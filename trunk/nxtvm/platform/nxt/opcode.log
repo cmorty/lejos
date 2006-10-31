@@ -1,0 +1,119 @@
+OPCODE (0xB2) getstatic
+OPCODE (0xBB) new
+OPCODE (0x59) dup
+OPCODE (0x3) iconst_0
+OPCODE (0xB7) invokespecial
+OPCODE (0x2A) aload_0
+OPCODE (0xB7) invokespecial
+OPCODE (0xB1) return
+OPCODE (0x2A) aload_0
+10 OPCODE (0x3) iconst_0
+OPCODE (0xB5) putfield
+OPCODE (0x2A) aload_0
+OPCODE (0x1B) iload_1
+OPCODE (0xB5) putfield
+OPCODE (0x2A) aload_0
+OPCODE (0x6) iconst_3
+OPCODE (0x11) sipush
+OPCODE (0xB6) invokevirtual
+OPCODE (0x2A) aload_0
+20 OPCODE (0xB4) getfield
+OPCODE (0x1B) iload_1
+OPCODE (0x4) iconst_1
+OPCODE (0xB8) invokestatic
+OPCODE (0x2A) aload_0
+OPCODE (0xB4) getfield
+OPCODE (0x1C) iload_2
+OPCODE (0x3) iconst_0
+OPCODE (0xB8) invokestatic
+OPCODE (0xB1) return
+30 OPCODE (0xB1) return
+OPCODE (0xB3) putstatic
+OPCODE (0xBB) new
+OPCODE (0x59) dup
+OPCODE (0x4) iconst_1
+OPCODE (0xB7) invokespecial
+OPCODE (0x2A) aload_0
+OPCODE (0xB7) invokespecial
+OPCODE (0xB1) return
+OPCODE (0x2A) aload_0
+40 OPCODE (0x3) iconst_0
+OPCODE (0xB5) putfield
+OPCODE (0x2A) aload_0
+OPCODE (0x1B) iload_1
+OPCODE (0xB5) putfield
+OPCODE (0x2A) aload_0
+OPCODE (0x6) iconst_3
+OPCODE (0x11) sipush
+OPCODE (0xB6) invokevirtual
+OPCODE (0x2A) aload_0
+50 OPCODE (0xB4) getfield
+OPCODE (0x1B) iload_1
+OPCODE (0x4) iconst_1
+OPCODE (0xB8) invokestatic
+OPCODE (0x2A) aload_0
+OPCODE (0xB4) getfield
+OPCODE (0x1C) iload_2
+OPCODE (0x3) iconst_0
+OPCODE (0xB8) invokestatic
+OPCODE (0xB1) return
+60 OPCODE (0xB1) return
+OPCODE (0xB3) putstatic
+OPCODE (0xBB) new
+OPCODE (0x59) dup
+OPCODE (0x5) iconst_2
+OPCODE (0xB7) invokespecial
+OPCODE (0x2A) aload_0
+OPCODE (0xB7) invokespecial
+OPCODE (0xB1) return
+OPCODE (0x2A) aload_0
+70 OPCODE (0x3) iconst_0
+OPCODE (0xB5) putfield
+OPCODE (0x2A) aload_0
+OPCODE (0x1B) iload_1
+OPCODE (0xB5) putfield
+OPCODE (0x2A) aload_0
+OPCODE (0x6) iconst_3
+OPCODE (0x11) sipush
+OPCODE (0xB6) invokevirtual
+OPCODE (0x2A) aload_0
+80 OPCODE (0xB4) getfield
+OPCODE (0x1B) iload_1
+OPCODE (0x4) iconst_1
+OPCODE (0xB8) invokestatic
+OPCODE (0x2A) aload_0
+OPCODE (0xB4) getfield
+OPCODE (0x1C) iload_2
+OPCODE (0x3) iconst_0
+OPCODE (0xB8) invokestatic
+OPCODE (0xB1) return
+90 OPCODE (0xB1) return
+OPCODE (0xB3) putstatic
+OPCODE (0x6) iconst_3
+OPCODE (0xBC) newarray
+OPCODE (0x0) nop
+OPCODE (0x59) dup
+OPCODE (0x3) iconst_0
+OPCODE (0xB2) getstatic
+OPCODE (0x53) aastore
+OPCODE (0x59) dup
+100 OPCODE (0x4) iconst_1
+OPCODE (0xB2) getstatic
+OPCODE (0x53) aastore
+OPCODE (0x59) dup
+OPCODE (0x5) iconst_2
+OPCODE (0xB2) getstatic
+OPCODE (0x53) aastore
+OPCODE (0xB3) putstatic
+OPCODE (0xB1) return
+OPCODE (0xB2) getstatic
+110 OPCODE (0xB6) invokevirtual
+OPCODE (0x11) sipush
+OPCODE (0x11) sipush
+OPCODE (0x2A) aload_0
+OPCODE (0xB4) getfield
+OPCODE (0x60) iadd
+OPCODE (0x93) i2s
+OPCODE (0xB8) invokestatic
+OPCODE (0xB1) return
+119 OPCODE (0xB1) return

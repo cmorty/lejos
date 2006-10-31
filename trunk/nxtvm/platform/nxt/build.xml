@@ -1,0 +1,53 @@
+<!-- ant file to make the emu runtime tools -->
+
+<project name="nxt" default="make" basedir=".">
+	
+	<!-- cleans all compilation artifacts -->
+	<target name="clean" description="cleans all compilation artifacts">
+		<delete>
+			<fileset dir=".">
+				<include name="*.o"/>
+			</fileset>
+		</delete>
+	</target>
+	
+	<!-- make the nxt stuff --> 
+	<target name="make" depends="clean,nxt_lejoss" description="makes the nxt stuff">
+	</target>
+
+	<!-- make nxt vm --> 
+	<target name="nxt_lejos" description="nxt lejos vm">
+  		<cc subsystem="console" 
+  				outfile="${make.out}/nxt_lejos"
+  				objdir="." 
+  				outtype="executable" 
+  				debug="false"
+  			    exceptions="false"
+  			    rtti="true"
+  			    optimize="speed"
+  				name="${lejos.compiler}">
+  				<fileset dir=".">
+ 				<fileset dir="${javavm.src}">
+					<include name="interpreter.c"/>
+					<include name="threads.c"/> 
+					<include name="exceptions.c"/>
+					<include name="memory.c"/>
+					<include name="language.c"/>
+					<include name="poll.c"/>
+				</fileset>
+  				<fileset dir=".">
+  					<include name="sensors.c"/>
+  					<include name="main.c"/> 
+  					<include name="native.c"/>
+  				</fileset>
+  				</fileset>
+				<includepath>
+					<pathelement location="."/>
+					<pathelement location="${javavm.src}"/>
+				</includepath>
+  				<versioninfo refid="${lejos.version}"/>
+  		</cc>
+	</target>
+
+</project>
+
