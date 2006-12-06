@@ -8,7 +8,7 @@ include targetdef.mak
 
 RAM_TARGET   := $(TARGET)_ram.elf
 ROM_TARGET   := $(TARGET)_rom.elf
-SAMBA_TARGET := $(TARGET)_samba.elf
+SAMBA_TARGET := $(TARGET)_samba_ram.bin
 ROMBIN_TARGET := $(TARGET)_rom.bin
 
 RAM_LDSCRIPT   := $(TARGET)_ram.ld
@@ -61,7 +61,7 @@ $(RAM_LDSCRIPT): $(LDSCRIPT_SOURCE)
 $(ROM_LDSCRIPT): $(LDSCRIPT_SOURCE)
 	cat $< | sed -e 's/^ROM_ONLY//' -e'/^RAM_ONLY/d' -e'/^SAMBA_ONLY/d' >$@
 
-$(SAMBA_TARGET): $(C_OBJECTS) $(S_OBJECTS) $(SAMBA_LDSCRIPT)
+$(SAMBA_TARGET)_elf: $(C_OBJECTS) $(S_OBJECTS) $(SAMBA_LDSCRIPT)
 	@echo "Linking $@"
 	$(LD) -o $@ $(C_OBJECTS) $(S_OBJECTS) -T $(SAMBA_LDSCRIPT) $(LIBC) $(GCC_LIB) $(LDFLAGS)
 
@@ -74,6 +74,10 @@ $(ROM_TARGET): $(C_OBJECTS) $(S_OBJECTS) $(ROM_LDSCRIPT)
 	$(LD) -o $@ $(C_OBJECTS) $(S_OBJECTS) -T $(ROM_LDSCRIPT) $(LIBC) $(GCC_LIB) $(LDFLAGS)
 
 $(ROMBIN_TARGET): $(ROM_TARGET)
+	@echo "Generating binary file $@"
+	$(OBJCOPY) -O binary $< $@
+
+$(SAMBA_TARGET): $(SAMBA_TARGET)_elf
 	@echo "Generating binary file $@"
 	$(OBJCOPY) -O binary $< $@
 
