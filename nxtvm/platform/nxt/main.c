@@ -72,11 +72,13 @@ void run(void)
 
   // Initialize memory
   {
-    int size = __free_ram_end__ - __free_ram_start__;
+    byte *ram_end = (byte *)(& __free_ram_end__);
+    byte * ram_start = (byte *)(& __free_ram_start__);
+    unsigned size = ((unsigned)ram_end) - ((unsigned) ram_start);
     
     memory_init ();
-    region = (byte *) __free_ram_start__;
-    memory_add_region (region, (byte *)__free_ram_end__);
+    region = ram_start;
+    memory_add_region (region, (byte *)ram_end);
   }
 
   //printf("Initializing exceptions\n");
@@ -210,18 +212,18 @@ void main(void)
 	display_init();
 
 
-	while(1){
+//	while(1){
 //		nxt_avr_power_down();
 //		nxt_avr_test_loop();
 //		nxt_lcd_test();
 //		systick_test();
 //		display_test();
 
-		xx_show();
+//		xx_show();
 
-	}
+//	}
 	
-//	nxt_main();
+	nxt_main();
 
 
 
