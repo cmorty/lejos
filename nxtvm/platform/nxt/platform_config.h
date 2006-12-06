@@ -27,7 +27,7 @@ typedef unsigned long FOURBYTES;
 
 // Floating point arithmetic supported?
 
-#define FP_ARITHMETIC 0
+#define FP_ARITHMETIC 1
 
 // Are we using the timer IRQ to switch threads? Not yet.
 

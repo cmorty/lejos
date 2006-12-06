@@ -11,17 +11,18 @@
 
 #include "poll.h"
 
-extern void poll_sensors();
+extern void poll_sensors(void);
 
 extern int last_sys_time;
 extern int last_ad_time;
 
-static inline void instruction_hook()
+static inline void instruction_hook(void)
 {
   gMakeRequest = true;
 }
 
-static inline void tick_hook()
+
+static inline void tick_hook(void)
 {
   register int st = get_sys_time_impl();
   if( st >= last_ad_time + 3){

@@ -1,9 +1,14 @@
-/**
- * main.c
- * NXT VM.
- */
 
-#include <stdio.h>
+#include "mytypes.h"
+#include "interrupts.h"
+#include "aic.h"
+#include "AT91SAM7.h"
+#include "uart.h"
+#include "systick.h"
+#include "stdio.h"
+#include "flashprog.h"
+#include "nxt_avr.h"
+#include "twi.h"
 #include "types.h"
 #include "constants.h"
 #include "classes.h"
@@ -21,25 +26,18 @@
 #include "platform_hooks.h"
 #include "java_binary.h"
 
-#define MEMORY_SIZE 4096 /* 8 Kb */
+#include "nxt_avr.h"
+#include "nxt_lcd.h"
 
-#define STATUS_BYTE ((char *) 0x20F000)
+#include "lejos_nxt.h"
 
-#define STATUS_WORD ((int *) 0x20F004)
+#include "display.h"
+
+extern U32 __free_ram_start__;
+extern U32 __free_ram_end__;
 
 byte *region;
 Thread   *bootThread;
-
-FOURBYTES sys_time = 0;
-
-int last_sys_time;              /* to generate ticks */
-int last_ad_time;               /* to generate sensor reads */
-
-FOURBYTES get_sys_time_impl()
-{
-  return sys_time;
-}
-
 
 void handle_uncaught_exception (Object *exception,
                                        const Thread *thread,
@@ -74,12 +72,11 @@ void run(void)
 
   // Initialize memory
   {
-    TWOBYTES size;
-
+    int size = __free_ram_end__ - __free_ram_start__;
+    
     memory_init ();
-    size = MEMORY_SIZE;
-    region = (byte *) 0x20A000;
-    memory_add_region (0x20A000, 0x20C000);
+    region = (byte *) __free_ram_start__;
+    memory_add_region (region, (byte *)__free_ram_end__);
   }
 
   //printf("Initializing exceptions\n");
@@ -118,6 +115,7 @@ void run(void)
 int nxt_main()
 {
         init_sensors ();
+        
 
         *STATUS_BYTE = 0;
         *STATUS_WORD = 0;
@@ -132,3 +130,128 @@ int nxt_main()
 
         return 0;
 } 
+
+const U8 splash_data[4*26] = {
+ 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+ 0x00,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0xFF,0xFF,0xFF,0xFF,0xFE,0xFC,
+ 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xA0,0x40,0xA0,0x40,
+ 0xA0,0x40,0xA0,0x00,0x00,0x00,0x00,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,
+ 0xF0,0xF0,0xF0,0xF0,0xF0,0xF0,0x00,0x00,0x00,0x0A,0x05,0x0A,0x05,
+ 0x0A,0x05,0x0A,0x00,0x00,0x00,0x00,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,
+ 0x0F,0x1F,0x3F,0x3F,0x7F,0x7F,0xFC,0xF8,0xF0,0xF0,0xF0,0xF0,0xF0,
+ 0xF0,0xF0,0xF0,0xF0,0xF0,0xF8,0xFC,0x7F,0x7F,0x3F,0x3F,0x1F,0x0F,};
+  
+void show_splash(U32 milliseconds)
+{
+  display_clear(0);
+  display_bitmap_copy(splash_data, 26, 4, 37,5);
+  display_update();
+  
+  systick_wait_ms(milliseconds);
+}
+
+
+void xx_show(void)
+{
+  int iterator = 0;
+  U32 buttons;
+  
+  show_splash(3000);
+  
+  while(1){
+    display_clear(0);
+    iterator = (iterator + 1) & 7;
+    
+    
+    nxt_avr_update();
+    buttons = buttons_get();
+    
+    display_goto_xy(iterator,0); display_string("LEJOS NXT");
+    
+    display_goto_xy(0,1); display_string("TIME ");display_unsigned(systick_get_ms(),0);
+    
+    display_goto_xy(0,2); display_string("BATTERY ");display_unsigned(battery_voltage(),0);
+    
+    display_goto_xy(0,3); display_string("BUTTONS "); 
+    if(buttons & 1) display_string("0 ");
+    if(buttons & 2) display_string("1 ");
+    if(buttons & 4) display_string("2 ");
+    if(buttons & 8) display_string("3 ");
+
+    display_goto_xy(0,4); 
+    display_unsigned(sensor_adc(0),5);
+    display_unsigned(sensor_adc(1),5);
+    display_goto_xy(0,5); 
+    display_unsigned(sensor_adc(2),5);
+    display_unsigned(sensor_adc(3),5);
+    
+    display_update();
+    systick_wait_ms(500);
+  }
+}
+
+
+void main(void)
+{
+	int error;
+	unsigned int i;
+	unsigned char b;
+	unsigned now,prev;
+	char *s;
+	
+	/* When we get here:
+	 * PLL and flash have been initialised and
+	 * interrupts are off, but the AIC has not been initialised.
+	 */
+	aic_initialise();
+	interrupts_enable();
+	systick_init();
+	nxt_avr_init();
+	display_init();
+
+
+	while(1){
+//		nxt_avr_power_down();
+//		nxt_avr_test_loop();
+//		nxt_lcd_test();
+//		systick_test();
+//		display_test();
+
+		xx_show();
+
+	}
+	
+//	nxt_main();
+
+
+
+#if 0
+	error = uart_init(0,9600,8,1,'N');
+	
+	
+	*AT91C_PIOA_PER = LED1 | LED2 | LED3 | LED4;
+	*AT91C_PIOA_OER = LED1 | LED2 | LED3 | LED4;
+	
+	uart_put_str(0,"baah, baah!\n");
+	
+	
+	while(1){
+		if(uart_get_byte(0,&b))
+			uart_put_byte(0,b+1);
+			
+		systick_get_time(&now,(void *)0);
+		
+		if(now != prev){
+			prev = now;
+			
+			if(now & 1)
+				*AT91C_PIOA_CODR = LED1;
+			else
+				*AT91C_PIOA_SODR = LED1;
+		}
+	}
+#endif
+
+}
+
+

@@ -11,13 +11,13 @@
 
 extern int verbose;
 
-sensor_t sensors[3] = {
+sensor_t sensors[N_SENSORS] = {
   { 0, 0, 0, 0, 0 },
   { 0, 0, 0, 0, 0 },
   { 0, 0, 0, 0, 0 }
 };
 
-FOURBYTES last_time[3];
+static FOURBYTES last_time[N_SENSORS];
 
 void init_sensors( void)
 {
