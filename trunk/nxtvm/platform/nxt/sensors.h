@@ -9,7 +9,10 @@ typedef struct {
     char boolean;
 } sensor_t;
 
-extern sensor_t sensors[3];
+
+#define N_SENSORS (3)
+
+extern sensor_t sensors[N_SENSORS];
 extern void init_sensors( void);
 extern void poll_sensors( void);
 extern void read_buttons(int, short*);
