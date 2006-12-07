@@ -1,5 +1,6 @@
 #include "nxt_avr.h"
 
+#include "systick.h"
 #include <string.h>
 
 #include "twi.h"
@@ -151,6 +152,10 @@ static void nxt_avr_get_io(void)
 int nxt_avr_init(void)
 {
   twi_init();
+  systick_wait_ms(10);
+  //nxt_avr_brainwash();
+  systick_wait_ms(200);
+  
   return 1;
 }
 

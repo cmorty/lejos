@@ -219,7 +219,7 @@ void main(void)
 //		systick_test();
 //		display_test();
 
-//		xx_show();
+	xx_show();
 
 //	}
 	
