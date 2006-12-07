@@ -81,11 +81,11 @@ int twi_read(U32 dev_addr, U32 int_addr_bytes, U32 int_addr, U8 *data, U32 nByte
       
       *data = *AT91C_TWI_RHR;
     } else {
+      *data = *AT91C_TWI_RHR;
       *AT91C_TWI_CR = 0x05; /* Start, enable */
       do{
         status = *AT91C_TWI_SR;
       } while(!(status & 2));
-//        *data = *AT91C_TWI_RHR;
       while(nBytes){
         
       do{

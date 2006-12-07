@@ -97,12 +97,20 @@ static  U16 Unpack16(const U8 *x)
 static void nxt_avr_get_io(void)
 {
   static U8 x[(2 * NXT_AVR_N_INPUTS)+ 5];
-  U8 *p = &x[1];
+  U8 *p = x;
+  U8 checkByte;
   U16 buttonsVal;
   U32 voltageVal;
   int i;
   
   nxt_avr_read(x,sizeof(x));
+  
+  for(checkByte = i = 0; i < sizeof(x); i++){
+    checkByte += *p;
+    p++;
+  }
+  
+  p = x;
   
   // Marshall
   for(i = 0; i < NXT_AVR_N_INPUTS; i++){
