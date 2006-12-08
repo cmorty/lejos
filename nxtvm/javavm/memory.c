@@ -13,6 +13,8 @@
 #include "exceptions.h"
 #include "stdlib.h"
 
+#include <string.h>
+
 #ifdef VERIFY
 static boolean memoryInitialized = false;
 #endif
@@ -439,7 +441,7 @@ void memory_add_region (byte *start, byte *end)
   /* add to list */
   memory_regions = region;
 #endif
-  region->end = (TWOBYTES *) ((unsigned int)end & ~1); /* word align
+  region->end = (TWOBYTES *) ((unsigned int)end & ~1); /* 16-bit align
  downwards */
 
   /* create free block in region */
