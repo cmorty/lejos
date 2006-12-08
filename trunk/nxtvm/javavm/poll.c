@@ -9,7 +9,7 @@
 #define SERIAL_RECEIVED_POS	6
 
 Poll *poller;
-short old_sensor_values[3];
+short old_sensor_values[N_SENSORS];
 short old_button_state;
 
 byte throttle;
@@ -21,7 +21,7 @@ void set_poller(Poll *_poller)
   
   poller = _poller;
   old_button_state = 0;
-  for (i=0; i<3; i++)
+  for (i=0; i<N_SENSORS; i++)
     old_sensor_values[i] = sensors[i].value;
 }
 
