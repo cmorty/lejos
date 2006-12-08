@@ -46,7 +46,7 @@ ROM_ONLY  rom : ORIGIN = 1M, LENGTH =256k
   vector_ram  : ORIGIN = 2M, LENGTH = 64
 RAM_ONLY  ram         : ORIGIN = 2M + 64, LENGTH = 64K - 64
 ROM_ONLY  ram         : ORIGIN = 2M + 64, LENGTH = 64K - 64
-SAMBA_ONLY  ram         : ORIGIN = 2M + 64, LENGTH = 64K - 64
+SAMBA_ONLY  ram         : ORIGIN = 2M + 8k, LENGTH = 64K - 8k
 }
 
 ROM_ONLY ROM_BASE = 1M;
