@@ -2,7 +2,7 @@
 #include "AT91SAM7.h"
 #include "interrupts.h"
 
-#define sysc ((struct _AT91S_SYSC *)0xFFFFF000)
+#define sysc ((volatile struct _AT91S_SYSC *)0xFFFFF000)
 
 extern void default_isr(void);
 extern void default_fiq(void);
