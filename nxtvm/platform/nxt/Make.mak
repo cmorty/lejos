@@ -25,7 +25,7 @@ CFLAGS = -c -ffreestanding -fsigned-char -mcpu=arm7tdmi  \
 
 LDFLAGS = -Map $@.map -L$(LIBPREFIX) -lm -cref --gc-sections $(LIBC)
 
-ASFLAGS = -mthumb-interwork
+ASFLAGS = -mthumb-interwork  -mfpu=softfpa
 
 def_target: all
 
