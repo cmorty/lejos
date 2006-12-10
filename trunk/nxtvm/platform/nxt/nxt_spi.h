@@ -16,7 +16,7 @@
  */
 
 void nxt_spi_init(void);
-void nxt_spi_write(U32 CD, U8 *data, U32 nBytes);
+void nxt_spi_write(U32 CD, const U8 *data, U32 nBytes);
 
 #endif
 
