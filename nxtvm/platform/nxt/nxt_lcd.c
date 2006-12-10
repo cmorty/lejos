@@ -44,7 +44,7 @@ void nxt_lcd_set_scroll_line(U32 sl)
 
 void nxt_lcd_set_page_address(U32 pa)
 {
-  nxt_lcd_command(0xD0 | (pa & 0xf));
+  nxt_lcd_command(0xB0 | (pa & 0xf));
 }
 
 void nxt_lcd_set_pot(U32 pot)
@@ -99,14 +99,16 @@ void nxt_lcd_set_cursor_update(U32 on)
 }
 
 
-void nxt_lcd_data(const U8 *data, U32 nBytes)
+void nxt_lcd_data(const U8 *data)
 {
-  nxt_lcd_set_page_address(0);
-  nxt_lcd_set_ram_address_control(1);
-  nxt_lcd_set_col(0);
-  nxt_lcd_set_map_control(0x02);
+  int i;
+  for(i = 0; i < NXT_LCD_DEPTH; i++){
+    nxt_lcd_set_col(0);
+    nxt_lcd_set_page_address(i);
   
-  nxt_spi_write(1,data,nBytes);
+    nxt_spi_write(1,data,NXT_LCD_WIDTH);
+    data += NXT_LCD_WIDTH;
+  }
 }
 
 void nxt_lcd_power_up(void)
@@ -118,6 +120,9 @@ void nxt_lcd_power_up(void)
   nxt_lcd_set_multiplex_rate(3); // 1/65
   nxt_lcd_set_bias_ratio(3); 	// 1/9
   nxt_lcd_set_pot(0x60);	// ?? 9V??
+
+  nxt_lcd_set_ram_address_control(0);
+  nxt_lcd_set_map_control(0x02);
   
   nxt_lcd_enable(1);
 
@@ -132,47 +137,3 @@ void nxt_lcd_init(void)
   
 }
 
-
-#define WIDTH 132
-#define DEPTH 8
-#define ALL   (WIDTH * DEPTH)
-void nxt_lcd_test(void)
-{
-  static U8 xx[ALL];
-  int i;
-  int j;
-  int iteration = 0;
-  nxt_lcd_init();
-  while(1){
-    systick_wait_ms(2000);
-    iteration++;
-    
-    memset(xx,0,ALL);
-    
-    switch(iteration & 3){
-      case 0:
-        for(i = 0; i < ALL; i++)
-          xx[i] = 0x0F;
-        break;
-      case 1:
-        for(i = 0; i < ALL; i++)
-         if((i / WIDTH) & 1)
-           xx[i] = 0xFF;
-        break;
-      case 2:
-         for( i = 0; i < ALL; i++)
-            if(i < 8)
-              xx[i] = 0x8f;
-        break;
-      case 3:
-         for(i = 0; i < DEPTH; i++)
-           for(j = 0; j < WIDTH; j++)
-             if(j / 8 == i)
-               xx[i * WIDTH + j] = (1 << (j & 7));
-    }
-
-    nxt_lcd_data(xx,ALL);
-  }
-  
-  
-}

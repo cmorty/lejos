@@ -5,12 +5,10 @@
 #include <string.h>
 
 
-#define DISPLAY_WIDTH (100)
-#define DISPLAY_BUFFER_WIDTH (132)
-#define DISPLAY_DEPTH (8)
-#define DISPLAY_BUFFER_DEPTH (DISPLAY_DEPTH)
+#define DISPLAY_WIDTH (NXT_LCD_WIDTH)
+#define DISPLAY_DEPTH (NXT_LCD_DEPTH)
 
-static U8 display_buffer[DISPLAY_BUFFER_DEPTH][DISPLAY_BUFFER_WIDTH];
+static U8 display_buffer[DISPLAY_DEPTH][DISPLAY_WIDTH];
 
 /* Font table for a 5x8 font. 1 pixel spacing between chars */
 #define N_CHARS 128
@@ -154,7 +152,7 @@ static const U8 font [N_CHARS][FONT_WIDTH] = {
 
 void display_update(void)
 {
-  nxt_lcd_data((U8 *)display_buffer,sizeof(display_buffer));
+  nxt_lcd_data((U8 *)display_buffer);
 }
 
 
@@ -178,7 +176,6 @@ void display_goto_xy(int x, int y)
 void display_char(int c)
 {
   int i;
-  int j;
   U8 *b;
   const U8 *f;
   if(c >= 0 && c < N_CHARS &&
@@ -264,8 +261,17 @@ void display_bitmap_copy(const U8 *data, U32 width, U32 depth, U32 x, U32 y)
 {
   U32 i;
   U32 j;
+  U32 dy;
+  U32 dx;
 
-  // Todo  
+  for(i = 0; i < depth; i++)
+    for(j = 0; j < width; j++){
+      dx = x + j;
+      dy = y + i;
+      
+      if( dx < DISPLAY_WIDTH && dy < DISPLAY_DEPTH)
+        display_buffer[y + i][x+j] = data[width * i + j];
+    }
 }
 
 
