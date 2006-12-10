@@ -227,13 +227,16 @@ main_returned:
 
 
 undef_handler:
+	b undef_handler
 swi_handler:
+	b swi_handler
 prefetch_abort_handler:
+	b prefetch_abort_handler
 data_abort_handler:
+	b data_abort_handler
 reserved_handler:
+	b reserved_handler
 
-xx:
-	b xx
 
 
 @ Little helper funcs
