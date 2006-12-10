@@ -29,6 +29,8 @@
 #include "nxt_avr.h"
 #include "nxt_lcd.h"
 
+#include "nxt_motors.h"
+
 #include "lejos_nxt.h"
 
 #include "display.h"
@@ -146,7 +148,9 @@ const U8 splash_data[4*26] = {
 void show_splash(U32 milliseconds)
 {
   display_clear(0);
-  display_bitmap_copy(splash_data, 26, 4, 37,5);
+  display_bitmap_copy(splash_data, 26, 4, 37,1);
+  
+  display_goto_xy(6,6); display_string("LEJOS");
   display_update();
   
   systick_wait_ms(milliseconds);
@@ -162,33 +166,47 @@ void xx_show(void)
   
   while(1){
     display_clear(0);
-    iterator = (iterator + 1) & 7;
+    iterator++;
     
+    if((iterator & 8) == 0){
+	    nxt_avr_update();
+	    buttons = buttons_get();
     
-    nxt_avr_update();
-    buttons = buttons_get();
+	    display_goto_xy(iterator & 7,0); display_string("LEJOS NXT");
     
-    display_goto_xy(iterator,0); display_string("LEJOS NXT");
+	    display_goto_xy(0,1); display_string("TIME ");display_unsigned(systick_get_ms(),0);
     
-    display_goto_xy(0,1); display_string("TIME ");display_unsigned(systick_get_ms(),0);
+	    display_goto_xy(0,2); display_string("BATTERY ");display_unsigned(battery_voltage(),0);
     
-    display_goto_xy(0,2); display_string("BATTERY ");display_unsigned(battery_voltage(),0);
-    
-    display_goto_xy(0,3); display_string("BUTTONS "); 
-    if(buttons & 1) display_string("0 ");
-    if(buttons & 2) display_string("1 ");
-    if(buttons & 4) display_string("2 ");
-    if(buttons & 8) display_string("3 ");
+	    display_goto_xy(0,3); display_string("BUTTONS "); 
+	    if(buttons & 1) display_string("0 ");
+	    if(buttons & 2) display_string("1 ");
+	    if(buttons & 4) display_string("2 ");
+	    if(buttons & 8) display_string("3 ");
 
-    display_goto_xy(0,4); 
-    display_unsigned(sensor_adc(0),5);
-    display_unsigned(sensor_adc(1),5);
-    display_goto_xy(0,5); 
-    display_unsigned(sensor_adc(2),5);
-    display_unsigned(sensor_adc(3),5);
+	    display_goto_xy(0,4); display_string("ADC ");
+	    display_unsigned(sensor_adc(0),5);
+	    display_unsigned(sensor_adc(1),5);
+	    display_goto_xy(0,5); display_string("    "); 
+	    display_unsigned(sensor_adc(2),5);
+	    display_unsigned(sensor_adc(3),5);
     
-    display_update();
-    systick_wait_ms(500);
+	    display_update();
+	    systick_wait_ms(500);
+    } else {
+    
+	    display_goto_xy(iterator & 7,0); display_string("LEJOS NXT");
+    
+	    display_goto_xy(0,1); display_string("TIME ");display_unsigned(systick_get_ms(),0);
+	    
+	    display_goto_xy(0,2); display_string("MOTORS");
+//	    display_goto_xy(1,3); display_integer(motor_get_count(0));
+//	    display_goto_xy(1,4); display_integer(motor_get_count(1));
+//	    display_goto_xy(1,5); display_integer(motor_get_count(2));
+
+	    display_update();
+	    systick_wait_ms(500);
+    }
   }
 }
 
