@@ -1,9 +1,8 @@
 
-  GCC_VERSION :=3.4.3
-  COMP_PATH   := /usr/local/gnuarm-3.4.3
-  NEWLIB_PATH := /usr/local
-  LIBPREFIX        := /usr/local/arm-elf/lib
-  GCC_LIB     := $(COMP_PATH)/lib/gcc/arm-elf/3.4.3/interwork/libgcc.a
+  GCC_VERSION :=4.0.2
+  COMP_PATH   := /opt/arm-elf-tools/
+  LIBPREFIX   := $(COMP_PATH)/arm-elf/lib
+  GCC_LIB     := $(COMP_PATH)/lib/gcc/arm-elf/$(GCC_VERSION)/interwork/libgcc.a
   LIBC        := $(COMP_PATH)/arm-elf/lib/interwork/libc.a
 
   TARGET_PREFIX :=arm-elf
