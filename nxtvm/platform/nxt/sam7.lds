@@ -71,6 +71,7 @@ SAMBA_ONLY AT> ram
 __vectors_ram_start__  = ADDR(.vectors);
 __vectors_ram_end__    = (ADDR(.vectors) + SIZEOF(.vectors));
 __vectors_load_start__ = LOADADDR(.vectors);
+__vectors_load_end__ = (LOADADDR(.vectors) + SIZEOF(.vectors));
 
 /*
  * The initialisation code goes first, followed by the text.
