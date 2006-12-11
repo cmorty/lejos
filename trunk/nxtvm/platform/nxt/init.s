@@ -9,10 +9,10 @@
 
 @ Macros to do memory initialisation
 
-	.macro  mem_copy,  dest, dest_end, source
-	ldr   r0,=\dest
-	ldr   r1,=\dest_end
-	ldr   r2,=\source
+	.macro  mem_copy,  source, source_end, dest
+	ldr   r0,=\source
+	ldr   r1,=\source_end
+	ldr   r2,=\dest
 	bl    mem_copy_func
 	.endm
 
@@ -163,15 +163,15 @@ wait_MCLK_Ready2:
 @ Copy the vector table
 @
 vector_copy:
-	mem_copy       __vectors_ram_start__, __vectors_ram_end__, __vectors_load_start__
+	mem_copy       __vectors_load_start__, __vectors_load_end__, __vectors_ram_start__
 
 @
 @ Initialise memory regions
 @
 data_copy:
-	mem_copy       __data_ram_start__, __data_ram_end__, __data_load_start__
+	mem_copy       __data_load_start__, __data_load_end__, __data_ram_start__
 ram_text_copy:
-	mem_copy       __ramtext_ram_start__, __ramtext_ram_end__, __ramtext_load_start__
+	mem_copy       __ramtext_load_start__, __ramtext_load_end__, __ramtext_ram_start__
 bss_init:
 	mem_initialise __bss_start__, __bss_end__, 0
 stack_init_0:
