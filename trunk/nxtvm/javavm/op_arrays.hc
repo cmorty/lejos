@@ -57,11 +57,6 @@ case OP_DALOAD:
 case OP_AASTORE:
   // Stack size: -3
   tempStackWord = pop_ref();
-
-  // LGG
-  pop_word();
-  pop_ref();
-  goto LABEL_ENGINELOOP;
   if (!array_store_helper())
     goto LABEL_ENGINELOOP;
   ref_array(tempBytePtr)[tempInt] = tempStackWord;
