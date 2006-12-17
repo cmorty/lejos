@@ -230,10 +230,6 @@ void engine()
   printf ("OPCODE (0x%X) %s\n", (int) *pc, OPCODE_NAME[*pc]);
   #endif
 
-    *((int *) 0x20F004) = pc;
-    *((char *) 0x20F000) = *pc;
-    if (lgginst++ == 200) return;
-
   switch (*pc++)
   {
     case OP_NOP:
