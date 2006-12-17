@@ -52,27 +52,24 @@ totalMemory()J
 # java.lang.Throwable
 getMessage()Ljava/lang/String;
 
-# josx.platform.rcx.ROM
+# josx.platform.nxt.ROM
 call(S)V
 call(SS)V
 call(SSS)V
 call(SSSS)V
 call(SSSSS)V
 
-# josx.platform.rcx.Memory
+# josx.platform.nxt.Memory
 readByte(I)B
 writeByte(IB)V
 setBit(III)V
 getDataAddress(Ljava/lang/Object;)I
 
-# josx.platform.rcx.Serial
-resetSerial()V
-
-# josx.platform.rcx.Sensor
+# josx.platform.nxt.Sensor
 readSensorValue(II)I
 setSensorValue(III)V
 
-# josx.platform.rcx.Poller
+# josx.platform.nxt.Poller
 setPoller()V
 setThrottle(I)V
 
@@ -84,13 +81,18 @@ testEQ(Ljava/lang/String;II)V
 floatToIntBits(F)I
 intBitsToFloat(I)F
 
-# josx.rcxcomm.LLC
-init()V
-write([BI)V
-read()I
-isSending()Z
-isSendError()Z
+#josx.platform.nxt/LCD
+drawString(Ljava/lang/String;II)V
+drawInt(III)V
+refresh()V
 
-# josx.platform.rcx.PersistentMemoryArea
-getRegionAddress()I
+#josx.platform.nxt.Battery
+getVoltageMilliVolt()I
+
+#josx.platform.nxt.Button
+readButtons()I
+
+
+
+
 
