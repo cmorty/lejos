@@ -21,6 +21,8 @@ C_PLATFORM_SOURCES := \
 	udp.c \
 	twi.c \
 	nxt_spi.c \
+	pio.c \
+	nxt_motors.c \
 	display.c
 
 C_HOOK_SOURCES := \

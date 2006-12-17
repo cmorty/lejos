@@ -1,9 +1,11 @@
 #include "nxt_avr.h"
 
+
+#include "twi.h"
+
 #include "systick.h"
 #include <string.h>
 
-#include "twi.h"
 
 
 
@@ -14,78 +16,81 @@
 
 const char avr_brainwash_string[] = "\xCC""Let's samba nxt arm in arm, (c)LEGO System A/S";
 
-
+static U32 nxt_avr_initialised;
 
 static struct {
   U8 power;
-  U8 pwmFreq;
-  S8 outPercent[NXT_AVR_N_OUTPUTS];
-  U8 outputMode;
-  U8 inputPower;
+  U8 pwm_frequency;
+  S8 output_percent[NXT_AVR_N_OUTPUTS];
+  U8 output_mode;
+  U8 input_power;
 } io_to_avr;
 
 
+static struct {
+  U16 adc_value[NXT_AVR_N_INPUTS];
+  U16 buttons;
+  U16 battery_is_AA;
+  U16 battery_mV;
+  U8 avr_fw_version_major;
+  U8 avr_fw_version_minor;  
+} io_from_avr;
 
-static void nxt_avr_send(const U8 *buffer, U32 nBytes)
+static U8 data_from_avr[(2 * NXT_AVR_N_INPUTS)+ 5];
+
+static U8 data_to_avr[5 + NXT_AVR_N_OUTPUTS];
+
+
+
+/* We're assuming that we get good packing */
+
+static void nxt_avr_start_read(void)
 {
-  twi_write(NXT_AVR_ADDRESS,0,0,buffer,nBytes);
+  memset(data_from_avr,0,sizeof(data_from_avr));
+  twi_start_read(NXT_AVR_ADDRESS,0,0,data_from_avr,sizeof(data_from_avr));
 }
 
-static void nxt_avr_read(U8 *buffer, U32 nBytes)
+static void nxt_avr_start_send(void)
 {
-  twi_read(NXT_AVR_ADDRESS,0,0,buffer,nBytes);
-}
-
-static void nxt_avr_send_io(void)
-{
-  // NB we use a marshalling area to get around any ARM-vs-AVR packing issues
-  static U8 x[4 + NXT_AVR_N_OUTPUTS];
-  U8 *p = x;
   int i;
+  U8 checkByte = 0;
+  U8 *a = data_to_avr;
+  U8 *b = (U8 *)(&io_to_avr);
   
-  *p = io_to_avr.power;   p++;
-  *p = io_to_avr.pwmFreq; p++;  
-  for(i = 0; i < NXT_AVR_N_OUTPUTS; i++) {
-    *p = io_to_avr.outPercent[i];
-    p++;
+  i = sizeof(io_to_avr);
+  while(i){
+    *a = *b;
+    checkByte += *b;
+    a++;
+    b++;
+    i--;
   }
-  *p = io_to_avr.outputMode; p++;
-  *p = io_to_avr.inputPower;
   
-  nxt_avr_send(x,sizeof(x));
+  *a = ~ checkByte;
+
+  twi_start_write(NXT_AVR_ADDRESS,0,0,data_to_avr,sizeof(data_to_avr));
+  
 }
 
 void nxt_avr_power_down(void)
 {
   io_to_avr.power = 0x5a;
-  io_to_avr.pwmFreq = 0x00;
-  nxt_avr_send_io();
+  io_to_avr.pwm_frequency = 0x00;
 }
 
 
 void nxt_avr_firmware_update_mode(void)
 {
   io_to_avr.power = 0xA5;
-  io_to_avr.pwmFreq = 0x5A;
-  nxt_avr_send_io();
+  io_to_avr.pwm_frequency = 0x5A;
 }
 
-void nxt_avr_brainwash(void)
+void nxt_avr_link_init(void)
 {
-  nxt_avr_send(avr_brainwash_string,strlen(avr_brainwash_string));
+  twi_start_write(NXT_AVR_ADDRESS,0,0,(const U8 *)avr_brainwash_string,strlen(avr_brainwash_string));
 }
 
-
-static struct {
-  U16 adcVal[NXT_AVR_N_INPUTS];
-  U16 buttons;
-  U16 batteryAA;
-  U16 batterymV;
-  U16 avrFwVerMajor;
-  U16 avrFwVerMinor;  
-} io_from_avr;
-
-
+  
 static  U16 Unpack16(const U8 *x)
 {
   U16 retval;
@@ -94,27 +99,36 @@ static  U16 Unpack16(const U8 *x)
   return retval;
 }
 
-static void nxt_avr_get_io(void)
+static U32 nxt_avr_good_rx;
+static U32 nxt_avr_bad_rx;
+
+static void nxt_avr_unpack(void)
 {
-  static U8 x[(2 * NXT_AVR_N_INPUTS)+ 5];
-  U8 *p = x;
-  U8 checkByte;
+  U8 check_sum;
+  U8 *p;
   U16 buttonsVal;
   U32 voltageVal;
   int i;
   
-  nxt_avr_read(x,sizeof(x));
+  p = data_from_avr;
   
-  for(checkByte = i = 0; i < sizeof(x); i++){
-    checkByte += *p;
+  for(check_sum = i = 0; i < sizeof(data_from_avr); i++){
+    check_sum += *p;
     p++;
   }
   
-  p = x;
+  if(check_sum != 0xff){
+    nxt_avr_bad_rx++;
+    return;
+  }
+  
+  nxt_avr_good_rx++;
+  
+  p = data_from_avr;
   
   // Marshall
   for(i = 0; i < NXT_AVR_N_INPUTS; i++){
-    io_from_avr.adcVal[i] = Unpack16(p);
+    io_from_avr.adc_value[i] = Unpack16(p);
     p+=2;
   }
   
@@ -136,14 +150,11 @@ static void nxt_avr_get_io(void)
   else if(buttonsVal > 60)
     io_from_avr.buttons |= 0x02;
 
-  
-  
-  
   voltageVal = Unpack16(p);
   
-  io_from_avr.batteryAA = (voltageVal & 0x8000) ? 1 : 0;
-  io_from_avr.avrFwVerMajor = (voltageVal >>13) & 3;
-  io_from_avr.avrFwVerMinor = (voltageVal >>10) & 7;
+  io_from_avr.battery_is_AA = (voltageVal & 0x8000) ? 1 : 0;
+  io_from_avr.avr_fw_version_major = (voltageVal >>13) & 3;
+  io_from_avr.avr_fw_version_minor = (voltageVal >>10) & 7;
   
     
   // Figure out voltage
@@ -153,23 +164,54 @@ static void nxt_avr_get_io(void)
   voltageVal &= 0x3ff; // Toss unwanted bits.
   voltageVal *= 14180;
   voltageVal >>= 10;
-  io_from_avr.batterymV = voltageVal;
+  io_from_avr.battery_mV = voltageVal;
   
 }
 
-int nxt_avr_init(void)
+
+void nxt_avr_init(void)
 {
   twi_init();
-  systick_wait_ms(10);
-  //nxt_avr_brainwash();
-  systick_wait_ms(200);
   
-  return 1;
+  memset(&io_to_avr,0,sizeof(io_to_avr));
+  io_to_avr.power = 0;
+  io_to_avr.pwm_frequency = 8;
+  
+  nxt_avr_initialised = 1;
 }
 
-void nxt_avr_update(void)
+static U32 update_count;
+static U32 link_init_wait;
+static U32 link_initialised;
+
+void nxt_avr_1kHz_update(void)
 {
-  nxt_avr_get_io();
+  
+  if(!nxt_avr_initialised)
+    return;
+    
+  if(link_init_wait){
+    link_init_wait--;
+    return;
+  }
+    
+  if(!twi_ok() || !link_initialised){
+    memset(data_from_avr,0,sizeof(data_from_avr));
+    link_initialised = 1;
+    nxt_avr_link_init();
+    link_init_wait = 2;
+    update_count = 0;
+    return;
+  }
+    
+  if(update_count & 3){
+      nxt_avr_unpack();
+      nxt_avr_start_read();
+  } else {  
+      nxt_avr_unpack();
+      nxt_avr_start_send();
+  }
+  update_count++;
 }
 
 U32 buttons_get(void)
@@ -179,20 +221,14 @@ U32 buttons_get(void)
 
 U32 battery_voltage(void)
 {
-  return io_from_avr.batterymV;
+  return io_from_avr.battery_mV;
 }
 
 U32 sensor_adc(U32 n)
 {
   if(n < 4)
-    return io_from_avr.adcVal[n];
+    return io_from_avr.adc_value[n];
   else
     return 0;
 }
 
-void nxt_avr_test_loop(void)
-{
-  while(1){
-    nxt_avr_get_io();
-  }
-}

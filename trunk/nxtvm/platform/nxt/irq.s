@@ -128,3 +128,9 @@ uart_isr_entry_0:
 uart_isr_entry_1:
   irq_wrapper_nested uart_isr_C_1
 
+
+  .extern pio_isr_C
+  .global pio_isr_entry
+pio_isr_entry:
+  irq_wrapper_nested pio_isr_C
+

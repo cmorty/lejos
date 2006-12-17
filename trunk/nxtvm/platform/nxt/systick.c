@@ -12,6 +12,8 @@
 #include "interrupts.h"
 #include "systick.h"
 
+#include "nxt_avr.h"
+
 
 #define PIT_FREQ 1000  /* Hz */
 
@@ -29,6 +31,8 @@ void systick_isr_C(void)
   
   /* Read status to confirm interrupt */
   status = *AT91C_PITC_PIVR;
+  
+  nxt_avr_1kHz_update();
   
   systick_ms++;
   
@@ -57,6 +61,16 @@ void systick_wait_ms(U32 ms)
   volatile U32 final=   ms + systick_get_ms();
   
   while(systick_get_ms() < final) {}
+}
+
+
+void systick_wait_ns(U32 ns)
+{
+  volatile x = (ns>>7) + 1;
+  
+  while(x){
+    x--;
+  }
 }
 
 void systick_init(void)

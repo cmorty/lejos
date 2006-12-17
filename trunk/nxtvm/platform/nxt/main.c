@@ -37,6 +37,9 @@
 
 extern U32 __free_ram_start__;
 extern U32 __free_ram_end__;
+extern U32 __extra_ram_start__;
+extern U32 __extra_ram_end__;
+
 
 byte *region;
 Thread   *bootThread;
@@ -79,8 +82,17 @@ void run(void)
     unsigned size = ((unsigned)ram_end) - ((unsigned) ram_start);
     
     memory_init ();
+    
     region = ram_start;
     memory_add_region (region, (byte *)ram_end);
+    
+    /*Add extra RAM if available */
+    ram_end = (byte *)(&__extra_ram_end__);
+    ram_start = (byte *)(&__extra_ram_start__);
+    size = ((unsigned)ram_end) - ((unsigned)ram_start);
+    
+    if(size > 0)
+    	memory_add_region(ram_start, ram_end);
   }
 
   //printf("Initializing exceptions\n");
@@ -169,7 +181,7 @@ void xx_show(void)
     iterator++;
     
     if((iterator & 8) == 0){
-	    nxt_avr_update();
+	    // nxt_avr_update();
 	    buttons = buttons_get();
     
 	    display_goto_xy(iterator & 7,0); display_string("LEJOS NXT");
