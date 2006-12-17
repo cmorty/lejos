@@ -11,6 +11,7 @@ U32 systick_get_ms(void);
 
 void systick_wait_ms(U32 ms);
 
+void systick_wait_ns(U32 n);
 
 void systick_test(void);
 

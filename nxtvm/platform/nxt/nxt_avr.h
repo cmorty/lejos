@@ -4,11 +4,15 @@
 #include "mytypes.h"
 
 /* Main user interface */
-int nxt_avr_init(void);
+void nxt_avr_init(void);
+
+void nxt_avr_1kHz_update(void);
+
 
 void nxt_avr_power_down(void);
 
 void nxt_avr_test_loop(void);
+
 void nxt_avr_update(void);
 
 U32 buttons_get(void);

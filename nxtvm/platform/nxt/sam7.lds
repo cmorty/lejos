@@ -22,7 +22,7 @@
  * Memory definitions.
  */
 
-/* SAM7C64 */
+/* SAM7S64 */
 /*
 MEMORY
 {
@@ -38,15 +38,13 @@ RAM_SIZE = 16k;
 
 
 
-/* SAM7C256 */
+/* SAM7S256 */
 
 MEMORY
 {
 ROM_ONLY  rom : ORIGIN = 1M, LENGTH =256k
   vector_ram  : ORIGIN = 2M, LENGTH = 64
-RAM_ONLY  ram         : ORIGIN = 2M + 64, LENGTH = 64K - 64
-ROM_ONLY  ram         : ORIGIN = 2M + 64, LENGTH = 64K - 64
-SAMBA_ONLY  ram         : ORIGIN = 2M + 8k, LENGTH = 64K - 8k
+ram         : ORIGIN = 2M + 64, LENGTH = 64K - 64
 }
 
 ROM_ONLY ROM_BASE = 1M;
@@ -56,6 +54,19 @@ RAM_SIZE = 64k;
 
 SECTIONS {
 
+/* Samba needs space reserved up to 8k */
+SAMBA_ONLY .samba_reserved : {
+SAMBA_ONLY     . = (8k - 64);
+SAMBA_ONLY } > ram
+SAMBA_ONLY __samba_ram_start__ = ADDR(.samba_reserved);
+SAMBA_ONLY __samba_ram_end__   = (__samba_ram_start__ + SIZEOF(.samba_reserved));
+
+/* Provide symbols if not defined above */
+PROVIDE (__samba_ram_start__ = 0);
+PROVIDE (__samba_ram_end__ = 0);
+
+__extra_ram_start__ = __samba_ram_start__;
+__extra_ram_end__   = __samba_ram_end__;
 
 /* The vectors are at 0, but since this is overlapped with 
  * the ram area we need to reserve some space for the vector
