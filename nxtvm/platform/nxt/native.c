@@ -1,6 +1,6 @@
 /**
  * native.c
- * Native method handling for nxt (dummy).
+ * Native method handling for nxt.
  */
 #include "types.h"
 #include "trace.h"
@@ -18,8 +18,8 @@
 #include "platform_config.h"
 #include "sensors.h"
 #include "poll.h"
-
-extern byte *region;
+#include "display.h"
+#include "nxt_avr.h"
 
 /**
  * NOTE: The technique is not the same as that used in TinyVM.
@@ -27,9 +27,9 @@ extern byte *region;
 void dispatch_native (TWOBYTES signature, STACKWORD *paramBase)
 {
   ClassRecord	*classRecord;
-
-  *((char *) 0x20F000) = 99;
-
+  STACKWORD *paramBase1 = paramBase+1;
+  STACKWORD *paramBase2 = paramBase+2;
+    
   switch (signature)
   {
     case wait_4_5V:
@@ -115,23 +115,23 @@ void dispatch_native (TWOBYTES signature, STACKWORD *paramBase)
     case call_4SSSSS_5V:
       return;      
     case readByte_4I_5B:
-	push_word (0);
-	return;
+	  push_word ((STACKWORD) *((byte *) word2ptr(paramBase[0])));
+	  return;
     case writeByte_4IB_5V:
+      *((byte *) word2ptr(paramBase[0])) = (byte) (*paramBase1 & 0xFF);
       return;
     case setBit_4III_5V:
+      *((byte *)word2ptr(paramBase[0])) =
+        ( *((byte *)word2ptr(paramBase[0])) & (~(1<<*paramBase1)) ) | (((*paramBase2 != 0) ? 1 : 0) <<*paramBase1);   
       return;      
     case getDataAddress_4Ljava_3lang_3Object_2_5I:
       push_word (ptr2word (((byte *) word2ptr (paramBase[0])) + HEADER_SIZE));
-      return;
-    case resetSerial_4_5V:
       return;
     case setPoller_4_5V:
       set_poller(word2ptr(paramBase[0]));
       return;
     case readSensorValue_4II_5I:
-      // Parameters: int romId (0..2), int requestedValue (0..2).
-      push_word (sensors[paramBase[0]].value);
+      push_word (sensor_adc(paramBase[0]));
       return;
     case setSensorValue_4III_5V:
       // Arguments: int romId (1..3), int value, int requestedValue (0..3) 
@@ -173,21 +173,37 @@ void dispatch_native (TWOBYTES signature, STACKWORD *paramBase)
     case intBitsToFloat_4I_5F:
       push_word (paramBase[0]);
       return;
-    case init_4_5V:
+    case drawString_4Ljava_3lang_3String_2II_5V:
+      {
+        byte *p = word2ptr(paramBase[0]);
+        int len, i;             
+        Object *charArray = (Object *) word2ptr(get_word(p + HEADER_SIZE, 4));
+        
+        len = charArray->flags.arrays.length;
+        {
+         char buff[len+1];
+         char *chars = ((char *) charArray) + HEADER_SIZE;
+         for(i=0;i<len;i++) buff[i] = chars[i+i];
+         buff[len] = 0;
+         display_goto_xy(paramBase[1],paramBase[2]);
+         display_string(buff);
+        }
+        //display_update();
+      }
       return;
-    case read_4_5I:
-      push_word(0);
+    case drawInt_4III_5V:
+      display_goto_xy(paramBase[1],paramBase[2]);
+      display_int(paramBase[0],0);
+      //display_update();
+      return; 
+    case refresh_4_5V:
+      display_update();
       return;
-    case write_4_1BI_5V:
+    case getVoltageMilliVolt_4_5I:
+      push_word(battery_voltage());
       return;
-    case isSending_4_5Z:
-      push_word(0);
-      return;
-    case isSendError_4_5Z:
-      push_word(0);
-      return;   
-    case getRegionAddress_4_5I:
-      push_word ((int)region);
+    case readButtons_4_5I:
+      push_word(buttons_get());
       return;
     default:
       throw_exception (noSuchMethodError);
