@@ -20,7 +20,6 @@ case OP_IMUL:
   just_set_top_word (word2jint(get_top_word()) * word2jint(tempStackWord));
   goto LABEL_ENGINELOOP;
 
-#if HARD_SUMS
 case OP_IDIV:
 case OP_IREM:
   tempInt = word2jint(pop_word());
@@ -33,7 +32,6 @@ case OP_IREM:
                                             word2jint(get_top_word()) % tempInt);
   goto LABEL_ENGINELOOP;
 
-#endif
 case OP_INEG:
   just_set_top_word (-word2jint(get_top_word()));
   goto LABEL_ENGINELOOP;
