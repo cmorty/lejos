@@ -185,7 +185,7 @@ ROM_ONLY __rom_end__ = ADDR(.text) + SIZEOF(.text) ;
 	__irq_stack__ = . ;
 
 	/* system stack */
-	. += 0x200 ;
+	. += 0x400 ;
 	. = ALIGN(16);
 	__system_stack__ = .;
 
