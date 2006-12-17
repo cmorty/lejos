@@ -19,6 +19,10 @@
 static boolean memoryInitialized = false;
 #endif
 
+// Heap memory needs to be aligned to 4 bytes on ARM
+// Value is in 2-byte units and must be a power of 2
+#define MEMORY_ALIGNMENT 2
+
 #define NULL_OFFSET 0xFFFF
 
 // Size of stack frame in 2-byte words
@@ -103,6 +107,7 @@ Object *memcheck_allocate (const TWOBYTES size)
     throw_exception (outOfMemoryError);
     return JNULL;
   }
+  
   ref->monitorCount = 0;
   ref->threadId = 0;
 #if SAFE
@@ -133,7 +138,7 @@ Object *new_object_checked (const byte classIndex, byte *btAddr)
   printf("New object checked returning null\n");
 #endif
     return JNULL;
-  }
+  }   
   return new_object_for_class (classIndex);
 }
 
@@ -152,6 +157,9 @@ Object *new_object_for_class (const byte classIndex)
 #endif
   instanceSize = get_class_record(classIndex)->classSize;
 
+  // Temporary fix for 8-byte Object struct on ARM 
+  instanceSize += 2;
+  
   ref = memcheck_allocate (instanceSize);
 
   if (ref == null)
@@ -171,7 +179,7 @@ Object *new_object_for_class (const byte classIndex)
   #if DEBUG_OBJECTS || DEBUG_MEMORY
   printf ("new_object_for_class: returning %d\n", (int) ref);
   #endif
-
+  
   return ref;
 }
 
@@ -472,6 +480,8 @@ void memory_add_region (byte *start, byte *end)
  */
 TWOBYTES *allocate (TWOBYTES size)
 {
+  // Align memory to boundary appropriate for system	
+  size = (size + (MEMORY_ALIGNMENT-1)) & ~(MEMORY_ALIGNMENT-1);
 
 #if SEGMENTED_HEAP
   MemoryRegion *region;
@@ -559,6 +569,9 @@ TWOBYTES *allocate (TWOBYTES size)
  */
 void deallocate (TWOBYTES *p, TWOBYTES size)
 {
+  // Align memory to boundary appropriate for system	
+  size = (size + (MEMORY_ALIGNMENT-1)) & ~(MEMORY_ALIGNMENT-1);
+  
   #ifdef VERIFY
   assert (size <= (FREE_BLOCK_SIZE_MASK >> FREE_BLOCK_SIZE_SHIFT), MEMORY3);
   #endif
