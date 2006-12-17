@@ -100,8 +100,6 @@ void run(void)
   // Initialize exceptions
   init_exceptions();
 
-  *STATUS_BYTE = 1;
-
   // Create the boot thread (bootThread is a special global)
   bootThread = (Thread *) new_object_for_class (JAVA_LANG_THREAD);
 
@@ -111,14 +109,10 @@ void run(void)
     return;	  
   }
 
-  *STATUS_BYTE = 2;
-
   //printf("Executing Interpreter\n");
 
   // Execute the bytecode interpreter
   set_program_number (0);
-
-  *STATUS_BYTE = 3;
 
   engine();
   // Engine returns when all non-daemon threads are dead
@@ -131,10 +125,6 @@ void run(void)
 int nxt_main()
 {
         init_sensors ();
-        
-
-        *STATUS_BYTE = 0;
-        *STATUS_WORD = 0;
 
  //       printf("Installing Binary\n");
 
