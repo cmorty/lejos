@@ -195,7 +195,9 @@ void nxt_avr_1kHz_update(void)
     return;
   }
     
-  if(!twi_ok() || !link_initialised){
+  if(!twi_ok() || 
+     twi_busy() ||
+     !link_initialised){
     memset(data_from_avr,0,sizeof(data_from_avr));
     link_initialised = 1;
     nxt_avr_link_init();
@@ -204,7 +206,8 @@ void nxt_avr_1kHz_update(void)
     return;
   }
     
-  if(update_count & 3){
+  if(twi_ok())
+  if(update_count & 1){
       nxt_avr_unpack();
       nxt_avr_start_read();
   } else {  
