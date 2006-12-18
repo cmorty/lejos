@@ -159,6 +159,21 @@ void show_splash(U32 milliseconds)
 }
 
 
+
+U32 free_stack(void)
+{
+	extern U32 __system_stack_bottom__;
+	extern U32 __system_stack_top__;
+	U32 *sp = & __system_stack_bottom__;
+	U32 space = 0;
+	while( (sp < &__system_stack_top__) &&
+		*sp == 0x6b617453){
+		sp++;
+		space += 4;
+	}
+	return space;
+}
+
 void xx_show(void)
 {
   int iterator = 0;
@@ -200,18 +215,17 @@ void xx_show(void)
 	    display_goto_xy(iterator & 7,0); display_string("LEJOS NXT");
     
 	    display_goto_xy(0,1); display_string("TIME ");display_unsigned(systick_get_ms(),0);
-	    
-	    display_goto_xy(0,2); display_string("MOTORS");
-//	    display_goto_xy(1,3); display_integer(motor_get_count(0));
-//	    display_goto_xy(1,4); display_integer(motor_get_count(1));
-//	    display_goto_xy(1,5); display_integer(motor_get_count(2));
+	    display_goto_xy(0,2); display_string("Stack ");display_unsigned(free_stack(),0);
+	    display_goto_xy(0,3); display_string("MOTORS");
+//	    display_goto_xy(1,4); display_integer(motor_get_count(0));
+//	    display_goto_xy(1,5); display_integer(motor_get_count(1));
+//	    display_goto_xy(1,6); display_integer(motor_get_count(2));
 
 	    display_update();
 	    systick_wait_ms(500);
     }
   }
 }
-
 
 void main(void)
 {
