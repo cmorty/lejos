@@ -185,9 +185,11 @@ ROM_ONLY __rom_end__ = ADDR(.text) + SIZEOF(.text) ;
 	__irq_stack__ = . ;
 
 	/* system stack */
+	__system_stack_bottom__ = . ;
 	. += 0x400 ;
 	. = ALIGN(16);
 	__system_stack__ = .;
+	__system_stack_top__ = . ;
 
 } > ram
 
