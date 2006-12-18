@@ -4,29 +4,34 @@ package josx.platform.nxt;
  * Abstraction for an NXT button.
  * Example:<p>
  * <code><pre>
- *    Button.RUN.waitForPressAndRelease();
+ *    Button.ENTER.waitForPressAndRelease();
  *    Sound.playTone (1000, 1);
  * </pre></code>
  */
 public class Button implements ListenerCaller
 {
   /**
-   * The Run button.
+   * The Enter button.
    */
-  //public static final Button RUN = new Button (0x01);
+  public static final Button ENTER = new Button (0x01);
   /**
-   * The View button.
+   * The Left button.
    */
-  //public static final Button VIEW = new Button (0x02);
+  public static final Button LEFT = new Button (0x02);
   /**
-   * The Prgm button.
+   * The Right button.
    */
-  //public static final Button PRGM = new Button (0x04);
+  public static final Button RIGHT = new Button (0x04);
+  /**
+   * The Escape button.
+   */
+  public static final Button ESCAPE = new Button (0x08);
   
+	
   /**
-   * Array containing VIEW, PRGM and RUN, in that order.
+   * Array containing ENTER, LEFT, RIGHT, ESCAPE, in that order.
    */
-  //public static final Button[] BUTTONS = { Button.RUN, Button.VIEW, Button.PRGM };
+  public static final Button[] BUTTONS = { Button.ENTER, Button.LEFT, Button.RIGHT, Button.ESCAPE };
   
   private int iCode;
   private ButtonListener[] iListeners = new ButtonListener[4];
@@ -53,17 +58,17 @@ public class Button implements ListenerCaller
     return (readButtons() & iCode) != 0;
   }
 
-  //static Poll poller = new Poll();
+  static Poll poller = new Poll();
 
   /**
    * Wait until the button is released.
    */
-  //public final void waitForPressAndRelease() throws InterruptedException
-  //{
-  //  do {
-  //      poller.poll(iCode << Poll.BUTTON_MASK_SHIFT, 0);
-  //  } while (isPressed());
-  //}
+  public final void waitForPressAndRelease() throws InterruptedException
+  {
+    do {
+        poller.poll(iCode << Poll.BUTTON_MASK_SHIFT, 0);
+    } while (isPressed());
+  }
 
   /**
    * Adds a listener of button events. Each button can serve at most
@@ -81,8 +86,9 @@ public class Button implements ListenerCaller
 
   /**
    * <i>Low-level API</i> that reads status of buttons.
-   * @return An integer with possibly some bits set: 0x02 (view button pressed)
-   * 0x04 (prgm button pressed), 0x01 (run button pressed). If all buttons 
+   * @return An integer with possibly some bits set: 0x01 (ENTER button pressed)
+   * 0x02 (LEFT button pressed), 0x04 (RIGHT button pressed), 0x08 (ESCAPE button pressed).
+   * If all buttons 
    * are released, this method returns 0.
    */
   public static native int readButtons();
