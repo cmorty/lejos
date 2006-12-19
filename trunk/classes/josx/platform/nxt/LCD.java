@@ -14,6 +14,8 @@ public class LCD
   public static native void drawInt(int i, int x, int y);
 
   public static native void refresh();
+  
+  public static native void clear();
 
 }
 
