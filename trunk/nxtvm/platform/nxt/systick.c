@@ -17,9 +17,9 @@
 
 #define PIT_FREQ 1000  /* Hz */
 
-static U32 systick_sec;
-static U32 systick_sub_sec;
-static U32 systick_ms;
+static volatile U32 systick_sec;
+static volatile U32 systick_sub_sec;
+static volatile U32 systick_ms;
 
 extern void systick_isr_entry(void);
 
@@ -58,9 +58,9 @@ U32 systick_get_ms(void)
 
 void systick_wait_ms(U32 ms)
 {
-  volatile U32 final=   ms + systick_get_ms();
+  volatile U32 final= ms + systick_ms;
   
-  while(systick_get_ms() < final) {}
+  while(systick_ms < final) {}
 }
 
 
