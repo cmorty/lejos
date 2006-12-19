@@ -1,24 +1,25 @@
 #include "nxt_motors.h"
 
-# define MA0 0
-# define MA1 1
-# define MB0 2
-# define MB1 3
-# define MC0 4
-# define MC1 5
+#include "aic.h"
 
-static const U32 motor_pin_mask[NXT_N_MOTORS][2] = {
-  { 1 << MA0, 1 << MA1 },
-  { 1 << MB0, 1 << MB1},
-  { 1 << MC0, 1 << MC1},
-  
-};
+#include "AT91SAM7.h"
+
+#define MA0 15
+#define MA1 1
+#define MB0 26
+#define MB1 9
+#define MC0 27
+#define MC1 8
+
+#define MOTOR_PIN_MASK ((1 << MA0) | (1<<MA1) | (1<<MB0) | (1<<MB1) | (1<<MC0) | (1<<MC1))
 
 
-static struct {
+
+static struct motor_struct {
   int current_count;
   int target_count;
   int speed_percent;
+  U32 last;
 }motor [NXT_N_MOTORS];
 
 
@@ -45,13 +46,81 @@ void nxt_motor_set(U32 n, int cmd, int target_count, int speed_percent)
 }
 
 
-// ISR points used by motor processing
-void nxt_motor_pio_process(U32 gpio)
+void nxt_motor_kHz_process(void)
 {
 }
 
-void nxt_motor_kHz_process(void)
+void nxt_motor_quad_decode(struct motor_struct *m, U32 value)
 {
+#if 0
+  if(m->last != value){
+    if((m->last + 1) & 3 == value)
+      m->current_count--;
+    else if((value + 1) & 3 == m->last)
+      m->current_count++;
+    m->last = value;
+  }
+#endif
+
+  U32 dir = value & 2;
+  U32 edge = value & 1;
+  
+  if(edge != m->last){
+    if(edge && dir)
+      m->current_count++;
+    else if(edge && !dir)
+      m->current_count--;
+    else if(!edge && !dir)
+      m->current_count++;
+    else if(!edge && dir)
+      m->current_count--;
+    m->last = edge;
+  }
+}
+
+
+extern void nxt_motor_isr_entry(void);
+
+void  nxt_motor_isr_C(void)
+{ 
+  U32 pinChanges = *AT91C_PIOA_ISR;// Acknowledge change
+  U32 currentPins = *AT91C_PIOA_PDSR;  // Read pins
+  
+  U32 pins;
+    
+  /* Motor A */
+  pins = ((currentPins >> MA0) & 1) | ((currentPins >> (MA1 - 1)) & 2);
+  nxt_motor_quad_decode(&motor[0],pins);
+  
+  /* Motor B */
+  pins = ((currentPins >> MB0) & 1) | ((currentPins >> (MB1 - 1)) & 2);
+  nxt_motor_quad_decode(&motor[1],pins);
+  
+  /* Motor C */
+  pins = ((currentPins >> MC0) & 1) | ((currentPins >> (MC1 - 1)) & 2);
+  nxt_motor_quad_decode(&motor[2],pins);
+  
+}
+
+
+
+void nxt_motor_init(void)
+{
+   *AT91C_PMC_PCER = (1<< AT91C_PERIPHERAL_ID_PIOA); /* Power to the pins! */
+  *AT91C_PIOA_IDR = ~0; 
+  *AT91C_PIOA_IFER = MOTOR_PIN_MASK;
+  *AT91C_PIOA_PPUDR = MOTOR_PIN_MASK;			    
+  *AT91C_PIOA_PER = MOTOR_PIN_MASK;			    
+  *AT91C_PIOA_ODR = MOTOR_PIN_MASK;
+  
+  /* Enable ISR */
+  aic_mask_off(AT91C_PERIPHERAL_ID_PIOA);
+  aic_set_vector(AT91C_PERIPHERAL_ID_PIOA,AIC_INT_LEVEL_NORMAL,nxt_motor_isr_entry);
+  aic_mask_on(AT91C_PERIPHERAL_ID_PIOA);
+  
+  *AT91C_PIOA_IER = MOTOR_PIN_MASK;
+  
+  
 }
 
 
