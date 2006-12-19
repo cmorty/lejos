@@ -181,6 +181,13 @@ public class Motor
     ROM.call ((short) 0x1a4e, (short) (0x2000 + aMotor - 'A'), 
               (short) aMode, (short) aPower);
   }
+  
+  public int getTachoCount()
+  {
+	  return getTachoCountById((int) (getId() - 'A'));
+  }
+  
+  public static native int getTachoCountById(int id);
 }
 
 
