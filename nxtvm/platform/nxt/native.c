@@ -20,6 +20,7 @@
 #include "poll.h"
 #include "display.h"
 #include "nxt_avr.h"
+#include "nxt_motors.h"
 
 /**
  * NOTE: The technique is not the same as that used in TinyVM.
@@ -199,11 +200,21 @@ void dispatch_native (TWOBYTES signature, STACKWORD *paramBase)
     case refresh_4_5V:
       display_update();
       return;
+   case clear_4_5V:
+      display_clear(0);
+      return;   
     case getVoltageMilliVolt_4_5I:
       push_word(battery_voltage());
       return;
     case readButtons_4_5I:
       push_word(buttons_get());
+      return;
+    case getTachoCountById_4I_5I:
+      push_word(nxt_motor_get_count(paramBase[0]));
+      return;
+    case controlMotor_4III_5V:
+      if (paramBase[1] == 4) return; // No float yet
+      nxt_motor_set_speed(paramBase[0], (paramBase[1] == 2 ? -paramBase[2] : paramBase[2]));
       return;
     default:
       throw_exception (noSuchMethodError);
