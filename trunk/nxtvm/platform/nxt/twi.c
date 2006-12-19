@@ -57,16 +57,16 @@ void twi_isr_C(void)
   
   if((status & AT91C_TWI_RXRDY) && twi_state == TWI_RX_BUSY) {
   
-    if(twi_pending == 2){
-      /* second last byte -- issue a stop on the next byte */
-      *AT91C_TWI_CR = AT91C_TWI_STOP;
-    }
     
     if(twi_pending){
        twi_stats.bytes_rx++;
        *twi_ptr = *AT91C_TWI_RHR;
        twi_ptr++;
        twi_pending--;   
+    if(twi_pending == 1){
+      /* second last byte -- issue a stop on the next byte */
+      *AT91C_TWI_CR = AT91C_TWI_STOP;
+    }
        if(!twi_pending){
          twi_stats.rx_done++;
          twi_state = TWI_RX_DONE;
@@ -78,7 +78,7 @@ void twi_isr_C(void)
   if((status & AT91C_TWI_TXRDY) && twi_state == TWI_TX_BUSY) {
     if(twi_pending){
       /* Still Stuff to send */
-      //*AT91C_TWI_CR = AT91C_TWI_MSEN | AT91C_TWI_START;
+      *AT91C_TWI_CR = AT91C_TWI_MSEN | AT91C_TWI_START;
       if(twi_pending == 1){
         *AT91C_TWI_CR = AT91C_TWI_STOP;
       }
@@ -164,7 +164,7 @@ int twi_init(void)
 	/* Todo: set up interrupt */
 	*AT91C_TWI_IDR = ~0; /* Disable all interrupt sources */
 	aic_mask_off(AT91C_PERIPHERAL_ID_TWI);
-	aic_set_vector(AT91C_PERIPHERAL_ID_TWI,AIC_INT_LEVEL_NORMAL,twi_isr_entry);
+	aic_set_vector(AT91C_PERIPHERAL_ID_TWI,AIC_INT_LEVEL_ABOVE_NORMAL,twi_isr_entry);
 	aic_mask_on(AT91C_PERIPHERAL_ID_TWI);
 	
 
@@ -195,7 +195,7 @@ void twi_start_read(U32 dev_addr, U32 int_addr_bytes, U32 int_addr, U8 *data, U3
       twi_pending = nBytes;
       dummy = *AT91C_TWI_SR;
       dummy = *AT91C_TWI_RHR;
-      *AT91C_AIC_ICCR = ( 1<< AT91C_PERIPHERAL_ID_TWI);
+//      *AT91C_AIC_ICCR = ( 1<< AT91C_PERIPHERAL_ID_TWI);
       *AT91C_TWI_MMR = mode;
       *AT91C_TWI_CR = AT91C_TWI_START | AT91C_TWI_MSEN;
 //      dummy = *AT91C_TWI_SR;
