@@ -99,8 +99,14 @@ static  U16 Unpack16(const U8 *x)
   return retval;
 }
 
-static U32 nxt_avr_good_rx;
-static U32 nxt_avr_bad_rx;
+
+static struct {
+  U32 good_rx;
+  U32 bad_rx;
+  U32 resets;
+  U32 still_busy;
+  U32 not_ok;
+} nxt_avr_stats;
 
 static void nxt_avr_unpack(void)
 {
@@ -118,11 +124,11 @@ static void nxt_avr_unpack(void)
   }
   
   if(check_sum != 0xff){
-    nxt_avr_bad_rx++;
+    nxt_avr_stats.bad_rx++;
     return;
   }
   
-  nxt_avr_good_rx++;
+  nxt_avr_stats.good_rx++;
   
   p = data_from_avr;
   
@@ -182,11 +188,11 @@ void nxt_avr_init(void)
 
 static U32 update_count;
 static U32 link_init_wait;
-static U32 link_initialised;
+static U32 link_running;
 
 void nxt_avr_1kHz_update(void)
 {
-  
+    
   if(!nxt_avr_initialised)
     return;
     
@@ -194,21 +200,31 @@ void nxt_avr_1kHz_update(void)
     link_init_wait--;
     return;
   }
+  
+  if(!twi_ok()){
+    nxt_avr_stats.not_ok++;
+    link_running = 0;
+  }
+  
+  if(twi_busy()){
+    nxt_avr_stats.still_busy++;
+    link_running = 0;
+  }
+  
     
   if(!twi_ok() || 
      twi_busy() ||
-     !link_initialised){
+     !link_running){
     memset(data_from_avr,0,sizeof(data_from_avr));
-    link_initialised = 1;
+    link_running = 1;
     nxt_avr_link_init();
     link_init_wait = 2;
     update_count = 0;
+    nxt_avr_stats.resets++;
     return;
   }
     
-  if(twi_ok())
   if(update_count & 1){
-      nxt_avr_unpack();
       nxt_avr_start_read();
   } else {  
       nxt_avr_unpack();
