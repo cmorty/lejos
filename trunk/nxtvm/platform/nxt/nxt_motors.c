@@ -66,13 +66,13 @@ void nxt_motor_quad_decode(struct motor_struct *m, U32 value)
   U32 edge = value & 1;
   
   if(edge != m->last){
-    if(edge && dir)
+    if(edge && !dir)
       m->current_count++;
-    else if(edge && !dir)
+    else if(edge && dir)
       m->current_count--;
-    else if(!edge && !dir)
-      m->current_count++;
     else if(!edge && dir)
+      m->current_count++;
+    else if(!edge && !dir)
       m->current_count--;
     m->last = edge;
   }
