@@ -217,9 +217,9 @@ void xx_show(void)
 	    display_goto_xy(0,1); display_string("TIME ");display_unsigned(systick_get_ms(),0);
 	    display_goto_xy(0,2); display_string("Stack ");display_unsigned(free_stack(),0);
 	    display_goto_xy(0,3); display_string("MOTORS");
-//	    display_goto_xy(1,4); display_integer(motor_get_count(0));
-//	    display_goto_xy(1,5); display_integer(motor_get_count(1));
-//	    display_goto_xy(1,6); display_integer(motor_get_count(2));
+	    display_goto_xy(1,4); display_int(nxt_motor_get_count(0),0);
+	    display_goto_xy(1,5); display_int(nxt_motor_get_count(1),0);
+	    display_goto_xy(1,6); display_int(nxt_motor_get_count(2),0);
 
 	    display_update();
 	    systick_wait_ms(500);
@@ -244,49 +244,13 @@ void main(void)
 	systick_init();
 	nxt_avr_init();
 	display_init();
+	nxt_motor_init();
 
-
-//	while(1){
-//		nxt_avr_power_down();
-//		nxt_avr_test_loop();
-//		nxt_lcd_test();
-//		systick_test();
-//		display_test();
 
 	xx_show();
 
-//	}
-	
 	nxt_main();
 
-
-
-#if 0
-	error = uart_init(0,9600,8,1,'N');
-	
-	
-	*AT91C_PIOA_PER = LED1 | LED2 | LED3 | LED4;
-	*AT91C_PIOA_OER = LED1 | LED2 | LED3 | LED4;
-	
-	uart_put_str(0,"baah, baah!\n");
-	
-	
-	while(1){
-		if(uart_get_byte(0,&b))
-			uart_put_byte(0,b+1);
-			
-		systick_get_time(&now,(void *)0);
-		
-		if(now != prev){
-			prev = now;
-			
-			if(now & 1)
-				*AT91C_PIOA_CODR = LED1;
-			else
-				*AT91C_PIOA_SODR = LED1;
-		}
-	}
-#endif
 
 }
 
