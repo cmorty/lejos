@@ -50,6 +50,9 @@
 #define drawString_4Ljava_3lang_3String_2II_5V 43
 #define drawInt_4III_5V 44
 #define refresh_4_5V 45
-#define getVoltageMilliVolt_4_5I 46
-#define readButtons_4_5I 47
+#define clear_4_5V 46
+#define getVoltageMilliVolt_4_5I 47
+#define readButtons_4_5I 48
+#define getTachoCountById_4I_5I 49
+#define controlMotor_4III_5V 50
 #endif // _SPECIALSIGNATURES_H
