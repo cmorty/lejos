@@ -85,12 +85,17 @@ intBitsToFloat(I)F
 drawString(Ljava/lang/String;II)V
 drawInt(III)V
 refresh()V
+clear()V
 
 #josx.platform.nxt.Battery
 getVoltageMilliVolt()I
 
 #josx.platform.nxt.Button
 readButtons()I
+
+#josx.platform.nxt.Motor
+getTachoCountById(I)I
+controlMotor(III)V
 
 
 
