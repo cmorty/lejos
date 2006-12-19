@@ -185,6 +185,9 @@ void xx_show(void)
     display_clear(0);
     iterator++;
     
+    if((iterator & 7) == 0)
+    	nxt_motor_set_speed(2,(iterator & 8) ? 100 : -100);
+    
     if((iterator & 8) == 0){
 	    // nxt_avr_update();
 	    buttons = buttons_get();

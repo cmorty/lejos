@@ -2,6 +2,7 @@
 
 
 #include "twi.h"
+#include "nxt_motors.h"
 
 #include "systick.h"
 #include <string.h>
@@ -251,3 +252,14 @@ U32 sensor_adc(U32 n)
     return 0;
 }
 
+
+void nxt_avr_set_motor(U32 n, int power_percent, int brake)
+{
+  if(n < NXT_N_MOTORS){
+    io_to_avr.output_percent[n] = power_percent;
+    if(brake)
+      io_to_avr.output_mode |= (1<<n);
+    else
+      io_to_avr.output_mode &= ~(1<<n);
+  }
+}

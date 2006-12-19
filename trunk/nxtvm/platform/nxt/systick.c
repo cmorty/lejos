@@ -12,6 +12,7 @@
 #include "interrupts.h"
 #include "systick.h"
 
+#include "nxt_motors.h"
 #include "nxt_avr.h"
 
 
@@ -33,6 +34,7 @@ void systick_isr_C(void)
   status = *AT91C_PITC_PIVR;
   
   nxt_avr_1kHz_update();
+  nxt_motor_1kHz_process();
   
   systick_ms++;
   
