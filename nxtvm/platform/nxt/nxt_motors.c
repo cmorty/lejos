@@ -1,6 +1,8 @@
 #include "nxt_motors.h"
 
+#include "nxt_avr.h"
 #include "aic.h"
+#include "interrupts.h"
 
 #include "AT91SAM7.h"
 
@@ -11,8 +13,8 @@
 #define MC0 0
 #define MC1 8
 
-#define MOTOR_PIN_MASK ((1 << MA0) | (1<<MA1) | (1<<MB0) | (1<<MB1) | (1<<MC0) | (1<<MC1))
-
+#define MOTOR_PIN_MASK 		((1 << MA0) | (1<<MA1) | (1<<MB0) | (1<<MB1) | (1<<MC0) | (1<<MC1))
+#define MOTOR_INTERRUPT_PINS 	((1 << MA0) | (1<<MB0) | (1<<MC0))
 
 
 static struct motor_struct {
@@ -22,6 +24,8 @@ static struct motor_struct {
   U32 last;
 }motor [NXT_N_MOTORS];
 
+static U32 nxt_motor_initialised;
+static U32 interrupts_this_period;
 
 int nxt_motor_get_count(U32 n)
 {
@@ -37,7 +41,19 @@ void nxt_motor_set_count(U32 n, int count)
     motor[n].current_count = count;
 }
 
-void nxt_motor_set(U32 n, int cmd, int target_count, int speed_percent)
+void nxt_motor_set_speed(U32 n, int speed_percent)
+{
+  if(n < NXT_N_MOTORS){
+    if(speed_percent > 100)
+      speed_percent = 100;
+    if(speed_percent < -100)
+      speed_percent = -100;
+    motor[n].speed_percent = speed_percent;
+    nxt_avr_set_motor(n,speed_percent,0);
+  }
+}
+
+void nxt_motor_command(U32 n, int cmd, int target_count, int speed_percent)
 {
   if(n < NXT_N_MOTORS) {
     motor[n].target_count = target_count;
@@ -46,8 +62,13 @@ void nxt_motor_set(U32 n, int cmd, int target_count, int speed_percent)
 }
 
 
-void nxt_motor_kHz_process(void)
+void nxt_motor_1kHz_process(void)
 {
+  if(nxt_motor_initialised){
+    interrupts_this_period = 0;
+    *AT91C_PIOA_IER = MOTOR_INTERRUPT_PINS;
+  }
+  
 }
 
 void nxt_motor_quad_decode(struct motor_struct *m, U32 value)
@@ -83,10 +104,19 @@ extern void nxt_motor_isr_entry(void);
 
 void  nxt_motor_isr_C(void)
 { 
+  U32 i_state = interrupts_get_and_disable();
+  
   U32 pinChanges = *AT91C_PIOA_ISR;// Acknowledge change
   U32 currentPins = *AT91C_PIOA_PDSR;  // Read pins
   
   U32 pins;
+  
+  interrupts_this_period++;
+  if(interrupts_this_period > 4){
+    *AT91C_PIOA_IDR = MOTOR_INTERRUPT_PINS;
+    // Todo : tacho speed fault
+  }
+    
     
   /* Motor A */
   pins = ((currentPins >> MA0) & 1) | ((currentPins >> (MA1 - 1)) & 2);
@@ -99,6 +129,9 @@ void  nxt_motor_isr_C(void)
   /* Motor C */
   pins = ((currentPins >> MC0) & 1) | ((currentPins >> (MC1 - 1)) & 2);
   nxt_motor_quad_decode(&motor[2],pins);
+  
+  if(i_state)
+    interrupts_enable();
   
 }
 
@@ -118,7 +151,9 @@ void nxt_motor_init(void)
   aic_set_vector(AT91C_PERIPHERAL_ID_PIOA,AIC_INT_LEVEL_NORMAL,nxt_motor_isr_entry);
   aic_mask_on(AT91C_PERIPHERAL_ID_PIOA);
   
-  *AT91C_PIOA_IER = MOTOR_PIN_MASK;
+  *AT91C_PIOA_IER = MOTOR_INTERRUPT_PINS;
+  
+  nxt_motor_initialised = 1;
   
   
 }

@@ -8,6 +8,7 @@ void nxt_avr_init(void);
 
 void nxt_avr_1kHz_update(void);
 
+void nxt_avr_set_motor(U32 n, int power_percent, int brake);
 
 void nxt_avr_power_down(void);
 
