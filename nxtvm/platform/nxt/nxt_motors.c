@@ -8,7 +8,7 @@
 #define MA1 1
 #define MB0 26
 #define MB1 9
-#define MC0 27
+#define MC0 0
 #define MC1 8
 
 #define MOTOR_PIN_MASK ((1 << MA0) | (1<<MA1) | (1<<MB0) | (1<<MB1) | (1<<MC0) | (1<<MC1))
