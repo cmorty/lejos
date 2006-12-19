@@ -5,13 +5,13 @@ package josx.platform.nxt;
  * are available: <code>Motor.A</code>, <code>Motor.B</code>
  * and <code>Motor.C</code>. To control each motor use
  * methods <code>forward, backward, reverseDirection, stop</code>
- * and <code>flt</code>. To set each motor's power, use
- * <code>setPower</code>.  
+ * and <code>flt</code>. To set each motor's speed, use
+ * <code>setSpeed</code>.  
  * <p>
  * Example:<p>
  * <code><pre>
- *   Motor.A.setPower(1);
- *   Motor.C.setPower(7);
+ *   Motor.A.setSpeed(50);
+ *   Motor.C.setSpeed(100);
  *   Motor.A.forward();
  *   Motor.C.forward();
  *   Thread.sleep (1000);
@@ -22,8 +22,8 @@ package josx.platform.nxt;
 public class Motor
 {
   private char  iId;
-  private short iMode = 4;
-  private short iPower = 3;
+  private int iMode = 4;
+  private int iSpeed = 0;
 
   /**
    * Motor A.
@@ -53,12 +53,12 @@ public class Motor
 
   /**
    * Sets motor power to a <i>value between 0 and 7</i>.
-   * @param aPower value in the range [0-7].
+   * @param aSpeed value in the range [0-100].
    */
-  public final void setPower (int aPower)
+  public final void setSpeed (int aSpeed)
   {
-    iPower = (short) aPower;
-    controlMotor (iId, iMode, aPower);
+    iSpeed = aSpeed;
+    controlMotor (iId - 'A', iMode, aSpeed);
   }
 
   /**
@@ -67,7 +67,7 @@ public class Motor
   public final void forward()
   {
     iMode = 1;
-    controlMotor (iId, 1, iPower);
+    controlMotor (iId - 'A', 1, iSpeed);
   }
   
   /**
@@ -84,7 +84,7 @@ public class Motor
   public final void backward()
   {
     iMode = 2;
-    controlMotor (iId, 2, iPower);
+    controlMotor (iId - 'A', 2, iSpeed);
   }
 
   /**
@@ -103,17 +103,17 @@ public class Motor
   {
     if (iMode == 1 || iMode == 2)
     {
-      iMode = (short) (3 - iMode);
-      controlMotor (iId, iMode, iPower);
+      iMode = (3 - iMode);
+      controlMotor (iId - 'A', iMode, iSpeed);
     }
   }
 
   /**
-   * Returns the current motor power.
+   * Returns the current motor speed.
    */
-  public final int getPower()
+  public final int getSpeed()
   {
-    return iPower;	  
+    return iSpeed;	  
   }
 
   /**
@@ -141,7 +141,7 @@ public class Motor
   public final void stop()
   {
     iMode = 3;
-    controlMotor (iId, 3, 7);
+    controlMotor (iId - 'A', 3, 0);
   }
   
   /**
@@ -161,7 +161,7 @@ public class Motor
   public final void flt()
   {
     iMode = 4;
-    controlMotor (iId, 4, iPower);
+    controlMotor (iId - 'A', 4, iSpeed);
   }
 
   /**
@@ -174,20 +174,16 @@ public class Motor
    *             in classes/josx/platform/rcx/Motor.java. 
    * @param aMotor The motor id: 'A', 'B' or 'C'.
    * @param aMode 1=forward, 2=backward, 3=stop, 4=float
-   * @param aPower A value in the range [0-7].
+   * @param aSpeed A value in the range [0-100].
    */
-  public static void controlMotor (char aMotor, int aMode, int aPower)
-  {
-    ROM.call ((short) 0x1a4e, (short) (0x2000 + aMotor - 'A'), 
-              (short) aMode, (short) aPower);
-  }
-  
+  public static native void controlMotor (int aMotor, int aMode, int aPower);
+
   public int getTachoCount()
   {
-	  return getTachoCountById((int) (getId() - 'A'));
+	  return getTachoCountById(iId - 'A');
   }
   
-  public static native int getTachoCountById(int id);
+  public static native int getTachoCountById(int aMotor);
 }
 
 
