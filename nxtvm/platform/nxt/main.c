@@ -178,17 +178,26 @@ void xx_show(void)
 {
   int iterator = 0;
   U32 buttons;
+  U32 motor_mode = 0;
   
   show_splash(3000);
   
   while(1){
     display_clear(0);
+    
+    if((iterator & 15) == 0){
+    	motor_mode = (iterator >> 4) & 3;
+    	switch(motor_mode){
+    	
+    		case 0: nxt_motor_set_speed(2,-100,0);break;
+    		case 1: nxt_motor_set_speed(2,100,0);break;
+    		case 2: nxt_motor_set_speed(2,0,0);break;
+    		case 3: nxt_motor_set_speed(2,0,1);break;
+	}    		
+    }
     iterator++;
     
-    if((iterator & 7) == 0)
-    	nxt_motor_set_speed(2,(iterator & 8) ? 100 : -100);
-    
-    if((iterator & 8) == 0){
+    if((iterator % 10) == 0){
 	    // nxt_avr_update();
 	    buttons = buttons_get();
     
@@ -219,7 +228,14 @@ void xx_show(void)
     
 	    display_goto_xy(0,1); display_string("TIME ");display_unsigned(systick_get_ms(),0);
 	    display_goto_xy(0,2); display_string("Stack ");display_unsigned(free_stack(),0);
-	    display_goto_xy(0,3); display_string("MOTORS");
+	    display_goto_xy(0,3); 
+	    switch(motor_mode){
+	    	case 0:display_string("MOTORS REV"); break;
+       	    	case 1:display_string("MOTORS FWD"); break;
+	    	case 2:display_string("MOTORS COAST"); break;
+	    	case 3:display_string("MOTORS BRAKE"); break;
+	    }
+	    
 	    display_goto_xy(1,4); display_int(nxt_motor_get_count(0),0);
 	    display_goto_xy(1,5); display_int(nxt_motor_get_count(1),0);
 	    display_goto_xy(1,6); display_int(nxt_motor_get_count(2),0);

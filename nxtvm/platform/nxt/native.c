@@ -214,7 +214,7 @@ void dispatch_native (TWOBYTES signature, STACKWORD *paramBase)
       return;
     case controlMotor_4III_5V:
       if (paramBase[1] == 4) return; // No float yet
-      nxt_motor_set_speed(paramBase[0], (paramBase[1] == 2 ? -paramBase[2] : paramBase[2]));
+      nxt_motor_set_speed(paramBase[0], (paramBase[1] == 2 ? -paramBase[2] : paramBase[2]),0);
       return;
     default:
       throw_exception (noSuchMethodError);

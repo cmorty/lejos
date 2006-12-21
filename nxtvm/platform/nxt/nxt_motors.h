@@ -8,7 +8,7 @@
 int nxt_motor_get_count(U32 n);
 void nxt_motor_set_count(U32 n, int count);
 
-void nxt_motor_set_speed(U32 n, int speed_percent);
+void nxt_motor_set_speed(U32 n, int speed_percent, int brake);
 
 void nxt_motor_command(U32 n, int cmd, int target_count, int speed_percent);
 
