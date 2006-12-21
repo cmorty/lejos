@@ -18,12 +18,22 @@
 
 #define PIT_FREQ 1000  /* Hz */
 
+#define LOW_PRIORITY_IRQ 10
+
 static volatile U32 systick_sec;
 static volatile U32 systick_sub_sec;
 static volatile U32 systick_ms;
 
 extern void systick_isr_entry(void);
+extern void systick_low_priority_entry(void);
 
+// Systick low priority
+void systick_low_priority_C(void)
+{
+  *AT91C_AIC_ICCR = (1>>LOW_PRIORITY_IRQ);
+  nxt_avr_1kHz_update();
+  nxt_motor_1kHz_process();
+}
 
 // Called at 1000Hz
 void systick_isr_C(void)
@@ -33,8 +43,7 @@ void systick_isr_C(void)
   /* Read status to confirm interrupt */
   status = *AT91C_PITC_PIVR;
   
-  nxt_avr_1kHz_update();
-  nxt_motor_1kHz_process();
+//  systick_low_priority_C();
   
   systick_ms++;
   
@@ -46,6 +55,8 @@ void systick_isr_C(void)
     systick_sec++;
   }
   
+  // Trigger low priority task
+  *AT91C_AIC_ISCR = (1<<LOW_PRIORITY_IRQ);
 }
 
 
@@ -77,6 +88,15 @@ void systick_wait_ns(U32 ns)
 
 void systick_init(void)
 {
+  int i_state = interrupts_get_and_disable();
+  
+  aic_mask_off(LOW_PRIORITY_IRQ);
+  aic_set_vector(LOW_PRIORITY_IRQ,
+                 (1<<5) /* positive internal edge */ |
+                 AIC_INT_LEVEL_LOW,
+                 (U32)systick_low_priority_entry);
+  aic_mask_on(LOW_PRIORITY_IRQ);
+  
   aic_mask_off(AT91C_PERIPHERAL_ID_SYSIRQ);
   aic_set_vector(AT91C_PERIPHERAL_ID_SYSIRQ,
                  (1<<5) /* positive internal edge */ |
@@ -86,6 +106,9 @@ void systick_init(void)
   aic_mask_on(AT91C_PERIPHERAL_ID_SYSIRQ);
   *AT91C_PITC_PIMR = ((CLOCK_FREQUENCY/16/PIT_FREQ)-1) | 
                       0x03000000; /* Enable, enable interrupts */
+                      
+  if(i_state)
+    interrupts_enable();
 }
 
 void systick_get_time(U32 *sec, U32 *usec)
