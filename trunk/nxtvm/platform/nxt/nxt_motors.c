@@ -41,7 +41,7 @@ void nxt_motor_set_count(U32 n, int count)
     motor[n].current_count = count;
 }
 
-void nxt_motor_set_speed(U32 n, int speed_percent)
+void nxt_motor_set_speed(U32 n, int speed_percent,int brake)
 {
   if(n < NXT_N_MOTORS){
     if(speed_percent > 100)
@@ -49,7 +49,7 @@ void nxt_motor_set_speed(U32 n, int speed_percent)
     if(speed_percent < -100)
       speed_percent = -100;
     motor[n].speed_percent = speed_percent;
-    nxt_avr_set_motor(n,speed_percent,0);
+    nxt_avr_set_motor(n,speed_percent,brake);
   }
 }
 
