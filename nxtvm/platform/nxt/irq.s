@@ -64,7 +64,7 @@
 
 @ Save registers on stack
   sub r14,r14,#4 @ fix up for return
-  stmfd r13!,{r0-r3,r14}
+  stmfd r13!,{r0-r12,r14}
 
 @ Acknowledge the IVR for debugging to support Protected Mode
   ldr   r14,=0xFFFFF100
@@ -77,10 +77,10 @@
 
 @End of interrupt by doing a write to AIC_EOICR
   ldr  r14,=0xFFFFF130
-  str  r14,[r0]
+  str  r14,[r14]
 
   @ Return from interrupt (unstacking the modified r14)
-  ldmfd r13!,{r0-r3,12,pc}^
+  ldmfd r13!,{r0-r12,pc}^
 
   .endm
 
@@ -102,6 +102,12 @@ default_isr:
   .global systick_isr_entry
 systick_isr_entry:
   irq_wrapper_nested systick_isr_C
+
+
+  .extern systick_low_priority_C
+  .global systick_low_priority_entry
+systick_low_priority_entry:
+  irq_wrapper_nested systick_low_priority_C
 
   .extern udp_isr_C
   .global udp_isr_entry
