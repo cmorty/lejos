@@ -1,0 +1,27 @@
+<!--
+  ==================================================
+  Buildfile for building jtools
+  ==================================================
+-->
+<project name="jtools" default="build" basedir=".">
+	
+  	<!-- creates the jtools jar (PC: JDK 1.4) -->
+  	<target name="build"  description="generate jtools jar">
+    	<mkdir dir="build"/>
+    	<!-- generate constants first -->
+    	<javac srcdir="." destdir="build" fork="yes" optimize="on" debug="on" source="1.4" 
+    		includes="**/GenerateConstants.java">
+    	</javac>
+   		<java classpath="build" classname="js.tinyvm.GenerateConstants">
+      		<sysproperty key="tinyvm.home" value=".."/>
+    	</java>
+    	<!-- generate tools -->
+    	<javac srcdir="." destdir="build" fork="yes" optimize="on" debug="on" source="1.4">
+      		<classpath location="3rdparty/lib/commons-cli-1.0.jar"/>
+      		<classpath location="3rdparty/lib/bcel-5.1.jar"/>
+      	</javac>
+    	<jar destfile="lib/jtools.jar" basedir="build" update="false">
+    	</jar>
+
+  	</target>
+</project>
