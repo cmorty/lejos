@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry excluding="TestButton/|TestMotor/|TestSensor/|HelloWorld/" kind="src" path=""/>
+	<classpathentry kind="src" path="TestButton"/>
+	<classpathentry kind="src" path="TestMotor"/>
+	<classpathentry kind="src" path="TestSensor"/>
+	<classpathentry kind="src" path="HelloWorld"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="/classes/lib/classes.jar"/>
+	<classpathentry kind="output" path=""/>
+</classpath>
