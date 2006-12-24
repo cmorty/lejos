@@ -64,14 +64,14 @@ void assert_hook (boolean aCond, int aCode)
 }
 
 
-void run(void)
+void run(int jsize)
 {
   init_poller();
-
+  	
   //printf("Initializing Binary\n");
-
+  
   // Initialize binary image state
-  initialize_binary();
+  initialize_binary(); 
 
   //printf("Initializing memory\n");
 
@@ -79,7 +79,12 @@ void run(void)
   {
     byte *ram_end = (byte *)(& __free_ram_end__);
     byte * ram_start = (byte *)(& __free_ram_start__);
-    unsigned size = ((unsigned)ram_end) - ((unsigned) ram_start);
+    unsigned size;
+    
+    // Skip java binary if it is an top of ram
+    
+    if (jsize > 0) ram_end -= (jsize+4);
+    size = ((unsigned)ram_end) - ((unsigned) ram_start);
     
     memory_init ();
     
@@ -124,17 +129,29 @@ void run(void)
 //int main (int argc, char *argv[])
 int nxt_main()
 {
-        init_sensors ();
+   int jsize = 0;
+   char *binary = java_binary;
+   unsigned *temp;
+   
+   if (__extra_ram_start__ != __extra_ram_end__) {
+     // Samba RAM mode
+     
+     temp = ((unsigned *)(& __free_ram_end__)) - 1;
+     jsize = *temp;
+     binary = ((char *) temp) - jsize;
+   }
+     
+   init_sensors ();
 
- //       printf("Installing Binary\n");
+   //       printf("Installing Binary\n");
 
-        install_binary(java_binary);
+   install_binary(binary);
 
- //      printf("Running\n");
+   //      printf("Running\n");
 
-	run();
+   run(jsize);
 
-        return 0;
+   return 0;
 } 
 
 const U8 splash_data[4*26] = {
