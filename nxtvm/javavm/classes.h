@@ -67,7 +67,7 @@ typedef struct S_Object
      {
        TWOBYTES size:15;
        TWOBYTES isAllocated:1;
-     } freeBlock;
+     }  __attribute__((packed)) freeBlock;
      struct _objects
      {
        byte     class;
@@ -75,7 +75,7 @@ typedef struct S_Object
        byte     mark:1;
        byte     isArray:1;
        byte     isAllocated:1;
-     } objects;
+     }  __attribute__((packed)) objects;
      struct _arrays
      {
        TWOBYTES length:9;
@@ -83,8 +83,8 @@ typedef struct S_Object
        TWOBYTES mark:1;
        TWOBYTES isArray:1;
        TWOBYTES isAllocated:1;
-     } arrays;
-   } flags;
+     } __attribute__((packed)) arrays;
+   } __attribute__((packed)) flags;
 
   /**
    * Synchronization state.
@@ -92,7 +92,7 @@ typedef struct S_Object
   byte monitorCount;
   byte threadId;
 
-} Object;
+} __attribute__((packed)) Object;
 
 /**
  * Thread class native structure
