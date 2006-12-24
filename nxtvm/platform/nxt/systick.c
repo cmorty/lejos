@@ -30,7 +30,7 @@ extern void systick_low_priority_entry(void);
 // Systick low priority
 void systick_low_priority_C(void)
 {
-  *AT91C_AIC_ICCR = (1>>LOW_PRIORITY_IRQ);
+  *AT91C_AIC_ICCR = (1<<LOW_PRIORITY_IRQ);
   nxt_avr_1kHz_update();
   nxt_motor_1kHz_process();
 }
