@@ -156,9 +156,6 @@ Object *new_object_for_class (const byte classIndex)
   printf("New object for class %d\n", classIndex);
 #endif
   instanceSize = get_class_record(classIndex)->classSize;
-
-  // Temporary fix for 8-byte Object struct on ARM 
-  instanceSize += 2;
   
   ref = memcheck_allocate (instanceSize);
 
