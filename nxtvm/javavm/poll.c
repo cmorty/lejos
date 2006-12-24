@@ -5,8 +5,8 @@
 #include "threads.h"
 
 #define SENSOR_POS		0
-#define BUTTON_POS		3
-#define SERIAL_RECEIVED_POS	6
+#define BUTTON_POS		4
+#define SERIAL_RECEIVED_POS	9
 
 Poll *poller;
 short old_sensor_values[N_SENSORS];
@@ -84,7 +84,7 @@ void poll_inputs()
       jword = get_word((byte*)&poller->changed, 2);
       printf("Poller: poller->changed = 0x%1X\n", jword);      
 #endif
-      
+           
       // poller.notifyAll()
       monitor_notify_unchecked(&poller->_super, 1);
     }
