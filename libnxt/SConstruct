@@ -29,6 +29,9 @@ Default(BuildEnv.Program('fwflash', glob('main_fwflash.c'),
 
 Default(BuildEnv.Program('runc', glob('main_runc.c'),
 			 LIBS=['usb', 'nxt'], LIBPATH='.'))
+			 
+Default(BuildEnv.Program('runjava', glob('main_runjava.c'),
+			 LIBS=['usb', 'nxt'], LIBPATH='.'))
 
 BuildEnv.Program('sambaget', glob('main_sambaget.c'),
 		 LIBS=['usb', 'nxt'], LIBPATH='.')
