@@ -8,49 +8,37 @@
 #include "sensors.h"
 #include "poll.h"
 #include "at91sam7s256.h"
+#include "nxt_avr.h"
 
 extern int verbose;
 
 sensor_t sensors[N_SENSORS] = {
   { 0, 0, 0, 0, 0 },
   { 0, 0, 0, 0, 0 },
+  { 0, 0, 0, 0, 0 },
   { 0, 0, 0, 0, 0 }
 };
 
-static FOURBYTES last_time[N_SENSORS];
-
 void init_sensors( void)
 {
-  FOURBYTES time = get_sys_time();
-  byte i;
-
-  for (i=0; i<3; i++) {
-    last_time[i] = time;
-  }
 }
 
 /**
- * Increment sensor values every 300, 600 and 900 ms
- * for sensor 0, 1 & 2 respectively.
+ * Read sensor values
  */
 void poll_sensors( void)
 {
   byte i;
   sensor_t *pSensor = sensors;
-  FOURBYTES time = get_sys_time();
 
   for( i=0; i<3; i++,pSensor++){
-    if ((time - last_time[i]) > 300*(i+1))
-    {
-      last_time[i] = time;
-      pSensor->value = (pSensor->value + 1) % 100;
-    }
+    pSensor->value = sensor_adc(i);
   }
 }
 
 void read_buttons(int dummy, short *output)
 {
-  *output = 0;
+  *output = (short) buttons_get();
 }
 
 
