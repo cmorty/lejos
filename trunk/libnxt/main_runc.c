@@ -1,7 +1,9 @@
 /**
  * Main program code for the runc utility.
  *
- * Copyright 2006 David Anderson <david.anderson@calixo.net>
+ * Copyright 2006 Lawrie Griffiths <lawrie.griffiths@ntlworld.com>
+ * Based on fwflash by David Anderson <david.anderson@calixo.net>
+ * 
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -51,8 +53,6 @@ int main(int argc, char *argv[])
   int ret;
   char *buf;
   long lsize;
-  unsigned char b; 
-  unsigned int w;
 
   if (argc != 2)
     {
@@ -108,23 +108,12 @@ int main(int argc, char *argv[])
   printf("NXT device in reset mode located and opened.\n"
          "Starting C program now...\n");
 
-  // Put the clock in PLL/2 mode
-  //NXT_ERR(nxt_write_word(nxt, 0xFFFFFC30, 0x7));
-
   // Send the C program
   NXT_HANDLE_ERR(nxt_send_file(nxt, 0x202000, buf, (int) lsize), nxt, 
                   "Error Sending file");
 
   NXT_HANDLE_ERR(nxt_jump(nxt, 0x202000), nxt,
-                 "Error downloading C program");
-
-  printf("C program finished\n");
-
-  NXT_HANDLE_ERR(nxt_read_byte(nxt,0x20F000,&b),nxt,"Reading status byte");
-  printf("b = %d\n",b);
-
-  NXT_HANDLE_ERR(nxt_read_word(nxt,0x20F004,&w),nxt,"Reading status word");
-  printf("w = %d\n",w);
+                 "Error jumping to C program");
 
   NXT_HANDLE_ERR(nxt_close(nxt), NULL,
                  "Error while closing connection to NXT");
