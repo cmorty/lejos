@@ -1,0 +1,94 @@
+To build the examples under Eclipse, do the following:
+
+- Get the SVN plug-in
+- Checkout the nxtvm project 
+- Checkout and build the jtools project
+- Checkout and build the classes project
+- Checkout and build the example project
+
+You can then add a new example - see below.
+
+Instructions for running the examples is also given below.
+
+Get the SVN plug-in
+-------------------
+
+Get the SVN plug-in for Eclipse, if you do not have it already.
+
+See http://sourceforge.net/docman?group id=178176
+
+Checkout the nxtvm project
+--------------------------
+
+Get it from from https://svn.sourceforge.net/svntoot/lejos/trunk/nxtvm.
+
+You do not need to build it if you are not doing VM devlopment.
+
+It is needed by the build of jtools.
+
+Checkout and build the jtools project
+-------------------------------------
+
+Get it from https://svn.sourceforge.net/svntoot/lejos/trunk/jtools.
+
+To build it, right click on build.xml and select RunAs Ant Build.
+
+The jtools project needs nxtvm to be present as it uses classes.db and signatures.db
+from that project.
+
+Checkout and build the classes project
+--------------------------------------
+
+Get it from https://svn.sourceforge.net/svntoot/lejos/trunk/classes.
+
+To build it, right click on build.xml and select RunAs Ant Build.
+
+Checkout the examples project
+-----------------------------
+
+Get it from https://svn.sourceforge.net/svntoot/lejos/trunk/classes.
+
+You need to build each example separately. Note that the build
+relies on the jtools and classes project being present and under the
+same directory (e.g. workspace) as examples.
+
+To build each example, right click on its build.xml file and select RunAs Ant Build.
+
+Adding a new example
+--------------------
+
+Create a folder for the example.
+
+Under the project's properties Java Build path, Source tab, and the new folder.
+
+Create the Java classes for the example.
+
+Copy a build.xml file from one of the other examples, e.g. HelloWorld, 
+and change the program name in 3 places (one is a comment).
+
+To build the example, right click on its build.xml file and select RunAs Ant Build.
+
+Running an example
+------------------
+
+To run and example, you need the runjava utility and the SAMBA RAM
+version of the lejos VM.
+
+Windows users can get these from the snapshot project at 
+https://svn.sourceforge.net/svntoot/lejos/trunk/snapshot.
+They are runjava.exe and lejos_nxt.bin. You can also get built example files
+from this snapshot (e.g. View.bin).
+
+Linux users can get the source of libnxt (which includes runjava), from
+https://svn.sourceforge.net/svntoot/lejos/trunk/libnxt and
+build is using scons.
+
+Linux users with an arm toolchain can build nxtvm,
+by going to the platform/nxt directory and typing make.
+
+Once you have runjava, you can run:
+
+runjava lejos_nxt.bin MyExample.bin
+
+(Note for Linux users: lejos_nxt.bin is built as lejos_nxt_samba_ram.bin).
+
