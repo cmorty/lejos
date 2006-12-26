@@ -215,7 +215,6 @@ void xx_show(void)
     iterator++;
     
     if((iterator % 10) == 0){
-	    // nxt_avr_update();
 	    buttons = buttons_get();
     
 	    display_goto_xy(iterator & 7,0); display_string("LEJOS NXT");
@@ -283,9 +282,13 @@ void main(void)
 	nxt_motor_init();
 
 
-	xx_show();
+//	xx_show();
 
 	nxt_main();
+	
+	while(1){
+		nxt_avr_power_down();
+	}
 
 
 }
