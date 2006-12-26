@@ -1,10 +1,10 @@
 package lejos.nxt;
 
-public class Port
+public class Port implements ListenerCaller
 {
   private int iPortId;
   private short iNumListeners = 0;
-  //private SensorListener[] iListeners;
+  private PortListener[] iListeners;
   private int iPreviousValue;
   
   /**
@@ -72,7 +72,7 @@ public class Port
   }
     
   /**
-   * Adds a sensor listener.
+   * Adds a port listener.
    * <p>
    * <b>
    * NOTE 1: You can add at most 8 listeners.<br>
@@ -81,15 +81,15 @@ public class Port
    * </b>
    * @see josx.platform.rcx.SensorListener
    */
-  //public synchronized void addSensorListener (SensorListener aListener)
-  //{
-  //  if (iListeners == null)
-  //  {
-  //      iListeners = new SensorListener[8];
-  //  }
-  // iListeners[iNumListeners++] = aListener;
-  //  ListenerThread.get().addSensorToMask(iPortId, this);
-  //}
+  public synchronized void addPortListener (PortListener aListener)
+  {
+    if (iListeners == null)
+    {
+        iListeners = new PortListener[8];
+    }
+    iListeners[iNumListeners++] = aListener;
+    ListenerThread.get().addSensorToMask(iPortId, this);
+  }
 
   /**
    * Activates the sensor. This method should be called
@@ -136,12 +136,12 @@ public class Port
   
   private static native void setSensorValue (int aPortId, int aVal, int aRequestType);
   
-  //public synchronized void callListeners() {
-  //  int newValue = readSensorValue( iPortId, 1);
-  //  for (int i = 0; i < iNumListeners; i++) {
-  //    iListeners[i].stateChanged( this, iPreviousValue, newValue);
-  //  }
-  // iPreviousValue = newValue;
-  //}
+  public synchronized void callListeners() {
+    int newValue = readSensorValue( iPortId, 0);
+    for (int i = 0; i < iNumListeners; i++) {
+      iListeners[i].stateChanged( this, iPreviousValue, newValue);
+    }
+   iPreviousValue = newValue;
+  }
 }
 
