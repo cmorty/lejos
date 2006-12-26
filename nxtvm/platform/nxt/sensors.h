@@ -10,7 +10,7 @@ typedef struct {
 } sensor_t;
 
 
-#define N_SENSORS (3)
+#define N_SENSORS (4)
 
 extern sensor_t sensors[N_SENSORS];
 extern void init_sensors( void);

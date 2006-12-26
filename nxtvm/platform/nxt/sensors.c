@@ -31,7 +31,7 @@ void poll_sensors( void)
   byte i;
   sensor_t *pSensor = sensors;
 
-  for( i=0; i<3; i++,pSensor++){
+  for( i=0; i<N_SENSORS; i++,pSensor++){
     pSensor->value = sensor_adc(i);
   }
 }
