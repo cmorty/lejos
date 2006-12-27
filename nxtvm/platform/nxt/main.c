@@ -285,6 +285,7 @@ void main(void)
 //	xx_show();
 
     show_splash(3000);
+    display_clear(1);
 	nxt_main();
 	systick_wait_ms(5000);
 	
