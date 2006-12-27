@@ -23,5 +23,6 @@ void display_bitmap_copy(const U8 *data, U32 width, U32 depth, U32 x, U32 y);
 
 void display_test(void);
 
+U8 * display_get_buffer(void);
 
 #endif
