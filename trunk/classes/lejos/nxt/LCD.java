@@ -16,6 +16,8 @@ public class LCD
   public static native void refresh();
   
   public static native void clear();
+  
+  public static native void setDisplay(int[] buff);
 
 }
 
