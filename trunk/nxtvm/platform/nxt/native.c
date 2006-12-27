@@ -202,7 +202,17 @@ void dispatch_native (TWOBYTES signature, STACKWORD *paramBase)
       return;
    case clear_4_5V:
       display_clear(0);
-      return;   
+      return; 
+   case setDisplay_4_1I_5V:
+      {
+        Object *p = word2ptr(paramBase[0]);
+        int len, i;
+        len = p->flags.arrays.length;
+        unsigned * intArray = (unsigned *) (((byte *) p) +HEADER_SIZE);
+        unsigned * display_buffer = (unsigned *) display_get_buffer();
+        for(i=0;i<200;i++) display_buffer[i] = intArray[i];
+      }
+      return;
     case getVoltageMilliVolt_4_5I:
       push_word(battery_voltage());
       return;
