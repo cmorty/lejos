@@ -51,8 +51,9 @@
 #define drawInt_4III_5V 44
 #define refresh_4_5V 45
 #define clear_4_5V 46
-#define getVoltageMilliVolt_4_5I 47
-#define readButtons_4_5I 48
-#define getTachoCountById_4I_5I 49
-#define controlMotor_4III_5V 50
+#define setDisplay_4_1I_5V 47
+#define getVoltageMilliVolt_4_5I 48
+#define readButtons_4_5I 49
+#define getTachoCountById_4I_5I 50
+#define controlMotor_4III_5V 51
 #endif // _SPECIALSIGNATURES_H

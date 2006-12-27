@@ -52,24 +52,24 @@ totalMemory()J
 # java.lang.Throwable
 getMessage()Ljava/lang/String;
 
-# josx.platform.nxt.ROM
+# lejos.nxt.ROM
 call(S)V
 call(SS)V
 call(SSS)V
 call(SSSS)V
 call(SSSSS)V
 
-# josx.platform.nxt.Memory
+# lejos.nxt.Memory
 readByte(I)B
 writeByte(IB)V
 setBit(III)V
 getDataAddress(Ljava/lang/Object;)I
 
-# josx.platform.nxt.Sensor
+# lejos.nxt.Sensor
 readSensorValue(II)I
 setSensorValue(III)V
 
-# josx.platform.nxt.Poller
+# lejos.nxt.Poller
 setPoller()V
 setThrottle(I)V
 
@@ -81,21 +81,24 @@ testEQ(Ljava/lang/String;II)V
 floatToIntBits(F)I
 intBitsToFloat(I)F
 
-#josx.platform.nxt/LCD
+#lejos.nxt/LCD
 drawString(Ljava/lang/String;II)V
 drawInt(III)V
 refresh()V
 clear()V
+setDisplay([I)V
 
-#josx.platform.nxt.Battery
+#lejos.nxt.Battery
 getVoltageMilliVolt()I
 
-#josx.platform.nxt.Button
+#lejos.nxt.Button
 readButtons()I
 
-#josx.platform.nxt.Motor
+#lejos.nxt.Motor
 getTachoCountById(I)I
 controlMotor(III)V
+
+
 
 
 
