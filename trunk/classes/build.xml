@@ -3,7 +3,7 @@
   Buildfile for building classes.jar for NXT
   ==================================================
 -->
-<project name="leJOS NXT Java classes" default="build" basedir="."> 	<!-- creates the classes jar (RCX: JDK 1.1) -->
+<project name="leJOS NXT Java classes" default="build" basedir="."> 	<!-- creates the classes jar -->
   	<target name="build" description="generate classes jar">
     	<mkdir dir="build/classes"/>
     	<javac srcdir="." destdir="build/classes" fork="yes" optimize="on" debug="on" source="1.3" target="1.1"/>
