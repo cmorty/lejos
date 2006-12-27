@@ -52,6 +52,7 @@ public interface SpecialSignatureConstants {
     "drawInt(III)V",
     "refresh()V",
     "clear()V",
+    "setDisplay([I)V",
     "getVoltageMilliVolt()I",
     "readButtons()I",
     "getTachoCountById(I)I",
