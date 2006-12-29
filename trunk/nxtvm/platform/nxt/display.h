@@ -16,6 +16,7 @@ void display_char(int c);
 void display_string(const char *str);
 
 void display_int (int val, U32 places);
+void display_hex (U32 val, U32 places);
 
 void display_unsigned (U32 val, U32 places);  
 
