@@ -205,6 +205,35 @@ void display_string(const char *str)
   }
 }
 
+void display_hex(U32 val, U32 places)
+{
+  char x[9];
+                    
+  char *p = &x[8];
+  int p_count = 0;
+  
+  
+  *p = 0;
+  
+  if(places > 8)
+    places = 8;
+  
+  while(val) {
+    p--;
+    p_count++;
+    *p = "0123456789ABCDEF"[val & 0x0f];
+    val>>=4;
+  }
+  
+  while(p_count < places){
+    p--;
+    p_count++;
+    *p = '0';
+  }
+  
+  display_string(p);
+}
+
 static void display_unsigned_worker(U32 val, U32 places, U32 sign)
 {
   char x[12]; // enough for 10 digits + sign + NULL 
