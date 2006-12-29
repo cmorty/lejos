@@ -22,6 +22,7 @@ C_PLATFORM_SOURCES := \
 	twi.c \
 	nxt_spi.c \
 	nxt_motors.c \
+	data_abort.c \
 	display.c
 
 C_HOOK_SOURCES := \

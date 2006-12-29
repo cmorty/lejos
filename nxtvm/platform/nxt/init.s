@@ -232,8 +232,19 @@ swi_handler:
 	b swi_handler
 prefetch_abort_handler:
 	b prefetch_abort_handler
+
+	.extern data_abort_pc
+	.extern data_abort_C
+
 data_abort_handler:
-	b data_abort_handler
+	ldr r0,=data_abort_pc
+	str lr,[r0]
+	msr   CPSR_c,#0xDF		@ System mode , I and F bits set (interrupts disabled)
+	ldr r0,=data_abort_C
+	mov lr,pc
+	bx  r0
+data_abort_C_returned:
+	b data_abort_C_returned
 reserved_handler:
 	b reserved_handler
 
