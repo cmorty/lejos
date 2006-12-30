@@ -102,19 +102,7 @@ void dispatch_native (TWOBYTES signature, STACKWORD *paramBase)
     case currentTimeMillis_4_5J:
       push_word (0);
       push_word (get_sys_time());
-      return;
-    case call_4S_5V:
-	return;      
-    case call_4SS_5V:
-        if (paramBase[0] == 0x1946) activate((int) (paramBase[1] - 0x1000));
-        if (paramBase[0] == 0x19C4) passivate((int) (paramBase[1] - 0x1000));
-	return;      
-    case call_4SSS_5V:
-	return;      
-    case call_4SSSS_5V:
-	return;      
-    case call_4SSSSS_5V:
-      return;      
+      return;  
     case readByte_4I_5B:
 	  push_word ((STACKWORD) *((byte *) word2ptr(paramBase[0])));
 	  return;
@@ -134,21 +122,14 @@ void dispatch_native (TWOBYTES signature, STACKWORD *paramBase)
     case readSensorValue_4II_5I:
       push_word (sensor_adc(paramBase[0]));
       return;
-    case setSensorValue_4III_5V:
-      // Arguments: int romId (1..3), int value, int requestedValue (0..3) 
-      switch ((byte) paramBase[2])
-      {
-         case 0:
-           return;
-         case 1:	      
-           return;
-         case 2:
-           sensors[paramBase[0]].value = paramBase[1];
-           return;
-         case 3:
-           sensors[paramBase[0]].value = paramBase[1];
-           return;
-      }
+    case setADTypeById_4II_5V:
+      if (paramBase[1] & 1) set_digi0(paramBase[0]);
+      else unset_digi0(paramBase[0]);
+      if (paramBase[1] & 2) set_digi1(paramBase[0]);
+      else unset_digi1(paramBase[0]);      	
+      return;
+    case setPowerTypeById_4II_5V:
+      nxt_avr_set_input_power(paramBase[0],paramBase[1]);
       return;
     case freeMemory_4_5J:
       push_word (0);
