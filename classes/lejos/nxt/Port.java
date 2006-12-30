@@ -27,7 +27,6 @@ public class Port implements ListenerCaller
    */
   public static final Port S4 = new Port (3);
 
-
   /**
    * Array containing all three ports [0..3].
    */
@@ -60,7 +59,6 @@ public class Port implements ListenerCaller
   private Port (int aId)
   {
     iPortId = aId;
-    setTypeAndMode (3, 0x80);
   }
 
   /**
@@ -99,7 +97,7 @@ public class Port implements ListenerCaller
    */
   public final void activate()
   {
-    ROM.call ((short) 0x1946, (short) (0x1000 + iPortId));
+    setPowerType(1);
   }
 
   /**
@@ -107,26 +105,9 @@ public class Port implements ListenerCaller
    */
   public final void passivate()
   {
-    ROM.call ((short) 0x19C4, (short) (0x1000 + iPortId));
+    setPowerType(0);
   }
 
-  /**
-   * Sets the sensor's mode and type. 
-   */
-  public final void setTypeAndMode (int aType, int aMode)
-  {
-    setSensorValue (iPortId, aType, 1);
-    setSensorValue (iPortId, aMode, 0);     
-  }
-
-  /**
-   * Resets the canonical sensor value. This may be useful for rotation sensors. 
-   */
-  public final void setPreviousValue (int aValue)
-  {
-    setSensorValue (iPortId, aValue, 2);    
-  }
-  
   /**
    * <i>Low-level API</i> for reading sensor values.
    * @param aSensorId Sensor ID (0..2).
@@ -134,7 +115,19 @@ public class Port implements ListenerCaller
    */
   public static native int readSensorValue (int aPortId, int aRequestType);
   
-  private static native void setSensorValue (int aPortId, int aVal, int aRequestType);
+  public void setADType(int type)
+  {
+	  setADTypeById(iPortId,type);
+  }
+  
+  public void setPowerType(int type)
+  {
+	  setPowerTypeById(iPortId,type);
+  }
+  
+  public static native void setADTypeById(int aPortId, int aADType);
+  
+  public static native void setPowerTypeById(int aPortId, int aPortType);
   
   public synchronized void callListeners() {
     int newValue = readSensorValue( iPortId, 0);
