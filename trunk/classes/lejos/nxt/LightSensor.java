@@ -7,7 +7,7 @@ public class LightSensor {
 	{
 		this.port = port;
 		port.setPowerType(0);
-		port.setADType(2); // Default to LED on
+		port.setADType(1); // Default to LED on
 	}
 	
 	public LightSensor(Port port, boolean floodlight)
