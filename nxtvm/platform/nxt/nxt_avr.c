@@ -263,3 +263,12 @@ void nxt_avr_set_motor(U32 n, int power_percent, int brake)
       io_to_avr.output_mode &= ~(1<<n);
   }
 }
+
+void nxt_avr_set_input_power(U32 n, U32 power_type)
+{
+  if (n < NXT_AVR_N_INPUTS && power_type <= 3)
+  {
+    io_to_avr.input_power &= ~(0x11 << (n<<1));
+    io_to_avr.input_power |= (power_type << (n<<1));
+  }  
+}  

@@ -20,8 +20,9 @@ U32 buttons_get(void);
 
 U32 battery_voltage(void);
 
-
 U32 sensor_adc(U32 n);
+
+void nxt_avr_set_input_power(U32 n, U32 power_type);
 
 #endif
 
