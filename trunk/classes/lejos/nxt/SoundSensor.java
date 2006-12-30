@@ -7,13 +7,20 @@ public class SoundSensor {
 	public SoundSensor(Port port)
 	{
 	   this.port = port;
-	   port.activate(); // Default to DB
+	   port.setPowerType(0);
+	   port.setADType(1); // Default to DB
 	}
 	
 	public SoundSensor(Port port, boolean dba)
 	{
 	   this.port = port;
-	   if (!dba) port.activate();
+	   port.setPowerType(0);
+	   port.setADType((dba ? 2 : 1));
+	}
+	
+	public void setDBA(boolean dba)
+	{
+		port.setADType((dba ? 2 : 1));
 	}
 
 	public int readValue()
