@@ -50,7 +50,19 @@ void handle_uncaught_exception (Object *exception,
 				       const MethodRecord *rootMethod,
 				       byte *pc)
 {
-					       
+	display_clear(0);
+	display_goto_xy(0,0);
+	display_string("Java Exception:");
+	display_goto_xy(0,1);
+	display_string("Class:");
+	display_goto_xy(7,1);
+	display_int(get_class_index (exception),0);
+	display_goto_xy(0,2);
+	display_string("Method:");
+	display_goto_xy(8,2);
+	display_int(methodRecord->signatureId,0);
+    display_update();
+	for(;;);
 }
 
 void switch_thread_hook()
