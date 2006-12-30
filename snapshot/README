@@ -7,7 +7,9 @@ To run lejos NXT Java test programs on Windows using this snapshot, you need to 
 - Do a long reset on your NXT
 - Plug-in your NXT to a USB port
 - Start a cmd window and cd to <snapshot directory>\bin
-- Type: runjava lejos_bin.nxt TestSensor.bin
+- Type: runjava lejos_nxt.bin View.bin
+
+See below for how to compile and link your own program.
 
 Install the libusb filter driver
 --------------------------------
@@ -34,4 +36,16 @@ For Tortoise SVN for create the <snapshop directory> directory in Windows Explor
 right click on it and select SVN Check out.
 
 You will need to supply your sourceforge username and password.
+
+Compiling and linking your own program on Windows
+-------------------------------------------------
+
+To compile, link and run Test.java, do:
+
+- Set LEJOS_HOME to the snapshot directory
+- Put %LEJOS_HOME%\bin on the PATH
+- Type: lejosjc Test.java
+- Type: lejoslink Test -o Test.bin
+- Type: runjava %LEJOS_HOME%/bin/lejos_nxt.bin Test.bin
+
 
