@@ -21,6 +21,14 @@ sensor_t sensors[N_SENSORS] = {
 
 void init_sensors( void)
 {
+  int i;
+  
+  for(i=0;i<N_SENSORS;i++) 
+  {
+  	unset_digi0(i);
+  	unset_digi1(i);
+  	nxt_avr_set_input_power(i,0);
+  }
 }
 
 /**
@@ -47,9 +55,9 @@ void check_for_data (char *valid, char **nextbyte)
   *valid = 0;
 }
 
-void activate(int sensor) 
+void set_digi0(int sensor) 
 {
-  /* Enable output on light LED */
+  /* Enable output on the pin */
 
   int functions[] = {AT91C_PIO_PA23, AT91C_PIO_PA28, 
                    AT91C_PIO_PA29, AT91C_PIO_PA30};
@@ -58,15 +66,15 @@ void activate(int sensor)
 
   *AT91C_PIOA_OER |= functions[sensor];
 
-  /* Switch the LED on */
+  /* Set high */
 
   *AT91C_PIOA_SODR |= functions[sensor];
 
 }
 
-void passivate(int sensor) 
+void unset_digi0(int sensor) 
 {
-  /* Enable output on light LED */
+  /* Enable output on the pin */
 
   int functions[] = {AT91C_PIO_PA23, AT91C_PIO_PA28, 
                    AT91C_PIO_PA29, AT91C_PIO_PA30};
@@ -75,12 +83,45 @@ void passivate(int sensor)
 
   *AT91C_PIOA_OER |= functions[sensor];
 
-  /* Switch the LED off */
+  /* Set low */
 
   *AT91C_PIOA_CODR |= functions[sensor];
 
 }
 
+void set_digi1(int sensor) 
+{
+  /* Enable output on the pin */
+
+  int functions[] = {AT91C_PIO_PA18, AT91C_PIO_PA19, 
+                   AT91C_PIO_PA20, AT91C_PIO_PA2};
+
+  *AT91C_PIOA_PER |= functions[sensor];
+
+  *AT91C_PIOA_OER |= functions[sensor];
+
+  /* Set high */
+
+  *AT91C_PIOA_SODR |= functions[sensor];
+
+}
+
+void unset_digi1(int sensor) 
+{
+  /* Enable output on the pin */
+
+  int functions[] = {AT91C_PIO_PA18, AT91C_PIO_PA19, 
+                   AT91C_PIO_PA20, AT91C_PIO_PA2};
+
+  *AT91C_PIOA_PER |= functions[sensor];
+
+  *AT91C_PIOA_OER |= functions[sensor];
+
+  /* Set low */
+
+  *AT91C_PIOA_CODR |= functions[sensor];
+
+}
 
 
 
