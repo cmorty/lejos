@@ -17,7 +17,9 @@ extern void init_sensors( void);
 extern void poll_sensors( void);
 extern void read_buttons(int, short*);
 extern void check_for_data (char *valid, char **nextbyte);
-extern void activate(int);
-extern void passivate(int);
+extern void set_digi0(int);
+extern void unset_digi0(int);
+extern void set_digi1(int);
+extern void unset_digi1(int);
 
 #endif // _SENSORS_H
