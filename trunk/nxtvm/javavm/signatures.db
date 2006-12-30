@@ -52,13 +52,6 @@ totalMemory()J
 # java.lang.Throwable
 getMessage()Ljava/lang/String;
 
-# lejos.nxt.ROM
-call(S)V
-call(SS)V
-call(SSS)V
-call(SSSS)V
-call(SSSSS)V
-
 # lejos.nxt.Memory
 readByte(I)B
 writeByte(IB)V
@@ -67,7 +60,8 @@ getDataAddress(Ljava/lang/Object;)I
 
 # lejos.nxt.Sensor
 readSensorValue(II)I
-setSensorValue(III)V
+setADTypeById(II)V
+setPowerTypeById(II)V
 
 # lejos.nxt.Poller
 setPoller()V
@@ -81,7 +75,7 @@ testEQ(Ljava/lang/String;II)V
 floatToIntBits(F)I
 intBitsToFloat(I)F
 
-#lejos.nxt/LCD
+#lejos.nxt.LCD
 drawString(Ljava/lang/String;II)V
 drawInt(III)V
 refresh()V
