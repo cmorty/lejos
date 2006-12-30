@@ -29,10 +29,11 @@ public class View {
 		
 		Menu pickSensor = new Menu("Pick Sensor");
 		pickSensor.add("Touch");
-		pickSensor.add("Reflected");
+		pickSensor.add("Floodlit");
 		pickSensor.add("Ambient");
 		pickSensor.add("Sound DB");
 		pickSensor.add("Sound DBA");
+		pickSensor.add("RCX Light");
 		
 		Menu pickSensorPort = new Menu("Pick Port");
 		pickSensorPort.add("S1");
@@ -147,6 +148,20 @@ public class View {
 						Thread.sleep(100);
 					}
 				}	
+				
+				if (sensor == 5) // RCX Light Sensor
+				{
+					RCXLightSensor light = new RCXLightSensor(Port.PORTS[portId]);
+					
+					while (!Button.ESCAPE.isPressed())
+					{
+						LCD.drawString(blanks3,7,4);
+						LCD.drawInt(light.readValue(), 7, 4);
+						
+						LCD.refresh();
+						Thread.sleep(500);
+					}
+				}
 				
 				Thread.sleep(500);
 			}
