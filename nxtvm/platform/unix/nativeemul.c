@@ -209,50 +209,15 @@ void dispatch_native (TWOBYTES signature, STACKWORD *paramBase)
       push_word (0);
       push_word (get_sys_time());
       return;
-    case call_4S_5V:
-	if(verbose == 0)
-		printf ("& ROM call 0: 0x%lX\n", paramBase[0]);
-	else
-		printf("> %s\n", get_meaning(paramBase));
-	return;      
-    case call_4SS_5V:
-	if(verbose == 0)
-		printf ("& ROM call 1: 0x%lX (%ld)\n", paramBase[0], paramBase[1]);
-	else
-		printf("> %s\n", get_meaning(paramBase));
-	return;      
-    case call_4SSS_5V:
-	if(verbose == 0)
-		printf ("& ROM call 2: 0x%lX (%ld, %ld)\n", paramBase[0],
-				paramBase[1], paramBase[2]);
-	else
-		printf("> %s\n", get_meaning(paramBase));
-	return;      
-    case call_4SSSS_5V:
-	if(verbose == 0)
-		printf ("& ROM call 3: 0x%lX (%ld, %ld, %ld)\n",
-				paramBase[0], paramBase[1],
-				paramBase[2], paramBase[3]);
-	else
-		printf("> %s\n", get_meaning(paramBase));
-	return;      
-    case call_4SSSSS_5V:
-      printf ("& ROM call 4: 0x%lX (%ld, %ld, %ld, %ld)\n", paramBase[0],
-                                                     paramBase[1],
-                                                     paramBase[2],
-                                                     paramBase[3],
-                                                     paramBase[4]
-             );
-      return;      
     case readByte_4I_5B:
-	if(verbose == 0)
+	  if(verbose == 0)
 		printf ("& Attempt to read byte from 0x%lX\n", (paramBase[0] & 0xFFFF));
-	else
+	  else
 		printf ("> read byte from 0x%lX\n", (paramBase[0] & 0xFFFF));
-	push_word (0);
-	return;
+	  push_word (0);
+	  return;
     case writeByte_4IB_5V:
-	if(verbose == 0)
+	  if(verbose == 0)
 		printf ("& Attempt to write byte [%lX] at 0x%lX (no effect)\n",
 			paramBase[1] & 0xFF, paramBase[0] & 0xFFFF);
 	else
@@ -277,31 +242,20 @@ void dispatch_native (TWOBYTES signature, STACKWORD *paramBase)
       printf("Reading sensor %ld, requested value %s, returned value %d\n",paramBase[0],sensorReadTypes[paramBase[1]],sensors[paramBase[0]].value);
       push_word (sensors[paramBase[0]].value);
       return;
-    case setSensorValue_4III_5V:
-      // Arguments: int romId (1..3), int value, int requestedValue (0..3) 
+    case setADTypeById_4II_5V:
       if (verbose)
          printf("> ");
       else
          printf("& ");
-      printf("Setting sensor %ld, ", paramBase[0]);
-      switch ((byte) paramBase[2])
-      {
-         case 0:
-           printf("%s\n", getSensorMode(paramBase[1]));
-           return;
-         case 1:	      
-           printf("type %s\n", sensorSetTypes[paramBase[1]]);
-           return;
-         case 2:
-           printf("canonical value %ld\n", paramBase[1]);
-           sensors[paramBase[0]].value = paramBase[1];
-           return;
-         case 3:
-           printf("boolean value %ld\n", paramBase[1]);
-           sensors[paramBase[0]].value = paramBase[1];
-           return;
-      }
+      printf("Setting sensor %d to AD Type %d\n",paramBase[0], paramBase[1]);
       return;
+    case setPowerTypeById_4II_5V:
+       if (verbose)
+         printf("> ");
+      else
+         printf("& ");
+      printf("Setting sensor %d to Power Type %d\n",paramBase[0], paramBase[1]);
+    return; 
     case freeMemory_4_5J:
       push_word (0);
       push_word (getHeapFree());
@@ -380,6 +334,13 @@ void dispatch_native (TWOBYTES signature, STACKWORD *paramBase)
          printf("& ");
       printf("Display cleared\n");
       return;
+    case setDisplay_4_1I_5V:
+       if (verbose)
+         printf("> ");
+      else
+         printf("& ");
+      printf("Display set\n");
+      return;  
     case getVoltageMilliVolt_4_5I:
       if (verbose)
          printf("> ");
