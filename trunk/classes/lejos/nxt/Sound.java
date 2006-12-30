@@ -23,7 +23,6 @@ public class Sound
    */
   public static void systemSound (boolean aQueued, int aCode)
   {
-    ROM.call ((short) 0x299a, (short) (aQueued ? 0x4004 : 0x4003), (short) aCode);
   }
 
   /**
@@ -67,7 +66,5 @@ public class Sound
    */
   public static void playTone (int aFrequency, int aDuration)
   {
-    ROM.call ((short) 0x327c, (short) 0x1773, (short) aFrequency, 
-              (short) aDuration);
   }
 }
