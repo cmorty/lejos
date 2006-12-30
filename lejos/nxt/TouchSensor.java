@@ -6,6 +6,7 @@ public class TouchSensor {
 	public TouchSensor(Port port)
 	{
 	   this.port = port;
+	   port.setPowerType(0);
 	}
 	
 	public boolean isPressed()
