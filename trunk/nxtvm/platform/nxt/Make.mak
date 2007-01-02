@@ -19,7 +19,7 @@ S_OBJECTS := $(S_SOURCES:.s=.o)
 C_OBJECTS := $(C_SOURCES:.c=.o) $(C_RAMSOURCES:.c=.oram)
 
 CFLAGS = -c -ffreestanding -fsigned-char -mcpu=arm7tdmi  \
-         -Winline -O0 -g  -Wall -Werror-implicit-function-declaration \
+         -Winline -Os -g  -Wall -Werror-implicit-function-declaration \
 	-I. -I$(VM_DIR) \
          -mthumb -mthumb-interwork -ffunction-sections -fdata-sections
 
