@@ -96,6 +96,7 @@ package lejos.robotics;
 	      // Thread is for keeping the RCX straight when driving by
 	      // monitoring the rotation sensors while moving.
 	      SteerThread steering = new SteerThread();
+	      steering.setDaemon(true);
 	      steering.start();
 	   }
 	   
