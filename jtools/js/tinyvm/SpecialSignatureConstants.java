@@ -31,17 +31,13 @@ public interface SpecialSignatureConstants {
     "freeMemory()J",
     "totalMemory()J",
     "getMessage()Ljava/lang/String;",
-    "call(S)V",
-    "call(SS)V",
-    "call(SSS)V",
-    "call(SSSS)V",
-    "call(SSSSS)V",
     "readByte(I)B",
     "writeByte(IB)V",
     "setBit(III)V",
     "getDataAddress(Ljava/lang/Object;)I",
     "readSensorValue(II)I",
-    "setSensorValue(III)V",
+    "setADTypeById(II)V",
+    "setPowerTypeById(II)V",
     "setPoller()V",
     "setThrottle(I)V",
     "test(Ljava/lang/String;Z)V",
@@ -56,6 +52,7 @@ public interface SpecialSignatureConstants {
     "getVoltageMilliVolt()I",
     "readButtons()I",
     "getTachoCountById(I)I",
-    "controlMotor(III)V"
+    "controlMotor(III)V",
+    "resetTachoCountById(I)V"
   };
 }
