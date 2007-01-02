@@ -184,6 +184,14 @@ public class Motor
   }
   
   public static native int getTachoCountById(int aMotor);
+  
+  public void resetTachoCount()
+  {
+	  resetTachoCountById(iId - 'A');
+  }
+  
+  public static native void resetTachoCountById(int aMotor);
+
 }
 
 
