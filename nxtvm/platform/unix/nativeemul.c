@@ -362,8 +362,16 @@ void dispatch_native (TWOBYTES signature, STACKWORD *paramBase)
          printf("> ");
       else
          printf("& ");
-      printf("getTachoCount returning 0\n");
-      return;    
+      printf("getTachoCount on Motor %d returning 0\n", paramBase[0]);
+      push_word(0);
+      return;  
+    case resetTachoCountById_4I_5V:
+      if (verbose)
+         printf("> ");
+      else
+         printf("& ");
+      printf("resetTachoCount on Motor %d \n", paramBase[0]);
+      return;  
     default:
 #ifdef DEBUG_METHODS
       printf("Received bad native method code: %d\n", signature);
