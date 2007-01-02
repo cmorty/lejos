@@ -25,5 +25,9 @@ public class TestNavigator {
 		LCD.refresh();
 		
 		Button.ESCAPE.waitForPressAndRelease();
+		
+		LCD.clear();
+		LCD.drawString("Finished", 6, 3);
+		LCD.refresh();
 	}
 }
