@@ -52,4 +52,5 @@
 #define readButtons_4_5I 45
 #define getTachoCountById_4I_5I 46
 #define controlMotor_4III_5V 47
+#define resetTachoCountById_4I_5V 48
 #endif // _SPECIALSIGNATURES_H
