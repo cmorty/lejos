@@ -208,6 +208,9 @@ void dispatch_native (TWOBYTES signature, STACKWORD *paramBase)
         (paramBase[1] >= 3 ? 0 :(paramBase[1] == 2 ? -paramBase[2] : paramBase[2])),
         (paramBase[1] == 3 ? 1 : 0));
       return;
+    case resetTachoCountById_4I_5V:
+      nxt_motor_set_count(paramBase[0],0);
+      return;
     default:
       throw_exception (noSuchMethodError);
   }
