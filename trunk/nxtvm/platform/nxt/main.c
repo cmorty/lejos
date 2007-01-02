@@ -44,6 +44,23 @@ extern U32 __extra_ram_end__;
 byte *region;
 Thread   *bootThread;
 
+void wait_for_power_down_signal()
+{
+	for(;;)
+	{
+		int b = buttons_get();
+    
+    	// Check for ENTER and ESCAPE pressed
+    	if (b == 9)
+    	{
+      		// Shut down power immediately
+      		while(1){
+				nxt_avr_power_down();
+      		}
+		}
+	}
+}
+
 void handle_uncaught_exception (Object *exception,
                                        const Thread *thread,
 				       const MethodRecord *methodRecord,
@@ -62,14 +79,22 @@ void handle_uncaught_exception (Object *exception,
 	display_goto_xy(8,2);
 	display_int(methodRecord->signatureId,0);
     display_update();
-	for(;;);
+	wait_for_power_down_signal();
 }
 
 void switch_thread_hook()
 {
-  // NOP
+    int b = buttons_get();
+    
+    // Check for ENTER and ESCAPE pressed
+    if (b == 9)
+    {
+      // Shut down power immediately
+      while(1){
+		nxt_avr_power_down();
+      }
+	}
 }
-
 
 void assert_hook (boolean aCond, int aCode)
 {
