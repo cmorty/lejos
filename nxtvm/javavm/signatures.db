@@ -91,6 +91,7 @@ readButtons()I
 #lejos.nxt.Motor
 getTachoCountById(I)I
 controlMotor(III)V
+resetTachoCountById(I)V
 
 
 
