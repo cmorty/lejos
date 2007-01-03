@@ -505,6 +505,9 @@ TWOBYTES *allocate (TWOBYTES size)
         TWOBYTES s = (blockHeader & IS_ARRAY_MASK) 
           ? get_array_size ((Object *) ptr)
           : get_object_size ((Object *) ptr);
+          
+        // Round up according to alignment
+        s = (s + (MEMORY_ALIGNMENT-1)) & ~(MEMORY_ALIGNMENT-1);
         ptr += s;
       }
       else
