@@ -116,7 +116,7 @@ void run(int jsize)
   {
     byte *ram_end = (byte *)(& __free_ram_end__);
     byte * ram_start = (byte *)(& __free_ram_start__);
-    unsigned size;
+    int size, i;
     
     // Skip java binary if it is an top of ram
     
@@ -133,8 +133,8 @@ void run(int jsize)
     ram_start = (byte *)(&__extra_ram_start__);
     size = ((unsigned)ram_end) - ((unsigned)ram_start);
     
-    if(size > 0)
-    	memory_add_region(ram_start, ram_end);
+    //if(size > 0)
+    //	memory_add_region(ram_start, ram_end);
   }
 
   //printf("Initializing exceptions\n");
