@@ -43,7 +43,7 @@
 /**
  * If not 0 allow multiple heap segments
  */
-#define SEGMENTED_HEAP                 1
+#define SEGMENTED_HEAP                 0
 
 /**
  * Iff not 0, threads in the DEAD state are
