@@ -8,8 +8,12 @@ public class TestNavigator {
 	throws Exception
 	{
 		TachoNavigator nav = new TachoNavigator(5.5f,11.2f);
-		Motor.A.setSpeed(60);
-		Motor.C.setSpeed(60);
+		
+		Motor.A.regulateSpeed(true);
+		Motor.C.regulateSpeed(true);
+		
+		Motor.A.setSpeed(200);
+		Motor.C.setSpeed(200);
 		
 		Button.ENTER.waitForPressAndRelease();
 		
