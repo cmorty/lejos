@@ -18,7 +18,7 @@ extern int last_ad_time;
 
 static inline void instruction_hook(void)
 {
-  gMakeRequest = true;
+  //gMakeRequest = true;
 }
 
 
