@@ -2,7 +2,7 @@ package lejos.nxt;
 
 /**
  * Abstraction for receiver of button events.
- * @see josx.platform.rcx.Button#addButtonListener
+ * @see lejos.nxt.Button#addButtonListener
  */
 public interface ButtonListener
 {

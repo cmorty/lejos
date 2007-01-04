@@ -1,7 +1,8 @@
 package lejos.nxt;
 
 /**
- * RCX sound routines.
+ * NXT sound routines.
+ * These don't work yet.
  */
 public class Sound
 {

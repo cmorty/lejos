@@ -3,7 +3,7 @@ package lejos.util;
 /**
  * A recyclable array. It should be
  * allocated using an instance of <code>ArrayRecycler</code>.
- * @see josx.util.ArrayRecycler
+ * @see lejos.util.ArrayRecycler
  */
 public class RecyclableArray extends AbstractRecyclable {
 	private static final RuntimeException INDEX_EXCEPTION = new ArrayIndexOutOfBoundsException();

@@ -43,7 +43,7 @@ public class Button implements ListenerCaller
   }
 
   /**
-   * Return the ID of the button. One of 1, 2 or 4.
+   * Return the ID of the button. One of 1, 2, 4 or 8.
    */
   public final int getId()
   {
@@ -51,6 +51,7 @@ public class Button implements ListenerCaller
   }
     
   /**
+   * Check if the button is pressed.
    * @return <code>true</code> if button is pressed, <code>false</code> otherwise.
    */
   public final boolean isPressed()
@@ -88,11 +89,13 @@ public class Button implements ListenerCaller
    * <i>Low-level API</i> that reads status of buttons.
    * @return An integer with possibly some bits set: 0x01 (ENTER button pressed)
    * 0x02 (LEFT button pressed), 0x04 (RIGHT button pressed), 0x08 (ESCAPE button pressed).
-   * If all buttons 
-   * are released, this method returns 0.
+   * If all buttons are released, this method returns 0.
    */
   public static native int readButtons();
 
+  /**
+   * Call Button Listeners. Used by ListenerThread.
+   */
   public synchronized void callListeners()
   {
     for( int i = 0; i < iNumListeners; i++) {
