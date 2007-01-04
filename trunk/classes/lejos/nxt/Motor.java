@@ -1,6 +1,4 @@
-import lejos.nxt.Battery;
-
-
+package lejos.nxt;
 
 /**
  * Abstraction for a motor. Three instances of <code>Motor</code>
@@ -8,8 +6,8 @@ import lejos.nxt.Battery;
  * and <code>Motor.C</code>. To control each motor use
  * methods <code>forward, backward, reverseDirection, stop</code>
  * and <code>flt</code>. To set each motor's speed, use
- * <code>setSpeed.  Speed is in degrees per second. </code>.\
- * Methods that use the tachometer:  regulateSpeed, rotate, rotateTo  
+ * <code>setSpeed.  Speed is in degrees per second. </code>
+ * Methods that use the tachometer:  regulateSpeed, rotate, rotateTo.  
  * <p>
  * Example:<p>
  * <code><pre>
@@ -47,8 +45,6 @@ public class Motor
   private boolean _limit = false;
   private boolean _rotating = false;
 
-
-
   /**
    * Motor A.
    */
@@ -69,7 +65,7 @@ public class Motor
     regulator.setDaemon(true); 
   }
 
- private class Regulator extends Thread
+  private class Regulator extends Thread
   {
 	
   	float basePower = 0;
@@ -85,9 +81,10 @@ public class Motor
  		if(pwr>100)return 100;
  		else return (int)pwr;
  	}
- /*
-  * called by forward() backward() and reverseDirection()
-  **/
+ 	
+    /*
+     * called by forward() backward() and reverseDirection()
+     **/
  	public void startRegulating()
 	{
  		_regulate = true;
@@ -96,6 +93,7 @@ public class Motor
  	    basePower = calcPower(_speed);
     	setPower((int)basePower);
  	}
+ 	
   	public void run()
   	{
 	  	while(keepGoing)
@@ -140,7 +138,8 @@ public class Motor
 	  	Thread.yield();
 	  	}	
   	}
-  	 int angleAtStop()
+  	
+  	int angleAtStop()
   	{
 		int a0 = getTachoCount();
 		boolean turning = true;
@@ -158,7 +157,9 @@ public class Motor
   }
 
   private void halt(){stop();}
- public void shutdown(){keepGoing = false;}
+ 
+  public void shutdown(){keepGoing = false;}
+ 
   /**
    * Get the ID of the motor. One of 'A', 'B' or 'C'.
    */
@@ -188,28 +189,31 @@ public class Motor
 		_limit = true; // rotating to a limit
 
 	}
-	private int overshoot()
-	{
-		return 5+ (int)( _speed*0.065f);
-	}
-/**
- * causes motor to rotate through angle;  This method returns immediately <br>
- * When the angle is reached, the method isRotating() returns false;
- * @param  angle through which the motor will rotate
- */
-	public void rotate(int angle)
-	{
-		rotateTo(getTachoCount()+angle);
-	}
-/** 
- * turns speed regulation on/off; <br>
- * Cumulative speed error is within about 1 degree after initial acceleration.
- * @param  yes is true for speed regulation on
- */
-	 public void regulateSpeed(boolean yes) 
-	 	{
-	 		 _regulate = yes;
- 		 }
+  
+  private int overshoot()
+  {
+	return 5+ (int)( _speed*0.065f);
+  }
+	
+  /**
+   * causes motor to rotate through angle;  This method returns immediately <br>
+   * When the angle is reached, the method isRotating() returns false;
+   * @param  angle through which the motor will rotate
+   */
+  public void rotate(int angle)
+  {
+	rotateTo(getTachoCount()+angle);
+  }
+	
+  /** 
+   * turns speed regulation on/off; <br>
+   * Cumulative speed error is within about 1 degree after initial acceleration.
+   * @param  yes is true for speed regulation on
+   */
+  public void regulateSpeed(boolean yes) 
+  {
+    _regulate = yes;
+  }
 
   /**
    * Sets motor speed , in degrees per second; Up to 900 is posssible with 8 volts.
@@ -218,15 +222,14 @@ public class Motor
   public final void setSpeed (int speed)
   {
     _speed = speed;
-     setPower((int)regulator.calcPower(_speed));
+    setPower((int)regulator.calcPower(_speed));
   }
 
-	private void setPower(int power)
-	{
-	 _power = power;
-	  controlMotor (_id - 'A', _mode,power);
-	}
-
+  private void setPower(int power)
+  {
+	_power = power;
+	controlMotor (_id - 'A', _mode,power);
+  }
 
   /**
    * Causes motor to rotate forward.
@@ -280,11 +283,11 @@ public class Motor
     }
     if(_regulate)regulator.startRegulating();
   }
-/**
- * Returns current motor power.
- */
-	public final int getPower(){return _power;}
-
+  
+  /**
+   * Returns current motor power.
+   */
+  public final int getPower(){return _power;}
 
   /**
    * Returns the current motor speed in degrees per second
@@ -295,6 +298,7 @@ public class Motor
   }
 
   /**
+   * Return true if motor is in motion..
    * @return true iff the motor is currently in motion.
    */
   public final boolean isMoving()
@@ -303,6 +307,7 @@ public class Motor
   }
   
   /**
+   * Return true if motor is floating.
    * @return true iff the motor is currently in float mode.
    */
   public final boolean isFloating()
@@ -320,11 +325,11 @@ public class Motor
   {
     _mode = 3;
     controlMotor (_id - 'A', 3, 0);
-
   }
   
   /**
-   * Return true if motor is stopped.
+   * Returns true if motor is stopped.
+   * @return true iff the motor is currently stopped.
    */
   public final boolean isStopped()
   {
@@ -343,37 +348,40 @@ public class Motor
     controlMotor (_id - 'A', 4, 0);
   }
 
-/**
- *returns true when motor is rotating towarad a specified angle
- */ 
+ /**
+  * Return true if motor is rotating towards a specified angle.
+  *returns true when motor is rotating towards a specified angle
+  */ 
   public final boolean isRotating()
   {
   	return  _limit;
   }
+  
   /**
    * <i>Low-level API</i> for controlling a motor.
    * This method is not meant to be called directly.
    * If called, other methods such as isRunning() will
    * be unreliable.
-   * @deprecated I've decided to remove this method.
-   *             If you really need it, check its implementation
-   *             in classes/josx/platform/rcx/Motor.java. 
    * @param aMotor The motor id: 'A', 'B' or 'C'.
    * @param aMode 1=forward, 2=backward, 3=stop, 4=float
-   * @param aSpeed A value in the range [0-100].
+   * @param aPower A value in the range [0-100].
    */
   public static native void controlMotor (int aMotor, int aMode, int aPower);
-/**
- * returns tachometer count
- */
+  
+  /**
+   * returns tachometer count
+   */
   public int getTachoCount()
   {
 	  return getTachoCountById(_id - 'A');
   }
   
+  /**
+   * Low-level API to get tacho count.
+   */
   public static native int getTachoCountById(int aMotor);
 
- /**
+  /**
   *resets the tachometer count to 0;
   */ 
   public void resetTachoCount()
@@ -381,6 +389,9 @@ public class Motor
 	  resetTachoCountById( _id - 'A');
   }
   
+  /**
+   * Low-level API to reset tacho count.
+   */ 
   public static native void resetTachoCountById(int aMotor);
 }
 
