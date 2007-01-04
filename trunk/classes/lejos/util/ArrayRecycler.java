@@ -9,7 +9,7 @@ package lejos.util;
  * Note that the caller is expected to provide
  * thread safety for instances of this class.
  * 
- * @see josx.util.RecyclableArray
+ * @see lejos.util.RecyclableArray
  */
 public final class ArrayRecycler extends Recycler {
 	private int requestedLength;

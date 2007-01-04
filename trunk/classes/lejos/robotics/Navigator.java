@@ -14,28 +14,28 @@ package lejos.robotics;
 public interface Navigator{
   
   /**
-  * Returns the current x coordinate of the RCX.
-  * Note: At present it will only give an updated reading when the RCX is stopped.
+  * Returns the current x coordinate of the NXT.
+  * Note: At present it will only give an updated reading when the NXT is stopped.
   * @return float Present x coordinate.
   */
   public float getX();
   
   /**
-  * Returns the current y coordinate of the RCX.
-  * Note: At present it will only give an updated reading when the RCX is stopped.
+  * Returns the current y coordinate of the NXT.
+  * Note: At present it will only give an updated reading when the NXT is stopped.
   * @return float Present y coordinate.
   */
   public float getY();
   
   /**
-  * Returns the current angle the RCX robot is facing.
-  * Note: At present it will only give an updated reading when the RCX is stopped.
+  * Returns the current angle the NXT robot is facing.
+  * Note: At present it will only give an updated reading when the NXT is stopped.
   * @return float Angle in degrees.
   */
   public float getAngle();
   
   /**
-  * Rotates the RCX robot a specific number of degrees in a direction (+ or -).This
+  * Rotates the NXT robot a specific number of degrees in a direction (+ or -).This
   * method will return once the rotation is complete.
   *
   * @param angle Angle to rotate in degrees. A positive value rotates left, a negative value right.
@@ -43,7 +43,7 @@ public interface Navigator{
   public void rotate(float angle);
 
   /**
-  * Rotates the RCX robot to point in a certain direction. It will take the shortest
+  * Rotates the NXT robot to point in a certain direction. It will take the shortest
   * path necessary to point to the desired angle. Method returns once rotation is complete.
   *
   * @param angle The angle to rotate to, in degrees.
@@ -51,7 +51,7 @@ public interface Navigator{
   public void gotoAngle(float angle);
 
   /**
-  * Rotates the RCX robot towards the target point and moves the required distance.
+  * Rotates the NXT robot towards the target point and moves the required distance.
   *
   * @param x The x coordinate to move to.
   * @param y The y coordinate to move to.
@@ -59,7 +59,7 @@ public interface Navigator{
   public void gotoPoint(float x, float y);
 
   /**
-  * Moves the RCX robot a specific distance. A positive value moves it forward and
+  * Moves the NXT robot a specific distance. A positive value moves it forward and
   * a negative value moves it backward. Method returns when movement is done.
   *
   * @param distance The positive or negative distance to move the robot.
@@ -67,21 +67,21 @@ public interface Navigator{
   public void travel(int distance);
   
   /**
-  * Moves the RCX robot forward until stop() is called.
+  * Moves the NXT robot forward until stop() is called.
   *
   * @see Navigator#stop().
   */
   public void forward();
 
   /**
-  * Moves the RCX robot backward until stop() is called.
+  * Moves the NXT robot backward until stop() is called.
   *
   * @see Navigator#stop().
   */
   public void backward();
 
   /**
-  * Halts the RCX robot and calculates new x, y coordinates.
+  * Halts the NXT robot and calculates new x, y coordinates.
   *
   * @see Navigator#forward().
   */
