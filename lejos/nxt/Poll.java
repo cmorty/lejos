@@ -4,7 +4,7 @@
 package lejos.nxt;
 
 /**
- * Provides blocking access to events from the RCX. Poll is a bit
+ * Provides blocking access to events from the NXT. Poll is a bit
  * of a misnomer (since you don't 'poll' at all) but it takes its
  * name from the Unix call of the same name.
  */

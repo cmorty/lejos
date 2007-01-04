@@ -2,7 +2,7 @@ package lejos.util;
 
 /**
  * Represents a recyclable object.
- * @see josx.util.Recycler
+ * @see lejos.util.Recycler
  */
 public interface Recyclable {
 	/**
@@ -20,13 +20,13 @@ public interface Recyclable {
 	/**
 	 * Must return Recyclable most recently set with
 	 * <code>setNextRecyclable</code>.
-	 * @see josx.util.Recyclable#setNextRecyclable
+	 * @see lejos.util.Recyclable#setNextRecyclable
 	 */
     public Recyclable getNextRecyclable();
 
 	/**
 	 * Stores a Recyclable object.
-	 * @see josx.util.Recyclable#getNextRecyclable
+	 * @see lejos.util.Recyclable#getNextRecyclable
 	 */
     public void setNextRecyclable (Recyclable r);	
 }

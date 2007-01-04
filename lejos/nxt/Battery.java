@@ -9,6 +9,9 @@ package lejos.nxt;
 public class Battery
 {
 
+  private Battery()
+  {
+  }
   /**
    * @return Battery voltage in mV.
    */

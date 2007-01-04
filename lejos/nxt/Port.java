@@ -1,5 +1,9 @@
 package lejos.nxt;
 
+/**
+ * Abstraction for a NXT input port.
+ * 
+ */
 public class Port implements ListenerCaller
 {
   private int iPortId;
@@ -23,7 +27,7 @@ public class Port implements ListenerCaller
   public static final Port S3 = new Port (2);
 
   /**
-   * Port labeled 3 on NXT.
+   * Port labeled 4 on NXT.
    */
   public static final Port S4 = new Port (3);
 
@@ -34,6 +38,7 @@ public class Port implements ListenerCaller
 
   /**
    * Reads the canonical value of the sensor.
+   * Do not use - currently returns the raw value.
    */
   public final int readValue()
   {
@@ -50,6 +55,7 @@ public class Port implements ListenerCaller
 
   /**
    * Reads the boolean value of the sensor.
+   * Do not use - currently returns the raw value.
    */
   public final boolean readBooleanValue()
   {
@@ -77,7 +83,7 @@ public class Port implements ListenerCaller
    * NOTE 2: Synchronizing inside listener methods could result
    * in a deadlock.
    * </b>
-   * @see josx.platform.rcx.SensorListener
+   * @see lejos.nxt.PortListener
    */
   public synchronized void addPortListener (PortListener aListener)
   {
@@ -90,10 +96,10 @@ public class Port implements ListenerCaller
   }
 
   /**
-   * Activates the sensor. This method should be called
-   * if you want to get accurate values from the
-   * sensor. In the case of light sensors, you should see
-   * the led go on when you call this method.
+   * Activates an RCX sensor. This method should be called
+   * if you want to get accurate values from an RCX
+   * sensor. In the case of RCX light sensors, you should see
+   * the LED go on when you call this method.
    */
   public final void activate()
   {
@@ -101,7 +107,7 @@ public class Port implements ListenerCaller
   }
 
   /**
-   * Passivates the sensor. 
+   * Passivates an RCX sensor sensor. 
    */
   public final void passivate()
   {
@@ -110,25 +116,49 @@ public class Port implements ListenerCaller
 
   /**
    * <i>Low-level API</i> for reading sensor values.
-   * @param aSensorId Sensor ID (0..2).
+   * Currently always returns the raw ADC value.
+   * @param aPortId Port ID (0..4).
    * @param aRequestType 0 = raw value, 1 = canonical value, 2 = boolean value.
    */
   public static native int readSensorValue (int aPortId, int aRequestType);
   
+  /**
+   * Low-level method to set the type of an A/D sensor.
+   * A value of 1 will set pin 5, 2 will set pin 6, 3 will set both.
+   * For example, a value of 1 sets floodlighting on a LightSensor,
+   * a value of 1 sets DB mode and a value of 2 sets DBA mode, on a SoundSensor. 
+   */
   public void setADType(int type)
   {
 	  setADTypeById(iPortId,type);
   }
   
+  /**
+   * Low-level method to set the input power setting for a sensor.
+   * Values are: 0 - no power, 1 RCX active power, 2 power always on.
+   **/
   public void setPowerType(int type)
   {
 	  setPowerTypeById(iPortId,type);
   }
   
+  /**
+   * Low-level method to set the type of an A/D sensor.
+   * A value of 1 will set pin 5, 2 will set pin 6, 3 will set both.
+   * For example, a value of 1 sets floodlighting on a LightSensor,
+   * a value of 1 sets DB mode and a value of 2 sets DBA mode, on a SoundSensor. 
+   */
   public static native void setADTypeById(int aPortId, int aADType);
   
+  /**
+   * Low-level method to set the input power setting for a sensor.
+   * Values are: 0 - no power, 1 RCX active power, 2 power always on.
+   **/
   public static native void setPowerTypeById(int aPortId, int aPortType);
   
+  /**
+   * Call Port Listeners. Used by ListenerThread.
+   */
   public synchronized void callListeners() {
     int newValue = readSensorValue( iPortId, 0);
     for (int i = 0; i < iNumListeners; i++) {

@@ -2,7 +2,7 @@ package lejos.util;
 
 /**
  * Represents a recyclable object.
- * @see josx.util.Recycler
+ * @see lejos.util.Recycler
  */
 public abstract class AbstractRecyclable implements Recyclable {
 	private Recyclable nextRecyclable;
@@ -20,7 +20,7 @@ public abstract class AbstractRecyclable implements Recyclable {
 	/**
 	 * Must return Recyclable most recently set with
 	 * <code>setNextRecyclable</code>.
-	 * @see josx.util.Recyclable#setNextRecyclable
+	 * @see lejos.util.Recyclable#setNextRecyclable
 	 */
 	public Recyclable getNextRecyclable() {
 	    return this.nextRecyclable;
@@ -28,7 +28,7 @@ public abstract class AbstractRecyclable implements Recyclable {
 
 	/**
 	 * Stores a Recyclable object.
-	 * @see josx.util.Recyclable#getNextRecyclable
+	 * @see lejos.util.Recyclable#getNextRecyclable
 	 */
 	 public void setNextRecyclable (Recyclable r) {
 		this.nextRecyclable = r; 

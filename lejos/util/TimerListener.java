@@ -3,7 +3,7 @@ package lejos.util;
 /**
  * Listener used with Timer.
  * 
- * @see josx.util.Timer
+ * @see lejos.util.Timer
  * @author <a href="mailto:rvbijl39<at>calvin<dot>edu">Ryan VanderBijl</a> 
  */
 
