@@ -7,7 +7,7 @@
 
 #define DEBUG_RCX_MEMORY 0
 
-extern byte typeSize[];
+extern const byte typeSize[];
 
 extern void memory_init ();
 extern void memory_add_region (byte *region, byte *end);

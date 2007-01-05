@@ -28,7 +28,7 @@ static boolean memoryInitialized = false;
 // Size of stack frame in 2-byte words
 #define NORM_SF_SIZE ((sizeof(StackFrame) + 1) / 2)
 
-byte typeSize[] = { 
+const byte typeSize[] = { 
   4, // 0 == T_REFERENCE
   SF_SIZE, // 1 == T_STACKFRAME
   0, // 2
