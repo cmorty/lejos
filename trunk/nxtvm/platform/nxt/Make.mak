@@ -18,8 +18,12 @@ SAMBA_LDSCRIPT := $(TARGET)_samba.ld
 S_OBJECTS := $(S_SOURCES:.s=.o)
 C_OBJECTS := $(C_SOURCES:.c=.o) $(C_RAMSOURCES:.c=.oram)
 
+C_OPTIMISATION_FLAGS = -Os
+#C_OPTIMISATION_FLAGS = -O0
+
 CFLAGS = -c -ffreestanding -fsigned-char -mcpu=arm7tdmi  \
-         -Winline -Os -g  -Wall -Werror-implicit-function-declaration \
+	$(C_OPTIMISATION_FLAGS) -g  \
+	-Winline -Wall -Werror-implicit-function-declaration \
 	-I. -I$(VM_DIR) \
          -mthumb -mthumb-interwork -ffunction-sections -fdata-sections
 
