@@ -1,0 +1,89 @@
+<!-- ant file to make libnxt and runjava -->
+
+<project name="libnxt" default="make" basedir=".">
+	<property name="endian" value="_NXT_LITTLE_ENDIAN"/>
+	<!-- cpptasks task & type def -->
+	<taskdef resource="cpptasks.tasks">
+	  <classpath>
+	    <pathelement location="../jtools/3rdparty/lib/cpptasks.jar"/>
+	  </classpath>
+	</taskdef>
+	<typedef resource="cpptasks.types">
+	  <classpath>
+	    <pathelement location="../jtools/3rdparty/lib/cpptasks.jar"/>
+	  </classpath>
+	</typedef>
+	
+	<!-- cleans all compilation artifacts -->
+	<target name="clean" description="cleans all compilation artifacts">
+		<delete>
+			<fileset dir=".">
+				<include name="*.o"/>
+			</fileset>
+		</delete>
+	</target>
+	
+	<!-- make libnxt and its utilities --> 
+	<target name="make" depends="clean,libnxt,runjava" description="makes libnxrt and its tools">
+	</target>
+
+	<!-- make libnxt --> 
+	<target name="libnxt" description="makes libnxt">
+  		<cc subsystem="console" 
+  				outfile="nxt"
+  				objdir="." 
+  				outtype="static" 
+  				debug="false"
+  			    exceptions="false"
+  			    rtti="true"
+  			    optimize="speed"
+  				name="gcc">
+  			    <compilerarg value="-Wall"/>
+  			    <compilerarg value="-std=gnu99"/>
+  			    <compilerarg value="-g"/>
+  			    <compilerarg value="-ggdb"/>
+  			    <compilerarg value="-D${endian}"/>
+  				<fileset dir=".">
+  					<include name="error.c"/>
+  					<include name="firmware.c"/>
+  					<include name="flash_routine.c"/>  					<include name="error.c"/>
+  	  				<include name="flash.c"/> 
+  	  				<include name="lowlevel.c"/>
+  	  				<include name="samba.c"/>
+  				</fileset>
+				<includepath>
+					<pathelement location="."/>
+				</includepath>
+  				<versioninfo refid="libnxt"/>
+  		</cc>
+	</target>
+	
+	<!-- make runjava --> 
+	<target name="runjava" description="makes runjava utility">
+  		<cc subsystem="console" 
+  				outfile="runjava"
+  				objdir="." 
+  				outtype="executable" 
+  				debug="false"
+  			    exceptions="false"
+  			    rtti="true"
+  			    optimize="speed"
+  				name="gcc">
+  			    <compilerarg value="-Wall"/>
+  			    <compilerarg value="-std=gnu99"/>
+  			    <compilerarg value="-g"/>
+  			    <compilerarg value="-ggdb"/>
+  			    <compilerarg value="-D_NXT_LITTLE_ENDIAN"/>
+  				<fileset dir=".">
+  					<include name="main_runjava.c"/>
+  				</fileset>
+  				<libset dir="." libs="nxt,usb"/>				
+				<includepath>
+					<pathelement location="."/>
+				</includepath>
+  				<versioninfo refid="runjava"/>
+  		</cc>
+	</target>
+
+</project>
+
