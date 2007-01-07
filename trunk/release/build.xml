@@ -1,0 +1,263 @@
+<!--
+  ==================================================
+  Buildfile for release of leJOS NXJ
+  ==================================================
+-->
+<project name="leJOS NXJ release" default="release" basedir=".">
+	
+	<!-- Setting up the global properties for the build -->
+  	<property file="build.properties"/>
+	<property environment="env"/>
+	<property name="lejos.root" value="${basedir}/.."/>
+	<property name="3rdparty.libs" value="${lejos.root}/jtools/3rdparty/lib" />
+	<property name="release" value="${lejos.root}/release"/>
+	<property name="release.bin" value="${release}/bin"/>
+	<property name="src" value="${lejos.root}"/>
+	<property name="javasrc" value="${src}"/>
+	<property name="javavm.src" value="${src}/javavm"/>
+	<property name="release.tmp" value="${release}/tmp"/>
+	<property name="release.lib" value="${release}/lib"/>
+	<property name="release.src" value="${release}/src"/>
+	<property name="release.dist" value="${release}/dist"/>
+	<property name="release.release" value="${release}/release"/>
+	<property name="release.docs" value="${release}/docs"/>
+	<property name="release.samples" value="${release}/samples"/>
+	<property name="release.3rdparty.libs" value="${release}/3rdparty/lib"/>
+	<property name="plat.unix.src" value="${src}/platform/unix"/>
+	<property name="plat.nxt.src" value="${src}/platform/nxt"/>
+	<property name="release.3rdparty.cp" value="${release.3rdparty.libs}/commons-cli-1.0.jar:${release.3rdparty.libs}/bcel-5.1.jar"/>
+	<property name="release.lib.cp" value="${release.lib}/classes.jar:${release.lib}/jtools.jar"/>
+	<property name="make.out" value="${release.bin}"/>
+	<property name="build.tmp" value="${release.tmp}"/>
+	<property name="lib" value="${release.lib}"/>
+	<property name="bin" value="${release.bin}"/>
+
+	<!-- cpptasks task & type def -->
+	<taskdef resource="cpptasks.tasks">
+	  <classpath>
+	    <pathelement location="${3rdparty.libs}/cpptasks.jar"/>
+	  </classpath>
+	</taskdef>
+	<typedef resource="cpptasks.types">
+	  <classpath>
+	    <pathelement location="${3rdparty.libs}/cpptasks.jar"/>
+	  </classpath>
+	</typedef>
+	
+	<!-- release leJOS NXJ --> 
+	<target name="release" depends ="clean,create.folders,lejos.sources,license,doc,scripts,samples"
+		description="releases leJOS NXJ">
+		<!-- clean distribution -->
+		<delete>
+		    <fileset dir="${release.dist}">
+		    	<include name = "**/*.gz"/>
+		    	<include name = "**/*.zip"/>
+		    </fileset>
+		</delete>
+		<!-- tar/zip os dependent file -->
+		<antcall target="distribution.${lejos.ostype}"/> 
+		<!-- zip leJOS doc distribution -->
+		<zip destfile="${release.dist}/${lejos.version}-doc.zip">
+			 <fileset dir="${release}" >
+			    <include name="docs/**"/>
+			  </fileset>
+		</zip>
+		<!-- clean temp files -->
+		<delete>
+		    <fileset dir="${release.dist}">
+		    	<include name = "**/*.tar"/>
+		    </fileset>
+		</delete>
+		<!-- notify -->
+		<echo message="The packed distribution might be found in ${release.dist} now"/>
+	</target>
+
+  	<!-- cleans the distribution -->
+	<target name="clean" description="clean up all generated files">
+	  	<!-- delete transient release folders -->
+	    <delete dir="${release.tmp}"/>
+	  	<delete dir="${release.lib}"/>
+	  	<delete dir="${release.src}"/>
+	  	<delete dir="${release.docs}"/>
+	  	<delete dir="${release.samples}"/>
+	  	<delete dir="${release.3rdparty.libs}"/>
+		<!-- delete generated artifacts -->
+	  	<delete>
+	  		<fileset dir="${release.bin}">
+				<exclude name="*.srec"/>
+			</fileset>
+	  	</delete>
+		<!-- delete compiled and generated artifacts -->
+		<delete>
+			<fileset dir="${lejos.root}"> 
+				<include name="**/*.o"/>
+				<include name="**/*~"/>
+				<include name="**/*.core"/>
+				<include name="**/*.tvm"/>
+				<include name="**/*.class"/>
+				<include name="**/*.sig"/>
+				<include name="**/*.bak"/>
+				<include name="**/*.stackdump"/>
+				<include name="**/*.backtrace"/>
+				<include name="**/*.#"/>
+				<include name="**/*.lst"/>
+				<include name="**/*.log"/>
+			</fileset>
+		</delete>
+	  	<!-- delete distribution folder -->
+	  	<delete dir="${release.dist}"/>
+	  	<!-- delete release/release folder -->
+	  	<delete dir="${release.release}"/>
+  	</target>
+  	
+	<!-- copies the lejos sources -->
+	<target name="lejos.sources" description="copies the lejos sources">
+		<copy todir="${release.src}/java">
+			<fileset dir="${javasrc}">
+        		<include name="classes/**/*.java"/>
+      		</fileset>
+		</copy>
+
+		<copy todir="${release.src}/javavm">
+          	<fileset dir="${javavm.src}">
+            	<include name="**/*.c"/>
+            	<include name="**/*.h"/>
+            	<include name="**/*.db"/>
+            	<include name="**/*.hc"/>
+          	</fileset>
+		</copy>
+		
+		<copy todir="${release.src}/platform/unix">
+          	<fileset dir="${plat.unix.src}">
+            	<include name="**/*.c"/>
+            	<include name="**/*.h"/>
+            	<include name="**/build.xml"/>
+          	</fileset>
+		</copy>
+	</target>
+
+	<!-- makes a timestamp and creates some required folders -->
+ 	<target name="create.folders" description="setup build">
+    	<tstamp/>
+    	<mkdir dir="${release.tmp}"/>
+    	<mkdir dir="${release.lib}"/>
+    	<mkdir dir="${release.src}"/>
+    	<mkdir dir="${release.docs}"/>
+    	<mkdir dir="${release.docs}/tutorial"/>
+    	<mkdir dir="${release.docs}/uml"/>
+    	<mkdir dir="${release.dist}"/>
+    	<mkdir dir="${release.release}"/>
+    	<mkdir dir="${release.samples}"/>
+    	<mkdir dir="${release.3rdparty.libs}"/>
+ 		<copy todir="${release.3rdparty.libs}">
+ 			<fileset dir="${3rdparty.libs}">
+ 				<include name="*.jar"/>
+ 			</fileset>
+ 		</copy>
+  	</target>
+
+	<!-- creates the documentation -->
+	<target name="doc" depends="create.folders,platform.doc" description="creates the documentation">
+ 		<copy file="README.html" todir="${release.docs}"/>
+ 		<copy file="RELEASENOTES" todir="${release.docs}"/>
+ 		<copy file="LICENSE" todir="${release.docs}"/>
+ 		<copy file="ACKNOWLEDGMENTS" todir="${release.docs}"/>
+ 		<copy file="LEGAL" todir="${release.docs}"/>
+	</target>
+
+	<!-- copies the run scripts -->
+	<target name="scripts" depends="create.folders" description="copies the run scripts (lejosjc etc.)">
+		<copy todir="${release.bin}">
+      		<fileset dir="${lejos.root}/bin">
+        		<include name="lejosjc"/>
+				<include name="lejosjc.bat"/>
+        		<include name="lejoslink"/>
+				<include name="lejoslink.bat"/>
+      		</fileset>
+    	</copy>
+		<copy todir="${release.release}">
+      		<fileset dir="${release}">
+        		<include name="*.sh"/>
+      		</fileset>
+    	</copy>
+		<!-- adjust permissions -->
+  		<chmod perm="755">
+  			<fileset dir="${release.bin}">
+  	      	</fileset>
+  		</chmod>
+	</target>
+
+	<!-- copies the license -->
+	<target name="license" depends="create.folders" description="copies the license">
+		<copy todir="${release}">
+      		<fileset dir="${lejos.root}">
+        		<include name="LICENSE"/>
+      		</fileset>
+    	</copy>
+	</target>
+
+	<!-- copies the samples -->
+	<target name="samples" depends="create.folders" description="copies the samples">
+		<copy todir="${release.samples}">
+      		<fileset dir="${lejos.root}/examples">
+        		<exclude name="CVS"/>
+        		<exclude name="**/Makefile"/>
+      		</fileset>
+    	</copy>
+	</target>
+
+	<!-- packages the linux distribution -->
+	<target name="distribution.linux" description="packages the linux distribution">
+		<!-- tar & gzip leJOS Unix distribution -->
+		<tar destfile="${release.dist}/${lejos.version}.tar">
+			 <tarfileset dir="${release}" >
+			    <include name="RELEASENOTES"/>
+			    <include name="README.html"/>
+			    <include name="lib/*.jar"/>
+			    <include name="src/**"/>
+			    <include name="bin/*"/>
+			 	<exclude name="bin/*.xml"/>
+			    <include name="samples/**"/>
+			    <include name="check/**"/>
+			 	<include name="build/*"/>
+			 	<include name="3rdparty/**"/>
+			 	<include name="release/*"/>
+			  </tarfileset>
+		</tar>
+		<gzip zipfile="${release.dist}/${lejos.version}.tar.gz" src="${release.dist}/${lejos.version}.tar"/>
+	</target>
+	
+	<!-- packages the windows distribution -->
+	<target name="distribution.cygwin" description="packages the windows distribution">
+		<!-- zip leJOS windows distribution -->
+		<zip destfile="${release.dist}/${lejos.version}-win32.zip">
+			 <fileset dir="${release}" >
+			    <include name="RELEASENOTES"/>
+			    <include name="README.html"/>
+			    <include name="lib/*.jar"/>
+			    <include name="src/**"/>
+			    <include name="bin/*"/>
+			 	<exclude name="bin/*.xml"/>
+			    <include name="samples/**"/>
+			    <include name="check/**"/>
+<!--			 	<include name="build/*"/>-->
+			 	<include name="3rdparty/**"/>
+			  </fileset>
+		</zip>
+	</target>
+
+	<!-- creates the platform API doc -->
+  <target name="platform.doc" depends="" description="generate the platform API doc">
+    <mkdir dir="${release.docs}/platform"/>
+    <!-- packages: java.io java.lang java.util josx.platform.rcx josx.util josx.robotics josx.rcxcomm java.net javax.servlet.http -->
+    <javadoc protected="true"
+             windowtitle="leJOS API platform documentation"
+             author="true"
+             destdir="${release.docs}/platform"
+             source="1.1"
+             defaultexcludes="yes">
+      <fileset dir="${javasrc}/classes"/>
+    </javadoc>
+  </target>
+
+</project>
