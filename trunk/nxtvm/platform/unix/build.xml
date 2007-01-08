@@ -69,7 +69,7 @@
 				</includepath>
   				<versioninfo refid="lejos nxt 0.1"/>
   		</cc>
-		<exec executable="./dump_config" failonerror="true" dir=".">
+		<exec executable="${basedir}/dump_config" failonerror="true" dir=".">
 			<redirector outputproperty="platform_config.h">
 				<outputmapper type="merge" to="platform_config.h" />
 			</redirector>
