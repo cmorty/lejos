@@ -7,6 +7,7 @@ To create a new release of leJOS NXT, please perform the following steps:
 
 1. Open a shell (on Windows, you will need a cygwin shell) and change directory to $LEJOS_HOME/release
 2. Ensure you have the latest VM and jar files built. The release build file does not rebuild them.
-3. On Windows, make sure you have runjava.exe in snapshot/bin.
-4. Run "ant"
-5. After the ant script has finished (including, the packed distributions for Linux and Windows may be found at $LEJOS_HOME/release/dist
+3. Set the correct version number in release/build.properties
+4. On Windows, make sure you have runjava.exe in snapshot/bin.
+5. Run "ant"
+6. After the ant script has finished (including, the packed distributions for Linux and Windows may be found at $LEJOS_HOME/release/dist
