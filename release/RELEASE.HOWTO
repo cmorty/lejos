@@ -1,14 +1,12 @@
 For running the ant based release utilities successfully, you will need to have
 
 - an ANT installation (at least 1.6)
+- all projects downloaded from SVN
 
 To create a new release of leJOS NXT, please perform the following steps:
 
-1. Change into the lejos/release folder
-2. Edit the build.properties file:
-   - set the property "lejos.version" to the new label of the relase
-   - set the property "lejos.ostype" to either "linux", "cygwin" or "darwin" 
-3. Open a shell (on Windows, you will need a cygwin shell) and change there to lejos/release
-4. Set the environment LEJOS_HOME to your lejos installation path
-5. Run "ant"
-6. After the ant script has finished (including contained tests), the packed distribution may be found at lejos/release/dist
+1. Open a shell (on Windows, you will need a cygwin shell) and change directory to $LEJOS_HOME/release
+2. Ensure you have the latest VM and jar files built. The release build file does not rebuild them.
+3. On Windows, make sure you have runjava.exe in snapshot/bin.
+4. Run "ant"
+5. After the ant script has finished (including, the packed distributions for Linux and Windows may be found at $LEJOS_HOME/release/dist
