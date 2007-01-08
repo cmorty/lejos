@@ -1,7 +1,7 @@
 @echo off
 if "%LEJOS_HOME%" == ""  goto homeless
 
-runjava "%LEJOS_HOME%\lejos_nxt.bin" %1
+runjava "%LEJOS_HOME%\bin\lejos_nxt.bin" %1
 goto end
 
 :homeless

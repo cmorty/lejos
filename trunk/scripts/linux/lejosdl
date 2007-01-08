@@ -11,4 +11,4 @@ if [ -z "$LEJOS_HOME" ]; then
   LEJOS_HOME="$(dirname $(dirname $0))"
 fi
 
-runjava $LEJOS_HOME/lejos_nxt.bin "$@"
+runjava $LEJOS_HOME/bin/lejos_nxt.bin "$@"
