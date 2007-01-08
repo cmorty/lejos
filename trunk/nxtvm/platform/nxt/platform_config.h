@@ -32,6 +32,6 @@ typedef unsigned long FOURBYTES;
 // Are we using the timer IRQ to switch threads? Not yet.
 
 #define PLATFORM_HANDLES_SWITCH_THREAD 0
-#define TICKS_PER_TIME_SLICE          20
+#define TICKS_PER_TIME_SLICE          2
 
 #endif // _PLATFORM_CONFIG_H
