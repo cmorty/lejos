@@ -1,7 +1,7 @@
 #ifndef __NXT_AVR_H__
-#define __NXT_AVR_H__ 
+#  define __NXT_AVR_H__
 
-#include "mytypes.h"
+#  include "mytypes.h"
 
 /* Main user interface */
 void nxt_avr_init(void);
@@ -25,4 +25,3 @@ U32 sensor_adc(U32 n);
 void nxt_avr_set_input_power(U32 n, U32 power_type);
 
 #endif
-

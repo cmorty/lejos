@@ -1,7 +1,7 @@
 #ifndef __NXT_SPI_H__
-#define __NXT_SPI_H__
+#  define __NXT_SPI_H__
 
-#include "mytypes.h"
+#  include "mytypes.h"
 
 /*
  * Note that this is not a normal SPI interface, 
@@ -19,9 +19,3 @@ void nxt_spi_init(void);
 void nxt_spi_write(U32 CD, const U8 *data, U32 nBytes);
 
 #endif
-
-
-
-
-
-
