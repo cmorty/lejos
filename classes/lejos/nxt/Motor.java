@@ -1,7 +1,4 @@
-import lejos.nxt.Battery;
-//import lejos.nxt.LCD;
-
-
+package lejos.nxt;
 
 /**
  * Abstraction for a motor. Three instances of <code>Motor</code>
@@ -399,7 +396,7 @@ public class Motor
    *             in classes/josx/platform/rcx/Motor.java. 
    * @param aMotor The motor id: 'A', 'B' or 'C'.
    * @param aMode 1=forward, 2=backward, 3=stop, 4=float
-   * @param aSpeed A value in the range [0-100].
+   * @param aPower A value in the range [0-100].
    */
   public static native void controlMotor (int aMotor, int aMode, int aPower);
 /**
