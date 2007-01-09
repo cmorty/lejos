@@ -5,11 +5,8 @@
 
 int last_ad_time;
 
-FOURBYTES get_sys_time_impl(void)
+FOURBYTES
+get_sys_time_impl(void)
 {
   return systick_get_ms();
 }
-
-
-
-

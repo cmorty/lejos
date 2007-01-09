@@ -1,7 +1,7 @@
 #ifndef __DISPLAY_H__
-#define __DISPLAY_H__
+#  define __DISPLAY_H__
 
-#include "mytypes.h"
+#  include "mytypes.h"
 
 void display_init(void);
 
@@ -15,15 +15,15 @@ void display_char(int c);
 
 void display_string(const char *str);
 
-void display_int (int val, U32 places);
-void display_hex (U32 val, U32 places);
+void display_int(int val, U32 places);
+void display_hex(U32 val, U32 places);
 
-void display_unsigned (U32 val, U32 places);  
+void display_unsigned(U32 val, U32 places);
 
 void display_bitmap_copy(const U8 *data, U32 width, U32 depth, U32 x, U32 y);
 
 void display_test(void);
 
-U8 * display_get_buffer(void);
+U8 *display_get_buffer(void);
 
 #endif

@@ -1,7 +1,7 @@
 #ifndef  __SYSTICK_H__
-#define __SYSTICK_H__
+#  define __SYSTICK_H__
 
-#include "mytypes.h"
+#  include "mytypes.h"
 
 void systick_init(void);
 

@@ -2,24 +2,28 @@
 #include "interrupts.h"
 
 
-void flash_erase_range(U32 addr, U32 nBytes)
+void
+flash_erase_range(U32 addr, U32 nBytes)
 {
   int i = 0;
   int istate = interrupts_get_and_disable();
-  while(nBytes--){
+
+  while (nBytes--) {
     i++;
   }
-  if(istate)
+  if (istate)
     interrupts_enable();
 }
 
-void flash_write(U32 addr, void *buffer, U32 nBytes)
+void
+flash_write(U32 addr, void *buffer, U32 nBytes)
 {
   int i = 0;
   int istate = interrupts_get_and_disable();
-  while(nBytes--){
+
+  while (nBytes--) {
     i++;
   }
-  if(istate)
+  if (istate)
     interrupts_enable();
 }
