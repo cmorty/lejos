@@ -2,7 +2,7 @@ How to use NXT Lejos with the Samba RAM Loader on a Linux system:
 
 - Build a GCC toolchain, use the instructions at Gnuarm for gcc 4.0.2
 
-- Go to libnxt and build the runjava utility, just run make
+- Go to libnxt and build the runjava utility, just run scons
 
 - Go to nxtvm/platform/nxt, edit environment.mak w.r.t. the location
   of the toolchain, run make
