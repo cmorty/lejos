@@ -12,7 +12,7 @@
   <target name="compile" 
         description="compile the source " >
     <!-- Compile the java code from ${src}  -->
-    <javac srcdir="${src}" destdir="${src}">
+    <javac source="1.3" target="1.1" srcdir="${src}" destdir="${src}">
       <bootclasspath>
         <pathelement location="${lejos_home}/classes/lib/classes.jar"/>
        </bootclasspath>
