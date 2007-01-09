@@ -21,8 +21,6 @@ leJOS NXT 0.1alpha
 - The RCX touch and light sensors are supported, but not the rotation sensor
 - RCX motors are supported
 - I2C sensors such as the Ultrasonic sensior are not supported
-- The robotics classes are incomplete
-
 
 leJOS 3.0.0
 -----------
