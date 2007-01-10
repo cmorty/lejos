@@ -230,6 +230,10 @@
 			 	<exclude name="bin/runjava.exe"/>
 			 	<exclude name="bin/*.bat"/>
 			    <include name="samples/**"/>
+			 	<exclude name="samples/**/README"/>
+			 	<exclude name="samples/**/build.xml"/>
+			 	<exclude name="samples/**/.classpath"/>
+			 	<exclude name="samples/**/.project"/>
 			 	<include name="build/*"/>
 			 	<include name="3rdparty/**"/>
 			 	<include name="docs/**"/>
@@ -256,6 +260,7 @@
 			 	<exclude name="bin/lejoslink"/>
 			    <include name="samples/**"/>
 			 	<exclude name="samples/**/README"/>
+			 	<exclude name="samples/**/build.xml"/>
 			 	<exclude name="samples/**/.classpath"/>
 			 	<exclude name="samples/**/.project"/>
 			 	<include name="3rdparty/**"/>
