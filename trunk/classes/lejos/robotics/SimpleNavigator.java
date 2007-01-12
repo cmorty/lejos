@@ -135,14 +135,8 @@ package lejos.robotics;
 	      // Calculate the number of intervals of rotation sensor to count
 	      int count = (int)(COUNTS_PER_DEGREE * angle);
 	      
-	      if (count > 0) {
-	         right.rotate((int) count);
-	         left.rotate((int) -count);
-	      }
-	      else if (count < 0) {
-	         right.rotate((int) -count);
-	         left.rotate((int) count);
-	      }
+	      right.rotate(count);
+	      left.rotate(-count);
 	      
 	      while (left.isRotating() || right.isRotating());
 	   }
@@ -207,14 +201,9 @@ package lejos.robotics;
 		  left.resetTachoCount();
 		  right.resetTachoCount();
 		  
-	      if(dist > 0) {
-	    	  left.rotate(counts);
-	    	  right.rotate(counts);
-	      } else
-	      if(dist < 0) {
-	    	  left.rotate(-counts);
-	    	  right.rotate(-counts);
-	      }
+		  left.rotate(counts);
+		  right.rotate(counts);
+
 	      while (left.isRotating() || right.isRotating());
 	      moving = true;
 	      stop();
@@ -252,11 +241,13 @@ package lejos.robotics;
 	   * @see Navigator#forward().
 	   */
 	   public void stop() {
+		   
+	      left.stop();
+	      right.stop();
+	      
 	      if(moving) {
 	    	 moving = false;
-	         left.stop();
-	         right.stop();
-	         
+
 	         // Recalculate x-y coordinates based on rotation sensors
 
 	         int rotAvg = (left.getTachoCount() + right.getTachoCount()) / 2;
