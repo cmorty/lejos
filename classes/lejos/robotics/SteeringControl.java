@@ -1,6 +1,6 @@
+package lejos.robotics;
 
-import lejos.nxt.LCD;
-import lejos.nxt.Button;
+import lejos.nxt.*;
 
 /**
  * The SteeringControl class contains methods to control NXT robot movents: travel forward or backward in a straight line or a circular path or rotate to a new direction.  <br>
@@ -252,14 +252,14 @@ public class SteeringControl
 		_right.forward(); 
 	 }
 
-	public static void main(String[] args ) 
-	{
-
-		Start.press("Steering Control");
-		SteeringControl robot = new SteeringControl(Motor.A, Motor.C,2.1f,4.4f,true);
-		LCD.drawInt((int)(10*robot._trackWidth),0,4);
-		LCD.refresh();
-		robot.setSpeed(400);
+//	public static void main(String[] args ) 
+//	{
+//
+//		Start.press("Steering Control");
+//		SteeringControl robot = new SteeringControl(Motor.A, Motor.C,2.1f,4.4f,true);
+//		LCD.drawInt((int)(10*robot._trackWidth),0,4);
+//		LCD.refresh();
+//		robot.setSpeed(400);
 //		for(int i = 0; i<4; i++)
 //		{
 //			robot.rotate(90,true);
@@ -275,17 +275,17 @@ public class SteeringControl
 //		LCD.drawInt(robot._left.getTachoCount(),0,6);
 //		LCD.drawInt(robot._right.getTachoCount(),5,6);
 //		LCD.refresh();
-
-		robot.travel(12,true);
-		robot.travel(-5,true);
+//
+//		robot.travel(12,true);
+//		robot.travel(-5,true);
 //		robot.forward();
 //		Tools.pause(1000);
 //		robot.backward();
 //		Tools.pause(1000);
-		robot.travel(12);
-		while(robot.isMoving())Thread.yield();
-		robot.travel(-12);
-		while(robot.isMoving())Thread.yield();
+//		robot.travel(12);
+//		while(robot.isMoving())Thread.yield();
+//		robot.travel(-12);
+//		while(robot.isMoving())Thread.yield();
 //		robot.setSpeed(500);
 //		robot.rotate(90);
 //		while(robot.isMoving())Thread.yield();
@@ -310,8 +310,8 @@ public class SteeringControl
 //		LCD.drawInt(robot._left.getTachoCount(),0,7);
 //		LCD.drawInt(robot._right.getTachoCount(),5,7);
 //		LCD.refresh();
-		while(Button.readButtons()==0)Thread.yield();
+//		while(Button.readButtons()==0)Thread.yield();
 //		robot.shutDown();
-	}
+//	}
 		
 }
