@@ -253,7 +253,7 @@ public class SteeringControl
 		float steerRatio = 1 - rate/100.0f;
 		inside.setSpeed((int)(_speed*steerRatio));
 		float rotAngle  = angle*_trackWidth*2/(_wheelDiameter*(1-steerRatio));
-		if(angle == Integer.MAX_VALUE) rotAngle = Integer.MAX_VALUE; // turn rate == 0
+		if(angle == Integer.MAX_VALUE) rotAngle = Integer.MAX_VALUE/2; // turn rate == 0
 		resetTachoCount();
 		inside.rotate(_parity*(int)(rotAngle*steerRatio));
 		outside.rotate(_parity*(int)rotAngle);
