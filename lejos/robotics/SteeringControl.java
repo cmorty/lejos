@@ -1,14 +1,31 @@
 package lejos.robotics;
 import lejos.nxt.Motor;
 
-/**
- * The SteeringControl class contains methods to control NXT robot movents: travel forward or backward in a straight line or a circular path or rotate to a new direction.  <br>
- * Note: this class will only work with two independently controlled drive motors to steer differentially, so it can rotate within its own footprint (i.e. turn on one spot).<br>
- * It can be used with robots that have reversed motor design: the robot moves in the direction opposite to the the dirction of motor rotation.
- * Uses the Motor class, which regulates motor speed using the NXT motor's built in tachometer. <br>
- * Many methods return immediately.  
- * Resets tacho count every time a movement command is issued. 
+/** 
+* The SteeringControl class contains methods to control NXT robot movents: travel forward or backward in a straight line or a circular path or rotate to a new direction.  <br>
+* Note: this class will only work with two independently controlled drive motors to steer differentially, so it can rotate within its own footprint (i.e. turn on one spot).<br>
+* It can be used with robots that have reversed motor design: the robot moves in the direction opposite to the the dirction of motor rotation.
+* Uses the Motor class, which regulates motor speed using the NXT motor's built in tachometer. <br>
+* Many methods return immediately.  
+* Resets tacho count every time a movement command is issued.  <br>
+*  Example:<p>
+* <code><pre>
+*	SteeringControl sc = new SteeringControl(Motor.A, Motor.C,2.1f,4.4f,true)
+*   sc.setSpeed(720);// 2 RPM
+*	sc.travel(12);
+*	sc.rotate(-90);
+*	sc.travel(-12,true);
+*	while(sc.isMoving())Thread.yield();
+*	sc.rotate(-90);
+*	sc.rotateTo(270);
+*	sc.steer(-50,180,true);
+*	while(sc.isMoving())Thread.yield();
+*	sc.steer(100);
+*	try{Thread.sleep(1000);}
+*	sc.stop();
+* </pre></code>
  **/
+
  
 public class SteeringControl 
 {
