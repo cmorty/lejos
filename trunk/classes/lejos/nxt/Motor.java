@@ -1,4 +1,7 @@
-package lejos.nxt;
+import lejos.nxt.Battery;
+
+
+
 
 /**
  * Abstraction for a motor. Three instances of <code>Motor</code>
@@ -31,7 +34,7 @@ public class Motor
 {
   private char  _id;
   private int _mode = 4;
-  private int _speed = 0;
+  private int _speed = 360;
   private int _power = 0;
   // used for speed regulation
   private boolean _keepGoing = true;// for regulator
@@ -39,13 +42,13 @@ public class Motor
   
   public Regulator regulator = new Regulator();
   // used for control of angle of rotation
-  private byte _direction = 1; // +1 is forward ; used by rotate();
+  private int _direction = 1; // +1 is forward ; used by rotate();
   private int _limitAngle;
   private int _stopAngle;
   private boolean _rotating = false;
   private boolean _wasRotating = false;
-
-
+  private boolean _rampUp = false;
+  private boolean _noRamp = true;
 
   /**
    * Motor A.
@@ -84,10 +87,7 @@ public class Motor
   public final void forward()
   { 
     _mode = 1;
-    controlMotor (_id - 'A', 1, _power);
-    if(_regulate)regulator.startRegulating();
-    _direction = 1;
-    _rotating = false;
+    updateState();
   }
   
   /**
@@ -104,10 +104,7 @@ public class Motor
   public final void backward()
   {
     _mode = 2;
-    controlMotor (_id - 'A', 2, _power);
-    if(_regulate)regulator.startRegulating();
-    _direction = -1;
-    _rotating = false;
+    updateState();
   }
 
   /**
@@ -128,19 +125,31 @@ public class Motor
     if (_mode == 1 || _mode == 2)
     {
       _mode = (3 - _mode);
-      _direction *=-1;
-      controlMotor (_id - 'A', _mode, _power);
+		updateState();
     }
-    if(_regulate)regulator.startRegulating();
-    _rotating = false;
   }
+/** 
+ *calls controlMotor, startRegating;  updates _direction, _rotating
+ * precondition:  mode == 1 or 2
+ */
+	private void updateState()
+	{
+	    controlMotor (_id - 'A', _mode, _power);
+	   _rotating = false;
+   	   if(_regulate)
+   	   {
+   	   	regulator.startRegulating();
+   	   	_rampUp = true;
+   	   }
+   	   	 _direction = 3 - 2*_mode;
+	}
 
    /**
    * @return true iff the motor is currently in motion.
    */
   public final boolean isMoving()
   {
-    return (_mode == 1 || _mode == 2);	  
+    return (_mode == 1 || _mode == 2 || _rotating);	  
   }
 
     /**
@@ -169,12 +178,14 @@ public class Motor
    * instantaneously. In other words, the
    * motor doesn't just stop; it will resist
    * any further motion.
+   * Cancels any rotate() orders in progress
    */
   public final void stop()
   {
     _mode = 3;
     controlMotor (_id - 'A', 3, 0);
     _rotating = false;
+    _rampUp = false;
   }
   
   /**
@@ -186,8 +197,7 @@ public class Motor
   }
 
 /**
- * causes motor to rotate through angle;  This method returns immediately <br>
- * When the angle is reached, the method isRotating() returns false;
+ * causes motor to rotate through angle. <br>
  * @param  angle through which the motor will rotate
  */
 	public void rotate(int angle)
@@ -196,13 +206,38 @@ public class Motor
 	}
 
 /**
- * causes motor to rotate to limitAngle;  This method returns immediately <br>
- * When the limit angle is reached, the method isRotating() returns false;<br>
- * Then getTachoCount should be within +- 2 degrees if the limit angle
- *  
+ * causes motor to rotate through angle; <br>
+ * iff immediateReturn is true, method returns immediately and the motor stops by itself <br>
+ * When the angle is reached, the method isRotating() returns false;
+
+ * @param  angle through which the motor will rotate
+ * *@param immediateReturn; iff true, method returns immediately, thus allowing monitoring of sensors in the calling thread. 
+
+ */
+
+	public void rotate(int angle, boolean immediateReturn)
+	{
+		rotateTo(getTachoCount()+angle,immediateReturn);
+	}
+
+/**
+ * causes motor to rotate to limitAngle;  <br>
+ * Then getTachoCount should be within +- 2 degrees of the limit angle when the method returns
  * @param  limitAngle to which the motor will rotate
  */
   public void rotateTo(int limitAngle)
+  	 {
+  	 	rotateTo(limitAngle,false);
+	  }
+/**
+ * causes motor to rotate to limitAngle; <br>
+ * if immediateReturn is true, method returns immediately and the motor stops by itself <br>
+ * Then getTachoCount should be within +- 2 degrees if the limit angle
+ * When the angle is reached, the method isRotating() returns false;
+ * @param  limitAngle to which the motor will rotate, and then stop. 
+ *@param immediateReturn; iff true, method returns immediately, thus allowing monitoring of sensors in the calling thread. 
+ */
+  public void rotateTo(int limitAngle,boolean immediateReturn)
 	{
 		_stopAngle = limitAngle;
 		if(limitAngle > getTachoCount())
@@ -221,18 +256,33 @@ public class Motor
 			 _limitAngle = limitAngle;
 		}
 		_rotating = true; // rotating to a limit
+		_rampUp = !_noRamp && Math.abs(_stopAngle-getTachoCount())>40;  //no ramp for small angles
+		if(immediateReturn)return;
+		while(isMoving()) Thread.yield();
+		
 	}
 
 /**
  *inner class to regulate speed; also stop motor at desired rotation angle
  **/
- class Regulator extends Thread
+ private class Regulator extends Thread
   {
-  	int angle0 = 0;//tacho reading when regulation started
+  	/**
+  	 *tachoCount when regulating started
+  	 */
+  	int angle0 = 0;
+ /**
+  * set by startRegulating, used  to regulate  motor speed
+  */ 
   	float basePower = 0;
-  	int time0 = 0;// time regulation started
+  /**
+   * time regulating started
+   */
+  	int time0 = 0;
 
-  	/* used by startRegulating and setSpeed()*/
+/* *
+* helper method - used by startRegulating and setSpeed()
+*/
  	int calcPower(int speed)
  	{   
 		float pwr = 100 - 7.4f*Battery.getVoltage()+0.065f*speed;// no-load motor
@@ -241,7 +291,7 @@ public class Motor
  		else return (int)pwr;
  	}
  
- /*
+ /**
   * called by forward() backward() and reverseDirection()
   **/
  	public void startRegulating()
@@ -253,19 +303,43 @@ public class Motor
     	setPower((int)basePower);
  	}
  
+/**
+ * Monitors time and tachoCount to regulate speed and stop motor rotation at limit angle
+ */
   	public void run()
   	{
 	  	int speed0 = 0;
   		int limit = 0;
   		float error = 0;
 	  	float e0 = 0;
+	  	int speed = 0;
+	  	float accel =1.25f;// deg/sec/ms 
+	  	int td = 100;
+	  	float ts = 0;  //time to stabilize
 	  	while(_keepGoing)
 	  	{	
 	  		if(_regulate && isMoving()) //regulate speed 
 	  		{
 	  			int elapsed = (int)System.currentTimeMillis()-time0;
 	  			int angle = getTachoCount()-angle0;
-	  			error = (elapsed * _speed)/1000f - (float)Math.abs(angle);
+//	  			_rampUp = false;
+	  			if(_rampUp)
+	  			{   
+	  				ts = _speed/accel;
+					if (elapsed +td<ts)// not yet up to speed
+		  			{
+		  				elapsed +=td;
+		  				// target distance = a * t * t/ 2 - maintain constant acceleration
+		 				error = accel*elapsed * elapsed/2000 - (float)Math.abs(angle);
+		 				basePower = calcPower((int)Math.max(elapsed*accel,400));
+		  			}
+		  			else  // adjust elapsed time for acceleration time - don't try to catch up
+		  			{
+		  				error = ((elapsed + td-ts/2)* _speed)/1000f - (float)Math.abs(angle);
+		  			}
+	  			}
+		  		else 	
+					error = (elapsed*_speed/1000f)- (float)Math.abs(angle);
 	  			float power = basePower + 2 * error -1 * e0;// magic numbers from experiment
 	  			e0 = error;
 	  			float smooth = 0.0015f;// another magic number from experiment
@@ -273,13 +347,14 @@ public class Motor
 	  			setPower((int)power);
 	  		}
 	  // stop at rotation limit angle
-			if(_rotating && _direction*(getTachoCount() - _stopAngle)>0)
+			if(_rotating && _direction*(getTachoCount() - _stopAngle)>-1)
 			{
 				_mode = 3; // stop motor
 				controlMotor (_id - 'A', 3, 0);
+				_rampUp = false;
 				int a = angleAtStop();//returns when motor has stopped
 				int remaining = _limitAngle - a;
-				if(_direction * remaining > 0) // not yet done
+				if(_direction * remaining >0 ) // not yet done
 				{
 					if(!_wasRotating)// initial call to rotate(); save state variables
 					{
@@ -287,22 +362,24 @@ public class Motor
 						_wasRotating = true;
 						limit = _limitAngle;
 					}
+
 				 	startRegulating();
- 					setSpeed(150);
-				 	rotateTo(limit - remaining/3); //another try
+ 					setSpeed(100);
+				 	rotateTo(limit - remaining/3,true); //another try
 				}
 				else //rotation complete;  reset state variables
 				{
 					_rotating = false;
 					_wasRotating = false;
 					setSpeed(speed0);
+					_rampUp = false;
 				}
 	  		}
 	  	Thread.yield();
 	  	}	
   	}
   
-  /*
+/**
 *helper method for run
 **/
   	 int angleAtStop()
@@ -312,10 +389,10 @@ public class Motor
 		int a = 0;
 		while(turning)
 		{
-			try{Thread.sleep(10);}
+			try{Thread.sleep(10);}// was 10
 			catch(InterruptedException w){}
 			a = getTachoCount();
-			turning = Math.abs(a - a0)>1;
+			turning = Math.abs(a - a0)>0;
 			a0 = a;
 		}
 		return	a;
@@ -325,6 +402,10 @@ public class Motor
  * cant use stop() in a thread
  */
  private void halt(){stop();}
+ 
+ /**
+  *causes run() to exit
+  */
  public void shutdown(){_keepGoing = false;}
   
  
@@ -337,14 +418,21 @@ public class Motor
 	 	{
 	 		 _regulate = yes;
  		 }
-
+/**
+ * enables smoother acceleration.  Motor speed increases slowly,  and does not <>
+ * overshoot when regulate Speed is used. 
+ * 
+ */
+ 	public void smoothAcceleration(boolean yes) 
+ 		{_noRamp = ! yes;}
+ 
   /**
    * Sets motor speed , in degrees per second; Up to 900 is posssible with 8 volts.
    * @param speed value in degrees/sec  
    */
   public final void setSpeed (int speed)
   {
-    _speed = speed;
+    _speed = Math.abs(speed);
      setPower((int)regulator.calcPower(_speed));
   }
 
@@ -370,7 +458,7 @@ public class Motor
   
 	private int overshoot()
 	{
-		return  8 + (int)( _speed*0.07f);//0.67 from regression - extra margin for high speed
+		return  10 + (int)( _speed*0.067f);//0.067 from regression - extra margin for high speed
 	}
 
 	public int getLimitAngle()
@@ -406,7 +494,8 @@ public class Motor
   {
 	  return getTachoCountById(_id - 'A');
   }
-  
+
+
   public static native int getTachoCountById(int aMotor);
 
  /**
