@@ -1,6 +1,6 @@
-//package lejos.robotics;
-//import lejos.nxt.Motor;
-//import lejos.nxt.LCD;
+package lejos.robotics;
+import lejos.nxt.Motor;
+
 
 
 /**
@@ -9,11 +9,10 @@
 * However, some commands optionally return immediately, to permit sensor monitoring in the main thread.  It is then the programmers responsibility to 
 * call updatePosition() when the robot motion is completed.  All angles are in degrees, distances in the units used to specify robot dimensions.
 * As with SteeringControl, the robot must be have two independently controlled drive wheels. 
-*@author Roger Glassey  22 Jan 2007
 */
 
-public class CircleNavigator { // implements
-
+public class CircleNavigator
+{ 
 	// orientation and co-ordinate data
 	private float _heading = 0;
 	private float _x = 0;
@@ -39,11 +38,11 @@ public class CircleNavigator { // implements
 	
 	public CircleNavigator(float wheelDiameter, float trackWidth, Motor leftMotor, Motor rightMotor) 
 	{
-		sc = new SteeringControl(leftMotor, rightMotor,wheelDiameter,trackWidth);
+		sc = new SteeringControl(wheelDiameter,trackWidth,leftMotor, rightMotor);
 	}
 	   public CircleNavigator(float wheelDiameter, float trackWidth, Motor leftMotor, Motor rightMotor, boolean reverse) 
 	{
-		sc = new SteeringControl(leftMotor, rightMotor,wheelDiameter,trackWidth,reverse);
+		sc = new SteeringControl(wheelDiameter,trackWidth,leftMotor, rightMotor,reverse);
 	}
 	/**
 	* Overloaded CircleNavigator constructor that assumes the following:<BR>
@@ -111,6 +110,7 @@ public class CircleNavigator { // implements
    public void forward() 
    	{
 	  updated = false;
+	  sc.resetTachoCount();
 	  sc.forward();
    }
 /**
@@ -119,6 +119,7 @@ public class CircleNavigator { // implements
 	public void backward() 
 	{
 	  updated = false;
+  	  sc.resetTachoCount();
 	  sc.backward();
 	}
 /**
@@ -140,51 +141,83 @@ public class CircleNavigator { // implements
 /**
 * Moves the NXT robot a specific distance. A positive value moves it forwards and
 * a negative value moves it backwards. 
-*  If waitForCompletion is true, the robot position is updated atomatically when the method returns. 
-* If it is false, the method returns immediately, and your code MUST call updatePostion()
+* T robot position is updated atomatically when the method returns. 
+* @param dist The positive or negative distance to move the robot, same units as _wheelDiameter
+*/
+	public void travel(float distance) 
+	{
+		travel(distance,false);
+	}
+
+/**
+* Moves the NXT robot a specific distance. A positive value moves it forwards and
+* a negative value moves it backwards. 
+*  If immediateReturnis true, method returns immidiately and your code MUST call updatePostion()
 * when the robot has stopped.  Otherwise, the robot position is lost. 
 * @param dist The positive or negative distance to move the robot, same units as _wheelDiameter
-* @param waitForCompletion determines if the method returns immediately (false), in which case the programmer is responsible for calling 
-* updatePosition() before the robot moves again. 
+* @param immediateReturn: iff true, the method returns immediately, in which case the programmer <br>
+*  is responsible for calling updatePosition() before the robot moves again. 
 */
-	public void travel(float distance,boolean waitForCompletion) 
+ 
+	public void travel(float distance,boolean immediateReturn) 
 	{
 		updated = false;
-		sc.travel(distance,waitForCompletion);
-		if(waitForCompletion) updatePosition();
+		sc.resetTachoCount();
+		sc.travel(distance,immediateReturn);
+		if(!immediateReturn) updatePosition();
 	}
 
 /**
 * Rotates the NXT robot a specific number of degrees in a direction (+ or -).
-*  If waitForCompletion is true, the robot position is updated atomatically when the method returns. 
-* If it is false, the method returns immediately, and your code MUST call updatePostion()
+* @param angle Angle to rotate in degrees. A positive value rotates left, a negative value right.
+**/
+	public void rotate(float angle)
+	{
+		rotate(angle,false);
+	}
+/**
+* Rotates the NXT robot a specific number of degrees in a direction (+ or -).
+*  If immediateReturnis true, method returns immidiately and your code MUST call updatePostion()
 * when the robot has stopped.  Otherwise, the robot position is lost. 
 * @param angle Angle to rotate in degrees. A positive value rotates left, a negative value right.
-* @param waitForCompletion determines if the method returns immediately (false), in which case the programmer is responsible for calling 
-* updatePosition() before the robot moves again. 
+* @param immediateReturn: iff true, the method returns immediately, in which case the programmer <br>
+*  is responsible for calling updatePosition() before the robot moves again. 
 */
-	   public void rotate(float angle,boolean waitForCompletion)
-		{
-		  updated = false; 
-	      int turnAngle = Math.round(normalize(angle));
-	      sc.rotate(turnAngle,waitForCompletion);
-	      if(waitForCompletion) updatePosition();
-		}
+   public void rotate(float angle,boolean immediateReturn)
+	{
+	  updated = false; 
+      int turnAngle = Math.round(normalize(angle));
+      sc.resetTachoCount();
+      sc.rotate(turnAngle,immediateReturn);
+      if(!immediateReturn) updatePosition();
+	}
+
 
 /**
 * Rotates the NXT robot to point in a specific direction. It will take the shortest
 * path necessary to point to the desired angle. 
-*  If waitForCompletion is true, the robot position is updated atomatically when the method returns. 
-* If it is false, the method returns immediately, and your code MUST call updatePostion()
-* when the robot has stopped.  Otherwise, the robot position is lost. 
 * @param angle The angle to rotate to, in degrees.
-* @param waitForCompletion determines if the method returns immediately (false), in which case the programmer is responsible for calling 
-* updatePosition() before the robot moves again. 
 */
-   public void rotateTo(float angle,boolean waitForCompletion) 
+   public void rotateTo(float angle) 
    	{
         float turnAngle = normalize( angle - _heading);
-      	rotate(turnAngle,waitForCompletion);
+      	rotate(turnAngle,false);
+   }
+
+
+/**
+* Rotates the NXT robot to point in a specific direction. It will take the shortest
+* path necessary to point to the desired angle. 
+* If immediateReturnis true, method returns immidiately and your code MUST call updatePostion()
+* when the robot has stopped.  Otherwise, the robot position is lost. 
+* @param angle The angle to rotate to, in degrees.
+* @param immediateReturn: iff true,  method returns immediately and the programmer is responsible for calling 
+* updatePosition() before the robot moves again. 
+*/
+   public void rotateTo(float angle,boolean immediateReturn) 
+   	{
+        float turnAngle = normalize( angle - _heading);
+      	rotate(turnAngle,immediateReturn);
    }
 /**
 * Rotates the NXT robot towards the target point (x,y)  and moves the required distance.
@@ -194,9 +227,10 @@ public class CircleNavigator { // implements
 */
    public void goTo(float x, float y) 
    	{
-      rotateTo(angleTo(x,y),true);
-      travel(distanceTo(x,y),true);
+      rotateTo(angleTo(x,y));
+      travel(distanceTo(x,y));
    }
+  
 /**
  * distance from robot to the point with coordinates (x,y) .
  *@param x coordinate of the point
@@ -289,23 +323,37 @@ public class CircleNavigator { // implements
 	public void turn(float radius)
 	{
 		updated = false;
+		sc.resetTachoCount();
 		sc.steer(turnRate(radius));
 	}
+
+/**
+ * Moves the NXT robot in a circular path through a specific angle; If waitForCompletion is true, returns when angle is reached. <br>
+ * The center of the turning circle is on the right side of the robot iff parameter radius is negative.
+ *  Robot will stop when total rotation equals angle. If angle is negative, robot will move travel backwards.
+ * @param radius radius of the turning circle
+ * @param angle the angle by which the robot heading changes, + or -
+ */
+
+	public void turn(float radius, int angle)
+	{
+		turn(radius,angle,false);
+	  }
 /**
  * Moves the NXT robot in a circular path through a specific angle; If waitForCompletion is true, returns when angle is reached. <br>
  * The center of the turning circle is on the right side of the robot iff parameter radius is negative.
  *  Robot will stop when total rotation equals angle. If angle is negative, robot will move travel backwards.
  * @param radius  see tu(turnRage, angle)
- * @param waitForCompletion  If true,  this method returns when angle is reached, and the robot position is automatically updated.<br> 
- *Otherwise it returns immediately and you code MUST call updatePosition when the robot stops moving, or else the robot positios lost.
+* @param immediateReturn: iff true, the method returns immediately, in which case the programmer <br>
+*  is responsible for calling updatePosition() before the robot moves again. 
  */
 
-	public void turn(float radius, int angle, boolean waitForCompletion)
+	public void turn(float radius, int angle, boolean immediateReturn)
 	{
 		updated = false;
-
-		sc.steer(turnRate(radius),angle,waitForCompletion);
-		if(waitForCompletion) updatePosition();
+		sc.resetTachoCount();
+		sc.steer(turnRate(radius),angle,immediateReturn);
+		if(!immediateReturn) updatePosition();
 	   }
 
 /**
