@@ -49,4 +49,12 @@ public class LightSensor {
 	{
 		return ((1023 - port.readRawValue()) * 100/ 1023);  
 	}
+	
+	/**
+	 * Read the current sensor value.
+	 * @return Value as raw normalized (0 to 1023). 1023 = brightest
+	 */
+	public int readNormalizedValue() {
+		return 1023 - port.readRawValue();
+	}
 }
