@@ -10,12 +10,16 @@ import lejos.nxt.Battery;
  * methods <code>forward, backward, reverseDirection, stop</code>
  * and <code>flt</code>. To set each motor's speed, use
  * <code>setSpeed.  Speed is in degrees per second. </code>.\
- * Methods that use the tachometer:  regulateSpeed, rotate, rotateTo  
+ * Methods that use the tachometer:  regulateSpeed, rotate, rotateTo <br>
+ * The actual maximum speed of the motor depends on battery voltage and load.. 
+ * Speed regulation fails if the target speed exceeds the capability of the motor.
+ * Speed regulation and smooth accelerations modes are set ON by default.
+ * 
  * <p>
  * Example:<p>
  * <code><pre>
  *   Motor.A.setSpeed(720);// 2 RPM
- *   Motor.C.setSpeed(800);
+ *   Motor.C.setSpeed(7200);
  *   Motor.A.forward();
  *   Motor.C.forward();
  *   Thread.sleep (1000);
@@ -38,7 +42,7 @@ public class Motor
   private int _power = 0;
   // used for speed regulation
   private boolean _keepGoing = true;// for regulator
-  private boolean _regulate = false;
+  private boolean _regulate = true;
   
   public Regulator regulator = new Regulator();
   // used for control of angle of rotation
@@ -47,9 +51,9 @@ public class Motor
   private int _stopAngle;
   private boolean _rotating = false;
   private boolean _wasRotating = false;
-  private boolean _rampUp = false;
-  private boolean _noRamp = true;
-
+  private boolean _rampUp = true;
+  private boolean _noRamp = false;
+ 
   /**
    * Motor A.
    */
@@ -256,7 +260,7 @@ public class Motor
 			 _limitAngle = limitAngle;
 		}
 		_rotating = true; // rotating to a limit
-		_rampUp = !_noRamp && Math.abs(_stopAngle-getTachoCount())>40;  //no ramp for small angles
+		_rampUp = !_noRamp && Math.abs(_stopAngle-getTachoCount())>40 && _speed>200;  //no ramp for small angles
 		if(immediateReturn)return;
 		while(isMoving()) Thread.yield();
 		
@@ -322,7 +326,6 @@ public class Motor
 	  		{
 	  			int elapsed = (int)System.currentTimeMillis()-time0;
 	  			int angle = getTachoCount()-angle0;
-//	  			_rampUp = false;
 	  			if(_rampUp)
 	  			{   
 	  				ts = _speed/accel;
@@ -351,7 +354,6 @@ public class Motor
 			{
 				_mode = 3; // stop motor
 				controlMotor (_id - 'A', 3, 0);
-				_rampUp = false;
 				int a = angleAtStop();//returns when motor has stopped
 				int remaining = _limitAngle - a;
 				if(_direction * remaining >0 ) // not yet done
@@ -362,7 +364,6 @@ public class Motor
 						_wasRotating = true;
 						limit = _limitAngle;
 					}
-
 				 	startRegulating();
  					setSpeed(100);
 				 	rotateTo(limit - remaining/3,true); //another try
@@ -372,7 +373,6 @@ public class Motor
 					_rotating = false;
 					_wasRotating = false;
 					setSpeed(speed0);
-					_rampUp = false;
 				}
 	  		}
 	  	Thread.yield();
@@ -419,7 +419,7 @@ public class Motor
 	 		 _regulate = yes;
  		 }
 /**
- * enables smoother acceleration.  Motor speed increases slowly,  and does not <>
+ * enables smoother acceleration.  Motor speed increases gently,  and does not <>
  * overshoot when regulate Speed is used. 
  * 
  */
