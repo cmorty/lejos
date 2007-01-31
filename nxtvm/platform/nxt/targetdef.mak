@@ -23,7 +23,8 @@ C_PLATFORM_SOURCES := \
 	nxt_spi.c \
 	nxt_motors.c \
 	data_abort.c \
-	display.c
+	display.c \
+	i2c.c
 
 C_HOOK_SOURCES := \
 	main.c \

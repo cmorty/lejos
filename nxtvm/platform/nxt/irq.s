@@ -103,7 +103,6 @@ default_isr:
 systick_isr_entry:
   irq_wrapper_nested systick_isr_C
 
-
   .extern systick_low_priority_C
   .global systick_low_priority_entry
 systick_low_priority_entry:
@@ -134,9 +133,14 @@ uart_isr_entry_0:
 uart_isr_entry_1:
   irq_wrapper_nested uart_isr_C_1
 
-
   .extern nxt_motor_isr_C
   .global nxt_motor_isr_entry
 nxt_motor_isr_entry:
   irq_wrapper_nested nxt_motor_isr_C
+
+
+  .extern i2c_timer_isr_C
+  .global i2c_timer_isr_entry
+i2c_timer_isr_entry:
+  irq_wrapper_nested i2c_timer_isr_C
 
