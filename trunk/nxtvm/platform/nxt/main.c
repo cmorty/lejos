@@ -28,7 +28,7 @@
 
 #include "nxt_avr.h"
 #include "nxt_lcd.h"
-
+#include "i2c.h"
 #include "nxt_motors.h"
 
 #include "lejos_nxt.h"
@@ -239,9 +239,15 @@ xx_show(void)
   int iterator = 0;
   U32 buttons;
   U32 motor_mode = 0;
+  int result;
+  U8 distance;
 
   show_splash(3000);
 
+  /* set up power for ultrasonic sensor on port 1 (port 0 here )*/  
+  nxt_avr_set_input_power(0,2);
+  i2c_enable(0);
+                        
   while (1) {
     display_clear(0);
 
@@ -265,7 +271,7 @@ xx_show(void)
     }
     iterator++;
 
-    if ((iterator % 10) == 0) {
+    if ((iterator %10) < 5) {
       buttons = buttons_get();
 
       display_goto_xy(iterator & 7, 0);
@@ -298,9 +304,18 @@ xx_show(void)
       display_string("    ");
       display_unsigned(sensor_adc(2), 5);
       display_unsigned(sensor_adc(3), 5);
+      
+      i2c_start_transaction(0,1,0x42,1,&distance,1,0);
+      systick_wait_ms(200);
+      result = i2c_busy(0);
+
+      display_goto_xy(0,6);
+      display_string("DIST ");
+      display_unsigned(distance,3);
 
       display_update();
       systick_wait_ms(500);
+      
     } else {
 
       display_goto_xy(iterator & 7, 0);
@@ -360,11 +375,12 @@ main(void)
   nxt_avr_init();
   display_init();
   nxt_motor_init();
-
-
-//      xx_show();
+  i2c_init();
+  
+  //xx_show();
 
   show_splash(3000);
+    
   display_clear(1);
   nxt_main();
   systick_wait_ms(5000);
