@@ -11,6 +11,8 @@ import lejos.nxt.Battery;
  * and <code>flt</code>. To set each motor's speed, use
  * <code>setSpeed.  Speed is in degrees per second. </code>.\
  * Methods that use the tachometer:  regulateSpeed, rotate, rotateTo <br>
+ *  Motor has 2 modes : speedRegulation and smoothAcceleration. These are initially enabled. <>
+ * They can be switched off/on by the methods regulateSpeed() and smoothAcceleration().
  * The actual maximum speed of the motor depends on battery voltage and load.. 
  * Speed regulation fails if the target speed exceeds the capability of the motor.
  * Speed regulation and smooth accelerations modes are set ON by default.
@@ -300,7 +302,7 @@ public class Motor
   **/
  	public void startRegulating()
 	{
- 		_regulate = true;
+		if(!regulate)return;
  		time0 = (int)System.currentTimeMillis();
  		angle0 = getTachoCount();
  	    basePower = calcPower(_speed);
@@ -364,7 +366,6 @@ public class Motor
 						_wasRotating = true;
 						limit = _limitAngle;
 					}
-				 	startRegulating();
  					setSpeed(100);
 				 	rotateTo(limit - remaining/3,true); //another try
 				}
