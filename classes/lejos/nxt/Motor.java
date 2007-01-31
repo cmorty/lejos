@@ -1,6 +1,6 @@
+package lejos.nxt;
+
 import lejos.nxt.Battery;
-
-
 
 
 /**
@@ -436,7 +436,7 @@ public class Motor
      setPower((int)regulator.calcPower(_speed));
   }
 
-	private void setPower(int power)
+	public void setPower(int power)
 	{
 	 _power = power;
 	  controlMotor (_id - 'A', _mode,power);
