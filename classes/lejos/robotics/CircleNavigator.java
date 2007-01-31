@@ -96,7 +96,7 @@ public class CircleNavigator
 		_y = y;
 		_heading = directionAngle;
 	}
-	/**
+/**
  *sets the motor speed of the robot, in degrees/second. 
  */
 	public void setSpeed(int speed)
@@ -113,7 +113,13 @@ public class CircleNavigator
 	  sc.resetTachoCount();
 	  sc.forward();
    }
-/**
+/**/**
+*sets robot location (x,y) and direction angle
+*@param x  the x coordinate of the robot
+*@param y the y coordinate of the robot
+*@param directionAngle  the angle the robot is heading, measured from the x axis
+*/	
+	public void setPosition(float x, float y, float directionAngle)
 * Moves the NXT robot backward until stop() is called.
 */
 	public void backward() 
