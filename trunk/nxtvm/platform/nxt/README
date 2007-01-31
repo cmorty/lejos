@@ -6,9 +6,9 @@ To build, just type 'make'.
 
 This should produce 3 output files:
 
-lejos_nxt_rom.bin  binary rom image (as yet untested)
+lejos_nxt_rom.bin  binary rom image
 lejos_nxt_ram.elf  ram image for debugging with jtag
-lejos_nxt_samba_ram.xxx samba ram image... still needs some effort
+lejos_nxt_samba_ram.xxx samba ram image used with runjava
 
 A word about the make file structure.
 
