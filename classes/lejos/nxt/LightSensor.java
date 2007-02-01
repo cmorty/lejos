@@ -1,11 +1,15 @@
 package lejos.nxt;
+//import lejos.nxt.Port;
 
 /**
  * Abstraction for a NXT light sensor.
- * 
+ * The light sensor can be calibrated to low and high values. 
  */
-public class LightSensor {
+public class LightSensor
+{
 	Port port;
+	private int _zero = 1023;
+	private int _hundred = 0;
 	
 	/**
 	 * Create a light sensor object attached to the specified port.
@@ -43,11 +47,14 @@ public class LightSensor {
 
 	/**
 	 * Read the current sensor value.
-	 * @return Value as a percentage.
+	 * Use calibrateLow() to set the zero level, and calibrateHigh to set the 100 level.
+	 * @return Value as a percentage of difference between the low and high calibration values. 
 	 */
 	public int readValue()
 	{
-		return ((1023 - port.readRawValue()) * 100/ 1023);  
+//		return ((1023 - port.readRawValue()) * 100/ 1023); 
+		if(_hundred == _zero)return 1023;
+		return 100*(port.readRawValue() - _zero)/(_hundred - _zero); 
 	}
 	
 	/**
@@ -56,5 +63,20 @@ public class LightSensor {
 	 */
 	public int readNormalizedValue() {
 		return 1023 - port.readRawValue();
+	}
+
+/**
+ * call this method when the light sensor is reading the low value - used by readValue
+ **/
+	public void calibrateLow()
+	{
+		_zero = port.readRawValue();
+	}
+/** 
+ *call this method whtn the light sensor is reading the high value - used by reaeValue
+ */	
+	public void calibrateHigh()
+	{
+		_hundred = port.readRawValue();
 	}
 }
