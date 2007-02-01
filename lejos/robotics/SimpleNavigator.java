@@ -1,263 +1,331 @@
 package lejos.robotics;
+import lejos.nxt.Motor;
+import lejos.nxt.LCD;
 
 
-	import lejos.nxt.*;
+/**
+* The SimpleNavigator class can keep track of the robot position and the direction angle it faces; It uses a SteeringControl object to control NXT robot movements.<br>
+* The position and direction angle values are updated automatically when the movement command returns after the movement is complete and and after stop() command is issued.
+* However, some commands optionally return immediately, to permit sensor monitoring in the main thread.  It is then the programmers responsibility to 
+* call updatePosition() when the robot motion is completed.  All angles are in degrees, distances in the units used to specify robot dimensions.
+* As with SteeringControl, the robot must be have two independently controlled drive wheels. 
+*/
 
-//	 !! For rotation, it should straighten out when stopped to try to keep
-//	 the angle somewhat accurate.
+public class SimpleNavigator implements Navigator
+{ 
+	// orientation and co-ordinate data
+	private float _heading = 0;
+	private float _x = 0;
+	private float _y = 0;
+	// The essential component
+	public SteeringControl sc;
+/**
+ * set false whenever the robot moves,  set to true by updatePosition();
+ */
+	private boolean updated = false;
 
-//	 !! Should all methods call stop() first in case it was roaming?
-//	 OR methods account for NXT currently in moving mode?
-
-//	 !! All methods that change x, y must be synchronized.
-
-	/**
-	 * The SimpleNavigator class contains methods for performing basic navigational
-	 * movements. This class uses the tachometers built into the NXT motors to monitor 
-	 * the wheels of the differential drive.  This class also assumes the Motor.forward()
-	 * command will cause the drive wheels to move in a forward direction.<BR>
-	 * Note: This class will only work for robots using two motors to steer differentially
-	 * that can rotate within its footprint (i.e. turn on one spot).
-	 * 
-	 * @author <a href="mailto:bbagnall@escape.ca">Brian Bagnall</a>
-	 * @version 0.1  19-August-2001
-	 */
-	public class SimpleNavigator implements Navigator {
-
-	   // orientation and co-ordinate data
-	   private float angle;
-	   private float x;
-	   private float y;
-
-	   // Motors for differential steering:
-	   private Motor left;
-	   private Motor right;
-	   
-	   // Movement values:
-	   private float COUNTS_PER_CM;
-	   private float COUNTS_PER_DEGREE;
-	   
-	   // Internal states
-	   private boolean moving;
-	   
-	   /**
-	   * Allocates a RotationNavigator object and initializes it with the proper motors.
-	   * The x and y values will each equal 0 (cm's) on initialization, and the starting
-	   * angle is 0 degrees, so if the first move is forward() the robot will run along
-	   * the x axis. <BR>
-	   * @param wheelDiameter The diameter of the wheel, usually printed right on the
-	   * wheel, in centimeters (e.g. 49.6 mm = 4.96 cm) 
-	   * @param driveLength The distance from the center of the left tire to the center
-	   * of the right tire, in centimeters.
-	   * @param rightMotor The motor used to drive the right wheel e.g. Motor.C.
-	   * @param leftMotor The motor used to drive the left wheel e.g. Motor.A.
-	   */
-	   
-	   public SimpleNavigator(float wheelDiameter, float driveLength, Motor leftMotor, Motor rightMotor) {
-	      this.right = rightMotor;
-	      this.left = leftMotor;
-	      
-	      left.resetTachoCount();
-	      right.resetTachoCount();
-
-	      // Set coordinates and starting angle:
-	      angle = 0.0f;
-	      x = 0.0f;
-	      y = 0.0f;
-	      
-	      moving = false;
-	      
-	      // Calculate the counts per centimeter
-	      float wheelCircumference = wheelDiameter * (float)Math.PI;
-	      COUNTS_PER_CM = 360/wheelCircumference;
-	      
-	      // Calculate counts per degree
-	      float fullRotation = (driveLength * (float)Math.PI);
-	      COUNTS_PER_DEGREE = (fullRotation/wheelCircumference);
-	   }
-	   
-	   /**
-	   * Overloaded SimpleNavigator constructor that assumes the following:<BR>
-	   * Left motor = Motor.A   Right motor = Motor.C <BR>
-	   * @param wheelDiameter The diameter of the wheel, usually printed right on the
-	   * wheel, in centimeters (e.g. 49.6 mm = 4.96 cm) 
-	   * @param driveLength The distance from the center of the left tire to the center
-	   * of the right tire, in centimeters.
-	   */
-	   public SimpleNavigator(float wheelDiameter, float driveLength) {
-	      this(wheelDiameter, driveLength, Motor.A, Motor.C);
-	   }
-	   
-	   /**
-	   * Returns the current x coordinate of the NXT.
-	   * Note: At present it will only give an updated reading when the NXT is stopped.
-	   * @return float Present x coordinate.
-	   */
-	   public float getX() {
-	      // !! In future, if NXT is on the move it should return the present calculation of x
-	      return x;
-	   }
-	   
-	   /**
-	   * Returns the current y coordinate of the NXT.
-	   * Note: At present it will only give an updated reading when the NXT is stopped.
-	   * @return float Present y coordinate.
-	   */
-	   public float getY() {
-	      return y;
-	   }
-
-	   /**
-	   * Returns the current angle the NXT robot is facing.
-	   * Note: At present it will only give an updated reading when the NXT is stopped.
-	   * @return float Angle in degrees.
-	   */
-	   public float getAngle() {
-	      return angle;
-	   }
-
-	   /**
-	   * Rotates the NXT robot a specific number of degrees in a direction (+ or -).
-	   * This method will return once the rotation is complete.
-	   *
-	   * @param angle Angle to rotate in degrees. A positive value rotates left, a negative value right.
-	   */
-	   public void rotate(float angle) {
-	      
-	      // keep track of angle
-	      this.angle = this.angle + angle;
-	      this.angle = (int)this.angle % 360; // Must be < 360 degrees
-	      
-	      // Is it possible to do the following with modulo (%) ???
-	      while(this.angle < 0)
-	         this.angle += 360;  // Must be > 0
-	      
-	      // Calculate the number of intervals of rotation sensor to count
-	      int count = (int)(COUNTS_PER_DEGREE * angle);
-	      
-	      right.rotate(count);
-	      left.rotate(-count);
-	      
-	      while (left.isRotating() || right.isRotating());
-	   }
-
-	   /**
-	   * Rotates the NXT robot to point in a certain direction. It will take the shortest
-	   * path necessary to point to the desired angle. Method returns once rotation is complete.
-	   *
-	   * @param angle The angle to rotate to, in degrees.
-	   */
-	   public void gotoAngle(float angle) {
-	      // in future, use modulo instead of while loop???
-	      float difference = angle - this.angle;
-	      while(difference > 180)
-	         difference = difference - 360; // shortest path to goal angle
-	      while(difference < -180)
-	         difference = difference + 360; // shortest path to goal angle
-	      rotate(difference);
-	   }
-
-	   /**
-	   * Rotates the NXT robot towards the target point and moves the required distance.
-	   *
-	   * @param x The x coordinate to move to.
-	   * @param y The y coordinate to move to.
-	   */
-	   public void gotoPoint(float x, float y) {
-
-	      // Determine relative points
-	      float x1 = x - this.x;
-	      float y1 = y - this.y;
-
-	      // Calculate angle to go to:
-	      float angle = (float)Math.atan2(y1,x1);
-
-	      // Calculate distance to travel:
-	      float distance;
-	      if(y1 != 0)
-	         distance = y1/(float)Math.sin(angle);
-	      else
-	         distance = x1/(float)Math.cos(angle);
-
-	      // Convert angle from rads to degrees:
-	      angle = (float)Math.toDegrees(angle);
-	      
-	      // Now convert theory into action:
-	      gotoAngle(angle);
-	      travel(Math.round(distance));
-	   }
-
-	   /**
-	   * Moves the NXT robot a specific distance. A positive value moves it forwards and
-	   * a negative value moves it backwards. Method returns when movement is done.
-	   *
-	   * @param dist The positive or negative distance to move the robot (in centimeters).
-	   */
-	   public void travel(int dist) {
-	   // !! The command != STOP lines need to be tested!!!
-	   // !! Should stop and exit travel() when travel() interrupted by stop()
-	      int counts = (int)(dist * COUNTS_PER_CM);
-	      
-		  left.resetTachoCount();
-		  right.resetTachoCount();
-		  
-		  left.rotate(counts);
-		  right.rotate(counts);
-
-	      while (left.isRotating() || right.isRotating());
-	      moving = true;
-	      stop();
-	   }
-
-	   /**
-	   * Moves the NXT robot forward until stop() is called.
-	   *
-	   * @see Navigator#stop().
-	   */
-	   public void forward() {
-		  moving = true;
-		  left.resetTachoCount();
-		  right.resetTachoCount();
-		  left.forward();
-		  right.forward();
-	   }
-
-	   /**
-	   * Moves the NXT robot backward until stop() is called.
-	   *
-	   * @see Navigator#stop().
-	   */
-	   public void backward() {
-		  moving = true;
-		  left.resetTachoCount();
-		  right.resetTachoCount();
-		  left.backward();
-		  right.backward();
-	   }
-
-	   /**
-	   * Halts the NXT robot and calculates new x, y coordinates.
-	   *
-	   * @see Navigator#forward().
-	   */
-	   public void stop() {
-		   
-	      left.stop();
-	      right.stop();
-	      
-	      if(moving) {
-	    	 moving = false;
-
-	         // Recalculate x-y coordinates based on rotation sensors
-
-	         int rotAvg = (left.getTachoCount() + right.getTachoCount()) / 2;
-	         float centimeters = rotAvg / COUNTS_PER_CM;
-	      
-	         // update x, y coordinates
-	         x = x + (float)(Math.cos(Math.toRadians(angle)) * centimeters);
-	         y = y + (float)(Math.sin(Math.toRadians(angle)) * centimeters);
-	      }
-	   }
+/**
+* Allocates a RotationNavigator object and initializes it with the proper motors.
+* The x and y values and the direction angle are all initialized to 0, so if the first move is forward() the robot will run along
+* the x axis. <BR>
+* @param wheelDiameter The diameter of the wheel, usually printed right on the
+* wheel, in centimeters (e.g. 49.6 mm = 4.96 cm) 
+* @param trackWidth The distance from the center of the left tire to the center
+* of the right tire, in units of your choice
+* @param rightMotor The motor used to drive the right wheel e.g. Motor.C.
+* @param leftMotor The motor used to drive the left wheel e.g. Motor.A.
+*/
+	
+	public SimpleNavigator(float wheelDiameter, float trackWidth, Motor leftMotor, Motor rightMotor) 
+	{
+		sc = new SteeringControl(wheelDiameter,trackWidth,leftMotor, rightMotor);
 	}
+	   public SimpleNavigator(float wheelDiameter, float trackWidth, Motor leftMotor, Motor rightMotor, boolean reverse) 
+	{
+		sc = new SteeringControl(wheelDiameter,trackWidth,leftMotor, rightMotor,reverse);
+	}
+	/**
+	* Overloaded SimpleNavigator constructor that assumes the following:<BR>
+	* Left motor = Motor.A   Right motor = Motor.C <BR>
+	* @param wheelDiameter The diameter of the wheel, usually printed right on the
+	* wheel, in centimeters (e.g. 49.6 mm = 4.96 cm)  
+	* @param driveLength The distance from the center of the left tire to the center
+	* of the right tire, 
+	*/
+	public SimpleNavigator(float wheelDiameter, float driveLength)
+	{
+	  this(wheelDiameter, driveLength, Motor.A, Motor.C);
+	}
+	
+/**
+* Returns the current x coordinate of the NXT.
+* @return float Present x coordinate.
+*/
+	public float getX() 
+	{
+		return _x;
+	}
+	
+	/**
+	* Returns the current y coordinate of the NXT.
+	* Note: At present it will only give an updated reading when the NXT is stopped.
+	* @return float Present y coordinate.
+	*/
+	public float getY() {
+	  return _y;
+	}
+	
+	/**
+	* Returns the current angle the NXT robot is facing.
+	* Note: At present it will only give an updated reading when the NXT is stopped.
+	* @return float Angle in degrees.
+	*/
+	public float getAngle() 
+	{
+	  return _heading;
+	}
+/**
+*sets robot location (x,y) and direction angle
+*@param x  the x coordinate of the robot
+*@param y the y coordinate of the robot
+*@param directionAngle  the angle the robot is heading, measured from the x axis
+*/	
+	public void setPosition(float x, float y, float directionAngle)
+	{
+		_x = x;
+		_y = y;
+		_heading = directionAngle;
+	}
+	/**
+ *sets the motor speed of the robot, in degrees/second. 
+ */
+	public void setSpeed(int speed)
+	{
+		sc.setSpeed(speed);
+	}
+/**
+* Moves the NXT robot forward until stop() is called.
+* @see Navigator#stop().
+*/
+   public void forward() 
+   	{
+	  updated = false;
+	  sc.resetTachoCount();
+	  sc.forward();
+   }
+/**
+* Moves the NXT robot backward until stop() is called.
+*/
+	public void backward() 
+	{
+	  updated = false;
+  	  sc.resetTachoCount();
+	  sc.backward();
+	}
+/**
+* Halts the NXT robot and calculates new x, y coordinates.
+*/
+	public void stop() 
+	{
+	   	sc.stop();
+		updatePosition();
+	}
+/**
+ *returns true iff the robot is moving under power
+ */
+	public boolean isMoving()
+	{
+		return sc.isMoving();
+	}
+
+/**
+* Moves the NXT robot a specific distance. A positive value moves it forwards and
+* a negative value moves it backwards. 
+* T robot position is updated atomatically when the method returns. 
+* @param dist The positive or negative distance to move the robot, same units as _wheelDiameter
+*/
+	public void travel(float distance) 
+	{
+		travel(distance,false);
+	}
+
+/**
+* Moves the NXT robot a specific distance. A positive value moves it forwards and
+* a negative value moves it backwards. 
+*  If immediateReturnis true, method returns immidiately and your code MUST call updatePostion()
+* when the robot has stopped.  Otherwise, the robot position is lost. 
+* @param dist The positive or negative distance to move the robot, same units as _wheelDiameter
+* @param immediateReturn: iff true, the method returns immediately, in which case the programmer <br>
+*  is responsible for calling updatePosition() before the robot moves again. 
+*/
+ 
+	public void travel(float distance,boolean immediateReturn) 
+	{
+		updated = false;
+		sc.resetTachoCount();
+		sc.travel(distance,immediateReturn);
+		if(!immediateReturn) updatePosition();
+	}
+
+/**
+* Rotates the NXT robot a specific number of degrees in a direction (+ or -).
+* @param angle Angle to rotate in degrees. A positive value rotates left, a negative value right.
+**/
+	public void rotate(float angle)
+	{
+		rotate(angle,false);
+	}
+/**
+* Rotates the NXT robot a specific number of degrees in a direction (+ or -).
+*  If immediateReturnis true, method returns immidiately and your code MUST call updatePostion()
+* when the robot has stopped.  Otherwise, the robot position is lost. 
+* @param angle Angle to rotate in degrees. A positive value rotates left, a negative value right.
+* @param immediateReturn: iff true, the method returns immediately, in which case the programmer <br>
+*  is responsible for calling updatePosition() before the robot moves again. 
+*/
+   public void rotate(float angle,boolean immediateReturn)
+	{
+	  updated = false; 
+      int turnAngle = Math.round(normalize(angle));
+      sc.resetTachoCount();
+      sc.rotate(turnAngle,immediateReturn);
+      if(!immediateReturn) updatePosition();
+	}
+
+
+/**
+* Rotates the NXT robot to point in a specific direction. It will take the shortest
+* path necessary to point to the desired angle. 
+* @param angle The angle to rotate to, in degrees.
+*/
+   public void rotateTo(float angle) 
+   	{
+        float turnAngle = normalize( angle - _heading);
+      	rotate(turnAngle,false);
+   }
+
+
+/**
+* Rotates the NXT robot to point in a specific direction. It will take the shortest
+* path necessary to point to the desired angle. 
+* If immediateReturnis true, method returns immidiately and your code MUST call updatePostion()
+* when the robot has stopped.  Otherwise, the robot position is lost. 
+* @param angle The angle to rotate to, in degrees.
+* @param immediateReturn: iff true,  method returns immediately and the programmer is responsible for calling 
+* updatePosition() before the robot moves again. 
+*/
+   public void rotateTo(float angle,boolean immediateReturn) 
+   	{
+        float turnAngle = normalize( angle - _heading);
+      	rotate(turnAngle,immediateReturn);
+   }
+/**
+* Rotates the NXT robot towards the target point (x,y)  and moves the required distance.
+* Method returns when target point is reached, and the robot position is updated;
+* @param x The x coordinate to move to.
+* @param y The y coordinate to move to.
+*/
+   public void goTo(float x, float y) 
+   	{
+      rotateTo(angleTo(x,y));
+      travel(distanceTo(x,y));
+   }
+  
+/**
+ * distance from robot to the point with coordinates (x,y) .
+ *@param x coordinate of the point
+ *@param y coordinate of the point
+ *@return the distance from the robot current location to the point
+ */
+	public float distanceTo( float x, float y)
+	{
+		float dx = x -_x;
+		float dy = y -_y; 
+		//use hypotenuse formula
+		return (float)Math.sqrt(dx*dx+dy*dy);
+	}
+/**
+ * returns the direction angle (degrees) to point with coordinates (x,y)
+ *@param x coordinate of the point
+ *@param y coordinate of the point
+ *@return the direction angle to the point (x,y) from the NXT.  Rotate to this angle to head toward it. 
+ */
+	public float angleTo(float x, float y)
+	{
+		float dx = x -_x;
+		float dy = y -_y;
+		return(float)Math.toDegrees(Math.atan2(dy,dx));
+	}
+
+/**
+* Updates robot location (x,y) and direction angle. Called by stop, and movement commands that terminate when complete.
+* Must be called after a command that returns immediatly, but after robot movement stops, and before another movement method is called.
+*/ 
+	public void updatePosition()
+	{
+		if(updated)return;// don't do it again
+		try{Thread.sleep(70);}
+		catch(InterruptedException e){}
+		int left = sc.getLeftCount();//left wheel rotation angle
+		int right = sc.getRightCount();
+		if(left == 0 && right == 0)return; // no movement
+		int outsideRotation = 0;
+		int insideRotation = 0;
+		int direction = 1; // assume left turn
+		if(Math.abs(left)<Math.abs(right))
+		{
+			outsideRotation = right;
+			insideRotation = left;
+		}
+		else
+		{
+			outsideRotation = left;
+			insideRotation = right;
+			direction = -1; // turn to right
+		}
+		float turnAngle = direction*(outsideRotation-insideRotation)*sc._wheelDiameter/(2*sc._trackWidth);
+//		float ratio = 1.0f*insideRotation/outsideRotation;
+//		float moveAngle = 0; // angle of displacement in robot coordinates, degrees
+//		float projection = 0;  //angle to project displacement to world coordinates, in radians
+//		float distance = 0; // of displacement
+//		boolean approx = false;
+//		if(ratio>.95) // probably movement was intended to be straight
+//		{
+			float avg = (insideRotation+outsideRotation)/2.0f; 
+			float	distance = avg/sc._degPerDistance;
+//			projection = (float)Math.toRadians(_heading+turnAngle/2);
+//			approx = true;
+//		}
+//		else
+//		{ 
+//			float turnRadius =sc._trackWidth/(1 - ratio) -  sc._trackWidth/2 ; // 
+//			float radians = (float) Math.toRadians(turnAngle); // turnAngle in radians
+//			float dx0 = turnRadius*(float)Math.sin(radians);  //displacement  in robot coordinates
+//			float dy0 = turnRadius*(1 -(float) Math.cos(radians)); 
+//			distance = (float) Math.sqrt(dx0*dx0+dy0*dy0);  //distance 
+//			moveAngle = (float)Math.atan2(dy0,dx0); //in robot coordinates
+//			approx = false;
+//			projection = moveAngle + (float)Math.toRadians(_heading); // angle to project displacement onto world coordinates
+//		}
+
+		_x += distance * Math.cos(_heading); // displacement in world coordinates
+		_y += distance * Math.sin(_heading);
+		_heading = normalize(_heading + turnAngle); // keep angle between -180 and 180
+
+
+		updated = true;
+	}
+
+/**
+ *retuns equivalent angle between -180 and +180
+ */
+	private float normalize(float angle)
+	{
+	  float a = angle;
+	  while(a > 180) a -= 360;
+	  while(a < -180) a += 360;
+	  return a;
+	}
+}
 
 
