@@ -166,5 +166,36 @@ public class Port implements ListenerCaller
     }
    iPreviousValue = newValue;
   }
+  
+  public static native void i2cEnableById(int aPortId);
+  
+  public static native void i2cDisableById(int aPortId);
+  
+  public static native int i2cBusyById(int aPortId);
+  
+  public static native int i2cStartById(int aPortId, int address,
+		                            int internalAddress, int numInternalBytes,
+		                            byte [] buffer, int numBytes, int transferType);
+  
+  public void i2cEnable() {
+	  i2cEnableById(iPortId);
+  }
+  
+  public void i2cDisable() {
+	  i2cDisableById(iPortId);
+  }
+  
+  public int i2cBusy() {
+	  return i2cBusyById(iPortId);
+  }
+  
+  public int i2cStart(int address, int internalAddress,
+		              int numInternalBytes, byte[] buffer,
+		              int numBytes, int transferType) {
+	  
+	  return i2cStartById(iPortId, address, internalAddress,
+			              numInternalBytes, buffer,
+			              numBytes, transferType);
+  }
 }
 
