@@ -53,6 +53,10 @@ public interface SpecialSignatureConstants {
     "readButtons()I",
     "getTachoCountById(I)I",
     "controlMotor(III)V",
-    "resetTachoCountById(I)V"
+    "resetTachoCountById(I)V",
+    "i2cEnableById(I)V",
+    "i2cBusyById(I)I",
+    "i2cStartById(IIII[BII)I",
+    "i2cDisableById(I)V"
   };
 }
