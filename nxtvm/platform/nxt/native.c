@@ -22,6 +22,7 @@
 #include "display.h"
 #include "nxt_avr.h"
 #include "nxt_motors.h"
+#include "i2c.h"
 
 /**
  * NOTE: The technique is not the same as that used in TinyVM.
@@ -223,6 +224,28 @@ dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
     return;
   case resetTachoCountById_4I_5V:
     nxt_motor_set_count(paramBase[0], 0);
+    return;
+  case i2cEnableById_4I_5V:
+    i2c_enable(paramBase[0]);
+    return;
+  case i2cDisableById_4I_5V:
+    i2c_disable(paramBase[0]);
+    return;
+  case i2cBusyById_4I_5I:
+    push_word(i2c_busy(paramBase[0]));
+    return;
+  case i2cStartById_4IIII_1BII_5I:
+    {
+    	Object *p = word2ptr(paramBase[4]);
+    	byte *byteArray = (((byte *) p) + HEADER_SIZE);
+    	push_word(i2c_start_transaction(paramBase[0],
+    	                                paramBase[1],
+    	                                paramBase[2],
+    	                                paramBase[3],
+    	                                byteArray,
+    	                                paramBase[5],
+    	                                paramBase[6]));                      
+    }
     return;
   default:
     throw_exception(noSuchMethodError);
