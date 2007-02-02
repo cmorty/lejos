@@ -93,6 +93,14 @@ getTachoCountById(I)I
 controlMotor(III)V
 resetTachoCountById(I)V
 
+#lejos.nxt.Port
+i2cEnableById(I)V
+i2cBusyById(I)I
+i2cStartById(IIII[BII)I
+i2cDisableById(I)V
+
+
+
 
 
 
