@@ -6,17 +6,17 @@ package lejos.nxt;
  */
 public class UltraSonicSensor {
 	Port port;
+	byte[] buf;
 	
 	public UltraSonicSensor(Port port)
 	{
 		this.port = port;
+		buf = new byte[1];
 		port.setPowerType(2);
 		port.i2cEnable();
 	}
 	
-	public int getDistance() {
-		byte buf[] = new byte[1];
-		
+	public int getDistance() {		
 		int ret = port.i2cStart(1, 0x42, 1, buf, 1, 0);
 		
 		if (ret == 0) {
