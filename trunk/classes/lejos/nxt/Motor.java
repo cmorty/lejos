@@ -3,6 +3,8 @@ package lejos.nxt;
 import lejos.nxt.Battery;
 
 
+
+
 /**
  * Abstraction for a motor. Three instances of <code>Motor</code>
  * are available: <code>Motor.A</code>, <code>Motor.B</code>
@@ -11,11 +13,10 @@ import lejos.nxt.Battery;
  * and <code>flt</code>. To set each motor's speed, use
  * <code>setSpeed.  Speed is in degrees per second. </code>.\
  * Methods that use the tachometer:  regulateSpeed, rotate, rotateTo <br>
- *  Motor has 2 modes : speedRegulation and smoothAcceleration. These are initially enabled. <>
+ * Motor has 2 modes : speedRegulation and smoothAcceleration. These are initially enabled. <>
  * They can be switched off/on by the methods regulateSpeed() and smoothAcceleration().
  * The actual maximum speed of the motor depends on battery voltage and load.. 
  * Speed regulation fails if the target speed exceeds the capability of the motor.
- * Speed regulation and smooth accelerations modes are set ON by default.
  * 
  * <p>
  * Example:<p>
@@ -44,6 +45,10 @@ public class Motor
   private int _power = 0;
   // used for speed regulation
   private boolean _keepGoing = true;// for regulator
+  /**
+   * Initially true; changed only by regulateSpeed(),<br>
+   * used by Regulator, updteState, startRegulating*
+   */
   private boolean _regulate = true;
   
   public Regulator regulator = new Regulator();
@@ -54,6 +59,9 @@ public class Motor
   private boolean _rotating = false;
   private boolean _wasRotating = false;
   private boolean _rampUp = true;
+  /**
+   * initialized to be false(ramping enabled); changed only by smoothAcceleration
+   */
   private boolean _noRamp = false;
  
   /**
@@ -302,7 +310,7 @@ public class Motor
   **/
  	public void startRegulating()
 	{
-		if(!regulate)return;
+		if(!_regulate)return;
  		time0 = (int)System.currentTimeMillis();
  		angle0 = getTachoCount();
  	    basePower = calcPower(_speed);
@@ -437,6 +445,12 @@ public class Motor
      setPower((int)regulator.calcPower(_speed));
   }
 
+/**
+ *sets motor power.  This method is used by the Regulator thread to control motor speed.
+ *Warning:  negative power will cause the motor to run in reverse but without updating the _direction 
+ *field which is used by the Regulator thread.  If the speed regulation is enabled, the rusults are 
+ *unpredictable. 
+ */
 	public void setPower(int power)
 	{
 	 _power = power;
