@@ -4,8 +4,7 @@ package lejos.nxt;
  * Abstraction for a HiTechnic or Mindsensors compass.
  * 
  */
-public class CompassSensor {
-	Port port;
+public class CompassSensor extends I2CSensor {
 	byte[] buf;
 	
 	public CompassSensor(Port port)
@@ -17,14 +16,11 @@ public class CompassSensor {
 	}
 	
 	public int getDegrees() {		
-		int ret = port.i2cStart(1, 0x42, 2, buf, 2, 0);
-		
-		if (ret == 0) {
-			while (port.i2cBusy() != 0) {
-				Thread.yield();
-			}
-			return (buf[0] & 0xff + ((buf[1] & 0xff) << 8));
-		} else return -1;
+		int ret = getData(0x42, buf, 2);
+
+		return (ret == 0 
+				 ? (((buf[0] & 0xff)<< 1) + buf[1])
+				 : -1);
 	}
 }
 
