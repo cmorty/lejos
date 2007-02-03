@@ -1,4 +1,4 @@
-//package java.awt;
+package java.awt;
 
 import lejos.nxt.LCD;
 
