@@ -5,8 +5,7 @@ package lejos.nxt;
  * acceleration (tilt) sensor.
  * 
  */
-public class TiltSensor {
-	Port port;
+public class TiltSensor extends I2CSensor {
 	byte[] buf;
 	
 	public TiltSensor(Port port)
@@ -18,35 +17,20 @@ public class TiltSensor {
 	}
 	
 	public int getXTilt() {		
-		int ret = port.i2cStart(1, 0x42, 1, buf, 1, 0);
+		int ret = getData(0x42, buf, 1);
 		
-		if (ret == 0) {
-			while (port.i2cBusy() != 0) {
-				Thread.yield();
-			}
-			return (buf[0] & 0xff);
-		} else return -1;
+		return (ret == 0 ? (buf[0] & 0xff) : -1);
 	}
 	
 	public int getYTilt() {		
-		int ret = port.i2cStart(1, 0x43, 1, buf, 1, 0);
+		int ret = getData(0x43, buf, 1);
 		
-		if (ret == 0) {
-			while (port.i2cBusy() != 0) {
-				Thread.yield();
-			}
-			return (buf[0] & 0xff);
-		} else return -1;
+		return (ret == 0 ? (buf[0] & 0xff) : -1);
 	}
 	
 	public int getZTilt() {		
-		int ret = port.i2cStart(1, 0x44, 1, buf, 1, 0);
+		int ret = getData(0x44, buf, 1);
 		
-		if (ret == 0) {
-			while (port.i2cBusy() != 0) {
-				Thread.yield();
-			}
-			return (buf[0] & 0xff);
-		} else return -1;
+		return (ret == 0 ? (buf[0] & 0xff) : -1);
 	}
 }
