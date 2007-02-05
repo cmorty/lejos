@@ -6,7 +6,7 @@ package lejos.nxt;
  */
 public class CompassSensor extends I2CSensor {
 	byte[] buf;
-	
+	private static String MINDSENSORSID = "mndsnsrs";
 	public CompassSensor(Port port)
 	{
 		this.port = port;
@@ -24,8 +24,13 @@ public class CompassSensor extends I2CSensor {
 	public float getDegrees() {		
 		int ret = getData(0x42, buf, 2);
 		if(ret != 0) return -1;
-		int iHeading = (0xFF & buf[0]) | ((0xFF & buf[1]) << 8);
-		float dHeading = iHeading / 10.00F; 
-		return dHeading;	
+		
+		if(getProductID().equals(MINDSENSORSID)) {
+			int iHeading = (0xFF & buf[0]) | ((0xFF & buf[1]) << 8);
+			float dHeading = iHeading / 10.00F; 
+			return dHeading;
+		} else {
+			return ((buf[0] & 0xff)<< 1) + buf[1];
+		}
 	}
 }
