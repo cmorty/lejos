@@ -26,8 +26,13 @@ public class CompassSensor extends I2CSensor {
 		if(ret != 0) return -1;
 		
 		if(getProductID().equals(MINDSENSORSID)) {
-			int iHeading = (0xFF & buf[0]) | ((0xFF & buf[1]) << 8);
-			float dHeading = iHeading / 10.00F; 
+			// NOTE: This only works when Mindsensors compass in integer mode
+			/*int iHeading = (0xFF & buf[0]) | ((0xFF & buf[1]) << 8);
+			float dHeading = iHeading / 10.00F;*/
+			// Byte mode (default - will use Integer mode later)
+			int dHeading = (0xFF & buf[0]);
+			dHeading = dHeading * 360;
+			dHeading = dHeading / 255;
 			return dHeading;
 		} else {
 			return ((buf[0] & 0xff)<< 1) + buf[1];
