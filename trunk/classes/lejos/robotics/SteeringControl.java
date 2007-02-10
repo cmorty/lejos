@@ -50,11 +50,11 @@ public class SteeringControl
 /** 
  * motor speed  degrees per second. Used by all methods that cause movememt
  */
-	private int _speed = 360;
+	protected int _speed = 360;
 /**
  *  Motor rotation forward makes robot move forward iff parity == 1.
  */ 
-	private byte _parity = 1; 
+	protected byte _parity = 1; 
 /**
  * distance between wheels - used in steer() 
  */
@@ -228,6 +228,7 @@ public class SteeringControl
 /**
  * Moves the NXT robot in a circular path at a specific turn rate. <br>
  * The center of the turning circle is on the right side of the robot iff parameter turnRate is negative;  <br>
+ * Method returns immediately.<br>
  *     turnRate values are between -200 and +200;
 
  * @param turnRate If positive, the left wheel is on the inside of the turn.  If negative, the left wheel is on the outside.
@@ -239,7 +240,7 @@ public class SteeringControl
  */
 	public void steer(int turnRate)
 	{
-		steer(turnRate,Integer.MAX_VALUE,false);
+		steer(turnRate,Integer.MAX_VALUE,true);
 	}
 
 /**
