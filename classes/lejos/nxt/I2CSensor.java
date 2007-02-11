@@ -11,6 +11,13 @@ public abstract class I2CSensor {
 	char [] sensorTypeChars = StringUtils.getCharacters(sensorType);
 	byte[] byteBuff = new byte[8]; 
 	
+	public I2CSensor(Port port)
+	{
+		this.port = port;
+		port.setPowerType(2);
+		port.i2cEnable();
+	}
+	
 	public int getData(int register, byte [] buf, int len) {	
 		int ret = port.i2cStart(address, register, len, buf, len, 0);
 		

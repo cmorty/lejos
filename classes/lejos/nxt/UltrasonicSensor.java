@@ -1,14 +1,10 @@
 package lejos.nxt;
 
 public class UltrasonicSensor extends I2CSensor {
-	byte[] buf;
-
-	public UltrasonicSensor(Port port)
-	{
-		this.port = port;
-		buf = new byte[1];
-		port.setPowerType(2);
-		port.i2cEnable();
+	byte[] buf = new byte[1];
+	
+	public UltrasonicSensor(Port port) {
+		super(port);
 	}
 
 	public int getDistance() {		
