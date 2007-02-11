@@ -6,14 +6,11 @@ package lejos.nxt;
  * 
  */
 public class TiltSensor extends I2CSensor {
-	byte[] buf;
+	byte[] buf = new byte[2];
 	
 	public TiltSensor(Port port)
 	{
-		this.port = port;
-		buf = new byte[2];
-		port.setPowerType(2);
-		port.i2cEnable();
+		super(port);
 	}
 	
 	public int getXTilt() {		
