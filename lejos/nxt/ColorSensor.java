@@ -5,14 +5,11 @@ package lejos.nxt;
  * www.hitechnic.com
  */
 public class ColorSensor extends I2CSensor {
-	byte[] buf;
+	byte[] buf = new byte[2];
 	
 	public ColorSensor(Port port)
 	{
-		this.port = port;
-		buf = new byte[2];
-		port.setPowerType(2);
-		port.i2cEnable();
+		super(port);
 	}
 	
 	/**

@@ -5,16 +5,13 @@ package lejos.nxt;
  * 
  */
 public class CompassSensor extends I2CSensor {
-	byte[] buf;
+	byte[] buf = new byte[2];
 	
 	private int manufacturer; // For comparing HiTechnic vs. Mindsensors
+	
 	public CompassSensor(Port port)
 	{
-		this.port = port;
-		buf = new byte[2];
-		port.setPowerType(2);
-		port.i2cEnable();
-		
+		super(port);		
 		if(this.getProductID().equals("mndsnsrs")) manufacturer = 1;
 	}
 	
