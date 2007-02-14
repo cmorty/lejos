@@ -58,8 +58,10 @@ public class LightSensor
 	}
 	
 	/**
-	 * Read the current sensor value.
-	 * @return Value as raw normalized (0 to 1023). 1023 = brightest
+	 * Read the current sensor normalized value. Allows more accuracy
+	 * than readValue(). For LEGO sensor, values typically range from 
+	 * 145 (dark) to 890 (sunlight). 
+	 * @return Value as raw normalized (0 to 1023)
 	 */
 	public int readNormalizedValue() {
 		return 1023 - port.readRawValue();
