@@ -21,7 +21,7 @@ import lejos.nxt.Battery;
  * <p>
  * Example:<p>
  * <code><pre>
- *   Motor.A.setSpeed(720);// 2 RPM
+ *   Motor.A.setSpeed(720);// 2 RPS
  *   Motor.C.setSpeed(7200);
  *   Motor.A.forward();
  *   Motor.C.forward();
@@ -451,7 +451,7 @@ public class Motor
  *field which is used by the Regulator thread.  If the speed regulation is enabled, the rusults are 
  *unpredictable. 
  */
-	public void setPower(int power)
+	private void setPower(int power)
 	{
 	 _power = power;
 	  controlMotor (_id - 'A', _mode,power);
@@ -523,10 +523,3 @@ public class Motor
   
   public static native void resetTachoCountById(int aMotor);
 }
-
-
-
-
-
-
-
