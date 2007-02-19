@@ -3,14 +3,9 @@
 
 #include "mytypes.h"
 
-#define SAMPLEWORD  U32
-#define SAMPLEWORDS 8
-#define SAMPLEWORDBITS (sizeof(SAMPLEWORD) * 8)
-#define SAMPLEBITS (SAMPLEWORDS * SAMPLEWORDBITS)
-
 void sound_init();
-void sound_int_enable();
-void sound_int_enable();
+void sound_interrupt_enable();
+void sound_interrupt_disable();
 void sound_enable();
 void sound_disable();
 void sound_isr_C();
