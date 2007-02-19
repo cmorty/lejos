@@ -65,7 +65,5 @@ public class Sound
    * @param aFrequency The frequency of the tone in Hertz (Hz).
    * @param aDuration The duration of the tone, in centiseconds. Value is truncated at 256 centiseconds.
    */
-  public static void playTone (int aFrequency, int aDuration)
-  {
-  }
+  public static native void playTone (int aFrequency, int aDuration);
 }
