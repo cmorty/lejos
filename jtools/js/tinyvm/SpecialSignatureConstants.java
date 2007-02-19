@@ -57,6 +57,7 @@ public interface SpecialSignatureConstants {
     "i2cEnableById(I)V",
     "i2cBusyById(I)I",
     "i2cStartById(IIII[BII)I",
-    "i2cDisableById(I)V"
+    "i2cDisableById(I)V",
+    "playTone(II)V"
   };
 }
