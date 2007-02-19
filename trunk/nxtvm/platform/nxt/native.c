@@ -23,6 +23,7 @@
 #include "nxt_avr.h"
 #include "nxt_motors.h"
 #include "i2c.h"
+#include "sound.h"
 
 /**
  * NOTE: The technique is not the same as that used in TinyVM.
@@ -246,6 +247,9 @@ dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
     	                                paramBase[5],
     	                                paramBase[6]));                      
     }
+    return; 
+  case playTone_4II_5V:
+    sound_freq(paramBase[0],paramBase[1]);
     return;
   default:
     throw_exception(noSuchMethodError);

@@ -34,6 +34,7 @@
 #include "lejos_nxt.h"
 
 #include "display.h"
+#include "sound.h"
 
 extern U32 __free_ram_start__;
 extern U32 __free_ram_end__;
@@ -372,6 +373,7 @@ main(void)
   aic_initialise();
   interrupts_enable();
   systick_init();
+  sound_init();
   nxt_avr_init();
   display_init();
   nxt_motor_init();
