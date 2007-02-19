@@ -24,7 +24,8 @@ C_PLATFORM_SOURCES := \
 	nxt_motors.c \
 	data_abort.c \
 	display.c \
-	i2c.c
+	i2c.c \
+	sound.c
 
 C_HOOK_SOURCES := \
 	main.c \

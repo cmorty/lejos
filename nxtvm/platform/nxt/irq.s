@@ -122,6 +122,11 @@ spi_isr_entry:
   .global twi_isr_entry
 twi_isr_entry:
   irq_wrapper_nested twi_isr_C
+  
+  .extern sound_isr_C
+  .global sound_isr_entry
+sound_isr_entry:
+  irq_wrapper_nested sound_isr_C
 
   .extern uart_isr_C_0
   .global uart_isr_entry_0
