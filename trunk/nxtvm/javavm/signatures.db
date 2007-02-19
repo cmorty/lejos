@@ -99,6 +99,8 @@ i2cBusyById(I)I
 i2cStartById(IIII[BII)I
 i2cDisableById(I)V
 
+#lejos.nxt.Sound
+playTone(II)V
 
 
 

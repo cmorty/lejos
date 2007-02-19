@@ -57,4 +57,5 @@
 #define i2cBusyById_4I_5I 50
 #define i2cStartById_4IIII_1BII_5I 51
 #define i2cDisableById_4I_5V 52
+#define playTone_4II_5V 53
 #endif // _SPECIALSIGNATURES_H
