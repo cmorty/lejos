@@ -6,13 +6,14 @@ package lejos.nxt;
  */
 public class CompassSensor extends I2CSensor {
 	byte[] buf = new byte[2];
+	private static final String MINDSENSORS_ID = "mndsnsrs";
 	
-	private int manufacturer; // For comparing HiTechnic vs. Mindsensors
+	private boolean isMindsensors; // For comparing HiTechnic vs. Mindsensors
 	
 	public CompassSensor(Port port)
 	{
 		super(port);		
-		if(this.getProductID().equals("mndsnsrs")) manufacturer = 1;
+		isMindsensors = (this.getProductID().equals(MINDSENSORS_ID));
 	}
 	
 	/**
@@ -25,7 +26,7 @@ public class CompassSensor extends I2CSensor {
 		int ret = getData(0x42, buf, 2);
 		if(ret != 0) return -1;
 		
-		if(manufacturer == 1) { // 1 = mindsensors
+		if(isMindsensors) { // Check if this is mindsensors
 			// NOTE: This only works when Mindsensors compass in integer mode
 			/*int iHeading = (0xFF & buf[0]) | ((0xFF & buf[1]) << 8);
 			float dHeading = iHeading / 10.00F;*/
