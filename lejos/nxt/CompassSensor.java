@@ -27,7 +27,7 @@ public class CompassSensor extends I2CSensor {
 		if(ret != 0) return -1;
 		
 		if(isMindsensors) { // Check if this is mindsensors
-			// NOTE: This only works when Mindsensors compass in integer mode
+			// NOTE: The following only works when Mindsensors compass in integer mode
 			/*int iHeading = (0xFF & buf[0]) | ((0xFF & buf[1]) << 8);
 			float dHeading = iHeading / 10.00F;*/
 			// Byte mode (default - will use Integer mode later)
@@ -38,5 +38,14 @@ public class CompassSensor extends I2CSensor {
 		} else {
 			return ((buf[0] & 0xff)<< 1) + buf[1];
 		}
+	}
+	/**
+	 * Compass readings increase clockwise from 0 to 360, but Cartesian
+	 * coordinate systems increase counter-clockwise. This method returns
+	 * the Cartesian compass reading.
+	 * @return 360 - getDegrees()
+	 */
+	public float getDegreesCartesian() {
+		return 360 - getDegrees();
 	}
 }
