@@ -21,7 +21,7 @@ import lejos.nxt.Battery;
  * <p>
  * Example:<p>
  * <code><pre>
- *   Motor.A.setSpeed(720);// 2 RPS
+ *   Motor.A.setSpeed(720);// 2 RPM
  *   Motor.C.setSpeed(7200);
  *   Motor.A.forward();
  *   Motor.C.forward();
@@ -30,12 +30,11 @@ import lejos.nxt.Battery;
  *   Motor.C.stop();
  *   Motor.A.regulateSpeed(true);
  *   Motor.A.rotateTo( 360);
- *   while(Motor.A.isRotating());
- *   Motor.A.rotate(-720);
+ *   Motor.A.rotate(-720,true);
  *   while(Motor.A.isRotating();
  *   int angle = Motor.A.getTachoCount(); // should be -360
  * </pre></code>
- *  Roger Glassey 3 Jan 2006
+ * @author Roger Glassey 22 February 2007
  */
 public class Motor
 {
@@ -451,7 +450,7 @@ public class Motor
  *field which is used by the Regulator thread.  If the speed regulation is enabled, the rusults are 
  *unpredictable. 
  */
-	private void setPower(int power)
+	public void setPower(int power)
 	{
 	 _power = power;
 	  controlMotor (_id - 'A', _mode,power);
@@ -473,7 +472,8 @@ public class Motor
   
 	private int overshoot()
 	{
-		return  10 + (int)( _speed*0.067f);//0.067 from regression - extra margin for high speed
+		return   (int)( _speed*0.060f);//0.067 from regression - extra margin for high speed
+
 	}
 
 	public int getLimitAngle()
@@ -523,3 +523,10 @@ public class Motor
   
   public static native void resetTachoCountById(int aMotor);
 }
+
+
+
+
+
+
+
