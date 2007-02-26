@@ -91,25 +91,34 @@ public class Graphics {
 
 	public void drawArc(int x, int yME, int width, int height, int startAngle, int arcAngle) {
 		// Modified McIlroy's ellipse algorithm
-			int endAngle = startAngle + arcAngle; // Needs work if going past 0/360 degrees
-
-			int xc = x + (width/2); // X-center
-			int yc = yME + (height/2); // Y-center
-			int a = width/2;
-			int b = height/2;
-
-			/* e(x,y) = b^2*x^2 + a^2*y^2 - a^2*b^2 */
-			int xxx = 0, y = b;
-			int a2 = a*a, b2 = b*b;
-			int crit1 = -(a2/4 + a%2 + b2);
-			int crit2 = -(b2/4 + b%2 + a2);
-			int crit3 = -(b2/4 + b%2);
-			int t = -a2*y; /* e(xxx+1/2,y-1/2) - (a^2+b^2)/4 */
-			int dxt = 2*b2*xxx, dyt = -2*a2*y;
-			int d2xt = 2*b2, d2yt = 2*a2;
-			int count = 0; // DELETE ME!!
-			while (y>=0 && xxx<=a) {
-				float angle = (float)Math.toDegrees(Math.atan2(y, xxx));
+		int endAngle = startAngle + arcAngle;
+		if(endAngle<0) endAngle = endAngle + 360;
+		if(endAngle>360) endAngle = endAngle - 360;
+		if(arcAngle < 0) { // Switches start and end
+			int temp = startAngle;
+			startAngle = endAngle;
+			endAngle = temp;
+		}
+		
+		int xc = x + (width/2); // X-center
+		int yc = yME + (height/2); // Y-center
+		int a = width/2;
+		int b = height/2;
+	
+		/* e(x,y) = b^2*x^2 + a^2*y^2 - a^2*b^2 */
+		int xxx = 0, y = b;
+		int a2 = a*a, b2 = b*b;
+		int crit1 = -(a2/4 + a%2 + b2);
+		int crit2 = -(b2/4 + b%2 + a2);
+		int crit3 = -(b2/4 + b%2);
+		int t = -a2*y; /* e(xxx+1/2,y-1/2) - (a^2+b^2)/4 */
+		int dxt = 2*b2*xxx, dyt = -2*a2*y;
+		int d2xt = 2*b2, d2yt = 2*a2;
+		int count = 0; // DELETE ME!!
+		while (y>=0 && xxx<=a) {
+			float angle = (float)Math.toDegrees(Math.atan2(y, xxx));
+	
+			if(startAngle < endAngle) {
 				if(360 - angle >= startAngle && 360 - angle <= endAngle)
 					setPixel(BLACK, xc+xxx, yc+y); // Quadrant 4: lower-right
 				if (xxx!=0 || y!=0)
@@ -121,19 +130,31 @@ public class Graphics {
 					if(180 + angle >= startAngle && 180 + angle <= endAngle)
 						setPixel(BLACK, xc-xxx, yc+y); // Quadrant 3: Lower-left
 				}
-
-				if (t + b2*xxx <= crit1 ||   /* e(xxx+1,y-1/2) <= 0 */
-				    t + a2*y <= crit3)      /* e(xxx+1/2,y) <= 0 */
-					{xxx++; dxt += d2xt; t += dxt;} // incx()
-				 else if (t - a2*y > crit2) /* e(xxx+1/2,y-1) > 0 */
-					{y--; dyt += d2yt; t += dyt;} // incy()
-				else {
-					{xxx++; dxt += d2xt; t += dxt;} // incx()
-					{y--; dyt += d2yt; t += dyt;} // incy()
+			} else {
+				if(360 - angle >= startAngle)
+					setPixel(BLACK, xc+xxx, yc+y); // Quadrant 4: lower-right
+				if (xxx!=0 || y!=0)
+					if(180 - angle <= endAngle) 
+						setPixel(BLACK, xc-xxx, yc-y); // Quadrant 2: Upper-left
+				if (xxx!=0 && y!=0) {
+					if(angle <= endAngle)
+						setPixel(BLACK, xc+xxx, yc-y); // Quadrant 1: Upper-right
+					if(180 + angle >= startAngle)
+						setPixel(BLACK, xc-xxx, yc+y); // Quadrant 3: Lower-left
 				}
 			}
-		}
 
+			if (t + b2*xxx <= crit1 ||   /* e(xxx+1,y-1/2) <= 0 */
+			    t + a2*y <= crit3)      /* e(xxx+1/2,y) <= 0 */
+				{xxx++; dxt += d2xt; t += dxt;} // incx()
+			 else if (t - a2*y > crit2) /* e(xxx+1/2,y-1) > 0 */
+				{y--; dyt += d2yt; t += dyt;} // incy()
+			else {
+				{xxx++; dxt += d2xt; t += dxt;} // incx()
+				{y--; dyt += d2yt; t += dyt;} // incy()
+			}
+		}
+	}
 	
 	public void drawOval(int x, int y, int width, int height) {
 		
