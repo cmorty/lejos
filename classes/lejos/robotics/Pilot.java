@@ -104,6 +104,16 @@ public class Pilot
  *returns tachoCount of the right motor; Positive value means motor has moved the robot forward;
  */
 	public int getRightCount(){ return _parity*_right.getTachoCount();}
+/**
+ *returns actual speed of left motor in degrees per second; a negative value if motor is rotating backwards  <br>
+ * Updated avery 100 ms.
+ **/
+	public int getLeftActualSpeed(){ return _left.getActualSpeed();}
+/**
+ *returns actual speed of right motor in deg/sec;  a negative value if motor is rotating backwards. <br>
+ *  Updated avery 100 ms.
+ **/	
+	public int getRightActualSpeed() { return _right.getActualSpeed();}
 
 /**
  * return ratatio of Motor revolutions per 360 degree rotation of the robot
