@@ -1,8 +1,8 @@
 package lejos.nxt;
 
 import lejos.nxt.Battery;
-
-
+import lejos.util.Timer;
+import lejos.util.TimerListener;
 
 
 /**
@@ -36,7 +36,7 @@ import lejos.nxt.Battery;
  * </pre></code>
  * @author Roger Glassey 22 February 2007
  */
-public class Motor
+public class Motor implements TimerListener
 {
   private char  _id;
   private int _mode = 4;
@@ -51,6 +51,7 @@ public class Motor
   private boolean _regulate = true;
   
   public Regulator regulator = new Regulator();
+  private Timer timer = new Timer(100,this);
   // used for control of angle of rotation
   private int _direction = 1; // +1 is forward ; used by rotate();
   private int _limitAngle;
@@ -58,6 +59,8 @@ public class Motor
   private boolean _rotating = false;
   private boolean _wasRotating = false;
   private boolean _rampUp = true;
+  private int _lastTacho = 0;
+  private int _actualSpeed;
   /**
    * initialized to be false(ramping enabled); changed only by smoothAcceleration
    */
@@ -84,6 +87,7 @@ public class Motor
     _id = aId;
     regulator.start();
     regulator.setDaemon(true); 
+    timer.start();
   }
 
 /**
@@ -93,6 +97,7 @@ public class Motor
   {
     return _id;
   }
+
 
   /**
    * Causes motor to rotate forward.
@@ -326,7 +331,7 @@ public class Motor
   		float error = 0;
 	  	float e0 = 0;
 	  	int speed = 0;
-	  	float accel =1.25f;// deg/sec/ms 
+	  	float accel =1.5f;// deg/sec/ms 
 	  	int td = 100;
 	  	float ts = 0;  //time to stabilize
 	  	while(_keepGoing)
@@ -489,6 +494,22 @@ public class Motor
   {
   	return  _rotating;
   }
+
+/**
+ * requred by TimerListener interface
+ */
+	public void timedOut()
+	{
+		int angle = getTachoCount();
+		_actualSpeed = 10*(angle - _lastTacho);
+		_lastTacho = angle;
+	}
+	/** 
+	 *returns actualSpeed degrees per second,  calculated every 100 ms; negative value means motor is rotating backward
+	 */
+	public int getActualSpeed() { return _actualSpeed;}
+	
+
   /**
    * <i>Low-level API</i> for controlling a motor.
    * This method is not meant to be called directly.
