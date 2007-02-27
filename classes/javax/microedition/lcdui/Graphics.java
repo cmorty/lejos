@@ -1,4 +1,4 @@
-package java.awt;
+package javax.microedition.lcdui;
 
 import lejos.nxt.LCD;
 
@@ -19,25 +19,7 @@ public class Graphics {
 	public Graphics() {
 		 buff = new int[HEIGHT*WIDTH/32];
 	}
-	
-	// TESTING PURPOSES ONLY
-	public static void main(String [] options) throws Exception {
-		Graphics g = new Graphics();
-		for(int i=0;i<HEIGHT;i=i+2)
-			g.drawLine(0,HEIGHT - 1 - i,i,0);
-		g.refresh();
-		Thread.sleep(5000);
-		g.clear();
-		for(int i=0;i<HEIGHT;i=i+6)
-			g.drawRect(0, 0, i, i);
-		g.refresh();
-		Thread.sleep(5000);
-		g.clear();
-		for(int i=0;i<8;i++)
-			g.drawOval(WIDTH/2, HEIGHT/2, 7*i, 8*(7-i));
-		g.refresh();
-	}
-
+		
 	/**
 	* Using rgbColor as argument even though global, because when this
 	* setPixel() method is used later it will need color argument
@@ -89,7 +71,7 @@ public class Graphics {
 		}
 	}
 
-	public void drawArc(int x, int yME, int width, int height, int startAngle, int arcAngle) {
+	public void drawArc(int x, int y, int width, int height, int startAngle, int arcAngle) {
 		// Modified McIlroy's ellipse algorithm
 		int endAngle = startAngle + arcAngle;
 		if(endAngle<0) endAngle = endAngle + 360;
@@ -101,120 +83,111 @@ public class Graphics {
 		}
 		
 		int xc = x + (width/2); // X-center
-		int yc = yME + (height/2); // Y-center
+		int yc = y + (height/2); // Y-center
 		int a = width/2;
 		int b = height/2;
 	
 		/* e(x,y) = b^2*x^2 + a^2*y^2 - a^2*b^2 */
-		int xxx = 0, y = b;
+		int xxx = 0, yyy = b;
 		int a2 = a*a, b2 = b*b;
 		int crit1 = -(a2/4 + a%2 + b2);
 		int crit2 = -(b2/4 + b%2 + a2);
 		int crit3 = -(b2/4 + b%2);
-		int t = -a2*y; /* e(xxx+1/2,y-1/2) - (a^2+b^2)/4 */
-		int dxt = 2*b2*xxx, dyt = -2*a2*y;
+		int t = -a2*yyy; /* e(xxx+1/2,y-1/2) - (a^2+b^2)/4 */
+		int dxt = 2*b2*xxx, dyt = -2*a2*yyy;
 		int d2xt = 2*b2, d2yt = 2*a2;
 		int count = 0; // DELETE ME!!
-		while (y>=0 && xxx<=a) {
-			float angle = (float)Math.toDegrees(Math.atan2(y, xxx));
+		while (yyy>=0 && xxx<=a) {
+			float angle = (float)Math.toDegrees(Math.atan2(yyy, xxx));
 	
 			if(startAngle < endAngle) {
 				if(360 - angle >= startAngle && 360 - angle <= endAngle)
-					setPixel(BLACK, xc+xxx, yc+y); // Quadrant 4: lower-right
-				if (xxx!=0 || y!=0)
+					setPixel(BLACK, xc+xxx, yc+yyy); // Quadrant 4: lower-right
+				if (xxx!=0 || yyy!=0)
 					if(180 - angle >= startAngle && 180 - angle <= endAngle)
-						setPixel(BLACK, xc-xxx, yc-y); // Quadrant 2: Upper-left
-				if (xxx!=0 && y!=0) {
+						setPixel(BLACK, xc-xxx, yc-yyy); // Quadrant 2: Upper-left
+				if (xxx!=0 && yyy!=0) {
 					if(angle >= startAngle && angle <= endAngle)
-						setPixel(BLACK, xc+xxx, yc-y); // Quadrant 1: Upper-right
+						setPixel(BLACK, xc+xxx, yc-yyy); // Quadrant 1: Upper-right
 					if(180 + angle >= startAngle && 180 + angle <= endAngle)
-						setPixel(BLACK, xc-xxx, yc+y); // Quadrant 3: Lower-left
+						setPixel(BLACK, xc-xxx, yc+yyy); // Quadrant 3: Lower-left
 				}
 			} else {
 				if(360 - angle >= startAngle)
-					setPixel(BLACK, xc+xxx, yc+y); // Quadrant 4: lower-right
-				if (xxx!=0 || y!=0)
+					setPixel(BLACK, xc+xxx, yc+yyy); // Quadrant 4: lower-right
+				if (xxx!=0 || yyy!=0)
 					if(180 - angle <= endAngle) 
-						setPixel(BLACK, xc-xxx, yc-y); // Quadrant 2: Upper-left
-				if (xxx!=0 && y!=0) {
+						setPixel(BLACK, xc-xxx, yc-yyy); // Quadrant 2: Upper-left
+				if (xxx!=0 && yyy!=0) {
 					if(angle <= endAngle)
-						setPixel(BLACK, xc+xxx, yc-y); // Quadrant 1: Upper-right
+						setPixel(BLACK, xc+xxx, yc-yyy); // Quadrant 1: Upper-right
 					if(180 + angle >= startAngle)
-						setPixel(BLACK, xc-xxx, yc+y); // Quadrant 3: Lower-left
+						setPixel(BLACK, xc-xxx, yc+yyy); // Quadrant 3: Lower-left
 				}
 			}
 
 			if (t + b2*xxx <= crit1 ||   /* e(xxx+1,y-1/2) <= 0 */
-			    t + a2*y <= crit3)      /* e(xxx+1/2,y) <= 0 */
+			    t + a2*yyy <= crit3)      /* e(xxx+1/2,y) <= 0 */
 				{xxx++; dxt += d2xt; t += dxt;} // incx()
-			 else if (t - a2*y > crit2) /* e(xxx+1/2,y-1) > 0 */
-				{y--; dyt += d2yt; t += dyt;} // incy()
+			 else if (t - a2*yyy > crit2) /* e(xxx+1/2,y-1) > 0 */
+				{yyy--; dyt += d2yt; t += dyt;} // incy()
 			else {
 				{xxx++; dxt += d2xt; t += dxt;} // incx()
-				{y--; dyt += d2yt; t += dyt;} // incy()
+				{yyy--; dyt += d2yt; t += dyt;} // incy()
 			}
 		}
 	}
 	
-	public void drawOval(int x, int y, int width, int height) {
-		
-		int r1 = width/2;
-		int r2 = height/2;
-		
-		int rr1 =  r1 * r1;
-		int r21 = rr1 + rr1;
-		int r41 = r21 + r21;
-		int rr2 = r2 * r2;
-		int r22 = rr2 + rr2;
-		int r42 = r22 + r22;
-		int k = r2 * r21;
-		int p = r41 + r42;
-		int cc = r22 + rr1 - k;
-		k = k + k; // Addition faster than mult.
-		int rf2 = -r41;
-		r22 = r22 + p;
-		int xx = 0;
-		int yy = r2;
-		do {
-			ePlot(x, y, xx, yy);
-		     if(cc >= 0) {
-		    	yy = yy - 1;
-		        k = k - r41;
-		        cc = cc - k;
-		     }
-		     cc = cc + rf2 + r22;
-		     rf2 = rf2 + r42;
-		     xx = xx + 1;
-		} while(rf2 <= k);
-		
-		r22 = r22 - p;
-		k = r1 * r22;
-		cc = r21 + rr2 - k;
-		k = k + k; // Addition faster than mult.
-		int rf1 = -r42;
-		r21 = r21 + p;
-		xx = r1;
-		yy = 0;
-		do {
-			ePlot(x, y, xx, yy);
-		    if(cc >= 0) {
-		    	xx = xx - 1;
-		        k = k - r42;
-		        cc = cc - k;
-		    }
-		    cc = cc + rf1 + r21;
-		    rf1 = rf1 + r41;
-		    yy = yy + 1;
-		} while(rf1 <= k);
+	public void drawRoundRect(int x, int y, int width, int height, int arcWidth, int arcHeight) {
+
+		int xc = x + (width/2);
+		int yc = y + (height/2);
+		int a = arcWidth/2;
+		int b = arcHeight/2;
+
+		int translateX = (width/2) - (arcWidth/2);
+		int translateY = (height/2) - (arcHeight/2);
+
+		// Draw 4 sides:
+		int xDiff = arcWidth/2;
+		int yDiff = arcHeight/2;
+		drawLine(x, y+yDiff, x, height-yDiff);
+		drawLine(width, y+yDiff, width, height-yDiff);
+		drawLine(x+xDiff, y, width-xDiff, y);
+		drawLine(x+xDiff, height, width-xDiff, height);
+
+
+		/* e(x,y) = b^2*x^2 + a^2*y^2 - a^2*b^2 */
+		int xxx = 0, yyy = b;
+		int a2 = a*a, b2 = b*b;
+		int crit1 = -(a2/4 + a%2 + b2);
+		int crit2 = -(b2/4 + b%2 + a2);
+		int crit3 = -(b2/4 + b%2);
+		int t = -a2*yyy; /* e(xxx+1/2,y-1/2) - (a^2+b^2)/4 */
+		int dxt = 2*b2*xxx, dyt = -2*a2*yyy;
+		int d2xt = 2*b2, d2yt = 2*a2;
+
+		while (yyy>=0 && xxx<=a) {
+			setPixel(BLACK, xc+xxx + translateX, yc+yyy + translateY); // Q4
+			if (xxx!=0 || yyy!=0)
+				setPixel(BLACK, xc-xxx - translateX, yc-yyy - translateY); // Q2
+			if (xxx!=0 && yyy!=0) {
+				setPixel(BLACK, xc+xxx + translateX, yc-yyy - translateY); // Q1
+				setPixel(BLACK, xc-xxx - translateX, yc+yyy + translateY); // Q3
+			}
+			if (t + b2*xxx <= crit1 ||   /* e(xxx+1,y-1/2) <= 0 */
+			    t + a2*yyy <= crit3)      /* e(xxx+1/2,y) <= 0 */
+				{xxx++; dxt += d2xt; t += dxt;} // incx()
+			 else if (t - a2*yyy > crit2) /* e(xxx+1/2,y-1) > 0 */
+				{yyy--; dyt += d2yt; t += dyt;}
+			else {
+				{xxx++; dxt += d2xt; t += dxt;} // incx()
+				{yyy--; dyt += d2yt; t += dyt;}
+			}
+		}
 	}
 
-	private void ePlot(int x, int y, int a, int b) {
-		setPixel(rgbColor,x + a, y + b);
-		setPixel(rgbColor,x + a, y - b);
-		setPixel(rgbColor,x - a, y + b);
-		setPixel(rgbColor,x - a, y - b);
-	}
-
+	
 	public void drawRect(int x, int y, int width, int height) {
 		if ((width < 0) || (height < 0))
 			return;
