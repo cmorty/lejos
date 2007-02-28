@@ -7,7 +7,7 @@ import lejos.nxt.*;
  * Uses a compass to control rotation.
  * @author BB
  */
-public class CompassPilot extends SteeringControl {
+public class CompassPilot extends Pilot {
   private CompassSensor compass;
   //private SteeringControl sc;
   private boolean isCompassTravel = true;
