@@ -13,13 +13,14 @@ public class CompassPilot extends Pilot {
   private boolean isCompassTravel = true;
   
   public CompassPilot(CompassSensor compass, float wheelDiameter,float trackWidth,Motor leftMotor, Motor rightMotor) {
-    super(wheelDiameter, trackWidth, leftMotor, rightMotor);
-  	this.compass = compass;
+    this(compass, wheelDiameter, trackWidth, leftMotor, rightMotor, false);
   }
 
   public CompassPilot(CompassSensor compass, float wheelDiameter,float trackWidth,Motor leftMotor, Motor rightMotor, boolean reverse) {
     super(wheelDiameter, trackWidth, leftMotor, rightMotor, reverse);
   	this.compass = compass;
+  	try {Thread.sleep(100);} catch (Exception e) {} // Allow compass to stabalize
+  	compass.resetCartesianZero();
   }
   
   /**
