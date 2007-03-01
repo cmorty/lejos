@@ -9,6 +9,7 @@ public class CompassSensor extends I2CSensor {
 	private static final String MINDSENSORS_ID = "mndsnsrs";
 	
 	private boolean isMindsensors; // For comparing HiTechnic vs. Mindsensors
+	private float cartesianCalibrate = 0; // Used by both cartesian methods. 
 	
 	public CompassSensor(Port port)
 	{
@@ -42,10 +43,24 @@ public class CompassSensor extends I2CSensor {
 	/**
 	 * Compass readings increase clockwise from 0 to 360, but Cartesian
 	 * coordinate systems increase counter-clockwise. This method returns
-	 * the Cartesian compass reading.
-	 * @return 360 - getDegrees()
+	 * the Cartesian compass reading. Also, the resetCartesianZero() method
+	 * can be used to designate any direction as zero, rather than relying
+	 * on North as being zero.
+	 * @return Cartesian direction.
 	 */
 	public float getDegreesCartesian() {
-		return 360 - getDegrees();
+		float degrees = 360 - getDegrees() - cartesianCalibrate;
+		if(degrees>=360) degrees -= 360;
+		if(degrees<0) degrees += 360;
+		return degrees;
+	}
+	
+	/**
+	 * Changes the current direction the compass is facing into the zero 
+	 * angle. 
+	 *
+	 */
+	public void resetCartesianZero() {
+		cartesianCalibrate = getDegrees();
 	}
 }
