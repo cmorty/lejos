@@ -25,7 +25,7 @@ public class TachoNavigator
 	private boolean updated = false;
 
 /**
-* Allocates a RotationNavigator object and initializes it with the proper motors.
+* Allocates a Navigator object and initializes it with the proper motors.
 * The x and y values and the direction angle are all initialized to 0, so if the first move is forward() the robot will run along
 * the x axis. <BR>
 * @param wheelDiameter The diameter of the wheel, usually printed right on the
@@ -44,6 +44,11 @@ public class TachoNavigator
 	{
 		pilot = new Pilot(wheelDiameter,trackWidth,leftMotor, rightMotor,reverse);
 	}
+	   
+	   public TachoNavigator(Pilot pilot) {
+	  	 this.pilot = pilot;
+	   }
+	   
 	/**
 	* Overloaded TachoNavigator constructor that assumes the following:<BR>
 	* Left motor = Motor.A   Right motor = Motor.C <BR>
