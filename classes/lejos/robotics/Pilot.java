@@ -1,5 +1,5 @@
- package lejos.robotics;
- import lejos.nxt.Motor;
+package lejos.robotics;
+import lejos.nxt.Motor;
 
  
 /**
@@ -259,7 +259,7 @@ public class Pilot
  */
 	public void steer(int turnRate)
 	{
-		steer(turnRate,Integer.MAX_VALUE,false);
+		steer(turnRate,Integer.MAX_VALUE,true);
 	}
 
 /**
