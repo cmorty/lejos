@@ -17,6 +17,11 @@ public class CompassPilot extends Pilot {
   	this.compass = compass;
   }
 
+  public CompassPilot(CompassSensor compass, float wheelDiameter,float trackWidth,Motor leftMotor, Motor rightMotor, boolean reverse) {
+    super(wheelDiameter, trackWidth, leftMotor, rightMotor, reverse);
+  	this.compass = compass;
+  }
+  
   /**
    * Rotates the specified number of degrees
    */
@@ -32,6 +37,10 @@ public class CompassPilot extends Pilot {
       Thread.yield();
     }
     stop();
+  }
+  
+  public int getAngle() {
+  	return Math.round(compass.getDegreesCartesian());
   }
   
   /** Returns absolute value of difference */
