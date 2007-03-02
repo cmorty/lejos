@@ -201,6 +201,17 @@ public class Graphics {
 			drawLine(x, y + height, x, y + 1);
 		}
     }
+	 
+	public void fillRect(int x, int y, int width, int height) {
+		if ((width < 0) || (height < 0))
+			return;
+
+		for(int i=y;i<y + height;i++) 
+			drawLine(x, i, x + width, i);
+			//for(int j=x; j<x+width;j++) // Barely faster than using lines.
+				//setPixel(rgbColor, j, i);
+ 	}
+
 	
 	public void drawString(String str, int x, int y) {
 		LCD.drawString(str, x, y);
