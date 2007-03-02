@@ -3,6 +3,7 @@ package lejos.nxt;
 import lejos.nxt.Battery;
 import lejos.util.Timer;
 import lejos.util.TimerListener;
+import lejos.nxt.LCD;
 
 
 /**
@@ -46,7 +47,7 @@ public class Motor implements TimerListener
   private boolean _keepGoing = true;// for regulator
   /**
    * Initially true; changed only by regulateSpeed(),<br>
-   * used by Regulator, updteState, startRegulating*
+   * used by Regulator, updteState, reset*
    */
   private boolean _regulate = true;
   
@@ -81,6 +82,8 @@ public class Motor implements TimerListener
    */
   public static final Motor C = new Motor ('C');
   
+String blank = "                ";
+  		int ll = 0;
 
   private Motor (char aId)
   {
@@ -88,6 +91,7 @@ public class Motor implements TimerListener
     regulator.start();
     regulator.setDaemon(true); 
     timer.start();
+	if(_id == 'C')ll = 2;
   }
 
 /**
@@ -97,7 +101,8 @@ public class Motor implements TimerListener
   {
     return _id;
   }
-
+ public int getMode(){ return _mode;}
+ 
 
   /**
    * Causes motor to rotate forward.
@@ -156,7 +161,7 @@ public class Motor implements TimerListener
 	   _rotating = false;
    	   if(_regulate)
    	   {
-   	   	regulator.startRegulating();
+   	   	regulator.reset();
    	   	_rampUp = true;
    	   }
    	   	 _direction = 3 - 2*_mode;
@@ -235,7 +240,12 @@ public class Motor implements TimerListener
 
 	public void rotate(int angle, boolean immediateReturn)
 	{
-		rotateTo(getTachoCount()+angle,immediateReturn);
+//		stop();
+//		while(isRotating());
+		int t = getTachoCount();
+//		try{Thread.sleep(20);}
+//		catch(InterruptedException e){}
+		rotateTo(t+angle,immediateReturn);
 	}
 
 /**
@@ -290,7 +300,7 @@ public class Motor implements TimerListener
   	 */
   	int angle0 = 0;
  /**
-  * set by startRegulating, used  to regulate  motor speed
+  * set by reset, used  to regulate  motor speed
   */ 
   	float basePower = 0;
   /**
@@ -299,7 +309,7 @@ public class Motor implements TimerListener
   	int time0 = 0;
 
 /* *
-* helper method - used by startRegulating and setSpeed()
+* helper method - used by reset and setSpeed()
 */
  	int calcPower(int speed)
  	{   
@@ -310,9 +320,10 @@ public class Motor implements TimerListener
  	}
  
  /**
-  * called by forward() backward() and reverseDirection()
+  * called by forward() backward() and reverseDirection() <br>
+  * resets parameters for speed regulation
   **/
- 	public void startRegulating()
+ 	public void reset()
 	{
 		if(!_regulate)return;
  		time0 = (int)System.currentTimeMillis();
@@ -358,6 +369,7 @@ public class Motor implements TimerListener
 		  		else 	
 					error = (elapsed*_speed/1000f)- (float)Math.abs(angle);
 	  			float power = basePower + 2 * error -1 * e0;// magic numbers from experiment
+	  			if(power<0) power = 0;
 	  			e0 = error;
 	  			float smooth = 0.0015f;// another magic number from experiment
 	  			basePower = basePower + smooth*(power-basePower); 
@@ -372,6 +384,7 @@ public class Motor implements TimerListener
 				int remaining = _limitAngle - a;
 				if(_direction * remaining >0 ) // not yet done
 				{
+
 					if(!_wasRotating)// initial call to rotate(); save state variables
 					{
 						speed0 = _speed;
@@ -385,8 +398,11 @@ public class Motor implements TimerListener
 				{
 					_rotating = false;
 					_wasRotating = false;
-					setSpeed(speed0);
+					setSpeed(speed0);//restore speed setting
 				}
+			
+//			 LCD.drawInt(ll,ll,7);
+//			LCD.refresh();
 	  		}
 	  	Thread.yield();
 	  	}	
@@ -447,6 +463,7 @@ public class Motor implements TimerListener
   {
     _speed = Math.abs(speed);
      setPower((int)regulator.calcPower(_speed));
+     regulator.reset();
   }
 
 /**
@@ -455,7 +472,7 @@ public class Motor implements TimerListener
  *field which is used by the Regulator thread.  If the speed regulation is enabled, the rusults are 
  *unpredictable. 
  */
-	public void setPower(int power)
+	public synchronized void  setPower(int power)
 	{
 	 _power = power;
 	  controlMotor (_id - 'A', _mode,power);
@@ -522,11 +539,11 @@ public class Motor implements TimerListener
    * @param aMode 1=forward, 2=backward, 3=stop, 4=float
    * @param aPower A value in the range [0-100].
    */
-  public static native void controlMotor (int aMotor, int aMode, int aPower);
+  public synchronized static native void controlMotor (int aMotor, int aMode, int aPower);
 /**
  * returns tachometer count
  */
-  public int getTachoCount()
+  public  synchronized   int getTachoCount()
   {
 	  return getTachoCountById(_id - 'A');
   }
