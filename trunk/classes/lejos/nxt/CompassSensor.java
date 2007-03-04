@@ -63,4 +63,17 @@ public class CompassSensor extends I2CSensor {
 	public void resetCartesianZero() {
 		cartesianCalibrate = getDegrees();
 	}
+	
+	/**
+	 * Proposed name for calibration method.
+	 *
+	 */
+	public void startCalibration() {}
+	
+	/**
+	 * Proposed name for calibration method.
+	 *
+	 */
+	public void stopCalibration() {}
+	
 }
