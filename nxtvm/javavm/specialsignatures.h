@@ -58,4 +58,9 @@
 #define i2cStartById_4IIII_1BII_5I 51
 #define i2cDisableById_4I_5V 52
 #define playTone_4II_5V 53
+#define btSend_4_1BI_5V 54
+#define btReceive_4_1B_5V 55
+#define btGetCmdMode_4_5I 56
+#define btSetCmdMode_4I_5V 57
+#define btStartADConverter_4_5V 58
 #endif // _SPECIALSIGNATURES_H

@@ -102,6 +102,12 @@ i2cDisableById(I)V
 #lejos.nxt.Sound
 playTone(II)V
 
+#lejos.Bluetooth
+btSend([BI)V
+btReceive([B)V
+btGetCmdMode()I
+btSetCmdMode(I)V
+btStartADConverter()V
 
 
 
