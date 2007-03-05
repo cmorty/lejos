@@ -24,6 +24,7 @@
 #include "nxt_motors.h"
 #include "i2c.h"
 #include "sound.h"
+#include "bt.h"
 
 /**
  * NOTE: The technique is not the same as that used in TinyVM.
@@ -251,6 +252,30 @@ dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
   case playTone_4II_5V:
     sound_freq(paramBase[0],paramBase[1]);
     return;
+  case btSend_4_1BI_5V:
+    {
+      Object *p = word2ptr(paramBase[0]);
+      byte *byteArray = (((byte *) p) + HEADER_SIZE);
+      bt_send(byteArray,paramBase[1]);                      
+    }
+    return;
+  case btReceive_4_1B_5V:
+    {
+      Object *p = word2ptr(paramBase[0]);
+      byte *byteArray = (((byte *) p) + HEADER_SIZE);
+      bt_receive(byteArray);                      
+    }
+    return;
+  case btGetCmdMode_4_5I:
+    push_word(bt_get_mode());
+    break;
+  case btSetCmdMode_4I_5V:
+    if (paramBase[0] == 0) bt_set_arm7_cmd();
+    else bt_clear_arm7_cmd(); 
+    break;
+  case btStartADConverter_4_5V:
+    bt_start_ad_converter();
+    break;
   default:
     throw_exception(noSuchMethodError);
   }

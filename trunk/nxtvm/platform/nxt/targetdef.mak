@@ -25,7 +25,8 @@ C_PLATFORM_SOURCES := \
 	data_abort.c \
 	display.c \
 	i2c.c \
-	sound.c
+	sound.c \
+	bt.c
 
 C_HOOK_SOURCES := \
 	main.c \

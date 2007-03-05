@@ -35,6 +35,7 @@
 
 #include "display.h"
 #include "sound.h"
+#include "bt.h"
 
 extern U32 __free_ram_start__;
 extern U32 __free_ram_end__;
@@ -360,12 +361,6 @@ xx_show(void)
 void
 main(void)
 {
-  int error;
-  unsigned int i;
-  unsigned char b;
-  unsigned now, prev;
-  char *s;
-
   /* When we get here:
    * PLL and flash have been initialised and
    * interrupts are off, but the AIC has not been initialised.
@@ -378,11 +373,11 @@ main(void)
   display_init();
   nxt_motor_init();
   i2c_init();
-  
+  bt_init();
+    
   //xx_show();
 
-  show_splash(3000);
-    
+  show_splash(3000);    
   display_clear(1);
   nxt_main();
   systick_wait_ms(5000);
@@ -390,6 +385,5 @@ main(void)
   while (1) {
     nxt_avr_power_down();
   }
-
-
+  
 }
