@@ -58,6 +58,11 @@ public interface SpecialSignatureConstants {
     "i2cBusyById(I)I",
     "i2cStartById(IIII[BII)I",
     "i2cDisableById(I)V",
-    "playTone(II)V"
+    "playTone(II)V",
+    "btSend([BI)V",
+    "btReceive([B)V",
+    "btGetCmdMode()I",
+    "btSetCmdMode(I)V",
+    "btStartADConverter()V"
   };
 }
