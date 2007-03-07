@@ -3,7 +3,7 @@ package lejos.nxt;
 import lejos.nxt.Battery;
 import lejos.util.Timer;
 import lejos.util.TimerListener;
-import lejos.nxt.LCD;
+//import lejos.nxt.LCD; for debugging
 
 
 /**
@@ -400,9 +400,6 @@ String blank = "                ";
 					_wasRotating = false;
 					setSpeed(speed0);//restore speed setting
 				}
-			
-//			 LCD.drawInt(ll,ll,7);
-//			LCD.refresh();
 	  		}
 	  	Thread.yield();
 	  	}	
@@ -418,6 +415,7 @@ String blank = "                ";
 		int a = 0;
 		while(turning)
 		{
+	  		controlMotor(_id - 'A', 3, 0); // looks redundant, but controlMotor(x,3,0) fails, rarely.
 			try{Thread.sleep(10);}// was 10
 			catch(InterruptedException w){}
 			a = getTachoCount();
@@ -543,7 +541,7 @@ String blank = "                ";
 /**
  * returns tachometer count
  */
-  public  synchronized   int getTachoCount()
+  public  int getTachoCount()
   {
 	  return getTachoCountById(_id - 'A');
   }
@@ -559,7 +557,7 @@ String blank = "                ";
 	  resetTachoCountById( _id - 'A');
   }
   
-  public static native void resetTachoCountById(int aMotor);
+  public static synchronized native void resetTachoCountById(int aMotor);
 }
 
 
