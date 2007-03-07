@@ -46,6 +46,6 @@ To compile, link and run Test.java, do:
 - Put %LEJOS_HOME%\bin on the PATH
 - Type: lejosjc Test.java
 - Type: lejoslink Test -o Test.bin
-- Type: runjava %LEJOS_HOME%/bin/lejos_nxt.bin Test.bin
+- Type: lejosdl Test.bin
 
 
