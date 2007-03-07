@@ -101,6 +101,59 @@ public class BTTest {
 						msg[6] = (byte) ((mv >> 8) & 0xFF);
 						Bluetooth.btSend(msg, 7);						
 					}
+					
+					// GETOUTPUTSTATE - Currently only returns tacho count
+					if (reply[n][3] == 0x06) {
+						byte port = reply[n][4]; 
+						int tacho = Motor.getTachoCountById(port);
+						LCD.drawInt(tacho, 9, 3);
+						LCD.refresh();
+						msg[0] = 25;
+						msg[1] = 0;
+						msg[2] = 0x02;
+						msg[3] = 0x06;
+						msg[4] = port;
+						msg[15] = (byte) (tacho & 0xFF);
+						msg[16] = (byte) ((tacho >> 8) & 0xFF);
+						msg[17] = (byte) ((tacho >> 16) & 0xFF);
+						msg[18] = (byte) ((tacho >> 24) & 0xFF);
+						Bluetooth.btSend(msg, 27);						
+					}
+					
+					// Motor control
+					if(reply[n][3] == 0x04) {
+						Motor m = null;
+						byte motorid = reply[n][4];
+						byte power = reply[n][5];
+						LCD.drawInt(motorid, 9, 2); // = 1 !!
+						LCD.refresh();
+						if(motorid == 0)
+							m = Motor.A;
+						else if (motorid == 1)
+							m = Motor.B;
+						else m = Motor.C;
+						for(int i=0;i<reply[n].length;i++) {
+							LCD.drawString("reply          ",3,2);
+							LCD.drawInt(reply[n][i], 12, 2);
+							LCD.drawInt(i, 9, 2);
+							LCD.refresh();
+							while(!Button.ENTER.isPressed()) {}
+							Thread.sleep(250);
+						}
+						
+						int tacholimit = (0xFF & reply[n][10]) | ((0xFF & reply[n][11]) << 8)| ((0xFF & reply[n][12]) << 16)| ((0xFF & reply[n][13]) << 24);
+						LCD.drawInt(tacholimit, 9, 3);
+						LCD.refresh();
+						
+						//if(power < 0) tacholimit = -tacholimit;
+						m.rotate(tacholimit); // Doesn't return until done.
+						msg[0] = 3;
+						msg[1] = 0;
+						msg[2] = 0x02;
+						msg[3] = 0x04;
+						msg[4] = 0; // Status byte
+						Bluetooth.btSend(msg, 5);
+					}
 				}
 			}
 
