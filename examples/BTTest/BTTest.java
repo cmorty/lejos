@@ -105,14 +105,24 @@ public class BTTest {
 					// GETOUTPUTSTATE - Currently only returns tacho count
 					if (reply[n][3] == 0x06) {
 						byte port = reply[n][4]; 
-						int tacho = Motor.getTachoCountById(port);
-						LCD.drawInt(tacho, 9, 3);
-						LCD.refresh();
+						Motor m = null;
+						if(port == 0)
+							m = Motor.A;
+						else if(port == 1)
+							m = Motor.B;
+						else m = Motor.C;
+						int tacho = m.getTachoCount();
+						
+						byte mode = 0;
+						if (m.isMoving()) mode = 0x01; 
 						msg[0] = 25;
 						msg[1] = 0;
 						msg[2] = 0x02;
 						msg[3] = 0x06;
-						msg[4] = port;
+						msg[4] = 0; // Status byte
+						msg[5] = port;
+						msg[6] = (byte)(m.getSpeed() * 100 / 900); // Power
+						msg[7] = mode; // Only contains isMoving at moment
 						msg[15] = (byte) (tacho & 0xFF);
 						msg[16] = (byte) ((tacho >> 8) & 0xFF);
 						msg[17] = (byte) ((tacho >> 16) & 0xFF);
@@ -125,8 +135,6 @@ public class BTTest {
 						Motor m = null;
 						byte motorid = reply[n][4];
 						byte power = reply[n][5];
-						LCD.drawInt(motorid, 9, 2); // = 1 !!
-						LCD.refresh();
 						if(motorid == 0)
 							m = Motor.A;
 						else if (motorid == 1)
@@ -137,8 +145,6 @@ public class BTTest {
 						m.setSpeed(speed);
 						int tacholimit = (0xFF & reply[n][10]) | ((0xFF & reply[n][11]) << 8)| ((0xFF & reply[n][12]) << 16)| ((0xFF & reply[n][13]) << 24);
 						if(power < 0) tacholimit = -tacholimit;
-						LCD.drawInt(tacholimit, 9, 3);
-						LCD.refresh();
 						
 						m.rotate(tacholimit, true); // Returns immediately
 						msg[0] = 3;
@@ -147,6 +153,23 @@ public class BTTest {
 						msg[3] = 0x04;
 						msg[4] = 0; // Status byte
 						Bluetooth.btSend(msg, 5);
+					}
+					
+					// SETINPUTMODE
+					if (reply[n][3] == 0x05) {
+						byte port = reply[n][4];
+						byte sensorType = reply[n][5];
+						byte sensorMode = reply[n][6];
+						
+						// port.setPowerType();
+						// port.setADType();
+						
+						msg [0] = 5;
+						msg[1] = 0;
+						msg[2] = 0x02;
+						msg[3] = 0x05;
+						msg[4] = 0; // Status byte
+						Bluetooth.btSend(msg, 5);						
 					}
 				}
 			}
