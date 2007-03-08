@@ -120,7 +120,7 @@ public class BTTest {
 						Bluetooth.btSend(msg, 27);						
 					}
 					
-					// Motor control
+					// SETOUTPUTSTATE
 					if(reply[n][3] == 0x04) {
 						Motor m = null;
 						byte motorid = reply[n][4];
@@ -132,21 +132,15 @@ public class BTTest {
 						else if (motorid == 1)
 							m = Motor.B;
 						else m = Motor.C;
-						for(int i=0;i<reply[n].length;i++) {
-							LCD.drawString("reply          ",3,2);
-							LCD.drawInt(reply[n][i], 12, 2);
-							LCD.drawInt(i, 9, 2);
-							LCD.refresh();
-							while(!Button.ENTER.isPressed()) {}
-							Thread.sleep(250);
-						}
 						
+						int speed = (Math.abs(power) * 900) / 100;
+						m.setSpeed(speed);
 						int tacholimit = (0xFF & reply[n][10]) | ((0xFF & reply[n][11]) << 8)| ((0xFF & reply[n][12]) << 16)| ((0xFF & reply[n][13]) << 24);
+						if(power < 0) tacholimit = -tacholimit;
 						LCD.drawInt(tacholimit, 9, 3);
 						LCD.refresh();
 						
-						//if(power < 0) tacholimit = -tacholimit;
-						m.rotate(tacholimit); // Doesn't return until done.
+						m.rotate(tacholimit, true); // Returns immediately
 						msg[0] = 3;
 						msg[1] = 0;
 						msg[2] = 0x02;
