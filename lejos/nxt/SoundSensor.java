@@ -17,6 +17,8 @@ package lejos.nxt;
 	   this.port = port;
 	   port.setPowerType(0);
 	   port.setADType(1); // Default to DB
+	   port.setTypeAndMode(Port.TYPE_SOUND_DB,
+                           Port.MODE_PCTFULLSCALE);
 	}
 	
 	/**
@@ -30,6 +32,11 @@ package lejos.nxt;
 	   this.port = port;
 	   port.setPowerType(0);
 	   port.setADType((dba ? 2 : 1));
+       port.setTypeAndMode(
+    		   (dba ? Port.TYPE_SOUND_DBA
+    				: Port.TYPE_SOUND_DB),
+    		   Port.MODE_PCTFULLSCALE);
+	   
 	}
 	
 	/**
@@ -39,6 +46,8 @@ package lejos.nxt;
 	public void setDBA(boolean dba)
 	{
 		port.setADType((dba ? 2 : 1));
+	    port.setType((dba ? Port.TYPE_SOUND_DBA
+	    				  : Port.TYPE_SOUND_DB));
 	}
 
 	/**
