@@ -116,7 +116,8 @@ public class Bluetooth {
 	
 	public static int receiveData(byte[] buf, int bufLen)
 	{
-		int checkSum = 0, negSum, len, skip=0;
+		int len;
+		
 		btReceive(receiveBuf);
 		len = receiveBuf[0];
 
@@ -130,5 +131,60 @@ public class Bluetooth {
 		}
 		buf[0] = 0;
 		return 0;
+	}
+	
+	public static void waitForConnection()
+	{
+		byte[] reply = new byte[32];
+		byte[] dummy = new byte[32];
+		byte[] msg = new byte[32];
+		byte[] device = new byte[7];
+		boolean cmdMode = true;
+
+		Bluetooth.btSetCmdMode(1);
+		Bluetooth.btStartADConverter();
+
+		while (cmdMode)
+		{
+			receiveReply(reply,32);
+			
+			if (reply[0] != 0) {
+				if (reply[1] == MSG_REQUEST_PIN_CODE) {
+					for(int i=0;i<7;i++) device[i] = reply[i+2];
+					msg[0] = Bluetooth.MSG_PIN_CODE;
+					for(int i=0;i<7;i++) msg[i+1] = device[i];
+					msg[8] = '1';
+					msg[9] = '2';
+					msg[10] = '3';
+					msg[11] = '4';
+					for(int i=0;i<12;i++) msg[i+12] = 0;
+					sendCommand(msg, 24);					
+				}	
+				
+				if (reply[1] == MSG_REQUEST_CONNECTION) {
+					for(int i=0;i<7;i++) device[i] = reply[i+2];
+					msg[0] = MSG_ACCEPT_CONNECTION;
+					msg[1] = 1;
+					sendCommand(msg, 2);					
+				}
+				
+				if (reply[1] == MSG_CONNECT_RESULT) {
+					try {
+						Thread.sleep(300);
+					} catch (InterruptedException ie) {}
+					receiveReply(dummy,32);					
+					if (dummy[0] == 0) {
+						msg[0] = Bluetooth.MSG_OPEN_STREAM;
+						msg[1] = reply[3];
+						Bluetooth.sendCommand(msg, 2);
+						try {
+							Thread.sleep(100);
+						} catch (InterruptedException ie) {}
+						Bluetooth.btSetCmdMode(0);
+						cmdMode = false;
+					} 
+				}
+			}
+		}	
 	}
 }
