@@ -1,7 +1,7 @@
 import lejos.nxt.*;
 
 public class BTTest {
-	
+	// NOTE: These commands only work with iCommand if NXTCommand.setVerify(true);
 	public static void main(String [] args)  throws Exception {
 		// Get the version
 		
@@ -164,12 +164,40 @@ public class BTTest {
 						// port.setPowerType();
 						// port.setADType();
 						
-						msg [0] = 5;
+						msg [0] = 3;
 						msg[1] = 0;
 						msg[2] = 0x02;
 						msg[3] = 0x05;
 						msg[4] = 0; // Status byte
 						Bluetooth.btSend(msg, 5);						
+					}
+					
+					// GETINPUTVALUES
+					if (reply[n][3] == 0x07) {
+						byte port = reply[n][4];
+						
+						// port.setPowerType();
+						// port.setADType();
+						
+						msg [0] = 16;
+						msg[1] = 0;
+						msg[2] = 0x02;
+						msg[3] = 0x07;
+						msg[4] = 0; // Status byte
+						msg[5] = port;
+						msg[6] = 1; // true if data is valid
+						msg[7] = 1; // true if calibrated
+						msg[8] = 0; // Sensor type
+						msg[9] = 0; // sensor mode
+						msg[10] = 0; // Raw AD Value
+						msg[11] = 0;
+						msg[12] = 0; // Normalized AD value
+						msg[13] = 0;
+						msg[14] = 0; // Scaled value
+						msg[15] = 0;
+						msg[16] = 0; // Calibrated value
+						msg[17] = 0;
+						Bluetooth.btSend(msg, 18);						
 					}
 				}
 			}
