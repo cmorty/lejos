@@ -1,5 +1,4 @@
 package lejos.nxt;
-//import lejos.nxt.Port;
 
 /**
  * Abstraction for a NXT light sensor.
@@ -21,6 +20,8 @@ public class LightSensor
 		this.port = port;
 		port.setPowerType(0);
 		port.setADType(1); // Default to LED on
+		port.setTypeAndMode(Port.TYPE_LIGHT_ACTIVE,
+                            Port.MODE_PCTFULLSCALE);
 	}
 	
 	/**
@@ -34,6 +35,12 @@ public class LightSensor
 	   this.port = port;
 	   port.setPowerType(0);
 	   port.setADType((floodlight ? 1 : 0));
+       port.setTypeAndMode(
+    		   (floodlight ? Port.TYPE_LIGHT_ACTIVE
+    				        : Port.TYPE_LIGHT_INACTIVE),
+    		   Port.MODE_PCTFULLSCALE);
+		        
+	   
 	}
 	
 	/**
@@ -43,6 +50,8 @@ public class LightSensor
 	public void setFloodlight(boolean floodlight)
 	{
 		port.setADType((floodlight ? 1 : 0));
+		port.setType((floodlight ? Port.TYPE_LIGHT_ACTIVE
+		                         : Port.TYPE_LIGHT_INACTIVE));
 	}
 
 	/**

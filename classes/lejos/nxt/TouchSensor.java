@@ -16,6 +16,8 @@ public class TouchSensor {
 	{
 	   this.port = port;
 	   port.setPowerType(0);
+	   port.setTypeAndMode(Port.TYPE_SWITCH,
+	                       Port.MODE_BOOLEAN);
 	}
 	/**
 	 * Check if the sensor is pressed.
