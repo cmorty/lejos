@@ -15,7 +15,6 @@ public class RCXLightSensor {
 	public RCXLightSensor(Port port)
 	{
 		this.port = port;
-		port.setPowerType(1); // Default to LED on
 		port.setTypeAndMode(Port.TYPE_REFLECTION,
                             Port.MODE_PCTFULLSCALE);
 	}
