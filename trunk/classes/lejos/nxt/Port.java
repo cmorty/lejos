@@ -10,7 +10,30 @@ public class Port implements ListenerCaller
   private short iNumListeners = 0;
   private PortListener[] iListeners;
   private int iPreviousValue;
+  int type, mode;
   
+  public static final int TYPE_NO_SENSOR = 0x00;
+  public static final int TYPE_SWITCH = 0x01;
+  public static final int TYPE_TEMPERATURE = 0x02;
+  public static final int TYPE_REFLECTION = 0x03;
+  public static final int TYPE_ANGLE = 0x04;
+  public static final int TYPE_LIGHT_ACTIVE = 0x05;
+  public static final int TYPE_LIGHT_INACTIVE = 0x06;
+  public static final int TYPE_SOUND_DB = 0x07; 
+  public static final int TYPE_SOUND_DBA = 0x08;
+  public static final int TYPE_CUSTOM = 0x09;
+  public static final int TYPE_LOWSPEED = 0x0A;
+  public static final int TYPE_LOWSPEED_9V = 0x0B;
+  
+  public static final int MODE_RAW = 0x00;
+  public static final int MODE_BOOLEAN = 0x20;
+  public static final int MODE_TRANSITIONCNT = 0x40;
+  public static final int MODE_PERIODCOUNTER = 0x60;
+  public static final int MODE_PCTFULLSCALE = 0x80;
+  public static final int MODE_CELSIUS = 0xA0;
+  public static final int MODE_FARENHEIT = 0xC0;
+  public static final int MODE_ANGLESTEP = 0xE0;
+
   /**
    * Port labeled 1 on NXT.
    */
@@ -37,15 +60,6 @@ public class Port implements ListenerCaller
   public static final Port[] PORTS = { Port.S1, Port.S2, Port.S3, Port.S4 };
 
   /**
-   * Reads the canonical value of the sensor.
-   * Do not use - currently returns the raw value.
-   */
-  public final int readValue()
-  {
-    return readSensorValue (iPortId, 1);
-  }
-
-  /**
    * Reads the raw value of the sensor.
    */
   public final int readRawValue()
@@ -59,12 +73,15 @@ public class Port implements ListenerCaller
    */
   public final boolean readBooleanValue()
   {
-    return readSensorValue (iPortId, 2) != 0;
+	int rawValue = readSensorValue(iPortId,0);
+    return (rawValue < 600);
   }
 
   private Port (int aId)
   {
     iPortId = aId;
+    type = TYPE_NO_SENSOR;
+    mode = MODE_RAW;
   }
 
   /**
@@ -113,7 +130,68 @@ public class Port implements ListenerCaller
   {
     setPowerType(0);
   }
-
+  
+  /**
+   * Returns mode compatible with Lego firmware. 
+   */
+  public int getMode()
+  {
+    return mode;
+  }
+  
+  /**
+   * Returns type compatible with Lego firmware. 
+   */
+  public int getType()
+  {
+    return type;
+  }
+  
+  /**
+   * Sets type and mode compatible with Lego firmware. 
+   */
+  public void setTypeAndMode(int type, int mode)
+  {
+    this.type = type;
+    this.mode = mode;
+  }
+  
+  /**
+   * Sets type compatible with Lego firmware. 
+   */
+  public void setType(int type)
+  {
+    this.type = type;
+  }
+  
+  /**
+   * Sets mode compatible with Lego firmware. 
+   */
+  public void setMode(int mode)
+  {
+    this.mode = mode;
+  }
+  
+  /**
+   * Returns value compatible with Lego firmware. 
+   */
+  public int readValue()
+  {
+    int rawValue = readSensorValue(iPortId,0);
+    
+    if (mode == MODE_BOOLEAN)
+    {
+    	return (rawValue < 600 ? 1 : 0);
+    }
+    
+    if (mode == MODE_PCTFULLSCALE)
+    {
+    	return ((1023 - rawValue) * 100/ 1023);
+    }
+    
+    return rawValue;
+  }
+ 
   /**
    * <i>Low-level API</i> for reading sensor values.
    * Currently always returns the raw ADC value.
