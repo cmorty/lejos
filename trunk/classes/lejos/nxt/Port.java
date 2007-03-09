@@ -33,6 +33,9 @@ public class Port implements ListenerCaller
   public static final int MODE_CELSIUS = 0xA0;
   public static final int MODE_FARENHEIT = 0xC0;
   public static final int MODE_ANGLESTEP = 0xE0;
+  
+  public static final byte[]  powerType = {0,0,1,1,1,0,0,0,0,0,0,2};
+  public static final byte[]  adType = {-1,-1,-1,-1,-1,1,0,1,2,-1,-1,-1};
 
   /**
    * Port labeled 1 on NXT.
@@ -152,8 +155,8 @@ public class Port implements ListenerCaller
    */
   public void setTypeAndMode(int type, int mode)
   {
-    this.type = type;
-    this.mode = mode;
+    setType(type);
+    setMode(mode);
   }
   
   /**
@@ -162,6 +165,10 @@ public class Port implements ListenerCaller
   public void setType(int type)
   {
     this.type = type;
+    int adt = adType[type];
+    
+    setPowerType(powerType[type]);
+    if (adt >= 0) setADType(adt);
   }
   
   /**

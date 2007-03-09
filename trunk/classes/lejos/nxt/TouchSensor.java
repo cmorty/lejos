@@ -15,7 +15,6 @@ public class TouchSensor {
 	public TouchSensor(Port port)
 	{
 	   this.port = port;
-	   port.setPowerType(0);
 	   port.setTypeAndMode(Port.TYPE_SWITCH,
 	                       Port.MODE_BOOLEAN);
 	}
