@@ -158,12 +158,10 @@ public class BTTest {
 					// SETINPUTMODE
 					if (reply[n][3] == 0x05) {
 						byte port = reply[n][4];
-						byte sensorType = reply[n][5];
-						byte sensorMode = reply[n][6];
-						
-						// port.setPowerType();
-						// port.setADType();
-						
+						int sensorType = reply[n][5];
+						int sensorMode = (byte)(reply[n][6] & 0xFF);
+						Port.PORTS[port].setTypeAndMode(sensorType, sensorMode);
+
 						msg [0] = 3;
 						msg[1] = 0;
 						msg[2] = 0x02;
@@ -175,11 +173,16 @@ public class BTTest {
 					// GETINPUTVALUES
 					if (reply[n][3] == 0x07) {
 						byte port = reply[n][4];
+						Port p;
+						if(port == 0)
+							p = Port.S1;
+						else if(port == 1)
+							p = Port.S2;
+						else if(port == 2)
+							p = Port.S3;
+						else p = Port.S4;
 						
-						// port.setPowerType();
-						// port.setADType();
-						
-						msg [0] = 16;
+						msg[0] = 16;
 						msg[1] = 0;
 						msg[2] = 0x02;
 						msg[3] = 0x07;
@@ -187,16 +190,18 @@ public class BTTest {
 						msg[5] = port;
 						msg[6] = 1; // true if data is valid
 						msg[7] = 1; // true if calibrated
-						msg[8] = 0; // Sensor type
-						msg[9] = 0; // sensor mode
-						msg[10] = 0; // Raw AD Value
-						msg[11] = 0;
-						msg[12] = 0; // Normalized AD value
-						msg[13] = 0;
-						msg[14] = 0; // Scaled value
-						msg[15] = 0;
-						msg[16] = 0; // Calibrated value
-						msg[17] = 0;
+						msg[8] = (byte)p.getType(); // Sensor type
+						msg[9] = (byte)p.getMode(); // sensor mode
+						int ADVal = p.readRawValue();
+						msg[10] = (byte)ADVal;// Raw AD Value
+						msg[11] = (byte)(ADVal>>>8);
+						int normVal = p.readValue();
+						msg[12] = (byte)normVal; // Normalized AD value
+						msg[13] = (byte)(normVal>>>8);
+						msg[14] = (byte)normVal; // Scaled value NOT IMPLEMENTED
+						msg[15] = (byte)(normVal>>>8);
+						msg[16] = (byte)normVal; // Calibrated value NOT IMPLEMENTED
+						msg[17] = (byte)(normVal>>>8);
 						Bluetooth.btSend(msg, 18);						
 					}
 				}
