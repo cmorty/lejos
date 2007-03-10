@@ -146,7 +146,11 @@ public class BTTest {
 						int tacholimit = (0xFF & reply[n][10]) | ((0xFF & reply[n][11]) << 8)| ((0xFF & reply[n][12]) << 16)| ((0xFF & reply[n][13]) << 24);
 						if(power < 0) tacholimit = -tacholimit;
 						
-						m.rotate(tacholimit, true); // Returns immediately
+						if(tacholimit==0) {
+							if(power>0) m.forward();
+							else m.backward();
+						} else
+							m.rotate(tacholimit, true); // Returns immediately
 						msg[0] = 3;
 						msg[1] = 0;
 						msg[2] = 0x02;
