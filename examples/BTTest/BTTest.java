@@ -158,8 +158,8 @@ public class BTTest {
 					// SETINPUTMODE
 					if (reply[n][3] == 0x05) {
 						byte port = reply[n][4];
-						int sensorType = reply[n][5];
-						int sensorMode = (byte)(reply[n][6] & 0xFF);
+						int sensorType = reply[n][5] & 0xFF;
+						int sensorMode = reply[n][6] & 0xFF;
 						Port.PORTS[port].setTypeAndMode(sensorType, sensorMode);
 
 						msg [0] = 3;
@@ -204,6 +204,23 @@ public class BTTest {
 						msg[17] = (byte)(normVal>>>8);
 						Bluetooth.btSend(msg, 18);						
 					}
+					
+					// LSGETSTATUS (I2C)
+					if (reply[n][3] == 0x0E) {
+						byte port = reply[n][4]; 
+						msg[0] = 4;
+						msg[1] = 0;
+						msg[2] = 0x02;
+						msg[3] = (byte) 0x0E;
+						msg[4] = 0; // Status
+						msg[5] = (byte)Port.i2cBusyById(port); // Assume this returns bytes ready
+						LCD.drawInt(msg[5], 6, 2);
+						Bluetooth.btSend(msg, 6);						
+					}
+					
+					// LSWRITE
+					
+					// LSREAD
 				}
 			}
 
