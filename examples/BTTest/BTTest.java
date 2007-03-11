@@ -132,25 +132,39 @@ public class BTTest {
 					
 					// SETOUTPUTSTATE
 					if(reply[n][3] == 0x04) {
-						Motor m = null;
 						byte motorid = reply[n][4];
 						byte power = reply[n][5];
+						int speed = (Math.abs(power) * 900) / 100;
+						byte mode = reply[n][6];
+						byte regMode = reply[n][7];
+						byte turnRatio = reply[n][8];
+						byte runState = reply[n][9];
+						int tacholimit = (0xFF & reply[n][10]) | ((0xFF & reply[n][11]) << 8)| ((0xFF & reply[n][12]) << 16)| ((0xFF & reply[n][13]) << 24);
+						
+						// Initialize motor:
+						Motor m = null;
 						if(motorid == 0)
 							m = Motor.A;
 						else if (motorid == 1)
 							m = Motor.B;
 						else m = Motor.C;
-						
-						int speed = (Math.abs(power) * 900) / 100;
 						m.setSpeed(speed);
-						int tacholimit = (0xFF & reply[n][10]) | ((0xFF & reply[n][11]) << 8)| ((0xFF & reply[n][12]) << 16)| ((0xFF & reply[n][13]) << 24);
+						
 						if(power < 0) tacholimit = -tacholimit;
 						
-						if(tacholimit==0) {
+						// Check if command is to STOP:
+						if(mode == 0x07 & power == 0) // MOTORON + BRAKE + REGULATED
+							m.stop();
+						
+						// Check if doing tacho rotation
+						if(tacholimit != 0)
+							m.rotate(tacholimit, true); // Returns immediately
+						
+						if(mode == 0x07 & power != 0 & tacholimit == 0) { // MOTORON
 							if(power>0) m.forward();
 							else m.backward();
-						} else
-							m.rotate(tacholimit, true); // Returns immediately
+						}
+						
 						msg[0] = 3;
 						msg[1] = 0;
 						msg[2] = 0x02;
