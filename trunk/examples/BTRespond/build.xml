@@ -1,0 +1,41 @@
+<project name="BTRespond" default="link" basedir=".">
+    <description>
+    	BTRespond example build file
+    </description>
+
+  <!-- set global properties for this build -->
+  <property name="lejos_home" location="../.." />
+  <property name="src" location="."/>
+  <property name="program" value="BTRespond"/>
+  <property name="binary" value="${program}.bin" />
+
+  <target name="compile" 
+        description="compile the source " >
+    <!-- Compile the java code from ${src}  -->
+    <javac source="1.3" target="1.1" srcdir="${src}" destdir="${src}">
+      <bootclasspath>
+        <pathelement location="${lejos_home}/classes/lib/classes.jar"/>
+       </bootclasspath>
+    </javac>
+  </target>
+
+  <target name="link" depends="compile"
+        description="link the binary " >
+    <!-- Link the binary and create a signature file -->
+    <java classname="js.tinyvm.TinyVM">
+      <arg value="--classpath"/>
+      <arg path="${lejos_home}/classes/lib/classes.jar:." /> 
+      <arg value="--writeorder" />
+      <arg value="LE" />
+      <arg value="${program}"/>
+      <arg value="-o"/>
+      <arg value="${binary}"/>
+      <arg value="-v"/>
+      <classpath>
+        <pathelement location="${lejos_home}/jtools/lib/jtools.jar"/>
+  		<pathelement location="${lejos_home}/jtools/3rdparty/lib/commons-cli-1.0.jar"/>
+  		<pathelement location="${lejos_home}/jtools/3rdparty/lib/bcel-5.1.jar"/>
+      </classpath>
+    </java>
+  </target>
+</project>
