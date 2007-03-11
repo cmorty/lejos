@@ -133,13 +133,39 @@ public class Bluetooth {
 		return 0;
 	}
 	
-	public static void waitForConnection()
+	public static int readPacket(byte[] buf, int bufLen)
+	{
+		int len;
+		
+		btReceive(receiveBuf);
+		len = receiveBuf[0];
+		if (len > 0 && len <= bufLen)
+		{
+	      for(int i=0;i<len;i++) buf[i] = receiveBuf[i+2];
+	      return len;
+		}
+		return 0;
+	}
+	
+	public static void sendPacket(byte [] buf, int bufLen)
+	{
+		if (bufLen <= 254)
+	    {
+			sendBuf[0] = (byte) (bufLen & 0xFF);
+			sendBuf[1] = (byte) ((bufLen >> 8) & 0xFF);
+			for(int i=0;i<bufLen;i++) sendBuf[i+2] = buf[i];
+			btSend(sendBuf,bufLen+2);
+	    }
+	}
+	
+	public static BTConnection waitForConnection()
 	{
 		byte[] reply = new byte[32];
 		byte[] dummy = new byte[32];
 		byte[] msg = new byte[32];
 		byte[] device = new byte[7];
 		boolean cmdMode = true;
+		BTConnection btc = null;
 
 		Bluetooth.btSetCmdMode(1);
 		Bluetooth.btStartADConverter();
@@ -174,17 +200,19 @@ public class Bluetooth {
 					} catch (InterruptedException ie) {}
 					receiveReply(dummy,32);					
 					if (dummy[0] == 0) {
-						msg[0] = Bluetooth.MSG_OPEN_STREAM;
+	                    btc = new BTConnection(reply[3]);
+						msg[0] = MSG_OPEN_STREAM;
 						msg[1] = reply[3];
-						Bluetooth.sendCommand(msg, 2);
+						sendCommand(msg, 2);
 						try {
 							Thread.sleep(100);
 						} catch (InterruptedException ie) {}
-						Bluetooth.btSetCmdMode(0);
+						btSetCmdMode(0);
 						cmdMode = false;
 					} 
 				}
 			}
-		}	
+		}
+		return btc;
 	}
 }
