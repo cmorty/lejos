@@ -74,7 +74,7 @@ public class Pilot
 	{
 		_left = leftMotor;
 		_right = rightMotor;
-		_degPerDistance = 360/(3.14158f*wheelDiameter);
+		_degPerDistance = 360/((float)Math.PI*wheelDiameter);
 		_turnRatio = trackWidth/wheelDiameter;
 		_left.regulateSpeed(true);
 		_left.smoothAcceleration(true);
