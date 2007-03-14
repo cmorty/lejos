@@ -1,7 +1,7 @@
 package lejos.nxt;
 
-public abstract class I2CSensor {
-	Port port;
+public abstract class I2CSensor implements SensorConstants {
+	I2CPort port;
 	int address = 1;
 	String version = "        ";
 	String productID = "        ";
@@ -11,11 +11,11 @@ public abstract class I2CSensor {
 	char [] sensorTypeChars = StringUtils.getCharacters(sensorType);
 	byte[] byteBuff = new byte[8]; 
 	
-	public I2CSensor(Port port)
+	public I2CSensor(I2CPort port)
 	{
 		this.port = port;
-		port.setPowerType(2);
 		port.i2cEnable();
+		port.setType(TYPE_LOWSPEED);
 	}
 	
 	public int getData(int register, byte [] buf, int len) {	
