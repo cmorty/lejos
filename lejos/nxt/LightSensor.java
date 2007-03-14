@@ -4,9 +4,9 @@ package lejos.nxt;
  * Abstraction for a NXT light sensor.
  * The light sensor can be calibrated to low and high values. 
  */
-public class LightSensor
+public class LightSensor implements SensorConstants
 {
-	Port port;
+	ADSensorPort port;
 	private int _zero = 1023;
 	private int _hundred = 0;
 	
@@ -15,11 +15,11 @@ public class LightSensor
 	 * The sensor will be set to floodlit mode, i.e. the LED will be turned on.
 	 * @param port port, e.g. Port.S1
 	 */
-	public LightSensor(Port port)
+	public LightSensor(ADSensorPort port)
 	{
 		this.port = port;
-		port.setTypeAndMode(Port.TYPE_LIGHT_ACTIVE,
-                            Port.MODE_PCTFULLSCALE);
+		port.setTypeAndMode(TYPE_LIGHT_ACTIVE,
+                            MODE_PCTFULLSCALE);
 	}
 	
 	/**
@@ -28,13 +28,13 @@ public class LightSensor
 	 * @param port port, e.g. Port.S1
 	 * @param floodlight true to set floodit mode, false for ambient light.
 	 */
-	public LightSensor(Port port, boolean floodlight)
+	public LightSensor(ADSensorPort port, boolean floodlight)
 	{
 	   this.port = port;
        port.setTypeAndMode(
-    		   (floodlight ? Port.TYPE_LIGHT_ACTIVE
-    				       : Port.TYPE_LIGHT_INACTIVE),
-    		   Port.MODE_PCTFULLSCALE);
+    		   (floodlight ? TYPE_LIGHT_ACTIVE
+    				       : TYPE_LIGHT_INACTIVE),
+    		   MODE_PCTFULLSCALE);
 		        
 	   
 	}
@@ -45,8 +45,8 @@ public class LightSensor
 	 */
 	public void setFloodlight(boolean floodlight)
 	{
-		port.setType((floodlight ? Port.TYPE_LIGHT_ACTIVE
-		                         : Port.TYPE_LIGHT_INACTIVE));
+		port.setType((floodlight ? TYPE_LIGHT_ACTIVE
+		                         : TYPE_LIGHT_INACTIVE));
 	}
 
 	/**
