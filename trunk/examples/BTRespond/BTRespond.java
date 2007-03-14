@@ -1,4 +1,5 @@
 import lejos.nxt.*;
+import lejos.nxt.comm.*;
 
 public class BTRespond {
 
