@@ -1,0 +1,129 @@
+package lejos.nxt;
+
+public abstract class SimpleMotor {
+	
+	int _mode = 4;
+	int _power = 50;
+	SimpleMotorPort _port;
+
+	/**
+	 * Sets power
+	 * @param power power setting: 0 - 100
+	 */
+	public void setPower(int power)
+	{
+		_power = power;
+		_port.controlMotor(_power, _mode);
+	}
+	 
+	public int getPower()
+	{
+		return _power;
+	}
+
+	/**
+	 * Causes motor to rotate forward.
+	 */
+	public void forward()
+	{ 
+		_mode = 1;
+		updateState();
+	}
+	  
+	/**
+	 * Return true if motor is forward.
+	 */
+	public boolean isForward()
+	{
+		return (_mode == 1);
+	}
+
+	/**
+	 * Causes motor to rotate backwards.
+	 */
+	public void backward()
+	{
+		_mode = 2;
+		updateState();
+	}
+
+	/**
+	 * Return true if motor is backward.
+	 */
+	public boolean isBackward()
+	{
+		return (_mode == 2);
+	}
+
+	/**
+	 * Reverses direction of the motor. It only has
+	 * effect if the motor is moving.
+	 */
+	public void reverseDirection()
+	{
+		if (_mode == 1 || _mode == 2)
+	    {
+			_mode = (3 - _mode);
+			updateState();
+	    }
+	}
+
+	/**
+	 * @return true iff the motor is currently in motion.
+	 */
+	public boolean isMoving()
+	{
+		return (_mode == 1 || _mode == 2);	  
+	}
+
+	/**
+	 * Causes motor to float. The motor will lose all power,
+	 * but this is not the same as stopping. Use this
+	 * method if you don't want your robot to trip in
+	 * abrupt turns.
+	 */   
+	public void flt()
+	{
+		_mode = 4;
+	    _port.controlMotor (0, _mode);
+	}
+
+	/**
+	 * @return true iff the motor is currently in float mode.
+	 */
+	public boolean isFloating()
+	{
+		return _mode == 4;	  
+	}
+	  
+	/**
+	 * Causes motor to stop, pretty much
+	 * instantaneously. In other words, the
+	 * motor doesn't just stop; it will resist
+	 * any further motion.
+	 * Cancels any rotate() orders in progress
+	 */
+	public void stop()
+	{
+		_mode = 3;
+	    _port.controlMotor(0, _mode);
+	}
+	  
+	/**
+	 * Return true if motor is stopped.
+	 */
+	public boolean isStopped()
+	{
+		return (_mode == 3);
+	}
+
+	void updateState()
+	{
+		_port.controlMotor(_power, _mode);
+	}
+	  
+	public int getMode()
+	{ 
+		return _mode;
+    }
+}
