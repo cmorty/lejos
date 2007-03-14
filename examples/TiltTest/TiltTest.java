@@ -4,7 +4,7 @@ import lejos.nxt.*;
 public class TiltTest {
 	
 	public static void main(String[] args) throws Exception {
-		TiltSensor tilt = new TiltSensor(Port.S1);
+		TiltSensor tilt = new TiltSensor(SensorPort.S1);
 		
 		
 		while(!Button.ESCAPE.isPressed()) {

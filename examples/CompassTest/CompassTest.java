@@ -3,7 +3,7 @@ import lejos.nxt.*;
 	public class CompassTest {
 		
 		public static void main(String[] args) throws Exception {
-			CompassSensor compass = new CompassSensor(Port.S1);
+			CompassSensor compass = new CompassSensor(SensorPort.S1);
 						
 			while(!Button.ESCAPE.isPressed()) {
 				LCD.clear();
