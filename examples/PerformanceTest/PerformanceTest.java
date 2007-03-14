@@ -83,8 +83,8 @@ public class PerformanceTest
     showNumber( (int)(Runtime.getRuntime().freeMemory())-10000);
     Button.ENTER.waitForPressAndRelease();
 
-    Port.S1.addPortListener( new PortListener() {
-        public void stateChanged( Port port, int oldValue, int newValue) {
+    SensorPort.S1.addSensorPortListener( new SensorPortListener() {
+        public void stateChanged( SensorPort port, int oldValue, int newValue) {
         }
       }
     );

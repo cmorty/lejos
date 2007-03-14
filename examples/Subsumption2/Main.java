@@ -19,8 +19,8 @@ public class Main {
 
 		actions[0] = new Action() {
 			public int act() {
-				Motor.C.setSpeed(200); Motor.C.forward();
-				Motor.A.setSpeed(200); Motor.A.forward();
+				Motor.C.setSpeed(400); Motor.C.forward();
+				Motor.A.setSpeed(400); Motor.A.forward();
 				return 5000;
 			}
 
@@ -31,7 +31,7 @@ public class Main {
 		
 		actions[1] = new Action() {
 			public int act() {
-				Motor.C.setSpeed(100);
+				Motor.C.setSpeed(200);
 				return 2000;
 			}
 
@@ -62,9 +62,9 @@ public class Main {
 
 		actions[0] = new Action() {
 			public int act() {
-				Motor.C.setSpeed(200); Motor.C.backward();
-				Motor.A.setSpeed(200); Motor.A.backward();
-				return 200;
+				Motor.C.setSpeed(400); Motor.C.backward();
+				Motor.A.setSpeed(400); Motor.A.backward();
+				return 1000;
 			}
 
 			public int nextState() {
@@ -94,9 +94,9 @@ public class Main {
 
 		actions[0] = new Action() {
 			public int act() {
-				Motor.C.setSpeed(200); Motor.C.backward();
-				Motor.A.setSpeed(200); Motor.A.backward();
-				return 200;
+				Motor.C.setSpeed(400); Motor.C.backward();
+				Motor.A.setSpeed(400); Motor.A.backward();
+				return 500;
 			}
 
 			public int nextState() {
@@ -127,10 +127,10 @@ public class Main {
 	  	Sense s1 = new SenseNoOwner(new Actuator(getWanderFSM()));
 		s1.setPri(Thread.MIN_PRIORITY);
 
-		Sense s2 = new SenseBumper(Port.S3, new Actuator(getAvoidLeftFSM()));
+		Sense s2 = new SenseBumper(SensorPort.S3, new Actuator(getAvoidLeftFSM()));
 		s2.setPri(Thread.MIN_PRIORITY+1);
 
-		Sense s3 = new SenseBumper(Port.S1, new Actuator(getAvoidRightFSM()));
+		Sense s3 = new SenseBumper(SensorPort.S1, new Actuator(getAvoidRightFSM()));
 		s3.setPri(Thread.MIN_PRIORITY+1);
 	
 		Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
@@ -263,8 +263,9 @@ class Actuator extends Thread {
  * <P>
  * Sub-classes should implement run() to wait on the sensor's monitor.
  */
-abstract class Sense extends Thread implements PortListener {
+abstract class Sense extends Thread implements SensorPortListener {
 	Actuator actuator;
+	int lastTime = 0;
 	
 	Sense(Actuator actuator) {
 		this.actuator = actuator;
@@ -276,9 +277,12 @@ abstract class Sense extends Thread implements PortListener {
 	 * &lt;bumper&gt;.addSensorListener(). That thread executes at
 	 * MAX_PRIORITY so just hand the call off.
 	 */	
-	public void stateChanged(Port bumper, int oldValue, int newValue) {
+	public void stateChanged(SensorPort bumper, int oldValue, int newValue) {
 		synchronized (bumper) {
-			bumper.notifyAll();
+			if (((int) System.currentTimeMillis() - lastTime) > 500) {
+				lastTime = (int) System.currentTimeMillis();
+				bumper.notifyAll();				
+			}
 		}
 	}
 	
@@ -298,15 +302,15 @@ abstract class Sense extends Thread implements PortListener {
  * and, when notified, will execute its actuator if the bumper's value is true.
  */
 class SenseBumper extends Sense {
-	Port bumper;
+	SensorPort bumper;
 
-	SenseBumper(Port bumper, Actuator actuator) {
+	SenseBumper(SensorPort bumper, Actuator actuator) {
 		super(actuator);
 
 		this.bumper = bumper;
 		
 		// Add a listener for the bumper
-		bumper.addPortListener(this);
+		bumper.addSensorPortListener(this);
 	}
 	
 	public void run() {
@@ -322,10 +326,12 @@ class SenseBumper extends Sense {
 					} catch (InterruptedException ie) {
 					}
 					Sound.playTone(440, 10);
-				} while (!bumper.readBooleanValue());
+				} while (bumper.readRawValue() > 600);
 			}
 			Sound.playTone(500, 10);
-			
+			if (bumper == SensorPort.S3) LCD.drawString("Left Bumper",0,0);
+			if (bumper == SensorPort.S1) LCD.drawString("Right Bumper",0,0);
+			LCD.refresh();
 			// Execute our FSM
 			actuator.execute();
 		}

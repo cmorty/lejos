@@ -1,4 +1,4 @@
-import lejos.robotics.*;
+import lejos.subsumption.*;
 import lejos.nxt.*;
 
 public class BumperCar {

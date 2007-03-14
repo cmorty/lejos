@@ -1,5 +1,6 @@
 
 import lejos.nxt.*;
+import lejos.subsumption.*;
 
 /**
  * Entry point for the program. Creates an instance of Subsumption
@@ -128,8 +129,8 @@ interface Action {
 abstract class Task extends Thread {
 	public static final Motor LEFT_MOTOR = Motor.C ;
 	public static final Motor RIGHT_MOTOR = Motor.A;
-	public static final TouchSensor LEFT_BUMBER = new TouchSensor(Port.S3);;
-	public static final TouchSensor RIGHT_BUMBER = new TouchSensor(Port.S1);
+	public static final TouchSensor LEFT_BUMBER = new TouchSensor(SensorPort.S3);;
+	public static final TouchSensor RIGHT_BUMBER = new TouchSensor(SensorPort.S1);
 	public static final boolean FORWARD = true;
 	public static final boolean BACKWARD = false;
 	public static final int END = -1;
@@ -220,7 +221,7 @@ abstract class Task extends Thread {
 /**
  * Defines a finite state machine to avoid an obstacle on the left.
  */		
-class LeftBumber extends Task implements PortListener {
+class LeftBumber extends Task implements SensorPortListener {
 	public LeftBumber() {
 		actions = new Action[3];
 		actions[0] = new Action() {
@@ -251,14 +252,14 @@ class LeftBumber extends Task implements PortListener {
 		fsm[0] = 1;
 		fsm[1] = 2;
 		fsm[2] = END;
-		Port.S3.addPortListener(this);
+		SensorPort.S3.addSensorPortListener(this);
 	}
 
 	/**
 	 * This is actually executed in a thread established by
 	 * LEFT_BUMBER.addSensorListener().
 	 */	
-	public void stateChanged(Port bumber, int oldValue, int newValue) {
+	public void stateChanged(SensorPort bumber, int oldValue, int newValue) {
 		Sound.playTone(440, 10);
 		if (LEFT_BUMBER.isPressed()) {
 			Sound.playTone(500, 10);
@@ -270,7 +271,7 @@ class LeftBumber extends Task implements PortListener {
 /**
  * Defines a finite state machine to avoid an obstacle on the right.
  */		
-class RightBumber extends Task implements PortListener {
+class RightBumber extends Task implements SensorPortListener {
 	public RightBumber() {
 		actions = new Action[3];
 		actions[0] = new Action() {
@@ -301,14 +302,14 @@ class RightBumber extends Task implements PortListener {
 		fsm[0] = 1;
 		fsm[1] = 2;
 		fsm[2] = END;
-		Port.S1.addPortListener(this);
+		SensorPort.S1.addSensorPortListener(this);
 	}
 
 	/**
 	 * This is actually executed in a thread established by
 	 * RIGHT_BUMBER.addSensorListener().
 	 */	
-	public void stateChanged(Port bumber, int oldValue, int newValue) {
+	public void stateChanged(SensorPort bumber, int oldValue, int newValue) {
 		Sound.playTone(1000, 10);
 		if (RIGHT_BUMBER.isPressed()) {
 			Sound.playTone(1400, 10);

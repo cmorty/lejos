@@ -1,5 +1,5 @@
 import lejos.nxt.*;
-import lejos.robotics.*;
+import lejos.subsumption.*;
 
 public class HitWall implements Behavior {
 	
@@ -7,7 +7,7 @@ public class HitWall implements Behavior {
    
    public HitWall()
    {
-	   touch = new TouchSensor(Port.S2);
+	   touch = new TouchSensor(SensorPort.S2);
    }
    
    public boolean takeControl() {

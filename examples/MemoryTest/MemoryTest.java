@@ -7,7 +7,7 @@ public class MemoryTest {
     {
 	    do
 	    {
-	      String s = "Some text";
+	      String s = "Some more text";
 	      LCD.clear();
 	      LCD.drawInt( (int)(Runtime.getRuntime().freeMemory()),0,0);
 	      LCD.refresh();
