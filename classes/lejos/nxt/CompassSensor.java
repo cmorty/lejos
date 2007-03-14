@@ -7,9 +7,19 @@ package lejos.nxt;
 public class CompassSensor extends I2CSensor {
 	byte[] buf = new byte[2];
 	private static final String MINDSENSORS_ID = "mndsnsrs";
-	
 	private boolean isMindsensors; // For comparing HiTechnic vs. Mindsensors
 	private float cartesianCalibrate = 0; // Used by both cartesian methods. 
+	
+	// Mindsensors.com constants:
+	private final static byte COMMAND = 0x41;
+	private final static byte BEGIN_CALIBRATION = 0x43;
+	private final static byte END_CALIBRATION = 0x44;
+	
+	// HiTechnic constants:
+	private final static byte MODE_CONTROL = 0x41;
+	private final static byte MEASUREMENT_MODE = 0x00;
+	private final static byte CALIBRATE_MODE = 0x43;
+	
 	
 	public CompassSensor(I2CPort port)
 	{
@@ -65,15 +75,27 @@ public class CompassSensor extends I2CSensor {
 	}
 	
 	/**
-	 * Proposed name for calibration method.
-	 *
+	 * Starts calibration for Mindsensors.com compass. Must rotate *very* 
+	 * slowly ,taking at least 20 seconds per rotation.
+	 * Mindsensors: At least 2 full rotations.
+	 * HiTechnic: 1.5 to 2 full rotations.
+	 * Must call stopCalibration() when done.
 	 */
-	public void startCalibration() {}
+	public void startCalibration() {
+		buf[0] = BEGIN_CALIBRATION; 
+		// Same value for HiTechnic and Mindsensors
+		super.sendData(COMMAND, buf, 1);
+	}
 	
 	/**
-	 * Proposed name for calibration method.
+	 * Ends calibration sequence.
 	 *
 	 */
-	public void stopCalibration() {}
-	
+	public void stopCalibration() {
+		if(isMindsensors)
+			buf[0] = END_CALIBRATION;
+		else
+			buf[0] = MEASUREMENT_MODE;
+		super.sendData(COMMAND, buf, 1);
+	}
 }
