@@ -109,20 +109,6 @@ dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
     push_word(0);
     push_word(get_sys_time());
     return;
-  case readByte_4I_5B:
-    push_word((STACKWORD) * ((byte *) word2ptr(paramBase[0])));
-    return;
-  case writeByte_4IB_5V:
-    *((byte *) word2ptr(paramBase[0])) = (byte) (*paramBase1 & 0xFF);
-    return;
-  case setBit_4III_5V:
-    *((byte *) word2ptr(paramBase[0])) =
-      (*((byte *) word2ptr(paramBase[0])) & (~(1 << *paramBase1))) |
-      (((*paramBase2 != 0) ? 1 : 0) << *paramBase1);
-    return;
-  case getDataAddress_4Ljava_3lang_3Object_2_5I:
-    push_word(ptr2word(((byte *) word2ptr(paramBase[0])) + HEADER_SIZE));
-    return;
   case setPoller_4_5V:
     set_poller(word2ptr(paramBase[0]));
     return;
@@ -181,14 +167,16 @@ dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
 	display_goto_xy(paramBase[1], paramBase[2]);
 	display_string(buff);
       }
-      //display_update();
     }
     return;
   case drawInt_4III_5V:
     display_goto_xy(paramBase[1], paramBase[2]);
     display_int(paramBase[0], 0);
-    //display_update();
     return;
+  case drawInt_4IIII_5V:
+     display_goto_xy(paramBase[2], paramBase[3]);
+     display_int(paramBase[0], paramBase[1]);
+    return;   
   case refresh_4_5V:
     display_update();
     return;
@@ -217,12 +205,8 @@ dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
   case getTachoCountById_4I_5I:
     push_word(nxt_motor_get_count(paramBase[0]));
     return;
-  case controlMotor_4III_5V:
-    nxt_motor_set_speed(paramBase[0],
-			(paramBase[1] >=
-			 3 ? 0 : (paramBase[1] ==
-				  2 ? -paramBase[2] : paramBase[2])),
-			(paramBase[1] == 3 ? 1 : 0));
+  case controlMotorById_4III_5V:
+    nxt_motor_set_speed(paramBase[0], paramBase[1], paramBase[2]); 
     return;
   case resetTachoCountById_4I_5V:
     nxt_motor_set_count(paramBase[0], 0);
