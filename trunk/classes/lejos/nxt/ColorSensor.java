@@ -7,7 +7,7 @@ package lejos.nxt;
 public class ColorSensor extends I2CSensor {
 	byte[] buf = new byte[2];
 	
-	public ColorSensor(Port port)
+	public ColorSensor(I2CPort port)
 	{
 		super(port);
 	}
