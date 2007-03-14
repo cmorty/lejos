@@ -1,7 +1,4 @@
-import lejos.nxt.Button;
-import lejos.nxt.ColorSensor;
-import lejos.nxt.LCD;
-import lejos.nxt.Port;
+import lejos.nxt.*;
 
 /**
  * For testing the HiTechnic color sensor (see lejos.nxt.ColorSensor).
@@ -12,7 +9,7 @@ public class ColorDetector {
 	final static int INTERVAL = 200; // milliseconds
 	
 	public static void main(String [] args) throws Exception {
-		ColorSensor cmps = new ColorSensor(Port.S1);
+		ColorSensor cmps = new ColorSensor(SensorPort.S1);
 		
 		while(!Button.ESCAPE.isPressed()) {
 			LCD.clear();
