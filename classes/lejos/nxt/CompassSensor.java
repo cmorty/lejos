@@ -11,7 +11,7 @@ public class CompassSensor extends I2CSensor {
 	private boolean isMindsensors; // For comparing HiTechnic vs. Mindsensors
 	private float cartesianCalibrate = 0; // Used by both cartesian methods. 
 	
-	public CompassSensor(Port port)
+	public CompassSensor(I2CPort port)
 	{
 		super(port);		
 		isMindsensors = (this.getProductID().equals(MINDSENSORS_ID));
