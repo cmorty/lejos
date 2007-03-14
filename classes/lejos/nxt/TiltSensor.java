@@ -8,7 +8,7 @@ package lejos.nxt;
 public class TiltSensor extends I2CSensor {
 	byte[] buf = new byte[2];
 	
-	public TiltSensor(Port port)
+	public TiltSensor(I2CPort port)
 	{
 		super(port);
 	}

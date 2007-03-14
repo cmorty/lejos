@@ -3,20 +3,20 @@ package lejos.nxt;
 /**
  * Abstraction for a NXT sound sensor.
  * 
- */public class SoundSensor {
+ */public class SoundSensor implements SensorConstants {
 
-	Port port;
+	ADSensorPort port;
 	
 	/**
 	 * Create a sound sensor object attached to the specified port.
 	 * The sensor will be set to DB mode.
 	 * @param port port, e.g. Port.S1
 	 */
-	public SoundSensor(Port port)
+	public SoundSensor(ADSensorPort port)
 	{
 	   this.port = port;
-	   port.setTypeAndMode(Port.TYPE_SOUND_DB,
-                           Port.MODE_PCTFULLSCALE);
+	   port.setTypeAndMode(TYPE_SOUND_DB,
+                           MODE_PCTFULLSCALE);
 	}
 	
 	/**
@@ -25,13 +25,13 @@ package lejos.nxt;
 	 * @param port port, e.g. Port.S1
 	 * @param dba true to set DBA mode, false for DB mode.
 	 */
-	public SoundSensor(Port port, boolean dba)
+	public SoundSensor(SensorPort port, boolean dba)
 	{
 	   this.port = port;
        port.setTypeAndMode(
-    		   (dba ? Port.TYPE_SOUND_DBA
-    				: Port.TYPE_SOUND_DB),
-    		   Port.MODE_PCTFULLSCALE);   
+    		   (dba ? TYPE_SOUND_DBA
+    				: TYPE_SOUND_DB),
+    		   MODE_PCTFULLSCALE);   
 	}
 	
 	/**
@@ -40,8 +40,8 @@ package lejos.nxt;
 	 */
 	public void setDBA(boolean dba)
 	{
-	    port.setType((dba ? Port.TYPE_SOUND_DBA
-	    				  : Port.TYPE_SOUND_DB));
+	    port.setType((dba ? TYPE_SOUND_DBA
+	    				  : TYPE_SOUND_DB));
 	}
 
 	/**

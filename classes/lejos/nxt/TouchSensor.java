@@ -5,18 +5,17 @@ package lejos.nxt;
  * Also works with RCX touch sensors.
  * 
  */
-public class TouchSensor {
-	Port port;
+public class TouchSensor implements SensorConstants {
+	ADSensorPort port;
 	
 	/**
 	 * Create a touch sensor object attached to the specified port.
 	 * @param port port, e.g. Port.S1
 	 */
-	public TouchSensor(Port port)
+	public TouchSensor(ADSensorPort port)
 	{
 	   this.port = port;
-	   port.setTypeAndMode(Port.TYPE_SWITCH,
-	                       Port.MODE_BOOLEAN);
+	   port.setTypeAndMode(TYPE_SWITCH, MODE_BOOLEAN);
 	}
 	/**
 	 * Check if the sensor is pressed.
