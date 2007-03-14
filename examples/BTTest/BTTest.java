@@ -1,4 +1,5 @@
 import lejos.nxt.*;
+import lejos.nxt.comm.*;
 
 public class BTTest {
 	// NOTE: These commands only work with iCommand if NXTCommand.setVerify(true);
@@ -178,7 +179,7 @@ public class BTTest {
 						byte port = reply[n][4];
 						int sensorType = reply[n][5] & 0xFF;
 						int sensorMode = reply[n][6] & 0xFF;
-						Port.PORTS[port].setTypeAndMode(sensorType, sensorMode);
+						SensorPort.PORTS[port].setTypeAndMode(sensorType, sensorMode);
 
 						msg [0] = 3;
 						msg[1] = 0;
@@ -191,14 +192,14 @@ public class BTTest {
 					// GETINPUTVALUES
 					if (reply[n][3] == 0x07) {
 						byte port = reply[n][4];
-						Port p;
+						SensorPort p;
 						if(port == 0)
-							p = Port.S1;
+							p = SensorPort.S1;
 						else if(port == 1)
-							p = Port.S2;
+							p = SensorPort.S2;
 						else if(port == 2)
-							p = Port.S3;
-						else p = Port.S4;
+							p = SensorPort.S3;
+						else p = SensorPort.S4;
 						
 						msg[0] = 16;
 						msg[1] = 0;
@@ -231,7 +232,7 @@ public class BTTest {
 						msg[2] = 0x02;
 						msg[3] = (byte) 0x0E;
 						msg[4] = 0; // Status
-						msg[5] = (byte)Port.i2cBusyById(port); // Assume this returns bytes ready
+						msg[5] = (byte)SensorPort.i2cBusyById(port); // Assume this returns bytes ready
 						LCD.drawInt(msg[5], 6, 2);
 						Bluetooth.btSend(msg, 6);						
 					}
