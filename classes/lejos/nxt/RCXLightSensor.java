@@ -4,19 +4,19 @@ package lejos.nxt;
  * Abstraction for an RCX light sensor.
  * 
  */
-public class RCXLightSensor {
-	Port port;
+public class RCXLightSensor implements SensorConstants {
+	LegacySensorPort port;
 	
 	/**
 	 * Create an RCX light sensor object attached to the specified port.
 	 * The sensor will be activated, i.e. the LED will be turned on.
 	 * @param port port, e.g. Port.S1
 	 */
-	public RCXLightSensor(Port port)
+	public RCXLightSensor(LegacySensorPort port)
 	{
 		this.port = port;
-		port.setTypeAndMode(Port.TYPE_REFLECTION,
-                            Port.MODE_PCTFULLSCALE);
+		port.setTypeAndMode(TYPE_REFLECTION,
+                            MODE_PCTFULLSCALE);
 	}
 	
 	/**
@@ -27,7 +27,7 @@ public class RCXLightSensor {
 	  */
 	public void activate()
 	{
-		port.setPowerType(1);
+		port.activate();
 	}
 	
 	/**
@@ -35,7 +35,7 @@ public class RCXLightSensor {
 	 */
 	public void passivate()
 	{
-		port.setPowerType(0);
+		port.passivate();
 	}
 	
 	/**
