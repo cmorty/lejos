@@ -20,6 +20,11 @@ public class LCD
   public static native void drawInt(int i, int x, int y);
 
   /**
+   * Display an in on the LCD at x,y with leading spaces to occupy at least the number
+   * of characters specified by the places parameter.
+   */
+  public static native void drawInt(int i, int places, int x, int y);
+  /**
    * Update the display.
    */
   public static native void refresh();
