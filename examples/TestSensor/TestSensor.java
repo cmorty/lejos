@@ -16,9 +16,9 @@ public class TestSensor
     String t = "T";
     String f = "F";
 
-    TouchSensor touch = new TouchSensor(Port.S1);
-    LightSensor light = new LightSensor(Port.S2);
-    SoundSensor sound = new SoundSensor(Port.S3);
+    TouchSensor touch = new TouchSensor(SensorPort.S1);
+    LightSensor light = new LightSensor(SensorPort.S2);
+    SoundSensor sound = new SoundSensor(SensorPort.S3);
 
     for(;;) {
        LCD.clear();
@@ -27,16 +27,16 @@ public class TestSensor
        LCD.drawString(butt,0,1);
        LCD.drawInt(Button.readButtons(),9,1);
        LCD.drawString(s1,0,2);
-       LCD.drawInt(Port.S1.readRawValue(),9,2);
+       LCD.drawInt(SensorPort.S1.readRawValue(),9,2);
        LCD.drawString((touch.isPressed() ? t : f),14,2);
        LCD.drawString(s2,0,3);
-       LCD.drawInt(Port.S2.readRawValue(),9,3);
+       LCD.drawInt(SensorPort.S2.readRawValue(),9,3);
        LCD.drawInt(light.readValue(),14,3);
        LCD.drawString(s3,0,4);
-       LCD.drawInt(Port.S3.readRawValue(),9,4); 
+       LCD.drawInt(SensorPort.S3.readRawValue(),9,4); 
        LCD.drawInt(sound.readValue(),14,4);
        LCD.drawString(s4,0,5);
-       LCD.drawInt(Port.S4.readRawValue(),9,5); 
+       LCD.drawInt(SensorPort.S4.readRawValue(),9,5); 
        LCD.drawString(tot,0,6);
        LCD.drawInt((int)(Runtime.getRuntime().totalMemory()),9,6);
        LCD.drawString(free,0,7);
