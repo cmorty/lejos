@@ -3,7 +3,7 @@ package lejos.nxt;
 public class UltrasonicSensor extends I2CSensor {
 	byte[] buf = new byte[1];
 	
-	public UltrasonicSensor(Port port) {
+	public UltrasonicSensor(I2CPort port) {
 		super(port);
 	}
 
