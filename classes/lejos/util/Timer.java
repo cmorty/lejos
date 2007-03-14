@@ -51,6 +51,8 @@ public class Timer
 		}
 	    }
 	};
+	
+	myThread.setDaemon(true);
     }
 
     /**
