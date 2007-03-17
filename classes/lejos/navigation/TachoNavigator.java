@@ -234,6 +234,19 @@ public class TachoNavigator implements Navigator
       travel(distanceTo(x,y));
    }
   
+   /**
+   * Rotates the NXT robot towards the target point (x,y)  and moves the required distance.
+   * Method returns when target point is reached, and the robot position is updated;
+   * @param x The x coordinate to move to.
+   * @param y The y coordinate to move to.
+   * @param immediateReturn: iff true,  method returns immediately
+   */
+      public void goTo(float x, float y, boolean immediateReturn) 
+      	{
+         rotateTo(angleTo(x,y));
+         travel(distanceTo(x,y), immediateReturn);
+      }
+   
 /**
  * distance from robot to the point with coordinates (x,y) .
  *@param x coordinate of the point
