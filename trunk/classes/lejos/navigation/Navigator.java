@@ -135,6 +135,16 @@ public interface Navigator
   * @param y The y coordinate to move to.
   */
   public void goTo(float x, float y);
+
+  /**
+   * Rotates the NXT robot towards the target point and moves the required distance.
+   *
+   * @param x The x coordinate to move to.
+   * @param y The y coordinate to move to.
+   * @param immediateReturn Indicates whether method should return immediately.
+   */
+   public void goTo(float x, float y, boolean immediateReturn);
+
   
   /**
  *returns the distance from robot to the point with coordinates (x,y) .
