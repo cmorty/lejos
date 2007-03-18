@@ -1,5 +1,10 @@
 package lejos.nxt;
 
+/**
+ * 
+ * Constants used to set Sensor types and modes.
+ *
+ */
 public interface SensorConstants {
 
 	public static final int TYPE_NO_SENSOR = 0x00;

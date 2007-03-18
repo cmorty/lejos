@@ -20,7 +20,7 @@ public class RCXLightSensor implements SensorConstants {
 	}
 	
 	/**
-	  * Activates an RCX sensor. This method should be called
+	  * Activates an RCX light sensor. This method should be called
 	  * if you want to get accurate values from an RCX
 	  * sensor. In the case of RCX light sensors, you should see
 	  * the LED go on when you call this method.
@@ -31,7 +31,7 @@ public class RCXLightSensor implements SensorConstants {
 	}
 	
 	/**
-     * Passivates an RCX sensor sensor. 
+     * Passivates an RCX light sensor. 
 	 */
 	public void passivate()
 	{

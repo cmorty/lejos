@@ -33,7 +33,6 @@ public class TachoNavigator implements Navigator
 * @param rightMotor The motor used to drive the right wheel e.g. Motor.C.
 * @param leftMotor The motor used to drive the left wheel e.g. Motor.A.
 */
-	
 	public TachoNavigator(float wheelDiameter, float trackWidth, Motor leftMotor, Motor rightMotor) 
 	{
 		pilot = new Pilot(wheelDiameter,trackWidth,leftMotor, rightMotor);
@@ -106,62 +105,65 @@ public class TachoNavigator implements Navigator
 	{
 		pilot.setSpeed(speed);
 	}
-/**
-* Moves the NXT robot forward until stop() is called.
-* @see Navigator#stop().
-*/
-   public void forward() 
-   	{
+	
+	/**
+	 * Moves the NXT robot forward until stop() is called.
+	 * @see Navigator#stop().
+	 */
+    public void forward() 
+    {
 	  updated = false;
 	  pilot.resetTachoCount();
 	  pilot.forward();
-   }
-/**
-* Moves the NXT robot backward until stop() is called.
-*/
+    }
+   
+    /**
+     * Moves the NXT robot backward until stop() is called.
+     */
 	public void backward() 
 	{
 	  updated = false;
   	  pilot.resetTachoCount();
 	  pilot.backward();
 	}
-/**
-* Halts the NXT robot and calculates new x, y coordinates.
-*/
+	
+	/**
+	 * Halts the NXT robot and calculates new x, y coordinates.
+	 */
 	public void stop() 
 	{
 	   	pilot.stop();
 		updatePosition();
 	}
-/**
- *returns true iff the robot is moving under power
- */
+	
+	/**
+	 *returns true iff the robot is moving under power
+	 */
 	public boolean isMoving()
 	{
 		return pilot.isMoving();
 	}
 
-/**
-* Moves the NXT robot a specific distance. A positive value moves it forwards and
-* a negative value moves it backwards. 
-* T robot position is updated atomatically when the method returns. 
-* @param dist The positive or negative distance to move the robot, same units as _wheelDiameter
-*/
+	/**
+	 * Moves the NXT robot a specific distance. A positive value moves it forwards and
+	 * a negative value moves it backwards. 
+	 * The robot position is updated atomatically when the method returns. 
+	 * @param distance The positive or negative distance to move the robot, same units as _wheelDiameter
+	 */
 	public void travel(float distance) 
 	{
 		travel(distance,false);
 	}
 
-/**
-* Moves the NXT robot a specific distance. A positive value moves it forwards and
-* a negative value moves it backwards. 
-*  If immediateReturnis true, method returns immidiately and your code MUST call updatePostion()
-* when the robot has stopped.  Otherwise, the robot position is lost. 
-* @param dist The positive or negative distance to move the robot, same units as _wheelDiameter
-* @param immediateReturn: iff true, the method returns immediately, in which case the programmer <br>
-*  is responsible for calling updatePosition() before the robot moves again. 
-*/
- 
+	/**
+	 * Moves the NXT robot a specific distance. A positive value moves it forwards and
+	 * a negative value moves it backwards. 
+	 *  If immediateReturnis true, method returns immidiately and your code MUST call updatePostion()
+	 * when the robot has stopped.  Otherwise, the robot position is lost. 
+	 * @param distance The positive or negative distance to move the robot, same units as _wheelDiameter
+	 * @param immediateReturn iff true, the method returns immediately, in which case the programmer <br>
+	 *  is responsible for calling updatePosition() before the robot moves again. 
+	 */
 	public void travel(float distance,boolean immediateReturn) 
 	{
 		updated = false;
@@ -170,22 +172,23 @@ public class TachoNavigator implements Navigator
 		if(!immediateReturn) updatePosition();
 	}
 
-/**
-* Rotates the NXT robot a specific number of degrees in a direction (+ or -).
-* @param angle Angle to rotate in degrees. A positive value rotates left, a negative value right.
-**/
+	/**
+	 * Rotates the NXT robot a specific number of degrees in a direction (+ or -).
+	 * @param angle Angle to rotate in degrees. A positive value rotates left, a negative value right.
+	 **/
 	public void rotate(float angle)
 	{
 		rotate(angle,false);
 	}
-/**
-* Rotates the NXT robot a specific number of degrees in a direction (+ or -).
-*  If immediateReturnis true, method returns immidiately and your code MUST call updatePostion()
-* when the robot has stopped.  Otherwise, the robot position is lost. 
-* @param angle Angle to rotate in degrees. A positive value rotates left, a negative value right.
-* @param immediateReturn: iff true, the method returns immediately, in which case the programmer <br>
-*  is responsible for calling updatePosition() before the robot moves again. 
-*/
+	
+	/**
+	 * Rotates the NXT robot a specific number of degrees in a direction (+ or -).
+	 *  If immediateReturnis true, method returns immidiately and your code MUST call updatePostion()
+	 * when the robot has stopped.  Otherwise, the robot position is lost. 
+	 * @param angle Angle to rotate in degrees. A positive value rotates left, a negative value right.
+	 * @param immediateReturn iff true, the method returns immediately, in which case the programmer <br>
+	 *  is responsible for calling updatePosition() before the robot moves again. 
+	 */
    public void rotate(float angle,boolean immediateReturn)
 	{
 	  updated = false; 
@@ -195,64 +198,63 @@ public class TachoNavigator implements Navigator
       if(!immediateReturn) updatePosition();
 	}
 
-
-/**
-* Rotates the NXT robot to point in a specific direction. It will take the shortest
-* path necessary to point to the desired angle. 
-* @param angle The angle to rotate to, in degrees.
-*/
+   /**
+    * Rotates the NXT robot to point in a specific direction. It will take the shortest
+    * path necessary to point to the desired angle. 
+    * @param angle The angle to rotate to, in degrees.
+    */
    public void rotateTo(float angle) 
    	{
         float turnAngle = normalize( angle - _heading);
       	rotate(turnAngle,false);
    }
 
-
-/**
-* Rotates the NXT robot to point in a specific direction. It will take the shortest
-* path necessary to point to the desired angle. 
-* If immediateReturnis true, method returns immidiately and your code MUST call updatePostion()
-* when the robot has stopped.  Otherwise, the robot position is lost. 
-* @param angle The angle to rotate to, in degrees.
-* @param immediateReturn: iff true,  method returns immediately and the programmer is responsible for calling 
-* updatePosition() before the robot moves again. 
-*/
+   /**
+    * Rotates the NXT robot to point in a specific direction. It will take the shortest
+    * path necessary to point to the desired angle. 
+    * If immediateReturnis true, method returns immidiately and your code MUST call updatePostion()
+    * when the robot has stopped.  Otherwise, the robot position is lost. 
+    * @param angle The angle to rotate to, in degrees.
+    * @param immediateReturn iff true,  method returns immediately and the programmer is responsible for calling 
+    * updatePosition() before the robot moves again. 
+    */
    public void rotateTo(float angle,boolean immediateReturn) 
    	{
         float turnAngle = normalize( angle - _heading);
       	rotate(turnAngle,immediateReturn);
    }
-/**
-* Rotates the NXT robot towards the target point (x,y)  and moves the required distance.
-* Method returns when target point is reached, and the robot position is updated;
-* @param x The x coordinate to move to.
-* @param y The y coordinate to move to.
-*/
+   
+   /**
+    * Rotates the NXT robot towards the target point (x,y)  and moves the required distance.
+    * Method returns when target point is reached, and the robot position is updated;
+    * @param x The x coordinate to move to.
+    * @param y The y coordinate to move to.
+    */
    public void goTo(float x, float y) 
-   	{
+   {
       rotateTo(angleTo(x,y));
       travel(distanceTo(x,y));
    }
   
    /**
-   * Rotates the NXT robot towards the target point (x,y)  and moves the required distance.
-   * Method returns when target point is reached, and the robot position is updated;
-   * @param x The x coordinate to move to.
-   * @param y The y coordinate to move to.
-   * @param immediateReturn: iff true,  method returns immediately
-   */
-      public void goTo(float x, float y, boolean immediateReturn) 
-      	{
-         rotateTo(angleTo(x,y));
-         travel(distanceTo(x,y), immediateReturn);
-      }
+    * Rotates the NXT robot towards the target point (x,y)  and moves the required distance.
+    * Method returns when target point is reached, and the robot position is updated;
+    * @param x The x coordinate to move to.
+    * @param y The y coordinate to move to.
+    * @param immediateReturn iff true,  method returns immediately
+    */
+   public void goTo(float x, float y, boolean immediateReturn) 
+   {
+	   rotateTo(angleTo(x,y));
+       travel(distanceTo(x,y), immediateReturn);
+   }
    
-/**
- * distance from robot to the point with coordinates (x,y) .
- *@param x coordinate of the point
- *@param y coordinate of the point
- *@return the distance from the robot current location to the point
- */
+   /**
+    * distance from robot to the point with coordinates (x,y) .
+    * @param x coordinate of the point
+    * @param y coordinate of the point
+    * @return the distance from the robot current location to the point
+    */
 	public float distanceTo( float x, float y)
 	{
 		float dx = x -_x;
@@ -260,12 +262,13 @@ public class TachoNavigator implements Navigator
 		//use hypotenuse formula
 		return (float)Math.sqrt(dx*dx+dy*dy);
 	}
-/**
- * returns the direction angle (degrees) to point with coordinates (x,y)
- *@param x coordinate of the point
- *@param y coordinate of the point
- *@return the direction angle to the point (x,y) from the NXT.  Rotate to this angle to head toward it. 
- */
+	
+	/**
+	 * returns the direction angle (degrees) to point with coordinates (x,y)
+	 * @param x coordinate of the point
+ 	 * @param y coordinate of the point
+ 	 * @return the direction angle to the point (x,y) from the NXT.  Rotate to this angle to head toward it. 
+ 	 */
 	public float angleTo(float x, float y)
 	{
 		float dx = x -_x;
@@ -273,10 +276,10 @@ public class TachoNavigator implements Navigator
 		return(float)Math.toDegrees(Math.atan2(dy,dx));
 	}
 
-/**
-* Updates robot location (x,y) and direction angle. Called by stop, and movement commands that terminate when complete.
-* Must be called after a command that returns immediatly, but after robot movement stops, and before another movement method is called.
-*/ 
+	/**
+	 * Updates robot location (x,y) and direction angle. Called by stop, and movement commands that terminate when complete.
+	 * Must be called after a command that returns immediatly, but after robot movement stops, and before another movement method is called.
+	 */ 
 	public void updatePosition()
 	{
 		if(updated)return;// don't do it again
@@ -329,13 +332,13 @@ public class TachoNavigator implements Navigator
 		if(approx) _heading += turnAngle/2; // correct approximation
 		updated = true;
 	}
-/**
- * Moves the NXT robot in a circular path with a specified radius. <br>
- * The center of the turning circle is on the right side of the robot iff parameter radius is negative;  <br>
- * Postcondition:  motor speed is NOT restored to previous value;
- * @param radius is the radius of the circular path. If positive, the left wheel is on the inside of the turn.  If negative, the left wheel is on the outside.
- */
-
+	
+	/**
+	 * Moves the NXT robot in a circular path with a specified radius. <br>
+	 * The center of the turning circle is on the right side of the robot iff parameter radius is negative;  <br>
+	 * Postcondition:  motor speed is NOT restored to previous value;
+	 * @param radius is the radius of the circular path. If positive, the left wheel is on the inside of the turn.  If negative, the left wheel is on the outside.
+	 */
 	public void turn(float radius)
 	{
 		updated = false;
@@ -343,38 +346,37 @@ public class TachoNavigator implements Navigator
 		pilot.steer(turnRate(radius));
 	}
 
-/**
- * Moves the NXT robot in a circular path through a specific angle; If waitForCompletion is true, returns when angle is reached. <br>
- * The center of the turning circle is on the right side of the robot iff parameter radius is negative.
- *  Robot will stop when total rotation equals angle. If angle is negative, robot will move travel backwards.
- * @param radius radius of the turning circle
- * @param angle the angle by which the robot heading changes, + or -
- */
-
+	/**
+	 * Moves the NXT robot in a circular path through a specific angle; If waitForCompletion is true, returns when angle is reached. <br>
+	 * The center of the turning circle is on the right side of the robot iff parameter radius is negative.
+	 *  Robot will stop when total rotation equals angle. If angle is negative, robot will move travel backwards.
+	 * @param radius radius of the turning circle
+	 * @param angle the angle by which the robot heading changes, + or -
+	 */
 	public void turn(float radius, int angle)
 	{
 		turn(radius,angle,false);
-	  }
-/**
- * Moves the NXT robot in a circular path through a specific angle; If waitForCompletion is true, returns when angle is reached. <br>
- * The center of the turning circle is on the right side of the robot iff parameter radius is negative.
- *  Robot will stop when total rotation equals angle. If angle is negative, robot will move travel backwards.
- * @param radius  see tu(turnRage, angle)
-* @param immediateReturn: iff true, the method returns immediately, in which case the programmer <br>
-*  is responsible for calling updatePosition() before the robot moves again. 
- */
-
+	}
+	
+	/**
+	 * Moves the NXT robot in a circular path through a specific angle; If waitForCompletion is true, returns when angle is reached. <br>
+	 * The center of the turning circle is on the right side of the robot iff parameter radius is negative.
+	 * Robot will stop when total rotation equals angle. If angle is negative, robot will move travel backwards.
+	 * @param radius  see turn(turnRage, angle)
+	 * @param immediateReturn iff true, the method returns immediately, in which case the programmer <br>
+	 * is responsible for calling updatePosition() before the robot moves again. 
+	 */
 	public void turn(float radius, int angle, boolean immediateReturn)
 	{
 		updated = false;
 		pilot.resetTachoCount();
 		pilot.steer(turnRate(radius),angle,immediateReturn);
 		if(!immediateReturn) updatePosition();
-	   }
+	}
 
-/**
- *retuns equivalent angle between -180 and +180
- */
+	/**
+	 * returns equivalent angle between -180 and +180
+	 */
 	private float normalize(float angle)
 	{
 	  float a = angle;
@@ -382,6 +384,7 @@ public class TachoNavigator implements Navigator
 	  while(a < -180) a += 360;
 	  return a;
 	}
+	
 	private int turnRate(float radius)
 	{
 		int direction = 1;
@@ -394,6 +397,4 @@ public class TachoNavigator implements Navigator
 		return Math.round(direction * 100*(1 - ratio));
 	}
 }
-
-
 

@@ -1,6 +1,6 @@
 package lejos.nxt;
 
-public interface LegacySensorPort extends ADSensorPort {
+interface LegacySensorPort extends ADSensorPort {
 	
 	public void activate();
 	

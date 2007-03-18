@@ -1,6 +1,6 @@
 package lejos.nxt;
 
-public interface SimpleMotorPort {
+interface SimpleMotorPort {
 	
 	public void controlMotor(int power, int mode);
 

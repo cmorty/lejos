@@ -1,6 +1,6 @@
 package lejos.nxt;
 
-public interface SimpleSensorPort extends SensorConstants {
+interface SimpleSensorPort extends SensorConstants {
 
 	public int getMode();
 	

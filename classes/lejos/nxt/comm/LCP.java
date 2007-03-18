@@ -1,18 +1,27 @@
 package lejos.nxt.comm;
 
-import lejos.nxt.Battery;
-import lejos.nxt.Motor;
-import lejos.nxt.SensorPort;
-import lejos.nxt.Sound;
+import lejos.nxt.*;
 
+/**
+ * 
+ * Implements the Lego Communication Protocol.
+ *
+ */
 public class LCP {
 	static byte[] reply = new byte[32];
 	static byte[] i2cCommand = new byte[16];
 	static byte[] i2cReply = new byte[16];
 	static int i2cLen = 0;
 	
-	/*
-	 * Emulates a Lego firmware Direct or System
+	
+	private LCP()
+	{		
+	}
+	
+	/**
+	 * Emulates a Lego firmware Direct or System command
+	 * @param cmd the buffer containing the command
+	 * @param cmdLen the legth of the command
 	 */
 	public static void emulateCommand(byte[] cmd, int cmdLen)
 	{

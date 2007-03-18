@@ -1,6 +1,9 @@
 package lejos.nxt.comm;
 
 
+/**
+ * Support for Bluetooth communications.
+ */
 public class Bluetooth {
 
 	public static  final int MSG_BEGIN_INQUIRY = 0;
@@ -64,12 +67,46 @@ public class Bluetooth {
 	{	
 	}
 	
+	/**
+	 * Low-level method to send a BT command or data
+	 * 
+	 * @param buf the buffer to send
+	 * @param len the number of bytes to send
+	 */
 	public static native void btSend(byte[] buf, int len);
+	
+	/**
+	 * Low-level method to receive BT replies or data
+	 * 
+	 * @param buf the buffer to receive data in
+	 */
 	public static native void btReceive(byte[] buf);
+	
+	/**
+	 * Low-level method to switch BC4 chip between command
+	 * and data (stream) mode.
+	 * 
+	 * @param mode 0=data mode, 1=command mode
+	 */
 	public static native void btSetCmdMode(int mode);
+	
+	/**
+	 * Low-level nethod to get the BC4 chip mode - does not work.
+	 */
 	public static native int btGetCmdMode();
+	
+	/**
+	 * Low-level method to start ADC converter - does not wok.
+	 *
+	 */
 	public static native void btStartADConverter();
 	
+	/**
+	 * Send a command to the BC4 chip. Must be in command mode.
+	 * @param cmd the command
+	 * @param len the number of bytes
+	 * 
+	 */
 	public static void sendCommand(byte[] cmd, int len)
 	{
 		int checkSum = 0;
@@ -89,6 +126,14 @@ public class Bluetooth {
 		btSend(sendBuf,len+3);
 	}
 	
+	/**
+	 * Receive a command or reply from the BC4 chip. 
+	 * Must be in command mode.
+	 * 
+	 * @param buf the buffer to receive the reply
+	 * @param bufLen the length of the buffer
+	 * @return the number of bytes received
+	 */
 	public static int receiveReply(byte[] buf, int bufLen)
 	{
 		int checkSum, negSum, len;
@@ -115,6 +160,9 @@ public class Bluetooth {
 		return 0;
 	}
 	
+	/**
+	 * Deprecated - do not use.
+	 */
 	public static int receiveData(byte[] buf, int bufLen)
 	{
 		int len;
@@ -134,6 +182,14 @@ public class Bluetooth {
 		return 0;
 	}
 	
+	/**
+	 * Read a data packet (with 2-byte length header) from a stream connection.
+	 * Must be in data mode.
+	 * 
+	 * @param buf the buffer to receive the data in
+	 * @param bufLen the length of the buffer
+	 * @return the number of bytes received
+	 */
 	public static int readPacket(byte[] buf, int bufLen)
 	{
 		int len;
@@ -148,6 +204,12 @@ public class Bluetooth {
 		return 0;
 	}
 	
+	/**
+	 * Send a data packet.
+	 * Must be in data mode.
+	 * @param buf the data to send
+	 * @param bufLen the number of bytes to send
+	 */
 	public static void sendPacket(byte [] buf, int bufLen)
 	{
 		if (bufLen <= 254)
@@ -159,6 +221,12 @@ public class Bluetooth {
 	    }
 	}
 	
+	/**
+	 * Wait for a remote device to connect.
+	 * Pin currently must be 1234.
+	 * 
+	 * @return a BTConnection
+	 */
 	public static BTConnection waitForConnection()
 	{
 		byte[] reply = new byte[32];
