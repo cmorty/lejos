@@ -21,7 +21,7 @@ package lejos.nxt;
 	
 	/**
 	 * Create a sound sensor object attached to the specified port,
-	 * and set db or DBA mode.
+	 * and sets DB or DBA mode.
 	 * @param port port, e.g. Port.S1
 	 * @param dba true to set DBA mode, false for DB mode.
 	 */
@@ -35,7 +35,7 @@ package lejos.nxt;
 	}
 	
 	/**
-	 * Set DB r DBA mode.
+	 * Set DB or DBA mode.
 	 * @param dba true to set DBA mode, false for DB mode.
 	 */
 	public void setDBA(boolean dba)
@@ -46,7 +46,7 @@ package lejos.nxt;
 
 	/**
 	 * Read the current sensor value.
-	 * @return Value as a percentage.
+	 * @return value as a percentage.
 	 */
 	public int readValue()
 	{

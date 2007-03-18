@@ -1,5 +1,10 @@
 package lejos.nxt;
 
+/**
+ * 
+ * Abstraction for a NXT output port.
+ *
+ */
 public class MotorPort implements TachoMotorPort {
 	int _id;
 	int _pwmMode = 0; // default to float mode
@@ -24,6 +29,12 @@ public class MotorPort implements TachoMotorPort {
 	 */
 	public static final MotorPort C = new MotorPort ('C');
 	
+	/**
+	 * Low-level method to control a motor.
+	 * 
+	 * @param power power from 0-100
+	 * @param mode 1=forward, 2=backward, 3=stop, 4=float
+	 */
 	public void controlMotor(int power, int mode)
 	{
 		// Convert lejos power and mode to NXT power and mode
@@ -32,7 +43,13 @@ public class MotorPort implements TachoMotorPort {
 				         (mode == 3 ? 1 : (mode == 4 ? 0 : _pwmMode)));
 	}
 
-	public synchronized static native void controlMotorById(int id, int power, int mode);
+	/**
+	 * Low-level method to control a motor.
+	 * 
+	 * @param power power from -100 to =100
+	 * @param mode 0=float, 1=brake
+	 */
+	synchronized static native void controlMotorById(int id, int power, int mode);
 
 	/**
 	 * returns tachometer count
@@ -42,7 +59,7 @@ public class MotorPort implements TachoMotorPort {
 		return getTachoCountById(_id - 'A');
 	}
 
-	public static native int getTachoCountById(int aMotor);
+	static native int getTachoCountById(int aMotor);
 	
     /**
 	 *resets the tachometer count to 0;
@@ -52,5 +69,5 @@ public class MotorPort implements TachoMotorPort {
 		resetTachoCountById( _id - 'A');
 	}
 	  
-	public static synchronized native void resetTachoCountById(int aMotor);
+	static synchronized native void resetTachoCountById(int aMotor);
 }
