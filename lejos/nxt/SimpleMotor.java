@@ -1,13 +1,14 @@
 package lejos.nxt;
 
-public abstract class SimpleMotor {
+abstract class SimpleMotor {
 	
 	int _mode = 4;
 	int _power = 50;
 	SimpleMotorPort _port;
 
 	/**
-	 * Sets power
+	 * Sets power.
+	 * 
 	 * @param power power setting: 0 - 100
 	 */
 	public void setPower(int power)
@@ -16,6 +17,11 @@ public abstract class SimpleMotor {
 		_port.controlMotor(_power, _mode);
 	}
 	 
+	/**
+	 * Returns the current power setting.
+	 * 
+	 * @return power value 0-100
+	 */
 	public int getPower()
 	{
 		return _power;
@@ -69,6 +75,8 @@ public abstract class SimpleMotor {
 	}
 
 	/**
+	 * Returns true iff the motor is in motion.
+	 * 
 	 * @return true iff the motor is currently in motion.
 	 */
 	public boolean isMoving()
@@ -89,6 +97,8 @@ public abstract class SimpleMotor {
 	}
 
 	/**
+	 * Returns true iff the motor is in float mode.
+	 * 
 	 * @return true iff the motor is currently in float mode.
 	 */
 	public boolean isFloating()
@@ -122,6 +132,11 @@ public abstract class SimpleMotor {
 		_port.controlMotor(_power, _mode);
 	}
 	  
+	/**
+	 * Returns the mode.
+	 * 
+	 * @return mode 1=forward, 2=backward, 3=stopped, 4=floating
+	 */
 	public int getMode()
 	{ 
 		return _mode;

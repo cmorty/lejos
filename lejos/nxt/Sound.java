@@ -2,7 +2,7 @@ package lejos.nxt;
 
 /**
  * NXT sound routines.
- * These don't work yet.
+ * Only playTone() works.
  */
 public class Sound
 {
@@ -11,7 +11,7 @@ public class Sound
   }
 
   /**
-   * Play a system sound.
+   * Play a system sound - not yet implemented.
    * <TABLE BORDER=1>
    * <TR><TH>aCode</TH><TH>Resulting Sound</TH></TR>
    * <TR><TD>0</TD><TD>short beep</TD></TR>
@@ -27,7 +27,7 @@ public class Sound
   }
 
   /**
-   * Beeps once.
+   * Beeps once - not yet implemented.
    */
   public static void beep()
   {
@@ -35,7 +35,7 @@ public class Sound
   }
 
   /**
-   * Beeps twice.
+   * Beeps twice - not yet implemented.
    */
   public static void twoBeeps()
   {
@@ -43,7 +43,7 @@ public class Sound
   }
 
   /**
-   * Downward tones.
+   * Downward tones - not yet implemented.
    */
   public static void beepSequence()
   {
@@ -51,7 +51,7 @@ public class Sound
   }
 
   /**
-   * Low buzz.
+   * Low buzz - not yet implemented.
    */
   public static void buzz()
   {

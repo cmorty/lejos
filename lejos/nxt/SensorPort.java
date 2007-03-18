@@ -10,11 +10,11 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
   private short iNumListeners = 0;
   private SensorPortListener[] iListeners;
   private int iPreviousValue;
-  int type, mode;
+  private int type, mode;
   
    
-  public static final byte[]  powerType = {0,0,1,1,1,0,0,0,0,0,0,1};
-  public static final byte[]  adType = {-1,-1,-1,-1,-1,1,0,1,2,-1,-1,-1};
+  private static final byte[]  powerType = {0,0,1,1,1,0,0,0,0,0,0,1};
+  private static final byte[]  adType = {-1,-1,-1,-1,-1,1,0,1,2,-1,-1,-1};
 
   /**
    * Port labeled 1 on NXT.
@@ -185,9 +185,9 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
    * <i>Low-level API</i> for reading sensor values.
    * Currently always returns the raw ADC value.
    * @param aPortId Port ID (0..4).
-   * @param aRequestType 0 = raw value, 1 = canonical value, 2 = boolean value.
+   * @param aRequestType ignored.
    */
-  public static native int readSensorValue (int aPortId, int aRequestType);
+  static native int readSensorValue (int aPortId, int aRequestType);
   
   /**
    * Low-level method to set the type of an A/D sensor.
@@ -215,13 +215,13 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
    * For example, a value of 1 sets floodlighting on a LightSensor,
    * a value of 1 sets DB mode and a value of 2 sets DBA mode, on a SoundSensor. 
    */
-  public static native void setADTypeById(int aPortId, int aADType);
+  static native void setADTypeById(int aPortId, int aADType);
   
   /**
    * Low-level method to set the input power setting for a sensor.
    * Values are: 0 - no power, 1 RCX active power, 2 power always on.
    **/
-  public static native void setPowerTypeById(int aPortId, int aPortType);
+  static native void setPowerTypeById(int aPortId, int aPortType);
   
   /**
    * Call Port Listeners. Used by ListenerThread.
@@ -234,28 +234,54 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
    iPreviousValue = newValue;
   }
   
+  /**
+   * Low-level method to enable I2C on the port.
+   */
   public static native void i2cEnableById(int aPortId);
   
+  /**
+   * Low-level method to disable I2C on the port.
+   * 
+   */
   public static native void i2cDisableById(int aPortId);
   
+  /**
+   * Low-level method to test if I2C connection is busy.
+   */
   public static native int i2cBusyById(int aPortId);
   
+  /**
+   * Low-level method to start an I2C transaction.
+   */
   public static native int i2cStartById(int aPortId, int address,
 		                            int internalAddress, int numInternalBytes,
 		                            byte [] buffer, int numBytes, int transferType);
   
+  /**
+   * Low-level method to enable I2C on the port.
+   */
   public void i2cEnable() {
 	  i2cEnableById(iPortId);
   }
   
+  /**
+   * Low-level method to disable I2C on the port.
+   * 
+   */
   public void i2cDisable() {
 	  i2cDisableById(iPortId);
   }
   
+  /**
+   * Low-level method to test if I2C connection is busy.
+   */
   public int i2cBusy() {
 	  return i2cBusyById(iPortId);
   }
   
+  /**
+   * Low-level method to start an I2C transaction.
+   */
   public int i2cStart(int address, int internalAddress,
 		              int numInternalBytes, byte[] buffer,
 		              int numBytes, int transferType) {

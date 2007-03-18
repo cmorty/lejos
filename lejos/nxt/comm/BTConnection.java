@@ -3,12 +3,20 @@ package lejos.nxt.comm;
 import java.io.*;
 import javax.microedition.io.*;
 
-
+/**
+ * 
+ * Represents a Bluetooth Stream Connection.
+ * 
+ * Currently only used to close a Bluetooth connection,
+ * but will be used in a later release to implement input
+ * and output streams.
+ *
+ */
 public class BTConnection implements StreamConnection {
 	int handle;
 	boolean open;
 	
-	public BTConnection(int handle)
+	BTConnection(int handle)
 	{
 		this.handle = handle;
 		open = true;

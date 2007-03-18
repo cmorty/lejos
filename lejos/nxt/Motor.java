@@ -4,7 +4,7 @@ import lejos.util.TimerListener;
 import lejos.util.Timer;
 
 /**
- * Abstraction for a motor. Three instances of <code>Motor</code>
+ * Abstraction for a NXT motor. Three instances of <code>Motor</code>
  * are available: <code>Motor.A</code>, <code>Motor.B</code>
  * and <code>Motor.C</code>. To control each motor use
  * methods <code>forward, backward, reverseDirection, stop</code>
@@ -150,7 +150,7 @@ public class Motor extends SimpleMotor implements TimerListener
    * iff immediateReturn is true, method returns immediately and the motor stops by itself <br>
    * When the angle is reached, the method isRotating() returns false;
    * @param  angle through which the motor will rotate
-   * @param immediateReturn; iff true, method returns immediately, thus allowing monitoring of sensors in the calling thread. 
+   * @param immediateReturn iff true, method returns immediately, thus allowing monitoring of sensors in the calling thread. 
    */
    public void rotate(int angle, boolean immediateReturn)
    {
@@ -178,7 +178,7 @@ public class Motor extends SimpleMotor implements TimerListener
    * Then getTachoCount should be within +- 2 degrees if the limit angle
    * When the angle is reached, the method isRotating() returns false;
    * @param  limitAngle to which the motor will rotate, and then stop. 
-   *@param immediateReturn; iff true, method returns immediately, thus allowing monitoring of sensors in the calling thread. 
+   * @param immediateReturn iff true, method returns immediately, thus allowing monitoring of sensors in the calling thread. 
     */
   public void rotateTo(int limitAngle,boolean immediateReturn)
   {
@@ -405,6 +405,11 @@ public class Motor extends SimpleMotor implements TimerListener
 	return   (int)( _speed*0.060f);//0.067 from regression - extra margin for high speed
   }
 
+  /**
+   * Return the angle that a Motor is rotating to.
+   * 
+   * @return angle in degrees
+   */
   public int getLimitAngle()
   {
 	return _limitAngle;
@@ -433,11 +438,19 @@ public class Motor extends SimpleMotor implements TimerListener
    */
   public int getActualSpeed() { return _actualSpeed;}
 	
+  /**
+   * Returns the tachometer count.
+   * 
+   * @return tachometer count in degrees
+   */
   public int getTachoCount()
   {
 	return _port.getTachoCount();
   }
 	
+  /**
+   * Resets the tachometer count to zero.
+   */
   public void resetTachoCount()
   {
 	_port.resetTachoCount();
