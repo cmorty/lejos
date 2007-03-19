@@ -1,10 +1,10 @@
 package lejos.nxt;
 
-abstract class SimpleMotor {
+abstract class BasicMotor {
 	
 	int _mode = 4;
 	int _power = 50;
-	SimpleMotorPort _port;
+	BasicMotorPort _port;
 
 	/**
 	 * Sets power.
@@ -142,3 +142,4 @@ abstract class SimpleMotor {
 		return _mode;
     }
 }
+

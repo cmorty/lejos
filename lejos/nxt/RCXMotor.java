@@ -5,9 +5,9 @@ package lejos.nxt;
  * Abstraction for an RCX motor.
  *
  */
-public class RCXMotor extends SimpleMotor {
+public class RCXMotor extends BasicMotor {
 	
-	public RCXMotor(SimpleMotorPort port)
+	public RCXMotor(BasicMotorPort port)
 	{
 		_port = port;
 	}

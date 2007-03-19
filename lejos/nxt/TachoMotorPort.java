@@ -1,5 +1,5 @@
 package lejos.nxt;
 
-interface TachoMotorPort extends SimpleMotorPort, Tachometer {
+interface TachoMotorPort extends BasicMotorPort, Tachometer {
 	
 }

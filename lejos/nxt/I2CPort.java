@@ -1,6 +1,6 @@
 package lejos.nxt;
 
-interface I2CPort extends SimpleSensorPort {
+interface I2CPort extends BasicSensorPort {
 
 	public void i2cEnable();
 	
