@@ -9,7 +9,7 @@ import lejos.nxt.Motor;
 * As with pilot, the robot must be have two independently controlled drive wheels. 
 */
 
-public class TachoNavigator implements Navigator
+public class TachoNavigator  implements Navigator
 { 
 	// orientation and co-ordinate data
 	private float _heading = 0;
@@ -20,7 +20,7 @@ public class TachoNavigator implements Navigator
 /**
  * set false whenever the robot moves,  set to true by updatePosition();
  */
-	private boolean updated = false;
+	private boolean _updated = false;
 
 /**
 * Allocates a Navigator object and initializes it with the proper motors.
@@ -112,7 +112,7 @@ public class TachoNavigator implements Navigator
 	 */
     public void forward() 
     {
-	  updated = false;
+	  _updated = false;
 	  pilot.resetTachoCount();
 	  pilot.forward();
     }
@@ -122,7 +122,7 @@ public class TachoNavigator implements Navigator
      */
 	public void backward() 
 	{
-	  updated = false;
+	  _updated = false;
   	  pilot.resetTachoCount();
 	  pilot.backward();
 	}
@@ -166,11 +166,31 @@ public class TachoNavigator implements Navigator
 	 */
 	public void travel(float distance,boolean immediateReturn) 
 	{
-		updated = false;
+		_updated = false;
 		pilot.resetTachoCount();
 		pilot.travel(distance,immediateReturn);
 		if(!immediateReturn) updatePosition();
 	}
+
+/**
+*Rotates the NXT to the left (increasing angle) until stop() is called;
+*/
+	public void rotateLeft()
+	{
+	  _updated = false;
+	  pilot.resetTachoCount();
+	  pilot.steer(200);
+	}
+  
+/**
+*Rotates the NXT to the right (decreasing angle) until stop() is called;
+*/
+  public void rotateRight()
+  {
+  	  _updated = false;
+	  pilot.resetTachoCount();
+	  pilot.steer(-200);
+  }
 
 	/**
 	 * Rotates the NXT robot a specific number of degrees in a direction (+ or -).
@@ -191,7 +211,7 @@ public class TachoNavigator implements Navigator
 	 */
    public void rotate(float angle,boolean immediateReturn)
 	{
-	  updated = false; 
+	  _updated = false; 
       int turnAngle = Math.round(normalize(angle));
       pilot.resetTachoCount();
       pilot.rotate(turnAngle,immediateReturn);
@@ -282,7 +302,7 @@ public class TachoNavigator implements Navigator
 	 */ 
 	public void updatePosition()
 	{
-		if(updated)return;// don't do it again
+		if(_updated)return;// don't do it again
 		try{Thread.sleep(70);}
 		catch(InterruptedException e){}
 		int left = pilot.getLeftCount();//left wheel rotation angle
@@ -330,7 +350,7 @@ public class TachoNavigator implements Navigator
 		_x += distance * Math.cos(projection); // displacement in world coordinates
 		_y += distance * Math.sin(projection);
 		if(approx) _heading += turnAngle/2; // correct approximation
-		updated = true;
+		_updated = true;
 	}
 	
 	/**
@@ -341,7 +361,7 @@ public class TachoNavigator implements Navigator
 	 */
 	public void turn(float radius)
 	{
-		updated = false;
+		_updated = false;
 		pilot.resetTachoCount();
 		pilot.steer(turnRate(radius));
 	}
@@ -368,7 +388,7 @@ public class TachoNavigator implements Navigator
 	 */
 	public void turn(float radius, int angle, boolean immediateReturn)
 	{
-		updated = false;
+		_updated = false;
 		pilot.resetTachoCount();
 		pilot.steer(turnRate(radius),angle,immediateReturn);
 		if(!immediateReturn) updatePosition();
