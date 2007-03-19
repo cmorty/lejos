@@ -34,7 +34,7 @@ import lejos.util.Timer;
  * </pre></code>
  * @author Roger Glassey 22 February 2007
  */
-public class Motor extends SimpleMotor implements TimerListener
+public class Motor extends BasicMotor implements TimerListener
 {
   private TachoMotorPort _port;
   private int _speed = 360;
