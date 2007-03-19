@@ -198,7 +198,7 @@ public class Pilot
 	 */
 	public int getAngle()
 	{
-		return  Math.round((getRightCount()-getLeftCount())/(2*_turnRatio));
+		return  _parity*Math.round((getRightCount()-getLeftCount())/(2*_turnRatio));
 	}
 	
 	/**
