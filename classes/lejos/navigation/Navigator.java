@@ -73,6 +73,17 @@ public interface Navigator
    * @param directionAngle  the angle the robot is heading, measured from the x axis
    */	
   public void setPosition(float x, float y, float directionAngle); 
+
+/**
+*Rotates the NXT to the left (increasing angle) until stop() is called;
+*/
+  public void rotateLeft();
+  
+/**
+*Rotates the NXT to the right (decreasing angle) until stop() is called;
+*/
+  public void rotateRight();
+  
   
   /**
    * Rotates the NXT robot a specific number of degrees in a direction (+ or -).This
@@ -111,7 +122,8 @@ public interface Navigator
    */
   public void rotateTo(float angle,boolean immediateReturn) ;
    	
-  /**
+  
+    /**
    * Moves the NXT robot a specific distance. A positive value moves it forward and
    * a negative value moves it backward. Method returns when movement is done.
    * @param distance The positive or negative distance to move the robot.
