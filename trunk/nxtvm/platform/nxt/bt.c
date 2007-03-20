@@ -125,14 +125,22 @@ void bt_receive(U8 * buf)
   
   // At least 2 bytes ready to be processed?
   
-  if (bytes_ready > in_buf_idx + 1)
+  if (total_bytes_ready > in_buf_idx + 1)
   {
   	cmd_len = (int) buf_ptr[in_buf_idx];
   	
   	// Data mode kludge - data cannot be more than 255 bytes
   	
-  	if (buf_ptr[in_buf_idx+1] == 0) cmd_len++; 
-  
+  	if (in_buf_idx < 127)
+  	{
+  		if (buf_ptr[in_buf_idx+1] == 0) cmd_len++;
+  	} 
+  	else
+  	{
+  	  tmp_ptr = &(in_buf[(in_buf_in_ptr+1)%2][0]);
+      if (tmp_ptr[0] == 0) cmd_len++;
+  	}
+
     // Is whole command in the buffer?
   
     if (bytes_ready >= in_buf_idx + cmd_len + 1)
