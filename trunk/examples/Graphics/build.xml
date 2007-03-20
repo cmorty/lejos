@@ -1,12 +1,12 @@
-<project name="Graphics" default="link" basedir=".">
+<project name="GraphicsSample" default="link" basedir=".">
     <description>
-    	Graphics example build file
+    	GraphicsSample example build file
     </description>
 
   <!-- set global properties for this build -->
   <property name="lejos_home" location="../.." />
   <property name="src" location="."/>
-  <property name="program" value="Graphics"/>
+  <property name="program" value="GraphicsSample"/>
   <property name="binary" value="${program}.bin" />
 
   <target name="compile" 
