@@ -1,4 +1,3 @@
-package Graphics;
 import javax.microedition.lcdui.Graphics;
 
 public class GraphicsSample {
