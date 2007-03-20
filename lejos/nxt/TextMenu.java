@@ -92,13 +92,12 @@ public class TextMenu  // implements Menu
 		while(true)
 		{
 			while(Button.readButtons()>0)Thread.yield();// wait for release
-			while( Button.readButtons()==0) Thread.yield();
-			{
-				Thread.yield();
-				button = Button.readButtons();
-			}
-			button = Button.readButtons();
+			while(Button.readButtons()==0) Thread.yield();
+			try {Thread.sleep(20);} catch (InterruptedException ie) {} // wait to stabilize
+			button=Button.readButtons();
+			
 			if(button == 1) return _selectedIndex;
+			if(button == 8) return -1; //Escape
 			if(button == 4)//scroll forward
 			{
 				_selectedIndex ++;
