@@ -11,55 +11,37 @@ public class View {
 		String free = "Free mem:";
 		String sensVal = "Sensor Value";
 		String mot = "Motors";
-		String mots = "Motors:    ";
-		String tach = "Tacho: ";
+		String mots = "Motors:";
+		String tach = "Tacho:";
 		String port = "Port:";
 		String type = "Type:";
 		String val = "Value:";
 		String pressed = "pressed ";
 		String released = "released";
-		String blanks3 = "   ";
 		
-	
-		Menu main = new Menu("View example");
-		main.add("System");
-		main.add("Sensors");
-		main.add("Motors");
-		main.add("Exit");
+	    String[] viewItems = {"System", "Sensors", "Motors", "Exit"};
+	    
+		TextMenu main = new TextMenu(viewItems, 7, "View Example");
 		
-		Menu pickSensor = new Menu("Pick Sensor");
-		pickSensor.add("Touch");
-		pickSensor.add("Floodlit");
-		pickSensor.add("Ambient");
-		pickSensor.add("Sound DB");
-		pickSensor.add("Sound DBA");
-		pickSensor.add("RCX Light");
+		String[] sensorItems = {"Touch","Light(Floodlit)","Light(Ambient)","Sound DB","Sound DBA","RCX Light","Ultrasonic"};
 		
-		Menu pickSensorPort = new Menu("Pick Port");
-		pickSensorPort.add("S1");
-		pickSensorPort.add("S2");
-		pickSensorPort.add("S3");
-		pickSensorPort.add("S4");
+		TextMenu pickSensor = new TextMenu(sensorItems, 7, "Pick Sensor");
 		
-		Menu pickMotor = new Menu("Pick Motor");
-		pickMotor.add("A");
-		pickMotor.add("B");
-		pickMotor.add("C");
-		pickMotor.add("A&B");
-		pickMotor.add("A&C");
-		pickMotor.add("B&C");
+		String[] sensorPorts = {"S1","S2","S3","S4"};
+		TextMenu pickSensorPort = new TextMenu(sensorPorts, 7, "Pick Port");
+
+		String[] motors = {"A","B","C","A&B","A&C","B&C"};
+		TextMenu pickMotor = new TextMenu(motors,7,"Pick Motor");
 		
-		Menu operation = new Menu("Pick option");
-		operation.add("forward");
-		operation.add("backward");
-		operation.add("flt");
-		operation.add("stop");
-				
+		String[] motorMethods = {"forward","backward","flt","stop"};
+		TextMenu operation = new TextMenu(motorMethods, 7, "Pick option");
+		
 		int selection;
 		
 		for(;;)
 		{
-			selection = main.process();
+			LCD.clear();
+			selection = main.select();
 			
 			if (selection == -1 || selection == 3)
 			{
@@ -74,11 +56,11 @@ public class View {
 				LCD.clear();
 				LCD.drawString(sys, 0, 0);
 				LCD.drawString(batt, 0, 2);
-				LCD.drawInt(Battery.getVoltageMilliVolt(), 10, 2);
+				LCD.drawInt(Battery.getVoltageMilliVolt(), 4, 10, 2);
 				LCD.drawString(tot, 0, 3);
-			    LCD.drawInt((int)(Runtime.getRuntime().totalMemory()),10, 3);
+			    LCD.drawInt((int)(Runtime.getRuntime().totalMemory()), 5, 10, 3);
 				LCD.drawString(free, 0, 4);
-			    LCD.drawInt((int)(Runtime.getRuntime().freeMemory()),10,4);
+			    LCD.drawInt((int)(Runtime.getRuntime().freeMemory()), 5, 10,4);
 			    LCD.refresh();
 			    
 			    Button.ESCAPE.waitForPressAndRelease();
@@ -86,30 +68,32 @@ public class View {
 			
 			if (selection == 1) // Sensors				
 			{
-				Thread.sleep(300);
+				int portId = pickSensorPort.select();
+				if (portId < 0) 
+				{
+					Button.ESCAPE.waitForPressAndRelease();
+					continue;
+				}
 
-				int portId = pickSensorPort.process();
-				
-				if (portId < 0) return;
-				
-				Thread.sleep(300);
-
-				int sensor = pickSensor.process();
-				
-				if (sensor < 0) return; 
+				LCD.clear();
+				int sensor = pickSensor.select();				
+				if (sensor < 0)
+				{
+					Button.ESCAPE.waitForPressAndRelease();
+					continue;
+				} 
 				
 				LCD.clear();
-				LCD.drawString(sensVal, 0, 0);
-				
+				LCD.drawString(sensVal, 0, 0);				
 				LCD.drawString(port, 0, 2);
-				LCD.drawString(pickSensorPort.getValue(),6,2);
+				LCD.drawString(sensorPorts[portId],6,2);
 				LCD.drawString(type, 0, 3);
-				LCD.drawString(pickSensor.getValue(),6,3);
+				LCD.drawString(sensorItems[sensor],6,3);
 				LCD.drawString(val,0,4);
 				
 				if (sensor == 0)
 				{
-					TouchSensor touch = new TouchSensor(Port.PORTS[portId]);
+					TouchSensor touch = new TouchSensor(SensorPort.PORTS[portId]);
 					
 					while (!Button.ESCAPE.isPressed())
 					{
@@ -117,32 +101,30 @@ public class View {
 						else LCD.drawString(released, 7, 4);
 						
 						LCD.refresh();
-						Thread.sleep(500);
+						Thread.sleep(100);
 					}
 				}
 				
 				if (sensor == 1 || sensor == 2)
 				{
-					LightSensor light = new LightSensor(Port.PORTS[portId], sensor == 1);
+					LightSensor light = new LightSensor(SensorPort.PORTS[portId], sensor == 1);
 					
 					while (!Button.ESCAPE.isPressed())
 					{
-						LCD.drawString(blanks3,7,4);
-						LCD.drawInt(light.readValue(), 7, 4);
+						LCD.drawInt(light.readValue(), 3, 7, 4);
 						
 						LCD.refresh();
-						Thread.sleep(500);
+						Thread.sleep(100);
 					}
 				}
 
 				if (sensor == 3 || sensor == 4)
 				{
-					SoundSensor sound = new SoundSensor(Port.PORTS[portId], sensor == 4);
+					SoundSensor sound = new SoundSensor(SensorPort.PORTS[portId], sensor == 4);
 					
 					while (!Button.ESCAPE.isPressed())
 					{
-						LCD.drawString(blanks3,7,4);
-						LCD.drawInt(sound.readValue(), 7, 4);
+						LCD.drawInt(sound.readValue(), 3, 7, 4);
 						
 						LCD.refresh();
 						Thread.sleep(100);
@@ -151,45 +133,51 @@ public class View {
 				
 				if (sensor == 5) // RCX Light Sensor
 				{
-					RCXLightSensor light = new RCXLightSensor(Port.PORTS[portId]);
+					RCXLightSensor light = new RCXLightSensor(SensorPort.PORTS[portId]);
 					
 					while (!Button.ESCAPE.isPressed())
 					{
-						LCD.drawString(blanks3,7,4);
-						LCD.drawInt(light.readValue(), 7, 4);
+						LCD.drawInt(light.readValue(), 3, 7, 4);
 						
 						LCD.refresh();
-						Thread.sleep(500);
+						Thread.sleep(100);
 					}
 				}
 				
-				Thread.sleep(500);
+				if (sensor == 6) // Ultrasonic
+				{
+					UltrasonicSensor sonar = new UltrasonicSensor(SensorPort.PORTS[portId]);
+					
+					while (!Button.ESCAPE.isPressed())
+					{
+						LCD.drawInt(sonar.getDistance(), 3, 7, 4);
+						
+						LCD.refresh();
+						Thread.sleep(100);
+					}
+				}
+				Button.ESCAPE.waitForPressAndRelease();
 			}
 			
 			if (selection == 2) // Motors
 			{
-				Thread.sleep(300);
-				
-				int motor = pickMotor.process();
-				
-				if (motor < 0) return;
-				
-				Thread.sleep(300);
+				LCD.clear();
+				int motor = pickMotor.select();				
+				if (motor < 0)
+				{
+					Button.ESCAPE.waitForPressAndRelease();
+					continue;
+				}
 				
 				for(;;)
-				{
-				
-				  int op = operation.process();
-				  
+				{				
+				  LCD.clear();
+				  int op = operation.select();				  
 				  if (op < 0)
 				  {
 					  Button.ESCAPE.waitForPressAndRelease();
 					  break;
 				  }
-				
-				  Motor.A.setSpeed(100);
-				  Motor.B.setSpeed(100);
-				  Motor.C.setSpeed(100);
 				
 				  if (op == 0) // forwards
 				  {
@@ -219,21 +207,22 @@ public class View {
 					if (motor == 2 || motor == 4 || motor == 5) Motor.C.stop();
 				  }
 				  
+				  // Display tach reading until Escape is pressed
 				  while(!Button.ESCAPE.isPressed())
 				  {
 					  LCD.clear();
 					  LCD.drawString(mot,0,0);
 					  LCD.drawString(mots, 0, 2);
-					  LCD.drawString(pickMotor.getValue(), 8,2);
+					  LCD.drawString(motors[motor], 8,2);
 					  LCD.drawString(tach, 0, 3);
 					  if (motor == 0 || motor == 3 || motor == 4) 
-						  LCD.drawInt(Motor.A.getTachoCount(), 7, 3);
+						  LCD.drawInt(Motor.A.getTachoCount(), 8, 7, 3);
 					  if (motor == 1 || motor == 3 || motor == 5)
-						  LCD.drawInt(Motor.B.getTachoCount(), 7, 3);
+						  LCD.drawInt(Motor.B.getTachoCount(), 8, 7, 3);
 					  if (motor == 2 || motor == 4 || motor == 5)
-						  LCD.drawInt(Motor.C.getTachoCount(), 7, 3);
+						  LCD.drawInt(Motor.C.getTachoCount(), 8, 7, 3);
 					  LCD.refresh();
-					  Thread.sleep(500);
+					  Thread.sleep(100);
 				  }
 				  
 				  Button.ESCAPE.waitForPressAndRelease();
