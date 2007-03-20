@@ -161,28 +161,6 @@ public class Bluetooth {
 	}
 	
 	/**
-	 * Deprecated - do not use.
-	 */
-	public static int receiveData(byte[] buf, int bufLen)
-	{
-		int len;
-		
-		btReceive(receiveBuf);
-		len = receiveBuf[0];
-
-		buf[0] = (byte) len;
-		buf[1] = 0;
-		
-		if (len+1 <= bufLen)
-		{
-			for(int i=1;i<len+1;i++) buf[i+1] = receiveBuf[i+1];			
-			return len+2;
-		}
-		buf[0] = 0;
-		return 0;
-	}
-	
-	/**
 	 * Read a data packet (with 2-byte length header) from a stream connection.
 	 * Must be in data mode.
 	 * 
