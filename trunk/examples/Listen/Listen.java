@@ -1,12 +1,12 @@
 import lejos.nxt.*;
 
-public class Listen implements PortListener
+public class Listen implements SensorPortListener
 {
 	String changed = "State changed";
 	String val = "Value:";
 	String oldVal = "old Value:";
 	String free = "Free Mem:"; 
-	SoundSensor sound = new SoundSensor(Port.S1);
+	SoundSensor sound = new SoundSensor(SensorPort.S1);
 	
 	public static void main (String[] aArg)
 	throws Exception
@@ -19,9 +19,9 @@ public class Listen implements PortListener
 		LCD.refresh();
 	}
 	
-	public void stateChanged(Port port, int value, int oldValue)
+	public void stateChanged(SensorPort port, int value, int oldValue)
     {
-		if (port == Port.S1 && sound.readValue() > 50)
+		if (port == SensorPort.S1 && sound.readValue() > 50)
 		{
 	    	LCD.clear();
 	    	LCD.drawString(changed,0,0);
@@ -39,6 +39,6 @@ public class Listen implements PortListener
 	private void run()
 	throws InterruptedException
 	{
-		Port.S1.addPortListener(this);
+		SensorPort.S1.addSensorPortListener(this);
 	}
 }
