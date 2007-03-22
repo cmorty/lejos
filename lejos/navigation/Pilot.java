@@ -62,6 +62,16 @@ public class Pilot
 	private byte _parity = 1;
 	
 	/**
+	 * if true, motor speed regulation is turned on
+	 */
+	 private boolean _regulating;
+	 
+	 /**
+	  *steer until stop() or other command
+	  */
+	  private boolean  _noSteerLimit = false;
+	
+	/**
 	 * distance between wheels - used in steer() 
 	 */
 	public  final float _trackWidth;
@@ -137,9 +147,9 @@ public class Pilot
 	public void setSpeed(int speed) 
 	{
 		_speed = speed;
-		_left.regulateSpeed(true);
+		_left.regulateSpeed(_regulating);
 		_left.smoothAcceleration(true);
-		_right.regulateSpeed(true);
+		_right.regulateSpeed(_regulating);
 		_right.smoothAcceleration(true);
 		_left.setSpeed(speed);
 		_right.setSpeed(speed);
@@ -328,15 +338,21 @@ public class Pilot
 		outside.setSpeed(_speed);
 		float steerRatio = 1 - rate/100.0f;
 		inside.setSpeed((int)(_speed*steerRatio));
+		if(angle == Integer.MAX_VALUE) //no limit angle for turn
+		{
+			if(_parity == 1) outside.forward();
+			else outside.backward();
+			if( _parity*steerRatio > 0) inside.forward();
+			else inside.backward();
+			return;
+		}
 		float rotAngle  = angle*_trackWidth*2/(_wheelDiameter*(1-steerRatio));
-		if(angle == Integer.MAX_VALUE) rotAngle = Integer.MAX_VALUE/2; // turn rate == 0
+//		if(angle == Integer.MAX_VALUE) rotAngle = Integer.MAX_VALUE/2; // turn rate == 0
 		inside.rotate(_parity*(int)(rotAngle*steerRatio),true);
 		outside.rotate(_parity*(int)rotAngle,true);
 		if(immediateReturn)return;
 		while (isMoving())Thread.yield();
 		inside.setSpeed(outside.getSpeed());
-		
-
 	}
 
 	/**
@@ -346,6 +362,17 @@ public class Pilot
 	{
 		_left.backward();
 		_right.backward();
+	}
+/**
+ *Sets motor speed regulation   on = true (default) or off = false; <br>
+ *Allows steer() method to be called by (for example)
+ *a line tracker) so direction control is from sensor inputs 
+ */	
+	public void regulateSpeed(boolean yes)
+	{
+		_regulating = yes;
+		 _left.regulateSpeed(yes);
+		_right.regulateSpeed(yes);
 	}
 
 	/**
