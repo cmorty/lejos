@@ -1,7 +1,6 @@
 package lejos.nxt;
-
-import lejos.util.TimerListener;
-import lejos.util.Timer;
+import lejos.nxt.*;
+import lejos.util.*;
 
 /**
  * Abstraction for a NXT motor. Three instances of <code>Motor</code>
@@ -32,7 +31,7 @@ import lejos.util.Timer;
  *   while(Motor.A.isRotating();
  *   int angle = Motor.A.getTachoCount(); // should be -360
  * </pre></code>
- * @author Roger Glassey 22 February 2007
+ * @author Roger Glassey revised 22 March 2007
  */
 public class Motor extends BasicMotor implements TimerListener
 {
@@ -57,8 +56,9 @@ public class Motor extends BasicMotor implements TimerListener
   private boolean _rampUp = true;
   private int _lastTacho = 0;
   private int _actualSpeed;
-  /**
-   * initialized to be false(ramping enabled); changed only by smoothAcceleration
+
+
+   /** initialized to be false(ramping enabled); changed only by smoothAcceleration
    */
   private boolean _noRamp = false;
  
@@ -81,10 +81,10 @@ public class Motor extends BasicMotor implements TimerListener
   {
     _port = port;
     regulator.start();
-    regulator.setDaemon(true); 
-    timer.start();
+    regulator.setDaemon(true);
   }
-
+   public int getStopAngle() { return (int)_stopAngle;}
+   
   /** 
    *calls controlMotor, startRegating;  updates _direction, _rotating
    * precondition:  mode == 1 or 2
@@ -154,11 +154,7 @@ public class Motor extends BasicMotor implements TimerListener
    */
    public void rotate(int angle, boolean immediateReturn)
    {
-//		stop();
-//		while(isRotating());
 		int t = getTachoCount();
-//		try{Thread.sleep(20);}
-//		catch(InterruptedException e){}
 		rotateTo(t+angle,immediateReturn);
 	}
 
@@ -171,7 +167,7 @@ public class Motor extends BasicMotor implements TimerListener
   {
   	rotateTo(limitAngle,false);
   }
-  
+
   /**
    * causes motor to rotate to limitAngle; <br>
    * if immediateReturn is true, method returns immediately and the motor stops by itself <br>
@@ -183,16 +179,15 @@ public class Motor extends BasicMotor implements TimerListener
   public void rotateTo(int limitAngle,boolean immediateReturn)
   {
 	_stopAngle = limitAngle;
-	if(limitAngle > getTachoCount())
-	{
-	  _direction = 1;
-	  forward();
-	}
-	else
-	{
-	  _direction = -1;
-	  backward();
-	}
+//	int tc = getTachoCount();
+
+	if(limitAngle > getTachoCount()) _mode = 1;
+//	if(limitAngle > tc) _mode = 1;
+
+	else _mode = 2;
+    _port.controlMotor(_power, _mode);
+    _direction = 3 - 2*_mode;
+   	if(_regulate) regulator.reset();
 	if(!_wasRotating)
 	{
 	  _stopAngle -= _direction * overshoot();
@@ -200,9 +195,9 @@ public class Motor extends BasicMotor implements TimerListener
 	}
 	_rotating = true; // rotating to a limit
 	_rampUp = !_noRamp && Math.abs(_stopAngle-getTachoCount())>40 && _speed>200;  //no ramp for small angles
+
 	if(immediateReturn)return;
 	while(isMoving()) Thread.yield();
-		
   }
 
 /**
@@ -256,7 +251,7 @@ public class Motor extends BasicMotor implements TimerListener
   		int limit = 0;
   		float error = 0;
 	  	float e0 = 0;
-	  	float accel =1.5f;// deg/sec/ms 
+	  	float accel = 1.5f;// deg/sec/ms  was 1.5
 	  	int td = 100;
 	  	float ts = 0;  //time to stabilize
 	  	while(_keepGoing)
@@ -290,7 +285,8 @@ public class Motor extends BasicMotor implements TimerListener
 	  			setPower((int)power);
 	  		}
 	  // stop at rotation limit angle
-			if(_rotating && _direction*(getTachoCount() - _stopAngle)>-1)
+	  		int tc = getTachoCount();
+			if(_rotating && _direction*(tc - _stopAngle)>-1)
 			{
 				_mode = 3; // stop motor
 				_port.controlMotor (0, 3);
@@ -305,7 +301,7 @@ public class Motor extends BasicMotor implements TimerListener
 						_wasRotating = true;
 						limit = _limitAngle;
 					}
- 					setSpeed(100);
+ 					setSpeed(150);
 				 	rotateTo(limit - remaining/3,true); //another try
 				}
 				else //rotation complete;  reset state variables
@@ -313,6 +309,8 @@ public class Motor extends BasicMotor implements TimerListener
 					_rotating = false;
 					_wasRotating = false;
 					setSpeed(speed0);//restore speed setting
+					_mode = 3; // stop motor  maybe redundant
+					_port.controlMotor (0, 3);
 				}
 	  		}
 	  	Thread.yield();
@@ -330,7 +328,7 @@ public class Motor extends BasicMotor implements TimerListener
 		while(turning)
 		{
 	  		_port.controlMotor(0,3); // looks redundant, but controlMotor(0,3) fails, rarely.
-			try{Thread.sleep(10);}// was 10
+			try{Thread.sleep(20);}// was 10
 			catch(InterruptedException w){}
 			a = getTachoCount();
 			turning = Math.abs(a - a0)>0;
@@ -339,11 +337,6 @@ public class Motor extends BasicMotor implements TimerListener
 		return	a;
 	}
   }
- 
-  /**
-   * cant use stop() in a thread
-   */
-  private void halt(){stop();}
  
   /**
    *causes run() to exit
