@@ -66,10 +66,6 @@ public class Pilot
 	 */
 	 private boolean _regulating;
 	 
-	 /**
-	  *steer until stop() or other command
-	  */
-	  private boolean  _noSteerLimit = false;
 	
 	/**
 	 * distance between wheels - used in steer() 
