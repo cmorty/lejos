@@ -64,7 +64,7 @@ public class Pilot
 	/**
 	 * if true, motor speed regulation is turned on
 	 */
-	 private boolean _regulating;
+	 private boolean _regulating = true;
 	 
 	
 	/**
