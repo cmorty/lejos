@@ -2,6 +2,9 @@ package lejos.nxt;
 import lejos.nxt.*;
 import lejos.util.*;
 
+
+
+
 /**
  * Abstraction for a NXT motor. Three instances of <code>Motor</code>
  * are available: <code>Motor.A</code>, <code>Motor.B</code>
@@ -82,23 +85,30 @@ public class Motor extends BasicMotor implements TimerListener
     _port = port;
     regulator.start();
     regulator.setDaemon(true);
+    timer.start();
   }
    public int getStopAngle() { return (int)_stopAngle;}
    
   /** 
-   *calls controlMotor, startRegating;  updates _direction, _rotating
-   * precondition:  mode == 1 or 2
+   *calls controlMotor, startRegating;  updates _direction, _rotating, _wasRotating
    */
   void updateState()
   {
-    _port.controlMotor(_power, _mode);
-	_rotating = false;
+  	_rotating = false;
+	_wasRotating = false;
+  	if(_mode>2) // stop or float
+  	{
+  		_port.controlMotor(0, _mode);
+  		return;
+  	}
+	 _port.controlMotor(_power, _mode);
+
    	if(_regulate)
    	{
    	  regulator.reset();
    	  _rampUp = true;
    	}
-   	_direction = 3 - 2*_mode;
+   	 _direction = 3 - 2*_mode;
   }
 
   /**
@@ -109,32 +119,6 @@ public class Motor extends BasicMotor implements TimerListener
     return (_mode == 1 || _mode == 2 || _rotating);	  
   }
   
-  /**
-   * Causes motor to stop, pretty much
-   * instantaneously. In other words, the
-   * motor doesn't just stop; it will resist
-   * any further motion.
-   * Cancels any rotate() orders in progress
-   */
-  public final void stop()
-  {
-    _mode = 3;
-    _port.controlMotor (0, _mode);
-    _rotating = false;
-    _rampUp = false;
-  }
-  
-  /**
-   * Causes motor to float. The motor will lose all power,
-   * but this is not the same as stopping. Use this
-   * method if you don't want your robot to trip in
-   * abrupt turns.
-   */   
-  public void flt()
-  {
-    _mode = 4;
-    _port.controlMotor (0, _mode);
-  }
   
   /**
    * causes motor to rotate through angle. <br>
@@ -179,11 +163,7 @@ public class Motor extends BasicMotor implements TimerListener
   public void rotateTo(int limitAngle,boolean immediateReturn)
   {
 	_stopAngle = limitAngle;
-//	int tc = getTachoCount();
-
 	if(limitAngle > getTachoCount()) _mode = 1;
-//	if(limitAngle > tc) _mode = 1;
-
 	else _mode = 2;
     _port.controlMotor(_power, _mode);
     _direction = 3 - 2*_mode;
@@ -254,6 +234,7 @@ public class Motor extends BasicMotor implements TimerListener
 	  	float accel = 1.5f;// deg/sec/ms  was 1.5
 	  	int td = 100;
 	  	float ts = 0;  //time to stabilize
+	  	boolean wasRegulating = true;
 	  	while(_keepGoing)
 	  	{	
 	  		if(_regulate && isMoving()) //regulate speed 
@@ -285,8 +266,8 @@ public class Motor extends BasicMotor implements TimerListener
 	  			setPower((int)power);
 	  		}
 	  // stop at rotation limit angle
-	  		int tc = getTachoCount();
-			if(_rotating && _direction*(tc - _stopAngle)>-1)
+//	  		int tc = getTachoCount();
+			if(_rotating && _direction*(getTachoCount() - _stopAngle)>-1)
 			{
 				_mode = 3; // stop motor
 				_port.controlMotor (0, 3);
@@ -294,23 +275,25 @@ public class Motor extends BasicMotor implements TimerListener
 				int remaining = _limitAngle - a;
 				if(_direction * remaining >0 ) // not yet done
 				{
-
 					if(!_wasRotating)// initial call to rotate(); save state variables
 					{
 						speed0 = _speed;
+						setSpeed(150);
 						_wasRotating = true;
+						wasRegulating = _regulate;
+						_regulate = true;
 						limit = _limitAngle;
 					}
- 					setSpeed(150);
 				 	rotateTo(limit - remaining/3,true); //another try
 				}
-				else //rotation complete;  reset state variables
+				else //rotation complete;  restore state variables
 				{
+					if(_wasRotating) setSpeed(speed0);//restore speed setting
+					_mode = 3; // stop motor  maybe redundant
+					_port.controlMotor (0, _mode);
 					_rotating = false;
 					_wasRotating = false;
-					setSpeed(speed0);//restore speed setting
-					_mode = 3; // stop motor  maybe redundant
-					_port.controlMotor (0, 3);
+					_regulate = wasRegulating;
 				}
 	  		}
 	  	Thread.yield();
@@ -371,6 +354,7 @@ public class Motor extends BasicMotor implements TimerListener
     _speed = Math.abs(speed);
      setPower((int)regulator.calcPower(_speed));
      regulator.reset();
+     _rampUp = false;
   }
 
   /**
@@ -392,10 +376,12 @@ public class Motor extends BasicMotor implements TimerListener
   {
     return _speed;	  
   }
-
+	public int getMode() {return _mode;}
+	public int getPower() { return _power;}
+	
   private int overshoot()
   {
-	return   (int)( _speed*0.060f);//0.067 from regression - extra margin for high speed
+	return   (int)( _speed*0.060f);
   }
 
   /**

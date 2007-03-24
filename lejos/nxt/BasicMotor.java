@@ -1,6 +1,7 @@
 package lejos.nxt;
 
-abstract class BasicMotor {
+abstract class BasicMotor 
+{
 	
 	int _mode = 4;
 	int _power = 50;
@@ -93,7 +94,7 @@ abstract class BasicMotor {
 	public void flt()
 	{
 		_mode = 4;
-	    _port.controlMotor (0, _mode);
+		updateState();
 	}
 
 	/**
@@ -116,7 +117,7 @@ abstract class BasicMotor {
 	public void stop()
 	{
 		_mode = 3;
-	    _port.controlMotor(0, _mode);
+	    updateState();
 	}
 	  
 	/**
