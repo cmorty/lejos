@@ -40,6 +40,7 @@ public class Motor extends BasicMotor implements TimerListener
 {
   private TachoMotorPort _port;
   private int _speed = 360;
+  private int _speed0 = 360;
   // used for speed regulation
   private boolean _keepGoing = true;// for regulator
   /**
@@ -94,21 +95,26 @@ public class Motor extends BasicMotor implements TimerListener
    */
   void updateState()
   {
-  	_rotating = false;
-	_wasRotating = false;
-  	if(_mode>2) // stop or float
+  	synchronized(regulator)
   	{
-  		_port.controlMotor(0, _mode);
-  		return;
+	
+	  	_rotating = false;
+		_wasRotating = false;
+		setSpeed(_speed0);
+	  	if(_mode>2) // stop or float
+	  	{
+	  		_port.controlMotor(0, _mode);
+	  		return;
+	  	}
+		 _port.controlMotor(_power, _mode);
+	
+	   	if(_regulate)
+	   	{
+	   	  regulator.reset();
+	   	  _rampUp = true;
+	   	}
+	   	 _direction = 3 - 2*_mode;
   	}
-	 _port.controlMotor(_power, _mode);
-
-   	if(_regulate)
-   	{
-   	  regulator.reset();
-   	  _rampUp = true;
-   	}
-   	 _direction = 3 - 2*_mode;
   }
 
   /**
@@ -227,7 +233,6 @@ public class Motor extends BasicMotor implements TimerListener
      */
   	public void run()
   	{
-	  	int speed0 = 0;
   		int limit = 0;
   		float error = 0;
 	  	float e0 = 0;
@@ -236,6 +241,7 @@ public class Motor extends BasicMotor implements TimerListener
 	  	float ts = 0;  //time to stabilize
 	  	boolean wasRegulating = true;
 	  	while(_keepGoing)
+	  	{ synchronized(this)
 	  	{	
 	  		if(_regulate && isMoving()) //regulate speed 
 	  		{
@@ -277,7 +283,7 @@ public class Motor extends BasicMotor implements TimerListener
 				{
 					if(!_wasRotating)// initial call to rotate(); save state variables
 					{
-						speed0 = _speed;
+						_speed0 = _speed;
 						setSpeed(150);
 						_wasRotating = true;
 						wasRegulating = _regulate;
@@ -288,7 +294,7 @@ public class Motor extends BasicMotor implements TimerListener
 				}
 				else //rotation complete;  restore state variables
 				{
-					if(_wasRotating) setSpeed(speed0);//restore speed setting
+					setSpeed(_speed0);//restore speed setting
 					_mode = 3; // stop motor  maybe redundant
 					_port.controlMotor (0, _mode);
 					_rotating = false;
@@ -296,6 +302,7 @@ public class Motor extends BasicMotor implements TimerListener
 					_regulate = wasRegulating;
 				}
 	  		}
+	  	}
 	  	Thread.yield();
 	  	}	
   	}
