@@ -97,10 +97,10 @@ public class Motor extends BasicMotor implements TimerListener
   {
   	synchronized(regulator)
   	{
-	
+  		if(_wasRotating)setSpeed(_speed0);
 	  	_rotating = false;
 		_wasRotating = false;
-		setSpeed(_speed0);
+
 	  	if(_mode>2) // stop or float
 	  	{
 	  		_port.controlMotor(0, _mode);
