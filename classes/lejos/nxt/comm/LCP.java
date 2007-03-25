@@ -48,7 +48,7 @@ public class LCP {
 		}
 		
 		// GET FIRMWARE VERSION
-		if (cmd[1] == 0x88) 
+		if (cmd[1] == (byte) 0x88) 
 		{
 			reply[3] = 2;
 			reply[4] = 1;
@@ -125,26 +125,33 @@ public class LCP {
 			
 			// Initialize motor:
 			Motor m = null;
-			if(motorid == 0)
-				m = Motor.A;
-			else if (motorid == 1)
-				m = Motor.B;
-			else m = Motor.C;
-			m.setSpeed(speed);
+		
+			for(int i=0;i<3;i++) 
+			{			
+				if(motorid == 0 || (motorid < 0 && i == 0))
+					m = Motor.A;
+				else if (motorid == 1 || (motorid < 0 && i == 1))
+					m = Motor.B;
+				else if (motorid == 2 || (motorid < 0 && i == 2))
+				    m = Motor.C;
+				
+				m.setSpeed(speed);
 			
-			if(power < 0) tacholimit = -tacholimit;
+				if(power < 0) tacholimit = -tacholimit;
 			
-			// Check if command is to STOP:
-			if(mode == 0x07 & power == 0) // MOTORON + BRAKE + REGULATED
-				m.stop();
+				// Check if command is to STOP:
+				if(power == 0) m.stop();
 			
-			// Check if doing tacho rotation
-			if(tacholimit != 0)
-				m.rotate(tacholimit, true); // Returns immediately
+				// Check if doing tacho rotation
+				if(tacholimit != 0)
+					m.rotate(tacholimit, true); // Returns immediately
 			
-			if(mode == 0x07 & power != 0 & tacholimit == 0) { // MOTORON
-				if(power>0) m.forward();
-				else m.backward();
+				if((mode | 0x01) != 0 && power != 0 && tacholimit == 0) { // MOTORON
+					if(power>0) m.forward();
+					else m.backward();
+				}
+				
+				if (motorid >= 0) break;
 			}
 		}
 		
@@ -152,6 +159,12 @@ public class LCP {
 		if (cmd[1] == (byte) 0x0A)
 		{
 			MotorPort.resetTachoCountById(cmd[2]);
+		}
+		
+		// KEEPALIVE
+		if (cmd[1] == (byte) 0x0D)
+		{
+			len = 7;
 		}
 		
 		// LSWRITE
