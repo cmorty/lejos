@@ -12,7 +12,7 @@ public class PilotTester
 		try {
 			Button.ENTER.waitForPressAndRelease();
 		} catch (InterruptedException ie) {}
-		Pilot robot = new Pilot(5.5f,11.2f,Motor.A, Motor.C,false);
+		Pilot robot = new Pilot(2.1f,4.4f,Motor.A, Motor.C,false);
 
 		robot.setSpeed(500);
 		robot.forward();
@@ -50,7 +50,6 @@ public class PilotTester
 		robot.travel(10,true);
 		pause(500);
 		robot.travel(-10,true);
-		pause(500);
 		robot.rotate(720);
 		while(Button.readButtons()==0)Thread.yield();
 	}
