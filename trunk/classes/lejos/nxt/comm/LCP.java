@@ -27,9 +27,10 @@ public class LCP {
 	{
 	    int len = 3;
 	    
+	    for(int i=0;i<32;i++)reply[i] = 0;
+	    
 		reply[0] = 0x02;
 		reply[1] = cmd[1];
-		reply[2] = 0;
 		
 		// GET BATTERY LEVEL
 		if (cmd[1] == 0x0B) {
@@ -174,10 +175,24 @@ public class LCP {
 		}
 		
 		// LSGETSTATUS
-		if (cmd[1] == 0x0E)
+		if (cmd[1] == (byte) 0x0E)
 		{
 			reply[3] = (byte) i2cLen;
 			len = 4;
+		}
+		
+		// FIND FIRST
+		if (cmd[1] == (byte) 0x86)
+		{
+			reply[2] = (byte) 0x86; // File not found
+			len = 28;
+		}
+		
+		// FIND NEXT
+		if (cmd[1] == (byte) 0x87)
+		{
+			reply[2] = (byte) (byte) 0x86; // File not found
+			len = 28;
 		}
 
 		if ((cmd[0] & 0x80) == 0) Bluetooth.sendPacket(reply, len);
