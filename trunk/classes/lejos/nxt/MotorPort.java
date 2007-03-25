@@ -59,7 +59,7 @@ public class MotorPort implements TachoMotorPort {
 		return getTachoCountById(_id - 'A');
 	}
 
-	static native int getTachoCountById(int aMotor);
+	public static native int getTachoCountById(int aMotor);
 	
     /**
 	 *resets the tachometer count to 0;
@@ -69,5 +69,5 @@ public class MotorPort implements TachoMotorPort {
 		resetTachoCountById( _id - 'A');
 	}
 	  
-	static synchronized native void resetTachoCountById(int aMotor);
+	public static synchronized native void resetTachoCountById(int aMotor);
 }
