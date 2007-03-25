@@ -148,6 +148,12 @@ public class LCP {
 			}
 		}
 		
+		// RESETMOTORPOSITION
+		if (cmd[1] == (byte) 0x0A)
+		{
+			MotorPort.resetTachoCountById(cmd[2]);
+		}
+		
 		// LSWRITE
 		if (cmd[1] == 0x0F)
 		{
