@@ -30,7 +30,7 @@
 #define freeMemory_4_5J 23
 #define totalMemory_4_5J 24
 #define getMessage_4_5Ljava_3lang_3String_2 25
-#define readSensorValue_4II_5I 26
+#define readSensorValue_4I_5I 26
 #define setADTypeById_4II_5V 27
 #define setPowerTypeById_4II_5V 28
 #define setPoller_4_5V 29

@@ -53,7 +53,7 @@ totalMemory()J
 getMessage()Ljava/lang/String;
 
 # lejos.nxt.SensorPort
-readSensorValue(II)I
+readSensorValue(I)I
 setADTypeById(II)V
 setPowerTypeById(II)V
 
