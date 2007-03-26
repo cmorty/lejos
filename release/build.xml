@@ -11,17 +11,18 @@
 	<property name="lejos.root" value="${basedir}/.."/>
 	<property name="3rdparty.libs" value="${lejos.root}/jtools/3rdparty/lib" />
 	<property name="release" value="${lejos.root}/release"/>
-	<property name="release.bin" value="${release}/bin"/>
+	<property name="release.nxj" value="${release}/lejos_nxj"/>
+	<property name="release.bin" value="${release.nxj}/bin"/>
 	<property name="src" value="${lejos.root}"/>
 	<property name="javasrc" value="${src}"/>
 	<property name="javavm.src" value="${src}/nxtvm/javavm"/>
 	<property name="release.tmp" value="${release}/tmp"/>
-	<property name="release.lib" value="${release}/lib"/>
-	<property name="release.src" value="${release}/src"/>
+	<property name="release.lib" value="${release.nxj}/lib"/>
+	<property name="release.src" value="${release.nxj}/src"/>
 	<property name="release.dist" value="${release}/dist"/>
-	<property name="release.docs" value="${release}/docs"/>
-	<property name="release.samples" value="${release}/samples"/>
-	<property name="release.3rdparty.libs" value="${release}/3rdparty/lib"/>
+	<property name="release.docs" value="${release.nxj}/docs"/>
+	<property name="release.samples" value="${release.nxj}/samples"/>
+	<property name="release.3rdparty.libs" value="${release.nxj}/3rdparty/lib"/>
 	<property name="plat.unix.src" value="${src}/nxtvm/platform/unix"/>
 	<property name="plat.nxt.src" value="${src}/nxtvm/platform/nxt"/>
 	<property name="release.3rdparty.cp" value="${release.3rdparty.libs}/commons-cli-1.0.jar:${release.3rdparty.libs}/bcel-5.1.jar"/>
@@ -64,7 +65,8 @@
   	<!-- cleans the distribution -->
 	<target name="clean" description="clean up all generated files">
 	  	<!-- delete transient release folders -->
-	  	<delete dir="${release.lib}"/>
+		<delete dir="${release.bin}"/>
+		<delete dir="${release.lib}"/>
 	  	<delete dir="${release.src}"/>
 	  	<delete dir="${release.docs}"/>
 	  	<delete dir="${release.samples}"/>
@@ -150,6 +152,7 @@
 	<!-- makes a timestamp and creates some required folders -->
  	<target name="create.folders" description="setup build">
     	<tstamp/>
+    	<mkdir dir="${release.bin}"/>
     	<mkdir dir="${release.lib}"/>
     	<mkdir dir="${release.src}"/>
     	<mkdir dir="${release.docs}"/>
@@ -216,55 +219,56 @@
 	<!-- packages the linux distribution -->
 	<target name="distribution.linux" description="packages the linux distribution">
 		<!-- tar & gzip leJOS Unix distribution -->
-		<tar destfile="${release.dist}/${lejos.version}.tar">
+		<tar destfile="${release.dist}/${lejos.linux.version}.tar">
 			 <tarfileset dir="${release}" >
-			    <include name="RELEASENOTES"/>
-			    <include name="README.html"/>
-			    <include name="LICENSE"/>
-			    <include name="LEGAL"/>
-			    <include name="ACKNOWLEDGMENTS"/>
-			    <include name="lib/*.jar"/>
-			    <include name="src/**"/>
-			    <include name="bin/*"/>
-			 	<exclude name="bin/*.xml"/>
-			 	<exclude name="bin/runjava.exe"/>
-			 	<exclude name="bin/*.bat"/>
-			    <include name="samples/**"/>
-			 	<exclude name="samples/**/README"/>
-			 	<exclude name="samples/**/build.xml"/>
-			 	<exclude name="samples/**/.classpath"/>
-			 	<exclude name="samples/**/.project"/>
-			 	<include name="build/*"/>
-			 	<include name="3rdparty/**"/>
-			 	<include name="docs/**"/>
+			    <include name="lejos_nxj/RELEASENOTES"/>
+			    <include name="lejos_nxj/README.html"/>
+			    <include name="lejos_nxj/LICENSE"/>
+			    <include name="lejos_nxj/LEGAL"/>
+			    <include name="lejos_nxj/ACKNOWLEDGMENTS"/>
+			    <include name="lejos_nxj/lib/*.jar"/>
+			    <include name="lejos_nxj/src/**"/>
+			    <include name="lejos_nxj/bin/*"/>
+			 	<exclude name="lejos_nxj/bin/*.xml"/>
+			 	<exclude name="lejos_nxj/bin/runjava.exe"/>
+			 	<exclude name="lejos_nxj/bin/*.bat"/>
+			    <include name="lejos_nxj/samples/**"/>
+			 	<exclude name="lejos_nxj/samples/**/README"/>
+			 	<exclude name="lejos_nxj/samples/**/build.xml"/>
+			 	<exclude name="lejos_nxj/samples/**/.classpath"/>
+			 	<exclude name="lejos_nxj/samples/**/.project"/>
+			 	<include name="lejos_nxj/build/*"/>
+			 	<include name="lejos_nxj/3rdparty/**"/>
+			 	<include name="lejos_nxj/docs/**"/>
 			  </tarfileset>
 		</tar>
-		<gzip zipfile="${release.dist}/${lejos.version}.tar.gz" src="${release.dist}/${lejos.version}.tar"/>
+		<gzip zipfile="${release.dist}/${lejos.linux.version}.tar.gz" src="${release.dist}/${lejos.linux.version}.tar"/>
 	</target>
 	
 	<!-- packages the windows distribution -->
 	<target name="distribution.windows" description="packages the windows distribution">
 		<!-- zip leJOS windows distribution -->
-		<zip destfile="${release.dist}/${lejos.version}-win32.zip">
+		<zip destfile="${release.dist}/${lejos.windows.version}.zip">
 			 <fileset dir="${release}" >
-			    <include name="RELEASENOTES"/>
-			    <include name="README.html"/>
-			 	<include name="LICENSE"/>
-			 	<include name="LEGAL"/>
-			 	<include name="ACKNOWLEDGMENTS"/>
-			    <include name="lib/*.jar"/>
-			    <include name="src/**"/>
-			    <include name="bin/*"/>
-			 	<exclude name="bin/*.xml"/>
-			 	<exclude name="bin/lejosjc"/>
-			 	<exclude name="bin/lejoslink"/>
-			    <include name="samples/**"/>
-			 	<exclude name="samples/**/README"/>
-			 	<exclude name="samples/**/build.xml"/>
-			 	<exclude name="samples/**/.classpath"/>
-			 	<exclude name="samples/**/.project"/>
-			 	<include name="3rdparty/**"/>
-			 	<include name="docs/**"/>
+			    <include name="lejos_nxj/RELEASENOTES"/>
+			    <include name="lejos_nxj/README.html"/>
+			 	<include name="lejos_nxj/LICENSE"/>
+			 	<include name="lejos_nxj/LEGAL"/>
+			 	<include name="lejos_nxj/ACKNOWLEDGMENTS"/>
+			    <include name="lejos_nxj/lib/*.jar"/>
+			    <include name="lejos_nxj/src/**"/>
+			    <include name="lejos_nxj/bin/*"/>
+			 	<exclude name="lejos_nxj/bin/*.xml"/>
+			 	<exclude name="lejos_nxj/bin/lejosjc"/>
+			 	<exclude name="lejos_nxj/bin/lejoslink"/>
+			 	<exclude name="lejos_nxj/bin/lejosdl"/>
+			    <include name="lejos_nxj/samples/**"/>
+			 	<exclude name="lejos_nxj/samples/**/README"/>
+			 	<exclude name="lejos_nxj/samples/**/build.xml"/>
+			 	<exclude name="lejos_nxj/samples/**/.classpath"/>
+			 	<exclude name="lejos_nxj/samples/**/.project"/>
+			 	<include name="lejos_nxj/3rdparty/**"/>
+			 	<include name="lejos_nxj/docs/**"/>
 			  </fileset>
 		</zip>
 	</target>
