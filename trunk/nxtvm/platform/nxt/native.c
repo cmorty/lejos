@@ -112,7 +112,7 @@ dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
   case setPoller_4_5V:
     set_poller(word2ptr(paramBase[0]));
     return;
-  case readSensorValue_4II_5I:
+  case readSensorValue_4I_5I:
     push_word(sensor_adc(paramBase[0]));
     return;
   case setADTypeById_4II_5V:
