@@ -31,7 +31,7 @@ public interface SpecialSignatureConstants {
     "freeMemory()J",
     "totalMemory()J",
     "getMessage()Ljava/lang/String;",
-    "readSensorValue(II)I",
+    "readSensorValue(I)I",
     "setADTypeById(II)V",
     "setPowerTypeById(II)V",
     "setPoller()V",
