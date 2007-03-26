@@ -1,3 +1,48 @@
+leJOS NXT 0.2alpha
+------------------
+
+- This release is similar to 0.1alpha in that it still runs in RAM under SAMBA. 
+- It adds partial support for I2C, Bluetooth, and sound, and greatly improved Motor
+  control and navigation.
+- The API is substantially revised
+
+Charles Manning has added:
+
+- I2C support (reads only)
+
+Lawrie Griffiths has added:
+
+- Bluetooth support (PC to NXT)
+- Sound support (playTone, single volume)
+- Native methods for I2C
+- Ultrasonic sensor support
+- Refactored API and native methods
+- new samples (BTRespond, updated View sample etc.)
+
+Roger Glassey has added:
+
+- Improved Motor class
+- New Pilot class for steering control
+- TextMenu
+- new samples
+
+Roger Glassey and Brian Bagnall have added:
+
+- New TachoNavigator class and Navigator interface replacing previous navigators
+
+Brian Bagnall has added:
+
+- javax.microedition.lcdui.Graphics class
+- Support for third party I2C sensors (ColorSensor, CompassSensor etc.)
+- new samples
+
+Lawrie Griffiths and Brian Bagnall have added:
+
+- Support for Lego Communications Protocol
+- Partial support for iCommand (no files)
+- Partial support for Bluetooth utilities that work with the standard Lego firmware
+  (This includes the Lego Mobile Application)
+
 leJOS NXT 0.1alpha
 ------------------
 
