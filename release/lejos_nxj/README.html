@@ -1,0 +1,144 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <title>leJOS NXT, a Java system for the Lego Mindstorms NXT</title>
+</head>
+<body style="background-color: rgb(255, 255, 255);">
+<ul>
+  <li><a href="#what_is_lejos">What is leJOS?</a></li>
+  <li><a href="#preliminiaries">Preliminiaries</a></li>
+  <li><a href="#installation_and_set_up">Installation and Set Up</a></li>
+  <li><a href="#using-lejos">Using lejos on the NXT</a></li>
+  <li><a href="#limitations">Known limitations</a></li>
+  <li><a href="#bugs">Known bugs</a></li>
+  <li><a href="#documentation">Documentation</a></li>
+  <li><a href="#license">License</a></li>
+  <li><a href="#questions">Questions and Problems</a></li>
+</ul>
+<a href="#questions"> </a>
+<h1><a name="what_is_lejos">What is leJOS?</a></h1>
+leJOS (pronounced like the Spanish word "lejos" for "far") is a 
+tiny Java-based operating system that
+has been ported to the following platforms: </a>
+<ul>
+  <li>Lego Mindstorms NXT</li>
+  <li>Lego Mindstorms RCX</li>
+  <li>Unix (for emulation of lejos programs only)</li>
+  </a>
+</ul>
+leJOS was originally forked out of the </a><a
+ href="http://tinyvm.sourceforge.net">TinyVM project</a>. <br>
+It contains a VM for Java bytecodes and additional software to load and
+run Java programs. <br/><br/>
+
+These are some of the features offered:
+<ul>
+  <li>Object oriented language (Java)</li>
+  <li>Preemptive threads (tasks)</li>
+  <li>Arrays, including multi-dimensional ones</li>
+  <li>Recursion</li>
+  <li>Synchronization</li>
+  <li>Exceptions</li>
+  <li>Java types including float, long, String, but with some restrictions</li>
+  <li>Math class</li>
+  <li>Well-documented Robotics API</li>
+</ul>
+<h1><a name="preliminiaries">Preliminaries</a></h1>
+<ul>
+  <li>You need a Java Development Kit (JDK), preferably 1.5</li>
+  <li>Your PATH must contain the JDK's bin directory</li>
+  <li>Make sure you have set JAVA_HOME properly to the root directory
+of the JDK</li>
+  <li>In case you want to build the distribution, your PATH must
+contain the ant binary (ant 1.6 or above)</li>
+  <li>You need libusb installed. On Windows you should use the libusb-Win32 filter driver</li>
+  <li>On Windows you will need the Lego Mindstorms NXT software installed, as its USB drivers are used</li>
+</ul>
+<h1><a name="installation_and_set_up">Installation and Set Up</a></h1>
+Please download the leJOS
+documentation from the same location you downloaded this distribution.
+<ol>
+  <li>Set your environment variable <em>LEJOS_HOME</em> to the
+directory you installed this distribution into</li>
+  <li>Add leJOS's bin directory to your PATH</li>
+  <li>On Linux, depending on the privilege settings you might need to
+adjust the execution permissions in the <em>bin</em> folder</li>
+</ol>
+On Linux, you will have to build the distribution first. To do so,
+switch to the <em>build</em> folder and run <code>ant</code>.
+Note that depending on the privilege settings you might need to adjust
+the the execution permissions in the <em>release</em> folder.
+<h1><a name="using-lejos">Using lejos on the NXT</a></h1>
+<ul>
+  <li>Compile using <em>lejosjc</em> instead of <em>javac</em></li>
+  <li>Link programs using <em>lejoslink</em></li>
+  <li>Download and run programs using <em>lejosdl</em>
+  <li>Emulate leJOS programs on the host using <em>emu-lejosrun</em> (currently Linux only)</li>
+  <li>Exceptions: Use <em>lejoslink --verbose</em>. Exceptions are shown in the NXT as Method:XXXX, CLASS:YY, where XXXX = method_signature and YY = exception_class_index</li>
+</ul>
+
+Your NXT must be plugged into the USB, switched on, and in firmware update mode to run lejosdl. 
+<br/><br/>
+To go into firmware update mode press the reset button (at the back of the NXT , upper left corner) for more than 4 seconds. 
+Your NXT will audibly tick when it is firmware update mode, but is not running a lejos program.
+<br/><br/>
+To switch your NXT on, just press the orange button. It will start to audibly tick.
+<br/><br/>
+When you use <em>lejosdl</em> your program will download and run. You can stop a program by pressing the ENTER and ESCAPE (orange and grey square) buttons together. 
+This powers down the NXT immediately. Press the ENTER (orange) button to wake it up again.
+<br/><br/>
+You can also power down the NXT with ENTER + ESCAPE, after an Exception occurs.
+
+<h1><a name="limitations">Known limitations</a></h1>
+Due to size constraints, some Java language
+features have been omitted. Others just haven't been implemented yet.
+Known limitations are: </a>
+<ul>
+  <li>Garbage collection is not performed yet.
+Hence, the number of objects in your program should be limited</li>
+  <li>Switch statements are not supported</li>
+  <li>Arithmetic operations on variables of type long are not
+supported, although you can cast ints to longs and vice versa</li>
+  <li>Maximum array length is 511</li>
+  <li>The instanceof operation will always be true for interfaces. In
+bytecode, CHECKCAST succeeds on all interface classes (which is a bit
+unsafe)</li>
+  <li>The instanceof and checkcast operations are rejected by the
+linker when they are performed on array classes (e.g. b instanceof
+byte[])</li>
+  <li>There are no objects of type java.lang.Class, which means that
+the ".class" construct won't work. Class.forName() throws
+ClassNotFoundException at all times. As a consequence, reflection is
+not supported by leJOS</li>
+  <li>Most JDK APIs are unavailable</li>
+  </a>
+</ul>
+<h1><a name="bugs">Known Bugs</a></h1>
+<ul>
+ <li>MONITOREXIT ignores null objects (it assumes
+MONITORENTER has handled them). Furthermore, it doesn't check monitor
+validity. Until this bug is fixed (actually, at all times) all monitors
+should be constants</li>
+  <li>Initializers (static or otherwise) are not implicitly
+synchronized. This could lead to access of statics before they are
+initialized, when multiple threads use a class</li>
+  </a>
+</ul>
+<h1><a name="documentation">Documentation</a></h1>
+Please download the leJOS documentation from
+the same location you downloaded this distribution from. The
+documentation contains the API docs. 
+<h1><a name="license">License</a></h1>
+We are continuing to release under the Mozilla Public License
+(see the LICENSE file). The runjava utility using David Anderson's libnxt
+which is release under a GPL v2 license (see COPYING in the libnxt directory).
+<h1><a name="questions">Questions and Problems</a></h1>
+Please direct feedback to the lejos-discussion
+mailing list mailto:lejos-discussion@lists.sourceforge.net. <br>
+To subscribe, see </a><a
+ href="http://lists.sourceforge.net/lists/listinfo/lejos-discussion">http://lists.sourceforge.net/lists/listinfo/lejos-discussion</a>.
+<p> Feel free to take a look at the <a href="http://www.lejos.org">Lejos
+website</a> or its <a href="http://sourceforge.net/projects/lejos">project
+page</a>. </p>
+</body>
+</html>
