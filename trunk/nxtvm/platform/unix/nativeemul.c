@@ -209,37 +209,16 @@ void dispatch_native (TWOBYTES signature, STACKWORD *paramBase)
       push_word (0);
       push_word (get_sys_time());
       return;
-    case readByte_4I_5B:
-	  if(verbose == 0)
-		printf ("& Attempt to read byte from 0x%lX\n", (paramBase[0] & 0xFFFF));
-	  else
-		printf ("> read byte from 0x%lX\n", (paramBase[0] & 0xFFFF));
-	  push_word (0);
-	  return;
-    case writeByte_4IB_5V:
-	  if(verbose == 0)
-		printf ("& Attempt to write byte [%lX] at 0x%lX (no effect)\n",
-			paramBase[1] & 0xFF, paramBase[0] & 0xFFFF);
-	else
-		printf ("> write byte [%lX] at 0x%lX (no effect)\n",
-			paramBase[1] & 0xFF, paramBase[0] & 0xFFFF);
-      return;
-    case setBit_4III_5V:
-      printf ("& Attempt to set memory bit [%ld] at 0x%lX (no effect)\n", paramBase[1] & 0xFF, paramBase[0] & 0xFFFF);
-      return;      
-    case getDataAddress_4Ljava_3lang_3Object_2_5I:
-      push_word (ptr2word (((byte *) word2ptr (paramBase[0])) + HEADER_SIZE));
-      return;
     case setPoller_4_5V:
       set_poller(word2ptr(paramBase[0]));
       return;
     case readSensorValue_4II_5I:
-      // Parameters: int romId (0..2), int requestedValue (0..2).
+      // Parameters: int portId
       if (verbose)
          printf("> ");
       else
          printf("& ");
-      printf("Reading sensor %ld, requested value %s, returned value %d\n",paramBase[0],sensorReadTypes[paramBase[1]],sensors[paramBase[0]].value);
+      printf("Reading sensor %ld, returned value %d\n",sensors[paramBase[0]].value);
       push_word (sensors[paramBase[0]].value);
       return;
     case setADTypeById_4II_5V:
@@ -247,14 +226,14 @@ void dispatch_native (TWOBYTES signature, STACKWORD *paramBase)
          printf("> ");
       else
          printf("& ");
-      printf("Setting sensor %d to AD Type %d\n",paramBase[0], paramBase[1]);
+      printf("Setting sensor %d to AD type %d\n",paramBase[0], paramBase[1]);
       return;
     case setPowerTypeById_4II_5V:
        if (verbose)
          printf("> ");
       else
          printf("& ");
-      printf("Setting sensor %d to Power Type %d\n",paramBase[0], paramBase[1]);
+      printf("Setting sensor %d to power type %d\n",paramBase[0], paramBase[1]);
     return; 
     case freeMemory_4_5J:
       push_word (0);
@@ -302,7 +281,7 @@ void dispatch_native (TWOBYTES signature, STACKWORD *paramBase)
            printf("> ");
          else
            printf("& ");
-         printf("displayString called with parameters %s,%d,%d\n",buff,paramBase[1],paramBase[2]);
+         printf("drawString called with parameters %s,%d,%d\n",buff,paramBase[1],paramBase[2]);
         }
       }
       return;
@@ -311,9 +290,16 @@ void dispatch_native (TWOBYTES signature, STACKWORD *paramBase)
          printf("> ");
       else
          printf("& ");
-      printf("drawInt called with parameters %d,%d,%d\n",paramBase[0],paramBase[1],paramBase[2]);
+      printf("drawInt called with parameters %d, %d, %d\n",paramBase[0],paramBase[1],paramBase[2]);
       return;
-    case controlMotor_4III_5V:
+    case drawInt_4IIII_5V:
+      if (verbose)
+         printf("> ");
+      else
+         printf("& ");
+      printf("drawInt called with parameters %d, %d, %d, %d\n",paramBase[0],paramBase[1],paramBase[2],paramBase[3]);
+    return; 
+    case controlMotorById_4III_5V:
       if (verbose)
          printf("> ");
       else
@@ -372,6 +358,93 @@ void dispatch_native (TWOBYTES signature, STACKWORD *paramBase)
          printf("& ");
       printf("resetTachoCount on Motor %d \n", paramBase[0]);
       return;  
+    case i2cEnableById_4I_5V:
+      if (verbose)
+         printf("> ");
+      else
+         printf("& ");
+      printf("i2cEnableById\n"); 
+      return;
+    case i2cDisableById_4I_5V:
+      if (verbose)
+         printf("> ");
+      else
+         printf("& ");
+      printf("i2cDisableById\n");
+      return;
+    case i2cBusyById_4I_5I:
+      if (verbose)
+         printf("> ");
+      else
+         printf("& ");
+      printf("i2cBusyById\n");
+      push_word(0);
+      return;
+    case i2cStartById_4IIII_1BII_5I:
+      {
+    	Object *p = word2ptr(paramBase[4]);
+    	byte *byteArray = (((byte *) p) + HEADER_SIZE);
+       if (verbose)
+         printf("> ");
+      else
+         printf("& ");
+      printf("i2cStart called with parameters %d, %d, %d, %d %x, %d, %d\n",
+                                        paramBase[0],
+    	                                paramBase[1],
+    	                                paramBase[2],
+    	                                paramBase[3],
+    	                                byteArray,
+    	                                paramBase[5],
+    	                                paramBase[6]);                      
+      }
+      push_word(0);
+      return; 
+    case playTone_4II_5V:
+      if (verbose)
+         printf("> ");
+      else
+         printf("& ");
+      printf("playTone with tone = %d, duration = %d\n", paramBase[0], paramBase[1]);
+      return;
+    case btSend_4_1BI_5V:
+      {
+        Object *p = word2ptr(paramBase[0]);
+        byte *byteArray = (((byte *) p) + HEADER_SIZE);
+        if (verbose)
+          printf("> ");
+        else
+          printf("& "); 
+          printf("btSend with parameter &d\n", byteArray);                       
+      }
+      return;
+    case btReceive_4_1B_5V:
+      {
+        Object *p = word2ptr(paramBase[0]);
+        byte *byteArray = (((byte *) p) + HEADER_SIZE);
+        if (verbose) 
+        {
+          printf("> ");
+          printf("btReceive called with parameter %x\n", byteArray);                                           
+        }
+      }
+      return;
+    case btGetCmdMode_4_5I:
+      if (verbose)
+         printf("> ");
+      else
+         printf("& ");
+      printf("btGetCmdMode returning 1\n");
+      push_word(1);
+      break;
+    case btSetCmdMode_4I_5V:
+      if (verbose)
+         printf("> ");
+      else
+         printf("& ");
+      printf("btSetCmdMode\n");
+      break;
+    case btStartADConverter_4_5V:
+      break;
     default:
 #ifdef DEBUG_METHODS
       printf("Received bad native method code: %d\n", signature);
