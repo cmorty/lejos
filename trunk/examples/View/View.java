@@ -68,6 +68,7 @@ public class View {
 			
 			if (selection == 1) // Sensors				
 			{
+				LCD.clear();
 				int portId = pickSensorPort.select();
 				if (portId < 0) 
 				{
