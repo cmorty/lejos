@@ -46,7 +46,7 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
    */
   public final int readRawValue()
   {
-    return readSensorValue (iPortId, 0);
+    return readSensorValue (iPortId);
   }
 
   /**
@@ -55,7 +55,7 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
    */
   public final boolean readBooleanValue()
   {
-	int rawValue = readSensorValue(iPortId,0);
+	int rawValue = readSensorValue(iPortId);
     return (rawValue < 600);
   }
 
@@ -166,7 +166,7 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
    */
   public int readValue()
   {
-    int rawValue = readSensorValue(iPortId,0);
+    int rawValue = readSensorValue(iPortId);
     
     if (mode == MODE_BOOLEAN)
     {
@@ -187,7 +187,7 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
    * @param aPortId Port ID (0..4).
    * @param aRequestType ignored.
    */
-  static native int readSensorValue (int aPortId, int aRequestType);
+  static native int readSensorValue (int aPortId);
   
   /**
    * Low-level method to set the type of an A/D sensor.
@@ -227,7 +227,7 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
    * Call Port Listeners. Used by ListenerThread.
    */
   public synchronized void callListeners() {
-    int newValue = readSensorValue( iPortId, 0);
+    int newValue = readSensorValue( iPortId);
     for (int i = 0; i < iNumListeners; i++) {
       iListeners[i].stateChanged( this, iPreviousValue, newValue);
     }
