@@ -9,6 +9,7 @@
   <li><a href="#preliminiaries">Preliminiaries</a></li>
   <li><a href="#installation_and_set_up">Installation and Set Up</a></li>
   <li><a href="#using-lejos">Using lejos on the NXT</a></li>
+  <li><a href="#compiling">Compiling and running your first code</a></li>
   <li><a href="#limitations">Known limitations</a></li>
   <li><a href="#bugs">Known bugs</a></li>
   <li><a href="#documentation">Documentation</a></li>
@@ -49,25 +50,30 @@ These are some of the features offered:
   <li>Your PATH must contain the JDK's bin directory</li>
   <li>Make sure you have set JAVA_HOME properly to the root directory
 of the JDK</li>
-  <li>In case you want to build the distribution, your PATH must
+  <li>On systems other than Microsoft Windows, you will need to build the distribution, so your PATH must
 contain the ant binary (ant 1.6 or above)</li>
-  <li>You need libusb installed. On Windows you should use the libusb-Win32 filter driver</li>
-  <li>On Windows you will need the Lego Mindstorms NXT software installed, as its USB drivers are used</li>
+  <li>You need libusb installed. On Microsoft Windows you should use the libusb-Win32 filter driver</li>
+  <li>On Microsoft Windows you will need the Lego Mindstorms NXT software installed, as its USB drivers are used</li>
 </ul>
+
+The libusb filter driver for Microsoft Windows can be obtained from <a href="http://libusb-win32.sourceforge.net/#downloads">http://libusb-win32.sourceforge.net/#downloads</a>.
+
+libusb for other systems can be obtained from <a href="http://libusb.sourceforge.net">http://libusb.sourceforge.net</a>.
+
+On Linux and Unix system, you will need to ensure that you have read and write access the NXT USB device in /dev/bus/usb.
+
 <h1><a name="installation_and_set_up">Installation and Set Up</a></h1>
-Please download the leJOS
-documentation from the same location you downloaded this distribution.
+
 <ol>
-  <li>Set your environment variable <em>LEJOS_HOME</em> to the
-directory you installed this distribution into</li>
-  <li>Add leJOS's bin directory to your PATH</li>
-  <li>On Linux, depending on the privilege settings you might need to
-adjust the execution permissions in the <em>bin</em> folder</li>
+  <li>Extract the files from the distribution. A lejos_nxj subdirectory will be created.</li>
+  <li>Set the environment variable <em>LEJOS_HOME</em> to the full path of the lejos_nxj
+directory</li>
+  <li>Add the lejos_nxj/bin directory to your PATH</li>
+  <li>On Linux and Unix systems, depending on your privilege settings you might need to
+adjust the execution permissions in the <em>bin</em> directory</li>
 </ol>
-On Linux, you will have to build the distribution first. To do so,
+On Linux and Unix systems, you will have to build the distribution first. To do so,
 switch to the <em>build</em> folder and run <code>ant</code>.
-Note that depending on the privilege settings you might need to adjust
-the the execution permissions in the <em>release</em> folder.
 <h1><a name="using-lejos">Using lejos on the NXT</a></h1>
 <ul>
   <li>Compile using <em>lejosjc</em> instead of <em>javac</em></li>
@@ -88,6 +94,24 @@ When you use <em>lejosdl</em> your program will download and run. You can stop a
 This powers down the NXT immediately. Press the ENTER (orange) button to wake it up again.
 <br/><br/>
 You can also power down the NXT with ENTER + ESCAPE, after an Exception occurs.
+
+<h1><a name="compiling">Compiling and running your first code</a></h1>
+
+To compile, link and download the Tune sample:
+
+<ul>
+  <li>Open a command window</li>
+  <li>Check that java and lejos are on your PATH</li>
+  <li>Change to the lejos samples\Tune directory</li>
+  <li>Type <em>lejosjc Tune.java</em></li>
+  <li>Type <em>lejoslink Tune -o Tune.bin</em></li>
+  <li>Check that your USB cable is connected</li>
+  <li>Press the orange button to turn on the NXT</li>
+  <li>Check that the NXT is in firmware update mode. The screen should be blank and the NXT should be audibly clicking</li>
+  <li>Type <em>lejosdl Tune.bin</em>
+ </ul>
+ 
+ After a moment, you should hear a tune play. Then, after 5 seconds the NXT will switch itself off.
 
 <h1><a name="limitations">Known limitations</a></h1>
 Due to size constraints, some Java language
