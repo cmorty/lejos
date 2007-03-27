@@ -6,7 +6,7 @@
 	<!-- Setting up the global properties for the build -->
 	<property name="lejos.dist.root" value="${basedir}/.."/>
 	<property name="lejos.dist.bin" value="${lejos.dist.root}/bin"/>
-	<property name="lejos.dist.3rdparty.libs" value="${lejos.dist.root}/3rdparty/lib"/>
+	<property name="lejos.dist.3rdparty.libs" value="../3rdparty/lib"/>
 	<property name="lejos.dist.src" value="${lejos.dist.root}/src"/>
 	<property name="plat.unix.src" value="${lejos.dist.src}/nxtvm/platform/unix"/>
 	<property name="javavm.src" value="${lejos.dist.src}/nxtvm/javavm"/>
