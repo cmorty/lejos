@@ -2,7 +2,7 @@
 
 <project name="libnxt" default="make" basedir=".">
 	<property name="endian" value="_NXT_LITTLE_ENDIAN"/>
-	<!-- cpptasks task & type def -->
+	<!-- cpptasks task & type def
 	<taskdef resource="cpptasks.tasks">
 	  <classpath>
 	    <pathelement location="../jtools/3rdparty/lib/cpptasks.jar"/>
@@ -13,6 +13,7 @@
 	    <pathelement location="../jtools/3rdparty/lib/cpptasks.jar"/>
 	  </classpath>
 	</typedef>
+	-->
 	
 	<!-- cleans all compilation artifacts -->
 	<target name="clean" description="cleans all compilation artifacts">
