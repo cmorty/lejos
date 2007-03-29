@@ -34,7 +34,7 @@ import lejos.util.*;
  *   while(Motor.A.isRotating();
  *   int angle = Motor.A.getTachoCount(); // should be -360
  * </pre></code>
- * @author Roger Glassey revised 22 March 2007
+ * @author Roger Glassey revised 26 March 2007
  */
 public class Motor extends BasicMotor implements TimerListener
 {
@@ -48,7 +48,7 @@ public class Motor extends BasicMotor implements TimerListener
    * used by Regulator, updteState, reset*
    */
   private boolean _regulate = true;
-  
+  private boolean _wasRegulating = false;
   public Regulator regulator = new Regulator();
   private Timer timer = new Timer(100,this);
   // used for control of angle of rotation
@@ -80,7 +80,7 @@ public class Motor extends BasicMotor implements TimerListener
    * Motor C.
    */
   public static final Motor C = new Motor (MotorPort.C);
-  
+   
   public Motor (MotorPort port)
   {
     _port = port;
@@ -90,16 +90,90 @@ public class Motor extends BasicMotor implements TimerListener
   }
    public int getStopAngle() { return (int)_stopAngle;}
    
+ 	/**
+	 * Causes motor to rotate forward.
+	 */
+	public void forward()
+	{ 
+		synchronized(regulator) 
+		{
+			_mode = 1;
+			updateState();
+		}
+	}  
+		
+	/**
+ 	* Causes motor to rotate backwards.
+	 */
+	public void backward()
+	{
+		synchronized(regulator)
+		{
+			_mode = 2;
+			updateState();
+		}
+	}
+
+	/**
+	 * Reverses direction of the motor. It only has
+	 * effect if the motor is moving.
+	 */
+	public void reverseDirection()
+	{
+		synchronized(regulator)
+		{
+			if (_mode == 1 || _mode == 2)
+		    {
+				_mode = (3 - _mode);
+				updateState();
+		    }
+		}
+	}
+
+   	/**
+	 * Causes motor to float. The motor will lose all power,
+	 * but this is not the same as stopping. Use this
+	 * method if you don't want your robot to trip in
+	 * abrupt turns.
+	 */   
+	public void flt()
+	{
+		synchronized(regulator)
+		{
+			_mode = 4;
+			updateState();
+		}
+	}
+
+	/**
+	 * Causes motor to stop, pretty much
+	 * instantaneously. In other words, the
+	 * motor doesn't just stop; it will resist
+	 * any further motion.
+	 * Cancels any rotate() orders in progress
+	 */
+	public void stop()
+	{
+		synchronized(regulator)
+		{
+			_mode = 3;
+		    updateState();
+		}
+	}
   /** 
    *calls controlMotor, startRegating;  updates _direction, _rotating, _wasRotating
    */
   void updateState()
   {
-  	synchronized(regulator)
+  	  _rotating = false; //regulator should stop testing for rotation limit  ASAP
+//  	synchronized(regulator)
   	{
-  		if(_wasRotating)setSpeed(_speed0);
-	  	_rotating = false;
-		_wasRotating = false;
+  		if(_wasRotating)
+  		{
+  			setSpeed(_speed0);
+			_regulate = _wasRegulating;
+  		}
+		_wasRotating = false; // perhaps redundant
 
 	  	if(_mode>2) // stop or float
 	  	{
@@ -168,21 +242,29 @@ public class Motor extends BasicMotor implements TimerListener
     */
   public void rotateTo(int limitAngle,boolean immediateReturn)
   {
-	_stopAngle = limitAngle;
-	if(limitAngle > getTachoCount()) _mode = 1;
-	else _mode = 2;
-    _port.controlMotor(_power, _mode);
-    _direction = 3 - 2*_mode;
-   	if(_regulate) regulator.reset();
-	if(!_wasRotating)
-	{
-	  _stopAngle -= _direction * overshoot();
-	  _limitAngle = limitAngle;
-	}
-	_rotating = true; // rotating to a limit
-	_rampUp = !_noRamp && Math.abs(_stopAngle-getTachoCount())>40 && _speed>200;  //no ramp for small angles
-
+  	synchronized(regulator)
+  	{
+  		if(_wasRotating)
+  		{
+  			setSpeed(_speed0);
+			_regulate = _wasRegulating;
+			_wasRotating = false;
+  		}
+		_stopAngle = limitAngle;
+		if(limitAngle > getTachoCount()) _mode = 1;
+		else _mode = 2;
+	    _port.controlMotor(_power, _mode);
+	    _direction = 3 - 2*_mode;
+	   	if(_regulate) regulator.reset();
+		if(!_wasRotating)
+		{
+		  _stopAngle -= _direction * overshoot();
+		  _limitAngle = limitAngle;
+		}
+		_rotating = true; // rotating to a limit
+		_rampUp = !_noRamp && Math.abs(_stopAngle-getTachoCount())>40 && _speed>200;  //no ramp for small angles
 	if(immediateReturn)return;
+  	}
 	while(isMoving()) Thread.yield();
   }
 
@@ -239,7 +321,6 @@ public class Motor extends BasicMotor implements TimerListener
 	  	float accel = 1.5f;// deg/sec/ms  was 1.5
 	  	int td = 100;
 	  	float ts = 0;  //time to stabilize
-	  	boolean wasRegulating = true;
 	  	while(_keepGoing)
 	  	{ synchronized(this)
 	  	{	
@@ -272,9 +353,9 @@ public class Motor extends BasicMotor implements TimerListener
 	  			setPower((int)power);
 	  		}
 	  // stop at rotation limit angle
-//	  		int tc = getTachoCount();
 			if(_rotating && _direction*(getTachoCount() - _stopAngle)>-1)
 			{
+				if(!_wasRotating)_speed0 = _speed;
 				_mode = 3; // stop motor
 				_port.controlMotor (0, 3);
 				int a = angleAtStop();//returns when motor has stopped
@@ -286,27 +367,40 @@ public class Motor extends BasicMotor implements TimerListener
 						_speed0 = _speed;
 						setSpeed(150);
 						_wasRotating = true;
-						wasRegulating = _regulate;
+						_wasRegulating = _regulate;
 						_regulate = true;
 						limit = _limitAngle;
 					}
-				 	rotateTo(limit - remaining/3,true); //another try
+			 	nudge(remaining,a); //another try
 				}
 				else //rotation complete;  restore state variables
-				{
+				{	
 					setSpeed(_speed0);//restore speed setting
 					_mode = 3; // stop motor  maybe redundant
 					_port.controlMotor (0, _mode);
 					_rotating = false;
 					_wasRotating = false;
-					_regulate = wasRegulating;
+					_regulate = _wasRegulating;
 				}
 	  		}
 	  	}
 	  	Thread.yield();
 	  	}	
   	}
-  
+  /**
+   *helper method for run  - stop at limit angle branch
+   */ 
+  	private void nudge(int remaining,int tachoCount)
+  	{
+  		_stopAngle = tachoCount + remaining/3;
+  		if(remaining>0)_mode = 1;
+  		else _mode = 2;	
+	    _port.controlMotor(_power, _mode);
+	    _direction = 3 - 2*_mode;
+	    _rotating = true;
+	    _rampUp = false;
+	    _regulate = true;
+	}  
     /**
      *helper method for run
      **/
@@ -388,7 +482,7 @@ public class Motor extends BasicMotor implements TimerListener
 	
   private int overshoot()
   {
-	return   (int)( _speed*0.060f);
+	return   (int)(5+ _speed*0.060f);//60?
   }
 
   /**
