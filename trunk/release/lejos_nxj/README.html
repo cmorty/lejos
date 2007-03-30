@@ -58,9 +58,21 @@ contain the ant binary (ant 1.6 or above)</li>
 
 The libusb filter driver for Microsoft Windows can be obtained from <a href="http://libusb-win32.sourceforge.net/#downloads">http://libusb-win32.sourceforge.net/#downloads</a>.
 
-libusb for other systems can be obtained from <a href="http://libusb.sourceforge.net">http://libusb.sourceforge.net</a>.
+libusb for other systems can be obtained from <a href="http://libusb.sourceforge.net">http://libusb.sourceforge.net</a>.<br/><br/>
 
-On Linux and Unix system, you will need to ensure that you have read and write access the NXT USB device in /dev/bus/usb.
+On Linux systems, if you are running lejos NXJ from a non-root user, you will need to ensure that you have read and write access the NXT USB device in /dev/bus/usb.
+
+If you can identify the device in /dev/bus/usb, you can do this by:<br/><br/>
+
+<em>sudo chmod a+w /dev/bus/usb/xxx/yyy</em><br/><br/>
+
+However, the yyy number will count up each time the NXT is disconnected and reconnected.<br/><br/>
+
+A better solution is to use udev rules or pamcomsole. How to do this varies with different Linux systems. A pamconsole solution that works on Fedora Core 5, is to create a file /etc/security/console.perms.d/60-libusb.perms with the two lines:<br/><br/>
+
+&lt;usbdevices&gt;=/dev/bus/usb/*/*<br/>
+&lt;console&gt; 0600 &lt;usbdevices&gt; 0644 root
+<br/>
 
 <h1><a name="installation_and_set_up">Installation and Set Up</a></h1>
 
