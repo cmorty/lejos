@@ -60,6 +60,9 @@ public interface SpecialSignatureConstants {
     "btReceive([B)V",
     "btGetCmdMode()I",
     "btSetCmdMode(I)V",
-    "btStartADConverter()V"
+    "btStartADConverter()V",
+    "usbRead([BI)I",
+    "usbWrite([BI)V",
+    "usbWaitForConnection()V"
   };
 }
