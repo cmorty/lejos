@@ -106,7 +106,7 @@ static const U8 ld[] = {0x04,0x03,0x09,0x04}; // Language descriptor
       
 extern void udp_isr_entry(void);
 
-/*static char x4[5];
+static char x4[5];
 static char* hexchars = "0123456789abcdef";
   
 static char *
@@ -118,7 +118,7 @@ hex4(int i)
   x4[3] = hexchars[i & 0xF];
   x4[4] = 0;
   return x4;
-}*/
+}
  
 void
 udp_isr_C(void)
@@ -201,7 +201,7 @@ udp_timed_out()
       timeout_counter++;
       udp_short_reset_timeout();
    }
-   return (timeout_counter > 200);
+   return (timeout_counter > 500);
 }
 
 void
@@ -314,10 +314,8 @@ void udp_send_control(U8* p, int len)
   	while (!(tmp & AT91C_UDP_TXCOMP) && !udp_timed_out());
 	
 	(*AT91C_UDP_CSR0) &= ~(AT91C_UDP_TXCOMP);
-	 
-    udp_reset_timeout(); 	
     
-  	while (((*AT91C_UDP_CSR0) & AT91C_UDP_TXCOMP) && !udp_timed_out());
+  	while ((*AT91C_UDP_CSR0) & AT91C_UDP_TXCOMP);
 
   }
   while (i < len);
@@ -346,8 +344,6 @@ udp_set_configured(int conf)
 
 static int reqno = 0;
 
-static int cfg_attempts = 0;
-
 void 
 udp_enumerate()
 {
@@ -359,9 +355,9 @@ udp_enumerate()
   bt = *AT91C_UDP_FDR0;
   br = *AT91C_UDP_FDR0;
   
-  val = (*AT91C_UDP_FDR0 | (*AT91C_UDP_FDR0 << 8));
-  ind = (*AT91C_UDP_FDR0 | (*AT91C_UDP_FDR0 << 8));
-  len = (*AT91C_UDP_FDR0 | (*AT91C_UDP_FDR0 << 8));
+  val = ((*AT91C_UDP_FDR0 & 0xFF) | (*AT91C_UDP_FDR0 << 8));
+  ind = ((*AT91C_UDP_FDR0 & 0xFF) | (*AT91C_UDP_FDR0 << 8));
+  len = ((*AT91C_UDP_FDR0 & 0xFF) | (*AT91C_UDP_FDR0 << 8));
   
   if (bt & 0x80)
   {
@@ -382,8 +378,10 @@ udp_enumerate()
         udp_send_control(dd, sizeof(dd));
       }
       else if (val == 0x200) // Configuration descriptor
-      {       
-        udp_send_control(cfd, (cfg_attempts++ == 0 ? 8 :sizeof(cfd)));
+      {  
+        systick_wait_ms(100);     
+        udp_send_control(cfd, (len < sizeof(cfd) ? len : sizeof(cfd)));
+        udp_send_null();
       }	
       else if ((val & 0xF00) == 0x300)
       {
