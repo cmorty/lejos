@@ -63,4 +63,6 @@
 #define usbRead_4_1BI_5I 56
 #define usbWrite_4_1BI_5V 57
 #define usbWaitForConnection_4_5V 58
+#define writePage_4_1BI_5V 59
+#define readPage_4_1BI_5V 60
 #endif // _SPECIALSIGNATURES_H
