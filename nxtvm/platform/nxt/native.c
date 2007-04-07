@@ -26,6 +26,7 @@
 #include "sound.h"
 #include "bt.h"
 #include "udp.h"
+#include "flashprog.h"
 
 /**
  * NOTE: The technique is not the same as that used in TinyVM.
@@ -277,7 +278,22 @@ dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
     break; 
   case usbWaitForConnection_4_5V:
     udp_wait_for_connection();
-    break;    
+    break;
+  case writePage_4_1BI_5V:
+    {
+      Object *p = word2ptr(paramBase[0]);
+      unsigned int *intArray = (unsigned int *) (((byte *) p) + HEADER_SIZE);
+      flash_write_page(intArray,paramBase[1]);                      
+    }
+    break;
+  case readPage_4_1BI_5V:
+    {
+      int i;
+      Object *p = word2ptr(paramBase[0]);
+      unsigned int *intArray = (unsigned int *) (((byte *) p) + HEADER_SIZE);
+      for(i=0;i<64;i++) intArray[i] = FLASH_BASE[(paramBase[1]*64)+i];                       
+    }
+    break;
   default:
     throw_exception(noSuchMethodError);
   }
