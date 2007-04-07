@@ -97,12 +97,18 @@ i2cDisableById(I)V
 #lejos.nxt.Sound
 playTone(II)V
 
-#lejos.Bluetooth
+#lejos.nxt.comm.Bluetooth
 btSend([BI)V
 btReceive([B)V
 btGetCmdMode()I
 btSetCmdMode(I)V
 btStartADConverter()V
+
+#lejos.nxt.comm.USB
+usbRead([BI)I
+usbWrite([BI)V
+usbWaitForConnection()V
+
 
 
 

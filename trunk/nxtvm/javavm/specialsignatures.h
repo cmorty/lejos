@@ -60,4 +60,7 @@
 #define btGetCmdMode_4_5I 53
 #define btSetCmdMode_4I_5V 54
 #define btStartADConverter_4_5V 55
+#define usbRead_4_1BI_5I 56
+#define usbWrite_4_1BI_5V 57
+#define usbWaitForConnection_4_5V 58
 #endif // _SPECIALSIGNATURES_H
