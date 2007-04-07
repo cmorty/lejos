@@ -378,7 +378,7 @@ main(void)
     
   //xx_show();
   
-  show_splash(1);    
+  show_splash(2000);    
  
   udp_reset();
 
