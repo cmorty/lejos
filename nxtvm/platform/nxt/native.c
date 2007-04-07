@@ -25,6 +25,7 @@
 #include "i2c.h"
 #include "sound.h"
 #include "bt.h"
+#include "udp.h"
 
 /**
  * NOTE: The technique is not the same as that used in TinyVM.
@@ -260,6 +261,23 @@ dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
   case btStartADConverter_4_5V:
     bt_start_ad_converter();
     break;
+  case usbRead_4_1BI_5I:
+     {
+      Object *p = word2ptr(paramBase[0]);
+      byte *byteArray = (((byte *) p) + HEADER_SIZE);
+      push_word(udp_read(byteArray,paramBase[1]));                      
+    } 
+    break;
+  case usbWrite_4_1BI_5V:
+     {
+      Object *p = word2ptr(paramBase[0]);
+      byte *byteArray = (((byte *) p) + HEADER_SIZE);
+      udp_write(byteArray,paramBase[1]);                      
+    }
+    break; 
+  case usbWaitForConnection_4_5V:
+    udp_wait_for_connection();
+    break;    
   default:
     throw_exception(noSuchMethodError);
   }

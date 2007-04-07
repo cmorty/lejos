@@ -36,6 +36,7 @@
 #include "display.h"
 #include "sound.h"
 #include "bt.h"
+#include "udp.h"
 
 extern U32 __free_ram_start__;
 extern U32 __free_ram_end__;
@@ -376,9 +377,18 @@ main(void)
   bt_init();
     
   //xx_show();
+  
+  show_splash(1);    
+ 
+  udp_reset();
 
-  show_splash(3000);    
+  while (!udp_configured()) 
+  {
+  	udp_enumerate();
+  }
+  
   display_clear(1);
+  
   nxt_main();
   systick_wait_ms(5000);
 
