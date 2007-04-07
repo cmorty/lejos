@@ -63,6 +63,8 @@ public interface SpecialSignatureConstants {
     "btStartADConverter()V",
     "usbRead([BI)I",
     "usbWrite([BI)V",
-    "usbWaitForConnection()V"
+    "usbWaitForConnection()V",
+    "writePage([BI)V",
+    "readPage([BI)V"
   };
 }
