@@ -6,7 +6,7 @@ public class BTRespond {
 	public static void main(String [] args)  throws Exception 
 	{
 
-		byte[] inMsg = new byte[32];
+		byte[] inMsg = new byte[64];
 		byte [] outMsg = new byte[32];
 		boolean cmdMode = true;
 		BTConnection btc = null;
@@ -23,7 +23,7 @@ public class BTRespond {
 				cmdMode = false;
 			}
 			
-			len = Bluetooth.readPacket(inMsg,32);
+			len = Bluetooth.readPacket(inMsg,64);
 			
 			if (len > 0)
 			{
