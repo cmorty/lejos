@@ -27,6 +27,7 @@ extern char *OPCODE_NAME[];
 
 volatile boolean gMakeRequest;
 byte    gRequestCode;
+unsigned int gNextProgram;
 
 byte *pc;
 STACKWORD *localsBase;
