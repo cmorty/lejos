@@ -168,13 +168,15 @@ run(int jsize)
  ***************************************************************************/
 //int main (int argc, char *argv[])
 int
-nxt_main()
+nxt_main(int bin)
 {
   int jsize = 0;
   char *binary = java_binary;
   unsigned *temp;
 
-  if (__extra_ram_start__ != __extra_ram_end__) {
+  if (bin > 0) {
+  	binary = (char *) bin;
+  } else if (__extra_ram_start__ != __extra_ram_end__) {
     // Samba RAM mode
 
     temp = ((unsigned *) (&__free_ram_end__)) - 1;
@@ -378,7 +380,7 @@ main(void)
     
   //xx_show();
   
-  show_splash(2000);    
+  show_splash(1);    
  
   udp_reset();
 
@@ -389,7 +391,15 @@ main(void)
   
   display_clear(1);
   
-  nxt_main();
+  gNextProgram = 0;
+  do 
+  {
+  	int next = gNextProgram;
+  	gNextProgram = 0;
+  	nxt_main(next);
+  }
+  while (gNextProgram != 0);
+  
   systick_wait_ms(5000);
 
   while (1) {
