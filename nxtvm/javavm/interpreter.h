@@ -12,6 +12,7 @@
 
 extern volatile boolean gMakeRequest;
 extern byte    gRequestCode;
+extern unsigned int gNextProgram;
 
 extern byte *pc;
 extern STACKWORD *stackTop;
