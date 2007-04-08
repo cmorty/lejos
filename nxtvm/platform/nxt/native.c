@@ -294,6 +294,10 @@ dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
       for(i=0;i<64;i++) intArray[i] = FLASH_BASE[(paramBase[1]*64)+i];                       
     }
     break;
+  case exec_4I_5V:
+    gNextProgram = &FLASH_BASE[(paramBase[0]*64)];
+    schedule_request(REQUEST_EXIT);
+    break;
   default:
     throw_exception(noSuchMethodError);
   }
