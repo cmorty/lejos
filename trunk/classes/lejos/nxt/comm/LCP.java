@@ -12,7 +12,9 @@ public class LCP {
 	static byte[] i2cCommand = new byte[16];
 	static byte[] i2cReply = new byte[16];
 	static int i2cLen = 0;
-	
+	static byte[] pageBuf = new byte[256];
+	static int pageIdx = 0;
+	static int currentPage = 0;
 	
 	private LCP()
 	{		
@@ -200,6 +202,44 @@ public class LCP {
 			len = 4;
 		}
 		
+		// OPEN READ
+		if (cmd[1] == (byte) 0x80)
+		{
+			reply[2] = (byte) 0x86; // File not found
+			len = 8;
+		}	
+		
+		// OPEN WRITE
+		if (cmd[1] == (byte) 0x81)
+		{
+			pageIdx = 0;
+			currentPage = 0;
+			len = 4;
+		}
+		
+		// OPEN WRITE LINEAR
+		if (cmd[1] == (byte) 0x89)
+		{
+			pageIdx = 0;
+			currentPage = 0;
+			len = 4;
+		}
+		
+		// OPEN WRITE DATA
+		if (cmd[1] == (byte) 0x8B)
+		{
+			pageIdx = 0;
+			currentPage = 0;
+			len = 4;
+		}
+		
+		// OPEN APPEND  DATA
+		if (cmd[1] == (byte) 0x8C)
+		{
+			reply[2] = (byte) 0x86; // File not found
+			len = 8;
+		}
+
 		// FIND FIRST
 		if (cmd[1] == (byte) 0x86)
 		{
@@ -212,6 +252,33 @@ public class LCP {
 		{
 			reply[2] = (byte) (byte) 0x86; // File not found
 			len = 28;
+		}
+		
+		// WRITE
+		if (cmd[1] == (byte) 0x83)
+		{
+			int dataLen = cmdLen - 3;
+			
+			if (pageIdx + dataLen <= 256)
+			{
+				for(int i=0;i<dataLen;i++) pageBuf[pageIdx++] = cmd[i+3];
+			}
+			else
+			{
+				int i;
+				for(i=0;i<dataLen && pageIdx < 256;i++) pageBuf[pageIdx++] = cmd[i+3];
+				Flash.writePage(pageBuf, currentPage++);
+				pageIdx = 0;
+				for(;i<dataLen;i++) pageBuf[pageIdx++] = cmd[i+3];
+			}
+			len = 6;
+		}
+		
+		// CLOSE
+		if (cmd[1] == (byte) 0x84)
+		{
+			Flash.writePage(pageBuf, currentPage++);
+			len = 4;
 		}
 
 		if ((cmd[0] & 0x80) == 0) Bluetooth.sendPacket(reply, len);
