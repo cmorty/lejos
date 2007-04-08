@@ -364,11 +364,11 @@ public class Motor extends BasicMotor implements TimerListener
 				{
 					if(!_wasRotating)// initial call to rotate(); save state variables
 					{
+						_wasRegulating = _regulate;
+						_regulate = true;
 						_speed0 = _speed;
 						setSpeed(150);
 						_wasRotating = true;
-						_wasRegulating = _regulate;
-						_regulate = true;
 						limit = _limitAngle;
 					}
 			 	nudge(remaining,a); //another try
@@ -498,11 +498,11 @@ public class Motor extends BasicMotor implements TimerListener
   /**
    *returns true when motor is rotating towarad a specified angle
    */ 
-  public final boolean isRotating()
+  public boolean isRotating()
   {
   	return  _rotating;
   }
-
+  public boolean isRegulating(){return _regulate;}
   /**
    * requred by TimerListener interface
    */
