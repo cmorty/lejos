@@ -112,6 +112,8 @@ usbWaitForConnection()V
 #lejos.nxt.Flash
 writePage([BI)V
 readPage([BI)V
+exec(I)V
+
 
 
 
