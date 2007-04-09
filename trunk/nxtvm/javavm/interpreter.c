@@ -28,6 +28,7 @@ extern char *OPCODE_NAME[];
 volatile boolean gMakeRequest;
 byte    gRequestCode;
 unsigned int gNextProgram;
+unsigned int gNextProgramSize;
 
 byte *pc;
 STACKWORD *localsBase;
@@ -171,8 +172,6 @@ boolean array_store_helper()
 void engine()
 {
   byte ticks_until_switch = TICKS_PER_TIME_SLICE;
-
-  int lgginst = 0;
 
   assert( currentThread != null, INTERPRETER0);
 
