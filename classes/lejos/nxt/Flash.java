@@ -10,5 +10,5 @@ public class Flash {
 
 	public static native void writePage(byte[] buf, int pageNum);
 	
-	public static native void exec(int pageNum);
+	public static native void exec(int pageNum, int size);
 }
