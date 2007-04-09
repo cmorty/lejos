@@ -34,9 +34,6 @@
 void
 dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
 {
-  ClassRecord *classRecord;
-  STACKWORD *paramBase1 = paramBase + 1;
-  STACKWORD *paramBase2 = paramBase + 2;
 
   switch (signature) {
   case wait_4_5V:
@@ -282,7 +279,7 @@ dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
   case writePage_4_1BI_5V:
     {
       Object *p = word2ptr(paramBase[0]);
-      unsigned int *intArray = (unsigned int *) (((byte *) p) + HEADER_SIZE);
+      unsigned long *intArray = (unsigned long *) (((byte *) p) + HEADER_SIZE);
       flash_write_page(intArray,paramBase[1]);                      
     }
     break;
@@ -290,12 +287,13 @@ dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
     {
       int i;
       Object *p = word2ptr(paramBase[0]);
-      unsigned int *intArray = (unsigned int *) (((byte *) p) + HEADER_SIZE);
+      unsigned long *intArray = (unsigned long *) (((byte *) p) + HEADER_SIZE);
       for(i=0;i<64;i++) intArray[i] = FLASH_BASE[(paramBase[1]*64)+i];                       
     }
     break;
-  case exec_4I_5V:
-    gNextProgram = &FLASH_BASE[(paramBase[0]*64)];
+  case exec_4II_5V:
+    gNextProgram = (unsigned int) &FLASH_BASE[(paramBase[0]*64)];
+    gNextProgramSize = paramBase[1];
     schedule_request(REQUEST_EXIT);
     break;
   default:
