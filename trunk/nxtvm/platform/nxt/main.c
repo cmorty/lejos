@@ -38,6 +38,8 @@
 #include "bt.h"
 #include "udp.h"
 
+#include <string.h>
+
 extern U32 __free_ram_start__;
 extern U32 __free_ram_end__;
 extern U32 __extra_ram_start__;
@@ -69,7 +71,7 @@ handle_uncaught_exception(Object * exception,
 			  const MethodRecord * methodRecord,
 			  const MethodRecord * rootMethod, byte * pc)
 {
-  display_clear(0);
+  //display_clear(0);
   display_goto_xy(0, 0);
   display_string("Java Exception:");
   display_goto_xy(0, 1);
@@ -101,6 +103,16 @@ switch_thread_hook()
 void
 assert_hook(boolean aCond, int aCode)
 {
+  if (aCond) return;
+  display_clear(0);
+  display_goto_xy(0,0);
+  display_string("Assert failed");
+  display_goto_xy(0,1);
+  display_string("Code: ");
+  display_goto_xy(6,1);
+  display_int(aCode,0);
+  display_update();
+  while(1); // Hang
 }
 
 
@@ -168,14 +180,17 @@ run(int jsize)
  ***************************************************************************/
 //int main (int argc, char *argv[])
 int
-nxt_main(int bin)
+nxt_main(int bin, int size)
 {
   int jsize = 0;
-  char *binary = java_binary;
+  const char *binary = java_binary;
   unsigned *temp;
 
   if (bin > 0) {
-  	binary = (char *) bin;
+  	temp = ((unsigned *) (&__free_ram_end__)) - 3000;
+  	memcpy(temp,bin,size);
+  	binary = (char *) temp;
+  	jsize = size-4;
   } else if (__extra_ram_start__ != __extra_ram_end__) {
     // Samba RAM mode
 
@@ -377,18 +392,18 @@ main(void)
   nxt_motor_init();
   i2c_init();
   bt_init();
-    
-  //xx_show();
   
-  show_splash(1);    
- 
   udp_reset();
 
   while (!udp_configured()) 
   {
   	udp_enumerate();
   }
+    
+  //xx_show();
   
+  show_splash(3000);    
+ 
   display_clear(1);
   
   gNextProgram = 0;
@@ -396,7 +411,7 @@ main(void)
   {
   	int next = gNextProgram;
   	gNextProgram = 0;
-  	nxt_main(next);
+  	nxt_main(next, gNextProgramSize);
   }
   while (gNextProgram != 0);
   

@@ -381,7 +381,7 @@ udp_enumerate()
       {  
         systick_wait_ms(100);     
         udp_send_control(cfd, (len < sizeof(cfd) ? len : sizeof(cfd)));
-        udp_send_null();
+        if (len > sizeof(cfd)) udp_send_null();
       }	
       else if ((val & 0xF00) == 0x300)
       {

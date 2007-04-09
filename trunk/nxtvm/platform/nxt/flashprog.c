@@ -2,7 +2,7 @@
 #include "interrupts.h"
 
 void 
-flash_write_page(U32* page, int page_num)
+flash_write_page(U32 *page, int page_num)
 {
   int i;
   int istate = interrupts_get_and_disable();

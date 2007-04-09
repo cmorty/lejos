@@ -2,7 +2,7 @@
 #  define __FLASHPROG_H__
 #  include "mytypes.h"
 
-void flash_write_page(U32* buf, int page_num);
+void flash_write_page(U32 *buf, int page_num);
 void flash_erase_range(U32 addr, U32 nBytes);
 void flash_write(U32 addr, void *buffer, U32 nBytes);
 
