@@ -66,6 +66,6 @@ public interface SpecialSignatureConstants {
     "usbWaitForConnection()V",
     "writePage([BI)V",
     "readPage([BI)V",
-    "exec(I)V"
+    "exec(II)V"
   };
 }
