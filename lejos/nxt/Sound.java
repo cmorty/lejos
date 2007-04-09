@@ -1,8 +1,9 @@
 package lejos.nxt;
+//import lejos.nxt.*;
 
 /**
  * NXT sound routines.
- * Only playTone() works.
+ *
  */
 public class Sound
 {
@@ -22,8 +23,42 @@ public class Sound
    * <TR><TD>5</TD><TD>quick ascending arpeggio</TD></TR>
    * </TABLE>
    */
+   
+   public static int C2 = 1056;
   public static void systemSound (boolean aQueued, int aCode)
   {
+  	if(aCode==0)
+  	{
+  		playTone(1200,200);
+  	}
+  	else if(aCode == 1)
+  	{
+  		playTone(1200,150);
+  		pause(200);
+  		playTone(1200,150);
+  		pause(150);
+  	}
+     	else if(aCode == 2)
+  	{// C major arpeggio
+  		for(int i = 4; i<8; i++)
+  		{
+  			playTone(C2*i/4,100);
+  			pause(100);
+  		}
+  	}
+  	else if(aCode == 3)
+  	{
+  		for(int i = 7; i>3; i--)
+  		{
+  			playTone(C2*i/4,100);
+  			pause(100);
+  		}
+  	}
+  	else if(aCode == 4 )
+  	{ 
+  		playTone(100,500);
+  		pause(500);
+  	}
   }
 
   /**
@@ -43,21 +78,33 @@ public class Sound
   }
 
   /**
-   * Downward tones - not yet implemented.
+   * Downward tones.
    */
   public static void beepSequence()
   {
-    systemSound (true, 2);
+    systemSound (true, 3);
   }
 
   /**
-   * Low buzz - not yet implemented.
+   * Downward tones.
+   */
+ public static void beepSequenceUp()
+ {
+ 	systemSound (true,2);
+ }
+
+  /**
+   * Low buzz 
    */
   public static void buzz()
   {
     systemSound (true, 4);
   }
-
+	public static void pause(int t)
+	{
+		try { Thread.sleep(t); }
+		catch(InterruptedException e){}
+	}
   /**
    * Plays a tone, given its frequency and duration. Frequency is audible from about 31 to 2100 Hertz. The
    * duration argument is in hundreds of a seconds (centiseconds, not milliseconds) and is truncated
