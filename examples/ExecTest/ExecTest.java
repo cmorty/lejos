@@ -6,7 +6,12 @@ public class ExecTest {
 	 * @param args
 	 */
 	public static void main(String[] args) throws Exception {
-		Flash.exec(0);
+		LCD.drawString("About to exec", 0, 0);
+		LCD.refresh();
+		Button.ENTER.waitForPressAndRelease();
+		LCD.clear();
+		LCD.refresh();
+		Flash.exec(0,12000);
 
 	}
 
