@@ -8,7 +8,7 @@ import lejos.nxt.*;
  *
  */
 public class LCP {
-	static byte[] reply = new byte[32];
+	static byte[] reply = new byte[64];
 	static byte[] i2cCommand = new byte[16];
 	static byte[] i2cReply = new byte[16];
 	static int i2cLen = 0;
@@ -206,6 +206,8 @@ public class LCP {
 		if (cmd[1] == (byte) 0x80)
 		{
 			reply[2] = (byte) 0x86; // File not found
+			currentPage = 0;
+			pageIdx = 0;
 			len = 8;
 		}	
 		
@@ -252,6 +254,24 @@ public class LCP {
 		{
 			reply[2] = (byte) (byte) 0x86; // File not found
 			len = 28;
+		}
+		
+		// READ
+		if (cmd[1] == (byte) 0x82)
+		{
+			int numBytes = cmd[3];
+			if (currentPage == 0 && pageIdx == 0) Flash.readPage(pageBuf,0);
+			if (pageIdx + numBytes <= 256) {
+				for(int i=0;i<numBytes;i++) reply[6+i] = pageBuf[pageIdx++];	
+			} else {
+				int i;
+				for(i=0;i<numBytes && pageIdx < 256;i++) reply[6+i] = pageBuf[pageIdx++];
+				Flash.readPage(pageBuf, ++currentPage);
+				pageIdx = 0;
+				for(;i<numBytes;i++) reply[6+i] = pageBuf[pageIdx++];
+			}
+			reply[4] = (byte) numBytes;
+			len = numBytes + 6;
 		}
 		
 		// WRITE
