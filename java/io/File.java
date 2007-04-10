@@ -20,7 +20,7 @@ public class File {
 	static byte totalFiles = -1; // Negative indicates not initialized
 	static String header = "LEJOS";  // Written to front of file table
 	// First table entry (past header and number of files)
-	static byte firstTableFile = (byte)(header.length() + 1); 
+	static byte TOTAL_FILES_LOCATION = (byte)(header.length()); 
 	
 	static byte MAX_FILES = 30; // Defines size of files array
 	static short TOTAL_PAGES = 896; // 0 to 895
@@ -30,33 +30,35 @@ public class File {
 	static byte FILE_TABLE_PAGES = 2; // Number of pages reserved to file table
 	static byte FILE_START_PAGE = (byte)(FILE_TABLE_START + FILE_TABLE_PAGES); 
 	
+	static byte table_pointer;
+	
 	short page_location; // Starting block of file
 	String name; // file name
 	int file_length; // Total bytes of file
 	
+	private static char [] charBuff = new char[30]; // Used in listFiles()
+	
 	public File(String name) {
-		// !! Check if filename exists. If yes, update info in this object.
+		// !! Check if filename exists. If yes, update info in this object?
 		this.name = name;
 	}
 	
-	private static char [] charBuff = new char[30]; 
 	static public File[] listFiles() {
 		if(files == null) {
 			// !! update files array with file info 
 			files = new File[MAX_FILES];
 		}
 		Flash.readPage(buff, FILE_TABLE_START);
-		byte numberOfFiles = buff[firstTableFile - 1];
-		short tablePointer = firstTableFile;
+		table_pointer = TOTAL_FILES_LOCATION;
+		byte numberOfFiles = buff[table_pointer];
 		for(int i=0;i<numberOfFiles;i++) {
-			short pageLocation = (short)((0xFF & buff[tablePointer]) | ((0xFF & buff[++tablePointer])<<8)); // !! Possible bug
-			int fileLength = (0xFF & buff[++tablePointer]) | ((0xFF & buff[++tablePointer]) <<8) | ((0xFF & buff[++tablePointer])<<16) | ((0xFF & buff[++tablePointer])<<24); // !! Possible bug
+			short pageLocation = (short)((0xFF & buff[++table_pointer]) | ((0xFF & buff[++table_pointer])<<8)); // !! Possible bug
+			int fileLength = (0xFF & buff[++table_pointer]) | ((0xFF & buff[++table_pointer]) <<8) | ((0xFF & buff[++table_pointer])<<16) | ((0xFF & buff[++table_pointer])<<24); // !! Possible bug
 			
 			if(files[i] == null) {
-				byte nameChars = buff[++tablePointer];
-				++tablePointer;
+				byte nameChars = buff[++table_pointer];
 				for(int j=0;j<nameChars;j++) {
-					charBuff[j] = (char)buff[tablePointer + j];
+					charBuff[j] = (char)buff[++table_pointer];
 				}
 				String name = new String(charBuff, 0, nameChars);
 				files[i] = new File(name);
@@ -70,22 +72,40 @@ public class File {
 	public void delete() {
 		// !! Check if file table starts with 'header'
 		// !! Rewrite file table without this file
-		// !! If auto-defragging, run now.
+		// !! Auto-defrag?
 	}
 	
+	// ** Note this currently operates in first page of memory only
+	// Needs to be expanded to handle more files over multiple pages
 	public void createNewFile(int size) {
 		// !! Check if file table starts with 'header'
+		// !! Check if file name already exists.
 		// !! find contiguous pages that can fit this file length
 		// Find byte number it can start writing to table
 		Flash.readPage(buff, FILE_TABLE_START);
-		byte numberOfFiles = buff[firstTableFile - 1];
-		short table_pointer = firstTableFile;
+		byte numberOfFiles = buff[TOTAL_FILES_LOCATION];
 		short page_location = FILE_START_PAGE;
-		for(int i=0;i<numberOfFiles;i++) {
-			// !! Move table_pointer to first empty table entry
-			
-			// !! Find last page used, so next page will be page start
+		table_pointer = (byte)(TOTAL_FILES_LOCATION + 1); // Move to start 
+		
+		// Move table_pointer to first empty table entry:
+		File [] files = listFiles();
+		table_pointer++; // Move to first empty file table location
+		
+		// Find last page used, so next page will be page start
+		// Look at info in last File in listFiles(). Size and page number
+		// indicate first free page.
+		int index = 0;
+		while(files[index+1] != null) {
+			++index;
 		}
+		if(files[index] != null) {
+			page_location = files[index].page_location;
+			int fileSize = files[index].file_length;
+			int pages = fileSize / PAGE_SIZE;
+			if(fileSize % PAGE_SIZE != 0) pages++;
+			page_location = (short)(page_location + pages);
+		}
+		
 		// Write page location of file:
 		buff[table_pointer] = (byte)page_location;
 		buff[table_pointer + 1] = (byte)(page_location>>8);
@@ -102,7 +122,7 @@ public class File {
 		}
 		// Increase file count by one and write to flash
 		++numberOfFiles;
-		buff[firstTableFile-1] = numberOfFiles;
+		buff[TOTAL_FILES_LOCATION] = numberOfFiles;
 		Flash.writePage(buff, FILE_TABLE_START);
 	}
 	
