@@ -32,6 +32,6 @@ public class FileInputStream extends InputStream{
 			page_pointer++;
 			Flash.readPage(buff, page_pointer);
 		}
-		return val + 128; // Need to return 0-255 value
+		return val & 0xff; // Need to return 0-255 value
 	}	
 }
