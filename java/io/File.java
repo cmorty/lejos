@@ -78,6 +78,14 @@ public class File {
 		return files;
 	}
 	
+	/**
+	 * Executes this file directly from flash memory.
+	 *
+	 */
+	public void exec() {
+		Flash.exec(page_location, file_length);
+	}
+		
 	public void delete() {
 		// !! Check if file table starts with 'header'
 		// !! Rewrite file table without this file
