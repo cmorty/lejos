@@ -43,15 +43,24 @@ public class File {
 		this.name = name;
 	}
 	
+	/**
+	 * Retrieves a list of File objects. Each item in the list represents
+	 * a file in the directory.
+	 * @return Array of files.
+	 * Note: Due to the lack of garbage collection the array is always 30 in
+	 * length regardless of the number of files in the directory. The first null
+	 * value in the list indicates the end of the list.
+	 */
 	static public File[] listFiles() {
+		// !! Check if formatted
 		if(files == null) {
 			// !! update files array with file info 
 			files = new File[MAX_FILES];
 		}
 		Flash.readPage(buff, FILE_TABLE_START);
 		table_pointer = TOTAL_FILES_LOCATION;
-		byte numberOfFiles = buff[table_pointer];
-		for(int i=0;i<numberOfFiles;i++) {
+		totalFiles = buff[table_pointer];
+		for(int i=0;i<totalFiles;i++) {
 			short pageLocation = (short)((0xFF & buff[++table_pointer]) | ((0xFF & buff[++table_pointer])<<8)); // !! Possible bug
 			int fileLength = (0xFF & buff[++table_pointer]) | ((0xFF & buff[++table_pointer]) <<8) | ((0xFF & buff[++table_pointer])<<16) | ((0xFF & buff[++table_pointer])<<24); // !! Possible bug
 			
@@ -75,20 +84,21 @@ public class File {
 		// !! Auto-defrag?
 	}
 	
-	// ** Note this currently operates in first page of memory only
+	// Note this currently operates in first page of memory only
 	// Needs to be expanded to handle more files over multiple pages
+	
+	/**
+	 * Creates a new 
+	 * @param size The number of bytes in this file.
+	 */
 	public void createNewFile(int size) {
 		// !! Check if file table starts with 'header'
+
 		// !! Check if file name already exists.
-		// !! find contiguous pages that can fit this file length
-		// Find byte number it can start writing to table
-		Flash.readPage(buff, FILE_TABLE_START);
-		byte numberOfFiles = buff[TOTAL_FILES_LOCATION];
-		short page_location = FILE_START_PAGE;
-		table_pointer = (byte)(TOTAL_FILES_LOCATION + 1); // Move to start 
 		
 		// Move table_pointer to first empty table entry:
 		File [] files = listFiles();
+		page_location = FILE_START_PAGE;
 		table_pointer++; // Move to first empty file table location
 		
 		// Find last page used, so next page will be page start
@@ -104,6 +114,8 @@ public class File {
 			int pages = fileSize / PAGE_SIZE;
 			if(fileSize % PAGE_SIZE != 0) pages++;
 			page_location = (short)(page_location + pages);
+		} else {
+			// !! Store new values here so it's live data?
 		}
 		
 		// Write page location of file:
@@ -120,9 +132,11 @@ public class File {
 		for(int i=0;i<name.length();i++) {
 			buff[table_pointer + 7 + i] = (byte)name.charAt(i);
 		}
+		// Assign this to files array:
+		files[totalFiles] = this;
+		
 		// Increase file count by one and write to flash
-		++numberOfFiles;
-		buff[TOTAL_FILES_LOCATION] = numberOfFiles;
+		buff[TOTAL_FILES_LOCATION] = ++totalFiles;
 		Flash.writePage(buff, FILE_TABLE_START);
 	}
 	
@@ -142,5 +156,17 @@ public class File {
 	public boolean exists() {
 		// !! Check with 'files' array if a file with this name exists
 		return true;
+	}
+	
+	public static void displayPage(int page, int loc) {
+		int chars_per_line = 16;
+		int rows = 8;
+		Flash.readPage(buff, page);
+		for(int y=0;y<rows;y++) {
+			for(int i=0;i<chars_per_line/4;i++) {
+				lejos.nxt.LCD.drawInt(buff[i + (4 * y) + loc], i*4, y);
+			}
+		}
+		lejos.nxt.LCD.refresh();
 	}
 }
