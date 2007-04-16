@@ -1,5 +1,6 @@
 package lejos.nxt.comm;
 
+import java.io.*;
 import lejos.nxt.*;
 
 /**
@@ -12,9 +13,14 @@ public class LCP {
 	static byte[] i2cCommand = new byte[16];
 	static byte[] i2cReply = new byte[16];
 	static int i2cLen = 0;
-	static byte[] pageBuf = new byte[256];
-	static int pageIdx = 0;
 	static int currentPage = 0;
+    static File[] files = null;
+    static String[] fileNames = null;
+    static int fileIdx = -1;
+    static String currentProgram = null;
+    static File file = null;
+    static FileOutputStream out = null;
+    static FileInputStream in = null;
 	
 	private LCP()
 	{		
@@ -33,6 +39,38 @@ public class LCP {
 	    
 		reply[0] = 0x02;
 		reply[1] = cmd[1];
+		
+		// START PROGRAM
+		if (cmd[1] == (byte) 0x00) {
+			int filenameLength = 0;
+			for(int i=0;i<20 && cmd[i+2] != 0;i++) filenameLength++;
+			char[] chars = new char[filenameLength];
+			for(int i=0;i<filenameLength;i++) chars[i] = (char) cmd[i+2];
+			chars[filenameLength-3] = 'b';
+			chars[filenameLength-2] = 'i';
+			chars[filenameLength-1] = 'n';
+			currentProgram = new String(chars,0,filenameLength);
+			//lejos.nxt.LCD.drawString(currentProgram,0,6);
+			//lejos.nxt.LCD.refresh();
+			if (fileNames != null) {
+				for(int i=0;i<fileNames.length;i++) {
+					if (currentProgram.equals(fileNames[i])) {
+						LCD.clear();
+						LCD.refresh();
+						files[i].exec();
+					}
+				}
+			}
+		}
+		
+		// GET CURRENT PROGRAM NAME
+		
+		if (cmd[1] == (byte) 0x11) {
+			if (currentProgram != null) {
+				for(int i=0;i<currentProgram.length() && i < 19;i++) 
+					reply[3+i] = (byte) currentProgram.charAt(i); 
+			}
+		}
 		
 		// GET BATTERY LEVEL
 		if (cmd[1] == 0x0B) {
@@ -205,33 +243,52 @@ public class LCP {
 		// OPEN READ
 		if (cmd[1] == (byte) 0x80)
 		{
-			reply[2] = (byte) 0x86; // File not found
-			currentPage = 0;
-			pageIdx = 0;
+			int filenameLength = 0;
+			for(int i=0;i<20 && cmd[i+2] != 0;i++) filenameLength++;
+			char[] chars = new char[filenameLength];
+			for(int i=0;i<filenameLength;i++) chars[i] = (char) cmd[i+2];
+			file = new File(new String(chars,0,filenameLength));
+            try {
+            	in = new FileInputStream(file);
+            	int size = file.getSize();
+            	cmd[4] = (byte) (size & 0xFF);
+    			cmd[5] = (byte) ((size >> 8) & 0xFF);
+    			cmd[6] = (byte) ((size >> 16) & 0xFF);
+    			cmd[7] = (byte) ((size >> 24) & 0xFF);          	
+            } catch (Exception e) {
+            	reply[2] = (byte) 0x86; // File not found
+            }
 			len = 8;
 		}	
 		
 		// OPEN WRITE
 		if (cmd[1] == (byte) 0x81)
 		{
-			pageIdx = 0;
-			currentPage = 0;
+			int filenameLength = 0;
+			for(int i=0;i<20 && cmd[i+2] != 0;i++) filenameLength++;
+			char[] chars = new char[filenameLength];
+			for(int i=0;i<filenameLength;i++) chars[i] = (char) cmd[i+2];
+			file = new File(new String(chars,0,filenameLength));
+			int size = cmd[22] & 0xFF;
+			size += ((cmd[23] & 0xFF) << 8);
+			size += ((cmd[24] & 0xFF) << 16);
+			size += ((cmd[25] & 0xFF) << 24);
+			// Need check for exists already and current size
+			file.createNewFile(size); 
+			out = new FileOutputStream(file);
+			
 			len = 4;
 		}
 		
 		// OPEN WRITE LINEAR
 		if (cmd[1] == (byte) 0x89)
 		{
-			pageIdx = 0;
-			currentPage = 0;
 			len = 4;
 		}
 		
 		// OPEN WRITE DATA
 		if (cmd[1] == (byte) 0x8B)
 		{
-			pageIdx = 0;
-			currentPage = 0;
 			len = 4;
 		}
 		
@@ -245,59 +302,73 @@ public class LCP {
 		// FIND FIRST
 		if (cmd[1] == (byte) 0x86)
 		{
-			reply[2] = (byte) 0x86; // File not found
+			files = File.listFiles();
+			
+			int numFiles = 0;
+			for(int i=0;i<files.length && files[i] != null;i++) numFiles++;
+			if (numFiles == 0)
+			{
+				reply[2] = (byte) 0x86; // File not found
+			}
+			else
+			{
+				fileNames = new String[numFiles];
+				for(int i=0;i<numFiles;i++) fileNames[i] = files[i].getName();
+				for(int i=0;i<fileNames[0].length();i++) reply[4+i] = (byte) fileNames[0].charAt(i);
+				fileIdx = 1;
+			}
+			
 			len = 28;
 		}
 		
 		// FIND NEXT
 		if (cmd[1] == (byte) 0x87)
 		{
-			reply[2] = (byte) (byte) 0x86; // File not found
+			if (fileNames == null || fileIdx >= fileNames.length) reply[2] = (byte) 0x86; // File not found
+			else
+			{
+				for(int i=0;i<fileNames[fileIdx].length();i++) reply[4+i] = (byte) fileNames[fileIdx].charAt(i);
+				fileIdx++;
+			}
 			len = 28;
 		}
 		
 		// READ
 		if (cmd[1] == (byte) 0x82)
 		{
-			int numBytes = cmd[3];
-			if (currentPage == 0 && pageIdx == 0) Flash.readPage(pageBuf,0);
-			if (pageIdx + numBytes <= 256) {
-				for(int i=0;i<numBytes;i++) reply[6+i] = pageBuf[pageIdx++];	
-			} else {
-				int i;
-				for(i=0;i<numBytes && pageIdx < 256;i++) reply[6+i] = pageBuf[pageIdx++];
-				Flash.readPage(pageBuf, ++currentPage);
-				pageIdx = 0;
-				for(;i<numBytes;i++) reply[6+i] = pageBuf[pageIdx++];
-			}
-			reply[4] = (byte) numBytes;
-			len = numBytes + 6;
+            int numBytes = ((cmd[4] & 0xFF) << 8) + (cmd[3] & 0xFF);
+            int bytesRead = 0;
+            
+            try {
+            	bytesRead = in.read(reply,6, numBytes);
+            } catch (IOException ioe) {}
+			reply[4] = (byte) (bytesRead & 0xFF);
+			reply[5] = (byte) ((bytesRead << 8) & 0xFF);
+			len = bytesRead + 6;
 		}
 		
 		// WRITE
 		if (cmd[1] == (byte) 0x83)
 		{
 			int dataLen = cmdLen - 3;
-			
-			if (pageIdx + dataLen <= 256)
-			{
-				for(int i=0;i<dataLen;i++) pageBuf[pageIdx++] = cmd[i+3];
-			}
-			else
-			{
-				int i;
-				for(i=0;i<dataLen && pageIdx < 256;i++) pageBuf[pageIdx++] = cmd[i+3];
-				Flash.writePage(pageBuf, currentPage++);
-				pageIdx = 0;
-				for(;i<dataLen;i++) pageBuf[pageIdx++] = cmd[i+3];
-			}
+			try {
+				out.write(cmd,3,dataLen);
+			} catch (IOException ioe) {}
+			reply[4] = (byte) (dataLen &0xFF);
+			reply[5] = (byte) ((dataLen >> 8) & 0xFF);
 			len = 6;
 		}
 		
 		// CLOSE
 		if (cmd[1] == (byte) 0x84)
 		{
-			Flash.writePage(pageBuf, currentPage++);
+			if (out != null) {
+				try {
+					out.flush();
+					out.close();
+				} catch (IOException ioe) {}
+				out = null;
+			}
 			len = 4;
 		}
 
