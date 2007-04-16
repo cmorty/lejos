@@ -71,7 +71,7 @@ handle_uncaught_exception(Object * exception,
 			  const MethodRecord * methodRecord,
 			  const MethodRecord * rootMethod, byte * pc)
 {
-  //display_clear(0);
+  display_clear(0);
   display_goto_xy(0, 0);
   display_string("Java Exception:");
   display_goto_xy(0, 1);
@@ -187,10 +187,11 @@ nxt_main(int bin, int size)
   unsigned *temp;
 
   if (bin > 0) {
-  	temp = ((unsigned *) (&__free_ram_end__)) - 3000;
+    size = (size + 3) & ~3;
+  	temp = ((unsigned *) (&__free_ram_end__)) - (size >> 2);
   	memcpy(temp,bin,size);
   	binary = (char *) temp;
-  	jsize = size-4;
+  	jsize = size;
   } else if (__extra_ram_start__ != __extra_ram_end__) {
     // Samba RAM mode
 
@@ -392,13 +393,6 @@ main(void)
   nxt_motor_init();
   i2c_init();
   bt_init();
-  
-  udp_reset();
-
-  while (!udp_configured()) 
-  {
-  	udp_enumerate();
-  }
     
   //xx_show();
   
