@@ -5,7 +5,7 @@ void
 flash_write_page(U32 *page, int page_num)
 {
   int i;
-  int istate = interrupts_get_and_disable();
+  //int istate = interrupts_get_and_disable();
   
   while (!(FLASH_STATUS_REG & 0x1));
   
@@ -18,8 +18,7 @@ flash_write_page(U32 *page, int page_num)
 
   while (!(FLASH_STATUS_REG & 0x1));
   
-   if (istate)
-    interrupts_enable();
+  //if (istate) interrupts_enable();
 }
 
 void
