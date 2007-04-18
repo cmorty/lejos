@@ -39,6 +39,7 @@ public class File {
 	private static char [] charBuff = new char[30]; // Used in listFiles()
 	
 	public File(String name) {
+		if(!File.isFormatted()) File.format();
 		// !! Check if filename exists. If yes, update info in this object?
 		this.name = name;
 	}
@@ -52,7 +53,8 @@ public class File {
 	 * value in the list indicates the end of the list.
 	 */
 	static public File[] listFiles() {
-		// !! Check if formatted
+		if(!File.isFormatted())
+			File.format();
 		if(files == null) {
 			// !! update files array with file info 
 			files = new File[MAX_FILES];
@@ -78,16 +80,11 @@ public class File {
 		return files;
 	}
 	
-	/**
-	 * Executes this file directly from flash memory.
-	 *
-	 */
 	public void exec() {
 		Flash.exec(page_location, file_length);
 	}
-		
+	
 	public void delete() {
-		// !! Check if file table starts with 'header'
 		// !! Rewrite file table without this file
 		// !! Auto-defrag?
 	}
@@ -100,9 +97,10 @@ public class File {
 	 * @param size The number of bytes in this file.
 	 */
 	public void createNewFile(int size) {
-		// !! Check if file table starts with 'header'
-
+		
 		// !! Check if file name already exists.
+		
+		this.file_length = size;
 		
 		// Move table_pointer to first empty table entry:
 		File [] files = listFiles();
@@ -161,9 +159,30 @@ public class File {
  		Flash.writePage(buff, FILE_TABLE_START);
 	}
 	
+	// Compares header with expected header
+	public static boolean isFormatted() {
+		boolean formatted = true;
+		Flash.readPage(buff, FILE_TABLE_START);
+		for(int i=0;i<header.length();i++) {
+			if(buff[i] != header.charAt(i))
+				formatted = false;
+		}
+		return formatted; 
+	}
+	
 	public boolean exists() {
-		// !! Check with 'files' array if a file with this name exists
-		return true;
+		// Check with 'files' array if a file with this name exists
+		boolean exists = false; 
+		
+		if(files == null)
+			File.listFiles(); // update list
+				
+		for(int i=0;i<File.totalFiles;i++) {
+			if(files[i].name.equals(this.name)) {
+				exists = true;
+			}
+		}
+		return exists;
 	}
 	
 	public static void displayPage(int page, int loc) {
