@@ -21,17 +21,19 @@ public class File {
 	static String header = "LEJOS";  // Written to front of file table
 	// First table entry (past header and number of files)
 	static byte TOTAL_FILES_LOCATION = (byte)(header.length()); 
+	static byte table_pointer;
 	
+	// CONSTANTS
 	static byte MAX_FILES = 30; // Defines size of files array
 	static short TOTAL_PAGES = 896; // 0 to 895
 	static short PAGE_SIZE = 256; // # bytes per page
-	static byte [] buff = new byte[PAGE_SIZE]; // Buffer
 	static byte FILE_TABLE_START = 0; // Beginning page of file table
 	static byte FILE_TABLE_PAGES = 2; // Number of pages reserved to file table
 	static byte FILE_START_PAGE = (byte)(FILE_TABLE_START + FILE_TABLE_PAGES); 
 	
-	static byte table_pointer;
+	static byte [] buff = new byte[PAGE_SIZE]; // Buffer
 	
+	// Instance global variables:
 	short page_location; // Starting block of file
 	String name; // file name
 	int file_length; // Total bytes of file
@@ -40,8 +42,16 @@ public class File {
 	
 	public File(String name) {
 		if(!File.isFormatted()) File.format();
-		// !! Check if filename exists. If yes, update info in this object?
 		this.name = name;
+		if(exists()) {
+			// Assign proper values to this object
+			for(int i=0;i<File.totalFiles;i++) {
+				if(files[i].name.equals(this.name)) {
+					this.file_length = files[i].file_length;
+					this.page_location = files[i].page_location;
+				}
+			}
+		}
 	}
 	
 	/**
@@ -96,9 +106,9 @@ public class File {
 	 * Creates a new 
 	 * @param size The number of bytes in this file.
 	 */
-	public void createNewFile(int size) {
+	public boolean createNewFile(int size) {
 		
-		// !! Check if file name already exists.
+		if(exists()) return false;
 		
 		this.file_length = size;
 		
@@ -144,6 +154,7 @@ public class File {
 		// Increase file count by one and write to flash
 		buff[TOTAL_FILES_LOCATION] = ++totalFiles;
 		Flash.writePage(buff, FILE_TABLE_START);
+		return true;
 	}
 	
 	/**
