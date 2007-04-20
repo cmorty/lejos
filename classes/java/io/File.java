@@ -2,209 +2,250 @@ package java.io;
 
 import lejos.nxt.Flash;
 
-/*
- * leJOS Developer instructions:
- * The file table is stored in page 0 and 1 (as shown in FILE_TABLE_START and
- * FILE_TABLE_PAGES). The file table data is laid out as follows:
- * Byte 0-4: "LEJOS"
- * Byte 5: Number of files in directory
- * Byte 6-7: Page location of file #1 (value = 2 to 895)
- * Byte 8-11: File length (size of file as number of bytes)
- * Byte 12: Number of characters in filename
- * Byte 13 to 13 + Number of characters in filename: File name (String)
- * [repeats data after byte 5 for each additional file in directory]
- */
 public class File {
+
+	// CONSTANTS:
+	/**
+	 *  Number of files the file system can store. 
+	 *  Defines the size of the files array. If leJOS gets a garbage
+	 *  collector we can get rid of this limitation.
+	 */
+	private static final byte MAX_FILES = 30;
 	
-	static File [] files;
-	static byte totalFiles = -1; // Negative indicates not initialized
-	static String header = "LEJOS";  // Written to front of file table
-	// First table entry (past header and number of files)
-	static byte TOTAL_FILES_LOCATION = (byte)(header.length()); 
-	static byte table_pointer;
+	/**
+	 * Maximum size of file name. Used because no garbage collector.
+	 * If leJOS gets a garbage collector we can recode this. This value
+	 * is used to define the character array charBuff[] below.
+	 */
+	private static final byte MAX_FILENAME = 30;
 	
-	// CONSTANTS
-	static byte MAX_FILES = 30; // Defines size of files array
-	static short TOTAL_PAGES = 896; // 0 to 895
-	static short PAGE_SIZE = 256; // # bytes per page
-	static byte FILE_TABLE_START = 0; // Beginning page of file table
-	static byte FILE_TABLE_PAGES = 2; // Number of pages reserved to file table
-	static byte FILE_START_PAGE = (byte)(FILE_TABLE_START + FILE_TABLE_PAGES); 
+	/**
+	 * Signature written to the front of the file table to indicate if the
+	 * flash memory contains file table information.
+	 */
+	private static final String TABLE_ID = "LEJOS";  
 	
-	static byte [] buff = new byte[PAGE_SIZE]; // Buffer
+	/**
+	 * Indicates the starting page of the file table.
+	 */
+	private static byte TABLE_START_PAGE = 0;
 	
-	// Instance global variables:
-	short page_location; // Starting block of file
-	String name; // file name
-	int file_length; // Total bytes of file
+	/**
+	 * The position (order of bytes) where the number of files
+	 * is stored in the table. 
+	 */
+	private static byte NUM_FILES_POS = (byte)TABLE_ID.length();
+		
+	/**
+	 * Indicates the # of bytes per page in the Flash class.
+	 * Lawrie Griffiths determines this. Might want to access this
+	 * directly from Flash in future from a package level constant in case
+	 * we want to alter this number.
+	 */
+	private static short BYTES_PER_PAGE = 256;
 	
-	private static char [] charBuff = new char[30]; // Used in listFiles()
+	// GLOBAL STATIC CLASS VARIABLES: 
+	/**
+	 * Shared buffer. Using this as static class variable because leJOS
+	 * lacks a garbage collector.
+	 */
+	private static byte [] buff = new byte[BYTES_PER_PAGE];
+	
+	/**
+	 * Array containing all the Files in the directory. 
+	 */
+	private static File [] files = new File[MAX_FILES];
+	
+	/**
+	 * The total number of files in the file system. A negative value 
+	 * indicates this variable has not been initialized. Using byte, but
+	 * if we expand past the 30 limit (garbage collector) we can use short.
+	 */
+	public static byte totalFiles = -1;
+	
+	/**
+	 *  Temp buffer of characters used to read file names. If leJOS gets a 
+	 *  garbage collector we can eliminate this. Used in readTable()
+	 */
+	private static char [] charBuff = new char[MAX_FILENAME];
+	
+	
+	// INSTANCE VARIABLES (file name, page location of file, file size):
+	/**
+	 * The name of the file. Initialized in File constructor.
+	 */
+	private String file_name;
+	
+	/**
+	 * The starting page location of this file. All files start at the 0 byte
+	 * position of the page that they start at.
+	 * Init to -1 to indicate not initialized or does that waste memory?
+	 */
+	short page_location; // !! Make private when done tests!
+	
+	/**
+	 * The length, in bytes, of this file according to the file table.
+	 * A file that does not exists is supposed to equal 0. i.e. The Java SDK
+	 * says that it doesn't get written to the file table until it has bytes.
+	 */
+	private int file_length;
 	
 	public File(String name) {
-		if(!File.isFormatted()) File.format();
-		this.name = name;
+		if(!File.tableExists()) File.format();
+		this.file_name = name;
+		
+		/* !! CHECK IF FILE EXISTS!!!
+		 * !! A file that does not exist is supposed to return length() of 0.
+		 * !! But my exists() method might just check length().
+		 * So perhaps this method should just look through names manually to 
+		 * see if it exists, then steal the file_length and page_location vals.
 		if(exists()) {
 			// Assign proper values to this object
-			for(int i=0;i<File.totalFiles;i++) {
+			for(int i=0;i<FileOld.totalFiles;i++) {
 				if(files[i].name.equals(this.name)) {
 					this.file_length = files[i].file_length;
 					this.page_location = files[i].page_location;
 				}
 			}
 		}
+		*/
 	}
 	
 	/**
-	 * Retrieves a list of File objects. Each item in the list represents
-	 * a file in the directory.
-	 * @return Array of files.
-	 * Note: Due to the lack of garbage collection the array is always 30 in
-	 * length regardless of the number of files in the directory. The first null
-	 * value in the list indicates the end of the list.
+	 *  Returns a list of files in the flash file system. Because there are no
+	 *  directories, this is a static method in leJOS NXJ. The order of the files
+	 *  in the array goes from oldest (0) to newest (highest index array).
+	 *  
+	 *  @return An array of File objects representing files in the file system.
+	 *  The array will be empty if the directory is empty.
+	 *  
+	 * NOTE: In the Java SDK this method should return an array
+	 * of size equaling the number of files. However, because leJOS has no garbage
+	 * collector it returns the same array that is always 30 in length. The unused
+	 * file spots are null. Use File.totalFiles to determine number of files. 
 	 */
-	static public File[] listFiles() {
-		if(!File.isFormatted())
-			File.format();
-		if(files == null) {
-			// !! update files array with file info 
-			files = new File[MAX_FILES];
-		}
-		Flash.readPage(buff, FILE_TABLE_START);
-		table_pointer = TOTAL_FILES_LOCATION;
-		totalFiles = buff[table_pointer];
+	public static File [] listFiles() {
+		File.readTable(files); // Update files array with actual files.
+		return files;
+	}
+	
+	/**
+	 * Returns the name of the file.
+	 * @return The name of the file, including the file extension. e.g. "mapdata.txt"
+	 * 
+	 */
+	public String getName() {
+		return file_name;
+	}
+	
+	/**
+	 * Returns the length of the file denoted by this file name.
+	 * @return The length, in bytes, of the file denoted by this file name, or 0 if the file does not exist.
+	 */
+	public int length() {
+		return file_length;
+	}
+	
+	/**
+	 * Reads the file information in the table from flash memory and
+	 * stores the information in the array supplied. 
+	 * @param files An array of File objects. When the method returns the
+	 * array will contain File objects for all the files in flash. If a null
+	 * File array is given, it will create a new File array.
+	 */
+	static void readTable(File [] files) { // !! Make private!
+		// Make sure flash has table id:
+		if(!File.tableExists())	File.format();
+		
+		Flash.readPage(buff, TABLE_START_PAGE);
+		// page_pos is the byte position in the page (pointer):
+		short page_pos = NUM_FILES_POS;
+		totalFiles = buff[page_pos]; // update total files value 
 		for(int i=0;i<totalFiles;i++) {
-			short pageLocation = (short)((0xFF & buff[++table_pointer]) | ((0xFF & buff[++table_pointer])<<8)); // !! Possible bug
-			int fileLength = (0xFF & buff[++table_pointer]) | ((0xFF & buff[++table_pointer]) <<8) | ((0xFF & buff[++table_pointer])<<16) | ((0xFF & buff[++table_pointer])<<24); // !! Possible bug
+			short pageLocation = (short)((0xFF & buff[++page_pos]) | ((0xFF & buff[++page_pos])<<8));
+			int fileLength = (0xFF & buff[++page_pos]) | ((0xFF & buff[++page_pos]) <<8) | ((0xFF & buff[++page_pos])<<16) | ((0xFF & buff[++page_pos])<<24);
 			
+			// The following code attempts to reuse String's. If leJOS gets
+			// a garbage collector we can create new strings and reduce this
+			// code. It assumes that if files[i] is NOT null then the filename
+			// is correct. Relies on delete() to adjust file names correctly.
 			if(files[i] == null) {
-				byte nameChars = buff[++table_pointer];
-				for(int j=0;j<nameChars;j++) {
-					charBuff[j] = (char)buff[++table_pointer];
+				byte numChars = buff[++page_pos]; // Size of file name (string length)
+				for(int j=0;j<numChars;j++) {
+					charBuff[j] = (char)buff[++page_pos];
 				}
-				String name = new String(charBuff, 0, nameChars);
+				String name = new String(charBuff, 0, numChars);
 				files[i] = new File(name);
 			}
 			files[i].page_location = pageLocation;
 			files[i].file_length = fileLength;
 		}
-		return files;
 	}
-	
-	public void exec() {
-		Flash.exec(page_location, file_length);
-	}
-	
-	public void delete() {
-		// !! Rewrite file table without this file
-		// !! Auto-defrag?
-	}
-	
-	// Note this currently operates in first page of memory only
-	// Needs to be expanded to handle more files over multiple pages
 	
 	/**
-	 * Creates a new 
-	 * @param size The number of bytes in this file.
+	 * Writes the file data to the table from the files [] array. 
+	 * NOTE: Currently can only use first page of flash to store table! ~ 8 files
+	 * @param files The array containing a list of Files to write to table. 
 	 */
-	public boolean createNewFile(int size) {
+	void writeTable(File [] files) { // !! Make private!
+		short table_pointer = NUM_FILES_POS; // Move pointer to start of table
 		
-		if(exists()) return false;
-		
-		this.file_length = size;
-		
-		// Move table_pointer to first empty table entry:
-		File [] files = listFiles();
-		page_location = FILE_START_PAGE;
-		table_pointer++; // Move to first empty file table location
-		
-		// Find last page used, so next page will be page start
-		// Look at info in last File in listFiles(). Size and page number
-		// indicate first free page.
-		int index = 0;
-		while(files[index+1] != null) {
-			++index;
+		/* 
+		 * NOTE: The code below attempts to reuse File objects in the files 
+		 * array rather than making it null. An unused File object is identified
+		 * as having -999 for the file_length. In effect, -999 is the same as
+		 * having a null value in the files array. If leJOS gets a garbage 
+		 * collector then this code can be reduced. 
+		*/
+		byte arrayIndex = 0;
+		while(files[arrayIndex].file_length != 999 | files[arrayIndex] != null) {
+			// Write page location of file:
+			buff[++table_pointer] = (byte)files[arrayIndex].page_location;
+			buff[++table_pointer] = (byte)(files[arrayIndex].page_location>>8);
+			// Write file size:
+			buff[++table_pointer] = (byte)files[arrayIndex].file_length;
+			buff[++table_pointer] = (byte)(files[arrayIndex].file_length>>8);
+			buff[++table_pointer] = (byte)(files[arrayIndex].file_length>>16);
+			buff[++table_pointer] = (byte)(files[arrayIndex].file_length>>24);
+			// Write length of name:
+			buff[++table_pointer] = (byte)(files[arrayIndex].file_name.length());
+			// Write name:
+			for(int i=0;i<files[arrayIndex].file_name.length();i++) {
+				buff[++table_pointer] = (byte)files[arrayIndex].file_name.charAt(i);
+			}
+			++arrayIndex;
 		}
-		if(files[index] != null) {
-			page_location = files[index].page_location;
-			int fileSize = files[index].file_length;
-			int pages = fileSize / PAGE_SIZE;
-			if(fileSize % PAGE_SIZE != 0) pages++;
-			page_location = (short)(page_location + pages);
-		} else {
-			// !! Store new values here so it's live data?
-		}
-		
-		// Write page location of file:
-		buff[table_pointer] = (byte)page_location;
-		buff[table_pointer + 1] = (byte)(page_location>>8);
-		// Write file size:
-		buff[table_pointer + 2] = (byte)(size);
-		buff[table_pointer + 3] = (byte)(size>>8);
-		buff[table_pointer + 4] = (byte)(size>>16);
-		buff[table_pointer + 5] = (byte)(size>>24);
-		// Write length of name:
-		buff[table_pointer + 6] = (byte)(name.length());
-		// Write name:
-		for(int i=0;i<name.length();i++) {
-			buff[table_pointer + 7 + i] = (byte)name.charAt(i);
-		}
-		// Assign this to files array:
-		files[totalFiles] = this;
-		
-		// Increase file count by one and write to flash
-		buff[TOTAL_FILES_LOCATION] = ++totalFiles;
-		Flash.writePage(buff, FILE_TABLE_START);
-		return true;
+		Flash.writePage(buff, TABLE_START_PAGE);
 	}
 	
 	/**
-	 * "Formats" the flash drive by writing "LEJOS" to the first 5 bytes,
-	 * followed by the number of files in the directory (0 to start with)
+	 * Essentially formats the file system by writing TABLE_ID characters to 
+	 * the first page of flash memroy. Also writes 0 as the number of files
+	 * in the file system, so it can be used to restart/erase all files.
 	 *
 	 */
-	static public void format() {
-		for(int i=0;i<header.length();i++) {
-			buff[i] = (byte)header.charAt(i);
+	private static void format() {
+		// Write TABLE_ID to buff array:
+		for(int i=0;i<TABLE_ID.length();i++) {
+			buff[i] = (byte)TABLE_ID.charAt(i);
 		}
-		buff[header.length()] = 0; // Number of files = 0 when formated
- 		Flash.writePage(buff, FILE_TABLE_START);
+		// Write # of files (0) right after TABLE_ID
+		buff[NUM_FILES_POS] = 0;
+ 		Flash.writePage(buff, TABLE_START_PAGE);
 	}
 	
-	// Compares header with expected header
-	public static boolean isFormatted() {
+	/** 
+	 * Indicates if the flash memory contains a file table.
+	 * Compares header with expected header (TABLE_HEADER) at the 
+	 * start of page 0.
+	 */
+	private static boolean tableExists() {
 		boolean formatted = true;
-		Flash.readPage(buff, FILE_TABLE_START);
-		for(int i=0;i<header.length();i++) {
-			if(buff[i] != header.charAt(i))
+		Flash.readPage(buff, TABLE_START_PAGE);
+		for(int i=0;i<TABLE_ID.length();i++) {
+			if(buff[i] != TABLE_ID.charAt(i))
 				formatted = false;
 		}
 		return formatted; 
-	}
-	
-	public boolean exists() {
-		// Check with 'files' array if a file with this name exists
-		boolean exists = false; 
-		
-		if(files == null)
-			File.listFiles(); // update list
-				
-		for(int i=0;i<File.totalFiles;i++) {
-			if(files[i].name.equals(this.name)) {
-				exists = true;
-			}
-		}
-		return exists;
-	}
-	
-	public static void displayPage(int page, int loc) {
-		int chars_per_line = 16;
-		int rows = 8;
-		Flash.readPage(buff, page);
-		for(int y=0;y<rows;y++) {
-			for(int i=0;i<chars_per_line/4;i++) {
-				lejos.nxt.LCD.drawInt(buff[i + (4 * y) + loc], i*4, y);
-			}
-		}
-		lejos.nxt.LCD.refresh();
 	}
 }
