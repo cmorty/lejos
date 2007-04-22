@@ -11,6 +11,8 @@
 #define EP_OUT	1
 #define EP_IN	2
 
+#define AT91C_PERIPHERAL_ID_UDP		11
+
 #define AT91C_UDP_CSR0  ((AT91_REG *)   0xFFFB0030) 
 #define AT91C_UDP_CSR1  ((AT91_REG *)   0xFFFB0034) 
 #define AT91C_UDP_CSR2  ((AT91_REG *)   0xFFFB0038) 
@@ -21,7 +23,8 @@
 #define AT91C_UDP_FDR2  ((AT91_REG *)   0xFFFB0058) 
 #define AT91C_UDP_FDR3  ((AT91_REG *)   0xFFFB005C) 
 
-static unsigned currentConfig;
+
+static U8 currentConfig;
 static unsigned currentConnection;
 static unsigned currentRxBank;
 static unsigned usbTimeOut;
@@ -106,6 +109,8 @@ static const U8 ld[] = {0x04,0x03,0x09,0x04}; // Language descriptor
       
 extern void udp_isr_entry(void);
 
+static int configured = 0;
+
 static char x4[5];
 static char* hexchars = "0123456789abcdef";
   
@@ -123,8 +128,50 @@ hex4(int i)
 void
 udp_isr_C(void)
 {
-
 }
+
+udp_check_interrupt()
+{
+  if (*AT91C_UDP_ISR & END_OF_BUS_RESET) 
+  { 
+  	//display_goto_xy(0,0);
+  	//display_string("Bus Reset");
+  	//display_update();
+	*AT91C_UDP_ICR = END_OF_BUS_RESET;          
+	*AT91C_UDP_ICR = SUSPEND_RESUME;      
+	*AT91C_UDP_ICR = WAKEUP;              
+    configured = 0;
+	*AT91C_UDP_RSTEP = 0xFFFFFFFF;
+	*AT91C_UDP_RSTEP = 0x0; 
+	currentRxBank = AT91C_UDP_RX_DATA_BK0; 
+	*AT91C_UDP_FADDR = AT91C_UDP_FEN;    
+	*AT91C_UDP_CSR0 = (AT91C_UDP_EPEDS | AT91C_UDP_EPTYPE_CTRL); 
+  }
+  else if (*AT91C_UDP_ISR & SUSPEND_INT)
+  {
+  	//display_goto_xy(0,0);
+  	//display_string("Suspend");
+  	//display_update();
+    if (configured == 1) configured = 2;
+	*AT91C_UDP_ICR = SUSPEND_INT;
+	currentRxBank = AT91C_UDP_RX_DATA_BK0; 
+  }
+  else if (*AT91C_UDP_ISR & SUSPEND_RESUME)
+  {
+  	//display_goto_xy(0,0);
+  	//display_string("Resume");
+  	//display_update();
+    if (configured == 2) configured = 1;
+    *AT91C_UDP_ICR = WAKEUP;
+    *AT91C_UDP_ICR = SUSPEND_RESUME;
+  }
+  else if (*AT91C_UDP_ISR & AT91C_UDP_EPINT0)
+  {
+    *AT91C_UDP_ICR = AT91C_UDP_EPINT0; 
+	udp_enumerate();					
+  } 
+}
+
 
 int
 udp_init(void)
@@ -145,7 +192,7 @@ udp_init(void)
 
   currentConfig = 0;
   currentConnection = 0;
-  currentRxBank = 0;
+  currentRxBank = AT91C_UDP_RX_DATA_BK0;
 
   /*i_state = interrupts_get_and_disable();
 
@@ -153,7 +200,6 @@ udp_init(void)
   aic_set_vector(AT91C_PERIPHERAL_ID_UDP, AIC_INT_LEVEL_NORMAL,
 		 (U32) udp_isr_entry);
   aic_mask_on(AT91C_PERIPHERAL_ID_UDP);
-
 
   if (i_state)
     interrupts_enable(); */
@@ -222,6 +268,8 @@ udp_read(U8* buf, int len)
 {
   int packetSize = 0, i;
   
+  if (udp_configured() != 1) return 0;
+  
   if ((*AT91C_UDP_CSR1) & currentRxBank) // data to read
   {
   	packetSize = (*AT91C_UDP_CSR1) >> 16;
@@ -243,6 +291,8 @@ void
 udp_write(U8* buf, int len)
 {
   int i;
+  
+  if (configured != 1) return;
   
   for(i=0;i<len;i++) *AT91C_UDP_FDR2 = buf[i];
   
@@ -328,27 +378,24 @@ void udp_send_control(U8* p, int len)
 
 }
 
-static int configured = 0;
+
 
 int
 udp_configured()
 {
+  udp_check_interrupt();
+  /*display_goto_xy(0,7);
+  display_int(configured,1);
+  display_update();*/
   return configured;
 }
-
-void
-udp_set_configured(int conf)
-{
-  configured = conf;
-}
-
-static int reqno = 0;
 
 void 
 udp_enumerate()
 {
   U8 bt, br;
   int req, len, ind, val; 
+  short status;
   
   while(!((*AT91C_UDP_CSR0) & AT91C_UDP_RXSETUP)); // Wait for setup
   
@@ -369,6 +416,18 @@ udp_enumerate()
   while ( ((*AT91C_UDP_CSR0)  & AT91C_UDP_RXSETUP)  );
 
   req = br << 8 | bt;
+  
+  /*if (req != 258 && req != 2817 && req != 2304) {
+  	display_goto_xy(0,0);
+    display_string(hex4(req));
+    display_goto_xy(4,0);
+    display_string(hex4(val));
+    display_goto_xy(8,0);
+    display_string(hex4(ind));
+    display_goto_xy(12,0);
+    display_string(hex4(len));
+    display_update();
+  }*/
     
   switch(req)
   {
@@ -378,8 +437,7 @@ udp_enumerate()
         udp_send_control(dd, sizeof(dd));
       }
       else if (val == 0x200) // Configuration descriptor
-      {  
-        systick_wait_ms(100);     
+      {     
         udp_send_control(cfd, (len < sizeof(cfd) ? len : sizeof(cfd)));
         if (len > sizeof(cfd)) udp_send_null();
       }	
@@ -414,58 +472,121 @@ udp_enumerate()
       *AT91C_UDP_FADDR = (AT91C_UDP_FEN | val);            
                                                                    
       *AT91C_UDP_GLBSTATE  = (val) ? AT91C_UDP_FADDEN : 0;
+      
       break;
         
     case STD_SET_CONFIGURATION:
 
       configured = 1;
-      udp_send_null();                            // Signal request processed OK
-      *AT91C_UDP_GLBSTATE  = (val) ? AT91C_UDP_CONFG : AT91C_UDP_FADDEN;           // If wanted configuration != 0
+      currentConfig = val;
+      udp_send_null(); 
+      *AT91C_UDP_GLBSTATE  = (val) ? AT91C_UDP_CONFG : AT91C_UDP_FADDEN;
 
-      *AT91C_UDP_CSR1 = (val) ? (AT91C_UDP_EPEDS | AT91C_UDP_EPTYPE_BULK_OUT) : 0; // Endpoint 1 enabled and set as BULK OUT
-      *AT91C_UDP_CSR2 = (val) ? (AT91C_UDP_EPEDS | AT91C_UDP_EPTYPE_BULK_IN)  : 0; // Endpoint 2 enabled and set as BULK IN
-      *AT91C_UDP_CSR3 = (val) ? (AT91C_UDP_EPTYPE_INT_IN)   : 0;                   // Endpoint 3 disabled and set as INTERRUPT IN
-
-      currentRxBank = AT91C_UDP_RX_DATA_BK0;
-        
+      *AT91C_UDP_CSR1 = (val) ? (AT91C_UDP_EPEDS | AT91C_UDP_EPTYPE_BULK_OUT) : 0; 
+      *AT91C_UDP_CSR2 = (val) ? (AT91C_UDP_EPEDS | AT91C_UDP_EPTYPE_BULK_IN)  : 0;
+      *AT91C_UDP_CSR3 = (val) ? (AT91C_UDP_EPTYPE_INT_IN)   : 0;      
+      
       break;
-        
+      
+    case STD_SET_FEATURE_ENDPOINT:
+
+      ind &= 0x0F;
+
+      if ((val == 0) && ind && (ind <= 3))
+      {
+        switch (ind)
+        {
+          case 1:   
+            (*AT91C_UDP_CSR1) = 0;
+            break;
+          case 2:   
+            (*AT91C_UDP_CSR2) = 0;
+            break;
+          case 3:   
+            (*AT91C_UDP_CSR3) = 0;
+            break;
+        }
+        udp_send_null();
+      }
+      else udp_send_stall();
+      break;
+
+    case STD_CLEAR_FEATURE_ENDPOINT:
+      val &= 0x0F;
+
+      if ((val == 0) && ind && (ind <= 3))
+      {                                             
+        if (ind == 1)
+          (*AT91C_UDP_CSR1) = (AT91C_UDP_EPEDS | AT91C_UDP_EPTYPE_BULK_OUT); 
+        else if (ind == 2)
+          (*AT91C_UDP_CSR2) = (AT91C_UDP_EPEDS | AT91C_UDP_EPTYPE_BULK_IN);
+        else if (ind == 3)
+          (*AT91C_UDP_CSR3) = (AT91C_UDP_EPEDS | AT91C_UDP_EPTYPE_INT_IN); 
+        udp_send_null();
+      }
+      else udp_send_stall();
+
+      break;
+      
+    case STD_GET_CONFIGURATION:                                   
+
+      udp_send_control((U8 *) &(currentConfig), sizeof(currentConfig));
+      break;
+
+    case STD_GET_STATUS_ZERO:
+    
+      status = 0x01; 
+      udp_send_control((U8 *) &status, sizeof(status));
+      break;
+      
+    case STD_GET_STATUS_INTERFACE:
+
+      status = 0;
+      udp_send_control((U8 *) &status, sizeof(status));
+      break;
+
+    case STD_GET_STATUS_ENDPOINT:
+
+      status = 0;
+      ind &= 0x0F;
+
+      if (((*AT91C_UDP_GLBSTATE) & AT91C_UDP_CONFG) && (ind <= 3)) 
+      {
+        switch (ind)
+        {
+          case 1: 
+            status = ((*AT91C_UDP_CSR1) & AT91C_UDP_EPEDS) ? 0 : 1; 
+            break;
+          case 2: 
+            status = ((*AT91C_UDP_CSR2) & AT91C_UDP_EPEDS) ? 0 : 1;
+            break;
+          case 3: 
+            status = ((*AT91C_UDP_CSR3) & AT91C_UDP_EPEDS) ? 0 : 1;
+            break;
+        }
+        udp_send_control((U8 *) &status, sizeof(status));
+      }
+      else if (((*AT91C_UDP_GLBSTATE) & AT91C_UDP_FADDEN) && (ind == 0))
+      {
+        status = ((*AT91C_UDP_CSR0) & AT91C_UDP_EPEDS) ? 0 : 1;
+        udp_send_control((U8 *) &status, sizeof(status));
+      }
+      else udp_send_stall();                                // Illegal request :-(
+
+      break;
+      
+    case STD_SET_INTERFACE:
     case STD_CLEAR_FEATURE_INTERFACE:
       udp_send_null();
       break;
+      
+    case STD_SET_FEATURE_ZERO:
     case STD_CLEAR_FEATURE_ZERO:
     default:
       udp_send_stall();
   } 
 }
-   
-void udp_wait_for_connection()
-{
-  int connected = 0;
-    
-  udp_set_configured(0);
-  
-  while (!udp_configured())
-  {
-    udp_enumerate();
-  }
-   
-  while (!connected)
-  {
-    U8 buf[2];
- 	
-    int i = udp_read(buf,2);
-  	
-    if (i != 0) 
-    {
-	  U8 reply[3];
-	  reply[0] = '\n';
-	  reply[1] = '\r';
-	  udp_write(reply,2);
-	  connected = 1;
-    } 	    
-  }
-}
+
 
 
 
