@@ -4,30 +4,48 @@ import lejos.nxt.Flash;
 
 public class FileOutputStream extends OutputStream {
 
-	int page_pointer;
-	int data_pointer; // Current byte in buff array
-	byte [] buff;
+	/**
+	 * Current page this stream is writing to
+	 */
+	private int page_pointer;
+	
+	/**
+	 * Current byte in *buffer* (buff below) it is writing to
+	 */
+	private int data_pointer;
+	
+	/**
+	 * A buffer of the same size as a page of flash memory.
+	 */
+	private byte [] buff;
+	
+	/**
+	 * File attached to this stream
+	 */
+	File file;
 	
 	public FileOutputStream(File f) {
 		this(f, false);
 	}
 	
-	// !! Haven't implemented append yet
 	public FileOutputStream(File f, boolean append) {
-		buff = new byte[File.PAGE_SIZE];
+		// !! Haven't implemented append yet.
+		// !! Will move page_pointer and data_pointer to end of file
+		// when this is implemented.
+		buff = new byte[File.BYTES_PER_PAGE];
 		page_pointer = f.page_location;
-		data_pointer = 0; // Start of page
+		data_pointer = 0; // Start of first page
+		file = f;
 	}
 	
-	
 	public void write(int b) throws IOException {
+		if(file.page_location < 0) throw new IOException(); // "File has not been created!"
 		buff[data_pointer] = (byte)b;
 		data_pointer++;
-		if(data_pointer >= File.PAGE_SIZE) {
-			// Write to flash
-			flush();
-			// Move to next page
-			page_pointer++;
+		file.file_length++; // !! NOT CORRECT! Only if new file is made. If writing to existing file or append is used, needs to be different!
+		if(data_pointer >= File.BYTES_PER_PAGE) {
+			flush(); // Write to flash
+			page_pointer++; // Move to next page
 			data_pointer = 0;
 		}
 	}
@@ -37,8 +55,10 @@ public class FileOutputStream extends OutputStream {
     }
 	
 	public void close() throws IOException {
+		// !! Alternate implementation: If this is a new file, perhaps only 
+		// write the file table information AFTER close() called so  
+		// incomplete/partial files don't exist.
 		flush();
-		// !! Rewrite total bytes in this file (if it was expanded
-		// while writing) if it is > f.file_length
+		File.writeTable(File.listFiles()); // Updates file size for this file.
 	}
 }

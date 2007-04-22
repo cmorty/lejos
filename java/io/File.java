@@ -21,14 +21,28 @@ public class File {
 	
 	/**
 	 * Signature written to the front of the file table to indicate if the
-	 * flash memory contains file table information.
+	 * flash memory contains file table information. By changing this
+	 * version number/string, the users file system will reformat automatically.
+	 * (i.e. Restarting file system and erasing their current stored classes) 
 	 */
-	private static final String TABLE_ID = "LEJOS";  
+	private static final String TABLE_ID = "V_0.2";  
 	
 	/**
 	 * Indicates the starting page of the file table.
 	 */
 	private static byte TABLE_START_PAGE = 0;
+	
+	/**
+	 *  Number of pages reserved for storing file table information.
+	 *  If we want to allow more files to be stored in system, increase
+	 *  this number. (!! File table data currently only writes to page 0.)
+	 */
+	private static byte FILE_TABLE_PAGES = 2;
+	
+	/**
+	 * First page for storing *file data*.
+	 */
+	private static byte FILE_START_PAGE = (byte)(TABLE_START_PAGE + FILE_TABLE_PAGES); 
 	
 	/**
 	 * The position (order of bytes) where the number of files
@@ -42,7 +56,7 @@ public class File {
 	 * directly from Flash in future from a package level constant in case
 	 * we want to alter this number.
 	 */
-	private static short BYTES_PER_PAGE = 256;
+	protected static short BYTES_PER_PAGE = 256;
 	
 	// GLOBAL STATIC CLASS VARIABLES: 
 	/**
@@ -54,7 +68,7 @@ public class File {
 	/**
 	 * Array containing all the Files in the directory. 
 	 */
-	private static File [] files = new File[MAX_FILES];
+	private static File [] files = null;
 	
 	/**
 	 * The total number of files in the file system. A negative value 
@@ -70,7 +84,7 @@ public class File {
 	private static char [] charBuff = new char[MAX_FILENAME];
 	
 	
-	// INSTANCE VARIABLES (file name, page location of file, file size):
+	// INSTANCE VARIABLES (file name, page location of file, file size, exists):
 	/**
 	 * The name of the file. Initialized in File constructor.
 	 */
@@ -81,34 +95,60 @@ public class File {
 	 * position of the page that they start at.
 	 * Init to -1 to indicate not initialized or does that waste memory?
 	 */
-	short page_location; // !! Make private when done tests!
+	short page_location = -1; // !! Make protected when done tests?
 	
 	/**
 	 * The length, in bytes, of this file according to the file table.
 	 * A file that does not exists is supposed to equal 0. i.e. The Java SDK
 	 * says that it doesn't get written to the file table until it has bytes.
 	 */
-	private int file_length;
+	int file_length; // 0 when not created yet
 	
+	/**
+	 * 
+	 */
+	boolean exists = false;
+	
+	/**
+	 * Creates a new File object. If this file exists on disk it will
+	 * represent that file. If the file does not exist, you will need to
+	 * use createNewFile() before writing to the file.
+	 * @param name
+	 */
 	public File(String name) {
+		this(name, true);
+	}
+	
+	/**
+	 * A private constructor with the option to check if the file_name already 
+	 * exists against the files in the file table. Needed this method because
+	 * the readTable() method created an array of new File objects (hence had
+	 * to call the constructor) but the file list wasn't ready yet so it made
+	 * no sense to check the list. 
+	 * @param name File name
+	 * @param checkExists If true, checks filename against list of files.
+	 */
+	private File(String name, boolean checkExists) {
 		if(!File.tableExists()) File.format();
 		this.file_name = name;
 		
-		/* !! CHECK IF FILE EXISTS!!!
-		 * !! A file that does not exist is supposed to return length() of 0.
-		 * !! But my exists() method might just check length().
-		 * So perhaps this method should just look through names manually to 
-		 * see if it exists, then steal the file_length and page_location vals.
-		if(exists()) {
-			// Assign proper values to this object
-			for(int i=0;i<FileOld.totalFiles;i++) {
-				if(files[i].name.equals(this.name)) {
+		if(files == null) {
+			 files = new File[MAX_FILES];
+			 readTable(files); // Update file data
+		}
+		
+		// Check through file system to see if file with same name exists.
+		if(checkExists) {
+			for(int i=0;i<File.totalFiles;i++) {
+				if(files[i].file_name.equals(this.file_name)) {
 					this.file_length = files[i].file_length;
 					this.page_location = files[i].page_location;
+					this.exists = true;
+					files[i] = this; // Substitute this object in actual array so it remains synchronized.
 				}
 			}
-		}
-		*/
+		} else
+			this.exists = true; // If not checking if it exists, means this was made from readTable, therefore it exists for sure.
 	}
 	
 	/**
@@ -125,7 +165,10 @@ public class File {
 	 * file spots are null. Use File.totalFiles to determine number of files. 
 	 */
 	public static File [] listFiles() {
-		File.readTable(files); // Update files array with actual files.
+		if(files == null) {
+			 files = new File[MAX_FILES];
+			 File.readTable(files); // Update file data
+		}
 		return files;
 	}
 	
@@ -147,21 +190,30 @@ public class File {
 	}
 	
 	/**
+	 * Indicates if the file exists in the flash memory.
+	 * @return True indicates the file exists, false means it has not been created.
+	 */
+	public boolean exists() {
+		return exists;
+	}
+	
+	/**
 	 * Reads the file information in the table from flash memory and
 	 * stores the information in the array supplied. 
 	 * @param files An array of File objects. When the method returns the
 	 * array will contain File objects for all the files in flash. If a null
 	 * File array is given, it will create a new File array.
 	 */
-	static void readTable(File [] files) { // !! Make private!
+	static void readTable(File [] files) { // !! Make private when done tests!
 		// Make sure flash has table id:
 		if(!File.tableExists())	File.format();
 		
 		Flash.readPage(buff, TABLE_START_PAGE);
 		// page_pos is the byte position in the page (pointer):
 		short page_pos = NUM_FILES_POS;
-		totalFiles = buff[page_pos]; // update total files value 
-		for(int i=0;i<totalFiles;i++) {
+		File.totalFiles = buff[page_pos]; // update total files value 
+		
+		for(int i=0;i<File.totalFiles;i++) {
 			short pageLocation = (short)((0xFF & buff[++page_pos]) | ((0xFF & buff[++page_pos])<<8));
 			int fileLength = (0xFF & buff[++page_pos]) | ((0xFF & buff[++page_pos]) <<8) | ((0xFF & buff[++page_pos])<<16) | ((0xFF & buff[++page_pos])<<24);
 			
@@ -171,11 +223,12 @@ public class File {
 			// is correct. Relies on delete() to adjust file names correctly.
 			if(files[i] == null) {
 				byte numChars = buff[++page_pos]; // Size of file name (string length)
+				
 				for(int j=0;j<numChars;j++) {
 					charBuff[j] = (char)buff[++page_pos];
 				}
 				String name = new String(charBuff, 0, numChars);
-				files[i] = new File(name);
+				files[i] = new File(name, false); // Uses private constructor so it doesn't check through file list if it already exists.
 			}
 			files[i].page_location = pageLocation;
 			files[i].file_length = fileLength;
@@ -187,7 +240,7 @@ public class File {
 	 * NOTE: Currently can only use first page of flash to store table! ~ 8 files
 	 * @param files The array containing a list of Files to write to table. 
 	 */
-	void writeTable(File [] files) { // !! Make private!
+	static void writeTable(File [] files) { // !! Make private when done tests!
 		short table_pointer = NUM_FILES_POS; // Move pointer to start of table
 		
 		/* 
@@ -197,24 +250,37 @@ public class File {
 		 * having a null value in the files array. If leJOS gets a garbage 
 		 * collector then this code can be reduced. 
 		*/
+		// !! THERE IS NO USE DOING THIS REUSING CRAP! WHen they create a new
+		// File object it gets added to array anyway. If they delete a file,
+		// just null it from the array. If they hang onto the file instance and 
+		// use createNewFile() after deleting it, that's fine too (just gets
+		// added to array again).
 		byte arrayIndex = 0;
-		while(files[arrayIndex].file_length != 999 | files[arrayIndex] != null) {
-			// Write page location of file:
-			buff[++table_pointer] = (byte)files[arrayIndex].page_location;
-			buff[++table_pointer] = (byte)(files[arrayIndex].page_location>>8);
-			// Write file size:
-			buff[++table_pointer] = (byte)files[arrayIndex].file_length;
-			buff[++table_pointer] = (byte)(files[arrayIndex].file_length>>8);
-			buff[++table_pointer] = (byte)(files[arrayIndex].file_length>>16);
-			buff[++table_pointer] = (byte)(files[arrayIndex].file_length>>24);
-			// Write length of name:
-			buff[++table_pointer] = (byte)(files[arrayIndex].file_name.length());
-			// Write name:
-			for(int i=0;i<files[arrayIndex].file_name.length();i++) {
-				buff[++table_pointer] = (byte)files[arrayIndex].file_name.charAt(i);
+		if(files.length != 0) { // Will throw exception for 0 length unless this checks
+			while(files[arrayIndex] != null) {
+				
+				if(files[arrayIndex].file_length == -999) break;
+				
+				// Write page location of file:
+				buff[++table_pointer] = (byte)files[arrayIndex].page_location;
+				buff[++table_pointer] = (byte)(files[arrayIndex].page_location>>8);
+				// Write file size:
+				buff[++table_pointer] = (byte)files[arrayIndex].file_length;
+				buff[++table_pointer] = (byte)(files[arrayIndex].file_length>>8);
+				buff[++table_pointer] = (byte)(files[arrayIndex].file_length>>16);
+				buff[++table_pointer] = (byte)(files[arrayIndex].file_length>>24);
+				// Write length of name:
+				buff[++table_pointer] = (byte)(files[arrayIndex].file_name.length());
+				// Write name:
+				for(int i=0;i<files[arrayIndex].file_name.length();i++) {
+					buff[++table_pointer] = (byte)files[arrayIndex].file_name.charAt(i);
+				}
+				++arrayIndex;
+				if(arrayIndex >= files.length) break;
 			}
-			++arrayIndex;
 		}
+		buff[NUM_FILES_POS] = arrayIndex; // Update number of files
+		File.totalFiles = arrayIndex; // Update total files in File class?
 		Flash.writePage(buff, TABLE_START_PAGE);
 	}
 	
@@ -232,6 +298,50 @@ public class File {
 		// Write # of files (0) right after TABLE_ID
 		buff[NUM_FILES_POS] = 0;
  		Flash.writePage(buff, TABLE_START_PAGE);
+	}
+	
+	/**
+	 * Creates a new file entry in the flash memory. [?CUT: According to the standard
+	 * Java API, a file of 0 length is not written to the file system. Therefore
+	 * this will only be added to the file system when the first byte is 
+	 * written using FileOutputStream.?]
+	 * @param size The number of bytes in this file.
+	 * @return True indicates file was created in flash. False means it already existed or the size is 0 or less.
+	 */
+	public boolean createNewFile() {
+		/**
+		 * Internally this method updates the page location value and
+		 * adds this file instance to the global array of files.
+		 * It then writes the current files array
+		 * to the file table. It always adds the file to the end
+		 * of the array.
+		 */
+		
+		// !! if(exists()) return false; // Exists in file table
+		
+		if(files == null) {
+			 files = new File[MAX_FILES];
+			 readTable(files); // Update file data
+		}
+		
+		// Calculate start page by looking at last File in array
+		if(File.totalFiles > 0) { // Make sure array not empty
+			this.page_location = files[File.totalFiles - 1].page_location;
+			int prevFileSize = files[File.totalFiles - 1].file_length;
+			if(prevFileSize == 0) prevFileSize = 1; // Kludge to reserve page for empty files.
+			int pages = prevFileSize / BYTES_PER_PAGE;
+			if(prevFileSize % BYTES_PER_PAGE != 0) pages++;
+			this.page_location = (short)(page_location + pages);
+		} else { // If array empty, start writing on first page after table data
+			this.page_location = File.FILE_START_PAGE;
+		}
+		
+		// Add this file to the end of files array.
+		files[File.totalFiles] = this;
+		
+		File.writeTable(files); // Now update actual data table
+		
+		return true;
 	}
 	
 	/** 
