@@ -105,7 +105,7 @@ public class File {
 	int file_length; // 0 when not created yet
 	
 	/**
-	 * 
+	 * Indicates if the file exists as an entry in the file table.
 	 */
 	boolean exists = false;
 	
@@ -139,7 +139,7 @@ public class File {
 		
 		// Check through file system to see if file with same name exists.
 		if(checkExists) {
-			for(int i=0;i<File.totalFiles;i++) {
+			for(byte i=0;i<File.totalFiles;i++) {
 				if(files[i].file_name.equals(this.file_name)) {
 					this.file_length = files[i].file_length;
 					this.page_location = files[i].page_location;
@@ -149,6 +149,41 @@ public class File {
 			}
 		} else
 			this.exists = true; // If not checking if it exists, means this was made from readTable, therefore it exists for sure.
+	}
+	
+	/**
+	 * Deletes the file represented by this File object.
+	 * @return true if the file is successfully deleted; false otherwise
+	 */
+	public boolean delete() {
+		if(!exists()) return false; // Check if file is in file table.
+		// 1. Find where this object is in the files array:
+		byte index = -1;
+		for(byte i=0;i<File.totalFiles;i++) {
+			if(files[i].file_name.equals(this.file_name)) index = i;
+		}
+		// 2. Update File.totalFiles:
+		--File.totalFiles; // One less file
+		// 3. If any files remain after this, shuffle them down.
+		if(files[index + 1] != null) { // Make sure there are files left after this in array
+			// Shuffle array File objects down in array to fill space 
+			for(;index<=File.totalFiles;index++) {
+				files[index] = files[index + 1]; // This should also set last file to null
+			} 
+		}
+		// 3. writeTable() to update table data.
+		File.writeTable(files);
+		// 4. Make this file.exists = false;
+		this.exists = false;
+		return true;
+	}
+	
+	/**
+	 * If the file is a binary executable, begins running it.
+	 *
+	 */
+	public void exec() {
+		Flash.exec(page_location, file_length);
 	}
 	
 	/**

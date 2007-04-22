@@ -36,6 +36,7 @@ public class FileOutputStream extends OutputStream {
 		page_pointer = f.page_location;
 		data_pointer = 0; // Start of first page
 		file = f;
+		// !! When defrag implemented, any FileStream that is open should be locked from defragging.
 	}
 	
 	public void write(int b) throws IOException {
