@@ -191,7 +191,7 @@ nxt_main(int bin, int size)
   	temp = ((unsigned *) (&__free_ram_end__)) - (size >> 2);
   	memcpy(temp,bin,size);
   	binary = (char *) temp;
-  	jsize = size;
+  	jsize = size - 4;
   } else if (__extra_ram_start__ != __extra_ram_end__) {
     // Samba RAM mode
 

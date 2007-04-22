@@ -4,6 +4,7 @@
 #  include "mytypes.h"
 
 void udp_isr_C(void);
+void udp_check_interrupt(void);
 int udp_init(void);
 void udp_close(U32 u);
 void udp_disable(void);
@@ -18,11 +19,13 @@ void udp_send_control(U8* p,int len);
 void udp_send_null(void);
 void udp_send_stall(void);
 int udp_configured(void);
-void udp_set_configured(int conf);
 int udp_read(U8* buf, int len);
-void udp_wait_for_connection(void);
 
 #define   USB_TIMEOUT   0x0BB8 
+#define END_OF_BUS_RESET ((unsigned int) 0x1 << 12)
+#define SUSPEND_INT      ((unsigned int) 0x1 << 8)
+#define SUSPEND_RESUME   ((unsigned int) 0x1 << 9)
+#define WAKEUP           ((unsigned int) 0x1 << 13)
 
 /* USB standard request codes */
 
