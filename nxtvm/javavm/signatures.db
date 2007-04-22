@@ -107,12 +107,13 @@ btStartADConverter()V
 #lejos.nxt.comm.USB
 usbRead([BI)I
 usbWrite([BI)V
-usbWaitForConnection()V
+usbReset()V
 
 #lejos.nxt.Flash
 writePage([BI)V
 readPage([BI)V
 exec(II)V
+
 
 
 
