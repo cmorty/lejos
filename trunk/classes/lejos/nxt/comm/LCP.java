@@ -250,7 +250,7 @@ public class LCP {
 			file = new File(new String(chars,0,filenameLength));
             try {
             	in = new FileInputStream(file);
-            	int size = file.getSize();
+            	int size = file.length();
             	cmd[4] = (byte) (size & 0xFF);
     			cmd[5] = (byte) ((size >> 8) & 0xFF);
     			cmd[6] = (byte) ((size >> 16) & 0xFF);
@@ -274,7 +274,7 @@ public class LCP {
 			size += ((cmd[24] & 0xFF) << 16);
 			size += ((cmd[25] & 0xFF) << 24);
 			// Need check for exists already and current size
-			file.createNewFile(size); 
+			file.createNewFile(); 
 			out = new FileOutputStream(file);
 			
 			len = 4;
