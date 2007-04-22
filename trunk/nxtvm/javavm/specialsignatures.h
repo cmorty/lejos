@@ -62,7 +62,7 @@
 #define btStartADConverter_4_5V 55
 #define usbRead_4_1BI_5I 56
 #define usbWrite_4_1BI_5V 57
-#define usbWaitForConnection_4_5V 58
+#define usbReset_4_5V 58
 #define writePage_4_1BI_5V 59
 #define readPage_4_1BI_5V 60
 #define exec_4II_5V 61
