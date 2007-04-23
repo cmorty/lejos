@@ -352,7 +352,7 @@ public class File {
 		 * of the array.
 		 */
 		
-		// !! if(exists()) return false; // Exists in file table
+		if(exists()) return false; // Exists in file table
 		
 		if(files == null) {
 			 files = new File[MAX_FILES];
