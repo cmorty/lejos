@@ -59,17 +59,26 @@ int main(int argc, char *argv[])
   char reply[32];
   char write_cmd[3];
   char close_cmd[3];
+  char start_cmd[22];
+  char msg_cmd[5];
   int start_base = 0;
+  int farg = 1;
+  int run = 0;
 
-  if (argc != 2)
+  if (argc < 2)
     {
-      printf("Syntax: %s <lejos NXJ binary file>\n"
+      printf("Syntax: %s [-r] <lejos NXJ binary file>\n"
              "\n"
-             "Example: %s Test.bin\n", argv[0], argv[0]);
+             "Example: %s -r Test.bin\n", argv[0], argv[0]);
       exit(1);
     }
 
-  fw_file = argv[1];
+  if (argc >2 && strcmp(argv[1],"-r") == 0) {
+  	farg=2;
+  	run = 1;
+  }
+  
+  fw_file = argv[farg];
 
   NXT_HANDLE_ERR(nxt_init(&nxt), NULL,
                  "Error during library initialization");
@@ -160,6 +169,22 @@ int main(int argc, char *argv[])
   NXT_HANDLE_ERR(nxt_recv_buf(nxt, reply  , 4), nxt,
                   "Error receiving reply from CLOSE");
 
+  if (run) {
+  	start_cmd[0] = 0x80;
+  	start_cmd[1] = 0;
+  	strcpy(&start_cmd[2],&fw_file[start_base]);
+  	NXT_HANDLE_ERR(nxt_send_buf(nxt, start_cmd, 22), nxt,
+                  "Error sending START command");
+  } else {
+  	msg_cmd[0] = 0x80;
+  	msg_cmd[1] = 0x09;
+  	msg_cmd[2] = 0;
+  	msg_cmd[3] = 1;
+  	msg_cmd[4] = 0; 
+  	NXT_HANDLE_ERR(nxt_send_buf(nxt, msg_cmd, 5), nxt,
+                  "Error sending START command");
+  }
+  
   NXT_HANDLE_ERR(nxt_close0(nxt), NULL,
                  "Error while closing connection to NXT");
   return 0;
