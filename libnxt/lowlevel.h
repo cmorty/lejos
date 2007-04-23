@@ -32,6 +32,8 @@ nxt_error_t nxt_init(nxt_t **nxt);
 nxt_error_t nxt_find(nxt_t *nxt);
 nxt_error_t nxt_open(nxt_t *nxt);
 nxt_error_t nxt_close(nxt_t *nxt);
+nxt_error_t nxt_open0(nxt_t *nxt);
+nxt_error_t nxt_close0(nxt_t *nxt);
 int nxt_in_reset_mode(nxt_t *nxt);
 nxt_error_t nxt_send_buf(nxt_t *nxt, char *buf, int len);
 nxt_error_t nxt_send_str(nxt_t *nxt, char *str);
