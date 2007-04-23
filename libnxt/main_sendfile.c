@@ -63,7 +63,7 @@ int main(int argc, char *argv[])
 
   if (argc != 2)
     {
-      printf("Syntax: %s <C program image to write>\n"
+      printf("Syntax: %s <lejos NXJ binary file>\n"
              "\n"
              "Example: %s Test.bin\n", argv[0], argv[0]);
       exit(1);
