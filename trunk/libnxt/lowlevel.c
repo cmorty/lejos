@@ -2,6 +2,7 @@
  * NXT bootstrap interface; low-level USB functions.
  *
  * Copyright 2006 David Anderson <david.anderson@calixo.net>
+ * Modified to work with lejos NXJ by Lawrie Griffiths (lawrie.griffiths@ntlwworld.com)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -136,6 +137,44 @@ nxt_close(nxt_t *nxt)
   return NXT_OK;
 }
 
+// Version of open that works with lejos NXJ firmware.
+// Uses interface zero, and does not send samba N# message
+nxt_error_t
+nxt_open0(nxt_t *nxt)
+{
+  int ret;
+
+  nxt->hdl = usb_open(nxt->dev);
+
+  ret = usb_set_configuration(nxt->hdl, 1);
+
+  if (ret < 0)
+    {
+      usb_close(nxt->hdl);
+      return NXT_CONFIGURATION_ERROR;
+    }
+
+  ret = usb_claim_interface(nxt->hdl, 0);
+
+  if (ret < 0)
+    {
+      usb_close(nxt->hdl);
+      return NXT_IN_USE;
+    }
+
+  return NXT_OK;
+}
+
+// Version of close that uses interface 0
+nxt_error_t
+nxt_close0(nxt_t *nxt)
+{
+  usb_release_interface(nxt->hdl, 0);
+  usb_close(nxt->hdl);
+  free(nxt);
+
+  return NXT_OK;
+}
 
 int
 nxt_in_reset_mode(nxt_t *nxt)
@@ -143,11 +182,11 @@ nxt_in_reset_mode(nxt_t *nxt)
   return nxt->is_in_reset_mode;
 }
 
-
+// Timeout set to 10 seconds for lejos NXJ
 nxt_error_t
 nxt_send_buf(nxt_t *nxt, char *buf, int len)
 {
-  int ret = usb_bulk_write(nxt->hdl, 0x1, buf, len, 1000);
+  int ret = usb_bulk_write(nxt->hdl, 0x1, buf, len, 10000);
   if (ret < 0)
     return NXT_USB_WRITE_ERROR;
 

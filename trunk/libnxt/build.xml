@@ -1,8 +1,8 @@
-<!-- ant file to make libnxt and runjava -->
+<!-- ant file to make libnxt, runjava and sendfile -->
 
 <project name="libnxt" default="make" basedir=".">
 	<property name="endian" value="_NXT_LITTLE_ENDIAN"/>
-	<!-- cpptasks task & type def
+	<!-- cpptasks task & type def 
 	<taskdef resource="cpptasks.tasks">
 	  <classpath>
 	    <pathelement location="../jtools/3rdparty/lib/cpptasks.jar"/>
@@ -25,7 +25,7 @@
 	</target>
 	
 	<!-- make libnxt and its utilities --> 
-	<target name="make" depends="clean,libnxt,runjava" description="makes libnxrt and its tools">
+	<target name="make" depends="clean,libnxt,runjava,sendfile" description="makes libnxrt and its tools">
 	</target>
 
 	<!-- make libnxt --> 
@@ -83,6 +83,33 @@
 					<pathelement location="."/>
 				</includepath>
   				<versioninfo refid="runjava"/>
+  		</cc>
+	</target>
+	
+	<!-- make sendfile --> 
+	<target name="sendfile" description="makes sendfile utility">
+  		<cc subsystem="console" 
+  				outfile="sendfile"
+  				objdir="." 
+  				outtype="executable" 
+  				debug="false"
+  			    exceptions="false"
+  			    rtti="true"
+  			    optimize="speed"
+  				name="gcc">
+  			    <compilerarg value="-Wall"/>
+  			    <compilerarg value="-std=gnu99"/>
+  			    <compilerarg value="-g"/>
+  			    <compilerarg value="-ggdb"/>
+  			    <compilerarg value="-D_NXT_LITTLE_ENDIAN"/>
+  				<fileset dir=".">
+  					<include name="main_sendfile.c"/>
+  				</fileset>
+  				<libset dir="." libs="nxt,usb"/>				
+				<includepath>
+					<pathelement location="."/>
+				</includepath>
+  				<versioninfo refid="sendfile"/>
   		</cc>
 	</target>
 
