@@ -170,11 +170,13 @@ public class File {
 			for(;index<=File.totalFiles;index++) {
 				files[index] = files[index + 1]; // This should also set last file to null
 			} 
-		}
+		} else 
+			files[index] = null;
 		// 3. writeTable() to update table data.
 		File.writeTable(files);
 		// 4. Make this file.exists = false;
 		this.exists = false;
+		this.file_length = 0;
 		return true;
 	}
 	
@@ -325,7 +327,7 @@ public class File {
 	 * in the file system, so it can be used to restart/erase all files.
 	 *
 	 */
-	private static void format() {
+	public static void format() {
 		// Write TABLE_ID to buff array:
 		for(int i=0;i<TABLE_ID.length();i++) {
 			buff[i] = (byte)TABLE_ID.charAt(i);
@@ -392,5 +394,9 @@ public class File {
 				formatted = false;
 		}
 		return formatted; 
+	}
+	
+	public int getPage() {
+		return page_location;
 	}
 }
