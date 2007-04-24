@@ -49,6 +49,11 @@ public class TextMenu  // implements Menu
 	private String _title;
 	
 	/**
+	 * boolean for cause select to quit
+	 */
+	private boolean _quit = false;
+	
+	/**
 	 * This constructor sets the menu size to 8 rows, the top linw is in display row 0
 	 */
 	public TextMenu( String[] items)
@@ -88,11 +93,13 @@ public class TextMenu  // implements Menu
 	{
 		if (_items.length<_size) _size = _items.length;
 		int button = 0;
+		_selectedIndex = 0;
 		display();
-		while(true)
+		while(!_quit)
 		{
-			while(Button.readButtons()>0)Thread.yield();// wait for release
-			while(Button.readButtons()==0) Thread.yield();
+			while(Button.readButtons()>0 && !_quit)Thread.yield();// wait for release
+			while(Button.readButtons()==0 && !_quit) Thread.yield();
+			if (_quit) return -2; // quit by another thread
 			try {Thread.sleep(20);} catch (InterruptedException ie) {} // wait to stabilize
 			button=Button.readButtons();
 			
@@ -114,7 +121,16 @@ public class TextMenu  // implements Menu
 			}
 			display();
 		}
+		return -2;
 	}
+	
+	/**
+	 * method to call from another thread to quit the menu
+	 */
+    public void quit()
+    {
+    	_quit = true;
+    }
 	
 	/**
 	 * helper method used by select()
