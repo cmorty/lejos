@@ -7,33 +7,50 @@ import lejos.nxt.comm.USB;
 public class Menu {
 
 	public static void main(String[] args) throws Exception {
-		File[] files = File.listFiles();
-		
-		int len = 0;
-		for(int i=0;i<files.length && files[i] != null;i++) len++;
-		String[] fileNames = new String[len];
+
 		Indicators ind = new Indicators();
 		USBRespond usb = new USBRespond();
 		String title = "leJOS NXJ";
+		String[] fileMenuData = {"Execute program", "Delete file"}; 
+		TextMenu fileMenu = new TextMenu(fileMenuData, 2 ,1);
+		boolean quit = false;
 		
 		ind.setDaemon(true);
 		ind.start();
 		usb.setDaemon(true);
 		usb.start();
 		
-		LCD.drawString(title,2,0);
-		
-		for(int i=0;i<len;i++) fileNames[i] = files[i].getName();
-		
-		TextMenu menu = new TextMenu(fileNames, 7, 1);
-		
-	    int selection = menu.select();
-	    
-	    if (selection >= 0) {
-	    	LCD.clear();
-	    	LCD.refresh();
-	    	files[selection].exec();
-	    } 
+		while (!quit) {
+			File[] files = File.listFiles();
+			int len = 0;
+			for(int i=0;i<files.length && files[i] != null;i++) len++;
+			String[] fileNames = new String[len];
+			
+			for(int i=0;i<len;i++) fileNames[i] = files[i].getName();
+			
+			TextMenu menu = new TextMenu(fileNames, 7, 1);
+			usb.setMenu(menu);
+			
+			LCD.clear();
+			LCD.drawString(title,2,0);
+			LCD.refresh();
+			
+		    int selection = menu.select();
+		    
+		    if (selection >= 0) {
+				LCD.clear();
+				LCD.drawString(title,2,0);
+				LCD.refresh();
+		    	int subSelection = fileMenu.select();
+		    	if (subSelection == 0) {
+		    		LCD.clear();
+		    		LCD.refresh();
+		    		files[selection].exec();
+		    	} else if (subSelection == 1){
+		    		files[selection].delete();	
+		    	}
+		    } else if (selection == -1) quit = true;
+		}
 	}
 }
 
@@ -55,6 +72,11 @@ class Indicators extends Thread {
 }
 
 class USBRespond extends Thread {
+	TextMenu menu;
+	
+	public void setMenu(TextMenu menu) {
+		this.menu = menu;
+	}
 	
 	public void run() {
 		byte[] buf = new byte[64];
@@ -116,6 +138,7 @@ class USBRespond extends Thread {
 						    out.flush();
 						    out.close();
 						    Sound.beepSequenceUp();
+						    menu.quit(); // Force redisplay of menu
 							replyLen = 4;
 						} else if (buf[1] == (byte) 0x00) { // STARTPROGRAM
 							f.exec();
