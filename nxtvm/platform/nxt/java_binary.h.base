@@ -25,7 +25,7 @@
 /*
  * An array containing all the bits of the flash routine bytecode.
  */
-static char java_binary[] = { ___JAVA_BINARY___ };
+static char __attribute__ ((aligned (8))) java_binary[] = { ___JAVA_BINARY___ };
 
 
 #endif /* __JAVA_BINARY_H__ */
