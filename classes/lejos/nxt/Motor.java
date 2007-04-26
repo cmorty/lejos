@@ -1,5 +1,5 @@
 package lejos.nxt;
-import lejos.nxt.*;
+import lejos.nxt.Battery;
 import lejos.util.*;
 
 
@@ -265,7 +265,7 @@ public class Motor extends BasicMotor implements TimerListener
 		_rampUp = !_noRamp && Math.abs(_stopAngle-getTachoCount())>40 && _speed>200;  //no ramp for small angles
 	if(immediateReturn)return;
   	}
-	while(isMoving()) Thread.yield();
+	while(_rotating) Thread.yield();
   }
 
 /**
@@ -353,14 +353,14 @@ public class Motor extends BasicMotor implements TimerListener
 	  			setPower((int)power);
 	  		}
 	  // stop at rotation limit angle
-			if(_rotating && _direction*(getTachoCount() - _stopAngle)>-1)
+			if(_rotating && _direction*(getTachoCount() - _stopAngle)>0)
 			{
 				if(!_wasRotating)_speed0 = _speed;
 				_mode = 3; // stop motor
 				_port.controlMotor (0, 3);
 				int a = angleAtStop();//returns when motor has stopped
 				int remaining = _limitAngle - a;
-				if(_direction * remaining >0 ) // not yet done
+				if(_direction * remaining >3 ) // not yet done; don't call nudge for less than 3 deg
 				{
 					if(!_wasRotating)// initial call to rotate(); save state variables
 					{
@@ -392,11 +392,13 @@ public class Motor extends BasicMotor implements TimerListener
    */ 
   	private void nudge(int remaining,int tachoCount)
   	{
-  		_stopAngle = tachoCount + remaining/3;
+ 
   		if(remaining>0)_mode = 1;
   		else _mode = 2;	
 	    _port.controlMotor(_power, _mode);
 	    _direction = 3 - 2*_mode;
+ 		_stopAngle = tachoCount + remaining/3;
+ 		if(remaining < 3 && remaining > -3) _stopAngle += _direction; //nudge at least 1 deg
 	    _rotating = true;
 	    _rampUp = false;
 	    _regulate = true;
