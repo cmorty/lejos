@@ -1,4 +1,6 @@
-package lejos.nxt;
+//package lejos.nxt;
+import lejos.nxt.Button;
+import lejos.nxt.LCD;
 
 /**
  *Displays a list of items.  The select() method allows the user to scroll the list using the right and left keys to scroll forward and backward 
@@ -69,6 +71,8 @@ public class TextMenu  // implements Menu
 		this(items);
 		_topRow = topRow;
 		_size = size;
+		if(size + topRow > 8)
+		_size -= _topRow ;
 	}
 	
 	/**
@@ -83,10 +87,29 @@ public class TextMenu  // implements Menu
 	}
 	
 	/**
-	 * Allows the to scroll through the items, using the right and left buttons. The Enter key closes the menu <br>
+	 * set menu title
+	 * @param title  the new title
+	 */
+	public void setTitle(String title) 
+	{
+		_title = title;
+		if(_topRow == 0)_topRow = 1;
+		if(_size > 7)_size = 7;
+	}
+	
+	/**
+	 * set the array of items to be displayed
+	 * @param items
+	 */
+	public void setItems(String[] items)
+	{
+		_items = items;
+	}
+	
+	/**
+	 * Allows the user to scroll through the items, using the right and left buttons (forward and back)  The Enter key closes the menu <br>
 	 * and returns the index of the selected item. <br>
 	 * The menu display wraps items that scroll off the top will reappear on the bottom and vice versa.
-
 	 * @return the index of the selected item
 	 **/
 	public int select()
@@ -108,16 +131,20 @@ public class TextMenu  // implements Menu
 			if(button == 4)//scroll forward
 			{
 				_selectedIndex ++;
-				if(_selectedIndex >= _items.length) _selectedIndex  -= _items.length;				
+				// check for index out of bounds
+				if(_selectedIndex >= _items.length) _selectedIndex -= _items.length;				
 				int diff = _selectedIndex - _topIndex;
-				if(diff  < 0 || diff >= _size)  _topIndex = _selectedIndex +1 - _size;
+				if(diff < 0)diff += _items.length;
+				if(diff >= _size) _topIndex = 1+ _selectedIndex  - _size;
 			}
 			if(button == 2)//scroll backward
 			{
 				_selectedIndex --;
-				if(_selectedIndex<0) _selectedIndex  += _items.length;
+				// check for index out of bounds
+				if(_selectedIndex < 0) _selectedIndex  += _items.length;
 				int diff = _selectedIndex - _topIndex;
-				if(diff  < 0 || diff >= _size)  _topIndex = _selectedIndex;
+				if(diff > _items.length) diff -= _items.length;
+				if(diff < 0 || diff > _size)_topIndex = _selectedIndex;
 			}
 			display();
 		}
@@ -137,14 +164,17 @@ public class TextMenu  // implements Menu
 	 */
 	private  void display()
 	{
-		if(_title != null)LCD.drawString(_title,0,0);
+		if(_title != null)LCD.drawString(_title,0,_topRow-1);
 		for (int i = 0;i<_size;i++)
 		{
 			LCD.drawString(blank,0,i + _topRow);
 			int indx = index(i);
-			if(_items[indx] !=null) LCD.drawString(_items[indx],1,i + _topRow);
+			if(_items[indx] !=null)
+			{
+				LCD.drawString(_items[indx],1,i + _topRow);
+				if(indx == _selectedIndex) LCD.drawString(_selChar,0,i + _topRow);
+			}
 		}
-		LCD.drawString(_selChar,0,_selectedIndex-_topIndex + _topRow);
 		LCD.refresh();
 	}
 	
