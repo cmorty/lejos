@@ -372,12 +372,13 @@ public class File {
 		} else { // If array empty, start writing on first page after table data
 			this.page_location = File.FILE_START_PAGE;
 		}
+	
 		
 		// Add this file to the end of files array.
 		files[File.totalFiles] = this;
 		
 		File.writeTable(files); // Now update actual data table
-		
+		this.exists = true;//file is in the table
 		return true;
 	}
 	
