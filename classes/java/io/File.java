@@ -10,7 +10,7 @@ public class File {
 	 *  Defines the size of the files array. If leJOS gets a garbage
 	 *  collector we can get rid of this limitation.
 	 */
-	private static final byte MAX_FILES = 30;
+	public static final byte MAX_FILES = 30;
 	
 	/**
 	 * Maximum size of file name. Used because no garbage collector.
