@@ -5,61 +5,66 @@ import lejos.nxt.*;
 import lejos.nxt.comm.USB;
 
 public class Menu {
-
+	static boolean update = true;
+    
 	public static void main(String[] args) throws Exception {
 
 		Indicators ind = new Indicators();
 		USBRespond usb = new USBRespond();
-		String title = "leJOS NXJ";
+		String title = " leJOS NXJ";
+		TextMenu menu = new TextMenu(null,1);
 		String[] fileMenuData = {"Execute program", "Delete file"}; 
-		TextMenu fileMenu = new TextMenu(fileMenuData, 2 ,1);
+		TextMenu fileMenu = new TextMenu(fileMenuData,2);
+		String[] fileNames = new String[File.MAX_FILES];
 		boolean quit = false;
-		
 		ind.setDaemon(true);
 		ind.start();
 		usb.setDaemon(true);
 		usb.start();
 		
-		while (!quit) {
+		while (!quit) 
+		{
 			File[] files = File.listFiles();
 			int len = 0;
-			for(int i=0;i<files.length && files[i] != null;i++) len++;
-			String[] fileNames = new String[len];
-			
+			for(int i=0;i<files.length && files[i] != null;i++) len++;		
 			for(int i=0;i<len;i++) fileNames[i] = files[i].getName();
-			
-			TextMenu menu = new TextMenu(fileNames, 7, 1);
+			for(int i = len; fileNames[i] != null && i<files.length;i++)fileNames[i] = null;
+			menu.setItems(fileNames);
 			usb.setMenu(menu);
-			
 			LCD.clear();
 			LCD.drawString(title,2,0);
 			LCD.refresh();
-			
+
 		    int selection = menu.select();
 		    
 		    if (selection >= 0) {
-				LCD.clear();
-				LCD.drawString(title,2,0);
-				LCD.refresh();
+				fileMenu.setTitle(fileNames[selection]);
 		    	int subSelection = fileMenu.select();
-		    	if (subSelection == 0) {
+		    	if (subSelection == 0) 
+		    	{
 		    		LCD.clear();
 		    		LCD.refresh();
 		    		files[selection].exec();
-		    	} else if (subSelection == 1){
-		    		files[selection].delete();	
+		    	} else if (subSelection == 1)
+		    	{
+		    		files[selection].delete();	 
+		    		LCD.clear();
 		    	}
 		    } else if (selection == -1) quit = true;
 		}
 	}
 }
 
-class Indicators extends Thread {
-	public void run() {
+class Indicators extends Thread 
+{
+	public void run() 
+	{
 		String dot = ".";
 		int millis;
-		while(true) {
-			try {
+		while(true) 
+		{
+			try 
+			{
 			  millis = Battery.getVoltageMilliVolt() + 50;
 			  LCD.drawInt((millis - millis%1000)/1000,13,0);
 			  LCD.drawString(dot, 14, 0);
@@ -71,7 +76,8 @@ class Indicators extends Thread {
 	}
 }
 
-class USBRespond extends Thread {
+class USBRespond extends Thread 
+{
 	TextMenu menu;
 	
 	public void setMenu(TextMenu menu) {
@@ -126,8 +132,7 @@ class USBRespond extends Thread {
 							for(int i=0;i<filenameLength;i++) chars[i] = (char) buf[i+2];
 							String fileName = new String(chars,0,filenameLength);
 							f = new File(fileName);
-							if (f.exists()) f.delete();
-							boolean created = f.createNewFile();
+							f.createNewFile();
 	    					bytes = 0;
 							replyLen = 4;
 						} else if (buf[1] == (byte) 0x83) { // WRITE
