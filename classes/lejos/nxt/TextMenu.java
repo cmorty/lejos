@@ -1,17 +1,17 @@
-//package lejos.nxt;
+package lejos.nxt;
 import lejos.nxt.Button;
 import lejos.nxt.LCD;
 
 /**
  *Displays a list of items.  The select() method allows the user to scroll the list using the right and left keys to scroll forward and backward 
- * through the list. The number maximum number of rows, and an optional title can be specified.
+ * through the list. The location of the list , and an optional title can be specified.
  * @author Roger Glassey   Feb 20, 2007
  */
 
-public class TextMenu  // implements Menu 
+public class TextMenu  
 {
 	/**
-	 * index of the list item at the top of the menu; set by constructor, used by select()
+	 * index of the list item at the top of the list; set by constructor, used by select()
  	 **/
 	private int _topIndex = 0;  
 	
@@ -21,12 +21,12 @@ public class TextMenu  // implements Menu
 	private int _selectedIndex = 0;
 	
 	/** 
-	 *	maximum number of rows displayed; set by constructor, used by display()
+	 * number of rows displayed; set by constructor, used by display()
 	 */
 	private int _size = 8;
 	
 	/**
-	 *location of the top row of the menu; set by constructor, used by display()
+	 *location of the top row of the list; set by constructor, used by display()
 	 */
 	private int _topRow = 0;
 	
@@ -46,55 +46,59 @@ public class TextMenu  // implements Menu
 	public static String blank = "                ";
 	
 	/**
-	 *optional menu title displayed in line 0
+	 *optional menu title displayed immediately above the list of items
 	 */
 	private String _title;
 	
 	/**
-	 * boolean for cause select to quit
+	 * boolean to cause select to quit 
 	 */
 	private boolean _quit = false;
 	
 	/**
-	 * This constructor sets the menu size to 8 rows, the top linw is in display row 0
+	 * effective length of items array  - number of items before null 
+	 */
+	private int _length;
+	
+	/**
+	 * This constructor sets location of the top row of the item list to row 0 of the display.
 	 */
 	public TextMenu( String[] items)
 	{
-		_items = items;
+		this.setItems(items);
 	}
 	
 	/**
-	 * This constructor allows specification of the size and top row of the menu.
+	 * This constructor allows specification location of the item list .
 	 */
-	public TextMenu( String[] items, int size, int topRow)
+	public TextMenu( String[] items, int topRow)
 	{
-		this(items);
 		_topRow = topRow;
-		_size = size;
-		if(size + topRow > 8)
-		_size -= _topRow ;
+		this.setItems(items);
 	}
 	
 	/**
-	 * This constuctor allows the specfication of a title (of up to 16 characters) displayed in row 0, and the size of the menu. <br>
-	 * The top row of the menu itself is row 1 of the display
-	 * @param items  -  string array containing the menu items.  Null strings will produce a blank line in the display.
+	 * This constuctor allows the specfication of a title (of up to 16 characters) and the location of the item list <br>
+	 * The title is displayed in the row above the item lise.
+	 * @param items  -  string array containing the menu items. No items beyond the first null will be displayed.
 	 */	
-	public TextMenu(String[] items, int size, String title)
+	public TextMenu(String[] items, int topRow, String title)
 	{
-		this(items,size,1);
 		_title = title;
+		_topRow = topRow;
+		this.setItems(items);
 	}
 	
 	/**
-	 * set menu title
+	 * set menu title. 
 	 * @param title  the new title
 	 */
 	public void setTitle(String title) 
 	{
 		_title = title;
 		if(_topRow == 0)_topRow = 1;
-		if(_size > 7)_size = 7;
+		if(_length <= 8)_size = _length;
+		if(_size > 8 - _topRow) _size = 8 - _topRow;
 	}
 	
 	/**
@@ -104,6 +108,17 @@ public class TextMenu  // implements Menu
 	public void setItems(String[] items)
 	{
 		_items = items;
+		if(items == null) return;
+		int i = 0;
+		while(i < items.length && items[i] != null)i++;
+		_length = i;
+//		LCD.drawInt(_topRow,2,0,7);
+//		LCD.drawInt(_length, 2,5,7 );
+		_size = _length;
+		if(_size > 8 - _topRow) _size = 8 - _topRow;
+//		LCD.drawInt(_size,2,9,7);
+		_quit = false;
+		_topIndex = 0;
 	}
 	
 	/**
@@ -114,9 +129,10 @@ public class TextMenu  // implements Menu
 	 **/
 	public int select()
 	{
-		if (_items.length<_size) _size = _items.length;
+//		if (_length<_size) _size = _length;
 		int button = 0;
 		_selectedIndex = 0;
+//		LCD.clear();
 		display();
 		while(!_quit)
 		{
@@ -132,18 +148,18 @@ public class TextMenu  // implements Menu
 			{
 				_selectedIndex ++;
 				// check for index out of bounds
-				if(_selectedIndex >= _items.length) _selectedIndex -= _items.length;				
+				if(_selectedIndex >= _length) _selectedIndex -= _length;				
 				int diff = _selectedIndex - _topIndex;
-				if(diff < 0)diff += _items.length;
+				if(diff < 0)diff += _length;
 				if(diff >= _size) _topIndex = 1+ _selectedIndex  - _size;
 			}
 			if(button == 2)//scroll backward
 			{
 				_selectedIndex --;
 				// check for index out of bounds
-				if(_selectedIndex < 0) _selectedIndex  += _items.length;
+				if(_selectedIndex < 0) _selectedIndex  += _length;
 				int diff = _selectedIndex - _topIndex;
-				if(diff > _items.length) diff -= _items.length;
+				if(diff > _length) diff -= _length;
 				if(diff < 0 || diff > _size)_topIndex = _selectedIndex;
 			}
 			display();
@@ -184,7 +200,7 @@ public class TextMenu  // implements Menu
 	 */
 	private int index(int row)
 	{
-		return (_topIndex + row + _items.length)%_items.length;
+		return (_topIndex + row + _length)%_length;
 	}
 	
 }
