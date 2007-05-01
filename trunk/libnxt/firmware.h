@@ -25,7 +25,7 @@
 #include "error.h"
 #include "lowlevel.h"
 
-nxt_error_t nxt_firmware_flash(nxt_t *nxt, char *fw_path);
-nxt_error_t nxt_firmware_validate(char *fw_path);
+nxt_error_t nxt_firmware_flash(nxt_t *nxt, char *fw_path, int start_page, int num_pages, int unlock, int write_len);
+nxt_error_t nxt_firmware_validate(char *fw_path, int max_pages);
 
 #endif /* __FLASH_H__ */

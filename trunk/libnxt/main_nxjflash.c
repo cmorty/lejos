@@ -1,9 +1,9 @@
 /**
- * Main program code for the fwflash utility.
+ * Main program code for the nxjflash utility.
  *
  * Copyright 2006 David Anderson <david.anderson@calixo.net>
- * Modified 2007 by Lawrie Griffiths <lawrie.griffiths@ntlworld.com> 
- * to support lejos NXJ firmware flashing.
+ * Modified 2007 by Lawrie Griffiths <lawrie.griffiths@ntlworld.com>
+ * to flash nxj firmware and Java menu
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -29,7 +29,8 @@
 #include "samba.h"
 #include "firmware.h"
 
-#define MAX_PAGES 1024
+#define MAX_VM_PAGES 128
+#define MAX_MENU_PAGES 64
 
 #define NXT_HANDLE_ERR(expr, nxt, msg)     \
   do {                                     \
@@ -50,22 +51,29 @@ int main(int argc, char *argv[])
 {
   nxt_t *nxt;
   nxt_error_t err;
-  char *fw_file;
+  char *fw_file, *menu_file;
 
-  if (argc != 2)
+  if (argc != 3)
     {
-      printf("Syntax: %s <firmware image to write>\n"
+      printf("Syntax: %s <VM binary> <java menu binary>\n"
              "\n"
-             "Example: %s nxtos.bin\n", argv[0], argv[0]);
+             "Example: %s lejos_nxt_rom.bin Menu.bin\n", argv[0], argv[0]);
       exit(1);
     }
 
   fw_file = argv[1];
 
-  printf("Checking firmware... ");
-  NXT_HANDLE_ERR(nxt_firmware_validate(fw_file, MAX_PAGES * 256), NULL,
-                 "Error");
-  printf("OK.\n");
+  printf("Checking VM... ");
+  NXT_HANDLE_ERR(nxt_firmware_validate(fw_file, MAX_VM_PAGES * 256), NULL,
+                 "Error in VM file");
+  printf("VM OK.\n");
+  
+  menu_file = argv[2];
+  
+  printf("Checking Menu... ");
+  NXT_HANDLE_ERR(nxt_firmware_validate(menu_file, (MAX_MENU_PAGES * 256) - 4), NULL,
+                 "Error in Menu file");
+  printf("Menu OK.\n");
 
   NXT_HANDLE_ERR(nxt_init(&nxt), NULL,
                  "Error during library initialization");
@@ -90,11 +98,18 @@ int main(int argc, char *argv[])
   NXT_HANDLE_ERR(nxt_open(nxt), NULL, "Error while connecting to NXT");
 
   printf("NXT device in reset mode located and opened.\n"
-         "Starting firmware flash procedure now...\n");
+         "Starting VM flash procedure now...\n");
 
-  NXT_HANDLE_ERR(nxt_firmware_flash(nxt, fw_file, 0, MAX_PAGES, 1, 0), nxt,
-                 "Error flashing firmware");
-  printf("Firmware flash complete.\n");
+  NXT_HANDLE_ERR(nxt_firmware_flash(nxt, fw_file, 0, MAX_VM_PAGES, 1, 0), nxt,
+                 "Error flashing VM");
+  printf("VM flash complete.\n");
+
+  printf("Starting menu flash procedure now...\n");
+  
+  NXT_HANDLE_ERR(nxt_firmware_flash(nxt, menu_file, MAX_VM_PAGES, MAX_MENU_PAGES, 0, 1), nxt,
+                 "Error flashing menu");
+  printf("Menu flash complete.\n");
+  
   NXT_HANDLE_ERR(nxt_jump(nxt, 0x00100000), nxt,
                  "Error booting new firmware");
   printf("New firmware started!\n");

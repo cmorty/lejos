@@ -57,7 +57,6 @@
 <target name="default" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>scons</buildCommand>
 <buildArguments></buildArguments>
-<buildTarget></buildTarget>
 <stopOnError>false</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>

@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<history>
+   <processor signature="gcc noversion nomachine-Wall -std=gnu99 -g -ggdb -D_NXT_LITTLE_ENDIAN -c -Os -I.">
+      <target file="main_runjava.o" lastModified="1121dbf7248">
+         <source file="main_runjava.c" lastModified="10fb3da4760"/>
+      </target>
+      <target file="samba.o" lastModified="1121dbf6e60">
+         <source file="samba.c" lastModified="10e9fb1f1a8"/>
+      </target>
+      <target file="main_sendfile.o" lastModified="1121dbf7248">
+         <source file="main_sendfile.c" lastModified="1121dbf2040"/>
+      </target>
+      <target file="firmware.o" lastModified="1121dbf7248">
+         <source file="firmware.c" lastModified="10e9fb1f1a8"/>
+      </target>
+      <target file="lowlevel.o" lastModified="1121dbf6e60">
+         <source file="lowlevel.c" lastModified="1121db8dac8"/>
+      </target>
+      <target file="flash.o" lastModified="1121dbf6e60">
+         <source file="flash.c" lastModified="10e9fb1f1a8"/>
+      </target>
+      <target file="error.o" lastModified="1121dbf6e60">
+         <source file="error.c" lastModified="10e9fb1f1a8"/>
+      </target>
+   </processor>
+   <processor signature="gcc -L/home/lawrie/workspace/libnxt -lnxt -lusb">
+      <target file="runjava" lastModified="1121dbf7248">
+         <source file="libnxt.a" lastModified="1121dbf7248"/>
+         <source file="main_runjava.o" lastModified="1121dbf7248"/>
+      </target>
+      <target file="sendfile" lastModified="1121dbf7248">
+         <source file="libnxt.a" lastModified="1121dbf7248"/>
+         <source file="main_sendfile.o" lastModified="1121dbf7248"/>
+      </target>
+   </processor>
+   <processor signature="ar">
+      <target file="libnxt.a" lastModified="1121dbf7248">
+         <source file="samba.o" lastModified="1121dbf6e60"/>
+         <source file="flash.o" lastModified="1121dbf6e60"/>
+         <source file="error.o" lastModified="1121dbf6e60"/>
+         <source file="lowlevel.o" lastModified="1121dbf6e60"/>
+         <source file="firmware.o" lastModified="1121dbf7248"/>
+      </target>
+   </processor>
+</history>
