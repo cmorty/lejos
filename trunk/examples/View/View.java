@@ -21,20 +21,20 @@ public class View {
 		
 	    String[] viewItems = {"System", "Sensors", "Motors", "Exit"};
 	    
-		TextMenu main = new TextMenu(viewItems, 7, "View Example");
+		TextMenu main = new TextMenu(viewItems, 1, "View Example");
 		
 		String[] sensorItems = {"Touch","Light(Floodlit)","Light(Ambient)","Sound DB","Sound DBA","RCX Light","Ultrasonic"};
 		
-		TextMenu pickSensor = new TextMenu(sensorItems, 7, "Pick Sensor");
+		TextMenu pickSensor = new TextMenu(sensorItems, 1, "Pick Sensor");
 		
 		String[] sensorPorts = {"S1","S2","S3","S4"};
-		TextMenu pickSensorPort = new TextMenu(sensorPorts, 7, "Pick Port");
+		TextMenu pickSensorPort = new TextMenu(sensorPorts, 1, "Pick Port");
 
 		String[] motors = {"A","B","C","A&B","A&C","B&C"};
-		TextMenu pickMotor = new TextMenu(motors,7,"Pick Motor");
+		TextMenu pickMotor = new TextMenu(motors,1,"Pick Motor");
 		
 		String[] motorMethods = {"forward","backward","flt","stop"};
-		TextMenu operation = new TextMenu(motorMethods, 7, "Pick option");
+		TextMenu operation = new TextMenu(motorMethods, 1, "Pick option");
 		
 		int selection;
 		
