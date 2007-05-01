@@ -24,7 +24,7 @@
 #include "poll.h"
 #include "sensors.h"
 #include "platform_hooks.h"
-#include "java_binary.h"
+//#include "java_binary.h"
 
 #include "nxt_avr.h"
 #include "nxt_lcd.h"
@@ -183,7 +183,7 @@ int
 nxt_main(int bin, int size)
 {
   int jsize = 0;
-  const char *binary = java_binary;
+  const char *binary; // = java_binary;
   unsigned *temp;
 
   if (bin > 0) {
@@ -192,12 +192,20 @@ nxt_main(int bin, int size)
   	memcpy(temp,bin,size);
   	binary = (char *) temp;
   	jsize = size - 4;
-  } else if (__extra_ram_start__ != __extra_ram_end__) {
-    // Samba RAM mode
+  } else {
+    // Execute flash menu
 
-    temp = ((unsigned *) (&__free_ram_end__)) - 1;
-    jsize = *temp;
-    binary = ((char *) temp) - jsize;
+    bin = (unsigned *) 0x00108000;
+    size = *((unsigned *) 0x0010bffc);
+    //display_goto_xy(0,0);
+    //display_int(size,0);
+    //display_update();
+    //while(1);
+    size = (size + 3) & ~3;
+    temp = ((unsigned *) (&__free_ram_end__)) - (size >> 2);   
+    memcpy(temp,bin,size);
+    binary = ((char *) temp);
+    jsize = size - 4;
   }
 
   init_sensors();
@@ -266,7 +274,7 @@ xx_show(void)
   show_splash(3000);
 
   /* set up power for ultrasonic sensor on port 1 (port 0 here )*/  
-  nxt_avr_set_input_power(0,2);
+  nxt_avr_set_input_power(0,1);
   i2c_enable(0);
                         
   while (1) {
