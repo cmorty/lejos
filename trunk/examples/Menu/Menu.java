@@ -33,11 +33,12 @@ public class Menu {
 			usb.setMenu(menu);
 			LCD.clear();
 			LCD.drawString(title,2,0);
-			LCD.refresh();
 
 		    int selection = menu.select();
 		    
 		    if (selection >= 0) {
+		    	LCD.clear();
+		    	LCD.drawString(title,2,0);
 				fileMenu.setTitle(fileNames[selection]);
 		    	int subSelection = fileMenu.select();
 		    	if (subSelection == 0) 
@@ -48,7 +49,6 @@ public class Menu {
 		    	} else if (subSelection == 1)
 		    	{
 		    		files[selection].delete();	 
-		    		LCD.clear();
 		    	}
 		    } else if (selection == -1) quit = true;
 		}
@@ -66,9 +66,9 @@ class Indicators extends Thread
 			try 
 			{
 			  millis = Battery.getVoltageMilliVolt() + 50;
-			  LCD.drawInt((millis - millis%1000)/1000,13,0);
+			  LCD.drawInt(millis/1000,13,0);
 			  LCD.drawString(dot, 14, 0);
-			  LCD.drawInt((millis% 1000)/100,15,0);
+			  LCD.drawInt((millis%1000)/100,15,0);
 			  LCD.refresh();
 			  Thread.sleep(1000);
 			} catch (InterruptedException ie) {}
@@ -132,6 +132,7 @@ class USBRespond extends Thread
 							for(int i=0;i<filenameLength;i++) chars[i] = (char) buf[i+2];
 							String fileName = new String(chars,0,filenameLength);
 							f = new File(fileName);
+							if (f.exists()) f.delete();
 							f.createNewFile();
 	    					bytes = 0;
 							replyLen = 4;
