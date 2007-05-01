@@ -82,12 +82,12 @@ continue_boot:
 
 @   MC_FMR:
 @   Set up flash memory accessing and memory for 48 MHz FMCN = 50)
-@   1 wait state (FWS = 0)
+@   2 wait states (FWS = 1)
 @   No special flags
 @
 
 	ldr r0,=0xFFFFFF60
-	ldr r1,=((50 << 16) | (0 << 8))
+	ldr r1,=((50 << 16) | (1 << 8))
 	str r1,[r0]
 
 @
