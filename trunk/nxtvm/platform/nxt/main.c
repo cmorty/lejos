@@ -183,7 +183,7 @@ int
 nxt_main(int bin, int size)
 {
   int jsize = 0;
-  const char *binary; // = java_binary;
+  const char *binary; 
   unsigned *temp;
 
   if (bin > 0) {
@@ -197,10 +197,6 @@ nxt_main(int bin, int size)
 
     bin = (unsigned *) 0x00108000;
     size = *((unsigned *) 0x0010bffc);
-    //display_goto_xy(0,0);
-    //display_int(size,0);
-    //display_update();
-    //while(1);
     size = (size + 3) & ~3;
     temp = ((unsigned *) (&__free_ram_end__)) - (size >> 2);   
     memcpy(temp,bin,size);
@@ -406,13 +402,13 @@ main(void)
   
   show_splash(3000);    
  
-  display_clear(1);
-  
   gNextProgram = 0;
   do 
   {
   	int next = gNextProgram;
   	gNextProgram = 0;
+  	 
+    display_clear(1);
   	nxt_main(next, gNextProgramSize);
   }
   while (gNextProgram != 0);
