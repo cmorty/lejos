@@ -21,6 +21,7 @@ public class LCP {
     static File file = null;
     static FileOutputStream out = null;
     static FileInputStream in = null;
+    static int numFiles;
 	
 	private LCP()
 	{		
@@ -46,12 +47,7 @@ public class LCP {
 			for(int i=0;i<20 && cmd[i+2] != 0;i++) filenameLength++;
 			char[] chars = new char[filenameLength];
 			for(int i=0;i<filenameLength;i++) chars[i] = (char) cmd[i+2];
-			chars[filenameLength-3] = 'b';
-			chars[filenameLength-2] = 'i';
-			chars[filenameLength-1] = 'n';
 			currentProgram = new String(chars,0,filenameLength);
-			//lejos.nxt.LCD.drawString(currentProgram,0,6);
-			//lejos.nxt.LCD.refresh();
 			if (fileNames != null) {
 				for(int i=0;i<fileNames.length;i++) {
 					if (currentProgram.equals(fileNames[i])) {
@@ -273,8 +269,10 @@ public class LCP {
 			size += ((cmd[23] & 0xFF) << 8);
 			size += ((cmd[24] & 0xFF) << 16);
 			size += ((cmd[25] & 0xFF) << 24);
-			// Need check for exists already and current size
-			file.createNewFile(); 
+			if (file.exists()) file.delete();	
+			file.createNewFile();
+			fileNames = new String[++numFiles];
+			for(int j=0;j<numFiles;j++) fileNames[j] = files[j].getName();
 			out = new FileOutputStream(file);
 			
 			len = 4;
@@ -304,7 +302,7 @@ public class LCP {
 		{
 			files = File.listFiles();
 			
-			int numFiles = 0;
+			numFiles = 0;
 			for(int i=0;i<files.length && files[i] != null;i++) numFiles++;
 			if (numFiles == 0)
 			{
@@ -316,6 +314,11 @@ public class LCP {
 				for(int i=0;i<numFiles;i++) fileNames[i] = files[i].getName();
 				for(int i=0;i<fileNames[0].length();i++) reply[4+i] = (byte) fileNames[0].charAt(i);
 				fileIdx = 1;
+            	int size = files[0].length();
+            	reply[24] = (byte) (size & 0xFF);
+    			reply[25] = (byte) ((size >> 8) & 0xFF);
+    			reply[26] = (byte) ((size >> 16) & 0xFF);
+    			reply[27] = (byte) ((size >> 24) & 0xFF);  
 			}
 			
 			len = 28;
@@ -328,6 +331,11 @@ public class LCP {
 			else
 			{
 				for(int i=0;i<fileNames[fileIdx].length();i++) reply[4+i] = (byte) fileNames[fileIdx].charAt(i);
+            	int size = files[fileIdx].length();
+            	reply[24] = (byte) (size & 0xFF);
+    			reply[25] = (byte) ((size >> 8) & 0xFF);
+    			reply[26] = (byte) ((size >> 16) & 0xFF);
+    			reply[27] = (byte) ((size >> 24) & 0xFF);
 				fileIdx++;
 			}
 			len = 28;
@@ -357,6 +365,32 @@ public class LCP {
 			reply[4] = (byte) (dataLen &0xFF);
 			reply[5] = (byte) ((dataLen >> 8) & 0xFF);
 			len = 6;
+		}
+		
+		// DELETE
+		if (cmd[1] == (byte) 0x85)
+		{
+			int filenameLength = 0;
+			boolean deleted = false;
+			len = 23;
+			for(int i=0;i<20 && cmd[i+2] != 0;i++) filenameLength++;
+			char[] chars = new char[filenameLength];
+			for(int i=0;i<filenameLength;i++) chars[i] = (char) cmd[i+2];
+			String fileName = new String(chars,0,filenameLength);
+			if (fileNames != null) {
+				for(int i=0;i<fileNames.length;i++) {
+					if (fileName.equals(fileNames[i])) {
+						files[i].delete();
+						for(int j=0;j<filenameLength;j++) reply[j+3] = (byte) chars[j];
+						deleted = true;
+						numFiles --;
+						fileNames = new String[numFiles];
+						for(int j=0;j<numFiles;j++) fileNames[j] = files[j].getName();
+						break;
+					}
+				}
+			}
+			if (!deleted) reply[2] = (byte) 0x86;
 		}
 		
 		// CLOSE
