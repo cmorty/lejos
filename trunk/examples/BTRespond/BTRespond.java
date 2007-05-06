@@ -27,7 +27,11 @@ public class BTRespond {
 			
 			if (len > 0)
 			{
-				LCD.drawInt(inMsg[1] & 0xFF,3,0,1);
+				LCD.drawInt(len,3,0,1);
+				LCD.drawInt(inMsg[0] & 0xFF,3,3,1);
+				LCD.drawInt(inMsg[1] & 0xFF,3,6,1);
+				LCD.drawInt(inMsg[2] & 0xFF,3,9,1);
+				LCD.drawInt(inMsg[3] & 0xFF,3,12,1);
 				LCD.refresh();
 				LCP.emulateCommand(inMsg,len);
 				if (inMsg[1] == 0x09)
