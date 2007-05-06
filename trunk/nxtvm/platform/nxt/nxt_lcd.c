@@ -153,7 +153,8 @@ nxt_lcd_power_up(void)
 void
 nxt_lcd_init(void)
 {
-
+  systick_wait_ms(1000);
+  
   nxt_spi_init();
 
   nxt_lcd_power_up();
