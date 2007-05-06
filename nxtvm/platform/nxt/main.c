@@ -397,10 +397,10 @@ main(void)
   systick_init();
   sound_init();
   nxt_avr_init();
-  display_init();
   nxt_motor_init();
   i2c_init();
   bt_init();
+  display_init();
     
   //xx_show();
   
