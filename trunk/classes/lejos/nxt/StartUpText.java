@@ -40,12 +40,14 @@ public class StartUpText {
 		    int selection = menu.select();
 		    
 		    if (selection >= 0) {
+				LCD.clear();
+				LCD.drawString(title,6,0);
+			    LCD.drawInt( (int)(Runtime.getRuntime().freeMemory()),0,0);
+				LCD.refresh();
 				fileMenu.setTitle(fileNames[selection]);
 		    	int subSelection = fileMenu.select();
 		    	if (subSelection == 0) 
 		    	{
-		    		LCD.clear();
-		    		LCD.refresh();
 		    		files[selection].exec();
 		    	} else if (subSelection == 1)
 		    	{
