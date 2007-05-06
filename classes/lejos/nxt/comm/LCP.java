@@ -269,7 +269,10 @@ public class LCP {
 			size += ((cmd[23] & 0xFF) << 8);
 			size += ((cmd[24] & 0xFF) << 16);
 			size += ((cmd[25] & 0xFF) << 24);
-			if (file.exists()) file.delete();	
+			if (file.exists()) {
+				file.delete();
+				numFiles--;
+			}
 			file.createNewFile();
 			fileNames = new String[++numFiles];
 			for(int j=0;j<numFiles;j++) fileNames[j] = files[j].getName();
