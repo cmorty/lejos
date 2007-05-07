@@ -137,6 +137,7 @@ class USBRespond extends Thread
 							for(int i=0;i<filenameLength;i++) chars[i] = (char) buf[i+2];
 							String fileName = new String(chars,0,filenameLength);
 							f = new File(fileName);
+							if (f.exists()) f.delete();
 							f.createNewFile();
 	    					bytes = 0;
 							replyLen = 4;
