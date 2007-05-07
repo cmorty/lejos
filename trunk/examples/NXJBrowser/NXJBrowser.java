@@ -1,4 +1,3 @@
-
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.table.*;
@@ -56,7 +55,7 @@ public class NXJBrowser {
     table.addMouseListener(new JTableButtonMouseListener(table));
 
     final JScrollPane tablePane = new JScrollPane(table);
-    tablePane.setPreferredSize(new Dimension(555, 500));
+    tablePane.setPreferredSize(new Dimension(640, 500));
 
     frame.getContentPane().add(tablePane, BorderLayout.CENTER);
 
@@ -181,11 +180,16 @@ public class NXJBrowser {
       out.close();
     } catch (IOException ioe) {}
   }
+
+  public static void runProgram(String fileName) {
+    nxtCommand.startProgram(fileName);
+  }
 }
 
 
 class FileModel extends AbstractTableModel {
-  String[] columnNames = {"File","Size", "Delete", "Download"};
+  private static final String[] columnNames = {"File","Size", "Delete", "Download", "Run"};
+  private static final int NUM_COLUMNS = 5;
 
   Object[][] fileData;
   int numFiles;
@@ -199,21 +203,23 @@ class FileModel extends AbstractTableModel {
   public void setData(FileInfo[] files, int numFiles) {
     this.numFiles = numFiles;
 
-    fileData = new Object[30][4];
+    fileData = new Object[30][NUM_COLUMNS];
 
     for(int i=0;i<numFiles;i++) {
       fileData[i][0]  = files[i].fileName;
       fileData[i][1] = new Integer(files[i].fileSize);
       fileData[i][2] = new Boolean(false);
       fileData[i][3] = new JButton("Download");
+      fileData[i][4] = new JButton("Run");
 
-      JButton button = (JButton) fileData[i][3];
+      JButton downloadButton = (JButton) fileData[i][3];
+      JButton runButton = (JButton) fileData[i][4];
 
       final int row = i;
       final String fileName = files[i].fileName;
       final int size = files[i].fileSize;
 
-      button.addMouseListener(new MouseAdapter() {
+      downloadButton.addMouseListener(new MouseAdapter() {
         public void mouseClicked(MouseEvent e) {
           JFileChooser fc = new JFileChooser();
 	  int returnVal = fc.showSaveDialog(frame);
@@ -221,6 +227,12 @@ class FileModel extends AbstractTableModel {
             File file = fc.getSelectedFile();
             NXJBrowser.getFile(file, fileName, size);
           }
+        }
+      });
+
+      runButton.addMouseListener(new MouseAdapter() {
+        public void mouseClicked(MouseEvent e) {
+          NXJBrowser.runProgram(fileName);
         }
       });
     }
@@ -238,7 +250,7 @@ class FileModel extends AbstractTableModel {
   }
 
   public int getColumnCount() {
-    return 4;
+    return NUM_COLUMNS;
   }
 
   public Object getValueAt(int row, int column) {
@@ -342,4 +354,3 @@ class JTableButtonMouseListener implements MouseListener {
     
 
   
-
