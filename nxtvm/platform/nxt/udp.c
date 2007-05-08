@@ -23,7 +23,6 @@
 #define AT91C_UDP_FDR2  ((AT91_REG *)   0xFFFB0058) 
 #define AT91C_UDP_FDR3  ((AT91_REG *)   0xFFFB005C) 
 
-
 static U8 currentConfig;
 static unsigned currentConnection;
 static unsigned currentRxBank;
@@ -141,9 +140,10 @@ udp_check_interrupt()
 	*AT91C_UDP_ICR = SUSPEND_RESUME;      
 	*AT91C_UDP_ICR = WAKEUP;              
     configured = 0;
+    currentConfig = 0;
 	*AT91C_UDP_RSTEP = 0xFFFFFFFF;
 	*AT91C_UDP_RSTEP = 0x0; 
-	currentRxBank = AT91C_UDP_RX_DATA_BK0; 
+	currentRxBank = AT91C_UDP_RX_DATA_BK0;
 	*AT91C_UDP_FADDR = AT91C_UDP_FEN;    
 	*AT91C_UDP_CSR0 = (AT91C_UDP_EPEDS | AT91C_UDP_EPTYPE_CTRL); 
   }
@@ -153,8 +153,9 @@ udp_check_interrupt()
   	//display_string("Suspend");
   	//display_update();
     if (configured == 1) configured = 2;
+    else configured = 0;
 	*AT91C_UDP_ICR = SUSPEND_INT;
-	currentRxBank = AT91C_UDP_RX_DATA_BK0; 
+	currentRxBank = AT91C_UDP_RX_DATA_BK0;
   }
   else if (*AT91C_UDP_ISR & SUSPEND_RESUME)
   {
@@ -162,6 +163,7 @@ udp_check_interrupt()
   	//display_string("Resume");
   	//display_update();
     if (configured == 2) configured = 1;
+    else configured = 0;
     *AT91C_UDP_ICR = WAKEUP;
     *AT91C_UDP_ICR = SUSPEND_RESUME;
   }
@@ -171,7 +173,6 @@ udp_check_interrupt()
 	udp_enumerate();					
   } 
 }
-
 
 int
 udp_init(void)
@@ -279,10 +280,11 @@ udp_read(U8* buf, int len)
   	
   	*AT91C_UDP_CSR1 &= ~(currentRxBank);	
 
-    if (currentRxBank == AT91C_UDP_RX_DATA_BK0)	
+    if (currentRxBank == AT91C_UDP_RX_DATA_BK0) {	
       currentRxBank = AT91C_UDP_RX_DATA_BK1;
-    else
+    } else {
       currentRxBank = AT91C_UDP_RX_DATA_BK0;
+    }
   }
   return packetSize;
 }
@@ -301,7 +303,7 @@ udp_write(U8* buf, int len)
   udp_reset_timeout();
   
   while ( !((*AT91C_UDP_CSR2) & AT91C_UDP_TXCOMP) )	
-     if ( !(udp_configured()) || udp_timed_out()) return;
+     if (udp_configured() != 1 || udp_timed_out()) return;
             
  (*AT91C_UDP_CSR2) &= ~(AT91C_UDP_TXCOMP);
 
@@ -378,8 +380,6 @@ void udp_send_control(U8* p, int len)
 
 }
 
-
-
 int
 udp_configured()
 {
@@ -397,7 +397,7 @@ udp_enumerate()
   int req, len, ind, val; 
   short status;
   
-  while(!((*AT91C_UDP_CSR0) & AT91C_UDP_RXSETUP)); // Wait for setup
+  if (!((*AT91C_UDP_CSR0) & AT91C_UDP_RXSETUP)) return;
   
   bt = *AT91C_UDP_FDR0;
   br = *AT91C_UDP_FDR0;
@@ -417,7 +417,7 @@ udp_enumerate()
 
   req = br << 8 | bt;
   
-  /*if (req != 258 && req != 2817 && req != 2304) {
+  /*if (1) {
   	display_goto_xy(0,0);
     display_string(hex4(req));
     display_goto_xy(4,0);
@@ -512,16 +512,23 @@ udp_enumerate()
       break;
 
     case STD_CLEAR_FEATURE_ENDPOINT:
-      val &= 0x0F;
+      ind &= 0x0F;
 
       if ((val == 0) && ind && (ind <= 3))
       {                                             
-        if (ind == 1)
+        if (ind == 1) {
           (*AT91C_UDP_CSR1) = (AT91C_UDP_EPEDS | AT91C_UDP_EPTYPE_BULK_OUT); 
-        else if (ind == 2)
+          (*AT91C_UDP_RSTEP) |= AT91C_UDP_EP1;
+          (*AT91C_UDP_RSTEP) &= ~AT91C_UDP_EP1;
+        } else if (ind == 2) {
           (*AT91C_UDP_CSR2) = (AT91C_UDP_EPEDS | AT91C_UDP_EPTYPE_BULK_IN);
-        else if (ind == 3)
-          (*AT91C_UDP_CSR3) = (AT91C_UDP_EPEDS | AT91C_UDP_EPTYPE_INT_IN); 
+          (*AT91C_UDP_RSTEP) |= AT91C_UDP_EP2;
+          (*AT91C_UDP_RSTEP) &= ~AT91C_UDP_EP2;
+        } else if (ind == 3) {
+          (*AT91C_UDP_CSR3) = (AT91C_UDP_EPEDS | AT91C_UDP_EPTYPE_INT_IN);
+          (*AT91C_UDP_RSTEP) |= AT91C_UDP_EP3;
+          (*AT91C_UDP_RSTEP) &= ~AT91C_UDP_EP3; 
+        }
         udp_send_null();
       }
       else udp_send_stall();
@@ -575,11 +582,12 @@ udp_enumerate()
 
       break;
       
-    case STD_SET_INTERFACE:
+    case STD_SET_FEATURE_INTERFACE:
     case STD_CLEAR_FEATURE_INTERFACE:
       udp_send_null();
       break;
-      
+ 
+    case STD_SET_INTERFACE:     
     case STD_SET_FEATURE_ZERO:
     case STD_CLEAR_FEATURE_ZERO:
     default:
