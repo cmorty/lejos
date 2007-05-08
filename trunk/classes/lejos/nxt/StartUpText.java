@@ -98,71 +98,65 @@ class USBRespond extends Thread
 		FileOutputStream out = null;
 		byte[] reply = new byte[32];
 		int replyLen;
-		boolean  disconnected = false;
-
+		
+		USB.usbReset();
+		
 		while(true)
 		{				
-			disconnected = false;
-			sending = false;
-
-			USB.usbReset();
-			
-			while(!disconnected)
-			{
-				int dataLen = USB.usbRead(buf,64);
-				try {
-					if (dataLen != 0) 
-					{
-						for(int i=0;i<32;i++) reply[i] = 0;
-						reply[0] = 0x02;
-						reply[1] = buf[1];
-						replyLen = 3;
-						if (sending) {
-							bytes += dataLen;
-							out.write(buf,0,dataLen);
-							if (bytes == size) {
-								sending = false;
-								reply[2] = (byte) 0x83;
-								buf[0] = 0x01;
-								replyLen = 6;
-							}
-						} else if (buf[1] == (byte) 0x81) { // OPEN WRITE
-							size = buf[22] & 0xFF;
-							size += ((buf[23] & 0xFF) << 8);
-							size += ((buf[24] & 0xFF) << 16);
-							size += ((buf[25] & 0xFF) << 24);
-							int filenameLength = 0;
-							for(int i=2;i<22 && buf[i] != 0;i++) filenameLength++;
-							char [] chars = new char[filenameLength];
-							for(int i=0;i<filenameLength;i++) chars[i] = (char) buf[i+2];
-							String fileName = new String(chars,0,filenameLength);
-							f = new File(fileName);
-							if (f.exists()) f.delete();
-							f.createNewFile();
-	    					bytes = 0;
-							replyLen = 4;
-						} else if (buf[1] == (byte) 0x83) { // WRITE
-							out = new FileOutputStream(f);
+			int dataLen = USB.usbRead(buf,64);
+			try {
+				if (dataLen != 0) 
+				{
+					for(int i=0;i<32;i++) reply[i] = 0;
+					reply[0] = 0x02;
+					reply[1] = buf[1];
+					replyLen = 3;
+					if (sending) {
+						bytes += dataLen;
+						out.write(buf,0,dataLen);
+						if (bytes == size) {
+							sending = false;
+							reply[2] = (byte) 0x83;
+							buf[0] = 0x01;
 							replyLen = 6;
-							sending = true;			
-						} else if (buf[1] == (byte) 0x84) { // CLOSE
-						    out.flush();
-						    out.close();
-						    Sound.beepSequenceUp();
-						    menu.quit(); // Force redisplay of menu
-							replyLen = 4;
-						} else if (buf[1] == (byte) 0x00) { // STARTPROGRAM
-							f.exec();
-					    } else if (buf[1] == (byte) 0x09) { // MESSAGE
-					    	disconnected = true;
-					    }
-						if (!sending && ((buf[0] & 0x80) == 0)) {
-							USB.usbWrite(reply,replyLen);
 						}
+					} else if (buf[1] == (byte) 0x81) { // OPEN WRITE
+						size = buf[22] & 0xFF;
+						size += ((buf[23] & 0xFF) << 8);
+						size += ((buf[24] & 0xFF) << 16);
+						size += ((buf[25] & 0xFF) << 24);
+						int filenameLength = 0;
+						for(int i=2;i<22 && buf[i] != 0;i++) filenameLength++;
+						char [] chars = new char[filenameLength];
+						for(int i=0;i<filenameLength;i++) chars[i] = (char) buf[i+2];
+						String fileName = new String(chars,0,filenameLength);
+						f = new File(fileName);
+						if (f.exists()) f.delete();
+						f.createNewFile();
+    					bytes = 0;
+						replyLen = 4;
+					} else if (buf[1] == (byte) 0x83) { // WRITE
+						out = new FileOutputStream(f);
+						replyLen = 6;
+						sending = true;			
+					} else if (buf[1] == (byte) 0x84) { // CLOSE
+					    out.flush();
+					    out.close();
+					    Sound.beepSequenceUp();
+					    menu.quit(); // Force redisplay of menu
+						replyLen = 4;
+					} else if (buf[1] == (byte) 0x00) { // STARTPROGRAM
+						f.exec();
+				    } 
+					if (!sending && ((buf[0] & 0x80) == 0)) {
+						USB.usbWrite(reply,replyLen);
 					}
-				} catch (IOException ie) {}
-				Thread.yield();
+				}
+			} catch (IOException ie) {
+				LCD.drawString("IOException",0,7);
+				LCD.refresh();
 			}
+			Thread.yield();
 		}
 	}
 }
