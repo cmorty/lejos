@@ -5,10 +5,10 @@
 -->
 <project name="pccomms" default="build" basedir=".">
 	
-  	<!-- creates the pctools jar (PC: JDK 1.4) -->
+  	<!-- creates the pccomm jar (PC: JDK 1.4) -->
   	<target name="build"  description="generate pccomm jar">
     	<mkdir dir="build"/>
-    	<!-- generate tools -->
+    	<!-- generate jar file -->
     	<javac srcdir="." destdir="build" fork="yes" optimize="on" debug="on" source="1.4">
       		<classpath location="3rdparty/lib/bluecove.jar"/>
       	</javac>
