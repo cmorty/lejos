@@ -9,7 +9,6 @@ import lejos.nxt.*;
  *
  */
 public class LCP {
-	static byte[] reply = new byte[64];
 	static byte[] i2cCommand = new byte[16];
 	static byte[] i2cReply = new byte[16];
 	static int i2cLen = 0;
@@ -32,7 +31,7 @@ public class LCP {
 	 * @param cmd the buffer containing the command
 	 * @param cmdLen the legth of the command
 	 */
-	public static void emulateCommand(byte[] cmd, int cmdLen)
+	public static int emulateCommand(byte[] cmd, int cmdLen, byte[] reply)
 	{
 	    int len = 3;
 	    
@@ -408,8 +407,8 @@ public class LCP {
 			}
 			len = 4;
 		}
-
-		if ((cmd[0] & 0x80) == 0) Bluetooth.sendPacket(reply, len);
+		
+		return len;
 	}
 	
 	private static int getInt(byte [] cmd, int i)
