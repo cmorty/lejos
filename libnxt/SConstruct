@@ -35,9 +35,15 @@ Default(BuildEnv.Program('runjava', glob('main_runjava.c'),
 
 Default(BuildEnv.Program('nxjupload', glob('main_nxjupload.c'),
 			 LIBS=['usb', 'nxt'], LIBPATH='.'))
-			 
+	
+Default(BuildEnv.Program('sendpacket', glob('main_sendpacket.c'),
+			 LIBS=['usb', 'nxt'], LIBPATH='.'))
+			 		 
 Default(BuildEnv.Program('nxjflash', glob('main_nxjflash.c'),
 			LIBS=['usb', 'nxt'], LIBPATH='.'))
 			 
 BuildEnv.Program('sambaget', glob('main_sambaget.c'),
 		 LIBS=['usb', 'nxt'], LIBPATH='.')
+		 
+Default(BuildEnv.SharedLibrary('jlibnxt', glob('main_jlibnxt.c'),
+		 LIBS=['usb', 'nxt'], LIBPATH='.'))
