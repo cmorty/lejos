@@ -33,13 +33,13 @@ public class NXJBrowser {
 
 
     nxtCommand = NXTCommand.getSingleton();
-    NXTInfo[] nxts = nxtCommand.search(null, NXTCommand.BLUETOOTH);
+    NXTInfo[] nxts = nxtCommand.search(null, NXTCommand.USB | NXTCommand.BLUETOOTH);
     if (nxts.length == 0) {
       System.out.println("No NXT found");
       System.exit(1);
     }
     nxtCommand.open(nxts[0]);
-    nxtCommand.setVerify(true);
+    //nxtCommand.setVerify(true);
 
     fetchFiles();
 
@@ -119,7 +119,6 @@ public class NXJBrowser {
     byte[] data = new byte[60];
     int len, sent = 0;
     FileInputStream in = null;
-    int index;
 
     //System.out.println("Filename is " + file.getName());
 
@@ -144,7 +143,7 @@ public class NXJBrowser {
 
   private static void fetchFiles() {
     files[0] = nxtCommand.findFirst("*.*");
-    System.out.println(files[0].fileName);
+    //System.out.println(files[0].fileName);
 
     if (files[0] != null) {
       numFiles = 1;
@@ -153,7 +152,7 @@ public class NXJBrowser {
         files[i] = nxtCommand.findNext(files[i-1].fileHandle);
         if (files[i] == null) break;
         else {
-          System.out.println(files[i].fileName);
+          //System.out.println(files[i].fileName);
           numFiles++;
         }
       }
@@ -221,7 +220,6 @@ class FileModel extends AbstractTableModel {
       JButton downloadButton = (JButton) fileData[i][3];
       JButton runButton = (JButton) fileData[i][4];
 
-      final int row = i;
       final String fileName = files[i].fileName;
       final int size = files[i].fileSize;
 
