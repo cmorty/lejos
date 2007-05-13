@@ -7,7 +7,7 @@ public class BTRespond {
 	{
 
 		byte[] inMsg = new byte[64];
-		byte [] outMsg = new byte[32];
+		byte [] reply = new byte[64];
 		boolean cmdMode = true;
 		BTConnection btc = null;
 		int len;
@@ -33,7 +33,8 @@ public class BTRespond {
 				LCD.drawInt(inMsg[2] & 0xFF,3,9,1);
 				LCD.drawInt(inMsg[3] & 0xFF,3,12,1);
 				LCD.refresh();
-				LCP.emulateCommand(inMsg,len);
+				int replyLen = LCP.emulateCommand(inMsg,len, reply);
+				if ((inMsg[0] & 0x80) == 0) Bluetooth.sendPacket(reply, replyLen);
 				if (inMsg[1] == 0x09)
 				{
 					LCD.drawString("Message",0,2);
