@@ -7,20 +7,20 @@ import java.util.Vector;
 import java.util.Enumeration;
 
 public class NXTCommBluecove implements NXTComm, DiscoveryListener  {
-	static Vector devices, services, nxtInfos;
-	StreamConnection con;
-	String url;
-	OutputStream os;
-	InputStream is;
-    NXTInfo nxtInfo;
+	private static Vector devices, services, nxtInfos;
+	private StreamConnection con;
+	private String url;
+	private OutputStream os;
+	private InputStream is;
+    private NXTInfo nxtInfo;
 
 	public NXTInfo[] search(String name, int protocol) {
 		
 		devices = new Vector();
 		services = new Vector();
-                nxtInfos = new Vector();
+        nxtInfos = new Vector();
 
-                if (protocol != NXTCommand.BLUETOOTH) return new NXTInfo[0];
+        if ((protocol | NXTCommand.BLUETOOTH) == 0) return new NXTInfo[0];
 
 		synchronized (this) {
 			try {
@@ -111,35 +111,35 @@ public class NXTCommBluecove implements NXTComm, DiscoveryListener  {
 	*/	
     public synchronized void sendData(byte [] message) {
     	
-    		// length of packet (Least and Most significant byte)
-    		// * NOTE: Bluetooth only. If do USB, doesn't need it.
-    		int LSB = message.length;
+    	// length of packet (Least and Most significant byte)
+    	// * NOTE: Bluetooth only. If do USB, doesn't need it.
+    	int LSB = message.length;
 		int MSB = message.length >>> 8;
 		
-                if (os == null) return;
+        if (os == null) return;
 
-        	try {
-        		// Send length of packet:
-        		os.write((byte)LSB);
-    			os.write((byte)MSB);
+        try {
+        	// Send length of packet:
+        	os.write((byte)LSB);
+    		os.write((byte)MSB);
         	
-        		os.write(message);
-       		} catch (IOException e) {
-        		System.out.println("Error encountered in NXTCommRXTX.sendData()");
-        	e.printStackTrace();
-        	}            
-    	}
+        	os.write(message);
+       	} catch (IOException e) {
+        	System.out.println("Error encountered in NXTCommRXTX.sendData()");
+        }            
+    }
 
-	public byte[] readData() {
+	public byte[] readData(int len) {
 		byte [] message = null;
 		int length = -1;
 		
-                if (is == null) return new byte[0];
+        if (is == null) return new byte[0];
 
 		try {
 			do {
 				length = is.read(); // First byte specifies length of packet.
 			} while (length < 0);
+			
 			int MSB = is.read(); // Most Significant Byte value
 			length = (0xFF & length) | ((0xFF & MSB) << 8);
 			message = new byte[length];

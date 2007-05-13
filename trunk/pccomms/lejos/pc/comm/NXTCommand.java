@@ -2,11 +2,11 @@ package lejos.pc.comm;
 
 public class NXTCommand implements NXTProtocol {
 	private static NXTCommand singleton = new NXTCommand();
-	private NXTComm nxtComm = new NXTCommBluecove();	
+	private NXTComm nxtComm = new NXTCommLibnxt();	
 	private boolean verifyCommand = false;
 
-    public static final int USB = 0;
-    public static final int BLUETOOTH = 1;
+    public static final int USB = 1;
+    public static final int BLUETOOTH = 2;
 	
 
     public NXTInfo[] search(String name, int protocol) {
@@ -26,14 +26,14 @@ public class NXTCommand implements NXTProtocol {
 	 * @param request
 	 * @return
 	 */
-	private byte sendRequest(byte [] request) {
+	private byte sendRequest(byte [] request, int len) {
 		byte verify = 0; // default of 0 means success
 		if(verifyCommand)
 			request[0] = DIRECT_COMMAND_REPLY;
 		
 		nxtComm.sendData(request);
 		if(verifyCommand) {
-			byte [] reply = nxtComm.readData();
+			byte [] reply = nxtComm.readData(len);
 			verify = reply[2];
 		}
 		return verify;
@@ -47,7 +47,7 @@ public class NXTCommand implements NXTProtocol {
 	public byte startProgram(String fileName) {
 		byte [] request = {DIRECT_COMMAND_NOREPLY, START_PROGRAM};
 		request = appendString(request, fileName);
-		return sendRequest(request);
+		return sendRequest(request,22);
 	}	
 
 	/**
@@ -64,7 +64,7 @@ public class NXTCommand implements NXTProtocol {
 		byte [] request = {SYSTEM_COMMAND_REPLY, OPEN_READ};
 		request = appendString(request, fileName); // No padding required apparently
 		nxtComm.sendData(request);
-		byte [] reply = nxtComm.readData();
+		byte [] reply = nxtComm.readData(8);
 		FileInfo fileInfo = new FileInfo(fileName);
 		fileInfo.status = reply[2];
 		if(reply.length > 3) { // Check if all data included in reply
@@ -91,7 +91,7 @@ public class NXTCommand implements NXTProtocol {
 		byte [] fileLength = {(byte)size, (byte)(size>>>8), (byte)(size>>>16), (byte)(size>>>24)};
 		request = appendBytes(request, fileLength);
 		nxtComm.sendData(request);
-		byte [] reply = nxtComm.readData();
+		byte [] reply = nxtComm.readData(4);
 		return reply[3]; // The handle number
 	}
 
@@ -109,7 +109,7 @@ public class NXTCommand implements NXTProtocol {
 			request[0] = SYSTEM_COMMAND_REPLY;
 		nxtComm.sendData(request);
 		if(verifyCommand) {
-			byte [] reply = nxtComm.readData();
+			byte [] reply = nxtComm.readData(4);
 			verify = reply[2];
 		}
 				
@@ -125,7 +125,7 @@ public class NXTCommand implements NXTProtocol {
 		
 		// !! Below should be a method shared by System Commands and Direct Commands.
 		nxtComm.sendData(request);
-		byte [] reply = nxtComm.readData();
+		byte [] reply = nxtComm.readData(23);
 		return reply[2];
 	}
 
@@ -141,13 +141,11 @@ public class NXTCommand implements NXTProtocol {
 	public FileInfo findFirst(String wildCard) {
 
 		byte [] request = {SYSTEM_COMMAND_REPLY, FIND_FIRST};
-		// !! Below, could use String concat function (str1 + str2)
 		request = appendString(request, wildCard);
-		//request = (new String(request) + fileName).getBytes();
 		
 		// !! Below should be a method shared by System Commands and Direct Commands.
 		nxtComm.sendData(request);
-		byte [] reply = nxtComm.readData();
+		byte [] reply = nxtComm.readData(28);
 		FileInfo fileInfo = null;
 		if(reply[2] == 0) {
 			fileInfo = new FileInfo("");
@@ -179,7 +177,7 @@ public class NXTCommand implements NXTProtocol {
 		
 		// !! Below should be a method shared by System Commands and Direct Commands.
 		nxtComm.sendData(request);
-		byte [] reply = nxtComm.readData();
+		byte [] reply = nxtComm.readData(28);
 		FileInfo fileInfo = null;
 		if(reply[2] == 0) {
 			fileInfo = new FileInfo("");
@@ -204,12 +202,11 @@ public class NXTCommand implements NXTProtocol {
 	 * @return
 	 */
 	private byte[] appendString(byte [] command, String str) {
-		String requestStr = new String(command);
-		StringBuffer buff = new StringBuffer(requestStr);
-		buff.append(str);
-		// buff.append(0x00); // Need to add 0 to end of command array.
-		buff.setLength(buff.length() + 1); // This is a hack to add null value to end
-		return buff.toString().getBytes();
+		byte[] buff = new byte[command.length + str.length() + 1];
+		for(int i=0;i<command.length;i++) buff[i] = command[i];
+		for(int i=0;i<str.length();i++) buff[command.length+i] = (byte) str.charAt(i);
+		buff[command.length + str.length()] = 0;
+		return buff;
 	}
 
 	private byte[] appendBytes(byte [] array1, byte [] array2) {
@@ -222,7 +219,7 @@ public class NXTCommand implements NXTProtocol {
 	public int getBatteryLevel() {
 		byte [] request = {DIRECT_COMMAND_REPLY, GET_BATTERY_LEVEL};
 		nxtComm.sendData(request);
-		byte [] reply = nxtComm.readData();
+		byte [] reply = nxtComm.readData(5);
 		if(reply[1] != GET_BATTERY_LEVEL)
 			System.out.println("Weird data reply received.");
 		if(reply[2] != 0)
@@ -253,7 +250,7 @@ public class NXTCommand implements NXTProtocol {
 			request[0] = SYSTEM_COMMAND_REPLY;
 		nxtComm.sendData(request);
 		if(verifyCommand) {
-			byte [] reply = nxtComm.readData();
+			byte [] reply = nxtComm.readData(6);
 			verify = reply[2];
 			// Next line can be used to confirm if data written:
 			// int bytesWritten = (0xFF & reply[4]) | ((0xFF & reply[5]) << 8);
@@ -272,12 +269,11 @@ public class NXTCommand implements NXTProtocol {
 	public byte [] readFile(byte handle, int length) {
 		byte [] request = {SYSTEM_COMMAND_REPLY, READ, handle, (byte)length, (byte)(length>>>8)};
 		nxtComm.sendData(request);
-		byte [] reply = nxtComm.readData();
-		byte [] data = new byte[reply.length - 6];
-		// Copy data into array:
-		// !! * Could crash due to receiving no data array. Test with bad handle.
-		System.arraycopy(reply, 6, data, 0, data.length);
-		return data; // The handle number
+		byte [] reply = nxtComm.readData(6);
+		int dataLen = (reply[4] & 0xFF) + ((reply[5] << 8) & 0xFF);
+		byte [] data = nxtComm.readData(dataLen);
+		handle = reply[3];
+		return data; 
 	}
 
 	public static NXTCommand getSingleton() {
