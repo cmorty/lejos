@@ -1,0 +1,102 @@
+/**
+ * JNI interface for libnxt..
+ *
+ * Copyright 2007 Lawrie Griffiths <lawrie.griffiths@ntlwworld.com>
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+ * USA
+ */
+
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <errno.h>
+#include "lowlevel.h"
+#include "jlibnxt.h"
+
+JNIEXPORT jint JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1find(JNIEnv *env, jobject obj) {
+  nxt_t *nxt;
+  nxt_error_t nxt_err;
+	
+  nxt_err = nxt_init(&nxt);
+	
+  if (nxt_err == NXT_OK) {
+    nxt_err = nxt_find(nxt);
+    if (nxt_err == NXT_OK && !(nxt_in_reset_mode(nxt))) {
+      return (jint) nxt;
+    }
+  }
+  return 0;
+}
+
+JNIEXPORT void JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1open(JNIEnv *env, jobject obj, jint nxt)  {
+  nxt_error_t nxt_err;
+  
+  nxt_err = nxt_open0( (nxt_t *) nxt);
+  
+  if (nxt_err != NXT_OK) {
+    printf("Open failed\n");
+    exit(1);
+  }
+}
+
+JNIEXPORT void JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1close(JNIEnv *env, jobject obj, jint nxt)  {
+  nxt_error_t nxt_err;
+  
+  nxt_err = nxt_close0( (nxt_t *) nxt); 
+  
+  if (nxt_err != NXT_OK) {
+    printf("Close failed\n");
+  } 
+   
+}
+
+JNIEXPORT void JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1send_1data(JNIEnv *env, jobject obj, jint nxt, jbyteArray data)  {
+  nxt_error_t nxt_err;
+
+  jsize len2 = (*env)->GetArrayLength(env, data);
+  char *elements2 = (char *) (*env)->GetByteArrayElements(env, data, 0);  
+
+  nxt_err = nxt_send_buf((nxt_t *) nxt, elements2, len2);
+  
+  if (nxt_err != NXT_OK) {
+    printf("Send data failed: %d\n", nxt_err);
+    exit(1);
+  }
+
+  (*env)->ReleaseByteArrayElements(env, data, (jbyte *) elements2, 0);
+}
+
+JNIEXPORT jbyteArray JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1read_1data(JNIEnv *env, jobject obj, jint nxt, jint len)  {
+  nxt_error_t nxt_err;
+  char *data;
+  jbyte *jb;
+
+  data = (char *) calloc(1, len);
+  
+  nxt_err = nxt_recv_buf((nxt_t *) nxt, data, len); // read data
+  
+  if (nxt_err != NXT_OK) {
+    printf("Failed to read packet data\n");
+    exit(1);
+  }
+    
+  jb=(*env)->NewByteArray(env, len);
+  (*env)->SetByteArrayRegion(env, jb, 0, len, (jbyte *) data);
+  return (jb);
+      
+}
