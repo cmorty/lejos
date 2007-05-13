@@ -5,5 +5,5 @@ public interface NXTComm {
 	public void open(NXTInfo nxt);
 	public void close();
 	public void sendData(byte [] message);
-	public byte[] readData();	
+	public byte[] readData(int len);	
 }
