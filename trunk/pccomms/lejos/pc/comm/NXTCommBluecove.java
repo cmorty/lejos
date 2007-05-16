@@ -39,13 +39,13 @@ public class NXTCommBluecove implements NXTComm, DiscoveryListener  {
 			RemoteDevice d = (RemoteDevice) enum_d.nextElement();
 
 			try {	
-                                nxtInfo = new NXTInfo();
+                nxtInfo = new NXTInfo();
 
-                                nxtInfo.name = d.getFriendlyName(false);		
+                nxtInfo.name = d.getFriendlyName(false);		
 				nxtInfo.btDeviceAddress = d.getBluetoothAddress();
-                                nxtInfo.protocol = 1;
+                nxtInfo.protocol = 1;
 
-                                if (name == null || name.equals(nxtInfo.name)) nxtInfos.addElement(nxtInfo);
+                if (name == null || name.equals(nxtInfo.name)) nxtInfos.addElement(nxtInfo);
 				else continue;
 
       	 			// We want additional attributes, ServiceName (0x100),
@@ -53,10 +53,10 @@ public class NXTCommBluecove implements NXTComm, DiscoveryListener  {
 
 				int[] attributes = {0x100,0x101,0x102};
 	
-    				UUID[] uuids = new UUID[1];
-       				uuids[0] = new UUID("1101",true); // Serial Port
-    				synchronized (this) {
-    					try {
+				UUID[] uuids = new UUID[1];
+       			uuids[0] = new UUID("1101",true); // Serial Port
+    			synchronized (this) {
+    				try {
 						LocalDevice.getLocalDevice().getDiscoveryAgent().searchServices(attributes,uuids,d,this);
 						try {
 							wait();
@@ -73,33 +73,33 @@ public class NXTCommBluecove implements NXTComm, DiscoveryListener  {
 					e.printStackTrace();
 				}
 
-                                System.out.println(services.size() + " services detected");
+                System.out.println(services.size() + " services detected");
 
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 
 		}
-                NXTInfo[] nxts = new NXTInfo[nxtInfos.size()];
-                for(int i=0;i<nxts.length;i++) nxts[i] = (NXTInfo) nxtInfos.elementAt(i);
-                return nxts;
+        NXTInfo[] nxts = new NXTInfo[nxtInfos.size()];
+        for(int i=0;i<nxts.length;i++) nxts[i] = (NXTInfo) nxtInfos.elementAt(i);
+        return nxts;
 	}
 
 	public void open(NXTInfo nxt) {		
-    		try{
+		try{
 			if (nxt.btUrl != null) con = (StreamConnection) Connector.open(nxt.btUrl);
-                        if (con != null) {
-                        	os = con.openOutputStream();
+	                    if (con != null) {
+	                    	os = con.openOutputStream();
 				is = con.openInputStream();
 			} else {
 				System.out.println("Connection failed");
 				System.exit(1);
 			}			
-     	 	}
-     	 	catch(IOException e){
-     	 		System.out.println("Open failed");
-  			System.exit(1);
-     	 	} 
+ 	 	}
+ 	 	catch(IOException e){
+ 	 		System.out.println("Open failed");
+ 	 		System.exit(1);
+ 	 	} 
 	}
 
 	public void close() {
@@ -149,29 +149,28 @@ public class NXTCommBluecove implements NXTComm, DiscoveryListener  {
 		}           
         		
 		return (message == null)? new byte[0] : message;
-        }
-
+    }
 
 	public void deviceDiscovered(RemoteDevice btDevice, DeviceClass cod) {
-                System.out.println("Major Device Class: " + cod.getMajorDeviceClass());
-                System.out.println("Major Device Class: " + cod.getMinorDeviceClass());
+        System.out.println("Major Device Class: " + cod.getMajorDeviceClass());
+        System.out.println("Major Device Class: " + cod.getMinorDeviceClass());
 		if (cod.getMajorDeviceClass() == 2048 && cod.getMinorDeviceClass() == 4)
-                	devices.addElement(btDevice);
+			devices.addElement(btDevice);
 
 	}
 
 	public synchronized void inquiryCompleted(int discType) {		
-                //if (discType == INQUIRY_COMPLETED) System.out.println("Inquiry completed");
-                //else System.out.println("Inquiry Failed");
+        //if (discType == INQUIRY_COMPLETED) System.out.println("Inquiry completed");
+        //else System.out.println("Inquiry Failed");
 		notifyAll();
 	}
 
 	public void servicesDiscovered(int transID, ServiceRecord[] servRecord) {
-                System.out.println("Services discovered");
+        System.out.println("Services discovered");
 		for (int i = 0; i < servRecord.length; i++) {
 			services.addElement(servRecord[i]);
-                        url = servRecord[i].getConnectionURL(ServiceRecord.NOAUTHENTICATE_NOENCRYPT, false);
-                        nxtInfo.btUrl = url;
+            url = servRecord[i].getConnectionURL(ServiceRecord.NOAUTHENTICATE_NOENCRYPT, false);
+            nxtInfo.btUrl = url;
 			System.out.println(url);
 
 		}
