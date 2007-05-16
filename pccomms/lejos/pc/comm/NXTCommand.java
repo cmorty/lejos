@@ -35,7 +35,7 @@ public class NXTCommand implements NXTProtocol {
     		System.out.println("Failure to read working directory prop file");
     	}
     	
-    	String nxtCommName = props.getProperty("NXTComm", "NXTCommBluecove");
+    	String nxtCommName = props.getProperty("NXTComm", "lejos.pc.comm.NXTCommBluecove");
     	System.out.println("NXTComm = " + nxtCommName);
     	try {
     		Class c = Class.forName(nxtCommName);
