@@ -4,9 +4,9 @@ public class NXTCommFantom implements NXTComm {
 	private NXTInfo nxtInfo;
 	
 	public native int jfantom_find();
-	public native void jfantom_open(int nxt);
+	public native int jfantom_open(int nxt);
 	public native void jfantom_close(int nxt);
-	public native void jfantom_send_data(int nxt, byte [] message, int len);
+	public native void jfantom_send_data(int nxt, byte [] message, int len, int replyLen);
 	public native byte[] jfantom_read_data(int nxt, int len);
 	
 	public NXTInfo[] search(String name, int protocol) {
@@ -25,9 +25,9 @@ public class NXTCommFantom implements NXTComm {
 		return new NXTInfo[0];
 	}
 
-	public void open(NXTInfo nxtInfo) {
+	public open(NXTInfo nxtInfo) {
 		this.nxtInfo = nxtInfo;
-		jfantom_open(nxtInfo.fantomIterator);
+		nxtInfo.fantomNXT = jfantom_open(nxtInfo.fantomIterator);
 	}
 	
 	public void close() {
@@ -35,10 +35,7 @@ public class NXTCommFantom implements NXTComm {
 	}
 	
 	public void sendData(byte [] data) {
-		jfantom_send_data(nxtInfo.usbNXT, data, data.length);
-		try {
-			Thread.sleep(10);
-		} catch (InterruptedException ie) {}
+		jfantom_send_data(nxtInfo.usbNXT, data, data.length, 4);}
 	}
 	
 	public byte[] readData(int len) {
