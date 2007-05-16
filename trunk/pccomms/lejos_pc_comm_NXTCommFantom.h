@@ -18,9 +18,9 @@ JNIEXPORT jint JNICALL Java_lejos_pc_comm_NXTCommFantom_jfantom_1find
 /*
  * Class:     lejos_pc_comm_NXTCommFantom
  * Method:    jfantom_open
- * Signature: (I)V
+ * Signature: (I)I
  */
-JNIEXPORT void JNICALL Java_lejos_pc_comm_NXTCommFantom_jfantom_1open
+JNIEXPORT jint JNICALL Java_lejos_pc_comm_NXTCommFantom_jfantom_1open
   (JNIEnv *, jobject, jint);
 
 /*
@@ -34,10 +34,10 @@ JNIEXPORT void JNICALL Java_lejos_pc_comm_NXTCommFantom_jfantom_1close
 /*
  * Class:     lejos_pc_comm_NXTCommFantom
  * Method:    jfantom_send_data
- * Signature: (I[BI)V
+ * Signature: (I[BII)V
  */
 JNIEXPORT void JNICALL Java_lejos_pc_comm_NXTCommFantom_jfantom_1send_1data
-  (JNIEnv *, jobject, jint, jbyteArray, jint);
+  (JNIEnv *, jobject, jint, jbyteArray, jint, jint);
 
 /*
  * Class:     lejos_pc_comm_NXTCommFantom
