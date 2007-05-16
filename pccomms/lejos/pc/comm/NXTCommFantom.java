@@ -31,16 +31,16 @@ public class NXTCommFantom implements NXTComm {
 	}
 	
 	public void close() {
-		jfantom_close(nxtInfo.usbNXT);
+		jfantom_close(nxtInfo.fantomNXT);
 	}
 	
 	public void sendData(byte [] data) {
 		System.out.println("Sending data");
-		jfantom_send_data(nxtInfo.usbNXT, data, data.length, 4);
+		jfantom_send_data(nxtInfo.fantomNXT, data, data.length, 4);
 	}
 	
 	public byte[] readData(int len) {
-		return jfantom_read_data(nxtInfo.usbNXT, len);
+		return jfantom_read_data(nxtInfo.fantomNXT, len);
 	}
 	
 	static {
