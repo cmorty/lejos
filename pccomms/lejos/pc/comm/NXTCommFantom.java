@@ -35,6 +35,7 @@ public class NXTCommFantom implements NXTComm {
 	}
 	
 	public void sendData(byte [] data) {
+		System.out.println("Sending data");
 		jfantom_send_data(nxtInfo.usbNXT, data, data.length, 4);
 	}
 	
