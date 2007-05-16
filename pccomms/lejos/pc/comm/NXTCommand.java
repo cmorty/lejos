@@ -1,12 +1,53 @@
 package lejos.pc.comm;
 
-public class NXTCommand implements NXTProtocol {
-	private static NXTCommand singleton = new NXTCommand();
-	private NXTComm nxtComm = new NXTCommLibnxt();	
-	private boolean verifyCommand = false;
+import java.util.*;
+import java.io.*;
 
+public class NXTCommand implements NXTProtocol {	
+	private NXTComm nxtComm;	
+	private boolean verifyCommand = false;
+	private static String HOME = System.getProperty("user.home");
+	private static String WORKING_DIR = System.getProperty("user.dir");
+	private static String SEP = System.getProperty("file.separator");
+	private static String USER_PROP_FILE = HOME + SEP + "nxj.properties";
+	private static String WORKING_PROP_FILE = WORKING_DIR + SEP + "nxj.properties";
+	private static NXTCommand singleton = new NXTCommand();
+	
     public static final int USB = 1;
     public static final int BLUETOOTH = 2;
+    
+    public NXTCommand() {
+    	Properties props = new Properties();
+    	try {
+    		System.out.println("Loading " + USER_PROP_FILE);
+    		props.load(new FileInputStream(USER_PROP_FILE));
+    	} catch (FileNotFoundException e) {
+    		System.out.println("No user prop file");
+    	} catch (IOException e) {
+    		System.out.println("Failure to read user prop file");
+    	}
+    	try {
+    		System.out.println("Loading " + WORKING_PROP_FILE);
+    		props.load(new FileInputStream(WORKING_PROP_FILE));
+    	} catch (FileNotFoundException e) {
+    		System.out.println("No working directory prop file");
+    	} catch (IOException e) {
+    		System.out.println("Failure to read working directory prop file");
+    	}
+    	
+    	String nxtCommName = props.getProperty("NXTComm", "NXTCommBluecove");
+    	System.out.println("NXTComm = " + nxtCommName);
+    	try {
+    		Class c = Class.forName(nxtCommName);
+    		nxtComm = (NXTComm) c.newInstance();
+    	} catch (ClassNotFoundException e) {
+    		e.printStackTrace();
+    	} catch (IllegalAccessException e) {
+    		e.printStackTrace();
+    	} catch (InstantiationException e) {
+    		e.printStackTrace();
+    	}
+    }
 	
 
     public NXTInfo[] search(String name, int protocol) {
