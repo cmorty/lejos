@@ -7,4 +7,5 @@ public class NXTInfo {
 	public int protocol; // 0=URL, 1 = Bluetooth
 	public int usbNXT;
 	public int fantomIterator;
+	public int fantomNXT;
 }
