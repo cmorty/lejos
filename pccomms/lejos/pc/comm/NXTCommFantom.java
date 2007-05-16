@@ -25,7 +25,7 @@ public class NXTCommFantom implements NXTComm {
 		return new NXTInfo[0];
 	}
 
-	public open(NXTInfo nxtInfo) {
+	public void open(NXTInfo nxtInfo) {
 		this.nxtInfo = nxtInfo;
 		nxtInfo.fantomNXT = jfantom_open(nxtInfo.fantomIterator);
 	}
@@ -35,7 +35,7 @@ public class NXTCommFantom implements NXTComm {
 	}
 	
 	public void sendData(byte [] data) {
-		jfantom_send_data(nxtInfo.usbNXT, data, data.length, 4);}
+		jfantom_send_data(nxtInfo.usbNXT, data, data.length, 4);
 	}
 	
 	public byte[] readData(int len) {
