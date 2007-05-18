@@ -36,7 +36,7 @@ public class NXTCommFantom implements NXTComm {
 	
 	public byte [] sendRequest(byte [] data, int replyLen) {
 		System.out.println("Sending data");
-		jfantom_send_data(nxtInfo.fantomNXT, data, data.length, replyLen);
+		jfantom_send_data(nxtInfo.fantomNXT, data, data.length, replyLen-1);
 		return jfantom_read_data(nxtInfo.fantomNXT, replyLen);
 	}
 	
