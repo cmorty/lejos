@@ -67,14 +67,27 @@ public class NXTCommand implements NXTProtocol {
 	 * @param request
 	 * @return
 	 */
-	private byte sendRequest(byte [] request, int len) {
+	private byte sendRequest(byte [] request, int replyLen) {
 		byte verify = 0; // default of 0 means success
 		if(verifyCommand)
 			request[0] = DIRECT_COMMAND_REPLY;
 		
-		nxtComm.sendData(request);
+		byte [] reply = nxtComm.sendRequest(request,
+				                (verifyCommand ? replyLen : 0));
 		if(verifyCommand) {
-			byte [] reply = nxtComm.readData(len);
+			verify = reply[2];
+		}
+		return verify;
+	}
+	
+	private byte sendSystemRequest(byte [] request, int replyLen) {
+		byte verify = 0; // default of 0 means success
+		if(verifyCommand)
+			request[0] = SYSTEM_COMMAND_REPLY;
+		
+		byte [] reply = nxtComm.sendRequest(request,
+				                (verifyCommand ? replyLen : 0));
+		if(verifyCommand) {
 			verify = reply[2];
 		}
 		return verify;
@@ -104,8 +117,7 @@ public class NXTCommand implements NXTProtocol {
 	public FileInfo openRead(String fileName) {
 		byte [] request = {SYSTEM_COMMAND_REPLY, OPEN_READ};
 		request = appendString(request, fileName); // No padding required apparently
-		nxtComm.sendData(request);
-		byte [] reply = nxtComm.readData(8);
+		byte [] reply = nxtComm.sendRequest(request,8);
 		FileInfo fileInfo = new FileInfo(fileName);
 		fileInfo.status = reply[2];
 		if(reply.length > 3) { // Check if all data included in reply
@@ -131,8 +143,7 @@ public class NXTCommand implements NXTProtocol {
 		System.arraycopy(command, 0, request, 0, command.length);
 		byte [] fileLength = {(byte)size, (byte)(size>>>8), (byte)(size>>>16), (byte)(size>>>24)};
 		request = appendBytes(request, fileLength);
-		nxtComm.sendData(request);
-		byte [] reply = nxtComm.readData(4);
+		byte [] reply = nxtComm.sendRequest(request, 4);
 		return reply[3]; // The handle number
 	}
 
@@ -142,32 +153,15 @@ public class NXTCommand implements NXTProtocol {
 	 * @return Error code 0 = success
 	 */
 	public byte closeFile(byte handle) {
-		byte [] request = {SYSTEM_COMMAND_NOREPLY, CLOSE, handle};
-		
-		// The code below is repitative but can't use sendRequest() because SYSTEM_COMMAND being used
-		byte verify = 0; // default of 0 means success
-		if(verifyCommand)
-			request[0] = SYSTEM_COMMAND_REPLY;
-		nxtComm.sendData(request);
-		if(verifyCommand) {
-			byte [] reply = nxtComm.readData(4);
-			verify = reply[2];
-		}
-				
-		return verify;
+		byte [] request = {SYSTEM_COMMAND_NOREPLY, CLOSE, handle};			
+		return sendSystemRequest(request, 4);
 	}
 	
 	public byte delete(String fileName) {
 		
 		byte [] request = {SYSTEM_COMMAND_REPLY, DELETE};
-		// !! Below, could use String concat function (str1 + str2)
 		request = appendString(request, fileName);
-		//request = (new String(request) + fileName).getBytes();
-		
-		// !! Below should be a method shared by System Commands and Direct Commands.
-		nxtComm.sendData(request);
-		byte [] reply = nxtComm.readData(23);
-		return reply[2];
+		return sendSystemRequest(request, 23);
 	}
 
 	/**
@@ -185,8 +179,7 @@ public class NXTCommand implements NXTProtocol {
 		request = appendString(request, wildCard);
 		
 		// !! Below should be a method shared by System Commands and Direct Commands.
-		nxtComm.sendData(request);
-		byte [] reply = nxtComm.readData(28);
+		byte [] reply = nxtComm.sendRequest(request, 28);
 		FileInfo fileInfo = null;
 		if(reply[2] == 0) {
 			fileInfo = new FileInfo("");
@@ -217,8 +210,7 @@ public class NXTCommand implements NXTProtocol {
 		byte [] request = {SYSTEM_COMMAND_REPLY, FIND_NEXT, handle};
 		
 		// !! Below should be a method shared by System Commands and Direct Commands.
-		nxtComm.sendData(request);
-		byte [] reply = nxtComm.readData(28);
+		byte [] reply = nxtComm.sendRequest(request, 28);
 		FileInfo fileInfo = null;
 		if(reply[2] == 0) {
 			fileInfo = new FileInfo("");
@@ -259,8 +251,7 @@ public class NXTCommand implements NXTProtocol {
 
 	public int getBatteryLevel() {
 		byte [] request = {DIRECT_COMMAND_REPLY, GET_BATTERY_LEVEL};
-		nxtComm.sendData(request);
-		byte [] reply = nxtComm.readData(5);
+		byte [] reply = nxtComm.sendRequest(request, 5);
 		if(reply[1] != GET_BATTERY_LEVEL)
 			System.out.println("Weird data reply received.");
 		if(reply[2] != 0)
@@ -284,20 +275,8 @@ public class NXTCommand implements NXTProtocol {
 		byte [] command = {SYSTEM_COMMAND_NOREPLY, WRITE, handle};
 		System.arraycopy(command, 0, request, 0, command.length);
 		System.arraycopy(data, 0, request, 3, data.length);
-				
-//		 The code below is repetitive but can't use sendRequest() because SYSTEM_COMMAND being used
-		byte verify = 0; // default of 0 means success
-		if(verifyCommand)
-			request[0] = SYSTEM_COMMAND_REPLY;
-		nxtComm.sendData(request);
-		if(verifyCommand) {
-			byte [] reply = nxtComm.readData(6);
-			verify = reply[2];
-			// Next line can be used to confirm if data written:
-			// int bytesWritten = (0xFF & reply[4]) | ((0xFF & reply[5]) << 8);
-		}
-		
-		return verify;
+						
+		return sendSystemRequest(command, 6);
 	}
 
 	/**
@@ -309,12 +288,11 @@ public class NXTCommand implements NXTProtocol {
 	 */
 	public byte [] readFile(byte handle, int length) {
 		byte [] request = {SYSTEM_COMMAND_REPLY, READ, handle, (byte)length, (byte)(length>>>8)};
-		nxtComm.sendData(request);
-		byte [] reply = nxtComm.readData(6);
+		byte [] reply = nxtComm.sendRequest(request, 6);
 		int dataLen = (reply[4] & 0xFF) + ((reply[5] << 8) & 0xFF);
-		byte [] data = nxtComm.readData(dataLen);
+		//byte [] data = nxtComm.readData(dataLen);
 		handle = reply[3];
-		return data; 
+		return new byte [0]; 
 	}
 
 	public static NXTCommand getSingleton() {
