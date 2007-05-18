@@ -34,15 +34,13 @@ public class NXTCommLibnxt implements NXTComm {
 		jlibnxt_close(nxtInfo.usbNXT);
 	}
 	
-	public void sendData(byte [] data) {
+	public byte[] sendRequest(byte [] data, int replyLen) {
 		jlibnxt_send_data(nxtInfo.usbNXT, data);
 		try {
 			Thread.sleep(10);
 		} catch (InterruptedException ie) {}
-	}
-	
-	public byte[] readData(int len) {
-		return jlibnxt_read_data(nxtInfo.usbNXT, len);
+
+		return jlibnxt_read_data(nxtInfo.usbNXT, replyLen);
 	}
 	
 	static {

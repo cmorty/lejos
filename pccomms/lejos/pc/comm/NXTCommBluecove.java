@@ -105,18 +105,18 @@ public class NXTCommBluecove implements NXTComm, DiscoveryListener  {
 	public void close() {
 	}
 
-    	/**
-	* Sends a command to the NXT brick.
+    /**
+	* Sends a request to the NXT brick.
 	* @param message Data to send.
 	*/	
-    public synchronized void sendData(byte [] message) {
+    public synchronized byte [] sendRequest(byte [] message, int replyLen) {
     	
     	// length of packet (Least and Most significant byte)
     	// * NOTE: Bluetooth only. If do USB, doesn't need it.
     	int LSB = message.length;
 		int MSB = message.length >>> 8;
 		
-        if (os == null) return;
+        if (os == null) return new byte[0];
 
         try {
         	// Send length of packet:
@@ -126,11 +126,11 @@ public class NXTCommBluecove implements NXTComm, DiscoveryListener  {
         	os.write(message);
        	} catch (IOException e) {
         	System.out.println("Error encountered in NXTCommRXTX.sendData()");
-        }            
-    }
-
-	public byte[] readData(int len) {
-		byte [] message = null;
+        }
+       	
+       	if (replyLen == 0) return new byte[0];
+       	
+		byte [] reply = null;
 		int length = -1;
 		
         if (is == null) return new byte[0];
@@ -140,15 +140,15 @@ public class NXTCommBluecove implements NXTComm, DiscoveryListener  {
 				length = is.read(); // First byte specifies length of packet.
 			} while (length < 0);
 			
-			int MSB = is.read(); // Most Significant Byte value
-			length = (0xFF & length) | ((0xFF & MSB) << 8);
-			message = new byte[length];
-			is.read(message);
+			int lengthMSB = is.read(); // Most Significant Byte value
+			length = (0xFF & length) | ((0xFF & lengthMSB) << 8);
+			reply = new byte[length];
+			is.read(reply);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}           
         		
-		return (message == null)? new byte[0] : message;
+		return (reply == null)? new byte[0] : reply;
     }
 
 	public void deviceDiscovered(RemoteDevice btDevice, DeviceClass cod) {
