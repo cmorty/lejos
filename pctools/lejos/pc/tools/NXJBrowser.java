@@ -107,6 +107,8 @@ public class NXJBrowser {
           fm.setData(files, numFiles);
           table.invalidate();
           tablePane.revalidate(); 
+        } else {
+        	System.out.println("returnVal = " + returnVal);
         }
       }
     });
