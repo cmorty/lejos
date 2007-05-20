@@ -288,7 +288,11 @@ public class NXTCommand implements NXTProtocol {
 	 */
 	public byte [] readFile(byte handle, int length) {
 		byte [] request = {SYSTEM_COMMAND_REPLY, READ, handle, (byte)length, (byte)(length>>>8)};
-		return nxtComm.sendRequest(request, length+6); 
+		byte [] reply1 =  nxtComm.sendRequest(request, length+6);
+		int dataLen = (reply1[4] & 0xFF) + ((reply1[5] << 8) & 0xFF);
+		byte [] reply = new byte[dataLen];
+		for(int i=0;i<dataLen;i++) reply[i] = reply1[i+6];
+		return reply;
 	}
 
 	public static NXTCommand getSingleton() {
