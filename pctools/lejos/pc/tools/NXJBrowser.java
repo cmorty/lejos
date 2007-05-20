@@ -100,7 +100,7 @@ public class NXJBrowser {
         JFileChooser fc = new JFileChooser();
 
         int returnVal = fc.showOpenDialog(frame);
-        if (returnVal == 0) {
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
           File file = fc.getSelectedFile();
           sendFile(file);
           fetchFiles();
