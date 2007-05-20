@@ -120,12 +120,13 @@ public class NXJBrowser {
     int len, sent = 0;
     FileInputStream in = null;
 
-    //System.out.println("Filename is " + file.getName());
+    System.out.println("Filename is " + file.getName());
 
     try {
       in = new FileInputStream(file);
     } catch (FileNotFoundException e) {}
 
+    System.out.println("Opening for write");
     nxtCommand.openWrite(file.getName(), 0); // File size not currently used
 
     try {
