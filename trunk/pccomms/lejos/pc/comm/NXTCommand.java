@@ -276,7 +276,7 @@ public class NXTCommand implements NXTProtocol {
 		System.arraycopy(command, 0, request, 0, command.length);
 		System.arraycopy(data, 0, request, 3, data.length);
 						
-		return sendSystemRequest(command, 6);
+		return sendSystemRequest(request, 6);
 	}
 
 	/**
