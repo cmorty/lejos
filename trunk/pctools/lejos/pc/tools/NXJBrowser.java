@@ -172,7 +172,7 @@ public class NXJBrowser {
     try {
       do
       {
-        byte [] data = nxtCommand.readFile((byte) 0,51);
+        byte [] data = nxtCommand.readFile((byte) 0,(size-received < 51 ? size-received : 51));
         //System.out.println("Received " + data.length + " bytes");
         received += data.length;
       
