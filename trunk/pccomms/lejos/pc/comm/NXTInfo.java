@@ -8,4 +8,5 @@ public class NXTInfo {
 	public int usbNXT;
 	public int fantomIterator;
 	public int fantomNXT;
+	public String blueZBTAddress;
 }
