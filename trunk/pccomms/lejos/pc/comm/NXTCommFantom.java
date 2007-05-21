@@ -10,14 +10,10 @@ public class NXTCommFantom implements NXTComm {
 	public native byte[] jfantom_read_data(int nxt, int len);
 	
 	public NXTInfo[] search(String name, int protocol) {
-		if ((protocol | NXTCommand.USB) == 0) {
-			return new NXTInfo[0];
-		}
 		int nxt = jfantom_find();
 		if (nxt != 0) {
 			NXTInfo[] nxtInfo = new NXTInfo[1];
 			nxtInfo[0] = new NXTInfo();
-			nxtInfo[0].protocol = NXTCommand.USB;
 			nxtInfo[0].name = "Unknown";
 			nxtInfo[0].fantomIterator = nxt;
 			return nxtInfo;
@@ -35,7 +31,6 @@ public class NXTCommFantom implements NXTComm {
 	}
 	
 	public byte [] sendRequest(byte [] data, int replyLen) {
-		System.out.println("Sending data");
 		jfantom_send_data(nxtInfo.fantomNXT, data, data.length, replyLen-1);
 		return jfantom_read_data(nxtInfo.fantomNXT, replyLen);
 	}
