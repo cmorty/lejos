@@ -129,7 +129,7 @@ public class NXJBrowser {
     } catch (FileNotFoundException e) {}
 
     System.out.println("Opening for write");
-    nxtCommand.openWrite(file.getName(), 0); // File size not currently used
+    nxtCommand.openWrite(file.getName(), (int) file.length());
 
     try {
       while ((len = in.read(data)) > 0) {
