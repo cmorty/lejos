@@ -44,16 +44,12 @@ public class NXTCommand implements NXTProtocol {
     	// Look for USB comms driver first
     	
     	if ((protocol & USB) != 0) {
-    		String nxtCommName = props.getProperty("NXTCommUSB", "lejos.pc.comm.NXTCommLibusb");
+    		String nxtCommName = props.getProperty("NXTCommUSB", "lejos.pc.comm.NXTCommLibnxt");
     		System.out.println("NXTCommUSB = " + nxtCommName);
     		try {
         		Class c = Class.forName(nxtCommName);
         		nxtCommUSB = (NXTComm) c.newInstance();
-        	} catch (ClassNotFoundException e) {
-        		e.printStackTrace();
-        	} catch (IllegalAccessException e) {
-        		e.printStackTrace();
-        	} catch (InstantiationException e) {
+        	} catch (Exception e) {
         		e.printStackTrace();
         	}
     	}
@@ -66,11 +62,7 @@ public class NXTCommand implements NXTProtocol {
     		try {
         		Class c = Class.forName(nxtCommName);
         		nxtCommBluetooth = (NXTComm) c.newInstance();
-        	} catch (ClassNotFoundException e) {
-        		e.printStackTrace();
-        	} catch (IllegalAccessException e) {
-        		e.printStackTrace();
-        	} catch (InstantiationException e) {
+        	} catch (Exception e) {
         		e.printStackTrace();
         	}
     	}
