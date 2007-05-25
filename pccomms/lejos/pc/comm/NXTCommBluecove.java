@@ -155,8 +155,7 @@ public class NXTCommBluecove implements NXTComm, DiscoveryListener  {
     }
 
 	public void deviceDiscovered(RemoteDevice btDevice, DeviceClass cod) {
-        System.out.println("Major Device Class: " + cod.getMajorDeviceClass());
-        System.out.println("Minor Device Class: " + cod.getMinorDeviceClass());
+        System.out.println("Found Device,  class: " + cod.getMajorDeviceClass() + "/" + cod.getMinorDeviceClass());
 		if (cod.getMajorDeviceClass() == 2048 && cod.getMinorDeviceClass() == 4)
 			devices.addElement(btDevice);
 
@@ -169,7 +168,7 @@ public class NXTCommBluecove implements NXTComm, DiscoveryListener  {
 	}
 
 	public void servicesDiscovered(int transID, ServiceRecord[] servRecord) {
-        System.out.println(servRecord.length + " service(s) discovered");
+        //System.out.println(servRecord.length + " service(s) discovered");
         // Should only be one service on a NXT
         if (servRecord.length != 1) return;
         nxtInfo.btUrl = servRecord[0].getConnectionURL(ServiceRecord.NOAUTHENTICATE_NOENCRYPT, false);
@@ -177,7 +176,7 @@ public class NXTCommBluecove implements NXTComm, DiscoveryListener  {
 	}
 
 	public synchronized void serviceSearchCompleted(int transID, int respCode) {
-		System.out.println("Service search completed: respCode = " + respCode);
+		//System.out.println("Service search completed: respCode = " + respCode);
 		notifyAll();
 	}
 }
