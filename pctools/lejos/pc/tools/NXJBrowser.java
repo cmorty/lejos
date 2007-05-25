@@ -31,16 +31,48 @@ public class NXJBrowser {
     };
     frame.addWindowListener(listener);
 
-
-    nxtCommand = NXTCommand.getSingleton(NXTCommand.BLUETOOTH);
-    NXTInfo[] nxts = nxtCommand.search(null, NXTCommand.USB | NXTCommand.BLUETOOTH);
+    nxtCommand = NXTCommand.getSingleton(NXTCommand.USB | NXTCommand.BLUETOOTH);
+    
+    final NXTInfo[] nxts = nxtCommand.search(null, NXTCommand.USB | NXTCommand.BLUETOOTH);
+    
     if (nxts.length == 0) {
       System.out.println("No NXT found");
       System.exit(1);
     }
-    nxtCommand.open(nxts[0]);
-    //nxtCommand.setVerify(true);
+    
+    final NXTModel nm = new NXTModel(frame, nxts, nxts.length);
+    
+    final JTable nxtTable = new JTable(nm);
+    
+    final JScrollPane nxtTablePane = new JScrollPane(nxtTable);
+    
+    frame.getContentPane().add(nxtTablePane, BorderLayout.CENTER);
+    
+    JButton connectButton = new JButton("Connect");
+    
+    connectButton.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent ae) {
+          int row = nxtTable.getSelectedRow();
+          showFiles(frame,nxts[row]);
+          
+        }
+      });
 
+    JPanel buttonPanel = new JPanel();
+    
+    buttonPanel.add(connectButton);
+
+    frame.getContentPane().add(new JScrollPane(buttonPanel), BorderLayout.SOUTH);
+
+    frame.pack();
+    frame.setVisible(true);
+  }
+  
+  private static void showFiles(final JFrame frame, NXTInfo nxt) {
+    nxtCommand.open(nxt);
+
+    frame.getContentPane().removeAll();
+    
     fetchFiles();
 
     final FileModel fm = new FileModel(frame, files, numFiles);
@@ -278,6 +310,53 @@ class FileModel extends AbstractTableModel {
 
   public boolean isCellEditable(int row, int column) {
     return (column == 2);
+  }
+}
+
+class NXTModel extends AbstractTableModel {
+  private static final String[] columnNames = {"Name","Protocol", "Address"};
+  private static final int NUM_COLUMNS = 3;
+
+  Object[][] nxtData;
+  int numNXTs;
+  JFrame frame;
+
+  public NXTModel(JFrame frame, NXTInfo[] nxts, int numNXTs) {
+    this.frame = frame;
+    setData(nxts, numNXTs);
+  }
+
+  public void setData(NXTInfo[] nxts, int numNXTs) {
+    this.numNXTs = numNXTs;
+    System.out.println("Number of NXTS is " + numNXTs);
+    nxtData = new Object[numNXTs][NUM_COLUMNS];
+
+    for(int i=0;i<numNXTs;i++) {
+      nxtData[i][0]  = nxts[i].name;
+      nxtData[i][1] = (nxts[i].protocol == NXTCommand.USB ? "USB" : "Bluetooth");
+      nxtData[i][2] = (nxts[i].btDeviceAddress == null ? "" : nxts[i].btDeviceAddress);
+    }
+  }
+
+  public int getRowCount() {
+    return numNXTs;
+  }
+
+  public int getColumnCount() {
+    return NUM_COLUMNS;
+  }
+
+  public Object getValueAt(int row, int column) {
+    return nxtData[row][column];
+  }
+
+  public String getColumnName(int column) {
+    return columnNames[column];
+  }
+
+  public Class getColumnClass(int column) {
+	System.out.println("Getting class for column " + column);
+    return nxtData[0][column].getClass();
   }
 }
 
