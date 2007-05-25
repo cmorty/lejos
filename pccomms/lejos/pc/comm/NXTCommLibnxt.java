@@ -31,7 +31,7 @@ public class NXTCommLibnxt implements NXTComm {
 	}
 	
 	public void close() {
-		jlibnxt_close(nxtInfo.usbNXT);
+		if (nxtInfo != null && nxtInfo.usbNXT != 0) jlibnxt_close(nxtInfo.usbNXT);
 	}
 	
 	public byte[] sendRequest(byte [] data, int replyLen) {
