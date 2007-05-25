@@ -44,7 +44,7 @@ public class NXTCommand implements NXTProtocol {
     	// Look for USB comms driver first
     	
     	if ((protocol & USB) != 0) {
-    		String nxtCommName = props.getProperty("NXTCommUSB", "lejos.pc.comm.NXTCommLibnxt");
+    		String nxtCommName = props.getProperty("NXTCommUSB", "lejos.pc.comm.NXTCommBluecove");
     		System.out.println("NXTCommUSB = " + nxtCommName);
     		try {
         		Class c = Class.forName(nxtCommName);
