@@ -355,7 +355,6 @@ class NXTModel extends AbstractTableModel {
   }
 
   public Class getColumnClass(int column) {
-	System.out.println("Getting class for column " + column);
     return nxtData[0][column].getClass();
   }
 }
