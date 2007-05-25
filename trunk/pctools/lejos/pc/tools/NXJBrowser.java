@@ -32,7 +32,7 @@ public class NXJBrowser {
     frame.addWindowListener(listener);
 
 
-    nxtCommand = NXTCommand.getSingleton();
+    nxtCommand = NXTCommand.getSingleton(NXTCommand.BLUETOOTH);
     NXTInfo[] nxts = nxtCommand.search(null, NXTCommand.USB | NXTCommand.BLUETOOTH);
     if (nxts.length == 0) {
       System.out.println("No NXT found");
