@@ -40,7 +40,9 @@ public class NXTCommBluecove implements NXTComm, DiscoveryListener  {
 			try {	
                 nxtInfo = new NXTInfo();
 
-                nxtInfo.name = d.getFriendlyName(false);		
+                nxtInfo.name = d.getFriendlyName(false);
+                if (nxtInfo.name == null || nxtInfo.name.length() == 0)
+                	nxtInfo.name = "Unknown";
 				nxtInfo.btDeviceAddress = d.getBluetoothAddress();
                 nxtInfo.protocol = NXTCommand.BLUETOOTH;
 
