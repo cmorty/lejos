@@ -22,6 +22,7 @@ public class NXTCommFantom implements NXTComm {
 			    if (nxtName.length() >= 3 && nxtName.substring(0,3).equals("BTH"))
 			    	nxtInfo[i].protocol = NXTCommand.BLUETOOTH;	
 			    int startName = nxtName.indexOf("::");
+			    if (startName >= 0) startName +=2;
 			    int endName = -1;
 			    if (startName != -1) endName = nxtName.indexOf("::", startName);
 			    if (startName >= 0 && endName >= 0) {
@@ -35,7 +36,7 @@ public class NXTCommFantom implements NXTComm {
 
 	public void open(NXTInfo nxtInfo) {
 		this.nxtInfo = nxtInfo;
-		nxtInfo.nxtPtr = jfantom_open(nxtInfo.name);
+		nxtInfo.nxtPtr = jfantom_open(nxtInfo.btResourceString);
 	}
 	
 	public void close() {
