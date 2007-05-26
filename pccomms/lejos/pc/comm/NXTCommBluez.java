@@ -16,7 +16,7 @@ public class NXTCommBluez implements NXTComm {
 		else {
 			NXTInfo nxtInfo = new NXTInfo();
 			System.out.println("Setting address to " + btAddress);
-			nxtInfo.blueZBTAddress = btAddress;
+			nxtInfo.btDeviceAddress = btAddress;
 			NXTInfo[] nxts = new NXTInfo[1];
 			nxts[0] = nxtInfo;
 			return nxts;
@@ -43,7 +43,7 @@ public class NXTCommBluez implements NXTComm {
 
 	public void open(NXTInfo nxt) {
 		try {
-			open(BDADDR_ANY, nxt.blueZBTAddress, 1);
+			open(BDADDR_ANY, nxt.btDeviceAddress, 1);
 		} catch (BlueZException e) {
 			System.out.println("Open failed");
 		}

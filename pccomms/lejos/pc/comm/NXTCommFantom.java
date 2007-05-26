@@ -14,27 +14,37 @@ public class NXTCommFantom implements NXTComm {
 		NXTInfo[] nxtInfo = new NXTInfo[nxtNames.length];
 		for(int i=0;i<nxtNames.length;i++) {
 			nxtInfo[i] = new NXTInfo();
-			nxtInfo[i].name = (nxtNames[i] == null ? "" : nxtNames[i]);
-			if (nxtNames[i] != null && nxtNames[i].length() >= 3 && nxtNames[i].substring(0,3).equals("BTH"))
-				nxtInfo[i].protocol = NXTCommand.BLUETOOTH;
-			else
-				nxtInfo[i].protocol = NXTCommand.USB;
+			String nxtName = (nxtNames[i] == null ? "" : nxtNames[i]);
+			nxtInfo[i].name = "Unknown";
+			nxtInfo[i].protocol = NXTCommand.USB;
+			nxtInfo[i].btDeviceAddress = "";
+			if (nxtName != null) {
+			    if (nxtName.length() >= 3 && nxtName.substring(0,3).equals("BTH"))
+			    	nxtInfo[i].protocol = NXTCommand.BLUETOOTH;	
+			    int startName = nxtName.indexOf("::");
+			    int endName = -1;
+			    if (startName != -1) endName = nxtName.indexOf("::", startName);
+			    if (startName >= 0 && endName >= 0) {
+			    	nxtInfo[i].name = nxtName.substring(startName, endName);
+		            nxtInfo[i].btDeviceAddress = nxtName.substring(endName+2);
+			    }
+			}
 		}
 		return nxtInfo;
 	}
 
 	public void open(NXTInfo nxtInfo) {
 		this.nxtInfo = nxtInfo;
-		nxtInfo.fantomNXT = jfantom_open(nxtInfo.name);
+		nxtInfo.nxtPtr = jfantom_open(nxtInfo.name);
 	}
 	
 	public void close() {
-		jfantom_close(nxtInfo.fantomNXT);
+		jfantom_close(nxtInfo.nxtPtr);
 	}
 	
 	public byte [] sendRequest(byte [] data, int replyLen) {
-		jfantom_send_data(nxtInfo.fantomNXT, data, data.length, replyLen-1);
-		return jfantom_read_data(nxtInfo.fantomNXT, replyLen);
+		jfantom_send_data(nxtInfo.nxtPtr, data, data.length, replyLen-1);
+		return jfantom_read_data(nxtInfo.nxtPtr, replyLen);
 	}
 	
 	static {
