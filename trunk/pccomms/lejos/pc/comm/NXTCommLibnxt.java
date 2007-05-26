@@ -36,10 +36,7 @@ public class NXTCommLibnxt implements NXTComm {
 	
 	public byte[] sendRequest(byte [] data, int replyLen) {
 		jlibnxt_send_data(nxtInfo.nxtPtr, data);
-		try {
-			Thread.sleep(10);
-		} catch (InterruptedException ie) {}
-
+        if (replyLen == 0) return new byte [0];
 		return jlibnxt_read_data(nxtInfo.nxtPtr, replyLen);
 	}
 	
