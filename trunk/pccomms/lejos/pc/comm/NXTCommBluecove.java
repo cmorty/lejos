@@ -86,11 +86,11 @@ public class NXTCommBluecove implements NXTComm, DiscoveryListener  {
 
 	public void open(NXTInfo nxt) {		
 		try{
-			if (nxt.btUrl == null) {
+			if (nxt.btResourceString == null) {
 				System.out.print("Service not found - is NXT paired?");
 				System.exit(1);
 			}
-			con = (StreamConnection) Connector.open(nxt.btUrl);
+			con = (StreamConnection) Connector.open(nxt.btResourceString);
 	        os = con.openOutputStream();
 			is  = con.openInputStream();			
  	 	}
@@ -171,8 +171,8 @@ public class NXTCommBluecove implements NXTComm, DiscoveryListener  {
         //System.out.println(servRecord.length + " service(s) discovered");
         // Should only be one service on a NXT
         if (servRecord.length != 1) return;
-        nxtInfo.btUrl = servRecord[0].getConnectionURL(ServiceRecord.NOAUTHENTICATE_NOENCRYPT, false);
-	    System.out.println("Setting url to : " + nxtInfo.btUrl);
+        nxtInfo.btResourceString = servRecord[0].getConnectionURL(ServiceRecord.NOAUTHENTICATE_NOENCRYPT, false);
+	    System.out.println("Setting url to : " + nxtInfo.btResourceString);
 	}
 
 	public synchronized void serviceSearchCompleted(int transID, int respCode) {

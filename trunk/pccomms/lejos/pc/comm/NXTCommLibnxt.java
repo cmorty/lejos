@@ -19,7 +19,7 @@ public class NXTCommLibnxt implements NXTComm {
 			nxtInfo[0] = new NXTInfo();
 			nxtInfo[0].protocol = NXTCommand.USB;
 			nxtInfo[0].name = "Unknown";
-			nxtInfo[0].usbNXT = nxt;
+			nxtInfo[0].nxtPtr = nxt;
 			return nxtInfo;
 		}
 		return new NXTInfo[0];
@@ -27,20 +27,20 @@ public class NXTCommLibnxt implements NXTComm {
 
 	public void open(NXTInfo nxtInfo) {
 		this.nxtInfo = nxtInfo;
-		jlibnxt_open(nxtInfo.usbNXT);
+		jlibnxt_open(nxtInfo.nxtPtr);
 	}
 	
 	public void close() {
-		if (nxtInfo != null && nxtInfo.usbNXT != 0) jlibnxt_close(nxtInfo.usbNXT);
+		if (nxtInfo != null && nxtInfo.nxtPtr != 0) jlibnxt_close(nxtInfo.nxtPtr);
 	}
 	
 	public byte[] sendRequest(byte [] data, int replyLen) {
-		jlibnxt_send_data(nxtInfo.usbNXT, data);
+		jlibnxt_send_data(nxtInfo.nxtPtr, data);
 		try {
 			Thread.sleep(10);
 		} catch (InterruptedException ie) {}
 
-		return jlibnxt_read_data(nxtInfo.usbNXT, replyLen);
+		return jlibnxt_read_data(nxtInfo.nxtPtr, replyLen);
 	}
 	
 	static {
