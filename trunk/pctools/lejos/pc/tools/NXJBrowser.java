@@ -46,6 +46,8 @@ public class NXJBrowser {
     
     final JScrollPane nxtTablePane = new JScrollPane(nxtTable);
     
+    nxtTable.setRowSelectionInterval(0, 0);
+    
     frame.getContentPane().add(nxtTablePane, BorderLayout.CENTER);
     
     JButton connectButton = new JButton("Connect");
@@ -53,7 +55,7 @@ public class NXJBrowser {
     connectButton.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent ae) {
           int row = nxtTable.getSelectedRow();
-          showFiles(frame,nxts[row]);
+          if (row >= 0) showFiles(frame,nxts[row]);
           
         }
       });
