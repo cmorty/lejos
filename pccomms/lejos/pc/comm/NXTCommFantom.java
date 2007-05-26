@@ -15,7 +15,7 @@ public class NXTCommFantom implements NXTComm {
 		for(int i=0;i<nxtNames.length;i++) {
 			nxtInfo[i] = new NXTInfo();
 			nxtInfo[i].name = (nxtNames[i] == null ? "" : nxtNames[i]);
-			if (nxtNames[i] != null && nxtNames[i].length() >= 3 && nxtNames[i].substring(0,4).equals("BTH"))
+			if (nxtNames[i] != null && nxtNames[i].length() >= 3 && nxtNames[i].substring(0,3).equals("BTH"))
 				nxtInfo[i].protocol = NXTCommand.BLUETOOTH;
 			else
 				nxtInfo[i].protocol = NXTCommand.USB;
