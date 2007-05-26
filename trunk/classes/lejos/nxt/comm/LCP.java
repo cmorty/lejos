@@ -43,6 +43,7 @@ public class LCP {
 		// START PROGRAM
 		if (cmd[1] == (byte) 0x00) {
 			int filenameLength = 0;
+			init_files();
 			for(int i=0;i<20 && cmd[i+2] != 0;i++) filenameLength++;
 			char[] chars = new char[filenameLength];
 			for(int i=0;i<filenameLength;i++) chars[i] = (char) cmd[i+2];
@@ -239,6 +240,7 @@ public class LCP {
 		if (cmd[1] == (byte) 0x80)
 		{
 			int filenameLength = 0;
+			init_files();
 			for(int i=0;i<20 && cmd[i+2] != 0;i++) filenameLength++;
 			char[] chars = new char[filenameLength];
 			for(int i=0;i<filenameLength;i++) chars[i] = (char) cmd[i+2];
@@ -260,6 +262,7 @@ public class LCP {
 		if (cmd[1] == (byte) 0x81)
 		{
 			int filenameLength = 0;
+			init_files();
 			for(int i=0;i<20 && cmd[i+2] != 0;i++) filenameLength++;
 			char[] chars = new char[filenameLength];
 			for(int i=0;i<filenameLength;i++) chars[i] = (char) cmd[i+2];
@@ -302,18 +305,13 @@ public class LCP {
 		// FIND FIRST
 		if (cmd[1] == (byte) 0x86)
 		{
-			files = File.listFiles();
-			
-			numFiles = 0;
-			for(int i=0;i<files.length && files[i] != null;i++) numFiles++;
+			init_files();
 			if (numFiles == 0)
 			{
 				reply[2] = (byte) 0x86; // File not found
 			}
 			else
 			{
-				fileNames = new String[numFiles];
-				for(int i=0;i<numFiles;i++) fileNames[i] = files[i].getName();
 				for(int i=0;i<fileNames[0].length();i++) reply[4+i] = (byte) fileNames[0].charAt(i);
 				fileIdx = 1;
             	int size = files[0].length();
@@ -363,7 +361,10 @@ public class LCP {
 			int dataLen = cmdLen - 3;
 			try {
 				out.write(cmd,3,dataLen);
-			} catch (IOException ioe) {}
+			} catch (Exception ioe) {
+				//LCD.drawString("Exception", 0, 7);
+				//LCD.refresh();						
+			}
 			reply[4] = (byte) (dataLen &0xFF);
 			reply[5] = (byte) ((dataLen >> 8) & 0xFF);
 			len = 6;
@@ -402,7 +403,10 @@ public class LCP {
 				try {
 					out.flush();
 					out.close();
-				} catch (IOException ioe) {}
+				} catch (Exception ioe) {
+					//LCD.drawString("Exception",0,7);
+					//LCD.refresh();
+				}
 				out = null;
 			}
 			len = 4;
@@ -425,6 +429,15 @@ public class LCP {
 	{
 		return (byte) ((i >> 8) & 0xFF);
 	}
-
+	
+	private static void init_files() {
+		if (files == null) {
+			files = File.listFiles();
+			numFiles = 0;
+			for(int i=0;i<files.length && files[i] != null;i++) numFiles++;
+			fileNames = new String[numFiles];
+			for(int i=0;i<numFiles;i++) fileNames[i] = files[i].getName();
+		}
+	}
 }
 
