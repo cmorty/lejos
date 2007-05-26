@@ -14,10 +14,13 @@ public class NXTCommFantom implements NXTComm {
 		NXTInfo[] nxtInfo = new NXTInfo[nxtNames.length];
 		for(int i=0;i<nxtNames.length;i++) {
 			nxtInfo[i] = new NXTInfo();
-			nxtInfo[0].name = nxtNames[i];
-			return nxtInfo;
+			nxtInfo[i].name = (nxtNames[i] == null ? "" : nxtNames[i]);
+			if (nxtNames[i] != null && nxtNames[i].length() >= 3 && nxtNames[i].substring(0,4).equals("BTH"))
+				nxtInfo[i].protocol = NXTCommand.BLUETOOTH;
+			else
+				nxtInfo[i].protocol = NXTCommand.USB;
 		}
-		return new NXTInfo[0];
+		return nxtInfo;
 	}
 
 	public void open(NXTInfo nxtInfo) {
