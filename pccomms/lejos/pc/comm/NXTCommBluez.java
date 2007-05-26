@@ -67,6 +67,8 @@ public class NXTCommBluez implements NXTComm {
 			e.printStackTrace();
 		}
 		
+		if (replyLen == 0) return new byte[0];
+		
 		byte[] data = null;
 		try {
 			data = rcSocketRecv(sk);
