@@ -59,7 +59,9 @@ public class NXJUpload {
 			if (c == '\\' || c == '/') break;
 		}
 		
-		baseFileName = fileName.substring(i+1);
+		if (i != 0) i++;
+		
+		baseFileName = fileName.substring(i);
 		
 		System.out.println("Base file name is " + baseFileName);
 		
@@ -95,9 +97,10 @@ public class NXJUpload {
 
 	    try {
 	      in = new FileInputStream(file);
-	    } catch (FileNotFoundException e) {}
+	    } catch (FileNotFoundException e) {
+	    	System.out.println("File not found");
+	    }
 
-	    System.out.println("Opening for write");
 	    nxtCommand.openWrite(baseFileName, (int) file.length());
 
 	    try {
@@ -109,7 +112,8 @@ public class NXJUpload {
 	        nxtCommand.writeFile((byte) 0,sendData); // Handles not yet used
 	      }
 	    } catch (IOException ioe) {}
-	    //System.out.println("Sent " + sent + " bytes");
+	    System.out.println("Sent " + sent + " bytes");
+	    nxtCommand.setVerify(true);
 	    nxtCommand.closeFile((byte) 0);
 	  }
 }
