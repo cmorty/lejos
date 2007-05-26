@@ -14,7 +14,8 @@ public class NXTCommFantom implements NXTComm {
 		NXTInfo[] nxtInfo = new NXTInfo[nxtNames.length];
 		for(int i=0;i<nxtNames.length;i++) {
 			nxtInfo[i] = new NXTInfo();
-			String nxtName = (nxtNames[i] == null ? "" : nxtNames[i]);
+			String nxtName = nxtNames[i];
+			nxtInfo[i].btResourceString = nxtName;
 			nxtInfo[i].name = "Unknown";
 			nxtInfo[i].protocol = NXTCommand.USB;
 			nxtInfo[i].btDeviceAddress = "";
