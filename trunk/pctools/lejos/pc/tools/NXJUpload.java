@@ -14,7 +14,7 @@ public class NXJUpload {
 		
 		for(int i=0;i<args.length;i++) {
 			arg = args[i];
-			System.out.println("Parameter " + i + " = " + arg);
+			//System.out.println("Parameter " + i + " = " + arg);
 			if (arg.charAt(0) == '-') { // flags
 				if (arg.length() != 2) invalidFlag = true;
 				else {
@@ -63,7 +63,7 @@ public class NXJUpload {
 		
 		baseFileName = fileName.substring(i);
 		
-		System.out.println("Base file name is " + baseFileName);
+		//System.out.println("Base file name is " + baseFileName);
 		
 		File f = new File(fileName);
 		
@@ -83,7 +83,10 @@ public class NXJUpload {
 		if (nxtInfo.length > 0) {
 			nxtCommand.open(nxtInfo[0]);
 			sendFile(f, baseFileName);
-			if (run) nxtCommand.startProgram(baseFileName);
+			if (run) {
+				nxtCommand.setVerify(false);
+				nxtCommand.startProgram(baseFileName);
+			}
 			nxtCommand.close();
 		}
 	}
@@ -93,7 +96,7 @@ public class NXJUpload {
 	    int len, sent = 0;
 	    FileInputStream in = null;
 
-	    System.out.println("Filename is " + file.getName());
+	    //System.out.println("Filename is " + file.getName());
 
 	    try {
 	      in = new FileInputStream(file);
@@ -112,7 +115,7 @@ public class NXJUpload {
 	        nxtCommand.writeFile((byte) 0,sendData); // Handles not yet used
 	      }
 	    } catch (IOException ioe) {}
-	    System.out.println("Sent " + sent + " bytes");
+	    //System.out.println("Sent " + sent + " bytes");
 	    nxtCommand.setVerify(true);
 	    nxtCommand.closeFile((byte) 0);
 	  }
