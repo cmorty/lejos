@@ -3,19 +3,18 @@ package lejos.pc.comm;
 public class NXTCommFantom implements NXTComm {
 	private NXTInfo nxtInfo;
 	
-	public native int jfantom_find();
-	public native int jfantom_open(int nxt);
+	public native String[] jfantom_find();
+	public native int jfantom_open(String nxt);
 	public native void jfantom_close(int nxt);
 	public native void jfantom_send_data(int nxt, byte [] message, int len, int replyLen);
 	public native byte[] jfantom_read_data(int nxt, int len);
 	
 	public NXTInfo[] search(String name, int protocol) {
-		int nxt = jfantom_find();
-		if (nxt != 0) {
-			NXTInfo[] nxtInfo = new NXTInfo[1];
-			nxtInfo[0] = new NXTInfo();
-			nxtInfo[0].name = "Unknown";
-			nxtInfo[0].fantomIterator = nxt;
+		String[] nxtNames = jfantom_find();
+		NXTInfo[] nxtInfo = new NXTInfo[nxtNames.length];
+		for(int i=0;i<nxtNames.length;i++) {
+			nxtInfo[i] = new NXTInfo();
+			nxtInfo[0].name = nxtNames[i];
 			return nxtInfo;
 		}
 		return new NXTInfo[0];
@@ -23,7 +22,7 @@ public class NXTCommFantom implements NXTComm {
 
 	public void open(NXTInfo nxtInfo) {
 		this.nxtInfo = nxtInfo;
-		nxtInfo.fantomNXT = jfantom_open(nxtInfo.fantomIterator);
+		nxtInfo.fantomNXT = jfantom_open(nxtInfo.name);
 	}
 	
 	public void close() {
