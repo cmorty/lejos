@@ -5,6 +5,7 @@
 void flash_write_page(U32 *buf, int page_num);
 void flash_erase_range(U32 addr, U32 nBytes);
 void flash_write(U32 addr, void *buffer, U32 nBytes);
+void flash_set_mode(U32 fmcn); 
 
 #define VINTPTR(addr) ((volatile unsigned int *)(addr))
 #define VINT(addr) (*(VINTPTR(addr)))
