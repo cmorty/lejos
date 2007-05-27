@@ -147,6 +147,7 @@ nxt_firmware_flash(nxt_t *nxt, char *fw_path,
         
           if (ret != -1 && write_len)
             {
+              ((unsigned *) buf)[62] = write_len; // fmcn  
               ((unsigned *) buf)[63] = len;
               NXT_ERR(nxt_flash_block(nxt,start_page + max_pages -1, buf));
             }
@@ -159,8 +160,12 @@ nxt_firmware_flash(nxt_t *nxt, char *fw_path,
 
   close(fd);
   
-  ((unsigned *) buf)[63] = len;
-  NXT_ERR(nxt_flash_block(nxt,start_page + max_pages -1, buf));
+  if (write_len) 
+    { 
+      ((unsigned *) buf)[62] = write_len; // fmcn
+      ((unsigned *) buf)[63] = len;
+      NXT_ERR(nxt_flash_block(nxt,start_page + max_pages -1, buf));
+    }
   
   NXT_ERR(nxt_flash_finish(nxt));
 
