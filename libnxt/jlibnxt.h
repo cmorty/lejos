@@ -45,7 +45,7 @@ JNIEXPORT void JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1send_1data
  * Signature: ([B)[B
  */
 JNIEXPORT jbyteArray JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1read_1data
-  (JNIEnv *, jobject, jint, int jlen);
+  (JNIEnv *, jobject, jint, jint);
 
 #ifdef __cplusplus
 }
