@@ -25,6 +25,10 @@ flash_write_page(U32 *page, int page_num)
   if (istate) interrupts_enable();
 }
 
+void flash_set_mode(U32 fmcn) {
+  FLASH_MODE_REG = ((fmcn << 16) | (1 << 8));
+}
+
 void
 flash_erase_range(U32 addr, U32 nBytes)
 {

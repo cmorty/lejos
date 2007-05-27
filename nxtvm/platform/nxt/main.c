@@ -37,6 +37,7 @@
 #include "sound.h"
 #include "bt.h"
 #include "udp.h"
+#include "flashprog.h"
 
 #include <string.h>
 
@@ -397,6 +398,8 @@ main(void)
   i2c_init();
   bt_init();
   display_init();
+  
+  flash_set_mode(*((unsigned *) 0x0010bff8));
     
   //xx_show();
   
