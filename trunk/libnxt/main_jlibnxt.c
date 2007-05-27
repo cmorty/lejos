@@ -97,6 +97,5 @@ JNIEXPORT jbyteArray JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1read_1dat
     
   jb=(*env)->NewByteArray(env, len);
   (*env)->SetByteArrayRegion(env, jb, 0, len, (jbyte *) data);
-  return (jb);
-      
+  return (jb);    
 }
