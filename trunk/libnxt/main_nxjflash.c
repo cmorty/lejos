@@ -52,10 +52,11 @@ int main(int argc, char *argv[])
   nxt_t *nxt;
   nxt_error_t err;
   char *fw_file, *menu_file;
+  unsigned fmcn = 50;
 
-  if (argc != 3)
+  if (argc < 3 || argc > 4)
     {
-      printf("Syntax: %s <VM binary> <java menu binary>\n"
+      printf("Syntax: %s <VM binary> <java menu binary> [fmcn]\n"
              "\n"
              "Example: %s lejos_nxt_rom.bin Menu.bin\n", argv[0], argv[0]);
       exit(1);
@@ -69,6 +70,12 @@ int main(int argc, char *argv[])
   printf("VM OK.\n");
   
   menu_file = argv[2];
+  
+  if (argc == 4) {
+  	fmcn = atoi(argv[3]);
+  }
+  
+  printf("Setting fmcn to %d\n", fmcn);
   
   printf("Checking Menu... ");
   NXT_HANDLE_ERR(nxt_firmware_validate(menu_file, (MAX_MENU_PAGES * 256) - 4), NULL,
@@ -106,7 +113,7 @@ int main(int argc, char *argv[])
 
   printf("Starting menu flash procedure now...\n");
   
-  NXT_HANDLE_ERR(nxt_firmware_flash(nxt, menu_file, MAX_VM_PAGES, MAX_MENU_PAGES, 0, 1), nxt,
+  NXT_HANDLE_ERR(nxt_firmware_flash(nxt, menu_file, MAX_VM_PAGES, MAX_MENU_PAGES, 0, fmcn), nxt,
                  "Error flashing menu");
   printf("Menu flash complete.\n");
   
