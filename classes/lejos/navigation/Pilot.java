@@ -54,7 +54,7 @@ public class Pilot
 	/** 
 	 * motor speed  degrees per second. Used by all methods that cause movememt
 	 */
-	private int _speed = 360;
+	protected int _speed = 360;
 	
 	/**
 	 * Motor rotation forward makes robot move forward iff parity == 1.
@@ -343,7 +343,6 @@ public class Pilot
 			return;
 		}
 		float rotAngle  = angle*_trackWidth*2/(_wheelDiameter*(1-steerRatio));
-//		if(angle == Integer.MAX_VALUE) rotAngle = Integer.MAX_VALUE/2; // turn rate == 0
 		inside.rotate(_parity*(int)(rotAngle*steerRatio),true);
 		outside.rotate(_parity*(int)rotAngle,true);
 		if(immediateReturn)return;
@@ -362,7 +361,7 @@ public class Pilot
 /**
  *Sets motor speed regulation   on = true (default) or off = false; <br>
  *Allows steer() method to be called by (for example)
- *a line tracker) so direction control is from sensor inputs 
+ *a line tracker or compass navigator so direction control is from sensor inputs 
  */	
 	public void regulateSpeed(boolean yes)
 	{
