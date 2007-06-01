@@ -181,5 +181,9 @@ public class NXTCommBluecove implements NXTComm, DiscoveryListener  {
 		//System.out.println("Service search completed: respCode = " + respCode);
 		notifyAll();
 	}
+	
+	public OutputStream getOutputStream() {
+		return new BTOutputStream(os);		
+	}
 }
 
