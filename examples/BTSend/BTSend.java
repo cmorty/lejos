@@ -16,12 +16,14 @@ public class BTSend {
 
 		nxtComm.open(nxtInfo[0]);
 		
+		InputStream is = nxtComm.getInputStream();
 		OutputStream os = nxtComm.getOutputStream();
 		
 		for(int i=0;i<100;i++) {
 			try {
 				os.write(99);
 				os.flush();
+				System.out.println("Received " + is.read());
 			} catch (IOException ioe) {
 				System.out.println("IO Exception writing bytes");
 			}
