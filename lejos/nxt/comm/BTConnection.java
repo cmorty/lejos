@@ -15,6 +15,8 @@ import javax.microedition.io.*;
 public class BTConnection implements StreamConnection {
 	int handle;
 	boolean open;
+	BTInputStream is = new BTInputStream();
+	BTOutputStream os = new BTOutputStream();
 	
 	BTConnection(int handle)
 	{
@@ -28,23 +30,19 @@ public class BTConnection implements StreamConnection {
 	}
 
 	public DataInputStream openDataInputStream() throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		return new DataInputStream(is);
 	}
 
 	public DataOutputStream openDataOutputStream() throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		return new DataOutputStream(os);
 	}
 
 	public InputStream openInputStream() throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		return is;
 	}
 
 	public OutputStream openOutputStream() throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		return os;
 	}
 
 }
