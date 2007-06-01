@@ -21,7 +21,7 @@ public class BTSend {
 		
 		for(int i=0;i<100;i++) {
 			try {
-				os.write(99);
+				os.write(i);
 				os.flush();
 				System.out.println("Received " + is.read());
 			} catch (IOException ioe) {
