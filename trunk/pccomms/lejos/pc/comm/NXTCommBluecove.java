@@ -185,5 +185,9 @@ public class NXTCommBluecove implements NXTComm, DiscoveryListener  {
 	public OutputStream getOutputStream() {
 		return new BTOutputStream(os);		
 	}
+	
+	public InputStream getInputStream() {
+		return is;
+	}
 }
 
