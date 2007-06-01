@@ -16,9 +16,10 @@ public class BTOutputStream extends OutputStream {
 	}
 	
 	public void flush() throws IOException {
-		byte[] b = baos.toByteArray();
-		
+		byte[] b = baos.toByteArray();		
 		byte lsb = (byte) b.length;
+		
+		baos.reset();
 		
 		os.write(lsb);
 		os.write(0);
