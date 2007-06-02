@@ -197,7 +197,7 @@ nxt_main(int bin, int size)
     // Execute flash menu
 
     bin = (unsigned *) 0x00108000;
-    size = *((unsigned *) 0x0010bffc);
+    size = *((unsigned *) 0x0010fffc);
     size = (size + 3) & ~3;
     temp = ((unsigned *) (&__free_ram_end__)) - (size >> 2);   
     memcpy(temp,bin,size);
@@ -399,7 +399,7 @@ main(void)
   bt_init();
   display_init();
   
-  flash_set_mode(*((unsigned *) 0x0010bff8));
+  flash_set_mode(*((unsigned *) 0x0010fff8));
     
   //xx_show();
   
