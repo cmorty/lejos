@@ -23,6 +23,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "error.h"
 #include "lowlevel.h"
@@ -30,7 +31,7 @@
 #include "firmware.h"
 
 #define MAX_VM_PAGES 128
-#define MAX_MENU_PAGES 64
+#define MAX_MENU_PAGES 128
 
 #define NXT_HANDLE_ERR(expr, nxt, msg)     \
   do {                                     \
@@ -53,31 +54,52 @@ int main(int argc, char *argv[])
   nxt_error_t err;
   char *fw_file, *menu_file;
   unsigned fmcn = 50;
+  char *nxj_home;
 
-  if (argc < 3 || argc > 4)
+  if (argc == 1)
+    {
+      nxj_home = getenv("NXJ_HOME");
+      
+      if (nxj_home == NULL || strlen(nxj_home) == 0)
+        {
+          printf("NXJ_HOME is not defined\n");
+          exit(1);
+        }
+      printf("NXJ_HOME is %s\n", nxj_home);
+      
+      fw_file = (char *) calloc(1,256);
+      strcpy(fw_file, nxj_home);
+      strcat(fw_file,"/bin/lejos_nxt_rom.bin");
+      menu_file = calloc(1,256);
+      strcpy(menu_file,nxj_home);
+      strcat(menu_file,"/bin/StartUpText.bin");
+    }
+  else if (argc < 3 || argc > 4)
     {
       printf("Syntax: %s <VM binary> <java menu binary> [fmcn]\n"
              "\n"
              "Example: %s lejos_nxt_rom.bin Menu.bin\n", argv[0], argv[0]);
       exit(1);
     }
+  else
+    {
+      fw_file = argv[1];     
+      menu_file = argv[2];
+    }
+    
+  if (argc == 4) 
+    {
+  	  fmcn = atoi(argv[3]);
+    }
 
-  fw_file = argv[1];
-
-  printf("Checking VM... ");
+  printf("Setting fmcn to %d\n", fmcn);
+  
+  printf("Checking VM %s ... ", fw_file);
   NXT_HANDLE_ERR(nxt_firmware_validate(fw_file, MAX_VM_PAGES * 256), NULL,
                  "Error in VM file");
   printf("VM OK.\n");
-  
-  menu_file = argv[2];
-  
-  if (argc == 4) {
-  	fmcn = atoi(argv[3]);
-  }
-  
-  printf("Setting fmcn to %d\n", fmcn);
-  
-  printf("Checking Menu... ");
+ 
+  printf("Checking Menu %s ... ", menu_file);
   NXT_HANDLE_ERR(nxt_firmware_validate(menu_file, (MAX_MENU_PAGES * 256) - 4), NULL,
                  "Error in Menu file");
   printf("Menu OK.\n");
