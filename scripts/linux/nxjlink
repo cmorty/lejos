@@ -1,0 +1,21 @@
+#!/bin/bash
+
+#
+# lejoslink: Java tool to link java programs for LeJOS
+#
+# 12/12/02  created L. Griffiths
+
+if [ -z "$NXJ_HOME" ]; then 
+  NXJ_HOME="$(dirname $(dirname $0))"
+fi
+
+if [ $OSTYPE == "cygwin" ]; then
+  SEP=";"
+else
+  SEP=":"
+fi
+
+THIRDPARTY_LIBS="$NXJ_HOME/3rdparty/lib"
+LINK_CLASSPATH=".$SEP$THIRDPARTY_LIBS/bcel-5.1.jar$SEP$THIRDPARTY_LIBS/commons-cli-1.0.jar$SEP$NXJ_HOME/lib/jtools.jar$SEP$NXJ_HOME/lib/classes.jar"
+
+java -classpath "$LINK_CLASSPATH" js.tinyvm.TinyVM --writeorder LE --classpath "$LINK_CLASSPATH" "$@"
