@@ -1,4 +1,4 @@
-echo off
+@echo off
 if "%NXJ_HOME%" == ""  goto homeless
 
 set THIRDPARTY_LIBS="%NXJ_HOME%\3rdparty\lib"
