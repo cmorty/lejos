@@ -1,4 +1,5 @@
 package lejos.navigation;
+//import lejos.navigation.*;
 import lejos.nxt.Motor;
 
 /**
@@ -12,11 +13,12 @@ import lejos.nxt.Motor;
 public class TachoNavigator  implements Navigator
 { 
 	// orientation and co-ordinate data
-	private float _heading = 0;
+	protected float _heading = 0;
 	private float _x = 0;
 	private float _y = 0;
 	// The essential component
 	public Pilot pilot;
+	
 /**
  * set false whenever the robot moves,  set to true by updatePosition();
  */
@@ -32,15 +34,18 @@ public class TachoNavigator  implements Navigator
 * of the right tire, in units of your choice
 * @param rightMotor The motor used to drive the right wheel e.g. Motor.C.
 * @param leftMotor The motor used to drive the left wheel e.g. Motor.A.
+* @param reverse  If motor.forward() dives the robot backwars, set this parameter true.
 */
+	public TachoNavigator(float wheelDiameter, float trackWidth, Motor leftMotor, Motor rightMotor, boolean reverse) 
+		{
+			pilot = new Pilot(wheelDiameter,trackWidth,leftMotor, rightMotor,reverse);
+		}
+	
 	public TachoNavigator(float wheelDiameter, float trackWidth, Motor leftMotor, Motor rightMotor) 
 	{
 		pilot = new Pilot(wheelDiameter,trackWidth,leftMotor, rightMotor);
 	}
-	   public TachoNavigator(float wheelDiameter, float trackWidth, Motor leftMotor, Motor rightMotor, boolean reverse) 
-	{
-		pilot = new Pilot(wheelDiameter,trackWidth,leftMotor, rightMotor,reverse);
-	}
+
 	   
 	   public TachoNavigator(Pilot pilot) {
 	  	 this.pilot = pilot;
@@ -203,7 +208,7 @@ public class TachoNavigator  implements Navigator
 	
 	/**
 	 * Rotates the NXT robot a specific number of degrees in a direction (+ or -).
-	 *  If immediateReturnis true, method returns immidiately and your code MUST call updatePostion()
+	 *  If immediateReturn is true, method returns immidiately and your code MUST call updatePostion()
 	 * when the robot has stopped.  Otherwise, the robot position is lost. 
 	 * @param angle Angle to rotate in degrees. A positive value rotates left, a negative value right.
 	 * @param immediateReturn iff true, the method returns immediately, in which case the programmer <br>
@@ -225,8 +230,7 @@ public class TachoNavigator  implements Navigator
     */
    public void rotateTo(float angle) 
    	{
-        float turnAngle = normalize( angle - _heading);
-      	rotate(turnAngle,false);
+        rotateTo(angle,false);
    }
 
    /**

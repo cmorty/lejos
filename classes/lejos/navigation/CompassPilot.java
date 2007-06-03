@@ -1,37 +1,68 @@
-package lejos.navigation;
 
+
+
+
+package lejos.navigation;
+//import lejos.navigation.*;
 import lejos.nxt.CompassSensor;
 import lejos.nxt.SensorPort;
 import lejos.nxt.Motor;
-import lejos.nxt.LCD;
 
 
 
 public class CompassPilot extends Pilot {
 	
 	public CompassSensor compass;
-	public Regulator regulator = new Regulator(); // inner regulator for thread
-	private int heading; // Heading to point robot
+	private  Regulator regulator = new Regulator(); // inner regulator for thread
+	private int _heading; // Heading to point robot
 	
 	private boolean _traveling = false; // state variable used by regulator
 	private boolean _rotating = false; // state variable used by regulator
-	private int _distance; // set by travel()  used by regulator to stop
+	private float _distance; // set by travel()  used by regulator to stop
 	
-	public CompassPilot(CompassSensor cs, float wheelDiameter,float trackWidth,Motor leftMotor, Motor rightMotor) {
-		this(cs, wheelDiameter, trackWidth, leftMotor, rightMotor, false);
+	/**
+	 * returns true if robot is rotating to a specific direction
+	 * @return
+	 */
+	public boolean isRotating(){return _rotating;}
+	
+	/**
+	 *returns returns if the robot is travelling for a specific distance;
+	 **/	
+	public boolean isTraveling(){ return _traveling;}
+	
+	/**
+	 *  Allocates a CompasPilot object, and sets the physical parameters of the NXT robot. <br>
+	 *  Assumes  Motor.forward() causes the robot to move forward);
+	 *  @parameter compassPort the sensor port connected to the CompassSensor e.g. SensorPort.S1
+	 *  @param wheelDiameter  Diameter of the tire, in any convenient units.  (The diameter in mm is usually printed on the tire). 
+	 *  @param trackWidth Distance between center of right tire and center of left tire, in same units as wheelDiameter
+	 */
+	public CompassPilot(SensorPort compassPort, float wheelDiameter,float trackWidth,Motor leftMotor, Motor rightMotor) {
+		this(compassPort, wheelDiameter, trackWidth, leftMotor, rightMotor, false);
 	}
-	
-	public CompassPilot(CompassSensor cs, float wheelDiameter,float trackWidth,Motor leftMotor, Motor rightMotor, boolean reverse) {
+/**
+ * Allocates a CompasPilot object, and sets the physical parameters of the NXT robot. <br>
+ *  Assumes  Motor.forward() causes the robot to move forward);
+ * Parameters 
+ * @param compassPort :  the compass sensor is connected to this port;
+ * @param wheelDiameter Diameter of the tire, in any convenient units.  (The diameter in mm is usually printed on the tire). 
+ * @param trackWidth Distance between center of right tire and center of left tire, in same units as wheelDiameter
+ * @param leftMotor
+ * @param rightMotor
+ * @param reverse  if true of motor.forward() drives the robot backwards
+ */
+	public CompassPilot(SensorPort compassPort, float wheelDiameter,float trackWidth,Motor leftMotor, Motor rightMotor, boolean reverse) 
+	{
 		super(wheelDiameter, trackWidth, leftMotor, rightMotor, reverse);
-		this.compass = cs;
-		heading = (int)compass.getDegreesCartesian(); // Current compass direction = heading target
+		this.compass = new CompassSensor(compassPort);
+		_heading = (int)compass.getDegreesCartesian(); // Current compass direction = heading target
 		regulator.start();
 		regulator.setDaemon(true);
 	}
 	
-	
 	/**
-	 * Returns the angle from the compass in degrees, Cartesian (increasing counter clockwise)
+	 * Returns the compass angle in degrees, Cartesian (increasing counter clockwise)
 	 */
 	public int getAngle() {
 		return (int)compass.getDegreesCartesian();
@@ -40,13 +71,24 @@ public class CompassPilot extends Pilot {
 	/**
 	 * Returns target direction of robot facing
 	 */
-	public int getHeading() { return heading;}
-	
+	public int getHeading() { return _heading;}
+
 	/**
 	 * sets target direction of robot facing in degrees
 	 */
-	public void setHeading(int heading){ this.heading = heading;}
+	public void setHeading(int angle){ _heading = angle;}
 	
+	public void calibrate()
+	{
+		int spd = _speed;
+		setSpeed(180);
+		regulateSpeed(true);
+		compass.startCalibration();
+		super.rotate(360);
+		compass.stopCalibration();
+		setSpeed(spd);
+	}
+		
 	/**
 	 * Determines the difference between actual compass direction and target heading in degrees 
 	 * @param heading The target angle (in degrees). 
@@ -60,11 +102,16 @@ public class CompassPilot extends Pilot {
 		return err;
 	}
 	
-/**
- *  see method   travel(distance);
- * @param immediateReturn  if TRUE, method returns immediately; robot stops after moving specified distance
- */	
-	public void travel(int distance, boolean immediateReturn)
+	/**
+	 * Moves the NXT robot a specific distance. A positive value moves it forwards and
+	 * a negative value moves it backwards.
+	 * If immediateReturn is fale, this method calls updateXY(). 
+	 * If immediateReturn is true, method returns immidiately and your code MUST call updateXY()
+	 * after the robot stops and before the  robot moves again.  Otherwise, the robot position is lost. 
+	 * @param distance The positive or negative distance to move the robot, same units as _wheelDiameter
+	 * @param immediateReturn iff true, the method returns immediately. 
+	 */
+	public void travel(float distance, boolean immediateReturn)
 	{
 		regulateSpeed(false);
 		resetTachoCount();
@@ -72,7 +119,7 @@ public class CompassPilot extends Pilot {
 		_distance = distance;
 		_traveling = true;
 		if(immediateReturn)return;
-		while(_traveling)Thread.yield();
+		while(_traveling)Thread.yield(); // regulator will call stop when distance is reached
 	}
 	
  /**
@@ -81,23 +128,24 @@ public class CompassPilot extends Pilot {
  * Robot steers to maintain its compass heading;
  * @param  distance of robot movement. Unit of measure for distance must be same as wheelDiameter and trackWidth
  **/
-	public void travel(int distance)
+	public void travel(float distance)
 	{ 
-		this.travel(distance,false);
+		travel(distance,false);
 	}
 /**
  * robot rotates to the specified compass heading;
  * @param heading   Desired compass heading
  * @param immediateReturn  if TRUE, method returns immediately; robot stops facing in specified direction
  */		
-	public void rotateTo(int heading, boolean immediateReturn)
+	public void rotateTo(int angle, boolean immediateReturn)
 	{	
-		this.heading = heading;
+		_heading = angle;
 		_traveling = false;
 		regulateSpeed(true); // accurate use of tacho count to regulate speed;
 		_rotating = true;
 		if(immediateReturn)return;
 		while(_rotating) Thread.yield();
+		_heading = (int) compass.getDegreesCartesian();
 	}
 	/**
 	 * robot rotates to the specified compass heading;
@@ -115,7 +163,10 @@ public class CompassPilot extends Pilot {
 	 */
 	public void rotate(int angle, boolean immediateReturn) 
 	{
-		rotateTo(heading + angle,immediateReturn);	
+		super.rotate(angle,immediateReturn);
+		if(immediateReturn)return;
+		while(isMoving())Thread.yield();
+		rotateTo(_heading + angle);
 	}
 
 	/**
@@ -141,8 +192,10 @@ public class CompassPilot extends Pilot {
 	
 	private boolean pilotIsMoving() { return super.isMoving();}
 	
-	private void performRotation(int angle)
+	private void performRotation(int angle) // usd by regulator to call pilot rotate(angle, true)
 	{ 
+		if(angle > 180) angle = angle -  360;
+		if(angle < -180) angle = angle +360;
 		if(angle>5) angle -= 3;
 		if(angle < -5)angle += 3;  // attempt to correct overshoot
 		super.rotate(angle,true);
@@ -169,7 +222,7 @@ public class CompassPilot extends Pilot {
 				}
 				if(_rotating && ! pilotIsMoving())
 				{
-					int error = (int) getHeadingError(heading);
+					int error = (int) getHeadingError(_heading);
 					if(Math.abs(error) > 3) performRotation(-error);
 					else 
 					{
@@ -180,11 +233,11 @@ public class CompassPilot extends Pilot {
 				Thread.yield();
 			}	
 		}
-		private void controlTravel()
+		private void controlTravel() 
 		{
 			float gain = 2;
 			int slowSpeed;		
-			int error = (int)(gain* getHeadingError(heading));
+			int error = (int)(gain* getHeadingError(_heading));
 			if(error<0)// turn right
 			{
 				error = -error;
