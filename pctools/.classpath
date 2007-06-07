@@ -3,5 +3,8 @@
 	<classpathentry kind="src" path=""/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="/pccomms/lib/pccomm.jar"/>
+	<classpathentry kind="lib" path="/jtools/lib/jtools.jar"/>
+	<classpathentry kind="lib" path="/jtools/3rdparty/lib/bcel-5.1.jar"/>
+	<classpathentry kind="lib" path="/jtools/3rdparty/lib/commons-cli-1.0.jar"/>
 	<classpathentry kind="output" path=""/>
 </classpath>
