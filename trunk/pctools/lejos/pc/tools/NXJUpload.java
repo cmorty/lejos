@@ -44,7 +44,7 @@ public class NXJUpload {
 		}
 		
 		if (args.length == 0 || showUsage || fileName == null) {
-			System.err.println("Usage: nxjupload [-u] [-b] [-r] [-name <name>] filename");
+			System.err.println("Usage: nxjupload [-u] [-b] [-r] [-n <name>] filename");
 			System.exit(1);
 		}
 		
@@ -82,7 +82,7 @@ public class NXJUpload {
 		
 		if (nxtInfo.length > 0) {
 			nxtCommand.open(nxtInfo[0]);
-			sendFile(f, baseFileName);
+			SendFile.sendFile(nxtCommand, f, baseFileName);
 			if (run) {
 				nxtCommand.setVerify(false);
 				nxtCommand.startProgram(baseFileName);
@@ -90,33 +90,4 @@ public class NXJUpload {
 			nxtCommand.close();
 		}
 	}
-	
-	private static void sendFile(File file, String baseFileName) {
-	    byte[] data = new byte[60];
-	    int len, sent = 0;
-	    FileInputStream in = null;
-
-	    //System.out.println("Filename is " + file.getName());
-
-	    try {
-	      in = new FileInputStream(file);
-	    } catch (FileNotFoundException e) {
-	    	System.out.println("File not found");
-	    }
-
-	    nxtCommand.openWrite(baseFileName, (int) file.length());
-
-	    try {
-	      while ((len = in.read(data)) > 0) {
-	        byte[] sendData = new byte[len];
-	        for(int i=0;i<len;i++) sendData[i] = data[i];
-	        // System.out.println("Sending " + len + " bytes");
-	        sent += len;
-	        nxtCommand.writeFile((byte) 0,sendData); // Handles not yet used
-	      }
-	    } catch (IOException ioe) {}
-	    //System.out.println("Sent " + sent + " bytes");
-	    nxtCommand.setVerify(true);
-	    nxtCommand.closeFile((byte) 0);
-	  }
 }
