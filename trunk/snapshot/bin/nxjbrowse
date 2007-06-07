@@ -1,0 +1,20 @@
+#!/bin/bash
+
+#
+# nxjbrowse: Browses files on the NXT
+#
+# June 7, 2007  created L. Griffiths
+
+if [ -z "$NXJ_HOME" ]; then 
+  NXJ_HOME="$(dirname $(dirname $0))"
+fi
+
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$NXJ_HOME/bin
+
+if [ $OSTYPE == "cygwin" ]; then
+  SEP=";"
+else
+  SEP=":"
+fi
+
+java -Djava.library.path="$NXJ_HOME/bin" -classpath "$NXJ_HOME/lib/pctools.jar$SEP$NXJ_HOME/lib/pccomm.jar" lejos.pc.tools.NXJBrowser "$@"
