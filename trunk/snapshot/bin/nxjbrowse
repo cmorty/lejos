@@ -17,4 +17,4 @@ else
   SEP=":"
 fi
 
-java -Djava.library.path="$NXJ_HOME/bin" -classpath "$NXJ_HOME/lib/pctools.jar$SEP$NXJ_HOME/lib/pccomm.jar" lejos.pc.tools.NXJBrowser "$@"
+java -Djava.library.path="$NXJ_HOME/bin" -Dnxj.home="$NXJ_HOME" -classpath "$NXJ_HOME/lib/pctools.jar$SEP$NXJ_HOME/lib/pccomm.jar" lejos.pc.tools.NXJBrowser "$@"
