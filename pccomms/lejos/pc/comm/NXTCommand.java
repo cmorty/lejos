@@ -8,75 +8,73 @@ public class NXTCommand implements NXTProtocol {
 	                nxtCommUSB = null,
 	                nxtCommBluetooth = null;
 	
-	private static String HOME = System.getProperty("user.home");
-	private static String WORKING_DIR = System.getProperty("user.dir");
+	private static String HOME = System.getProperty("nxj.home");;
 	private static String SEP = System.getProperty("file.separator");
-	private static String USER_PROP_FILE = HOME + SEP + "nxj.properties";
-	private static String WORKING_PROP_FILE = WORKING_DIR + SEP + "nxj.properties";
+	private static String PROP_FILE = HOME + SEP + "bin" + SEP + "nxj.properties";
 	private static NXTCommand singleton = null;
 	
 	private boolean verifyCommand = false;
 	
     public static final int USB = 1;
     public static final int BLUETOOTH = 2;
-    
-    private NXTCommand(int protocol) {
-    	Properties props = new Properties();
-    	
-    	try {
-    		System.out.println("Loading " + USER_PROP_FILE);
-    		props.load(new FileInputStream(USER_PROP_FILE));
-    	} catch (FileNotFoundException e) {
-    		System.out.println("No user prop file");
-    	} catch (IOException e) {
-    		System.out.println("Failure to read user prop file");
-    	}
-    	
-    	try {
-    		System.out.println("Loading " + WORKING_PROP_FILE);
-    		props.load(new FileInputStream(WORKING_PROP_FILE));
-    	} catch (FileNotFoundException e) {
-    		System.out.println("No working directory prop file");
-    	} catch (IOException e) {
-    		System.out.println("Failure to read working directory prop file");
-    	}
-    	
-    	// Look for USB comms driver first
-    	
-    	if ((protocol & USB) != 0) {
-    		String nxtCommName = props.getProperty("NXTCommUSB", "lejos.pc.comm.NXTCommLibnxt");
-    		System.out.println("NXTCommUSB = " + nxtCommName);
-    		try {
-        		Class c = Class.forName(nxtCommName);
-        		nxtCommUSB = (NXTComm) c.newInstance();
-        	} catch (Exception e) {
-        		e.printStackTrace();
-        	}
-    	}
-    	
-    	// Look for a Bluetooth one
-    	
-    	if ((protocol & BLUETOOTH) != 0) {
-    		String nxtCommName = props.getProperty("NXTCommBluetooth", "lejos.pc.comm.NXTCommBluecove");
-    		System.out.println("NXTCommBluetooth = " + nxtCommName);
-    		try {
-        		Class c = Class.forName(nxtCommName);
-        		nxtCommBluetooth = (NXTComm) c.newInstance();
-        	} catch (Exception e) {
-        		e.printStackTrace();
-        	}
-    	}
-    	
-    	if (nxtCommUSB == null && nxtCommBluetooth == null) {
-    		System.out.println("Cannot load a comms driver");
-    		System.exit(1);
-    	}
-    }
-	
 
     public NXTInfo[] search(String name, int protocol) {
     	NXTInfo[] nxtInfos;
     	
+    	if (nxtComm == null) {
+	    	Properties props = new Properties();
+	    	
+	    	try {
+	    		System.out.println("Loading " + PROP_FILE);
+	    		props.load(new FileInputStream(PROP_FILE));
+	    	} catch (FileNotFoundException e) {
+	    		System.out.println("No nxj.properties file");
+	    	} catch (IOException e) {
+	    		System.out.println("Failure to read nxj.properties file");
+	    	}
+
+	    	String os = System.getProperty("os.name");
+	    	boolean windows = false;
+	    	
+	    	if (os.length() >= 7 && os.substring(0,7).equals("Windows"))
+	    		windows = true;
+	    	
+	    	// Look for USB comms driver first
+	    	
+	    	if ((protocol & USB) != 0) {
+	    		String nxtCommName = props.getProperty("NXTCommUSB", "lejos.pc.comm.NXTCommLibnxt");
+	    		System.out.println("NXTCommUSB = " + nxtCommName);
+	    		try {
+	        		Class c = Class.forName(nxtCommName);
+	        		nxtCommUSB = (NXTComm) c.newInstance();
+	        	} catch (Exception e) {
+	        		e.printStackTrace();
+	        	}
+	    	}
+	        		        	
+        	// Look for a Bluetooth one
+        	
+	    	String defaultDriver = (windows  ? "lejos.pc.comm.NXTCommBluecove"
+	    			                         : "lejos.pc.comm.NXTCommBluez");
+        	
+	    	if ((protocol & BLUETOOTH) != 0) {
+        		String nxtCommName = props.getProperty("NXTCommBluetooth", defaultDriver);
+        		System.out.println("NXTCommBluetooth = " + nxtCommName);
+        		try {
+            		Class c = Class.forName(nxtCommName);
+            		nxtCommBluetooth = (NXTComm) c.newInstance();
+            	} catch (Exception e) {
+            		e.printStackTrace();
+            	}
+        	}
+        	
+        	if (nxtCommUSB == null && nxtCommBluetooth == null) {
+        		System.out.println("Cannot load a comms driver");
+        		System.exit(1);
+        	}
+
+    	}
+
     	// Look for a USB one first
     	
     	if ((protocol & USB) != 0 && nxtCommUSB != null) {
@@ -343,8 +341,8 @@ public class NXTCommand implements NXTProtocol {
 		return reply;
 	}
 
-	public static NXTCommand getSingleton(int protocol) {
-    	if (singleton == null) singleton = new NXTCommand(protocol);
+	public static NXTCommand getSingleton() {
+    	if (singleton == null) singleton = new NXTCommand();
 		return singleton;
 	}
 }
