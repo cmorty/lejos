@@ -1,57 +1,42 @@
 package lejos.pc.tools;
 
 import lejos.pc.comm.*;
+
 import java.io.*;
+
+import org.apache.commons.cli.CommandLine;
 
 public class NXJUpload {
 	private static NXTCommand nxtCommand = null;
+	private NXJUploadCommandLineParser fParser;
+
+	public NXJUpload() {
+		fParser = new NXJUploadCommandLineParser();
+	}
 
 	public static void main(String[] args) {
-		boolean run = false, showUsage = false, invalidFlag = false;
-		String name = null, arg = null, fileName = null;
+		try {
+			NXJUpload instance = new NXJUpload();
+			instance.run(args);
+		} catch(js.tinyvm.TinyVMException tvexc) {
+	         System.err.println("Error: " + tvexc.getMessage());
+		}
+	}
+	
+	public void run(String[] args) throws js.tinyvm.TinyVMException {
 		String baseFileName = null;
 		int protocols = 0;
 		
-		for(int i=0;i<args.length;i++) {
-			arg = args[i];
-			//System.out.println("Parameter " + i + " = " + arg);
-			if (arg.charAt(0) == '-') { // flags
-				if (arg.length() != 2) invalidFlag = true;
-				else {
-					char flagChar = arg.charAt(1);
-					if (flagChar == 'r') run = true;
-					else if (flagChar == 'u') protocols |= NXTCommand.USB;
-					else if (flagChar == 'b') protocols |= NXTCommand.BLUETOOTH;
-					else if (flagChar == 'n') {
-						if (i == args.length-1) {
-							showUsage = true;
-							break;
-						} else {
-							name = args[++i];
-						}	
-					} else {
-						invalidFlag = true;
-						break;
-					}
-				}
-			} else { // not a flag - must be filename
-				if (fileName != null) {
-					showUsage = true;
-					break;
-				}
-				fileName = arg;
-			}
-		}
+		CommandLine commandLine = fParser.parse(args);
+		boolean run = commandLine.hasOption("r");
+		boolean blueTooth = commandLine.hasOption("b");
+		boolean usb = commandLine.hasOption("u");
+		String name = commandLine.getOptionValue("name");
 		
-		if (args.length == 0 || showUsage || fileName == null) {
-			System.err.println("Usage: nxjupload [-u] [-b] [-r] [-n <name>] filename");
-			System.exit(1);
-		}
+		String fileName = commandLine.getArgs()[0];
 		
-		if (invalidFlag) {
-			System.err.println("Invalid flag: " + arg);
-			System.exit(1);
-		}
+		if (blueTooth) protocols |= NXTCommand.BLUETOOTH;
+		if (usb) protocols |= NXTCommand.USB;
 		
 		int i;
 		for (i=fileName.length()-1;i>0;i--) {
@@ -68,7 +53,7 @@ public class NXJUpload {
 		File f = new File(fileName);
 		
 		if (!f.exists()) {
-			System.err.println("No such file");
+			System.err.println("Error: No such file");
 			System.exit(1);
 		}
 		
@@ -78,7 +63,7 @@ public class NXJUpload {
 		
 		NXTInfo[] nxtInfo = nxtCommand.search(name, protocols);
 		
-		System.out.println("Found " + nxtInfo.length + " NXTs");
+		//System.out.println("Found " + nxtInfo.length + " NXTs");
 		
 		if (nxtInfo.length > 0) {
 			nxtCommand.open(nxtInfo[0]);

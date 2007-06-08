@@ -15,7 +15,7 @@ import org.apache.commons.cli.ParseException;
 /**
  * CommandLineParser
  */
-public class NXJCommandLineParser 
+public class NXJUploadCommandLineParser 
 {
    /**
     * Parse commandline.
@@ -28,28 +28,11 @@ public class NXJCommandLineParser
       assert args != null: "Precondition: args != null";
 
       Options options = new Options();
-      options.addOption("v", "verbose", false,
-         "print class and signature information");
       options.addOption("h", "help", false, "help");
-      Option classpathOption = new Option("cp", "classpath", true, "classpath");
-      classpathOption.setArgName("classpath");
-      options.addOption(classpathOption);
-      Option outputOption = new Option("o", "output", true,
-         "dump binary to file");
-      outputOption.setArgName("binary");
-      options.addOption(outputOption);
-      options.addOption("a", "all", false, "do not filter classes");
-      Option writeOrderOption = new Option("wo", "writeorder", true,
-         "write order (BE or LE)");
-      writeOrderOption.setArgName("write order");
-      options.addOption(writeOrderOption);
-      
       options.addOption("b", "bluetooth", false,
       "use bluetooth");
-      
       options.addOption("u", "usb", false,
       "use usb");
-     
       options.addOption("r", "run", false,
       "run program");
       
@@ -75,24 +58,14 @@ public class NXJCommandLineParser
             throw new TinyVMException("Help:");
          }
 
-         if (!result.hasOption("cp"))
-         {
-            throw new TinyVMException("No classpath defined");
-         }
-
-         if (!result.hasOption("wo"))
-         {
-            throw new TinyVMException("No write order specified");
-         }
-         String writeOrder = result.getOptionValue("wo").toLowerCase();
-         if (!"be".equals(writeOrder) && !"le".equals(writeOrder))
-         {
-            throw new TinyVMException("Wrong write order: " + writeOrder);
-         }
-
          if (result.getArgs().length == 0)
          {
-            throw new TinyVMException("No classes specified");
+            throw new TinyVMException("No file name specified");
+         }
+         
+         if (result.getArgs().length > 1)
+         {
+            throw new TinyVMException("Only one file name allowed");
          }
       }
       catch (TinyVMException e)
@@ -101,7 +74,7 @@ public class NXJCommandLineParser
          PrintWriter printWriter = new PrintWriter(writer);
          printWriter.println(e.getMessage());
 
-         String usage = getClass().getName() + " [options] class1[,class2,...]";
+         String usage = getClass().getName() + " [options] filename";
          new HelpFormatter().printHelp(printWriter, 80, usage.toString(), null,
             options, 0, 2, null);
 
