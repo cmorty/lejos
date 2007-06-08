@@ -31,7 +31,7 @@ public class NXJBrowser {
     };
     frame.addWindowListener(listener);
 
-    nxtCommand = NXTCommand.getSingleton(NXTCommand.USB | NXTCommand.BLUETOOTH);
+    nxtCommand = NXTCommand.getSingleton();
     
     final NXTInfo[] nxts = nxtCommand.search(null, NXTCommand.USB | NXTCommand.BLUETOOTH);
     

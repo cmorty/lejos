@@ -65,7 +65,7 @@ import lejos.pc.comm.*;
 		int index = 0;
 	    tinyVMArgs = new String[argCount+2];
 	    
-	    if (binName == null) binName = firstArg + ".bin";
+	    if (binName == null) binName = firstArg + ".nxj";
 	    
 		for(int i=0;i<args.length;i++) {
 			if (args[i].equals("-b")) continue;
@@ -118,11 +118,11 @@ import lejos.pc.comm.*;
 		
 		if (protocols == 0) protocols = NXTCommand.USB | NXTCommand.BLUETOOTH;
 		
-		nxtCommand = NXTCommand.getSingleton(protocols);
+		nxtCommand = NXTCommand.getSingleton();
 		
 		NXTInfo[] nxtInfo = nxtCommand.search(name, protocols);
 		
-		System.out.println("Found " + nxtInfo.length + " NXTs");
+		//System.out.println("Found " + nxtInfo.length + " NXTs");
 		
 		if (nxtInfo.length > 0) {
 			nxtCommand.open(nxtInfo[0]);
