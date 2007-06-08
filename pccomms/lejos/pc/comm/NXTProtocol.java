@@ -60,6 +60,7 @@ public interface NXTProtocol {
 	public static byte MESSAGE_READ = 0x13;
 	// public static byte POSSIBLY_MORE_HIDDEN = 0x14; // ????
 		
+	public static byte DISCONNECT = 0x20; // NXJ addition
 	// Output state constants 
 	// �Mode�:
 	/** Turn on the specified motor */
