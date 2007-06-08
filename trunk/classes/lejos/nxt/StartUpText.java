@@ -169,6 +169,7 @@ class BTRespond  extends Thread {
 				}
 				if (inMsg[0] == (byte) 0x20) { // Disconnect
 					Bluetooth.btSetCmdMode(1); // set Command mode
+					cmdMode = true;
 				}
 			}			
 		}
