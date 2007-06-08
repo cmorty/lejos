@@ -59,7 +59,7 @@ public class NXJUpload {
 		
 		if (protocols == 0) protocols = NXTCommand.USB | NXTCommand.BLUETOOTH;
 		
-		nxtCommand = NXTCommand.getSingleton(protocols);
+		nxtCommand = NXTCommand.getSingleton();
 		
 		NXTInfo[] nxtInfo = nxtCommand.search(name, protocols);
 		
