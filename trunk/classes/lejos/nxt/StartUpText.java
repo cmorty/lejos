@@ -167,7 +167,7 @@ class BTRespond  extends Thread {
 					Sound.beepSequenceUp();
 					menu.quit();
 				}
-				if (inMsg[0] == (byte) 0x20) { // Disconnect
+				if (inMsg[1] == (byte) 0x20) { // Disconnect
 					Bluetooth.btSetCmdMode(1); // set Command mode
 					cmdMode = true;
 				}
