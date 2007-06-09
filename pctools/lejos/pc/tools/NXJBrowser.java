@@ -80,22 +80,13 @@ public class NXJBrowser {
     final FileModel fm = new FileModel(frame, files, numFiles);
       
     final JTable table = new JTable(fm);
-
-    TableCellRenderer defaultRenderer = table.getDefaultRenderer(JButton.class);
-    table.setDefaultRenderer(JButton.class,
-			       new JTableButtonRenderer(defaultRenderer));
-
     table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
     
     TableColumn col = table.getColumnModel().getColumn(0);
     col.setPreferredWidth(300);
-    col = table.getColumnModel().getColumn(3);
-    col.setPreferredWidth(100);
-
-    table.addMouseListener(new JTableButtonMouseListener(table));
 
     final JScrollPane tablePane = new JScrollPane(table);
-    tablePane.setPreferredSize(new Dimension(640, 500));
+    tablePane.setPreferredSize(new Dimension(450, 500));
 
     frame.getContentPane().add(tablePane, BorderLayout.CENTER);
 
@@ -103,9 +94,13 @@ public class NXJBrowser {
 
     JButton deleteButton = new JButton("Delete Files");
     JButton uploadButton = new JButton("Upload file");
-
+    JButton downloadButton = new JButton("Download file");
+    JButton runButton = new JButton("Run program");
+    
     buttonPanel.add(deleteButton);
     buttonPanel.add(uploadButton);
+    buttonPanel.add(downloadButton);
+    buttonPanel.add(runButton);
 
     frame.getContentPane().add(new JScrollPane(buttonPanel), BorderLayout.SOUTH);
 
@@ -136,46 +131,46 @@ public class NXJBrowser {
         int returnVal = fc.showOpenDialog(frame);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
           File file = fc.getSelectedFile();
-          sendFile(file);
+          SendFile.sendFile(nxtCommand, file, file.getName());
           fetchFiles();
           fm.setData(files, numFiles);
           table.invalidate();
           tablePane.revalidate(); 
         } else {
-        	System.out.println("returnVal = " + returnVal);
+        	//System.out.println("returnVal = " + returnVal);
         }
+      }
+    });
+    
+    downloadButton.addMouseListener(new MouseAdapter() {
+      public void mouseClicked(MouseEvent e) {
+        int i = table.getSelectedRow();
+        if (i<0) return;
+        String fileName = files[i].fileName;
+        int size = files[i].fileSize;
+        JFileChooser fc = new JFileChooser();
+        fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        fc.setSelectedFile(new File(fileName)); 
+	    int returnVal = fc.showSaveDialog(frame);
+        if (returnVal == 0) {
+          File file = fc.getSelectedFile();
+          NXJBrowser.getFile(file, fileName, size);
+        }
+      }
+    });
+
+    runButton.addMouseListener(new MouseAdapter() {
+      public void mouseClicked(MouseEvent e) {
+    	int i = table.getSelectedRow();
+    	if (i<0) return;
+        String fileName = files[i].fileName;
+        NXJBrowser.runProgram(fileName);
+        System.exit(0);
       }
     });
 
     frame.pack();
     frame.setVisible(true);
-  }
-
-  private static void sendFile(File file) {
-    byte[] data = new byte[60];
-    int len, sent = 0;
-    FileInputStream in = null;
-
-    System.out.println("Filename is " + file.getName());
-
-    try {
-      in = new FileInputStream(file);
-    } catch (FileNotFoundException e) {}
-
-    System.out.println("Opening for write");
-    nxtCommand.openWrite(file.getName(), (int) file.length());
-
-    try {
-      while ((len = in.read(data)) > 0) {
-        byte[] sendData = new byte[len];
-        for(int i=0;i<len;i++) sendData[i] = data[i];
-        // System.out.println("Sending " + len + " bytes");
-        sent += len;
-        nxtCommand.writeFile((byte) 0,sendData); // Handles not yet used
-      }
-    } catch (IOException ioe) {}
-    //System.out.println("Sent " + sent + " bytes");
-    nxtCommand.closeFile((byte) 0);
   }
 
   private static void fetchFiles() {
@@ -231,7 +226,7 @@ public class NXJBrowser {
 
 class FileModel extends AbstractTableModel {
   private static final String[] columnNames = {"File","Size", "Delete", "Download", "Run"};
-  private static final int NUM_COLUMNS = 5;
+  private static final int NUM_COLUMNS = 3;
 
   Object[][] fileData;
   int numFiles;
@@ -251,32 +246,8 @@ class FileModel extends AbstractTableModel {
       fileData[i][0]  = files[i].fileName;
       fileData[i][1] = new Integer(files[i].fileSize);
       fileData[i][2] = new Boolean(false);
-      fileData[i][3] = new JButton("Download");
-      fileData[i][4] = new JButton("Run");
 
-      JButton downloadButton = (JButton) fileData[i][3];
-      JButton runButton = (JButton) fileData[i][4];
-
-      final String fileName = files[i].fileName;
-      final int size = files[i].fileSize;
-
-      downloadButton.addMouseListener(new MouseAdapter() {
-        public void mouseClicked(MouseEvent e) {
-          JFileChooser fc = new JFileChooser();
-	  int returnVal = fc.showSaveDialog(frame);
-          if (returnVal == 0) {
-            File file = fc.getSelectedFile();
-            NXJBrowser.getFile(file, fileName, size);
-          }
-        }
-      });
-
-      runButton.addMouseListener(new MouseAdapter() {
-        public void mouseClicked(MouseEvent e) {
-          NXJBrowser.runProgram(fileName);
-        }
-      });
-    }
+     }
   }
 
   public void delete(int row) {
@@ -360,85 +331,4 @@ class NXTModel extends AbstractTableModel {
     return nxtData[0][column].getClass();
   }
 }
-
-class JTableButtonRenderer implements TableCellRenderer {
-  private TableCellRenderer __defaultRenderer;
-
-  public JTableButtonRenderer(TableCellRenderer renderer) {
-    __defaultRenderer = renderer;
-  }
-
-  public Component getTableCellRendererComponent(JTable table, Object value,
-						 boolean isSelected,
-						 boolean hasFocus,
-						 int row, int column)
-  {
-    if(value instanceof Component)
-      return (Component)value;
-    return __defaultRenderer.getTableCellRendererComponent(
-	   table, value, isSelected, hasFocus, row, column);
-  }
-}
-
-class JTableButtonMouseListener implements MouseListener {
-  private JTable __table;
-
-  private void __forwardEventToButton(MouseEvent e) {
-    TableColumnModel columnModel = __table.getColumnModel();
-    int column = columnModel.getColumnIndexAtX(e.getX());
-    int row    = e.getY() / __table.getRowHeight();
-    Object value;
-    JButton button;
-    MouseEvent buttonEvent;
-
-    if(row >= __table.getRowCount() || row < 0 ||
-       column >= __table.getColumnCount() || column < 0)
-      return;
-
-    value = __table.getValueAt(row, column);
-
-    if(!(value instanceof JButton))
-      return;
-
-    button = (JButton)value;
-
-    buttonEvent =
-      (MouseEvent)SwingUtilities.convertMouseEvent(__table, e, button);
-    button.dispatchEvent(buttonEvent);
-    // This is necessary so that when a button is pressed and released
-    // it gets rendered properly.  Otherwise, the button may still appear
-    // pressed down when it has been released.
-    __table.repaint();
-  }
-
-  public JTableButtonMouseListener(JTable table) {
-    __table = table;
-  }
-
-  public void mouseClicked(MouseEvent e) {
-    __forwardEventToButton(e);
-  }
-
-  public void mouseEntered(MouseEvent e) {
-    __forwardEventToButton(e);
-  }
-
-  public void mouseExited(MouseEvent e) {
-    __forwardEventToButton(e);
-  }
-
-  public void mousePressed(MouseEvent e) {
-    __forwardEventToButton(e);
-  }
-
-  public void mouseReleased(MouseEvent e) {
-    __forwardEventToButton(e);
-  }
-}
-
-
-
-    
-
-  
 
