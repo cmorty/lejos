@@ -107,7 +107,7 @@ public class NXTCommand implements NXTProtocol {
 	}
 
 	/**
-	 * Small helper method to send request to NXT and return verification result.
+	 * Small helper method to send DIRECT COMMAND request to NXT and return verification result.
 	 * @param request
 	 * @return
 	 */
@@ -124,6 +124,11 @@ public class NXTCommand implements NXTProtocol {
 		return verify;
 	}
 	
+	/**
+	 * Small helper method to send a SYSTEM COMMAND request to NXT and return verification result.
+	 * @param request
+	 * @return
+	 */
 	private byte sendSystemRequest(byte [] request, int replyLen) {
 		byte verify = 0; // default of 0 means success
 		if(verifyCommand)
@@ -155,16 +160,13 @@ public class NXTCommand implements NXTProtocol {
 	 * @param fileName e.g. "Woops.rso"
 	 * @return
 	 */
-	
-	// !! Something might be wrong with this because I can't run a program
-	// twice in a row after calling this. But other calls work after this.
 	public FileInfo openRead(String fileName) {
 		byte [] request = {SYSTEM_COMMAND_REPLY, OPEN_READ};
 		request = appendString(request, fileName); // No padding required apparently
 		byte [] reply = nxtComm.sendRequest(request,8);
 		FileInfo fileInfo = new FileInfo(fileName);
 		fileInfo.status = reply[2];
-		if(reply.length > 3) { // Check if all data included in reply
+		if(reply.length == 8) { // Check if all data included in reply
 			fileInfo.fileHandle = reply[3];
 			fileInfo.fileSize = (0xFF & reply[4]) | ((0xFF & reply[5]) << 8)| ((0xFF & reply[6]) << 16)| ((0xFF & reply[7]) << 24);
 		}
@@ -173,8 +175,6 @@ public class NXTCommand implements NXTProtocol {
 
 	/**
 	 * Opens a file on the NXT for writing.
-	 * UNFINISHED
-	 * UNTESTED
 	 * @param fileName e.g. "Woops.rso"
 	 * @return File Handle number
 	 */
@@ -201,19 +201,13 @@ public class NXTCommand implements NXTProtocol {
 		return sendSystemRequest(request, 4);
 	}
 	
-	public byte delete(String fileName) {
-		
+	public byte delete(String fileName) {		
 		byte [] request = {SYSTEM_COMMAND_REPLY, DELETE};
 		request = appendString(request, fileName);
 		return sendSystemRequest(request, 23);
 	}
 
 	/**
-	 * When no files exist within the system, an error message is returned in
-	 * the package saying "File not found".
-	 * When this command returns a success, a close command is required for "closing
-	 * the handle" within the brick when handle is not needed anymore. If an error
-	 * is returned, the firmware will close the handle automatically.
 	 * @param wildCard [filename].[extension], *.[extension], [filename].*, *.*
 	 * @return
 	 */
@@ -221,31 +215,22 @@ public class NXTCommand implements NXTProtocol {
 
 		byte [] request = {SYSTEM_COMMAND_REPLY, FIND_FIRST};
 		request = appendString(request, wildCard);
-		
-		// !! Below should be a method shared by System Commands and Direct Commands.
+
 		byte [] reply = nxtComm.sendRequest(request, 28);
 		FileInfo fileInfo = null;
-		if(reply[2] == 0) {
-			fileInfo = new FileInfo("");
-			fileInfo.status = reply[2];
-			if(reply.length > 3) { // Check if all data included in reply
-				fileInfo.fileHandle = reply[3];
-				StringBuffer name= new StringBuffer(new String(reply)).delete(24,27).delete(0, 4);
-				int lastPos = name.indexOf(".") + 4; // find . in filename, index of last char.
-				name.delete(lastPos, name.length());
-				fileInfo.fileName = name.toString();
-				fileInfo.fileSize = (0xFF & reply[24]) | ((0xFF & reply[25]) << 8)| ((0xFF & reply[26]) << 16)| ((0xFF & reply[27]) << 24);
-			}
+		if(reply[2] == 0  && reply.length == 28) {
+			StringBuffer name= new StringBuffer(new String(reply)).delete(0, 4);
+			int lastPos = name.indexOf("\0"); 
+			name.delete(lastPos, name.length());
+			fileInfo = new FileInfo(name.toString());
+			fileInfo.status = 0;
+			fileInfo.fileHandle = reply[3];
+			fileInfo.fileSize = (0xFF & reply[24]) | ((0xFF & reply[25]) << 8)| ((0xFF & reply[26]) << 16)| ((0xFF & reply[27]) << 24);
 		}
 		return fileInfo;
 	}
 	
 	/**
-	 * When no files exist within the system, an error message is returned in
-	 * the package saying "File not found".
-	 * When this command returns a success, a close command is required for "closing
-	 * the handle" within the brick when handle is not needed anymore. If an error
-	 * is returned, the firmware will close the handle automatically.
 	 * @param handle Handle number from the previous found file or fromthe Find First command.
 	 * @return
 	 */
@@ -253,20 +238,16 @@ public class NXTCommand implements NXTProtocol {
 
 		byte [] request = {SYSTEM_COMMAND_REPLY, FIND_NEXT, handle};
 		
-		// !! Below should be a method shared by System Commands and Direct Commands.
 		byte [] reply = nxtComm.sendRequest(request, 28);
 		FileInfo fileInfo = null;
-		if(reply[2] == 0) {
-			fileInfo = new FileInfo("");
-			fileInfo.status = reply[2];
-			if(reply.length > 3) { // Check if all data included in reply
-				fileInfo.fileHandle = reply[3];
-				StringBuffer name= new StringBuffer(new String(reply)).delete(24,27).delete(0, 4);
-				int lastPos = name.indexOf(".") + 4; // find . in filename, index of last char.
-				name.delete(lastPos, name.length());
-				fileInfo.fileName = name.toString();
-				fileInfo.fileSize = (0xFF & reply[24]) | ((0xFF & reply[25]) << 8)| ((0xFF & reply[26]) << 16)| ((0xFF & reply[27]) << 24);
-			}
+		if(reply[2] == 0 && reply.length == 28) {
+			StringBuffer name= new StringBuffer(new String(reply)).delete(0, 4);
+			int lastPos = name.indexOf("\0");
+			name.delete(lastPos, name.length());
+			fileInfo = new FileInfo(name.toString());
+			fileInfo.status = 0;
+			fileInfo.fileHandle = reply[3];
+			fileInfo.fileSize = (0xFF & reply[24]) | ((0xFF & reply[25]) << 8)| ((0xFF & reply[26]) << 16)| ((0xFF & reply[27]) << 24);
 		}
 		return fileInfo;
 	}
@@ -296,10 +277,6 @@ public class NXTCommand implements NXTProtocol {
 	public int getBatteryLevel() {
 		byte [] request = {DIRECT_COMMAND_REPLY, GET_BATTERY_LEVEL};
 		byte [] reply = nxtComm.sendRequest(request, 5);
-		if(reply[1] != GET_BATTERY_LEVEL)
-			System.out.println("Weird data reply received.");
-		if(reply[2] != 0)
-			System.out.println("NXT reports the check battery command did not work.");
 		int batteryLevel = (0xFF & reply[3]) | ((0xFF & reply[4]) << 8);
 		return batteryLevel;
 	}
@@ -307,7 +284,7 @@ public class NXTCommand implements NXTProtocol {
 	/**
 	 * Call the close() command when your program ends, otherwise you
 	 * will have to turn the NXT brick off/on before you run another
-	 * program using iCommand.
+	 * program.
 	 *
 	 */
 	public void close() {
