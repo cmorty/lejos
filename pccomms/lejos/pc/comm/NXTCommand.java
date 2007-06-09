@@ -288,7 +288,7 @@ public class NXTCommand implements NXTProtocol {
 	 *
 	 */
 	public void close() {
-		byte [] request = {DISCONNECT};
+		byte [] request = {DIRECT_COMMAND_NOREPLY, DISCONNECT};
 		nxtComm.sendRequest(request,0); // Tell NXT to disconnect
 		nxtComm.close();
 	}
