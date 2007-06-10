@@ -18,7 +18,8 @@ public class NXJBrowser {
   static int numFiles;
   static FileInfo[] files= new FileInfo[MAX_FILES];
   static NXTCommand nxtCommand;
-
+  static Cursor hourglassCursor = new Cursor(Cursor.WAIT_CURSOR);
+  static Cursor normalCursor = new Cursor(Cursor.DEFAULT_CURSOR);
   public static void main(String args[]) {
 
     final JFrame frame = new JFrame("NXJ File Browser");
@@ -86,7 +87,7 @@ public class NXJBrowser {
     col.setPreferredWidth(300);
 
     final JScrollPane tablePane = new JScrollPane(table);
-    tablePane.setPreferredSize(new Dimension(450, 500));
+    tablePane.setPreferredSize(new Dimension(455, 500));
 
     frame.getContentPane().add(tablePane, BorderLayout.CENTER);
 
@@ -106,6 +107,7 @@ public class NXJBrowser {
 
     deleteButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent ae) {
+    	frame.setCursor(hourglassCursor);
         
         for(int i=0;i<fm.getRowCount();i++) {
           Boolean b = (Boolean) fm.getValueAt(i,2);
@@ -121,6 +123,7 @@ public class NXJBrowser {
             tablePane.revalidate();         
           }
         }
+        frame.setCursor(normalCursor);
       }
     });
 
@@ -130,12 +133,14 @@ public class NXJBrowser {
 
         int returnVal = fc.showOpenDialog(frame);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
+          frame.setCursor(hourglassCursor);
           File file = fc.getSelectedFile();
           SendFile.sendFile(nxtCommand, file);
           fetchFiles();
           fm.setData(files, numFiles);
           table.invalidate();
-          tablePane.revalidate(); 
+          tablePane.revalidate();
+          frame.setCursor(normalCursor);
         } else {
         	//System.out.println("returnVal = " + returnVal);
         }
@@ -154,7 +159,9 @@ public class NXJBrowser {
 	    int returnVal = fc.showSaveDialog(frame);
         if (returnVal == 0) {
           File file = fc.getSelectedFile();
-          NXJBrowser.getFile(file, fileName, size);
+          frame.setCursor(hourglassCursor);
+          getFile(file, fileName, size);
+          frame.setCursor(normalCursor);
         }
       }
     });
