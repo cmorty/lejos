@@ -1,5 +1,8 @@
 package lejos.pc.comm;
 
+import java.io.InputStream;
+import java.io.OutputStream;
+
 public class NXTCommFantom implements NXTComm {
 	private NXTInfo nxtInfo;
 	
@@ -47,6 +50,14 @@ public class NXTCommFantom implements NXTComm {
 	public byte [] sendRequest(byte [] data, int replyLen) {
 		jfantom_send_data(nxtInfo.nxtPtr, data, data.length, replyLen-1);
 		return jfantom_read_data(nxtInfo.nxtPtr, replyLen);
+	}
+	
+	public OutputStream getOutputStream() {
+		return null;		
+	}
+	
+	public InputStream getInputStream() {
+		return null;		
 	}
 	
 	static {

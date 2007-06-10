@@ -1,5 +1,7 @@
 package lejos.pc.comm;
 
+import java.io.*;
+
 public class NXTCommLibnxt implements NXTComm {
 	private NXTInfo nxtInfo;
 	
@@ -38,6 +40,14 @@ public class NXTCommLibnxt implements NXTComm {
 		jlibnxt_send_data(nxtInfo.nxtPtr, data);
         if (replyLen == 0) return new byte [0];
 		return jlibnxt_read_data(nxtInfo.nxtPtr, replyLen);
+	}
+	
+	public OutputStream getOutputStream() {
+		return new LibnxtOutputStream(this, nxtInfo.nxtPtr);		
+	}
+	
+	public InputStream getInputStream() {
+		return new LibnxtInputStream(this, nxtInfo.nxtPtr);		
 	}
 	
 	static {

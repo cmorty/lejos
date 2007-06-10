@@ -1,5 +1,8 @@
 package lejos.pc.comm;
 
+import java.io.InputStream;
+import java.io.OutputStream;
+
 public class NXTCommBluez implements NXTComm {
 
 	private static final String BDADDR_ANY = "00:00:00:00:00:00";
@@ -123,6 +126,14 @@ public class NXTCommBluez implements NXTComm {
 		System.arraycopy(data, start, result, 0, end - start);
 
 		return result;
+	}
+	
+	public OutputStream getOutputStream() {
+		return null;		
+	}
+	
+	public InputStream getInputStream() {
+		return null;		
 	}
 	
 	native private String search();
