@@ -7,10 +7,6 @@ import javax.microedition.io.*;
  * 
  * Represents a Bluetooth Stream Connection.
  * 
- * Currently only used to close a Bluetooth connection,
- * but will be used in a later release to implement input
- * and output streams.
- *
  */
 public class BTConnection implements StreamConnection {
 	int handle;
