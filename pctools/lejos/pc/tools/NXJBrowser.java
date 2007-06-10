@@ -131,7 +131,7 @@ public class NXJBrowser {
         int returnVal = fc.showOpenDialog(frame);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
           File file = fc.getSelectedFile();
-          SendFile.sendFile(nxtCommand, file, file.getName());
+          SendFile.sendFile(nxtCommand, file);
           fetchFiles();
           fm.setData(files, numFiles);
           table.invalidate();
