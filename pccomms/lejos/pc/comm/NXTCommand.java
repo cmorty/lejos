@@ -17,6 +17,7 @@ public class NXTCommand implements NXTProtocol {
 	
     public static final int USB = 1;
     public static final int BLUETOOTH = 2;
+    private boolean open = false;
 
     public NXTInfo[] search(String name, int protocol) {
     	NXTInfo[] nxtInfos;
@@ -100,6 +101,7 @@ public class NXTCommand implements NXTProtocol {
 
 	public void open(NXTInfo nxt) {
 		nxtComm.open(nxt);
+		open = true;
 	}
 
 	public void setVerify(boolean verify) {
@@ -288,6 +290,8 @@ public class NXTCommand implements NXTProtocol {
 	 *
 	 */
 	public void close() {
+		if (!open) return;
+		open = false;
 		byte [] request = {DIRECT_COMMAND_NOREPLY, DISCONNECT};
 		nxtComm.sendRequest(request,0); // Tell NXT to disconnect
 		nxtComm.close();
