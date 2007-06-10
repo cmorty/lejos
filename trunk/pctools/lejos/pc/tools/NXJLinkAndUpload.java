@@ -132,7 +132,7 @@ import lejos.pc.comm.*;
 				nxtCommand.startProgram(baseFileName);
 			}
 			nxtCommand.close();
-		}
+		} else System.out.println("No NXT found - is it switched on and plugged in (for USB)?");
 	}
 }
 
