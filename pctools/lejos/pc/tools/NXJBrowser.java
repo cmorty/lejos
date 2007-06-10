@@ -55,7 +55,7 @@ public class NXJBrowser {
     
     CommandLine commandLine = fParser.parse(args);
     
-    String name = commandLine.getOptionValue("name");
+    String name = commandLine.getOptionValue("n");
 	boolean blueTooth = commandLine.hasOption("b");
 	boolean usb = commandLine.hasOption("u");
 	
@@ -65,7 +65,7 @@ public class NXJBrowser {
 	if (usb) protocols |= NXTCommand.USB;
 	
 	if (protocols == 0) protocols = NXTCommand.USB | NXTCommand.BLUETOOTH;
-
+	
     final NXTInfo[] nxts = nxtCommand.search(name, protocols);
     
     if (nxts.length == 0) {
