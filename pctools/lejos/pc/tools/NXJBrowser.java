@@ -1,9 +1,13 @@
 package lejos.pc.tools;
 
 import lejos.pc.comm.*;
+
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.table.*;
+
+import org.apache.commons.cli.CommandLine;
+
 import java.awt.event.*;
 import java.io.*;
 
@@ -15,12 +19,27 @@ import java.io.*;
  */
 public class NXJBrowser {
   public static final int MAX_FILES = 30;
-  static int numFiles;
-  static FileInfo[] files= new FileInfo[MAX_FILES];
-  static NXTCommand nxtCommand;
-  static Cursor hourglassCursor = new Cursor(Cursor.WAIT_CURSOR);
-  static Cursor normalCursor = new Cursor(Cursor.DEFAULT_CURSOR);
+  private int numFiles;
+  private FileInfo[] files= new FileInfo[MAX_FILES];
+  private NXTCommand nxtCommand;
+  private Cursor hourglassCursor = new Cursor(Cursor.WAIT_CURSOR);
+  private Cursor normalCursor = new Cursor(Cursor.DEFAULT_CURSOR);
+  private NXJBrowserCommandLineParser fParser;
+  
+  public NXJBrowser() {
+	fParser = new NXJBrowserCommandLineParser();
+  }
+  
   public static void main(String args[]) {
+	try {
+		NXJBrowser instance = new NXJBrowser();
+		instance.run(args);
+	} catch(js.tinyvm.TinyVMException tvexc) {
+         System.err.println("Error: " + tvexc.getMessage());
+	}
+  }
+  
+  public void run(String[] args) throws js.tinyvm.TinyVMException  {
 
     final JFrame frame = new JFrame("NXJ File Browser");
 
@@ -34,10 +53,23 @@ public class NXJBrowser {
 
     nxtCommand = NXTCommand.getSingleton();
     
-    final NXTInfo[] nxts = nxtCommand.search(null, NXTCommand.USB | NXTCommand.BLUETOOTH);
+    CommandLine commandLine = fParser.parse(args);
+    
+    String name = commandLine.getOptionValue("name");
+	boolean blueTooth = commandLine.hasOption("b");
+	boolean usb = commandLine.hasOption("u");
+	
+    int protocols = 0;
+    
+	if (blueTooth) protocols |= NXTCommand.BLUETOOTH;
+	if (usb) protocols |= NXTCommand.USB;
+	
+	if (protocols == 0) protocols = NXTCommand.USB | NXTCommand.BLUETOOTH;
+
+    final NXTInfo[] nxts = nxtCommand.search(name, protocols);
     
     if (nxts.length == 0) {
-      System.out.println("No NXT found");
+      System.out.println("No NXT found - is it switched on and plugged in (for USB)?");
       System.exit(1);
     }
     
@@ -71,7 +103,7 @@ public class NXJBrowser {
     frame.setVisible(true);
   }
   
-  private static void showFiles(final JFrame frame, NXTInfo nxt) {
+  private void showFiles(final JFrame frame, NXTInfo nxt) {
     nxtCommand.open(nxt);
 
     frame.getContentPane().removeAll();
@@ -171,7 +203,7 @@ public class NXJBrowser {
     	int i = table.getSelectedRow();
     	if (i<0) return;
         String fileName = files[i].fileName;
-        NXJBrowser.runProgram(fileName);
+        runProgram(fileName);
         System.exit(0);
       }
     });
@@ -180,7 +212,7 @@ public class NXJBrowser {
     frame.setVisible(true);
   }
 
-  private static void fetchFiles() {
+  private void fetchFiles() {
     files[0] = nxtCommand.findFirst("*.*");
     //System.out.println(files[0].fileName);
 
@@ -198,7 +230,7 @@ public class NXJBrowser {
     } else numFiles = 0;
   }
 
-  public static void getFile(File file, String fileName, int size) {
+  public void getFile(File file, String fileName, int size) {
     FileOutputStream out = null; 
     int received = 0;
 
@@ -225,11 +257,10 @@ public class NXJBrowser {
     } catch (IOException ioe) {}
   }
 
-  public static void runProgram(String fileName) {
+  public void runProgram(String fileName) {
     nxtCommand.startProgram(fileName);
   }
 }
-
 
 class FileModel extends AbstractTableModel {
   private static final String[] columnNames = {"File","Size", "Delete", "Download", "Run"};
@@ -308,7 +339,6 @@ class NXTModel extends AbstractTableModel {
 
   public void setData(NXTInfo[] nxts, int numNXTs) {
     this.numNXTs = numNXTs;
-    System.out.println("Number of NXTS is " + numNXTs);
     nxtData = new Object[numNXTs][NUM_COLUMNS];
 
     for(int i=0;i<numNXTs;i++) {
