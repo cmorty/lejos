@@ -5,7 +5,7 @@ import java.io.*;
 
 public class SendFile {
 
-	public static void sendFile(NXTCommand nxtCommand, File file, String baseFileName) {
+	public static void sendFile(NXTCommand nxtCommand, File file) {
 	    byte[] data = new byte[60];
 	    int len, sent = 0;
 	    FileInputStream in = null;
@@ -20,7 +20,7 @@ public class SendFile {
 	    	System.out.println("File not found");
 	    }
 
-	    nxtCommand.openWrite(baseFileName, (int) file.length());
+	    nxtCommand.openWrite(file.getName(), (int) file.length());
 
 	    try {
 	      while ((len = in.read(data)) > 0) {

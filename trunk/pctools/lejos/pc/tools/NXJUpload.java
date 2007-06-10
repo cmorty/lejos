@@ -67,7 +67,7 @@ public class NXJUpload {
 		
 		if (nxtInfo.length > 0) {
 			nxtCommand.open(nxtInfo[0]);
-			SendFile.sendFile(nxtCommand, f, baseFileName);
+			SendFile.sendFile(nxtCommand, f);
 			if (run) {
 				nxtCommand.setVerify(false);
 				nxtCommand.startProgram(baseFileName);
