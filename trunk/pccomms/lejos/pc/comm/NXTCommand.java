@@ -25,10 +25,10 @@ public class NXTCommand implements NXTProtocol {
 	    	Properties props = new Properties();
 	    	
 	    	try {
-	    		System.out.println("Loading " + PROP_FILE);
+	    		//System.out.println("Loading " + PROP_FILE);
 	    		props.load(new FileInputStream(PROP_FILE));
 	    	} catch (FileNotFoundException e) {
-	    		System.out.println("No nxj.properties file");
+	    		//System.out.println("No nxj.properties file");
 	    	} catch (IOException e) {
 	    		System.out.println("Failure to read nxj.properties file");
 	    	}
@@ -43,7 +43,7 @@ public class NXTCommand implements NXTProtocol {
 	    	
 	    	if ((protocol & USB) != 0) {
 	    		String nxtCommName = props.getProperty("NXTCommUSB", "lejos.pc.comm.NXTCommLibnxt");
-	    		System.out.println("NXTCommUSB = " + nxtCommName);
+	    		//System.out.println("NXTCommUSB = " + nxtCommName);
 	    		try {
 	        		Class c = Class.forName(nxtCommName);
 	        		nxtCommUSB = (NXTComm) c.newInstance();
@@ -59,7 +59,7 @@ public class NXTCommand implements NXTProtocol {
         	
 	    	if ((protocol & BLUETOOTH) != 0) {
         		String nxtCommName = props.getProperty("NXTCommBluetooth", defaultDriver);
-        		System.out.println("NXTCommBluetooth = " + nxtCommName);
+        		//System.out.println("NXTCommBluetooth = " + nxtCommName);
         		try {
             		Class c = Class.forName(nxtCommName);
             		nxtCommBluetooth = (NXTComm) c.newInstance();
