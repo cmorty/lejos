@@ -24,32 +24,19 @@ public class NXJUpload {
 	}
 	
 	public void run(String[] args) throws js.tinyvm.TinyVMException {
-		String baseFileName = null;
 		int protocols = 0;
 		
 		CommandLine commandLine = fParser.parse(args);
 		boolean run = commandLine.hasOption("r");
 		boolean blueTooth = commandLine.hasOption("b");
 		boolean usb = commandLine.hasOption("u");
-		String name = commandLine.getOptionValue("name");
+		String name = commandLine.getOptionValue("n");
 		
 		String fileName = commandLine.getArgs()[0];
 		
 		if (blueTooth) protocols |= NXTCommand.BLUETOOTH;
 		if (usb) protocols |= NXTCommand.USB;
-		
-		int i;
-		for (i=fileName.length()-1;i>0;i--) {
-			char c = fileName.charAt(i);
-			if (c == '\\' || c == '/') break;
-		}
-		
-		if (i != 0) i++;
-		
-		baseFileName = fileName.substring(i);
-		
-		//System.out.println("Base file name is " + baseFileName);
-		
+
 		File f = new File(fileName);
 		
 		if (!f.exists()) {
@@ -70,7 +57,7 @@ public class NXJUpload {
 			SendFile.sendFile(nxtCommand, f);
 			if (run) {
 				nxtCommand.setVerify(false);
-				nxtCommand.startProgram(baseFileName);
+				nxtCommand.startProgram(f.getName());
 			}
 			nxtCommand.close();
 		} else System.out.println("No NXT found - is it switched on and plugged in (for USB)?");

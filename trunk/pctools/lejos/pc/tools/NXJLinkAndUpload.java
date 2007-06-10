@@ -39,7 +39,7 @@ import lejos.pc.comm.*;
 		boolean run = commandLine.hasOption("r");
 		boolean blueTooth = commandLine.hasOption("b");
 		boolean usb = commandLine.hasOption("u");
-		String name = commandLine.getOptionValue("name");
+		String name = commandLine.getOptionValue("n");
 		String tinyVMArgs[];
 		
 		String firstArg = commandLine.getArgs()[0];
@@ -91,23 +91,10 @@ import lejos.pc.comm.*;
 		
 		// upload         
 		System.out.println("Uploading...");;
-		String baseFileName = null;
 		int protocols = 0;
 		
 		if (blueTooth) protocols |= NXTCommand.BLUETOOTH;
 		if (usb) protocols |= NXTCommand.USB;
-				
-		int i;
-		for (i=binName.length()-1;i>0;i--) {
-			char c = binName.charAt(i);
-			if (c == '\\' || c == '/') break;
-		}
-		
-		if (i != 0) i++;
-		
-		baseFileName = binName.substring(i);
-		
-		//System.out.println("Base file name is " + baseFileName);
 		
 		File f = new File(binName);
 		
@@ -129,7 +116,7 @@ import lejos.pc.comm.*;
 			SendFile.sendFile(nxtCommand, f);
 			if (run) {
 				nxtCommand.setVerify(false);
-				nxtCommand.startProgram(baseFileName);
+				nxtCommand.startProgram(f.getName());
 			}
 			nxtCommand.close();
 		} else System.out.println("No NXT found - is it switched on and plugged in (for USB)?");
