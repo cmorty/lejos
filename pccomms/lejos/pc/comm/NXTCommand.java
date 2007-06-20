@@ -99,9 +99,8 @@ public class NXTCommand implements NXTProtocol {
     	return new NXTInfo[0];
 	}
 
-	public void open(NXTInfo nxt) {
-		nxtComm.open(nxt);
-		open = true;
+	public boolean open(NXTInfo nxt) {
+		return open = nxtComm.open(nxt);
 	}
 
 	public void setVerify(boolean verify) {

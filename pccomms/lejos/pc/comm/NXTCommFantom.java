@@ -38,9 +38,10 @@ public class NXTCommFantom implements NXTComm {
 		return nxtInfo;
 	}
 
-	public void open(NXTInfo nxtInfo) {
+	public boolean open(NXTInfo nxtInfo) {
 		this.nxtInfo = nxtInfo;
 		nxtInfo.nxtPtr = jfantom_open(nxtInfo.btResourceString);
+		return true;
 	}
 	
 	public void close() {

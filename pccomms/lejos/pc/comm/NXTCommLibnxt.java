@@ -27,9 +27,10 @@ public class NXTCommLibnxt implements NXTComm {
 		return new NXTInfo[0];
 	}
 
-	public void open(NXTInfo nxtInfo) {
+	public boolean open(NXTInfo nxtInfo) {
 		this.nxtInfo = nxtInfo;
 		jlibnxt_open(nxtInfo.nxtPtr);
+		return true;
 	}
 	
 	public void close() {
