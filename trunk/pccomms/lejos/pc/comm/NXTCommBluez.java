@@ -46,11 +46,13 @@ public class NXTCommBluez implements NXTComm {
 		}
 	}
 
-	public void open(NXTInfo nxt) {
+	public boolean open(NXTInfo nxt) {
 		try {
 			open(BDADDR_ANY, nxt.btDeviceAddress, 1);
+			return true;
 		} catch (BlueZException e) {
 			System.out.println("Open failed");
+			return false;
 		}
 		
 	}
