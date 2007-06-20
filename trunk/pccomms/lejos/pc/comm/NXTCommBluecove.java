@@ -88,7 +88,7 @@ public class NXTCommBluecove implements NXTComm, DiscoveryListener  {
 	public boolean open(NXTInfo nxt) {		
 		try{
 			if (nxt.btResourceString == null) {
-				System.out.print("Failed to connect - is NXT switched on and paired with PC?");
+				System.out.print("Failed to connect to " + nxt.name + " - is it switched on and paired with PC?");
 				return false;
 			}
 			con = (StreamConnection) Connector.open(nxt.btResourceString);
@@ -97,7 +97,7 @@ public class NXTCommBluecove implements NXTComm, DiscoveryListener  {
 			return true;
  	 	}
  	 	catch(IOException e){
- 	 		System.out.println("Open failed");
+ 	 		System.out.println("Open of " + nxt.name + " failed");
  	 		return false;
  	 	} 
 	}
