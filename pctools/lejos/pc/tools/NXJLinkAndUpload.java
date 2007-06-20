@@ -111,15 +111,19 @@ import lejos.pc.comm.*;
 		
 		//System.out.println("Found " + nxtInfo.length + " NXTs");
 		
-		if (nxtInfo.length > 0) {
-			nxtCommand.open(nxtInfo[0]);
+		boolean connected = false;
+		
+		for(int i=0;i<nxtInfo.length;i++) {
+			connected = nxtCommand.open(nxtInfo[i]);
+			if (!connected) continue;
 			SendFile.sendFile(nxtCommand, f);
 			if (run) {
 				nxtCommand.setVerify(false);
 				nxtCommand.startProgram(f.getName());
 			}
 			nxtCommand.close();
-		} else System.out.println("No NXT found - is it switched on and plugged in (for USB)?");
+		}
+		if (!connected) System.out.println("No NXT found - is it switched on and plugged in (for USB)?");
 	}
 }
 
