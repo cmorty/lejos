@@ -2,8 +2,9 @@ package java.io;
 
 import lejos.nxt.Flash;
 
-public class File {
 
+public class File {
+	static int count;
 	// CONSTANTS:
 	/**
 	 *  Number of files the file system can store. 
@@ -68,7 +69,7 @@ public class File {
 	/**
 	 * Array containing all the Files in the directory. 
 	 */
-	private static File [] files = null;
+	 static File [] files = null;
 	
 	/**
 	 * The total number of files in the file system. A negative value 
@@ -179,7 +180,7 @@ public class File {
 		this.file_length = 0;
 		return true;
 	}
-	
+
 	/**
 	 * If the file is a binary executable, begins running it.
 	 *
@@ -249,7 +250,8 @@ public class File {
 		// page_pos is the byte position in the page (pointer):
 		short page_pos = NUM_FILES_POS;
 		File.totalFiles = buff[page_pos]; // update total files value 
-		
+//		LCD.drawInt(totalFiles, count++, 5);
+//		LCD.refresh();
 		for(int i=0;i<File.totalFiles;i++) {
 			short pageLocation = (short)((0xFF & buff[++page_pos]) | ((0xFF & buff[++page_pos])<<8));
 			int fileLength = (0xFF & buff[++page_pos]) | ((0xFF & buff[++page_pos]) <<8) | ((0xFF & buff[++page_pos])<<16) | ((0xFF & buff[++page_pos])<<24);
@@ -278,20 +280,11 @@ public class File {
 	 * @param files The array containing a list of Files to write to table. 
 	 */
 	static void writeTable(File [] files) { // !! Make private when done tests!
-		short table_pointer = NUM_FILES_POS; // Move pointer to start of table
-		
-		/* 
-		 * NOTE: The code below attempts to reuse File objects in the files 
-		 * array rather than making it null. An unused File object is identified
-		 * as having -999 for the file_length. In effect, -999 is the same as
-		 * having a null value in the files array. If leJOS gets a garbage 
-		 * collector then this code can be reduced. 
-		*/
-		// !! THERE IS NO USE DOING THIS REUSING CRAP! WHen they create a new
-		// File object it gets added to array anyway. If they delete a file,
-		// just null it from the array. If they hang onto the file instance and 
-		// use createNewFile() after deleting it, that's fine too (just gets
-		// added to array again).
+		short table_pointer = 0; // Move pointer to start of table
+		for(table_pointer=0;table_pointer<TABLE_ID.length();table_pointer++) 
+		{
+			buff[table_pointer] = (byte)TABLE_ID.charAt(table_pointer);
+		}
 		byte arrayIndex = 0;
 		if(files.length != 0) { // Will throw exception for 0 length unless this checks
 			while(files[arrayIndex] != null) {
@@ -319,6 +312,7 @@ public class File {
 		buff[NUM_FILES_POS] = arrayIndex; // Update number of files
 		File.totalFiles = arrayIndex; // Update total files in File class?
 		Flash.writePage(buff, TABLE_START_PAGE);
+
 	}
 	
 	/**
@@ -335,6 +329,7 @@ public class File {
 		// Write # of files (0) right after TABLE_ID
 		buff[NUM_FILES_POS] = 0;
  		Flash.writePage(buff, TABLE_START_PAGE);
+// 		LCD.drawInt(999, 12,5);
 	}
 	
 	/**
@@ -372,7 +367,6 @@ public class File {
 		} else { // If array empty, start writing on first page after table data
 			this.page_location = File.FILE_START_PAGE;
 		}
-	
 		
 		// Add this file to the end of files array.
 		files[File.totalFiles] = this;
@@ -382,6 +376,52 @@ public class File {
 		return true;
 	}
 	
+/**
+ * Move the file a page at a time, in order from low to high memory
+ * assumes that new starting page location  is lower in flash memory than the old or else that the new pages
+ * does not overlap with the old.  
+ * @param page  starting page of the new location.
+ */
+	 private void moveTo(int page)
+	{
+		int nrPages = file_length/BYTES_PER_PAGE;
+		if(file_length%BYTES_PER_PAGE>0) nrPages++;
+		int from = page_location;
+		int to = page;
+		page_location =(short) page;
+		for(int i = 0; i<nrPages;i++)
+		{
+			Flash.readPage(buff, from++);
+			Flash.writePage(buff, to++);
+
+		}
+		writeTable(files);	
+	}
+
+	 /**
+	  * move the file to become the last one in flash memory 
+	  */
+	public void moveToTop()
+	{
+		File  top = files[totalFiles - 1]; // file at top of flash memory
+		int page = 1+ top.getPage()+top.length()/BYTES_PER_PAGE;  
+		int length = file_length;
+		moveTo(page);	
+		delete(); // remove from files[] array
+		file_length = length;
+		createNewFile(); // put back into files[]
+	}
+
+/**
+ * returns location of file in the files[] array
+ * @return  index of file in files[]
+ */
+	public  int getIndex()
+	{
+		int i = 0;
+		while( i<totalFiles  && this != files[i]) i++;
+		return i;
+	}
 	/** 
 	 * Indicates if the flash memory contains a file table.
 	 * Compares header with expected header (TABLE_HEADER) at the 
@@ -396,7 +436,24 @@ public class File {
 		}
 		return formatted; 
 	}
-	
+/**
+ *  assumptions: the files[] array has no nulls, and is in increasing order by page_location
+ *  this scheme moves moves each file down to fill in the empty pages. 
+ */	
+	public static void defrag()
+	{
+		File file;
+		int page_pointer = FILE_START_PAGE; // smallest memory location possible for current file 
+
+		for(byte  i = 0; i < totalFiles; i++)
+		{
+			file = files[i];
+			if(file.page_location > page_pointer) file.moveTo(page_pointer);					
+			page_pointer = file.page_location + file.length()/BYTES_PER_PAGE ;
+			if (file.length()%BYTES_PER_PAGE >0 ) page_pointer++;	
+		}
+		writeTable(files);	// update the file data in flash memory	
+	}
 	public int getPage() {
 		return page_location;
 	}
