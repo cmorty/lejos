@@ -19,32 +19,55 @@ public class FileOutputStream extends OutputStream {
 	 */
 	private byte [] buff;
 	
+	private boolean append = false;
 	/**
 	 * File attached to this stream
 	 */
 	File file;
 	
-	public FileOutputStream(File f) {
+	/**
+	 * create a new OutputStream to write to this file, starting  at the beginning of the file.
+	 * @param f:  the file this stream writes to
+	 */		
+	public FileOutputStream(File f) 
+	{
 		this(f, false);
 	}
-	
+/**
+ * create a new OutputStream to write to this file
+ * @param f:  the file this stream writes to
+ * @param append:   if true this sream will start writing at the end of the file, otherwise at the beginning
+ */	
 	public FileOutputStream(File f, boolean append) {
-		// !! Haven't implemented append yet.
-		// !! Will move page_pointer and data_pointer to end of file
-		// when this is implemented.
+		this.append = append;
 		buff = new byte[File.BYTES_PER_PAGE];
 		page_pointer = f.page_location;
 		data_pointer = 0; // Start of first page
 		file = f;
-		// !! When defrag implemented, any FileStream that is open should be locked from defragging.
+		if(append)
+		{
+			page_pointer = file.page_location + file.file_length/File.BYTES_PER_PAGE ;
+			data_pointer =  file.file_length%File.BYTES_PER_PAGE;
+			Flash.readPage(buff, page_pointer);
+		}
+		else file.file_length = 0;// can this cause trouble?
 	}
 	
+/**
+ * write 1 byte to the file; if necessary, file will be moved become the last file in memory
+ */	
 	public void write(int b) throws IOException {
 		if(file.page_location < 0) throw new IOException(); // "File has not been created!"
 		buff[data_pointer] = (byte)b;
 		data_pointer++;
-		file.file_length++; // !! NOT CORRECT! Only if new file is made. If writing to existing file or append is used, needs to be different!
-		if(data_pointer >= File.BYTES_PER_PAGE) {
+		file.file_length++; 
+		if(data_pointer >= File.BYTES_PER_PAGE) 
+		{
+			if(file.getIndex()< ( File.totalFiles -1)) 
+				{
+				file.moveToTop();
+				page_pointer = file.page_location + file.file_length/File.BYTES_PER_PAGE; 					
+				}
 			flush(); // Write to flash
 			page_pointer++; // Move to next page
 			data_pointer = 0;
@@ -54,7 +77,9 @@ public class FileOutputStream extends OutputStream {
 	public void flush() throws IOException {
 		Flash.writePage(buff, page_pointer);
     }
-	
+/**
+ * write the buffer to flash memory and update the file parameters in flash
+ */	
 	public void close() throws IOException {
 		// !! Alternate implementation: If this is a new file, perhaps only 
 		// write the file table information AFTER close() called so  
