@@ -88,8 +88,12 @@ public class NXJBrowser {
     connectButton.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent ae) {
           int row = nxtTable.getSelectedRow();
-          if (row >= 0) showFiles(frame,nxts[row]);
-          
+          if (row >= 0) {
+        	  boolean open = nxtCommand.open(nxts[row]);
+        	  if (!open) {
+        		  JOptionPane.showMessageDialog(frame, "Failed to connect");
+        	  } else showFiles(frame,nxts[row]);
+          }
         }
       });
 
@@ -104,8 +108,6 @@ public class NXJBrowser {
   }
   
   private void showFiles(final JFrame frame, NXTInfo nxt) {
-    nxtCommand.open(nxt);
-
     frame.getContentPane().removeAll();
     
     fetchFiles();
