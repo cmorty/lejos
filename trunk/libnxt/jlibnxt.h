@@ -10,7 +10,7 @@ extern "C" {
 /*
  * Class:     lejos_pc_comm_NXTCommLibnxt
  * Method:    jlibnxt_find
- * Signature: ()[B
+ * Signature: ()I
  */
 JNIEXPORT jint JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1find
   (JNIEnv *, jobject);
@@ -18,9 +18,9 @@ JNIEXPORT jint JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1find
 /*
  * Class:     lejos_pc_comm_NXTCommLibnxt
  * Method:    jlibnxt_open
- * Signature: ([B)V
+ * Signature: ([B)I
  */
-JNIEXPORT void JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1open
+JNIEXPORT jint JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1open
   (JNIEnv *, jobject, jint);
 
 /*
