@@ -119,7 +119,7 @@ public class NXJBrowser {
     col.setPreferredWidth(300);
 
     final JScrollPane tablePane = new JScrollPane(table);
-    tablePane.setPreferredSize(new Dimension(455, 500));
+    tablePane.setPreferredSize(new Dimension(600, 500));
 
     frame.getContentPane().add(tablePane, BorderLayout.CENTER);
 
@@ -129,11 +129,13 @@ public class NXJBrowser {
     JButton uploadButton = new JButton("Upload file");
     JButton downloadButton = new JButton("Download file");
     JButton runButton = new JButton("Run program");
+    JButton defragButton = new JButton("Defrag");
     
     buttonPanel.add(deleteButton);
     buttonPanel.add(uploadButton);
     buttonPanel.add(downloadButton);
     buttonPanel.add(runButton);
+    buttonPanel.add(defragButton);
 
     frame.getContentPane().add(new JScrollPane(buttonPanel), BorderLayout.SOUTH);
 
@@ -142,7 +144,7 @@ public class NXJBrowser {
     	frame.setCursor(hourglassCursor);
         
         for(int i=0;i<fm.getRowCount();i++) {
-          Boolean b = (Boolean) fm.getValueAt(i,2);
+          Boolean b = (Boolean) fm.getValueAt(i,4);
           boolean deleteIt = b.booleanValue();
           String fileName = (String) fm.getValueAt(i,0);
           if (deleteIt) {
@@ -207,6 +209,19 @@ public class NXJBrowser {
         System.exit(0);
       }
     });
+    
+    defragButton.addMouseListener(new MouseAdapter() {
+        public void mouseClicked(MouseEvent e) {
+          frame.setCursor(hourglassCursor);
+          nxtCommand.defrag();
+          fetchFiles();
+          fm.setData(files, numFiles);
+          table.invalidate();
+          tablePane.revalidate();
+          tablePane.repaint();
+          frame.setCursor(normalCursor);
+        }
+      });
 
     frame.pack();
     frame.setVisible(true);
@@ -214,7 +229,7 @@ public class NXJBrowser {
 
   private void fetchFiles() {
     files[0] = nxtCommand.findFirst("*.*");
-    //System.out.println(files[0].fileName);
+    //System.out.println(files[0].startPage);
 
     if (files[0] != null) {
       numFiles = 1;
@@ -223,7 +238,7 @@ public class NXJBrowser {
         files[i] = nxtCommand.findNext(files[i-1].fileHandle);
         if (files[i] == null) break;
         else {
-          //System.out.println(files[i].fileName);
+          //System.out.println(files[i].startPage);
           numFiles++;
         }
       }
@@ -263,8 +278,8 @@ public class NXJBrowser {
 }
 
 class FileModel extends AbstractTableModel {
-  private static final String[] columnNames = {"File","Size", "Delete", "Download", "Run"};
-  private static final int NUM_COLUMNS = 3;
+  private static final String[] columnNames = {"File","Size", "Start Page", "End Page", "Delete"};
+  private static final int NUM_COLUMNS = 5;
 
   Object[][] fileData;
   int numFiles;
@@ -283,7 +298,9 @@ class FileModel extends AbstractTableModel {
     for(int i=0;i<numFiles;i++) {
       fileData[i][0]  = files[i].fileName;
       fileData[i][1] = new Integer(files[i].fileSize);
-      fileData[i][2] = new Boolean(false);
+      fileData[i][2] = new Integer(files[i].startPage);
+      fileData[i][3] = new Integer(files[i].startPage + ((files[i].fileSize -1)/256));
+      fileData[i][4] = new Boolean(false);
 
      }
   }
@@ -320,7 +337,7 @@ class FileModel extends AbstractTableModel {
   }
 
   public boolean isCellEditable(int row, int column) {
-    return (column == 2);
+    return (column == 4);
   }
 }
 
