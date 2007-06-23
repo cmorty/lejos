@@ -5,23 +5,81 @@ import lejos.nxt.*;
 
 /**
  * 
- * Implements the Lego Communication Protocol.
+ * Implements the Lego Communication Protocol,
+ * with some extensions for lejos NXJ.
  *
  */
 public class LCP {
-	static byte[] i2cCommand = new byte[16];
-	static byte[] i2cReply = new byte[16];
-	static int i2cLen = 0;
-	static int currentPage = 0;
-    static File[] files = null;
-    static String[] fileNames = null;
-    static int fileIdx = -1;
-    static String currentProgram = null;
-    static File file = null;
-    static FileOutputStream out = null;
-    static FileInputStream in = null;
-    static int numFiles;
+	private static byte[] i2cReply = new byte[16];
+	private static int i2cLen = 0;
+    private static File[] files = null;
+    private static String[] fileNames = null;
+    private static int fileIdx = -1;
+    private static String currentProgram = null;
+    private static File file = null;
+    private static FileOutputStream out = null;
+    private static FileInputStream in = null;
+    private static int numFiles;
+    
+	// Command types constants. Indicates type of packet being sent or received.
+	public static byte DIRECT_COMMAND_REPLY = 0x00;
+	public static byte SYSTEM_COMMAND_REPLY = 0x01;
+	public static byte REPLY_COMMAND = 0x02;
+	public static byte DIRECT_COMMAND_NOREPLY = (byte)0x80; // Avoids ~100ms latency
+	public static byte SYSTEM_COMMAND_NOREPLY = (byte)0x81; // Avoids ~100ms latency
+
+	// Direct Commands
+	public static final byte START_PROGRAM = 0x00;
+	public static final byte STOP_PROGRAM = 0x01;
+	public static final byte PLAY_SOUND_FILE = 0x02;
+	public static final byte PLAY_TONE = 0x03;
+	public static final byte SET_OUTPUT_STATE = 0x04;
+	public static final byte SET_INPUT_MODE = 0x05;
+	public static final byte GET_OUTPUT_STATE = 0x06;
+	public static final byte GET_INPUT_VALUES = 0x07;
+	public static final byte RESET_SCALED_INPUT_VALUE = 0x08;
+	public static final byte MESSAGE_WRITE = 0x09;
+	public static final byte RESET_MOTOR_POSITION = 0x0A;	
+	public static final byte GET_BATTERY_LEVEL = 0x0B;
+	public static final byte STOP_SOUND_PLAYBACK = 0x0C;
+	public static final byte KEEP_ALIVE = 0x0D;
+	public static final byte LS_GET_STATUS = 0x0E;
+	public static final byte LS_WRITE = 0x0F;
+	public static final byte LS_READ = 0x10;
+	public static final byte GET_CURRENT_PROGRAM_NAME = 0x11;
 	
+	// NXJ additions
+	public static byte NXJ_DISCONNECT = 0x20; 
+	public static byte NXJ_DEFRAG = 0x21;
+	
+	// System Commands:
+	public static final byte OPEN_READ = (byte)0x80;
+	public static final byte OPEN_WRITE = (byte)0x81;
+	public static final byte READ = (byte)0x82;
+	public static final byte WRITE = (byte)0x83;
+	public static final byte CLOSE = (byte)0x84;
+	public static final byte DELETE = (byte)0x85;
+	public static final byte FIND_FIRST = (byte)0x86;
+	public static final byte FIND_NEXT = (byte)0x87;
+	public static final byte GET_FIRMWARE_VERSION = (byte)0x88;
+	public static final byte OPEN_WRITE_LINEAR = (byte)0x89;
+	public static final byte OPEN_READ_LINEAR = (byte)0x8A;
+	public static final byte OPEN_WRITE_DATA = (byte)0x8B;
+	public static final byte OPEN_APPEND_DATA = (byte)0x8C;
+	public static final byte BOOT = (byte)0x97;
+	public static final byte SET_BRICK_NAME = (byte)0x98;
+	public static final byte GET_DEVICE_INFO = (byte)0x9B;
+	public static final byte DELETE_USER_FLASH = (byte)0xA0;
+	public static final byte POLL_LENGTH = (byte)0xA1;
+	public static final byte POLL = (byte)0xA2;
+	
+	public static final byte NXJ_FIND_FIRST = (byte)0xB6;
+	public static final byte NXJ_FIND_NEXT = (byte)0xB7;
+	
+	// Error codes
+	
+	public static final byte FILE_NOT_FOUND = (byte)0x86;
+
 	private LCP()
 	{		
 	}
@@ -37,11 +95,13 @@ public class LCP {
 	    
 	    for(int i=0;i<32;i++)reply[i] = 0;
 	    
-		reply[0] = 0x02;
+		reply[0] = REPLY_COMMAND;;
 		reply[1] = cmd[1];
 		
+		byte cmdId = cmd[1];
+		
 		// START PROGRAM
-		if (cmd[1] == (byte) 0x00) {
+		if (cmdId == START_PROGRAM) {
 			int filenameLength = 0;
 			init_files();
 			for(int i=0;i<20 && cmd[i+2] != 0;i++) filenameLength++;
@@ -61,7 +121,7 @@ public class LCP {
 		
 		// GET CURRENT PROGRAM NAME
 		
-		if (cmd[1] == (byte) 0x11) {
+		if (cmdId == GET_CURRENT_PROGRAM_NAME) {
 			if (currentProgram != null) {
 				for(int i=0;i<currentProgram.length() && i < 19;i++) 
 					reply[3+i] = (byte) currentProgram.charAt(i); 
@@ -69,7 +129,7 @@ public class LCP {
 		}
 		
 		// GET BATTERY LEVEL
-		if (cmd[1] == 0x0B) {
+		if (cmdId == GET_BATTERY_LEVEL) {
 			int mv = Battery.getVoltageMilliVolt();
 
 			reply[3] = getLSB(mv);
@@ -78,13 +138,13 @@ public class LCP {
 		}
 		
 		// PLAYTONE
-		if (cmd[1] == 0x03)
+		if (cmdId == PLAY_TONE)
 		{
 			Sound.playTone(getInt(cmd,2), getInt(cmd,4));
 		}
 		
 		// GET FIRMWARE VERSION
-		if (cmd[1] == (byte) 0x88) 
+		if (cmdId == GET_FIRMWARE_VERSION) 
 		{
 			reply[3] = 2;
 			reply[4] = 1;
@@ -94,7 +154,7 @@ public class LCP {
 		}
 		
 		// GETOUTPUTSTATE 
-		if (cmd[1] == 0x06) {
+		if (cmdId == GET_OUTPUT_STATE) {
 			byte port = cmd[2]; 
 			Motor m;
 			if(port == 0)
@@ -118,7 +178,7 @@ public class LCP {
 		}
 		
 		// GETINPUTVALUES
-		if (cmd[1] == 0x07) {
+		if (cmdId == GET_INPUT_VALUES) {
 			byte port = cmd[2];
 			int raw = SensorPort.PORTS[port].readRawValue();
 			int scaled = SensorPort.PORTS[port].readValue();
@@ -141,7 +201,7 @@ public class LCP {
 		}
 		
 		// SETINPUTMODE
-		if (cmd[1] == 0x05) {
+		if (cmdId == SET_INPUT_MODE) {
 			byte port = cmd[2];
 			int sensorType = (cmd[3] & 0xFF);
 			int sensorMode = (cmd[4] & 0xFF);
@@ -149,7 +209,7 @@ public class LCP {
 		}
 		
 		// SETOUTPUTSTATE
-		if(cmd[1] == 0x04) {
+		if(cmdId == SET_OUTPUT_STATE) {
 			byte motorid = cmd[2];
 			byte power = cmd[3];
 			int speed = (Math.abs(power) * 900) / 100;
@@ -192,19 +252,19 @@ public class LCP {
 		}
 		
 		// RESETMOTORPOSITION
-		if (cmd[1] == (byte) 0x0A)
+		if (cmdId == RESET_MOTOR_POSITION)
 		{
 			MotorPort.resetTachoCountById(cmd[2]);
 		}
 		
 		// KEEPALIVE
-		if (cmd[1] == (byte) 0x0D)
+		if (cmdId == KEEP_ALIVE)
 		{
 			len = 7;
 		}
 		
 		// LSWRITE
-		if (cmd[1] == 0x0F)
+		if (cmdId == LS_WRITE)
 		{
 			byte port = cmd[2];
 			byte txLen = cmd[3];
@@ -221,7 +281,7 @@ public class LCP {
 		}
 		
 		// LSREAD
-		if (cmd[1] == 0x10)
+		if (cmdId == LS_READ)
 		{
 			reply[3] = (byte) i2cLen;
 			for(int i=0;i<16;i++) reply[i+4] = i2cReply[i];
@@ -230,14 +290,14 @@ public class LCP {
 		}
 		
 		// LSGETSTATUS
-		if (cmd[1] == (byte) 0x0E)
+		if (cmdId == LS_GET_STATUS)
 		{
 			reply[3] = (byte) i2cLen;
 			len = 4;
 		}
 		
 		// OPEN READ
-		if (cmd[1] == (byte) 0x80)
+		if (cmdId == OPEN_READ)
 		{
 			int filenameLength = 0;
 			init_files();
@@ -253,13 +313,13 @@ public class LCP {
     			cmd[6] = (byte) ((size >> 16) & 0xFF);
     			cmd[7] = (byte) ((size >> 24) & 0xFF);          	
             } catch (Exception e) {
-            	reply[2] = (byte) 0x86; // File not found
+            	reply[2] = FILE_NOT_FOUND;
             }
 			len = 8;
 		}	
 		
 		// OPEN WRITE
-		if (cmd[1] == (byte) 0x81)
+		if (cmdId == OPEN_WRITE)
 		{
 			int filenameLength = 0;
 			init_files();
@@ -284,31 +344,39 @@ public class LCP {
 		}
 		
 		// OPEN WRITE LINEAR
-		if (cmd[1] == (byte) 0x89)
+		if (cmdId == OPEN_WRITE_LINEAR)
 		{
 			len = 4;
 		}
 		
 		// OPEN WRITE DATA
-		if (cmd[1] == (byte) 0x8B)
+		if (cmdId == OPEN_WRITE_DATA)
 		{
 			len = 4;
 		}
 		
 		// OPEN APPEND  DATA
-		if (cmd[1] == (byte) 0x8C)
+		if (cmdId == OPEN_APPEND_DATA)
 		{
-			reply[2] = (byte) 0x86; // File not found
+			reply[2] = FILE_NOT_FOUND;
 			len = 8;
+		}
+		
+		// DEFRAG
+		if (cmdId == NXJ_DEFRAG)
+		{
+			File.defrag();
 		}
 
 		// FIND FIRST
-		if (cmd[1] == (byte) 0x86)
+		if (cmdId == FIND_FIRST || cmdId == NXJ_FIND_FIRST)
 		{
 			init_files();
+			if (cmdId == FIND_FIRST) len = 28;
+			else len = 32;
 			if (numFiles == 0)
 			{
-				reply[2] = (byte) 0x86; // File not found
+				reply[2] = FILE_NOT_FOUND;
 			}
 			else
 			{
@@ -318,16 +386,24 @@ public class LCP {
             	reply[24] = (byte) (size & 0xFF);
     			reply[25] = (byte) ((size >> 8) & 0xFF);
     			reply[26] = (byte) ((size >> 16) & 0xFF);
-    			reply[27] = (byte) ((size >> 24) & 0xFF);  
+    			reply[27] = (byte) ((size >> 24) & 0xFF);
+    			
+    			if (cmdId == NXJ_FIND_FIRST) {
+    				int startPage = files[0].getPage();
+    				reply[28] = (byte) (startPage & 0xFF);
+        			reply[29] = (byte) ((startPage >> 8) & 0xFF);
+        			reply[30] = (byte) ((startPage >> 16) & 0xFF);
+        			reply[31] = (byte) ((startPage >> 24) & 0xFF);   				
+    			}
 			}
-			
-			len = 28;
 		}
 		
 		// FIND NEXT
-		if (cmd[1] == (byte) 0x87)
+		if (cmdId == FIND_NEXT || cmdId == NXJ_FIND_NEXT)
 		{
-			if (fileNames == null || fileIdx >= fileNames.length) reply[2] = (byte) 0x86; // File not found
+			if (cmdId == FIND_NEXT) len = 28;
+			else len = 32;
+			if (fileNames == null || fileIdx >= fileNames.length) reply[2] = FILE_NOT_FOUND;
 			else
 			{
 				for(int i=0;i<fileNames[fileIdx].length();i++) reply[4+i] = (byte) fileNames[fileIdx].charAt(i);
@@ -336,13 +412,21 @@ public class LCP {
     			reply[25] = (byte) ((size >> 8) & 0xFF);
     			reply[26] = (byte) ((size >> 16) & 0xFF);
     			reply[27] = (byte) ((size >> 24) & 0xFF);
+    			
+    			if (cmdId == NXJ_FIND_NEXT) {
+    				int startPage = files[fileIdx].getPage();
+    				reply[28] = (byte) (startPage & 0xFF);
+        			reply[29] = (byte) ((startPage >> 8) & 0xFF);
+        			reply[30] = (byte) ((startPage >> 16) & 0xFF);
+        			reply[31] = (byte) ((startPage >> 24) & 0xFF);   				
+    			}
+    			
 				fileIdx++;
 			}
-			len = 28;
 		}
 		
 		// READ
-		if (cmd[1] == (byte) 0x82)
+		if (cmdId == READ)
 		{
             int numBytes = ((cmd[4] & 0xFF) << 8) + (cmd[3] & 0xFF);
             int bytesRead = 0;
@@ -356,7 +440,7 @@ public class LCP {
 		}
 		
 		// WRITE
-		if (cmd[1] == (byte) 0x83)
+		if (cmdId == WRITE)
 		{
 			int dataLen = cmdLen - 3;
 			try {
@@ -371,7 +455,7 @@ public class LCP {
 		}
 		
 		// DELETE
-		if (cmd[1] == (byte) 0x85)
+		if (cmdId == DELETE)
 		{
 			int filenameLength = 0;
 			boolean deleted = false;
@@ -386,18 +470,17 @@ public class LCP {
 						files[i].delete();
 						for(int j=0;j<filenameLength;j++) reply[j+3] = (byte) chars[j];
 						deleted = true;
-						numFiles --;
-						fileNames = new String[numFiles];
+						fileNames = new String[--numFiles];
 						for(int j=0;j<numFiles;j++) fileNames[j] = files[j].getName();
 						break;
 					}
 				}
 			}
-			if (!deleted) reply[2] = (byte) 0x86;
+			if (!deleted) reply[2] = FILE_NOT_FOUND;
 		}
 		
 		// CLOSE
-		if (cmd[1] == (byte) 0x84)
+		if (cmdId == CLOSE)
 		{
 			if (out != null) {
 				try {
