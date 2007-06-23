@@ -6,7 +6,7 @@ public class NXTCommLibnxt implements NXTComm {
 	private NXTInfo nxtInfo;
 	
 	public native int jlibnxt_find();
-	public native void jlibnxt_open(int nxt);
+	public native int jlibnxt_open(int nxt);
 	public native void jlibnxt_close(int nxt);
 	public native void jlibnxt_send_data(int nxt, byte [] message);
 	public native byte[] jlibnxt_read_data(int nxt, int len);
@@ -29,8 +29,8 @@ public class NXTCommLibnxt implements NXTComm {
 
 	public boolean open(NXTInfo nxtInfo) {
 		this.nxtInfo = nxtInfo;
-		jlibnxt_open(nxtInfo.nxtPtr);
-		return true;
+		int open = jlibnxt_open(nxtInfo.nxtPtr);
+		return (open == 0);
 	}
 	
 	public void close() {
