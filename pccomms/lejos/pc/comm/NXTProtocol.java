@@ -33,6 +33,9 @@ public interface NXTProtocol {
 	public static byte POLL_LENGTH = (byte)0xA1;
 	public static byte POLL = (byte)0xA2;
 	
+	public static byte NXJ_FIND_FIRST = (byte)0xB6;
+	public static byte NXJ_FIND_NEXT = (byte)0xB7;
+	
 	// Poll constants:
 	public static byte POLL_BUFFER = (byte)0x00;
 	public static byte HIGH_SPEED_BUFFER = (byte)0x01;
@@ -59,8 +62,11 @@ public interface NXTProtocol {
 	// public static byte MYSTERY_OPCODE = 0x12; // ????
 	public static byte MESSAGE_READ = 0x13;
 	// public static byte POSSIBLY_MORE_HIDDEN = 0x14; // ????
-		
-	public static byte DISCONNECT = 0x20; // NXJ addition
+	
+	// NXJ additions
+	public static byte NXJ_DISCONNECT = 0x20; 
+	public static byte NXJ_DEFRAG = 0x21;
+	
 	// Output state constants 
 	// �Mode�:
 	/** Turn on the specified motor */

@@ -118,8 +118,8 @@ public class NXTCommand implements NXTProtocol {
 			request[0] = DIRECT_COMMAND_REPLY;
 		
 		byte [] reply = nxtComm.sendRequest(request,
-				                (verifyCommand ? replyLen : 0));
-		if(verifyCommand) {
+				                (request[0] == DIRECT_COMMAND_REPLY ? replyLen : 0));
+		if(request[0] == DIRECT_COMMAND_REPLY) {
 			verify = reply[2];
 		}
 		return verify;
@@ -136,8 +136,8 @@ public class NXTCommand implements NXTProtocol {
 			request[0] = SYSTEM_COMMAND_REPLY;
 		
 		byte [] reply = nxtComm.sendRequest(request,
-				                (verifyCommand ? replyLen : 0));
-		if(verifyCommand) {
+				                (request[0] == SYSTEM_COMMAND_REPLY ? replyLen : 0));
+		if(request[0] == SYSTEM_COMMAND_REPLY) {
 			verify = reply[2];
 		}
 		return verify;
@@ -214,12 +214,12 @@ public class NXTCommand implements NXTProtocol {
 	 */
 	public FileInfo findFirst(String wildCard) {
 
-		byte [] request = {SYSTEM_COMMAND_REPLY, FIND_FIRST};
+		byte [] request = {SYSTEM_COMMAND_REPLY, NXJ_FIND_FIRST};
 		request = appendString(request, wildCard);
 
-		byte [] reply = nxtComm.sendRequest(request, 28);
+		byte [] reply = nxtComm.sendRequest(request, 32);
 		FileInfo fileInfo = null;
-		if(reply[2] == 0  && reply.length == 28) {
+		if(reply[2] == 0  && reply.length == 32) {
 			StringBuffer name= new StringBuffer(new String(reply)).delete(0, 4);
 			int lastPos = name.indexOf("\0"); 
 			name.delete(lastPos, name.length());
@@ -227,6 +227,8 @@ public class NXTCommand implements NXTProtocol {
 			fileInfo.status = 0;
 			fileInfo.fileHandle = reply[3];
 			fileInfo.fileSize = (0xFF & reply[24]) | ((0xFF & reply[25]) << 8)| ((0xFF & reply[26]) << 16)| ((0xFF & reply[27]) << 24);
+			fileInfo.startPage = (0xFF & reply[28]) | ((0xFF & reply[29]) << 8)| ((0xFF & reply[30]) << 16)| ((0xFF & reply[31]) << 24);
+
 		}
 		return fileInfo;
 	}
@@ -237,11 +239,11 @@ public class NXTCommand implements NXTProtocol {
 	 */
 	public FileInfo findNext(byte handle) {
 
-		byte [] request = {SYSTEM_COMMAND_REPLY, FIND_NEXT, handle};
+		byte [] request = {SYSTEM_COMMAND_REPLY, NXJ_FIND_NEXT, handle};
 		
-		byte [] reply = nxtComm.sendRequest(request, 28);
+		byte [] reply = nxtComm.sendRequest(request, 32);
 		FileInfo fileInfo = null;
-		if(reply[2] == 0 && reply.length == 28) {
+		if(reply[2] == 0 && reply.length == 32) {
 			StringBuffer name= new StringBuffer(new String(reply)).delete(0, 4);
 			int lastPos = name.indexOf("\0");
 			name.delete(lastPos, name.length());
@@ -249,6 +251,7 @@ public class NXTCommand implements NXTProtocol {
 			fileInfo.status = 0;
 			fileInfo.fileHandle = reply[3];
 			fileInfo.fileSize = (0xFF & reply[24]) | ((0xFF & reply[25]) << 8)| ((0xFF & reply[26]) << 16)| ((0xFF & reply[27]) << 24);
+			fileInfo.startPage = (0xFF & reply[28]) | ((0xFF & reply[29]) << 8)| ((0xFF & reply[30]) << 16)| ((0xFF & reply[31]) << 24);
 		}
 		return fileInfo;
 	}
@@ -291,7 +294,7 @@ public class NXTCommand implements NXTProtocol {
 	public void close() {
 		if (!open) return;
 		open = false;
-		byte [] request = {DIRECT_COMMAND_NOREPLY, DISCONNECT};
+		byte [] request = {DIRECT_COMMAND_NOREPLY, NXJ_DISCONNECT};
 		nxtComm.sendRequest(request,0); // Tell NXT to disconnect
 		nxtComm.close();
 	}
@@ -319,6 +322,11 @@ public class NXTCommand implements NXTProtocol {
 		byte [] reply = new byte[dataLen];
 		for(int i=0;i<dataLen;i++) reply[i] = reply1[i+6];
 		return reply;
+	}
+	
+	public byte defrag() {
+		byte [] request = {DIRECT_COMMAND_NOREPLY, NXJ_DEFRAG};		
+        return sendRequest(request,3);
 	}
 
 	public static NXTCommand getSingleton() {

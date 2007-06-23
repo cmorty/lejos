@@ -5,6 +5,7 @@ public class FileInfo {
 	public byte fileHandle;
 	public int fileSize;
 	public byte status;
+	public int startPage;
 	
 	public FileInfo(String fileName) {
 		this.fileName = fileName;
