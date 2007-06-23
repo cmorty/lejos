@@ -43,15 +43,8 @@ JNIEXPORT jint JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1find(JNIEnv *en
   return 0;
 }
 
-JNIEXPORT void JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1open(JNIEnv *env, jobject obj, jint nxt)  {
-  nxt_error_t nxt_err;
-  
-  nxt_err = nxt_open0( (nxt_t *) nxt);
-  
-  if (nxt_err != NXT_OK) {
-    printf("Open failed\n");
-    exit(1);
-  }
+JNIEXPORT jint JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1open(JNIEnv *env, jobject obj, jint nxt)  {
+  return (jint) nxt_open0( (nxt_t *) nxt); 
 }
 
 JNIEXPORT void JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1close(JNIEnv *env, jobject obj, jint nxt)  {
