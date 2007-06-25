@@ -60,8 +60,9 @@ public class Bluetooth {
 	public static  final int MSG_GET_BRICK_STATUSBYTE = 51;
 	public static  final int MSG_SET_BRICK_STATUSBYTE = 52;
 	
-	static byte[] sendBuf = new byte[256];
-	static byte[] receiveBuf = new byte[128];
+	private static byte[] sendBuf = new byte[256];
+	private static byte[] receiveBuf = new byte[128];
+	private static byte[] friendlyName = retrieveFriendlyName();
 	
 	private Bluetooth()
 	{	
@@ -263,7 +264,7 @@ public class Bluetooth {
 		return btc;
 	}
 	
-	public static byte[] getFriendlyName() {
+	private static byte[] retrieveFriendlyName() {
 		byte[] reply = new byte[32];
 		byte[] msg = new byte[32];
 		byte[] name = new byte[16];
@@ -286,9 +287,15 @@ public class Bluetooth {
 		return name;
 	}
 	
+	public static byte [] getFriendlyName() {
+		return friendlyName;
+	}
+	
 	public static void setFriendlyName(byte[] name) {
 		byte[] reply = new byte[32];
 		byte[] msg = new byte[32];
+		
+		friendlyName = name;
 		
 		msg[0] = MSG_SET_FRIENDLY_NAME;
 		
