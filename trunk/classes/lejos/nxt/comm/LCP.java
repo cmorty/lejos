@@ -93,7 +93,7 @@ public class LCP {
 	{
 	    int len = 3;
 	    
-	    for(int i=0;i<32;i++)reply[i] = 0;
+	    for(int i=0;i<reply.length;i++)reply[i] = 0;
 	    
 		reply[0] = REPLY_COMMAND;;
 		reply[1] = cmd[1];
@@ -152,6 +152,23 @@ public class LCP {
 			reply[6] = 1;			
 			len = 7;
 		}
+		
+		// GET DEVICE INFO
+		if (cmdId == GET_DEVICE_INFO) 
+		{
+            byte [] name = Bluetooth.getFriendlyName();
+            for(int i=0;i<16;i++) reply[3+i] = name[i];
+			len = 33;
+		}	
+		
+		// SET BRICK NAME
+		if (cmdId == SET_BRICK_NAME) 
+		{
+            byte [] name = new byte[16];
+            for(int i=0;i<16;i++) name[i] = cmd[i+2];
+            Bluetooth.setFriendlyName(name);
+			len = 4;
+		}	
 		
 		// GETOUTPUTSTATE 
 		if (cmdId == GET_OUTPUT_STATE) {
