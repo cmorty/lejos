@@ -328,6 +328,29 @@ public class NXTCommand implements NXTProtocol {
 		byte [] request = {DIRECT_COMMAND_NOREPLY, NXJ_DEFRAG};		
         return sendRequest(request,3);
 	}
+	
+	public String getFriendlyName() {
+		byte [] request = {DIRECT_COMMAND_REPLY, GET_DEVICE_INFO};
+		
+		byte [] reply = nxtComm.sendRequest(request,33);
+		
+		char nameChars[] = new char[16];
+		int len = 0;
+		
+		for(int i=0;i<16 && reply[i+3] != 0;i++) {
+			nameChars[i] = (char) reply[i+3];
+			len++;
+		}
+		
+		return new String(nameChars,0,len);
+	}
+	
+	public byte setFriendlyName(String name) {
+		byte [] request = {DIRECT_COMMAND_NOREPLY, SET_BRICK_NAME};
+		request = appendString(request, name);
+		
+		return sendSystemRequest(request,3);
+	}
 
 	public static NXTCommand getSingleton() {
     	if (singleton == null) singleton = new NXTCommand();
