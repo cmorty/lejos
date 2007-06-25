@@ -262,5 +262,49 @@ public class Bluetooth {
 		}
 		return btc;
 	}
+	
+	public static byte[] getFriendlyName() {
+		byte[] reply = new byte[32];
+		byte[] msg = new byte[32];
+		byte[] name = new byte[16];
+		
+		msg[0] = MSG_GET_FRIENDLY_NAME;
+		
+		sendCommand(msg,1);
+		
+		boolean gotName = false;
+		
+		while(!gotName) {
+			receiveReply(reply,32);
+			
+			if (reply[0] != 0 && reply[1] == MSG_GET_FRIENDLY_NAME_RESULT) {
+				for(int i=0;i<16;i++) name[i] = reply[i+2];
+				gotName = true;
+			}
+		}
+		
+		return name;
+	}
+	
+	public static void setFriendlyName(byte[] name) {
+		byte[] reply = new byte[32];
+		byte[] msg = new byte[32];
+		
+		msg[0] = MSG_SET_FRIENDLY_NAME;
+		
+		for(int i=-0;i<16;i++) msg[i+1] = name[i];
+		
+		sendCommand(msg,17);
+		
+		boolean setName = false;
+		
+		while(!setName) {
+			receiveReply(reply,32);
+			
+			if (reply[0] != 0 && reply[1] == MSG_SET_FRIENDLY_NAME_ACK) {
+				setName = true;
+			}
+		}
+	}
 }
 
