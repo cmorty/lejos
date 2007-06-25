@@ -221,6 +221,16 @@ public class NXJBrowser {
         }
       });
     
+    runButton.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent ae) {
+      	  int i = table.getSelectedRow();
+      	  if (i<0) return;
+          String fileName = files[i].fileName;
+          runProgram(fileName);
+          System.exit(0);
+        }
+      });
+    
     nameButton.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent ae) {
           String name = JOptionPane.showInputDialog(frame,"New Name");
