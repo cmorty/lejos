@@ -25,6 +25,7 @@ public class NXJBrowser {
   private Cursor hourglassCursor = new Cursor(Cursor.WAIT_CURSOR);
   private Cursor normalCursor = new Cursor(Cursor.DEFAULT_CURSOR);
   private NXJBrowserCommandLineParser fParser;
+  private static String title = "NXJ File Browser";
   
   public NXJBrowser() {
 	fParser = new NXJBrowserCommandLineParser();
@@ -41,7 +42,7 @@ public class NXJBrowser {
   
   public void run(String[] args) throws js.tinyvm.TinyVMException  {
 
-    final JFrame frame = new JFrame("NXJ File Browser");
+    final JFrame frame = new JFrame(title);
 
     WindowListener listener = new WindowAdapter() {
       public void windowClosing(WindowEvent w) {
@@ -108,6 +109,9 @@ public class NXJBrowser {
   }
   
   private void showFiles(final JFrame frame, NXTInfo nxt) {
+	  
+	frame.setTitle(title + " : " + nxtCommand.getFriendlyName());
+	
     frame.getContentPane().removeAll();
     
     fetchFiles();
@@ -121,7 +125,7 @@ public class NXJBrowser {
     col.setPreferredWidth(300);
 
     final JScrollPane tablePane = new JScrollPane(table);
-    tablePane.setPreferredSize(new Dimension(600, 500));
+    tablePane.setPreferredSize(new Dimension(605, 500));
 
     frame.getContentPane().add(tablePane, BorderLayout.CENTER);
 
@@ -132,12 +136,14 @@ public class NXJBrowser {
     JButton downloadButton = new JButton("Download file");
     JButton runButton = new JButton("Run program");
     JButton defragButton = new JButton("Defrag");
+    JButton nameButton = new JButton("Set Name");
     
     buttonPanel.add(deleteButton);
     buttonPanel.add(uploadButton);
     buttonPanel.add(downloadButton);
     buttonPanel.add(runButton);
     buttonPanel.add(defragButton);
+    buttonPanel.add(nameButton);
 
     frame.getContentPane().add(new JScrollPane(buttonPanel), BorderLayout.SOUTH);
 
@@ -183,8 +189,8 @@ public class NXJBrowser {
       }
     });
     
-    downloadButton.addMouseListener(new MouseAdapter() {
-      public void mouseClicked(MouseEvent e) {
+    downloadButton.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent ae) {
         int i = table.getSelectedRow();
         if (i<0) return;
         String fileName = files[i].fileName;
@@ -202,18 +208,8 @@ public class NXJBrowser {
       }
     });
 
-    runButton.addMouseListener(new MouseAdapter() {
-      public void mouseClicked(MouseEvent e) {
-    	int i = table.getSelectedRow();
-    	if (i<0) return;
-        String fileName = files[i].fileName;
-        runProgram(fileName);
-        System.exit(0);
-      }
-    });
-    
-    defragButton.addMouseListener(new MouseAdapter() {
-        public void mouseClicked(MouseEvent e) {
+    defragButton.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent ae) {
           frame.setCursor(hourglassCursor);
           nxtCommand.defrag();
           fetchFiles();
@@ -224,6 +220,20 @@ public class NXJBrowser {
           frame.setCursor(normalCursor);
         }
       });
+    
+    nameButton.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent ae) {
+          String name = JOptionPane.showInputDialog(frame,"New Name");
+          
+          if (name != null && name.length() <= 16) {
+        	  frame.setCursor(hourglassCursor);        
+              nxtCommand.setFriendlyName(name);
+              frame.setTitle(title + " : " + name);
+        	  frame.setCursor(normalCursor);
+          }
+        }
+      });
+
 
     frame.pack();
     frame.setVisible(true);
