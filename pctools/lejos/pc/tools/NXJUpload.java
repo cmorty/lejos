@@ -44,6 +44,11 @@ public class NXJUpload {
 			System.exit(1);
 		}
 		
+		if (f.getName().length() > 20) {
+			System.err.println("Filename is more than 20 characters");
+			System.exit(1);
+		}
+		
 		if (protocols == 0) protocols = NXTCommand.USB | NXTCommand.BLUETOOTH;
 		
 		nxtCommand = NXTCommand.getSingleton();
@@ -61,7 +66,6 @@ public class NXJUpload {
 				if (!connected) continue;
 				SendFile.sendFile(nxtCommand, f);
 				if (run) {
-					nxtCommand.setVerify(false);
 					nxtCommand.startProgram(f.getName());
 				}
 				nxtCommand.close();
