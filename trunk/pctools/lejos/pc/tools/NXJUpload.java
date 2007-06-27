@@ -66,6 +66,7 @@ public class NXJUpload {
 				if (!connected) continue;
 				SendFile.sendFile(nxtCommand, f);
 				if (run) {
+					nxtCommand.setVerify(false);
 					nxtCommand.startProgram(f.getName());
 				}
 				nxtCommand.close();
