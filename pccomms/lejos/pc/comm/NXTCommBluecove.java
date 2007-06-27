@@ -102,19 +102,17 @@ public class NXTCommBluecove implements NXTComm, DiscoveryListener  {
  	 	} 
 	}
 
-	public void close() {
-		try {
-			if (os != null) os.close();
-			if (is != null) is.close();
-			if (con != null) con.close();
-		} catch (IOException ioe) {}
+	public void close() throws IOException {
+		if (os != null) os.close();
+		if (is != null) is.close();
+		if (con != null) con.close();
 	}
 
     /**
 	* Sends a request to the NXT brick.
 	* @param message Data to send.
 	*/	
-    public synchronized byte [] sendRequest(byte [] message, int replyLen) {
+    public synchronized byte [] sendRequest(byte [] message, int replyLen) throws IOException {
     	
     	// length of packet (Least and Most significant byte)
     	// * NOTE: Bluetooth only. If do USB, doesn't need it.
@@ -123,16 +121,12 @@ public class NXTCommBluecove implements NXTComm, DiscoveryListener  {
 		
         if (os == null) return new byte[0];
 
-        try {
-        	// Send length of packet:
-        	os.write((byte)LSB);
-    		os.write((byte)MSB);
-        	
-        	os.write(message);
-       	} catch (IOException e) {
-        	System.out.println("Write error encountered in NXTCommBluecove.sendData");
-        }
-       	
+    	// Send length of packet:
+    	os.write((byte)LSB);
+		os.write((byte)MSB);
+    	
+    	os.write(message);
+     	
        	if (replyLen == 0) return new byte[0];
        	
 		byte [] reply = null;
@@ -140,19 +134,15 @@ public class NXTCommBluecove implements NXTComm, DiscoveryListener  {
 		
         if (is == null) return new byte[0];
 
-		try {
-			do {
-				length = is.read(); // First byte specifies length of packet.
-			} while (length < 0);
-			
-			int lengthMSB = is.read(); // Most Significant Byte value
-			length = (0xFF & length) | ((0xFF & lengthMSB) << 8);
-			reply = new byte[length];
-			is.read(reply);
-		} catch (IOException e) {
-        	System.out.println("Read error encountered in NXTCommBluecove.sendData");
-		}           
-        		
+		do {
+			length = is.read(); // First byte specifies length of packet.
+		} while (length < 0);
+		
+		int lengthMSB = is.read(); // Most Significant Byte value
+		length = (0xFF & length) | ((0xFF & lengthMSB) << 8);
+		reply = new byte[length];
+		is.read(reply);
+                 		
 		return (reply == null) ? new byte[0] : reply;
     }
 

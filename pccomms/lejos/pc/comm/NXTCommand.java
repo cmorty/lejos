@@ -112,7 +112,7 @@ public class NXTCommand implements NXTProtocol {
 	 * @param request
 	 * @return
 	 */
-	private byte sendRequest(byte [] request, int replyLen) {
+	private byte sendRequest(byte [] request, int replyLen) throws IOException {
 		byte verify = 0; // default of 0 means success
 		if(verifyCommand)
 			request[0] = DIRECT_COMMAND_REPLY;
@@ -130,7 +130,7 @@ public class NXTCommand implements NXTProtocol {
 	 * @param request
 	 * @return
 	 */
-	private byte sendSystemRequest(byte [] request, int replyLen) {
+	private byte sendSystemRequest(byte [] request, int replyLen) throws IOException {
 		byte verify = 0; // default of 0 means success
 		if(verifyCommand)
 			request[0] = SYSTEM_COMMAND_REPLY;
@@ -148,7 +148,7 @@ public class NXTCommand implements NXTProtocol {
 	 * @param fileName
 	 * @return
 	 */
-	public byte startProgram(String fileName) {
+	public byte startProgram(String fileName) throws IOException {
 		byte [] request = {DIRECT_COMMAND_NOREPLY, START_PROGRAM};
 		request = appendString(request, fileName);
 		return sendRequest(request,22);
@@ -161,7 +161,7 @@ public class NXTCommand implements NXTProtocol {
 	 * @param fileName e.g. "Woops.rso"
 	 * @return
 	 */
-	public FileInfo openRead(String fileName) {
+	public FileInfo openRead(String fileName) throws IOException {
 		byte [] request = {SYSTEM_COMMAND_REPLY, OPEN_READ};
 		request = appendString(request, fileName); // No padding required apparently
 		byte [] reply = nxtComm.sendRequest(request,8);
@@ -179,7 +179,7 @@ public class NXTCommand implements NXTProtocol {
 	 * @param fileName e.g. "Woops.rso"
 	 * @return File Handle number
 	 */
-	public byte openWrite(String fileName, int size) {
+	public byte openWrite(String fileName, int size) throws IOException {
 		byte [] command = {SYSTEM_COMMAND_REPLY, OPEN_WRITE};
         byte[] asciiFileName = new byte[fileName.length()];
         for(int i=0;i<fileName.length();i++) asciiFileName[i] = (byte) fileName.charAt(i);
@@ -197,12 +197,12 @@ public class NXTCommand implements NXTProtocol {
 	 * @param handle File handle number.
 	 * @return Error code 0 = success
 	 */
-	public byte closeFile(byte handle) {
+	public byte closeFile(byte handle) throws IOException {
 		byte [] request = {SYSTEM_COMMAND_NOREPLY, CLOSE, handle};			
 		return sendSystemRequest(request, 4);
 	}
 	
-	public byte delete(String fileName) {		
+	public byte delete(String fileName) throws IOException {		
 		byte [] request = {SYSTEM_COMMAND_REPLY, DELETE};
 		request = appendString(request, fileName);
 		return sendSystemRequest(request, 23);
@@ -212,7 +212,7 @@ public class NXTCommand implements NXTProtocol {
 	 * @param wildCard [filename].[extension], *.[extension], [filename].*, *.*
 	 * @return
 	 */
-	public FileInfo findFirst(String wildCard) {
+	public FileInfo findFirst(String wildCard) throws IOException {
 
 		byte [] request = {SYSTEM_COMMAND_REPLY, NXJ_FIND_FIRST};
 		request = appendString(request, wildCard);
@@ -237,7 +237,7 @@ public class NXTCommand implements NXTProtocol {
 	 * @param handle Handle number from the previous found file or fromthe Find First command.
 	 * @return
 	 */
-	public FileInfo findNext(byte handle) {
+	public FileInfo findNext(byte handle) throws IOException {
 
 		byte [] request = {SYSTEM_COMMAND_REPLY, NXJ_FIND_NEXT, handle};
 		
@@ -278,7 +278,7 @@ public class NXTCommand implements NXTProtocol {
 		return array;
 	}
 
-	public int getBatteryLevel() {
+	public int getBatteryLevel() throws IOException {
 		byte [] request = {DIRECT_COMMAND_REPLY, GET_BATTERY_LEVEL};
 		byte [] reply = nxtComm.sendRequest(request, 5);
 		int batteryLevel = (0xFF & reply[3]) | ((0xFF & reply[4]) << 8);
@@ -291,7 +291,7 @@ public class NXTCommand implements NXTProtocol {
 	 * program.
 	 *
 	 */
-	public void close() {
+	public void close() throws IOException {
 		if (!open) return;
 		open = false;
 		byte [] request = {DIRECT_COMMAND_NOREPLY, NXJ_DISCONNECT};
@@ -299,7 +299,7 @@ public class NXTCommand implements NXTProtocol {
 		nxtComm.close();
 	}
 
-	public byte writeFile(byte handle, byte [] data) {
+	public byte writeFile(byte handle, byte [] data) throws IOException {
 		byte [] request = new byte[data.length + 3];
 		byte [] command = {SYSTEM_COMMAND_NOREPLY, WRITE, handle};
 		System.arraycopy(command, 0, request, 0, command.length);
@@ -315,7 +315,7 @@ public class NXTCommand implements NXTProtocol {
 	 * @param length Number of bytes to read.
 	 * @return
 	 */
-	public byte [] readFile(byte handle, int length) {
+	public byte [] readFile(byte handle, int length) throws IOException {
 		byte [] request = {SYSTEM_COMMAND_REPLY, READ, handle, (byte)length, (byte)(length>>>8)};
 		byte [] reply1 =  nxtComm.sendRequest(request, length+6);
 		int dataLen = (reply1[4] & 0xFF) + ((reply1[5] << 8) & 0xFF);
@@ -324,12 +324,12 @@ public class NXTCommand implements NXTProtocol {
 		return reply;
 	}
 	
-	public byte defrag() {
+	public byte defrag() throws IOException {
 		byte [] request = {DIRECT_COMMAND_NOREPLY, NXJ_DEFRAG};		
         return sendRequest(request,3);
 	}
 	
-	public String getFriendlyName() {
+	public String getFriendlyName() throws IOException {
 		byte [] request = {DIRECT_COMMAND_REPLY, GET_DEVICE_INFO};
 		
 		byte [] reply = nxtComm.sendRequest(request,33);
@@ -345,7 +345,7 @@ public class NXTCommand implements NXTProtocol {
 		return new String(nameChars,0,len);
 	}
 	
-	public byte setFriendlyName(String name) {
+	public byte setFriendlyName(String name) throws IOException {
 		byte [] request = {DIRECT_COMMAND_NOREPLY, SET_BRICK_NAME};
 		request = appendString(request, name);
 		
