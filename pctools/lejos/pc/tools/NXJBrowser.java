@@ -189,11 +189,15 @@ public class NXJBrowser {
           frame.setCursor(hourglassCursor);
           try {
         	  File file = fc.getSelectedFile();
-	          SendFile.sendFile(nxtCommand, file);
-	          fetchFiles();
-	          fm.setData(files, numFiles);
-	          table.invalidate();
-	          tablePane.revalidate();
+        	  if (file.getName().length() > 20) {
+        		  showMessage("File name is more than 20 characters");
+        	  } else {   	
+		          SendFile.sendFile(nxtCommand, file);
+		          fetchFiles();
+		          fm.setData(files, numFiles);
+		          table.invalidate();
+		          tablePane.revalidate();
+        	  }
           } catch (IOException ioe) {
         	  showMessage("IOException uploading file");
           }
