@@ -64,7 +64,7 @@ void throwNewBlueZException(JNIEnv *env, char *msg)
 {
 	jclass exception_cls;
 
-	exception_cls = (*env)->FindClass(env, "icommand/nxt/comm/BlueZException");
+	exception_cls = (*env)->FindClass(env, "lejos/pc/comm/BlueZException");
 	if ((*env)->ThrowNew(env, exception_cls, msg) < 0)
 	{
 		fprintf(stderr, "** Error throwing BlueZException exception - exiting **\n");
