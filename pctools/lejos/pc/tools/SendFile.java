@@ -5,7 +5,7 @@ import java.io.*;
 
 public class SendFile {
 
-	public static void sendFile(NXTCommand nxtCommand, File file) {
+	public static void sendFile(NXTCommand nxtCommand, File file) throws IOException {
 	    byte[] data = new byte[60];
 	    int len, sent = 0;
 	    FileInputStream in = null;

@@ -26,6 +26,7 @@ public class NXJBrowser {
   private Cursor normalCursor = new Cursor(Cursor.DEFAULT_CURSOR);
   private NXJBrowserCommandLineParser fParser;
   private static String title = "NXJ File Browser";
+  private JFrame frame;
   
   public NXJBrowser() {
 	fParser = new NXJBrowserCommandLineParser();
@@ -42,11 +43,13 @@ public class NXJBrowser {
   
   public void run(String[] args) throws js.tinyvm.TinyVMException  {
 
-    final JFrame frame = new JFrame(title);
+    frame = new JFrame(title);
 
     WindowListener listener = new WindowAdapter() {
       public void windowClosing(WindowEvent w) {
-        nxtCommand.close();
+        try {
+        	nxtCommand.close();
+        } catch (IOException ioe) {}
         System.exit(0);
       }
     };
@@ -110,7 +113,11 @@ public class NXJBrowser {
   
   private void showFiles(final JFrame frame, NXTInfo nxt) {
 	  
-	frame.setTitle(title + " : " + nxtCommand.getFriendlyName());
+	try {
+		frame.setTitle(title + " : " + nxtCommand.getFriendlyName());
+	} catch (IOException ioe) {
+		showMessage("IOException getting friendly name");
+	}
 	
     frame.getContentPane().removeAll();
     
@@ -151,19 +158,23 @@ public class NXJBrowser {
       public void actionPerformed(ActionEvent ae) {
     	frame.setCursor(hourglassCursor);
         
-        for(int i=0;i<fm.getRowCount();i++) {
-          Boolean b = (Boolean) fm.getValueAt(i,4);
-          boolean deleteIt = b.booleanValue();
-          String fileName = (String) fm.getValueAt(i,0);
-          if (deleteIt) {
-            //System.out.println("Deleting " + fileName);
-            nxtCommand.delete(fileName); 
-            fm.delete(i);
-            numFiles--;
-            i--;
-            table.invalidate();
-            tablePane.revalidate();         
-          }
+    	try {
+	        for(int i=0;i<fm.getRowCount();i++) {
+	          Boolean b = (Boolean) fm.getValueAt(i,4);
+	          boolean deleteIt = b.booleanValue();
+	          String fileName = (String) fm.getValueAt(i,0);
+	          if (deleteIt) {
+	            //System.out.println("Deleting " + fileName);
+	            nxtCommand.delete(fileName); 
+		        fm.delete(i);
+		        numFiles--;
+		        i--;
+		        table.invalidate();
+		        tablePane.revalidate();   
+	          }
+	        }
+        } catch (IOException ioe) {
+        	showMessage("IOException deleting files");
         }
         frame.setCursor(normalCursor);
       }
@@ -176,15 +187,17 @@ public class NXJBrowser {
         int returnVal = fc.showOpenDialog(frame);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
           frame.setCursor(hourglassCursor);
-          File file = fc.getSelectedFile();
-          SendFile.sendFile(nxtCommand, file);
-          fetchFiles();
-          fm.setData(files, numFiles);
-          table.invalidate();
-          tablePane.revalidate();
+          try {
+        	  File file = fc.getSelectedFile();
+	          SendFile.sendFile(nxtCommand, file);
+	          fetchFiles();
+	          fm.setData(files, numFiles);
+	          table.invalidate();
+	          tablePane.revalidate();
+          } catch (IOException ioe) {
+        	  showMessage("IOException uploading file");
+          }
           frame.setCursor(normalCursor);
-        } else {
-        	//System.out.println("returnVal = " + returnVal);
         }
       }
     });
@@ -211,12 +224,16 @@ public class NXJBrowser {
     defragButton.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent ae) {
           frame.setCursor(hourglassCursor);
-          nxtCommand.defrag();
-          fetchFiles();
-          fm.setData(files, numFiles);
-          table.invalidate();
-          tablePane.revalidate();
-          tablePane.repaint();
+          try {
+        	  nxtCommand.defrag();
+	          fetchFiles();
+	          fm.setData(files, numFiles);
+	          table.invalidate();
+	          tablePane.revalidate();
+	          tablePane.repaint();
+          } catch (IOException ioe) {
+        	  showMessage("IOException during defrag");
+          }
           frame.setCursor(normalCursor);
         }
       });
@@ -226,8 +243,12 @@ public class NXJBrowser {
       	  int i = table.getSelectedRow();
       	  if (i<0) return;
           String fileName = files[i].fileName;
-          runProgram(fileName);
-          System.exit(0);
+          try {
+        	  runProgram(fileName);
+        	  System.exit(0);
+          } catch (IOException ioe) {
+        	  showMessage("IOException running program");
+          }
         }
       });
     
@@ -237,8 +258,12 @@ public class NXJBrowser {
           
           if (name != null && name.length() <= 16) {
         	  frame.setCursor(hourglassCursor);        
-              nxtCommand.setFriendlyName(name);
-              frame.setTitle(title + " : " + name);
+              try {
+            	  nxtCommand.setFriendlyName(name);
+            	  frame.setTitle(title + " : " + name);
+              } catch (IOException ioe) {
+            	  showMessage("IOException setting friendly name");
+              }
         	  frame.setCursor(normalCursor);
           }
         }
@@ -250,21 +275,26 @@ public class NXJBrowser {
   }
 
   private void fetchFiles() {
-    files[0] = nxtCommand.findFirst("*.*");
-    //System.out.println(files[0].startPage);
-
-    if (files[0] != null) {
-      numFiles = 1;
-
-      for(int i=1;i<MAX_FILES;i++) {
-        files[i] = nxtCommand.findNext(files[i-1].fileHandle);
-        if (files[i] == null) break;
-        else {
-          //System.out.println(files[i].startPage);
-          numFiles++;
-        }
-      }
-    } else numFiles = 0;
+	numFiles = 0;
+    try {
+      files[0] = nxtCommand.findFirst("*.*");
+	  //System.out.println(files[0].startPage);
+	
+	  if (files[0] != null) {
+	    numFiles = 1;
+	
+	    for(int i=1;i<MAX_FILES;i++) {
+	      files[i] = nxtCommand.findNext(files[i-1].fileHandle);
+	      if (files[i] == null) break;
+	      else {
+	        //System.out.println(files[i].startPage);
+	        numFiles++;
+	      }
+	    }
+	  }
+    } catch (IOException ioe) {
+    	showMessage("IOException fetching files");
+    }
   }
 
   public void getFile(File file, String fileName, int size) {
@@ -275,9 +305,8 @@ public class NXJBrowser {
       out = new FileOutputStream(file);
     } catch (FileNotFoundException e) {}
 
-    nxtCommand.openRead(fileName);
-
-    try {
+    try {  	
+      nxtCommand.openRead(fileName);
       do
       {
         byte [] data = nxtCommand.readFile((byte) 0,(size-received < 51 ? size-received : 51));
@@ -291,11 +320,17 @@ public class NXJBrowser {
       //System.out.println("Received " + received + " bytes");
       nxtCommand.closeFile((byte) 0);
       out.close();
-    } catch (IOException ioe) {}
+    } catch (IOException ioe) {
+    	showMessage("IOException downloading file");
+    }
   }
 
-  public void runProgram(String fileName) {
+  public void runProgram(String fileName) throws IOException {
     nxtCommand.startProgram(fileName);
+  }
+  
+  public void showMessage(String msg) {
+	  JOptionPane.showMessageDialog(frame, msg);
   }
 }
 

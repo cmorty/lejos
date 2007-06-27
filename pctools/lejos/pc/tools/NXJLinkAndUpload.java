@@ -1,6 +1,8 @@
 package lejos.pc.tools;
 
 import java.io.File;
+import java.io.IOException;
+
 import org.apache.commons.cli.CommandLine;
 import js.common.CLIToolProgressMonitor;
 import js.tinyvm.TinyVM;
@@ -113,18 +115,23 @@ import lejos.pc.comm.*;
 		
 		boolean connected = false;
 		
-		for(int i=0;i<nxtInfo.length;i++) {
-			connected = nxtCommand.open(nxtInfo[i]);
-			if (!connected) continue;
-			SendFile.sendFile(nxtCommand, f);
-			if (run) {
-				nxtCommand.setVerify(false);
-				nxtCommand.startProgram(f.getName());
-			}
-			nxtCommand.close();
-			break;
+		try {
+			for(int i=0;i<nxtInfo.length;i++) {
+
+				connected = nxtCommand.open(nxtInfo[i]);
+				if (!connected) continue;
+				SendFile.sendFile(nxtCommand, f);
+				if (run) {
+					nxtCommand.setVerify(false);
+					nxtCommand.startProgram(f.getName());
+				}
+				nxtCommand.close();
+				break;
+			} 
+			if (!connected) System.out.println("No NXT found - is it switched on and plugged in (for USB)?");
+		} catch (IOException ioe) {
+			System.out.println("IOException during upload");
 		}
-		if (!connected) System.out.println("No NXT found - is it switched on and plugged in (for USB)?");
 	}
 }
 

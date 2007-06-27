@@ -54,17 +54,22 @@ public class NXJUpload {
 		
 		boolean connected = false;
 		
-		for(int i=0;i<nxtInfo.length;i++) {
-			connected = nxtCommand.open(nxtInfo[i]);
-			if (!connected) continue;
-			SendFile.sendFile(nxtCommand, f);
-			if (run) {
-				nxtCommand.setVerify(false);
-				nxtCommand.startProgram(f.getName());
-			}
-			nxtCommand.close();
-			break;
-		} 
-		if (!connected) System.out.println("No NXT found - is it switched on and plugged in (for USB)?");
+		try {
+			for(int i=0;i<nxtInfo.length;i++) {
+
+				connected = nxtCommand.open(nxtInfo[i]);
+				if (!connected) continue;
+				SendFile.sendFile(nxtCommand, f);
+				if (run) {
+					nxtCommand.setVerify(false);
+					nxtCommand.startProgram(f.getName());
+				}
+				nxtCommand.close();
+				break;
+			} 
+			if (!connected) System.out.println("No NXT found - is it switched on and plugged in (for USB)?");
+		} catch (IOException ioe) {
+			System.out.println("IOException during upload");
+		}
 	}
 }
