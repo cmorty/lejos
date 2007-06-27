@@ -1,5 +1,7 @@
 package java.io;
 
+
+
 import lejos.nxt.Flash;
 
 public class FileInputStream extends InputStream{
@@ -11,11 +13,11 @@ public class FileInputStream extends InputStream{
 	File file;
 	
 	public FileInputStream(File f) {
+        file = f;
 		buff = new byte[File.BYTES_PER_PAGE];
-		page_pointer = f.page_location;
+		page_pointer = file.page_location;
 		data_pointer = 0; // Start of page
-		pointer = 0; // Overall mark
-		file = f;
+		pointer = 0; // Overall mark;
 		Flash.readPage(buff, page_pointer);
 	}
 	
@@ -34,4 +36,15 @@ public class FileInputStream extends InputStream{
 		}
 		return val & 0xff; // Need to return 0-255 value
 	}	
+    
+    /**
+     * resets pointers so next read() is from the start of the file;
+     */
+    public void reset()
+    {
+        page_pointer = file.page_location;
+        data_pointer = 0; // Start of page
+        pointer = 0; 
+        Flash.readPage(buff, page_pointer);
+    }
 }
