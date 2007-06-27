@@ -33,7 +33,7 @@ public class NXTCommLibnxt implements NXTComm {
 		return (open == 0);
 	}
 	
-	public void close() {
+	public void close() throws IOException {
 		if (nxtInfo != null && nxtInfo.nxtPtr != 0) jlibnxt_close(nxtInfo.nxtPtr);
 	}
 	
