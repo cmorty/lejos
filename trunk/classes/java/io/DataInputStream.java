@@ -1,19 +1,16 @@
-/*
- * @(#)DataInputStream.java   1.00 01/12/14
- *
- * Adapted from the original Sun Microsystems code for leJOS.
- * @author Brian Bagnall
- */
 
 package java.io;
+
 
 public class DataInputStream extends InputStream {
     
    protected InputStream  in;
     
-   public DataInputStream(InputStream in) {
+   public DataInputStream(InputStream in)
+   {
       this.in = in;
    }
+   
    
    /**
    * Reads the next byte of data from this input stream. The value 
@@ -80,9 +77,11 @@ public class DataInputStream extends InputStream {
    }
 
    public final byte readByte() throws IOException {
-      int ch = in.read();
+      int K = 256;
+	   int ch = in.read();
       if (ch < 0)
          throw new IOException();
+      while(ch>128)ch = ch - K;;
       return (byte)(ch);
    }
 /*
@@ -93,23 +92,40 @@ public class DataInputStream extends InputStream {
 	   return ch;
    }
 */
-   public final short readShort() throws IOException {
-      int ch1 = in.read();
-      int ch2 = in.read();
-      if ((ch1 | ch2) < 0)
-         throw new IOException();
-      return (short)((ch1 << 8) + (ch2 << 0));
+   public final short readShort() throws IOException 
+   {
+      byte b0 = readByte();  
+      byte b1 = readByte(); // Note if b2> 127, it is will be negataive.
+      int x= b1;  // low order byte
+      x = x <<24;
+      x = x >>>24;
+      x = x | b0 <<8;
+      return (short)x;
    }
-   /*
-   public final int readUnsignedShort() throws IOException {
-      InputStream in = this.in;
-      int ch1 = in.read();
-      int ch2 = in.read();
-      if ((ch1 | ch2) < 0)
-         throw new IOException();
-      return (ch1 << 8) + (ch2 << 0);
-   }
+   
+   public final int readInt() throws IOException 
+   {
+      byte b0 = readByte();
+      byte b1 = readByte();
+      byte b2 = readByte();
+      byte b3 = readByte();
+      int x= b3;  // low order byte
+      x = x <<24;
+      x = x >>>24;  // just in case b3 > 127 and got converted to negative int.
+      x = x | b2<<8; 
+      x = x <<16;
+      x = x >>> 16;
+      x = x | b1<<16;
+      x = x <<8;
+      x = x >>> 8;
+      x = x | b0<<24;  //high byte
+    /*Why so complicated?  Java uses 2s compliment so negative integers the high order bytes full
+      of  1s. All the bytes are converted to integers by the << and  | ops.  We fil lfrom the top down
+      at each stage, if the current byte is > 127, the integer version is negative, and we have to
+      get rid of the bogus  all 1 byttes.   The only way is to left shift off.
    */
+      return x;
+   }
    
    public final char readChar() throws IOException {
       InputStream in = this.in;
@@ -120,15 +136,7 @@ public class DataInputStream extends InputStream {
       return (char)((ch1 << 8) + (ch2 << 0));
    }
 
-   public final int readInt() throws IOException {
-      int ch1 = in.read();
-      int ch2 = in.read();
-      int ch3 = in.read();
-      int ch4 = in.read();
-      if ((ch1 | ch2 | ch3 | ch4) < 0)
-         throw new IOException();
-      return ((ch1 << 24) + (ch2 << 16) + (ch3 << 8) + (ch4 << 0));
-   }
+  
 /*
    public final long readLong() throws IOException {
       InputStream in = this.in;

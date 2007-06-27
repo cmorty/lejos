@@ -1,6 +1,8 @@
 package java.io;
 
+ 
 import lejos.nxt.Flash;
+
 
 public class FileOutputStream extends OutputStream {
 
@@ -39,11 +41,12 @@ public class FileOutputStream extends OutputStream {
  * @param append:   if true this sream will start writing at the end of the file, otherwise at the beginning
  */	
 	public FileOutputStream(File f, boolean append) {
-		this.append = append;
+       this.append = append;
+        file = f;
 		buff = new byte[File.BYTES_PER_PAGE];
-		page_pointer = f.page_location;
+		page_pointer = file.page_location;
 		data_pointer = 0; // Start of first page
-		file = f;
+
 		if(append)
 		{
 			page_pointer = file.page_location + file.file_length/File.BYTES_PER_PAGE ;
@@ -79,6 +82,7 @@ public class FileOutputStream extends OutputStream {
     }
 /**
  * write the buffer to flash memory and update the file parameters in flash
+ * Resets pointers, so file can be writen again from beginning with the same output stream.
  */	
 	public void close() throws IOException {
 		// !! Alternate implementation: If this is a new file, perhaps only 
@@ -86,5 +90,7 @@ public class FileOutputStream extends OutputStream {
 		// incomplete/partial files don't exist.
 		flush();
 		File.writeTable(File.listFiles()); // Updates file size for this file.
+        page_pointer = file.page_location;
+        data_pointer = 0; // Start of first page
 	}
 }
