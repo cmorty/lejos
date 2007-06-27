@@ -1,5 +1,5 @@
 /**
- * JNI interface for libnxt..
+ * JNI interface for libnxt.
  *
  * Copyright 2007 Lawrie Griffiths <lawrie.griffiths@ntlwworld.com>
  *
@@ -28,6 +28,20 @@
 #include "lowlevel.h"
 #include "jlibnxt.h"
 
+void throwIOException(JNIEnv *env, char *msg)
+{
+	jclass exception_cls;
+
+	exception_cls = (*env)->FindClass(env, "java/io/IOException");
+	if ((*env)->ThrowNew(env, exception_cls, msg) < 0)
+	{
+		fprintf(stderr, "** Error throwing IOexception - exiting **\n");
+		fprintf(stderr, "Message:\n%s\n", msg);
+		exit(1);
+	}
+	return;
+}
+
 JNIEXPORT jint JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1find(JNIEnv *env, jobject obj) {
   nxt_t *nxt;
   nxt_error_t nxt_err;
@@ -53,7 +67,7 @@ JNIEXPORT void JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1close(JNIEnv *e
   nxt_err = nxt_close0( (nxt_t *) nxt); 
   
   if (nxt_err != NXT_OK) {
-    printf("Close failed\n");
+    throwIOException(env,"Close failed");
   } 
    
 }
@@ -67,8 +81,7 @@ JNIEXPORT void JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1send_1data(JNIE
   nxt_err = nxt_send_buf((nxt_t *) nxt, elements2, len2);
   
   if (nxt_err != NXT_OK) {
-    printf("Send data failed: %d\n", nxt_err);
-    exit(1);
+    throwIOException(env,"Send failed");
   }
 
   (*env)->ReleaseByteArrayElements(env, data, (jbyte *) elements2, 0);
@@ -84,8 +97,7 @@ JNIEXPORT jbyteArray JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1read_1dat
   nxt_err = nxt_recv_buf((nxt_t *) nxt, data, len); // read data
   
   if (nxt_err != NXT_OK) {
-    printf("Failed to read packet data\n");
-    exit(1);
+    throwIOException(env,"Read failed");
   }
     
   jb=(*env)->NewByteArray(env, len);
