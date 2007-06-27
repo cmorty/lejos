@@ -1,10 +1,11 @@
 package lejos.pc.tools;
 
 import lejos.pc.comm.*;
+import java.io.*;
 
 public class BatteryLevel {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		System.out.println("Battery Level Test");
 		NXTCommand nxtCommand = NXTCommand.getSingleton();
 		
