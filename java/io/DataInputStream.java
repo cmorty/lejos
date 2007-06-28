@@ -97,8 +97,7 @@ public class DataInputStream extends InputStream {
       byte b0 = readByte();  
       byte b1 = readByte(); // Note if b2> 127, it is will be negataive.
       int x= b1;  // low order byte
-      x = x <<24;
-      x = x >>>24;
+      x = x & 0x000000FF;// keep only the low order byte
       x = x | b0 <<8;
       return (short)x;
    }
@@ -109,21 +108,13 @@ public class DataInputStream extends InputStream {
       byte b1 = readByte();
       byte b2 = readByte();
       byte b3 = readByte();
-      int x= b3;  // low order byte
-      x = x <<24;
-      x = x >>>24;  // just in case b3 > 127 and got converted to negative int.
+      int x= b3;  
+      x = x & 0x000000FF; // keep only low order byte
       x = x | b2<<8; 
-      x = x <<16;
-      x = x >>> 16;
+      x = x & 0x0000FFFF; // keep only 2 low order bytes
       x = x | b1<<16;
-      x = x <<8;
-      x = x >>> 8;
+      x = x & 0x00FFFFFF; // etc
       x = x | b0<<24;  //high byte
-    /*Why so complicated?  Java uses 2s compliment so negative integers the high order bytes full
-      of  1s. All the bytes are converted to integers by the << and  | ops.  We fil lfrom the top down
-      at each stage, if the current byte is > 127, the integer version is negative, and we have to
-      get rid of the bogus  all 1 byttes.   The only way is to left shift off.
-   */
       return x;
    }
    
