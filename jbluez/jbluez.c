@@ -45,7 +45,7 @@ void throwIOException(JNIEnv *env, char *msg)
 //---------------------------------------------------------------------------//
 
 JNIEXPORT jobjectArray JNICALL Java_lejos_pc_comm_NXTCommBluez_search
-  (JNIEnv *env, jobject obj)
+  (JNIEnv *env, jobject obj, jstring jname)
 {
 	jstring str;
 	inquiry_info *ii = NULL;
@@ -58,10 +58,12 @@ JNIEXPORT jobjectArray JNICALL Java_lejos_pc_comm_NXTCommBluez_search
   	char msg[80];
   	char return_str[80] = {0};
   	int num_nxts = 0;
+  	char* name_str;
+  	
+  	if (jname != NULL) name_str = (char*) (*env)->GetStringUTFChars(env, jname, NULL);
   	
   	jclass sclass = (*env)->FindClass(env,"java/lang/String");
   	
-
     dev_id = hci_get_route(NULL);
     sock = hci_open_dev( dev_id );
     if (dev_id < 0 || sock < 0) {
@@ -83,6 +85,10 @@ JNIEXPORT jobjectArray JNICALL Java_lejos_pc_comm_NXTCommBluez_search
     }
     
     for (i = 0; i < num_rsp; i++) {
+    	memset(name, 0, sizeof(name));
+        if (hci_read_remote_name(sock, &(ii+i)->bdaddr, sizeof(name), 
+            name, 0) < 0) strcpy(name, "[unknown]");
+    	if (jname != NULL && strcmp(name,name_str) != 0) continue;
         if ((ii+i)->dev_class[1] == 8 && (ii+i)->dev_class[0] == 4)
         	num_nxts++;
     }
@@ -98,6 +104,7 @@ JNIEXPORT jobjectArray JNICALL Java_lejos_pc_comm_NXTCommBluez_search
         memset(name, 0, sizeof(name));
         if (hci_read_remote_name(sock, &(ii+i)->bdaddr, sizeof(name), 
             name, 0) < 0) strcpy(name, "[unknown]");
+        if (jname != NULL && strcmp(name,name_str) != 0) continue;
         //printf("%s  %s %x %x\n", addr, name, (ii+i)->dev_class[1], (ii+i)->dev_class[0]);
         strcpy(return_str,name);
         strcat(return_str,"::");
@@ -108,6 +115,7 @@ JNIEXPORT jobjectArray JNICALL Java_lejos_pc_comm_NXTCommBluez_search
         }
     }
 
+    if (jname != NULL) (*env)->ReleaseStringUTFChars(env, jname, name_str);
     free( ii );
     close( sock );
     
