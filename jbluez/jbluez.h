@@ -12,7 +12,7 @@ extern "C" {
  * Method:    search
  * Signature: ()Ljava/lang/String;
  */
-JNIEXPORT jstring JNICALL Java_lejos_pc_comm_NXTCommBluez_search
+JNIEXPORT jobjectArray JNICALL Java_lejos_pc_comm_NXTCommBluez_search
   (JNIEnv *, jobject);
 
 /*
