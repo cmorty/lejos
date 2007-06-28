@@ -1,7 +1,6 @@
 package lejos.pc.comm;
 
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 
 public class NXTCommBluez implements NXTComm {
 
@@ -14,36 +13,38 @@ public class NXTCommBluez implements NXTComm {
 	}
 	
 	public NXTInfo[] search(String name, int protocol) {
-		String btAddress = search();
-		if (btAddress == null) return new NXTInfo[0];
+		String[] btString = null;
+		
+		try {
+			btString = search();
+		} catch (BlueZException e) {
+			System.err.println(e.getMessage());	
+		}
+		if (btString == null) return new NXTInfo[0];
 		else {
-			NXTInfo nxtInfo = new NXTInfo();
-			System.out.println("Setting address to " + btAddress);
-			nxtInfo.btDeviceAddress = btAddress;
-			nxtInfo.name = "Unknown";
-			nxtInfo.protocol = NXTCommand.BLUETOOTH;
-			NXTInfo[] nxts = new NXTInfo[1];
-			nxts[0] = nxtInfo;
+			NXTInfo[] nxts = new NXTInfo[btString.length];
+			for(int i=0;i<btString.length;i++) {
+				NXTInfo nxtInfo = new NXTInfo();
+				int sep = btString[i].indexOf("::");
+				//System.out.println("Setting address to " + btAddress);
+				nxtInfo.btDeviceAddress =  btString[i].substring(sep+2);
+				nxtInfo.name = btString[i].substring(0, sep);
+				nxtInfo.protocol = NXTCommand.BLUETOOTH;
+				
+				nxts[i] = nxtInfo;			
+			}
 			return nxts;
 		}
 	}
 
-	public void close() {
+	public void close() throws IOException{
 		try {
 			rcSocketShutdown(sk);
-		} catch (BlueZException e) {
-			System.err.println(e.getMessage());
-			e.printStackTrace();
-			if (sk != -1) {
-				try {
-					rcSocketClose(sk);
-				} catch (BlueZException e1) {
-					System.err.println(e.getMessage());
-					e.printStackTrace();
-				}
-				sk = -1;
-			}
+		} catch (IOException ioe) {
+			System.err.println("Shutdown failed");
 		}
+		if (sk != -1) rcSocketClose(sk);
+		sk = -1;
 	}
 
 	public boolean open(NXTInfo nxt) {
@@ -51,13 +52,12 @@ public class NXTCommBluez implements NXTComm {
 			open(BDADDR_ANY, nxt.btDeviceAddress, 1);
 			return true;
 		} catch (BlueZException e) {
-			System.out.println("Open failed");
 			return false;
 		}
 		
 	}
 
-	public byte [] sendRequest(byte[] request, int replyLen) {
+	public byte [] sendRequest(byte[] request, int replyLen) throws IOException {
 		
 		// add lsb & msb
 		byte[] lsb_msb = new byte[2];
@@ -65,23 +65,13 @@ public class NXTCommBluez implements NXTComm {
 		lsb_msb[1] = (byte) 0x00;
 		request = concat(lsb_msb, request);
 	
-		try {
-			rcSocketSend(sk, request);
-		} catch (BlueZException e) {
-			System.err.println(e.getMessage());
-			e.printStackTrace();
-		}
+	    rcSocketSend(sk, request);
 		
 		if (replyLen == 0) return new byte[0];
 		
 		byte[] data = null;
-		try {
-			data = rcSocketRecv(sk);
-		} catch (BlueZException e) {
-			System.err.println(e.getMessage());
-			e.printStackTrace();
-		}
-		
+	    data = rcSocketRecv(sk);
+	
 		// remove lsb & msb
 		data = subArray(data, 2, data.length);
 
@@ -92,18 +82,20 @@ public class NXTCommBluez implements NXTComm {
 		boolean ok = false;
 
 		try {
-			System.out.println("Creating socket");
+			//System.out.println("Creating socket");
 			sk = rcSocketCreate();
-			System.out.println("Binding");
+			//System.out.println("Binding");
 			rcSocketBind(sk, l_bdaddr);
-			System.out.println("Connecting");
+			//System.out.println("Connecting");
 			rcSocketConnect(sk, r_bdaddr, channel);
 
 			ok = true;
 		} finally {
 			if (!ok) {
 				if (sk != -1) {
-					rcSocketClose(sk);
+					try {
+						rcSocketClose(sk);
+					} catch (IOException ioe) {}
 					sk = -1;
 				}
 			}
@@ -138,7 +130,7 @@ public class NXTCommBluez implements NXTComm {
 		return null;		
 	}
 	
-	native private String search();
+	native private String[] search() throws BlueZException;
 	
 	native private int rcSocketCreate() throws BlueZException;
 
@@ -146,12 +138,12 @@ public class NXTCommBluez implements NXTComm {
 
 	native private void rcSocketConnect(int sk, String bdaddr, int channel) throws BlueZException;
 
-	native private void rcSocketSend(int sk, byte[] data) throws BlueZException;
+	native private void rcSocketSend(int sk, byte[] data) throws IOException;
 
-	native private byte[] rcSocketRecv(int sk) throws BlueZException;
+	native private byte[] rcSocketRecv(int sk) throws IOException;
 
-	native private void rcSocketShutdown(int sk) throws BlueZException;
+	native private void rcSocketShutdown(int sk) throws IOException;
 
-	native private void rcSocketClose(int sk) throws BlueZException;
+	native private void rcSocketClose(int sk) throws IOException;
 
 }
