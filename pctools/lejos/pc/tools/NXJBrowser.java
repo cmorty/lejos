@@ -73,7 +73,7 @@ public class NXJBrowser {
     final NXTInfo[] nxts = nxtCommand.search(name, protocols);
     
     if (nxts.length == 0) {
-      System.out.println("No NXT found - is it switched on and plugged in (for USB)?");
+      System.err.println("No NXT found - is it switched on and plugged in (for USB)?");
       System.exit(1);
     }
     
