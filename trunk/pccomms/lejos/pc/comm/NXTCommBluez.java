@@ -16,7 +16,7 @@ public class NXTCommBluez implements NXTComm {
 		String[] btString = null;
 		
 		try {
-			btString = search();
+			btString = search(name);
 		} catch (BlueZException e) {
 			System.err.println(e.getMessage());	
 		}
@@ -130,7 +130,7 @@ public class NXTCommBluez implements NXTComm {
 		return null;		
 	}
 	
-	native private String[] search() throws BlueZException;
+	native private String[] search(String name) throws BlueZException;
 	
 	native private int rcSocketCreate() throws BlueZException;
 
