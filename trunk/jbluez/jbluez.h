@@ -10,10 +10,10 @@ extern "C" {
 /*
  * Class:     lejos_pc_comm_NXTCommBluez
  * Method:    search
- * Signature: ()Ljava/lang/String;
+ * Signature: 
  */
 JNIEXPORT jobjectArray JNICALL Java_lejos_pc_comm_NXTCommBluez_search
-  (JNIEnv *, jobject);
+  (JNIEnv *, jobject, jstring);
 
 /*
  * Class:     lejos_pc_comm_NXTCommBluez
