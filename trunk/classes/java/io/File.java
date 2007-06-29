@@ -411,6 +411,17 @@ public class File {
 		file_length = length;
 		createNewFile(); // put back into files[]
 	}
+	
+	public static int freeMemory() {
+		int last_page;
+		if (totalFiles <= 0) {
+			last_page = -1;
+		} else {
+			File  top = files[totalFiles - 1]; // file at top of flash memory
+			last_page = top.getPage()+(top.length()-1)/BYTES_PER_PAGE;
+		}
+		return (767 - last_page) * BYTES_PER_PAGE;
+	}
 
 /**
  * returns location of file in the files[] array

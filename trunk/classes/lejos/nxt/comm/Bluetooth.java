@@ -63,6 +63,7 @@ public class Bluetooth {
 	private static byte[] sendBuf = new byte[256];
 	private static byte[] receiveBuf = new byte[128];
 	private static byte[] friendlyName = retrieveFriendlyName();
+	private static byte[] localAddr = retrieveLocalAddress();
 	
 	private Bluetooth()
 	{	
@@ -266,7 +267,7 @@ public class Bluetooth {
 	
 	private static byte[] retrieveFriendlyName() {
 		byte[] reply = new byte[32];
-		byte[] msg = new byte[32];
+		byte[] msg = new byte[1];
 		byte[] name = new byte[16];
 		
 		msg[0] = MSG_GET_FRIENDLY_NAME;
@@ -312,6 +313,33 @@ public class Bluetooth {
 				setName = true;
 			}
 		}
+	}
+	
+	public static byte[] getLocalAddress() {
+		return localAddr;
+	}
+	
+	private static byte[] retrieveLocalAddress() {
+		byte[] reply = new byte[32];
+		byte[] msg = new byte[1];
+		byte[] address = new byte[7];
+		
+		msg[0] = MSG_GET_LOCAL_ADDR;
+		
+		sendCommand(msg,1);
+		
+		boolean gotAddress = false;
+		
+		while(!gotAddress) {
+			receiveReply(reply,32);
+			
+			if (reply[0] != 0 && reply[1] == MSG_GET_LOCAL_ADDR_RESULT) {
+				for(int i=0;i<7;i++) address[i] = reply[i+2];
+				gotAddress = true;
+			}
+		}
+		
+		return address;
 	}
 }
 
