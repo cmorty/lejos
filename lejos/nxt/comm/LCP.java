@@ -157,7 +157,14 @@ public class LCP {
 		if (cmdId == GET_DEVICE_INFO) 
 		{
             byte [] name = Bluetooth.getFriendlyName();
-            for(int i=0;i<16;i++) reply[3+i] = name[i];
+            for(int i=0;i<15;i++) reply[3+i] = name[i];
+            byte [] address = Bluetooth.getLocalAddress();
+            for(int i=0;i<7;i++) reply[18+i] = address[i];
+            int freeMem = File.freeMemory();
+			reply[29] = (byte) (freeMem & 0xFF);
+			reply[30] = (byte) ((freeMem >> 8) & 0xFF);
+			reply[31] = (byte) ((freeMem >> 16) & 0xFF);
+			reply[32] = (byte) ((freeMem >> 24) & 0xFF);
 			len = 33;
 		}	
 		
