@@ -18,6 +18,7 @@ public class NXTCommand implements NXTProtocol {
     public static final int USB = 1;
     public static final int BLUETOOTH = 2;
     private boolean open = false;
+    private static String hexChars = "01234567890abcdef";
 
     public NXTInfo[] search(String name, int protocol) {
     	NXTInfo[] nxtInfos;
@@ -337,7 +338,7 @@ public class NXTCommand implements NXTProtocol {
 		char nameChars[] = new char[16];
 		int len = 0;
 		
-		for(int i=0;i<16 && reply[i+3] != 0;i++) {
+		for(int i=0;i<15 && reply[i+3] != 0;i++) {
 			nameChars[i] = (char) reply[i+3];
 			len++;
 		}
@@ -350,6 +351,20 @@ public class NXTCommand implements NXTProtocol {
 		request = appendString(request, name);
 		
 		return sendSystemRequest(request,3);
+	}
+	
+	public String getLocalAddress() throws IOException {
+		byte [] request = {DIRECT_COMMAND_REPLY, GET_DEVICE_INFO};
+		byte [] reply = nxtComm.sendRequest(request,33);		
+		char addrChars[] = new char[14];
+	
+		for(int i=0;i<7;i++) {
+			//System.out.println("Addr char " + i + " = " + (reply[i+18] & 0xFF));
+			addrChars[i*2] = hexChars.charAt((reply[i+18] >> 4) & 0xF);
+			addrChars[i*2+1] = hexChars.charAt(reply[i+18] & 0xF);
+		}
+		
+		return new String(addrChars);
 	}
 
 	public static NXTCommand getSingleton() {
