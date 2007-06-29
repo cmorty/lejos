@@ -98,6 +98,7 @@ JNIEXPORT jbyteArray JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1read_1dat
   
   if (nxt_err != NXT_OK) {
     throwIOException(env,"Read failed");
+    return NULL;
   }
     
   jb=(*env)->NewByteArray(env, len);
