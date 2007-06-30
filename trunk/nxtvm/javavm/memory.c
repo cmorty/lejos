@@ -19,9 +19,9 @@
 static boolean memoryInitialized = false;
 #endif
 
-// Heap memory needs to be aligned to 4 bytes on ARM
+// Heap memory needs to be aligned to 8 bytes on ARM
 // Value is in 2-byte units and must be a power of 2
-#define MEMORY_ALIGNMENT 2
+#define MEMORY_ALIGNMENT 4
 
 #define NULL_OFFSET 0xFFFF
 
