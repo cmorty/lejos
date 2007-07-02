@@ -138,3 +138,14 @@ systick_test(void)
     systick_wait_ms(2000);
   }
 }
+
+void systick_suspend()
+{
+  aic_mask_off(LOW_PRIORITY_IRQ);
+}
+
+void systick_resume()
+{
+  aic_mask_on(LOW_PRIORITY_IRQ);
+}
+

@@ -399,7 +399,7 @@ main(void)
   bt_init();
   display_init();
   
-  flash_set_mode(*((unsigned *) 0x0010fff8));
+  //flash_set_mode(*((unsigned *) 0x0010fff8));
     
   //xx_show();
   

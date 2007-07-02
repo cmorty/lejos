@@ -87,7 +87,7 @@ continue_boot:
 @
 
 	ldr r0,=0xFFFFFF60
-	ldr r1,=((50 << 16) | (1 << 8))
+	ldr r1,=((72 << 16) | (1 << 8))
 	str r1,[r0]
 
 @
