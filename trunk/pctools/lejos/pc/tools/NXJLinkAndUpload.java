@@ -1,8 +1,5 @@
 package lejos.pc.tools;
 
-import java.io.File;
-import java.io.IOException;
-
 import org.apache.commons.cli.CommandLine;
 import js.common.CLIToolProgressMonitor;
 import js.tinyvm.TinyVM;
@@ -14,7 +11,6 @@ import lejos.pc.comm.*;
  *
  */
  public class NXJLinkAndUpload {
-	private static NXTCommand nxtCommand = null;
 	private NXJCommandLineParser fParser;
 
 	public NXJLinkAndUpload() {
@@ -98,45 +94,7 @@ import lejos.pc.comm.*;
 		if (blueTooth) protocols |= NXTCommand.BLUETOOTH;
 		if (usb) protocols |= NXTCommand.USB;
 		
-		File f = new File(binName);
-		
-		if (!f.exists()) {
-			System.err.println("No such file");
-			System.exit(1);
-		}
-		
-		if (f.getName().length() > 20) {
-			System.err.println("Filename is more than 20 characters");
-			System.exit(1);
-		}
-		
-		if (protocols == 0) protocols = NXTCommand.USB | NXTCommand.BLUETOOTH;
-		
-		nxtCommand = NXTCommand.getSingleton();
-		
-		NXTInfo[] nxtInfo = nxtCommand.search(name, protocols);
-		
-		//System.out.println("Found " + nxtInfo.length + " NXTs");
-		
-		boolean connected = false;
-		
-		try {
-			for(int i=0;i<nxtInfo.length;i++) {
-
-				connected = nxtCommand.open(nxtInfo[i]);
-				if (!connected) continue;
-				SendFile.sendFile(nxtCommand, f);
-				if (run) {
-					nxtCommand.setVerify(false);
-					nxtCommand.startProgram(f.getName());
-				}
-				nxtCommand.close();
-				break;
-			} 
-			if (!connected) System.out.println("No NXT found - is it switched on and plugged in (for USB)?");
-		} catch (IOException ioe) {
-			System.out.println("IOException during upload");
-		}
+		Upload.upload(name, protocols, binName, run);
 	}
 }
 
