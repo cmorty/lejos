@@ -23,33 +23,33 @@ public class PilotTester
 		pause(1000);
 		robot.stop();
 		showCount(1);
-		robot.travel(10);
+		robot.travel(10,true);
 		while(robot.isMoving())Thread.yield();
 		showCount(2);
-		robot.travel(-10,true);
+		robot.travel(-10);
 		showCount(3);
 		for(int i = 0; i<4; i++)
 		{
-			robot.rotate(90,true);
+			robot.rotate(90);
 		}
 		showCount(4);
 		for(int i = 0; i<4; i++)
 		{
-			robot.rotate(-90);
+			robot.rotate(-90,true);
 			while(robot.isMoving())Thread.yield();
 		}
 		showCount(5);
-		robot.steer(-50,180);
+		robot.steer(-50,180,true);
 		while(robot.isMoving())Thread.yield();
 		robot.steer(-50,-180);
-		while(robot.isMoving())Thread.yield();
 		showCount(6);
-		robot.steer(50,180,true);
-		robot.steer(50, -180, true);
+		robot.steer(50,180);
+		robot.steer(50, -180);
 		showCount(7);
 		robot.travel(10,true);
 		pause(500);
-		robot.travel(-10,true);
+        robot.stop();
+		robot.travel(-10);
 		robot.rotate(720);
 		while(Button.readButtons()==0)Thread.yield();
 	}
