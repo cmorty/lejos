@@ -1,20 +1,20 @@
-<project name="CompassTest" default="link" basedir=".">
+<project name="samples" default="uploadandrun">
     <description>
-    	CompassTest example build file
+    	Sample build file
     </description>
 
-  <!-- set global properties for this build -->
-  <property name="lejos_home" location="../.." />
+  <!-- set properties for this build -->
+  <property file="../samples.properties"/>
   <property name="src" location="."/>
-  <property name="program" value="CompassTest"/>
-  <property name="binary" value="${program}.bin" />
+  <basename property="program" file="."/>
+  <property name="binary" value="${program}.nxj" />
 
   <target name="compile" 
         description="compile the source " >
     <!-- Compile the java code from ${src}  -->
     <javac source="1.3" target="1.1" srcdir="${src}" destdir="${src}">
       <bootclasspath>
-        <pathelement location="${lejos_home}/classes/lib/classes.jar"/>
+        <pathelement location="${nxj.classes.home}/lib/classes.jar"/>
        </bootclasspath>
     </javac>
   </target>
@@ -24,7 +24,7 @@
     <!-- Link the binary and create a signature file -->
     <java classname="js.tinyvm.TinyVM">
       <arg value="--classpath"/>
-      <arg path="${lejos_home}/classes/lib/classes.jar:." /> 
+      <arg path="${nxj.classes.home}/lib/classes.jar:." /> 
       <arg value="--writeorder" />
       <arg value="LE" />
       <arg value="${program}"/>
@@ -32,9 +32,42 @@
       <arg value="${binary}"/>
       <arg value="-v"/>
       <classpath>
-        <pathelement location="${lejos_home}/jtools/lib/jtools.jar"/>
-  		<pathelement location="${lejos_home}/jtools/3rdparty/lib/commons-cli-1.0.jar"/>
-  		<pathelement location="${lejos_home}/jtools/3rdparty/lib/bcel-5.1.jar"/>
+        <pathelement location="${nxj.jtools.home}/lib/jtools.jar"/>
+  	<pathelement location="${nxj.jtools.home}/3rdparty/lib/commons-cli-1.0.jar"/>
+  	<pathelement location="${nxj.jtools.home}/3rdparty/lib/bcel-5.1.jar"/>
+      </classpath>
+    </java>
+  </target>
+	
+  <target name="upload" depends="link"
+        description="upload the binary " >
+    <java classname="lejos.pc.tools.NXJUpload" fork="true">
+      <jvmarg value="-Djava.library.path=${nxj.library.path}"/>
+      <arg value="${binary}"/>
+      <classpath>
+        <pathelement location="${nxj.jtools.home}/lib/jtools.jar"/>
+        <pathelement location="${nxj.pctools.home}/lib/pctools.jar"/>
+      	<pathelement location="${nxj.pccomm.home}/lib/pccomm.jar"/>
+  	<pathelement location="${nxj.jtools.home}/3rdparty/lib/commons-cli-1.0.jar"/>
+  	<pathelement location="${nxj.jtools.home}/3rdparty/lib/bcel-5.1.jar"/>
+      	<pathelement location="${nxj.pccomm.home}/3rdparty/lib/bluecove.jar"/>
+      </classpath>
+    </java>
+  </target>
+	
+  <target name="uploadandrun" depends="link"
+        description="upload and run the binary " >
+    <java classname="lejos.pc.tools.NXJUpload" fork="true">
+      <jvmarg value="-Djava.library.path=${nxj.library.path}"/>
+      <arg value="${binary}"/>
+      <arg value="-r"/>
+      <classpath>
+        <pathelement location="${nxj.jtools.home}/lib/jtools.jar"/>
+        <pathelement location="${nxj.pctools.home}/lib/pctools.jar"/>
+      	<pathelement location="${nxj.pccomm.home}/lib/pccomm.jar"/>
+  	<pathelement location="${nxj.jtools.home}/3rdparty/lib/commons-cli-1.0.jar"/>
+  	<pathelement location="${nxj.jtools.home}/3rdparty/lib/bcel-5.1.jar"/>
+      	<pathelement location="${nxj.pccomm.home}/3rdparty/lib/bluecove.jar"/>
       </classpath>
     </java>
   </target>

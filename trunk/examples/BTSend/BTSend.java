@@ -5,7 +5,7 @@ import java.io.*;
 public class BTSend {
 	
 	public static void main(String[] args) {
-		NXTCommBluecove nxtComm = new NXTCommBluecove();
+		NXTComm nxtComm = new NXTCommBluecove();
 		
 		NXTInfo[] nxtInfo = nxtComm.search(null,NXTCommand.BLUETOOTH);
 		
@@ -29,7 +29,9 @@ public class BTSend {
 			}
 		}
 		
-		nxtComm.close();
+		try {
+			nxtComm.close();
+		} catch (IOException ioe) {}
 	}
 
 }

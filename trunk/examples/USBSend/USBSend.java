@@ -27,8 +27,9 @@ public class USBSend {
 				System.out.println("IO Exception writing bytes");
 			}
 		}
-		
-		nxtComm.close();
+		try {
+			nxtComm.close();
+		} catch (IOException ioe) {}
 	}
 
 }
