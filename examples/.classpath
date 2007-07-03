@@ -1,11 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="TestButton/|TestMotor/|TestSensor/|HelloWorld/" kind="src" path=""/>
-	<classpathentry kind="src" path="TestButton"/>
-	<classpathentry kind="src" path="TestMotor"/>
-	<classpathentry kind="src" path="TestSensor"/>
+	<classpathentry excluding="BTReceive/|BTSend/|BumperCar/|ColorDetector/|CompassTest/|ExceptionTest/|HelloWorld/|Line/|Listen/|MemoryTest/|PerformanceTest/|PilotTester/|SonicTest/|SpeedTest/|Subsumption1/|Subsumption2/|TiltTest/|Tune/|USBReceive/|USBSend/|View/|GraphicsSample/" kind="src" path=""/>
+	<classpathentry kind="src" path="GraphicsSample"/>
+	<classpathentry kind="src" path="USBSend"/>
+	<classpathentry kind="src" path="USBReceive"/>
+	<classpathentry kind="src" path="BTReceive"/>
+	<classpathentry kind="src" path="BTSend"/>
+	<classpathentry kind="src" path="ColorDetector"/>
+	<classpathentry kind="src" path="PilotTester"/>
+	<classpathentry kind="src" path="SpeedTest"/>
+	<classpathentry kind="src" path="Tune"/>
+	<classpathentry kind="src" path="TiltTest"/>
+	<classpathentry kind="src" path="CompassTest"/>
+	<classpathentry kind="src" path="SonicTest"/>
+	<classpathentry kind="src" path="Subsumption2"/>
+	<classpathentry kind="src" path="Subsumption1"/>
+	<classpathentry kind="src" path="BumperCar"/>
+	<classpathentry kind="src" path="MemoryTest"/>
+	<classpathentry kind="src" path="PerformanceTest"/>
+	<classpathentry kind="src" path="ExceptionTest"/>
+	<classpathentry kind="src" path="Listen"/>
+	<classpathentry kind="src" path="View"/>
+	<classpathentry kind="src" path="Line"/>
 	<classpathentry kind="src" path="HelloWorld"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="/classes/lib/classes.jar"/>
+	<classpathentry kind="lib" path="/pccomms/lib/pccomm.jar"/>
 	<classpathentry kind="output" path=""/>
 </classpath>
