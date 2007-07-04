@@ -1,4 +1,4 @@
-package lejos.nxt;
+//package lejos.nxt;
 
 /**
  * Abstraction for an NXT button.
@@ -70,7 +70,26 @@ public class Button implements ListenerCaller
         poller.poll(iCode << Poll.BUTTON_MASK_SHIFT, 0);
     } while (isPressed());
   }
-
+ 
+  /**
+   * wait for some button to be pressed 
+   * @return the ID of that button, the same as readButtons(); 
+   */ 
+  public static int waitForPress()
+  {
+     while(0<readButtons())
+     {
+        try  {Thread.sleep(50);}
+        catch(InterruptedException ie) {};
+     }
+     while(0 == readButtons())
+     {
+           try  {Thread.sleep(50);}
+           catch(InterruptedException ie){};
+     }
+     return readButtons();             
+  }
+  
   /**
    * Adds a listener of button events. Each button can serve at most
    * 4 listeners.
