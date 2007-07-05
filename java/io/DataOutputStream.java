@@ -75,7 +75,18 @@ public class DataOutputStream extends OutputStream {
     public void flush() throws IOException {
 	out.flush();
     }
-
+    /**
+     * Closes this data output stream. This forces any buffered output 
+     * bytes to be written out to the stream. 
+     * <p>
+     * The <code>close</code> method of <code>DataOuputStream</code> 
+     * calls the <code>close</code> method of its underlying output stream.
+     *
+     * @exception  IOException  if an I/O error occurs.
+     * @see        java.io.FilterOutputStream#out
+     * @see        java.io.OutputStream#flush()
+     */
+    public void close()throws IOException {out.close();}
    /**
    * Writes a <code>boolean</code> to the underlying output stream as 
    * a 1-byte value. The value <code>true</code> is written out as the 
@@ -229,3 +240,5 @@ public class DataOutputStream extends OutputStream {
       return written;
    }
 }
+   
+  
