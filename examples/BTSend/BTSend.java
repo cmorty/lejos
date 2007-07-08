@@ -5,7 +5,7 @@ import java.io.*;
 public class BTSend {
 	
 	public static void main(String[] args) {
-		NXTComm nxtComm = new NXTCommBluecove();
+		NXTComm nxtComm = new NXTCommBluez();
 		
 		NXTInfo[] nxtInfo = nxtComm.search(null,NXTCommand.BLUETOOTH);
 		
@@ -23,9 +23,15 @@ public class BTSend {
 			try {
 				os.write(i);
 				os.flush();
-				System.out.println("Received " + is.read());
+				
 			} catch (IOException ioe) {
 				System.out.println("IO Exception writing bytes");
+			}
+			
+			try {
+				System.out.println("Received " + is.read());
+			} catch (IOException ioe) {
+				System.out.println("IO Exception reading bytes");
 			}
 		}
 		
