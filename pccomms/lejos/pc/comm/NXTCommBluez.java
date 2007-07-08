@@ -52,6 +52,7 @@ public class NXTCommBluez implements NXTComm {
 			open(BDADDR_ANY, nxt.btDeviceAddress, 1);
 			return true;
 		} catch (BlueZException e) {
+			System.err.println("Error from open: " + e.getMessage());
 			return false;
 		}
 		
@@ -122,12 +123,20 @@ public class NXTCommBluez implements NXTComm {
 		return result;
 	}
 	
+	public byte [] read () throws IOException {
+		return rcSocketRecv(sk);
+	}
+	
+	public void write(byte[] data) throws IOException {
+		rcSocketSend(sk, data);
+	}
+	
 	public OutputStream getOutputStream() {
-		return null;		
+		return new NXTCommBTOutputStream(this);		
 	}
 	
 	public InputStream getInputStream() {
-		return null;		
+		return new NXTCommInputStream(this);		
 	}
 	
 	native private String[] search(String name) throws BlueZException;
@@ -138,9 +147,9 @@ public class NXTCommBluez implements NXTComm {
 
 	native private void rcSocketConnect(int sk, String bdaddr, int channel) throws BlueZException;
 
-	native private void rcSocketSend(int sk, byte[] data) throws IOException;
+	native public void rcSocketSend(int sk, byte[] data) throws IOException;
 
-	native private byte[] rcSocketRecv(int sk) throws IOException;
+	native public byte[] rcSocketRecv(int sk) throws IOException;
 
 	native private void rcSocketShutdown(int sk) throws IOException;
 

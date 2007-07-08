@@ -8,8 +8,8 @@ public class NXTCommLibnxt implements NXTComm {
 	public native int jlibnxt_find();
 	public native int jlibnxt_open(int nxt);
 	public native void jlibnxt_close(int nxt);
-	public native void jlibnxt_send_data(int nxt, byte [] message);
-	public native byte[] jlibnxt_read_data(int nxt, int len);
+	public native void jlibnxt_send_data(int nxt, byte [] message) throws IOException;
+	public native byte[] jlibnxt_read_data(int nxt, int len) throws IOException;
 	
 	public NXTInfo[] search(String name, int protocol) {
 		if ((protocol | NXTCommand.USB) == 0) {
@@ -37,18 +37,27 @@ public class NXTCommLibnxt implements NXTComm {
 		if (nxtInfo != null && nxtInfo.nxtPtr != 0) jlibnxt_close(nxtInfo.nxtPtr);
 	}
 	
-	public byte[] sendRequest(byte [] data, int replyLen) {
+	public byte[] sendRequest(byte [] data, int replyLen) throws IOException {
 		jlibnxt_send_data(nxtInfo.nxtPtr, data);
         if (replyLen == 0) return new byte [0];
 		return jlibnxt_read_data(nxtInfo.nxtPtr, replyLen);
 	}
 	
+	public byte [] read() throws IOException
+	{
+		return jlibnxt_read_data(nxtInfo.nxtPtr, 1);
+	}
+	
+	public void write(byte [] data) throws IOException {
+		jlibnxt_send_data(nxtInfo.nxtPtr, data);
+	}
+	
 	public OutputStream getOutputStream() {
-		return new LibnxtOutputStream(this, nxtInfo.nxtPtr);		
+		return new NXTCommUSBOutputStream(this);		
 	}
 	
 	public InputStream getInputStream() {
-		return new LibnxtInputStream(this, nxtInfo.nxtPtr);		
+		return new NXTCommInputStream(this);		
 	}
 	
 	static {
