@@ -145,6 +145,15 @@ public class NXTCommBluecove implements NXTComm, DiscoveryListener  {
                  		
 		return (reply == null) ? new byte[0] : reply;
     }
+    
+    public byte [] read() throws IOException {
+    	return new byte[0];
+    }
+    
+    public void write(byte [] data) throws IOException {
+    	os.write(data);
+    	os.flush();
+    }
 
 	public void deviceDiscovered(RemoteDevice btDevice, DeviceClass cod) {
         //System.out.println("Found Device,  class: " + cod.getMajorDeviceClass() + "/" + cod.getMinorDeviceClass());
