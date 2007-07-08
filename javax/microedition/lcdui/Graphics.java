@@ -8,13 +8,23 @@ import lejos.nxt.LCD;
  *
  */
 public class Graphics {
+	/** drawArc and fillArc accuracy parameter */
+	private static final int ARC_ACC = 5;
+
 	private static final byte HEIGHT = 64; // Pixels
 	private static final byte WIDTH = 100; // Pixels
-	private int [] buff;
-	private int rgbColor = BLACK;
-	
+
+	/* Public color definitions */
 	public static final int BLACK = 1;
 	public static final int WHITE = 0;
+
+	/* Public line stroke definitions */
+	public static final int SOLID 	= 0;
+	public static final int DOTTED 	= 2;
+
+	private int [] buff;
+	private int rgbColor = BLACK;
+	private int strokeStyle = SOLID;
 
 	public Graphics() {
 		 buff = new int[HEIGHT*WIDTH/32];
@@ -33,12 +43,16 @@ public class Graphics {
 		buff[index] = buff[index] | (rgbColor << specificBit);
 	}
 
-
 	public void drawLine(int x0, int y0, int x1, int y1) {
+		drawLine(x0, y0, x1, y1, strokeStyle);
+	}
+	
+	private void drawLine(int x0, int y0, int x1, int y1, int style) {
 		// Uses Bresenham's line algorithm
 		int dy = y1 - y0;
 		int dx = x1 - x0;
 		int stepx, stepy;
+		boolean skip = false;
 
 		if (dy < 0) { dy = -dy;  stepy = -1; } else { stepy = 1; }
 		if (dx < 0) { dx = -dx;  stepx = -1; } else { stepx = 1; }
@@ -55,90 +69,133 @@ public class Graphics {
 				}
 				x0 += stepx;
 				fraction += dy; // same as fraction -= 2*dy
-				setPixel(rgbColor,x0, y0);
+				if ((style == SOLID) || !skip)
+					setPixel(rgbColor, x0, y0);
+				skip = !skip;
 			}
-	        	} else {
-				int fraction = dx - (dy >> 1);
-				while (y0 != y1) {
+    	} else {
+			int fraction = dx - (dy >> 1);
+			while (y0 != y1) {
 				if (fraction >= 0) {
 					x0 += stepx;
 					fraction -= dy;
 				}
 				y0 += stepy;
 				fraction += dx;
-				setPixel(rgbColor,x0, y0);
+				if ((style == SOLID) || !skip)
+					setPixel(rgbColor, x0, y0);
+				skip = !skip;
 			}
 		}
 	}
 
 	public void drawArc(int x, int y, int width, int height, int startAngle, int arcAngle) {
-		// Modified McIlroy's ellipse algorithm
+		drawArc(x, y, width, height, startAngle, arcAngle, strokeStyle, false);
+	}
+	
+	public void fillArc(int x, int y, int width, int height, int startAngle, int arcAngle) {
+		// drawArc is for now only SOLID 
+		drawArc(x, y, width, height, startAngle, arcAngle, SOLID, true);
+	}
+
+	private void drawArc(int x, int y, int width, int height, int startAngle, int arcAngle, 
+			int style, boolean fill) {
+		// Scale up width and height to create more accurate ellipse form
+		int xscale = (width < height) ? ARC_ACC : ((ARC_ACC * width + (width >> 1)) / 
+
+height);
+		int yscale = (width < height) ? ((ARC_ACC * height + (height >> 1)) / width) : 
+
+ARC_ACC;
+		
+		// Calculate x, y center and radius from upper left corner
+		int x0 = x + (width >> 1);
+		int y0 = y + (height >> 1);
+		int radius = (width < height) ? (width >> 1) : (height >> 1);
+		
+		// Check and set start and end angle
 		int endAngle = startAngle + arcAngle;
-		if(endAngle<0) endAngle = endAngle + 360;
-		if(endAngle>360) endAngle = endAngle - 360;
+		while (endAngle < 0) endAngle = endAngle + 360;
+		while (endAngle > 360) endAngle = endAngle - 360;
 		if(arcAngle < 0) { // Switches start and end
 			int temp = startAngle;
 			startAngle = endAngle;
-			endAngle = temp;
+			endAngle = (temp > 0) ? temp : 360;
 		}
 		
-		int xc = x + (width/2); // X-center
-		int yc = y + (height/2); // Y-center
-		int a = width/2;
-		int b = height/2;
-	
-		/* e(x,y) = b^2*x^2 + a^2*y^2 - a^2*b^2 */
-		int xxx = 0, yyy = b;
-		int a2 = a*a, b2 = b*b;
-		int crit1 = -(a2/4 + a%2 + b2);
-		int crit2 = -(b2/4 + b%2 + a2);
-		int crit3 = -(b2/4 + b%2);
-		int t = -a2*yyy; /* e(xxx+1/2,y-1/2) - (a^2+b^2)/4 */
-		int dxt = 2*b2*xxx, dyt = -2*a2*yyy;
-		int d2xt = 2*b2, d2yt = 2*a2;
-		int count = 0; // DELETE ME!!
-		while (yyy>=0 && xxx<=a) {
-			float angle = (float)Math.toDegrees(Math.atan2(yyy, xxx));
-	
-			if(startAngle < endAngle) {
-				if(360 - angle >= startAngle && 360 - angle <= endAngle)
-					setPixel(BLACK, xc+xxx, yc+yyy); // Quadrant 4: lower-right
-				if (xxx!=0 || yyy!=0)
-					if(180 - angle >= startAngle && 180 - angle <= endAngle)
-						setPixel(BLACK, xc-xxx, yc-yyy); // Quadrant 2: Upper-left
-				if (xxx!=0 && yyy!=0) {
-					if(angle >= startAngle && angle <= endAngle)
-						setPixel(BLACK, xc+xxx, yc-yyy); // Quadrant 1: Upper-right
-					if(180 + angle >= startAngle && 180 + angle <= endAngle)
-						setPixel(BLACK, xc-xxx, yc+yyy); // Quadrant 3: Lower-left
-				}
-			} else {
-				if(360 - angle >= startAngle)
-					setPixel(BLACK, xc+xxx, yc+yyy); // Quadrant 4: lower-right
-				if (xxx!=0 || yyy!=0)
-					if(180 - angle <= endAngle) 
-						setPixel(BLACK, xc-xxx, yc-yyy); // Quadrant 2: Upper-left
-				if (xxx!=0 && yyy!=0) {
-					if(angle <= endAngle)
-						setPixel(BLACK, xc+xxx, yc-yyy); // Quadrant 1: Upper-right
-					if(180 + angle >= startAngle)
-						setPixel(BLACK, xc-xxx, yc+yyy); // Quadrant 3: Lower-left
-				}
+		// Initialize scaled up Bresenham's circle algorithm
+		int f = (1 - ARC_ACC * radius);
+		int ddF_x = 0;
+		int ddF_y = -2 * ARC_ACC * radius;
+		int xc = 0;
+		int yc = ARC_ACC * radius;
+		int dotskip = 0;
+		while (xc < yc) {
+			if (f >= 0) { 
+				yc--;
+				ddF_y += 2;
+				f += ddF_y;
 			}
+		    
+			xc++;
+		    ddF_x += 2;
+		    f += ddF_x + 1;
+		    
+		    // Skip points for dotted version
+		    dotskip = (dotskip + 1) % (2 * ARC_ACC);
+		    if ((style == DOTTED) && !fill && (dotskip < ((2 * ARC_ACC) - 1))) continue;
 
-			if (t + b2*xxx <= crit1 ||   /* e(xxx+1,y-1/2) <= 0 */
-			    t + a2*yyy <= crit3)      /* e(xxx+1/2,y) <= 0 */
-				{xxx++; dxt += d2xt; t += dxt;} // incx()
-			 else if (t - a2*yyy > crit2) /* e(xxx+1/2,y-1) > 0 */
-				{yyy--; dyt += d2yt; t += dyt;} // incy()
-			else {
-				{xxx++; dxt += d2xt; t += dxt;} // incx()
-				{yyy--; dyt += d2yt; t += dyt;} // incy()
-			}
+		    // Scale down again
+		    int xxp = (xc * xscale + (xscale >> 1)) / (ARC_ACC * ARC_ACC);
+		    int xyp = (xc * yscale + (yscale >> 1)) / (ARC_ACC * ARC_ACC);
+		    int yyp = (yc * yscale + (yscale >> 1)) / (ARC_ACC * ARC_ACC);
+		    int yxp = (yc * xscale + (xscale >> 1)) / (ARC_ACC * ARC_ACC);
+		    
+		    // Calculate angle for partly circles / ellipses
+		    // NOTE: Below, (float) should not be needed. Not sure why Math.round() only accepts float.
+		    int tp = (int) Math.round((float)Math.toDegrees(Math.atan2(yc, xc)));
+		    if (fill) {
+		    	/* TODO: Optimize more by drawing horizontal lines */
+		    	if (((90 - tp) >= startAngle) && ((90 - tp) <= endAngle))
+		    		drawLine(x0, y0, x0 + yxp, y0 - xyp, style); // 0   - 45 degrees
+		    	if ((tp >= startAngle) && (tp <= endAngle))
+		    		drawLine(x0, y0, x0 + xxp, y0 - yyp, style); // 45  - 90 degrees
+		    	if (((180 - tp) >= startAngle) && ((180 - tp) <= endAngle))
+		    		drawLine(x0, y0, x0 - xxp, y0 - yyp, style); // 90  - 135 degrees
+		    	if (((180 - (90 - tp)) >= startAngle) && ((180 - (90 - tp)) <= endAngle))
+		    		drawLine(x0, y0, x0 - yxp, y0 - xyp, style); // 135 - 180 degrees
+		    	if (((270 - tp) >= startAngle) && ((270 - tp) <= endAngle))
+		    		drawLine(x0, y0, x0 - yxp, y0 + xyp, style); // 180 - 225 degrees
+		    	if (((270 - (90 - tp)) >= startAngle) && ((270 - (90 - tp)) <= endAngle))
+		    		drawLine(x0, y0, x0 - xxp, y0 + yyp, style); // 225 - 270 degrees
+		    	if (((360 - tp) >= startAngle) && ((360 - tp) <= endAngle))
+		    		drawLine(x0, y0, x0 + xxp, y0 + yyp, style); // 270 - 315 degrees
+		    	if (((360 - (90 - tp)) >= startAngle) && ((360 - (90 - tp)) <= endAngle))
+		    		drawLine(x0, y0, x0 + yxp, y0 + xyp, style); // 315 - 360 degrees
+		    } else {
+		    	if (((90 - tp) >= startAngle) && ((90 - tp) <= endAngle))
+		    		setPixel(rgbColor, x0 + yxp, y0 - xyp); // 0   - 45 degrees
+		    	if ((tp >= startAngle) && (tp <= endAngle))
+		    		setPixel(rgbColor, x0 + xxp, y0 - yyp); // 45  - 90 degrees
+		    	if (((180 - tp) >= startAngle) && ((180 - tp) <= endAngle))
+		    		setPixel(rgbColor, x0 - xxp, y0 - yyp); // 90  - 135 degrees
+		    	if (((180 - (90 - tp)) >= startAngle) && ((180 - (90 - tp)) <= endAngle))
+		    		setPixel(rgbColor, x0 - yxp, y0 - xyp); // 135 - 180 degrees
+		    	if (((270 - tp) >= startAngle) && ((270 - tp) <= endAngle))
+		    		setPixel(rgbColor, x0 - yxp, y0 + xyp); // 180 - 225 degrees
+		    	if (((270 - (90 - tp)) >= startAngle) && ((270 - (90 - tp)) <= endAngle))
+		    		setPixel(rgbColor, x0 - xxp, y0 + yyp); // 225 - 270 degrees
+		    	if (((360 - tp) >= startAngle) && ((360 - tp) <= endAngle))
+		    		setPixel(rgbColor, x0 + xxp, y0 + yyp); // 270 - 315 degrees
+		    	if (((360 - (90 - tp)) >= startAngle) && ((360 - (90 - tp)) <= endAngle))
+		    		setPixel(rgbColor, x0 + yxp, y0 + xyp); // 315 - 360 degrees
+		    }
 		}
 	}
-	
-	public void drawRoundRect(int x, int y, int width, int height, int arcWidth, int arcHeight) {
+
+	public void drawRoundRect(int x, int y, int width, int height, int arcWidth, int arcHeight) 
+
+{
 
 		int xc = x + (width/2);
 		int yc = y + (height/2);
@@ -215,6 +272,17 @@ public class Graphics {
 	
 	public void drawString(String str, int x, int y) {
 		LCD.drawString(str, x, y);
+	}
+
+	public int getStrokeStyle() {
+		return strokeStyle;
+	}
+
+	public void setStrokeStyle(int style) {
+		if (style != SOLID && style != DOTTED) {
+			throw new IllegalArgumentException();
+		}
+		strokeStyle = style;
 	}
 
 	// Temp for testing purposes until Canvas made.
