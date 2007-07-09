@@ -18,7 +18,7 @@ public class NXTCommBluecove implements NXTComm, DiscoveryListener  {
 		devices = new Vector();
         nxtInfos = new Vector();
 
-        if ((protocol | NXTCommand.BLUETOOTH) == 0) return new NXTInfo[0];
+        if ((protocol | NXTCommFactory.BLUETOOTH) == 0) return new NXTInfo[0];
 
 		synchronized (this) {
 			try {
@@ -43,7 +43,7 @@ public class NXTCommBluecove implements NXTComm, DiscoveryListener  {
                 if (nxtInfo.name == null || nxtInfo.name.length() == 0)
                 	nxtInfo.name = "Unknown";
 				nxtInfo.btDeviceAddress = d.getBluetoothAddress();
-                nxtInfo.protocol = NXTCommand.BLUETOOTH;
+                nxtInfo.protocol = NXTCommFactory.BLUETOOTH;
 
                 if (name == null || name.equals(nxtInfo.name)) nxtInfos.addElement(nxtInfo);
 				else continue;
@@ -85,19 +85,24 @@ public class NXTCommBluecove implements NXTComm, DiscoveryListener  {
         return nxts;
 	}
 
-	public boolean open(NXTInfo nxt) {		
-		try{
-			if (nxt.btResourceString == null) {
-				System.out.println("Failed to connect to " + nxt.name + " - is it switched on and paired with PC?");
-				return false;
-			}
+	public boolean open(NXTInfo nxt) {	
+		
+		// Construct URL if not present
+		
+		if (nxt.btResourceString == null ||
+			nxt.btResourceString.length() < 5 ||
+			!(nxt.btResourceString.substring(0,5).equals("btspp"))) {
+			nxt.btResourceString = "btspp://" + stripColons(nxt.btDeviceAddress) + ":1;authenticate=false;encncrypt=false";
+		}
+		
+		try {
 			con = (StreamConnection) Connector.open(nxt.btResourceString);
 	        os = con.openOutputStream();
 			is  = con.openInputStream();
 			return true;
  	 	}
  	 	catch(IOException e){
- 	 		System.out.println("Open of " + nxt.name + " failed");
+ 	 		System.err.println("Open of " + nxt.name + " failed");
  	 		return false;
  	 	} 
 	}
@@ -186,6 +191,20 @@ public class NXTCommBluecove implements NXTComm, DiscoveryListener  {
 	
 	public InputStream getInputStream() {
 		return is;
+	}
+	
+	public String stripColons(String s) {
+		StringBuffer sb = new StringBuffer();
+		
+		for(int i=0;i<s.length();i++) {
+			char c = s.charAt(i);
+			
+			if (c != ':') {
+				sb.append(c);
+			}
+		}
+		
+		return sb.toString();
 	}
 }
 

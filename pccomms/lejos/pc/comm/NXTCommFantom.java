@@ -19,11 +19,11 @@ public class NXTCommFantom implements NXTComm {
 			String nxtName = nxtNames[i];
 			nxtInfo[i].btResourceString = nxtName;
 			nxtInfo[i].name = "Unknown";
-			nxtInfo[i].protocol = NXTCommand.USB;
+			nxtInfo[i].protocol = NXTCommFactory.USB;
 			nxtInfo[i].btDeviceAddress = "";
 			if (nxtName != null) {
 			    if (nxtName.length() >= 3 && nxtName.substring(0,3).equals("BTH"))
-			    	nxtInfo[i].protocol = NXTCommand.BLUETOOTH;	
+			    	nxtInfo[i].protocol = NXTCommFactory.BLUETOOTH;	
 			    int startName = nxtName.indexOf("::");
 			    if (startName >= 0) startName +=2;
 			    int endName = -1;
