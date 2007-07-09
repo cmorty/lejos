@@ -91,8 +91,8 @@ import lejos.pc.comm.*;
 		System.out.println("Uploading...");;
 		int protocols = 0;
 		
-		if (blueTooth) protocols |= NXTCommand.BLUETOOTH;
-		if (usb) protocols |= NXTCommand.USB;
+		if (blueTooth) protocols |= NXTCommFactory.BLUETOOTH;
+		if (usb) protocols |= NXTCommFactory.USB;
 		
 		Upload.upload(name, protocols, binName, run);
 	}

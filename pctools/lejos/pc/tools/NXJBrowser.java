@@ -65,10 +65,10 @@ public class NXJBrowser {
 	
     int protocols = 0;
     
-	if (blueTooth) protocols |= NXTCommand.BLUETOOTH;
-	if (usb) protocols |= NXTCommand.USB;
+	if (blueTooth) protocols |= NXTCommFactory.BLUETOOTH;
+	if (usb) protocols |= NXTCommFactory.USB;
 	
-	if (protocols == 0) protocols = NXTCommand.USB | NXTCommand.BLUETOOTH;
+	if (protocols == 0) protocols = NXTCommFactory.USB | NXTCommFactory.BLUETOOTH;
 	
     final NXTInfo[] nxts = nxtCommand.search(name, protocols);
     
@@ -421,7 +421,7 @@ class NXTModel extends AbstractTableModel {
 
     for(int i=0;i<numNXTs;i++) {
       nxtData[i][0]  = nxts[i].name;
-      nxtData[i][1] = (nxts[i].protocol == NXTCommand.USB ? "USB" : "Bluetooth");
+      nxtData[i][1] = (nxts[i].protocol == NXTCommFactory.USB ? "USB" : "Bluetooth");
       nxtData[i][2] = (nxts[i].btDeviceAddress == null ? "" : nxts[i].btDeviceAddress);
     }
   }
