@@ -26,5 +26,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="/classes/lib/classes.jar"/>
 	<classpathentry kind="lib" path="/pccomms/lib/pccomm.jar"/>
+	<classpathentry kind="lib" path="/pccomms/3rdparty/lib/bluecove.jar"/>
 	<classpathentry kind="output" path=""/>
 </classpath>
