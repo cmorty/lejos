@@ -25,11 +25,16 @@ public class NXTCommBluez implements NXTComm {
 			NXTInfo[] nxts = new NXTInfo[btString.length];
 			for(int i=0;i<btString.length;i++) {
 				NXTInfo nxtInfo = new NXTInfo();
+				if (btString[i] == null) {
+					System.err.println("Null btString");
+					return new NXTInfo[0];
+				}
 				int sep = btString[i].indexOf("::");
 				//System.out.println("Setting address to " + btAddress);
 				nxtInfo.btDeviceAddress =  btString[i].substring(sep+2);
 				nxtInfo.name = btString[i].substring(0, sep);
-				nxtInfo.protocol = NXTCommand.BLUETOOTH;
+				nxtInfo.protocol = NXTCommFactory.BLUETOOTH;
+				nxtInfo.btResourceString = btString[i];
 				
 				nxts[i] = nxtInfo;			
 			}

@@ -12,14 +12,14 @@ public class NXTCommLibnxt implements NXTComm {
 	public native byte[] jlibnxt_read_data(int nxt, int len) throws IOException;
 	
 	public NXTInfo[] search(String name, int protocol) {
-		if ((protocol | NXTCommand.USB) == 0) {
+		if ((protocol | NXTCommFactory.USB) == 0) {
 			return new NXTInfo[0];
 		}
 		int nxt = jlibnxt_find();
 		if (nxt != 0) {
 			NXTInfo[] nxtInfo = new NXTInfo[1];
 			nxtInfo[0] = new NXTInfo();
-			nxtInfo[0].protocol = NXTCommand.USB;
+			nxtInfo[0].protocol = NXTCommFactory.USB;
 			nxtInfo[0].name = "Unknown";
 			nxtInfo[0].nxtPtr = nxt;
 			return nxtInfo;

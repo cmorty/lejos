@@ -14,9 +14,6 @@ public class NXTCommand implements NXTProtocol {
 	private static NXTCommand singleton = null;
 	
 	private boolean verifyCommand = false;
-	
-    public static final int USB = 1;
-    public static final int BLUETOOTH = 2;
     private boolean open = false;
     private static String hexChars = "01234567890abcdef";
 
@@ -43,7 +40,7 @@ public class NXTCommand implements NXTProtocol {
 	    	
 	    	// Look for USB comms driver first
 	    	
-	    	if ((protocol & USB) != 0) {
+	    	if ((protocol & NXTCommFactory.USB) != 0) {
 	    		String nxtCommName = props.getProperty("NXTCommUSB", "lejos.pc.comm.NXTCommLibnxt");
 	    		//System.out.println("NXTCommUSB = " + nxtCommName);
 	    		try {
@@ -59,7 +56,7 @@ public class NXTCommand implements NXTProtocol {
 	    	String defaultDriver = (windows  ? "lejos.pc.comm.NXTCommBluecove"
 	    			                         : "lejos.pc.comm.NXTCommBluez");
         	
-	    	if ((protocol & BLUETOOTH) != 0) {
+	    	if ((protocol & NXTCommFactory.BLUETOOTH) != 0) {
         		String nxtCommName = props.getProperty("NXTCommBluetooth", defaultDriver);
         		//System.out.println("NXTCommBluetooth = " + nxtCommName);
         		try {
@@ -79,7 +76,7 @@ public class NXTCommand implements NXTProtocol {
 
     	// Look for a USB one first
     	
-    	if ((protocol & USB) != 0 && nxtCommUSB != null) {
+    	if ((protocol & NXTCommFactory.USB) != 0 && nxtCommUSB != null) {
     		nxtInfos = nxtCommUSB.search(name, protocol);
     		if (nxtInfos.length > 0) {
     			nxtComm = nxtCommUSB;
@@ -89,7 +86,7 @@ public class NXTCommand implements NXTProtocol {
     	
     	// If not found, look for a Bluetooth one
     	
-    	if ((protocol & BLUETOOTH) != 0 && nxtCommBluetooth != null){
+    	if ((protocol & NXTCommFactory.BLUETOOTH) != 0 && nxtCommBluetooth != null){
     		nxtInfos = nxtCommBluetooth.search(name, protocol);
     		if (nxtInfos.length > 0) {
     			nxtComm = nxtCommBluetooth;
