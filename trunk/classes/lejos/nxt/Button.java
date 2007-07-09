@@ -1,4 +1,4 @@
-//package lejos.nxt;
+package lejos.nxt;
 
 /**
  * Abstraction for an NXT button.
