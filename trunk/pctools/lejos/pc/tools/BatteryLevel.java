@@ -9,7 +9,7 @@ public class BatteryLevel {
 		System.out.println("Battery Level Test");
 		NXTCommand nxtCommand = NXTCommand.getSingleton();
 		
-		NXTInfo[] nxtInfo = nxtCommand.search(null, NXTCommand.USB);
+		NXTInfo[] nxtInfo = nxtCommand.search(null, NXTCommFactory.USB);
 		
 		System.out.println("Found " + nxtInfo.length + " NXTs");
 		

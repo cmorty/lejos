@@ -1,9 +1,7 @@
 package lejos.pc.tools;
 
-import java.io.File;
-import java.io.IOException;
-import lejos.pc.comm.NXTCommand;
-import lejos.pc.comm.NXTInfo;
+import java.io.*;
+import lejos.pc.comm.*;
 
 public class Upload {
 	
@@ -23,7 +21,7 @@ public class Upload {
 			System.exit(1);
 		}
 		
-		if (protocols == 0) protocols = NXTCommand.USB | NXTCommand.BLUETOOTH;
+		if (protocols == 0) protocols = NXTCommFactory.USB | NXTCommFactory.BLUETOOTH;
 		
 		NXTInfo[] nxtInfo = nxtCommand.search(name, protocols);
 		

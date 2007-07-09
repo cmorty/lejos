@@ -30,8 +30,8 @@ public class NXJUpload {
 		
 		String fileName = commandLine.getArgs()[0];
 		
-		if (blueTooth) protocols |= NXTCommand.BLUETOOTH;
-		if (usb) protocols |= NXTCommand.USB;
+		if (blueTooth) protocols |= NXTCommFactory.BLUETOOTH;
+		if (usb) protocols |= NXTCommFactory.USB;
 		
 		Upload.upload(name, protocols, fileName, run);
 	}	
