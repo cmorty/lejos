@@ -4,9 +4,9 @@ import java.io.*;
 public class USBSend {
 	
 	public static void main(String[] args) {
-		NXTCommLibnxt nxtComm = new NXTCommLibnxt();
+		NXTComm nxtComm = NXTCommFactory.createNXTComm(NXTCommFactory.USB);
 		
-		NXTInfo[] nxtInfo = nxtComm.search(null,NXTCommand.BLUETOOTH);
+		NXTInfo[] nxtInfo = nxtComm.search(null, NXTCommFactory.USB);
 		
 		if (nxtInfo.length == 0) {
 			System.out.println("No NXT Found");
