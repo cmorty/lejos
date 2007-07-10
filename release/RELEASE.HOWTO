@@ -3,11 +3,16 @@ For running the ant based release utilities successfully, you will need to have
 - an ANT installation (at least 1.6)
 - all projects downloaded from SVN
 
-To create a new release of leJOS NXT, please perform the following steps:
+To create a new release of leJOS NXJ in Eclipse on Linux, please perform the following steps:
 
-1. Open a shell (on Windows, you will need a cygwin shell) and change directory to $LEJOS_HOME/release
+1. Updates release/lejos_nxj/README.html, RELEASENOTES and other documentation for the release
 2. Ensure you have the latest VM and jar files built. The release build file does not rebuild them.
 3. Set the correct version number in release/build.properties
-4. On Windows, make sure you have runjava.exe in snapshot/bin.
-5. Run "ant"
-6. After the ant script has finished (including, the packed distributions for Linux and Windows may be found at $LEJOS_HOME/release/dist
+4. Make sure you have the Windows builds of nxjflash.exe and jlibnxt.dll in snapshot/bin.
+5. Make sure that the Linux ant build file in the release/lejos_nxj/build directory is up to date
+6. Generate Javadocs for classes.jar in classes/doc/apidocs
+7. Make sure that the current versions of 3rd party libraries are in release/lejos_nxj/3rdparty/lib
+8. Ensure that the release/build.xml script is up to date
+9. Update this file if there are any changes in the way the release is built
+10. Right click on release/build.xml and select "Run As", "Ant Build"
+11. After the ant script has finished, the packed distributions for Linux and Windows may be found at release/dist

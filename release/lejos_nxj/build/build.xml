@@ -10,7 +10,7 @@
 	<property name="lejos.dist.src" value="${lejos.dist.root}/src"/>
 	<property name="plat.unix.src" value="${lejos.dist.src}/nxtvm/platform/unix"/>
 	<property name="javavm.src" value="${lejos.dist.src}/nxtvm/javavm"/>
-	<property name="lejos.version" value="lejosNXJ0.2alpha"/>
+	<property name="lejos.version" value="lejosNXJ0.3.0alpha"/>
 
 	<!-- cpptasks task & type def -->
 	<taskdef resource="cpptasks.tasks">
