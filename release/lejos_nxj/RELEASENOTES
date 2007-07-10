@@ -1,3 +1,39 @@
+leJOS NXJ 0.3alpha
+------------------
+
+This is the first firmware release of leJOS NXJ. It includes a flash file system
+and a menu system, written in Java.
+
+Brian Bagnall and Roger Glassey have added:
+
+- A flash file system including implementations of java.io.File,
+  FileInputStream, and FileOutputStream.
+- CompassPilot and CompassNavigator
+
+Lawrie Griffiths and Roger Glassey have added:
+
+- The StartUpText menu system that supports executing and
+  deleting programs, and LCP commands with NXJ extensions
+  over USB and Bluetooth
+- Java streams over Bluetooth and USB
+
+Lawrie Griffiths has added:
+
+- USB support
+- Flash native methods
+- Working flash build of leJOS NXJ
+- Support in the VM for running a Java start-up menu
+- Improved LCP support including file commands
+- Improved Bluetooth support including setting the NXT name
+- The pccomm library including Windows and Linux Bluetooth and
+  USB comms drivers. This incorporates some of the functionality
+  of iCommand.
+- The pctools library of nxj tools including nxjbrowse
+- Ant build files for all the samples
+- Libnxt JNI library
+- Bluez JNI library based on the iCommand version
+- nxjflash utility based on David Anderson's fwflash
+
 leJOS NXT 0.2alpha
 ------------------
 
