@@ -433,7 +433,7 @@ void dispatch_native (TWOBYTES signature, STACKWORD *paramBase)
          printf("> ");
       else
          printf("& ");
-      printf("btGetCmdMode returning 1\n");
+         printf("btGetCmdMode returning 1\n");
       push_word(1);
       break;
     case btSetCmdMode_4I_5V:
@@ -444,6 +444,66 @@ void dispatch_native (TWOBYTES signature, STACKWORD *paramBase)
       printf("btSetCmdMode\n");
       break;
     case btStartADConverter_4_5V:
+      break;
+    case usbRead_4_1BI_5I:
+      {
+        Object *p = word2ptr(paramBase[0]);
+        byte *byteArray = (((byte *) p) + HEADER_SIZE);
+        if (verbose) 
+        {
+          printf("> ");
+          printf("usbReceive called with parameters %x, %d\n", byteArray, paramBase[1]);                                           
+        }
+        push_word(0);                      
+      } 
+      break;
+    case usbWrite_4_1BI_5V:
+      {
+        Object *p = word2ptr(paramBase[0]);
+        byte *byteArray = (((byte *) p) + HEADER_SIZE);
+        if (verbose) 
+        {
+          printf("> ");
+          printf("usbWrite called with parameters %x, %d\n", byteArray, paramBase[1]);                                           
+        }                     
+      }
+      break; 
+    case writePage_4_1BI_5V:
+      {
+        Object *p = word2ptr(paramBase[0]);
+        unsigned long *intArray = (unsigned long *) (((byte *) p) + HEADER_SIZE);
+        if (verbose) 
+        {
+          printf("> ");
+          printf("writePage called with parameters %x, %d\n", intArray, paramBase[1]);                                           
+        }                       
+      }
+      break;
+    case readPage_4_1BI_5V:
+      {
+        int i;
+        Object *p = word2ptr(paramBase[0]);
+        unsigned long *intArray = (unsigned long *) (((byte *) p) + HEADER_SIZE);
+        if (verbose) 
+        {
+          printf("> ");
+          printf("readPage called with parameters %x, %d\n", intArray, paramBase[1]);                                           
+        }                       
+      }
+      break;
+    case exec_4II_5V:
+      if (verbose) 
+      {
+        printf("> ");
+        printf("exec called\n");                                           
+      }
+      break;
+    case usbReset_4_5V :
+      if (verbose) 
+      {
+        printf("> ");
+        printf("udpReset called\n");                                           
+      }
       break;
     default:
 #ifdef DEBUG_METHODS
