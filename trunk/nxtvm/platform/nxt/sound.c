@@ -5,7 +5,7 @@
 
 extern void sound_isr_entry(void);
 
-const U32 tone_pattern[16] = 
+const U32 load_tone_pattern[16] = 
   {
     0xF0F0F0F0,0xF0F0F0F0,
     0xFCFCFCFC,0xFCFCFDFD,
@@ -17,6 +17,30 @@ const U32 tone_pattern[16] =
     0x8080C0C0,0xC0C0C0C0
   };
   
+ const U32 medium_tone_pattern[16] =
+  {
+    0xF0F0F0F0,0xF0F0F0F0,                        
+    0xF8F8F8F8,0xF8F8FCFC,
+    0xF8F8FCFC,0xFCFCFCFC,
+    0xFCFCF8F8,0xF8F8F8F8,
+    0xF0F0F0F0,0xF0F0F0F0,
+    0xE0E0E0E0,0xE0E0C0C0,
+    0xE0E0C0C0,0xC0C0C0C0,
+    0xC0C0E0E0,0xE0E0E0E0
+  };
+  
+const U32 tone_pattern[16] =
+  {
+    0xF0F0F0F0,0xF0F0F0F0,
+    0xF0F0F0F0,0xF0F8F8F8,
+    0xF0F0F8F8,0xF8F8F0F0,
+    0xF8F8F8F0,0xF0F0F0F0,
+    0xF0F0F0F0,0xF0F0F0F0,
+    0xF0F0F0F0,0xF0E0E0E0,
+    0xF0F0E0E0,0xE0E0F0F0,
+    0xE0E0E0F0,0xF0F0F0F0
+  };
+    
 U32 tone_cycles;
 
 void sound_init()
