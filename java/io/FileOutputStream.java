@@ -29,7 +29,7 @@ public class FileOutputStream extends OutputStream {
 	
 	/**
 	 * create a new OutputStream to write to this file, starting  at the beginning of the file.
-	 * @param f:  the file this stream writes to
+	 * @param f  the file this stream writes to
 	 */		
 	public FileOutputStream(File f) 
 	{
@@ -37,8 +37,8 @@ public class FileOutputStream extends OutputStream {
 	}
 /**
  * create a new OutputStream to write to this file
- * @param f:  the file this stream writes to
- * @param append:   if true this sream will start writing at the end of the file, otherwise at the beginning
+ * @param f  the file this stream writes to
+ * @param append  if true this sream will start writing at the end of the file, otherwise at the beginning
  */	
 	public FileOutputStream(File f, boolean append) {
        this.append = append;

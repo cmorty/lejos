@@ -27,7 +27,6 @@ public class CompassNavigator extends TachoNavigator
 	* of the right tire, in units of your choice
 	* @param rightMotor The motor used to drive the right wheel e.g. Motor.C.
 	* @param leftMotor The motor used to drive the left wheel e.g. Motor.A.
-	* @param reverse  If motor.forward() dives the robot backwars, set this parameter true.
 	*/
 
 	public CompassNavigator(SensorPort compassPort, float wheelDiameter, float trackWidth, Motor leftMotor, Motor rightMotor) 

@@ -22,7 +22,7 @@ public class CompassPilot extends Pilot {
 	
 	/**
 	 * returns true if robot is rotating to a specific direction
-	 * @return
+	 * @return true iff robot is rotating to a specific direction
 	 */
 	public boolean isRotating(){return _rotating;}
 	
@@ -34,7 +34,7 @@ public class CompassPilot extends Pilot {
 	/**
 	 *  Allocates a CompasPilot object, and sets the physical parameters of the NXT robot. <br>
 	 *  Assumes  Motor.forward() causes the robot to move forward);
-	 *  @parameter compassPort the sensor port connected to the CompassSensor e.g. SensorPort.S1
+	 *  @param compassPort the sensor port connected to the CompassSensor e.g. SensorPort.S1
 	 *  @param wheelDiameter  Diameter of the tire, in any convenient units.  (The diameter in mm is usually printed on the tire). 
 	 *  @param trackWidth Distance between center of right tire and center of left tire, in same units as wheelDiameter
 	 */
@@ -134,7 +134,7 @@ public class CompassPilot extends Pilot {
 	}
 /**
  * robot rotates to the specified compass heading;
- * @param heading   Desired compass heading
+ * @param angle   Desired compass heading
  * @param immediateReturn  if TRUE, method returns immediately; robot stops facing in specified direction
  */		
 	public void rotateTo(int angle, boolean immediateReturn)
@@ -158,7 +158,7 @@ public class CompassPilot extends Pilot {
 	
 	/** 
 	 * see rotate(angle)
-	 * @parameter  immediateReturn  - if true, method returns immediately. <br>
+	 * @param  immediateReturn  - if true, method returns immediately. <br>
 	 * Robot stops when specified angle is reached
 	 */
 	public void rotate(int angle, boolean immediateReturn) 

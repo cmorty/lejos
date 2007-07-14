@@ -333,11 +333,7 @@ public class File {
 	}
 	
 	/**
-	 * Creates a new file entry in the flash memory. [?CUT: According to the standard
-	 * Java API, a file of 0 length is not written to the file system. Therefore
-	 * this will only be added to the file system when the first byte is 
-	 * written using FileOutputStream.?]
-	 * @param size The number of bytes in this file.
+	 * Creates a new file entry in the flash memory.
 	 * @return True indicates file was created in flash. False means it already existed or the size is 0 or less.
 	 */
 	public boolean createNewFile() {
