@@ -153,7 +153,8 @@
           	<fileset dir="${src}/jbluez">
             	<include name="**/*.c"/>
             	<include name="**/*.h"/>
-          		<include name="**/makefile"/>
+          		<include name="makefile"/>
+          		<include name="build.xml"/>
           	</fileset>
 		</copy>
 		
