@@ -59,7 +59,7 @@
 		    </fileset>
 		</delete>
 		<!-- notify -->
-		<echo message="The packed distribution might be found in ${release.dist} now"/>
+		<echo message="The packed distribution can be found in ${release.dist} now"/>
 	</target>
 
   	<!-- cleans the distribution -->
@@ -96,7 +96,8 @@
         		<include name="classes/**/*.java"/>
 				<include name="classes/**/*package.html"/>
         		<include name="jtools/**/*.java"/>
-				<include name="jtools/**/*.java"/>
+				<include name="pctools/**/*.java"/>
+				<include name="pccomms/**/*.java"/>
       		</fileset>
 		</copy>
 
@@ -144,6 +145,15 @@
           		<include name="**/COPYING"/>
           		<include name="**/SConstruct"/>
           		<include name="**/Makefile"/>
+          		<exclude name="test/**"/>
+          	</fileset>
+		</copy>
+		
+		<copy todir="${release.src}/jbluez">
+          	<fileset dir="${src}/jbluez">
+            	<include name="**/*.c"/>
+            	<include name="**/*.h"/>
+          		<include name="**/makefile"/>
           	</fileset>
 		</copy>
 		
@@ -160,12 +170,14 @@
   	</target>
 
 	<!-- copies the run scripts and other binaries -->
-	<target name="scripts" depends="create.folders" description="copies the run scripts (lejosjc etc.)">
+	<target name="scripts" depends="create.folders" description="copies the run scripts (nxjc etc.)">
 		<copy todir="${release.bin}">
       		<fileset dir="${lejos.root}/scripts/linux">
-        		<include name="lejosjc"/>
-        		<include name="lejoslink"/>
-      			<include name="lejosdl"/>
+        		<include name="nxj"/>
+        		<include name="nxjc"/>
+      			<include name="nxjlink"/>
+      			<include name="nxjupload"/>
+      			<include name="nxjbrowse"/>
       		</fileset>
       		<fileset dir="${lejos.root}/scripts/windows">
         		<include name="*.bat"/>
@@ -174,13 +186,17 @@
 		
 		<copy todir="${release.bin}">
       		<fileset dir="${lejos.root}/snapshot/bin">
-        		<include name="runjava.exe"/>
+        		<include name="nxjflash.exe"/>
+      			<include name="runc.exe"/>
+      			<include name="jlibnxt.dll"/>
       		</fileset>
     	</copy>
 		
-		<copy tofile="${release.bin}/lejos_nxt.bin">
+		<copy todir="${release.bin}">
       		<fileset dir="${plat.nxt.src}">
         		<include name="lejos_nxt_samba_ram.bin"/>
+      			<include name="lejos_nxt_rom.bin"/>
+      			<include name="StartUpText.bin"/>
       		</fileset>
     	</copy>
 		
@@ -200,6 +216,16 @@
     	</copy>
 		<copy todir="${release.lib}">
       		<fileset dir="${lejos.root}/jtools/lib">
+        		<include name="*.jar"/>
+      		</fileset>
+    	</copy>
+		<copy todir="${release.lib}">
+      		<fileset dir="${lejos.root}/pctools/lib">
+        		<include name="*.jar"/>
+      		</fileset>
+    	</copy>
+		<copy todir="${release.lib}">
+      		<fileset dir="${lejos.root}/pccomms/lib">
         		<include name="*.jar"/>
       		</fileset>
     	</copy>
@@ -230,13 +256,11 @@
 			    <include name="lejos_nxj/src/**"/>
 			    <include name="lejos_nxj/bin/*"/>
 			 	<exclude name="lejos_nxj/bin/*.xml"/>
-			 	<exclude name="lejos_nxj/bin/runjava.exe"/>
+			 	<exclude name="lejos_nxj/bin/*.exe"/>
+			 	<exclude name="lejos_nxj/bin/*.dll"/>
 			 	<exclude name="lejos_nxj/bin/*.bat"/>
 			    <include name="lejos_nxj/samples/**"/>
 			 	<exclude name="lejos_nxj/samples/**/README"/>
-			 	<exclude name="lejos_nxj/samples/**/build.xml"/>
-			 	<exclude name="lejos_nxj/samples/**/.classpath"/>
-			 	<exclude name="lejos_nxj/samples/**/.project"/>
 			 	<include name="lejos_nxj/build/*"/>
 			 	<include name="lejos_nxj/3rdparty/**"/>
 			 	<include name="lejos_nxj/docs/**"/>
@@ -257,16 +281,18 @@
 			 	<include name="lejos_nxj/ACKNOWLEDGMENTS"/>
 			    <include name="lejos_nxj/lib/*.jar"/>
 			    <include name="lejos_nxj/src/**"/>
+			 	<exclude name="lejos_nxj/src/jbluez/**"/>
 			    <include name="lejos_nxj/bin/*"/>
 			 	<exclude name="lejos_nxj/bin/*.xml"/>
-			 	<exclude name="lejos_nxj/bin/lejosjc"/>
-			 	<exclude name="lejos_nxj/bin/lejoslink"/>
-			 	<exclude name="lejos_nxj/bin/lejosdl"/>
+			 	<exclude name="lejos_nxj/bin/nxj"/>
+			 	<exclude name="lejos_nxj/bin/nxjlink"/>
+			 	<exclude name="lejos_nxj/bin/nxjc"/>
+			 	<exclude name="lejos_nxj/bin/nxjupload"/>
+			 	<exclude name="lejos_nxj/bin/nxjbrowse"/>
+			 	<exclude name="lejos_nxj/bin/nxjflash"/>
+			 	<exclude name="lejos_nxj/bin/*.so"/>
 			    <include name="lejos_nxj/samples/**"/>
 			 	<exclude name="lejos_nxj/samples/**/README"/>
-			 	<exclude name="lejos_nxj/samples/**/build.xml"/>
-			 	<exclude name="lejos_nxj/samples/**/.classpath"/>
-			 	<exclude name="lejos_nxj/samples/**/.project"/>
 			 	<include name="lejos_nxj/3rdparty/**"/>
 			 	<include name="lejos_nxj/docs/**"/>
 			  </fileset>
