@@ -1,4 +1,4 @@
-<!-- ant file to make libnxt, runjava and sendfile -->
+<!-- ant file to make libnxt, runc, nxjflash and jlibnxt -->
 
 <project name="libnxt" default="make" basedir=".">
 	<property name="endian" value="_NXT_LITTLE_ENDIAN"/>
@@ -25,7 +25,7 @@
 	</target>
 	
 	<!-- make libnxt and its utilities --> 
-	<target name="make" depends="clean,libnxt,runjava,sendfile" description="makes libnxrt and its tools">
+	<target name="make" depends="clean,libnxt,nxjflash,jlibnxt" description="makes libnxt and its tools">
 	</target>
 
 	<!-- make libnxt --> 
@@ -59,10 +59,10 @@
   		</cc>
 	</target>
 	
-	<!-- make runjava --> 
-	<target name="runjava" description="makes runjava utility">
+	<!-- make runc --> 
+	<target name="runc" description="makes runc utility">
   		<cc subsystem="console" 
-  				outfile="runjava"
+  				outfile="runc"
   				objdir="." 
   				outtype="executable" 
   				debug="false"
@@ -76,20 +76,20 @@
   			    <compilerarg value="-ggdb"/>
   			    <compilerarg value="-D_NXT_LITTLE_ENDIAN"/>
   				<fileset dir=".">
-  					<include name="main_runjava.c"/>
+  					<include name="main_runc.c"/>
   				</fileset>
   				<libset dir="." libs="nxt,usb"/>				
 				<includepath>
 					<pathelement location="."/>
 				</includepath>
-  				<versioninfo refid="runjava"/>
+  				<versioninfo refid="runc"/>
   		</cc>
 	</target>
 	
-	<!-- make sendfile --> 
-	<target name="sendfile" description="makes sendfile utility">
+	<!-- make nxjflash --> 
+	<target name="nxjflash" description="makes nxjflash utility">
   		<cc subsystem="console" 
-  				outfile="sendfile"
+  				outfile="nxjflash"
   				objdir="." 
   				outtype="executable" 
   				debug="false"
@@ -103,13 +103,40 @@
   			    <compilerarg value="-ggdb"/>
   			    <compilerarg value="-D_NXT_LITTLE_ENDIAN"/>
   				<fileset dir=".">
-  					<include name="main_sendfile.c"/>
+  					<include name="main_nxjflash.c"/>
   				</fileset>
   				<libset dir="." libs="nxt,usb"/>				
 				<includepath>
 					<pathelement location="."/>
 				</includepath>
-  				<versioninfo refid="sendfile"/>
+  				<versioninfo refid="nxjflash"/>
+  		</cc>
+	</target>
+	
+	<!-- make jlibnxt --> 
+	<target name="jlibnxt" description="makes jlibnxt">
+  		<cc subsystem="console" 
+  				outfile="jlibnxt"
+  				objdir="." 
+  				outtype="shared" 
+  				debug="false"
+  			    exceptions="false"
+  			    rtti="true"
+  			    optimize="speed"
+  				name="gcc">
+  			    <compilerarg value="-Wall"/>
+  			    <compilerarg value="-std=gnu99"/>
+  			    <compilerarg value="-g"/>
+  			    <compilerarg value="-ggdb"/>
+  			    <compilerarg value="-D${endian}"/>
+  				<fileset dir=".">
+  					<include name="main_jlibnxt.c"/>
+  				</fileset>
+				<libset dir="." libs="nxt,usb"/>
+				<includepath>
+					<pathelement location="."/>
+				</includepath>
+  				<versioninfo refid="libnxt"/>
   		</cc>
 	</target>
 
