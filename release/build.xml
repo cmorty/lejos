@@ -97,6 +97,8 @@
 				<include name="classes/**/*package.html"/>
         		<include name="jtools/**/*.java"/>
 				<include name="pctools/**/*.java"/>
+				<exclude name="pctools/BatteryLevel.java"/>
+				<exclude name="pctools/GetFriendlyName.java"/>
 				<include name="pccomms/**/*.java"/>
       		</fileset>
 		</copy>
