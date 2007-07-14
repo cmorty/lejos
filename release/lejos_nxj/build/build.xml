@@ -25,7 +25,7 @@
 	</typedef>
 	
 	<!-- build the os dependent parts of the lejos distribution --> 
-	<target name="build" depends ="clean,libnxt, emulator, copy.binaries, clear" 
+	<target name="build" depends ="clean,libnxt, jbluez, emulator, copy.binaries, clear" 
 		description="build the os dependent parts of the lejos distribution">
 		<echo message="Done."/>
 	</target>
@@ -37,6 +37,9 @@
 		<move todir="${lejos.dist.bin}">
 			<fileset dir="${lejos.dist.bin}">
 				<include name="emu-*"/>	
+				<include name="nxjflash"/>
+				<include name="runc"/>
+				<include name="*.so"/>
 		      	<exclude name="*.bak"/>
 		    </fileset>
 		    <mapper type="glob" from="*" to="*.bak"/>
@@ -62,11 +65,19 @@
   		<ant antfile="${lejos.dist.src}/libnxt/build.xml" dir="${lejos.dist.src}/libnxt" inheritall="true" />
   	</target>
 	
+	<!-- builds jbluez -->
+  	<target name="jbluez" description="builds jbluez">
+  		<ant antfile="${lejos.dist.src}/jbluez/build.xml" dir="${lejos.dist.src}/jbluez" inheritall="true" />
+  	</target>
+	
 	<!-- copies the binaries -->
 	<target name="copy.binaries" description="copies runjava and emu-lejosrun">
 		<copy todir="${lejos.dist.bin}">
       		<fileset dir="${lejos.dist.src}/libnxt">
-        		<include name="runjava"/>
+        		<include name="runc"/>
+      			<include name="nxjflash"/>
+      			<include name="libjlibnxt.so"/>
+      			<include name="libjbluez.so"/>
       		</fileset>
 		</copy>
 		
