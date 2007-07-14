@@ -92,7 +92,7 @@ public class NXTCommBluecove implements NXTComm, DiscoveryListener  {
 		if (nxt.btResourceString == null ||
 			nxt.btResourceString.length() < 5 ||
 			!(nxt.btResourceString.substring(0,5).equals("btspp"))) {
-			nxt.btResourceString = "btspp://" + stripColons(nxt.btDeviceAddress) + ":1;authenticate=false;encncrypt=false";
+			nxt.btResourceString = "btspp://" + stripColons(nxt.btDeviceAddress) + ":1;authenticate=false;encrypt=false";
 		}
 		
 		try {
