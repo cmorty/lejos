@@ -77,6 +77,11 @@
         		<include name="runc"/>
       			<include name="nxjflash"/>
       			<include name="libjlibnxt.so"/>
+      		</fileset>
+		</copy>
+		
+		<copy todir="${lejos.dist.bin}">
+      		<fileset dir="${lejos.dist.src}/jbluez">>
       			<include name="libjbluez.so"/>
       		</fileset>
 		</copy>
