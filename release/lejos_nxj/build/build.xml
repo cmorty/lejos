@@ -81,7 +81,7 @@
 		</copy>
 		
 		<copy todir="${lejos.dist.bin}">
-      		<fileset dir="${lejos.dist.src}/jbluez">>
+      		<fileset dir="${lejos.dist.src}/jbluez">
       			<include name="libjbluez.so"/>
       		</fileset>
 		</copy>
