@@ -239,6 +239,13 @@ public class DataOutputStream extends OutputStream {
    public final int size() {
       return written;
    }
+   
+   public final void writeChars (String value) throws IOException
+   {
+	   int len = value.length();
+	   for (int i = 0; i < len; ++i)
+		   writeChar (value.charAt(i));
+   }
 }
    
   
