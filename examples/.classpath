@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="BTReceive/|BTSend/|BumperCar/|ColorDetector/|CompassTest/|ExceptionTest/|HelloWorld/|Line/|Listen/|MemoryTest/|PerformanceTest/|PilotTester/|SonicTest/|SpeedTest/|Subsumption1/|Subsumption2/|TiltTest/|Tune/|USBReceive/|USBSend/|View/|GraphicsSample/" kind="src" path=""/>
+	<classpathentry excluding="BTReceive/|BTSend/|BumperCar/|ColorDetector/|CompassTest/|ExceptionTest/|HelloWorld/|Line/|Listen/|MemoryTest/|PerformanceTest/|PilotTester/|SonicTest/|SpeedTest/|Subsumption1/|Subsumption2/|TiltTest/|Tune/|USBReceive/|USBSend/|View/|GraphicsSample/|SocketTest/|TimeTest/|SocketServer/" kind="src" path=""/>
 	<classpathentry kind="src" path="GraphicsSample"/>
 	<classpathentry kind="src" path="USBSend"/>
 	<classpathentry kind="src" path="USBReceive"/>
@@ -23,6 +23,9 @@
 	<classpathentry kind="src" path="View"/>
 	<classpathentry kind="src" path="Line"/>
 	<classpathentry kind="src" path="HelloWorld"/>
+	<classpathentry kind="src" path="SocketTest"/>
+	<classpathentry kind="src" path="TimeTest"/>
+	<classpathentry kind="src" path="SocketServer"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="/classes/lib/classes.jar"/>
 	<classpathentry kind="lib" path="/pccomms/lib/pccomm.jar"/>
