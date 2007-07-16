@@ -7,5 +7,6 @@
 	<classpathentry kind="lib" path="/jtools/3rdparty/lib/bcel-5.1.jar"/>
 	<classpathentry kind="lib" path="/jtools/3rdparty/lib/commons-cli-1.0.jar"/>
 	<classpathentry kind="lib" path="lib/pctools.jar"/>
+	<classpathentry kind="lib" path="/pccomms/3rdparty/lib/bluecove.jar"/>
 	<classpathentry kind="output" path=""/>
 </classpath>
