@@ -143,4 +143,20 @@ public class DataInputStream extends InputStream {
    public final double readDouble() throws IOException {
       return Double.longBitsToDouble(readLong());
    }*/
+   
+	public String readLine() throws IOException{
+		StringBuffer strb = new StringBuffer();
+		boolean endOfLine = false;
+		while(!endOfLine){
+			char c = readChar();
+			if(c=='\n'){endOfLine = true;}
+			else if(c==(char)-1){endOfLine = true;}
+			else{strb.append(c);}
+		}
+		return strb.toString();
+	}
+	
+	public void close() throws IOException {
+		in.close();
+	}
 }
