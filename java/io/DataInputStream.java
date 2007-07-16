@@ -8,7 +8,7 @@ public class DataInputStream extends InputStream {
     
    public DataInputStream(InputStream in)
    {
-      this.in = in;
+      this.in = in; 
    }
    
    
