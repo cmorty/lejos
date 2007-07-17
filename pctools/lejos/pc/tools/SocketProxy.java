@@ -51,8 +51,14 @@ public class SocketProxy {
 
 			inFromNXT = new DataInputStream(nxtComm.getInputStream());
 			outToNXT = new DataOutputStream(nxtComm.getOutputStream());
-
-		    newSocketConnection();
+			
+			// check to see if socket is a server or a client
+			boolean isServer = inFromNXT.readBoolean();
+			if(isServer){
+				newSocketServer();
+			}else{
+				newSocketConnection();
+			}
 		}
 		catch (UnknownHostException e) {e.printStackTrace();}
 		catch (IOException e) {e.printStackTrace();}
@@ -65,11 +71,13 @@ public class SocketProxy {
 	private void newSocketServer() throws IOException{
 		int port = inFromNXT.readInt();
 		serverSocket = new ServerSocket(port);
-		while(true){
+		boolean cmdMode = true;
+		while(cmdMode){
 			// wait for command from NXT
 			byte command = inFromNXT.readByte();
 			if(command == 1){
 				waitForConnection();
+				cmdMode = false;
 			}
 			// TODO support for other socket server functions
 		}
@@ -85,6 +93,7 @@ public class SocketProxy {
 
 			//	inform the NXT of the new Connection
 			outToNXT.writeBoolean(true);
+			outToNXT.flush();
 
 			DataInputStream inFromSocket = new DataInputStream(sock.getInputStream());
 			DataOutputStream outToSocket = new DataOutputStream(sock.getOutputStream());
@@ -93,7 +102,7 @@ public class SocketProxy {
 			new forward(sock, inFromSocket, outToNXT);
 
 			// listen for incoming data from NXT
-			new forward(sock, inFromNXT, outToSocket);
+			new forwardNXT(sock, inFromNXT, outToSocket);
 		}
 	}
 
