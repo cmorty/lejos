@@ -1,14 +1,8 @@
-
-
-
-
 package lejos.navigation;
 //import lejos.navigation.*;
 import lejos.nxt.CompassSensor;
 import lejos.nxt.SensorPort;
 import lejos.nxt.Motor;
-
-
 
 public class CompassPilot extends Pilot {
 	
@@ -41,6 +35,7 @@ public class CompassPilot extends Pilot {
 	public CompassPilot(SensorPort compassPort, float wheelDiameter,float trackWidth,Motor leftMotor, Motor rightMotor) {
 		this(compassPort, wheelDiameter, trackWidth, leftMotor, rightMotor, false);
 	}
+		
 /**
  * Allocates a CompasPilot object, and sets the physical parameters of the NXT robot. <br>
  *  Assumes  Motor.forward() causes the robot to move forward);
@@ -53,9 +48,38 @@ public class CompassPilot extends Pilot {
  * @param reverse  if true of motor.forward() drives the robot backwards
  */
 	public CompassPilot(SensorPort compassPort, float wheelDiameter,float trackWidth,Motor leftMotor, Motor rightMotor, boolean reverse) 
-	{
+	{	
+		this(new CompassSensor(compassPort), wheelDiameter, trackWidth, leftMotor, rightMotor, reverse);		
+	}
+	
+	/**
+	 * Allocates a CompasPilot object, and sets the physical parameters of the NXT robot. <br>
+	 *  Assumes  Motor.forward() causes the robot to move forward);
+	 * Parameters 
+	 * @param compass :  a compass sensor;
+	 * @param wheelDiameter Diameter of the tire, in any convenient units.  (The diameter in mm is usually printed on the tire). 
+	 * @param trackWidth Distance between center of right tire and center of left tire, in same units as wheelDiameter
+	 * @param leftMotor
+	 * @param rightMotor
+	 */
+	public CompassPilot(CompassSensor compass,  float wheelDiameter,float trackWidth,Motor leftMotor, Motor rightMotor) {
+		this(compass, wheelDiameter, trackWidth, leftMotor, rightMotor, false);
+	}
+	
+	/**
+	 * Allocates a CompasPilot object, and sets the physical parameters of the NXT robot. <br>
+	 *  Assumes  Motor.forward() causes the robot to move forward);
+	 * Parameters 
+	 * @param compass :  a compass sensor;
+	 * @param wheelDiameter Diameter of the tire, in any convenient units.  (The diameter in mm is usually printed on the tire). 
+	 * @param trackWidth Distance between center of right tire and center of left tire, in same units as wheelDiameter
+	 * @param leftMotor
+	 * @param rightMotor
+	 * @param reverse if true of motor.forward() drives the robot backwards
+	 */
+	public CompassPilot(CompassSensor compass,  float wheelDiameter,float trackWidth,Motor leftMotor, Motor rightMotor, boolean reverse) {
 		super(wheelDiameter, trackWidth, leftMotor, rightMotor, reverse);
-		this.compass = new CompassSensor(compassPort);
+		this.compass = compass;
 		_heading = (int)compass.getDegreesCartesian(); // Current compass direction = heading target
 		regulator.start();
 		regulator.setDaemon(true);
