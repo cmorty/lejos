@@ -3,7 +3,7 @@ package lejos.navigation;
 import lejos.nxt.Motor;
 
 /**
-* The TachoNavigator class can keep track of the robot position and the direction angle it faces; It uses a pilot object to control NXT robot movements.<br>
+* The TachoNavigator class can keep track of the robot position and the direction angle it faces; It uses a _pilot object to control NXT robot movements.<br>
 * The position and direction angle values are updated automatically when the movement command returns after the movement is complete and and after stop() command is issued.
 * However, some commands optionally return immediately, to permit sensor monitoring in the main thread.  It is then the programmers responsibility to 
 * call updatePosition() when the robot motion is completed.  All angles are in degrees, distances in the units used to specify robot dimensions.
@@ -17,7 +17,7 @@ public class TachoNavigator  implements Navigator
 	private float _x = 0;
 	private float _y = 0;
 	// The essential component
-	public Pilot pilot;
+	protected Pilot _pilot;
 	
 /**
  * set false whenever the robot moves,  set to true by updatePosition();
@@ -38,17 +38,17 @@ public class TachoNavigator  implements Navigator
 */
 	public TachoNavigator(float wheelDiameter, float trackWidth, Motor leftMotor, Motor rightMotor, boolean reverse) 
 		{
-			pilot = new Pilot(wheelDiameter,trackWidth,leftMotor, rightMotor,reverse);
+			_pilot = new Pilot(wheelDiameter,trackWidth,leftMotor, rightMotor,reverse);
 		}
 	
 	public TachoNavigator(float wheelDiameter, float trackWidth, Motor leftMotor, Motor rightMotor) 
 	{
-		pilot = new Pilot(wheelDiameter,trackWidth,leftMotor, rightMotor);
+		_pilot = new Pilot(wheelDiameter,trackWidth,leftMotor, rightMotor);
 	}
 
 	   
 	   public TachoNavigator(Pilot pilot) {
-	  	 this.pilot = pilot;
+	  	 _pilot = pilot;
 	   }
 	   
 	/**
@@ -64,6 +64,7 @@ public class TachoNavigator  implements Navigator
 	  this(wheelDiameter, driveLength, Motor.A, Motor.C);
 	}
 	
+    public Pilot getPilot(){ return _pilot;}
 /**
 * Returns the current x coordinate of the NXT.
 * @return float Present x coordinate.
@@ -78,19 +79,15 @@ public class TachoNavigator  implements Navigator
 	* Note: At present it will only give an updated reading when the NXT is stopped.
 	* @return float Present y coordinate.
 	*/
-	public float getY() {
-	  return _y;
-	}
-	
+	public float getY() { return _y;}
+	 
 	/**
 	* Returns the current angle the NXT robot is facing.
 	* Note: At present it will only give an updated reading when the NXT is stopped.
 	* @return float Angle in degrees.
 	*/
-	public float getAngle() 
-	{
-	  return _heading;
-	}
+	public float getAngle() { return _heading;} 
+
 /**
 *sets robot location (x,y) and direction angle
 *@param x  the x coordinate of the robot
@@ -108,7 +105,7 @@ public class TachoNavigator  implements Navigator
  */
 	public void setSpeed(int speed)
 	{
-		pilot.setSpeed(speed);
+		_pilot.setSpeed(speed);
 	}
 	
 	/**
@@ -118,8 +115,8 @@ public class TachoNavigator  implements Navigator
     public void forward() 
     {
 	  _updated = false;
-	  pilot.resetTachoCount();
-	  pilot.forward();
+	  _pilot.resetTachoCount();
+	  _pilot.forward();
     }
    
     /**
@@ -128,8 +125,8 @@ public class TachoNavigator  implements Navigator
 	public void backward() 
 	{
 	  _updated = false;
-  	  pilot.resetTachoCount();
-	  pilot.backward();
+  	  _pilot.resetTachoCount();
+	  _pilot.backward();
 	}
 	
 	/**
@@ -137,7 +134,7 @@ public class TachoNavigator  implements Navigator
 	 */
 	public void stop() 
 	{
-	   	pilot.stop();
+	   	_pilot.stop();
 		updatePosition();
 	}
 	
@@ -146,7 +143,7 @@ public class TachoNavigator  implements Navigator
 	 */
 	public boolean isMoving()
 	{
-		return pilot.isMoving();
+		return _pilot.isMoving();
 	}
 
 	/**
@@ -172,8 +169,8 @@ public class TachoNavigator  implements Navigator
 	public void travel(float distance,boolean immediateReturn) 
 	{
 		_updated = false;
-		pilot.resetTachoCount();
-		pilot.travel(distance,immediateReturn);
+		_pilot.resetTachoCount();
+		_pilot.travel(distance,immediateReturn);
 		if(!immediateReturn) updatePosition();
 	}
 
@@ -183,8 +180,8 @@ public class TachoNavigator  implements Navigator
 	public void rotateLeft()
 	{
 	  _updated = false;
-	  pilot.resetTachoCount();
-	  pilot.steer(200);
+	  _pilot.resetTachoCount();
+	  _pilot.steer(200);
 	}
   
 /**
@@ -193,8 +190,8 @@ public class TachoNavigator  implements Navigator
   public void rotateRight()
   {
   	  _updated = false;
-	  pilot.resetTachoCount();
-	  pilot.steer(-200);
+	  _pilot.resetTachoCount();
+	  _pilot.steer(-200);
   }
 
 	/**
@@ -218,8 +215,8 @@ public class TachoNavigator  implements Navigator
 	{
 	  _updated = false; 
       int turnAngle = Math.round(normalize(angle));
-      pilot.resetTachoCount();
-      pilot.rotate(turnAngle,immediateReturn);
+      _pilot.resetTachoCount();
+      _pilot.rotate(turnAngle,immediateReturn);
       if(!immediateReturn) updatePosition();
 	}
 
@@ -309,8 +306,8 @@ public class TachoNavigator  implements Navigator
 		if(_updated)return;// don't do it again
 		try{Thread.sleep(70);}
 		catch(InterruptedException e){}
-		int left = pilot.getLeftCount();//left wheel rotation angle
-		int right = pilot.getRightCount();
+		int left = _pilot.getLeftCount();//left wheel rotation angle
+		int right = _pilot.getRightCount();
 		if(left == 0 && right == 0)return; // no movement
 		int outsideRotation = 0;
 		int insideRotation = 0;
@@ -326,7 +323,7 @@ public class TachoNavigator  implements Navigator
 			insideRotation = right;
 			direction = -1; // turn to right
 		}
-		float turnAngle = direction*(outsideRotation-insideRotation)*pilot._wheelDiameter/(2*pilot._trackWidth);
+		float turnAngle = direction*(outsideRotation-insideRotation)*_pilot._wheelDiameter/(2*_pilot._trackWidth);
 		float ratio = 1.0f*insideRotation/outsideRotation;
 		float moveAngle = 0; // angle of displacement in robot coordinates, degrees
 		float projection = 0;  //angle to project displacement to world coordinates, in radians
@@ -335,13 +332,13 @@ public class TachoNavigator  implements Navigator
 		if(ratio>.95) // probably movement was intended to be straight
 		{
 			float avg = (insideRotation+outsideRotation)/2.0f; 
-			distance = avg/pilot._degPerDistance;
+			distance = avg/_pilot._degPerDistance;
 			projection = (float)Math.toRadians(_heading+turnAngle/2);
 			approx = true;
 		}
 		else
 		{ 
-			float turnRadius =pilot._trackWidth/(1 - ratio) -  pilot._trackWidth/2 ; // 
+			float turnRadius =_pilot._trackWidth/(1 - ratio) -  _pilot._trackWidth/2 ; // 
 			float radians = (float) Math.toRadians(turnAngle); // turnAngle in radians
 			float dx0 = turnRadius*(float)Math.sin(radians);  //displacement  in robot coordinates
 			float dy0 = turnRadius*(1 -(float) Math.cos(radians)); 
@@ -366,8 +363,8 @@ public class TachoNavigator  implements Navigator
 	public void turn(float radius)
 	{
 		_updated = false;
-		pilot.resetTachoCount();
-		pilot.steer(turnRate(radius));
+		_pilot.resetTachoCount();
+		_pilot.steer(turnRate(radius));
 	}
 
 	/**
@@ -393,8 +390,8 @@ public class TachoNavigator  implements Navigator
 	public void turn(float radius, int angle, boolean immediateReturn)
 	{
 		_updated = false;
-		pilot.resetTachoCount();
-		pilot.steer(turnRate(radius),angle,immediateReturn);
+		_pilot.resetTachoCount();
+		_pilot.steer(turnRate(radius),angle,immediateReturn);
 		if(!immediateReturn) updatePosition();
 	}
 
@@ -417,7 +414,7 @@ public class TachoNavigator  implements Navigator
 			direction = -1;
 			radius = -radius;
 		}
-		float ratio = (2*radius - pilot._trackWidth)/(2*radius+pilot._trackWidth);
+		float ratio = (2*radius - _pilot._trackWidth)/(2*radius+_pilot._trackWidth);
 		return Math.round(direction * 100*(1 - ratio));
 	}
 }
