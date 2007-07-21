@@ -3,8 +3,8 @@ package lejos.pc.comm;
 import java.io.*;
 
 public class NXTCommBTOutputStream extends OutputStream {
-	ByteArrayOutputStream baos;
-	NXTComm nxtComm;
+	private ByteArrayOutputStream baos;
+	private NXTComm nxtComm;
 	
 	public NXTCommBTOutputStream(NXTComm nxtComm) {
 		this.nxtComm = nxtComm;

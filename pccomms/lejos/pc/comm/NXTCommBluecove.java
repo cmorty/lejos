@@ -152,7 +152,14 @@ public class NXTCommBluecove implements NXTComm, DiscoveryListener  {
     }
     
     public byte [] read() throws IOException {
-    	return new byte[0];
+  	
+    	int lsb = is.read(); 
+       	int msb = is.read();
+    	if (lsb != 1 || msb != 0) throw new IOException("Packet more than 1 byte");  
+    	byte[] bb = new byte[1];   	
+    	bb[0] = (byte) is.read();
+    	
+    	return bb;
     }
     
     public void write(byte [] data) throws IOException {
@@ -190,7 +197,7 @@ public class NXTCommBluecove implements NXTComm, DiscoveryListener  {
 	}
 	
 	public InputStream getInputStream() {
-		return is;
+		return new NXTCommBTInputStream(this);
 	}
 	
 	public String stripColons(String s) {
