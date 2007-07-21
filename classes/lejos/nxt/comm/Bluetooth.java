@@ -1,5 +1,5 @@
 package lejos.nxt.comm;
-
+import java.util.*;
 
 /**
  * Support for Bluetooth communications.
@@ -224,6 +224,8 @@ public class Bluetooth {
 			receiveReply(reply,32);
 			
 			if (reply[0] != 0) {
+				//LCD.drawInt(reply[1],0, 2);
+				//LCD.refresh();
 				if (reply[1] == MSG_REQUEST_PIN_CODE) {
 					for(int i=0;i<7;i++) device[i] = reply[i+2];
 					msg[0] = Bluetooth.MSG_PIN_CODE;
@@ -265,6 +267,10 @@ public class Bluetooth {
 		return btc;
 	}
 	
+	/**
+	 * Called when Bluetooth starts up to get the friendly namr
+	 * of this device, as this cannot be done when a stream is open.
+	 */
 	private static byte[] retrieveFriendlyName() {
 		byte[] reply = new byte[32];
 		byte[] msg = new byte[1];
@@ -288,10 +294,18 @@ public class Bluetooth {
 		return name;
 	}
 	
+	/**
+	 * Get the friendly name of the local device
+	 * @return the friendly name
+	 */
 	public static byte [] getFriendlyName() {
 		return friendlyName;
 	}
 	
+	/**
+	 * Set the name of the local device
+	 * @param name the friendly name for the device
+	 */
 	public static void setFriendlyName(byte[] name) {
 		byte[] reply = new byte[32];
 		byte[] msg = new byte[32];
@@ -315,10 +329,18 @@ public class Bluetooth {
 		}
 	}
 	
+	/**
+	 * get the Bluetooth address of the local device
+	 * @return the local address
+	 */
 	public static byte[] getLocalAddress() {
 		return localAddr;
 	}
 	
+	/**
+	 * get the local address when Bluetooth starts up
+	 * as it cannot be retrivedwhen a stream is open.
+	 */
 	private static byte[] retrieveLocalAddress() {
 		byte[] reply = new byte[32];
 		byte[] msg = new byte[1];
@@ -340,6 +362,314 @@ public class Bluetooth {
 		}
 		
 		return address;
+	}
+	
+	/**
+	 * Connects to a remote device
+	 * 
+	 * @param remoteDevice remote device
+	 * @return BTConnection Object or null
+	 */
+	public static BTConnection connect(BTRemoteDevice remoteDevice) {
+		return connect(remoteDevice.getDeviceAddr());
+	}
+	
+	/**
+	 * Connects to a Device by it's Byte-Device-Address Array
+	 * 
+	 * @param device_addr byte-Array with device-Address
+	 * @return BTConnection Object or null
+	 */
+	public static BTConnection connect(byte[] device_addr) {
+
+		boolean cmdMode = true;
+		byte[] msg = new byte[32];
+		byte[] reply = new byte[32];
+		byte[] dummy = new byte[32];
+		BTConnection btc = null;
+		byte[] device = new byte[7]; // remote device 
+				
+		Bluetooth.btSetCmdMode(1);
+		Bluetooth.btStartADConverter();
+
+		// invoke BC4 Chip to connect
+		msg[0] = MSG_CONNECT;
+		for (int i = 0; i < 7; i++) {
+			msg[i + 1] = device_addr[i];
+		}
+		sendCommand(msg, 8);
+
+		// receive connection-result
+		while (cmdMode) {
+			receiveReply(reply, 32);
+			
+			if (reply[0] != 0) {
+				//LCD.drawInt(reply[1], 0, 2);
+				//LCD.refresh();
+				if (reply[1] == MSG_REQUEST_PIN_CODE) {
+					for(int i=0;i<7;i++) device[i] = reply[i+2];
+					msg[0] = Bluetooth.MSG_PIN_CODE;
+					for(int i=0;i<7;i++) msg[i+1] = device[i];
+					msg[8] = '1';
+					msg[9] = '2';
+					msg[10] = '3';
+					msg[11] = '4';
+					for(int i=0;i<12;i++) msg[i+12] = 0;
+					sendCommand(msg, 24);					
+				} else if (reply[1] == MSG_CONNECT_RESULT) {
+					try {
+						Thread.sleep(300);
+					} catch (InterruptedException ie) {
+					}
+					  
+					receiveReply(dummy, 32);
+					if (dummy[0] == 0) {
+						btc = new BTConnection(reply[3]);
+						msg[0] = MSG_OPEN_STREAM;
+						msg[1] = reply[3];
+						sendCommand(msg, 2);
+						try {
+							Thread.sleep(100);
+						} catch (InterruptedException ie) {
+						}
+						btSetCmdMode(0);
+						cmdMode = false;
+					}
+		        }
+			}
+		}
+		return btc;
+	}
+	
+	/**
+	 * The internal Chip has a list of already paired Devices. This Method returns a 
+	 * Vector-List which contains all the known Devices on the List. These need not be reachable. 
+	 * To connect to a "not-known"-Device, you should use the Inquiry-Prozess. 
+	 * The pairing-Process can also be done with the original Lego-Firmware. The List of known 
+	 * devices will not get lost, when installing the LeJOS Firmware. 
+	 * @return Vector with List of known Devices
+	 */
+	public static Vector getKnownDevicesList() {
+
+		boolean cmdMode = true;
+		byte[] msg = new byte[2];
+		byte[] reply = new byte[32];
+		byte[] device = new byte[7];
+		byte[] devclass = new byte[4];
+		Vector retVec = new Vector(1);
+		BTRemoteDevice curDevice;
+
+		Bluetooth.btSetCmdMode(1);
+		Bluetooth.btStartADConverter();
+
+		// invoke BC4 Chip to send the DumpList
+		msg[0] = MSG_DUMP_LIST;
+		sendCommand(msg, 1);
+
+		// receive DeviceList one by one
+		while (cmdMode) {
+			receiveReply(reply, 32);
+
+			if (reply[0] != 0) {
+
+				if (reply[1] == MSG_LIST_ITEM) {
+
+					// Get MAC-Address
+					for (int i = 0; i < 7; i++)
+						device[i] = reply[i + 2];
+					
+					// Get the friendly Name, it is terminated by Zero
+					char[] c_ar = new char[16];
+					int ci = 0;
+					for (; (ci < 16 && reply[ci + 9] != 0); ci++)
+						c_ar[ci] = (char) reply[ci + 9];
+
+					// Get Device-Class
+					for (int i = 0; i < 4; i++)
+						devclass[i] = reply[i + 25];
+					
+					// create BTRemoteDevice
+					
+					curDevice = new BTRemoteDevice(c_ar, ci, device, devclass);
+
+					// add the Element to the Vector List
+					retVec.addElement(curDevice);
+				}
+
+				if (reply[1] == MSG_LIST_DUMP_STOPPED) {
+					break;
+				}
+			}
+		}
+		return retVec;
+	}
+	
+	/**
+	 * Gets a Device of the BC4-Chips internal list of known Devices 
+	 * (those who have been paired before) into the BTDevice Object. 
+	 * @param fName Friendly-Name of the device
+	 * @return BTDevice Object or null, if not found.
+	 */
+	public static BTRemoteDevice getKnownDevice(String fName) {
+		BTRemoteDevice btd = null;
+		//look the name up in List of Known Devices
+		Vector devList = getKnownDevicesList();
+		if (devList.size() > 0) {
+			for (int i = 0; i < devList.size(); i++) {
+				btd = (BTRemoteDevice) devList.elementAt(i);
+				if (btd.getFriendlyName().equals(fName)) {
+					return btd; 
+				}
+			}
+		}
+		return btd;
+	}
+	
+	/**
+	 * Add device to known devices
+	 * @param d Remote Device
+	 * @return true iff add was successful
+	 */
+	public static boolean addDevice(BTRemoteDevice d) {
+		byte [] msg = new byte[28];
+		byte [] reply = new byte[32];
+		byte [] addr = d.getDeviceAddr();
+		String name = d.getFriendlyName();
+		byte[] cod = d.getDeviceClass();
+		msg[0] = MSG_ADD_DEVICE;
+		for(int i=0;i<7;i++) msg[i+1] = addr[i];
+		for(int i=0;i<name.length();i++)  msg[i+8] = (byte) name.charAt(i);
+		for(int i=0;i<4;i++) msg[i+24] = cod[i];
+		
+		sendCommand(msg,28);
+		
+		boolean added = false;
+		
+		while(!added) {
+			receiveReply(reply,32);
+			
+			if (reply[0] != 0 && reply[1] == MSG_LIST_RESULT) {
+				added = true;
+			}
+		}
+		
+		return reply[2] == 0x50;
+	}
+	
+	/**
+	 * Add device to known devices
+	 * @param d Remote Device
+	 * @return true iff add was successful
+	 */
+	public static boolean removeDevice(BTRemoteDevice d) {
+		byte [] msg = new byte[28];
+		byte [] reply = new byte[32];
+		byte [] addr = d.getDeviceAddr();
+
+		msg[0] = MSG_REMOVE_DEVICE;		
+		for(int i=0;i<7;i++) msg[i+1] = addr[i];
+		
+		sendCommand(msg,8);
+		
+		boolean removed = false;
+		
+		while(!removed) {
+			receiveReply(reply,32);
+			
+			if (reply[0] != 0 && reply[1] == MSG_LIST_RESULT) {
+				removed = true;
+			}
+		}
+		
+		return reply[2] == 0x50;
+	}
+	
+	public static Vector inquire(int maxDevices,  int timeout, byte[] cod) {
+		Vector retVec = new Vector();
+		byte[] msg = new byte[8];
+		byte[] reply = new byte[32];
+		byte[] device = new byte[7];
+		char[] name = new char[16];
+		int nameLen;
+		
+		msg[0] = MSG_BEGIN_INQUIRY;
+		msg[1] = (byte) maxDevices;
+		msg[2] = 0;
+		msg[3] = (byte) timeout;
+		for(int i=0;i<4;i++) msg[4+i] = cod[i];
+		
+		sendCommand(msg, 8);
+		
+		boolean stopped = false;
+		
+		while(!stopped) {
+			receiveReply(reply,32);
+			
+			if (reply[0] != 0) {
+				if (reply[1] == MSG_INQUIRY_STOPPED) stopped = true;
+				else if (reply[1] == MSG_INQUIRY_RESULT) {
+					for(int i=0;i<7;i++) device[i] = reply[2+i];
+					nameLen = 0;
+					for(int i=0;i<16 & reply[9+i] != 0;i++) {
+						name[i] = (char) reply[9+i];
+						nameLen++;
+					}
+					for(int i=0;i<4;i++) cod[i] = reply[25+i];
+
+					// add the Element to the Vector List
+					retVec.addElement(new BTRemoteDevice(name, nameLen, device, cod));
+				}
+				
+			}	
+		}
+		
+		// Fill in the names
+		
+		for (int i = 0; i < retVec.size(); i++) {
+			BTRemoteDevice btrd = ((BTRemoteDevice) retVec.elementAt(i));
+            String s = btrd.getFriendlyName();
+            if (s.length() == 0) {
+            	String nm = lookupName(btrd.getDeviceAddr());
+            	btrd.setFriendlyName(nm.toCharArray(),nm.length());
+            }
+		}
+		
+		return retVec;		
+	}
+	
+	/**
+	 * Look up the name of a device using its address
+	 * 
+	 * @param deviceAddr
+	 * @return friendly name of device
+	 */
+	public static String lookupName(byte [] deviceAddr) {
+		byte [] msg = new byte[8];
+		byte[] reply = new byte[32];
+		char[] name = new char[16];
+		
+		msg[0] = MSG_LOOKUP_NAME;	
+		for(int i=0;i<7;i++) msg[i+1] = deviceAddr[i];
+		
+		sendCommand(msg,8);
+		
+		while(true) {
+			receiveReply(reply,32);		
+			if (reply[0] != 0) {
+				if (reply[1] == MSG_LOOKUP_NAME_RESULT) {
+					int nameLen = 0;
+					for(int i=0;i<16 && reply[9+i] != 0;i++) {
+						nameLen++;
+						name[i] = (char) reply[9+i];
+					}
+					return new String(name,0,nameLen);
+
+				} else if (reply[1] == MSG_LOOKUP_NAME_FAILURE) 
+					break;	
+			}
+		}
+
+		return "";
 	}
 }
 
