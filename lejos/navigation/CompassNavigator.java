@@ -13,7 +13,7 @@ import lejos.nxt.*;
 public class CompassNavigator extends TachoNavigator 
 {
 
-	public CompassPilot compassPilot; //
+	private CompassPilot compassPilot; //
 	
 	/**
 	* Allocates a CompassNavigator objects and its  CompassPilot object and initializes it with the proper motors and dimensions.
@@ -37,7 +37,7 @@ public class CompassNavigator extends TachoNavigator
 	public CompassNavigator(SensorPort compassPort, float wheelDiameter, float trackWidth, Motor leftMotor, Motor rightMotor, boolean reverse) 
 	{
 		super(new CompassPilot( compassPort, wheelDiameter,trackWidth,leftMotor, rightMotor,reverse));
-		this.compassPilot = (CompassPilot) pilot;
+		compassPilot = (CompassPilot) _pilot;
 		_heading = getAngle();
 	}
 	
@@ -48,9 +48,16 @@ public class CompassNavigator extends TachoNavigator
 	public CompassNavigator(CompassPilot compassPilot) 
 	{
 		super(compassPilot);
-		this.compassPilot = (CompassPilot) pilot;
+		compassPilot = (CompassPilot) _pilot;
 		_heading = getAngle();
 	}
+    
+    /**
+     * returns the pilot of this navigator
+     * @return compass pilot
+     */
+    CompassPilot getCompassPilot(){return compassPilot;}
+
 /**
  * Robot rotates 360 degrees while calibrating the compass sensor  
  */	

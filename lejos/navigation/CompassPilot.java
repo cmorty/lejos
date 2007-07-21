@@ -6,7 +6,7 @@ import lejos.nxt.Motor;
 
 public class CompassPilot extends Pilot {
 	
-	public CompassSensor compass;
+	protected CompassSensor compass;
 	private  Regulator regulator = new Regulator(); // inner regulator for thread
 	private int _heading; // Heading to point robot
 	
@@ -84,7 +84,12 @@ public class CompassPilot extends Pilot {
 		regulator.start();
 		regulator.setDaemon(true);
 	}
-	
+    
+    /**
+     * return the compass 
+     * @return the compass
+     */	
+    public CompassSensor getCompass(){ return compass;}
 	/**
 	 * Returns the compass angle in degrees, Cartesian (increasing counter clockwise)
 	 */
