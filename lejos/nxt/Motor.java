@@ -22,7 +22,7 @@ import lejos.util.*;
  * Example:<p>
  * <code><pre>
  *   Motor.A.setSpeed(720);// 2 RPM
- *   Motor.C.setSpeed(7200);
+ *   Motor.C.setSpeed(720);
  *   Motor.A.forward();
  *   Motor.C.forward();
  *   Thread.sleep (1000);
