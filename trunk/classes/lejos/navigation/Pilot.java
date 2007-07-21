@@ -1,5 +1,5 @@
 package lejos.navigation;
-//import lejos.navigation.*;
+
 import lejos.nxt.Motor;
 
  
@@ -12,20 +12,20 @@ import lejos.nxt.Motor;
 * Uses the smoothAcceleration  property of Motors to improve motor symchronication
 *  Example:<p>
 * <code><pre>
-*	Pilot sc = new Pilot(2.1f,4.4f,Motor.A, Motor.C,true);
-*        sc.setSpeed(720);// 2 RPM
-*	sc.travel(12);
-*	sc.rotate(-90);
-*	sc.travel(-12,true);
-*	while(sc.isMoving())Thread.yield();
-*	sc.rotate(-90);
-*	sc.rotateTo(270);
-*	sc.steer(-50,180,true);
-*	while(sc.isMoving())Thread.yield();
-*	sc.steer(100);
+*	Pilot pilot = new Pilot(2.1f,4.4f,Motor.A, Motor.C,true);
+*   pilot.setSpeed(720);// 2 RPM
+*	pilot.travel(12);
+*	pilot.rotate(-90);
+*	pilot.travel(-12,true);
+*	while(pilot.isMoving())Thread.yield();
+*	pilot.rotate(-90);
+*	pilot.rotateTo(270);
+*	pilot.steer(-50,180,true);
+*	while(pilot.isMoving())Thread.yield();
+*	pilot.steer(100);
 *	try{Thread.sleep(1000);}
 *   catch(InterruptedException e){}
-*	sc.stop();
+*	pilot.stop();
 * </pre></code>
  **/
  
@@ -34,12 +34,12 @@ public class Pilot
 	/**
 	 *left motor
 	 */
-	public Motor _left;
+	protected Motor _left;
 	
 	/**
 	 * right motor
 	 */
-	public Motor _right;
+	protected Motor _right;
 	
 	/**
 	 * motor degrees per unit of travel
@@ -111,9 +111,21 @@ public class Pilot
 		else _parity = 1;
 	}
 	
-	/**
-	 *	returns tachoCount of left motor; Positive value means motor has moved the robot forward;
-	 */
+    /**
+     * returns left motor
+     * @return left motor
+     */
+    public Motor getLeft() { return _left;}
+    
+    /**
+     * returns right motor
+     * @return right motor
+     */  
+    public Motor getRight() {return _right;}
+    
+    /**
+     *  returns tachoCount of left motor; Positive value means motor has moved the robot forward;
+     */
 	public int getLeftCount(){ return _parity*_left.getTachoCount();}
 
 	/**
@@ -138,6 +150,12 @@ public class Pilot
 	 */
 	public float getTurnRatio(){ return _turnRatio;}
 	
+    /**
+     * return current speed setting
+     * @return current speed
+     */
+    public int getSpeed(){return _speed;}
+    
 	/**
 	 * Sets speed of both motors,  degrees/sec; also sets retulate speed true 
 	 */
