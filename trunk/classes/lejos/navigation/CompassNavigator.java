@@ -33,11 +33,16 @@ public class CompassNavigator extends TachoNavigator
 	{
 		this(compassPort, wheelDiameter,trackWidth,leftMotor, rightMotor, false);
 	}
-	
+		
 	public CompassNavigator(SensorPort compassPort, float wheelDiameter, float trackWidth, Motor leftMotor, Motor rightMotor, boolean reverse) 
 	{
-		super(new CompassPilot( compassPort, wheelDiameter,trackWidth,leftMotor, rightMotor,reverse));
-		compassPilot = (CompassPilot) _pilot;
+		this(new CompassSensor(compassPort), wheelDiameter,trackWidth,leftMotor, rightMotor,reverse);
+	}
+	
+	public CompassNavigator(CompassSensor compass, float wheelDiameter, float trackWidth, Motor leftMotor, Motor rightMotor, boolean reverse) 
+	{
+		super(new CompassPilot(compass, wheelDiameter,trackWidth,leftMotor, rightMotor,reverse));
+		this.compassPilot = (CompassPilot) _pilot;
 		_heading = getAngle();
 	}
 	
