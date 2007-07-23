@@ -110,6 +110,8 @@ To go into firmware update mode press the reset button (at the back of the NXT ,
 Your NXT will audibly tick when it is firmware update mode.
 <br/><br/>
 
+<p>To run nxjflash, open a command window, and type <em>nxjflash</em></p>
+
 <p><em>nxjflash</em> will write the Java VM and the leJOS NXJ start-up menu to the flash memory of your NXT. It will create an empty user flash area. When the flash procedure has finished, leJOS NXJ will start up and an empty menu will be displayed.
 </p>
 <p>You can switch the NXT off at any time, including when a program is running, by pressing the orange and dark gray buttons (ENTER + ESCAPE) together.To switch it back on just press the orange button. The leJOS NXJ start-up menu will be displayed.
@@ -220,8 +222,6 @@ initialized, when multiple threads use a class</li>
 <li>leJOS NXJ does not work on Windows Vista systems. There are possible circumventions for Vista 32-bit systems, but not for Vista 64-bit systems. This is due to limitations in libusb-win32 that the leJOS  NXJ Windows USB tools, including nxjflash, rely on
 </li>
 <li>Occasionally, after pressing the orange (ENTER) button to start leJOS NXJ, the LCD remains blank. If this occurs, and is not due to low batteries, it is necessary to shut down leJOS, by pressing the orange and dark gray buttons (ENTER + ESCAPE), and try again.
-</li>
-<li>Bluetooth on Windows is supported by the Bluecove open source library. The NXJ tools over Bluetooth and Java streams over Bluetooth both use this. It only works with the Micosoft Bluetooth stack, not the Widcomm stack. You must use a Bluetooth dongle that supports the Microsoft stack, and uninstall the Widcomm stack (or otherwise ensure that your dongle uses the Microsoft stack) . iCommand can still communicate with leJOS NXJ using the Widcomm stack.  
 </li>
 <li>When plugging in the USB cable, or starting leJOS NXJ with the cable plugged in, the keys on the NXT do not respond for several seconds. This particularly affects Windows systems, and may be dependent on the speed of the host PC.
 </li>
