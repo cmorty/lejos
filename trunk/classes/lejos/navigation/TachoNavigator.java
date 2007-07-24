@@ -8,6 +8,7 @@ import lejos.nxt.Motor;
 * However, some commands optionally return immediately, to permit sensor monitoring in the main thread.  It is then the programmers responsibility to 
 * call updatePosition() when the robot motion is completed.  All angles are in degrees, distances in the units used to specify robot dimensions.
 * As with pilot, the robot must be have two independently controlled drive wheels. 
+* The assumed initial position of the robot is at (0,0) and initial angle 0 i.e. pointing in the +X direction. 
 */
 
 public class TachoNavigator  implements Navigator
@@ -82,7 +83,7 @@ public class TachoNavigator  implements Navigator
 	public float getY() { return _y;}
 	 
 	/**
-	* Returns the current angle the NXT robot is facing.
+	* Returns the current angle the NXT robot is facing, relative to the +X axis direction; the +Y direction is 90 degrees.
 	* Note: At present it will only give an updated reading when the NXT is stopped.
 	* @return float Angle in degrees.
 	*/
@@ -92,7 +93,7 @@ public class TachoNavigator  implements Navigator
 *sets robot location (x,y) and direction angle
 *@param x  the x coordinate of the robot
 *@param y the y coordinate of the robot
-*@param directionAngle  the angle the robot is heading, measured from the x axis
+*@param directionAngle  the angle the robot is heading, measured from the x axis.  90 degrees is the +Y direction
 */	
 	public void setPosition(float x, float y, float directionAngle)
 	{
