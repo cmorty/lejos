@@ -180,7 +180,7 @@ public class LCD {
 			drawChar(strData[i], (x + i) * CELL_WIDTH, y, invert);
 		}
 	}
-
+	  	  	  
 	public static void drawChar(char c, int x, int y, boolean invert) {
 		for (int i = 0; i <= FONT_WIDTH; i++) {
 			int xChar = (x + i) / 4;
@@ -220,6 +220,18 @@ public class LCD {
 	 */
 	public static native void setDisplay(int[] buff);
 
+	  /**
+	   * Display an int on the LCD at specified x,y co-ordinate.
+	   */
+	  public static native void drawInt(int i, int x, int y);
+
+	  /**
+	   * Display an in on the LCD at x,y with leading spaces to occupy at least the number
+	   * of characters specified by the places parameter.
+	   */
+	  public static native void drawInt(int i, int places, int x, int y);
+
+	
 	
 	/* Draw stuff only on PC
 	public static void refresh() {
