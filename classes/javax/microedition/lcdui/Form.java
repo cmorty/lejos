@@ -1,6 +1,6 @@
 package javax.microedition.lcdui;
 
-import lejos.nxt.ArrayList;
+import java.util.ArrayList;
 
 /**
  * 

@@ -2,6 +2,7 @@ package javax.microedition.lcdui;
 
 import lejos.nxt.LCD;
 
+
 /**
  * Preliminary Graphics class for LCD Screen
  * @author Brian Bagnall
@@ -11,8 +12,8 @@ public class Graphics {
 	/** drawArc and fillArc accuracy parameter */
 	private static final int ARC_ACC = 5;
 
-	private static final byte HEIGHT = 64; // Pixels
-	private static final byte WIDTH = 100; // Pixels
+//	private static final byte HEIGHT = 64; // Pixels
+//	private static final byte WIDTH = 100; // Pixels
 
 	/* Public color definitions */
 	public static final int BLACK = 1;
@@ -22,12 +23,21 @@ public class Graphics {
 	public static final int SOLID 	= 0;
 	public static final int DOTTED 	= 2;
 
-	private int [] buff;
 	private int rgbColor = BLACK;
 	private int strokeStyle = SOLID;
 
-	public Graphics() {
-		 buff = new int[HEIGHT*WIDTH/32];
+	public Graphics() {}
+	
+	public int getWidth() {
+		return LCD.DISPLAY_WIDTH;
+	}
+	
+	public int getHeight() {
+		return 2 * LCD.DISPLAY_DEPTH;
+	}
+	
+	public int getCenteredX(String str) {
+		return (LCD.DISPLAY_CHAR_WIDTH - str.length()) / 2;
 	}
 		
 	/**
@@ -35,12 +45,7 @@ public class Graphics {
 	* setPixel() method is used later it will need color argument
 	*/
 	public void setPixel(int rgbColor, int x, int y) {
-		if(x<0||x>=WIDTH||y<0||y>=HEIGHT) return; // Test-Modify for speed
-		int xChar = x / 4;
-		int yChar = y / 8;
-		int index = yChar * 25 + xChar;
-		int specificBit = (y % 8) + ((x % 4) * 8);
-		buff[index] = buff[index] | (rgbColor << specificBit);
+		LCD.setPixel(rgbColor, x, y);
 	}
 
 	public void drawLine(int x0, int y0, int x1, int y1) {
@@ -101,12 +106,8 @@ public class Graphics {
 	private void drawArc(int x, int y, int width, int height, int startAngle, int arcAngle, 
 			int style, boolean fill) {
 		// Scale up width and height to create more accurate ellipse form
-		int xscale = (width < height) ? ARC_ACC : ((ARC_ACC * width + (width >> 1)) / 
-
-height);
-		int yscale = (width < height) ? ((ARC_ACC * height + (height >> 1)) / width) : 
-
-ARC_ACC;
+		int xscale = (width < height) ? ARC_ACC : ((ARC_ACC * width + (width >> 1)) / height);
+		int yscale = (width < height) ? ((ARC_ACC * height + (height >> 1)) / width) : ARC_ACC;
 		
 		// Calculate x, y center and radius from upper left corner
 		int x0 = x + (width >> 1);
@@ -153,7 +154,7 @@ ARC_ACC;
 		    
 		    // Calculate angle for partly circles / ellipses
 		    // NOTE: Below, (float) should not be needed. Not sure why Math.round() only accepts float.
-		    int tp = (int) Math.round((float)Math.toDegrees(Math.atan2(yc, xc)));
+		    int tp = (int) Math.round((float) Math.toDegrees(Math.atan2(yc, xc)));
 		    if (fill) {
 		    	/* TODO: Optimize more by drawing horizontal lines */
 		    	if (((90 - tp) >= startAngle) && ((90 - tp) <= endAngle))
@@ -193,9 +194,7 @@ ARC_ACC;
 		}
 	}
 
-	public void drawRoundRect(int x, int y, int width, int height, int arcWidth, int arcHeight) 
-
-{
+	public void drawRoundRect(int x, int y, int width, int height, int arcWidth, int arcHeight) {
 
 		int xc = x + (width/2);
 		int yc = y + (height/2);
@@ -269,9 +268,16 @@ ARC_ACC;
 				//setPixel(rgbColor, j, i);
  	}
 
-	
 	public void drawString(String str, int x, int y) {
-		LCD.drawString(str, x, y);
+		drawString(str, x, y, false);
+	}
+	
+	public void drawString(String str, int x, int y, boolean invert) {
+		LCD.drawString(str, x, y, invert);
+	}
+	
+	public void drawChar(char c, int x, int y, boolean invert) {
+		LCD.drawChar(c, x, y, invert);
 	}
 
 	public int getStrokeStyle() {
@@ -287,15 +293,106 @@ ARC_ACC;
 
 	// Temp for testing purposes until Canvas made.
 	public void refresh() {
-		LCD.setDisplay(buff);
-		LCD.refresh(); // Unsure if needed
+		LCD.setDisplay();
+		LCD.refresh();
 	}
 	
 	// Temp method for testing. Clears out graphics buffer
 	// and refreshes screen.
 	public void clear() {
-		for(int i=0;i<buff.length;i++)
-			buff[i] = 0;
-		refresh();
+		LCD.clearDisplay();
 	}
 }
+
+/*
+class LCD extends JPanel {
+	public static final int SCREEN_WIDTH = 100;
+	public static final int SCREEN_HEIGHT = 64;
+	public static final int SCREEN_SCALE = 4;
+
+	public static int [] screenBuf;
+	public Graphics nxjGraphics;
+	
+	// drawArc and fillArc parameters
+	int x = 10;
+	int y = 10;
+	int width = 80;
+	int height = 50;
+	int start = 0;
+	int angle = -135;
+	
+	public LCD() {
+		setBackground(Color.WHITE);
+		setPreferredSize(new Dimension(SCREEN_SCALE * SCREEN_WIDTH, 
+				SCREEN_SCALE * SCREEN_HEIGHT));
+
+		nxjGraphics = new Graphics();
+		nxjGraphics.setStrokeStyle(Graphics.DOTTED);
+		nxjGraphics.drawLine(0, 0, 100, 64);
+		nxjGraphics.fillArc(x, y, width, height, start, angle);
+		nxjGraphics.drawArc(10, 10, 20, 40, 0, 360);
+//		nxjGraphics.drawRoundRect(75, 5, 20, 10, 45, 45);
+		nxjGraphics.refresh();
+		repaint();
+	}
+
+	public static void drawString(String str, int x, int y) {}
+	public static void setDisplay(int [] buff) {
+		screenBuf = buff;
+	}
+	public static void refresh() {}
+	
+    public synchronized void paint(java.awt.Graphics g) {
+        int w = getSize().width;
+        int h = getSize().height;
+
+        java.awt.Graphics2D g2 = (java.awt.Graphics2D) g;
+        g2.setBackground(getBackground());
+        g2.clearRect(0, 0, w, h); 
+        
+        // Draw example image for verification
+        g2.setColor(Color.RED);
+        g2.fillArc(SCREEN_SCALE * x, SCREEN_SCALE * y, SCREEN_SCALE * width, 
+        		SCREEN_SCALE * height, start, angle);
+        g2.drawRect(300, 20, 80, 40);
+        g2.drawRoundRect(300, 20, 80, 40, 45, 30);
+
+        // Draw NXJ image
+        g2.setColor(Color.BLACK);
+        for (int xp = 0; xp < 100; xp++) {
+        	for (int yp = 0; yp < 64; yp++) {
+        		if (xp < 0 || xp >= 100 || yp < 0 || yp >= 64) continue;
+        		int xChar = xp / 4;
+        		int yChar = yp / 8;
+        		int index = yChar * 25 + xChar;
+        		int specificBit = (yp % 8) + ((xp % 4) * 8);
+        		if ((screenBuf[index] & (1 << specificBit)) != 0) {
+        			g2.drawRect(SCREEN_SCALE * xp, SCREEN_SCALE * yp, 
+        					SCREEN_SCALE, SCREEN_SCALE);
+        		}
+        	}
+        }        
+    }
+}
+
+class TestApp extends JFrame {
+	public TestApp() {
+		// End application when window is closed
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                System.exit(0);
+            }
+        });
+
+        setTitle("NXJ Grapics test app");
+		getContentPane().add(new LCD());
+	    pack();
+	    show();
+	}
+
+	public static void main(String[] args) {
+		new TestApp();
+	}
+}
+
+*/
