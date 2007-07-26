@@ -180,15 +180,15 @@ public class TextMenu
 	 */
 	private  void display()
 	{
-		if(_title != null)LCD.drawString(_title,0,_topRow-1);
+		if(_title != null)LCD.drawString(_title,0,_topRow-1, true);
 		for (int i = 0;i<_size;i++)
 		{
-			LCD.drawString(blank,0,i + _topRow);
+			LCD.drawString(blank,0,i + _topRow, false);
 			int indx = index(i);
 			if(_items[indx] !=null)
 			{
-				LCD.drawString(_items[indx],1,i + _topRow);
-				if(indx == _selectedIndex) LCD.drawString(_selChar,0,i + _topRow);
+				LCD.drawString(_items[indx],1,i + _topRow, false);
+				if(indx == _selectedIndex) LCD.drawString(_selChar,0,i + _topRow, false);
 			}
 		}
 		LCD.refresh();

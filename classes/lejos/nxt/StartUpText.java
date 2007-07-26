@@ -35,7 +35,7 @@ public class StartUpText {
 			usb.setMenu(menu);
 			bt.setMenu(menu);
 			LCD.clear();
-			LCD.drawString(title,6,0);
+			LCD.drawString(title,6,0, false);
 		    LCD.drawInt( (int)(Runtime.getRuntime().freeMemory()),0,0);
 			LCD.refresh();
 
@@ -43,7 +43,7 @@ public class StartUpText {
 		    
 		    if (selection >= 0) {
 				LCD.clear();
-				LCD.drawString(title,6,0);
+				LCD.drawString(title,6,0, false);
 			    LCD.drawInt( (int)(Runtime.getRuntime().freeMemory()),0,0);
 				LCD.refresh();
 				fileMenu.setTitle(fileNames[selection]);
@@ -75,7 +75,7 @@ class Indicators extends Thread
 			{
 			  millis = Battery.getVoltageMilliVolt() + 50;
 			  LCD.drawInt((millis - millis%1000)/1000,13,0);
-			  LCD.drawString(dot, 14, 0);
+			  LCD.drawString(dot, 14, 0, false);
 			  LCD.drawInt((millis% 1000)/100,15,0);
 			  LCD.refresh();
 			  Thread.sleep(1000);
