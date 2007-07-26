@@ -167,6 +167,10 @@ public class LCD {
 		nativeBuff[index] = nativeBuff[index] | (rgbColor << specificBit);
 	}
 
+	public static void drawString(String str, int x, int y) {
+		drawString(str, x, y);
+	}
+	
 	public static void drawString(String str, int x, int y, boolean invert) {
 		char [] strData = str.toCharArray();
 		for (int i = 0; (i < strData.length) && (x < DISPLAY_CHAR_WIDTH) 
