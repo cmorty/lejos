@@ -81,8 +81,8 @@ public class CompassPilot extends Pilot {
 		super(wheelDiameter, trackWidth, leftMotor, rightMotor, reverse);
 		this.compass = compass;
 		_heading = (int)compass.getDegreesCartesian(); // Current compass direction = heading target
-		regulator.start();
 		regulator.setDaemon(true);
+		regulator.start();
 	}
     
     /**

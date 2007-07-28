@@ -84,8 +84,8 @@ public class Motor extends BasicMotor implements TimerListener
   public Motor (MotorPort port)
   {
     _port = port;
-    regulator.start();
     regulator.setDaemon(true);
+    regulator.start();
     timer.start();
   }
    public int getStopAngle() { return (int)_stopAngle;}
