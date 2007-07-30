@@ -25,15 +25,15 @@ public class LCD {
 		/* 0x02 */ {0x3E, 0x6B, 0x5F, 0x6B, 0x3E},
 		/* 0x03 */ {0x0C, 0x1E, 0x3C, 0x1E, 0x0C},
 		/* 0x04 */ {0x08, 0x1C, 0x3E, 0x1C, 0x08},
-		/* 0x05 */ {0x18, 0x5E, 0x7E, 0x5E, 0x18},
+		/* 0x05 */ {0x08, 0x7c, 0x0e, 0x7c, 0x08}, /* SHIFT char */
 		/* 0x06 */ {0x18, 0x5C, 0x7E, 0x5C, 0x18},
 		/* 0x07 */ {0x3E, 0x36, 0x2A, 0x36, 0x3E},
-		/* 0x08 */ {0x3E, 0x36, 0x2A, 0x36, 0x3E},
+		/* 0x08 */ {0x08, 0x1c, 0x3e, 0x08, 0x08}, /* BACKSPACE char */
 		/* 0x09 */ {0x3E, 0x36, 0x2A, 0x36, 0x3E},
 		/* 0x0A */ {0x3E, 0x36, 0x2A, 0x36, 0x3E},
 		/* 0x0B */ {0x3E, 0x36, 0x2A, 0x36, 0x3E},
 		/* 0x0C */ {0x3E, 0x36, 0x2A, 0x36, 0x3E},
-		/* 0x0D */ {0x3E, 0x36, 0x2A, 0x36, 0x3E},
+		/* 0x0D */ {0x10, 0x38, 0x7c, 0x10, 0x1e}, /* ENTER char */
 		/* 0x0E */ {0x3E, 0x36, 0x2A, 0x36, 0x3E},
 		/* 0x0F */ {0x3E, 0x36, 0x2A, 0x36, 0x3E},
 		/* 0x10 */ {0x3E, 0x36, 0x2A, 0x36, 0x3E},
@@ -150,13 +150,7 @@ public class LCD {
 		/* 0x7F */ {0x3E, 0x36, 0x2A, 0x36, 0x3E},
 	};
 
-	private static int [] nativeBuff = new int[200];
-	public static LCD lcd;
-
-	public LCD() {
-		// Store static reference for calling from Graphics
-		lcd = this;
-	}
+	private static int [] displayBuf = new int[200];
 
 	public static void setPixel(int rgbColor, int x, int y) {
 		if (x < 0 || x >= SCREEN_WIDTH || y < 0 || y >= SCREEN_HEIGHT) return; // Test-Modify for speed
@@ -164,56 +158,70 @@ public class LCD {
 		int yChar = y / 8;
 		int index = yChar * 25 + xChar;
 		int specificBit = (y % 8) + ((x % 4) * 8);
-		nativeBuff[index] = nativeBuff[index] | (rgbColor << specificBit);
+		displayBuf[index] = displayBuf[index] | (rgbColor << specificBit);
 	}
 
-	public static void drawString(String str, int x, int y) {
-		drawString(str, x, y);
-	}
-	
 	public static void drawString(String str, int x, int y, boolean invert) {
 		char [] strData = str.toCharArray();
 		for (int i = 0; (i < strData.length) && (x < DISPLAY_CHAR_WIDTH) 
 				&& (y < DISPLAY_CHAR_DEPTH); i++) {
-			if (strData[i] == '\n') {
-				// Continue on next line
-				y++;
-				continue;
-			}
-
 			drawChar(strData[i], (x + i) * CELL_WIDTH, y, invert);
 		}
 	}
-	  	  	  
+
 	public static void drawChar(char c, int x, int y, boolean invert) {
 		for (int i = 0; i <= FONT_WIDTH; i++) {
 			int xChar = (x + i) / 4;
 			int index = y * 25 + xChar;
 			
 			if (i < FONT_WIDTH) {
-				nativeBuff[index] = nativeBuff[index] | ((invert ? (font[c][i] ^0xFF) : font[c][i]) << (((x + i) % 4) * 8));
+				// Clear buffer before writing chars
+				displayBuf[index] &= ~(0xFF << (((x + i) % 4) * 8));
+				displayBuf[index] |= ((invert ? (font[c][i] ^0xFF) : font[c][i]) << (((x + i) % 4) * 8));
 			} else if (invert) {
-				nativeBuff[index] = nativeBuff[index] | (0xFF << (((x + i) % 4) * 8));
+				displayBuf[index] &= ~(0xFF << (((x + i) % 4) * 8));
+				displayBuf[index] |= (0xFF << (((x + i) % 4) * 8));
 			}
 		}
 	}
+	
+	public static void drawPixels(byte b, int x, int y, boolean invert) {
+		int index = ((y / 8) * 25) + (x / 4);
+		displayBuf[index] |= (((invert ? (b ^ 0xFF) : b) & 0xFF) << ((x % 4) * 8));
+	}
 
 	public static void clearDisplay() {
-		for (int i = 0; i < nativeBuff.length; i++) {
-			nativeBuff[i] = 0;
+		for (int i = 0; i < displayBuf.length; i++) {
+			displayBuf[i] = 0;
 		}
 		clear();
 	}
 	
 	public static void setDisplay() {
-		setDisplay(nativeBuff);
+		setDisplay(displayBuf);
 	}
+
+	/**
+	 * Display a string on the LCD at specified x,y co-ordinate.
+	 */
+	public static native void drawString(String str, int x, int y);
+
+	/**
+	 * Display an int on the LCD at specified x,y co-ordinate.
+	 */
+	public static native void drawInt(int i, int x, int y);
+
+	/**
+	 * Display an in on the LCD at x,y with leading spaces to occupy at least the number
+	 * of characters specified by the places parameter.
+	 */
+	public static native void drawInt(int i, int places, int x, int y);
 
 	/**
 	 * Update the display.
 	 */
 	public static native void refresh();
-
+	  
 	/**
 	 * Clear the display.
 	 */
@@ -223,45 +231,4 @@ public class LCD {
 	 * Write graphics from a Java buffer to the display.
 	 */
 	public static native void setDisplay(int[] buff);
-
-	  /**
-	   * Display an int on the LCD at specified x,y co-ordinate.
-	   */
-	  public static native void drawInt(int i, int x, int y);
-
-	  /**
-	   * Display an in on the LCD at x,y with leading spaces to occupy at least the number
-	   * of characters specified by the places parameter.
-	   */
-	  public static native void drawInt(int i, int places, int x, int y);
-
-	
-	
-	/* Draw stuff only on PC
-	public static void refresh() {
-		lcd.repaint();
-	}
-	
-    public synchronized void paint(java.awt.Graphics g) {
-        int w = getSize().width;
-        int h = getSize().height;
-
-        java.awt.Graphics2D g2 = (java.awt.Graphics2D) g;
-        g2.setBackground(getBackground());
-        g2.clearRect(0, 0, w, h); 
-
-        // Draw NXJ screen buffer contents
-        g2.setColor(Color.BLACK);
-        for (int xp = 0; xp < DISPLAY_WIDTH; xp++) {
-        	for (int yp = 0; yp < DISPLAY_DEPTH; yp++) {
-        		for (int pixel = 0; pixel < 8; pixel++) {
-        			if ((displayBuffer[yp][xp] & (0x80 >> pixel)) != 0) {        				
-        				g2.fillRect(SCREEN_SCALE * xp, SCREEN_SCALE * (yp * 8 + 7 - pixel), 
-        						SCREEN_SCALE, SCREEN_SCALE);
-        			}
-        		}
-        	}
-        }
-    } */
-
 }

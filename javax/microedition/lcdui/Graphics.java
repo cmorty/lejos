@@ -12,9 +12,6 @@ public class Graphics {
 	/** drawArc and fillArc accuracy parameter */
 	private static final int ARC_ACC = 5;
 
-//	private static final byte HEIGHT = 64; // Pixels
-//	private static final byte WIDTH = 100; // Pixels
-
 	/* Public color definitions */
 	public static final int BLACK = 1;
 	public static final int WHITE = 0;
@@ -278,6 +275,20 @@ public class Graphics {
 	
 	public void drawChar(char c, int x, int y, boolean invert) {
 		LCD.drawChar(c, x, y, invert);
+	}
+	
+	public void drawImage(Image img, int x, int y, boolean invert) {
+		if (img == null) {
+			return;
+		}
+		
+		byte[] imgData = img.getData();
+		for (int iy = y; iy < (y + img.getHeight()); iy += 8) {
+			int yOffset = ((iy - y) / 8) * img.getWidth();
+			for (int ix = x; ix < (x + img.getWidth()); ix++) {
+				LCD.drawPixels(imgData[yOffset + (ix - x)], ix, iy, invert);
+			}
+		}
 	}
 
 	public int getStrokeStyle() {

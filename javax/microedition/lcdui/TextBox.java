@@ -9,18 +9,24 @@ public class TextBox extends Screen {
 			{'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'},
 			{'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 8},
 			{5, 'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', 13},
-			{16, 17, 18, 19, ' ', ' ', '-', '!', '.', 13},
+			{' ', ' ', ' ', ' ', ' ', ' ', '-', '!', '.', ' '},
 			{'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'},
 			{'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 8},
 			{5, 'Z', 'X', 'C', 'V', 'B', 'N', 'M', ';', 13},
-			{16, 17, 18, 19, ' ', ' ', '-', '!', '.', 13},
+			{' ', ' ', ' ', ' ', ' ', ' ', '-', '!', '.', ' '},
 			{'(', ')', '"', '+', '*', '1', '2', '3', '@', '_'},
 			{'<', '>', '\'', '-', '/', '4', '5', '6', '#', 8},
-			{'[', ']', '^', '|', '=', '7', '8', '9', ';', 13},
-			{16, 17, 18, '%', '&', '$', '0', '.', '.', 13},
+			{'[', ']', '^', '|', '=', '7', '8', '9', '~', 13},
+			{' ', ' ', ' ', ' ', ' ', ' ', '0', '%', '&', '$'},
 	};
 
-	private String title;
+	private final Image digits = new Image(8, 8, new byte[] {
+		(byte) 0x02, (byte) 0x1f, (byte) 0x64, (byte) 0x52, 
+		(byte) 0x4c, (byte) 0xa8, (byte) 0xa8, (byte) 0x50});
+	private final Image chars = new Image(8, 8, new byte[] {
+		(byte) 0x0e, (byte) 0x05, (byte) 0x0e, (byte) 0x7c, 
+		(byte) 0x54, (byte) 0x68, (byte) 0x90, (byte) 0x90});
+
 	private String text;
 	private int maxSize;
 	private int constraints;
@@ -38,8 +44,26 @@ public class TextBox extends Screen {
 		this.constraints = constraints;
 	}
 	
+	public void setText(String text) {
+		this.text = text;
+
+		char[] caText = text.toCharArray();
+		for (int i = 0; (i < caText.length) && (i < inputText.length); i++) {
+			inputText[i] = caText[i];
+		}
+		inputIdx = caText.length;
+	}
+	
 	public String getText() {
 		return text;
+	}
+	
+	public void setMaxSize(int maxSize) {
+		this.maxSize = maxSize;
+	}
+	
+	public void setConstraints(int constraints) {
+		this.constraints = constraints;
 	}
 
 	protected void keyPressed(int keyCode) {
@@ -55,11 +79,13 @@ public class TextBox extends Screen {
 		} else if (keyCode == KEY_ENTER) {
 			if ((xSel == 0) && (ySel == 2) && ((kSel == 0) || (kSel == 4))) {
 				kSel = (kSel == 4) ? 0 : 4;
-			} else if ((xSel == 1) && (ySel == 3)) {
+			} else if ((xSel == 0) && (ySel == 3)) {
 				kSel = (kSel == 8) ? 0 : 8;
 			} else if ((xSel == 9) && (ySel == 1)) {
 				// Backspace pressed
-				inputText[--inputIdx] = '\0';
+				if (inputIdx > 0) {
+					inputText[--inputIdx] = '\0';
+				}
 			} else if ((xSel == 9) && (ySel == 2)) {
 				// Enter pressed: store string and return
 				text = new String(inputText, 0, inputIdx);
@@ -85,8 +111,9 @@ public class TextBox extends Screen {
 	}
 	
 	public void paint(Graphics g) {
-		g.clear();
-		g.drawString(title, 0, 1);
+		if (title != null) {
+			g.drawString(title, 0, 1);
+		}
 		
 		// Draw input string per character
 		for (int i = 0; (i < inputIdx) && (inputText[i] > '\0'); i++) {
@@ -107,13 +134,16 @@ public class TextBox extends Screen {
 		g.drawLine(70, 32, 70, 99);
 		g.drawLine(80, 32, 80, 99);
 		g.drawLine(90, 32, 90, 99);
-		
+
 		// Draw keyboard selection
 		for (int x = 0; x < 10; x++) {
 			for (int y = 0; y < 4; y++) {
 				g.drawChar(keyboard[kSel + y][x], (x * 10) + 2, y + 4, ((x == xSel) && (y == ySel)));
 			}
 		}
+		
+		// Draw character / digit switch image
+		g.drawImage((kSel == 8) ? chars : digits, 0, 56, (xSel == 0) && (ySel == 3));
 	}
 	
 	private boolean checkConstraints() {

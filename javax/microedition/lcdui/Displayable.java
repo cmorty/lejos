@@ -17,6 +17,7 @@ public class Displayable {
 	protected ArrayList commands = new ArrayList();
 	protected CommandListener cmdListener;
 
+	protected Ticker ticker;
 	protected String title;
 	protected int height;
 	protected int width;
@@ -26,8 +27,12 @@ public class Displayable {
 		return height;
 	}
 	
-	public int getTicker() {
-		return 0;
+	public void setTicker(Ticker ticker) {
+		this.ticker = ticker;
+	}
+
+	public Ticker getTicker() {
+		return ticker;
 	}
 	
 	public String getTitle() {
@@ -77,7 +82,11 @@ public class Displayable {
 		return paintRequest;
 	}
 	
-	protected void repaint() {
+	public void clearPaintRequest() {
+		paintRequest = false;
+	}
+	
+	public void repaint() {
 		paintRequest = true;
 	}
 }
