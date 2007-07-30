@@ -24,6 +24,31 @@ public class Gauge extends Item {
 		}
 	}
 	
+	public int getMaxValue() {
+		return maxValue;
+	}
+	
+	public void setMaxValue(int maxValue) {
+		this.maxValue = maxValue;
+	}
+	
+	public int getValue() {
+		return curValue;
+	}
+	
+	public void setValue(int value) {
+		this.curValue = value;
+		
+		// Check value bounds
+		if (curValue < 0) {
+			curValue = 0;
+		} else if (curValue > maxValue) {
+			curValue = maxValue;
+		}
+		
+		repaint();
+	}
+	
 	protected void keyPressed(int keyCode) {
 		if (keyCode == Screen.KEY_RIGHT) {
 			if (interactive && (curValue < maxValue)) {
@@ -36,9 +61,7 @@ public class Gauge extends Item {
 			}
 			repaint();
 		} else if ((keyCode == Screen.KEY_BACK) || (keyCode == Screen.KEY_ENTER)) {
-			for (int i = 0; i < commands.size(); i++) {
-				callCommandListener();
-			}
+			notifyStateChanged();
 		}
 	}
 

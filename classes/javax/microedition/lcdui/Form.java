@@ -6,7 +6,8 @@ import java.util.ArrayList;
  * 
  * @author Andre Nijholt
  */
-public class Form extends Screen {
+public class Form extends Screen implements CommandListener {
+	private static final Command EDIT_COMMAND = new Command(1, Command.SCREEN, 0);
 	private ItemStateListener itemStateListener;
 	
 	private ArrayList items = new ArrayList();
@@ -15,8 +16,13 @@ public class Form extends Screen {
 	private int height;
 	private int width;
 	
+	private TextBox editBox;
+	
 	public Form(String title) {
 		this.title = title;
+		editBox = new TextBox(null, null, 0, TextField.ANY);
+		editBox.setCommandListener(this);
+		editBox.addCommand(EDIT_COMMAND);
 	}
 	
 	public Form(String title, Item[] items) {
@@ -78,11 +84,9 @@ public class Form extends Screen {
 	}
 
 	protected void callItemStateListener() {
-		for (int i = 0; (i < items.size()) && (itemStateListener != null); i++) {
-			Object o = items.get(i);
-			if (o instanceof Item) {
-				itemStateListener.itemStateChanged((Item) o);
-			}
+		Object o = items.get(curItemIdx);
+		if ((itemStateListener != null) && (o instanceof Item)) {
+			itemStateListener.itemStateChanged((Item) o);
 		}
 	}
 
@@ -97,9 +101,10 @@ public class Form extends Screen {
 				Object o = items.get(curItemIdx);
 				if (o instanceof TextField) {
 					// Update currently selected TextField until keyboard enter pressed
-					((Item) items.get(curItemIdx)).keyPressed(keyCode);					
+					editBox.keyPressed(keyCode);
 				} else {
-					// Leave current selection
+					// Notify item changed and leave current selection
+					callItemStateListener();
 					selectedItem = false;
 				}
 			}				
@@ -136,39 +141,138 @@ public class Form extends Screen {
 					callCommandListener();
 				}
 			} else if (keyCode == Screen.KEY_ENTER) {
-				selectedItem = true;		
+				Object o = items.get(curItemIdx);
+				if (o instanceof TextField) {
+					// Show text box for editing
+					editBox.setTitle(((TextField) o).getLabel());
+					editBox.setText(((TextField) o).getText());
+					editBox.setMaxSize(((TextField) o).getMaxSize());
+					editBox.setConstraints(((TextField) o).getConstraints());
+					Display.getDisplay().setCurrent(editBox);
+				} else {
+					// Set current selection
+					selectedItem = true;
+				}
 			}
 		}
 		repaint();
 	}
 
+	public void commandAction(Command c, Displayable d) {
+		if ((c == EDIT_COMMAND) && (d == editBox)) {
+			// Update textfield and return to form display
+			TextField tf = (TextField) items.get(curItemIdx);
+			tf.setText(editBox.getText());
+			callItemStateListener();
+			Display.getDisplay().setCurrent(this);
+		}
+	}
+
 	public void paint(Graphics g) {
 		int curX = 0;
 		int curY = 0;
-		int curWidth = 100;
-		int curHeight = 24;
+		int curWidth;
+		int curHeight;
 
-		g.clear();
+		ChoiceGroup activePopup = null;
+		int popupX = 0;
+		int popupY = 0;
+
+		// Draw title on entire line
+		if (title != null) {
+			g.drawString(title, 0, 0);
+			curY += Display.CHAR_HEIGHT;
+		}
+		
+		// Draw all items
 		for (int i = 0; i < items.size(); i++) {
+			// Calculate position and size for current item
+			curWidth = getItemWidth(i);
+			curHeight = getItemHeight(i);
+			if (((curX + curWidth) < Display.SCREEN_WIDTH)
+					&& ((curX + curWidth + getItemWidth(i + 1)) > Display.SCREEN_WIDTH)) {
+				// Next item doesn't fit on current line: allow entire line for current item
+				curWidth = Display.SCREEN_WIDTH - curX;
+			}
+
+			// Draw current item
 			Object o = items.get(i);
 			if (o instanceof Image) {
-				
+				g.drawImage((Image) o, curX, curY, false);
 			} else if (o instanceof String) {
-				
+				g.drawString(((String) o), curX / Display.CHAR_WIDTH, curY / Display.CHAR_HEIGHT);
 			} else if (o instanceof Item) {
-				Item item = (Item) o;
+				((Item) o).paint(g, curX, curY, curWidth, curHeight, (i == curItemIdx));
 				
-				curWidth = item.getMinimumWidth();
-				if (curWidth > (Display.SCREEN_WIDTH >> 1)) {
-					curWidth = Display.SCREEN_WIDTH;
+				if (selectedItem && (i == curItemIdx) && (o instanceof ChoiceGroup)
+						&& (((ChoiceGroup) o).choiceType == Choice.POPUP)) {
+					// Draw popup window again after all items drawn
+					activePopup = (ChoiceGroup) o;
+					popupX = curX;
+					popupY = curY;
 				}
-				curHeight = item.getMinimumHeight();
-				item.paint(g, curX, curY, curWidth, curHeight, (i == curItemIdx));
-
-				// Start on next line
-				curY += (((curHeight + Display.CHAR_HEIGHT - 1) / Display.CHAR_HEIGHT)) * Display.CHAR_HEIGHT;
-				curX = 0; // TODO
+			}
+			
+			if ((curX + curWidth) < Display.SCREEN_WIDTH) {
+				// Draw next item on current line
+				curX += curWidth;
+				if (curHeight > Display.CHAR_HEIGHT) {
+					curY += (curHeight - Display.CHAR_HEIGHT);
+				}
+			} else {
+				// Start new line and draw item
+				curX = 0;
+				curY += curHeight;
 			}
 		}
+		
+		// Draw popup menu above currently drawn items
+		if (activePopup != null) {
+			int popupHeight = ((activePopup.label != null) ? Display.CHAR_HEIGHT : 0)
+				+ (activePopup.size() * Display.CHAR_HEIGHT);
+			if ((popupY + popupHeight) > Display.SCREEN_HEIGHT) {
+				popupHeight = Display.SCREEN_HEIGHT - popupY;
+			}
+			activePopup.paint(g, popupX, popupY, activePopup.getMinimumWidth(), 
+					popupHeight, true);
+		}
+	}
+	
+	private int getItemWidth(int itemIdx) {
+		if (itemIdx >= items.size()) {
+			return 0;
+		}
+		
+		Object o = items.get(itemIdx);
+		if (o instanceof Image) {
+			return ((Image) o).getWidth();
+		} else if (o instanceof String) {
+			return ((String) o).length() * Display.CHAR_WIDTH;
+		} else if (o instanceof Item) {
+			return Math.max(((Item) o).getMinimumWidth(), ((Item) o).getPreferredWidth());
+		}
+
+		return 0;
+	}
+
+	private int getItemHeight(int itemIdx) {
+		if (itemIdx >= items.size()) {
+			return 0;
+		}
+		
+		Object o = items.get(itemIdx);
+		int height = 0;
+		if (o instanceof Image) {
+			height = ((Image) o).getHeight();
+		} else if (o instanceof String) {
+			// Always single line string
+			height = Display.CHAR_HEIGHT;
+		} else if (o instanceof Item) {
+			height = Math.max(((Item) o).getMinimumHeight(), ((Item) o).getPreferredHeight());
+		}
+
+		// Round to multiple of line height
+		height = (((height + Display.CHAR_HEIGHT - 1) / Display.CHAR_HEIGHT)) * Display.CHAR_HEIGHT;
+		return height;
 	}
 }

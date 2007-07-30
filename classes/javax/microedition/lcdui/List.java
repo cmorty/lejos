@@ -7,57 +7,78 @@ import java.util.ArrayList;
  * @author Andre Nijholt
  */
 public class List extends Screen implements Choice {
-	private static final int MAX_NOOF_SCROLL_LINES = 5;
-	
 	/** Default command for implicit lists */
 	private final Command SELECT_COMMAND = new Command(0, Command.SCREEN, 0);
 
 	protected int listType;
 	protected ArrayList listItems;
-	private int fitPolicy;
+//	private int fitPolicy;
 	
 	/** Scrolling administration */
 	private int scrollFirst = 0;
 	private int scrollCurr 	= 0;
-	private int scrollLast 	= MAX_NOOF_SCROLL_LINES;
+	private int scrollLast 	= 0;
+	private boolean scrollWrap = true;
 	
 	public List(String title, int listType) {
+		if (listType == Choice.POPUP) {
+			// Type POPUP not allowed
+			throw new IllegalArgumentException();
+		}
 		this.title = title;
 		this.listType = listType;
 		listItems = new ArrayList();
 	}
 	
-	List(String title, int listType, String[] stringElements, Image[] imageElements) {
+	public List(String title, int listType, String[] stringElements, Image[] imageElements) {
+		if (listType == Choice.POPUP) {
+			// Type POPUP not allowed
+			throw new IllegalArgumentException();
+		}
 		this.title = title;
 		this.listType = listType;
 
 		listItems = new ArrayList(stringElements.length);
 		for (int i = 0; i < stringElements.length; i++) {
 			listItems.add(new ListItem(stringElements[i], imageElements[i]));
+			scrollLast++;
 		}
 	}
 
 	public int append(String stringPart, Image imagePart) {
 		listItems.add(new ListItem(stringPart, imagePart));
+		scrollLast++;
 		return listItems.size();
 	}
 	
 	public void delete(int elementNum) {
+		scrollLast--;
 		listItems.remove(elementNum);
 	}
 	
 	public void deleteAll() {
+		scrollLast = 0;
 		listItems.clear();
 	}
 
-	public int getFitPolicy() {
-		return fitPolicy;
-	}
-	
-	public Font getFont(int elementNum) {
-		return ((ListItem) listItems.get(elementNum)).font;
-	}
-	
+// TODO: FitPolicy currently not supported: no wrapping allowed
+//	public int getFitPolicy() {
+//		return fitPolicy;
+//	}
+//	
+//    public void setFitPolicy(int fitPolicy) {
+//    	this.fitPolicy = fitPolicy;
+//    }
+
+// TODO: Multiple fonts currently not supported	
+//	public Font getFont(int elementNum) {
+//		return ((ListItem) listItems.get(elementNum)).font;
+//	}
+//	
+//    public void setFont(int elementNum, Font font) {
+//    	((ListItem) listItems.get(elementNum)).font = font;
+//    } 
+
 	public Image getImage(int elementNum) {
 		return ((ListItem) listItems.get(elementNum)).img;
 	}
@@ -96,14 +117,10 @@ public class List extends Screen implements Choice {
 		listItems.set(elementNum, new ListItem(stringPart, imagePart));
 	}
 	
-    public void setFitPolicy(int fitPolicy) {
-    	this.fitPolicy = fitPolicy;
+    public void setScrollWrap(boolean scrollWrap) {
+    	this.scrollWrap = scrollWrap;
     }
-    
-    public void setFont(int elementNum, Font font) {
-    	((ListItem) listItems.get(elementNum)).font = font;
-    } 
-    
+
     public void setSelectedFlags(boolean[] selectedArray) {
 		for (int i = 0; i < listItems.size(); i++) {
 			((ListItem) listItems.get(i)).selected = selectedArray[i];
@@ -111,7 +128,16 @@ public class List extends Screen implements Choice {
     } 
 
     public void setSelectedIndex(int elementNum, boolean selected) {
-    	((ListItem) listItems.get(elementNum)).selected = selected;
+    	if ((listType == Choice.MULTIPLE) || !selected) {
+			// Just set/clear selection
+			((ListItem) listItems.get(elementNum)).selected = selected;    		
+    	} else {
+			// Set single selection for these types
+			for (int i = 0; i < listItems.size(); i++) {
+				ListItem li = ((ListItem) listItems.get(i));
+				li.selected = (i == elementNum);
+			}
+		} 
     }
     
     public int size() {
@@ -120,14 +146,14 @@ public class List extends Screen implements Choice {
     
 	protected void keyPressed(int keyCode) {
 		if (keyCode == KEY_RIGHT) {
-			if (fitPolicy == Choice.TEXT_WRAP_ON) {
+			if (scrollWrap) {
 				scrollCurr = (scrollCurr + 1) % listItems.size();
 			} else if (scrollCurr < (listItems.size() - 1)) {
 				scrollCurr++;
 			}
 			repaint();
 		} else if (keyCode == KEY_LEFT) {
-			if (fitPolicy == Choice.TEXT_WRAP_ON) {
+			if (scrollWrap) {
 				scrollCurr = (scrollCurr == 0) 
 					? (listItems.size() - 1) : (scrollCurr - 1);
 			} else if (scrollCurr > 0) {
@@ -135,47 +161,58 @@ public class List extends Screen implements Choice {
 			}
 			repaint();
 		} else if (keyCode == KEY_BACK) {
-			for (int i = 0; i < commands.size(); i++) {
-				callCommandListener();
-			}
+			callCommandListener();
 		} else if (keyCode == KEY_ENTER) {
-			if ((listType == Choice.IMPLICIT) || (listType == Choice.EXCLUSIVE)) {
-				// Set single selection for these types
-				for (int i = 0; i < listItems.size(); i++) {
-					if ((scrollCurr == i)) {
-						// Toggle selection (discard current state when IMPLICIT)
-						ListItem li = ((ListItem) listItems.get(scrollCurr));
-						setSelectedIndex(scrollCurr, (listType == Choice.IMPLICIT)
-								? true : !li.selected);						
-					} else {
-						// Multiple items cannot be selected for this listType
-						setSelectedIndex(i, false);
-					}
-				}
-			} else {
-				// Toggle selection
-				ListItem li = ((ListItem) listItems.get(scrollCurr));
-				setSelectedIndex(scrollCurr, !li.selected);
-			}
+			ListItem li = ((ListItem) listItems.get(scrollCurr));
+			setSelectedIndex(scrollCurr, !li.selected);
+
+//			if ((listType == Choice.IMPLICIT) || (listType == Choice.EXCLUSIVE)) {
+//				// Set single selection for these types
+//				for (int i = 0; i < listItems.size(); i++) {
+//					if ((scrollCurr == i)) {
+//						// Toggle selection (discard current state when IMPLICIT)
+//						ListItem li = ((ListItem) listItems.get(scrollCurr));
+//						setSelectedIndex(scrollCurr, (listType == Choice.IMPLICIT)
+//								? true : !li.selected);						
+//					} else {
+//						// Multiple items cannot be selected for this listType
+//						setSelectedIndex(i, false);
+//					}
+//				}
+//			} else {
+//				// Toggle selection
+//				ListItem li = ((ListItem) listItems.get(scrollCurr));
+//				setSelectedIndex(scrollCurr, !li.selected);
+//			}
 			
 			// Send selection command for implicit list only
-			if (listType == Choice.IMPLICIT) {
+			if ((listType == Choice.IMPLICIT) && (cmdListener != null)) {
 				cmdListener.commandAction(SELECT_COMMAND, this);
-			}				
+			}	
+			repaint();
 		}
 	}
-
     
     protected void paint(Graphics g) {
-    	int lineIdx = 1;
-    	g.clear();
+    	int lineIdx = 0;
 
+    	if (ticker != null) {
+    		lineIdx++;
+    	}
     	if (title != null) {
     		g.drawString(title, 0, lineIdx++);
     	}
 
     	// Update scrolling administration
-    	if (scrollCurr > scrollLast) {
+    	int scrollLines = Display.SCREEN_CHAR_DEPTH - lineIdx;
+    	if (scrollCurr == 0) {
+    		scrollFirst = 0;
+    		scrollLast = scrollLines;
+    	} else if ((listItems.size() >= scrollLines) 
+    			&& (scrollCurr >= (listItems.size() - 1))) {
+    		scrollFirst = listItems.size() - scrollLines;
+    		scrollLast = listItems.size() - 1;
+    	} else if (scrollCurr >= scrollLast) {
     		scrollFirst++;
     		scrollLast++;
     	} else if (scrollCurr < scrollFirst) {
@@ -205,13 +242,13 @@ public class List extends Screen implements Choice {
     	String str;
     	Image img;
     	boolean selected;
-    	Font font;
+//    	Font font;
 
     	ListItem(String stringPart, Image imagePart) {
     		this.str = stringPart;
     		this.img = imagePart;
     		this.selected = false;
-    		this.font = null; // TODO
+//    		this.font = null;
     	}    	
     }
 }

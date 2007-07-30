@@ -54,8 +54,12 @@ public abstract class Item {
 	}
 	
 	public void notifyStateChanged() {
-		
+		// Notify ItemStateListener
+		for (int i = 0; (i < commands.size()) && (cmdListener != null); i++) {
+			cmdListener.commandAction((Command) commands.get(i), this);
+		}
 	}
+
 	public void addCommand(Command cmd) {
 		commands.add(cmd);
 	}
@@ -64,15 +68,15 @@ public abstract class Item {
 		commands.remove(commands.indexOf(cmd));
 	}
 	
-	public void setCommandListener(ItemCommandListener l) {
+	public void setItemCommandListener(ItemCommandListener l) {
 		cmdListener = l;
 	}
 	
-	protected void callCommandListener() {
-		for (int i = 0; (i < commands.size()) && (cmdListener != null); i++) {
-			cmdListener.commandAction((Command) commands.get(i), this);
-		}
-	}
+//	protected void callItemCommandListener() {
+//		for (int i = 0; (i < commands.size()) && (cmdListener != null); i++) {
+//			cmdListener.commandAction((Command) commands.get(i), this);
+//		}
+//	}
 	
 	public boolean getPaintRequest() {
 		return paintRequest;
