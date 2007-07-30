@@ -22,17 +22,15 @@ public class TextField extends Item {
 	private String text;
 	private int maxSize;
 	private int constraints;
-	
+
 	public TextField(String label, String text, int maxSize, int constraints) {
 		this.label = label;
 		this.text = text;
 		this.maxSize = maxSize;
 		this.constraints = constraints;
+		this.interactive = true;
 		
 		if (label != null) {
-			prefWidth = Display.SCREEN_WIDTH;
-			prefHeight = Display.CHAR_HEIGHT;
-
 			minWidth = (label.length() * Display.CHAR_WIDTH);
 			minHeight = Display.CHAR_HEIGHT;
 		}
@@ -45,12 +43,35 @@ public class TextField extends Item {
 				minWidth = Math.max(minWidth, text.length() * Display.CHAR_WIDTH);
 				minHeight += Display.CHAR_HEIGHT;
 			}
-				
-			prefHeight += Display.CHAR_HEIGHT;
 		}
 	}
 
+	public void setText(String text) {
+		this.text = text;
+	}
+
+	public String getText() {
+		return text;
+	}
+	
+	public int getMaxSize() {
+		return maxSize;
+	}
+	
+	public int getConstraints() {
+		return constraints;
+	}
+
 	public void paint(Graphics g, int x, int y, int w, int h, boolean selected) {
-		
+		if (label != null) {
+			g.drawString(label, x / Display.CHAR_WIDTH, y / Display.CHAR_HEIGHT);
+			if (h <= Display.CHAR_HEIGHT) {
+				x += label.length() * Display.CHAR_WIDTH;
+			} else {
+				y += Display.CHAR_HEIGHT;
+			}
+		}
+
+		g.drawString(text, x / Display.CHAR_WIDTH, y / Display.CHAR_HEIGHT, selected);
 	}
 }
