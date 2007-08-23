@@ -197,13 +197,14 @@ public class LCP {
 			// REGULATION_MODE CALCULATION:
 			byte regulation_mode = 0; // 0 = idle
 			if (m.isMoving()) mode = 0x01; // 0x01 = MOTOR_SPEED
+			// !! This returns same as run state (below). Whats the diff?
 			reply[6] = regulation_mode; // Regulation mode
 			// TURN RATIO CALC (ignored):
 			byte turn_ratio = 0; // NXJ uses Pilot. Omitting.
 			reply[7] = turn_ratio; // Turn ratio
 			// RUN_STATE CALCULATION:
 			byte run_state = 0;
-			if (m.isMoving()) mode = 0x20; // 0x20 = RUNNING
+			if (m.isMoving()) run_state = 0x20; // 0x20 = RUNNING
 			reply[8] = run_state; // Run state
 			// 9 - 12 = Tacho Limit. Ignored?
 			reply[13] = (byte) (tacho & 0xFF);
