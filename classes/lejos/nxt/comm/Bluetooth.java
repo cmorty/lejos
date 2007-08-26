@@ -1,5 +1,6 @@
 package lejos.nxt.comm;
 import java.util.*;
+import lejos.nxt.*;
 
 /**
  * Support for Bluetooth communications.
@@ -38,7 +39,7 @@ public class Bluetooth {
 	public static  final int MSG_CLOSE_PORT = 29;
 	public static  final int MSG_CLOSE_PORT_RESULT = 30;
 	public static  final int MSG_PIN_CODE_ACK = 31;
-	public static  final int MSG_DISCOVERABLE_ACK = 32;
+	public static  final int MSG_SET_DISCOVERABLE_ACK = 32;
 	public static  final int MSG_SET_FRIENDLY_NAME = 33;
 	public static  final int MSG_SET_FRIENDLY_NAME_ACK = 34;
 	public static  final int MSG_GET_LINK_QUALITY = 35;
@@ -64,6 +65,7 @@ public class Bluetooth {
 	private static byte[] receiveBuf = new byte[128];
 	private static byte[] friendlyName = retrieveFriendlyName();
 	private static byte[] localAddr = retrieveLocalAddress();
+	private static boolean supressWait = false;
 	
 	private Bluetooth()
 	{	
@@ -219,7 +221,7 @@ public class Bluetooth {
 		Bluetooth.btSetCmdMode(1);
 		Bluetooth.btStartADConverter();
 
-		while (cmdMode)
+		while (cmdMode & !supressWait)
 		{
 			receiveReply(reply,32);
 			
@@ -263,6 +265,7 @@ public class Bluetooth {
 					} 
 				}
 			}
+			Thread.yield();
 		}
 		return btc;
 	}
@@ -437,6 +440,7 @@ public class Bluetooth {
 					}
 		        }
 			}
+			Thread.yield();
 		}
 		return btc;
 	}
@@ -461,6 +465,8 @@ public class Bluetooth {
 
 		Bluetooth.btSetCmdMode(1);
 		Bluetooth.btStartADConverter();
+		
+		supressWait = true;
 
 		// invoke BC4 Chip to send the DumpList
 		msg[0] = MSG_DUMP_LIST;
@@ -500,7 +506,10 @@ public class Bluetooth {
 					break;
 				}
 			}
+			
+			Thread.yield();
 		}
+		supressWait = false;
 		return retVec;
 	}
 	
@@ -592,6 +601,8 @@ public class Bluetooth {
 		char[] name = new char[16];
 		int nameLen;
 		
+		supressWait = true;
+		
 		msg[0] = MSG_BEGIN_INQUIRY;
 		msg[1] = (byte) maxDevices;
 		msg[2] = 0;
@@ -618,9 +629,9 @@ public class Bluetooth {
 
 					// add the Element to the Vector List
 					retVec.addElement(new BTRemoteDevice(name, nameLen, device, cod));
-				}
-				
-			}	
+				}		
+			}
+			Thread.yield();
 		}
 		
 		// Fill in the names
@@ -633,6 +644,8 @@ public class Bluetooth {
             	btrd.setFriendlyName(nm.toCharArray(),nm.length());
             }
 		}
+		
+		supressWait = false;
 		
 		return retVec;		
 	}
@@ -671,5 +684,99 @@ public class Bluetooth {
 
 		return "";
 	}
-}
+	
+	public static int getStatus() {
+		byte [] msg = new byte[8];
+		byte[] reply = new byte[32];
+		
+		supressWait = true;
+		
+		msg[0] = MSG_GET_BRICK_STATUSBYTE;	
+		
+		sendCommand(msg,1);
+		
+		while(true) {
+			receiveReply(reply,32);		
+			if (reply[0] != 0) {
+				if (reply[1] == MSG_GET_BRICK_STATUSBYTE_RESULT) {
+					supressWait = false;
+					return (int) reply[2];
+				}
+			}
+		}
+	}
 
+	public static void setStatus(byte status) {
+		byte [] msg = new byte[8];
+		byte[] reply = new byte[32];
+		
+		supressWait = true;
+		
+		Thread.yield();
+		
+		msg[0] = MSG_SET_BRICK_STATUSBYTE;	
+		msg[1] = status;
+		msg[2] = 0;
+		
+		sendCommand(msg,3);
+		
+		while(true) {
+			receiveReply(reply,32);		
+			if (reply[0] != 0) {
+				//LCD.drawInt(reply[1],3,0,0);
+				//LCD.refresh();
+				if (reply[1] == MSG_SET_BRICK_STATUSBYTE_RESULT) {
+					supressWait = false;
+					return;
+				}
+			}
+		}		
+	}
+	
+	public static int getVisibility() {
+		byte [] msg = new byte[8];
+		byte[] reply = new byte[32];
+		
+		supressWait = true;
+		
+		msg[0] = MSG_GET_DISCOVERABLE;	
+		
+		sendCommand(msg,1);
+		
+		while(true) {
+			receiveReply(reply,32);		
+			if (reply[0] != 0) {
+				if (reply[1] == MSG_GET_DISCOVERABLE_RESULT) {
+					supressWait = false;
+					return (int) reply[2];
+				}
+			}
+		}	
+	}
+	
+	public static void setVisibility(byte visible) {
+		byte [] msg = new byte[8];
+		byte[] reply = new byte[32];
+		
+		supressWait = true;
+		
+		Thread.yield();
+		
+		msg[0] = MSG_SET_DISCOVERABLE;	
+		msg[1] = visible;
+		
+		sendCommand(msg,2);
+		
+		while(true) {
+			receiveReply(reply,32);		
+			if (reply[0] != 0) {
+				//LCD.drawInt(reply[1],3,0,0);
+				//LCD.refresh();
+				if (reply[1] == MSG_SET_DISCOVERABLE_ACK) {
+					supressWait = false;
+					return;
+				}
+			}
+		}		
+	}
+}
