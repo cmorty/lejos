@@ -1,4 +1,6 @@
 import java.io.*;
+import java.util.Vector;
+
 import lejos.nxt.comm.*;
 import lejos.nxt.*;
 
@@ -6,16 +8,35 @@ public class StartUpText {
 	static boolean update = true;
     
 	public static void main(String[] args) throws Exception {
-
 		Indicators ind = new Indicators();
 		USBRespond usb = new USBRespond();
 		BTRespond bt = new BTRespond(); 
 		String title = " leJOS NXJ";
-		TextMenu menu = new TextMenu(null,1);
+		String devices = "Devices";
+		String found = "Found";
+		String status = "Status ";
+		String on = "on ";
+		String off = "off";
+		String visible = "vis  ";
+		String invisible = "invis";
+		String bluetooth = "Bluetooth";
+		String system = "System";
+		String freeFlash = "Free flash";
+		TextMenu filesMenu = new TextMenu(null,1);
+		String[] topMenuData = {"Files", "Bluetooth", "System"};
+		TextMenu topMenu = new TextMenu(topMenuData,1);
 		String[] fileMenuData = {"Execute program", "Delete file"}; 
 		TextMenu fileMenu = new TextMenu(fileMenuData,2);
 		String[] fileNames = new String[File.MAX_FILES];
+		TextMenu menu = topMenu;
+		String[] blueMenuData = {"Devices", "Search", "On/Off","Visibility"};
+		TextMenu blueMenu = new TextMenu(blueMenuData,3);
+		String[] systemMenuData = {"Defrag"};
+		TextMenu systemMenu = new TextMenu(systemMenuData,3);
+		File[] files = null;
 		boolean quit = false;
+		int blueStatus = 0, visibility = 0;
+		
 		ind.setDaemon(true);
 		ind.start();
 		usb.setDaemon(true);
@@ -26,39 +47,170 @@ public class StartUpText {
 		while (!quit) 
 		{
 		    LCD.drawInt( (int)(Runtime.getRuntime().freeMemory()),0,0);
-			File[] files = File.listFiles();
-			int len = 0;
-			for(int i=0;i<files.length && files[i] != null;i++) len++;		
-			for(int i=0;i<len;i++) fileNames[i] = files[i].getName();
-			for(int i = len; fileNames[i] != null && i<files.length;i++)fileNames[i] = null;
-			menu.setItems(fileNames);
 			usb.setMenu(menu);
 			bt.setMenu(menu);
 			LCD.clear();
-			LCD.drawString(title,6,0, false);
+			LCD.drawString(title,6,0);
 		    LCD.drawInt( (int)(Runtime.getRuntime().freeMemory()),0,0);
 			LCD.refresh();
+			
+			if (menu == filesMenu) {
+				files = File.listFiles();
+				int len = 0;
+				for(int i=0;i<files.length && files[i] != null;i++) len++;		
+				for(int i=0;i<len;i++) fileNames[i] = files[i].getName();
+				for(int i = len; fileNames[i] != null && i<files.length;i++)fileNames[i] = null;
+				filesMenu.setItems(fileNames);
+			} else if (menu == blueMenu) {
+				LCD.drawString(bluetooth, 3, 1);
+				LCD.drawString(status,0,2);
+				blueStatus = Bluetooth.getStatus();
+				visibility = Bluetooth.getVisibility();
+				LCD.drawString(blueStatus == 0 ? on : off, 7, 2);
+				LCD.drawString(visibility == 1 ? visible : invisible, 11, 2);			
+				LCD.refresh();
+			} else if (menu == systemMenu) {
+				LCD.drawString(system, 4, 1);
+				LCD.drawString(freeFlash, 0, 2);
+				LCD.drawInt(File.freeMemory(),5, 11, 2);
+				LCD.refresh();				
+			}
 
 		    int selection = menu.select();
 		    
-		    if (selection >= 0) {
-				LCD.clear();
-				LCD.drawString(title,6,0, false);
-			    LCD.drawInt( (int)(Runtime.getRuntime().freeMemory()),0,0);
-				LCD.refresh();
-				fileMenu.setTitle(fileNames[selection]);
-		    	int subSelection = fileMenu.select();
-		    	if (subSelection == 0) 
-		    	{
-		    		Bluetooth.btSetCmdMode(1);
-		    		files[selection].exec();
-		    	} else if (subSelection == 1)
-		    	{
-		    		files[selection].delete();	 
+		    if (menu == topMenu) {
+		    	 if (selection == 0) {
+		    		 menu = filesMenu;
+		    	 } else if (selection ==1) {
+		    		 menu = blueMenu;
+		    	 } else if (selection == 2) {
+		    		 menu = systemMenu;
+		    	 } else if (selection == -1) {
+		    		 quit = true;
+		    	 }
+		    } else if (menu == filesMenu) {
+			    if (selection >= 0) {
+					LCD.clear();
+					LCD.drawString(title,6,0);
+				    LCD.drawInt( (int)(Runtime.getRuntime().freeMemory()),0,0);
+					LCD.refresh();
+					fileMenu.setTitle(fileNames[selection]);
+			    	int subSelection = fileMenu.select();
+			    	if (subSelection == 0) 
+			    	{
+			    		Bluetooth.btSetCmdMode(1);
+			    		files[selection].exec();
+			    	} else if (subSelection == 1)
+			    	{
+			    		files[selection].delete();	 
+			    		LCD.clear();
+			    		LCD.refresh();
+			    	}
+			    } if (selection == -1) {
+			    	menu = topMenu;
+			    }
+		    } else if (menu == blueMenu) {
+		    	if (selection == 0) { //Devices
+    	    		Vector devList = Bluetooth.getKnownDevicesList();
+		    		if (devList.size() > 0) {
+		    			String[] names = new String[devList.size()];
+		    			for (int i = 0; i < devList.size(); i++) {
+		    				BTRemoteDevice btrd = ((BTRemoteDevice) devList.elementAt(i));
+		    				names[i] = btrd.getFriendlyName();
+		    			}
+		    				
+		    			TextMenu deviceMenu = new TextMenu(names,1);
+		    			String[] subItems = {"Remove"};
+		    			TextMenu subMenu = new TextMenu(subItems,5);
+
+		    			int selected;
+		    			do {
+		    				LCD.clear();
+				    		LCD.drawString(devices,5,0);
+				    		LCD.refresh();
+		    				selected = deviceMenu.select();
+		    				if (selected >=0) {
+		    					BTRemoteDevice btrd = ((BTRemoteDevice) devList.elementAt(selected));
+		    					LCD.clear();
+		    					LCD.drawString(devices,5,0);
+		    					LCD.drawString(names[selected],0,1);
+		    					LCD.drawString(btrd.getAddressString(), 0, 2);
+		    					for(int i=0;i<4;i++) LCD.drawInt(btrd.getDeviceClass()[i], 3, i*4, 3);
+		    					int subSelection = subMenu.select();
+		    					if (subSelection == 0) Bluetooth.removeDevice(btrd);
+		    				}
+		    			} while (selected >= 0);
+
+		    		} else {
+		    			LCD.clear();
+		    			LCD.drawString("no known devices", 0, 0);
+		    			LCD.refresh();
+		    			try {
+		    				Thread.sleep(2000);
+		    			} catch (InterruptedException e) {}
+		    		}
+		    	} else if (selection == 1) { // Search    		
+		    		byte[] cod = {0,0,8,4}; // Toy, Robot
 		    		LCD.clear();
+		    		LCD.drawString("Searching ...", 0, 0);
 		    		LCD.refresh();
+		    		Vector devList = Bluetooth.inquire(5, 10,cod);
+					
+		    		if (devList.size() > 0) {
+		    			String[] names = new String[devList.size()];
+		    			for (int i = 0; i < devList.size(); i++) {
+		    				BTRemoteDevice btrd = ((BTRemoteDevice) devList.elementAt(i));
+		    				names[i] = btrd.getFriendlyName();
+		    			}
+		    				
+		    			TextMenu searchMenu = new TextMenu(names,1);
+		    			String[] subItems = {"Add"};
+		    			TextMenu subMenu = new TextMenu(subItems,4);
+		    			
+		    			int selected;
+		    			do {
+				    		LCD.clear();
+							LCD.drawString(found,6,0);
+							LCD.refresh();
+		    				selected = searchMenu.select();
+		    				if (selected >=0) {
+		    					BTRemoteDevice btrd = ((BTRemoteDevice) devList.elementAt(selected));
+		    					LCD.clear();
+		    					LCD.drawString(found,6,0);
+		    					LCD.drawString(names[selected],0,1);
+		    					LCD.drawString(btrd.getAddressString(), 0, 2);
+		    					int subSelection = subMenu.select();
+		    					if (subSelection == 0) Bluetooth.addDevice(btrd);
+		    				}
+		    			} while (selected >= 0);
+
+		    		} else {
+		    			LCD.clear();
+		    			LCD.drawString("no devices", 0, 0);
+		    			LCD.refresh();
+		    			try {
+		    				Thread.sleep(2000);
+		    			} catch (InterruptedException e) {}
+		    		}
+		        } else if (selection == 2) // On/Off
+		        {
+		        	//LCD.clear();
+		        	//LCD.refresh();
+		        	Bluetooth.setStatus((byte) (blueStatus == 0 ? 1 : 0));
+		        }else if (selection == 3) // Visibility
+		        {
+		        	Bluetooth.setVisibility((byte) (visibility == 1 ? 0 : 1));
+		        } else if (selection == -1) {
+		    		menu = topMenu;
 		    	}
-		    } else if (selection == -1) quit = true;
+		    	
+		    } else if (menu == systemMenu) {
+		    	if (selection == 0) {
+		    		File.defrag();
+		    	} else if (selection == -1) {
+		    		menu = topMenu;
+		    	}
+		    }
 		}
 	}
 }
@@ -75,7 +227,7 @@ class Indicators extends Thread
 			{
 			  millis = Battery.getVoltageMilliVolt() + 50;
 			  LCD.drawInt((millis - millis%1000)/1000,13,0);
-			  LCD.drawString(dot, 14, 0, false);
+			  LCD.drawString(dot, 14, 0);
 			  LCD.drawInt((millis% 1000)/100,15,0);
 			  LCD.refresh();
 			  Thread.sleep(1000);
@@ -119,7 +271,8 @@ class USBRespond extends Thread
 					Sound.beepSequenceUp();
 					menu.quit();
 				}
-			}			
+			}
+			Thread.yield();
 		}
 	}
 }
@@ -145,6 +298,12 @@ class BTRespond  extends Thread {
 		{
 			if (cmdMode) {
 				btc = Bluetooth.waitForConnection();
+				if (btc == null) {
+					try {
+						Thread.sleep(2000);
+					} catch (InterruptedException e) {}
+					continue;
+				}
 				//LCD.clear();
 				//LCD.drawString(connected,0,0);
 				//LCD.refresh();			
@@ -171,7 +330,8 @@ class BTRespond  extends Thread {
 					Bluetooth.btSetCmdMode(1); // set Command mode
 					cmdMode = true;
 				}
-			}			
+			}
+			Thread.yield();
 		}
 	}
 }
