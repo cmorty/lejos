@@ -1,5 +1,6 @@
 package lejos.nxt;
-//import lejos.nxt.*;
+
+import java.io.*;
 
 /**
  * NXT sound routines.
@@ -24,7 +25,8 @@ public class Sound
    * </TABLE>
    */
    
-   public static int C2 = 1056;
+  public static int C2 = 1056;
+  
   public static void systemSound (boolean aQueued, int aCode)
   {
   	if(aCode==0)
@@ -100,11 +102,13 @@ public class Sound
   {
     systemSound (true, 4);
   }
-	public static void pause(int t)
+  
+  public static void pause(int t)
 	{
 		try { Thread.sleep(t); }
 		catch(InterruptedException e){}
 	}
+	
   /**
    * Plays a tone, given its frequency and duration. Frequency is audible from about 31 to 2100 Hertz. The
    * duration argument is in hundreds of a seconds (centiseconds, not milliseconds) and is truncated
@@ -113,4 +117,24 @@ public class Sound
    * @param aDuration The duration of the tone, in centiseconds. Value is truncated at 256 centiseconds.
    */
   public static native void playTone (int aFrequency, int aDuration);
+  
+  /**
+   * Internal method used to play sound sample from a file
+   * @param page the start page of the file
+   * @param len the length of the file
+   * @param freq the frequency
+   * @param vol the volume
+   */
+  public static native void playSample(int page, int len, int freq, int vol);
+  
+  /**
+   * 
+   * @param file the 8-bit PWM (WAV) sample file
+   * @param freq the average frequency to play the sample at
+   * @param vol the sound volume
+   */
+  public static void playSample(File file, int freq, int vol) {
+	  playSample(file.getPage(), file.length(), freq, vol);
+  }
+  
 }
