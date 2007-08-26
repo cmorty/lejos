@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="BTReceive/|BTSend/|BumperCar/|ColorDetector/|CompassTest/|ExceptionTest/|HelloWorld/|Line/|Listen/|MemoryTest/|PerformanceTest/|PilotTester/|SonicTest/|SpeedTest/|Subsumption1/|Subsumption2/|TiltTest/|Tune/|USBReceive/|USBSend/|View/|GraphicsSample/|SocketTest/|TimeTest/|SocketServer/|BTConnectTest/|BTDumpTest/|BTInquiryTest/" kind="src" path=""/>
+	<classpathentry excluding="BTReceive/|BTSend/|BumperCar/|ColorDetector/|CompassTest/|ExceptionTest/|HelloWorld/|Line/|Listen/|MemoryTest/|PerformanceTest/|PilotTester/|SonicTest/|SpeedTest/|Subsumption1/|Subsumption2/|TiltTest/|Tune/|USBReceive/|USBSend/|View/|GraphicsSample/|SocketTest/|TimeTest/|SocketServer/|BTConnectTest/|BTDumpTest/|BTInquiryTest/|SoundSample/" kind="src" path=""/>
+	<classpathentry kind="src" path="SoundSample"/>
 	<classpathentry kind="src" path="GraphicsSample"/>
 	<classpathentry kind="src" path="USBSend"/>
 	<classpathentry kind="src" path="USBReceive"/>
