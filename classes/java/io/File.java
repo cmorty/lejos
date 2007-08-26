@@ -409,6 +409,12 @@ public class File {
 	
 	public static int freeMemory() {
 		int last_page;
+		
+		if(files == null) {
+			 files = new File[MAX_FILES];
+			 File.readTable(files); // Update file data
+		}
+		
 		if (totalFiles <= 0) {
 			last_page = -1;
 		} else {
