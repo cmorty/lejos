@@ -66,6 +66,7 @@ public interface SpecialSignatureConstants {
     "usbReset()V",
     "writePage([BI)V",
     "readPage([BI)V",
-    "exec(II)V"
+    "exec(II)V",
+    "playSample(IIII)V"
   };
 }
