@@ -1,7 +1,6 @@
 package java.io;
 
-import lejos.nxt.Flash;
-
+import lejos.nxt.*;
 
 public class File {
 	static int count;
@@ -461,7 +460,12 @@ public class File {
 		}
 		writeTable(files);	// update the file data in flash memory	
 	}
+	
 	public int getPage() {
 		return page_location;
+	}
+	
+	public void play(int freq, int vol) {
+		Sound.playSample(page_location, file_length, freq, vol);
 	}
 }
