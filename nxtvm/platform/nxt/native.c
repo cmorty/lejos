@@ -293,8 +293,11 @@ dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
     gNextProgramSize = paramBase[1];
     schedule_request(REQUEST_EXIT);
     break;
-  case usbReset_4_5V :
+  case usbReset_4_5V:
     udp_reset();
+    break; 
+  case playSample_4IIII_5V:
+    sound_play_sample((unsigned char *) &FLASH_BASE[(paramBase[0]*64)],paramBase[1],paramBase[2],paramBase[3]);
     break;
   default:
     throw_exception(noSuchMethodError);

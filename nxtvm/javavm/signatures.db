@@ -114,6 +114,10 @@ writePage([BI)V
 readPage([BI)V
 exec(II)V
 
+#lejos.nxt.Sound
+playSample(IIII)V
+
+
 
 
 
