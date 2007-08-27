@@ -25,7 +25,7 @@ START "LIBUSB INSTALLER" /wait %NXJ_HOME%\3rdparty\lib\libusb-win32-filter-bin-0
 echo NOTE: If you encounter the error NXT Not Found, reboot your computer, make sure the brick is still in firmware upload mode, and try again.
 
 :MAIN
-@nxjflash.exe %1 %2 %3 %4 %5 %6 %7 %8 %9
+@nxjflash.exe %*
 GoTo :Done
 
 :UNDEFINED
