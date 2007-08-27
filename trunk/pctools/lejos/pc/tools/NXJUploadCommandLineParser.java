@@ -41,6 +41,11 @@ public class NXJUploadCommandLineParser
       nameOption.setArgName("name");
       options.addOption(nameOption);
       
+      Option addressOption = new Option("d", "address", true,
+    		 "look for name with given address");
+      addressOption.setArgName("address");
+      options.addOption(addressOption);
+      
       CommandLine result;
       try
       {

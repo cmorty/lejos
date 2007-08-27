@@ -27,12 +27,13 @@ public class NXJUpload {
 		boolean blueTooth = commandLine.hasOption("b");
 		boolean usb = commandLine.hasOption("u");
 		String name = commandLine.getOptionValue("n");
+		String address = commandLine.getOptionValue("d");
 		
 		String fileName = commandLine.getArgs()[0];
 		
 		if (blueTooth) protocols |= NXTCommFactory.BLUETOOTH;
 		if (usb) protocols |= NXTCommFactory.USB;
 		
-		Upload.upload(name, protocols, fileName, run);
+		Upload.upload(name, address, protocols, fileName, run);
 	}	
 }

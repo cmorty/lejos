@@ -38,6 +38,7 @@ import lejos.pc.comm.*;
 		boolean blueTooth = commandLine.hasOption("b");
 		boolean usb = commandLine.hasOption("u");
 		String name = commandLine.getOptionValue("n");
+		String address = commandLine.getOptionValue("d");
 		String tinyVMArgs[];
 		
 		String firstArg = commandLine.getArgs()[0];
@@ -52,6 +53,8 @@ import lejos.pc.comm.*;
 			if (args[i].equals("--usb")) continue;
 			if (args[i].equals("-n")) {i++; continue;}
 			if (args[i].equals("--name")) {i++; continue;}
+			if (args[i].equals("-d")) {i++; continue;}
+			if (args[i].equals("--address")) {i++; continue;}
 			if (args[i].equals("-r")) continue;
 			if (args[i].equals("--run")) continue;
 			argCount++;
@@ -72,6 +75,8 @@ import lejos.pc.comm.*;
 			if (args[i].equals("--usb")) continue;
 			if (args[i].equals("-n")) {i++; continue;}
 			if (args[i].equals("--name")) {i++; continue;}
+			if (args[i].equals("-d")) {i++; continue;}
+			if (args[i].equals("--address")) {i++; continue;}
 			if (args[i].equals("-r")) continue;
 			if (args[i].equals("--run")) continue;
 			tinyVMArgs[index++] = args[i];
@@ -94,7 +99,7 @@ import lejos.pc.comm.*;
 		if (blueTooth) protocols |= NXTCommFactory.BLUETOOTH;
 		if (usb) protocols |= NXTCommFactory.USB;
 		
-		Upload.upload(name, protocols, binName, run);
+		Upload.upload(name, address, protocols, binName, run);
 	}
 }
 

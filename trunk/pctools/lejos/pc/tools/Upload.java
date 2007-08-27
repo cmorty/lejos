@@ -5,7 +5,7 @@ import lejos.pc.comm.*;
 
 public class Upload {
 	
-	public static void upload(String name, int protocols, String fileName, boolean run) {
+	public static void upload(String name, String address, int protocols, String fileName, boolean run) {
 
 		NXTCommand nxtCommand = NXTCommand.getSingleton();
 		
@@ -23,7 +23,16 @@ public class Upload {
 		
 		if (protocols == 0) protocols = NXTCommFactory.USB | NXTCommFactory.BLUETOOTH;
 		
-		NXTInfo[] nxtInfo = nxtCommand.search(name, protocols);
+		NXTInfo[] nxtInfo;
+		
+		if (address != null) {
+			nxtCommand.setNXTCommBlueTooth();
+			nxtInfo = new NXTInfo[1];
+			nxtInfo[0] = new NXTInfo((name == null ? "Unknown" : name),address);	
+			//System.out.println("Address: " + address);
+		} else {
+			nxtInfo = nxtCommand.search(name, protocols);
+		}
 		
 		//System.out.println("Found " + nxtInfo.length + " NXTs");
 		
@@ -31,7 +40,6 @@ public class Upload {
 		
 		try {
 			for(int i=0;i<nxtInfo.length;i++) {
-
 				connected = nxtCommand.open(nxtInfo[i]);
 				if (!connected) continue;
 				SendFile.sendFile(nxtCommand, f);
