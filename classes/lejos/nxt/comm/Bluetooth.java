@@ -467,6 +467,7 @@ public class Bluetooth {
 		Bluetooth.btStartADConverter();
 		
 		supressWait = true;
+		Thread.yield();
 
 		// invoke BC4 Chip to send the DumpList
 		msg[0] = MSG_DUMP_LIST;
@@ -545,6 +546,10 @@ public class Bluetooth {
 		byte [] addr = d.getDeviceAddr();
 		String name = d.getFriendlyName();
 		byte[] cod = d.getDeviceClass();
+		
+		supressWait = true;
+		Thread.yield();
+		
 		msg[0] = MSG_ADD_DEVICE;
 		for(int i=0;i<7;i++) msg[i+1] = addr[i];
 		for(int i=0;i<name.length();i++)  msg[i+8] = (byte) name.charAt(i);
@@ -562,19 +567,23 @@ public class Bluetooth {
 			}
 		}
 		
+		supressWait = false;
 		return reply[2] == 0x50;
 	}
 	
 	/**
 	 * Add device to known devices
 	 * @param d Remote Device
-	 * @return true iff add was successful
+	 * @return true iff remove was successful
 	 */
 	public static boolean removeDevice(BTRemoteDevice d) {
 		byte [] msg = new byte[28];
 		byte [] reply = new byte[32];
 		byte [] addr = d.getDeviceAddr();
 
+		supressWait = true;
+		Thread.yield();
+		
 		msg[0] = MSG_REMOVE_DEVICE;		
 		for(int i=0;i<7;i++) msg[i+1] = addr[i];
 		
@@ -590,6 +599,7 @@ public class Bluetooth {
 			}
 		}
 		
+		supressWait = false;
 		return reply[2] == 0x50;
 	}
 	
@@ -602,6 +612,7 @@ public class Bluetooth {
 		int nameLen;
 		
 		supressWait = true;
+		Thread.yield();
 		
 		msg[0] = MSG_BEGIN_INQUIRY;
 		msg[1] = (byte) maxDevices;
@@ -621,7 +632,7 @@ public class Bluetooth {
 				else if (reply[1] == MSG_INQUIRY_RESULT) {
 					for(int i=0;i<7;i++) device[i] = reply[2+i];
 					nameLen = 0;
-					for(int i=0;i<16 & reply[9+i] != 0;i++) {
+					for(int i=0;i<16 && reply[9+i] != 0;i++) {
 						name[i] = (char) reply[9+i];
 						nameLen++;
 					}
@@ -690,6 +701,7 @@ public class Bluetooth {
 		byte[] reply = new byte[32];
 		
 		supressWait = true;
+		Thread.yield();
 		
 		msg[0] = MSG_GET_BRICK_STATUSBYTE;	
 		
@@ -710,8 +722,7 @@ public class Bluetooth {
 		byte [] msg = new byte[8];
 		byte[] reply = new byte[32];
 		
-		supressWait = true;
-		
+		supressWait = true;	
 		Thread.yield();
 		
 		msg[0] = MSG_SET_BRICK_STATUSBYTE;	
@@ -738,6 +749,7 @@ public class Bluetooth {
 		byte[] reply = new byte[32];
 		
 		supressWait = true;
+		Thread.yield();
 		
 		msg[0] = MSG_GET_DISCOVERABLE;	
 		
@@ -758,8 +770,7 @@ public class Bluetooth {
 		byte [] msg = new byte[8];
 		byte[] reply = new byte[32];
 		
-		supressWait = true;
-		
+		supressWait = true;	
 		Thread.yield();
 		
 		msg[0] = MSG_SET_DISCOVERABLE;	
