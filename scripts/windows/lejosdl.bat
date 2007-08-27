@@ -8,7 +8,7 @@
 
 :CHANGE
 SET NXJ_HOME=%LEJOS_HOME%
-@nxj.bat -r %1 %2 %3 %4 %5 %6 %7 %8 %9
+@nxj.bat -r %*
 GoTo :Done
 
 :UNDEFINED
