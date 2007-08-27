@@ -96,6 +96,12 @@ public class NXTCommand implements NXTProtocol {
     	
     	return new NXTInfo[0];
 	}
+    
+    public void setNXTCommBlueTooth() {
+    	if (nxtComm == null) {
+    		nxtComm = NXTCommFactory.createNXTComm(NXTCommFactory.BLUETOOTH);
+    	}
+    }
 
 	public boolean open(NXTInfo nxt) {
 		return open = nxtComm.open(nxt);
