@@ -1,10 +1,11 @@
          
-import lejos.nxt.*;
+package lejos.nxt;
+import javax.microedition.io.StreamConnection;
 import lejos.nxt.comm.*;
-     
+
 import java.io.*;
 /**
- * Datalogger class; stores float values then  then transmits  via bluetooth<br>
+ * Datalogger class; stores float values then  then transmits  via bluetooth or usb<br>
  * works with DataViewer   in pctools.
  * A maximum of 2000 data values can be stored. 
  */
@@ -60,14 +61,16 @@ public class Datalogger
   }
   
  /**
-  * transmit the stored values to the PC via Bluetooth;<br>
+  * transmit the stored values to the PC via USB or bluetooth;<br>
   * Displays "waiting" , so then start the DataViewer. 
   * When finished, displays the number values sent, and asks "Resend?". 
   * Press ENTER for yes, ESC to exit the program.
+  * @param useUSb  if false, uses Bluetooth
   *
   */
-    public  void transmit()
+    public  void transmit(boolean useUSB)
     {
+       StreamConnection connection= null;
        DataOutputStream dataOut = null;
        InputStream is = null;
        boolean more = true;
@@ -76,8 +79,15 @@ public class Datalogger
           LCD.clear();
           LCD.drawInt(_indx, 0, 0);
           LCD.drawString("waiting",8,0);
-          LCD.refresh();         
-          BTConnection connection =Bluetooth.waitForConnection();
+          LCD.refresh();  
+          if(useUSB)
+          {
+             connection = new USBConnection();
+          }
+          else 
+          {
+             connection = Bluetooth.waitForConnection();
+          }
           try 
              { 
                 dataOut=  connection.openDataOutputStream(); 
@@ -94,7 +104,6 @@ public class Datalogger
              LCD.drawString("sending",0,0);
              LCD.drawInt(_indx, 12, 0);
              LCD.refresh();
-   //       Tools.waitForPress();
              try
              {
                dataOut.writeFloat(_indx);
@@ -105,7 +114,7 @@ public class Datalogger
                   else if(i<2*BLOCK)dataOut.writeFloat(log1[i%BLOCK]);
                   else if(i<3*BLOCK)dataOut.writeFloat(log2[i%BLOCK]);
                   else if(i<3*BLOCK)dataOut.writeFloat(log3[i%BLOCK]);
-                  Tools.pause(3);
+                  try{Thread.sleep(4);} catch (InterruptedException e ){}
                }
                dataOut.flush();
                dataOut.close();
@@ -140,7 +149,7 @@ public class Datalogger
              float x = i*0.5f;
              dl.writeLog(x);
           }
-       dl.transmit(); 
+       dl.transmit(true); 
        dl.reset();
        LCD.clear();
        LCD.drawString("more?",0,2);
