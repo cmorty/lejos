@@ -129,7 +129,11 @@ public class NXTCommBluez implements NXTComm {
 	}
 	
 	public byte [] read () throws IOException {
-		return rcSocketRecv(sk);
+		// Currently all packets are 1-byte
+		byte [] packet = rcSocketRecv(sk);
+		byte [] data = new byte [packet.length/3];
+		for(int i=0;i<packet.length/3;i++) data[i] = packet[i*3+2];
+		return data;
 	}
 	
 	public void write(byte[] data) throws IOException {
@@ -141,7 +145,7 @@ public class NXTCommBluez implements NXTComm {
 	}
 	
 	public InputStream getInputStream() {
-		return new NXTCommInputStream(this);		
+		return new NXTCommBTInputStream(this);		
 	}
 	
 	native private String[] search(String name) throws BlueZException;
