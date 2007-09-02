@@ -10,6 +10,7 @@ Lawrie Griffiths and Michael Wiedau have added:
 Lawrie Griffiths has added:
 
 - Multi-level StartUp Text menu
+- Connection by address on the nxj and nxjupload utilities
 
 Roger Glassey has added:
 
@@ -32,6 +33,7 @@ Brian Bagnall has added
 
 - Fixes to Windows batch files to allows spaces in NXJ_HOME
 - Backward compatibility lejosdl and lejosfirmdl scripts
+- Some improvement to Lego Communications Protocol support.
 
 leJOS NXJ 0.3alpha
 ------------------
