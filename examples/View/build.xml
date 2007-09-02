@@ -9,14 +9,14 @@
   <property name="src" location="."/>
   <basename property="program" file="."/>
   <property name="binary" value="${program}.nxj" />
-
+	
   <!-- deletes class files -->
   <target name="clean" description="clean up all generated files">
     <delete>
       <fileset dir="."> 
         <include name="**/*.class"/>
       </fileset>
-    </delete>
+     </delete>
   </target>
 
   <target name="compile" depends="clean"

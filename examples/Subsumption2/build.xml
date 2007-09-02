@@ -10,7 +10,16 @@
   <property name="program" value="Main"/>
   <property name="binary" value="${program}.nxj" />
 
-  <target name="compile" 
+  <!-- deletes class files -->
+  <target name="clean" description="clean up all generated files">
+    <delete>
+      <fileset dir="."> 
+        <include name="**/*.class"/>
+      </fileset>
+     </delete>
+  </target>
+
+  <target name="compile" depends="clean"
         description="compile the source " >
     <!-- Compile the java code from ${src}  -->
     <javac source="1.3" target="1.1" srcdir="${src}" destdir="${src}">
