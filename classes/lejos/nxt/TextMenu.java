@@ -132,6 +132,7 @@ public class TextMenu
 //		if (_length<_size) _size = _length;
 		int button = 0;
 		_selectedIndex = 0;
+		_quit = false;
 //		LCD.clear();
 		display();
 		while(!_quit)

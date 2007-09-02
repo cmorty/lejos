@@ -137,7 +137,10 @@ public class StartUpText {
 		    					LCD.drawString(btrd.getAddressString(), 0, 2);
 		    					for(int i=0;i<4;i++) LCD.drawInt(btrd.getDeviceClass()[i], 3, i*4, 3);
 		    					int subSelection = subMenu.select();
-		    					if (subSelection == 0) Bluetooth.removeDevice(btrd);
+		    					if (subSelection == 0) {
+		    						Bluetooth.removeDevice(btrd);
+		    						selected = -1;
+		    					}
 		    				}
 		    			} while (selected >= 0);
 
