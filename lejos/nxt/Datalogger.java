@@ -65,7 +65,7 @@ public class Datalogger
   * Displays "waiting" , so then start the DataViewer. 
   * When finished, displays the number values sent, and asks "Resend?". 
   * Press ENTER for yes, ESC to exit the program.
-  * @param useUSb  if false, uses Bluetooth
+  * @param useUSB  if false, uses Bluetooth
   *
   */
     public  void transmit(boolean useUSB)
