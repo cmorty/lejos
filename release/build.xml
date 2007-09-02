@@ -262,6 +262,7 @@
 			 	<exclude name="lejos_nxj/bin/*.exe"/>
 			 	<exclude name="lejos_nxj/bin/*.dll"/>
 			 	<exclude name="lejos_nxj/bin/*.bat"/>
+			 	<exclude name="lejos_nxj/lib/*.exe"/>
 			    <include name="lejos_nxj/samples/**"/>
 			 	<exclude name="lejos_nxj/samples/**/README"/>
 			 	<include name="lejos_nxj/build/*"/>
