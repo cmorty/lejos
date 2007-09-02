@@ -1,3 +1,38 @@
+lejos NXJ 0.4beta
+-----------------
+
+Most of the leJOS functionality is now present, so this has been declared a beta release.
+
+Lawrie Griffiths and Michael Wiedau have added:
+
+- NXT to NXT Bluetooth comms.
+
+Lawrie Griffiths has added:
+
+- Multi-level StartUp Text menu
+
+Roger Glassey has added:
+
+- DataLogger
+- Some improvement to Motor speed control
+
+Andre Nijholt and Brian Bagnall have added:
+
+- Support for the J2ME MIDP LCD user interface and graphics
+
+Ranulf Green has added:
+
+- Comms proxy included NXTSocket class
+
+Patai Gergely and Lawrie Griffiths have added:
+
+- Playing sound files (8-bit WAV)
+
+Brian Bagnall has added
+
+- Fixes to Windows batch files to allows spaces in NXJ_HOME
+- Backward compatibility lejosdl and lejosfirmdl scripts
+
 leJOS NXJ 0.3alpha
 ------------------
 
