@@ -60,6 +60,7 @@ public class Motor extends BasicMotor implements TimerListener
   private boolean _rampUp = true;
   private int _lastTacho = 0;
   private int _actualSpeed;
+  private float _voltage;
 
 
    /** initialized to be false(ramping enabled); changed only by smoothAcceleration
@@ -285,13 +286,14 @@ public class Motor extends BasicMotor implements TimerListener
      * time regulating started
      */
   	int time0 = 0;
-
+    float error = 0;
     /**
      * helper method - used by reset and setSpeed()
      */
  	int calcPower(int speed)
  	{   
-		float pwr = 100 - 7.4f*Battery.getVoltage()+0.065f*speed;// no-load motor
+//		float pwr = 100 - 7.4f*Battery.getVoltage()+0.065f*speed;// no-load motor
+      float pwr = 100 - 7.4f*_voltage+0.065f*speed;
  		if(pwr<0) return 0;
  		if(pwr>100)return 100;
  		else return (int)pwr;
@@ -315,12 +317,12 @@ public class Motor extends BasicMotor implements TimerListener
      */
   	public void run()
   	{
-  		int limit = 0;
-  		float error = 0;
+//  		int limit = 0;
+
 	  	float e0 = 0;
-	  	float accel = 1.5f;// deg/sec/ms  was 1.5
-	  	int td = 100;
-	  	float ts = 0;  //time to stabilize
+	  	float accel =5f;// deg/sec/ms  was 1.5
+        float power =  0;
+	  	int ts = 0;//time to reach speed
 	  	while(_keepGoing)
 	  	{ synchronized(this)
 	  	{	
@@ -328,27 +330,29 @@ public class Motor extends BasicMotor implements TimerListener
 	  		{
 	  			int elapsed = (int)System.currentTimeMillis()-time0;
 	  			int angle = getTachoCount()-angle0;
+//                basePower = calcPower(_speed);
 	  			if(_rampUp)
 	  			{   
-	  				ts = _speed/accel;
-					if (elapsed +td<ts)// not yet up to speed
+
+	  				ts = (int)(_speed/accel);
+//	  				ts = 100;
+                    if(elapsed<ts)// not at speed yet
 		  			{
-		  				elapsed +=td;
+ 
 		  				// target distance = a * t * t/ 2 - maintain constant acceleration
 		 				error = accel*elapsed * elapsed/2000 - (float)Math.abs(angle);
-		 				basePower = calcPower((int)Math.max(elapsed*accel,400));
 		  			}
 		  			else  // adjust elapsed time for acceleration time - don't try to catch up
 		  			{
-		  				error = ((elapsed + td-ts/2)* _speed)/1000f - (float)Math.abs(angle);
+                     error = ((elapsed - ts/2)* _speed)/1000f - (float)Math.abs(angle);
 		  			}
 	  			}
 		  		else 	
 					error = (elapsed*_speed/1000f)- (float)Math.abs(angle);
-	  			float power = basePower + 2 * error -1 * e0;// magic numbers from experiment
+	  			power = basePower + 0.75f * error;// -0.1f * e0;// magic numbers from experiment
 	  			if(power<0) power = 0;
 	  			e0 = error;
-	  			float smooth = 0.0015f;// another magic number from experiment
+	  			float smooth = 0.0025f;// another magic number from experiment
 	  			basePower = basePower + smooth*(power-basePower); 
 	  			setPower((int)power);
 	  		}
@@ -367,9 +371,9 @@ public class Motor extends BasicMotor implements TimerListener
 						_wasRegulating = _regulate;
 						_regulate = true;
 						_speed0 = _speed;
-						setSpeed(150);
+						setSpeed(300);//was 150
 						_wasRotating = true;
-						limit = _limitAngle;
+//						limit = _limitAngle;
 					}
 			 	nudge(remaining,a); //another try
 				}
@@ -513,13 +517,13 @@ public class Motor extends BasicMotor implements TimerListener
 	int angle = getTachoCount();
 	_actualSpeed = 10*(angle - _lastTacho);
 	_lastTacho = angle;
+    _voltage = Battery.getVoltage();
   }
 	
   /** 
    *returns actualSpeed degrees per second,  calculated every 100 ms; negative value means motor is rotating backward
    */
-  public int getActualSpeed() { return _actualSpeed;}
-	
+  public int getActualSpeed() { return _actualSpeed;}	
   /**
    * Returns the tachometer count.
    * 
@@ -537,6 +541,9 @@ public class Motor extends BasicMotor implements TimerListener
   {
 	_port.resetTachoCount();
   }
+
+  public float getError() {return regulator.error;}
+  public float getBasePower() {return regulator.basePower;}
 }
 
 
