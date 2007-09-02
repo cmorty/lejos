@@ -505,6 +505,13 @@ void dispatch_native (TWOBYTES signature, STACKWORD *paramBase)
         printf("udpReset called\n");                                           
       }
       break;
+    case playSample_4IIII_5V:
+     if (verbose)
+         printf("> ");
+      else
+         printf("& ");
+      printf("Playing sound sample\n");
+    break;
     default:
 #ifdef DEBUG_METHODS
       printf("Received bad native method code: %d\n", signature);
