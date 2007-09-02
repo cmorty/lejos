@@ -80,9 +80,24 @@ However, the yyy number will count up each time the NXT is disconnected and reco
 
 A better solution is to use udev rules or pamcomsole. How to do this varies with different Linux systems. A pamconsole solution that works on Fedora Core 5, is to create a file /etc/security/console.perms.d/60-libusb.perms with the two lines:<br/><br/>
 
+<code>
 &lt;usbdevices&gt;=/dev/bus/usb/*/*<br/>
 &lt;console&gt; 0600 &lt;usbdevices&gt; 0644 root
-<br/>
+</code>
+<br/><br/>
+
+To use udev rules, set up a file such as  /etc/udev/rules.d/70-lego.rules and populate it with the following lines: <br/><br/>
+
+<code>
+# Lego NXT<br/>
+BUS=="usb", SYSFS{idVendor}=="03eb", GROUP="lego", MODE="0660" <br/>
+BUS=="usb", SYSFS{idVendor}=="0694", GROUP="lego", MODE="0660" <br/>
+</code>
+</br>
+
+This relies on the username you are using being in the <em>lego</em> group. You can modify the file to your
+requirements. The two vendors are LEGO and Atmel (for the samba driver used in firmware update mode).
+You may need to restart udev.
 
 <h1><a name="installation_and_set_up">Installation and Set Up</a></h1>
 
@@ -95,7 +110,10 @@ directory.</li>
 adjust the execution permissions in the <em>bin</em> directory.</li>
 </ol>
 On Linux and Unix systems, you will have to build the distribution first. To do so,
-switch to the <em>build</em> folder and run <code>ant</code>.
+switch to the <em>build</em> folder and run <code>ant</code>. You  will need to ensure that the
+packages that leJOS NXJ is dependent on are on your system. These include libusb-dev,
+gcj and libbluetooth-dev.
+
 <h1><a name="using-lejos">Using leJOS NXJ</a></h1>
 <ul>
   <li>Flash the leJOS NXJ firmware using <em>nxjflash</em>.</li>
@@ -162,10 +180,13 @@ By default they try to use USB first, and if this fails, they try Bluetooth</P>
 <em>nxj</em> and <em>nxjupload</em>, try each NXT they find in turn until they successfully connect to one. 
 To pick a specific NXT to connect to by name, use the <em>--name</em> flag.</p>
 
+<p>You can connect to a specific NXT by address, using the <em>--address</em> flag. If you specify the address, a Bluetooth inquiry will not be done,
+and the connection will be much faster. Use <em>nxjbrowse</em> to list the addresses of your NXT devices. An address is 12 hex digits with optional colons
+between the hex pairs.</p>
+
 <p>The leJOS NXJ tools can use different comms driver to connect to the NXT. The only driver available for USB is NXTCommLibnxt, 
 which uses David Anderson's libnxt library and the libusb open source library. This works on all operating systems. 
 For Bluetooth on Windows, NXTCommBluecove, which uses the Bluecove open source library, is used. 
-Note that this only works with the Microsoft Bluetooth stack - see "Known Bugs and Limitations in leJOS NXJ" below.
 On Linux and MAC OS X, NXTCommBluez, which uses the open source Bluez project, is used for Bluetooth.</p>
 
 <p>A future version of leJOS NXJ is expected to support the LEGO Fantom API, which should work for both USB abd Bluetooth.</p>
@@ -225,8 +246,6 @@ initialized, when multiple threads use a class</li>
 </li>
 <li>When plugging in the USB cable, or starting leJOS NXJ with the cable plugged in, the keys on the NXT do not respond for several seconds. This particularly affects Windows systems, and may be dependent on the speed of the host PC.
 </li>
-<li>NXT to NXT communications over Bluetooth is not yet supported by the lejos.nxt.comm API. It does work if you write low-level Java code to send commands to the Bluecore 4 chip.
-</li>
 <li>I2C sensors such as the Ultrasonic sensor do not work in port 4.
 </li>
 <li>The Ultrasonic sensor needs a gap of at least 200 milliseconds between calls of getDistance().
@@ -236,6 +255,8 @@ initialized, when multiple threads use a class</li>
 <li>The light sensor does not seem to work correctlly on port 4. The floodlight does not come on.
 </li>
 <li>Multidimensional arrays of objects do not work correctly. They can cause exceptions, data aborts and other problems.
+</li>
+<li>Turning off Bluetooth is on the Bluetooth menu, but not functional.
 </li>
 <li>leJOS NXJ closes down five seconds after a user program exits.  Press ENTER to restart it.
 </li>
@@ -259,17 +280,12 @@ initialized, when multiple threads use a class</li>
 </li>
 <li>The RCX limitations of the Java VM also apply to NXJ. In particular, there is no garbage collection.
 </li>
-<li>Graphics support on the LCD is limited. If text are graphics are mixed, the graphics must be written first.
+<li>LCD text and graphics modes do not mix very well. 
+<li>Sound volume cannot be controlled.
 </li>
-<li>There is no support for image files.
-</li>
-<li>Sound support is limited. Playing tones and system sounds is supported, but not sound files. The volume is always set to maximum.
-</li>
-<li>Bluetooth is always on and the device visible. There is currently no way of switching it off.
+<li>Support for sound sample files is a bit primitive.
 </li>
 <li>The name of a NXT can be changed using nxjbrowse over a USB connection. If this is attempted over a Bluetooth connection it may apprear to work, but will not.
-</li>
-<li>Defragging the file system is supported from nxjbrowse. This sometimes causes the NXT to appear to hang. It is then necessary to remove and reinsert a battery. The defrag will usually have worked successfully.
 </li>
 <li>The last parameter to nxjflash (FMCN) is ignored. it is not normally necessary to use any parameters with nxflash as the defaults are fine.
 </li>
@@ -295,11 +311,9 @@ initialized, when multiple threads use a class</li>
 </li>
 <li>Discovery of Bluetooth devices is slow, taking at least 10 seconds. It is slower still with Bluez on Linux. For Java streams connections from user programs, you can connect directly by Bluetooth address, which is much faster.
 </li>
-<li>To get permissions to the lejos NXJ usb devices from non-root users on Linux, you typically need to user pamconsole or udev rules. There are currently no instructions for setting up udev rules. 
+<li>To get permissions to the lejos NXJ usb devices from non-root users on Linux, you typically need to user pamconsole or udev rules. The instructions for doing this are not very explicit.
 </li>
 <li>Some Linux systems may require you to delete the entries for your NXT device in /var/lib/bluetooth, to enable connections over Bluetooth.
-</li>
-<li>lejos NXJ on Windows should not be installed to a folder with a space in its name (e.g a subfolder of "Program Files").
 </li>
 </ul>
 <h1><a name="documentation">Documentation</a></h1>
