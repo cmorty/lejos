@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #
-# nxjcjc: Java tool for compiling java programs for LeJOS NXJ
+# nxjc: Java tool for compiling java programs for LeJOS NXJ
 #
 # July 7, 2007  created L. Griffiths
 
@@ -15,4 +15,4 @@ else
   SEP=":"
 fi
 
-javac -source 1.3 -target 1.1 -bootclasspath "$NXJ_HOME\lib\classes.jar$SEP$CLASSPATH" "$@"
+javac -source 1.3 -target 1.1 -bootclasspath "$NXJ_HOME/lib/classes.jar$SEP$CLASSPATH" "$@"
