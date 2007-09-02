@@ -46,7 +46,7 @@ public class NXTSocket{
 	 * Constructor: Pass an open USB connection and socket details.
 	 * @param host The name of the host with which the socket will be opened
 	 * @param port The port to connect to
-	 * @param btc The bluetooth connection
+	 * @param usbc The USB connection
 	 * @throws IOException If the bluetooth does not respond or the proxy is
 	 * 	not running
 	 */
