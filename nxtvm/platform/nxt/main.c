@@ -415,8 +415,6 @@ main(void)
   	nxt_main(next, gNextProgramSize);
   }
   while (gNextProgram != 0);
-  
-  systick_wait_ms(5000);
 
   while (1) {
     nxt_avr_power_down();
