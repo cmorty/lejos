@@ -25,12 +25,12 @@ import lejos.pc.comm.*;
 		try {
 			NXJLinkAndUpload instance = new NXJLinkAndUpload();
 			instance.run(args);
-		} catch(js.tinyvm.TinyVMException tvexc) {
-	         System.err.println("Error: " + tvexc.getMessage());
+		} catch(Throwable t) {
+	         System.err.println("An error occurred: " + t.getMessage());
 		}
 	}
 	
-	private void run(String[] args) throws js.tinyvm.TinyVMException {
+	public void run(String[] args) throws js.tinyvm.TinyVMException, NXJUploadException {
 		// process arguments
 		CommandLine commandLine = fParser.parse(args);
 		String binName = commandLine.getOptionValue("o");
@@ -93,7 +93,7 @@ import lejos.pc.comm.*;
 		tinyVM.start(tinyVMArgs);
 		
 		// upload         
-		System.out.println("Uploading...");;
+		System.out.println("Uploading...");
 		int protocols = 0;
 		
 		if (blueTooth) protocols |= NXTCommFactory.BLUETOOTH;

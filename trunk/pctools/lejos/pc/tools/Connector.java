@@ -1,3 +1,5 @@
+package lejos.pc.tools;
+
 import java.io.*;
    
 import lejos.pc.comm.*;

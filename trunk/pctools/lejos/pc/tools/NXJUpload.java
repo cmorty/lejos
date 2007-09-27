@@ -14,12 +14,12 @@ public class NXJUpload {
 		try {
 			NXJUpload instance = new NXJUpload();
 			instance.run(args);
-		} catch(js.tinyvm.TinyVMException tvexc) {
-	         System.err.println("Error: " + tvexc.getMessage());
+		} catch(Throwable t) {
+	         System.err.println("An error occurred: " + t.getMessage());
 		}
 	}
 	
-	public void run(String[] args) throws js.tinyvm.TinyVMException {
+	public void run(String[] args) throws js.tinyvm.TinyVMException, NXJUploadException {
 		int protocols = 0;
 		
 		CommandLine commandLine = fParser.parse(args);
