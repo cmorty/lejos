@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+
+   <extension
+         id="leJOSBuilder"
+         name="leJOS Project Builder"
+         point="org.eclipse.core.resources.builders">
+      <builder
+            hasNature="true">
+         <run
+               class="org.lejos.nxt.ldt.builder.leJOSBuilder">
+         </run>
+      </builder>
+   </extension>
+   <extension
+         id="leJOSNature"
+         name="leJOS Project Nature"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+               class="org.lejos.nxt.ldt.builder.leJOSNature">
+         </run>
+      </runtime>
+      <requires-nature id="org.eclipse.jdt.core.javanature" />
+      <builder
+            id="org.lejos.nxt.ldt.leJOSBuilder">
+      </builder>
+   </extension>
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            adaptable="true"
+            objectClass="org.eclipse.jdt.core.IJavaElement"
+            nameFilter="*"
+            id="org.lejos.nxt.ldt.leJOSContribution">
+         <menu
+               id="org.lejos.nxt.ldt.leJOSNXJPopupMenu"
+               label="leJOS NXJ"
+               path="additions">
+         </menu>
+         <action
+               class="org.lejos.nxt.ldt.actions.LeJOSLinkAndUploadAction"
+               icon="icons/nxj.jpg"
+               id="org.lejos.nxt.ldt.actions.LeJOSLinkAndUploadAction"
+               label="&amp;Upload Program To The NXT Brick"
+               menubarPath="org.lejos.nxt.ldt.leJOSNXJPopupMenu/leJOSNXJGroup"
+               tooltip="Uploads the program to the NXT brick">
+         </action>
+         <action
+               class="org.lejos.nxt.ldt.actions.ConvertToLeJOSNatureAction"
+               enablesFor="+"
+               icon="icons/nxj.jpg"
+               id="org.lejos.nxt.ldt.ConvertToLeJOSNatureAction"
+               label="Convert to leJOS NXJ project"
+               menubarPath="org.lejos.nxt.ldt.leJOSNXJPopupMenu/leJOSNXJGroup"
+               tooltip="Converts the project to a leJOS NXJ project">
+         </action>
+      </objectContribution>
+   </extension>
+   <extension
+         id="xmlProblem"
+         name="XML Problem"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.core.resources.problemmarker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+   </extension>
+   <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            label="leJOS NXJ"
+            visible="true"
+            id="org.lejos.nxt.ldt.actionSet">
+         <menu
+               label="&amp;leJOS NXJ"
+               id="leJOSNXJMenu">
+         </menu>
+         <action
+               label="Upload &amp;Firmware"
+               icon="icons/nxj.jpg"
+               class="org.lejos.nxt.ldt.actions.LeJOSUploadFirmwareAction"
+               tooltip="Downloads the firmware to the NXT brick"
+               menubarPath="leJOSNXJMenu/leJOSNXJGroup"
+               toolbarPath="org.lejos.nxt.ldt/DownloadFirmware"
+               id="org.lejos.nxt.ldt.actions.LeJOSFirmwareDownloadAction">
+         </action>
+      </actionSet>
+   </extension>
+   <extension
+         point="org.eclipse.help.toc">
+      <toc
+            file="toc.xml"
+            primary="true">
+      </toc>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            name="leJOS NXJ"
+            class="org.lejos.nxt.ldt.preferences.leJOSNXJPreferencePage"
+            id="org.lejos.nxt.ldt.preferences.leJOSNXJPreferencePage">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="org.lejos.nxt.ldt.preferences.PreferenceInitializer">
+      </initializer>
+   </extension>
+
+</plugin>
