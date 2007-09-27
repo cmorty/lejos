@@ -12,6 +12,8 @@ import javax.swing.JPanel;
 import javax.swing.JLabel;
 import java.io.*;
 
+import lejos.pc.comm.NXTCommException;
+
 
 /**
 * Downloads  data from the DataLogger running on a MXT <br>
@@ -89,7 +91,11 @@ import java.io.*;
               _nxt = nameField.getText();
       		System.out.println(_rowLength  + "  "+ _nxt);	
       		_recordCount = 0;
-            startDownload();
+      		try {
+      			startDownload();
+      		} catch(NXTCommException n) {
+      			System.err.println(n.getMessage());
+      		}
         }
         if(e.getSource()==usbButton)
         {
@@ -111,8 +117,7 @@ import java.io.*;
 
 	}
 
-	private void startDownload()
-	{   
+	private void startDownload() throws NXTCommException {   
 	   float length = 0;
 	   _nxt = nameField.getText(); 
 	   setMessage("startDL");

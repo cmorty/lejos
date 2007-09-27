@@ -31,7 +31,11 @@ public class Upload {
 			nxtInfo = new NXTInfo[1];
 			nxtInfo[0] = new NXTInfo((name == null ? "Unknown" : name), address);
 		} else {
-			nxtInfo = nxtCommand.search(name, protocols);
+			try {
+				nxtInfo = nxtCommand.search(name, protocols);
+			} catch (Throwable t) {
+				throw new NXJUploadException(t);
+			}
 		}
 
 		boolean connected = false;
@@ -49,10 +53,11 @@ public class Upload {
 				nxtCommand.close();
 				break;
 			}
-			if (!connected)
-				throw new NXJUploadException("No NXT found - is it switched on and plugged in (for USB)?");
-		} catch (IOException ioe) {
-			throw new NXJUploadException("IOException during upload", ioe);
+		} catch (Throwable t) {
+			throw new NXJUploadException("Exception during upload", t);
 		}
+		if (!connected)
+			throw new NXJUploadException(
+					"No NXT found - is it switched on and plugged in (for USB)?");
 	}
 }

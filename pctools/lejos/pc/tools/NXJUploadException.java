@@ -2,6 +2,8 @@ package lejos.pc.tools;
 
 public class NXJUploadException extends Exception {
 
+	private static final long serialVersionUID = -7605663541720174844L;
+
 	public NXJUploadException() {
 		// TODO Auto-generated constructor stub
 	}
@@ -20,7 +22,11 @@ public class NXJUploadException extends Exception {
 		// TODO Auto-generated constructor stub
 	}
 
-	
-	
+	public String getMessage() {
+		if((getCause()!=null)&&(getCause().getMessage()!=null))
+			return getCause().getMessage();
+		else
+			return super.getMessage();
+	}	
 
 }

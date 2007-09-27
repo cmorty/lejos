@@ -36,12 +36,12 @@ public class NXJBrowser {
 	try {
 		NXJBrowser instance = new NXJBrowser();
 		instance.run(args);
-	} catch(js.tinyvm.TinyVMException tvexc) {
-         System.err.println("Error: " + tvexc.getMessage());
+	} catch(Throwable t) {
+         System.err.println("Error: " + t.getMessage());
 	}
   }
   
-  public void run(String[] args) throws js.tinyvm.TinyVMException  {
+  public void run(String[] args) throws js.tinyvm.TinyVMException, NXTCommException  {
 
     frame = new JFrame(title);
 
@@ -93,7 +93,12 @@ public class NXJBrowser {
         public void actionPerformed(ActionEvent ae) {
           int row = nxtTable.getSelectedRow();
           if (row >= 0) {
-        	  boolean open = nxtCommand.open(nxts[row]);
+        	  boolean open = false;
+        	  try {
+        		  open = nxtCommand.open(nxts[row]);
+        	  } catch(NXTCommException n) {
+        		  open = false;
+        	  }
         	  if (!open) {
         		  JOptionPane.showMessageDialog(frame, "Failed to connect");
         	  } else showFiles(frame,nxts[row]);
