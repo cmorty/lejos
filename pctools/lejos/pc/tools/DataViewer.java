@@ -1,3 +1,4 @@
+package lejos.pc.tools;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
