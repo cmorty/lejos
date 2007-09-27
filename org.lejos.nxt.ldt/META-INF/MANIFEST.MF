@@ -1,0 +1,22 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Ldt Plug-in
+Bundle-SymbolicName: org.lejos.nxt.ldt; singleton:=true
+Bundle-Version: 1.0.0
+Bundle-Activator: org.lejos.nxt.ldt.LeJOSNXJPlugin
+Bundle-Vendor: leJOS
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.core.resources,
+ org.eclipse.jdt.core,
+ org.eclipse.ui.ide
+Eclipse-LazyStart: true
+Bundle-ClassPath: lejosnxj.jar,
+ .,
+ lib/classes.jar,
+ lib/jtools.jar,
+ lib/pccomm.jar,
+ lib/pctools.jar,
+ lib/bcel-5.1.jar,
+ lib/commons-cli-1.0.jar,
+ lib/bluecove.jar
