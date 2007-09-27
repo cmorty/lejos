@@ -17,7 +17,7 @@ public class NXTCommand implements NXTProtocol {
     private boolean open = false;
     private static String hexChars = "01234567890abcdef";
 
-    public NXTInfo[] search(String name, int protocol) {
+    public NXTInfo[] search(String name, int protocol) throws NXTCommException {
     	NXTInfo[] nxtInfos;
     	
     	if (nxtComm == null) {
@@ -47,7 +47,7 @@ public class NXTCommand implements NXTProtocol {
 	        		Class c = Class.forName(nxtCommName);
 	        		nxtCommUSB = (NXTComm) c.newInstance();
 	        	} catch (Exception e) {
-	        		e.printStackTrace();
+	        		System.err.println("some error occurred while searching for USB comm drivers: " + e.getMessage());
 	        	}
 	    	}
 	        		        	
@@ -63,13 +63,12 @@ public class NXTCommand implements NXTProtocol {
             		Class c = Class.forName(nxtCommName);
             		nxtCommBluetooth = (NXTComm) c.newInstance();
             	} catch (Exception e) {
-            		e.printStackTrace();
+	        		System.err.println("some error occurred while searching for Bluetooth comm drivers: " + e.getMessage());
             	}
         	}
         	
         	if (nxtCommUSB == null && nxtCommBluetooth == null) {
-        		System.out.println("Cannot load a comms driver");
-        		System.exit(1);
+        		throw new NXTCommException("Cannot load a comm driver");
         	}
 
     	}
@@ -103,7 +102,7 @@ public class NXTCommand implements NXTProtocol {
     	}
     }
 
-	public boolean open(NXTInfo nxt) {
+	public boolean open(NXTInfo nxt) throws NXTCommException {
 		return open = nxtComm.open(nxt);
 	}
 
