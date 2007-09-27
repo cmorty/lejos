@@ -44,7 +44,14 @@ public class SocketProxy {
 			System.out.println("Connecting to " + nxtInfo[0].btResourceString);
 
 			// check to see if NXT really exists, if not exit
-			if (!nxtComm.open(nxtInfo[0])) {
+			boolean isOpen = false;
+			try {
+				isOpen = nxtComm.open(nxtInfo[0]);
+			} catch(NXTCommException n) {
+				System.err.println(n.getMessage());
+				isOpen = false;
+			}
+			if (!isOpen) {
 				System.out.println("Failed to open " + nxtInfo[0].name);
 				System.exit(1);
 			}

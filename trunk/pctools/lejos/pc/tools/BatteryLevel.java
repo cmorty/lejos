@@ -5,7 +5,7 @@ import java.io.*;
 
 public class BatteryLevel {
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException, NXTCommException {
 		System.out.println("Battery Level Test");
 		NXTCommand nxtCommand = NXTCommand.getSingleton();
 		
