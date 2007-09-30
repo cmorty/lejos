@@ -61,14 +61,12 @@ public class LeJOSNXJUtil {
 	public static void message(String message) {
 		// log
 		LeJOSNXJPlugin.getDefault().log(message);
-		// TODO open dialog
 		System.out.println("leJOS NXJ> " + message);
 	}
 
 	public static void message(Throwable throwable) {
 		// log
 		LeJOSNXJPlugin.getDefault().log(throwable);
-		// TODO open dialog
 		System.err.println("leJOS NXJ> " + throwable.getMessage());
 	}
 

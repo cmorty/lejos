@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?NLS TYPE="org.eclipse.help.toc"?>
 
-<toc label="leJOS NXJ Table of Contents" topic="html/toc.html">
-	<topic label="Main Topic"  href="html/maintopic.html"> 
-		<topic label="Sub Topic" href="html/subtopic.html"/> 
+<toc label="leJOS NXJ" topic="html/toc.html">
+	<topic label="Preliminaries" href="html/preliminaries/preliminaries.html"/>
+	<topic label="User Manual"  href="html/usermanual/usermanual.html"> 
+		<topic label="Configuration" href="html/usermanual/configuration.html"/> 
+		<topic label="Uploading the firmware" href="html/usermanual/firmwareupload.html"/> 
+		<topic label="Creating a leJOS NXJ project" href="html/usermanual/lejosproject.html"/> 
+		<topic label="Uploading a leJOS NXJ program to the NXT brick" href="html/usermanual/programupload.html"/> 
 	</topic>
-	<topic label="Main Topic 2"/>
+	<topic label="leJOS NXJ API" href="http://lejos.sourceforge.net/p_technologies/nxt/nxj/api/index.html"/>
+	<topic label="FAQs" href="html/faqs/faqs.html"/>
+	<topic label="About" href="html/about/about.html"/>
 </toc>
