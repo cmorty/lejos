@@ -5,12 +5,11 @@ public class NXJUploadException extends Exception {
 	private static final long serialVersionUID = -7605663541720174844L;
 
 	public NXJUploadException() {
-		// TODO Auto-generated constructor stub
+		super();
 	}
 
 	public NXJUploadException(String arg0) {
 		super(arg0);
-		// TODO Auto-generated constructor stub
 	}
 
 	public NXJUploadException(Throwable arg0) {
@@ -19,7 +18,6 @@ public class NXJUploadException extends Exception {
 
 	public NXJUploadException(String arg0, Throwable arg1) {
 		super(arg0, arg1);
-		// TODO Auto-generated constructor stub
 	}
 
 	public String getMessage() {
