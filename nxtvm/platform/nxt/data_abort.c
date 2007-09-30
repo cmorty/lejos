@@ -1,5 +1,6 @@
 #include "display.h"
 #include "AT91SAM7.h"
+#include "interpreter.h"
 
 U32 data_abort_pc;
 
@@ -18,6 +19,15 @@ data_abort_C(void)
   display_goto_xy(0, 3);
   display_string("ASR  ");
   display_hex(*AT91C_MC_ASR, 8);
+  display_goto_xy(0, 4);
+  display_string("OPCODE ");
+  display_int((int) *old_pc, 4);
+  display_goto_xy(0,5);
+  display_string("DEBUG1 ");
+  display_hex(debug_word1,8);
+  display_goto_xy(0,6);
+  display_string("DEBUG2 ");
+  display_hex(debug_word2,8);
 
   display_update();
 
