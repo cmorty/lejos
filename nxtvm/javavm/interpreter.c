@@ -30,7 +30,8 @@ byte    gRequestCode;
 unsigned int gNextProgram;
 unsigned int gNextProgramSize;
 
-byte *pc;
+byte *pc, *old_pc;
+unsigned int debug_word1, debug_word2;
 STACKWORD *localsBase;
 STACKWORD *stackTop;
 
@@ -230,6 +231,8 @@ void engine()
   printf ("OPCODE (0x%X) %s\n", (int) *pc, OPCODE_NAME[*pc]);
   #endif
 
+  old_pc = pc;
+  
   switch (*pc++)
   {
     case OP_NOP:
