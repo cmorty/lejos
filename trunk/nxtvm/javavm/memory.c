@@ -19,9 +19,9 @@
 static boolean memoryInitialized = false;
 #endif
 
-// Heap memory needs to be aligned to 8 bytes on ARM
+// Heap memory needs to be aligned to 4 bytes on ARM
 // Value is in 2-byte units and must be a power of 2
-#define MEMORY_ALIGNMENT 4
+#define MEMORY_ALIGNMENT 2
 
 #define NULL_OFFSET 0xFFFF
 
@@ -40,7 +40,11 @@ const byte typeSize[] = {
   1, // 8 == T_BYTE
   2, // 9 == T_SHORT
   4, // 10 == T_INT
-  8  // 11 == T_LONG
+  8, // 11 == T_LONG
+  0, // 12
+  0, // 13
+  4, // 14 Used for multidimensional arrays 
+  
 };
 
 typedef struct MemoryRegion_S {
@@ -285,6 +289,7 @@ Object *new_multi_array (byte elemType, byte totalDimensions,
   #if 0
   printf ("num elements: %d\n", (int) *numElemPtr);
   #endif
+
 
   if (totalDimensions == 1)
     return new_primitive_array (elemType, *numElemPtr);
