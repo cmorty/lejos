@@ -18,6 +18,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.lejos.nxt.ldt.LeJOSNXJPlugin;
 import org.lejos.nxt.ldt.builder.leJOSNature;
 import org.lejos.nxt.ldt.preferences.PreferenceConstants;
+import org.lejos.nxt.ldt.util.LeJOSNXJException;
 import org.lejos.nxt.ldt.util.LeJOSNXJUtil;
 
 public class ConvertToLeJOSNatureAction implements IObjectActionDelegate {
@@ -35,7 +36,8 @@ public class ConvertToLeJOSNatureAction implements IObjectActionDelegate {
 		if (project != null) {
 			setLeJOSNature(project);
 		} else {
-			// TODO log error
+			// log 
+			LeJOSNXJUtil.message(new LeJOSNXJException("no project selected or no Java project"));
 		}
 	}
 
@@ -97,8 +99,7 @@ public class ConvertToLeJOSNatureAction implements IObjectActionDelegate {
 							+ " now is a leJOS NXJ project");
 		} catch (CoreException e) {
 			// log
-			// TODO show error
-			LeJOSNXJPlugin.getDefault().log(e);
+			LeJOSNXJUtil.message(e);
 		}
 	}
 

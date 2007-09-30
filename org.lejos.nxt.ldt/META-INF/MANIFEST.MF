@@ -2,14 +2,14 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Ldt Plug-in
 Bundle-SymbolicName: org.lejos.nxt.ldt; singleton:=true
-Bundle-Version: 1.0.0
+Bundle-Version: 0.1.0
 Bundle-Activator: org.lejos.nxt.ldt.LeJOSNXJPlugin
 Bundle-Vendor: leJOS
-Require-Bundle: org.eclipse.ui,
- org.eclipse.core.runtime,
+Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.resources,
- org.eclipse.jdt.core,
- org.eclipse.ui.ide
+ org.eclipse.swt,
+ org.eclipse.ui,
+ org.eclipse.jdt.core
 Eclipse-LazyStart: true
 Bundle-ClassPath: lejosnxj.jar,
  .,
@@ -20,3 +20,50 @@ Bundle-ClassPath: lejosnxj.jar,
  lib/bcel-5.1.jar,
  lib/commons-cli-1.0.jar,
  lib/bluecove.jar
+Export-Package: com.intel.bluetooth;uses:="javax.bluetooth,new com.intel.bluetooth,javax.microedition.io",
+ com.intel.bluetooth.btgoep;uses:="javax.obex,com.ibm.oti.connection,javax.microedition.io",
+ com.intel.bluetooth.btspp;
+  uses:="javax.bluetooth,
+   com.intel.bluetooth,
+   com.ibm.oti.connection,
+   javax.microedition.io",
+ com.intel.bluetooth.gcf.socket;uses:="javax.microedition.io",
+ com.intel.bluetooth.obex;uses:="javax.bluetooth,javax.obex,javax.microedition.io",
+ com.intel.bluetooth.tcpobex;uses:="javax.obex,com.ibm.oti.connection,javax.microedition.io",
+ com.sun.cdc.io.j2me.btgoep;uses:="com.sun.cdc.io,javax.microedition.io",
+ com.sun.cdc.io.j2me.btspp;uses:="com.sun.cdc.io,javax.microedition.io",
+ com.sun.cdc.io.j2me.tcpobex;uses:="com.sun.cdc.io,javax.microedition.io",
+ javax.bluetooth;uses:="javax.microedition.io",
+ javax.microedition.io,
+ javax.obex;uses:="javax.microedition.io",
+ lejos.pc.tools;
+  uses:="javax.swing,
+   org.apache.commons.cli,
+   javax.swing.table,
+   lejos.pc.comm",
+ org,
+ org.apache.bcel;uses:="org.apache.bcel.classfile,org.apache.bcel.util",
+ org.apache.bcel.classfile;uses:="org.apache.bcel.generic,org.apache.bcel.util,org.apache.bcel",
+ org.apache.bcel.generic;uses:="org.apache.bcel.classfile,org.apache.bcel.util",
+ org.apache.bcel.util;uses:="org.apache.bcel.classfile,org.apache.bcel.generic,org.apache.bcel",
+ org.apache.bcel.verifier;uses:="javax.swing,javax.swing.event",
+ org.apache.bcel.verifier.exc,
+ org.apache.bcel.verifier.statics;
+  uses:="org.apache.bcel.classfile,
+   org.apache.bcel.generic,
+   org.apache.bcel,
+   org.apache.bcel.verifier",
+ org.apache.bcel.verifier.structurals;uses:="org.apache.bcel.generic,org.apache.bcel,org.apache.bcel.verifier",
+ org.apache.commons.cli,
+ org.lejos,
+ org.lejos.nxt,
+ org.lejos.nxt.ldt;uses:="org.eclipse.jface.resource,org.eclipse.ui.plugin,org.osgi.framework",
+ org.lejos.nxt.ldt.actions;uses:="org.eclipse.jface.action,org.eclipse.ui,org.eclipse.jface.viewers",
+ org.lejos.nxt.ldt.builder;
+  uses:="org.eclipse.core.runtime,
+   org.eclipse.core.resources,
+   org.xml.sax.helpers,
+   org.xml.sax",
+ org.lejos.nxt.ldt.preferences;uses:="org.eclipse.jface.preference,org.eclipse.ui,org.eclipse.core.runtime.preferences",
+ org.lejos.nxt.ldt.util;uses:="org.eclipse.jdt.core,org.eclipse.jface.viewers",
+ org.lejos.nxt.ldt.views

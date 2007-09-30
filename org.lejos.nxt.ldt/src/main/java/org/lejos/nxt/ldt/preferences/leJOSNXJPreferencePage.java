@@ -19,7 +19,7 @@ public class leJOSNXJPreferencePage
 	public leJOSNXJPreferencePage() {
 		super(GRID);
 		setPreferenceStore(LeJOSNXJPlugin.getDefault().getPreferenceStore());
-		setDescription("A demonstration of a preference page implementation");
+		setDescription("preference page for leJOS NXJ");
 	}
 	
 	/**

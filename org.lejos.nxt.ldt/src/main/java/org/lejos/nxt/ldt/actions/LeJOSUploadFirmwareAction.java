@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
@@ -18,6 +17,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IProgressService;
 import org.lejos.nxt.ldt.LeJOSNXJPlugin;
 import org.lejos.nxt.ldt.preferences.PreferenceConstants;
+import org.lejos.nxt.ldt.util.LeJOSNXJException;
 import org.lejos.nxt.ldt.util.LeJOSNXJUtil;
 
 /**
@@ -96,8 +96,8 @@ public class LeJOSUploadFirmwareAction implements
 	public void init(IWorkbenchWindow window) {
 	}
 
-	private int uploadFirmware() throws InterruptedException,
-			InvocationTargetException, IOException {
+	private int uploadFirmware() throws LeJOSNXJException  {
+		try {
 		// get runtime
 		Runtime rt = Runtime.getRuntime();
 		// get NXJ_HOME property from preferences
@@ -105,12 +105,20 @@ public class LeJOSUploadFirmwareAction implements
 				.getString(PreferenceConstants.P_NXJ_HOME);
 		String nxjHomeEnv = "NXJ_HOME=" + nxjHome;
 		// create call to nxjflash
-		// TODO linux, macosx
-		String command = nxjHome + "\\bin\\nxjflash.exe";
+		// operating system? TODO Mac OSX
+		String command = null;
+		String os = System.getProperty("os.name");
+		if("Windows XP".equals(os) || "Windows 2000".equals(os)) {
+			command = nxjHome + "\\bin\\nxjflash.exe";
+		} else if("linux".equals(os)) {
+			command = nxjHome + "/bin/nxjflash";
+		} else {
+			throw new UnsupportedOperationException("operating system is presently not supported");
+		}
 		// check if file exists
 		File commandFile = new File(command);
 		if (!commandFile.exists())
-			throw new IOException("preference NXJ_HOME is invalid or not set");
+			throw new LeJOSNXJException("preference NXJ_HOME is invalid or not set");
 		// run command
 		String[] cmd = { command };
 		String[] envp = { nxjHomeEnv };
@@ -122,6 +130,9 @@ public class LeJOSUploadFirmwareAction implements
 		outputMonitor.start();
 		// watch for result
 		return proc.waitFor();
+		} catch(Throwable t) {
+			throw new LeJOSNXJException(t);
+		}
 	}
 
 	class StreamMonitor extends Thread {

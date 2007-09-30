@@ -37,7 +37,7 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 	}
 
 	/**
-	 * TODO present error in dialog
+	 * TODO present error in progress dialog
 	 * 
 	 * @see IWorkbenchWindowActionDelegate#run
 	 */
@@ -113,7 +113,7 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 			// writeorder
 			args[argsCounter++] = "--writeorder";
 			args[argsCounter++] = "LE";
-			// TODO connection type
+			// connection type
 			String connectionType = LeJOSNXJPlugin.getDefault().getPluginPreferences()
 					.getString(PreferenceConstants.P_CONNECTION_TYPE);
 			args[argsCounter++] = "-" + connectionType; 
