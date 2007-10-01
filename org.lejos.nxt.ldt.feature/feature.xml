@@ -1,26 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.lejos.nxt.ldt.feature"
-      label="Feature Feature"
-      version="1.0.0"
+      label="leJOS NXJ Eclipse features"
+      version="0.1.0"
       provider-name="www.lejos.org">
 
-   <description url="http://www.example.com/description">
-      [Enter Feature Description here.]
+   <description url="http://www.lejos.org">
+      Eclipse features for leJOS NXJ
    </description>
 
-   <copyright url="http://www.example.com/copyright">
-      [Enter Copyright Description here.]
+   <copyright url="http://www.lejos.org">
+      Copyrighted to the leJOS project
    </copyright>
 
-   <license url="http://www.example.com/license">
-      [Enter License Description here.]
+   <license url="http://www.lejos.org">
+      Licensed under the GPL
    </license>
 
    <plugin
          id="org.lejos.nxt.ldt"
-         download-size="0"
-         install-size="0"
+         download-size="1016"
+         install-size="1016"
          version="0.1.0"
          unpack="false"/>
 
