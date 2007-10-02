@@ -1,21 +1,28 @@
 package lejos.pc.tools;
 
+import java.util.Collection;
+
 import lejos.pc.comm.*;
 import org.apache.commons.cli.CommandLine;
 
 public class NXJUpload {
+
+	private Collection<ToolsLogListener> fLogListeners;
 	private NXJUploadCommandLineParser fParser;
+	private Upload fUpload;
 
 	public NXJUpload() {
 		fParser = new NXJUploadCommandLineParser();
+		fUpload = new Upload(); 
 	}
 
 	public static void main(String[] args) {
 		try {
 			NXJUpload instance = new NXJUpload();
+			instance.addLogListener(new ToolsLogger());
 			instance.run(args);
 		} catch(Throwable t) {
-	         System.err.println("An error occurred: " + t.getMessage());
+			System.err.println("leJOSNXJ> an error occurred: " + t.getMessage());
 		}
 	}
 	
@@ -34,6 +41,27 @@ public class NXJUpload {
 		if (blueTooth) protocols |= NXTCommFactory.BLUETOOTH;
 		if (usb) protocols |= NXTCommFactory.USB;
 		
-		Upload.upload(name, address, protocols, fileName, run);
+		fUpload.upload(name, address, protocols, fileName, run);
 	}	
+	
+	/**
+	 * register log listener
+	 * 
+	 * @param listener
+	 */
+	public void addLogListener(ToolsLogListener listener) {
+		fLogListeners.add(listener);
+		fUpload.addLogListener(listener);
+	}
+	
+	/**
+	 * unregister log listener
+	 * 
+	 * @param listener
+	 */
+	public void removeLogListener(ToolsLogListener listener) {
+		fLogListeners.remove(listener);
+		fUpload.removeLogListener(listener);
+	}
+
 }
