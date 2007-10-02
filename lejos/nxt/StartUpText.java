@@ -1,3 +1,5 @@
+package lejos.nxt;
+
 import java.io.*;
 import java.util.Vector;
 
