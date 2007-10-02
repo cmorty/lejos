@@ -1,106 +1,116 @@
 package lejos.pc.comm;
 
-import java.util.*;
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Properties;
 
-public class NXTCommand implements NXTProtocol {	
-	private NXTComm nxtComm = null,
-	                nxtCommUSB = null,
-	                nxtCommBluetooth = null;
-	
+public class NXTCommand implements NXTProtocol {
+
+	private Collection<NXTCommLogListener> fLogListeners;
+
+	private NXTComm nxtComm = null, nxtCommUSB = null, nxtCommBluetooth = null;
+
 	private static String HOME = System.getProperty("nxj.home");;
 	private static String SEP = System.getProperty("file.separator");
-	private static String PROP_FILE = HOME + SEP + "bin" + SEP + "nxj.properties";
+	private static String PROP_FILE = HOME + SEP + "bin" + SEP
+			+ "nxj.properties";
 	private static NXTCommand singleton = null;
-	
+
 	private boolean verifyCommand = false;
-    private boolean open = false;
-    private static String hexChars = "01234567890abcdef";
+	private boolean open = false;
+	private static String hexChars = "01234567890abcdef";
 
-    public NXTInfo[] search(String name, int protocol) throws NXTCommException {
-    	NXTInfo[] nxtInfos;
-    	
-    	if (nxtComm == null) {
-	    	Properties props = new Properties();
-	    	
-	    	try {
-	    		//System.out.println("Loading " + PROP_FILE);
-	    		props.load(new FileInputStream(PROP_FILE));
-	    	} catch (FileNotFoundException e) {
-	    		//System.out.println("No nxj.properties file");
-	    	} catch (IOException e) {
-	    		System.out.println("Failure to read nxj.properties file");
-	    	}
-
-	    	String os = System.getProperty("os.name");
-	    	boolean windows = false;
-	    	
-	    	if (os.length() >= 7 && os.substring(0,7).equals("Windows"))
-	    		windows = true;
-	    	
-	    	// Look for USB comms driver first
-	    	
-	    	if ((protocol & NXTCommFactory.USB) != 0) {
-	    		String nxtCommName = props.getProperty("NXTCommUSB", "lejos.pc.comm.NXTCommLibnxt");
-	    		//System.out.println("NXTCommUSB = " + nxtCommName);
-	    		try {
-	        		Class c = Class.forName(nxtCommName);
-	        		nxtCommUSB = (NXTComm) c.newInstance();
-	        	} catch (Exception e) {
-	        		System.err.println("some error occurred while searching for USB comm drivers: " + e.getMessage());
-	        	}
-	    	}
-	        		        	
-        	// Look for a Bluetooth one
-        	
-	    	String defaultDriver = (windows  ? "lejos.pc.comm.NXTCommBluecove"
-	    			                         : "lejos.pc.comm.NXTCommBluez");
-        	
-	    	if ((protocol & NXTCommFactory.BLUETOOTH) != 0) {
-        		String nxtCommName = props.getProperty("NXTCommBluetooth", defaultDriver);
-        		//System.out.println("NXTCommBluetooth = " + nxtCommName);
-        		try {
-            		Class c = Class.forName(nxtCommName);
-            		nxtCommBluetooth = (NXTComm) c.newInstance();
-            	} catch (Exception e) {
-	        		System.err.println("some error occurred while searching for Bluetooth comm drivers: " + e.getMessage());
-            	}
-        	}
-        	
-        	if (nxtCommUSB == null && nxtCommBluetooth == null) {
-        		throw new NXTCommException("Cannot load a comm driver");
-        	}
-
-    	}
-
-    	// Look for a USB one first
-    	
-    	if ((protocol & NXTCommFactory.USB) != 0 && nxtCommUSB != null) {
-    		nxtInfos = nxtCommUSB.search(name, protocol);
-    		if (nxtInfos.length > 0) {
-    			nxtComm = nxtCommUSB;
-    			return nxtInfos;
-    		}
-    	}
-    	
-    	// If not found, look for a Bluetooth one
-    	
-    	if ((protocol & NXTCommFactory.BLUETOOTH) != 0 && nxtCommBluetooth != null){
-    		nxtInfos = nxtCommBluetooth.search(name, protocol);
-    		if (nxtInfos.length > 0) {
-    			nxtComm = nxtCommBluetooth;
-    			return nxtInfos;
-    		}   		
-    	}
-    	
-    	return new NXTInfo[0];
+	private NXTCommand() {
+		fLogListeners = new ArrayList<NXTCommLogListener>();
 	}
-    
-    public void setNXTCommBlueTooth() {
-    	if (nxtComm == null) {
-    		nxtComm = NXTCommFactory.createNXTComm(NXTCommFactory.BLUETOOTH);
-    	}
-    }
+
+	public NXTInfo[] search(String name, int protocol) throws NXTCommException {
+		NXTInfo[] nxtInfos;
+
+		if (nxtComm == null) {
+			Properties props = new Properties();
+
+			try {
+				// log("Loading " + PROP_FILE);
+				props.load(new FileInputStream(PROP_FILE));
+			} catch (FileNotFoundException e) {
+			} catch (IOException e) {
+				log("Failed to read file " + PROP_FILE + ": " + e.getMessage());
+			}
+
+			String os = System.getProperty("os.name");
+			boolean windows = false;
+
+			if (os.length() >= 7 && os.substring(0, 7).equals("Windows"))
+				windows = true;
+
+			// Look for USB comms driver first
+			if ((protocol & NXTCommFactory.USB) != 0) {
+				String nxtCommName = props.getProperty("NXTCommUSB",
+						"lejos.pc.comm.NXTCommLibnxt");
+				// log("NXTCommUSB = " + nxtCommName);
+				try {
+					Class c = Class.forName(nxtCommName);
+					nxtCommUSB = (NXTComm) c.newInstance();
+				} catch (Throwable t) {
+					log(t);
+				}
+			}
+
+			// Look for a Bluetooth one
+			String defaultDriver = (windows ? "lejos.pc.comm.NXTCommBluecove"
+					: "lejos.pc.comm.NXTCommBluez");
+
+			if ((protocol & NXTCommFactory.BLUETOOTH) != 0) {
+				String nxtCommName = props.getProperty("NXTCommBluetooth",
+						defaultDriver);
+				// log("NXTCommBluetooth = " + nxtCommName);
+				try {
+					Class c = Class.forName(nxtCommName);
+					nxtCommBluetooth = (NXTComm) c.newInstance();
+				} catch (Throwable t) {
+					log(t);
+				}
+			}
+
+			if (nxtCommUSB == null && nxtCommBluetooth == null) {
+				throw new NXTCommException("Cannot load a comm driver");
+			}
+
+		}
+
+		// Look for a USB one first
+
+		if ((protocol & NXTCommFactory.USB) != 0 && nxtCommUSB != null) {
+			nxtInfos = nxtCommUSB.search(name, protocol);
+			if (nxtInfos.length > 0) {
+				nxtComm = nxtCommUSB;
+				return nxtInfos;
+			}
+		}
+
+		// If not found, look for a Bluetooth one
+
+		if ((protocol & NXTCommFactory.BLUETOOTH) != 0
+				&& nxtCommBluetooth != null) {
+			nxtInfos = nxtCommBluetooth.search(name, protocol);
+			if (nxtInfos.length > 0) {
+				nxtComm = nxtCommBluetooth;
+				return nxtInfos;
+			}
+		}
+
+		return new NXTInfo[0];
+	}
+
+	public void setNXTCommBlueTooth() {
+		if (nxtComm == null) {
+			nxtComm = NXTCommFactory.createNXTComm(NXTCommFactory.BLUETOOTH);
+		}
+	}
 
 	public boolean open(NXTInfo nxt) throws NXTCommException {
 		return open = nxtComm.open(nxt);
@@ -111,36 +121,41 @@ public class NXTCommand implements NXTProtocol {
 	}
 
 	/**
-	 * Small helper method to send DIRECT COMMAND request to NXT and return verification result.
+	 * Small helper method to send DIRECT COMMAND request to NXT and return
+	 * verification result.
+	 * 
 	 * @param request
 	 * @return
 	 */
-	private byte sendRequest(byte [] request, int replyLen) throws IOException {
+	private byte sendRequest(byte[] request, int replyLen) throws IOException {
 		byte verify = 0; // default of 0 means success
-		if(verifyCommand)
+		if (verifyCommand)
 			request[0] = DIRECT_COMMAND_REPLY;
-		
-		byte [] reply = nxtComm.sendRequest(request,
-				                (request[0] == DIRECT_COMMAND_REPLY ? replyLen : 0));
-		if(request[0] == DIRECT_COMMAND_REPLY) {
+
+		byte[] reply = nxtComm.sendRequest(request,
+				(request[0] == DIRECT_COMMAND_REPLY ? replyLen : 0));
+		if (request[0] == DIRECT_COMMAND_REPLY) {
 			verify = reply[2];
 		}
 		return verify;
 	}
-	
+
 	/**
-	 * Small helper method to send a SYSTEM COMMAND request to NXT and return verification result.
+	 * Small helper method to send a SYSTEM COMMAND request to NXT and return
+	 * verification result.
+	 * 
 	 * @param request
 	 * @return
 	 */
-	private byte sendSystemRequest(byte [] request, int replyLen) throws IOException {
+	private byte sendSystemRequest(byte[] request, int replyLen)
+			throws IOException {
 		byte verify = 0; // default of 0 means success
-		if(verifyCommand)
+		if (verifyCommand)
 			request[0] = SYSTEM_COMMAND_REPLY;
-		
-		byte [] reply = nxtComm.sendRequest(request,
-				                (request[0] == SYSTEM_COMMAND_REPLY ? replyLen : 0));
-		if(request[0] == SYSTEM_COMMAND_REPLY) {
+
+		byte[] reply = nxtComm.sendRequest(request,
+				(request[0] == SYSTEM_COMMAND_REPLY ? replyLen : 0));
+		if (request[0] == SYSTEM_COMMAND_REPLY) {
 			verify = reply[2];
 		}
 		return verify;
@@ -148,231 +163,290 @@ public class NXTCommand implements NXTProtocol {
 
 	/**
 	 * Starts a program already on the NXT.
+	 * 
 	 * @param fileName
 	 * @return
 	 */
 	public byte startProgram(String fileName) throws IOException {
-		byte [] request = {DIRECT_COMMAND_NOREPLY, START_PROGRAM};
+		byte[] request = { DIRECT_COMMAND_NOREPLY, START_PROGRAM };
 		request = appendString(request, fileName);
-		return sendRequest(request,22);
-	}	
+		return sendRequest(request, 22);
+	}
 
 	/**
-	 * Opens a file on the NXT for reading. Returns a handle number and file size,
-	 * enclosed in a FileInfo object.
+	 * Opens a file on the NXT for reading. Returns a handle number and file
+	 * size, enclosed in a FileInfo object.
 	 * 
-	 * @param fileName e.g. "Woops.rso"
+	 * @param fileName
+	 *            e.g. "Woops.rso"
 	 * @return
 	 */
 	public FileInfo openRead(String fileName) throws IOException {
-		byte [] request = {SYSTEM_COMMAND_REPLY, OPEN_READ};
-		request = appendString(request, fileName); // No padding required apparently
-		byte [] reply = nxtComm.sendRequest(request,8);
+		byte[] request = { SYSTEM_COMMAND_REPLY, OPEN_READ };
+		request = appendString(request, fileName); // No padding required
+													// apparently
+		byte[] reply = nxtComm.sendRequest(request, 8);
 		FileInfo fileInfo = new FileInfo(fileName);
 		fileInfo.status = reply[2];
-		if(reply.length == 8) { // Check if all data included in reply
+		if (reply.length == 8) { // Check if all data included in reply
 			fileInfo.fileHandle = reply[3];
-			fileInfo.fileSize = (0xFF & reply[4]) | ((0xFF & reply[5]) << 8)| ((0xFF & reply[6]) << 16)| ((0xFF & reply[7]) << 24);
+			fileInfo.fileSize = (0xFF & reply[4]) | ((0xFF & reply[5]) << 8)
+					| ((0xFF & reply[6]) << 16) | ((0xFF & reply[7]) << 24);
 		}
 		return fileInfo;
 	}
 
 	/**
 	 * Opens a file on the NXT for writing.
-	 * @param fileName e.g. "Woops.rso"
+	 * 
+	 * @param fileName
+	 *            e.g. "Woops.rso"
 	 * @return File Handle number
 	 */
 	public byte openWrite(String fileName, int size) throws IOException {
-		byte [] command = {SYSTEM_COMMAND_REPLY, OPEN_WRITE};
-        byte[] asciiFileName = new byte[fileName.length()];
-        for(int i=0;i<fileName.length();i++) asciiFileName[i] = (byte) fileName.charAt(i);
+		byte[] command = { SYSTEM_COMMAND_REPLY, OPEN_WRITE };
+		byte[] asciiFileName = new byte[fileName.length()];
+		for (int i = 0; i < fileName.length(); i++)
+			asciiFileName[i] = (byte) fileName.charAt(i);
 		command = appendBytes(command, asciiFileName);
-		byte [] request = new byte[22];
+		byte[] request = new byte[22];
 		System.arraycopy(command, 0, request, 0, command.length);
-		byte [] fileLength = {(byte)size, (byte)(size>>>8), (byte)(size>>>16), (byte)(size>>>24)};
+		byte[] fileLength = { (byte) size, (byte) (size >>> 8),
+				(byte) (size >>> 16), (byte) (size >>> 24) };
 		request = appendBytes(request, fileLength);
-		byte [] reply = nxtComm.sendRequest(request, 4);
+		byte[] reply = nxtComm.sendRequest(request, 4);
 		return reply[3]; // The handle number
 	}
 
 	/**
 	 * Closes an open file.
-	 * @param handle File handle number.
+	 * 
+	 * @param handle
+	 *            File handle number.
 	 * @return Error code 0 = success
 	 */
 	public byte closeFile(byte handle) throws IOException {
-		byte [] request = {SYSTEM_COMMAND_NOREPLY, CLOSE, handle};			
+		byte[] request = { SYSTEM_COMMAND_NOREPLY, CLOSE, handle };
 		return sendSystemRequest(request, 4);
 	}
-	
-	public byte delete(String fileName) throws IOException {		
-		byte [] request = {SYSTEM_COMMAND_REPLY, DELETE};
+
+	public byte delete(String fileName) throws IOException {
+		byte[] request = { SYSTEM_COMMAND_REPLY, DELETE };
 		request = appendString(request, fileName);
 		return sendSystemRequest(request, 23);
 	}
 
 	/**
-	 * @param wildCard [filename].[extension], *.[extension], [filename].*, *.*
+	 * @param wildCard
+	 *            [filename].[extension], *.[extension], [filename].*, *.*
 	 * @return
 	 */
 	public FileInfo findFirst(String wildCard) throws IOException {
 
-		byte [] request = {SYSTEM_COMMAND_REPLY, NXJ_FIND_FIRST};
+		byte[] request = { SYSTEM_COMMAND_REPLY, NXJ_FIND_FIRST };
 		request = appendString(request, wildCard);
 
-		byte [] reply = nxtComm.sendRequest(request, 32);
+		byte[] reply = nxtComm.sendRequest(request, 32);
 		FileInfo fileInfo = null;
-		if(reply[2] == 0  && reply.length == 32) {
-			StringBuffer name= new StringBuffer(new String(reply)).delete(0, 4);
-			int lastPos = name.indexOf("\0"); 
-			name.delete(lastPos, name.length());
-			fileInfo = new FileInfo(name.toString());
-			fileInfo.status = 0;
-			fileInfo.fileHandle = reply[3];
-			fileInfo.fileSize = (0xFF & reply[24]) | ((0xFF & reply[25]) << 8)| ((0xFF & reply[26]) << 16)| ((0xFF & reply[27]) << 24);
-			fileInfo.startPage = (0xFF & reply[28]) | ((0xFF & reply[29]) << 8)| ((0xFF & reply[30]) << 16)| ((0xFF & reply[31]) << 24);
-
-		}
-		return fileInfo;
-	}
-	
-	/**
-	 * @param handle Handle number from the previous found file or fromthe Find First command.
-	 * @return
-	 */
-	public FileInfo findNext(byte handle) throws IOException {
-
-		byte [] request = {SYSTEM_COMMAND_REPLY, NXJ_FIND_NEXT, handle};
-		
-		byte [] reply = nxtComm.sendRequest(request, 32);
-		FileInfo fileInfo = null;
-		if(reply[2] == 0 && reply.length == 32) {
-			StringBuffer name= new StringBuffer(new String(reply)).delete(0, 4);
+		if (reply[2] == 0 && reply.length == 32) {
+			StringBuffer name = new StringBuffer(new String(reply))
+					.delete(0, 4);
 			int lastPos = name.indexOf("\0");
 			name.delete(lastPos, name.length());
 			fileInfo = new FileInfo(name.toString());
 			fileInfo.status = 0;
 			fileInfo.fileHandle = reply[3];
-			fileInfo.fileSize = (0xFF & reply[24]) | ((0xFF & reply[25]) << 8)| ((0xFF & reply[26]) << 16)| ((0xFF & reply[27]) << 24);
-			fileInfo.startPage = (0xFF & reply[28]) | ((0xFF & reply[29]) << 8)| ((0xFF & reply[30]) << 16)| ((0xFF & reply[31]) << 24);
+			fileInfo.fileSize = (0xFF & reply[24]) | ((0xFF & reply[25]) << 8)
+					| ((0xFF & reply[26]) << 16) | ((0xFF & reply[27]) << 24);
+			fileInfo.startPage = (0xFF & reply[28]) | ((0xFF & reply[29]) << 8)
+					| ((0xFF & reply[30]) << 16) | ((0xFF & reply[31]) << 24);
+
 		}
 		return fileInfo;
 	}
 
 	/**
-	 * Helper code to append a string and null terminator at the end of a command request.
-	 * Should use String.concat if I could add a zero to end somehow.
+	 * @param handle
+	 *            Handle number from the previous found file or fromthe Find
+	 *            First command.
+	 * @return
+	 */
+	public FileInfo findNext(byte handle) throws IOException {
+
+		byte[] request = { SYSTEM_COMMAND_REPLY, NXJ_FIND_NEXT, handle };
+
+		byte[] reply = nxtComm.sendRequest(request, 32);
+		FileInfo fileInfo = null;
+		if (reply[2] == 0 && reply.length == 32) {
+			StringBuffer name = new StringBuffer(new String(reply))
+					.delete(0, 4);
+			int lastPos = name.indexOf("\0");
+			name.delete(lastPos, name.length());
+			fileInfo = new FileInfo(name.toString());
+			fileInfo.status = 0;
+			fileInfo.fileHandle = reply[3];
+			fileInfo.fileSize = (0xFF & reply[24]) | ((0xFF & reply[25]) << 8)
+					| ((0xFF & reply[26]) << 16) | ((0xFF & reply[27]) << 24);
+			fileInfo.startPage = (0xFF & reply[28]) | ((0xFF & reply[29]) << 8)
+					| ((0xFF & reply[30]) << 16) | ((0xFF & reply[31]) << 24);
+		}
+		return fileInfo;
+	}
+
+	/**
+	 * Helper code to append a string and null terminator at the end of a
+	 * command request. Should use String.concat if I could add a zero to end
+	 * somehow.
+	 * 
 	 * @param command
 	 * @param str
 	 * @return
 	 */
-	private byte[] appendString(byte [] command, String str) {
+	private byte[] appendString(byte[] command, String str) {
 		byte[] buff = new byte[command.length + str.length() + 1];
-		for(int i=0;i<command.length;i++) buff[i] = command[i];
-		for(int i=0;i<str.length();i++) buff[command.length+i] = (byte) str.charAt(i);
+		for (int i = 0; i < command.length; i++)
+			buff[i] = command[i];
+		for (int i = 0; i < str.length(); i++)
+			buff[command.length + i] = (byte) str.charAt(i);
 		buff[command.length + str.length()] = 0;
 		return buff;
 	}
 
-	private byte[] appendBytes(byte [] array1, byte [] array2) {
-		byte [] array = new byte[array1.length + array2.length];
+	private byte[] appendBytes(byte[] array1, byte[] array2) {
+		byte[] array = new byte[array1.length + array2.length];
 		System.arraycopy(array1, 0, array, 0, array1.length);
 		System.arraycopy(array2, 0, array, array1.length, array2.length);
 		return array;
 	}
 
 	public int getBatteryLevel() throws IOException {
-		byte [] request = {DIRECT_COMMAND_REPLY, GET_BATTERY_LEVEL};
-		byte [] reply = nxtComm.sendRequest(request, 5);
+		byte[] request = { DIRECT_COMMAND_REPLY, GET_BATTERY_LEVEL };
+		byte[] reply = nxtComm.sendRequest(request, 5);
 		int batteryLevel = (0xFF & reply[3]) | ((0xFF & reply[4]) << 8);
 		return batteryLevel;
 	}
 
 	/**
-	 * Call the close() command when your program ends, otherwise you
-	 * will have to turn the NXT brick off/on before you run another
-	 * program.
-	 *
+	 * Call the close() command when your program ends, otherwise you will have
+	 * to turn the NXT brick off/on before you run another program.
+	 * 
 	 */
 	public void close() throws IOException {
-		if (!open) return;
+		if (!open)
+			return;
 		open = false;
-		byte [] request = {DIRECT_COMMAND_NOREPLY, NXJ_DISCONNECT};
-		nxtComm.sendRequest(request,0); // Tell NXT to disconnect
+		byte[] request = { DIRECT_COMMAND_NOREPLY, NXJ_DISCONNECT };
+		nxtComm.sendRequest(request, 0); // Tell NXT to disconnect
 		nxtComm.close();
 	}
 
-	public byte writeFile(byte handle, byte [] data) throws IOException {
-		byte [] request = new byte[data.length + 3];
-		byte [] command = {SYSTEM_COMMAND_NOREPLY, WRITE, handle};
+	public byte writeFile(byte handle, byte[] data) throws IOException {
+		byte[] request = new byte[data.length + 3];
+		byte[] command = { SYSTEM_COMMAND_NOREPLY, WRITE, handle };
 		System.arraycopy(command, 0, request, 0, command.length);
 		System.arraycopy(data, 0, request, 3, data.length);
-						
+
 		return sendSystemRequest(request, 6);
 	}
 
 	/**
 	 * Returns requested number of bytes from a file. File must first be opened
 	 * using the openRead() command.
-	 * @param handle File handle number (from openRead method)
-	 * @param length Number of bytes to read.
+	 * 
+	 * @param handle
+	 *            File handle number (from openRead method)
+	 * @param length
+	 *            Number of bytes to read.
 	 * @return
 	 */
-	public byte [] readFile(byte handle, int length) throws IOException {
-		byte [] request = {SYSTEM_COMMAND_REPLY, READ, handle, (byte)length, (byte)(length>>>8)};
-		byte [] reply1 =  nxtComm.sendRequest(request, length+6);
+	public byte[] readFile(byte handle, int length) throws IOException {
+		byte[] request = { SYSTEM_COMMAND_REPLY, READ, handle, (byte) length,
+				(byte) (length >>> 8) };
+		byte[] reply1 = nxtComm.sendRequest(request, length + 6);
 		int dataLen = (reply1[4] & 0xFF) + ((reply1[5] << 8) & 0xFF);
-		byte [] reply = new byte[dataLen];
-		for(int i=0;i<dataLen;i++) reply[i] = reply1[i+6];
+		byte[] reply = new byte[dataLen];
+		for (int i = 0; i < dataLen; i++)
+			reply[i] = reply1[i + 6];
 		return reply;
 	}
-	
+
 	public byte defrag() throws IOException {
-		byte [] request = {DIRECT_COMMAND_NOREPLY, NXJ_DEFRAG};		
-        return sendRequest(request,3);
+		byte[] request = { DIRECT_COMMAND_NOREPLY, NXJ_DEFRAG };
+		return sendRequest(request, 3);
 	}
-	
+
 	public String getFriendlyName() throws IOException {
-		byte [] request = {DIRECT_COMMAND_REPLY, GET_DEVICE_INFO};
-		
-		byte [] reply = nxtComm.sendRequest(request,33);
-		
+		byte[] request = { DIRECT_COMMAND_REPLY, GET_DEVICE_INFO };
+
+		byte[] reply = nxtComm.sendRequest(request, 33);
+
 		char nameChars[] = new char[16];
 		int len = 0;
-		
-		for(int i=0;i<15 && reply[i+3] != 0;i++) {
-			nameChars[i] = (char) reply[i+3];
+
+		for (int i = 0; i < 15 && reply[i + 3] != 0; i++) {
+			nameChars[i] = (char) reply[i + 3];
 			len++;
 		}
-		
-		return new String(nameChars,0,len);
+
+		return new String(nameChars, 0, len);
 	}
-	
+
 	public byte setFriendlyName(String name) throws IOException {
-		byte [] request = {DIRECT_COMMAND_NOREPLY, SET_BRICK_NAME};
+		byte[] request = { DIRECT_COMMAND_NOREPLY, SET_BRICK_NAME };
 		request = appendString(request, name);
-		
-		return sendSystemRequest(request,3);
+
+		return sendSystemRequest(request, 3);
 	}
-	
+
 	public String getLocalAddress() throws IOException {
-		byte [] request = {DIRECT_COMMAND_REPLY, GET_DEVICE_INFO};
-		byte [] reply = nxtComm.sendRequest(request,33);		
+		byte[] request = { DIRECT_COMMAND_REPLY, GET_DEVICE_INFO };
+		byte[] reply = nxtComm.sendRequest(request, 33);
 		char addrChars[] = new char[14];
-	
-		for(int i=0;i<7;i++) {
-			//System.out.println("Addr char " + i + " = " + (reply[i+18] & 0xFF));
-			addrChars[i*2] = hexChars.charAt((reply[i+18] >> 4) & 0xF);
-			addrChars[i*2+1] = hexChars.charAt(reply[i+18] & 0xF);
+
+		for (int i = 0; i < 7; i++) {
+			// log("Addr char " + i + " = " + (reply[i+18] &
+			// 0xFF));
+			addrChars[i * 2] = hexChars.charAt((reply[i + 18] >> 4) & 0xF);
+			addrChars[i * 2 + 1] = hexChars.charAt(reply[i + 18] & 0xF);
 		}
-		
+
 		return new String(addrChars);
 	}
 
 	public static NXTCommand getSingleton() {
-    	if (singleton == null) singleton = new NXTCommand();
+		if (singleton == null)
+			singleton = new NXTCommand();
 		return singleton;
 	}
+
+	/**
+	 * register log listener
+	 * 
+	 * @param listener
+	 */
+	public void addLogListener(NXTCommLogListener listener) {
+		fLogListeners.add(listener);
+	}
+
+	/**
+	 * unregister log listener
+	 * 
+	 * @param listener
+	 */
+	public void removeLogListener(NXTCommLogListener listener) {
+		fLogListeners.remove(listener);
+	}
+
+	private void log(String message) {
+		for (NXTCommLogListener listener : fLogListeners) {
+			listener.logEvent(message);
+		}
+	}
+
+	private void log(Throwable t) {
+		for (NXTCommLogListener listener : fLogListeners) {
+			listener.logEvent(t);
+		}
+	}
+	
 }
-
-
