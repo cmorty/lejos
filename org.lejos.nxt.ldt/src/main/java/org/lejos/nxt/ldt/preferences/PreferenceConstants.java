@@ -2,6 +2,9 @@ package org.lejos.nxt.ldt.preferences;
 
 /**
  * Constant definitions for plug-in preferences
+ * 
+ * @author Matthias Paul Scholz
+ * 
  */
 public class PreferenceConstants {
 

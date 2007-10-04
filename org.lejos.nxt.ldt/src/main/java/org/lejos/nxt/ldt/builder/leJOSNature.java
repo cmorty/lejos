@@ -6,6 +6,12 @@ import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IProjectNature;
 import org.eclipse.core.runtime.CoreException;
 
+/**
+ *
+ * leJOS NXJ project nature
+ * @author Matthias Paul Scholz
+ * 
+ */
 public class leJOSNature implements IProjectNature {
 
 	/**
