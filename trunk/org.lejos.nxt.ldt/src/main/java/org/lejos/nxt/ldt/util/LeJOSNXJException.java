@@ -1,5 +1,10 @@
 package org.lejos.nxt.ldt.util;
 
+/**
+ * leJOS-specific exception
+ * @author Matthias Paul Scholz
+ *
+ */
 public class LeJOSNXJException extends Exception {
 
 	private static final long serialVersionUID = -3880564716609150775L;

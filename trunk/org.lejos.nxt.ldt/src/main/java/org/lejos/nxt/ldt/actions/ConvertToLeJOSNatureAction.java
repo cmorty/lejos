@@ -21,6 +21,13 @@ import org.lejos.nxt.ldt.preferences.PreferenceConstants;
 import org.lejos.nxt.ldt.util.LeJOSNXJException;
 import org.lejos.nxt.ldt.util.LeJOSNXJUtil;
 
+/**
+ * converts a Java project into a Java project with additional leJOS project
+ * nature
+ * 
+ * @author Matthias Paul Scholz
+ * 
+ */
 public class ConvertToLeJOSNatureAction implements IObjectActionDelegate {
 
 	private ISelection selection;
@@ -36,8 +43,9 @@ public class ConvertToLeJOSNatureAction implements IObjectActionDelegate {
 		if (project != null) {
 			setLeJOSNature(project);
 		} else {
-			// log 
-			LeJOSNXJUtil.message(new LeJOSNXJException("no project selected or no Java project"));
+			// log
+			LeJOSNXJUtil.message(new LeJOSNXJException(
+					"no project selected or no Java project"));
 		}
 	}
 
@@ -72,10 +80,10 @@ public class ConvertToLeJOSNatureAction implements IObjectActionDelegate {
 			String[] natures = description.getNatureIds();
 
 			// nature already set?
-			if(LeJOSNXJUtil.isLeJOSProject(project)) {
-				LeJOSNXJPlugin.getDefault().log(
-						"project " + project.getProject().getName()
-								+ " already is a leJOS NXJ project");
+			if (LeJOSNXJUtil.isLeJOSProject(project)) {
+				LeJOSNXJUtil.message("project "
+						+ project.getProject().getName()
+						+ " already is a leJOS NXJ project");
 				return;
 			}
 
@@ -94,9 +102,8 @@ public class ConvertToLeJOSNatureAction implements IObjectActionDelegate {
 					JavaCore.VERSION_1_3);
 			project.setOption(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_3);
 			// log
-			LeJOSNXJPlugin.getDefault().log(
-					"project " + project.getProject().getName()
-							+ " now is a leJOS NXJ project");
+			LeJOSNXJUtil.message("project " + project.getProject().getName()
+					+ " now is a leJOS NXJ project");
 		} catch (CoreException e) {
 			// log
 			LeJOSNXJUtil.message(e);

@@ -9,7 +9,9 @@ import org.lejos.nxt.ldt.LeJOSNXJPlugin;
 
 /**
  * This class represents a preference page that
- * is contributed to the Preferences dialog. 
+ * is contributed to the Preferences dialog.
+ *  
+ * @author Matthias Paul Scholz
  */
 
 public class leJOSNXJPreferencePage

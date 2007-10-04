@@ -2,7 +2,7 @@
 <feature
       id="org.lejos.nxt.ldt.feature"
       label="leJOS NXJ Eclipse features"
-      version="0.1.0"
+      version="0.2.0"
       provider-name="www.lejos.org">
 
    <description url="http://www.lejos.org">
@@ -21,7 +21,7 @@
          id="org.lejos.nxt.ldt"
          download-size="1016"
          install-size="1016"
-         version="0.1.0"
+         version="0.2.0"
          unpack="false"/>
 
 </feature>

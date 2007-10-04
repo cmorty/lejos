@@ -11,9 +11,16 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.console.MessageConsole;
+import org.eclipse.ui.console.MessageConsoleStream;
 import org.lejos.nxt.ldt.LeJOSNXJPlugin;
 import org.lejos.nxt.ldt.builder.leJOSNature;
 
+/**
+ * utility methods for the plugin
+ * @author Matthias Paul Scholz
+ *
+ */
 public class LeJOSNXJUtil {
 
 	public static IJavaProject getJavaProjectFromSelection(ISelection selection) {
@@ -59,15 +66,18 @@ public class LeJOSNXJUtil {
 	}
 
 	public static void message(String message) {
-		// log
-		LeJOSNXJPlugin.getDefault().log(message);
-		System.out.println("leJOS NXJ> " + message);
+		// log to leJOS NXJ console
+		MessageConsole console = LeJOSNXJPlugin.getDefault().getLeJOSNXJConsole();
+		console.newMessageStream().println(message);
+		// System.out.println("leJOS NXJ> " + message);
 	}
 
 	public static void message(Throwable throwable) {
-		// log
+		// log to error log
 		LeJOSNXJPlugin.getDefault().log(throwable);
-		System.err.println("leJOS NXJ> " + throwable.getMessage());
+		// log to leJOS NXJ console
+		MessageConsole console = LeJOSNXJPlugin.getDefault().getLeJOSNXJConsole();
+		console.newMessageStream().println("Error: " + throwable.getMessage());
 	}
 
 	public static String getClassNameFromJavaFile(String fileName) {

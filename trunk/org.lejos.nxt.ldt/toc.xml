@@ -2,7 +2,7 @@
 <?NLS TYPE="org.eclipse.help.toc"?>
 
 <toc label="leJOS NXJ" topic="html/toc.html">
-	<topic label="Preliminaries" href="html/preliminaries/preliminaries.html"/>
+	<topic label="Preliminairies" href="html/preliminairies/preliminairies.html"/>
 	<topic label="User Manual"  href="html/usermanual/usermanual.html"> 
 		<topic label="Configuration" href="html/usermanual/configuration.html"/> 
 		<topic label="Uploading the firmware" href="html/usermanual/firmwareupload.html"/> 

@@ -1,11 +1,10 @@
 package org.lejos.nxt.ldt.actions;
 
-import java.io.File;
-
 import lejos.pc.tools.NXJLinkAndUpload;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaModelException;
@@ -21,10 +20,14 @@ import org.eclipse.ui.progress.IProgressService;
 import org.lejos.nxt.ldt.LeJOSNXJPlugin;
 import org.lejos.nxt.ldt.preferences.PreferenceConstants;
 import org.lejos.nxt.ldt.util.LeJOSNXJException;
+import org.lejos.nxt.ldt.util.LeJOSNXJLogListener;
 import org.lejos.nxt.ldt.util.LeJOSNXJUtil;
 
 /**
+ * links and uploads a leJOS NXJ program to the brick
  * @see IWorkbenchWindowActionDelegate
+ * @author Matthias Paul Scholz
+ * 
  */
 public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 	
@@ -94,6 +97,7 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 		try {
 			// instantiate link and upload delegate
 			NXJLinkAndUpload delegate = new NXJLinkAndUpload();
+			delegate.addLogListener(new LeJOSNXJLogListener());
 			// create arguments
 			String args[] = new String[6];
 			int argsCounter = 0;
@@ -152,51 +156,21 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 	/**
 	 * 
 	 * build the classpath for the link and upload utility
-	 * TODO read jars from configuration
 	 * @param project
 	 * @return String classpath
 	 * @throws JavaModelException
 	 */
 	private String createClassPath(IJavaProject project) throws JavaModelException {
-		String classPath = null;
+		String classPath = LeJOSNXJUtil.getAbsoluteProjectTargetDir(project).getAbsolutePath();
 		// path separator
 		String pathSeparator = System.getProperty("path.separator");
-		// get NXJ_HOME
-		String nxjHome = LeJOSNXJPlugin.getDefault().getPluginPreferences()
-				.getString(PreferenceConstants.P_NXJ_HOME);
-		// classes in target directory
-		File projectTargetDir = LeJOSNXJUtil.getAbsoluteProjectTargetDir(project);
-		classPath = projectTargetDir.getAbsolutePath();
-		// leJOS NXJ jars
-		classPath += pathSeparator + nxjHome + "/lib/classes.jar";
-		// third party libs
-		String thirdPartyLibs = nxjHome + "/3rdparty/lib";
-		classPath += pathSeparator + thirdPartyLibs + "/bluecove.jar";
+		// project's classpath
+		IClasspathEntry[] entries = project.getResolvedClasspath(true);
+		// build string
+		for (IClasspathEntry classpathEntry : entries) {
+			classPath += pathSeparator + classpathEntry.getPath().toOSString();
+		}
 		return classPath;
 	}
 	
-	// public static IJavaElement[] getSelectedJavaElements(ISelection
-	// aSelection) {
-	// IStructuredSelection structured = (IStructuredSelection) aSelection;
-	// Object[] oElems = structured.toArray();
-	// // get only java elements
-	// int noOfJavaElements = 0;
-	// for (int i = 0; i < oElems.length; i++) {
-	// Object elem = oElems[i];
-	// if (elem instanceof IJavaElement) {
-	// noOfJavaElements++;
-	// }
-	// }
-	// // copy into type safe array
-	// IJavaElement[] elems = new IJavaElement[noOfJavaElements];
-	// int counter = 0;
-	// for (int i = 0; (i < oElems.length) && (counter < elems.length); i++) {
-	// Object elem = oElems[i];
-	// if (elem instanceof IJavaElement) {
-	// elems[counter++] = (IJavaElement) elem;
-	// }
-	// }
-	// return elems;
-	// }
-
 }

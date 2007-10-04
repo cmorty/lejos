@@ -6,6 +6,9 @@ import org.lejos.nxt.ldt.LeJOSNXJPlugin;
 
 /**
  * Class used to initialize default preference values.
+ * 
+ * @author Matthias Paul Scholz
+ * 
  */
 public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
@@ -15,11 +18,12 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 	 * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#initializeDefaultPreferences()
 	 */
 	public void initializeDefaultPreferences() {
-		IPreferenceStore store = LeJOSNXJPlugin.getDefault().getPreferenceStore();
-//		store.setDefault(PreferenceConstants.P_BOOLEAN, true);
+		IPreferenceStore store = LeJOSNXJPlugin.getDefault()
+				.getPreferenceStore();
+		// store.setDefault(PreferenceConstants.P_BOOLEAN, true);
 		store.setDefault(PreferenceConstants.P_CONNECTION_TYPE, "u");
-//		store.setDefault(PreferenceConstants.P_STRING,
-//				"Default value");
+		// store.setDefault(PreferenceConstants.P_STRING,
+		// "Default value");
 	}
 
 }
