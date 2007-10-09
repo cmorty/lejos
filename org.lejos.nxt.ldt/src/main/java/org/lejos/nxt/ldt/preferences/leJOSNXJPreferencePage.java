@@ -1,5 +1,6 @@
 package org.lejos.nxt.ldt.preferences;
 
+import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.DirectoryFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.RadioGroupFieldEditor;
@@ -33,12 +34,6 @@ public class leJOSNXJPreferencePage
 	public void createFieldEditors() {
 		addField(new DirectoryFieldEditor(PreferenceConstants.P_NXJ_HOME, 
 				"&NXJ_HOME:", getFieldEditorParent()));
-//		addField(
-//			new BooleanFieldEditor(
-//				PreferenceConstants.P_BOOLEAN,
-//				"&An example of a boolean preference",
-//				getFieldEditorParent()));
-//
 		addField(new RadioGroupFieldEditor(
 				PreferenceConstants.P_CONNECTION_TYPE,
 			"&Connection type",
@@ -46,6 +41,12 @@ public class leJOSNXJPreferencePage
 			new String[][] { { "&USB", "u" }, {
 				"&Bluetooth", "b" }
 		}, getFieldEditorParent()));
+		addField(
+		new BooleanFieldEditor(
+			PreferenceConstants.P_IS_VERBOSE,
+			"&Verbose",
+			getFieldEditorParent()));
+
 		
 //		addField(
 //			new StringFieldEditor(PreferenceConstants.P_STRING, "A &text preference:", getFieldEditorParent()));

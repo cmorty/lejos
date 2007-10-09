@@ -47,8 +47,7 @@ public class LeJOSUploadFirmwareAction implements
 			ps.busyCursorWhile(new IRunnableWithProgress() {
 				public void run(IProgressMonitor pm) {
 					try {
-						// download firmware
-						// TODO internationalization
+						// upload firmware
 						pm.beginTask("Uploading firmware...",
 								IProgressMonitor.UNKNOWN);
 						int result = uploadFirmware();
@@ -105,7 +104,7 @@ public class LeJOSUploadFirmwareAction implements
 				.getString(PreferenceConstants.P_NXJ_HOME);
 		String nxjHomeEnv = "NXJ_HOME=" + nxjHome;
 		// create call to nxjflash
-		// operating system? TODO Mac OSX
+		// operating system? 
 		String command = null;
 		String os = System.getProperty("os.name");
 		if("Windows XP".equals(os) || "Windows 2000".equals(os)) {
