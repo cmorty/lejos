@@ -20,7 +20,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 	public void initializeDefaultPreferences() {
 		IPreferenceStore store = LeJOSNXJPlugin.getDefault()
 				.getPreferenceStore();
-		// store.setDefault(PreferenceConstants.P_BOOLEAN, true);
+		store.setDefault(PreferenceConstants.P_IS_VERBOSE, false);
 		store.setDefault(PreferenceConstants.P_CONNECTION_TYPE, "u");
 		// store.setDefault(PreferenceConstants.P_STRING,
 		// "Default value");

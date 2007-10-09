@@ -25,18 +25,21 @@ import org.lejos.nxt.ldt.util.LeJOSNXJUtil;
 
 /**
  * links and uploads a leJOS NXJ program to the brick
+ * 
  * @see IWorkbenchWindowActionDelegate
  * @author Matthias Paul Scholz
  * 
  */
 public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
-	
+
 	private ISelection _selection;
+	private LeJOSNXJLogListener _logListener;
 
 	/**
 	 * The constructor.
 	 */
 	public LeJOSLinkAndUploadAction() {
+		_logListener = new LeJOSNXJLogListener();
 	}
 
 	/**
@@ -52,15 +55,16 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 			ps.busyCursorWhile(new IRunnableWithProgress() {
 				public void run(IProgressMonitor pm) {
 					try {
-						// download firmware
-						// TODO internationalization
+						// upload program
 						pm
 								.beginTask(
-										"Linking and uploading program to the brick...",IProgressMonitor.UNKNOWN);
+										"Linking and uploading program to the brick...",
+										IProgressMonitor.UNKNOWN);
 						linkAndUploadProgram();
 						pm.done();
 						// log
-						LeJOSNXJUtil.message("Program has been successfully downloaded to the NXT brick");
+						LeJOSNXJUtil
+								.message("Program has been successfully uploaded to the NXT brick");
 					} catch (Throwable t) {
 						// log
 						LeJOSNXJUtil.message(t);
@@ -81,7 +85,7 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 	 */
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -97,9 +101,10 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 		try {
 			// instantiate link and upload delegate
 			NXJLinkAndUpload delegate = new NXJLinkAndUpload();
-			delegate.addLogListener(new LeJOSNXJLogListener());
+			delegate.addToolsLogListener(_logListener);
+			delegate.addJSToolsLogListener(_logListener);
 			// create arguments
-			String args[] = new String[6];
+			String args[] = new String[7];
 			int argsCounter = 0;
 			// get selected project
 			IJavaProject project = LeJOSNXJUtil
@@ -109,7 +114,8 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 			// class name
 			IJavaElement javaElement = LeJOSNXJUtil
 					.getFirstJavaElementFromSelection(_selection);
-			String className = LeJOSNXJUtil.getClassNameFromJavaFile(javaElement.getElementName());
+			String className = LeJOSNXJUtil
+					.getClassNameFromJavaFile(javaElement.getElementName());
 			args[argsCounter++] = className;
 			// classpath
 			args[argsCounter++] = "--classpath";
@@ -118,12 +124,21 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 			args[argsCounter++] = "--writeorder";
 			args[argsCounter++] = "LE";
 			// connection type
-			String connectionType = LeJOSNXJPlugin.getDefault().getPluginPreferences()
-					.getString(PreferenceConstants.P_CONNECTION_TYPE);
-			args[argsCounter++] = "-" + connectionType; 
+			String connectionType = LeJOSNXJPlugin.getDefault()
+					.getPluginPreferences().getString(
+							PreferenceConstants.P_CONNECTION_TYPE);
+			args[argsCounter++] = "-" + connectionType;
+			// verbosity
+			boolean isVerbose = LeJOSNXJPlugin.getDefault()
+					.getPluginPreferences().getBoolean(
+							PreferenceConstants.P_IS_VERBOSE);
+			if(isVerbose)
+				args[argsCounter++] = "--verbose";
+			else
+				args[argsCounter++] = "";
 			// run link and upload
 			delegate.run(args);
-		} catch(Throwable e) {
+		} catch (Throwable e) {
 			throw new LeJOSNXJException(e);
 		}
 	}
@@ -152,16 +167,19 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 		// set state
 		action.setEnabled(isEnabled);
 	}
-	
+
 	/**
 	 * 
 	 * build the classpath for the link and upload utility
+	 * 
 	 * @param project
 	 * @return String classpath
 	 * @throws JavaModelException
 	 */
-	private String createClassPath(IJavaProject project) throws JavaModelException {
-		String classPath = LeJOSNXJUtil.getAbsoluteProjectTargetDir(project).getAbsolutePath();
+	private String createClassPath(IJavaProject project)
+			throws JavaModelException {
+		String classPath = LeJOSNXJUtil.getAbsoluteProjectTargetDir(project)
+				.getAbsolutePath();
 		// path separator
 		String pathSeparator = System.getProperty("path.separator");
 		// project's classpath
@@ -172,5 +190,5 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 		}
 		return classPath;
 	}
-	
+
 }
