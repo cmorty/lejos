@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import js.common.CLIToolProgressMonitor;
+import js.common.JSToolsLogListener;
 import js.tinyvm.TinyVM;
 import lejos.pc.comm.NXTCommFactory;
 
@@ -20,11 +21,13 @@ public class NXJLinkAndUpload {
 	private Collection<ToolsLogListener> fLogListeners;
 	private NXJCommandLineParser fParser;
 	private Upload fUpload;
+	private CLIToolProgressMonitor fMonitor;
 
 	public NXJLinkAndUpload() {
 		fParser = new NXJCommandLineParser();
 		fLogListeners = new ArrayList<ToolsLogListener>();
 		fUpload = new Upload(); 
+		fMonitor = new CLIToolProgressMonitor();
 	}
 
 	/**
@@ -35,7 +38,7 @@ public class NXJLinkAndUpload {
 	public static void main(String[] args) {
 		try {
 			NXJLinkAndUpload instance = new NXJLinkAndUpload();
-			instance.addLogListener(new ToolsLogger());
+			instance.addToolsLogListener(new ToolsLogger());
 			instance.run(args);
 		} catch (Throwable t) {
 			System.err.println("leJOSNXJ> an error occurred: " + t.getMessage());
@@ -44,6 +47,7 @@ public class NXJLinkAndUpload {
 
 	public void run(String[] args) throws js.tinyvm.TinyVMException,
 			NXJUploadException {
+		fMonitor.reset();
 		// process arguments
 		CommandLine commandLine = fParser.parse(args);
 		String binName = commandLine.getOptionValue("o");
@@ -134,12 +138,10 @@ public class NXJLinkAndUpload {
 		tinyVMArgs[argCount] = "-o";
 		tinyVMArgs[argCount + 1] = binName;
 
-		// create progress monitor
-		CLIToolProgressMonitor monitor = new CLIToolProgressMonitor();
 
 		// link
 		log("Linking...");
-		TinyVM tinyVM = new TinyVM(monitor);
+		TinyVM tinyVM = new TinyVM(fMonitor);
 		tinyVM.start(tinyVMArgs);
 
 		// upload
@@ -155,23 +157,39 @@ public class NXJLinkAndUpload {
 	}
 
 	/**
-	 * register log listener
+	 * register pctools log listener
 	 * @param listener
 	 */
-	public void addLogListener(ToolsLogListener listener) {
+	public void addToolsLogListener(ToolsLogListener listener) {
 		fLogListeners.add(listener);
 		fUpload.addLogListener(listener);
 	}
 	
 	/**
-	 * unregister log listener
+	 * unregister pctools log listener
 	 * @param listener
 	 */
-	public void removeLogListener(ToolsLogListener listener) {
+	public void removeToolsLogListener(ToolsLogListener listener) {
 		fLogListeners.remove(listener);
 		fUpload.removeLogListener(listener);
 	}
 	
+	/**
+	 * register jstools log listener
+	 * @param listener
+	 */
+	public void addJSToolsLogListener(JSToolsLogListener listener) {
+		fMonitor.addLogListener(listener);
+	}
+	
+	/**
+	 * unregister jstools log listener
+	 * @param listener
+	 */
+	public void removeJSToolsLogListener(JSToolsLogListener listener) {
+		fMonitor.removeLogListener(listener);
+	}
+
 	private void log(String message) {
 		for (ToolsLogListener listener : fLogListeners) {
 			listener.logEvent(message);
