@@ -51,7 +51,11 @@ public class Upload {
 
 		try {
 			for (int i = 0; i < nxtInfo.length; i++) {
-				connected = fNXTCommand.open(nxtInfo[i]);
+				try {
+					connected = fNXTCommand.open(nxtInfo[i]);
+				} catch (NXTCommException e) {
+					connected = false;
+				}
 				if (!connected)
 					continue;
 				String result = SendFile.sendFile(fNXTCommand, f);
