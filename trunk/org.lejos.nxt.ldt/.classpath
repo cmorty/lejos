@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src/main/java"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/jtools"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/pctools"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/pccomms"/>
 	<classpathentry exported="true" kind="lib" path="lib/bluecove.jar"/>
