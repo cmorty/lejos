@@ -15,6 +15,7 @@ public class USBReceive {
 			LCD.drawInt(b,3,0,1);
 			LCD.refresh();
 			os.write((byte) 100-b);
+			os.flush();
 		}
 	}
 }
