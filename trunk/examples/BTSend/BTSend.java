@@ -30,7 +30,13 @@ public class BTSend {
 		
 		System.out.println("Connecting to " + nxtInfo[0].btResourceString);
 
-		boolean opened = nxtComm.open(nxtInfo[0]); 
+		boolean opened = false;
+		
+		try {
+			opened = nxtComm.open(nxtInfo[0]); 
+		} catch (NXTCommException e) {
+			System.out.println("Exception from open");
+		}
 		
 		if (!opened) {
 			System.out.println("Failed to open " + nxtInfo[0].name);
@@ -47,6 +53,7 @@ public class BTSend {
 				
 		for(int i=0;i<100;i++) {
 			try {
+				System.out.println("Sending " + (i*30000));
 				dos.writeInt((i*30000));
 				dos.flush();			
 			} catch (IOException ioe) {

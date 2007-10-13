@@ -6,14 +6,24 @@ public class USBSend {
 	public static void main(String[] args) {
 		NXTComm nxtComm = NXTCommFactory.createNXTComm(NXTCommFactory.USB);
 		
-		NXTInfo[] nxtInfo = nxtComm.search(null, NXTCommFactory.USB);
+		NXTInfo[] nxtInfo = null;
+		
+		try {
+			nxtInfo = nxtComm.search(null, NXTCommFactory.USB);
+		} catch (NXTCommException e) {
+			System.out.println("Exception in search");
+		}
 		
 		if (nxtInfo.length == 0) {
 			System.out.println("No NXT Found");
 			System.exit(1);
 		}
 
-		nxtComm.open(nxtInfo[0]);
+		try {
+			nxtComm.open(nxtInfo[0]);
+		} catch (NXTCommException e) {
+			System.out.println("Exception in open");
+		}
 		
 		InputStream is = nxtComm.getInputStream();
 		OutputStream os = nxtComm.getOutputStream();
