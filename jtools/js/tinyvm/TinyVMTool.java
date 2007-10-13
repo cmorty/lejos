@@ -17,13 +17,13 @@ import js.tinyvm.io.LEByteWriter;
  */
 public class TinyVMTool extends AbstractTool
 {
-   /**
-    * Constructor.
-    */
-   public TinyVMTool (ToolProgressMonitor monitor)
-   {
-      super(monitor);
-   }
+//   /**
+//    * Constructor.
+//    */
+//   public TinyVMTool (ToolProgressMonitor monitor)
+//   {
+//      super(monitor);
+//   }
 
    /**
     * Execute tiny vm.
@@ -43,7 +43,10 @@ public class TinyVMTool extends AbstractTool
       assert stream != null: "Precondition: stream != null";
 
       Binary binary = link(classpath, classes, all);
-      binary.log(getProgressMonitor());
+      for(ToolProgressMonitor monitor : _monitors) {
+    	  binary.log(monitor);
+      }
+      //binary.log(getProgressMonitor());
       dump(binary, stream, bigEndian);
 
    

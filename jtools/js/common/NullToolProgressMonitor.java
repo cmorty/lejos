@@ -38,4 +38,15 @@ public class NullToolProgressMonitor implements ToolProgressMonitor
    {
       return false;
    }
+
+   /*
+    * (non-Javadoc)
+    * 
+    * @see js.common.ToolProgressMonitor#setVerbose()
+    */
+	public void setVerbose(boolean verbose) {
+		// ignore
+	}
+   
+   
 }

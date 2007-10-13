@@ -30,4 +30,11 @@ public interface ToolProgressMonitor
     * Is tool canceled?.
     */
    public boolean isCanceled ();
+   
+	/**
+	 * Be verbose?
+	 */
+	public void setVerbose(boolean verbose);
+	
+
 }
