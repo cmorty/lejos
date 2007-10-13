@@ -16,7 +16,7 @@ public class Datalogger
    private float [] log1;
    private float [] log2;
    private float [] log3;
-   private int _indx = 0;  //where the data will be witten
+   private int _indx = 0;  //where the data will be written
 
    private final int  BLOCK = 510; // block size
    private int _blocks = 1; 
@@ -129,32 +129,5 @@ public class Datalogger
           more = Button.waitForPress()==1;
        }
        try{dataOut.close();}catch(IOException e){}
-    }
-
-       
-      
-          
-  /**
-   * to test the DL object
-   */  
-    public static void main(String[] args)
-    {
-       int size =600;
-       Datalogger dl = new Datalogger();
-       boolean more = true;
-       while(more)
-       {
-       for(int i = 0 ; i<size; i++)
-          {
-             float x = i*0.5f;
-             dl.writeLog(x);
-          }
-       dl.transmit(true); 
-       dl.reset();
-       LCD.clear();
-       LCD.drawString("more?",0,2);
-       LCD.refresh();
-       more = 1 == Button.waitForPress();
-       }
     }
 }
