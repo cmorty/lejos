@@ -9,16 +9,7 @@ import java.util.Collection;
 public class CLIToolProgressMonitor implements ToolProgressMonitor {
 
 	private boolean _verbose = false;
-	private Collection<JSToolsLogListener> fLogListeners;
 	
-	public CLIToolProgressMonitor() {
-		fLogListeners = new ArrayList<JSToolsLogListener>();
-	}
-	
-	public void reset() {
-		_verbose = false;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -27,7 +18,6 @@ public class CLIToolProgressMonitor implements ToolProgressMonitor {
 	public void operation(String message) {
 		assert message != null : "Precondition: message != null";
 		System.out.println(message);
-		notifyListeners(message);
 	}
 
 	/*
@@ -40,7 +30,6 @@ public class CLIToolProgressMonitor implements ToolProgressMonitor {
 			return;
 		assert message != null : "Precondition: message != null";
 		System.out.println(message);
-		notifyListeners(message);
 	}
 
 	/*
@@ -52,7 +41,6 @@ public class CLIToolProgressMonitor implements ToolProgressMonitor {
 		assert progress >= 0 && progress <= 1000 : "Precondition: progress >= 0 && progress <= 1000";
 		String message = "\r  " + (progress / 10) + "%\r";
 		System.out.print(message);
-		notifyListeners(message);
 		if (progress >= 1000) {
 			System.out.println();
 		}
@@ -74,25 +62,4 @@ public class CLIToolProgressMonitor implements ToolProgressMonitor {
 		_verbose = verbose;
 	}
 	
-	/**
-	 * register log listener
-	 * @param listener
-	 */
-	public void addLogListener(JSToolsLogListener listener) {
-		fLogListeners.add(listener);
-	}
-	
-	/**
-	 * unregister log listener
-	 * @param listener
-	 */
-	public void removeLogListener(JSToolsLogListener listener) {
-		fLogListeners.remove(listener);
-	}
-
-	private void notifyListeners(String message) {
-		for (JSToolsLogListener listener : fLogListeners) {
-			listener.logEvent(message);
-		}
-	}
 }
