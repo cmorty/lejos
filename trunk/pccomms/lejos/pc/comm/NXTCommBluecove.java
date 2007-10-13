@@ -172,10 +172,10 @@ public class NXTCommBluecove implements NXTComm, DiscoveryListener {
 
 		int lsb = is.read();
 		int msb = is.read();
-		if (lsb != 1 || msb != 0)
-			throw new IOException("Packet more than 1 byte");
-		byte[] bb = new byte[1];
-		bb[0] = (byte) is.read();
+		if (msb != 0)
+			throw new IOException("Packet more than 255 bytes");
+		byte[] bb = new byte[lsb];
+		for (int i=0;i<lsb;i++) bb[i] = (byte) is.read();
 
 		return bb;
 	}
