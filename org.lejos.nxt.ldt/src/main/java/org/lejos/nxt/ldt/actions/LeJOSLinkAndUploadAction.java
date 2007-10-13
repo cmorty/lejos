@@ -102,9 +102,16 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 			// instantiate link and upload delegate
 			NXJLinkAndUpload delegate = new NXJLinkAndUpload();
 			delegate.addToolsLogListener(_logListener);
-			delegate.addJSToolsLogListener(_logListener);
+			delegate.addMonitor(_logListener);
 			// create arguments
-			String args[] = new String[7];
+			int noOfArguments = 6;
+			// verbosity?
+			boolean isVerbose = LeJOSNXJPlugin.getDefault()
+					.getPluginPreferences().getBoolean(
+							PreferenceConstants.P_IS_VERBOSE);
+			if(isVerbose)
+				noOfArguments++;
+			String args[] = new String[noOfArguments];
 			int argsCounter = 0;
 			// get selected project
 			IJavaProject project = LeJOSNXJUtil
@@ -129,13 +136,8 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 							PreferenceConstants.P_CONNECTION_TYPE);
 			args[argsCounter++] = "-" + connectionType;
 			// verbosity
-			boolean isVerbose = LeJOSNXJPlugin.getDefault()
-					.getPluginPreferences().getBoolean(
-							PreferenceConstants.P_IS_VERBOSE);
 			if(isVerbose)
 				args[argsCounter++] = "--verbose";
-			else
-				args[argsCounter++] = "";
 			// run link and upload
 			delegate.run(args);
 		} catch (Throwable e) {

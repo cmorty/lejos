@@ -23,6 +23,7 @@ import org.lejos.nxt.ldt.util.LeJOSNXJUtil;
 /**
  * 
  * @see IWorkbenchWindowActionDelegate
+ * @author Matthias Paul Scholz
  */
 public class LeJOSUploadFirmwareAction implements
 		IWorkbenchWindowActionDelegate {

@@ -8,11 +8,10 @@
 	<classpathentry exported="true" kind="lib" path="lib/commons-cli-1.0.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
-	<classpathentry kind="lib" path="lib/pctools.jar"/>
+	<classpathentry kind="lib" path="lib/pctools.jar" sourcepath="/pctools"/>
 	<classpathentry kind="lib" path="C:/development/lejos_nxj/lib/jtools.jar" sourcepath="/jtools"/>
 	<classpathentry kind="lib" path="C:/development/lejos_nxj/lib/pccomm.jar"/>
 	<classpathentry kind="lib" path="C:/development/lejos_nxj/3rdparty/lib/commons-cli-1.0.jar"/>
 	<classpathentry kind="lib" path="C:/development/lejos_nxj/3rdparty/lib/bluecove.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/jtools"/>
 	<classpathentry kind="output" path="target"/>
 </classpath>
