@@ -20,6 +20,11 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
+/**
+ * leJOS project builder
+ * @author Matthias Paul Scholz
+ *
+ */
 public class leJOSBuilder extends IncrementalProjectBuilder {
 
 	class SampleDeltaVisitor implements IResourceDeltaVisitor {
