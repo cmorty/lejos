@@ -11,6 +11,8 @@ import lejos.pc.tools.ToolsLogListener;
 public class LeJOSNXJLogListener implements ToolsLogListener,
 		ToolProgressMonitor {
 
+	private boolean _verbose = false;
+
 	@Override
 	public void logEvent(String message) {
 		LeJOSNXJUtil.message(message);
@@ -30,6 +32,8 @@ public class LeJOSNXJLogListener implements ToolsLogListener,
 
 	@Override
 	public void log(String message) {
+		if (!_verbose)
+			return;
 		logEvent(message);
 	}
 
@@ -42,6 +46,11 @@ public class LeJOSNXJLogListener implements ToolsLogListener,
 	public void progress(int progress) {
 		String message = "\r  " + (progress / 10) + "%\r";
 		logEvent(message);
+	}
+
+	@Override
+	public void setVerbose(boolean verbose) {
+		_verbose = verbose;
 	}
 
 }
