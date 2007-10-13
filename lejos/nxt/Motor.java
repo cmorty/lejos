@@ -85,6 +85,7 @@ public class Motor extends BasicMotor implements TimerListener
   public Motor (MotorPort port)
   {
     _port = port;
+    _voltage = Battery.getVoltage();
     regulator.setDaemon(true);
     regulator.start();
     timer.start();
@@ -161,13 +162,15 @@ public class Motor extends BasicMotor implements TimerListener
 		    updateState();
 		}
 	}
+    
+
   /** 
    *calls controlMotor, startRegating;  updates _direction, _rotating, _wasRotating
    */
   void updateState()
   {
   	  _rotating = false; //regulator should stop testing for rotation limit  ASAP
-//  	synchronized(regulator)
+  	synchronized(regulator)
   	{
   		if(_wasRotating)
   		{
@@ -359,7 +362,7 @@ public class Motor extends BasicMotor implements TimerListener
 	  // stop at rotation limit angle
 			if(_rotating && _direction*(getTachoCount() - _stopAngle)>0)
 			{
-				if(!_wasRotating)_speed0 = _speed;
+				//if(!_wasRotating)_speed0 = _speed;
 				_mode = 3; // stop motor
 				_port.controlMotor (0, 3);
 				int a = angleAtStop();//returns when motor has stopped
@@ -379,12 +382,16 @@ public class Motor extends BasicMotor implements TimerListener
 				}
 				else //rotation complete;  restore state variables
 				{	
-					setSpeed(_speed0);//restore speed setting
-					_mode = 3; // stop motor  maybe redundant
+                    if (_wasRotating)
+                    {
+                        setSpeed(_speed0);//restore speed setting
+                        _wasRotating = false;
+                        _regulate = _wasRegulating;
+                    }
+                    _mode = 3; // stop motor  maybe redundant
 					_port.controlMotor (0, _mode);
 					_rotating = false;
-					_wasRotating = false;
-					_regulate = _wasRegulating;
+
 				}
 	  		}
 	  	}
@@ -458,6 +465,7 @@ public class Motor extends BasicMotor implements TimerListener
    */
   public final void setSpeed (int speed)
   {
+
     _speed = Math.abs(speed);
      setPower((int)regulator.calcPower(_speed));
      regulator.reset();
