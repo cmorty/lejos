@@ -22,7 +22,7 @@ public class NXJUpload {
 			instance.addLogListener(new ToolsLogger());
 			instance.run(args);
 		} catch(Throwable t) {
-			System.err.println("leJOSNXJ> an error occurred: " + t.getMessage());
+			System.err.println("an error occurred: " + t.getMessage());
 		}
 	}
 	

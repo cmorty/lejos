@@ -4,20 +4,19 @@
   ==================================================
 -->
 <project name="pctools" default="build" basedir=".">
-	
-  	<!-- creates the pctools jar (PC: JDK 1.4) -->
-  	<target name="build"  description="generate pctools jar">
-    	<mkdir dir="build"/>
-    	<!-- generate tools -->
-<!--    	<javac srcdir="." destdir="build" fork="yes" optimize="on" debug="on" source="1.4"> -->
+
+	<!-- creates the pctools jar -->
+	<target name="build" description="generate pctools jar">
+		<mkdir dir="build"/>
+		<!-- generate tools -->
 		<javac srcdir="." destdir="build" fork="yes" optimize="on" debug="on">
 			<classpath location="../jtools/lib/jtools.jar"/>
 			<classpath location="../pccomms/lib/pccomm.jar"/>
 			<classpath location="../jtools/3rdparty/lib/commons-cli-1.0.jar"/>
 			<classpath location="../jtools/3rdparty/lib/bcel-5.1.jar"/>
 		</javac>
-    	<jar destfile="lib/pctools.jar" basedir="build" update="false">
-    	</jar>
+		<jar destfile="lib/pctools.jar" basedir="build" update="false">
+		</jar>
 
-  	</target>
+	</target>
 </project>
