@@ -103,20 +103,4 @@ public class Connector {
 	public DataOutputStream getDataOut() {
 		return dataOut;
 	}
-
-	public static void main(String[] args) {
-		try {
-			Connector con = new Connector();
-			con.startConnector("NXT", false);
-		} catch (Throwable t) {
-			System.err.println(t.getMessage());
-		}
-		// DataInputStream din= btm.getDataIn();
-		// while(true)
-		// {
-		// try{ System.out.println(din.readFloat());} catch(IOException e){}
-		// }
-
-	}
-
 }
