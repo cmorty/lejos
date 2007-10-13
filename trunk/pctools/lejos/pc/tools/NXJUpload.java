@@ -1,5 +1,6 @@
 package lejos.pc.tools;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import lejos.pc.comm.*;
@@ -13,6 +14,7 @@ public class NXJUpload {
 
 	public NXJUpload() {
 		fParser = new NXJUploadCommandLineParser();
+		fLogListeners = new ArrayList<ToolsLogListener>();
 		fUpload = new Upload(); 
 	}
 
