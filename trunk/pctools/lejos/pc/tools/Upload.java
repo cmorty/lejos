@@ -54,7 +54,10 @@ public class Upload {
 				connected = fNXTCommand.open(nxtInfo[i]);
 				if (!connected)
 					continue;
-				SendFile.sendFile(fNXTCommand, f);
+				String result = SendFile.sendFile(fNXTCommand, f);
+				for (ToolsLogListener listener : fLogListeners) {
+					listener.logEvent(result);
+				}
 				if (run) {
 					fNXTCommand.setVerify(false);
 					fNXTCommand.startProgram(f.getName());

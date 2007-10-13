@@ -5,7 +5,7 @@ import java.io.*;
 
 public class SendFile {
 
-	public static void sendFile(NXTCommand nxtCommand, File file) throws IOException {
+	public static String sendFile(NXTCommand nxtCommand, File file) throws IOException {
 	    byte[] data = new byte[60];
 	    int len, sent = 0;
 	    FileInputStream in = null;
@@ -17,7 +17,7 @@ public class SendFile {
 	    try {
 	      in = new FileInputStream(file);
 	    } catch (FileNotFoundException e) {
-	    	System.out.println("File not found");
+	    	throw new IOException("File not found");
 	    }
 
 	    nxtCommand.openWrite(file.getName(), (int) file.length());
@@ -31,12 +31,11 @@ public class SendFile {
 	        nxtCommand.writeFile((byte) 0,sendData); // Handles not yet used
 	      }
 	    } catch (IOException ioe) {
-	    	System.out.println("Failed to upload");
-	    	System.exit(1);
+	    	throw new IOException("Failed to upload");
 	    }
 	    //System.out.println("Sent " + sent + " bytes");
 	    nxtCommand.setVerify(true);
 	    nxtCommand.closeFile((byte) 0);
-	    System.out.println("Upload successful in " + (System.currentTimeMillis() - millis) + " milliseconds");
+	    return "Upload successful in " + (System.currentTimeMillis() - millis) + " milliseconds";
 	}
 }
