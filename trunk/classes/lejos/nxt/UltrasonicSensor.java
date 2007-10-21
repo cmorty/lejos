@@ -5,7 +5,7 @@ package lejos.nxt;
  * Abstraction for a NXT Ultrasonic Sensor.
  *
  */
-class UltrasonicSensor extends I2CSensor
+public class UltrasonicSensor extends I2CSensor
 {
     byte[] buf = new byte[1];
    
