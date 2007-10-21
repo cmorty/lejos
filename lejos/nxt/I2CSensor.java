@@ -114,4 +114,8 @@ public abstract class I2CSensor implements SensorConstants {
 		}	
 		return sensorType;
 	}
+	
+	public void setAddress(int addr) {
+		address = addr;
+	}
 }
