@@ -55,23 +55,16 @@ public abstract class I2CSensor implements SensorConstants {
 	 * @return status zero=success, non-zero=failure
 	 */
 	public int sendData(int register, byte [] buf, int len) {
-        // AS Fix to allow write to work correctly. Avoid using the
-        // automatic internal address. Instead send the address as
-        // part of the data
-        if (len >= byteBuff.length) return -1;
-        for(int i=0; i < len; i++ )
-            byteBuff[i+1] = buf[i];
-        byteBuff[0] = (byte)register;
-        int ret = port.i2cStart(address, 0, 0, byteBuff, len+1, 1);
-      
-        if (ret != 0) return ret;
-      
-        while (port.i2cBusy() != 0) {
-            Thread.yield();
-        }
-      
-        return 0;
-    } 
+        int ret = port.i2cStart(address, register, len, buf, len, 1);
+		if (ret != 0) return ret;
+		
+		while (port.i2cBusy() != 0) {
+			Thread.yield();
+		}
+		
+		return 0;
+	}
+
 	
 	/**
 	 * Return the sensor version number.
