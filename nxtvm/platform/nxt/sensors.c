@@ -29,6 +29,13 @@ init_sensors(void)
     unset_digi1(i);
     nxt_avr_set_input_power(i, 0);
   }
+  /* Ensure RS485 is inactive. Otherwise it can interfere with
+   * the operation of port 4.
+   */
+  *AT91C_PIOA_PER |= AT91C_PIO_PA5 | AT91C_PIO_PA6 | AT91C_PIO_PA7;
+  *AT91C_PIOA_PPUDR |= AT91C_PIO_PA5 | AT91C_PIO_PA6 | AT91C_PIO_PA7;
+  *AT91C_PIOA_OER |= AT91C_PIO_PA5 | AT91C_PIO_PA6 | AT91C_PIO_PA7;
+  *AT91C_PIOA_CODR |= AT91C_PIO_PA5 | AT91C_PIO_PA6 | AT91C_PIO_PA7;
 }
 
 /**
