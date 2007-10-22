@@ -13,7 +13,7 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
   private int type, mode;
   
    
-  private static final byte[]  powerType = {0,0,1,1,1,0,0,0,0,0,0,1};
+  private static final byte[]  powerType = {0,0,1,1,1,0,0,0,0,0,0,2};
   private static final byte[]  adType = {-1,-1,-1,-1,-1,1,0,1,2,-1,-1,-1};
 
   /**
