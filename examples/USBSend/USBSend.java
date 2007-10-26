@@ -1,6 +1,6 @@
 import lejos.pc.comm.*;
 import java.io.*;
-
+ 
 public class USBSend {
 	
 	public static void main(String[] args) {
@@ -27,20 +27,30 @@ public class USBSend {
 		
 		InputStream is = nxtComm.getInputStream();
 		OutputStream os = nxtComm.getOutputStream();
-		
-		for(int i=0;i<100;i++) {
+		DataInputStream inDat = new DataInputStream(is);
+		DataOutputStream outDat = new DataOutputStream(os);
+		int x = 0;
+		for(int i=0;i<100;i++) 
+		{
 			try {
-				os.write(i);
-				os.flush();
-				System.out.println("Received " + is.read());
+//				os.write(i);
+			   outDat.writeInt(i);
+//				os.flush();
+			   outDat.flush();
+	
 			} catch (IOException ioe) {
 				System.out.println("IO Exception writing bytes");
 			}
+	         try {x = inDat.readInt();}
+	         catch (IOException ioe) {
+	           System.out.println(ioe);
+	         }            
+	       System.out.println("Sent "+i+ " Received "+x);
 		}
 		
 		try {
 			Thread.sleep(1000);
-		} catch (InterruptedException ioe) {}
+		} catch (InterruptedException ie) {}
 		
 		try {
 			nxtComm.close();

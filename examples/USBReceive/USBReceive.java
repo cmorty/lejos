@@ -10,12 +10,25 @@ public class USBReceive {
 		USBConnection conn = new USBConnection();
 		InputStream is = conn.openInputStream();
 		OutputStream os = conn.openOutputStream();
-		while (true) {
-			int b = is.read();
-			LCD.drawInt(b,3,0,1);
-			LCD.refresh();
-			os.write((byte) 100-b);
-			os.flush();
+//		DataOutputStream dOut = conn.openDataOutputStream();
+		DataOutputStream dOut = new DataOutputStream(os);
+//		DataInputStream dIn = conn.openDataInputStream();
+		DataInputStream dIn = new DataInputStream(is);
+		LCD.drawString("waiting", 0, 0);
+		LCD.refresh();
+		int b;
+		while (true) 
+		{
+			b = dIn.readInt();
+//		    b = is.read();
+			dOut.writeInt(b);
+			dOut.flush();
+	         LCD.drawInt((int)b,8,0,1);
+	          LCD.refresh();
+//			os.write( b);
+//			os.flush();
+	
 		}
 	}
 }
+
