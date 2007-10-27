@@ -12,7 +12,7 @@ public class Tune {
     0,33, 1760,75, 0,5, 1760,20, 0,20, 1760,20, 0,20, 1976,18, 0,23, 1760,18, 
     0,23, 2217,225, 0,15, 2217,218};
 
-   public static void main(String [] args)  throws Exception {
+   public static void main(String [] args) {
       for(int i=0;i<note.length; i+=2) {
          final short w = note[i+1];
          final int n = note[i];
