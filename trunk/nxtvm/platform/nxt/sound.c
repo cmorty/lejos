@@ -5,7 +5,8 @@
 #include "nxt_avr.h"
 #include <string.h>
 
-#define PWM_BUFFER_LENGTH 16 /* Must be a multiple of 8 and at most 64 */
+/* Buffer length must be a multiple of 8 and at most 64 (preferably as long as possible) */
+#define PWM_BUFFER_LENGTH 64
 
 extern void sound_isr_entry(void);
 
@@ -102,14 +103,20 @@ U8 sound_mode = SOUND_MODE_NONE;
 struct {
   // The number of samples ahead
   S32 count;
-  // 0 or 1, identifies the current buffer
-  U8 buf_id;
   // Pointer to the next sample
   U8* ptr;
+  // 0 or 1, identifies the current buffer
+  U8 buf_id;
   // Double buffer
   U32 buf1[PWM_BUFFER_LENGTH], buf2[PWM_BUFFER_LENGTH];
   // Amplification LUT
   U8 amp[256];
+  // Chosen frequency (1/1024 Hz)
+  S32 cfreq;
+  // Actual frequency (1/1024 Hz)
+  S32 afreq;
+  // Frequency counter
+  S32 fcnt;
 } sample;
 
 void sound_init()
@@ -206,22 +213,11 @@ void sound_fill_sample_buffer() {
       *sbuf++ = msb;
     */
 
-    /*
-      Good old Bresenham would help here to produce arbitrary sample
-      rates:
-       
-      for (fcnt += chosen_freq; fcnt > base_freq; fcnt -= base_freq) {
-        sample.ptr++;
-	sample.count--;
-      }
-
-      Where chosen_freq is the one we'd like to hear, base_freq is the
-      one set in hardware (could be an eternal constant) and fcnt is
-      an S32 fraction counter that's initialised with zero when the
-      sample starts playing.
-     */
-    sample.ptr++;
-    sample.count--;
+    /* Bresenham to the save */
+    for (sample.fcnt += sample.cfreq; sample.fcnt >= sample.afreq; sample.fcnt -= sample.afreq) {
+      sample.ptr++;
+      sample.count--;
+    }
   }
 }
 
@@ -229,17 +225,22 @@ void sound_play_sample(U8 *data, U32 length, U32 freq, U32 amp)
 {
   S16 i;
 
-  /*
-    Note: instead of setting the frequency this way, it should be the
-    highest possible constant, and sound_fill_sample_buffer() should
-    take care of the scaling, because hardware fine tuning is not
-    possible (the high frequency range allows only very crude steps).
-  */
-  *AT91C_SSC_CMR = ((96109714 / 1024) / (freq << 2)) + 1;
+  //U32 cdiv = 96109714 / 2048 / freq;
+  //if (cdiv < 4) cdiv = 4;
+
+  /* Constant hardware frequency */
+  U32 cdiv = 4;
+
+  *AT91C_SSC_CMR = cdiv;
   *AT91C_SSC_PTCR = AT91C_PDC_TXTEN;
   sample.count = length;
   sample.buf_id = 0;
   sample.ptr = data;
+
+  /* Frequency correction */
+  sample.cfreq = freq << 10;
+  sample.afreq = 96109714 / cdiv;
+  sample.fcnt = 0;
 
   /* Simple linear amplification */
   for (i = 0; i < 256; i++) {
@@ -270,7 +271,7 @@ void sound_isr_C()
     }
     break;
   case SOUND_MODE_PCM:
-    if (sample.count > -(PWM_BUFFER_LENGTH >> 3)) {
+    if (sample.count > 0) {
       *AT91C_SSC_TNPR = (unsigned int)(sample.buf_id ? sample.buf1 : sample.buf2);
       *AT91C_SSC_TNCR = PWM_BUFFER_LENGTH;
       sample.buf_id ^= 1;
