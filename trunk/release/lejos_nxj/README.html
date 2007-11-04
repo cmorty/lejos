@@ -67,7 +67,14 @@ contain the ant binary (ant 1.6 or above).</li>
 </ul>
 
 The libusb filter driver for Microsoft Windows can be obtained from <a href="http://libusb-win32.sourceforge.net/#downloads">http://libusb-win32.sourceforge.net/#downloads</a>. 
-This does not currently work under Windows Vista - see "Known Bugs and Limitations in leJOS NXJ" below.<br/><br/>
+This does not currently work under Windows Vista - see "Known Bugs and Limitations in leJOS NXJ" below.
+However, it works if you install on Vista under Windows XP compatibility mode:<br/>
+<ol>
+<li>Download libusb-win32-filter-bin-0.1.12.1.exe (the version current @ 27/09/07)
+<li>Right click on this file. Select Properties | Compatibility Click the “Run this program in compatibility mode” box and select “Windows XP (Service Pack2)” from the drop down list.
+<li>Right click again and select “Run as “Administrator”. Follow the installation instructions. Run the test program will list the usb devices plugged into your computer – but not new devices.
+</ol>
+<br/>
 
 libusb for other systems can be obtained from <a href="http://libusb.sourceforge.net">http://libusb.sourceforge.net</a>.<br/><br/>
 
