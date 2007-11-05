@@ -31,7 +31,7 @@ public class RCXRemote {
 				link.runProgram(menu_item + 1);
 			}
 			
-			if (menu_item == 5) link.stop();
+			if (menu_item == 5) link.stopAllPrograms();
 			if (menu_item == 6) link.beep();
 					
 			if (menu_item == 7) link.forwardStep(0);
