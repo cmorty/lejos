@@ -10,19 +10,23 @@ public class ColorDetector {
 	
 	public static void main(String [] args) throws Exception {
 		ColorSensor cmps = new ColorSensor(SensorPort.S1);
+		String color = "Color";
+		String r = "R";
+		String g = "G";
+		String b = "B";
 		
 		while(!Button.ESCAPE.isPressed()) {
 			LCD.clear();
 			LCD.drawString(cmps.getProductID(), 0, 0);
 			LCD.drawString(cmps.getSensorType(), 0, 1);
 			LCD.drawString(cmps.getVersion(), 9, 1);
-			LCD.drawString("Color", 0, 3);
+			LCD.drawString(color, 0, 3);
 			LCD.drawInt((int)cmps.getColorNumber(),7,3);
-			LCD.drawString("R", 0, 5);
+			LCD.drawString(r, 0, 5);
 			LCD.drawInt((int)cmps.getRed(),1,5);
-			LCD.drawString("G", 5, 5);
+			LCD.drawString(g, 5, 5);
 			LCD.drawInt((int)cmps.getGreen(),6,5);
-			LCD.drawString("B", 10, 5);
+			LCD.drawString(b, 10, 5);
 			LCD.drawInt((int)cmps.getBlue(),11,5);
 			LCD.refresh();
 			Thread.sleep(INTERVAL);
