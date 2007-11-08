@@ -206,7 +206,9 @@ public class LCP {
 			byte run_state = 0;
 			if (m.isMoving()) run_state = 0x20; // 0x20 = RUNNING
 			reply[8] = run_state; // Run state
-			// 9 - 12 = Tacho Limit. Ignored?
+			// 9 - 12 = Tacho Limit is currently ignored.
+			// In future, it could get this from Motor if a
+			// rotate() or rotateTo() command is in progress.
 			reply[13] = (byte) (tacho & 0xFF);
 			reply[14] = (byte) ((tacho >> 8) & 0xFF);
 			reply[15] = (byte) ((tacho >> 16) & 0xFF);
