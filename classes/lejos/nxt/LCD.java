@@ -2,7 +2,7 @@ package lejos.nxt;
 
 /**
  * 
- * @author Andre Nijholt
+ * @author Andre Nijholt and BB
  */
 public class LCD {
 	public static final int SCREEN_SCALE 	= 4;
@@ -152,6 +152,10 @@ public class LCD {
 
 	private static int [] displayBuf = new int[200];
 
+	/**
+	 * Method to set a pixel to screen.
+	 * @author BB
+	 */
 	public static void setPixel(int rgbColor, int x, int y) {
 		if (x < 0 || x >= SCREEN_WIDTH || y < 0 || y >= SCREEN_HEIGHT) return; // Test-Modify for speed
 		int xChar = x / 4;
