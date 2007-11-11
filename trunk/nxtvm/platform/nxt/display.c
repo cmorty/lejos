@@ -8,7 +8,12 @@
 #define DISPLAY_WIDTH (NXT_LCD_WIDTH)
 #define DISPLAY_DEPTH (NXT_LCD_DEPTH)
 
-static U8 display_buffer[DISPLAY_DEPTH][DISPLAY_WIDTH];
+/* NOTE
+ * The following buffer is declared with one extra line (the +1).
+ * This is to allow fast dma update of the screen (see nxt_spi.c
+ * for details). 
+ */
+static U8 display_buffer[DISPLAY_DEPTH+1][DISPLAY_WIDTH];
 
 /* Font table for a 5x8 font. 1 pixel spacing between chars */
 #define N_CHARS 128
@@ -318,7 +323,7 @@ display_bitmap_copy(const U8 *data, U32 width, U32 depth, U32 x, U32 y)
 U8 *
 display_get_buffer(void)
 {
-  return display_buffer;
+  return (U8 *)display_buffer;
 }
 
 void
