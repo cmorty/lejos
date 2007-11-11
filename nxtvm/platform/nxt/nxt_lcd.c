@@ -117,10 +117,13 @@ nxt_lcd_set_cursor_update(U32 on)
   nxt_lcd_command(0xEE | ((on) ? 1 : 0));
 }
 
-
 void
 nxt_lcd_data(const U8 *data)
 {
+#define DMA_REFRESH
+#ifdef DMA_REFRESH
+  nxt_spi_refresh(data);
+#else
   int i;
 
   for (i = 0; i < NXT_LCD_DEPTH; i++) {
@@ -130,6 +133,7 @@ nxt_lcd_data(const U8 *data)
     nxt_spi_write(1, data, NXT_LCD_WIDTH);
     data += NXT_LCD_WIDTH;
   }
+#endif
 }
 
 void
@@ -143,8 +147,8 @@ nxt_lcd_power_up(void)
   nxt_lcd_set_bias_ratio(3);	// 1/9
   nxt_lcd_set_pot(0x60);	// ?? 9V??
 
-  nxt_lcd_set_ram_address_control(0);
-  nxt_lcd_set_map_control(0x02);
+  nxt_lcd_set_ram_address_control(1); // auto wrap
+  nxt_lcd_set_map_control(0x02); // mirror in y
 
   nxt_lcd_enable(1);
 
