@@ -209,10 +209,21 @@ public class LCP {
 			// 9 - 12 = Tacho Limit is currently ignored.
 			// In future, it could get this from Motor if a
 			// rotate() or rotateTo() command is in progress.
+			
+			// TachoCount just returns same as RotationCount:
 			reply[13] = (byte) (tacho & 0xFF);
 			reply[14] = (byte) ((tacho >> 8) & 0xFF);
 			reply[15] = (byte) ((tacho >> 16) & 0xFF);
 			reply[16] = (byte) ((tacho >> 24) & 0xFF);
+			
+			// !! Ignores BlockTacho
+			
+			// RotationCount:
+			reply[21] = (byte) (tacho & 0xFF);
+			reply[22] = (byte) ((tacho >> 8) & 0xFF);
+			reply[23] = (byte) ((tacho >> 16) & 0xFF);
+			reply[24] = (byte) ((tacho >> 24) & 0xFF);
+			
 			len = 25;						
 		}
 		
@@ -293,7 +304,10 @@ public class LCP {
 		// RESETMOTORPOSITION
 		if (cmdId == RESET_MOTOR_POSITION)
 		{
-			MotorPort.resetTachoCountById(cmd[2]);
+			// Check if boolean value (cmd[3]) is false. If so,
+			// reset TachoCount (i.e. RotationCount in LEGO FW terminology)
+			if(cmd[3] == 0)
+				MotorPort.resetTachoCountById(cmd[2]);				
 		}
 		
 		// KEEPALIVE
