@@ -335,7 +335,7 @@ public class NXTCommand implements NXTProtocol {
 		if (!open)
 			return;
 		open = false;
-		byte[] request = { DIRECT_COMMAND_NOREPLY, NXJ_DISCONNECT };
+		byte[] request = { SYSTEM_COMMAND_NOREPLY, NXJ_DISCONNECT };
 		nxtComm.sendRequest(request, 0); // Tell NXT to disconnect
 		nxtComm.close();
 	}
@@ -371,12 +371,12 @@ public class NXTCommand implements NXTProtocol {
 	}
 
 	public byte defrag() throws IOException {
-		byte[] request = { DIRECT_COMMAND_NOREPLY, NXJ_DEFRAG };
-		return sendRequest(request, 3);
+		byte[] request = { SYSTEM_COMMAND_NOREPLY, NXJ_DEFRAG };
+		return sendSystemRequest(request, 3);
 	}
 
 	public String getFriendlyName() throws IOException {
-		byte[] request = { DIRECT_COMMAND_REPLY, GET_DEVICE_INFO };
+		byte[] request = { SYSTEM_COMMAND_REPLY, GET_DEVICE_INFO };
 
 		byte[] reply = nxtComm.sendRequest(request, 33);
 
@@ -392,14 +392,14 @@ public class NXTCommand implements NXTProtocol {
 	}
 
 	public byte setFriendlyName(String name) throws IOException {
-		byte[] request = { DIRECT_COMMAND_NOREPLY, SET_BRICK_NAME };
+		byte[] request = { SYSTEM_COMMAND_NOREPLY, SET_BRICK_NAME };
 		request = appendString(request, name);
 
 		return sendSystemRequest(request, 3);
 	}
 
 	public String getLocalAddress() throws IOException {
-		byte[] request = { DIRECT_COMMAND_REPLY, GET_DEVICE_INFO };
+		byte[] request = { SYSTEM_COMMAND_REPLY, GET_DEVICE_INFO };
 		byte[] reply = nxtComm.sendRequest(request, 33);
 		char addrChars[] = new char[14];
 
