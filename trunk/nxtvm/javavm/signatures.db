@@ -117,6 +117,10 @@ exec(II)V
 #lejos.nxt.Sound
 playSample(IIII)V
 
+#java.lang.Object
+getDataAddress(Ljava/lang/Object;)I
+
+
 
 
 
