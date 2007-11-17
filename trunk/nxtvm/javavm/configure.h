@@ -43,10 +43,10 @@
 /**
  * If not 0 allow multiple heap segments
  */
-#define SEGMENTED_HEAP                 0
+#define SEGMENTED_HEAP                   0
 
 /**
- * Iff not 0, threads in the DEAD state are
+ * If not 0, threads in the DEAD state are
  * removed from the circular list. Recommended.
  */
 #define REMOVE_DEAD_THREADS              1
@@ -61,5 +61,12 @@
  * inversion avoidance.
  */
 #define PI_AVOIDANCE                     1
+
+/**
+ * If not 0, use a garbage collector. It consumes about
+ * 1000 bytes of flash and about 1800 bytes of ram.
+ */
+#define GARBAGE_COLLECTOR                1
+
 
 #endif
