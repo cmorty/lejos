@@ -67,6 +67,7 @@ public interface SpecialSignatureConstants {
     "writePage([BI)V",
     "readPage([BI)V",
     "exec(II)V",
-    "playSample(IIII)V"
+    "playSample(IIII)V",
+    "getDataAddress(Ljava/lang/Object;)I"
   };
 }
