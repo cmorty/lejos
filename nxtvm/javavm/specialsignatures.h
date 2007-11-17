@@ -67,4 +67,5 @@
 #define readPage_4_1BI_5V 60
 #define exec_4II_5V 61
 #define playSample_4IIII_5V 62
+#define getDataAddress_4Ljava_3lang_3Object_2_5I 63
 #endif // _SPECIALSIGNATURES_H

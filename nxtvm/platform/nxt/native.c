@@ -299,6 +299,9 @@ dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
   case playSample_4IIII_5V:
     sound_play_sample((unsigned char *) &FLASH_BASE[(paramBase[0]*64)],paramBase[1],paramBase[2],paramBase[3]);
     break;
+  case getDataAddress_4Ljava_3lang_3Object_2_5I:
+    push_word (ptr2word (((byte *) word2ptr (paramBase[0])) + HEADER_SIZE));
+    break;
   default:
     throw_exception(noSuchMethodError);
   }
