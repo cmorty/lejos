@@ -8,12 +8,28 @@ public class BTConnectTest {
 	public static void main(String[] args) throws Exception {
 		String name = "NXT";
 		
-		LCD.drawString("Try to connect...", 0, 0);
+		LCD.drawString("Connecting...", 0, 0);
 		LCD.refresh();
 		
 		BTRemoteDevice btrd = Bluetooth.getKnownDevice(name);
 
+		if (btrd == null) {
+			LCD.clear();
+			LCD.drawString("No such device", 0, 0);
+			LCD.refresh();
+			Button.ESCAPE.waitForPressAndRelease();
+			System.exit(1);
+		}
+		
 		BTConnection btc = Bluetooth.connect(btrd);
+		
+		if (btc == null) {
+			LCD.clear();
+			LCD.drawString("Connect fail", 0, 0);
+			LCD.refresh();
+			Button.ESCAPE.waitForPressAndRelease();
+			System.exit(1);
+		}
 		
 		LCD.clear();
 		LCD.drawString("Connected", 0, 0);
