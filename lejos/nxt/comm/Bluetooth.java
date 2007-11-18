@@ -1,6 +1,5 @@
 package lejos.nxt.comm;
 import java.util.*;
-import lejos.nxt.*;
 
 /**
  * Support for Bluetooth communications.
@@ -60,6 +59,12 @@ public class Bluetooth {
 	public static  final int MSG_SET_BRICK_STATUSBYTE_RESULT = 50;
 	public static  final int MSG_GET_BRICK_STATUSBYTE = 51;
 	public static  final int MSG_SET_BRICK_STATUSBYTE = 52;
+	public static  final int MSG_GET_OPERATING_MODE = 53;
+	public static  final int MSG_SET_OPERATING_MODE = 54;
+	public static  final int MSG_OPERATING_MODE_RESULT = 55;
+	public static  final int MSG_GET_CONNECTION_STATUS = 56;
+	public static  final int MSG_CONNECTION_STATUS_RESULT = 57;
+	public static  final int MSG_GOTO_DFU_MODE = 58;
 	
 	private static byte[] sendBuf = new byte[256];
 	private static byte[] receiveBuf = new byte[128];
@@ -374,7 +379,8 @@ public class Bluetooth {
 	 * @return BTConnection Object or null
 	 */
 	public static BTConnection connect(BTRemoteDevice remoteDevice) {
-		return connect(remoteDevice.getDeviceAddr());
+		if (remoteDevice == null) return null;
+		else return connect(remoteDevice.getDeviceAddr());
 	}
 	
 	/**
@@ -420,10 +426,21 @@ public class Bluetooth {
 					for(int i=0;i<12;i++) msg[i+12] = 0;
 					sendCommand(msg, 24);					
 				} else if (reply[1] == MSG_CONNECT_RESULT) {
+					
+					
+					if (reply[2] == 0) { // Connection failed
+						return null;
+					}
+					
+					// Wait a while to check that connection
+					// is not immediately terminated
+					
 					try {
 						Thread.sleep(300);
 					} catch (InterruptedException ie) {
 					}
+					
+					// If no message is received then the connection is good
 					  
 					receiveReply(dummy, 32);
 					if (dummy[0] == 0) {
@@ -431,12 +448,19 @@ public class Bluetooth {
 						msg[0] = MSG_OPEN_STREAM;
 						msg[1] = reply[3];
 						sendCommand(msg, 2);
+						
+						// wait for the open connection to take affect
+						
 						try {
 							Thread.sleep(100);
 						} catch (InterruptedException ie) {
 						}
+						
+						// But the BC4 chip in data mode
+						
 						btSetCmdMode(0);
 						cmdMode = false;
+						return btc;
 					}
 		        }
 			}
@@ -451,6 +475,7 @@ public class Bluetooth {
 	 * To connect to a "not-known"-Device, you should use the Inquiry-Prozess. 
 	 * The pairing-Process can also be done with the original Lego-Firmware. The List of known 
 	 * devices will not get lost, when installing the LeJOS Firmware. 
+	 * 
 	 * @return Vector with List of known Devices
 	 */
 	public static Vector getKnownDevicesList() {
@@ -532,7 +557,7 @@ public class Bluetooth {
 				}
 			}
 		}
-		return btd;
+		return null;
 	}
 	
 	/**
@@ -603,6 +628,14 @@ public class Bluetooth {
 		return reply[2] == 0x50;
 	}
 	
+	/**
+	 * Start a Bluetooth inquiry process
+	 * 
+	 * @param maxDevices the maximum number of devices to discover
+	 * @param timeout the timeout value in units of 1.28 econds
+	 * @param cod the class of device to look for
+	 * @return a vector of all the devices found
+	 */
 	public static Vector inquire(int maxDevices,  int timeout, byte[] cod) {
 		Vector retVec = new Vector();
 		byte[] msg = new byte[8];
@@ -696,6 +729,11 @@ public class Bluetooth {
 		return "";
 	}
 	
+	/**
+	 * Get the persistent status value from the BC4 chip
+	 * 
+	 * @return the byte value
+	 */
 	public static int getStatus() {
 		byte [] msg = new byte[8];
 		byte[] reply = new byte[32];
@@ -718,6 +756,11 @@ public class Bluetooth {
 		}
 	}
 
+	/**
+	 * Set the persistent status byte for the BC4 chip
+	 * 
+	 * @param status the byte status value
+	 */
 	public static void setStatus(byte status) {
 		byte [] msg = new byte[8];
 		byte[] reply = new byte[32];
@@ -734,8 +777,6 @@ public class Bluetooth {
 		while(true) {
 			receiveReply(reply,32);		
 			if (reply[0] != 0) {
-				//LCD.drawInt(reply[1],3,0,0);
-				//LCD.refresh();
 				if (reply[1] == MSG_SET_BRICK_STATUSBYTE_RESULT) {
 					supressWait = false;
 					return;
@@ -744,6 +785,11 @@ public class Bluetooth {
 		}		
 	}
 	
+	/**
+	 * Get the visibility (discoverable) status of the device
+	 * 
+	 * @return 1 = visible, 0 = invisible
+	 */
 	public static int getVisibility() {
 		byte [] msg = new byte[8];
 		byte[] reply = new byte[32];
@@ -751,8 +797,7 @@ public class Bluetooth {
 		supressWait = true;
 		Thread.yield();
 		
-		msg[0] = MSG_GET_DISCOVERABLE;	
-		
+		msg[0] = MSG_GET_DISCOVERABLE;			
 		sendCommand(msg,1);
 		
 		while(true) {
@@ -766,6 +811,64 @@ public class Bluetooth {
 		}	
 	}
 	
+	/**
+	 * Get the port open status, 
+	 * i.e whether connections are being accepted
+	 * 
+	 * @return 1 if the port is open, 0 otherwise
+	 */
+	public static int getPortOpen() {
+		byte [] msg = new byte[8];
+		byte[] reply = new byte[32];
+		
+		supressWait = true;
+		Thread.yield();
+		
+		msg[0] = MSG_GET_PORT_OPEN;			
+		sendCommand(msg,1);
+		
+		while(true) {
+			receiveReply(reply,32);		
+			if (reply[0] != 0) {
+				if (reply[1] == MSG_GET_PORT_OPEN_RESULT) {
+					supressWait = false;
+					return (int) reply[2];
+				}
+			}
+		}	
+	}
+	
+	/**
+	 * Get the operating mode (stream breaking or not) 
+	 * 
+	 * @return 0 = stream breaking mode, 1 = don't break stream mode
+	 */
+	public static int getOperatingMode() {
+		byte [] msg = new byte[8];
+		byte[] reply = new byte[32];
+		
+		supressWait = true;
+		Thread.yield();
+		
+		msg[0] = MSG_GET_OPERATING_MODE;			
+		sendCommand(msg,1);
+		
+		while(true) {
+			receiveReply(reply,32);		
+			if (reply[0] != 0) {
+				if (reply[1] == MSG_OPERATING_MODE_RESULT) {
+					supressWait = false;
+					return (int) reply[2];
+				}
+			}
+		}	
+	}
+	
+	/**
+	 * Set Bluetooth visibility (discoverable) on or off for the local device
+	 * 
+	 * @param visible true to set visibility on, false to set it off
+	 */
 	public static void setVisibility(byte visible) {
 		byte [] msg = new byte[8];
 		byte[] reply = new byte[32];
@@ -781,13 +884,256 @@ public class Bluetooth {
 		while(true) {
 			receiveReply(reply,32);		
 			if (reply[0] != 0) {
-				//LCD.drawInt(reply[1],3,0,0);
-				//LCD.refresh();
 				if (reply[1] == MSG_SET_DISCOVERABLE_ACK) {
 					supressWait = false;
 					return;
 				}
 			}
 		}		
+	}
+	
+	/**
+	 * Reset the settings of the BC4 chip to the factory defaults.
+	 * The NXT should be restarted after this.
+	 *
+	 */
+	public static void setFactorySettings() {
+		byte [] msg = new byte[8];
+		byte[] reply = new byte[32];
+		
+		supressWait = true;	
+		Thread.yield();
+		
+		msg[0] = MSG_SET_FACTORY_SETTINGS;			
+		sendCommand(msg,1);
+		
+		while(true) {
+			receiveReply(reply,32);		
+			if (reply[0] != 0) {
+				if (reply[1] == MSG_SET_FACTORY_SETTINGS_ACK) {
+					supressWait = false;
+					return;
+				}
+			}
+		}		
+	}
+	
+	/**
+	 * Set the operating mode
+	 * 
+	 * @param mode 0 = Stream breaking, 1 don't break stream 
+	 */
+	public static void setOperatingMode(byte mode) {
+		byte [] msg = new byte[8];
+		byte[] reply = new byte[32];
+		
+		supressWait = true;	
+		Thread.yield();
+		
+		msg[0] = MSG_SET_OPERATING_MODE;
+		msg[1] = mode;
+		sendCommand(msg,2);
+		
+		while(true) {
+			receiveReply(reply,32);		
+			if (reply[0] != 0) {
+				if (reply[1] == MSG_OPERATING_MODE_RESULT) {
+					supressWait = false;
+					return;
+				}
+			}
+		}		
+	}
+	
+	/**
+	 * Opens the  port to allow incoming connections.
+	 * 
+	 * @return an array of three bytes: success, handle, ps_success
+	 */
+	public static byte[] openPort() {
+		byte [] msg = new byte[8];
+		byte[] reply = new byte[32];
+		byte[] result = new byte[3];
+		
+		supressWait = true;	
+		Thread.yield();
+		
+		msg[0] = MSG_OPEN_PORT;			
+		sendCommand(msg,1);
+		
+		while(true) {
+			receiveReply(reply,32);		
+			if (reply[0] != 0) {
+				if (reply[1] == MSG_PORT_OPEN_RESULT) {
+					result[0] = reply[2];
+					result[1] = reply[3];
+					result[2] = reply[4];
+					supressWait = false;
+					return result;
+				}
+			}
+		}		
+	}
+	
+	/**
+	 * Closes the  port to disallow incoming connections.
+	 * 
+	 * @return an array of three bytes: success, handle, ps_success
+	 */
+	public static byte[] closePort() {
+		byte [] msg = new byte[8];
+		byte[] reply = new byte[32];
+		byte[] result = new byte[3];
+		
+		supressWait = true;	
+		Thread.yield();
+		
+		msg[0] = MSG_OPEN_PORT;			
+		sendCommand(msg,1);
+		
+		while(true) {
+			receiveReply(reply,32);		
+			if (reply[0] != 0) {
+				if (reply[1] == MSG_PORT_OPEN_RESULT) {
+					result[0] = reply[2];
+					result[1] = reply[3];
+					result[2] = reply[4];
+					supressWait = false;
+					return result;
+				}
+			}
+		}		
+	}
+	
+	/**
+	 * Close an close connection
+	 * 
+	 * @param handle the handle for the connection
+	 * @return the status 0 = success
+	 */
+	public static int closeConnection(byte handle) {
+		byte [] msg = new byte[8];
+		byte[] reply = new byte[32];
+		
+		supressWait = true;	
+		Thread.yield();
+		
+		msg[0] = MSG_CLOSE_CONNECTION;
+		msg[1] = handle;
+		sendCommand(msg,2);
+		
+		while(true) {
+			receiveReply(reply,32);		
+			if (reply[0] != 0) {
+				if (reply[1] == MSG_CLOSE_CONNECTION_RESULT) {
+					supressWait = false;
+					return reply[2];
+				}
+			}
+		}		
+	}
+	
+	/**
+	 * Open or reopen a stream for a connection
+	 * 
+	 * @param handle the handle for the connection
+	 * @return the status 0 = success
+	 */
+	public static void openStream(byte handle) {
+		byte [] msg = new byte[8];
+		
+		supressWait = true;	
+		Thread.yield();
+		
+		msg[0] = MSG_OPEN_STREAM;
+		msg[1] = handle;
+		sendCommand(msg,2);		
+	}
+	
+	/**
+	 * Get the Bluetooth signal strength (link quality)
+	 * Higher values mean stronger signal.
+	 * Note this cannot be called when a connection is open.
+	 * 
+	 * @return link quality value 0 to 255. 
+	 * 
+	 */
+	public static int getSignalStrength(byte handle) {
+		byte [] msg = new byte[8];
+		byte[] reply = new byte[32];
+		
+		supressWait = true;
+		Thread.yield();
+		
+		msg[0] = MSG_GET_LINK_QUALITY;
+		msg[1] = handle;
+		sendCommand(msg,2);
+		
+		while(true) {
+			receiveReply(reply,32);		
+			if (reply[0] != 0) {
+				if (reply[1] == MSG_LINK_QUALITY_RESULT) {
+					supressWait = false;
+					return (int) ( reply[2] & 0xFF);
+				}
+			}
+		}	
+	}
+	
+	/**
+	 * Get the status of all connections
+	 * 
+	 * @return byte array of status for each handle
+	 */
+	public static byte[] getConnectionStatus() {
+		byte [] msg = new byte[8];
+		byte[] reply = new byte[32];
+		byte[] result = new byte[4];
+		
+		supressWait = true;
+		Thread.yield();
+		
+		msg[0] = MSG_GET_CONNECTION_STATUS;			
+		sendCommand(msg,1);
+		
+		while(true) {
+			receiveReply(reply,32);		
+			if (reply[0] != 0) {
+				if (reply[1] == MSG_CONNECTION_STATUS_RESULT) {
+					for(int i=0;i<4;i++) result[i] = reply[5+i];
+					supressWait = false;
+					return result;
+				}
+			}
+		}	
+	}
+	
+	/**
+	 * Get the major and minor version of the BlueCore code
+	 * 
+	 * @return an array of two bytes: major version, minor version
+	 */
+	public static byte[] getVersion() {
+		byte [] msg = new byte[8];
+		byte[] reply = new byte[32];
+		byte [] version = new byte[2];
+		
+		supressWait = true;
+		Thread.yield();
+		
+		msg[0] = MSG_GET_VERSION;			
+		sendCommand(msg,1);
+		
+		while(true) {
+			receiveReply(reply,32);		
+			if (reply[0] != 0) {
+				if (reply[1] == MSG_GET_VERSION_RESULT) {
+					supressWait = false;
+					version[0] = reply[2];
+					version[1] = reply[3];
+					return version;
+				}
+			}
+		}	
 	}
 }
