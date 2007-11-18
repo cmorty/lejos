@@ -6,8 +6,11 @@ To run lejos NXT Java test programs on Windows using this snapshot, you need to 
 - Checkout the snapshot project from SVN into <snapshot directory>
 - Do a long reset on your NXT
 - Plug-in your NXT to a USB port
-- Start a cmd window and cd to <snapshot directory>\bin
-- Type: runjava lejos_nxt.bin View.bin
+- Set NXJ_HOME to <snapshot directory>
+- Add <snapshot directory>\bin to the PATH
+- Type nxjflash to flash the firmware and menu
+- Compile programs with nxjc
+- Run programs with nxj
 
 See below for how to compile and link your own program.
 
@@ -37,15 +40,12 @@ right click on it and select SVN Check out.
 
 You will need to supply your sourceforge username and password.
 
-Compiling and linking your own program on Windows
--------------------------------------------------
+Compiling and linking your own program
+--------------------------------------
 
 To compile, link and run Test.java, do:
 
-- Set LEJOS_HOME to the snapshot directory
-- Put %LEJOS_HOME%\bin on the PATH
-- Type: lejosjc Test.java
-- Type: lejoslink Test -o Test.bin
-- Type: lejosdl Test.bin
+- Type: nxjc Test.java
+- Type: nxj Test
 
 
