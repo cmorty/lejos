@@ -31,11 +31,8 @@
 	<classpathentry kind="src" path="SocketServer"/>
 	<classpathentry kind="src" path="BTConnectTest"/>
 	<classpathentry kind="src" path="RCXMMTest"/>
-	<classpathentry kind="src" path="RCXLinkTest"/>
-	<classpathentry kind="src" path="LLCTest"/>
 	<classpathentry kind="src" path="RCXRemote"/>
 	<classpathentry kind="src" path="RCXRemoteMotor"/>
-	<classpathentry kind="src" path="SerialTest"/>
 	<classpathentry kind="src" path="RCXEmulator"/>
 	<classpathentry kind="src" path="LLCMonitor"/>
 	<classpathentry kind="src" path="RCXPortTest"/>
