@@ -2,7 +2,15 @@ import lejos.nxt.*;
 import lejos.rcxcomm.LLC;
 
 
-public class LLCMonitor {
+/**
+ * Shows Lego IR byes received on the LCD
+ * 
+ * Point the RCX remote control at the NRLink and see
+ * the bytes received, or use any other Lego IR source. 
+ * 
+ * @author Lawrie Griffiths
+ *
+ */public class LLCMonitor {
 	public static void main(String[] args) throws Exception {
 		LLC.init(SensorPort.S1);
 		
