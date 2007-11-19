@@ -72,6 +72,9 @@ public class Bluetooth {
 	private static byte[] localAddr = retrieveLocalAddress();
 	private static boolean supressWait = false;
 	
+	private static byte[] default_pin = 
+	    {(byte) '1', (byte) '2', (byte) '3', (byte) '4'};
+	
 	private Bluetooth()
 	{	
 	}
@@ -210,11 +213,21 @@ public class Bluetooth {
 	
 	/**
 	 * Wait for a remote device to connect.
-	 * Pin currently must be 1234.
+	 * Uses default pin "1234"
 	 * 
 	 * @return a BTConnection
 	 */
-	public static BTConnection waitForConnection()
+	public static BTConnection waitForConnection() {
+		return waitForConnection(default_pin);
+	}
+	
+	/**
+	 * Wait for a remote device to connect.
+	 * 
+	 * @param pin the pin to use
+	 * @return a BTConnection
+	 */
+	public static BTConnection waitForConnection(byte[] pin)
 	{
 		byte[] reply = new byte[32];
 		byte[] dummy = new byte[32];
@@ -237,11 +250,10 @@ public class Bluetooth {
 					for(int i=0;i<7;i++) device[i] = reply[i+2];
 					msg[0] = Bluetooth.MSG_PIN_CODE;
 					for(int i=0;i<7;i++) msg[i+1] = device[i];
-					msg[8] = '1';
-					msg[9] = '2';
-					msg[10] = '3';
-					msg[11] = '4';
-					for(int i=0;i<12;i++) msg[i+12] = 0;
+					for(int i=0;i<16;i++) {
+						if (i >= pin.length) msg[i+8] = 0;
+						else msg[i+8] = pin[i];
+					}
 					sendCommand(msg, 24);					
 				}	
 				
@@ -382,14 +394,26 @@ public class Bluetooth {
 		if (remoteDevice == null) return null;
 		else return connect(remoteDevice.getDeviceAddr());
 	}
-	
+
 	/**
 	 * Connects to a Device by it's Byte-Device-Address Array
+	 * Uses default pin "1234"
 	 * 
 	 * @param device_addr byte-Array with device-Address
 	 * @return BTConnection Object or null
 	 */
 	public static BTConnection connect(byte[] device_addr) {
+		return connect(device_addr, default_pin);
+	}
+	
+	/**
+	 * Connects to a Device by it's Byte-Device-Address Array
+	 * 
+	 * @param device_addr byte-Array with device-Address
+	 * @param pin the pin to use
+	 * @return BTConnection Object or null
+	 */
+	public static BTConnection connect(byte[] device_addr, byte[] pin) {
 
 		boolean cmdMode = true;
 		byte[] msg = new byte[32];
@@ -418,12 +442,12 @@ public class Bluetooth {
 				if (reply[1] == MSG_REQUEST_PIN_CODE) {
 					for(int i=0;i<7;i++) device[i] = reply[i+2];
 					msg[0] = Bluetooth.MSG_PIN_CODE;
+					
 					for(int i=0;i<7;i++) msg[i+1] = device[i];
-					msg[8] = '1';
-					msg[9] = '2';
-					msg[10] = '3';
-					msg[11] = '4';
-					for(int i=0;i<12;i++) msg[i+12] = 0;
+					for(int i=0;i<16;i++) {
+						if (i >= pin.length) msg[i+8] = 0;
+						else msg[i+8] = pin[i];
+					}
 					sendCommand(msg, 24);					
 				} else if (reply[1] == MSG_CONNECT_RESULT) {
 					
