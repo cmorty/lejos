@@ -17,7 +17,8 @@ public abstract class I2CSensor implements SensorConstants {
 	char [] versionChars = StringUtils.getCharacters(version);
 	char [] productIDChars = StringUtils.getCharacters(productID);
 	char [] sensorTypeChars = StringUtils.getCharacters(sensorType);
-	byte[] byteBuff = new byte[8]; 
+	byte [] byteBuff = new byte[8];
+	byte [] buf1 = new byte[1];
 	
 	public I2CSensor(I2CPort port)
 	{
@@ -64,7 +65,18 @@ public abstract class I2CSensor implements SensorConstants {
 		
 		return 0;
 	}
-
+	
+	/**
+	 *  Executes an I2C write transaction.
+	 *  
+	 * @param register I2C register, e.g 0x42
+	 * @param value single byte to send
+	 * @return status zero=success, non-zero=failure
+	 */
+	public int sendData(int register, byte value) {
+		buf1[0] = value;
+		return sendData(register, buf1, 1);
+	}
 	
 	/**
 	 * Return the sensor version number.

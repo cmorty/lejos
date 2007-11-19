@@ -1,15 +1,15 @@
 package lejos.nxt;
 
+import lejos.rcxcomm.Opcode;
 /**
  * Supports Mindsensors NRLink RCX IR adapter.
  * 
  * @author Lawrie Griffiths <lawrie.griffiths@ntlworld.com>
  *
  */
-public class RCXLink extends I2CSensor {
+public class RCXLink extends I2CSensor implements Opcode {
 	
 	private byte[] buf = new byte[4];
-	private byte[] buf2 = new byte[1];
 	
 	public RCXMotor A = new RCXMotor(new RCXRemoteMotorPort(this,0));
 	public RCXMotor B = new RCXMotor(new RCXRemoteMotorPort(this,1));
@@ -53,6 +53,9 @@ public class RCXLink extends I2CSensor {
      * before it works again.
 	 */
 	public final static byte BEEP = 0x39;	
+		
+	public final static int EEPROM_BUFFER = 0x78;
+	public final static int DELAY = 10;
 	
 	public RCXLink(I2CPort port) {
 		super(port);
@@ -98,43 +101,36 @@ public class RCXLink extends I2CSensor {
 	}
 	
 	public void flush() {
-		buf[0] = FLUSH;
-		sendData(COMMAND, buf, 1);
+		sendData(COMMAND, FLUSH);
 	}
 	
 	public void setDefaultSpeed() {
-		buf[0] = SLOW_SPEED;
-		sendData(COMMAND, buf, 1);
+		sendData(COMMAND, SLOW_SPEED);
 	}
 	
 	public void setHighSpeed() {
-		buf[0] = HIGH_SPEED ;
-		sendData(COMMAND, buf, 1);
+		sendData(COMMAND, HIGH_SPEED);
 	}
 	
 	public void setRangeLong() {
-		buf[0] = LONG_RANGE;
-		sendData(COMMAND, buf, 1);
+		sendData(COMMAND, LONG_RANGE);
 	}
 
 	public void setRangeShort() {
-		buf[0] = SHORT_RANGE;
-		sendData(COMMAND, buf, 1);
+		sendData(COMMAND, SHORT_RANGE);
 	}
 	
 	public void setAPDAOn() {
-		buf[0] = ARPA_ON;
-		sendData(COMMAND, buf, 1);
+		sendData(COMMAND, ARPA_ON);
 	}
 	
 	public void setAPDAOff() {
-		buf[0] = ARPA_OFF;
-		sendData(COMMAND, buf, 1);
+
+		sendData(COMMAND, ARPA_OFF);
 	}
 	
 	public void defineMacro(int addr, byte[] macro) {
-		buf2[0] = (byte) macro.length;
-		sendData((byte) addr,buf2,1);
+		sendData((byte) addr,(byte) macro.length);
 		sleep();
 		sendData((byte) addr+1, macro, macro.length);
 	}
@@ -150,76 +146,73 @@ public class RCXLink extends I2CSensor {
 	}
 	
 	public void ping() {
-		buf[0] = 0x10;
+		buf[0] = OPCODE_ALIVE;
 		defineAndRun(buf,1);
 	}
 	
 	public void sendF7(int msg) {
-		buf[0] = (byte) 0xF7;
+		buf[0] = (byte) OPCODE_SET_MESSAGE;
 		buf[1] = (byte) (msg & 0xFF);
 		defineAndRun(buf,2);
 	}
 	
 	public void sendRemoteCommand(int msg) {
-		buf[0] = (byte) 0xD2;
+		buf[0] = OPCODE_REMOTE_COMMAND;
 		buf[1] = (byte) (msg >> 8);
 		buf[2] = (byte) (msg & 0xFF);
 		defineAndRun(buf,3);
 	}
 	
 	public void setMotorPower(int id, int power) { 
-		buf[0] = 0x13;
+		buf[0] = OPCODE_SET_MOTOR_POWER;
 		buf[1] = (byte) (1 << id);
 		buf[2] = 2;
 		buf[3] = (byte) power;
-		defineMacro(0x78, buf); // Bug: sendData cannot send more than 3 bytes
+		defineMacro(EEPROM_BUFFER, buf); // Bug: sendData cannot send more than 3 bytes
 		sleep();
-		buf[0] = (byte) power;
-		sendData(0x7C, buf,1);
+		sendData(EEPROM_BUFFER+4, (byte) power);
 		sleep();
-		runMacro(0x78);
+		runMacro(EEPROM_BUFFER);
 	}
 	
 	public void stopMotor(int id) {
-		buf[0] = 0x21;
+		buf[0] = OPCODE_SET_MOTOR_ON_OFF;
 		buf[1] = (byte) ((1 << id) | 0x40);
 		defineAndRun(buf,2);
 	}
 	
 	public void startMotor(int id) {
-		buf[0] = 0x21;
+		buf[0] = OPCODE_SET_MOTOR_ON_OFF;
 		buf[1] = (byte) ((1 << id) | 0x80);
 		defineAndRun(buf,2);
 	}
 	
 	public void fltMotor(int id) {
-		buf[0] = 0x21;
+		buf[0] = OPCODE_SET_MOTOR_ON_OFF;
 		buf[1] = (byte) (1 << id);
 		defineAndRun(buf,2);
 	}
 	
 	public void forward(int id) {
-		buf[0] = (byte) 0xe1;
+		buf[0] = (byte) OPCODE_SET_MOTOR_DIRECTION;
 		buf[1] = (byte) ((1 << id) | 0x80);
 		defineAndRun(buf,2);
 	}
 	
 	public void backward(int id) {
-		buf[0] = (byte) 0xe1;
+		buf[0] = (byte) OPCODE_SET_MOTOR_DIRECTION;
 		buf[1] = (byte) (1 << id);
 		defineAndRun(buf,2);
 	}
 	
 	public void setRawMode() {
-		buf[0] = TRANSMIT_RAW_MACRO;
-		sendData(COMMAND, buf, 1);
+		sendData(COMMAND, TRANSMIT_RAW_MACRO);
 	}
 	
 	public void sendBytes(byte[] data, int len) {
 		sendData(TX_DATA,data,len);
 		sleep();
-		buf[0] = (byte) len;
-		sendData(TX_DATA_LEN, buf, 1);
+		sendData(TX_DATA_LEN, (byte) len);
 	}
 	
 	public int readBytes(byte [] data) {
@@ -235,16 +228,15 @@ public class RCXLink extends I2CSensor {
 	
 	private void sleep() {
 		try {
-			Thread.sleep(10);
+			Thread.sleep(DELAY);
 		} catch (InterruptedException e) {}
 	}
 	
 	public void defineAndRun(byte[] macro, int len) {
-		buf2[0] = (byte) len;
-		sendData(0x78,buf2,1); // Use 078 -0x7F of EEPOM as buffer
+		sendData(EEPROM_BUFFER,(byte) len);
 		sleep();
-		sendData(0x79, macro, len);
+		sendData(EEPROM_BUFFER+1, macro, len);
 		sleep();		
-		runMacro(0x78);
+		runMacro(EEPROM_BUFFER);
 	}
 }
