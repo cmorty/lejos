@@ -65,9 +65,9 @@ public class Serial {
 		if (skipping) {
 			while(available> 0) {
 				readByte(buf1);
-				LCD.drawInt(buf1[0] & 0xFF, 4, 8, 7);
-				LCD.refresh();
-				try {Thread.sleep(500);} catch (InterruptedException e) {}
+				//LCD.drawInt(buf1[0] & 0xFF, 4, 8, 7);
+				//LCD.refresh();
+				try {Thread.sleep(50);} catch (InterruptedException e) {}
 				available--;
 				if (headerByte(buf1[0])) {
 					skipping = false;
