@@ -314,7 +314,7 @@ public class Motor extends BasicMotor implements TimerListener
  	    basePower = calcPower(_speed);
     	setPower((int)basePower);
  	}
- 
+    
     /**
      * Monitors time and tachoCount to regulate speed and stop motor rotation at limit angle
      */
@@ -333,7 +333,12 @@ public class Motor extends BasicMotor implements TimerListener
 	  		{
 	  			int elapsed = (int)System.currentTimeMillis()-time0;
 	  			int angle = getTachoCount()-angle0;
-//                basePower = calcPower(_speed);
+	  			while( angle < 2 && angle> -2 )
+	  			{
+	  			   setPower(100);
+	  			   Thread.yield();
+	  			 angle = getTachoCount()-angle0;
+	  			}
 	  			if(_rampUp)
 	  			{   
 
@@ -352,10 +357,10 @@ public class Motor extends BasicMotor implements TimerListener
 	  			}
 		  		else 	
 					error = (elapsed*_speed/1000f)- (float)Math.abs(angle);
-	  			power = basePower + 0.75f * error;// -0.1f * e0;// magic numbers from experiment
+	  			power = basePower + 2f * error;// +5f*e0;// -0.1f * e0;// magic numbers from experiment .75
 	  			if(power<0) power = 0;
 	  			e0 = error;
-	  			float smooth = 0.0025f;// another magic number from experiment
+	  			float smooth = 0.001f;// another magic number from experiment.0025
 	  			basePower = basePower + smooth*(power-basePower); 
 	  			setPower((int)power);
 	  		}
