@@ -1,6 +1,6 @@
 package lejos.navigation;
 //import lejos.navigation.*;
-import lejos.nxt.Motor;
+import lejos.nxt.*;
 
 /**
 * The TachoNavigator class can keep track of the robot position and the direction angle it faces; It uses a _pilot object to control NXT robot movements.<br>
@@ -310,47 +310,46 @@ public class TachoNavigator  implements Navigator
 		int left = _pilot.getLeftCount();//left wheel rotation angle
 		int right = _pilot.getRightCount();
 		if(left == 0 && right == 0)return; // no movement
-		int outsideRotation = 0;
-		int insideRotation = 0;
-		int direction = 1; // assume left turn
+		int outside = 0;
+		int inside = 0;
+		byte direction = 0; 
+		float dx = 0;
+		float dy = 0;
 		if(Math.abs(left)<Math.abs(right))
 		{
-			outsideRotation = right;
-			insideRotation = left;
+			outside = right;
+			inside = left;
+			direction = 1;
 		}
 		else
 		{
-			outsideRotation = left;
-			insideRotation = right;
+			outside = left;
+			inside = right;
 			direction = -1; // turn to right
 		}
-		float turnAngle = direction*(outsideRotation-insideRotation)*_pilot._wheelDiameter/(2*_pilot._trackWidth);
-		float ratio = 1.0f*insideRotation/outsideRotation;
-		float moveAngle = 0; // angle of displacement in robot coordinates, degrees
-		float projection = 0;  //angle to project displacement to world coordinates, in radians
-		float distance = 0; // of displacement
+		float turnAngle = direction*(outside-inside)*_pilot._wheelDiameter/(2*_pilot._trackWidth);
+
 		boolean approx = false;
-		if(ratio>.95) // probably movement was intended to be straight
+		if(1.0f*inside/outside > .98) // probably movement was intended to be straight
 		{
-			float avg = (insideRotation+outsideRotation)/2.0f; 
-			distance = avg/_pilot._degPerDistance;
-			projection = (float)Math.toRadians(_heading+turnAngle/2);
+			float distance = 0.5f*(inside+outside)/_pilot._degPerDistance;
+			float projection = (float)Math.toRadians(_heading+turnAngle/2);
+			dx = distance*(float)Math.cos(projection);
+			dy = distance*(float)Math.sin(projection);
 			approx = true;
 		}
 		else
 		{ 
-			float turnRadius =_pilot._trackWidth/(1 - ratio) -  _pilot._trackWidth/2 ; // 
-			float radians = (float) Math.toRadians(turnAngle); // turnAngle in radians
-			float dx0 = turnRadius*(float)Math.sin(radians);  //displacement  in robot coordinates
-			float dy0 = turnRadius*(1 -(float) Math.cos(radians)); 
-			distance = (float) Math.sqrt(dx0*dx0+dy0*dy0);  //distance 
-			moveAngle = (float)Math.atan2(dy0,dx0); //in robot coordinates
-			approx = false;
-			projection = moveAngle + (float)Math.toRadians(_heading); // angle to project displacement onto world coordinates
+		      float turnRadius = _pilot._trackWidth*(outside+inside)/(2*(outside - inside));
+		      double  headingRad = (Math.toRadians(_heading));
+		      if(direction == -1)headingRad +=Math.PI;
+		      double  turnRad =  Math.toRadians(turnAngle);
+		      dx = turnRadius*(float)(Math.sin(headingRad + turnRad) - Math.sin(headingRad));
+		      dy = turnRadius*(float)(Math.cos(headingRad)- Math.cos(headingRad+turnRad));
 		}
 		_heading = normalize(_heading + turnAngle); // keep angle between -180 and 180
-		_x += distance * Math.cos(projection); // displacement in world coordinates
-		_y += distance * Math.sin(projection);
+		_x += dx;
+		_y += dy; 
 		if(approx) _heading += turnAngle/2; // correct approximation
 		_updated = true;
 	}
@@ -383,7 +382,7 @@ public class TachoNavigator  implements Navigator
 	/**
 	 * Moves the NXT robot in a circular path through a specific angle; If waitForCompletion is true, returns when angle is reached. <br>
 	 * The center of the turning circle is on the right side of the robot iff parameter radius is negative.
-	 * Robot will stop when total rotation equals angle. If angle is negative, robot will move travel backwards.
+	 * Robot will stop when total rotation equals angle. If angle is negative, robot will travel backwards.
 	 * @param radius  see turn(turnRage, angle)
 	 * @param immediateReturn iff true, the method returns immediately, in which case the programmer <br>
 	 * is responsible for calling updatePosition() before the robot moves again. 
