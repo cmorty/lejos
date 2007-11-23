@@ -16,7 +16,7 @@ SET NXJ_HOME=%LEJOS_HOME%
 @REM Check operating system and skip Vista:
 Ver | Find "Version 6" >NUL
   If ErrorLevel 1 Goto :INSTALL
-  Echo Vista Detected. There have been reports of LibUSB disabling USB devices. Install at your own risk. http://libusb-win32.sourceforge.net/#downloads
+  Echo Vista Detected. Please manually install libusb in XP compatibility mode, otherwise USB devices will be deactivated. http://libusb-win32.sourceforge.net/#downloads
   Goto :DONE
 
 :INSTALL
