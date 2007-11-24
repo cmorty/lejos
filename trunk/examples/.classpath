@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="BTReceive/|BTSend/|BumperCar/|ColorDetector/|CompassTest/|ExceptionTest/|HelloWorld/|Line/|Listen/|MemoryTest/|PerformanceTest/|PilotTester/|SonicTest/|SpeedTest/|Subsumption1/|Subsumption2/|TiltTest/|Tune/|USBReceive/|USBSend/|View/|GraphicsSample/|SocketTest/|TimeTest/|SocketServer/|BTConnectTest/|SoundSample/|LCDUI/|DLTest/|RCXMMTest/|RCXLinkTest/|LLCTest/|RCXRemote/|RCXRemoteMotor/|SerialTest/|RCXEmulator/|LLCMonitor/|RCXPortTest/|SignalTest/|BlueStats/" kind="src" path=""/>
+	<classpathentry excluding="BTReceive/|BTSend/|BumperCar/|ColorDetector/|CompassTest/|ExceptionTest/|HelloWorld/|Line/|Listen/|MemoryTest/|PerformanceTest/|PilotTester/|SonicTest/|SpeedTest/|Subsumption1/|Subsumption2/|TiltTest/|Tune/|USBReceive/|USBSend/|View/|GraphicsSample/|SocketTest/|TimeTest/|SocketServer/|BTConnectTest/|SoundSample/|LCDUI/|DLTest/|RCXMMTest/|RCXLinkTest/|LLCTest/|RCXRemote/|RCXRemoteMotor/|SerialTest/|RCXEmulator/|LLCMonitor/|RCXPortTest/|SignalTest/|BlueStats/|RemoteMotor/" kind="src" path=""/>
 	<classpathentry kind="src" path="DLTest"/>
 	<classpathentry kind="src" path="LCDUI"/>
 	<classpathentry kind="src" path="SoundSample"/>
@@ -38,6 +38,7 @@
 	<classpathentry kind="src" path="RCXPortTest"/>
 	<classpathentry kind="src" path="SignalTest"/>
 	<classpathentry kind="src" path="BlueStats"/>
+	<classpathentry kind="src" path="RemoteMotor"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="/classes/lib/classes.jar"/>
 	<classpathentry kind="lib" path="/pccomms/lib/pccomm.jar"/>
