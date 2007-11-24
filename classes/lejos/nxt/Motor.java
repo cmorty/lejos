@@ -82,7 +82,7 @@ public class Motor extends BasicMotor implements TimerListener
    */
   public static final Motor C = new Motor (MotorPort.C);
    
-  public Motor (MotorPort port)
+  public Motor (TachoMotorPort port)
   {
     _port = port;
     _voltage = Battery.getVoltage();
