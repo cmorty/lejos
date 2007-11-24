@@ -188,9 +188,15 @@ public class NXTCommand implements NXTProtocol {
 			byte [] reply = nxtComm.readData();
 			FirmwareInfo info = new FirmwareInfo();
 			info.status = reply[2];
+			char[] cc = new char[3];
 			if(info.status == 0) {
-				info.protocolVersion = reply[4] + "." + reply[3];
-				info.firmwareVersion = reply[6] + "." + reply[5];
+				cc[1] = '.';
+				cc[0] = (char) ('0' + reply[4]);
+				cc[2] = (char) ('0' + reply[3]);
+				info.protocolVersion = new String(cc,0,3);
+				cc[0] = (char) ('0' + reply[6]);
+				cc[2] = (char) ('0' + reply[5]);
+				info.firmwareVersion = new String(cc,0,3);
 			}
 			return info;
 		}
