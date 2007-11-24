@@ -6,7 +6,7 @@ public class NXTComm {
 	private static BTConnection btc;
 	private static DataInputStream dis;
 	private static DataOutputStream dos;
-	byte[] buf = new byte[32];
+	byte[] buf = new byte[64];
 	
 	public boolean open(String name) throws IOException {
 		BTRemoteDevice btrd = Bluetooth.getKnownDevice(name);	
@@ -29,7 +29,7 @@ public class NXTComm {
 	public byte[] readData() throws IOException {	
 		int len = 0;
 		
-		while (len == 0) len = Bluetooth.readPacket(buf, 32);
+		while (len == 0) len = Bluetooth.readPacket(buf, 64);
 		byte [] data = new byte[len];
 		for(int i=0;i<len;i++) data[i] = buf[i];
 		return data;
