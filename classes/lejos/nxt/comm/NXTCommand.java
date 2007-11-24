@@ -133,4 +133,79 @@ public class NXTCommand implements NXTProtocol {
 			return sendRequest(request);
 		}
 	}
+	
+	/**
+	 * Plays a tone on NXT speaker. If a new tone is sent while the previous tone is playing,
+	 * the new tone command will stop the old tone command.
+	 * @param frequency 
+	 * @param duration - In milliseconds.
+	 * @return - Returns true if command worked, false if it failed.
+	 */
+	public byte playTone(int frequency, int duration) throws IOException {
+		synchronized (this) {
+			byte [] request = {DIRECT_COMMAND_NOREPLY, PLAY_TONE, (byte)frequency, (byte)(frequency>>>8), (byte)duration, (byte)(duration>>>8)};
+			return sendRequest(request);
+		}		
+	}
+	
+	public DeviceInfo getDeviceInfo() throws IOException {
+		synchronized (this) {
+			byte [] request = {SYSTEM_COMMAND_REPLY, GET_DEVICE_INFO};
+			char[] name = new char[14];
+			nxtComm.sendData(request);
+			byte [] reply = nxtComm.readData();
+			DeviceInfo d = new DeviceInfo();
+			d.status = reply[2];
+			int i = 0;
+			for(;reply[3+i] != 0 && i<14;i++) name[i] = (char) reply[3+i]; 
+			d.NXTname = new String(name,0,i);
+			d.bluetoothAddress = getAddressString(reply);
+			d.signalStrength = (0xFF & reply[25]) | ((0xFF & reply[26]) << 8)| ((0xFF & reply[27]) << 16)| ((0xFF & reply[28]) << 24);
+			d.freeFlash = (0xFF & reply[29]) | ((0xFF & reply[30]) << 8)| ((0xFF & reply[31]) << 16)| ((0xFF & reply[32]) << 24);
+			return d;
+		}
+	}
+	
+	private static final char[] cs = {'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
+
+	private String getAddressString(byte [] reply) {
+		char[] caddr = new char[20];		
+		int ci = 0;
+		
+		for(int i=0; i<7; i++) {
+			int nr = reply[i+18] & 0xFF;	
+			caddr[ci++] = cs[nr / 16];
+			caddr[ci++] = cs[nr % 16];
+			if (i != 6) caddr[ci++] = ':';
+		}
+		return new String(caddr, 0, 20);
+	}
+	
+	public FirmwareInfo getFirmwareVersion() throws IOException {
+		synchronized (this) {
+			byte [] request = {SYSTEM_COMMAND_REPLY, GET_FIRMWARE_VERSION};
+			nxtComm.sendData(request);
+			byte [] reply = nxtComm.readData();
+			FirmwareInfo info = new FirmwareInfo();
+			info.status = reply[2];
+			if(info.status == 0) {
+				info.protocolVersion = reply[4] + "." + reply[3];
+				info.firmwareVersion = reply[6] + "." + reply[5];
+			}
+			return info;
+		}
+	}
+	
+	/**
+	 * Deletes user flash memory (not including system modules).
+	 * @return 0 for success
+	 */
+	public byte deleteUserFlash() throws IOException {
+		synchronized (this) {
+			byte [] request = {SYSTEM_COMMAND_REPLY, DELETE_USER_FLASH};
+			nxtComm.sendData(request);
+			byte [] reply = nxtComm.readData();
+			return reply[2];
+		}
+	}
 }
