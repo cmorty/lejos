@@ -26,4 +26,85 @@ public class RemoteNXT {
 		S3 = new RemoteSensorPort(nxtCommand, 2);
 		S4 = new RemoteSensorPort(nxtCommand, 3);
 	}
+	
+	/**
+	 * Get the  name of the remote brick
+	 * 
+	 * @return name of remote brick
+	 */
+	public String getBrickName()  {
+		try {
+			DeviceInfo i = nxtCommand.getDeviceInfo();
+			return i.NXTname;
+		} catch (IOException ioe) {
+			return null;
+		}	
+	}
+	
+	/**
+	 * Get the bluetooth address of the remorte device
+	 * 
+	 * @return address with hex pairs separated by colons
+	 */
+	public String getBluetoothAddress()  {
+		try {
+			DeviceInfo i = nxtCommand.getDeviceInfo();
+			return i.bluetoothAddress;
+		} catch (IOException ioe) {
+			return null;
+		}	
+	}
+	
+	/**
+	 * 
+	 * @return Free memory remaining in FLASH
+	 */
+	public int getFlashMemory() {
+		try {
+			DeviceInfo i = nxtCommand.getDeviceInfo();
+			return i.freeFlash; 
+		} catch (IOException ioe) {
+			return 0;
+		}	
+	}
+	
+	/**
+	 * Return Lego firmware vserion
+	 * 
+	 * @return <major>.<minor>
+	 */
+	public String getFirmwareVersion() {
+		try {
+			FirmwareInfo f = nxtCommand.getFirmwareVersion();
+			return f.firmwareVersion;
+		} catch (IOException ioe) {
+			return null;
+		}		
+	}
+	
+	/**
+	 * Return LCP protocol version
+	 * 
+	 * @return <major>.<minor>
+	 */
+	public String getProtocolVersion() {
+		try {
+			FirmwareInfo f = nxtCommand.getFirmwareVersion();
+			return f.protocolVersion;
+		} catch (IOException ioe) {
+			return null;
+		}		
+	}
+	
+	/**
+	 * Deletes all user programs and data in FLASH memory
+	 * @return zero for success
+	 */
+	public byte deleteFlashMemory() {
+		try {
+			return nxtCommand.deleteUserFlash(); 
+		} catch (IOException ioe) {
+			return -1;
+		}
+	}
 }
