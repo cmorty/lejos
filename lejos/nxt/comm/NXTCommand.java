@@ -90,4 +90,47 @@ public class NXTCommand implements NXTProtocol {
 	public void close() throws IOException {
 		nxtComm.close();
 	}
+	public int getBatteryLevel() throws IOException {
+		synchronized (this) {
+			byte [] request = {DIRECT_COMMAND_REPLY, GET_BATTERY_LEVEL};
+			nxtComm.sendData(request);
+			byte [] reply = nxtComm.readData();
+			int batteryLevel = (0xFF & reply[3]) | ((0xFF & reply[4]) << 8);
+			return batteryLevel;
+		}
+	}
+	
+	public InputValues getInputValues(int port) throws IOException {
+		synchronized (this) {
+			byte [] request = {DIRECT_COMMAND_REPLY, GET_INPUT_VALUES, (byte)port};
+			nxtComm.sendData(request);
+			byte [] reply = nxtComm.readData();
+			InputValues inputValues = new InputValues();
+			inputValues.inputPort = reply[3];
+			// 0 is false, 1 is true.
+			inputValues.valid = (reply[4] != 0);
+			// 0 is false, 1 is true. 
+			inputValues.isCalibrated = (reply[5] == 0);
+			inputValues.sensorType = reply[6];
+			inputValues.sensorMode = reply[7];
+			inputValues.rawADValue = (0xFF & reply[8]) | ((0xFF & reply[9]) << 8);
+			inputValues.normalizedADValue = (0xFF & reply[10]) | ((0xFF & reply[11]) << 8);
+			inputValues.scaledValue = (short)((0xFF & reply[12]) | (reply[13] << 8));
+			inputValues.calibratedValue = (short)((0xFF & reply[14]) | (reply[15] << 8));
+			return inputValues;
+		}
+	}
+	
+	/**
+	 * Tells the NXT what type of sensor you are using and the mode to operate in.
+	 * @param port - 0 to 3
+	 * @param sensorType - Enumeration for sensor type (see NXTProtocol) 
+	 * @param sensorMode - Enumeration for sensor mode (see NXTProtocol)
+	 */
+	public byte setInputMode(int port, int sensorType, int sensorMode) throws IOException {
+		synchronized(this) {
+			byte [] request = {DIRECT_COMMAND_NOREPLY, SET_INPUT_MODE, (byte)port, (byte)sensorType, (byte)sensorMode};
+			return sendRequest(request);
+		}
+	}
 }
