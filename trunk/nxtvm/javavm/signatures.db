@@ -120,6 +120,11 @@ playSample(IIII)V
 #java.lang.Object
 getDataAddress(Ljava/lang/Object;)I
 
+#java.lang.System
+gc()V
+shutDown()V
+
+
 
 
 
