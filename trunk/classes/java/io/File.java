@@ -329,6 +329,7 @@ public class File {
 		buff[NUM_FILES_POS] = 0;
  		Flash.writePage(buff, TABLE_START_PAGE);
 // 		LCD.drawInt(999, 12,5);
+ 		files = null;
 	}
 	
 	/**

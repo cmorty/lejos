@@ -35,5 +35,18 @@ public final class System
   public static Runtime getRuntime() {
   	return Runtime.getRuntime();
   }
+  
+  /**
+   * Collect garbage
+   */
+ public static native void gc();
+ 
+ /**
+  * Shutdown the brick
+  */
+ public static native void shutDown();
+ 
 }
+
+
 
