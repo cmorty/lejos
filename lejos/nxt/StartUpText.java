@@ -74,7 +74,14 @@ public class StartUpText {
 			} else if (menu == systemMenu) {
 				LCD.drawString(system, 4, 1);
 				LCD.drawString(freeFlash, 0, 2);
-				LCD.drawInt(File.freeMemory(),5, 11, 2);
+				int free = File.freeMemory();
+				int size = 5;
+				int pos = 11;
+				if (free >= 100000) {
+					size = 6;
+					pos = 10;
+				}
+				LCD.drawInt(free,size, pos, 2);
 				LCD.refresh();				
 			}
 
