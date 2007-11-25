@@ -32,7 +32,7 @@ public class StartUpText {
 		TextMenu menu = topMenu;
 		String[] blueMenuData = {"Devices", "Search", "On/Off","Visibility"};
 		TextMenu blueMenu = new TextMenu(blueMenuData,3);
-		String[] systemMenuData = {"Defrag"};
+		String[] systemMenuData = {"Defrag", "Format"};
 		TextMenu systemMenu = new TextMenu(systemMenuData,3);
 		File[] files = null;
 		boolean quit = false;
@@ -97,7 +97,7 @@ public class StartUpText {
 		    		 quit = true;
 		    	 }
 		    } else if (menu == filesMenu) {
-			    if (selection >= 0) {
+			    if (selection >= 0 && files[selection] != null) {
 					LCD.clear();
 					LCD.drawString(title,6,0);
 				    LCD.drawInt( (int)(Runtime.getRuntime().freeMemory()),0,0);
@@ -218,11 +218,14 @@ public class StartUpText {
 		    } else if (menu == systemMenu) {
 		    	if (selection == 0) {
 		    		File.defrag();
+		    	} else if (selection == 1) {
+		    		File.format();
 		    	} else if (selection == -1) {
 		    		menu = topMenu;
 		    	}
 		    }
 		}
+		System.shutDown();
 	}
 }
 
