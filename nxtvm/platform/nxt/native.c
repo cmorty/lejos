@@ -251,35 +251,35 @@ dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
     return;
   case btGetCmdMode_4_5I:
     push_word(bt_get_mode());
-    break;
+    return;
   case btSetCmdMode_4I_5V:
     if (paramBase[0] == 0) bt_set_arm7_cmd();
     else bt_clear_arm7_cmd(); 
-    break;
+    return;
   case btStartADConverter_4_5V:
     bt_start_ad_converter();
-    break;
+    return;
   case usbRead_4_1BI_5I:
      {
       Object *p = word2ptr(paramBase[0]);
       byte *byteArray = (((byte *) p) + HEADER_SIZE);
       push_word(udp_read(byteArray,paramBase[1]));                      
     } 
-    break;
+    return;
   case usbWrite_4_1BI_5V:
      {
       Object *p = word2ptr(paramBase[0]);
       byte *byteArray = (((byte *) p) + HEADER_SIZE);
       udp_write(byteArray,paramBase[1]);                      
     }
-    break; 
+    return; 
   case writePage_4_1BI_5V:
     {
       Object *p = word2ptr(paramBase[0]);
       unsigned long *intArray = (unsigned long *) (((byte *) p) + HEADER_SIZE);
       flash_write_page(intArray,paramBase[1]);                      
     }
-    break;
+    return;
   case readPage_4_1BI_5V:
     {
       int i;
@@ -287,21 +287,26 @@ dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
       unsigned long *intArray = (unsigned long *) (((byte *) p) + HEADER_SIZE);
       for(i=0;i<64;i++) intArray[i] = FLASH_BASE[(paramBase[1]*64)+i];                       
     }
-    break;
+    return;
   case exec_4II_5V:
     gNextProgram = (unsigned int) &FLASH_BASE[(paramBase[0]*64)];
     gNextProgramSize = paramBase[1];
     schedule_request(REQUEST_EXIT);
-    break;
+    return;
   case usbReset_4_5V:
     udp_reset();
-    break; 
+    return; 
   case playSample_4IIII_5V:
     sound_play_sample((unsigned char *) &FLASH_BASE[(paramBase[0]*64)],paramBase[1],paramBase[2],paramBase[3]);
-    break;
+    return;
   case getDataAddress_4Ljava_3lang_3Object_2_5I:
     push_word (ptr2word (((byte *) word2ptr (paramBase[0])) + HEADER_SIZE));
-    break;
+    return;
+  case gc_4_5V:
+    garbage_collect();
+    return;
+  case shutDown_4_5V:
+    while (1) nxt_avr_power_down(); // does not return
   default:
     throw_exception(noSuchMethodError);
   }

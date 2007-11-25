@@ -204,8 +204,13 @@ nxt_main(int bin, int size)
     binary = ((char *) temp);
     jsize = size - 4;
   }
+  
+  // reset all motors, sensors and devices
 
   init_sensors();
+  nxt_motor_reset_all();
+  bt_clear_arm7_cmd(); // Set command mode
+  display_clear(1);
 
   //       printf("Installing Binary\n");
 
@@ -410,11 +415,9 @@ main(void)
   {
   	int next = gNextProgram;
   	gNextProgram = 0;
-  	 
-    display_clear(1);
   	nxt_main(next, gNextProgramSize);
   }
-  while (gNextProgram != 0);
+  while (true);
 
   while (1) {
     nxt_avr_power_down();

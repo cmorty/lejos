@@ -68,4 +68,6 @@
 #define exec_4II_5V 61
 #define playSample_4IIII_5V 62
 #define getDataAddress_4Ljava_3lang_3Object_2_5I 63
+#define gc_4_5V 64
+#define shutDown_4_5V 65
 #endif // _SPECIALSIGNATURES_H
