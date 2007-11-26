@@ -46,7 +46,7 @@ public class NXTCommBluez implements NXTComm {
 		try {
 			rcSocketShutdown(sk);
 		} catch (IOException ioe) {
-			System.err.println("Shutdown failed");
+			//System.err.println("Shutdown failed");
 		}
 		if (sk != -1) rcSocketClose(sk);
 		sk = -1;
