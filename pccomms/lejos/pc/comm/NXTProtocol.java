@@ -68,7 +68,7 @@ public interface NXTProtocol {
 	public static byte NXJ_DEFRAG = 0x21;
 	
 	// Output state constants 
-	// �Mode�:
+	// "Mode":
 	/** Turn on the specified motor */
 	public static byte MOTORON = 0x01;
 	/** Use run/brake instead of run/float in PWM */
@@ -76,7 +76,7 @@ public interface NXTProtocol {
 	/** Turns on the regulation */
 	public static byte REGULATED = 0x04; 
 
-	// �Regulation Mode�:
+	// "Regulation Mode":
 	/** No regulation will be enabled */
 	public static byte REGULATION_MODE_IDLE = 0x00;
 	/** Power control will be enabled on specified output */
@@ -84,7 +84,7 @@ public interface NXTProtocol {
 	/** Synchronization will be enabled (Needs enabled on two output) */
 	public static byte REGULATION_MODE_MOTOR_SYNC = 0x02; 
 
-	// �RunState�:
+	// "RunState":
 	/** Output will be idle */
 	public static byte MOTOR_RUN_STATE_IDLE = 0x00;
 	/** Output will ramp-up */
@@ -95,7 +95,7 @@ public interface NXTProtocol {
 	public static byte MOTOR_RUN_STATE_RAMPDOWN = 0x40;
 	
 	// Input Mode Constants
-	// �Port Type�:
+	// "Port Type":
 	/**  */
 	public static byte NO_SENSOR = 0x00;
 	/**  */
@@ -123,7 +123,7 @@ public interface NXTProtocol {
 	/**  */
 	public static byte NO_OF_SENSOR_TYPES = 0x0C;
 
-	// �Port Mode�:
+	// "Port Mode":
 	/**  */
 	public static byte RAWMODE = 0x00;
 	/**  */

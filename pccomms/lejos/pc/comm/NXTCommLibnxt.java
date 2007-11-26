@@ -48,6 +48,10 @@ public class NXTCommLibnxt implements NXTComm {
 		return jlibnxt_read_data(nxtInfo.nxtPtr, 1);
 	}
 	
+	public int available() throws IOException {
+		return 0;
+	}
+	
 	public void write(byte [] data) throws IOException {
 		jlibnxt_send_data(nxtInfo.nxtPtr, data);
 	}
@@ -57,7 +61,7 @@ public class NXTCommLibnxt implements NXTComm {
 	}
 	
 	public InputStream getInputStream() {
-		return new NXTCommInputStream(this);		
+		return new NXTCommUSBInputStream(this);		
 	}
 	
 	static {

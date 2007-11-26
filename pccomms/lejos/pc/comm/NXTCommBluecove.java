@@ -134,7 +134,7 @@ public class NXTCommBluecove implements NXTComm, DiscoveryListener {
 			throws IOException {
 
 		// length of packet (Least and Most significant byte)
-		// * NOTE: Bluetooth only. If do USB, doesn't need it.
+		// * NOTE: Bluetooth only. 
 		int LSB = message.length;
 		int MSB = message.length >>> 8;
 
@@ -171,6 +171,7 @@ public class NXTCommBluecove implements NXTComm, DiscoveryListener {
 	public byte[] read() throws IOException {
 
 		int lsb = is.read();
+		if (lsb < 0) return null;
 		int msb = is.read();
 		if (msb != 0)
 			throw new IOException("Packet more than 255 bytes");
@@ -179,6 +180,11 @@ public class NXTCommBluecove implements NXTComm, DiscoveryListener {
 
 		return bb;
 	}
+	
+    public int available() throws IOException {
+    	if (is.available() > 2) return is.available() -2;
+    	else return 0;
+    }
 
 	public void write(byte[] data) throws IOException {
 		os.write(data);
@@ -216,7 +222,7 @@ public class NXTCommBluecove implements NXTComm, DiscoveryListener {
 	}
 
 	public OutputStream getOutputStream() {
-		return new BTOutputStream(os);
+		return new NXTCommBTOutputStream(this);
 	}
 
 	public InputStream getInputStream() {

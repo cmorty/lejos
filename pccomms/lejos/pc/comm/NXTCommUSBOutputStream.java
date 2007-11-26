@@ -10,7 +10,7 @@ public class NXTCommUSBOutputStream extends OutputStream {
 	}
 	
 	public void write(int b) throws IOException {
-		byte[] bb = new byte[1];
+		byte[] bb = new byte[1]; // USB uses 1-byte packets
 		bb[0] = (byte) b;
 		nxtComm.write( bb);
 	}

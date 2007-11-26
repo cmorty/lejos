@@ -8,6 +8,7 @@ public interface NXTComm {
 	public void close() throws IOException;
 	public byte[] sendRequest(byte [] message, int replyLen) throws IOException;
 	public byte[] read() throws IOException;
+	public int available() throws IOException;
 	public void write(byte [] data) throws IOException;
 	public OutputStream getOutputStream();
 	public InputStream getInputStream();

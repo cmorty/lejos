@@ -129,11 +129,33 @@ public class NXTCommBluez implements NXTComm {
 	}
 	
 	public byte [] read () throws IOException {
-		// Currently all packets are 1-byte
-		byte [] packet = rcSocketRecv(sk);
-		byte [] data = new byte [packet.length/3];
-		for(int i=0;i<packet.length/3;i++) data[i] = packet[i*3+2];
+		byte [] packet = rcSocketRecv(sk); // Can read multiple packets
+		if (packet == null || packet.length == 0) return null;
+		int len = packet.length, dataLen = 0;
+		int i = 0, j = 0;
+		while (i < len-2) {
+			int lsb = packet[i++];
+			int msb = packet[i++];
+			if (msb != 0)
+				throw new IOException("Packet more than 255 bytes");
+            dataLen += lsb;
+            i += lsb;
+		}
+		if (i != len) throw new IOException("Incomplete packet");	
+		byte [] data = new byte [dataLen];
+		
+		i = 0;
+		while (i < len-2) {
+			int lsb = packet[i++];
+			i++; // Skip msb
+            for(int k = 0;k<lsb;k++) data[j++] = packet[i+k];
+            i += lsb;
+		}
 		return data;
+	}
+	
+	public int available() throws IOException {
+		return 0;
 	}
 	
 	public void write(byte[] data) throws IOException {
