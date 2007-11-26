@@ -56,14 +56,19 @@ public class BTSend {
 				System.out.println("Sending " + (i*30000));
 				dos.writeInt((i*30000));
 				dos.flush();			
+				
 			} catch (IOException ioe) {
-				System.out.println("IO Exception writing bytes");
+				System.out.println("IO Exception writing bytes:");
+				System.out.println(ioe.getMessage());
+				break;
 			}
 			
 			try {
 				System.out.println("Received " + dis.readInt());
 			} catch (IOException ioe) {
-				System.out.println("IO Exception reading bytes");
+				System.out.println("IO Exception reading bytes:");
+				System.out.println(ioe.getMessage());
+				break;
 			}
 		}
 		
@@ -72,7 +77,8 @@ public class BTSend {
 			//dos.close(); Why does this prevent re-connection?
 			nxtComm.close();
 		} catch (IOException ioe) {
-			System.out.println("IOException closing connection");
+			System.out.println("IOException closing connection:");
+			System.out.println(ioe.getMessage());
 		}
 	}
 }
