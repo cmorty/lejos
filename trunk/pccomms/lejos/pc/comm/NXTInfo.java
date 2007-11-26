@@ -5,12 +5,9 @@ public class NXTInfo {
 	public String btDeviceAddress;
 	public String btResourceString;
 	public int nxtPtr;
-	// ?? NXTCommFactory says 1=USB, 2=BT for protocol. Notation below might be wrong.
-	public int protocol = 0; // 0=URL, 1 = Bluetooth
-	
-	public NXTInfo() {
-		
-	}
+	public int protocol = 0;
+
+	public NXTInfo() {}
 	
 	public NXTInfo(String name, String address) {
 		this.name = name;

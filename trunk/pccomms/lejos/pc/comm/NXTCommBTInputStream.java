@@ -5,10 +5,14 @@ import java.io.*;
 public class NXTCommBTInputStream extends InputStream {
 	private NXTComm nxtComm;
 	private byte buf[];
-	private int bufIdx = 0, bufSize = 0;
+	private int bufIdx, bufSize;
+	boolean endOfFile;
 	
 	public NXTCommBTInputStream(NXTComm nxtComm) {
 		this.nxtComm = nxtComm;
+		endOfFile = false;
+		bufIdx = 0;
+		bufSize = 0;
 	}
 	
     /**
@@ -18,9 +22,17 @@ public class NXTCommBTInputStream extends InputStream {
      */
 	public int read() throws IOException
     {
+	   if (endOfFile) return -1;
 	   if (bufIdx >= bufSize) bufSize = 0;
-       while(bufSize == 0) bufSize = available();
-	
+       if (bufSize == 0) {
+    	   bufIdx = 0;
+    	   buf = nxtComm.read();
+    	   if (buf == null || buf.length ==0) {
+    		   endOfFile = true;
+    		   return -1;
+    	   }
+    	   bufSize = buf.length;
+       }
        return buf[bufIdx++] & 0xFF;
 	}
 	
@@ -29,13 +41,7 @@ public class NXTCommBTInputStream extends InputStream {
      */
     public int available() throws IOException
     {
-       if (bufIdx >= bufSize) bufSize = 0;
-       if (bufSize == 0) {
-    	   bufIdx = 0;
-    	   buf = nxtComm.read();
-    	   bufSize = buf.length;
-       }
-       return bufSize - bufIdx;
+       return nxtComm.available();
     }
     
     /**

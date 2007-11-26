@@ -56,6 +56,10 @@ public class NXTCommFantom implements NXTComm {
 		throw new IOException("Not implemented");
 	}
 	
+	public int available() throws IOException {
+		throw new IOException("Not implemented");
+	}
+	
 	public void write(byte [] data) throws IOException {
 		throw new IOException("Not implemented");
 	}
