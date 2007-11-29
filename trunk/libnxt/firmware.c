@@ -96,7 +96,11 @@ nxt_firmware_validate(char *fw_path, int max_pages)
   nxt_error_t err;
   int fd;
 
+#if defined(_WIN32) || defined(__CYGWIN32__)
+  fd = open(fw_path, O_RDONLY | O_BINARY);
+#else
   fd = open(fw_path, O_RDONLY);
+#endif
   if (fd < 0)
     return NXT_FILE_ERROR;
 
@@ -114,7 +118,11 @@ nxt_firmware_flash(nxt_t *nxt, char *fw_path,
   int fd, i, err, len = 0;
   char buf[256];
 
+#if defined(_WIN32) || defined(__CYGWIN32__)
+  fd = open(fw_path, O_RDONLY | O_BINARY);
+#else
   fd = open(fw_path, O_RDONLY);
+#endif
   if (fd < 0)
     return NXT_FILE_ERROR;
 
