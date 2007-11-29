@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #
-# lejoslink: Java tool to link java programs for LeJOS
+# lnxjlink: Java tool to link java programs for LeJOS NXJ
 #
 # 12/12/02  created L. Griffiths
 
@@ -16,6 +16,6 @@ else
 fi
 
 THIRDPARTY_LIBS="$NXJ_HOME/3rdparty/lib"
-LINK_CLASSPATH=".$SEP$THIRDPARTY_LIBS/bcel-5.1.jar$SEP$THIRDPARTY_LIBS/commons-cli-1.0.jar$SEP$NXJ_HOME/lib/jtools.jar$SEP$NXJ_HOME/lib/classes.jar"
+LINK_CLASSPATH=".$SEP$THIRDPARTY_LIBS/bcel-5.1.jar$SEP$THIRDPARTY_LIBS/commons-cli-1.0.jar$SEP$NXJ_HOME/lib/jtools.jar"
 
-java -classpath "$LINK_CLASSPATH" js.tinyvm.TinyVM --writeorder LE --classpath "$LINK_CLASSPATH" "$@"
+java -classpath "$LINK_CLASSPATH" js.tinyvm.TinyVM --writeorder LE --classpath ".$SEP$NXJ_HOME/lib/classes.jar" "$@"
