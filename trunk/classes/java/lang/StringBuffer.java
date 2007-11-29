@@ -90,7 +90,13 @@ public final class StringBuffer
 
   public StringBuffer append (int aInt)
   {
-	if ( aInt < 0 ) {
+    if( aInt == 0 ) 
+	{ 
+	    characters[ curPos++ ] = '0'; 
+        return this; 
+    }
+
+    if ( aInt < 0 ) {
 	    characters[ curPos++ ] = '-';
 	    aInt = -aInt;
 	} // if
