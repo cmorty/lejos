@@ -125,13 +125,31 @@ public class TextMenu
 	 * Allows the user to scroll through the items, using the right and left buttons (forward and back)  The Enter key closes the menu <br>
 	 * and returns the index of the selected item. <br>
 	 * The menu display wraps items that scroll off the top will reappear on the bottom and vice versa.
+	 * 
+	 * The selectedIndex is set to the first menu item.
+	 * 
 	 * @return the index of the selected item
 	 **/
-	public int select()
-	{
+	public int select() 
+	{ 
+	   return select(0); 
+	} 
+
+	/**
+	 * Allows the user to scroll through the items, using the right and left buttons (forward and back)  The Enter key closes the menu <br>
+	 * and returns the index of the selected item. <br>
+	 * The menu display wraps items that scroll off the top will reappear on the bottom and vice versa.
+	 * 
+	 * This version of select allows the selected index to be set when the menu is first displayed.
+	 * 
+	 * @param selectedIndex the idex to start the menu on
+	 * @return the index of the selected item
+	 **/
+	public int select(int selectedIndex) 
+	{ 
+	   _selectedIndex = selectedIndex;
 //		if (_length<_size) _size = _length;
 		int button = 0;
-		_selectedIndex = 0;
 		_quit = false;
 //		LCD.clear();
 		display();
