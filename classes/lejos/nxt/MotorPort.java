@@ -6,8 +6,10 @@ package lejos.nxt;
  *
  */
 public class MotorPort implements TachoMotorPort {
+	static public final int PWM_FLOAT = 0;
+	static public final int PWM_BRAKE = 1;
 	int _id;
-	int _pwmMode = 0; // default to float mode
+	int _pwmMode = PWM_FLOAT; // default to float mode
 	
 	private MotorPort(int id)
 	{
@@ -67,6 +69,11 @@ public class MotorPort implements TachoMotorPort {
 	public void resetTachoCount()
 	{
 		resetTachoCountById( _id - 'A');
+	}
+	
+	public void setPWMMode(int mode)
+	{
+		_pwmMode = mode;
 	}
 	  
 	public static synchronized native void resetTachoCountById(int aMotor);
