@@ -198,7 +198,7 @@ public class Motor extends BasicMotor implements TimerListener
   /**
    * @return true iff the motor is currently in motion.
    */
-  public final boolean isMoving()
+  public boolean isMoving()
   {
     return (_mode == 1 || _mode == 2 || _rotating);	  
   }
@@ -468,7 +468,7 @@ public class Motor extends BasicMotor implements TimerListener
    * Sets motor speed , in degrees per second; Up to 900 is posssible with 8 volts.
    * @param speed value in degrees/sec  
    */
-  public final void setSpeed (int speed)
+  public void setSpeed (int speed)
   {
 
     _speed = Math.abs(speed);
@@ -492,7 +492,7 @@ public class Motor extends BasicMotor implements TimerListener
   /**
    * Returns the current motor speed in degrees per second
    */
-  public final int getSpeed()
+  public int getSpeed()
   {
     return _speed;	  
   }
