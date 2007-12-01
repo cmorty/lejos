@@ -241,7 +241,7 @@ public class File {
 	 * array will contain File objects for all the files in flash. If a null
 	 * File array is given, it will create a new File array.
 	 */
-	static void readTable(File [] files) { // !! Make private when done tests!
+	private static void readTable(File [] files) {
 		// Make sure flash has table id:
 		if(!File.tableExists())	File.format();
 		
@@ -278,7 +278,7 @@ public class File {
 	 * NOTE: Currently can only use first page of flash to store table! ~ 8 files
 	 * @param files The array containing a list of Files to write to table. 
 	 */
-	static void writeTable(File [] files) { // !! Make private when done tests!
+	static void writeTable(File [] files) {
 		short table_pointer = 0; // Move pointer to start of table
 		for(table_pointer=0;table_pointer<TABLE_ID.length();table_pointer++) 
 		{
@@ -474,5 +474,9 @@ public class File {
 	
 	public void play(int freq, int vol) {
 		Sound.playSample(page_location, file_length, freq, vol);
+	}
+	
+	public static void reset() {
+		files = null;
 	}
 }
