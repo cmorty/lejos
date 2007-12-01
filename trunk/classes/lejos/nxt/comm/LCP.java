@@ -79,7 +79,8 @@ public class LCP {
 	// Error codes
 	
 	public static final byte FILE_NOT_FOUND = (byte)0x86;
-
+	public static final byte INSUFFICIENT_MEMORY = (byte) 0xFB;
+	public static final byte DIRECTORY_FULL = (byte) 0xFC;
 	private LCP()
 	{		
 	}
@@ -87,7 +88,7 @@ public class LCP {
 	/**
 	 * Emulates a Lego firmware Direct or System command
 	 * @param cmd the buffer containing the command
-	 * @param cmdLen the legth of the command
+	 * @param cmdLen the length of the command
 	 */
 	public static int emulateCommand(byte[] cmd, int cmdLen, byte[] reply)
 	{
@@ -374,25 +375,46 @@ public class LCP {
 		// OPEN WRITE
 		if (cmdId == OPEN_WRITE)
 		{
-			int filenameLength = 0;
-			init_files();
-			for(int i=0;i<20 && cmd[i+2] != 0;i++) filenameLength++;
-			char[] chars = new char[filenameLength];
-			for(int i=0;i<filenameLength;i++) chars[i] = (char) cmd[i+2];
-			file = new File(new String(chars,0,filenameLength));
 			int size = cmd[22] & 0xFF;
 			size += ((cmd[23] & 0xFF) << 8);
 			size += ((cmd[24] & 0xFF) << 16);
 			size += ((cmd[25] & 0xFF) << 24);
-			if (file.exists()) {
-				file.delete();
-				numFiles--;
-			}
-			file.createNewFile();
-			fileNames = new String[++numFiles];
-			for(int j=0;j<numFiles;j++) fileNames[j] = files[j].getName();
-			out = new FileOutputStream(file);
+			init_files();
 			
+			// If insufficient flash do a Defrag
+			if (size > File.freeMemory()) {
+				File.defrag();
+				files = null;
+				init_files();
+			}
+			
+			// If still insufficient, report an error			
+			if (size > File.freeMemory()) {
+				reply[2] = INSUFFICIENT_MEMORY;
+			} else {	
+				try {
+					int filenameLength = 0;
+					for(int i=0;i<20 && cmd[i+2] != 0;i++) filenameLength++;
+					char[] chars = new char[filenameLength];
+					for(int i=0;i<filenameLength;i++) chars[i] = (char) cmd[i+2];
+					file = new File(new String(chars,0,filenameLength));
+				
+					if (file.exists()) {
+						file.delete();
+						numFiles--;
+					}
+
+					file.createNewFile();
+					fileNames = new String[++numFiles];
+					for(int j=0;j<numFiles;j++) fileNames[j] = files[j].getName();
+					out = new FileOutputStream(file);
+				} catch (Exception e) {
+					files = null;
+					File.reset(); // force read from file table
+					init_files();
+					reply[2] = DIRECTORY_FULL;
+				}
+			}
 			len = 4;
 		}
 		
