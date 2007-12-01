@@ -215,6 +215,13 @@ public class NXTCommand implements NXTProtocol {
 				(byte) (size >>> 16), (byte) (size >>> 24) };
 		request = appendBytes(request, fileLength);
 		byte[] reply = nxtComm.sendRequest(request, 4);
+		if (reply == null || reply.length != 4) {
+			throw new IOException("Invalid return from OPEN WRITE");
+		} else if (reply[2] != 0) {
+			if (reply[2] == (byte) 0xFB) throw new IOException("NXJ Flash Memory Full");
+			else if (reply[2] == (byte) 0xFC) throw new IOException("NXJ Directory Full");
+			else throw new IOException("OPEN WRITE failed");
+		}
 		return reply[3]; // The handle number
 	}
 
