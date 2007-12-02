@@ -134,6 +134,7 @@ int main(int argc, char *argv[])
   NXT_HANDLE_ERR(nxt_jump(nxt, 0x00100000), nxt,
                  "Error booting new firmware");
   printf("New firmware started!\n");
+  printf("If battery level reads 0.0, remove and re-insert a battery/n");
 
   NXT_HANDLE_ERR(nxt_close(nxt), NULL,
                  "Error while closing connection to NXT");

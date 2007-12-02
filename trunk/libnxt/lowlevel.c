@@ -204,7 +204,8 @@ nxt_send_str(nxt_t *nxt, char *str)
 nxt_error_t
 nxt_recv_buf(nxt_t *nxt, char *buf, int len)
 {
-  int ret = usb_bulk_read(nxt->hdl, 0x82, buf, len, 1000);
+  // set timeout to 10 seconds to allow time for defrag
+  int ret = usb_bulk_read(nxt->hdl, 0x82, buf, len, 10000);
   if (ret < 0)
     return NXT_USB_READ_ERROR;
 
