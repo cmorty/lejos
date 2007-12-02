@@ -34,6 +34,9 @@ public class BTConnection implements StreamConnection {
 	public void close() throws IOException {
 		//Bluetooth.closeConnection((byte) handle);
 		Bluetooth.btSetCmdMode(1);
+		// Disconnect the stream -- seems to help clean things up but may cause
+		// problems with multi NXT comms
+		Bluetooth.closeConnection((byte) handle);
 		open = false;
 		streamOpen = false;
 	}
