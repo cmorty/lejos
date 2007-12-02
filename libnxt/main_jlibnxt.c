@@ -90,7 +90,7 @@ JNIEXPORT void JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1send_1data(JNIE
 JNIEXPORT jbyteArray JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1read_1data(JNIEnv *env, jobject obj, jint nxt, jint len)  {
   nxt_error_t nxt_err;
   char *data;
-  jbyte *jb;
+  jbyteArray jb;
 
   data = (char *) calloc(1, len);
   
