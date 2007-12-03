@@ -13,15 +13,14 @@ public class Sound
   }
 
   /**
-   * Play a system sound - not yet implemented.
+   * Play a system sound.
    * <TABLE BORDER=1>
    * <TR><TH>aCode</TH><TH>Resulting Sound</TH></TR>
    * <TR><TD>0</TD><TD>short beep</TD></TR>
    * <TR><TD>1</TD><TD>double beep</TD></TR>
    * <TR><TD>2</TD><TD>descending arpeggio</TD></TR>
    * <TR><TD>3</TD><TD>ascending  arpeggio</TD></TR>
-   * <TR><TD>4</TD><TD>long, low beep</TD></TR>
-   * <TR><TD>5</TD><TD>quick ascending arpeggio</TD></TR>
+   * <TR><TD>4</TD><TD>long, low buzz</TD></TR>
    * </TABLE>
    */
    
@@ -64,7 +63,7 @@ public class Sound
   }
 
   /**
-   * Beeps once - not yet implemented.
+   * Beeps once.
    */
   public static void beep()
   {
@@ -72,7 +71,7 @@ public class Sound
   }
 
   /**
-   * Beeps twice - not yet implemented.
+   * Beeps twice.
    */
   public static void twoBeeps()
   {
@@ -88,7 +87,7 @@ public class Sound
   }
 
   /**
-   * Downward tones.
+   * Upward tones.
    */
  public static void beepSequenceUp()
  {
@@ -103,7 +102,7 @@ public class Sound
     systemSound (true, 4);
   }
   
-  public static void pause(int t)
+  private static void pause(int t)
 	{
 		try { Thread.sleep(t); }
 		catch(InterruptedException e){}
