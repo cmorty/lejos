@@ -1,5 +1,11 @@
 package lejos.nxt.comm;
 
+/**
+ * Represents a remote Bluetooth device.
+ * 
+ * @author Lawrie Griffiths
+ *
+ */
 public class BTRemoteDevice {
 
 	private byte[] addr = new byte[7];

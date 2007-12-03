@@ -1,5 +1,11 @@
 package lejos.nxt;
 
+/**
+ * Supports a motor connected to a remote RCX via a mindsensord NRLink adapter
+ * 
+ * @author Lawrie Griffiths
+ *
+ */
 public class RCXRemoteMotorPort implements BasicMotorPort {
 	private RCXLink link;
 	private int id;

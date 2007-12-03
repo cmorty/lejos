@@ -55,9 +55,8 @@ public class LightSensor implements SensorConstants
 	 * @return Value as a percentage of difference between the low and high calibration values. 
 	 */
 	public int readValue()
-	{
-//		return ((1023 - port.readRawValue()) * 100/ 1023); 
-		if(_hundred == _zero)return 1023;
+	{ 
+		if(_hundred == _zero) return 0;
 		return 100*(port.readRawValue() - _zero)/(_hundred - _zero); 
 	}
 	
