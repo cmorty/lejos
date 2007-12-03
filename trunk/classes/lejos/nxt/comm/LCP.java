@@ -19,7 +19,8 @@ public class LCP {
     private static File file = null;
     private static FileOutputStream out = null;
     private static FileInputStream in = null;
-    private static int numFiles;
+    private static int numFiles;	
+	private static char[] charBuffer = new char[20];
     
 	// Command types constants. Indicates type of packet being sent or received.
 	public static byte DIRECT_COMMAND_REPLY = 0x00;
@@ -81,6 +82,10 @@ public class LCP {
 	public static final byte FILE_NOT_FOUND = (byte)0x86;
 	public static final byte INSUFFICIENT_MEMORY = (byte) 0xFB;
 	public static final byte DIRECTORY_FULL = (byte) 0xFC;
+	public static final byte UNDEFINED_ERROR = (byte) 0x8A;
+	public static final byte NOT_IMPLEMENTED = (byte) 0xFD;
+
+	
 	private LCP()
 	{		
 	}
@@ -103,17 +108,11 @@ public class LCP {
 		
 		// START PROGRAM
 		if (cmdId == START_PROGRAM) {
-			int filenameLength = 0;
 			init_files();
-			for(int i=0;i<20 && cmd[i+2] != 0;i++) filenameLength++;
-			char[] chars = new char[filenameLength];
-			for(int i=0;i<filenameLength;i++) chars[i] = (char) cmd[i+2];
-			currentProgram = new String(chars,0,filenameLength);
+			currentProgram = getFile(cmd,2);
 			if (fileNames != null) {
 				for(int i=0;i<fileNames.length;i++) {
 					if (currentProgram.equals(fileNames[i])) {
-						LCD.clear();
-						LCD.refresh();
 						files[i].exec();
 					}
 				}
@@ -131,17 +130,23 @@ public class LCP {
 		
 		// GET BATTERY LEVEL
 		if (cmdId == GET_BATTERY_LEVEL) {
-			int mv = Battery.getVoltageMilliVolt();
-
-			reply[3] = getLSB(mv);
-			reply[4] = getMSB(mv);
+			setReplyShortInt(Battery.getVoltageMilliVolt(), reply, 3);
 			len = 5;									
+		}
+		
+		// PLAY SOUND FILE
+		if (cmdId == PLAY_SOUND_FILE)
+		{
+			init_files();
+			String soundFile = getFile(cmd,3);
+			File f = new File(soundFile);
+			Sound.playSample(f, 10000, 500);
 		}
 		
 		// PLAYTONE
 		if (cmdId == PLAY_TONE)
 		{
-			Sound.playTone(getInt(cmd,2), getInt(cmd,4));
+			Sound.playTone(getShortInt(cmd,2), getShortInt(cmd,4));
 		}
 		
 		// GET FIRMWARE VERSION
@@ -161,11 +166,7 @@ public class LCP {
             for(int i=0;i<15;i++) reply[3+i] = name[i];
             byte [] address = Bluetooth.getLocalAddress();
             for(int i=0;i<7;i++) reply[18+i] = address[i];
-            int freeMem = File.freeMemory();
-			reply[29] = (byte) (freeMem & 0xFF);
-			reply[30] = (byte) ((freeMem >> 8) & 0xFF);
-			reply[31] = (byte) ((freeMem >> 16) & 0xFF);
-			reply[32] = (byte) ((freeMem >> 24) & 0xFF);
+            setReplyInt(File.freeMemory(),reply,29);
 			len = 33;
 		}	
 		
@@ -212,18 +213,12 @@ public class LCP {
 			// rotate() or rotateTo() command is in progress.
 			
 			// TachoCount just returns same as RotationCount:
-			reply[13] = (byte) (tacho & 0xFF);
-			reply[14] = (byte) ((tacho >> 8) & 0xFF);
-			reply[15] = (byte) ((tacho >> 16) & 0xFF);
-			reply[16] = (byte) ((tacho >> 24) & 0xFF);
+			setReplyInt(tacho,reply,13);
 			
 			// !! Ignores BlockTacho
 			
 			// RotationCount:
-			reply[21] = (byte) (tacho & 0xFF);
-			reply[22] = (byte) ((tacho >> 8) & 0xFF);
-			reply[23] = (byte) ((tacho >> 16) & 0xFF);
-			reply[24] = (byte) ((tacho >> 24) & 0xFF);
+			setReplyInt(tacho,reply,21);
 			
 			len = 25;						
 		}
@@ -237,17 +232,11 @@ public class LCP {
 			
 			reply[3] = port;
 			reply[4] = 1;
-			reply[5] = 0;
 			reply[6] = (byte) SensorPort.PORTS[port].getType();
 			reply[7] = (byte) SensorPort.PORTS[port].getMode();
-			reply[8] = getLSB(raw);
-			reply[9] = getMSB(raw);
-			reply[10] = getLSB(norm);
-			reply[11] = getMSB(norm);
-			reply[12] = getLSB(scaled);
-			reply[13] = getMSB(scaled);
-			reply[14] = 0;
-			reply[15] = 0;		
+			setReplyShortInt(raw, reply, 8);
+			setReplyShortInt(norm, reply, 10);
+			setReplyShortInt(scaled, reply, 10);		
 			len = 16;						
 		}
 		
@@ -268,8 +257,8 @@ public class LCP {
 			byte regMode = cmd[5];
 			byte turnRatio = cmd[6];
 			byte runState = cmd[7];
-			int tacholimit = (0xFF & cmd[8]) | ((0xFF & cmd[9]) << 8)| ((0xFF & cmd[10]) << 16)| ((0xFF & cmd[11]) << 24);
-			
+			int tacholimit = getInt(cmd, 8);
+					
 			// Initialize motor:
 			Motor m = null;
 		
@@ -353,19 +342,12 @@ public class LCP {
 		// OPEN READ
 		if (cmdId == OPEN_READ)
 		{
-			int filenameLength = 0;
 			init_files();
-			for(int i=0;i<20 && cmd[i+2] != 0;i++) filenameLength++;
-			char[] chars = new char[filenameLength];
-			for(int i=0;i<filenameLength;i++) chars[i] = (char) cmd[i+2];
-			file = new File(new String(chars,0,filenameLength));
+			file = new File(getFile(cmd,2));
             try {
             	in = new FileInputStream(file);
             	int size = file.length();
-            	cmd[4] = (byte) (size & 0xFF);
-    			cmd[5] = (byte) ((size >> 8) & 0xFF);
-    			cmd[6] = (byte) ((size >> 16) & 0xFF);
-    			cmd[7] = (byte) ((size >> 24) & 0xFF);          	
+            	setReplyInt(size,reply,4);         	
             } catch (Exception e) {
             	reply[2] = FILE_NOT_FOUND;
             }
@@ -375,10 +357,7 @@ public class LCP {
 		// OPEN WRITE
 		if (cmdId == OPEN_WRITE)
 		{
-			int size = cmd[22] & 0xFF;
-			size += ((cmd[23] & 0xFF) << 8);
-			size += ((cmd[24] & 0xFF) << 16);
-			size += ((cmd[25] & 0xFF) << 24);
+			int size = getInt(cmd, 22);
 			init_files();
 			
 			// If insufficient flash do a Defrag
@@ -393,11 +372,7 @@ public class LCP {
 				reply[2] = INSUFFICIENT_MEMORY;
 			} else {	
 				try {
-					int filenameLength = 0;
-					for(int i=0;i<20 && cmd[i+2] != 0;i++) filenameLength++;
-					char[] chars = new char[filenameLength];
-					for(int i=0;i<filenameLength;i++) chars[i] = (char) cmd[i+2];
-					file = new File(new String(chars,0,filenameLength));
+					file = new File(getFile(cmd,2));
 				
 					if (file.exists()) {
 						file.delete();
@@ -421,12 +396,14 @@ public class LCP {
 		// OPEN WRITE LINEAR
 		if (cmdId == OPEN_WRITE_LINEAR)
 		{
+			reply[2] = NOT_IMPLEMENTED;
 			len = 4;
 		}
 		
 		// OPEN WRITE DATA
 		if (cmdId == OPEN_WRITE_DATA)
 		{
+			reply[2] = NOT_IMPLEMENTED;
 			len = 4;
 		}
 		
@@ -458,17 +435,11 @@ public class LCP {
 				for(int i=0;i<fileNames[0].length();i++) reply[4+i] = (byte) fileNames[0].charAt(i);
 				fileIdx = 1;
             	int size = files[0].length();
-            	reply[24] = (byte) (size & 0xFF);
-    			reply[25] = (byte) ((size >> 8) & 0xFF);
-    			reply[26] = (byte) ((size >> 16) & 0xFF);
-    			reply[27] = (byte) ((size >> 24) & 0xFF);
+            	setReplyInt(size,reply,24);
     			
     			if (cmdId == NXJ_FIND_FIRST) {
     				int startPage = files[0].getPage();
-    				reply[28] = (byte) (startPage & 0xFF);
-        			reply[29] = (byte) ((startPage >> 8) & 0xFF);
-        			reply[30] = (byte) ((startPage >> 16) & 0xFF);
-        			reply[31] = (byte) ((startPage >> 24) & 0xFF);   				
+    				setReplyInt(startPage,reply,28);   				
     			}
 			}
 		}
@@ -483,17 +454,10 @@ public class LCP {
 			{
 				for(int i=0;i<fileNames[fileIdx].length();i++) reply[4+i] = (byte) fileNames[fileIdx].charAt(i);
             	int size = files[fileIdx].length();
-            	reply[24] = (byte) (size & 0xFF);
-    			reply[25] = (byte) ((size >> 8) & 0xFF);
-    			reply[26] = (byte) ((size >> 16) & 0xFF);
-    			reply[27] = (byte) ((size >> 24) & 0xFF);
-    			
+            	setReplyInt(size,reply,24);   			
     			if (cmdId == NXJ_FIND_NEXT) {
     				int startPage = files[fileIdx].getPage();
-    				reply[28] = (byte) (startPage & 0xFF);
-        			reply[29] = (byte) ((startPage >> 8) & 0xFF);
-        			reply[30] = (byte) ((startPage >> 16) & 0xFF);
-        			reply[31] = (byte) ((startPage >> 24) & 0xFF);   				
+    				setReplyInt(startPage,reply,28);  				
     			}
     			
 				fileIdx++;
@@ -503,14 +467,16 @@ public class LCP {
 		// READ
 		if (cmdId == READ)
 		{
-            int numBytes = ((cmd[4] & 0xFF) << 8) + (cmd[3] & 0xFF);
+            int numBytes = getShortInt(cmd,3);
             int bytesRead = 0;
             
             try {
-            	bytesRead = in.read(reply,6, numBytes);
-            } catch (IOException ioe) {}
-			reply[4] = (byte) (bytesRead & 0xFF);
-			reply[5] = (byte) ((bytesRead << 8) & 0xFF);
+            	bytesRead = in.read(reply, 6, numBytes);
+            	setReplyShortInt(bytesRead, reply, 4);
+            } catch (IOException ioe) {
+            	reply[2] = UNDEFINED_ERROR;
+            }
+
 			len = bytesRead + 6;
 		}
 		
@@ -520,30 +486,25 @@ public class LCP {
 			int dataLen = cmdLen - 3;
 			try {
 				out.write(cmd,3,dataLen);
+				setReplyShortInt(dataLen, reply, 4);
 			} catch (Exception ioe) {
-				//LCD.drawString("Exception", 0, 7);
-				//LCD.refresh();						
-			}
-			reply[4] = (byte) (dataLen &0xFF);
-			reply[5] = (byte) ((dataLen >> 8) & 0xFF);
+				reply[2] = UNDEFINED_ERROR;
+			}						
+
 			len = 6;
 		}
 		
 		// DELETE
 		if (cmdId == DELETE)
 		{
-			int filenameLength = 0;
 			boolean deleted = false;
 			len = 23;
-			for(int i=0;i<20 && cmd[i+2] != 0;i++) filenameLength++;
-			char[] chars = new char[filenameLength];
-			for(int i=0;i<filenameLength;i++) chars[i] = (char) cmd[i+2];
-			String fileName = new String(chars,0,filenameLength);
+			String fileName = getFile(cmd,2);
 			if (fileNames != null) {
 				for(int i=0;i<fileNames.length;i++) {
 					if (fileName.equals(fileNames[i])) {
 						files[i].delete();
-						for(int j=0;j<filenameLength;j++) reply[j+3] = (byte) chars[j];
+						for(int j=0;j<fileName.length();j++) reply[j+3] = (byte) fileName.charAt(i);
 						deleted = true;
 						fileNames = new String[--numFiles];
 						for(int j=0;j<numFiles;j++) fileNames[j] = files[j].getName();
@@ -562,8 +523,7 @@ public class LCP {
 					out.flush();
 					out.close();
 				} catch (Exception ioe) {
-					//LCD.drawString("Exception",0,7);
-					//LCD.refresh();
+					reply[2] = UNDEFINED_ERROR;
 				}
 				out = null;
 			}
@@ -573,9 +533,17 @@ public class LCP {
 		return len;
 	}
 	
-	private static int getInt(byte [] cmd, int i)
+	private static int getShortInt(byte [] cmd, int i)
 	{
 		return (cmd[i] & 0xFF) + ((cmd[i+1] & 0xFF) << 8);
+	}
+	
+	private static int getInt(byte [] cmd, int i)
+	{
+		return (cmd[i] & 0xFF) + 
+		       ((cmd[i+1] & 0xFF) << 8) +
+		       ((cmd[i+2] & 0xFF) << 16) +
+		       ((cmd[i+3] & 0xFF) << 24);
 	}
 	
 	private static byte getLSB(int i)
@@ -588,6 +556,28 @@ public class LCP {
 		return (byte) ((i >> 8) & 0xFF);
 	}
 	
+	private static byte getMSB1(int i)
+	{
+		return (byte) ((i >> 16) & 0xFF);
+	}
+	
+	private static byte getMSB2(int i)
+	{
+		return (byte) ((i >> 24) & 0xFF);
+	}
+	
+	private static void setReplyInt(int n, byte [] reply, int start) {
+		reply[start] = getLSB(n);
+		reply[start+1] = getMSB(n);
+		reply[start+2] = getMSB1(n);
+		reply[start+3] = getMSB2(n);
+	}
+	
+	private static void setReplyShortInt(int n, byte [] reply, int start) {
+		reply[start] = getLSB(n);
+		reply[start+1] = getMSB(n);
+	}
+	
 	private static void init_files() {
 		if (files == null) {
 			files = File.listFiles();
@@ -596,6 +586,13 @@ public class LCP {
 			fileNames = new String[numFiles];
 			for(int i=0;i<numFiles;i++) fileNames[i] = files[i].getName();
 		}
+	}
+	
+	private static String getFile(byte [] cmd,int start) {
+		int filenameLength = 0;
+		for(int i=0;i<20 && cmd[i+start] != 0;i++) filenameLength++;
+		for(int i=0;i<filenameLength;i++) charBuffer[i] = (char) cmd[i+start];
+		return new String(charBuffer,0,filenameLength);
 	}
 }
 
