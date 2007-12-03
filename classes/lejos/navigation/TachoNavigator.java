@@ -1,4 +1,4 @@
-//package lejos.navigation;
+package lejos.navigation;
 //import lejos.navigation.*;
 import lejos.nxt.*;
 import lejos.navigation.*;
