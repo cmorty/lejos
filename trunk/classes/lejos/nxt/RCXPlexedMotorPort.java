@@ -1,5 +1,11 @@
 package lejos.nxt;
 
+/**
+ * Supports a motor connected to the Mindsensors RCX Motor Multiplexer
+ * 
+ * @author Lawrie Griffiths
+ *
+ */
 public class RCXPlexedMotorPort implements BasicMotorPort {
 	private RCXMotorMultiplexer plex;
 	private int id;

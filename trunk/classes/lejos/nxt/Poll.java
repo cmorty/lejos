@@ -1,5 +1,5 @@
 /**
- * RCX access classes.
+ * NXT access classes.
  */
 package lejos.nxt;
 
@@ -24,7 +24,7 @@ public class Poll
     public static final short ALL_BUTTONS  = 0xF0;
     public static final short BUTTON_MASK_SHIFT  = 4;
 
-    public static final short SERIAL_MASK = 0x100;
+    public static final short SERIAL_MASK = 0x100; // Not used
     public static final short SERIAL_SHIFT = 8;
 
     private static Poll monitor = new Poll(true);

@@ -1,5 +1,11 @@
 package lejos.nxt;
 
+/**
+ * Supports the mindsensors RCX Motor Multiplexer
+ * 
+ * @author Lawrie Griffiths
+ *
+ */
 public class RCXMotorMultiplexer extends I2CSensor {
 	private byte[] buf = new byte[1];
 	

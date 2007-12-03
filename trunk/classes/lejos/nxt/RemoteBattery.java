@@ -4,9 +4,8 @@ import lejos.nxt.comm.*;
 import java.io.*;
 
 /**
- * Remote Battery.
+ * Battery readings from a remote NXT.
  */
-
 public class RemoteBattery implements NXTProtocol {
 	
 	private NXTCommand nxtCommand;

@@ -3,6 +3,12 @@ package lejos.nxt;
 import lejos.nxt.comm.*;
 import java.io.*;
 
+/**
+ * Supports a motor connected to a remote NXT
+ * 
+ * @author Lawrie Griffiths
+ *
+ */
 public class RemoteMotorPort implements NXTProtocol, TachoMotorPort
 {
 	private NXTCommand nxtCommand;
