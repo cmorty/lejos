@@ -102,7 +102,7 @@ public class Sound
     systemSound (true, 4);
   }
   
-  private static void pause(int t)
+  public static void pause(int t)
 	{
 		try { Thread.sleep(t); }
 		catch(InterruptedException e){}
