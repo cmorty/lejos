@@ -58,8 +58,8 @@ public interface SpecialSignatureConstants {
     "playTone(II)V",
     "btSend([BI)V",
     "btReceive([B)V",
-    "btGetCmdMode()I",
-    "btSetCmdMode(I)V",
+    "btGetBC4CmdMode()I",
+    "btSetArmCmdMode(I)V",
     "btStartADConverter()V",
     "usbRead([BI)I",
     "usbWrite([BI)V",
@@ -70,6 +70,8 @@ public interface SpecialSignatureConstants {
     "playSample(IIII)V",
     "getDataAddress(Ljava/lang/Object;)I",
     "gc()V",
-    "shutDown()V"
+    "shutDown()V",
+    "btSetResetLow()V",
+    "btSetResetHigh()V"
   };
 }
