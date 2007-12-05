@@ -41,8 +41,10 @@ public class StartUpText {
 		ind.setDaemon(true);
 		ind.start();
 		usb.setDaemon(true);
+		usb.setIndicator(ind);
 		usb.start();
 		bt.setDaemon(true);
+		bt.setIndicator(ind);
 		bt.start();
 		
 		while (!quit) 
@@ -231,18 +233,36 @@ public class StartUpText {
 
 class Indicators extends Thread 
 {
+	private boolean io = false;
+	
+	public void ioActive()
+	{
+		io = true;
+	}
+	
 	public void run() 
 	{
 		String dot = ".";
+		String [] ioProgress = {".  ", " . ", "  ."};
+		int ioIndex = 0;
 		int millis;
 		while(true) 
 		{
 			try 
 			{
-			  millis = Battery.getVoltageMilliVolt() + 50;
-			  LCD.drawInt((millis - millis%1000)/1000,13,0);
-			  LCD.drawString(dot, 14, 0);
-			  LCD.drawInt((millis% 1000)/100,15,0);
+			  if (io)
+			  {
+				  ioIndex = (ioIndex + 1) % ioProgress.length;
+				  LCD.drawString(ioProgress[ioIndex], 13, 0);
+				  io = false;
+			  }
+			  else
+			  {
+				  millis = Battery.getVoltageMilliVolt() + 50;
+				  LCD.drawInt((millis - millis%1000)/1000,13,0);
+				  LCD.drawString(dot, 14, 0);
+				  LCD.drawInt((millis% 1000)/100,15,0);
+			  }
 			  LCD.refresh();
 			  Thread.sleep(1000);
 			} catch (InterruptedException ie) {}
@@ -253,9 +273,14 @@ class Indicators extends Thread
 class USBRespond extends Thread 
 {
 	TextMenu menu;
+	Indicators ind;
 	
 	public void setMenu(TextMenu menu) {
 		this.menu = menu;
+	}
+	
+	public void setIndicator(Indicators ind) {
+		this.ind = ind;
 	}
 	
 	public void run() {
@@ -279,6 +304,7 @@ class USBRespond extends Thread
 				//LCD.drawInt(inMsg[2] & 0xFF,3,9,1);
 				//LCD.drawInt(inMsg[3] & 0xFF,3,12,1);
 				//LCD.refresh();
+				ind.ioActive();
 				int replyLen = LCP.emulateCommand(inMsg,len, reply);
 				if ((inMsg[0] & 0x80) == 0) USB.usbWrite(reply, replyLen);
 				if (inMsg[1] == (byte) 0x84 || inMsg[1] == (byte) 0x85) {
@@ -293,9 +319,14 @@ class USBRespond extends Thread
 
 class BTRespond  extends Thread {
 	TextMenu menu;
+	Indicators ind;
 	
 	public void setMenu(TextMenu menu) {
 		this.menu = menu;
+	}
+	
+	public void setIndicator(Indicators ind) {
+		this.ind = ind;
 	}
 	
 	public void run() 
@@ -307,6 +338,8 @@ class BTRespond  extends Thread {
 		BTConnection btc = null;
 		int len;
 		String connected = "Connected";
+		String [] progress = {".  ", " . ", "  ."};
+		int progressPos = 0;
 		
 		while (true)
 		{
@@ -334,6 +367,7 @@ class BTRespond  extends Thread {
 				//LCD.drawInt(inMsg[2] & 0xFF,3,9,1);
 				//LCD.drawInt(inMsg[3] & 0xFF,3,12,1);
 				//LCD.refresh();
+				ind.ioActive();
 				int replyLen = LCP.emulateCommand(inMsg,len, reply);
 				if ((inMsg[0] & 0x80) == 0) Bluetooth.sendPacket(reply, replyLen);
 				if (inMsg[1] == (byte) 0x84 || inMsg[1] == (byte) 0x85) {
