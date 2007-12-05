@@ -134,7 +134,7 @@ run(int jsize)
   {
     byte *ram_end = (byte *) (&__free_ram_end__);
     byte *ram_start = (byte *) (&__free_ram_start__);
-    int size, i;
+    int size;
 
     // Skip java binary if it is an top of ram
 
@@ -210,9 +210,8 @@ nxt_main(int bin, int size)
 
   init_sensors();
   nxt_motor_reset_all();
-  bt_clear_arm7_cmd(); // Set command mode
+  bt_reset(); 
   display_clear(1);
-
   //       printf("Installing Binary\n");
 
   install_binary(binary);

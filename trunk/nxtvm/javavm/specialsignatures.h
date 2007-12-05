@@ -57,8 +57,8 @@
 #define playTone_4II_5V 50
 #define btSend_4_1BI_5V 51
 #define btReceive_4_1B_5V 52
-#define btGetCmdMode_4_5I 53
-#define btSetCmdMode_4I_5V 54
+#define btGetBC4CmdMode_4_5I 53
+#define btSetArmCmdMode_4I_5V 54
 #define btStartADConverter_4_5V 55
 #define usbRead_4_1BI_5I 56
 #define usbWrite_4_1BI_5V 57
@@ -70,4 +70,6 @@
 #define getDataAddress_4Ljava_3lang_3Object_2_5I 63
 #define gc_4_5V 64
 #define shutDown_4_5V 65
+#define btSetResetLow_4_5V 66
+#define btSetResetHigh_4_5V 67
 #endif // _SPECIALSIGNATURES_H

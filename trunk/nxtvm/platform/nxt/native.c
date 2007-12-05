@@ -27,14 +27,13 @@
 #include "bt.h"
 #include "udp.h"
 #include "flashprog.h"
-
+int pos = 0;
 /**
  * NOTE: The technique is not the same as that used in TinyVM.
  */
 void
 dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
 {
-
   switch (signature) {
   case wait_4_5V:
     monitor_wait((Object *) word2ptr(paramBase[0]), 0);
@@ -249,15 +248,21 @@ dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
       bt_receive(byteArray);                      
     }
     return;
-  case btGetCmdMode_4_5I:
+  case btGetBC4CmdMode_4_5I:
     push_word(bt_get_mode());
     return;
-  case btSetCmdMode_4I_5V:
+  case btSetArmCmdMode_4I_5V:
     if (paramBase[0] == 0) bt_set_arm7_cmd();
     else bt_clear_arm7_cmd(); 
     return;
   case btStartADConverter_4_5V:
     bt_start_ad_converter();
+    return;
+  case btSetResetLow_4_5V:
+    bt_set_reset_low();
+    return;
+  case btSetResetHigh_4_5V:
+    bt_set_reset_high();
     return;
   case usbRead_4_1BI_5I:
      {
