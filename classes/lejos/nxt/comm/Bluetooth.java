@@ -1,6 +1,7 @@
 package lejos.nxt.comm;
 import java.util.*;
 
+
 /**
  * Support for Bluetooth communications.
  */
@@ -71,6 +72,7 @@ public class Bluetooth {
 	private static byte[] friendlyName = retrieveFriendlyName();
 	private static byte[] localAddr = retrieveLocalAddress();
 	private static boolean supressWait = false;
+	private static int cmdMode = -1;
 	
 	private static byte[] default_pin = 
 	    {(byte) '1', (byte) '2', (byte) '3', (byte) '4'};
@@ -100,18 +102,91 @@ public class Bluetooth {
 	 * 
 	 * @param mode 0=data mode, 1=command mode
 	 */
-	public static native void btSetCmdMode(int mode);
+	public static native void btSetArmCmdMode(int mode);
 	
 	/**
-	 * Low-level nethod to get the BC4 chip mode - does not work.
+	 * Low-level method to get the BC4 chip mode
 	 */
-	public static native int btGetCmdMode();
+	public static native int btGetBC4CmdMode();
 	
 	/**
-	 * Low-level method to start ADC converter - does not wok.
+	 * Low-level method to start ADC converter
 	 *
 	 */
 	public static native void btStartADConverter();
+
+	/**
+	 * Low-level method to take the BC4 reset line low
+	 */
+	public static native void btSetResetLow();
+	
+	/**
+	 * Low-level method to take the BC4 reset line high
+	 */
+	public static native void btSetResetHigh();
+
+	/**
+	 * Low-level method to get the current mode of the BC4 chip. Note that
+	 * a call to btStartADConverter must have been made prior to this call.
+	 *
+	 * @return 1 == Command Mode 0 == Stream mode -1 == Conversion not complete
+	 */
+	public static int btGetCmdMode()
+	{
+		int ret = btGetBC4CmdMode();
+		// < 0 data not yet ready
+		if (ret < 0)
+			return -1;
+		// > 512 indicates a high logic level which is mode 0!
+		if (ret > 512)
+			return 0;
+		else
+			return 1;
+	}
+
+	/**
+	 * Set the BC4 mode, and wait for that mode to be confirmed by the chip.
+	 *
+	 * @param mode the requested mode 1 == Command mode 0 == Stream mode
+	 */
+	public static void btSetCmdMode(int mode)
+	{
+		// Are we already in the requested mode?
+		if (mode == cmdMode) return;
+		// Set the arm cmd mode to the requested state
+		btSetArmCmdMode(mode);
+		// now wait for the BC4 to follow us into this mode. 
+		int BC4Mode = -1;
+		int now = (int) System.currentTimeMillis();
+		int end1 = now + 2000;
+		while(now < end1)
+		{
+			// Request a conversion
+			btStartADConverter();
+			int end2 = now + 10;
+			// And wait for it to complete
+			while (((BC4Mode = btGetCmdMode()) < 0) && (now < end2))
+			{
+				Thread.yield();
+				now = (int)System.currentTimeMillis();
+			}
+			// Have we switched mode yet?
+			if (BC4Mode == mode) break;
+			Thread.yield();
+			now = (int) System.currentTimeMillis();
+		}
+		cmdMode = mode;
+		/*
+		if (now >= end1)
+		{
+			LCD.drawString("MODE T/O", 8, 7);
+			LCD.drawInt(mode, 3, 0, 7);
+			LCD.drawInt(BC4Mode, 3, 3, 7);
+			LCD.refresh();			
+		}
+		 */
+	}
+	
 	
 	/**
 	 * Send a command to the BC4 chip. Must be in command mode.
@@ -136,6 +211,8 @@ public class Bluetooth {
 	    sendBuf[len+3] = (byte) (checkSum & 0xff);
 	    				
 		btSend(sendBuf,len+3);
+		//LCD.drawInt(sendBuf[1], 4, 0, 6);
+		//LCD.refresh();
 	}
 	
 	/**
@@ -154,7 +231,8 @@ public class Bluetooth {
 		buf[0] = (byte) len;
 		
 		if (len == 0) return 0;
-		
+		//LCD.drawInt(receiveBuf[1], 4, 8, 6);
+		//LCD.refresh();		
 		checkSum = len;
 		
 		if (len-1 <= bufLen)
@@ -237,8 +315,6 @@ public class Bluetooth {
 		BTConnection btc = null;
 
 		Bluetooth.btSetCmdMode(1);
-		Bluetooth.btStartADConverter();
-
 		while (cmdMode & !supressWait)
 		{
 			receiveReply(reply,32);
@@ -295,7 +371,8 @@ public class Bluetooth {
 		byte[] reply = new byte[32];
 		byte[] msg = new byte[1];
 		byte[] name = new byte[16];
-		
+
+		Bluetooth.btSetCmdMode(1);
 		msg[0] = MSG_GET_FRIENDLY_NAME;
 		
 		sendCommand(msg,1);
@@ -310,7 +387,6 @@ public class Bluetooth {
 				gotName = true;
 			}
 		}
-		
 		return name;
 	}
 	
@@ -329,7 +405,8 @@ public class Bluetooth {
 	public static void setFriendlyName(byte[] name) {
 		byte[] reply = new byte[32];
 		byte[] msg = new byte[32];
-		
+		Bluetooth.btSetCmdMode(1);
+
 		friendlyName = name;
 		
 		msg[0] = MSG_SET_FRIENDLY_NAME;
@@ -365,6 +442,8 @@ public class Bluetooth {
 		byte[] reply = new byte[32];
 		byte[] msg = new byte[1];
 		byte[] address = new byte[7];
+
+		Bluetooth.btSetCmdMode(1);
 		
 		msg[0] = MSG_GET_LOCAL_ADDR;
 		
@@ -380,7 +459,6 @@ public class Bluetooth {
 				gotAddress = true;
 			}
 		}
-		
 		return address;
 	}
 	
@@ -423,7 +501,6 @@ public class Bluetooth {
 		byte[] device = new byte[7]; // remote device 
 				
 		Bluetooth.btSetCmdMode(1);
-		Bluetooth.btStartADConverter();
 
 		// invoke BC4 Chip to connect
 		msg[0] = MSG_CONNECT;
@@ -513,7 +590,6 @@ public class Bluetooth {
 		BTRemoteDevice curDevice;
 
 		Bluetooth.btSetCmdMode(1);
-		Bluetooth.btStartADConverter();
 		
 		supressWait = true;
 		Thread.yield();
@@ -598,6 +674,7 @@ public class Bluetooth {
 		
 		supressWait = true;
 		Thread.yield();
+		Bluetooth.btSetCmdMode(1);
 		
 		msg[0] = MSG_ADD_DEVICE;
 		for(int i=0;i<7;i++) msg[i+1] = addr[i];
@@ -632,6 +709,7 @@ public class Bluetooth {
 
 		supressWait = true;
 		Thread.yield();
+		Bluetooth.btSetCmdMode(1);
 		
 		msg[0] = MSG_REMOVE_DEVICE;		
 		for(int i=0;i<7;i++) msg[i+1] = addr[i];
@@ -670,6 +748,7 @@ public class Bluetooth {
 		
 		supressWait = true;
 		Thread.yield();
+		Bluetooth.btSetCmdMode(1);
 		
 		msg[0] = MSG_BEGIN_INQUIRY;
 		msg[1] = (byte) maxDevices;
@@ -728,6 +807,7 @@ public class Bluetooth {
 		byte [] msg = new byte[8];
 		byte[] reply = new byte[32];
 		char[] name = new char[16];
+		Bluetooth.btSetCmdMode(1);
 		
 		msg[0] = MSG_LOOKUP_NAME;	
 		for(int i=0;i<7;i++) msg[i+1] = deviceAddr[i];
@@ -764,6 +844,7 @@ public class Bluetooth {
 		
 		supressWait = true;
 		Thread.yield();
+		Bluetooth.btSetCmdMode(1);
 		
 		msg[0] = MSG_GET_BRICK_STATUSBYTE;	
 		
@@ -791,6 +872,7 @@ public class Bluetooth {
 		
 		supressWait = true;	
 		Thread.yield();
+		Bluetooth.btSetCmdMode(1);
 		
 		msg[0] = MSG_SET_BRICK_STATUSBYTE;	
 		msg[1] = status;
@@ -820,6 +902,7 @@ public class Bluetooth {
 		
 		supressWait = true;
 		Thread.yield();
+		Bluetooth.btSetCmdMode(1);
 		
 		msg[0] = MSG_GET_DISCOVERABLE;			
 		sendCommand(msg,1);
@@ -847,6 +930,7 @@ public class Bluetooth {
 		
 		supressWait = true;
 		Thread.yield();
+		Bluetooth.btSetCmdMode(1);
 		
 		msg[0] = MSG_GET_PORT_OPEN;			
 		sendCommand(msg,1);
@@ -873,6 +957,7 @@ public class Bluetooth {
 		
 		supressWait = true;
 		Thread.yield();
+		Bluetooth.btSetCmdMode(1);
 		
 		msg[0] = MSG_GET_OPERATING_MODE;			
 		sendCommand(msg,1);
@@ -899,6 +984,7 @@ public class Bluetooth {
 		
 		supressWait = true;	
 		Thread.yield();
+		Bluetooth.btSetCmdMode(1);
 		
 		msg[0] = MSG_SET_DISCOVERABLE;	
 		msg[1] = visible;
@@ -927,6 +1013,7 @@ public class Bluetooth {
 		
 		supressWait = true;	
 		Thread.yield();
+		Bluetooth.btSetCmdMode(1);
 		
 		msg[0] = MSG_SET_FACTORY_SETTINGS;			
 		sendCommand(msg,1);
@@ -953,6 +1040,7 @@ public class Bluetooth {
 		
 		supressWait = true;	
 		Thread.yield();
+		Bluetooth.btSetCmdMode(1);
 		
 		msg[0] = MSG_SET_OPERATING_MODE;
 		msg[1] = mode;
@@ -981,6 +1069,7 @@ public class Bluetooth {
 		
 		supressWait = true;	
 		Thread.yield();
+		Bluetooth.btSetCmdMode(1);
 		
 		msg[0] = MSG_OPEN_PORT;			
 		sendCommand(msg,1);
@@ -1011,6 +1100,7 @@ public class Bluetooth {
 		
 		supressWait = true;	
 		Thread.yield();
+		Bluetooth.btSetCmdMode(1);
 		
 		msg[0] = MSG_OPEN_PORT;			
 		sendCommand(msg,1);
@@ -1041,6 +1131,7 @@ public class Bluetooth {
 		
 		supressWait = true;	
 		Thread.yield();
+		Bluetooth.btSetCmdMode(1);
 		
 		msg[0] = MSG_CLOSE_CONNECTION;
 		msg[1] = handle;
@@ -1068,6 +1159,7 @@ public class Bluetooth {
 		
 		supressWait = true;	
 		Thread.yield();
+		Bluetooth.btSetCmdMode(1);
 		
 		msg[0] = MSG_OPEN_STREAM;
 		msg[1] = handle;
@@ -1088,6 +1180,7 @@ public class Bluetooth {
 		
 		supressWait = true;
 		Thread.yield();
+		Bluetooth.btSetCmdMode(1);
 		
 		msg[0] = MSG_GET_LINK_QUALITY;
 		msg[1] = handle;
@@ -1116,6 +1209,7 @@ public class Bluetooth {
 		
 		supressWait = true;
 		Thread.yield();
+		Bluetooth.btSetCmdMode(1);
 		
 		msg[0] = MSG_GET_CONNECTION_STATUS;			
 		sendCommand(msg,1);
@@ -1144,6 +1238,7 @@ public class Bluetooth {
 		
 		supressWait = true;
 		Thread.yield();
+		Bluetooth.btSetCmdMode(1);
 		
 		msg[0] = MSG_GET_VERSION;			
 		sendCommand(msg,1);
@@ -1159,5 +1254,38 @@ public class Bluetooth {
 				}
 			}
 		}	
+	}
+
+	/**
+	 * Perform a hardware reset of the BlueCore chip.
+	 * 
+	 */	
+	public static void reset() {
+		byte[] reply = new byte[32];
+
+		supressWait = true;
+		Thread.yield();
+		// BC4 reset seq. First take the reset line low...
+		btSetResetLow();
+		// Keep it that way for 100ms
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException ie) {}
+		// Now bring it high
+		btSetResetHigh();
+		// Now wait for either 5 seconds or for a RESET_INDICATION
+		int timeout = 5000;
+		while (timeout-- > 0) {
+			receiveReply(reply, 32);		
+			if (reply[0] != 0 && reply[1] == MSG_RESET_INDICATION)
+				break;
+			try {
+				Thread.sleep(1);
+			} catch (InterruptedException ie) {}			
+		}
+		// Force command mode
+		cmdMode = -1;
+		btSetCmdMode(1);
+		supressWait = false;
 	}
 }
