@@ -4,6 +4,8 @@
 #include "bt.h"
 #include "aic.h"
 #include  <string.h>
+#include "display.h"
+#include "systick.h"
 
 static U8 in_buf[2][128];
 static U8 in_buf_in_ptr, out_buf_ptr;
@@ -12,9 +14,11 @@ static U8 out_buf[2][256];
 static U8* buf_ptr;
 
 static int in_buf_idx = 0;
+static U32 clear;
 
 #define BAUD_RATE 460800
 #define CLOCK_RATE 48054850
+
 	
 void bt_init(void)
 {
@@ -74,12 +78,19 @@ void bt_init(void)
 
 void bt_start_ad_converter()
 {
+  // Clear any existing state by reading the data register
+  clear = (U32) *AT91C_ADC_CDR6;
   *AT91C_ADC_CR = AT91C_ADC_START;
 }
 
 U32 bt_get_mode()
 {
-  return (U32) *AT91C_ADC_CDR6;
+  // If the conversion has completed return the value. If not
+  // return 0xffffffff to indicate not ready.
+  if (*AT91C_ADC_SR & AT91C_ADC_EOC6)
+    return (U32) *AT91C_ADC_CDR6;
+  else
+    return 0xffffffff;
 }
 
 void bt_send(U8 *buf, U32 len)
@@ -179,4 +190,47 @@ void bt_set_reset_low(void)
 {
   *AT91C_PIOA_CODR = BT_RST_PIN;
 }
-	
+
+void bt_reset(void)
+{
+  // Perform hardware reset. This function has some relatively long
+  // delays in it and so should probably only be called during application
+  // initialisation and termination. Calling it at other times may cause
+  // problems for other real time tasks.
+
+  //display_goto_xy(0, 1);
+  //display_string("BT Reset....");
+  //display_update();
+  // Ask for command mode
+  bt_clear_arm7_cmd();
+  // BC4 reset sequence. First take the reset line low for 100ms
+  bt_set_reset_low();
+  // Wait and discard any packets that may be around
+  int cnt = 100;
+  U8 *buf = out_buf[0];
+  while (cnt-- > 0)
+  {
+    bt_receive(buf);
+    systick_wait_ms(1);
+  }
+  bt_set_reset_high();
+  // Now wait either for 5000ms or for the BC4 chip to signal reset
+  // complete. Note we use the out buffer as a scratch area here
+  // this id safe since we are forcing a reset.
+  cnt = 5000;
+  while (cnt-- > 0)
+  {
+    bt_receive(buf);
+    // Look for the reset indication and the checksum
+    if ((buf[0] == 3) && (buf[1] == MSG_RESET_INDICATION) && 
+        (buf[2] == 0xff) && (buf[3] == 0xe9))
+        break;
+    systick_wait_ms(1);
+  }
+  // Force command mode
+  bt_clear_arm7_cmd();
+  //display_goto_xy(10, 1);
+  //display_int(cnt, 5);
+  //display_update();
+  //systick_wait_ms(10000);
+}

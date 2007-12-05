@@ -100,8 +100,8 @@ playTone(II)V
 #lejos.nxt.comm.Bluetooth
 btSend([BI)V
 btReceive([B)V
-btGetCmdMode()I
-btSetCmdMode(I)V
+btGetBC4CmdMode()I
+btSetArmCmdMode(I)V
 btStartADConverter()V
 
 #lejos.nxt.comm.USB
@@ -124,7 +124,9 @@ getDataAddress(Ljava/lang/Object;)I
 gc()V
 shutDown()V
 
-
+#lejos.nxt.comm.Bluetooth
+btSetResetLow()V
+btSetResetHigh()V
 
 
 

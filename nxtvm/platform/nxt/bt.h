@@ -75,5 +75,6 @@ void bt_start_ad_converter(void);
 void bt_send(U8 *buf, U32 len);
 void bt_receive(U8 * buf);
 U32 bt_get_mode(void);
+void bt_reset(void);
 
 #endif /*BT_H_*/
