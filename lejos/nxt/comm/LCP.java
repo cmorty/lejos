@@ -236,7 +236,7 @@ public class LCP {
 			reply[7] = (byte) SensorPort.PORTS[port].getMode();
 			setReplyShortInt(raw, reply, 8);
 			setReplyShortInt(norm, reply, 10);
-			setReplyShortInt(scaled, reply, 10);		
+			setReplyShortInt(scaled, reply, 12);		
 			len = 16;						
 		}
 		
