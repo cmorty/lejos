@@ -63,7 +63,7 @@ public class NXJMonitor extends JFrame implements ActionListener {
 			new MotorPanel("A"),
 			new MotorPanel("B"),
 			new MotorPanel("C")};
-	private Gauge batteryGuage = new Gauge();
+	private Gauge batteryGauge = new Gauge();
 	private JLabel batteryLabel = new JLabel("Battery");
 	private InputValues[] sensorValues = new InputValues[4];
 	private OutputState[] motorValues = new OutputState[3];
@@ -146,8 +146,9 @@ public class NXJMonitor extends JFrame implements ActionListener {
 			p1.add(sensorPanels[i]);
 		}
 		
+		batteryGauge.setMaxVal(10000);
 		p2.add(batteryLabel);
-		p2.add(batteryGuage);
+		p2.add(batteryGauge);
 		
 		for(int i=0;i<3;i++) {
 			p3.add(motorPanels[i]);
@@ -181,7 +182,7 @@ public class NXJMonitor extends JFrame implements ActionListener {
     		motorPanels[i].setTachoVal(motorValues[i].tachoCount);
     		motorPanels[i].repaint();
     	}
-		batteryGuage.setVal(mv);
+		batteryGauge.setVal(mv);
     	repaint();
 	}
 
@@ -216,7 +217,6 @@ public class NXJMonitor extends JFrame implements ActionListener {
 		}
 	}
 }
-
 
 class SensorPanel  extends Panel {
 	Gauge rawGauge, scaledGauge;
