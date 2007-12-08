@@ -419,7 +419,56 @@ public class NXTCommand implements NXTProtocol {
 
 		return new String(addrChars);
 	}
-
+	
+	public InputValues getInputValues(int port) throws IOException {
+		byte [] request = {DIRECT_COMMAND_REPLY, GET_INPUT_VALUES, (byte)port};
+		byte [] reply = nxtComm.sendRequest(request, 16);
+		InputValues inputValues = new InputValues();
+		inputValues.inputPort = reply[3];
+		// 0 is false, 1 is true.
+		inputValues.valid = (reply[4] != 0);
+		// 0 is false, 1 is true. 
+		inputValues.isCalibrated = (reply[5] == 0);
+		inputValues.sensorType = reply[6];
+		inputValues.sensorMode = reply[7];
+		inputValues.rawADValue = (0xFF & reply[8]) | ((0xFF & reply[9]) << 8);
+		inputValues.normalizedADValue = (0xFF & reply[10]) | ((0xFF & reply[11]) << 8);
+		inputValues.scaledValue = (short)((0xFF & reply[12]) | (reply[13] << 8));
+		inputValues.calibratedValue = (short)((0xFF & reply[14]) | (reply[15] << 8));
+		
+		return inputValues;
+	}
+	
+	/**
+	 * Retrieves the current output state for a port.
+	 * @param port - 0 to 3
+	 * @return OutputState - returns a container object for output state variables.
+	 */
+	public OutputState getOutputState(int port) throws IOException {
+		// !! Needs to check port to verify they are correct ranges.
+		byte [] request = {DIRECT_COMMAND_REPLY, GET_OUTPUT_STATE, (byte)port};
+		byte [] reply = nxtComm.sendRequest(request,25);
+		
+		if(reply[1] != GET_OUTPUT_STATE) {
+			System.out.println("Oops! Error in NXTCommand.getOutputState.");
+			System.out.println("Return data did not match request.");
+			System.out.println("reply[0] = " + reply[0] + "  reply[1] = " + reply[1] +"  reply[2] = " + reply[2]);
+		}
+		OutputState outputState = new OutputState(port);
+		outputState.status = reply[2];
+		outputState.outputPort = reply[3];
+		outputState.powerSetpoint = reply[4];
+		outputState.mode = reply[5];
+		outputState.regulationMode = reply[6];
+		outputState.turnRatio = reply[7];
+		outputState.runState = reply[8];
+		outputState.tachoLimit = (0xFF & reply[9]) | ((0xFF & reply[10]) << 8)| ((0xFF & reply[11]) << 16)| ((0xFF & reply[12]) << 24);
+		outputState.tachoCount = (0xFF & reply[13]) | ((0xFF & reply[14]) << 8)| ((0xFF & reply[15]) << 16)| ((0xFF & reply[16]) << 24);
+		outputState.blockTachoCount = (0xFF & reply[17]) | ((0xFF & reply[18]) << 8)| ((0xFF & reply[19]) << 16)| ((0xFF & reply[20]) << 24);
+		outputState.rotationCount = (0xFF & reply[21]) | ((0xFF & reply[22]) << 8)| ((0xFF & reply[23]) << 16)| ((0xFF & reply[24]) << 24);
+		return outputState;
+	}
+	
 	public static NXTCommand getSingleton() {
 		if (singleton == null)
 			singleton = new NXTCommand();
