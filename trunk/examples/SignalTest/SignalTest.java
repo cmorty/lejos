@@ -6,36 +6,38 @@ import java.io.OutputStream;
 import lejos.nxt.*;
 import lejos.nxt.comm.*;
 
+/**
+ * Open a connection to the NXT using the BTSend sample
+ * and then walk round the house measuring the signal
+ * strength.
+ * 
+ * @author Lawrie Griffiths
+ *
+ */
 public class SignalTest {
 
 	public static void main(String [] args)  throws Exception 
 	{
 		String connected = "Connected";
         String waiting = "Waiting";
+        String strength = "Signal: ";
 
-		while (true)
-		{
-			LCD.drawString(waiting,0,0);
+		LCD.drawString(waiting,0,0);
+		LCD.refresh();
+
+        BTConnection btc = Bluetooth.waitForConnection();
+        
+		LCD.clear();
+		LCD.drawString(connected,0,0);
+		LCD.refresh();	
+		
+		while(!Button.ESCAPE.isPressed()) {
+			LCD.drawString(strength, 0, 3);
+			LCD.drawInt(btc.getSignalStrength(), 3, 9 ,3);
 			LCD.refresh();
-
-	        BTConnection btc = Bluetooth.waitForConnection();
-	        
-			LCD.clear();
-			LCD.drawString(connected,0,0);
-			LCD.refresh();	
-			
-			InputStream is = btc.openInputStream();
-			OutputStream os = btc.openOutputStream();
-			DataInputStream dis = new DataInputStream(is);
-			DataOutputStream dos = new DataOutputStream(os);
-			
-			while(true) {
-				LCD.clear();
-				LCD.refresh();
-				LCD.drawInt(btc.getSignalStrength(), 3, 0 ,1);
-				LCD.refresh();
-				Thread.sleep(1000);
-			}
+			Thread.sleep(1000);
 		}
+		
+		btc.close();
 	}
 }
