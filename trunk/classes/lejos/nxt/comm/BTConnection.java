@@ -32,10 +32,7 @@ public class BTConnection implements StreamConnection {
 	 * 
 	 */
 	public void close() throws IOException {
-		//Bluetooth.closeConnection((byte) handle);
 		Bluetooth.btSetCmdMode(1);
-		// Disconnect the stream -- seems to help clean things up but may cause
-		// problems with multi NXT comms
 		Bluetooth.closeConnection((byte) handle);
 		open = false;
 		streamOpen = false;
@@ -86,7 +83,6 @@ public class BTConnection implements StreamConnection {
 	public void closeStream() {
 		streamOpen = false;
 		Bluetooth.btSetCmdMode(1);
-		try {Thread.sleep(100);} catch (InterruptedException ioe) {}
 	}
 	
 	/**
@@ -95,19 +91,22 @@ public class BTConnection implements StreamConnection {
 	 *
 	 */
 	public void openStream() {
+		if (streamOpen) return;
 		Bluetooth.openStream((byte) handle);
-		try {Thread.sleep(100);} catch (InterruptedException ioe) {}
+		// Wait a while for the BC4 chip to go into stream mode 
+		try {Thread.sleep(50);} catch (InterruptedException ie) {}
 		Bluetooth.btSetCmdMode(0);
 		streamOpen = true;
 	}
 	
 	/**
 	 * Get the signal strength of this connection.
-	 * This necessitates closeing and reopening the data stream.
+	 * This necessitates closing and reopening the data stream.
 	 *  
 	 * @return a value from 0 to 255
 	 */
 	public int getSignalStrength() {
+		if (!streamOpen) return 0;
 		closeStream();
 		int strength = Bluetooth.getSignalStrength((byte) handle); 
 		openStream();
