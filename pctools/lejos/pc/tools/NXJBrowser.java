@@ -12,8 +12,11 @@ import java.awt.event.*;
 import java.io.*;
 
 /**
- *  Thus is a PC example that uses iCommand and the BTRespond example running on the NXT
- *  to implement a Bluetooth file browser for leJOS NXJ.
+ * 
+ *  Graphical file browser for leJOS NXJ.
+ *  Supports uploading,, downloading, and deleting files.
+ *  Also supports running programs, defragging the file system
+ *  and setting the name of the NXT.
  *
  *  @author Lawrie Griffiths <lawrie.griffiths@ntlworld.com>
  */
@@ -77,7 +80,7 @@ public class NXJBrowser {
       System.exit(1);
     }
     
-    final NXTModel nm = new NXTModel(frame, nxts, nxts.length);
+    final NXTTableModel nm = new NXTTableModel(frame, nxts, nxts.length);
     
     final JTable nxtTable = new JTable(nm);
     
@@ -404,51 +407,6 @@ class FileModel extends AbstractTableModel {
 
   public boolean isCellEditable(int row, int column) {
     return (column == 4);
-  }
-}
-
-class NXTModel extends AbstractTableModel {
-  private static final String[] columnNames = {"Name","Protocol", "Address"};
-  private static final int NUM_COLUMNS = 3;
-
-  Object[][] nxtData;
-  int numNXTs;
-  JFrame frame;
-
-  public NXTModel(JFrame frame, NXTInfo[] nxts, int numNXTs) {
-    this.frame = frame;
-    setData(nxts, numNXTs);
-  }
-
-  public void setData(NXTInfo[] nxts, int numNXTs) {
-    this.numNXTs = numNXTs;
-    nxtData = new Object[numNXTs][NUM_COLUMNS];
-
-    for(int i=0;i<numNXTs;i++) {
-      nxtData[i][0]  = nxts[i].name;
-      nxtData[i][1] = (nxts[i].protocol == NXTCommFactory.USB ? "USB" : "Bluetooth");
-      nxtData[i][2] = (nxts[i].btDeviceAddress == null ? "" : nxts[i].btDeviceAddress);
-    }
-  }
-
-  public int getRowCount() {
-    return numNXTs;
-  }
-
-  public int getColumnCount() {
-    return NUM_COLUMNS;
-  }
-
-  public Object getValueAt(int row, int column) {
-    return nxtData[row][column];
-  }
-
-  public String getColumnName(int column) {
-    return columnNames[column];
-  }
-
-  public Class getColumnClass(int column) {
-    return nxtData[0][column].getClass();
   }
 }
 
