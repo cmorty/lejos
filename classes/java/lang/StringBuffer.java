@@ -27,7 +27,7 @@ public final class StringBuffer
   private static final float log10 = 2.30258509f;
 
   public StringBuffer () {
-  	characters = new char[0];
+  	characters = new char[20];
   }
   
   public StringBuffer (String aString)
