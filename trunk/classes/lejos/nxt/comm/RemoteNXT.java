@@ -15,10 +15,13 @@ public class RemoteNXT {
 		nxtCommand.open(name);
 		//nxtCommand.setVerify(true);
 		A =  new Motor(new RemoteMotorPort(nxtCommand,0));
+		A.regulateSpeed(false);
 		A.shutdown();
 		B = new Motor(new RemoteMotorPort(nxtCommand,1));
+		B.regulateSpeed(false);
 		B.shutdown();
 		C = new Motor(new RemoteMotorPort(nxtCommand,2));
+		C.regulateSpeed(false);
 		C.shutdown();
 		Battery = new RemoteBattery(nxtCommand);
 		S1 = new RemoteSensorPort(nxtCommand, 0);
