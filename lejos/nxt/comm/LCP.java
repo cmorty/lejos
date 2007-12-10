@@ -2,6 +2,7 @@ package lejos.nxt.comm;
 
 import java.io.*;
 import lejos.nxt.*;
+import java.util.*;
 
 /**
  * 
@@ -21,6 +22,7 @@ public class LCP {
     private static FileInputStream in = null;
     private static int numFiles;	
 	private static char[] charBuffer = new char[20];
+	public static Queue[] inBoxes = new Queue[20];
     
 	// Command types constants. Indicates type of packet being sent or received.
 	public static byte DIRECT_COMMAND_REPLY = 0x00;
@@ -48,6 +50,7 @@ public class LCP {
 	public static final byte LS_WRITE = 0x0F;
 	public static final byte LS_READ = 0x10;
 	public static final byte GET_CURRENT_PROGRAM_NAME = 0x11;
+	public static final byte MESSAGE_READ = 0x13;
 	
 	// NXJ additions
 	public static byte NXJ_DISCONNECT = 0x20; 
@@ -79,6 +82,7 @@ public class LCP {
 	
 	// Error codes
 	
+	public static final byte MAILBOX_EMPTY = (byte)0x40;
 	public static final byte FILE_NOT_FOUND = (byte)0x86;
 	public static final byte INSUFFICIENT_MEMORY = (byte) 0xFB;
 	public static final byte DIRECTORY_FULL = (byte) 0xFC;
@@ -530,7 +534,33 @@ public class LCP {
 			len = 4;
 		}
 		
+		// MESSAGE READ		
+		if (cmdId == MESSAGE_READ) {
+			Queue inBox = inBoxes[cmd[2]];
+			reply[3] = cmd[3];
+			if (inBox == null || inBox.empty()) {
+				reply[2] = MAILBOX_EMPTY;
+			} else {
+				String msg = (String) (cmd[4] == 0 ? inBox.peek()
+						                           : inBox.pop());
+				int msgLen = msg.length();
+				reply[4] = (byte) (msgLen > 58 ? 58 : msgLen);
+				for(int i=0;i<58 && i<msgLen;i++) {
+					reply[5+i] = (byte) msg.charAt(i);
+				}
+			}
+			LCD.refresh();
+			len = 64;
+		}
+		
 		return len;
+	}
+	
+	public static void messageWrite(int mailbox, String msg) {
+		if (mailbox < inBoxes.length) {
+			if (inBoxes[mailbox] == null) inBoxes[mailbox] = new Queue();
+			inBoxes[mailbox].push(msg);			
+		}
 	}
 	
 	private static int getShortInt(byte [] cmd, int i)
