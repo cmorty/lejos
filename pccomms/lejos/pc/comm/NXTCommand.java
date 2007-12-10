@@ -469,6 +469,20 @@ public class NXTCommand implements NXTProtocol {
 		return outputState;
 	}
 	
+	/**
+	 * @param remoteInbox 0-9
+	 * @param localInbox 0-9
+	 * @param remove True clears the message from the remote inbox.
+	 * @return
+	 */
+	public byte[] messageRead(byte remoteInbox, byte localInbox, boolean remove) throws IOException {
+		byte [] request = {DIRECT_COMMAND_REPLY, MESSAGE_READ, remoteInbox, localInbox, (remove ? (byte) 1 : (byte) 0)};
+		byte [] reply = nxtComm.sendRequest(request, 64);
+		byte[] message = new byte[reply[4]];
+		System.arraycopy(reply, 5, message, 0, reply[4]);
+		return message;
+	}
+	
 	public static NXTCommand getSingleton() {
 		if (singleton == null)
 			singleton = new NXTCommand();
