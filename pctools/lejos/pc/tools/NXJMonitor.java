@@ -52,6 +52,7 @@ public class NXJMonitor extends JFrame implements ActionListener {
 			"I2C",
 			"I2C 9V"};
 	
+	private String title = "NXJ Monitor";
 	private NXTCommand nxtCommand = null;
 	private Timer timer;
 	private SensorPanel [] sensorPanels = {
@@ -68,9 +69,12 @@ public class NXJMonitor extends JFrame implements ActionListener {
 	private InputValues[] sensorValues = new InputValues[4];
 	private OutputState[] motorValues = new OutputState[3];
 	private int mv;
+	private JTextArea text = new JTextArea(10,58);
+	private String[] textStrings = new String[10];
+	private int numStrings = 0;
 	
 	public NXJMonitor() {
-		setTitle("NXJ Monitor");
+		setTitle(title);
 		
 		WindowListener listener = new WindowAdapter() {
 	        public void windowClosing(WindowEvent w) {
@@ -135,7 +139,13 @@ public class NXJMonitor extends JFrame implements ActionListener {
 	    setVisible(true);
 	}
 	
-	private void showMonitor() {			
+	private void showMonitor() {
+		
+		try {
+			setTitle(title + " : " + nxtCommand.getFriendlyName());
+		} catch (IOException ioe) {
+			showMessage("IOException getting friendly name");
+		}
 		getContentPane().removeAll();
 		
 		JPanel p1 = new JPanel();
@@ -155,13 +165,18 @@ public class NXJMonitor extends JFrame implements ActionListener {
 		}
 
 		getContentPane().add(p1, BorderLayout.NORTH);
-		getContentPane().add(p2, BorderLayout.CENTER);
+		getContentPane().add(p2, BorderLayout.WEST);
+		getContentPane().add(text, BorderLayout.CENTER);
 		getContentPane().add(p3, BorderLayout.SOUTH);
 		pack();
 	    
 		timer = new Timer(1000, this);
 		timer.setInitialDelay(2000);
 		timer.start();
+	}
+	
+	public void showMessage(String msg) {
+		JOptionPane.showMessageDialog(this, msg);
 	}
 	
 	public void actionPerformed(ActionEvent e) {
@@ -183,6 +198,11 @@ public class NXJMonitor extends JFrame implements ActionListener {
     		motorPanels[i].repaint();
     	}
 		batteryGauge.setVal(mv);
+		text.setText("");
+		for(int i=0;i<numStrings;i++) {
+			text.append(textStrings[i] + "\n");
+		}
+		text.repaint();
     	repaint();
 	}
 
@@ -202,6 +222,20 @@ public class NXJMonitor extends JFrame implements ActionListener {
 			//System.out.println("Getting Battery value");
 			mv = nxtCommand.getBatteryLevel();
 			//System.out.println("Got Battery value");
+			
+			// Read trace messages from the NXT in mailbox 0
+			while(true) {				
+				byte[] msg = nxtCommand.messageRead((byte)0, (byte) 0, true);
+				if (msg.length == 0) break;
+				String msgString = new String(msg);
+				if (numStrings == textStrings.length) {
+					for(int i=0;i<textStrings.length-1;i++) {
+						textStrings[i] = textStrings[i+1];						
+					}
+					numStrings = textStrings.length-1;
+				}
+				textStrings[numStrings++] = msgString;
+			}			
 
 		} catch (IOException ioe) {
 			System.err.println(ioe.getMessage());
