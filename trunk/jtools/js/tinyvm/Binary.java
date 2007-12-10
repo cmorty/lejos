@@ -387,6 +387,14 @@ public class Binary
 
 
    public void log(ToolProgressMonitor monitor) throws TinyVMException {
+	   
+     // all classes
+     for (int pIndex = 0; pIndex < iClassTable.size(); pIndex++)
+     {
+       ClassRecord pRec = (ClassRecord) iClassTable.get(pIndex);
+       monitor.log("Class " + pIndex + ": " + pRec.iName);
+     }
+     
      int pSize = iSignatures.size();
      for (int i = 0; i < pSize; i++)
      {
