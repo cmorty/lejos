@@ -88,7 +88,6 @@ public class Motor extends BasicMotor// implements TimerListener
       _voltage = Battery.getVoltage();
       regulator.setDaemon(true);
       regulator.start();
-//    timer.start();
    }
    public int getStopAngle() { return (int)_stopAngle;}
 
@@ -343,7 +342,7 @@ public class Motor extends BasicMotor// implements TimerListener
                   int angle = getTachoCount()-angle0;
                   int absA = angle;
                   if(angle<0)absA = -angle;
-                  while( angle < 2 && angle> -2 )
+                  while( angle < 2 && angle> -2 && tock > (int)System.currentTimeMillis() )//kick start
                   {
                      setPower(100);
                      Thread.yield();
