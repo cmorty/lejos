@@ -1,6 +1,42 @@
 import lejos.pc.comm.*;
 import java.io.*;
 
+/**
+ * This is a PC sample. It connects to the NXT, and then
+ * sends an integer and waits for a reply, 100 times.
+ * 
+ * Compile this program with javac (not nxjc), and run it 
+ * with java.
+ * 
+ * You need pccomm.jar on the CLASSPATH. On Windows you
+ * will also need bluecove.jar on the CLASSPATH. On Linux, 
+ * you will need libjbluez.so on the Java library path.
+ * 
+ * Run the program by:
+ * 
+ *   java BTSend <name> <address>
+ *   
+ * where <name> is the name of your NXT, and <address> is
+ * its Bluetooth address. 
+ * 
+ * For example:
+ * 
+ *   java BTSend NXT 00:16:53:00:78:48
+ *   
+ * You can find the address for your NXT by running nxjbrowse
+ *  - this lists the name and address of each NXT it finds.
+ * 
+ * See the comment in the code on how to do a Bluetooth 
+ * inquiry to find your NXT, instead of using the address
+ * parameter.
+ * 
+ * Your NXT should be running a sample such as BTReceive or
+ * SignalTest. Run the NXT program first until it is
+ * waiting for a connection, and then run the PC program. 
+ * 
+ * @author Lawrie Griffiths
+ *
+ */
 public class BTSend {
 	
 	public static void main(String[] args) {
@@ -74,7 +110,7 @@ public class BTSend {
 		
 		try {
 			dis.close();
-			//dos.close(); Why does this prevent re-connection?
+			dos.close();
 			nxtComm.close();
 		} catch (IOException ioe) {
 			System.out.println("IOException closing connection:");
