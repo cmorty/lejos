@@ -1,12 +1,15 @@
 #include "display.h"
 #include "AT91SAM7.h"
 #include "interpreter.h"
+#include "nxt_spi.h"
 
 U32 data_abort_pc;
 
 void
 data_abort_C(void)
 {
+  // Need to reset the link to the display to see any output
+  nxt_spi_init();
   display_clear(0);
   display_goto_xy(0, 0);
   display_string("Data abort");
@@ -29,7 +32,7 @@ data_abort_C(void)
   display_string("DEBUG2 ");
   display_hex(debug_word2,8);
 
-  display_update();
+  display_force_update();
 
   while (1) {
   }

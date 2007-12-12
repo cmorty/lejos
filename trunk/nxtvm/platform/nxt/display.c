@@ -161,6 +161,12 @@ display_update(void)
   nxt_lcd_data((U8 *) display_buffer);
 }
 
+void display_force_update(void)
+{
+  // Force a display update even if interrupts are disabled
+  nxt_lcd_force_update((U8 *) display_buffer);
+}
+
 
 void
 display_clear(U32 updateToo)
