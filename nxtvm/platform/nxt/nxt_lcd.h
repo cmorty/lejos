@@ -10,6 +10,7 @@ void nxt_lcd_init(void);
 void nxt_lcd_power_up(void);
 void nxt_lcd_power_down(void);
 void nxt_lcd_data(const U8 *buffer);
+void nxt_lcd_force_update(const U8 *buffer);
 
 
 #endif

@@ -7,6 +7,8 @@ void display_init(void);
 
 void display_update(void);
 
+void display_force_update(void);
+
 void display_clear(U32 updateToo);
 
 void display_goto_xy(int x, int y);

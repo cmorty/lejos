@@ -118,12 +118,9 @@ nxt_lcd_set_cursor_update(U32 on)
 }
 
 void
-nxt_lcd_data(const U8 *data)
+nxt_lcd_force_update(const U8 *data)
 {
-#define DMA_REFRESH
-#ifdef DMA_REFRESH
-  nxt_spi_refresh(data);
-#else
+  // Update the screen the slow way. Works with interrupts disabled
   int i;
 
   for (i = 0; i < NXT_LCD_DEPTH; i++) {
@@ -133,6 +130,17 @@ nxt_lcd_data(const U8 *data)
     nxt_spi_write(1, data, NXT_LCD_WIDTH);
     data += NXT_LCD_WIDTH;
   }
+}
+
+
+void
+nxt_lcd_data(const U8 *data)
+{
+#define DMA_REFRESH
+#ifdef DMA_REFRESH
+  nxt_spi_refresh(data);
+#else
+  nxt_lcd_force_update(data);
 #endif
 }
 
