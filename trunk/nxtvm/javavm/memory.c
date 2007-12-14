@@ -12,6 +12,7 @@
 #include "interpreter.h"
 #include "exceptions.h"
 #include "stdlib.h"
+#include "stack.h"
 
 #include <string.h>
 
@@ -68,6 +69,7 @@ static TWOBYTES memory_free;    /* total number of free words in heap */
 
 extern void deallocate (TWOBYTES *ptr, TWOBYTES size);
 extern TWOBYTES *allocate (TWOBYTES size);
+extern Object *protectedRef;
 
 /**
  * @param numWords Number of 2-byte words used in allocating the object.
@@ -833,6 +835,11 @@ static void mark_static_objects( void)
 static void mark_local_objects()
 {
   int i;
+  // Make sure the stack frame for the current thread is up to date.
+  StackFrame *currentFrame = current_stackframe();
+  if (currentFrame != null) update_stack_frame(currentFrame);
+  // If needed make sure we protect the VM temporary reference
+  if (protectedRef != JNULL) mark_object(protectedRef);
 
   for( i = 0; i < MAX_PRIORITY; i ++)
   {
