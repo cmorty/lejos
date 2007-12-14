@@ -2,7 +2,7 @@
 package lejos.util;
 import javax.microedition.io.StreamConnection;
 import lejos.nxt.comm.*;
-
+import lejos.nxt.*;
 import java.io.*;
 /**
  * Datalogger class; stores float values then  then transmits  via bluetooth or usb<br>
