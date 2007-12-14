@@ -1,5 +1,6 @@
 package java.lang;
 
+
 /**
  * An expandable string of characters. Actually not very expandable!
  * 09/25/2001 added number formatting thanks to Martin E. Nielsen.
@@ -12,6 +13,8 @@ public final class StringBuffer
 {
   char[] characters;
   int curPos = 0;
+  static char [] buf = new char[16];
+  static String minInt = "-2147483648";
 
   /**
    * Conversion between integers from 0 to 9 and their respective
@@ -88,30 +91,45 @@ public final class StringBuffer
     return append (new String (new char[] { aChar }, 0, 1));
   }
 
-  public StringBuffer append (int aInt)
+  public synchronized StringBuffer append (int i)
   {
-    if( aInt == 0 ) 
-	{ 
-	    characters[ curPos++ ] = '0'; 
-        return this; 
+	// Modified to expand the buffer...
+	// Conversion code lifted from Integer, could have just called
+	// append(Integer.toString(aInt))
+	// but that would have allocated a new string for every call. Not sure
+	// how good the garbage collector is at the moment, so probably best
+	// to preserve the existing memory allocation behavior.
+	int q, r, charPos = buf.length; 
+    char sign = 0 ; 
+
+    if (i == Integer.MIN_VALUE) return append(minInt);
+
+    if (i < 0) { 
+	   sign = '-' ; 
+	   i = -i ; 
     }
 
-    if ( aInt < 0 ) {
-	    characters[ curPos++ ] = '-';
-	    aInt = -aInt;
-	} // if
+    for (;;) { 
+ 	  q = i/10; ; 
+ 	  r = i-(q*10) ;
+ 	  buf [--charPos] = (char) ((int) '0' + r) ; 
+ 	  i = q ; 
+ 	  if (i == 0) break ; 
+    }
 
-	int pow = ( int )Math.floor( Math.log( aInt ) / log10 );
+    if (sign != 0) {
+	  buf [--charPos] = sign ; 
+    }
 
-	int div = 0;
-	while ( pow >= 0 ) {
-	    div = ( int ) ( aInt / (int)Math.pow( 10, pow ) );
-	    
-	    characters[ curPos++ ] = numbers[ div ];
-	    aInt -= div * (int)Math.pow( 10, pow );
-	    pow--;
-	} // while
-	
+	// Will it fit in the existing space?
+	int len = buf.length - charPos;
+	if (len + curPos > characters.length) {
+      char [] nc = new char[curPos + len];
+      System.arraycopy (characters, 0, nc, 0, curPos);	
+	  characters = nc;
+	}
+	System.arraycopy(buf, charPos, characters, curPos, len);
+	curPos += len;
 	return this;
   }
 
@@ -170,83 +188,91 @@ public final class StringBuffer
      *
      * @author Martin E. Nielsen
      **/
-    private StringBuffer append( float number, int significantDigits ) {
+    private synchronized StringBuffer append( float number, int significantDigits ) {
 
-	if ( number == 0 ) {
-	    characters[ curPos++ ] = '0';
-	    return this;
-	} // if
-	    
-	if ( number < 0 ) {
-	    characters[ curPos++ ] = '-';
-	    number = -number;
-	} // if
+		int charPos = 0;
+		if ( number == 0 ) {
+			buf[ charPos++ ] = '0';
+		} else {
+			if ( number < 0 ) {
+				buf[ charPos++ ] = '-';
+				number = -number;
+			} // if
 
-	// calc. the power (base 10) for the given number:
-	int pow = ( int )Math.floor( Math.log( number ) / log10 );
-	int exponent = 0;
+			// calc. the power (base 10) for the given number:
+			int pow = ( int )Math.floor( Math.log( number ) / log10 );
+			int exponent = 0;
 
-	// use exponential formatting if number too big or too small
-	if ( pow < -3 || pow > 6 ) {
-	    exponent = pow;
-	    number /= Math.exp( Math.ln10 * exponent );
-	} // if
+			// use exponential formatting if number too big or too small
+			if ( pow < -3 || pow > 6 ) {
+				exponent = pow;
+				number /= Math.exp( Math.ln10 * exponent );
+			} // if
 
-	// Recalc. the pow if exponent removed and d has changed
-	pow = ( int )Math.floor( Math.log( number ) / log10 );
+			// Recalc. the pow if exponent removed and d has changed
+			pow = ( int )Math.floor( Math.log( number ) / log10 );
 
-	// Decide how many insignificant zeros there will be in the
-	// lead of the number.
-	int insignificantDigits = -Math.min( 0, pow );
+			// Decide how many insignificant zeros there will be in the
+			// lead of the number.
+			int insignificantDigits = -Math.min( 0, pow );
 
-	// Force it to start with at least "0." if necessarry
-	pow = Math.max( 0, pow );
-        double divisor = Math.pow(10, pow);
-        
-	// Loop over the significant digits (17 for double, 8 for float)
-	for ( int i = 0, end = significantDigits+insignificantDigits, div; i < end; i++  ) {
+			// Force it to start with at least "0." if necessarry
+			pow = Math.max( 0, pow );
+				double divisor = Math.pow(10, pow);
 
-	    // Add the '.' when passing from 10^0 to 10^-1
-	    if ( pow == -1 ) {
-		characters[ curPos++ ] = '.';
-	    } // if
-	    
-	    // Find the divisor
-	    div = ( int ) ( number / divisor );
-	    // This might happen with 1e6: pow = 5 ( instead of 6 )
-	    if ( div == 10 ) {
-		characters[ curPos++ ] = '1';
-		characters[ curPos++ ] = '0';
-	    } // if
-	    else {
-//		characters[ curPos ] = numbers[ div ];
-		characters[ curPos ] = (char)(div + '0');
-		curPos++;
-	    } // else
+			// Loop over the significant digits (17 for double, 8 for float)
+			for ( int i = 0, end = significantDigits+insignificantDigits, div; i < end; i++  ) {
 
-	    number -= div * divisor;
-	    divisor /= 10.0;
-	    pow--;
+				// Add the '.' when passing from 10^0 to 10^-1
+				if ( pow == -1 ) {
+					buf[ charPos++ ] = '.';
+				} // if
 
-	    // Break the loop if we have passed the '.'
-	    if ( number == 0 && divisor < 0.1 ) break;
-	} // for
+				// Find the divisor
+				div = ( int ) ( number / divisor );
+				// This might happen with 1e6: pow = 5 ( instead of 6 )
+				if ( div == 10 ) {
+					buf[ charPos++ ] = '1';
+					buf[ charPos++ ] = '0';
+				} // if
+				else {
+			//		buf[ charPos ] = numbers[ div ];
+					buf[ charPos ] = (char)(div + '0');
+					charPos++;
+				} // else
 
-	// Remove trailing zeros
-  	while ( characters[ curPos-1 ] == '0' )
-  	    curPos--;
+				number -= div * divisor;
+				divisor /= 10.0;
+				pow--;
 
-	// Avoid "4." instead of "4.0"
-	if ( characters[ curPos-1 ] == '.' )
-	    curPos++;
+				// Break the loop if we have passed the '.'
+				if ( number == 0 && divisor < 0.1 ) break;
+			} // for
 
-	// Restore the exponential format
-	if ( exponent != 0 ) {
-	    characters[ curPos++ ] = 'E';
-	    append( exponent );
-	} // if
-	
-	return this;
+			// Remove trailing zeros
+			while ( buf[ charPos-1 ] == '0' )
+				charPos--;
+
+			// Avoid "4." instead of "4.0"
+			if ( buf[ charPos-1 ] == '.' )
+				charPos++;
+			if ( exponent != 0 ) {
+				buf[ charPos++ ] = 'E';
+			} // if
+			// Do we have enough room?
+			if (charPos + curPos > characters.length) {
+				  char [] nc = new char[curPos + charPos];
+				  System.arraycopy (characters, 0, nc, 0, curPos);	
+				  characters = nc;
+			}
+			System.arraycopy(buf, 0, characters, curPos, charPos);
+			curPos += charPos;
+			// Restore the exponential format
+			if ( exponent != 0 ) {
+				append( exponent );
+			} // if
+		}
+		return this;
     }
 }
 
