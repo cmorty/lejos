@@ -1,4 +1,5 @@
 import lejos.nxt.*;
+import lejos.util.*;
 import lejos.nxt.comm.*;
 
 /**
