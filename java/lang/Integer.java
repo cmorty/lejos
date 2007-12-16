@@ -46,7 +46,8 @@ package java.lang;
      * @param   i   an integer to be converted.
      * @return  a string representation of the argument in base&nbsp;10.
      */
-    public static synchronized String toString(int i) {
+    public static String toString(int i) {
+	  synchronized(buf) {
        int q, r, charPos = 12; 
        char sign = 0 ; 
 
@@ -70,6 +71,7 @@ package java.lang;
        }
 
        return new String ( buf, charPos, 12 - charPos) ; 
+     }
    }
 
    /**
