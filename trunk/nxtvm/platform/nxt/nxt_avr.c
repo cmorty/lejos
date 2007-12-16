@@ -292,7 +292,7 @@ nxt_avr_set_input_power(U32 n, U32 power_type)
   // Having both bits set is currently not supported.
   if (n < NXT_AVR_N_INPUTS && power_type <= 2) {
     U8 val = (power_type & 0x2 ? 0x10 << n : 0) | ((power_type & 1) << n);
-    io_to_avr.input_power &= ~(0x11 < n);
+    io_to_avr.input_power &= ~(0x11 << n);
     io_to_avr.input_power |= val;
   }
 }
