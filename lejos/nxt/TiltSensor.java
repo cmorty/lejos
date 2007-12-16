@@ -6,20 +6,30 @@ package lejos.nxt;
  * 
  */
 public class TiltSensor extends I2CSensor {
-	byte[] buf = new byte[3];
+	byte[] buf = new byte[2];
+	byte[] buf2 = new byte[1];
+	
+	private static final String MINDSENSORS_ID = "mndsnsrs";
 	
 	private static byte X_TILT = 0x42;
 	private static byte Y_TILT = 0x43;
 	private static byte Z_TILT = 0x44;
 	
-	private static byte X_ACCEL_LSB = 0x45;
-	private static byte Y_ACCEL_LSB = 0x47;
-	private static byte Z_ACCEL_LSB = 0x49;
+	private static byte MINDSTORMS_X_ACCEL_LSB = 0x45;
+	private static byte MINDSTORMS_Y_ACCEL_LSB = 0x47;
+	private static byte MINDSTORMS_Z_ACCEL_LSB = 0x49;
+	
+	private static byte HITECHNIC_X_ACCEL_2BITS = 0x45;
+	private static byte HITECHNIC_Y_ACCEL_2BITS = 0x46;
+	private static byte HITECHNIC_Z_ACCEL_2BITS = 0x47;
+	
+	private boolean isMindsensors; // For comparing HiTechnic vs. Mindsensors
 	
 	public TiltSensor(I2CPort port)
 	{
 		super(port);
 		port.setType(TYPE_LOWSPEED_9V);
+		isMindsensors = (this.getProductID().equals(MINDSENSORS_ID));
 	}
 	
 	/**
@@ -59,9 +69,17 @@ public class TiltSensor extends I2CSensor {
 	 * @return Acceleration e.g. 9810 mg (falling on earth)
 	 */
 	public int getXAccel() {
-		int ret = getData(X_ACCEL_LSB, buf, 2);
-		int accel = (buf[0] & 0xFF) | ((buf[1]) << 8);
-		return (ret == 0 ? accel : -1);
+		if (isMindsensors) {
+			int ret = getData(MINDSTORMS_X_ACCEL_LSB, buf, 2);
+			int accel = (buf[0] & 0xFF) | ((buf[1]) << 8);
+			return (ret == 0 ? accel : -1);
+		} else {
+			int ret = getData(X_TILT, buf, 1);
+			if (ret != 0) return -1;
+			ret = getData(HITECHNIC_X_ACCEL_2BITS, buf2, 1);
+			if (ret != 0) return -1;
+			return ((buf[0] & 0xFF) << 2) + (buf2[0] & 0xFF);
+		}
 	}
 	
 	/**
@@ -70,9 +88,17 @@ public class TiltSensor extends I2CSensor {
 	 * @return Acceleration e.g. 9810 mg (falling on earth)
 	 */
 	public int getYAccel() {
-		int ret = getData(Y_ACCEL_LSB, buf, 2);
-		int accel = (buf[0] & 0xFF) | ((buf[1]) << 8);
-		return (ret == 0 ? accel : -1);
+		if (isMindsensors) {
+			int ret = getData(MINDSTORMS_Y_ACCEL_LSB, buf, 2);
+			int accel = (buf[0] & 0xFF) | ((buf[1]) << 8);
+			return (ret == 0 ? accel : -1);
+		} else {
+			int ret = getData(Y_TILT, buf, 1);
+			if (ret != 0) return -1;
+			ret = getData(HITECHNIC_Y_ACCEL_2BITS, buf2, 1);
+			if (ret != 0) return -1;
+			return ((buf[0] & 0xFF) << 2) + (buf2[0] & 0xFF);
+		}
 	}
 	
 	/**
@@ -81,8 +107,16 @@ public class TiltSensor extends I2CSensor {
 	 * @return Acceleration e.g. 9810 mg (falling on earth)
 	 */
 	public int getZAccel() {
-		int ret = getData(Z_ACCEL_LSB, buf, 2);
-		int accel = (buf[0] & 0xFF) | ((buf[1]) << 8);
-		return (ret == 0 ? accel : -1);
+		if (isMindsensors) {
+			int ret = getData(MINDSTORMS_Z_ACCEL_LSB, buf, 2);
+			int accel = (buf[0] & 0xFF) | ((buf[1]) << 8);
+			return (ret == 0 ? accel : -1);
+		} else {
+			int ret = getData(Z_TILT, buf, 1);
+			if (ret != 0) return -1;
+			ret = getData(HITECHNIC_Z_ACCEL_2BITS, buf2, 1);
+			if (ret != 0) return -1;
+			return ((buf[0] & 0xFF) << 2) + (buf2[0] & 0xFF);
+		}
 	}
 }
