@@ -72,6 +72,10 @@ public interface SpecialSignatureConstants {
     "gc()V",
     "shutDown()V",
     "btSetResetLow()V",
-    "btSetResetHigh()V"
+    "btSetResetHigh()V",
+    "btWrite([BII)I",
+    "btRead([BII)I",
+    "btPending()I",
+    "arraycopy(Ljava/lang/Object;ILjava/lang/Object;II)V"
   };
 }
