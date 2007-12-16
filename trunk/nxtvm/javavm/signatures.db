@@ -127,8 +127,12 @@ shutDown()V
 #lejos.nxt.comm.Bluetooth
 btSetResetLow()V
 btSetResetHigh()V
+btWrite([BII)I
+btRead([BII)I
+btPending()I
 
-
+#java.lang.System
+arraycopy(Ljava/lang/Object;ILjava/lang/Object;II)V
 
 
 

@@ -264,6 +264,25 @@ dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
   case btSetResetHigh_4_5V:
     bt_set_reset_high();
     return;
+  case btWrite_4_1BII_5I:
+    {
+      Object *p = word2ptr(paramBase[0]);
+      byte *byteArray = (((byte *) p) + HEADER_SIZE);
+      push_word(bt_write(byteArray, paramBase[1], paramBase[2]));                      
+    }
+    return;
+  case btRead_4_1BII_5I:
+    {
+      Object *p = word2ptr(paramBase[0]);
+      byte *byteArray = (((byte *) p) + HEADER_SIZE);
+      push_word(bt_read(byteArray, paramBase[1], paramBase[2]));                      
+    }
+    return;
+  case btPending_4_5I:
+    {
+      push_word(bt_pending());
+    }
+    return;
   case usbRead_4_1BI_5I:
      {
       Object *p = word2ptr(paramBase[0]);
@@ -312,6 +331,13 @@ dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
     return;
   case shutDown_4_5V:
     while (1) nxt_avr_power_down(); // does not return
+  case arraycopy_4Ljava_3lang_3Object_2ILjava_3lang_3Object_2II_5V:
+    {
+      Object *p1 = word2ptr(paramBase[0]);
+      Object *p2 = word2ptr(paramBase[2]);
+      arraycopy(p1, paramBase[1], p2, paramBase[3], paramBase[4]);
+    }
+    return;
   default:
     throw_exception(noSuchMethodError);
   }

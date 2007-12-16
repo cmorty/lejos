@@ -76,5 +76,8 @@ void bt_send(U8 *buf, U32 len);
 void bt_receive(U8 * buf);
 U32 bt_get_mode(void);
 void bt_reset(void);
+U32 bt_write(U8 *buf, U32 off, U32 len);
+U32 bt_read(U8 * buf, U32 off, U32 len);
+U32 bt_pending(void);
 
 #endif /*BT_H_*/
