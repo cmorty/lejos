@@ -72,4 +72,8 @@
 #define shutDown_4_5V 65
 #define btSetResetLow_4_5V 66
 #define btSetResetHigh_4_5V 67
+#define btWrite_4_1BII_5I 68
+#define btRead_4_1BII_5I 69
+#define btPending_4_5I 70
+#define arraycopy_4Ljava_3lang_3Object_2ILjava_3lang_3Object_2II_5V 71
 #endif // _SPECIALSIGNATURES_H

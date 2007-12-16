@@ -329,6 +329,35 @@ Object *new_multi_array (byte elemType, byte totalDimensions,
 
   return ref;
 }
+/**
+ * Native array copy method,
+ * Copy the (partial) contents of one array to another
+ * Placed here tp allow access to element size information.
+ */
+void arraycopy(Object *src, int srcOff, Object *dst, int dstOff, int len)
+{
+  // validate things
+  if (src == null || dst == null)
+  {
+    throw_exception(nullPointerException);
+    return;
+  }
+  if (!is_array(src) || !is_array(dst) || (get_element_type(src) != get_element_type(dst)))
+  {
+    throw_exception(illegalArgumentException);
+    return;
+  }
+  if (srcOff < 0 || (srcOff + len > get_array_length(src)) ||
+      dstOff < 0 || (dstOff + len > get_array_length(dst)))
+  {
+    throw_exception(arrayIndexOutOfBoundsException);
+    return;
+  }
+  // and finally do the copy!
+  int elemSize = typeSize[get_element_type(src)];
+  memcpy(((byte *) dst + HEADER_SIZE) + dstOff*elemSize , ((byte *) src + HEADER_SIZE) + srcOff*elemSize, len*elemSize);
+}
+
 
 #ifdef WIMPY_MATH
 

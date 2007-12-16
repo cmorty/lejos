@@ -14,7 +14,6 @@ static U8 out_buf[2][256];
 static U8* buf_ptr;
 
 static int in_buf_idx = 0;
-static U32 clear;
 
 #define BAUD_RATE 460800
 #define CLOCK_RATE 48054850
@@ -23,7 +22,7 @@ static U32 clear;
 void bt_init(void)
 {
   U8 trash;
-  
+  U32 trash2;
   in_buf_in_ptr = out_buf_ptr = 0; 
   in_buf_idx = 0;
   
@@ -66,8 +65,20 @@ void bt_init(void)
   *AT91C_PIOA_PER   = BT_ARM7_CMD_PIN; 
   *AT91C_PIOA_CODR  = BT_ARM7_CMD_PIN;
   *AT91C_PIOA_OER   = BT_ARM7_CMD_PIN; 
+  // Configure timer 01 as trigger for ADC, sample every 0.5ms
+  *AT91C_PMC_PCER = (1 << AT91C_PERIPHERAL_ID_TC1); 
+  *AT91C_TC1_CCR = AT91C_TC_CLKDIS;
+  *AT91C_TC1_IDR = ~0;
+  trash2 = *AT91C_TC1_SR;
+  *AT91C_TC1_CMR = AT91C_TC_WAVE | AT91C_TC_WAVESEL_UP_AUTO | AT91C_TC_ACPA_SET | AT91C_TC_ACPC_CLEAR | AT91C_TC_ASWTRG_SET; /* MCLK/2, wave mode 10 */
+  *AT91C_TC1_RC = (CLOCK_FREQUENCY/2)/(2000);
+  *AT91C_TC1_RA = (CLOCK_FREQUENCY/2)/(4000);
+  *AT91C_TC1_CCR = AT91C_TC_CLKEN;
+  *AT91C_TC1_CCR = AT91C_TC_SWTRG;
 
+  *AT91C_PMC_PCER = (1 << AT91C_PERIPHERAL_ID_ADC); 
   *AT91C_ADC_MR  = 0;
+  *AT91C_ADC_MR |= AT91C_ADC_TRGEN_EN | AT91C_ADC_TRGSEL_TIOA1;
   *AT91C_ADC_MR |= 0x00003F00;
   *AT91C_ADC_MR |= 0x00020000;
   *AT91C_ADC_MR |= 0x09000000;
@@ -78,31 +89,58 @@ void bt_init(void)
 
 void bt_start_ad_converter()
 {
-  // Clear any existing state by reading the data register
-  clear = (U32) *AT91C_ADC_CDR6;
-  *AT91C_ADC_CR = AT91C_ADC_START;
+  // This method is no longer required. The ADC is started automatically
+  // by the hardware timer.
 }
 
 U32 bt_get_mode()
 {
-  // If the conversion has completed return the value. If not
-  // return 0xffffffff to indicate not ready.
-  if (*AT91C_ADC_SR & AT91C_ADC_EOC6)
-    return (U32) *AT91C_ADC_CDR6;
-  else
-    return 0xffffffff;
+  // return the bt4 mode value.
+  return (U32) *AT91C_ADC_CDR6;
 }
 
 void bt_send(U8 *buf, U32 len)
 {
   if (*AT91C_US1_TNCR == 0)
-  {	
+  {
     memcpy(&(out_buf[out_buf_ptr][0]), buf, len);
     *AT91C_US1_TNPR = (unsigned int) &(out_buf[out_buf_ptr][0]);
     *AT91C_US1_TNCR = len;
     out_buf_ptr = (out_buf_ptr+1) % 2;
   }
 }
+
+U32 bt_write(U8 *buf, U32 off, U32 len)
+{
+  if (*AT91C_US1_TNCR == 0)
+  {	
+    if (len > 256) len = 256;	
+    memcpy(&(out_buf[out_buf_ptr][0]), buf+off, len);
+    *AT91C_US1_TNPR = (unsigned int) &(out_buf[out_buf_ptr][0]);
+    *AT91C_US1_TNCR = len;
+    out_buf_ptr = (out_buf_ptr+1) % 2;
+    return len;
+  }
+  else
+    return 0;
+}
+
+U32 bt_pending()
+{
+  // return the state of any pending i/o requests one bit for input one bit
+  // for output.
+  // First check for any input
+  int ret = 0;
+  int bytes_ready;
+  if (*AT91C_US1_RNCR == 0) 
+    bytes_ready = 256 - *AT91C_US1_RCR;
+  else 
+    bytes_ready = 128 - *AT91C_US1_RCR;
+  if (bytes_ready  > in_buf_idx) ret |= 1;
+  if ((*AT91C_US1_TCR != 0) || (*AT91C_US1_TNCR != 0)) ret |= 2;
+  return ret;
+}
+
 
 void bt_clear_arm7_cmd(void)
 {
@@ -184,6 +222,54 @@ void bt_receive(U8 * buf)
   	in_buf_in_ptr = (in_buf_in_ptr+1) % 2;
   	buf_ptr = &(in_buf[in_buf_in_ptr][0]);
   }   
+}
+
+U32 bt_read(U8 * buf, U32 off, U32 len)
+{
+  int bytes_ready, total_bytes_ready;
+  int cmd_len, i;
+  U8* tmp_ptr;
+  
+  cmd_len = 0;
+  if (*AT91C_US1_RNCR == 0) {
+    bytes_ready = 128;
+    total_bytes_ready = 256 - *AT91C_US1_RCR;
+  }
+  else
+    total_bytes_ready = bytes_ready = 128 - *AT91C_US1_RCR;
+  
+  if (total_bytes_ready > in_buf_idx)
+  {
+    cmd_len = (int) (total_bytes_ready - in_buf_idx);
+    if (cmd_len > len) cmd_len = len;
+  	
+    if (bytes_ready >= in_buf_idx + cmd_len)
+    { 	
+      for(i=0;i<cmd_len;i++) buf[off+i] = buf_ptr[in_buf_idx++];
+    }
+    else
+    {
+      for(i=0;i<cmd_len && in_buf_idx < 128;i++) buf[off+i] = buf_ptr[in_buf_idx++];
+      in_buf_idx = 0;
+      tmp_ptr = &(in_buf[(in_buf_in_ptr+1)%2][0]);
+      for(;i<cmd_len;i++) buf[off+i] = tmp_ptr[in_buf_idx++];
+      in_buf_idx += 128;
+    } 
+  }
+  
+  // Current buffer full and fully processed
+  
+  if (in_buf_idx >= 128 && *AT91C_US1_RNCR == 0)
+  { 	
+  	// Switch current buffer, and set up next 
+  	
+  	in_buf_idx -= 128;
+  	*AT91C_US1_RNPR = (unsigned int) buf_ptr;
+  	*AT91C_US1_RNCR = 128;
+  	in_buf_in_ptr = (in_buf_in_ptr+1) % 2;
+  	buf_ptr = &(in_buf[in_buf_in_ptr][0]);
+  }
+  return cmd_len;   
 }
 
 void bt_set_reset_low(void)
