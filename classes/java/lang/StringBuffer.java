@@ -91,7 +91,7 @@ public final class StringBuffer
     return append (new String (new char[] { aChar }, 0, 1));
   }
 
-  public synchronized StringBuffer append (int i)
+  public StringBuffer append (int i)
   {
 	// Modified to expand the buffer...
 	// Conversion code lifted from Integer, could have just called
@@ -100,37 +100,38 @@ public final class StringBuffer
 	// how good the garbage collector is at the moment, so probably best
 	// to preserve the existing memory allocation behavior.
 	int q, r, charPos = buf.length; 
-    char sign = 0 ; 
+	char sign = 0 ; 
 
-    if (i == Integer.MIN_VALUE) return append(minInt);
+	if (i == Integer.MIN_VALUE) return append(minInt);
 
-    if (i < 0) { 
+	if (i < 0) { 
 	   sign = '-' ; 
 	   i = -i ; 
-    }
-
-    for (;;) { 
- 	  q = i/10; ; 
- 	  r = i-(q*10) ;
- 	  buf [--charPos] = (char) ((int) '0' + r) ; 
- 	  i = q ; 
- 	  if (i == 0) break ; 
-    }
-
-    if (sign != 0) {
-	  buf [--charPos] = sign ; 
-    }
-
-	// Will it fit in the existing space?
-	int len = buf.length - charPos;
-	if (len + curPos > characters.length) {
-      char [] nc = new char[curPos + len];
-      System.arraycopy (characters, 0, nc, 0, curPos);	
-	  characters = nc;
 	}
-	System.arraycopy(buf, charPos, characters, curPos, len);
-	curPos += len;
-	return this;
+	synchronized (buf) {
+	  for (;;) { 
+	    q = i/10; ; 
+	    r = i-(q*10) ;
+	    buf [--charPos] = (char) ((int) '0' + r) ; 
+	    i = q ; 
+	    if (i == 0) break ; 
+	  }
+
+	  if (sign != 0) {
+	    buf [--charPos] = sign ; 
+	  }
+
+	  // Will it fit in the existing space?
+	  int len = buf.length - charPos;
+	  if (len + curPos > characters.length) {
+		char [] nc = new char[curPos + len];
+		System.arraycopy (characters, 0, nc, 0, curPos);	
+		characters = nc;
+	  }
+	  System.arraycopy(buf, charPos, characters, curPos, len);
+	  curPos += len;
+	  return this;
+	}
   }
 
   public StringBuffer append (long aLong)
@@ -188,8 +189,8 @@ public final class StringBuffer
      *
      * @author Martin E. Nielsen
      **/
-    private synchronized StringBuffer append( float number, int significantDigits ) {
-
+    private StringBuffer append( float number, int significantDigits ) {
+	  synchronized(buf) {
 		int charPos = 0;
 		if ( number == 0 ) {
 			buf[ charPos++ ] = '0';
@@ -273,6 +274,7 @@ public final class StringBuffer
 			} // if
 		}
 		return this;
+	  }
     }
 }
 
