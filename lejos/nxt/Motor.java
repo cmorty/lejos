@@ -2,9 +2,6 @@ package lejos.nxt;
 import lejos.nxt.Battery;
 import lejos.util.*;
 
-
-
-
 /**
  * Abstraction for a NXT motor. Three instances of <code>Motor</code>
  * are available: <code>Motor.A</code>, <code>Motor.B</code>
@@ -34,11 +31,14 @@ import lejos.util.*;
  *   while(Motor.A.isRotating();
  *   int angle = Motor.A.getTachoCount(); // should be -360
  * </pre></code>
- * @author Roger Glassey revised 26 March 2007
+ * @author Roger Glassey revised 20 Dec 2007 - uses brake mode for better control
  */
 public class Motor extends BasicMotor// implements TimerListener
 {
    private TachoMotorPort _port;
+   /*
+    * default speed
+    */
    private int _speed = 360;
    private int _speed0 = 360;
    // used for speed regulation
@@ -58,15 +58,19 @@ public class Motor extends BasicMotor// implements TimerListener
    private boolean _rotating = false;
    private boolean _wasRotating = false;
    private boolean _rampUp = true;
+   /**
+    * used by timedOut to calculate actual speed;
+    */
    private int _lastTacho = 0;
+   /**
+    * set by timedOut
+    */
    private int _actualSpeed;
-   private float _voltage;
-
-
+   private float _voltage = 0f;
    /** initialized to be false(ramping enabled); changed only by smoothAcceleration
     */
    private boolean _noRamp = false;
-
+     
    /**
     * Motor A.
     */
@@ -85,9 +89,11 @@ public class Motor extends BasicMotor// implements TimerListener
    public Motor (TachoMotorPort port)
    {
       _port = port;
-      _voltage = Battery.getVoltage();
+      MotorPort p = (MotorPort)port;
+      p.setPWMMode(MotorPort.PWM_BRAKE);
       regulator.setDaemon(true);
       regulator.start();
+      while(_voltage < 1f );
    }
    public int getStopAngle() { return (int)_stopAngle;}
 
@@ -294,8 +300,7 @@ public class Motor extends BasicMotor// implements TimerListener
        */
       int calcPower(int speed)
       {   
-//       float pwr = 100 - 7.4f*Battery.getVoltage()+0.065f*speed;// no-load motor
-         float pwr = 100 - 7.4f*_voltage+0.065f*speed;
+         float pwr = 100 -12*_voltage + 0.12f*_speed;
          if(pwr<0) return 0;
          if(pwr>100)return 100;
          else return (int)pwr;
@@ -319,10 +324,10 @@ public class Motor extends BasicMotor// implements TimerListener
        */
       public void run()
       {
-         float e0 = 0;
-         float accel =2.f;// deg/sec/ms  was 1.5  5
+         float e0=0;
+         float accel = 0;// =8.f;// accel = _speed/(1000*ts);
          float power =  0;
-         int ts = 0;//time to reach speed
+         float ts = 200;//time to reach speed
          int tock = 100+ (int)System.currentTimeMillis(); // 
          int tick = (int)System.currentTimeMillis();  // loop once per ms
          while(_keepGoing)
@@ -336,97 +341,94 @@ public class Motor extends BasicMotor// implements TimerListener
                   tock+=100;
                   timedOut();
                }
-               if(_regulate && isMoving()) //regulate speed 
+               if(_rotating && _direction*(getTachoCount() - _stopAngle)>=0)  stopAtLimit();  // was >0
+               else if(_regulate && isMoving()) //regulate speed 
                {
                   int elapsed = (int)System.currentTimeMillis()-time0;
                   int angle = getTachoCount()-angle0;
                   int absA = angle;
                   if(angle<0)absA = -angle;
-                  while( angle < 2 && angle> -2 && tock > (int)System.currentTimeMillis() )//kick start
-                  {
-                     setPower(100);
-                     Thread.yield();
-                     angle = getTachoCount()-angle0;
-                  }
                   if(_rampUp)
                   {   
-                     ts = (int)(_speed/accel);
+                     ts = 130;// time to get up to speed
                      if(elapsed<ts)// not at speed yet
                      {
-                        // target distance = a * t * t/ 2 - maintain constant acceleration
-                        error = accel*elapsed * elapsed/2000 - absA;
+                        error = elapsed*elapsed/ts;  //assume acceleration decreases linearly
+                        error = error * (1 - elapsed/(3.0f*ts))*(_speed/1000f);
+                        error = error -absA;
                      }
                      else  // adjust elapsed time for acceleration time - don't try to catch up
                      {
-                        error = ((elapsed - ts/2)* _speed)/1000f - absA;
+                        error = ((elapsed - ts/3)* _speed)/1000f - absA;
                      }
                   }
                   else 	
                      error = (elapsed*_speed/1000f)- absA;
-                  power = basePower + 5f * error -2*e0;// +5f*e0;// -0.1f * e0;// magic numbers from experiment .75
+                  power = basePower + 10f * error;// -2*e0;//10 , -4// magic numbers from experiment .75
                   if(power<0) power = 0;
                   e0 = error;
-                  float smooth = 0.004f;// another magic number from experiment.0025
+                  float smooth = 0.008f;// another magic number from experiment.0025
                   basePower = basePower + smooth*(power-basePower); 
                   setPower((int)power);
                }// end speed regulation
                // stop at rotation limit angle
-               if(_rotating && _direction*(getTachoCount() - _stopAngle)>0)
-               {
-                  //if(!_wasRotating)_speed0 = _speed;
-                  _mode = 3; // stop motor
-                  _port.controlMotor (0, 3);
-                  int a = angleAtStop();//returns when motor has stopped
-                  int remaining = _limitAngle - a;
-                  if(_direction * remaining >3 ) // not yet done; don't call nudge for less than 3 deg
-                  {
-                     if(!_wasRotating)// initial call to rotate(); save state variables
-                     {
-                        _wasRegulating = _regulate;
-                        _regulate = true;
-                        _speed0 = _speed;
-                        setSpeed(300);//was 150
-                        _wasRotating = true;
-//                      limit = _limitAngle;
-                     }
-                     nudge(remaining,a); //another try
-                  }
-                  else //rotation complete;  restore state variables
-                  {	
-                     if (_wasRotating)
-                     {
-                        setSpeed(_speed0);//restore speed setting
-                        _wasRotating = false;
-                        _regulate = _wasRegulating;
-                     }
-                     _mode = 3; // stop motor  maybe redundant
-                     _port.controlMotor (0, _mode);
-                     _rotating = false;
-                  }
-               }// end if rotating
+      
             }// end if tick
             }// end synchronized block
          Thread.yield();
          }	// end keep going loop
       }
       /**
-       *helper method for run  - stop at limit angle branch
-       */ 
+       * helper method for run()
+       */
+      void stopAtLimit()
+      {
+         _mode = 3; // stop motor
+         _port.controlMotor (0, 3);
+         int a = angleAtStop();//returns w:hen motor has stopped
+         int remaining = _limitAngle - a;
+         if(_direction * remaining >2 ) // not yet done; don't call nudge for less than 3 deg
+         {                                                            
+            if(!_wasRotating)// initial call to rotate(); save state variables
+            {
+               _wasRegulating = _regulate;
+               _regulate = true;
+               _speed0 = _speed;
+               _wasRotating = true;
+            }
+            nudge(remaining,a); //another try
+         }
+         else //rotation complete;  restore state variables
+         { 
+            if (_wasRotating)
+            {
+               setSpeed(_speed0);//restore speed setting
+               _wasRotating = false;
+               _regulate = _wasRegulating;
+            }
+            _mode = 3; // stop motor  maybe redundant
+            _port.controlMotor (0, _mode);
+            _rotating = false;
+         }  
+      }
+      /**
+       *helper method for stopAtLimit() 
+       **/
       private void nudge(int remaining,int tachoCount)
       {
-
-         if(remaining>0)_mode = 1;
+         setSpeed(100);
+         if(remaining > 0)_mode = 1;
          else _mode = 2;	
          _port.controlMotor(_power, _mode);
          _direction = 3 - 2*_mode;
-         _stopAngle = tachoCount + remaining/3;
-         if(remaining < 3 && remaining > -3) _stopAngle += _direction; //nudge at least 1 deg
+         _stopAngle = tachoCount + remaining/2;
+         if(remaining < 2 && remaining > -2) _stopAngle += _direction; //nudge at least 1 deg
          _rotating = true;
          _rampUp = false;
          _regulate = true;
       }  
       /**
-       *helper method for run
+       *helper method for stopAtLimit
        **/
       int angleAtStop()
       {
@@ -503,12 +505,18 @@ public class Motor extends BasicMotor// implements TimerListener
    {
       return _speed;	  
    }
+   /**
+    * @return : 1 = forwardm, 2= backward, 3 = stop, 4 = float
+    */
    public int getMode() {return _mode;}
    public int getPower() { return _power;}
-
+   /**
+    * used by rotateTo to calculate stopAngle from limitAngle
+    * @return
+    */
    private int overshoot()
    {
-      return   (int)(5+ _speed*0.060f);//60?
+      return   (int)(3+ _speed*0.072f);//60?
    }
 
    /**
@@ -522,7 +530,7 @@ public class Motor extends BasicMotor// implements TimerListener
    }
 
    /**
-    *returns true when motor is rotating towarad a specified angle
+    *returns true when motor rotation task is not yet complete a specified angle
     */ 
    public boolean isRotating()
    {
@@ -530,14 +538,14 @@ public class Motor extends BasicMotor// implements TimerListener
    }
    public boolean isRegulating(){return _regulate;}
    /**
-    * requred by TimerListener interface
+   /* calculates  actual speed and updates battery voltage every 100 ms
     */
-   public void timedOut()
+   private void timedOut()
    {
       int angle = getTachoCount();
       _actualSpeed = 10*(angle - _lastTacho);
       _lastTacho = angle;
-      _voltage = Battery.getVoltage();
+      _voltage = Battery.getVoltage(); 
    }
 
    /** 
@@ -562,7 +570,15 @@ public class Motor extends BasicMotor// implements TimerListener
       _port.resetTachoCount();
    }
 
+   /**
+    * for degugging
+    * @return
+    */
    public float getError() {return regulator.error;}
+   /**
+    * for debugging
+    * @return
+    */
    public float getBasePower() {return regulator.basePower;}
 }
 
