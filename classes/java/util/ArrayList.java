@@ -153,14 +153,11 @@ public class ArrayList {
 
 	    	Object oldData[] = elementData;
 	    	elementData = new Object[newCapacity];
-	    	arraycopy(oldData, 0, elementData, 0, elementCount);
+	    	System.arraycopy(oldData, 0, elementData, 0, elementCount);
 	    }
 	}
 	
-	private void arraycopy(Object[] src, int srcOffset, Object[] dst, int dstOffset, int length) {
-		for (int i = 0; i < length; i++)
-			dst[i + dstOffset] = src[i + srcOffset];
-	}
+
 
 
 }

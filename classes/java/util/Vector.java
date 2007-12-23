@@ -171,7 +171,7 @@ public class Vector
 
       elementData = new Object[pNewCapacity];
 
-      arraycopy(oldData,0, elementData, 0, elementCount);
+      System.arraycopy(oldData,0, elementData, 0, elementCount);
 
 
 
@@ -381,7 +381,7 @@ public class Vector
 
       {
 
-        arraycopy(elementData, aIndex + 1, elementData, aIndex, j);
+        System.arraycopy(elementData, aIndex + 1, elementData, aIndex, j);
 
       }
 
@@ -453,7 +453,7 @@ public class Vector
 
       Object[] pNewElements = new Object[pNewCapacity];
 
-      arraycopy (elementData, 0, pNewElements, 0, elementData.length);
+      System.arraycopy (elementData, 0, pNewElements, 0, elementData.length);
 
       elementData = pNewElements;*/
 
@@ -487,7 +487,7 @@ public class Vector
 
     Object[] result = new Object[elementCount];
 
-    arraycopy(elementData, 0, result, 0, elementCount);
+    System.arraycopy(elementData, 0, result, 0, elementCount);
 
     return result;
 
@@ -531,23 +531,11 @@ public class Vector
 
       elementData = new Object[elementCount];
 
-      arraycopy(oldData, 0, elementData, 0, elementCount);
+      System.arraycopy(oldData, 0, elementData, 0, elementCount);
 
     }
 
   }
-
-  static void arraycopy (Object[] src, int srcoffset, Object[] dest, int destoffset, int length)
-
-    {
-
-      for (int i = 0; i < length; i++)
-
-        dest[i + destoffset] = src[i + srcoffset];
-
-  }
-
-  //private native void arraycopy (Object aSource, int aOffset1, Object aDest, int aOffset2, int aLength);
 
 }
 

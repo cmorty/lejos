@@ -11,12 +11,7 @@ public final class System
    * Copies one array to another.
    */
   public static native void arraycopy (Object src, int srcOffset, Object dest, int destOffset, int length);
-  
-  static void arraycopy (char[] src, int srcOffset, char[] dest, int destOffset, int length)
-  {
-    for (int i = 0; i < length; i++)
-      dest[i + destOffset] = src[i + srcOffset]; 
-  }
+
 
   /**
    * Terminate the application.
