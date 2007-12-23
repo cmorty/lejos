@@ -68,5 +68,9 @@
  */
 #define GARBAGE_COLLECTOR                1
 
+/**
+ * Max number of VM objects that we need to protect, from the gc.
+ */
+#define MAX_VM_REFS                      8
 
 #endif

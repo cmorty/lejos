@@ -5,7 +5,10 @@
 case OP_NEWARRAY:
   // Stack size: unchanged
   // Arguments: 1
-  set_top_ref (obj2ref(new_primitive_array (*pc++, get_top_word())));
+  tempStackWord = obj2ref(new_primitive_array (*pc++, get_top_word()));
+  // Do not modify the stack if an exception has been thrown
+  if (tempStackWord != JNULL)
+    set_top_ref(tempStackWord);
   // Exceptions are taken care of
   goto LABEL_ENGINELOOP;
 case OP_MULTIANEWARRAY:
@@ -13,9 +16,13 @@ case OP_MULTIANEWARRAY:
   // Arguments: 3
   tempByte = pc[2] - 1;
   tempBytePtr = (byte *) new_multi_array (pc[0], pc[1], pc[2], get_stack_ptr() - tempByte);
-  pop_words (tempByte);
-  set_top_ref (ptr2ref (tempBytePtr));
-  pc += 3;
+  // Must not modify either the stack or the pc if an exception has been thrown
+  if (tempBytePtr != JNULL)
+  {
+    pop_words (tempByte);
+    pc += 3;
+    set_top_ref (ptr2ref (tempBytePtr));
+  }
   goto LABEL_ENGINELOOP;
 case OP_AALOAD:
   // Stack size: -2 + 1
