@@ -69,7 +69,7 @@ static TWOBYTES memory_free;    /* total number of free words in heap */
 
 extern void deallocate (TWOBYTES *ptr, TWOBYTES size);
 extern TWOBYTES *allocate (TWOBYTES size);
-extern Object *protectedRef;
+Object *protectedRef[MAX_VM_REFS];
 
 /**
  * @param numWords Number of 2-byte words used in allocating the object.
@@ -283,8 +283,8 @@ Object *new_multi_array (byte elemType, byte totalDimensions,
 
   #ifdef WIMPY_MATH
   Object *aux;
-  TWOBYTES ne;
   #endif
+  TWOBYTES ne;
 
   #ifdef VERIFY
   assert (totalDimensions >= 1, MEMORY6);
@@ -294,13 +294,17 @@ Object *new_multi_array (byte elemType, byte totalDimensions,
   #if 0
   printf ("new_multi_array (%d, %d, %d)\n", (int) elemType, (int) totalDimensions, (int) reqDimensions);
   #endif
-
   if (reqDimensions == 0)
     return JNULL;
 
   #if 0
   printf ("num elements: %d\n", (int) *numElemPtr);
   #endif
+  if (totalDimensions >= MAX_VM_REFS)
+  {
+    throw_exception (outOfMemoryError);
+    return JNULL;
+  }
 
   if (totalDimensions == 1)
     return new_primitive_array (elemType, *numElemPtr);
@@ -309,23 +313,26 @@ Object *new_multi_array (byte elemType, byte totalDimensions,
   ref = new_primitive_array (T_REFERENCE, *numElemPtr);
   if (ref == JNULL)
     return JNULL;
-
-  while ((*numElemPtr)--)
+  // Make sure we protect each level from the gc. Once we have returned
+  // the ref it will be protected by the level above.
+  protectedRef[totalDimensions] = ref;
+  
+  ne = *numElemPtr;
+  while (ne--)
   {
     #ifdef WIMPY_MATH
 
     aux = new_multi_array (elemType, totalDimensions - 1, reqDimensions - 1,
       numElemPtr + 1);
-    ne = *numElemPtr;
     ref_array(ref)[ne] = ptr2word (aux);
 
     #else
 
-    ref_array(ref)[*numElemPtr] = ptr2word (new_multi_array (elemType, totalDimensions - 1, reqDimensions - 1, numElemPtr + 1));
+    ref_array(ref)[ne] = ptr2word (new_multi_array (elemType, totalDimensions - 1, reqDimensions - 1, numElemPtr + 1));
 
     #endif // WIMPY_MATH
   }
-
+  protectedRef[totalDimensions] = JNULL;
 
   return ref;
 }
@@ -566,7 +573,6 @@ static TWOBYTES *try_allocate (TWOBYTES size)
     while (ptr < regionTop) {
       TWOBYTES blockHeader = *ptr;
 
-
       if (blockHeader & IS_ALLOCATED_MASK) {
         /* jump over allocated block */
         TWOBYTES s = (blockHeader & IS_ARRAY_MASK) 
@@ -581,7 +587,7 @@ static TWOBYTES *try_allocate (TWOBYTES size)
       {
         if (size <= blockHeader) {
           /* allocate from this block */
-
+#if GARBAGE_COLLECTOR == 0
 #if COALESCE
           {
             TWOBYTES nextBlockHeader;
@@ -605,6 +611,7 @@ static TWOBYTES *try_allocate (TWOBYTES size)
               *ptr = blockHeader;
             }
           }
+#endif
 #endif
           if (size < blockHeader) {
             /* cut into two blocks */
@@ -867,8 +874,9 @@ static void mark_local_objects()
   // Make sure the stack frame for the current thread is up to date.
   StackFrame *currentFrame = current_stackframe();
   if (currentFrame != null) update_stack_frame(currentFrame);
-  // If needed make sure we protect the VM temporary reference
-  if (protectedRef != JNULL) mark_object(protectedRef);
+  // If needed make sure we protect the VM temporary references
+  for(i=0; i < MAX_VM_REFS; i++)
+    if (protectedRef[i] != JNULL) mark_object(protectedRef[i]);
 
   for( i = 0; i < MAX_PRIORITY; i ++)
   {
@@ -1042,8 +1050,8 @@ static void sweep_heap_objects( void)
 #endif
   {
     TWOBYTES* ptr = &(region->contents);
+    TWOBYTES* fptr = null;
     TWOBYTES* regionTop = region->end;
-
     while( ptr < regionTop)
     {
       TWOBYTES blockHeader = *ptr;
@@ -1057,16 +1065,24 @@ static void sweep_heap_objects( void)
           
         // Round up according to alignment
         size = (size + (MEMORY_ALIGNMENT-1)) & ~(MEMORY_ALIGNMENT-1);
+        sweep_object( (Object*) ptr, size);
+        blockHeader = *ptr;
       }
       else
       {
         /* continue searching */
         size = blockHeader;
       }
-
-      if( blockHeader & IS_ALLOCATED_MASK)
-        sweep_object( (Object*) ptr, size);
-
+      if( !(blockHeader & IS_ALLOCATED_MASK))
+      {
+        // Got a free block can we merge?
+        if (fptr != null)
+          *fptr += size;
+        else
+          fptr = ptr;
+      }
+      else
+          fptr = null;
       ptr += size;
     }
   }

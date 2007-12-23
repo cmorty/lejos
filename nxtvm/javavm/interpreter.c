@@ -44,7 +44,6 @@ ConstantRecord *tempConstRec;
 STACKWORD tempStackWord;
 STACKWORD *tempWordPtr;
 JSHORT tempInt;
-Object *protectedRef = JNULL;
   
 /**
  * Assumes pc points to 2-byte offset, and jumps.
@@ -101,9 +100,9 @@ static inline Object *create_string (ConstantRecord *constantRecord,
   if (ref == JNULL)
     return JNULL;
   // Guard the partially created object against the GC
-  protectedRef = ref;
+  protectedRef[0] = ref;
   arr = new_primitive_array (T_CHAR, constantRecord->constantSize);
-  protectedRef = JNULL;
+  protectedRef[0] = JNULL;
   if (arr == JNULL)
   {
     deallocate (obj2ptr(ref), class_size (JAVA_LANG_STRING));    
