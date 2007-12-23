@@ -11,8 +11,8 @@ import javax.microedition.io.*;
 public class BTConnection implements StreamConnection {
 	private int handle;
 	private boolean open, streamOpen;
-	private BTInputStream is = new BTInputStream();
-	private BTOutputStream os = new BTOutputStream();
+	private InputStream is = null;
+	private OutputStream os = null;
 	
 	/**
 	 * Create a connection for the given handle.
@@ -20,7 +20,7 @@ public class BTConnection implements StreamConnection {
 	 * @param handle the handle for the connection
 	 *
 	 */
-	BTConnection(int handle)
+	public BTConnection(int handle)
 	{
 		this.handle = handle;
 		open = true;
@@ -44,7 +44,7 @@ public class BTConnection implements StreamConnection {
 	 * @return the data input stream
 	 */
 	public DataInputStream openDataInputStream() throws IOException {
-		return new DataInputStream(is);
+		return new DataInputStream(openInputStream());
 	}
 
 	/**
@@ -53,7 +53,7 @@ public class BTConnection implements StreamConnection {
 	 * @return the data output stream
 	 */
 	public DataOutputStream openDataOutputStream() throws IOException {
-		return new DataOutputStream(os);
+		return new DataOutputStream(openOutputStream());
 	}
 
 	/**
@@ -62,7 +62,7 @@ public class BTConnection implements StreamConnection {
 	 * @return the input stream
 	 */
 	public InputStream openInputStream() throws IOException {
-		return is;
+		return (is != null ? is : new BTInputStream());
 	}
 
 	/**
@@ -72,7 +72,7 @@ public class BTConnection implements StreamConnection {
 	 * 
 	 */
 	public OutputStream openOutputStream() throws IOException {
-		return os;
+		return (os != null ? os : new BTOutputStream());
 	}
 	
 	/**
