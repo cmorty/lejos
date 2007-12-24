@@ -1,6 +1,5 @@
 import lejos.nxt.*;
 import lejos.util.*;
-import lejos.nxt.comm.*;
 
 /**
  * Test of the DataLogger class. Logs 600 floating point 
