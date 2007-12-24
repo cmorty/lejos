@@ -1,6 +1,4 @@
-
- 
-import lejos.subsumption.*;
+package lejos.subsumption;
 
 /**
  * This interface works with Aribtrator2. 
