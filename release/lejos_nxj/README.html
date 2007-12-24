@@ -210,8 +210,6 @@ Due to size constraints, some Java language
 features have been omitted. Others just haven't been implemented yet.
 Known limitations with all versions of leJOS are: </a>
 <ul>
-  <li>Garbage collection is not performed yet.
-Hence, the number of objects in your program should be limited</li>
   <li>Switch statements are not supported</li>
   <li>Arithmetic operations on variables of type long are not
 supported, although you can cast ints to longs and vice versa</li>
@@ -247,25 +245,15 @@ initialized, when multiple threads use a class</li>
 <ul>
 <li>Occasionally, after flashing the firmware with with nxjflash, the battery level reads as 0.0 and buttons do not respond. If this happens, a battery must be removed and re-inserted. It is not necessary to repeat the nxjflash.
 </li>
-<li>leJOS NXJ does not work on Windows Vista systems. There are possible circumventions for Vista 32-bit systems, but not for Vista 64-bit systems. This is due to limitations in libusb-win32 that the leJOS  NXJ Windows USB tools, including nxjflash, rely on
+<li>leJOS NXJ does not work very well on Windows Vista systems. This is due to limitations in libusb-win32 that the leJOS  NXJ Windows USB tools, including nxjflash, rely on. Installing libusb in windows XP compatibility mode may cure the problem.
 </li>
 <li>Occasionally, after pressing the orange (ENTER) button to start leJOS NXJ, the LCD remains blank. If this occurs, and is not due to low batteries, it is necessary to shut down leJOS, by pressing the orange and dark gray buttons (ENTER + ESCAPE), and try again.
 </li>
 <li>When plugging in the USB cable, or starting leJOS NXJ with the cable plugged in, the keys on the NXT do not respond for several seconds. This particularly affects Windows systems, and may be dependent on the speed of the host PC.
 </li>
-<li>I2C sensors such as the Ultrasonic sensor do not work in port 4.
-</li>
-<li>The Ultrasonic sensor needs a gap of at least 200 milliseconds between calls of getDistance().
-</li>
-<li>I2C writes are not supported. This means that I2C multplexers and similar sensors that require data to be written to them are not supported. It also means that callibrarion of I2C sensors is not supported.
-</li>
-<li>The light sensor does not seem to work correctlly on port 4. The floodlight does not come on.
-</li>
-<li>Multidimensional arrays of objects do not work correctly. They can cause exceptions, data aborts and other problems.
-</li>
 <li>Turning off Bluetooth is on the Bluetooth menu, but not functional.
 </li>
-<li>leJOS NXJ closes down five seconds after a user program exits.  Press ENTER to restart it.
+<li>leJOS NXJ closes down after a user program exits.  Press ENTER to restart it.
 </li>
 <li>Only one file can be open at a time.
 </li>
@@ -285,12 +273,12 @@ initialized, when multiple threads use a class</li>
 </li>
 <li>Java streams over USB are never closed down, and are always open.
 </li>
-<li>The RCX limitations of the Java VM also apply to NXJ. In particular, there is no garbage collection.
+<li>The RCX limitations of the Java VM also apply to NXJ.
 </li>
 <li>LCD text and graphics modes do not mix very well. 
 <li>Sound volume cannot be controlled.
 </li>
-<li>Support for sound sample files is a bit primitive.
+<li>Support for sound sample files is limited.
 </li>
 <li>The name of a NXT can be changed using nxjbrowse over a USB connection. If this is attempted over a Bluetooth connection it may apprear to work, but will not.
 </li>
@@ -305,8 +293,6 @@ initialized, when multiple threads use a class</li>
 <li>No buzz occurs when an exception happens (as it does on the RCX).
 </li>
 <li>Data aborts occur if there is a failure in the NXJ VM. If a data abort occurs, it is necessary to remove and re-insert a battery.
-</li>
-<li>Some aspects of leJOS NXJ are much slower than they should be. In particular, a future release will make refreshing the LCD display much faster.
 </li>
 <li>leJOS NXJ does not work with the LEGO Mindstorms PC software, or the LEGO Mindstorms Fantom API.
 </li>
