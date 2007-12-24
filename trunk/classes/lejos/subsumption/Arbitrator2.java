@@ -1,4 +1,4 @@
-//import lejos.nxt.*;
+package lejos.subsumption;
     
 
 /**
