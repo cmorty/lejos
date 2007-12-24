@@ -1,6 +1,25 @@
 import lejos.pc.comm.*;
 import java.io.*;
  
+/**
+ * This is a PC sample. It connects to the NXT, and then
+ * sends an integer and waits for a reply, 100 times.
+ * 
+ * Compile this program with javac (not nxjc), and run it 
+ * with java.
+ * 
+ * You need pccomm.jar on the CLASSPATH and the jlibnxt
+ * DLL or shared library on the Java library path.
+ * 
+ * Run the program by:
+ * 
+ *   java USBSend
+ * 
+ * Your NXT should be running a sample such as USBReceive. 
+ * 
+ * @author Lawrie Griffiths
+ *
+ */
 public class USBSend {
 	
 	public static void main(String[] args) {
@@ -33,9 +52,7 @@ public class USBSend {
 		for(int i=0;i<100;i++) 
 		{
 			try {
-//				os.write(i);
 			   outDat.writeInt(i);
-//				os.flush();
 			   outDat.flush();
 	
 			} catch (IOException ioe) {
@@ -46,6 +63,13 @@ public class USBSend {
 	           System.out.println(ioe);
 	         }            
 	       System.out.println("Sent "+i+ " Received "+x);
+		}
+		
+		try {
+			inDat.close();
+			outDat.close();
+		} catch (IOException ioe) {
+			System.out.println(ioe);
 		}
 		
 		try {
