@@ -121,16 +121,16 @@ public class Sound
    * Internal method used to play sound sample from a file
    * @param page the start page of the file
    * @param len the length of the file
-   * @param freq the frequency
-   * @param vol the volume
+   * @param freq the frequency up to 5866. Try using 2500.
+   * @param vol the volume 1000 corresponds to 100%, 100 to 10%, 2500 to 250%
    */
   public static native void playSample(int page, int len, int freq, int vol);
   
   /**
    * 
    * @param file the 8-bit PWM (WAV) sample file
-   * @param freq the average frequency to play the sample at
-   * @param vol the sound volume
+   * @param freq the frequency up to 5866. Try using 2500.
+   * @param vol the volume 1000 corresponds to 100%, 100 to 10%, 2500 to 250%
    */
   public static void playSample(File file, int freq, int vol) {
 	  playSample(file.getPage(), file.length(), freq, vol);
