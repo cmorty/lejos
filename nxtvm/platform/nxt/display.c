@@ -1,7 +1,8 @@
 #include "display.h"
 #include "nxt_lcd.h"
 #include "systick.h"
-
+#include "constants.h"
+#include "classes.h"
 #include <string.h>
 
 
@@ -11,9 +12,16 @@
 /* NOTE
  * The following buffer is declared with one extra line (the +1).
  * This is to allow fast dma update of the screen (see nxt_spi.c
- * for details). 
+ * for details). The buffer is now created wrapped inside of a Java
+ * array. This allows the buffer to be shared with Java applications.
  */
-static U8 display_buffer[DISPLAY_DEPTH+1][DISPLAY_WIDTH];
+//static U8 display_buffer[DISPLAY_DEPTH+1][DISPLAY_WIDTH];
+static struct
+{
+  Object hdr;
+  U8 display[DISPLAY_DEPTH+1][DISPLAY_WIDTH];
+} __attribute__((packed)) display_array;
+static U8 (*display_buffer)[DISPLAY_WIDTH] = display_array.display;
 
 /* Font table for a 5x8 font. 1 pixel spacing between chars */
 #define N_CHARS 128
@@ -153,25 +161,27 @@ static const U8 font[N_CHARS][FONT_WIDTH] = {
 /* 0x7F */ {0x3E, 0x36, 0x2A, 0x36, 0x3E},
 };
 
-
+int displayTick = 0;
 
 void
 display_update(void)
 {
-  nxt_lcd_data((U8 *) display_buffer);
+  displayTick = 0;
+  nxt_lcd_update();
 }
 
 void display_force_update(void)
 {
   // Force a display update even if interrupts are disabled
-  nxt_lcd_force_update((U8 *) display_buffer);
+  nxt_lcd_force_update();
 }
 
 
 void
 display_clear(U32 updateToo)
 {
-  memset(display_buffer, 0, sizeof(display_buffer));
+  //memset(display_buffer, 0, sizeof(display_buffer));
+  memset(display_buffer, 0, DISPLAY_WIDTH*DISPLAY_DEPTH);
   if (updateToo)
     display_update();
 }
@@ -332,11 +342,28 @@ display_get_buffer(void)
   return (U8 *)display_buffer;
 }
 
+STACKWORD
+display_get_array(void)
+{
+  return (STACKWORD)ptr2word(&display_array);
+}
+
 void
 display_init(void)
 {
-  nxt_lcd_init();
-  display_clear(1);
+  // Initialise the array parameters so that the display can
+  // be memory mapped into the Java address space
+  display_array.hdr.flags.arrays.isArray = 1;
+  // NOTE This object must always be marked, otherwise very, very bad
+  // things will happen!
+  display_array.hdr.flags.arrays.mark = 1;
+  display_array.hdr.flags.arrays.length = 200;
+  display_array.hdr.flags.arrays.isAllocated = 1;
+  display_array.hdr.flags.arrays.type = T_INT;
+  display_array.hdr.monitorCount = 0;
+  display_array.hdr.threadId = 0;
+  display_clear(0);
+  nxt_lcd_init((U8 *)display_buffer);
 }
 
 void
@@ -344,7 +371,7 @@ display_test(void)
 {
   int iterator = 0;
 
-  nxt_lcd_init();
+  nxt_lcd_init((U8 *)display_buffer);
   while (1) {
     display_clear(0);
     display_goto_xy(iterator, 0);

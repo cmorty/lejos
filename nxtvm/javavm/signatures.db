@@ -134,6 +134,8 @@ btPending()I
 #java.lang.System
 arraycopy(Ljava/lang/Object;ILjava/lang/Object;II)V
 
+#lejos.nxt.LCD
+getDisplay()[I
 
 
 
