@@ -28,4 +28,6 @@ void display_test(void);
 
 U8 *display_get_buffer(void);
 
+extern int displayTick;
+
 #endif

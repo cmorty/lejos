@@ -76,6 +76,7 @@ public interface SpecialSignatureConstants {
     "btWrite([BII)I",
     "btRead([BII)I",
     "btPending()I",
-    "arraycopy(Ljava/lang/Object;ILjava/lang/Object;II)V"
+    "arraycopy(Ljava/lang/Object;ILjava/lang/Object;II)V",
+    "getDisplay()[I"
   };
 }

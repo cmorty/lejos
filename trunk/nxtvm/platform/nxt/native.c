@@ -28,6 +28,8 @@
 #include "udp.h"
 #include "flashprog.h"
 int pos = 0;
+// Declared below to avoid needing STACKWORD everywhere we use display
+extern STACKWORD display_get_array(void);
 /**
  * NOTE: The technique is not the same as that used in TinyVM.
  */
@@ -193,6 +195,9 @@ dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
       for (i = 0; i < 200; i++)
 	display_buffer[i] = intArray[i];
     }
+    return;
+  case getDisplay_4_5_1I:
+    push_word(display_get_array());
     return;
   case getVoltageMilliVolt_4_5I:
     push_word(battery_voltage());

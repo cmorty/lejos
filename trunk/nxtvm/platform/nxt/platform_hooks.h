@@ -10,6 +10,7 @@
 #  include "interpreter.h"
 
 #  include "poll.h"
+#  include "display.h"
 
 extern void poll_sensors(void);
 
@@ -33,6 +34,8 @@ tick_hook(void)
     poll_sensors();
     poll_inputs();
   }
+  if (displayTick++ > 250)
+    display_update();
 }
 
 static inline void

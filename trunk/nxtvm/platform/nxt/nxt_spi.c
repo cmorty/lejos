@@ -31,9 +31,9 @@
 #define CS_PIN	(1<<10)
 #define CD_PIN  (1<<12)
 const U8 *display = (U8 *) 0;
-U8 dirty = 0;
-U8 page = 0;
-const U8 *data = (U8 *) 0;
+volatile U8 dirty = 0;
+volatile U8 page = 0;
+volatile const U8 *data = (U8 *) 0;
 U8 mode = 0xff;
 
 extern void spi_isr_entry(void);
@@ -65,20 +65,19 @@ spi_isr_C(void)
   if (page == 0)
   {
     /* Check to see if we have data to display */
-    data = (U8 *)0;
-    if (dirty)
+    if (dirty == 1)
     {
-      /* mark as now clean */
-      dirty = 0;
       data = display;
+      dirty = 2;
     }
-    /* Do we really have something to do? */
-    if (!data)
+    else
     {
       /* No so turn things off. It will get re-set if we ever have anything
          to display
       */
       *AT91C_SPI_IDR = AT91C_SPI_ENDTX;
+      /* mark as now clean */
+      dirty = 0;
       return;
     }
   }
@@ -173,13 +172,26 @@ nxt_spi_write(U32 CD, const U8 *data, U32 nBytes)
 }
 
 void
-nxt_spi_refresh(const U8 *disp)
+nxt_spi_set_display(const U8 *disp)
 {
-  /* Request the start of a dma refresh of the display */
-  /* it is really only safe to set the display once. Should probably
+  /* Set the display buffer to be used for dma refresh.
+   * it is really only safe to set the display once. Should probably
    * sort this out so that it is set separately from requesting a refresh
    */
   if (!display) display = disp;
+  //dirty = 1;
+  //*AT91C_SPI_IER = AT91C_SPI_ENDTX;
+}
+
+void
+nxt_spi_refresh(void)
+{
+  /* Request the start of a dma refresh of the display 
+   * if the display has not been set we have nothing to do.
+   */
+  if (!display || dirty) return;
   dirty = 1;
   *AT91C_SPI_IER = AT91C_SPI_ENDTX;
 }
+
+
