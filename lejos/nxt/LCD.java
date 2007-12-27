@@ -1,3 +1,4 @@
+
 package lejos.nxt;
 
 /**
@@ -149,9 +150,11 @@ public class LCD {
 		/* 0x7E */ {0x00, 0x07, 0x00, 0x07, 0x00},
 		/* 0x7F */ {0x3E, 0x36, 0x2A, 0x36, 0x3E},
 	};
-
-	private static int [] displayBuf = new int[200];
-
+	public static native int [] getDisplay();
+	// Use shared display buffer. Switch over next two lines to go back to old
+	// way
+	//private static int [] displayBuf = new int[200];
+	private static int [] displayBuf = getDisplay();
 	/**
 	 * Method to set a pixel to screen.
 	 * @author BB
@@ -203,6 +206,7 @@ public class LCD {
 	
 	public static void setDisplay() {
 		setDisplay(displayBuf);
+		refresh();
 	}
 
 	/**
