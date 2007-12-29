@@ -177,6 +177,7 @@ public class File {
 		// 4. Make this file.exists = false;
 		this.exists = false;
 		this.file_length = 0;
+		File.defrag();
 		return true;
 	}
 
