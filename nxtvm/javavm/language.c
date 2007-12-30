@@ -25,6 +25,11 @@
 
 void *installedBinary;
 
+#if EXECUTE_FROM_FLASH
+byte *classStaticStateBase;
+byte *classStatusBase;
+#endif
+
 // Temporary globals:
 
 // (Gotta be careful with these; a lot of stuff

@@ -36,8 +36,11 @@ case OP_PUTSTATIC:
     printf ("---  GET/PUTSTATIC --- (%d, %d)\n", (int) pc[0], (int) pc[1]);
     #endif
 
-    if (dispatch_static_initializer (get_class_record (pc[0]), pc - 1))
-      goto LABEL_ENGINELOOP;
+#if EXECUTE_FROM_FLASH
+    if (!is_initialized_idx (pc[0]))
+#endif
+      if (dispatch_static_initializer (get_class_record (pc[0]), pc - 1))
+        goto LABEL_ENGINELOOP;
 
     fieldRecord = ((STATICFIELD *) get_static_fields_base())[pc[1]];
 

@@ -87,6 +87,23 @@ void run(void)
   #endif
 
   init_poller();
+
+#if EXECUTE_FROM_FLASH
+  {
+    MasterRecord *mrec = get_master_record();
+    int staticSize = mrec->staticStateLength;
+    int statusSize = (mrec->lastClass + 1) * sizeof( classStatusBase[0]);
+
+    staticSize = (staticSize + 1) & ~(1);
+    statusSize = (statusSize + 3) & ~(3);
+
+    classStaticStateBase = malloc( staticSize * 2);
+    classStatusBase = malloc( statusSize);
+
+    memset( classStatusBase, 0, statusSize);
+  }
+#endif
+
   // Initialize binary image state
   initialize_binary();
 

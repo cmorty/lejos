@@ -121,9 +121,31 @@ assert_hook(boolean aCond, int aCode)
 void
 run(int jsize)
 {
+  byte *ram_end = (byte *) (&__free_ram_end__);
+  byte *ram_start = (byte *) (&__free_ram_start__);
+
   init_poller();
 
   //printf("Initializing Binary\n");
+
+#if EXECUTE_FROM_FLASH
+  {
+    MasterRecord *mrec = get_master_record();
+    int staticSize = mrec->staticStateLength;
+    int statusSize = (mrec->lastClass + 1) * sizeof( classStatusBase[0]);
+
+    staticSize = (staticSize + 1) & ~(1);
+    statusSize = (statusSize + 3) & ~(3);
+
+    ram_end -= staticSize * 2;
+    classStaticStateBase = ram_end;
+
+    ram_end -= statusSize;
+    classStatusBase = ram_end;
+
+    memset( classStatusBase, 0, statusSize);
+  }
+#endif
 
   // Initialize binary image state
   initialize_binary();
@@ -132,15 +154,15 @@ run(int jsize)
 
   // Initialize memory
   {
-    byte *ram_end = (byte *) (&__free_ram_end__);
-    byte *ram_start = (byte *) (&__free_ram_start__);
-    int size;
+    //int size;
 
+#if ! EXECUTE_FROM_FLASH
     // Skip java binary if it is an top of ram
-
     if (jsize > 0)
       ram_end -= (jsize + 4);
-    size = ((unsigned) ram_end) - ((unsigned) ram_start);
+#endif
+
+    //size = ((unsigned) ram_end) - ((unsigned) ram_start);
 
     memory_init();
 
@@ -148,9 +170,9 @@ run(int jsize)
     memory_add_region(region, (byte *) ram_end);
 
     /*Add extra RAM if available */
-    ram_end = (byte *) (&__extra_ram_end__);
-    ram_start = (byte *) (&__extra_ram_start__);
-    size = ((unsigned) ram_end) - ((unsigned) ram_start);
+    //ram_end = (byte *) (&__extra_ram_end__);
+    //ram_start = (byte *) (&__extra_ram_start__);
+    //size = ((unsigned) ram_end) - ((unsigned) ram_start);
 
     //if(size > 0)
     //  memory_add_region(ram_start, ram_end);
@@ -188,6 +210,21 @@ nxt_main(int bin, int size)
   const char *binary; 
   unsigned *temp;
 
+#if EXECUTE_FROM_FLASH
+  if (bin > 0) {
+    size = (size + 3) & ~3;
+  	binary = (char *) bin;
+  	jsize = size - 4;
+  } else {
+    // Execute flash menu
+
+    bin = (unsigned *) 0x00108000;
+    size = *((unsigned *) 0x0010fffc);
+    size = (size + 3) & ~3;
+  	binary = (char *) bin;
+    jsize = size - 4;
+  }
+#else
   if (bin > 0) {
     size = (size + 3) & ~3;
   	temp = ((unsigned *) (&__free_ram_end__)) - (size >> 2);
@@ -205,6 +242,7 @@ nxt_main(int bin, int size)
     binary = ((char *) temp);
     jsize = size - 4;
   }
+#endif
   
   // reset all motors, sensors and devices
 

@@ -1,6 +1,8 @@
 #ifndef _TYPES_H
 #define _TYPES_H
 
+#include "configure.h"
+
 #include "platform_config.h"
 
 typedef byte boolean;
@@ -38,8 +40,14 @@ typedef struct
 #error LITTLE_ENDIAN not defined in platform_config.h
 #endif
 
+#ifndef jfloat2word
 #define jfloat2word(FLOAT_) (((AuxConvUnion1) (FLOAT_)).sword)
+#endif
+
+#ifndef word2jfloat
 #define word2jfloat(WORD_)  (((AuxConvUnion1) (WORD_)).fnum)
+#endif
+
 #define byte2jint(BYTE_)    ((JINT) (signed char) (BYTE_))
 #define word2jint(WORD_)    ((JINT) (WORD_))
 #define word2jshort(WORD_)  ((JSHORT) (WORD_))
