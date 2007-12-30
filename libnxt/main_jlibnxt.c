@@ -42,7 +42,7 @@ void throwIOException(JNIEnv *env, char *msg)
 	return;
 }
 
-JNIEXPORT jint JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1find(JNIEnv *env, jobject obj) {
+JNIEXPORT jlong JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1find(JNIEnv *env, jobject obj) {
   nxt_t *nxt;
   nxt_error_t nxt_err;
 	
@@ -51,20 +51,20 @@ JNIEXPORT jint JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1find(JNIEnv *en
   if (nxt_err == NXT_OK) {
     nxt_err = nxt_find(nxt);
     if (nxt_err == NXT_OK && !(nxt_in_reset_mode(nxt))) {
-      return (jint) nxt;
+      return (jlong) (unsigned long) nxt;
     }
   }
-  return 0;
+  return (jlong) 0;
 }
 
-JNIEXPORT jint JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1open(JNIEnv *env, jobject obj, jint nxt)  {
-  return (jint) nxt_open0( (nxt_t *) nxt); 
+JNIEXPORT jint JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1open(JNIEnv *env, jobject obj, jlong nxt)  {
+  return (jint) nxt_open0( (nxt_t *) (unsigned long) nxt); 
 }
 
-JNIEXPORT void JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1close(JNIEnv *env, jobject obj, jint nxt)  {
+JNIEXPORT void JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1close(JNIEnv *env, jobject obj, jlong nxt)  {
   nxt_error_t nxt_err;
   
-  nxt_err = nxt_close0( (nxt_t *) nxt); 
+  nxt_err = nxt_close0( (nxt_t *) (unsigned long) nxt); 
   
   if (nxt_err != NXT_OK) {
     throwIOException(env,"Close failed");
@@ -72,13 +72,13 @@ JNIEXPORT void JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1close(JNIEnv *e
    
 }
 
-JNIEXPORT void JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1send_1data(JNIEnv *env, jobject obj, jint nxt, jbyteArray data)  {
+JNIEXPORT void JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1send_1data(JNIEnv *env, jobject obj, jlong nxt, jbyteArray data)  {
   nxt_error_t nxt_err;
 
   jsize len2 = (*env)->GetArrayLength(env, data);
   char *elements2 = (char *) (*env)->GetByteArrayElements(env, data, 0);  
 
-  nxt_err = nxt_send_buf((nxt_t *) nxt, elements2, len2);
+  nxt_err = nxt_send_buf((nxt_t *) (unsigned long) nxt, elements2, len2);
   
   if (nxt_err != NXT_OK) {
     throwIOException(env,"Send failed");
@@ -87,14 +87,14 @@ JNIEXPORT void JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1send_1data(JNIE
   (*env)->ReleaseByteArrayElements(env, data, (jbyte *) elements2, 0);
 }
 
-JNIEXPORT jbyteArray JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1read_1data(JNIEnv *env, jobject obj, jint nxt, jint len)  {
+JNIEXPORT jbyteArray JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1read_1data(JNIEnv *env, jobject obj, jlong nxt, jint len)  {
   nxt_error_t nxt_err;
   char *data;
   jbyteArray jb;
 
   data = (char *) calloc(1, len);
   
-  nxt_err = nxt_recv_buf((nxt_t *) nxt, data, len); // read data
+  nxt_err = nxt_recv_buf((nxt_t *) (unsigned long) nxt, data, len); // read data
   
   if (nxt_err != NXT_OK) {
     throwIOException(env,"Read failed");
