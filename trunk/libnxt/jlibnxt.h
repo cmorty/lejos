@@ -10,42 +10,42 @@ extern "C" {
 /*
  * Class:     lejos_pc_comm_NXTCommLibnxt
  * Method:    jlibnxt_find
- * Signature: ()I
+ * Signature: ()J
  */
-JNIEXPORT jint JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1find
+JNIEXPORT jlong JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1find
   (JNIEnv *, jobject);
 
 /*
  * Class:     lejos_pc_comm_NXTCommLibnxt
  * Method:    jlibnxt_open
- * Signature: ([B)I
+ * Signature: (J)I
  */
 JNIEXPORT jint JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1open
-  (JNIEnv *, jobject, jint);
+  (JNIEnv *, jobject, jlong);
 
 /*
  * Class:     lejos_pc_comm_NXTCommLibnxt
  * Method:    jlibnxt_close
- * Signature: ([B)V
+ * Signature: (J)V
  */
 JNIEXPORT void JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1close
-  (JNIEnv *, jobject, jint);
+  (JNIEnv *, jobject, jlong);
 
 /*
  * Class:     lejos_pc_comm_NXTCommLibnxt
  * Method:    jlibnxt_send_data
- * Signature: ([B[B)V
+ * Signature: (J[B)V
  */
 JNIEXPORT void JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1send_1data
-  (JNIEnv *, jobject, jint, jbyteArray);
+  (JNIEnv *, jobject, jlong, jbyteArray);
 
 /*
  * Class:     lejos_pc_comm_NXTCommLibnxt
  * Method:    jlibnxt_read_data
- * Signature: ([B)[B
+ * Signature: (JI)[B
  */
 JNIEXPORT jbyteArray JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1read_1data
-  (JNIEnv *, jobject, jint, jint);
+  (JNIEnv *, jobject, jlong, jint);
 
 #ifdef __cplusplus
 }
