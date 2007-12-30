@@ -73,4 +73,9 @@
  */
 #define MAX_VM_REFS                      8
 
+/**
+ * If not 0, leave binary in rom instead of copying it to ram.
+ */
+#define EXECUTE_FROM_FLASH               1
+
 #endif

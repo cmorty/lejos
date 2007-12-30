@@ -117,6 +117,13 @@ typedef TWOBYTES STATICFIELD;
 
 extern void *installedBinary;
 
+#if EXECUTE_FROM_FLASH
+// base of static area of all classes
+extern byte *classStaticStateBase;
+// base of class status table
+extern byte *classStatusBase;
+#endif
+
 extern byte get_class_index (Object *obj);
 extern void dispatch_virtual (Object *obj, TWOBYTES signature, byte *rAddr);
 extern MethodRecord *find_method (ClassRecord *classRec, TWOBYTES signature);
@@ -150,20 +157,37 @@ extern void handle_field (byte hiByte, byte loByte, boolean doPut, boolean aStat
 
 #define class_size(CLASSIDX_)       (get_class_record(CLASSIDX_)->classSize)
 
+#if EXECUTE_FROM_FLASH
+#define get_class_status(CREC_)     (classStatusBase[ CREC_ - get_class_base()])
+#define is_initialized(CREC_)       ((get_class_status(CREC_) & C_INITIALIZED) != 0)
+#define is_initialized_idx(CIDX_)   ((classStatusBase[(CIDX_)] & C_INITIALIZED) != 0)
+#else
 #define is_initialized(CREC_)       (((CREC_)->cflags & C_INITIALIZED) != 0)
+#define is_initialized_idx(CIDX_)   ((get_class_record(CIDX_)->cflags & C_INITIALIZED) != 0)
+#endif
+
 #define is_array_class(CREC_)       (((CREC_)->cflags & C_ARRAY) != 0)
 #define has_clinit(CREC_)           (((CREC_)->cflags & C_HASCLINIT) != 0)
 #define is_interface(CREC_)         (((CREC_)->cflags & C_INTERFACE) != 0)
 
-#define set_initialized(CLASSREC_)   ((CLASSREC_)->cflags |= C_INITIALIZED)
-#define set_uninitialized(CLASSREC_) ((CLASSREC_)->cflags &= ~C_INITIALIZED)
+#if EXECUTE_FROM_FLASH
+#define set_initialized(CREC_)      (get_class_status(CREC_) |= C_INITIALIZED)
+#define set_uninitialized(CREC_)    (get_class_status(CREC_) &= ~C_INITIALIZED)
+#else
+#define set_initialized(CREC_)      ((CREC_)->cflags |= C_INITIALIZED)
+#define set_uninitialized(CREC_)    ((CREC_)->cflags &= ~C_INITIALIZED)
+#endif
 
 #define is_synchronized(MREC_)      (((MREC_)->mflags & M_SYNCHRONIZED) != 0)
 #define is_native(MREC_)            (((MREC_)->mflags & M_NATIVE) != 0)
 #define get_code_ptr(MREC_)         (get_binary_base() + (MREC_)->codeOffset)
 
 #define get_static_fields_base()    (get_binary_base() + get_master_record()->staticFieldsOffset)
+#if EXECUTE_FROM_FLASH
+#define get_static_state_base()     (classStaticStateBase)
+#else
 #define get_static_state_base()     (get_binary_base() + get_master_record()->staticStateOffset)
+#endif
 #define get_static_field_offset(R_) ((R_) & 0x0FFF)
 
 #define get_num_entry_classes()     (get_master_record()->numEntryClasses)
@@ -182,8 +206,7 @@ static inline void initialize_binary()
   printf("Offset is %d\n",(int) mrec->staticStateOffset); */
 
   /* printf("Length is %d\n",(int) mrec->staticStateLength);*/
-  zero_mem ((TWOBYTES *) (get_binary_base() + mrec->staticStateOffset),
-            mrec->staticStateLength);
+  zero_mem ((TWOBYTES *) (get_static_state_base()), mrec->staticStateLength);
 //  printf("Zeroed memory\n");
   for (i = 0; i <= mrec->lastClass; i++)
   {
