@@ -5,17 +5,17 @@ import java.io.*;
 public class NXTCommLibnxt implements NXTComm {
 	private NXTInfo nxtInfo;
 	
-	public native int jlibnxt_find();
-	public native int jlibnxt_open(int nxt);
-	public native void jlibnxt_close(int nxt);
-	public native void jlibnxt_send_data(int nxt, byte [] message) throws IOException;
-	public native byte[] jlibnxt_read_data(int nxt, int len) throws IOException;
+	public native long jlibnxt_find();
+	public native int jlibnxt_open(long nxt);
+	public native void jlibnxt_close(long nxt);
+	public native void jlibnxt_send_data(long nxt, byte [] message) throws IOException;
+	public native byte[] jlibnxt_read_data(long nxt, int len) throws IOException;
 	
 	public NXTInfo[] search(String name, int protocol) {
 		if ((protocol | NXTCommFactory.USB) == 0) {
 			return new NXTInfo[0];
 		}
-		int nxt = jlibnxt_find();
+		long nxt = jlibnxt_find();
 		if (nxt != 0) {
 			NXTInfo[] nxtInfo = new NXTInfo[1];
 			nxtInfo[0] = new NXTInfo();

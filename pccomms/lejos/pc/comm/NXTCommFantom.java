@@ -6,10 +6,10 @@ public class NXTCommFantom implements NXTComm {
 	private NXTInfo nxtInfo;
 	
 	public native String[] jfantom_find();
-	public native int jfantom_open(String nxt);
-	public native void jfantom_close(int nxt);
-	public native void jfantom_send_data(int nxt, byte [] message, int len, int replyLen);
-	public native byte[] jfantom_read_data(int nxt, int len);
+	public native long jfantom_open(String nxt);
+	public native void jfantom_close(long nxt);
+	public native void jfantom_send_data(long nxt, byte [] message, int len, int replyLen);
+	public native byte[] jfantom_read_data(long nxt, int len);
 	
 	public NXTInfo[] search(String name, int protocol) {
 		String[] nxtNames = jfantom_find();
