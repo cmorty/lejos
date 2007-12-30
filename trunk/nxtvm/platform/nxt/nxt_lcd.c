@@ -122,13 +122,14 @@ nxt_lcd_force_update()
 {
   // Update the screen the slow way. Works with interrupts disabled
   int i;
+  U8 *disp = display;
 
   for (i = 0; i < NXT_LCD_DEPTH; i++) {
     nxt_lcd_set_col(0);
     nxt_lcd_set_page_address(i);
 
-    nxt_spi_write(1, display, NXT_LCD_WIDTH);
-    display += NXT_LCD_WIDTH;
+    nxt_spi_write(1, disp, NXT_LCD_WIDTH);
+    disp += NXT_LCD_WIDTH;
   }
 }
 
