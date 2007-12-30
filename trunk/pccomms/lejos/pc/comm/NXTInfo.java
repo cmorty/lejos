@@ -4,7 +4,7 @@ public class NXTInfo {
 	public String name;
 	public String btDeviceAddress;
 	public String btResourceString;
-	public int nxtPtr;
+	public long nxtPtr;
 	public int protocol = 0;
 
 	public NXTInfo() {}
