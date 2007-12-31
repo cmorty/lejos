@@ -38,6 +38,30 @@ static char *sensorSetTypes[5] = {
   "ROT"
 };
 
+#define DISPLAY_WIDTH 100
+#define DISPLAY_DEPTH 8
+
+static struct
+{
+  Object hdr;
+  unsigned char display[DISPLAY_DEPTH+1][DISPLAY_WIDTH];
+} __attribute__((packed)) display_array;
+
+static char display_init() 
+{
+  // Initialise the array parameters so that the display can
+  // be memory mapped into the Java address space
+  display_array.hdr.flags.arrays.isArray = 1;
+  // NOTE This object must always be marked, otherwise very, very bad
+  // things will happen!
+  display_array.hdr.flags.arrays.mark = 1;
+  display_array.hdr.flags.arrays.length = 200;
+  display_array.hdr.flags.arrays.isAllocated = 1;
+  display_array.hdr.flags.arrays.type = T_INT;
+  display_array.hdr.monitorCount = 0;
+  display_array.hdr.threadId = 0;
+}
+
 static char *getSensorMode(byte code)
 {
   static char smBuffer[256];
@@ -218,7 +242,7 @@ void dispatch_native (TWOBYTES signature, STACKWORD *paramBase)
          printf("> ");
       else
          printf("& ");
-      printf("Reading sensor %ld, returned value %d\n",sensors[paramBase[0]].value);
+      printf("Reading sensor %d, returned value %d\n",paramBase[0], sensors[paramBase[0]].value);
       push_word (sensors[paramBase[0]].value);
       return;
     case setADTypeById_4II_5V:
@@ -321,12 +345,22 @@ void dispatch_native (TWOBYTES signature, STACKWORD *paramBase)
       printf("Display cleared\n");
       return;
     case setDisplay_4_1I_5V:
-       if (verbose)
+      if (verbose)
          printf("> ");
       else
          printf("& ");
       printf("Display set\n");
       return;  
+    case getDisplay_4_5_1I:
+      if (verbose)
+         printf("> ");
+      else
+         printf("& ");
+      printf("Get display\n");
+      display_init();
+      push_word((STACKWORD) ptr2word(&display_array));
+      return;
+    return;
     case getVoltageMilliVolt_4_5I:
       if (verbose)
          printf("> ");
@@ -337,10 +371,10 @@ void dispatch_native (TWOBYTES signature, STACKWORD *paramBase)
       return;
     case readButtons_4_5I:
       if (verbose)
+      {
          printf("> ");
-      else
-         printf("& ");
-      printf("readButtons returning 0\n");
+         printf("readButtons returning 0\n");
+      }     
       push_word(0);
       return;
     case getTachoCountById_4I_5I:
@@ -414,37 +448,86 @@ void dispatch_native (TWOBYTES signature, STACKWORD *paramBase)
           printf("> ");
         else
           printf("& "); 
-          printf("btSend with parameter &d\n", byteArray);                       
+          printf("btSend called with parameter &d\n", byteArray);                       
       }
       return;
     case btReceive_4_1B_5V:
       {
         Object *p = word2ptr(paramBase[0]);
         byte *byteArray = (((byte *) p) + HEADER_SIZE);
+        if (verbose)
+          printf("> ");
+        else
+          printf("& "); 
+        printf("btReceive called with parameter %x\n", byteArray);                                           
+      }
+      return;
+    case btGetBC4CmdMode_4_5I:
+      if (verbose)
+         printf("> ");
+      else
+         printf("& ");
+         printf("btGetBC4CmdMode returning 1\n");
+      push_word(1);
+      return;
+    case btSetArmCmdMode_4I_5V:
+      if (verbose)
+         printf("> ");
+      else
+         printf("& ");
+      printf("btSetArmCmdMode\n");
+      return;
+    case btStartADConverter_4_5V:
+      if (verbose)
+         printf("> ");
+      else
+         printf("& ");
+      printf("btStartAdConverter\n");
+      return;
+    case btSetResetLow_4_5V:
+      if (verbose)
+         printf("> ");
+      else
+         printf("& ");
+      printf("btSetResetLow\n");
+      return;
+    case btSetResetHigh_4_5V:
+      if (verbose)
+         printf("> ");
+      else
+         printf("& ");
+      printf("btSetResetHigh\n");
+    return;
+    case btWrite_4_1BII_5I:
+      {
+        Object *p = word2ptr(paramBase[0]);
+        byte *byteArray = (((byte *) p) + HEADER_SIZE);
         if (verbose) 
         {
           printf("> ");
-          printf("btReceive called with parameter %x\n", byteArray);                                           
+          printf("btWrite called with parameters %x,%,%d\n", byteArray,paramBase[1],paramBase[2]);                                           
         }
       }
       return;
-    case btGetCmdMode_4_5I:
-      if (verbose)
-         printf("> ");
-      else
-         printf("& ");
-         printf("btGetCmdMode returning 1\n");
-      push_word(1);
-      break;
-    case btSetCmdMode_4I_5V:
-      if (verbose)
-         printf("> ");
-      else
-         printf("& ");
-      printf("btSetCmdMode\n");
-      break;
-    case btStartADConverter_4_5V:
-      break;
+    case btRead_4_1BII_5I:
+      {
+        Object *p = word2ptr(paramBase[0]);
+        byte *byteArray = (((byte *) p) + HEADER_SIZE);
+        if (verbose)
+          printf("> ");
+        else
+          printf("& "); 
+          printf("btRead called with parameters %x,%,%d\n", byteArray,paramBase[1],paramBase[2]);                                                               
+      }
+      return;
+    case btPending_4_5I:
+      if (verbose) 
+      {
+        printf("> ");
+        printf("btPending called\n");                                           
+      }
+      push_word(0);
+      return;
     case usbRead_4_1BI_5I:
       {
         Object *p = word2ptr(paramBase[0]);
@@ -456,7 +539,7 @@ void dispatch_native (TWOBYTES signature, STACKWORD *paramBase)
         }
         push_word(0);                      
       } 
-      break;
+      return;
     case usbWrite_4_1BI_5V:
       {
         Object *p = word2ptr(paramBase[0]);
@@ -467,7 +550,7 @@ void dispatch_native (TWOBYTES signature, STACKWORD *paramBase)
           printf("usbWrite called with parameters %x, %d\n", byteArray, paramBase[1]);                                           
         }                     
       }
-      break; 
+      return; 
     case writePage_4_1BI_5V:
       {
         Object *p = word2ptr(paramBase[0]);
@@ -478,7 +561,7 @@ void dispatch_native (TWOBYTES signature, STACKWORD *paramBase)
           printf("writePage called with parameters %x, %d\n", intArray, paramBase[1]);                                           
         }                       
       }
-      break;
+      return;
     case readPage_4_1BI_5V:
       {
         int i;
@@ -490,28 +573,56 @@ void dispatch_native (TWOBYTES signature, STACKWORD *paramBase)
           printf("readPage called with parameters %x, %d\n", intArray, paramBase[1]);                                           
         }                       
       }
-      break;
+      return;
     case exec_4II_5V:
       if (verbose) 
       {
         printf("> ");
         printf("exec called\n");                                           
       }
-      break;
+      return;
     case usbReset_4_5V :
       if (verbose) 
       {
         printf("> ");
         printf("udpReset called\n");                                           
       }
-      break;
+      return;
     case playSample_4IIII_5V:
-     if (verbose)
+      if (verbose)
          printf("> ");
       else
          printf("& ");
       printf("Playing sound sample\n");
-    break;
+      return;
+    case getDataAddress_4Ljava_3lang_3Object_2_5I:
+     if (verbose)
+         printf("> ");
+      else
+         printf("& ");
+      printf("Data address is %x\n",ptr2word (((byte *) word2ptr (paramBase[0])) + HEADER_SIZE));
+      return;
+    case gc_4_5V:
+      if (verbose)
+         printf("> ");
+      else
+         printf("& ");
+      printf("Collecting garbage\n");
+      return;
+    case shutDown_4_5V:
+      if (verbose)
+         printf("> ");
+      else
+         printf("& ");
+      printf("Shutting down\n");
+      exit(0);
+    case arraycopy_4Ljava_3lang_3Object_2ILjava_3lang_3Object_2II_5V:
+      {
+        Object *p1 = word2ptr(paramBase[0]);
+        Object *p2 = word2ptr(paramBase[2]);
+        arraycopy(p1, paramBase[1], p2, paramBase[3], paramBase[4]);
+      }
+      return;
     default:
 #ifdef DEBUG_METHODS
       printf("Received bad native method code: %d\n", signature);

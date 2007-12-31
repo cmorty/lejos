@@ -14,6 +14,11 @@
 
 void *installedBinary;
 
+#if EXECUTE_FROM_FLASH
+byte *classStaticStateBase;
+byte *classStatusBase;
+#endif
+
 void dumpCommon()
 {
   MasterRecord *pRec;
