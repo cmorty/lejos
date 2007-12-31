@@ -247,10 +247,10 @@ public class File {
 	 * array will contain File objects for all the files in flash. If a null
 	 * File array is given, it will create a new File array.
 	 */
-	private static void readTable(File [] files) {
+	static void readTable(File [] files) {
 		// Make sure flash has table id:
 		if(!File.tableExists())	File.format();
-		
+		File.
 		resetTablePointer();
 		Flash.readPage(buff, TABLE_START_PAGE); // Kludge to fill data into first page
 		// Move pointer to file total:
@@ -300,7 +300,7 @@ public class File {
 	 * Writes the file data to the table from the files [] array. 
 	 * @param files The array containing a list of Files to write to table. 
 	 */
-	private static void writeTable(File [] files) throws IOException {
+	static void writeTable(File [] files) throws IOException {
 		/*
 		 * Note: This method doesn't bother assigning empty 
 		 * byte positions as 0. Ghost data appears in memory but
@@ -574,10 +574,6 @@ public class File {
 	
 	public int getPage() {
 		return page_location;
-	}
-	
-	public void play(int freq, int vol) {
-		//lejos.nxt.Sound.playSample(page_location, file_length, freq, vol);
 	}
 	
 	public static void reset() {
