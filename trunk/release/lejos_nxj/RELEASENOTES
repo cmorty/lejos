@@ -1,3 +1,63 @@
+lejos NXJ 0.5 beta
+------------------
+
+Andy Shaw has added:
+
+- I2C writes
+- Use of port 4 for I2C sensors and the light sensor
+- Faster LCD writing without need for LCD.refresh()
+- Mixing of text and graphics 
+- Bluetooth reset and detection of BC4 mode
+- Rewrite of Bluetooth comms to support multiple connections and to remove restrictions.
+- Ability to switch Bluetooth on and off.
+- Greatly improved UltrasonicSensor class.
+- Native arrayCopy method for improved performance.
+- Speed improvements to the SpeedTest sample.
+- I/O activity indicator in startup menu.
+- Various bug fixes including to the garbage collector.
+
+Janusz Gorecki has added:
+
+- Garbage collection.
+- Execution of program directly from flash memory.
+
+Lawrie Griffiths has added
+
+- Return to the startup menu after a program exits
+- More Bluetooth methods including getSignalStrength()
+- Support for Mindsensors NRLink adapter (RCXLink class)
+- RCX Comms support using RCXLink class
+- Support for Remote Motors, Sensors, etc. over Bluetooth via RemoteNXT class.
+- Remote monitoring and tracing over Bluetooth, including NXTMonitor tool
+- Format menu item on System menu
+- Support for Mindsensors NXTCam camera for tracking objects
+- Support for the Mindsensors RCX Motor Multiplexer
+- Untested support for the Hitechnic Gyro Sensor
+- Improved Tiltsensor class including acceleration data for Mindsensors and HiTechnic Acceleration Sensors.
+- Untested support for the HiTechnic IRSeeker sensor
+- Checking for flash and directory full conditions during program or file upload.
+- New and improved samples
+- Support for 64-bit Linux systems in jlibnxt
+
+Brian Bagnall and Lawrie Griffiths have added:
+
+- Improved support for the Lego communications Protocol.
+
+Brian Bagnall has added
+
+- Auto defrag on file deletion
+- Bigger file table - now supports 30 files
+
+Roger Glassey has added
+
+- Improved Motor and TachoNavigator classes.
+- ButtonCounter class.
+- Behavior2 classes as an alternative to the Behavior classes.
+
+Patai Gergely and Brian Bagnall have added:
+
+- Improved support for playing 8-bit WAV files
+
 lejos NXJ 0.4beta
 -----------------
 
