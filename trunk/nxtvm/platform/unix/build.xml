@@ -47,7 +47,7 @@
 					<pathelement location="."/>
 					<pathelement location="../../javavm"/>
 				</includepath>
-  				<versioninfo refid="lejos nxt 0.1"/>
+  				<versioninfo refid="leJOS NXJ 0.5"/>
   		</cc>
 	</target>
 
@@ -68,7 +68,7 @@
 				<includepath>
 					<pathelement location="."/>
 				</includepath>
-  				<versioninfo refid="lejos nxt 0.1"/>
+  				<versioninfo refid="leJOS NXJ 0.5"/>
   		</cc>
 		<exec executable="${basedir}/dump_config" failonerror="true" dir=".">
 			<redirector outputproperty="platform_config.h">
@@ -109,7 +109,7 @@
 					<pathelement location="."/>
 					<pathelement location="../../javavm"/>
 				</includepath>
-  				<versioninfo refid="lejos nxt 0.1"/>
+  				<versioninfo refid="leJOS NXJ 0.5"/>
   		</cc>
 	</target>
 
