@@ -366,7 +366,9 @@ public class LCP {
 			
 			// If insufficient flash do a Defrag
 			if (size > File.freeMemory()) {
-				File.defrag();
+				try {
+					File.defrag();
+				} catch (IOException ioe) {}
 				files = null;
 				init_files();
 			}
@@ -421,7 +423,9 @@ public class LCP {
 		// DEFRAG
 		if (cmdId == NXJ_DEFRAG)
 		{
-			File.defrag();
+			try {
+				File.defrag();
+			}catch (IOException ioe) {}
 		}
 
 		// FIND FIRST
