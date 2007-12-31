@@ -1,15 +1,8 @@
 package java.io;
 
-/**
- * Class for handling files in the NXJ flash file system.
- * Currently you can only have one file open at a time for reading
- * or writing. There are also limits on the length of file name (30)
- * and the number of files (30). This will change when we adapt this
- * class for the new garbage collector.
- * 
- * @author BB
- *
- */
+import lejos.nxt.Flash;
+import java.io.IOException;
+
 public class File {
 	//static int count; Used for anything?
 	// CONSTANTS:
@@ -181,11 +174,15 @@ public class File {
 		} else 
 			files[index] = null;
 		// 3. writeTable() to update table data.
-		File.writeTable(files);
+		try { // Impossible for IOException when deleting, therefore catch here.
+			File.writeTable(files);
+		} catch (IOException e) {}
 		// 4. Make this file.exists = false;
 		this.exists = false;
 		this.file_length = 0;
-		File.defrag();
+		try { // Impossible for IOException when deleting, therefore catch here.
+			File.defrag();
+		} catch (IOException e){}
 		return true;
 	}
 
@@ -303,7 +300,7 @@ public class File {
 	 * Writes the file data to the table from the files [] array. 
 	 * @param files The array containing a list of Files to write to table. 
 	 */
-	private static void writeTable(File [] files) {
+	private static void writeTable(File [] files) throws IOException {
 		/*
 		 * Note: This method doesn't bother assigning empty 
 		 * byte positions as 0. Ghost data appears in memory but
@@ -326,22 +323,40 @@ public class File {
 				
 				if(files[arrayIndex].file_length == -999) break; // !! What is this for? Can't remember why it is here.
 				
-				// Write page location of file:
-				writeNextByte((byte)files[arrayIndex].page_location);
-				writeNextByte((byte)(files[arrayIndex].page_location>>8));
-				// Write file size:
-				writeNextByte((byte)files[arrayIndex].file_length);
-				writeNextByte((byte)(files[arrayIndex].file_length>>8));
-				writeNextByte((byte)(files[arrayIndex].file_length>>16));
-				writeNextByte((byte)(files[arrayIndex].file_length>>24));
-				// Write length of name:
-				writeNextByte((byte)(files[arrayIndex].file_name.length()));
-				// Write name:
-				for(int i=0;i<files[arrayIndex].file_name.length();i++) {
-					writeNextByte((byte)files[arrayIndex].file_name.charAt(i));
+				try {
+					// Write page location of file:
+					writeNextByte((byte)files[arrayIndex].page_location);
+					writeNextByte((byte)(files[arrayIndex].page_location>>8));
+					// Write file size:
+					writeNextByte((byte)files[arrayIndex].file_length);
+					writeNextByte((byte)(files[arrayIndex].file_length>>8));
+					writeNextByte((byte)(files[arrayIndex].file_length>>16));
+					writeNextByte((byte)(files[arrayIndex].file_length>>24));
+					// Write length of name:
+					writeNextByte((byte)(files[arrayIndex].file_name.length()));
+					// Write name:
+					for(int i=0;i<files[arrayIndex].file_name.length();i++) {
+						writeNextByte((byte)files[arrayIndex].file_name.charAt(i));
+					}
+				} catch (IOException e) {
+					// Write total files (ignoring aborted one) before rethrowing IOException:
+					
+					// Write the current page to flash:
+					writeBufftoFlash();
+					
+					// KLUDGE (should really be done above): Now write total files 
+					Flash.readPage(buff, TABLE_START_PAGE);
+					buff[NUM_FILES_POS] = arrayIndex; // Update number of files
+					File.totalFiles = arrayIndex; // Update total files in File class?
+					Flash.writePage(buff, TABLE_START_PAGE);
+					throw e;
+				} finally {
+					// If catch rethrows IOException wonder if finally called? 
 				}
+				
 				++arrayIndex;
 				if(arrayIndex >= files.length) break;
+				
 			}
 		}
 		
@@ -366,10 +381,13 @@ public class File {
 	 * and automatically switch to next page.
 	 * @param value The value to write.
 	 */
-	private static void writeNextByte(byte value) {
+	private static void writeNextByte(byte value) throws IOException {
 		if(byte_pointer >= BYTES_PER_PAGE) {
 			writeBufftoFlash();
-			++page_pointer; // Throw exception here if > FILE_TABLE_PAGES - 1?
+			++page_pointer;
+			// Throw exception here if > FILE_TABLE_PAGES - 1:
+			if(page_pointer >= FILE_TABLE_PAGES)
+				throw new IOException("File table is full. Try deleting some files.");
 			byte_pointer = 0;
 		}
 			
@@ -407,16 +425,16 @@ public class File {
 		}
 		// Write # of files (0) right after TABLE_ID
 		buff[NUM_FILES_POS] = 0;
- 		Flash.writePage(buff, TABLE_START_PAGE);
-// 		LCD.drawInt(999, 12,5);
- 		files = null;
+		Flash.writePage(buff, TABLE_START_PAGE);
+//		LCD.drawInt(999, 12,5);
+		files = null;
 	}
 	
 	/**
 	 * Creates a new file entry in the flash memory.
 	 * @return True indicates file was created in flash. False means it already existed or the size is 0 or less.
 	 */
-	public boolean createNewFile() {
+	public boolean createNewFile() throws IOException {
 		/**
 		 * Internally this method updates the page location value and
 		 * adds this file instance to the global array of files.
@@ -453,12 +471,12 @@ public class File {
 	}
 	
 /**
- * Move the file a page at a time, in order from low to high memory
- * assumes that new starting page location  is lower in flash memory than the old or else that the new pages
- * does not overlap with the old.  
- * @param page  starting page of the new location.
- */
-	 private void moveTo(int page)
+* Move the file a page at a time, in order from low to high memory
+* assumes that new starting page location  is lower in flash memory than the old or else that the new pages
+* does not overlap with the old.  
+* @param page  starting page of the new location.
+*/
+	 private void moveTo(int page) throws IOException
 	{
 		int nrPages = file_length/BYTES_PER_PAGE;
 		if(file_length%BYTES_PER_PAGE>0) nrPages++;
@@ -477,7 +495,7 @@ public class File {
 	 /**
 	  * move the file to become the last one in flash memory 
 	  */
-	public void moveToTop()
+	public void moveToTop() throws IOException
 	{
 		File  top = files[totalFiles - 1]; // file at top of flash memory
 		// !! Is the 1 value below problematic? I want to expand
@@ -512,9 +530,9 @@ public class File {
 	}
 
 /**
- * returns location of file in the files[] array
- * @return  index of file in files[]
- */
+* returns location of file in the files[] array
+* @return  index of file in files[]
+*/
 	public  int getIndex()
 	{
 		int i = 0;
@@ -536,10 +554,10 @@ public class File {
 		return formatted; 
 	}
 /**
- *  assumptions: the files[] array has no nulls, and is in increasing order by page_location
- *  this scheme moves moves each file down to fill in the empty pages. 
- */	
-	public static void defrag()
+*  assumptions: the files[] array has no nulls, and is in increasing order by page_location
+*  this scheme moves moves each file down to fill in the empty pages. 
+*/	
+	public static void defrag() throws IOException
 	{
 		File file;
 		int page_pointer = FILE_START_PAGE; // smallest memory location possible for current file 
@@ -559,7 +577,7 @@ public class File {
 	}
 	
 	public void play(int freq, int vol) {
-		lejos.nxt.Sound.playSample(page_location, file_length, freq, vol);
+		//lejos.nxt.Sound.playSample(page_location, file_length, freq, vol);
 	}
 	
 	public static void reset() {
