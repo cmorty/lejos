@@ -146,6 +146,8 @@ public final class Math {
 	*/
 	public static double log(double x)
 	{
+		    if (x == 0) return NaN;
+		    
 	        if (x < 1.0)
 	                return -log(1.0/x);
 	                
