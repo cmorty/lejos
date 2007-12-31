@@ -1,9 +1,17 @@
 package java.io;
 
-import lejos.nxt.*;
-
+/**
+ * Class for handling files in the NXJ flash file system.
+ * Currently you can only have one file open at a time for reading
+ * or writing. There are also limits on the length of file name (30)
+ * and the number of files (30). This will change when we adapt this
+ * class for the new garbage collector.
+ * 
+ * @author BB
+ *
+ */
 public class File {
-	static int count;
+	//static int count; Used for anything?
 	// CONSTANTS:
 	/**
 	 *  Number of files the file system can store. 
@@ -246,73 +254,144 @@ public class File {
 		// Make sure flash has table id:
 		if(!File.tableExists())	File.format();
 		
-		Flash.readPage(buff, TABLE_START_PAGE);
-		// page_pos is the byte position in the page (pointer):
-		short page_pos = NUM_FILES_POS;
-		File.totalFiles = buff[page_pos]; // update total files value 
-//		LCD.drawInt(totalFiles, count++, 5);
-//		LCD.refresh();
+		resetTablePointer();
+		Flash.readPage(buff, TABLE_START_PAGE); // Kludge to fill data into first page
+		// Move pointer to file total:
+		byte_pointer = NUM_FILES_POS; // Kludge
+		File.totalFiles = readNextByte(); // update total files value 
+		
 		for(int i=0;i<File.totalFiles;i++) {
-			short pageLocation = (short)((0xFF & buff[++page_pos]) | ((0xFF & buff[++page_pos])<<8));
-			int fileLength = (0xFF & buff[++page_pos]) | ((0xFF & buff[++page_pos]) <<8) | ((0xFF & buff[++page_pos])<<16) | ((0xFF & buff[++page_pos])<<24);
+			short pageLocation = (short)((0xFF & readNextByte()) | ((0xFF & readNextByte())<<8));
+			int fileLength = (0xFF & readNextByte()) | ((0xFF & readNextByte()) <<8) | ((0xFF & readNextByte())<<16) | ((0xFF & readNextByte())<<24);
 			
 			// The following code attempts to reuse String's. If leJOS gets
 			// a garbage collector we can create new strings and reduce this
 			// code. It assumes that if files[i] is NOT null then the filename
 			// is correct. Relies on delete() to adjust file names correctly.
 			if(files[i] == null) {
-				byte numChars = buff[++page_pos]; // Size of file name (string length)
+				byte numChars = readNextByte(); // Size of file name (string length)
 				
 				for(int j=0;j<numChars;j++) {
-					charBuff[j] = (char)buff[++page_pos];
+					charBuff[j] = (char)readNextByte();
 				}
 				String name = new String(charBuff, 0, numChars);
 				files[i] = new File(name, false); // Uses private constructor so it doesn't check through file list if it already exists.
 			}
 			files[i].page_location = pageLocation;
 			files[i].file_length = fileLength;
+		}		
+	}
+	
+	/**
+	 * Helper method to read next byte from file table. It
+	 * automtatically flips to next page when it gets to end
+	 * of last page. 
+	 * @return Next byte of data from table.
+	 */
+	private static byte readNextByte() {
+		
+		if(byte_pointer >= BYTES_PER_PAGE) {
+			++page_pointer; // Throw exception here if > FILE_TABLE_PAGES - 1?
+			byte_pointer = 0;
+			Flash.readPage(buff, page_pointer);
 		}
+		
+		return buff[byte_pointer++];
 	}
 	
 	/**
 	 * Writes the file data to the table from the files [] array. 
-	 * NOTE: Currently can only use first page of flash to store table! ~ 8 files
 	 * @param files The array containing a list of Files to write to table. 
 	 */
-	static void writeTable(File [] files) {
-		short table_pointer = 0; // Move pointer to start of table
-		for(table_pointer=0;table_pointer<TABLE_ID.length();table_pointer++) 
-		{
-			buff[table_pointer] = (byte)TABLE_ID.charAt(table_pointer);
+	private static void writeTable(File [] files) {
+		/*
+		 * Note: This method doesn't bother assigning empty 
+		 * byte positions as 0. Ghost data appears in memory but
+		 * it will be ignored.
+		 */
+		// Move pointer to start of file table:
+		resetTablePointer();
+		// Write table id (header with version info): 
+		for(int i=0;i<TABLE_ID.length();i++) {
+			writeNextByte((byte)TABLE_ID.charAt(i));
 		}
+		// Write total files (when using GC and arrays, can use array length): 
+		// POSPONED UNTIL LATER (see Kludge below)
+		writeNextByte((byte)0); // used to increment byte pointer 
+		
+		// Now write all the file info to the table 
 		byte arrayIndex = 0;
 		if(files.length != 0) { // Will throw exception for 0 length unless this checks
 			while(files[arrayIndex] != null) {
 				
-				if(files[arrayIndex].file_length == -999) break;
+				if(files[arrayIndex].file_length == -999) break; // !! What is this for? Can't remember why it is here.
 				
 				// Write page location of file:
-				buff[++table_pointer] = (byte)files[arrayIndex].page_location;
-				buff[++table_pointer] = (byte)(files[arrayIndex].page_location>>8);
+				writeNextByte((byte)files[arrayIndex].page_location);
+				writeNextByte((byte)(files[arrayIndex].page_location>>8));
 				// Write file size:
-				buff[++table_pointer] = (byte)files[arrayIndex].file_length;
-				buff[++table_pointer] = (byte)(files[arrayIndex].file_length>>8);
-				buff[++table_pointer] = (byte)(files[arrayIndex].file_length>>16);
-				buff[++table_pointer] = (byte)(files[arrayIndex].file_length>>24);
+				writeNextByte((byte)files[arrayIndex].file_length);
+				writeNextByte((byte)(files[arrayIndex].file_length>>8));
+				writeNextByte((byte)(files[arrayIndex].file_length>>16));
+				writeNextByte((byte)(files[arrayIndex].file_length>>24));
 				// Write length of name:
-				buff[++table_pointer] = (byte)(files[arrayIndex].file_name.length());
+				writeNextByte((byte)(files[arrayIndex].file_name.length()));
 				// Write name:
 				for(int i=0;i<files[arrayIndex].file_name.length();i++) {
-					buff[++table_pointer] = (byte)files[arrayIndex].file_name.charAt(i);
+					writeNextByte((byte)files[arrayIndex].file_name.charAt(i));
 				}
 				++arrayIndex;
 				if(arrayIndex >= files.length) break;
 			}
 		}
+		
+		// Write the current page to flash:
+		writeBufftoFlash();
+		
+		// KLUDGE (should really be done above): Now write total files 
+		Flash.readPage(buff, TABLE_START_PAGE);
 		buff[NUM_FILES_POS] = arrayIndex; // Update number of files
 		File.totalFiles = arrayIndex; // Update total files in File class?
 		Flash.writePage(buff, TABLE_START_PAGE);
-
+	}
+	
+	/**
+	 * Couple of global variables used for table pointers.
+	 */
+	private static short page_pointer;
+	private static short byte_pointer;
+	
+	/**
+	 * Helper method to write the next byte to flash memory
+	 * and automatically switch to next page.
+	 * @param value The value to write.
+	 */
+	private static void writeNextByte(byte value) {
+		if(byte_pointer >= BYTES_PER_PAGE) {
+			writeBufftoFlash();
+			++page_pointer; // Throw exception here if > FILE_TABLE_PAGES - 1?
+			byte_pointer = 0;
+		}
+			
+		buff[byte_pointer] = value;
+		++byte_pointer;
+	}
+	
+	/**
+	 * Writes the current page in buff[] to flash
+	 *
+	 */
+	private static void writeBufftoFlash() {
+		Flash.writePage(buff, page_pointer);
+	}
+	
+	/**
+	 * Resets the global variables for page and byte pointers to start.
+	 *
+	 */
+	private static void resetTablePointer() {
+		page_pointer = TABLE_START_PAGE;
+		byte_pointer = 0;
 	}
 	
 	/**
@@ -401,6 +480,8 @@ public class File {
 	public void moveToTop()
 	{
 		File  top = files[totalFiles - 1]; // file at top of flash memory
+		// !! Is the 1 value below problematic? I want to expand
+		// past 1 page for table. Actually is looks okay.
 		int page = 1+ top.getPage()+top.length()/BYTES_PER_PAGE;  
 		int length = file_length;
 		moveTo(page);	
@@ -409,7 +490,11 @@ public class File {
 		createNewFile(); // put back into files[]
 	}
 	
+	/**
+	 * Returns to total free memory in the flash file system.
+	 */
 	public static int freeMemory() {
+		// !! 767 below should be defined as constant so we know what it is.
 		int last_page;
 		
 		if(files == null) {
@@ -474,7 +559,7 @@ public class File {
 	}
 	
 	public void play(int freq, int vol) {
-		Sound.playSample(page_location, file_length, freq, vol);
+		lejos.nxt.Sound.playSample(page_location, file_length, freq, vol);
 	}
 	
 	public static void reset() {
