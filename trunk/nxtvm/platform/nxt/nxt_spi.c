@@ -65,10 +65,10 @@ spi_isr_C(void)
   if (page == 0)
   {
     /* Check to see if we have data to display */
-    if (dirty == 1)
+    if (dirty != 0)
     {
       data = display;
-      dirty = 2;
+      dirty = 0;
     }
     else
     {
@@ -76,8 +76,6 @@ spi_isr_C(void)
          to display
       */
       *AT91C_SPI_IDR = AT91C_SPI_ENDTX;
-      /* mark as now clean */
-      dirty = 0;
       return;
     }
   }
@@ -104,34 +102,44 @@ void
 nxt_spi_init(void)
 {
   int i_state = interrupts_get_and_disable();
+#define OSC 48054805
+#define SPI_BITRATE 2000000
 
-  /* Get clock */
-  *AT91C_PMC_PCER = (1 << AT91C_PERIPHERAL_ID_PIOA) |	/* Need PIO too */
-    (1 << AT91C_PERIPHERAL_ID_SPI);	/* SPI clock domain */
-  /* Get pins, oly MOSI and clock */
-  *AT91C_PIOA_PDR = /* (1<< 12) | */ (1 << 13) | (1 << 14);
-  *AT91C_PIOA_ASR = /* (1<< 12) | */ (1 << 13) | (1 << 14);
-
-
-  /* Set up MISO as an output to control CD.
-   * Set up CS pin
-   */
-  *AT91C_PIOA_SODR = CS_PIN | CD_PIN;
-  *AT91C_PIOA_PER = CS_PIN | CD_PIN;
-  *AT91C_PIOA_OER = CS_PIN | CD_PIN;
-
-  /* Set up SPI peripheral */
-  *AT91C_SPI_CR = AT91C_SPI_SWRST; /* S/Reset */
-  *AT91C_SPI_CR = AT91C_SPI_SPIEN; /* Enable */
-  *AT91C_SPI_MR = 0x06000000 | AT91C_SPI_MSTR;
-  *AT91C_SPI_IDR = ~0;		/* Disable all interrupts */
-  AT91C_SPI_CSR[0] = 0x18181801;
-  AT91C_SPI_CSR[1] = 0x18181801;
-  AT91C_SPI_CSR[2] = 0x18181801;
-  AT91C_SPI_CSR[3] = 0x18181801;
-
-  /* Force chip select */
-  *AT91C_PIOA_CODR = CS_PIN;
+  *AT91C_PMC_PCER  =  (1L << AT91C_ID_SPI);       /* Enable MCK clock     */
+  *AT91C_PIOA_PER = AT91C_PIO_PA12;/*EnableA0onPA12*/
+  *AT91C_PIOA_OER = AT91C_PIO_PA12;
+  *AT91C_PIOA_CODR = AT91C_PIO_PA12;
+  *AT91C_PIOA_PDR = AT91C_PA14_SPCK;/*EnableSPCKonPA14*/
+  *AT91C_PIOA_ASR = AT91C_PA14_SPCK;
+  *AT91C_PIOA_ODR = AT91C_PA14_SPCK;
+  *AT91C_PIOA_OWER = AT91C_PA14_SPCK;
+  *AT91C_PIOA_MDDR = AT91C_PA14_SPCK;
+  *AT91C_PIOA_PPUDR = AT91C_PA14_SPCK;
+  *AT91C_PIOA_IFDR = AT91C_PA14_SPCK;
+  *AT91C_PIOA_CODR = AT91C_PA14_SPCK;
+  *AT91C_PIOA_IDR = AT91C_PA14_SPCK;
+  *AT91C_PIOA_PDR = AT91C_PA13_MOSI;/*EnablemosionPA13*/
+  *AT91C_PIOA_ASR = AT91C_PA13_MOSI;
+  *AT91C_PIOA_ODR = AT91C_PA13_MOSI;
+  *AT91C_PIOA_OWER = AT91C_PA13_MOSI;
+  *AT91C_PIOA_MDDR = AT91C_PA13_MOSI;
+  *AT91C_PIOA_PPUDR = AT91C_PA13_MOSI;
+  *AT91C_PIOA_IFDR = AT91C_PA13_MOSI;
+  *AT91C_PIOA_CODR = AT91C_PA13_MOSI;
+  *AT91C_PIOA_IDR = AT91C_PA13_MOSI;
+  *AT91C_PIOA_PDR = AT91C_PA10_NPCS2;/*Enablenpcs0onPA10*/
+  *AT91C_PIOA_BSR = AT91C_PA10_NPCS2;
+  *AT91C_PIOA_ODR = AT91C_PA10_NPCS2;
+  *AT91C_PIOA_OWER = AT91C_PA10_NPCS2;
+  *AT91C_PIOA_MDDR = AT91C_PA10_NPCS2;
+  *AT91C_PIOA_PPUDR = AT91C_PA10_NPCS2;
+  *AT91C_PIOA_IFDR = AT91C_PA10_NPCS2;
+  *AT91C_PIOA_CODR = AT91C_PA10_NPCS2;
+  *AT91C_PIOA_IDR = AT91C_PA10_NPCS2;
+  *AT91C_SPI_CR = AT91C_SPI_SWRST;/*Softreset*/
+  *AT91C_SPI_CR = AT91C_SPI_SPIEN;/*Enablespi*/
+  *AT91C_SPI_MR = AT91C_SPI_MSTR|AT91C_SPI_MODFDIS | (0xB<<16);
+  AT91C_SPI_CSR[2] = ((OSC/SPI_BITRATE)<<8) | AT91C_SPI_CPOL;
 
   /* Set mode to unknown */
   mode = 0xff;
@@ -179,19 +187,17 @@ nxt_spi_set_display(const U8 *disp)
    * sort this out so that it is set separately from requesting a refresh
    */
   if (!display) display = disp;
-  //dirty = 1;
-  //*AT91C_SPI_IER = AT91C_SPI_ENDTX;
 }
 
 void
 nxt_spi_refresh(void)
 {
   /* Request the start of a dma refresh of the display 
-   * if the display has not been set we have nothing to do.
    */
-  if (!display || dirty) return;
+  // If the display is not set nothing to do.
+  if (!display) return;
+  // Say we have changes
   dirty = 1;
+  // Start the DMA refresh
   *AT91C_SPI_IER = AT91C_SPI_ENDTX;
 }
-
-
