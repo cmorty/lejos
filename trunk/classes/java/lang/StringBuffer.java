@@ -1,6 +1,5 @@
 package java.lang;
 
-
 /**
  * An expandable string of characters. Actually not very expandable!
  * 09/25/2001 added number formatting thanks to Martin E. Nielsen.
@@ -17,13 +16,6 @@ public final class StringBuffer
   static String minInt = "-2147483648";
 
   /**
-   * Conversion between integers from 0 to 9 and their respective
-   * chars.
-   **/
-  private static final char[] numbers = { '0', '1', '2', '3', '4',
-					    '5', '6', '7', '8', '9' };
-
-  /**
    * The value of <i>log(10)</i> used for converting from base
    * <i>e</i> to base 10.
    **/
@@ -36,6 +28,7 @@ public final class StringBuffer
   public StringBuffer (String aString)
   {
     characters = aString.toCharArray();
+    curPos = aString.length();
   }
 
   public StringBuffer (int length)
@@ -237,7 +230,6 @@ public final class StringBuffer
 					buf[ charPos++ ] = '0';
 				} // if
 				else {
-			//		buf[ charPos ] = numbers[ div ];
 					buf[ charPos ] = (char)(div + '0');
 					charPos++;
 				} // else
