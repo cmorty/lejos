@@ -36,6 +36,11 @@ public class Graphics {
 	public int getCenteredX(String str) {
 		return (LCD.DISPLAY_CHAR_WIDTH - str.length()) / 2;
 	}
+	
+	public void setColor(int rgb)
+	{
+		rgbColor = rgb;
+	}
 		
 	/**
 	* Using rgbColor as argument even though global, because when this
