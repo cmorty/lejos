@@ -57,18 +57,19 @@ nxt_error_t nxt_init(nxt_t **nxt)
 nxt_error_t nxt_find(nxt_t *nxt)
 {
   struct usb_bus *busses, *bus;
-
+printf("searching\n");
   usb_find_busses();
   usb_find_devices();
 
   busses = usb_get_busses();
-
   for (bus = busses; bus != NULL; bus = bus->next)
     {
       struct usb_device *dev;
+printf("Search bus\n");
 
       for (dev = bus->devices; dev != NULL; dev = dev->next)
         {
+printf("found device %x %x\n", dev->descriptor.idVendor, dev->descriptor.idProduct);
           if (dev->descriptor.idVendor == VENDOR_ATMEL &&
               dev->descriptor.idProduct == PRODUCT_SAMBA)
             {
