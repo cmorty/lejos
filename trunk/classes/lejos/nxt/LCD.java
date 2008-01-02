@@ -165,7 +165,8 @@ public class LCD {
 		int yChar = y / 8;
 		int index = yChar * 25 + xChar;
 		int specificBit = (y % 8) + ((x % 4) * 8);
-		displayBuf[index] = displayBuf[index] | (rgbColor << specificBit);
+		//displayBuf[index] = displayBuf[index] | (rgbColor << specificBit);
+		displayBuf[index] = (displayBuf[index] & ~(1 << specificBit)) | (rgbColor << specificBit);
 	}
 
 	public static void drawString(String str, int x, int y, boolean invert) {
