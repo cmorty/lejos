@@ -21,6 +21,14 @@ public class File {
 	private static final byte MAX_FILENAME = 30;
 	
 	/**
+	 * Maximum number of pages available to user flash memory.
+	 * Change this if the start of user flash memory in the
+	 * firmware changes.
+	 * 
+	 */
+	private static final int MAX_USER_PAGES = 768;
+	
+	/**
 	 * Signature written to the front of the file table to indicate if the
 	 * flash memory contains file table information. By changing this
 	 * version number/string, the users file system will reformat automatically.
@@ -512,7 +520,6 @@ public class File {
 	 * Returns to total free memory in the flash file system.
 	 */
 	public static int freeMemory() {
-		// !! 767 below should be defined as constant so we know what it is.
 		int last_page;
 		
 		if(files == null) {
@@ -526,7 +533,7 @@ public class File {
 			File  top = files[totalFiles - 1]; // file at top of flash memory
 			last_page = top.getPage()+(top.length()-1)/BYTES_PER_PAGE;
 		}
-		return (767 - last_page) * BYTES_PER_PAGE;
+		return (MAX_USER_PAGES - 1 - last_page) * BYTES_PER_PAGE;
 	}
 
 /**
