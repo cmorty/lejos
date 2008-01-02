@@ -163,7 +163,8 @@ public class StartUpText {
 		    			} catch (InterruptedException e) {}
 		    		}
 		    	} else if (selection == 1) { // Search    		
-		    		byte[] cod = {0,0,8,4}; // Toy, Robot
+		    		//byte[] cod = {0,0,8,4}; // Toy, Robot
+					byte[] cod = {0,0,0,0}; // All
 		    		LCD.clear();
 		    		LCD.drawString("Searching ...", 0, 0);
 		    		LCD.refresh();
@@ -338,9 +339,8 @@ class BTRespond  extends Thread {
 		BTConnection btc = null;
 		int len;
 		String connected = "Connected";
-		String [] progress = {".  ", " . ", "  ."};
 		int progressPos = 0;
-		
+		//Debug.open();
 		while (true)
 		{
 			if (cmdMode) {
@@ -357,7 +357,8 @@ class BTRespond  extends Thread {
 				cmdMode = false;
 			}
 			
-			len = Bluetooth.readPacket(inMsg,64);
+			//len = Bluetooth.readPacket(inMsg,64);
+			len = btc.read(inMsg,64);
 			
 			if (len > 0)
 			{
@@ -369,13 +370,15 @@ class BTRespond  extends Thread {
 				//LCD.refresh();
 				ind.ioActive();
 				int replyLen = LCP.emulateCommand(inMsg,len, reply);
-				if ((inMsg[0] & 0x80) == 0) Bluetooth.sendPacket(reply, replyLen);
+				//if ((inMsg[0] & 0x80) == 0) Bluetooth.sendPacket(reply, replyLen);
+				if ((inMsg[0] & 0x80) == 0) btc.write(reply, replyLen);
 				if (inMsg[1] == (byte) 0x84 || inMsg[1] == (byte) 0x85) {
 					Sound.beepSequenceUp();
 					menu.quit();
 				}
 				if (inMsg[1] == (byte) 0x20) { // Disconnect
-					Bluetooth.btSetCmdMode(1); // set Command mode
+					//Bluetooth.btSetCmdMode(1); // set Command mode
+					btc.close(); 
 					cmdMode = true;
 				}
 			}
