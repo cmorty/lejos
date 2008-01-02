@@ -31,7 +31,7 @@
 #include "firmware.h"
 
 #define MAX_VM_PAGES 128
-#define MAX_MENU_PAGES 128
+#define MAX_MENU_PAGES 192
 
 #define NXT_HANDLE_ERR(expr, nxt, msg)     \
   do {                                     \
@@ -87,12 +87,12 @@ int main(int argc, char *argv[])
     }
   
   printf("Checking VM %s ... ", fw_file);
-  NXT_HANDLE_ERR(nxt_firmware_validate(fw_file, MAX_VM_PAGES * 256), NULL,
+  NXT_HANDLE_ERR(nxt_firmware_validate(fw_file, MAX_VM_PAGES ), NULL,
                  "Error in VM file");
   printf("VM OK.\n");
  
   printf("Checking Menu %s ... ", menu_file);
-  NXT_HANDLE_ERR(nxt_firmware_validate(menu_file, (MAX_MENU_PAGES * 256) - 4), NULL,
+  NXT_HANDLE_ERR(nxt_firmware_validate(menu_file, (MAX_MENU_PAGES ) - 4), NULL,
                  "Error in Menu file");
   printf("Menu OK.\n");
 

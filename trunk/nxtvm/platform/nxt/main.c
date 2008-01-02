@@ -219,7 +219,7 @@ nxt_main(int bin, int size)
     // Execute flash menu
 
     bin = (unsigned *) 0x00108000;
-    size = *((unsigned *) 0x0010fffc);
+    size = *((unsigned *) 0x00113ffc);
     size = (size + 3) & ~3;
   	binary = (char *) bin;
     jsize = size - 4;
@@ -235,7 +235,7 @@ nxt_main(int bin, int size)
     // Execute flash menu
 
     bin = (unsigned *) 0x00108000;
-    size = *((unsigned *) 0x0010fffc);
+    size = *((unsigned *) 0x00113ffc);
     size = (size + 3) & ~3;
     temp = ((unsigned *) (&__free_ram_end__)) - (size >> 2);   
     memcpy(temp,bin,size);
