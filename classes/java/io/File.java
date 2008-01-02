@@ -26,7 +26,7 @@ public class File {
 	 * firmware changes.
 	 * 
 	 */
-	private static final int MAX_USER_PAGES = 768;
+	private static final int MAX_USER_PAGES = 704;
 	
 	/**
 	 * Signature written to the front of the file table to indicate if the
