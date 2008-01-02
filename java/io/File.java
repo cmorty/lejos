@@ -34,7 +34,7 @@ public class File {
 	 * version number/string, the users file system will reformat automatically.
 	 * (i.e. Restarting file system and erasing their current stored classes) 
 	 */
-	private static final String TABLE_ID = "V_0.2";  
+	private static final String TABLE_ID = "V_0.3";  
 	
 	/**
 	 * Indicates the starting page of the file table.
