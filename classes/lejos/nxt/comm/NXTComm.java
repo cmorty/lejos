@@ -29,7 +29,7 @@ public class NXTComm {
 	public byte[] readData() throws IOException {	
 		int len = 0;
 		
-		while (len == 0) len = Bluetooth.readPacket(buf, 64);
+		while (len == 0) len = btc.readPacket(buf, 64);
 		byte [] data = new byte[len];
 		for(int i=0;i<len;i++) data[i] = buf[i];
 		return data;
