@@ -82,7 +82,6 @@ nxt_firmware_validate_fd(int fd, int max_size)
 
   if (fstat(fd, &s) < 0)
     return NXT_FILE_ERROR;
-printf("Check size max %d actual %d\n", max_size, (int)s.st_size);
 
   if (s.st_size > max_size)
     return NXT_INVALID_FIRMWARE;
