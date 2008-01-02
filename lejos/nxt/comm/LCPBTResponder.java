@@ -26,17 +26,17 @@ public class LCPBTResponder extends Thread {
 				cmdMode = false;
 			}
 			
-			len = Bluetooth.readPacket(inMsg,64);
+			len = btc.readPacket(inMsg,64);
 			
 			if (len > 0)
 			{
 				int replyLen = LCP.emulateCommand(inMsg,len, reply);
-				if ((inMsg[0] & 0x80) == 0) Bluetooth.sendPacket(reply, replyLen);
+				if ((inMsg[0] & 0x80) == 0) btc.sendPacket(reply, replyLen);
 				if (inMsg[1] == (byte) 0x20) { // Disconnect
-					Bluetooth.btSetCmdMode(1); // set Command mode
-					try {
+//					Bluetooth.btSetCmdMode(1); // set Command mode
+					//try {
 						btc.close();
-					} catch (IOException ioe) {}
+					//} catch (IOException ioe) {}
 					cmdMode = true;
 				}
 			}
