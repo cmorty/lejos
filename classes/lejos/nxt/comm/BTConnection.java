@@ -444,7 +444,7 @@ public class BTConnection implements StreamConnection
 	{
 		//Debug.out("needs attention\n");
 		// return true if we need to perform low level I/O on this channel
-		if (state == CS_IDLE || switchMode == AM_DISABLE) return false;
+		if (state < CS_CONNECTED || switchMode == AM_DISABLE) return false;
 		// If we have any output then need to send it
 		if (outOffset < outCnt) return true;
 		if (switchMode == AM_OUTPUT) return false;
