@@ -440,6 +440,7 @@ main(void)
   nxt_motor_init();
   i2c_init();
   bt_init();
+  systick_wait_ms(1000); // wait for LCD to stabilize
   display_init();
   
   //flash_set_mode(*((unsigned *) 0x0010fff8));
