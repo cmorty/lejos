@@ -104,7 +104,7 @@ public class BTConnection implements StreamConnection
 	synchronized void disconnected()
 	{
 		// Connection has been closed wake up anything waiting
-		//1 Debug.out("Disconnected " + handle + "\n");
+		Debug.out("Disconnected " + handle + "\n");
 		state = CS_DISCONNECTED;
 		outCnt = 0;
 		notifyAll();
@@ -116,14 +116,14 @@ public class BTConnection implements StreamConnection
 	 */
 	public void close()
 	{
-		//1 Debug.out("Close\n");
+		Debug.out("Close\n");
 		if (state == CS_IDLE) return;
 		synchronized (this)
 		{
 			if (state >= CS_CONNECTED)
 				state = CS_DISCONNECTING;
 		}
-		//1 Debug.out("Close1\n");
+		Debug.out("Close1\n");
 		// If we have any output pending give it chance to go... and discard
 		// any input. We allow longer if we have pending output, just in case we
 		// need to switch streams.
@@ -134,21 +134,21 @@ public class BTConnection implements StreamConnection
 		}
 		// Dump any remaining output
 		outCnt = 0;
-		//1 Debug.out("Close2\n");
+		Debug.out("Close2\n");
 		if (state == CS_DISCONNECTING)
 			// Must not be synchronized here or we get a deadlock
 			Bluetooth.closeConnection(handle);
 		synchronized(this)
 		{
-		//1 Debug.out("Close3\n");
+		Debug.out("Close3\n");
 			while (state == CS_DISCONNECTING)
 				try{wait();}catch(Exception e){}
-		//1 Debug.out("Close4\n");
+		Debug.out("Close4\n");
 			state = CS_IDLE;
 			inBuf = null;
 			outBuf = null;
 		}
-		//1 Debug.out("Close complete\n");
+		Debug.out("Close complete\n");
 
 	}
 	
@@ -251,18 +251,18 @@ public class BTConnection implements StreamConnection
 	 */
 	synchronized void recv()
 	{
-		//Debug.out("recv\n");
+		Debug.out("recv\n");
 		// Read data into the input buffer
 		while (inCnt < inBuf.length)
 		{
 			if (inCnt == 0) inOffset = 0;
 			int offset = (inOffset + inCnt) % inBuf.length;
 			int len = (offset >= inOffset ? inBuf.length - offset : inOffset - offset);
-			//Debug.out("inCnt " + inCnt + " inOffset " + inOffset + " offset " + offset + " len " + len + "\n");
+			Debug.out("inCnt " + inCnt + " inOffset " + inOffset + " offset " + offset + " len " + len + "\n");
 			int cnt = Bluetooth.btRead(inBuf, offset, len);
 			if (cnt <= 0) break;
 			inCnt += cnt;
-			//Debug.out("recv " + inCnt + "\n");
+			Debug.out("recv " + inCnt + "\n");
 		}
 		if (inCnt > 0) notifyAll();
 	}
@@ -440,11 +440,11 @@ public class BTConnection implements StreamConnection
 	 * to this question can be controlled using the setActiveMode method.
 	 * @ return			true if the channel is interesting!
 	 */
-	boolean needsAttention()
+	synchronized boolean needsAttention()
 	{
 		//Debug.out("needs attention\n");
 		// return true if we need to perform low level I/O on this channel
-		if (state < CS_CONNECTED || switchMode == AM_DISABLE) return false;
+		if (state == CS_IDLE || switchMode == AM_DISABLE) return false;
 		// If we have any output then need to send it
 		if (outOffset < outCnt) return true;
 		if (switchMode == AM_OUTPUT) return false;
@@ -481,9 +481,10 @@ public class BTConnection implements StreamConnection
 	{
 		// Need to be sure that there is no input in the input buffer before
 		// we switch mode. 
+		if (state == CS_IDLE) return;
 		//Debug.out("Flush\n");
 		if (!pendingInput()) return;
-		//1 Debug.out("Pending input space " + (inBuf.length - inCnt) + "\n");
+		Debug.out("Pending input space " + (inBuf.length - inCnt) + "\n");
 		while (pendingInput() && inCnt < inBuf.length)
 			recv();
 		if (!pendingInput()) return;
