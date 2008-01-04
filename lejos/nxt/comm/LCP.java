@@ -144,7 +144,7 @@ public class LCP {
 			init_files();
 			String soundFile = getFile(cmd,3);
 			File f = new File(soundFile);
-			Sound.playSample(f, 10000, 500);
+			Sound.playSample(f, 50);
 		}
 		
 		// PLAYTONE
