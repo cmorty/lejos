@@ -132,7 +132,7 @@ public class Sound
    * @param vol the volume percentage 0 - 100
    */
   public static void playSample(File file, int vol) {
-	  playSample(file.getPage(), file.length(), 17600, vol * 10);
+	  playSample(file.getPage(), file.length(), 11000, vol * 10);
   }
   
 }
