@@ -253,12 +253,14 @@ public class Display {
 	
 	private void update() {
 		if (current.getPaintRequest()) {
+			graphics.autoRefresh(false);
 			graphics.clear();
 			updateTicker(tickerOffset);
 			
 			current.paint(graphics);
 			current.clearPaintRequest();
 			graphics.refresh();
+			graphics.autoRefresh(true);
 		}
 	}
 	
