@@ -3,7 +3,10 @@ import lejos.rcxcomm.LLC;
 
 
 /**
- * Shows Lego IR byes received on the LCD
+ * Shows Lego IR byes received on the LCD.
+ * 
+ * Requires a Mindsensors NRLink adapter connected to
+ * sensor port S1.
  * 
  * Point the RCX remote control at the NRLink and see
  * the bytes received, or use any other Lego IR source. 
