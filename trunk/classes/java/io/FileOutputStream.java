@@ -1,8 +1,6 @@
 package java.io;
 
- 
 import lejos.nxt.Flash;
-
 
 public class FileOutputStream extends OutputStream {
 
@@ -35,6 +33,7 @@ public class FileOutputStream extends OutputStream {
 	{
 		this(f, false);
 	}
+	
 /**
  * create a new OutputStream to write to this file
  * @param f  the file this stream writes to
@@ -43,14 +42,14 @@ public class FileOutputStream extends OutputStream {
 	public FileOutputStream(File f, boolean append) {
        this.append = append;
         file = f;
-		buff = new byte[File.BYTES_PER_PAGE];
+		buff = new byte[Flash.BYTES_PER_PAGE];
 		page_pointer = file.page_location;
 		data_pointer = 0; // Start of first page
 
 		if(append)
 		{
-			page_pointer = file.page_location + file.file_length/File.BYTES_PER_PAGE ;
-			data_pointer =  file.file_length%File.BYTES_PER_PAGE;
+			page_pointer = file.page_location + file.file_length/Flash.BYTES_PER_PAGE ;
+			data_pointer =  file.file_length%Flash.BYTES_PER_PAGE;
 			Flash.readPage(buff, page_pointer);
 		}
 		else file.file_length = 0;// can this cause trouble?
@@ -64,12 +63,12 @@ public class FileOutputStream extends OutputStream {
 		buff[data_pointer] = (byte)b;
 		data_pointer++;
 		file.file_length++; 
-		if(data_pointer >= File.BYTES_PER_PAGE) 
+		if(data_pointer >= Flash.BYTES_PER_PAGE) 
 		{
 			if(file.getIndex()< ( File.totalFiles -1)) 
 				{
 				file.moveToTop();
-				page_pointer = file.page_location + file.file_length/File.BYTES_PER_PAGE; 					
+				page_pointer = file.page_location + file.file_length/Flash.BYTES_PER_PAGE; 					
 				}
 			flush(); // Write to flash
 			page_pointer++; // Move to next page
@@ -80,10 +79,11 @@ public class FileOutputStream extends OutputStream {
 	public void flush() throws IOException {
 		Flash.writePage(buff, page_pointer);
     }
-/**
- * write the buffer to flash memory and update the file parameters in flash
- * Resets pointers, so file can be writen again from beginning with the same output stream.
- */	
+	
+	/**
+	 * Write the buffer to flash memory and update the file parameters in flash.
+	 * Resets pointers, so file can be writen again from beginning with the same output stream.
+	 */	
 	public void close() throws IOException {
 		// !! Alternate implementation: If this is a new file, perhaps only 
 		// write the file table information AFTER close() called so  
