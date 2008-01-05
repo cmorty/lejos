@@ -32,7 +32,7 @@ public class StartUpText {
 		TextMenu menu = topMenu;
 		String[] blueMenuData = {"Devices", "Search", "On/Off","Visibility"};
 		TextMenu blueMenu = new TextMenu(blueMenuData,3);
-		String[] systemMenuData = {"Defrag", "Format"};
+		String[] systemMenuData = {"Format"};
 		TextMenu systemMenu = new TextMenu(systemMenuData,3);
 		File[] files = null;
 		boolean quit = false;
@@ -46,6 +46,15 @@ public class StartUpText {
 		bt.setDaemon(true);
 		bt.setIndicator(ind);
 		bt.start();
+		
+		// Defrag the file system	
+		files = File.listFiles();
+		try {
+			File.defrag();
+		}
+		catch (IOException ioe) {
+			File.reset();
+		}
 		
 		while (!quit) 
 		{
@@ -108,11 +117,15 @@ public class StartUpText {
 			    	int subSelection = fileMenu.select();
 			    	if (subSelection == 0) 
 			    	{
-			    		Bluetooth.btSetCmdMode(1);
 			    		files[selection].exec();
 			    	} else if (subSelection == 1)
 			    	{
-			    		files[selection].delete();	 
+			    		files[selection].delete();
+						try {
+							File.defrag();
+						} catch (IOException ioe) {
+							File.reset();
+						}
 			    		LCD.clear();
 			    		LCD.refresh();
 			    	}
@@ -220,8 +233,6 @@ public class StartUpText {
 		    	
 		    } else if (menu == systemMenu) {
 		    	if (selection == 0) {
-		    		File.defrag();
-		    	} else if (selection == 1) {
 		    		File.format();
 		    	} else if (selection == -1) {
 		    		menu = topMenu;
@@ -308,7 +319,14 @@ class USBRespond extends Thread
 				ind.ioActive();
 				int replyLen = LCP.emulateCommand(inMsg,len, reply);
 				if ((inMsg[0] & 0x80) == 0) USB.usbWrite(reply, replyLen);
-				if (inMsg[1] == (byte) 0x84 || inMsg[1] == (byte) 0x85) {
+				if (inMsg[1] == LCP.CLOSE|| inMsg[1] == LCP.DELETE) {
+					if (inMsg[1] == LCP.DELETE) {
+						try {
+							File.defrag();
+						} catch (IOException ioe) {
+							File.reset();
+						}
+					}
 					Sound.beepSequenceUp();
 					menu.quit();
 				}
@@ -332,14 +350,12 @@ class BTRespond  extends Thread {
 	
 	public void run() 
 	{
-
 		byte[] inMsg = new byte[64];
 		byte [] reply = new byte[64];
 		boolean cmdMode = true;
 		BTConnection btc = null;
 		int len;
-		String connected = "Connected";
-		int progressPos = 0;
+		
 		//Debug.open();
 		while (true)
 		{
@@ -370,14 +386,19 @@ class BTRespond  extends Thread {
 				//LCD.refresh();
 				ind.ioActive();
 				int replyLen = LCP.emulateCommand(inMsg,len, reply);
-				//if ((inMsg[0] & 0x80) == 0) Bluetooth.sendPacket(reply, replyLen);
 				if ((inMsg[0] & 0x80) == 0) btc.write(reply, replyLen);
-				if (inMsg[1] == (byte) 0x84 || inMsg[1] == (byte) 0x85) {
+				if (inMsg[1] == LCP.CLOSE|| inMsg[1] == LCP.DELETE) {
+					if (inMsg[1] == LCP.DELETE) {
+						try {
+							File.defrag();
+						} catch (IOException ioe) {
+							File.reset();
+						}
+					}
 					Sound.beepSequenceUp();
 					menu.quit();
 				}
-				if (inMsg[1] == (byte) 0x20) { // Disconnect
-					//Bluetooth.btSetCmdMode(1); // set Command mode
+				if (inMsg[1] == LCP.NXJ_DISCONNECT) { 
 					btc.close(); 
 					cmdMode = true;
 				}
