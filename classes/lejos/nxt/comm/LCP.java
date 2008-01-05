@@ -364,16 +364,7 @@ public class LCP {
 			int size = getInt(cmd, 22);
 			init_files();
 			
-			// If insufficient flash do a Defrag
-			if (size > File.freeMemory()) {
-				try {
-					File.defrag();
-				} catch (IOException ioe) {}
-				files = null;
-				init_files();
-			}
-			
-			// If still insufficient, report an error			
+			// If insufficient flash memory, report an error			
 			if (size > File.freeMemory()) {
 				reply[2] = INSUFFICIENT_MEMORY;
 			} else {	

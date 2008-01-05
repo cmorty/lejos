@@ -14,7 +14,7 @@ public class FileInputStream extends InputStream{
 	
 	public FileInputStream(File f) {
         file = f;
-		buff = new byte[File.BYTES_PER_PAGE];
+		buff = new byte[Flash.BYTES_PER_PAGE];
 		page_pointer = file.page_location;
 		data_pointer = 0; // Start of page
 		pointer = 0; // Overall mark;
@@ -29,7 +29,7 @@ public class FileInputStream extends InputStream{
 		int val = buff[data_pointer];
 		data_pointer++;
 		pointer++;
-		if(data_pointer >= File.BYTES_PER_PAGE) {
+		if(data_pointer >= Flash.BYTES_PER_PAGE) {
 			data_pointer = 0;
 			page_pointer++;
 			Flash.readPage(buff, page_pointer);
