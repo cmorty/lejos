@@ -199,6 +199,9 @@ dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
   case getDisplay_4_5_1I:
     push_word(display_get_array());
     return;
+  case setAutoRefresh_4I_5V:
+    display_set_auto_update(paramBase[0]);
+    return;
   case getVoltageMilliVolt_4_5I:
     push_word(battery_voltage());
     return;

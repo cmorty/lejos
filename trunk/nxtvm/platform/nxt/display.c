@@ -161,14 +161,22 @@ static const U8 font[N_CHARS][FONT_WIDTH] = {
 /* 0x7F */ {0x3E, 0x36, 0x2A, 0x36, 0x3E},
 };
 
-int displayTick = 0;
+int display_tick = 0;
+int display_auto_update = 1;
 
 void
 display_update(void)
 {
-  displayTick = 0;
+  display_tick = 0;
   nxt_lcd_update();
 }
+
+void display_set_auto_update(int mode)
+{
+  // Enable/disable automatic refresh of the display.
+  display_auto_update = mode;
+}
+  
 
 void display_force_update(void)
 {
@@ -363,6 +371,7 @@ display_init(void)
   display_array.hdr.monitorCount = 0;
   display_array.hdr.threadId = 0;
   display_clear(0);
+  display_auto_update = 1;
   nxt_lcd_init((U8 *)display_buffer);
 }
 

@@ -28,6 +28,9 @@ void display_test(void);
 
 U8 *display_get_buffer(void);
 
-extern int displayTick;
+void display_set_auto_update(int);
+
+extern int display_tick;
+extern int display_auto_update;
 
 #endif
