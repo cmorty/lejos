@@ -1,5 +1,6 @@
-package lejos.nxt;
+package lejos.nxt.remote;
 
+import lejos.nxt.*;
 import lejos.nxt.comm.*;
 import java.io.*;
 
