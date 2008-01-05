@@ -23,4 +23,7 @@ public class RCXPlexedMotorPort implements BasicMotorPort {
 		plex.setDirection(mmMode, id);
 		plex.setSpeed(mmPower, id);
 	}
+	
+	public void setPWMMode(int mode) {
+	}
 }

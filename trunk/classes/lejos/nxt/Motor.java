@@ -89,12 +89,12 @@ public class Motor extends BasicMotor// implements TimerListener
    public Motor (TachoMotorPort port)
    {
       _port = port;
-      MotorPort p = (MotorPort)port;
-      p.setPWMMode(MotorPort.PWM_BRAKE);
+      port.setPWMMode(TachoMotorPort.PWM_BRAKE);
       regulator.setDaemon(true);
       regulator.start();
       while(_voltage < 1f );
    }
+   
    public int getStopAngle() { return (int)_stopAngle;}
 
    /**
