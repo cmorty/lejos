@@ -250,6 +250,7 @@ nxt_main(int bin, int size)
   nxt_motor_reset_all();
   bt_reset(); 
   display_clear(1);
+  display_set_auto_update(1);
   //       printf("Installing Binary\n");
 
   install_binary(binary);

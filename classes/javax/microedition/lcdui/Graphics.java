@@ -318,6 +318,11 @@ public class Graphics {
 	public void clear() {
 		LCD.clearDisplay();
 	}
+	
+	public void autoRefresh(boolean on)
+	{
+		LCD.setAutoRefresh((on ? 1 : 0));
+	}
 }
 
 /*
