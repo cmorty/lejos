@@ -1,6 +1,6 @@
 package lejos.nxt;
 
-interface ADSensorPort extends BasicSensorPort {
+public interface ADSensorPort extends BasicSensorPort {
 
 	public boolean readBooleanValue();
 	

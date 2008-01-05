@@ -1,6 +1,6 @@
 package lejos.nxt;
 
-interface Tachometer {
+public interface Tachometer {
 	
 	public int getTachoCount();
 	
