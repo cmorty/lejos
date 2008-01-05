@@ -1,6 +1,6 @@
 package lejos.nxt;
 
-interface BasicMotorPort {
+public interface BasicMotorPort {
 	static public final int PWM_FLOAT = 0;
 	static public final int PWM_BRAKE = 1;
 	
