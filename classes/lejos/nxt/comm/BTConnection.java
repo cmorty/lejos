@@ -35,7 +35,7 @@ public class BTConnection implements StreamConnection
 	
 	private static int BTC_BUFSZ = 256;
 	private static int BTC_CLOSETIMEOUT1 = 1000;
-	private static int BTC_CLOSETIMEOUT2 = 500;
+	private static int BTC_CLOSETIMEOUT2 = 250;
 	
 	public static final int AM_DISABLE = 0;
 	public static final int AM_ALWAYS = 1;
@@ -101,13 +101,16 @@ public class BTConnection implements StreamConnection
 	 * Called when the remote side of the connection disconnects.
 	 * Mark the connection as now disconected.
 	 */
-	synchronized void disconnected()
+	synchronized boolean disconnected()
 	{
 		// Connection has been closed wake up anything waiting
-		Debug.out("Disconnected " + handle + "\n");
+		//1 Debug.out.out("Disconnected " + handle + "\n");
+		notifyAll();
+		// don't allow multiple disconnects, or disconnect of a closed connection'
+		if (state <= CS_DISCONNECTED) return false;
 		state = CS_DISCONNECTED;
 		outCnt = 0;
-		notifyAll();
+		return true;
 	}
 	
 	/**
@@ -116,14 +119,14 @@ public class BTConnection implements StreamConnection
 	 */
 	public void close()
 	{
-		Debug.out("Close\n");
+		//Debug.out("Close\n");
 		if (state == CS_IDLE) return;
 		synchronized (this)
 		{
 			if (state >= CS_CONNECTED)
 				state = CS_DISCONNECTING;
 		}
-		Debug.out("Close1\n");
+		//Debug.out("Close1\n");
 		// If we have any output pending give it chance to go... and discard
 		// any input. We allow longer if we have pending output, just in case we
 		// need to switch streams.
@@ -134,21 +137,21 @@ public class BTConnection implements StreamConnection
 		}
 		// Dump any remaining output
 		outCnt = 0;
-		Debug.out("Close2\n");
+		//Debug.out("Close2\n");
 		if (state == CS_DISCONNECTING)
 			// Must not be synchronized here or we get a deadlock
 			Bluetooth.closeConnection(handle);
 		synchronized(this)
 		{
-		Debug.out("Close3\n");
+		//Debug.out("Close3\n");
 			while (state == CS_DISCONNECTING)
 				try{wait();}catch(Exception e){}
-		Debug.out("Close4\n");
+		//Debug.out("Close4\n");
 			state = CS_IDLE;
 			inBuf = null;
 			outBuf = null;
 		}
-		Debug.out("Close complete\n");
+		//Debug.out("Close complete\n");
 
 	}
 	
@@ -163,6 +166,7 @@ public class BTConnection implements StreamConnection
 		if (outOffset >= outCnt) return;
 		// Transmit the data in the output buffer
 		int cnt = Bluetooth.btWrite(outBuf, outOffset, outCnt - outOffset);
+		//1 Debug.out.out("Send " + cnt + "\n");
 		outOffset += cnt;
 		if (outOffset >= outCnt)
 		{
@@ -201,7 +205,7 @@ public class BTConnection implements StreamConnection
 		int offset = -header;
 		int hdr = len;
 
-		//Debug.out("write " + len +" bytes\n");
+		//1 Debug.out.out("write " + len +" bytes\n");
 		if (state == CS_DATALOST)
 		{
 			state = CS_CONNECTED;
@@ -251,18 +255,18 @@ public class BTConnection implements StreamConnection
 	 */
 	synchronized void recv()
 	{
-		Debug.out("recv\n");
+		//1 Debug.out("recv\n");
 		// Read data into the input buffer
 		while (inCnt < inBuf.length)
 		{
 			if (inCnt == 0) inOffset = 0;
 			int offset = (inOffset + inCnt) % inBuf.length;
 			int len = (offset >= inOffset ? inBuf.length - offset : inOffset - offset);
-			Debug.out("inCnt " + inCnt + " inOffset " + inOffset + " offset " + offset + " len " + len + "\n");
+			//Debug.out("inCnt " + inCnt + " inOffset " + inOffset + " offset " + offset + " len " + len + "\n");
 			int cnt = Bluetooth.btRead(inBuf, offset, len);
 			if (cnt <= 0) break;
 			inCnt += cnt;
-			Debug.out("recv " + inCnt + "\n");
+			//1 Debug.out.out("recv " + inCnt + "\n");
 		}
 		if (inCnt > 0) notifyAll();
 	}
@@ -442,6 +446,7 @@ public class BTConnection implements StreamConnection
 	 */
 	synchronized boolean needsAttention()
 	{
+		//1 if (chanNo == 0) Debug.out("na s" + state + " i " + inCnt + "\n");
 		//Debug.out("needs attention\n");
 		// return true if we need to perform low level I/O on this channel
 		if (state < CS_CONNECTED || switchMode == AM_DISABLE) return false;
@@ -484,7 +489,7 @@ public class BTConnection implements StreamConnection
 		if (state == CS_IDLE) return;
 		//Debug.out("Flush\n");
 		if (!pendingInput()) return;
-		Debug.out("Pending input space " + (inBuf.length - inCnt) + "\n");
+		//1 Debug.out.out("Pending input space " + (inBuf.length - inCnt) + "\n");
 		while (pendingInput() && inCnt < inBuf.length)
 			recv();
 		if (!pendingInput()) return;
