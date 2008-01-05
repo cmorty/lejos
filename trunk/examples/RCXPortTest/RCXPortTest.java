@@ -3,6 +3,19 @@ import lejos.rcxcomm.*;
 import java.io.*;
 import lejos.nxt.*;
 
+/**
+ * Test of NXT emulation of the leJOS RCX RCXPort class.
+ * 
+ * Run the LLCSensorReader sample on the RCX, and the NXT 
+ * will read the raw sensor value of the sensor connected to
+ * the RCX S2 port.
+ * 
+ * Requires a Mindsensors NRLink adapter connected to sensor
+ * port S1 on the NXT.
+ * 
+ * @author Lawrie Griffiths
+ *
+ */
 public class RCXPortTest {
 
 	public static void main(String[] args) throws Exception {

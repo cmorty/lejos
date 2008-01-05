@@ -1,5 +1,14 @@
 import lejos.nxt.*;
 
+/**
+ * Test of the Mindsensors RCX Motor Multiplexer.
+ * 
+ * The adapter should be connected to S1 and an RCX
+ * motor connected to port A on the multiplexer.
+ * 
+ * @author Lawrie Griffiths
+ *
+ */
 public class RCXMMTest {
 
 	public static void main(String[] args) throws Exception {

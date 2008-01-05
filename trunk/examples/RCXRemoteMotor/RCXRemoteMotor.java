@@ -1,6 +1,22 @@
 
 import lejos.nxt.*;
 
+/**
+ * Test of a remote RCX motor using a remote RCX as a controller.
+ * 
+ * Requires a Mindsensors NRLink adapter connected to sensor
+ * port S1 on the NXT, and RCX motors connected to one or
+ * more of the RCX m,otor ports.
+ * 
+ * Press the ENTER button to increase the power, LEFT to cycle through
+ * the motor modes (forward, backward,float,stop) and RIGHT
+ * to cycle through the motors.
+ * 
+ * ESCAPE terminates the program.
+ * 
+ * @author Lawrie Griffiths
+ *
+ */
 public class RCXRemoteMotor {
 
 	public static void main(String[] args) throws Exception {
