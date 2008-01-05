@@ -1,6 +1,6 @@
 package lejos.nxt;
 
-abstract class BasicMotor 
+public abstract class BasicMotor 
 {
 	
 	int _mode = 4;
