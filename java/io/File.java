@@ -21,14 +21,6 @@ public class File {
 	private static final byte MAX_FILENAME = 30;
 	
 	/**
-	 * Maximum number of pages available to user flash memory.
-	 * Change this if the start of user flash memory in the
-	 * firmware changes.
-	 * 
-	 */
-	private static final int MAX_USER_PAGES = 704;
-	
-	/**
 	 * Signature written to the front of the file table to indicate if the
 	 * flash memory contains file table information. By changing this
 	 * version number/string, the users file system will reformat automatically.
@@ -58,21 +50,13 @@ public class File {
 	 * is stored in the table. 
 	 */
 	private static byte NUM_FILES_POS = (byte)TABLE_ID.length();
-		
-	/**
-	 * Indicates the # of bytes per page in the Flash class.
-	 * Lawrie Griffiths determines this. Might want to access this
-	 * directly from Flash in future from a package level constant in case
-	 * we want to alter this number.
-	 */
-	protected static short BYTES_PER_PAGE = 256;
 	
 	// GLOBAL STATIC CLASS VARIABLES: 
 	/**
 	 * Shared buffer. Using this as static class variable because leJOS
 	 * lacks a garbage collector.
 	 */
-	private static byte [] buff = new byte[BYTES_PER_PAGE];
+	private static byte [] buff = new byte[Flash.BYTES_PER_PAGE];
 	
 	/**
 	 * Array containing all the Files in the directory. 
@@ -185,12 +169,9 @@ public class File {
 		try { // Impossible for IOException when deleting, therefore catch here.
 			File.writeTable(files);
 		} catch (IOException e) {}
-		// 4. Make this file.exists = false;
+		// 4. Make this file.exists = false and length = 0.
 		this.exists = false;
 		this.file_length = 0;
-		try { // Impossible for IOException when deleting, therefore catch here.
-			File.defrag();
-		} catch (IOException e){}
 		return true;
 	}
 
@@ -295,7 +276,7 @@ public class File {
 	 */
 	private static byte readNextByte() {
 		
-		if(byte_pointer >= BYTES_PER_PAGE) {
+		if(byte_pointer >= Flash.BYTES_PER_PAGE) {
 			++page_pointer; // Throw exception here if > FILE_TABLE_PAGES - 1?
 			byte_pointer = 0;
 			Flash.readPage(buff, page_pointer);
@@ -390,7 +371,7 @@ public class File {
 	 * @param value The value to write.
 	 */
 	private static void writeNextByte(byte value) throws IOException {
-		if(byte_pointer >= BYTES_PER_PAGE) {
+		if(byte_pointer >= Flash.BYTES_PER_PAGE) {
 			writeBufftoFlash();
 			++page_pointer;
 			// Throw exception here if > FILE_TABLE_PAGES - 1:
@@ -424,7 +405,6 @@ public class File {
 	 * Essentially formats the file system by writing TABLE_ID characters to 
 	 * the first page of flash memroy. Also writes 0 as the number of files
 	 * in the file system, so it can be used to restart/erase all files.
-	 *
 	 */
 	public static void format() {
 		// Write TABLE_ID to buff array:
@@ -463,8 +443,8 @@ public class File {
 			this.page_location = files[File.totalFiles - 1].page_location;
 			int prevFileSize = files[File.totalFiles - 1].file_length;
 			if(prevFileSize == 0) prevFileSize = 1; // Kludge to reserve page for empty files.
-			int pages = prevFileSize / BYTES_PER_PAGE;
-			if(prevFileSize % BYTES_PER_PAGE != 0) pages++;
+			int pages = prevFileSize / Flash.BYTES_PER_PAGE;
+			if(prevFileSize % Flash.BYTES_PER_PAGE != 0) pages++;
 			this.page_location = (short)(page_location + pages);
 		} else { // If array empty, start writing on first page after table data
 			this.page_location = File.FILE_START_PAGE;
@@ -478,16 +458,16 @@ public class File {
 		return true;
 	}
 	
-/**
-* Move the file a page at a time, in order from low to high memory
-* assumes that new starting page location  is lower in flash memory than the old or else that the new pages
-* does not overlap with the old.  
-* @param page  starting page of the new location.
-*/
+	/**
+	 * Move the file a page at a time, in order from low to high memory
+	 * assumes that new starting page location  is lower in flash memory than the old or else that the new pages
+	 * does not overlap with the old.  
+	 * @param page  starting page of the new location.
+	 */
 	 private void moveTo(int page) throws IOException
 	{
-		int nrPages = file_length/BYTES_PER_PAGE;
-		if(file_length%BYTES_PER_PAGE>0) nrPages++;
+		int nrPages = file_length/Flash.BYTES_PER_PAGE;
+		if(file_length%Flash.BYTES_PER_PAGE>0) nrPages++;
 		int from = page_location;
 		int to = page;
 		page_location =(short) page;
@@ -500,15 +480,15 @@ public class File {
 		writeTable(files);	
 	}
 
-	 /**
-	  * move the file to become the last one in flash memory 
-	  */
+	/**
+	 * Move the file to become the last one in flash memory.
+	 */
 	public void moveToTop() throws IOException
 	{
 		File  top = files[totalFiles - 1]; // file at top of flash memory
 		// !! Is the 1 value below problematic? I want to expand
 		// past 1 page for table. Actually is looks okay.
-		int page = 1+ top.getPage()+top.length()/BYTES_PER_PAGE;  
+		int page = 1+ top.getPage()+top.length()/Flash.BYTES_PER_PAGE;  
 		int length = file_length;
 		moveTo(page);	
 		delete(); // remove from files[] array
@@ -531,21 +511,22 @@ public class File {
 			last_page = -1;
 		} else {
 			File  top = files[totalFiles - 1]; // file at top of flash memory
-			last_page = top.getPage()+(top.length()-1)/BYTES_PER_PAGE;
+			last_page = top.getPage()+(top.length()-1)/Flash.BYTES_PER_PAGE;
 		}
-		return (MAX_USER_PAGES - 1 - last_page) * BYTES_PER_PAGE;
+		return (Flash.MAX_USER_PAGES - 1 - last_page) * Flash.BYTES_PER_PAGE;
 	}
 
-/**
-* returns location of file in the files[] array
-* @return  index of file in files[]
-*/
+	/**
+	 * Returns location of file in the files[] array
+	 * @return  index of file in files[]
+	 */
 	public  int getIndex()
 	{
 		int i = 0;
 		while( i<totalFiles  && this != files[i]) i++;
 		return i;
 	}
+	
 	/** 
 	 * Indicates if the flash memory contains a file table.
 	 * Compares header with expected header (TABLE_HEADER) at the 
@@ -560,10 +541,17 @@ public class File {
 		}
 		return formatted; 
 	}
-/**
-*  assumptions: the files[] array has no nulls, and is in increasing order by page_location
-*  this scheme moves moves each file down to fill in the empty pages. 
-*/	
+	
+	/**
+	 * Defrag the file system.
+	 * 
+	 * WARNING: should only be called from the startup menu.
+	 * If called from a user program, can cause the current program to
+	 * be moved resulting in a data abort of other firmware crash.
+	 * 
+	 * Assumptions: the files[] array has no nulls, and is in increasing order by page_location.
+	 * This scheme moves moves each file down to fill in the empty pages. 
+	 */	
 	public static void defrag() throws IOException
 	{
 		File file;
@@ -573,16 +561,25 @@ public class File {
 		{
 			file = files[i];
 			if(file.page_location > page_pointer) file.moveTo(page_pointer);					
-			page_pointer = file.page_location + file.length()/BYTES_PER_PAGE ;
-			if (file.length()%BYTES_PER_PAGE >0 ) page_pointer++;	
+			page_pointer = file.page_location + file.length()/Flash.BYTES_PER_PAGE ;
+			if (file.length()%Flash.BYTES_PER_PAGE >0 ) page_pointer++;	
 		}
 		writeTable(files);	// update the file data in flash memory	
 	}
 	
+	/**
+	 * Internal method used to get the page number of the start of the file.
+	 * 
+	 * @return page number
+	 */
 	public int getPage() {
 		return page_location;
 	}
 	
+	/**
+	 * Reset the files array after an error.
+	 * Forces listFiles to read from the file table.
+	 */
 	public static void reset() {
 		files = null;
 	}
