@@ -6,6 +6,6 @@ public class HelloWorld
   throws Exception
   {
      LCD.drawString("Hello World",3,4);
-     LCD.refresh();
+     Thread.sleep(2000);
   }
 }
