@@ -360,6 +360,12 @@ void dispatch_native (TWOBYTES signature, STACKWORD *paramBase)
       display_init();
       push_word((STACKWORD) ptr2word(&display_array));
       return;
+    case setAutoRefresh_4I_5V:
+      if (verbose)
+         printf("> ");
+      else
+         printf("& ");
+      printf("Set autodisplay to %d\n", paramBase[0]);
     return;
     case getVoltageMilliVolt_4_5I:
       if (verbose)
