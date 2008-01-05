@@ -259,6 +259,7 @@ public class NXTCommand implements NXTProtocol {
 			StringBuffer name = new StringBuffer(new String(reply))
 					.delete(0, 4);
 			int lastPos = name.indexOf("\0");
+			if (lastPos < 0 || lastPos > 20) lastPos = 20;
 			name.delete(lastPos, name.length());
 			fileInfo = new FileInfo(name.toString());
 			fileInfo.status = 0;
@@ -288,6 +289,7 @@ public class NXTCommand implements NXTProtocol {
 			StringBuffer name = new StringBuffer(new String(reply))
 					.delete(0, 4);
 			int lastPos = name.indexOf("\0");
+			if (lastPos < 0 || lastPos > 20) lastPos = 20;
 			name.delete(lastPos, name.length());
 			fileInfo = new FileInfo(name.toString());
 			fileInfo.status = 0;
