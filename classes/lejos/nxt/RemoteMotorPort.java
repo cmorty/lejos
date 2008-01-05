@@ -59,4 +59,7 @@ public class RemoteMotorPort implements NXTProtocol, TachoMotorPort
 			nxtCommand.resetMotorPosition(id, false);
 		} catch (IOException ioe) { }
 	}
+	
+	public void setPWMMode(int mode) {
+	}
 }

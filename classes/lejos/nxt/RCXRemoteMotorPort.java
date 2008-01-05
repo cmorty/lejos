@@ -50,4 +50,7 @@ public class RCXRemoteMotorPort implements BasicMotorPort {
 			Thread.sleep(50);
 		} catch (InterruptedException e) {}
 	}
+	
+	public void setPWMMode(int mode) {
+	}
 }
