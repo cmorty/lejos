@@ -1,4 +1,4 @@
-package lejos.nxt;
+package lejos.nxt.remote;
 
 import lejos.nxt.comm.*;
 import java.io.*;
@@ -37,3 +37,4 @@ public class RemoteBattery implements NXTProtocol {
 	   return (float)(getVoltageMilliVolt() * 0.001);
 	}
 }
+
