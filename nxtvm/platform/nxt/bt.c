@@ -284,9 +284,12 @@ void bt_reset(void)
   // initialisation and termination. Calling it at other times may cause
   // problems for other real time tasks.
 
+  // If power is currently off to the BC4 do not reset it!
+  if ((*AT91C_PIOA_ODSR & BT_RST_PIN) == 0) return; 
   //display_goto_xy(0, 1);
   //display_string("BT Reset....");
   //display_update();
+  //systick_wait_ms(10000);
   // Ask for command mode
   bt_clear_arm7_cmd();
   // BC4 reset sequence. First take the reset line low for 100ms
