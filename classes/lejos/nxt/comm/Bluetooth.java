@@ -90,7 +90,10 @@ public class Bluetooth
 	private static final int TO_LONG = 30000;
 	private static final int TO_RESET = 5000;
 	private static final int TO_INIT = 500;
-	private static final int TO_CLOSE = 125;
+	private static final int TO_CLOSE = 100;
+	private static final int TO_FORCERESET = -1;
+	private static final int TO_NONE = 0;
+	private static final int TO_FLUSH = 500;
 	
 	static BTConnection [] Chans = new BTConnection[CHANCNT];
 	static byte [] cmdBuf = new byte[128];
@@ -101,6 +104,7 @@ public class Bluetooth
 	static boolean listening = false;
 	static int connected;
 	static int resetCnt;
+	static boolean powerOn;
 	public final static byte[] defaultPin = 
 	    {(byte) '1', (byte) '2', (byte) '3', (byte) '4'};
 	private static byte [] pin = defaultPin;
@@ -212,6 +216,8 @@ public class Bluetooth
 			reqState = RS_INIT;
 			curChan = -1;
 			resetCnt = 0;
+			// Make sure power is on(may cause a reset!)
+			setPower(true);
 			for(int i = 0; i < CHANCNT; i++)
 				Chans[i] = new BTConnection(i);
 			connected = 0;
@@ -230,7 +236,7 @@ public class Bluetooth
 			// Command should be all setup and ready to go in cmdBuf
 			int checkSum = 0;
 			int len = (int)cmdBuf[0] & 0xff;
-			//1 Debug.out.out("send cmd " + (int)cmdBuf[1] + "\n");
+			//1 Debug.out("send cmd " + (int)cmdBuf[1] + "\n");
 			for(int i=0;i<len;i++)
 			{
 				checkSum += cmdBuf[i+1];
@@ -251,14 +257,18 @@ public class Bluetooth
 			int len = (int)replyBuf[0] & 0xff;
 			if (len < 3 ||len >= replyBuf.length)
 			{
-				//1 Debug.out.out("Bad packet len " + len + " cnt " + cnt + "\n");
+				//1 Debug.out("Bad packet len " + len + " cnt " + cnt + "\n");
 				return -1;
 			}
 			int timeout = (int)System.currentTimeMillis() + TO_REPLY;
 			while (cnt < len+1)
 			{
 				cnt += Bluetooth.btRead(replyBuf, cnt, len + 1 - cnt);
-				if ((int)System.currentTimeMillis() > timeout) return -1;
+				if ((int)System.currentTimeMillis() > timeout)
+				{
+					//1 Debug.out("recvReply timeout\n");
+					return -1;
+				}
 			}
 			
 			int csum = len;	
@@ -266,12 +276,12 @@ public class Bluetooth
 			for(int i = 0; i < len; i++)
 				csum += (int)replyBuf[i+1] & 0xff;
 			csum = -csum;
-			//Debug.out("Got reply " + replyBuf[1] + "\n");
+			//1 Debug.out("Got reply " + replyBuf[1] + "\n");
 			if (((byte) csum == replyBuf[len+2]) && ((byte)(csum >> 8) == replyBuf[len+1]))
 				return len;
 			else
 			{
-				//1 Debug.out.out("Bad csum\n");
+				//1 Debug.out("Bad csum\n");
 				return -1;
 			}
 		}
@@ -285,47 +295,57 @@ public class Bluetooth
 
 			synchronized(Bluetooth.sync)
 			{
-				//1 Debug.out.out("hardware reset\n");
-				// Ditch any pending data in the input buffer
-				startTimeout(1000);
-				while (!checkTimeout())
+				int len;
+				//1 Debug.out("hardware reset\n");
+				for(int resetCnt = 0; resetCnt < 2; resetCnt++)
 				{
-					recvReply();
-				}
-				//1 Debug.out.out("End of flush\n");
-				// BC4 reset seq. First take the reset line low...
-				btSetArmCmdMode(MO_CMD);
-				btSetResetLow();
-				// Keep it that way for 100ms and discard any input
-				startTimeout(100);
-				while (!checkTimeout())
-				{
-					recvReply();
-				}
-				// Now bring it high
-				btSetResetHigh();
-				// Now wait for either 5 seconds or for a RESET_INDICATION
-				startTimeout(TO_RESET);
-				while (!checkTimeout())
-				{
-					if (recvReply() > 0 && replyBuf[1] == MSG_RESET_INDICATION)
-						break;
+					// Ditch any pending data in the input buffer
+					startTimeout(TO_FLUSH);
+					while (!checkTimeout())
+					{
+						recvReply();
+					}
+					// Debug.out("End of flush\n");
+					// BC4 reset seq. First take the reset line low...
+					btSetArmCmdMode(MO_CMD);
+					btSetResetLow();
+					// Keep it that way for 100ms and discard any input
+					startTimeout(100);
+					while (!checkTimeout())
+					{
+						recvReply();
+					}
+					// Now bring it high
+					btSetResetHigh();
+					// Now wait for either 5 seconds or for a RESET_INDICATION
+					startTimeout(TO_RESET);
+					while ((len = recvReply()) == 0 || ( len > 0 && replyBuf[1] != MSG_RESET_INDICATION))
+							Thread.yield();
+					//1 if (len < 0) Debug.out("Reset timed out");
+					// Check things are working
+					//Debug.out("Send mode cmd\n");
+					cmdInit(MSG_GET_OPERATING_MODE, 1, 0, 0);
+					sendCommand();
+					startTimeout(TO_SHORT);
+					while ((len = recvReply()) == 0 || (len > 0 && replyBuf[1] != MSG_OPERATING_MODE_RESULT))
+							Thread.yield();
+					//1 if (len < 0) Debug.out("mode had timed out\n");
+					// if we got the response without a timeout we are done!
+					if (len > 0) break;
 				}
 				// We are now in command mode
 				mode = MO_CMD;
 				// Now reset everything else that is going on gulp!
 				for(int i = 0; i < CHANCNT; i++)
 					Chans[i].reset();
-				//1 Debug.out.out("reset complete state is " + reqState + "\n");
+				//1 Debug.out("reset complete state is " + reqState + "\n");
 				listening = false;
 				connected = 0;
 				curChan = -1;
+				cancelTimeout();
 				// Tell anyone that is waiting
-				if (reqState > RS_IDLE)
-				{
-					reqState = RS_ERROR;
-					Bluetooth.sync.notifyAll();
-				}
+				if (reqState > RS_IDLE)	reqState = RS_ERROR;
+				Bluetooth.sync.notifyAll();
 				resetCnt++;
 			}
 		}
@@ -344,10 +364,10 @@ public class Bluetooth
 					// Got a message. We only deal with the messages we have to deal
 					// with here. In general we allow the calling thread to decide
 					// what to do (this includes ignoring the message!).
-					//1 Debug.out.out("got request " + (int)replyBuf[1] + " state " + reqState + "\n");
+					//1 Debug.out("got request " + (int)replyBuf[1] + " state " + reqState + "\n");
 					if (len < 0 || replyBuf[1] == MSG_RESET_INDICATION)
 					{
-						//1 Debug.out.out("Got reply error\n");
+						//1 Debug.out("Got reply error\n");
 						reset();
 						break;
 					}
@@ -486,7 +506,7 @@ public class Bluetooth
 				// Need to flush input when switching to command mode
 				if (flush && curChan >= 0) Chans[curChan].flushInput();
 			}
-			//1 Debug.out.out("Failed to switch\n");
+			//1 Debug.out("Failed to switch\n");
 			mode = -1;
 			curChan = -1;
 			return bc4Mode();
@@ -497,12 +517,12 @@ public class Bluetooth
 			// Decide which (if any) stream to switch to
 			if (mode == MO_STREAM && chan == curChan) return true;
 			switchToCmd();
-			//1 Debug.out.out("Switch to chan " + chan + " handle " + Chans[chan].handle + "\n");
+			//1 Debug.out("Switch to chan " + chan + " handle " + Chans[chan].handle + "\n");
 			cmdInit(MSG_OPEN_STREAM, 2, Chans[chan].handle, 0);
 			sendCommand();
 			// Now wait for the BC4 to switch
 			if (waitSwitch(MO_STREAM, false) != MO_STREAM) return false;
-			//1 Debug.out.out("In stream mode\n");
+			//1 Debug.out("In stream mode\n");
 			// Make sure we process any remaining command input that may have arrived
 			processReply();
 			// Finally switch the ARM over
@@ -517,10 +537,10 @@ public class Bluetooth
 			// Need to switch back into command mode
 			// First step send any pending data
 			if (mode == MO_CMD) return;
-			//1 Debug.out.out("switch to cmd\n");
+			//1 Debug.out("switch to cmd\n");
 			if (mode == MO_STREAM && bc4Mode() == MO_CMD && curChan >= 0)
 			{
-				//1 Debug.out.out("Trying early flush\n");
+				//1 Debug.out("Trying early flush\n");
 				Chans[curChan].flushInput();
 			}
 			// wait for any output to drain
@@ -532,7 +552,7 @@ public class Bluetooth
 			// flush everything.
 			if (waitSwitch(MO_CMD, true) != MO_CMD)
 			{
-				//1 Debug.out.out("Failed to switch to cmd\n");
+				//1 Debug.out("Failed to switch to cmd\n");
 				reset();
 				return;
 			}
@@ -563,9 +583,9 @@ public class Bluetooth
 		
 		public void run()
 		{
-			//1 Debug.out.out("Thread running\n");
+			//1 Debug.out("Thread running\n");
 			waitInit();
-			//1 Debug.out.out("Init complete\n");
+			//1 Debug.out("Init complete\n");
 			while(true)
 			{
 				processCommands();
@@ -616,7 +636,7 @@ public class Bluetooth
 		synchronized (Bluetooth.sync)
 		{
 			if (waitState > 0) reqState = waitState;
-			if (timeout > 0) startTimeout(timeout);
+			if (timeout != TO_NONE) startTimeout(timeout);
 			while (true)
 			{
 				if (waitState(state) < 0) return -1;
@@ -659,18 +679,24 @@ public class Bluetooth
 	public static int closeConnection(byte handle)
 	{
 		int ret = -1;
-		//1 Debug.out.out("Close connection state " + reqState + "\n");
+		//1 Debug.out("Close connection state " + reqState + "\n");
 		synchronized (Bluetooth.sync)
 		{
 			cmdStart();
-			// There is a small chance that we may have had a reset so make sure
-			// that we still have an open channel to close!
-			int timeout = (handle == 3 ? 2*TO_CLOSE : TO_CLOSE);
+			// We can have a race condition when both ends of the connection
+			// close at the same time. This can mean we try and close an already
+			// closed connection. If we do this the BC4 goes into reset mode.
+			// To try and avoid this happening we insert a different length
+			// delay between outbound and inbound streams. We then wait to see
+			// if the other end has already closed things...
+			int timeout = (handle == 3 ? 5*TO_CLOSE : TO_CLOSE);
 			reqState = RS_WAIT;
 			try{Bluetooth.sync.wait(timeout);}catch(Exception e){}
 			reqState = RS_IDLE;
+			// There is a small chance that we may have had a reset so make sure
+			// that we still have an open channel to close!
 			byte [] status = getConnectionStatus();
-			//1 Debug.out.out("Conn status " + status[handle]);
+			//1 Debug.out("Conn status " + status[handle]);
 			if (status == null || status[handle] != 2) return -1;
 			if (Chans[handle].state != BTConnection.CS_DISCONNECTING) return -1;
 			cmdInit(MSG_CLOSE_CONNECTION, 2, handle, 0);
@@ -704,7 +730,7 @@ public class Bluetooth
 				result = null;
 			else
 				System.arraycopy(replyBuf, 2, result, 0, 3);
-			//1 Debug.out.out("Port open handle " + (int)replyBuf[3] + " status " + (int)replyBuf[2] + "\n");
+			//1 Debug.out("Port open handle " + (int)replyBuf[3] + " status " + (int)replyBuf[2] + "\n");
 			cmdComplete();
 			return result;
 		}
@@ -718,7 +744,7 @@ public class Bluetooth
 	 */
 	public static byte [] closePort() {
 		byte [] result = new byte[2];
-		//1 Debug.out.out("Close port\n");
+		//1 Debug.out("Close port\n");
 		synchronized (Bluetooth.sync)
 		{
 			cmdStart();
@@ -741,7 +767,7 @@ public class Bluetooth
 	 */
 	public static BTConnection waitForConnection(byte[] pin)
 	{
-		//1 Debug.out.out("waitForConnection\n");
+		//1 Debug.out("waitForConnection\n");
 		synchronized (Bluetooth.sync)
 		{
 			BTConnection ret = null;
@@ -751,7 +777,7 @@ public class Bluetooth
 			byte [] port = openPort();
 			if (port == null || port[0] != 1 || port[1] >=  Chans.length || port[1] < 0)
 			{
-				//1 Debug.out.out("Failed to open port\n");
+				//1 Debug.out("Failed to open port\n");
 				return null;
 			}
 			// Now in listening mode
@@ -763,7 +789,7 @@ public class Bluetooth
 				try{Bluetooth.sync.wait();}catch(Exception e){}
 			if (listening)
 			{
-				//1 Debug.out.out("Got connect request\n");
+				//1 Debug.out("Got connect request\n");
 				// Restore state
 				reqState = savedState;
 				// and wait until we have control
@@ -772,7 +798,7 @@ public class Bluetooth
 				cmdInit(MSG_ACCEPT_CONNECTION, 2, 1, 0);
 				if (cmdWait(RS_REPLY, RS_CMD, MSG_CONNECT_RESULT, TO_LONG) >= 0)
 				{
-					//1 Debug.out.out("Connect result " + (int)replyBuf[2] + " handle " + (int)replyBuf[3] + "\n");
+					//1 Debug.out("Connect result " + (int)replyBuf[2] + " handle " + (int)replyBuf[3] + "\n");
 					if (replyBuf[2] == 1)
 					{
 						byte handle = replyBuf[3];
@@ -830,7 +856,7 @@ public class Bluetooth
 	 * @return BTConnection Object or null
 	 */
 	public static BTConnection connect(byte[] device_addr, byte[] pin) {
-		//1 Debug.out.out("Connect\n");
+		//1 Debug.out("Connect\n");
 		synchronized(Bluetooth.sync)
 		{
 			BTConnection ret = null;
@@ -841,7 +867,7 @@ public class Bluetooth
 			System.arraycopy(device_addr, 0, cmdBuf, 2, 7);
 			if (cmdWait(RS_REPLY, RS_CMD, MSG_CONNECT_RESULT, TO_LONG) >= 0)
 			{
-				//1 Debug.out.out("Connect result " + (int)replyBuf[2] + " handle " + (int)replyBuf[3] + "\n");
+				//1 Debug.out("Connect result " + (int)replyBuf[2] + " handle " + (int)replyBuf[3] + "\n");
 				if (replyBuf[2] != 0)
 				{
 					byte handle = replyBuf[3];
@@ -874,7 +900,7 @@ public class Bluetooth
 	 * 
 	 */
 	public static int getSignalStrength(byte handle) {
-		//1 Debug.out.out("getSignalStrength\n");
+		//1 Debug.out("getSignalStrength\n");
 		synchronized (Bluetooth.sync)
 		{
 			int ret = -1;
@@ -895,7 +921,7 @@ public class Bluetooth
 	 */
 	public static byte [] getFriendlyName() {
 		byte[] result = new byte[16];
-		//1 Debug.out.out("getFriendlyName\n");
+		//1 Debug.out("getFriendlyName\n");
 		synchronized (Bluetooth.sync)
 		{
 			cmdStart();
@@ -914,7 +940,7 @@ public class Bluetooth
 	 * @param name the friendly name for the device
 	 */
 	public static boolean setFriendlyName(byte[] name) {
-		//1 Debug.out.out("setFriendlyName\n");
+		//1 Debug.out("setFriendlyName\n");
 		synchronized (Bluetooth.sync)
 		{
 			boolean ret=false;
@@ -934,7 +960,7 @@ public class Bluetooth
 	 */
 	public static byte[] getLocalAddress() {
 		byte[] result = new byte[7];
-		//1 Debug.out.out("getLocalAddress\n");
+		//1 Debug.out("getLocalAddress\n");
 		synchronized (Bluetooth.sync)
 		{
 			cmdStart();
@@ -959,7 +985,7 @@ public class Bluetooth
 	 * @return Vector with List of known Devices
 	 */
 	public static Vector getKnownDevicesList() {
-		//1 Debug.out.out("getKnownDevicesList\n");
+		//1 Debug.out("getKnownDevicesList\n");
 		synchronized(Bluetooth.sync)
 		{
 			int state = RS_CMD;
@@ -981,7 +1007,7 @@ public class Bluetooth
 						name[nl] = (char)replyBuf[nl+9];
 					System.arraycopy(replyBuf, 25, devclass, 0, 4);
 					curDevice = new BTRemoteDevice(name, nl, device, devclass);
-					//1 Debug.out.out("got name " + curDevice.getFriendlyName() + "\n");
+					//1 Debug.out("got name " + curDevice.getFriendlyName() + "\n");
 					retVec.addElement(curDevice);
 				}
 				else if (replyBuf[1] == MSG_LIST_DUMP_STOPPED)
@@ -1022,7 +1048,7 @@ public class Bluetooth
 		byte [] addr = d.getDeviceAddr();
 		String name = d.getFriendlyName();
 		byte[] cod = d.getDeviceClass();
-		//1 Debug.out.out("addDevice " + name + "\n");
+		//1 Debug.out("addDevice " + name + "\n");
 		synchronized (Bluetooth.sync)
 		{
 			boolean ret=false;
@@ -1154,7 +1180,7 @@ public class Bluetooth
 	 */
 	public static byte[] getConnectionStatus() {
 		byte[] result = new byte[4];
-		//1 Debug.out.out("getConnectionStatus\n");
+		//1 Debug.out("getConnectionStatus\n");
 		synchronized (Bluetooth.sync)
 		{
 			cmdStart();
@@ -1175,7 +1201,7 @@ public class Bluetooth
 	 */
 	public static byte[] getVersion() {
 		byte [] version = new byte[2];
-		//1 Debug.out.out("getVersion\n");
+		//1 Debug.out("getVersion\n");
 		synchronized (Bluetooth.sync)
 		{
 			cmdStart();
@@ -1195,7 +1221,7 @@ public class Bluetooth
 	 * @return the byte value
 	 */
 	public static int getStatus() {
-		//1 Debug.out.out("getStatus\n");
+		//1 Debug.out("getStatus\n");
 		synchronized (Bluetooth.sync)
 		{
 			int ret = -1;
@@ -1215,7 +1241,7 @@ public class Bluetooth
 	 * @return < 0 Error
 	 */
 	public static int setStatus(int status) {
-		//1 Debug.out.out("setStatus\n");
+		//1 Debug.out("setStatus\n");
 		synchronized (Bluetooth.sync)
 		{
 			int ret = -1;
@@ -1234,7 +1260,7 @@ public class Bluetooth
 	 * @return 1 = visible, 0 = invisible
 	 */
 	public static int getVisibility() {
-		//1 Debug.out.out("getVisibility\n");
+		//1 Debug.out("getVisibility\n");
 		synchronized (Bluetooth.sync)
 		{
 			int ret = -1;
@@ -1254,7 +1280,7 @@ public class Bluetooth
 	 * @return 1 if the port is open, 0 otherwise
 	 */
 	public static int getPortOpen() {
-		//1 Debug.out.out("getPortOpen\n");
+		//1 Debug.out("getPortOpen\n");
 		synchronized (Bluetooth.sync)
 		{
 			int ret = -1;
@@ -1274,7 +1300,7 @@ public class Bluetooth
 	 *		   < 0 Error
 	 */
 	public static int getOperatingMode() {
-		//1 Debug.out.out("getOperatingMode\n");
+		//1 Debug.out("getOperatingMode\n");
 		synchronized (Bluetooth.sync)
 		{
 			int ret = -1;
@@ -1294,7 +1320,7 @@ public class Bluetooth
 	 * @return < 0 error 
 	 */
 	public static int setVisibility(byte visible) {
-		//1 Debug.out.out("setVisibility\n");
+		//1 Debug.out("setVisibility\n");
 		synchronized (Bluetooth.sync)
 		{
 			int ret = -1;
@@ -1313,7 +1339,7 @@ public class Bluetooth
 	 *
 	 */
 	public static int setFactorySettings() {
-		//1 Debug.out.out("setFactorySettings\n");
+		//1 Debug.out("setFactorySettings\n");
 		synchronized (Bluetooth.sync)
 		{
 			int ret = -1;
@@ -1333,7 +1359,7 @@ public class Bluetooth
 	 * @return	< 0 error
 	 */
 	public static int setOperatingMode(byte mode) {
-		//1 Debug.out.out("setOperatingMode\n");
+		//1 Debug.out("setOperatingMode\n");
 		synchronized (Bluetooth.sync)
 		{
 			int ret = -1;
@@ -1347,10 +1373,28 @@ public class Bluetooth
 	}
 	
 	/**
+	 * Force a reset of the Bluetooth module.
+	 * Notes:
+	 * After this call power will be on.
+	 * Any existing connections will be closed
+	 * Any listening threads will be aborted
+	 * 
+	 */	
+	public static void reset()
+	{
+		synchronized (Bluetooth.sync)
+		{
+			cmdStart();
+			// Force a timeout and hence a reset
+			cmdWait(RS_REPLY, RS_WAIT, MSG_RESET_INDICATION, TO_FORCERESET);
+			cmdComplete();
+		}		
+	}
+	
+	/**
 	 * Set the power to the module
 	 * 
 	 * @param on power on or off 
-	 * @return	< 0 error
 	 */
 	public static void setPower(boolean on)
 	{
@@ -1358,6 +1402,17 @@ public class Bluetooth
 			btSetResetHigh();
 		else
 			btSetResetLow();
+		powerOn = on;
+	}
+
+	/**
+	 * Return the current state of the module power
+	 * 
+	 * @return power on or off 
+	 */
+	public static boolean getPower()
+	{
+		return powerOn;
 	}
 	
 

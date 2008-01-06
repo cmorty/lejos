@@ -104,7 +104,7 @@ public class BTConnection implements StreamConnection
 	synchronized boolean disconnected()
 	{
 		// Connection has been closed wake up anything waiting
-		//1 Debug.out.out("Disconnected " + handle + "\n");
+		//1 Debug.out("Disconnected " + handle + "\n");
 		notifyAll();
 		// don't allow multiple disconnects, or disconnect of a closed connection'
 		if (state <= CS_DISCONNECTED) return false;
@@ -166,7 +166,7 @@ public class BTConnection implements StreamConnection
 		if (outOffset >= outCnt) return;
 		// Transmit the data in the output buffer
 		int cnt = Bluetooth.btWrite(outBuf, outOffset, outCnt - outOffset);
-		//1 Debug.out.out("Send " + cnt + "\n");
+		//1 Debug.out("Send " + cnt + "\n");
 		outOffset += cnt;
 		if (outOffset >= outCnt)
 		{
@@ -205,7 +205,7 @@ public class BTConnection implements StreamConnection
 		int offset = -header;
 		int hdr = len;
 
-		//1 Debug.out.out("write " + len +" bytes\n");
+		//1 Debug.out("write " + len +" bytes\n");
 		if (state == CS_DATALOST)
 		{
 			state = CS_CONNECTED;
@@ -266,7 +266,7 @@ public class BTConnection implements StreamConnection
 			int cnt = Bluetooth.btRead(inBuf, offset, len);
 			if (cnt <= 0) break;
 			inCnt += cnt;
-			//1 Debug.out.out("recv " + inCnt + "\n");
+			//1 Debug.out("recv " + inCnt + "\n");
 		}
 		if (inCnt > 0) notifyAll();
 	}
@@ -489,7 +489,7 @@ public class BTConnection implements StreamConnection
 		if (state == CS_IDLE) return;
 		//Debug.out("Flush\n");
 		if (!pendingInput()) return;
-		//1 Debug.out.out("Pending input space " + (inBuf.length - inCnt) + "\n");
+		//1 Debug.out("Pending input space " + (inBuf.length - inCnt) + "\n");
 		while (pendingInput() && inCnt < inBuf.length)
 			recv();
 		if (!pendingInput()) return;
