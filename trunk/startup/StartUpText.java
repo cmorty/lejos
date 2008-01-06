@@ -7,6 +7,36 @@ import lejos.nxt.*;
 
 public class StartUpText {
 	static boolean update = true;
+	static boolean btPowerOn = true;
+	
+	private static void setBluetoothPower(boolean powerOn, boolean needReset)
+	{
+		// Set the state of the Bluetooth power to be powerOn. Also record the
+		// current state of this in the BT status bytes.
+		
+		// First update the status bytes if needed
+		int status = Bluetooth.getStatus();
+		if (powerOn != (status == 1))
+			Bluetooth.setStatus((powerOn ? 1 : 0));
+		// Now sort out what to do with the actual power
+		if (powerOn == btPowerOn) return;
+		// If we are about to power the BC4 down. First do a reset to abort
+		// any current operations. This may not always be needed (for instance
+		// when the program has just started.
+		if (!powerOn && needReset)
+		{
+			Bluetooth.reset();
+			// wait for any other threads to exit the Bluetooth code
+			try{Thread.sleep(500);}catch(Exception e){}
+		}
+		Bluetooth.setPower(powerOn);
+		if (powerOn)
+		{
+			// Let things settle
+			try{Thread.sleep(1000);}catch(Exception e){}
+		}
+		btPowerOn = powerOn;
+	}
     
 	public static void main(String[] args) throws Exception {
 		Indicators ind = new Indicators();
@@ -30,13 +60,18 @@ public class StartUpText {
 		TextMenu fileMenu = new TextMenu(fileMenuData,2);
 		String[] fileNames = new String[File.MAX_FILES];
 		TextMenu menu = topMenu;
-		String[] blueMenuData = {"Devices", "Search", "On/Off","Visibility"};
+		String[] blueMenuData = {"Devices", "Search", "Power off","Visibility"};
+		String[] blueOffMenuData = {"Power on"};
 		TextMenu blueMenu = new TextMenu(blueMenuData,3);
+		TextMenu blueOffMenu = new TextMenu(blueOffMenuData,3);
 		String[] systemMenuData = {"Format"};
+
 		TextMenu systemMenu = new TextMenu(systemMenuData,3);
 		File[] files = null;
 		boolean quit = false;
-		int blueStatus = 0, visibility = 0;
+		int visibility = 0;
+		
+		setBluetoothPower(Bluetooth.getStatus() == 1, false);
 		
 		ind.setDaemon(true);
 		ind.start();
@@ -76,11 +111,15 @@ public class StartUpText {
 			} else if (menu == blueMenu) {
 				LCD.drawString(bluetooth, 3, 1);
 				LCD.drawString(status,0,2);
-				blueStatus = Bluetooth.getStatus();
 				visibility = Bluetooth.getVisibility();
-				LCD.drawString(blueStatus == 0 ? on : off, 7, 2);
+				LCD.drawString(btPowerOn ? on : off, 7, 2);
 				LCD.drawString(visibility == 1 ? visible : invisible, 11, 2);			
 				LCD.refresh();
+			} else if (menu == blueOffMenu) {
+				LCD.drawString(bluetooth, 3, 1);
+				LCD.drawString(status,0,2);
+				LCD.drawString(btPowerOn ? on : off, 7, 2);	
+				LCD.refresh();			
 			} else if (menu == systemMenu) {
 				LCD.drawString(system, 4, 1);
 				LCD.drawString(freeFlash, 0, 2);
@@ -101,7 +140,7 @@ public class StartUpText {
 		    	 if (selection == 0) {
 		    		 menu = filesMenu;
 		    	 } else if (selection ==1) {
-		    		 menu = blueMenu;
+		    		 menu = (btPowerOn ? blueMenu : blueOffMenu);
 		    	 } else if (selection == 2) {
 		    		 menu = systemMenu;
 		    	 } else if (selection == -1) {
@@ -132,7 +171,18 @@ public class StartUpText {
 			    } if (selection == -1) {
 			    	menu = topMenu;
 			    }
-		    } else if (menu == blueMenu) {
+		    } else if (menu == blueOffMenu) {
+				if (selection == 0)
+				{
+					LCD.clear();
+					LCD.drawString("Power on...", 0, 0);
+					LCD.refresh();
+				    setBluetoothPower(true, true);
+					menu = blueMenu;
+				}
+				else
+					menu = topMenu;
+			} else if (menu == blueMenu) {
 		    	if (selection == 0) { //Devices
     	    		Vector devList = Bluetooth.getKnownDevicesList();
 		    		if (devList.size() > 0) {
@@ -221,9 +271,11 @@ public class StartUpText {
 		    		}
 		        } else if (selection == 2) // On/Off
 		        {
-		        	//LCD.clear();
-		        	//LCD.refresh();
-		        	Bluetooth.setStatus((byte) (blueStatus == 0 ? 1 : 0));
+					LCD.clear();
+					LCD.drawString("Power off...", 0, 0);
+					LCD.refresh();
+					setBluetoothPower(false, true);
+					menu = blueOffMenu;
 		        }else if (selection == 3) // Visibility
 		        {
 		        	Bluetooth.setVisibility((byte) (visibility == 1 ? 0 : 1));
@@ -359,6 +411,13 @@ class BTRespond  extends Thread {
 		//Debug.open();
 		while (true)
 		{
+			// Wait for power on
+			while (!Bluetooth.getPower())
+			{
+				try {
+					Thread.sleep(500);
+				} catch (InterruptedException e) {}				
+			}
 			if (cmdMode) {
 				btc = Bluetooth.waitForConnection();
 				if (btc == null) {
