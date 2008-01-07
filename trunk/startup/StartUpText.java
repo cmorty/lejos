@@ -16,8 +16,8 @@ public class StartUpText {
 		
 		// First update the status bytes if needed
 		int status = Bluetooth.getStatus();
-		if (powerOn != (status == 1))
-			Bluetooth.setStatus((powerOn ? 1 : 0));
+		if (powerOn != (status == 0))
+			Bluetooth.setStatus((powerOn ? 0 : 1));
 		// Now sort out what to do with the actual power
 		if (powerOn == btPowerOn) return;
 		// If we are about to power the BC4 down. First do a reset to abort
@@ -71,7 +71,7 @@ public class StartUpText {
 		boolean quit = false;
 		int visibility = 0;
 		
-		setBluetoothPower(Bluetooth.getStatus() == 1, false);
+		setBluetoothPower(Bluetooth.getStatus() == 0, false);
 		
 		ind.setDaemon(true);
 		ind.start();
@@ -461,6 +461,11 @@ class BTRespond  extends Thread {
 					btc.close(); 
 					cmdMode = true;
 				}
+			}
+			else if (len < 0)
+			{
+				btc.close();
+				cmdMode = true;
 			}
 			Thread.yield();
 		}
