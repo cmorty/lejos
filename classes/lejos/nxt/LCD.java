@@ -2,6 +2,7 @@
 package lejos.nxt;
 
 /**
+ * Text and graphics output to the LCD display.
  * 
  * @author Andre Nijholt and BB
  */

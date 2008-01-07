@@ -2,6 +2,12 @@ package lejos.nxt.comm;
 
 import java.io.*;
 
+/**
+ * 
+ * Initiates communication to a remote NXT. Used by NXTCommand
+ * to implement the Lego Communications Protocol (LCP).
+ *
+ */
 public class NXTComm {
 	private static BTConnection btc;
 	private static DataInputStream dis;

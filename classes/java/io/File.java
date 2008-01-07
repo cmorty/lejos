@@ -3,6 +3,13 @@ package java.io;
 import lejos.nxt.Flash;
 import java.io.IOException;
 
+/**
+ * Implements a file system using pages of flash memory.
+ * Currently has limited functionality and only supports
+ * one file open at a time.
+ * 
+ * @author Brian Bagnall
+ */
 public class File {
 	//static int count; Used for anything?
 	// CONSTANTS:

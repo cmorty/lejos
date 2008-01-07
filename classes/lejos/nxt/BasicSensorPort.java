@@ -1,5 +1,12 @@
 package lejos.nxt;
 
+/**
+ * An abstraction for a sensor port that supports 
+ * setting and retrieving types and modes of sensors.
+ * 
+ * @author Lawrie Griffiths
+ *
+ */
 public interface BasicSensorPort extends SensorConstants {
 
 	public int getMode();

@@ -6,6 +6,9 @@
  */
 package java.io;
 
+/**
+ * Transmits java data types as bytes over an OutputStream.
+ */
 public class DataOutputStream extends OutputStream {
     
    protected int written;
