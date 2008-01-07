@@ -15,7 +15,12 @@ import lejos.nxt.*;
  * 5/6: two button listeners
  * 7/8: two button listeners and a sensor listener
  *
- * */
+ *
+ * Note that this program is similar to the leJOS RCX version
+ * and can be used to compare the performance of leJOS on the
+ * NXT with leJOS on the RCX.
+ * 
+ **/
 
 public class PerformanceTest
 {
@@ -101,7 +106,6 @@ public class PerformanceTest
     Button.ENTER.waitForPressAndRelease();
 
   }
-  
   
   static void showProgramNumber(int p)
   {
