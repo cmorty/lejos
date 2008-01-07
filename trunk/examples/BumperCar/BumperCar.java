@@ -6,7 +6,7 @@ import lejos.nxt.*;
  * 
  * Requires a wheeled vehicle with two independently controlled
  * motors connected to motor ports A and C, and a touch
- * sensor connected to sensport port 2.
+ * sensor connected to sensor  port 2.
  * 
  * @author Brian Bagnall and Lawrie Griffiths
  *
