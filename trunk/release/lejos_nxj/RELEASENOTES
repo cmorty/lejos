@@ -6,7 +6,7 @@ Andy Shaw has added:
 - I2C writes.
 - Use of port 4 for I2C sensors and the light sensor.
 - Faster LCD writing without need for LCD.refresh().
-- Mixing of text and graphics .
+- Mixing of text and graphics.
 - Bluetooth reset and detection of BC4 mode.
 - Rewrite of Bluetooth comms to support multiple connections and to remove restrictions.
 - Ability to switch Bluetooth on and off.
@@ -14,6 +14,8 @@ Andy Shaw has added:
 - Native arrayCopy method for improved performance.
 - Speed improvements to the SpeedTest sample.
 - I/O activity indicator in startup menu.
+- Fix of slow startup of USB on Windows.
+- Remote debugging over USB.
 - Various bug fixes including to the garbage collector.
 
 Janusz Gorecki has added:
@@ -38,14 +40,15 @@ Lawrie Griffiths has added:
 - Checking for flash and directory full conditions during program or file upload.
 - New and improved samples.
 - Support for 64-bit Linux systems in jlibnxt.
+- Various bug fixes.
 
 Brian Bagnall and Lawrie Griffiths have added:
 
 - Improved support for the Lego communications Protocol.
+- Support for automatic defrag of the file system.
 
 Brian Bagnall has added:
 
-- Auto defrag on file deletion.
 - Bigger file table - now supports 30 files.
 
 Roger Glassey has added:
