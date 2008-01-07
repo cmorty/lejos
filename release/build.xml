@@ -98,8 +98,8 @@
         		<include name="jtools/**/*.java"/>
 				<include name="pctools/**/*.java"/>
 				<exclude name="pctools//**/BatteryLevel.java"/>
-				<exclude name="pctools/**/GetFriendlyName.java"/>
 				<include name="pccomms/**/*.java"/>
+				<include name="startup/**/*.java"/>
       		</fileset>
 		</copy>
 
@@ -239,8 +239,8 @@
 	<target name="samples" depends="create.folders" description="copies the samples">
 		<copy todir="${release.samples}">
       		<fileset dir="${lejos.root}/examples">
-        		<exclude name="CVS"/>
-        		<exclude name="**/Makefile"/>
+			 	<exclude name="BTTest/*"/>
+			 	<exclude name="BtTestPC/*"/>
       		</fileset>
     	</copy>
 	</target>
