@@ -2,11 +2,34 @@ import lejos.nxt.*;
 import lejos.navigation.*;
 import lejos.nxt.comm.*;
 
+/**
+ * Test of remote monitor.
+ * 
+ * This sample is based on the PilotTester sample - see
+ * the comments in PilotTester.java for the requirements
+ * of the robot. MonitorTest also requires a light sensor 
+ * connected to sensor port S1.
+ * 
+ * Run MonitorTest on the NXT and then start pc.tools.NXJMonitor
+ * on the PC and connect to the NXT.
+ * 
+ * You will see some messages in the tracing area and the
+ * gauges for sensor port S1 will show you the raw and scaled
+ * value of the light sensor.
+ * 
+ * Then press ENTER on the NXT and you will see messages in
+ * the NXJMonitor tracing area as the NXJ program runs, and
+ * you will see values for the motor tachometer readings 
+ * in the motor gauges for A and C.
+ * 
+ * @author Lawrie Griffiths
+ *
+ */
 public class MonitorTest 
 {
-	static Pilot robot = new Pilot(2.1f,4.4f,Motor.A, Motor.C,true);
+	static Pilot robot = new Pilot(5.6f,16.0f,Motor.A, Motor.C,true);
 	
-	public static void main(String[] args ) 
+	public static void main(String[] args ) throws Exception 
 	{
         LCPBTResponder lcpThread = new LCPBTResponder();
         lcpThread.setDaemon(true);
@@ -16,11 +39,9 @@ public class MonitorTest
    
 		LCP.messageWrite(0, "Waiting for ENTER to be pressed");
 		
-		try {
-			Button.ENTER.waitForPressAndRelease();
-		} catch (InterruptedException ie) {}
+		// Wait for user to press ENTER
+	    Button.ENTER.waitForPressAndRelease();
 		
-		Pilot robot = new Pilot(2.1f,4.4f,Motor.A, Motor.C,false);
 		LCP.messageWrite(0, "PilotTester Started");
 
 		robot.setSpeed(500);
@@ -81,6 +102,8 @@ public class MonitorTest
 		LCP.messageWrite(0, "A quick spin");
 		robot.rotate(720);
 		LCP.messageWrite(0, "Finished");
+		
+		// Exit after any button is pressed
 		Button.waitForPress();
 	}
 		
@@ -95,9 +118,7 @@ public class MonitorTest
 	{
 		LCD.drawInt(robot.getLeftCount(),0,i);
 		LCD.drawInt(robot.getRightCount(),7,i);
-		LCD.refresh();
 	}
-
 }
 
 
