@@ -3,9 +3,9 @@ import java.util.*;
 
 
 /**
- * Provides Bluetooth comminications
+ * Provides Bluetooth comminications.
  * Allows inbound and outbound connections.
- * Access to to device registration
+ * Provides access to to device registration.
  */
 public class Bluetooth
 {

@@ -1,5 +1,11 @@
 package lejos.nxt.comm;
 
+/**
+ * Low-level USB access.
+ * 
+ * @author Lawrie Griffiths
+ *
+ */
 public class USB {
 
 	private USB()

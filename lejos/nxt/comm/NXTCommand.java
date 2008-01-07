@@ -2,6 +2,11 @@ package lejos.nxt.comm;
 
 import java.io.*;
 
+/**
+ * 
+ * Remote access to a NXT via Bluetooth using LCP.
+ *
+ */
 public class NXTCommand implements NXTProtocol {
 	
 	private NXTComm nxtComm = new NXTComm();
