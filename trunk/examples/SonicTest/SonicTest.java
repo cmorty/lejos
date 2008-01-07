@@ -1,6 +1,12 @@
 
 import lejos.nxt.*;
 
+/**
+ * Simple test of the Lego UltraSonic Sensor.
+ * 
+ * @author Lawrie Griffiths
+ *
+ */
 public class SonicTest {
 	
 	public static void main(String[] args) throws Exception {
