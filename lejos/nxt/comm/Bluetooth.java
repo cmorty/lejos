@@ -650,7 +650,7 @@ public class Bluetooth
 	/**
 	 * Set the pin to be used for pairing/connecting to the system
 	 * 
-	 * @param pin the new pin code
+	 * @param newPin the new pin code
 	 * 
 	 */
 	public static void setPin(byte[] newPin)
@@ -1140,7 +1140,7 @@ public class Bluetooth
 	/**
 	 * Look up the name of a device using its address
 	 * 
-	 * @param deviceAddr
+	 * @param addr device address
 	 * @return friendly name of device
 	 */
 	public static String lookupName(byte [] addr) {
