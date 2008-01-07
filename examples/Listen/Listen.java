@@ -1,5 +1,18 @@
 import lejos.nxt.*;
 
+/**
+ * Test of sensor port listeners.
+ * 
+ * Note that these only work with Analog/Digital sensors
+ * like the LEGO Touch, Sound and Light sensors.
+ * 
+ * They do not work with I2C sensors like the Ultrasonic sensor.
+ * 
+ * This test needs a LEGO Sound sensor connected to sensor port S1.
+ * 
+ * @author Lawrie Griffiths
+ *
+ */
 public class Listen implements SensorPortListener
 {
 	String changed = "State changed";
@@ -17,6 +30,7 @@ public class Listen implements SensorPortListener
 		LCD.clear();
 		LCD.drawString("Finished", 3, 4);
 		LCD.refresh();
+		Thread.sleep(2000);
 	}
 	
 	public void stateChanged(SensorPort port, int value, int oldValue)
