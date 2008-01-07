@@ -1,5 +1,14 @@
 import javax.microedition.lcdui.Graphics;
 import lejos.nxt.*;
+
+/**
+ * Simple demonstration of leJOS graphics.
+ * 
+ * see the LCDUI sample for more sophisticated graphics.
+ * 
+ * @author Brian Bagnall and Lawrie Griffiths
+ *
+ */
 public class GraphicsSample {
 	
 	public static void main(String [] options) throws Exception {
