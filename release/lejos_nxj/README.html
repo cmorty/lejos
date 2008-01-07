@@ -126,7 +126,7 @@ gcj and libbluetooth-dev.
   <li>Flash the leJOS NXJ firmware using <em>nxjflash</em>.</li>
   <li>Compile using <em>nxjc</em> instead of <em>javac</em>.</li>
   <li>Link, upload and run programs using <em>nxj</em>.</li>
-  <li>Exceptions: Use <em>nxj --verbose</em> to get information on methods and special classes used by your program (but see "Known Bugs and Limitations in leJOS NXJ" below). Exceptions are shown on the NXT as Method:XXXX, CLASS:YY, where XXXX = method_signature and YY = exception_class_index</li>
+  <li>Exceptions: Use <em>nxj --verbose</em> to get information on methods and special classes used by your program. Exceptions are shown on the NXT as Method:XXXX, CLASS:YY, where XXXX = method_signature and YY = exception_class_index</li>
 </ul>
 
 <p>Your NXT must be plugged into the USB, switched on, and in firmware update mode to run nxjflash. Note that the standard LEGO firmware will be overwritten and all existing data lost. You can reinstall the LEGO firmware using the LEGO Mindstorms software.
@@ -159,11 +159,11 @@ To compile, link and download the Tune sample:
   <li>Type <em>nxj -r Tune</em></li>
  </ul>
  
-<p>After a few seconds, you should hear an ascending tone sequence indicating that the program uploaded OK. You will then hear a tune play. Then, after 5 seconds the NXT will switch itself off.</p>
+<p>After a few seconds, you should hear an ascending tone sequence indicating that the program uploaded OK. You will then hear a tune play. When it has finished the leJOS NXJ menu will be displayed.</p>
 
-<p>When you switch your NXT back on you will see "Tune.nxj" on the leJOS NXJ menu</p>
+<p>When you switch your NXT back on, select "Files" and press ENTER and you will see "Tune.nxj" in the files menu</p>
 
-<p>You can navigate through the leJOS NXJ menu using the left and right buttons. To select a program, press the ENTER button. You will then see a sub-menu that lets you execute or delete the program.</p>
+<p>You can navigate through the leJOS NXJ menus using the left and right buttons. You select a menu item by pressing ENTER, and exit from a menu by pressing ESCAPE. There are 3 menus: Files, Bluetooth ands System. To select a program, go to the Files menu, scroll down to your program and press the ENTER button. You will then see a sub-menu that lets you execute or delete the program.</p>
 
 <h1><a name="tools">LeJOS NXJ Tools</a></h1>
 <p>The following tools are available with leJOS NXJ:</p>
@@ -245,52 +245,35 @@ initialized, when multiple threads use a class</li>
 <ul>
 <li>Occasionally, after flashing the firmware with with nxjflash, the battery level reads as 0.0 and buttons do not respond. If this happens, a battery must be removed and re-inserted. It is not necessary to repeat the nxjflash.
 </li>
-<li>leJOS NXJ does not work very well on Windows Vista systems. This is due to limitations in libusb-win32 that the leJOS  NXJ Windows USB tools, including nxjflash, rely on. Installing libusb in windows XP compatibility mode may cure the problem.
+<li>leJOS NXJ does not work out of the box on Windows Vista systems. This is due to limitations in libusb-win32 that the leJOS  NXJ Windows USB tools, including nxjflash, rely on. Installing libusb in windows XP compatibility mode should cure the problem.
+</li>
+<li>leJOS NXJ does not work out of the box on MAC OS X systems. See the forums on the leJOS web site for partial solutions to building leJOS for OS X.
 </li>
 <li>Occasionally, after pressing the orange (ENTER) button to start leJOS NXJ, the LCD remains blank. If this occurs, and is not due to low batteries, it is necessary to shut down leJOS, by pressing the orange and dark gray buttons (ENTER + ESCAPE), and try again.
 </li>
-<li>When plugging in the USB cable, or starting leJOS NXJ with the cable plugged in, the keys on the NXT do not respond for several seconds. This particularly affects Windows systems, and may be dependent on the speed of the host PC.
-</li>
-<li>Turning off Bluetooth is on the Bluetooth menu, but not functional.
-</li>
-<li>leJOS NXJ closes down after a user program exits.  Press ENTER to restart it.
-</li>
 <li>Only one file can be open at a time.
 </li>
-<li>leJOS NXJ only supports program upload and download, tools such as nxjbrowse, and LEGO communications Protocol commands when the start-up menu is running, not when a user program is running.
+<li>leJOS NXJ only supports program upload and download, tools such as nxjbrowse, and LEGO communications Protocol commands when the start-up menu is running, not when a user program is running, unless a user program explicitly starts the LCPBTResponder thread.
 </li>
-<li>The number of files that can be uploaded to lejos NXJ is limited by the fact that the whole file table must fit in a 256-byte page. If the average filename length is 15 characters, approximately 10 files are supported. This limitations is not checked, and will cause an exceptions when the file table becomes full.
+<li>The number of files that can be uploaded to lejos NXJ is limited by the fact that the whole file table must fit into two 256-byte pages. If the average filename length is 15 characters, approximately 20 files are supported.
 </li>
 <li>The maximum filename length is 20 characters.
 </li>
 <li>Not all LEGO Communications Protocol command are supported, and the semantics of some of them are different from that of the standard LEGO firmware. In particular only one file can be open at a time and the file handle is always 0.
 </li>
-<li>The maximum packet size over Bluetooth is 254 bytes (not 64k-1 that the standard Lego firmware supports).
-</li>
-<li>The leJOS NXJ USB driver does not return a unique serial number for each NXT, in the way that the standard LEGO software does. The affects of this are not known, but it may be the cause of lejos NXJ not working with the LEGO fantom API over USB.
-</li>
-<li>Closing Bluetooth connections on the PC is not detected by leJOS NXJ. New Bluetooth connections will fail unless the connection is closed at the NXJ end. The tools cope with this by sending a termination message that is dected by NXJ. Java streams connections need to be closed at the NXJ end, to circumvent this issue, e.g. close the connection when all expected data has been transmitted or send a termination message.
+<li>The leJOS NXJ USB driver does not return a unique serial number for each NXT, in the way that the standard LEGO software does. The effects of this are not known, but it may be the cause of lejos NXJ not working with the LEGO fantom API over USB.
 </li>
 <li>Java streams over USB are never closed down, and are always open.
 </li>
+<li>Reading buttons is not very reliable unless your code takes steps to wait for button readings to stabilize. See the TextMenu code for how to do this.
+</li>
 <li>The RCX limitations of the Java VM also apply to NXJ.
+</li> 
+<li>Sound volume cannot be controlled when playing tones.
 </li>
-<li>LCD text and graphics modes do not mix very well. 
-<li>Sound volume cannot be controlled.
-</li>
-<li>Support for sound sample files is limited.
+<li>Support for sound sample files is limited to 8-bit WAV files with a sample rate of 11k.
 </li>
 <li>The name of a NXT can be changed using nxjbrowse over a USB connection. If this is attempted over a Bluetooth connection it may apprear to work, but will not.
-</li>
-<li>The last parameter to nxjflash (FMCN) is ignored. it is not normally necessary to use any parameters with nxflash as the defaults are fine.
-</li>
-<li>There are 767 256-byte pages of user flash memory avaiable. There is no check when this is filled, attempts to write to higher page number will probably fail silently. 
-</li>
-<li>The lejos NXJ menu system leaks memory every time a file operation is done. This is reclaimed when a user program is run. In practice, due to the amount of memory available on the NXT, this should not be a problem.
-</li>
-<li>The lejos linker (nxj or nxjlink commands), in verbose mode, does not list the special classes used by a program. To decode the class number displayed in a leJOS NXJ exception, you need to consult src/nxtvm/javavm/secialclasses.h.
-</li>
-<li>No buzz occurs when an exception happens (as it does on the RCX).
 </li>
 <li>Data aborts occur if there is a failure in the NXJ VM. If a data abort occurs, it is necessary to remove and re-insert a battery.
 </li>
@@ -300,13 +283,9 @@ initialized, when multiple threads use a class</li>
 </li>
 <li>Is usually necessary to pair your NXT using the Operating System before it can be connected to by the lejOS NXJ PC tools and libraries.
 </li>
-<li>The Bluetooth PIN used by leJOS NXJ is always 1234.
-</li>
 <li>Discovery of Bluetooth devices is slow, taking at least 10 seconds. It is slower still with Bluez on Linux. For Java streams connections from user programs, you can connect directly by Bluetooth address, which is much faster.
 </li>
 <li>To get permissions to the lejos NXJ usb devices from non-root users on Linux, you typically need to user pamconsole or udev rules. The instructions for doing this are not very explicit.
-</li>
-<li>Some Linux systems may require you to delete the entries for your NXT device in /var/lib/bluetooth, to enable connections over Bluetooth.
 </li>
 </ul>
 <h1><a name="documentation">Documentation</a></h1>
