@@ -1,9 +1,7 @@
 package lejos.nxt.comm;
 
-import java.io.*;
-
 /**
- * Support for LCP commands in user programs.
+ * Support for LCP commands over Bluetooth in user programs.
  * 
  * @author Lawrie Griffiths
  *
@@ -18,25 +16,30 @@ public class LCPBTResponder extends Thread {
 		BTConnection btc = null;
 		int len;
 		
-		while (true)
+		// Wait for power on
+		while (!Bluetooth.getPower())
 		{
+			try {
+				Thread.sleep(500);
+			} catch (InterruptedException e) {}				
+		}
+		
+		while (true)
+		{	
 			if (cmdMode) {
 				btc = Bluetooth.waitForConnection();
 				if (btc == null) continue;			
 				cmdMode = false;
 			}
 			
-			len = btc.readPacket(inMsg,64);
+			len = btc.read(inMsg,64);
 			
 			if (len > 0)
 			{
 				int replyLen = LCP.emulateCommand(inMsg,len, reply);
-				if ((inMsg[0] & 0x80) == 0) btc.sendPacket(reply, replyLen);
-				if (inMsg[1] == (byte) 0x20) { // Disconnect
-//					Bluetooth.btSetCmdMode(1); // set Command mode
-					//try {
-						btc.close();
-					//} catch (IOException ioe) {}
+				if ((inMsg[0] & 0x80) == 0) btc.write(reply, replyLen);
+				if (inMsg[1] == LCP.NXJ_DISCONNECT) { 
+					btc.close(); 
 					cmdMode = true;
 				}
 			}
