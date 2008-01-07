@@ -1,18 +1,34 @@
 import lejos.nxt.*;
 import lejos.navigation.*;
 
-
+/**
+ * Test of the Pilot class.
+ * 
+ * Requires a wheeled vehicle with two independently controlled
+ * motors to steer differentially, so it can rotate within its 
+ * own footprint (i.e. turn on one spot).
+ * 
+ * Adjust the parameters of the Pilot to the dimensions
+ * and motor connections for your robot.
+ * 
+ * The vehicle will go through a series of manoeuvres and
+ * show the tachometer readings on the screen after each
+ * manoeuvre. 
+ * 
+ * Press ENTER to start and any button to return to the menu
+ * when the program has finished.
+ *
+ * @author Roger Glassey and Lawrie Griffiths
+ *
+ */
 public class PilotTester
 {
-	
-	static Pilot robot = new Pilot(2.1f,4.4f,Motor.A, Motor.C,true);
-		public static void main(String[] args ) 
+	static Pilot robot = new Pilot(5.6f,16.0f,Motor.A, Motor.C,true);
+ 
+	public static void main(String[] args ) throws Exception
 	{
-
-		try {
-			Button.ENTER.waitForPressAndRelease();
-		} catch (InterruptedException ie) {}
-		Pilot robot = new Pilot(2.1f,4.4f,Motor.A, Motor.C,false);
+        // Wait for user to press ENTER
+		Button.ENTER.waitForPressAndRelease();
 
 		robot.setSpeed(500);
 		robot.forward();
@@ -51,21 +67,22 @@ public class PilotTester
         robot.stop();
 		robot.travel(-10);
 		robot.rotate(720);
-		while(Button.readButtons()==0)Thread.yield();
+		
+		// Exit after any button is pressed
+		Button.waitForPress();
 	}
 		
-  public static void pause(int time)
-  {
-  	try{ Thread.sleep(time);
-  }
-  	catch(InterruptedException e){}
-  }
+    public static void pause(int time)
+    {
+    	try{ Thread.sleep(time);
+    }
+    	catch(InterruptedException e){}
+    }
+    
 	public static void showCount(int i)
 	{
 		LCD.drawInt(robot.getLeftCount(),0,i);
 		LCD.drawInt(robot.getRightCount(),7,i);
-		LCD.refresh();
 	}
-
 }
 
