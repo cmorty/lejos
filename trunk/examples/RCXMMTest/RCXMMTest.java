@@ -4,7 +4,7 @@ import lejos.nxt.*;
  * Test of the Mindsensors RCX Motor Multiplexer.
  * 
  * The adapter should be connected to S1 and an RCX
- * motor connected to port A on the multiplexer.
+ * motor connected to port 1 on the multiplexer.
  * 
  * @author Lawrie Griffiths
  *

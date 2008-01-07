@@ -6,7 +6,7 @@ import lejos.nxt.*;
  * 
  * Requires a Mindsensors NRLink adapter connected to sensor
  * port S1 on the NXT, and RCX motors connected to one or
- * more of the RCX m,otor ports.
+ * more of the RCX motor ports.
  * 
  * Press the ENTER button to increase the power, LEFT to cycle through
  * the motor modes (forward, backward,float,stop) and RIGHT
