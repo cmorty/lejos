@@ -125,7 +125,7 @@ public class NXJMonitor extends JFrame implements ActionListener {
 	        	  if (!open) {
 	        		  JOptionPane.showMessageDialog(frame, "Failed to connect");
 	        	  } else {
-	        		  showMonitor();
+	        		  showMonitor(nxts[row].name);
 	        	  }
 	          }
 	        }
@@ -139,13 +139,9 @@ public class NXJMonitor extends JFrame implements ActionListener {
 	    setVisible(true);
 	}
 	
-	private void showMonitor() {
-		
-		try {
-			setTitle(title + " : " + nxtCommand.getFriendlyName());
-		} catch (IOException ioe) {
-			showMessage("IOException getting friendly name");
-		}
+	private void showMonitor(String name) {
+	    setTitle(title + " : " + name);
+
 		getContentPane().removeAll();
 		
 		JPanel p1 = new JPanel();
