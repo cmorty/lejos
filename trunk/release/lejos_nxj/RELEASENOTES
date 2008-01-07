@@ -16,7 +16,7 @@ Andy Shaw has added:
 - I/O activity indicator in startup menu.
 - Fix for slow startup of USB on Windows.
 - Remote debugging over USB.
-- Size of menu flash area increased from 32kb to 48kb (causes reform,at of file system).
+- Size of menu flash area increased from 32kb to 48kb (causes reformat of file system).
 - Various bug fixes including to the garbage collector.
 
 Janusz Gorecki has added:
