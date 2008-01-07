@@ -1,6 +1,15 @@
 
 import lejos.nxt.*;
 
+/**
+ * Simple test of Acceleration (Tilt) sensors.
+ * 
+ * This should work with Mindsensors and HiTechnic Acceleration
+ * sensors.
+ * 
+ * @author Lawrie Griffiths
+ *
+ */
 public class TiltTest {
 	
 	public static void main(String[] args) throws Exception {
