@@ -9,13 +9,14 @@ Andy Shaw has added:
 - Mixing of text and graphics.
 - Bluetooth reset and detection of BC4 mode.
 - Rewrite of Bluetooth comms to support multiple connections and to remove restrictions.
-- Ability to switch Bluetooth on and off.
+- Ability to switch Bluetooth power on and off.
 - Greatly improved UltrasonicSensor class.
 - Native arrayCopy method for improved performance.
 - Speed improvements to the SpeedTest sample.
 - I/O activity indicator in startup menu.
-- Fix of slow startup of USB on Windows.
+- Fix for slow startup of USB on Windows.
 - Remote debugging over USB.
+- Size of menu flash area increased from 32kb to 48kb (causes reform,at of file system).
 - Various bug fixes including to the garbage collector.
 
 Janusz Gorecki has added:
