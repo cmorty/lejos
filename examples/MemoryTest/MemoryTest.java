@@ -1,6 +1,14 @@
-import java.lang.System;
 import lejos.nxt.*;
 
+/**
+ * Shows how leJOS free RAM reduces as String objects are created.
+ * 
+ * Now that leJOS NXJ has a garbage collector, it shows the
+ * garbage collector kicking in and the memory increasing again.
+ * 
+ * @author Lawrie Griffiths
+ *
+ */
 public class MemoryTest {
 	public static void main (String[] arg)
     	throws InterruptedException
