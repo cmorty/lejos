@@ -572,12 +572,13 @@ public class Motor extends BasicMotor// implements TimerListener
 
    /**
     * for degugging
-    * @return
+    * @return regulator error
     */
    public float getError() {return regulator.error;}
+   
    /**
     * for debugging
-    * @return
+    * @return base power of regulator
     */
    public float getBasePower() {return regulator.basePower;}
 }

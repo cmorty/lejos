@@ -159,7 +159,6 @@ public class LCD {
 	private static int [] displayBuf = getDisplay();
 	/**
 	 * Method to set a pixel to screen.
-	 * @author BB
 	 */
 	public static void setPixel(int rgbColor, int x, int y) {
 		if (x < 0 || x >= SCREEN_WIDTH || y < 0 || y >= SCREEN_HEIGHT) return; // Test-Modify for speed
