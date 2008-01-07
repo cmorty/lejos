@@ -1,9 +1,12 @@
 package lejos.navigation;
-//import lejos.navigation.*;
+
 import lejos.nxt.CompassSensor;
 import lejos.nxt.SensorPort;
 import lejos.nxt.Motor;
 
+/**
+ * A Pilot that keeps track of direction using a CompassSensor.
+ */
 public class CompassPilot extends Pilot {
 	
 	protected CompassSensor compass;

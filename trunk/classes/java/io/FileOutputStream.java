@@ -2,6 +2,12 @@ package java.io;
 
 import lejos.nxt.Flash;
 
+/**
+ * Writes a stream of bytes to a file.
+ * 
+ * @author Brian Bagnall
+ *
+ */
 public class FileOutputStream extends OutputStream {
 
 	/**

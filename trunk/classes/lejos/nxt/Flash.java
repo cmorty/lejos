@@ -1,5 +1,11 @@
 package lejos.nxt;
 
+/**
+ * Read and write access to flash memory in pages.
+ * 
+ * @author Lawrie Griffiths
+ *
+ */
 public class Flash {
 	
 	/**

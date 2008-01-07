@@ -1,5 +1,12 @@
 package lejos.nxt;
 
+/**
+ * An abstraction for a motor without a tachometer,
+ * such as an RCX motor.
+ * 
+ * @author Lawrie Griffiths
+ *
+ */
 public abstract class BasicMotor 
 {
 	

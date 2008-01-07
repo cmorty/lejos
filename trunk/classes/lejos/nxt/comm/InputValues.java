@@ -1,6 +1,7 @@
 package lejos.nxt.comm;
 
 /**
+ * Sensor input values for a remote NXT accessed via LCP.
  * 
  * @author <a href="mailto:bbagnall@mts.net">Brian Bagnall</a>
  */

@@ -2,7 +2,7 @@ package lejos.navigation;
 import lejos.nxt.*;
 
 /**
-* The CompassPilot class, like its superclass, can keep track of the robot position and the direction angle it faces; It uses a compassPpilot bject to control NXT robot movements.<br>
+* The CompassNavigatort class, like its superclass, can keep track of the robot position and the direction angle it faces. It uses a CompassPilot object to control NXT robot movements.<br>
 * The position and direction angle values are updated automatically when the movement command returns after the movement is complete and and after stop() command is issued.
 * However, some commands optionally return immediately, to permit sensor monitoring in the main thread.  It is then the programmers responsibility to 
 * call updateXY() when the robot motion is completed.  All angles are in degrees, distances in the units used to specify robot dimensions.

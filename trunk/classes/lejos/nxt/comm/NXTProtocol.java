@@ -1,5 +1,10 @@
 package lejos.nxt.comm;
 
+/**
+ * 
+ * LCP constants.
+ *
+ */
 public interface NXTProtocol {
 
 	// Command types constants. Indicates type of packet being sent or received.

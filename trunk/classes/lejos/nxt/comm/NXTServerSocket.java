@@ -8,6 +8,12 @@ import lejos.nxt.comm.BTConnection;
 import lejos.nxt.comm.NXTSocket;
 import lejos.nxt.comm.USBConnection;
 
+/**
+ * 
+ * Communicates with a ServerProxy on the PC to provide a
+ * ServerSocket interface applications on the NXT.
+ *
+ */
 public class NXTServerSocket {
 
 	private int port;

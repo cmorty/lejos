@@ -2,7 +2,10 @@ package lejos.nxt.comm;
 
 import java.io.*;
 
-public class BTOutputStream extends OutputStream {
+/**
+ * Implements an OutputStream over Bluetooth.
+ *
+ */public class BTOutputStream extends OutputStream {
 	private final int BUFFER_SIZE = 32;	
 	private byte[] buffer = new byte[BUFFER_SIZE];
 	private int numBytes = 0;

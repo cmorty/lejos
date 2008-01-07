@@ -1,6 +1,7 @@
 package java.util;
 
 /**
+ * An expandable array.
  * 
  * @author Andre Nijholt
  */

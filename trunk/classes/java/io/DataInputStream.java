@@ -2,6 +2,9 @@
 package java.io;
 
 
+/**
+ * Reads java data types transmitted as bytes over an InputStream.
+ */
 public class DataInputStream extends InputStream {
     
    protected InputStream  in;
