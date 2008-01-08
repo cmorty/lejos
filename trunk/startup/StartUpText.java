@@ -417,41 +417,44 @@ class BTRespond  extends Thread {
 			}
 			
 			//len = Bluetooth.readPacket(inMsg,64);
-			len = btc.read(inMsg,64);
-			
-			if (len > 0)
+			while(!cmdMode)
 			{
-				//LCD.drawInt(len,3,0,1);
-				//LCD.drawInt(inMsg[0] & 0xFF,3,3,1);
-				//LCD.drawInt(inMsg[1] & 0xFF,3,6,1);
-				//LCD.drawInt(inMsg[2] & 0xFF,3,9,1);
-				//LCD.drawInt(inMsg[3] & 0xFF,3,12,1);
-				//LCD.refresh();
-				ind.ioActive();
-				int replyLen = LCP.emulateCommand(inMsg,len, reply);
-				if ((inMsg[0] & 0x80) == 0) btc.write(reply, replyLen);
-				if (inMsg[1] == LCP.CLOSE|| inMsg[1] == LCP.DELETE) {
-					if (inMsg[1] == LCP.DELETE) {
-						try {
-							File.defrag();
-						} catch (IOException ioe) {
-							File.reset();
+				len = btc.read(inMsg,64);
+
+				if (len > 0)
+				{
+					//LCD.drawInt(len,3,0,1);
+					//LCD.drawInt(inMsg[0] & 0xFF,3,3,1);
+					//LCD.drawInt(inMsg[1] & 0xFF,3,6,1);
+					//LCD.drawInt(inMsg[2] & 0xFF,3,9,1);
+					//LCD.drawInt(inMsg[3] & 0xFF,3,12,1);
+					//LCD.refresh();
+					ind.ioActive();
+					int replyLen = LCP.emulateCommand(inMsg,len, reply);
+					if ((inMsg[0] & 0x80) == 0) btc.write(reply, replyLen);
+					if (inMsg[1] == LCP.CLOSE|| inMsg[1] == LCP.DELETE) {
+						if (inMsg[1] == LCP.DELETE) {
+							try {
+								File.defrag();
+							} catch (IOException ioe) {
+								File.reset();
+							}
 						}
+						Sound.beepSequenceUp();
+						menu.quit();
 					}
-					Sound.beepSequenceUp();
-					menu.quit();
+					if (inMsg[1] == LCP.NXJ_DISCONNECT) { 
+						btc.close(); 
+						cmdMode = true;
+					}
 				}
-				if (inMsg[1] == LCP.NXJ_DISCONNECT) { 
-					btc.close(); 
+				else if (len < 0)
+				{
+					btc.close();
 					cmdMode = true;
 				}
+				Thread.yield();
 			}
-			else if (len < 0)
-			{
-				btc.close();
-				cmdMode = true;
-			}
-			Thread.yield();
 		}
 	}
 }
