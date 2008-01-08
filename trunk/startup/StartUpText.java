@@ -6,36 +6,23 @@ import lejos.nxt.comm.*;
 import lejos.nxt.*;
 
 public class StartUpText {
-	static boolean update = true;
-	static boolean btPowerOn = true;
 	
-	private static void setBluetoothPower(boolean powerOn, boolean needReset)
+	private static boolean setBluetoothPower(boolean powerOn, boolean needReset)
 	{
 		// Set the state of the Bluetooth power to be powerOn. Also record the
 		// current state of this in the BT status bytes.
-		
+
+		// If power is not on we need it on to check things
+		if (!Bluetooth.getPower())
+		{
+			Bluetooth.setPower(true);
+		}
 		// First update the status bytes if needed
 		int status = Bluetooth.getStatus();
 		if (powerOn != (status == 0))
 			Bluetooth.setStatus((powerOn ? 0 : 1));
-		// Now sort out what to do with the actual power
-		if (powerOn == btPowerOn) return;
-		// If we are about to power the BC4 down. First do a reset to abort
-		// any current operations. This may not always be needed (for instance
-		// when the program has just started.
-		if (!powerOn && needReset)
-		{
-			Bluetooth.reset();
-			// wait for any other threads to exit the Bluetooth code
-			try{Thread.sleep(500);}catch(Exception e){}
-		}
 		Bluetooth.setPower(powerOn);
-		if (powerOn)
-		{
-			// Let things settle
-			try{Thread.sleep(1000);}catch(Exception e){}
-		}
-		btPowerOn = powerOn;
+		return powerOn;
 	}
     
 	public static void main(String[] args) throws Exception {
@@ -70,9 +57,7 @@ public class StartUpText {
 		File[] files = null;
 		boolean quit = false;
 		int visibility = 0;
-		
-		setBluetoothPower(Bluetooth.getStatus() == 0, false);
-		
+		boolean btPowerOn = setBluetoothPower(Bluetooth.getStatus() == 0, false);
 		ind.setDaemon(true);
 		ind.start();
 		usb.setDaemon(true);
@@ -177,7 +162,7 @@ public class StartUpText {
 					LCD.clear();
 					LCD.drawString("Power on...", 0, 0);
 					LCD.refresh();
-				    setBluetoothPower(true, true);
+				    btPowerOn = setBluetoothPower(true, true);
 					menu = blueMenu;
 				}
 				else
@@ -274,7 +259,7 @@ public class StartUpText {
 					LCD.clear();
 					LCD.drawString("Power off...", 0, 0);
 					LCD.refresh();
-					setBluetoothPower(false, true);
+					btPowerOn = setBluetoothPower(false, true);
 					menu = blueOffMenu;
 		        }else if (selection == 3) // Visibility
 		        {
@@ -408,7 +393,6 @@ class BTRespond  extends Thread {
 		BTConnection btc = null;
 		int len;
 		
-		//Debug.open();
 		while (true)
 		{
 			// Wait for power on

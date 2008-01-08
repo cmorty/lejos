@@ -105,10 +105,13 @@ public class Bluetooth
 	static int connected;
 	static int resetCnt;
 	static boolean powerOn;
+	static boolean publicPowerOn = false;
 	public final static byte[] defaultPin = 
 	    {(byte) '1', (byte) '2', (byte) '3', (byte) '4'};
 	private static byte [] pin = defaultPin;
 	static Object sync = new Object();
+	static byte[] cachedName;
+	static byte[] cachedAddress;
 
 	/**
 	 * Low-level method to write BT data
@@ -122,10 +125,10 @@ public class Bluetooth
 	/**
 	 * Low-level method to read BT data
 	 * 
-	 * @param buf the buffer to send
+	 * @param buf the buffer to read data into
 	 * @param off the offset at which to start the transfer
-	 * @param len the number of bytes to send
-	 * @return number of bytes actually written
+	 * @param len the number of bytes to read
+	 * @return number of bytes actually read
 	 */
 	public static native int btRead(byte[] buf, int off, int len);	
 	/**
@@ -163,10 +166,22 @@ public class Bluetooth
 	 * Low-level method to take the BC4 reset line high
 	 */
 	public static native void btSetResetHigh();
+	
+	
 	/**
-	 * Perform a hardware reset of the BlueCore chip.
-	 * 
-	 */	
+	 * Low-level method to send a BT command or data
+	 *
+	 * @param buf the buffer to send
+	 * @param len the number of bytes to send
+	 */
+	public static native void btSend(byte[] buf, int len);
+
+	/**
+	 * Low-level method to receive BT replies or data
+	 *
+	 * @param buf the buffer to receive data in
+	 */
+	public static native void btReceive(byte[] buf);
 
 	
 	public Bluetooth()
@@ -217,7 +232,7 @@ public class Bluetooth
 			curChan = -1;
 			resetCnt = 0;
 			// Make sure power is on(may cause a reset!)
-			setPower(true);
+			btSetResetHigh();
 			for(int i = 0; i < CHANCNT; i++)
 				Chans[i] = new BTConnection(i);
 			connected = 0;
@@ -226,8 +241,12 @@ public class Bluetooth
 			setDaemon(true);
 			start();
 			// Setup initial state
+			powerOn = false;
+			setPower(true);
 			setOperatingMode((byte)1);
 			closePort();
+			cachedName = getFriendlyName();
+			cachedAddress = getLocalAddress();
 		}
 
 		
@@ -323,7 +342,7 @@ public class Bluetooth
 							Thread.yield();
 					//1 if (len < 0) Debug.out("Reset timed out");
 					// Check things are working
-					//Debug.out("Send mode cmd\n");
+					//1 Debug.out("Send mode cmd\n");
 					cmdInit(MSG_GET_OPERATING_MODE, 1, 0, 0);
 					sendCommand();
 					startTimeout(TO_SHORT);
@@ -600,7 +619,7 @@ public class Bluetooth
 	
 	static private int waitState(int target)
 	{
-		//Debug.out("Wait state " + target + "\n");
+		// Debug.out("Wait state " + target + "\n");
 		synchronized (Bluetooth.sync) {
 			// Wait for the system to enter the specified state (or timeout)
 			while (reqState != target && reqState != RS_ERROR)
@@ -616,7 +635,7 @@ public class Bluetooth
 	{
 		// Wait for the system to be idle. Ignore timeout errors.
 		while (waitState(RS_IDLE) < 0)
-			;
+			try{Bluetooth.sync.wait();}catch(Exception e){}
 	}
 	
 	private static void cmdComplete()
@@ -632,9 +651,11 @@ public class Bluetooth
 	
 	private static int cmdWait(int state, int waitState, int msg, int timeout)
 	{
-		//Debug.out("Cmd wait\n");
+		//1 Debug.out("Cmd wait\n");
 		synchronized (Bluetooth.sync)
 		{
+			// Check we have power if not fail the request
+			if (!powerOn) return -1;
 			if (waitState > 0) reqState = waitState;
 			if (timeout != TO_NONE) startTimeout(timeout);
 			while (true)
@@ -815,8 +836,9 @@ public class Bluetooth
 				}
 				listening = false;
 				cmdComplete();
-				setPin(savedPin);
+
 			}
+			setPin(savedPin);
 			closePort();
 			return ret;
 		}
@@ -924,6 +946,8 @@ public class Bluetooth
 		//1 Debug.out("getFriendlyName\n");
 		synchronized (Bluetooth.sync)
 		{
+			// If power is off return the cached name.
+			if (!powerOn) return cachedName;
 			cmdStart();
 			cmdInit(MSG_GET_FRIENDLY_NAME, 1, 0, 0);
 			if (cmdWait(RS_REPLY, RS_CMD, MSG_GET_FRIENDLY_NAME_RESULT, TO_SHORT) < 0)	
@@ -963,6 +987,8 @@ public class Bluetooth
 		//1 Debug.out("getLocalAddress\n");
 		synchronized (Bluetooth.sync)
 		{
+			// If power is off return cached name.
+			if (!powerOn) return cachedAddress;
 			cmdStart();
 			cmdInit(MSG_GET_LOCAL_ADDR, 1, 0, 0);
 			if (cmdWait(RS_REPLY, RS_CMD, MSG_GET_LOCAL_ADDR_RESULT, TO_SHORT) < 0)	
@@ -1398,11 +1424,34 @@ public class Bluetooth
 	 */
 	public static void setPower(boolean on)
 	{
-		if (on)
-			btSetResetHigh();
-		else
-			btSetResetLow();
-		powerOn = on;
+		synchronized (Bluetooth.sync)
+		{
+			if (powerOn == on) return;
+			if (on)
+			{
+				btSetResetHigh();
+				powerOn = true;
+				// Now make sure things have settled
+				for(int i =0; i < 5; i++)
+					if (getOperatingMode() >= 0) break;
+			}
+			else
+			{
+				// Powering off. Do we need to reset things?
+				boolean wasListening = listening;
+				// Wait for any other commands to complete
+				cmdStart();
+				if (connected > 0 || listening)
+					reset();
+				// Wait for the listening thread to exit
+				if (wasListening)
+					try{Bluetooth.sync.wait(2000);}catch(Exception e){}
+				//1 Debug.out("Power going off\n");
+				btSetResetLow();
+				powerOn = false;
+			}
+			publicPowerOn = powerOn;
+		}
 	}
 
 	/**
@@ -1412,7 +1461,10 @@ public class Bluetooth
 	 */
 	public static boolean getPower()
 	{
-		return powerOn;
+		synchronized(Bluetooth.sync)
+		{
+			return publicPowerOn;
+		}
 	}
 	
 
