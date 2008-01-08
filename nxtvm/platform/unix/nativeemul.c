@@ -305,7 +305,7 @@ void dispatch_native (TWOBYTES signature, STACKWORD *paramBase)
            printf("> ");
          else
            printf("& ");
-         printf("drawString called with parameters %s,%d,%d\n",buff,paramBase[1],paramBase[2]);
+         printf("drawString called with parameters %s, %d, %d\n",buff,paramBase[1],paramBase[2]);
         }
       }
       return;
@@ -328,7 +328,7 @@ void dispatch_native (TWOBYTES signature, STACKWORD *paramBase)
          printf("> ");
       else
          printf("& ");
-      printf("controlMotor called with parameters %d,%d,%d\n",paramBase[0],paramBase[1],paramBase[2]);
+      printf("controlMotor called with parameters %d, %d, %d\n",paramBase[0],paramBase[1],paramBase[2]);
       return; 
     case refresh_4_5V:
       if (verbose)
@@ -508,11 +508,11 @@ void dispatch_native (TWOBYTES signature, STACKWORD *paramBase)
       {
         Object *p = word2ptr(paramBase[0]);
         byte *byteArray = (((byte *) p) + HEADER_SIZE);
-        if (verbose) 
-        {
+        if (verbose)
           printf("> ");
-          printf("btWrite called with parameters %x,%d,%d\n", byteArray,paramBase[1],paramBase[2]);                                           
-        }
+        else
+          printf("& "); 
+        printf("btWrite called with parameters %x, %d, %d\n", byteArray,paramBase[1],paramBase[2]);                                           
       }
       return;
     case btRead_4_1BII_5I:
@@ -523,7 +523,7 @@ void dispatch_native (TWOBYTES signature, STACKWORD *paramBase)
           printf("> ");
         else
           printf("& "); 
-          printf("btRead called with parameters %x,%d,%d\n", byteArray,paramBase[1],paramBase[2]);                                                               
+        printf("btRead called with parameters %x, %d, %d\n", byteArray,paramBase[1],paramBase[2]);                                                               
       }
       return;
     case btPending_4_5I:
