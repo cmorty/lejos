@@ -239,8 +239,8 @@
 	<target name="samples" depends="create.folders" description="copies the samples">
 		<copy todir="${release.samples}">
       		<fileset dir="${lejos.root}/examples">
-			 	<exclude name="BTTest/*"/>
-			 	<exclude name="BtTestPC/*"/>
+			 	<exclude name="BTTest/**"/>
+			 	<exclude name="BtTestPC/**"/>
       		</fileset>
     	</copy>
 	</target>
@@ -313,7 +313,14 @@
              destdir="${release.docs}/apidocs"
              source="1.1"
              defaultexcludes="yes">
-      <fileset dir="${javasrc}/classes"/>
+      <fileset dir="${javasrc}/classes">
+      		<exclude name="doc/**"/>
+      	    <exclude name="build/**"/>
+      	    <exclude name="lib/**"/>
+      	    <exclude name="**/.*/**"/>
+      	    <exclude name="**/package.html"/>
+      	    <exclude name="**/build.xml"/>
+      </fileset>
     </javadoc>
   </target>
 
