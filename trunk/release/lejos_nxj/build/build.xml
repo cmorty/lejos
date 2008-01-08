@@ -64,9 +64,13 @@
   	<target name="libnxt" description="builds libnxt">
   		<ant antfile="${lejos.dist.src}/libnxt/build.xml" dir="${lejos.dist.src}/libnxt" inheritall="true" />
   	</target>
-	
+  	
+     <condition property="isMacOs">
+	      <os family="mac"/>
+	  </condition>
+
 	<!-- builds jbluez -->
-  	<target name="jbluez" description="builds jbluez">
+  	<target name="jbluez" description="builds jbluez"  unless="isMacOs">
   		<ant antfile="${lejos.dist.src}/jbluez/build.xml" dir="${lejos.dist.src}/jbluez" inheritall="true" />
   	</target>
 	
@@ -77,6 +81,7 @@
         		<include name="runc"/>
       			<include name="nxjflash"/>
       			<include name="libjlibnxt.so"/>
+      			<include name="libjlibnxt.dylib"/>
       		</fileset>
 		</copy>
 		
