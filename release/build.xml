@@ -241,6 +241,7 @@
       		<fileset dir="${lejos.root}/examples">
 			 	<exclude name="BTTest/**"/>
 			 	<exclude name="BtTestPC/**"/>
+      			<exclude name="**/*.nxj"/>
       		</fileset>
     	</copy>
 	</target>
