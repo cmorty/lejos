@@ -454,7 +454,7 @@ void dispatch_native (TWOBYTES signature, STACKWORD *paramBase)
           printf("> ");
         else
           printf("& "); 
-          printf("btSend called with parameter &d\n", byteArray);                       
+          printf("btSend called with parameters %x, %d\n", byteArray, paramBase[1]);                       
       }
       return;
     case btReceive_4_1B_5V:
@@ -511,7 +511,7 @@ void dispatch_native (TWOBYTES signature, STACKWORD *paramBase)
         if (verbose) 
         {
           printf("> ");
-          printf("btWrite called with parameters %x,%,%d\n", byteArray,paramBase[1],paramBase[2]);                                           
+          printf("btWrite called with parameters %x,%d,%d\n", byteArray,paramBase[1],paramBase[2]);                                           
         }
       }
       return;
@@ -523,7 +523,7 @@ void dispatch_native (TWOBYTES signature, STACKWORD *paramBase)
           printf("> ");
         else
           printf("& "); 
-          printf("btRead called with parameters %x,%,%d\n", byteArray,paramBase[1],paramBase[2]);                                                               
+          printf("btRead called with parameters %x,%d,%d\n", byteArray,paramBase[1],paramBase[2]);                                                               
       }
       return;
     case btPending_4_5I:
