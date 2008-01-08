@@ -63,7 +63,9 @@ of the JDK.</li>
   <li>On systems other than Microsoft Windows, you will need to build the distribution, so your PATH must
 contain the ant binary (ant 1.6 or above).</li>
   <li>You need libusb installed. On Microsoft Windows you should use the libusb-Win32 filter driver.</li>
-  <li>On Microsoft Windows you will need the LEGO Mindstorms NXT software installed, as its USB drivers are used.</li>
+  <li>On Microsoft Windows and MAC OS X you will need the LEGO Mindstorms NXT software installed, as its USB drivers are used.</li>
+  <li>On MAC OS X systems, you will need the OS X developer tools installed.</li>
+  
 </ul>
 
 The libusb filter driver for Microsoft Windows can be obtained from <a href="http://libusb-win32.sourceforge.net/#downloads">http://libusb-win32.sourceforge.net/#downloads</a>. 
@@ -247,7 +249,7 @@ initialized, when multiple threads use a class</li>
 </li>
 <li>leJOS NXJ does not work out of the box on Windows Vista systems. This is due to limitations in libusb-win32 that the leJOS  NXJ Windows USB tools, including nxjflash, rely on. Installing libusb in windows XP compatibility mode should cure the problem.
 </li>
-<li>leJOS NXJ does not work out of the box on MAC OS X systems. See the forums on the leJOS web site for partial solutions to building leJOS for OS X.
+<li>Bluetooth does not work on MAC OS X systems, and the ant build files for MAC OS X are largely untested.  See the forums on the leJOS web site for the latest state of leJOS on MAC OS X.
 </li>
 <li>Occasionally, after pressing the orange (ENTER) button to start leJOS NXJ, the LCD remains blank. If this occurs, and is not due to low batteries, it is necessary to shut down leJOS, by pressing the orange and dark gray buttons (ENTER + ESCAPE), and try again.
 </li>
