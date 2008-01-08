@@ -30,6 +30,23 @@
 
 	<!-- make libnxt --> 
 	<target name="libnxt" description="makes libnxt">
+		<condition property="includePath" value=".">
+			<not>
+				<os family="mac"/>
+			</not>
+		</condition>
+		<condition property="includePath" value="/Developer/SDKs/MacOSX10.5.sdk/System/Library/Frameworks/JavaVM.framework/Versions/Current/Headers/">
+			<and>
+				<os family="mac"/>
+				<matches pattern="^10\.5.*" string="${os.version}"/>
+			</and>
+		</condition>
+		<condition property="includePath" value="/Developer/SDKs/MacOSX10.4u.sdk/System/Library/Frameworks/JavaVM.framework/Versions/Current/Headers/">
+			<and>
+				<os family="mac"/>
+				<matches pattern="^10\.4.*" string="${os.version}"/>
+			</and>
+		</condition>
   		<cc subsystem="console" 
   				outfile="nxt"
   				objdir="." 
@@ -47,13 +64,14 @@
   				<fileset dir=".">
   					<include name="error.c"/>
   					<include name="firmware.c"/>
-  					<include name="flash_routine.c"/>  					<include name="error.c"/>
+  					<include name="flash_routine.c"/>  					
+  					<include name="error.c"/>
   	  				<include name="flash.c"/> 
   	  				<include name="lowlevel.c"/>
   	  				<include name="samba.c"/>
   				</fileset>
 				<includepath>
-					<pathelement location="."/>
+					<pathelement location="${includePath}"/>
 				</includepath>
   				<versioninfo refid="libnxt"/>
   		</cc>
@@ -139,6 +157,5 @@
   				<versioninfo refid="libnxt"/>
   		</cc>
 	</target>
-
 </project>
 
