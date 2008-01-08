@@ -246,8 +246,7 @@ public class File {
 	static void readTable(File [] files) {
 		// Make sure flash has table id:
 		if(!File.tableExists())	File.format();
-		File.
-		resetTablePointer();
+		File.resetTablePointer();
 		Flash.readPage(buff, TABLE_START_PAGE); // Kludge to fill data into first page
 		// Move pointer to file total:
 		byte_pointer = NUM_FILES_POS; // Kludge
@@ -314,7 +313,7 @@ public class File {
 		
 		// Now write all the file info to the table 
 		byte arrayIndex = 0;
-		if(files.length != 0) { // Will throw exception for 0 length unless this checks
+		if(files != null && files.length != 0) { // Will throw exception for 0 length unless this checks
 			while(files[arrayIndex] != null) {
 				
 				if(files[arrayIndex].file_length == -999) break; // !! What is this for? Can't remember why it is here.
