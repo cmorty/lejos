@@ -2,6 +2,9 @@ package lejos.pc.comm;
 
 import java.io.*;
 
+/**
+ * Implementation of InputStream over NXTComm using Bluetooth.
+ */
 public class NXTCommBTInputStream extends InputStream {
 	private NXTComm nxtComm;
 	private byte buf[];

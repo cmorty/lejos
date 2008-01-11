@@ -7,6 +7,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Properties;
 
+/**
+ * 
+ * Sends LCP requests to the NXT and receives replies.
+ * Uses an object that implements the NXTComm interface 
+ * for low-level communication.
+ *
+ */
 public class NXTCommand implements NXTProtocol {
 
 	private Collection<NXTCommLogListener> fLogListeners;
@@ -165,7 +172,7 @@ public class NXTCommand implements NXTProtocol {
 	 * Starts a program already on the NXT.
 	 * 
 	 * @param fileName
-	 * @return
+	 * @return the status
 	 */
 	public byte startProgram(String fileName) throws IOException {
 		byte[] request = { DIRECT_COMMAND_NOREPLY, START_PROGRAM };
@@ -178,8 +185,8 @@ public class NXTCommand implements NXTProtocol {
 	 * size, enclosed in a FileInfo object.
 	 * 
 	 * @param fileName
-	 *            e.g. "Woops.rso"
-	 * @return
+	 *            e.g. "Woops.wav"
+	 * @return fileInfo object giving details of the file
 	 */
 	public FileInfo openRead(String fileName) throws IOException {
 		byte[] request = { SYSTEM_COMMAND_REPLY, OPEN_READ };
@@ -246,7 +253,7 @@ public class NXTCommand implements NXTProtocol {
 	/**
 	 * @param wildCard
 	 *            [filename].[extension], *.[extension], [filename].*, *.*
-	 * @return
+	 * @return fileInfo object giving details of the file
 	 */
 	public FileInfo findFirst(String wildCard) throws IOException {
 
@@ -277,7 +284,7 @@ public class NXTCommand implements NXTProtocol {
 	 * @param handle
 	 *            Handle number from the previous found file or fromthe Find
 	 *            First command.
-	 * @return
+	 * @return fileInfo object giving details of the file
 	 */
 	public FileInfo findNext(byte handle) throws IOException {
 
@@ -366,7 +373,7 @@ public class NXTCommand implements NXTProtocol {
 	 *            File handle number (from openRead method)
 	 * @param length
 	 *            Number of bytes to read.
-	 * @return
+	 * @return the bytes requested
 	 */
 	public byte[] readFile(byte handle, int length) throws IOException {
 		byte[] request = { SYSTEM_COMMAND_REPLY, READ, handle, (byte) length,
@@ -475,7 +482,7 @@ public class NXTCommand implements NXTProtocol {
 	 * @param remoteInbox 0-9
 	 * @param localInbox 0-9
 	 * @param remove True clears the message from the remote inbox.
-	 * @return
+	 * @return the message as an array of bytes
 	 */
 	public byte[] messageRead(byte remoteInbox, byte localInbox, boolean remove) throws IOException {
 		byte [] request = {DIRECT_COMMAND_REPLY, MESSAGE_READ, remoteInbox, localInbox, (remove ? (byte) 1 : (byte) 0)};

@@ -2,6 +2,9 @@ package lejos.pc.comm;
 
 import java.io.*;
 
+/**
+ * Implementation of InputStream over NXTComm using USB.
+ */
 public class NXTCommUSBInputStream extends InputStream {
 	private NXTComm nxtComm;
 

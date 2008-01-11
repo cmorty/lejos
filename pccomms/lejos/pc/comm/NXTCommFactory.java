@@ -1,5 +1,11 @@
 package lejos.pc.comm;
 
+/**
+ * 
+ * Creates a version of NTComm appropriate to the OS in use
+ * and protocol (Bluetooth or USB) that is requested.
+ *
+ */
 public class NXTCommFactory {
 	
     public static final int USB = 1;

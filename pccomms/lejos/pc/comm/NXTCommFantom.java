@@ -2,6 +2,16 @@ package lejos.pc.comm;
 
 import java.io.*;
 
+/**
+ * Implementation of NXTComm using the the LEGO Fantom API.
+ * 
+ * Not yet functional.
+ * 
+ * Should not be used directly - use NXTCommFactory to create
+ * an appropriate NXTComm object for your system and the protocol
+ * you are using.
+ *
+ */
 public class NXTCommFantom implements NXTComm {
 	private NXTInfo nxtInfo;
 	
