@@ -2,6 +2,15 @@ package lejos.pc.comm;
 
 import java.io.*;
 
+/**
+ * Implementation of NXTComm using the the jbluez library 
+ * on Linux or Unix systems. 
+ * 
+ * Should not be used directly - use NXTCommFactory to create
+ * an appropriate NXTComm object for your system and the protocol
+ * you are using.
+ *
+ */
 public class NXTCommBluez implements NXTComm {
 
 	private static final String BDADDR_ANY = "00:00:00:00:00:00";

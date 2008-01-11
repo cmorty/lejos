@@ -1,5 +1,8 @@
 package lejos.pc.comm;
 
+/**
+ * An exception thrown by a NXTComm implementation.
+ */
 public class NXTCommException extends Exception {
 
 	private static final long serialVersionUID = 8129230555756024038L;

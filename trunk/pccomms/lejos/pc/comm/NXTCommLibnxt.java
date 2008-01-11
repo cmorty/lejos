@@ -2,6 +2,14 @@ package lejos.pc.comm;
 
 import java.io.*;
 
+/**
+ * Implementation of NXTComm over USB using libnxt.
+ * 
+ * Should not be used directly - use NXTCommFactory to create
+ * an appropriate NXTComm object for your system and the protocol
+ * you are using.
+ *
+ */
 public class NXTCommLibnxt implements NXTComm {
 	private NXTInfo nxtInfo;
 	

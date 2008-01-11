@@ -1,5 +1,10 @@
 package lejos.pc.comm;
 
+/**
+ * 
+ * LEGO Communication Protocol constants.
+ *
+ */
 public interface NXTProtocol {
 	// Command types constants. Indicates type of packet being sent or received.
 	public static byte DIRECT_COMMAND_REPLY = 0x00;

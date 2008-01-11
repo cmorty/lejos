@@ -6,6 +6,15 @@ import java.io.*;
 import java.util.Vector;
 import java.util.Enumeration;
 
+/**
+ * Implementation of NXTComm using the Bluecove libraries 
+ * on Microsoft Windows. 
+ * 
+ * Should not be used directly - use NXTCommFactory to create
+ * an appropriate NXTComm object for your system and the protocol
+ * you are using.
+ *
+ */
 public class NXTCommBluecove implements NXTComm, DiscoveryListener {
 	private static Vector devices, nxtInfos;
 	private StreamConnection con;
