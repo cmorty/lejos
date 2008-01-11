@@ -199,10 +199,16 @@ Object *new_object_for_class (const byte classIndex)
 /**
  * Return the size in words of an array of the given type
  */
+
+#if 0
 TWOBYTES comp_array_size (const TWOBYTES length, const byte elemType)
 {
   return NORM_OBJ_SIZE + (((TWOBYTES) length * typeSize[elemType]) + 1) / 2;
 }
+#else
+#define comp_array_size( length, elemType) \
+  (NORM_OBJ_SIZE + (((TWOBYTES) (length) * typeSize[ elemType]) + 1) / 2)
+#endif
 
 /**
  * Allocates an array. The size of the array is NORM_OBJ_SIZE
@@ -235,11 +241,16 @@ Object *new_primitive_array (const byte primitiveType, STACKWORD length)
   return ref;
 }
 
+#if 0
 TWOBYTES get_array_size (Object *obj)
 {
   return comp_array_size (get_array_length (obj),
                           get_element_type (obj));  
 }
+#else
+#define get_array_size( obj) \
+  (comp_array_size( get_array_length( obj), get_element_type( obj)))
+#endif
 
 void free_array (Object *objectRef)
 {
@@ -343,6 +354,7 @@ Object *new_multi_array (byte elemType, byte totalDimensions,
  */
 void arraycopy(Object *src, int srcOff, Object *dst, int dstOff, int len)
 {
+  int elemSize;
   // validate things
   if (src == null || dst == null)
   {
@@ -361,7 +373,7 @@ void arraycopy(Object *src, int srcOff, Object *dst, int dstOff, int len)
     return;
   }
   // and finally do the copy!
-  int elemSize = typeSize[get_element_type(src)];
+  elemSize = typeSize[get_element_type(src)];
   memcpy(((byte *) dst + HEADER_SIZE) + dstOff*elemSize , ((byte *) src + HEADER_SIZE) + srcOff*elemSize, len*elemSize);
 }
 
@@ -1029,6 +1041,7 @@ static void mark_object( Object *obj)
  * If it's "marked" clear the mark. Otherwise delete the object.
  * For safety omit objects with active monitor.
  */
+/*
 static void sweep_object( Object *obj, TWOBYTES size)
 {
   if( is_gc_marked( obj))
@@ -1037,42 +1050,58 @@ static void sweep_object( Object *obj, TWOBYTES size)
   if( get_monitor_count( obj) == 0)
     deallocate( (TWOBYTES*) obj, size);
 }
+*/
 
 /**
  * Scan heap objects and for every allocated object call
  * the sweep_object function.
  */
-static void sweep_heap_objects( void)
+void sweep_heap_objects( void)
 {
+
 #if SEGMENTED_HEAP
   MemoryRegion *region;
   for (region = memory_regions; region != null; region = region->next)
 #endif
   {
+    int mf = memory_free;
     TWOBYTES* ptr = &(region->contents);
     TWOBYTES* fptr = null;
     TWOBYTES* regionTop = region->end;
     while( ptr < regionTop)
     {
-      TWOBYTES blockHeader = *ptr;
-      TWOBYTES size;
+      unsigned int blockHeader = *ptr;
+      unsigned int size;
 
       if( blockHeader & IS_ALLOCATED_MASK)
       {
+        Object* obj = (Object*) ptr;
+
         /* jump over allocated block */
-        size = (blockHeader & IS_ARRAY_MASK) ? get_array_size ((Object *) ptr)
-                                             : get_object_size ((Object *) ptr);
+        size = (blockHeader & IS_ARRAY_MASK) ? get_array_size( obj)
+                                             : get_object_size( obj);
           
         // Round up according to alignment
         size = (size + (MEMORY_ALIGNMENT-1)) & ~(MEMORY_ALIGNMENT-1);
-        sweep_object( (Object*) ptr, size);
-        blockHeader = *ptr;
+
+        if( is_gc_marked( obj))
+          clr_gc_marked( obj);
+        else
+        if( get_monitor_count( obj) == 0)
+        {
+          // Set object free
+          mf += size;
+
+          obj->flags.all = size;
+          blockHeader = size;
+        }
       }
       else
       {
         /* continue searching */
         size = blockHeader;
       }
+
       if( !(blockHeader & IS_ALLOCATED_MASK))
       {
         // Got a free block can we merge?
@@ -1083,8 +1112,11 @@ static void sweep_heap_objects( void)
       }
       else
           fptr = null;
+
       ptr += size;
     }
+
+    memory_free = mf;
   }
 }
 
