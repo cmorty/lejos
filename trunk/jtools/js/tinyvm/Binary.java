@@ -406,6 +406,7 @@ public class Binary
      monitor.log("Field records : " + getTotalNumInstanceFields() + " (" + iInstanceFieldTables.getLength() + " bytes).");
      monitor.log("Method records: " + getTotalNumMethods() + " (" + iMethodTables.getLength() + " bytes).");
      monitor.log("Code          : " + iCodeSequences.size() + " (" + iCodeSequences.getLength() + " bytes).");
+	 monitor.log("Static fields : " + iStaticState.size() + " (" + iStaticState.getLength() + " bytes).");
    }
    
 }

@@ -20,6 +20,12 @@ case OP_NEW:
   goto LABEL_ENGINELOOP;
 case OP_GETSTATIC:
 case OP_PUTSTATIC:
+case OP_GETSTATIC_1:
+case OP_PUTSTATIC_1:
+case OP_GETSTATIC_2:
+case OP_PUTSTATIC_2:
+case OP_GETSTATIC_3:
+case OP_PUTSTATIC_3:
 
   // Stack: +1 or +2 for GETSTATIC, -1 or -2 for PUTSTATIC
   {
@@ -29,7 +35,9 @@ case OP_PUTSTATIC:
 #if RECORD_REFERENCES
     byte isRef;
 #endif
+    int opcode;
     byte fieldSize;
+    unsigned int fldIdx;
     boolean wideWord;
 
     #if DEBUG_FIELDS
@@ -42,7 +50,13 @@ case OP_PUTSTATIC:
       if (dispatch_static_initializer (get_class_record (pc[0]), pc - 1))
         goto LABEL_ENGINELOOP;
 
-    fieldRecord = ((STATICFIELD *) get_static_fields_base())[pc[1]];
+    opcode = pc[-1];
+    fldIdx = pc[1];
+
+    if( opcode >= OP_GETSTATIC_1)
+      fldIdx |= (((opcode - OP_GETSTATIC_1) >> 1) + 1) << 8;
+
+    fieldRecord = ((STATICFIELD *) get_static_fields_base())[fldIdx];
 
     fieldType = (fieldRecord >> 12) & 0x0F;
 #if RECORD_REFERENCES
@@ -63,7 +77,7 @@ case OP_PUTSTATIC:
     printf ("fbase1  = %d\n", (int) fbase1);
     #endif
 
-    if (*(pc-1) == OP_GETSTATIC)
+    if (opcode == OP_GETSTATIC || opcode == OP_GETSTATIC_1 || opcode == OP_GETSTATIC_2 || opcode == OP_GETSTATIC_3)
     {
       make_word (fbase1, fieldSize, &tempStackWord);
 
@@ -227,7 +241,8 @@ case OP_CHECKCAST:
 
 // Notes:
 // - NEW, INSTANCEOF, CHECKCAST: 8 bits ignored, 8-bit class index
-// - GETSTATIC and PUTSTATIC: 8-bit class index, 8-bit static field record
+// - GETSTATIC and PUTSTATIC: 8-bit class index, 8-bit static field record index
+// - GETSTATIC_x and PUTSTATIC_x: 8-bit class index, 8-bit static field record low byte of index
 // - GETFIELD and PUTFIELD: 4-bit field type, 12-bit field data offset
 
 /*end*/
