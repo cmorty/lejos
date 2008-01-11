@@ -58,4 +58,16 @@ public interface OpCodeInfo
       "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
       "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""
    };
+
+   ///////////////////////////
+   // lejos nxj specific opcodes
+   // codes from 203 to 228 are reserved for QUICK opcodes, what we are
+   // doing here is equivalent so let's use them
+   int OP_GETSTATIC_1 = 203;
+   int OP_PUTSTATIC_1 = 204;
+   int OP_GETSTATIC_2 = 205;
+   int OP_PUTSTATIC_2 = 206;
+   int OP_GETSTATIC_3 = 207;
+   int OP_PUTSTATIC_3 = 208;
+
 }

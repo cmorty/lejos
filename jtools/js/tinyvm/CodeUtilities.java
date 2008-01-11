@@ -158,9 +158,9 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
          int pClassIndex = iBinary.getClassIndex(pClassRecord);
          assert pClassIndex >= 0 && pClassIndex <= 0xFF: "Check: class index in range";
          int pFieldIndex = pClassRecord.getStaticFieldIndex(pName);
-         assert pFieldIndex >= 0 && pFieldIndex <= 0xFF: "Check: field index in range";
+         assert pFieldIndex >= 0 && pFieldIndex <= 0x03FF: "Check: field index in range";
 
-         return (pClassIndex << 8) | pFieldIndex;
+         return (pClassIndex << 16) | pFieldIndex;
       }
       else
       {
@@ -291,7 +291,21 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
             case OP_GETSTATIC:
                int pWord1 = processField((aCode[i] & 0xFF) << 8
                   | (aCode[i + 1] & 0xFF), true);
-               pOutCode[i++] = (byte) (pWord1 >> 8);
+               pOutCode[i++] = (byte) (pWord1 >> 16);
+               int fldIdx = pWord1 & 0x03FF;
+               if( fldIdx >= 256)
+               {
+                 int newOpCode;
+
+                 if( ((int)aCode[i-2] & 0xFF) == OP_PUTSTATIC)
+                    newOpCode = OP_PUTSTATIC_1 + (fldIdx - 256) / 256 * 2;
+                 else
+                    newOpCode = OP_GETSTATIC_1 + (fldIdx - 256) / 256 * 2;
+
+                 pOutCode[i-2] = (byte) (newOpCode & 0xFF);
+
+                 // System.out.println( "large index of static field " + newOpCode + " - " + fldIdx);
+               }
                pOutCode[i++] = (byte) (pWord1 & 0xFF);
                break;
             case OP_PUTFIELD:

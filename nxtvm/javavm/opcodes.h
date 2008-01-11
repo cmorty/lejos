@@ -208,4 +208,12 @@
 #define OP_GOTO_W	200
 #define OP_JSR_W	201
 #define OP_BREAKPOINT	202
+///////////////////////////////////
+#define OP_GETSTATIC_1  203
+#define OP_PUTSTATIC_1  204
+#define OP_GETSTATIC_2  205
+#define OP_PUTSTATIC_2  206
+#define OP_GETSTATIC_3  207
+#define OP_PUTSTATIC_3  208
+
 #endif // _OPCODES_H
