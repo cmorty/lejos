@@ -2,7 +2,7 @@
 
 <project name="libnxt" default="make" basedir=".">
 	<property name="endian" value="_NXT_LITTLE_ENDIAN"/>
-	<!-- cpptasks task & type def 
+	<!-- cpptasks task & type def
 	<taskdef resource="cpptasks.tasks">
 	  <classpath>
 	    <pathelement location="../jtools/3rdparty/lib/cpptasks.jar"/>
@@ -30,23 +30,6 @@
 
 	<!-- make libnxt --> 
 	<target name="libnxt" description="makes libnxt">
-		<condition property="includePath" value=".">
-			<not>
-				<os family="mac"/>
-			</not>
-		</condition>
-		<condition property="includePath" value="/Developer/SDKs/MacOSX10.5.sdk/System/Library/Frameworks/JavaVM.framework/Versions/Current/Headers/">
-			<and>
-				<os family="mac"/>
-				<matches pattern="^10\.5.*" string="${os.version}"/>
-			</and>
-		</condition>
-		<condition property="includePath" value="/Developer/SDKs/MacOSX10.4u.sdk/System/Library/Frameworks/JavaVM.framework/Versions/Current/Headers/">
-			<and>
-				<os family="mac"/>
-				<matches pattern="^10\.4.*" string="${os.version}"/>
-			</and>
-		</condition>
   		<cc subsystem="console" 
   				outfile="nxt"
   				objdir="." 
@@ -60,6 +43,7 @@
   			    <compilerarg value="-std=gnu99"/>
   			    <compilerarg value="-g"/>
   			    <compilerarg value="-ggdb"/>
+  			    <compilerarg value="-fPIC"/>
   			    <compilerarg value="-D${endian}"/>
   				<fileset dir=".">
   					<include name="error.c"/>
@@ -71,9 +55,8 @@
   	  				<include name="samba.c"/>
   				</fileset>
 				<includepath>
-					<pathelement location="${includePath}"/>
+					<pathelement location="."/>
 				</includepath>
-  				<versioninfo refid="libnxt"/>
   		</cc>
 	</target>
 	
@@ -100,7 +83,6 @@
 				<includepath>
 					<pathelement location="."/>
 				</includepath>
-  				<versioninfo refid="runc"/>
   		</cc>
 	</target>
 	
@@ -127,12 +109,28 @@
 				<includepath>
 					<pathelement location="."/>
 				</includepath>
-  				<versioninfo refid="nxjflash"/>
   		</cc>
 	</target>
 	
 	<!-- make jlibnxt --> 
 	<target name="jlibnxt" description="makes jlibnxt">
+		<condition property="includePath" value=".">
+			<not>
+				<os family="mac"/>
+			</not>
+		</condition>
+		<condition property="includePath" value="/Developer/SDKs/MacOSX10.5.sdk/System/Library/Frameworks/JavaVM.framework/Versions/Current/Headers/">
+			<and>
+				<os family="mac"/>
+				<matches pattern="^10\.5.*" string="${os.version}"/>
+			</and>
+		</condition>
+		<condition property="includePath" value="/Developer/SDKs/MacOSX10.4u.sdk/System/Library/Frameworks/JavaVM.framework/Versions/Current/Headers/">
+			<and>
+				<os family="mac"/>
+				<matches pattern="^10\.4.*" string="${os.version}"/>
+			</and>
+		</condition>
   		<cc subsystem="console" 
   				outfile="jlibnxt"
   				objdir="." 
@@ -152,9 +150,8 @@
   				</fileset>
 				<libset dir="." libs="nxt,usb"/>
 				<includepath>
-					<pathelement location="."/>
+					<pathelement location="${includePath}"/>
 				</includepath>
-  				<versioninfo refid="libnxt"/>
   		</cc>
 	</target>
 </project>
