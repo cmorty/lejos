@@ -72,9 +72,9 @@ extern TWOBYTES *allocate (TWOBYTES size);
 Object *protectedRef[MAX_VM_REFS];
 
 /**
- * @param numWords Number of 2-byte words used in allocating the object.
+ * @param numWords Number of 2-byte  words in the data part of the object
  */
-#define initialize_state(OBJ_,NWORDS_) zero_mem(((TWOBYTES *) (OBJ_)) + NORM_OBJ_SIZE, (NWORDS_) - NORM_OBJ_SIZE)
+#define initialize_state(PTR_,NWORDS_) zero_mem(((TWOBYTES *) (PTR_)), (NWORDS_) )
 #define get_object_size(OBJ_)          (get_class_record(get_na_class_index(OBJ_))->classSize)
 
 #if GARBAGE_COLLECTOR
@@ -99,13 +99,16 @@ void zero_mem( TWOBYTES *ptr, TWOBYTES numWords)
     *ptr++ = 0;
 }
 
-static inline void set_array (Object *obj, const byte elemType, const TWOBYTES length)
+static inline void set_array (Object *obj, const byte elemType, const TWOBYTES length, const int baLength)
 {
   #ifdef VERIFY
   assert (elemType <= (ELEM_TYPE_MASK >> ELEM_TYPE_SHIFT), MEMORY0); 
   assert (length <= (ARRAY_LENGTH_MASK >> ARRAY_LENGTH_SHIFT), MEMORY1);
   #endif
   obj->flags.all = IS_ALLOCATED_MASK | IS_ARRAY_MASK | ((TWOBYTES) elemType << ELEM_TYPE_SHIFT) | length;
+  // If this is a big array set the real length
+  if (baLength)
+    ((BigArray *)obj)->length = baLength;
   #ifdef VERIFY
   assert (is_array(obj), MEMORY3);
   #endif
@@ -187,7 +190,7 @@ Object *new_object_for_class (const byte classIndex)
 
   ref->flags.all = IS_ALLOCATED_MASK | classIndex;
 
-  initialize_state (ref, instanceSize);
+  initialize_state (fields_start(ref), instanceSize - NORM_OBJ_SIZE);
 
   #if DEBUG_OBJECTS || DEBUG_MEMORY
   printf ("new_object_for_class: returning %d\n", (int) ref);
@@ -207,37 +210,49 @@ TWOBYTES comp_array_size (const TWOBYTES length, const byte elemType)
 }
 #else
 #define comp_array_size( length, elemType) \
-  (NORM_OBJ_SIZE + (((TWOBYTES) (length) * typeSize[ elemType]) + 1) / 2)
+  ((((TWOBYTES) (length) * typeSize[ elemType]) + 1) / 2)
 #endif
 
 /**
- * Allocates an array. The size of the array is NORM_OBJ_SIZE
- * plus the size necessary to contain <code>length</code> elements
- * of the given type.
+ * Allocates an array. 
+ * To allow compact representation of small arrays but also allow the
+ * use of larger objects we support two classes of array. The standard array
+ * has a normal object header. Arrays larger then BIGARRAYLEN have the
+ * std length field set to BIARRAYLEN and then have an extra length field which
+ * is placed immediately at the end of the normal header. This length
+ * field contains the real array size.
  */
 Object *new_primitive_array (const byte primitiveType, STACKWORD length)
 {
   Object *ref;
   TWOBYTES allocSize;
+  TWOBYTES hdrSize;
+  int baLength;
 
-  // Check if length is too large to be representable
-  if (length > (ARRAY_LENGTH_MASK >> ARRAY_LENGTH_SHIFT))
-  {
-    throw_exception (outOfMemoryError);
-    return JNULL;
-  }
   allocSize = comp_array_size (length, primitiveType);
 #if DEBUG_MEMORY
   printf("New array of type %d, length %ld\n", primitiveType, length);
 #endif
-  ref = memcheck_allocate (allocSize);
+  // If this is a large array use a bigger header
+  if (length >= BIGARRAYLEN)
+  {
+    hdrSize = BA_OBJ_SIZE;
+    baLength = length;
+    length = BIGARRAYLEN;
+  }
+  else
+  {
+    baLength = 0;
+    hdrSize = NORM_OBJ_SIZE;
+  }
+  ref = memcheck_allocate (allocSize + hdrSize);
 #if DEBUG_MEMORY
   printf("Array ptr=%d\n", (int)ref);
 #endif
   if (ref == null)
     return JNULL;
-  set_array (ref, primitiveType, length);
-  initialize_state (ref, allocSize);
+  set_array (ref, primitiveType, length, baLength);
+  initialize_state (array_start(ref), allocSize);
   return ref;
 }
 
@@ -249,7 +264,7 @@ TWOBYTES get_array_size (Object *obj)
 }
 #else
 #define get_array_size( obj) \
-  (comp_array_size( get_array_length( obj), get_element_type( obj)))
+  ((is_std_array(obj) ? NORM_OBJ_SIZE : BA_OBJ_SIZE) + comp_array_size( get_array_length( obj), get_element_type( obj)))
 #endif
 
 void free_array (Object *objectRef)
@@ -271,7 +286,7 @@ Object *reallocate_array(Object *obj, STACKWORD newlen)
     if (newArray != JNULL)
     {
       // Copy old array to new
-      memcpy(((byte *) newArray + HEADER_SIZE), ((byte *) obj + HEADER_SIZE), get_array_length(obj) * typeSize[elemType]);
+      memcpy(array_start(newArray), array_start(obj), get_array_length(obj) * typeSize[elemType]);
     
       // Free old array
       free_array(obj);
@@ -292,9 +307,6 @@ Object *new_multi_array (byte elemType, byte totalDimensions,
 {
   Object *ref;
 
-  #ifdef WIMPY_MATH
-  Object *aux;
-  #endif
   TWOBYTES ne;
 
   #ifdef VERIFY
@@ -331,17 +343,7 @@ Object *new_multi_array (byte elemType, byte totalDimensions,
   ne = *numElemPtr;
   while (ne--)
   {
-    #ifdef WIMPY_MATH
-
-    aux = new_multi_array (elemType, totalDimensions - 1, reqDimensions - 1,
-      numElemPtr + 1);
-    ref_array(ref)[ne] = ptr2word (aux);
-
-    #else
-
     ref_array(ref)[ne] = ptr2word (new_multi_array (elemType, totalDimensions - 1, reqDimensions - 1, numElemPtr + 1));
-
-    #endif // WIMPY_MATH
   }
   protectedRef[totalDimensions] = JNULL;
 
@@ -374,30 +376,10 @@ void arraycopy(Object *src, int srcOff, Object *dst, int dstOff, int len)
   }
   // and finally do the copy!
   elemSize = typeSize[get_element_type(src)];
-  memcpy(((byte *) dst + HEADER_SIZE) + dstOff*elemSize , ((byte *) src + HEADER_SIZE) + srcOff*elemSize, len*elemSize);
+  memcpy(get_array_element_ptr(dst, elemSize, dstOff), get_array_element_ptr(src, elemSize, srcOff), len*elemSize);
 }
 
 
-#ifdef WIMPY_MATH
-
-void store_word (byte *ptr, byte aSize, STACKWORD aWord)
-{
-  byte *wptr;
-  byte ctr;
-
-  wptr = &aWord;
-  ctr = aSize;
-  while (ctr--)
-  {
-    #if LITTLE_ENDIAN
-    ptr[ctr] = wptr[aSize-ctr-1];
-    #else
-    ptr[ctr] = wptr[ctr];
-    #endif // LITTLE_ENDIAN
-  }
-}
-
-#else
 /**
  * Problem here is bigendian v. littleendian. Java has its
  * words stored bigendian, intel is littleendian.
@@ -406,6 +388,20 @@ void store_word (byte *ptr, byte aSize, STACKWORD aWord)
 
 STACKWORD get_word( byte *ptr, int aSize)
 {
+/*
+  switch(aSize)
+  {
+  case 1:
+    return (STACKWORD)ptr[0];
+  case 2:
+    return (((STACKWORD)ptr[0]) << 8) | ((STACKWORD)ptr[0]);
+  case 4:
+    return (((STACKWORD)ptr[0]) << 24) | (((STACKWORD)ptr[1]) << 16) |
+           (((STACKWORD)ptr[2]) << 8) | ((STACKWORD)ptr[3]);
+  }
+  return 0;
+*/
+
   STACKWORD aWord = 0;
   byte *end = ptr + aSize;
 
@@ -419,6 +415,24 @@ STACKWORD get_word( byte *ptr, int aSize)
 
 void store_word( byte *ptr, int aSize, STACKWORD aWord)
 {
+/*
+  switch(aSize)
+  {
+  case 1:
+    ptr[0] = (byte)aWord;
+    return;
+  case 2:
+    ptr[0] = (byte)(aWord >> 8);
+    ptr[1] = (byte)(aWord); 
+    return;
+  case 4:
+    ptr[0] = (byte)(aWord >> 24);
+    ptr[1] = (byte)(aWord >> 16); 
+    ptr[2] = (byte)(aWord >> 8);
+    ptr[3] = (byte)(aWord); 
+    return;
+  }
+*/
   byte* base = ptr;
   
   ptr += aSize;
@@ -431,7 +445,6 @@ void store_word( byte *ptr, int aSize, STACKWORD aWord)
   while( ptr > base);
 }
 
-#endif // WIMPY_MATH
 
 typedef union 
 {

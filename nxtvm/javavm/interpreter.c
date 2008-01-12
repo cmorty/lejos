@@ -43,7 +43,7 @@ JFLOAT tempFloat;
 ConstantRecord *tempConstRec;
 STACKWORD tempStackWord;
 STACKWORD *tempWordPtr;
-JSHORT tempInt;
+JINT tempInt;
   
 /**
  * Assumes pc points to 2-byte offset, and jumps.
@@ -130,14 +130,17 @@ static inline Object *create_string (ConstantRecord *constantRecord,
  */
 boolean array_load_helper()
 {
-  tempInt = word2jshort(pop_word());
+  tempInt = word2jint(pop_word());
   tempBytePtr = word2ptr(get_top_ref());
   if (tempBytePtr == JNULL)
     throw_exception (nullPointerException);
   else if (tempInt < 0 || tempInt >= get_array_length ((Object *) tempBytePtr))
     throw_exception (arrayIndexOutOfBoundsException);
   else
+  {
+    tempBytePtr = array_start((Object *) tempBytePtr);
     return true;
+  }
   return false;
 }
 

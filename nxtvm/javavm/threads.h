@@ -3,6 +3,7 @@
 #include "language.h"
 #include "constants.h"
 #include "trace.h"
+#include "memory.h"
 
 #ifndef _THREADS_H
 #define _THREADS_H
@@ -63,9 +64,9 @@ extern void monitor_notify_unchecked(Object *obj, const boolean all);
 #define stackframe_array_ptr()   (word2ptr(currentThread->stackFrameArray))
 #define stack_array_ptr()        (word2ptr(currentThread->stackArray))
 #define is_reference_array_ptr() (word2ptr(currentThread->isReferenceArray))
-#define stackframe_array()       ((StackFrame *) ((byte *) stackframe_array_ptr() + HEADER_SIZE))
-#define stack_array()            ((STACKWORD *) ((byte *) stack_array_ptr() + HEADER_SIZE))
-#define is_reference_array()     ((JBYTE *) ((byte *) is_reference_array_ptr() + HEADER_SIZE))
+#define stackframe_array()       ((StackFrame *) array_start(stackframe_array_ptr()))
+#define stack_array()            ((STACKWORD *) (array_start(stack_array_ptr())))
+#define is_reference_array()     ((JBYTE *) (array_start(is_reference_array_ptr()))
 #define set_program_number(N_)   {gProgramNumber = (N_);}
 #define inc_program_number()     {if (++gProgramNumber >= get_num_entry_classes()) gProgramNumber = 0;}
 #define get_program_number()     gProgramNumber 

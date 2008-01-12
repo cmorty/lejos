@@ -154,12 +154,12 @@ dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
     {
       byte *p = word2ptr(paramBase[0]);
       int len, i;
-      Object *charArray = (Object *) word2ptr(get_word(p + HEADER_SIZE, 4));
+      Object *charArray = (Object *) word2ptr(get_word(fields_start(p), 4));
 
-      len = charArray->flags.arrays.length;
+      len = get_array_length(charArray);
       {
 	char buff[len + 1];
-	char *chars = ((char *) charArray) + HEADER_SIZE;
+	char *chars = (char *) jchar_array(charArray);
 
 	for (i = 0; i < len; i++)
 	  buff[i] = chars[i + i];
@@ -188,8 +188,8 @@ dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
       Object *p = word2ptr(paramBase[0]);
       int len, i;
 
-      len = p->flags.arrays.length;
-      unsigned *intArray = (unsigned *) (((byte *) p) + HEADER_SIZE);
+      len = get_array_length(p);
+      unsigned *intArray = (unsigned *) jint_array(p);
       unsigned *display_buffer = (unsigned *) display_get_buffer();
 
       for (i = 0; i < 200; i++)
@@ -229,7 +229,7 @@ dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
   case i2cStartById_4IIII_1BII_5I:
     {
     	Object *p = word2ptr(paramBase[4]);
-    	byte *byteArray = (((byte *) p) + HEADER_SIZE);
+    	byte *byteArray = (byte *) jbyte_array(p);
     	push_word(i2c_start_transaction(paramBase[0],
     	                                paramBase[1],
     	                                paramBase[2],
@@ -245,14 +245,14 @@ dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
   case btSend_4_1BI_5V:
     {
       Object *p = word2ptr(paramBase[0]);
-      byte *byteArray = (((byte *) p) + HEADER_SIZE);
+      byte *byteArray = (byte *) jbyte_array(p);
       bt_send(byteArray,paramBase[1]);                      
     }
     return;
   case btReceive_4_1B_5V:
     {
       Object *p = word2ptr(paramBase[0]);
-      byte *byteArray = (((byte *) p) + HEADER_SIZE);
+      byte *byteArray = (byte *) jbyte_array(p);
       bt_receive(byteArray);                      
     }
     return;
@@ -275,14 +275,14 @@ dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
   case btWrite_4_1BII_5I:
     {
       Object *p = word2ptr(paramBase[0]);
-      byte *byteArray = (((byte *) p) + HEADER_SIZE);
+      byte *byteArray = (byte *) jbyte_array(p);
       push_word(bt_write(byteArray, paramBase[1], paramBase[2]));                      
     }
     return;
   case btRead_4_1BII_5I:
     {
       Object *p = word2ptr(paramBase[0]);
-      byte *byteArray = (((byte *) p) + HEADER_SIZE);
+      byte *byteArray = (byte *) jbyte_array(p);
       push_word(bt_read(byteArray, paramBase[1], paramBase[2]));                      
     }
     return;
@@ -294,21 +294,21 @@ dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
   case usbRead_4_1BI_5I:
      {
       Object *p = word2ptr(paramBase[0]);
-      byte *byteArray = (((byte *) p) + HEADER_SIZE);
+      byte *byteArray = (byte *) jbyte_array(p);
       push_word(udp_read(byteArray,paramBase[1]));                      
     } 
     return;
   case usbWrite_4_1BI_5V:
      {
       Object *p = word2ptr(paramBase[0]);
-      byte *byteArray = (((byte *) p) + HEADER_SIZE);
+      byte *byteArray = (byte *) jbyte_array(p);
       udp_write(byteArray,paramBase[1]);                      
     }
     return; 
   case writePage_4_1BI_5V:
     {
       Object *p = word2ptr(paramBase[0]);
-      unsigned long *intArray = (unsigned long *) (((byte *) p) + HEADER_SIZE);
+      unsigned long *intArray = (unsigned long *) jint_array(p);
       flash_write_page(intArray,paramBase[1]);                      
     }
     return;
@@ -316,7 +316,7 @@ dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
     {
       int i;
       Object *p = word2ptr(paramBase[0]);
-      unsigned long *intArray = (unsigned long *) (((byte *) p) + HEADER_SIZE);
+      unsigned long *intArray = (unsigned long *) jint_array(p);
       for(i=0;i<64;i++) intArray[i] = FLASH_BASE[(paramBase[1]*64)+i];                       
     }
     return;
@@ -332,7 +332,7 @@ dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
     sound_play_sample((unsigned char *) &FLASH_BASE[(paramBase[0]*64)],paramBase[1],paramBase[2],paramBase[3]);
     return;
   case getDataAddress_4Ljava_3lang_3Object_2_5I:
-    push_word (ptr2word (((byte *) word2ptr (paramBase[0])) + HEADER_SIZE));
+    push_word (ptr2word ((byte *) fields_start(word2ptr(paramBase[0]))));
     return;
   case gc_4_5V:
     garbage_collect();

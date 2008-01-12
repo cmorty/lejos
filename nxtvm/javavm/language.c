@@ -55,7 +55,7 @@ byte get_class_index (Object *obj)
  */
 MethodRecord *find_method (ClassRecord *classRecord, TWOBYTES methodSignature)
 {
-  tempByte = classRecord->numMethods;
+  byte tempByte = classRecord->numMethods;
   while (tempByte--)
   {
     tempMethodRecord = get_method_record (classRecord, tempByte);
@@ -266,7 +266,7 @@ boolean dispatch_special (MethodRecord *methodRecord, byte *retAddr)
     // int len = (int)(stackTop + methodRecord->maxOperands) - (int)(stack_array()) - HEADER_SIZE;
     
     // Need to compute new array size (as distinct from number of bytes in array).
-  	int newlen = (((int)(stackTop + methodRecord->maxOperands) - (int)(stack_array()) - HEADER_SIZE + 1) / 4) * 3 / 2;
+  	int newlen = (((int)(stackTop + methodRecord->maxOperands) - (int)(stack_array()) + 3) / 4) * 3 / 2;
   	JINT newStackArray = ptr2word(reallocate_array(word2ptr(currentThread->stackArray), newlen));
   	
   	// If can't allocate new stack, give in!
