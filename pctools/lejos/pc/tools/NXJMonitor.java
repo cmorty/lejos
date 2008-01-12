@@ -61,9 +61,9 @@ public class NXJMonitor extends JFrame implements ActionListener {
 			new SensorPanel("Sensor 3"),
 			new SensorPanel("Sensor 4")};
 	private LabeledGauge[] motorPanels = {
-			new LabeledGauge("Motor A Tacho", 360),
-			new LabeledGauge("Motor B Tacho", 360),
-			new LabeledGauge("Motor C Tacho", 360)};
+			new LabeledGauge("Motor A Tacho", 270),
+			new LabeledGauge("Motor B Tacho", 270),
+			new LabeledGauge("Motor C Tacho", 270)};
 	private LabeledGauge batteryGauge = new LabeledGauge("Battery", 10000);
 	private InputValues[] sensorValues = new InputValues[4];
 	private OutputState[] motorValues = new OutputState[3];
