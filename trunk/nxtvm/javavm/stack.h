@@ -181,7 +181,7 @@ static inline void dup2_x2 (void)
 
 static inline void swap (void)
 {
-  tempStackWord = *stackTop;
+  STACKWORD tempStackWord = *stackTop;
   *stackTop = *(stackTop-1);
   *(stackTop-1) = tempStackWord;
 }

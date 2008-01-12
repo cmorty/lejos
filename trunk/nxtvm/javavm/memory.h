@@ -36,10 +36,14 @@ extern void scan_memory (TWOBYTES *numNodes, TWOBYTES *biggest, TWOBYTES *freeMe
 #define HEADER_SIZE (sizeof(Object))
 // Size of object header in 2-byte words
 #define NORM_OBJ_SIZE ((HEADER_SIZE + 1) / 2)
+// Size of BigArry header in 2 byte words
+#define BA_OBJ_SIZE ((sizeof(BigArray) + 1) / 2)
 
-#define get_array_element_ptr(ARR_,ESIZE_,IDX_) ((byte *) (ARR_) + (IDX_) * (ESIZE_) + HEADER_SIZE)
-
-#define array_start(OBJ_)   ((byte *) (OBJ_) + HEADER_SIZE)
+#define fields_start(OBJ_)  ((byte *) (OBJ_) + HEADER_SIZE)
+//#define array_start(OBJ_)   ((byte *) (OBJ_) + HEADER_SIZE)
+// Generic access to array data given an array object
+#define array_start(OBJ_)   (is_std_array((Object *)(OBJ_)) ? (byte *) (OBJ_) + HEADER_SIZE : (byte *)(OBJ_) + sizeof(BigArray))
+// Typed access to the data
 #define jbyte_array(OBJ_)   ((JBYTE *) array_start(OBJ_))
 #define word_array(OBJ_)    ((STACKWORD *) array_start(OBJ_))
 #define ref_array(OBJ_)     ((REFERENCE *) array_start(OBJ_))
@@ -48,7 +52,17 @@ extern void scan_memory (TWOBYTES *numNodes, TWOBYTES *biggest, TWOBYTES *freeMe
 #define jchar_array(OBJ_)   ((JCHAR *) array_start(OBJ_))
 #define jlong_array(OBJ_)   ((JLONG *) array_start(OBJ_))
 #define jfloat_array(OBJ_)  ((JFLOAT *) array_start(OBJ_))
+// Following provide access to the array data given a pointer to the start
+#define jbyte_array_ptr(PTR_)   ((JBYTE *) PTR_)
+#define word_array_ptr(PTR_)    ((STACKWORD *) PTR_)
+#define ref_array_ptr(PTR_)     ((REFERENCE *) PTR_)
+#define jint_array_ptr(PTR_)    ((JINT *) PTR_)
+#define jshort_array_ptr(PTR_)  ((JSHORT *) PTR_)
+#define jchar_array_ptr(PTR_)   ((JCHAR *) PTR_)
+#define jlong_array_ptr(PTR_)   ((JLONG *) PTR_)
+#define jfloat_array_ptr(PTR_)  ((JFLOAT *) PTR_)
 
+#define get_array_element_ptr(ARR_,ESIZE_,IDX_) (array_start((ARR_)) + (IDX_) * (ESIZE_))
 #endif // _MEMORY_H
 
 

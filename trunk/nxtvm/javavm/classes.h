@@ -78,7 +78,8 @@ typedef struct S_Object
      }  __attribute__((packed)) objects;
      struct _arrays
      {
-       TWOBYTES length:9;
+       TWOBYTES length:8;
+       TWOBYTES padding:1;
        TWOBYTES type:4;
        TWOBYTES mark:1;
        TWOBYTES isArray:1;
@@ -93,6 +94,12 @@ typedef struct S_Object
   byte threadId;
 
 } __attribute__((packed)) Object;
+
+typedef struct S_BigArray
+{
+  Object hdr;
+  int length;
+} BigArray;
 
 /**
  * Thread class native structure
@@ -135,57 +142,13 @@ typedef struct S_String
   REFERENCE characters;
 } String;
 
-
-#ifdef WIMPY_MATH
-
-static inline TWOBYTES get_array_length (Object *obj)
-{
-   TWOBYTES aux;
-   aux = obj->flags.all & ARRAY_LENGTH_MASK;
-   #if (ARRAY_LENGTH_SHIFT == 0)
-   return aux;
-   #else
-   return (aux >> ARRAY_LENGTH_SHIFT);
-   #endif
-}
-
-static inline TWOBYTES get_element_type (Object *obj)
-{
-   TWOBYTES aux;
-   aux = obj->flags.all & ELEM_TYPE_MASK;
-   #if (ELEM_TYPE_SHIFT == 0)
-   return aux;
-   #else
-   return (aux >> ELEM_TYPE_SHIFT);
-   #endif
-}
-
-static inline TWOBYTES get_na_class_index (Object *obj)
-{
-   TWOBYTES aux;
-   aux = obj->flags.all & CLASS_MASK;
-   #if (CLASS_SHIFT == 0)
-   return aux;
-   #else
-   return (aux >> CLASS_SHIFT);
-   #endif
-}
-
-#else
-
-#ifndef notdef
-#define get_array_length(ARR_)   (((ARR_)->flags.all & ARRAY_LENGTH_MASK) >> ARRAY_LENGTH_SHIFT)
-#define get_element_type(ARR_)   ((ARR_)->flags.all & ELEM_TYPE_MASK) >> ELEM_TYPE_SHIFT
-#define get_na_class_index(OBJ_) (((OBJ_)->flags.all & CLASS_MASK) >> CLASS_SHIFT)
-#define get_free_length(OBJ_)    (((OBJ_)->flags.all & FREE_BLOCK_SIZE_MASK) >> FREE_BLOCK_SIZE_SHIFT)
-#else
-#define get_array_length(ARR_)   ((ARR_)->flags.arrays.length)
+#define BIGARRAYLEN 0xff
+#define is_big_array(ARR_)       ((ARR_)->flags.arrays.length == BIGARRAYLEN)
+#define is_std_array(ARR_)       ((ARR_)->flags.arrays.length != BIGARRAYLEN)
+#define get_array_length(ARR_)   (is_std_array(ARR_) ? (ARR_)->flags.arrays.length : ((BigArray *)(ARR_))->length)
 #define get_element_type(ARR_)   ((ARR_)->flags.arrays.type)
 #define get_na_class_index(OBJ_) ((OBJ_)->flags.objects.class)
 #define get_free_length(OBJ_)    ((OBJ_)->flags.freeBlock.size)
-#endif
-
-#endif // WIMPY_MATH
 
 #endif // _CLASSES_H
 
