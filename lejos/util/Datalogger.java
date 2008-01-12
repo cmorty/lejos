@@ -7,26 +7,32 @@ import java.io.*;
 /**
  * Datalogger class; stores float values then  then transmits  via bluetooth or usb<br>
  * works with DataViewer   in pctools.
- * A maximum of 2000 data values can be stored. 
+ * Default size is 512.  Capacity is limited only by the available ram.
+ * @author  Roger Glassey   - revised 1/12/08 for large arrays 
  */
 public class Datalogger 
 {
    // overcome limitation of array size; created as needed
-   private float [] log0;  
-   private float [] log1;
-   private float [] log2;
-   private float [] log3;
+   private float [] log;  
+
    private int _indx = 0;  //where the data will be written
+   private int _size;
 
-   private final int  BLOCK = 510; // block size
-   private int _blocks = 1; 
-
-
-
+/**
+ * buld a Datalogger with default size  512
+ */
     public Datalogger()
     {
-      log0 = new float[BLOCK];
-     
+      this(512);    
+    }
+    /**
+     * build a new Datalogger with capacity  = size;
+     * @param size the capacity of the Datalogger
+     */
+    public Datalogger(int size)
+    {
+       _size = size;
+       log = new float[size];
     }
 /**
  * write a float  value to the log
@@ -34,20 +40,11 @@ public class Datalogger
  */
   public void writeLog(float v)
   {   
-     if(_indx>=_blocks * BLOCK)
+     if(_indx<_size)
      {
-        if(_blocks == 1 && log1 == null)log1 = new float[BLOCK];
-        else if(_blocks == 2 && log2 == null)log2 = new float[BLOCK];
-        else if(_blocks == 3 && log3 == null)log3 = new float [BLOCK];
-        else if (_blocks == 4) return;
-        _blocks ++;
+        log[_indx]= v;
+        _indx ++ ;
      }
-    if(_blocks == 1) log0[_indx]= v;
-    else  if(_blocks == 2)log1[_indx %BLOCK]= v;
-    else  if(_blocks == 3)log2[_indx %BLOCK]= v;
-    else  if(_blocks == 4)log3[_indx %BLOCK]= v;
-    else return;
-    _indx++;
   }
   
   /**
@@ -57,7 +54,6 @@ public class Datalogger
   public void reset()
   {
      _indx = 0;
-     _blocks = 1;
   }
   
  /**
@@ -108,14 +104,7 @@ public class Datalogger
              {
                dataOut.writeFloat(_indx);
                dataOut.flush();
-               for (int i = 0; i<_indx ; i++) 
-               {        
-                  if(i<BLOCK)dataOut.writeFloat(log0[i]);   
-                  else if(i<2*BLOCK)dataOut.writeFloat(log1[i%BLOCK]);
-                  else if(i<3*BLOCK)dataOut.writeFloat(log2[i%BLOCK]);
-                  else if(i<3*BLOCK)dataOut.writeFloat(log3[i%BLOCK]);
-                  try{Thread.sleep(4);} catch (InterruptedException e ){}
-               }
+               for (int i = 0; i<_indx ; i++)   dataOut.writeFloat(log[i]);  
                dataOut.flush();
                dataOut.close();
           }
