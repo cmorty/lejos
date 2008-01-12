@@ -4,7 +4,7 @@ import java.awt.*;
 import java.awt.event.*;
 
 import javax.swing.*;
-import javax.swing.table.*;
+import javax.swing.border.*;
 import lejos.pc.comm.*;
 import java.io.*;
 
@@ -56,20 +56,20 @@ public class NXJMonitor extends JFrame implements ActionListener {
 	private NXTCommand nxtCommand = null;
 	private Timer timer;
 	private SensorPanel [] sensorPanels = {
-			new SensorPanel("S1"),
-			new SensorPanel("S2"),
-			new SensorPanel("S3"),
-			new SensorPanel("S4")};
-	private MotorPanel[] motorPanels = {
-			new MotorPanel("A"),
-			new MotorPanel("B"),
-			new MotorPanel("C")};
-	private Gauge batteryGauge = new Gauge();
-	private JLabel batteryLabel = new JLabel("Battery");
+			new SensorPanel("Sensor 1"),
+			new SensorPanel("Sensor 2"),
+			new SensorPanel("Sensor 3"),
+			new SensorPanel("Sensor 4")};
+	private LabeledGauge[] motorPanels = {
+			new LabeledGauge("Motor A Tacho", 360),
+			new LabeledGauge("Motor B Tacho", 360),
+			new LabeledGauge("Motor C Tacho", 360)};
+	private LabeledGauge batteryGauge = new LabeledGauge("Battery", 10000);
 	private InputValues[] sensorValues = new InputValues[4];
 	private OutputState[] motorValues = new OutputState[3];
 	private int mv;
-	private JTextArea text = new JTextArea(10,58);
+	private JLabel textLabel = new JLabel("Trace messages");
+	private JTextArea text = new JTextArea(10,60);
 	private String[] textStrings = new String[10];
 	private int numStrings = 0;
 	
@@ -140,30 +140,49 @@ public class NXJMonitor extends JFrame implements ActionListener {
 	}
 	
 	private void showMonitor(String name) {
+		Container contentPane = getContentPane();
+		JPanel contentPanel = new JPanel();
+
 	    setTitle(title + " : " + name);
 
-		getContentPane().removeAll();
+		contentPane.removeAll();
+			
+		contentPane.add(contentPanel);
 		
-		JPanel p1 = new JPanel();
-		JPanel p2 = new JPanel();
-		JPanel p3 = new JPanel();
+		JPanel sensorsPanel = new JPanel();
+		JPanel motorsPanel = new JPanel();
+		JPanel textPanel = new JPanel();
+		
+		sensorsPanel.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
+		
+		sensorsPanel.setBackground(Color.YELLOW);
+		motorsPanel.setBackground(Color.CYAN);
 
 		for(int i=0;i<4;i++) {
-			p1.add(sensorPanels[i]);
-		}
-		
-		batteryGauge.setMaxVal(10000);
-		p2.add(batteryLabel);
-		p2.add(batteryGauge);
-		
-		for(int i=0;i<3;i++) {
-			p3.add(motorPanels[i]);
+			sensorsPanel.add(sensorPanels[i]);
 		}
 
-		getContentPane().add(p1, BorderLayout.NORTH);
-		getContentPane().add(p2, BorderLayout.WEST);
-		getContentPane().add(text, BorderLayout.CENTER);
-		getContentPane().add(p3, BorderLayout.SOUTH);
+		motorsPanel.add(batteryGauge);
+		motorsPanel.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
+		
+		for(int i=0;i<3;i++) {
+			motorsPanel.add(motorPanels[i]);
+		}
+		
+		textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.PAGE_AXIS));
+		textPanel.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
+		textPanel.add(textLabel);
+		textLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+		textPanel.add(text);
+		
+		contentPanel.setLayout(new BorderLayout());	
+		contentPanel.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+
+		contentPanel.add(sensorsPanel, BorderLayout.NORTH);
+		contentPanel.add(textPanel, BorderLayout.CENTER);
+		contentPanel.add(motorsPanel, BorderLayout.SOUTH);
+		
 		pack();
 	    
 		timer = new Timer(1000, this);
@@ -190,7 +209,7 @@ public class NXJMonitor extends JFrame implements ActionListener {
     		sensorPanels[i].repaint();
     	}
     	for(int i=0;i<3;i++) {
-    		motorPanels[i].setTachoVal(motorValues[i].tachoCount);
+    		motorPanels[i].setVal(motorValues[i].tachoCount);
     		motorPanels[i].repaint();
     	}
 		batteryGauge.setVal(mv);
@@ -202,7 +221,6 @@ public class NXJMonitor extends JFrame implements ActionListener {
     	repaint();
 	}
 
-	
 	public void getValues() {
 		try {
 			for(int i=0;i<4;i++) {
@@ -249,23 +267,24 @@ public class NXJMonitor extends JFrame implements ActionListener {
 }
 
 class SensorPanel  extends Panel {
-	Gauge rawGauge, scaledGauge;
+	LabeledGauge rawGauge, scaledGauge;
 	String name;
 	JLabel nameLabel;
 	JLabel typeLabel = new JLabel("No Sensor");
 	
 	public SensorPanel(String name) {
 		this.name = name;
+		//this.setBackground(Color.YELLOW);
 		nameLabel = new JLabel(name);
-		rawGauge = new Gauge();
-		scaledGauge = new Gauge();
-		add(rawGauge,BorderLayout.NORTH);
-		add(scaledGauge,BorderLayout.CENTER);
-		JPanel p1 = new JPanel();
-		p1.add(nameLabel);
-		p1.add(typeLabel);
-		add(p1,BorderLayout.SOUTH);
-		Dimension size = new Dimension(110,250);
+		rawGauge = new LabeledGauge("Raw", 1024);
+		scaledGauge = new LabeledGauge("Scaled", 100);
+		
+		add(nameLabel);
+		add(rawGauge);
+		add(scaledGauge);		
+		add(typeLabel);
+
+		Dimension size = new Dimension(110,350);
 		setSize(size);
 		setMaximumSize(size);
 		setPreferredSize(size);
@@ -292,29 +311,35 @@ class SensorPanel  extends Panel {
 	}
 }
 
-class MotorPanel  extends Panel {
-	Gauge tachoGauge;
+
+class LabeledGauge  extends Panel {
+	Gauge gauge;
 	String name;
 	JLabel nameLabel;
 	
-	public MotorPanel(String name) {
+	public LabeledGauge(String name, int maxVal) {
 		this.name = name;
 		nameLabel = new JLabel(name);
-		tachoGauge = new Gauge();
-		tachoGauge.setMaxVal(360);
+		gauge = new Gauge();
+		gauge.setMaxVal(maxVal);
 
 		JPanel p1 = new JPanel();
 		p1.add(nameLabel);
-		add(tachoGauge,BorderLayout.NORTH);
+		add(gauge,BorderLayout.NORTH);
 		add(p1,BorderLayout.SOUTH);
-		Dimension size = new Dimension(110,150);
+		Dimension size = new Dimension(110,140);
 		setSize(size);
 		setMaximumSize(size);
 		setPreferredSize(size);
 	}
 	
-	public void setTachoVal(int val) {
-		tachoGauge.setVal(val);
+	public void setVal(int val) {
+		gauge.setVal(val);
+		gauge.repaint();
+	}
+	
+	public void setMaxVal(int val) {
+		gauge.setMaxVal(val);
 	}
 }
 
