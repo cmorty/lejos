@@ -50,9 +50,15 @@ public class NXTCommand implements NXTProtocol {
 
 			String os = System.getProperty("os.name");
 			boolean windows = false;
+			boolean mac = false;
 
-			if (os.length() >= 7 && os.substring(0, 7).equals("Windows"))
+			if (os.length() >= 7 && os.substring(0, 7).equals("Windows")) {
 				windows = true;
+			}
+			
+	       	if (os.equals("Mac OS X")) { 
+	       		mac = true;          
+	       	}
 
 			// Look for USB comms driver first
 			if ((protocol & NXTCommFactory.USB) != 0) {
@@ -68,7 +74,7 @@ public class NXTCommand implements NXTProtocol {
 			}
 
 			// Look for a Bluetooth one
-			String defaultDriver = (windows ? "lejos.pc.comm.NXTCommBluecove"
+			String defaultDriver = (windows || mac ? "lejos.pc.comm.NXTCommBluecove"
 					: "lejos.pc.comm.NXTCommBluez");
 
 			if ((protocol & NXTCommFactory.BLUETOOTH) != 0) {
