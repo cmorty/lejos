@@ -388,20 +388,18 @@ void arraycopy(Object *src, int srcOff, Object *dst, int dstOff, int len)
 
 STACKWORD get_word( byte *ptr, int aSize)
 {
-/*
   switch(aSize)
   {
   case 1:
     return (STACKWORD)ptr[0];
   case 2:
-    return (((STACKWORD)ptr[0]) << 8) | ((STACKWORD)ptr[0]);
+    return (((STACKWORD)ptr[0]) << 8) | ((STACKWORD)ptr[1]);
   case 4:
     return (((STACKWORD)ptr[0]) << 24) | (((STACKWORD)ptr[1]) << 16) |
            (((STACKWORD)ptr[2]) << 8) | ((STACKWORD)ptr[3]);
   }
   return 0;
-*/
-
+/*
   STACKWORD aWord = 0;
   byte *end = ptr + aSize;
 
@@ -411,11 +409,11 @@ STACKWORD get_word( byte *ptr, int aSize)
   } while( ptr < end);
   
   return aWord;
+*/
 }
 
 void store_word( byte *ptr, int aSize, STACKWORD aWord)
 {
-/*
   switch(aSize)
   {
   case 1:
@@ -432,7 +430,7 @@ void store_word( byte *ptr, int aSize, STACKWORD aWord)
     ptr[3] = (byte)(aWord); 
     return;
   }
-*/
+/*
   byte* base = ptr;
   
   ptr += aSize;
@@ -443,49 +441,7 @@ void store_word( byte *ptr, int aSize, STACKWORD aWord)
     aWord >>= 8;
   }
   while( ptr > base);
-}
-
-
-typedef union 
-{
-  struct
-  {
-    byte byte0;
-    byte byte1;
-    byte byte2;
-    byte byte3;
-  } st;
-  STACKWORD word;
-} AuxStackUnion;
-
-void make_word (byte *ptr, int aSize, STACKWORD *aWordPtr)
-{
-  // This switch statement is 
-  // a workaround for a h8300-gcc bug.
-  switch (aSize)
-  {
-    case 1:
-      *aWordPtr = (JINT) (JBYTE) (ptr[0]);
-      return;
-    case 2:
-      *aWordPtr = (JINT) (JSHORT) (((TWOBYTES) ptr[0] << 8) | (ptr[1]));
-      return;
-    #ifdef VERIFY
-    default:
-      assert (aSize == 4, MEMORY9);
-    #endif // VERIFY
-  }
-  #if LITTLE_ENDIAN
-  ((AuxStackUnion *) aWordPtr)->st.byte3 = *ptr++;  
-  ((AuxStackUnion *) aWordPtr)->st.byte2 = *ptr++;  
-  ((AuxStackUnion *) aWordPtr)->st.byte1 = *ptr++;  
-  ((AuxStackUnion *) aWordPtr)->st.byte0 = *ptr;  
-  #else
-  ((AuxStackUnion *) aWordPtr)->st.byte0 = *ptr++;  
-  ((AuxStackUnion *) aWordPtr)->st.byte1 = *ptr++;  
-  ((AuxStackUnion *) aWordPtr)->st.byte2 = *ptr++;  
-  ((AuxStackUnion *) aWordPtr)->st.byte3 = *ptr;  
-  #endif
+*/
 }
 
 #if DEBUG_RCX_MEMORY
