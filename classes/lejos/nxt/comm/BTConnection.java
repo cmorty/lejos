@@ -36,6 +36,7 @@ public class BTConnection implements StreamConnection
 	private static int BTC_BUFSZ = 256;
 	private static int BTC_CLOSETIMEOUT1 = 1000;
 	private static int BTC_CLOSETIMEOUT2 = 250;
+	private static int BTC_FLUSH_WAIT = 25;
 	
 	public static final int AM_DISABLE = 0;
 	public static final int AM_ALWAYS = 1;
@@ -56,6 +57,8 @@ public class BTConnection implements StreamConnection
 	int pktLen;
 	InputStream is;
 	OutputStream os;
+	static int inBufSz = BTC_BUFSZ;
+	static int outBufSz = BTC_BUFSZ;
 
 
 	public BTConnection(int chan)
@@ -82,9 +85,9 @@ public class BTConnection implements StreamConnection
 	synchronized void bind(byte handle)
 	{
 		if (inBuf == null )
-			inBuf = new byte[BTC_BUFSZ];
+			inBuf = new byte[inBufSz];
 		if (outBuf == null)
-			outBuf = new byte[BTC_BUFSZ];
+			outBuf = new byte[outBufSz];
 		inCnt = 0;
 		inOffset = 0;
 		outCnt = 0;
@@ -465,9 +468,29 @@ public class BTConnection implements StreamConnection
 	 * waiting to be sent.
 	 * @param	mode	The switch control mode.
 	 */
-	void setActiveMode(int mode)
+	public void setActiveMode(int mode)
 	{
 		switchMode = mode;
+	}
+
+	/**
+	 * Set the size to be used for the input buffer. This will effect all
+	 * new connections after this call is made.
+	 * @param	sz	The required size. if < 0 the default size will be used
+	 */
+	public static void setInputBufferSize(int sz)
+	{
+		inBufSz = (sz >= 0 ? sz : BTC_BUFSZ);
+	}
+	
+	/**
+	 * Set the size to be used for the output buffer. This will effect all
+	 * new connections after this call is made.
+	 * @param	sz	The required size. if < 0 the default size will be used
+	 */
+	public static void setOutputBufferSize(int sz)
+	{
+		outBufSz = (sz >= 0 ? sz : BTC_BUFSZ);
 	}
 	
 	private boolean pendingInput()
@@ -491,7 +514,13 @@ public class BTConnection implements StreamConnection
 		if (!pendingInput()) return;
 		//1 Debug.out("Pending input space " + (inBuf.length - inCnt) + "\n");
 		while (pendingInput() && inCnt < inBuf.length)
+		{
 			recv();
+			// If we still have pending input give the application chance to
+			// read what is in the input buffer
+			if (pendingInput())
+				try{Thread.sleep(BTC_FLUSH_WAIT);}catch(Exception e){}
+		}
 		if (!pendingInput()) return;
 		//Debug.out("Dropping packets\n");
 		// If we still have input we are now in big trouble we will have
