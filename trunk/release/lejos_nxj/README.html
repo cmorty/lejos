@@ -76,7 +76,6 @@ However, it works if you install on Vista under Windows XP compatibility mode:<b
 <li>Right click on this file. Select Properties | Compatibility Click the "Run this program in compatibility mode" box and select "Windows XP (Service Pack2)" from the drop down list.
 <li>Right click again and select "Run as Administrator". Follow the installation instructions. Run the test program will list the usb devices plugged into your computer, but not new devices.
 </ol>
-<br/>
 
 libusb for other systems can be obtained from <a href="http://libusb.sourceforge.net">http://libusb.sourceforge.net</a>.<br/><br/>
 
@@ -171,12 +170,16 @@ To compile, link and download the Tune sample:
 <p>The following tools are available with leJOS NXJ:</p>
 
 <ul>
-<li><em>nxjflash</em> - flashes the firmware</li>
+<li><em>nxjflash</em> - flashes the firmware and leJOS menu</li>
 <li><em>nxjc</em> - compiles a Java program for leJOS NXJ</li>
 <li><em>nxj</em> - links, uploads and optionally runs a leJOS NXJ program</li>
 <li><em>nxjlink</em> - links a program</li>
 <li><em>nxjupload</em> - uploads and optionally runs a program</li>
 <li><em>nxjbrowse</em> - explorer for NXJ files</li>
+<li><em>nxjmonitor</em> - remote monitoring and tracing over Bluetooth</li>
+<li><em>nxjdebug</em> - remote debugging over USB</li>
+<li><em>nxjdataviewer</em> - remote viewer for Datalogger files</li>
+<li><em>nxjproxyserver</em> - proxy server for Socket and SocketServer connections</li>
 <li><em>emu-lejosrun</em> - emulate a leJOS NXJ program on Unix</li>
 </ul>
 
@@ -198,7 +201,7 @@ which uses David Anderson's libnxt library and the libusb open source library. T
 For Bluetooth on Windows, NXTCommBluecove, which uses the Bluecove open source library, is used. 
 On Linux and MAC OS X, NXTCommBluez, which uses the open source Bluez project, is used for Bluetooth.</p>
 
-<p>A future version of leJOS NXJ is expected to support the LEGO Fantom API, which should work for both USB abd Bluetooth.</p>
+<p>A future version of leJOS NXJ is expected to support the LEGO Fantom API, which should work for both USB and Bluetooth.</p>
 
 <p>The properties file,lejos_nxt/bin/nxj.properties, can be modified to select different comms drivers,
 but for this release the defaults are the only available drivers.</p>
@@ -207,6 +210,15 @@ but for this release the defaults are the only available drivers.</p>
 It can be used to delete, upload and download programs and other files. 
 It can also run programs, change the name of the NXT and defrag the files,
 moving them all to the start of user flash memory. Changing the name of the NXT only works over USB.</p> 
+<p><em>nxjmonitor</em> can be used to monitor a running program on the NXT. 
+The program being monitored should run the LCPBTResponder thread and can output trace
+messages using LCP.messageWrite on message box 0 - see the MonitorTest sample.
+<em>nxjmonitor</em> produces a graphical display of the current values of sensors, the battery and motor tachometers
+as the program runs, as well as displaying the trace messages.</p>
+<p><em>nxjdebug</em> displays messages output by Debug.out on the NXT.</p>
+<p><em>nxjdataviewer</em> views data log file produced by the Datalogger class - see the DLTest sample.<p>
+<p><em>nxjproxyserver</em> runs a proxy server that can be used to support Socket and SocketServer connections between
+programs running on the NXT and Java programs on a PC or across the Internet - see the SocketTest, SocketServer and TimeTest samples.<p>
 <h1><a name="limitations">Known limitations</a></h1>
 Due to size constraints, some Java language
 features have been omitted. Others just haven't been implemented yet.
@@ -215,7 +227,6 @@ Known limitations with all versions of leJOS are: </a>
   <li>Switch statements are not supported</li>
   <li>Arithmetic operations on variables of type long are not
 supported, although you can cast ints to longs and vice versa</li>
-  <li>Maximum array length is 511</li>
   <li>The instanceof operation will always be true for interfaces. In
 bytecode, CHECKCAST succeeds on all interface classes (which is a bit
 unsafe)</li>
@@ -249,8 +260,6 @@ initialized, when multiple threads use a class</li>
 </li>
 <li>leJOS NXJ does not work out of the box on Windows Vista systems. This is due to limitations in libusb-win32 that the leJOS  NXJ Windows USB tools, including nxjflash, rely on. Installing libusb in windows XP compatibility mode should cure the problem.
 </li>
-<li>Bluetooth does not work on MAC OS X systems, and the ant build files for MAC OS X are largely untested.  See the forums on the leJOS web site for the latest state of leJOS on MAC OS X.
-</li>
 <li>Occasionally, after pressing the orange (ENTER) button to start leJOS NXJ, the LCD remains blank. If this occurs, and is not due to low batteries, it is necessary to shut down leJOS, by pressing the orange and dark gray buttons (ENTER + ESCAPE), and try again.
 </li>
 <li>Only one file can be open at a time.
@@ -264,6 +273,8 @@ initialized, when multiple threads use a class</li>
 <li>Not all LEGO Communications Protocol command are supported, and the semantics of some of them are different from that of the standard LEGO firmware. In particular only one file can be open at a time and the file handle is always 0.
 </li>
 <li>The leJOS NXJ USB driver does not return a unique serial number for each NXT, in the way that the standard LEGO software does. The effects of this are not known, but it may be the cause of lejos NXJ not working with the LEGO fantom API over USB.
+</li>
+<li>Multiple NXT bricks connected by USB are not supported.
 </li>
 <li>Java streams over USB are never closed down, and are always open.
 </li>
