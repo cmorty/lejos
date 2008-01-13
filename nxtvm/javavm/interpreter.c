@@ -236,8 +236,6 @@ void engine()
   printf ("OPCODE (0x%X) %s\n", (int) *pc, OPCODE_NAME[*pc]);
   #endif
 
-  old_pc = pc;
-  
   switch (*pc++)
   {
     case OP_NOP:

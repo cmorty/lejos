@@ -34,9 +34,7 @@ case OP_LDC:
       break;
     case T_INT:
     case T_FLOAT:
-      make_word (get_constant_ptr(tempConstRec), 4, &tempStackWord);
-      //printf ("### LDC offset=%d 0x%X (%f)\n", (int) tempConstRec->offset, (int) tempStackWord, word2jfloat(tempStackWord));
-      push_word (tempStackWord);
+      push_word(get_word (get_constant_ptr(tempConstRec), 4));
       break;
     #ifdef VERIFY
     default:
@@ -55,10 +53,8 @@ case OP_LDC2_W:
   #endif // VERIFY
 
   tempBytePtr = get_constant_ptr (tempConstRec);
-  make_word (tempBytePtr, 4, &tempStackWord);
-  push_word (tempStackWord);
-  make_word (tempBytePtr + 4, 4, &tempStackWord);
-  push_word (tempStackWord);
+  push_word(get_word (tempBytePtr, 4));
+  push_word(get_word (tempBytePtr + 4, 4));
 
   pc += 2;
   goto LABEL_ENGINELOOP;
