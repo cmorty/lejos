@@ -84,16 +84,20 @@ public class Bluetooth
 	
 	private static final int IO_TIME = 100;
 	private static final int CMD_TIME = 50;
+	
 	private static final int TO_SWITCH = 500;
 	private static final int TO_REPLY = 250;
 	private static final int TO_SHORT = 2000;
 	private static final int TO_LONG = 30000;
 	private static final int TO_RESET = 5000;
-	private static final int TO_INIT = 500;
 	private static final int TO_CLOSE = 100;
 	private static final int TO_FORCERESET = -1;
 	private static final int TO_NONE = 0;
 	private static final int TO_FLUSH = 500;
+	private static final int TO_SWITCH_WAIT = 75;
+	
+	private static final int CN_NONE = -1;
+	private static final int CN_IDLE = 0x7ffffff;
 	
 	static BTConnection [] Chans = new BTConnection[CHANCNT];
 	static byte [] cmdBuf = new byte[128];
@@ -222,6 +226,7 @@ public class Bluetooth
 	{
 		static final int MO_STREAM = 0;
 		static final int MO_CMD = 1;
+		static final int MO_UNKNOWN = -1;
 		private int mode;
 		private int curChan;
 
@@ -229,7 +234,7 @@ public class Bluetooth
 		{
 			mode = MO_CMD;
 			reqState = RS_INIT;
-			curChan = -1;
+			curChan = CN_NONE;
 			resetCnt = 0;
 			// Make sure power is on(may cause a reset!)
 			btSetResetHigh();
@@ -360,7 +365,7 @@ public class Bluetooth
 				//1 Debug.out("reset complete state is " + reqState + "\n");
 				listening = false;
 				connected = 0;
-				curChan = -1;
+				curChan = CN_NONE;
 				cancelTimeout();
 				// Tell anyone that is waiting
 				if (reqState > RS_IDLE)	reqState = RS_ERROR;
@@ -396,7 +401,7 @@ public class Bluetooth
 						{
 							if (Chans[replyBuf[3]].disconnected())
 								connected--;
-							if (replyBuf[3] == (byte)curChan) curChan = -1;
+							if (replyBuf[3] == (byte)curChan) curChan = CN_NONE;
 						}
 					}
 					else if (replyBuf[1] == MSG_REQUEST_CONNECTION)
@@ -479,8 +484,8 @@ public class Bluetooth
 					return cur;
 				}
 			}
-			// Nothing better found so stick with the current channel
-			return curChan;
+			// No active channel found say we are idle
+			return CN_IDLE;
 		}
 		
 		private void processStreams()
@@ -494,18 +499,27 @@ public class Bluetooth
 					//Debug.out("Process streams " + reqState + "\n");
 					if (reqState != RS_IDLE) return;
 					int next = selectChan();
-					if (next < 0 || !switchToStream(next)) return;
-					// Perform I/O on the current stream. Switching from one stream
-					// to another is a slow process, so we spend at least IO_TIME ms
-					// on each stream before switching away.
-					//Debug.out("Process streams 2" + reqState + "\n");
-					int ioEnd = (int)System.currentTimeMillis() + IO_TIME;			
-					while (ioEnd > (int)System.currentTimeMillis() && Chans[curChan].state >= BTConnection.CS_CONNECTED)
+					if (next < 0) return;
+					if (next != CN_IDLE)
 					{
-						if (bc4Mode() != MO_STREAM) return;
-						Chans[curChan].send();
-						Chans[curChan].recv();
-						Thread.yield();
+						if (!switchToStream(next)) return;
+						// Perform I/O on the current stream. Switching from one stream
+						// to another is a slow process, so we spend at least IO_TIME ms
+						// on each stream before switching away.
+						//Debug.out("Process streams 2" + reqState + "\n");
+						int ioEnd = (int)System.currentTimeMillis() + IO_TIME;			
+						while (ioEnd > (int)System.currentTimeMillis() && Chans[curChan].state >= BTConnection.CS_CONNECTED)
+						{
+							if (bc4Mode() != MO_STREAM) return;
+							Chans[curChan].send();
+							Chans[curChan].recv();
+							Thread.yield();
+						}
+					}
+					else
+					{
+						//1 Debug.out("Stream idle\n");
+						if (bc4Mode() != mode) return;
 					}
 					//Debug.out("Process streams 3" + reqState + "\n");
 					// Do we need to switch back to command mode?
@@ -526,8 +540,8 @@ public class Bluetooth
 				if (flush && curChan >= 0) Chans[curChan].flushInput();
 			}
 			//1 Debug.out("Failed to switch\n");
-			mode = -1;
-			curChan = -1;
+			mode = MO_UNKNOWN;
+			curChan = CN_NONE;
 			return bc4Mode();
 		}
 		
@@ -565,7 +579,8 @@ public class Bluetooth
 			// wait for any output to drain
 			while((btPending() & BT_PENDING_OUTPUT) != 0)
 				Thread.yield();
-			try{Thread.sleep(100);}catch(Exception e){}
+			// Need to have a minimum period of no output to the BC4
+			try{Thread.sleep(TO_SWITCH_WAIT);}catch(Exception e){}
 			btSetArmCmdMode(MO_CMD);
 			// If there is any input data left we could be in trouble. Try and
 			// flush everything.
