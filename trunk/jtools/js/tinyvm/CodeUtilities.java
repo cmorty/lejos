@@ -31,11 +31,9 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
       throw new TinyVMException("Unsupported " + OPCODE_NAME[aOpCode] + " in "
          + iFullName + ".\n"
          + "The following features/conditions are currently unsupported:\n"
-         + "- Switch statements.\n"
-         + "- Integer increment constant too large. (If > 255, declare it).\n"
          + "- Arithmetic or logical operations on variables of type long.\n"
          + "- Remainder operations on floats or doubles.\n"
-         + "- Too many constants or locals ( > 255).\n"
+         + "- Too many locals ( > 255).\n"
          + "- Method code too long ( > 64 Kb!).\n" + "");
    }
 
@@ -235,6 +233,21 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
       }
    }
 
+   static int getAndCopyFourBytesInt( byte[] aCode, int ix, byte[] pOutCode, int ox)
+   {
+      int a = 0;
+      
+      a |= (aCode[ ix + 0] & 0xFF) << 24;
+      a |= (aCode[ ix + 1] & 0xFF) << 16;
+      a |= (aCode[ ix + 2] & 0xFF) << 8;
+      a |= (aCode[ ix + 3] & 0xFF) << 0;
+
+      for( int i = 0; i < 4; i ++)
+         pOutCode[ ox + i] = aCode[ ix + i];
+
+      return a;
+   }
+
    public byte[] processCode (byte[] aCode) throws TinyVMException
    {
       byte[] pOutCode = new byte[aCode.length];
@@ -255,6 +268,7 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
                pOutCode[i] = (byte) processConstantIndex(aCode[i] & 0xFF);
                i++;
                break;
+            case OP_LDC_W:
             case OP_LDC2_W:
                int pIdx1 = processConstantIndex((aCode[i] & 0xFF) << 8
                   | (aCode[i + 1] & 0xFF));
@@ -295,16 +309,16 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
                int fldIdx = pWord1 & 0x03FF;
                if( fldIdx >= 256)
                {
-                 int newOpCode;
+                  int newOpCode;
 
-                 if( ((int)aCode[i-2] & 0xFF) == OP_PUTSTATIC)
-                    newOpCode = OP_PUTSTATIC_1 + (fldIdx - 256) / 256 * 2;
-                 else
-                    newOpCode = OP_GETSTATIC_1 + (fldIdx - 256) / 256 * 2;
+                  if( ((int)aCode[i-2] & 0xFF) == OP_PUTSTATIC)
+                     newOpCode = OP_PUTSTATIC_1 + (fldIdx - 256) / 256 * 2;
+                  else
+                     newOpCode = OP_GETSTATIC_1 + (fldIdx - 256) / 256 * 2;
 
-                 pOutCode[i-2] = (byte) (newOpCode & 0xFF);
+                  pOutCode[i-2] = (byte) (newOpCode & 0xFF);
 
-                 // System.out.println( "large index of static field " + newOpCode + " - " + fldIdx);
+                  // System.out.println( "large index of static field " + newOpCode + " - " + fldIdx);
                }
                pOutCode[i++] = (byte) (pWord1 & 0xFF);
                break;
@@ -341,11 +355,60 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
                pOutCode[i++] = (byte) (pWord5 & 0xFF);
                break;
             case OP_LOOKUPSWITCH:
+               {
+                  int oi = i;
+                  while( (i % 4) != 0)
+                     i ++;
+
+                  int dft = getAndCopyFourBytesInt( aCode, i, pOutCode, oi); i += 4; oi += 4;
+                  int npairs = getAndCopyFourBytesInt( aCode, i, pOutCode, oi); i += 4; oi += 4;
+                  //System.out.println( "lookupswitch: dft: " + dft + ", npairs: " + npairs + ", padding: " + (i - oi));
+
+                  for( int k = 0; k < npairs; k ++)
+                  {
+                     int idx = getAndCopyFourBytesInt( aCode, i, pOutCode, oi); i += 4; oi += 4;
+                     int off = getAndCopyFourBytesInt( aCode, i, pOutCode, oi); i += 4; oi += 4;
+                     //System.out.println( "lookupswitch: idx: " + idx + ", off: " + off);
+                  }
+
+                  while( oi < i)
+                     pOutCode[oi++] = 0;
+               }
+               break;
+
             case OP_TABLESWITCH:
+               {
+                  int oi = i;
+                  while( (i % 4) != 0)
+                     i ++;
+
+                  int dft = getAndCopyFourBytesInt( aCode, i, pOutCode, oi); i += 4; oi += 4;
+                  int low = getAndCopyFourBytesInt( aCode, i, pOutCode, oi); i += 4; oi += 4;
+                  int hig = getAndCopyFourBytesInt( aCode, i, pOutCode, oi); i += 4; oi += 4;
+                  //System.out.println( "tableswitch: dft: " + dft + ", low: " + low + ", hig: " + hig + ", padding: " + (i - oi));
+
+                  for( int k = low; k <= hig; k ++)
+                  {
+                     int idx = getAndCopyFourBytesInt( aCode, i, pOutCode, oi); i += 4; oi += 4;
+                     //System.out.println( "tableswitch: idx: " + idx);
+                  }
+
+                  while( oi < i)
+                     pOutCode[oi++] = 0;
+               }
+               break;
+
             case OP_WIDE:
+                if( (aCode[i] & 0xFF) == OP_IINC && aCode[i+1] == 0)
+                {
+                   for( int k = 0; k < 5; k ++, i ++)
+                      pOutCode[i] = aCode[i];
+                   break;
+                }
+                // Fall through
+
             case OP_GOTO_W:
             case OP_JSR_W:
-            case OP_LDC_W:
             case OP_LADD:
             case OP_LSUB:
             case OP_LMUL:

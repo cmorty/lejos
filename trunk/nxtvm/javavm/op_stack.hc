@@ -7,7 +7,7 @@ case OP_BIPUSH:
   // Arguments: 1
   // TBD: check negatives
   push_word ((JBYTE) (*pc++));
-  goto LABEL_ENGINELOOP;
+  goto LABEL_ENGINEFASTLOOP;
 case OP_SIPUSH:
   // Stack size: +1
   // Arguments: 2
@@ -16,25 +16,32 @@ case OP_SIPUSH:
   #endif
   push_word ((JSHORT) (((TWOBYTES) pc[0] << 8) | pc[1]));
   pc += 2;
-  goto LABEL_ENGINELOOP;
+  goto LABEL_ENGINEFASTLOOP;
+case OP_LDC_W:
+  tempConstRec = get_constant_record (((TWOBYTES) pc[0] << 8) | pc[1]);
+  pc += 2;
+  tempByte = 3;
+  goto LDC_CONT;
 case OP_LDC:
   // Stack size: +1
   // Arguments: 1
   tempConstRec = get_constant_record (*pc++);
+  tempByte = 2;
+LDC_CONT:
   switch (tempConstRec->constantType)
   {
     case T_REFERENCE:
 
       // T_REFERENCE is actually String
 
-      tempWordPtr = (void *) create_string (tempConstRec, pc - 2);
+      tempWordPtr = (void *) create_string (tempConstRec, pc - tempByte);
       if (tempWordPtr == JNULL)
         goto LABEL_ENGINELOOP;
       push_ref (ptr2word (tempWordPtr));
       break;
     case T_INT:
     case T_FLOAT:
-      push_word(get_word (get_constant_ptr(tempConstRec), 4));
+      push_word(get_word_4(get_constant_ptr(tempConstRec)));
       break;
     #ifdef VERIFY
     default:
@@ -53,8 +60,8 @@ case OP_LDC2_W:
   #endif // VERIFY
 
   tempBytePtr = get_constant_ptr (tempConstRec);
-  push_word(get_word (tempBytePtr, 4));
-  push_word(get_word (tempBytePtr + 4, 4));
+  push_word(get_word_4 (tempBytePtr));
+  push_word(get_word_4 (tempBytePtr + 4));
 
   pc += 2;
   goto LABEL_ENGINELOOP;
@@ -63,19 +70,29 @@ case OP_ACONST_NULL:
   // Stack size: +1
   // Arguments: 0
   push_ref (JNULL);
-  goto LABEL_ENGINELOOP;
+  goto LABEL_ENGINEFASTLOOP;
 
 case OP_ICONST_M1:
+  push_word (-1);
+  goto LABEL_ENGINEFASTLOOP;
 case OP_ICONST_0:
+  push_word (0);
+  goto LABEL_ENGINEFASTLOOP;
 case OP_ICONST_1:
+  push_word (1);
+  goto LABEL_ENGINEFASTLOOP;
 case OP_ICONST_2:
+  push_word (2);
+  goto LABEL_ENGINEFASTLOOP;
 case OP_ICONST_3:
+  push_word (3);
+  goto LABEL_ENGINEFASTLOOP;
 case OP_ICONST_4:
+  push_word (4);
+  goto LABEL_ENGINEFASTLOOP;
 case OP_ICONST_5:
-  // Stack size: +1
-  // Arguments: 0
-  push_word ((JINT) (*(pc-1) - OP_ICONST_0));
-  goto LABEL_ENGINELOOP;
+  push_word (5);
+  goto LABEL_ENGINEFASTLOOP;
 case OP_LCONST_0:
 case OP_LCONST_1:
   // Stack size: +2
@@ -88,7 +105,7 @@ case OP_DCONST_0:
   // Fall through!
 case OP_FCONST_0:
   push_word (0);
-  goto LABEL_ENGINELOOP;  
+  goto LABEL_ENGINEFASTLOOP;  
 case OP_POP2:
   // Stack size: -2
   // Arguments: 0

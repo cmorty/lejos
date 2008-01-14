@@ -22,6 +22,7 @@ extern Object *new_multi_array (byte elemType, byte totalDimensions, byte reqDim
 extern void arraycopy(Object *src, int srcOff, Object *dst, int dstOff, int len);
 extern void store_word (byte *ptr, int aSize, STACKWORD aWord);
 extern STACKWORD get_word(byte *ptr, int aSize);
+extern STACKWORD get_word_4(byte *ptr);
 extern void zero_mem (TWOBYTES *ptr, TWOBYTES numWords);
 extern int getHeapSize();
 extern int getHeapFree();

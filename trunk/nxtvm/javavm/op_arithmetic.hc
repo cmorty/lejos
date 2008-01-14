@@ -5,14 +5,17 @@
 case OP_ISUB:
   // Arguments: 0
   // Stack: -2 +1
-  just_set_top_word (-word2jint(get_top_word()));
-  // Fall through!
+  tempStackWord = pop_word();
+  just_set_top_word (word2jint(get_top_word()) - word2jint(tempStackWord));
+  goto LABEL_ENGINELOOP;
+
 case OP_IADD:
   // Arguments: 0
   // Stack: -2 +1
   tempStackWord = pop_word();
   just_set_top_word (word2jint(get_top_word()) + word2jint(tempStackWord));
   goto LABEL_ENGINELOOP;
+
 case OP_IMUL:
   // Arguments: 0
   // Stack: -2 +1
@@ -39,28 +42,35 @@ case OP_INEG:
 #if FP_ARITHMETIC
 
 case OP_FSUB:
-  just_set_top_word (jfloat2word(-word2jfloat(get_top_word())));
-  // Fall through!
+  tempStackWord = pop_word();
+  just_set_top_word (jfloat2word(word2jfloat(get_top_word()) - 
+                     word2jfloat(tempStackWord)));
+  goto LABEL_ENGINELOOP;
+
 case OP_FADD:
   tempStackWord = pop_word();
   just_set_top_word (jfloat2word(word2jfloat(get_top_word()) + 
                      word2jfloat(tempStackWord)));
   goto LABEL_ENGINELOOP;
+
 case OP_FMUL:
   tempStackWord = pop_word();
   just_set_top_word (jfloat2word(word2jfloat(get_top_word()) * 
                      word2jfloat(tempStackWord)));
   goto LABEL_ENGINELOOP;
+
 case OP_FDIV:
   // TBD: no division by zero?
   tempStackWord = pop_word();
   just_set_top_word (jfloat2word(word2jfloat(get_top_word()) / 
                      word2jfloat(tempStackWord)));
   goto LABEL_ENGINELOOP;
+
 case OP_FNEG:
 case OP_DNEG:
   just_set_top_word (jfloat2word(-word2jfloat(get_top_word())));
   goto LABEL_ENGINELOOP;
+
 case OP_DSUB:
   just_set_top_word (jfloat2word(-word2jfloat(get_top_word())));
   // Fall through!
@@ -70,12 +80,14 @@ case OP_DADD:
   just_set_top_word (jfloat2word(word2jfloat(get_top_word()) +
                     word2jfloat(tempStackWord)));
   goto LABEL_ENGINELOOP;
+
 case OP_DMUL:
   tempStackWord = get_top_word();
   pop_words(2);
   just_set_top_word (jfloat2word(word2jfloat(get_top_word()) *
                     word2jfloat(tempStackWord)));
   goto LABEL_ENGINELOOP;
+
 case OP_DDIV:
   // TBD: no division by zero?
   tempStackWord = get_top_word();

@@ -117,6 +117,12 @@ typedef TWOBYTES STATICFIELD;
 
 extern void *installedBinary;
 
+extern ConstantRecord* constantTableBase;
+extern byte* staticFieldsBase;
+extern byte* staticStateBase;
+extern byte* entryClassesBase;
+extern ClassRecord* classBase;
+
 #if EXECUTE_FROM_FLASH
 // base of static area of all classes
 extern byte *classStaticStateBase;
@@ -125,20 +131,23 @@ extern byte *classStatusBase;
 #endif
 
 extern byte get_class_index (Object *obj);
-extern void dispatch_virtual (Object *obj, TWOBYTES signature, byte *rAddr);
-extern MethodRecord *find_method (ClassRecord *classRec, TWOBYTES signature);
+extern void dispatch_virtual (Object *obj, int signature, byte *rAddr);
+extern MethodRecord *find_method (ClassRecord *classRec, int signature);
 extern STACKWORD instance_of (Object *obj, byte classIndex);
-extern void do_return (byte numWords);
+extern void do_return (int numWords);
 extern boolean dispatch_static_initializer (ClassRecord *aRec, byte *rAddr);
 extern boolean dispatch_special (MethodRecord *methodRecord, byte *retAddr);
 void dispatch_special_checked (byte classIndex, byte methodIndex, byte *retAddr, byte *btAddr);
-extern void handle_field (byte hiByte, byte loByte, boolean doPut, boolean aStatic, byte *btAddr);
+//extern void handle_field (byte hiByte, byte loByte, boolean doPut, boolean aStatic, byte *btAddr);
 
-#define install_binary(PTR_)        (installedBinary=(PTR_))
+void install_binary( void* ptr);
+//#define install_binary(PTR_)        (installedBinary=(PTR_))
+
 #define get_master_record()         ((MasterRecord *) installedBinary)
 #define get_magic_number()          get_master_record()->magicNumber
 #define get_binary_base()           ((byte *) installedBinary)
-#define get_class_base()            ((ClassRecord *) (get_binary_base() + sizeof(MasterRecord)))
+#define __get_class_base()          ((ClassRecord *) (get_binary_base() + sizeof(MasterRecord)))
+#define get_class_base()            ((ClassRecord *) (classBase))
 
 #define get_class_record(CLASSIDX_) (get_class_base() + (CLASSIDX_))
 #define get_method_table(CREC_)     ((MethodRecord *) (get_binary_base() + (CREC_)->methodTableOffset))
@@ -149,7 +158,8 @@ extern void handle_field (byte hiByte, byte loByte, boolean doPut, boolean aStat
 
 #define get_method_record(CR_,I_)   (get_method_table(CR_) + (I_)) 
 
-#define get_constant_base()         ((ConstantRecord *) (get_binary_base() + get_master_record()->constantTableOffset))
+#define __get_constant_base()       ((ConstantRecord *) (get_binary_base() + get_master_record()->constantTableOffset))
+#define get_constant_base()         (constantTableBase)
 
 #define get_constant_record(IDX_)   (get_constant_base() + (IDX_))
 
@@ -182,16 +192,20 @@ extern void handle_field (byte hiByte, byte loByte, boolean doPut, boolean aStat
 #define is_native(MREC_)            (((MREC_)->mflags & M_NATIVE) != 0)
 #define get_code_ptr(MREC_)         (get_binary_base() + (MREC_)->codeOffset)
 
-#define get_static_fields_base()    (get_binary_base() + get_master_record()->staticFieldsOffset)
+#define __get_static_fields_base()  (get_binary_base() + get_master_record()->staticFieldsOffset)
+#define get_static_fields_base()    (staticFieldsBase)
+
 #if EXECUTE_FROM_FLASH
 #define get_static_state_base()     (classStaticStateBase)
 #else
 #define get_static_state_base()     (get_binary_base() + get_master_record()->staticStateOffset)
 #endif
+
 #define get_static_field_offset(R_) ((R_) & 0x0FFF)
 
 #define get_num_entry_classes()     (get_master_record()->numEntryClasses)
-#define get_entry_classes_base()    (get_binary_base() + get_master_record()->entryClassesOffset)
+#define __get_entry_classes_base()  (get_binary_base() + get_master_record()->entryClassesOffset)
+#define get_entry_classes_base()    (entryClassesBase)
 #define get_entry_class(N_)         (*(get_entry_classes_base() + (N_)))
 
 static inline void initialize_binary()

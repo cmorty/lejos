@@ -375,6 +375,7 @@ display_init(void)
   nxt_lcd_init((U8 *)display_buffer);
 }
 
+#if 0
 void
 display_test(void)
 {
@@ -404,3 +405,4 @@ display_test(void)
     systick_wait_ms(2000);
   }
 }
+#endif

@@ -154,7 +154,7 @@ dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
     {
       byte *p = word2ptr(paramBase[0]);
       int len, i;
-      Object *charArray = (Object *) word2ptr(get_word(fields_start(p), 4));
+      Object *charArray = (Object *) word2ptr(get_word_4(fields_start(p)));
 
       len = get_array_length(charArray);
       {
