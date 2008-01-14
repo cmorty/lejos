@@ -36,7 +36,7 @@ public class BTConnection implements StreamConnection
 	private static int BTC_BUFSZ = 256;
 	private static int BTC_CLOSETIMEOUT1 = 1000;
 	private static int BTC_CLOSETIMEOUT2 = 250;
-	private static int BTC_FLUSH_WAIT = 25;
+	private static int BTC_FLUSH_WAIT = 10;
 	
 	public static final int AM_DISABLE = 0;
 	public static final int AM_ALWAYS = 1;
@@ -511,21 +511,24 @@ public class BTConnection implements StreamConnection
 		// we switch mode. 
 		if (state == CS_IDLE) return;
 		//Debug.out("Flush\n");
-		if (!pendingInput()) return;
-		//1 Debug.out("Pending input space " + (inBuf.length - inCnt) + "\n");
-		while (pendingInput() && inCnt < inBuf.length)
+		// Try to empty the low level input buffer while giving the 
+		// application chance to help by reading the data.
+		int timeout = (int)System.currentTimeMillis() + BTC_FLUSH_WAIT;
+		while (timeout > (int)System.currentTimeMillis())
 		{
-			recv();
-			// If we still have pending input give the application chance to
-			// read what is in the input buffer
-			if (pendingInput())
-				try{Thread.sleep(BTC_FLUSH_WAIT);}catch(Exception e){}
+			// Read as much as we can
+			while (pendingInput() && inCnt < inBuf.length)
+				recv();
+			// Give the app chance to process it
+			try{wait(1);}catch(Exception e){}
 		}
 		if (!pendingInput()) return;
-		//Debug.out("Dropping packets\n");
+		//1 Debug.out("Dropping packets\n");
 		// If we still have input we are now in big trouble we will have
-		// to discard data.
-		while (pendingInput())
+		// to discard data. Note even if we read all of the data we need
+		// to linger a little to see if more arrives.
+		timeout = (int)System.currentTimeMillis() + BTC_FLUSH_WAIT;
+		while (pendingInput() || (timeout > (int)System.currentTimeMillis()))
 		{
 			while (read(null, inBuf.length, false) > 0)
 				;
