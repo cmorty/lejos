@@ -86,7 +86,7 @@ systick_wait_ms(U32 ms)
 void
 systick_wait_ns(U32 ns)
 {
-  volatile x = (ns >> 7) + 1;
+  volatile U32 x = (ns >> 7) + 1;
 
   while (x) {
     x--;
@@ -128,7 +128,7 @@ systick_get_time(U32 *sec, U32 *usec)
     interrupts_enable();
 }
 
-
+#if 0
 static U32 test_counter;
 void
 systick_test(void)
@@ -138,6 +138,7 @@ systick_test(void)
     systick_wait_ms(2000);
   }
 }
+#endif
 
 void systick_suspend()
 {

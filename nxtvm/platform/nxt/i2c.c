@@ -553,6 +553,7 @@ i2c_start_transaction(int port,
 
 // Test
 
+#if 0
 #include "nxt_avr.h"
 void i2c_test(void)
 { U8 xx[20];
@@ -567,3 +568,4 @@ void i2c_test(void)
     result = i2c_busy(0);
   }
 }
+#endif

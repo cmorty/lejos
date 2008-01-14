@@ -44,9 +44,7 @@ case OP_PUTSTATIC_3:
     printf ("---  GET/PUTSTATIC --- (%d, %d)\n", (int) pc[0], (int) pc[1]);
     #endif
 
-#if EXECUTE_FROM_FLASH
     if (!is_initialized_idx (pc[0]))
-#endif
       if (dispatch_static_initializer (get_class_record (pc[0]), pc - 1))
         goto LABEL_ENGINELOOP;
 
@@ -63,10 +61,11 @@ case OP_PUTSTATIC_3:
     isRef = (fieldType == T_REFERENCE);
 #endif
     fieldSize = typeSize[fieldType];
-    wideWord = fieldSize > 4;
-    if (wideWord)
+    wideWord = false;
+    if( fieldSize > 4)
     {
       fieldSize = 4;
+      wideWord = true;
     }
 
     fbase1 = get_static_state_base() + get_static_field_offset (fieldRecord);
@@ -80,13 +79,14 @@ case OP_PUTSTATIC_3:
     {
 #if RECORD_REFERENCES
       if (isRef)
-        push_ref(tempStackWord);
         push_ref (get_word(fbase1, fieldSize));
       else
 #endif
-      push_word (get_word(fbase1, fieldSize));
-      if (wideWord)
-        push_word (get_word(fbase1 + 4, 4));
+      {
+        push_word (get_word(fbase1, fieldSize));
+        if (wideWord)
+          push_word (get_word_4(fbase1 + 4));
+      }
     }
     else
     {
@@ -121,10 +121,11 @@ case OP_GETFIELD:
     fieldSize = typeSize[fieldType];
     fbase2 = ((byte *) word2ptr (tempStackWord)) + 
                 get_pgfield_offset(pc[0], pc[1]);
-    wideWord = fieldSize > 4;
-    if (wideWord)
+    wideWord = false;
+    if( fieldSize > 4)
     {
       fieldSize = 4;
+      wideWord = true;
     }
 
 
@@ -157,7 +158,7 @@ case OP_GETFIELD:
     	printf("Wide word\n");
     #endif
     if (wideWord)
-      push_word (get_word(fbase2 + 4, 4));
+      push_word (get_word_4(fbase2 + 4));
     pc += 2;
   }
 #ifdef DEBUG_FIELDS
@@ -175,10 +176,15 @@ case OP_PUTFIELD:
     fieldType = get_pgfield_type(pc[0]);
     offset = get_pgfield_offset (pc[0], pc[1]); 
     fieldSize = typeSize[fieldType];
-    wideWord = (fieldSize > 4);
-    if (wideWord)
+    wideWord = false;
+    if( fieldSize > 4)
+    {
       fieldSize = 4;
-    tempStackWord = get_ref_at (wideWord ? 2 : 1);
+      wideWord = true;
+      tempStackWord = get_ref_at (2);
+    }
+    else
+      tempStackWord = get_ref_at (1);
 
     #ifdef DEBUG_FIELDS
     printf ("--- PUTFIELD ---\n");
@@ -187,7 +193,6 @@ case OP_PUTFIELD:
     printf ("wideWord: %d\n", (int) wideWord);
     printf ("reference: %d\n", (int) tempStackWord);
     #endif
-
 
     if (tempStackWord == JNULL)
     {

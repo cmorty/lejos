@@ -37,18 +37,19 @@ STACKWORD *stackTop;
 
 // Temporary globals:
 
-byte tempByte;
-byte *tempBytePtr;
-JFLOAT tempFloat;
-ConstantRecord *tempConstRec;
-STACKWORD tempStackWord;
-STACKWORD *tempWordPtr;
-JINT tempInt;
+// byte tempByte;
+// byte *tempBytePtr;
+// JFLOAT tempFloat;
+// ConstantRecord *tempConstRec;
+// STACKWORD tempStackWord;
+// STACKWORD *tempWordPtr;
   
+static byte* arrayStart;
+
 /**
  * Assumes pc points to 2-byte offset, and jumps.
  */
-void do_goto (boolean aCond)
+void do_goto (int aCond)
 {
   if (aCond)
   {
@@ -73,14 +74,18 @@ void do_isub (void)
 
 void do_fcmp (JFLOAT f1, JFLOAT f2, STACKWORD def)
 {
+  STACKWORD res;
+
   if (f1 > f2)
-    push_word (1);
+    res = 1;
   else if (f1 == f2)
-    push_word (0);
+    res = 0;
   else if (f1 < f2)
-    push_word (-1);
+    res = -1;
   else 
-    push_word (def);
+    res = def;
+
+  push_word (res);
 }
 
 #endif
@@ -89,12 +94,14 @@ void do_fcmp (JFLOAT f1, JFLOAT f2, STACKWORD def)
  * @return A String instance, or JNULL if an exception was thrown
  *         or the static initializer of String had to be executed.
  */
-static inline Object *create_string (ConstantRecord *constantRecord, 
+Object *create_string (ConstantRecord *constantRecord, 
                                      byte *btAddr)
 {
   Object *ref;
   Object *arr;
-  TWOBYTES i;
+  JCHAR *dst;
+  byte *src;
+  byte *src_end;
 
   ref = new_object_checked (JAVA_LANG_STRING, btAddr);
   if (ref == JNULL)
@@ -108,54 +115,43 @@ static inline Object *create_string (ConstantRecord *constantRecord,
     deallocate (obj2ptr(ref), class_size (JAVA_LANG_STRING));    
     return JNULL;
   }
-//  printf ("char array at %d\n", (int) arr);
+  // printf ("char array at %d\n", (int) arr);
   
-  store_word ((byte *) &(((String *) ref)->characters), 4, obj2word(arr));
+  store_word( (byte *) &(((String *) ref)->characters), 4, obj2word(arr));
   
-  for (i = 0; i < constantRecord->constantSize; i++)
-  {
-    jchar_array(arr)[i] = (JCHAR) get_constant_ptr(constantRecord)[i];
+  dst = jchar_array(arr);
+  src = get_constant_ptr(constantRecord);
+  src_end = src + constantRecord->constantSize;
 
-    //printf ("char %d: %c\n", i, (char) (jchar_array(arr)[i])); 
-  }
+  while( src < src_end)
+    *dst++ = (JCHAR) (*src++);
+
   return ref;
 }
 
 /**
- * Pops the array index off the stack, assigns
- * both tempInt and tempBytePtr, and checks
+ * Pops the array index off the stack, checks
  * bounds and null reference. The array reference
  * is the top word on the stack after this operation.
- * @return True if successful, false if an exception has been scheduled.
+ * Sets arrayStart to start of the array data area.
+ * @return array index if successful, -1 if an exception has been scheduled.
  */
-boolean array_load_helper()
+static int array_helper()
 {
-  tempInt = word2jint(pop_word());
-  tempBytePtr = word2ptr(get_top_ref());
-  if (tempBytePtr == JNULL)
+  unsigned int idx = word2jint(pop_word());
+  byte* ptr = word2ptr(get_top_ref());
+
+  if (ptr == JNULL)
     throw_exception (nullPointerException);
-  else if (tempInt < 0 || tempInt >= get_array_length ((Object *) tempBytePtr))
+  else if ( /*idx < 0 ||*/ idx >= get_array_length ((Object *) ptr))
     throw_exception (arrayIndexOutOfBoundsException);
   else
   {
-    tempBytePtr = array_start((Object *) tempBytePtr);
-    return true;
+    arrayStart = array_start((Object*)ptr);
+    return idx;
   }
-  return false;
-}
 
-/**
- * Same as array_load_helper, except that it pops
- * the reference from the stack.
- */
-boolean array_store_helper()
-{
-  if (array_load_helper())
-  {
-    pop_ref();
-    return true;
-  }
-  return false;
+  return -1;
 }
 
 /**
@@ -178,6 +174,12 @@ boolean array_store_helper()
 void engine()
 {
   byte ticks_until_switch = TICKS_PER_TIME_SLICE;
+  STACKWORD tempStackWord;
+  STACKWORD *tempWordPtr;
+  ConstantRecord *tempConstRec;
+  int tempInt;
+  byte tempByte;
+  byte* tempBytePtr;
 
   assert( currentThread != null, INTERPRETER0);
 
@@ -236,6 +238,12 @@ void engine()
   printf ("OPCODE (0x%X) %s\n", (int) *pc, OPCODE_NAME[*pc]);
   #endif
 
+  // experimental feature: "fast loop", to disable place this label just next to LABEL_ENGINELOOP
+ LABEL_ENGINEFASTLOOP: 
+
+  // uncomment the following line if you want to see the opcode after data abort
+  // old_pc = pc;
+  
   switch (*pc++)
   {
     case OP_NOP:

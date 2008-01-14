@@ -23,7 +23,12 @@
 
 // Reliable globals:
 
-void *installedBinary;
+void* installedBinary;
+
+ConstantRecord* constantTableBase;
+byte* staticFieldsBase;
+byte* entryClassesBase;
+ClassRecord* classBase;
 
 #if EXECUTE_FROM_FLASH
 byte *classStaticStateBase;
@@ -35,10 +40,20 @@ byte *classStatusBase;
 // (Gotta be careful with these; a lot of stuff
 // is not reentrant because of globals like these).
 
-static ClassRecord *tempClassRecord;
-static MethodRecord *tempMethodRecord;
+// static ClassRecord *tempClassRecord;
+// static MethodRecord *tempMethodRecord;
 
 // Methods:
+
+void install_binary( void* ptr)
+{
+  installedBinary = ptr;
+
+  constantTableBase = __get_constant_base();
+  staticFieldsBase = __get_static_fields_base();
+  entryClassesBase = __get_entry_classes_base();
+  classBase = __get_class_base();
+}
 
 byte get_class_index (Object *obj)
 {
@@ -53,15 +68,15 @@ byte get_class_index (Object *obj)
 /**
  * @return Method record or null.
  */
-MethodRecord *find_method (ClassRecord *classRecord, TWOBYTES methodSignature)
+MethodRecord *find_method (ClassRecord *classRecord, int methodSignature)
 {
-  byte tempByte = classRecord->numMethods;
-  while (tempByte--)
-  {
-    tempMethodRecord = get_method_record (classRecord, tempByte);
-    if (tempMethodRecord->signatureId == methodSignature)
-      return tempMethodRecord;
-  }
+  MethodRecord* mr0 = get_method_table( classRecord);
+  MethodRecord* mr = mr0 + classRecord->numMethods;
+
+  while( -- mr >= mr0)
+    if( mr->signatureId == methodSignature)
+      return mr;
+
   return null;
 }
 
@@ -80,10 +95,11 @@ boolean dispatch_static_initializer (ClassRecord *aRec, byte *retAddr)
   return true;
 }
 
-void dispatch_virtual (Object *ref, TWOBYTES signature, byte *retAddr)
+void dispatch_virtual (Object *ref, int signature, byte *retAddr)
 {
-  MethodRecord *auxMethodRecord;
-  byte auxByte;
+  ClassRecord *classRecord;
+  MethodRecord *methodRecord;
+  int classIndex;
 
 #if DEBUG_METHODS
   printf("dispatch_virtual %d\n", signature);
@@ -94,26 +110,26 @@ void dispatch_virtual (Object *ref, TWOBYTES signature, byte *retAddr)
     return;
   }
 
-  auxByte = get_class_index(ref);
+  classIndex = get_class_index(ref);
  LABEL_METHODLOOKUP:
-  tempClassRecord = get_class_record (auxByte);
-  auxMethodRecord = find_method (tempClassRecord, signature);
-  if (auxMethodRecord == null)
+  classRecord = get_class_record (classIndex);
+  methodRecord = find_method (classRecord, signature);
+  if (methodRecord == null)
   {
     #if SAFE
-    if (auxByte == JAVA_LANG_OBJECT)
+    if (classIndex == JAVA_LANG_OBJECT)
     {
       throw_exception (noSuchMethodError);
       return;
     }
     #endif
-    auxByte = tempClassRecord->parentClass;
+    classIndex = classRecord->parentClass;
     goto LABEL_METHODLOOKUP;
   }
 
-  if (dispatch_special (auxMethodRecord, retAddr))
+  if (dispatch_special (methodRecord, retAddr))
   {
-    if (is_synchronized(auxMethodRecord))
+    if (is_synchronized(methodRecord))
     {
       current_stackframe()->monitor = ref;
       enter_monitor (currentThread, ref);
@@ -139,8 +155,9 @@ void dispatch_special_checked (byte classIndex, byte methodIndex,
   #endif
 
   classRecord = get_class_record (classIndex);
-  if (dispatch_static_initializer (classRecord, btAddr))
-    return;
+  if (!is_initialized_idx (classIndex))
+    if (dispatch_static_initializer (classRecord, btAddr))
+      return;
   dispatch_special (get_method_record (classRecord, methodIndex), retAddr);
 }
 
@@ -306,7 +323,7 @@ boolean dispatch_special (MethodRecord *methodRecord, byte *retAddr)
 
 /**
  */
-void do_return (byte numWords)
+void do_return (int numWords)
 {
   StackFrame *stackFrame;
   STACKWORD *fromStackPtr;

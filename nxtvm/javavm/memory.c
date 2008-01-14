@@ -151,13 +151,16 @@ Object *new_object_checked (const byte classIndex, byte *btAddr)
   #if 0
   trace (-1, classIndex, 0);
   #endif
-  if (dispatch_static_initializer (get_class_record(classIndex), btAddr))
-  {
+
+  if (!is_initialized_idx (classIndex))
+    if (dispatch_static_initializer (get_class_record(classIndex), btAddr))
+    {
 #if DEBUG_MEMORY
-  printf("New object checked returning null\n");
+      printf("New object checked returning null\n");
 #endif
-    return JNULL;
-  }   
+      return JNULL;
+    }
+
   return new_object_for_class (classIndex);
 }
 
@@ -273,7 +276,9 @@ void free_array (Object *objectRef)
   assert (is_array(objectRef), MEMORY7);
   #endif // VERIFY
 
+#if !GARBAGE_COLLECTOR
   deallocate ((TWOBYTES *) objectRef, get_array_size (objectRef));
+#endif
 }
 
 #if !FIXED_STACK_SIZE
@@ -399,17 +404,12 @@ STACKWORD get_word( byte *ptr, int aSize)
            (((STACKWORD)ptr[2]) << 8) | ((STACKWORD)ptr[3]);
   }
   return 0;
-/*
-  STACKWORD aWord = 0;
-  byte *end = ptr + aSize;
+}
 
-  do
-  {
-    aWord = (aWord << 8) | (STACKWORD)(*ptr++);
-  } while( ptr < end);
-  
-  return aWord;
-*/
+STACKWORD get_word_4( byte *ptr)
+{
+    return (((STACKWORD)ptr[0]) << 24) | (((STACKWORD)ptr[1]) << 16) |
+           (((STACKWORD)ptr[2]) << 8) | ((STACKWORD)ptr[3]);
 }
 
 void store_word( byte *ptr, int aSize, STACKWORD aWord)
@@ -430,18 +430,6 @@ void store_word( byte *ptr, int aSize, STACKWORD aWord)
     ptr[3] = (byte)(aWord); 
     return;
   }
-/*
-  byte* base = ptr;
-  
-  ptr += aSize;
-
-  do
-  {
-    *--ptr = (byte) aWord;
-    aWord >>= 8;
-  }
-  while( ptr > base);
-*/
 }
 
 #if DEBUG_RCX_MEMORY
@@ -833,7 +821,7 @@ static void mark_static_objects( void)
 
     if( fieldType == T_REFERENCE)
     {
-      Object* obj = (Object*) get_word( staticState, 4);
+      Object* obj = (Object*) get_word_4( staticState);
       if( obj != NULL)
         mark_object( obj);
     }
@@ -961,7 +949,7 @@ static void mark_reference_fields( Object* obj)
 
           if( ! (classIndex == JAVA_LANG_THREAD && i == 0))
           {
-            Object* robj = (Object*) get_word( statePtr, 4);
+            Object* robj = (Object*) get_word_4( statePtr);
             if( robj != NULL)
               mark_object( robj);
           }
@@ -1000,6 +988,15 @@ static void mark_object( Object *obj)
           mark_object( obj);
       }
     }
+  }
+  else
+  if( get_na_class_index( obj) == JAVA_LANG_STRING)
+  {
+    String* str = (String*)obj;
+    Object* chars = word2obj(get_word_4((byte*)(&(str->characters))));
+
+    if( chars != NULL)
+      set_gc_marked( chars);
   }
   else
     mark_reference_fields( obj);

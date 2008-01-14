@@ -140,7 +140,7 @@ char* string2chp(String* s)
     Object *obj;
     JCHAR *pA;
     int length;
-    obj = word2obj(get_word((byte*)(&(s->characters)), 4));
+    obj = word2obj(get_word_4((byte*)(&(s->characters))));
     pA = jchar_array(obj);
     length = get_array_length(obj);
     ret = malloc(length+1);
@@ -291,7 +291,7 @@ void dispatch_native (TWOBYTES signature, STACKWORD *paramBase)
         int len, i;
         //printf("displayString: pointer is %x\n",p);
         //printf("Object size is %d\n",sizeof(Object));
-        Object *charArray = (Object *) word2ptr(get_word(p + HEADER_SIZE, 4));
+        Object *charArray = (Object *) word2ptr(get_word_4(p + HEADER_SIZE));
         //printf("Chars is %x\n",charArray);
         len = charArray->flags.arrays.length;
         //printf("length is %d\n",len);

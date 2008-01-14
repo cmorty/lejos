@@ -14,6 +14,7 @@ case OP_IFNULL:
   // Stack: -1
   do_goto (pop_word() == 0);
   goto LABEL_ENGINELOOP;
+
 case OP_IF_ICMPNE:
 case OP_IF_ACMPNE:
   do_isub();
@@ -22,31 +23,34 @@ case OP_IFNE:
 case OP_IFNONNULL:
   do_goto (pop_word() != 0);
   goto LABEL_ENGINELOOP;
+
 case OP_IF_ICMPLT:
   do_isub();
   // Fall through!
 case OP_IFLT:
   do_goto (pop_jint() < 0);
   goto LABEL_ENGINELOOP;
+
 case OP_IF_ICMPLE:
   do_isub();
   // Fall through!
 case OP_IFLE:
   do_goto (pop_jint() <= 0);
   goto LABEL_ENGINELOOP;
+
 case OP_IF_ICMPGE:
   do_isub();
   // Fall through!
 case OP_IFGE:
   do_goto (pop_jint() >= 0);
   goto LABEL_ENGINELOOP;
+
 case OP_IF_ICMPGT:
   do_isub();
   // Fall through!
 case OP_IFGT:
   do_goto (pop_jint() > 0);
   goto LABEL_ENGINELOOP;
-
 
 case OP_JSR:
   // Arguments: 2
@@ -59,6 +63,7 @@ case OP_GOTO:
   do_goto (true);
   // No pc increment!
   goto LABEL_ENGINELOOP;
+
 case OP_RET:
   // Arguments: 1
   // Stack: +0
@@ -113,8 +118,51 @@ case OP_LCMP:
 
 #endif // 0
 
+case OP_LOOKUPSWITCH:
+  {
+    // padding removed while linking
+    int off, npairs, idx, idx8;
+    byte *from, *to;
+
+    off = get_word_4( pc);
+    npairs = get_word_4( pc + 4);
+
+    idx = pop_word();
+    idx8 = (byte) idx;
+
+    for( from = pc + 8, to = from + npairs * 8; from < to; from += 8)
+    {
+       if( from[ 3] == idx8) // fast compare of low byte of match value
+        if( get_word_4( from) == idx)
+        {
+          off = get_word_4( from + 4);
+          break;
+        }
+    }
+
+    pc += off - 1;
+  }
+  goto LABEL_ENGINELOOP;    
+
+case OP_TABLESWITCH:
+  {
+    // padding removed while linking
+    int off, low, hig, idx;
+
+    off = get_word_4( pc);
+    low = get_word_4( pc + 4);
+    hig = get_word_4( pc + 8);
+
+    idx = pop_word();
+    if( idx >= low && idx <= hig)
+      off = get_word_4( pc + 12 + ((idx - low) << 2));
+
+    pc += off - 1;
+  }
+  goto LABEL_ENGINELOOP;    
+
 // Notes:
-// - Not supported: TABLESWITCH, LOOKUPSWITCH, GOTO_W, JSR_W, LCMP
+// - Not supported: GOTO_W, JSR_W, LCMP
 
 /*end*/
 

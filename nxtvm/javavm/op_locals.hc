@@ -5,42 +5,40 @@
 case OP_ILOAD:
 case OP_FLOAD:
   push_word (get_local_word(*pc++));
-  goto LABEL_ENGINELOOP;
+  goto LABEL_ENGINEFASTLOOP;
 case OP_ALOAD:
   // Arguments: 1
   // Stack: +1
   push_ref (get_local_ref(*pc++));
-  goto LABEL_ENGINELOOP;
+  goto LABEL_ENGINEFASTLOOP;
 case OP_ILOAD_0:
-case OP_ILOAD_1:
-case OP_ILOAD_2:
-case OP_ILOAD_3:
-  // Arguments: 0
-  // Stack: +1
-
-  push_word (get_local_word(*(pc-1)-OP_ILOAD_0));
-  goto LABEL_ENGINELOOP;
 case OP_FLOAD_0:
+  push_word (get_local_word(0));
+  goto LABEL_ENGINEFASTLOOP;
+case OP_ILOAD_1:
 case OP_FLOAD_1:
+  push_word (get_local_word(1));
+  goto LABEL_ENGINEFASTLOOP;
+case OP_ILOAD_2:
 case OP_FLOAD_2:
+  push_word (get_local_word(2));
+  goto LABEL_ENGINEFASTLOOP;
+case OP_ILOAD_3:
 case OP_FLOAD_3:
-  // Arguments: 0
-  // Stack: +1
-  push_word (get_local_word(*(pc-1)-OP_FLOAD_0));
-  goto LABEL_ENGINELOOP;
+  push_word (get_local_word(3));
+  goto LABEL_ENGINEFASTLOOP;
 case OP_ALOAD_0:
+  push_ref (get_local_ref(0));
+  goto LABEL_ENGINEFASTLOOP;
 case OP_ALOAD_1:
+  push_ref (get_local_ref(1));
+  goto LABEL_ENGINEFASTLOOP;
 case OP_ALOAD_2:
+  push_ref (get_local_ref(2));
+  goto LABEL_ENGINEFASTLOOP;
 case OP_ALOAD_3:
-  // Arguments: 0
-  // Stack: +1
-
-#if DEBUG_BYTECODE
- printf ("### aload_x(thread=%d, frame=%d, ref=%d): %d\n", currentThread->threadId, currentThread->stackFrameArraySize-1, (int)localsBase, (int) get_local_ref(*(pc-1)-OP_ALOAD_0));
-#endif
- 
-  push_ref (get_local_ref(*(pc-1)-OP_ALOAD_0));
-  goto LABEL_ENGINELOOP;
+  push_ref (get_local_ref(3));
+  goto LABEL_ENGINEFASTLOOP;
 case OP_LLOAD:
 case OP_DLOAD:
   // Arguments: 1
@@ -76,40 +74,40 @@ case OP_FSTORE:
   // Arguments: 1
   // Stack: -1
   set_local_word(*pc++, pop_word());
-  goto LABEL_ENGINELOOP;  
+  goto LABEL_ENGINEFASTLOOP;  
 case OP_ASTORE:
   // Arguments: 1
   // Stack: -1
-
   set_local_ref(*pc++, pop_word());
-  goto LABEL_ENGINELOOP;
+  goto LABEL_ENGINEFASTLOOP;
 case OP_ISTORE_0:
-case OP_ISTORE_1:
-case OP_ISTORE_2:
-case OP_ISTORE_3:
-  // Arguments: 0
-  // Stack: -1
-  set_local_word(*(pc-1)-OP_ISTORE_0, pop_word());
-  goto LABEL_ENGINELOOP;
 case OP_FSTORE_0:
+  set_local_word(0, pop_word());
+  goto LABEL_ENGINEFASTLOOP;
+case OP_ISTORE_1:
 case OP_FSTORE_1:
+  set_local_word(1, pop_word());
+  goto LABEL_ENGINEFASTLOOP;
+case OP_ISTORE_2:
 case OP_FSTORE_2:
+  set_local_word(2, pop_word());
+  goto LABEL_ENGINEFASTLOOP;
+case OP_ISTORE_3:
 case OP_FSTORE_3:
-  // Arguments: 0
-  // Stack: -1
-  set_local_word(*(pc-1)-OP_FSTORE_0, pop_word());
-  goto LABEL_ENGINELOOP;
+  set_local_word(3, pop_word());
+  goto LABEL_ENGINEFASTLOOP;
 case OP_ASTORE_0:
+  set_local_ref(0, pop_word());
+  goto LABEL_ENGINEFASTLOOP;
 case OP_ASTORE_1:
+  set_local_ref(1, pop_word());
+  goto LABEL_ENGINEFASTLOOP;
 case OP_ASTORE_2:
+  set_local_ref(2, pop_word());
+  goto LABEL_ENGINEFASTLOOP;
 case OP_ASTORE_3:
-  // Arguments: 0
-  // Stack: -1
-
-  //printf ("### astore_x: %d\n", (int) get_top_word());
-
-  set_local_ref(*(pc-1)-OP_ASTORE_0, pop_word());
-  goto LABEL_ENGINELOOP;
+  set_local_ref(3, pop_word());
+  goto LABEL_ENGINEFASTLOOP;
 case OP_LSTORE:
 case OP_DSTORE:
   // Arguments: 1
@@ -140,10 +138,21 @@ case OP_IINC:
   // Stack: +0
   inc_local_word (pc[0], byte2jint(pc[1]));
   pc += 2;
-  goto LABEL_ENGINELOOP;
+  goto LABEL_ENGINEFASTLOOP;
+case OP_WIDE:
+  if( pc[0] == OP_IINC && pc[1] == 0)
+  {
+    // Arguments: 4
+    // Stack: +0
+    inc_local_word (pc[2], (JSHORT) (TWOBYTES) (((TWOBYTES) pc[3] << 8) | pc[4]));
+    pc += 5;
+  }
+  else
+   throw_exception (noSuchMethodError);
+  goto LABEL_ENGINEFASTLOOP;
 
 // Notes:
-// - OP_WIDE is unexpected in TinyVM and CompactVM.
+// - OP_WIDE other then OP_IINC is unexpected in TinyVM and CompactVM.
 
 /*end*/
 
