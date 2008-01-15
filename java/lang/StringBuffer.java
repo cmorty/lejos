@@ -164,6 +164,11 @@ public final class StringBuffer
         return characters[i];
   }
   
+  public void setCharAt(int i, char ch)
+  {
+        characters[i] = ch;
+  }
+  
   public int length()
   {
         return curPos;
