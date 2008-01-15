@@ -93,6 +93,9 @@ $(SAMBA_TARGET): $(SAMBA_TARGET)_elf
 	@echo "Compiling $< to $@"
 	$(CC) $(CFLAGS) -o $@ $< 
 
+%.asm: %.c
+	@echo "Compiling $< to $@"
+	$(CC) -S $(CFLAGS) -o $@ $< 
 
 %.oram: %.c
 	@echo "Compiling $< to $@"
