@@ -52,7 +52,7 @@ public class StartUpText {
 		TextMenu blueMenu = new TextMenu(blueMenuData,3);
 		TextMenu blueOffMenu = new TextMenu(blueOffMenuData,3);
 		String[] systemMenuData = {"Format"};
-
+		Wakeup.play();
 		TextMenu systemMenu = new TextMenu(systemMenuData,3);
 		File[] files = null;
 		boolean quit = false;
@@ -65,8 +65,7 @@ public class StartUpText {
 		usb.start();
 		bt.setDaemon(true);
 		bt.setIndicator(ind);
-		bt.start();
-		
+		bt.start();		
 		// Defrag the file system	
 		files = File.listFiles();
 		try {
@@ -457,6 +456,18 @@ class BTRespond  extends Thread {
 			}
 		}
 	}
+}
+ class Wakeup
+{
+   static int [] freq = {523,784, 659};
+   public static void play()
+   {
+      for(int i = 0; i<3; i++)
+      {
+         Sound.playTone(freq[i],250);
+         Sound.pause(260);       
+      }
+   }
 }
 
 
