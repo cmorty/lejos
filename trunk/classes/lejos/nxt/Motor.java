@@ -102,11 +102,12 @@ public class Motor extends BasicMotor// implements TimerListener
     */
    public void forward()
    { 
-      synchronized(regulator) 
-      {
-         _mode = 1;
-         updateState();
-      }
+      if( _mode != 1)
+         synchronized(regulator) 
+         {
+            _mode = 1;
+            updateState();
+         }
    }  
 
    /**
@@ -114,11 +115,12 @@ public class Motor extends BasicMotor// implements TimerListener
     */
    public void backward()
    {
-      synchronized(regulator)
-      {
-         _mode = 2;
-         updateState();
-      }
+      if( _mode != 2)
+         synchronized(regulator)
+         {
+            _mode = 2;
+            updateState();
+         }
    }
 
    /**
@@ -478,7 +480,6 @@ public class Motor extends BasicMotor// implements TimerListener
     */
    public void setSpeed (int speed)
    {
-
       _speed = speed;
       if(speed<0)_speed = - speed;
       setPower((int)regulator.calcPower(_speed));

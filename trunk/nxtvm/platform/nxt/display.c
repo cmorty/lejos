@@ -5,6 +5,7 @@
 #include "classes.h"
 #include <string.h>
 
+typedef unsigned int uint;
 
 #define DISPLAY_WIDTH (NXT_LCD_WIDTH)
 #define DISPLAY_DEPTH (NXT_LCD_DEPTH)
@@ -209,20 +210,19 @@ display_goto_xy(int x, int y)
 void
 display_char(int c)
 {
-  int i;
   U8 *b;
-  const U8 *f;
+  const U8 *f, *fend;
 
-  if (c >= 0 && c < N_CHARS &&
-      display_x >= 0 && display_x < DISPLAY_CHAR_WIDTH &&
-      display_y >= 0 && display_y < DISPLAY_CHAR_DEPTH) {
+  if ((uint) c < N_CHARS &&
+      (uint) display_x < DISPLAY_CHAR_WIDTH &&
+      (uint) display_y < DISPLAY_CHAR_DEPTH) {
     b = &display_buffer[display_y][display_x * CELL_WIDTH];
     f = font[c];
-    for (i = 0; i < FONT_WIDTH; i++) {
-      *b = *f;
-      b++;
-      f++;
-    }
+    fend = f + FONT_WIDTH;
+
+    do {
+      *b++ = *f++;
+    } while( f < fend);
   }
 }
 
@@ -275,10 +275,9 @@ static void
 display_unsigned_worker(U32 val, U32 places, U32 sign)
 {
   char x[12];			// enough for 10 digits + sign + NULL 
-
   char *p = &x[11];
   int p_count = 0;
-
+  U32 val0;
 
   *p = 0;
 
@@ -288,8 +287,9 @@ display_unsigned_worker(U32 val, U32 places, U32 sign)
   while (val) {
     p--;
     p_count++;
-    *p = (val % 10) + '0';
+    val0 = val;
     val /= 10;
+    *p = (val0 - val * 10) + '0';
   }
 
   if (!p_count) {
@@ -325,7 +325,6 @@ display_int(int val, U32 places)
   display_unsigned_worker((val < 0) ? -val : val, places, (val < 0));
 }
 
-
 void
 display_bitmap_copy(const U8 *data, U32 width, U32 depth, U32 x, U32 y)
 {
@@ -340,7 +339,7 @@ display_bitmap_copy(const U8 *data, U32 width, U32 depth, U32 x, U32 y)
       dy = y + i;
 
       if (dx < DISPLAY_WIDTH && dy < DISPLAY_DEPTH)
-	display_buffer[y + i][x + j] = data[width * i + j];
+        display_buffer[y + i][x + j] = data[width * i + j];
     }
 }
 
