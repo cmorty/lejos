@@ -35,6 +35,8 @@ public class Display {
 	
 	private Display() {
 		graphics = new Graphics();
+		// We control when the screen gets updated explicitly
+		graphics.autoRefresh(false);
 	}
 	
 	public static Display getDisplay() {
@@ -251,16 +253,14 @@ public class Display {
 	    }).start();
 	}
 	
-	private void update() {
+	private synchronized void update() {
 		if (current.getPaintRequest()) {
-			graphics.autoRefresh(false);
 			graphics.clear();
 			updateTicker(tickerOffset);
 			
 			current.paint(graphics);
 			current.clearPaintRequest();
 			graphics.refresh();
-			graphics.autoRefresh(true);
 		}
 	}
 	

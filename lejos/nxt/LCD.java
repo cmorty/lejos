@@ -151,24 +151,22 @@ public class LCD {
 		/* 0x7E */ {0x00, 0x07, 0x00, 0x07, 0x00},
 		/* 0x7F */ {0x3E, 0x36, 0x2A, 0x36, 0x3E},
 	};
-	public static native int [] getDisplay();
+	public static native byte [] getDisplay();
 	public static native void setAutoRefresh(int mode);
 	
 	// Use shared display buffer. Switch over next two lines to go back to old
 	// way
 	//private static int [] displayBuf = new int[200];
-	private static int [] displayBuf = getDisplay();
+	private static byte [] displayBuf = getDisplay();
+	//private static byte[] disp2 = new byte[800];
 	/**
 	 * Method to set a pixel to screen.
 	 */
 	public static void setPixel(int rgbColor, int x, int y) {
 		if (x < 0 || x >= SCREEN_WIDTH || y < 0 || y >= SCREEN_HEIGHT) return; // Test-Modify for speed
-		int xChar = x / 4;
-		int yChar = y / 8;
-		int index = yChar * 25 + xChar;
-		int specificBit = (y % 8) + ((x % 4) * 8);
-		//displayBuf[index] = displayBuf[index] | (rgbColor << specificBit);
-		displayBuf[index] = (displayBuf[index] & ~(1 << specificBit)) | (rgbColor << specificBit);
+		byte bit = (byte)(1 << (y & 0x7));
+		int index = (y/8)*DISPLAY_WIDTH + x;
+		displayBuf[index] = (byte)((displayBuf[index] & ~bit) | bit);
 	}
 
 	public static void drawString(String str, int x, int y, boolean invert) {
@@ -181,35 +179,32 @@ public class LCD {
 
 	public static void drawChar(char c, int x, int y, boolean invert) {
 		for (int i = 0; i <= FONT_WIDTH; i++) {
-			int xChar = (x + i) / 4;
-			int index = y * 25 + xChar;
+			int xChar = x + i;
+			int index = y * DISPLAY_WIDTH + xChar;
 			
 			if (i < FONT_WIDTH) {
 				// Clear buffer before writing chars
-				displayBuf[index] &= ~(0xFF << (((x + i) % 4) * 8));
-				displayBuf[index] |= ((invert ? (font[c][i] ^0xFF) : font[c][i]) << (((x + i) % 4) * 8));
+				displayBuf[index] &= ~0xFF;
+				displayBuf[index] |= (invert ? (font[c][i] ^0xFF) : font[c][i]);
 			} else if (invert) {
-				displayBuf[index] &= ~(0xFF << (((x + i) % 4) * 8));
-				displayBuf[index] |= (0xFF << (((x + i) % 4) * 8));
+				displayBuf[index] &= ~0xFF;
+				displayBuf[index] |= 0xFF;
 			}
 		}
 	}
 	
 	public static void drawPixels(byte b, int x, int y, boolean invert) {
-		int index = ((y / 8) * 25) + (x / 4);
-		displayBuf[index] |= (((invert ? (b ^ 0xFF) : b) & 0xFF) << ((x % 4) * 8));
+		int index = (y/8)*DISPLAY_WIDTH + x;
+		displayBuf[index] |= ((invert ? (b ^ 0xFF) : b));
 	}
 
 	public static void clearDisplay() {
-		for (int i = 0; i < displayBuf.length; i++) {
-			displayBuf[i] = 0;
-		}
 		clear();
 	}
 	
 	public static void setDisplay() {
 		//setDisplay(displayBuf);
-		refresh();
+		//refresh();
 	}
 
 	/**
