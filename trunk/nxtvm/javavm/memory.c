@@ -396,9 +396,9 @@ STACKWORD get_word( byte *ptr, int aSize)
   switch(aSize)
   {
   case 1:
-    return (STACKWORD)ptr[0];
+    return (STACKWORD)(JINT)(JBYTE)ptr[0];
   case 2:
-    return (((STACKWORD)ptr[0]) << 8) | ((STACKWORD)ptr[1]);
+    return (STACKWORD)(JINT)(JSHORT)(((TWOBYTES)ptr[0]) << 8) | (ptr[1]);
   case 4:
     return (((STACKWORD)ptr[0]) << 24) | (((STACKWORD)ptr[1]) << 16) |
            (((STACKWORD)ptr[2]) << 8) | ((STACKWORD)ptr[3]);
