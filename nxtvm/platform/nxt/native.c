@@ -196,7 +196,7 @@ dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
 	display_buffer[i] = intArray[i];
     }
     return;
-  case getDisplay_4_5_1I:
+  case getDisplay_4_5_1B:
     push_word(display_get_array());
     return;
   case setAutoRefresh_4I_5V:

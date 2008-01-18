@@ -19,7 +19,7 @@ typedef unsigned int uint;
 //static U8 display_buffer[DISPLAY_DEPTH+1][DISPLAY_WIDTH];
 static struct
 {
-  Object hdr;
+  BigArray arrayHdr;
   U8 display[DISPLAY_DEPTH+1][DISPLAY_WIDTH];
 } __attribute__((packed)) display_array;
 static U8 (*display_buffer)[DISPLAY_WIDTH] = display_array.display;
@@ -360,15 +360,16 @@ display_init(void)
 {
   // Initialise the array parameters so that the display can
   // be memory mapped into the Java address space
-  display_array.hdr.flags.arrays.isArray = 1;
+  display_array.arrayHdr.hdr.flags.arrays.isArray = 1;
   // NOTE This object must always be marked, otherwise very, very bad
   // things will happen!
-  display_array.hdr.flags.arrays.mark = 1;
-  display_array.hdr.flags.arrays.length = 200;
-  display_array.hdr.flags.arrays.isAllocated = 1;
-  display_array.hdr.flags.arrays.type = T_INT;
-  display_array.hdr.monitorCount = 0;
-  display_array.hdr.threadId = 0;
+  display_array.arrayHdr.hdr.flags.arrays.mark = 1;
+  display_array.arrayHdr.hdr.flags.arrays.length = BIGARRAYLEN;
+  display_array.arrayHdr.hdr.flags.arrays.isAllocated = 1;
+  display_array.arrayHdr.hdr.flags.arrays.type = T_INT;
+  display_array.arrayHdr.hdr.monitorCount = 0;
+  display_array.arrayHdr.hdr.threadId = 0;
+  display_array.arrayHdr.length = DISPLAY_DEPTH*DISPLAY_WIDTH;
   display_clear(0);
   display_auto_update = 1;
   nxt_lcd_init((U8 *)display_buffer);

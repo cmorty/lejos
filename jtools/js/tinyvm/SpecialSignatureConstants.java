@@ -77,7 +77,7 @@ public interface SpecialSignatureConstants {
     "btRead([BII)I",
     "btPending()I",
     "arraycopy(Ljava/lang/Object;ILjava/lang/Object;II)V",
-    "getDisplay()[I",
+    "getDisplay()[B",
     "setAutoRefresh(I)V"
   };
 }
