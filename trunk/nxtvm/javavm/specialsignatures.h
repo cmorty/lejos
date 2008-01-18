@@ -76,6 +76,6 @@
 #define btRead_4_1BII_5I 69
 #define btPending_4_5I 70
 #define arraycopy_4Ljava_3lang_3Object_2ILjava_3lang_3Object_2II_5V 71
-#define getDisplay_4_5_1I 72
+#define getDisplay_4_5_1B 72
 #define setAutoRefresh_4I_5V 73
 #endif // _SPECIALSIGNATURES_H
