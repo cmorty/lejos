@@ -83,7 +83,11 @@ case OP_PUTSTATIC_3:
       else
 #endif
       {
-        push_word (get_word(fbase1, fieldSize));
+        tempStackWord = get_word(fbase1, fieldSize);
+        if( fieldType == T_CHAR)
+          tempStackWord = (TWOBYTES) tempStackWord;
+        push_word (tempStackWord);
+
         if (wideWord)
           push_word (get_word_4(fbase1 + 4));
       }
@@ -151,7 +155,12 @@ case OP_GETFIELD:
       set_top_ref (get_word(fbase2, fieldSize));
     else
 #endif
-    set_top_word (get_word(fbase2, fieldSize));
+
+    tempStackWord = get_word(fbase2, fieldSize);
+    if( fieldType == T_CHAR)
+      tempStackWord = (TWOBYTES) tempStackWord;
+    set_top_word (tempStackWord);
+
     #ifdef DEBUG_FIELDS
     printf("Set top word done\n");
     if (wideWord)
