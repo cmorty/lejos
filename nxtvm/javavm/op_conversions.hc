@@ -6,8 +6,10 @@ case OP_I2B:
   just_set_top_word ((JBYTE) word2jint(get_top_word()));
   goto LABEL_ENGINELOOP;
 case OP_I2S:
-case OP_I2C:
   just_set_top_word ((JSHORT) word2jint(get_top_word()));
+  goto LABEL_ENGINELOOP;   
+case OP_I2C:
+  just_set_top_word ((JCHAR) word2jint(get_top_word()));
   goto LABEL_ENGINELOOP;   
 case OP_F2D:
   // Arguments: 0
