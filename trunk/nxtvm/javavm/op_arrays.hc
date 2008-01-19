@@ -47,6 +47,12 @@ case OP_FALOAD:
   goto LABEL_ENGINELOOP;
 
 case OP_CALOAD:
+  tempInt = array_helper();
+  if( tempInt < 0)
+    goto LABEL_ENGINELOOP;
+  set_top_word (jchar_array_ptr(arrayStart)[tempInt]);
+  goto LABEL_ENGINELOOP;
+
 case OP_SALOAD:
   tempInt = array_helper();
   if( tempInt < 0)
