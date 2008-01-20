@@ -34,11 +34,8 @@ tick_hook(void)
     poll_sensors();
     poll_inputs();
   }
-  if (display_tick++ > 250)
-  {
-    display_tick = 0;
-    if (display_auto_update) display_update();
-  }
+  if (st > display_update_time)
+    display_update();
 }
 
 static inline void

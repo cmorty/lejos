@@ -164,6 +164,8 @@ public class List extends Screen implements Choice {
 			callCommandListener();
 		} else if (keyCode == KEY_ENTER) {
 			ListItem li = ((ListItem) listItems.get(scrollCurr));
+			if (listType == Choice.IMPLICIT) 
+				setSelectedIndex(scrollCurr, false); 
 			setSelectedIndex(scrollCurr, !li.selected);
 
 //			if ((listType == Choice.IMPLICIT) || (listType == Choice.EXCLUSIVE)) {
@@ -195,12 +197,13 @@ public class List extends Screen implements Choice {
     
     protected void paint(Graphics g) {
     	int lineIdx = 0;
-
+		int line = Display.CHAR_HEIGHT;
+		int ch = Display.CHAR_WIDTH;
     	if (ticker != null) {
     		lineIdx++;
     	}
     	if (title != null) {
-    		g.drawString(title, 0, lineIdx++);
+    		g.drawString(title, 0, lineIdx++ * line);
     	}
 
     	// Update scrolling administration
@@ -223,7 +226,7 @@ public class List extends Screen implements Choice {
     	// Display list items with current highlighted
 		for (int i = scrollFirst; (i < listItems.size()) && (i <= scrollLast); i++) {
 			ListItem li = ((ListItem) listItems.get(i));
-			g.drawString(li.str, 2, lineIdx, (i == scrollCurr));
+			g.drawString(li.str, 2*ch, lineIdx*line, (i == scrollCurr));
 			
 			// Draw selection state
 			if ((listType == Choice.EXCLUSIVE) || (listType == Choice.MULTIPLE)) {

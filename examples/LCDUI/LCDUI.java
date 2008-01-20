@@ -9,6 +9,7 @@ import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.Gauge;
+import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.Item;
 import javax.microedition.lcdui.ItemCommandListener;
@@ -17,14 +18,94 @@ import javax.microedition.lcdui.Spacer;
 import javax.microedition.lcdui.TextBox;
 import javax.microedition.lcdui.TextField;
 import javax.microedition.lcdui.Ticker;
-
 import lejos.util.Timer;
 import lejos.util.TimerListener;
+import lejos.nxt.LCD;
 
 /**
  * 
  * @author Andre Nijholt
  */
+class Splasher extends Alert
+{
+	Image img;
+	boolean startUp;
+	String text;
+	
+	Splasher(Image img, String text, boolean start)
+	{
+		super("");
+		this.img = img;
+		this.text = text;
+		setStart(start);
+	}
+	
+	public void setStart(boolean start)
+	{
+		startUp = start;
+	}
+	
+	protected void showNotify() {
+		// Start painting alert screen
+		repaint();
+	}
+	
+	public void paint(Graphics g)
+	{
+		int iw = img.getWidth();
+		int ih = img.getHeight();
+		int dx = (Display.SCREEN_WIDTH - iw)/2;
+		int dy = (Display.SCREEN_HEIGHT - ih)/2 - 5;
+		int tdx = g.getCenteredX(text);
+		int tdy = dy + ih + 5;
+		int tw = text.length()*Display.CHAR_WIDTH;
+		int th = Display.CHAR_HEIGHT;
+		if (startUp)
+		{
+			for(int i = 32; i >=0; i--)
+			{
+				g.clear();
+				g.drawImage(img, 0, 0, dx + i, dy, iw, ih, 0xaaffaa00);
+				g.drawImage(img, 0, 0, dx - i, dy, iw, ih, 0x55ff5500);
+				g.refresh();
+				try{Thread.sleep(50);}catch(Exception e){}
+			}
+			int old = g.getColor();
+			g.setColor(Graphics.WHITE);
+			for(int i = (Display.SCREEN_HEIGHT - tdy); i >= 0; i--)
+			{
+				g.fillRect(tdx, tdy + i + 1, tw, th);
+				g.drawString(text, tdx, tdy + i, false);
+				g.refresh();
+				try{Thread.sleep(50);}catch(Exception e){}
+			}
+			g.setColor(old);
+		}
+		else
+		{
+			int old = g.getColor();
+			g.setColor(Graphics.WHITE);
+			g.drawImage(img, 0, 0, dx, dy, iw, ih, LCD.ROP_COPY);
+			for(int i = 0; i < (Display.SCREEN_HEIGHT - tdy); i++)
+			{
+				g.fillRect(tdx, tdy + i - 1, tw, th);
+				g.drawString(text, tdx, tdy + i, false);
+				g.refresh();
+				try{Thread.sleep(50);}catch(Exception e){}
+			}
+			g.setColor(old);
+			for(int i = 0; i <= iw/2; i++)
+			{
+				g.clear();
+				g.drawImage(img, i, i, dx + i, dy + i, iw - 2*i, ih - 2*i, LCD.ROP_COPY);
+				g.refresh();
+				try{Thread.sleep(50);}catch(Exception e){}
+			}
+		}
+	}
+	
+}
+
 public class LCDUI implements CommandListener {
 	private static final int CMDID_BACK_TO_MAIN 	= 1;
 	private static final int CMDID_EXIT_APP 		= 2;
@@ -80,12 +161,23 @@ public class LCDUI implements CommandListener {
 			(byte) 0x80, (byte) 0x80, (byte) 0x80, (byte) 0x80, (byte) 0x80, (byte) 0x80, (byte) 0x80, (byte) 0x80,
 			(byte) 0x81, (byte) 0x82, (byte) 0x84, (byte) 0x88, (byte) 0x90, (byte) 0xa0, (byte) 0xc0, (byte) 0xff
 	});
+	private Image splash = new Image(26, 32, new byte[] {
+			(byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00,
+			(byte)0x00, (byte)0x3F, (byte)0x3F, (byte)0x3F, (byte)0x3F, (byte)0x3F, (byte)0x3F, (byte)0xFF, (byte)0xFF, (byte)0xFF, (byte)0xFF, (byte)0xFE, (byte)0xFC,
+			(byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0xA0, (byte)0x40, (byte)0xA0, (byte)0x40,
+			(byte)0xA0, (byte)0x40, (byte)0xA0, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0xFF, (byte)0xFF, (byte)0xFF, (byte)0xFF, (byte)0xFF, (byte)0xFF,
+			(byte)0xF0, (byte)0xF0, (byte)0xF0, (byte)0xF0, (byte)0xF0, (byte)0xF0, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x0A, (byte)0x05, (byte)0x0A, (byte)0x05,
+			(byte)0x0A, (byte)0x05, (byte)0x0A, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0xFF, (byte)0xFF, (byte)0xFF, (byte)0xFF, (byte)0xFF, (byte)0xFF,
+			(byte)0x0F, (byte)0x1F, (byte)0x3F, (byte)0x3F, (byte)0x7F, (byte)0x7F, (byte)0xFC, (byte)0xF8, (byte)0xF0, (byte)0xF0, (byte)0xF0, (byte)0xF0, (byte)0xF0,
+			(byte)0xF0, (byte)0xF0, (byte)0xF0, (byte)0xF0, (byte)0xF0, (byte)0xF8, (byte)0xFC, (byte)0x7F, (byte)0x7F, (byte)0x3F, (byte)0x3F, (byte)0x1F, (byte)0x0F,});
+	private Splasher startUp		= new Splasher(splash, "LEJOS", true);
 
     // Items on form2
     private Gauge 	volGauge 	= new Gauge("Volume: ", true, 8, 6);
     private Gauge 	gauge 		= new Gauge("Progress Bar", true, 20, 9);
     TextField 		textfield 	= new TextField("TextField label", "abc", 16, TextField.ANY);
     
+	
     private Display display;
 
 	public LCDUI() {}
@@ -103,7 +195,7 @@ public class LCDUI implements CommandListener {
 	    menu.append("Test Alert", null);
 	    menu.append("Test Form 1", null);
 	    menu.append("Test Form 2", null);
-	    menu.setSelectedIndex(0, true);
+	    //menu.setSelectedIndex(0, true);
 	    menu.addCommand(EXIT_COMMAND);
 	    menu.setCommandListener(this);
 	    menu.setTicker(ticker);
@@ -130,7 +222,7 @@ public class LCDUI implements CommandListener {
 
         // Set alert properties
 		soundAlert.setType(Alert.ALERT_TYPE_ERROR);
-	    soundAlert.setTimeout(2000);
+	    soundAlert.setTimeout(5000);
 		soundAlert.setString("** ERROR **");
 		soundAlert.setIndicator(alertGauge);
 
@@ -181,9 +273,12 @@ public class LCDUI implements CommandListener {
 		form2.addCommand(BACK_COMMAND);
 	    form2.setCommandListener(this);
 	    
-	    // Start displaying main menu and handling buttons
-	    display = Display.getDisplay();
+		// Make the system active
+		display = Display.getDisplay();
 	    display.setCurrent(menu);
+		// Show the splash screen
+	    startUp.setTimeout(4000);
+		display.setCurrent(startUp);
 	    display.show(polling);
 	}
 	
@@ -204,6 +299,8 @@ public class LCDUI implements CommandListener {
 			// Handle system commands
 			if (d == exitAlert) {
 				if (exitAlert.getConfirmation()) {
+					startUp.setStart(false);
+					display.setCurrent(startUp);
 					display.quit();
 				} else {
 					display.setCurrent(menu);

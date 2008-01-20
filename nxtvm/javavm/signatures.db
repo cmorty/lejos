@@ -137,6 +137,7 @@ arraycopy(Ljava/lang/Object;ILjava/lang/Object;II)V
 #lejos.nxt.LCD
 getDisplay()[B
 setAutoRefresh(I)V
+bitBlt([BIIII[BIIIIIII)V
 
 
 

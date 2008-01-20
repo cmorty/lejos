@@ -78,6 +78,7 @@ public interface SpecialSignatureConstants {
     "btPending()I",
     "arraycopy(Ljava/lang/Object;ILjava/lang/Object;II)V",
     "getDisplay()[B",
-    "setAutoRefresh(I)V"
+    "setAutoRefresh(I)V",
+    "bitBlt([BIIII[BIIIIIII)V"
   };
 }

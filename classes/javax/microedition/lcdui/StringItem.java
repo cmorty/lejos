@@ -37,7 +37,7 @@ public class StringItem extends Item {
 	
 	public void paint(Graphics g, int x, int y, int w, int h, boolean selected) {
 		if (label != null) {
-			g.drawString(label, x / Display.CHAR_WIDTH, y / Display.CHAR_HEIGHT);
+			g.drawString(label, x, y );
 			if (h <= Display.CHAR_HEIGHT) {
 				x += label.length() * Display.CHAR_WIDTH;
 			} else {
@@ -45,6 +45,6 @@ public class StringItem extends Item {
 			}
 		}
 
-		g.drawString(text, x / Display.CHAR_WIDTH, y / Display.CHAR_HEIGHT, selected);
+		g.drawString(text, x, y, selected);
 	}
 }

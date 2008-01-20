@@ -162,13 +162,14 @@ static const U8 font[N_CHARS][FONT_WIDTH] = {
 /* 0x7F */ {0x3E, 0x36, 0x2A, 0x36, 0x3E},
 };
 
-int display_tick = 0;
+int display_update_time = 0;
 int display_auto_update = 1;
 
 void
 display_update(void)
 {
-  display_tick = 0;
+  if(display_auto_update)
+    display_update_time = get_sys_time_impl() + 250;
   nxt_lcd_update();
 }
 
@@ -176,6 +177,10 @@ void display_set_auto_update(int mode)
 {
   // Enable/disable automatic refresh of the display.
   display_auto_update = mode;
+  if (mode == 0)
+    display_update_time = 0x7fffffff;
+  else
+    display_update_time = 0;
 }
   
 
@@ -341,6 +346,171 @@ display_bitmap_copy(const U8 *data, U32 width, U32 depth, U32 x, U32 y)
       if (dx < DISPLAY_WIDTH && dy < DISPLAY_DEPTH)
         display_buffer[y + i][x + j] = data[width * i + j];
     }
+}
+
+void display_bitblt(byte *src, int sw, int sh, int sx, int sy, byte *dst, int dw, int dh, int dx, int dy, int w, int h, int rop)
+{
+  /* This is a partial implementation of the BitBlt algorithm. It provides a
+   * complete set of raster operations and handles partial and fully aligned
+   * images correctly. Overlapping source and destination images is also 
+   * supported. It does not performing mirroring. The code was converted
+   * from an initial Java implementation and has not been optimized for C.
+   * The genral mechanism is to perform the block copy with Y as the inner
+   * loop (because on the display the bits are packed y-wise into a byte). We
+   * perform the various rop cases by reducing the operation to a series of
+   * AND and XOR operations. Each step is controlled by a byte in the rop code.
+   * This mechanism is based upon that used in the X Windows system server.
+   */
+  // Clip to source and destination
+  int trim;
+  if (dx < 0)
+  {
+    trim = -dx;
+    dx = 0;
+    sx += trim;
+    w -= trim;
+  }
+  if (dy < 0)
+  {
+    trim = -dy;
+    dy = 0;
+    sy += trim;
+    h -= trim;
+  }
+  if (sx < 0 || sy < 0) return;
+  if (dx + w > dw) w = dw - dx;
+  if (sx + w > sw) w = sw - sx;
+  if (w <= 0) return;
+  if (dy + h > dh) h = dh - dy;
+  if (sy + h > sh) h = sh - sy;
+  if (h <= 0) return;
+  // Setup initial parameters and check for overlapping copy
+  int xinc = 1;
+  int yinc = 1;
+  byte firstBit = 1;
+  if (src == dst)
+  {
+    // If copy overlaps we use reverse direction
+    if (dy > sy)
+    {
+      sy = sy + h - 1;
+      dy = dy + h - 1;
+      firstBit = (byte)0x80;
+      yinc = -1;
+    }
+    if (dx > sx)
+    {
+      xinc = -1;
+      sx = sx + w - 1;
+      dx = dx + w - 1;
+    }
+  }
+  int inStart = (sy/8)*sw;
+  int outStart = (dy/8)*dw;
+  byte inStartBit = (byte)(1 << (sy & 0x7));
+  byte outStartBit = (byte)(1 << (dy & 0x7));
+  dw *= yinc;
+  sw *= yinc;
+  // Extract rop sub-fields
+  byte ca1 = (byte)(rop >> 24);
+  byte cx1 = (byte)(rop >> 16);
+  byte ca2 = (byte)(rop >> 8);
+  byte cx2 = (byte) rop;
+  boolean noDst = (ca1 == 0 && cx1 == 0);
+  int xcnt;
+  // Check for byte aligned case and optimise for it
+  if (h >= 8 && inStartBit == firstBit && outStartBit == firstBit)
+  {
+    int ix = sx;
+    int ox = dx;
+    int byteCnt = h/8;
+    xcnt = w;
+    while (xcnt-- > 0)
+    {
+      int inIndex = inStart + ix;
+      int outIndex = outStart + ox;
+      int cnt = byteCnt;
+      while(cnt-- > 0)
+      {
+        if (noDst)
+          dst[outIndex] = (byte)((src[inIndex] & ca2)^cx2);            
+        else
+        {
+          byte inVal = src[inIndex];
+          dst[outIndex] = (byte)((dst[outIndex] & ((inVal & ca1)^cx1)) ^ ((inVal & ca2)^cx2));
+        }
+        outIndex += dw;
+        inIndex += sw;
+      }
+      ox += xinc;
+      ix += xinc;
+    }
+    // Do we have a final non byte multiple to do?
+    h &= 0x7;
+    if (h == 0) return;
+    outStart += (byteCnt*dw);
+    inStart += (byteCnt*sw);
+  }
+  // General non byte aligned case
+  int ix = sx;
+  int ox = dx;
+  xcnt = w;
+  while(xcnt-- > 0)
+  {
+    int inIndex = inStart + ix;
+    byte inBit = inStartBit;
+    byte inVal = src[inIndex];
+    byte inAnd = (byte)((inVal & ca1)^cx1);
+    byte inXor = (byte)((inVal & ca2)^cx2);
+    int outIndex = outStart + ox;
+    byte outBit = outStartBit;
+    byte outPixels = dst[outIndex];
+    int cnt = h;
+    while(true)
+    {
+      if (noDst)
+      {
+        if ((inXor & inBit) != 0)
+          outPixels |= outBit;
+        else
+          outPixels &= ~outBit;
+      }
+      else
+      {
+        byte resBit = (byte)((outPixels & ((inAnd & inBit) != 0 ? outBit : 0))^((inXor & inBit) != 0 ? outBit : 0));
+        outPixels = (byte)((outPixels & ~outBit) | resBit);
+      }
+      if (--cnt <= 0) break;
+      if (yinc > 0)
+      {
+        inBit <<= 1;
+        outBit <<= 1;
+      }
+      else
+      {
+        inBit >>= 1;
+        outBit >>= 1;
+      }
+      if (inBit == 0)
+      {
+        inBit = firstBit;
+        inIndex += sw;
+        inVal = src[inIndex];
+        inAnd = (byte)((inVal & ca1)^cx1);
+        inXor = (byte)((inVal & ca2)^cx2);
+      }
+      if (outBit == 0)
+      {
+        dst[outIndex] = outPixels;
+        outBit = firstBit;
+        outIndex += dw;
+        outPixels = dst[outIndex];
+      }
+    }
+    dst[outIndex] = outPixels;
+    ix += xinc;
+    ox += xinc;
+  }
 }
 
 U8 *
