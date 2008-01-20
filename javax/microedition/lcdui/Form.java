@@ -200,7 +200,7 @@ public class Form extends Screen implements CommandListener {
 			if (o instanceof Image) {
 				g.drawImage((Image) o, curX, curY, false);
 			} else if (o instanceof String) {
-				g.drawString(((String) o), curX / Display.CHAR_WIDTH, curY / Display.CHAR_HEIGHT);
+				g.drawString(((String) o), curX, curY);
 			} else if (o instanceof Item) {
 				((Item) o).paint(g, curX, curY, curWidth, curHeight, (i == curItemIdx));
 				

@@ -22,26 +22,38 @@ public class Graphics {
 
 	private int rgbColor = BLACK;
 	private int strokeStyle = SOLID;
+	
+	private Font font = new Font();
 
 	public Graphics() {}
 	
 	public int getWidth() {
-		return LCD.DISPLAY_WIDTH;
+		return LCD.SCREEN_WIDTH;
 	}
 	
 	public int getHeight() {
-		return 2 * LCD.DISPLAY_DEPTH;
+		return LCD.SCREEN_HEIGHT;
 	}
 	
 	public int getCenteredX(String str) {
-		return (LCD.DISPLAY_CHAR_WIDTH - str.length()) / 2;
+		return (LCD.DISPLAY_CHAR_WIDTH - str.length())*LCD.CELL_WIDTH / 2;
+	}
+	
+	public Font getFont()
+	{
+		return font;
 	}
 	
 	public void setColor(int rgb)
 	{
 		rgbColor = rgb;
 	}
-		
+	
+	public int getColor()
+	{
+		return rgbColor;
+	}
+	
 	/**
 	* Using rgbColor as argument even though global, because when this
 	* setPixel() method is used later it will need color argument
@@ -63,6 +75,16 @@ public class Graphics {
 
 		if (dy < 0) { dy = -dy;  stepy = -1; } else { stepy = 1; }
 		if (dx < 0) { dx = -dx;  stepx = -1; } else { stepx = 1; }
+		if (style == SOLID)
+		{
+			// Special case horizontal and vertical lines
+			if (dy == 0 || dx == 0)
+			{
+				LCD.bitBlt((stepx == 1 ? x0 : x1), (stepy == 1 ? y0 : y1),
+						    (dx == 0 ? 1 : dx+1), (dy == 0 ? 1 : dy+1), (rgbColor == BLACK ? LCD.ROP_SET : LCD.ROP_CLEAR));
+				return;
+			}
+		}
 		dy <<= 1; // dy is now 2*dy
 		dx <<= 1; // dx is now 2*dx
 
@@ -263,15 +285,15 @@ public class Graphics {
 	public void fillRect(int x, int y, int width, int height) {
 		if ((width < 0) || (height < 0))
 			return;
-
-		for(int i=y;i<y + height;i++) 
-			drawLine(x, i, x + width, i);
-			//for(int j=x; j<x+width;j++) // Barely faster than using lines.
-				//setPixel(rgbColor, j, i);
+		LCD.bitBlt(x, y, width, height, (rgbColor == BLACK ? LCD.ROP_SET : LCD.ROP_CLEAR));
  	}
 
+	public void drawString(String str, int x, int y, int rop) {
+		LCD.drawString(str, x, y, rop);
+	}
+	
 	public void drawString(String str, int x, int y) {
-		drawString(str, x, y, false);
+		drawString(str, x, y, LCD.ROP_COPY);
 	}
 	
 	public void drawString(String str, int x, int y, boolean invert) {
@@ -286,16 +308,16 @@ public class Graphics {
 		if (img == null) {
 			return;
 		}
-		
-		byte[] imgData = img.getData();
-		for (int iy = y; iy < (y + img.getHeight()); iy += 8) {
-			int yOffset = ((iy - y) / 8) * img.getWidth();
-			for (int ix = x; ix < (x + img.getWidth()); ix++) {
-				LCD.drawPixels(imgData[yOffset + (ix - x)], ix, iy, invert);
-			}
-		}
+		LCD.bitBlt(img.getData(), img.getWidth(), img.getHeight(), 0, 0, x, y, img.getWidth(), img.getHeight(), (invert ? LCD.ROP_COPYINVERTED : LCD.ROP_COPY));
 	}
 
+	public void drawImage(Image img, int sx, int sy, int x, int y, int w, int h, int rop) {
+		if (img == null)
+			LCD.bitBlt(x, y, w, h, rop);
+		else
+			LCD.bitBlt(img.getData(), img.getWidth(), img.getHeight(), sx, sy, x, y, w, h, rop);
+	}
+	
 	public int getStrokeStyle() {
 		return strokeStyle;
 	}
