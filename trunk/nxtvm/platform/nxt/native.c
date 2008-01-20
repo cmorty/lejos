@@ -202,6 +202,13 @@ dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
   case setAutoRefresh_4I_5V:
     display_set_auto_update(paramBase[0]);
     return;
+  case bitBlt_4_1BIIII_1BIIIIIII_5V:
+    {
+      Object *src = word2ptr(paramBase[0]);
+      Object *dst = word2ptr(paramBase[5]);
+      display_bitblt((byte *)jbyte_array(src), paramBase[1], paramBase[2], paramBase[3], paramBase[4], (byte *)jbyte_array(dst), paramBase[6], paramBase[7], paramBase[8], paramBase[9], paramBase[10], paramBase[11], paramBase[12]);
+      return;
+    }
   case getVoltageMilliVolt_4_5I:
     push_word(battery_voltage());
     return;

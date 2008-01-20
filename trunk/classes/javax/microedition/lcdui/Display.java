@@ -10,7 +10,7 @@ import lejos.util.TimerListener;
  * @author Andre Nijholt
  */
 public class Display {
-	private static final int TICKER_INTERVAL_MSEC = 500;
+	private static final int TICKER_INTERVAL_MSEC = 100;
 
 	public static final int SCREEN_WIDTH 	= 100;
 	public static final int SCREEN_HEIGHT 	= 64;
@@ -28,7 +28,7 @@ public class Display {
 	private int alertTimeout;
 	
 	private Timer tickerTimer;
-	private int tickerOffset = SCREEN_CHAR_WIDTH;
+	private int tickerOffset = SCREEN_WIDTH;
 	
 	protected Graphics graphics;
 	private boolean quit;
@@ -50,7 +50,9 @@ public class Display {
 	public void setCurrent(Screen nextDisplayable) {
 		if (nextDisplayable != null) {
 			if (nextDisplayable instanceof Alert) {
-				alertBackup = current;				
+				// Only allow one level of alert
+				if (alertBackup == null)
+					alertBackup = current;				
 				alertTimeout = (((Alert) nextDisplayable).getTimeout() == Alert.FOREVER) ? Alert.FOREVER
 					: ((int) System.currentTimeMillis()) + ((Alert) nextDisplayable).getTimeout();
 			}
@@ -58,7 +60,7 @@ public class Display {
 				current.hideNotify();
 			}
 			
-			tickerOffset = SCREEN_CHAR_WIDTH;
+			tickerOffset = SCREEN_WIDTH;
 			current = nextDisplayable;
 			current.showNotify();
 			current.repaint();
@@ -76,7 +78,7 @@ public class Display {
 			alertTimeout = (alert.getTimeout() == Alert.FOREVER) ? Alert.FOREVER
 					: ((int) System.currentTimeMillis()) + alert.getTimeout();
 			
-			tickerOffset = SCREEN_CHAR_WIDTH;
+			tickerOffset = SCREEN_WIDTH;
 			current = alert;
 			current.showNotify();
 			current.repaint();
@@ -113,7 +115,7 @@ public class Display {
 		    		if (tickerLen > 0) {
 		    			tickerOffset--;
 		    			if (tickerOffset < -tickerLen) {
-		    				tickerOffset = SCREEN_CHAR_WIDTH;
+		    				tickerOffset = SCREEN_WIDTH;
 		    			}
 		    		}
 		    		tsTickerUpdate = (int) System.currentTimeMillis() + TICKER_INTERVAL_MSEC;
@@ -124,6 +126,7 @@ public class Display {
     				// Hide alert screen and replace backup without notify
     				current.hideNotify();
     				current = alertBackup;
+					alertBackup = null;
 				}
 
 				// Handle repaint requests from outside
@@ -146,9 +149,15 @@ public class Display {
 				// ENTER button pressed
     			if (current instanceof Alert) {
     				// Hide alert screen and replace backup without notify
-    				current.keyPressed(Displayable.KEY_ENTER);
-    				current.hideNotify();
-    				current = alertBackup;
+					Screen saved = current;
+     				current.keyPressed(Displayable.KEY_ENTER);
+					// Make sure that we are still current!
+					if (saved == current)
+					{
+						current.hideNotify();
+						current = alertBackup;
+						alertBackup = null;
+					}
     			} else {
     				current.keyPressed(Displayable.KEY_ENTER);
     			}
@@ -182,10 +191,16 @@ public class Display {
 	    	public void buttonPressed (Button b) {
 	    		if (current != null) {
 	    			if (current instanceof Alert) {
-	    				// Hide alert screen and replace backup without notify
-	    				current.keyPressed(Displayable.KEY_ENTER);
-	    				current.hideNotify();
-	    				current = alertBackup;
+						// Hide alert screen and replace backup without notify
+						Screen saved = current;
+						current.keyPressed(Displayable.KEY_ENTER);
+						// Make sure that we are still current!
+						if (saved == current)
+						{
+							current.hideNotify();
+							current = alertBackup;
+							alertBackup = null;
+						}
 	    			} else {
 	    				current.keyPressed(Displayable.KEY_ENTER);
 	    			}
@@ -221,13 +236,13 @@ public class Display {
 	    	}
 	    });
 
-	    tickerTimer = new Timer(500, new TimerListener() {
+	    tickerTimer = new Timer(TICKER_INTERVAL_MSEC, new TimerListener() {
 	    	public void timedOut() {
 	    		int tickerLen = updateTicker(tickerOffset);
 	    		if (tickerLen > 0) {
 	    			tickerOffset--;
 	    			if (tickerOffset < -tickerLen) {
-	    				tickerOffset = SCREEN_CHAR_WIDTH;
+	    				tickerOffset = SCREEN_WIDTH;
 	    			}
 	    		}
 	    	}
@@ -242,6 +257,7 @@ public class Display {
     				// Hide alert screen and replace backup without notify
     				current.hideNotify();
     				current = alertBackup;
+					alertBackup = null;
 				}
 				
 				if (quit) {
@@ -267,6 +283,12 @@ public class Display {
 	private int updateTicker(int offset) {
 		Ticker ticker = current.getTicker();
 		if (ticker != null) {
+			int old = graphics.getColor();
+			graphics.setColor(Graphics.WHITE);
+			graphics.fillRect(0, 0, SCREEN_WIDTH, CHAR_HEIGHT);
+			graphics.setColor(old);
+			graphics.drawString(ticker.getString(), offset, 0);
+			/*
 			int tickerLen = ticker.getString().length();
 			for (int i = 0; i < SCREEN_CHAR_WIDTH; i++) {
 				if ((i >= offset) && ((i - offset) < tickerLen)) {
@@ -275,9 +297,9 @@ public class Display {
 				} else {
 					graphics.drawChar(' ', i * Display.CHAR_WIDTH, 0, false);
 				}
-			}
+			}*/
 			graphics.refresh();
-			return tickerLen;
+			return ticker.getString().length()*CHAR_WIDTH;
 		}
 		
 		return 0;

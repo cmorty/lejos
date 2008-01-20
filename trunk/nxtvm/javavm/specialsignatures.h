@@ -78,4 +78,5 @@
 #define arraycopy_4Ljava_3lang_3Object_2ILjava_3lang_3Object_2II_5V 71
 #define getDisplay_4_5_1B 72
 #define setAutoRefresh_4I_5V 73
+#define bitBlt_4_1BIIII_1BIIIIIII_5V 74
 #endif // _SPECIALSIGNATURES_H

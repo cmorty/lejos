@@ -1,6 +1,7 @@
 package javax.microedition.lcdui;
 
 import lejos.nxt.Sound;
+import lejos.nxt.LCD;
 
 /**
  * 
@@ -55,7 +56,7 @@ public class Alert extends Screen {
 		(byte) 0x07, (byte) 0x08, (byte) 0x30, (byte) 0x20, (byte) 0x40, (byte) 0x80, (byte) 0x90, (byte) 0xbb,
 		(byte) 0xbb, (byte) 0x90, (byte) 0x80, (byte) 0x40, (byte) 0x20, (byte) 0x30, (byte) 0x08, (byte) 0x07
 	});
-
+	static Image[] icons = new Image [] {IMG_INFO, IMG_WARNING, IMG_ERROR, IMG_ALARM, IMG_CONFIRM};
 	String text;
 	Image image;
 	Gauge gauge;
@@ -145,29 +146,25 @@ public class Alert extends Screen {
 //		g.fillArc(0, 0, 34, 34, 90, 90);
 //		g.fillArc(64, 0, 34, 34, 0, 90);
 //		g.fillRect(16, 0, 66, 18);
-		g.fillRect(0, 0, 100, 16);
-		g.drawString(title, g.getCenteredX(title), 1, true);
+		int line = Display.CHAR_HEIGHT;
+		int ch = Display.CHAR_WIDTH;
+		//g.fillRect(0, 0, 100, 16);
+		// Use special rop to create a "gray" banner.
+		g.drawImage(null, 0, 0, 0, 0, 100, 16, 0x55);
+		g.drawString(title, g.getCenteredX(title), line/2, true);
 
 		if (this.image != null) {
 			// Draw user defined image
-			g.drawImage(image, 0, 16, false);
-		} else if (this.type == ALERT_TYPE_INFO) {
-			g.drawImage(IMG_INFO, 0, 16, false);
-		} else if (this.type == ALERT_TYPE_WARNING) {
-			g.drawImage(IMG_WARNING, 0, 16, false);
-		} else if (this.type == ALERT_TYPE_ERROR) {
-			g.drawImage(IMG_ERROR, 0, 16, false);
-		} else if (this.type == ALERT_TYPE_ALARM) {
-			g.drawImage(IMG_ALARM, 0, 16, false);
-		} else if (this.type == ALERT_TYPE_CONFIRMATION) {
-			g.drawImage(IMG_CONFIRM, 0, 16, false);
+			g.drawImage(image, 0, 20, false);
+		} else {
+			g.drawImage(icons[this.type], 0, 20, false);
 		}
 		
 		
 		// Draw centered text
-		g.drawString(text, 3, 3);
+		g.drawString(text, 3*ch, 3*line);
 		if (type == ALERT_TYPE_CONFIRMATION) {
-			g.drawString(confirm ? STR_CONFIRM : STR_DENY, g.getCenteredX(STR_CONFIRM), 4, true);
+			g.drawString(confirm ? STR_CONFIRM : STR_DENY, g.getCenteredX(STR_CONFIRM), 4*line, true);
 		} else if (gauge != null) {
 			gauge.paint(g, 0, 32, 100, 32, false);
 		}

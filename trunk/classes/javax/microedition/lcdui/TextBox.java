@@ -111,13 +111,15 @@ public class TextBox extends Screen {
 	}
 	
 	public void paint(Graphics g) {
+		int line = Display.CHAR_HEIGHT;
+		int ch = Display.CHAR_WIDTH;
 		if (title != null) {
-			g.drawString(title, 0, 1);
+			g.drawString(title, 0, 1*line);
 		}
 		
 		// Draw input string per character
 		for (int i = 0; (i < inputIdx) && (inputText[i] > '\0'); i++) {
-			g.drawChar(inputText[i], (i * Display.CHAR_WIDTH), 2, false);
+			g.drawChar(inputText[i], (i * ch), 2*line, false);
 		}
 		
 		// Draw keyboard frame
@@ -138,12 +140,12 @@ public class TextBox extends Screen {
 		// Draw keyboard selection
 		for (int x = 0; x < 10; x++) {
 			for (int y = 0; y < 4; y++) {
-				g.drawChar(keyboard[kSel + y][x], (x * 10) + 2, y + 4, ((x == xSel) && (y == ySel)));
+				g.drawChar(keyboard[kSel + y][x], (x * 10) + 2, (y + 4)*line, ((x == xSel) && (y == ySel)));
 			}
 		}
 		
 		// Draw character / digit switch image
-		g.drawImage((kSel == 8) ? chars : digits, 0, 56, (xSel == 0) && (ySel == 3));
+		g.drawImage((kSel == 8) ? chars : digits, 1, 56, (xSel == 0) && (ySel == 3));
 	}
 	
 	private boolean checkConstraints() {

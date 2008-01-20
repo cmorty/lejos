@@ -210,7 +210,7 @@ public class ChoiceGroup extends Item implements Choice {
     
 	protected void paint(Graphics g, int x, int y, int w, int h, boolean selected) {
     	if (label != null) {
-    		g.drawString(label, x / Display.CHAR_WIDTH, y / Display.CHAR_HEIGHT, 
+    		g.drawString(label, x, y, 
     				(selected && (choiceType == Choice.POPUP)));
     		y += Display.CHAR_HEIGHT;
     		h -= Display.CHAR_HEIGHT;
@@ -249,7 +249,7 @@ public class ChoiceGroup extends Item implements Choice {
     	int xOffset = (choiceType == Choice.POPUP) ? x : (x + 2 * Display.CHAR_WIDTH);
 		for (int i = scrollFirst; (i < choiceItems.size()) && (i <= scrollLast); i++) {
 			ChoiceItem li = ((ChoiceItem) choiceItems.get(i));
-			g.drawString(li.str, xOffset / Display.CHAR_WIDTH, y / Display.CHAR_HEIGHT, 
+			g.drawString(li.str, xOffset, y, 
 					(selected && (i == scrollCurr)));
 			
 			if ((choiceType == Choice.EXCLUSIVE) || (choiceType == Choice.MULTIPLE)) {
