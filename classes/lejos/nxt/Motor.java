@@ -1,6 +1,6 @@
 package lejos.nxt;
 import lejos.nxt.Battery;
-import lejos.util.*;
+
 
 /**
  * Abstraction for a NXT motor. Three instances of <code>Motor</code>
@@ -304,10 +304,10 @@ public class Motor extends BasicMotor// implements TimerListener
       {   
          float pwr = 100 -12*_voltage + 0.12f*_speed;
          if(pwr<0) return 0;
-         if(pwr>100)return 100;
-         else return (int)pwr;
+         if(pwr>100)return 92;
+         else return (int)(.8f*pwr);
       }
-
+ 
       /**
        * called by forward() backward() and reverseDirection() <br>
        * resets parameters for speed regulation
@@ -326,10 +326,10 @@ public class Motor extends BasicMotor// implements TimerListener
        */
       public void run()
       {
-         float e0=0;
-         float accel = 0;// =8.f;// accel = _speed/(1000*ts);
+//         float e0=0;
+//         float accel = 0;// =8.f;// accel = _speed/(1000*ts);
          float power =  0;
-         float ts = 200;//time to reach speed
+         float ts = 300;//time to reach speed  /was 200
          int tock = 100+ (int)System.currentTimeMillis(); // 
          int tick = (int)System.currentTimeMillis();  // loop once per ms
          while(_keepGoing)
@@ -338,7 +338,7 @@ public class Motor extends BasicMotor// implements TimerListener
             if((int)System.currentTimeMillis()> tick)	     	   
             {
                tick = (int)System.currentTimeMillis();    
-               if(tick >= tock)
+               if(tick >= tock)// simulate timer
                {	  	     
                   tock+=100;
                   timedOut();
@@ -352,7 +352,6 @@ public class Motor extends BasicMotor// implements TimerListener
                   if(angle<0)absA = -angle;
                   if(_rampUp)
                   {   
-                     ts = 130;// time to get up to speed
                      if(elapsed<ts)// not at speed yet
                      {
                         error = elapsed*elapsed/ts;  //assume acceleration decreases linearly
@@ -364,22 +363,20 @@ public class Motor extends BasicMotor// implements TimerListener
                         error = ((elapsed - ts/3)* _speed)/1000f - absA;
                      }
                   }
-                  else 	
+                  else 	// no ramp
                      error = (elapsed*_speed/1000f)- absA;
-                  power = basePower + 10f * error;// -2*e0;//10 , -4// magic numbers from experiment .75
+                  power = basePower + 10f * error;// magic number from experiment - simple proportional control
                   if(power<0) power = 0;
-                  e0 = error;
+//                  e0 = error;
                   float smooth = 0.008f;// another magic number from experiment.0025
                   basePower = basePower + smooth*(power-basePower); 
                   setPower((int)power);
-               }// end speed regulation
-               // stop at rotation limit angle
-      
+               }// end speed regulation 
             }// end if tick
             }// end synchronized block
          Thread.yield();
          }	// end keep going loop
-      }
+      }// end run
       /**
        * helper method for run()
        */
