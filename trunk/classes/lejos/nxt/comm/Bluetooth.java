@@ -865,7 +865,7 @@ public class Bluetooth
 	}
 	
 	/**
-	 * Connects to a remote device
+	 * Connects to a remote device. Uses '1234' as default pin. 
 	 * 
 	 * @param remoteDevice remote device
 	 * @return BTConnection Object or null
