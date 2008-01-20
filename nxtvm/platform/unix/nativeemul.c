@@ -22,6 +22,11 @@
 #include "sensors.h"
 #include "poll.h"
 
+#undef push_word()
+#undef push_ref()
+#define push_word( a) push_word_cur( a)
+#define push_ref( a)  push_ref_cur( a)
+
 static TWOBYTES gSensorValue = 0;
 
 static char* sensorReadTypes[3] = {

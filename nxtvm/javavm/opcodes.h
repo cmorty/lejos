@@ -215,5 +215,16 @@
 #define OP_PUTSTATIC_2  206
 #define OP_GETSTATIC_3  207
 #define OP_PUTSTATIC_3  208
+// some new experimental "quick" opcodes
+#define OP_GETFIELD_S1	209
+#define OP_PUTFIELD_S1  210
+#define OP_GETFIELD_S2	211
+#define OP_PUTFIELD_S2  212
+#define OP_GETFIELD_U2	213
+#define OP_PUTFIELD_U2  214
+#define OP_GETFIELD_W4	215
+#define OP_PUTFIELD_W4  216
+#define OP_GETFIELD_A4	217
+#define OP_PUTFIELD_A4  218
 
 #endif // _OPCODES_H

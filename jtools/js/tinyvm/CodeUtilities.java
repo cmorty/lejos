@@ -324,10 +324,42 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
                break;
             case OP_PUTFIELD:
             case OP_GETFIELD:
-               int pWord2 = processField((aCode[i] & 0xFF) << 8
-                  | (aCode[i + 1] & 0xFF), false);
-               pOutCode[i++] = (byte) (pWord2 >> 8);
-               pOutCode[i++] = (byte) (pWord2 & 0xFF);
+               {
+                  int pWord2 = processField((aCode[i] & 0xFF) << 8 | (aCode[i + 1] & 0xFF), false);
+                  int opcode = aCode[i-1] & 0xFF;
+                  byte b0 = (byte) (pWord2 >> 8);
+                  byte b1 = (byte) (pWord2 & 0xFF);
+
+                  if( false)
+                  {
+                     int fieldType = (b0 >>> 4) & 0x0F;
+                     if( fieldType == TinyVMType.T_BOOLEAN_TYPE || fieldType == TinyVMType.T_BYTE_TYPE)
+                        opcode = opcode == OP_GETFIELD ? OP_GETFIELD_S1 : OP_PUTFIELD_S1;
+                     else
+                     if( fieldType == TinyVMType.T_SHORT_TYPE)
+                        opcode = opcode == OP_GETFIELD ? OP_GETFIELD_S2 : OP_PUTFIELD_S2;
+                     else
+                     if( fieldType == TinyVMType.T_CHAR_TYPE)
+                        opcode = opcode == OP_GETFIELD ? OP_GETFIELD_U2 : OP_PUTFIELD_U2;
+                     else
+                     if( fieldType == TinyVMType.T_INT_TYPE || fieldType == TinyVMType.T_FLOAT_TYPE)
+                        opcode = opcode == OP_GETFIELD ? OP_GETFIELD_W4 : OP_PUTFIELD_W4;
+                     else
+                     if( fieldType == TinyVMType.T_REFERENCE_TYPE)
+                        opcode = opcode == OP_GETFIELD ? OP_GETFIELD_A4 : OP_PUTFIELD_A4;
+
+                     if( opcode != OP_GETFIELD && opcode != OP_PUTFIELD)
+                     {
+                        b0 = b1;
+                        b1 = 0;
+                        // System.out.println( "quick field opcode: " + opcode + " - " + b0);
+                     }
+                  }
+
+                  pOutCode[i-1] = (byte) opcode;
+                  pOutCode[i++] = b0;
+                  pOutCode[i++] = b1;
+               }
                break;
             case OP_INVOKEINTERFACE:
                // Opcode is changed:

@@ -51,15 +51,15 @@ StackFrame *current_stackframe()
 
 void update_stack_frame (StackFrame *stackFrame)
 {
-  stackFrame->stackTop = stackTop;
-  stackFrame->pc = pc;
+  stackFrame->stackTop = curStackTop;
+  stackFrame->pc = curPc;
 }  
 
 void update_registers (StackFrame *stackFrame)
 {
-  pc = stackFrame->pc;
-  stackTop = stackFrame->stackTop;
-  localsBase = stackFrame->localsBase;
+  curPc = stackFrame->pc;
+  curStackTop = stackFrame->stackTop;
+  curLocalsBase = stackFrame->localsBase;
 }
 
 /* Turns out inlines aren't really inlined.
@@ -360,16 +360,16 @@ done_pi:
               ClassRecord *classRecord;
               classRecord = get_class_record (get_entry_class (gProgramNumber));
               // Initialize top word with fake parameter for main():
-              set_top_ref (JNULL);
+              set_top_ref_cur (JNULL);
               // Push stack frame for main method:
               mRec= find_method (classRecord, main_4_1Ljava_3lang_3String_2_5V);
               dispatch_special (mRec, null);
               // Push another if necessary for the static initializer:
-              dispatch_static_initializer (classRecord, pc);
+              dispatch_static_initializer (classRecord, curPc);
             }
             else
             {
-              set_top_ref (ptr2word (candidate));
+              set_top_ref_cur (ptr2word (candidate));
               dispatch_virtual ((Object *) candidate, run_4_5V, null);
             }
             // The following is needed because the current stack frame

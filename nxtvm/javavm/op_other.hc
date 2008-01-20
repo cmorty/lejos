@@ -5,17 +5,32 @@
 case OP_ATHROW:
   tempStackWord = pop_ref();
   if (tempStackWord == JNULL)
-  {
-    throw_exception (nullPointerException);
-    goto LABEL_ENGINELOOP;
-  }
-  throw_exception (word2obj (tempStackWord));
-  goto LABEL_ENGINELOOP;
+    goto LABEL_NULLPTR_EXCEPTION;
+  thrownException = word2obj (tempStackWord);
+  goto LABEL_THROW_EXCEPTION;
+
 case OP_MONITORENTER:
-  enter_monitor (currentThread, word2obj(pop_ref()));
+  {
+    Object *obj = word2obj(pop_ref());
+    SAVE_REGS();
+    enter_monitor (currentThread, obj);
+    LOAD_REGS();
+  }
   goto LABEL_ENGINELOOP;
+
 case OP_MONITOREXIT:
-  exit_monitor (currentThread, word2obj(pop_ref()));
+  {
+    Object *obj = word2obj(pop_ref());
+    SAVE_REGS();
+    exit_monitor (currentThread, obj);
+    LOAD_REGS();
+  }
+  goto LABEL_ENGINELOOP;
+
+LABEL_THROW_EXCEPTION:
+  SAVE_REGS();
+  throw_exception( thrownException);
+  LOAD_REGS();
   goto LABEL_ENGINELOOP;
 
 // Notes:

@@ -12,7 +12,7 @@ case OP_IFEQ:
 case OP_IFNULL:
   // Arguments: 2
   // Stack: -1
-  do_goto (pop_word() == 0);
+  pc = do_goto (pc, pop_word() == 0);
   goto LABEL_ENGINELOOP;
 
 case OP_IF_ICMPNE:
@@ -21,35 +21,35 @@ case OP_IF_ACMPNE:
   // Fall through!
 case OP_IFNE:
 case OP_IFNONNULL:
-  do_goto (pop_word() != 0);
+  pc = do_goto (pc, pop_word() != 0);
   goto LABEL_ENGINELOOP;
 
 case OP_IF_ICMPLT:
   do_isub();
   // Fall through!
 case OP_IFLT:
-  do_goto (pop_jint() < 0);
+  pc = do_goto (pc, pop_jint() < 0);
   goto LABEL_ENGINELOOP;
 
 case OP_IF_ICMPLE:
   do_isub();
   // Fall through!
 case OP_IFLE:
-  do_goto (pop_jint() <= 0);
+  pc = do_goto (pc, pop_jint() <= 0);
   goto LABEL_ENGINELOOP;
 
 case OP_IF_ICMPGE:
   do_isub();
   // Fall through!
 case OP_IFGE:
-  do_goto (pop_jint() >= 0);
+  pc = do_goto (pc, pop_jint() >= 0);
   goto LABEL_ENGINELOOP;
 
 case OP_IF_ICMPGT:
   do_isub();
   // Fall through!
 case OP_IFGT:
-  do_goto (pop_jint() > 0);
+  pc = do_goto (pc, pop_jint() > 0);
   goto LABEL_ENGINELOOP;
 
 case OP_JSR:
@@ -60,7 +60,7 @@ case OP_JSR:
 case OP_GOTO:
   // Arguments: 2
   // Stack: +0
-  do_goto (true);
+  pc = do_goto (pc, true);
   // No pc increment!
   goto LABEL_ENGINELOOP;
 
@@ -87,7 +87,7 @@ case OP_DCMPG:
     just_pop_word();
     wrd1 = pop_word();
     just_pop_word();
-    do_fcmp (word2jfloat(wrd1), word2jfloat (wrd2), 0);
+    push_word( do_fcmp (word2jfloat(wrd1), word2jfloat (wrd2), 0));
   }
   goto LABEL_ENGINELOOP;
 
@@ -95,7 +95,7 @@ case OP_FCMPL:
 case OP_FCMPG:
   // TBD: no distinction between opcodes
   tempStackWord = pop_word();
-  do_fcmp (word2jfloat(pop_word()), word2jfloat(tempStackWord), 0);
+  push_word( do_fcmp (word2jfloat(pop_word()), word2jfloat(tempStackWord), 0));
   goto LABEL_ENGINELOOP;
   
 #endif // FP_ARITHMETIC

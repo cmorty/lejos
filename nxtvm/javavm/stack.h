@@ -1,12 +1,12 @@
 
+#ifndef _STACK_H
+#define _STACK_H
+
 #include "configure.h"
 #include "threads.h"
 #include "interpreter.h"
 #include "memory.h"
 #include "language.h"
-
-#ifndef _STACK_H
-#define _STACK_H
 
 #define get_local_word(IDX_)       (localsBase[(IDX_)])
 #define get_local_ref(IDX_)        (localsBase[(IDX_)])
@@ -17,20 +17,17 @@
 #define get_word_at(DOWN_)         (*(stackTop-(DOWN_)))
 #define get_ref_at(DOWN_)          *(stackTop-(DOWN_))
 #define get_stack_ptr()            (stackTop)
+#define get_stack_ptr_cur()        (curStackTop)
 #define get_stack_ptr_at(DOWN_)    (stackTop-(DOWN_))
+#define get_stack_ptr_at_cur(DOWN_)(curStackTop-(DOWN_))
 
-// Note: The following locals should only be accessed
-// in this header file.
-
-extern STACKWORD *localsBase;
-extern STACKWORD *stackTop;
 
 /**
  * Clears the operand stack for the given stack frame.
  */
 static inline void init_sp (StackFrame *stackFrame, MethodRecord *methodRecord)
 {
-  stackTop = stackFrame->localsBase + methodRecord->numLocals - 1;
+  curStackTop = stackFrame->localsBase + methodRecord->numLocals - 1;
 }
 
 /**
@@ -40,7 +37,7 @@ static inline void init_sp (StackFrame *stackFrame, MethodRecord *methodRecord)
  */
 static inline void init_sp_pv (void)
 {
-  stackTop = stack_array();
+  curStackTop = stack_array();
 }
 
 /**
@@ -48,7 +45,7 @@ static inline void init_sp_pv (void)
  */
 static inline boolean is_stack_overflow (MethodRecord *methodRecord)
 {
-  return (stackTop + methodRecord->maxOperands) >= (stack_array() + get_array_length((Object *) word2ptr (currentThread->stackArray)));
+  return (curStackTop + methodRecord->maxOperands) >= (stack_array() + get_array_length((Object *) word2ptr (currentThread->stackArray)));
 }
 
 extern void update_stack_frame (StackFrame *stackFrame);
@@ -59,142 +56,94 @@ extern void update_registers (StackFrame *stackFrame);
 
 static inline void update_constant_registers (StackFrame *stackFrame)
 {
-  localsBase = stackFrame->localsBase;
+  curLocalsBase = stackFrame->localsBase;
 }
 
-static inline void push_word (const STACKWORD word)
-{
-  *(++stackTop) = word;
+#define push_word(word)     (*(++stackTop) = word)
+#define push_word_cur(word) (*(++curStackTop) = word)
+#define push_ref(word)      (*(++stackTop) = word)
+#define push_ref_cur(word)  (*(++curStackTop) = word)
+
+#define pop_word()          (*stackTop--)
+#define pop_ref()           (*stackTop--)
+
+#define pop_jint()          ((JINT)word2jint(*stackTop--))
+#define pop_word_or_ref()   (*stackTop--)
+
+#define pop_jlong(lword)    (lword->lo = *stackTop--, lword->hi = *stackTop--)
+
+#define pop_words(aNum)     (stackTop -= aNum)
+#define pop_words_cur(aNum) (curStackTop -= aNum)
+
+#define just_pop_word()     (--stackTop)
+#define just_pop_ref()      (--stackTop)
+
+#define push_void()         (++stackTop)
+
+#define set_top_ref(aRef)   (*stackTop = aRef)
+#define set_top_ref_cur(aRef)(*curStackTop = aRef)
+#define set_top_word(aWord) (*stackTop = aWord)
+
+#define dup() \
+{ \
+  stackTop++; \
+  *stackTop = *(stackTop-1); \
 }
 
-static inline void push_ref (const REFERENCE word)
-{
-  *(++stackTop) = word;
+#define dup2() \
+{ \
+  *(stackTop+1) = *(stackTop-1); \
+  *(stackTop+2) = *stackTop; \
+  stackTop += 2; \
 }
 
-static inline STACKWORD pop_word (void)
-{
-  return *stackTop--;
+#define dup_x1() \
+{ \
+  stackTop++; \
+  *stackTop = *(stackTop-1); \
+  *(stackTop-1) = *(stackTop-2); \
+  *(stackTop-2) = *stackTop; \
 }
 
-static inline REFERENCE pop_ref (void)
-{
-  return *stackTop--;
+#define dup2_x1() \
+{ \
+  stackTop += 2; \
+  *stackTop = *(stackTop-2); \
+  *(stackTop-1) = *(stackTop-3); \
+  *(stackTop-2) = *(stackTop-4); \
+  *(stackTop-3) = *stackTop; \
+  *(stackTop-4) = *(stackTop-1); \
 }
 
-static inline JINT pop_jint (void)
-{
-  return word2jint(*stackTop--);
+#define dup_x2() \
+{ \
+  stackTop++; \
+  *stackTop = *(stackTop-1); \
+  *(stackTop-1) = *(stackTop-2); \
+  *(stackTop-2) = *(stackTop-3); \
+  *(stackTop-3) = *stackTop; \
 }
 
-static inline STACKWORD pop_word_or_ref()
-{
-  return *stackTop--;
+#define dup2_x2() \
+{ \
+  stackTop += 2; \
+  *stackTop = *(stackTop-2); \
+  *(stackTop-1) = *(stackTop-3); \
+  *(stackTop-2) = *(stackTop-4); \
+  *(stackTop-3) = *(stackTop-5); \
+  *(stackTop-4) = *stackTop; \
+  *(stackTop-5) = *(stackTop-1); \
 }
 
-static inline void pop_jlong (JLONG *lword)
-{
-  lword->lo = *stackTop--;
-  lword->hi = *stackTop--;
+#define swap() \
+{ \
+  STACKWORD tempStackWord = *stackTop; \
+  *stackTop = *(stackTop-1); \
+  *(stackTop-1) = tempStackWord; \
 }
 
-static inline void pop_words (byte aNum)
-{
-  stackTop -= aNum;
-}
-
-static inline void just_pop_word (void)
-{
-  --stackTop;
-}
-
-static inline void just_pop_ref (void)
-{
-  --stackTop;
-}
-
-static inline void push_void (void)
-{
-  ++stackTop;
-}
-
-static inline void set_top_ref (REFERENCE aRef)
-{
-  *stackTop = aRef;
-}
-
-static inline void set_top_word (STACKWORD aWord)
-{
-  *stackTop = aWord;
-}
-
-static inline void dup (void)
-{
-  stackTop++;
-  *stackTop = *(stackTop-1);
-}
-
-static inline void dup2 (void)
-{
-  *(stackTop+1) = *(stackTop-1);
-  *(stackTop+2) = *stackTop;
-  stackTop += 2;
-}
-
-static inline void dup_x1 (void)
-{
-  stackTop++;
-  *stackTop = *(stackTop-1);
-  *(stackTop-1) = *(stackTop-2);
-  *(stackTop-2) = *stackTop;
-}
-
-static inline void dup2_x1 (void)
-{
-  stackTop += 2;
-  *stackTop = *(stackTop-2);
-  *(stackTop-1) = *(stackTop-3);
-  *(stackTop-2) = *(stackTop-4);
-  *(stackTop-3) = *stackTop;
-  *(stackTop-4) = *(stackTop-1);
-}
-
-static inline void dup_x2 (void)
-{
-  stackTop++;
-  *stackTop = *(stackTop-1);
-  *(stackTop-1) = *(stackTop-2);
-  *(stackTop-2) = *(stackTop-3);
-  *(stackTop-3) = *stackTop;
-}
-
-static inline void dup2_x2 (void)
-{
-  stackTop += 2;
-  *stackTop = *(stackTop-2);
-  *(stackTop-1) = *(stackTop-3);
-  *(stackTop-2) = *(stackTop-4);
-  *(stackTop-3) = *(stackTop-5);
-  *(stackTop-4) = *stackTop;
-  *(stackTop-5) = *(stackTop-1);
-}
-
-static inline void swap (void)
-{
-  STACKWORD tempStackWord = *stackTop;
-  *stackTop = *(stackTop-1);
-  *(stackTop-1) = tempStackWord;
-}
-
-static inline void set_local_word (byte aIndex, STACKWORD aWord)
-{
-  localsBase[aIndex] = aWord;
-}
-
-static inline void set_local_ref (byte aIndex, REFERENCE aWord)
-{
-  localsBase[aIndex] = aWord;
-}
+#define set_local_word(aIndex,aWord)    (localsBase[aIndex] = aWord)
+#define set_local_ref(aIndex, aWord)    (localsBase[aIndex] = aWord)
 
 #endif
 
