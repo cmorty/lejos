@@ -9,8 +9,12 @@ package lejos.nxt;
  */
 public abstract class BasicMotor 
 {
-	
-	int _mode = 4;
+	final int FORWARD = 1;
+	final int BACKWARD = 2;
+	final int STOP = 3;
+	final int FLOAT = 4;
+
+	int _mode = FLOAT;
 	int _power = 50;
 	BasicMotorPort _port;
 
@@ -40,8 +44,7 @@ public abstract class BasicMotor
 	 */
 	public void forward()
 	{ 
-		_mode = 1;
-		updateState();
+		updateState( FORWARD);
 	}
 	  
 	/**
@@ -49,7 +52,7 @@ public abstract class BasicMotor
 	 */
 	public boolean isForward()
 	{
-		return (_mode == 1);
+		return (_mode == FORWARD);
 	}
 
 	/**
@@ -57,8 +60,7 @@ public abstract class BasicMotor
 	 */
 	public void backward()
 	{
-		_mode = 2;
-		updateState();
+		updateState( BACKWARD);
 	}
 
 	/**
@@ -66,7 +68,7 @@ public abstract class BasicMotor
 	 */
 	public boolean isBackward()
 	{
-		return (_mode == 2);
+		return (_mode == BACKWARD);
 	}
 
 	/**
@@ -75,11 +77,11 @@ public abstract class BasicMotor
 	 */
 	public void reverseDirection()
 	{
-		if (_mode == 1 || _mode == 2)
-	    {
-			_mode = (3 - _mode);
-			updateState();
-	    }
+		if (_mode == FORWARD)
+			updateState( BACKWARD);
+		else
+		if (_mode == BACKWARD)
+			updateState( FORWARD);
 	}
 
 	/**
@@ -89,7 +91,7 @@ public abstract class BasicMotor
 	 */
 	public boolean isMoving()
 	{
-		return (_mode == 1 || _mode == 2);	  
+		return (_mode == FORWARD || _mode == BACKWARD);   
 	}
 
 	/**
@@ -100,8 +102,7 @@ public abstract class BasicMotor
 	 */   
 	public void flt()
 	{
-		_mode = 4;
-		updateState();
+		updateState( FLOAT);
 	}
 
 	/**
@@ -111,7 +112,7 @@ public abstract class BasicMotor
 	 */
 	public boolean isFloating()
 	{
-		return _mode == 4;	  
+		return _mode == FLOAT;	  
 	}
 	  
 	/**
@@ -123,8 +124,7 @@ public abstract class BasicMotor
 	 */
 	public void stop()
 	{
-		_mode = 3;
-	    updateState();
+		updateState( STOP);
 	}
 	  
 	/**
@@ -132,12 +132,16 @@ public abstract class BasicMotor
 	 */
 	public boolean isStopped()
 	{
-		return (_mode == 3);
+		return (_mode == STOP);
 	}
 
-	void updateState()
+	void updateState( int mode)
 	{
-		_port.controlMotor(_power, _mode);
+		if( _mode != mode)
+		{
+			_mode = mode;
+			_port.controlMotor(_power, _mode);
+		}
 	}
 	  
 	/**
@@ -148,6 +152,6 @@ public abstract class BasicMotor
 	public int getMode()
 	{ 
 		return _mode;
-    }
+	}
 }
 
