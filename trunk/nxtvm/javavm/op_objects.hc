@@ -6,18 +6,24 @@ case OP_NEW:
   // Stack: +1
   // Arguments: 2
   // Hi byte unused
-  tempBytePtr = (byte *) new_object_checked (pc[1], pc - 1);
-  if (tempBytePtr != JNULL)
-  { 
-    #if 0
-    trace (-1, (short) pc[1], 1);
-    trace (-1, (short) tempBytePtr, 2);
-    trace (-1, get_class_index((Object *) tempBytePtr), 3);
-    #endif
-    push_ref (ptr2ref(tempBytePtr));
-    pc += 2;
+  {
+    byte *tempBytePtr;
+    SAVE_REGS();
+    tempBytePtr = (byte *) new_object_checked (pc[1], pc - 1);
+    LOAD_REGS();
+    if (tempBytePtr != JNULL)
+    { 
+      #if 0
+      trace (-1, (short) pc[1], 1);
+      trace (-1, (short) tempBytePtr, 2);
+      trace (-1, get_class_index((Object *) tempBytePtr), 3);
+      #endif
+      push_ref (ptr2ref(tempBytePtr));
+      pc += 2;
+    }
   }
   goto LABEL_ENGINELOOP;
+
 case OP_GETSTATIC:
 case OP_PUTSTATIC:
 case OP_GETSTATIC_1:
@@ -26,17 +32,16 @@ case OP_GETSTATIC_2:
 case OP_PUTSTATIC_2:
 case OP_GETSTATIC_3:
 case OP_PUTSTATIC_3:
-
   // Stack: +1 or +2 for GETSTATIC, -1 or -2 for PUTSTATIC
   {
     STATICFIELD fieldRecord;
     byte *fbase1 = null;
-    byte fieldType;
+    unsigned int fieldType;
 #if RECORD_REFERENCES
     byte isRef;
 #endif
-    int opcode;
-    byte fieldSize;
+    unsigned int opcode;
+    unsigned int fieldSize;
     unsigned int fldIdx;
     boolean wideWord;
 
@@ -45,8 +50,13 @@ case OP_PUTSTATIC_3:
     #endif
 
     if (!is_initialized_idx (pc[0]))
-      if (dispatch_static_initializer (get_class_record (pc[0]), pc - 1))
+    {
+      SAVE_REGS();
+      tempInt = dispatch_static_initializer (get_class_record (pc[0]), pc - 1);
+      LOAD_REGS();
+      if( tempInt)
         goto LABEL_ENGINELOOP;
+    }
 
     opcode = pc[-1];
     fldIdx = pc[1];
@@ -105,22 +115,20 @@ case OP_PUTSTATIC_3:
     }
 
     pc += 2;
-
   }
   goto LABEL_ENGINELOOP;
+
 case OP_GETFIELD:
   {
     byte *fbase2;
-    byte fieldType;
-    byte fieldSize;
+    unsigned int fieldType;
+    unsigned int fieldSize;
     boolean wideWord;
 
     tempStackWord = get_top_ref();
     if (tempStackWord == JNULL)
-    {
-      throw_exception (nullPointerException);
-      goto LABEL_ENGINELOOP;
-    }
+      goto LABEL_NULLPTR_EXCEPTION;
+
     fieldType = get_pgfield_type(pc[0]);
     fieldSize = typeSize[fieldType];
     fbase2 = ((byte *) word2ptr (tempStackWord)) + 
@@ -131,7 +139,6 @@ case OP_GETFIELD:
       fieldSize = 4;
       wideWord = true;
     }
-
 
     #ifdef DEBUG_FIELDS
     printf ("--- GETFIELD ---\n");
@@ -174,12 +181,13 @@ case OP_GETFIELD:
 	printf("Going home\n");
 #endif
   goto LABEL_ENGINELOOP;
+
 case OP_PUTFIELD:
   {
     byte *fbase3;
-    byte fieldType;
-    byte fieldSize;
-    int offset;
+    unsigned int fieldType;
+    unsigned int fieldSize;
+    unsigned int offset;
     boolean wideWord;
 
     fieldType = get_pgfield_type(pc[0]);
@@ -204,10 +212,7 @@ case OP_PUTFIELD:
     #endif
 
     if (tempStackWord == JNULL)
-    {
-      throw_exception (nullPointerException);
-      goto LABEL_ENGINELOOP;
-    }
+      goto LABEL_NULLPTR_EXCEPTION;
     fbase3 = ((byte *) word2ptr (tempStackWord)) + offset;
     if (wideWord)
       store_word (fbase3 + 4, 4, pop_word());
@@ -226,6 +231,99 @@ case OP_PUTFIELD:
     pc += 2;
   }
   goto LABEL_ENGINELOOP;
+
+#if 1
+case OP_GETFIELD_S1:
+  {
+    byte *fp;
+    STACKWORD w = get_top_ref();
+    if( w == JNULL)
+      goto LABEL_NULLPTR_EXCEPTION;
+    fp = ((byte *) word2ptr( w)) + pc[0];
+    set_top_word( (JINT)(JBYTE)fp[0]);
+    pc += 2;
+  }
+  goto LABEL_ENGINELOOP;
+
+case OP_GETFIELD_S2:
+  {
+    byte *fp;
+    STACKWORD w = get_top_ref();
+    if( w == JNULL)
+      goto LABEL_NULLPTR_EXCEPTION;
+    fp = ((byte *) word2ptr( w)) + pc[0];
+    set_top_word( (JINT)(JSHORT) ((fp[0] << 8) | fp[1]));
+    pc += 2;
+  }
+  goto LABEL_ENGINELOOP;
+
+case OP_GETFIELD_U2:
+  {
+    byte *fp;
+    STACKWORD w = get_top_ref();
+    if( w == JNULL)
+      goto LABEL_NULLPTR_EXCEPTION;
+    fp = ((byte *) word2ptr( w)) + pc[0];
+    set_top_word( (JINT)(JCHAR) ((fp[0] << 8) | fp[1]));
+    pc += 2;
+  }
+  goto LABEL_ENGINELOOP;
+
+case OP_GETFIELD_W4:
+case OP_GETFIELD_A4:
+  {
+    byte *fp;
+    STACKWORD w = get_top_ref();
+    if( w == JNULL)
+      goto LABEL_NULLPTR_EXCEPTION;
+    fp = ((byte *) word2ptr( w)) + pc[0];
+    set_top_word( get_word_4( fp));
+    pc += 2;
+  }
+  goto LABEL_ENGINELOOP;
+
+case OP_PUTFIELD_S1:
+  {
+    byte *fp;
+    STACKWORD w = get_ref_at (1);
+    if (w == JNULL)
+      goto LABEL_NULLPTR_EXCEPTION;
+    fp = ((byte *) word2ptr( w)) + pc[0];
+    fp[0] = (JBYTE) pop_word();
+    just_pop_ref();
+    pc += 2;
+  }
+  goto LABEL_ENGINELOOP;
+
+case OP_PUTFIELD_S2:
+case OP_PUTFIELD_U2:
+  {
+    byte *fp;
+    STACKWORD w = get_ref_at (1);
+    if (w == JNULL)
+      goto LABEL_NULLPTR_EXCEPTION;
+    fp = ((byte *) word2ptr( w)) + pc[0];
+    store_word (fp, 2, pop_word());
+    just_pop_ref();
+    pc += 2;
+  }
+  goto LABEL_ENGINELOOP;
+
+case OP_PUTFIELD_W4:
+case OP_PUTFIELD_A4:
+  {
+    byte *fp;
+    STACKWORD w = get_ref_at (1);
+    if (w == JNULL)
+      goto LABEL_NULLPTR_EXCEPTION;
+    fp = ((byte *) word2ptr( w)) + pc[0];
+    store_word (fp, 4, pop_word());
+    just_pop_ref();
+    pc += 2;
+  }
+  goto LABEL_ENGINELOOP;
+#endif
+
 case OP_INSTANCEOF:
   // Stack: unchanged
   // Arguments: 2
@@ -233,6 +331,7 @@ case OP_INSTANCEOF:
   set_top_word (instance_of (word2obj (get_top_ref()),  pc[1]));
   pc += 2;
   goto LABEL_ENGINELOOP;
+
 case OP_CHECKCAST:
   // Stack: -1 +1 (same)
   // Arguments: 2
@@ -240,7 +339,10 @@ case OP_CHECKCAST:
   pc++;
   tempStackWord = get_top_ref();
   if (tempStackWord != JNULL && !instance_of (word2obj (tempStackWord), pc[0]))
-    throw_exception (classCastException);
+  {
+    thrownException = classCastException;
+    goto LABEL_THROW_EXCEPTION;
+  }
   pc++;
   goto LABEL_ENGINELOOP;
 

@@ -93,9 +93,17 @@ $(SAMBA_TARGET): $(SAMBA_TARGET)_elf
 	@echo "Compiling $< to $@"
 	$(CC) $(CFLAGS) -o $@ $< 
 
+../../javavm/interpreter.o: ../../javavm/interpreter.c
+	@echo "Compiling $< to $@"
+	$(CC) $(CFLAGS) -O2 -o $@ $< 
+
 %.asm: %.c
 	@echo "Compiling $< to $@"
-	$(CC) -S $(CFLAGS) -o $@ $< 
+	$(CC) -S $(CFLAGS) -g0 -o $@ $< 
+
+../../javavm/interpreter.asm: ../../javavm/interpreter.c
+	@echo "Compiling $< to $@"
+	$(CC) -S $(CFLAGS) -g0 -O2 -o $@ $< 
 
 %.oram: %.c
 	@echo "Compiling $< to $@"

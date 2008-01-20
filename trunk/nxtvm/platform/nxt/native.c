@@ -27,7 +27,12 @@
 #include "bt.h"
 #include "udp.h"
 #include "flashprog.h"
-int pos = 0;
+
+#undef push_word()
+#undef push_ref()
+#define push_word( a) push_word_cur( a)
+#define push_ref( a)  push_ref_cur( a)
+
 // Declared below to avoid needing STACKWORD everywhere we use display
 extern STACKWORD display_get_array(void);
 /**

@@ -90,7 +90,7 @@ void throw_exception (Object *exception)
   assert (currentThread->state > DEAD, EXCEPTIONS1);
   #endif // VERIFY
   
-  gExceptionPc = pc;
+  gExceptionPc = curPc;
   gExcepMethodRec = null;
 
   #if 0
@@ -104,7 +104,7 @@ void throw_exception (Object *exception)
   if (gExcepMethodRec == null)
     gExcepMethodRec = tempMethodRecord;
   gExceptionRecord = (ExceptionRecord *) (get_binary_base() + tempMethodRecord->exceptionTable);
-  tempCurrentOffset = ptr2word(pc) - ptr2word(get_binary_base() + tempMethodRecord->codeOffset);
+  tempCurrentOffset = ptr2word(curPc) - ptr2word(get_binary_base() + tempMethodRecord->codeOffset);
 
   #if 0
   trace (-1, tempCurrentOffset, 5);
@@ -125,10 +125,10 @@ void throw_exception (Object *exception)
         // Clear operand stack
         init_sp (tempStackFrame, tempMethodRecord);
         // Push the exception object
-        push_ref (ptr2word (exception));
+        push_ref_cur (ptr2word (exception));
         // Jump to handler:
-        pc = get_binary_base() + tempMethodRecord->codeOffset + 
-             gExceptionRecord->handler;
+        curPc = get_binary_base() + tempMethodRecord->codeOffset + 
+                 gExceptionRecord->handler;
 #if DEBUG_EXCEPTIONS
   printf("Found exception handler\n");
 #endif
@@ -159,13 +159,5 @@ void throw_exception (Object *exception)
     return;
   }
   goto LABEL_PROPAGATE; 
-
-
 }
-
-
-
-
-
-
 

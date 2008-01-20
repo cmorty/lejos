@@ -30,10 +30,12 @@ byte    gRequestCode;
 unsigned int gNextProgram;
 unsigned int gNextProgramSize;
 
-byte *pc, *old_pc;
+byte *curPc;
+STACKWORD *curStackTop;
+STACKWORD *curLocalsBase;
+
+byte *old_pc;
 unsigned int debug_word1, debug_word2;
-STACKWORD *localsBase;
-STACKWORD *stackTop;
 
 // Temporary globals:
 
@@ -45,11 +47,12 @@ STACKWORD *stackTop;
 // STACKWORD *tempWordPtr;
   
 static byte* arrayStart;
+static Object* thrownException;
 
 /**
  * Assumes pc points to 2-byte offset, and jumps.
  */
-void do_goto (int aCond)
+static byte* do_goto ( byte* pc, int aCond)
 {
   if (aCond)
   {
@@ -60,19 +63,19 @@ void do_goto (int aCond)
   {
     pc += 2;
   }
+
+  return pc;
 }
 
-void do_isub (void)
-{
-  STACKWORD poppedWord;
-
-  poppedWord = pop_word();
-  set_top_word (word2jint(get_top_word()) - word2jint(poppedWord));
+#define do_isub() \
+{ \
+  STACKWORD poppedWord = pop_word(); \
+  set_top_word (word2jint(get_top_word()) - word2jint(poppedWord)); \
 }
 
 #if FP_ARITHMETIC
 
-void do_fcmp (JFLOAT f1, JFLOAT f2, STACKWORD def)
+STACKWORD do_fcmp (JFLOAT f1, JFLOAT f2, STACKWORD def)
 {
   STACKWORD res;
 
@@ -85,7 +88,7 @@ void do_fcmp (JFLOAT f1, JFLOAT f2, STACKWORD def)
   else 
     res = def;
 
-  push_word (res);
+  return res;
 }
 
 #endif
@@ -136,23 +139,23 @@ Object *create_string (ConstantRecord *constantRecord,
  * Sets arrayStart to start of the array data area.
  * @return array index if successful, -1 if an exception has been scheduled.
  */
-static int array_helper()
+inline static int array_helper( byte *pc, STACKWORD* stackTop)
 {
   unsigned int idx = word2jint(pop_word());
   byte* ptr = word2ptr(get_top_ref());
 
   if (ptr == JNULL)
-    throw_exception (nullPointerException);
-  else if ( /*idx < 0 ||*/ idx >= get_array_length ((Object *) ptr))
-    throw_exception (arrayIndexOutOfBoundsException);
-  else
-  {
-    arrayStart = array_start((Object*)ptr);
-    return idx;
-  }
+    return -1;
 
-  return -1;
+  if ( /*idx < 0 ||*/ idx >= get_array_length ((Object *) ptr))
+    return -2;
+
+  arrayStart = array_start((Object*)ptr);
+  return idx;
 }
+
+#define SAVE_REGS() (curPc = pc, curStackTop = stackTop, curLocalsBase = localsBase)
+#define LOAD_REGS() (localsBase = curLocalsBase, stackTop = curStackTop, pc = curPc)
 
 /**
  * Everything runs inside here, essentially.
@@ -171,6 +174,8 @@ static int array_helper()
  *   for time slices to work.
  * 
  */
+
+
 void engine()
 {
   byte ticks_until_switch = TICKS_PER_TIME_SLICE;
@@ -178,8 +183,9 @@ void engine()
   STACKWORD *tempWordPtr;
   ConstantRecord *tempConstRec;
   int tempInt;
-  byte tempByte;
-  byte* tempBytePtr;
+  byte *pc = curPc;
+  STACKWORD *stackTop = curStackTop;
+  STACKWORD *localsBase = curLocalsBase;
 
   assert( currentThread != null, INTERPRETER0);
 
@@ -193,6 +199,8 @@ void engine()
   while( gMakeRequest)
   {
     byte requestCode = gRequestCode;
+
+    SAVE_REGS();
 
     gMakeRequest = false;
     gRequestCode = REQUEST_TICK;
@@ -224,6 +232,8 @@ void engine()
       idle_hook();
       schedule_request( REQUEST_SWITCH_THREAD);
     }
+
+    LOAD_REGS();
   }
 
   assert( gRequestCode == REQUEST_TICK, INTERPRETER2);

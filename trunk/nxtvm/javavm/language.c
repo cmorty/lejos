@@ -192,15 +192,15 @@ boolean dispatch_special (MethodRecord *methodRecord, byte *retAddr)
   printf ("-- max stack ptr= %d\n", (int) (currentThread->stackArray + (get_array_size(currentThread->stackArray))*2));
   #endif
 
-  pop_words (methodRecord->numParameters);
-  pc = retAddr;
+  pop_words_cur (methodRecord->numParameters);
+  curPc = retAddr;
 
   if (is_native (methodRecord))
   {
   #if DEBUG_METHODS
   printf ("-- native\n");
   #endif 
-    dispatch_native (methodRecord->signatureId, get_stack_ptr() + 1);
+    dispatch_native (methodRecord->signatureId, get_stack_ptr_cur() + 1);
     // Stack frame not pushed
     return false;
   }
@@ -258,9 +258,9 @@ boolean dispatch_special (MethodRecord *methodRecord, byte *retAddr)
   // Initialize rest of new stack frame
   stackFrame->methodRecord = methodRecord;
   stackFrame->monitor = null;
-  stackFrame->localsBase = get_stack_ptr() + 1;
+  stackFrame->localsBase = get_stack_ptr_cur() + 1;
   // Initialize auxiliary global variables (registers)
-  pc = get_code_ptr(methodRecord);
+  curPc = get_code_ptr(methodRecord);
 
   #if DEBUG_METHODS
   printf ("pc set to 0x%X\n", (int) pc);
@@ -283,7 +283,7 @@ boolean dispatch_special (MethodRecord *methodRecord, byte *retAddr)
     // int len = (int)(stackTop + methodRecord->maxOperands) - (int)(stack_array()) - HEADER_SIZE;
     
     // Need to compute new array size (as distinct from number of bytes in array).
-  	int newlen = (((int)(stackTop + methodRecord->maxOperands) - (int)(stack_array()) + 3) / 4) * 3 / 2;
+  	int newlen = (((int)(curStackTop + methodRecord->maxOperands) - (int)(stack_array()) + 3) / 4) * 3 / 2;
   	JINT newStackArray = ptr2word(reallocate_array(word2ptr(currentThread->stackArray), newlen));
   	
   	// If can't allocate new stack, give in!
@@ -298,8 +298,8 @@ boolean dispatch_special (MethodRecord *methodRecord, byte *retAddr)
     // Adjust pointers.
     newlen = newStackArray - currentThread->stackArray;
     stackBase = stackframe_array();
-    stackTop = word2ptr(ptr2word(stackTop) + newlen);
-    localsBase = word2ptr(ptr2word(localsBase) + newlen);
+    curStackTop = word2ptr(ptr2word(curStackTop) + newlen);
+    curLocalsBase = word2ptr(ptr2word(curLocalsBase) + newlen);
 #if DEBUG_MEMORY
 	printf("thread=%d, stackTop(%d), localsBase(%d)=%d\n", currentThread->threadId, (int)stackTop, (int)localsBase, (int)(*localsBase));
 #endif
@@ -361,7 +361,7 @@ void do_return (int numWords)
   }
 
   // Place source ptr below data to be copied up the stack
-  fromStackPtr = get_stack_ptr_at (numWords);
+  fromStackPtr = get_stack_ptr_at_cur(numWords);
   // Pop stack frame
   currentThread->stackFrameArraySize--;
   stackFrame--;
@@ -375,7 +375,7 @@ void do_return (int numWords)
 
   while (numWords--)
   {
-    push_word (*(++fromStackPtr));
+    push_word_cur (*(++fromStackPtr));
   }  
 }
 

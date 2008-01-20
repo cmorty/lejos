@@ -15,10 +15,12 @@ extern byte    gRequestCode;
 extern unsigned int gNextProgram;
 extern unsigned int gNextProgramSize;
 
-extern byte *pc, *old_pc;
+extern byte *curPc;
+extern STACKWORD *curStackTop;
+extern STACKWORD *curLocalsBase;
+
+extern byte *old_pc;
 extern unsigned int debug_word1, debug_word2;
-extern STACKWORD *stackTop;
-extern STACKWORD *localsBase;
 
 // Temp globals:
 

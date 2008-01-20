@@ -28,8 +28,8 @@ case OP_IREM:
   tempInt = word2jint(pop_word());
   if (tempInt == 0)
   {
-    throw_exception (arithmeticException);
-    goto LABEL_ENGINELOOP;
+    thrownException = arithmeticException;
+    goto LABEL_THROW_EXCEPTION;
   }
   just_set_top_word ((*(pc-1) == OP_IDIV) ? word2jint(get_top_word()) / tempInt :
                                             word2jint(get_top_word()) % tempInt);
