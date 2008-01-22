@@ -154,6 +154,25 @@ public final class StringBuffer
     return this;
   }
   
+  public int indexOf(String str) {
+      return indexOf(str, 0);
+  }
+
+  public synchronized int indexOf(String str, int fromIndex) {
+      return String.indexOf(characters, 0, characters.length,
+                            str.toCharArray(), 0, str.length(), fromIndex);
+  }
+
+  public int lastIndexOf(String str) {
+      // Note, synchronization achieved via other invocations
+      return lastIndexOf(str, characters.length);
+  }
+
+  public synchronized int lastIndexOf(String str, int fromIndex) {
+      return String.lastIndexOf(characters, 0, characters.length,
+                            str.toCharArray(), 0, str.length(), fromIndex);
+  }
+  
   public String toString()
   {
     return new String (characters, 0, curPos);
