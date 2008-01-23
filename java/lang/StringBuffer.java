@@ -201,6 +201,16 @@ public final class StringBuffer
     return characters;
   }
   
+  public synchronized String substring(int start) {
+      return substring(start, curPos);
+  }
+
+  public synchronized String substring(int start, int end) {
+      // THIS SHOULD REALLY THROW StringIndexOutOfBoundsException
+	  int len = end - start;
+	  return new String(characters, start, len);
+  }
+  
     /**
      * Helper method for converting floats and doubles.
      *
