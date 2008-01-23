@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Ldt Plug-in
 Bundle-SymbolicName: org.lejos.nxt.ldt; singleton:=true
-Bundle-Version: 0.3.0
+Bundle-Version: 0.4.0
 Bundle-Activator: org.lejos.nxt.ldt.LeJOSNXJPlugin
 Bundle-Vendor: leJOS
 Require-Bundle: org.eclipse.core.runtime,
@@ -10,7 +10,6 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.swt,
  org.eclipse.ui,
  org.eclipse.jdt.core,
- org.eclipse.pde,
  org.eclipse.ui.console
 Eclipse-LazyStart: true
 Bundle-ClassPath: lejosnxj.jar,

@@ -109,8 +109,20 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 			boolean isVerbose = LeJOSNXJPlugin.getDefault()
 					.getPluginPreferences().getBoolean(
 							PreferenceConstants.P_IS_VERBOSE);
-			if(isVerbose)
+			if (isVerbose)
 				noOfArguments++;
+			// connect to brick address?
+			boolean isConnectToAddress = LeJOSNXJPlugin.getDefault()
+					.getPluginPreferences().getBoolean(
+							PreferenceConstants.P_CONNECT_TO_BRICK_ADDRESS);
+			if (isConnectToAddress)
+				noOfArguments += 2;
+			// connect to named brick?
+			boolean isConnectToName = LeJOSNXJPlugin.getDefault()
+					.getPluginPreferences().getBoolean(
+							PreferenceConstants.P_CONNECT_TO_BRICK_NAME);
+			if (isConnectToName)
+				noOfArguments += 2;
 			String args[] = new String[noOfArguments];
 			int argsCounter = 0;
 			// get selected project
@@ -136,8 +148,38 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 							PreferenceConstants.P_CONNECTION_TYPE);
 			args[argsCounter++] = "-" + connectionType;
 			// verbosity
-			if(isVerbose)
+			if (isVerbose)
 				args[argsCounter++] = "--verbose";
+			// connect to brick address?
+			if (isConnectToAddress) {
+				String connectionAddress = LeJOSNXJPlugin.getDefault()
+						.getPluginPreferences().getString(
+								PreferenceConstants.P_CONNECTION_BRICK_ADDRESS)
+						.trim();
+				if (connectionAddress.isEmpty())
+					throw new LeJOSNXJException(
+							"no address to connect to specified in the preferences");
+				args[argsCounter++] = "--address";
+				args[argsCounter++] = connectionAddress;
+			}
+			// connect to named brick?
+			if (isConnectToName) {
+				String connectionName = LeJOSNXJPlugin.getDefault()
+						.getPluginPreferences().getString(
+								PreferenceConstants.P_CONNECTION_BRICK_NAME)
+						.trim();
+				if (connectionName.isEmpty())
+					throw new LeJOSNXJException(
+							"no brick name to connect to specified in the preferences");
+				args[argsCounter++] = "--name";
+				args[argsCounter++] = connectionName;
+			}
+			// log
+			String argsString = "arguments";
+			for (int arg = 0; arg < args.length; arg++) {
+				argsString += " " + args[arg];
+			}
+			LeJOSNXJUtil.message("linking and uploading using " + argsString);
 			// run link and upload
 			delegate.run(args);
 		} catch (Throwable e) {

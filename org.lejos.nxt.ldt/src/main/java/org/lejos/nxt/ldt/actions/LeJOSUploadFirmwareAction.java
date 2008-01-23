@@ -110,10 +110,10 @@ public class LeJOSUploadFirmwareAction implements
 		String os = System.getProperty("os.name");
 		if("Windows XP".equals(os) || "Windows 2000".equals(os)) {
 			command = nxjHome + "\\bin\\nxjflash.exe";
-		} else if("linux".equals(os)) {
+		} else if("linux".equals(os)||("OSX").equals(os)) {
 			command = nxjHome + "/bin/nxjflash";
 		} else {
-			throw new UnsupportedOperationException("operating system is presently not supported");
+			throw new UnsupportedOperationException("operating system " + os + " is presently not supported");
 		}
 		// check if file exists
 		File commandFile = new File(command);
