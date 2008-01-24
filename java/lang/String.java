@@ -248,6 +248,16 @@ public final class String
     return ca;
   }
 
+  public synchronized String substring(int start) {
+      return substring(start, characters.length);
+  }
+
+  public synchronized String substring(int start, int end) {
+      // THIS SHOULD REALLY THROW StringIndexOutOfBoundsException
+	  int len = end - start;
+	  return new String(characters, start, len);
+  }
+  
   /**
    * Converts an Object to a String
    * @return the String that represents the object
