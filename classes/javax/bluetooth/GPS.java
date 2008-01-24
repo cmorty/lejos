@@ -17,7 +17,6 @@ public class GPS extends Thread {
 	private final int BUFF = 20; 
 	private byte [] segment = new byte[BUFF];
 	private StringBuffer currentSentence = new StringBuffer();
-	private StringBuffer previousSentence = new StringBuffer();
 	
 	private String START_CHAR = "$";
 	
@@ -93,12 +92,20 @@ public class GPS extends Thread {
 		while(true) {
 			String s = getNextString();
 
+			// Make NMEASentence
+			NMEASentence sen = new NMEASentence(s);
+			
 			LCD.clear();
 			LCD.drawInt(sentenceCount, 0, 0); // DELETE
-			LCD.drawString(s, 0, 2);
+			LCD.drawString(s, 0, 1);
+			LCD.drawString(sen.getPrefix(), 0, 2);
+			LCD.drawString(sen.getDataType(), 0, 3);
+			LCD.drawInt(sen.getChecksum(), 0, 4);
+			LCD.drawInt(sen.calcChecksum(), 0, 5);
+			
 			LCD.refresh();
 			
-			// Make NMEASentence
+			
 			// Check if valid (discard if it is invalid)
 			// Check if contains lat/long data
 			// If so, pull that data and update all global vars
