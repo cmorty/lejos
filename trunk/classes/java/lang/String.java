@@ -57,50 +57,31 @@ public final class String
    */
   public int indexOf(int ch, int fromIndex) {
       int offset = 0; // Assume string always starts at 0 in characters[]
-	  int max = offset + characters.length;
-      char v[] = characters;
+		int max = offset + characters.length;
+		char v[] = characters;
 
-      if (fromIndex < 0) {
-          fromIndex = 0;
-      } else if (fromIndex >= characters.length) {
-          // Note: fromIndex might be near -1>>>1.
-          return -1;
-      }
+		if (fromIndex < 0) {
+			fromIndex = 0;
+		} else if (fromIndex >= characters.length) {
+			// Note: fromIndex might be near -1>>>1.
+			return -1;
+		}
 
-      int i = offset + fromIndex;
-      if (ch < Character.MIN_SUPPLEMENTARY_CODE_POINT) {
-          // handle most cases here (ch is a BMP code point or a
-          // negative value (invalid code point))
-          for (; i < max ; i++) {
-              if (v[i] == ch) {
-                  return i - offset;
-              }
-          }
-          return -1;
-      }
-
-      if (ch <= Character.MAX_CODE_POINT) {
-          // handle supplementary characters here
-          char[] surrogates = Character.toChars(ch);
-          for (; i < max; i++) {
-              if (v[i] == surrogates[0]) {
-                  if (i + 1 == max) {
-                      break;
-                  }
-                  if (v[i+1] == surrogates[1]) {
-                      return i - offset;
-                  }
-              }
-          }
-      }
-      return -1;
+		int i = offset + fromIndex;
+		for (; i < max; i++) {
+			if (v[i] == ch) {
+				return i - offset;
+			}
+		}
+		return -1;
   }
   
   /**
-   * Finds the location of a string within this string 
-   * @param str
-   * @return Index of string location, -1 if string does not exist.
-   */
+	 * Finds the location of a string within this string
+	 * 
+	 * @param str
+	 * @return Index of string location, -1 if string does not exist.
+	 */
   public int indexOf(String str) {
       return indexOf(str, 0);
   }
