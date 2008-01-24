@@ -1,11 +1,42 @@
 
 import java.io.*;
 import java.util.Vector;
-
+import javax.microedition.lcdui.*;
 import lejos.nxt.comm.*;
 import lejos.nxt.*;
 
-public class StartUpText {
+public class StartUpText
+{
+   static Graphics g = new Graphics();
+   static  boolean btPowerOn = false;
+   static String blank = "               ";
+   
+   static int [] freq = {523,784, 659};
+   public static void playTune()
+   {
+      for(int i = 0; i<3; i++)
+      {
+         Sound.playTone(freq[i],250);
+         Sound.pause(260);       
+      }
+   }
+   static void drawTopRow()
+   {
+      LCD.drawString(blank,0,0);
+      g.drawRect(0,1, 13,5);  // battery icon
+      g.drawRect(14,3,1,1);
+      // 2.5 v shows as empty, 9 as full;
+      int b = -5+Battery.getVoltageMilliVolt()/500 ;
+      g.fillRect(0,2, b,4);
+      byte [] nam = Bluetooth.getFriendlyName();
+      for(int i=0; i<nam.length; i++)
+      {
+         if(nam[i] <32)break;
+         g.drawChar((char)nam[i],(4+i)*6,0,false);
+      }
+      g.drawString(" BT",82, 0,!btPowerOn);  // invert when power is off
+      g.refresh();    
+   }
 	
 	private static boolean setBluetoothPower(boolean powerOn, boolean needReset)
 	{
@@ -28,8 +59,7 @@ public class StartUpText {
 	public static void main(String[] args) throws Exception {
 		Indicators ind = new Indicators();
 		USBRespond usb = new USBRespond();
-		BTRespond bt = new BTRespond(); 
-		String title = " leJOS NXJ";
+		BTRespond bt = new BTRespond();
 		String devices = "Devices";
 		String found = "Found";
 		String status = "Status ";
@@ -40,6 +70,9 @@ public class StartUpText {
 		String bluetooth = "Bluetooth";
 		String system = "System";
 		String freeFlash = "Free flash";
+		String freeMem = "Free ram";
+		String battery = "Battery ";
+		
 		TextMenu filesMenu = new TextMenu(null,1);
 		String[] topMenuData = {"Files", "Bluetooth", "System"};
 		TextMenu topMenu = new TextMenu(topMenuData,1);
@@ -52,13 +85,14 @@ public class StartUpText {
 		TextMenu blueMenu = new TextMenu(blueMenuData,3);
 		TextMenu blueOffMenu = new TextMenu(blueOffMenuData,3);
 		String[] systemMenuData = {"Format"};
-		Wakeup.play();
-		TextMenu systemMenu = new TextMenu(systemMenuData,3);
+		String dot = ".";
+        playTune();
+		TextMenu systemMenu = new TextMenu(systemMenuData,5);
 		File[] files = null;
 		boolean quit = false;
 		int visibility = 0;
-		boolean btPowerOn = setBluetoothPower(Bluetooth.getStatus() == 0, false);
-		ind.setDaemon(true);
+		btPowerOn = setBluetoothPower(Bluetooth.getStatus() == 0, false);		
+		ind.setDaemon(true);	
 		ind.start();
 		usb.setDaemon(true);
 		usb.setIndicator(ind);
@@ -74,17 +108,13 @@ public class StartUpText {
 		catch (IOException ioe) {
 			File.reset();
 		}
-		
+
 		while (!quit) 
-		{
-		    LCD.drawInt( (int)(Runtime.getRuntime().freeMemory()),0,0);
-			usb.setMenu(menu);
-			bt.setMenu(menu);
-			LCD.clear();
-			LCD.drawString(title,6,0);
-		    LCD.drawInt( (int)(Runtime.getRuntime().freeMemory()),0,0);
-			LCD.refresh();
-			
+		{ 
+		   LCD.clear();
+		   drawTopRow();
+            usb.setMenu(menu);
+            bt.setMenu(menu);			
 			if (menu == filesMenu) {
 				files = File.listFiles();
 				int len = 0;
@@ -115,11 +145,15 @@ public class StartUpText {
 					pos = 10;
 				}
 				LCD.drawInt(free,size, pos, 2);
-				LCD.refresh();				
+				LCD.drawString(battery, 0,3);
+               int  millis = Battery.getVoltageMilliVolt() + 50;
+                LCD.drawInt((millis - millis%1000)/1000,11,3);
+                LCD.drawString(dot, 12, 3);
+                LCD.drawInt((millis% 1000)/100,13,3);
+                LCD.drawString(freeMem,0,4);
+                LCD.drawInt((int)(Runtime.getRuntime().freeMemory()),11,4);				
 			}
-
-		    int selection = menu.select();
-		    
+			int selection = menu.select();
 		    if (menu == topMenu) {
 		    	 if (selection == 0) {
 		    		 menu = filesMenu;
@@ -132,10 +166,12 @@ public class StartUpText {
 		    	 }
 		    } else if (menu == filesMenu) {
 			    if (selection >= 0 && files[selection] != null) {
-					LCD.clear();
-					LCD.drawString(title,6,0);
-				    LCD.drawInt( (int)(Runtime.getRuntime().freeMemory()),0,0);
-					LCD.refresh();
+			       LCD.clear();
+			       drawTopRow();
+//					LCD.clear();
+//					LCD.drawString(title,6,0);
+//				    LCD.drawInt( (int)(Runtime.getRuntime().freeMemory()),0,0);
+//					LCD.refresh();
 					fileMenu.setTitle(fileNames[selection]);
 			    	int subSelection = fileMenu.select();
 			    	if (subSelection == 0) 
@@ -159,7 +195,7 @@ public class StartUpText {
 				if (selection == 0)
 				{
 					LCD.clear();
-					LCD.drawString("Power on...", 0, 0);
+					LCD.drawString("   Power on...", 0, 0);
 					LCD.refresh();
 				    btPowerOn = setBluetoothPower(true, true);
 					menu = blueMenu;
@@ -256,7 +292,7 @@ public class StartUpText {
 		        } else if (selection == 2) // On/Off
 		        {
 					LCD.clear();
-					LCD.drawString("Power off...", 0, 0);
+					LCD.drawString("   Power off...", 0, 0);
 					LCD.refresh();
 					btPowerOn = setBluetoothPower(false, true);
 					menu = blueOffMenu;
@@ -290,28 +326,28 @@ class Indicators extends Thread
 	
 	public void run() 
 	{
-		String dot = ".";
-		String [] ioProgress = {".  ", " . ", "  ."};
+		String [] ioProgress = {".   ", " .  ", "  . "};
 		int ioIndex = 0;
-		int millis;
+		boolean rewrite = false;
 		while(true) 
 		{
 			try 
 			{
 			  if (io)
 			  {
-				  ioIndex = (ioIndex + 1) % ioProgress.length;
-				  LCD.drawString(ioProgress[ioIndex], 13, 0);
+			     StartUpText.g.drawString("     ", 76, 0);
+			     ioIndex = (ioIndex + 1) % ioProgress.length;
+				  StartUpText.g.drawString(ioProgress[ioIndex], 78, 0);
 				  io = false;
+				  rewrite = true;
 			  }
-			  else
+			  else if(rewrite)
 			  {
-				  millis = Battery.getVoltageMilliVolt() + 50;
-				  LCD.drawInt((millis - millis%1000)/1000,13,0);
-				  LCD.drawString(dot, 14, 0);
-				  LCD.drawInt((millis% 1000)/100,15,0);
+			     LCD.drawString("   ",13,0);
+			      StartUpText.g.drawString(" BT",82, 0,!StartUpText.btPowerOn);  // invert when power is off
+			      StartUpText.g.refresh();   
+			      rewrite = false;
 			  }
-			  LCD.refresh();
 			  Thread.sleep(1000);
 			} catch (InterruptedException ie) {}
 		}
@@ -340,18 +376,11 @@ class USBRespond extends Thread
 		USB.usbReset();
 		
 		while (true)
-		{
-		
+		{		
 			len = USB.usbRead(inMsg,64);
-			
+		
 			if (len > 0)
 			{
-				//LCD.drawInt(len,3,0,1);
-				//LCD.drawInt(inMsg[0] & 0xFF,3,3,1);
-				//LCD.drawInt(inMsg[1] & 0xFF,3,6,1);
-				//LCD.drawInt(inMsg[2] & 0xFF,3,9,1);
-				//LCD.drawInt(inMsg[3] & 0xFF,3,12,1);
-				//LCD.refresh();
 				ind.ioActive();
 				int replyLen = LCP.emulateCommand(inMsg,len, reply);
 				if ((inMsg[0] & 0x80) == 0) USB.usbWrite(reply, replyLen);
@@ -414,20 +443,13 @@ class BTRespond  extends Thread {
 				//LCD.refresh();			
 				cmdMode = false;
 			}
-			
-			//len = Bluetooth.readPacket(inMsg,64);
+
 			while(!cmdMode)
 			{
 				len = btc.read(inMsg,64);
 
 				if (len > 0)
 				{
-					//LCD.drawInt(len,3,0,1);
-					//LCD.drawInt(inMsg[0] & 0xFF,3,3,1);
-					//LCD.drawInt(inMsg[1] & 0xFF,3,6,1);
-					//LCD.drawInt(inMsg[2] & 0xFF,3,9,1);
-					//LCD.drawInt(inMsg[3] & 0xFF,3,12,1);
-					//LCD.refresh();
 					ind.ioActive();
 					int replyLen = LCP.emulateCommand(inMsg,len, reply);
 					if ((inMsg[0] & 0x80) == 0) btc.write(reply, replyLen);
@@ -457,17 +479,6 @@ class BTRespond  extends Thread {
 		}
 	}
 }
- class Wakeup
-{
-   static int [] freq = {523,784, 659};
-   public static void play()
-   {
-      for(int i = 0; i<3; i++)
-      {
-         Sound.playTone(freq[i],250);
-         Sound.pause(260);       
-      }
-   }
-}
+
 
 
