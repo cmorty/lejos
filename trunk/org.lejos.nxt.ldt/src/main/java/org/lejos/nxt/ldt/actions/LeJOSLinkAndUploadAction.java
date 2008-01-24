@@ -105,6 +105,12 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 			delegate.addMonitor(_logListener);
 			// create arguments
 			int noOfArguments = 6;
+			// run after download?
+			boolean runAfterDownload = LeJOSNXJPlugin.getDefault()
+					.getPluginPreferences().getBoolean(
+							PreferenceConstants.P_RUN_AFTER_DOWNLOAD);
+			if (runAfterDownload)
+				noOfArguments++;
 			// verbosity?
 			boolean isVerbose = LeJOSNXJPlugin.getDefault()
 					.getPluginPreferences().getBoolean(
@@ -147,6 +153,9 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 					.getPluginPreferences().getString(
 							PreferenceConstants.P_CONNECTION_TYPE);
 			args[argsCounter++] = "-" + connectionType;
+			// run after download?
+            if(runAfterDownload)
+				args[argsCounter++] = "-r";
 			// verbosity
 			if (isVerbose)
 				args[argsCounter++] = "--verbose";
