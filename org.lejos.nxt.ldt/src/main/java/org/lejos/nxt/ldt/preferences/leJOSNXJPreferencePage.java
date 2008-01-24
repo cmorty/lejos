@@ -39,6 +39,9 @@ public class leJOSNXJPreferencePage extends FieldEditorPreferencePage implements
 				PreferenceConstants.P_CONNECTION_TYPE, "&Connection type", 1,
 				new String[][] { { "&USB", "u" }, { "&Bluetooth", "b" } },
 				getFieldEditorParent()));
+		// run after download?
+		addField(new BooleanFieldEditor(PreferenceConstants.P_RUN_AFTER_DOWNLOAD,
+				"&Run program after download", getFieldEditorParent()));
 		// verbose?
 		addField(new BooleanFieldEditor(PreferenceConstants.P_IS_VERBOSE,
 				"&Verbose", getFieldEditorParent()));

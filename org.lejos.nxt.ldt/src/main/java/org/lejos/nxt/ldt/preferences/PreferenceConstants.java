@@ -11,9 +11,10 @@ public class PreferenceConstants {
 	public static final String P_NXJ_HOME = "nxjHome";
 	public static final String P_IS_VERBOSE = "isVerbose";
 	public static final String P_CONNECTION_TYPE = "connectionType";
-	public static final String P_CONNECT_TO_BRICK_ADDRESS = "Connect to address";
-	public static final String P_CONNECTION_BRICK_ADDRESS = "Connection address";
-	public static final String P_CONNECT_TO_BRICK_NAME = "Connect to name";
-	public static final String P_CONNECTION_BRICK_NAME = "Connection name";
+	public static final String P_CONNECT_TO_BRICK_ADDRESS = "ConnectToAddress";
+	public static final String P_CONNECTION_BRICK_ADDRESS = "ConnectionAddress";
+	public static final String P_CONNECT_TO_BRICK_NAME = "ConnectToName";
+	public static final String P_CONNECTION_BRICK_NAME = "ConnectionName";
+	public static final String P_RUN_AFTER_DOWNLOAD = "runAfterDownload";
 	
 }
