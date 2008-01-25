@@ -8,7 +8,7 @@ package lejos.nxt;
  * @author Lawrie Griffiths (lawrie.griffiths@ntlworld.com)
  *
  */
-public abstract class I2CSensor implements SensorConstants {
+public class I2CSensor implements SensorConstants {
 	I2CPort port;
 	int address = 1;
 	String version = "        ";
@@ -120,7 +120,23 @@ public abstract class I2CSensor implements SensorConstants {
 		return sensorType;
 	}
 	
+	/**
+	 * Set the address of the port 
+	 * Note that addresses are from 0x01 to 0x7F not
+	 * even numbers from 0x02 to 0xFE as given in some I2C device specifications.
+	 * They are 7-bit addresses not 8-bit addresses.
+	 * 
+	 * @param addr 1 to 0x7F 
+	 */
 	public void setAddress(int addr) {
 		address = addr;
+	}
+	
+	/**
+	 * Get the port that the sensor is attached to
+	 * @return the I2CPort
+	 */
+	public I2CPort getPort() {
+		return port;
 	}
 }
