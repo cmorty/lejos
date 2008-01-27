@@ -26,8 +26,7 @@ public class UltrasonicSensor extends I2CSensor
 	
 	private byte[] buf = new byte[1];
 	private byte[] inBuf = new byte[8];
-	private String units = "       ";
-	private char [] unitsChars = StringUtils.getCharacters(units);
+	private String units = null;
 	private int nextCmdTime;
 	private int dataAvailableTime;
 	private int currentDistance;
@@ -293,10 +292,15 @@ public class UltrasonicSensor extends I2CSensor
 	 */
 	public String getUnits()
 	{
-		int ret = getData(UNITS, inBuf, 7);
-		for(int i = 0; i < 7; i++)
-			unitsChars[i] = (ret == 0 ? (char)inBuf[i] : ' ');
-		return units;
+		if(units == null) {
+			int ret = getData(UNITS, inBuf, 7);
+			char [] charBuff = new char[7];
+			for(int i=0;i<7;i++)
+				charBuff[i] = (char)inBuf[i];
+			units = new String(charBuff, 0, 7);
+		}
+			
+		return productID;
 	}
 	
 	/**
