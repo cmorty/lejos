@@ -40,6 +40,11 @@ public final class String
     return characters[index];
   }
 
+  /**
+   * Find the index of a character.
+   * @param ch The character to find.
+   * @return The index of the character. -1 means it wasn't found.
+   */
   public int indexOf(int ch) {
       return indexOf(ch, 0);
   }
