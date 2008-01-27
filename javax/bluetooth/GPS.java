@@ -1,5 +1,7 @@
 package javax.bluetooth;
+
 import java.io.*;
+
 import lejos.nxt.LCD; // !! DELETE
 
 /**
