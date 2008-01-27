@@ -1,5 +1,6 @@
 package lejos.nxt;
 import lejos.nxt.Battery;
+import lejos.nxt.*;
 
 
 /**
@@ -34,7 +35,7 @@ import lejos.nxt.Battery;
  * @author Roger Glassey revised 20 Dec 2007 - uses brake mode for better control
  */
 public class Motor extends BasicMotor// implements TimerListener
-{
+{  
    private TachoMotorPort _port;
    /*
     * default speed
@@ -50,13 +51,16 @@ public class Motor extends BasicMotor// implements TimerListener
    private boolean _regulate = true;
    private boolean _wasRegulating = false;
    public Regulator regulator = new Regulator();
-// private Timer timer = new Timer(100,this);
    // used for control of angle of rotation
    private int _direction = 1; // +1 is forward ; used by rotate();
    private int _limitAngle;
    private int _stopAngle;
    private boolean _rotating = false;
+   /**
+    * used by stopAtLimit to save * restore state 
+    */
    private boolean _wasRotating = false;
+
    private boolean _rampUp = true;
    /**
     * used by timedOut to calculate actual speed;
@@ -85,7 +89,10 @@ public class Motor extends BasicMotor// implements TimerListener
     * Motor C.
     */
    public static final Motor C = new Motor (MotorPort.C);
-
+/**
+ * Use this constructor to assign a variable of type motor connected to a particular port.
+ * @param port  to which this motor is connected
+ */
    public Motor (TachoMotorPort port)
    {
       _port = port;
@@ -102,13 +109,7 @@ public class Motor extends BasicMotor// implements TimerListener
     */
    public void forward()
    { 
-      if (_mode != FORWARD)
-         synchronized(regulator) 
-         {
-            if(_regulate && _mode == BACKWARD)
-               updateState( STOP);
-            updateState( FORWARD);
-         }
+      updateState( FORWARD);
    }  
 
    /**
@@ -116,26 +117,18 @@ public class Motor extends BasicMotor// implements TimerListener
     */
    public void backward()
    {
-      if (_mode != BACKWARD)
-         synchronized(regulator)
-         {
-            if(_regulate && _mode == FORWARD)
-               updateState( STOP);
-            updateState( BACKWARD);
-         }
+      updateState( BACKWARD);
    }
 
    /**
     * Reverses direction of the motor. It only has
-    * effect if the motor is moving.
+    * effect if the motor is moving. 
     */
    public void reverseDirection()
    {
-      if (_mode == FORWARD)
-         backward();
+      if (_mode == FORWARD)backward();
       else
-      if (_mode == BACKWARD)
-         forward();
+      if (_mode == BACKWARD)forward();
    }
 
    /**
@@ -171,24 +164,17 @@ public class Motor extends BasicMotor// implements TimerListener
 
    /** 
     *calls controlMotor, startRegating;  updates _direction, _rotating, _wasRotating
+    *called by forwsrd(), backward(),stop(),flt();
     */
    void updateState( int mode)
    {
-      if( _mode == mode)
-         return;
-      
-      _rotating = false; //regulator should stop testing for rotation limit  ASAP
+
       synchronized(regulator)
       {
+         _rotating = false; //regulator should stop testing for rotation limit  ASAP
+         if( _mode == mode)
+            return;
          _mode = mode;
-         
-         if(_wasRotating)
-         {
-            setSpeed(_speed0);
-            _regulate = _wasRegulating;
-         }
-         _wasRotating = false; // perhaps redundant
-
          if(_mode == STOP || _mode == FLOAT)
          {
             _port.controlMotor(0, _mode);
@@ -233,7 +219,9 @@ public class Motor extends BasicMotor// implements TimerListener
    /**
     * causes motor to rotate through angle; <br>
     * iff immediateReturn is true, method returns immediately and the motor stops by itself <br>
-    * When the angle is reached, the method isRotating() returns false;
+    * If any motor method is called before the limit is reached, the rotation is canceled. 
+    * When the angle is reached, the method isRotating() returns false;<br>
+    * 
     * @param  angle through which the motor will rotate
     * @param immediateReturn iff true, method returns immediately, thus allowing monitoring of sensors in the calling thread. 
     */
@@ -255,9 +243,10 @@ public class Motor extends BasicMotor// implements TimerListener
 
    /**
     * causes motor to rotate to limitAngle; <br>
-    * if immediateReturn is true, method returns immediately and the motor stops by itself <br>
-    * Then getTachoCount should be within +- 2 degrees if the limit angle
-    * When the angle is reached, the method isRotating() returns false;
+    * if immediateReturn is true, method returns immediately and the motor stops by itself <br> 
+    * and getTachoCount should be within +- 2 degrees if the limit angle
+    * If any motor method is called before the limit is reached, the rotation is canceled. 
+    * When the angle is reached, the method isRotating() returns false;<br>
     * @param  limitAngle to which the motor will rotate, and then stop. 
     * @param immediateReturn iff true, method returns immediately, thus allowing monitoring of sensors in the calling thread. 
     */
@@ -265,11 +254,11 @@ public class Motor extends BasicMotor// implements TimerListener
    {
       synchronized(regulator)
       {
-         if(_wasRotating)
+         if (_wasRotating)// just in case this method is called while stopAtLimit is in progress
          {
-            setSpeed(_speed0);
-            _regulate = _wasRegulating;
+            setSpeed(_speed0);//restore speed setting
             _wasRotating = false;
+            _regulate = _wasRegulating;
          }
          _stopAngle = limitAngle;
          if(limitAngle > getTachoCount()) _mode = FORWARD;
@@ -277,11 +266,8 @@ public class Motor extends BasicMotor// implements TimerListener
          _port.controlMotor(_power, _mode);
          updateDirection(_mode);
          if(_regulate) regulator.reset();
-         if(!_wasRotating)
-         {
             _stopAngle -= _direction * overshoot();
             _limitAngle = limitAngle;
-         }
          _rotating = true; // rotating to a limit
          _rampUp = !_noRamp && Math.abs(_stopAngle-getTachoCount())>40 && _speed>200;  //no ramp for small angles
          if(immediateReturn)return;
@@ -307,6 +293,7 @@ public class Motor extends BasicMotor// implements TimerListener
        */
       int time0 = 0;
       float error = 0;
+
       /**
        * helper method - used by reset and setSpeed()
        */
@@ -394,11 +381,11 @@ public class Motor extends BasicMotor// implements TimerListener
       {
          _mode = STOP; // stop motor
          _port.controlMotor (0, STOP);
-         int a = angleAtStop();//returns w:hen motor has stopped
+         int a = angleAtStop();//returns when motor has stopped
          int remaining = _limitAngle - a;
          if(_direction * remaining >2 ) // not yet done; don't call nudge for less than 3 deg
          {                                                            
-            if(!_wasRotating)// initial call to rotate(); save state variables
+            if(!_wasRotating)// initial call to stopAtLimit; save state variables
             {
                _wasRegulating = _regulate;
                _regulate = true;
@@ -415,8 +402,6 @@ public class Motor extends BasicMotor// implements TimerListener
                _wasRotating = false;
                _regulate = _wasRegulating;
             }
-            _mode = STOP; // stop motor  maybe redundant
-            _port.controlMotor (0, _mode);
             _rotating = false;
          }  
       }
