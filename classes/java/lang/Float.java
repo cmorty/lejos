@@ -80,6 +80,44 @@ package java.lang;
      *          pattern.
      */
   public static native float intBitsToFloat(int value);
+  
+  /**
+	 * Converts a String value into a float 
+	 * @param s String representation of float. Must only contain numbers and an optional decimal, and optional - sign at front.
+	 * @return float number
+	 * @author BB
+	 */
+	public static float parseFloat(String s) throws NumberFormatException {
+		boolean negative = (s.charAt(0) == '-'); // Check if negative symbol.
+		float result = 0.0f; // Starting value
+		int index = s.indexOf('.');
+		
+		if(index > -1) {
+		// Means the decimal place exists, add values to right of it
+			int divisor = 1;
+			for(int i=index+1;i<s.length();i++) {
+				divisor *= 10;
+				int curVal = (s.charAt(i)-48); // Convert char to int
+				if(curVal > 9|curVal < 0)
+					throw new NumberFormatException();
+				result += ((float)curVal/divisor);
+			}
+		}
+		
+		// Now add number characters to left of decimal
+		int multiplier = 1;
+		if(index < 0) // i.e. -1
+			index = s.length(); // If number string had no decimal
+		int finish = negative ? 1 : 0; // Determine finishing position
+		
+		for(int i=index-1;i>= finish;i--) {
+			int curVal = (s.charAt(i) - 48); // Convert char to int
+			if(curVal > 9|curVal < 0)
+				throw new NumberFormatException();
+			result += (curVal * multiplier);
+			multiplier *= 10;
+		}	
+		
+		return negative ? -result : result;
+	}
 }
-
-   
