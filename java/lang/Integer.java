@@ -101,7 +101,7 @@ package java.lang;
 			throw new NumberFormatException();
 			//throw NumberFormatException.forInputString(s);
 		}
-		return negative ? result : -result;
+		return negative ? result : -result; // !! Is this backwards? 
 	}
 
 
