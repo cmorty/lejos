@@ -11,12 +11,9 @@ package lejos.nxt;
 public class I2CSensor implements SensorConstants {
 	I2CPort port;
 	int address = 1;
-	String version = "        ";
-	String productID = "        ";
-	String sensorType = "        ";
-	char [] versionChars = StringUtils.getCharacters(version);
-	char [] productIDChars = StringUtils.getCharacters(productID);
-	char [] sensorTypeChars = StringUtils.getCharacters(sensorType);
+	String version = null;
+	String productID = null;
+	String sensorType = null;
 	byte [] byteBuff = new byte[8];
 	byte [] buf1 = new byte[1];
 	
@@ -84,11 +81,19 @@ public class I2CSensor implements SensorConstants {
 	 * @return 8-byte string
 	 */
 	public String getVersion() {
-		int ret = getData(0x00, byteBuff, 8);
-
-		for(int i=0;i<8;i++) {
-			versionChars[i] = (ret == 0 ? (char) byteBuff[i] : ' ');
-		}	
+	/* NOTE! getVersion(), getProductID(), getSensorType() and
+	 * UltrasonicSensor.getUnits() are all about the same. 
+	 * Should probably make one helper method with appropriate arguments.
+	 * - BB
+	 */	
+		if(version == null) {
+			int ret = getData(0x00, byteBuff, 8);
+			char [] charBuff = new char[8];
+			for(int i=0;i<8;i++)
+				charBuff[i] = (char)byteBuff[i];
+			version = new String(charBuff, 0, 8);
+		}
+			
 		return version;
 	}
 	
@@ -98,11 +103,14 @@ public class I2CSensor implements SensorConstants {
 	 * @return 8-byte string
 	 */
 	public String getProductID() {
-		int ret = getData(0x08, byteBuff, 8);
-
-		for(int i=0;i<8;i++) {
-			productIDChars[i] = (ret == 0 ? (char) byteBuff[i] : ' ');
-		}	
+		if(productID == null) {
+			int ret = getData(0x08, byteBuff, 8);
+			char [] charBuff = new char[8];
+			for(int i=0;i<8;i++)
+				charBuff[i] = (char)byteBuff[i];
+			productID = new String(charBuff, 0, 8);
+		}
+			
 		return productID;
 	}
 	
@@ -112,11 +120,14 @@ public class I2CSensor implements SensorConstants {
 	 * @return 8-byte string
 	 */
 	public String getSensorType() {
-		int ret = getData(0x10, byteBuff, 8);
-
-		for(int i=0;i<8;i++) {
-			sensorTypeChars[i] = (ret == 0 ? (char) byteBuff[i] : ' ');
-		}	
+		if(sensorType == null) {
+			int ret = getData(0x10, byteBuff, 8);
+			char [] charBuff = new char[8];
+			for(int i=0;i<8;i++)
+				charBuff[i] = (char)byteBuff[i];
+			sensorType = new String(charBuff, 0, 8);
+		}
+			
 		return sensorType;
 	}
 	
