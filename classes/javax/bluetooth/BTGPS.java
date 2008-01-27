@@ -1,4 +1,5 @@
 package javax.bluetooth;
+
 import lejos.nxt.*;
 import lejos.nxt.comm.*;
 

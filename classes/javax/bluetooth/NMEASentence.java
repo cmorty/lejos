@@ -1,4 +1,5 @@
 package javax.bluetooth;
+
 import java.util.Vector;
 
 /**
@@ -13,10 +14,12 @@ import java.util.Vector;
  */
 
 // TO DO:
-// 1. Handle GPGGA sentences
-// 2. Handle GPGLL sentences
-// 3. Handle GPGSA sentences (satellite info)
-// 4. Handle GPGSV sentences (detailed sat info)
+// 1. GGA sentences
+// 2. GLL sentences? (none by Holux)
+// 3. GSA sentences (satellite info)
+// 4. GSV sentences (detailed sat info)
+// 5. VTG (velocity)
+// 6. RMC (time and date, etc..)
 // OPTION: Instead of refreshing all values at once in refreshVals()
 // could get rid of setSentence() and refresh each only when called.
 public class NMEASentence {
@@ -28,7 +31,10 @@ public class NMEASentence {
 	private byte checksum;
 	
 	private Vector fields = null;
-		
+	
+	private String COMMA = ",";
+	private String BLANK = "";
+	
 	public NMEASentence(String sentence) {
 		setSentence(sentence);
 	}
@@ -38,14 +44,30 @@ public class NMEASentence {
 		refreshVals();
 	}
 	
+	/**
+	 * Returns the prefix of the NMEA sentence. e.g. "GP" 
+	 * @return
+	 */
 	public String getPrefix() {
 		return prefix;
 	}
 	
+	/**
+	 * Returns the data type of the NMEA sentence. e.g. "GGA" 
+	 * @return
+	 */
 	public String getDataType() {
 		return dataType;
 	}
 	
+	public Vector getDataFields() {
+		return fields;
+	}
+	
+	/**
+	 * Compares the checksum values to see if this is a corrupt sentence
+	 * @return
+	 */
 	public boolean isValid() {
 		return(getChecksum() == calcChecksum());
 	}
@@ -72,7 +94,37 @@ public class NMEASentence {
 		dataType = sentence.substring(3, 6);
 		int end = sentence.indexOf('*');
 		String checksumStr = sentence.substring(end + 1, end + 3);
+		
+		fields = extractDataFields();
+		
 		checksum = convertChecksum(checksumStr);
+	}
+	
+	private Vector extractDataFields() {
+		Vector df = new Vector(15);
+		int end = sentence.indexOf('*');
+		// Find index of first ','
+		int firstIndex = sentence.indexOf(',');
+		int nextIndex = 0;
+		
+		do {
+			// Find index of next starting past first index','
+			nextIndex = sentence.indexOf(',', firstIndex+1);
+			// If nextIndex = -1 then use end (*) as nextIndex
+			if(nextIndex == -1) nextIndex = end;
+			// Substring the string in between them
+			String dataField = null;
+			if(sentence.substring(firstIndex+1) == COMMA)
+				dataField = BLANK;
+			else
+				dataField = sentence.substring(firstIndex+1, nextIndex);
+			// Add to fields vector
+			df.addElement(dataField);
+			
+			firstIndex = nextIndex;
+		} while(nextIndex != end);
+		
+		return df;
 	}
 	
 	private static byte convertChecksum(String checksum_string) {
