@@ -79,13 +79,13 @@ public class TextMenu
 	
 	/**
 	 * This constuctor allows the specfication of a title (of up to 16 characters) and the location of the item list <br>
-	 * The title is displayed in the row above the item lise.
+	 * The title is displayed in the row above the item list.
 	 * @param items  -  string array containing the menu items. No items beyond the first null will be displayed.
 	 */	
 	public TextMenu(String[] items, int topRow, String title)
 	{
-		_title = title;
 		_topRow = topRow;
+		setTitle(title);
 		this.setItems(items);
 	}
 	
@@ -112,11 +112,8 @@ public class TextMenu
 		int i = 0;
 		while(i < items.length && items[i] != null)i++;
 		_length = i;
-//		LCD.drawInt(_topRow,2,0,7);
-//		LCD.drawInt(_length, 2,5,7 );
 		_size = _length;
 		if(_size > 8 - _topRow) _size = 8 - _topRow;
-//		LCD.drawInt(_size,2,9,7);
 		_quit = false;
 		_topIndex = 0;
 	}
@@ -142,7 +139,7 @@ public class TextMenu
 	 * 
 	 * This version of select allows the selected index to be set when the menu is first displayed.
 	 * 
-	 * @param selectedIndex the idex to start the menu on
+	 * @param selectedIndex the index to start the menu on
 	 * @return the index of the selected item
 	 **/
 	public int select(int selectedIndex) 
@@ -209,17 +206,28 @@ public class TextMenu
 				LCD.drawString(_items[indx],1,i + _topRow);
 				if(indx == _selectedIndex) LCD.drawString(_selChar,0,i + _topRow);
 			}
+			else LCD.drawString(blank,0,i + _topRow);
 		}
+		// clear to bottom of screen
+		for (int i = _size  + _topRow; i<8; i++) LCD.drawString(blank,0,i);
 		LCD.refresh();
 	}
 	
 	/**
-	 * helper method used by display() to caluclate the index in the items array corresponding to a row of the 
+	 * helper method used by display() to calculate the index in the items array corresponding to a row of the 
 	 * menu display
 	 */
 	private int index(int row)
 	{
 		return (_topIndex + row + _length)%_length;
+	}
+/**
+ *  returns list of items in this menu; 
+ * @return
+ */
+	public String[] getItems()
+	{
+	   return _items;
 	}
 	
 }
