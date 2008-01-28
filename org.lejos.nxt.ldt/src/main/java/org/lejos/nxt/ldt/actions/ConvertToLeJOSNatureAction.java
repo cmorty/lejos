@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IProjectDescription;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IClasspathEntry;
@@ -87,6 +86,12 @@ public class ConvertToLeJOSNatureAction implements IObjectActionDelegate {
 				return;
 			}
 
+			// check setting of NXJ_HOME
+			String nxjHome = LeJOSNXJPlugin.getDefault().getPluginPreferences()
+					.getString(PreferenceConstants.P_NXJ_HOME);
+			if ((nxjHome == null) || (nxjHome.isEmpty()))
+				throw new LeJOSNXJException(
+						"preference for NXJ_HOME is not set");
 			// add the nature
 			String[] newNatures = new String[natures.length + 1];
 			System.arraycopy(natures, 0, newNatures, 0, natures.length);
@@ -104,9 +109,9 @@ public class ConvertToLeJOSNatureAction implements IObjectActionDelegate {
 			// log
 			LeJOSNXJUtil.message("project " + project.getProject().getName()
 					+ " now is a leJOS NXJ project");
-		} catch (CoreException e) {
+		} catch (Throwable t) {
 			// log
-			LeJOSNXJUtil.message(e);
+			LeJOSNXJUtil.message(t);
 		}
 	}
 
