@@ -109,6 +109,7 @@ public class Motor extends BasicMotor// implements TimerListener
     */
    public void forward()
    { 
+      if(_mode == BACKWARD)stop();
       updateState( FORWARD);
    }  
 
@@ -117,6 +118,7 @@ public class Motor extends BasicMotor// implements TimerListener
     */
    public void backward()
    {
+      if(_mode == FORWARD)stop();
       updateState( BACKWARD);
    }
 
