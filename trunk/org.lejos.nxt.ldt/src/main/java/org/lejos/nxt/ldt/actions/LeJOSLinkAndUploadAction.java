@@ -139,6 +139,7 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 			// class name
 			IJavaElement javaElement = LeJOSNXJUtil
 					.getFirstJavaElementFromSelection(_selection);
+			// TODO merge packages into name
 			String className = LeJOSNXJUtil
 					.getClassNameFromJavaFile(javaElement.getElementName());
 			args[argsCounter++] = className;
