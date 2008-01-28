@@ -1,20 +1,31 @@
-package javax.bluetooth;
-
 import lejos.nxt.*;
 import lejos.nxt.comm.*;
 
 import java.util.*;
 import java.io.*;
+import javax.bluetooth.*;
 
+/**
+ * This sample allows you to connect to a Bluetooth GPS and
+ * read latitude, longitude, and altitude on the NXT LCD.
+ * 1. Turn on your Bluetooth GPS
+ * 2. Turn on the NXT and run this program
+ * 3. It will search out Bluetooth devices. Select your GPS
+ * 4. After it connects it will output the data to the LCD.
+ * @author BB
+ *
+ */
 public class BTGPS {
 
 	static String found = "Found";
 	
 	public static void main(String[] args) {
 		
-		byte[] cod = {0,0,0,0}; // Lawrie says this picks up everything.
+		byte[] cod = {0,0,0,0}; // 0,0,0,0 picks up every Bluetooth device regardless of Class of Device (cod).
 				
 		final byte[] pin = {(byte) '0', (byte) '0', (byte) '0', (byte) '0'};
+		
+		int sentenceCount = 0; // DELETE ME
 		
 		InputStream in = null;
 		
@@ -49,6 +60,7 @@ public class BTGPS {
 					int subSelection = subMenu.select();
 					if (subSelection == 0) Bluetooth.addDevice(btrd);
 					
+					LCD.clear();
 					
 					BTConnection btGPS = null;
 					btGPS = Bluetooth.connect(btrd.getDeviceAddr(), pin);
@@ -59,17 +71,26 @@ public class BTGPS {
 						LCD.drawString("Connected!", 0, 1);
 					LCD.refresh();
 					
+					GPS gps = null;
+					
 					try {
-						Thread.sleep(2000);
 						in = btGPS.openInputStream();
-						GPS gps = new GPS(in);
-						
+						gps = new GPS(in);
+						LCD.drawString("GPS Online", 0, 6);
+						LCD.refresh();
 					} catch(Exception e) {
 						LCD.drawString("Something bad", 0, 6);
 						LCD.refresh();
 					}
-					try {Thread.sleep(20000);}catch(Exception e){}
 					
+					while(true) {
+						LCD.drawInt(++sentenceCount, 0, 0); // DELETE
+						LCD.drawString("Lat " + gps.getLatitude(), 0, 1);
+						LCD.drawString("Long " + gps.getLongitude(), 0, 2);
+						LCD.drawString("Alt " + gps.getAltitude(), 0, 3);
+						LCD.refresh();
+						try {Thread.sleep(500);} catch (Exception e) {}
+					}
 				}
 			} while (selected >= 0);
 
