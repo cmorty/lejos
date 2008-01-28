@@ -86,13 +86,11 @@ public class I2CSensor implements SensorConstants {
 	 * Should probably make one helper method with appropriate arguments.
 	 * - BB
 	 */	
-		if(version == null) {
-			int ret = getData(0x00, byteBuff, 8);
-			char [] charBuff = new char[8];
-			for(int i=0;i<8;i++)
-				charBuff[i] = (char)byteBuff[i];
-			version = new String(charBuff, 0, 8);
-		}
+		int ret = getData(0x00, byteBuff, 8);
+		char [] charBuff = new char[8];
+		for(int i=0;i<8;i++)
+			charBuff[i] = (char)byteBuff[i];
+		version = new String(charBuff, 0, 8);
 			
 		return version;
 	}
@@ -103,14 +101,12 @@ public class I2CSensor implements SensorConstants {
 	 * @return 8-byte string
 	 */
 	public String getProductID() {
-		if(productID == null) {
-			int ret = getData(0x08, byteBuff, 8);
-			char [] charBuff = new char[8];
-			for(int i=0;i<8;i++)
-				charBuff[i] = (char)byteBuff[i];
-			productID = new String(charBuff, 0, 8);
-		}
-			
+		int ret = getData(0x08, byteBuff, 8);
+		char [] charBuff = new char[8];
+		for(int i=0;i<8;i++)
+			charBuff[i] = (char)byteBuff[i];
+		productID = new String(charBuff, 0, 8);
+					
 		return productID;
 	}
 	
@@ -120,14 +116,12 @@ public class I2CSensor implements SensorConstants {
 	 * @return 8-byte string
 	 */
 	public String getSensorType() {
-		if(sensorType == null) {
-			int ret = getData(0x10, byteBuff, 8);
-			char [] charBuff = new char[8];
-			for(int i=0;i<8;i++)
-				charBuff[i] = (char)byteBuff[i];
-			sensorType = new String(charBuff, 0, 8);
-		}
-			
+		int ret = getData(0x10, byteBuff, 8);
+		char [] charBuff = new char[8];
+		for(int i=0;i<8;i++)
+			charBuff[i] = (char)byteBuff[i];
+		sensorType = new String(charBuff, 0, 8);
+					
 		return sensorType;
 	}
 	
