@@ -104,7 +104,7 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 			delegate.addToolsLogListener(_logListener);
 			delegate.addMonitor(_logListener);
 			// create arguments
-			int noOfArguments = 6;
+			int noOfArguments = 8;
 			// run after download?
 			boolean runAfterDownload = LeJOSNXJPlugin.getDefault()
 					.getPluginPreferences().getBoolean(
@@ -141,7 +141,7 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 					.getFirstJavaElementFromSelection(_selection);
 			// TODO merge packages into name
 			String className = LeJOSNXJUtil
-					.getClassNameFromJavaFile(javaElement.getElementName());
+					.getFullQualifiedClassName(javaElement);
 			args[argsCounter++] = className;
 			// classpath
 			args[argsCounter++] = "--classpath";
@@ -149,13 +149,16 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 			// writeorder
 			args[argsCounter++] = "--writeorder";
 			args[argsCounter++] = "LE";
+			// name of binary
+			args[argsCounter++] = "-o";
+			args[argsCounter++] = LeJOSNXJUtil.getBinaryName(javaElement);
 			// connection type
 			String connectionType = LeJOSNXJPlugin.getDefault()
 					.getPluginPreferences().getString(
 							PreferenceConstants.P_CONNECTION_TYPE);
 			args[argsCounter++] = "-" + connectionType;
 			// run after download?
-            if(runAfterDownload)
+			if (runAfterDownload)
 				args[argsCounter++] = "-r";
 			// verbosity
 			if (isVerbose)

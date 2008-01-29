@@ -1,6 +1,7 @@
 package org.lejos.nxt.ldt.util;
 
 import java.io.File;
+import java.util.Date;
 import java.util.Iterator;
 
 import org.eclipse.core.resources.IProjectDescription;
@@ -17,8 +18,9 @@ import org.lejos.nxt.ldt.builder.leJOSNature;
 
 /**
  * utility methods for the plugin
+ * 
  * @author Matthias Paul Scholz
- *
+ * 
  */
 public class LeJOSNXJUtil {
 
@@ -66,7 +68,8 @@ public class LeJOSNXJUtil {
 
 	public static void message(String message) {
 		// log to leJOS NXJ console
-		MessageConsole console = LeJOSNXJPlugin.getDefault().getLeJOSNXJConsole();
+		MessageConsole console = LeJOSNXJPlugin.getDefault()
+				.getLeJOSNXJConsole();
 		console.newMessageStream().println(message);
 		// System.out.println("leJOS NXJ> " + message);
 	}
@@ -75,20 +78,49 @@ public class LeJOSNXJUtil {
 		// log to error log
 		LeJOSNXJPlugin.getDefault().log(throwable);
 		// log to leJOS NXJ console
-		MessageConsole console = LeJOSNXJPlugin.getDefault().getLeJOSNXJConsole();
+		MessageConsole console = LeJOSNXJPlugin.getDefault()
+				.getLeJOSNXJConsole();
 		console.newMessageStream().println("Error: " + throwable.getMessage());
 	}
 
-	public static String getClassNameFromJavaFile(String fileName) {
-		if (fileName == null)
-			return null;
-		// get position of suffix
-		int indexOfSuffix = fileName.lastIndexOf('.');
-		if (indexOfSuffix >= 0) {
-			return fileName.substring(0, indexOfSuffix);
-		} else {
-			return fileName;
+	public static String getFullQualifiedClassName(IJavaElement javaElement) {
+		String fullQualifiedName = "";
+		if (javaElement != null) {
+			// get packages
+			IJavaElement parent = javaElement.getParent();
+			if (parent != null) {
+				String packages = parent.getElementName().trim();
+				if(packages.length()>0)
+					fullQualifiedName += packages + ".";
+			}
+			// get class name
+			String elementName = javaElement.getElementName();
+			int indexOfSuffix = elementName.lastIndexOf('.');
+			if (indexOfSuffix >= 0) {
+				fullQualifiedName += elementName.substring(0, indexOfSuffix);
+			} else {
+				fullQualifiedName += elementName;
+			}
 		}
+		return fullQualifiedName;
+	}
+
+	public static String getBinaryName(IJavaElement javaElement) {
+		String binaryName = null;
+		if (javaElement != null) {
+			// get class name
+			String elementName = javaElement.getElementName();
+			int indexOfSuffix = elementName.lastIndexOf('.');
+			if (indexOfSuffix >= 0) {
+				binaryName = elementName.substring(0, indexOfSuffix);
+			} else {
+				binaryName = elementName;
+			}
+		} else {
+			binaryName = Long.toHexString(new Date().getTime());
+		}
+		binaryName += ".bin";
+		return binaryName;
 	}
 
 	public static File getAbsoluteProjectTargetDir(IJavaProject project)
