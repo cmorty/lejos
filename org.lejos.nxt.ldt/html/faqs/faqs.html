@@ -8,6 +8,14 @@
 
 <body>
 <h1>FAQs</h1>
-none so far. ;-)
+<h2>When compiling my classes, I get an error stating that some leJOS classes can not be found.</h2>
+Make sure that <em>NXJ_HOME</em> is set in the
+the <em>leJOS NXJ</em> section of the <em>Preferences</em> page of Eclipse and that you have converted the project 
+to a leJOS project. 
+<h2>When trying to upload my main class to the brick, I get an error stating that the communication classes 
+can not instantiated.</h2>
+This is due to the fact that the native comm driver library can not be loaded. Make sure that 
+the environment variable <em>NXJ_HOME</em> is set and that <em>%NXJ_HOME%\bin</em> resp. <em>$NXJ_HOME/bin</em> 
+is included in your system class path.
 </body>
 </html>
