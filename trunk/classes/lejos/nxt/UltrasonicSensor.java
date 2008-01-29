@@ -293,6 +293,8 @@ public class UltrasonicSensor extends I2CSensor
 	public String getUnits()
 	{
 		int ret = getData(UNITS, inBuf, 7);
+		if(ret != 0)
+			return BLANK;
 		char [] charBuff = new char[7];
 		for(int i=0;i<7;i++)
 			charBuff[i] = (char)inBuf[i];
