@@ -16,6 +16,7 @@ public class I2CSensor implements SensorConstants {
 	String sensorType = null;
 	byte [] byteBuff = new byte[8];
 	byte [] buf1 = new byte[1];
+	String BLANK = "        ";
 	
 	public I2CSensor(I2CPort port)
 	{
@@ -87,6 +88,8 @@ public class I2CSensor implements SensorConstants {
 	 * - BB
 	 */	
 		int ret = getData(0x00, byteBuff, 8);
+		if(ret != 0)
+			return BLANK;
 		char [] charBuff = new char[8];
 		for(int i=0;i<8;i++)
 			charBuff[i] = (char)byteBuff[i];
@@ -102,6 +105,8 @@ public class I2CSensor implements SensorConstants {
 	 */
 	public String getProductID() {
 		int ret = getData(0x08, byteBuff, 8);
+		if(ret != 0)
+			return BLANK;
 		char [] charBuff = new char[8];
 		for(int i=0;i<8;i++)
 			charBuff[i] = (char)byteBuff[i];
@@ -117,6 +122,8 @@ public class I2CSensor implements SensorConstants {
 	 */
 	public String getSensorType() {
 		int ret = getData(0x10, byteBuff, 8);
+		if(ret != 0)
+			return BLANK;
 		char [] charBuff = new char[8];
 		for(int i=0;i<8;i++)
 			charBuff[i] = (char)byteBuff[i];
