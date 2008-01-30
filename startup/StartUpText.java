@@ -80,12 +80,14 @@ public class StartUpText
 		TextMenu fileMenu = new TextMenu(fileMenuData,2);
 		String[] fileNames = new String[File.MAX_FILES];
 		TextMenu menu = topMenu;
-		String[] blueMenuData = {"Devices", "Search", "Power off","Visibility"};
+		String[] blueMenuData = {"Power off", "Search", "Devices","Visibility"};
 		String[] blueOffMenuData = {"Power on"};
 		TextMenu blueMenu = new TextMenu(blueMenuData,3);
 		TextMenu blueOffMenu = new TextMenu(blueOffMenuData,3);
 		String[] systemMenuData = {"Format"};
 		String dot = ".";
+        String[] yes_no = {"No","Yes"};
+        TextMenu yes_noMenu = new TextMenu(yes_no,6);
         playTune();
 		TextMenu systemMenu = new TextMenu(systemMenuData,5);
 		File[] files = null;
@@ -203,7 +205,7 @@ public class StartUpText
 				else
 					menu = topMenu;
 			} else if (menu == blueMenu) {
-		    	if (selection == 0) { //Devices
+		    	if (selection == 2) { //Devices
     	    		Vector devList = Bluetooth.getKnownDevicesList();
 		    		if (devList.size() > 0) {
 		    			String[] names = new String[devList.size()];
@@ -289,7 +291,7 @@ public class StartUpText
 		    				Thread.sleep(2000);
 		    			} catch (InterruptedException e) {}
 		    		}
-		        } else if (selection == 2) // On/Off
+		        } else if (selection == 0) // On/Off
 		        {
 					LCD.clear();
 					LCD.drawString("   Power off...", 0, 0);
@@ -303,13 +305,16 @@ public class StartUpText
 		    		menu = topMenu;
 		    	}
 		    	
-		    } else if (menu == systemMenu) {
-		    	if (selection == 0) {
-		    		File.format();
-		    	} else if (selection == -1) {
-		    		menu = topMenu;
-		    	}
-		    }
+			} else if (menu == systemMenu) {
+               if (selection == 0) 
+               {
+                  yes_noMenu.setTitle("Delete all files?");
+                   if(yes_noMenu.select()== 1)File.format();
+               }
+//             } else if (selection == -1) {
+                   menu = topMenu;
+//             }
+           }
 		}
 		System.shutDown();
 	}
