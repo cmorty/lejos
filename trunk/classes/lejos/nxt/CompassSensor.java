@@ -59,7 +59,7 @@ public class CompassSensor extends I2CSensor {
 	 * @return Cartesian direction.
 	 */
 	public float getDegreesCartesian() {
-		float degrees = 360 - getDegrees() - cartesianCalibrate;
+		float degrees = cartesianCalibrate - getDegrees() ;
 		if(degrees>=360) degrees -= 360;
 		if(degrees<0) degrees += 360;
 		return degrees;
