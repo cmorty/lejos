@@ -53,7 +53,7 @@ public class CompassNavigator extends TachoNavigator
 	public CompassNavigator(CompassPilot compassPilot) 
 	{
 		super(compassPilot);
-		compassPilot = (CompassPilot) _pilot;
+		this.compassPilot = compassPilot;
 		_heading = getAngle();
 	}
     
