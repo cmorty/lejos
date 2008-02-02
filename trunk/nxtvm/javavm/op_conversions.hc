@@ -48,7 +48,8 @@ case OP_I2F:
 case OP_I2D:
   // Arguments: 0
   // Stack: -1 +2
-  push_word (jfloat2word ((JFLOAT) word2jint(get_top_word())));
+  tempStackWord = get_top_word();
+  push_word (jfloat2word ((JFLOAT) word2jint(tempStackWord)));
   goto LABEL_ENGINELOOP;
 
 case OP_F2I:

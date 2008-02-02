@@ -157,16 +157,17 @@ case OP_GETFIELD:
     printf ("### get_field base=%d size=%d pushed=%d\n", (int) fbase2, (int) fieldSize, (int) tempStackWord);
     #endif
 
-#ifdef RECORD_REFERENCES
+#if RECORD_REFERENCES
     if (fieldType == T_REFERENCE)
       set_top_ref (get_word(fbase2, fieldSize));
     else
 #endif
-
-    tempStackWord = get_word(fbase2, fieldSize);
-    if( fieldType == T_CHAR)
-      tempStackWord = (TWOBYTES) tempStackWord;
-    set_top_word (tempStackWord);
+    {
+      tempStackWord = get_word(fbase2, fieldSize);
+      if( fieldType == T_CHAR)
+        tempStackWord = (TWOBYTES) tempStackWord;
+      set_top_word (tempStackWord);
+    }
 
     #ifdef DEBUG_FIELDS
     printf("Set top word done\n");
@@ -221,7 +222,7 @@ case OP_PUTFIELD:
     printf ("### put_field base=%d size=%d stored=%d\n", (int) fbase3, (int) fieldSize, (int) get_top_word());
     #endif
 
-#ifdef RECORD_REFERENCES
+#if RECORD_REFERENCES
     if (fieldType == T_REFERENCE)
       store_word (fbase3, fieldSize, pop_ref());
     else
