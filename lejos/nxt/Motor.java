@@ -99,7 +99,8 @@ public class Motor extends BasicMotor// implements TimerListener
       port.setPWMMode(TachoMotorPort.PWM_BRAKE);
       regulator.setDaemon(true);
       regulator.start();
-      while(_voltage < 1f );
+      //while(_voltage < 1f );
+      _voltage = Battery.getVoltage(); 
    }
    
    public int getStopAngle() { return (int)_stopAngle;}
