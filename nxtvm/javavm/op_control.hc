@@ -95,7 +95,7 @@ case OP_FCMPL:
 case OP_FCMPG:
   // TBD: no distinction between opcodes
   tempStackWord = pop_word();
-  push_word( do_fcmp (word2jfloat(pop_word()), word2jfloat(tempStackWord), 0));
+  just_set_top_word( do_fcmp (word2jfloat(get_top_word()), word2jfloat(tempStackWord), 0));
   goto LABEL_ENGINELOOP;
   
 #endif // FP_ARITHMETIC
