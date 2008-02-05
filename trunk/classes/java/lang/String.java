@@ -9,6 +9,9 @@ public final class String
   // native code (see vmsrc/classes.h).
 
   char[] characters; // package protected, so StringUtils can access it
+  
+  //Cache the calculated hash
+  private int hash = 0;
 
   /**
    * Create a String from a character array.
@@ -250,7 +253,7 @@ public final class String
    **/
   public static String valueOf (Object aObj)
   {
-    return aObj.toString();
+    return aObj == null ? "null" : aObj.toString();
   }
 
   /**
@@ -270,6 +273,9 @@ public final class String
   {
     if (other == null)
       return false;
+    
+    if (other == this)
+      return true;
       
     try {
       String os = (String)other;
@@ -286,6 +292,17 @@ public final class String
     } catch (ClassCastException e) {
     }    
     return false;
+  }
+  
+  public int hashCode() {
+      int h = hash;
+        if (h == 0) {
+            for (int i = 0; i < this.characters.length; i++) {
+                h = 31 * h + this.characters[i];
+            }
+            hash = h;
+        }
+        return h;
   }
 }
 

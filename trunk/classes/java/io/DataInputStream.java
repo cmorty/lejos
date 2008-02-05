@@ -15,7 +15,11 @@ public class DataInputStream extends InputStream {
    }
    
    
-   /**
+   public int available() throws IOException {
+       return this.in.available();
+   }
+
+/**
    * Reads the next byte of data from this input stream. The value 
    * byte is returned as an <code>int</code> in the range 
    * <code>0</code> to <code>255</code>. If no byte is available 

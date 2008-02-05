@@ -53,35 +53,23 @@ public final class StringBuffer
 
   public StringBuffer append (String s)
   {
-    // Reminder: compact code more important than speed
-    char[] sc = s.toCharArray();
-    int cl = characters.length;
-    int sl = sc.length;
-    char [] nc = characters;
-    if (sl + curPos > cl)
-    {
-        nc = new char[sl + curPos];
-        System.arraycopy (characters, 0, nc, 0, curPos);
-    }
-    System.arraycopy (sc, 0, nc, curPos, sl);
-    characters = nc;
-    curPos += sl;
-    return this;
+    s = String.valueOf(s);
+    return this.appendInternal(s);
   }
 
   public StringBuffer append (java.lang.Object aObject)
   {
-    return append (aObject.toString());
+    return this.appendInternal(String.valueOf(aObject));
   }
 
   public StringBuffer append (boolean aBoolean)
   {
-    return append (aBoolean ? "true" : "false");
+    return this.appendInternal(aBoolean ? "true" : "false");
   }
   
   public StringBuffer append (char aChar)
   {
-    return append (new String (new char[] { aChar }, 0, 1));
+    return this.appendInternal(new String (new char[] { aChar }, 0, 1));
   }
 
   public StringBuffer append (int i)
@@ -129,7 +117,7 @@ public final class StringBuffer
 
   public StringBuffer append (long aLong)
   {
-        return append("<longs not supported>");
+        return this.appendInternal("<longs not supported>");
   }
 
   public StringBuffer append (float aFloat)
@@ -150,6 +138,27 @@ public final class StringBuffer
     } catch (ArrayIndexOutOfBoundsException e) {
         curPos = Math.min(characters.length, curPos);
     }
+    
+    return this;
+  }
+  
+  /**
+   * Appends a string with no null checking
+   */
+  private StringBuffer appendInternal(String s) {
+    // Reminder: compact code more important than speed
+    char[] sc = s.toCharArray();
+    int cl = characters.length;
+    int sl = sc.length;
+    char [] nc = characters;
+    if (sl + curPos > cl)
+    {
+        nc = new char[sl + curPos];
+        System.arraycopy (characters, 0, nc, 0, curPos);
+    }
+    System.arraycopy (sc, 0, nc, curPos, sl);
+    characters = nc;
+    curPos += sl;
     
     return this;
   }
