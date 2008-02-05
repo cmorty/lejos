@@ -25,9 +25,13 @@ public class FileInputStream extends InputStream{
 		Flash.readPage(buff, page_pointer);
 	}
 	
-	public int read() throws IOException {
+	public int available() throws IOException {
+        return file.file_length - pointer;
+    }
+
+    public int read() throws IOException {
 		// Check against file size for EOF.
-		if(pointer >= file.file_length)
+		if(this.available() <= 0)
 			return -1; // Indicates EOF
 				
 		int val = buff[data_pointer];

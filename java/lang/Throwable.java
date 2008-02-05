@@ -7,7 +7,6 @@ public class Throwable
 {
 	private String _message;
   public Throwable() {
-	  _message = "";
   }
 
   public Throwable(String message) {
@@ -17,5 +16,10 @@ public class Throwable
   public String getMessage()
   {
     return _message;
+  }
+
+  public java.lang.String toString()
+  {
+    return this.getMessage();
   }
 }
