@@ -128,11 +128,7 @@ public class Alert extends Screen {
 		// Play notification sound
 		new Thread() {
 			public void run() {
-		  		for (int i = 4; i < 8; i++) {
-		  			Sound.playTone((1056 * i) / 4, 100);
-		  			Sound.pause(100);
-		  		}
-
+				Sound.beepSequenceUp();
 			}
 		}.start();
 		
