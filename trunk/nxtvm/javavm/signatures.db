@@ -95,7 +95,7 @@ i2cStartById(IIII[BII)I
 i2cDisableById(I)V
 
 #lejos.nxt.Sound
-playTone(II)V
+playTone(III)V
 
 #lejos.nxt.comm.Bluetooth
 btSend([BI)V
@@ -115,7 +115,7 @@ readPage([BI)V
 exec(II)V
 
 #lejos.nxt.Sound
-playSample(IIII)V
+playSample(IIIII)V
 
 #java.lang.Object
 getDataAddress(Ljava/lang/Object;)I
@@ -138,6 +138,11 @@ arraycopy(Ljava/lang/Object;ILjava/lang/Object;II)V
 getDisplay()[B
 setAutoRefresh(I)V
 bitBlt([BIIII[BIIIIIII)V
+
+#lejos.nxt.Sound
+setVolume(I)V
+getVolume()I
+getTime()I
 
 
 

@@ -1,85 +1,49 @@
+/* leJOS Sound generation
+ * The module provides support for audio output. Two modes are supported, tone
+ * generation and the playback of PCM based audio samples. Both use pulse 
+ * density modulation to actually produce the output.
+ * To produce a tone a single pdm encoded cycle is created (having the 
+ * requested amplitude), this single cycle is then played repeatedly to
+ * generate the tone. The bit rate used to output the sample defines the
+ * frequency of the tone and the number of repeats represents then length.
+ * To play an encoded sample (only 8 bit PCM is currently supported), each PCM
+ * sample is turned into a 256 bit pdm block, which is then output (at the
+ * sample rate), to create the output. Again the amplitude of the samples may
+ * be controlled. 
+ * The actual output of the bits is performed using the built in Synchronous
+ * Serial Controller (SSC). This is capable of outputing a series of bits to
+ * port at fixed intervals and is used to output the pdm audio.
+ */
 #include "mytypes.h"
 #include "sound.h"
 #include "AT91SAM7.h"
 #include "aic.h"
 #include "nxt_avr.h"
 #include <string.h>
+#include "display.h"
+#include "systick.h"
 
 /* Buffer length must be a multiple of 8 and at most 64 (preferably as long as possible) */
-#define PWM_BUFFER_LENGTH 64
+#define PDM_BUFFER_LENGTH 64
+/* Main clock frequency */
+#define OSC 48054805
+/* Size of a sample block */
+#define SAMPBITS 256
+#define SAMPBYTES SAMPBITS/8
+#define SAMPWORDS SAMPBITS/32
+
+#define MAXRATE 22050
+#define MINRATE 2000
+#define DEFRATE 8000
 
 extern void sound_isr_entry(void);
 
 enum {
   SOUND_MODE_NONE,
+  SOUND_MODE_SILENCE,
   SOUND_MODE_TONE,
   SOUND_MODE_PCM
 };
-
-#if 0 /* Introduced with leJOS 0.3 but not used so far */
-const U32 load_tone_pattern[16] = 
-  {
-    0xF0F0F0F0,0xF0F0F0F0,
-    0xFCFCFCFC,0xFCFCFDFD,
-    0xFFFFFFFF,0xFFFFFFFF,
-    0xFDFDFCFC,0xFCFCFCFC,
-    0xF0F0F0F0,0xF0F0F0F0,
-    0xC0C0C0C0,0xC0C08080,
-    0x00000000,0x00000000,
-    0x8080C0C0,0xC0C0C0C0
-  };
-  
-const U32 medium_tone_pattern[16] =
-  {
-    0xF0F0F0F0,0xF0F0F0F0,                        
-    0xF8F8F8F8,0xF8F8FCFC,
-    0xF8F8FCFC,0xFCFCFCFC,
-    0xFCFCF8F8,0xF8F8F8F8,
-    0xF0F0F0F0,0xF0F0F0F0,
-    0xE0E0E0E0,0xE0E0C0C0,
-    0xE0E0C0C0,0xC0C0C0C0,
-    0xC0C0E0E0,0xE0E0E0E0
-  };
-#endif /*0*/
-
-/*
-  This pattern is only useful from frequencies higher than ca. 120 Hz,
-  because PWM volume control enters the audible range below that,
-  adding a rather irritating high-pitched component.
-
-  The problem can be solved by using a higher sample rate for lower
-  frequencies, and a longer waveform, of course.
-
-  It would be probably a good idea to calculate the samples on the fly
-  so as to allow volume control and better frequency control as well.
-*/
-const U32 tone_pattern_low[32] =
-  {
-    0xAAAAAAAA,0xAAAAAAAA,0xAAAAAAAA,0xAAAAAAAA,
-    0xAAAAAAAA,0xAAAAAAAA,0xAAAAB6B6,0xB6B6B6B6,
-    0xAAAAAAAA,0xB6B6B6B6,0xB6B6B6B6,0xAAAAAAAA,
-    0xB6B6B6B6,0xB6B6AAAA,0xAAAAAAAA,0xAAAAAAAA,
-    0xAAAAAAAA,0xAAAAAAAA,0xAAAAAAAA,0xAAAAAAAA,
-    0xAAAAAAAA,0xAAAAAAAA,0xAAAA9292,0x92929292,
-    0xAAAAAAAA,0x92929292,0x92929292,0xAAAAAAAA,
-    0x92929292,0x9292AAAA,0xAAAAAAAA,0xAAAAAAAA
-  };
-
-/*
-  Pattern for higher frequencies to prevent halving the maximum
-  frequency. Very noisy below 250 Hz.
- */
-const U32 tone_pattern_high[16] =
-  {
-    0xAAAAAAAA,0xAAAAAAAA,
-    0xAAAAAAAA,0xAAB6B6B6,
-    0xAAAAB6B6,0xB6B6AAAA,
-    0xB6B6B6AA,0xAAAAAAAA,
-    0xAAAAAAAA,0xAAAAAAAA,
-    0xAAAAAAAA,0xAA929292,
-    0xAAAA9292,0x9292AAAA,
-    0x929292AA,0xAAAAAAAA
-  };
 
 /* Numbers with 0-32 evenly spaced bits set */
 const U32 sample_pattern[33] =
@@ -95,43 +59,96 @@ const U32 sample_pattern[33] =
     0xffffffff
   };
 
-U32 tone_cycles;
-U32 *tone_pattern;
-U8 tone_length;
 U8 sound_mode = SOUND_MODE_NONE;
 
 struct {
+  // pointer to the next sample
+  U8 *ptr;
   // The number of samples ahead
   S32 count;
-  // Pointer to the next sample
-  U8* ptr;
   // 0 or 1, identifies the current buffer
   U8 buf_id;
   // Double buffer
-  U32 buf1[PWM_BUFFER_LENGTH], buf2[PWM_BUFFER_LENGTH];
+  U32 buf[2][PDM_BUFFER_LENGTH];
   // Amplification LUT
-  U8 amp[256];
-  // Chosen frequency (1/1024 Hz)
-  S32 cfreq;
-  // Actual frequency (1/1024 Hz)
-  S32 afreq;
-  // Frequency counter
-  S32 fcnt;
+  U8 amp[257];
+  // Volume val used to create the amp LUT
+  S32 cur_vol;
+  // Clock divisor to use to play the sample
+  U32 clock_div;
+  // Size of the sample
+  U32 len;
 } sample;
+
+/* The following tables provide input to the wave generation code. This
+ * code takes a set of points describing one half cycle of a symmetric waveform
+ * and from this creates a pdm encoded version of a single full cycle of the
+ * wave. 
+ *
+ * A number of sample wave shapes have been tried, an accurates sine wave, a
+ * square wave, triangular wave and a rough approximation of a sine wave.
+ * Currently the rough sine wave is used, the sqaure wave also works well.
+ * The purer shapes do not seem to work very well at frequencies below
+ * about 800Hz. It seems that a combination of the sounder and the Lego
+ * amplifier electronics mean that the response below this is very poor.
+ * However by using a waveform like a square wave that has a lot of harminics
+ * the ear can be fooled into hearing the lower frequencies. Using a pure wave
+ * form like the sine wave results in a very low volume. This rather surprising
+ * result has to some extent been validated using an audio spectrum analyzer
+ * which shows vertually no fundamental below 700Hz but lots of harmonics.
+ *
+ * The square wave also produces a higher volume than other wave shapes. 
+ * Higher volumes can be achieved when using the rough sine wave by allowing
+ * the volume setting to push the shape into distortion and effectively
+ * becomming a square wave!
+ */
+const byte sine[] =  {0x80, 0x80, 0xc0, 0xc0, 0xc0, 0xc0, 0xff, 0xff, 0xff, 0xff, 0xff, 0xc0, 0xc0, 0xc0, 0xc0, 0x80, 0x80};
+// Time required to generate the tone and volume lookup table...
+#define TONE_OVERHEAD 1
+
+/* To minimise the number of cracks and pops when playing a series of tones
+ * and/or samples we output a shprt period of "silence" at the end of each
+ * sample. A small click is generated when turning off the sound system so
+ * by filling small gaps with explicit silence we can avoid this additonal
+ * noise.
+ */
+
+const U32 silence[16] = {
+0xaaaaaaaa, 0xaaaaaaaa,
+0xaaaaaaaa, 0xaaaaaaaa,
+0xaaaaaaaa, 0xaaaaaaaa,
+0xaaaaaaaa, 0xaaaaaaaa,
+0xaaaaaaaa, 0xaaaaaaaa,
+0xaaaaaaaa, 0xaaaaaaaa,
+0xaaaaaaaa, 0xaaaaaaaa,
+0xaaaaaaaa, 0xaaaaaaaa
+};
+#define SILENCE_CLK (OSC/(16*32*2) + 250/2)/250
+#define SILENCE_CNT 50
+
+// We use a volume law that approximates a log function. The values in the
+// table below have been hand tuned to try and provide a smooth change in
+// the loudness of both tones and samples.
+const byte logvol[] = {0, 4, 16, 28, 40, 52, 64, 78, 93, 109, 128, 196, 255, 255};
+
+// Master volume value.
+int master_volume = 100;
 
 void sound_init()
 {
+  // Initialise the hardware. We make use of the SSC module.
   sound_interrupt_disable();
   sound_disable();
   
   *AT91C_PMC_PCER = (1 << AT91C_PERIPHERAL_ID_SSC);
 
-  //*AT91C_PIOA_ODR = AT91C_PA17_TD;
-  //*AT91C_PIOA_OWDR = AT91C_PA17_TD;
-  //*AT91C_PIOA_MDDR = AT91C_PA17_TD;
-  //*AT91C_PIOA_PPUDR = AT91C_PA17_TD;
-  //*AT91C_PIOA_IFDR = AT91C_PA17_TD;
-  //*AT91C_PIOA_CODR = AT91C_PA17_TD;
+  *AT91C_PIOA_ODR = AT91C_PA17_TD;
+  *AT91C_PIOA_OWDR = AT91C_PA17_TD;
+  *AT91C_PIOA_MDDR = AT91C_PA17_TD;
+  *AT91C_PIOA_PPUDR = AT91C_PA17_TD;
+  *AT91C_PIOA_IFDR = AT91C_PA17_TD;
+  *AT91C_PIOA_CODR = AT91C_PA17_TD;
+  *AT91C_PIOA_IDR = AT91C_PA17_TD;
   
   *AT91C_SSC_CR = AT91C_SSC_SWRST;
   *AT91C_SSC_TCMR = AT91C_SSC_CKS_DIV + AT91C_SSC_CKO_CONTINOUS + AT91C_SSC_START_CONTINOUS;
@@ -142,33 +159,150 @@ void sound_init()
   aic_clear(AT91C_PERIPHERAL_ID_SSC);
   aic_set_vector(AT91C_PERIPHERAL_ID_SSC, AT91C_AIC_PRIOR_LOWEST | AT91C_AIC_SRCTYPE_INT_EDGE_TRIGGERED,
 		 (U32)sound_isr_entry); /*PG*/
+  sample.buf_id = 0;
+  master_volume = 80;
+  sample.cur_vol = -1;
 }
 
-void sound_freq(U32 freq, U32 ms)
+
+static void create_tone(const byte *lookup, int lulen, U32 *pat, int len)
 {
-  if (freq < 500) {
-    *AT91C_SSC_CMR = ((96109714 / 1024) / (freq << 1)) + 1;
-    tone_pattern = (U32*)tone_pattern_low;
-    tone_length = 32;
-  } else {
-    *AT91C_SSC_CMR = ((96109714 / 1024) / freq) + 1;
-    tone_pattern = (U32*)tone_pattern_high;
-    tone_length = 16;
+  // Fill the supplied buffer with len longs representing a pdm encoded
+  // wave. We use a pre-generated lookup table for the wave shape.
+  // The shape will be symmetric. The original code used interpolation as part
+  // of the lookup but this was too slow. 
+  int numsamples = len*32/2;
+  int step = numsamples/(lulen-1);
+  int word = 0;
+  U32 bit = 0x80000000;
+  U32 bit2 = 0x00000001;
+  int i;
+  int error = 0;
+  int error2 = 0;
+  int out=0;
+  U32 bits = 0;
+  U32 bits2 = 0;
+  for(i =0; i < numsamples; i++)
+  {
+    int entry = i/step;
+    int res;
+    res = lookup[entry];
+    // Apply volume control
+    res = sample.amp[res] - 128;
+    // Perform pdm conversion    
+    error = res - out + error;
+    error2 = error - out + error2;
+    if (error2 > 0)
+    //if (res >= error)
+      out = 127;
+    else
+      out = -127;
+    //error = out - res + error;
+    if (out > 0)
+      bits |= bit;
+    else
+      bits2 |= bit2;
+    bit >>= 1;
+    bit2 <<= 1;
+    if (bit == 0)
+    {
+      bit = 0x80000000;
+      bit2 = 0x00000001;
+      pat[word++] = bits;
+      pat[len - word] = bits2;
+      bits2 = bits = 0;
+    }
   }
-  *AT91C_SSC_PTCR = AT91C_PDC_TXTEN;
-  tone_cycles = (freq * ms) / 2000 - 1;
-
-  sound_mode = SOUND_MODE_TONE;
-  sound_interrupt_enable();
 }
 
-void sound_interrupt_enable()
+static void set_vol(int vol)
 {
-  *AT91C_SSC_IER = AT91C_SSC_ENDTX;
+  // Create the amplification control lookup table. We use a logartihmic
+  // volume system mapped into a range of 0 to 120. 0 is muted, 100 is
+  // full volume, 120 is driving into overload.
+  int i;
+  S32 output;
+
+  if (vol == MASTERVOL) vol = master_volume;
+  // Get into range and use log conversion
+  if (vol < 0) vol = 0;
+  if (vol > MAXVOL) vol = MAXVOL;
+  // Do we need to create a new LUT?
+  if (sample.cur_vol == vol) return;
+  output = logvol[vol/10];
+  output = output + ((logvol[vol/10 + 1]-output)*(vol%10))/10;
+
+  // Create the symmetric lookup table
+  for(i = 0; i <= 128; i++)
+  {
+    S32 a = (i*output)/128;
+    S32 b = a;
+    if (a > 127)
+    {
+      a = 127;
+      b = 128;
+    }
+    sample.amp[128-i] = 128 - b; 
+    sample.amp[i+128] = a + 128;
+  }
+  sample.cur_vol = vol;
+}
+
+
+static int start;
+void sound_freq(U32 freq, U32 ms, int vol)
+{
+  // Set things up ready to go, note we avoid using anything that may
+  // be used by the interupt routine because ints may still be enabled
+  // at this point
+start = systick_get_ms();
+  int len;
+  // we use longer samples for lower frequencies
+  if (freq > 250)
+    len = 16;
+  else if (freq < 120)
+    len = 64;
+  else
+    len = 32;
+  sound_mode = SOUND_MODE_TONE;
+  // Update the volume lookup table if we need to
+  set_vol(vol);
+  int buf = sample.buf_id^1;
+  create_tone(sine, sizeof(sine), sample.buf[buf], len); 
+  // The note gneration takes approx 1ms, to ensure that we do not get gaps
+  // when playing a series of tones we extend the requested period to cover
+  // this 1ms cost.
+  ms += TONE_OVERHEAD;
+  // Turn of ints while we update shared values
+  sound_interrupt_disable();
+  /* Genrate the pdm wave of the correct amplitude */
+  sample.clock_div = (OSC/(len*32*2) + freq/2)/freq;
+  // Calculate actual frequency and use this for length calc
+  freq = (OSC/(2*sample.clock_div))/(len*32);
+  sample.count = (freq*ms + 1000-1)/1000;
+  sample.len = len;
+  sample.ptr = (U8 *)sample.buf[buf];
+  *AT91C_SSC_PTCR = AT91C_PDC_TXTEN;
+  sound_mode = SOUND_MODE_TONE;
+  sound_interrupt_enable(1);
+}
+
+void sound_interrupt_enable(int end)
+{
+  // Enable interrupt notification of either the end of the next buffer
+  // or the end of all output. Having both enabled does not seem to work
+  // the end notifaction seems to get lost.
+  *AT91C_SSC_IDR = AT91C_SSC_TXBUFE;
+  *AT91C_SSC_IDR = AT91C_SSC_ENDTX;
+  if (end)
+    *AT91C_SSC_IER = AT91C_SSC_TXBUFE;
+  else
+    *AT91C_SSC_IER = AT91C_SSC_ENDTX;
 }
 
 void sound_interrupt_disable()
 {
+  *AT91C_SSC_IDR = AT91C_SSC_TXBUFE;
   *AT91C_SSC_IDR = AT91C_SSC_ENDTX;
 }
 
@@ -183,11 +317,12 @@ void sound_disable()
 }
 
 void sound_fill_sample_buffer() {
-  U32 *sbuf = sample.buf_id ? sample.buf1 : sample.buf2;
+  sample.buf_id ^= 1;
+  U32 *sbuf = sample.buf[sample.buf_id];
   U8 i;
   /* Each 8-bit sample is turned into 8 32-bit numbers, i.e. 256 bits altogether */
-  for (i = 0; i < PWM_BUFFER_LENGTH >> 3; i++) {
-    U8 smp = sample.amp[*sample.ptr];
+  for (i = 0; i < PDM_BUFFER_LENGTH >> 3; i++) {
+    U8 smp = (sample.count > 0 ? sample.amp[*sample.ptr] : 128);
     U8 msk = "\x00\x10\x22\x4a\x55\x6d\x77\x7f"[smp & 7];
     U8 s3 = smp >> 3;
     *sbuf++ = sample_pattern[s3 + (msk & 1)]; msk >>= 1;
@@ -198,94 +333,114 @@ void sound_fill_sample_buffer() {
     *sbuf++ = sample_pattern[s3 + (msk & 1)]; msk >>= 1;
     *sbuf++ = sample_pattern[s3 + (msk & 1)];
     *sbuf++ = sample_pattern[s3];
-
-    /*
-      An alternative that doesn't need a sample_pattern array:
-
+/*
+      //An alternative that doesn't need a sample_pattern array:
       U32 msb = 0xffffffff << (32 - (smp >> 3));
-      *sbuf++ = msb | (msk & 1); msk >>= 1;
-      *sbuf++ = msb | (msk & 1); msk >>= 1;
-      *sbuf++ = msb | (msk & 1); msk >>= 1;
-      *sbuf++ = msb | (msk & 1); msk >>= 1;
-      *sbuf++ = msb | (msk & 1); msk >>= 1;
-      *sbuf++ = msb | (msk & 1); msk >>= 1;
-      *sbuf++ = msb | (msk & 1);
+      *sbuf++ = msb | ((msk & 1) ? msb >> 1 : 0); msk >>= 1;
+      *sbuf++ = msb | ((msk & 1) ? msb >> 1 : 0); msk >>= 1;
+      *sbuf++ = msb | ((msk & 1) ? msb >> 1 : 0); msk >>= 1;
+      *sbuf++ = msb | ((msk & 1) ? msb >> 1 : 0); msk >>= 1;
+      *sbuf++ = msb | ((msk & 1) ? msb >> 1 : 0); msk >>= 1;
+      *sbuf++ = msb | ((msk & 1) ? msb >> 1 : 0); msk >>= 1;
+      *sbuf++ = msb | ((msk & 1) ? msb >> 1 : 0); 
       *sbuf++ = msb;
-    */
-
-    /* Bresenham to the save */
-    for (sample.fcnt += sample.cfreq; sample.fcnt >= sample.afreq; sample.fcnt -= sample.afreq) {
-      sample.ptr++;
-      sample.count--;
-    }
+*/
+    sample.ptr++;
+    sample.count--;
   }
 }
 
-void sound_play_sample(U8 *data, U32 length, U32 freq, U32 amp)
+void sound_play_sample(U8 *data, U32 length, U32 freq, int vol)
 {
-  S16 i;
-
-  //U32 cdiv = 96109714 / 2048 / freq;
-  //if (cdiv < 4) cdiv = 4;
-
-  /* Constant hardware frequency */
-  U32 cdiv = 4;
-
-  *AT91C_SSC_CMR = cdiv;
-  *AT91C_SSC_PTCR = AT91C_PDC_TXTEN;
-  sample.count = length;
-  sample.buf_id = 0;
-  sample.ptr = data;
-
-  /* Frequency correction */
-  sample.cfreq = freq << 10;
-  sample.afreq = 96109714 / cdiv;
-  sample.fcnt = 0;
-
-  /* Simple linear amplification */
-  for (i = 0; i < 256; i++) {
-    S32 a = (i - 128) * (S32)amp / 1000 + 128;
-    if (a < 0) a = 0;
-    if (a > 255) a = 255;
-    sample.amp[i] = a;
-  }
-
-  sound_fill_sample_buffer();
-
+  if (data == (U8 *) 0 || length == 0) return;
+  // Calculate the clock divisor based upon the recorded sample frequency */
+  if (freq == 0) freq = DEFRATE;
+  if (freq > MAXRATE) freq = MAXRATE;
+  if (freq < MINRATE) freq = MINRATE;
+  U32 cdiv = (OSC/(2*SAMPBITS) + freq/2)/freq;
+  set_vol(vol);
+  // Turn off ints while we update shared values
+  sound_interrupt_disable();
   sound_mode = SOUND_MODE_PCM;
-  sound_interrupt_enable();
+  sample.count = length;
+  sample.ptr = data;
+  sample.len = PDM_BUFFER_LENGTH;
+  sample.clock_div = cdiv;
+  // re-enable and wait for the current sample to complete
+  sound_interrupt_enable(1);
+  *AT91C_SSC_PTCR = AT91C_PDC_TXTEN;
+}
+
+void sound_set_volume(int vol)
+{
+  if (vol < 0) vol = 0;
+  if (vol > MAXVOL) vol = MAXVOL;
+  master_volume = vol;
+}
+
+int sound_get_volume()
+{
+  return master_volume;
+}
+
+int sound_get_time()
+{
+  // Return the amount of time still to play for the current tone/sample
+  if (sound_mode > SOUND_MODE_SILENCE)
+  {
+    int ms = (sample.count*1000*sample.len*32)/(OSC/(2*sample.clock_div));
+    // remove the extra time we added
+    if (sound_mode == SOUND_MODE_TONE && ms > 0) ms -= TONE_OVERHEAD;
+    return ms;
+  }
+  else
+    return 0;
 }
 
 void sound_isr_C()
 {
-  switch (sound_mode) {
-  case SOUND_MODE_TONE:
-    if (tone_cycles--) {
-      *AT91C_SSC_TNPR = (unsigned int)tone_pattern;
-      *AT91C_SSC_TNCR = tone_length;
+    if (sample.count > 0)
+    {
+      // refill the buffer, and adjust any clocks
+      *AT91C_SSC_CMR = sample.clock_div;
       sound_enable();
-    } else {
+      if (*AT91C_SSC_TCR == 0)
+      {
+        if (sound_mode == SOUND_MODE_PCM)
+        {
+          sound_fill_sample_buffer();
+          *AT91C_SSC_TPR = (unsigned int)sample.buf[sample.buf_id];
+        }
+        else
+          *AT91C_SSC_TPR = (unsigned int)sample.ptr;
+        *AT91C_SSC_TCR = sample.len;
+        sample.count--;
+      }
+      if (sound_mode == SOUND_MODE_PCM)
+      {
+        sound_fill_sample_buffer();
+        *AT91C_SSC_TNPR = (unsigned int)sample.buf[sample.buf_id];
+      }
+      else
+        *AT91C_SSC_TNPR = (unsigned int)sample.ptr;
+      *AT91C_SSC_TNCR = sample.len;
+      sample.count--;
+      sound_interrupt_enable((sample.count <= 0));
+    }
+    else if (sound_mode == SOUND_MODE_SILENCE)
+    {
+      sound_mode = SOUND_MODE_NONE;
       sound_disable();
       sound_interrupt_disable();
-      sound_mode = SOUND_MODE_NONE;
     }
-    break;
-  case SOUND_MODE_PCM:
-    if (sample.count > 0) {
-      *AT91C_SSC_TNPR = (unsigned int)(sample.buf_id ? sample.buf1 : sample.buf2);
-      *AT91C_SSC_TNCR = PWM_BUFFER_LENGTH;
-      sample.buf_id ^= 1;
-      sound_fill_sample_buffer();
-      sound_enable();
-    } else {
-      sound_disable();
-      sound_interrupt_disable();
-      sound_mode = SOUND_MODE_NONE;
+    else
+    {
+      // Add a short section of silence after the sample/tone
+      sound_mode = SOUND_MODE_SILENCE;
+      sample.clock_div = SILENCE_CLK;
+      sample.ptr = (U8 *)silence;
+      sample.count = SILENCE_CNT;
+      sample.len = 16;
+      sound_isr_C();
     }
-    break;
-  default:
-    sound_disable();
-    sound_interrupt_disable();
-    sound_mode = SOUND_MODE_NONE;
-  }
 }

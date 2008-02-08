@@ -251,8 +251,8 @@ dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
     	                                paramBase[6]));                      
     }
     return; 
-  case playTone_4II_5V:
-    sound_freq(paramBase[0],paramBase[1]);
+  case playTone_4III_5V:
+    sound_freq(paramBase[0],paramBase[1], paramBase[2]);
     return;
   case btSend_4_1BI_5V:
     {
@@ -340,8 +340,17 @@ dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
   case usbReset_4_5V:
     udp_reset();
     return; 
-  case playSample_4IIII_5V:
-    sound_play_sample((unsigned char *) &FLASH_BASE[(paramBase[0]*64)],paramBase[1],paramBase[2],paramBase[3]);
+  case playSample_4IIIII_5V:
+    sound_play_sample(((unsigned char *) &FLASH_BASE[(paramBase[0]*64)]) + paramBase[1],paramBase[2],paramBase[3],paramBase[4]);
+    return;
+  case setVolume_4I_5V:
+    sound_set_volume(paramBase[0]);
+    return;
+  case getVolume_4_5I:
+    push_word(sound_get_volume());
+    return;
+  case getTime_4_5I:
+    push_word(sound_get_time());
     return;
   case getDataAddress_4Ljava_3lang_3Object_2_5I:
     push_word (ptr2word ((byte *) fields_start(word2ptr(paramBase[0]))));

@@ -10,7 +10,13 @@ void sound_enable();
 void sound_disable();
 void sound_isr_C();
 
-void sound_freq(U32 freq, U32 ms);
-void sound_play_sample(U8 *data, U32 length, U32 freq, U32 amp);
+void sound_freq(U32 freq, U32 ms, int vol);
+void sound_play_sample(U8 *data, U32 length, U32 freq, int vol);
+void sound_set_volume(int vol);
+int sound_get_volume();
+int sound_get_time();
+
+#define MAXVOL 120
+#define MASTERVOL -1
 
 #endif /*SOUND_H_*/
