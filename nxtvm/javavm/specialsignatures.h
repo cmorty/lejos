@@ -54,7 +54,7 @@
 #define i2cBusyById_4I_5I 47
 #define i2cStartById_4IIII_1BII_5I 48
 #define i2cDisableById_4I_5V 49
-#define playTone_4II_5V 50
+#define playTone_4III_5V 50
 #define btSend_4_1BI_5V 51
 #define btReceive_4_1B_5V 52
 #define btGetBC4CmdMode_4_5I 53
@@ -66,7 +66,7 @@
 #define writePage_4_1BI_5V 59
 #define readPage_4_1BI_5V 60
 #define exec_4II_5V 61
-#define playSample_4IIII_5V 62
+#define playSample_4IIIII_5V 62
 #define getDataAddress_4Ljava_3lang_3Object_2_5I 63
 #define gc_4_5V 64
 #define shutDown_4_5V 65
@@ -79,4 +79,7 @@
 #define getDisplay_4_5_1B 72
 #define setAutoRefresh_4I_5V 73
 #define bitBlt_4_1BIIII_1BIIIIIII_5V 74
+#define setVolume_4I_5V 75
+#define getVolume_4_5I 76
+#define getTime_4_5I 77
 #endif // _SPECIALSIGNATURES_H

@@ -55,7 +55,7 @@ public interface SpecialSignatureConstants {
     "i2cBusyById(I)I",
     "i2cStartById(IIII[BII)I",
     "i2cDisableById(I)V",
-    "playTone(II)V",
+    "playTone(III)V",
     "btSend([BI)V",
     "btReceive([B)V",
     "btGetBC4CmdMode()I",
@@ -67,7 +67,7 @@ public interface SpecialSignatureConstants {
     "writePage([BI)V",
     "readPage([BI)V",
     "exec(II)V",
-    "playSample(IIII)V",
+    "playSample(IIIII)V",
     "getDataAddress(Ljava/lang/Object;)I",
     "gc()V",
     "shutDown()V",
@@ -79,6 +79,9 @@ public interface SpecialSignatureConstants {
     "arraycopy(Ljava/lang/Object;ILjava/lang/Object;II)V",
     "getDisplay()[B",
     "setAutoRefresh(I)V",
-    "bitBlt([BIIII[BIIIIIII)V"
+    "bitBlt([BIIII[BIIIIIII)V",
+    "setVolume(I)V",
+    "getVolume()I",
+    "getTime()I"
   };
 }
