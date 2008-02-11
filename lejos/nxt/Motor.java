@@ -1,7 +1,7 @@
 package lejos.nxt;
 import lejos.nxt.Battery;
 import lejos.nxt.*;
-
+  
 
 /**
  * Abstraction for a NXT motor. Three instances of <code>Motor</code>
