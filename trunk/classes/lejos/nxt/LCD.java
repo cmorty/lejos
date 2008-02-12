@@ -364,5 +364,16 @@ public class LCD {
 	 * @param h height of the area to copy
 	 * @param rop raster operation.
 	 */
-	public native static void bitBlt(byte [] src, int sw, int sh, int sx, int sy, byte dst[], int dw, int dh, int dx, int dy, int w, int h, int rop);	
+	public native static void bitBlt(byte [] src, int sw, int sh, int sx, int sy, byte dst[], int dw, int dh, int dx, int dy, int w, int h, int rop);
+	
+	/**
+	 * Scrolls the screen up one text line
+	 *
+	 */
+	public static void scroll() {
+		LCD.bitBlt(displayBuf, SCREEN_WIDTH, SCREEN_HEIGHT, 0, CELL_HEIGHT,
+				   0, 0, SCREEN_WIDTH, SCREEN_HEIGHT - CELL_HEIGHT, ROP_COPY);
+		LCD.bitBlt(0, SCREEN_HEIGHT - CELL_HEIGHT,
+				   SCREEN_WIDTH, CELL_HEIGHT, ROP_CLEAR);
+	}
 }
