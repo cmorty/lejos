@@ -63,8 +63,12 @@ class ListenerThread extends Thread
   public void run()
   {
       for (;;) {
+    	  singleton.setPriority(Thread.MAX_PRIORITY);
           try  {
               int changed = poller.poll(mask, 0);
+              
+              // Run events at normal priority so they can use Thread.yield()
+              singleton.setPriority(Thread.NORM_PRIORITY);
 
               for(int i=0;i<numLC;i++) 
                 if ((changed & masks[i]) != 0) 
