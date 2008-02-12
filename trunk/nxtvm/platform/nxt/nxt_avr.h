@@ -24,4 +24,6 @@ U32 sensor_adc(U32 n);
 
 void nxt_avr_set_input_power(U32 n, U32 power_type);
 
+void nxt_avr_set_key_click(U32 freq, U32 len, U32 vol);
+
 #endif

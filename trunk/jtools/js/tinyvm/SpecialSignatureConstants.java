@@ -82,6 +82,7 @@ public interface SpecialSignatureConstants {
     "bitBlt([BIIII[BIIIIIII)V",
     "setVolume(I)V",
     "getVolume()I",
-    "getTime()I"
+    "getTime()I",
+    "setKeyClick(III)V"
   };
 }

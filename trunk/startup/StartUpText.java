@@ -5,6 +5,58 @@ import javax.microedition.lcdui.*;
 import lejos.nxt.comm.*;
 import lejos.nxt.*;
 
+/*
+class SoundOptions extends Form
+{
+	private static final int CMDID_BACK_TO_MAIN 	= 1;
+	private static final Command BACK_COMMAND = new Command(CMDID_BACK_TO_MAIN, Command.BACK, 0);
+	private Gauge	volumeGauge  = new Gauge("Volume:", true, 12, 8);
+	private Gauge	keyClickGauge  = new Gauge("Click: ", true, 12, 8);
+
+	private Display display = Display.getDisplay();
+	
+	SoundOptions()
+	{
+		super("Sound settings");
+		//append(new Spacer(Display.SCREEN_WIDTH, Display.CHAR_HEIGHT));
+		//append(new StringItem(null, "Vol:"));
+		append(volumeGauge);
+		append(new Spacer(Display.SCREEN_WIDTH, Display.CHAR_HEIGHT));
+		append(keyClickGauge);
+		append(new Spacer(Display.SCREEN_WIDTH, Display.CHAR_HEIGHT));
+		addCommand(BACK_COMMAND);
+		setCommandListener(this);	
+	}
+	
+	protected void keyPressed(int keyCode)
+	{
+		int oldVol = volumeGauge.getValue();
+		int oldClick = keyClickGauge.getValue();
+		super.keyPressed(keyCode);
+		int newVol = volumeGauge.getValue();
+		int newClick = keyClickGauge.getValue();
+		if (oldVol != newVol)
+		{
+			Sound.setVolume(newVol*10);
+			Sound.beep();
+		}
+		if (oldClick != newClick)
+			Sound.playTone(3500, 20, newClick*10);
+	}
+	public void commandAction(Command c, Displayable d) 
+	{
+		if (c.getCommandId() == CMDID_BACK_TO_MAIN)
+			display.quit();
+	}
+	public void show()
+	{
+		display.setCurrent(this);
+		display.show(true);
+	}
+}
+ */
+
+
 public class StartUpText
 {
    static Graphics g = new Graphics();
@@ -16,8 +68,7 @@ public class StartUpText
    {
       for(int i = 0; i<3; i++)
       {
-         Sound.playTone(freq[i],250);
-         Sound.pause(260);       
+         Sound.playNote(Sound.XYLOPHONE, freq[i], (i==3 ? 500 : 300));   
       }
    }
    static void drawTopRow()
@@ -55,6 +106,22 @@ public class StartUpText
 		Bluetooth.setPower(powerOn);
 		return powerOn;
 	}
+	
+	private static void drawGauge(int x, int y, int w, int h, int max, int cur)
+	{
+		int segWidth = (w/max);
+		for(int i = 0; i < cur; i++)
+			g.fillRect(x + i*segWidth, y+1, segWidth-1, h-1);
+		for(int i = cur; i < max; i++)
+			g.drawRect(x + i*segWidth, y+1, segWidth-1, h-1);
+	}
+	
+	private static String formatVol(int vol)
+	{
+		if (vol == 0) return "mute";
+		if (vol == 10) return "10";
+		return " " + vol;
+	}
     
 	public static void main(String[] args) throws Exception {
 		Indicators ind = new Indicators();
@@ -74,7 +141,7 @@ public class StartUpText
 		String battery = "Battery ";
 		
 		TextMenu filesMenu = new TextMenu(null,1);
-		String[] topMenuData = {"Files", "Bluetooth", "System"};
+		String[] topMenuData = {"Files", "Bluetooth", "Sound", "System"};
 		TextMenu topMenu = new TextMenu(topMenuData,1);
 		String[] fileMenuData = {"Execute program", "Delete file"}; 
 		TextMenu fileMenu = new TextMenu(fileMenuData,2);
@@ -84,10 +151,17 @@ public class StartUpText
 		String[] blueOffMenuData = {"Power on"};
 		TextMenu blueMenu = new TextMenu(blueMenuData,3);
 		TextMenu blueOffMenu = new TextMenu(blueOffMenuData,3);
+		String[] soundMenuData = {"Volume:    ", "Key click: "};
+		String[] soundMenuData2 = new String[2];
+		TextMenu soundMenu = new TextMenu(soundMenuData, 2);
+		int [][] Volumes = {{Sound.getVolume()/10, 784, 350}, {4, 1568, 100}};
+		int curItem = 0;
 		String[] systemMenuData = {"Format"};
 		String dot = ".";
         String[] yes_no = {"No","Yes"};
         TextMenu yes_noMenu = new TextMenu(yes_no,6);
+		
+		//SoundOptions soundMenu = new SoundOptions();
         playTune();
 		TextMenu systemMenu = new TextMenu(systemMenuData,5);
 		File[] files = null;
@@ -110,7 +184,7 @@ public class StartUpText
 		catch (IOException ioe) {
 			File.reset();
 		}
-
+		Button.setKeyClick(Volumes[1][1], Volumes[1][2], Volumes[1][0]*10);
 		while (!quit) 
 		{ 
 		   LCD.clear();
@@ -154,14 +228,24 @@ public class StartUpText
                 LCD.drawInt((millis% 1000)/100,13,3);
                 LCD.drawString(freeMem,0,4);
                 LCD.drawInt((int)(Runtime.getRuntime().freeMemory()),11,4);				
+			} else if (menu == soundMenu)
+			{
+				for(int i = 0; i < Volumes.length; i++)
+					soundMenuData2[i] = soundMenuData[i] + formatVol(Volumes[i][0]);
+				soundMenu.setItems(soundMenuData2);
 			}
-			int selection = menu.select();
+			int selection = menu.select(curItem);
 		    if (menu == topMenu) {
 		    	 if (selection == 0) {
 		    		 menu = filesMenu;
 		    	 } else if (selection ==1) {
 		    		 menu = (btPowerOn ? blueMenu : blueOffMenu);
 		    	 } else if (selection == 2) {
+					 menu = soundMenu;
+					 // Turn of key click when in the sound menu so it does
+					 // not screw with the feedback sounds
+					 Button.setKeyClick(0, 0, 0);
+				 } else if (selection == 3) {
 		    		 menu = systemMenu;
 		    	 } else if (selection == -1) {
 		    		 quit = true;
@@ -313,8 +397,32 @@ public class StartUpText
                }
 //             } else if (selection == -1) {
                    menu = topMenu;
-//             }
-           }
+//             } else
+            } else if (menu == soundMenu) {
+				if (selection >= 0)
+				{
+					Volumes[selection][0]++;
+					Volumes[selection][0] %= 11;
+					for(int i = 0; i < Volumes.length; i++)
+						soundMenuData2[i] = soundMenuData[i] + formatVol(Volumes[i][0]);
+					soundMenu.setItems(soundMenuData2);
+					if (selection == 0)
+					{
+						Sound.setVolume(Volumes[0][0]*10);
+						Sound.playNote(Sound.XYLOPHONE, Volumes[selection][1], Volumes[selection][2]);
+					}
+					else
+						Sound.playTone(Volumes[selection][1], Volumes[selection][2], -Volumes[selection][0]*10);
+					curItem = selection;
+				}
+				else
+				{
+					// Make sure key click is back on...
+					Button.setKeyClick(Volumes[1][1], Volumes[1][2], Volumes[1][0]*10);
+					menu = topMenu;
+					curItem = 0;
+				}
+			}
 		}
 		System.shutDown();
 	}

@@ -102,7 +102,11 @@ struct {
  * the volume setting to push the shape into distortion and effectively
  * becomming a square wave!
  */
-const byte sine[] =  {0x80, 0x80, 0xc0, 0xc0, 0xc0, 0xc0, 0xff, 0xff, 0xff, 0xff, 0xff, 0xc0, 0xc0, 0xc0, 0xc0, 0x80, 0x80};
+//const byte sine[] =  {0xa8, 0xc0, 0xca, 0xd4, 0xe0, 0xe9, 0xff, 0xff, 0xff, 0xff, 0xe9, 0xe0, 0xd4, 0xca, 0xc0, 0xa8};
+//const byte sine[] =  {0xb0, 0xc0, 0xca, 0xd4, 0xe0, 0xe9, 0xf2, 0xff, 0xff, 0xf2, 0xe9, 0xe0, 0xd4, 0xca, 0xc0, 0xb0};
+//const byte sine[] =  {0xc0, 0xc8, 0xd0, 0xd8, 0xe0, 0xea, 0xf4, 0xff, 0xff, 0xf4, 0xea, 0xe0, 0xd8, 0xd0, 0xc8, 0xc0};
+const byte sine[] =  {0xc0, 0xc8, 0xd0, 0xd8, 0xe0, 0xea, 0xf4, 0xff, 0xff, 0xf0, 0xe5, 0xdc, 0xd4, 0xcc, 0xc4, 0xbc};
+//const byte sine[] =  {0x98, 0xb0, 0xc7, 0xda, 0xea, 0xf6, 0xfd, 0xff, 0xff, 0xfd, 0xf6, 0xea, 0xda, 0xc7, 0xb0, 0x98};
 // Time required to generate the tone and volume lookup table...
 #define TONE_OVERHEAD 1
 
@@ -129,10 +133,13 @@ const U32 silence[16] = {
 // We use a volume law that approximates a log function. The values in the
 // table below have been hand tuned to try and provide a smooth change in
 // the loudness of both tones and samples.
-const byte logvol[] = {0, 4, 16, 28, 40, 52, 64, 78, 93, 109, 128, 196, 255, 255};
+//const byte logvol[] = {0, 4, 16, 28, 40, 52, 64, 78, 93, 109, 128, 196, 255, 255};
+//const byte logvol[] = {0, 8, 24, 40, 56, 80, 104, 128, 160, 208, 255, 255};
+const byte logvol[] = {0, 8, 24, 40, 56, 80, 104, 128, 162, 196, 255, 255};
+
 
 // Master volume value.
-int master_volume = 100;
+int master_volume = 70;
 
 void sound_init()
 {
@@ -160,10 +167,9 @@ void sound_init()
   aic_set_vector(AT91C_PERIPHERAL_ID_SSC, AT91C_AIC_PRIOR_LOWEST | AT91C_AIC_SRCTYPE_INT_EDGE_TRIGGERED,
 		 (U32)sound_isr_entry); /*PG*/
   sample.buf_id = 0;
-  master_volume = 80;
+  master_volume = 70;
   sample.cur_vol = -1;
 }
-
 
 static void create_tone(const byte *lookup, int lulen, U32 *pat, int len)
 {
@@ -172,45 +178,48 @@ static void create_tone(const byte *lookup, int lulen, U32 *pat, int len)
   // The shape will be symmetric. The original code used interpolation as part
   // of the lookup but this was too slow. 
   int numsamples = len*32/2;
-  int step = numsamples/(lulen-1);
+  int step = numsamples/lulen;
   int word = 0;
   U32 bit = 0x80000000;
   U32 bit2 = 0x00000001;
-  int i;
+  int i = numsamples/step;;
   int error = 0;
   int error2 = 0;
   int out=0;
   U32 bits = 0;
   U32 bits2 = 0;
-  for(i =0; i < numsamples; i++)
+  int entry = 0;
+  
+  while (i-- > 0)
   {
-    int entry = i/step;
-    int res;
-    res = lookup[entry];
-    // Apply volume control
+    int res = lookup[entry++];
     res = sample.amp[res] - 128;
-    // Perform pdm conversion    
-    error = res - out + error;
-    error2 = error - out + error2;
-    if (error2 > 0)
-    //if (res >= error)
-      out = 127;
-    else
-      out = -127;
-    //error = out - res + error;
-    if (out > 0)
-      bits |= bit;
-    else
-      bits2 |= bit2;
-    bit >>= 1;
-    bit2 <<= 1;
-    if (bit == 0)
+    int j = step;
+    while (j-- > 0)
     {
-      bit = 0x80000000;
-      bit2 = 0x00000001;
-      pat[word++] = bits;
-      pat[len - word] = bits2;
-      bits2 = bits = 0;
+      // Perform pdm conversion    
+      error = res - out + error;
+      error2 = error - out + error2;
+      if (error2 > 0)
+      {
+        out = 127;
+        bits |= bit;
+      }
+      else
+      {
+        out = -127;
+        bits2 |= bit2;
+      }
+      bit2 <<= 1;
+      bit >>= 1;
+      if (bit == 0)
+      {
+        bit = 0x80000000;
+        bit2 = 0x00000001;
+        pat[word++] = bits;
+        pat[len - word] = bits2;
+        bits2 = bits = 0;
+      }
     }
   }
 }
@@ -223,7 +232,15 @@ static void set_vol(int vol)
   int i;
   S32 output;
 
-  if (vol == MASTERVOL) vol = master_volume;
+  if (vol == MASTERVOL)
+    vol = master_volume;
+  else
+  {
+    if (vol < 0)
+      vol = -vol;
+    else
+      vol = (master_volume*vol)/100;
+  }
   // Get into range and use log conversion
   if (vol < 0) vol = 0;
   if (vol > MAXVOL) vol = MAXVOL;
@@ -249,18 +266,16 @@ static void set_vol(int vol)
 }
 
 
-static int start;
 void sound_freq(U32 freq, U32 ms, int vol)
 {
   // Set things up ready to go, note we avoid using anything that may
   // be used by the interupt routine because ints may still be enabled
   // at this point
-start = systick_get_ms();
   int len;
   // we use longer samples for lower frequencies
-  if (freq > 250)
+  if (freq > 1000)
     len = 16;
-  else if (freq < 120)
+  else if (freq < 500)
     len = 64;
   else
     len = 32;
@@ -282,28 +297,28 @@ start = systick_get_ms();
   sample.count = (freq*ms + 1000-1)/1000;
   sample.len = len;
   sample.ptr = (U8 *)sample.buf[buf];
+  sample.buf_id = buf;
   *AT91C_SSC_PTCR = AT91C_PDC_TXTEN;
   sound_mode = SOUND_MODE_TONE;
-  sound_interrupt_enable(1);
+  sound_interrupt_enable(AT91C_SSC_TXBUFE);
 }
 
-void sound_interrupt_enable(int end)
+void sound_interrupt_enable(U32 typ)
 {
   // Enable interrupt notification of either the end of the next buffer
   // or the end of all output. Having both enabled does not seem to work
   // the end notifaction seems to get lost.
   *AT91C_SSC_IDR = AT91C_SSC_TXBUFE;
   *AT91C_SSC_IDR = AT91C_SSC_ENDTX;
-  if (end)
-    *AT91C_SSC_IER = AT91C_SSC_TXBUFE;
-  else
-    *AT91C_SSC_IER = AT91C_SSC_ENDTX;
+  *AT91C_SSC_IDR = AT91C_SSC_TXEMPTY;
+  *AT91C_SSC_IER = typ;
 }
 
 void sound_interrupt_disable()
 {
   *AT91C_SSC_IDR = AT91C_SSC_TXBUFE;
   *AT91C_SSC_IDR = AT91C_SSC_ENDTX;
+  *AT91C_SSC_IDR = AT91C_SSC_TXEMPTY;
 }
 
 void sound_enable()
@@ -367,7 +382,7 @@ void sound_play_sample(U8 *data, U32 length, U32 freq, int vol)
   sample.len = PDM_BUFFER_LENGTH;
   sample.clock_div = cdiv;
   // re-enable and wait for the current sample to complete
-  sound_interrupt_enable(1);
+  sound_interrupt_enable(AT91C_SSC_TXBUFE);
   *AT91C_SSC_PTCR = AT91C_PDC_TXTEN;
 }
 
@@ -425,7 +440,9 @@ void sound_isr_C()
         *AT91C_SSC_TNPR = (unsigned int)sample.ptr;
       *AT91C_SSC_TNCR = sample.len;
       sample.count--;
-      sound_interrupt_enable((sample.count <= 0));
+      // If this is the last sample wait for it to complete, otherwise wait
+      // to switch buffers
+      sound_interrupt_enable(sample.count <= 0 ? (sound_mode == SOUND_MODE_SILENCE ? AT91C_SSC_TXEMPTY : AT91C_SSC_TXBUFE) : AT91C_SSC_ENDTX);
     }
     else if (sound_mode == SOUND_MODE_SILENCE)
     {
