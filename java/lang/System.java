@@ -1,5 +1,9 @@
 package java.lang;
 
+import java.io.PrintStream;
+
+import lejos.nxt.LCDOutputStream;
+
 /**
  * System utilities.
  */
@@ -41,6 +45,8 @@ public final class System
   * Shutdown the brick
   */
  public static native void shutDown();
+ 
+ public static PrintStream out = new PrintStream(new LCDOutputStream());
  
 }
 
