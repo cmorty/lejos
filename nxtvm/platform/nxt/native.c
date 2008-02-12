@@ -352,6 +352,9 @@ dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
   case getTime_4_5I:
     push_word(sound_get_time());
     return;
+  case setKeyClick_4III_5V:
+    nxt_avr_set_key_click(paramBase[0], paramBase[1], paramBase[2]);
+    return;
   case getDataAddress_4Ljava_3lang_3Object_2_5I:
     push_word (ptr2word ((byte *) fields_start(word2ptr(paramBase[0]))));
     return;

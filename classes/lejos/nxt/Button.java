@@ -124,5 +124,13 @@ public class Button implements ListenerCaller
         iListeners[i].buttonReleased( this);
     }
   }
+  
+  /**
+   * Set the freq duration and length of the system key click sound.
+   * @param freq
+   * @param len
+   * @param vol
+   */
+  public static native void setKeyClick(int freq, int len, int vol);
 }
 

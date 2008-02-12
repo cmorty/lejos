@@ -6,6 +6,7 @@
 
 #include "systick.h"
 #include <string.h>
+#include "sound.h"
 
 
 
@@ -42,6 +43,16 @@ static U8 data_from_avr[(2 * NXT_AVR_N_INPUTS) + 5];
 
 static U8 data_to_avr[5 + NXT_AVR_N_OUTPUTS];
 
+// 50ms Debounce time. Button read is called every other 1000Hz tick
+#define BUTTON_DEBOUNCE_CNT 50/2;
+static U16 prev_buttons;
+static U16 button_state;
+static U16 debounce_state;
+static U16 debounce_cnt;
+static U32 click_freq;
+static U32 click_len;
+static U32 click_vol;
+static U16 click_buttons;
 
 
 /* We're assuming that we get good packing */
@@ -123,6 +134,7 @@ nxt_avr_unpack(void)
   U8 check_sum;
   U8 *p;
   U16 buttonsVal;
+  U16 newState;
   U32 voltageVal;
   int i;
 
@@ -151,20 +163,38 @@ nxt_avr_unpack(void)
   buttonsVal = Unpack16(p);
   p += 2;
 
+  // Process the buttons. First we drop any noisy inputs
+  if (buttonsVal != prev_buttons)
+    prev_buttons = buttonsVal;
+  else
+  {
+    // Work out which buttons are down. We allowing chording of the enter
+    // button with other buttons
+    newState = 0;
+    if (buttonsVal > 1500) {
+      newState |= 1;
+      buttonsVal -= 0x7ff;
+    }
 
-  io_from_avr.buttons = 0;
-
-  if (buttonsVal > 1023) {
-    io_from_avr.buttons |= 1;
-    buttonsVal -= 0x7ff;
+    if (buttonsVal > 720)
+      newState |= 0x08;
+    else if (buttonsVal > 270)
+      newState |= 0x04;
+    else if (buttonsVal > 60)
+      newState |= 0x02;
+    // Debounce things...
+    if (newState != debounce_state)
+    {
+      debounce_cnt = BUTTON_DEBOUNCE_CNT;
+      debounce_state = newState;
+    }
+    else if (debounce_cnt > 0)
+      debounce_cnt--;
+    else
+      // Got a good key, make a note of it
+      button_state = debounce_state;
   }
-
-  if (buttonsVal > 720)
-    io_from_avr.buttons |= 0x08;
-  else if (buttonsVal > 270)
-    io_from_avr.buttons |= 0x04;
-  else if (buttonsVal > 60)
-    io_from_avr.buttons |= 0x02;
+  io_from_avr.buttons = button_state;
 
   voltageVal = Unpack16(p);
 
@@ -193,7 +223,12 @@ nxt_avr_init(void)
   memset(&io_to_avr, 0, sizeof(io_to_avr));
   io_to_avr.power = 0;
   io_to_avr.pwm_frequency = 8;
-
+  button_state = 0;
+  prev_buttons = 0;
+  debounce_state = 0;
+  debounce_cnt = BUTTON_DEBOUNCE_CNT;
+  nxt_avr_set_key_click(1568, 100, 20);
+  click_buttons = 0;
   nxt_avr_initialised = 1;
 }
 
@@ -246,6 +281,9 @@ nxt_avr_1kHz_update(void)
 U32
 buttons_get(void)
 {
+  if ((io_from_avr.buttons != 0) && (io_from_avr.buttons != click_buttons) && (click_vol != 0))
+    sound_freq((U32) click_freq, (U32) click_len, (int) -click_vol);
+  click_buttons = io_from_avr.buttons;
   return io_from_avr.buttons;
 }
 
@@ -295,4 +333,12 @@ nxt_avr_set_input_power(U32 n, U32 power_type)
     io_to_avr.input_power &= ~(0x11 << n);
     io_to_avr.input_power |= val;
   }
+}
+
+void
+nxt_avr_set_key_click(U32 freq, U32 len, U32 vol)
+{
+  click_freq = freq;
+  click_len = len;
+  click_vol = vol;
 }

@@ -82,4 +82,5 @@
 #define setVolume_4I_5V 75
 #define getVolume_4_5I 76
 #define getTime_4_5I 77
+#define setKeyClick_4III_5V 78
 #endif // _SPECIALSIGNATURES_H
