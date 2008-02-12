@@ -52,6 +52,7 @@ typedef struct MemoryRegion_S {
   struct MemoryRegion_S *next;  /* pointer to next region */
 #endif
   TWOBYTES *end;                /* pointer to end of region */
+  TWOBYTES *allocBase;          /* pointer to last allocated or splitted block */
   TWOBYTES contents;            /* start of contents, even length */
 } MemoryRegion;
 
@@ -475,6 +476,7 @@ void memory_add_region (byte *start, byte *end)
   /* add to list */
   memory_regions = region;
 #endif
+  region->allocBase = &(region->contents);
   region->end = (TWOBYTES *) ((unsigned int)end & ~1); /* 16-bit align
  downwards */
 
@@ -536,7 +538,7 @@ static TWOBYTES *try_allocate (TWOBYTES size)
   for (region = memory_regions; region != null; region = region->next)
 #endif
   {
-    TWOBYTES *ptr = &(region->contents);
+    TWOBYTES *ptr = region->allocBase; // was &(region->contents);
     TWOBYTES *regionTop = region->end;
 
     while (ptr < regionTop) {
@@ -581,6 +583,9 @@ static TWOBYTES *try_allocate (TWOBYTES size)
             }
           }
 #endif
+#else
+          /* remember ptr as a current allocation base */
+          region->allocBase = ptr;
 #endif
           if (size < blockHeader) {
             /* cut into two blocks */
@@ -607,6 +612,8 @@ static TWOBYTES *try_allocate (TWOBYTES size)
     }
   }
   /* couldn't allocate block */
+  /* restore allocation base to the begin of the region */
+  region->allocBase = &(region->contents);
   return JNULL;
 }
 
