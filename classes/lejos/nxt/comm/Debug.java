@@ -10,7 +10,7 @@ import java.io.*;
  */
 public class Debug {
 	static USBConnection conn;
-	static byte [] buf = new byte[100];
+	static byte [] buf = new byte[64];
 	
 	public static void open(int timeout)
 	{
@@ -49,14 +49,16 @@ public class Debug {
 	public static void out(String s)
 	{
 		if (conn == null) return;
+		int len = s.length();
+		if (len > 63) len = 63;
 		synchronized (conn){
 		try
 		{
-			for(int i = 0; i < s.length(); i++)
+			for(int i = 0; i < len; i++)
 				buf[i+1] = (byte)s.charAt(i);
 
-			buf[0] = (byte)s.length();
-			USB.usbWrite(buf, s.length()+1);
+			buf[0] = (byte) len;
+			USB.usbWrite(buf, len+1);
 		}
 		catch (Exception e)
 		{
