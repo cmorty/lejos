@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="BTReceive/|BTSend/|BumperCar/|ColorDetector/|CompassTest/|ExceptionTest/|HelloWorld/|Line/|Listen/|MemoryTest/|PerformanceTest/|PilotTester/|SonicTest/|SpeedTest/|Subsumption1/|Subsumption2/|TiltTest/|Tune/|USBReceive/|USBSend/|View/|GraphicsSample/|SocketTest/|TimeTest/|SocketServer/|BTConnectTest/|SoundSample/|LCDUI/|DLTest/|RCXMMTest/|RCXLinkTest/|LLCTest/|RCXRemote/|RCXRemoteMotor/|SerialTest/|RCXEmulator/|LLCMonitor/|RCXPortTest/|SignalTest/|BlueStats/|RemoteMotor/|MonitorTest/|NXTCamTest/|RemoteNXTTest/|I2CDevices/" kind="src" path=""/>
+	<classpathentry excluding="BTReceive/|BTSend/|BumperCar/|ColorDetector/|CompassTest/|ExceptionTest/|HelloWorld/|Line/|Listen/|MemoryTest/|PerformanceTest/|PilotTester/|SonicTest/|SpeedTest/|Subsumption1/|Subsumption2/|TiltTest/|Tune/|USBReceive/|USBSend/|View/|GraphicsSample/|SocketTest/|TimeTest/|SocketServer/|BTConnectTest/|SoundSample/|LCDUI/|DLTest/|RCXMMTest/|RCXLinkTest/|LLCTest/|RCXRemote/|RCXRemoteMotor/|SerialTest/|RCXEmulator/|LLCMonitor/|RCXPortTest/|SignalTest/|BlueStats/|RemoteMotor/|MonitorTest/|NXTCamTest/|RemoteNXTTest/|I2CDevices/|BTGPS/" kind="src" path=""/>
+	<classpathentry kind="src" path="BTGPS"/>
 	<classpathentry kind="src" path="DLTest"/>
 	<classpathentry kind="src" path="LCDUI"/>
 	<classpathentry kind="src" path="SoundSample"/>

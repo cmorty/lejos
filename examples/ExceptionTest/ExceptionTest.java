@@ -12,10 +12,8 @@ import lejos.nxt.*;
  * @author Lawrie Griffiths
  *
  */
-public class ExceptionTest {
-	
+public class ExceptionTest {	
 	public static void main (String[] aArg)
-	throws Exception
 	{
 		SensorPort p = SensorPort.PORTS[5];
 	}

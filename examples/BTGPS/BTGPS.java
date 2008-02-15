@@ -3,7 +3,7 @@ import lejos.nxt.comm.*;
 
 import java.util.*;
 import java.io.*;
-import javax.bluetooth.devices*;
+import javax.bluetooth.devices.*;
 
 /**
  * This sample allows you to connect to a Bluetooth GPS and
