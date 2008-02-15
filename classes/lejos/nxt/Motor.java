@@ -327,7 +327,7 @@ public class Motor extends BasicMotor// implements TimerListener
        */
       int time0 = 0;
       float error = 0;
-
+      float e0 = 0;
       /**
        * helper method - used by reset and setSpeed()
        */
@@ -361,18 +361,14 @@ public class Motor extends BasicMotor// implements TimerListener
          float e0 = 0;// for differential control
          float power =  0;
          float ts = 120;//time to reach speed 
-         int tock = 100+ (int)System.currentTimeMillis(); // 
-         int tick = (int)System.currentTimeMillis();  // loop once per ms
+         int tick = 100+ (int)System.currentTimeMillis(); // 
          float accel = 0;
          while(_keepGoing)
          { synchronized(this)
-            { 
-            if((int)System.currentTimeMillis()> tick)
-            {
-               tick = (int)System.currentTimeMillis();    
-               if(tick >= tock)// simulate timer
+            {    
+               if((int)System.currentTimeMillis()>= tick)// simulate timer
                {
-                  tock += 100;
+                  tick += 100;
                   timedOut();
                }
                if(_lock)
@@ -411,7 +407,13 @@ public class Motor extends BasicMotor// implements TimerListener
                      }
                   } //end if ramp up
                   else 	error = (elapsed*_speed/1000f)- absA;// no ramp
-                  power = basePower + 15f * error;// - 5f * e0;// 10 magic number from experiment - simple proportional control
+                  float gain = 5f;
+                  float extrap = 4f;
+                  power = basePower + gain*(error + extrap*(error - e0));
+                  e0 = error;
+                  
+                  
+//                  power = basePower + 15f * error;// - 5f * e0;// 10 magic number from experiment - simple proportional control
                   if(power < 0) power = 0;
                   if(power > 100) power = 100;
                   e0 = error;
@@ -419,9 +421,9 @@ public class Motor extends BasicMotor// implements TimerListener
                   basePower = basePower + smooth*(power-basePower); 
                   setPower((int)power);
                }// end speed regulation 
-            }// end if tick
             }// end synchronized block
-         Thread.yield();
+         try {sleep(1);} catch(InterruptedException ie ) {}
+//         Thread.yield();
          }	// end keep going loop
       }// end run
       /**
