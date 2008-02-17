@@ -84,6 +84,10 @@ public class Debug {
 		{
 		}
 	}
+	
+	public static boolean isOpen() {
+		return (conn != null);
+	}
 }
 
 
