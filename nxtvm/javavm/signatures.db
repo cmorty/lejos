@@ -143,14 +143,9 @@ bitBlt([BIIII[BIIIIIII)V
 setVolume(I)V
 getVolume()I
 getTime()I
+
 #lejos.nxt.Button
 setKeyClick(III)V
 
-
-
-
-
-
-
-
-
+#java.lang.System
+diagn(II)I

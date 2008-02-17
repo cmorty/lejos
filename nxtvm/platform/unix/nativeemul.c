@@ -620,6 +620,9 @@ void dispatch_native (TWOBYTES signature, STACKWORD *paramBase)
          printf("& ");
       printf("Collecting garbage\n");
       return;
+    case diagn_4II_5I:
+      push_word (sys_diagn(paramBase[0], paramBase[1]));
+      return;
     case shutDown_4_5V:
       if (verbose)
          printf("> ");

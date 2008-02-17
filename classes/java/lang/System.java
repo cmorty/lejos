@@ -1,6 +1,7 @@
 package java.lang;
 
 import java.io.PrintStream;
+
 import lejos.nxt.LCDOutputStream;
 
 /**
@@ -44,6 +45,11 @@ public final class System
   * Shutdown the brick
   */
  public static native void shutDown();
+ 
+ /**
+  * Diagnostic tool (for firmware developers only)
+  */
+ public static native int diagn( int code, int param);
  
  public static PrintStream out = new PrintStream(new LCDOutputStream());
  

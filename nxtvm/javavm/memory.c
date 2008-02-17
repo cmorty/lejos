@@ -68,8 +68,16 @@ static MemoryRegion *region; /* list of regions */
 static TWOBYTES memory_size;    /* total number of words in heap */
 static TWOBYTES memory_free;    /* total number of free words in heap */
 
+TWOBYTES failed_alloc_size;
+
+VarStat gc_mark_vs;
+VarStat gc_sweep_vs;
+VarStat gc_freeblk_vs;
+VarStat gc_usedblk_vs;
+
 extern void deallocate (TWOBYTES *ptr, TWOBYTES size);
 extern TWOBYTES *allocate (TWOBYTES size);
+
 Object *protectedRef[MAX_VM_REFS];
 
 /**
@@ -81,10 +89,47 @@ Object *protectedRef[MAX_VM_REFS];
 #if GARBAGE_COLLECTOR
 static void set_reference( TWOBYTES* ptr);
 static void clr_reference( TWOBYTES* ptr);
+static void collect_mem_stat();
 #else
 static inline void set_reference( TWOBYTES* ptr) {}
 static inline void clr_reference( TWOBYTES* ptr) {}
 #endif
+
+void varstat_init( VarStat* vs)
+{
+  vs->last = 0;
+  vs->min = 0x7FFFFFFF;
+  vs->max = 0;
+  vs->sum = 0;
+  vs->count = 0;
+}
+
+void varstat_adjust( VarStat* vs, int v)
+{
+  vs->last = v;
+  if( vs->max < v)
+    vs->max = v;
+  if( vs->min > v)
+    vs->min = v;
+  vs->sum += v;
+  vs->count ++;
+}
+
+int varstat_get( VarStat* vs, int id)
+{
+  int val = 0;
+
+  switch( id)
+  {
+  case 0:  val = vs->last;  break;
+  case 1:  val = vs->min;   break;
+  case 2:  val = vs->max;   break;
+  case 3:  val = vs->sum;   break;
+  case 4:  val = vs->count; break;
+  }
+
+  return val;
+}
 
 /**
  * Zeroes out memory.
@@ -453,6 +498,11 @@ void memory_init ()
 #endif
   memory_size = 0;
   memory_free = 0;
+
+  varstat_init( &gc_mark_vs);
+  varstat_init( &gc_sweep_vs);
+  varstat_init( &gc_freeblk_vs);
+  varstat_init( &gc_usedblk_vs);
 }
 
 /**
@@ -630,6 +680,12 @@ TWOBYTES *allocate (TWOBYTES size)
 
     /* now try to allocate object again */
     ptr = try_allocate( size);
+
+    if( ptr == JNULL)
+    {
+      failed_alloc_size = size;
+      collect_mem_stat();
+    }
   }
 
   return ptr;
@@ -1031,7 +1087,6 @@ static void sweep_object( Object *obj, TWOBYTES size)
  */
 void sweep_heap_objects( void)
 {
-
 #if SEGMENTED_HEAP
   MemoryRegion *region;
   for (region = memory_regions; region != null; region = region->next)
@@ -1122,10 +1177,65 @@ static void mark_exception_objects( void)
  */
 void garbage_collect( void)
 {
+  int t0, t1, t2;
+
+  t0 = get_sys_time();
+
   mark_exception_objects();
   mark_static_objects();
   mark_local_objects();
+
+  t1 = get_sys_time();
+
   sweep_heap_objects();
+
+  t2 = get_sys_time();
+
+  varstat_adjust( &gc_mark_vs, t1 - t0);
+  varstat_adjust( &gc_sweep_vs, t2 - t1);
+}
+
+void collect_mem_stat( void)
+{
+  varstat_init( &gc_freeblk_vs);
+  varstat_init( &gc_usedblk_vs);
+
+#if SEGMENTED_HEAP
+  MemoryRegion *region;
+  for (region = memory_regions; region != null; region = region->next)
+#endif
+  {
+    TWOBYTES* ptr = &(region->contents);
+    TWOBYTES* regionTop = region->end;
+    while( ptr < regionTop)
+    {
+      unsigned int blockHeader = *ptr;
+      unsigned int size;
+
+      if( blockHeader & IS_ALLOCATED_MASK)
+      {
+        Object* obj = (Object*) ptr;
+
+        /* jump over allocated block */
+        size = (blockHeader & IS_ARRAY_MASK) ? get_array_size( obj)
+                                             : get_object_size( obj);
+          
+        // Round up according to alignment
+        size = (size + (MEMORY_ALIGNMENT-1)) & ~(MEMORY_ALIGNMENT-1);
+
+        varstat_adjust( &gc_usedblk_vs, size << 1);
+      }
+      else
+      {
+        /* continue searching */
+        size = blockHeader;
+
+        varstat_adjust( &gc_freeblk_vs, size << 1);
+      }
+
+      ptr += size;
+    }
+  }
 }
 
 #else
@@ -1135,4 +1245,24 @@ void garbage_collect( void)
 }
 
 #endif // GARBAGE_COLLECTOR
+
+int sys_diagn( int code, int param)
+{
+  switch( code)
+  {
+  case 1:
+    return varstat_get( &gc_mark_vs, param);
+  case 2:
+    return varstat_get( &gc_sweep_vs, param);
+  case 3:
+    collect_mem_stat();
+    break;
+  case 4:
+    return varstat_get( &gc_freeblk_vs, param);
+  case 5:
+    return varstat_get( &gc_usedblk_vs, param);
+  }
+
+  return 0;
+}
 

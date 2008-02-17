@@ -83,4 +83,5 @@
 #define getVolume_4_5I 76
 #define getTime_4_5I 77
 #define setKeyClick_4III_5V 78
+#define diagn_4II_5I 79
 #endif // _SPECIALSIGNATURES_H

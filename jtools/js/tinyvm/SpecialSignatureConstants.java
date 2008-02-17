@@ -83,6 +83,7 @@ public interface SpecialSignatureConstants {
     "setVolume(I)V",
     "getVolume()I",
     "getTime()I",
-    "setKeyClick(III)V"
+    "setKeyClick(III)V",
+    "diagn(II)I"
   };
 }
