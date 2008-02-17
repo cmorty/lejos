@@ -28,6 +28,7 @@ extern int getHeapSize();
 extern int getHeapFree();
 extern int getRegionAddress();
 extern void garbage_collect(void);
+extern int sys_diagn( int code, int param);
 
 #if DEBUG_RCX_MEMORY
 extern void scan_memory (TWOBYTES *numNodes, TWOBYTES *biggest, TWOBYTES *freeMem);
@@ -63,6 +64,24 @@ extern void scan_memory (TWOBYTES *numNodes, TWOBYTES *biggest, TWOBYTES *freeMe
 #define jfloat_array_ptr(PTR_)  ((JFLOAT *) PTR_)
 
 #define get_array_element_ptr(ARR_,ESIZE_,IDX_) (array_start((ARR_)) + (IDX_) * (ESIZE_))
+
+extern TWOBYTES failed_alloc_size;
+
+typedef struct
+{
+  int last;
+  int min;
+  int max;
+  int sum;
+  int count;
+} VarStat;
+
+extern VarStat gc_mark_vs;
+extern VarStat gc_sweep_vs;
+extern VarStat gc_freeblk_vs;
+extern VarStat gc_usedblk_vs;
+
+
 #endif // _MEMORY_H
 
 

@@ -233,7 +233,7 @@ case OP_PUTFIELD:
   }
   goto LABEL_ENGINELOOP;
 
-#if 1
+#if 0
 case OP_GETFIELD_S1:
   {
     byte *fp;

@@ -361,6 +361,9 @@ dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
   case gc_4_5V:
     garbage_collect();
     return;
+  case diagn_4II_5I:
+    push_word (sys_diagn(paramBase[0], paramBase[1]));
+    return;
   case shutDown_4_5V:
     while (1) nxt_avr_power_down(); // does not return
   case arraycopy_4Ljava_3lang_3Object_2ILjava_3lang_3Object_2II_5V:

@@ -139,7 +139,7 @@ Object *create_string (ConstantRecord *constantRecord,
  * Sets arrayStart to start of the array data area.
  * @return array index if successful, -1 if an exception has been scheduled.
  */
-inline static int array_helper( byte *pc, STACKWORD* stackTop)
+static int array_helper( byte *pc, STACKWORD* stackTop)
 {
   unsigned int idx = word2jint(pop_word());
   byte* ptr = word2ptr(get_top_ref());

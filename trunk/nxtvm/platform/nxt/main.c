@@ -66,6 +66,18 @@ wait_for_power_down_signal()
   }
 }
 
+void disp_varstat( VarStat* vs)
+{
+  const char* sep = ",";
+  display_unsigned( vs->min, 0);
+  display_string( sep);
+  display_unsigned( vs->max, 0);
+  display_string( sep);
+  display_unsigned( vs->sum, 0);
+  display_string( sep);
+  display_unsigned( vs->count, 0);
+}
+
 void
 handle_uncaught_exception(Object * exception,
 			  const Thread * thread,
@@ -77,13 +89,21 @@ handle_uncaught_exception(Object * exception,
   display_goto_xy(0, 0);
   display_string("Java Exception:");
   display_goto_xy(0, 1);
-  display_string("Class:");
-  display_goto_xy(7, 1);
+  display_string("Class: ");
   display_int(get_class_index(exception), 0);
   display_goto_xy(0, 2);
-  display_string("Method:");
-  display_goto_xy(8, 2);
+  display_string("Method: ");
   display_int(methodRecord->signatureId, 0);
+  if( get_class_index(exception) == JAVA_LANG_OUTOFMEMORYERROR)
+  {
+    display_goto_xy(0, 3);
+    display_string("Size: ");
+    display_int(failed_alloc_size << 1, 0);
+    display_goto_xy(0, 4);
+    disp_varstat( &gc_freeblk_vs);
+    display_goto_xy(0, 6);
+    disp_varstat( &gc_usedblk_vs);
+  }
   display_update();
   wait_for_power_down_signal();
 }
@@ -303,6 +323,7 @@ free_stack(void)
   return space;
 }
 
+#if 0
 void
 xx_show(void)
 {
@@ -425,6 +446,7 @@ xx_show(void)
     }
   }
 }
+#endif
 
 void
 main(void)
