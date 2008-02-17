@@ -1,7 +1,6 @@
 package java.lang;
 
 import java.io.PrintStream;
-
 import lejos.nxt.LCDOutputStream;
 
 /**
@@ -47,6 +46,26 @@ public final class System
  public static native void shutDown();
  
  public static PrintStream out = new PrintStream(new LCDOutputStream());
+ 
+ /**
+  * Redirect System.out
+  * 
+  * @param out a PrintStream
+  */
+ public static void setOut(PrintStream out) {
+	 System.out = out;
+ }
+
+ public static PrintStream err = new PrintStream(new LCDOutputStream());
+ 
+ /**
+  * Redirect System.err
+  * 
+  * @param err a PrintStream
+  */
+ public static void setErr(PrintStream err) {
+	 System.err = err;
+ }
  
 }
 
