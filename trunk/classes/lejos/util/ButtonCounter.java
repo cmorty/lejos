@@ -73,6 +73,7 @@ counters are reset when this method is called.
  */	
 	public void count()
 	{
+	   Button.setKeyClick(0,0,0);
        if(_reset)       
        {
            _rightCount = 0;
