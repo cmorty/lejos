@@ -27,7 +27,7 @@ extern void zero_mem (TWOBYTES *ptr, TWOBYTES numWords);
 extern int getHeapSize();
 extern int getHeapFree();
 extern int getRegionAddress();
-extern void garbage_collect(void);
+extern void garbage_collect( int size);
 extern int sys_diagn( int code, int param);
 
 #if DEBUG_RCX_MEMORY
@@ -78,8 +78,10 @@ typedef struct
 
 extern VarStat gc_mark_vs;
 extern VarStat gc_sweep_vs;
-extern VarStat gc_freeblk_vs;
-extern VarStat gc_usedblk_vs;
+extern VarStat gc_total_vs;
+extern VarStat mem_alloctm_vs;
+extern VarStat mem_freeblk_vs;
+extern VarStat mem_usedblk_vs;
 
 
 #endif // _MEMORY_H

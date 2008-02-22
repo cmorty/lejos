@@ -52,7 +52,8 @@ typedef struct MemoryRegion_S {
   struct MemoryRegion_S *next;  /* pointer to next region */
 #endif
   TWOBYTES *end;                /* pointer to end of region */
-  TWOBYTES *allocBase;          /* pointer to last allocated or splitted block */
+  TWOBYTES *alloc_base;         /* pointer to last allocated or splitted block */
+  TWOBYTES *sweep_base;         /* current position of sweeping */
   TWOBYTES contents;            /* start of contents, even length */
 } MemoryRegion;
 
@@ -61,19 +62,24 @@ typedef struct MemoryRegion_S {
  */
 #if SEGMENTED_HEAP
 static MemoryRegion *memory_regions; /* list of regions */
+static MemoryRegion *alloc_region; /* current allocation region */
 #else
 static MemoryRegion *region; /* list of regions */
 #endif
 
-static TWOBYTES memory_size;    /* total number of words in heap */
-static TWOBYTES memory_free;    /* total number of free words in heap */
+static MemoryRegion *sweep_region; /* current region being swept or NULL if not sweeping */
+
+static unsigned int memory_size;    /* total number of words in heap */
+static unsigned int memory_free;    /* total number of free words in heap */
 
 TWOBYTES failed_alloc_size;
 
 VarStat gc_mark_vs;
 VarStat gc_sweep_vs;
-VarStat gc_freeblk_vs;
-VarStat gc_usedblk_vs;
+VarStat gc_total_vs;
+VarStat mem_alloctm_vs;
+VarStat mem_freeblk_vs;
+VarStat mem_usedblk_vs;
 
 extern void deallocate (TWOBYTES *ptr, TWOBYTES size);
 extern TWOBYTES *allocate (TWOBYTES size);
@@ -94,6 +100,8 @@ static void collect_mem_stat();
 static inline void set_reference( TWOBYTES* ptr) {}
 static inline void clr_reference( TWOBYTES* ptr) {}
 #endif
+
+#if USE_VARSTAT
 
 void varstat_init( VarStat* vs)
 {
@@ -130,6 +138,17 @@ int varstat_get( VarStat* vs, int id)
 
   return val;
 }
+
+#define varstat_gettime()       get_sys_time()
+
+#else
+
+#define varstat_init( vs)
+#define varstat_adjust( vs, v)
+#define varstat_get( vs, id)    0
+#define varstat_gettime()       0
+
+#endif
 
 /**
  * Zeroes out memory.
@@ -255,11 +274,16 @@ Object *new_object_for_class (const byte classIndex)
 #if 0
 TWOBYTES comp_array_size (const TWOBYTES length, const byte elemType)
 {
-  return NORM_OBJ_SIZE + (((TWOBYTES) length * typeSize[elemType]) + 1) / 2;
+  return elemType == T_CHAR ? length * 2 : 
+           elemType == T_BOOLEAN ? length :
+            (((unsigned int) length * typeSize[elemType]) + 1) / 2;
 }
 #else
 #define comp_array_size( length, elemType) \
-  ((((TWOBYTES) (length) * typeSize[ elemType]) + 1) / 2)
+(                                          \
+  elemType == T_CHAR ? length * 2 :        \
+    elemType == T_BOOLEAN ? length :       \
+      ((((unsigned int) (length) * typeSize[ elemType]) + 1) / 2))
 #endif
 
 /**
@@ -274,9 +298,9 @@ TWOBYTES comp_array_size (const TWOBYTES length, const byte elemType)
 Object *new_primitive_array (const byte primitiveType, STACKWORD length)
 {
   Object *ref;
-  TWOBYTES allocSize;
-  TWOBYTES hdrSize;
-  int baLength;
+  unsigned int allocSize;
+  unsigned int hdrSize;
+  unsigned int baLength;
 
   allocSize = comp_array_size (length, primitiveType);
 #if DEBUG_MEMORY
@@ -495,14 +519,20 @@ void memory_init ()
 
 #if SEGMENTED_HEAP
   memory_regions = null;
+  alloc_region = NULL;
 #endif
+
+  sweep_region = NULL;
+
   memory_size = 0;
   memory_free = 0;
 
   varstat_init( &gc_mark_vs);
   varstat_init( &gc_sweep_vs);
-  varstat_init( &gc_freeblk_vs);
-  varstat_init( &gc_usedblk_vs);
+  varstat_init( &gc_total_vs);
+  varstat_init( &mem_alloctm_vs);
+  varstat_init( &mem_freeblk_vs);
+  varstat_init( &mem_usedblk_vs);
 }
 
 /**
@@ -526,7 +556,8 @@ void memory_add_region (byte *start, byte *end)
   /* add to list */
   memory_regions = region;
 #endif
-  region->allocBase = &(region->contents);
+  region->alloc_base = &(region->contents);
+  region->sweep_base = NULL;
   region->end = (TWOBYTES *) ((unsigned int)end & ~1); /* 16-bit align
  downwards */
 
@@ -567,103 +598,134 @@ void memory_add_region (byte *start, byte *end)
 #endif
 }
 
+void init_sweep( void)
+{
+#if SEGMENTED_HEAP
+  MemoryRegion *region;
+  for (region = memory_regions; region != null; region = region->next)
+    region->alloc_base = region->sweep_base = &region->contents;
+
+  sweep_region = alloc_region = memory_regions;
+#else
+  region->alloc_base = region->sweep_base = &region->contents;
+  sweep_region = region;
+#endif
+}
 
 /**
  * @param size Size of block including header in 2-byte words.
  */
-static TWOBYTES *try_allocate (TWOBYTES size)
+
+static TWOBYTES *try_allocate( unsigned int size)
 {
 #if SEGMENTED_HEAP
   MemoryRegion *region;
 #endif
 
-  // Align memory to boundary appropriate for system  
-  size = (size + (MEMORY_ALIGNMENT-1)) & ~(MEMORY_ALIGNMENT-1);
-
+  if( memory_free >= size)
+  {
 #if DEBUG_MEMORY
-  printf("Allocate %d - free %d\n", size, memory_free-size);
+    printf("Allocate %d - free %d\n", size, memory_free-size);
 #endif
 
 #if SEGMENTED_HEAP
-  for (region = memory_regions; region != null; region = region->next)
+    region = alloc_region != NULL ? alloc_region : memory_regions;
+    for ( ; region != null; region = region->next)
 #endif
-  {
-    TWOBYTES *ptr = region->allocBase; // was &(region->contents);
-    TWOBYTES *regionTop = region->end;
+    {
+      TWOBYTES *ptr = region->alloc_base;
+      TWOBYTES *regionTop = region->end;
 
-    while (ptr < regionTop) {
-      TWOBYTES blockHeader = *ptr;
-
-      if (blockHeader & IS_ALLOCATED_MASK) {
-        /* jump over allocated block */
-        TWOBYTES s = (blockHeader & IS_ARRAY_MASK) 
-          ? get_array_size ((Object *) ptr)
-          : get_object_size ((Object *) ptr);
-          
-        // Round up according to alignment
-        s = (s + (MEMORY_ALIGNMENT-1)) & ~(MEMORY_ALIGNMENT-1);
-        ptr += s;
-      }
-      else
+      while (ptr < regionTop)
       {
-        if (size <= blockHeader) {
-          /* allocate from this block */
+        unsigned int blockHeader = *ptr;
+
+        if (blockHeader & IS_ALLOCATED_MASK)
+        {
+          /* jump over allocated block */
+          TWOBYTES s = (blockHeader & IS_ARRAY_MASK) 
+            ? get_array_size ((Object *) ptr)
+            : get_object_size ((Object *) ptr);
+          
+          // Round up according to alignment
+          s = (s + (MEMORY_ALIGNMENT-1)) & ~(MEMORY_ALIGNMENT-1);
+          ptr += s;
+        }
+        else
+        {
+          if (size <= blockHeader)
+          {
+            /* allocate from this block */
 #if GARBAGE_COLLECTOR == 0
 #if COALESCE
-          {
-            TWOBYTES nextBlockHeader;
+            {
+              TWOBYTES nextBlockHeader;
 
-            /* NOTE: Theoretically there could be adjacent blocks
-               that are too small, so we never arrive here and fail.
-               However, in practice this should suffice as it keeps
-               the big block at the beginning in one piece.
-               Putting it here saves code space as we only have to
-               search through the heap once, and deallocat remains
-               simple.
-            */
+              /* NOTE: Theoretically there could be adjacent blocks
+                 that are too small, so we never arrive here and fail.
+                 However, in practice this should suffice as it keeps
+                 the big block at the beginning in one piece.
+                 Putting it here saves code space as we only have to
+                 search through the heap once, and deallocat remains
+                 simple.
+              */
             
-            while (true) {
-              TWOBYTES *next_ptr = ptr + blockHeader;
-              nextBlockHeader = *next_ptr;
-              if (next_ptr >= regionTop ||
-                  (nextBlockHeader & IS_ALLOCATED_MASK) != 0)
-                break;
-              blockHeader += nextBlockHeader;
-              *ptr = blockHeader;
+              while (true)
+              {
+                TWOBYTES *next_ptr = ptr + blockHeader;
+                nextBlockHeader = *next_ptr;
+                if (next_ptr >= regionTop ||
+                    (nextBlockHeader & IS_ALLOCATED_MASK) != 0)
+                  break;
+                blockHeader += nextBlockHeader;
+                *ptr = blockHeader;
+              }
             }
-          }
 #endif
 #else
-          /* remember ptr as a current allocation base */
-          region->allocBase = ptr;
+            /* remember ptr as a current allocation base */
+#if SEGMENTED_HEAP
+            alloc_region = region;
 #endif
-          if (size < blockHeader) {
-            /* cut into two blocks */
-            blockHeader -= size; /* first block gets remaining free space */
-            *ptr = blockHeader;
-            ptr += blockHeader; /* second block gets allocated */
+            region->alloc_base = ptr;
+#endif
+            if (size < blockHeader)
+            {
+              /* cut into two blocks */
+              blockHeader -= size; /* first block gets remaining free space */
+              *ptr = blockHeader;
+              ptr += blockHeader; /* second block gets allocated */
 #if SAFE
-            *ptr = size;
+              *ptr = size;
 #endif
-            /* NOTE: allocating from the top downwards avoids most
-                     searching through already allocated blocks */
+              /* NOTE: allocating from the top downwards avoids most
+                       searching through already allocated blocks */
+            }
+            memory_free -= size;
+
+            /* set the corresponding bit of the reference map */
+            set_reference( ptr);
+
+            return ptr;
           }
-          memory_free -= size;
-
-          /* set the corresponding bit of the reference map */
-          set_reference( ptr);
-
-          return ptr;
-        } else {
-          /* continue searching */
-          ptr += blockHeader;
+          else
+          {
+            /* continue searching */
+            ptr += blockHeader;
+          }
         }
       }
+
+      /* restore allocation base to the begin of the region */
+      region->alloc_base = &(region->contents);
     }
   }
+
   /* couldn't allocate block */
-  /* restore allocation base to the begin of the region */
-  region->allocBase = &(region->contents);
+#if SEGMENTED_HEAP
+  alloc_region = NULL;
+#endif
+
   return JNULL;
 }
 
@@ -671,22 +733,38 @@ static TWOBYTES *try_allocate (TWOBYTES size)
 
 TWOBYTES *allocate (TWOBYTES size)
 {
-  TWOBYTES *ptr = try_allocate( size);
+  long t0, t1;
+  TWOBYTES *ptr;
+  unsigned int asize;
+
+  t0 = varstat_gettime();
+
+  // Align memory to boundary appropriate for system  
+  asize = (size + (MEMORY_ALIGNMENT-1)) & ~(MEMORY_ALIGNMENT-1);
+
+  if( sweep_region != NULL)
+    garbage_collect( asize);
+
+  ptr = try_allocate( asize);
 
   if( ptr == JNULL)
   {
     /* no memory left so run the garbage collector */
-    garbage_collect();
+    garbage_collect( asize);
 
     /* now try to allocate object again */
-    ptr = try_allocate( size);
+    ptr = try_allocate( asize);
 
     if( ptr == JNULL)
     {
-      failed_alloc_size = size;
+      failed_alloc_size = asize;
       collect_mem_stat();
     }
   }
+
+  t1 = varstat_gettime();
+
+  varstat_adjust( &mem_alloctm_vs, t1 - t0);
 
   return ptr;
 }
@@ -1066,37 +1144,29 @@ static void mark_object( Object *obj)
 }
 
 /**
- * A function which performs a "sweep" operation for an object.
- * If it's "marked" clear the mark. Otherwise delete the object.
- * For safety omit objects with active monitor.
- */
-/*
-static void sweep_object( Object *obj, TWOBYTES size)
-{
-  if( is_gc_marked( obj))
-    clr_gc_marked( obj);
-  else
-  if( get_monitor_count( obj) == 0)
-    deallocate( (TWOBYTES*) obj, size);
-}
-*/
-
-/**
  * Scan heap objects and for every allocated object call
  * the sweep_object function.
+ * Sweep at least "reqsize" in contiguous block and preferably "optsize" of
+ * memory area.
  */
-void sweep_heap_objects( void)
+void sweep_heap_objects( unsigned int reqsize, unsigned int optsize)
 {
+  unsigned int contsize = 0;
 #if SEGMENTED_HEAP
-  MemoryRegion *region;
-  for (region = memory_regions; region != null; region = region->next)
+  MemoryRegion *region = sweep_region;
+  while( region != null)
 #endif
   {
     int mf = memory_free;
-    TWOBYTES* ptr = &(region->contents);
+    TWOBYTES* ptr = region->sweep_base;
     TWOBYTES* fptr = null;
     TWOBYTES* regionTop = region->end;
-    while( ptr < regionTop)
+    TWOBYTES* limit = region->sweep_base + optsize;
+
+    if( limit > regionTop)
+      limit = regionTop;
+
+    while( (ptr < limit) || ((ptr < regionTop) && (contsize < reqsize)))
     {
       unsigned int blockHeader = *ptr;
       unsigned int size;
@@ -1134,9 +1204,21 @@ void sweep_heap_objects( void)
       {
         // Got a free block can we merge?
         if (fptr != null)
-          *fptr += size;
+        {
+          unsigned int fsize;
+
+          fsize = *fptr;
+          fsize += size;
+          *fptr = fsize;
+          if( contsize < fsize)
+            contsize = fsize;
+        }
         else
+        {
           fptr = ptr;
+          if( contsize < size)
+            contsize = size;
+        }
       }
       else
           fptr = null;
@@ -1145,7 +1227,28 @@ void sweep_heap_objects( void)
     }
 
     memory_free = mf;
+
+    if( ptr < regionTop)
+    {
+      region->sweep_base = ptr;
+#if SEGMENTED_HEAP
+      break;
+#endif
+    }
+    else
+    {
+      region->sweep_base = NULL;
+#if SEGMENTED_HEAP
+      region = region->next;
+#endif
+    }
   }
+
+#if SEGMENTED_HEAP
+  sweep_region = region;
+#else
+  sweep_region = region->sweep_base != NULL ? region : NULL;
+#endif
 }
 
 /**
@@ -1175,33 +1278,57 @@ static void mark_exception_objects( void)
  * After that perform a "sweep" operation for
  * every "unmarked" heap object.
  */
-void garbage_collect( void)
+
+void mark_objects( void)
 {
-  int t0, t1, t2;
-
-  t0 = get_sys_time();
-
   mark_exception_objects();
   mark_static_objects();
   mark_local_objects();
+}
 
-  t1 = get_sys_time();
+void garbage_collect( int reqsize)
+{
+  int t0, t1, t2;
+  int optsize;
 
-  sweep_heap_objects();
+  t0 = varstat_gettime();
 
-  t2 = get_sys_time();
+  if( sweep_region == NULL)
+  {
+    mark_objects();
 
-  varstat_adjust( &gc_mark_vs, t1 - t0);
+    init_sweep();
+
+    optsize = 128;
+
+    t1 = varstat_gettime();
+
+    varstat_adjust( &gc_mark_vs, t1 - t0);
+  }
+  else
+  {
+    optsize = 1024;  // 2 KB
+    t1 = t0;
+  }
+
+  sweep_heap_objects( reqsize, optsize);
+
+  t2 = varstat_gettime();
+
   varstat_adjust( &gc_sweep_vs, t2 - t1);
+  varstat_adjust( &gc_total_vs, t2 - t0);
 }
 
 void collect_mem_stat( void)
 {
-  varstat_init( &gc_freeblk_vs);
-  varstat_init( &gc_usedblk_vs);
-
 #if SEGMENTED_HEAP
   MemoryRegion *region;
+#endif
+
+  varstat_init( &mem_freeblk_vs);
+  varstat_init( &mem_usedblk_vs);
+
+#if SEGMENTED_HEAP
   for (region = memory_regions; region != null; region = region->next)
 #endif
   {
@@ -1223,14 +1350,14 @@ void collect_mem_stat( void)
         // Round up according to alignment
         size = (size + (MEMORY_ALIGNMENT-1)) & ~(MEMORY_ALIGNMENT-1);
 
-        varstat_adjust( &gc_usedblk_vs, size << 1);
+        varstat_adjust( &mem_usedblk_vs, size << 1);
       }
       else
       {
         /* continue searching */
         size = blockHeader;
 
-        varstat_adjust( &gc_freeblk_vs, size << 1);
+        varstat_adjust( &mem_freeblk_vs, size << 1);
       }
 
       ptr += size;
@@ -1240,7 +1367,7 @@ void collect_mem_stat( void)
 
 #else
 
-void garbage_collect( void)
+void garbage_collect( int size)
 {
 }
 
@@ -1248,6 +1375,7 @@ void garbage_collect( void)
 
 int sys_diagn( int code, int param)
 {
+#if GARBAGE_COLLECTOR && USE_VARSTAT
   switch( code)
   {
   case 1:
@@ -1258,10 +1386,15 @@ int sys_diagn( int code, int param)
     collect_mem_stat();
     break;
   case 4:
-    return varstat_get( &gc_freeblk_vs, param);
+    return varstat_get( &mem_freeblk_vs, param);
   case 5:
-    return varstat_get( &gc_usedblk_vs, param);
+    return varstat_get( &mem_usedblk_vs, param);
+  case 6:
+    return varstat_get( &gc_total_vs, param);
+  case 7:
+    return varstat_get( &mem_alloctm_vs, param);
   }
+#endif
 
   return 0;
 }

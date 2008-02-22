@@ -66,6 +66,7 @@ wait_for_power_down_signal()
   }
 }
 
+#if USE_VARSTAT
 void disp_varstat( VarStat* vs)
 {
   const char* sep = ",";
@@ -77,6 +78,7 @@ void disp_varstat( VarStat* vs)
   display_string( sep);
   display_unsigned( vs->count, 0);
 }
+#endif
 
 void
 handle_uncaught_exception(Object * exception,
@@ -99,10 +101,12 @@ handle_uncaught_exception(Object * exception,
     display_goto_xy(0, 3);
     display_string("Size: ");
     display_int(failed_alloc_size << 1, 0);
+#if USE_VARSTAT
     display_goto_xy(0, 4);
-    disp_varstat( &gc_freeblk_vs);
+    disp_varstat( &mem_freeblk_vs);
     display_goto_xy(0, 6);
-    disp_varstat( &gc_usedblk_vs);
+    disp_varstat( &mem_usedblk_vs);
+#endif
   }
   display_update();
   wait_for_power_down_signal();

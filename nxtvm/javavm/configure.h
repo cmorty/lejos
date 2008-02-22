@@ -64,7 +64,7 @@
 
 /**
  * If not 0, use a garbage collector. It consumes about
- * 1000 bytes of flash and about 1800 bytes of ram.
+ * 1300 bytes of flash and about 1800 bytes of ram.
  */
 #define GARBAGE_COLLECTOR                1
 
@@ -77,5 +77,10 @@
  * If not 0, leave binary in rom instead of copying it to ram.
  */
 #define EXECUTE_FROM_FLASH               1
+
+/**
+ * If not 0, use diagnostic statistical instrumentation
+ */
+#define USE_VARSTAT                      1
 
 #endif
