@@ -359,7 +359,7 @@ dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
     push_word (ptr2word ((byte *) fields_start(word2ptr(paramBase[0]))));
     return;
   case gc_4_5V:
-    garbage_collect();
+    garbage_collect( 2048);
     return;
   case diagn_4II_5I:
     push_word (sys_diagn(paramBase[0], paramBase[1]));
