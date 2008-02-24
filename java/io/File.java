@@ -3,6 +3,20 @@ package java.io;
 import lejos.nxt.Flash;
 import java.io.IOException;
 
+/*
+ * DEVELOPER NOTES:
+ * - Requirement is for all files to be contiguous (unfragmented) so
+ * that they can be executed.
+ * - Files are stored in the flash memory one file after another.
+ * - If a user opens a file and wants to write to it, the file system
+ * shuffles the file to the end so that it has open space to write.
+ * - This File system is currently unthreaded, so all functions are
+ * blocked until each call completes. If someone starts writing to
+ * a file and it needs to be shuffled, a significant pause can
+ * occur to shuffle files around. If this was threaded it might be
+ * possible to avoid this pause.
+ */
+
 /**
  * Implements a file system using pages of flash memory.
  * Currently has limited functionality and only supports
@@ -43,7 +57,7 @@ public class File {
 	/**
 	 *  Number of pages reserved for storing file table information.
 	 *  If we want to allow more files to be stored in system, increase
-	 *  this number. (!! File table data currently only writes to page 0.)
+	 *  this number.
 	 */
 	private static byte FILE_TABLE_PAGES = 2;
 	
