@@ -141,7 +141,7 @@ public class OpticalDistanceSensor extends I2CSensor{
 	 * Returns the current voltage level for MSB
 	 * @return int
 	 */
-	public int getVoltMBS(){
+	public int getVoltMSB(){
 		getData(VOLT_DATA_MSB, buf, 1);
 		return buf[0] & 0xFF;
 	}
