@@ -241,10 +241,12 @@ public final class String
       return substring(start, characters.length);
   }
 
-  public synchronized String substring(int start, int end) {
-      // THIS SHOULD REALLY THROW StringIndexOutOfBoundsException
-	  int len = end - start;
-	  return new String(characters, start, len);
+  public synchronized String substring(int start, int end) {  
+	  if (start < 0 || end > characters.length || start > end) {
+		  throw new StringIndexOutOfBoundsException();
+	  }
+		  
+	  return new String(characters, start, end - start);
   }
   
   /**
