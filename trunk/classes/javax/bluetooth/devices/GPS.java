@@ -7,6 +7,15 @@ import java.io.*;
  * @author BB
  *
  */
+
+/* DEVELOPER NOTES:
+ * In general this could be improved by parsing out the appropriate 
+ * fields only at the time they are called, rather than parsing them
+ * all at once as can be seen in the run() method. 
+ * This would save some CPU cycles since it would work to extract
+ * data that the user wants, rather than parsing data that ends 
+ * up going unused.
+ */
 public class GPS extends Thread {
 
 	/**
