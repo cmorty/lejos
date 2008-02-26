@@ -84,4 +84,10 @@
 #define getTime_4_5I 77
 #define setKeyClick_4III_5V 78
 #define diagn_4II_5I 79
+#define executeProgram_4I_5V 80
+#define setDebug_4_5V 81
+#define peekWord_4I_5I 82
+#define eventOptions_4II_5I 83
+#define suspendThread_4Ljava_3lang_3Object_2_5V 84
+#define resumeThread_4Ljava_3lang_3Object_2_5V 85
 #endif // _SPECIALSIGNATURES_H

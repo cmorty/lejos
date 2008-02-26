@@ -120,7 +120,7 @@ Object *create_string (ConstantRecord *constantRecord,
   }
   // printf ("char array at %d\n", (int) arr);
   
-  store_word( (byte *) &(((String *) ref)->characters), 4, obj2word(arr));
+  store_word_ns( (byte *) &(((String *) ref)->characters), 4, obj2word(arr));
   
   dst = jchar_array(arr);
   src = get_constant_ptr(constantRecord);

@@ -81,6 +81,6 @@
 /**
  * If not 0, use diagnostic statistical instrumentation
  */
-#define USE_VARSTAT                      1
+#define USE_VARSTAT                      0
 
 #endif

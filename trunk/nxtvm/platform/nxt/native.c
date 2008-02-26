@@ -27,6 +27,7 @@
 #include "bt.h"
 #include "udp.h"
 #include "flashprog.h"
+#include "debug.h"
 
 #undef push_word()
 #undef push_ref()
@@ -159,7 +160,7 @@ dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
     {
       byte *p = word2ptr(paramBase[0]);
       int len, i;
-      Object *charArray = (Object *) word2ptr(get_word_4(fields_start(p)));
+      Object *charArray = (Object *) word2ptr(get_word_4_ns(fields_start(p)));
 
       len = get_array_length(charArray);
       {
@@ -372,6 +373,38 @@ dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
       Object *p2 = word2ptr(paramBase[2]);
       arraycopy(p1, paramBase[1], p2, paramBase[3], paramBase[4]);
     }
+    return;
+  case executeProgram_4I_5V:
+    {
+      MethodRecord *mRec;
+      ClassRecord *classRecord;
+      classRecord = get_class_record (get_entry_class (paramBase[0]));
+      // Initialize top word with fake parameter for main():
+      set_top_ref_cur (JNULL);
+      // Push stack frame for main method:
+      mRec= find_method (classRecord, main_4_1Ljava_3lang_3String_2_5V);
+      dispatch_special (mRec, curPc);
+      dispatch_static_initializer (classRecord, curPc);
+    }
+    return;
+  case setDebug_4_5V:
+    set_debug(word2ptr(paramBase[0]));
+    return;
+  case peekWord_4I_5I:
+    push_word(*((unsigned long *)(paramBase[0])));
+    return;
+  case eventOptions_4II_5I:
+    {
+      byte old = debugEventOptions[paramBase[0]];
+      debugEventOptions[paramBase[0]] = (byte)paramBase[1];
+      push_word(old);
+    }
+    return;
+  case suspendThread_4Ljava_3lang_3Object_2_5V:
+    suspend_thread(ref2ptr(paramBase[0]));
+    return;
+  case resumeThread_4Ljava_3lang_3Object_2_5V:
+    resume_thread(ref2ptr(paramBase[0]));
     return;
   default:
     throw_exception(noSuchMethodError);

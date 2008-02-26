@@ -89,29 +89,29 @@ case OP_PUTSTATIC_3:
     {
 #if RECORD_REFERENCES
       if (isRef)
-        push_ref (get_word(fbase1, fieldSize));
+        push_ref (get_word_ns(fbase1, fieldSize));
       else
 #endif
       {
-        tempStackWord = get_word(fbase1, fieldSize);
+        tempStackWord = get_word_ns(fbase1, fieldSize);
         if( fieldType == T_CHAR)
           tempStackWord = (TWOBYTES) tempStackWord;
         push_word (tempStackWord);
 
         if (wideWord)
-          push_word (get_word_4(fbase1 + 4));
+          push_word (get_word_4_ns(fbase1 + 4));
       }
     }
     else
     {
       if (wideWord)
-        store_word (fbase1 + 4, 4, pop_word());
+        store_word_ns (fbase1 + 4, 4, pop_word());
 #if RECORD_REFERENCES
       if (isRef)
-        store_word (fbase1, fieldSize, pop_ref());
+        store_word_ns (fbase1, fieldSize, pop_ref());
       else
 #endif
-      store_word (fbase1, fieldSize, pop_word());
+      store_word_ns (fbase1, fieldSize, pop_word());
     }
 
     pc += 2;
@@ -159,11 +159,11 @@ case OP_GETFIELD:
 
 #if RECORD_REFERENCES
     if (fieldType == T_REFERENCE)
-      set_top_ref (get_word(fbase2, fieldSize));
+      set_top_ref (get_word_ns(fbase2, fieldSize));
     else
 #endif
     {
-      tempStackWord = get_word(fbase2, fieldSize);
+      tempStackWord = get_word_ns(fbase2, fieldSize);
       if( fieldType == T_CHAR)
         tempStackWord = (TWOBYTES) tempStackWord;
       set_top_word (tempStackWord);
@@ -175,7 +175,7 @@ case OP_GETFIELD:
     	printf("Wide word\n");
     #endif
     if (wideWord)
-      push_word (get_word_4(fbase2 + 4));
+      push_word (get_word_4_ns(fbase2 + 4));
     pc += 2;
   }
 #ifdef DEBUG_FIELDS
@@ -216,7 +216,7 @@ case OP_PUTFIELD:
       goto LABEL_NULLPTR_EXCEPTION;
     fbase3 = ((byte *) word2ptr (tempStackWord)) + offset;
     if (wideWord)
-      store_word (fbase3 + 4, 4, pop_word());
+      store_word_ns (fbase3 + 4, 4, pop_word());
 
     #if 0
     printf ("### put_field base=%d size=%d stored=%d\n", (int) fbase3, (int) fieldSize, (int) get_top_word());
@@ -224,10 +224,10 @@ case OP_PUTFIELD:
 
 #if RECORD_REFERENCES
     if (fieldType == T_REFERENCE)
-      store_word (fbase3, fieldSize, pop_ref());
+      store_word_ns (fbase3, fieldSize, pop_ref());
     else
 #endif
-    store_word (fbase3, fieldSize, pop_word());
+    store_word_ns (fbase3, fieldSize, pop_word());
     just_pop_ref();
     pc += 2;
   }
@@ -241,7 +241,7 @@ case OP_GETFIELD_S1:
     if( w == JNULL)
       goto LABEL_NULLPTR_EXCEPTION;
     fp = ((byte *) word2ptr( w)) + pc[0];
-    set_top_word( (JINT)(JBYTE)fp[0]);
+    set_top_word_ns( (JINT)(JBYTE)fp[0]);
     pc += 2;
   }
   goto LABEL_ENGINELOOP;

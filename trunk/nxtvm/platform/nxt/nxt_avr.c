@@ -49,8 +49,7 @@ static U16 prev_buttons;
 static U16 button_state;
 static U16 debounce_state;
 static U16 debounce_cnt;
-static U32 click_freq;
-static U32 click_len;
+static U16 click_freq[16];
 static U32 click_vol;
 static U16 click_buttons;
 
@@ -218,6 +217,7 @@ nxt_avr_unpack(void)
 void
 nxt_avr_init(void)
 {
+  int i;
   twi_init();
 
   memset(&io_to_avr, 0, sizeof(io_to_avr));
@@ -227,7 +227,18 @@ nxt_avr_init(void)
   prev_buttons = 0;
   debounce_state = 0;
   debounce_cnt = BUTTON_DEBOUNCE_CNT;
-  nxt_avr_set_key_click(1568, 100, 20);
+  //nxt_avr_set_key_click(1568, 100, 20);
+  click_vol = 20;
+  for(i=0; i < 16; i++)
+    click_freq[i] = 0;
+  click_freq[1] = 209 + 697;
+  click_freq[2] = 209 + 770;
+  click_freq[4] = 209 + 852;
+  click_freq[8] = 209 + 941;
+  click_freq[1+2] = 633 + 770;
+  click_freq[1+4] = 633 + 852;
+  click_freq[1+8] = 633 + 941;
+  
   click_buttons = 0;
   nxt_avr_initialised = 1;
 }
@@ -281,8 +292,11 @@ nxt_avr_1kHz_update(void)
 U32
 buttons_get(void)
 {
-  if ((io_from_avr.buttons != 0) && (io_from_avr.buttons != click_buttons) && (click_vol != 0))
-    sound_freq((U32) click_freq, (U32) click_len, (int) -click_vol);
+  if ((io_from_avr.buttons != click_buttons) && (click_vol != 0))
+  {
+    U32 note = click_freq[io_from_avr.buttons];
+    if (note) sound_freq(note, (note != 0 ? 100 : 0), (int) -click_vol);
+  }
   click_buttons = io_from_avr.buttons;
   return io_from_avr.buttons;
 }
@@ -338,7 +352,6 @@ nxt_avr_set_input_power(U32 n, U32 power_type)
 void
 nxt_avr_set_key_click(U32 freq, U32 len, U32 vol)
 {
-  click_freq = freq;
-  click_len = len;
+  if (len > 0 && len < 16) click_freq[len] = freq; 
   click_vol = vol;
 }

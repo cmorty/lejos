@@ -18,6 +18,8 @@
 
 #include "platform_hooks.h"
 
+#include "debug.h"
+
 Object *outOfMemoryError;
 Object *noSuchMethodError;
 Object *stackOverflowError;
@@ -67,6 +69,7 @@ void init_exceptions()
 void throw_exception (Object *exception)
 {
   Thread *auxThread;
+  int exceptionFrame = currentThread->stackFrameArraySize;
   
   #ifdef VERIFY
   assert (exception != null, EXCEPTIONS0);
@@ -152,7 +155,10 @@ void throw_exception (Object *exception)
   printf("Handle uncaught exception\n");
 #endif
 
-      handle_uncaught_exception (exception, auxThread,
+      if (!debug_uncaught_exception (exception, auxThread,
+  			         gExcepMethodRec, tempMethodRecord,
+			         gExceptionPc, exceptionFrame))
+        handle_uncaught_exception (exception, auxThread,
   			         gExcepMethodRec, tempMethodRecord,
 			         gExceptionPc);
     }

@@ -15,6 +15,7 @@
 #define MON_WAITING      4 // Trying to enter a synchronized block
 #define CONDVAR_WAITING  5 // Someone called wait() on us in a synchronized block.
 #define SLEEPING         6 // ZZZZZzzzzzzzz
+#define SUSPENDED        0x80 // Or with the above to suspend
 
 #define INTERRUPT_CLEARED    0
 #define INTERRUPT_REQUESTED  1
@@ -30,7 +31,8 @@
 extern Thread *currentThread;
 extern Thread *bootThread;
 extern byte gThreadCounter;
-extern Thread *threadQ[];
+extern REFERENCE threads;
+extern Thread **threadQ;
 extern byte gProgramNumber;
 extern boolean gRequestSuicide;
 
@@ -49,6 +51,7 @@ typedef struct S_StackFrame
   STACKWORD *stackTop;
 } StackFrame;
 
+extern void init_threads();
 extern boolean init_thread (Thread *thread);
 extern StackFrame *current_stackframe();
 extern void enter_monitor (Thread *pThread, Object* obj);
@@ -60,6 +63,8 @@ extern void enqueue_thread(Thread *thread);
 extern void monitor_wait(Object *obj, const FOURBYTES time);
 extern void monitor_notify(Object *obj, const boolean all);
 extern void monitor_notify_unchecked(Object *obj, const boolean all);
+extern void suspend_thread(Thread *thread);
+extern void resume_thread(Thread *thread);
 
 #define stackframe_array_ptr()   (word2ptr(currentThread->stackFrameArray))
 #define stack_array_ptr()        (word2ptr(currentThread->stackArray))
@@ -70,18 +75,6 @@ extern void monitor_notify_unchecked(Object *obj, const boolean all);
 #define set_program_number(N_)   {gProgramNumber = (N_);}
 #define inc_program_number()     {if (++gProgramNumber >= get_num_entry_classes()) gProgramNumber = 0;}
 #define get_program_number()     gProgramNumber 
-
-static inline void init_threads()
-{
-  int i;
-  Thread **pQ = threadQ;
-  gThreadCounter = 0;
-  currentThread = JNULL;
-  for (i = 0; i<10; i++)
-  {
-    *pQ++ = null;
-  }
-}
 
 /**
  * Sets thread state to SLEEPING.

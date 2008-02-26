@@ -22,6 +22,7 @@
 #include "exceptions.h"
 #include "trace.h"
 #include "poll.h"
+#include "debug.h"
 #include "sensors.h"
 #include "platform_hooks.h"
 //#include "java_binary.h"
@@ -38,6 +39,7 @@
 #include "bt.h"
 #include "udp.h"
 #include "flashprog.h"
+#include "debug.h"
 
 #include <string.h>
 
@@ -95,7 +97,7 @@ handle_uncaught_exception(Object * exception,
   display_int(get_class_index(exception), 0);
   display_goto_xy(0, 2);
   display_string("Method: ");
-  display_int(methodRecord->signatureId, 0);
+  display_int(methodRecord - get_method_table(get_class_record(0)), 0);
   if( get_class_index(exception) == JAVA_LANG_OUTOFMEMORYERROR)
   {
     display_goto_xy(0, 3);
@@ -119,6 +121,7 @@ switch_thread_hook()
 
   // Check for ENTER and ESCAPE pressed
   if (b == 9) {
+    if (debug_user_interrupt()) return;
     // Shut down power immediately
     while (1) {
       nxt_avr_power_down();
@@ -149,6 +152,7 @@ run(int jsize)
   byte *ram_start = (byte *) (&__free_ram_start__);
 
   init_poller();
+  init_debug();
 
   //printf("Initializing Binary\n");
 

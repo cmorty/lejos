@@ -124,8 +124,8 @@ case OP_LOOKUPSWITCH:
     int off, npairs, idx, idx8;
     byte *from, *to;
 
-    off = get_word_4( pc);
-    npairs = get_word_4( pc + 4);
+    off = get_word_4_swp( pc);
+    npairs = get_word_4_swp( pc + 4);
 
     idx = pop_word();
     idx8 = (byte) idx;
@@ -133,9 +133,9 @@ case OP_LOOKUPSWITCH:
     for( from = pc + 8, to = from + npairs * 8; from < to; from += 8)
     {
        if( from[ 3] == idx8) // fast compare of low byte of match value
-        if( get_word_4( from) == idx)
+        if( get_word_4_swp( from) == idx)
         {
-          off = get_word_4( from + 4);
+          off = get_word_4_swp( from + 4);
           break;
         }
     }
@@ -149,13 +149,13 @@ case OP_TABLESWITCH:
     // padding removed while linking
     int off, low, hig, idx;
 
-    off = get_word_4( pc);
-    low = get_word_4( pc + 4);
-    hig = get_word_4( pc + 8);
+    off = get_word_4_swp( pc);
+    low = get_word_4_swp( pc + 4);
+    hig = get_word_4_swp( pc + 8);
 
     idx = pop_word();
     if( idx >= low && idx <= hig)
-      off = get_word_4( pc + 12 + ((idx - low) << 2));
+      off = get_word_4_swp( pc + 12 + ((idx - low) << 2));
 
     pc += off - 1;
   }
