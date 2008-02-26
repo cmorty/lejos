@@ -128,15 +128,15 @@ twi_isr_entry:
 sound_isr_entry:
   irq_wrapper_nested sound_isr_C
 
-  .extern uart_isr_C_0
-  .global uart_isr_entry_0
-uart_isr_entry_0:
-  irq_wrapper_nested uart_isr_C_0
+@  .extern uart_isr_C_0
+@  .global uart_isr_entry_0
+@uart_isr_entry_0:
+@  irq_wrapper_nested uart_isr_C_0
 
-  .extern uart_isr_C_1
-  .global uart_isr_entry_1
-uart_isr_entry_1:
-  irq_wrapper_nested uart_isr_C_1
+@  .extern uart_isr_C_1
+@  .global uart_isr_entry_1
+@uart_isr_entry_1:
+@  irq_wrapper_nested uart_isr_C_1
 
   .extern nxt_motor_isr_C
   .global nxt_motor_isr_entry

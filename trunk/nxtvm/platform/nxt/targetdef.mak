@@ -14,8 +14,6 @@ TARGET := lejos_nxt
 C_RAMSOURCES := flashprog.c
 
 C_PLATFORM_SOURCES := \
-	uart.c \
-	byte_fifo.c \
 	aic.c \
 	systick.c \
 	udp.c \
@@ -42,7 +40,8 @@ C_VM_SOURCES := \
 	$(VM_DIR)/exceptions.c \
 	$(VM_DIR)/memory.c \
 	$(VM_DIR)/language.c \
-	$(VM_DIR)/poll.c
+	$(VM_DIR)/poll.c \
+	$(VM_DIR)/debug.c
 
 C_SOURCES := $(C_PLATFORM_SOURCES) $(C_VM_SOURCES) $(C_HOOK_SOURCES)
 
