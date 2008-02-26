@@ -17,8 +17,6 @@ public class Sound
     private static final short RIFF_FMT_1CHAN = 0x0100;
     private static final short RIFF_FMT_8BITS = 0x0800;
     private static final int RIFF_DATA_SIG = 0x64617461;
-	
-	
     public static final int VOL_USEMASTER = 0xffff;
     // Instruments (yes I know they don't sound anything like the names!)
     public final static int[] PIANO = new int[]{4, 25, 500, 7000, 5};
@@ -43,34 +41,32 @@ public class Sound
 
     public static void systemSound(boolean aQueued, int aCode)
     {
-	if (aCode == 0)
-	{
-	    playTone(600, 200);
-	} else if (aCode == 1)
-	{
-	    playTone(600, 150);
-	    pause(200);
-	    playTone(600, 150);
-	    pause(150);
-	} else if (aCode == 2)
-	{// C major arpeggio
-	    for (int i = 4; i < 8; i++)
-	    {
-		playTone(C2 * i / 4, 100);
-		pause(100);
-	    }
-	} else if (aCode == 3)
-	{
-	    for (int i = 7; i > 3; i--)
-	    {
-		playTone(C2 * i / 4, 100);
-		pause(100);
-	    }
-	} else if (aCode == 4)
-	{
-	    playTone(100, 500);
-	    pause(500);
-	}
+        if (aCode == 0)
+            playTone(600, 200);
+        else if (aCode == 1)
+        {
+            playTone(600, 150);
+            pause(200);
+            playTone(600, 150);
+            pause(150);
+        }
+        else if (aCode == 2)// C major arpeggio
+            for (int i = 4; i < 8; i++)
+            {
+                playTone(C2 * i / 4, 100);
+                pause(100);
+            }
+        else if (aCode == 3)
+            for (int i = 7; i > 3; i--)
+            {
+                playTone(C2 * i / 4, 100);
+                pause(100);
+            }
+        else if (aCode == 4)
+        {
+            playTone(100, 500);
+            pause(500);
+        }
     }
 
     /**
@@ -78,7 +74,7 @@ public class Sound
      */
     public static void beep()
     {
-	systemSound(true, 0);
+        systemSound(true, 0);
     }
 
     /**
@@ -86,7 +82,7 @@ public class Sound
      */
     public static void twoBeeps()
     {
-	systemSound(true, 1);
+        systemSound(true, 1);
     }
 
     /**
@@ -94,7 +90,7 @@ public class Sound
      */
     public static void beepSequence()
     {
-	systemSound(true, 3);
+        systemSound(true, 3);
     }
 
     /**
@@ -102,7 +98,7 @@ public class Sound
      */
     public static void beepSequenceUp()
     {
-	systemSound(true, 2);
+        systemSound(true, 2);
     }
 
     /**
@@ -110,17 +106,18 @@ public class Sound
      */
     public static void buzz()
     {
-	systemSound(true, 4);
+        systemSound(true, 4);
     }
 
     public static void pause(int t)
     {
-	try
-	{
-	    Thread.sleep(t);
-	} catch (InterruptedException e)
-	{
-	}
+        try
+        {
+            Thread.sleep(t);
+        }
+        catch (InterruptedException e)
+        {
+        }
     }
 
     /**
@@ -139,7 +136,7 @@ public class Sound
 
     public static void playTone(int freq, int duration)
     {
-	playTone(freq, duration, VOL_USEMASTER);
+        playTone(freq, duration, VOL_USEMASTER);
     }
 
     /**
@@ -161,71 +158,56 @@ public class Sound
      */
     public static int playSample(File file, int vol)
     {
-	// First check that we have a wave file. File must be at least 44 bytes
-	// in size to contain a RIFF header.
-	if (file.length() < RIFF_HDR_SIZE)
-	{
-	    return -1;
-	}
-	// Now check for a RIFF header
-	FileInputStream f = new FileInputStream(file);
-	DataInputStream d = new DataInputStream(f);
-	int sampleRate = 0;
-	int dataLen = 0;
-	try
-	{
-	    if (d.readInt() != RIFF_RIFF_SIG)
-	    {
-		return -1;
-	    }
-	    // Skip chunk size
-	    d.readInt();
-	    // Check we have a wave file
-	    if (d.readInt() != RIFF_WAVE_SIG)
-	    {
-		return -1;
-	    }
-	    if (d.readInt() != RIFF_FMT_SIG)
-	    {
-		return -1;
-	    }
-	    // Now check that the format is PCM, Mono 8 bits. Note that these
-	    // values are stored little endian.
-	    d.readInt(); // Skip chunk size
-	    if (d.readShort() != RIFF_FMT_PCM)
-	    {
-		return -1;
-	    }
-	    if (d.readShort() != RIFF_FMT_1CHAN)
-	    {
-		return -1;
-	    }
-	    sampleRate = d.readByte() & 0xff;
-	    sampleRate |= (d.readByte() & 0xff) << 8;
-	    sampleRate |= (d.readByte() & 0xff) << 16;
-	    sampleRate |= (d.readByte() & 0xff) << 24;
-	    d.readInt();
-	    d.readShort();
-	    if (d.readShort() != RIFF_FMT_8BITS)
-	    {
-		return -1;
-	    }
-	    // Make sure we now have a data chunk
-	    if (d.readInt() != RIFF_DATA_SIG)
-	    {
-		return -1;
-	    }
-	    dataLen = d.readByte() & 0xff;
-	    dataLen |= (d.readByte() & 0xff) << 8;
-	    dataLen |= (d.readByte() & 0xff) << 16;
-	    dataLen |= (d.readByte() & 0xff) << 24;
-	    d.close();
-	} catch (IOException e)
-	{
-	    return -1;
-	}
-	playSample(file.getPage(), RIFF_HDR_SIZE, dataLen, sampleRate, vol);
-	return getTime();
+        // First check that we have a wave file. File must be at least 44 bytes
+        // in size to contain a RIFF header.
+        if (file.length() < RIFF_HDR_SIZE)
+            return -1;
+        // Now check for a RIFF header
+        FileInputStream f = new FileInputStream(file);
+        DataInputStream d = new DataInputStream(f);
+        int sampleRate = 0;
+        int dataLen = 0;
+        try
+        {
+            if (d.readInt() != RIFF_RIFF_SIG)
+                return -1;
+            // Skip chunk size
+            d.readInt();
+            // Check we have a wave file
+            if (d.readInt() != RIFF_WAVE_SIG)
+                return -1;
+            if (d.readInt() != RIFF_FMT_SIG)
+                return -1;
+            // Now check that the format is PCM, Mono 8 bits. Note that these
+            // values are stored little endian.
+            d.readInt(); // Skip chunk size
+            if (d.readShort() != RIFF_FMT_PCM)
+                return -1;
+            if (d.readShort() != RIFF_FMT_1CHAN)
+                return -1;
+            sampleRate = d.readByte() & 0xff;
+            sampleRate |= (d.readByte() & 0xff) << 8;
+            sampleRate |= (d.readByte() & 0xff) << 16;
+            sampleRate |= (d.readByte() & 0xff) << 24;
+            d.readInt();
+            d.readShort();
+            if (d.readShort() != RIFF_FMT_8BITS)
+                return -1;
+            // Make sure we now have a data chunk
+            if (d.readInt() != RIFF_DATA_SIG)
+                return -1;
+            dataLen = d.readByte() & 0xff;
+            dataLen |= (d.readByte() & 0xff) << 8;
+            dataLen |= (d.readByte() & 0xff) << 16;
+            dataLen |= (d.readByte() & 0xff) << 24;
+            d.close();
+        }
+        catch (IOException e)
+        {
+            return -1;
+        }
+        playSample(file.getPage(), RIFF_HDR_SIZE, dataLen, sampleRate, vol);
+        return getTime();
     }
 
     /**
@@ -236,17 +218,15 @@ public class Sound
      */
     public static int playSample(File file)
     {
-	return playSample(file, VOL_USEMASTER);
+        return playSample(file, VOL_USEMASTER);
     }
 
     static int waitUntil(int t)
     {
-	int t2;
-	while ((t2 = (int) System.currentTimeMillis()) < t)
-	{
-	    Thread.yield();
-	}
-	return t2;
+        int t2;
+        while ((t2 = (int) System.currentTimeMillis()) < t)
+            Thread.yield();
+        return t2;
     }
 
     /**
@@ -260,73 +240,72 @@ public class Sound
      */
     public static void playNote(int[] inst, int freq, int len)
     {
-	// Generate an enevlope controlled note. The instrument array contains
-	// the shape of the envelope. The attack period, the decay period the
-	// level to decay to and the level to decay to during the sustain part
-	// of the note finally the length of the actual release period. All
-	// periods are given in 2000th of a second units. This is because the
-	// generation of a tone using the playTone function will often take
-	// more than 1ms to execute. This means that the minimum tone segment
-	// that we can reliably generate is 2ms and so we use this unit as the
-	// basis of note generation.
-	int segLen = inst[0];
-	// All volume settings are scaled by 100.
-	int step = 8000 / segLen;
-	int vol = 2000;
-	// We do not really have fine grained enough timing so try and keep
-	// things aligned as closely as possible to a tick by waiting here
-	// before we start for the next tick.
-	int t = waitUntil((int) System.currentTimeMillis() + 1);
-	// Generate the attack profile from 20 to full volume
-	len /= 2;
-	for (int i = 0; i < segLen; i++)
-	{
-	    Sound.playTone(freq, 10, vol / 100);
-	    vol += step;
-	    t = waitUntil(t + 2);
-	}
-	len -= segLen;
-	// Now do the decay
-	segLen = inst[1];
-	if (segLen > 0)
-	{
-	    step = inst[2] / segLen;
-	    for (int i = 0; i < segLen; i++)
-	    {
-		Sound.playTone(freq, 100, vol / 100);
-		vol -= step;
-		t = waitUntil(t + 2);
-	    }
-	    len -= segLen;
-	}
-	segLen = inst[4];
-	len -= segLen;
-	// adjust length of the sustain and possibly the release to match the
-	// requested note length
-	if (len > 0)
-	{
-	    step = inst[3] / len;
-	    for (int i = 0; i < len; i++)
-	    {
-		Sound.playTone(freq, 100, vol / 100);
-		vol -= step;
-		t = waitUntil(t + 2);
-	    }
-	} else
-	{
-	    segLen += len;
-	}
-	// Finally do the release
-	if (segLen > 0)
-	{
-	    step = (vol - 1000) / segLen;
-	    for (int i = 0; i < segLen; i++)
-	    {
-		Sound.playTone(freq, 2, vol / 100);
-		vol -= step;
-		t = waitUntil(t + 2);
-	    }
-	}
+        // Generate an enevlope controlled note. The instrument array contains
+        // the shape of the envelope. The attack period, the decay period the
+        // level to decay to and the level to decay to during the sustain part
+        // of the note finally the length of the actual release period. All
+        // periods are given in 2000th of a second units. This is because the
+        // generation of a tone using the playTone function will often take
+        // more than 1ms to execute. This means that the minimum tone segment
+        // that we can reliably generate is 2ms and so we use this unit as the
+        // basis of note generation.
+        int segLen = inst[0];
+        // All volume settings are scaled by 100.
+        int step = 8000 / segLen;
+        int vol = 2000;
+        // We do not really have fine grained enough timing so try and keep
+        // things aligned as closely as possible to a tick by waiting here
+        // before we start for the next tick.
+        int t = waitUntil((int) System.currentTimeMillis() + 1);
+        // Generate the attack profile from 20 to full volume
+        len /= 2;
+        for (int i = 0; i < segLen; i++)
+        {
+            Sound.playTone(freq, 10, vol / 100);
+            vol += step;
+            t = waitUntil(t + 2);
+        }
+        len -= segLen;
+        // Now do the decay
+        segLen = inst[1];
+        if (segLen > 0)
+        {
+            step = inst[2] / segLen;
+            for (int i = 0; i < segLen; i++)
+            {
+                Sound.playTone(freq, 100, vol / 100);
+                vol -= step;
+                t = waitUntil(t + 2);
+            }
+            len -= segLen;
+        }
+        segLen = inst[4];
+        len -= segLen;
+        // adjust length of the sustain and possibly the release to match the
+        // requested note length
+        if (len > 0)
+        {
+            step = inst[3] / len;
+            for (int i = 0; i < len; i++)
+            {
+                Sound.playTone(freq, 100, vol / 100);
+                vol -= step;
+                t = waitUntil(t + 2);
+            }
+        }
+        else
+            segLen += len;
+        // Finally do the release
+        if (segLen > 0)
+        {
+            step = (vol - 1000) / segLen;
+            for (int i = 0; i < segLen; i++)
+            {
+                Sound.playTone(freq, 2, vol / 100);
+                vol -= step;
+                t = waitUntil(t + 2);
+            }
+        }
     }
 
     /**
