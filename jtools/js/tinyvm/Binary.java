@@ -266,6 +266,7 @@ public class Binary
          {
             classRecord.addUsedMethod((String) pInterfaceMethods.elementAt(i));
          }
+
          classRecord.iIndex = pIndex;
          classRecord.initFlags();
          classRecord.initParent();
@@ -394,12 +395,28 @@ public class Binary
        ClassRecord pRec = (ClassRecord) iClassTable.get(pIndex);
        monitor.log("Class " + pIndex + ": " + pRec.iName);
      }
-     
+     /*
      int pSize = iSignatures.size();
      for (int i = 0; i < pSize; i++)
      {
        Signature pSig = (Signature) iSignatures.elementAt (i);
        monitor.log("Signature " + i + ": " + pSig.getImage());
+     }
+	 */
+     int pSize = iMethodTables.size();
+	 int methodNo = 0;
+     for (int i = 0; i < pSize; i++)
+     {
+		RecordTable rt = ((RecordTable) iMethodTables.get(i));
+        int cnt = rt.size();
+		for(int j = 0; j < cnt; j++)
+		{
+			MethodRecord mr = (MethodRecord) (rt.get(j));
+			monitor.log("Method " + methodNo + ": Class: " + mr.iClassRecord.getName() + " Signature: " + 
+					     ((Signature)iSignatures.elementAt(mr.iSignatureId)).getImage());
+			methodNo++;
+			
+		}
      }
      monitor.log("Master record : " + iMasterRecord.getLength() + " bytes.");
      monitor.log("Class records : " + iClassTable.size() + " (" + iClassTable.getLength() + " bytes).");
