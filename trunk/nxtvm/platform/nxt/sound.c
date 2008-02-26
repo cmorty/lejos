@@ -294,7 +294,10 @@ void sound_freq(U32 freq, U32 ms, int vol)
   sample.clock_div = (OSC/(len*32*2) + freq/2)/freq;
   // Calculate actual frequency and use this for length calc
   freq = (OSC/(2*sample.clock_div))/(len*32);
-  sample.count = (freq*ms + 1000-1)/1000;
+  if (ms <= TONE_OVERHEAD)
+    sample.count = 0;
+  else
+    sample.count = (freq*ms + 1000-1)/1000;
   sample.len = len;
   sample.ptr = (U8 *)sample.buf[buf];
   sample.buf_id = buf;
