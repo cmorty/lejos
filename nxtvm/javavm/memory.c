@@ -458,10 +458,12 @@ void arraycopy(Object *src, int srcOff, Object *dst, int dstOff, int len)
 /**
  * Problem here is bigendian v. littleendian. Java has its
  * words stored bigendian, intel is littleendian.
+ * Note the issue is not just endian. We also need to deal with the fact that
+ * java items may not be aligned correctly.
  * Now slightly optmized;
  */
 
-STACKWORD get_word( byte *ptr, int aSize)
+STACKWORD get_word_swp( byte *ptr, int aSize)
 {
   switch(aSize)
   {
@@ -476,13 +478,14 @@ STACKWORD get_word( byte *ptr, int aSize)
   return 0;
 }
 
-STACKWORD get_word_4( byte *ptr)
+
+STACKWORD get_word_4_swp( byte *ptr)
 {
     return (((STACKWORD)ptr[0]) << 24) | (((STACKWORD)ptr[1]) << 16) |
            (((STACKWORD)ptr[2]) << 8) | ((STACKWORD)ptr[3]);
 }
 
-void store_word( byte *ptr, int aSize, STACKWORD aWord)
+void store_word_swp( byte *ptr, int aSize, STACKWORD aWord)
 {
   switch(aSize)
   {
@@ -501,6 +504,51 @@ void store_word( byte *ptr, int aSize, STACKWORD aWord)
     return;
   }
 }
+
+/**
+ * Following are non-swapping versions of the above.
+ */
+STACKWORD get_word_ns( byte *ptr, int aSize)
+{
+  switch(aSize)
+  {
+  case 1:
+    return (STACKWORD)(JINT)(JBYTE)ptr[0];
+  case 2:
+    return (STACKWORD)(JINT)(JSHORT)(((TWOBYTES)ptr[1]) << 8) | (ptr[0]);
+  case 4:
+    return (((STACKWORD)ptr[3]) << 24) | (((STACKWORD)ptr[2]) << 16) |
+           (((STACKWORD)ptr[1]) << 8) | ((STACKWORD)ptr[0]);
+  }
+  return 0;
+}
+
+STACKWORD get_word_4_ns( byte *ptr)
+{
+    return (((STACKWORD)ptr[3]) << 24) | (((STACKWORD)ptr[2]) << 16) |
+           (((STACKWORD)ptr[1]) << 8) | ((STACKWORD)ptr[0]);
+}
+
+void store_word_ns( byte *ptr, int aSize, STACKWORD aWord)
+{
+  switch(aSize)
+  {
+  case 1:
+    ptr[0] = (byte)aWord;
+    return;
+  case 2:
+    ptr[0] = (byte)(aWord); 
+    ptr[1] = (byte)(aWord >> 8);
+    return;
+  case 4:
+    ptr[0] = (byte)(aWord); 
+    ptr[1] = (byte)(aWord >> 8);
+    ptr[2] = (byte)(aWord >> 16); 
+    ptr[3] = (byte)(aWord >> 24);
+    return;
+  }
+}
+
 
 #if DEBUG_RCX_MEMORY
 
@@ -962,7 +1010,7 @@ static void mark_static_objects( void)
 
     if( fieldType == T_REFERENCE)
     {
-      Object* obj = (Object*) get_word_4( staticState);
+      Object* obj = (Object*) get_word_4_ns( staticState);
       if( obj != NULL)
         mark_object( obj);
     }
@@ -987,7 +1035,7 @@ static void mark_local_objects()
   // If needed make sure we protect the VM temporary references
   for(i=0; i < MAX_VM_REFS; i++)
     if (protectedRef[i] != JNULL) mark_object(protectedRef[i]);
-
+  if (threads) mark_object((Object *)threads);
   for( i = 0; i < MAX_PRIORITY; i ++)
   {
     Thread* th0 = threadQ[ i];
@@ -1090,7 +1138,7 @@ static void mark_reference_fields( Object* obj)
 
           if( ! (classIndex == JAVA_LANG_THREAD && i == 0))
           {
-            Object* robj = (Object*) get_word_4( statePtr);
+            Object* robj = (Object*) get_word_4_ns( statePtr);
             if( robj != NULL)
               mark_object( robj);
           }
@@ -1134,7 +1182,7 @@ static void mark_object( Object *obj)
   if( get_na_class_index( obj) == JAVA_LANG_STRING)
   {
     String* str = (String*)obj;
-    Object* chars = word2obj(get_word_4((byte*)(&(str->characters))));
+    Object* chars = word2obj(get_word_4_ns((byte*)(&(str->characters))));
 
     if( chars != NULL)
       set_gc_marked( chars);

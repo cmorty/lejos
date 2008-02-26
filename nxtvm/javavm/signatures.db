@@ -149,3 +149,11 @@ setKeyClick(III)V
 
 #java.lang.System
 diagn(II)I
+
+#lejos.nxt.DebugInterface
+executeProgram(I)V
+setDebug()V
+peekWord(I)I
+eventOptions(II)I
+suspendThread(Ljava/lang/Object;)V
+resumeThread(Ljava/lang/Object;)V

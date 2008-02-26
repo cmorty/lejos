@@ -27,7 +27,8 @@ Thread* currentThread;
 /**
  * Priority queue of threads. Entry points at the last thread in the queue.
  */
-Thread *threadQ[10];
+REFERENCE threads;
+Thread **threadQ;
 
 /**
  * Thread id generator, always increasing.
@@ -88,6 +89,23 @@ inline void set_monitor_count (Object *obj, byte count)
 #define set_thread_id(obj,_threadId) ((obj)->threadId = (_threadId))
 #define inc_monitor_count(obj) ((obj)->monitorCount++)
 #define set_monitor_count(obj,count) ((obj)->monitorCount = (count))
+/**
+ * Initialise the thread pool. Note we use a Java object so that we can make
+ * the pool available to Java.
+ **/
+void init_threads()
+{
+  int i;
+  threads = ptr2ref(new_primitive_array(T_REFERENCE, 10));
+  threadQ = (Thread **)ref_array(threads);
+  Thread **pQ = threadQ;
+  gThreadCounter = 0;
+  currentThread = JNULL;
+  for (i = 0; i<10; i++)
+  {
+    *pQ++ = null;
+  }
+}
 
 /**
  * Allocate stack frames
@@ -702,3 +720,55 @@ void set_thread_priority(Thread *thread, const FOURBYTES priority)
   enqueue_thread(thread);      
 }
 
+/**
+ * Suspend the specified thread. If thread is null suspend all threads
+ * except currentThread.
+ */
+void suspend_thread(Thread *thread)
+{
+  int i;
+  Thread *pThread;
+  if (thread)
+    thread->state |= SUSPENDED;
+  else
+  {
+    // Suspend all threads
+    for (i=MAX_PRIORITY-1; i >= 0; i--)
+    {
+      pThread = threadQ[i];
+      if (!pThread)
+        continue;
+      
+      do {
+        // Remember threadQ[i] is the last thread on the queue
+        pThread = word2ptr(pThread->nextThread);
+        if (pThread != currentThread) pThread->state |= SUSPENDED;
+      } while (pThread != threadQ[i]);
+    }
+  }
+  schedule_request( REQUEST_SWITCH_THREAD);
+}
+
+void resume_thread(Thread *thread)
+{
+  int i;
+  Thread *pThread;
+  if (thread)
+  {
+    thread->state &= ~SUSPENDED;
+    return;
+  }
+  // Suspend all threads
+  for (i=MAX_PRIORITY-1; i >= 0; i--)
+  {
+    pThread = threadQ[i];
+    if (!pThread)
+      continue;
+      
+    do {
+      // Remember threadQ[i] is the last thread on the queue
+      pThread = word2ptr(pThread->nextThread);
+      pThread->state &= ~SUSPENDED;
+    } while (pThread != threadQ[i]);
+  }
+}

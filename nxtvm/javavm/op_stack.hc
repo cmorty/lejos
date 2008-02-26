@@ -46,7 +46,7 @@ LDC_CONT:
       break;
     case T_INT:
     case T_FLOAT:
-      push_word(get_word_4(get_constant_ptr(tempConstRec)));
+      push_word(get_word_4_swp(get_constant_ptr(tempConstRec)));
       break;
     #ifdef VERIFY
     default:
@@ -67,8 +67,8 @@ case OP_LDC2_W:
     #endif // VERIFY
 
     tempBytePtr = get_constant_ptr (tempConstRec);
-    push_word(get_word_4 (tempBytePtr));
-    push_word(get_word_4 (tempBytePtr + 4));
+    push_word(get_word_4_swp (tempBytePtr));
+    push_word(get_word_4_swp (tempBytePtr + 4));
 
     pc += 2;
   }
