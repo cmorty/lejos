@@ -84,6 +84,12 @@ public interface SpecialSignatureConstants {
     "getVolume()I",
     "getTime()I",
     "setKeyClick(III)V",
-    "diagn(II)I"
+    "diagn(II)I",
+    "executeProgram(I)V",
+    "setDebug()V",
+    "peekWord(I)I",
+    "eventOptions(II)I",
+    "suspendThread(Ljava/lang/Object;)V",
+    "resumeThread(Ljava/lang/Object;)V"
   };
 }
