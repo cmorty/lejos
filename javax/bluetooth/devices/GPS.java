@@ -1,6 +1,7 @@
 package javax.bluetooth.devices;
 
 import java.io.*;
+import lejos.nxt.comm.Debug;
 
 /**
  * Class to pull data from a GPS receiver
@@ -126,8 +127,22 @@ public class GPS extends Thread {
 		
 		while(true) {
 			String s = getNextString();
+			
+			// Check if sentence is valid:
+			if(s.indexOf('*') < 0) { 
+				Debug.out("Error no * caught!\n");
+				Debug.out("String: " + s + "\n");
+				continue;
+			}
+			if(s.indexOf('$') < 0) {
+				Debug.out("Error no $ caught!\n");
+				Debug.out("String: " + s + "\n");
+				continue;
+			}
+			
 			// Make NMEASentence
 			NMEASentence sen = new NMEASentence(s);
+			Debug.out("String: " + s + "\n");
 			
 			// Check if valid (discard if it is invalid)
 			if(sen.isValid()) {
