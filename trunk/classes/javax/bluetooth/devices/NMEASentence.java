@@ -99,12 +99,12 @@ public class NMEASentence {
 	private void refreshVals() {
 		
 		// ** POTENTIAL BUGFIX 1:
-		if(sentence.length() < 6) return; // See if has minimum length
+		//if(sentence.length() < 6) return; // See if has minimum length
 		prefix = sentence.substring(1, 3); // Skip over '$'
 		dataType = sentence.substring(3, 6);
 		int end = sentence.indexOf('*');
 		// ** POTENTIAL BUGFIX 2:
-		if(end < 0) return; // -1 indicates no * in string
+		//if(end < 0) return; // -1 indicates no * in string
  
 		String checksumStr = sentence.substring(end + 1, end + 3);
 		
