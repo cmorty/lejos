@@ -73,6 +73,8 @@ public class BTGPS {
 					
 					GPS gps = null;
 					
+					btGPS.setIOMode(0); // Stream mode
+					
 					try {
 						in = btGPS.openInputStream();
 						gps = new GPS(in);
