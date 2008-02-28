@@ -436,7 +436,7 @@ public class Motor extends BasicMotor// implements TimerListener
          int a = angleAtStop();//returns when motor speed < 100 deg/sec
          int k = 0;
          int error = 0;
-         while ( k < 4)
+         while ( k < 40)
          {
             error = _limitAngle - getTachoCount();
             if(error < -1)
@@ -624,6 +624,7 @@ public class Motor extends BasicMotor// implements TimerListener
     */
    public void resetTachoCount()
    {
+      regulator.reset();
       _port.resetTachoCount();
    }
    public void setBrakePower(int power)
