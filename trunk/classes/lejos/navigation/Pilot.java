@@ -157,7 +157,7 @@ public class Pilot
     public int getSpeed(){return _speed;}
     
 	/**
-	 * Sets speed of both motors,  degrees/sec; also sets retulate speed true 
+	 * Sets speed of both motors,  degrees/sec; also sets regulate speed true 
 	 */
 	public void setSpeed(int speed) 
 	{
@@ -166,8 +166,8 @@ public class Pilot
 		_left.smoothAcceleration(true);
 		_right.regulateSpeed(_regulating);
 		_right.smoothAcceleration(true);
-		_left.setSpeed(speed);
-		_right.setSpeed(speed);
+		if(_left.getSpeed() != speed)_left.setSpeed(speed);
+		if(_right.getSpeed() != speed) _right.setSpeed(speed);
 	}
 	
 	/**
@@ -175,7 +175,7 @@ public class Pilot
 	 */
 	public void forward() 
 	{	
-		setSpeed(_speed);
+		setSpeed(_speed);//both motors run at same speed
 		if(_parity == 1) fwd();
 		else bak();
 	}
@@ -185,7 +185,7 @@ public class Pilot
 	 */
 	public void backward() 
 	{
-		setSpeed(_speed);
+		setSpeed(_speed);//both motors run at same speed
 		if(_parity == 1)bak();
 		else fwd();
 	}
@@ -210,7 +210,7 @@ public class Pilot
 	 */
 	public void rotate(int angle, boolean immediateReturn )
 	{
-		setSpeed(_speed);
+		setSpeed(_speed);//both motors run at same speed
 		int ta = _parity*(int)( angle*_turnRatio);
 		_left.rotate(-ta,true);
 		_right.rotate(ta,true);
@@ -278,7 +278,7 @@ public class Pilot
 	 */
 	public void travel(float distance,boolean immediateReturn)
 	{
-		setSpeed(_speed);
+		setSpeed(_speed);// both motors at same speed
 		_left.rotate((int)(_parity*distance*_degPerDistance),true);
 		_right.rotate((int)(_parity*distance*_degPerDistance),true);
 		if(immediateReturn)return;
@@ -319,7 +319,8 @@ public class Pilot
 	 * Moves the NXT robot in a circular path, and stops when the direction it is facing has changed by a specific angle;  <br>
 	 * Returns immediately if immediateReturn is true.  The robot will stop automatically when the turm is complete. 
 	 * The center of the turning circle is on right side of the robot iff parameter turnRate is negative  <br>
-	 * turnRate values are between -200 and +200;
+	 * turnRate values are between -200 and +200; <br>
+	 * post condition:  motor speeds are not equal when method returns.
 	 * @param turnRate If positive, the left wheel is on the inside of the turn.  If negative, the left wheel is on the outside.
 	 * This parameter determines the ratio of inner wheel speed to outer wheel speed (as a percent). <br>
 	 * @param angle  the angle through which the robot will rotate and then stop. If negative, robot traces the turning circle backwards. 
