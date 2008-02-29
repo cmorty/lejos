@@ -1,7 +1,6 @@
 package java.io;
 
 import lejos.nxt.Flash;
-import java.io.IOException;
 
 /*
  * DEVELOPER NOTES:
@@ -28,6 +27,16 @@ public class File {
 	//static int count; Used for anything?
 	// CONSTANTS:
 	/**
+	 * MS-DOS File attribute constants:
+	 */
+	private static final byte READ_ONLY_ATTR = 0x01;
+	private static final byte HIDDEN_ATTR = 0x02;
+	//private static final byte SYSTEM_ATTR = 0x04; // System file
+	//private static final byte VOLUME_LABEL_ATTR = 0x08;
+	//private static final byte DIRECTORY_ATTR = 0x10;
+	//private static final byte ARCHIVE_ATTR = 0x20;
+			
+	/**
 	 *  Number of files the file system can store. 
 	 *  Defines the size of the files array. If leJOS gets a garbage
 	 *  collector we can get rid of this limitation.
@@ -47,7 +56,7 @@ public class File {
 	 * version number/string, the users file system will reformat automatically.
 	 * (i.e. Restarting file system and erasing their current stored classes) 
 	 */
-	private static final String TABLE_ID = "V_0.3";  
+	private static final String TABLE_ID = "V_0.4";  
 	
 	/**
 	 * Indicates the starting page of the file table.
@@ -122,6 +131,13 @@ public class File {
 	 * Indicates if the file exists as an entry in the file table.
 	 */
 	boolean exists = false;
+	
+	/**
+	 * Byte that stores bit-wise data of file attributes, like hidden,
+	 * locked, compressed, delete on exit, etc...
+	 * See file attribute constants above
+	 */
+	byte file_attributes;
 	
 	/**
 	 * Creates a new File object. If this file exists on disk it will
@@ -249,6 +265,23 @@ public class File {
 	public boolean exists() {
 		return exists;
 	}
+		
+	public boolean canRead() {
+		return true; // All files can be read in NXJ
+	}
+	
+	public boolean canWrite() {
+		return !((file_attributes & READ_ONLY_ATTR) == READ_ONLY_ATTR);
+	}
+	
+	public boolean isHidden() {
+		return (file_attributes & HIDDEN_ATTR) == HIDDEN_ATTR;
+	}
+		
+	public boolean setReadOnly() {
+		file_attributes = (byte)(file_attributes | READ_ONLY_ATTR);
+		return true; // Supposed to return false if unsuccessful
+	}
 	
 	/**
 	 * Reads the file information in the table from flash memory and
@@ -269,7 +302,7 @@ public class File {
 		for(int i=0;i<File.totalFiles;i++) {
 			short pageLocation = (short)((0xFF & readNextByte()) | ((0xFF & readNextByte())<<8));
 			int fileLength = (0xFF & readNextByte()) | ((0xFF & readNextByte()) <<8) | ((0xFF & readNextByte())<<16) | ((0xFF & readNextByte())<<24);
-			
+			byte fileAttributes = readNextByte();
 			// The following code attempts to reuse String's. If leJOS gets
 			// a garbage collector we can create new strings and reduce this
 			// code. It assumes that if files[i] is NOT null then the filename
@@ -285,6 +318,7 @@ public class File {
 			}
 			files[i].page_location = pageLocation;
 			files[i].file_length = fileLength;
+			files[i].file_attributes = fileAttributes;
 		}		
 	}
 	
@@ -341,6 +375,8 @@ public class File {
 					writeNextByte((byte)(files[arrayIndex].file_length>>8));
 					writeNextByte((byte)(files[arrayIndex].file_length>>16));
 					writeNextByte((byte)(files[arrayIndex].file_length>>24));
+					// Write file attributes:
+					writeNextByte(files[arrayIndex].file_attributes);
 					// Write length of name:
 					writeNextByte((byte)(files[arrayIndex].file_name.length()));
 					// Write name:
