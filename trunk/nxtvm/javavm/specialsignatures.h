@@ -90,4 +90,5 @@
 #define eventOptions_4II_5I 83
 #define suspendThread_4Ljava_3lang_3Object_2_5V 84
 #define resumeThread_4Ljava_3lang_3Object_2_5V 85
+#define getSystemFont_4_5_1B 86
 #endif // _SPECIALSIGNATURES_H
