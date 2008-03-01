@@ -36,6 +36,7 @@
 
 // Declared below to avoid needing STACKWORD everywhere we use display
 extern STACKWORD display_get_array(void);
+extern STACKWORD display_get_font(void);
 /**
  * NOTE: The technique is not the same as that used in TinyVM.
  */
@@ -215,6 +216,9 @@ dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
       display_bitblt((byte *)jbyte_array(src), paramBase[1], paramBase[2], paramBase[3], paramBase[4], (byte *)jbyte_array(dst), paramBase[6], paramBase[7], paramBase[8], paramBase[9], paramBase[10], paramBase[11], paramBase[12]);
       return;
     }
+  case getSystemFont_4_5_1B:
+    push_word(display_get_font());
+    return;
   case getVoltageMilliVolt_4_5I:
     push_word(battery_voltage());
     return;
