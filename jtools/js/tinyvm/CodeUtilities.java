@@ -232,6 +232,39 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
          return (pNumParams << TinyVMConstants.M_ARGS_SHIFT) | pSignature;
       }
    }
+  /**
+    * @return The word that should be written as parameter of an invocation
+    *         opcode.
+    * @throws TinyVMException
+    */
+   MethodRecord findMethod (int aMethodIndex, boolean aSpecial)
+      throws TinyVMException
+   {
+      Constant pEntry = iCF.getConstantPool().getConstant(aMethodIndex); // TODO catch all (runtime) exceptions
+      if (!(pEntry instanceof ConstantCP))
+      {
+         throw new TinyVMException("Classfile error: Instruction requiring "
+            + "CONSTANT_MethodRef or CONSTANT_InterfaceMethodRef " + "got "
+            + (pEntry == null? "null" : pEntry.getClass().getName()));
+      }
+      ConstantCP pMethodEntry = (ConstantCP) pEntry;
+      String className = pMethodEntry.getClass(iCF.getConstantPool()).replace(
+         '.', '/');
+      ClassRecord pClassRecord = iBinary.getClassRecord(className);
+      if (pClassRecord == null)
+      {
+         throw new TinyVMException("Bug CU-4: Didn't find class " + className
+            + " from class " + iCF.getClassName());
+      }
+      ConstantNameAndType pNT = (ConstantNameAndType) iCF.getConstantPool()
+         .getConstant(pMethodEntry.getNameAndTypeIndex());
+      Signature pSig = new Signature(pNT.getName(iCF.getConstantPool()), pNT
+         .getSignature(iCF.getConstantPool()));
+      MethodRecord pMethod = pClassRecord.getVirtualMethodRecord(pSig);
+      //if (pMethod == null)
+          // _logger.log(Level.INFO, "Failed to find " + pSig + " class " + className);
+      return pMethod;
+   }
 
    static int getAndCopyFourBytesInt( byte[] aCode, int ix, byte[] pOutCode, int ox)
    {
@@ -245,6 +278,17 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
       for( int i = 0; i < 4; i ++)
          pOutCode[ ox + i] = aCode[ ix + i];
 
+      return a;
+   }   
+   
+   static int getFourBytesInt( byte[] aCode, int ix )
+   {
+      int a = 0;
+      
+      a |= (aCode[ ix + 0] & 0xFF) << 24;
+      a |= (aCode[ ix + 1] & 0xFF) << 16;
+      a |= (aCode[ ix + 2] & 0xFF) << 8;
+      a |= (aCode[ ix + 3] & 0xFF) << 0;
       return a;
    }
 
@@ -477,6 +521,110 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
          }
       }
       return pOutCode;
+   }
+   public void processCalls (byte[] aCode, JavaClass aClassFile, Binary aBinary) throws TinyVMException
+   {
+      int i = 0;
+      while (i < aCode.length)
+      {
+         int pOpCode = aCode[i] & 0xFF;
+
+         i++;
+         //System.out.println("Opcode " + OPCODE_NAME[pOpCode]);
+         switch (pOpCode)
+         {
+
+            case OP_INVOKEINTERFACE:
+               // Opcode is changed:
+               // _logger.log(Level.INFO, "Interface");
+               MethodRecord pMeth0 = findMethod((aCode[i] & 0xFF) << 8
+                  | (aCode[i + 1] & 0xFF), false); 
+               if (pMeth0 != null) pMeth0.getClassRecord().markMethod(pMeth0);
+               i += 4;
+               break;
+            case OP_INVOKEVIRTUAL:
+               // Opcode is changed:
+               MethodRecord pMeth1 = findMethod((aCode[i] & 0xFF) << 8
+                  | (aCode[i + 1] & 0xFF), false); 
+               if (pMeth1 != null) pMeth1.getClassRecord().markMethod(pMeth1);
+               i += 2;
+               break;
+            case OP_INVOKESPECIAL:
+            case OP_INVOKESTATIC:
+               // Opcode is changed:
+               MethodRecord pMeth2 = findMethod((aCode[i] & 0xFF) << 8
+                  | (aCode[i + 1] & 0xFF), true); 
+               if (pMeth2 != null) pMeth2.getClassRecord().markMethod(pMeth2);
+               i += 2;
+               break;
+            case OP_LOOKUPSWITCH:
+               {
+                   while( (i % 4) != 0)
+                     i ++;
+
+                  int dft = getFourBytesInt( aCode, i); i += 4;
+                  int npairs = getFourBytesInt( aCode, i); i += 4;
+                  //System.out.println( "lookupswitch: dft: " + dft + ", npairs: " + npairs + ", padding: " + (i - oi));
+                  i += 4*npairs;
+               }
+               break;
+
+            case OP_TABLESWITCH:
+               {
+                  while( (i % 4) != 0)
+                     i ++;
+
+                  int dft = getFourBytesInt( aCode, i); i += 4;
+                  int low = getFourBytesInt( aCode, i); i += 4;
+                  int hig = getFourBytesInt( aCode, i); i += 4;
+                  //System.out.println( "tableswitch: dft: " + dft + ", low: " + low + ", hig: " + hig + ", padding: " + (i - oi));
+
+                  for( int k = low; k <= hig; k ++)
+                  {
+                     i += 4;
+                     //System.out.println( "tableswitch: idx: " + idx);
+                  }
+
+              }
+               break;
+
+            case OP_WIDE:
+                if( (aCode[i] & 0xFF) == OP_IINC && aCode[i+1] == 0)
+                {
+                   i += 5;
+                   break;
+                }
+                // Fall Through
+            case OP_GOTO_W:
+            case OP_JSR_W:
+            case OP_LADD:
+            case OP_LSUB:
+            case OP_LMUL:
+            case OP_LDIV:
+            case OP_LREM:
+            case OP_LNEG:
+            case OP_LCMP:
+            case OP_FREM:
+            case OP_DREM:
+            case OP_LSHL:
+            case OP_LSHR:
+            case OP_LUSHR:
+            case OP_LAND:
+            case OP_LOR:
+            case OP_LXOR:
+               exitOnBadOpCode(pOpCode);
+               break;             
+            default:
+               int pArgs = OPCODE_ARGS[pOpCode];
+               if (pArgs == -1)
+               {
+                  throw new TinyVMException("Bug CU-1: Got " + pOpCode + " in "
+                     + iFullName + ".");
+               }
+               i += pArgs;
+         }
+
+      }
    }
 
    // private static final Logger _logger = Logger.getLogger("TinyVM");

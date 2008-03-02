@@ -24,9 +24,8 @@ public class Binary
    final RecordTable iStaticFields = new RecordTable("static fields", true,
       false);
    final RecordTable iConstantTable = new RecordTable("constants", false, false);
-   final RecordTable iMethodTables = new RecordTable("methods", true, false);
-   final RecordTable iExceptionTables = new RecordTable("exceptions", false,
-      false);
+   RecordTable iMethodTables = new RecordTable("methods", true, false);
+   RecordTable iExceptionTables = new RecordTable("exceptions", false, false);
    final RecordTable iInstanceFieldTables = new RecordTable("instance fields",
       true, false);
    final RecordTable iCodeSequences = new RecordTable("code", true, false);
@@ -190,7 +189,7 @@ public class Binary
     * @param all do not filter classes?
     */
    public static Binary createFromClosureOf (String[] entryClassNames,
-      ClassPath classPath, boolean all) throws TinyVMException
+      ClassPath classPath, boolean all, boolean remove) throws TinyVMException
    {
       Binary result = new Binary();
       // From special classes and entry class, store closure
@@ -200,6 +199,12 @@ public class Binary
       result.processConstants();
       result.processMethods(all);
       result.processFields();
+      if (remove)
+      {
+         // Remove unused methods.
+         result.markMethods(entryClassNames);
+         result.processOptimizedMethods();
+      }
       // Copy code as is (first pass)
       result.processCode(false);
       result.storeComponents();
@@ -272,6 +277,66 @@ public class Binary
          classRecord.initParent();
       }
    }
+   
+   
+   public void markMethods (String[] entryClassNames)
+      throws TinyVMException
+   {
+      /* First stage of unused method elimination. Starting with the callable
+       * root methods we need to mark all callable methods. We recursively wallk
+       * the code for each method marking and walking new methods as we come
+       * to them. We need to take particular care with interfaces and with
+       * over-ridden methods to ensure that all possible destinations are
+       * included.
+       */
+      
+      /* For interfaces we need to ensure that for every method in an interface
+       * that ends up being marked we locate all possible implementations
+       * of that method. To do that we search all classes for those that
+       * implement an interface and associate those classes with the interface.
+       * Then when we mark a method in the interface we can mark all possible
+       * implementations.
+       *
+       * We also need to handle marking methods that may be over-ridden by a 
+       * method in a sub class. We locate all such methods and link them to the
+       * "super-method" if this gets marked we also mark the sub-methods.
+       */
+      int pSize = iClassTable.size();
+      for (int pIndex = 0; pIndex < pSize; pIndex++)
+      {
+         ClassRecord classRecord = (ClassRecord) iClassTable.get(pIndex);
+         classRecord.addInterfaces(classRecord);
+         classRecord.findHiddenMethods();
+      }
+      // Add the methods that can be called directly from the vm
+      Signature staticInit = new Signature("<clinit>()V");
+      Signature runMethod = new Signature("run()V");
+      for (int pIndex = 0; pIndex < pSize; pIndex++)
+      {
+         ClassRecord classRecord = (ClassRecord) iClassTable.get(pIndex);
+         if (classRecord.hasStaticInitializer())
+         {
+             MethodRecord pRec = classRecord.getMethodRecord(staticInit);
+             classRecord.markMethod(pRec);
+         }
+         if (classRecord.hasMethod(runMethod, false))
+         {
+             MethodRecord pRec = classRecord.getMethodRecord(runMethod);
+             classRecord.markMethod(pRec);             
+         }
+      }
+
+      // Now add entry classes
+      // _logger.log(Level.INFO, "Starting with " + entryClassNames.length
+      //    + " entry classes.");
+      for (int i = 0; i < entryClassNames.length; i++)
+      {
+         String className = entryClassNames[i];
+         ClassRecord classRecord = getClassRecord(className);
+         classRecord.markMethods();
+      }
+
+   }
 
    public void processSpecialSignatures ()
    {
@@ -312,6 +377,26 @@ public class Binary
          ClassRecord classRecord = (ClassRecord) iClassTable.get(pIndex);
          classRecord.storeMethods(iMethodTables, iExceptionTables, iSignatures,
             iAll);
+      }
+   }
+   
+   
+   public void processOptimizedMethods () throws TinyVMException
+   {
+      /* This is the second stage of the unsed methos elimination code.
+       * We need to re-create the method and exception tables so that they
+       * only contain methods that are actually called.
+       */
+      int pSize = iClassTable.size();
+      // We need an optimized version of the method and exception tables
+      // so create new ones and repopulate.
+      iMethodTables = new RecordTable("methods", true, false);
+      iExceptionTables = new RecordTable("exceptions", false, false);
+
+      for (int pIndex = 0; pIndex < pSize; pIndex++)
+      {
+         ClassRecord classRecord = (ClassRecord) iClassTable.get(pIndex);
+         classRecord.storeOptimizedMethods(iMethodTables, iExceptionTables, iSignatures);
       }
    }
 
@@ -413,18 +498,22 @@ public class Binary
 		{
 			MethodRecord mr = (MethodRecord) (rt.get(j));
 			monitor.log("Method " + methodNo + ": Class: " + mr.iClassRecord.getName() + " Signature: " + 
-					     ((Signature)iSignatures.elementAt(mr.iSignatureId)).getImage());
+					     ((Signature)iSignatures.elementAt(mr.iSignatureId)).getImage() + " PC " + mr.getCodeStart());
 			methodNo++;
 			
 		}
      }
-     monitor.log("Master record : " + iMasterRecord.getLength() + " bytes.");
-     monitor.log("Class records : " + iClassTable.size() + " (" + iClassTable.getLength() + " bytes).");
-     monitor.log("Field records : " + getTotalNumInstanceFields() + " (" + iInstanceFieldTables.getLength() + " bytes).");
-     monitor.log("Method records: " + getTotalNumMethods() + " (" + iMethodTables.getLength() + " bytes).");
-     monitor.log("Code          : " + iCodeSequences.size() + " (" + iCodeSequences.getLength() + " bytes).");
-     monitor.log("Static fields : " + iStaticState.size() + " (" + iStaticState.getLength() + " bytes).");
-     monitor.log("Constants     : " + iConstantTable.size() + " (" + iConstantTable.getLength() + " bytes).");
+     monitor.log("Master record    : " + iMasterRecord.getLength() + " bytes.");
+     monitor.log("Class records    : " + iClassTable.size() + " (" + iClassTable.getLength() + " bytes).");
+     monitor.log("Field records    : " + getTotalNumInstanceFields() + " (" + iInstanceFieldTables.getLength() + " bytes).");
+     monitor.log("Static fields    : " + iStaticFields.size() + " (" + iStaticFields.getLength() + " bytes).");
+     monitor.log("Static state     : " + iStaticState.size() + " (" + iStaticState.getLength() + " bytes).");
+     monitor.log("Constant records : " + iConstantTable.size() + " (" + iConstantTable.getLength() + " bytes).");
+     monitor.log("Constant values  : " + iConstantValues.size() + " (" + iConstantValues.getLength() + " bytes).");
+     monitor.log("Method records   : " + getTotalNumMethods() + " (" + iMethodTables.getLength() + " bytes).");
+     monitor.log("Exception records: " + iExceptionTables.size() + " (" + iExceptionTables.getLength() + " bytes).");
+     monitor.log("Code             : " + iCodeSequences.size() + " (" + iCodeSequences.getLength() + " bytes).");
+     monitor.log("Total            : " + iEntireBinary.getLength() + " bytes.");
    }
    
 }

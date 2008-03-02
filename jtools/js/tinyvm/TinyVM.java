@@ -62,6 +62,7 @@ public class TinyVM extends TinyVMTool {
 		String classpath = commandLine.getOptionValue("cp");
 		String output = commandLine.getOptionValue("o");
 		boolean all = commandLine.hasOption("a");
+        boolean remove = commandLine.hasOption("r");
 		boolean bigEndian = "be".equalsIgnoreCase(commandLine
 				.getOptionValue("wo"));
 
@@ -78,7 +79,7 @@ public class TinyVM extends TinyVMTool {
 		try {
 			stream = output == null ? (OutputStream) System.out
 					: (OutputStream) new FileOutputStream(output);
-			link(classpath, classes, all, stream, bigEndian);
+			link(classpath, classes, all, stream, bigEndian, remove);
 		} catch (FileNotFoundException e) {
 			throw new TinyVMException(e.getMessage(), e);
 		} finally {
