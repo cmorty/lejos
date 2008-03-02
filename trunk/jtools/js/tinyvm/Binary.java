@@ -469,6 +469,17 @@ public class Binary
       return pTotal;
    }
 
+   public int getTotalNumExceptionRecords()
+   {
+      int pTotal = 0;
+      int pSize = iExceptionTables.size();
+      for (int i = 0; i < pSize; i++)
+      {
+         pTotal += ((RecordTable) iExceptionTables.get(i)).size();
+      }
+      return pTotal;
+   }
+           
    // private static final Logger _logger = Logger.getLogger("TinyVM");
 
 
@@ -511,7 +522,8 @@ public class Binary
      monitor.log("Constant records : " + iConstantTable.size() + " (" + iConstantTable.getLength() + " bytes).");
      monitor.log("Constant values  : " + iConstantValues.size() + " (" + iConstantValues.getLength() + " bytes).");
      monitor.log("Method records   : " + getTotalNumMethods() + " (" + iMethodTables.getLength() + " bytes).");
-     monitor.log("Exception records: " + iExceptionTables.size() + " (" + iExceptionTables.getLength() + " bytes).");
+     //monitor.log("Exception records: " + iExceptionTables.size() + " (" + iExceptionTables.getLength() + " bytes).");
+     monitor.log("Exception records: " + getTotalNumExceptionRecords() + " (" + iExceptionTables.getLength() + " bytes).");
      monitor.log("Code             : " + iCodeSequences.size() + " (" + iCodeSequences.getLength() + " bytes).");
      monitor.log("Total            : " + iEntireBinary.getLength() + " bytes.");
    }
