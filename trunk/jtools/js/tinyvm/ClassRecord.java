@@ -41,17 +41,18 @@ public class ClassRecord implements WritableData
    int iClassSize = -1;
    JavaClass iCF;
    Binary iBinary;
-   final RecordTable iMethodTable = new RecordTable("methods", false, false);
+   RecordTable iMethodTable = new RecordTable("methods", false, false);
    final RecordTable iInstanceFields = new RecordTable("instance fields", true,
       false);
    final Hashtable iStaticValues = new Hashtable();
    final Hashtable iStaticFields = new Hashtable();
-   final Hashtable iMethods = new Hashtable();
+   Hashtable iMethods = new Hashtable();
    final Vector iUsedMethods = new Vector();
    int iParentClassIndex;
    int iArrayElementType;
    int iFlags;
    boolean iUseAllMethods = false;
+   final Vector iImplementedBy = new Vector();
 
    public void useAllMethods ()
    {
@@ -285,7 +286,7 @@ public class ClassRecord implements WritableData
          }
          else if (pEntry instanceof ConstantNameAndType)
          {
-            if (((ConstantNameAndType) pEntry).getSignature(
+             if (((ConstantNameAndType) pEntry).getSignature(
                iCF.getConstantPool()).substring(0, 1).equals("("))
             {
                if (!((ConstantNameAndType) pEntry).getName(
@@ -432,6 +433,29 @@ public class ClassRecord implements WritableData
       }
       aMethodTables.add(iMethodTable);
    }
+   public void storeOptimizedMethods (RecordTable aMethodTables,
+           RecordTable aExceptionTables, HashVector aSignatures)
+      throws TinyVMException
+   {
+      // _logger.log(Level.INFO, "Processing methods in " + iName);
+      RecordTable iOptMethodTable = new RecordTable("methods", false, false);
+      Hashtable iOptMethods = new Hashtable();
+
+
+      for (Iterator iter = iMethodTable.iterator(); iter.hasNext();)
+      {
+         MethodRecord pRec = (MethodRecord) iter.next();
+         if (pRec.isCalled())
+         {
+            iOptMethodTable.add(pRec);
+            iOptMethods.put(((Signature)aSignatures.elementAt(pRec.iSignatureId)), pRec);
+            if (pRec.getExceptions() != null) aExceptionTables.add(pRec.getExceptions());
+         }
+      }
+      iMethodTable = iOptMethodTable;
+      iMethods = iOptMethods;
+      aMethodTables.add(iMethodTable);
+   }
 
    public void storeFields (RecordTable aInstanceFieldTables,
       RecordTable aStaticFields, RecordTable aStaticState)
@@ -467,12 +491,43 @@ public class ClassRecord implements WritableData
    {
       for (Iterator iter = iMethodTable.iterator(); iter.hasNext();)
       {
-         MethodRecord pRec = (MethodRecord) iter.next();
-         if (aPostProcess)
+        MethodRecord pRec = (MethodRecord) iter.next();
+        if (aPostProcess)
             pRec.postProcessCode(aCodeSequences, iCF, iBinary);
          else
             pRec.copyCode(aCodeSequences, iCF, iBinary);
       }
+   }
+   
+   public void markMethods ()   throws TinyVMException
+   {
+      for (Iterator iter = iMethodTable.iterator(); iter.hasNext();)
+      {
+         MethodRecord pRec = (MethodRecord) iter.next();
+         pRec.markCalled(iCF, iBinary);
+      }
+   }
+   
+   public void markMethod(MethodRecord pRec) throws TinyVMException
+   {
+       // Is this a simple class?
+       pRec.markCalled(iCF, iBinary);
+       if (!iImplementedBy.isEmpty())
+       {
+           // Must be an interface. We need to mark all possible methods that
+           // could be called via this interface
+           for (Iterator iter = iImplementedBy.iterator(); iter.hasNext();)
+           {
+              ClassRecord pClass = (ClassRecord) iter.next();
+              // _logger.log(Level.INFO, "Mark interface class " + pClass.getName());
+              // Does this class (or a super class), have this method?
+              MethodRecord pActualMethod = pClass.getVirtualMethodRecord((Signature)iBinary.iSignatures.elementAt(pRec.getSignatureId()));
+              // If so then we need to mark it...
+              if (pActualMethod != null)
+                  pClass.markMethod(pActualMethod);
+           }
+          
+       }
    }
 
    public static ClassRecord getClassRecord (String className, ClassPath aCP,
@@ -531,6 +586,56 @@ public class ClassRecord implements WritableData
       ClassRecord pOther = (ClassRecord) aObj;
       return pOther.iName.equals(iName);
    }
+   
+   public void addInterfaces(ClassRecord pUserClass)
+   {
+       String []interfaces = iCF.getInterfaceNames();
+       if (interfaces == null) return;
+       for(int i = 0; i < interfaces.length; i++)
+       {
+           // _logger.log(Level.INFO, "Interface name " + interfaces[i]);
+           ClassRecord pInterfaceRecord = iBinary.getClassRecord(interfaces[i].replace('.', '/'));
+           pInterfaceRecord.addInterfaceUser(pUserClass);
+           // If this interface extends an existing interface then the parent
+           // interfaces do not show up as super-classes instead they show up
+           // as interfaces, implemented by this interface. So we add this
+           // class to those inetrafces as well.
+           pInterfaceRecord.addInterfaces(pUserClass);
+       }
+   }
+   
+   public void addInterfaceUser(ClassRecord pRec)
+   {
+       // Add the supplied class to the list of classes known to implement this
+       // interface.
+       // _logger.log(Level.INFO, "Adding class " + pRec.getName() + " to interface " + getName());
+       if (iImplementedBy.contains(pRec)) return;
+       iImplementedBy.add(pRec);
+   }
+   
+   public void findHiddenMethods ()   throws TinyVMException
+   {
+      // If this class is a sub class and it contains methods that over-ride
+      // methods, then we need to add the over-ridding method to the list of
+      // methods to be marked that is associated with the over-ridden method!
+      for (Iterator iter = iMethodTable.iterator(); iter.hasNext();)
+      {
+         MethodRecord pRec = (MethodRecord) iter.next();
+         if (hasParent () && (pRec.getFlags() & (TinyVMConstants.M_STATIC | TinyVMConstants.M_STATIC)) == 0
+             && !((Signature)iBinary.iSignatures.elementAt(pRec.iSignatureId)).getImage().substring(0, 1).equals("<"))
+         {
+             MethodRecord pOverridden = getParent().getVirtualMethodRecord((Signature)iBinary.iSignatures.elementAt(pRec.getSignatureId()));
+             if (pOverridden != null)
+             {
+                pOverridden.setHiddenBy(pRec);
+                // _logger.log(Level.INFO, "Set " + pOverridden.iClassRecord.getName() + " : " + ((Signature)iBinary.iSignatures.elementAt(pOverridden.iSignatureId)).getImage() + " hidden by "
+                          // + getName() + " : " + ((Signature)iBinary.iSignatures.elementAt(pRec.iSignatureId)).getImage());
+             }
+
+         }
+      }
+   }
+
 
    // private static final Logger _logger = Logger.getLogger("TinyVM");
 }

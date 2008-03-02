@@ -36,13 +36,13 @@ public class TinyVMTool extends AbstractTool
     * @throws TinyVMException
     */
    public void link (String classpath, String[] classes, boolean all,
-      OutputStream stream, boolean bigEndian) throws TinyVMException
+      OutputStream stream, boolean bigEndian, boolean remove) throws TinyVMException
    {
       assert classpath != null: "Precondition: classpath != null";
       assert classes != null: "Precondition: classes != null";
       assert stream != null: "Precondition: stream != null";
 
-      Binary binary = link(classpath, classes, all);
+      Binary binary = link(classpath, classes, all, remove);
       for(ToolProgressMonitor monitor : _monitors) {
     	  binary.log(monitor);
       }
@@ -61,7 +61,7 @@ public class TinyVMTool extends AbstractTool
     * @return binary
     * @throws TinyVMException
     */
-   public Binary link (String classpath, String[] entryClassNames, boolean all)
+   public Binary link (String classpath, String[] entryClassNames, boolean all, boolean remove)
       throws TinyVMException
    {
       assert classpath != null: "Precondition: classpath != null";
@@ -78,7 +78,7 @@ public class TinyVMTool extends AbstractTool
          entryClassNames[i] = entryClassNames[i].replace('.', '/');
       }
       Binary result = Binary.createFromClosureOf(entryClassNames,
-         computedClasspath, all);
+         computedClasspath, all, remove);
       for (int i = 0; i < entryClassNames.length; i++)
       {
          if (!result.hasMain(entryClassNames[i]))

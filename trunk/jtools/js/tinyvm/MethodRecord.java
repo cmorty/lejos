@@ -3,6 +3,8 @@ package js.tinyvm;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.Vector;
+import java.util.Iterator;
 
 import js.tinyvm.io.IByteWriter;
 import js.tinyvm.io.IOUtilities;
@@ -28,6 +30,9 @@ public class MethodRecord implements WritableData
    int iNumParameters; // DONE
    int iNumExceptionHandlers; // DONE
    int iFlags; // DONE
+   boolean isCalled;
+   int iCodeStart;
+   Vector iIsHiddenBy = new Vector();
 
    public MethodRecord (Method aEntry, Signature aSignature,
       ClassRecord aClassRec, Binary aBinary, RecordTable aExceptionTables,
@@ -135,6 +140,8 @@ public class MethodRecord implements WritableData
       if (pCodeAttrib != null)
       {
          postProcessCode(pCodeAttrib.getCode(), aClassFile, aBinary);
+         iCodeStart = (iCodeSequence == null? 0 : iCodeSequence.getOffset());
+
       }
    }
 
@@ -217,6 +224,7 @@ public class MethodRecord implements WritableData
       {
          aOut.writeU2(iSignatureId);
          aOut.writeU2(iExceptionTable == null? 0 : iExceptionTable.getOffset());
+         iCodeStart = (iCodeSequence == null? 0 : iCodeSequence.getOffset());
          aOut.writeU2(iCodeSequence == null? 0 : iCodeSequence.getOffset());
          aOut.writeU1(iNumLocals);
          aOut.writeU1(iNumOperands);
@@ -254,5 +262,52 @@ public class MethodRecord implements WritableData
    }
 
    private static final Logger _logger = Logger.getLogger("TinyVM");
+   
+   public void markCalled (JavaClass aClassFile, Binary aBinary) throws TinyVMException
+   {
+      // Mark the current method as being called. Then process the associated 
+      // byte code looking for other called methods.
+      // _logger.log(Level.INFO, "Marking :" + iClassRecord.getName() + " : " + iMethod.getName());
+      if (isCalled) return;
+      isCalled = true;
+      for (Iterator iter = iIsHiddenBy.iterator(); iter.hasNext();)
+      {
+         MethodRecord pMeth = (MethodRecord) iter.next();
+         // _logger.log(Level.INFO, "Marking sub method " + pMeth.iMethod.getName());
+         pMeth.iClassRecord.markMethod(pMeth);
+      }
+      Code pCodeAttrib = iMethod.getCode();
+      if (pCodeAttrib == null) return;
+      byte [] aCode = pCodeAttrib.getCode();
+      if (aCode == null) return;
+      CodeUtilities pUtils = new CodeUtilities(iMethod.getName().toString(),
+         aClassFile, aBinary);
+      
+      pUtils.processCalls(aCode, aClassFile, aBinary);
+   }
+   
+   public boolean isCalled()
+   {
+       return isCalled;
+   }
+   
+   public int getCodeStart()
+   {
+       return iCodeStart;
+   }
+   
+   public void setHiddenBy(MethodRecord pRec)
+   {
+       // Mark this method as being hidden by a sub-class method.
+       // We need to mark all such methods if this method is ever marked.
+       // _logger.log(Level.INFO, "Count is " + iIsHiddenBy.size());
+       iIsHiddenBy.add(pRec);
+   }
+   
+   public RecordTable getExceptions()
+   {
+       return iExceptionTable;
+   }
 }
+   
 
