@@ -30,8 +30,8 @@
 #include "samba.h"
 #include "firmware.h"
 
-#define MAX_VM_PAGES 128
-#define MAX_MENU_PAGES 192
+#define MAX_FIRMWARE_PAGES 320
+#define MAX_FILE_SIZE 256
 
 #define NXT_HANDLE_ERR(expr, nxt, msg)     \
   do {                                     \
@@ -54,6 +54,8 @@ int main(int argc, char *argv[])
   nxt_error_t err;
   char *fw_file, *menu_file;
   char *nxj_home;
+  int vm_file_size, menu_file_size;
+  int num_vm_pages, num_menu_pages;
 
   if (argc == 1)
     {
@@ -66,10 +68,10 @@ int main(int argc, char *argv[])
         }
       printf("NXJ_HOME is %s\n", nxj_home);
       
-      fw_file = (char *) calloc(1,256);
+      fw_file = (char *) calloc(1,MAX_FILE_SIZE);
       strcpy(fw_file, nxj_home);
       strcat(fw_file,"/bin/lejos_nxt_rom.bin");
-      menu_file = calloc(1,256);
+      menu_file = calloc(1,MAX_FILE_SIZE);
       strcpy(menu_file,nxj_home);
       strcat(menu_file,"/bin/StartUpText.bin");
     }
@@ -87,14 +89,23 @@ int main(int argc, char *argv[])
     }
   
   printf("Checking VM %s ... ", fw_file);
-  NXT_HANDLE_ERR(nxt_firmware_validate(fw_file, MAX_VM_PAGES ), NULL,
+  NXT_HANDLE_ERR(nxt_firmware_validate(fw_file, MAX_FIRMWARE_PAGES * FLASH_PAGE_SIZE - 8, &vm_file_size ), NULL,
                  "Error in VM file");
   printf("VM OK.\n");
+  num_vm_pages = (vm_file_size + FLASH_PAGE_SIZE - 1) / FLASH_PAGE_SIZE;
  
   printf("Checking Menu %s ... ", menu_file);
-  NXT_HANDLE_ERR(nxt_firmware_validate(menu_file, (MAX_MENU_PAGES ) - 4), NULL,
+  NXT_HANDLE_ERR(nxt_firmware_validate(menu_file, MAX_FIRMWARE_PAGES * FLASH_PAGE_SIZE - 8, &menu_file_size), NULL,
                  "Error in Menu file");
   printf("Menu OK.\n");
+  num_menu_pages = (menu_file_size + FLASH_PAGE_SIZE - 1)/FLASH_PAGE_SIZE;
+  
+  if (((num_vm_pages * FLASH_PAGE_SIZE) + menu_file_size) >
+      ((MAX_FIRMWARE_PAGES * FLASH_PAGE_SIZE) - 8))
+    {
+      printf("Combined size of VM and menu  > %d\n", MAX_FIRMWARE_PAGES*FLASH_PAGE_SIZE - 8);
+      exit(1);
+    }
 
   NXT_HANDLE_ERR(nxt_init(&nxt), NULL,
                  "Error during library initialization");
@@ -121,13 +132,13 @@ int main(int argc, char *argv[])
   printf("NXT device in reset mode located and opened.\n"
          "Starting VM flash procedure now...\n");
 
-  NXT_HANDLE_ERR(nxt_firmware_flash(nxt, fw_file, 0, MAX_VM_PAGES, 1, 0), nxt,
+  NXT_HANDLE_ERR(nxt_firmware_flash(nxt, fw_file, 0, MAX_FIRMWARE_PAGES, 1, 0), nxt,
                  "Error flashing VM");
   printf("VM flash complete.\n");
 
   printf("Starting menu flash procedure now...\n");
   
-  NXT_HANDLE_ERR(nxt_firmware_flash(nxt, menu_file, MAX_VM_PAGES, MAX_MENU_PAGES, 0, 1), nxt,
+  NXT_HANDLE_ERR(nxt_firmware_flash(nxt, menu_file, num_vm_pages, MAX_FIRMWARE_PAGES - num_vm_pages, 0, 1), nxt,
                  "Error flashing menu");
   printf("Menu flash complete.\n");
   

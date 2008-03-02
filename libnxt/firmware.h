@@ -2,7 +2,8 @@
  * NXT bootstrap interface; NXT firmware handling code.
  *
  * Copyright 2006 David Anderson <david.anderson@calixo.net>
- *
+ * Modified 2008 by Lawrie Griffiths <lawrie.griffiths@ntlworld.com> 
+
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation; either version 2 of the
@@ -19,13 +20,14 @@
  * USA
  */
 
-#ifndef __FLASH_H__
-#define __FLASH_H__
+#ifndef __FIRMWARE_H__
+#define __FIRMWARE_H__
 
 #include "error.h"
 #include "lowlevel.h"
+#include "flash.h"
 
-nxt_error_t nxt_firmware_flash(nxt_t *nxt, char *fw_path, int start_page, int num_pages, int unlock, int write_len);
-nxt_error_t nxt_firmware_validate(char *fw_path, int max_pages);
+nxt_error_t nxt_firmware_flash(nxt_t *nxt, char *fw_path, int start_page, int num_pages, int unlock, int write_addr_len);
+nxt_error_t nxt_firmware_validate(char *fw_path, int max_size, int *file_size);
 
-#endif /* __FLASH_H__ */
+#endif /* __FIRMWARE_H__ */

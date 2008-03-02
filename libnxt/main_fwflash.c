@@ -51,6 +51,7 @@ int main(int argc, char *argv[])
   nxt_t *nxt;
   nxt_error_t err;
   char *fw_file;
+  int file_size;
 
   if (argc != 2)
     {
@@ -63,7 +64,7 @@ int main(int argc, char *argv[])
   fw_file = argv[1];
 
   printf("Checking firmware... ");
-  NXT_HANDLE_ERR(nxt_firmware_validate(fw_file, MAX_PAGES * 256), NULL,
+  NXT_HANDLE_ERR(nxt_firmware_validate(fw_file, MAX_PAGES * FLASH_PAGE_SIZE, &file_size), NULL,
                  "Error");
   printf("OK.\n");
 
