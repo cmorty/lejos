@@ -59,7 +59,7 @@ nxt_flash_block(nxt_t *nxt, nxt_word_t block_num, char *buf)
   NXT_ERR(nxt_write_word(nxt, 0x202300, block_num));
 
   // Send the block to flash
-  NXT_ERR(nxt_send_file(nxt, 0x202100, buf, 256));
+  NXT_ERR(nxt_send_file(nxt, 0x202100, buf, FLASH_PAGE_SIZE));
 
   // Jump into the flash writing routine
   NXT_ERR(nxt_jump(nxt, 0x202000));
@@ -74,26 +74,10 @@ nxt_flash_finish(nxt_t *nxt)
   return nxt_flash_wait_ready(nxt);
 }
 
-
-static nxt_error_t
-nxt_firmware_validate_fd(int fd, int max_size)
+nxt_error_t
+nxt_firmware_validate(char *fw_path, int max_size, int *file_size)
 {
   struct stat s;
-
-  if (fstat(fd, &s) < 0)
-    return NXT_FILE_ERROR;
-
-  if (s.st_size > max_size)
-    return NXT_INVALID_FIRMWARE;
-
-  return NXT_OK;
-}
-
-
-nxt_error_t
-nxt_firmware_validate(char *fw_path, int max_pages)
-{
-  nxt_error_t err;
   int fd;
 
 #if defined(_WIN32) || defined(__CYGWIN32__)
@@ -101,22 +85,33 @@ nxt_firmware_validate(char *fw_path, int max_pages)
 #else
   fd = open(fw_path, O_RDONLY);
 #endif
+  
   if (fd < 0)
     return NXT_FILE_ERROR;
 
-  err = nxt_firmware_validate_fd(fd, max_pages * 256);
+  if (fstat(fd, &s) < 0)
+    return NXT_FILE_ERROR;
+    
+  printf("Size = %d, max size = %d\n", (int) s.st_size, max_size);
+
+  if (s.st_size > max_size)
+    return NXT_INVALID_FIRMWARE;
+  
+  *file_size = s.st_size;
+    
   close(fd);
 
-  return err;
+  return NXT_OK;
 }
 
 
 nxt_error_t
 nxt_firmware_flash(nxt_t *nxt, char *fw_path, 
-                   int start_page, int max_pages, int unlock, int write_len)
+                   int start_page, int max_pages, int unlock, int write_addr_len)
 {
-  int fd, i, err, len = 0;
-  char buf[256];
+  int fd, i, len = 0;
+  char buf[FLASH_PAGE_SIZE];
+  int ret = -1;
 
 #if defined(_WIN32) || defined(__CYGWIN32__)
   fd = open(fw_path, O_RDONLY | O_BINARY);
@@ -126,22 +121,12 @@ nxt_firmware_flash(nxt_t *nxt, char *fw_path,
   if (fd < 0)
     return NXT_FILE_ERROR;
 
-  err = nxt_firmware_validate_fd(fd, max_pages * 256);
-  if (err != NXT_OK)
-    {
-      close(fd);
-      return NXT_INVALID_FIRMWARE;
-    }
-
   NXT_ERR(nxt_flash_prepare(nxt, unlock));
 
   for (i = start_page; i < start_page + max_pages; i++) 
     {
-
-      int ret;
-
-      memset(buf, 0, 256);
-      ret = read(fd, buf, 256);
+      memset(buf, 0, FLASH_PAGE_SIZE);
+      ret = read(fd, buf, FLASH_PAGE_SIZE);
 
       if (ret != -1) 
         {
@@ -149,32 +134,21 @@ nxt_firmware_flash(nxt_t *nxt, char *fw_path,
           len += ret;
         }
 
-      if (ret < 256)
-        {
-          close(fd);
-        
-          if (ret != -1 && write_len)
-            {
-              ((unsigned *) buf)[63] = len;
-              NXT_ERR(nxt_flash_block(nxt,start_page + max_pages -1, buf));
-            }
-
-          NXT_ERR(nxt_flash_finish(nxt));
-          
-          return ret == -1 ? NXT_FILE_ERROR : NXT_OK;
-        }
+      if (ret < FLASH_PAGE_SIZE) break;
     }
 
   close(fd);
   
-  if (write_len) 
+  if (ret != -1 && write_addr_len) 
     { 
-      ((unsigned *) buf)[63] = len;
+      // Write address and length to end of last page
+      ((unsigned *) buf)[63] = len; 
+      ((unsigned *) buf)[62] = start_page*FLASH_PAGE_SIZE; 
       NXT_ERR(nxt_flash_block(nxt,start_page + max_pages -1, buf));
     }
   
   NXT_ERR(nxt_flash_finish(nxt));
 
-  return NXT_OK;
+  return ret == -1 ? NXT_FILE_ERROR : NXT_OK;
 }
 

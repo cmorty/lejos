@@ -25,6 +25,8 @@
 #include "error.h"
 #include "lowlevel.h"
 
+#define FLASH_PAGE_SIZE 256
+
 nxt_error_t nxt_flash_wait_ready(nxt_t *nxt);
 nxt_error_t nxt_flash_lock_region(nxt_t *nxt, int region_num);
 nxt_error_t nxt_flash_unlock_region(nxt_t *nxt, int region_num);
