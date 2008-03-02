@@ -51,6 +51,9 @@ extern U32 __extra_ram_end__;
 
 byte *region;
 Thread *bootThread;
+static unsigned int menu_address;
+static unsigned int menu_length_address = 0x00113ffc;
+static unsigned int menu_address_address = 0x00113ff8;
 
 void
 wait_for_power_down_signal()
@@ -246,8 +249,8 @@ nxt_main(int bin, int size)
   } else {
     // Execute flash menu
 
-    bin = (unsigned *) 0x00108000;
-    size = *((unsigned *) 0x00113ffc);
+    bin = (unsigned *) menu_address;
+    size = *((unsigned *) menu_length_address);
     size = (size + 3) & ~3;
   	binary = (char *) bin;
     jsize = size - 4;
@@ -262,8 +265,8 @@ nxt_main(int bin, int size)
   } else {
     // Execute flash menu
 
-    bin = (unsigned *) 0x00108000;
-    size = *((unsigned *) 0x00113ffc);
+    bin = (unsigned *) menu_address;
+    size = *((unsigned *) menu_length_address);
     size = (size + 3) & ~3;
     temp = ((unsigned *) (&__free_ram_end__)) - (size >> 2);   
     memcpy(temp,bin,size);
@@ -473,12 +476,11 @@ main(void)
   bt_init();
   systick_wait_ms(1000); // wait for LCD to stabilize
   display_init();
+
+  show_splash(3000); 
   
-  //flash_set_mode(*((unsigned *) 0x0010fff8));
-    
-  //xx_show();
-  
-  show_splash(3000);    
+  // Get the address of the menu
+  menu_address = 0x00100000 + *((unsigned *) menu_address_address); 
  
   gNextProgram = 0;
   do 
