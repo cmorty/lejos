@@ -120,7 +120,7 @@ public class PSPNXController extends I2CSensor {
 	}
 	
 	/**
-	 * Use ADPA mode is only if you are trying to connect more
+	 * Use ADPA mode only if you are trying to connect more
 	 * than one I2C sensor to a single port.
 	 * @param activate
 	 * @return
