@@ -1,27 +1,26 @@
 package lejos.nxt;
 /**
- * Supports Mindsensors DIST-Nx series of Optical Distance Sensor.
- * This sensor is used for greater precision and accuracy than the Ultrasonic Sensor.
+ * Supports Mindsensors DIST-Nx series of Optical Distance Sensor.<br>
+ * This sensor is used for greater precision than the Ultrasonic Sensor.<br>
  * 
  * @author Michael Smith <mdsmitty@gmail.com>
- * 
+ * <br><br>Lum, Many thanks for helping me test this class.
  */
 
 public class OpticalDistanceSensor extends I2CSensor{
-	private byte[] buf = new byte[1];
-	
+	private byte[] buf = new byte[2];
 	//Registers
-	private final static byte COMMAND = 0x41;
-	private final static byte DIST_DATA_LSB = 0x42;
-	private final static byte DIST_DATA_MSB = 0x43;
-	private final static byte VOLT_DATA_LSB = 0x44;
-	private final static byte VOLT_DATA_MSB = 0x45;
-	private final static byte SENSOR_MOD_TYPE = 0x50;
-	private final static byte CUSTOM_CURVE = 0x51;
-	private final static byte DIST_MIN_DATA_LSB = 0x52;
-	private final static byte DIST_MIN_DATA_MSB = 0x53;
-	private final static byte DIST_MAX_DATA_LSB = 0x54;
-	private final static byte DIST_MAX_DATA_MSB = 0x55;
+	private final static int COMMAND = 0x41;
+	private final static int DIST_DATA_LSB = 0x42;
+	private final static int DIST_DATA_MSB = 0x43;
+	private final static int VOLT_DATA_LSB = 0x44;
+	private final static int VOLT_DATA_MSB = 0x45;
+	private final static int SENSOR_MOD_TYPE = 0x50;
+	private final static int CURVE = 0x51;
+	private final static int DIST_MIN_DATA_LSB = 0x52;
+	private final static int DIST_MIN_DATA_MSB = 0x53;
+	private final static int DIST_MAX_DATA_LSB = 0x54;
+	private final static int DIST_MAX_DATA_MSB = 0x55;
 	private final static int VOLT_DATA_POINT_LSB = 0x52;
 	private final static int VOLT_DATA_POINT_MSB = 0x53;
 	private final static int DIST_DATA_POINT_LSB = 0x54;
@@ -44,6 +43,10 @@ public class OpticalDistanceSensor extends I2CSensor{
 	 * DIST-Nx-Long
 	 */
 	public final static byte GP2YA02 = 0x34;
+	
+	/**
+	 * Custom sensor
+	 */
 	public final static byte CUSTOM = 0x35;
 	
 	//Commands
@@ -62,23 +65,25 @@ public class OpticalDistanceSensor extends I2CSensor{
 	}
 	
 	/**
-	 * This only needs the be run if you are changing the sensor
+	 * This only needs the be run if you are changing the sensor.
 	 * @param module changes the sensor module attached the he board.
 	 * 
 	 */
-	public void setModule(byte module){
+	public void setSensorModule(byte module){
 		sendData(COMMAND, module);
 	}
 	
 	/**
-	 * Returns the distance from the object. This returns the same value as getDistLSB.
-	 * @return int
+	 * Returns the distance from the object in millimeters.
+	 * This returns the same value as getDistLSB.
+	 * @return int 
 	 */
 	public int getDistance(){
 		return getDistLSB();
 	}
+	
 	/**
-	 * Turns the sensor module on.  
+	 * Turns the sensor module on.  <br>
 	 * Power is turned on by the constuctor method.
 	 *
 	 */
@@ -95,7 +100,8 @@ public class OpticalDistanceSensor extends I2CSensor{
 	}
 	
 	/**
-	 * Enables (ADPA) Auto Detecting Parallel Architecture. Once you have enabled it you dont have to enable again.
+	 * Enables (ADPA) Auto Detecting Parallel Architecture. <br>
+	 * Once you have enabled it you dont have to enable again.
 	 *
 	 */
 	public void setAPDAOn() {
@@ -103,7 +109,8 @@ public class OpticalDistanceSensor extends I2CSensor{
 	}
 	
 	/**
-	 * Disables (ADPA) Auto Detecting Parallel Architecture, Disabled by default.
+	 * Disables (ADPA) Auto Detecting Parallel Architecture.<br>
+	 * Disabled by default.
 	 *
 	 */
 	public void setAPDAOff() {
@@ -111,39 +118,35 @@ public class OpticalDistanceSensor extends I2CSensor{
 	}
 	
 	/**
-	 * Returns the current distance for LSB based on the current curve.
+	 * Returns the current distance in millimeters for the LSB.
 	 * @return int
 	 */
 	public int getDistLSB(){
-		getData(DIST_DATA_LSB, buf, 1);
-		return buf[0] & 0xFF;
+		return readDISTNX(DIST_DATA_LSB, 2);
 	}
 	
 	/**
-	 * Returns the current distance for MSB based on the current curve.
+	 * Returns the current distance in millimeters for MSB.
 	 * @return int
 	 */
 	public int getDistMSB(){
-		getData(DIST_DATA_MSB, buf, 1);
-		return buf[0] & 0xFF;
+		return readDISTNX(DIST_DATA_MSB, 2);
 	}
 	
 	/**
-	 *  Returns the current voltage level for LSB
+	 * Returns the current voltage level in millivolts for the LSB. 
 	 * @return int
 	 */
 	public int getVoltLSB(){
-		getData(VOLT_DATA_LSB, buf, 1);
-		return buf[0] & 0xFF;
+		return readDISTNX(VOLT_DATA_LSB, 2);
 	}
 	
 	/**
-	 * Returns the current voltage level for MSB
+	 * Returns the current voltage level in millivolts for the MSB. 
 	 * @return int
 	 */
 	public int getVoltMSB(){
-		getData(VOLT_DATA_MSB, buf, 1);
-		return buf[0] & 0xFF;
+		return readDISTNX(VOLT_DATA_MSB, 2);
 	}
 	
 	/**
@@ -152,109 +155,104 @@ public class OpticalDistanceSensor extends I2CSensor{
 	 * @return int
 	 */
 	public int getSensorModule(){
-		getData(SENSOR_MOD_TYPE, buf, 1);
-		return buf[0] & 0xFF;
+		return readDISTNX(SENSOR_MOD_TYPE, 1);
 	}
 	
 	/**
 	 * Gets the number of points that will be in the curve.
-	 * This corisponds with the set/get Vold and Distance points methods.
+	 *  This corisponds with the set/get Volt and Distance methods.<br>
 	 * Used for recalibrating the sensor. 
 	 * @return int
 	 */
-	public int getCustomCurveCount(){
-		getData(CUSTOM_CURVE, buf, 1);
-		return buf[0] & 0xFF;
+	public int getCurveCount(){
+		return readDISTNX(CURVE, 1);
 	}
 	
 	/**
-	 * Set the number of points that will be in the curve.
-	 * This corisponds with the set/get Vold and Distance points methods.
+	 * Sets the number of points that will be in the configured curve. 
+	 * This corisponds with the set/get Vold and Distance points methods.<br>
 	 * Used for recalibrating the sensor. 
 	 * @param value max 39
 	 */
-	public void setCustomCurveCount(int value){
-		sendData(CUSTOM_CURVE, (byte)value);
+	public void setCurveCount(int value){
+		sendData(CURVE, (byte)value);
 	}	
 	
 	/**
-	 * Gets the min value for LSB that will be in the curve.
+	 * Gets the min value in millimeters for the LSB.<br>
 	 * Used for recalibrating the sensor. 
 	 * @return int
 	 */
 	public int getDistMinLSB(){
-		getData(DIST_MIN_DATA_LSB, buf, 1);
-		return buf[0] & 0xFF;
+		return readDISTNX(DIST_MIN_DATA_LSB, 2);
 	}
 	
 	/**
-	 * Sets the min value for LSB that will be in the curve.
-	 * Used for recalibrating the sensor. 
+	 * Sets the min value in millimeters for the LSB.<br>
+	 * Used for recalibrating the sensor.
 	 * @param value int
 	 */
 	public void setDistMinLSB(int value){
-		sendData(DIST_MIN_DATA_LSB, (byte)value);
+		writeDISTNX(DIST_MIN_DATA_LSB, (byte)value);
 	}
 	
 	/**
-	 * Gets the min value for MSB that will be in the curve.
+	 * Gets the min value in millimeters for the MSB.<br>
 	 * Used for recalibrating the sensor. 
 	 * @return int
 	 */
 	public int getDistMinMSB(){
-		getData(DIST_MIN_DATA_MSB, buf, 1);
-		return buf[0] & 0xFF;
+		return readDISTNX(DIST_MIN_DATA_MSB, 2);
 	}
 	
 	/**
-	 * Sets the min value for MSB that will be in the curve.
+	 * Sets the min value in millimeters for the MSB.<br>
 	 * Used for recalibrating the sensor. 
 	 * @param value int
 	 */
 	public void setDistMinMSB(int value){
-		sendData(DIST_MIN_DATA_MSB, (byte)value);
+		writeDISTNX(DIST_MIN_DATA_MSB, (byte)value);
 	}
 	
 	/**
-	 * Gets the max value for LSB that will be in the curve.
+	 * Gets the max value in millimeters for the LSB.<br>
 	 * Used for recalibrating the sensor. 
 	 * @return int
 	 */
 	public int getDistMaxLSB(){
-		getData(DIST_MAX_DATA_LSB, buf, 1);
-		return buf[0] & 0xFF;
+		return readDISTNX(DIST_MAX_DATA_LSB, 2);
 	}
 	
 	/**
-	 * Sets the max value for LSB that will be in the curve.
+	 * Sets the max value in millimeters for LSB.<br>
 	 * Used for recalibrating the sensor. 
 	 * @param value int
 	 */
 	public void setDistMaxLSB(int value){
-		sendData(DIST_MAX_DATA_LSB, (byte)value);
+		writeDISTNX(DIST_MAX_DATA_LSB, (byte)value);
 	}
 	
 	/**
-	 * Gets the max value for MSB that will be in the curve.
+	 * Gets the max value in millimeters for the MSB.<br>
 	 * Used for recalibrating the sensor. 
 	 * @return int
 	 */	
 	public int getDistMaxMSB(){
-		getData(DIST_MAX_DATA_MSB, buf, 1);
-		return buf[0] & 0xFF;
+		return readDISTNX(DIST_MAX_DATA_MSB, 2);
 	}
 	
 	/**
-	 * Sets the max value for MSB that will be in the curve.
+	 * Sets the max value in millimeters for the MSB.<br>
 	 * Used for recalibrating the sensor. 
 	 * @param value int
 	 */
 	public void setDistMaxMSB(int value){
-		sendData(DIST_MAX_DATA_MSB, (byte)value);
+		writeDISTNX(DIST_MAX_DATA_MSB, (byte)value);
 	}
 	
 	/**
-	 * Gets volt value with in the curve for LSB. These will corispond with the point methods index value.
+	 * Gets millivolts value of the specific index for the LSB. 
+	 * These will corispond with the point methods index value.<br>
 	 * Used for recalibrating the sensor.
 	 * @param index max 39
 	 * @return int
@@ -262,12 +260,12 @@ public class OpticalDistanceSensor extends I2CSensor{
 	public int getVoltPointLSB(int index){
 		if(index == 0) index = 1;
 		index = VOLT_DATA_POINT_LSB + 4 * index;
-		getData(index, buf, 1);
-		return buf[0] & 0xFF;
+		return readDISTNX(index, 2);
 	}
 	
 	/**
-	 * Sets volt value with in the curve for LSB. These will corispond with the point methods index value.
+	 * Sets millivolts value of the specific index for the LSB. 
+	 * These will corispond with the point methods index value.<br>
 	 * Used for recalibrating the sensor.
 	 * @param index max 39
 	 * @param value int
@@ -279,7 +277,8 @@ public class OpticalDistanceSensor extends I2CSensor{
 	}
 	
 	/**
-	 * Gets volt value with in the curve for MSB. These will corispond with the point methods index value.
+	 * Gets millivolts value of the specific index for the MSB.
+	 *  These will corispond with the point methods index value.<br>
 	 * Used for recalibrating the sensor.
 	 * @param index max 39
 	 * @return Returns int
@@ -287,12 +286,12 @@ public class OpticalDistanceSensor extends I2CSensor{
 	public int getVoltPointMSB(int index){
 		if(index == 0) index = 1;
 		index = VOLT_DATA_POINT_MSB + 4 * index;
-		getData(index, buf, 1);
-		return buf[0] & 0xFF;
+		return readDISTNX(index, 2);
 	}
 	
 	/**
-	 * Sets volt value with in the curve for MSB. These will corispond with the point methods index value.
+	 * Sets millivolts value of the specific index for the MSB. 
+	 * These will corispond with the point methods index value.<br>
 	 * Used for recalibrating the sensor.
 	 * @param index max 39
 	 * @param value int
@@ -300,52 +299,92 @@ public class OpticalDistanceSensor extends I2CSensor{
 	public void setVoltPointMSB(int index, int value){
 		if(index == 0) index = 1;
 		index = VOLT_DATA_POINT_MSB + 4 * index;
-		sendData(index, (byte)value);
+		writeDISTNX(index, value);
 	}
 	
 	/**
-	 * Gets points with in the curve for LSB. Used for recalibrating the sensor.
+	 * Gets millimeter value of the specific index for the LSB.<br>
+	 * Used for recalibrating the sensor.
 	 * @param index max 39
 	 * @return Returns int
 	 */
 	public int getDistPointLSB(int index){
 		if(index == 0) index = 1;
 		index = DIST_DATA_POINT_LSB + 4 * index;
-		getData(index, buf, 1);
-		return buf[0] & 0xFF;
+		return readDISTNX(index, 2);
 	}
 	
 	/**
-	 * Sets points with in the curve for LSB. Used for recalibrating the sensor.
+	 * Sets millimeter value of the specific index for the LSB. <br>
+	 * Used for recalibrating the sensor.
 	 * @param index max 39
 	 * @param value int
 	 */
 	public void setDistPointLSB(int index, int value){
 		if(index == 0) index = 1;
 		index = DIST_DATA_POINT_LSB + 4 * index;
-		sendData(index, (byte)value);
+		writeDISTNX(index, value);
 	}
 	
 	/**
-	 * Gets points with in the curve for MSB. Used for recalibrating the sensor.
+	 * Gets millimeter value of the specific index for the MSB. <br>
+	 * Used for recalibrating the sensor.
 	 * @param index max 39
 	 * @return int
 	 */
 	public int getDistPointMSB(int index){
 		if(index == 0) index = 1;
 		index = DIST_DATA_POINT_MSB + 4 * index;
-		getData(index, buf, 1);
-		return buf[0] & 0xFF;
+		return readDISTNX(index, 2);
 	}
 	
 	/**
-	 * Sets points with in the curve for MSB. Used for recalibrating the sensor.
+	 * Sets millimeter value of the specific index for the MSB. <br>
+	 * Used for recalibrating the sensor.
 	 * @param index max 39.
 	 * @param value int
 	 */
 	public void setDistPointMSB(int index, int value){
 		if(index == 0) index = 1;
 		index = DIST_DATA_POINT_MSB + 4 * index;
-		sendData(index, (byte)value);
+		writeDISTNX(index, value);
+	}
+	
+	/**
+	 * Returns an integer value from the specified register.<br>
+	 * @param register I2C register, e.g 0x41
+	 * @param bytes number of bytes to read 1 or 2
+	 * @return int value from register
+	 */
+	private int readDISTNX(int register, int bytes){
+		int buf0;
+		int buf1;
+		
+		getData(register, buf, bytes);
+		
+		if (bytes == 1)	return buf[0] & 0xFF;
+		
+		buf0 = buf[0] & 0xFF;
+		buf1 = buf[1] & 0xFF;
+		return buf1 * 256 + buf0;
+	}
+	
+	/**
+	 * Writes an integer value to the register. <br>
+	 * This is called if two bytes are to be writen.<br>
+	 * All other methods just call sendData() from i2cSensor.
+	 * @param register I2C register, e.g 0x41
+	 * @param value iteger value to be writen to the register
+	 */
+	private void writeDISTNX(int register, int value){		
+		int buf0;
+		int buf1;
+		
+		buf0 = value % 256;
+		buf1 = value / 256;
+		buf[0] = (byte)buf0;
+		buf[1] = (byte)buf1;
+		
+		sendData(register, buf, 2);	
 	}
 }
