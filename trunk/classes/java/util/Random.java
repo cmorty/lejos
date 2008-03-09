@@ -6,6 +6,8 @@ package java.util;
 public class Random
 {
   private int iPrevSeed, iSeed;
+  private boolean haveNextNextGaussian;
+  private double nextNextGaussian;
   
   public Random (long seed)
   {
@@ -39,4 +41,46 @@ public class Random
 	int m = nextInt() % n;
 	return m >= 0 ? m : m + n;
     }
+
+    /**
+     * Returns a random boolean in the range 0-1.
+     * @return A random boolean in the range 0-1.
+     */
+    public boolean nextBoolean(){
+    	boolean nextBoolean;
+		int nextInt = this.nextInt(2);
+		if(nextInt == 1){
+			nextBoolean = true;
+		}else{
+			nextBoolean = false;			
+		}
+		return nextBoolean;    	
+    }
+
+    public double nextDouble(){
+    	return Math.random();
+    }
+    
+    /**
+     * Returns the next pseudorandom, Gaussian ("normally") distributed double value with mean 0.0 and standard deviation 1.0 from this random number generator's sequence.
+     * @return Returns the next pseudorandom, Gaussian ("normally") distributed double value
+     */
+    public double nextGaussian(){
+    	//http://java.sun.com/j2se/1.4.2/docs/api/java/util/Random.html#nextGaussian()
+        if (haveNextNextGaussian) {
+            haveNextNextGaussian = false;
+            return nextNextGaussian;
+	    } else {
+	            double v1, v2, s;
+	            do { 
+	                    v1 = 2 * nextDouble() - 1;   // between -1.0 and 1.0
+	                    v2 = 2 * nextDouble() - 1;   // between -1.0 and 1.0
+	                    s = v1 * v1 + v2 * v2;
+	            } while (s >= 1 || s == 0);
+	            double multiplier = Math.sqrt(-2 * Math.log(s)/s);
+	            nextNextGaussian = v2 * multiplier;
+	            haveNextNextGaussian = true;
+	            return v1 * multiplier;
+	    }  	
+    }  
 }
