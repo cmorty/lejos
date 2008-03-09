@@ -58,6 +58,38 @@ public class Hashtable
     }
   }
 
+  /**
+   * 
+   * @return An Enumeration object containing all keys for this Hashtable
+   * @author BB
+   */
+  public Enumeration keys() {
+	  return new Enumeration() {
+		  int cur = 0;
+		  public boolean hasMoreElements() {
+			  /* Difficult to work with our current Hashtable code 
+			   *  due to iTable gaps.
+			   */
+			  for(int i=cur;i<TABLE_SIZE;i++)
+				  if(iTable[i] != null)
+					  return true;
+			  return false;
+		  }
+		  
+		  public Object nextElement() {
+			  /* Difficult to work with our current Hashtable code 
+			     due to iTable gaps. */
+			  // Go thru iTable until object found
+			  while(cur < TABLE_SIZE) {
+				  KeyValuePair kvp = (KeyValuePair)iTable[cur++];
+				  if(kvp != null)
+					  return kvp.iKey;
+			  }
+			  return null;
+		  }
+	  };
+  }
+  
   private KeyValuePair getKeyValuePair (Object aPivot, Object aKey)
   {
     if (aPivot instanceof Vector)
