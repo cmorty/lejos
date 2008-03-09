@@ -2,6 +2,8 @@ package lejos.nxt.comm;
 
 import java.io.*;
 
+import javax.bluetooth.RemoteDevice;
+
 /**
  * 
  * Initiates communication to a remote NXT. Used by NXTCommand
@@ -15,7 +17,7 @@ public class NXTComm {
 	byte[] buf = new byte[64];
 	
 	public boolean open(String name) throws IOException {
-		BTRemoteDevice btrd = Bluetooth.getKnownDevice(name);	
+		RemoteDevice btrd = Bluetooth.getKnownDevice(name);	
 		if (btrd == null) return false;
 		
 		btc = Bluetooth.connect(btrd);
