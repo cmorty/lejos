@@ -120,4 +120,8 @@ package java.lang;
 		
 		return negative ? -result : result;
 	}
+	
+	public String toString(float f) {
+		return "" + f;
+	}
 }
