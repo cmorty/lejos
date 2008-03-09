@@ -1,4 +1,4 @@
-package javax.bluetooth.devices;
+package lejos.devices;
 
 import java.io.*;
 import lejos.nxt.comm.Debug;
