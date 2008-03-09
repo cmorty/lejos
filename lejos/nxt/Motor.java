@@ -1,7 +1,5 @@
 package lejos.nxt;
 import lejos.nxt.Battery;
-import lejos.nxt.*;
-
 
 /**
  * Abstraction for a NXT motor. Three instances of <code>Motor</code>
@@ -11,14 +9,14 @@ import lejos.nxt.*;
  * and <code>flt</code>. To set each motor's speed, use
  * <code>setSpeed.  Speed is in degrees per second. </code>.\
  * Methods that use the tachometer:  regulateSpeed, rotate, rotateTo <br>
- * Motor has 2 modes : speedRegulation and smoothAcceleration which only works if speed regulation is used. These are initially enabled. <>
+ * Motor has 2 modes : speedRegulation and smoothAcceleration which only works if speed regulation is used. These are initially enabled. 
+ * The speed is regulated by comparing the tacho count with speed times elapsed time and adjusting motor power to keep these closely matched.
+ * Smooth acceleration corrects the speed regulation to account for the acceleration time. 
  * They can be switched off/on by the methods regulateSpeed() and smoothAcceleration().
  * The actual maximum speed of the motor depends on battery voltage and load. With no load, the maximum is about 100 times the voltage.  
  * Speed regulation fails if the target speed exceeds the capability of the motor.
- * If your motor is working against a heavy load, you might need to increase the brake power to insure that a rotation is completed.
  * If you need the motor to hold its position and you find that still moves after stop() is called , you can use the lock() method.
- * 
- * 
+ *  
  * <p>
  * Example:<p>
  * <code><pre>
@@ -351,6 +349,7 @@ public class Motor extends BasicMotor// implements TimerListener
          angle0 = getTachoCount();
          basePower = calcPower(_speed);
          setPower((int)basePower);
+         e0 = 0;
       }
 
       /**
@@ -358,7 +357,6 @@ public class Motor extends BasicMotor// implements TimerListener
        */
       public void run()
       {
-         float e0 = 0;// for differential control
          float power =  0;
          float ts = 120;//time to reach speed 
          int tick = 100+ (int)System.currentTimeMillis(); // 
@@ -410,13 +408,10 @@ public class Motor extends BasicMotor// implements TimerListener
                   float gain = 5f;
                   float extrap = 4f;
                   power = basePower + gain*(error + extrap*(error - e0));
-                  e0 = error;
-                  
-                  
+                  e0 = error;                 
 //                  power = basePower + 15f * error;// - 5f * e0;// 10 magic number from experiment - simple proportional control
                   if(power < 0) power = 0;
                   if(power > 100) power = 100;
-                  e0 = error;
                   float smooth = 0.012f;// another magic number from experiment
                   basePower = basePower + smooth*(power-basePower); 
                   setPower((int)power);
@@ -429,26 +424,48 @@ public class Motor extends BasicMotor// implements TimerListener
       /**
        * helper method for run()
        */
-      void stopAtLimit()
-      {    
+      void stopAtLimit()  // converge to limit angle; reverse direction if necessary
+      {  
          _mode = STOP; // stop motor
          _port.controlMotor (0, STOP);
-         int a = angleAtStop();//returns when motor speed < 100 deg/sec
-         int k = 0;
-         int error = 0;
-         while ( k < 40)
+         int e0 = 0;// former error
+         e0 = angleAtStop();//returns when motor speed < 100 deg/sec
+         e0 -= _limitAngle;
+         int k = 0; // time within limit angle +=1
+         int t1 = 0; // time since change in tacho count
+         int error = 0; 
+         int pwr = _brakePower;// local power 
+         while ( k < 20)// exit when no movement for 20 ms 
          {
             error = _limitAngle - getTachoCount();
+            if (error == e0)  // no change in tacho count
+            {  
+               t1++;
+               if( t1 > 10)
+                  {
+                  pwr += 10;  // speed < 100 deg/sec so increase brake power
+                  t1 = 0;
+                  }                           
+               // don't let motor stall if outside limit angle +- 1 deg
+            }
+            else // tacho count changed
+            {
+               t1 = 0;
+               if( error == 0) pwr = _brakePower;  
+               e0 = error; 
+            }
             if(error < -1)
             {
                _mode = BACKWARD;
-               _port.controlMotor(_brakePower,_mode);  
+               setPower(pwr);
+//               _port.controlMotor(pwr,_mode);  
                k = 0;
             }
             else if (error > 1 )
             {
                _mode = FORWARD ;
-               _port.controlMotor(_brakePower,_mode); 
+               setPower(pwr);
+//               _port.controlMotor(pwr,_mode); 
                k = 0;
             }
             else 
@@ -460,7 +477,6 @@ public class Motor extends BasicMotor// implements TimerListener
             try { Thread.sleep(1);} catch(InterruptedException ie) {};
          }
          _rotating = false;
-
       }
 
       /**
@@ -532,7 +548,7 @@ public class Motor extends BasicMotor// implements TimerListener
    /**
     *sets motor power.  This method is used by the Regulator thread to control motor speed.
     *Warning:  negative power will cause the motor to run in reverse but without updating the _direction 
-    *field which is used by the Regulator thread.  If the speed regulation is enabled, the rusults are 
+    *field which is used by the Regulator thread.  If the speed regulation is enabled, the results are 
     *unpredictable. 
     */
    public synchronized void setPower(int power)
@@ -562,7 +578,7 @@ public class Motor extends BasicMotor// implements TimerListener
       int spd = _speed;
       float ratio =0.068f;
       if (angle < 0 ) angle = -angle;
-      if(angle < spd / 15) spd = 15 * angle;
+      if(angle < spd / 10) spd = 10 * angle;  //15
       if(!_regulate)ratio = -0.173f + 0.029f * _voltage;
       return (int)(ratio * spd);
    }
@@ -627,14 +643,8 @@ public class Motor extends BasicMotor// implements TimerListener
       regulator.reset();
       _port.resetTachoCount();
    }
-   public void setBrakePower(int power)
-   {
-      if (power>100)power = 100;
-      if (power < 0 )power = 0;
-      _brakePower = power;
-   }
    /**
-    * for degugging
+    * for debugging
     * @return regulator error
     */
    public float getError()
