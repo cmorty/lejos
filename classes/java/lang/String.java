@@ -24,6 +24,10 @@ public final class String
     characters = new char[len];
     System.arraycopy (c, off, characters, 0, len);
   }
+  
+  public String (char [] c) {
+	  this(c, 0, c.length);
+  }
 
   /**
    * Return the length of the String in characters
