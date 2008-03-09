@@ -9,7 +9,7 @@ import lejos.nxt.Motor;
 * It can be used with robots that have reversed motor design: the robot moves in the direction opposite to the the dirction of motor rotation.
 * Uses the Motor class, which regulates motor speed using the NXT motor's built in tachometer. <br>
 * Some methods optionally return immediately so the thread that called the method can monitor sensors and call stop() if necessary.  <br>  
-* Uses the smoothAcceleration  property of Motors to improve motor symchronication
+* Uses the smoothAcceleration  property of Motors to improve motor synchronization when starting a movement. 
 *  Example:<p>
 * <code><pre>
 *	Pilot pilot = new Pilot(2.1f,4.4f,Motor.A, Motor.C,true);
@@ -89,11 +89,7 @@ public class Pilot
 		_left = leftMotor;
 		_right = rightMotor;
 		_degPerDistance = 360/((float)Math.PI*wheelDiameter);
-		_turnRatio = trackWidth/wheelDiameter;
-		_left.regulateSpeed(true);
-		_left.smoothAcceleration(true);
-		_right.regulateSpeed(true);
-		_right.smoothAcceleration(true);
+		_turnRatio = trackWidth/wheelDiameter;;
 		_trackWidth = trackWidth;
 		_wheelDiameter = wheelDiameter;
 	}
@@ -163,9 +159,9 @@ public class Pilot
 	{
 		_speed = speed;
 		_left.regulateSpeed(_regulating);
-		_left.smoothAcceleration(true);
+		_left.smoothAcceleration(!isMoving());
 		_right.regulateSpeed(_regulating);
-		_right.smoothAcceleration(true);
+		_right.smoothAcceleration(!isMoving());
 		if(_left.getSpeed() != speed)_left.setSpeed(speed);
 		if(_right.getSpeed() != speed) _right.setSpeed(speed);
 	}
