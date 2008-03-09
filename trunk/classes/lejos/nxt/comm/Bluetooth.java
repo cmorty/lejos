@@ -1,6 +1,8 @@
 package lejos.nxt.comm;
 import java.util.*;
 
+import javax.bluetooth.RemoteDevice;
+
 
 /**
  * Provides Bluetooth comminications.
@@ -870,7 +872,7 @@ public class Bluetooth
 	 * @param remoteDevice remote device
 	 * @return BTConnection Object or null
 	 */
-	public static BTConnection connect(BTRemoteDevice remoteDevice) {
+	public static BTConnection connect(RemoteDevice remoteDevice) {
 		if (remoteDevice == null) return null;
 		return connect(remoteDevice.getDeviceAddr());
 	}
@@ -1034,7 +1036,7 @@ public class Bluetooth
 			byte[] devclass = new byte[4];
 			char[] name = new char[16];
 			Vector retVec = new Vector(1);
-			BTRemoteDevice curDevice;
+			RemoteDevice curDevice;
 			cmdStart();
 			cmdInit(MSG_DUMP_LIST, 1, 0, 0);
 			while (cmdWait(RS_REPLY, state, MSG_ANY, TO_LONG) >= 0)
@@ -1047,7 +1049,7 @@ public class Bluetooth
 					for(; nl < 16 && replyBuf[nl+9] != 0; nl++)
 						name[nl] = (char)replyBuf[nl+9];
 					System.arraycopy(replyBuf, 25, devclass, 0, 4);
-					curDevice = new BTRemoteDevice(name, nl, device, devclass);
+					curDevice = new RemoteDevice(name, nl, device, devclass);
 					//1 Debug.out("got name " + curDevice.getFriendlyName() + "\n");
 					retVec.addElement(curDevice);
 				}
@@ -1065,13 +1067,13 @@ public class Bluetooth
 	 * @param fName Friendly-Name of the device
 	 * @return BTDevice Object or null, if not found.
 	 */
-	public static BTRemoteDevice getKnownDevice(String fName) {
-		BTRemoteDevice btd = null;
+	public static RemoteDevice getKnownDevice(String fName) {
+		RemoteDevice btd = null;
 		//look the name up in List of Known Devices
 		Vector devList = getKnownDevicesList();
 		if (devList.size() > 0) {
 			for (int i = 0; i < devList.size(); i++) {
-				btd = (BTRemoteDevice) devList.elementAt(i);
+				btd = (RemoteDevice) devList.elementAt(i);
 				if (btd.getFriendlyName().equals(fName)) {
 					return btd; 
 				}
@@ -1085,7 +1087,7 @@ public class Bluetooth
 	 * @param d Remote Device
 	 * @return true iff add was successful
 	 */
-	public static boolean addDevice(BTRemoteDevice d) {
+	public static boolean addDevice(RemoteDevice d) {
 		byte [] addr = d.getDeviceAddr();
 		String name = d.getFriendlyName();
 		byte[] cod = d.getDeviceClass();
@@ -1111,7 +1113,7 @@ public class Bluetooth
 	 * @param d Remote Device
 	 * @return true iff remove was successful
 	 */
-	public static boolean removeDevice(BTRemoteDevice d) {
+	public static boolean removeDevice(RemoteDevice d) {
 		byte [] addr = d.getDeviceAddr();
 		synchronized (Bluetooth.sync)
 		{
@@ -1156,14 +1158,14 @@ public class Bluetooth
 						name[nameLen] = (char) replyBuf[9+nameLen];
 					System.arraycopy(replyBuf, 25, cod, 0, 4);
 					// add the Element to the Vector List
-					retVec.addElement(new BTRemoteDevice(name, nameLen, device, cod));					
+					retVec.addElement(new RemoteDevice(name, nameLen, device, cod));					
 				}
 				else if (replyBuf[1] == MSG_INQUIRY_STOPPED)
 				{
 					cmdComplete();
 					// Fill in the names	
 					for (int i = 0; i < retVec.size(); i++) {
-						BTRemoteDevice btrd = ((BTRemoteDevice) retVec.elementAt(i));
+						RemoteDevice btrd = ((RemoteDevice) retVec.elementAt(i));
 						String s = btrd.getFriendlyName();
 						if (s.length() == 0) {
 							String nm = lookupName(btrd.getDeviceAddr());
