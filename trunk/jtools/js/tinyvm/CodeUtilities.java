@@ -565,7 +565,7 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
                   int dft = getFourBytesInt( aCode, i); i += 4;
                   int npairs = getFourBytesInt( aCode, i); i += 4;
                   //System.out.println( "lookupswitch: dft: " + dft + ", npairs: " + npairs + ", padding: " + (i - oi));
-                  i += 4*npairs;
+                  i += 8*npairs;
                }
                break;
 
