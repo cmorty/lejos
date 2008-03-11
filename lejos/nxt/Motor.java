@@ -1,6 +1,6 @@
 package lejos.nxt;
 import lejos.nxt.Battery;
-
+import lejos.nxt.comm.*; //*****
 /**
  * Abstraction for a NXT motor. Three instances of <code>Motor</code>
  * are available: <code>Motor.A</code>, <code>Motor.B</code>
@@ -8,7 +8,7 @@ import lejos.nxt.Battery;
  * methods <code>forward, backward, reverseDirection, stop</code>
  * and <code>flt</code>. To set each motor's speed, use
  * <code>setSpeed.  Speed is in degrees per second. </code>.\
- * Methods that use the tachometer:  regulateSpeed, rotate, rotateTo <br>
+ * Methods that use the tachometer:  regulateSpeed, rotate, rotateTo.   These rotate methods may not stop smoothly at the target angle if called when the motor is already moving<br>
  * Motor has 2 modes : speedRegulation and smoothAcceleration which only works if speed regulation is used. These are initially enabled. 
  * The speed is regulated by comparing the tacho count with speed times elapsed time and adjusting motor power to keep these closely matched.
  * Smooth acceleration corrects the speed regulation to account for the acceleration time. 
@@ -69,10 +69,7 @@ public class Motor extends BasicMotor// implements TimerListener
     * true when rotation to limit is in progress.  set by rotateTo(), used  and reset by regulator
     */
    private boolean _rotating = false;
-   /**
-    * used by stopAtLimit to save * restore state 
-    */
-   private boolean _wasRotating = false;
+ 
    /**  
     * set by smoothAcceleratio.  Only has effect if _regulate is true
     */
@@ -287,10 +284,6 @@ public class Motor extends BasicMotor// implements TimerListener
       synchronized(regulator)
       {
          _lock = false;
-         if (_wasRotating)// just in case this method is called while stopAtLimit is in progress
-         {
-            setSpeed(_speed0);//restore speed setting
-         }
          _stopAngle = limitAngle;
          if(limitAngle > getTachoCount()) _mode = FORWARD;
          else _mode = BACKWARD;
@@ -435,15 +428,15 @@ public class Motor extends BasicMotor// implements TimerListener
          int t1 = 0; // time since change in tacho count
          int error = 0; 
          int pwr = _brakePower;// local power 
-         while ( k < 20)// exit when no movement for 20 ms 
+         while ( k < 40)// exit within +-1  for 40 ms 
          {
             error = _limitAngle - getTachoCount();
             if (error == e0)  // no change in tacho count
             {  
                t1++;
-               if( t1 > 10)
+               if( t1 > 20)// speed < 50 deg/sec so increase brake power
                   {
-                  pwr += 10;  // speed < 100 deg/sec so increase brake power
+                  pwr += 10;  
                   t1 = 0;
                   }                           
                // don't let motor stall if outside limit angle +- 1 deg
@@ -563,7 +556,7 @@ public class Motor extends BasicMotor// implements TimerListener
    public int getSpeed()
    {
       return _speed;	  
-   }
+   } 
    /**
     * @return : 1 = forward, 2= backward, 3 = stop, 4 = float
     */
@@ -575,12 +568,16 @@ public class Motor extends BasicMotor// implements TimerListener
     */
    private int overshoot(int angle)
    {
-      int spd = _speed;
-      float ratio =0.068f;
+      float ratio =0.06f; // overshoot/speed  - magic number from experiments
+      if(!_regulate)ratio = -0.173f + 0.029f * _voltage;// more magic numbers - fit to data
       if (angle < 0 ) angle = -angle;
-      if(angle < spd / 10) spd = 10 * angle;  //15
-      if(!_regulate)ratio = -0.173f + 0.029f * _voltage;
-      return (int)(ratio * spd);
+      float endRamp = _speed*0.15f;  //angle at end of ramp up to speed
+     if( angle < endRamp) 
+     { // more complicated calculation in this case
+      float a  = angle/endRamp;// normalized angle
+      ratio = .052f*( 1 - (1 - a)*(1 - a)); // quadratic in normalized angle
+     }
+      return (int) (ratio* _speed);    
    }
 
    /**
@@ -659,7 +656,8 @@ public class Motor extends BasicMotor// implements TimerListener
    public float getBasePower()
    {
       return regulator.basePower;
-   }
+   }   
+   public void setBrakePower(int pwr) {_brakePower = pwr;}
 }
 
 
