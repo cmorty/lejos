@@ -1,6 +1,6 @@
 package lejos.nxt;
 import lejos.nxt.Battery;
-import lejos.nxt.comm.*; //*****
+
 /**
  * Abstraction for a NXT motor. Three instances of <code>Motor</code>
  * are available: <code>Motor.A</code>, <code>Motor.B</code>
@@ -470,6 +470,7 @@ public class Motor extends BasicMotor// implements TimerListener
             try { Thread.sleep(1);} catch(InterruptedException ie) {};
          }
          _rotating = false;
+         setPower((int)calcPower(_speed));
       }
 
       /**
