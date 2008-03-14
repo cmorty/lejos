@@ -4,6 +4,7 @@ import java.util.Vector;
 import javax.microedition.lcdui.*;
 import lejos.nxt.comm.*;
 import lejos.nxt.*;
+import javax.bluetooth.*;
 
 /*
 class SoundOptions extends Form
@@ -294,7 +295,7 @@ public class StartUpText
 		    		if (devList.size() > 0) {
 		    			String[] names = new String[devList.size()];
 		    			for (int i = 0; i < devList.size(); i++) {
-		    				BTRemoteDevice btrd = ((BTRemoteDevice) devList.elementAt(i));
+		    				RemoteDevice btrd = ((RemoteDevice) devList.elementAt(i));
 		    				names[i] = btrd.getFriendlyName();
 		    			}
 		    				
@@ -309,7 +310,7 @@ public class StartUpText
 				    		LCD.refresh();
 		    				selected = deviceMenu.select();
 		    				if (selected >=0) {
-		    					BTRemoteDevice btrd = ((BTRemoteDevice) devList.elementAt(selected));
+		    					RemoteDevice btrd = ((RemoteDevice) devList.elementAt(selected));
 		    					LCD.clear();
 		    					LCD.drawString(devices,5,0);
 		    					LCD.drawString(names[selected],0,1);
@@ -342,7 +343,7 @@ public class StartUpText
 		    		if (devList.size() > 0) {
 		    			String[] names = new String[devList.size()];
 		    			for (int i = 0; i < devList.size(); i++) {
-		    				BTRemoteDevice btrd = ((BTRemoteDevice) devList.elementAt(i));
+		    				RemoteDevice btrd = ((RemoteDevice) devList.elementAt(i));
 		    				names[i] = btrd.getFriendlyName();
 		    			}
 		    				
@@ -357,7 +358,7 @@ public class StartUpText
 							LCD.refresh();
 		    				selected = searchMenu.select();
 		    				if (selected >=0) {
-		    					BTRemoteDevice btrd = ((BTRemoteDevice) devList.elementAt(selected));
+		    					RemoteDevice btrd = ((RemoteDevice) devList.elementAt(selected));
 		    					LCD.clear();
 		    					LCD.drawString(found,6,0);
 		    					LCD.drawString(names[selected],0,1);
