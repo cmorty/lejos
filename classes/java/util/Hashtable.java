@@ -50,6 +50,7 @@ public class Hashtable
       Vector pVector = new Vector();
       pVector.addElement (pElement);
       pVector.addElement (pKeyValuePair);
+      iTable[pIndex] = pVector;
     }
     else
     {
