@@ -137,3 +137,7 @@ eventOptions(II)I
 suspendThread(Ljava/lang/Object;)V
 resumeThread(Ljava/lang/Object;)V
 
+#System
+getProgramExecutionsCount()I
+
+

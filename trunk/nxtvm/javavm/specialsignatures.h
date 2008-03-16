@@ -88,4 +88,5 @@
 #define eventOptions_4II_5I 81
 #define suspendThread_4Ljava_3lang_3Object_2_5V 82
 #define resumeThread_4Ljava_3lang_3Object_2_5V 83
+#define getProgramExecutionsCount_4_5I 84
 #endif // _SPECIALSIGNATURES_H

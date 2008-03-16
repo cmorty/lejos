@@ -487,6 +487,7 @@ main(void)
   {
   	int next = gNextProgram;
   	gNextProgram = 0;
+  	gProgramExecutions++;
   	nxt_main(next, gNextProgramSize);
   }
   while (true);
