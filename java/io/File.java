@@ -61,7 +61,7 @@ public class File {
 	/**
 	 * Indicates the starting page of the file table.
 	 */
-	private static byte TABLE_START_PAGE = 0;
+	private static byte TABLE_START_PAGE = 1;
 	
 	/**
 	 *  Number of pages reserved for storing file table information.
