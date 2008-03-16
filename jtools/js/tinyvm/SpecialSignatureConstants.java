@@ -88,6 +88,7 @@ public interface SpecialSignatureConstants {
     "peekWord(I)I",
     "eventOptions(II)I",
     "suspendThread(Ljava/lang/Object;)V",
-    "resumeThread(Ljava/lang/Object;)V"
+    "resumeThread(Ljava/lang/Object;)V",
+    "getProgramExecutionsCount()I"
   };
 }
