@@ -401,6 +401,9 @@ dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
   case resumeThread_4Ljava_3lang_3Object_2_5V:
     resume_thread(ref2ptr(paramBase[0]));
     return;
+  case getProgramExecutionsCount_4_5I:
+    push_word(gProgramExecutions);
+    return;
   default:
     throw_exception(noSuchMethodError);
   }

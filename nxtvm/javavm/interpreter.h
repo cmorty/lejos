@@ -14,6 +14,7 @@ extern volatile boolean gMakeRequest;
 extern byte    gRequestCode;
 extern unsigned int gNextProgram;
 extern unsigned int gNextProgramSize;
+extern unsigned int gProgramExecutions;
 
 extern byte *curPc;
 extern STACKWORD *curStackTop;

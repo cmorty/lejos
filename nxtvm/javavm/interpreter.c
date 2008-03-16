@@ -29,6 +29,7 @@ volatile boolean gMakeRequest;
 byte    gRequestCode;
 unsigned int gNextProgram;
 unsigned int gNextProgramSize;
+unsigned int gProgramExecutions = 0;
 
 byte *curPc;
 STACKWORD *curStackTop;
