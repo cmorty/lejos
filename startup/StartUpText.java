@@ -13,6 +13,7 @@ public class StartUpText
    static Graphics g = new Graphics();
    static  boolean btPowerOn = false;
    static String blank = "               ";
+   static String defaultProgramProperty = "lejos.default_program"; 
    
    static int [] freq = {523,784, 659};
    public static void playTune()
@@ -73,7 +74,19 @@ public class StartUpText
 		if (vol == 10) return "10";
 		return " " + vol;
 	}
-    
+	
+	private static String getExtension(String fileName) {
+		int dot = fileName.lastIndexOf(".");
+		if (dot < 0) return "";
+		else return fileName.substring(dot+1, fileName.length());
+	}
+	
+	private static String getBaseName(String fileName) {
+		int dot = fileName.lastIndexOf(".");
+		if (dot < 0) return fileName;
+		else return fileName.substring(0, dot);
+	}
+	
 	public static void main(String[] args) throws Exception {
 		Indicators ind = new Indicators();
 		USBRespond usb = new USBRespond();
@@ -93,10 +106,12 @@ public class StartUpText
 		String battery = "Battery ";
 		
 		TextMenu filesMenu = new TextMenu(null,1);
-		String[] topMenuData = {"Files", "Bluetooth", "Sound", "System"};
+		String[] topMenuData = {"Run Default", "Files", "Bluetooth", "Sound", "System", "Unset Default"};
 		TextMenu topMenu = new TextMenu(topMenuData,1);
-		String[] fileMenuData = {"Execute program", "Delete file"}; 
+		String[] fileMenuData = {"Execute program"}; 
 		TextMenu fileMenu = new TextMenu(fileMenuData,2);
+		String[] programMenuData = {"Execute program", "Set as Default", "Delete file"}; 
+		TextMenu programMenu = new TextMenu(programMenuData,2);
 		String[] fileNames = new String[File.MAX_FILES];
 		TextMenu menu = topMenu;
 		String[] blueMenuData = {"Power off", "Search", "Devices","Visibility"};
@@ -113,9 +128,21 @@ public class StartUpText
 		String dot = ".";
         String[] yes_no = {"No","Yes"};
         TextMenu yes_noMenu = new TextMenu(yes_no,6);
+        String defaultProgram = Settings.getProperty(defaultProgramProperty, "");
+        
+        //LCD.drawString("" + Button.readButtons(), 0, 7);
+        //LCD.drawString("" + System.getProgramExecutionsCount(), 8, 7);
 		
 		//SoundOptions soundMenu = new SoundOptions();
         playTune();
+        
+        if (System.getProgramExecutionsCount() == 1 &&
+        	(Button.readButtons() & 2) != 2 && // Left button not pressed
+        	defaultProgram != null &&
+        	defaultProgram.length() > 0) {
+        	File f = new File(defaultProgram + ".nxj");
+        	if (f.exists()) f.exec();
+        }
 		TextMenu systemMenu = new TextMenu(systemMenuData,5);
 		File[] files = null;
 		boolean quit = false;
@@ -195,33 +222,43 @@ public class StartUpText
 			int selection = menu.select(curItem);
 		    if (menu == topMenu) {
 		    	 if (selection == 0) {
+		    		 defaultProgram = Settings.getProperty(defaultProgramProperty, "");
+		    		 if (defaultProgram != null && defaultProgram.length() > 0) {
+		    			 String progName = defaultProgram + ".nxj";
+		    			 File f = new File(progName);
+		    			 if (f.exists()) f.exec();
+		    		 }
+		    	 } else if (selection == 1) {
 		    		 menu = filesMenu;
-		    	 } else if (selection ==1) {
+		    	 } else if (selection ==2) {
 		    		 menu = (btPowerOn ? blueMenu : blueOffMenu);
-		    	 } else if (selection == 2) {
+		    	 } else if (selection == 3) {
 					 menu = soundMenu;
 					 // Turn of key click when in the sound menu so it does
 					 // not screw with the feedback sounds
 					 Button.setKeyClickTone(1, 0);
-				 } else if (selection == 3) {
+				 } else if (selection == 4) {
 		    		 menu = systemMenu;
+		    	 } else if (selection == 5) {
+		    		 Settings.setProperty(defaultProgramProperty, "");
 		    	 } else if (selection == -1) {
 		    		 quit = true;
 		    	 }
 		    } else if (menu == filesMenu) {
 			    if (selection >= 0 && files[selection] != null) {
-			       LCD.clear();
-			       drawTopRow();
+			    	String fileName = files[selection].getName();
+			    	String ext = getExtension(fileName);
+			        LCD.clear();
+			        drawTopRow();
 //					LCD.clear();
 //					LCD.drawString(title,6,0);
 //				    LCD.drawInt( (int)(Runtime.getRuntime().freeMemory()),0,0);
 //					LCD.refresh();
-					fileMenu.setTitle(fileNames[selection]);
-			    	int subSelection = fileMenu.select();
-			    	if (subSelection == 0) 
-			    	{
-			    		files[selection].exec();
-			    	} else if (subSelection == 1)
+			        TextMenu subMenu = fileMenu;
+			        if (ext.equals("nxj")) subMenu = programMenu;
+					subMenu.setTitle(fileNames[selection]);
+			    	int subSelection = subMenu.select();
+                    if (subMenu == fileMenu || subSelection == 2)
 			    	{
 			    		files[selection].delete();
 						try {
@@ -231,8 +268,14 @@ public class StartUpText
 						}
 			    		LCD.clear();
 			    		LCD.refresh();
-			    	}
-			    } if (selection == -1) {
+			    	} else if (subMenu == programMenu && subSelection == 0) 
+			    	{
+			    		files[selection].exec();
+			    	} else if (subSelection == 1)
+			    	{
+			    		Settings.setProperty(defaultProgramProperty, getBaseName(fileName));
+			        } 
+			    } else if (selection == -1) {
 			    	menu = topMenu;
 			    }
 		    } else if (menu == blueOffMenu) {
