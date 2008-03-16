@@ -73,7 +73,9 @@ counters are reset when this method is called.
  */	
 	public void count()
 	{
-	   Button.setKeyClick(0,0,0);
+        // Sound code disabled. We now have per button tones. 
+        // Is this good enough if not, then we need to modify and re-enable.
+	   //Button.setKeyClick(0,0,0);
        if(_reset)       
        {
            _rightCount = 0;
@@ -87,7 +89,7 @@ counters are reset when this method is called.
             int b = Button.waitForPress();
             try {Thread.sleep(80);} catch (InterruptedException ie) {}
             b = Button.readButtons();          
-			Sound.playTone(880 + 100*b,200);
+			//Sound.playTone(880 + 100*b,200);
 		    if( b == ESC || b == ENTER)counting = false;
 			else
 			{

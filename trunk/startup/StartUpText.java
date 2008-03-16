@@ -4,58 +4,8 @@ import java.util.Vector;
 import javax.microedition.lcdui.*;
 import lejos.nxt.comm.*;
 import lejos.nxt.*;
+
 import javax.bluetooth.*;
-
-/*
-class SoundOptions extends Form
-{
-	private static final int CMDID_BACK_TO_MAIN 	= 1;
-	private static final Command BACK_COMMAND = new Command(CMDID_BACK_TO_MAIN, Command.BACK, 0);
-	private Gauge	volumeGauge  = new Gauge("Volume:", true, 12, 8);
-	private Gauge	keyClickGauge  = new Gauge("Click: ", true, 12, 8);
-
-	private Display display = Display.getDisplay();
-	
-	SoundOptions()
-	{
-		super("Sound settings");
-		//append(new Spacer(Display.SCREEN_WIDTH, Display.CHAR_HEIGHT));
-		//append(new StringItem(null, "Vol:"));
-		append(volumeGauge);
-		append(new Spacer(Display.SCREEN_WIDTH, Display.CHAR_HEIGHT));
-		append(keyClickGauge);
-		append(new Spacer(Display.SCREEN_WIDTH, Display.CHAR_HEIGHT));
-		addCommand(BACK_COMMAND);
-		setCommandListener(this);	
-	}
-	
-	protected void keyPressed(int keyCode)
-	{
-		int oldVol = volumeGauge.getValue();
-		int oldClick = keyClickGauge.getValue();
-		super.keyPressed(keyCode);
-		int newVol = volumeGauge.getValue();
-		int newClick = keyClickGauge.getValue();
-		if (oldVol != newVol)
-		{
-			Sound.setVolume(newVol*10);
-			Sound.beep();
-		}
-		if (oldClick != newClick)
-			Sound.playTone(3500, 20, newClick*10);
-	}
-	public void commandAction(Command c, Displayable d) 
-	{
-		if (c.getCommandId() == CMDID_BACK_TO_MAIN)
-			display.quit();
-	}
-	public void show()
-	{
-		display.setCurrent(this);
-		display.show(true);
-	}
-}
- */
 
 
 public class StartUpText
@@ -137,6 +87,7 @@ public class StartUpText
 		String invisible = "invis";
 		String bluetooth = "Bluetooth";
 		String system = "System";
+        String sound = "Sound";
 		String freeFlash = "Free flash";
 		String freeMem = "Free ram";
 		String battery = "Battery ";
@@ -155,7 +106,8 @@ public class StartUpText
 		String[] soundMenuData = {"Volume:    ", "Key click: "};
 		String[] soundMenuData2 = new String[2];
 		TextMenu soundMenu = new TextMenu(soundMenuData, 2);
-		int [][] Volumes = {{Sound.getVolume()/10, 784, 350}, {4, 1568, 100}};
+		int [][] Volumes = {{Sound.getVolume()/10, 784, 250, 0}, {Button.getKeyClickVolume()/10, Button.getKeyClickTone(1), Button.getKeyClickLength(), 0}};
+        int enterTone = Button.getKeyClickTone(1);
 		int curItem = 0;
 		String[] systemMenuData = {"Format"};
 		String dot = ".";
@@ -185,7 +137,11 @@ public class StartUpText
 		catch (IOException ioe) {
 			File.reset();
 		}
-		Button.setKeyClick(Volumes[1][1], Volumes[1][2], Volumes[1][0]*10);
+        
+        // Make a note of starting volumes so we know if it changes        
+        for(int i = 0; i < Volumes.length; i++)
+            Volumes[i][3] = Volumes[i][0];
+
 		while (!quit) 
 		{ 
 		   LCD.clear();
@@ -231,6 +187,7 @@ public class StartUpText
                 LCD.drawInt((int)(Runtime.getRuntime().freeMemory()),11,4);				
 			} else if (menu == soundMenu)
 			{
+   				LCD.drawString(sound, 5, 1);
 				for(int i = 0; i < Volumes.length; i++)
 					soundMenuData2[i] = soundMenuData[i] + formatVol(Volumes[i][0]);
 				soundMenu.setItems(soundMenuData2);
@@ -245,7 +202,7 @@ public class StartUpText
 					 menu = soundMenu;
 					 // Turn of key click when in the sound menu so it does
 					 // not screw with the feedback sounds
-					 Button.setKeyClick(0, 0, 0);
+					 Button.setKeyClickTone(1, 0);
 				 } else if (selection == 3) {
 		    		 menu = systemMenu;
 		    	 } else if (selection == -1) {
@@ -418,8 +375,20 @@ public class StartUpText
 				}
 				else
 				{
-					// Make sure key click is back on...
-					Button.setKeyClick(Volumes[1][1], Volumes[1][2], Volumes[1][0]*10);
+					// Make sure key click is back on and has new volume
+					Button.setKeyClickVolume(Volumes[1][0]*10);
+                    Button.setKeyClickTone(1, enterTone);
+                    // Wait for any sound to complete, writing to flash distorts
+                    // any playing sound...
+                    Sound.pause(Sound.getTime()+250);
+                    // Save in settings
+                    if (Volumes[0][0] != Volumes[0][3])
+                        Settings.setProperty(Sound.VOL_SETTING, Integer.toString(Volumes[0][0]*10));
+                    if (Volumes[1][0] != Volumes[1][3])
+                        Settings.setProperty(Button.VOL_SETTING, Integer.toString(Volumes[1][0]*10));
+                    // Make a note of new volumes so we know if it changes        
+                    for(int i = 0; i < Volumes.length; i++)
+                        Volumes[i][3] = Volumes[i][0];
 					menu = topMenu;
 					curItem = 0;
 				}
@@ -492,7 +461,6 @@ class USBRespond extends Thread
 		while (true)
 		{		
 			len = USB.usbRead(inMsg,64);
-		
 			if (len > 0)
 			{
 				ind.ioActive();

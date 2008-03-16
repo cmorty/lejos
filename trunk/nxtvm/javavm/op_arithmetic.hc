@@ -7,21 +7,21 @@ case OP_ISUB:
   // Stack: -2 +1
   tempStackWord = pop_word();
   just_set_top_word (word2jint(get_top_word()) - word2jint(tempStackWord));
-  goto LABEL_ENGINELOOP;
+  goto LABEL_ENGINEFASTLOOP;
 
 case OP_IADD:
   // Arguments: 0
   // Stack: -2 +1
   tempStackWord = pop_word();
   just_set_top_word (word2jint(get_top_word()) + word2jint(tempStackWord));
-  goto LABEL_ENGINELOOP;
+  goto LABEL_ENGINEFASTLOOP;
 
 case OP_IMUL:
   // Arguments: 0
   // Stack: -2 +1
   tempStackWord = pop_word();
   just_set_top_word (word2jint(get_top_word()) * word2jint(tempStackWord));
-  goto LABEL_ENGINELOOP;
+  goto LABEL_ENGINEFASTLOOP;
 
 case OP_IDIV:
 case OP_IREM:
@@ -33,11 +33,11 @@ case OP_IREM:
   }
   just_set_top_word ((*(pc-1) == OP_IDIV) ? word2jint(get_top_word()) / tempInt :
                                             word2jint(get_top_word()) % tempInt);
-  goto LABEL_ENGINELOOP;
+  goto LABEL_ENGINEFASTLOOP;
 
 case OP_INEG:
   just_set_top_word (-word2jint(get_top_word()));
-  goto LABEL_ENGINELOOP;
+  goto LABEL_ENGINEFASTLOOP;
 
 #if FP_ARITHMETIC
 
@@ -45,31 +45,31 @@ case OP_FSUB:
   tempStackWord = pop_word();
   just_set_top_word (jfloat2word(word2jfloat(get_top_word()) - 
                      word2jfloat(tempStackWord)));
-  goto LABEL_ENGINELOOP;
+  goto LABEL_ENGINEFASTLOOP;
 
 case OP_FADD:
   tempStackWord = pop_word();
   just_set_top_word (jfloat2word(word2jfloat(get_top_word()) + 
                      word2jfloat(tempStackWord)));
-  goto LABEL_ENGINELOOP;
+  goto LABEL_ENGINEFASTLOOP;
 
 case OP_FMUL:
   tempStackWord = pop_word();
   just_set_top_word (jfloat2word(word2jfloat(get_top_word()) * 
                      word2jfloat(tempStackWord)));
-  goto LABEL_ENGINELOOP;
+  goto LABEL_ENGINEFASTLOOP;
 
 case OP_FDIV:
   // TBD: no division by zero?
   tempStackWord = pop_word();
   just_set_top_word (jfloat2word(word2jfloat(get_top_word()) / 
                      word2jfloat(tempStackWord)));
-  goto LABEL_ENGINELOOP;
+  goto LABEL_ENGINEFASTLOOP;
 
 case OP_FNEG:
 case OP_DNEG:
   just_set_top_word (jfloat2word(-word2jfloat(get_top_word())));
-  goto LABEL_ENGINELOOP;
+  goto LABEL_ENGINEFASTLOOP;
 
 case OP_DSUB:
   just_set_top_word (jfloat2word(-word2jfloat(get_top_word())));
@@ -79,14 +79,14 @@ case OP_DADD:
   pop_words(2);
   just_set_top_word (jfloat2word(word2jfloat(get_top_word()) +
                     word2jfloat(tempStackWord)));
-  goto LABEL_ENGINELOOP;
+  goto LABEL_ENGINEFASTLOOP;
 
 case OP_DMUL:
   tempStackWord = get_top_word();
   pop_words(2);
   just_set_top_word (jfloat2word(word2jfloat(get_top_word()) *
                     word2jfloat(tempStackWord)));
-  goto LABEL_ENGINELOOP;
+  goto LABEL_ENGINEFASTLOOP;
 
 case OP_DDIV:
   // TBD: no division by zero?
@@ -94,7 +94,7 @@ case OP_DDIV:
   pop_words(2);
   just_set_top_word (jfloat2word(word2jfloat(get_top_word()) /
                     word2jfloat(tempStackWord)));
-  goto LABEL_ENGINELOOP;
+  goto LABEL_ENGINEFASTLOOP;
 
 #endif // FP_ARITHMETIC
 
