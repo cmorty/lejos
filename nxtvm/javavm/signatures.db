@@ -24,6 +24,7 @@ notify()V
 notifyAll()V
 wait()V
 wait(J)V
+getDataAddress(Ljava/lang/Object;)I
 
 # java.lang.Thread
 start()V
@@ -41,9 +42,12 @@ join()V
 join(J)V
 
 # java.lang.System
-#arraycopy(Ljava/lang/Object;ILjava/lang/Object;II)V
 currentTimeMillis()J
 exit(I)V
+diagn(II)I
+arraycopy(Ljava/lang/Object;ILjava/lang/Object;II)V
+gc()V
+shutDown()V
 
 # java.lang.Runtime
 freeMemory()J
@@ -76,12 +80,16 @@ drawInt(IIII)V
 refresh()V
 clear()V
 setDisplay([I)V
+getDisplay()[B
+setAutoRefresh(I)V
+bitBlt([BIIII[BIIIIIII)V
+getSystemFont()[B
 
 #lejos.nxt.Battery
 getVoltageMilliVolt()I
 
 #lejos.nxt.Button
-readButtons()I
+getButtons()I
 
 #lejos.nxt.MotorPort
 getTachoCountById(I)I
@@ -95,7 +103,9 @@ i2cStartById(IIII[BII)I
 i2cDisableById(I)V
 
 #lejos.nxt.Sound
-playTone(III)V
+playFreq(III)V
+playSample(IIIII)V
+getTime()I
 
 #lejos.nxt.comm.Bluetooth
 btSend([BI)V
@@ -103,6 +113,11 @@ btReceive([B)V
 btGetBC4CmdMode()I
 btSetArmCmdMode(I)V
 btStartADConverter()V
+btSetResetLow()V
+btSetResetHigh()V
+btWrite([BII)I
+btRead([BII)I
+btPending()I
 
 #lejos.nxt.comm.USB
 usbRead([BI)I
@@ -114,42 +129,6 @@ writePage([BI)V
 readPage([BI)V
 exec(II)V
 
-#lejos.nxt.Sound
-playSample(IIIII)V
-
-#java.lang.Object
-getDataAddress(Ljava/lang/Object;)I
-
-#java.lang.System
-gc()V
-shutDown()V
-
-#lejos.nxt.comm.Bluetooth
-btSetResetLow()V
-btSetResetHigh()V
-btWrite([BII)I
-btRead([BII)I
-btPending()I
-
-#java.lang.System
-arraycopy(Ljava/lang/Object;ILjava/lang/Object;II)V
-
-#lejos.nxt.LCD
-getDisplay()[B
-setAutoRefresh(I)V
-bitBlt([BIIII[BIIIIIII)V
-
-#lejos.nxt.Sound
-setVolume(I)V
-getVolume()I
-getTime()I
-
-#lejos.nxt.Button
-setKeyClick(III)V
-
-#java.lang.System
-diagn(II)I
-
 #lejos.nxt.DebugInterface
 executeProgram(I)V
 setDebug()V
@@ -158,5 +137,3 @@ eventOptions(II)I
 suspendThread(Ljava/lang/Object;)V
 resumeThread(Ljava/lang/Object;)V
 
-#lejos.nxt.LCD
-getSystemFont()[B

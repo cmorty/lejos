@@ -17,6 +17,5 @@ int sound_get_volume();
 int sound_get_time();
 
 #define MAXVOL 100
-#define MASTERVOL 0xffff
 
 #endif /*SOUND_H_*/

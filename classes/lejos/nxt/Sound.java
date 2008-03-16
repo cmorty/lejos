@@ -2,6 +2,7 @@ package lejos.nxt;
 
 import java.io.*;
 
+
 /**
  * NXT sound routines.
  *
@@ -17,15 +18,27 @@ public class Sound
     private static final short RIFF_FMT_1CHAN = 0x0100;
     private static final short RIFF_FMT_8BITS = 0x0800;
     private static final int RIFF_DATA_SIG = 0x64617461;
-    public static final int VOL_USEMASTER = 0xffff;
+    
+    public static final int VOL_MAX = 100;
+    public static final String VOL_SETTING = "lejos.volume";
     // Instruments (yes I know they don't sound anything like the names!)
     public final static int[] PIANO = new int[]{4, 25, 500, 7000, 5};
     public final static int[] FLUTE = new int[]{10, 25, 2000, 1000, 25};
     public final static int[] XYLOPHONE = new int[]{1, 8, 3000, 5000, 5};
+    
+    private static int masterVolume = 0;
+    
+    /**
+     * Static contstructor to force loading of system settings
+     */
+    static {
+        loadSettings();
+    }
 
     private Sound()
     {
     }
+    
     /**
      * Play a system sound.
      * <TABLE BORDER=1>
@@ -125,6 +138,15 @@ public class Sound
      * @return milliseconds remaining
      */
     public static native int getTime();
+    
+    /**
+     * Plays a tone, given its frequency and duration. 
+     * @param aFrequency The frequency of the tone in Hertz (Hz).
+     * @param aDuration The duration of the tone, in milliseconds.
+     * @param aVolume The volume of the playback 100 corresponds to 100%
+     */
+    static native void playFreq(int aFrequency, int aDuration, int aVolume);
+
 
     /**
      * Plays a tone, given its frequency and duration. 
@@ -132,11 +154,19 @@ public class Sound
      * @param aDuration The duration of the tone, in milliseconds.
      * @param aVolume The volume of the playback 100 corresponds to 100%
      */
-    public static native void playTone(int aFrequency, int aDuration, int aVolume);
+    public static void playTone(int aFrequency, int aDuration, int aVolume)
+    {
+        if (aVolume >= 0)
+            aVolume = (aVolume*masterVolume)/100;
+        else
+            aVolume = -aVolume;
+        playFreq(aFrequency, aDuration, aVolume);
+    }
+    
 
     public static void playTone(int freq, int duration)
     {
-        playTone(freq, duration, VOL_USEMASTER);
+        playTone(freq, duration, masterVolume);
     }
 
     /**
@@ -147,7 +177,7 @@ public class Sound
      * @param freq the sampling frequency 
      * @param vol the volume 100 corresponds to 100%
      */
-    public static native void playSample(int page, int offset, int len, int freq, int vol);
+    static native void playSample(int page, int offset, int len, int freq, int vol);
 
     /**
      * Play a wav file
@@ -206,6 +236,10 @@ public class Sound
         {
             return -1;
         }
+        if (vol >= 0)
+            vol = (vol*masterVolume)/100;
+        else
+            vol = -vol;
         playSample(file.getPage(), RIFF_HDR_SIZE, dataLen, sampleRate, vol);
         return getTime();
     }
@@ -218,7 +252,7 @@ public class Sound
      */
     public static int playSample(File file)
     {
-        return playSample(file, VOL_USEMASTER);
+        return playSample(file, masterVolume);
     }
 
     static int waitUntil(int t)
@@ -310,13 +344,31 @@ public class Sound
 
     /**
      * Set the master volume level
-     * @param vol 
+     * @param vol 0-100
      */
-    public static native void setVolume(int vol);
+    public static void setVolume(int vol)
+    {
+        if (vol > VOL_MAX) vol = VOL_MAX;
+        if (vol < 0) vol = 0;
+        masterVolume = vol;
+    }
 
     /**
      * Get the current master volume level
-     * @return
+     * @return the current master volume 0-100
      */
-    public static native int getVolume();
+    public static int getVolume()
+    {
+        return masterVolume;
+    }
+    
+    /**
+     * Load the current system settings associated with this class. Called
+     * automatically to initialize the class. May be called if it is required
+     * to reload any settings.
+     */
+    public static void loadSettings()
+    {
+        masterVolume = SystemSettings.getIntSetting(VOL_SETTING, 80);
+    }
 }

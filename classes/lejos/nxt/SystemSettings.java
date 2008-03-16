@@ -18,7 +18,7 @@ public class SystemSettings {
 	// Add to this String array to define new persistent
 	// settings. There is a maximum of 16 including the version.
 	private static final String[] names = {
-		versionName, "lejos.volume", "lejos.default_program"
+		versionName, "lejos.volume", "lejos.default_program", "lejos.keyclick_volume"
 	};
 	
 	/**
@@ -99,7 +99,7 @@ public class SystemSettings {
 	 * @param defaultValue the default value
 	 * @return the value
 	 */
-	/*public static int getIntSetting(String key, int defaultValue) {
+	public static int getIntSetting(String key, int defaultValue) {
 		String s = getStringSetting(key, null);
 		if (s == null) {
 			return defaultValue;
@@ -110,7 +110,7 @@ public class SystemSettings {
 				return defaultValue;
 			}
 		}
-	}*/
+	}
 	
 	/**
 	 * Set a leJOS NXJ persistent setting. 

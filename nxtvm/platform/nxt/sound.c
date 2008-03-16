@@ -138,8 +138,6 @@ const U32 silence[16] = {
 const byte logvol[] = {0, 8, 24, 40, 56, 80, 104, 128, 162, 196, 255, 255};
 
 
-// Master volume value.
-int master_volume = 70;
 
 void sound_init()
 {
@@ -167,7 +165,6 @@ void sound_init()
   aic_set_vector(AT91C_PERIPHERAL_ID_SSC, AT91C_AIC_PRIOR_LOWEST | AT91C_AIC_SRCTYPE_INT_EDGE_TRIGGERED,
 		 (U32)sound_isr_entry); /*PG*/
   sample.buf_id = 0;
-  master_volume = 70;
   sample.cur_vol = -1;
 }
 
@@ -232,15 +229,6 @@ static void set_vol(int vol)
   int i;
   S32 output;
 
-  if (vol == MASTERVOL)
-    vol = master_volume;
-  else
-  {
-    if (vol < 0)
-      vol = -vol;
-    else
-      vol = (master_volume*vol)/100;
-  }
   // Get into range and use log conversion
   if (vol < 0) vol = 0;
   if (vol > MAXVOL) vol = MAXVOL;
@@ -387,18 +375,6 @@ void sound_play_sample(U8 *data, U32 length, U32 freq, int vol)
   // re-enable and wait for the current sample to complete
   sound_interrupt_enable(AT91C_SSC_TXBUFE);
   *AT91C_SSC_PTCR = AT91C_PDC_TXTEN;
-}
-
-void sound_set_volume(int vol)
-{
-  if (vol < 0) vol = 0;
-  if (vol > MAXVOL) vol = MAXVOL;
-  master_volume = vol;
-}
-
-int sound_get_volume()
-{
-  return master_volume;
 }
 
 int sound_get_time()

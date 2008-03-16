@@ -91,7 +91,7 @@ handle_uncaught_exception(Object * exception,
 			  const MethodRecord * methodRecord,
 			  const MethodRecord * rootMethod, byte * pc)
 {
-  sound_freq(100,500, MASTERVOL); // buzz
+  sound_freq(100,500, 80); // buzz
   display_clear(0);
   display_goto_xy(0, 0);
   display_string("Java Exception:");
