@@ -108,10 +108,12 @@ public class StartUpText
 		TextMenu filesMenu = new TextMenu(null,1);
 		String[] topMenuData = {"Run Default", "Files", "Bluetooth", "Sound", "System", "Unset Default"};
 		TextMenu topMenu = new TextMenu(topMenuData,1);
-		String[] fileMenuData = {"Execute program"}; 
+		String[] fileMenuData = {"Delete file"}; 
 		TextMenu fileMenu = new TextMenu(fileMenuData,2);
 		String[] programMenuData = {"Execute program", "Set as Default", "Delete file"}; 
 		TextMenu programMenu = new TextMenu(programMenuData,2);
+		String[] wavMenuData = {"Play sample", "Delete file"}; 
+		TextMenu wavMenu = new TextMenu(wavMenuData,2);
 		String[] fileNames = new String[File.MAX_FILES];
 		TextMenu menu = topMenu;
 		String[] blueMenuData = {"Power off", "Search", "Devices","Visibility"};
@@ -256,9 +258,12 @@ public class StartUpText
 //					LCD.refresh();
 			        TextMenu subMenu = fileMenu;
 			        if (ext.equals("nxj")) subMenu = programMenu;
+			        if (ext.equals("wav")) subMenu = wavMenu;
 					subMenu.setTitle(fileNames[selection]);
 			    	int subSelection = subMenu.select();
-                    if (subMenu == fileMenu || subSelection == 2)
+                    if ((subMenu == fileMenu && subSelection == 0) ||
+                         (subMenu == wavMenu && subSelection == 1) 
+                         || subSelection == 2)
 			    	{
 			    		files[selection].delete();
 						try {
@@ -271,10 +276,12 @@ public class StartUpText
 			    	} else if (subMenu == programMenu && subSelection == 0) 
 			    	{
 			    		files[selection].exec();
-			    	} else if (subSelection == 1)
+			    	} else if (subMenu == programMenu && subSelection == 1)
 			    	{
 			    		Settings.setProperty(defaultProgramProperty, getBaseName(fileName));
-			        } 
+			        } else if (subMenu == wavMenu && subSelection == 0) {
+			        	Sound.playSample(files[selection]);
+			        }
 			    } else if (selection == -1) {
 			    	menu = topMenu;
 			    }
