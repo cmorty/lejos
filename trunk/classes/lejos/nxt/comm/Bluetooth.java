@@ -1074,7 +1074,7 @@ public class Bluetooth
 		if (devList.size() > 0) {
 			for (int i = 0; i < devList.size(); i++) {
 				btd = (RemoteDevice) devList.elementAt(i);
-				if (btd.getFriendlyName().equals(fName)) {
+				if (btd.getFriendlyName(false).equals(fName)) {
 					return btd; 
 				}
 			}
@@ -1089,7 +1089,7 @@ public class Bluetooth
 	 */
 	public static boolean addDevice(RemoteDevice d) {
 		byte [] addr = d.getDeviceAddr();
-		String name = d.getFriendlyName();
+		String name = d.getFriendlyName(false);
 		byte[] cod = d.getDeviceClass();
 		//1 Debug.out("addDevice " + name + "\n");
 		synchronized (Bluetooth.sync)
@@ -1166,7 +1166,7 @@ public class Bluetooth
 					// Fill in the names	
 					for (int i = 0; i < retVec.size(); i++) {
 						RemoteDevice btrd = ((RemoteDevice) retVec.elementAt(i));
-						String s = btrd.getFriendlyName();
+						String s = btrd.getFriendlyName(false);
 						if (s.length() == 0) {
 							String nm = lookupName(btrd.getDeviceAddr());
 							btrd.setFriendlyName(nm.toCharArray(),nm.length());

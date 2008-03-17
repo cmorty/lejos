@@ -553,6 +553,10 @@ public class BTConnection implements StreamConnection
 	 * 
 	 * @return the output stream
 	 */
+	/*
+	 * DEVELOPER NOTES: Should this switch to stream mode
+	 * from packet mode automatically before returning os? - BB 
+	 */
 	public OutputStream openOutputStream() throws IOException {
 		return (os != null ? os : new BTOutputStream(this));
 	}
