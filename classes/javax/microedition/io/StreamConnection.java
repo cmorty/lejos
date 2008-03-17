@@ -1,5 +1,4 @@
 package javax.microedition.io;
-import java.io.*;
 
 /**
  * 
@@ -14,33 +13,6 @@ import java.io.*;
  * Trying to open the InputStream or OutputStream after they have been closed causes an IOException
  *
  */
-public interface StreamConnection {
+public interface StreamConnection extends InputConnection, OutputConnection {
 	
-	/**
-	 * Close the stream connection
-	 * 
-	 * @throws IOException
-	 */
-	public void close() throws IOException;
-
-	/**
-	 * Open and return an InputStream - not yet implemented.
-	 *
-	 */
-	public InputStream openInputStream() throws IOException;
-	
-	/**
-	 * Open and return a DataInputStream - not yet implemented.
-	 */
-	public DataInputStream openDataInputStream() throws IOException;
-	
-	/**
-	 * Open and return an OutputStream - not yet implemented.
-	 */
-	public OutputStream openOutputStream() throws IOException;
-	
-	/**
-	 * Open and return a DataOutputStream - not yet implemented.
-	 */
-	public DataOutputStream openDataOutputStream() throws IOException;
 }
