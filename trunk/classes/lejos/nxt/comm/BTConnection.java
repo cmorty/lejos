@@ -544,7 +544,7 @@ public class BTConnection implements StreamConnection
 	 * 
 	 * @return the input stream
 	 */
-	public InputStream openInputStream() throws IOException {
+	public InputStream openInputStream() {
 		return (is != null ? is : new BTInputStream(this));
 	}
 
@@ -557,7 +557,7 @@ public class BTConnection implements StreamConnection
 	 * DEVELOPER NOTES: Should this switch to stream mode
 	 * from packet mode automatically before returning os? - BB 
 	 */
-	public OutputStream openOutputStream() throws IOException {
+	public OutputStream openOutputStream() {
 		return (os != null ? os : new BTOutputStream(this));
 	}
 
@@ -566,7 +566,7 @@ public class BTConnection implements StreamConnection
 	 * 
 	 * @return the data input stream
 	 */
-	public DataInputStream openDataInputStream() throws IOException {
+	public DataInputStream openDataInputStream() {
 		return new DataInputStream(openInputStream());
 	}
 
@@ -575,7 +575,7 @@ public class BTConnection implements StreamConnection
 	 * 
 	 * @return the data output stream
 	 */
-	public DataOutputStream openDataOutputStream() throws IOException {
+	public DataOutputStream openDataOutputStream() {
 		return new DataOutputStream(openOutputStream());
 	}
 
