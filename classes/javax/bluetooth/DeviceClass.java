@@ -15,14 +15,20 @@ package javax.bluetooth;
  */
 public class DeviceClass {
 
+	private static final int SERVICE_MASK = 0xffe000;
+	private static final int MAJOR_MASK = 0x001f00;
+	private static final int MINOR_MASK = 0x0000fc;
+	
 	int major;
 	int minor;
 	int service;
 		
 	public DeviceClass(int record) {
-		// To Do: Extract three types of data from record.
+		major = record & MAJOR_MASK; 
+		minor = record & MINOR_MASK;
+		service = record & SERVICE_MASK;
 	}
-
+	
 	/**
 	 * Retrieves the major service classes. A device may have multiple major service classes. When this occurs, the major service classes are bitwise OR'ed together.
 	 * @return the major service classes

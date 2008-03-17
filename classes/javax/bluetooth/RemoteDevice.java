@@ -34,7 +34,14 @@ public class RemoteDevice {
 
 	}
 	
-	public String getFriendlyName() {
+	/**
+	 * 
+	 * @param alwaysAsk true causes the method to contact the remote device for the name. false and it will use the known name, if any. 
+	 * @return
+	 */
+	public String getFriendlyName(boolean alwaysAsk) {
+		// !! DEV NOTES: If field is blank or alwaysAsk is true, refresh from remote device.
+		// !! Will throw IOException in future.
 		return new String(this.friendlyNameCAr, 0 ,this.friendlyNameLen);
 	}
 	
@@ -51,7 +58,7 @@ public class RemoteDevice {
 		for(int i=0;i<4;i++) deviceClass[i] = devclass[i];
 	}
 	
-	public String getAddressString() {
+	public String getBluetoothAddress() {
 		char[] caddr = new char[12];
 		
 		int ci = 0;
