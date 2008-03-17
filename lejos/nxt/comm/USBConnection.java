@@ -22,19 +22,19 @@ public class USBConnection implements StreamConnection {
 		open = false;
 	}
 
-	public DataInputStream openDataInputStream() throws IOException {
+	public DataInputStream openDataInputStream() {
 		return new DataInputStream(is);
 	}
 
-	public DataOutputStream openDataOutputStream() throws IOException {
+	public DataOutputStream openDataOutputStream() {
 		return new DataOutputStream(os);
 	}
 
-	public InputStream openInputStream() throws IOException {
+	public InputStream openInputStream() {
 		return is;
 	}
 
-	public OutputStream openOutputStream() throws IOException {
+	public OutputStream openOutputStream() {
 		return os;
 	}
 
