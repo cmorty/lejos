@@ -189,8 +189,10 @@ public class Bluetooth
 	 */
 	public static native void btReceive(byte[] buf);
 
-	
-	public Bluetooth()
+	/**
+	 * Prevent users from instantiating this (all static members).
+	 */
+	private Bluetooth()
 	{
 	}
 	
