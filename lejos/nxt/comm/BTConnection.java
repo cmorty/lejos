@@ -59,14 +59,27 @@ public class BTConnection implements StreamConnection
 	OutputStream os;
 	static int inBufSz = BTC_BUFSZ;
 	static int outBufSz = BTC_BUFSZ;
+	String bt_address; // POSSIBLY DELETE
 
-
+	/*
+	 * UNSURE IF THIS IS NEEDED
+	 */
+	public BTConnection(int chan, String address)
+	{
+		this(chan);
+		this.bt_address = address;
+	}
+	
 	public BTConnection(int chan)
 	{
 		state = CS_IDLE;
 		chanNo = chan;
 		is = null;
 		os = null;
+	}
+	
+	public String getAddress() {
+		return bt_address;
 	}
 	
 	synchronized void reset()

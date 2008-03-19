@@ -3,20 +3,15 @@ package javax.bluetooth;
 import lejos.nxt.comm.Bluetooth;
 
 /**
- * Currently unimplemented. Singleton class.
+ * Singleton class representing a local NXT Bluetooth device.
+ * Most methods are standard, except you can also set the friendly
+ * name with this class. 
  * @author BB
  *
  */
 public class LocalDevice {
 	
 	private static LocalDevice localDevice;
-	
-	/**
-	 * DEVELOPER NOTES:
-	 * The values in cs are redundant from RemoteDevice. 
-	 * Might save some memory by recycling it.
-	 */
-	private static final char[] cs = {'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
 		
 	private LocalDevice() {}
 
@@ -32,12 +27,43 @@ public class LocalDevice {
 	}
 	
 	public String getFriendlyName() {
-		char [] nameChars = ConvertBytesToChars(Bluetooth.getFriendlyName());
+		char [] nameChars = convertBytesToChars(Bluetooth.getFriendlyName());
 		String fName = new String(nameChars);  
 		return fName.substring(0, fName.indexOf(0)); // Clip off extra chars
 	}
 	
-	private char [] ConvertBytesToChars(byte [] byteArray) {
+	/**
+	 * Changes the friendly name of the NXT brick.
+	 * NOTE: This method is not part of the standard JSR 82 API
+	 * because not all Bluetooth devices can change their friendly name.
+	 * @return true = success, false = failed
+	 */
+	public boolean setFriendlyName(String name) {
+		byte[] nameBytes = convertCharsToBytes(name.toCharArray(), 16);
+		return Bluetooth.setFriendlyName(nameBytes);
+	}
+	
+	/*
+	 * !! DEV NOTES: If we get javax.bluetooth and lejos.nxt.comm classes
+	 * working with the same data types more consistently can probably
+	 * get rid of some of these convert helper methods.
+	 * e.g. Bluetooth.setFriendlyName accepts char[] and casts when
+	 * it sends the data.
+	 */
+	protected byte[] convertCharsToBytes(char [] charArray, int length) {
+		byte [] byteArray = new byte[length];
+		for(byte i=0;i<charArray.length;i++)
+			byteArray[i] = (byte)charArray[i];
+		return byteArray;
+	}
+	
+	/*
+	 * !! DEV NOTES: If we get javax.bluetooth and lejos.nxt.comm classes
+	 * working with the same data types more consistently can probably
+	 * get rid of some of these convert helper methods.
+	 * e.g. Bluetooth.getFriendlyName returns char[] or String instead.
+	 */
+	protected char [] convertBytesToChars(byte [] byteArray) {
 		char [] charArray = new char[byteArray.length];
 		for(byte i=0;i<charArray.length;i++)
 			charArray[i] = (char)byteArray[i];
@@ -108,7 +134,7 @@ public class LocalDevice {
 		 * DEVELOPER NOTES:
 		 * Most of the code in this method is redundant from 
 		 * RemoteDevice.getBluetoothAddress(). Might be able to 
-		 * save memory by reusing code. 
+		 * save memory by using protected method in RemoteDevice. 
 		 */
 		char[] caddr = new char[12];
 		
@@ -120,8 +146,8 @@ public class LocalDevice {
 		for(int i=0; i<6; i++) {
 			addri = (int)addr[i];
 			nr = (addri>=0) ? addri : (256 + addri);	
-			caddr[ci++] = cs[nr / 16];
-			caddr[ci++] = cs[nr % 16];
+			caddr[ci++] = RemoteDevice.cs[nr / 16];
+			caddr[ci++] = RemoteDevice.cs[nr % 16];
 		}
 		return new String(caddr);
 	}
