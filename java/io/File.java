@@ -448,6 +448,8 @@ public class File {
 	 *
 	 */
 	public static void dumpFileTable() {
+		if(files == null) listFiles(); // Fill list
+		
 		Debug.out("byte_pointer = " + byte_pointer + "\n");
 		Debug.out("page_pointer = " + page_pointer + "\n");
 		Debug.out("FILE_TABLE_PAGES = " + FILE_TABLE_PAGES + "\n");
