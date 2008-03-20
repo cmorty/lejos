@@ -303,7 +303,7 @@ public class StartUpText
 		    			String[] names = new String[devList.size()];
 		    			for (int i = 0; i < devList.size(); i++) {
 		    				RemoteDevice btrd = ((RemoteDevice) devList.elementAt(i));
-		    				names[i] = btrd.getFriendlyName();
+		    				names[i] = btrd.getFriendlyName(true);
 		    			}
 		    				
 		    			TextMenu deviceMenu = new TextMenu(names,1);
@@ -321,7 +321,7 @@ public class StartUpText
 		    					LCD.clear();
 		    					LCD.drawString(devices,5,0);
 		    					LCD.drawString(names[selected],0,1);
-		    					LCD.drawString(btrd.getAddressString(), 0, 2);
+		    					LCD.drawString(btrd.getBluetoothAddress(), 0, 2);
 		    					for(int i=0;i<4;i++) LCD.drawInt(btrd.getDeviceClass()[i], 3, i*4, 3);
 		    					int subSelection = subMenu.select();
 		    					if (subSelection == 0) {
@@ -351,7 +351,7 @@ public class StartUpText
 		    			String[] names = new String[devList.size()];
 		    			for (int i = 0; i < devList.size(); i++) {
 		    				RemoteDevice btrd = ((RemoteDevice) devList.elementAt(i));
-		    				names[i] = btrd.getFriendlyName();
+		    				names[i] = btrd.getFriendlyName(true);
 		    			}
 		    				
 		    			TextMenu searchMenu = new TextMenu(names,1);
@@ -369,7 +369,7 @@ public class StartUpText
 		    					LCD.clear();
 		    					LCD.drawString(found,6,0);
 		    					LCD.drawString(names[selected],0,1);
-		    					LCD.drawString(btrd.getAddressString(), 0, 2);
+		    					LCD.drawString(btrd.getBluetoothAddress(), 0, 2);
 		    					int subSelection = subMenu.select();
 		    					if (subSelection == 0) Bluetooth.addDevice(btrd);
 		    				}
