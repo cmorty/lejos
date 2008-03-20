@@ -468,6 +468,7 @@ public class File {
 				Debug.out((char)buff[k] + " | ");
 			}
 		}
+		Debug.out("Please copy and paste this into an email to bbagnall@mts.net");
 	}
 	
 	/**
