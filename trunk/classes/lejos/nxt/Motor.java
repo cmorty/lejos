@@ -1,6 +1,6 @@
 package lejos.nxt;
 import lejos.nxt.Battery;
-
+import lejos.nxt.comm.*;
 /**
  * Abstraction for a NXT motor. Three instances of <code>Motor</code>
  * are available: <code>Motor.A</code>, <code>Motor.B</code>
@@ -43,10 +43,7 @@ public class Motor extends BasicMotor// implements TimerListener
     * default speed
     */
    private int _speed = 360;
-   /**
-    * initial speed; set by setSpeed()  used by rotateTo
-    */
-   private int _speed0 = 360;
+ 
    private boolean _keepGoing = true;// for regulator
    /**
     * Initially true; changed only by regulateSpeed(),<br>
@@ -55,8 +52,11 @@ public class Motor extends BasicMotor// implements TimerListener
    private boolean _regulate = true;
 
    public Regulator regulator = new Regulator();
-   // used for control of angle of rotation
-   private int _direction = 1; // +1 is forward ; used by rotate();
+
+   /**
+    * sign of the rotation direction. set by forward(), backward()
+    */
+   private byte  _direction = 1;
    /*
     * angle at which rotation ends.  Set by rotateTo(), used by regulator
     */
@@ -71,9 +71,13 @@ public class Motor extends BasicMotor// implements TimerListener
    private boolean _rotating = false;
  
    /**  
-    * set by smoothAcceleratio.  Only has effect if _regulate is true
+    * set by smoothAcceleration, forward(),backward(), setSpeed().  Only has effect if _regulate is true
     */
    public boolean _rampUp = true; 
+   /** initialized true (ramping enabled); changed only by smoothAcceleration
+    * used by forward(),backward(), setSpeed() a value of _rampUp only if motor mode changes. 
+    */
+   private boolean _useRamp = true;
    /**
     * used by timedOut to calculate actual speed;
     */
@@ -83,10 +87,7 @@ public class Motor extends BasicMotor// implements TimerListener
     */
    private int _actualSpeed;
    private float _voltage = 0f;
-   /** initialized to be false(ramping enabled); changed only by smoothAcceleration
-    * used by upddateState(), rotateTo()
-    */
-   private boolean _noRamp = false;
+   
    private boolean _lock = false;
    
    private int _brakePower = 20;
@@ -115,7 +116,7 @@ public class Motor extends BasicMotor// implements TimerListener
       port.setPWMMode(TachoMotorPort.PWM_BRAKE);
       regulator.setDaemon(true);
       regulator.start();
-      _voltage = Battery.getVoltage(); 
+      _voltage = Battery.getVoltage();       
    }
 
    public int getStopAngle() { return (int)_stopAngle;}
@@ -125,7 +126,10 @@ public class Motor extends BasicMotor// implements TimerListener
     */
    public void forward()
    { 
+      if(_mode == FORWARD)_rampUp = false;
+      else _rampUp = _useRamp;
       if(_mode == BACKWARD)stop();
+      _direction = 1;
       updateState( FORWARD);
    }  
 
@@ -134,8 +138,11 @@ public class Motor extends BasicMotor// implements TimerListener
     */
    public void backward()
    {
+      if(_mode == BACKWARD )_rampUp = false;
+      else _rampUp = _useRamp;
       if(_mode == FORWARD)stop();
       updateState( BACKWARD);
+      _direction = -1;
    }
 
    /**
@@ -184,16 +191,9 @@ public class Motor extends BasicMotor// implements TimerListener
       _lock = true;
    }
 
-   void updateDirection( int mode)
-   {
-      if( mode == FORWARD)
-         _direction = 1;
-      else if( mode == BACKWARD)
-         _direction = -1;
-   }
 
    /** 
-    *calls controlMotor, startRegating;  updates _direction, _rotating, _wasRotating
+    *calls controlMotor(), regulator.reset().  resets _rotating, _lock; updates _mode
     *called by forwsrd(), backward(),stop(),flt();
     */
    void updateState( int mode)
@@ -201,13 +201,13 @@ public class Motor extends BasicMotor// implements TimerListener
       synchronized(regulator)
       {
          _rotating = false; //regulator should stop testing for rotation limit  ASAP
+         _lock = false;
          if( _mode == mode)
             return;
          _mode = mode;
          if(_mode == STOP || _mode == FLOAT)
          {
             _port.controlMotor(0, _mode);
-
             if(_regulate)
             {
                // give it some time to stop, it may depend on power used however, for now 20 ms is working
@@ -217,13 +217,7 @@ public class Motor extends BasicMotor// implements TimerListener
             return;
          }
          _port.controlMotor(_power, _mode);
-         updateDirection( _mode);
-
-         if(_regulate)
-         {
-            regulator.reset();
-            _rampUp = !_noRamp;
-         }
+         if(_regulate)regulator.reset();
       }
    }
 
@@ -285,18 +279,14 @@ public class Motor extends BasicMotor// implements TimerListener
       {
          _lock = false;
          _stopAngle = limitAngle;
-         if(limitAngle > getTachoCount()) _mode = FORWARD;
-         else _mode = BACKWARD;
-         _port.controlMotor(_power, _mode);
-         updateDirection(_mode);
-         if(_regulate) regulator.reset();
+         if(limitAngle > getTachoCount()) forward();
+         else backward();
          int os = overshoot(limitAngle - getTachoCount()); 
          _stopAngle -= _direction * os;//overshoot(limitAngle - getTachoCount());  
          _limitAngle = limitAngle;
-         _rotating = true; // rotating to a limit
-         _rampUp = !_noRamp;// && Math.abs(_stopAngle-getTachoCount())>40 && _speed>200;  //no ramp for small angles
-         if(immediateReturn)return;
+         _rotating = true;
       }
+      if(immediateReturn)return;
       while(_rotating) Thread.yield();
    }
 
@@ -402,7 +392,6 @@ public class Motor extends BasicMotor// implements TimerListener
                   float extrap = 4f;
                   power = basePower + gain*(error + extrap*(error - e0));
                   e0 = error;                 
-//                  power = basePower + 15f * error;// - 5f * e0;// 10 magic number from experiment - simple proportional control
                   if(power < 0) power = 0;
                   if(power > 100) power = 100;
                   float smooth = 0.012f;// another magic number from experiment
@@ -411,7 +400,6 @@ public class Motor extends BasicMotor// implements TimerListener
                }// end speed regulation 
             }// end synchronized block
          try {sleep(1);} catch(InterruptedException ie ) {}
-//         Thread.yield();
          }	// end keep going loop
       }// end run
       /**
@@ -451,14 +439,12 @@ public class Motor extends BasicMotor// implements TimerListener
             {
                _mode = BACKWARD;
                setPower(pwr);
-//               _port.controlMotor(pwr,_mode);  
                k = 0;
             }
             else if (error > 1 )
             {
                _mode = FORWARD ;
                setPower(pwr);
-//               _port.controlMotor(pwr,_mode); 
                k = 0;
             }
             else 
@@ -483,8 +469,8 @@ public class Motor extends BasicMotor// implements TimerListener
          int a = 0;
          while(turning)
          {
-            _port.controlMotor(0,STOP); // looks redundant, but controlMotor(0,3) fails, rarely.
-            try{Thread.sleep(10);}//
+            _port.controlMotor(0,STOP);
+            try{Thread.sleep(10);}
             catch(InterruptedException w){}
             a = getTachoCount();
             turning = a != a0; ;
@@ -511,7 +497,7 @@ public class Motor extends BasicMotor// implements TimerListener
    public void regulateSpeed(boolean yes) 
    {
       _regulate = yes;
-//    _wasRegulating = yes;
+      if(yes)regulator.reset();
    }
 
    /**
@@ -521,21 +507,21 @@ public class Motor extends BasicMotor// implements TimerListener
     */
    public void smoothAcceleration(boolean yes) 
    {
-      _noRamp = ! yes;
+      _rampUp = yes;
+      _useRamp =  yes;
    }
 
    /**
-    * Sets motor speed , in degrees per second; Up to 900 is posssible with 8 volts.
+    * Sets motor speed , in degrees per second; Up to 900 is possible with 8 volts.
     * @param speed value in degrees/sec  
     */
    public void setSpeed (int speed)
    {
-      _rampUp = !_noRamp;
-      if(speed < _speed - 100) _rampUp = false;
+      if(speed > _speed + 300 && isMoving()) _rampUp = _useRamp;
+      else _rampUp = false;
       _speed = speed;
       if(speed<0)_speed = - speed;
       setPower((int)regulator.calcPower(_speed));
-      _speed0 = _speed;
       regulator.reset();
    }
 
