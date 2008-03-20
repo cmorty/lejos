@@ -3,6 +3,7 @@ import java.io.IOException;
 import lejos.nxt.*;
 import lejos.nxt.comm.*;
 import java.io.*;
+import javax.bluetooth.*;
 
 /**
  * 
@@ -33,7 +34,7 @@ public class BTConnectTest {
 		LCD.drawString("Connecting...", 0, 0);
 		LCD.refresh();
 		
-		BTRemoteDevice btrd = Bluetooth.getKnownDevice(name);
+		RemoteDevice btrd = Bluetooth.getKnownDevice(name);
 
 		if (btrd == null) {
 			LCD.clear();
