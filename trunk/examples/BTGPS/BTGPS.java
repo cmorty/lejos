@@ -3,7 +3,8 @@ import lejos.nxt.comm.*;
 
 import java.util.*;
 import java.io.*;
-import javax.bluetooth.devices.*;
+import javax.bluetooth.*;
+import lejos.devices.*;
 
 /**
  * This sample allows you to connect to a Bluetooth GPS and
@@ -37,8 +38,8 @@ public class BTGPS {
 		if (devList.size() > 0) {
 			String[] names = new String[devList.size()];
 			for (int i = 0; i < devList.size(); i++) {
-				BTRemoteDevice btrd = ((BTRemoteDevice) devList.elementAt(i));
-				names[i] = btrd.getFriendlyName();
+				RemoteDevice btrd = ((RemoteDevice) devList.elementAt(i));
+				names[i] = btrd.getFriendlyName(true);
 			}
 				
 			TextMenu searchMenu = new TextMenu(names,1);
@@ -52,11 +53,11 @@ public class BTGPS {
 				LCD.refresh();
 				selected = searchMenu.select();
 				if (selected >=0) {
-					BTRemoteDevice btrd = ((BTRemoteDevice) devList.elementAt(selected));
+					RemoteDevice btrd = ((RemoteDevice) devList.elementAt(selected));
 					LCD.clear();
 					LCD.drawString(found,6,0);
 					LCD.drawString(names[selected],0,1);
-					LCD.drawString(btrd.getAddressString(), 0, 2);
+					LCD.drawString(btrd.getBluetoothAddress(), 0, 2);
 					int subSelection = subMenu.select();
 					if (subSelection == 0) Bluetooth.addDevice(btrd);
 					
