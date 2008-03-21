@@ -73,6 +73,14 @@ public final class System
 	 System.err = err;
  }
  
+ /**
+  * Get the number of times a Java program (including the menu)
+  * has executed since the brick was swiched on
+  * 
+  * @return the count
+  */
+ public static native int getProgramExecutionsCount();
+ 
 }
 
 
