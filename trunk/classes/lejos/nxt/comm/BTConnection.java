@@ -59,17 +59,8 @@ public class BTConnection implements StreamConnection
 	OutputStream os;
 	static int inBufSz = BTC_BUFSZ;
 	static int outBufSz = BTC_BUFSZ;
-	String bt_address; // POSSIBLY DELETE
+	String bt_address;
 
-	/*
-	 * UNSURE IF THIS IS NEEDED
-	 */
-	public BTConnection(int chan, String address)
-	{
-		this(chan);
-		this.bt_address = address;
-	}
-	
 	public BTConnection(int chan)
 	{
 		state = CS_IDLE;
@@ -91,6 +82,12 @@ public class BTConnection implements StreamConnection
 		notifyAll();
 	}
 
+	// !!TEMPORARY!! Until testing done, then only this signature.
+	synchronized void bind(byte handle, byte [] address) {
+		this.bt_address = Bluetooth.addressToString(address);
+		this.bind(handle);
+	}
+	
 	/**
 	 * Bind the low level I/O handle to a connection object
 	 * set things up ready to go.
