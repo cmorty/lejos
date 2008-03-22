@@ -3,6 +3,7 @@ package javax.bluetooth;
 import java.io.IOException;
 import javax.microedition.io.Connection;
 import lejos.nxt.comm.Bluetooth;
+import lejos.nxt.comm.BTConnection;
 
 /**
  * Represents a remote Bluetooth device.
@@ -20,7 +21,6 @@ public class RemoteDevice {
 	private char[] friendlyNameCAr = new char[16];
 	private int friendlyNameLen = 0;
 	private byte[] deviceClass = new byte[4];
-	protected static final char[] cs = {'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
 	
 	/**
 	 * UNIMPLEMENTED
@@ -45,8 +45,9 @@ public class RemoteDevice {
 	 * Solution: Add address to BTConnection class?
 	 */
 	public static RemoteDevice getRemoteDevice(Connection conn) throws IOException {
-		// !! Throw a BluetoothStateException if doesn't work
-		return null;
+		// !! Throw a BluetoothStateException if doesn't work?
+		BTConnection btc = (BTConnection)conn;
+		return new RemoteDevice(btc.getAddress());
 	}
 	
 	public void setDeviceAddr(byte[] deviceAddr) {
@@ -101,20 +102,9 @@ public class RemoteDevice {
 	}
 	
 	public String getBluetoothAddress() {
-		char[] caddr = new char[12];
-		
-		int ci = 0;
-		int nr = 0;
-		int addri = 0;
-		
-		for(int i=0; i<6; i++) {
-			addri = (int)addr[i];
-			nr = (addri>=0) ? addri : (256 + addri);	
-			caddr[ci++] = cs[nr / 16];
-			caddr[ci++] = cs[nr % 16];
-		}
-		return new String(caddr);
+		return Bluetooth.addressToString(addr);
 	}
+	
 	
 	/**
 	 * Determines if two RemoteDevices are equal. If they both have the same BT address

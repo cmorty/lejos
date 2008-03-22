@@ -101,6 +101,8 @@ public class Bluetooth
 	private static final byte CN_NONE = -1;
 	private static final int CN_IDLE = 0x7ffffff;
 	
+	protected static final char[] cs = {'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
+	
 	static BTConnection [] Chans = new BTConnection[CHANCNT];
 	static byte [] cmdBuf = new byte[128];
 	static byte [] replyBuf = new byte[256];
@@ -862,7 +864,11 @@ public class Bluetooth
 			return ret;
 		}
 	}
-		
+	
+	/**
+	 * Uses the default PIN "1234"
+	 * @return
+	 */
 	public static BTConnection waitForConnection()
 	{
 		return waitForConnection(defaultPin);
@@ -897,6 +903,7 @@ public class Bluetooth
 	 * @return BTConnection Object or null
 	 */
 	public static BTConnection connect(byte[] device_addr, byte[] pin) {
+		
 		//1 Debug.out("Connect\n");
 		synchronized(Bluetooth.sync)
 		{
@@ -918,7 +925,7 @@ public class Bluetooth
 					if (reqState == RS_WAIT && handle >= 0 && handle < Chans.length)
 					{
 						// Got a connection
-						Chans[handle].bind(handle);
+						Chans[handle].bind(handle, device_addr);
 						// now have one more connected
 						connected++;
 						ret = Chans[handle];
@@ -931,6 +938,28 @@ public class Bluetooth
 		}
 	}
 
+	/**
+	 * Helper method to convert address byte array to String. Used
+	 * by LocalDevice, RemoteDevice, and BTConnection.
+	 * @param addr A byte array of 7 bytes containing the address. 
+	 * @return String representation of Bluetooth address.
+	 * @author BB
+	 */
+	public static String addressToString(byte [] addr) {
+		char[] caddr = new char[12];
+		
+		int ci = 0;
+		int nr = 0;
+		int addri = 0;
+		
+		for(int i=0; i<6; i++) {
+			addri = (int)addr[i];
+			nr = (addri>=0) ? addri : (256 + addri);	
+			caddr[ci++] = cs[nr / 16];
+			caddr[ci++] = cs[nr % 16];
+		}
+		return new String(caddr);
+	}
 	
 	/**
 	 * Get the Bluetooth signal strength (link quality)

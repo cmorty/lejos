@@ -130,25 +130,8 @@ public class LocalDevice {
 	 * @return
 	 */
 	public String getBluetoothAddress() {
-		/*
-		 * DEVELOPER NOTES:
-		 * Most of the code in this method is redundant from 
-		 * RemoteDevice.getBluetoothAddress(). Might be able to 
-		 * save memory by using protected method in RemoteDevice. 
-		 */
-		char[] caddr = new char[12];
-		
 		byte [] addr = Bluetooth.getLocalAddress();
-		int ci = 0;
-		int nr = 0;
-		int addri = 0;
-		
-		for(int i=0; i<6; i++) {
-			addri = (int)addr[i];
-			nr = (addri>=0) ? addri : (256 + addri);	
-			caddr[ci++] = RemoteDevice.cs[nr / 16];
-			caddr[ci++] = RemoteDevice.cs[nr % 16];
-		}
-		return new String(caddr);
+		// !! DEV NOTES: What if it doesn't return proper data?
+		return Bluetooth.addressToString(addr);
 	}
 }

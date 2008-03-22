@@ -9,6 +9,11 @@ package lejos.nxt;
  * @see www.mindsensors.com 
  * @author BB
  */
+/*
+ * DEV NOTES To Do:
+ * - Add listened interface?
+ * 
+ */
 public class PSPNXController extends I2CSensor {
 	/* Send command */
 	private static final byte MODE = 0x41;
