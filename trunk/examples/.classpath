@@ -43,8 +43,8 @@
 	<classpathentry kind="src" path="NXTCamTest"/>
 	<classpathentry kind="src" path="RemoteNXTTest"/>
 	<classpathentry kind="src" path="I2CDevices"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="/classes/lib/classes.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="/pccomms/lib/pccomm.jar"/>
 	<classpathentry kind="lib" path="/pccomms/3rdparty/lib/bluecove.jar"/>
 	<classpathentry kind="output" path=""/>
