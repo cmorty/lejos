@@ -3,6 +3,8 @@ import java.util.Vector;
 
 import lejos.nxt.comm.*;
 import lejos.nxt.*;
+import javax.bluetooth.*;
+
 /*
  * Bluetooth test code.
  * Tests developed alongside the new Bluetooth implementation. Included as an
@@ -188,7 +190,7 @@ public class bttest {
 		// of the widcomm com ports. Test can be run with by slow and fast data
 		// rates.
 		Debug.out("Single connect test delay " + delay + "\n");
-		BTRemoteDevice btrd = Bluetooth.getKnownDevice(name);
+		RemoteDevice btrd = Bluetooth.getKnownDevice(name);
 		if (btrd == null) {
 			Debug.out("No such device " + name + "\n");
 			return false;
@@ -245,7 +247,7 @@ public class bttest {
 		}
 		Debug.out("Connected\n");
 			
-		BTRemoteDevice btrd = Bluetooth.getKnownDevice(name);
+		RemoteDevice btrd = Bluetooth.getKnownDevice(name);
 		if (btrd == null) {
 			Debug.out("No such device " + name + "\n");
 			bt.close();
@@ -436,10 +438,10 @@ public class bttest {
 			return false;
 		}
 		for(int i = 0; i < curList.size(); i++)
-			Debug.out("Current device " + ((BTRemoteDevice)curList.elementAt(i)).getFriendlyName() + "\n");
+			Debug.out("Current device " + ((RemoteDevice)curList.elementAt(i)).getFriendlyName(false) + "\n");
 		Debug.out("Delete all\n");
 		for(int i = 0; i < curList.size(); i++)
-			Bluetooth.removeDevice((BTRemoteDevice)curList.elementAt(i));
+			Bluetooth.removeDevice((RemoteDevice)curList.elementAt(i));
 		Vector newList = Bluetooth.getKnownDevicesList();
 		if (newList == null)
 		{
@@ -447,7 +449,7 @@ public class bttest {
 			return false;
 		}
 		for(int i = 0; i < newList.size(); i++)
-			Debug.out("Current device " + ((BTRemoteDevice)newList.elementAt(i)).getFriendlyName() + "\n");
+			Debug.out("Current device " + ((RemoteDevice)newList.elementAt(i)).getFriendlyName(false) + "\n");
 
 		byte[] cod = {0,0,0,0}; // Any
 		Debug.out("Searching...\n");
@@ -460,16 +462,16 @@ public class bttest {
 		if (devList.size() > 0) {
 			String[] names = new String[devList.size()];
 			for (int i = 0; i < devList.size(); i++) {
-				BTRemoteDevice btrd = ((BTRemoteDevice) devList.elementAt(i));
-				names[i] = btrd.getFriendlyName();
+				RemoteDevice btrd = ((RemoteDevice) devList.elementAt(i));
+				names[i] = btrd.getFriendlyName(false);
 				Debug.out("Got device " + names[i] + "\n");
 			}
 		}
 		Debug.out("Add all\n");
 		for(int i = 0; i < devList.size(); i++)
-			if (!Bluetooth.addDevice((BTRemoteDevice)devList.elementAt(i)))
+			if (!Bluetooth.addDevice((RemoteDevice)devList.elementAt(i)))
 			{
-				Debug.out("Failed to add device " + ((BTRemoteDevice)devList.elementAt(i)).getFriendlyName() + "\n");
+				Debug.out("Failed to add device " + ((RemoteDevice)devList.elementAt(i)).getFriendlyName(false) + "\n");
 				return false;
 			}
 		newList = Bluetooth.getKnownDevicesList();
@@ -479,7 +481,7 @@ public class bttest {
 			return false;
 		}
 		for(int i = 0; i < newList.size(); i++)
-			Debug.out("Current device " + ((BTRemoteDevice)newList.elementAt(i)).getFriendlyName() + "\n");
+			Debug.out("Current device " + ((RemoteDevice)newList.elementAt(i)).getFriendlyName(false) + "\n");
 		byte[] name = Bluetooth.getFriendlyName();
 		byte[] saved = name;
 		char [] cName = new char[name.length];
