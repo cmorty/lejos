@@ -303,7 +303,7 @@ public class StartUpText
 		    			String[] names = new String[devList.size()];
 		    			for (int i = 0; i < devList.size(); i++) {
 		    				RemoteDevice btrd = ((RemoteDevice) devList.elementAt(i));
-		    				names[i] = btrd.getFriendlyName(true);
+		    				names[i] = btrd.getFriendlyName(false);
 		    			}
 		    				
 		    			TextMenu deviceMenu = new TextMenu(names,1);
@@ -351,7 +351,7 @@ public class StartUpText
 		    			String[] names = new String[devList.size()];
 		    			for (int i = 0; i < devList.size(); i++) {
 		    				RemoteDevice btrd = ((RemoteDevice) devList.elementAt(i));
-		    				names[i] = btrd.getFriendlyName(true);
+		    				names[i] = btrd.getFriendlyName(false);
 		    			}
 		    				
 		    			TextMenu searchMenu = new TextMenu(names,1);
