@@ -832,6 +832,12 @@ public class Bluetooth
 			if (listening)
 			{
 				//1 Debug.out("Got connect request\n");
+				
+				// !Kludge Alert! Extract address here:
+				byte [] addr = new byte[7];
+				for(byte i=0;i<addr.length;i++) addr[i] = replyBuf[i+2];
+				//Debug.out("waitForConnect() Address: " + Bluetooth.addressToString(addr) + "\n"); 
+				
 				// Restore state
 				reqState = savedState;
 				// and wait until we have control
@@ -848,7 +854,7 @@ public class Bluetooth
 						if (handle >= 0 && handle < Chans.length)
 						{
 							// Assert(Chans[handle].state == CS_IDLE);
-							Chans[handle].bind(handle);
+							Chans[handle].bind(handle, addr);
 							// now have one more connected
 							connected++;
 							ret = Chans[handle];
