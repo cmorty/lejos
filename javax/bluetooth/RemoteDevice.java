@@ -1,5 +1,6 @@
 package javax.bluetooth;
 
+import lejos.nxt.comm.Debug; // DELETE ME!!
 import java.io.IOException;
 import javax.microedition.io.Connection;
 import lejos.nxt.comm.Bluetooth;
@@ -23,14 +24,22 @@ public class RemoteDevice {
 	private byte[] deviceClass = new byte[4];
 	
 	/**
-	 * UNIMPLEMENTED
-	 * Standard method for obtaining a RemoteDevice
-	 * @param address
+	 * Note: The standard JSR 82 method for obtaining a RemoteDevice
+	 * uses a String rather than byte[]. Protected so shouldn't matter.
+	 * @param addr
 	 */
-	protected RemoteDevice(String address) {
+	protected RemoteDevice(byte [] addr) {
+		// Set Address:
+		this.addr = addr;
 		
+		// !! Set device class: Is this going to be used?
+		// (Not part of JSR 82)
+		
+		// Set Friendly name:
+		this.getFriendlyName(true); // Refresh name
 	}
 	
+	// !! DEV NOTES: Remove this eventually.
 	public RemoteDevice(char[] friendlyNameCharArray, int len, byte[] deviceAddr, byte [] devclass) {
 		setFriendlyName(friendlyNameCharArray, len);
 		setDeviceAddr(deviceAddr);
@@ -45,7 +54,6 @@ public class RemoteDevice {
 	 * Solution: Add address to BTConnection class?
 	 */
 	public static RemoteDevice getRemoteDevice(Connection conn) throws IOException {
-		// !! Throw a BluetoothStateException if doesn't work?
 		BTConnection btc = (BTConnection)conn;
 		return new RemoteDevice(btc.getAddress());
 	}
@@ -84,7 +92,7 @@ public class RemoteDevice {
 	}
 	
 	/*
-	 * !! DELETE THIS. UNUSED.
+	 * !! DELETE THIS. UNUSED. Then move to all String usage for name.
 	 * Get the FriendlyName of the BTRemoteDevice as Char-Array 
 	 * @params: 
 	 */
@@ -104,7 +112,6 @@ public class RemoteDevice {
 	public String getBluetoothAddress() {
 		return Bluetooth.addressToString(addr);
 	}
-	
 	
 	/**
 	 * Determines if two RemoteDevices are equal. If they both have the same BT address
