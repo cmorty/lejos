@@ -59,7 +59,7 @@ public class BTConnection implements StreamConnection
 	OutputStream os;
 	static int inBufSz = BTC_BUFSZ;
 	static int outBufSz = BTC_BUFSZ;
-	String bt_address;
+	byte [] bt_address;
 
 	public BTConnection(int chan)
 	{
@@ -69,7 +69,7 @@ public class BTConnection implements StreamConnection
 		os = null;
 	}
 	
-	public String getAddress() {
+	public byte [] getAddress() {
 		return bt_address;
 	}
 	
@@ -84,7 +84,7 @@ public class BTConnection implements StreamConnection
 
 	// !!TEMPORARY!! Until testing done, then only this signature.
 	synchronized void bind(byte handle, byte [] address) {
-		this.bt_address = Bluetooth.addressToString(address);
+		this.bt_address = address;
 		this.bind(handle);
 	}
 	
