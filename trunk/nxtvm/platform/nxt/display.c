@@ -30,12 +30,24 @@ static U8 (*display_buffer)[DISPLAY_WIDTH] = display_array.display;
 #define CELL_WIDTH (FONT_WIDTH + 1)
 #define DISPLAY_CHAR_WIDTH (DISPLAY_WIDTH/(CELL_WIDTH))
 #define DISPLAY_CHAR_DEPTH (DISPLAY_DEPTH)
-static struct
+static const struct
 {
   BigArray arrayHdr;
   U8 font[N_CHARS][FONT_WIDTH];
 } __attribute__((packed)) font_array =
-{{}, {
+{{{{
+    .arrays.length=BIGARRAYLEN,
+    .arrays.type = T_BYTE,
+    .arrays.mark = 1,
+    .arrays.isArray = 1,
+    .arrays.isAllocated = 1
+   },
+   0,
+   0
+  },
+  N_CHARS*FONT_WIDTH
+ },
+ {
 /* 0x00 */ {0x3E, 0x36, 0x2A, 0x36, 0x3E},
 /* 0x01 */ {0x3E, 0x55, 0x61, 0x55, 0x3E},
 /* 0x02 */ {0x3E, 0x6B, 0x5F, 0x6B, 0x3E},
@@ -165,7 +177,7 @@ static struct
 /* 0x7E */ {0x00, 0x07, 0x00, 0x07, 0x00},
 /* 0x7F */ {0x3E, 0x36, 0x2A, 0x36, 0x3E},
 }};
-static U8 (*font)[FONT_WIDTH] = font_array.font;
+static const U8 (*font)[FONT_WIDTH] = font_array.font;
 
 int display_update_time = 0;
 int display_auto_update = 1;
@@ -551,6 +563,7 @@ display_init(void)
   display_array.arrayHdr.hdr.monitorCount = 0;
   display_array.arrayHdr.hdr.threadId = 0;
   display_array.arrayHdr.length = DISPLAY_DEPTH*DISPLAY_WIDTH;
+/*
   // We use the same trick for the font characters
   font_array.arrayHdr.hdr.flags.arrays.isArray = 1;
   // NOTE This object must always be marked, otherwise very, very bad
@@ -562,6 +575,7 @@ display_init(void)
   font_array.arrayHdr.hdr.monitorCount = 0;
   font_array.arrayHdr.hdr.threadId = 0;
   font_array.arrayHdr.length = sizeof(font_array.font);
+*/
   display_clear(0);
   display_auto_update = 1;
   nxt_lcd_init((U8 *)display_buffer);
