@@ -73,35 +73,42 @@ JNIEXPORT void JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1close(JNIEnv *e
 }
 
 JNIEXPORT void JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1send_1data(JNIEnv *env, jobject obj, jlong nxt, jbyteArray data)  {
-  nxt_error_t nxt_err;
+  int write_len;
+  int written = 0;
 
   jsize len2 = (*env)->GetArrayLength(env, data);
   char *elements2 = (char *) (*env)->GetByteArrayElements(env, data, 0);  
 
-  nxt_err = nxt_send_buf((nxt_t *) (unsigned long) nxt, elements2, len2);
-  
-  if (nxt_err != NXT_OK) {
-    throwIOException(env,"Send failed");
+  while (written < len2)
+  {
+    write_len = nxt_write_buf((nxt_t *) (unsigned long) nxt, elements2+written, len2 - written);
+    if (write_len < 0) {
+      throwIOException(env,"Send failed");
+      break;
+    }
+    written += write_len;
   }
 
   (*env)->ReleaseByteArrayElements(env, data, (jbyte *) elements2, 0);
 }
 
 JNIEXPORT jbyteArray JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1read_1data(JNIEnv *env, jobject obj, jlong nxt, jint len)  {
-  nxt_error_t nxt_err;
+  int read_len;
   char *data;
   jbyteArray jb;
 
   data = (char *) calloc(1, len);
   
-  nxt_err = nxt_recv_buf((nxt_t *) (unsigned long) nxt, data, len); // read data
+  read_len = nxt_read_buf((nxt_t *) (unsigned long) nxt, data, len); // read data
   
-  if (nxt_err != NXT_OK) {
+  if (read_len < 0) {
     throwIOException(env,"Read failed");
+    free(data);
     return NULL;
   }
     
-  jb=(*env)->NewByteArray(env, len);
-  (*env)->SetByteArrayRegion(env, jb, 0, len, (jbyte *) data);
+  jb=(*env)->NewByteArray(env, read_len);
+  (*env)->SetByteArrayRegion(env, jb, 0, read_len, (jbyte *) data);
+  free(data);
   return (jb);    
 }

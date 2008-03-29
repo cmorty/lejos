@@ -72,6 +72,7 @@ nxt_error_t nxt_find(nxt_t *nxt)
             {
               nxt->dev = dev;
               nxt->is_in_reset_mode = 1;
+
               return NXT_OK;
             }
           else if (dev->descriptor.idVendor == VENDOR_LEGO &&
@@ -141,7 +142,7 @@ nxt_error_t
 nxt_open0(nxt_t *nxt)
 {
   int ret;
-
+  char buf[64];
   nxt->hdl = usb_open(nxt->dev);
 
   ret = usb_set_configuration(nxt->hdl, 1);
@@ -151,7 +152,6 @@ nxt_open0(nxt_t *nxt)
       usb_close(nxt->hdl);
       return NXT_CONFIGURATION_ERROR;
     }
-
   ret = usb_claim_interface(nxt->hdl, 0);
 
   if (ret < 0)
@@ -159,6 +159,14 @@ nxt_open0(nxt_t *nxt)
       usb_close(nxt->hdl);
       return NXT_IN_USE;
     }
+  // Discard any data that is left in the buffer
+  while (usb_bulk_read(nxt->hdl, 0x82, buf, sizeof(buf), 1) > 0)
+    ;
+
+  // Set the stream I/o feature
+  ret = usb_control_msg(nxt->hdl, 0x41, 0x3, 0, 0, NULL, 0, 1000);
+  if (ret < 0)
+    printf("failed to set feature\n");
 
   return NXT_OK;
 }
@@ -167,6 +175,14 @@ nxt_open0(nxt_t *nxt)
 nxt_error_t
 nxt_close0(nxt_t *nxt)
 {
+  char buf[64];
+  // Clear the stream I/o feature
+  int ret = usb_control_msg(nxt->hdl, 0x41, 0x1, 0, 0, NULL, 0, 1000);
+  if (ret < 0)
+    printf("failed to set feature\n");
+  // Discard any data that is left in the buffer
+  while (usb_bulk_read(nxt->hdl, 0x82, buf, sizeof(buf), 1) > 0)
+    ;
   usb_release_interface(nxt->hdl, 0);
   usb_close(nxt->hdl);
   free(nxt);
@@ -179,7 +195,6 @@ nxt_in_reset_mode(nxt_t *nxt)
 {
   return nxt->is_in_reset_mode;
 }
-
 // Timeout set to 10 seconds for lejos NXJ
 nxt_error_t
 nxt_send_buf(nxt_t *nxt, char *buf, int len)
@@ -209,3 +224,22 @@ nxt_recv_buf(nxt_t *nxt, char *buf, int len)
 
   return NXT_OK;
 }
+
+
+// Implement "blocking" write, and return amount actually written
+int
+nxt_write_buf(nxt_t *nxt, char *buf, int len)
+{
+  int ret = usb_bulk_write(nxt->hdl, 0x1, buf, len, 0x7ffffff);
+  return ret;
+}
+
+
+// Implement "blocking" read, and return amount actually read
+int
+nxt_read_buf(nxt_t *nxt, char *buf, int len)
+{
+  int ret = usb_bulk_read(nxt->hdl, 0x82, buf, len, 0x7fffffff);
+  return ret;
+}
+

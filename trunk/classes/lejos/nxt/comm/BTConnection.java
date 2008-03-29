@@ -25,7 +25,7 @@ import javax.microedition.io.*;
  * by issuing a read to discard the partial packet which may be in the input
  * buffer.
  */
-public class BTConnection implements StreamConnection
+public class BTConnection implements NXTConnection
 {
 	static final int CS_IDLE = 0;
 	static final int CS_DISCONNECTED = 1;
@@ -555,7 +555,7 @@ public class BTConnection implements StreamConnection
 	 * @return the input stream
 	 */
 	public InputStream openInputStream() {
-		return (is != null ? is : new BTInputStream(this));
+		return (is != null ? is : new NXTInputStream(this, BTC_BUFSZ));
 	}
 
 	/**
@@ -568,7 +568,7 @@ public class BTConnection implements StreamConnection
 	 * from packet mode automatically before returning os? - BB 
 	 */
 	public OutputStream openOutputStream() {
-		return (os != null ? os : new BTOutputStream(this));
+		return (os != null ? os : new NXTOutputStream(this, BTC_BUFSZ));
 	}
 
 	/**

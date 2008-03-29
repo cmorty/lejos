@@ -4,22 +4,13 @@
 #  include "mytypes.h"
 
 void udp_isr_C(void);
-void udp_check_interrupt(void);
 int udp_init(void);
-void udp_close(U32 u);
 void udp_disable(void);
+void udp_enable(int reset);
 void udp_reset(void);
-int udp_timed_out(void);
-void udp_reset_timeout(void);
-int udp_short_timed_out(void);
-void udp_short_reset_timeout(void);
-void udp_write(U8* buf, int len);
-void udp_enumerate(void);
-void udp_send_control(U8* p,int len, int send_null);
-void udp_send_null(void);
-void udp_send_stall(void);
-int udp_configured(void);
-int udp_read(U8* buf, int len);
+int udp_write(U8* buf, int off, int len);
+int udp_read(U8* buf, int off, int len);
+int udp_status();
 
 #define   USB_TIMEOUT   0x0BB8 
 #define END_OF_BUS_RESET ((unsigned int) 0x1 << 12)
@@ -49,4 +40,7 @@ int udp_read(U8* buf, int len);
 #define STD_GET_INTERFACE             0x0A81
 #define STD_SET_INTERFACE             0x0B01
 #define STD_SYNCH_FRAME               0x0C82
+
+#define VENDOR_SET_FEATURE_INTERFACE  0x0341
+#define VENDOR_CLEAR_FEATURE_INTERFACE  0x0141
 #endif

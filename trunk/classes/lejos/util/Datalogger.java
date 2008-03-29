@@ -78,7 +78,7 @@ public class Datalogger
           LCD.refresh();  
           if(useUSB)
           {
-             connection = new USBConnection();
+             connection = USB.waitForConnection();
           }
           else 
           {

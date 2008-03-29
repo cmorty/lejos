@@ -803,11 +803,11 @@ public class Bluetooth
 
 	/**
 	 * Wait for a remote device to connect.
-	 * 
-	 * @param pin the pin to use
+	 * @param timeout time in ms to wait for connection, 0 == wait for ever
+	 * @param pin the pin to use, null use current default
 	 * @return a BTConnection
 	 */
-	public static BTConnection waitForConnection(byte[] pin)
+	public static BTConnection waitForConnection(int timeout, byte[] pin)
 	{
 		//1 Debug.out("waitForConnection\n");
 		synchronized (Bluetooth.sync)
@@ -824,11 +824,20 @@ public class Bluetooth
 			}
 			// Now in listening mode
 			listening = true;
-			byte []savedPin = getPin();
-			setPin(pin);
+			byte []savedPin = null;
+            if (pin != null)
+            {
+                savedPin = getPin();
+                setPin(pin);
+            }
+            if (timeout == 0) timeout = 0x7fffffff;
 			// Wait for special connect indication
 			while (listening && reqState != RS_REQUESTCONNECT)
-				try{Bluetooth.sync.wait();}catch(Exception e){}
+            {
+				try{Bluetooth.sync.wait(timeout < 1000 ? timeout : 1000);}catch(Exception e){}
+                timeout -= 1000;
+                if (timeout <= 0) listening = false;
+            }
 			if (listening)
 			{
 				//1 Debug.out("Got connect request\n");
@@ -865,23 +874,23 @@ public class Bluetooth
 				cmdComplete();
 
 			}
-			setPin(savedPin);
+			if (savedPin != null) setPin(savedPin);
 			closePort();
 			return ret;
 		}
 	}
 	
 	/**
-	 * Uses the default PIN "1234"
+	 * Uses the current default PIN
 	 * @return
 	 */
 	public static BTConnection waitForConnection()
 	{
-		return waitForConnection(defaultPin);
+		return waitForConnection(0, null);
 	}
 	
 	/**
-	 * Connects to a remote device. Uses '1234' as default pin. 
+	 * Connects to a remote device. Uses the current default pin. 
 	 * 
 	 * @param remoteDevice remote device
 	 * @return BTConnection Object or null
@@ -892,13 +901,13 @@ public class Bluetooth
 	}
 	/**
 	 * Connects to a Device by it's Byte-Device-Address Array
-	 * Uses default pin "1234"
+	 * Uses the current default pin
 	 * 
 	 * @param device_addr byte-Array with device-Address
 	 * @return BTConnection Object or null
 	 */
 	public static BTConnection connect(byte[] device_addr) {
-		return connect(device_addr, defaultPin);
+		return connect(device_addr, null);
 	}
 	
 	/**
@@ -914,8 +923,12 @@ public class Bluetooth
 		synchronized(Bluetooth.sync)
 		{
 			BTConnection ret = null;
-			byte[] savedPin = getPin();
-			setPin(pin);
+			byte[] savedPin = null;
+            if (pin != null)
+            {
+                savedPin = getPin();
+                setPin(pin);
+            }
 			cmdStart();
 			cmdInit(MSG_CONNECT, 8, 0, 0);
 			System.arraycopy(device_addr, 0, cmdBuf, 2, 7);
@@ -939,7 +952,7 @@ public class Bluetooth
 				}
 			}
 			cmdComplete();
-			setPin(savedPin);
+			if (savedPin != null) setPin(savedPin);
 			return ret;
 		}
 	}

@@ -5,19 +5,19 @@ import java.io.*;
 /**
  * Implements an OutputStream over Bluetooth.
  *
- */public class BTOutputStream extends OutputStream {
-	private final int BUFFER_SIZE = 32;	
-	private byte[] buffer = new byte[BUFFER_SIZE];
+ */public class NXTOutputStream extends OutputStream {
+	private byte[] buffer;
 	private int numBytes = 0;
-	private BTConnection conn = null;
+	private NXTConnection conn = null;
 	
-	BTOutputStream(BTConnection conn)
+	NXTOutputStream(NXTConnection conn, int buffSize)
 	{
 		this.conn = conn;
+        buffer = new byte[buffSize];
 	}
 	
     public void write(int b) {
-    	if (numBytes == BUFFER_SIZE) {
+    	if (numBytes == buffer.length) {
     		flush();
     	}
     	buffer[numBytes] = (byte) b;
@@ -26,7 +26,7 @@ import java.io.*;
     
 	public void flush() {
 		if (numBytes > 0) {
-			conn.write(buffer, numBytes, true);
+			conn.write(buffer, numBytes);
 			numBytes = 0;
 		}
 	}

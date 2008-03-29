@@ -280,6 +280,7 @@ nxt_main(int bin, int size)
   init_sensors();
   nxt_motor_reset_all();
   bt_reset(); 
+  udp_disable();
   display_clear(1);
   display_set_auto_update(1);
   //       printf("Installing Binary\n");

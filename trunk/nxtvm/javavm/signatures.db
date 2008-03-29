@@ -120,8 +120,8 @@ btRead([BII)I
 btPending()I
 
 #lejos.nxt.comm.USB
-usbRead([BI)I
-usbWrite([BI)V
+usbRead([BII)I
+usbWrite([BII)I
 usbReset()V
 
 #lejos.nxt.Flash
@@ -140,4 +140,7 @@ resumeThread(Ljava/lang/Object;)V
 #System
 getProgramExecutionsCount()I
 
-
+#USB
+usbStatus()I
+usbEnable(I)V
+usbDisable()V

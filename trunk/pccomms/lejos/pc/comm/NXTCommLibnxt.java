@@ -42,7 +42,12 @@ public class NXTCommLibnxt implements NXTComm {
 	}
 	
 	public void close() throws IOException {
-		if (nxtInfo != null && nxtInfo.nxtPtr != 0) jlibnxt_close(nxtInfo.nxtPtr);
+		if (nxtInfo != null && nxtInfo.nxtPtr != 0) 
+        {
+            // Send eof marker 
+            try {jlibnxt_send_data(nxtInfo.nxtPtr, new byte[0]);} catch(Exception e){}
+            jlibnxt_close(nxtInfo.nxtPtr);
+        }
 	}
 	
 	public byte[] sendRequest(byte [] data, int replyLen) throws IOException {
@@ -53,7 +58,9 @@ public class NXTCommLibnxt implements NXTComm {
 	
 	public byte [] read() throws IOException
 	{
-		return jlibnxt_read_data(nxtInfo.nxtPtr, 1);
+		byte [] ret = jlibnxt_read_data(nxtInfo.nxtPtr, 64);
+        if (ret != null && ret.length == 0) return null;
+        return ret;
 	}
 	
 	public int available() throws IOException {
@@ -65,11 +72,11 @@ public class NXTCommLibnxt implements NXTComm {
 	}
 	
 	public OutputStream getOutputStream() {
-		return new NXTCommUSBOutputStream(this);		
+		return new NXTCommOutputStream(this);		
 	}
 	
 	public InputStream getInputStream() {
-		return new NXTCommUSBInputStream(this);		
+		return new NXTCommInputStream(this);		
 	}
 	
 	static {

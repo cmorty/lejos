@@ -77,8 +77,8 @@ public interface SpecialSignatureConstants {
     "btWrite([BII)I",
     "btRead([BII)I",
     "btPending()I",
-    "usbRead([BI)I",
-    "usbWrite([BI)V",
+    "usbRead([BII)I",
+    "usbWrite([BII)I",
     "usbReset()V",
     "writePage([BI)V",
     "readPage([BI)V",
@@ -89,6 +89,9 @@ public interface SpecialSignatureConstants {
     "eventOptions(II)I",
     "suspendThread(Ljava/lang/Object;)V",
     "resumeThread(Ljava/lang/Object;)V",
-    "getProgramExecutionsCount()I"
+    "getProgramExecutionsCount()I",
+    "usbStatus()I",
+    "usbEnable(I)V",
+    "usbDisable()V"
   };
 }

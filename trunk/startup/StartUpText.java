@@ -501,34 +501,51 @@ class USBRespond extends Thread
 	}
 	
 	public void run() {
-
 		byte[] inMsg = new byte[64];
 		byte [] reply = new byte[64];
+		boolean cmdMode = true;
+        USBConnection conn = null;
 		int len;
-		
-		USB.usbReset();
-		
+        
 		while (true)
-		{		
-			len = USB.usbRead(inMsg,64);
-			if (len > 0)
+		{
+            conn = USB.waitForConnection(0, USB.RAW);
+            if (conn == null) {
+                continue;
+            }
+            cmdMode = false;
+			while(!cmdMode)
 			{
-				ind.ioActive();
-				int replyLen = LCP.emulateCommand(inMsg,len, reply);
-				if ((inMsg[0] & 0x80) == 0) USB.usbWrite(reply, replyLen);
-				if (inMsg[1] == LCP.CLOSE|| inMsg[1] == LCP.DELETE) {
-					if (inMsg[1] == LCP.DELETE) {
-						try {
-							File.defrag();
-						} catch (IOException ioe) {
-							File.reset();
+				len = conn.read(inMsg,64);
+
+				if (len > 0)
+				{
+					ind.ioActive();
+					int replyLen = LCP.emulateCommand(inMsg,len, reply);
+					if ((inMsg[0] & 0x80) == 0) conn.write(reply, replyLen);
+					if (inMsg[1] == LCP.CLOSE|| inMsg[1] == LCP.DELETE) {
+						if (inMsg[1] == LCP.DELETE) {
+							try {
+								File.defrag();
+							} catch (IOException ioe) {
+								File.reset();
+							}
 						}
+						Sound.beepSequenceUp();
+						menu.quit();
 					}
-					Sound.beepSequenceUp();
-					menu.quit();
+					if (inMsg[1] == LCP.NXJ_DISCONNECT) { 
+						conn.close(); 
+						cmdMode = true;
+					}
 				}
+				else if (len < 0)
+				{
+					conn.close();
+					cmdMode = true;
+				}
+				Thread.yield();
 			}
-			Thread.yield();
 		}
 	}
 }
@@ -550,7 +567,7 @@ class BTRespond  extends Thread {
 		byte[] inMsg = new byte[64];
 		byte [] reply = new byte[64];
 		boolean cmdMode = true;
-		BTConnection btc = null;
+		BTConnection conn = null;
 		int len;
 		
 		while (true)
@@ -562,29 +579,21 @@ class BTRespond  extends Thread {
 					Thread.sleep(500);
 				} catch (InterruptedException e) {}				
 			}
-			if (cmdMode) {
-				btc = Bluetooth.waitForConnection();
-				if (btc == null) {
-					try {
-						Thread.sleep(2000);
-					} catch (InterruptedException e) {}
-					continue;
-				}
-				//LCD.clear();
-				//LCD.drawString(connected,0,0);
-				//LCD.refresh();			
-				cmdMode = false;
-			}
+            conn = Bluetooth.waitForConnection();
+            if (conn == null) {
+                continue;
+            }
+			cmdMode = false;
 
 			while(!cmdMode)
 			{
-				len = btc.read(inMsg,64);
+				len = conn.read(inMsg,64);
 
 				if (len > 0)
 				{
 					ind.ioActive();
 					int replyLen = LCP.emulateCommand(inMsg,len, reply);
-					if ((inMsg[0] & 0x80) == 0) btc.write(reply, replyLen);
+					if ((inMsg[0] & 0x80) == 0) conn.write(reply, replyLen);
 					if (inMsg[1] == LCP.CLOSE|| inMsg[1] == LCP.DELETE) {
 						if (inMsg[1] == LCP.DELETE) {
 							try {
@@ -597,13 +606,13 @@ class BTRespond  extends Thread {
 						menu.quit();
 					}
 					if (inMsg[1] == LCP.NXJ_DISCONNECT) { 
-						btc.close(); 
+						conn.close(); 
 						cmdMode = true;
 					}
 				}
 				else if (len < 0)
 				{
-					btc.close();
+					conn.close();
 					cmdMode = true;
 				}
 				Thread.yield();
