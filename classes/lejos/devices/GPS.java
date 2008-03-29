@@ -1,7 +1,7 @@
 package lejos.devices;
 
 import java.io.*;
-import lejos.nxt.comm.Debug;
+import lejos.nxt.comm.RConsole;
 
 /**
  * Class to pull data from a GPS receiver
@@ -10,7 +10,7 @@ import lejos.nxt.comm.Debug;
  */
 
 /* DEVELOPER NOTES:
- * In general this could be improved by parsing out the appropriate 
+ * In general this could be improved by parsing print the appropriate 
  * fields only at the time they are called, rather than parsing them
  * all at once as can be seen in the run() method. 
  * This would save some CPU cycles since it would work to extract
@@ -130,19 +130,19 @@ public class GPS extends Thread {
 			
 			// Check if sentence is valid:
 			if(s.indexOf('*') < 0) { 
-				Debug.out("Error no * caught!\n");
-				Debug.out("String: " + s + "\n");
+				RConsole.print("Error no * caught!\n");
+				RConsole.print("String: " + s + "\n");
 				continue;
 			}
 			if(s.indexOf('$') < 0) {
-				Debug.out("Error no $ caught!\n");
-				Debug.out("String: " + s + "\n");
+				RConsole.print("Error no $ caught!\n");
+				RConsole.print("String: " + s + "\n");
 				continue;
 			}
 			
 			// Make NMEASentence
 			NMEASentence sen = new NMEASentence(s);
-			Debug.out("String: " + s + "\n");
+			RConsole.print("String: " + s + "\n");
 			
 			// Check if valid (discard if it is invalid)
 			if(sen.isValid()) {
@@ -191,7 +191,7 @@ public class GPS extends Thread {
 		int endIndex = currentSentence.indexOf(START_CHAR, 1);
 		String sentence = currentSentence.substring(0, endIndex);
 		
-		// Crop out current sentence
+		// Crop print current sentence
 		currentSentence.delete(0, endIndex);
 		
 		return sentence;

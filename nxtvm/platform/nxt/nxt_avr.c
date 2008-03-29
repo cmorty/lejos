@@ -6,8 +6,7 @@
 
 #include "systick.h"
 #include <string.h>
-#include "sound.h"
-
+#include "display.h"
 
 
 
@@ -254,6 +253,7 @@ nxt_avr_1kHz_update(void)
 
 
   if (!twi_ok() || twi_busy() || !link_running) {
+    twi_init();
     memset(data_from_avr, 0, sizeof(data_from_avr));
     link_running = 1;
     nxt_avr_link_init();

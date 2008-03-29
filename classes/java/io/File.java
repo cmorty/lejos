@@ -1,6 +1,6 @@
 package java.io;
 
-import lejos.nxt.comm.Debug;
+import lejos.nxt.comm.RConsole;
 import lejos.nxt.Flash;
 
 /*
@@ -450,25 +450,25 @@ public class File {
 	public static void dumpFileTable() {
 		if(files == null) listFiles(); // Fill list
 		
-		Debug.out("byte_pointer = " + byte_pointer + "\n");
-		Debug.out("page_pointer = " + page_pointer + "\n");
-		Debug.out("FILE_TABLE_PAGES = " + FILE_TABLE_PAGES + "\n");
-		Debug.out("files.length = " + files.length + "\n");
-		Debug.out("totalFiles = " + totalFiles + "\n");
+		RConsole.print("byte_pointer = " + byte_pointer + "\n");
+		RConsole.print("page_pointer = " + page_pointer + "\n");
+		RConsole.print("FILE_TABLE_PAGES = " + FILE_TABLE_PAGES + "\n");
+		RConsole.print("files.length = " + files.length + "\n");
+		RConsole.print("totalFiles = " + totalFiles + "\n");
 	
 		for(int i=TABLE_START_PAGE;i<FILE_START_PAGE;i++) {
 			Flash.readPage(buff, i);
 			for(int j=0;j<Flash.BYTES_PER_PAGE;j++) {
-				if(j % 8 == 0) Debug.out("\n");
-				Debug.out(buff[j] + ", ");
+				if(j % 8 == 0) RConsole.print("\n");
+				RConsole.print(buff[j] + ", ");
 			}
 			
 			for(int k=0;k<Flash.BYTES_PER_PAGE;k++) {
-				if(k % 8 == 0)  Debug.out("\n");
-				Debug.out((char)buff[k] + " | ");
+				if(k % 8 == 0)  RConsole.print("\n");
+				RConsole.print((char)buff[k] + " | ");
 			}
 		}
-		Debug.out("Please copy and paste this into an email to bbagnall@mts.net");
+		RConsole.print("Please copy and paste this into an email to bbagnall@mts.net");
 	}
 	
 	/**

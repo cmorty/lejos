@@ -76,8 +76,8 @@
 #define btWrite_4_1BII_5I 69
 #define btRead_4_1BII_5I 70
 #define btPending_4_5I 71
-#define usbRead_4_1BI_5I 72
-#define usbWrite_4_1BI_5V 73
+#define usbRead_4_1BII_5I 72
+#define usbWrite_4_1BII_5I 73
 #define usbReset_4_5V 74
 #define writePage_4_1BI_5V 75
 #define readPage_4_1BI_5V 76
@@ -89,4 +89,7 @@
 #define suspendThread_4Ljava_3lang_3Object_2_5V 82
 #define resumeThread_4Ljava_3lang_3Object_2_5V 83
 #define getProgramExecutionsCount_4_5I 84
+#define usbStatus_4_5I 85
+#define usbEnable_4I_5V 86
+#define usbDisable_4_5V 87
 #endif // _SPECIALSIGNATURES_H

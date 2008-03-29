@@ -168,15 +168,18 @@ public class NXTCommBluez implements NXTComm {
 	}
 	
 	public void write(byte[] data) throws IOException {
-		rcSocketSend(sk, data);
+		byte[] lsb_msb = new byte[2];
+		lsb_msb[0] = (byte) data.length;
+		lsb_msb[1] = (byte) ((data.length >> 8) & 0xff);
+		rcSocketSend(sk, concat(lsb_msb, data));
 	}
 	
 	public OutputStream getOutputStream() {
-		return new NXTCommBTOutputStream(this);		
+		return new NXTCommOutputStream(this);		
 	}
 	
 	public InputStream getInputStream() {
-		return new NXTCommBTInputStream(this);		
+		return new NXTCommInputStream(this);		
 	}
 	
 	native private String[] search(String name) throws BlueZException;

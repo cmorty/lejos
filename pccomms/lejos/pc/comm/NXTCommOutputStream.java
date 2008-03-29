@@ -5,11 +5,11 @@ import java.io.*;
 /**
  * Implementation of OutputStream over NXTComm using Bluetooth.
  */
-public class NXTCommBTOutputStream extends OutputStream {
+public class NXTCommOutputStream extends OutputStream {
 	private ByteArrayOutputStream baos;
 	private NXTComm nxtComm;
 	
-	public NXTCommBTOutputStream(NXTComm nxtComm) {
+	public NXTCommOutputStream(NXTComm nxtComm) {
 		this.nxtComm = nxtComm;
 		baos = new ByteArrayOutputStream();
 	}
@@ -19,14 +19,8 @@ public class NXTCommBTOutputStream extends OutputStream {
 	}
 	
 	public void flush() throws IOException {
-		byte[] b = baos.toByteArray();
-		byte [] data = new byte[b.length+2];
-		data[0] = (byte) b.length;
-		data[1] = 0;
-		for(int i=0;i<b.length;i++) data[i+2] = b[i];
-		
+		byte[] b = baos.toByteArray();	
+		nxtComm.write(b);
 		baos.reset();
-		
-		nxtComm.write(data);
 	}
 }

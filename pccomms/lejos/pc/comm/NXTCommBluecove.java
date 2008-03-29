@@ -191,11 +191,12 @@ public class NXTCommBluecove implements NXTComm, DiscoveryListener {
 	}
 	
     public int available() throws IOException {
-    	if (is.available() > 2) return is.available() -2;
-    	else return 0;
+        return 0;
     }
 
 	public void write(byte[] data) throws IOException {
+        os.write((byte)(data.length & 0xff));
+        os.write((byte)((data.length >> 8) & 0xff));
 		os.write(data);
 		os.flush();
 	}
@@ -231,11 +232,11 @@ public class NXTCommBluecove implements NXTComm, DiscoveryListener {
 	}
 
 	public OutputStream getOutputStream() {
-		return new NXTCommBTOutputStream(this);
+		return new NXTCommOutputStream(this);
 	}
 
 	public InputStream getInputStream() {
-		return new NXTCommBTInputStream(this);
+		return new NXTCommInputStream(this);
 	}
 
 	public String stripColons(String s) {

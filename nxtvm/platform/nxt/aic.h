@@ -18,6 +18,7 @@ void aic_mask_off(U32 vector);
 void aic_clear(U32 mask);
 
 /* Priority levels for interrupt lines. */
+#  define AIC_INT_LEVEL_LOWEST 1
 #  define AIC_INT_LEVEL_LOW    2
 #  define AIC_INT_LEVEL_NORMAL 4
 #  define AIC_INT_LEVEL_ABOVE_NORMAL 5

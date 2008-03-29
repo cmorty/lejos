@@ -308,19 +308,37 @@ dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
       push_word(bt_pending());
     }
     return;
-  case usbRead_4_1BI_5I:
+  case usbRead_4_1BII_5I:
      {
       Object *p = word2ptr(paramBase[0]);
       byte *byteArray = (byte *) jbyte_array(p);
-      push_word(udp_read(byteArray,paramBase[1]));                      
+      push_word(udp_read(byteArray,paramBase[1], paramBase[2]));                      
     } 
     return;
-  case usbWrite_4_1BI_5V:
+  case usbWrite_4_1BII_5I:
      {
       Object *p = word2ptr(paramBase[0]);
       byte *byteArray = (byte *) jbyte_array(p);
-      udp_write(byteArray,paramBase[1]);                      
+      push_word(udp_write(byteArray,paramBase[1], paramBase[2]));                      
     }
+    return; 
+  case usbStatus_4_5I:
+    {
+      push_word(udp_status());
+    }
+    return;
+  case usbEnable_4I_5V:
+    {
+      udp_enable(paramBase[0]);
+    }
+    return;
+  case usbDisable_4_5V:
+    {
+      udp_disable();
+    }
+    return;
+  case usbReset_4_5V:
+    udp_reset();
     return; 
   case writePage_4_1BI_5V:
     {
@@ -342,9 +360,6 @@ dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
     gNextProgramSize = paramBase[1];
     schedule_request(REQUEST_EXIT);
     return;
-  case usbReset_4_5V:
-    udp_reset();
-    return; 
   case playSample_4IIIII_5V:
     sound_play_sample(((unsigned char *) &FLASH_BASE[(paramBase[0]*64)]) + paramBase[1],paramBase[2],paramBase[3],paramBase[4]);
     return;

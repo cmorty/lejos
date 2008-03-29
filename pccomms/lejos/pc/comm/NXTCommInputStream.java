@@ -5,13 +5,13 @@ import java.io.*;
 /**
  * Implementation of InputStream over NXTComm using Bluetooth.
  */
-public class NXTCommBTInputStream extends InputStream {
+public class NXTCommInputStream extends InputStream {
 	private NXTComm nxtComm;
 	private byte buf[];
 	private int bufIdx, bufSize;
 	boolean endOfFile;
 	
-	public NXTCommBTInputStream(NXTComm nxtComm) {
+	public NXTCommInputStream(NXTComm nxtComm) {
 		this.nxtComm = nxtComm;
 		endOfFile = false;
 		bufIdx = 0;
@@ -44,7 +44,7 @@ public class NXTCommBTInputStream extends InputStream {
      */
     public int available() throws IOException
     {
-       return nxtComm.available();
+       return bufSize - bufIdx;
     }
     
     /**

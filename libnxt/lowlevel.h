@@ -38,5 +38,7 @@ int nxt_in_reset_mode(nxt_t *nxt);
 nxt_error_t nxt_send_buf(nxt_t *nxt, char *buf, int len);
 nxt_error_t nxt_send_str(nxt_t *nxt, char *str);
 nxt_error_t nxt_recv_buf(nxt_t *nxt, char *buf, int len);
+int nxt_write_buf(nxt_t *nxt, char *buf, int len);
+int nxt_read_buf(nxt_t *nxt, char *buf, int len);
 
 #endif /* __LOWLEVEL_H__ */
