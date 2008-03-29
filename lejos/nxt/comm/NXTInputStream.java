@@ -6,14 +6,15 @@ import java.io.*;
  * Extends InputStream for BlueTooth; implements available()
  * @author   Roger Glassey revised on june 23, 2007, modified for Bluetooth2
  */
-public class BTInputStream extends InputStream {
-	private byte buf[] = new byte[256];
+public class NXTInputStream extends InputStream {
+	private byte buf[];
 	private int bufIdx = 0, bufSize = 0;
-	private BTConnection conn = null;
+	private NXTConnection conn = null;
     
-	BTInputStream(BTConnection conn)
+	NXTInputStream(NXTConnection conn, int buffSize)
 	{
 		this.conn = conn;
+        buf = new byte[buffSize];
 	}
     /**
      * Returns one byte as an integer between 0 and 255.  
@@ -25,7 +26,7 @@ public class BTInputStream extends InputStream {
 	   if (bufIdx >= bufSize) bufSize = 0;
 	   if (bufSize <= 0)
 	   {
-		   bufSize = conn.read(buf, buf.length, true);
+		   bufSize = conn.read(buf, buf.length, false);
 		   if (bufSize <= 0) return -1;
 		   bufIdx = 0;
 	   }
@@ -40,7 +41,7 @@ public class BTInputStream extends InputStream {
        if (bufIdx >= bufSize) bufSize = 0;
        if (bufSize == 0) {
     	   bufIdx = 0;
-    	   bufSize = conn.read(buf, buf.length, false);
+    	   bufSize = conn.read(buf, buf.length);
        }
        return bufSize - bufIdx;
     }

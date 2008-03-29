@@ -23,15 +23,34 @@ public class PrintStream extends OutputStream {
     }
     
     /**
+     * Writes a string to the underlying output stream.
+     * 
+     * @param s the string to print
+     */
+    public void print(String s) {
+    	for(int i=0;i<s.length();i++) {
+    		write(s.charAt(i));
+    	}
+    }
+    
+    /**
+     * Flush any pending output in the stream
+     */
+    public void flush()
+    {
+    	try {
+    		os.flush();
+    	} catch (IOException ioe) {}      
+    }
+    /**
      * Writes a string followed by a newline character
      * to the underlying output stream.
      * 
      * @param s the string to print
      */
     public void println(String s) {
-    	for(int i=0;i<s.length();i++) {
-    		write(s.charAt(i));
-    	}
-    	write('\n');
+        print(s);
+        write('\n');
+        flush();
     }
 }
