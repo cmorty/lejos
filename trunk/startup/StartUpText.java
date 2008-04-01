@@ -4,7 +4,6 @@ import java.util.Vector;
 import javax.microedition.lcdui.*;
 import lejos.nxt.comm.*;
 import lejos.nxt.*;
-
 import javax.bluetooth.*;
 
 
@@ -12,12 +11,13 @@ public class StartUpText
 {
    static Graphics g = new Graphics();
    static  boolean btPowerOn = false;
-   static String blank = "               ";
+   static String blank = "                ";
    static String defaultProgramProperty = "lejos.default_program"; 
-   
-   static int [] freq = {523,784, 659};
+   static String defaultProgramAutoRunProperty = "lejos.default_autoRun";
+ 
    public static void playTune()
    {
+      int [] freq = {523,784, 659};
       for(int i = 0; i<3; i++)
       {
          Sound.playNote(Sound.XYLOPHONE, freq[i], (i==3 ? 500 : 300));   
@@ -44,8 +44,7 @@ public class StartUpText
 	private static boolean setBluetoothPower(boolean powerOn, boolean needReset)
 	{
 		// Set the state of the Bluetooth power to be powerOn. Also record the
-		// current state of this in the BT status bytes.
-
+		// current state of this in the BT status bytes.                                                      
 		// If power is not on we need it on to check things
 		if (!Bluetooth.getPower())
 		{
@@ -59,14 +58,14 @@ public class StartUpText
 		return powerOn;
 	}
 	
-	private static void drawGauge(int x, int y, int w, int h, int max, int cur)
-	{
-		int segWidth = (w/max);
-		for(int i = 0; i < cur; i++)
-			g.fillRect(x + i*segWidth, y+1, segWidth-1, h-1);
-		for(int i = cur; i < max; i++)
-			g.drawRect(x + i*segWidth, y+1, segWidth-1, h-1);
-	}
+//	private static void drawGauge(int x, int y, int w, int h, int max, int cur)
+//	{
+//		int segWidth = (w/max);
+//		for(int i = 0; i < cur; i++)                  
+//			g.fillRect(x + i*segWidth, y+1, segWidth-1, h-1);
+//		for(int i = cur; i < max; i++)
+//			g.drawRect(x + i*segWidth, y+1, segWidth-1, h-1);
+//	}
 	
 	private static String formatVol(int vol)
 	{
@@ -76,15 +75,27 @@ public class StartUpText
 	}
 	
 	private static String getExtension(String fileName) {
-		int dot = fileName.lastIndexOf(".");
+	 	int dot = fileName.lastIndexOf(".");
 		if (dot < 0) return "";
-		else return fileName.substring(dot+1, fileName.length());
+		else return fileName.substring(dot+1, fileName.length());                                                                                                                                                                                                                                                                                                                         
 	}
 	
 	private static String getBaseName(String fileName) {
 		int dot = fileName.lastIndexOf(".");
 		if (dot < 0) return fileName;
 		else return fileName.substring(0, dot);
+	}
+	
+	private static void runDefaultProgram()
+	{
+       String defaultProgram = Settings.getProperty(defaultProgramProperty, "");
+       if (defaultProgram != null && defaultProgram.length() > 0) 
+       {
+           String progName = defaultProgram + ".nxj";
+           File f = new File(progName);
+           if (f.exists()) f.exec();
+           else Settings.setProperty(defaultProgramProperty, "") ;
+       }
 	}
 	
 	public static void main(String[] args) throws Exception {
@@ -104,9 +115,8 @@ public class StartUpText
 		String freeFlash = "Free flash";
 		String freeMem = "Free ram";
 		String battery = "Battery ";
-		
 		TextMenu filesMenu = new TextMenu(null,1);
-		String[] topMenuData = {"Run Default", "Files", "Bluetooth", "Sound", "System", "Unset Default"};
+		String[] topMenuData = {"Run Default", "Files", "Bluetooth", "Sound", "System"};
 		TextMenu topMenu = new TextMenu(topMenuData,1);
 		String[] fileMenuData = {"Delete file"}; 
 		TextMenu fileMenu = new TextMenu(fileMenuData,2);
@@ -126,26 +136,20 @@ public class StartUpText
 		int [][] Volumes = {{Sound.getVolume()/10, 784, 250, 0}, {Button.getKeyClickVolume()/10, Button.getKeyClickTone(1), Button.getKeyClickLength(), 0}};
         int enterTone = Button.getKeyClickTone(1);
 		int curItem = 0;
-		String[] systemMenuData = {"Format"};
+		String[] systemMenuData = {"Format","Auto Run"};
 		String dot = ".";
         String[] yes_no = {"No","Yes"};
         TextMenu yes_noMenu = new TextMenu(yes_no,6);
-        String defaultProgram = Settings.getProperty(defaultProgramProperty, "");
-        
-        //LCD.drawString("" + Button.readButtons(), 0, 7);
-        //LCD.drawString("" + System.getProgramExecutionsCount(), 8, 7);
-		
-		//SoundOptions soundMenu = new SoundOptions();
+        TextMenu systemMenu = new TextMenu(systemMenuData,5);
         playTune();
         
-        if (System.getProgramExecutionsCount() == 1 &&
-        	(Button.readButtons() & 2) != 2 && // Left button not pressed
-        	defaultProgram != null &&
-        	defaultProgram.length() > 0) {
-        	File f = new File(defaultProgram + ".nxj");
-        	if (f.exists()) f.exec();
-        }
-		TextMenu systemMenu = new TextMenu(systemMenuData,5);
+ // Run default program if required
+        if( System.getProgramExecutionsCount() == 1 &&
+            (Button.readButtons() & 2) != 2 &&  //left button down? 
+            Settings.getProperty(defaultProgramAutoRunProperty, "").equals("YES")
+           ) 
+           runDefaultProgram();
+                            
 		File[] files = null;
 		boolean quit = false;
 		int visibility = 0;
@@ -223,13 +227,9 @@ public class StartUpText
 			}
 			int selection = menu.select(curItem);
 		    if (menu == topMenu) {
-		    	 if (selection == 0) {
-		    		 defaultProgram = Settings.getProperty(defaultProgramProperty, "");
-		    		 if (defaultProgram != null && defaultProgram.length() > 0) {
-		    			 String progName = defaultProgram + ".nxj";
-		    			 File f = new File(progName);
-		    			 if (f.exists()) f.exec();
-		    		 }
+		    	 if (selection == 0) 
+		    	 {
+		    	    runDefaultProgram();	    	 
 		    	 } else if (selection == 1) {
 		    		 menu = filesMenu;
 		    	 } else if (selection ==2) {
@@ -241,8 +241,6 @@ public class StartUpText
 					 Button.setKeyClickTone(1, 0);
 				 } else if (selection == 4) {
 		    		 menu = systemMenu;
-		    	 } else if (selection == 5) {
-		    		 Settings.setProperty(defaultProgramProperty, "");
 		    	 } else if (selection == -1) {
 		    		 quit = true;
 		    	 }
@@ -252,10 +250,6 @@ public class StartUpText
 			    	String ext = getExtension(fileName);
 			        LCD.clear();
 			        drawTopRow();
-//					LCD.clear();
-//					LCD.drawString(title,6,0);
-//				    LCD.drawInt( (int)(Runtime.getRuntime().freeMemory()),0,0);
-//					LCD.refresh();
 			        TextMenu subMenu = fileMenu;
 			        if (ext.equals("nxj")) subMenu = programMenu;
 			        if (ext.equals("wav")) subMenu = wavMenu;
@@ -272,7 +266,6 @@ public class StartUpText
 							File.reset();
 						}
 			    		LCD.clear();
-			    		LCD.refresh();
 			    	} else if (subMenu == programMenu && subSelection == 0) 
 			    	{
 			    		files[selection].exec();
@@ -290,7 +283,6 @@ public class StartUpText
 				{
 					LCD.clear();
 					LCD.drawString("   Power on...", 0, 0);
-					LCD.refresh();
 				    btPowerOn = setBluetoothPower(true, true);
 					menu = blueMenu;
 				}
@@ -314,7 +306,6 @@ public class StartUpText
 		    			do {
 		    				LCD.clear();
 				    		LCD.drawString(devices,5,0);
-				    		LCD.refresh();
 		    				selected = deviceMenu.select();
 		    				if (selected >=0) {
 		    					RemoteDevice btrd = ((RemoteDevice) devList.elementAt(selected));
@@ -344,7 +335,6 @@ public class StartUpText
 					byte[] cod = {0,0,0,0}; // All
 		    		LCD.clear();
 		    		LCD.drawString("Searching ...", 0, 0);
-		    		LCD.refresh();
 		    		Vector devList = Bluetooth.inquire(5, 10,cod);
 					
 		    		if (devList.size() > 0) {
@@ -362,7 +352,6 @@ public class StartUpText
 		    			do {
 				    		LCD.clear();
 							LCD.drawString(found,6,0);
-							LCD.refresh();
 		    				selected = searchMenu.select();
 		    				if (selected >=0) {
 		    					RemoteDevice btrd = ((RemoteDevice) devList.elementAt(selected));
@@ -378,7 +367,6 @@ public class StartUpText
 		    		} else {
 		    			LCD.clear();
 		    			LCD.drawString("no devices", 0, 0);
-		    			LCD.refresh();
 		    			try {
 		    				Thread.sleep(2000);
 		    			} catch (InterruptedException e) {}
@@ -402,6 +390,22 @@ public class StartUpText
                {
                   yes_noMenu.setTitle("Delete all files?");
                    if(yes_noMenu.select()== 1)File.format();
+               }
+               if (selection == 1)
+               { 
+                  String defaultPrgm = Settings.getProperty(defaultProgramProperty, "");
+                  if(defaultPrgm != null && defaultPrgm.length() >0)
+                  {
+                     LCD.drawString(blank,0,2);
+                     LCD.drawString("Default Program:    ",0,3);
+                     LCD.drawString(" " + defaultPrgm + blank,0 , 4);
+                     yes_noMenu.setTitle("Run at power up?");
+                     int subSelection =  yes_noMenu.select() ;
+                     if(subSelection == 0)
+                        Settings.setProperty(defaultProgramAutoRunProperty, "NO");
+                     else if(subSelection == 1)
+                        Settings.setProperty(defaultProgramAutoRunProperty, "YES");                   
+                  }
                }
 //             } else if (selection == -1) {
                    menu = topMenu;
