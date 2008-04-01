@@ -18,7 +18,8 @@ public class SystemSettings {
 	// Add to this String array to define new persistent
 	// settings. There is a maximum of 16 including the version.
 	private static final String[] names = {
-		versionName, "lejos.volume", "lejos.default_program", "lejos.keyclick_volume"
+		versionName, "lejos.volume", "lejos.default_program", "lejos.keyclick_volume",
+		"lejos.default_autoRun"
 	};
 	
 	/**
