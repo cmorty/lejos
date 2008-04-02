@@ -7,7 +7,7 @@
 #include "language.h"
 #include "sensors.h"
 #include "poll.h"
-#include "at91sam7s256.h"
+#include "AT91SAM7.h"
 #include "nxt_avr.h"
 
 extern int verbose;

@@ -17,7 +17,7 @@
 /* Shorthand for addressing the System Controller structure defined in
  * the AT91 platform package, where the AIC's registers are defined.
  */
-#define sysc ((volatile struct _AT91S_SYSC *)0xFFFFF000)
+#define sysc ((volatile struct _AT91S_SYS *)0xFFFFF000)
 
 
 /* Default handlers for the three general kinds of interrupts that the
@@ -53,24 +53,24 @@ aic_initialise(void)
    *  - No pending interrupts,
    *  - AIC idle, not handling an interrupt.
    */
-  sysc->SYSC_AIC_IDCR = 0xFFFFFFFF;
-  sysc->SYSC_AIC_FFDR = 0xFFFFFFFF;
-  sysc->SYSC_AIC_ICCR = 0xFFFFFFFF;
-  sysc->SYSC_AIC_EOICR = 1;
+  sysc->AIC_IDCR = 0xFFFFFFFF;
+  sysc->AIC_FFDR = 0xFFFFFFFF;
+  sysc->AIC_ICCR = 0xFFFFFFFF;
+  sysc->AIC_EOICR = 1;
 
   /* Enable debug protection. This is necessary for JTAG debugging, so
    * that the hardware debugger can read AIC registers without
    * triggering side-effects.
    */
-  sysc->SYSC_AIC_DCR = 1;
+  sysc->AIC_DCR = 1;
 
   /* Set default handlers for all interrupt lines. */
   for (i = 0; i < 32; i++) {
-    sysc->SYSC_AIC_SMR[i] = 0;
-    sysc->SYSC_AIC_SVR[i] = (U32) default_isr;
+    sysc->AIC_SMR[i] = 0;
+    sysc->AIC_SVR[i] = (U32) default_isr;
   }
-  sysc->SYSC_AIC_SVR[AT91C_PERIPHERAL_ID_FIQ] = (U32) default_fiq;
-  sysc->SYSC_AIC_SPU = (U32) spurious_isr;
+  sysc->AIC_SVR[AT91C_ID_FIQ] = (U32) default_fiq;
+  sysc->AIC_SPU = (U32) spurious_isr;
 }
 
 
@@ -93,8 +93,8 @@ aic_set_vector(U32 vector, U32 mode, U32 isr)
   if (vector < 32) {
     int i_state = interrupts_get_and_disable();
 
-    sysc->SYSC_AIC_SMR[vector] = mode;
-    sysc->SYSC_AIC_SVR[vector] = isr;
+    sysc->AIC_SMR[vector] = mode;
+    sysc->AIC_SVR[vector] = isr;
     if (i_state)
       interrupts_enable();
   }
@@ -111,7 +111,7 @@ aic_mask_on(U32 vector)
 {
   int i_state = interrupts_get_and_disable();
 
-  sysc->SYSC_AIC_IECR = (1 << vector);
+  sysc->AIC_IECR = (1 << vector);
   if (i_state)
     interrupts_enable();
 }
@@ -127,7 +127,7 @@ aic_mask_off(U32 vector)
 {
   int i_state = interrupts_get_and_disable();
 
-  sysc->SYSC_AIC_IDCR = (1 << vector);
+  sysc->AIC_IDCR = (1 << vector);
   if (i_state)
     interrupts_enable();
 }
@@ -143,7 +143,7 @@ aic_clear(U32 vector)
 {
   int i_state = interrupts_get_and_disable();
 
-  sysc->SYSC_AIC_ICCR = (1 << vector);
+  sysc->AIC_ICCR = (1 << vector);
   if (i_state)
     interrupts_enable();
 }

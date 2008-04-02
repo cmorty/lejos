@@ -103,11 +103,11 @@ systick_init(void)
 		 AIC_INT_LEVEL_LOW, (U32) systick_low_priority_entry);
   aic_mask_on(LOW_PRIORITY_IRQ);
 
-  aic_mask_off(AT91C_PERIPHERAL_ID_SYSIRQ);
-  aic_set_vector(AT91C_PERIPHERAL_ID_SYSIRQ, (1 << 5) /* positive internal edge */ |
+  aic_mask_off(AT91C_ID_SYS);
+  aic_set_vector(AT91C_ID_SYS, (1 << 5) /* positive internal edge */ |
 		 AIC_INT_LEVEL_NORMAL, (U32) systick_isr_entry);
 
-  aic_mask_on(AT91C_PERIPHERAL_ID_SYSIRQ);
+  aic_mask_on(AT91C_ID_SYS);
   *AT91C_PITC_PIMR = ((CLOCK_FREQUENCY / 16 / PIT_FREQ) - 1) | 0x03000000;	/* Enable, enable interrupts */
 
   if (i_state)

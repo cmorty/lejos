@@ -158,7 +158,7 @@ nxt_motor_isr_C(void)
 void
 nxt_motor_init(void)
 {
-  *AT91C_PMC_PCER = (1 << AT91C_PERIPHERAL_ID_PIOA);	/* Power to the pins! */
+  *AT91C_PMC_PCER = (1 << AT91C_ID_PIOA);	/* Power to the pins! */
   *AT91C_PIOA_IDR = ~0;
   *AT91C_PIOA_IFER = MOTOR_PIN_MASK;
   *AT91C_PIOA_PPUDR = MOTOR_PIN_MASK;
@@ -166,10 +166,10 @@ nxt_motor_init(void)
   *AT91C_PIOA_ODR = MOTOR_PIN_MASK;
 
   /* Enable ISR */
-  aic_mask_off(AT91C_PERIPHERAL_ID_PIOA);
-  aic_set_vector(AT91C_PERIPHERAL_ID_PIOA, AIC_INT_LEVEL_NORMAL,
+  aic_mask_off(AT91C_ID_PIOA);
+  aic_set_vector(AT91C_ID_PIOA, AIC_INT_LEVEL_NORMAL,
 		 nxt_motor_isr_entry);
-  aic_mask_on(AT91C_PERIPHERAL_ID_PIOA);
+  aic_mask_on(AT91C_ID_PIOA);
 
   *AT91C_PIOA_IER = MOTOR_INTERRUPT_PINS;
 

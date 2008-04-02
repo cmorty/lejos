@@ -20,7 +20,7 @@
 #include "mytypes.h"
 #include "udp.h"
 #include "interrupts.h"
-#include "at91sam7s256.h"
+#include "AT91SAM7.h"
 
 #include "aic.h"
 #include "systick.h"

@@ -150,9 +150,9 @@ nxt_spi_init(void)
   page = 0;
 
   /* Install the interrupt handler */
-  aic_mask_off(AT91C_PERIPHERAL_ID_SPI);
-  aic_set_vector(AT91C_PERIPHERAL_ID_SPI, AIC_INT_LEVEL_NORMAL, (U32)spi_isr_entry);
-  aic_mask_on(AT91C_PERIPHERAL_ID_SPI);
+  aic_mask_off(AT91C_ID_SPI);
+  aic_set_vector(AT91C_ID_SPI, AIC_INT_LEVEL_NORMAL, (U32)spi_isr_entry);
+  aic_mask_on(AT91C_ID_SPI);
   *AT91C_SPI_PTCR = AT91C_PDC_TXTEN;
 
   if (i_state)
