@@ -26,7 +26,7 @@
 /* Buffer length must be a multiple of 8 and at most 64 (preferably as long as possible) */
 #define PDM_BUFFER_LENGTH 64
 /* Main clock frequency */
-#define OSC 48054805
+#define OSC CLOCK_FREQUENCY
 /* Size of a sample block */
 #define SAMPBITS 256
 #define SAMPBYTES SAMPBITS/8
@@ -145,7 +145,7 @@ void sound_init()
   sound_interrupt_disable();
   sound_disable();
   
-  *AT91C_PMC_PCER = (1 << AT91C_PERIPHERAL_ID_SSC);
+  *AT91C_PMC_PCER = (1 << AT91C_ID_SSC);
 
   *AT91C_PIOA_ODR = AT91C_PA17_TD;
   *AT91C_PIOA_OWDR = AT91C_PA17_TD;
@@ -160,9 +160,9 @@ void sound_init()
   *AT91C_SSC_TFMR = 31 + (7 << 8) + AT91C_SSC_MSBF; // 8 32-bit words
   *AT91C_SSC_CR = AT91C_SSC_TXEN;                                        
 
-  aic_mask_on(AT91C_PERIPHERAL_ID_SSC);
-  aic_clear(AT91C_PERIPHERAL_ID_SSC);
-  aic_set_vector(AT91C_PERIPHERAL_ID_SSC, AT91C_AIC_PRIOR_LOWEST | AT91C_AIC_SRCTYPE_INT_EDGE_TRIGGERED,
+  aic_mask_on(AT91C_ID_SSC);
+  aic_clear(AT91C_ID_SSC);
+  aic_set_vector(AT91C_ID_SSC, AT91C_AIC_PRIOR_LOWEST | AT91C_AIC_SRCTYPE_INT_EDGE_TRIGGERED,
 		 (U32)sound_isr_entry); /*PG*/
   sample.buf_id = 0;
   sample.cur_vol = -1;

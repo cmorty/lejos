@@ -10,6 +10,9 @@
 
 #include "aic.h"
 
+// Calculate required clock divisor
+#define   I2CClk                        400000L
+#define   CLDIV                         (((CLOCK_FREQUENCY/I2CClk)/2)-3)
 
 
 extern void twi_isr_entry(void);
@@ -132,8 +135,8 @@ twi_reset(void)
 
   *AT91C_TWI_IDR = ~0;
 
-  *AT91C_PMC_PCER = (1 << AT91C_PERIPHERAL_ID_PIOA) |	/* Need PIO too */
-    (1 << AT91C_PERIPHERAL_ID_TWI);	/* TWI clock domain */
+  *AT91C_PMC_PCER = (1 << AT91C_ID_PIOA) |	/* Need PIO too */
+    (1 << AT91C_ID_TWI);	/* TWI clock domain */
 
   /* Set up pin as an IO pin for clocking till clean */
   *AT91C_PIOA_MDER = (1 << 3) | (1 << 4);
@@ -155,7 +158,8 @@ twi_reset(void)
 
   *AT91C_TWI_CR = 0x88;		/* Disable & reset */
 
-  *AT91C_TWI_CWGR = 0x020f0f;	/* Set for 380kHz */
+  //*AT91C_TWI_CWGR = 0x020f0f;	/* Set for 380kHz */
+  *AT91C_TWI_CWGR = ((CLDIV << 8)|CLDIV);       /* Set for 400kHz */
   *AT91C_TWI_CR = 0x04;		/* Enable as master */
 }
 
@@ -168,10 +172,10 @@ twi_init(void)
 
   /* Todo: set up interrupt */
   *AT91C_TWI_IDR = ~0;		/* Disable all interrupt sources */
-  aic_mask_off(AT91C_PERIPHERAL_ID_TWI);
-  aic_set_vector(AT91C_PERIPHERAL_ID_TWI, AIC_INT_LEVEL_ABOVE_NORMAL,
+  aic_mask_off(AT91C_ID_TWI);
+  aic_set_vector(AT91C_ID_TWI, AIC_INT_LEVEL_ABOVE_NORMAL,
 		 twi_isr_entry);
-  aic_mask_on(AT91C_PERIPHERAL_ID_TWI);
+  aic_mask_on(AT91C_ID_TWI);
 
 
   twi_reset();
@@ -204,7 +208,7 @@ twi_start_read(U32 dev_addr, U32 int_addr_bytes, U32 int_addr, U8 *data,
     twi_pending = nBytes;
     dummy = *AT91C_TWI_SR;
     dummy = *AT91C_TWI_RHR;
-//      *AT91C_AIC_ICCR = ( 1<< AT91C_PERIPHERAL_ID_TWI);
+//      *AT91C_AIC_ICCR = ( 1<< AT91C_ID_TWI);
     *AT91C_TWI_MMR = mode;
     *AT91C_TWI_CR = AT91C_TWI_START | AT91C_TWI_MSEN;
 //      dummy = *AT91C_TWI_SR;

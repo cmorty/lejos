@@ -26,7 +26,7 @@ void bt_init(void)
   in_buf_in_ptr = out_buf_ptr = 0; 
   in_buf_idx = 0;
   
-  *AT91C_PMC_PCER = (1 << AT91C_PERIPHERAL_ID_US1); 
+  *AT91C_PMC_PCER = (1 << AT91C_ID_US1); 
   
   *AT91C_PIOA_PDR = BT_RX_PIN | BT_TX_PIN | BT_SCK_PIN | BT_RTS_PIN | BT_CTS_PIN; 
   *AT91C_PIOA_ASR = BT_RX_PIN | BT_TX_PIN | BT_SCK_PIN | BT_RTS_PIN | BT_CTS_PIN; 
@@ -43,8 +43,8 @@ void bt_init(void)
   *AT91C_US1_RNPR = 0;
   *AT91C_US1_TNPR = 0;
   
-  aic_mask_off(AT91C_PERIPHERAL_ID_US1);
-  aic_clear(AT91C_PERIPHERAL_ID_US1);
+  aic_mask_off(AT91C_ID_US1);
+  aic_clear(AT91C_ID_US1);
 
   trash = *AT91C_US1_RHR;
   trash = *AT91C_US1_CSR;
@@ -66,7 +66,7 @@ void bt_init(void)
   *AT91C_PIOA_CODR  = BT_ARM7_CMD_PIN;
   *AT91C_PIOA_OER   = BT_ARM7_CMD_PIN; 
   // Configure timer 01 as trigger for ADC, sample every 0.5ms
-  *AT91C_PMC_PCER = (1 << AT91C_PERIPHERAL_ID_TC1); 
+  *AT91C_PMC_PCER = (1 << AT91C_ID_TC1); 
   *AT91C_TC1_CCR = AT91C_TC_CLKDIS;
   *AT91C_TC1_IDR = ~0;
   trash2 = *AT91C_TC1_SR;
@@ -76,7 +76,7 @@ void bt_init(void)
   *AT91C_TC1_CCR = AT91C_TC_CLKEN;
   *AT91C_TC1_CCR = AT91C_TC_SWTRG;
 
-  *AT91C_PMC_PCER = (1 << AT91C_PERIPHERAL_ID_ADC); 
+  *AT91C_PMC_PCER = (1 << AT91C_ID_ADC); 
   *AT91C_ADC_MR  = 0;
   *AT91C_ADC_MR |= AT91C_ADC_TRGEN_EN | AT91C_ADC_TRGSEL_TIOA1;
   *AT91C_ADC_MR |= 0x00003F00;

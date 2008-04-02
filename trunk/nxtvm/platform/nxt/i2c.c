@@ -449,7 +449,7 @@ i2c_init(void)
   istate = interrupts_get_and_disable();
   
   /* Set up Timer Counter 0 */
-  *AT91C_PMC_PCER = (1 << AT91C_PERIPHERAL_ID_TC0);    /* Power enable */
+  *AT91C_PMC_PCER = (1 << AT91C_ID_TC0);    /* Power enable */
     
   *AT91C_TC0_CCR = 0x02; /* Disable */
   *AT91C_TC0_IDR = ~0;
@@ -459,9 +459,9 @@ i2c_init(void)
   *AT91C_TC0_IER = 0x10; /* Enable RC trigger interrupt */
   *AT91C_TC0_CCR = 1; /* Enable */
 
-  aic_mask_off(AT91C_PERIPHERAL_ID_TC0);
-  aic_set_vector(AT91C_PERIPHERAL_ID_TC0, AIC_INT_LEVEL_NORMAL, i2c_timer_isr_entry);
-  aic_mask_on(AT91C_PERIPHERAL_ID_TC0);
+  aic_mask_off(AT91C_ID_TC0);
+  aic_set_vector(AT91C_ID_TC0, AIC_INT_LEVEL_NORMAL, i2c_timer_isr_entry);
+  aic_mask_on(AT91C_ID_TC0);
   
   *AT91C_TC0_CCR = 0x04; /* Software trigger */
   
