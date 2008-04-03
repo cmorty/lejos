@@ -146,7 +146,7 @@ public class StartUpText
  // Run default program if required
         if( System.getProgramExecutionsCount() == 1 &&
             (Button.readButtons() & 2) != 2 &&  //left button down? 
-            Settings.getProperty(defaultProgramAutoRunProperty, "").equals("YES")
+            Settings.getProperty(defaultProgramAutoRunProperty, "").equals("ON")
            ) 
            runDefaultProgram();
                             
@@ -396,15 +396,15 @@ public class StartUpText
                   String defaultPrgm = Settings.getProperty(defaultProgramProperty, "");
                   if(defaultPrgm != null && defaultPrgm.length() >0)
                   {
-                     LCD.drawString(blank,0,2);
+                     LCD.drawString("Auto Run: "+Settings.getProperty(defaultProgramAutoRunProperty, "")+blank,0,2);
                      LCD.drawString("Default Program:    ",0,3);
                      LCD.drawString(" " + defaultPrgm + blank,0 , 4);
                      yes_noMenu.setTitle("Run at power up?");
                      int subSelection =  yes_noMenu.select() ;
                      if(subSelection == 0)
-                        Settings.setProperty(defaultProgramAutoRunProperty, "NO");
+                        Settings.setProperty(defaultProgramAutoRunProperty, "OFF");
                      else if(subSelection == 1)
-                        Settings.setProperty(defaultProgramAutoRunProperty, "YES");                   
+                        Settings.setProperty(defaultProgramAutoRunProperty, "ON");                   
                   }
                }
 //             } else if (selection == -1) {
