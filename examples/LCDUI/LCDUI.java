@@ -59,6 +59,7 @@ class Splasher extends Alert
 		int tdx = g.getCenteredX(text);
 		int tdy = dy + ih + 5;
 		int tw = text.length()*Display.CHAR_WIDTH;
+        tdx = (Display.SCREEN_WIDTH - tw)/2;
 		int th = Display.CHAR_HEIGHT;
 		if (startUp)
 		{
@@ -74,7 +75,7 @@ class Splasher extends Alert
 			g.setColor(Graphics.WHITE);
 			for(int i = (Display.SCREEN_HEIGHT - tdy); i >= 0; i--)
 			{
-				g.fillRect(tdx, tdy + i + 1, tw, th);
+				g.fillRect(tdx, tdy + i + th + 1, tw, th);
 				g.drawString(text, tdx, tdy + i, false);
 				g.refresh();
 				try{Thread.sleep(50);}catch(Exception e){}
