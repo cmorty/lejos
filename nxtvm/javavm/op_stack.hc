@@ -25,6 +25,14 @@ case OP_LDC_W:
   tempInt = 3;
   goto LDC_CONT;
 
+case OP_LDC_1:
+case OP_LDC_2:
+case OP_LDC_3:
+  tempConstRec = get_constant_record ((*(pc-1) - OP_LDC_1 + 1)*256 + *pc);
+  pc++;
+  tempInt = 2;
+  goto LDC_CONT;
+
 case OP_LDC:
   // Stack size: +1
   // Arguments: 1

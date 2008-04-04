@@ -226,5 +226,9 @@
 #define OP_PUTFIELD_W4  216
 #define OP_GETFIELD_A4	217
 #define OP_PUTFIELD_A4  218
+// extended value get constant opcodes
+#define OP_LDC_1 219
+#define OP_LDC_2 220
+#define OP_LDC_3 221
 
 #endif // _OPCODES_H

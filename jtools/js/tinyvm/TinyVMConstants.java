@@ -23,7 +23,8 @@ public class TinyVMConstants
    public static final int MAX_LOCALS = 255;
    public static final int MAX_EXCEPTION_HANDLERS = 255;
    public static final int MAX_CODE = 0xFFFF;
-   public static final int MAX_CONSTANTS = 256;
+   public static final int MAX_CONSTANTS = 1024;
+   public static final int MAX_STATICS = 1024;
    public static final int MAX_FIELD_OFFSET = F_OFFSET_MASK;
    public static final int MAX_STRING_CONSTANT_LENGTH = 255;
 
