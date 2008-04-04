@@ -40,7 +40,6 @@
       <arg value="-o"/>
       <arg value="${binary}"/>
       <arg value="-v"/>
-      <arg value="-r"/>
       <classpath>
         <pathelement location="${lejos_home}/jtools/lib/jtools.jar"/>
   		<pathelement location="${lejos_home}/jtools/3rdparty/lib/commons-cli-1.0.jar"/>
