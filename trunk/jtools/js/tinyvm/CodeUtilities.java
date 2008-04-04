@@ -34,6 +34,8 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
          + "- Arithmetic or logical operations on variables of type long.\n"
          + "- Remainder operations on floats or doubles.\n"
          + "- Too many locals ( > 255).\n"
+         + "- Too many constants ( > 1024).\n"
+         + "- Too many static fields ( > 1024).\n"
          + "- Method code too long ( > 64 Kb!).\n" + "");
    }
 
@@ -45,6 +47,7 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
    public int processConstantIndex (int aPoolIndex) throws TinyVMException
    {
       Constant pEntry = iCF.getConstantPool().getConstant(aPoolIndex); // TODO catch all (runtime) exceptions
+
       if (!(pEntry instanceof ConstantInteger)
          && !(pEntry instanceof ConstantFloat)
          && !(pEntry instanceof ConstantString)
@@ -64,7 +67,6 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
          throw new TinyVMException("Bug CU-2: Didn't find constant " + pEntry
             + " of class " + iCF.getClassName());
       }
-
       return pIdx;
    }
 
@@ -305,12 +307,15 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
          switch (pOpCode)
          {
             case OP_LDC:
-               // Bug reported by Jochen Hiller, fixed by Lawrie Griffiths
-               // convert aCode[i] not to an int, mask it to an unsigned byte
-               // instead
-               // pOutCode[i] = (byte) processConstantIndex ((int) aCode[i]);
-               pOutCode[i] = (byte) processConstantIndex(aCode[i] & 0xFF);
-               i++;
+               int constIdx = processConstantIndex(aCode[i] & 0xFF);
+               if( constIdx >= 256)
+               {
+                  pOutCode[i-1] = (byte) (OP_LDC_1 + (constIdx - 256)/256);
+                  if (constIdx > TinyVMConstants.MAX_CONSTANTS) exitOnBadOpCode(pOpCode);
+
+                  //System.out.println("Large constant index value " + constIdx);
+               }
+               pOutCode[i++] = (byte) constIdx;
                break;
             case OP_LDC_W:
             case OP_LDC2_W:
@@ -354,6 +359,7 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
                if( fldIdx >= 256)
                {
                   int newOpCode;
+                  if (fldIdx > TinyVMConstants.MAX_STATICS) exitOnBadOpCode(pOpCode);
 
                   if( ((int)aCode[i-2] & 0xFF) == OP_PUTSTATIC)
                      newOpCode = OP_PUTSTATIC_1 + (fldIdx - 256) / 256 * 2;

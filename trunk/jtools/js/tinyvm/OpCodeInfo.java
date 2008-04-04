@@ -80,4 +80,8 @@ public interface OpCodeInfo
    int OP_PUTFIELD_W4 = 216;
    int OP_GETFIELD_A4 = 217;
    int OP_PUTFIELD_A4 = 218;
+   
+   int OP_LDC_1 = 219;
+   int OP_LDC_2 = 220;
+   int OP_LDC_3 = 221;
 }
