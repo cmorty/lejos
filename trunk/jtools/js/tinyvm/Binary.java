@@ -189,7 +189,7 @@ public class Binary
     * @param all do not filter classes?
     */
    public static Binary createFromClosureOf (String[] entryClassNames,
-      ClassPath classPath, boolean all, boolean remove) throws TinyVMException
+      ClassPath classPath, boolean all) throws TinyVMException
    {
       Binary result = new Binary();
       // From special classes and entry class, store closure
@@ -199,7 +199,7 @@ public class Binary
       result.processConstants();
       result.processMethods(all);
       result.processFields();
-      if (remove)
+      if (!all)
       {
          // Remove unused methods.
          result.markMethods(entryClassNames);

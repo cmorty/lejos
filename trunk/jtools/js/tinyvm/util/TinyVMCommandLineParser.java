@@ -47,7 +47,7 @@ public class TinyVMCommandLineParser
       Option deviceOption = new Option("tty", "device", true,"device used (USB, COM1, etc)");
       deviceOption.setArgName("device");
       options.addOption(deviceOption);
-      options.addOption("r", "remove", false, "remove unused methods");
+      options.addOption("d", "debug", false, "Include debug monitor");
       
       CommandLine result;
       try

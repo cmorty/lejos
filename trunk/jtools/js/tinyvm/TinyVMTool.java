@@ -36,13 +36,13 @@ public class TinyVMTool extends AbstractTool
     * @throws TinyVMException
     */
    public void link (String classpath, String[] classes, boolean all,
-      OutputStream stream, boolean bigEndian, boolean remove) throws TinyVMException
+      OutputStream stream, boolean bigEndian, boolean debug) throws TinyVMException
    {
       assert classpath != null: "Precondition: classpath != null";
       assert classes != null: "Precondition: classes != null";
       assert stream != null: "Precondition: stream != null";
 
-      Binary binary = link(classpath, classes, all, remove);
+      Binary binary = link(classpath, classes, all, debug);
       for(ToolProgressMonitor monitor : _monitors) {
     	  binary.log(monitor);
       }
@@ -61,15 +61,24 @@ public class TinyVMTool extends AbstractTool
     * @return binary
     * @throws TinyVMException
     */
-   public Binary link (String classpath, String[] entryClassNames, boolean all, boolean remove)
+   public Binary link (String classpath, String[] entryClassNames, boolean all, boolean debug)
       throws TinyVMException
    {
       assert classpath != null: "Precondition: classpath != null";
       assert entryClassNames != null: "Precondition: entryClassNames != null";
-
-      if (entryClassNames.length >= 256)
+      if (entryClassNames.length >= 255)
       {
-         throw new TinyVMException("Too many entry classes (max is 255!)");
+         throw new TinyVMException("Too many entry classes (max is 254!)");
+      }
+
+      if (debug)
+      {
+         // Insert the debug monitor class as the first entry class
+         int names = entryClassNames.length;
+         String [] newNames = new String[names+1];
+         System.arraycopy(entryClassNames, 0, newNames, 1, names);
+         entryClassNames = newNames;
+         entryClassNames[0] = "lejos.nxt.debug.DebugMonitor";
       }
 
       ClassPath computedClasspath = new ClassPath(classpath);
@@ -78,7 +87,7 @@ public class TinyVMTool extends AbstractTool
          entryClassNames[i] = entryClassNames[i].replace('.', '/');
       }
       Binary result = Binary.createFromClosureOf(entryClassNames,
-         computedClasspath, all, remove);
+         computedClasspath, all);
       for (int i = 0; i < entryClassNames.length; i++)
       {
          if (!result.hasMain(entryClassNames[i]))
