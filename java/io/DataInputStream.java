@@ -79,7 +79,7 @@ public class DataInputStream extends InputStream {
    public final boolean readBoolean() throws IOException {
       int ch = in.read();
       if (ch < 0)
-         throw new IOException();
+         throw new EOFException();
       return (ch != 0);
    }
 
@@ -87,7 +87,7 @@ public class DataInputStream extends InputStream {
       int K = 256;
 	   int ch = in.read();
       if (ch < 0)
-         throw new IOException();
+         throw new EOFException();
       while(ch>128)ch = ch - K;;
       return (byte)(ch);
    }
@@ -130,7 +130,7 @@ public class DataInputStream extends InputStream {
       int ch1 = in.read();
       int ch2 = in.read();
       if ((ch1 | ch2) < 0)
-         throw new IOException();
+         throw new EOFException();
       return (char)((ch1 << 8) + (ch2 << 0));
    }
 
