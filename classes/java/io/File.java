@@ -1,6 +1,6 @@
 package java.io;
 
-import lejos.nxt.comm.RConsole;
+//import lejos.nxt.comm.RConsole;
 import lejos.nxt.Flash;
 
 /*
@@ -449,7 +449,7 @@ public class File {
 	 */
 	public static void dumpFileTable() {
 		if(files == null) listFiles(); // Fill list
-		
+		/*
 		RConsole.print("byte_pointer = " + byte_pointer + "\n");
 		RConsole.print("page_pointer = " + page_pointer + "\n");
 		RConsole.print("FILE_TABLE_PAGES = " + FILE_TABLE_PAGES + "\n");
@@ -469,6 +469,7 @@ public class File {
 			}
 		}
 		RConsole.print("Please copy and paste this into an email to bbagnall@mts.net");
+         */
 	}
 	
 	/**
