@@ -26,7 +26,7 @@ public class NXTInputStream extends InputStream {
 	   if (bufIdx >= bufSize) bufSize = 0;
 	   if (bufSize <= 0)
 	   {
-		   bufSize = conn.read(buf, buf.length, false);
+		   bufSize = conn.read(buf, buf.length);
 		   if (bufSize <= 0) return -1;
 		   bufIdx = 0;
 	   }
@@ -41,7 +41,7 @@ public class NXTInputStream extends InputStream {
        if (bufIdx >= bufSize) bufSize = 0;
        if (bufSize == 0) {
     	   bufIdx = 0;
-    	   bufSize = conn.read(buf, buf.length);
+    	   bufSize = conn.read(buf, buf.length, false);
        }
        return bufSize - bufIdx;
     }
