@@ -315,12 +315,11 @@ public class Binary
       for (int pIndex = 0; pIndex < pSize; pIndex++)
       {
          ClassRecord classRecord = (ClassRecord) iClassTable.get(pIndex);
-         /*
          if (classRecord.hasStaticInitializer())
          {
              MethodRecord pRec = classRecord.getMethodRecord(staticInit);
              classRecord.markMethod(pRec);
-         }*/
+         }
          if (classRecord.hasMethod(runMethod, false))
          {
              MethodRecord pRec = classRecord.getMethodRecord(runMethod);
