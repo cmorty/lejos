@@ -13,14 +13,22 @@ public class USBReceive {
 
 	public static void main(String [] args) throws Exception 
 	{
-		USBConnection conn = new USBConnection();
+		LCD.drawString("waiting", 0, 0);
+		USBConnection conn = USB.waitForConnection();
 		DataOutputStream dOut = conn.openDataOutputStream();
 		DataInputStream dIn = conn.openDataInputStream();
-		LCD.drawString("waiting", 0, 0);
 		
 		while (true) 
 		{
-			int b = dIn.readInt();
+            int b;
+            try
+            {
+                b = dIn.readInt();
+            }
+            catch (EOFException e) 
+            {
+                break;
+            }         
 			dOut.writeInt(-b);
 			dOut.flush();
 	        LCD.drawInt((int)b,8,0,1);
