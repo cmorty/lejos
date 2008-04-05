@@ -44,9 +44,8 @@ public class NXTCommLibnxt implements NXTComm {
 	public void close() throws IOException {
 		if (nxtInfo != null && nxtInfo.nxtPtr != 0) 
         {
-            // Send eof marker 
-            try {jlibnxt_send_data(nxtInfo.nxtPtr, new byte[0]);} catch(Exception e){}
             jlibnxt_close(nxtInfo.nxtPtr);
+            nxtInfo.nxtPtr = 0;
         }
 	}
 	
