@@ -42,6 +42,7 @@ struct nxt_t {
   struct usb_device *dev;
   struct usb_dev_handle *hdl;
   int is_in_reset_mode;
+  int stream_mode;
 };
 
 
@@ -163,10 +164,12 @@ nxt_open0(nxt_t *nxt)
   while (usb_bulk_read(nxt->hdl, 0x82, buf, sizeof(buf), 1) > 0)
     ;
 
-  // Set the stream I/o feature
+  // try to set the stream I/O feature
   ret = usb_control_msg(nxt->hdl, 0x41, 0x3, 0, 0, NULL, 0, 1000);
-  if (ret < 0)
-    printf("failed to set feature\n");
+  if (ret >= 0)
+  {
+    nxt->stream_mode = 1;
+  }
 
   return NXT_OK;
 }
@@ -177,9 +180,13 @@ nxt_close0(nxt_t *nxt)
 {
   char buf[64];
   // Clear the stream I/o feature
-  int ret = usb_control_msg(nxt->hdl, 0x41, 0x1, 0, 0, NULL, 0, 1000);
-  if (ret < 0)
-    printf("failed to set feature\n");
+  if (nxt->stream_mode)
+  {
+    // Send EOF marker, a zero length packet
+    usb_bulk_write(nxt->hdl, 0x1, buf, 0, 1000);
+    // Turn off stream mode
+    usb_control_msg(nxt->hdl, 0x41, 0x1, 0, 0, NULL, 0, 5000);
+  }
   // Discard any data that is left in the buffer
   while (usb_bulk_read(nxt->hdl, 0x82, buf, sizeof(buf), 1) > 0)
     ;

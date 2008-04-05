@@ -52,6 +52,7 @@ public class USB {
             if (timeout == 0 || timeout-- > 0)
             try{Thread.sleep(1);}catch(Exception e){}          
         }
+        usbDisable();
         return null;
     }
     
