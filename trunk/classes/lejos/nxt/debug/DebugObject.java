@@ -29,6 +29,6 @@ public class DebugObject
      */
     public int getClassIndex(Object obj)
     {
-        return (DebugInterface.peekWord(obj.hashCode() - OBJECT_HEADER) & 0xf);
+        return (DebugInterface.peekWord(obj.hashCode() - OBJECT_HEADER) & 0xff);
     }
 }
