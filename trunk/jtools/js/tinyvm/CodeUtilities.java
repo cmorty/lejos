@@ -44,6 +44,7 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
       return aCF.getClassName() + ":" + aMethodName;
    }
 
+
    public int processConstantIndex (int aPoolIndex) throws TinyVMException
    {
       Constant pEntry = iCF.getConstantPool().getConstant(aPoolIndex); // TODO catch all (runtime) exceptions
@@ -539,6 +540,23 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
          //System.out.println("Opcode " + OPCODE_NAME[pOpCode]);
          switch (pOpCode)
          {
+            case OP_LDC:
+               {
+                  int constIdx = processConstantIndex(aCode[i] & 0xFF);
+                  ConstantRecord pRec = (ConstantRecord)iBinary.getConstantRecord(constIdx);
+                  pRec.markUsed();
+                  i++;
+               }
+               break;
+            case OP_LDC_W:
+            case OP_LDC2_W:
+               {
+                  int constIdx = processConstantIndex((aCode[i] & 0xFF) << 8 | (aCode[i + 1] & 0xFF));
+                  ConstantRecord pRec = (ConstantRecord)iBinary.getConstantRecord(constIdx);
+                  pRec.markUsed();
+                  i += 2;
+               }
+               break;
 
             case OP_INVOKEINTERFACE:
                // Opcode is changed:

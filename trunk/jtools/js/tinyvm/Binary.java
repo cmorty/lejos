@@ -23,13 +23,13 @@ public class Binary
    final RecordTable iStaticState = new RecordTable("static state", true, true);
    final RecordTable iStaticFields = new RecordTable("static fields", true,
       false);
-   final RecordTable iConstantTable = new RecordTable("constants", false, false);
+   RecordTable iConstantTable = new RecordTable("constants", false, false);
    RecordTable iMethodTables = new RecordTable("methods", true, false);
    RecordTable iExceptionTables = new RecordTable("exceptions", false, false);
    final RecordTable iInstanceFieldTables = new RecordTable("instance fields",
       true, false);
    final RecordTable iCodeSequences = new RecordTable("code", true, false);
-   final RecordTable iConstantValues = new RecordTable("constant values", true,
+   RecordTable iConstantValues = new RecordTable("constant values", true,
       false);
    final RecordTable iEntryClassIndices = new RecordTable(
       "entry class indices", true, false);
@@ -203,6 +203,7 @@ public class Binary
       {
          // Remove unused methods.
          result.markMethods(entryClassNames);
+         result.processOptimizedConstants();
          result.processOptimizedMethods();
       }
       // Copy code as is (first pass)
@@ -314,11 +315,12 @@ public class Binary
       for (int pIndex = 0; pIndex < pSize; pIndex++)
       {
          ClassRecord classRecord = (ClassRecord) iClassTable.get(pIndex);
+         /*
          if (classRecord.hasStaticInitializer())
          {
              MethodRecord pRec = classRecord.getMethodRecord(staticInit);
              classRecord.markMethod(pRec);
-         }
+         }*/
          if (classRecord.hasMethod(runMethod, false))
          {
              MethodRecord pRec = classRecord.getMethodRecord(runMethod);
@@ -362,6 +364,25 @@ public class Binary
          pRec.storeConstants(iConstantTable, iConstantValues);
       }
    }
+   
+   public void processOptimizedConstants () throws TinyVMException
+   {
+      int pSize = iConstantTable.size();
+      RecordTable iOptConstantTable = new RecordTable("constants", false, false);
+      RecordTable iOptConstantValues = new RecordTable("constant values", true, false);
+      
+      for (int pIndex = 0; pIndex < pSize; pIndex++)
+      {
+         ConstantRecord pRec = (ConstantRecord) iConstantTable.get(pIndex);
+         if (pRec.used())
+         {
+            iOptConstantTable.add(pRec);
+            iOptConstantValues.add(pRec.constantValue());
+         }
+      }
+      iConstantTable = iOptConstantTable;
+      iConstantValues = iOptConstantValues;
+   }
 
    /**
     * Calls storeMethods on all the classes of the closure previously computed
@@ -383,7 +404,7 @@ public class Binary
    
    public void processOptimizedMethods () throws TinyVMException
    {
-      /* This is the second stage of the unsed methos elimination code.
+      /* This is the second stage of the unused methods elimination code.
        * We need to re-create the method and exception tables so that they
        * only contain methods that are actually called.
        */
