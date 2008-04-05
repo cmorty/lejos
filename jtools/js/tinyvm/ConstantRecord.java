@@ -19,6 +19,8 @@ public class ConstantRecord implements WritableData
     * Deferenced value.
     */
    ConstantValue _constantValue;
+   
+   boolean isUsed = false;
 
    /**
     * Constructor.
@@ -89,5 +91,15 @@ public class ConstantRecord implements WritableData
       {
          throw new TinyVMException(e.getMessage(), e);
       }
+   }
+   
+   public void markUsed()
+   {
+       isUsed = true;
+   }
+   
+   public boolean used()
+   {
+       return isUsed;
    }
 }
