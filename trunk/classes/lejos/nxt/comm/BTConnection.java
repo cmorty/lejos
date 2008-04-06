@@ -33,10 +33,11 @@ public class BTConnection implements NXTConnection
 	static final int CS_DATALOST = 3;
 	static final int CS_DISCONNECTING = 4;
 	
-	private static int BTC_BUFSZ = 256;
-	private static int BTC_CLOSETIMEOUT1 = 1000;
-	private static int BTC_CLOSETIMEOUT2 = 250;
-	private static int BTC_FLUSH_WAIT = 10;
+	private static final int BTC_BUFSZ = 256;
+    private static final int BTC_DEFHEADER = 2;
+	private static final int BTC_CLOSETIMEOUT1 = 1000;
+	private static final int BTC_CLOSETIMEOUT2 = 250;
+	private static final int BTC_FLUSH_WAIT = 10;
 	
 	public static final int AM_DISABLE = 0;
 	public static final int AM_ALWAYS = 1;
@@ -45,7 +46,7 @@ public class BTConnection implements NXTConnection
 	int state = CS_IDLE;
 	int chanNo;
 	byte handle;
-	int header = 2;
+	int header = BTC_DEFHEADER;
 	int switchMode;
 	byte [] inBuf;
 	byte [] outBuf;
@@ -103,7 +104,7 @@ public class BTConnection implements NXTConnection
 		outCnt = 0;
 		outOffset = 0;
 		state = CS_CONNECTED;
-		header = 2;
+		header = BTC_DEFHEADER;
 		switchMode = AM_ALWAYS;
 		this.handle = handle;
 		pktOffset = -header;
@@ -568,7 +569,7 @@ public class BTConnection implements NXTConnection
 	 * from packet mode automatically before returning os? - BB 
 	 */
 	public OutputStream openOutputStream() {
-		return (os != null ? os : new NXTOutputStream(this, BTC_BUFSZ));
+		return (os != null ? os : new NXTOutputStream(this, BTC_BUFSZ-BTC_DEFHEADER));
 	}
 
 	/**
