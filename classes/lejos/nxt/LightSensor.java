@@ -34,9 +34,7 @@ public class LightSensor implements SensorConstants
        port.setTypeAndMode(
     		   (floodlight ? TYPE_LIGHT_ACTIVE
     				       : TYPE_LIGHT_INACTIVE),
-    		   MODE_PCTFULLSCALE);
-		        
-	   
+    		   MODE_PCTFULLSCALE); 
 	}
 	
 	/**
@@ -84,4 +82,23 @@ public class LightSensor implements SensorConstants
 	{
 		_hundred = port.readRawValue();
 	}
+	/** 
+	 * set the normalized value corresponding to readValue() = 0
+	 * @param low
+	 */
+	public void setLow(int low) { _zero = 1023 - low;}
+	  /** 
+     * set the normalized value corresponding to  readValue() = 100;
+     * @param low
+     */
+    public void setHigh(int high) { _hundred = 1023 - high;}
+    /**
+    * return  the normalized value corresponding to readValue() = 0
+    */
+   public int getLow() { return 1023 - _zero;}
+    /** 
+    * return the normalized value corresponding to  readValue() = 100;
+    * @param low
+    */
+   public int  getHigh() {return 1023 - _hundred;}
 }
