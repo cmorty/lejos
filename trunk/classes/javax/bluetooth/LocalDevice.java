@@ -26,6 +26,13 @@ public class LocalDevice {
 		return localDevice;
 	}
 	
+	/**
+	 * Returns the friendly name of a Bluetooth device. 
+	 * NOTE: If you want to set the friendly name, it can be done 
+	 * through the LCP class or using the NXJExplorer program on 
+	 * your personal computer.
+	 * @return
+	 */
 	public String getFriendlyName() {
 		char [] nameChars = convertBytesToChars(Bluetooth.getFriendlyName());
 		String fName = new String(nameChars);  
@@ -36,6 +43,8 @@ public class LocalDevice {
 	 * Changes the friendly name of the NXT brick.
 	 * NOTE: This method is not part of the standard JSR 82 API
 	 * because not all Bluetooth devices can change their friendly name.
+	 * This method does not work. Technically this should be done
+	 * through LCP so USB can also change it.
 	 * @return true = success, false = failed
 	 */
 	public boolean setFriendlyName(String name) {
