@@ -228,6 +228,8 @@ public final class StringBuffer
     private StringBuffer append( float number, int significantDigits ) {
 	  synchronized(buf) {
 		int charPos = 0;
+		int exponent = 0;
+		
 		if ( number == 0 ) {
 			buf[ charPos++ ] = '0';
 		} else {
@@ -238,7 +240,6 @@ public final class StringBuffer
 
 			// calc. the power (base 10) for the given number:
 			int pow = ( int )Math.floor( Math.log( number ) / log10 );
-			int exponent = 0;
 
 			// use exponential formatting if number too big or too small
 			if ( pow < -3 || pow > 6 ) {
@@ -295,19 +296,21 @@ public final class StringBuffer
 			if ( exponent != 0 ) {
 				buf[ charPos++ ] = 'E';
 			} // if
-			// Do we have enough room?
-			if (charPos + curPos > characters.length) {
-				  char [] nc = new char[curPos + charPos];
-				  System.arraycopy (characters, 0, nc, 0, curPos);	
-				  characters = nc;
-			}
-			System.arraycopy(buf, 0, characters, curPos, charPos);
-			curPos += charPos;
-			// Restore the exponential format
-			if ( exponent != 0 ) {
-				append( exponent );
-			} // if
 		}
+		
+		// Do we have enough room?
+		if (charPos + curPos > characters.length) {
+			  char [] nc = new char[curPos + charPos];
+			  System.arraycopy (characters, 0, nc, 0, curPos);	
+			  characters = nc;
+		}
+		System.arraycopy(buf, 0, characters, curPos, charPos);
+		curPos += charPos;
+		// Restore the exponential format
+		if ( exponent != 0 ) {
+			append( exponent );
+		} // if
+		
 		return this;
 	  }
     }
