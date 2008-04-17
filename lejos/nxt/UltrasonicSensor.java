@@ -83,7 +83,7 @@ public class UltrasonicSensor extends I2CSensor
 		return ret;
 	}
 	
-	public UltrasonicSensor(SensorPort port)
+	public UltrasonicSensor(I2CPort port)
 	{
 		super(port);
 		// Set correct sensor type, default is TYPE_LOWSPEED
