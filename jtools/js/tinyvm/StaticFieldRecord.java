@@ -10,6 +10,8 @@ public class StaticFieldRecord implements WritableData
 {
    ClassRecord iClassRecord;
    Field iField;
+   boolean isUsed = false;
+
 
    public StaticFieldRecord (Field aEntry, ClassRecord aRec)
    {
@@ -55,5 +57,16 @@ public class StaticFieldRecord implements WritableData
    {
       return iField.hashCode();
    }
+   
+   public void markUsed()
+   {
+       isUsed = true;
+   }
+   
+   public boolean used()
+   {
+       return isUsed;
+   }
+
 }
 

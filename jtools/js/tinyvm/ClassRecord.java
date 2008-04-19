@@ -53,6 +53,7 @@ public class ClassRecord implements WritableData
    int iFlags;
    boolean iUseAllMethods = false;
    final Vector iImplementedBy = new Vector();
+   private boolean isUsed = false;
 
    public void useAllMethods ()
    {
@@ -236,7 +237,6 @@ public class ClassRecord implements WritableData
    {
       // _logger.log(Level.INFO, "Processing CONSTANT_Class entries in " +
       // iName);
-
       ConstantPool pPool = iCF.getConstantPool();
       Constant[] constants = pPool.getConstantPool();
       for (int i = 0; i < constants.length; i++)
@@ -375,6 +375,11 @@ public class ClassRecord implements WritableData
       // TBD: This indexOf call is slow
       return iBinary.iStaticFields.indexOf(pRecord);
    }
+   
+   public StaticFieldRecord getStaticFieldRecord(String aName)
+   {
+      return (StaticFieldRecord) iStaticFields.get(aName);       
+   }
 
    public void storeConstants (RecordTable aConstantTable,
       RecordTable aConstantValues) throws TinyVMException
@@ -407,7 +412,6 @@ public class ClassRecord implements WritableData
       throws TinyVMException
    {
       // _logger.log(Level.INFO, "Processing methods in " + iName);
-
       Method[] methods = iCF.getMethods();
       for (int i = 0; i < methods.length; i++)
       {
@@ -433,6 +437,8 @@ public class ClassRecord implements WritableData
       }
       aMethodTables.add(iMethodTable);
    }
+   
+   
    public void storeOptimizedMethods (RecordTable aMethodTables,
            RecordTable aExceptionTables, HashVector aSignatures)
       throws TinyVMException
@@ -440,7 +446,6 @@ public class ClassRecord implements WritableData
       // _logger.log(Level.INFO, "Processing methods in " + iName);
       RecordTable iOptMethodTable = new RecordTable("methods", false, false);
       Hashtable iOptMethods = new Hashtable();
-
 
       for (Iterator iter = iMethodTable.iterator(); iter.hasNext();)
       {
@@ -457,12 +462,32 @@ public class ClassRecord implements WritableData
       aMethodTables.add(iMethodTable);
    }
 
+   public void storeOptimizedFields (RecordTable aInstanceFieldTables,
+      RecordTable aStaticFields, RecordTable aStaticState)
+      throws TinyVMException
+   {
+      Field[] fields = iCF.getFields();
+      for (int i = 0; i < fields.length; i++)
+      {
+         Field pField = fields[i];
+         if (pField.isStatic())
+         {
+            String pName = pField.getName().toString();
+            StaticFieldRecord pRec = (StaticFieldRecord) iStaticFields.get(pName);
+            if (pRec.used())
+            {
+                StaticValue pValue = (StaticValue) iStaticValues.get(pName);
+                aStaticState.add(pValue);
+                aStaticFields.add(pRec);
+            }
+         }
+      }
+   }
+
    public void storeFields (RecordTable aInstanceFieldTables,
       RecordTable aStaticFields, RecordTable aStaticState)
       throws TinyVMException
    {
-      // _logger.log(Level.INFO, "Processing methods in " + iName);
-
       Field[] fields = iCF.getFields();
       for (int i = 0; i < fields.length; i++)
       {
@@ -508,9 +533,10 @@ public class ClassRecord implements WritableData
       }
    }
    
-   public void markMethod(MethodRecord pRec) throws TinyVMException
+   public void markMethod(MethodRecord pRec, boolean directCall) throws TinyVMException
    {
        // Is this a simple class?
+       if (directCall) isUsed = true;
        pRec.markCalled(iCF, iBinary);
        if (!iImplementedBy.isEmpty())
        {
@@ -524,7 +550,7 @@ public class ClassRecord implements WritableData
               MethodRecord pActualMethod = pClass.getVirtualMethodRecord((Signature)iBinary.iSignatures.elementAt(pRec.getSignatureId()));
               // If so then we need to mark it...
               if (pActualMethod != null)
-                  pClass.markMethod(pActualMethod);
+                  pClass.markMethod(pActualMethod, false);
            }
           
        }
@@ -636,7 +662,17 @@ public class ClassRecord implements WritableData
       }
    }
 
-
+   public void markUsed()
+   {
+       if (!isUsed && hasParent())
+          getParent().markUsed();
+       isUsed = true;
+   }
+   
+   public boolean used()
+   {
+       return isUsed;
+   }
    // private static final Logger _logger = Logger.getLogger("TinyVM");
 }
 

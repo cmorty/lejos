@@ -274,7 +274,7 @@ public class MethodRecord implements WritableData
       {
          MethodRecord pMeth = (MethodRecord) iter.next();
          // _logger.log(Level.INFO, "Marking sub method " + pMeth.iMethod.getName());
-         pMeth.iClassRecord.markMethod(pMeth);
+         pMeth.iClassRecord.markMethod(pMeth, false);
       }
       Code pCodeAttrib = iMethod.getCode();
       if (pCodeAttrib == null) return;
