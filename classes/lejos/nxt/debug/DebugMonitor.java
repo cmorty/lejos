@@ -98,6 +98,7 @@ public class DebugMonitor
                     displayThreads(monitor);
                     break;
             }
+            LCD.refresh();
             Sound.playTone(73, 150);
             Sound.pause(300);
             Sound.playTone(62, 500);
