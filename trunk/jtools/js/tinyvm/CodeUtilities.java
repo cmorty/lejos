@@ -178,6 +178,63 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
          return (fieldType.type() << TinyVMConstants.F_SIZE_SHIFT) | pOffset;
       }
    }
+ 
+   /**
+    * Make the class as being used.
+    * @param aPoolIndex
+    * @return
+    * @throws js.tinyvm.TinyVMException
+    */
+   public void markClass (int aPoolIndex) throws TinyVMException
+   {
+      Constant pEntry = iCF.getConstantPool().getConstant(aPoolIndex); // TODO catch all (runtime) exceptions
+      if (!(pEntry instanceof ConstantClass))
+      {
+         throw new TinyVMException("Classfile error: Instruction requiring "
+            + "CONSTANT_Class entry got "
+            + (pEntry == null? "null" : pEntry.getClass().getName()));
+      }
+      ConstantClass pClassEntry = (ConstantClass) pEntry;
+      String pClassName = pClassEntry.getBytes(iCF.getConstantPool());
+      ClassRecord pClassRecord = iBinary.getClassRecord(pClassName);
+      if (pClassRecord == null)
+      {
+         throw new TinyVMException("Bug CU-3: Didn't find class " + pClassName
+            + " from class " + iCF.getClassName());
+      }
+      iBinary.markClassUsed(pClassRecord);
+   }
+
+   /**
+    * Mark the static field as being used.
+    * @param aFieldIndex
+    * @throws js.tinyvm.TinyVMException
+    */
+   void markStaticField (int aFieldIndex) throws TinyVMException
+   {
+      Constant pEntry = iCF.getConstantPool().getConstant(aFieldIndex); // TODO catch all (runtime) exceptions
+      if (!(pEntry instanceof ConstantFieldref))
+      {
+         throw new TinyVMException("Classfile error: Instruction requiring "
+            + "CONSTANT_Fieldref entry got "
+            + (pEntry == null? "null" : pEntry.getClass().getName()));
+      }
+      ConstantFieldref pFieldEntry = (ConstantFieldref) pEntry;
+      String className = pFieldEntry.getClass(iCF.getConstantPool()).replace(
+         '.', '/');
+      ClassRecord pClassRecord = iBinary.getClassRecord(className);
+      if (pClassRecord == null)
+      {
+         throw new TinyVMException("Bug CU-3: Didn't find class " + className
+            + " from class " + iCF.getClassName());
+      }
+      ConstantNameAndType cnat = (ConstantNameAndType) iCF.getConstantPool()
+         .getConstant(pFieldEntry.getNameAndTypeIndex());
+      String pName = cnat.getName(iCF.getConstantPool());
+
+      iBinary.markClassUsed(pClassRecord);
+      pClassRecord.getStaticFieldRecord(pName).markUsed();
+   }
 
    /**
     * @return The word that should be written as parameter of an invocation
@@ -557,20 +614,32 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
                   i += 2;
                }
                break;
+               
+            case OP_NEW:
+            case OP_CHECKCAST:
+            case OP_INSTANCEOF:
+               markClass((aCode[i] & 0xFF) << 8 | (aCode[i + 1] & 0xFF));
+               i += 2;
+               break;
 
+            case OP_PUTSTATIC:
+            case OP_GETSTATIC:
+               markStaticField((aCode[i] & 0xFF) << 8 | (aCode[i + 1] & 0xFF));
+               i += 2;
+               break;
             case OP_INVOKEINTERFACE:
                // Opcode is changed:
                // _logger.log(Level.INFO, "Interface");
                MethodRecord pMeth0 = findMethod((aCode[i] & 0xFF) << 8
                   | (aCode[i + 1] & 0xFF), false); 
-               if (pMeth0 != null) pMeth0.getClassRecord().markMethod(pMeth0);
+               if (pMeth0 != null) pMeth0.getClassRecord().markMethod(pMeth0, true);
                i += 4;
                break;
             case OP_INVOKEVIRTUAL:
                // Opcode is changed:
                MethodRecord pMeth1 = findMethod((aCode[i] & 0xFF) << 8
                   | (aCode[i + 1] & 0xFF), false); 
-               if (pMeth1 != null) pMeth1.getClassRecord().markMethod(pMeth1);
+               if (pMeth1 != null) pMeth1.getClassRecord().markMethod(pMeth1, true);
                i += 2;
                break;
             case OP_INVOKESPECIAL:
@@ -578,7 +647,7 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
                // Opcode is changed:
                MethodRecord pMeth2 = findMethod((aCode[i] & 0xFF) << 8
                   | (aCode[i + 1] & 0xFF), true); 
-               if (pMeth2 != null) pMeth2.getClassRecord().markMethod(pMeth2);
+               if (pMeth2 != null) pMeth2.getClassRecord().markMethod(pMeth2, true);
                i += 2;
                break;
             case OP_LOOKUPSWITCH:
