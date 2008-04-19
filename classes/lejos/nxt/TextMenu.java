@@ -61,6 +61,11 @@ public class TextMenu
 	private int _length;
 	
 	/**
+	 * startb time for select()
+	 */
+	private int _startTime;
+	
+	/**
 	 * This constructor sets location of the top row of the item list to row 0 of the display.
 	 */
 	public TextMenu( String[] items)
@@ -129,8 +134,15 @@ public class TextMenu
 	 **/
 	public int select() 
 	{ 
-	   return select(0); 
+	   return select(0,0); 
 	} 
+	
+	/**
+	 * Version of select without timeout
+	 */
+	public int select(int selectedIndex) {
+		return select(selectedIndex, 0);
+	}
 
 	/**
 	 * Allows the user to scroll through the items, using the right and left buttons (forward and back)  The Enter key closes the menu <br>
@@ -142,18 +154,24 @@ public class TextMenu
 	 * @param selectedIndex the index to start the menu on
 	 * @return the index of the selected item
 	 **/
-	public int select(int selectedIndex) 
+	public int select(int selectedIndex, int timeout) 
 	{ 
 	   _selectedIndex = selectedIndex;
 //		if (_length<_size) _size = _length;
 		int button = 0;
 		_quit = false;
+		resetTimeout();
 //		LCD.clear();
 		display();
 		while(!_quit)
 		{
 			while(Button.readButtons()>0 && !_quit)Thread.yield();// wait for release
-			while(Button.readButtons()==0 && !_quit) Thread.yield();
+			while(Button.readButtons()==0 && !_quit) {
+				if (timeout > 0 && 
+				   ((int) System.currentTimeMillis())- _startTime >= timeout) 
+					return -3; // timeout
+				Thread.yield();
+			}
 			if (_quit) return -2; // quit by another thread
 			try {Thread.sleep(20);} catch (InterruptedException ie) {} // wait to stabilize
 			button=Button.readButtons();
@@ -230,5 +248,11 @@ public class TextMenu
 	   return _items;
 	}
 	
+	/**
+	 * Reset the timeout period.
+	 */
+	public void resetTimeout() {
+		_startTime = (int) System.currentTimeMillis();
+	}	
 }
 
