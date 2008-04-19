@@ -10,10 +10,13 @@ import javax.bluetooth.*;
 public class StartUpText
 {
    static Graphics g = new Graphics();
-   static  boolean btPowerOn = false;
-   static String blank = "                ";
-   static String defaultProgramProperty = "lejos.default_program"; 
-   static String defaultProgramAutoRunProperty = "lejos.default_autoRun";
+   static boolean btPowerOn = false;
+   static final String blank = "                ";
+   static final String defaultProgramProperty = "lejos.default_program"; 
+   static final String defaultProgramAutoRunProperty = "lejos.default_autoRun";
+   static final String sleepTimeProperty = "lejos.sleep_time";
+   static final int defaultSleepTime = 2;
+   static final int maxSleepTime = 10;
  
    public static void playTune()
    {
@@ -136,11 +139,15 @@ public class StartUpText
 		int [][] Volumes = {{Sound.getVolume()/10, 784, 250, 0}, {Button.getKeyClickVolume()/10, Button.getKeyClickTone(1), Button.getKeyClickLength(), 0}};
         int enterTone = Button.getKeyClickTone(1);
 		int curItem = 0;
-		String[] systemMenuData = {"Format","Auto Run"};
+		String sleepTime = "Sleep Time: ";
+		String[] systemMenuData = {"Format",sleepTime, "Auto Run"};
 		String dot = ".";
         String[] yes_no = {"No","Yes"};
         TextMenu yes_noMenu = new TextMenu(yes_no,6);
         TextMenu systemMenu = new TextMenu(systemMenuData,5);
+        int timeoutMinutes = SystemSettings.getIntSetting(sleepTimeProperty, defaultSleepTime);
+        int timeout = timeoutMinutes * 60000;
+        
         playTune();
         
  // Run default program if required
@@ -212,12 +219,13 @@ public class StartUpText
 				}
 				LCD.drawInt(free,size, pos, 2);
 				LCD.drawString(battery, 0,3);
-               int  millis = Battery.getVoltageMilliVolt() + 50;
+                int  millis = Battery.getVoltageMilliVolt() + 50;
                 LCD.drawInt((millis - millis%1000)/1000,11,3);
                 LCD.drawString(dot, 12, 3);
                 LCD.drawInt((millis% 1000)/100,13,3);
                 LCD.drawString(freeMem,0,4);
-                LCD.drawInt((int)(Runtime.getRuntime().freeMemory()),11,4);				
+                LCD.drawInt((int)(Runtime.getRuntime().freeMemory()),11,4);	
+                systemMenuData[1] = sleepTime + timeoutMinutes;
 			} else if (menu == soundMenu)
 			{
    				LCD.drawString(sound, 5, 1);
@@ -225,7 +233,8 @@ public class StartUpText
 					soundMenuData2[i] = soundMenuData[i] + formatVol(Volumes[i][0]);
 				soundMenu.setItems(soundMenuData2);
 			}
-			int selection = menu.select(curItem);
+			int selection = menu.select(curItem, timeout);
+			if (selection == -3) System.shutDown();
 		    if (menu == topMenu) {
 		    	 if (selection == 0) 
 		    	 {
@@ -254,7 +263,8 @@ public class StartUpText
 			        if (ext.equals("nxj")) subMenu = programMenu;
 			        if (ext.equals("wav")) subMenu = wavMenu;
 					subMenu.setTitle(fileNames[selection]);
-			    	int subSelection = subMenu.select();
+			    	int subSelection = subMenu.select(0,timeout);
+			    	if (subSelection == -3) System.shutDown();
                     if ((subMenu == fileMenu && subSelection == 0) ||
                          (subMenu == wavMenu && subSelection == 1) 
                          || subSelection == 2)
@@ -306,7 +316,8 @@ public class StartUpText
 		    			do {
 		    				LCD.clear();
 				    		LCD.drawString(devices,5,0);
-		    				selected = deviceMenu.select();
+		    				selected = deviceMenu.select(0,timeout);
+		    				if (selected == -3) System.shutDown();
 		    				if (selected >=0) {
 		    					RemoteDevice btrd = ((RemoteDevice) devList.elementAt(selected));
 		    					LCD.clear();
@@ -314,7 +325,8 @@ public class StartUpText
 		    					LCD.drawString(names[selected],0,1);
 		    					LCD.drawString(btrd.getBluetoothAddress(), 0, 2);
 		    					for(int i=0;i<4;i++) LCD.drawInt(btrd.getDeviceClass()[i], 3, i*4, 3);
-		    					int subSelection = subMenu.select();
+		    					int subSelection = subMenu.select(0, timeout);
+		    					if (subSelection == -3) System.shutDown();
 		    					if (subSelection == 0) {
 		    						Bluetooth.removeDevice(btrd);
 		    						selected = -1;
@@ -352,14 +364,16 @@ public class StartUpText
 		    			do {
 				    		LCD.clear();
 							LCD.drawString(found,6,0);
-		    				selected = searchMenu.select();
+		    				selected = searchMenu.select(0,timeout);
+		    				if (selected == -3) System.shutDown();
 		    				if (selected >=0) {
 		    					RemoteDevice btrd = ((RemoteDevice) devList.elementAt(selected));
 		    					LCD.clear();
 		    					LCD.drawString(found,6,0);
 		    					LCD.drawString(names[selected],0,1);
 		    					LCD.drawString(btrd.getBluetoothAddress(), 0, 2);
-		    					int subSelection = subMenu.select();
+		    					int subSelection = subMenu.select(0, timeout);
+		    					if (subSelection == -3) System.shutDown();
 		    					if (subSelection == 0) Bluetooth.addDevice(btrd);
 		    				}
 		    			} while (selected >= 0);
@@ -389,9 +403,17 @@ public class StartUpText
                if (selection == 0) 
                {
                   yes_noMenu.setTitle("Delete all files?");
-                   if(yes_noMenu.select()== 1)File.format();
-               }
-               if (selection == 1)
+                  int subSelection = yes_noMenu.select(0,timeout);
+                  if (subSelection == -3) System.shutDown();
+                  if(subSelection== 1)File.format();
+               } else if (selection == 1) // Sleep time
+               { 
+            	   timeoutMinutes++;
+            	   if (timeoutMinutes > maxSleepTime) timeoutMinutes = 0;
+            	   timeout = timeoutMinutes * 60000;
+            	   Settings.setProperty(sleepTimeProperty, "" + timeoutMinutes);
+            	   curItem = selection;
+               } else if (selection == 2)
                { 
                   String defaultPrgm = Settings.getProperty(defaultProgramProperty, "");
                   if(defaultPrgm != null && defaultPrgm.length() >0)
@@ -400,16 +422,18 @@ public class StartUpText
                      LCD.drawString("Default Program:    ",0,3);
                      LCD.drawString(" " + defaultPrgm + blank,0 , 4);
                      yes_noMenu.setTitle("Run at power up?");
-                     int subSelection =  yes_noMenu.select() ;
+                     int subSelection =  yes_noMenu.select(0, timeout) ;
+                     if (subSelection == -3) System.shutDown();
                      if(subSelection == 0)
                         Settings.setProperty(defaultProgramAutoRunProperty, "OFF");
                      else if(subSelection == 1)
                         Settings.setProperty(defaultProgramAutoRunProperty, "ON");                   
                   }
-               }
-//             } else if (selection == -1) {
+               } 
+               if (selection != 1) { // Return to top menu for all but sleep time
+            	   curItem = 0;
                    menu = topMenu;
-//             } else
+               }
             } else if (menu == soundMenu) {
 				if (selection >= 0)
 				{
@@ -525,6 +549,7 @@ class USBRespond extends Thread
 				if (len > 0)
 				{
 					ind.ioActive();
+					menu.resetTimeout();
 					int replyLen = LCP.emulateCommand(inMsg,len, reply);
 					if ((inMsg[0] & 0x80) == 0) conn.write(reply, replyLen);
 					if (inMsg[1] == LCP.CLOSE|| inMsg[1] == LCP.DELETE) {
@@ -596,6 +621,7 @@ class BTRespond  extends Thread {
 				if (len > 0)
 				{
 					ind.ioActive();
+					menu.resetTimeout();
 					int replyLen = LCP.emulateCommand(inMsg,len, reply);
 					if ((inMsg[0] & 0x80) == 0) conn.write(reply, replyLen);
 					if (inMsg[1] == LCP.CLOSE|| inMsg[1] == LCP.DELETE) {
