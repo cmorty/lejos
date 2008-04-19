@@ -121,13 +121,7 @@ public class DataViewer extends JFrame implements ActionListener
       _nxt = nameField.getText(); 
       setMessage("Connecting");
       con = new Connector();
-      try { con.startConnector(_nxt,_useUSB);}
-      catch(NXTCommException e) 
-      { 
-         System.out.println( " is BT adapter plugged in? " +e);
-         setMessage("BT adapter not found");
-         return;
-      }
+      if (! con.connectTo(_nxt,_useUSB)) System.exit(1);
    }
       setMessage("ready for data");
       dataIn = con.getDataIn();
