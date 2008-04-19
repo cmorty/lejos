@@ -122,7 +122,7 @@ public class Connector
     * @param useUSB
     * @return true if connection was made
     */
-   public boolean startConnection(String NXT, boolean useUSB)
+   public boolean startConnector(String NXT, boolean useUSB)
    {
       return connectTo(NXT,useUSB);
    }
