@@ -21,7 +21,7 @@ C_OBJECTS := $(C_SOURCES:.c=.o) $(C_RAMSOURCES:.c=.oram)
 C_OPTIMISATION_FLAGS = -Os
 #C_OPTIMISATION_FLAGS = -O0
 
-SVNDEF := -D'SVN_REV="$(shell svnversion -n .)"'
+SVNDEF := -D'SVN_REV="$(shell svnversion -n ../..)"'
 
 CFLAGS = -c -ffreestanding -fsigned-char -mcpu=arm7tdmi  \
 	$(C_OPTIMISATION_FLAGS) -g  \

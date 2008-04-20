@@ -28,6 +28,9 @@
 #include "udp.h"
 #include "flashprog.h"
 #include "debug.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #undef push_word()
 #undef push_ref()
@@ -37,6 +40,15 @@
 // Declared below to avoid needing STACKWORD everywhere we use display
 extern STACKWORD display_get_array(void);
 extern STACKWORD display_get_font(void);
+
+// Extract the highest revision number from the output of svnversion
+int getRevision() {
+  char* rev = SVN_REV;
+  char *str = strchr(rev,':'); // Skip start revision if present
+  if (str == NULL) str = rev;else str++;
+  return atoi(str);
+}
+	
 /**
  * NOTE: The technique is not the same as that used in TinyVM.
  */
@@ -420,12 +432,13 @@ dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
     push_word(gProgramExecutions);
     return;
   case getFirmwareRevision_4_5I:
-    push_word(SVN_REV);
+    push_word((STACKWORD) getRevision());
     return;
   case getFirmwareMajorVersion_4_5I:
-    push_word(MAJOR_VERSION);
+    push_word((STACKWORD) MAJOR_VERSION);
+    return;
   case getFirmwareMinorVersion_4_5I:
-    push_word(MINOR_VERSION); 
+    push_word((STACKWORD) MINOR_VERSION); 
     return;
   default:
     throw_exception(noSuchMethodError);
