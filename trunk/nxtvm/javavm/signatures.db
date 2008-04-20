@@ -144,3 +144,10 @@ getProgramExecutionsCount()I
 usbStatus()I
 usbEnable(I)V
 usbDisable()V
+
+#System
+getFirmwareRevision()I
+getFirmwareMajorVersion()I
+getFirmwareMinorVersion()I
+
+

@@ -4,7 +4,7 @@ default: def_target
 
 include environment.mak
 include targetdef.mak
-
+include version.mak
 
 RAM_TARGET   := $(TARGET)_ram.elf
 ROM_TARGET   := $(TARGET)_rom.elf
@@ -21,11 +21,14 @@ C_OBJECTS := $(C_SOURCES:.c=.o) $(C_RAMSOURCES:.c=.oram)
 C_OPTIMISATION_FLAGS = -Os
 #C_OPTIMISATION_FLAGS = -O0
 
+SVNDEF := -D'SVN_REV="$(shell svnversion -n .)"'
+
 CFLAGS = -c -ffreestanding -fsigned-char -mcpu=arm7tdmi  \
 	$(C_OPTIMISATION_FLAGS) -g  \
 	-Winline -Wall -Werror-implicit-function-declaration \
 	-I. -I$(VM_DIR) \
-         -mthumb -mthumb-interwork -ffunction-sections -fdata-sections
+         -mthumb -mthumb-interwork -ffunction-sections -fdata-sections \
+    $(SVNDEF) -DMAJOR_VERSION=$(MAJOR_VERSION) -DMINOR_VERSION=$(MINOR_VERSION)
 
 LDFLAGS = -Map $@.map -L$(LIBPREFIX) -lm -cref --gc-sections $(LIBC)
 
