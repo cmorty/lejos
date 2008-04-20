@@ -81,6 +81,12 @@ public final class System
   */
  public static native int getProgramExecutionsCount();
  
+ public static native int getFirmwareMajorVersion();
+ 
+ public static native int getFirmwareMinorVersion();
+ 
+ public static native int getFirmwareRevision();
+ 
 }
 
 
