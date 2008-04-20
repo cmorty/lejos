@@ -92,4 +92,7 @@
 #define usbStatus_4_5I 85
 #define usbEnable_4I_5V 86
 #define usbDisable_4_5V 87
+#define getFirmwareRevision_4_5I 88
+#define getFirmwareMajorVersion_4_5I 89
+#define getFirmwareMinorVersion_4_5I 90
 #endif // _SPECIALSIGNATURES_H

@@ -419,6 +419,14 @@ dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
   case getProgramExecutionsCount_4_5I:
     push_word(gProgramExecutions);
     return;
+  case getFirmwareRevision_4_5I:
+    push_word(SVN_REV);
+    return;
+  case getFirmwareMajorVersion_4_5I:
+    push_word(MAJOR_VERSION);
+  case getFirmwareMinorVersion_4_5I:
+    push_word(MINOR_VERSION); 
+    return;
   default:
     throw_exception(noSuchMethodError);
   }
