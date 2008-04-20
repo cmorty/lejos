@@ -119,7 +119,7 @@ public class StartUpText
 		String freeMem = "Free ram";
 		String battery = "Battery ";
 		TextMenu filesMenu = new TextMenu(null,1);
-		String[] topMenuData = {"Run Default", "Files", "Bluetooth", "Sound", "System"};
+		String[] topMenuData = {"Run Default", "Files", "Bluetooth", "Sound", "System", "Version"};
 		TextMenu topMenu = new TextMenu(topMenuData,1);
 		String[] fileMenuData = {"Delete file"}; 
 		TextMenu fileMenu = new TextMenu(fileMenuData,2);
@@ -147,6 +147,10 @@ public class StartUpText
         TextMenu systemMenu = new TextMenu(systemMenuData,5);
         int timeoutMinutes = SystemSettings.getIntSetting(sleepTimeProperty, defaultSleepTime);
         int timeout = timeoutMinutes * 60000;
+        String firmwareVersionString = "Firmware Version";
+        String firmwareVersion = System.getFirmwareMajorVersion() + "." +
+		                         System.getFirmwareMinorVersion() + "." +
+		                         System.getFirmwareRevision();
         
         playTune();
         
@@ -250,6 +254,12 @@ public class StartUpText
 					 Button.setKeyClickTone(1, 0);
 				 } else if (selection == 4) {
 		    		 menu = systemMenu;
+		    	 } else if (selection == 5) {
+		    		 LCD.clear();
+		    		 drawTopRow();
+		    		 LCD.drawString(firmwareVersionString, 0, 2);
+		    		 LCD.drawString(firmwareVersion,2,3);
+		    		 Button.waitForPress();		 
 		    	 } else if (selection == -1) {
 		    		 quit = true;
 		    	 }
