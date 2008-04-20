@@ -92,6 +92,9 @@ public interface SpecialSignatureConstants {
     "getProgramExecutionsCount()I",
     "usbStatus()I",
     "usbEnable(I)V",
-    "usbDisable()V"
+    "usbDisable()V",
+    "getFirmwareRevision()I",
+    "getFirmwareMajorVersion()I",
+    "getFirmwareMinorVersion()I"
   };
 }
