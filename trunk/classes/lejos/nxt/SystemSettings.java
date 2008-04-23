@@ -19,7 +19,7 @@ public class SystemSettings {
 	// settings. There is a maximum of 16 including the version.
 	private static final String[] names = {
 		versionName, "lejos.volume", "lejos.default_program", "lejos.keyclick_volume",
-		"lejos.default_autoRun", "lejos.sleep_time"
+		"lejos.default_autoRun", "lejos.sleep_time", "lejos.usb_serno", "lejos.usb_name"
 	};
 	
 	/**

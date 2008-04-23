@@ -27,7 +27,7 @@ public class NXTCommBluecove implements NXTComm, DiscoveryListener {
 		devices = new Vector();
 		nxtInfos = new Vector();
 
-		if ((protocol | NXTCommFactory.BLUETOOTH) == 0)
+		if ((protocol & NXTCommFactory.BLUETOOTH) == 0)
 			return new NXTInfo[0];
 
 		synchronized (this) {

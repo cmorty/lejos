@@ -11,6 +11,8 @@ void udp_reset(void);
 int udp_write(U8* buf, int off, int len);
 int udp_read(U8* buf, int off, int len);
 int udp_status();
+void udp_set_serialno(U8 *serNo, int len);
+void udp_set_name(U8 *name, int len);
 
 #define   USB_TIMEOUT   0x0BB8 
 #define END_OF_BUS_RESET ((unsigned int) 0x1 << 12)
@@ -43,4 +45,5 @@ int udp_status();
 
 #define VENDOR_SET_FEATURE_INTERFACE  0x0341
 #define VENDOR_CLEAR_FEATURE_INTERFACE  0x0141
+#define VENDOR_GET_DESCRIPTOR         0x06c0
 #endif

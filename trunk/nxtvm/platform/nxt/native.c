@@ -352,6 +352,26 @@ dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
   case usbReset_4_5V:
     udp_reset();
     return; 
+  case usbSetSerialNo_4Ljava_3lang_3String_2_5V: 
+    {
+      byte *p = word2ptr(paramBase[0]);
+      int len;
+      Object *charArray = (Object *) word2ptr(get_word_4_ns(fields_start(p)));
+
+      len = get_array_length(charArray);
+      udp_set_serialno((U8 *)jchar_array(charArray), len);
+    }
+    return;
+  case usbSetName_4Ljava_3lang_3String_2_5V:
+    {
+      byte *p = word2ptr(paramBase[0]);
+      int len;
+      Object *charArray = (Object *) word2ptr(get_word_4_ns(fields_start(p)));
+
+      len = get_array_length(charArray);
+      udp_set_name((U8 *)jchar_array(charArray), len);
+    }
+    return;
   case writePage_4_1BI_5V:
     {
       Object *p = word2ptr(paramBase[0]);

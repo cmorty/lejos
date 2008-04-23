@@ -537,6 +537,32 @@ class USBRespond extends Thread
 	public void setIndicator(Indicators ind) {
 		this.ind = ind;
 	}
+    
+    private void setAddress()
+    {
+        // Ensure the USB address property is set correctly. We use the
+        // Bluetooth address as our serial number.
+        String SerialNo = Bluetooth.addressToString(Bluetooth.getLocalAddress());
+        if (!SerialNo.equals(USB.getSerialNo()))
+        {
+            Settings.setProperty(USB.SERIAL_NO, SerialNo);
+            USB.setSerialNo(SerialNo);
+        }
+        byte[] fName = Bluetooth.getFriendlyName();
+        char []cName = new char[fName.length];
+        int cNameLen = 0;
+        while (cNameLen < fName.length && fName[cNameLen] != 0)
+        {
+            cName[cNameLen] = (char)fName[cNameLen];
+            cNameLen++;
+        }
+        String name = new String(cName, 0, cNameLen);
+        if (!name.equals(USB.getName()))
+        {
+            Settings.setProperty(USB.NAME, name);
+            USB.setName(name);
+        }
+    }
 	
 	public void run() {
 		byte[] inMsg = new byte[64];
@@ -544,6 +570,8 @@ class USBRespond extends Thread
 		boolean cmdMode = true;
         USBConnection conn = null;
 		int len;
+
+        setAddress();
         
 		while (true)
 		{

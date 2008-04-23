@@ -38,11 +38,15 @@ enum nxt_usb_ids {
   PRODUCT_SAMBA = 0x6124
 };
 
+#define MAX_SERNO 26
+#define MAX_NAME 34
 struct nxt_t {
   struct usb_device *dev;
   struct usb_dev_handle *hdl;
   int is_in_reset_mode;
   int stream_mode;
+  char serial_no[MAX_SERNO];
+  char name[MAX_NAME];
 };
 
 
@@ -55,12 +59,46 @@ nxt_error_t nxt_init(nxt_t **nxt)
 }
 
 
+nxt_error_t nxt_find_nth(nxt_t *nxt, int idx)
+{
+  struct usb_bus *busses, *bus;
+  if (idx == 0)
+  {
+    usb_find_busses();
+    usb_find_devices();
+  }
+  int cnt = 0;
+  busses = usb_get_busses();
+  for (bus = busses; bus != NULL; bus = bus->next)
+    {
+      struct usb_device *dev;
+
+      for (dev = bus->devices; dev != NULL; dev = dev->next)
+        {
+          if (dev->descriptor.idVendor == VENDOR_LEGO &&
+                   dev->descriptor.idProduct == PRODUCT_NXT)
+            {
+              if (cnt++ < idx) continue;
+              /* device found. Open it and get the serial no. and name
+                 if available */
+              struct usb_dev_handle *hdl;
+              hdl = usb_open(dev);
+              int len = usb_get_string(hdl, dev->descriptor.iSerialNumber, 0, nxt->serial_no, MAX_SERNO);
+              len = usb_control_msg(hdl, 0xc0, 0x6, 0, 0, nxt->name, MAX_NAME, 1000);
+              usb_close(hdl);
+              nxt->dev = dev;
+              return NXT_OK;
+            }
+        }
+    }
+  return NXT_NOT_PRESENT;
+}
+
 nxt_error_t nxt_find(nxt_t *nxt)
 {
   struct usb_bus *busses, *bus;
   usb_find_busses();
   usb_find_devices();
-
   busses = usb_get_busses();
   for (bus = busses; bus != NULL; bus = bus->next)
     {
@@ -84,10 +122,8 @@ nxt_error_t nxt_find(nxt_t *nxt)
             }
         }
     }
-
   return NXT_NOT_PRESENT;
 }
-
 
 nxt_error_t
 nxt_open(nxt_t *nxt)
@@ -250,3 +286,17 @@ nxt_read_buf(nxt_t *nxt, char *buf, int len)
   return ret;
 }
 
+// Get the device serial number
+char *
+nxt_serial_no(nxt_t *nxt)
+{
+  return nxt->serial_no;
+}
+
+
+// Get the device name
+char *
+nxt_name(nxt_t *nxt)
+{
+  return nxt->name;
+}
