@@ -101,6 +101,9 @@ handle_uncaught_exception(Object * exception,
   display_goto_xy(0, 2);
   display_string("Method: ");
   display_int(methodRecord - get_method_table(get_class_record(0)), 0);
+  display_goto_xy(0, 3);
+  display_string("PC: ");
+  display_int(pc - get_binary_base(), 0);
   if( get_class_index(exception) == JAVA_LANG_OUTOFMEMORYERROR)
   {
     display_goto_xy(0, 3);

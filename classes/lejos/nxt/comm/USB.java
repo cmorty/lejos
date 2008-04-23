@@ -10,8 +10,20 @@ import lejos.nxt.*;
 public class USB {
     public static final int RESET = 0x40000000;
     public static final int RAW = 0x20000000;
+    public static final String SERIAL_NO = "lejos.usb_serno";
+    public static final String NAME = "lejos.usb_name";
     static final int USB_BUFSZ = 64;
     static final int USB_STREAM = 1;
+    
+    private static String serialNo;
+    private static String name;
+    
+    /**
+     * Static contstructor to force loading of system settings
+     */
+    static {
+        loadSettings();
+    }
 
 	private USB()
 	{		
@@ -85,11 +97,62 @@ public class USB {
         usbDisable();
     }
     
+    /**
+     * Set the USB serial number. Should be a unique 12 character String
+     * @param sn
+     */
+    public static void setSerialNo(String sn)
+    {
+        serialNo = sn;
+        usbSetSerialNo(sn);
+    }
+    
+    /**
+     * Return the current USB serial number.
+     * @return
+     */
+    public static String getSerialNo()
+    {
+        return serialNo;
+    }
+    
+    /**
+     * Set the USB name. Can be up to 16 character String
+     * @param sn
+     */
+    public static void setName(String nam)
+    {
+        name = nam;
+        usbSetName(nam);
+    }
+    
+    /**
+     * Return the current USB name.
+     * @return
+     */
+    public static String getName()
+    {
+        return name;
+    }
+    
+    /**
+     * Load the current system settings associated with this class. Called
+     * automatically to initialize the class. May be called if it is required
+     * to reload any settings.
+     */
+    public static void loadSettings()
+    {
+        setSerialNo(SystemSettings.getStringSetting(SERIAL_NO, "123456780090"));
+        setSerialNo(SystemSettings.getStringSetting(NAME, "nxt"));
+    }
+    
 	public static native void usbEnable(int reset);
 	public static native void usbDisable();
 	public static native void usbReset();
 	public static native int usbRead(byte [] buf, int off, int len);
 	public static native int usbWrite(byte [] buf, int off, int len);
     public static native int usbStatus();
+    public static native void usbSetSerialNo(String serNo);
+    public static native void usbSetName(String name);
     
 }

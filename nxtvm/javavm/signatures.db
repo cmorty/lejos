@@ -150,4 +150,6 @@ getFirmwareRevision()I
 getFirmwareMajorVersion()I
 getFirmwareMinorVersion()I
 
-
+#USB
+usbSetSerialNo(Ljava/lang/String;)V
+usbSetName(Ljava/lang/String;)V

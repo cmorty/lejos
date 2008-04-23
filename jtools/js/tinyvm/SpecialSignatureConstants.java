@@ -95,6 +95,8 @@ public interface SpecialSignatureConstants {
     "usbDisable()V",
     "getFirmwareRevision()I",
     "getFirmwareMajorVersion()I",
-    "getFirmwareMinorVersion()I"
+    "getFirmwareMinorVersion()I",
+    "usbSetSerialNo(Ljava/lang/String;)V",
+    "usbSetName(Ljava/lang/String;)V"
   };
 }

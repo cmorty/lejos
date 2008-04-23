@@ -25,6 +25,7 @@
 #include "aic.h"
 #include "systick.h"
 #include "display.h"
+#include <string.h>
 
 #define EP_OUT    1
 #define EP_IN    2
@@ -131,8 +132,8 @@ static const U8 cfd[] = {
 // Serial Number Descriptor
 static U8 snd[] =
 {
-      0x1A,
-      0x03, 
+      0x1A,           // Descriptor length
+      0x03,           // Descriptor type 3 == string 
       0x31, 0x00,     // MSD of Lap (Lap[2,3]) in UNICode
       0x32, 0x00,     // Lap[4,5]
       0x33, 0x00,     // Lap[6,7]
@@ -145,6 +146,29 @@ static U8 snd[] =
       0x30, 0x00,     // LSD of Nap (Nap[20,21]) in UNICode
       0x39, 0x00,     // MSD of Uap in UNICode
       0x30, 0x00      // LSD of Uap in UNICode
+};
+
+// Name descriptor, we allow up to 16 unicode characters
+static U8 named[] =
+{
+      0x08,           // Descriptor length
+      0x03,           // Descriptor type 3 == string 
+      0x6e, 0x00,     // n
+      0x78, 0x00,     // x
+      0x74, 0x00,     // t
+      0x00, 0x00,
+      0x00, 0x00,
+      0x00, 0x00,
+      0x00, 0x00,
+      0x00, 0x00,
+      0x00, 0x00,
+      0x00, 0x00,
+      0x00, 0x00,
+      0x00, 0x00,
+      0x00, 0x00,
+      0x00, 0x00,
+      0x00, 0x00,
+      0x00, 0x00
 };
 
 static const U8 ld[] = {0x04,0x03,0x09,0x04}; // Language descriptor
@@ -536,6 +560,9 @@ udp_enumerate()
       currentFeatures &= ~(1 << ind);
       udp_send_null();
       break;
+    case VENDOR_GET_DESCRIPTOR:
+      udp_send_control((U8 *)named, named[0], 0);
+      break;
  
     case STD_SET_FEATURE_INTERFACE:
     case STD_CLEAR_FEATURE_INTERFACE:
@@ -661,4 +688,23 @@ udp_disable()
     interrupts_enable(); 
 }
 
+void
+udp_set_serialno(U8 *serNo, int len)
+{
+  /* Set the USB serial number. serNo should point to a 12 character
+   * Unicode string, containing the USB serial number.
+   */
+  if (len == (sizeof(snd)-2)/2)
+    memcpy(snd+2, serNo, len*2);
+}
+
+void
+udp_set_name(U8 *name, int len)
+{
+  if (len <= (sizeof(named)-2)/2)
+  {
+    memcpy(named+2, name, len*2);
+    named[0] = len*2 + 2;
+  } 
+}
 

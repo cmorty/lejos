@@ -42,15 +42,15 @@ void throwIOException(JNIEnv *env, char *msg)
 	return;
 }
 
-JNIEXPORT jlong JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1find(JNIEnv *env, jobject obj) {
+JNIEXPORT jlong JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1find(JNIEnv *env, jobject obj, jint idx) {
   nxt_t *nxt;
   nxt_error_t nxt_err;
 	
   nxt_err = nxt_init(&nxt);
 	
   if (nxt_err == NXT_OK) {
-    nxt_err = nxt_find(nxt);
-    if (nxt_err == NXT_OK && !(nxt_in_reset_mode(nxt))) {
+    nxt_err = nxt_find_nth(nxt, (int)idx);
+    if (nxt_err == NXT_OK) {
       return (jlong) (unsigned long) nxt;
     }
   }
@@ -112,3 +112,24 @@ JNIEXPORT jbyteArray JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1read_1dat
   free(data);
   return (jb);    
 }
+
+JNIEXPORT jstring JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1serial(JNIEnv *env, jobject obj, jlong nxt)
+{
+  char *serno = nxt_serial_no((nxt_t *)(unsigned long)nxt);
+  // Length of the string descriptor is in the first byte, the 2nd byte is 
+  // a type field (always 3) and the length contains these two bytes.
+  int len = (serno[0] - 2)/2;
+  if (len <= 0) return NULL;
+  return (*env)->NewString(env, (jchar *)(serno+2), len);
+}
+
+JNIEXPORT jstring JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1name(JNIEnv *env, jobject obj, jlong nxt)
+{
+  char *name = nxt_name((nxt_t *)(unsigned long)nxt);
+  // Length of the string descriptor is in the first byte, the 2nd byte is 
+  // a type field (always 3) and the length contains these two bytes.
+  int len = (name[0] - 2)/2;
+  if (len <= 0) return NULL;
+  return (*env)->NewString(env, (jchar *)(name+2), len);
+}
+
