@@ -40,7 +40,7 @@
 	</typedef>
 	
 	<!-- release leJOS NXJ --> 
-	<target name="release" depends ="clean,create.folders,lejos.sources,libs,scripts,samples,platform.doc"
+	<target name="release" depends ="clean,create.folders,lejos.sources,libs,scripts,samples,platform.doc, pc.doc"
 		description="releases leJOS NXJ">
 		<!-- clean distribution -->
 		<delete>
@@ -307,18 +307,40 @@
 	<!-- creates the platform API doc -->
   <target name="platform.doc" depends="" description="generate the platform API doc">
     <mkdir dir="${release.docs}/apidocs"/>
-    <!-- packages: java.io java.lang java.util josx.platform.rcx josx.util josx.robotics josx.rcxcomm java.net javax.servlet.http -->
     <javadoc protected="true"
              windowtitle="leJOS NXT API documentation"
              author="true"
              destdir="${release.docs}/apidocs"
-             source="1.1"
+             source="1.3"
              defaultexcludes="yes">
       <fileset dir="${javasrc}/classes">
       		<exclude name="doc/**"/>
       	    <exclude name="build/**"/>
       	    <exclude name="lib/**"/>
       	    <exclude name="**/.*/**"/>
+      	    <exclude name="**/package.html"/>
+      	    <exclude name="**/build.xml"/>
+      </fileset>
+    </javadoc>
+  </target>
+	
+	<!-- creates the PC API doc -->
+  <target name="pc.doc" depends="" description="generate the platform API doc">
+    <mkdir dir="${release.docs}/apidocs"/>
+    <javadoc protected="true"
+             windowtitle="leJOS NXT PC API documentation"
+             author="true"
+             destdir="${release.docs}/pcapidocs"
+             source="1.5"
+    	     classpath="${javasrc}/pccomms/3rdparty/lib/bluecove.jar"
+             defaultexcludes="yes">
+      <fileset dir="${javasrc}/pccomms">
+      		<exclude name="doc/**"/>
+      	    <exclude name="build/**"/>
+      	    <exclude name="**/pccomm.jar"/>
+      		<exclude name="3rdparty/**"/>
+      	    <exclude name="**/.*/**"/>
+      		<exclude name="**/*.h"/>
       	    <exclude name="**/package.html"/>
       	    <exclude name="**/build.xml"/>
       </fileset>
