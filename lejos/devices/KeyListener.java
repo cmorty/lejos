@@ -8,7 +8,6 @@ package lejos.devices;
  * @see Keyboard
  * @see KeyEvent
  * @since 0.6
- * @status updated to 0.6
  */
 public interface KeyListener {
   /**

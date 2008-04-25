@@ -62,7 +62,6 @@ public class Hashtable
   /**
    * 
    * @return An Enumeration object containing all keys for this Hashtable
-   * @author BB
    */
   public Enumeration keys() {
 	  return new Enumeration() {

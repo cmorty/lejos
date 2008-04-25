@@ -109,7 +109,7 @@ public class USB {
     
     /**
      * Return the current USB serial number.
-     * @return
+     * @return the serial number
      */
     public static String getSerialNo()
     {
@@ -118,7 +118,7 @@ public class USB {
     
     /**
      * Set the USB name. Can be up to 16 character String
-     * @param sn
+     * @param nam the mame
      */
     public static void setName(String nam)
     {
@@ -128,7 +128,7 @@ public class USB {
     
     /**
      * Return the current USB name.
-     * @return
+     * @return the name
      */
     public static String getName()
     {

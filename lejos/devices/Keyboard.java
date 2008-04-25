@@ -117,7 +117,7 @@ public class Keyboard extends Thread {
 	 * Converts raw keyboard scan code into ASCII.
 	 * Works with lower case only.
 	 * @param scanCode
-	 * @return
+	 * @return the ascii character
 	 */
 	// TODO: Make private
 	public static byte getASCII(byte scanCode) {

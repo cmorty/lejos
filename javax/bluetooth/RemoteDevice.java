@@ -78,7 +78,7 @@ public class RemoteDevice {
 	/**
 	 * 
 	 * @param alwaysAsk true causes the method to contact the remote device for the name. false and it will use the known name. 
-	 * @return
+	 * @return the friendly name
 	 */
 	public String getFriendlyName(boolean alwaysAsk) {
 		

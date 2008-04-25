@@ -20,7 +20,7 @@ public interface Iterator {
 	
 	/**
 	 * 
-	 * @return Removes from the underlying collection the last element returned by the iterator (optional operation).
+	 * Removes from the underlying collection the last element returned by the iterator (optional operation).
 	 */	
 	public void remove();
 	

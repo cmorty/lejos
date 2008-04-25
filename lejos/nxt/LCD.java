@@ -67,11 +67,6 @@ public class LCD {
 	/**
 	 * Special case bitBlt with no input image. Can be used to clear areas
 	 * draw rectangles etc.
-	 * @param src byte array containing the source image
-	 * @param sw Width of the source image
-	 * @param sh Height of the source image
-	 * @param sx X position to start the copy from
-	 * @param sy Y Position to start the copy from
 	 * @param dx X destination
 	 * @param dy Y destination
 	 * @param w width of the area to copy
