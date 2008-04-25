@@ -62,7 +62,7 @@ public class KeyEvent {
 	 * Will actually only return key codes that don't have 
 	 * ASCII/Unicode equivalents, such as arrow keys (e.g. VK_UP).
 	 * Otherwise it just returns the ASCII value.
-	 * @return
+	 * @return the key code
 	 */
 	public int getKeyCode() {
 		return this.keyCode;
@@ -70,7 +70,7 @@ public class KeyEvent {
 	
 	/**
 	 * Not Implemented
-	 * @return
+	 * @return 0
 	 */
 	public int getKeyLocation() {
 		return 0;

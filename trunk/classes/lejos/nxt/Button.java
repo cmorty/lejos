@@ -179,7 +179,7 @@ public class Button implements ListenerCaller
   
   /**
    * Set the len used for key clicks
-   * @param vol
+   * @param len the click duration
    */
   public static void setKeyClickLength(int len)
   {
@@ -198,7 +198,8 @@ public class Button implements ListenerCaller
   /**
    * Set the frequency used for a particular key. Setting this to 0 disables
    * the click. Note that key may also be a corded set of keys.
-   * @param vol
+   * @param key the NXT key
+   * @param freq the frequency
    */
   public static void setKeyClickTone(int key, int freq)
   {

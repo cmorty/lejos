@@ -31,7 +31,7 @@ public class LocalDevice {
 	 * NOTE: If you want to set the friendly name, it can be done 
 	 * through the LCP class or using the NXJExplorer program on 
 	 * your personal computer.
-	 * @return
+	 * @return the friendly name
 	 */
 	public String getFriendlyName() {
 		char [] nameChars = convertBytesToChars(Bluetooth.getFriendlyName());
@@ -83,7 +83,7 @@ public class LocalDevice {
 	 * The Lego Bluecore code can't retrieve this from the chip.
 	 * Always returns hardcoded 0x3e0100 DeviceClass
 	 * Untested if this is correct.
-	 * @return
+	 * @return the device class
 	 */
 	public DeviceClass getDeviceClass() {
 		return new DeviceClass(0x3e0100);
@@ -109,7 +109,7 @@ public class LocalDevice {
 	
 	/**
 	 * Power state of the Bluecore 4 chip in the NXT brick. 
-	 * @return
+	 * @return the power state
 	 */
 	public static boolean isPowerOn() {
 		return Bluetooth.getPower(); 
@@ -129,14 +129,14 @@ public class LocalDevice {
 	 * such as version, whether master/slave switch allowed, etc..
 	 * Possibly use Properties class in implementation.
 	 * @param property
-	 * @return
+	 * @return null
 	 */
 	public static String getProperty(String property) {
 		return null;
 	}
 	/**
 	 * Returns the local Bluetooth address of NXT brick.
-	 * @return
+	 * @return the address
 	 */
 	public String getBluetoothAddress() {
 		byte [] addr = Bluetooth.getLocalAddress();

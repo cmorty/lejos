@@ -79,7 +79,7 @@ public class USBConnection implements NXTConnection {
      * Perform an optionally blocking read on the USB connection
      * @param data byte array to store the results.
      * @param len max number of bytes to read
-     * @param true to block waiting for data
+     * @param wait set true to block waiting for data
      * @return actual number of bytes read, return -2 for eof
      */
     public int read(byte [] data, int len, boolean wait)
