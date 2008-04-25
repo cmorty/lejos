@@ -85,7 +85,6 @@ package java.lang;
 	 * Converts a String value into a float 
 	 * @param s String representation of float. Must only contain numbers and an optional decimal, and optional - sign at front.
 	 * @return float number
-	 * @author BB
 	 */
 	public static float parseFloat(String s) throws NumberFormatException {
 		boolean negative = (s.charAt(0) == '-'); // Check if negative symbol.

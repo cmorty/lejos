@@ -84,12 +84,12 @@ public class LightSensor implements SensorConstants
 	}
 	/** 
 	 * set the normalized value corresponding to readValue() = 0
-	 * @param low
+	 * @param low the low value
 	 */
 	public void setLow(int low) { _zero = 1023 - low;}
 	  /** 
      * set the normalized value corresponding to  readValue() = 100;
-     * @param low
+     * @param high the high value
      */
     public void setHigh(int high) { _hundred = 1023 - high;}
     /**
@@ -98,7 +98,6 @@ public class LightSensor implements SensorConstants
    public int getLow() { return 1023 - _zero;}
     /** 
     * return the normalized value corresponding to  readValue() = 100;
-    * @param low
     */
    public int  getHigh() {return 1023 - _hundred;}
 }

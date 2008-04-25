@@ -882,7 +882,7 @@ public class Bluetooth
 	
 	/**
 	 * Uses the current default PIN
-	 * @return
+	 * @return the Bluetooth connection
 	 */
 	public static BTConnection waitForConnection()
 	{
@@ -962,7 +962,6 @@ public class Bluetooth
 	 * by LocalDevice, RemoteDevice, and BTConnection.
 	 * @param addr A byte array of 7 bytes containing the address. 
 	 * @return String representation of Bluetooth address.
-	 * @author BB
 	 */
 	public static String addressToString(byte [] addr) {
 		char[] caddr = new char[12];

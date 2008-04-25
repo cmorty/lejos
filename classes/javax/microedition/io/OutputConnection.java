@@ -5,13 +5,13 @@ import java.io.*;
 public interface OutputConnection extends Connection {
 	/**
 	 * Open and return a data output stream for a connection.
-	 * @return
+	 * @return the data output stream
 	 */ 
 	public DataOutputStream openDataOutputStream();
      
 	/**
 	 * Open and return an output stream for a connection.
-	 * @return
+	 * @return the output stream
 	 */
 	OutputStream openOutputStream();
      

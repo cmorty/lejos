@@ -241,7 +241,7 @@ public class TextMenu
 	}
 /**
  *  returns list of items in this menu; 
- * @return
+ * @return the array of item names
  */
 	public String[] getItems()
 	{

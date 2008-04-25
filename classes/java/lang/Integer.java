@@ -63,7 +63,7 @@ package java.lang;
 	 * 
 	 * @param s The number string e.g. "123" or "FF" if radix is 16.
 	 * @param radix The base number system e.g. 16
-	 * @return
+	 * @return the integer value
 	 * @throws NumberFormatException
 	 */
 	public static int parseInt(String s, int radix)
@@ -149,7 +149,7 @@ package java.lang;
 	 * If we ever make one we can move this method to it.
 	 * @param ch
 	 * @param radix
-	 * @return
+	 * @return the digit
 	 */
 	public static int digit(char ch, int radix) {
 		return digit((int)ch, radix);

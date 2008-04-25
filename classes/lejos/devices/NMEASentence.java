@@ -46,7 +46,7 @@ public class NMEASentence {
 	
 	/**
 	 * Returns the prefix of the NMEA sentence. e.g. "GP" 
-	 * @return
+	 * @return prefix
 	 */
 	public String getPrefix() {
 		return prefix;
@@ -54,7 +54,7 @@ public class NMEASentence {
 	
 	/**
 	 * Returns the data type of the NMEA sentence. e.g. "GGA" 
-	 * @return
+	 * @return  data type
 	 */
 	public String getDataType() {
 		return dataType;
@@ -66,7 +66,7 @@ public class NMEASentence {
 	
 	/**
 	 * Compares the checksum values to see if this is a corrupt sentence
-	 * @return
+	 * @return true iff the checksum is valid
 	 */
 	public boolean isValid() {
 		return(getChecksum() == calcChecksum());

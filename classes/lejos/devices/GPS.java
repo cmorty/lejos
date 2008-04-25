@@ -88,7 +88,7 @@ public class GPS extends Thread {
 	/**
 	 * Placeholder idea: returns heading (from North) based on
 	 * previous lat/long reading.
-	 * @return
+	 * @return heading
 	 */
 	public int getHeading() {
 		return -1;
@@ -96,7 +96,7 @@ public class GPS extends Thread {
 	
 	/**
 	 * Placeholder idea: returns speed based on previous lat/long reading.
-	 * @return
+	 * @return speed
 	 */
 	public int getSpeed() {
 		return -1;

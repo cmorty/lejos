@@ -5,9 +5,7 @@ package lejos.nxt;
  * This class allows you to use a Sony Playstation 2 controller to
  * control your robot in conjunction with the Mindsensors.com
  * PSP-Nx interface. The controller has 2 analog joysticks and
- * 16 buttons.
- * @see www.mindsensors.com 
- * @author BB
+ * 16 buttons. See www.mindsensors.com 
  */
 /*
  * DEV NOTES To Do:
@@ -128,7 +126,7 @@ public class PSPNXController extends I2CSensor {
 	 * Use ADPA mode only if you are trying to connect more
 	 * than one I2C sensor to a single port.
 	 * @param activate
-	 * @return
+	 * @return the status value
 	 */
 	public int setADPAMode(boolean activate) {
 		/*
