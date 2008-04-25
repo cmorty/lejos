@@ -1,3 +1,83 @@
+leJOS NXJ 0.6 beta
+------------------
+
+Andy Shaw has added:
+
+- Support for arrays with more than 511 elements
+- Convergence of USB and Bluetooth
+- Much improved USB handling including USB connections similar to
+  Bluetooth connections and support for multiple named NXTs over USB.
+- Improved AVR and flash write handling
+- Linker improvements, including much improved unused method
+  removal, that significantly reduce memory usage.
+- Button handling improvements including debounce and audible clicks
+- Persistent property setttings for master volume and button click volume.
+- DebugMonitor and debug mode in linker that allows interrupting
+  and simple debugging of user programs.
+- Bluetooth improvments
+- Removal of various limits in linker and VM
+- Sound improvements
+- Speed and other improvements to LCDUI graphics including BitBlt methods.
+- LCD improvements including sharing system font beteen Java and the firmware
+- Tidy up of firmware code including timers, hardware headers and removal of unused code
+- Various bug fixes
+
+Janusz Gorecki has added:
+
+- Switch statements
+- Incremental garbage colllection
+- Significant speed improvements to the Java VM
+- Various bug fixes including to Motor class
+
+Brian Bagnall had added:
+
+- Support for Bluetooth GPS devices including NMEA sentence processing
+- BTGPS example
+- Support for Bluetooth connected keyboards (that use SPP not HID)
+- Properties and related classes
+- Bluetooth improvements to bring it closer to the JSR-82 standard
+- Improvements to File, String, StringBuffer, Integer and Float classes
+- Support for the Mindsensors PS2 controller
+- Various bug fixes
+
+Lawrie Griffiths has added:
+
+- Persistent property settings
+- Firmware version number on the menu
+- Automatic switch off of the brick when the menu is running with persistent
+  sleep time setting
+- I2C discovery example
+- Various bug fixes
+
+Lawrie Griffiths and Roger Glassey have added:
+
+- Support for a default program with optional auto-run
+  
+Roger Glassey has added:
+
+- Improved LightSensor callibration
+- Motor and Pilot improvements
+- Textmenu improvements
+
+Eric Dalquist has added
+
+- Improvements to input streams, String handling and exceptions
+
+Mike Smith has contributed:
+
+- Improved OpticalDistanceSensor
+- Support the mindsensors Rx Mux (RCXSensorMultiplexer) with example program
+
+Juan Antonio Brena Moral has added:
+
+- File example
+- Support for Iterator interface
+- Extra random number generation methods
+
+Asbjorn Brask has contributed:
+
+- Improvements to the ColorSensor class
+
 lejos NXJ 0.5 beta
 ------------------
 
