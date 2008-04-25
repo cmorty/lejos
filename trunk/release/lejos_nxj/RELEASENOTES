@@ -20,6 +20,8 @@ Andy Shaw has added:
 - Speed and other improvements to LCDUI graphics including BitBlt methods.
 - LCD improvements including sharing system font beteen Java and the firmware
 - Tidy up of firmware code including timers, hardware headers and removal of unused code
+- Debug class replaced by RConsole that works over USB and Bluetooth
+  and nxjdebug replaced by nxjconsole
 - Various bug fixes
 
 Janusz Gorecki has added:
@@ -47,6 +49,9 @@ Lawrie Griffiths has added:
 - Automatic switch off of the brick when the menu is running with persistent
   sleep time setting
 - I2C discovery example
+- Combining VM and menu into single area of flash to allow for firmware > 32kb
+- File submenus in the menu system specific to filetype (.nxj and .wav)
+- PC API docs
 - Various bug fixes
 
 Lawrie Griffiths and Roger Glassey have added:
@@ -58,6 +63,7 @@ Roger Glassey has added:
 - Improved LightSensor callibration
 - Motor and Pilot improvements
 - Textmenu improvements
+- Graphical battery icon and rework of menu top line
 
 Eric Dalquist has added
 
