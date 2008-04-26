@@ -60,7 +60,7 @@ public class USBSend {
 			}
 	         try {x = inDat.readInt();}
 	         catch (IOException ioe) {
-	           System.out.println(ioe);
+	           System.out.println("IO Exception reading reply");
 	         }            
 	       System.out.println("Sent "+i+ " Received "+x);
 		}
@@ -69,7 +69,7 @@ public class USBSend {
 			inDat.close();
 			outDat.close();
 		} catch (IOException ioe) {
-			System.out.println(ioe);
+			System.out.println("IO Exception Closing connection");
 		}
 		
 		try {
