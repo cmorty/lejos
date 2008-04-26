@@ -16,6 +16,8 @@ public class NXTCommBluez implements NXTComm {
 	private static final String BDADDR_ANY = "00:00:00:00:00:00";
 
 	private int sk = -1;
+	private int lenRemaining = 0;
+	byte[] savedData = null;
 
 	static {
 		System.loadLibrary("jbluez");
@@ -62,6 +64,9 @@ public class NXTCommBluez implements NXTComm {
 	}
 
 	public boolean open(NXTInfo nxt) {
+		lenRemaining = 0;
+		savedData = null;
+		
 		try {
 			open(BDADDR_ANY, nxt.btDeviceAddress, 1);
 			return true;
@@ -138,28 +143,80 @@ public class NXTCommBluez implements NXTComm {
 	}
 	
 	public byte [] read () throws IOException {
-		byte [] packet = rcSocketRecv(sk); // Can read multiple packets
-		if (packet == null || packet.length == 0) return null;
-		int len = packet.length, dataLen = 0;
-		int i = 0, j = 0;
-		while (i < len-2) {
-			int lsb = packet[i++];
-			int msb = packet[i++];
-			if (msb != 0)
-				throw new IOException("Packet more than 255 bytes");
-            dataLen += lsb;
-            i += lsb;
+		byte [] availData = rcSocketRecv(sk); // Can read multiple packets
+		int len = (availData == null ? 0 : availData.length);
+		int newLenRemaining = 0;
+		
+		//System.out.println("Length = " + availData.length);
+		
+		if (len == 0) return null; // EOF
+		
+		if (len <= lenRemaining) { // Just more of previous packet
+			lenRemaining -= len;
+			return availData;
 		}
-		if (i != len) throw new IOException("Incomplete packet");	
+		
+		// Append data to saved data, if any
+		if (savedData != null) {
+			availData = concat(savedData, availData);
+			len = availData.length;
+			savedData = null;
+		}
+		
+		// Make sure we have the header and at least one byte of data
+		while (len < 3) {
+			byte [] moreData = rcSocketRecv(sk);
+			if (moreData == null || moreData.length == 0) return null;
+			availData = concat(availData, moreData);
+			len = availData.length;		
+		}
+		
+		int i = lenRemaining;
+		int dataLen = lenRemaining;
+		
+		while (i < len) { // Calculate length skipping packet headers
+			if (len - i < 3) {
+				//Save the remaining data
+				savedData = new byte[len - i];
+				for(int j=0;j<len-i;j++) savedData[j] = availData[i+j];
+				break;
+			}
+			int lsb = availData[i++];
+			int msb = availData[i++];
+			int packetLen = ((lsb & 0xFF) + (msb << 8));
+			
+			//System.out.println("Packet length is " + packetLen);
+			
+            if (i + packetLen <= len) {
+            	dataLen += packetLen;
+            } else {
+            	dataLen += (len-i);
+            	newLenRemaining = packetLen - (len - i);
+            }
+            i += packetLen;
+		}
+		
+		//System.out.println("data length is " + dataLen);
+		
 		byte [] data = new byte [dataLen];
 		
-		i = 0;
+		// Copy any data from previous packet
+		for(i=0;i<lenRemaining;i++) data[i] = availData[i];
+
+		int j = i;
+		
+		// Copy any available packets. The last one may be incomplete.		
 		while (i < len-2) {
-			int lsb = packet[i++];
-			i++; // Skip msb
-            for(int k = 0;k<lsb;k++) data[j++] = packet[i+k];
-            i += lsb;
+			int lsb = availData[i++];
+			int msb = availData[i++];
+			int packetLen = ((lsb & 0xFF) + (msb << 8));
+            for(int k = 0;k<packetLen && i+k < len;k++) data[j++] = availData[i+k];
+            i += packetLen;
 		}
+		
+		lenRemaining = newLenRemaining;
+		
+		//System.out.println("Length remaining is " + lenRemaining);
 		return data;
 	}
 	
