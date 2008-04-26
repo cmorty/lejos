@@ -57,7 +57,7 @@ public class TimeTest {
 	}
 
 	public void print(String i, int n){
-		LCD.drawString("Received", 0, 0);
+		LCD.drawString("Received ", 0, 0);
 		LCD.drawString(i,n,1);
 		LCD.refresh();
 	}
