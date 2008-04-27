@@ -536,7 +536,7 @@ public class ClassRecord implements WritableData
    public void markMethod(MethodRecord pRec, boolean directCall) throws TinyVMException
    {
        // Is this a simple class?
-       if (directCall) isUsed = true;
+       if (directCall) iBinary.markClassUsed(this);
        pRec.markCalled(iCF, iBinary);
        if (!iImplementedBy.isEmpty())
        {
