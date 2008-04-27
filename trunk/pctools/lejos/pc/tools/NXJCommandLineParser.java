@@ -59,10 +59,12 @@ public class NXJCommandLineParser
       options.addOption(nameOption);
       
       Option addressOption = new Option("d", "address", true,
-		 "look for name with given address");
+		 "look for NXT with given address");
       addressOption.setArgName("address");
       options.addOption(addressOption);
       
+      options.addOption("g", "debug", false, "Include debug monitor");
+
       CommandLine result;
       try
       {
@@ -92,7 +94,7 @@ public class NXJCommandLineParser
          String writeOrder = result.getOptionValue("wo").toLowerCase();
          if (!"be".equals(writeOrder) && !"le".equals(writeOrder))
          {
-            throw new TinyVMException("Wrong write order: " + writeOrder);
+            throw new TinyVMException("Invalid write order: " + writeOrder);
          }
 
          if (result.getArgs().length == 0)
@@ -105,8 +107,10 @@ public class NXJCommandLineParser
          StringWriter writer = new StringWriter();
          PrintWriter printWriter = new PrintWriter(writer);
          printWriter.println(e.getMessage());
+         
+         String commandName = System.getProperty("COMMAND_NAME", "java pc.tools.NXJLinkAndUpload");
 
-         String usage = getClass().getName() + " [options] class1[,class2,...]";
+         String usage = commandName + " [options] class1[,class2,...]";
          new HelpFormatter().printHelp(printWriter, 80, usage.toString(), null,
             options, 0, 2, null);
 
