@@ -40,8 +40,6 @@ import java.io.*;
 public class BTSend {
 	
 	public static void main(String[] args) {
-		NXTComm nxtComm = NXTCommFactory.createNXTComm(NXTCommFactory.BLUETOOTH);
-		
 		/* Another way to connect, by discovery:
 
 		NXTInfo[] nxtInfo = nxtComm.search(args[0], NXTCommFactory.BLUETOOTH);
@@ -57,6 +55,14 @@ public class BTSend {
 	
 		if (args.length != 2) {
 			System.out.println("Usage: BTSend name address");
+			System.exit(1);
+		}
+		
+		NXTComm nxtComm = null;
+		try {
+			nxtComm = NXTCommFactory.createNXTComm(NXTCommFactory.BLUETOOTH);
+		} catch (NXTCommException e) {
+			System.out.println("Failed to load Bluetooth driver");
 			System.exit(1);
 		}
 		
