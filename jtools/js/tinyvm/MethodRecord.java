@@ -33,6 +33,7 @@ public class MethodRecord implements WritableData
    boolean isCalled;
    int iCodeStart;
    Vector iIsHiddenBy = new Vector();
+   int markCount = -1;
 
    public MethodRecord (Method aEntry, Signature aSignature,
       ClassRecord aClassRec, Binary aBinary, RecordTable aExceptionTables,
@@ -268,8 +269,9 @@ public class MethodRecord implements WritableData
       // Mark the current method as being called. Then process the associated 
       // byte code looking for other called methods.
       // _logger.log(Level.INFO, "Marking :" + iClassRecord.getName() + " : " + iMethod.getName());
-      if (isCalled) return;
+      if (isCalled && markCount == aBinary.getGeneration()) return;
       isCalled = true;
+      markCount = aBinary.getGeneration();
       for (Iterator iter = iIsHiddenBy.iterator(); iter.hasNext();)
       {
          MethodRecord pMeth = (MethodRecord) iter.next();
@@ -301,7 +303,8 @@ public class MethodRecord implements WritableData
        // Mark this method as being hidden by a sub-class method.
        // We need to mark all such methods if this method is ever marked.
        // _logger.log(Level.INFO, "Count is " + iIsHiddenBy.size());
-       iIsHiddenBy.add(pRec);
+       if (!iIsHiddenBy.contains(pRec))
+          iIsHiddenBy.add(pRec);
    }
    
    public RecordTable getExceptions()
