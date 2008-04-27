@@ -36,6 +36,8 @@ public class ExceptionRecord implements WritableData
       {
          throw new TinyVMException("Exception not found: " + iExcep);
       }
+      // Probably don't need to do this but it is probably best to be safe...
+      iClassRecord.markUsed();
       iBinary = aBinary;
    }
 
