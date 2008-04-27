@@ -36,7 +36,11 @@ public class Upload {
 		NXTInfo[] nxtInfo;
 
 		if (address != null) {
-			fNXTCommand.setNXTCommBlueTooth();
+			try {
+				fNXTCommand.setNXTCommBlueTooth();
+			} catch (NXTCommException e) {
+				throw new NXJUploadException(e);
+			}
 			nxtInfo = new NXTInfo[1];
 			nxtInfo[0] = new NXTInfo((name == null ? "Unknown" : name), address);
 		} else {
