@@ -12,7 +12,8 @@ import org.apache.bcel.classfile.JavaClass;
 public class ExceptionRecord implements WritableData
 {
    CodeException iExcep;
-   int iClassIndex;
+   ClassRecord iClassRecord;
+   Binary iBinary;
 
    public ExceptionRecord (CodeException aExcep, Binary aBinary, JavaClass aCF)
       throws Exception
@@ -22,19 +23,20 @@ public class ExceptionRecord implements WritableData
       if (pCPIndex == 0)
       {
          // An index of 0 means ANY.
-         iClassIndex = aBinary.getClassIndex("java/lang/Throwable");
+         iClassRecord = aBinary.getClassRecord("java/lang/Throwable");
       }
       else
       {
          ConstantClass pCls = (ConstantClass) aCF.getConstantPool()
             .getConstant(pCPIndex);
          String pName = pCls.getBytes(aCF.getConstantPool());
-         iClassIndex = aBinary.getClassIndex(pName);
+         iClassRecord = aBinary.getClassRecord(pName);
       }
-      if (iClassIndex == -1)
+      if (iClassRecord == null)
       {
          throw new TinyVMException("Exception not found: " + iExcep);
       }
+      iBinary = aBinary;
    }
 
    public int getLength ()
@@ -51,18 +53,23 @@ public class ExceptionRecord implements WritableData
       int pStart = iExcep.getStartPC();
       int pEnd = iExcep.getEndPC();
       int pHandler = iExcep.getHandlerPC();
+      int pClass = iBinary.getClassIndex(iClassRecord);
       if (pStart > TinyVMConstants.MAX_CODE || pEnd > TinyVMConstants.MAX_CODE
          || pHandler > TinyVMConstants.MAX_CODE)
       {
          throw new TinyVMException("Exception handler with huge PCs");
       }
-
+      if (pClass < 0)
+      {
+         throw new TinyVMException("Exception class record missing");          
+      }
+      //System.out.println("Sart " + pStart + " end " + pEnd + " class " + pClass + " Handler " + pHandler);
       try
       {
          aOut.writeU2(pStart);
          aOut.writeU2(pEnd);
          aOut.writeU2(pHandler);
-         aOut.writeU1(iClassIndex);
+         aOut.writeU1(pClass);
          IOUtilities.writePadding(aOut, 2);
       }
       catch (IOException e)
