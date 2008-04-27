@@ -62,7 +62,7 @@ public class TinyVM extends TinyVMTool {
 		String classpath = commandLine.getOptionValue("cp");
 		String output = commandLine.getOptionValue("o");
 		boolean all = commandLine.hasOption("a");
-        boolean debug = commandLine.hasOption("d");
+        boolean debug = commandLine.hasOption("g");
 		boolean bigEndian = "be".equalsIgnoreCase(commandLine
 				.getOptionValue("wo"));
 
