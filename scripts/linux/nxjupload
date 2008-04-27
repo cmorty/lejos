@@ -20,4 +20,4 @@ fi
 
 THIRDPARTY_LIBS="$NXJ_HOME/3rdparty/lib"
 
-java -Djava.library.path="$NXJ_HOME/bin" -Dnxj.home="$NXJ_HOME" -classpath "$THIRDPARTY_LIBS/bcel-5.1.jar$SEP$THIRDPARTY_LIBS/commons-cli-1.0.jar$SEP$NXJ_HOME/lib/pctools.jar$SEP$NXJ_HOME/lib/pccomm.jar$SEP$NXJ_HOME/lib/jtools.jar$SEP$THIRDPARTY_LIBS/bluecove.jar" lejos.pc.tools.NXJUpload "$@"
+java -DCOMMAND_NAME=nxjupload -Djava.library.path="$NXJ_HOME/bin" -Dnxj.home="$NXJ_HOME" -classpath "$THIRDPARTY_LIBS/bcel-5.1.jar$SEP$THIRDPARTY_LIBS/commons-cli-1.0.jar$SEP$NXJ_HOME/lib/pctools.jar$SEP$NXJ_HOME/lib/pccomm.jar$SEP$NXJ_HOME/lib/jtools.jar$SEP$THIRDPARTY_LIBS/bluecove.jar" lejos.pc.tools.NXJUpload "$@"
