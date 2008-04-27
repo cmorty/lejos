@@ -63,7 +63,7 @@ public class NXJBrowserCommandLineParser
          PrintWriter printWriter = new PrintWriter(writer);
          printWriter.println(e.getMessage());
          
-         String commandName = System.getProperty("COMMAND_NAME", "java pc.tools.NXJBrowser");
+         String commandName = System.getProperty("COMMAND_NAME", "java lejos.pc.tools.NXJBrowser");
 
          String usage = commandName + " [options]";
          new HelpFormatter().printHelp(printWriter, 80, usage.toString(), null,

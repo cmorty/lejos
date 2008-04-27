@@ -108,7 +108,7 @@ public class NXJCommandLineParser
          PrintWriter printWriter = new PrintWriter(writer);
          printWriter.println(e.getMessage());
          
-         String commandName = System.getProperty("COMMAND_NAME", "java pc.tools.NXJLinkAndUpload");
+         String commandName = System.getProperty("COMMAND_NAME", "java lejos.pc.tools.NXJLinkAndUpload");
 
          String usage = commandName + " [options] class1[,class2,...]";
          new HelpFormatter().printHelp(printWriter, 80, usage.toString(), null,
