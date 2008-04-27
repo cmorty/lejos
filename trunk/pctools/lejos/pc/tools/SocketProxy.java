@@ -35,8 +35,16 @@ public class SocketProxy {
 	 */
 	public SocketProxy(String NXTName, String NXTaddress){
 		try {
+			NXTComm nxtComm = null;
+			
 			//  create a Bluetooth connection with the NXT
-			NXTComm nxtComm = NXTCommFactory.createNXTComm(NXTCommFactory.BLUETOOTH);
+			try {
+				 nxtComm = NXTCommFactory.createNXTComm(NXTCommFactory.BLUETOOTH);
+			} catch (NXTCommException e) {
+				System.err.println("Failed to load comms driver: " + e.getMessage());
+				System.exit(1);
+			}
+			
 			NXTInfo[] nxtInfo = new NXTInfo[1];
 
 			nxtInfo[0] = new NXTInfo(NXTName,NXTaddress);

@@ -32,8 +32,13 @@ public class Connector
       
       if (useUSB) 
       {
-         nxtComm = NXTCommFactory.createNXTComm( NXTCommFactory.USB);
-         System.out.println("searching");
+		 try {
+			 nxtComm = NXTCommFactory.createNXTComm(NXTCommFactory.BLUETOOTH);
+		 } catch (NXTCommException e) {
+			System.out.println("Failed to load USB comms driver: " + e.getMessage());
+			System.exit(1);
+		 } 
+		 System.out.println("searching");
          try 
          {
             _nxtInfo = nxtComm.search(null, NXTCommFactory.USB);
@@ -47,7 +52,12 @@ public class Connector
          System.out.println("Opened USB connection");
       } else  //Bluetooth
       {  
-         nxtComm = NXTCommFactory.createNXTComm(NXTCommFactory.BLUETOOTH);
+		 try {
+			 nxtComm = NXTCommFactory.createNXTComm(NXTCommFactory.BLUETOOTH);
+		 } catch (NXTCommException e) {
+			System.err.println("Failed to load Bluetooth comms driver: " + e.getMessage());
+			System.exit(1);
+		 }
          if (NXT == null || NXT == " "||NXT.length()<1) 
          {
             System.out.println("searching for all");
@@ -57,7 +67,7 @@ public class Connector
          {
             System.out.println("searching for " +NXT);
             try {_nxtInfo = nxtComm.search(NXT,  NXTCommFactory.BLUETOOTH);}
-            catch (Exception ex) { System.out.println("searah Failed "+ex);}
+            catch (Exception ex) { System.out.println("search Failed "+ex);}
 
          } else 
          {
