@@ -260,7 +260,7 @@ public class SocketProxy {
 
 	public static void main(String[] args) {
 		if(args.length!=2){
-			System.out.println("USAGE: java SocketProxy <NXTName> <NXTAddress>");
+			System.out.println("USAGE: java pc.tools.SocketProxy <NXTName> <NXTAddress>");
 			System.exit(0);
 		}
 		new SocketProxy(args[0],args[1]);

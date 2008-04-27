@@ -42,7 +42,7 @@ public class NXJUploadCommandLineParser
       options.addOption(nameOption);
       
       Option addressOption = new Option("d", "address", true,
-    		 "look for name with given address");
+    		 "look for NXT with given address");
       addressOption.setArgName("address");
       options.addOption(addressOption);
       
@@ -78,8 +78,10 @@ public class NXJUploadCommandLineParser
          StringWriter writer = new StringWriter();
          PrintWriter printWriter = new PrintWriter(writer);
          printWriter.println(e.getMessage());
+         
+         String commandName = System.getProperty("COMMAND_NAME", "java pc.tools.NXJUpload");
 
-         String usage = getClass().getName() + " [options] filename";
+         String usage = commandName + " [options] filename";
          new HelpFormatter().printHelp(printWriter, 80, usage.toString(), null,
             options, 0, 2, null);
 
