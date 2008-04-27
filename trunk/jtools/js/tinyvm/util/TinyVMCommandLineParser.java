@@ -44,10 +44,10 @@ public class TinyVMCommandLineParser
       writeOrderOption.setArgName("write order");
       options.addOption(writeOrderOption);
 
-      Option deviceOption = new Option("tty", "device", true,"device used (USB, COM1, etc)");
-      deviceOption.setArgName("device");
-      options.addOption(deviceOption);
-      options.addOption("d", "debug", false, "Include debug monitor");
+      //Option deviceOption = new Option("tty", "device", true,"device used (USB, COM1, etc)");
+      //deviceOption.setArgName("device");
+      //options.addOption(deviceOption);
+      options.addOption("g", "debug", false, "Include debug monitor");
       
       CommandLine result;
       try
@@ -70,7 +70,12 @@ public class TinyVMCommandLineParser
          {
             throw new TinyVMException("No classpath defined");
          }
-
+         
+         if (!result.hasOption("o"))
+         {
+            throw new TinyVMException("No output file defined");
+         }
+         
          if (!result.hasOption("wo"))
          {
             throw new TinyVMException("No write order specified");
@@ -91,8 +96,10 @@ public class TinyVMCommandLineParser
          StringWriter writer = new StringWriter();
          PrintWriter printWriter = new PrintWriter(writer);
          printWriter.println(e.getMessage());
+         
+         String commandName = System.getProperty("COMMAND_NAME", "java js.tinyvm.TinyVM");
 
-         String usage = getClass().getName() + " [options] class1[,class2,...]";
+         String usage = commandName + " [options] class1[,class2,...]";
          // TODO check format parameters
          new HelpFormatter().printHelp(printWriter, 80, usage.toString(), null,
             options, 0, 2, null);
