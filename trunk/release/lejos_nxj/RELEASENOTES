@@ -48,6 +48,7 @@ Lawrie Griffiths has added:
 - Firmware version number on the menu
 - Automatic switch off of the brick when the menu is running with persistent
   sleep time setting
+- Implementation of System.out.println and System.err.println
 - I2C discovery example
 - Combining VM and menu into single area of flash to allow for firmware > 32kb
 - File submenus in the menu system specific to filetype (.nxj and .wav)
