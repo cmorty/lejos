@@ -6,6 +6,13 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.BufferedWriter;
 
+/**
+ * Properties class, used to store properties using a key,
+ * and retrieving properties with a key. String for both.
+ * Integrates well with File for saving to file system.
+ * @author BB
+ *
+ */
 public class Properties extends Hashtable {
     
 	private static final long serialVersionUID = 4112578634029874840L;
@@ -32,11 +39,11 @@ public class Properties extends Hashtable {
     
 	private static void writeComments(BufferedWriter bw, String comments)
 	    throws IOException {
-	    bw.write("#");
-	    int len = comments.length();
-	    int current = 0;
-	    int last = 0;
-	    char[] uu = new char[6];
+		bw.write("#");
+		int len = comments.length();
+		int current = 0;
+		int last = 0;
+		char[] uu = new char[6];
 	    uu[0] = '\\';
 	    uu[1] = 'u';
 	    while (current < len) {
@@ -382,15 +389,15 @@ public class Properties extends Hashtable {
         //bw.newLine();
         synchronized (this) {
             for (Enumeration e = keys(); e.hasMoreElements();) {
-                String key = (String)e.nextElement();
-                String val = (String)get(key);
-                key = saveConvert(key, true, escUnicode);
+            	String key = (String)e.nextElement();
+            	String val = (String)get(key);
+            	key = saveConvert(key, true, escUnicode);
                 /* No need to escape embedded and trailing spaces for value, hence
                  * pass false to flag.
                  */
-                val = saveConvert(val, false, escUnicode);
-                bw.write(key + "=" + val);
-                bw.newLine();
+            	val = saveConvert(val, false, escUnicode);
+            	bw.write(key + "=" + val);
+            	bw.newLine();
             }
         }
         bw.flush();
@@ -414,7 +421,7 @@ public class Properties extends Hashtable {
     }
     
     public void list(PrintStream out) {
-        out.println("-- listing properties --");
+        out.println("- properties -");
         Hashtable h = new Hashtable();
         enumerate(h);
         for (Enumeration e = h.keys() ; e.hasMoreElements() ;) {
@@ -428,11 +435,10 @@ public class Properties extends Hashtable {
     }
 
     private synchronized void enumerate(Hashtable h) {
-        if (defaults != null) {
-            defaults.enumerate(h);
-        }
+        if (defaults != null) defaults.enumerate(h);
+     
         for (Enumeration e = keys() ; e.hasMoreElements() ;) {
-            String key = (String)e.nextElement();
+        	String key = (String)e.nextElement();
             h.put(key, get(key));
         }
     }
