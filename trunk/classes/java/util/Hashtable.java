@@ -26,30 +26,30 @@ public class Hashtable
   
   public synchronized void put (Object aKey, Object aValue)
   {
-    int pIndex = getTableIndex (aKey);    
+	int pIndex = getTableIndex (aKey);    
     Object pElement = iTable[pIndex];
     KeyValuePair pKeyValuePair = null;
     if (pElement != null)
       pKeyValuePair = getKeyValuePair (pElement, aKey);
     if (pKeyValuePair == null)
     {
-      pKeyValuePair = new KeyValuePair();
-      pKeyValuePair.iKey = aKey;
-      pKeyValuePair.iValue = aValue;
+    	pKeyValuePair = new KeyValuePair();
+    	pKeyValuePair.iKey = aKey;
+    	pKeyValuePair.iValue = aValue;
     }
     if (pElement == null)      
     {
-      iTable[pIndex] = pKeyValuePair;
+    	iTable[pIndex] = pKeyValuePair;
     } 
     else if (pElement == pKeyValuePair)
     {
-      pKeyValuePair.iValue = aValue;	    
+    	pKeyValuePair.iValue = aValue;	    
     }
     else if (pElement instanceof KeyValuePair)
-    {	    
-      Vector pVector = new Vector();
-      pVector.addElement (pElement);
-      pVector.addElement (pKeyValuePair);
+    {
+    	Vector pVector = new Vector();
+    	pVector.addElement (pElement);
+    	pVector.addElement (pKeyValuePair);
       iTable[pIndex] = pVector;
     }
     else
@@ -66,11 +66,23 @@ public class Hashtable
   public Enumeration keys() {
 	  return new Enumeration() {
 		  int cur = 0;
+		  /* Our Hashtable stores more than one object in iTable if
+		   * getTableIndex() hashes it to the same slot. When this happens
+		   * it stores multiple items in a Vector. In this case, nextElement()
+		   * needs to keep track of which vector it is at via curVector.
+		   */
+		  int curVector = -1; 
 		  public boolean hasMoreElements() {
-			  /* Difficult to work with our current Hashtable code 
-			   *  due to iTable gaps.
-			   */
-			  for(int i=cur;i<TABLE_SIZE;i++)
+			  /* Difficult to work with our current Hashtable code due to iTable gaps.*/
+			   
+			  int i=cur;
+			  // This little detour is to check if there are any more objects in a Vector (if used)
+			  if(iTable[i] instanceof Vector) {
+				  Vector v = (Vector)iTable[i];
+				  if(curVector + 1 >= v.size())
+					  i++;
+			  }
+			  for(;i<TABLE_SIZE;i++)
 				  if(iTable[i] != null)
 					  return true;
 			  return false;
@@ -81,9 +93,23 @@ public class Hashtable
 			     due to iTable gaps. */
 			  // Go thru iTable until object found
 			  while(cur < TABLE_SIZE) {
-				  KeyValuePair kvp = (KeyValuePair)iTable[cur++];
-				  if(kvp != null)
-					  return kvp.iKey;
+				  if(iTable[cur] instanceof KeyValuePair) {
+					  KeyValuePair kvp = (KeyValuePair)iTable[cur];
+					  cur++;
+					  if(kvp != null) return kvp.iKey;
+				  } else if (iTable[cur] instanceof Vector) {
+					  curVector++;
+					  while(curVector >= 0) {
+						  Vector v = (Vector)iTable[cur];
+						  KeyValuePair kvp = (KeyValuePair)v.elementAt(curVector);
+						  if(kvp == null) {
+							  curVector = -1;
+						  } else {
+							  return kvp.iKey;
+						  }
+					  }
+				  }
+				  cur++;
 			  }
 			  return null;
 		  }
