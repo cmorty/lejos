@@ -17,6 +17,9 @@ public class StartUpText
    static final String sleepTimeProperty = "lejos.sleep_time";
    static final int defaultSleepTime = 2;
    static final int maxSleepTime = 10;
+   static final String revision = "$Revision$";
+   static final int MAJOR_VERSION=0;
+   static final int MINOR_VERSION=6;
  
    public static void playTune()
    {
@@ -149,8 +152,9 @@ public class StartUpText
         int timeout = timeoutMinutes * 60000;
         String firmwareVersionString = "Firmware Version";
         String firmwareVersion = System.getFirmwareMajorVersion() + "." +
-		                         System.getFirmwareMinorVersion() + "." +
-		                         System.getFirmwareRevision();
+		                         System.getFirmwareMinorVersion() + "(rev. " +
+		                         System.getFirmwareRevision() + ")";
+        String menuVersion = "Menu Version";
         
         playTune();
         
@@ -258,7 +262,11 @@ public class StartUpText
 		    		 LCD.clear();
 		    		 drawTopRow();
 		    		 LCD.drawString(firmwareVersionString, 0, 2);
-		    		 LCD.drawString(firmwareVersion,2,3);
+		    		 LCD.drawString(firmwareVersion,1,3);
+		    		 LCD.drawString(menuVersion,0,4);
+		    		 LCD.drawString(MAJOR_VERSION + "." +
+		    				        MINOR_VERSION + "(" + 
+		    				        revision.substring(4, revision.length()) + ")", 1, 5);
 		    		 Button.waitForPress();		 
 		    	 } else if (selection == -1) {
 		    		 quit = true;
