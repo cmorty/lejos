@@ -1,5 +1,11 @@
 import lejos.nxt.*;
 
+/**
+ * $Id$
+ * 
+ * @author Lawrie Griffiths
+ * 
+ */
 public class HelloWorld
 {
   public static void main (String[] aArg)
