@@ -1,18 +1,18 @@
 package lejos.pc.tools;
+import lejos.pc.comm.*;
 
 import java.io.*; 
-import lejos.pc.comm.*;
+
 
 /**
  * connects to a NXT using either Bluetooth or USB and supplies input and output
  * data streams.
  * 
- * @author Roger Glassey revised 4/4/2008
+ * @author Roger Glassey revised 5/1/2008
  */
 
 public class Connector
 {
-;;
    DataInputStream dataIn;
    DataOutputStream dataOut;
    InputStream is;
@@ -30,25 +30,29 @@ public class Connector
    {
       NXTComm nxtComm = null;;
       
-      if (useUSB) 
+      if (useUSB)  
       {
-		 try {
-			 nxtComm = NXTCommFactory.createNXTComm(NXTCommFactory.BLUETOOTH);
-		 } catch (NXTCommException e) {
-			System.out.println("Failed to load USB comms driver: " + e.getMessage());
-			System.exit(1);
-		 } 
-		 System.out.println("searching");
-         try 
-         {
-            _nxtInfo = nxtComm.search(null, NXTCommFactory.USB);
-            nxtComm.open(_nxtInfo[0]);
+         try { nxtComm = NXTCommFactory.createNXTComm(NXTCommFactory.USB);}
+         catch (Exception e ){}
+         
+         NXTInfo[] nxtInfo = null;
+         
+         try {
+             nxtInfo = nxtComm.search(null, NXTCommFactory.USB);
+         } catch (NXTCommException e) {
+             System.out.println("Exception in search");
          }
-         catch (Exception ex) 
-         {
-            System.out.println(" NXT not found. Is it connected to USB? Turned on?");
+         
+         if (nxtInfo.length == 0) {
+             System.out.println("No NXT Found");
+             System.exit(1);
          }
-         if (_nxtInfo.length == 0)return false;			
+
+         try {
+             nxtComm.open(nxtInfo[0]);
+         } catch (NXTCommException e) {
+             System.out.println("Exception in open");
+         }
          System.out.println("Opened USB connection");
       } else  //Bluetooth
       {  
@@ -86,7 +90,7 @@ public class Connector
          try {opened = nxtComm.open(_nxtInfo[0]); }
          catch (NXTCommException ex) { System.out.println(ex);}
          if (!opened) 
-         {
+         { 
             System.out.println("Failed to open " + _nxtInfo[0].name + " "
                   + _nxtInfo[0].btDeviceAddress);
             return false;
