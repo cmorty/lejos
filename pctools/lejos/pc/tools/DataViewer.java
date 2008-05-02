@@ -53,7 +53,7 @@ public class DataViewer extends JFrame implements ActionListener
    public DataViewer() 
    {		
       setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-      setTitle("View Data from NXT Datalogger x");
+      setTitle("View Data from NXT Datalogger");
       setSize(500,600);
       JPanel p1 = new JPanel();  //holds  button and text field
       p1.add(new JLabel("Row Length:"));
