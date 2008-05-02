@@ -1,8 +1,6 @@
 package lejos.navigation;
-
-import lejos.nxt.CompassSensor;
-import lejos.nxt.SensorPort;
-import lejos.nxt.Motor;
+import lejos.navigation.*;
+import lejos.nxt.*;
 
 /**
  * A Pilot that keeps track of direction using a CompassSensor.
@@ -113,10 +111,11 @@ public class CompassPilot extends Pilot {
 	public void calibrate()
 	{
 		int spd = _speed;
-		setSpeed(180);
+		setSpeed(100);
 		regulateSpeed(true);
 		compass.startCalibration();
-		super.rotate(360);
+		super.rotate(360,false);
+//		while(isMoving()) LCD.drawInt(super.getAngle(),4,0,0);
 		compass.stopCalibration();
 		setSpeed(spd);
 	}
