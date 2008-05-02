@@ -86,10 +86,8 @@ public class DataViewer extends JFrame implements ActionListener
    {
       if(e.getSource()== startButton)
       {
-         System.out.println("call download");
          _rowLength = Integer.parseInt(lengthField.getText());
-         _nxt = nameField.getText();
-         System.out.println(_rowLength  + "  "+ _nxt);	
+         _nxt = nameField.getText();	
          _recordCount = 0;
          startDownload();
       }
@@ -141,7 +139,6 @@ public class DataViewer extends JFrame implements ActionListener
       try
       {   
          int length = dataIn.readInt();
-         System.out.println( "length "+length);
          setMessage("length "+length);
          for (int i = 0; i < length; i++)
          {
