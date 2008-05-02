@@ -265,8 +265,8 @@ public class StartUpText
 		    		 LCD.drawString(firmwareVersion,1,3);
 		    		 LCD.drawString(menuVersion,0,4);
 		    		 LCD.drawString(MAJOR_VERSION + "." +
-		    				        MINOR_VERSION + "(" + 
-		    				        revision.substring(4, revision.length()) + ")", 1, 5);
+		    				        MINOR_VERSION + "(rev." + 
+		    				        revision.substring(10, revision.length()-2) + ")", 1, 5);
 		    		 Button.waitForPress();		 
 		    	 } else if (selection == -1) {
 		    		 quit = true;
