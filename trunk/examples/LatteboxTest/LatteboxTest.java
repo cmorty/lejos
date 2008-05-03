@@ -3,13 +3,13 @@ import lejos.nxt.*;
 
 public class LatteboxTest{
 	private static NXTe NXTeObj;
-	private static DebugMonitor dm;
+	private static DebugMessages dm;
 	private static int angle;
 	private static int motion;
 	
 	//Main
 	public static void main(String[] args) throws Exception{
-		dm = new DebugMonitor();
+		dm = new DebugMessages();
 		dm.setLCDLines(6);
 		dm.echo("Testing NXTe");
 		

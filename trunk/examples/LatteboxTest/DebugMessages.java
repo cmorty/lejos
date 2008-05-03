@@ -1,14 +1,14 @@
+
 import lejos.nxt.LCD;
 
 /**
- * Debug Monitor is a useful class designed to help
- * leJOS NXJ Developers in debugging tasks. 
+ * Displays debugging messages on the LCD screen. 
  * 
  * @author Juan Antonio Brenha Moral
  *
  */
 
-public class DebugMonitor {
+public class DebugMessages {
 	private int LINE_COUNTER = 0;
 	private int STEP = 0;
 	private final int MAXIMUM_LCD_LINES = 7;
@@ -18,7 +18,7 @@ public class DebugMonitor {
 	private boolean delayEnabled = false;
 	
 	//Constructors
-	public DebugMonitor(){
+	public DebugMessages(){
 
 	}
 
@@ -27,9 +27,9 @@ public class DebugMonitor {
 	 * show Debug Data
 	 * 
 	 * @param INIT
-	 * @author JAB
+
 	 */
-	public DebugMonitor(int INIT){
+	public DebugMessages(int INIT){
 		LINE_COUNTER = INIT;
 	}
 	
@@ -37,7 +37,6 @@ public class DebugMonitor {
 	 * Set the delay measured in MS.
 	 * 
 	 * @param DELAY_MS
-	 * @author JAB
 	 */	
 	public void setDelay(int DELAY_MS){
 		this.DELAY_MS = DELAY_MS;
@@ -47,7 +46,6 @@ public class DebugMonitor {
 	 * Show in NXT Screen a message
 	 * 
 	 * @param message
-	 * @author JAB
 	 */
 	public void echo(String message) throws Exception{
 		if(LINE_COUNTER > this.LCD_LINES){
@@ -67,7 +65,6 @@ public class DebugMonitor {
 	 * Show in NXT Screen a message
 	 * 
 	 * @param message
-	 * @author JAB
 	 */	
 	public void echo(int message) throws Exception{
 		if(LINE_COUNTER > this.LCD_LINES){
