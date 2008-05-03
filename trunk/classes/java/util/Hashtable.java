@@ -77,7 +77,7 @@ public class Hashtable
 			   
 			  int i=cur;
 			  // This little detour is to check if there are any more objects in a Vector (if used)
-			  if(iTable[i] instanceof Vector) {
+			  if(i < TABLE_SIZE && iTable[i] instanceof Vector) {
 				  Vector v = (Vector)iTable[i];
 				  if(curVector + 1 >= v.size())
 					  i++;
@@ -101,6 +101,10 @@ public class Hashtable
 					  curVector++;
 					  while(curVector >= 0) {
 						  Vector v = (Vector)iTable[cur];
+						  if (curVector >= v.size()) {
+							  curVector = -1;
+							  break;
+						  }
 						  KeyValuePair kvp = (KeyValuePair)v.elementAt(curVector);
 						  if(kvp == null) {
 							  curVector = -1;
