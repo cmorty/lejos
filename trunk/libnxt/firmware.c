@@ -52,7 +52,7 @@ nxt_flash_prepare(nxt_t *nxt, int unlock)
 }
 
 
-static nxt_error_t
+nxt_error_t
 nxt_flash_block(nxt_t *nxt, nxt_word_t block_num, char *buf)
 {
   // Set the target block number

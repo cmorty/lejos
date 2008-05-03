@@ -29,5 +29,5 @@
 
 nxt_error_t nxt_firmware_flash(nxt_t *nxt, char *fw_path, int start_page, int num_pages, int unlock, int write_addr_len);
 nxt_error_t nxt_firmware_validate(char *fw_path, int max_size, int *file_size);
-
+nxt_error_t nxt_flash_block(nxt_t *nxt, nxt_word_t block_num, char *buf);
 #endif /* __FIRMWARE_H__ */

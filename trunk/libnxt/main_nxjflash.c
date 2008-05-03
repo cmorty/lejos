@@ -56,7 +56,16 @@ int main(int argc, char *argv[])
   char *nxj_home;
   int vm_file_size, menu_file_size;
   int num_vm_pages, num_menu_pages;
-
+  int format = 0;
+  
+  // check for -f flag. This forces a format of the
+  // leJOS file system and clears all persistent settings.
+  if (argc > 1 && strcmp(argv[1],"-f") == 0)
+    {
+    	format = 1;
+    	argc--;
+    }
+    
   if (argc == 1)
     {
       nxj_home = getenv("NXJ_HOME");
@@ -77,15 +86,15 @@ int main(int argc, char *argv[])
     }
   else if (argc != 3)
     {
-      printf("Syntax: %s [<VM binary> <java menu binary>]\n"
+      printf("Syntax: %s [-f] [<VM binary> <java menu binary>]\n"
              "\n"
              "Example: %s lejos_nxt_rom.bin StartUpText.bin\n", argv[0], argv[0]);
       exit(1);
     }
   else
     {
-      fw_file = argv[1];     
-      menu_file = argv[2];
+      fw_file = argv[1+format];     
+      menu_file = argv[2+format];
     }
   
   printf("Checking VM %s ... ", fw_file);
@@ -142,6 +151,24 @@ int main(int argc, char *argv[])
                  "Error flashing menu");
   printf("Menu flash complete.\n");
   
+  if (format)
+    {
+      char *zero_page = (char *) calloc(1,FLASH_PAGE_SIZE);
+      int i;
+              
+      printf("Formatting file system...\n");
+      
+      for(i=0;i<3;i++) 
+        {
+          NXT_HANDLE_ERR(nxt_flash_block(nxt, MAX_FIRMWARE_PAGES+i, zero_page),
+                         nxt, "Error formatting file system");
+        }
+        
+       printf("Formatting complete\n");
+    }
+  	
+  
+  //Jump to the start of flash memory to start leJOS
   NXT_HANDLE_ERR(nxt_jump(nxt, 0x00100000), nxt,
                  "Error booting new firmware");
   printf("New firmware started!\n");
