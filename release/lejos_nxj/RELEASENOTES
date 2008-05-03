@@ -35,7 +35,7 @@ Brian Bagnall had added:
 
 - Support for Bluetooth GPS devices including NMEA sentence processing
 - BTGPS example
-- Support for Bluetooth connected keyboards (that use SPP not HID)
+- Support for Bluetooth connected keyboards (that use SPP not HID), with a sample program
 - Properties and related classes
 - Bluetooth improvements to bring it closer to the JSR-82 standard
 - Improvements to File, String, StringBuffer, Integer and Float classes
@@ -52,6 +52,7 @@ Lawrie Griffiths has added:
 - I2C discovery example
 - Combining VM and menu into single area of flash to allow for firmware > 32kb
 - File submenus in the menu system specific to filetype (.nxj and .wav)
+- -f parameter to nxjflash to force a format of the file system
 - PC API docs
 - Various bug fixes
 
@@ -65,6 +66,9 @@ Roger Glassey has added:
 - Motor and Pilot improvements
 - Textmenu improvements
 - Graphical battery icon and rework of menu top line
+- Graphical version of nxjconsole
+- Improved data logger
+- Various bug fixes
 
 Eric Dalquist has added
 
@@ -73,13 +77,14 @@ Eric Dalquist has added
 Mike Smith has contributed:
 
 - Improved OpticalDistanceSensor
-- Support the mindsensors Rx Mux (RCXSensorMultiplexer) with example program
+- Support the mindsensors Rx Mux (RCXSensorMultiplexer) with a sample program
 
 Juan Antonio Brena Moral has added:
 
 - File example
 - Support for Iterator interface
 - Extra random number generation methods
+- Support for Lattebox NXTe interface and servers motors, with a sample program
 
 Asbjorn Brask has contributed:
 
