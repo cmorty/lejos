@@ -1,6 +1,5 @@
 package lejos.nxt;
 
-import lejos.nxt.*;
 import java.util.ArrayList;
 
 /**
@@ -48,9 +47,7 @@ public class LSC extends I2CSensor {
 	 * Constructor
 	 * 
 	 * @param port
-	 * @param SPI_PORT
-	 * 
-	 * @author Juan Antonio Brenha Moral 
+	 * @param SPI_PORT 
 	 */
 	public LSC(SensorPort port,byte SPI_PORT){
 		super(port);
@@ -70,8 +67,6 @@ public class LSC extends I2CSensor {
 	 * @param index
 	 * @param name
 	 * @throws Exception
-	 *
-	 * @author Juan Antonio Brenha Moral
 	 */
 	public void addServo(int index, String name) throws Exception{
 		if(arrServo.size() <=MAXIMUM_SERVOS){
@@ -86,23 +81,9 @@ public class LSC extends I2CSensor {
 	 * Method to get a Servo in a LSC
 	 * 
 	 * @param index
-	 * @return
-	 * 
-	 * @author Juan Antonio Brenha Moral
+	 * @return LServo
 	 */
 	public LServo getServo(int index){
-		return (LServo) this.arrServo.get(index);
-	}
-
-	/**
-	 * Method to get a Servo in a LSC
-	 * 
-	 * @param index
-	 * @return
-	 * 
-	 * @author Juan Antonio Brenha Moral
-	 */
-	public LServo Servo(int index){
 		return (LServo) this.arrServo.get(index);
 	}
 	
@@ -111,8 +92,6 @@ public class LSC extends I2CSensor {
 	/**
 	 * This method check LSC connected with NXTe
 	 * Currently I am debugging
-	 * 
-	 * @author JAB
 	 */
 	public void calibrate() throws Exception{
 		I2C_Response = this.sendData((int)this.SPI_PORT, (byte)0x00);
@@ -136,8 +115,6 @@ public class LSC extends I2CSensor {
 	 * Load all servos connected this this LSC 
 	 * 
 	 * @throws Exception
-	 * 
-	 * @author Juan Antonio Brenha Moral
 	 */
 	public void loadAllServos()  throws Exception{
 		int channel = 1023;
