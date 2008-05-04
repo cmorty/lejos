@@ -80,10 +80,8 @@ public class LServo extends I2CSensor{
 	 * because the object should know servo id.
 	 *
 	 * @param Servo
-	 * @return
+	 * @return angle
 	 * @throws Exception
-	 * 
-	 * @author Juan Antonio Brenha Moral
 	 */
 	public int getAngle(int Servo) throws Exception{
 	
@@ -112,10 +110,8 @@ public class LServo extends I2CSensor{
 	 * public method to know internal information about 
 	 * if the servo is moving
 	 * 
-	 * @return
-	 * @throws Exception
-	 * 
-	 * Author: Juan Antonio Brenha Moral
+	 * @return motion
+	 * @throws Exceptionl
 	 */
 	public int readMotion() throws Exception{
 		int motion = -1;
@@ -144,10 +140,8 @@ public class LServo extends I2CSensor{
 	/**
 	 * Method to know if Servo is moving to a determinated angle
 	 * 
-	 * @return
+	 * @return true iff the serv is moving
 	 * @throws Exception
-	 * 
-	 * @author Juan Antonio Brenha Moral
 	 */
 	public boolean isMoving() throws Exception{
 		boolean flag = false;
@@ -179,8 +173,6 @@ public class LServo extends I2CSensor{
 	 * Set Minimal angle. Useful method to calibrate a Servo
 	 * 
 	 * @param minAngle
-	 * 
-	 * @author Juan Antonio Brenha Moral
 	 */
 	public void setMinAngle(int minAngle){
 		this.min_angle = minAngle;
@@ -190,8 +182,6 @@ public class LServo extends I2CSensor{
 	 * Set Maximum angle. Useful method to calibrate a Servo
 	 * 
 	 * @param maxAngle
-	 * 
-	 * @author Juan Antonio Brenha Moral
 	 */	
 	public void setMaxAngle(int maxAngle){
 		this.max_angle = maxAngle;
@@ -199,8 +189,6 @@ public class LServo extends I2CSensor{
 
 	/**
 	 * Method to set minimal angle
-	 *  
-	 * @author Juan Antonio Brenha Moral
 	 */	
 	public void goToMinAngle() throws Exception{
 		this.setAngle(1, this.min_angle);
@@ -208,8 +196,6 @@ public class LServo extends I2CSensor{
 
 	/**
 	 * Method to set maximum angle
-	 * 
-	 * @author Juan Antonio Brenha Moral
 	 */	
 	public void goToMaxAngle() throws Exception{
 		this.setAngle(1, this.max_angle);		
@@ -217,8 +203,6 @@ public class LServo extends I2CSensor{
 
 	/**
 	 * Method to set medium angle
-	 * 
-	 * @author Juan Antonio Brenha Moral
 	 */		
 	public void goToMiddleAngle() throws Exception{
 		float middle = (this.min_angle + this.max_angle) / 2;
@@ -228,8 +212,6 @@ public class LServo extends I2CSensor{
 
 	/**
 	 * Get servo name
-	 * 
-	 * @author Juan Antonio Brenha Moral
 	 */	
 	public String getName(){
 		return this.servoName;
