@@ -43,8 +43,6 @@ public class NXTe  extends I2CSensor{
 	 * Constructor
 	 * 
 	 * @param port
-	 * 
-	 * @author Juan Antonio Brenha Moral
 	 */
 	public NXTe(SensorPort port) throws Exception{
 		super(port);
@@ -70,8 +68,6 @@ public class NXTe  extends I2CSensor{
 	 * 
 	 * @param SPI_PORT
 	 * @throws Exception
-	 * 
-	 * @author Juan Antonio Brenha Moral
 	 */
 	public void addLSC(int SPI_PORT) throws Exception{
 		if(arrLSC.size() <= MAXIMUM_LSC){
@@ -86,23 +82,9 @@ public class NXTe  extends I2CSensor{
 	 * Get a LSC
 	 * 
 	 * @param index
-	 * @return
-	 * 
-	 * @author Juan Antonio Brenha Moral
+	 * @return LSC
 	 */
 	public LSC getLSC(int index){
-		return (LSC) arrLSC.get(index);
-	}
-
-	/**
-	 * Get a LSC
-	 * 
-	 * @param index
-	 * @return
-	 * 
-	 * @author Juan Antonio Brenha Moral
-	 */
-	public LSC LSC(int index){
 		return (LSC) arrLSC.get(index);
 	}
 }
