@@ -51,7 +51,12 @@
 				<includepath>
 					<pathelement location="."/>
 				</includepath>
-  				<versioninfo refid="jbluez"/>
+				<includepath if="jni.include.dir">
+					<pathelement location="${jni.include.dir}"/>
+				</includepath>
+			    <includepath if="jni.sys.dir">
+					<pathelement location="${jni.sys.dir}"/>
+				</includepath>
   		</cc>
 	</target>
 
