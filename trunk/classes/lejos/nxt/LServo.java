@@ -15,6 +15,7 @@ public class LServo extends I2CSensor{
 	private int speed;//Not implemented yet.
 	private int min_angle;
 	private int max_angle;
+	private int LSC_position; //Position where Servo has been pluged
 	
 	//Servo ID
 	private SensorPort portConnected;//What
@@ -34,12 +35,12 @@ public class LServo extends I2CSensor{
 	 * @param location
 	 * @param servoName
 	 * @param SPI_PORT
-	 * 
-	 * Author: Juan Antonio Brenha Moral 
+	 *  
 	 */
 	public LServo(SensorPort port, int location, String servoName, byte SPI_PORT){
 		super(port);
 		this.servoName = servoName;
+		this.LSC_position = location;
 		
 		this.SPI_PORT = SPI_PORT;
 		
@@ -54,13 +55,13 @@ public class LServo extends I2CSensor{
 	 * In next version, I will delete servo parameter, 
 	 * because the object should know servo id.
 	 * 
-	 * @param servo
 	 * @param angle
 	 * @throws Exception
 	 * 
 	 * Author: Juan Antonio Brenha Moral
 	 */
-	public void setAngle(int servo,int angle) throws Exception{
+	public void setAngle(int angle) throws Exception{
+		int servo = LSC_position;
 		h_byte = (byte)(0x80 | ((servo<<3) | (angle >>8)));
 	    l_byte = (byte)angle;
 		
@@ -79,14 +80,14 @@ public class LServo extends I2CSensor{
 	 * In next version, I will delete servo parameter, 
 	 * because the object should know servo id.
 	 *
-	 * @param Servo
-	 * @return angle
+	 * @return
 	 * @throws Exception
+	 * 
 	 */
-	public int getAngle(int Servo) throws Exception{
-	
+	public int getAngle() throws Exception{
+		int servo = LSC_position;
 	    //Write OP Code
-	    h_byte  = (byte)(Servo << 3);
+	    h_byte  = (byte)(servo << 3);
 		I2C_Response = this.sendData((int)this.SPI_PORT, h_byte);
 		
 	    //Read High Byte
@@ -110,8 +111,9 @@ public class LServo extends I2CSensor{
 	 * public method to know internal information about 
 	 * if the servo is moving
 	 * 
-	 * @return motion
-	 * @throws Exceptionl
+	 * @return
+	 * @throws Exception
+	 * 
 	 */
 	public int readMotion() throws Exception{
 		int motion = -1;
@@ -140,8 +142,9 @@ public class LServo extends I2CSensor{
 	/**
 	 * Method to know if Servo is moving to a determinated angle
 	 * 
-	 * @return true iff the serv is moving
+	 * @return
 	 * @throws Exception
+	 * 
 	 */
 	public boolean isMoving() throws Exception{
 		boolean flag = false;
@@ -161,9 +164,10 @@ public class LServo extends I2CSensor{
 	 * @param Servo
 	 * @param delay
 	 */
-	public void setDelay(int Servo,int delay){
-	     h_byte = (byte)0xF0;
-	     l_byte = (byte)(((Servo)<<4) + delay);
+	public void setDelay(int delay){
+		int servo = LSC_position;
+		h_byte = (byte)0xF0;
+		l_byte = (byte)(((servo)<<4) + delay);
 	     
 	     I2C_Response = this.sendData((int)this.SPI_PORT, (byte)h_byte);
 	     I2C_Response = this.sendData((int)this.SPI_PORT, (byte)l_byte);
@@ -173,6 +177,7 @@ public class LServo extends I2CSensor{
 	 * Set Minimal angle. Useful method to calibrate a Servo
 	 * 
 	 * @param minAngle
+	 * 
 	 */
 	public void setMinAngle(int minAngle){
 		this.min_angle = minAngle;
@@ -182,6 +187,7 @@ public class LServo extends I2CSensor{
 	 * Set Maximum angle. Useful method to calibrate a Servo
 	 * 
 	 * @param maxAngle
+	 * 
 	 */	
 	public void setMaxAngle(int maxAngle){
 		this.max_angle = maxAngle;
@@ -189,29 +195,33 @@ public class LServo extends I2CSensor{
 
 	/**
 	 * Method to set minimal angle
+	 *  
 	 */	
 	public void goToMinAngle() throws Exception{
-		this.setAngle(1, this.min_angle);
+		this.setAngle(this.min_angle);
 	}
 
 	/**
 	 * Method to set maximum angle
+	 * 
 	 */	
 	public void goToMaxAngle() throws Exception{
-		this.setAngle(1, this.max_angle);		
+		this.setAngle(this.max_angle);		
 	}
 
 	/**
 	 * Method to set medium angle
+	 * 
 	 */		
 	public void goToMiddleAngle() throws Exception{
 		float middle = (this.min_angle + this.max_angle) / 2;
 		
-		this.setAngle(1, Math.round(middle));		
+		this.setAngle(Math.round(middle));		
 	}
 
 	/**
 	 * Get servo name
+	 * 
 	 */	
 	public String getName(){
 		return this.servoName;
