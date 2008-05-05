@@ -1,5 +1,6 @@
 package lejos.nxt;
 
+import lejos.nxt.*;
 import java.util.ArrayList;
 
 /**
@@ -10,16 +11,16 @@ import java.util.ArrayList;
  * 
  * The physical design  is:
  * 
- *  ****************************
- *  * SERVO 01        SERVO 06 *
- *  * SERVO 02  CHIP  SERVO 07 *
- *  * SERVO 03  CHIP  SERVO 08 *
- *  * SERVO 04  CHIP  SERVO 09 *
- *  * SERVO 05  CHIP  SERVO 10 *
- *  *                          *
- *  * USB    DC   NXTe PINS    *
- *  * USB    DC                *
- *  ****************************
+*  ****************************
+*  * SERVO 08        SERVO 09 *
+*  * SERVO 06  CHIP  SERVO 07 *
+*  * SERVO 05  CHIP  SERVO 06 *
+*  * SERVO 03  CHIP  SERVO 04 *
+*  * SERVO 01  CHIP  SERVO 02 *
+*  *                          *
+*  * USB    DC   NXTe PINS    *
+*  * USB    DC                *
+*  ****************************
  *  
  * @author Juan Antonio Brenha Moral
  */
@@ -33,6 +34,7 @@ public class LSC extends I2CSensor {
 	
 	//Exception handling
 	private final String ERROR_SERVO_DEFINITION =  "Error with Servo definition";
+	private final String ERROR_SERVO_LOCATION =  "Error with Servo location";
 	
 	//I2C
 	private byte SPI_PORT;	
@@ -47,7 +49,8 @@ public class LSC extends I2CSensor {
 	 * Constructor
 	 * 
 	 * @param port
-	 * @param SPI_PORT 
+	 * @param SPI_PORT
+	 * 
 	 */
 	public LSC(SensorPort port,byte SPI_PORT){
 		super(port);
@@ -67,10 +70,11 @@ public class LSC extends I2CSensor {
 	 * @param index
 	 * @param name
 	 * @throws Exception
+	 *
 	 */
-	public void addServo(int index, String name) throws Exception{
+	public void addServo(int location, String name) throws Exception{
 		if(arrServo.size() <=MAXIMUM_SERVOS){
-			LServo s = new LServo(this.portConnected,index, name,this.SPI_PORT);
+			LServo s = new LServo(this.portConnected,location, name,this.SPI_PORT);
 			arrServo.add(s);
 		}else{
 			throw new Exception(ERROR_SERVO_DEFINITION);
@@ -81,9 +85,21 @@ public class LSC extends I2CSensor {
 	 * Method to get a Servo in a LSC
 	 * 
 	 * @param index
-	 * @return LServo
+	 * @return
+	 * 
 	 */
 	public LServo getServo(int index){
+		return (LServo) this.arrServo.get(index);
+	}
+
+	/**
+	 * Method to get a Servo in a LSC
+	 * 
+	 * @param index
+	 * @return
+	 * 
+	 */
+	public LServo Servo(int index){
 		return (LServo) this.arrServo.get(index);
 	}
 	
@@ -92,6 +108,7 @@ public class LSC extends I2CSensor {
 	/**
 	 * This method check LSC connected with NXTe
 	 * Currently I am debugging
+	 * 
 	 */
 	public void calibrate() throws Exception{
 		I2C_Response = this.sendData((int)this.SPI_PORT, (byte)0x00);
@@ -126,5 +143,64 @@ public class LSC extends I2CSensor {
 
 	    //Low Byte Write
 		I2C_Response = this.sendData((int)this.SPI_PORT, l_byte);
-	}	
+	}
+	
+	/**
+	 * Unload all servos connected in a LSC
+	 */
+	public void unloadAllServos(){
+		int channel = (int)0x00;
+		h_byte = (byte)0xe0; //0xe0 | (0x00 >>(byte)8); //?? 
+		l_byte = (byte)channel;
+	     
+	    //High Byte Write
+		I2C_Response = this.sendData((int)this.SPI_PORT, h_byte);
+
+	    //Low Byte Write
+		I2C_Response = this.sendData((int)this.SPI_PORT, l_byte);		
+	}
+	
+	/**
+	 * Load Servo located in a position X
+	 * 
+	 * @param location
+	 */
+	public void loadServo(int location) throws Exception{
+		int channel = (int)0x00;
+		
+		if((location > 0) && (location <= 10)){
+			if(location == 1){
+				channel = (int) 0x01;
+			}else if(location == 2){
+				channel = (int) 0x02;
+			}else if(location == 3){
+				channel = (int) 0x04;
+			}else if(location == 4){
+				channel = (int) 0x08;
+			}else if(location == 5){
+				channel = (int) 0x10;
+			}else if(location == 6){
+				channel = (int) 0x20;
+			}else if(location == 7){
+				channel = (int) 0x40;
+			}else if(location == 8){
+				channel = (int) 0x80;
+			}else if(location == 9){
+				channel = (int) 0x100;
+			}else if(location == 10){
+				channel = (int) 0x200;
+			}
+		}else{
+			throw new Exception(ERROR_SERVO_LOCATION);
+		}
+		
+		h_byte = (byte)0xe0; //0xe0 | (0x00 >>(byte)8); //?? 
+		l_byte = (byte)channel;
+	     
+	    //High Byte Write
+		I2C_Response = this.sendData((int)this.SPI_PORT, h_byte);
+
+	    //Low Byte Write
+		I2C_Response = this.sendData((int)this.SPI_PORT, l_byte);		
+	}
 }
