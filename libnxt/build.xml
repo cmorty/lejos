@@ -60,32 +60,6 @@
   		</cc>
 	</target>
 	
-	<!-- make runc --> 
-	<target name="runc" description="makes runc utility">
-  		<cc subsystem="console" 
-  				outfile="runc"
-  				objdir="." 
-  				outtype="executable" 
-  				debug="false"
-  			    exceptions="false"
-  			    rtti="true"
-  			    optimize="speed"
-  				name="gcc">
-  			    <compilerarg value="-Wall"/>
-  			    <compilerarg value="-std=gnu99"/>
-  			    <compilerarg value="-g"/>
-  			    <compilerarg value="-ggdb"/>
-  			    <compilerarg value="-D_NXT_LITTLE_ENDIAN"/>
-  				<fileset dir=".">
-  					<include name="main_runc.c"/>
-  				</fileset>
-  				<libset dir="." libs="nxt,usb"/>				
-				<includepath>
-					<pathelement location="."/>
-				</includepath>
-  		</cc>
-	</target>
-	
 	<!-- make nxjflash --> 
 	<target name="nxjflash" description="makes nxjflash utility">
   		<cc subsystem="console" 
@@ -114,23 +88,6 @@
 	
 	<!-- make jlibnxt --> 
 	<target name="jlibnxt" description="makes jlibnxt">
-		<condition property="includePath" value=".">
-			<not>
-				<os family="mac"/>
-			</not>
-		</condition>
-		<condition property="includePath" value="/Developer/SDKs/MacOSX10.5.sdk/System/Library/Frameworks/JavaVM.framework/Versions/Current/Headers/">
-			<and>
-				<os family="mac"/>
-				<matches pattern="^10\.5.*" string="${os.version}"/>
-			</and>
-		</condition>
-		<condition property="includePath" value="/Developer/SDKs/MacOSX10.4u.sdk/System/Library/Frameworks/JavaVM.framework/Versions/Current/Headers/">
-			<and>
-				<os family="mac"/>
-				<matches pattern="^10\.4.*" string="${os.version}"/>
-			</and>
-		</condition>
   		<cc subsystem="console" 
   				outfile="jlibnxt"
   				objdir="." 
@@ -150,7 +107,13 @@
   				</fileset>
 				<libset dir="." libs="nxt,usb"/>
 				<includepath>
-					<pathelement location="${includePath}"/>
+					<pathelement location="."/>
+				</includepath>
+  				<includepath if="jni.include.dir">
+					<pathelement location="${jni.include.dir}" />
+  				</includepath>
+  			    <includepath if="jni.sys.dir">
+					<pathelement location="${jni.sys.dir}"/>
 				</includepath>
   		</cc>
 	</target>
