@@ -13,11 +13,26 @@
 #include "load.h"
 
 void *installedBinary;
+ClassRecord* classBase;
+ConstantRecord* constantTableBase;
+byte* staticFieldsBase;
+byte* staticStateBase;
+byte* entryClassesBase;
 
 #if EXECUTE_FROM_FLASH
 byte *classStaticStateBase;
 byte *classStatusBase;
 #endif
+
+void install_binary( void* ptr)
+{
+  installedBinary = ptr;
+
+  constantTableBase = __get_constant_base();
+  staticFieldsBase = __get_static_fields_base();
+  entryClassesBase = __get_entry_classes_base();
+  classBase = __get_class_base();
+}
 
 void dumpCommon()
 {
@@ -75,7 +90,7 @@ void dumpClass (int aIndex)
   printf ("  num. fields : %d\n", (int) (pRec->numInstanceFields));
   printf ("  num. methods: %d\n", (int) (pRec->numMethods));
   printf ("  super       : %d\n", (int) (pRec->parentClass));
-  printf ("  C_INIT      : %d\n", (int) is_initialized (pRec));
+  printf ("  C_INIT      : %d\n", (int) (pRec->cflags & C_INITIALIZED));
   printf ("  C_ARRAY     : %d\n", (int) is_array_class (pRec));
   printf ("  C_HASCLINIT : %d\n", (int) has_clinit (pRec));
   printf ("  C_INTERFACE : %d\n", (int) is_interface (pRec));

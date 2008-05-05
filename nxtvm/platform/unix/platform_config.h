@@ -22,6 +22,6 @@ typedef unsigned long FOURBYTES;
 #define PLATFORM_HANDLES_SWITCH_THREAD 0
 #define TICKS_PER_TIME_SLICE          140 // Actually instructions per timeslice
 #define VERIFY
-#define RECORD_REFERENCES 0
+#define RECORD_REFERENCES 1
 
 #endif // _PLATFORM_CONFIG_H
