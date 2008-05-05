@@ -10,7 +10,35 @@
 	<property name="lejos.dist.src" value="${lejos.dist.root}/src"/>
 	<property name="plat.unix.src" value="${lejos.dist.src}/nxtvm/platform/unix"/>
 	<property name="javavm.src" value="${lejos.dist.src}/nxtvm/javavm"/>
-	
+    <condition property="jni.include.dir" value="${java.home}/../include">
+		<or>
+			<os name="Linux"/>
+			<os family="windows"/>
+			<os name="SunOS"/>
+		</or>			
+	</condition>
+	<condition property="jni.include.dir" value="/Developer/SDKs/MacOSX10.5.sdk/System/Library/Frameworks/JavaVM.framework/Versions/Current/Headers/">
+		<and>
+			<os family="mac"/>
+			<matches pattern="^10\.5.*" string="${os.version}"/>
+		</and>
+	</condition>
+	<condition property="jni.include.dir" value="/Developer/SDKs/MacOSX10.4u.sdk/System/Library/Frameworks/JavaVM.framework/Versions/Current/Headers/">
+		<and>
+			<os family="mac"/>
+			<matches pattern="^10\.4.*" string="${os.version}"/>
+		</and>
+	</condition>
+    <condition property="jni.sys.dir" value="${jni.include.dir}/linux">
+		<os name="Linux"/>
+	</condition>
+    <condition property="jni.sys.dir" value="${jni.include.dir}/win32">
+    	<os family="windows"/>
+	</condition>
+    <condition property="jni.sys.dir" value="${jni.include.dir}/solaris">
+    	<os name="SunOS"/>
+	</condition>
+		
 	<!-- cpptasks task & type def -->
 	<taskdef resource="cpptasks.tasks">
 	  <classpath>
