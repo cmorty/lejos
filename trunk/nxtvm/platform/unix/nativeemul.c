@@ -22,8 +22,11 @@
 #include "sensors.h"
 #include "poll.h"
 
-#undef push_word()
-#undef push_ref()
+#define MAJOR_VERSION 0
+#define MINOR_VERSION 6
+
+#undef push_word
+#undef push_ref
 #define push_word( a) push_word_cur( a)
 #define push_ref( a)  push_ref_cur( a)
 
@@ -145,7 +148,7 @@ char* string2chp(String* s)
     Object *obj;
     JCHAR *pA;
     int length;
-    obj = word2obj(get_word_4((byte*)(&(s->characters))));
+    obj = word2obj(get_word_4_ns((byte*)(&(s->characters))));
     pA = jchar_array(obj);
     length = get_array_length(obj);
     ret = malloc(length+1);
@@ -157,6 +160,15 @@ char* string2chp(String* s)
   }
 
   return ret;
+}
+
+boolean debug_uncaught_exception(Object * exception,
+                          const Thread * thread,
+                          const MethodRecord * methodRecord,
+                          const MethodRecord * rootMethod,
+                          byte * pc, int exceptionFrame)
+{
+  return false;
 }
 
 /**
@@ -296,7 +308,7 @@ void dispatch_native (TWOBYTES signature, STACKWORD *paramBase)
         int len, i;
         //printf("displayString: pointer is %x\n",p);
         //printf("Object size is %d\n",sizeof(Object));
-        Object *charArray = (Object *) word2ptr(get_word_4(p + HEADER_SIZE));
+        Object *charArray = (Object *) word2ptr(get_word_4_ns(p + HEADER_SIZE));
         //printf("Chars is %x\n",charArray);
         len = charArray->flags.arrays.length;
         //printf("length is %d\n",len);
@@ -328,13 +340,6 @@ void dispatch_native (TWOBYTES signature, STACKWORD *paramBase)
          printf("& ");
       printf("drawInt called with parameters %d, %d, %d, %d\n",paramBase[0],paramBase[1],paramBase[2],paramBase[3]);
     return; 
-    case controlMotorById_4III_5V:
-      if (verbose)
-         printf("> ");
-      else
-         printf("& ");
-      printf("controlMotor called with parameters %d, %d, %d\n",paramBase[0],paramBase[1],paramBase[2]);
-      return; 
     case refresh_4_5V:
       if (verbose)
          printf("> ");
@@ -356,7 +361,7 @@ void dispatch_native (TWOBYTES signature, STACKWORD *paramBase)
          printf("& ");
       printf("Display set\n");
       return;  
-    case getDisplay_4_5_1I:
+    case getDisplay_4_5_1B:
       if (verbose)
          printf("> ");
       else
@@ -371,7 +376,26 @@ void dispatch_native (TWOBYTES signature, STACKWORD *paramBase)
       else
          printf("& ");
       printf("Set autodisplay to %d\n", paramBase[0]);
-    return;
+      return;
+    case bitBlt_4_1BIIII_1BIIIIIII_5V:
+      {
+        Object *src = word2ptr(paramBase[0]);
+        Object *dst = word2ptr(paramBase[5]);
+        if (verbose)
+          printf("> ");
+        else
+          printf("& ");
+        printf("bitBlt called\n");
+        return;
+      }
+    case getSystemFont_4_5_1B:
+      if (verbose)
+         printf("> ");
+      else
+         printf("& ");
+      printf("getSystemFont called\n");
+      push_word(0);
+      return;    
     case getVoltageMilliVolt_4_5I:
       if (verbose)
          printf("> ");
@@ -380,7 +404,7 @@ void dispatch_native (TWOBYTES signature, STACKWORD *paramBase)
       printf("getVoltageMillivolts returning 9999\n");
       push_word(9999);
       return;
-    case readButtons_4_5I:
+    case getButtons_4_5I:
       if (verbose)
       {
          printf("> ");
@@ -396,6 +420,13 @@ void dispatch_native (TWOBYTES signature, STACKWORD *paramBase)
       printf("getTachoCount on Motor %d returning 0\n", paramBase[0]);
       push_word(0);
       return;  
+    case controlMotorById_4III_5V:
+      if (verbose)
+         printf("> ");
+      else
+         printf("& ");
+      printf("controlMotor called with parameters %d, %d, %d\n",paramBase[0],paramBase[1],paramBase[2]);
+      return; 
     case resetTachoCountById_4I_5V:
       if (verbose)
          printf("> ");
@@ -444,12 +475,12 @@ void dispatch_native (TWOBYTES signature, STACKWORD *paramBase)
       }
       push_word(0);
       return; 
-    case playTone_4II_5V:
+    case playFreq_4III_5V:
       if (verbose)
          printf("> ");
       else
          printf("& ");
-      printf("playTone with tone = %d, duration = %d\n", paramBase[0], paramBase[1]);
+      printf("playFreq with freq = %d, duration = %d, volume = %d\n", paramBase[0], paramBase[1], paramBase[2]);
       return;
     case btSend_4_1BI_5V:
       {
@@ -539,7 +570,7 @@ void dispatch_native (TWOBYTES signature, STACKWORD *paramBase)
       }
       push_word(0);
       return;
-    case usbRead_4_1BI_5I:
+    case usbRead_4_1BII_5I:
       {
         Object *p = word2ptr(paramBase[0]);
         byte *byteArray = (((byte *) p) + HEADER_SIZE);
@@ -551,7 +582,7 @@ void dispatch_native (TWOBYTES signature, STACKWORD *paramBase)
         push_word(0);                      
       } 
       return;
-    case usbWrite_4_1BI_5V:
+    case usbWrite_4_1BII_5I:
       {
         Object *p = word2ptr(paramBase[0]);
         byte *byteArray = (((byte *) p) + HEADER_SIZE);
@@ -562,6 +593,64 @@ void dispatch_native (TWOBYTES signature, STACKWORD *paramBase)
         }                     
       }
       return; 
+    case usbStatus_4_5I:
+      {
+        push_word(0);
+      }
+      return;
+    case usbEnable_4I_5V:
+      {
+        if (verbose) 
+        {
+          printf("> ");
+          printf("usbEnable called\n");;                                           
+        }
+      }
+      return;
+    case usbDisable_4_5V:
+      {
+        if (verbose) 
+        {
+          printf("> ");
+          printf("usbDisable called\n");;                                           
+        }
+      }
+      return;
+    case usbReset_4_5V :
+      if (verbose) 
+      {
+        printf("> ");
+        printf("udpReset called\n");                                           
+      }
+      return;
+    case usbSetSerialNo_4Ljava_3lang_3String_2_5V: 
+      {
+        byte *p = word2ptr(paramBase[0]);
+        int len;
+        Object *charArray = (Object *) word2ptr(get_word_4_ns(fields_start(p)));
+
+        len = get_array_length(charArray);
+        if (verbose) 
+        {
+          printf("> ");
+          printf("udpSetSerial called\n");                                           
+        }
+      }
+      return;
+    case usbSetName_4Ljava_3lang_3String_2_5V:
+      {
+        byte *p = word2ptr(paramBase[0]);
+        int len;
+        Object *charArray = (Object *) word2ptr(get_word_4_ns(fields_start(p)));
+
+        len = get_array_length(charArray);
+        if (verbose) 
+        {
+          printf("> ");
+          printf("udpSetName called\n");
+        }                                            
+      }
+      return;
     case writePage_4_1BI_5V:
       {
         Object *p = word2ptr(paramBase[0]);
@@ -592,22 +681,23 @@ void dispatch_native (TWOBYTES signature, STACKWORD *paramBase)
         printf("exec called\n");                                           
       }
       return;
-    case usbReset_4_5V :
-      if (verbose) 
-      {
-        printf("> ");
-        printf("udpReset called\n");                                           
-      }
-      return;
-    case playSample_4IIII_5V:
+    case playSample_4IIIII_5V:
       if (verbose)
          printf("> ");
       else
          printf("& ");
       printf("Playing sound sample\n");
       return;
+    case getTime_4_5I:
+      if (verbose)
+         printf("> ");
+      else
+         printf("& ");
+      printf("Sound getTime called\n");
+      push_word(0);
+      return;   
     case getDataAddress_4Ljava_3lang_3Object_2_5I:
-     if (verbose)
+      if (verbose)
          printf("> ");
       else
          printf("& ");
@@ -636,6 +726,57 @@ void dispatch_native (TWOBYTES signature, STACKWORD *paramBase)
         Object *p2 = word2ptr(paramBase[2]);
         arraycopy(p1, paramBase[1], p2, paramBase[3], paramBase[4]);
       }
+      return;
+    case executeProgram_4I_5V:
+      {
+        MethodRecord *mRec;
+        ClassRecord *classRecord;
+        classRecord = get_class_record (get_entry_class (paramBase[0]));
+        // Initialize top word with fake parameter for main():
+        set_top_ref_cur (JNULL);
+        // Push stack frame for main method:
+        mRec= find_method (classRecord, main_4_1Ljava_3lang_3String_2_5V);
+        dispatch_special (mRec, curPc);
+        dispatch_static_initializer (classRecord, curPc);
+      }
+      return;
+    case setDebug_4_5V:
+      if (verbose)
+         printf("> ");
+      else
+         printf("& ");
+      printf("Set debug\n");
+      return;
+    case peekWord_4I_5I:
+      push_word(*((unsigned long *)(paramBase[0])));
+      return;
+    case eventOptions_4II_5I:
+      {
+        if (verbose)
+          printf("> ");
+        else
+          printf("& ");
+        printf("Debug event options\n");
+        push_word(0);
+      }
+      return;
+    case suspendThread_4Ljava_3lang_3Object_2_5V:
+      suspend_thread(ref2ptr(paramBase[0]));
+      return;
+    case resumeThread_4Ljava_3lang_3Object_2_5V:
+      resume_thread(ref2ptr(paramBase[0]));
+      return;
+    case getProgramExecutionsCount_4_5I:
+      push_word(gProgramExecutions);
+      return;
+    case getFirmwareRevision_4_5I:
+      push_word(0);
+      return;
+    case getFirmwareMajorVersion_4_5I:
+      push_word((STACKWORD) MAJOR_VERSION);
+      return;
+    case getFirmwareMinorVersion_4_5I:
+      push_word((STACKWORD) MINOR_VERSION); 
       return;
     default:
 #ifdef DEBUG_METHODS

@@ -18,6 +18,7 @@
 #define O_BINARY 0
 #endif
 
+
 void abort_tool (char *msg, char *arg)
 {
   printf (msg, arg);
