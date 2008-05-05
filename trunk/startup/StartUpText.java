@@ -278,7 +278,7 @@ public class StartUpText
 			        LCD.clear();
 			        drawTopRow();
 			        TextMenu subMenu = fileMenu;
-			        if (ext.equals("nxj")) subMenu = programMenu;
+			        if (ext.equals("nxj") || ext.equals("bin")) subMenu = programMenu;
 			        if (ext.equals("wav")) subMenu = wavMenu;
 					subMenu.setTitle(fileNames[selection]);
 			    	int subSelection = subMenu.select(0,timeout);
