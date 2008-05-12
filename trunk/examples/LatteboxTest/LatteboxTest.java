@@ -25,11 +25,6 @@ public class LatteboxTest{
 			NXTeObj.LSC(0).calibrate();			
 			dm.echo("Load all servos");
 			NXTeObj.LSC(0).loadAllServos();
-			NXTeObj.LSC(0).Servo(0).setMinAngle(0);
-			NXTeObj.LSC(0).Servo(0).setMaxAngle(2000);
-			NXTeObj.LSC(0).Servo(1).setMinAngle(0);
-			NXTeObj.LSC(0).Servo(1).setMaxAngle(2000);
-
 			
 			while(!Button.ESCAPE.isPressed()){
 
