@@ -13,8 +13,8 @@ public class LServo extends I2CSensor{
 	private String servoName = "";//String to describe any Servo connected to LSC
 	private int angle;//Angle
 	private int speed;//Not implemented yet.
-	private int min_angle;
-	private int max_angle;
+	private int min_angle = 0;
+	private int max_angle = 2000;
 	private int LSC_position; //Position where Servo has been pluged
 	
 	//Servo ID
@@ -219,6 +219,22 @@ public class LServo extends I2CSensor{
 		this.setAngle(Math.round(middle));		
 	}
 
+	/**
+	 * Classic forward method
+	 * 
+	 */
+	public void forward() throws Exception{
+		this.setAngle(0);
+	}
+
+	/**
+	 * Classic backward method
+	 * 
+	 */
+	public void backward() throws Exception{
+		this.setAngle(2000);
+	}
+	
 	/**
 	 * Get servo name
 	 * 
