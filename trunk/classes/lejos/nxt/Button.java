@@ -94,17 +94,20 @@ public class Button implements ListenerCaller
    */ 
   public static int waitForPress()
   {
+     int button = 0;
      while(0<readButtons())
      {
         try  {Thread.sleep(50);}
         catch(InterruptedException ie) {};
      }
-     while(0 == readButtons())
+     while(0 == button)
      {
-           try  {Thread.sleep(50);}
-           catch(InterruptedException ie){};
+        button = readButtons();
+        try  {Thread.sleep(50);}
+        catch(InterruptedException ie){};
      }
-     return readButtons();             
+     while(readButtons()>0);
+     return button;             
   }
   
   /**
