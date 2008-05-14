@@ -1,0 +1,170 @@
+<html xmlns:o="urn:schemas-microsoft-com:office:office"
+xmlns:w="urn:schemas-microsoft-com:office:word"
+xmlns="http://www.w3.org/TR/REC-html40">
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=windows-1252">
+<meta name=ProgId content=Word.Document>
+<meta name=Generator content="Microsoft Word 10">
+<meta name=Originator content="Microsoft Word 10">
+<link rel=File-List href="BasicMotor_files/filelist.xml">
+<title>import lejos</title>
+<!--[if gte mso 9]><xml>
+ <o:DocumentProperties>
+  <o:Author>Roger</o:Author>
+  <o:LastAuthor>Roger</o:LastAuthor>
+  <o:Revision>5</o:Revision>
+  <o:TotalTime>2</o:TotalTime>
+  <o:Created>2008-05-11T03:52:00Z</o:Created>
+  <o:LastSaved>2008-05-13T23:26:00Z</o:LastSaved>
+  <o:Pages>1</o:Pages>
+  <o:Words>94</o:Words>
+  <o:Characters>541</o:Characters>
+  <o:Company>UC Bereley</o:Company>
+  <o:Lines>4</o:Lines>
+  <o:Paragraphs>1</o:Paragraphs>
+  <o:CharactersWithSpaces>634</o:CharactersWithSpaces>
+  <o:Version>10.4219</o:Version>
+ </o:DocumentProperties>
+</xml><![endif]--><!--[if gte mso 9]><xml>
+ <w:WordDocument>
+  <w:SpellingState>Clean</w:SpellingState>
+  <w:GrammarState>Clean</w:GrammarState>
+  <w:Compatibility>
+   <w:BreakWrappedTables/>
+   <w:SnapToGridInCell/>
+   <w:WrapTextWithPunct/>
+   <w:UseAsianBreakRules/>
+  </w:Compatibility>
+  <w:BrowserLevel>MicrosoftInternetExplorer4</w:BrowserLevel>
+ </w:WordDocument>
+</xml><![endif]-->
+<style>
+<!--
+ /* Style Definitions */
+ p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{mso-style-parent:"";
+	margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+span.SpellE
+	{mso-style-name:"";
+	mso-spl-e:yes;}
+span.GramE
+	{mso-style-name:"";
+	mso-gram-e:yes;}
+@page Section1
+	{size:8.5in 11.0in;
+	margin:1.0in 1.25in 1.0in 1.25in;
+	mso-header-margin:.5in;
+	mso-footer-margin:.5in;
+	mso-paper-source:0;}
+div.Section1
+	{page:Section1;}
+-->
+</style>
+<!--[if gte mso 10]>
+<style>
+ /* Style Definitions */
+ table.MsoNormalTable
+	{mso-style-name:"Table Normal";
+	mso-tstyle-rowband-size:0;
+	mso-tstyle-colband-size:0;
+	mso-style-noshow:yes;
+	mso-style-parent:"";
+	mso-padding-alt:0in 5.4pt 0in 5.4pt;
+	mso-para-margin:0in;
+	mso-para-margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";}
+</style>
+<![endif]-->
+</head>
+
+<body lang=EN-US style='tab-interval:.5in'>
+
+<div class=Section1>
+
+<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal><span class=GramE>import</span> <span class=SpellE>lejos.nxt</span>.*;
+// this is required for all programs that run on the NXT<o:p></o:p></p>
+
+<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal>/**<o:p></o:p></p>
+
+<p class=MsoNormal><span style='mso-spacerun:yes'> </span>*Motor runs forward
+then backward as button is pressed.<o:p></o:p></p>
+
+<p class=MsoNormal><span style='mso-spacerun:yes'> </span>* @author Roger<o:p></o:p></p>
+
+<p class=MsoNormal><span style='mso-spacerun:yes'> </span>*/<o:p></o:p></p>
+
+<p class=MsoNormal><span class=GramE>public</span> class <span class=SpellE>BasicMotorTest</span><o:p></o:p></p>
+
+<p class=MsoNormal>{<o:p></o:p></p>
+
+<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal><span style='mso-spacerun:yes'>    </span><span class=GramE>public</span>
+static void main(String[] <span class=SpellE>args</span>)<o:p></o:p></p>
+
+<p class=MsoNormal><span style='mso-spacerun:yes'>    </span>{<o:p></o:p></p>
+
+<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal><span style='mso-spacerun:yes'>        </span><span
+class=SpellE><span class=GramE>Motor.A.forward</span></span><span class=GramE>(</span>);<o:p></o:p></p>
+
+<p class=MsoNormal><span style='mso-spacerun:yes'>        </span><span
+class=SpellE><span class=GramE>LCD.drawString</span></span><span class=GramE>(</span>&quot;FORWARD&quot;,
+0, 0);<o:p></o:p></p>
+
+<p class=MsoNormal><span style='mso-spacerun:yes'>        </span><span
+class=SpellE><span class=GramE>Button.waitForPress</span></span><span
+class=GramE>(</span>);<o:p></o:p></p>
+
+<p class=MsoNormal><span style='mso-spacerun:yes'>        </span><span
+class=SpellE><span class=GramE>Motor.A.backward</span></span><span class=GramE>(</span>);
+// you could use<span style='mso-spacerun:yes'>  </span><span class=SpellE>Motor.A.reverseDirection</span><span
+style='mso-spacerun:yes'>  </span>instead<o:p></o:p></p>
+
+<p class=MsoNormal><span style='mso-spacerun:yes'>        </span><span
+class=SpellE><span class=GramE>LCD.drawString</span></span><span class=GramE>(</span>&quot;BACKWARD&quot;,
+0, 1);<o:p></o:p></p>
+
+<p class=MsoNormal><span style='mso-spacerun:yes'>        </span><span
+class=SpellE><span class=GramE>Button.waitForPress</span></span><span
+class=GramE>(</span>);<o:p></o:p></p>
+
+<p class=MsoNormal><span style='mso-spacerun:yes'>        </span><span
+class=SpellE><span class=GramE>Motor.A.reverseDirection</span></span><span
+class=GramE>(</span>);<o:p></o:p></p>
+
+<p class=MsoNormal><span style='mso-spacerun:yes'>        </span><span
+class=SpellE><span class=GramE>LCD.drawString</span></span><span class=GramE>(</span>&quot;FORWARD&quot;,
+0, 2);<o:p></o:p></p>
+
+<p class=MsoNormal><span style='mso-spacerun:yes'>        </span><span
+class=SpellE><span class=GramE>Button.waitForPress</span></span><span
+class=GramE>(</span>);<o:p></o:p></p>
+
+<p class=MsoNormal><span style='mso-spacerun:yes'>        </span><span
+class=SpellE><span class=GramE>Motor.A.stop</span></span><span class=GramE>(</span>);<o:p></o:p></p>
+
+<p class=MsoNormal><span style='mso-spacerun:yes'>    </span>}<o:p></o:p></p>
+
+<p class=MsoNormal>}<o:p></o:p></p>
+
+</div>
+
+</body>
+
+</html>

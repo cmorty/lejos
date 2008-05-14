@@ -1,0 +1,207 @@
+<html xmlns:o="urn:schemas-microsoft-com:office:office"
+xmlns:w="urn:schemas-microsoft-com:office:word"
+xmlns="http://www.w3.org/TR/REC-html40">
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=windows-1252">
+<meta name=ProgId content=Word.Document>
+<meta name=Generator content="Microsoft Word 10">
+<meta name=Originator content="Microsoft Word 10">
+<link rel=File-List href="Rotation_files/filelist.xml">
+<title>import lejos</title>
+<!--[if gte mso 9]><xml>
+ <o:DocumentProperties>
+  <o:Author>Roger</o:Author>
+  <o:LastAuthor>Roger</o:LastAuthor>
+  <o:Revision>5</o:Revision>
+  <o:TotalTime>45</o:TotalTime>
+  <o:Created>2008-05-11T04:06:00Z</o:Created>
+  <o:LastSaved>2008-05-13T23:09:00Z</o:LastSaved>
+  <o:Pages>1</o:Pages>
+  <o:Words>134</o:Words>
+  <o:Characters>764</o:Characters>
+  <o:Company>UC Bereley</o:Company>
+  <o:Lines>6</o:Lines>
+  <o:Paragraphs>1</o:Paragraphs>
+  <o:CharactersWithSpaces>897</o:CharactersWithSpaces>
+  <o:Version>10.4219</o:Version>
+ </o:DocumentProperties>
+</xml><![endif]--><!--[if gte mso 9]><xml>
+ <w:WordDocument>
+  <w:SpellingState>Clean</w:SpellingState>
+  <w:GrammarState>Clean</w:GrammarState>
+  <w:Compatibility>
+   <w:BreakWrappedTables/>
+   <w:SnapToGridInCell/>
+   <w:WrapTextWithPunct/>
+   <w:UseAsianBreakRules/>
+  </w:Compatibility>
+  <w:BrowserLevel>MicrosoftInternetExplorer4</w:BrowserLevel>
+ </w:WordDocument>
+</xml><![endif]-->
+<style>
+<!--
+ /* Style Definitions */
+ p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{mso-style-parent:"";
+	margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+span.SpellE
+	{mso-style-name:"";
+	mso-spl-e:yes;}
+span.GramE
+	{mso-style-name:"";
+	mso-gram-e:yes;}
+@page Section1
+	{size:8.5in 11.0in;
+	margin:1.0in 1.25in 1.0in 1.25in;
+	mso-header-margin:.5in;
+	mso-footer-margin:.5in;
+	mso-paper-source:0;}
+div.Section1
+	{page:Section1;}
+-->
+</style>
+<!--[if gte mso 10]>
+<style>
+ /* Style Definitions */
+ table.MsoNormalTable
+	{mso-style-name:"Table Normal";
+	mso-tstyle-rowband-size:0;
+	mso-tstyle-colband-size:0;
+	mso-style-noshow:yes;
+	mso-style-parent:"";
+	mso-padding-alt:0in 5.4pt 0in 5.4pt;
+	mso-para-margin:0in;
+	mso-para-margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";}
+</style>
+<![endif]-->
+</head>
+
+<body lang=EN-US style='tab-interval:.5in'>
+
+<div class=Section1>
+
+<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal><span class=GramE>import</span> <span class=SpellE>lejos.nxt</span>.*;<o:p></o:p></p>
+
+<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal>/**<o:p></o:p></p>
+
+<p class=MsoNormal><span style='mso-spacerun:yes'> </span>* A more object -
+oriented code.<span style='mso-spacerun:yes'>  </span><span class=GramE>the</span>
+main method just starts the program<o:p></o:p></p>
+
+<p class=MsoNormal><span style='mso-spacerun:yes'> </span>* @author Owner<o:p></o:p></p>
+
+<p class=MsoNormal><span style='mso-spacerun:yes'> </span>*/<o:p></o:p></p>
+
+<p class=MsoNormal><span class=GramE>public</span> class Rotation<o:p></o:p></p>
+
+<p class=MsoNormal>{<o:p></o:p></p>
+
+<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal><span style='mso-spacerun:yes'>    </span><span class=GramE>public</span>
+static void main(String <span class=SpellE>args</span>[])<o:p></o:p></p>
+
+<p class=MsoNormal><span style='mso-spacerun:yes'>   </span><span
+style='mso-spacerun:yes'> </span>{<o:p></o:p></p>
+
+<p class=MsoNormal><span style='mso-spacerun:yes'>        </span><span
+class=SpellE><span class=GramE>LCD.drawString</span></span><span class=GramE>(</span>&quot;Rotation&quot;,
+0, 0);//display program name before running<o:p></o:p></p>
+
+<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal><span style='mso-spacerun:yes'>        </span><span
+class=SpellE><span class=GramE>Button.waitForPress</span></span><span
+class=GramE>(</span>);<o:p></o:p></p>
+
+<p class=MsoNormal><span style='mso-spacerun:yes'>        </span><span
+class=SpellE><span class=GramE>LCD.clear</span></span><span class=GramE>(</span>);<o:p></o:p></p>
+
+<p class=MsoNormal><span style='mso-spacerun:yes'>        </span><span
+class=GramE>new</span> Rotation().go();// create an instance of the class and
+calls go<o:p></o:p></p>
+
+<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal><span style='mso-spacerun:yes'>    </span>}<o:p></o:p></p>
+
+<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal><span style='mso-spacerun:yes'>    </span>/**<o:p></o:p></p>
+
+<p class=MsoNormal><span style='mso-spacerun:yes'>     </span>* <span
+class=GramE>this</span> method does the actual work<o:p></o:p></p>
+
+<p class=MsoNormal><span style='mso-spacerun:yes'>     </span>*/<o:p></o:p></p>
+
+<p class=MsoNormal><span style='mso-spacerun:yes'>    </span><span class=GramE>public</span>
+void go()<o:p></o:p></p>
+
+<p class=MsoNormal><span style='mso-spacerun:yes'>    </span>{<o:p></o:p></p>
+
+<p class=MsoNormal><span style='mso-spacerun:yes'>        </span><span
+class=GramE>rotate720(</span>);<o:p></o:p></p>
+
+<p class=MsoNormal><span style='mso-spacerun:yes'>        </span><span
+class=SpellE><span class=GramE>Motor.A.setSpeed</span></span><span class=GramE>(</span>800);<o:p></o:p></p>
+
+<p class=MsoNormal><span style='mso-spacerun:yes'>        </span><span
+class=GramE>rotate720(</span>);<o:p></o:p></p>
+
+<p class=MsoNormal><span style='mso-spacerun:yes'>    </span>}<o:p></o:p></p>
+
+<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal><span style='mso-spacerun:yes'>    </span>/**<o:p></o:p></p>
+
+<p class=MsoNormal><span style='mso-spacerun:yes'>     </span>* <span
+class=GramE>helper</span> method for go(); stops motor when button <span
+class=SpellE>ia</span> pressed<o:p></o:p></p>
+
+<p class=MsoNormal><span style='mso-spacerun:yes'>     </span>*/<o:p></o:p></p>
+
+<p class=MsoNormal><span style='mso-spacerun:yes'>    </span><span class=GramE>public</span>
+void rotate720()<o:p></o:p></p>
+
+<p class=MsoNormal><span style='mso-spacerun:yes'>    </span>{<o:p></o:p></p>
+
+<p class=MsoNormal><span style='mso-spacerun:yes'>        </span><span
+class=SpellE><span class=GramE>Motor.A.rotate</span></span><span class=GramE>(</span>720);<o:p></o:p></p>
+
+<p class=MsoNormal><span style='mso-spacerun:yes'>        </span><span
+class=SpellE><span class=GramE>LCD.drawInt</span></span><span class=GramE>(</span><span
+class=SpellE>Motor.A.getTachoCount</span>(), 4, 0, 1);<o:p></o:p></p>
+
+<p class=MsoNormal><span style='mso-spacerun:yes'>        </span><span
+class=SpellE><span class=GramE>Motor.A.rotateTo</span></span><span class=GramE>(</span>0);<o:p></o:p></p>
+
+<p class=MsoNormal><span style='mso-spacerun:yes'>        </span><span
+class=SpellE><span class=GramE>LCD.drawInt</span></span><span class=GramE>(</span><span
+class=SpellE>Motor.A.getTachoCount</span>(), 4, 0, 2);<o:p></o:p></p>
+
+<p class=MsoNormal><span style='mso-spacerun:yes'>        </span><span
+class=SpellE><span class=GramE>Button.waitForPress</span></span><span
+class=GramE>(</span>);<o:p></o:p></p>
+
+<p class=MsoNormal><span style='mso-spacerun:yes'>    </span>}<o:p></o:p></p>
+
+<p class=MsoNormal>}<o:p></o:p></p>
+
+</div>
+
+</body>
+
+</html>
