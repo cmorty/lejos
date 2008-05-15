@@ -30,8 +30,9 @@ public class LSC extends I2CSensor {
 	//Servo Management
 	private final int MAXIMUM_SERVOS = 10;//LSC Suports until 10 RC Servos
 	private ArrayList arrServo;//ServoController manage until 10 RC Servos
-	public static final byte arrServoID[] = {0x01,0x02,0x04,0x08};
-	
+	public static final int arrServoLoad[] = {(int)0x01,(int)0x02,(int)0x04,(int)0x08,(int)0x20,(int)0x40,(int)0x80,(int)0x100,(int)0x200};
+	public static final int arrServoUnload[] = {(int)0x3FE,(int)0x3FD,(int)0x3FB,(int)0x3F7,(int)0x3EF,(int)0x3DF,(int)0x3BF,(int)0x37F,(int)0x2FF,(int)0x1FF};
+
 	//Exception handling
 	private final String ERROR_SERVO_DEFINITION =  "Error with Servo definition";
 	private final String ERROR_SERVO_LOCATION =  "Error with Servo location";
@@ -150,50 +151,6 @@ public class LSC extends I2CSensor {
 	 */
 	public void unloadAllServos(){
 		int channel = (int)0x00;
-		h_byte = (byte)0xe0; //0xe0 | (0x00 >>(byte)8); //?? 
-		l_byte = (byte)channel;
-	     
-	    //High Byte Write
-		I2C_Response = this.sendData((int)this.SPI_PORT, h_byte);
-
-	    //Low Byte Write
-		I2C_Response = this.sendData((int)this.SPI_PORT, l_byte);		
-	}
-	
-	/**
-	 * Load Servo located in a position X
-	 * 
-	 * @param location
-	 */
-	public void loadServo(int location) throws Exception{
-		int channel = (int)0x00;
-		
-		if((location > 0) && (location <= 10)){
-			if(location == 1){
-				channel = (int) 0x01;
-			}else if(location == 2){
-				channel = (int) 0x02;
-			}else if(location == 3){
-				channel = (int) 0x04;
-			}else if(location == 4){
-				channel = (int) 0x08;
-			}else if(location == 5){
-				channel = (int) 0x10;
-			}else if(location == 6){
-				channel = (int) 0x20;
-			}else if(location == 7){
-				channel = (int) 0x40;
-			}else if(location == 8){
-				channel = (int) 0x80;
-			}else if(location == 9){
-				channel = (int) 0x100;
-			}else if(location == 10){
-				channel = (int) 0x200;
-			}
-		}else{
-			throw new Exception(ERROR_SERVO_LOCATION);
-		}
-		
 		h_byte = (byte)0xe0; //0xe0 | (0x00 >>(byte)8); //?? 
 		l_byte = (byte)channel;
 	     
