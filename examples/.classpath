@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="BTReceive/|BTSend/|BumperCar/|ColorDetector/|CompassTest/|ExceptionTest/|HelloWorld/|Line/|Listen/|MemoryTest/|PerformanceTest/|PilotTester/|SonicTest/|SpeedTest/|Subsumption1/|Subsumption2/|TiltTest/|Tune/|USBReceive/|USBSend/|View/|GraphicsSample/|SocketTest/|TimeTest/|SocketServer/|BTConnectTest/|SoundSample/|LCDUI/|DLTest/|RCXMMTest/|RCXLinkTest/|LLCTest/|RCXRemote/|RCXRemoteMotor/|SerialTest/|RCXEmulator/|LLCMonitor/|RCXPortTest/|SignalTest/|BlueStats/|RemoteMotor/|MonitorTest/|NXTCamTest/|RemoteNXTTest/|I2CDevices/|BTGPS/|RCXMuxTest/|FileTest/|LatteboxTest/|BTKeyboard/|KeyboardTest/" kind="src" path=""/>
+	<classpathentry excluding="BTReceive/|BTSend/|BumperCar/|ColorDetector/|CompassTest/|ExceptionTest/|HelloWorld/|Line/|Listen/|MemoryTest/|PerformanceTest/|PilotTester/|SonicTest/|SpeedTest/|Subsumption1/|Subsumption2/|TiltTest/|Tune/|USBReceive/|USBSend/|View/|GraphicsSample/|SocketTest/|TimeTest/|SocketServer/|BTConnectTest/|SoundSample/|LCDUI/|DLTest/|RCXMMTest/|RCXLinkTest/|LLCTest/|RCXRemote/|RCXRemoteMotor/|SerialTest/|RCXEmulator/|LLCMonitor/|RCXPortTest/|SignalTest/|BlueStats/|RemoteMotor/|MonitorTest/|NXTCamTest/|RemoteNXTTest/|I2CDevices/|BTGPS/|RCXMuxTest/|FileTest/|LatteboxTest/|BTKeyboard/|KeyboardTest/|PFTest/" kind="src" path=""/>
 	<classpathentry kind="src" path="LatteboxTest"/>
 	<classpathentry kind="src" path="FileTest"/>
 	<classpathentry kind="src" path="BTGPS"/>
@@ -47,6 +47,7 @@
 	<classpathentry kind="src" path="I2CDevices"/>
 	<classpathentry kind="src" path="RCXMuxTest"/>
 	<classpathentry kind="src" path="KeyboardTest"/>
+	<classpathentry kind="src" path="PFTest"/>
 	<classpathentry kind="lib" path="/classes/lib/classes.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="/pccomms/3rdparty/lib/bluecove.jar"/>
