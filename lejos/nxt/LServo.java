@@ -28,6 +28,9 @@ public class LServo extends I2CSensor{
 	private byte h_byte;
 	private byte l_byte;
 	
+	public static final int arrServoUnload[] = {(int)0x01,(int)0x02,(int)0x04,(int)0x08,(int)0x20,(int)0x40,(int)0x80,(int)0x100,(int)0x200};
+	public static final int arrServoLoad[] = {(int)0x3FE,(int)0x3FD,(int)0x3FB,(int)0x3F7,(int)0x3EF,(int)0x3DF,(int)0x3BF,(int)0x37F,(int)0x2FF,(int)0x1FF};
+	
 	/**
 	 * Constructor
 	 * 
@@ -242,4 +245,37 @@ public class LServo extends I2CSensor{
 	public String getName(){
 		return this.servoName;
 	}
+	
+	public void unload(){
+		int channel = (int)0x00;
+		channel = (int) arrServoUnload[LSC_position];
+		
+		h_byte = (byte)0xe0; //0xe0 | (0x00 >>(byte)8); //?? 
+		l_byte = (byte)channel;
+	     
+	    //High Byte Write
+		I2C_Response = this.sendData((int)this.SPI_PORT, h_byte);
+
+	    //Low Byte Write
+		I2C_Response = this.sendData((int)this.SPI_PORT, l_byte);		
+	}	
+	
+	/**
+	 * Load Servo located in a position X
+	 * 
+	 * @param location
+	 */
+	public void load(){
+		int channel = (int)0x00;
+		channel = (int) arrServoLoad[LSC_position];
+		
+		h_byte = (byte)0xe0; //0xe0 | (0x00 >>(byte)8); //?? 
+		l_byte = (byte)channel;
+	     
+	    //High Byte Write
+		I2C_Response = this.sendData((int)this.SPI_PORT, h_byte);
+
+	    //Low Byte Write
+		I2C_Response = this.sendData((int)this.SPI_PORT, l_byte);		
+	}	
 }
