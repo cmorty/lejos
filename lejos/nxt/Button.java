@@ -89,7 +89,7 @@ public class Button implements ListenerCaller
   }
  
   /**
-   * wait for some button to be pressed 
+   * wait for some button to be pressed (and released). 
    * @return the ID of that button, the same as readButtons(); 
    */ 
   public static int waitForPress()
