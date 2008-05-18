@@ -69,7 +69,7 @@ public class LatteboxTest{
 			dm.echo(e.getMessage());
 		}
 
-				//At the end, unload all Servos
+		//At the end, unload all Servos
 		NXTeObj.LSC(0).unloadAllServos();
 		dm.echo("Test finished");
 	}
