@@ -1,6 +1,6 @@
 package lejos.nxt;
 
-import lejos.nxt.*;
+//import lejos.nxt.*;
 import java.util.ArrayList;
 
 /**
