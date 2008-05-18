@@ -18,9 +18,11 @@ public class LatteboxTest{
 
 			NXTeObj = new NXTe(SensorPort.S1);//NXTe Controller pluged in Port1
 			NXTeObj.addLSC(0);
-			dm.echo("Calibrating LSC");			
-			NXTeObj.LSC(0).addServo(1,"SAVOX, Digital SC-0352");//Servo 1 connected in location 1
-			NXTeObj.LSC(0).addServo(3,"SAVOX, Digital SC-0352");//Servo 2 connected in location 3
+			dm.echo("Calibrating LSC");
+			//Servo 1 connected in location 1			
+			NXTeObj.LSC(0).addServo(1,"SAVOX, Digital SC-0352");
+			//Servo 2 connected in location 3
+			NXTeObj.LSC(0).addServo(3,"SAVOX, Digital SC-0352");
 			//NXTeObj.LSC(0).addServo(2,"HITEC, HS-785HB");
 			NXTeObj.LSC(0).calibrate();			
 			dm.echo("Load all servos");
@@ -67,7 +69,7 @@ public class LatteboxTest{
 			dm.echo(e.getMessage());
 		}
 
-		//At the end, unload all Servos
+				//At the end, unload all Servos
 		NXTeObj.LSC(0).unloadAllServos();
 		dm.echo("Test finished");
 	}
