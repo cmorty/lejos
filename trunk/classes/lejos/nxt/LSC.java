@@ -70,15 +70,16 @@ public class LSC extends I2CSensor {
 	 * 
 	 * @param index
 	 * @param name
-	 * @throws Exception
+	 * @throws ArrayIndexOutOfBoundsException
 	 *
 	 */
-	public void addServo(int location, String name) throws Exception{
+	public void addServo(int location, String name) throws ArrayIndexOutOfBoundsException{
 		if(arrServo.size() <=MAXIMUM_SERVOS){
 			LServo s = new LServo(this.portConnected,location, name,this.SPI_PORT);
 			arrServo.add(s);
 		}else{
-			throw new Exception(ERROR_SERVO_DEFINITION);
+			//throw new ArrayIndexOutOfBoundsException(ERROR_SERVO_DEFINITION);
+			throw new ArrayIndexOutOfBoundsException();
 		}
 	}
 
@@ -111,7 +112,7 @@ public class LSC extends I2CSensor {
 	 * Currently I am debugging
 	 * 
 	 */
-	public void calibrate() throws Exception{
+	public void calibrate(){
 		I2C_Response = this.sendData((int)this.SPI_PORT, (byte)0x00);
 		I2C_Response = this.getData((int)this.SPI_PORT, bufReadResponse, 1);
 		
@@ -131,10 +132,8 @@ public class LSC extends I2CSensor {
 	
 	/**
 	 * Load all servos connected this this LSC 
-	 * 
-	 * @throws Exception
 	 */
-	public void loadAllServos()  throws Exception{
+	public void loadAllServos(){
 		int channel = 1023;
 		h_byte = (byte)0xe0; //0xe0 | (0x00 >>(byte)8); //?? 
 		l_byte = (byte)channel;

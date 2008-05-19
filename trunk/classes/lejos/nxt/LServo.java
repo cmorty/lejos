@@ -59,11 +59,9 @@ public class LServo extends I2CSensor{
 	 * because the object should know servo id.
 	 * 
 	 * @param angle
-	 * @throws Exception
 	 * 
-	 * Author: Juan Antonio Brenha Moral
 	 */
-	public void setAngle(int angle) throws Exception{
+	public void setAngle(int angle){
 		int servo = LSC_position;
 		h_byte = (byte)(0x80 | ((servo<<3) | (angle >>8)));
 	    l_byte = (byte)angle;
@@ -84,10 +82,9 @@ public class LServo extends I2CSensor{
 	 * because the object should know servo id.
 	 *
 	 * @return
-	 * @throws Exception
 	 * 
 	 */
-	public int getAngle() throws Exception{
+	public int getAngle(){
 		int servo = LSC_position;
 	    //Write OP Code
 	    h_byte  = (byte)(servo << 3);
@@ -115,10 +112,9 @@ public class LServo extends I2CSensor{
 	 * if the servo is moving
 	 * 
 	 * @return
-	 * @throws Exception
 	 * 
 	 */
-	public int readMotion() throws Exception{
+	public int readMotion(){
 		int motion = -1;
 		
 		//Write OP Code
@@ -146,10 +142,8 @@ public class LServo extends I2CSensor{
 	 * Method to know if Servo is moving to a determinated angle
 	 * 
 	 * @return
-	 * @throws Exception
-	 * 
 	 */
-	public boolean isMoving() throws Exception{
+	public boolean isMoving(){
 		boolean flag = false;
 		if(readMotion() != 0){
 			flag = true;
@@ -200,7 +194,7 @@ public class LServo extends I2CSensor{
 	 * Method to set minimal angle
 	 *  
 	 */	
-	public void goToMinAngle() throws Exception{
+	public void goToMinAngle(){
 		this.setAngle(this.min_angle);
 	}
 
@@ -208,7 +202,7 @@ public class LServo extends I2CSensor{
 	 * Method to set maximum angle
 	 * 
 	 */	
-	public void goToMaxAngle() throws Exception{
+	public void goToMaxAngle(){
 		this.setAngle(this.max_angle);		
 	}
 
@@ -216,7 +210,7 @@ public class LServo extends I2CSensor{
 	 * Method to set medium angle
 	 * 
 	 */		
-	public void goToMiddleAngle() throws Exception{
+	public void goToMiddleAngle(){
 		float middle = (this.min_angle + this.max_angle) / 2;
 		
 		this.setAngle(Math.round(middle));		
@@ -226,7 +220,7 @@ public class LServo extends I2CSensor{
 	 * Classic forward method
 	 * 
 	 */
-	public void forward() throws Exception{
+	public void forward(){
 		this.setAngle(0);
 	}
 
@@ -234,7 +228,7 @@ public class LServo extends I2CSensor{
 	 * Classic backward method
 	 * 
 	 */
-	public void backward() throws Exception{
+	public void backward(){
 		this.setAngle(2000);
 	}
 	
