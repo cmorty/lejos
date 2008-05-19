@@ -44,7 +44,7 @@ public class NXTe  extends I2CSensor{
 	 * 
 	 * @param port
 	 */
-	public NXTe(SensorPort port) throws Exception{
+	public NXTe(SensorPort port){
 		super(port);
 
 		port.setType(TYPE_LOWSPEED_9V);
@@ -55,12 +55,7 @@ public class NXTe  extends I2CSensor{
 		arrLSC = new ArrayList();
 		
 		this.setAddress((int) NXTE_ADDRESS);
-
 		I2C_Response = this.sendData((int)this.REGISTER_IIC, (byte)0x0c);
-
-		if(I2C_Response != 0){
-			throw new Exception(this.ERROR_SPI_CONFIGURATION); 
-		}
 	}
 	
 	/**
@@ -69,12 +64,13 @@ public class NXTe  extends I2CSensor{
 	 * @param SPI_PORT
 	 * @throws Exception
 	 */
-	public void addLSC(int SPI_PORT) throws Exception{
+	public void addLSC(int SPI_PORT) throws ArrayIndexOutOfBoundsException{
 		if(arrLSC.size() <= MAXIMUM_LSC){
 			LSC LSCObj = new LSC(this.portConnected,this.SPI_PORT[SPI_PORT]);
 			arrLSC.add(LSCObj);
 		}else{
-			throw new Exception(ERROR_SERVO_DEFINITION);
+			//throw new ArrayIndexOutOfBoundsException(ERROR_SERVO_DEFINITION);
+			throw new ArrayIndexOutOfBoundsException();
 		}		
 	}	
 	
@@ -82,9 +78,19 @@ public class NXTe  extends I2CSensor{
 	 * Get a LSC
 	 * 
 	 * @param index
-	 * @return LSC
+	 * @return
 	 */
 	public LSC getLSC(int index){
+		return (LSC) arrLSC.get(index);
+	}
+
+	/**
+	 * Get a LSC
+	 * 
+	 * @param index
+	 * @return
+	 */
+	public LSC LSC(int index){
 		return (LSC) arrLSC.get(index);
 	}
 }
