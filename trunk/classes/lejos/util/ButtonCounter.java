@@ -1,12 +1,11 @@
 package lejos.util;
- 
 import lejos.nxt.*;
 
 /**
 This is class is for data entry using the NXT keyboard.
 Counts number of presses of left and right buttons <br>
 Press ENTER together with together with LEFT  or RIGHT to decrease the count. 
-Press ESCAPE or ENTER alone to end counting. 
+Press ESCAPE to end counting. 
 Displays the count as it is entered, and makes a sound with each button press.
 Stores the count in public fields
 
@@ -73,9 +72,6 @@ counters are reset when this method is called.
  */	
 	public void count()
 	{
-        // Sound code disabled. We now have per button tones. 
-        // Is this good enough if not, then we need to modify and re-enable.
-	   //Button.setKeyClick(0,0,0);
        if(_reset)       
        {
            _rightCount = 0;
@@ -87,10 +83,7 @@ counters are reset when this method is called.
 		while(counting)
 		{
             int b = Button.waitForPress();
-            try {Thread.sleep(80);} catch (InterruptedException ie) {}
-            b = Button.readButtons();          
-			//Sound.playTone(880 + 100*b,200);
-		    if( b == ESC || b == ENTER)counting = false;
+		    if( b == ESC )counting = false;
 			else
 			{
 				if(b == LEFT) _leftCount++;
