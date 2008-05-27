@@ -444,5 +444,7 @@ public class TachoNavigator implements Navigator
       float ratio = (2*radius - _pilot._trackWidth)/(2*radius+_pilot._trackWidth);
       return Math.round(direction * 100*(1 - ratio));
    }
+   
+   public boolean stalled() {return _pilot.stalled();}
 }
 
