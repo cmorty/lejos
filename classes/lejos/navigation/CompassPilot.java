@@ -1,12 +1,13 @@
 package lejos.navigation;
-import lejos.navigation.*;
+
 import lejos.nxt.*;
+
 
 /**
  * A Pilot that keeps track of direction using a CompassSensor.
  */
 public class CompassPilot extends Pilot {
-	
+
 	protected CompassSensor compass;
 	private  Regulator regulator = new Regulator(); // inner regulator for thread
 	private int _heading; // Heading to point robot
@@ -14,6 +15,7 @@ public class CompassPilot extends Pilot {
 	private boolean _traveling = false; // state variable used by regulator
 	private boolean _rotating = false; // state variable used by regulator
 	private float _distance; // set by travel()  used by regulator to stop
+	private byte _direction;// direction of travel = sign of _distance
 	
 	/**
 	 * returns true if robot is rotating to a specific direction
@@ -22,7 +24,7 @@ public class CompassPilot extends Pilot {
 	public boolean isRotating(){return _rotating;}
 	
 	/**
-	 *returns returns if the robot is travelling for a specific distance;
+	 *returns returns  true if the robot is travelling for a specific distance;
 	 **/	
 	public boolean isTraveling(){ return _traveling;}
 	
@@ -32,6 +34,8 @@ public class CompassPilot extends Pilot {
 	 *  @param compassPort the sensor port connected to the CompassSensor e.g. SensorPort.S1
 	 *  @param wheelDiameter  Diameter of the tire, in any convenient units.  (The diameter in mm is usually printed on the tire). 
 	 *  @param trackWidth Distance between center of right tire and center of left tire, in same units as wheelDiameter
+	 *  @param leftMotor
+	 * @param rightMotor
 	 */
 	public CompassPilot(SensorPort compassPort, float wheelDiameter,float trackWidth,Motor leftMotor, Motor rightMotor) {
 		this(compassPort, wheelDiameter, trackWidth, leftMotor, rightMotor, false);
@@ -92,22 +96,24 @@ public class CompassPilot extends Pilot {
      */	
     public CompassSensor getCompass(){ return compass;}
 	/**
-	 * Returns the compass angle in degrees, Cartesian (increasing counter clockwise)
+	 * Returns the compass angle in degrees, Cartesian (increasing counter clockwise) i.e. the actual robot heading
 	 */
 	public int getAngle() {
 		return (int)compass.getDegreesCartesian();
 	}
 	
 	/**
-	 * Returns target direction of robot facing
+	 * Returns  direction of desired robot facing
 	 */
 	public int getHeading() { return _heading;}
 
 	/**
-	 * sets target direction of robot facing in degrees
+	 * sets  direction of desired robot facing in degrees
 	 */
 	public void setHeading(int angle){ _heading = angle;}
-	
+	/**
+	 * Rotates the robot 360 degrees while calibrating the compass
+	 */
 	public void calibrate()
 	{
 		int spd = _speed;
@@ -115,30 +121,26 @@ public class CompassPilot extends Pilot {
 		regulateSpeed(true);
 		compass.startCalibration();
 		super.rotate(360,false);
-//		while(isMoving()) LCD.drawInt(super.getAngle(),4,0,0);
 		compass.stopCalibration();
 		setSpeed(spd);
 	}
 		
 	/**
-	 * Determines the difference between actual compass direction and target heading in degrees 
-	 * @param heading The target angle (in degrees). 
+	 * Determines the difference between actual compass direction and desired  heading in degrees  
 	 * @return error (in degrees)
 	 */
-	private int getHeadingError(int heading) {
-		int err = getAngle() - heading;	
+	private int getHeadingError() 
+	{
+	   int  err = getAngle() - _heading;
 		// Handles the wrap-around problem:
-		if (err < -180) err = err + 360;
-		if (err > 180) err = err - 360;
+		while (err < -180) err = err + 360;
+		while (err > 180) err = err - 360;
 		return err;
 	}
 	
 	/**
 	 * Moves the NXT robot a specific distance. A positive value moves it forwards and
-	 * a negative value moves it backwards.
-	 * If immediateReturn is fale, this method calls updateXY(). 
-	 * If immediateReturn is true, method returns immidiately and your code MUST call updateXY()
-	 * after the robot stops and before the  robot moves again.  Otherwise, the robot position is lost. 
+	 * a negative value moves it backwards. The robot steers to maintain its compass heading.
 	 * @param distance The positive or negative distance to move the robot, same units as _wheelDiameter
 	 * @param immediateReturn iff true, the method returns immediately. 
 	 */
@@ -146,8 +148,16 @@ public class CompassPilot extends Pilot {
 	{
 		regulateSpeed(false);
 		resetTachoCount();
-		forward();
 		_distance = distance;
+		if(_distance > 0)
+		   {
+		   _direction = 1;
+		   forward();
+		   }
+		else {
+		   _direction = -1;
+		   backward();
+		}
 		_traveling = true;
 		if(immediateReturn)return;
 		while(_traveling)Thread.yield(); // regulator will call stop when distance is reached
@@ -188,7 +198,7 @@ public class CompassPilot extends Pilot {
 	}
 	
 	/** 
-	 * see rotate(angle)
+	 * robot rotates to the specified compass heading;
 	 * @param  immediateReturn  - if true, method returns immediately. <br>
 	 * Robot stops when specified angle is reached
 	 */
@@ -199,7 +209,7 @@ public class CompassPilot extends Pilot {
 		while(isMoving())Thread.yield();
 		rotateTo(_heading + angle);
 	}
-
+	
 	/**
 	 * Rotates the  NXT robot through a specific angle; Rotates left if angle is positive, right if negative,
 	 * Returns when angle is reached.
@@ -243,17 +253,21 @@ public class CompassPilot extends Pilot {
 			{
 				if(pilotIsMoving()&& _traveling)
 				{
-					if(getTravelDistance() >= _distance)
+				   if(_direction*(getTravelDistance() - _distance) >=0)
 					{
 						stopNow();
 						_traveling = false;
 					}
 					else
-					controlTravel();
+					{
+			            float gain = -3;    
+			            int error = (int)(gain* getHeadingError());
+			            steer(_direction * error, 360*_direction,true);
+			        }
 				}
 				if(_rotating && ! pilotIsMoving())
 				{
-					int error = (int) getHeadingError(_heading);
+					int error = (int) getHeadingError();
 					if(Math.abs(error) > 3) performRotation(-error);
 					else 
 					{
@@ -264,27 +278,7 @@ public class CompassPilot extends Pilot {
 				Thread.yield();
 			}	
 		}
-		private void controlTravel() 
-		{
-			float gain = 2;
-			int slowSpeed;		
-			int error = (int)(gain* getHeadingError(_heading));
-			if(error<0)// turn right
-			{
-				error = -error;
-				if(error>100)error = 100;
-				slowSpeed = _speed*(100-error)/100;// use error as speed ratio
-				_left.setSpeed(slowSpeed);
-				_right.setSpeed(_speed);
-			}
-			else // turn left
-			{
-				if(error>100)error = 100;
-				slowSpeed = _speed*(100-error)/100;
-				_right.setSpeed(slowSpeed);	
-				_left.setSpeed(_speed);
-			}
-		}
+		
 	}
 
 }
