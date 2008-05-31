@@ -1,183 +1,59 @@
-<html xmlns:o="urn:schemas-microsoft-com:office:office"
-xmlns:w="urn:schemas-microsoft-com:office:word"
-xmlns="http://www.w3.org/TR/REC-html40">
-
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
 <head>
-<meta http-equiv=Content-Type content="text/html; charset=windows-1252">
-<meta name=ProgId content=Word.Document>
-<meta name=Generator content="Microsoft Word 10">
-<meta name=Originator content="Microsoft Word 10">
-<link rel=File-List href="InertiaTest_files/filelist.xml">
-<title>import lejos</title>
-<!--[if gte mso 9]><xml>
- <o:DocumentProperties>
-  <o:Author>Roger</o:Author>
-  <o:LastAuthor>Roger</o:LastAuthor>
-  <o:Revision>3</o:Revision>
-  <o:TotalTime>3</o:TotalTime>
-  <o:Created>2008-05-11T03:57:00Z</o:Created>
-  <o:LastSaved>2008-05-13T23:18:00Z</o:LastSaved>
-  <o:Pages>1</o:Pages>
-  <o:Words>138</o:Words>
-  <o:Characters>787</o:Characters>
-  <o:Company>UC Bereley</o:Company>
-  <o:Lines>6</o:Lines>
-  <o:Paragraphs>1</o:Paragraphs>
-  <o:CharactersWithSpaces>924</o:CharactersWithSpaces>
-  <o:Version>10.4219</o:Version>
- </o:DocumentProperties>
-</xml><![endif]--><!--[if gte mso 9]><xml>
- <w:WordDocument>
-  <w:Compatibility>
-   <w:BreakWrappedTables/>
-   <w:SnapToGridInCell/>
-   <w:WrapTextWithPunct/>
-   <w:UseAsianBreakRules/>
-  </w:Compatibility>
-  <w:BrowserLevel>MicrosoftInternetExplorer4</w:BrowserLevel>
- </w:WordDocument>
-</xml><![endif]-->
-<style>
+<title>InertiaTest.java</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<style type="text/css">
 <!--
- /* Style Definitions */
- p.MsoNormal, li.MsoNormal, div.MsoNormal
-	{mso-style-parent:"";
-	margin:0in;
-	margin-bottom:.0001pt;
-	mso-pagination:widow-orphan;
-	font-size:12.0pt;
-	font-family:"Times New Roman";
-	mso-fareast-font-family:"Times New Roman";}
-@page Section1
-	{size:8.5in 11.0in;
-	margin:1.0in 1.25in 1.0in 1.25in;
-	mso-header-margin:.5in;
-	mso-footer-margin:.5in;
-	mso-paper-source:0;}
-div.Section1
-	{page:Section1;}
+body {color: #000000; background-color: #ffffff; font-family: Monospaced}
+table {color: #000000; background-color: #e9e8e2; font-family: Monospaced}
+.character {color: #0000ff}
+.ST0 {color: #993300; font-family: Monospaced; font-weight: bold}
+.comment {color: #339900}
+.ST1 {color: #339900; font-family: Monospaced; font-weight: bold}
 -->
 </style>
-<!--[if gte mso 10]>
-<style>
- /* Style Definitions */
- table.MsoNormalTable
-	{mso-style-name:"Table Normal";
-	mso-tstyle-rowband-size:0;
-	mso-tstyle-colband-size:0;
-	mso-style-noshow:yes;
-	mso-style-parent:"";
-	mso-padding-alt:0in 5.4pt 0in 5.4pt;
-	mso-para-margin:0in;
-	mso-para-margin-bottom:.0001pt;
-	mso-pagination:widow-orphan;
-	font-size:10.0pt;
-	font-family:"Times New Roman";}
-</style>
-<![endif]-->
 </head>
+<body>
+<table width="100%"><tr><td align="center">C:\Documents and Settings\Owner\My Documents\NetBeansProjects\Tutorial1\src\InertiaTest.java</td></tr></table>
+<pre>
 
-<body lang=EN-US style='tab-interval:.5in'>
+<span class="ST0">import</span> lejos.nxt.*;
 
-<div class=Section1>
 
-<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+<span class="comment">/**</span>
+<span class="comment"> * </span><span class="comment">Test</span> <span class="comment">the</span> <span class="comment">overshoot</span> <span class="comment">after</span> <span class="comment">stop</span><span class="comment">() </span><span class="comment">at</span> <span class="comment">different</span> <span class="comment">speeds</span><span class="comment">;</span>
+<span class="comment"> * </span><span class="ST1">@author</span> <span class="comment">Roger</span>
+ <span class="comment">*/</span>
+<span class="ST0">public</span> <span class="ST0">class</span> InertiaTest
+{
+   <span class="ST0">public</span> <span class="ST0">static</span> <span class="ST0">void</span> main(String[] args)
+   {      
+        LCD.drawString(<span class="character">&quot;</span><span class="character">Inertia Test</span><span class="character">&quot;</span>, 0, 0);  <span class="comment">// just so the program will not start immeditely</span>
+        Button.waitForPress();           
+        rotate720();
+        Motor.A.resetTachoCount();
+        Motor.A.setSpeed(800);
+        rotate720();  
+   }
+   <span class="comment">/**</span>
+<span class="comment">    * </span><span class="comment">helper</span> <span class="comment">method</span><span class="comment"> - </span><span class="comment">rotates</span> <span class="comment">to</span><span class="comment"> 720, </span><span class="comment">stops</span><span class="comment">, </span><span class="comment">display</span> <span class="comment">tacho</span> <span class="comment">count</span><span class="comment">, </span><span class="comment">wait</span><span class="comment">;</span>
+    <span class="comment">*/</span>
+   <span class="ST0">public</span> <span class="ST0">static</span> <span class="ST0">void</span> rotate720()
+   {
+        Motor.A.forward();
+        <span class="ST0">int</span> count = 0;
+        <span class="ST0">while</span>( count &lt; 720 )count = Motor.A.getTachoCount();         
+        Motor.A.stop();
+<span class="comment">//       Motor.A.flt();</span>
+        LCD.drawInt(count , 0, 1);
+        <span class="ST0">while</span>(Motor.A.getActualSpeed()&gt;0);
+        LCD.drawInt(Motor.A.getTachoCount(), 7,1 );    
+        Button.waitForPress();
+        LCD.clear();
+   }
+}
 
-<p class=MsoNormal>import lejos.nxt.*;</p>
 
-<p class=MsoNormal><o:p>&nbsp;</o:p></p>
-
-<p class=MsoNormal><o:p>&nbsp;</o:p></p>
-
-<p class=MsoNormal>/**</p>
-
-<p class=MsoNormal><span style='mso-spacerun:yes'> </span>* Test the overshoot
-after stop() at different speeds;</p>
-
-<p class=MsoNormal><span style='mso-spacerun:yes'> </span>* @author Roger</p>
-
-<p class=MsoNormal><span style='mso-spacerun:yes'> </span>*/</p>
-
-<p class=MsoNormal>public class InertiaTest</p>
-
-<p class=MsoNormal>{</p>
-
-<p class=MsoNormal><span style='mso-spacerun:yes'>   </span>public static void
-main(String[] args)</p>
-
-<p class=MsoNormal><span style='mso-spacerun:yes'>   </span>{<span
-style='mso-spacerun:yes'>      </span></p>
-
-<p class=MsoNormal><span style='mso-spacerun:yes'>       
-</span>LCD.drawString(&quot;Inertia Test&quot;, 0, 0);<span
-style='mso-spacerun:yes'>  </span>// just so the program will not start
-immeditely</p>
-
-<p class=MsoNormal><span style='mso-spacerun:yes'>       
-</span>Button.waitForPress();<span style='mso-spacerun:yes'>           </span></p>
-
-<p class=MsoNormal><span style='mso-spacerun:yes'>        </span>rotate720();</p>
-
-<p class=MsoNormal><span style='mso-spacerun:yes'>       
-</span>Motor.A.resetTachoCount();</p>
-
-<p class=MsoNormal><span style='mso-spacerun:yes'>       
-</span>Motor.A.setSpeed(800);</p>
-
-<p class=MsoNormal><span style='mso-spacerun:yes'>       
-</span>rotate720();<span style='mso-spacerun:yes'>  </span></p>
-
-<p class=MsoNormal><o:p>&nbsp;</o:p></p>
-
-<p class=MsoNormal><span style='mso-spacerun:yes'>   </span>}</p>
-
-<p class=MsoNormal><span style='mso-spacerun:yes'>   </span>/**</p>
-
-<p class=MsoNormal><span style='mso-spacerun:yes'>    </span>* helper method -
-rotates to 720, stops, display tacho count, wait;</p>
-
-<p class=MsoNormal><span style='mso-spacerun:yes'>    </span>*/</p>
-
-<p class=MsoNormal><span style='mso-spacerun:yes'>   </span>public static void
-rotate720()</p>
-
-<p class=MsoNormal><span style='mso-spacerun:yes'>   </span>{</p>
-
-<p class=MsoNormal><span style='mso-spacerun:yes'>       
-</span>Motor.A.forward();</p>
-
-<p class=MsoNormal><span style='mso-spacerun:yes'>        </span>int count = 0;</p>
-
-<p class=MsoNormal><span style='mso-spacerun:yes'>        </span>while( count
-&lt; 720 )count = Motor.A.getTachoCount();<span
-style='mso-spacerun:yes'>         </span></p>
-
-<p class=MsoNormal><span style='mso-spacerun:yes'>       
-</span>Motor.A.stop();</p>
-
-<p class=MsoNormal>//<span style='mso-spacerun:yes'>       
-</span>Motor.A.flt();</p>
-
-<p class=MsoNormal><span style='mso-spacerun:yes'>       
-</span>LCD.drawInt(count , 0, 1);</p>
-
-<p class=MsoNormal><span style='mso-spacerun:yes'>        </span>while(Motor.A.getActualSpeed()&gt;0);</p>
-
-<p class=MsoNormal><span style='mso-spacerun:yes'>       
-</span>LCD.drawInt(Motor.A.getTachoCount(), 7,1 );<span
-style='mso-spacerun:yes'>    </span></p>
-
-<p class=MsoNormal><span style='mso-spacerun:yes'>       
-</span>Button.waitForPress();</p>
-
-<p class=MsoNormal><span style='mso-spacerun:yes'>        </span>LCD.clear();</p>
-
-<p class=MsoNormal><span style='mso-spacerun:yes'>   </span>}</p>
-
-<p class=MsoNormal>}</p>
-
-</div>
-
-</body>
-
+</pre></body>
 </html>
