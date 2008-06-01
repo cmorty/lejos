@@ -1,6 +1,7 @@
 import lejos.nxt.*;
 import lejos.nxt.comm.Bluetooth;
 import lejos.nxt.comm.RConsole;
+import lejos.nxt.comm.NXTConnection;
 
 import javax.bluetooth.RemoteDevice;
 import lejos.nxt.comm.BTConnection;
@@ -106,14 +107,15 @@ public class KeyboardTest implements KeyListener {
 					// use alternate method.
 					BTConnection btSPPDevice = null;
 					//System.err.println("About to connect w/pin " + (char)pin[0] + (char)pin[1] + (char)pin[2] + (char)pin[3] + "\n");
-					btSPPDevice = Bluetooth.connect(btrd.getDeviceAddr(), pin);
+                    // Open connection in raw/stream mode
+                    btSPPDevice = Bluetooth.connect(btrd.getDeviceAddr(), NXTConnection.RAW, pin);
 					//if(btSPPDevice == null)
 					//	System.err.println("Connect failed.\n");
 					//else
 					//	System.err.println("Connect worked.\n");
 					
 					//System.err.println("Setting to stream mode.\n");
-					btSPPDevice.setIOMode(0); // 0 = Stream mode?
+					//btSPPDevice.setIOMode(0); // 0 = Stream mode?
 					
 					try {
 						//System.err.println("About to open BTConnection.openInputStream()"  + "\n");

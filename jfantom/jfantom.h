@@ -7,10 +7,12 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+#undef lejos_pc_comm_NXTCommFantom_USB_BUFSZ
+#define lejos_pc_comm_NXTCommFantom_USB_BUFSZ 64L
 /*
  * Class:     lejos_pc_comm_NXTCommFantom
  * Method:    jfantom_find
- * Signature: ()I
+ * Signature: ()[Ljava/lang/String;
  */
 JNIEXPORT jobjectArray JNICALL Java_lejos_pc_comm_NXTCommFantom_jfantom_1find
   (JNIEnv *, jobject);
@@ -18,34 +20,34 @@ JNIEXPORT jobjectArray JNICALL Java_lejos_pc_comm_NXTCommFantom_jfantom_1find
 /*
  * Class:     lejos_pc_comm_NXTCommFantom
  * Method:    jfantom_open
- * Signature: (I)I
+ * Signature: (Ljava/lang/String;)J
  */
-JNIEXPORT jint JNICALL Java_lejos_pc_comm_NXTCommFantom_jfantom_1open
+JNIEXPORT jlong JNICALL Java_lejos_pc_comm_NXTCommFantom_jfantom_1open
   (JNIEnv *, jobject, jstring);
 
 /*
  * Class:     lejos_pc_comm_NXTCommFantom
  * Method:    jfantom_close
- * Signature: (I)V
+ * Signature: (J)V
  */
 JNIEXPORT void JNICALL Java_lejos_pc_comm_NXTCommFantom_jfantom_1close
-  (JNIEnv *, jobject, jint);
+  (JNIEnv *, jobject, jlong);
 
 /*
  * Class:     lejos_pc_comm_NXTCommFantom
  * Method:    jfantom_send_data
- * Signature: (I[BII)V
+ * Signature: (J[BII)I
  */
-JNIEXPORT void JNICALL Java_lejos_pc_comm_NXTCommFantom_jfantom_1send_1data
-  (JNIEnv *, jobject, jint, jbyteArray, jint, jint);
+JNIEXPORT jint JNICALL Java_lejos_pc_comm_NXTCommFantom_jfantom_1send_1data
+  (JNIEnv *, jobject, jlong, jbyteArray, jint, jint);
 
 /*
  * Class:     lejos_pc_comm_NXTCommFantom
  * Method:    jfantom_read_data
- * Signature: (II)[B
+ * Signature: (J[BII)I
  */
-JNIEXPORT jbyteArray JNICALL Java_lejos_pc_comm_NXTCommFantom_jfantom_1read_1data
-  (JNIEnv *, jobject, jint, jint);
+JNIEXPORT jint JNICALL Java_lejos_pc_comm_NXTCommFantom_jfantom_1read_1data
+  (JNIEnv *, jobject, jlong, jbyteArray, jint, jint);
 
 #ifdef __cplusplus
 }

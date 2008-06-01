@@ -583,7 +583,7 @@ class USBRespond extends Thread
         
 		while (true)
 		{
-            conn = USB.waitForConnection(0, USB.RAW);
+            conn = USB.waitForConnection(0, NXTConnection.LCP);
             if (conn == null) {
                 continue;
             }
@@ -654,7 +654,7 @@ class BTRespond  extends Thread {
 					Thread.sleep(500);
 				} catch (InterruptedException e) {}				
 			}
-            conn = Bluetooth.waitForConnection();
+            conn = Bluetooth.waitForConnection(0, NXTConnection.LCP, null);
             if (conn == null) {
                 continue;
             }

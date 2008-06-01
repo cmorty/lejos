@@ -63,7 +63,7 @@ public class NXTCommBluecove implements NXTComm, DiscoveryListener {
 					continue;
 
 				System.out.println("Found: " + nxtInfo.name);
-
+ 
 				// We want additional attributes, ServiceName (0x100),
 				// ServiceDescription (0x101) and ProviderName (0x102).
 

@@ -27,7 +27,7 @@ public class LCPBTResponder extends Thread {
 		while (true)
 		{	
 			if (cmdMode) {
-				btc = Bluetooth.waitForConnection();
+				btc = Bluetooth.waitForConnection(0, NXTConnection.LCP, null);
 				if (btc == null) continue;			
 				cmdMode = false;
 			}

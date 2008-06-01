@@ -40,6 +40,7 @@ public interface NXTProtocol {
 	
 	public static byte NXJ_FIND_FIRST = (byte)0xB6;
 	public static byte NXJ_FIND_NEXT = (byte)0xB7;
+    public static byte NXJ_PACKET_MODE = (byte)0xff;
 	
 	// Poll constants:
 	public static byte POLL_BUFFER = (byte)0x00;

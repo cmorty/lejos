@@ -38,15 +38,10 @@ enum nxt_usb_ids {
   PRODUCT_SAMBA = 0x6124
 };
 
-#define MAX_SERNO 26
-#define MAX_NAME 34
 struct nxt_t {
   struct usb_device *dev;
   struct usb_dev_handle *hdl;
   int is_in_reset_mode;
-  int stream_mode;
-  char serial_no[MAX_SERNO];
-  char name[MAX_NAME];
 };
 
 
@@ -59,7 +54,8 @@ nxt_error_t nxt_init(nxt_t **nxt)
 }
 
 
-nxt_error_t nxt_find_nth(nxt_t *nxt, int idx)
+/* Return a handle to the nth NXT device, or null if not found/error */
+long nxt_find_nth(int idx)
 {
   struct usb_bus *busses, *bus;
   if (idx == 0)
@@ -79,19 +75,11 @@ nxt_error_t nxt_find_nth(nxt_t *nxt, int idx)
                    dev->descriptor.idProduct == PRODUCT_NXT)
             {
               if (cnt++ < idx) continue;
-              /* device found. Open it and get the serial no. and name
-                 if available */
-              struct usb_dev_handle *hdl;
-              hdl = usb_open(dev);
-              int len = usb_get_string(hdl, dev->descriptor.iSerialNumber, 0, nxt->serial_no, MAX_SERNO);
-              len = usb_control_msg(hdl, 0xc0, 0x6, 0, 0, nxt->name, MAX_NAME, 1000);
-              usb_close(hdl);
-              nxt->dev = dev;
-              return NXT_OK;
+              return (long) dev;
             }
         }
     }
-  return NXT_NOT_PRESENT;
+  return 0;
 }
 
 nxt_error_t nxt_find(nxt_t *nxt)
@@ -175,62 +163,45 @@ nxt_close(nxt_t *nxt)
 
 // Version of open that works with lejos NXJ firmware.
 // Uses interface zero, and does not send samba N# message
-nxt_error_t
-nxt_open0(nxt_t *nxt)
+long
+nxt_open0(long hdev)
 {
+  struct usb_dev_handle *hdl;
   int ret;
   char buf[64];
-  nxt->hdl = usb_open(nxt->dev);
-
-  ret = usb_set_configuration(nxt->hdl, 1);
+  hdl = usb_open((struct usb_device *) hdev);
+  if (!hdl) return 0;
+  ret = usb_set_configuration(hdl, 1);
 
   if (ret < 0)
     {
-      usb_close(nxt->hdl);
-      return NXT_CONFIGURATION_ERROR;
+      usb_close(hdl);
+      return 0;
     }
-  ret = usb_claim_interface(nxt->hdl, 0);
+  ret = usb_claim_interface(hdl, 0);
 
   if (ret < 0)
     {
-      usb_close(nxt->hdl);
-      return NXT_IN_USE;
+      usb_close(hdl);
+      return 0;
     }
   // Discard any data that is left in the buffer
-  while (usb_bulk_read(nxt->hdl, 0x82, buf, sizeof(buf), 1) > 0)
+  while (usb_bulk_read(hdl, 0x82, buf, sizeof(buf), 1) > 0)
     ;
 
-  // try to set the stream I/O feature
-  ret = usb_control_msg(nxt->hdl, 0x41, 0x3, 0, 0, NULL, 0, 1000);
-  if (ret >= 0)
-  {
-    nxt->stream_mode = 1;
-  }
-
-  return NXT_OK;
+  return (long) hdl;
 }
 
 // Version of close that uses interface 0
-nxt_error_t
-nxt_close0(nxt_t *nxt)
+void nxt_close0(long hhdl)
 {
   char buf[64];
-  // Clear the stream I/o feature
-  if (nxt->stream_mode)
-  {
-    // Send EOF marker, a zero length packet
-    usb_bulk_write(nxt->hdl, 0x1, buf, 0, 1000);
-    // Turn off stream mode
-    usb_control_msg(nxt->hdl, 0x41, 0x1, 0, 0, NULL, 0, 5000);
-  }
+  struct usb_dev_handle *hdl = (struct usb_dev_handle *) hhdl;
   // Discard any data that is left in the buffer
-  while (usb_bulk_read(nxt->hdl, 0x82, buf, sizeof(buf), 1) > 0)
+  while (usb_bulk_read(hdl, 0x82, buf, sizeof(buf), 1) > 0)
     ;
-  usb_release_interface(nxt->hdl, 0);
-  usb_close(nxt->hdl);
-  free(nxt);
-
-  return NXT_OK;
+  usb_release_interface(hdl, 0);
+  usb_close(hdl);
 }
 
 int
@@ -238,6 +209,7 @@ nxt_in_reset_mode(nxt_t *nxt)
 {
   return nxt->is_in_reset_mode;
 }
+
 // Timeout set to 10 seconds for lejos NXJ
 nxt_error_t
 nxt_send_buf(nxt_t *nxt, char *buf, int len)
@@ -269,34 +241,31 @@ nxt_recv_buf(nxt_t *nxt, char *buf, int len)
 }
 
 
-// Implement "blocking" write, and return amount actually written
+// Implement 20sec timeout write, and return amount actually written
 int
-nxt_write_buf(nxt_t *nxt, char *buf, int len)
+nxt_write_buf(long hdl, char *buf, int len)
 {
-  int ret = usb_bulk_write(nxt->hdl, 0x1, buf, len, 0x7ffffff);
+  int ret = usb_bulk_write((struct usb_dev_handle *)hdl, 0x1, buf, len, 20000);
   return ret;
 }
 
 
-// Implement "blocking" read, and return amount actually read
+// Implement 20 second timeout read, and return amount actually read
 int
-nxt_read_buf(nxt_t *nxt, char *buf, int len)
+nxt_read_buf(long hdl, char *buf, int len)
 {
-  int ret = usb_bulk_read(nxt->hdl, 0x82, buf, len, 0x7fffffff);
+  int ret = usb_bulk_read((struct usb_dev_handle *)hdl, 0x82, buf, len, 20000);
   return ret;
 }
 
-// Get the device serial number
-char *
-nxt_serial_no(nxt_t *nxt)
-{
-  return nxt->serial_no;
-}
 
-
-// Get the device name
-char *
-nxt_name(nxt_t *nxt)
+int nxt_serial_no(long hdev, char *serno, int maxlen)
 {
-  return nxt->name;
+  struct usb_device *dev = (struct usb_device *)hdev;
+  struct usb_dev_handle *hdl;
+  hdl = usb_open(dev);
+  if (!hdl) return 0;
+  int len = usb_get_string(hdl, dev->descriptor.iSerialNumber, 0, serno, maxlen);
+  usb_close(hdl);
+  return len;
 }

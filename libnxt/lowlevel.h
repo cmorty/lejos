@@ -30,18 +30,17 @@ typedef struct nxt_t nxt_t;
 
 nxt_error_t nxt_init(nxt_t **nxt);
 nxt_error_t nxt_find(nxt_t *nxt);
-nxt_error_t nxt_find_nth(nxt_t *nxt, int idx);
+long nxt_find_nth(int idx);
 nxt_error_t nxt_open(nxt_t *nxt);
 nxt_error_t nxt_close(nxt_t *nxt);
-nxt_error_t nxt_open0(nxt_t *nxt);
-nxt_error_t nxt_close0(nxt_t *nxt);
+long nxt_open0(long nxt);
+void nxt_close0(long nxt);
 int nxt_in_reset_mode(nxt_t *nxt);
 nxt_error_t nxt_send_buf(nxt_t *nxt, char *buf, int len);
 nxt_error_t nxt_send_str(nxt_t *nxt, char *str);
 nxt_error_t nxt_recv_buf(nxt_t *nxt, char *buf, int len);
-int nxt_write_buf(nxt_t *nxt, char *buf, int len);
-int nxt_read_buf(nxt_t *nxt, char *buf, int len);
-char *nxt_serial_no(nxt_t *nxt);
-char *nxt_name(nxt_t *nxt);
+int nxt_write_buf(long nxt, char *buf, int len);
+int nxt_read_buf(long nxt, char *buf, int len);
+int nxt_serial_no(long nxt, char *serno, int maxlen);
 
 #endif /* __LOWLEVEL_H__ */
