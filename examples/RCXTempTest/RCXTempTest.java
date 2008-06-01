@@ -1,6 +1,3 @@
-package RCXTempTest;
-
-
 import lejos.nxt.*;
 /**
  * Demo for RCXTemperatureSensor
