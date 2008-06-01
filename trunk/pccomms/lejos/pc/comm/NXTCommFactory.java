@@ -77,7 +77,7 @@ public class NXTCommFactory {
 			} catch (Throwable t) {
 				throw new NXTCommException("Cannot load Bluetooth driver");
 			}
-		}		
+		}	
 		return null;
    }   	
 } 

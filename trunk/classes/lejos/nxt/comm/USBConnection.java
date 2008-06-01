@@ -5,8 +5,20 @@ import javax.microedition.io.*;
 
 /**
  * 
- * Represents a USB Stream Connection.
+ * Provides a USB connection
+ * Supports both packetized, raw and stream based communincation.
+ * Blocking and non-blocking I/O.
  *
+ * Notes
+ * When using the low level read/write functions no buffering is provided. This
+ * means that for read operations te entire packet must be read or data will
+ * be lost. A USB packet has a max size of 64 bytes. The Stream based functions
+ * take care of this automatically.
+ * 
+ * When operating in RAW mode low level USB packets may be read and written.
+ * however this mode has no concept of EOF or start of a connection.
+ * When using PACKET mode each packet has a single byte header added to it. This
+ * is used to provide a simple start of connection/EOF model.
  */
 public class USBConnection implements NXTConnection {
   
@@ -19,7 +31,61 @@ public class USBConnection implements NXTConnection {
 	NXTInputStream is; 
 	NXTOutputStream os;
     int mode;
+    byte [] ioBuf = new byte[USB.USB_BUFSZ];
+    
+    /**
+     * Helper function. Write a single low level USB packet. Add header
+     * byte if in stream mode.
+     * @param data
+     * @param len
+     * @return length written.
+     */
+    private synchronized int writePacket(byte [] data, int offset, int len)
+    {
+        if (mode != PACKET)
+            return USB.usbWrite(data, offset, len);
+        else
+        {
+            // Need to add header byte
+            if (len >= USB.USB_BUFSZ) len = USB.USB_BUFSZ - 1; 
+            ioBuf[0] = (byte)len;
+            if (len > 0) System.arraycopy(data, offset, ioBuf, 1, len);
+            int written = USB.usbWrite(ioBuf, 0, len + 1);
+            if (written <= 0) return written;
+            if (written != len + 1) return -1;
+            return len;
+        }
+    }
 	
+    private synchronized int readPacket(byte[] data, int offset, int len)
+    {
+        if (mode != PACKET)
+            return USB.usbRead(data, 0, len);
+        else
+        {
+            // Need to process the header
+            int ret = USB.usbRead(ioBuf, 0, len);
+            if (ret <= 0) return ret;
+            int plen = (int)ioBuf[0] & 0xff;
+            if (plen != ret - 1) return -1;
+            if (plen == 0) return -2;
+            if (len < plen) plen = len;
+            if (plen > 0) 
+                System.arraycopy(ioBuf, 1, data, offset, plen);
+            return plen;
+        }
+    }
+    
+    private void waitEOF(int timeout)
+    {
+        while(timeout-- > 0)
+        {
+            if (readPacket(null, 0, 0) == -2) break;
+            try{Thread.sleep(1);}catch(Exception e){}          
+        }
+    }
+    
+         
 	public USBConnection(int mode)
 	{
 		state = CS_CONNECTED;
@@ -33,9 +99,14 @@ public class USBConnection implements NXTConnection {
      */
 	public void close() { 
         // Write eof marker if required
-        if ((mode & USB.RAW) == 0 && state == CS_CONNECTED)
-            USB.usbWrite(new byte[0], 0, 0);
-        USB.waitForDisconnect(USBC_CLOSETIMEOUT1);
+        if (state == CS_IDLE) return;
+        if (mode == PACKET)
+        {
+            writePacket(null, 0, 0);
+            if (state == CS_CONNECTED)
+                waitEOF(USBC_CLOSETIMEOUT1);
+        }
+        USB.waitForDisconnect(USBC_CLOSETIMEOUT2);
         state = CS_IDLE;
 	}
 
@@ -87,11 +158,11 @@ public class USBConnection implements NXTConnection {
         if (state != CS_CONNECTED) return -1;
         for(;;)
         {
-          int ret = USB.usbRead(data, 0, len);
+          int ret = readPacket(data, 0, len);
           if (ret == -2)
           {
               // eof indicator
-              if ((mode & USB.RAW) == 0)
+              if (mode == PACKET)
                   state = CS_DISCONNECTED;
               else
                   ret = 0;
@@ -127,7 +198,7 @@ public class USBConnection implements NXTConnection {
         int written = 0;
         while (written < len)
         {
-            int cnt = USB.usbWrite(data, written, len - written);
+            int cnt = writePacket(data, written, len - written);
             if (cnt < 0) return (written > 0 ? written : -1);
             if (cnt == 0)
             {
@@ -146,8 +217,6 @@ public class USBConnection implements NXTConnection {
     
     /**
      * Set the IO mode to be used for this connection. Currently only one mode
-     * - RAW is supported. Using this mode indicates that the connection
-     * will not use a zero length packet to indicate eof.
      * @param mode
      */
     public void setIOMode(int mode)

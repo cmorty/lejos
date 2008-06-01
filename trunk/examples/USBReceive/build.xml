@@ -41,6 +41,7 @@
       <arg value="-o"/>
       <arg value="${binary}"/>
       <arg value="-v"/>
+      <!--arg value="-a"/-->
       <classpath>
         <pathelement location="${nxj.jtools.home}/lib/jtools.jar"/>
   	<pathelement location="${nxj.jtools.home}/3rdparty/lib/commons-cli-1.0.jar"/>

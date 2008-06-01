@@ -62,6 +62,8 @@
 
 #define USB_DISABLED    0x8000
 #define USB_NEEDRESET   0x4000
+#define USB_WRITEABLE   0x100000
+#define USB_READABLE    0x200000
 
 
 static U8 currentConfig;
@@ -652,7 +654,13 @@ udp_status()
    * software on the PC and nxt to indicate the start and end of a stream
    * connection.
    */
-  return (configured << 28) | (currentConfig << 24) | (currentFeatures & 0xffff);
+  int ret = (configured << 28) | (currentConfig << 24) | (currentFeatures & 0xffff);
+  if (configured == 1)
+  {
+    if ((*AT91C_UDP_CSR1) & currentRxBank) ret |= USB_READABLE;
+    if ((*AT91C_UDP_CSR2 & AT91C_UDP_TXPKTRDY) == 0) ret |= USB_WRITEABLE;
+  }
+  return ret;
 }
 
 void

@@ -39,7 +39,7 @@ public class NXTCommand implements NXTProtocol {
 
 			try {
 				// Look for Bluetooth Comms driver				
-				if ((protocol & NXTCommFactory.USB) != 0) {
+				if ((protocol & NXTCommFactory.BLUETOOTH) != 0) {
 					nxtCommBluetooth = NXTCommFactory.createNXTComm(NXTCommFactory.BLUETOOTH);
 				}
 			} catch (NXTCommException e) {

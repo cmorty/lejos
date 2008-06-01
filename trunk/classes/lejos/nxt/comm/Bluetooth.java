@@ -804,10 +804,11 @@ public class Bluetooth
 	/**
 	 * Wait for a remote device to connect.
 	 * @param timeout time in ms to wait for connection, 0 == wait for ever
+     * @param mode the I/O mode to be used for this connection
 	 * @param pin the pin to use, null use current default
 	 * @return a BTConnection
 	 */
-	public static BTConnection waitForConnection(int timeout, byte[] pin)
+	public static BTConnection waitForConnection(int timeout, int mode, byte[] pin)
 	{
 		//1 Debug.out("waitForConnection\n");
 		synchronized (Bluetooth.sync)
@@ -863,7 +864,7 @@ public class Bluetooth
 						if (handle >= 0 && handle < Chans.length)
 						{
 							// Assert(Chans[handle].state == CS_IDLE);
-							Chans[handle].bind(handle, addr);
+							Chans[handle].bind(handle, addr, mode);
 							// now have one more connected
 							connected++;
 							ret = Chans[handle];
@@ -886,7 +887,7 @@ public class Bluetooth
 	 */
 	public static BTConnection waitForConnection()
 	{
-		return waitForConnection(0, null);
+		return waitForConnection(0, 0, null);
 	}
 	
 	/**
@@ -907,7 +908,7 @@ public class Bluetooth
 	 * @return BTConnection Object or null
 	 */
 	public static BTConnection connect(byte[] device_addr) {
-		return connect(device_addr, null);
+		return connect(device_addr, 0, null);
 	}
 	
 	/**
@@ -917,7 +918,7 @@ public class Bluetooth
 	 * @param pin the pin to use
 	 * @return BTConnection Object or null
 	 */
-	public static BTConnection connect(byte[] device_addr, byte[] pin) {
+	public static BTConnection connect(byte[] device_addr, int mode, byte[] pin) {
 		
 		//1 Debug.out("Connect\n");
 		synchronized(Bluetooth.sync)
@@ -944,7 +945,7 @@ public class Bluetooth
 					if (reqState == RS_WAIT && handle >= 0 && handle < Chans.length)
 					{
 						// Got a connection
-						Chans[handle].bind(handle, device_addr);
+						Chans[handle].bind(handle, device_addr, mode);
 						// now have one more connected
 						connected++;
 						ret = Chans[handle];

@@ -9,14 +9,26 @@ import lejos.nxt.*;
  */
 public class USB {
     public static final int RESET = 0x40000000;
-    public static final int RAW = 0x20000000;
     public static final String SERIAL_NO = "lejos.usb_serno";
     public static final String NAME = "lejos.usb_name";
     static final int USB_BUFSZ = 64;
     static final int USB_STREAM = 1;
-    
-    private static String serialNo;
-    private static String name;
+    static final int USB_STATE_MASK = 0xf0000000;
+    static final int USB_STATE_CONNECTED = 0x10000000;
+    static final int USB_CONFIG_MASK = 0xf000000;
+    static final int USB_WRITABLE = 0x100000;
+    static final int USB_READABLE = 0x200000;
+
+    // Private versions of LCP values. We don't want to pull in all of the
+    // LCP code.
+    private static final byte SYSTEM_COMMAND_REPLY = 0x01;
+	private static final byte REPLY_COMMAND = 0x02;
+	private static final byte GET_FIRMWARE_VERSION = (byte)0x88;
+	private static final byte GET_DEVICE_INFO = (byte)0x9B;
+    private static final byte NXJ_PACKET_MODE = (byte)0xFF;
+
+    private static String serialNo = "123";
+    private static String name = "xxx";
     
     /**
      * Static contstructor to force loading of system settings
@@ -37,11 +49,60 @@ public class USB {
         while (usbRead(buf, 0, buf.length) > 0)
             ;
     }
+    
+    private static boolean isConnected()
+    {
+        // When in packet mode, we must wait for the PC to send us when to
+        // switch to packet mode, this indicates that the connection is now open.
+        // We must also handle a small sub-set of LCP commands to allow
+        // identifiaction of the nxt.
+        byte[] cmd = new byte[USB_BUFSZ];
+        int len = 3;
+        boolean ret = false;
+        // Look for a system command
+        if (usbRead(cmd, 0, cmd.length) >= 2 && cmd[0] == SYSTEM_COMMAND_REPLY)
+        {
+            cmd[2] = (byte)0xff;
+            if (cmd[1] == GET_FIRMWARE_VERSION) 
+            {
+                cmd[2] = 0;
+                cmd[3] = 2;
+                cmd[4] = 1;
+                cmd[5] = 3;
+                cmd[6] = 1;			
+                len = 7;
+            }
+		
+            // GET DEVICE INFO
+            if (cmd[1] == GET_DEVICE_INFO) 
+            {
+                cmd[2] = 0;
+                // We only send back the device name.
+                for(int i=0;i<name.length();i++) cmd[3+i] = (byte)name.charAt(i);
+                len = 33;
+            }	
+             // Switch to packet mode
+            if (cmd[1] == NXJ_PACKET_MODE)
+            {
+                // Send back special signature to indicate we have accepted packet
+                // mode
+                cmd[1] = (byte)0xfe;
+                cmd[2] = (byte)0xef;
+                ret = true;
+                len = 3;
+            }
+            cmd[0] = REPLY_COMMAND;
+            usbWrite(cmd, 0, len);
+        }
+        return ret;
+    }
+    
+    
 	/**
      * Wait for the USB interface to become available and for a PC side program
      * to attach to it.
      * @param timeout length of time to wait (in ms), if 0 wait for ever
-     * @param mode The IO mode to be used for the connection. (see USBConnection)
+     * @param mode The IO mode to be used for the connection. (see NXTConnection)
      * @return a connection object or null if no connection.
      */
     public static USBConnection waitForConnection(int timeout, int mode)
@@ -51,18 +112,20 @@ public class USB {
         // Discard any left over input
         flushInput();
         if (timeout == 0) timeout = 0x7fffffff;
-        int features = 0;
-        if ((mode & RAW) == 0) features = USB_STREAM;
         while(timeout-- > 0)
         {
             int status = usbStatus();
-            // Check for the inetrface to be ready, to be in a non control
-            // configuration and for it to have the required features
-            if ((status & 0xf0000000) == 0x10000000 && (status & 0x0f000000) != 0 &&
-                 (status & features) == features )
-                return new USBConnection(mode);
+            // Check for the interface to be ready and to be in a non control
+            // configuration.
+            if ((status & USB_STATE_MASK) == USB_STATE_CONNECTED && (status & USB_CONFIG_MASK) != 0)
+            {
+                if (mode == NXTConnection.RAW ||
+                    (mode == NXTConnection.LCP && ((status & (USB_READABLE|USB_WRITABLE)) == (USB_READABLE|USB_WRITABLE))) ||
+                    (mode == NXTConnection.PACKET && isConnected()))
+                    return new USBConnection(mode);
+            }
             if (timeout == 0 || timeout-- > 0)
-            try{Thread.sleep(1);}catch(Exception e){}          
+                try{Thread.sleep(1);}catch(Exception e){}          
         }
         usbDisable();
         return null;
@@ -83,14 +146,12 @@ public class USB {
      */
     public static void waitForDisconnect(int timeout)
     {
-        flushInput();
         while(timeout-- > 0)
         {
+            flushInput();
             int status = usbStatus();
-            // Wait for the interface to be down or for the remote end to signal
-            // a disconnect.
-            if ((status & 0xf0000000) != 0x10000000 || (status & 0x0f000000) == 0
-                    || (status & 0xffff) == 0)
+            // Wait for the interface to be down
+            if ((status & 0xf0000000) != 0x10000000 || (status & 0x0f000000) == 0)
                 break;
             try{Thread.sleep(1);}catch(Exception e){}          
         }
@@ -143,7 +204,7 @@ public class USB {
     public static void loadSettings()
     {
         setSerialNo(SystemSettings.getStringSetting(SERIAL_NO, "123456780090"));
-        setSerialNo(SystemSettings.getStringSetting(NAME, "nxt"));
+        setName(SystemSettings.getStringSetting(NAME, "nxt"));
     }
     
 	public static native void usbEnable(int reset);

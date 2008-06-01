@@ -64,7 +64,8 @@ public class BTGPS {
 					LCD.clear();
 					
 					BTConnection btGPS = null;
-					btGPS = Bluetooth.connect(btrd.getDeviceAddr(), pin);
+                    // Open in stream mode
+					btGPS = Bluetooth.connect(btrd.getDeviceAddr(), NXTConnection.RAW, pin);
 					
 					if(btGPS == null)
 						LCD.drawString("No Connection", 0, 1);
@@ -73,8 +74,6 @@ public class BTGPS {
 					LCD.refresh();
 					
 					GPS gps = null;
-					
-					btGPS.setIOMode(0); // Stream mode
 					
 					try {
 						in = btGPS.openInputStream();
