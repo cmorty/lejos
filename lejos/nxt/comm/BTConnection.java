@@ -6,7 +6,7 @@ import javax.microedition.io.*;
 
 /**
  * Provides a Bluetooth connection
- * Supports both packetized and stream based commincation.
+ * Supports both packetized, raw and stream based communincation.
  * Blocking and non-blocking I/O.
  * Notes:
  * Because of the limited buffer space and the way that several connections
@@ -24,6 +24,12 @@ import javax.microedition.io.*;
  * problem. If using packet mode then the input stream can be re-synchronized
  * by issuing a read to discard the partial packet which may be in the input
  * buffer.
+ * 
+ * When operating in RAW mode bytes are read/written as is. This mode is useful
+ * for talking to none leJOS/Lego devices.
+ * When operating in PACKET mode the standard Lego 2 byte header is added to
+ * each packet (and is expected to be present on each incoming packet). Use this
+ * mode when talking to other leJOS/Lego devices.
  */
 public class BTConnection implements NXTConnection
 {
@@ -83,17 +89,12 @@ public class BTConnection implements NXTConnection
 		notifyAll();
 	}
 
-	// !!TEMPORARY!! Until testing done, then only this signature.
-	synchronized void bind(byte handle, byte [] address) {
-		this.bt_address = address;
-		this.bind(handle);
-	}
 	
 	/**
 	 * Bind the low level I/O handle to a connection object
 	 * set things up ready to go.
 	 */
-	synchronized void bind(byte handle)
+	synchronized void bind(byte handle, byte [] address, int mode)
 	{
 		if (inBuf == null )
 			inBuf = new byte[inBufSz];
@@ -104,11 +105,12 @@ public class BTConnection implements NXTConnection
 		outCnt = 0;
 		outOffset = 0;
 		state = CS_CONNECTED;
-		header = BTC_DEFHEADER;
 		switchMode = AM_ALWAYS;
 		this.handle = handle;
 		pktOffset = -header;
 		pktLen = 0;
+		bt_address = address;
+        setIOMode(mode);
 	}
 
 	/**
@@ -414,11 +416,14 @@ public class BTConnection implements NXTConnection
 	/**
 	 * Set operating mode. Controls the packet/stream mode of this channel.
 	 * For packet mode it defines the header size to be used.
-	 * @param mode	Size of header, 0 indicates stream mode.
+	 * @param mode	I/O mode to be used for this connection
 	 */
 	public void setIOMode(int mode)
 	{
-		header = mode;
+        if (mode == PACKET || mode == LCP)
+            header = BTC_DEFHEADER;
+        else
+            header = 0;
 	}
 	
 	/**

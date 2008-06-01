@@ -58,7 +58,7 @@ public class RConsole {
     public static void openBluetooth(int timeout)
     {
         LCD.drawString("BT Console...   ", 0, 0);
-        init(Bluetooth.waitForConnection(timeout, null));
+        init(Bluetooth.waitForConnection(timeout, NXTConnection.PACKET, null));
     }
     
 	public static void print(String s)
