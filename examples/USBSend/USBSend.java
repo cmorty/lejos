@@ -23,7 +23,12 @@ import java.io.*;
 public class USBSend {
 	
 	public static void main(String[] args) {
-		NXTComm nxtComm = NXTCommFactory.createNXTComm(NXTCommFactory.USB);
+		NXTComm nxtComm = null;
+		try {
+			nxtComm = NXTCommFactory.createNXTComm(NXTCommFactory.USB);
+		} catch (NXTCommException e) {
+			System.out.println("Failure to load comms driver");
+		}
 		
 		NXTInfo[] nxtInfo = null;
 		
