@@ -116,7 +116,7 @@ public class USBConnection implements NXTConnection {
 	 * @return the input stream
 	 */
 	public InputStream openInputStream() {
-		return (is != null ? is : new NXTInputStream(this, USB.USB_BUFSZ));
+		return (is != null ? is : new NXTInputStream(this, (mode == PACKET ? USB.USB_BUFSZ-1 : USB.USB_BUFSZ)));
 	}
 
 	/**
@@ -125,7 +125,7 @@ public class USBConnection implements NXTConnection {
 	 * @return the output stream
 	 */
 	public OutputStream openOutputStream() {
-		return (os != null ? os : new NXTOutputStream(this, USB.USB_BUFSZ));
+		return (os != null ? os : new NXTOutputStream(this, (mode == PACKET ? USB.USB_BUFSZ-1 : USB.USB_BUFSZ)));
 	}
 
 	/**
