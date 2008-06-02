@@ -1,0 +1,2679 @@
+<html xmlns:v="urn:schemas-microsoft-com:vml"
+xmlns:o="urn:schemas-microsoft-com:office:office"
+xmlns:w="urn:schemas-microsoft-com:office:word"
+xmlns:st1="urn:schemas-microsoft-com:office:smarttags"
+xmlns="http://www.w3.org/TR/REC-html40">
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=windows-1252">
+<meta name=ProgId content=Word.Document>
+<meta name=Generator content="Microsoft Word 10">
+<meta name=Originator content="Microsoft Word 10">
+<link rel=File-List href="Menu%20System_files/filelist.xml">
+<link rel=Edit-Time-Data href="Menu%20System_files/editdata.mso">
+<!--[if !mso]>
+<style>
+v\:* {behavior:url(#default#VML);}
+o\:* {behavior:url(#default#VML);}
+w\:* {behavior:url(#default#VML);}
+.shape {behavior:url(#default#VML);}
+</style>
+<![endif]-->
+<title>The leJOS NXJ Menu System</title>
+<o:SmartTagType namespaceuri="urn:schemas-microsoft-com:office:smarttags"
+ name="place"/>
+<!--[if gte mso 9]><xml>
+ <o:DocumentProperties>
+  <o:Author>Roger</o:Author>
+  <o:Template>NXJTutorialTemplate.dot</o:Template>
+  <o:LastAuthor>Roger</o:LastAuthor>
+  <o:Revision>2</o:Revision>
+  <o:TotalTime>2</o:TotalTime>
+  <o:Created>2008-06-02T02:59:00Z</o:Created>
+  <o:LastSaved>2008-06-02T02:59:00Z</o:LastSaved>
+  <o:Pages>1</o:Pages>
+  <o:Words>602</o:Words>
+  <o:Characters>3437</o:Characters>
+  <o:Company>UC Bereley</o:Company>
+  <o:Lines>28</o:Lines>
+  <o:Paragraphs>8</o:Paragraphs>
+  <o:CharactersWithSpaces>4031</o:CharactersWithSpaces>
+  <o:Version>10.4219</o:Version>
+ </o:DocumentProperties>
+</xml><![endif]--><!--[if gte mso 9]><xml>
+ <w:WordDocument>
+  <w:SpellingState>Clean</w:SpellingState>
+  <w:GrammarState>Clean</w:GrammarState>
+  <w:AttachedTemplate HRef="NXJTutorialTemplate.dot"></w:AttachedTemplate>
+  <w:UpdateStylesOnOpen/>
+  <w:Compatibility>
+   <w:BreakWrappedTables/>
+   <w:SnapToGridInCell/>
+   <w:WrapTextWithPunct/>
+   <w:UseAsianBreakRules/>
+  </w:Compatibility>
+  <w:BrowserLevel>MicrosoftInternetExplorer4</w:BrowserLevel>
+ </w:WordDocument>
+</xml><![endif]--><!--[if !mso]><object
+ classid="clsid:38481807-CA0E-42D2-BF39-B33AF135CC4D" id=ieooui></object>
+<style>
+st1\:*{behavior:url(#ieooui) }
+</style>
+<![endif]-->
+<style>
+<!--
+ /* Style Definitions */
+ p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{mso-style-parent:"";
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+h1
+	{mso-style-next:Normal;
+	margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:1;
+	font-size:16.0pt;
+	font-family:Arial;
+	mso-font-kerning:16.0pt;}
+h2
+	{mso-style-parent:"Heading 1";
+	mso-style-next:"Body Text 2";
+	margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:2;
+	font-size:14.0pt;
+	font-family:Arial;
+	mso-font-kerning:16.0pt;
+	font-weight:normal;
+	font-style:italic;}
+h3
+	{mso-style-link:Char;
+	mso-style-next:"Body Text 3";
+	margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:.2in;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:3;
+	font-size:13.0pt;
+	font-family:Arial;
+	mso-ansi-language:EN-GB;
+	mso-fareast-language:EN-GB;}
+h4
+	{mso-style-parent:"Heading 3";
+	mso-style-next:"Body Text 4";
+	margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:.3in;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:4;
+	font-size:12.0pt;
+	font-family:Arial;
+	mso-ansi-language:EN-GB;
+	mso-fareast-language:EN-GB;
+	mso-bidi-font-weight:normal;
+	font-style:italic;
+	mso-bidi-font-style:normal;}
+p.MsoToc2, li.MsoToc2, div.MsoToc2
+	{mso-style-update:auto;
+	mso-style-noshow:yes;
+	mso-style-next:Normal;
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:12.0pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoToc3, li.MsoToc3, div.MsoToc3
+	{mso-style-update:auto;
+	mso-style-noshow:yes;
+	mso-style-next:Normal;
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:24.0pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoToc4, li.MsoToc4, div.MsoToc4
+	{mso-style-update:auto;
+	mso-style-noshow:yes;
+	mso-style-next:Normal;
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:.5in;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoBodyText, li.MsoBodyText, div.MsoBodyText
+	{margin-top:0in;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoBodyText2, li.MsoBodyText2, div.MsoBodyText2
+	{mso-style-parent:"Body Text";
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:.1in;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoBodyText3, li.MsoBodyText3, div.MsoBodyText3
+	{mso-style-parent:"Body Text 2";
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:.2in;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	mso-bidi-font-size:8.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+a:link, span.MsoHyperlink
+	{color:blue;
+	text-decoration:underline;
+	text-underline:single;}
+a:visited, span.MsoHyperlinkFollowed
+	{color:purple;
+	text-decoration:underline;
+	text-underline:single;}
+span.Char
+	{mso-style-name:Char;
+	mso-style-link:"Heading 3";
+	mso-ansi-font-size:13.0pt;
+	mso-bidi-font-size:13.0pt;
+	font-family:Arial;
+	mso-ascii-font-family:Arial;
+	mso-hansi-font-family:Arial;
+	mso-bidi-font-family:Arial;
+	mso-ansi-language:EN-GB;
+	mso-fareast-language:EN-GB;
+	mso-bidi-language:AR-SA;
+	font-weight:bold;}
+p.BodyText4, li.BodyText4, div.BodyText4
+	{mso-style-name:"Body Text 4";
+	mso-style-parent:"Body Text 3";
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:.3in;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	mso-bidi-font-size:8.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.Heading1color, li.Heading1color, div.Heading1color
+	{mso-style-name:"Heading1 color";
+	mso-style-parent:"Heading 1";
+	mso-style-next:"Body Text";
+	margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:1;
+	font-size:16.0pt;
+	font-family:Arial;
+	mso-fareast-font-family:"Times New Roman";
+	color:#FF6600;
+	mso-font-kerning:16.0pt;
+	font-weight:bold;}
+p.Heading2Color, li.Heading2Color, div.Heading2Color
+	{mso-style-name:"Heading2 Color";
+	mso-style-parent:"Heading 2";
+	mso-style-next:"Body Text 2";
+	margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:2;
+	font-size:14.0pt;
+	font-family:Arial;
+	mso-fareast-font-family:"Times New Roman";
+	color:#FF6600;
+	mso-font-kerning:16.0pt;
+	font-style:italic;}
+p.Heading3color, li.Heading3color, div.Heading3color
+	{mso-style-name:"Heading3 color";
+	mso-style-update:auto;
+	mso-style-parent:"Heading 3";
+	mso-style-next:"Body Text 3";
+	margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:.2in;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:3;
+	font-size:13.0pt;
+	font-family:Arial;
+	mso-fareast-font-family:"Times New Roman";
+	color:#FF6600;
+	mso-ansi-language:EN-GB;
+	mso-fareast-language:EN-GB;
+	font-weight:bold;}
+span.N1Char
+	{mso-style-name:"N1 Char";
+	mso-style-link:N1;
+	mso-ansi-font-size:12.0pt;
+	mso-bidi-font-size:12.0pt;
+	mso-ansi-language:EN-US;
+	mso-fareast-language:EN-US;
+	mso-bidi-language:AR-SA;}
+p.N1, li.N1, div.N1
+	{mso-style-name:N1;
+	mso-style-parent:"";
+	mso-style-link:"N1 Char";
+	margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+span.SpellE
+	{mso-style-name:"";
+	mso-spl-e:yes;}
+span.GramE
+	{mso-style-name:"";
+	mso-gram-e:yes;}
+@page Section1
+	{size:8.5in 11.0in;
+	margin:1.0in 1.25in 1.0in 1.25in;
+	mso-header-margin:.5in;
+	mso-footer-margin:.5in;
+	mso-paper-source:0;}
+div.Section1
+	{page:Section1;}
+ /* List Definitions */
+ @list l0
+	{mso-list-id:-132;
+	mso-list-type:simple;
+	mso-list-template-ids:-1655899830;}
+@list l0:level1
+	{mso-level-tab-stop:1.25in;
+	mso-level-number-position:left;
+	margin-left:1.25in;
+	text-indent:-.25in;}
+@list l1
+	{mso-list-id:-131;
+	mso-list-type:simple;
+	mso-list-template-ids:-685490596;}
+@list l1:level1
+	{mso-level-tab-stop:1.0in;
+	mso-level-number-position:left;
+	margin-left:1.0in;
+	text-indent:-.25in;}
+@list l2
+	{mso-list-id:-130;
+	mso-list-type:simple;
+	mso-list-template-ids:948443036;}
+@list l2:level1
+	{mso-level-tab-stop:.75in;
+	mso-level-number-position:left;
+	margin-left:.75in;
+	text-indent:-.25in;}
+@list l3
+	{mso-list-id:-129;
+	mso-list-type:simple;
+	mso-list-template-ids:-871742908;}
+@list l3:level1
+	{mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l4
+	{mso-list-id:-128;
+	mso-list-type:simple;
+	mso-list-template-ids:-1254185752;}
+@list l4:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:1.25in;
+	mso-level-number-position:left;
+	margin-left:1.25in;
+	text-indent:-.25in;
+	font-family:Symbol;}
+@list l5
+	{mso-list-id:-127;
+	mso-list-type:simple;
+	mso-list-template-ids:-1802441078;}
+@list l5:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:1.0in;
+	mso-level-number-position:left;
+	margin-left:1.0in;
+	text-indent:-.25in;
+	font-family:Symbol;}
+@list l6
+	{mso-list-id:-126;
+	mso-list-type:simple;
+	mso-list-template-ids:-48739110;}
+@list l6:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:.75in;
+	mso-level-number-position:left;
+	margin-left:.75in;
+	text-indent:-.25in;
+	font-family:Symbol;}
+@list l7
+	{mso-list-id:-125;
+	mso-list-type:simple;
+	mso-list-template-ids:-1490543376;}
+@list l7:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	font-family:Symbol;}
+@list l8
+	{mso-list-id:-120;
+	mso-list-type:simple;
+	mso-list-template-ids:-927711426;}
+@list l8:level1
+	{mso-level-tab-stop:.25in;
+	mso-level-number-position:left;
+	margin-left:.25in;
+	text-indent:-.25in;}
+@list l9
+	{mso-list-id:-119;
+	mso-list-type:simple;
+	mso-list-template-ids:1431183632;}
+@list l9:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:.25in;
+	mso-level-number-position:left;
+	margin-left:.25in;
+	text-indent:-.25in;
+	font-family:Symbol;}
+@list l10
+	{mso-list-id:267469297;
+	mso-list-template-ids:437564154;}
+@list l10:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	mso-ansi-font-size:10.0pt;
+	font-family:Symbol;}
+@list l11
+	{mso-list-id:1407192298;
+	mso-list-type:hybrid;
+	mso-list-template-ids:1349155142 67698703 67698703 67698715 67698703 67698713 67698715 67698703 67698713 67698715;}
+@list l11:level1
+	{mso-level-tab-stop:42.0pt;
+	mso-level-number-position:left;
+	margin-left:42.0pt;
+	text-indent:-.25in;}
+@list l11:level2
+	{mso-level-tab-stop:78.0pt;
+	mso-level-number-position:left;
+	margin-left:78.0pt;
+	text-indent:-.25in;}
+@list l11:level3
+	{mso-level-tab-stop:1.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l11:level4
+	{mso-level-tab-stop:2.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l11:level5
+	{mso-level-tab-stop:2.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l11:level6
+	{mso-level-tab-stop:3.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l11:level7
+	{mso-level-tab-stop:3.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l11:level8
+	{mso-level-tab-stop:4.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l11:level9
+	{mso-level-tab-stop:4.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l12
+	{mso-list-id:2145850133;
+	mso-list-type:hybrid;
+	mso-list-template-ids:1764803410 67698689 67698691 67698693 67698689 67698691 67698693 67698689 67698691 67698693;}
+@list l12:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	font-family:Symbol;}
+@list l12:level2
+	{mso-level-tab-stop:1.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l12:level3
+	{mso-level-tab-stop:1.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l12:level4
+	{mso-level-tab-stop:2.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l12:level5
+	{mso-level-tab-stop:2.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l12:level6
+	{mso-level-tab-stop:3.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l12:level7
+	{mso-level-tab-stop:3.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l12:level8
+	{mso-level-tab-stop:4.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l12:level9
+	{mso-level-tab-stop:4.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+ol
+	{margin-bottom:0in;}
+ul
+	{margin-bottom:0in;}
+-->
+</style>
+<!--[if gte mso 10]>
+<style>
+ /* Style Definitions */
+ table.MsoNormalTable
+	{mso-style-name:"Table Normal";
+	mso-tstyle-rowband-size:0;
+	mso-tstyle-colband-size:0;
+	mso-style-noshow:yes;
+	mso-style-parent:"";
+	mso-padding-alt:0in 5.4pt 0in 5.4pt;
+	mso-para-margin:0in;
+	mso-para-margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";}
+table.MsoTableGrid
+	{mso-style-name:"Table Grid";
+	mso-tstyle-rowband-size:0;
+	mso-tstyle-colband-size:0;
+	border:solid windowtext 1.0pt;
+	mso-border-alt:solid windowtext .5pt;
+	mso-padding-alt:0in 5.4pt 0in 5.4pt;
+	mso-border-insideh:.5pt solid windowtext;
+	mso-border-insidev:.5pt solid windowtext;
+	mso-para-margin-top:0in;
+	mso-para-margin-right:0in;
+	mso-para-margin-bottom:6.0pt;
+	mso-para-margin-left:0in;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";}
+table.MsoTableGridFirstRow
+	{mso-style-name:"Table Grid";
+	mso-table-condition:first-row;
+	mso-ansi-font-weight:bold;
+	mso-ansi-font-style:normal;}
+</style>
+<![endif]--><!--[if gte mso 9]><xml>
+ <o:shapedefaults v:ext="edit" spidmax="4098">
+  <o:colormenu v:ext="edit" fillcolor="black" strokecolor="black"/>
+ </o:shapedefaults></xml><![endif]--><!--[if gte mso 9]><xml>
+ <o:shapelayout v:ext="edit">
+  <o:idmap v:ext="edit" data="1"/>
+ </o:shapelayout></xml><![endif]-->
+</head>
+
+<body lang=EN-US link=blue vlink=purple style='tab-interval:.5in'>
+
+<div class=Section1>
+
+<p class=N1><a name="_Toc198295456"></a><a name="_Toc198215031"></a><a
+name="_Toc198022877"></a><a name="_Toc198023257"></a><a name="_Toc198023378"></a><a
+name="_Toc198023474"></a><a name="_Toc198221593"></a><a name="_Toc198222054"><span
+style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198023474'><span
+style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023257'><span
+style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198215031'><span
+style='mso-bookmark:_Toc198295456'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></a></p>
+
+<p class=MsoNormal><span style='mso-bookmark:_Toc198222054'><span
+style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198023474'><span
+style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023257'><span
+style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198215031'><span
+style='mso-bookmark:_Toc198295456'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+
+<table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=1223
+ style='width:917.6pt;border-collapse:collapse;mso-yfti-tbllook:480;mso-padding-alt:
+ 0in 5.4pt 0in 5.4pt'>
+ <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+  <td width=155 valign=top style='width:116.6pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoToc2 style='tab-stops:right dotted 431.5pt'><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span><!--[if supportFields]><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span><span
+  style='mso-element:field-begin'></span><span style='mso-bookmark:_Toc198222054'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198295456'><span style='mso-spacerun:yes'> </span>TOC
+  \o &quot;1-4&quot; \h \z \u <b style='mso-bidi-font-weight:normal'><span
+  style='mso-element:field-separator'></span></b></span></span></span></span></span></span></span></span><![endif]--><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span><a
+  href="#_Toc200007735"><span style='mso-bookmark:_Toc198222054'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198295456'><span style='mso-no-proof:yes'>The Menu
+  System</span></span></span></span></span></span></span></span></span><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'><span
+  style='color:windowtext;display:none;mso-hide:screen;mso-no-proof:yes;
+  text-decoration:none;text-underline:none'><span style='mso-tab-count:1 dotted'>.. </span></span></span></span></span></span></span></span></span></span><!--[if supportFields]><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span><span
+  style='mso-element:field-begin'></span><span style='mso-bookmark:_Toc198222054'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198295456'><span style='color:windowtext;display:
+  none;mso-hide:screen;mso-no-proof:yes;text-decoration:none;text-underline:
+  none'> PAGEREF _Toc200007735 \h </span><b style='mso-bidi-font-weight:normal'><span
+  style='mso-element:field-separator'></span></b></span></span></span></span></span></span></span></span><![endif]--><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'><span
+  style='color:windowtext;display:none;mso-hide:screen;mso-no-proof:yes;
+  text-decoration:none;text-underline:none'>1</span><b style='mso-bidi-font-weight:
+  normal'><!--[if gte mso 9]><xml>
+   <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003200300030003000300037003700330035000000</w:data>
+  </xml><![endif]--></b></span></span></span></span></span></span></span></span><!--[if supportFields]><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span><span
+  style='mso-element:field-end'></span><![endif]--><span style='mso-bookmark:
+  _Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span></a><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-no-proof:yes'><o:p></o:p></span></span></span></span></span></span></span></span></span></p>
+  <p class=MsoToc3 style='tab-stops:right dotted 431.5pt'><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span><a
+  href="#_Toc200007736"><span style='mso-bookmark:_Toc198222054'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198295456'><span style='mso-no-proof:yes'>Main menu</span></span></span></span></span></span></span></span></span><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'><span
+  style='color:windowtext;display:none;mso-hide:screen;mso-no-proof:yes;
+  text-decoration:none;text-underline:none'><span style='mso-tab-count:1 dotted'>. </span></span></span></span></span></span></span></span></span></span><!--[if supportFields]><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span><span
+  style='mso-element:field-begin'></span><span style='mso-bookmark:_Toc198222054'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198295456'><span style='color:windowtext;display:
+  none;mso-hide:screen;mso-no-proof:yes;text-decoration:none;text-underline:
+  none'> PAGEREF _Toc200007736 \h </span><b style='mso-bidi-font-weight:normal'><span
+  style='mso-element:field-separator'></span></b></span></span></span></span></span></span></span></span><![endif]--><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'><span
+  style='color:windowtext;display:none;mso-hide:screen;mso-no-proof:yes;
+  text-decoration:none;text-underline:none'>1</span><b style='mso-bidi-font-weight:
+  normal'><!--[if gte mso 9]><xml>
+   <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003200300030003000300037003700330036000000</w:data>
+  </xml><![endif]--></b></span></span></span></span></span></span></span></span><!--[if supportFields]><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span><span
+  style='mso-element:field-end'></span><![endif]--><span style='mso-bookmark:
+  _Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span></a><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-no-proof:yes'><o:p></o:p></span></span></span></span></span></span></span></span></span></p>
+  <p class=MsoToc3 style='tab-stops:right dotted 431.5pt'><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span><a
+  href="#_Toc200007737"><span style='mso-bookmark:_Toc198222054'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198295456'><span style='mso-no-proof:yes'>Files menu</span></span></span></span></span></span></span></span></span><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'><span
+  style='color:windowtext;display:none;mso-hide:screen;mso-no-proof:yes;
+  text-decoration:none;text-underline:none'><span style='mso-tab-count:1 dotted'>. </span></span></span></span></span></span></span></span></span></span><!--[if supportFields]><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span><span
+  style='mso-element:field-begin'></span><span style='mso-bookmark:_Toc198222054'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198295456'><span style='color:windowtext;display:
+  none;mso-hide:screen;mso-no-proof:yes;text-decoration:none;text-underline:
+  none'> PAGEREF _Toc200007737 \h </span><b style='mso-bidi-font-weight:normal'><span
+  style='mso-element:field-separator'></span></b></span></span></span></span></span></span></span></span><![endif]--><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'><span
+  style='color:windowtext;display:none;mso-hide:screen;mso-no-proof:yes;
+  text-decoration:none;text-underline:none'>2</span><b style='mso-bidi-font-weight:
+  normal'><!--[if gte mso 9]><xml>
+   <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003200300030003000300037003700330037000000</w:data>
+  </xml><![endif]--></b></span></span></span></span></span></span></span></span><!--[if supportFields]><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span><span
+  style='mso-element:field-end'></span><![endif]--><span style='mso-bookmark:
+  _Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span></a><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-no-proof:yes'><o:p></o:p></span></span></span></span></span></span></span></span></span></p>
+  <p class=MsoToc3 style='tab-stops:right dotted 431.5pt'><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span><a
+  href="#_Toc200007738"><span style='mso-bookmark:_Toc198222054'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198295456'><span style='mso-no-proof:yes'>System menu</span></span></span></span></span></span></span></span></span><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'><span
+  style='color:windowtext;display:none;mso-hide:screen;mso-no-proof:yes;
+  text-decoration:none;text-underline:none'><span style='mso-tab-count:1 dotted'>. </span></span></span></span></span></span></span></span></span></span><!--[if supportFields]><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span><span
+  style='mso-element:field-begin'></span><span style='mso-bookmark:_Toc198222054'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198295456'><span style='color:windowtext;display:
+  none;mso-hide:screen;mso-no-proof:yes;text-decoration:none;text-underline:
+  none'> PAGEREF _Toc200007738 \h </span><b style='mso-bidi-font-weight:normal'><span
+  style='mso-element:field-separator'></span></b></span></span></span></span></span></span></span></span><![endif]--><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'><span
+  style='color:windowtext;display:none;mso-hide:screen;mso-no-proof:yes;
+  text-decoration:none;text-underline:none'>2</span><b style='mso-bidi-font-weight:
+  normal'><!--[if gte mso 9]><xml>
+   <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003200300030003000300037003700330038000000</w:data>
+  </xml><![endif]--></b></span></span></span></span></span></span></span></span><!--[if supportFields]><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span><span
+  style='mso-element:field-end'></span><![endif]--><span style='mso-bookmark:
+  _Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span></a><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-no-proof:yes'><o:p></o:p></span></span></span></span></span></span></span></span></span></p>
+  <p class=MsoToc3 style='tab-stops:right dotted 431.5pt'><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span><a
+  href="#_Toc200007739"><span style='mso-bookmark:_Toc198222054'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198295456'><span style='mso-no-proof:yes'>Bluetooth
+  menu</span></span></span></span></span></span></span></span></span><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'><span
+  style='color:windowtext;display:none;mso-hide:screen;mso-no-proof:yes;
+  text-decoration:none;text-underline:none'><span style='mso-tab-count:1 dotted'>. </span></span></span></span></span></span></span></span></span></span><!--[if supportFields]><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span><span
+  style='mso-element:field-begin'></span><span style='mso-bookmark:_Toc198222054'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198295456'><span style='color:windowtext;display:
+  none;mso-hide:screen;mso-no-proof:yes;text-decoration:none;text-underline:
+  none'> PAGEREF _Toc200007739 \h </span><b style='mso-bidi-font-weight:normal'><span
+  style='mso-element:field-separator'></span></b></span></span></span></span></span></span></span></span><![endif]--><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'><span
+  style='color:windowtext;display:none;mso-hide:screen;mso-no-proof:yes;
+  text-decoration:none;text-underline:none'>3</span><b style='mso-bidi-font-weight:
+  normal'><!--[if gte mso 9]><xml>
+   <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003200300030003000300037003700330039000000</w:data>
+  </xml><![endif]--></b></span></span></span></span></span></span></span></span><!--[if supportFields]><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span><span
+  style='mso-element:field-end'></span><![endif]--><span style='mso-bookmark:
+  _Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span></a><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-no-proof:yes'><o:p></o:p></span></span></span></span></span></span></span></span></span></p>
+  <p class=MsoToc4 style='tab-stops:right dotted 431.5pt'><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span><a
+  href="#_Toc200007740"><span style='mso-bookmark:_Toc198222054'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198295456'><span style='mso-no-proof:yes'>Devices</span></span></span></span></span></span></span></span></span><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'><span
+  style='color:windowtext;display:none;mso-hide:screen;mso-no-proof:yes;
+  text-decoration:none;text-underline:none'><span style='mso-tab-count:1 dotted'>. </span></span></span></span></span></span></span></span></span></span><!--[if supportFields]><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span><span
+  style='mso-element:field-begin'></span><span style='mso-bookmark:_Toc198222054'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198295456'><span style='color:windowtext;display:
+  none;mso-hide:screen;mso-no-proof:yes;text-decoration:none;text-underline:
+  none'> PAGEREF _Toc200007740 \h </span><b style='mso-bidi-font-weight:normal'><span
+  style='mso-element:field-separator'></span></b></span></span></span></span></span></span></span></span><![endif]--><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'><span
+  style='color:windowtext;display:none;mso-hide:screen;mso-no-proof:yes;
+  text-decoration:none;text-underline:none'>4</span><b style='mso-bidi-font-weight:
+  normal'><!--[if gte mso 9]><xml>
+   <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003200300030003000300037003700340030000000</w:data>
+  </xml><![endif]--></b></span></span></span></span></span></span></span></span><!--[if supportFields]><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span><span
+  style='mso-element:field-end'></span><![endif]--><span style='mso-bookmark:
+  _Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span></a><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-no-proof:yes'><o:p></o:p></span></span></span></span></span></span></span></span></span></p>
+  <p class=MsoToc4 style='tab-stops:right dotted 431.5pt'><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span><a
+  href="#_Toc200007741"><span style='mso-bookmark:_Toc198222054'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198295456'><span style='mso-no-proof:yes'>Search</span></span></span></span></span></span></span></span></span><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'><span
+  style='color:windowtext;display:none;mso-hide:screen;mso-no-proof:yes;
+  text-decoration:none;text-underline:none'><span style='mso-tab-count:1 dotted'>. </span></span></span></span></span></span></span></span></span></span><!--[if supportFields]><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span><span
+  style='mso-element:field-begin'></span><span style='mso-bookmark:_Toc198222054'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198295456'><span style='color:windowtext;display:
+  none;mso-hide:screen;mso-no-proof:yes;text-decoration:none;text-underline:
+  none'> PAGEREF _Toc200007741 \h </span><b style='mso-bidi-font-weight:normal'><span
+  style='mso-element:field-separator'></span></b></span></span></span></span></span></span></span></span><![endif]--><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'><span
+  style='color:windowtext;display:none;mso-hide:screen;mso-no-proof:yes;
+  text-decoration:none;text-underline:none'>4</span><b style='mso-bidi-font-weight:
+  normal'><!--[if gte mso 9]><xml>
+   <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003200300030003000300037003700340031000000</w:data>
+  </xml><![endif]--></b></span></span></span></span></span></span></span></span><!--[if supportFields]><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span><span
+  style='mso-element:field-end'></span><![endif]--><span style='mso-bookmark:
+  _Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span></a><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-no-proof:yes'><o:p></o:p></span></span></span></span></span></span></span></span></span></p>
+  <p class=MsoToc3 style='tab-stops:right dotted 431.5pt'><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span><a
+  href="#_Toc200007742"><span style='mso-bookmark:_Toc198222054'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198295456'><span style='mso-no-proof:yes'>Sound</span></span></span></span></span></span></span></span></span><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'><span
+  style='color:windowtext;display:none;mso-hide:screen;mso-no-proof:yes;
+  text-decoration:none;text-underline:none'><span style='mso-tab-count:1 dotted'>. </span></span></span></span></span></span></span></span></span></span><!--[if supportFields]><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span><span
+  style='mso-element:field-begin'></span><span style='mso-bookmark:_Toc198222054'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198295456'><span style='color:windowtext;display:
+  none;mso-hide:screen;mso-no-proof:yes;text-decoration:none;text-underline:
+  none'> PAGEREF _Toc200007742 \h </span><b style='mso-bidi-font-weight:normal'><span
+  style='mso-element:field-separator'></span></b></span></span></span></span></span></span></span></span><![endif]--><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'><span
+  style='color:windowtext;display:none;mso-hide:screen;mso-no-proof:yes;
+  text-decoration:none;text-underline:none'>5</span><b style='mso-bidi-font-weight:
+  normal'><!--[if gte mso 9]><xml>
+   <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003200300030003000300037003700340032000000</w:data>
+  </xml><![endif]--></b></span></span></span></span></span></span></span></span><!--[if supportFields]><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span><span
+  style='mso-element:field-end'></span><![endif]--><span style='mso-bookmark:
+  _Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span></a><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-no-proof:yes'><o:p></o:p></span></span></span></span></span></span></span></span></span></p>
+  <p class=MsoToc3 style='tab-stops:right dotted 431.5pt'><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span><a
+  href="#_Toc200007743"><span style='mso-bookmark:_Toc198222054'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198295456'><span style='mso-no-proof:yes'>Version</span></span></span></span></span></span></span></span></span><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'><span
+  style='color:windowtext;display:none;mso-hide:screen;mso-no-proof:yes;
+  text-decoration:none;text-underline:none'><span style='mso-tab-count:1 dotted'>. </span></span></span></span></span></span></span></span></span></span><!--[if supportFields]><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span><span
+  style='mso-element:field-begin'></span><span style='mso-bookmark:_Toc198222054'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198295456'><span style='color:windowtext;display:
+  none;mso-hide:screen;mso-no-proof:yes;text-decoration:none;text-underline:
+  none'> PAGEREF _Toc200007743 \h </span><b style='mso-bidi-font-weight:normal'><span
+  style='mso-element:field-separator'></span></b></span></span></span></span></span></span></span></span><![endif]--><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'><span
+  style='color:windowtext;display:none;mso-hide:screen;mso-no-proof:yes;
+  text-decoration:none;text-underline:none'>5</span><b style='mso-bidi-font-weight:
+  normal'><!--[if gte mso 9]><xml>
+   <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003200300030003000300037003700340033000000</w:data>
+  </xml><![endif]--></b></span></span></span></span></span></span></span></span><!--[if supportFields]><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span><span
+  style='mso-element:field-end'></span><![endif]--><span style='mso-bookmark:
+  _Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span></a><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-no-proof:yes'><o:p></o:p></span></span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198222054'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span><!--[if supportFields]><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span><span
+  style='mso-element:field-end'></span><![endif]--><span style='mso-bookmark:
+  _Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span></p>
+  </td>
+  <span style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span>
+  <td width=1068 valign=top style='width:801.0pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198222054'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198295456'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <p class=Heading2Color><span style='mso-bookmark:_Toc198222054'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198295456'><a name="_Toc200007735"><span
+  style='font-size:12.0pt;font-family:"Times New Roman";color:windowtext;
+  mso-font-kerning:0pt;font-style:normal'><span
+  style='mso-spacerun:yes'> </span></span>The </a><span class=SpellE><span
+  style='mso-bookmark:_Toc200007735'>leJOS</span></span><span style='mso-bookmark:
+  _Toc200007735'> NXJ Menu System</span><b style='mso-bidi-font-weight:normal'><o:p></o:p></b></span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198222054'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198295456'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <p class=Heading3color><span style='mso-bookmark:_Toc198222054'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198295456'><a name="_Toc200007736"></a><a
+  name="_Toc198295457"></a><a name="_Toc198215032"></a><a name="_Toc198022878"></a><a
+  name="_Toc198023258"></a><a name="_Toc198023379"></a><a name="_Toc198023475"></a><a
+  name="_Toc198221594"></a><a name="_Toc198222055"><span style='mso-bookmark:
+  _Toc198221594'><span style='mso-bookmark:_Toc198023475'><span
+  style='mso-bookmark:_Toc198023379'><span style='mso-bookmark:_Toc198023258'><span
+  style='mso-bookmark:_Toc198022878'><span style='mso-bookmark:_Toc198215032'><span
+  style='mso-bookmark:_Toc198295457'><span style='mso-bookmark:_Toc200007736'><span
+  lang=EN-GB>Main menu</span></span></span></span></span></span></span></span></span></a></span></span></span></span></span></span></span></span><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'><span
+  lang=EN-GB style='font-weight:normal;mso-bidi-font-weight:bold'><o:p></o:p></span></span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198222054'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198295456'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <p class=MsoBodyText3><span style='mso-bookmark:_Toc198222054'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198295456'>When <span class=SpellE>leJOS</span> NXJ
+  starts, it displays the <span class=SpellE>leJOS</span> NXJ logo for 3
+  seconds and then displays the main menu:</span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><!--[if gte vml 1]><v:shapetype id="_x0000_t202"
+   coordsize="21600,21600" o:spt="202" path="m,l,21600r21600,l21600,xe">
+   <v:stroke joinstyle="miter"/>
+   <v:path gradientshapeok="t" o:connecttype="rect"/>
+  </v:shapetype><v:shape id="_x0000_s1262" type="#_x0000_t202" style='position:absolute;
+   margin-left:87.5pt;margin-top:.8pt;width:137.25pt;height:159.95pt;z-index:1'>
+   <v:textbox style='mso-next-textbox:#_x0000_s1262'/>
+  </v:shape><![endif]--><![if !vml]><span style='mso-ignore:vglayout'>
+  <table cellpadding=0 cellspacing=0 align=left>
+   <tr>
+    <td width=116 height=0></td>
+   </tr>
+   <tr>
+    <td></td>
+    <td width=189 height=219 bgcolor=white style='border:.75pt solid black;
+    vertical-align:top;background:white'><![endif]><![if !mso]><span
+    style='position:absolute;mso-ignore:vglayout;z-index:1'>
+    <table cellpadding=0 cellspacing=0 width="100%">
+     <tr>
+      <td><![endif]>
+      <div v:shape="_x0000_s1262" style='padding:3.6pt 7.2pt 3.6pt 7.2pt'
+      class=shape>
+      <p class=MsoNormal><span style='font-family:"Courier New"'><span
+      style='mso-spacerun:yes'>    </span>MYNXT<span
+      style='mso-spacerun:yes'>     </span>BT<o:p></o:p></span></p>
+      <p class=MsoNormal><span style='font-family:"Courier New"'>&gt;Run
+      Default<o:p></o:p></span></p>
+      <p class=MsoNormal><span style='font-family:"Courier New"'><span
+      style='mso-spacerun:yes'> </span>Files<o:p></o:p></span></p>
+      <p class=MsoNormal><span style='font-family:"Courier New"'><span
+      style='mso-spacerun:yes'> </span><span class=SpellE>Bluetooth</span><o:p></o:p></span></p>
+      <p class=MsoNormal><span style='font-family:"Courier New"'><span
+      style='mso-spacerun:yes'> </span>Sound<o:p></o:p></span></p>
+      <p class=MsoNormal><span style='font-family:"Courier New"'><span
+      style='mso-spacerun:yes'> </span>System<o:p></o:p></span></p>
+      <p class=MsoNormal><span style='font-family:"Courier New"'><span
+      style='mso-spacerun:yes'> </span>Version<o:p></o:p></span></p>
+      </div>
+      <![if !mso]></td>
+     </tr>
+    </table>
+    </span><![endif]><![if !mso & !vml]>&nbsp;<![endif]><![if !vml]></td>
+   </tr>
+  </table>
+  </span><![endif]><span style='mso-bookmark:_Toc198222054'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198295456'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198222054'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198295456'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198222054'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198295456'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198222054'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198295456'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198222054'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198295456'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198222054'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198295456'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198222054'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198295456'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <p class=MsoBodyText3><span style='mso-bookmark:_Toc198222054'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198295456'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <br style='mso-ignore:vglayout' clear=ALL>
+  <p class=MsoBodyText3><span style='mso-bookmark:_Toc198222054'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198295456'>The top line shows the battery voltage
+  icon, the name of the NXT, and the <span class=SpellE>BlueTooth</span> power
+  icon.<span style='mso-spacerun:yes'>   </span>In this example, the power is
+  on. </span></span></span></span></span></span></span></span></p>
+  <p class=MsoBodyText3><span style='mso-bookmark:_Toc198222054'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198295456'>It then shows a menu implemented by the <span
+  class=SpellE>TextMenu</span> class.</span></span></span></span></span></span></span></span></p>
+  <p class=MsoBodyText3><span style='mso-bookmark:_Toc198222054'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198295456'>Using the keys to navigate the menu:</span></span></span></span></span></span></span></span></p>
+  <table class=MsoTableGrid border=1 cellspacing=0 cellpadding=0
+   style='border-collapse:collapse;border:none;mso-border-alt:solid windowtext .5pt;
+   mso-yfti-tbllook:480;mso-padding-alt:0in 5.4pt 0in 5.4pt;mso-border-insideh:
+   .5pt solid windowtext;mso-border-insidev:.5pt solid windowtext'>
+   <tr style='mso-yfti-irow:-1'>
+    <td width=100 valign=top style='width:75.2pt;border:solid windowtext 1.0pt;
+    mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+    <p class=MsoBodyText3 style='margin-left:0in;mso-yfti-cnfc:1'><span
+    style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+    style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+    style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+    style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'><b
+    style='mso-bidi-font-weight:normal'>Key<o:p></o:p></b></span></span></span></span></span></span></span></span></p>
+    </td>
+    <span style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+    style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+    style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+    style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span>
+    <td width=132 valign=top style='width:99.0pt;border:solid windowtext 1.0pt;
+    border-left:none;mso-border-left-alt:solid windowtext .5pt;mso-border-alt:
+    solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+    <p class=MsoBodyText3 style='margin-left:0in;mso-yfti-cnfc:1'><span
+    style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+    style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+    style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+    style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'><b
+    style='mso-bidi-font-weight:normal'>Name<o:p></o:p></b></span></span></span></span></span></span></span></span></p>
+    </td>
+    <span style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+    style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+    style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+    style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span>
+    <td width=300 valign=top style='width:225.0pt;border:solid windowtext 1.0pt;
+    border-left:none;mso-border-left-alt:solid windowtext .5pt;mso-border-alt:
+    solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+    <p class=MsoBodyText3 style='margin-left:0in;mso-yfti-cnfc:1'><span
+    style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+    style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+    style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+    style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'><b
+    style='mso-bidi-font-weight:normal'>Use<o:p></o:p></b></span></span></span></span></span></span></span></span></p>
+    </td>
+    <span style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+    style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+    style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+    style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span>
+   </tr>
+   <tr style='mso-yfti-irow:0'>
+    <td width=100 valign=top style='width:75.2pt;border:solid windowtext 1.0pt;
+    border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:
+    solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+    <p class=MsoBodyText3 style='margin-left:0in'><span style='mso-bookmark:
+    _Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+    style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+    style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+    style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'><!--[if gte vml 1]><v:shapetype
+     id="_x0000_t75" coordsize="21600,21600" o:spt="75" o:preferrelative="t"
+     path="m@4@5l@4@11@9@11@9@5xe" filled="f" stroked="f">
+     <v:stroke joinstyle="miter"/>
+     <v:formulas>
+      <v:f eqn="if lineDrawn pixelLineWidth 0"/>
+      <v:f eqn="sum @0 1 0"/>
+      <v:f eqn="sum 0 0 @1"/>
+      <v:f eqn="prod @2 1 2"/>
+      <v:f eqn="prod @3 21600 pixelWidth"/>
+      <v:f eqn="prod @3 21600 pixelHeight"/>
+      <v:f eqn="sum @0 0 1"/>
+      <v:f eqn="prod @6 1 2"/>
+      <v:f eqn="prod @7 21600 pixelWidth"/>
+      <v:f eqn="sum @8 21600 0"/>
+      <v:f eqn="prod @7 21600 pixelHeight"/>
+      <v:f eqn="sum @10 21600 0"/>
+     </v:formulas>
+     <v:path o:extrusionok="f" gradientshapeok="t" o:connecttype="rect"/>
+     <o:lock v:ext="edit" aspectratio="t"/>
+    </v:shapetype><v:shape id="_x0000_i1025" type="#_x0000_t75" style='width:20.25pt;
+     height:23.25pt'>
+     <v:imagedata src="Menu%20System_files/image001.emz" o:title=""/>
+    </v:shape><![endif]--><![if !vml]><img width=27 height=31
+    src="Menu%20System_files/image002.gif" v:shapes="_x0000_i1025"><![endif]><span
+    style='mso-spacerun:yes'>    </span><!--[if gte vml 1]><v:shape id="_x0000_i1026"
+     type="#_x0000_t75" style='width:21.75pt;height:23.25pt'>
+     <v:imagedata src="Menu%20System_files/image003.emz" o:title=""/>
+    </v:shape><![endif]--><![if !vml]><img width=29 height=31
+    src="Menu%20System_files/image004.gif" v:shapes="_x0000_i1026"><![endif]></span></span></span></span></span></span></span></span></p>
+    </td>
+    <span style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+    style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+    style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+    style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span>
+    <td width=132 valign=top style='width:99.0pt;border-top:none;border-left:
+    none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+    mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+    mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+    <p class=MsoBodyText3 style='margin-left:0in'><span style='mso-bookmark:
+    _Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+    style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+    style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+    style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'>Left,
+    Right </span></span></span></span></span></span></span></span></p>
+    </td>
+    <span style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+    style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+    style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+    style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span>
+    <td width=300 valign=top style='width:225.0pt;border-top:none;border-left:
+    none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+    mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+    mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+    <p class=MsoBodyText3 style='margin-left:0in'><span style='mso-bookmark:
+    _Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+    style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+    style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+    style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'>Scroll
+    up , down</span></span></span></span></span></span></span></span></p>
+    </td>
+    <span style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+    style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+    style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+    style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span>
+   </tr>
+   <tr style='mso-yfti-irow:1'>
+    <td width=100 valign=top style='width:75.2pt;border:solid windowtext 1.0pt;
+    border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:
+    solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+    <p class=MsoBodyText3 style='margin-left:0in'><span style='mso-bookmark:
+    _Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+    style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+    style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+    style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'><!--[if gte vml 1]><v:shape
+     id="_x0000_i1027" type="#_x0000_t75" style='width:24pt;height:24pt'>
+     <v:imagedata src="Menu%20System_files/image005.emz" o:title=""/>
+    </v:shape><![endif]--><![if !vml]><img width=32 height=32
+    src="Menu%20System_files/image006.gif" v:shapes="_x0000_i1027"><![endif]></span></span></span></span></span></span></span></span></p>
+    </td>
+    <span style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+    style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+    style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+    style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span>
+    <td width=132 valign=top style='width:99.0pt;border-top:none;border-left:
+    none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+    mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+    mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+    <p class=MsoBodyText3 style='margin-left:0in'><span style='mso-bookmark:
+    _Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+    style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+    style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+    style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'>Enter</span></span></span></span></span></span></span></span></p>
+    </td>
+    <span style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+    style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+    style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+    style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span>
+    <td width=300 valign=top style='width:225.0pt;border-top:none;border-left:
+    none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+    mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+    mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+    <p class=MsoBodyText3 style='margin-left:0in'><span style='mso-bookmark:
+    _Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+    style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+    style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+    style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'>Select
+    the menu item</span></span></span></span></span></span></span></span></p>
+    </td>
+    <span style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+    style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+    style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+    style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span>
+   </tr>
+   <tr style='mso-yfti-irow:2;mso-yfti-lastrow:yes'>
+    <td width=100 valign=top style='width:75.2pt;border:solid windowtext 1.0pt;
+    border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:
+    solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+    <p class=MsoBodyText3 style='margin-left:0in'><span style='mso-bookmark:
+    _Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+    style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+    style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+    style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'><!--[if gte vml 1]><v:shape
+     id="_x0000_i1028" type="#_x0000_t75" style='width:21.75pt;height:13.5pt'>
+     <v:imagedata src="Menu%20System_files/image007.emz" o:title=""/>
+    </v:shape><![endif]--><![if !vml]><img width=29 height=18
+    src="Menu%20System_files/image008.gif" v:shapes="_x0000_i1028"><![endif]></span></span></span></span></span></span></span></span></p>
+    </td>
+    <span style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+    style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+    style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+    style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span>
+    <td width=132 valign=top style='width:99.0pt;border-top:none;border-left:
+    none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+    mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+    mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+    <p class=MsoBodyText3 style='margin-left:0in'><span style='mso-bookmark:
+    _Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+    style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+    style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+    style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'>Escape</span></span></span></span></span></span></span></span></p>
+    </td>
+    <span style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+    style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+    style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+    style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span>
+    <td width=300 valign=top style='width:225.0pt;border-top:none;border-left:
+    none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+    mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+    mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+    <p class=MsoBodyText3 style='margin-left:0in'><span style='mso-bookmark:
+    _Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+    style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+    style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+    style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'>Quit
+    the menu and return to the previous one<span class=GramE>..</span><br>
+    In the main menu, shut down the NXT </span></span></span></span></span></span></span></span></p>
+    </td>
+    <span style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+    style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+    style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+    style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span>
+   </tr>
+  </table>
+  <p class=MsoBodyText3><span style='mso-bookmark:_Toc198222054'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198295456'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <p class=MsoBodyText3><span style='mso-bookmark:_Toc198222054'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198295456'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <p class=MsoBodyText3><span style='mso-bookmark:_Toc198222054'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span><a
+  href="#_top"><span style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:
+  _Toc198221593'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198295456'>Back to top</span></span></span></span></span></span></span></span><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span></a><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span></p>
+  <p class=MsoBodyText3><span style='mso-bookmark:_Toc198222054'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198295456'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <p class=Heading3color><span style='mso-bookmark:_Toc198222054'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198295456'><a name="_Toc200007737"></a><a
+  name="_Toc198295458"></a><a name="_Toc198215033"></a><a name="_Toc198022879"></a><a
+  name="_Toc198023259"></a><a name="_Toc198023380"></a><a name="_Toc198023476"></a><a
+  name="_Toc198221595"></a><a name="_Toc198222056"><span style='mso-bookmark:
+  _Toc198221595'><span style='mso-bookmark:_Toc198023476'><span
+  style='mso-bookmark:_Toc198023380'><span style='mso-bookmark:_Toc198023259'><span
+  style='mso-bookmark:_Toc198022879'><span style='mso-bookmark:_Toc198215033'><span
+  style='mso-bookmark:_Toc198295458'><span style='mso-bookmark:_Toc200007737'><span
+  lang=EN-GB>Files menu</span></span></span></span></span></span></span></span></span></a></span></span></span></span></span></span></span></span><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'><span
+  lang=EN-GB style='font-weight:normal;mso-bidi-font-weight:bold'><o:p></o:p></span></span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198222054'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198295456'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198222054'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198295456'>When you select the “Files” menu item, the
+  list of files<span style='mso-spacerun:yes'>  </span>is displayed:</span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198222054'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198295456'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198222054'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198295456'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><!--[if gte vml 1]><o:wrapblock><v:shape id="_x0000_s1263"
+    type="#_x0000_t202" style='position:absolute;margin-left:74.9pt;
+    margin-top:0;width:144.3pt;height:81.8pt;z-index:2;mso-position-vertical:top'>
+    <v:textbox style='mso-next-textbox:#_x0000_s1263'>
+     <![if !mso]>
+     <table cellpadding=0 cellspacing=0 width="100%">
+      <tr>
+       <td><![endif]>
+       <div>
+       <p class=MsoNormal><span style='font-family:"Courier New"'><span
+       style='mso-spacerun:yes'>    </span>MYNXT<span
+       style='mso-spacerun:yes'>     </span>BT<o:p></o:p></span></p>
+       <p class=MsoNormal><span style='font-family:"Courier New"'>&gt;<span
+       class=SpellE>View.nxj</span><o:p></o:p></span></p>
+       <p class=MsoNormal><span style='font-family:"Courier New"'><span
+       style='mso-spacerun:yes'> </span><span class=SpellE>SoundScope.nxj</span><o:p></o:p></span></p>
+       <p class=MsoNormal><span style='font-family:"Courier New"'><span
+       style='mso-spacerun:yes'> </span><span class=SpellE>LCDTest.nxj</span><o:p></o:p></span></p>
+       </div>
+       <![if !mso]></td>
+      </tr>
+     </table>
+     <![endif]></v:textbox>
+    <w:wrap type="topAndBottom"/>
+   </v:shape><![endif]--><![if !vml]><span style='mso-ignore:vglayout'>
+   <table cellpadding=0 cellspacing=0 align=left>
+    <tr>
+     <td width=99 height=0></td>
+    </tr>
+    <tr>
+     <td></td>
+     <td><img width=198 height=115 src="Menu%20System_files/image009.gif"
+     alt="Text Box:     MYNXT     BT&#13;&#10;&gt;View.nxj&#13;&#10; SoundScope.nxj&#13;&#10; LCDTest.nxj&#13;&#10;"
+     v:shapes="_x0000_s1263"></td>
+    </tr>
+   </table>
+   </span><![endif]><!--[if gte vml 1]></o:wrapblock><![endif]--><br
+  style='mso-ignore:vglayout' clear=ALL>
+  <span style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'><a
+  name="_top"></a></span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198222054'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198295456'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198222054'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198295456'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198222054'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198295456'>When you select a particular file, the
+  file submenu is displayed:</span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><!--[if gte vml 1]><v:shape id="_x0000_s1264" type="#_x0000_t202"
+   style='position:absolute;margin-left:76.8pt;margin-top:7.5pt;width:136pt;
+   height:103.25pt;z-index:3'>
+   <v:textbox style='mso-next-textbox:#_x0000_s1264'/>
+  </v:shape><![endif]--><![if !vml]><span style='mso-ignore:vglayout'>
+  <table cellpadding=0 cellspacing=0 align=left>
+   <tr>
+    <td width=101 height=9></td>
+   </tr>
+   <tr>
+    <td></td>
+    <td width=188 height=144 bgcolor=white style='border:.75pt solid black;
+    vertical-align:top;background:white'><![endif]><![if !mso]><span
+    style='position:absolute;mso-ignore:vglayout;z-index:3'>
+    <table cellpadding=0 cellspacing=0 width="100%">
+     <tr>
+      <td><![endif]>
+      <div v:shape="_x0000_s1264" style='padding:3.6pt 7.2pt 3.6pt 7.2pt'
+      class=shape>
+      <p class=MsoNormal><span style='font-family:"Courier New"'><span
+      style='mso-spacerun:yes'>    </span>MYNXT<span
+      style='mso-spacerun:yes'>     </span>BT<o:p></o:p></span></p>
+      <p class=MsoNormal><span class=SpellE><span style='font-family:"Courier New"'>View.nxj</span></span><span
+      style='font-family:"Courier New"'><o:p></o:p></span></p>
+      <p class=MsoNormal><span style='font-family:"Courier New"'>&gt;Execute
+      program<o:p></o:p></span></p>
+      <p class=MsoNormal><span style='font-family:"Courier New"'><span
+      style='mso-spacerun:yes'> </span>Set as Default<o:p></o:p></span></p>
+      <p class=MsoNormal><span style='font-family:"Courier New"'><span
+      style='mso-spacerun:yes'> </span>Delete file<o:p></o:p></span></p>
+      </div>
+      <![if !mso]></td>
+     </tr>
+    </table>
+    </span><![endif]><![if !mso & !vml]>&nbsp;<![endif]><![if !vml]></td>
+   </tr>
+  </table>
+  </span><![endif]><span style='mso-bookmark:_Toc198222054'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198295456'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198222054'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198295456'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198222054'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198295456'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198222054'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198295456'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198222054'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198295456'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198222054'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198295456'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198222054'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198295456'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <br style='mso-ignore:vglayout' clear=ALL>
+  <p class=MsoBodyText3><span style='mso-bookmark:_Toc198222054'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span><a
+  href="#_top"><span style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:
+  _Toc198221593'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198295456'>Back to top</span></span></span></span></span></span></span></span><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span></a><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198222054'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198295456'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <p class=Heading3color><span style='mso-bookmark:_Toc198222054'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198295456'><a name="_Toc200007738"></a><a
+  name="_Toc198295459"></a><a name="_Toc198215034"></a><a name="_Toc198022880"></a><a
+  name="_Toc198023260"></a><a name="_Toc198023381"></a><a name="_Toc198023477"></a><a
+  name="_Toc198221596"></a><a name="_Toc198222057"><span style='mso-bookmark:
+  _Toc198221596'><span style='mso-bookmark:_Toc198023477'><span
+  style='mso-bookmark:_Toc198023381'><span style='mso-bookmark:_Toc198023260'><span
+  style='mso-bookmark:_Toc198022880'><span style='mso-bookmark:_Toc198215034'><span
+  style='mso-bookmark:_Toc198295459'><span style='mso-bookmark:_Toc200007738'><span
+  class=Char><span lang=EN-GB style='font-size:14.0pt;mso-bidi-font-size:13.0pt;
+  mso-bidi-font-weight:normal'>System menu</span></span></span></span></span></span></span></span></span></span></a></span></span></span></span></span></span></span></span><span
+  style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'><span
+  class=Char><span lang=EN-GB style='font-size:14.0pt;mso-bidi-font-size:13.0pt;
+  mso-bidi-font-weight:normal'><o:p></o:p></span></span></span></span></span></span></span></span></span></span></p>
+  <p class=MsoBodyText3><span style='mso-bookmark:_Toc198222054'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198295456'>This menu shows some information about the
+  status of the NXT, and allows you to change some of these variables.<b
+  style='mso-bidi-font-weight:normal'><o:p></o:p></b></span></span></span></span></span></span></span></span></p>
+  <ul style='margin-top:0in' type=disc>
+   <li class=MsoNormal style='mso-list:l12 level1 lfo3;tab-stops:list .5in'><span
+       style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+       style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+       style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+       style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'>Free
+       flash</span></span></span></span></span></span></span></span></li>
+   <li class=MsoNormal style='mso-list:l12 level1 lfo3;tab-stops:list .5in'><span
+       style='mso-bookmark:_Toc198222054'><span style='mso-bookmark:_Toc198221593'><span
+       style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198023378'><span
+       style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198022877'><span
+       style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198295456'></span></span></span></span></span></span></span></span><st1:place><span
+        style='mso-bookmark:_Toc198295456'><span style='mso-bookmark:_Toc198215031'><span
+        style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198023257'><span
+        style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023474'><span
+        style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198222054'>Battery</span></span></span></span></span></span></span></span></st1:place><span
+       style='mso-bookmark:_Toc198295456'><span style='mso-bookmark:_Toc198215031'><span
+       style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198023257'><span
+       style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023474'><span
+       style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198222054'>
+       voltage</span></span></span></span></span></span></span></span></li>
+   <li class=MsoNormal style='mso-list:l12 level1 lfo3;tab-stops:list .5in'><span
+       style='mso-bookmark:_Toc198295456'><span style='mso-bookmark:_Toc198215031'><span
+       style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198023257'><span
+       style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023474'><span
+       style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198222054'>Free
+       ram</span></span></span></span></span></span></span></span></li>
+   <li class=MsoNormal style='mso-list:l12 level1 lfo3;tab-stops:list .5in'><span
+       style='mso-bookmark:_Toc198295456'><span style='mso-bookmark:_Toc198215031'><span
+       style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198023257'><span
+       style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023474'><span
+       style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198222054'>Format
+       <br>
+       wipes out the flash memory, deleting all files. </span></span></span></span></span></span></span></span></li>
+   <li class=MsoNormal style='mso-list:l12 level1 lfo3;tab-stops:list .5in'><span
+       style='mso-bookmark:_Toc198295456'><span style='mso-bookmark:_Toc198215031'><span
+       style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198023257'><span
+       style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023474'><span
+       style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198222054'>Sleep
+       Time<br>
+       is the number of seconds before the NXT shuts down in the absence of any
+       activity (button presses or program running)<span
+       style='mso-spacerun:yes'>   </span>You can change the setting by
+       pressing <span class=GramE>the<span style='mso-spacerun:yes'> 
+       </span>ENTER</span> button.<span style='mso-spacerun:yes'>   </span>Zero
+       means never. </span></span></span></span></span></span></span></span></li>
+   <li class=MsoNormal style='mso-list:l12 level1 lfo3;tab-stops:list .5in'><span
+       style='mso-bookmark:_Toc198295456'><span style='mso-bookmark:_Toc198215031'><span
+       style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198023257'><span
+       style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023474'><span
+       style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198222054'>Auto
+       run<br>
+       If this is turned on, the default program immediately starts running
+       when the NXT is powered up<span class=GramE>,<span
+       style='mso-spacerun:yes'>  </span>instead</span> of displaying the main
+       menu.<span style='mso-spacerun:yes'>  </span>You can disable the auto
+       run by holding down the left button during start up.<span
+       style='mso-spacerun:yes'>  </span></span></span></span></span></span></span></span></span></li>
+  </ul>
+  <p class=MsoBodyText3><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <p class=MsoBodyText3><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'></span></span></span></span></span></span></span></span><a
+  href="#_top"><span style='mso-bookmark:_Toc198295456'><span style='mso-bookmark:
+  _Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'>Back to top</span></span></span></span></span></span></span></span><span
+  style='mso-bookmark:_Toc198295456'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198222054'></span></span></span></span></span></span></span></span></a><span
+  style='mso-bookmark:_Toc198295456'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198222054'></span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <p class=Heading3color><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'><a name="_Toc200007739"></a><a
+  name="_Toc198295460"></a><a name="_Toc198215035"></a><a name="_Toc198022881"></a><a
+  name="_Toc198023261"></a><a name="_Toc198023382"></a><a name="_Toc198023478"></a><a
+  name="_Toc198221597"></a><a name="_Toc198222058"><span style='mso-bookmark:
+  _Toc198221597'><span style='mso-bookmark:_Toc198023478'><span
+  style='mso-bookmark:_Toc198023382'><span style='mso-bookmark:_Toc198023261'><span
+  style='mso-bookmark:_Toc198022881'><span style='mso-bookmark:_Toc198215035'><span
+  style='mso-bookmark:_Toc198295460'><span style='mso-bookmark:_Toc200007739'></span></span></span></span></span></span></span></span></a><span
+  class=SpellE><span style='mso-bookmark:_Toc198222058'><span style='mso-bookmark:
+  _Toc198221597'><span style='mso-bookmark:_Toc198023478'><span
+  style='mso-bookmark:_Toc198023382'><span style='mso-bookmark:_Toc198023261'><span
+  style='mso-bookmark:_Toc198022881'><span style='mso-bookmark:_Toc198215035'><span
+  style='mso-bookmark:_Toc198295460'><span style='mso-bookmark:_Toc200007739'><span
+  lang=EN-GB>Bluetooth</span></span></span></span></span></span></span></span></span></span></span><span
+  style='mso-bookmark:_Toc198222058'><span style='mso-bookmark:_Toc198221597'><span
+  style='mso-bookmark:_Toc198023478'><span style='mso-bookmark:_Toc198023382'><span
+  style='mso-bookmark:_Toc198023261'><span style='mso-bookmark:_Toc198022881'><span
+  style='mso-bookmark:_Toc198215035'><span style='mso-bookmark:_Toc198295460'><span
+  style='mso-bookmark:_Toc200007739'><span lang=EN-GB> menu</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span><span
+  style='mso-bookmark:_Toc198295456'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198222054'><span
+  lang=EN-GB style='font-weight:normal;mso-bidi-font-weight:bold'><o:p></o:p></span></span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'>This menu allows you to control the <span
+  class=SpellE>Bluetooth</span> chip.<span style='mso-spacerun:yes'> 
+  </span>When power is off, the menu looks like this:: </span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><!--[if gte vml 1]><v:shape id="_x0000_s1269" type="#_x0000_t202"
+   style='position:absolute;margin-left:117pt;margin-top:4.85pt;width:2in;
+   height:94.2pt;z-index:8'>
+   <v:textbox style='mso-next-textbox:#_x0000_s1269'/>
+  </v:shape><![endif]--><![if !vml]><span style='mso-ignore:vglayout'>
+  <table cellpadding=0 cellspacing=0 align=left>
+   <tr>
+    <td width=155 height=5></td>
+   </tr>
+   <tr>
+    <td></td>
+    <td width=198 height=132 bgcolor=white style='border:.75pt solid black;
+    vertical-align:top;background:white'><![endif]><![if !mso]><span
+    style='position:absolute;mso-ignore:vglayout;z-index:8'>
+    <table cellpadding=0 cellspacing=0 width="100%">
+     <tr>
+      <td><![endif]>
+      <div v:shape="_x0000_s1269" style='padding:3.6pt 7.2pt 3.6pt 7.2pt'
+      class=shape>
+      <p class=MsoNormal><span style='font-family:"Courier New"'><span
+      style='mso-spacerun:yes'>    </span>MYNXT<span
+      style='mso-spacerun:yes'>     </span><span style='background:black'>BT</span><o:p></o:p></span></p>
+      <p class=MsoNormal><span style='font-family:"Courier New"'><span
+      style='mso-spacerun:yes'>   </span><span class=SpellE>Bluetooth</span><o:p></o:p></span></p>
+      <p class=MsoNormal><span style='font-family:"Courier New"'>Status off<o:p></o:p></span></p>
+      <p class=MsoNormal><span style='font-family:"Courier New"'>&gt;Power on<o:p></o:p></span></p>
+      </div>
+      <![if !mso]></td>
+     </tr>
+    </table>
+    </span><![endif]><![if !mso & !vml]>&nbsp;<![endif]><![if !vml]></td>
+   </tr>
+  </table>
+  </span><![endif]><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <br style='mso-ignore:vglayout' clear=ALL>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'>This saves battery power, but <span
+  class=SpellE>Bluetooth</span> communication to or from the NXT is not
+  possible.<span style='mso-spacerun:yes'>  </span>Pressing Enter turns the
+  power on. </span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><!--[if gte vml 1]><v:shape id="_x0000_s1270" type="#_x0000_t202"
+   style='position:absolute;margin-left:119.45pt;margin-top:17.4pt;width:138.85pt;
+   height:2in;z-index:9'>
+   <v:textbox style='mso-next-textbox:#_x0000_s1270'/>
+  </v:shape><![endif]--><![if !vml]><span style='mso-ignore:vglayout;
+  position:absolute;z-index:9;margin-left:158px;margin-top:22px;width:191px;
+  height:198px'>
+  <table cellpadding=0 cellspacing=0>
+   <tr>
+    <td width=191 height=198 bgcolor=white style='border:.75pt solid black;
+    vertical-align:top;background:white'><![endif]><![if !mso]><span
+    style='position:absolute;mso-ignore:vglayout;z-index:9'>
+    <table cellpadding=0 cellspacing=0 width="100%">
+     <tr>
+      <td><![endif]>
+      <div v:shape="_x0000_s1270" style='padding:3.6pt 7.2pt 3.6pt 7.2pt'
+      class=shape>
+      <p class=MsoNormal><span style='font-family:"Courier New"'><span
+      style='mso-spacerun:yes'>    </span>MYNXT<span
+      style='mso-spacerun:yes'>     </span>BT<o:p></o:p></span></p>
+      <p class=MsoNormal><span style='font-family:"Courier New"'><span
+      style='mso-spacerun:yes'>   </span><span class=SpellE>Bluetooth</span><o:p></o:p></span></p>
+      <p class=MsoNormal><span style='font-family:"Courier New"'>Status <span
+      class=GramE>on<span style='mso-spacerun:yes'>  </span><span class=SpellE>vis</span></span><o:p></o:p></span></p>
+      <p class=MsoNormal><span style='font-family:"Courier New"'>&gt;Power off<o:p></o:p></span></p>
+      <p class=MsoNormal><span style='font-family:"Courier New"'>Search<o:p></o:p></span></p>
+      <p class=MsoNormal><span style='font-family:"Courier New"'>Devices<o:p></o:p></span></p>
+      <p class=MsoNormal><span style='font-family:"Courier New"'>Visibility<o:p></o:p></span></p>
+      </div>
+      <![if !mso]></td>
+     </tr>
+    </table>
+    </span><![endif]><![if !mso & !vml]>&nbsp;<![endif]><![if !vml]></td>
+   </tr>
+  </table>
+  </span><![endif]><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'>When the power is on, the menu looks like <span
+  class=SpellE>ths</span></span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'>The status line shows if power is on and
+  where the device is visible to <span class=SpellE>Bluetooth</span> searches.</span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'>The Visibility menu item switches
+  visibility of the devices to <span class=SpellE>Bluetooth</span> inquiries on
+  and off. When it is on the status line displays “<span class=SpellE>vis</span>”
+  and when it is off, “<span class=SpellE>invis</span>”.</span></span></span></span></span></span></span></span></p>
+  <h4><span style='mso-bookmark:_Toc198295456'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198222054'><a
+  name="_Toc200007740"></a><a name="_Toc198022882"></a><a name="_Toc198023262"><span
+  style='mso-bookmark:_Toc198022882'><span style='mso-bookmark:_Toc200007740'><span
+  lang=EN-GB>Devices</span></span></span></a></span></span></span></span></span></span></span></span></h4>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'>The Devices menu item lists the devices
+  currently in the Known Devices list for you NXT.</span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal align=center style='text-align:center'><!--[if gte vml 1]><o:wrapblock><v:shape
+    id="_x0000_s1265" type="#_x0000_t202" style='position:absolute;left:0;
+    text-align:left;margin-left:121pt;margin-top:0;width:126pt;height:117pt;
+    z-index:4;mso-position-vertical:top'>
+    <v:textbox style='mso-next-textbox:#_x0000_s1265'>
+     <![if !mso]>
+     <table cellpadding=0 cellspacing=0 width="100%">
+      <tr>
+       <td><![endif]>
+       <div>
+       <p class=MsoNormal><span lang=FR style='font-family:"Courier New";
+       mso-ansi-language:FR'><span style='mso-spacerun:yes'>   </span><span
+       class=SpellE>Devices</span><o:p></o:p></span></p>
+       <p class=MsoNormal><span lang=FR style='font-family:"Courier New";
+       mso-ansi-language:FR'>&gt;NXT1<o:p></o:p></span></p>
+       <p class=MsoNormal><span lang=FR style='font-family:"Courier New";
+       mso-ansi-language:FR'>&gt;NXT2<o:p></o:p></span></p>
+       <p class=MsoNormal><span lang=FR style='font-family:"Courier New";
+       mso-ansi-language:FR'>&gt;HOLUX_M-1200<o:p></o:p></span></p>
+       <p class=MsoNormal><span lang=FR style='font-family:"Courier New";
+       mso-ansi-language:FR'><span style='mso-spacerun:yes'> </span><o:p></o:p></span></p>
+       </div>
+       <![if !mso]></td>
+      </tr>
+     </table>
+     <![endif]></v:textbox>
+    <w:wrap type="topAndBottom"/>
+   </v:shape><![endif]--><![if !vml]><span style='mso-ignore:vglayout'>
+   <table cellpadding=0 cellspacing=0 align=left>
+    <tr>
+     <td width=160 height=0></td>
+    </tr>
+    <tr>
+     <td></td>
+     <td><img width=174 height=162 src="Menu%20System_files/image010.gif"
+     alt="Text Box:    Devices&#13;&#10;&gt;NXT1&#13;&#10;&gt;NXT2&#13;&#10;&gt;HOLUX_M-1200&#13;&#10; &#13;&#10;"
+     v:shapes="_x0000_s1265"></td>
+    </tr>
+   </table>
+   </span><![endif]><!--[if gte vml 1]></o:wrapblock><![endif]--><br
+  style='mso-ignore:vglayout' clear=ALL>
+  <span style='mso-bookmark:_Toc198295456'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198222054'></span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'>Selecting a specific device will show
+  details of it:</span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><!--[if gte vml 1]><v:shape id="_x0000_s1266" type="#_x0000_t202"
+   style='position:absolute;margin-left:126.75pt;margin-top:2.85pt;width:135pt;
+   height:143.25pt;z-index:5'>
+   <v:textbox style='mso-next-textbox:#_x0000_s1266'/>
+  </v:shape><![endif]--><![if !vml]><span style='mso-ignore:vglayout'>
+  <table cellpadding=0 cellspacing=0 align=left>
+   <tr>
+    <td width=168 height=3></td>
+   </tr>
+   <tr>
+    <td></td>
+    <td width=186 height=197 bgcolor=white style='border:.75pt solid black;
+    vertical-align:top;background:white'><![endif]><![if !mso]><span
+    style='position:absolute;mso-ignore:vglayout;z-index:5'>
+    <table cellpadding=0 cellspacing=0 width="100%">
+     <tr>
+      <td><![endif]>
+      <div v:shape="_x0000_s1266" style='padding:3.6pt 7.2pt 3.6pt 7.2pt'
+      class=shape>
+      <p class=MsoNormal><span style='font-family:"Courier New"'><span
+      style='mso-spacerun:yes'>   </span>Devices<o:p></o:p></span></p>
+      <p class=MsoNormal><span style='font-family:"Courier New"'>NXT1<o:p></o:p></span></p>
+      <p class=MsoNormal><span style='font-family:"Courier New"'>001653007848<o:p></o:p></span></p>
+      <p class=MsoNormal><span style='font-family:"Courier New"'><span
+      style='mso-spacerun:yes'>  </span>0<span style='mso-spacerun:yes'>  
+      </span><span class=SpellE>0</span><span style='mso-spacerun:yes'>  
+      </span><span class=SpellE>0</span><span style='mso-spacerun:yes'>  
+      </span>4<o:p></o:p></span></p>
+      <p class=MsoNormal><span style='font-family:"Courier New"'><o:p>&nbsp;</o:p></span></p>
+      <p class=MsoNormal><span style='font-family:"Courier New"'>&gt;Remove<o:p></o:p></span></p>
+      <p class=MsoNormal><span style='font-family:"Courier New"'><o:p>&nbsp;</o:p></span></p>
+      </div>
+      <![if !mso]></td>
+     </tr>
+    </table>
+    </span><![endif]><![if !mso & !vml]>&nbsp;<![endif]><![if !vml]></td>
+   </tr>
+  </table>
+  </span><![endif]><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <br style='mso-ignore:vglayout' clear=ALL>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'>The first line give the name, the second
+  the address, and the third the status of the four possible <span
+  class=SpellE>Bluetooth</span> connections. </span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'>The “Remove” menu item allows the device to
+  be removed from the Known device list.</span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <h4><span style='mso-bookmark:_Toc198295456'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198222054'><a
+  name="_Toc200007741"></a><a name="_Toc198022883"></a><a name="_Toc198023263"><span
+  style='mso-bookmark:_Toc198022883'><span style='mso-bookmark:_Toc200007741'><span
+  lang=EN-GB>Search</span></span></span></a></span></span></span></span></span></span></span></span></h4>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'>Selecting “Search” from the <span
+  class=SpellE>Bluetooth</span> menu, starts a <span class=SpellE>Bluetooth</span>
+  inquiry. The display is cleared and the first line displays “Searching…<span
+  class=GramE>”.</span> This takes about 10 seconds.</span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'>When the search is finished a menu of all
+  the <span class=SpellE>Bluetooth</span> devices found, is displayed:</span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><!--[if gte vml 1]><o:wrapblock><v:shape id="_x0000_s1267"
+    type="#_x0000_t202" style='position:absolute;margin-left:126pt;
+    margin-top:0;width:135pt;height:117pt;z-index:6'>
+    <v:textbox style='mso-next-textbox:#_x0000_s1267'>
+     <![if !mso]>
+     <table cellpadding=0 cellspacing=0 width="100%">
+      <tr>
+       <td><![endif]>
+       <div>
+       <p class=MsoNormal><span style='font-family:"Courier New"'><span
+       style='mso-spacerun:yes'>   </span>Found<o:p></o:p></span></p>
+       <p class=MsoNormal><span style='font-family:"Courier New"'>&gt;NXT1<o:p></o:p></span></p>
+       <p class=MsoNormal><span style='font-family:"Courier New"'>&gt;HOLUX_M-1200<o:p></o:p></span></p>
+       <p class=MsoNormal><span style='font-family:"Courier New"'>&gt;<span
+       class=SpellE>MyPhone</span><o:p></o:p></span></p>
+       <p class=MsoNormal><span style='font-family:"Courier New"'><o:p>&nbsp;</o:p></span></p>
+       <p class=MsoNormal><span style='font-family:"Courier New"'><o:p>&nbsp;</o:p></span></p>
+       </div>
+       <![if !mso]></td>
+      </tr>
+     </table>
+     <![endif]></v:textbox>
+    <w:wrap type="topAndBottom"/>
+   </v:shape><![endif]--><![if !vml]><span style='mso-ignore:vglayout'>
+   <table cellpadding=0 cellspacing=0 align=left>
+    <tr>
+     <td width=167 height=0></td>
+    </tr>
+    <tr>
+     <td></td>
+     <td><img width=186 height=162 src="Menu%20System_files/image011.gif"
+     alt="Text Box:    Found&#13;&#10;&gt;NXT1&#13;&#10;&gt;HOLUX_M-1200&#13;&#10;&gt;MyPhone&#13;&#10;&#13;&#10;&#13;&#10;"
+     v:shapes="_x0000_s1267"></td>
+    </tr>
+   </table>
+   </span><![endif]><!--[if gte vml 1]></o:wrapblock><![endif]--><br
+  style='mso-ignore:vglayout' clear=ALL>
+  <span style='mso-bookmark:_Toc198295456'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198222054'></span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'>All discoverable devices that support an
+  SPP profile are displayed. This includes other NXT, GPS devices, mobile
+  phones etc.</span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'>Selecting one of the devices gives the
+  following display:</span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><!--[if gte vml 1]><v:shape id="_x0000_s1268" type="#_x0000_t202"
+   style='position:absolute;margin-left:132pt;margin-top:3.45pt;width:135pt;
+   height:117pt;z-index:7'>
+   <v:textbox style='mso-next-textbox:#_x0000_s1268'/>
+  </v:shape><![endif]--><![if !vml]><span style='mso-ignore:vglayout'>
+  <table cellpadding=0 cellspacing=0 align=left>
+   <tr>
+    <td width=175 height=4></td>
+   </tr>
+   <tr>
+    <td></td>
+    <td width=186 height=162 bgcolor=white style='border:.75pt solid black;
+    vertical-align:top;background:white'><![endif]><![if !mso]><span
+    style='position:absolute;mso-ignore:vglayout;z-index:7'>
+    <table cellpadding=0 cellspacing=0 width="100%">
+     <tr>
+      <td><![endif]>
+      <div v:shape="_x0000_s1268" style='padding:3.6pt 7.2pt 3.6pt 7.2pt'
+      class=shape>
+      <p class=MsoNormal><span style='font-family:"Courier New"'><span
+      style='mso-spacerun:yes'>   </span>Found<o:p></o:p></span></p>
+      <p class=MsoNormal><span style='font-family:"Courier New"'>NXT1<o:p></o:p></span></p>
+      <p class=MsoNormal><span style='font-family:"Courier New"'>001653007848<o:p></o:p></span></p>
+      <p class=MsoNormal><span style='font-family:"Courier New"'><o:p>&nbsp;</o:p></span></p>
+      <p class=MsoNormal><span style='font-family:"Courier New"'>&gt;Add<o:p></o:p></span></p>
+      <p class=MsoNormal><span style='font-family:"Courier New"'><o:p>&nbsp;</o:p></span></p>
+      <p class=MsoNormal><span style='font-family:"Courier New"'><o:p>&nbsp;</o:p></span></p>
+      </div>
+      <![if !mso]></td>
+     </tr>
+    </table>
+    </span><![endif]><![if !mso & !vml]>&nbsp;<![endif]><![if !vml]></td>
+   </tr>
+  </table>
+  </span><![endif]><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <br style='mso-ignore:vglayout' clear=ALL>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'>Selecting Add, adds the device to the list
+  of know devices. This makes connecting to the devices from <span
+  class=SpellE>leJOS</span> programs much easier.</span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <p class=MsoBodyText3><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'></span></span></span></span></span></span></span></span><a
+  href="#_top"><span style='mso-bookmark:_Toc198295456'><span style='mso-bookmark:
+  _Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'>Back to top</span></span></span></span></span></span></span></span><span
+  style='mso-bookmark:_Toc198295456'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198222054'></span></span></span></span></span></span></span></span></a><span
+  style='mso-bookmark:_Toc198295456'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198222054'></span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <p class=Heading3color><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'><a name="_Toc200007742"><span lang=EN-GB>Sound</span></a></span></span></span></span></span></span></span></span><span
+  style='mso-bookmark:_Toc198295456'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198222054'><span
+  lang=EN-GB style='font-weight:normal;mso-bidi-font-weight:bold'><o:p></o:p></span></span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><!--[if gte vml 1]><v:shape id="_x0000_s1272" type="#_x0000_t202"
+   style='position:absolute;margin-left:129pt;margin-top:8pt;width:138pt;
+   height:91pt;z-index:11'>
+   <v:textbox style='mso-next-textbox:#_x0000_s1272'/>
+  </v:shape><![endif]--><![if !vml]><span style='mso-ignore:vglayout'>
+  <table cellpadding=0 cellspacing=0 align=left>
+   <tr>
+    <td width=171 height=10></td>
+   </tr>
+   <tr>
+    <td></td>
+    <td width=190 height=127 bgcolor=white style='border:.75pt solid black;
+    vertical-align:top;background:white'><![endif]><![if !mso]><span
+    style='position:absolute;mso-ignore:vglayout;z-index:11'>
+    <table cellpadding=0 cellspacing=0 width="100%">
+     <tr>
+      <td><![endif]>
+      <div v:shape="_x0000_s1272" style='padding:3.6pt 7.2pt 3.6pt 7.2pt'
+      class=shape>
+      <p class=MsoNormal><span style='font-family:"Courier New"'><span
+      style='mso-spacerun:yes'>    </span>MYNXT<span
+      style='mso-spacerun:yes'>     </span>BT<o:p></o:p></span></p>
+      <p class=MsoNormal><span style='font-family:"Courier New"'><span
+      style='mso-spacerun:yes'>   </span>Sound<o:p></o:p></span></p>
+      <p class=MsoNormal><span style='font-family:"Courier New"'>&gt;Volume:<span
+      style='mso-spacerun:yes'>      </span>8<o:p></o:p></span></p>
+      <p class=MsoNormal><span style='font-family:"Courier New"'><span
+      style='mso-spacerun:yes'> </span><span class=SpellE>KeyClick</span><span
+      style='mso-spacerun:yes'>     </span>6<o:p></o:p></span></p>
+      <p class=MsoNormal><o:p>&nbsp;</o:p></p>
+      </div>
+      <![if !mso]></td>
+     </tr>
+    </table>
+    </span><![endif]><![if !mso & !vml]>&nbsp;<![endif]><![if !vml]></td>
+   </tr>
+  </table>
+  </span><![endif]><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <br style='mso-ignore:vglayout' clear=ALL>
+  <p class=MsoBodyText3><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'><span lang=EN-GB style='mso-ansi-language:
+  EN-GB'>With this menu, you can set the default system sound Volume and the
+  Key Clock volume.<span style='mso-spacerun:yes'>   </span>Click <span
+  class=GramE>the<span style='mso-spacerun:yes'>  </span>Enter</span> key to
+  scroll through the options.<o:p></o:p></span></span></span></span></span></span></span></span></span></p>
+  <p class=Heading3color style='margin-top:0in'><!--[if gte vml 1]><v:shape
+   id="_x0000_s1271" type="#_x0000_t202" style='position:absolute;left:0;
+   text-align:left;margin-left:126pt;margin-top:22.75pt;width:139pt;height:117pt;
+   z-index:10'>
+   <v:textbox style='mso-next-textbox:#_x0000_s1271'/>
+  </v:shape><![endif]--><![if !vml]><span style='mso-ignore:vglayout;
+  position:absolute;z-index:10;left:0px;margin-left:167px;margin-top:29px;
+  width:191px;height:162px'>
+  <table cellpadding=0 cellspacing=0>
+   <tr>
+    <td width=191 height=162 bgcolor=white style='border:.75pt solid black;
+    vertical-align:top;background:white'><![endif]><![if !mso]><span
+    style='position:absolute;mso-ignore:vglayout;left:0pt;z-index:10'>
+    <table cellpadding=0 cellspacing=0 width="100%">
+     <tr>
+      <td><![endif]>
+      <div v:shape="_x0000_s1271" style='padding:3.6pt 7.2pt 3.6pt 7.2pt'
+      class=shape>
+      <p class=MsoNormal><span style='font-family:"Courier New"'><span
+      style='mso-spacerun:yes'>    </span>MYNXT<span
+      style='mso-spacerun:yes'>     </span>BT<o:p></o:p></span></p>
+      <p class=MsoNormal><span style='font-family:"Courier New"'>Firmware
+      Version<o:p></o:p></span></p>
+      <p class=MsoNormal><span style='font-family:"Courier New"'>1.0 (rev.
+      2260)<o:p></o:p></span></p>
+      <p class=MsoNormal><span style='font-family:"Courier New"'>Menu Version<o:p></o:p></span></p>
+      <p class=MsoNormal><span style='font-family:"Courier New"'>1.0 (rev 2260)<o:p></o:p></span></p>
+      <p class=MsoNormal><span style='font-family:"Courier New"'><o:p>&nbsp;</o:p></span></p>
+      </div>
+      <![if !mso]></td>
+     </tr>
+    </table>
+    </span><![endif]><![if !mso & !vml]>&nbsp;<![endif]><![if !vml]></td>
+   </tr>
+  </table>
+  </span><![endif]><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'><span lang=EN-GB><a name="_Toc200007743">Version</a>
+  </span></span></span></span></span></span></span></span></span></p>
+  <p class=MsoBodyText3 style='margin-left:0in'><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'><span lang=EN-GB style='mso-ansi-language:
+  EN-GB'><span style='mso-spacerun:yes'>  </span><o:p></o:p></span></span></span></span></span></span></span></span></span></p>
+  <p class=MsoBodyText3><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'><span lang=EN-GB style='mso-ansi-language:
+  EN-GB'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></span></p>
+  <p class=MsoBodyText3><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'><span lang=EN-GB style='mso-ansi-language:
+  EN-GB'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></span></p>
+  <p class=MsoBodyText3><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'><span lang=EN-GB style='mso-ansi-language:
+  EN-GB'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></span></p>
+  <p class=MsoBodyText3><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'><span lang=EN-GB style='mso-ansi-language:
+  EN-GB'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></span></p>
+  <p class=MsoBodyText3><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'><span lang=EN-GB style='mso-ansi-language:
+  EN-GB'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></span></p>
+  <p class=MsoBodyText3><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'><span lang=EN-GB style='mso-ansi-language:
+  EN-GB'>This menu is for information only. <o:p></o:p></span></span></span></span></span></span></span></span></span></p>
+  <p class=MsoBodyText3><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'><span lang=EN-GB style='mso-ansi-language:
+  EN-GB'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></span></p>
+  <p class=MsoBodyText3><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'></span></span></span></span></span></span></span></span><a
+  href="#_top"><span style='mso-bookmark:_Toc198295456'><span style='mso-bookmark:
+  _Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'>Back to top</span></span></span></span></span></span></span></span><span
+  style='mso-bookmark:_Toc198295456'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198222054'></span></span></span></span></span></span></span></span></a><span
+  style='mso-bookmark:_Toc198295456'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198222054'></span></span></span></span></span></span></span></span></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198295456'><span
+  style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+  style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+  style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+  style='mso-bookmark:_Toc198222054'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+  <span style='mso-bookmark:_Toc198295456'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198222054'></span></span></span></span></span></span></span></span>
+  <p class=MsoToc2 style='tab-stops:right dotted 431.5pt'><span
+  style='mso-bookmark:_Toc198295456'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198222054'><b
+  style='mso-bidi-font-weight:normal'><o:p>&nbsp;</o:p></b></span></span></span></span></span></span></span></span></p>
+  </td>
+  <span style='mso-bookmark:_Toc198295456'><span style='mso-bookmark:_Toc198215031'><span
+  style='mso-bookmark:_Toc198022877'><span style='mso-bookmark:_Toc198023257'><span
+  style='mso-bookmark:_Toc198023378'><span style='mso-bookmark:_Toc198023474'><span
+  style='mso-bookmark:_Toc198221593'><span style='mso-bookmark:_Toc198222054'></span></span></span></span></span></span></span></span>
+ </tr>
+</table>
+
+<p class=MsoNormal><span style='mso-bookmark:_Toc198295456'><span
+style='mso-bookmark:_Toc198215031'><span style='mso-bookmark:_Toc198022877'><span
+style='mso-bookmark:_Toc198023257'><span style='mso-bookmark:_Toc198023378'><span
+style='mso-bookmark:_Toc198023474'><span style='mso-bookmark:_Toc198221593'><span
+style='mso-bookmark:_Toc198222054'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></p>
+
+<span style='mso-bookmark:_Toc198222054'></span><span style='mso-bookmark:_Toc198221593'></span><span
+style='mso-bookmark:_Toc198023474'></span><span style='mso-bookmark:_Toc198023378'></span><span
+style='mso-bookmark:_Toc198023257'></span><span style='mso-bookmark:_Toc198022877'></span><span
+style='mso-bookmark:_Toc198215031'></span><span style='mso-bookmark:_Toc198295456'></span>
+
+<p class=MsoNormal style='tab-stops:387.65pt'><o:p>&nbsp;</o:p></p>
+
+<p class=MsoBodyText3><span lang=EN-GB style='mso-ansi-language:EN-GB'><o:p>&nbsp;</o:p></span></p>
+
+</div>
+
+</body>
+
+</html>
