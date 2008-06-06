@@ -11,7 +11,7 @@
 		<!-- generate constants first -->
 		<javac srcdir="." destdir="build" fork="yes" optimize="on" debug="on" includes="**/GenerateConstants.java">
 		</javac>
-		<java classpath="build" classname="js.tinyvm.GenerateConstants">
+		<java classpath="build" classname="js.tinyvm.GenerateConstants" fork="yes">
 			<sysproperty key="tinyvm.home" value=".." />
 		</java>
 		<!-- generate tools -->
