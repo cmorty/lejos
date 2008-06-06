@@ -1,4 +1,13 @@
-
+/* The fantom includes are not designed to compile with gcc for Windows.
+ * The following lets us fool the system so that it will build.
+ */
+#if (( defined( __GNUG__ ) || defined( __GNUC__ )) && defined( __WIN32__))
+#define _M_I86
+#define _MSC_VER
+#include "fantom/platform.h"
+#undef _M_I86
+#undef _MSC_VER
+#endif
 #include "fantom/iNXT.h"
 #include "fantom/iNXTIterator.h"
 
