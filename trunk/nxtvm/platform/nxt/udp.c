@@ -60,6 +60,8 @@
         SET((register), dFlags); \
 }
 
+#define MIN(a, b) ((a) < (b) ? (a) : (b))
+
 #define USB_DISABLED    0x8000
 #define USB_NEEDRESET   0x4000
 #define USB_WRITEABLE   0x100000
@@ -311,7 +313,7 @@ static void udp_send_stall()
   UDP_SETEPFLAGS(*AT91C_UDP_CSR0, AT91C_UDP_FORCESTALL); 
 }
 
-static void udp_send_control(U8* p, int len, int send_null)
+static void udp_send_control(U8* p, int len)
 {
   outPtr = p;
   outCnt = len;
@@ -413,11 +415,11 @@ udp_enumerate()
     case STD_GET_DESCRIPTOR: 
       if (val == 0x100) // Get device descriptor
       {
-        udp_send_control((U8 *)dd, sizeof(dd), 0);
+        udp_send_control((U8 *)dd, MIN(sizeof(dd), len));
       }
       else if (val == 0x200) // Configuration descriptor
       {     
-        udp_send_control((U8 *)cfd, (len < sizeof(cfd) ? len : sizeof(cfd)), (len > sizeof(cfd) ? 1 : 0));
+        udp_send_control((U8 *)cfd, MIN(sizeof(cfd), len));
         //if (len > sizeof(cfd)) udp_send_null();
       }    
       else if ((val & 0xF00) == 0x300)
@@ -425,10 +427,10 @@ udp_enumerate()
         switch(val & 0xFF)
         {
           case 0x00:
-            udp_send_control((U8 *)ld, sizeof(ld), 0);
+            udp_send_control((U8 *)ld, MIN(sizeof(ld), len));
             break;
           case 0x01:
-            udp_send_control(snd, sizeof(snd), 0);
+            udp_send_control(snd, MIN(sizeof(snd), len));
             break;
           default:
             udp_send_stall();
@@ -507,19 +509,19 @@ udp_enumerate()
       
     case STD_GET_CONFIGURATION:                                   
 
-      udp_send_control((U8 *) &(currentConfig), sizeof(currentConfig), 0);
+      udp_send_control((U8 *) &(currentConfig), MIN(sizeof(currentConfig), len));
       break;
 
     case STD_GET_STATUS_ZERO:
     
       status = 0x01; 
-      udp_send_control((U8 *) &status, sizeof(status), 0);
+      udp_send_control((U8 *) &status, MIN(sizeof(status), len));
       break;
       
     case STD_GET_STATUS_INTERFACE:
 
       status = 0;
-      udp_send_control((U8 *) &status, sizeof(status), 0);
+      udp_send_control((U8 *) &status, MIN(sizeof(status), len));
       break;
 
     case STD_GET_STATUS_ENDPOINT:
@@ -541,12 +543,12 @@ udp_enumerate()
             status = ((*AT91C_UDP_CSR3) & AT91C_UDP_EPEDS) ? 0 : 1;
             break;
         }
-        udp_send_control((U8 *) &status, sizeof(status), 0);
+        udp_send_control((U8 *) &status, MIN(sizeof(status), len));
       }
       else if (((*AT91C_UDP_GLBSTATE) & AT91C_UDP_FADDEN) && (ind == 0))
       {
         status = ((*AT91C_UDP_CSR0) & AT91C_UDP_EPEDS) ? 0 : 1;
-        udp_send_control((U8 *) &status, sizeof(status), 0);
+        udp_send_control((U8 *) &status, MIN(sizeof(status), len));
       }
       else udp_send_stall();                                // Illegal request :-(
 
@@ -563,7 +565,7 @@ udp_enumerate()
       udp_send_null();
       break;
     case VENDOR_GET_DESCRIPTOR:
-      udp_send_control((U8 *)named, named[0], 0);
+      udp_send_control((U8 *)named, MIN(named[0], len));
       break;
  
     case STD_SET_FEATURE_INTERFACE:
