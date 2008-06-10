@@ -3,7 +3,7 @@ package lejos.nxt;
 /** 
  *Abstraction for an RCX temperature sensor. 
  * 
- * @author Søren Hilmer
+ * @author Soren Hilmer
  */
 public class RCXTemperatureSensor
  implements SensorConstants {
