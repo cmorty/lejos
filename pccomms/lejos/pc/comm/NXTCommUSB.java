@@ -222,7 +222,7 @@ public abstract class NXTCommUSB implements NXTComm {
         {
             // not valid so search for it.
             String addr = nxtInfo.btDeviceAddress;
-            if (addr == null || addr.isEmpty())
+            if (addr == null || addr.length() == 0)
                 return false;
             NXTInfo[] nxts = search(null, NXTCommFactory.USB);
             nxtInfo = null;
