@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="BTReceive/|BTSend/|BumperCar/|ColorDetector/|CompassTest/|ExceptionTest/|HelloWorld/|Line/|Listen/|MemoryTest/|PerformanceTest/|PilotTester/|SonicTest/|SpeedTest/|Subsumption1/|Subsumption2/|TiltTest/|Tune/|USBReceive/|USBSend/|View/|GraphicsSample/|SocketTest/|TimeTest/|SocketServer/|BTConnectTest/|SoundSample/|LCDUI/|DLTest/|RCXMMTest/|RCXLinkTest/|LLCTest/|RCXRemote/|RCXRemoteMotor/|SerialTest/|RCXEmulator/|LLCMonitor/|RCXPortTest/|SignalTest/|BlueStats/|RemoteMotor/|MonitorTest/|NXTCamTest/|RemoteNXTTest/|I2CDevices/|BTGPS/|RCXMuxTest/|FileTest/|LatteboxTest/|BTKeyboard/|KeyboardTest/|PFTest/|MatrixTest/|RCXTempTest/" kind="src" path=""/>
+	<classpathentry excluding="BTConnectTest/|BTGPS/|BTKeyboard/|BTReceive/|BlueStats/|BumperCar/|ColorDetector/|CompassTest/|DLTest/|ExceptionTest/|FileTest/|GraphicsSample/|HelloWorld/|I2CDevices/|KeyboardTest/|LCDUI/|LLCMonitor/|LLCTest/|LatteboxTest/|Line/|Listen/|MatrixTest/|MemoryTest/|MonitorTest/|NXTCamTest/|PFTest/|PerformanceTest/|PilotTester/|RCXEmulator/|RCXLinkTest/|RCXMMTest/|RCXMuxTest/|RCXPortTest/|RCXRemote/|RCXRemoteMotor/|RCXTempTest/|RemoteMotor/|RemoteNXTTest/|SerialTest/|SignalTest/|SocketTest/|SonicTest/|SoundSample/|SpeedTest/|Subsumption1/|Subsumption2/|TiltTest/|TimeTest/|Tune/|USBReceive/|View/" kind="src" path=""/>
 	<classpathentry kind="src" path="RCXTempTest"/>
 	<classpathentry kind="src" path="MatrixTest"/>
 	<classpathentry kind="src" path="LatteboxTest"/>
@@ -10,10 +10,8 @@
 	<classpathentry kind="src" path="LCDUI"/>
 	<classpathentry kind="src" path="SoundSample"/>
 	<classpathentry kind="src" path="GraphicsSample"/>
-	<classpathentry kind="src" path="USBSend"/>
 	<classpathentry kind="src" path="USBReceive"/>
 	<classpathentry kind="src" path="BTReceive"/>
-	<classpathentry kind="src" path="BTSend"/>
 	<classpathentry kind="src" path="ColorDetector"/>
 	<classpathentry kind="src" path="PilotTester"/>
 	<classpathentry kind="src" path="SpeedTest"/>
@@ -33,7 +31,6 @@
 	<classpathentry kind="src" path="HelloWorld"/>
 	<classpathentry kind="src" path="SocketTest"/>
 	<classpathentry kind="src" path="TimeTest"/>
-	<classpathentry kind="src" path="SocketServer"/>
 	<classpathentry kind="src" path="BTConnectTest"/>
 	<classpathentry kind="src" path="RCXMMTest"/>
 	<classpathentry kind="src" path="RCXRemote"/>
@@ -52,7 +49,5 @@
 	<classpathentry kind="src" path="PFTest"/>
 	<classpathentry kind="lib" path="/classes/lib/classes.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="/pccomms/3rdparty/lib/bluecove.jar"/>
-	<classpathentry kind="lib" path="/pccomms/lib/pccomm.jar"/>
 	<classpathentry kind="output" path=""/>
 </classpath>
