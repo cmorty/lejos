@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="USBSend"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="/pccomms/lib/pccomm.jar"/>
+	<classpathentry kind="src" path="SocketServer"/>
+	<classpathentry kind="src" path="BTSend"/>
+	<classpathentry kind="lib" path="/pccomms/3rdparty/lib/bluecove.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
