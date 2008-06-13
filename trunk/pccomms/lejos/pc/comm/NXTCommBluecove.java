@@ -16,7 +16,8 @@ import java.util.Enumeration;
  *
  */
 public class NXTCommBluecove implements NXTComm, DiscoveryListener {
-	private static Vector devices, nxtInfos;
+	private static Vector<RemoteDevice> devices;
+    private static Vector<NXTInfo> nxtInfos;
 	private StreamConnection con;
 	private OutputStream os;
 	private InputStream is;
@@ -24,8 +25,8 @@ public class NXTCommBluecove implements NXTComm, DiscoveryListener {
 
 	public NXTInfo[] search(String name, int protocol) throws NXTCommException {
 
-		devices = new Vector();
-		nxtInfos = new Vector();
+		devices = new Vector<RemoteDevice>();
+		nxtInfos = new Vector<NXTInfo>();
 
 		if ((protocol & NXTCommFactory.BLUETOOTH) == 0)
 			return new NXTInfo[0];
@@ -103,8 +104,9 @@ public class NXTCommBluecove implements NXTComm, DiscoveryListener {
 		return nxts;
 	}
 
-	public boolean open(NXTInfo nxt) throws NXTCommException {
+	public boolean open(NXTInfo nxt, int mode) throws NXTCommException {
 
+        if (mode == RAW) throw new NXTCommException("RAW mode not implemented");
 		// Construct URL if not present
 
 		if (nxt.btResourceString == null || nxt.btResourceString.length() < 5
@@ -123,6 +125,11 @@ public class NXTCommBluecove implements NXTComm, DiscoveryListener {
 			throw new NXTCommException("Open of " + nxt.name + " failed");
 		}
 	}
+
+    public boolean open(NXTInfo nxt) throws NXTCommException
+    {
+        return open(nxt, PACKET);
+    }
 
 	public void close() throws IOException {
 		if (os != null)

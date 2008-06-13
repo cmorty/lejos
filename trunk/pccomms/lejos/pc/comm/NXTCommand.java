@@ -82,7 +82,7 @@ public class NXTCommand implements NXTProtocol {
 	}
 
 	public boolean open(NXTInfo nxt) throws NXTCommException {
-		return open = nxtComm.open(nxt);
+		return open = nxtComm.open(nxt, NXTComm.LCP);
 	}
 
 	public void setVerify(boolean verify) {

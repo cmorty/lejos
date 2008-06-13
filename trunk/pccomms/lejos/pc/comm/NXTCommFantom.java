@@ -23,7 +23,7 @@ import java.util.Vector;
  *
  */
 public class NXTCommFantom extends NXTCommUSB {
-    private static final int MIN_TIMEOUT = 60000;
+    private static final int MIN_TIMEOUT = 5000;
     private static final int MAX_ERRORS = 10;
 	
 	public native String[] jfantom_find();
@@ -34,28 +34,9 @@ public class NXTCommFantom extends NXTCommUSB {
 
 	Vector<NXTInfo> devFind()
     {
-		String[] nxtNames = jfantom_find();
-        if (nxtNames == null) return new Vector<NXTInfo>();
-		Vector<NXTInfo> nxtInfos = new Vector<NXTInfo>();
-        for(int idx = 0; idx < nxtNames.length; idx++)
-        {
-            String addr = nxtNames[idx];
-            NXTInfo info = new NXTInfo();
-            // Use the default way to obtain the name
-            info.name = null;
-            info.btResourceString = addr;
-            info.protocol = NXTCommFactory.USB;
-            nxtInfos.addElement(info);
-            // Extract the serial number from the device string
-            int endSerial = addr.lastIndexOf("::");
-            if (endSerial > 0)
-            {
-                int startSerial = addr.lastIndexOf("::", endSerial-2);
-                if (startSerial >= 0)
-                    info.btDeviceAddress = addr.substring(startSerial+2, endSerial);
-            }
-        }
-        return nxtInfos;
+        // Address is in standard format so we can use the helper function
+        // to do all the hard work.
+		return find(jfantom_find());
     }
     
 	long devOpen(NXTInfo nxt)

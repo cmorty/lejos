@@ -63,10 +63,11 @@ public class NXTCommBluez implements NXTComm {
 		sk = -1;
 	}
 
-	public boolean open(NXTInfo nxt) {
+	public boolean open(NXTInfo nxt, int mode) throws NXTCommException {
 		lenRemaining = 0;
 		savedData = null;
-		
+
+        if (mode == RAW) throw new NXTCommException("RAW mode not implemented");
 		try {
 			open(BDADDR_ANY, nxt.btDeviceAddress, 1);
 			return true;
@@ -76,6 +77,12 @@ public class NXTCommBluez implements NXTComm {
 		}
 		
 	}
+    
+    public boolean open(NXTInfo nxt) throws NXTCommException
+    {
+        return open(nxt, PACKET);
+    }
+
 
 	public byte [] sendRequest(byte[] request, int replyLen) throws IOException {
 		

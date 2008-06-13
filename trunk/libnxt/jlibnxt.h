@@ -12,18 +12,18 @@ extern "C" {
 /*
  * Class:     lejos_pc_comm_NXTCommLibnxt
  * Method:    jlibnxt_find
- * Signature: (I)J
+ * Signature: ()[Ljava/lang/String;
  */
-JNIEXPORT jlong JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1find
-  (JNIEnv *, jobject, jint);
+JNIEXPORT jobjectArray JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1find
+  (JNIEnv *, jobject);
 
 /*
  * Class:     lejos_pc_comm_NXTCommLibnxt
  * Method:    jlibnxt_open
- * Signature: (J)I
+ * Signature: (Ljava/lang/String;)J
  */
 JNIEXPORT jlong JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1open
-  (JNIEnv *, jobject, jlong);
+  (JNIEnv *, jobject, jstring);
 
 /*
  * Class:     lejos_pc_comm_NXTCommLibnxt
@@ -48,14 +48,6 @@ JNIEXPORT jint JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1send_1data
  */
 JNIEXPORT jint JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1read_1data
   (JNIEnv *, jobject, jlong, jbyteArray, jint, jint);
-
-/*
- * Class:     lejos_pc_comm_NXTCommLibnxt
- * Method:    jlibnxt_serial
- * Signature: (J)Ljava/lang/String;
- */
-JNIEXPORT jstring JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1serial
-  (JNIEnv *, jobject, jlong);
 
 #ifdef __cplusplus
 }

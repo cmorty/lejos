@@ -27,10 +27,12 @@
 
 struct nxt_t;
 typedef struct nxt_t nxt_t;
+#define MAX_WRITE 64
+#define MAX_SERNO MAX_WRITE
 
 nxt_error_t nxt_init(nxt_t **nxt);
 nxt_error_t nxt_find(nxt_t *nxt);
-long nxt_find_nth(int idx);
+long nxt_find_nth(int idx, char *address);
 nxt_error_t nxt_open(nxt_t *nxt);
 nxt_error_t nxt_close(nxt_t *nxt);
 long nxt_open0(long nxt);

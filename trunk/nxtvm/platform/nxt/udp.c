@@ -10,13 +10,9 @@
  * perform all of the configuration and enumeration here.
  * The leJOS implementation uses the standard Lego identifiers (and so can
  * be used from the PC side applications that work with the standard Lego
- * firmware. We have however extended the command set with a single vendor
- * feature. This is used to indicate the beginning and end of a stram session.
- * The higher level software uses this along with a convention of using a
- * zero length packet as an EOF marker to provide a simple stream style
- * I/O model.
+ * firmware).
  */
-
+#include "types.h"
 #include "mytypes.h"
 #include "udp.h"
 #include "interrupts.h"
@@ -61,6 +57,10 @@
 }
 
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
+// USB States
+#define USB_READY       0
+#define USB_CONFIGURED  1
+#define USB_SUSPENDED   2
 
 #define USB_DISABLED    0x8000
 #define USB_NEEDRESET   0x4000
@@ -75,6 +75,7 @@ static int configured = (USB_DISABLED|USB_NEEDRESET);
 static int newAddress;
 static U8 *outPtr;
 static U32 outCnt;
+static U8 delayedEnable = 0;
 static U32 intCnt = 0;
 // Device descriptor
 static const U8 dd[] = {
@@ -201,10 +202,11 @@ reset()
   // setup config state.
   currentConfig = 0;
   currentRxBank = AT91C_UDP_RX_DATA_BK0;
-  configured = 0;
+  configured = USB_READY;
   currentFeatures = 0;
   newAddress = -1;
   outCnt = 0;
+  delayedEnable = 0;
 }
  
 
@@ -257,11 +259,11 @@ udp_read(U8* buf, int off, int len)
    */
   int packetSize = 0, i;
   
-  if (configured != 1) return -1;
+  if (configured != USB_CONFIGURED) return -1;
   if (len == 0) return 0;
   if ((*AT91C_UDP_CSR1) & currentRxBank) // data to read
   {
-    packetSize = (*AT91C_UDP_CSR1) >> 16;
+    packetSize = ((*AT91C_UDP_CSR1) & AT91C_UDP_RXBYTECNT) >> 16;
     if (packetSize > len) packetSize = len;
      
     for(i=0;i<packetSize;i++) buf[off+i] = *AT91C_UDP_FDR1;
@@ -272,6 +274,15 @@ udp_read(U8* buf, int off, int len)
       currentRxBank = AT91C_UDP_RX_DATA_BK1;
     } else {
       currentRxBank = AT91C_UDP_RX_DATA_BK0;
+    }
+    // We may have an enable/reset pending do it now if there is no data
+    // in the buffers.
+    if (delayedEnable && ((*AT91C_UDP_CSR) & AT91C_UDP_RXBYTECNT) == 0)
+    {
+      delayedEnable = 0;
+      (*AT91C_UDP_CSR1) = (AT91C_UDP_EPEDS | AT91C_UDP_EPTYPE_BULK_OUT);
+      (*AT91C_UDP_RSTEP) |= AT91C_UDP_EP1;
+      (*AT91C_UDP_RSTEP) &= ~AT91C_UDP_EP1;
     }
     // use special case for a real zero length packet so we can use it to
     // indicate EOF
@@ -289,7 +300,7 @@ udp_write(U8* buf, int off, int len)
    */
   int i;
   
-  if (configured != 1) return -1;
+  if (configured != USB_CONFIGURED) return -1;
   // Can we write ?
   if ((*AT91C_UDP_CSR2 & AT91C_UDP_TXPKTRDY) != 0) return 0;
   // Limit to max transfer size
@@ -398,9 +409,10 @@ udp_enumerate()
   UDP_CLEAREPFLAGS(*AT91C_UDP_CSR0, AT91C_UDP_RXSETUP);
 
   req = br << 8 | bt;
-  
-  /*if (1) {
-      display_goto_xy(0,1);
+ /* 
+  if (1) {
+
+    display_goto_xy(0,1);
     display_string(hex4(req));
     display_goto_xy(4,1);
     display_string(hex4(val));
@@ -449,11 +461,11 @@ udp_enumerate()
         
     case STD_SET_CONFIGURATION:
 
-      configured = 1;
+      configured = (val ? USB_CONFIGURED : USB_READY);
       currentConfig = val;
       udp_send_null(); 
       *AT91C_UDP_GLBSTATE  = (val) ? AT91C_UDP_CONFG : AT91C_UDP_FADDEN;
-
+      delayedEnable = 0;
       *AT91C_UDP_CSR1 = (val) ? (AT91C_UDP_EPEDS | AT91C_UDP_EPTYPE_BULK_OUT) : 0; 
       *AT91C_UDP_CSR2 = (val) ? (AT91C_UDP_EPEDS | AT91C_UDP_EPTYPE_BULK_IN)  : 0;
       *AT91C_UDP_CSR3 = (val) ? (AT91C_UDP_EPTYPE_INT_IN)   : 0;      
@@ -470,6 +482,7 @@ udp_enumerate()
         {
           case 1:   
             (*AT91C_UDP_CSR1) = 0;
+            delayedEnable = 0;
             break;
           case 2:   
             (*AT91C_UDP_CSR2) = 0;
@@ -487,11 +500,27 @@ udp_enumerate()
       ind &= 0x0F;
 
       if ((val == 0) && ind && (ind <= 3))
-      {                                             
+      {
+        // Enable and reset the end point                                             
         if (ind == 1) {
-          (*AT91C_UDP_CSR1) = (AT91C_UDP_EPEDS | AT91C_UDP_EPTYPE_BULK_OUT); 
-          (*AT91C_UDP_RSTEP) |= AT91C_UDP_EP1;
-          (*AT91C_UDP_RSTEP) &= ~AT91C_UDP_EP1;
+          // We need to take special care for the input end point because
+          // we may have data in the hardware buffer. If we do then the reset
+          // will cause this to be lost. To prevent this loss we delay the
+          // enable until the data has been read.
+          if (((*AT91C_UDP_CSR1) & AT91C_UDP_RXBYTECNT) == 0)
+          {
+            (*AT91C_UDP_CSR1) = (AT91C_UDP_EPEDS | AT91C_UDP_EPTYPE_BULK_OUT); 
+            (*AT91C_UDP_RSTEP) |= AT91C_UDP_EP1;
+            (*AT91C_UDP_RSTEP) &= ~AT91C_UDP_EP1;
+            delayedEnable = 0;
+          }
+          else
+          {
+            // Use delayed anable. We also force the ep disabled to prevent
+            // any I/O using the wrong data toggle.
+            (*AT91C_UDP_CSR1) &= ~AT91C_UDP_EPEDS;
+            delayedEnable = 1;
+          }
         } else if (ind == 2) {
           (*AT91C_UDP_CSR2) = (AT91C_UDP_EPEDS | AT91C_UDP_EPTYPE_BULK_IN);
           (*AT91C_UDP_RSTEP) |= AT91C_UDP_EP2;
@@ -619,8 +648,8 @@ display_string(hex4(intCnt++));*/
     //display_goto_xy(0,2);
     //display_string("Suspend      ");
     //display_update();
-    if (configured == 1) configured = 2;
-    else configured = 0;
+    if (configured == USB_CONFIGURED) configured = USB_SUSPENDED;
+    else configured = USB_READY;
     *AT91C_UDP_ICR = SUSPEND_INT;
     currentRxBank = AT91C_UDP_RX_DATA_BK0;
   }
@@ -629,8 +658,8 @@ display_string(hex4(intCnt++));*/
     //display_goto_xy(0,2);
     //display_string("Resume     ");
     //display_update();
-    if (configured == 2) configured = 1;
-    else configured = 0;
+    if (configured == USB_SUSPENDED) configured = USB_CONFIGURED;
+    else configured = USB_READY;
     *AT91C_UDP_ICR = WAKEUP;
     *AT91C_UDP_ICR = SUSPEND_RESUME;
   }
@@ -657,7 +686,7 @@ udp_status()
    * connection.
    */
   int ret = (configured << 28) | (currentConfig << 24) | (currentFeatures & 0xffff);
-  if (configured == 1)
+  if (configured == USB_CONFIGURED)
   {
     if ((*AT91C_UDP_CSR1) & currentRxBank) ret |= USB_READABLE;
     if ((*AT91C_UDP_CSR2 & AT91C_UDP_TXPKTRDY) == 0) ret |= USB_WRITEABLE;

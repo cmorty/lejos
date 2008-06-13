@@ -48,7 +48,6 @@ public class NXTInfo {
 	public NXTInfo(String name, String address) {
 		this.name = name;
 		this.btDeviceAddress = address;
-		this.btResourceString = name + "::" + address;
 		this.protocol = NXTCommFactory.BLUETOOTH;
 	}
 }
