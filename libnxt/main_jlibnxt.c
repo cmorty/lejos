@@ -27,16 +27,51 @@
 #include <errno.h>
 #include "lowlevel.h"
 #include "jlibnxt.h"
+#define MAX_DEVS 64
 
-#define MAX_WRITE 64
-#define MAX_SERNO 26
+// On windows ETIMEDOUT is not defined. The windows driver uses 116 as the value
+#ifndef ETIMEDOUT
+#define ETIMEDOUT 116
+#endif
 
-JNIEXPORT jlong JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1find(JNIEnv *env, jobject obj, jint idx) {
-    return (jlong) nxt_find_nth((int)idx);
+JNIEXPORT jobjectArray JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1find
+  (JNIEnv *env, jobject obj)
+{
+  jstring names[MAX_DEVS];
+  int cnt = 0;
+  char name[MAX_SERNO];
+  int i = 0;
+  while(nxt_find_nth(cnt, name) != 0)
+  {
+    names[cnt++] = (*env)->NewStringUTF(env, name) ;
+  }
+  if (cnt <= 0) return NULL;
+
+  // Now copy names in a java array
+  jclass sclass = (*env)->FindClass(env, "java/lang/String");
+  jobjectArray arr = (*env)->NewObjectArray(env, cnt, sclass, NULL);
+  for(i = 0; i < cnt; i++)
+    (*env)->SetObjectArrayElement(env, arr, i, names[i]);
+   
+  return arr;
 }
 
-JNIEXPORT jlong JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1open(JNIEnv *env, jobject obj, jlong nxt)  {
-  return (jlong) nxt_open0( (long) nxt); 
+JNIEXPORT jlong JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1open
+  (JNIEnv *env, jobject obj, jstring jnxt)
+{
+  const char* nxt = (*env)->GetStringUTFChars(env, jnxt, 0);
+  long dev;
+  char name[MAX_SERNO];
+  int cnt = 0;
+  while((dev = nxt_find_nth(cnt, name)) != 0)
+  {
+    if (strcmp(name, nxt) == 0)
+    {
+      return (jlong) nxt_open0( dev ); 
+    }
+    cnt++;
+  }
+  return (jlong) 0;
 }
 
 JNIEXPORT void JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1close(JNIEnv *env, jobject obj, jlong nxt)  {
@@ -47,9 +82,10 @@ JNIEXPORT jint JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1send_1data(JNIE
   int ret;
   char *jb = (char *) (*env)->GetByteArrayElements(env, data, 0);  
   if (len > MAX_WRITE) len = MAX_WRITE;
-
   ret = nxt_write_buf((long) nxt, jb+offset, len);
   (*env)->ReleaseByteArrayElements(env, data, (jbyte *) jb, 0);
+   // Assume any error is a timeout!!! Need to fix this!
+   if (ret < 0) ret = 0;
   return ret;
 }
 
@@ -59,19 +95,7 @@ JNIEXPORT jint JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1read_1data(JNIE
 
    read_len = nxt_read_buf((long)nxt, jb + offset, len);
    (*env)->ReleaseByteArrayElements(env, jdata, (jbyte *)jb, 0);
+   if (read_len == -ETIMEDOUT) read_len = 0;
    return read_len;
-}
-
-
-JNIEXPORT jstring JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1serial(JNIEnv *env, jobject obj, jlong nxt)
-{
-  char serno[MAX_SERNO];
-  int len = nxt_serial_no((long)nxt, serno, sizeof(serno));
-  if (len <= 0) return NULL;
-  // Length of the string descriptor is in the first byte, the 2nd byte is 
-  // a type field (always 3) and the length contains these two bytes.
-  len = (serno[0] - 2)/2;
-  if (len <= 0) return NULL;
-  return (*env)->NewString(env, (jchar *)(serno+2), len);
 }
 

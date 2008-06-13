@@ -30,7 +30,6 @@ public class NXTCommFactory {
        	if (home == null) {
        		home = System.getenv("NXJ_HOME");
        	}
-       	
        	if (home != null) {
        		propFile = home + SEP + "bin" + SEP + "nxj.properties";
        	}

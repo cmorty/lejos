@@ -9,6 +9,12 @@ import java.io.*;
  *
  */
 public interface NXTComm {
+    public static final int PACKET = 0;
+    public static final int LCP = 1;
+    public static final int RAW = 2;
+            
+            
+            
 	
 	/**
 	 * Search for NXTs over USB, Bluetooth or both
@@ -18,7 +24,17 @@ public interface NXTComm {
 	 * @throws NXTCommException
 	 */
 	public NXTInfo[] search(String name, int protocol) throws NXTCommException;
-	
+
+	/**
+	 * Connect to a NXT found by a search or created from mname and address.
+	 * 
+	 * @param nxt the NXTInfo object for the NXT
+     * @param mode the mode for the connection
+	 * @return true iff the open succeeded
+	 * @throws NXTCommException
+	 */
+	public boolean open(NXTInfo nxt, int mode) throws NXTCommException;
+
 	/**
 	 * Connect to a NXT found by a search or created from mname and address.
 	 * 

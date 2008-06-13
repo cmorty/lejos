@@ -29,6 +29,9 @@ public abstract class NXTCommUSB implements NXTComm {
     private boolean packetMode = false;
     private boolean EOF = false;
     static final int USB_BUFSZ = 64;
+    static final String VENDOR_ATMEL = "0x03EB";
+    static final String PRODUCT_SAMBA = "0x6124";
+    
     private byte[] inBuf = new byte[USB_BUFSZ];
     private byte[] outBuf = new byte[USB_BUFSZ];
 	
@@ -84,6 +87,50 @@ public abstract class NXTCommUSB implements NXTComm {
      * @return True if ok, False otherwise.
      */
     abstract boolean devIsValid(NXTInfo nxt);
+    
+    /**
+     * Helper function to return the nth string that is part of a standard
+     * double colon separated USB address. Note that first entry in a string is
+     * entry 1 (not 0), -ve values may be used to access the address in reverse
+     * so that the last entry is entry -1.
+     * @param addr The adrress containing the string
+     * @param loc The location of the entry.
+     * @return The string at location loc or null if not found.
+     */
+    String getAddressString(String addr, int loc)
+    {
+        if (addr == null || addr.isEmpty()) return null;
+        int start, end;
+        if (loc < 0)
+        {
+            end = addr.length();
+            start = end;
+            for(;;)
+            {
+                start = addr.lastIndexOf("::", end - 2) + 2;
+                if (start < 2) start = 0;
+                if (++loc >= 0) break;
+                if (start <= 0) return null;
+                end = start - 2;
+            }
+        }
+        else
+        {
+            start = 0;
+            end = 0;
+            for(;;)
+            {
+               end = addr.indexOf("::", start);
+               if (end < 0) end = addr.length();
+               if (start > end) return null;
+               if (--loc <= 0) break;
+               if (end >= addr.length()) return null;
+               start = end+2;
+            }
+        }
+        if (start > end) return null;
+        return addr.substring(start, end);
+    }
 	
     /**
      * Helper function. Open the specified nxt, get its name and close it.
@@ -118,12 +165,13 @@ public abstract class NXTCommUSB implements NXTComm {
     /**
      * Helper function, reads a single packet from the USB device. Handles
      * packet headers and timeouts. Blocks until data is available.
+     * @param block true if request should block rather than timeout
      * @return date or null if at EOF
      */
-    private byte[] readPacket() throws IOException
+    private byte[] readPacket(boolean block) throws IOException
     {
         int len;
-        while((len=devRead(nxtInfo.nxtPtr, inBuf, 0, inBuf.length)) == 0)
+        while((len=devRead(nxtInfo.nxtPtr, inBuf, 0, inBuf.length)) == 0 && block)
             {}
         if (len < 0) throw new IOException("Error in read");
         int offset = 0;
@@ -133,6 +181,7 @@ public abstract class NXTCommUSB implements NXTComm {
             if (inBuf[0] == 0) return null;
             offset = 1;
         }
+        if (len == 0) return new byte[0];
         byte [] ret = new byte[len - offset];
         System.arraycopy(inBuf, offset, ret, 0, len - offset);
         return ret;
@@ -144,10 +193,11 @@ public abstract class NXTCommUSB implements NXTComm {
      * @param data
      * @param offset
      * @param len
+     * @param block true if requests should block rather than timeout
      * @return number of bytes actually written
      * @throws java.io.IOException
      */
-    private int writePacket(byte[] data, int offset, int len) throws IOException
+    private int writePacket(byte[] data, int offset, int len, boolean block) throws IOException
     {
         byte [] out = null;
         if (packetMode)
@@ -162,7 +212,7 @@ public abstract class NXTCommUSB implements NXTComm {
         else
             out = data;
         int ret;
-        while ((ret = devWrite(nxtInfo.nxtPtr, out, offset, len)) == 0)
+        while ((ret = devWrite(nxtInfo.nxtPtr, out, offset, len)) == 0 && block)
             {}
         if (ret < 0) throw new IOException("Error in write");
         return ret;
@@ -179,6 +229,36 @@ public abstract class NXTCommUSB implements NXTComm {
         while(devRead(nxtInfo.nxtPtr, inBuf, 0, inBuf.length) > 1)
             {}
     }
+    
+    /**
+     * Helper function, convert an array of names into an NXTInfo vector. This
+     * function takes an array of standard Lego USB string adresses and converts
+     * them into an nxtVector. It handles the both NXT and Samba type devices.
+     * @param nxtNames an array of device address strings.
+     * @return
+     */
+	Vector<NXTInfo> find(String[] nxtNames)
+    {
+        if (nxtNames == null) return new Vector<NXTInfo>();
+		Vector<NXTInfo> nxtInfos = new Vector<NXTInfo>();
+        for(int idx = 0; idx < nxtNames.length; idx++)
+        {
+            String addr = nxtNames[idx];
+            NXTInfo info = new NXTInfo();
+            // Use the default way to obtain the name
+            info.name = null;
+            info.btResourceString = addr;
+            info.protocol = NXTCommFactory.USB;
+            // Look to see if this is a Samba device
+            if (getAddressString(addr, 2).equals(VENDOR_ATMEL) && 
+                    getAddressString(addr, 3).equals(PRODUCT_SAMBA))
+                info.name = "%%NXT-SAMBA%%";
+            info.btDeviceAddress = getAddressString(addr, -2);
+            nxtInfos.addElement(info);
+        }
+        return nxtInfos;
+    }
+
 
     /**
      * Locate availabe nxt devices and return them. Optionally filter the list
@@ -195,6 +275,8 @@ public abstract class NXTCommUSB implements NXTComm {
         while (devs.hasNext())
         {
             NXTInfo nxt = devs.next();
+            if (nxt.btDeviceAddress == null)
+                nxt.btDeviceAddress = "000000000000";
             if (nxt.name == null)
             {
                 nxt.name = getName(nxt);
@@ -214,12 +296,14 @@ public abstract class NXTCommUSB implements NXTComm {
     /**
      * Open a connection to the specified device, and make it available for use.
      * @param nxtInfo The device to connect to.
+     * @param mode the I/O mode to be used on this connection.
      * @return True if the device is now open, Flase otherwise.
      */
-	public boolean open(NXTInfo nxtInfo) {
+	public boolean open(NXTInfo nxtInfo, int mode) {
         // Is the info vaild enough to connect directly?
         if (!devIsValid(nxtInfo))
         {
+            System.out.println("device is not valid");
             // not valid so search for it.
             String addr = nxtInfo.btDeviceAddress;
             if (addr == null || addr.length() == 0)
@@ -237,6 +321,7 @@ public abstract class NXTCommUSB implements NXTComm {
 		this.nxtInfo = nxtInfo;
 		this.nxtInfo.nxtPtr = devOpen(nxtInfo);
         if (this.nxtInfo.nxtPtr == 0) return false;
+        if (mode == RAW) return true;
         // Now try and switch to packet mode for normal read/writes
 		byte[] request = { NXTProtocol.SYSTEM_COMMAND_REPLY, NXTProtocol.NXJ_PACKET_MODE };
         byte [] ret = null;
@@ -254,6 +339,11 @@ public abstract class NXTCommUSB implements NXTComm {
 		return true;
 	}
 	
+    public boolean open(NXTInfo nxt) throws NXTCommException
+    {
+        return open(nxt, PACKET);
+    }
+
     /**
      * Close the current device.
      */
@@ -279,20 +369,29 @@ public abstract class NXTCommUSB implements NXTComm {
         if (replyLen == 0) return new byte [0];
         byte[] ret = new byte[replyLen];
         int len = devRead(nxtInfo.nxtPtr, ret, 0, replyLen);
-        if (len <= 0) throw new IOException("Faild to read reply");
+        if (len <= 0) throw new IOException("Failed to read reply");
         return ret; 
     }
 	
+    /**
+     * Read bytes from the device
+     * @param block true if requests should block rather than timeout
+     * @return An array of bytes read from the device. null if at EOF
+     * @throws java.io.IOException
+     */
+	byte [] read(boolean timeout) throws IOException {
+        if (EOF) return null;
+        byte [] ret = readPacket(timeout);
+        if (packetMode && ret == null) EOF = true;
+        return ret;
+	}
     /**
      * Read bytes from the device
      * @return An array of bytes read from the device. null if at EOF
      * @throws java.io.IOException
      */
 	public byte [] read() throws IOException {
-        if (EOF) return null;
-        byte [] ret = readPacket();
-        if (packetMode && ret == null) EOF = true;
-        return ret;
+        return read(true);
 	}
 	
     /**
@@ -307,15 +406,28 @@ public abstract class NXTCommUSB implements NXTComm {
     /**
      * Write bytes to the device.
      * @param data Data to be written.
+     * @param block true if request should block rather than timeout
      * @throws java.io.IOException
      */
-	public void write(byte [] data) throws IOException {
+	int write(byte [] data, boolean block) throws IOException {
         int total = data.length;
         int written = 0;
         while( written < total)
         {
-            written += writePacket(data, written, total-written);
+            int len = writePacket(data, written, total-written, block);
+            if (len <= 0) return written;
+            written += len;
         }
+        return written;
+	}
+    
+    /**
+     * Write bytes to the device.
+     * @param data Data to be written.
+     * @throws java.io.IOException
+     */
+	public void write(byte [] data) throws IOException {
+        write(data, true);
 	}
 	
 	public OutputStream getOutputStream() {
