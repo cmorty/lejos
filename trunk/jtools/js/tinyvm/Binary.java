@@ -621,8 +621,12 @@ public class Binary
 		for(int j = 0; j < cnt; j++)
 		{
 			MethodRecord mr = (MethodRecord) (rt.get(j));
-			monitor.log("Method " + methodNo + ": Class: " + mr.iClassRecord.getName() + " Signature: " + 
-					     ((Signature)iSignatures.elementAt(mr.iSignatureId)).getImage() + " PC " + mr.getCodeStart());
+            if ((mr.iFlags & TinyVMConstants.M_NATIVE) == 0)
+                monitor.log("Method " + methodNo + ": Class: " + mr.iClassRecord.getName() + " Signature: " + 
+                             ((Signature)iSignatures.elementAt(mr.iSignatureId)).getImage() + " PC " + mr.getCodeStart());
+            else
+                monitor.log("Method " + methodNo + ": Class: " + mr.iClassRecord.getName() + " Signature: " + 
+                             ((Signature)iSignatures.elementAt(mr.iSignatureId)).getImage() + " Native id " + mr.iSignatureId);
 			methodNo++;
 			
 		}
