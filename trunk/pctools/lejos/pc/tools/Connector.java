@@ -28,28 +28,26 @@ public class Connector
     */
    public boolean connectTo(String NXT, boolean useUSB)
    {
-      NXTComm nxtComm = null;;
+      NXTComm nxtComm = null;
       
       if (useUSB)  
       {
          try { nxtComm = NXTCommFactory.createNXTComm(NXTCommFactory.USB);}
          catch (Exception e ){}
          
-         NXTInfo[] nxtInfo = null;
-         
          try {
-             nxtInfo = nxtComm.search(null, NXTCommFactory.USB);
+             _nxtInfo = nxtComm.search(null, NXTCommFactory.USB);
          } catch (NXTCommException e) {
              System.out.println("Exception in search");
          }
          
-         if (nxtInfo.length == 0) {
+         if (_nxtInfo.length == 0) {
              System.out.println("No NXT Found");
              System.exit(1);
          }
 
          try {
-             nxtComm.open(nxtInfo[0]);
+             nxtComm.open(_nxtInfo[0]);
          } catch (NXTCommException e) {
              System.out.println("Exception in open");
          }
