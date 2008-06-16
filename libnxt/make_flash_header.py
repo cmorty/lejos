@@ -27,11 +27,16 @@ def char_by_char(f):
         yield d
 
 data = []
+java_data = []
 for c in char_by_char(fwbin):
     data.append("0x%s" % c.encode('hex'))
+    java_data.append("(byte)0x%s" % c.encode('hex'))
 
 for i in range(0, len(data), 12):
     data[i] = "\n" + data[i]
+
+for i in range(0, len(data), 8):
+    java_data[i] = "\n" + java_data[i]
 
 data_str = ', '.join(data)
 len_data = "0x%X" % len(data)
@@ -48,4 +53,15 @@ template = template.replace('___FLASH_LEN___', len_data)
 # Output the done header
 out = file('flash_routine.h', 'w')
 out.write(template)
+out.close()
+
+# Now create the java version
+data_str = ', '.join(java_data)
+# C
+out = file('../pccomms/lejos/pc/comm/FlaswWrite.java', 'w')
+out.write('package lejos.pc.comm;\n');
+out.write('/**\n  * Machine-generated file. Do not modify.\n**/\n\n')
+out.write('interface FlashWrite {\n  static final byte[] CODE = {')
+out.write(data_str)
+out.write('\n  };\n}\n')
 out.close()

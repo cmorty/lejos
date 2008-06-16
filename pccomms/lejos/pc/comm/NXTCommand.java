@@ -318,6 +318,13 @@ public class NXTCommand implements NXTProtocol {
 		nxtComm.close();
 	}
 
+    public void boot() throws IOException {
+        byte[] request = {SYSTEM_COMMAND_NOREPLY, BOOT};
+        nxtComm.sendRequest(request, 0);
+        // Connection cannot be used after this command so we close it
+        nxtComm.close();
+        open = false;
+    }
 	public byte writeFile(byte handle, byte[] data) throws IOException {
 		byte[] request = new byte[data.length + 3];
 		byte[] command = { SYSTEM_COMMAND_NOREPLY, WRITE, handle };
