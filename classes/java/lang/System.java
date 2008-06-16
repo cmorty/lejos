@@ -47,6 +47,11 @@ public final class System
  public static native void shutDown();
  
  /**
+  * Boot into firmware update mode.
+  */
+ public static native void boot();
+ 
+ /**
   * Diagnostic tool (for firmware developers only)
   */
  public static native int diagn( int code, int param);

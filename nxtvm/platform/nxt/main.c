@@ -478,9 +478,9 @@ main(void)
   nxt_motor_init();
   i2c_init();
   bt_init();
+  udp_init();
   systick_wait_ms(1000); // wait for LCD to stabilize
   display_init();
-
   show_splash(3000); 
   
   // Get the address of the menu

@@ -609,6 +609,12 @@ class USBRespond extends Thread
 						Sound.beepSequenceUp();
 						menu.quit();
 					}
+                    if (inMsg[1] == LCP.BOOT)
+                    {
+                        // Reboot into firmware update mode. Only supported
+                        // for USB connections.
+                        System.boot();
+                    }
 					if (inMsg[1] == LCP.NXJ_DISCONNECT) { 
 						conn.close(); 
 						cmdMode = true;

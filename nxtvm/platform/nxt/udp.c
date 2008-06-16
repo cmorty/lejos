@@ -213,6 +213,8 @@ reset()
 int
 udp_init(void)
 {
+  udp_disable();
+  configured = (USB_DISABLED|USB_NEEDRESET);
   return 1;
 }
 
@@ -228,13 +230,17 @@ udp_reset()
   *AT91C_PIOA_PER = (1 << 16);
   *AT91C_PIOA_OER = (1 << 16);
   *AT91C_PIOA_SODR = (1 << 16);
-  systick_wait_ms(1);
+  *AT91C_PMC_SCDR = AT91C_PMC_UDP;
+  *AT91C_PMC_PCDR = (1 << AT91C_ID_UDP);
+  systick_wait_ms(2);
   // now bring it back online
   i_state = interrupts_get_and_disable();
   /* Make sure the USB PLL and clock are set up */
   *AT91C_CKGR_PLLR |= AT91C_CKGR_USBDIV_1;
   *AT91C_PMC_SCER = AT91C_PMC_UDP;
   *AT91C_PMC_PCER = (1 << AT91C_ID_UDP);
+  *AT91C_UDP_FADDR = 0;            
+  *AT91C_UDP_GLBSTATE = 0;
 
   /* Enable the UDP pull up by outputting a zero on PA.16 */
   *AT91C_PIOA_PER = (1 << 16);
@@ -707,10 +713,11 @@ udp_enable(int reset)
          (U32) udp_isr_entry);
   aic_mask_on(AT91C_PERIPHERAL_ID_UDP);
   *AT91C_UDP_IER = (AT91C_UDP_EPINT0 | AT91C_UDP_RXSUSP | AT91C_UDP_RXRSM);
+  reset = reset || (configured & USB_NEEDRESET);
   configured &= ~USB_DISABLED;
   if (i_state)
     interrupts_enable(); 
-  if (reset || (configured & USB_NEEDRESET))
+  if (reset)
     udp_reset();
 }
 

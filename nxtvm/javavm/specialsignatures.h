@@ -97,4 +97,5 @@
 #define getFirmwareMinorVersion_4_5I 90
 #define usbSetSerialNo_4Ljava_3lang_3String_2_5V 91
 #define usbSetName_4Ljava_3lang_3String_2_5V 92
+#define boot_4_5V 93
 #endif // _SPECIALSIGNATURES_H

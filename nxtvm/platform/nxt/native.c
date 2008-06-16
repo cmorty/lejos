@@ -409,6 +409,8 @@ dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
     return;
   case shutDown_4_5V:
     while (1) nxt_avr_power_down(); // does not return
+  case boot_4_5V:
+    while (1) nxt_avr_firmware_update_mode(); // does not return_
   case arraycopy_4Ljava_3lang_3Object_2ILjava_3lang_3Object_2II_5V:
     {
       Object *p1 = word2ptr(paramBase[0]);

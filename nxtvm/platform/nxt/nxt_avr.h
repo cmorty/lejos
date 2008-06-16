@@ -12,6 +12,8 @@ void nxt_avr_set_motor(U32 n, int power_percent, int brake);
 
 void nxt_avr_power_down(void);
 
+void nxt_avr_firmware_update_mode(void);
+
 void nxt_avr_test_loop(void);
 
 void nxt_avr_update(void);
