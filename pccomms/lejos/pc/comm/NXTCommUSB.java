@@ -99,7 +99,7 @@ public abstract class NXTCommUSB implements NXTComm {
      */
     String getAddressString(String addr, int loc)
     {
-        if (addr == null || addr.isEmpty()) return null;
+        if (addr == null || addr.length() == 0) return null;
         int start, end;
         if (loc < 0)
         {
