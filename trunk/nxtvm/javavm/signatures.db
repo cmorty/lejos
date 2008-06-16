@@ -153,3 +153,6 @@ getFirmwareMinorVersion()I
 #USB
 usbSetSerialNo(Ljava/lang/String;)V
 usbSetName(Ljava/lang/String;)V
+
+#System
+boot()V

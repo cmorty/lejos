@@ -97,6 +97,7 @@ public interface SpecialSignatureConstants {
     "getFirmwareMajorVersion()I",
     "getFirmwareMinorVersion()I",
     "usbSetSerialNo(Ljava/lang/String;)V",
-    "usbSetName(Ljava/lang/String;)V"
+    "usbSetName(Ljava/lang/String;)V",
+    "boot()V"
   };
 }
