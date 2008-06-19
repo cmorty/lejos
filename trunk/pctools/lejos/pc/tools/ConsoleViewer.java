@@ -1,6 +1,6 @@
 
-package lejos.pc.tools;
-import lejos.pc.comm.*;
+//import lejos.pc.tools.Connector;
+package  lejos.pc.tools;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.TextArea;
@@ -26,16 +26,17 @@ import java.io.*;
  */
 public class ConsoleViewer extends JFrame implements ActionListener
 {
-   private JButton startButton = new JButton("Connect");
-   private JToggleButton usbButton = new JToggleButton("USE BlueTooth");
+   private JButton connectButton = new JButton("Connect");
+   private JToggleButton usbButton = new JToggleButton("Use BlueTooth");
    private TextField statusField = new TextField(20);
-   private TextField nameField = new TextField(12);
+   private TextField nameField = new TextField(10);
+   private TextField addrField = new TextField(12);
    private String _nxt = "NXT"; 
    private boolean _useUSB = true;
    private InputStream is = null;
    private DataInputStream dataIn = null;
    private OutputStream os = null;
-   private Connector con;
+   private Connector con ;
    private boolean _connected = false;
 
    /**
@@ -55,19 +56,19 @@ public class ConsoleViewer extends JFrame implements ActionListener
       JPanel p1 = new JPanel();  //holds  button and text field
       p1.add(usbButton);
       usbButton.addActionListener(this);
-      p1.add(new JLabel("name or address"));
+      p1.add(new JLabel(" Name"));
       p1.add(nameField);
-      startButton.addActionListener(this);
+      connectButton.addActionListener(this);
+      p1.add(new JLabel("Addr"));
+      p1.add(addrField);
       JPanel p2 = new JPanel();//  holds label and text field
-//      p2.add(usbButton);
-//      usbButton.addActionListener(this);
-      p2.add(startButton);
-      p2.add(new JLabel("  Status:"));
+      p2.add(connectButton);
+      p2.add(new JLabel("Status:"));
       p2.add(statusField);
       JPanel panel = new JPanel();  // North area of the frame
       panel.setLayout(new GridLayout(2,1));
       panel.add(p1);
-      panel.add(p2);;
+      panel.add(p2);
       add(panel,BorderLayout.NORTH);
       theLog = new TextArea(40,40); // Center area of the frame
       getContentPane().add(theLog,BorderLayout.CENTER);
@@ -80,9 +81,8 @@ public class ConsoleViewer extends JFrame implements ActionListener
     */	
    public void actionPerformed(ActionEvent e)
    {
-      if(e.getSource()== startButton)
+      if(e.getSource()== connectButton)
       {
-         _nxt = nameField.getText();
          startDownload();
       }
       if(e.getSource()==usbButton)
@@ -105,26 +105,54 @@ public class ConsoleViewer extends JFrame implements ActionListener
 
    private void connect()
    {
-      _nxt = nameField.getText(); 
+      String addr = addrField.getText();
+      if(addr.length()>8) _nxt = addr;
+      else _nxt = nameField.getText(); 
       setMessage("Connecting");
+      System.out.println(" connecting to "+_nxt+" "+addr);
       con = new Connector();
       if (! con.connectTo(_nxt,_useUSB)) System.exit(1);
       is = con.getInputStream();
+      if( is != null)System.out.println(" input stream OK");
+      else System.out.println( " NULL is ");
       _connected = true;
+      String name = con.getNXTInfo()[0].name;
+      addr = con.getNXTInfo()[0].btDeviceAddress;
+      nameField.setText(name);
+      addrField.setText(addr);     
    }
    private void startDownload()
    {  
-      if(!_connected)connect();        
-      os = con.getOutputStream();
-      // the NXT is waiting for an incoming byte before it starts transmitting 
-      try  // handshake
-      {     
-         byte [] hello = new byte [] {'C', 'O', 'N'};
-         os.write(hello);
-         os.flush();       
-      } catch(IOException e) {System.out.println(e+" write "); }
-      _connected = true;
-      setMessage("ready for data");
+       System.out.println(" starting download");
+//       _connected = false;
+//       while (!_connected)
+//       {
+//           if (!_connected)
+           {
+               connect();
+           }
+           os = con.getOutputStream();
+           if (os != null)
+           {
+               System.out.println(" os OK");
+           // the NXT is waiting for an incoming byte before it starts transmitting 
+           }
+           try  // handshake
+
+           {
+               byte[] hello = new byte[]
+               {
+                   'C', 'O', 'N'
+               };
+               os.write(hello);
+               os.flush();
+           } catch (IOException e)
+           {
+               System.out.println(e + " handshake failed to write ");
+               _connected = false;
+           }
+       _connected = true;
+       setMessage("ready for data");
    }
 
    private class Reader extends Thread
@@ -135,18 +163,21 @@ public class ConsoleViewer extends JFrame implements ActionListener
          {
             if(_connected)
             {
+//                setMessage(" reading ");
                try
                {  
                   int input;
                   while ((input = is.read()) >= 0) 
                   {   
                      theLog.append(""+(char)input);
+                     System.out.print(""+(char)input);
                   } 
                   is.close();
                }
                catch(IOException e) 
                {
                   System.out.println( "read error"); 
+                  _connected = false;
                }
             } 
             Thread.yield();
