@@ -274,15 +274,13 @@ Object *new_object_for_class (const byte classIndex)
 #if 0
 TWOBYTES comp_array_size (const TWOBYTES length, const byte elemType)
 {
-  return elemType == T_CHAR ? length * 2 : 
-           elemType == T_BOOLEAN ? length :
+  return elemType == T_CHAR ? length : 
             (((unsigned int) length * typeSize[elemType]) + 1) / 2;
 }
 #else
 #define comp_array_size( length, elemType) \
 (                                          \
-  elemType == T_CHAR ? length * 2 :        \
-    elemType == T_BOOLEAN ? length :       \
+  elemType == T_CHAR ? length :            \
       ((((unsigned int) (length) * typeSize[ elemType]) + 1) / 2))
 #endif
 
@@ -594,8 +592,8 @@ void memory_add_region (byte *start, byte *end)
 #endif
   TWOBYTES contents_size;
 
-  /* word align upwards */
-  region = (MemoryRegion *) (((unsigned int)start+1) & ~1);
+  /* align upwards */
+  region = (MemoryRegion *) (((unsigned int)start+ MEMORY_ALIGNMENT*2 - 1) & ~(MEMORY_ALIGNMENT*2 - 1));
 
 #if SEGMENTED_HEAP
   /* initialize region header */
@@ -606,8 +604,8 @@ void memory_add_region (byte *start, byte *end)
 #endif
   region->alloc_base = &(region->contents);
   region->sweep_base = NULL;
-  region->end = (TWOBYTES *) ((unsigned int)end & ~1); /* 16-bit align
- downwards */
+  /* align downwards */
+  region->end = (TWOBYTES *) ((unsigned int)end & ~(MEMORY_ALIGNMENT*2 - 1)); 
 
 #if GARBAGE_COLLECTOR
   {
@@ -618,6 +616,9 @@ void memory_add_region (byte *start, byte *end)
        The map must be zeroed. */
     TWOBYTES bitmap_size;
     contents_size = region->end - &(region->contents);
+    /* Calculate the required bitmap size (in words). Note that we devide here
+       by 33 rather then 32 to take into account the reduction in size of the
+       heap due to the bitmap size!  */
     bitmap_size = (contents_size / (((MEMORY_ALIGNMENT * 2) * 8) + 1) + 2) & ~1;
     region->end -= bitmap_size;
     zero_mem( region->end, bitmap_size);
@@ -1087,6 +1088,7 @@ static void mark_local_objects()
   }
 }
 
+
 /**
  * Scan member fields of class instance, and for every
  * non-null reference field call the mark_object function.
@@ -1338,7 +1340,6 @@ void garbage_collect( int reqsize)
 {
   int t0, t1, t2;
   int optsize;
-
   t0 = varstat_gettime();
 
   if( sweep_region == NULL)
