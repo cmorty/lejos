@@ -220,7 +220,7 @@ static inline void initialize_binary()
   printf("Offset is %d\n",(int) mrec->staticStateOffset); */
 
   /* printf("Length is %d\n",(int) mrec->staticStateLength);*/
-  zero_mem ((TWOBYTES *) (get_static_state_base()), mrec->staticStateLength);
+  zero_mem ((TWOBYTES *) (get_static_state_base()), (mrec->staticStateLength+1)/2);
 //  printf("Zeroed memory\n");
   for (i = 0; i <= mrec->lastClass; i++)
   {

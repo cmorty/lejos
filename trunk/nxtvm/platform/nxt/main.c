@@ -168,10 +168,10 @@ run(int jsize)
     int staticSize = mrec->staticStateLength;
     int statusSize = (mrec->lastClass + 1) * sizeof( classStatusBase[0]);
 
-    staticSize = (staticSize + 1) & ~(1);
+    staticSize = (staticSize + 3) & ~(3);
     statusSize = (statusSize + 3) & ~(3);
 
-    ram_end -= staticSize * 2;
+    ram_end -= staticSize;
     classStaticStateBase = ram_end;
 
     ram_end -= statusSize;
