@@ -42,7 +42,7 @@ public class MasterRecord implements WritableData
       int pConstantTableOffset = _binary.iConstantTable.getOffset();
       int pStaticFieldsOffset = _binary.iStaticFields.getOffset();
       int pStaticStateOffset = _binary.iStaticState.getOffset();
-      int pStaticStateLength = (_binary.iStaticState.getLength() + 1) / 2;
+      int pStaticStateLength = _binary.iStaticState.getLength();
       int pNumStaticFields = _binary.iStaticFields.size();
       int pEntryClassesOffset = _binary.iEntryClassIndices.getOffset();
       int pNumEntryClasses = _binary.iEntryClassIndices.size();

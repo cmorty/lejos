@@ -90,7 +90,7 @@ Object *protectedRef[MAX_VM_REFS];
  * @param numWords Number of 2-byte  words in the data part of the object
  */
 #define initialize_state(PTR_,NWORDS_) zero_mem(((TWOBYTES *) (PTR_)), (NWORDS_) )
-#define get_object_size(OBJ_)          (get_class_record(get_na_class_index(OBJ_))->classSize)
+#define get_object_size(OBJ_)          ((get_class_record(get_na_class_index(OBJ_))->classSize+1)/2)
 
 #if GARBAGE_COLLECTOR
 static void set_reference( TWOBYTES* ptr);
@@ -242,7 +242,7 @@ Object *new_object_for_class (const byte classIndex)
 #if DEBUG_MEMORY
   printf("New object for class %d\n", classIndex);
 #endif
-  instanceSize = get_class_record(classIndex)->classSize;
+  instanceSize = (get_class_record(classIndex)->classSize+1)/2;
   
   ref = memcheck_allocate (instanceSize);
 
@@ -1000,7 +1000,7 @@ static void mark_static_objects( void)
   STATICFIELD* staticFieldBase = (STATICFIELD*) get_static_fields_base();
   byte* staticStateBase = get_static_state_base();
   byte* staticState = staticStateBase;
-  byte* staticEnd = staticStateBase + mrec->staticStateLength * 2 - 1;
+  byte* staticEnd = staticStateBase + mrec->staticStateLength;
   int idx = 0;
 
   while( staticState < staticEnd)

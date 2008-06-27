@@ -159,12 +159,12 @@ public class ClassRecord implements WritableData
    }
 
    /**
-    * @return Number of words required for object allocation.
+    * @return Number of bytes required for object allocation.
     * @throws TinyVMException
     */
    public int getAllocationSize () throws TinyVMException
    {
-      return (getClassSize() + 5) / 2;
+      return (getClassSize() + 4);
    }
 
    /**
