@@ -1,0 +1,2111 @@
+<html xmlns:v="urn:schemas-microsoft-com:vml"
+xmlns:o="urn:schemas-microsoft-com:office:office"
+xmlns:w="urn:schemas-microsoft-com:office:word"
+xmlns="http://www.w3.org/TR/REC-html40">
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=windows-1252">
+<meta name=ProgId content=Word.Document>
+<meta name=Generator content="Microsoft Word 10">
+<meta name=Originator content="Microsoft Word 10">
+<link rel=File-List href="Intro_files/filelist.xml">
+<title>Preliminaries</title>
+<!--[if gte mso 9]><xml>
+ <o:DocumentProperties>
+  <o:Author>Roger</o:Author>
+  <o:Template>NXJTutorialTemplate.dot</o:Template>
+  <o:LastAuthor>Roger</o:LastAuthor>
+  <o:Revision>3</o:Revision>
+  <o:TotalTime>374</o:TotalTime>
+  <o:Created>2008-06-29T21:48:00Z</o:Created>
+  <o:LastSaved>2008-06-29T21:50:00Z</o:LastSaved>
+  <o:Pages>1</o:Pages>
+  <o:Words>611</o:Words>
+  <o:Characters>3484</o:Characters>
+  <o:Company>UC Bereley</o:Company>
+  <o:Lines>29</o:Lines>
+  <o:Paragraphs>8</o:Paragraphs>
+  <o:CharactersWithSpaces>4087</o:CharactersWithSpaces>
+  <o:Version>10.4219</o:Version>
+ </o:DocumentProperties>
+</xml><![endif]--><!--[if gte mso 9]><xml>
+ <w:WordDocument>
+  <w:Zoom>118</w:Zoom>
+  <w:SpellingState>Clean</w:SpellingState>
+  <w:GrammarState>Clean</w:GrammarState>
+  <w:AttachedTemplate HRef="NXJTutorialTemplate.dot"></w:AttachedTemplate>
+  <w:UpdateStylesOnOpen/>
+  <w:Compatibility>
+   <w:BreakWrappedTables/>
+   <w:SnapToGridInCell/>
+   <w:WrapTextWithPunct/>
+   <w:UseAsianBreakRules/>
+  </w:Compatibility>
+  <w:BrowserLevel>MicrosoftInternetExplorer4</w:BrowserLevel>
+ </w:WordDocument>
+</xml><![endif]-->
+<style>
+<!--
+ /* Font Definitions */
+ @font-face
+	{font-family:Wingdings;
+	panose-1:5 0 0 0 0 0 0 0 0 0;
+	mso-font-charset:2;
+	mso-generic-font-family:auto;
+	mso-font-pitch:variable;
+	mso-font-signature:0 268435456 0 0 -2147483648 0;}
+ /* Style Definitions */
+ p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{mso-style-parent:"";
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+h1
+	{mso-style-next:"Body Text";
+	margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:1;
+	font-size:16.0pt;
+	font-family:Arial;
+	color:#FF6600;
+	mso-font-kerning:16.0pt;
+	font-weight:bold;}
+h2
+	{mso-style-parent:"Heading 1";
+	mso-style-next:"Body Text 2";
+	margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:2;
+	font-size:14.0pt;
+	font-family:Arial;
+	color:#FF6600;
+	mso-font-kerning:16.0pt;
+	font-weight:normal;
+	font-style:italic;}
+h3
+	{mso-style-parent:"Heading 2";
+	mso-style-link:"Heading 3 Char";
+	mso-style-next:"Body Text 3\,Body Text 3 Char";
+	margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:.2in;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:3;
+	font-size:13.0pt;
+	font-family:Arial;
+	color:#FF6600;
+	mso-font-kerning:16.0pt;
+	font-weight:bold;
+	font-style:italic;}
+h4
+	{mso-style-parent:"Heading 3";
+	mso-style-next:"Body Text 4";
+	margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:.3in;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:4;
+	font-size:12.0pt;
+	font-family:Arial;
+	color:black;
+	font-weight:bold;
+	mso-bidi-font-weight:normal;
+	font-style:italic;
+	mso-bidi-font-style:normal;}
+p.MsoToc1, li.MsoToc1, div.MsoToc1
+	{mso-style-update:auto;
+	mso-style-noshow:yes;
+	mso-style-next:Normal;
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoToc2, li.MsoToc2, div.MsoToc2
+	{mso-style-update:auto;
+	mso-style-noshow:yes;
+	mso-style-next:Normal;
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:12.0pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoToc3, li.MsoToc3, div.MsoToc3
+	{mso-style-update:auto;
+	mso-style-noshow:yes;
+	mso-style-next:Normal;
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:24.0pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoToc4, li.MsoToc4, div.MsoToc4
+	{mso-style-update:auto;
+	mso-style-noshow:yes;
+	mso-style-next:Normal;
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:.5in;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoBodyText, li.MsoBodyText, div.MsoBodyText
+	{mso-style-link:"Body Text Char";
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoBodyText2, li.MsoBodyText2, div.MsoBodyText2
+	{mso-style-parent:"Body Text";
+	mso-style-link:"Body Text 2 Char";
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:.1in;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoBodyText3, li.MsoBodyText3, div.MsoBodyText3
+	{mso-style-name:"Body Text 3\,Body Text 3 Char";
+	mso-style-parent:"Body Text 2";
+	mso-style-link:"Body Text 3 Char Char";
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:.2in;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	mso-bidi-font-size:8.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+a:link, span.MsoHyperlink
+	{color:blue;
+	text-decoration:underline;
+	text-underline:single;}
+a:visited, span.MsoHyperlinkFollowed
+	{color:purple;
+	text-decoration:underline;
+	text-underline:single;}
+p
+	{mso-margin-top-alt:auto;
+	margin-right:0in;
+	mso-margin-bottom-alt:auto;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+span.Heading3Char
+	{mso-style-name:"Heading 3 Char";
+	mso-style-link:"Heading 3";
+	mso-ansi-font-size:13.0pt;
+	mso-bidi-font-size:13.0pt;
+	font-family:Arial;
+	mso-ascii-font-family:Arial;
+	mso-hansi-font-family:Arial;
+	mso-bidi-font-family:Arial;
+	color:#FF6600;
+	mso-font-kerning:16.0pt;
+	mso-ansi-language:EN-US;
+	mso-fareast-language:EN-US;
+	mso-bidi-language:AR-SA;
+	font-weight:bold;
+	font-style:italic;}
+p.BodyText4, li.BodyText4, div.BodyText4
+	{mso-style-name:"Body Text 4";
+	mso-style-parent:"Body Text 3\,Body Text 3 Char";
+	mso-style-link:"Body Text 4 Char";
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:.3in;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	mso-bidi-font-size:8.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+span.BodyTextChar
+	{mso-style-name:"Body Text Char";
+	mso-style-link:"Body Text";
+	mso-ansi-font-size:12.0pt;
+	mso-bidi-font-size:12.0pt;
+	mso-ansi-language:EN-US;
+	mso-fareast-language:EN-US;
+	mso-bidi-language:AR-SA;}
+span.BodyText2Char
+	{mso-style-name:"Body Text 2 Char";
+	mso-style-parent:"Body Text Char";
+	mso-style-link:"Body Text 2";
+	mso-ansi-font-size:12.0pt;
+	mso-bidi-font-size:12.0pt;
+	mso-ansi-language:EN-US;
+	mso-fareast-language:EN-US;
+	mso-bidi-language:AR-SA;}
+span.BodyText3CharChar
+	{mso-style-name:"Body Text 3 Char Char";
+	mso-style-parent:"Body Text 2 Char";
+	mso-style-link:"Body Text 3\,Body Text 3 Char";
+	mso-ansi-font-size:12.0pt;
+	mso-bidi-font-size:8.0pt;
+	mso-ansi-language:EN-US;
+	mso-fareast-language:EN-US;
+	mso-bidi-language:AR-SA;}
+span.BodyText4Char
+	{mso-style-name:"Body Text 4 Char";
+	mso-style-parent:"Body Text 3 Char Char";
+	mso-style-link:"Body Text 4";
+	mso-ansi-font-size:12.0pt;
+	mso-bidi-font-size:8.0pt;
+	mso-ansi-language:EN-US;
+	mso-fareast-language:EN-US;
+	mso-bidi-language:AR-SA;}
+p.Heading2Color, li.Heading2Color, div.Heading2Color
+	{mso-style-name:"Heading2 Color";
+	mso-style-parent:"Heading 2";
+	mso-style-next:"Body Text 2";
+	margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:2;
+	font-size:14.0pt;
+	font-family:Arial;
+	mso-fareast-font-family:"Times New Roman";
+	color:#FF6600;
+	mso-font-kerning:16.0pt;
+	font-style:italic;}
+p.Heading3color, li.Heading3color, div.Heading3color
+	{mso-style-name:"Heading3 color";
+	mso-style-update:auto;
+	mso-style-parent:"Heading 3";
+	mso-style-next:"Body Text 3\,Body Text 3 Char";
+	margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:.2in;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:3;
+	font-size:13.0pt;
+	font-family:Arial;
+	mso-fareast-font-family:"Times New Roman";
+	color:#FF6600;
+	mso-font-kerning:16.0pt;
+	font-weight:bold;
+	font-style:italic;}
+span.N1CharChar
+	{mso-style-name:"N1 Char Char";
+	mso-style-link:"N1 Char";
+	mso-ansi-font-size:12.0pt;
+	mso-bidi-font-size:12.0pt;
+	mso-ansi-language:EN-US;
+	mso-fareast-language:EN-US;
+	mso-bidi-language:AR-SA;}
+p.N1Char, li.N1Char, div.N1Char
+	{mso-style-name:"N1 Char";
+	mso-style-parent:"";
+	mso-style-link:"N1 Char Char";
+	margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.N1, li.N1, div.N1
+	{mso-style-name:N1;
+	mso-style-parent:"";
+	margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.Heading1color, li.Heading1color, div.Heading1color
+	{mso-style-name:"Heading1 color";
+	mso-style-parent:"Heading 1";
+	mso-style-next:"Body Text";
+	margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:1;
+	font-size:16.0pt;
+	font-family:Arial;
+	mso-fareast-font-family:"Times New Roman";
+	color:#FF6600;
+	mso-font-kerning:16.0pt;
+	font-weight:bold;}
+span.CharChar
+	{mso-style-name:"Char Char";
+	mso-ansi-font-size:13.0pt;
+	mso-bidi-font-size:13.0pt;
+	font-family:Arial;
+	mso-ascii-font-family:Arial;
+	mso-hansi-font-family:Arial;
+	mso-bidi-font-family:Arial;
+	mso-ansi-language:EN-GB;
+	mso-fareast-language:EN-GB;
+	mso-bidi-language:AR-SA;
+	font-weight:bold;}
+span.SpellE
+	{mso-style-name:"";
+	mso-spl-e:yes;}
+span.GramE
+	{mso-style-name:"";
+	mso-gram-e:yes;}
+@page Section1
+	{size:10.0in 15.0in;
+	margin:1.0in 1.25in 321.1pt 1.25in;
+	mso-header-margin:.5in;
+	mso-footer-margin:.5in;
+	mso-paper-source:0;}
+div.Section1
+	{page:Section1;}
+ /* List Definitions */
+ @list l0
+	{mso-list-id:-132;
+	mso-list-type:simple;
+	mso-list-template-ids:-1655899830;}
+@list l0:level1
+	{mso-level-tab-stop:1.25in;
+	mso-level-number-position:left;
+	margin-left:1.25in;
+	text-indent:-.25in;}
+@list l1
+	{mso-list-id:-131;
+	mso-list-type:simple;
+	mso-list-template-ids:-685490596;}
+@list l1:level1
+	{mso-level-tab-stop:1.0in;
+	mso-level-number-position:left;
+	margin-left:1.0in;
+	text-indent:-.25in;}
+@list l2
+	{mso-list-id:-130;
+	mso-list-type:simple;
+	mso-list-template-ids:948443036;}
+@list l2:level1
+	{mso-level-tab-stop:.75in;
+	mso-level-number-position:left;
+	margin-left:.75in;
+	text-indent:-.25in;}
+@list l3
+	{mso-list-id:-129;
+	mso-list-type:simple;
+	mso-list-template-ids:-871742908;}
+@list l3:level1
+	{mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l4
+	{mso-list-id:-128;
+	mso-list-type:simple;
+	mso-list-template-ids:-1254185752;}
+@list l4:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:1.25in;
+	mso-level-number-position:left;
+	margin-left:1.25in;
+	text-indent:-.25in;
+	font-family:Symbol;}
+@list l5
+	{mso-list-id:-127;
+	mso-list-type:simple;
+	mso-list-template-ids:-1802441078;}
+@list l5:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:1.0in;
+	mso-level-number-position:left;
+	margin-left:1.0in;
+	text-indent:-.25in;
+	font-family:Symbol;}
+@list l6
+	{mso-list-id:-126;
+	mso-list-type:simple;
+	mso-list-template-ids:-48739110;}
+@list l6:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:.75in;
+	mso-level-number-position:left;
+	margin-left:.75in;
+	text-indent:-.25in;
+	font-family:Symbol;}
+@list l7
+	{mso-list-id:-125;
+	mso-list-type:simple;
+	mso-list-template-ids:-1490543376;}
+@list l7:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	font-family:Symbol;}
+@list l8
+	{mso-list-id:-120;
+	mso-list-type:simple;
+	mso-list-template-ids:-927711426;}
+@list l8:level1
+	{mso-level-tab-stop:.25in;
+	mso-level-number-position:left;
+	margin-left:.25in;
+	text-indent:-.25in;}
+@list l9
+	{mso-list-id:-119;
+	mso-list-type:simple;
+	mso-list-template-ids:1431183632;}
+@list l9:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:.25in;
+	mso-level-number-position:left;
+	margin-left:.25in;
+	text-indent:-.25in;
+	font-family:Symbol;}
+@list l10
+	{mso-list-id:207380160;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-2065384034 134807553 67698691 67698693 67698689 67698691 67698693 67698689 67698691 67698693;}
+@list l10:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	font-family:Symbol;}
+@list l10:level2
+	{mso-level-tab-stop:1.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l10:level3
+	{mso-level-tab-stop:1.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l10:level4
+	{mso-level-tab-stop:2.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l10:level5
+	{mso-level-tab-stop:2.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l10:level6
+	{mso-level-tab-stop:3.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l10:level7
+	{mso-level-tab-stop:3.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l10:level8
+	{mso-level-tab-stop:4.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l10:level9
+	{mso-level-tab-stop:4.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l11
+	{mso-list-id:302196165;
+	mso-list-type:hybrid;
+	mso-list-template-ids:1095534674 67698703 134807577 134807579 134807567 134807577 134807579 134807567 134807577 134807579;}
+@list l11:level1
+	{mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l11:level2
+	{mso-level-tab-stop:1.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l11:level3
+	{mso-level-tab-stop:1.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l11:level4
+	{mso-level-tab-stop:2.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l11:level5
+	{mso-level-tab-stop:2.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l11:level6
+	{mso-level-tab-stop:3.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l11:level7
+	{mso-level-tab-stop:3.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l11:level8
+	{mso-level-tab-stop:4.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l11:level9
+	{mso-level-tab-stop:4.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l12
+	{mso-list-id:398984388;
+	mso-list-template-ids:-497546988;}
+@list l13
+	{mso-list-id:423841325;
+	mso-list-template-ids:-1266277570;}
+@list l13:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	mso-ansi-font-size:10.0pt;
+	font-family:Symbol;}
+@list l14
+	{mso-list-id:443042117;
+	mso-list-template-ids:733755854;}
+@list l14:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:.25in;
+	mso-level-number-position:left;
+	margin-left:.25in;
+	text-indent:0in;
+	font-family:Symbol;}
+@list l14:level2
+	{mso-level-number-format:bullet;
+	mso-level-text:o;
+	mso-level-tab-stop:1.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	font-family:"Courier New";}
+@list l14:level3
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0A7;
+	mso-level-tab-stop:1.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	font-family:Wingdings;}
+@list l14:level4
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:2.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	font-family:Symbol;}
+@list l14:level5
+	{mso-level-number-format:bullet;
+	mso-level-text:o;
+	mso-level-tab-stop:2.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	font-family:"Courier New";}
+@list l14:level6
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0A7;
+	mso-level-tab-stop:3.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	font-family:Wingdings;}
+@list l14:level7
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:3.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	font-family:Symbol;}
+@list l14:level8
+	{mso-level-number-format:bullet;
+	mso-level-text:o;
+	mso-level-tab-stop:4.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	font-family:"Courier New";}
+@list l14:level9
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0A7;
+	mso-level-tab-stop:4.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	font-family:Wingdings;}
+@list l15
+	{mso-list-id:696806939;
+	mso-list-type:hybrid;
+	mso-list-template-ids:554756946 67698703 134807555 134807557 134807553 134807555 134807557 134807553 134807555 134807557;}
+@list l15:level1
+	{mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l15:level2
+	{mso-level-tab-stop:1.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l15:level3
+	{mso-level-tab-stop:1.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l15:level4
+	{mso-level-tab-stop:2.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l15:level5
+	{mso-level-tab-stop:2.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l15:level6
+	{mso-level-tab-stop:3.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l15:level7
+	{mso-level-tab-stop:3.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l15:level8
+	{mso-level-tab-stop:4.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l15:level9
+	{mso-level-tab-stop:4.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l16
+	{mso-list-id:738329387;
+	mso-list-template-ids:-1783478518;}
+@list l17
+	{mso-list-id:933130006;
+	mso-list-type:hybrid;
+	mso-list-template-ids:196125716 67698703 134807553 67698693 67698689 67698691 67698693 67698689 67698691 67698693;}
+@list l17:level1
+	{mso-level-tab-stop:.7in;
+	mso-level-number-position:left;
+	margin-left:.7in;
+	text-indent:-.25in;}
+@list l17:level2
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:1.2in;
+	mso-level-number-position:left;
+	margin-left:1.2in;
+	text-indent:-.25in;
+	font-family:Symbol;}
+@list l17:level3
+	{mso-level-tab-stop:1.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l17:level4
+	{mso-level-tab-stop:2.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l17:level5
+	{mso-level-tab-stop:2.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l17:level6
+	{mso-level-tab-stop:3.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l17:level7
+	{mso-level-tab-stop:3.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l17:level8
+	{mso-level-tab-stop:4.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l17:level9
+	{mso-level-tab-stop:4.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l18
+	{mso-list-id:953512223;
+	mso-list-type:hybrid;
+	mso-list-template-ids:314469080 -1369821974 67698691 67698693 67698689 67698691 67698693 67698689 67698691 67698693;}
+@list l18:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	font-family:Symbol;}
+@list l19
+	{mso-list-id:1023559296;
+	mso-list-template-ids:-1141726176;}
+@list l19:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	mso-ansi-font-size:10.0pt;
+	font-family:Symbol;}
+@list l20
+	{mso-list-id:1126236212;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-887712326 16287876 67698713 67698715 67698703 67698713 67698715 67698703 67698713 67698715;}
+@list l20:level1
+	{mso-level-tab-stop:.55in;
+	mso-level-number-position:left;
+	margin-left:.55in;
+	text-indent:-.25in;}
+@list l20:level2
+	{mso-level-tab-stop:1.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l20:level3
+	{mso-level-tab-stop:1.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l20:level4
+	{mso-level-tab-stop:2.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l20:level5
+	{mso-level-tab-stop:2.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l20:level6
+	{mso-level-tab-stop:3.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l20:level7
+	{mso-level-tab-stop:3.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l20:level8
+	{mso-level-tab-stop:4.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l20:level9
+	{mso-level-tab-stop:4.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l21
+	{mso-list-id:1196848569;
+	mso-list-type:hybrid;
+	mso-list-template-ids:733755854 1655733534 67698691 67698693 67698689 67698691 67698693 67698689 67698691 67698693;}
+@list l21:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:.25in;
+	mso-level-number-position:left;
+	margin-left:.25in;
+	text-indent:0in;
+	font-family:Symbol;}
+@list l22
+	{mso-list-id:1490248214;
+	mso-list-type:hybrid;
+	mso-list-template-ids:2113858210 134807553 67698691 67698693 67698689 67698691 67698693 67698689 67698691 67698693;}
+@list l22:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	font-family:Symbol;}
+@list l22:level2
+	{mso-level-tab-stop:1.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l22:level3
+	{mso-level-tab-stop:1.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l22:level4
+	{mso-level-tab-stop:2.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l22:level5
+	{mso-level-tab-stop:2.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l22:level6
+	{mso-level-tab-stop:3.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l22:level7
+	{mso-level-tab-stop:3.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l22:level8
+	{mso-level-tab-stop:4.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l22:level9
+	{mso-level-tab-stop:4.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l23
+	{mso-list-id:1494905949;
+	mso-list-template-ids:-1505185492;}
+@list l23:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	mso-ansi-font-size:10.0pt;
+	font-family:Symbol;}
+@list l24
+	{mso-list-id:1535583200;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-150051134 67698703 67698713 67698715 67698703 67698713 67698715 67698703 67698713 67698715;}
+@list l24:level1
+	{mso-level-tab-stop:.7in;
+	mso-level-number-position:left;
+	margin-left:.7in;
+	text-indent:-.25in;}
+@list l24:level2
+	{mso-level-tab-stop:1.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l24:level3
+	{mso-level-tab-stop:1.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l24:level4
+	{mso-level-tab-stop:2.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l24:level5
+	{mso-level-tab-stop:2.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l24:level6
+	{mso-level-tab-stop:3.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l24:level7
+	{mso-level-tab-stop:3.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l24:level8
+	{mso-level-tab-stop:4.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l24:level9
+	{mso-level-tab-stop:4.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l25
+	{mso-list-id:1575357325;
+	mso-list-template-ids:-2036855806;}
+@list l25:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	mso-ansi-font-size:10.0pt;
+	font-family:Symbol;}
+@list l26
+	{mso-list-id:1637221373;
+	mso-list-type:hybrid;
+	mso-list-template-ids:1317700484 67698689 67698691 67698693 67698689 67698691 67698693 67698689 67698691 67698693;}
+@list l26:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	font-family:Symbol;}
+@list l26:level2
+	{mso-level-tab-stop:1.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l26:level3
+	{mso-level-tab-stop:1.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l26:level4
+	{mso-level-tab-stop:2.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l26:level5
+	{mso-level-tab-stop:2.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l26:level6
+	{mso-level-tab-stop:3.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l26:level7
+	{mso-level-tab-stop:3.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l26:level8
+	{mso-level-tab-stop:4.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l26:level9
+	{mso-level-tab-stop:4.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l27
+	{mso-list-id:1643804633;
+	mso-list-type:hybrid;
+	mso-list-template-ids:71712020 134807553 67698691 67698693 67698689 67698691 67698693 67698689 67698691 67698693;}
+@list l27:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	font-family:Symbol;}
+@list l27:level2
+	{mso-level-tab-stop:1.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l27:level3
+	{mso-level-tab-stop:1.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l27:level4
+	{mso-level-tab-stop:2.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l27:level5
+	{mso-level-tab-stop:2.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l27:level6
+	{mso-level-tab-stop:3.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l27:level7
+	{mso-level-tab-stop:3.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l27:level8
+	{mso-level-tab-stop:4.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l27:level9
+	{mso-level-tab-stop:4.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l28
+	{mso-list-id:1772167901;
+	mso-list-template-ids:-2022291682;}
+@list l28:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	mso-ansi-font-size:10.0pt;
+	font-family:Symbol;}
+@list l29
+	{mso-list-id:1921985629;
+	mso-list-template-ids:67698717;}
+@list l29:level1
+	{mso-level-text:"%1\)";
+	mso-level-tab-stop:.25in;
+	mso-level-number-position:left;
+	margin-left:.25in;
+	text-indent:-.25in;}
+@list l29:level2
+	{mso-level-number-format:alpha-lower;
+	mso-level-text:"%2\)";
+	mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	margin-left:.5in;
+	text-indent:-.25in;}
+@list l29:level3
+	{mso-level-number-format:roman-lower;
+	mso-level-text:"%3\)";
+	mso-level-tab-stop:.75in;
+	mso-level-number-position:left;
+	margin-left:.75in;
+	text-indent:-.25in;}
+@list l29:level4
+	{mso-level-text:"\(%4\)";
+	mso-level-tab-stop:1.0in;
+	mso-level-number-position:left;
+	margin-left:1.0in;
+	text-indent:-.25in;}
+@list l29:level5
+	{mso-level-number-format:alpha-lower;
+	mso-level-text:"\(%5\)";
+	mso-level-tab-stop:1.25in;
+	mso-level-number-position:left;
+	margin-left:1.25in;
+	text-indent:-.25in;}
+@list l29:level6
+	{mso-level-number-format:roman-lower;
+	mso-level-text:"\(%6\)";
+	mso-level-tab-stop:1.5in;
+	mso-level-number-position:left;
+	margin-left:1.5in;
+	text-indent:-.25in;}
+@list l29:level7
+	{mso-level-tab-stop:1.75in;
+	mso-level-number-position:left;
+	margin-left:1.75in;
+	text-indent:-.25in;}
+@list l29:level8
+	{mso-level-number-format:alpha-lower;
+	mso-level-tab-stop:2.0in;
+	mso-level-number-position:left;
+	margin-left:2.0in;
+	text-indent:-.25in;}
+@list l29:level9
+	{mso-level-number-format:roman-lower;
+	mso-level-tab-stop:2.25in;
+	mso-level-number-position:left;
+	margin-left:2.25in;
+	text-indent:-.25in;}
+@list l30
+	{mso-list-id:1955750863;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-2054526716 67698703 67698713 67698715 67698703 67698713 67698715 67698703 67698713 67698715;}
+@list l30:level1
+	{mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l30:level2
+	{mso-level-tab-stop:1.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l30:level3
+	{mso-level-tab-stop:1.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l30:level4
+	{mso-level-tab-stop:2.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l30:level5
+	{mso-level-tab-stop:2.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l30:level6
+	{mso-level-tab-stop:3.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l30:level7
+	{mso-level-tab-stop:3.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l30:level8
+	{mso-level-tab-stop:4.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l30:level9
+	{mso-level-tab-stop:4.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l31
+	{mso-list-id:1970428376;
+	mso-list-template-ids:137932694;}
+@list l32
+	{mso-list-id:1972175520;
+	mso-list-template-ids:-1200217340;}
+@list l32:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	mso-ansi-font-size:10.0pt;
+	font-family:Symbol;}
+@list l33
+	{mso-list-id:2015961087;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-292813858 67698689 67698691 67698693 67698689 67698691 67698693 67698689 67698691 67698693;}
+@list l33:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	font-family:Symbol;}
+@list l33:level2
+	{mso-level-tab-stop:1.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l33:level3
+	{mso-level-tab-stop:1.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l33:level4
+	{mso-level-tab-stop:2.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l33:level5
+	{mso-level-tab-stop:2.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l33:level6
+	{mso-level-tab-stop:3.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l33:level7
+	{mso-level-tab-stop:3.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l33:level8
+	{mso-level-tab-stop:4.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l33:level9
+	{mso-level-tab-stop:4.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l34
+	{mso-list-id:2121298141;
+	mso-list-type:hybrid;
+	mso-list-template-ids:607711258 134807553 134807555 134807557 134807553 134807555 134807557 134807553 134807555 134807557;}
+@list l34:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	font-family:Symbol;}
+@list l34:level2
+	{mso-level-tab-stop:1.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l34:level3
+	{mso-level-tab-stop:1.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l34:level4
+	{mso-level-tab-stop:2.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l34:level5
+	{mso-level-tab-stop:2.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l34:level6
+	{mso-level-tab-stop:3.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l34:level7
+	{mso-level-tab-stop:3.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l34:level8
+	{mso-level-tab-stop:4.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l34:level9
+	{mso-level-tab-stop:4.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l35
+	{mso-list-id:2137024385;
+	mso-list-template-ids:947052106;}
+@list l35:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	mso-ansi-font-size:10.0pt;
+	font-family:Symbol;}
+ol
+	{margin-bottom:0in;}
+ul
+	{margin-bottom:0in;}
+-->
+</style>
+<!--[if gte mso 10]>
+<style>
+ /* Style Definitions */
+ table.MsoNormalTable
+	{mso-style-name:"Table Normal";
+	mso-tstyle-rowband-size:0;
+	mso-tstyle-colband-size:0;
+	mso-style-noshow:yes;
+	mso-style-parent:"";
+	mso-padding-alt:0in 5.4pt 0in 5.4pt;
+	mso-para-margin:0in;
+	mso-para-margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";}
+table.MsoTableGrid
+	{mso-style-name:"Table Grid";
+	mso-tstyle-rowband-size:0;
+	mso-tstyle-colband-size:0;
+	border:solid windowtext 1.0pt;
+	mso-border-alt:solid windowtext .5pt;
+	mso-padding-alt:0in 5.4pt 0in 5.4pt;
+	mso-border-insideh:.5pt solid windowtext;
+	mso-border-insidev:.5pt solid windowtext;
+	mso-para-margin-top:0in;
+	mso-para-margin-right:0in;
+	mso-para-margin-bottom:6.0pt;
+	mso-para-margin-left:0in;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";}
+table.MsoTableGridFirstRow
+	{mso-style-name:"Table Grid";
+	mso-table-condition:first-row;
+	mso-ansi-font-weight:bold;
+	mso-ansi-font-style:normal;}
+</style>
+<![endif]--><!--[if gte mso 9]><xml>
+ <o:shapedefaults v:ext="edit" spidmax="12290"/>
+</xml><![endif]--><!--[if gte mso 9]><xml>
+ <o:shapelayout v:ext="edit">
+  <o:idmap v:ext="edit" data="1"/>
+ </o:shapelayout></xml><![endif]-->
+</head>
+
+<body lang=EN-US link=blue vlink=purple style='tab-interval:.5in'>
+
+<div class=Section1>
+
+<table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+ style='border-collapse:collapse;mso-yfti-tbllook:480;mso-padding-alt:0in 5.4pt 0in 5.4pt'>
+ <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+  <td width=156 valign=top style='width:117.2pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoToc1 style='tab-stops:right dotted 539.5pt'><a
+  name="_Toc198023129"></a><a name="_Toc198023322"></a><a name="_Toc198023418"></a><a
+  name="_Toc198214973"></a><a name="_Toc198221537"></a><a name="_Toc198221999"></a><a
+  name="_Toc198297540"></a><a name="_Toc200119250"></a><a name="_Toc201321844"></a><a
+  name="_Toc201680346"></a><a name="_top"></a><span style='mso-bookmark:_Toc198023129'><span
+  style='mso-bookmark:_Toc198023322'><span style='mso-bookmark:_Toc198023418'><span
+  style='mso-bookmark:_Toc198214973'><span style='mso-bookmark:_Toc198221537'><span
+  style='mso-bookmark:_Toc198221999'><span style='mso-bookmark:_Toc198297540'><span
+  style='mso-bookmark:_Toc200119250'><span style='mso-bookmark:_Toc201321844'><span
+  style='mso-bookmark:_Toc201680346'></span></span></span></span></span></span></span></span></span></span><!--[if supportFields]><span
+  style='mso-bookmark:_Toc198023129'><span style='mso-bookmark:_Toc198023322'><span
+  style='mso-bookmark:_Toc198023418'><span style='mso-bookmark:_Toc198214973'><span
+  style='mso-bookmark:_Toc198221537'><span style='mso-bookmark:_Toc198221999'><span
+  style='mso-bookmark:_Toc198297540'><span style='mso-bookmark:_Toc200119250'><span
+  style='mso-bookmark:_Toc201321844'><span style='mso-bookmark:_Toc201680346'></span></span></span></span></span></span></span></span></span></span><span
+  style='mso-element:field-begin'></span><span style='mso-bookmark:_Toc198023129'><span
+  style='mso-bookmark:_Toc198023322'><span style='mso-bookmark:_Toc198023418'><span
+  style='mso-bookmark:_Toc198214973'><span style='mso-bookmark:_Toc198221537'><span
+  style='mso-bookmark:_Toc198221999'><span style='mso-bookmark:_Toc198297540'><span
+  style='mso-bookmark:_Toc200119250'><span style='mso-bookmark:_Toc201321844'><span
+  style='mso-bookmark:_Toc201680346'><span style='mso-spacerun:yes'> </span>TOC
+  \n \h \z <span style='mso-element:field-separator'></span></span></span></span></span></span></span></span></span></span></span><![endif]--><span
+  style='mso-bookmark:_Toc198023129'><span style='mso-bookmark:_Toc198023322'><span
+  style='mso-bookmark:_Toc198023418'><span style='mso-bookmark:_Toc198214973'><span
+  style='mso-bookmark:_Toc198221537'><span style='mso-bookmark:_Toc198221999'><span
+  style='mso-bookmark:_Toc198297540'><span style='mso-bookmark:_Toc200119250'><span
+  style='mso-bookmark:_Toc201321844'><span style='mso-bookmark:_Toc201680346'></span></span></span></span></span></span></span></span></span></span><a
+  href="#_Toc202514187"><span style='mso-bookmark:_Toc198023129'><span
+  style='mso-bookmark:_Toc198023322'><span style='mso-bookmark:_Toc198023418'><span
+  style='mso-bookmark:_Toc198214973'><span style='mso-bookmark:_Toc198221537'><span
+  style='mso-bookmark:_Toc198221999'><span style='mso-bookmark:_Toc198297540'><span
+  style='mso-bookmark:_Toc200119250'><span style='mso-bookmark:_Toc201321844'><span
+  style='mso-bookmark:_Toc201680346'><span style='mso-no-proof:yes'>Introduction</span></span></span></span></span></span></span></span></span></span></span></a><span
+  style='mso-bookmark:_Toc198023129'><span style='mso-bookmark:_Toc198023322'><span
+  style='mso-bookmark:_Toc198023418'><span style='mso-bookmark:_Toc198214973'><span
+  style='mso-bookmark:_Toc198221537'><span style='mso-bookmark:_Toc198221999'><span
+  style='mso-bookmark:_Toc198297540'><span style='mso-bookmark:_Toc200119250'><span
+  style='mso-bookmark:_Toc201321844'><span style='mso-bookmark:_Toc201680346'><span
+  style='mso-no-proof:yes'><o:p></o:p></span></span></span></span></span></span></span></span></span></span></span></p>
+  <p class=MsoToc2 style='tab-stops:right dotted 539.5pt'><span
+  style='mso-bookmark:_Toc198023129'><span style='mso-bookmark:_Toc198023322'><span
+  style='mso-bookmark:_Toc198023418'><span style='mso-bookmark:_Toc198214973'><span
+  style='mso-bookmark:_Toc198221537'><span style='mso-bookmark:_Toc198221999'><span
+  style='mso-bookmark:_Toc198297540'><span style='mso-bookmark:_Toc200119250'><span
+  style='mso-bookmark:_Toc201321844'><span style='mso-bookmark:_Toc201680346'></span></span></span></span></span></span></span></span></span></span><a
+  href="#_Toc202514188"><span style='mso-bookmark:_Toc198023129'><span
+  style='mso-bookmark:_Toc198023322'><span style='mso-bookmark:_Toc198023418'><span
+  style='mso-bookmark:_Toc198214973'><span style='mso-bookmark:_Toc198221537'><span
+  style='mso-bookmark:_Toc198221999'><span style='mso-bookmark:_Toc198297540'><span
+  style='mso-bookmark:_Toc200119250'><span style='mso-bookmark:_Toc201321844'><span
+  style='mso-bookmark:_Toc201680346'><span style='mso-no-proof:yes'>What is
+  leJOS NXJ?</span></span></span></span></span></span></span></span></span></span></span></a><span
+  style='mso-bookmark:_Toc198023129'><span style='mso-bookmark:_Toc198023322'><span
+  style='mso-bookmark:_Toc198023418'><span style='mso-bookmark:_Toc198214973'><span
+  style='mso-bookmark:_Toc198221537'><span style='mso-bookmark:_Toc198221999'><span
+  style='mso-bookmark:_Toc198297540'><span style='mso-bookmark:_Toc200119250'><span
+  style='mso-bookmark:_Toc201321844'><span style='mso-bookmark:_Toc201680346'><span
+  style='mso-no-proof:yes'><o:p></o:p></span></span></span></span></span></span></span></span></span></span></span></p>
+  <p class=MsoToc2 style='tab-stops:right dotted 539.5pt'><span
+  style='mso-bookmark:_Toc198023129'><span style='mso-bookmark:_Toc198023322'><span
+  style='mso-bookmark:_Toc198023418'><span style='mso-bookmark:_Toc198214973'><span
+  style='mso-bookmark:_Toc198221537'><span style='mso-bookmark:_Toc198221999'><span
+  style='mso-bookmark:_Toc198297540'><span style='mso-bookmark:_Toc200119250'><span
+  style='mso-bookmark:_Toc201321844'><span style='mso-bookmark:_Toc201680346'></span></span></span></span></span></span></span></span></span></span><a
+  href="#_Toc202514189"><span style='mso-bookmark:_Toc198023129'><span
+  style='mso-bookmark:_Toc198023322'><span style='mso-bookmark:_Toc198023418'><span
+  style='mso-bookmark:_Toc198214973'><span style='mso-bookmark:_Toc198221537'><span
+  style='mso-bookmark:_Toc198221999'><span style='mso-bookmark:_Toc198297540'><span
+  style='mso-bookmark:_Toc200119250'><span style='mso-bookmark:_Toc201321844'><span
+  style='mso-bookmark:_Toc201680346'><span style='mso-no-proof:yes'>Advantages
+  of leJOS NXJ</span></span></span></span></span></span></span></span></span></span></span></a><span
+  style='mso-bookmark:_Toc198023129'><span style='mso-bookmark:_Toc198023322'><span
+  style='mso-bookmark:_Toc198023418'><span style='mso-bookmark:_Toc198214973'><span
+  style='mso-bookmark:_Toc198221537'><span style='mso-bookmark:_Toc198221999'><span
+  style='mso-bookmark:_Toc198297540'><span style='mso-bookmark:_Toc200119250'><span
+  style='mso-bookmark:_Toc201321844'><span style='mso-bookmark:_Toc201680346'><span
+  style='mso-no-proof:yes'><o:p></o:p></span></span></span></span></span></span></span></span></span></span></span></p>
+  <p class=MsoToc3 style='tab-stops:right dotted 539.5pt'><span
+  style='mso-bookmark:_Toc198023129'><span style='mso-bookmark:_Toc198023322'><span
+  style='mso-bookmark:_Toc198023418'><span style='mso-bookmark:_Toc198214973'><span
+  style='mso-bookmark:_Toc198221537'><span style='mso-bookmark:_Toc198221999'><span
+  style='mso-bookmark:_Toc198297540'><span style='mso-bookmark:_Toc200119250'><span
+  style='mso-bookmark:_Toc201321844'><span style='mso-bookmark:_Toc201680346'></span></span></span></span></span></span></span></span></span></span><!--[if supportFields]><span
+  style='mso-bookmark:_Toc198023129'><span style='mso-bookmark:_Toc198023322'><span
+  style='mso-bookmark:_Toc198023418'><span style='mso-bookmark:_Toc198214973'><span
+  style='mso-bookmark:_Toc198221537'><span style='mso-bookmark:_Toc198221999'><span
+  style='mso-bookmark:_Toc198297540'><span style='mso-bookmark:_Toc200119250'><span
+  style='mso-bookmark:_Toc201321844'><span style='mso-bookmark:_Toc201680346'></span></span></span></span></span></span></span></span></span></span><span
+  style='mso-element:field-end'></span><![endif]--><span style='mso-bookmark:
+  _Toc198023129'><span style='mso-bookmark:_Toc198023322'><span
+  style='mso-bookmark:_Toc198023418'><span style='mso-bookmark:_Toc198214973'><span
+  style='mso-bookmark:_Toc198221537'><span style='mso-bookmark:_Toc198221999'><span
+  style='mso-bookmark:_Toc198297540'><span style='mso-bookmark:_Toc200119250'><span
+  style='mso-bookmark:_Toc201321844'><span style='mso-bookmark:_Toc201680346'><span
+  style='mso-no-proof:yes'><o:p></o:p></span></span></span></span></span></span></span></span></span></span></span></p>
+  </td>
+  <span style='mso-bookmark:_Toc198023129'><span style='mso-bookmark:_Toc198023322'><span
+  style='mso-bookmark:_Toc198023418'><span style='mso-bookmark:_Toc198214973'><span
+  style='mso-bookmark:_Toc198221537'><span style='mso-bookmark:_Toc198221999'><span
+  style='mso-bookmark:_Toc198297540'><span style='mso-bookmark:_Toc200119250'><span
+  style='mso-bookmark:_Toc201321844'><span style='mso-bookmark:_Toc201680346'></span></span></span></span></span></span></span></span></span></span>
+  <td width=780 valign=top style='width:584.8pt;padding:0in 5.4pt 0in 5.4pt'>
+  <h1><span style='mso-bookmark:_Toc198023129'><span style='mso-bookmark:_Toc198023322'><span
+  style='mso-bookmark:_Toc198023418'><span style='mso-bookmark:_Toc198214973'><span
+  style='mso-bookmark:_Toc198221537'><span style='mso-bookmark:_Toc198221999'><span
+  style='mso-bookmark:_Toc198297540'><span style='mso-bookmark:_Toc200119250'><span
+  style='mso-bookmark:_Toc201321844'><span style='mso-bookmark:_Toc201680346'><a
+  name="_Toc198022796"></a><a name="_Toc198023174"></a><a name="_Toc198023172"></a><a
+  name="_Toc198022794"></a><a name="_Toc202514187"></a><a
+  name="_Preliminaries_1"></a><span style='mso-bookmark:_Toc198022796'><span
+  style='mso-bookmark:_Toc198023174'><span style='mso-bookmark:_Toc198023172'><span
+  style='mso-bookmark:_Toc198022794'><span style='mso-bookmark:_Toc202514187'>Introduction</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></h1>
+  <h2><span style='mso-bookmark:_Toc198023129'><span style='mso-bookmark:_Toc198023322'><span
+  style='mso-bookmark:_Toc198023418'><span style='mso-bookmark:_Toc198214973'><span
+  style='mso-bookmark:_Toc198221537'><span style='mso-bookmark:_Toc198221999'><span
+  style='mso-bookmark:_Toc198297540'><span style='mso-bookmark:_Toc200119250'><span
+  style='mso-bookmark:_Toc201321844'><span style='mso-bookmark:_Toc201680346'><span
+  style='mso-bookmark:_Toc198022796'><span style='mso-bookmark:_Toc198023174'><span
+  style='mso-bookmark:_Toc198023172'><span style='mso-bookmark:_Toc198022794'><a
+  name="_Toc202514188"></a><a name="_Toc201680347"></a><a name="_Toc201321845"></a><a
+  name="_Toc200119251"></a><a name="_Toc198297541"></a><a name="_Toc198222000"></a><a
+  name="_Toc198221538"></a><a name="_Toc198214974"></a><a
+  name="_What_is_leJOS_NXJ?"></a><span style='mso-bookmark:_Toc202514188'><span
+  style='mso-bookmark:_Toc201680347'><span style='mso-bookmark:_Toc201321845'><span
+  style='mso-bookmark:_Toc200119251'><span style='mso-bookmark:_Toc198297541'><span
+  style='mso-bookmark:_Toc198222000'><span style='mso-bookmark:_Toc198221538'><span
+  style='mso-bookmark:_Toc198214974'>What is <span class=SpellE>leJOS</span>
+  NXJ?</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></h2>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198023129'><span
+  style='mso-bookmark:_Toc198023322'><span style='mso-bookmark:_Toc198023418'><span
+  style='mso-bookmark:_Toc198214973'><span style='mso-bookmark:_Toc198221537'><span
+  style='mso-bookmark:_Toc198221999'><span style='mso-bookmark:_Toc198297540'><span
+  style='mso-bookmark:_Toc200119250'><span style='mso-bookmark:_Toc201321844'><span
+  style='mso-bookmark:_Toc201680346'><span style='mso-bookmark:_Toc198022796'><span
+  style='mso-bookmark:_Toc198023174'><span style='mso-bookmark:_Toc198023172'><span
+  style='mso-bookmark:_Toc198022794'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></span></span></span></span></span></span></p>
+  <p class=MsoBodyText2><span style='mso-bookmark:_Toc198023129'><span
+  style='mso-bookmark:_Toc198023322'><span style='mso-bookmark:_Toc198023418'><span
+  style='mso-bookmark:_Toc198214973'><span style='mso-bookmark:_Toc198221537'><span
+  style='mso-bookmark:_Toc198221999'><span style='mso-bookmark:_Toc198297540'><span
+  style='mso-bookmark:_Toc200119250'><span style='mso-bookmark:_Toc201321844'><span
+  style='mso-bookmark:_Toc201680346'><span style='mso-bookmark:_Toc198022796'><span
+  style='mso-bookmark:_Toc198023174'><span style='mso-bookmark:_Toc198023172'><span
+  style='mso-bookmark:_Toc198022794'><span class=SpellE><span class=GramE>leJOS</span></span>
+  NXJ is a Java programming environment for the LEGO MINDSTORMS NXT ®. It
+  allows you to program LEGO ® robots in Java.</span></span></span></span></span></span></span></span></span></span></span></span></span></span></p>
+  <p class=MsoBodyText2><span style='mso-bookmark:_Toc198023129'><span
+  style='mso-bookmark:_Toc198023322'><span style='mso-bookmark:_Toc198023418'><span
+  style='mso-bookmark:_Toc198214973'><span style='mso-bookmark:_Toc198221537'><span
+  style='mso-bookmark:_Toc198221999'><span style='mso-bookmark:_Toc198297540'><span
+  style='mso-bookmark:_Toc200119250'><span style='mso-bookmark:_Toc201321844'><span
+  style='mso-bookmark:_Toc201680346'><span style='mso-bookmark:_Toc198022796'><span
+  style='mso-bookmark:_Toc198023174'><span style='mso-bookmark:_Toc198023172'><span
+  style='mso-bookmark:_Toc198022794'>It consists of:</span></span></span></span></span></span></span></span></span></span></span></span></span></span></p>
+  <ul style='margin-top:0in' type=disc>
+   <li class=MsoNormal style='mso-list:l26 level1 lfo3;tab-stops:list .5in'><span
+       style='mso-bookmark:_Toc198023129'><span style='mso-bookmark:_Toc198023322'><span
+       style='mso-bookmark:_Toc198023418'><span style='mso-bookmark:_Toc198214973'><span
+       style='mso-bookmark:_Toc198221537'><span style='mso-bookmark:_Toc198221999'><span
+       style='mso-bookmark:_Toc198297540'><span style='mso-bookmark:_Toc200119250'><span
+       style='mso-bookmark:_Toc201321844'><span style='mso-bookmark:_Toc201680346'><span
+       style='mso-bookmark:_Toc198022796'><span style='mso-bookmark:_Toc198023174'><span
+       style='mso-bookmark:_Toc198023172'><span style='mso-bookmark:_Toc198022794'>Replacement
+       firmware for the NXT that includes a Java Virtual Machine.</span></span></span></span></span></span></span></span></span></span></span></span></span></span></li>
+   <li class=MsoNormal style='mso-list:l26 level1 lfo3;tab-stops:list .5in'><span
+       style='mso-bookmark:_Toc198023129'><span style='mso-bookmark:_Toc198023322'><span
+       style='mso-bookmark:_Toc198023418'><span style='mso-bookmark:_Toc198214973'><span
+       style='mso-bookmark:_Toc198221537'><span style='mso-bookmark:_Toc198221999'><span
+       style='mso-bookmark:_Toc198297540'><span style='mso-bookmark:_Toc200119250'><span
+       style='mso-bookmark:_Toc201321844'><span style='mso-bookmark:_Toc201680346'><span
+       style='mso-bookmark:_Toc198022796'><span style='mso-bookmark:_Toc198023174'><span
+       style='mso-bookmark:_Toc198023172'><span style='mso-bookmark:_Toc198022794'>A
+       library of Java classes (<span class=SpellE>classes.jar</span>) that <span
+       class=GramE>implement</span> the <span class=SpellE>leJOS</span> NXJ
+       Application Programming Interface (API).</span></span></span></span></span></span></span></span></span></span></span></span></span></span></li>
+   <li class=MsoNormal style='mso-list:l26 level1 lfo3;tab-stops:list .5in'><span
+       style='mso-bookmark:_Toc198023129'><span style='mso-bookmark:_Toc198023322'><span
+       style='mso-bookmark:_Toc198023418'><span style='mso-bookmark:_Toc198214973'><span
+       style='mso-bookmark:_Toc198221537'><span style='mso-bookmark:_Toc198221999'><span
+       style='mso-bookmark:_Toc198297540'><span style='mso-bookmark:_Toc200119250'><span
+       style='mso-bookmark:_Toc201321844'><span style='mso-bookmark:_Toc201680346'><span
+       style='mso-bookmark:_Toc198022796'><span style='mso-bookmark:_Toc198023174'><span
+       style='mso-bookmark:_Toc198023172'><span style='mso-bookmark:_Toc198022794'>A
+       linker for linking user Java classes with <span class=SpellE>classes.jar</span>
+       to form a .binary file that can be uploaded and run on the NXT.</span></span></span></span></span></span></span></span></span></span></span></span></span></span></li>
+   <li class=MsoNormal style='mso-list:l26 level1 lfo3;tab-stops:list .5in'><span
+       style='mso-bookmark:_Toc198023129'><span style='mso-bookmark:_Toc198023322'><span
+       style='mso-bookmark:_Toc198023418'><span style='mso-bookmark:_Toc198214973'><span
+       style='mso-bookmark:_Toc198221537'><span style='mso-bookmark:_Toc198221999'><span
+       style='mso-bookmark:_Toc198297540'><span style='mso-bookmark:_Toc200119250'><span
+       style='mso-bookmark:_Toc201321844'><span style='mso-bookmark:_Toc201680346'><span
+       style='mso-bookmark:_Toc198022796'><span style='mso-bookmark:_Toc198023174'><span
+       style='mso-bookmark:_Toc198023172'><span style='mso-bookmark:_Toc198022794'>PC
+       tools for flashing the firmware, uploading programs, debugging, and many
+       other functions.</span></span></span></span></span></span></span></span></span></span></span></span></span></span></li>
+   <li class=MsoNormal style='mso-list:l26 level1 lfo3;tab-stops:list .5in'><span
+       style='mso-bookmark:_Toc198023129'><span style='mso-bookmark:_Toc198023322'><span
+       style='mso-bookmark:_Toc198023418'><span style='mso-bookmark:_Toc198214973'><span
+       style='mso-bookmark:_Toc198221537'><span style='mso-bookmark:_Toc198221999'><span
+       style='mso-bookmark:_Toc198297540'><span style='mso-bookmark:_Toc200119250'><span
+       style='mso-bookmark:_Toc201321844'><span style='mso-bookmark:_Toc201680346'><span
+       style='mso-bookmark:_Toc198022796'><span style='mso-bookmark:_Toc198023174'><span
+       style='mso-bookmark:_Toc198023172'><span style='mso-bookmark:_Toc198022794'>A
+       PC API for writing PC programs <span class=GramE>that communicate</span>
+       with <span class=SpellE>leJOS</span> NXJ programs using Java streams
+       over <span class=SpellE>Bluetooth</span> or USB, or using the LEGO
+       Communications Protocol.</span></span></span></span></span></span></span></span></span></span></span></span></span></span></li>
+   <li class=MsoNormal style='mso-list:l26 level1 lfo3;tab-stops:list .5in'><span
+       style='mso-bookmark:_Toc198023129'><span style='mso-bookmark:_Toc198023322'><span
+       style='mso-bookmark:_Toc198023418'><span style='mso-bookmark:_Toc198214973'><span
+       style='mso-bookmark:_Toc198221537'><span style='mso-bookmark:_Toc198221999'><span
+       style='mso-bookmark:_Toc198297540'><span style='mso-bookmark:_Toc200119250'><span
+       style='mso-bookmark:_Toc201321844'><span style='mso-bookmark:_Toc201680346'><span
+       style='mso-bookmark:_Toc198022796'><span style='mso-bookmark:_Toc198023174'><span
+       style='mso-bookmark:_Toc198023172'><span style='mso-bookmark:_Toc198022794'>Many
+       sample programs</span></span></span></span></span></span></span></span></span></span></span></span></span></span></li>
+  </ul>
+  <p class=MsoBodyText2><span style='mso-bookmark:_Toc198023129'><span
+  style='mso-bookmark:_Toc198023322'><span style='mso-bookmark:_Toc198023418'><span
+  style='mso-bookmark:_Toc198214973'><span style='mso-bookmark:_Toc198221537'><span
+  style='mso-bookmark:_Toc198221999'><span style='mso-bookmark:_Toc198297540'><span
+  style='mso-bookmark:_Toc200119250'><span style='mso-bookmark:_Toc201321844'><span
+  style='mso-bookmark:_Toc201680346'><span style='mso-bookmark:_Toc198022796'><span
+  style='mso-bookmark:_Toc198023174'><span style='mso-bookmark:_Toc198023172'><span
+  style='mso-bookmark:_Toc198022794'>As <span class=SpellE>leJOS</span> is a
+  firmware replacement, the new firmware <span class=SpellE>leJOS</span> NXJ
+  firmware must be flashed onto the NXT, and will replace the standard LEGO
+  MINDSTORMS firmware. This wipes out any files currently held on the LEGO
+  firmware. The LEGO firmware can be restored using the LEGO supplied software.</span></span></span></span></span></span></span></span></span></span></span></span></span></span></p>
+  <p class=MsoBodyText2><span style='mso-bookmark:_Toc198023129'><span
+  style='mso-bookmark:_Toc198023322'><span style='mso-bookmark:_Toc198023418'><span
+  style='mso-bookmark:_Toc198214973'><span style='mso-bookmark:_Toc198221537'><span
+  style='mso-bookmark:_Toc198221999'><span style='mso-bookmark:_Toc198297540'><span
+  style='mso-bookmark:_Toc200119250'><span style='mso-bookmark:_Toc201321844'><span
+  style='mso-bookmark:_Toc201680346'><span style='mso-bookmark:_Toc198022796'><span
+  style='mso-bookmark:_Toc198023174'><span style='mso-bookmark:_Toc198023172'><span
+  style='mso-bookmark:_Toc198022794'><span class=SpellE><span class=GramE>leJOS</span></span>
+  is an open source project hosted in the <span class=SpellE>sourceforge</span>
+  repository.<span style='mso-spacerun:yes'>  </span>It was originally created
+  from the <span class=SpellE>TinyVM</span> project that implemented a Java VM
+  for the LEGO <span class=SpellE>Mindstorms</span> RCX system.<span
+  style='mso-spacerun:yes'>  </span>The RCX version of <span class=SpellE>leJOS</span>
+  proved very popular with the LEGO <span class=SpellE>Mindstorms</span>
+  Robotic Inventions Systems <span class=GramE>owners,</span> and close to
+  200,000 downloads of all versions of <span class=SpellE>leJOS</span> have
+  been done.<span style='mso-spacerun:yes'>  </span>The original author of <span
+  class=SpellE>TinyVM</span> and the RCX version of <span class=SpellE>leJOS</span>
+  was Jose <span class=SpellE>Solorzano</span>.</span></span></span></span></span></span></span></span></span></span></span></span></span></span></p>
+  <p class=MsoBodyText2><span style='mso-bookmark:_Toc198023129'><span
+  style='mso-bookmark:_Toc198023322'><span style='mso-bookmark:_Toc198023418'><span
+  style='mso-bookmark:_Toc198214973'><span style='mso-bookmark:_Toc198221537'><span
+  style='mso-bookmark:_Toc198221999'><span style='mso-bookmark:_Toc198297540'><span
+  style='mso-bookmark:_Toc200119250'><span style='mso-bookmark:_Toc201321844'><span
+  style='mso-bookmark:_Toc201680346'><span style='mso-bookmark:_Toc198022796'><span
+  style='mso-bookmark:_Toc198023174'><span style='mso-bookmark:_Toc198023172'><span
+  style='mso-bookmark:_Toc198022794'>The NXT has given the <span class=SpellE>leJOS</span>
+  development team the opportunity to greatly expand the capability of <span
+  class=SpellE>leJOS</span>. </span></span></span></span></span></span></span></span></span></span></span></span></span></span></p>
+  <p class=MsoBodyText2><span style='mso-bookmark:_Toc198023129'><span
+  style='mso-bookmark:_Toc198023322'><span style='mso-bookmark:_Toc198023418'><span
+  style='mso-bookmark:_Toc198214973'><span style='mso-bookmark:_Toc198221537'><span
+  style='mso-bookmark:_Toc198221999'><span style='mso-bookmark:_Toc198297540'><span
+  style='mso-bookmark:_Toc200119250'><span style='mso-bookmark:_Toc201321844'><span
+  style='mso-bookmark:_Toc201680346'><span style='mso-bookmark:_Toc198022796'><span
+  style='mso-bookmark:_Toc198023174'><span style='mso-bookmark:_Toc198023172'><span
+  style='mso-bookmark:_Toc198022794'></span></span></span></span></span></span></span></span></span></span></span></span></span></span><a
+  href="#_top"><span style='mso-bookmark:_Toc198023129'><span style='mso-bookmark:
+  _Toc198023322'><span style='mso-bookmark:_Toc198023418'><span
+  style='mso-bookmark:_Toc198214973'><span style='mso-bookmark:_Toc198221537'><span
+  style='mso-bookmark:_Toc198221999'><span style='mso-bookmark:_Toc198297540'><span
+  style='mso-bookmark:_Toc200119250'><span style='mso-bookmark:_Toc201321844'><span
+  style='mso-bookmark:_Toc201680346'><span style='mso-bookmark:_Toc198022796'><span
+  style='mso-bookmark:_Toc198023174'><span style='mso-bookmark:_Toc198023172'><span
+  style='mso-bookmark:_Toc198022794'>Back to top </span></span></span></span></span></span></span></span></span></span></span></span></span></span><span
+  style='mso-bookmark:_Toc198023129'><span style='mso-bookmark:_Toc198023322'><span
+  style='mso-bookmark:_Toc198023418'><span style='mso-bookmark:_Toc198214973'><span
+  style='mso-bookmark:_Toc198221537'><span style='mso-bookmark:_Toc198221999'><span
+  style='mso-bookmark:_Toc198297540'><span style='mso-bookmark:_Toc200119250'><span
+  style='mso-bookmark:_Toc201321844'><span style='mso-bookmark:_Toc201680346'><span
+  style='mso-bookmark:_Toc198022796'><span style='mso-bookmark:_Toc198023174'><span
+  style='mso-bookmark:_Toc198023172'><span style='mso-bookmark:_Toc198022794'></span></span></span></span></span></span></span></span></span></span></span></span></span></span></a><span
+  style='mso-bookmark:_Toc198023129'><span style='mso-bookmark:_Toc198023322'><span
+  style='mso-bookmark:_Toc198023418'><span style='mso-bookmark:_Toc198214973'><span
+  style='mso-bookmark:_Toc198221537'><span style='mso-bookmark:_Toc198221999'><span
+  style='mso-bookmark:_Toc198297540'><span style='mso-bookmark:_Toc200119250'><span
+  style='mso-bookmark:_Toc201321844'><span style='mso-bookmark:_Toc201680346'><span
+  style='mso-bookmark:_Toc198022796'><span style='mso-bookmark:_Toc198023174'><span
+  style='mso-bookmark:_Toc198023172'><span style='mso-bookmark:_Toc198022794'><span
+  style='mso-spacerun:yes'> </span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></p>
+  <h2><span style='mso-bookmark:_Toc198023129'><span style='mso-bookmark:_Toc198023322'><span
+  style='mso-bookmark:_Toc198023418'><span style='mso-bookmark:_Toc198214973'><span
+  style='mso-bookmark:_Toc198221537'><span style='mso-bookmark:_Toc198221999'><span
+  style='mso-bookmark:_Toc198297540'><span style='mso-bookmark:_Toc200119250'><span
+  style='mso-bookmark:_Toc201321844'><span style='mso-bookmark:_Toc201680346'><span
+  style='mso-bookmark:_Toc198022796'><span style='mso-bookmark:_Toc198023174'><span
+  style='mso-bookmark:_Toc198023172'><span style='mso-bookmark:_Toc198022794'><a
+  name="_Toc202514189"></a><a name="_Toc201680348"></a><a name="_Toc201321846"></a><a
+  name="_Toc200119252"></a><a name="_Toc200116623"></a><a name="_Toc198295403"></a><a
+  name="_Toc198214975"></a><a name="_Toc198022753"></a><a name="_Toc198023131"></a><a
+  name="_Toc198023323"></a><a name="_Toc198023419"></a><a name="_Toc198221539"></a><a
+  name="_Toc198222001"><span style='mso-bookmark:_Toc198221539'><span
+  style='mso-bookmark:_Toc198023419'><span style='mso-bookmark:_Toc198023323'><span
+  style='mso-bookmark:_Toc198023131'><span style='mso-bookmark:_Toc198022753'><span
+  style='mso-bookmark:_Toc198214975'><span style='mso-bookmark:_Toc198295403'><span
+  style='mso-bookmark:_Toc200116623'><span style='mso-bookmark:_Toc200119252'><span
+  style='mso-bookmark:_Toc201321846'><span style='mso-bookmark:_Toc201680348'><span
+  style='mso-bookmark:_Toc202514189'>Advantages of </span></span></span></span></span></span></span></span></span></span></span></span></a><span
+  class=SpellE><span style='mso-bookmark:_Toc198222001'><span style='mso-bookmark:
+  _Toc198221539'><span style='mso-bookmark:_Toc198023419'><span
+  style='mso-bookmark:_Toc198023323'><span style='mso-bookmark:_Toc198023131'><span
+  style='mso-bookmark:_Toc198022753'><span style='mso-bookmark:_Toc198214975'><span
+  style='mso-bookmark:_Toc198295403'><span style='mso-bookmark:_Toc200116623'><span
+  style='mso-bookmark:_Toc200119252'><span style='mso-bookmark:_Toc201321846'><span
+  style='mso-bookmark:_Toc201680348'><span style='mso-bookmark:_Toc202514189'>leJOS</span></span></span></span></span></span></span></span></span></span></span></span></span></span><span
+  style='mso-bookmark:_Toc198222001'><span style='mso-bookmark:_Toc198221539'><span
+  style='mso-bookmark:_Toc198023419'><span style='mso-bookmark:_Toc198023323'><span
+  style='mso-bookmark:_Toc198023131'><span style='mso-bookmark:_Toc198022753'><span
+  style='mso-bookmark:_Toc198214975'><span style='mso-bookmark:_Toc198295403'><span
+  style='mso-bookmark:_Toc200116623'><span style='mso-bookmark:_Toc200119252'><span
+  style='mso-bookmark:_Toc201321846'><span style='mso-bookmark:_Toc201680348'><span
+  style='mso-bookmark:_Toc202514189'> NXJ</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></h2>
+  <p class=MsoBodyText3><span style='mso-bookmark:_Toc198023129'><span
+  style='mso-bookmark:_Toc198023322'><span style='mso-bookmark:_Toc198023418'><span
+  style='mso-bookmark:_Toc198214973'><span style='mso-bookmark:_Toc198221537'><span
+  style='mso-bookmark:_Toc198221999'><span style='mso-bookmark:_Toc198297540'><span
+  style='mso-bookmark:_Toc200119250'><span style='mso-bookmark:_Toc201321844'><span
+  style='mso-bookmark:_Toc201680346'><span style='mso-bookmark:_Toc198022796'><span
+  style='mso-bookmark:_Toc198023174'><span style='mso-bookmark:_Toc198023172'><span
+  style='mso-bookmark:_Toc198022794'><a name="_Toc198022754"></a><a
+  name="_Toc198023132"><span style='mso-bookmark:_Toc198022754'>There are many
+  advantages of using </span></a><span class=SpellE><span style='mso-bookmark:
+  _Toc198023132'><span style='mso-bookmark:_Toc198022754'>leJOS</span></span></span><span
+  style='mso-bookmark:_Toc198023132'><span style='mso-bookmark:_Toc198022754'>
+  NXJ rather than the NXT-G or other programming environments for the NXT.
+  These include:</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></p>
+  <ul style='margin-top:0in' type=disc>
+   <li class=MsoNormal style='mso-list:l33 level1 lfo6;tab-stops:list .5in'><span
+       style='mso-bookmark:_Toc198023129'><span style='mso-bookmark:_Toc198023322'><span
+       style='mso-bookmark:_Toc198023418'><span style='mso-bookmark:_Toc198214973'><span
+       style='mso-bookmark:_Toc198221537'><span style='mso-bookmark:_Toc198221999'><span
+       style='mso-bookmark:_Toc198297540'><span style='mso-bookmark:_Toc200119250'><span
+       style='mso-bookmark:_Toc201321844'><span style='mso-bookmark:_Toc201680346'><span
+       style='mso-bookmark:_Toc198022796'><span style='mso-bookmark:_Toc198023174'><span
+       style='mso-bookmark:_Toc198023172'><span style='mso-bookmark:_Toc198022794'><a
+       name="_Toc198022755"></a><a name="_Toc198023133"><span style='mso-bookmark:
+       _Toc198022755'>It uses the industry-standard Java language.</span></a></span></span></span></span></span></span></span></span></span></span></span></span></span></span></li>
+   <li class=MsoNormal style='mso-list:l33 level1 lfo6;tab-stops:list .5in'><span
+       style='mso-bookmark:_Toc198023129'><span style='mso-bookmark:_Toc198023322'><span
+       style='mso-bookmark:_Toc198023418'><span style='mso-bookmark:_Toc198214973'><span
+       style='mso-bookmark:_Toc198221537'><span style='mso-bookmark:_Toc198221999'><span
+       style='mso-bookmark:_Toc198297540'><span style='mso-bookmark:_Toc200119250'><span
+       style='mso-bookmark:_Toc201321844'><span style='mso-bookmark:_Toc201680346'><span
+       style='mso-bookmark:_Toc198022796'><span style='mso-bookmark:_Toc198023174'><span
+       style='mso-bookmark:_Toc198023172'><span style='mso-bookmark:_Toc198022794'><a
+       name="_Toc198022756"></a><a name="_Toc198023134"><span style='mso-bookmark:
+       _Toc198022756'>It provides object-oriented programming.</span></a></span></span></span></span></span></span></span></span></span></span></span></span></span></span></li>
+   <li class=MsoNormal style='mso-list:l33 level1 lfo6;tab-stops:list .5in'><span
+       style='mso-bookmark:_Toc198023129'><span style='mso-bookmark:_Toc198023322'><span
+       style='mso-bookmark:_Toc198023418'><span style='mso-bookmark:_Toc198214973'><span
+       style='mso-bookmark:_Toc198221537'><span style='mso-bookmark:_Toc198221999'><span
+       style='mso-bookmark:_Toc198297540'><span style='mso-bookmark:_Toc200119250'><span
+       style='mso-bookmark:_Toc201321844'><span style='mso-bookmark:_Toc201680346'><span
+       style='mso-bookmark:_Toc198022796'><span style='mso-bookmark:_Toc198023174'><span
+       style='mso-bookmark:_Toc198023172'><span style='mso-bookmark:_Toc198022794'><a
+       name="_Toc198022757"></a><a name="_Toc198023135"><span style='mso-bookmark:
+       _Toc198022757'>It is an open source project with many contributors.</span></a></span></span></span></span></span></span></span></span></span></span></span></span></span></span></li>
+   <li class=MsoNormal style='mso-list:l33 level1 lfo6;tab-stops:list .5in'><span
+       style='mso-bookmark:_Toc198023129'><span style='mso-bookmark:_Toc198023322'><span
+       style='mso-bookmark:_Toc198023418'><span style='mso-bookmark:_Toc198214973'><span
+       style='mso-bookmark:_Toc198221537'><span style='mso-bookmark:_Toc198221999'><span
+       style='mso-bookmark:_Toc198297540'><span style='mso-bookmark:_Toc200119250'><span
+       style='mso-bookmark:_Toc201321844'><span style='mso-bookmark:_Toc201680346'><span
+       style='mso-bookmark:_Toc198022796'><span style='mso-bookmark:_Toc198023174'><span
+       style='mso-bookmark:_Toc198023172'><span style='mso-bookmark:_Toc198022794'><a
+       name="_Toc198022758"></a><a name="_Toc198023136"><span style='mso-bookmark:
+       _Toc198022758'>It allows you a choice of professional Integrated
+       Development Environment such as Eclipse and </span></a><span
+       class=SpellE><span style='mso-bookmark:_Toc198023136'><span
+       style='mso-bookmark:_Toc198022758'>Netbeans</span></span></span><span
+       style='mso-bookmark:_Toc198023136'><span style='mso-bookmark:_Toc198022758'>
+       that support syntax directed editors and many other features.</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></li>
+   <li class=MsoNormal style='mso-list:l33 level1 lfo6;tab-stops:list .5in'><span
+       style='mso-bookmark:_Toc198023129'><span style='mso-bookmark:_Toc198023322'><span
+       style='mso-bookmark:_Toc198023418'><span style='mso-bookmark:_Toc198214973'><span
+       style='mso-bookmark:_Toc198221537'><span style='mso-bookmark:_Toc198221999'><span
+       style='mso-bookmark:_Toc198297540'><span style='mso-bookmark:_Toc200119250'><span
+       style='mso-bookmark:_Toc201321844'><span style='mso-bookmark:_Toc201680346'><span
+       style='mso-bookmark:_Toc198022796'><span style='mso-bookmark:_Toc198023174'><span
+       style='mso-bookmark:_Toc198023172'><span style='mso-bookmark:_Toc198022794'><a
+       name="_Toc198022759"></a><a name="_Toc198023137"><span style='mso-bookmark:
+       _Toc198022759'>It has cross platform support – Windows, Linux, </span></a><span
+       class=GramE><span style='mso-bookmark:_Toc198023137'><span
+       style='mso-bookmark:_Toc198022759'>Mac</span></span></span><span
+       style='mso-bookmark:_Toc198023137'><span style='mso-bookmark:_Toc198022759'>
+       OS X.</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></li>
+   <li class=MsoNormal style='mso-list:l33 level1 lfo6;tab-stops:list .5in'><span
+       style='mso-bookmark:_Toc198023129'><span style='mso-bookmark:_Toc198023322'><span
+       style='mso-bookmark:_Toc198023418'><span style='mso-bookmark:_Toc198214973'><span
+       style='mso-bookmark:_Toc198221537'><span style='mso-bookmark:_Toc198221999'><span
+       style='mso-bookmark:_Toc198297540'><span style='mso-bookmark:_Toc200119250'><span
+       style='mso-bookmark:_Toc201321844'><span style='mso-bookmark:_Toc201680346'><span
+       style='mso-bookmark:_Toc198022796'><span style='mso-bookmark:_Toc198023174'><span
+       style='mso-bookmark:_Toc198023172'><span style='mso-bookmark:_Toc198022794'><a
+       name="_Toc198022760"></a><a name="_Toc198023138"><span style='mso-bookmark:
+       _Toc198022760'>It is much faster than NXT-G.</span></a></span></span></span></span></span></span></span></span></span></span></span></span></span></span></li>
+   <li class=MsoNormal style='mso-list:l33 level1 lfo6;tab-stops:list .5in'><span
+       style='mso-bookmark:_Toc198023129'><span style='mso-bookmark:_Toc198023322'><span
+       style='mso-bookmark:_Toc198023418'><span style='mso-bookmark:_Toc198214973'><span
+       style='mso-bookmark:_Toc198221537'><span style='mso-bookmark:_Toc198221999'><span
+       style='mso-bookmark:_Toc198297540'><span style='mso-bookmark:_Toc200119250'><span
+       style='mso-bookmark:_Toc201321844'><span style='mso-bookmark:_Toc201680346'><span
+       style='mso-bookmark:_Toc198022796'><span style='mso-bookmark:_Toc198023174'><span
+       style='mso-bookmark:_Toc198023172'><span style='mso-bookmark:_Toc198022794'><a
+       name="_Toc198022761"></a><a name="_Toc198023139"><span style='mso-bookmark:
+       _Toc198022761'>It has full support for </span></a><span class=SpellE><span
+       style='mso-bookmark:_Toc198023139'><span style='mso-bookmark:_Toc198022761'>Bluetooth</span></span></span><span
+       style='mso-bookmark:_Toc198023139'><span style='mso-bookmark:_Toc198022761'>.</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></li>
+   <li class=MsoNormal style='mso-list:l33 level1 lfo6;tab-stops:list .5in'><span
+       style='mso-bookmark:_Toc198023129'><span style='mso-bookmark:_Toc198023322'><span
+       style='mso-bookmark:_Toc198023418'><span style='mso-bookmark:_Toc198214973'><span
+       style='mso-bookmark:_Toc198221537'><span style='mso-bookmark:_Toc198221999'><span
+       style='mso-bookmark:_Toc198297540'><span style='mso-bookmark:_Toc200119250'><span
+       style='mso-bookmark:_Toc201321844'><span style='mso-bookmark:_Toc201680346'><span
+       style='mso-bookmark:_Toc198022796'><span style='mso-bookmark:_Toc198023174'><span
+       style='mso-bookmark:_Toc198023172'><span style='mso-bookmark:_Toc198022794'><a
+       name="_Toc198022762"></a><a name="_Toc198023140"><span style='mso-bookmark:
+       _Toc198022762'>It provides highly accurate motor control.</span></a></span></span></span></span></span></span></span></span></span></span></span></span></span></span></li>
+   <li class=MsoNormal style='mso-list:l33 level1 lfo6;tab-stops:list .5in'><span
+       style='mso-bookmark:_Toc198023129'><span style='mso-bookmark:_Toc198023322'><span
+       style='mso-bookmark:_Toc198023418'><span style='mso-bookmark:_Toc198214973'><span
+       style='mso-bookmark:_Toc198221537'><span style='mso-bookmark:_Toc198221999'><span
+       style='mso-bookmark:_Toc198297540'><span style='mso-bookmark:_Toc200119250'><span
+       style='mso-bookmark:_Toc201321844'><span style='mso-bookmark:_Toc201680346'><span
+       style='mso-bookmark:_Toc198022796'><span style='mso-bookmark:_Toc198023174'><span
+       style='mso-bookmark:_Toc198023172'><span style='mso-bookmark:_Toc198022794'><a
+       name="_Toc198022763"></a><a name="_Toc198023141"><span style='mso-bookmark:
+       _Toc198022763'>It has advanced navigation support.</span></a></span></span></span></span></span></span></span></span></span></span></span></span></span></span></li>
+   <li class=MsoNormal style='mso-list:l33 level1 lfo6;tab-stops:list .5in'><span
+       style='mso-bookmark:_Toc198023129'><span style='mso-bookmark:_Toc198023322'><span
+       style='mso-bookmark:_Toc198023418'><span style='mso-bookmark:_Toc198214973'><span
+       style='mso-bookmark:_Toc198221537'><span style='mso-bookmark:_Toc198221999'><span
+       style='mso-bookmark:_Toc198297540'><span style='mso-bookmark:_Toc200119250'><span
+       style='mso-bookmark:_Toc201321844'><span style='mso-bookmark:_Toc201680346'><span
+       style='mso-bookmark:_Toc198022796'><span style='mso-bookmark:_Toc198023174'><span
+       style='mso-bookmark:_Toc198023172'><span style='mso-bookmark:_Toc198022794'><a
+       name="_Toc198022764"></a><a name="_Toc198023142"><span style='mso-bookmark:
+       _Toc198022764'>It provides Behavior classes that support the </span></a><span
+       class=SpellE><span style='mso-bookmark:_Toc198023142'><span
+       style='mso-bookmark:_Toc198022764'>subsumption</span></span></span><span
+       style='mso-bookmark:_Toc198023142'><span style='mso-bookmark:_Toc198022764'>
+       architecture foe ease of programming of complex robot behaviors.</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></li>
+   <li class=MsoNormal style='mso-list:l33 level1 lfo6;tab-stops:list .5in'><span
+       style='mso-bookmark:_Toc198023129'><span style='mso-bookmark:_Toc198023322'><span
+       style='mso-bookmark:_Toc198023418'><span style='mso-bookmark:_Toc198214973'><span
+       style='mso-bookmark:_Toc198221537'><span style='mso-bookmark:_Toc198221999'><span
+       style='mso-bookmark:_Toc198297540'><span style='mso-bookmark:_Toc200119250'><span
+       style='mso-bookmark:_Toc201321844'><span style='mso-bookmark:_Toc201680346'><span
+       style='mso-bookmark:_Toc198022796'><span style='mso-bookmark:_Toc198023174'><span
+       style='mso-bookmark:_Toc198023172'><span style='mso-bookmark:_Toc198022794'><a
+       name="_Toc198022765"></a><a name="_Toc198023143"><span style='mso-bookmark:
+       _Toc198022765'>It supports third party sensors.</span></a></span></span></span></span></span></span></span></span></span></span></span></span></span></span></li>
+   <li class=MsoNormal style='mso-list:l33 level1 lfo6;tab-stops:list .5in'><span
+       style='mso-bookmark:_Toc198023129'><span style='mso-bookmark:_Toc198023322'><span
+       style='mso-bookmark:_Toc198023418'><span style='mso-bookmark:_Toc198214973'><span
+       style='mso-bookmark:_Toc198221537'><span style='mso-bookmark:_Toc198221999'><span
+       style='mso-bookmark:_Toc198297540'><span style='mso-bookmark:_Toc200119250'><span
+       style='mso-bookmark:_Toc201321844'><span style='mso-bookmark:_Toc201680346'><span
+       style='mso-bookmark:_Toc198022796'><span style='mso-bookmark:_Toc198023174'><span
+       style='mso-bookmark:_Toc198023172'><span style='mso-bookmark:_Toc198022794'><a
+       name="_Toc198022766"></a><a name="_Toc198023144"><span style='mso-bookmark:
+       _Toc198022766'>It supports remote monitoring and tracing of your </span></a><span
+       class=SpellE><span style='mso-bookmark:_Toc198023144'><span
+       style='mso-bookmark:_Toc198022766'>leJOS</span></span></span><span
+       style='mso-bookmark:_Toc198023144'><span style='mso-bookmark:_Toc198022766'>
+       NXJ program from the PC.</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></li>
+   <li class=MsoNormal style='mso-list:l33 level1 lfo6;tab-stops:list .5in'><span
+       style='mso-bookmark:_Toc198023129'><span style='mso-bookmark:_Toc198023322'><span
+       style='mso-bookmark:_Toc198023418'><span style='mso-bookmark:_Toc198214973'><span
+       style='mso-bookmark:_Toc198221537'><span style='mso-bookmark:_Toc198221999'><span
+       style='mso-bookmark:_Toc198297540'><span style='mso-bookmark:_Toc200119250'><span
+       style='mso-bookmark:_Toc201321844'><span style='mso-bookmark:_Toc201680346'><span
+       style='mso-bookmark:_Toc198022796'><span style='mso-bookmark:_Toc198023174'><span
+       style='mso-bookmark:_Toc198023172'><span style='mso-bookmark:_Toc198022794'><a
+       name="_Toc198022767"></a><a name="_Toc198023145"><span style='mso-bookmark:
+       _Toc198022767'>It provides trigonometry and other Math functions</span></a></span></span></span></span></span></span></span></span></span></span></span></span></span></span></li>
+   <li class=MsoNormal style='mso-list:l33 level1 lfo6;tab-stops:list .5in'><span
+       style='mso-bookmark:_Toc198023129'><span style='mso-bookmark:_Toc198023322'><span
+       style='mso-bookmark:_Toc198023418'><span style='mso-bookmark:_Toc198214973'><span
+       style='mso-bookmark:_Toc198221537'><span style='mso-bookmark:_Toc198221999'><span
+       style='mso-bookmark:_Toc198297540'><span style='mso-bookmark:_Toc200119250'><span
+       style='mso-bookmark:_Toc201321844'><span style='mso-bookmark:_Toc201680346'><span
+       style='mso-bookmark:_Toc198022796'><span style='mso-bookmark:_Toc198023174'><span
+       style='mso-bookmark:_Toc198023172'><span style='mso-bookmark:_Toc198022794'><a
+       name="_Toc198022768"></a><a name="_Toc198023146"><span style='mso-bookmark:
+       _Toc198022768'>It supports the J2ME LCD user Interface including many
+       graphics functions.</span></a></span></span></span></span></span></span></span></span></span></span></span></span></span></span></li>
+   <li class=MsoNormal style='mso-list:l33 level1 lfo6;tab-stops:list .5in'><span
+       style='mso-bookmark:_Toc198023129'><span style='mso-bookmark:_Toc198023322'><span
+       style='mso-bookmark:_Toc198023418'><span style='mso-bookmark:_Toc198214973'><span
+       style='mso-bookmark:_Toc198221537'><span style='mso-bookmark:_Toc198221999'><span
+       style='mso-bookmark:_Toc198297540'><span style='mso-bookmark:_Toc200119250'><span
+       style='mso-bookmark:_Toc201321844'><span style='mso-bookmark:_Toc201680346'><span
+       style='mso-bookmark:_Toc198022796'><span style='mso-bookmark:_Toc198023174'><span
+       style='mso-bookmark:_Toc198023172'><span style='mso-bookmark:_Toc198022794'><a
+       name="_Toc198022769"></a><a name="_Toc198023147"><span style='mso-bookmark:
+       _Toc198022769'>It supports multithreading.</span></a></span></span></span></span></span></span></span></span></span></span></span></span></span></span></li>
+   <li class=MsoNormal style='mso-list:l33 level1 lfo6;tab-stops:list .5in'><span
+       style='mso-bookmark:_Toc198023129'><span style='mso-bookmark:_Toc198023322'><span
+       style='mso-bookmark:_Toc198023418'><span style='mso-bookmark:_Toc198214973'><span
+       style='mso-bookmark:_Toc198221537'><span style='mso-bookmark:_Toc198221999'><span
+       style='mso-bookmark:_Toc198297540'><span style='mso-bookmark:_Toc200119250'><span
+       style='mso-bookmark:_Toc201321844'><span style='mso-bookmark:_Toc201680346'><span
+       style='mso-bookmark:_Toc198022796'><span style='mso-bookmark:_Toc198023174'><span
+       style='mso-bookmark:_Toc198023172'><span style='mso-bookmark:_Toc198022794'><a
+       name="_Toc198022770"></a><a name="_Toc198023148"><span style='mso-bookmark:
+       _Toc198022770'>It supports listeners and events.</span></a></span></span></span></span></span></span></span></span></span></span></span></span></span></span></li>
+   <li class=MsoNormal style='mso-list:l33 level1 lfo6;tab-stops:list .5in'><span
+       style='mso-bookmark:_Toc198023129'><span style='mso-bookmark:_Toc198023322'><span
+       style='mso-bookmark:_Toc198023418'><span style='mso-bookmark:_Toc198214973'><span
+       style='mso-bookmark:_Toc198221537'><span style='mso-bookmark:_Toc198221999'><span
+       style='mso-bookmark:_Toc198297540'><span style='mso-bookmark:_Toc200119250'><span
+       style='mso-bookmark:_Toc201321844'><span style='mso-bookmark:_Toc201680346'><span
+       style='mso-bookmark:_Toc198022796'><span style='mso-bookmark:_Toc198023174'><span
+       style='mso-bookmark:_Toc198023172'><span style='mso-bookmark:_Toc198022794'><a
+       name="_Toc198022771"></a><a name="_Toc198023149"><span style='mso-bookmark:
+       _Toc198022771'>It supports safe memory management with garbage
+       collection</span></a></span></span></span></span></span></span></span></span></span></span></span></span></span></span></li>
+   <li class=MsoNormal style='mso-list:l33 level1 lfo6;tab-stops:list .5in'><span
+       style='mso-bookmark:_Toc198023129'><span style='mso-bookmark:_Toc198023322'><span
+       style='mso-bookmark:_Toc198023418'><span style='mso-bookmark:_Toc198214973'><span
+       style='mso-bookmark:_Toc198221537'><span style='mso-bookmark:_Toc198221999'><span
+       style='mso-bookmark:_Toc198297540'><span style='mso-bookmark:_Toc200119250'><span
+       style='mso-bookmark:_Toc201321844'><span style='mso-bookmark:_Toc201680346'><span
+       style='mso-bookmark:_Toc198022796'><span style='mso-bookmark:_Toc198023174'><span
+       style='mso-bookmark:_Toc198023172'><span style='mso-bookmark:_Toc198022794'><a
+       name="_Toc198022772"></a><a name="_Toc198023150"><span style='mso-bookmark:
+       _Toc198022772'>It has USB support including Java streams over USB and
+       USB debugging.</span></a></span></span></span></span></span></span></span></span></span></span></span></span></span></span></li>
+   <li class=MsoNormal style='mso-list:l33 level1 lfo6;tab-stops:list .5in'><span
+       style='mso-bookmark:_Toc198023129'><span style='mso-bookmark:_Toc198023322'><span
+       style='mso-bookmark:_Toc198023418'><span style='mso-bookmark:_Toc198214973'><span
+       style='mso-bookmark:_Toc198221537'><span style='mso-bookmark:_Toc198221999'><span
+       style='mso-bookmark:_Toc198297540'><span style='mso-bookmark:_Toc200119250'><span
+       style='mso-bookmark:_Toc201321844'><span style='mso-bookmark:_Toc201680346'><span
+       style='mso-bookmark:_Toc198022796'><span style='mso-bookmark:_Toc198023174'><span
+       style='mso-bookmark:_Toc198023172'><span style='mso-bookmark:_Toc198022794'><a
+       name="_Toc198022773"></a><a name="_Toc198023151"><span style='mso-bookmark:
+       _Toc198022773'>It supports standard Java Communication streams</span></a></span></span></span></span></span></span></span></span></span></span></span></span></span></span></li>
+   <li class=MsoNormal style='mso-list:l33 level1 lfo6;tab-stops:list .5in'><span
+       style='mso-bookmark:_Toc198023129'><span style='mso-bookmark:_Toc198023322'><span
+       style='mso-bookmark:_Toc198023418'><span style='mso-bookmark:_Toc198214973'><span
+       style='mso-bookmark:_Toc198221537'><span style='mso-bookmark:_Toc198221999'><span
+       style='mso-bookmark:_Toc198297540'><span style='mso-bookmark:_Toc200119250'><span
+       style='mso-bookmark:_Toc201321844'><span style='mso-bookmark:_Toc201680346'><span
+       style='mso-bookmark:_Toc198022796'><span style='mso-bookmark:_Toc198023174'><span
+       style='mso-bookmark:_Toc198023172'><span style='mso-bookmark:_Toc198022794'><a
+       name="_Toc198022774"></a><a name="_Toc198023152"><span style='mso-bookmark:
+       _Toc198022774'>It has a flash file system accessed by the standard </span></a><span
+       class=SpellE><span style='mso-bookmark:_Toc198023152'><span
+       style='mso-bookmark:_Toc198022774'>java.io</span></span></span><span
+       style='mso-bookmark:_Toc198023152'><span style='mso-bookmark:_Toc198022774'>
+       classes.</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></li>
+   <li class=MsoNormal style='mso-list:l33 level1 lfo6;tab-stops:list .5in'><span
+       style='mso-bookmark:_Toc198023129'><span style='mso-bookmark:_Toc198023322'><span
+       style='mso-bookmark:_Toc198023418'><span style='mso-bookmark:_Toc198214973'><span
+       style='mso-bookmark:_Toc198221537'><span style='mso-bookmark:_Toc198221999'><span
+       style='mso-bookmark:_Toc198297540'><span style='mso-bookmark:_Toc200119250'><span
+       style='mso-bookmark:_Toc201321844'><span style='mso-bookmark:_Toc201680346'><span
+       style='mso-bookmark:_Toc198022796'><span style='mso-bookmark:_Toc198023174'><span
+       style='mso-bookmark:_Toc198023172'><span style='mso-bookmark:_Toc198022794'><a
+       name="_Toc198022775"></a><a name="_Toc198023153"><span style='mso-bookmark:
+       _Toc198022775'>It supports data logging and remote capturing of the
+       logs.</span></a></span></span></span></span></span></span></span></span></span></span></span></span></span></span></li>
+   <li class=MsoNormal style='mso-list:l33 level1 lfo6;tab-stops:list .5in'><span
+       style='mso-bookmark:_Toc198023129'><span style='mso-bookmark:_Toc198023322'><span
+       style='mso-bookmark:_Toc198023418'><span style='mso-bookmark:_Toc198214973'><span
+       style='mso-bookmark:_Toc198221537'><span style='mso-bookmark:_Toc198221999'><span
+       style='mso-bookmark:_Toc198297540'><span style='mso-bookmark:_Toc200119250'><span
+       style='mso-bookmark:_Toc201321844'><span style='mso-bookmark:_Toc201680346'><span
+       style='mso-bookmark:_Toc198022796'><span style='mso-bookmark:_Toc198023174'><span
+       style='mso-bookmark:_Toc198023172'><span style='mso-bookmark:_Toc198022794'><a
+       name="_Toc198022776"></a><a name="_Toc198023154"><span style='mso-bookmark:
+       _Toc198022776'>It has sound support including playing 8-bit WAV files</span></a></span></span></span></span></span></span></span></span></span></span></span></span></span></span></li>
+   <li class=MsoNormal style='mso-list:l33 level1 lfo6;tab-stops:list .5in'><span
+       style='mso-bookmark:_Toc198023129'><span style='mso-bookmark:_Toc198023322'><span
+       style='mso-bookmark:_Toc198023418'><span style='mso-bookmark:_Toc198214973'><span
+       style='mso-bookmark:_Toc198221537'><span style='mso-bookmark:_Toc198221999'><span
+       style='mso-bookmark:_Toc198297540'><span style='mso-bookmark:_Toc200119250'><span
+       style='mso-bookmark:_Toc201321844'><span style='mso-bookmark:_Toc201680346'><span
+       style='mso-bookmark:_Toc198022796'><span style='mso-bookmark:_Toc198023174'><span
+       style='mso-bookmark:_Toc198023172'><span style='mso-bookmark:_Toc198022794'><a
+       name="_Toc198022777"></a><a name="_Toc198023155"><span style='mso-bookmark:
+       _Toc198022777'>It provides dozens of sample programs.</span></a></span></span></span></span></span></span></span></span></span></span></span></span></span></span></li>
+   <li class=MsoNormal style='mso-list:l33 level1 lfo6;tab-stops:list .5in'><span
+       style='mso-bookmark:_Toc198023129'><span style='mso-bookmark:_Toc198023322'><span
+       style='mso-bookmark:_Toc198023418'><span style='mso-bookmark:_Toc198214973'><span
+       style='mso-bookmark:_Toc198221537'><span style='mso-bookmark:_Toc198221999'><span
+       style='mso-bookmark:_Toc198297540'><span style='mso-bookmark:_Toc200119250'><span
+       style='mso-bookmark:_Toc201321844'><span style='mso-bookmark:_Toc201680346'><span
+       style='mso-bookmark:_Toc198022796'><span style='mso-bookmark:_Toc198023174'><span
+       style='mso-bookmark:_Toc198023172'><span style='mso-bookmark:_Toc198022794'><a
+       name="_Toc198022778"></a><a name="_Toc198023156"><span style='mso-bookmark:
+       _Toc198022778'>It supports remote execution from the PC using </span></a><span
+       class=SpellE><span style='mso-bookmark:_Toc198023156'><span
+       style='mso-bookmark:_Toc198022778'>iCommand</span></span></span><span
+       style='mso-bookmark:_Toc198023156'><span style='mso-bookmark:_Toc198022778'>.</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></li>
+   <li class=MsoNormal style='mso-list:l33 level1 lfo6;tab-stops:list .5in'><span
+       style='mso-bookmark:_Toc198023129'><span style='mso-bookmark:_Toc198023322'><span
+       style='mso-bookmark:_Toc198023418'><span style='mso-bookmark:_Toc198214973'><span
+       style='mso-bookmark:_Toc198221537'><span style='mso-bookmark:_Toc198221999'><span
+       style='mso-bookmark:_Toc198297540'><span style='mso-bookmark:_Toc200119250'><span
+       style='mso-bookmark:_Toc201321844'><span style='mso-bookmark:_Toc201680346'><span
+       style='mso-bookmark:_Toc198022796'><span style='mso-bookmark:_Toc198023174'><span
+       style='mso-bookmark:_Toc198023172'><span style='mso-bookmark:_Toc198022794'><a
+       name="_Toc198022779"></a><a name="_Toc198023157"><span style='mso-bookmark:
+       _Toc198022779'>The Web site has online forums to help solve any problems
+       you might have, to share projects ideas, and to communicate with the
+       development team.</span></a> </span></span></span></span></span></span></span></span></span></span></span></span></span></span></li>
+   <li class=MsoNormal style='mso-list:l33 level1 lfo6;tab-stops:list .5in'><span
+       style='mso-bookmark:_Toc198023129'><span style='mso-bookmark:_Toc198023322'><span
+       style='mso-bookmark:_Toc198023418'><span style='mso-bookmark:_Toc198214973'><span
+       style='mso-bookmark:_Toc198221537'><span style='mso-bookmark:_Toc198221999'><span
+       style='mso-bookmark:_Toc198297540'><span style='mso-bookmark:_Toc200119250'><span
+       style='mso-bookmark:_Toc201321844'><span style='mso-bookmark:_Toc201680346'><span
+       style='mso-bookmark:_Toc198022796'><span style='mso-bookmark:_Toc198023174'><span
+       style='mso-bookmark:_Toc198023172'><span style='mso-bookmark:_Toc198022794'><a
+       name="_Toc198022780"></a><a name="_Toc198023158"><span style='mso-bookmark:
+       _Toc198022780'>It has </span></a><span class=SpellE><span
+       style='mso-bookmark:_Toc198023158'><span style='mso-bookmark:_Toc198022780'>telerobotics</span></span></span><span
+       style='mso-bookmark:_Toc198023158'><span style='mso-bookmark:_Toc198022780'>
+       support via standard TCP/IP sockets.</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></li>
+   <li class=MsoNormal style='mso-list:l33 level1 lfo6;tab-stops:list .5in'><span
+       style='mso-bookmark:_Toc198023129'><span style='mso-bookmark:_Toc198023322'><span
+       style='mso-bookmark:_Toc198023418'><span style='mso-bookmark:_Toc198214973'><span
+       style='mso-bookmark:_Toc198221537'><span style='mso-bookmark:_Toc198221999'><span
+       style='mso-bookmark:_Toc198297540'><span style='mso-bookmark:_Toc200119250'><span
+       style='mso-bookmark:_Toc201321844'><span style='mso-bookmark:_Toc201680346'><span
+       style='mso-bookmark:_Toc198022796'><span style='mso-bookmark:_Toc198023174'><span
+       style='mso-bookmark:_Toc198023172'><span style='mso-bookmark:_Toc198022794'><a
+       name="_Toc198022781"></a><a name="_Toc198023159"><span style='mso-bookmark:
+       _Toc198022781'>It supports NXT to NXT </span></a><span class=SpellE><span
+       style='mso-bookmark:_Toc198023159'><span style='mso-bookmark:_Toc198022781'>Bluetooth</span></span></span><span
+       style='mso-bookmark:_Toc198023159'><span style='mso-bookmark:_Toc198022781'>
+       communications.</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></li>
+   <li class=MsoNormal style='mso-list:l33 level1 lfo6;tab-stops:list .5in'><span
+       style='mso-bookmark:_Toc198023129'><span style='mso-bookmark:_Toc198023322'><span
+       style='mso-bookmark:_Toc198023418'><span style='mso-bookmark:_Toc198214973'><span
+       style='mso-bookmark:_Toc198221537'><span style='mso-bookmark:_Toc198221999'><span
+       style='mso-bookmark:_Toc198297540'><span style='mso-bookmark:_Toc200119250'><span
+       style='mso-bookmark:_Toc201321844'><span style='mso-bookmark:_Toc201680346'><span
+       style='mso-bookmark:_Toc198022796'><span style='mso-bookmark:_Toc198023174'><span
+       style='mso-bookmark:_Toc198023172'><span style='mso-bookmark:_Toc198022794'><a
+       name="_Toc198022782"></a><a name="_Toc198023160"><span style='mso-bookmark:
+       _Toc198022782'>It supports </span></a><span class=SpellE><span
+       style='mso-bookmark:_Toc198023160'><span style='mso-bookmark:_Toc198022782'>Bluetooth</span></span></span><span
+       style='mso-bookmark:_Toc198023160'><span style='mso-bookmark:_Toc198022782'>
+       communication with other devices.</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></li>
+   <li class=MsoNormal style='mso-list:l33 level1 lfo6;tab-stops:list .5in'><span
+       style='mso-bookmark:_Toc198023129'><span style='mso-bookmark:_Toc198023322'><span
+       style='mso-bookmark:_Toc198023418'><span style='mso-bookmark:_Toc198214973'><span
+       style='mso-bookmark:_Toc198221537'><span style='mso-bookmark:_Toc198221999'><span
+       style='mso-bookmark:_Toc198297540'><span style='mso-bookmark:_Toc200119250'><span
+       style='mso-bookmark:_Toc201321844'><span style='mso-bookmark:_Toc201680346'><span
+       style='mso-bookmark:_Toc198022796'><span style='mso-bookmark:_Toc198023174'><span
+       style='mso-bookmark:_Toc198023172'><span style='mso-bookmark:_Toc198022794'><a
+       name="_Toc198022783"></a><a name="_Toc198023161"><span style='mso-bookmark:
+       _Toc198022783'>It supports two-way communication with RCX via third
+       party adapters such as the </span></a><span class=SpellE><span
+       style='mso-bookmark:_Toc198023161'><span style='mso-bookmark:_Toc198022783'>Mindsensors</span></span></span><span
+       style='mso-bookmark:_Toc198023161'><span style='mso-bookmark:_Toc198022783'>
+       <span class=SpellE>NRLink</span>.</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></li>
+   <li class=MsoNormal style='mso-list:l33 level1 lfo6;tab-stops:list .5in'><span
+       style='mso-bookmark:_Toc198023129'><span style='mso-bookmark:_Toc198023322'><span
+       style='mso-bookmark:_Toc198023418'><span style='mso-bookmark:_Toc198214973'><span
+       style='mso-bookmark:_Toc198221537'><span style='mso-bookmark:_Toc198221999'><span
+       style='mso-bookmark:_Toc198297540'><span style='mso-bookmark:_Toc200119250'><span
+       style='mso-bookmark:_Toc201321844'><span style='mso-bookmark:_Toc201680346'><span
+       style='mso-bookmark:_Toc198022796'><span style='mso-bookmark:_Toc198023174'><span
+       style='mso-bookmark:_Toc198023172'><span style='mso-bookmark:_Toc198022794'><a
+       name="_Toc198022784"></a><a name="_Toc198023162"><span style='mso-bookmark:
+       _Toc198022784'>It provides compatibility with Lego Communications
+       Protocol, so that many tools that work with the standard LEGO firmware,
+       also work with </span></a><span class=SpellE><span style='mso-bookmark:
+       _Toc198023162'><span style='mso-bookmark:_Toc198022784'>leJOS</span></span></span><span
+       style='mso-bookmark:_Toc198023162'><span style='mso-bookmark:_Toc198022784'>.</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></li>
+   <li class=MsoNormal style='mso-list:l33 level1 lfo6;tab-stops:list .5in'><span
+       style='mso-bookmark:_Toc198023129'><span style='mso-bookmark:_Toc198023322'><span
+       style='mso-bookmark:_Toc198023418'><span style='mso-bookmark:_Toc198214973'><span
+       style='mso-bookmark:_Toc198221537'><span style='mso-bookmark:_Toc198221999'><span
+       style='mso-bookmark:_Toc198297540'><span style='mso-bookmark:_Toc200119250'><span
+       style='mso-bookmark:_Toc201321844'><span style='mso-bookmark:_Toc201680346'><span
+       style='mso-bookmark:_Toc198022796'><span style='mso-bookmark:_Toc198023174'><span
+       style='mso-bookmark:_Toc198023172'><span style='mso-bookmark:_Toc198022794'><a
+       name="_Toc198022785"></a><a name="_Toc198023163"><span style='mso-bookmark:
+       _Toc198022785'>It has an easy to use menu system.</span></a></span></span></span></span></span></span></span></span></span></span></span></span></span></span></li>
+   <li class=MsoNormal style='mso-list:l33 level1 lfo6;tab-stops:list .5in'><span
+       style='mso-bookmark:_Toc198023129'><span style='mso-bookmark:_Toc198023322'><span
+       style='mso-bookmark:_Toc198023418'><span style='mso-bookmark:_Toc198214973'><span
+       style='mso-bookmark:_Toc198221537'><span style='mso-bookmark:_Toc198221999'><span
+       style='mso-bookmark:_Toc198297540'><span style='mso-bookmark:_Toc200119250'><span
+       style='mso-bookmark:_Toc201321844'><span style='mso-bookmark:_Toc201680346'><span
+       style='mso-bookmark:_Toc198022796'><span style='mso-bookmark:_Toc198023174'><span
+       style='mso-bookmark:_Toc198023172'><span style='mso-bookmark:_Toc198022794'><a
+       name="_Toc198022786"></a><a name="_Toc198023164"><span style='mso-bookmark:
+       _Toc198022786'>It is widely used by universities and other education
+       establishments.</span></a></span></span></span></span></span></span></span></span></span></span></span></span></span></span></li>
+   <li class=MsoNormal style='mso-list:l33 level1 lfo6;tab-stops:list .5in'><span
+       style='mso-bookmark:_Toc198023129'><span style='mso-bookmark:_Toc198023322'><span
+       style='mso-bookmark:_Toc198023418'><span style='mso-bookmark:_Toc198214973'><span
+       style='mso-bookmark:_Toc198221537'><span style='mso-bookmark:_Toc198221999'><span
+       style='mso-bookmark:_Toc198297540'><span style='mso-bookmark:_Toc200119250'><span
+       style='mso-bookmark:_Toc201321844'><span style='mso-bookmark:_Toc201680346'><span
+       style='mso-bookmark:_Toc198022796'><span style='mso-bookmark:_Toc198023174'><span
+       style='mso-bookmark:_Toc198023172'><span style='mso-bookmark:_Toc198022794'><a
+       name="_Toc198022787"></a><a name="_Toc198023165"><span style='mso-bookmark:
+       _Toc198022787'>It has computer Vision and speech support via </span></a><span
+       class=SpellE><span style='mso-bookmark:_Toc198023165'><span
+       style='mso-bookmark:_Toc198022787'>iCommand</span></span></span><span
+       style='mso-bookmark:_Toc198023165'><span style='mso-bookmark:_Toc198022787'>.</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></li>
+  </ul>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198023129'><span
+  style='mso-bookmark:_Toc198023322'><span style='mso-bookmark:_Toc198023418'><span
+  style='mso-bookmark:_Toc198214973'><span style='mso-bookmark:_Toc198221537'><span
+  style='mso-bookmark:_Toc198221999'><span style='mso-bookmark:_Toc198297540'><span
+  style='mso-bookmark:_Toc200119250'><span style='mso-bookmark:_Toc201321844'><span
+  style='mso-bookmark:_Toc201680346'><span style='mso-bookmark:_Toc198022796'><span
+  style='mso-bookmark:_Toc198023174'><span style='mso-bookmark:_Toc198023172'><span
+  style='mso-bookmark:_Toc198022794'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></span></span></span></span></span></span></p>
+  <p class=MsoBodyText2 style='margin-left:0in'><span style='mso-bookmark:_Toc198023129'><span
+  style='mso-bookmark:_Toc198023322'><span style='mso-bookmark:_Toc198023418'><span
+  style='mso-bookmark:_Toc198214973'><span style='mso-bookmark:_Toc198221537'><span
+  style='mso-bookmark:_Toc198221999'><span style='mso-bookmark:_Toc198297540'><span
+  style='mso-bookmark:_Toc200119250'><span style='mso-bookmark:_Toc201321844'><span
+  style='mso-bookmark:_Toc201680346'><span style='mso-bookmark:_Toc198022796'><span
+  style='mso-bookmark:_Toc198023174'><span style='mso-bookmark:_Toc198023172'><span
+  style='mso-bookmark:_Toc198022794'></span></span></span></span></span></span></span></span></span></span></span></span></span></span><a
+  href="#_top"><span style='mso-bookmark:_Toc198023129'><span style='mso-bookmark:
+  _Toc198023322'><span style='mso-bookmark:_Toc198023418'><span
+  style='mso-bookmark:_Toc198214973'><span style='mso-bookmark:_Toc198221537'><span
+  style='mso-bookmark:_Toc198221999'><span style='mso-bookmark:_Toc198297540'><span
+  style='mso-bookmark:_Toc200119250'><span style='mso-bookmark:_Toc201321844'><span
+  style='mso-bookmark:_Toc201680346'><span style='mso-bookmark:_Toc198022796'><span
+  style='mso-bookmark:_Toc198023174'><span style='mso-bookmark:_Toc198023172'><span
+  style='mso-bookmark:_Toc198022794'>Back to Top<o:p></o:p></span></span></span></span></span></span></span></span></span></span></span></span></span></span></a></p>
+  <p class=MsoNormal><span style='mso-bookmark:_Toc198023129'><span
+  style='mso-bookmark:_Toc198023322'><span style='mso-bookmark:_Toc198023418'><span
+  style='mso-bookmark:_Toc198214973'><span style='mso-bookmark:_Toc198221537'><span
+  style='mso-bookmark:_Toc198221999'><span style='mso-bookmark:_Toc198297540'><span
+  style='mso-bookmark:_Toc200119250'><span style='mso-bookmark:_Toc201321844'><span
+  style='mso-bookmark:_Toc201680346'><span style='mso-bookmark:_Toc198022796'><span
+  style='mso-bookmark:_Toc198023174'><span style='mso-bookmark:_Toc198023172'><span
+  style='mso-bookmark:_Toc198022794'></span></span></span></span></span></span></span></span></span></span></span></span></span></span></p>
+  </td>
+  <span style='mso-bookmark:_Toc198023129'><span style='mso-bookmark:_Toc198023322'><span
+  style='mso-bookmark:_Toc198023418'><span style='mso-bookmark:_Toc198214973'><span
+  style='mso-bookmark:_Toc198221537'><span style='mso-bookmark:_Toc198221999'><span
+  style='mso-bookmark:_Toc198297540'><span style='mso-bookmark:_Toc200119250'><span
+  style='mso-bookmark:_Toc201321844'><span style='mso-bookmark:_Toc201680346'><span
+  style='mso-bookmark:_Toc198022796'><span style='mso-bookmark:_Toc198023174'><span
+  style='mso-bookmark:_Toc198023172'><span style='mso-bookmark:_Toc198022794'></span></span></span></span></span></span></span></span></span></span></span></span></span></span>
+ </tr>
+</table>
+
+<p class=MsoNormal><span style='mso-bookmark:_Toc198023129'><span
+style='mso-bookmark:_Toc198023322'><span style='mso-bookmark:_Toc198023418'><span
+style='mso-bookmark:_Toc198214973'><span style='mso-bookmark:_Toc198221537'><span
+style='mso-bookmark:_Toc198221999'><span style='mso-bookmark:_Toc198297540'><span
+style='mso-bookmark:_Toc200119250'><span style='mso-bookmark:_Toc201321844'><span
+style='mso-bookmark:_Toc201680346'><span style='mso-bookmark:_Toc198022796'><span
+style='mso-bookmark:_Toc198023174'><span style='mso-bookmark:_Toc198023172'><span
+style='mso-bookmark:_Toc198022794'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></span></span></span></span></span></span></p>
+
+<p class=MsoNormal><span style='mso-bookmark:_Toc198023129'><span
+style='mso-bookmark:_Toc198023322'><span style='mso-bookmark:_Toc198023418'><span
+style='mso-bookmark:_Toc198214973'><span style='mso-bookmark:_Toc198221537'><span
+style='mso-bookmark:_Toc198221999'><span style='mso-bookmark:_Toc198297540'><span
+style='mso-bookmark:_Toc200119250'><span style='mso-bookmark:_Toc201321844'><span
+style='mso-bookmark:_Toc201680346'><span style='mso-bookmark:_Toc198022796'><span
+style='mso-bookmark:_Toc198023174'><span style='mso-bookmark:_Toc198023172'><span
+style='mso-bookmark:_Toc198022794'><o:p>&nbsp;</o:p></span></span></span></span></span></span></span></span></span></span></span></span></span></span></p>
+
+<span style='mso-bookmark:_Toc201680346'></span><span style='mso-bookmark:_Toc201321844'></span><span
+style='mso-bookmark:_Toc200119250'></span><span style='mso-bookmark:_Toc198297540'></span><span
+style='mso-bookmark:_Toc198221999'></span><span style='mso-bookmark:_Toc198221537'></span><span
+style='mso-bookmark:_Toc198214973'></span><span style='mso-bookmark:_Toc198023418'></span><span
+style='mso-bookmark:_Toc198023322'></span><span style='mso-bookmark:_Toc198023129'></span>
+
+<p class=MsoNormal><span style='mso-bookmark:_Toc198022796'><span
+style='mso-bookmark:_Toc198023174'><span style='mso-bookmark:_Toc198023172'><span
+style='mso-bookmark:_Toc198022794'><o:p>&nbsp;</o:p></span></span></span></span></p>
+
+<p class=MsoNormal style='tab-stops:104.15pt'><span style='mso-bookmark:_Toc198022796'><span
+style='mso-bookmark:_Toc198023174'><span style='mso-bookmark:_Toc198023172'><span
+style='mso-bookmark:_Toc198022794'><o:p>&nbsp;</o:p></span></span></span></span></p>
+
+<span style='mso-bookmark:_Toc198022794'></span><span style='mso-bookmark:_Toc198023172'></span><span
+style='mso-bookmark:_Toc198023174'></span><span style='mso-bookmark:_Toc198022796'></span>
+
+<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal><a name="_Preliminaries"></a><o:p>&nbsp;</o:p></p>
+
+</div>
+
+</body>
+
+</html>
