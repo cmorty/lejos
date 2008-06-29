@@ -66,7 +66,7 @@ public class LatteboxTest{
 					angle = NXTeObj.getLSC(0).getServo(0).getAngle();	
 					angle = NXTeObj.getLSC(0).getServo(1).getAngle();
 					
-					dm.echo("Goto Middle");
+					dm.echo("Goto Max");
 					dm.echo(angle);
 					dm.echo(angle2);
 				}						
