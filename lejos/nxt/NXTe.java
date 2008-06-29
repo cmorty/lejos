@@ -1,25 +1,13 @@
 package lejos.nxt;
-
 //import lejos.nxt.*;
+
 import java.util.ArrayList;
 
 /**
 *
 * Abstraction for a  Lattebox NXT Extension Kit with  Lattebox 10-Axis Servo Kit
 * http://www.lattebox.com
-* 
-* The physical design  is:
-* 
-*  *********************************
-*  * NXT PORT                      *
-*  * NXT PORT      SC4 SC3 SC2 SC1 *
-*  * NXT PORT  PIN SC4 SC3 SC2 SC1 *
-*  * NXT PORT      SC4 SC3 SC2 SC1 *
-*  *               SC4 SC3 SC2 SC1 * 
-*  *                               *
-*  * PIN                           *
-*  *                               *
-*  *********************************
+* UML: http://www.juanantonio.info/p_research/robotics/lejos/nxj/lattebox/LatteboxNXTeKit.png
 *
 * @author Juan Antonio Brenha Moral
 */
@@ -37,7 +25,6 @@ public class NXTe  extends I2CSensor{
 	private final byte SPI_PORT[] = {0x01,0x02,0x04,0x08};//SPI Ports where you connect LSC
 	public static final byte NXTE_ADDRESS = 0x28;
 	private final byte REGISTER_IIC = (byte)0xF0;//NXTe IIC address
-	private int I2C_Response;
 	
 	/**
 	 * Constructor
@@ -46,7 +33,7 @@ public class NXTe  extends I2CSensor{
 	 */
 	public NXTe(SensorPort port){
 		super(port);
-
+		
 		port.setType(TYPE_LOWSPEED_9V);
 		port.setMode(MODE_RAW);
 		
@@ -55,11 +42,12 @@ public class NXTe  extends I2CSensor{
 		arrLSC = new ArrayList();
 		
 		this.setAddress((int) NXTE_ADDRESS);
+		int I2C_Response;
 		I2C_Response = this.sendData((int)this.REGISTER_IIC, (byte)0x0c);
 	}
 	
 	/**
-	 * Add a LSC
+	 * Add a LSC, Lattebox Servo Controller
 	 * 
 	 * @param SPI_PORT
 	 * @throws Exception
@@ -75,22 +63,12 @@ public class NXTe  extends I2CSensor{
 	}	
 	
 	/**
-	 * Get a LSC
+	 * Get a LSC, Lattebox Servo Controller
 	 * 
 	 * @param index
 	 * @return
 	 */
 	public LSC getLSC(int index){
-		return (LSC) arrLSC.get(index);
-	}
-
-	/**
-	 * Get a LSC
-	 * 
-	 * @param index
-	 * @return
-	 */
-	public LSC LSC(int index){
 		return (LSC) arrLSC.get(index);
 	}
 }

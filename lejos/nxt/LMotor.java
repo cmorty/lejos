@@ -1,0 +1,160 @@
+package lejos.nxt;
+//import lejos.nxt.*;
+
+/**
+* Generic abstraction to manage RC Servos and DC Motor.
+* LServo and LDCMotor uses inherits from this class
+*
+* @author Juan Antonio Brenha Moral
+*
+*/
+public class LMotor extends I2CSensor{
+	private String name = "";//String to describe any Motor connected to LSC
+	protected int LSC_position; //Position where Servo has been plugged
+	
+	//Servo ID
+	private SensorPort portConnected;//What
+	protected byte SPI_PORT;//What SPI Port is connected LSC
+
+	public static final int arrMotorUnload[] = {(int)0x01,(int)0x02,(int)0x04,(int)0x08,(int)0x20,(int)0x40,(int)0x80,(int)0x100,(int)0x200};
+	public static final int arrMotorLoad[] = {(int)0x3FE,(int)0x3FD,(int)0x3FB,(int)0x3F7,(int)0x3EF,(int)0x3DF,(int)0x3BF,(int)0x37F,(int)0x2FF,(int)0x1FF};
+	
+	/**
+	 * Constructor
+	 * 
+	 * @param port
+	 * @param location
+	 * @param servoName
+	 * @param SPI_PORT
+	 *  
+	 */
+	public LMotor(SensorPort port, int location, String name, byte SPI_PORT){
+		super(port);
+		this.name = name;
+		this.LSC_position = location;
+		
+		this.SPI_PORT = SPI_PORT;
+		
+		this.setAddress((int) NXTe.NXTE_ADDRESS);
+	}	
+	
+	/**
+	 * 
+	 * private method to know internal information about 
+	 * if the servo is moving
+	 * 
+	 * @return
+	 * 
+	 */
+	private int readMotion(){
+		int I2C_Response;
+		byte[] bufReadResponse;
+		bufReadResponse = new byte[8];
+		byte h_byte;
+		byte l_byte;
+		
+		int motion = -1;
+		
+		//Write OP Code
+		I2C_Response = this.sendData((int)this.SPI_PORT, (byte)0x68);
+		
+		//Read High Byte
+		I2C_Response = this.sendData((int)this.SPI_PORT, (byte)0x00);	
+		I2C_Response = this.getData((int)this.SPI_PORT, bufReadResponse, 1);
+		h_byte = bufReadResponse[0];
+
+		//Read Low Byte
+		I2C_Response = this.sendData((int)this.SPI_PORT, (byte)0x00);	
+		I2C_Response = this.getData((int)this.SPI_PORT, bufReadResponse, 1);
+		l_byte = bufReadResponse[0];
+	
+		if(l_byte == 0xFF){
+			motion =  ((h_byte & 0x07 ) << 8) + 255;
+		}else{
+			motion = ((h_byte & 0x07 ) << 8)|(l_byte&0xFF);
+		}
+		return motion;
+	}	
+	
+	/**
+	 * Method to know if Servo is moving to a determinated angle
+	 * 
+	 * @return
+	 */
+	public boolean isMoving(){
+		boolean flag = false;
+		if(readMotion() != 0){
+			flag = true;
+		}
+		return flag;
+	}
+	
+	/**
+	 * Set a delay in a Motor
+	 * 
+	 * @param Servo
+	 * @param delay
+	 */
+	public void setDelay(int delay){
+		int I2C_Response;
+		byte h_byte;
+		byte l_byte;
+		
+		int motor = LSC_position;
+		h_byte = (byte)0xF0;
+		l_byte = (byte)(((motor)<<4) + delay);
+	     
+		I2C_Response = this.sendData((int)this.SPI_PORT, (byte)h_byte);
+		I2C_Response = this.sendData((int)this.SPI_PORT, (byte)l_byte);
+	}
+	
+	public void unload(){
+		int I2C_Response;
+		byte[] bufReadResponse;
+		byte h_byte;
+		byte l_byte;		
+		
+		int channel = (int)0x00;
+		channel = (int) arrMotorUnload[LSC_position];
+		
+		h_byte = (byte)0xe0; //0xe0 | (0x00 >>(byte)8); //?? 
+		l_byte = (byte)channel;
+	     
+	    //High Byte Write
+		I2C_Response = this.sendData((int)this.SPI_PORT, h_byte);
+
+	    //Low Byte Write
+		I2C_Response = this.sendData((int)this.SPI_PORT, l_byte);		
+	}
+	
+	/**
+	 * Load Servo located in a position X
+	 * 
+	 * @param location
+	 */
+	public void load(){
+		int I2C_Response;
+		byte h_byte;
+		byte l_byte;		
+		
+		int channel = (int)0x00;
+		channel = (int) arrMotorLoad[LSC_position];
+		
+		h_byte = (byte)0xe0; //0xe0 | (0x00 >>(byte)8); //?? 
+		l_byte = (byte)channel;
+	     
+	    //High Byte Write
+		I2C_Response = this.sendData((int)this.SPI_PORT, h_byte);
+
+	    //Low Byte Write
+		I2C_Response = this.sendData((int)this.SPI_PORT, l_byte);		
+	}
+
+	/**
+	 * Get name from a RC Servo or a DC Motor
+	 * 
+	 */	
+	public String getName(){
+		return this.name;
+	}	
+}
