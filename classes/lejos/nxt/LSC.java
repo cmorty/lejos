@@ -1,38 +1,24 @@
 package lejos.nxt;
-
 //import lejos.nxt.*;
+
 import java.util.ArrayList;
 
 /**
  * 
- * Servo Controller manage until 10 RC Servos.
  * This class has been defined to manage the device
- * Lattebox Servo Controller
+ * LSC, Lattebox Servo Controller which
+ * manage until 10 RC Servos / DC Motors
  * 
- * The physical design  is:
- * 
-*  ****************************
-*  * SERVO 08        SERVO 09 *
-*  * SERVO 06  CHIP  SERVO 07 *
-*  * SERVO 05  CHIP  SERVO 06 *
-*  * SERVO 03  CHIP  SERVO 04 *
-*  * SERVO 01  CHIP  SERVO 02 *
-*  *                          *
-*  * USB    DC   NXTe PINS    *
-*  * USB    DC                *
-*  ****************************
- *  
  * @author Juan Antonio Brenha Moral
  */
 
 public class LSC extends I2CSensor {
 
 	//Servo Management
-	private final int MAXIMUM_SERVOS = 10;//LSC Suports until 10 RC Servos
 	private ArrayList arrServo;//ServoController manage until 10 RC Servos
-	public static final int arrServoLoad[] = {(int)0x01,(int)0x02,(int)0x04,(int)0x08,(int)0x20,(int)0x40,(int)0x80,(int)0x100,(int)0x200};
-	public static final int arrServoUnload[] = {(int)0x3FE,(int)0x3FD,(int)0x3FB,(int)0x3F7,(int)0x3EF,(int)0x3DF,(int)0x3BF,(int)0x37F,(int)0x2FF,(int)0x1FF};
-
+	private ArrayList arrDCMotor;//ServoController manage until 10 DC Motors
+	private final int MAXIMUM_SERVOS_DCMOTORS = 10;//LSC Suports until 10 RC Servos
+	
 	//Exception handling
 	private final String ERROR_SERVO_DEFINITION =  "Error with Servo definition";
 	private final String ERROR_SERVO_LOCATION =  "Error with Servo location";
@@ -40,10 +26,6 @@ public class LSC extends I2CSensor {
 	//I2C
 	private byte SPI_PORT;	
 	private SensorPort portConnected;
-	int I2C_Response;
-	private byte[] bufReadResponse;
-	private byte h_byte;
-	private byte l_byte;
 	
 	/**
 	 * 
@@ -58,15 +40,14 @@ public class LSC extends I2CSensor {
 		this.portConnected = port;
 		this.SPI_PORT = SPI_PORT;
 		
-		bufReadResponse = new byte[8];
-		
 		arrServo = new ArrayList();
+		arrDCMotor = new ArrayList();
 		
 		this.setAddress((int) NXTe.NXTE_ADDRESS);
 	}
 	
 	/**
-	 * Method to add servo to current LSC
+	 * Method to add  a RC servo to current LSC
 	 * 
 	 * @param index
 	 * @param name
@@ -74,7 +55,7 @@ public class LSC extends I2CSensor {
 	 *
 	 */
 	public void addServo(int location, String name) throws ArrayIndexOutOfBoundsException{
-		if(arrServo.size() <=MAXIMUM_SERVOS){
+		if(arrServo.size() <=MAXIMUM_SERVOS_DCMOTORS){
 			LServo s = new LServo(this.portConnected,location, name,this.SPI_PORT);
 			arrServo.add(s);
 		}else{
@@ -84,7 +65,25 @@ public class LSC extends I2CSensor {
 	}
 
 	/**
-	 * Method to get a Servo in a LSC
+	 * Method to add  a RC servo to current LSC
+	 * 
+	 * @param index
+	 * @param name
+	 * @throws ArrayIndexOutOfBoundsException
+	 *
+	 */
+	public void addServo(int location, String name,int min_angle, int max_angle) throws ArrayIndexOutOfBoundsException{
+		if(arrServo.size() <=MAXIMUM_SERVOS_DCMOTORS){
+			LServo s = new LServo(this.portConnected,location, name,this.SPI_PORT,min_angle,max_angle);
+			arrServo.add(s);
+		}else{
+			//throw new ArrayIndexOutOfBoundsException(ERROR_SERVO_DEFINITION);
+			throw new ArrayIndexOutOfBoundsException();
+		}
+	}	
+	
+	/**
+	 * Method to get a rRC Servo in a LSC
 	 * 
 	 * @param index
 	 * @return
@@ -92,17 +91,51 @@ public class LSC extends I2CSensor {
 	 */
 	public LServo getServo(int index){
 		return (LServo) this.arrServo.get(index);
+	}	 
+
+	/**
+	* Method to add a DC Motor
+	*
+	* @param location
+	* @param name
+	*
+	*/	
+	public void addDCMotor(int location, String name) throws ArrayIndexOutOfBoundsException{
+		if(arrDCMotor.size() <=MAXIMUM_SERVOS_DCMOTORS){
+			LDCMotor dcm = new LDCMotor(this.portConnected,location, name,this.SPI_PORT);
+			arrDCMotor.add(dcm);
+		}else{
+			//throw new ArrayIndexOutOfBoundsException(ERROR_SERVO_DEFINITION);
+			throw new ArrayIndexOutOfBoundsException();
+		}
 	}
 
 	/**
-	 * Method to get a Servo in a LSC
+	* Method to add a DC Motor
+	*
+	* @param location
+	* @param name
+	*
+	*/	
+	public void addDCMotor(int location, String name,int min_speed,int max_speed) throws ArrayIndexOutOfBoundsException{
+		if(arrDCMotor.size() <=MAXIMUM_SERVOS_DCMOTORS){
+			LDCMotor dcm = new LDCMotor(this.portConnected,location, name,this.SPI_PORT,min_speed,max_speed);
+			arrDCMotor.add(dcm);
+		}else{
+			//throw new ArrayIndexOutOfBoundsException(ERROR_SERVO_DEFINITION);
+			throw new ArrayIndexOutOfBoundsException();
+		}
+	}	
+	
+	/**
+	 * Method to get a rRC Servo in a LSC
 	 * 
 	 * @param index
 	 * @return
 	 * 
 	 */
-	public LServo Servo(int index){
-		return (LServo) this.arrServo.get(index);
+	public LDCMotor getDCMotor(int index){
+		return (LDCMotor) this.arrDCMotor.get(index);
 	}
 	
 	//I2C Methods
@@ -113,6 +146,12 @@ public class LSC extends I2CSensor {
 	 * 
 	 */
 	public void calibrate(){
+		int I2C_Response;
+		byte[] bufReadResponse;
+		bufReadResponse = new byte[8];
+		byte h_byte;
+		byte l_byte;		
+		
 		I2C_Response = this.sendData((int)this.SPI_PORT, (byte)0x00);
 		I2C_Response = this.getData((int)this.SPI_PORT, bufReadResponse, 1);
 		
@@ -134,6 +173,10 @@ public class LSC extends I2CSensor {
 	 * Load all servos connected this this LSC 
 	 */
 	public void loadAllServos(){
+		int I2C_Response;
+		byte h_byte;
+		byte l_byte;		
+		
 		int channel = 1023;
 		h_byte = (byte)0xe0; //0xe0 | (0x00 >>(byte)8); //?? 
 		l_byte = (byte)channel;
@@ -149,6 +192,10 @@ public class LSC extends I2CSensor {
 	 * Unload all servos connected in a LSC
 	 */
 	public void unloadAllServos(){
+		int I2C_Response;
+		byte h_byte;
+		byte l_byte;
+		
 		int channel = (int)0x00;
 		h_byte = (byte)0xe0; //0xe0 | (0x00 >>(byte)8); //?? 
 		l_byte = (byte)channel;
