@@ -166,7 +166,7 @@ public class Sound
 
     public static void playTone(int freq, int duration)
     {
-        playTone(freq, duration, masterVolume);
+        playTone(freq, duration, VOL_MAX);
     }
 
     /**
@@ -252,7 +252,7 @@ public class Sound
      */
     public static int playSample(File file)
     {
-        return playSample(file, masterVolume);
+        return playSample(file, VOL_MAX);
     }
 
     static int waitUntil(int t)
