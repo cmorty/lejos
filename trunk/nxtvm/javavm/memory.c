@@ -72,11 +72,22 @@ VarStat gc_total_vs;
 VarStat mem_alloctm_vs;
 VarStat mem_freeblk_vs;
 VarStat mem_usedblk_vs;
+VarStat gc_overflow_vs;
 
 extern void deallocate (TWOBYTES *ptr, TWOBYTES size);
 extern TWOBYTES *allocate (TWOBYTES size);
 
 Object *protectedRef[MAX_VM_REFS];
+
+static int overflowCnt = 0;
+#define MAX_CALL_DEPTH 16
+static int callLimit = MAX_CALL_DEPTH;
+static TWOBYTES *overflowScanStart = null;
+#define MARK_STACK_SZ 32
+static Object *markStack[MARK_STACK_SZ];
+static int markStackPtr = 0;
+
+
 
 /**
  * @param numWords Number of 2-byte  words in the data part of the object
@@ -566,6 +577,7 @@ void memory_init ()
   varstat_init( &mem_alloctm_vs);
   varstat_init( &mem_freeblk_vs);
   varstat_init( &mem_usedblk_vs);
+  varstat_init( &gc_overflow_vs);
 }
 
 /**
@@ -988,7 +1000,7 @@ static void mark_local_objects()
   }
 }
 
-
+#ifdef OLD
 /**
  * Scan member fields of class instance, and for every
  * non-null reference field call the mark_object function.
@@ -1051,24 +1063,130 @@ static void mark_reference_fields( Object* obj)
     }
   }
 }
+#else
+
+/**
+ * Scan member fields of class instance, and for every
+ * non-null reference field call the mark_object function.
+ */
+static void mark_reference_fields( Object* obj)
+{
+  byte classIndex = get_na_class_index( obj);
+  ClassRecord* classRecord;
+  byte* statePtr;
+
+  classRecord = get_class_record( classIndex);
+  statePtr = (byte*) obj;
+  /* Scan the object in reverse so we start at the end of the object */
+  statePtr += classRecord->classSize;
+  /* now we can scan the member fields */
+  while (classIndex != JAVA_LANG_OBJECT)
+  {
+    if( classRecord->numInstanceFields)
+    {
+      int i;
+/*
+  display_goto_xy(0, 1);
+  display_int(classIndex, 8);
+  display_goto_xy(8, 1);
+  display_int(classRecord->numInstanceFields, 8);*/
+      for( i = classRecord->numInstanceFields-1; i >= 0; i--)
+      {
+        byte fieldType = get_field_type( classRecord, i);
+        byte fieldSize = typeSize[ fieldType];
+        statePtr -= fieldSize;
+/*
+  display_goto_xy(0, 2);
+  display_int(i, 8);
+  display_goto_xy(8, 2);
+  display_int(fieldType, 8);
+  display_update();
+  systick_wait_ms(10000);*/
+  
+
+        if( fieldType == T_REFERENCE)
+        {
+          /* omit nextThread field of Thread class */
+
+          if( ! (classIndex == JAVA_LANG_THREAD && i == 0))
+          {
+            Object* robj = (Object*) get_word_4_ns( statePtr);
+            if( robj != NULL)
+              mark_object( robj);
+          }
+        }
+
+      }
+    }
+    classIndex = classRecord->parentClass;
+    classRecord = get_class_record(classIndex);
+  }
+}
+#endif
 
 /**
  * A function which performs a "mark" operation for an object.
  * If it is an array of references recursively call mark_object
  * for every non-null array element.
  * Otherwise "mark" every non-null reference field of that object.
+ * To handle deep structures we use a combination of recursive marking
+ * and an explicit mark stack. The recursive approach works well (especially
+ * for arrays and objects with a large number of refs), but requires more
+ * memory per call. So we use recusrion to a fixed depth and then switch
+ * to an explicit stack. If this inturn overflows, we simply give up and
+ * recover later.
  */
 static void mark_object( Object *obj)
 {
+  TWOBYTES hdr;
   if( is_gc_marked( obj))
     return;
 
   set_gc_marked( obj);
-
-  if( is_array( obj))
+  // Deal with non recusrive data types we don't need to examine these
+  // any deeper...
+  hdr = obj->flags.all; 
+  if (hdr & IS_ARRAY_MASK)
   {
-    if( get_element_type( obj) == T_REFERENCE)
+    if ((hdr & ELEM_TYPE_MASK) != T_REFERENCE) return;
+  }
+  else if ((hdr & CLASS_MASK) == JAVA_LANG_STRING)
+  {
+    String* str = (String*)obj;
+    Object* chars = word2obj(get_word_4_ns((byte*)(&(str->characters))));
+  
+    if( chars != NULL)
+      set_gc_marked( chars);
+    return;
+  }
+  else if (has_norefs(get_class_record((hdr & CLASS_MASK))))
+    return;
+
+  // Check to see if we have reached our recursive limit
+  if (callLimit == 0)
+  {
+    // Try and push the entry on the mark stack.
+    if (markStackPtr >= MARK_STACK_SZ)
     {
+      // No space give up!
+      overflowCnt++;
+      if ((TWOBYTES *)obj < overflowScanStart)
+        overflowScanStart = (TWOBYTES *)obj;
+    }
+    else
+      markStack[markStackPtr++] = obj;
+
+    return;
+  }
+  callLimit--;
+  for(;;)
+  {
+    if(hdr & IS_ARRAY_MASK)
+    {
+      // Must be an array of refs.
+#ifdef VERIFY
+      assert(get_array_type(obj) == T_REFERENCE, MEMORY3);
+#endif
       REFERENCE* refarr = ref_array( obj);
       REFERENCE* refarrend = refarr + get_array_length( obj);
       
@@ -1079,18 +1197,18 @@ static void mark_object( Object *obj)
           mark_object( obj);
       }
     }
+    else
+      mark_reference_fields( obj);
+    // By not processing stacked nodes until we have unwound the recursive
+    // calls we maximise the number of levels to process things. Normally
+    // this seems to be a win.
+    if (callLimit < (MAX_CALL_DEPTH-1) || markStackPtr <= 0) break;
+    //if (markStackPtr <= 0) break;
+    // Process a stacked node.
+    obj = markStack[--markStackPtr];
+    hdr = obj->flags.all; 
   }
-  else
-    if( get_na_class_index( obj) == JAVA_LANG_STRING)
-    {
-      String* str = (String*)obj;
-      Object* chars = word2obj(get_word_4_ns((byte*)(&(str->characters))));
-  
-      if( chars != NULL)
-        set_gc_marked( chars);
-    }
-  else
-    mark_reference_fields( obj);
+  callLimit++;
 }
 
 /**
@@ -1099,7 +1217,7 @@ static void mark_object( Object *obj)
  * Sweep at least "reqsize" in contiguous block and preferably "optsize" of
  * memory area.
  */
-void sweep_heap_objects( unsigned int reqsize, unsigned int optsize)
+static void sweep_heap_objects( unsigned int reqsize, unsigned int optsize)
 {
   unsigned int contsize = 0;
   int mf = memory_free;
@@ -1205,6 +1323,42 @@ static void mark_exception_objects( void)
   mark_object( error);
 }
 
+static
+void mark_overflow()
+{
+  TWOBYTES* ptr = &(region->contents);
+  TWOBYTES* regionTop = region->end;
+  ptr = overflowScanStart;
+  overflowScanStart = region->end;
+  while( ptr < regionTop)
+  {
+    unsigned int blockHeader = *ptr;
+    unsigned int size;
+
+    if( blockHeader & IS_ALLOCATED_MASK)
+    {
+      Object* obj = (Object*) ptr;
+      /* jump over allocated block */
+      size = (blockHeader & IS_ARRAY_MASK) ? get_array_size( obj)
+                                           : get_object_size( obj);
+      // Round up according to alignment
+      size = (size + (MEMORY_ALIGNMENT-1)) & ~(MEMORY_ALIGNMENT-1);
+      if (is_gc_marked(obj))
+      {
+        clr_gc_marked(obj);
+        mark_object(obj);
+      }
+    }
+    else
+    {
+      /* continue searching */
+      size = blockHeader;
+    }
+
+    ptr += size;
+  }
+}
+
 /**
  * Main garbage collecting function.
  * Perform "mark" operation for internal objects,
@@ -1213,11 +1367,23 @@ static void mark_exception_objects( void)
  * every "unmarked" heap object.
  */
 
-void mark_objects( void)
+static void mark_objects( void)
 {
+  int cnt = 0;
+  overflowCnt = 0;
+  overflowScanStart = region->end;
   mark_exception_objects();
   mark_static_objects();
   mark_local_objects();
+  // If the mark stack overflowed we treat each marked object in the
+  // heap as a root, and start marking from there. 
+  while (overflowCnt > 0)
+  {
+    overflowCnt = 0;
+    mark_overflow();
+    cnt++;
+  }
+  varstat_adjust(&gc_overflow_vs, cnt);
 }
 
 void garbage_collect( int reqsize)
@@ -1252,7 +1418,7 @@ void garbage_collect( int reqsize)
   varstat_adjust( &gc_total_vs, t2 - t0);
 }
 
-void collect_mem_stat( void)
+static void collect_mem_stat( void)
 {
   varstat_init( &mem_freeblk_vs);
   varstat_init( &mem_usedblk_vs);
@@ -1317,6 +1483,8 @@ int sys_diagn( int code, int param)
     return varstat_get( &gc_total_vs, param);
   case 7:
     return varstat_get( &mem_alloctm_vs, param);
+  case 8:
+    return varstat_get( &gc_overflow_vs, param);
   }
 #endif
 

@@ -103,7 +103,7 @@ public class ClassRecord implements WritableData
          aOut.writeU1(pNumMethods);
          aOut.writeU1(iParentClassIndex);
          //aOut.writeU1 (iArrayElementType);
-         aOut.writeU1(iFlags);
+         aOut.writeU1(iFlags | (hasReference() ? 0 : TinyVMConstants.C_NOREFS));
          IOUtilities.writePadding(aOut, 2);
       }
       catch (IOException e)
@@ -194,6 +194,18 @@ public class ClassRecord implements WritableData
       }
       return pSize;
    }
+   
+   public boolean hasReference() throws TinyVMException
+   {
+      if (hasParent() && getParent().hasReference())
+          return true;
+      for (Iterator iter = iInstanceFields.iterator(); iter.hasNext();)
+      {
+         InstanceFieldRecord pRec = (InstanceFieldRecord) iter.next();
+         if (pRec.iType.type() == TinyVMType.T_REFERENCE_TYPE) return true;
+      }
+      return false;
+   }   
 
    public boolean hasParent ()
    {

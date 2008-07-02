@@ -15,6 +15,7 @@
 #define C_ARRAY       0x02
 #define C_HASCLINIT   0x04
 #define C_INTERFACE   0x08
+#define C_NOREFS      0x10
 
 typedef struct S_MasterRecord
 {
@@ -179,6 +180,7 @@ void install_binary( void* ptr);
 #define is_array_class(CREC_)       (((CREC_)->cflags & C_ARRAY) != 0)
 #define has_clinit(CREC_)           (((CREC_)->cflags & C_HASCLINIT) != 0)
 #define is_interface(CREC_)         (((CREC_)->cflags & C_INTERFACE) != 0)
+#define has_norefs(CREC_)           (((CREC_)->cflags & C_NOREFS) != 0)
 
 #if EXECUTE_FROM_FLASH
 #define set_initialized(CREC_)      (get_class_status(CREC_) |= C_INITIALIZED)
