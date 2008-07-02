@@ -403,6 +403,7 @@ dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
     return;
   case gc_4_5V:
     garbage_collect(0x7fffffff);
+    garbage_collect(0x7fffffff);
     return;
   case diagn_4II_5I:
     push_word (sys_diagn(paramBase[0], paramBase[1]));
