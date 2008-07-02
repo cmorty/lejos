@@ -32,6 +32,7 @@ public class TinyVMConstants
    public static final int C_ARRAY = 0x02;
    public static final int C_HASCLINIT = 0x04;
    public static final int C_INTERFACE = 0x08;
+   public static final int C_NOREFS = 0x10;
 
    public static final int M_NATIVE = 0x01;
    public static final int M_SYNCHRONIZED = 0x02;
