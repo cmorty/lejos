@@ -1,7 +1,7 @@
 
 package lejos.util;
-import javax.microedition.io.StreamConnection;
-import lejos.nxt.comm.*;
+
+import lejos.nxt.comm.*;                        
 import lejos.nxt.*;
 
 import java.io.*;
@@ -68,7 +68,7 @@ public class Datalogger
     */
    public  void transmit()
    {
-      StreamConnection connection= null;
+      NXTConnection connection= null;
       DataOutputStream dataOut = null;
       InputStream is = null;
 
