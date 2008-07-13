@@ -912,10 +912,10 @@ static void mark_static_objects( void)
   STATICFIELD* staticFieldBase = (STATICFIELD*) get_static_fields_base();
   byte* staticStateBase = get_static_state_base();
   byte* staticState = staticStateBase;
-  byte* staticEnd = staticStateBase + mrec->staticStateLength;
+  int cnt = mrec->numStaticFields;
   int idx = 0;
 
-  while( staticState < staticEnd)
+  while(cnt-- > 0)
   {
     STATICFIELD fieldRecord = staticFieldBase[ idx ++];
     byte fieldType = (fieldRecord >> 12) & 0x0F;
@@ -1185,7 +1185,7 @@ static void mark_object( Object *obj)
     {
       // Must be an array of refs.
 #ifdef VERIFY
-      assert(get_array_type(obj) == T_REFERENCE, MEMORY3);
+      assert(get_element_type(obj) == T_REFERENCE, MEMORY3);
 #endif
       REFERENCE* refarr = ref_array( obj);
       REFERENCE* refarrend = refarr + get_array_length( obj);
