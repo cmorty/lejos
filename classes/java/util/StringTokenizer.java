@@ -9,7 +9,7 @@ I have discovered a bug
 /**
  * This class has been developed to parse strings with delimiters
  * 
- * @author Juan Antonio Breña Moral
+ * @author Juan Antonio Brenha Moral
  */
 public class StringTokenizer implements Enumeration{
 	/**
