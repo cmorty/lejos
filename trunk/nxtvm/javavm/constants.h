@@ -18,4 +18,7 @@
 #define T_INT 10
 #define T_LONG 11
 
+// Following is only used in multi dim arrays
+#define T_OBJECT 14
+
 #endif // _CONSTANTS_H
