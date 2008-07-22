@@ -406,7 +406,7 @@ Object *new_multi_array (byte elemType, byte totalDimensions,
   }
 
   if (totalDimensions == 1)
-    return new_primitive_array (elemType, *numElemPtr);
+    return new_primitive_array ((elemType == T_OBJECT ? T_REFERENCE : elemType), *numElemPtr);
 
 
   ref = new_primitive_array (T_REFERENCE, *numElemPtr);
