@@ -20,11 +20,11 @@
 #define IS_ALLOCATED_MASK  0x8000
 #define IS_ALLOCATED_SHIFT 15
 
-#define ARRAY_LENGTH_MASK  0x01FF
+#define ARRAY_LENGTH_MASK  0x00FF
 #define ARRAY_LENGTH_SHIFT 0
 
-#define ELEM_TYPE_MASK  0x1E00
-#define ELEM_TYPE_SHIFT 9
+#define ELEM_TYPE_MASK  0x0F00
+#define ELEM_TYPE_SHIFT 8
 
 #define FREE_BLOCK_SIZE_MASK 0x7FFF
 #define FREE_BLOCK_SIZE_SHIFT 0
@@ -54,7 +54,7 @@ typedef struct S_Object
    *  -- bit 14   : Zero (not an array).
    *  -- bit 15   : One (allocated).
    * Arrays:
-   *  -- bits 0-8 : Array length (0-511).
+   *  -- bits 0-7 : Array length (0-511).
    *  -- bits 9-12: Element type.
    *  -- bit 13   : Garbage collection mark.
    *  -- bit 14   : One (is an array).
@@ -79,8 +79,8 @@ typedef struct S_Object
      struct _arrays
      {
        TWOBYTES length:8;
-       TWOBYTES padding:1;
        TWOBYTES type:4;
+       TWOBYTES padding:1;
        TWOBYTES mark:1;
        TWOBYTES isArray:1;
        TWOBYTES isAllocated:1;
