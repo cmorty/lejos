@@ -1,11 +1,6 @@
 package java.util;
 //import java.util.*;
 
-/*
-2008/07/15
-I have discovered a bug
-*/
-
 /**
  * This class has been developed to parse strings with delimiters
  * 
@@ -27,7 +22,12 @@ public class StringTokenizer implements Enumeration{
 	 * 
 	 * @param s String to be StringTokenizer
 	 */
-	public StringTokenizer(String s) {
+	public StringTokenizer(String s){
+		String character = (String)s.substring(s.length()-1);
+		if(character != ","){
+			s += ",";
+		}
+
 		this.s = s;
 		this.total = s.length();
 		this.currentPosition = 0;
@@ -35,6 +35,11 @@ public class StringTokenizer implements Enumeration{
 	}
 
 	public StringTokenizer(String s, String _delimiter) {
+		String character = (String)s.substring(s.length()-1);
+		if(character != ","){
+			s += ",";
+		}
+		
 		this.delimiter = _delimiter;
 		this.s = s;
 		this.total = s.length();
@@ -63,10 +68,12 @@ public class StringTokenizer implements Enumeration{
 	 * @return Next token
 	 * @throws NoSuchElementException If there is no token left
 	 */
-	public String nextToken() throws Exception{// 
+	public String nextToken() {// throws Exception
+		/*
 		if (!hasMoreElements()){
-			throw new Exception();//NoSuchElementException
+			throw new Exception();
 		}
+		*/
 
 		String next = s.substring(currentPosition, nextPosition);
 
@@ -83,7 +90,7 @@ public class StringTokenizer implements Enumeration{
 		Object ne = null;
 		try{
 			ne = nextToken();
-		}catch(Exception e){
+		}catch(Exception  e){
 			
 		}
 		return ne;
