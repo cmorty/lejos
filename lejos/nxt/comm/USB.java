@@ -41,22 +41,20 @@ public class USB {
 	{		
 	}
     
-    private static void flushInput()
+    private static void flushInput(byte [] buf)
     {
         // Discard any input that may have been left by a previous user of the
         // USB connection.
-        byte [] buf = new byte [USB_BUFSZ];
         while (usbRead(buf, 0, buf.length) > 0)
             ;
     }
     
-    private static boolean isConnected()
+    private static boolean isConnected(byte [] cmd)
     {
-        // When in packet mode, we must wait for the PC to send us when to
-        // switch to packet mode, this indicates that the connection is now open.
-        // We must also handle a small sub-set of LCP commands to allow
-        // identifiaction of the nxt.
-        byte[] cmd = new byte[USB_BUFSZ];
+        // This method provides support for packet mode connections.
+        // We wait for the PC to tell us that the connection has been established.
+        // While waiting we support a small sub-set of LCP to allow identification
+        // of the device.
         int len = 3;
         boolean ret = false;
         // Look for a system command
@@ -107,10 +105,13 @@ public class USB {
      */
     public static USBConnection waitForConnection(int timeout, int mode)
     {
+        // Allocate buffer here for use by other methods. Saves repeated
+        // allocations.
+        byte [] buf = new byte [USB_BUFSZ];
         usbEnable(((mode & RESET) != 0 ? 1 : 0));
         mode &= ~RESET;
         // Discard any left over input
-        flushInput();
+        flushInput(buf);
         if (timeout == 0) timeout = 0x7fffffff;
         while(timeout-- > 0)
         {
@@ -121,7 +122,7 @@ public class USB {
             {
                 if (mode == NXTConnection.RAW ||
                     (mode == NXTConnection.LCP && ((status & (USB_READABLE|USB_WRITABLE)) == (USB_READABLE|USB_WRITABLE))) ||
-                    (mode == NXTConnection.PACKET && isConnected()))
+                    (mode == NXTConnection.PACKET && isConnected(buf)))
                     return new USBConnection(mode);
             }
             if (timeout == 0 || timeout-- > 0)
@@ -146,12 +147,16 @@ public class USB {
      */
     public static void waitForDisconnect(int timeout)
     {
+        // Allocate buffer here for use by other methods. Saves repeated
+        // allocations.
+        byte [] buf = new byte [USB_BUFSZ];
+
         while(timeout-- > 0)
         {
-            flushInput();
+            flushInput(buf);
             int status = usbStatus();
             // Wait for the interface to be down
-            if ((status & 0xf0000000) != 0x10000000 || (status & 0x0f000000) == 0)
+            if ((status & USB_STATE_MASK) != USB_STATE_CONNECTED || (status & USB_CONFIG_MASK) == 0)
                 break;
             try{Thread.sleep(1);}catch(Exception e){}          
         }
