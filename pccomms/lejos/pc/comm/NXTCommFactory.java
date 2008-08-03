@@ -54,7 +54,7 @@ public class NXTCommFactory {
 		// Look for USB comms driver first
 		if ((protocol & NXTCommFactory.USB) != 0) {
 			String nxtCommName = props.getProperty("NXTCommUSB",
-					"lejos.pc.comm.NXTCommLibnxt");
+					(windows ? "lejos.pc.comm.NXTCommFantom" : "lejos.pc.comm.NXTCommLibnxt"));
 			try {
 				Class c = Class.forName(nxtCommName);
 				return (NXTComm) c.newInstance();
