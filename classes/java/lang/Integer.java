@@ -53,7 +53,14 @@ package java.lang;
     public Integer(int value) {
 	this.value = value;
     }
-
+/**
+ * returns the value of this Integer as int
+ * @return the int value represented by this object.
+ */
+    public int intValue()
+    {
+       return value;
+    }
     static char buf [] = new char [12] ; 
 
     /**

@@ -10,6 +10,23 @@ package java.lang;
 
     private Float() {
     }
+    private float value;
+    /**
+     * Constructs a newly allocated Float object that represents the primitive float argument.
+     * @param value - the value to be represented by the Float.
+     */
+    public Float( float value )
+    {
+      this.value = value;
+    }
+    /**
+     * Returns the float value of this Float  object.
+     * @return the float value represented by this object
+     */
+    public float floatValue()
+    {
+       return value;
+    }
   
     /**
      * Returns the bit represention of a single-float value.
