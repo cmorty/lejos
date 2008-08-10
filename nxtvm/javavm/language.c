@@ -16,7 +16,6 @@
 #include "exceptions.h"
 #include "stack.h"
 #include "platform_hooks.h"
-
 #if 0
 #define get_stack_object(MREC_)  ((Object *) get_ref_at ((MREC_)->numParameters - 1))
 #endif
@@ -210,18 +209,18 @@ boolean dispatch_special (MethodRecord *methodRecord, byte *retAddr)
   if (newStackFrameIndex >= get_array_length((Object *) word2ptr (currentThread->stackFrameArray)))
   {
 #if !FIXED_STACK_SIZE
-  	// int len = get_array_length((Object *) word2ptr (currentThread->stackFrameArray));
-  	int newlen = get_array_length((Object *) word2ptr (currentThread->stackFrameArray)) * 3 / 2;
-  	JINT newStackFrameArray = JNULL;
-
-	// Stack frames are indexed by a byte value so limit the size.  	
-  	if (newlen <= 255)
-  	{
-  	    // increase the stack frame size
-  		newStackFrameArray = ptr2word(reallocate_array(word2ptr(currentThread->stackFrameArray), newlen));
-  	}
-  	
-  	// If can't allocate new stack, give in!
+    // int len = get_array_length((Object *) word2ptr (currentThread->stackFrameArray));
+    int newlen = get_array_length((Object *) word2ptr (currentThread->stackFrameArray)) * 3 / 2;
+    JINT newStackFrameArray = JNULL;
+    // Stack frames are indexed by a byte value so limit the size. 
+    if (newStackFrameIndex < 255)
+    {
+      if (newlen > 255)
+        newlen = 255;
+      // increase the stack frame size
+      newStackFrameArray = ptr2word(reallocate_array(word2ptr(currentThread->stackFrameArray), newlen));
+    }
+    // If can't allocate new stack, give in!
     if (newStackFrameArray == JNULL)
     {
 #endif
@@ -229,9 +228,8 @@ boolean dispatch_special (MethodRecord *methodRecord, byte *retAddr)
       return false;
 #if !FIXED_STACK_SIZE
     }
-      	
-  	// Assign new array
-  	currentThread->stackFrameArray = newStackFrameArray;
+    // Assign new array
+    currentThread->stackFrameArray = newStackFrameArray;
 #endif
   }
   
@@ -283,10 +281,10 @@ boolean dispatch_special (MethodRecord *methodRecord, byte *retAddr)
     // int len = (int)(stackTop + methodRecord->maxOperands) - (int)(stack_array()) - HEADER_SIZE;
     
     // Need to compute new array size (as distinct from number of bytes in array).
-  	int newlen = (((int)(curStackTop + methodRecord->maxOperands) - (int)(stack_array()) + 3) / 4) * 3 / 2;
-  	JINT newStackArray = ptr2word(reallocate_array(word2ptr(currentThread->stackArray), newlen));
-  	
-  	// If can't allocate new stack, give in!
+    int newlen = (((int)(curStackTop + methodRecord->maxOperands) - (int)(stack_array()) + 3) / 4) * 3 / 2;
+    JINT newStackArray = ptr2word(reallocate_array(word2ptr(currentThread->stackArray), newlen));
+
+    // If can't allocate new stack, give in!
     if (newStackArray == JNULL)
     {
 #endif
@@ -294,28 +292,26 @@ boolean dispatch_special (MethodRecord *methodRecord, byte *retAddr)
       return false;
 #if !FIXED_STACK_SIZE
     }
-      	
     // Adjust pointers.
-    newlen = newStackArray - currentThread->stackArray;
+    newlen = array_start((Object *)newStackArray) - array_start((Object *)(currentThread->stackArray));
     stackBase = stackframe_array();
     curStackTop = word2ptr(ptr2word(curStackTop) + newlen);
     curLocalsBase = word2ptr(ptr2word(curLocalsBase) + newlen);
 #if DEBUG_MEMORY
-	printf("thread=%d, stackTop(%d), localsBase(%d)=%d\n", currentThread->threadId, (int)stackTop, (int)localsBase, (int)(*localsBase));
+    printf("thread=%d, stackTop(%d), localsBase(%d)=%d\n", currentThread->threadId, (int)stackTop, (int)localsBase, (int)(*localsBase));
 #endif
-    for (i=currentThread->stackFrameArraySize-1;
+    for (i=((byte)(currentThread->stackFrameArraySize))-1;
          i >= 0;
          i--)
     {
-    	stackBase[i].localsBase = word2ptr(ptr2word(stackBase[i].localsBase) + newlen);
-   		stackBase[i].stackTop = word2ptr(ptr2word(stackBase[i].stackTop) + newlen);
+      stackBase[i].localsBase = word2ptr(ptr2word(stackBase[i].localsBase) + newlen);
+      stackBase[i].stackTop = word2ptr(ptr2word(stackBase[i].stackTop) + newlen);
 #if DEBUG_MEMORY
-	printf("stackBase[%d].localsBase(%d) = %d\n", i, (int)stackBase[i].localsBase, (int)(*stackBase[i].localsBase));
+      printf("stackBase[%d].localsBase(%d) = %d\n", i, (int)stackBase[i].localsBase, (int)(*stackBase[i].localsBase));
 #endif
     }
-    
-  	// Assign new array
-  	currentThread->stackArray = newStackArray;
+    // Assign new array
+    currentThread->stackArray = newStackArray;
 #endif
   } 
   return true;
