@@ -1,0 +1,81 @@
+a HTML document has 2 main sections: head and body.
+In head section is the part of any web document where you add:
++ metadata about your document
++ information about dependences:
+- CSS files
+- Icon
+- Javascript
+
+In body section is the part of any web document where you add:
+- The contents
+
+With OpenOffice, you discovered that the output is better because the HTML is more clearer than MS HTML.
+
+Steps to integrate contents using HTML from Openoffice with leJOS  tutorial Web Template:
+
++ Make a back from your contents
++ choose your first folder, use the most easy and short document to experiment
++ rename the current document: contentX.htm -> contentXOld.htm, for example
++ paste into this folder the web template and rename the file with the name: contentX.htm
++ Open the old web document contentXOld.htm with your favorite webBrowser. I recommend firefox by security reasons.
++ Open the document contentXOld.htm with a text editor. I recommend Notepad++
++ Open the document contentX.htm with a text editor.
++ Find head section in contentXOld.htm and copy all metadata and all <style> tag
++ Paste this text into the end of head section in contentX.htm
++ Find the navigation system from contentXOld.htm (The links in the left side of the old web document) and copy the HTML
++ Find a HTML comment STEP 2: CUT & PASTE LEFT NAVIGATION SYSTEM FROM OPEN OFFICE and paste into this area
++ Make a HTML comment with final navigation system. ¿How to do a HTML comment? type in your text editor <!-- TEXT  TO COMMENT -->
+in this case:
+
+                    <!-- COMMENT FINAL SYSTEM. IT IS NECCESARY TO CONVERT MANUALLY
+                    <div class="nolinkLESSON">TITLE</div>
+                    <div class="linkAHEAD"><a href="#1">SECTION 1</a></div>
+                    <div class="linkAHEAD2"><a href="#2">SECTION 1.1</a></div>
+                    <div class="linkAHEAD2"><a href="#3">SECTION 1.2</a></div>
+                    <div class="linkAHEAD2"><a href="#4">SECTION 1.3</a></div>
+                    <div class="linkAHEAD"><a href="#10">SECTION 2</a></div>
+                    <div class="linkAHEAD"><a href="#11">SECTION 3</a></div>
+                    -->
+
++ Find body contents from contentXOld.htm and copy them (copy all paragraphs, images, code examples, etc..)
++ Delete from web template some examples:
+
+        <!-- CONTENT TITLE -->
+        <div id="PageTitle">TITLE</div>
+               
+                <a id="1" name="1"></a><h4>SECTION 1</h4>
+                <p>
+Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nullam rhoncus dolor sed erat. Integer odio. Aenean tempor nulla sed ante. Ut suscipit elit nec mauris. Quisque ante. Sed elit. Donec nisi leo, lobortis id, auctor quis, tincidunt vitae, dolor. Pellentesque et nibh. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Donec auctor. Nulla facilisi.
+</p>
+<p>
+Curabitur vehicula, nulla quis vulputate fermentum, nibh tellus faucibus mauris, scelerisque posuere nisi purus sed lorem. Pellentesque vestibulum leo non dui. Aenean facilisis magna sed purus. Maecenas accumsan. Morbi arcu enim, elementum at, ultricies eu, egestas in, urna. Maecenas dictum rutrum lorem. Etiam lorem. Praesent elementum felis vel libero. Morbi rutrum auctor enim. Nullam semper suscipit nunc. Vivamus quam sapien, fermentum ultrices, tempor id, gravida eu, nisl. Proin urna pede, eleifend at, fermentum sed, semper vel, tortor. Aliquam erat volutpat. In purus.
+                </p>
+                <!-- EXAMPLE TO PUBLISH A CODE -->
+                <code>
+                <pre>
+public class HelloWorld
+{
+
+}
+                </pre>
+                </code>
+                <!-- WEB TOOL TO GO TO TOP OF THE DOCUMENT -->
+                <p>
+                <a href="#top">Back to top</a>
+
++ Paste above from:
+
+        <!-- DO NOT MANINPULATE -->
+        <div id="BreadCrumbs">
+            <a href="../index.htm" target="_top">Home Page</a>
+        &gt;
+            <a href="#">Getting Started</a>
+
+        </div>
+        <div class="NavBit">
+                <a target="_top" href="../Preliminaries/Intro.htm">«&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../Preliminaries/CompileAndRun.htm">Next&nbsp;»</a>
+        </div>
+
+your contents.
+
++ And finally, see the the results on your web browser. I suppose that you will have doubts. No problem I will help you.
