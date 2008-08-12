@@ -5,7 +5,7 @@ import javax.microedition.io.*;
 
 
 /**
- * Generic lejos nxt connection inetrface. Provide access to standard read/write
+ * Generic lejos nxt connection interface. Provide access to standard read/write
  * methods.
  * @author andy
  */

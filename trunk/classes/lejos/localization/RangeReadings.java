@@ -1,11 +1,11 @@
-package lejos.ai;
+package lejos.localization;
 
 /**
  * Represents a set of range readings.
  * 
  * @author Lawrie Griffiths
  */
-public class Readings {
+public class RangeReadings {
   public static short numReadings = 3;
   private float[] ranges = new float[numReadings];
 
