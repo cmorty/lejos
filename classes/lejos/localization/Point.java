@@ -1,4 +1,4 @@
-package lejos.ai;
+package lejos.localization;
 
 /**
  * Represents a point using float co-ordinates 

@@ -1,4 +1,4 @@
-package lejos.ai;
+package lejos.localization;
 
 import java.awt.Rectangle;
 
