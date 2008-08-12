@@ -1,0 +1,546 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=windows-1252">
+	<TITLE>leJOS NXJ Tutorial</TITLE>
+	<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.4  (Win32)">
+	<META NAME="AUTHOR" CONTENT="Lawrie Griffiths">
+	<META NAME="CREATED" CONTENT="20080808;11080000">
+	<META NAME="CHANGED" CONTENT="20080808;11531957">
+	<META NAME="CHANGEDBY" CONTENT="Roger Glassey">
+	<STYLE TYPE="text/css">
+	<!--
+		@page { size: 10.3in 11in; margin-left: 0.79in; margin-right: 0.04in; margin-top: 0.79in; margin-bottom: 0.81in }
+		P { margin-bottom: 0.08in; direction: ltr; color: #000000; widows: 2; orphans: 2 }
+		P.western { font-family: "Times New Roman", serif; font-size: 12pt; so-language: en-US }
+		P.cjk { font-family: "Times New Roman", serif; font-size: 12pt }
+		P.ctl { font-family: "Times New Roman", serif; font-size: 12pt; so-language: ar-SA }
+		TD P { margin-bottom: 0.08in; direction: ltr; color: #000000; widows: 2; orphans: 2 }
+		TD P.western { font-family: "Times New Roman", serif; font-size: 12pt; so-language: en-US }
+		TD P.cjk { font-family: "Times New Roman", serif; font-size: 12pt }
+		TD P.ctl { font-family: "Times New Roman", serif; font-size: 12pt; so-language: ar-SA }
+		H1 { margin-bottom: 0.04in; direction: ltr; color: #ff6600; widows: 2; orphans: 2 }
+		H1.western { font-family: "Arial", sans-serif; font-size: 16pt; so-language: en-US }
+		H1.cjk { font-family: "Times New Roman", serif; font-size: 16pt }
+		H1.ctl { font-family: "Arial", sans-serif; font-size: 16pt; so-language: ar-SA }
+		H2 { margin-bottom: 0.08in; direction: ltr; color: #ff6600; widows: 2; orphans: 2 }
+		H2.western { font-family: "Arial", sans-serif; font-size: 14pt; so-language: en-US; font-style: italic; font-weight: medium }
+		H2.cjk { font-family: "Times New Roman", serif; font-size: 14pt; font-style: italic; font-weight: medium }
+		H2.ctl { font-family: "Arial", sans-serif; font-size: 14pt; so-language: ar-SA; font-style: italic; font-weight: medium }
+		H3 { margin-left: 0.2in; margin-bottom: 0.08in; direction: ltr; color: #000000; widows: 2; orphans: 2 }
+		H3.western { font-family: "Arial", sans-serif; font-size: 13pt; so-language: en-GB; font-style: normal }
+		H3.cjk { font-family: "Times New Roman", serif; font-size: 13pt; font-style: normal }
+		H3.ctl { font-family: "Arial", sans-serif; font-size: 13pt; so-language: ar-SA; font-style: normal }
+		P.body-text-2-western { margin-left: 0.1in; font-family: "Times New Roman", serif; font-size: 12pt; so-language: en-US }
+		P.body-text-2-cjk { margin-left: 0.1in; font-family: "Times New Roman", serif; font-size: 12pt }
+		P.body-text-2-ctl { margin-left: 0.1in; font-family: "Times New Roman", serif; font-size: 12pt; so-language: ar-SA }
+		P.body-text-3-western { margin-left: 0.2in; font-family: "Times New Roman", serif; font-size: 12pt; so-language: en-US }
+		P.body-text-3-cjk { margin-left: 0.2in; font-family: "Times New Roman", serif; font-size: 12pt }
+		P.body-text-3-ctl { margin-left: 0.2in; font-family: "Times New Roman", serif; font-size: 8pt; so-language: ar-SA }
+		H1.heading1-color-western { font-family: "Arial", sans-serif; font-size: 16pt; so-language: en-GB }
+		H1.heading1-color-cjk { font-family: "Times New Roman", serif; font-size: 16pt }
+		H1.heading1-color-ctl { font-family: "Arial", sans-serif; font-size: 48pt; so-language: ar-SA }
+		A:link { color: #0000ff }
+		A:visited { color: #800080 }
+	-->
+	</STYLE>
+</HEAD>
+<BODY LANG="en-US" TEXT="#000000" LINK="#0000ff" VLINK="#800080" DIR="LTR">
+<TABLE WIDTH=100% BORDER=0 CELLPADDING=4 CELLSPACING=0 STYLE="page-break-before: always">
+	<COL WIDTH=66*>
+	<COL WIDTH=190*>
+	<TR VALIGN=TOP>
+		<TD WIDTH=26%>
+			<P CLASS="western"><A NAME="_top1"></A><A HREF="../index.htm"><FONT COLOR="#0000ff"><U>Tutorial
+			Start</U></FONT></A></P>
+			<P CLASS="western"><A HREF="#1.Controlling Wheeled Vehicles|outline">Controlling
+			Wheeled Vehicles</A></P>
+			<P CLASS="western"><A HREF="#2.Pilot|outline">Pilot</A></P>
+			<P CLASS="western" STYLE="margin-left: 0.33in"><A HREF="#0.0.1.Constructors:|outline">Constructors:</A></P>
+			<P CLASS="western" STYLE="margin-left: 0.33in"><A HREF="#0.0.2.Straight line movement|outline">Straight
+			line movement</A></P>
+			<P CLASS="western" STYLE="margin-left: 0.33in"><A HREF="#2.0.3.Program SquareTracer|outline">Program
+			SquareTracer </A>
+			</P>
+			<P CLASS="western" STYLE="margin-left: 0.33in"><A HREF="#2.0.4.Program SquareTracer2|outline">Program
+			SquareTracer2</A></P>
+			<P CLASS="western" STYLE="margin-left: 0.33in"><A HREF="#0.0.3.Movement along a curved path|outline">Movement
+			along a curved path</A></P>
+			<P CLASS="western" STYLE="margin-left: 0.33in"><A HREF="#2.0.6.Program  SteerTester|outline">Program
+			SteerTester</A></P>
+			<P CLASS="western" STYLE="margin-left: 0.33in"><A HREF="#0.0.4.Other methods for Pilot|outline">Other
+			methods for Pilot</A></P>
+			<P CLASS="western" STYLE="margin-left: 0.17in"><A HREF="#2.1.CompassPilot|outline">CompassPilot</A></P>
+			<P CLASS="western" STYLE="margin-left: 0.33in"><A HREF="#0.0.5.Constructors:|outline">Constructors:</A></P>
+			<P CLASS="western" STYLE="margin-left: 0.33in"><A HREF="#0.0.6.Additional methods in CompassPilot:  |outline">Additional
+			methods in CompassPilot: </A>
+			</P>
+			<P CLASS="western" STYLE="margin-left: 0.33in"><A HREF="#2.0.10.Program: Compass Pilot Test|outline">Program:
+			Compass Pilot Test</A></P>
+			<P CLASS="western"><A HREF="#3.Tacho Navigator|outline">Tacho
+			Navigator</A></P>
+			<P CLASS="western" STYLE="margin-left: 0.33in"><A HREF="#0.0.7.Constructors|outline">Constructors</A></P>
+			<P CLASS="western" STYLE="margin-left: 0.33in"><A HREF="#0.0.8.Basic navigational methods|outline">Basic
+			navigational methods</A></P>
+			<P CLASS="western" STYLE="margin-left: 0.33in"><A HREF="#0.0.9.Controlling the robot movement in the plane|outline">Controlling
+			the robot movement in the plane</A></P>
+			<P CLASS="western" STYLE="margin-left: 0.33in"><A HREF="#3.0.4.Program: Tacho Navitator Test|outline">Program:
+			Tacho Navitator Test</A></P>
+			<P CLASS="western" STYLE="margin-left: 0.17in"><A HREF="#3.1.CompassNavigator|outline">CompassNavigator</A></P>
+			<P CLASS="western" STYLE="margin-left: 0.33in"><A HREF="#0.0.10.Constructors|outline">Constructors</A></P>
+			<P CLASS="western" STYLE="margin-left: 0.33in"><A HREF="#0.0.11.Other Methods|outline">Other
+			Methods</A></P>
+			<P CLASS="western" STYLE="margin-left: 0.33in"><A HREF="#3.1.3.Program: Compass Navigator Test.|outline">Program:
+			Compass Navigator Test.</A></P>
+		</TD>
+		<TD WIDTH=74%>
+			<H1 CLASS="western"><A NAME="1.Controlling Wheeled Vehicles|outline"></A><A NAME="1.Controlling Wheeled Vehicles|outline"></A><A NAME="1.Controlling Wheeled Vehicles|outline"></A><A NAME="1.Controlling Wheeled Vehicles|outline"></A><A NAME="1.Controlling Wheeled Vehicles|outline"></A>
+			Controlling Wheeled Vehicles</H1>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<P CLASS="western">A common type of robot is the two wheeled
+			vehicle with independently controlled motors. This design uses
+			differential steering and can turn in place. LejosNXJ contains
+			several classes that control it. 
+			</P>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<H1 CLASS="western"><A NAME="2.Pilot|outline"></A>Pilot</H1>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<P CLASS="western">The Pilot class steers the vehicle by
+			controlling the speed and direction of rotation of its motors. The
+			pilot needs to know the wiring diagram of the robot, i.e. which
+			ports the motors are connected to and whether driving the motors
+			forward makes the robot move forward or backward (reverse). It
+			also needs to know the diameter of the wheels and the width of the
+			track, i.e. the distance between the centres of the tracks of the
+			two wheels. The Pilot uses the wheel diameter to calculate the
+			distance it has traveled. It uses the ratio to calculate how far
+			it has rotated. Obviously, both parameters must be in the same
+			units, but they can be anything you wish. With proper adjustment
+			of these parameters, errors in distance traveled and angle of
+			rotation can be held do 2% or perhaps less. This information is
+			passed to the pilot constructor. 
+			</P>
+			<H3 LANG="en-GB" CLASS="western"><A NAME="0.0.5.Constructors:|outline"></A><A NAME="0.0.1.Constructors:|outline"></A>
+			Constructors:</H3>
+			<UL>
+				<LI><P CLASS="western">Pilot(float wheelDiameter,float
+				trackWidth,Motor leftMotor, Motor rightMotor)</P>
+				<LI><P CLASS="western">Pilot(float wheelDiameter,float
+				trackWidth,Motor leftMotor, Motor rightMotor, boolean
+				reverse)<BR>Use thisconstructor if you need to set the <I><B>reverse</B></I>
+				boolean to <I><B>tru</B></I><B>e</B><I>.</I> 
+				</P>
+			</UL>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<H3 LANG="en-GB" CLASS="western"><A NAME="0.0.2.Straight line movement|outline"></A>
+			Straight line movement</H3>
+			<P LANG="en-GB" CLASS="body-text-3-western">To control the robot
+			moving in a straight line, use:</P>
+			<UL>
+				<LI><P CLASS="western">void setSpeed(int speed)<BR>sets the speed
+				of the motors in degrees/second</P>
+				<LI><P CLASS="western">void forward()<BR>starts the robot moving
+				forward</P>
+				<LI><P CLASS="western">void backward()</P>
+				<LI><P CLASS="western">void stop() 
+				</P>
+			</UL>
+			<P CLASS="western" STYLE="margin-left: 0.25in">To control the
+			distance the robot moves, use:</P>
+			<UL>
+				<LI><P CLASS="western">void travel(float distance) 
+				</P>
+				<LI><P CLASS="western">void travel(float distance,boolean
+				immediateReturn)<BR><I><B>distance</B></I> is in the same units
+				as wheel diameter; a negative distance means travel backwards.
+				You can find out how far the robot has moved by calling</P>
+				<LI><P CLASS="western">(int) getTravelDistance(); - returns the
+				distance traveled since the last call to resetTachoCount();</P>
+			</UL>
+			<P CLASS="body-text-3-western">Example:</P>
+			<P CLASS="body-text-3-western"><IMG SRC="WheeledVehicles21_html_5a178747.gif" NAME="Frame1" ALT="Frame1" ALIGN=BOTTOM WIDTH=608 HEIGHT=637 BORDER=0>&sect;</P>
+			<P CLASS="body-text-3-western"><BR><BR>
+			</P>
+			<P CLASS="body-text-3-western">You can cause the robot to rotate
+			in place by a specified angle by using</P>
+			<UL>
+				<LI><P CLASS="western">void <A HREF="http://lejos.sourceforge.net/nxt/nxj/api/lejos/navigation/Pilot.html#rotate(int)"><FONT COLOR="#0000ff"><U>rotate(int
+				degrees)</U></FONT></A><BR>You must have accurate values for
+				wheelDiameter and trackWidth for this method to produce accurate
+				results. 
+				</P>
+			</UL>
+			<H3 LANG="en-GB" CLASS="western"><A NAME="2.0.3.Program SquareTracer|outline"></A>
+			Program SquareTracer</H3>
+			<P LANG="en-GB" CLASS="body-text-3-western">Write a program that
+			uses a Pilot to trace out a square, using the travel and rotate
+			methods. 
+			</P>
+			<P CLASS="body-text-3-western"><A HREF="WheeledVehicles_files/SquareTracer.html" TARGET="_blank"><FONT COLOR="#0000ff"><SPAN LANG="en-GB"><U>Solution</U></SPAN></FONT></A></P>
+			<H3 LANG="en-GB" CLASS="western"><A NAME="2.0.4.Program SquareTracer2|outline"></A>
+			Program SquareTracer2</H3>
+			<P CLASS="body-text-3-western">Write a program that traces 2
+			squares with increasing angle at the corners, then retraces the
+			same path in the opposite direction.. Modify the traceSquare
+			method of program Pilot 1 so it can trace a square in either
+			direction, and use it in this program. This is stringent test of
+			the accuracy of the wheel diameter and track width constants you
+			use in you pilot. 
+			</P>
+			<P CLASS="body-text-3-western"><A HREF="WheeledVehicles_files/SquareTracer2.html" TARGET="_blank"><FONT COLOR="#0000ff"><U>Solution</U></FONT></A></P>
+			<H3 LANG="en-GB" CLASS="western"><A NAME="0.0.3.Movement along a curved path|outline"></A>
+			Movement along a curved path</H3>
+			<P CLASS="body-text-3-western">The pilot can turn the robot in
+			place by driving one wheel forward and the other backward. The
+			methods that do it are:</P>
+			<UL>
+				<LI><P CLASS="western">void rotate(int angle)</P>
+				<LI><P CLASS="western">void rotate(int angle, boolean
+				immediateReturn ) <BR>If <I><B>angle </B></I>is positive, the
+				robot turns to the left. The <I><B>immediateReturn</B></I>
+				parameter works as in the Motor methods &ndash;allowing the
+				calling thread to do other work while the rotation task in
+				progress. 
+				</P>
+			</UL>
+			<P CLASS="body-text-3-western">The Pilot can also control the
+			robot to move in a circular path using these methods:</P>
+			<UL>
+				<LI><P CLASS="western">void steer(int turnRate) &ndash; follows a
+				circular path until another method is executed</P>
+				<LI><P CLASS="western">void steer(int turnRate, int angle)</P>
+				<LI><P CLASS="western">void steer(int turnRate, int angle,
+				boolean immediateReturn)</P>
+			</UL>
+			<P CLASS="body-text-3-western">The <I><B>turnRate</B></I>
+			parameter determines the radius of the path. A positive value
+			means that center of the circle is to the left of the robot (so
+			the left motor drives the inside wheel). A negative value means
+			the left motor is the outside wheel. The absolute value is between
+			0 and 200, and this determines the ratio of inside to outside
+			motor speed. The outside motor runs at the set speed of the robot;
+			the inner motor is slowed down to make the robot turn. At turn
+			rate 0, the speed ratio is 1.0 and the robot travels in a straight
+			line. At turn rate 200, the speed ratio is -1 and the robot turns
+			in place. Turn rate 100 gives speed ratio 0, so the inside motor
+			stops. The formula is: speed ratio = 100 - abs(turnRate). 
+			</P>
+			<P CLASS="body-text-3-western">The <I><B>angle</B></I> parameter
+			determines the rotation angle at which the robot stops. If the
+			angle is negative, the robot follows the circular path defined by
+			the turn rate, but it moves backwards. 
+			</P>
+			<UL>
+				<LI><P CLASS="western">getAngle() - returns the angle of vehicle
+				rotation since the last call of resetTachoCount()</P>
+			</UL>
+			<H3 LANG="en-GB" CLASS="western">Program SteerTester</H3>
+			<P CLASS="body-text-3-western">Write a program that uses the
+			ButtonCounter to enter the turn rate and angle variables, and then
+			calls the steer() method. It does this in a loop so you can try
+			different values of these parameters to control the robot path. 
+			</P>
+			<P CLASS="body-text-3-western"><A HREF="WheeledVehicles_files/SteerTest.html" TARGET="_blank"><FONT COLOR="#0000ff"><U>Solution</U></FONT></A></P>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<H3 LANG="en-GB" CLASS="western"><A NAME="0.0.4.Other methods for Pilot|outline"></A>
+			Other methods for Pilot</H3>
+			<UL>
+				<LI><P CLASS="western">resetTachocount()<BR>Resets both motors.
+				This method is NOT called by any other Pilot methods. You must
+				call this method if you want useful results from
+				getTravelDistance() or getAngle();</P>
+				<LI><P CLASS="western">regulateSpeed(Boolean yes)<BR>You should
+				consider turning off speed regulation if you are using sensor
+				feedback and the steer() method to control the robot movement. 
+				</P>
+				<LI><P CLASS="western">boolean isMoving()<BR>Returns true if
+				either motor is moving. Useful if you have used the
+				immediateReturn parameter and need to know if the task is still
+				in progress. 
+				</P>
+				<LI><P CLASS="western">boolean stalled()<BR>returns true if
+				either motor actual speed is zero. Remember, the actual speed is
+				calculated every 100ms. So stalled() will return <I><B>true</B></I>
+				for the first 100ms after the robot begins its move. 
+				</P>
+			</UL>
+			<P CLASS="western" STYLE="margin-left: 0.25in">If you really need
+			to deal with individual motors, you can use:</P>
+			<UL>
+				<LI><P CLASS="western">(Motor) getLeft() 
+				</P>
+				<LI><P CLASS="western">(Motor) getRight()</P>
+			</UL>
+			<P CLASS="western"><A HREF="#1.Controlling Wheeled Vehicles|outline"><FONT COLOR="#0000ff"><U>Back
+			to top</U></FONT></A></P>
+			<H2 CLASS="western"><A NAME="2.1.CompassPilot|outline"></A>CompassPilot</H2>
+			<P CLASS="body-text-2-western">The CompassPilot is an extension of
+			the Pilot class. It implements the same methods, but uses a
+			<A HREF="http://lejos.sourceforge.net/p_technologies/nxt/nxj/api/lejos/nxt/CompassSensor.html"><FONT COLOR="#0000ff"><U>compass
+			sensor</U></FONT></A> to ensure that the pilot does not deviate
+			from the correct angle of robot heading. 
+			</P>
+			<P CLASS="body-text-2-western">It needs a HiTechnic or Mindsensors
+			compass sensor plugged in to one of the sensor ports. Its
+			constructors are similar those of Pilot, but with the additional
+			information of the compass sensor port.</P>
+			<H3 LANG="en-GB" CLASS="western">Constructors:</H3>
+			<UL>
+				<LI><P CLASS="western">CompassPilot(SensorPort compassPort, float
+				wheelDiameter,float trackWidth,Motor leftMotor, Motor rightMotor)</P>
+				<LI><P CLASS="western">CompassPilot(SensorPort compassPort, float
+				wheelDiameter,float trackWidth,Motor leftMotor, Motor rightMotor,
+				boolean reverse)</P>
+			</UL>
+			<H3 LANG="en-GB" CLASS="western">Additional methods in
+			CompassPilot: 
+			</H3>
+			<UL>
+				<LI><P CLASS="western">calibrate()<BR>calibrate the compass
+				sensor; rotates the robot slowly through 360 degreees.</P>
+				<LI><P CLASS="western">setHeading(int angle)<BR>set the desired
+				robot heading, in degrees in Cartesian coordinates (a left turn
+				increases the heading)</P>
+				<LI><P CLASS="western">(int) getHeading()<BR>return the desired
+				robot heading</P>
+				<LI><P CLASS="western">(int) getAngle()<BR>return the compass
+				Cartesian angle. Also the actual robot heading assuming the
+				compass sensor points forward.</P>
+			</UL>
+			<H3 LANG="en-GB" CLASS="western"><A NAME="2.0.10.Program: Compass Pilot Test|outline"></A>
+			Program: Compass Pilot Test</H3>
+			<P LANG="en-GB" CLASS="body-text-3-western">Write a program that
+			does these steps:</P>
+			<OL>
+				<LI><P CLASS="western">Calibrate the compass.</P>
+				<LI><P CLASS="western">Rotate the robot to a heading or 90
+				degrees</P>
+				<LI><P CLASS="western">Reset the Cartesian zero of the compass
+				sensor to correspond the current heading \</P>
+				<LI><P CLASS="western">Move the robot a fixed distance forward.</P>
+				<LI><P CLASS="western">Rotate 90 degrees to the left.</P>
+				<LI><P CLASS="western">Move the robot the same distance
+				backwards.</P>
+				<LI><P CLASS="western">Display the compass reading and the
+				distance traveled at the end of each move.</P>
+			</OL>
+			<P CLASS="western" STYLE="margin-left: 0.25in">Suggestion: while
+			the robot is moving, nudge it off course and watch it steer back
+			to the correct heading.</P>
+			<P CLASS="western" STYLE="margin-left: 0.25in"><BR><BR>
+			</P>
+			<P CLASS="western" STYLE="margin-left: 0.25in"><A HREF="WheeledVehicles_files/CompassPilotTst.html"><FONT COLOR="#0000ff"><U>Solution</U></FONT></A></P>
+			<P CLASS="western"><A HREF="#1.Controlling Wheeled Vehicles|outline"><FONT COLOR="#0000ff"><U>Back
+			to top</U></FONT></A></P>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<H1 CLASS="western"><A NAME="3.Tacho Navigator|outline"></A>Tacho
+			Navigator</H1>
+			<P CLASS="body-text-2-western" STYLE="margin-top: 0.17in">T<IMG SRC="WheeledVehicles21_html_806f85.gif" NAME="graphics1" ALIGN=RIGHT HSPACE=12 WIDTH=250 HEIGHT=192 BORDER=0>here
+			are three abstraction layers of classes that control two wheeled
+			vehicles. This architecture allows you to pick the layer that most
+			useful for your application and not be concerned with the lower
+			layers.</P>
+			<P CLASS="body-text-2-western" STYLE="margin-top: 0.17in">The
+			Tacho Navigator implements the Navigator interface which defines
+			methods for the basic navigational tasks. The navigator keeps
+			track of the robot&rsquo;s coordinates (x, and y) and its heading
+			angle (the direction it is facing ). It uses Cartesian
+			coordinates, with angles in degrees; 0 degrees is the direction of
+			the positive x axis, 90 degrees is the positive y axis. Since a
+			TachoNavigator needs a Pilot to control the vehicle, it implements
+			the common Pilot movement commands that you might want to use. 
+			</P>
+			<H3 LANG="en-GB" CLASS="western"><A NAME="0.0.10.Constructors|outline"></A><A NAME="0.0.7.Constructors|outline"></A>
+			Constructors</H3>
+			<UL>
+				<LI><P LANG="en-GB" CLASS="body-text-3-western">TachoNavigator(Pilot
+				aPilot)<BR>To use this constructor, you must construct a pilot
+				and use it as the parameter.</P>
+			</UL>
+			<P LANG="en-GB" CLASS="body-text-3-western">Alternatively, you can
+			use a constructor that creates a pilot from the information you
+			supply. The parameter list is the same as in the Pilot
+			constructors.</P>
+			<UL>
+				<LI><P CLASS="body-text-3-western">TachoNavigator(float&nbsp;wheelDiameter,,float&nbsp;trackWidth,
+				<A HREF="../../../../../../lejos_nxj/docs/apidocs/lejos/nxt/Motor.html"><FONT COLOR="#0000ff"><U>Motor</U></FONT></A>&nbsp;leftMotor,
+				<A HREF="../../../../../../lejos_nxj/docs/apidocs/lejos/nxt/Motor.html"><FONT COLOR="#0000ff"><U>Motor</U></FONT></A>&nbsp;rightMotor)</P>
+				<LI><P CLASS="western">TachoNavigator(float&nbsp;wheelDiameter,,float&nbsp;trackWidth,
+				<A HREF="../../../../../../lejos_nxj/docs/apidocs/lejos/nxt/Motor.html"><FONT COLOR="#0000ff"><U>Motor</U></FONT></A>&nbsp;leftMotor,
+				<A HREF="../../../../../../lejos_nxj/docs/apidocs/lejos/nxt/Motor.html"><FONT COLOR="#0000ff"><U>Motor</U></FONT></A>&nbsp;rightMotor,
+				boolean&nbsp;reverse)</P>
+			</UL>
+			<H3 LANG="en-GB" CLASS="western"><A NAME="0.0.8.Basic navigational methods|outline"></A>
+			Basic navigational methods</H3>
+			<P LANG="en-GB" CLASS="body-text-3-western">Methods to set and get
+			the robot position and its components:</P>
+			<UL>
+				<LI><P CLASS="body-text-3-western"><SPAN LANG="en-GB">void
+				setPosition(</SPAN>float&nbsp;x, float&nbsp;y,
+				float&nbsp;directionAngle<FONT FACE="Courier New, monospace"><FONT SIZE=2>)</FONT></FONT></P>
+				<LI><P CLASS="body-text-3-western">float getX()</P>
+				<LI><P CLASS="body-text-3-western">float getY()</P>
+				<LI><P CLASS="body-text-3-western">float getAngle()</P>
+			</UL>
+			<P LANG="en-GB" CLASS="body-text-3-western" STYLE="margin-left: 0.45in">
+			Methods to get the angle and distance to a point with coordinates
+			(x,y):</P>
+			<UL>
+				<LI><P CLASS="body-text-3-western">float angleTo(float x, float
+				y)</P>
+				<LI><P LANG="en-GB" CLASS="body-text-3-western">float
+				distanceTo(float x, float y)</P>
+			</UL>
+			<P LANG="en-GB" CLASS="body-text-3-western" STYLE="margin-left: 0.45in">
+			Updating the robot position (x,y and angle) 
+			</P>
+			<UL>
+				<LI><P CLASS="body-text-3-western">void updatePosition()<BR>Updates
+				robot location (x,y) and direction angle. Called by stop, and
+				movement commands that do not exit until the robot has stopped.
+				If you use a movement command that returns immediately, you MUST
+				call this method when the movement is complete. It may also be
+				called while movement is in progress so you can then call methods
+				to get the components of the robot position.</P>
+			</UL>
+			<H3 LANG="en-GB" CLASS="western"><A NAME="0.0.9.Controlling the robot movement in the plane|outline"></A>
+			Controlling the robot movement in the plane</H3>
+			<P LANG="en-GB" CLASS="body-text-3-western">As with the Pilot
+			class, the Navigator movement control methods have two versions.
+			One version returns only after the movement is complete and the
+			robot position has been updated. The other version has the option
+			of initiating the movement and returning immediately. When you use
+			this option, you must be sure the robot position is updated before
+			it moves again. 
+			</P>
+			<P LANG="en-GB" CLASS="body-text-3-western">The methods that
+			automatically call updatePosition() before returning are:</P>
+			<UL>
+				<LI><P CLASS="western">void stop()</P>
+				<LI><P CLASS="western">void travel(float distance)</P>
+				<LI><P CLASS="western">void rotate(float angle)</P>
+				<LI><P CLASS="western">void rotateTo(float angle)</P>
+				<LI><P CLASS="western">goTo(float x, float y)</P>
+				<LI><P CLASS="western">turn(float radius, float angle)<BR>This
+				method drives the robot in the arc of a circle. {It calls
+				pilot.steer().} If the <I><B>radius</B></I> is negative, the
+				center of the turn is on the right side of the robot. If <I><B>angle</B></I>
+				is negative, the robot travels backwards. 
+				</P>
+			</UL>
+			<P CLASS="body-text-3-western">The methods that require you to
+			call updatePosition when the movement is complete include the
+			methods when called with <I><B>immediateReturn</B></I> set to <I><B>true</B></I>
+						</P>
+			<UL>
+				<LI><P CLASS="western">void travel(float distance, boolean
+				immediateReturn)</P>
+				<LI><P CLASS="western">void rotate(float angle, boolean
+				immediateReturn)</P>
+				<LI><P CLASS="western">void rotateTo(float angle, boolean
+				immediateReturn)</P>
+				<LI><P CLASS="western">goTo(float x, float y , boolean
+				immediateReturn)</P>
+				<LI><P CLASS="western">turn(float radius, float angle, boolean
+				immediateReturn) 
+				</P>
+			</UL>
+			<UL>
+				<LI><P CLASS="western">forward()</P>
+				<LI><P CLASS="western">backward()</P>
+				<LI><P CLASS="western">rotateLeft()</P>
+				<LI><P CLASS="western">rotateRight()</P>
+			</UL>
+			<H3 LANG="en-GB" CLASS="western"><A NAME="3.0.4.Program: Tacho Navitator Test|outline"></A>
+			Program: Tacho Navitator Test</H3>
+			<P LANG="en-GB" CLASS="body-text-3-western">Write a program that
+			performs the following steps:</P>
+			<OL>
+				<LI><P LANG="en-GB" CLASS="body-text-3-western">Set the speed to
+				500, and the initial heading to 90 degrees (pointing along the y
+				axis)</P>
+				<LI><P LANG="en-GB" CLASS="body-text-3-western">Travel to the
+				point (-10,0).</P>
+				<LI><P LANG="en-GB" CLASS="body-text-3-western">Travel to
+				(10,20).<BR>while moving, display the x and y coordinates every
+				half second, in a new row each time.</P>
+			</OL>
+			<P CLASS="body-text-3-western"><A HREF="WheeledVehicles_files/TachoNav1.html"><FONT COLOR="#0000ff"><U>Solution.</U></FONT></A></P>
+			<P CLASS="western"><A HREF="#1.Controlling Wheeled Vehicles|outline"><FONT COLOR="#0000ff"><U>Back
+			to top</U></FONT></A></P>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<P CLASS="body-text-3-western"><BR><BR>
+			</P>
+			<H2 CLASS="western"><A NAME="3.1.CompassNavigator|outline"></A>CompassNavigator</H2>
+			<P CLASS="western">The compass navigator is a sub class of
+			TachoNavigator, and as such, implements all the TachoNavigator
+			methods. 
+			</P>
+			<H3 LANG="en-GB" CLASS="western">Constructors</H3>
+			<UL>
+				<LI><P LANG="en-GB" CLASS="body-text-3-western">CompassNavigator(CompassPilot
+				aPilot)<BR>To use this constructor, you must construct a pilot
+				and use it as the parameter.</P>
+			</UL>
+			<P LANG="en-GB" CLASS="body-text-3-western">Alternatively, you can
+			use a constructor that creates a pilot from the information you
+			supply. The parameter list is the same as in the CompassPilot
+			constructors.</P>
+			<UL>
+				<LI><P CLASS="body-text-3-western">CompassNavigator(SensorPort
+				compassPort ,float&nbsp;wheelDiameter,,float&nbsp;trackWidth,
+				<A HREF="../../../../../../lejos_nxj/docs/apidocs/lejos/nxt/Motor.html"><FONT COLOR="#0000ff"><U>Motor</U></FONT></A>&nbsp;leftMotor,
+				<A HREF="../../../../../../lejos_nxj/docs/apidocs/lejos/nxt/Motor.html"><FONT COLOR="#0000ff"><U>Motor</U></FONT></A>&nbsp;rightMotor)</P>
+				<LI><P CLASS="western">CompassNavigator(SensorPort compassPort
+				,float&nbsp;wheelDiameter,,float&nbsp;trackWidth,
+				<A HREF="../../../../../../lejos_nxj/docs/apidocs/lejos/nxt/Motor.html"><FONT COLOR="#0000ff"><U>Motor</U></FONT></A>&nbsp;leftMotor,
+				<A HREF="../../../../../../lejos_nxj/docs/apidocs/lejos/nxt/Motor.html"><FONT COLOR="#0000ff"><U>Motor</U></FONT></A>&nbsp;rightMotor,
+				boolean&nbsp;reverse)</P>
+			</UL>
+			<H3 LANG="en-GB" CLASS="western"><A NAME="0.0.11.Other Methods|outline"></A>
+			Other Methods</H3>
+			<UL>
+				<LI><P CLASS="western">void calibrate()<BR>This method merely
+				calls the same method on the CompassPilot.</P>
+				<LI><P CLASS="western">void updateHeading()<BR>Reads the compass
+				and updates the robot heading.</P>
+				<LI><P CLASS="western"></P>
+			</UL>
+			<H3 LANG="en-GB" CLASS="western"><A NAME="3.1.3.Program: Compass Navigator Test.|outline"></A>
+			Program: Compass Navigator Test.</H3>
+			<P LANG="en-GB" CLASS="body-text-3-western">Write a program for
+			the CompassNavigator that does the same steps as for the
+			TachoNavigator.</P>
+			<P CLASS="western"><A HREF="#1.Controlling Wheeled Vehicles|outline"><FONT COLOR="#0000ff"><SPAN LANG="en-GB"><U>Back
+			to top</U></SPAN></FONT></A></P>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<P CLASS="western"><BR>
+			</P>
+		</TD>
+	</TR>
+</TABLE>
+<P CLASS="western"><BR><BR>
+</P>
+<P CLASS="western"><A NAME="_top"></A><A HREF="../index.htm"><FONT COLOR="#0000ff"><U>Tutorial
+Start</U></FONT></A></P>
+<DIV ID="Table of Contents1" DIR="LTR">
+	<P CLASS="western"><BR><BR>
+	</P>
+</DIV>
+<P CLASS="western"><BR><BR>
+</P>
+<H1 LANG="en-GB" CLASS="heading1-color-western" STYLE="margin-right: 0.74in">
+<BR><BR>
+</H1>
+</BODY>
+</HTML>
