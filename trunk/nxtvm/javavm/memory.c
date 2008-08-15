@@ -1085,24 +1085,11 @@ static void mark_reference_fields( Object* obj)
     if( classRecord->numInstanceFields)
     {
       int i;
-/*
-  display_goto_xy(0, 1);
-  display_int(classIndex, 8);
-  display_goto_xy(8, 1);
-  display_int(classRecord->numInstanceFields, 8);*/
       for( i = classRecord->numInstanceFields-1; i >= 0; i--)
       {
         byte fieldType = get_field_type( classRecord, i);
         byte fieldSize = typeSize[ fieldType];
         statePtr -= fieldSize;
-/*
-  display_goto_xy(0, 2);
-  display_int(i, 8);
-  display_goto_xy(8, 2);
-  display_int(fieldType, 8);
-  display_update();
-  systick_wait_ms(10000);*/
-  
 
         if( fieldType == T_REFERENCE)
         {
@@ -1255,6 +1242,7 @@ static void sweep_heap_objects( unsigned int reqsize, unsigned int optsize)
   
           obj->flags.all = size;
           blockHeader = size;
+          clr_reference(ptr);
         }
     }
     else
