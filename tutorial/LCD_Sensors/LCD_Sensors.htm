@@ -1,2523 +1,846 @@
-<html xmlns:v="urn:schemas-microsoft-com:vml"
-xmlns:o="urn:schemas-microsoft-com:office:office"
-xmlns:w="urn:schemas-microsoft-com:office:word"
-xmlns:st1="urn:schemas-microsoft-com:office:smarttags"
-xmlns="http://www.w3.org/TR/REC-html40">
-
-<head>
-<meta http-equiv=Content-Type content="text/html; charset=windows-1252">
-<meta name=ProgId content=Word.Document>
-<meta name=Generator content="Microsoft Word 10">
-<meta name=Originator content="Microsoft Word 10">
-<link rel=File-List href="LCD_Sensors_files/filelist.xml">
-<link rel=Edit-Time-Data href="LCD_Sensors_files/editdata.mso">
-<!--[if !mso]>
-<style>
-v\:* {behavior:url(#default#VML);}
-o\:* {behavior:url(#default#VML);}
-w\:* {behavior:url(#default#VML);}
-.shape {behavior:url(#default#VML);}
-</style>
-<![endif]-->
-<title>leJOS NXJ Tutorial</title>
-<o:SmartTagType namespaceuri="urn:schemas-microsoft-com:office:smarttags"
- name="place"/>
-<!--[if gte mso 9]><xml>
- <w:WordDocument>
-  <w:Zoom>123</w:Zoom>
-  <w:BrowserLevel>MicrosoftInternetExplorer4</w:BrowserLevel>
- </w:WordDocument>
-</xml><![endif]--><!--[if !mso]><object
- classid="clsid:38481807-CA0E-42D2-BF39-B33AF135CC4D" id=ieooui></object>
-<style>
-st1\:*{behavior:url(#ieooui) }
-</style>
-<![endif]-->
-<style>
-<!--
- /* Font Definitions */
- @font-face
-	{font-family:Tahoma;
-	panose-1:2 11 6 4 3 5 4 4 2 4;
-	mso-font-charset:0;
-	mso-generic-font-family:swiss;
-	mso-font-pitch:variable;
-	mso-font-signature:1627421319 -2147483648 8 0 66047 0;}
- /* Style Definitions */
- p.MsoNormal, li.MsoNormal, div.MsoNormal
-	{mso-style-parent:"";
-	margin-top:0in;
-	margin-right:0in;
-	margin-bottom:6.0pt;
-	margin-left:0in;
-	mso-pagination:widow-orphan;
-	font-size:12.0pt;
-	font-family:"Times New Roman";
-	mso-fareast-font-family:"Times New Roman";}
-h1
-	{margin-top:12.0pt;
-	margin-right:0in;
-	margin-bottom:3.0pt;
-	margin-left:0in;
-	mso-pagination:widow-orphan;
-	page-break-after:avoid;
-	mso-outline-level:1;
-	font-size:16.0pt;
-	font-family:Arial;
-	color:#FF6600;
-	font-weight:bold;}
-h2
-	{margin-top:12.0pt;
-	margin-right:0in;
-	margin-bottom:6.0pt;
-	margin-left:0in;
-	mso-pagination:widow-orphan;
-	page-break-after:avoid;
-	mso-outline-level:2;
-	font-size:14.0pt;
-	font-family:Arial;
-	color:#FF6600;
-	font-weight:bold;
-	font-style:italic;}
-h3
-	{margin-top:12.0pt;
-	margin-right:0in;
-	margin-bottom:6.0pt;
-	margin-left:.2in;
-	mso-pagination:widow-orphan;
-	page-break-after:avoid;
-	mso-outline-level:3;
-	font-size:13.0pt;
-	font-family:Arial;
-	font-weight:bold;}
-h4
-	{margin-top:12.0pt;
-	margin-right:0in;
-	margin-bottom:3.0pt;
-	margin-left:.3in;
-	mso-pagination:widow-orphan;
-	page-break-after:avoid;
-	mso-outline-level:4;
-	font-size:12.0pt;
-	font-family:Arial;
-	font-weight:bold;
-	font-style:italic;}
-h5
-	{margin-top:12.0pt;
-	margin-right:0in;
-	margin-bottom:3.0pt;
-	margin-left:0in;
-	mso-pagination:widow-orphan;
-	mso-outline-level:5;
-	font-size:13.0pt;
-	font-family:"Times New Roman";
-	font-weight:bold;
-	font-style:italic;}
-p.MsoToc1, li.MsoToc1, div.MsoToc1
-	{margin-top:0in;
-	margin-right:0in;
-	margin-bottom:6.0pt;
-	margin-left:0in;
-	mso-pagination:widow-orphan;
-	font-size:12.0pt;
-	font-family:"Times New Roman";
-	mso-fareast-font-family:"Times New Roman";}
-p.MsoToc2, li.MsoToc2, div.MsoToc2
-	{margin-top:0in;
-	margin-right:0in;
-	margin-bottom:6.0pt;
-	margin-left:12.0pt;
-	mso-pagination:widow-orphan;
-	font-size:12.0pt;
-	font-family:"Times New Roman";
-	mso-fareast-font-family:"Times New Roman";}
-p.MsoToc3, li.MsoToc3, div.MsoToc3
-	{margin-top:0in;
-	margin-right:0in;
-	margin-bottom:6.0pt;
-	margin-left:24.0pt;
-	mso-pagination:widow-orphan;
-	font-size:12.0pt;
-	font-family:"Times New Roman";
-	mso-fareast-font-family:"Times New Roman";}
-p.MsoToc4, li.MsoToc4, div.MsoToc4
-	{margin-top:0in;
-	margin-right:0in;
-	margin-bottom:6.0pt;
-	margin-left:.5in;
-	mso-pagination:widow-orphan;
-	font-size:12.0pt;
-	font-family:"Times New Roman";
-	mso-fareast-font-family:"Times New Roman";}
-p.MsoToc5, li.MsoToc5, div.MsoToc5
-	{margin-top:0in;
-	margin-right:0in;
-	margin-bottom:6.0pt;
-	margin-left:48.0pt;
-	mso-pagination:widow-orphan;
-	font-size:12.0pt;
-	font-family:"Times New Roman";
-	mso-fareast-font-family:"Times New Roman";}
-p.MsoToc6, li.MsoToc6, div.MsoToc6
-	{margin-top:0in;
-	margin-right:0in;
-	margin-bottom:6.0pt;
-	margin-left:60.0pt;
-	mso-pagination:widow-orphan;
-	font-size:12.0pt;
-	font-family:"Times New Roman";
-	mso-fareast-font-family:"Times New Roman";}
-p.MsoToc7, li.MsoToc7, div.MsoToc7
-	{margin-top:0in;
-	margin-right:0in;
-	margin-bottom:6.0pt;
-	margin-left:1.0in;
-	mso-pagination:widow-orphan;
-	font-size:12.0pt;
-	font-family:"Times New Roman";
-	mso-fareast-font-family:"Times New Roman";}
-p.MsoToc8, li.MsoToc8, div.MsoToc8
-	{margin-top:0in;
-	margin-right:0in;
-	margin-bottom:6.0pt;
-	margin-left:84.0pt;
-	mso-pagination:widow-orphan;
-	font-size:12.0pt;
-	font-family:"Times New Roman";
-	mso-fareast-font-family:"Times New Roman";}
-p.MsoToc9, li.MsoToc9, div.MsoToc9
-	{margin-top:0in;
-	margin-right:0in;
-	margin-bottom:6.0pt;
-	margin-left:96.0pt;
-	mso-pagination:widow-orphan;
-	font-size:12.0pt;
-	font-family:"Times New Roman";
-	mso-fareast-font-family:"Times New Roman";}
-p.MsoListBullet, li.MsoListBullet, div.MsoListBullet
-	{margin-top:0in;
-	margin-right:0in;
-	margin-bottom:6.0pt;
-	margin-left:.25in;
-	text-indent:-.25in;
-	mso-pagination:widow-orphan;
-	font-size:12.0pt;
-	font-family:"Times New Roman";
-	mso-fareast-font-family:"Times New Roman";}
-p.MsoBodyText, li.MsoBodyText, div.MsoBodyText
-	{margin-top:0in;
-	margin-right:0in;
-	margin-bottom:6.0pt;
-	margin-left:0in;
-	mso-pagination:widow-orphan;
-	font-size:12.0pt;
-	font-family:"Times New Roman";
-	mso-fareast-font-family:"Times New Roman";}
-p.MsoBodyText2, li.MsoBodyText2, div.MsoBodyText2
-	{margin-top:0in;
-	margin-right:0in;
-	margin-bottom:6.0pt;
-	margin-left:.1in;
-	mso-pagination:widow-orphan;
-	font-size:12.0pt;
-	font-family:"Times New Roman";
-	mso-fareast-font-family:"Times New Roman";}
-p.MsoBodyText3, li.MsoBodyText3, div.MsoBodyText3
-	{margin-top:0in;
-	margin-right:0in;
-	margin-bottom:6.0pt;
-	margin-left:.2in;
-	mso-pagination:widow-orphan;
-	font-size:12.0pt;
-	font-family:"Times New Roman";
-	mso-fareast-font-family:"Times New Roman";}
-a:link, span.MsoHyperlink
-	{color:blue;
-	text-decoration:underline;
-	text-underline:single;}
-a:visited, span.MsoHyperlinkFollowed
-	{color:purple;
-	text-decoration:underline;
-	text-underline:single;}
-p.MsoDocumentMap, li.MsoDocumentMap, div.MsoDocumentMap
-	{margin-top:0in;
-	margin-right:0in;
-	margin-bottom:6.0pt;
-	margin-left:0in;
-	mso-pagination:widow-orphan;
-	background:navy;
-	font-size:10.0pt;
-	font-family:Tahoma;
-	mso-fareast-font-family:"Times New Roman";}
-p
-	{mso-margin-top-alt:auto;
-	margin-right:0in;
-	mso-margin-bottom-alt:auto;
-	margin-left:0in;
-	mso-pagination:widow-orphan;
-	font-size:12.0pt;
-	font-family:"Times New Roman";
-	mso-fareast-font-family:"Times New Roman";}
-code
-	{font-family:"Courier New";
-	mso-ascii-font-family:"Courier New";
-	mso-fareast-font-family:"Times New Roman";
-	mso-hansi-font-family:"Courier New";
-	mso-bidi-font-family:"Courier New";}
-pre
-	{margin:0in;
-	margin-bottom:.0001pt;
-	mso-pagination:widow-orphan;
-	tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt;
-	font-size:10.0pt;
-	font-family:"Courier New";
-	mso-fareast-font-family:"Times New Roman";}
-p.bodytext4, li.bodytext4, div.bodytext4
-	{mso-style-name:bodytext4;
-	margin-top:0in;
-	margin-right:0in;
-	margin-bottom:6.0pt;
-	margin-left:.3in;
-	mso-pagination:widow-orphan;
-	font-size:12.0pt;
-	font-family:"Times New Roman";
-	mso-fareast-font-family:"Times New Roman";}
-p.ap-api-parameter, li.ap-api-parameter, div.ap-api-parameter
-	{mso-style-name:ap-api-parameter;
-	mso-margin-top-alt:auto;
-	margin-right:0in;
-	mso-margin-bottom-alt:auto;
-	margin-left:0in;
-	mso-pagination:widow-orphan;
-	font-size:12.0pt;
-	font-family:"Times New Roman";
-	mso-fareast-font-family:"Times New Roman";}
-p.ap-api-code, li.ap-api-code, div.ap-api-code
-	{mso-style-name:ap-api-code;
-	mso-margin-top-alt:auto;
-	margin-right:0in;
-	mso-margin-bottom-alt:auto;
-	margin-left:0in;
-	mso-pagination:widow-orphan;
-	font-size:12.0pt;
-	font-family:"Times New Roman";
-	mso-fareast-font-family:"Times New Roman";}
-p.ap-api-tabletext, li.ap-api-tabletext, div.ap-api-tabletext
-	{mso-style-name:ap-api-tabletext;
-	mso-margin-top-alt:auto;
-	margin-right:0in;
-	mso-margin-bottom-alt:auto;
-	margin-left:0in;
-	mso-pagination:widow-orphan;
-	font-size:12.0pt;
-	font-family:"Times New Roman";
-	mso-fareast-font-family:"Times New Roman";}
-p.heading1color, li.heading1color, div.heading1color
-	{mso-style-name:heading1color;
-	margin-top:12.0pt;
-	margin-right:0in;
-	margin-bottom:3.0pt;
-	margin-left:0in;
-	mso-pagination:widow-orphan;
-	page-break-after:avoid;
-	font-size:16.0pt;
-	font-family:Arial;
-	mso-fareast-font-family:"Times New Roman";
-	color:#FF6600;
-	font-weight:bold;}
-p.n1, li.n1, div.n1
-	{mso-style-name:n1;
-	mso-margin-top-alt:auto;
-	margin-right:0in;
-	mso-margin-bottom-alt:auto;
-	margin-left:0in;
-	mso-pagination:widow-orphan;
-	font-size:12.0pt;
-	font-family:"Times New Roman";
-	mso-fareast-font-family:"Times New Roman";}
-p.n2, li.n2, div.n2
-	{mso-style-name:n2;
-	mso-margin-top-alt:auto;
-	margin-right:0in;
-	mso-margin-bottom-alt:auto;
-	margin-left:.1in;
-	mso-pagination:widow-orphan;
-	font-size:12.0pt;
-	font-family:"Times New Roman";
-	mso-fareast-font-family:"Times New Roman";}
-p.n3, li.n3, div.n3
-	{mso-style-name:n3;
-	mso-margin-top-alt:auto;
-	margin-right:0in;
-	mso-margin-bottom-alt:auto;
-	margin-left:.2in;
-	mso-pagination:widow-orphan;
-	font-size:12.0pt;
-	font-family:"Times New Roman";
-	mso-fareast-font-family:"Times New Roman";}
-p.heading2color, li.heading2color, div.heading2color
-	{mso-style-name:heading2color;
-	margin-top:12.0pt;
-	margin-right:0in;
-	margin-bottom:6.0pt;
-	margin-left:0in;
-	mso-pagination:widow-orphan;
-	page-break-after:avoid;
-	font-size:14.0pt;
-	font-family:Arial;
-	mso-fareast-font-family:"Times New Roman";
-	color:#FF6600;
-	font-weight:bold;
-	font-style:italic;}
-p.nd, li.nd, div.nd
-	{mso-style-name:nd;
-	margin-top:0in;
-	margin-right:0in;
-	margin-bottom:6.0pt;
-	margin-left:0in;
-	mso-pagination:widow-orphan;
-	font-size:12.0pt;
-	font-family:"Times New Roman";
-	mso-fareast-font-family:"Times New Roman";}
-p.heading3color, li.heading3color, div.heading3color
-	{mso-style-name:heading3color;
-	margin-top:12.0pt;
-	margin-right:0in;
-	margin-bottom:6.0pt;
-	margin-left:.2in;
-	mso-pagination:widow-orphan;
-	page-break-after:avoid;
-	font-size:13.0pt;
-	font-family:Arial;
-	mso-fareast-font-family:"Times New Roman";
-	color:#FF6600;
-	font-weight:bold;}
-span.heading1char
-	{mso-style-name:heading1char;
-	font-family:Arial;
-	mso-ascii-font-family:Arial;
-	mso-hansi-font-family:Arial;
-	mso-bidi-font-family:Arial;
-	font-weight:bold;}
-span.heading2char
-	{mso-style-name:heading2char;
-	font-family:Arial;
-	mso-ascii-font-family:Arial;
-	mso-hansi-font-family:Arial;
-	mso-bidi-font-family:Arial;
-	font-weight:bold;
-	font-style:italic;}
-span.char
-	{mso-style-name:char;
-	font-family:Arial;
-	mso-ascii-font-family:Arial;
-	mso-hansi-font-family:Arial;
-	mso-bidi-font-family:Arial;
-	font-weight:bold;}
-span.heading1colorchar
-	{mso-style-name:heading1colorchar;
-	font-family:Arial;
-	mso-ascii-font-family:Arial;
-	mso-hansi-font-family:Arial;
-	mso-bidi-font-family:Arial;
-	color:#FF6600;
-	font-weight:bold;}
-span.heading2colorchar
-	{mso-style-name:heading2colorchar;
-	font-family:Arial;
-	mso-ascii-font-family:Arial;
-	mso-hansi-font-family:Arial;
-	mso-bidi-font-family:Arial;
-	color:#FF6600;
-	font-weight:bold;
-	font-style:italic;}
-span.heading3char
-	{mso-style-name:heading3char;
-	font-family:Arial;
-	mso-ascii-font-family:Arial;
-	mso-hansi-font-family:Arial;
-	mso-bidi-font-family:Arial;
-	font-weight:bold;}
-@page Section1
-	{size:10.3in 11.0in;
-	margin:56.9pt 1.25in 58.3pt 1.25in;
-	mso-header-margin:.5in;
-	mso-footer-margin:.5in;
-	mso-paper-source:0;}
-div.Section1
-	{page:Section1;}
- /* List Definitions */
- @list l0
-	{mso-list-id:-119;
-	mso-list-type:simple;
-	mso-list-template-ids:-1621437630;}
-@list l0:level1
-	{mso-level-number-format:bullet;
-	mso-level-style-link:"List Bullet";
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:.25in;
-	mso-level-number-position:left;
-	margin-left:.25in;
-	text-indent:-.25in;
-	font-family:Symbol;}
-@list l1
-	{mso-list-id:23293200;
-	mso-list-template-ids:-2126214800;}
-@list l1:level1
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l2
-	{mso-list-id:139350685;
-	mso-list-template-ids:1434254754;}
-@list l2:level1
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l2:level2
-	{mso-level-tab-stop:1.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l2:level3
-	{mso-level-tab-stop:1.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l2:level4
-	{mso-level-tab-stop:2.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l2:level5
-	{mso-level-tab-stop:2.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l2:level6
-	{mso-level-tab-stop:3.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l2:level7
-	{mso-level-tab-stop:3.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l2:level8
-	{mso-level-tab-stop:4.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l2:level9
-	{mso-level-tab-stop:4.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l3
-	{mso-list-id:313341351;
-	mso-list-template-ids:628369738;}
-@list l3:level1
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l3:level2
-	{mso-level-tab-stop:1.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l3:level3
-	{mso-level-tab-stop:1.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l3:level4
-	{mso-level-tab-stop:2.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l3:level5
-	{mso-level-tab-stop:2.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l3:level6
-	{mso-level-tab-stop:3.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l3:level7
-	{mso-level-tab-stop:3.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l3:level8
-	{mso-level-tab-stop:4.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l3:level9
-	{mso-level-tab-stop:4.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l4
-	{mso-list-id:443618067;
-	mso-list-template-ids:-507360160;}
-@list l4:level1
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l5
-	{mso-list-id:476919225;
-	mso-list-template-ids:2033773016;}
-@list l5:level1
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l6
-	{mso-list-id:506019013;
-	mso-list-template-ids:-8206272;}
-@list l6:level1
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l6:level2
-	{mso-level-tab-stop:1.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l6:level3
-	{mso-level-tab-stop:1.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l6:level4
-	{mso-level-tab-stop:2.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l6:level5
-	{mso-level-tab-stop:2.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l6:level6
-	{mso-level-tab-stop:3.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l6:level7
-	{mso-level-tab-stop:3.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l6:level8
-	{mso-level-tab-stop:4.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l6:level9
-	{mso-level-tab-stop:4.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l7
-	{mso-list-id:564989743;
-	mso-list-template-ids:1411128776;}
-@list l7:level1
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l8
-	{mso-list-id:597325056;
-	mso-list-template-ids:-1154814884;}
-@list l8:level1
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l8:level2
-	{mso-level-tab-stop:1.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l8:level3
-	{mso-level-tab-stop:1.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l8:level4
-	{mso-level-tab-stop:2.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l8:level5
-	{mso-level-tab-stop:2.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l8:level6
-	{mso-level-tab-stop:3.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l8:level7
-	{mso-level-tab-stop:3.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l8:level8
-	{mso-level-tab-stop:4.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l8:level9
-	{mso-level-tab-stop:4.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l9
-	{mso-list-id:754858419;
-	mso-list-template-ids:-1315392780;}
-@list l9:level1
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l9:level2
-	{mso-level-tab-stop:1.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l9:level3
-	{mso-level-tab-stop:1.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l9:level4
-	{mso-level-tab-stop:2.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l9:level5
-	{mso-level-tab-stop:2.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l9:level6
-	{mso-level-tab-stop:3.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l9:level7
-	{mso-level-tab-stop:3.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l9:level8
-	{mso-level-tab-stop:4.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l9:level9
-	{mso-level-tab-stop:4.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l10
-	{mso-list-id:842669237;
-	mso-list-template-ids:173473202;}
-@list l10:level1
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l10:level2
-	{mso-level-tab-stop:1.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l10:level3
-	{mso-level-tab-stop:1.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l10:level4
-	{mso-level-tab-stop:2.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l10:level5
-	{mso-level-tab-stop:2.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l10:level6
-	{mso-level-tab-stop:3.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l10:level7
-	{mso-level-tab-stop:3.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l10:level8
-	{mso-level-tab-stop:4.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l10:level9
-	{mso-level-tab-stop:4.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l11
-	{mso-list-id:890462322;
-	mso-list-template-ids:1655342460;}
-@list l11:level1
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l11:level2
-	{mso-level-tab-stop:1.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l11:level3
-	{mso-level-tab-stop:1.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l11:level4
-	{mso-level-tab-stop:2.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l11:level5
-	{mso-level-tab-stop:2.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l11:level6
-	{mso-level-tab-stop:3.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l11:level7
-	{mso-level-tab-stop:3.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l11:level8
-	{mso-level-tab-stop:4.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l11:level9
-	{mso-level-tab-stop:4.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l12
-	{mso-list-id:895319521;
-	mso-list-template-ids:-217264512;}
-@list l12:level1
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l13
-	{mso-list-id:914365229;
-	mso-list-template-ids:-2057685070;}
-@list l13:level1
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l14
-	{mso-list-id:957226644;
-	mso-list-template-ids:-1510187232;}
-@list l14:level1
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l15
-	{mso-list-id:1085027950;
-	mso-list-template-ids:-730679142;}
-@list l15:level1
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l15:level2
-	{mso-level-tab-stop:1.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l15:level3
-	{mso-level-tab-stop:1.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l15:level4
-	{mso-level-tab-stop:2.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l15:level5
-	{mso-level-tab-stop:2.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l15:level6
-	{mso-level-tab-stop:3.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l15:level7
-	{mso-level-tab-stop:3.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l15:level8
-	{mso-level-tab-stop:4.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l15:level9
-	{mso-level-tab-stop:4.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l16
-	{mso-list-id:1087118340;
-	mso-list-template-ids:471107520;}
-@list l16:level1
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l16:level2
-	{mso-level-tab-stop:1.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l16:level3
-	{mso-level-tab-stop:1.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l16:level4
-	{mso-level-tab-stop:2.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l16:level5
-	{mso-level-tab-stop:2.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l16:level6
-	{mso-level-tab-stop:3.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l16:level7
-	{mso-level-tab-stop:3.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l16:level8
-	{mso-level-tab-stop:4.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l16:level9
-	{mso-level-tab-stop:4.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l17
-	{mso-list-id:1123497452;
-	mso-list-template-ids:-1666677956;}
-@list l17:level1
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l18
-	{mso-list-id:1132289413;
-	mso-list-template-ids:-319413920;}
-@list l18:level1
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l19
-	{mso-list-id:1165169234;
-	mso-list-template-ids:643083262;}
-@list l19:level1
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l20
-	{mso-list-id:1395394746;
-	mso-list-template-ids:-287566456;}
-@list l20:level1
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l21
-	{mso-list-id:1416435794;
-	mso-list-template-ids:-1826190050;}
-@list l21:level1
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l21:level2
-	{mso-level-tab-stop:1.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l21:level3
-	{mso-level-tab-stop:1.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l21:level4
-	{mso-level-tab-stop:2.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l21:level5
-	{mso-level-tab-stop:2.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l21:level6
-	{mso-level-tab-stop:3.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l21:level7
-	{mso-level-tab-stop:3.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l21:level8
-	{mso-level-tab-stop:4.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l21:level9
-	{mso-level-tab-stop:4.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l22
-	{mso-list-id:1428887641;
-	mso-list-template-ids:1672920042;}
-@list l22:level1
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l23
-	{mso-list-id:1599799547;
-	mso-list-template-ids:2099387742;}
-@list l23:level1
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l24
-	{mso-list-id:1747875338;
-	mso-list-template-ids:1941335680;}
-@list l24:level1
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l24:level2
-	{mso-level-tab-stop:1.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l24:level3
-	{mso-level-tab-stop:1.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l24:level4
-	{mso-level-tab-stop:2.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l24:level5
-	{mso-level-tab-stop:2.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l24:level6
-	{mso-level-tab-stop:3.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l24:level7
-	{mso-level-tab-stop:3.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l24:level8
-	{mso-level-tab-stop:4.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l24:level9
-	{mso-level-tab-stop:4.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l25
-	{mso-list-id:1871411164;
-	mso-list-template-ids:388250868;}
-@list l25:level1
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l26
-	{mso-list-id:1894660445;
-	mso-list-template-ids:-1101770152;}
-@list l26:level1
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l26:level2
-	{mso-level-tab-stop:1.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l26:level3
-	{mso-level-tab-stop:1.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l26:level4
-	{mso-level-tab-stop:2.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l26:level5
-	{mso-level-tab-stop:2.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l26:level6
-	{mso-level-tab-stop:3.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l26:level7
-	{mso-level-tab-stop:3.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l26:level8
-	{mso-level-tab-stop:4.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l26:level9
-	{mso-level-tab-stop:4.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l27
-	{mso-list-id:1930196107;
-	mso-list-template-ids:-2077489884;}
-@list l27:level1
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l28
-	{mso-list-id:1947344822;
-	mso-list-template-ids:-1670317820;}
-@list l28:level1
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l29
-	{mso-list-id:1989745812;
-	mso-list-template-ids:456540996;}
-@list l29:level1
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l29:level2
-	{mso-level-tab-stop:1.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l29:level3
-	{mso-level-tab-stop:1.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l29:level4
-	{mso-level-tab-stop:2.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l29:level5
-	{mso-level-tab-stop:2.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l29:level6
-	{mso-level-tab-stop:3.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l29:level7
-	{mso-level-tab-stop:3.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l29:level8
-	{mso-level-tab-stop:4.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l29:level9
-	{mso-level-tab-stop:4.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l30
-	{mso-list-id:2023192906;
-	mso-list-template-ids:-776552630;}
-@list l30:level1
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l30:level2
-	{mso-level-tab-stop:1.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l30:level3
-	{mso-level-tab-stop:1.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l30:level4
-	{mso-level-tab-stop:2.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l30:level5
-	{mso-level-tab-stop:2.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l30:level6
-	{mso-level-tab-stop:3.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l30:level7
-	{mso-level-tab-stop:3.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l30:level8
-	{mso-level-tab-stop:4.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l30:level9
-	{mso-level-tab-stop:4.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l31
-	{mso-list-id:2035645375;
-	mso-list-template-ids:1766652962;}
-@list l31:level1
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l31:level2
-	{mso-level-tab-stop:1.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l31:level3
-	{mso-level-tab-stop:1.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l31:level4
-	{mso-level-tab-stop:2.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l31:level5
-	{mso-level-tab-stop:2.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l31:level6
-	{mso-level-tab-stop:3.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l31:level7
-	{mso-level-tab-stop:3.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l31:level8
-	{mso-level-tab-stop:4.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l31:level9
-	{mso-level-tab-stop:4.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l32
-	{mso-list-id:2078890921;
-	mso-list-template-ids:1757475070;}
-@list l32:level1
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l32:level2
-	{mso-level-tab-stop:1.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l32:level3
-	{mso-level-tab-stop:1.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l32:level4
-	{mso-level-tab-stop:2.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l32:level5
-	{mso-level-tab-stop:2.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l32:level6
-	{mso-level-tab-stop:3.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l32:level7
-	{mso-level-tab-stop:3.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l32:level8
-	{mso-level-tab-stop:4.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l32:level9
-	{mso-level-tab-stop:4.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-ol
-	{margin-bottom:0in;}
-ul
-	{margin-bottom:0in;}
--->
-</style>
-<!--[if gte mso 10]>
-<style>
- /* Style Definitions */
- table.MsoNormalTable
-	{mso-style-name:"Table Normal";
-	mso-tstyle-rowband-size:0;
-	mso-tstyle-colband-size:0;
-	mso-style-noshow:yes;
-	mso-style-parent:"";
-	mso-padding-alt:0in 5.4pt 0in 5.4pt;
-	mso-para-margin:0in;
-	mso-para-margin-bottom:.0001pt;
-	mso-pagination:widow-orphan;
-	font-size:10.0pt;
-	font-family:"Times New Roman";}
-</style>
-<![endif]--><!--[if gte mso 9]><xml>
- <o:shapedefaults v:ext="edit" spidmax="2050"/>
-</xml><![endif]--><!--[if gte mso 9]><xml>
- <o:shapelayout v:ext="edit">
-  <o:idmap v:ext="edit" data="1"/>
- </o:shapelayout></xml><![endif]-->
-</head>
-
-<body lang=EN-US link=blue vlink=purple style='tab-interval:.5in'>
-
-<div class=Section1>
-
-<p class=MsoNormal><a name="_Toc198297548"></a><a name="_Toc198023428"></a><a
-name="_Toc198023332"></a><a name="_Toc198023182"></a><a name="_Toc198022804"></a><a
-name="_Toc198214986"></a><a name="_Toc198221544"></a><a name="_Toc198222006"></a><span
-style='mso-bookmark:_Toc198297548'>&nbsp;</span></p>
-
-<p class=MsoNormal>&nbsp;</p>
-
-<table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=1164
- style='width:873.0pt;border-collapse:collapse;mso-padding-alt:0in 0in 0in 0in'>
- <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
-  <td width=108 valign=top style='width:81.0pt;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=MsoToc1 style='tab-stops:right dotted 539.5pt'>&nbsp;<a
-  href="../index.htm">Tutorial Start</a><span style='mso-spacerun:yes'> 
-  </span></p>
-  <p class=MsoToc1><o:p>&nbsp;</o:p></p>
-  <p class=MsoToc1><a href="#_Hardware:_I/O_and_Sensors_1">Hardware: I/O and
-  Sensors</a></p>
-  <p class=MsoToc2><a href="#_LCD">LCD</a></p>
-  <p class=MsoToc3><a href="#_Text_LCD_methods">Text LCD methods</a></p>
-  <p class=MsoToc3><a href="#_LCD_graphics">LCD graphics</a></p>
-  <p class=MsoToc2><a href="#_Buttons">Buttons</a></p>
-  <p class=MsoToc2><a href="#_Sound">Sound</a></p>
-  <p class=MsoToc2><a href="#_Battery">Battery</a></p>
-  <p class=MsoToc1><a href="#_Sensors">Sensors</a></p>
-  <p class=MsoToc2><a href="#_Touch_Sensor">Touch Sensor</a></p>
-  <p class=MsoToc2><a href="#_Light_Sensor">Light Sensor</a></p>
-  <p class=MsoToc2><a href="#_Sound_Sensor">Sound Sensor</a></p>
-  <p class=MsoToc2><a href="#_Ultrasonic_Sensor">Ultrasonic Sensor</a><a
-  href="#_Program:_multiple_echoes">Program: multiple echoes</a></p>
-  <p class=MsoToc3><a href="#_Toc200100849">Program: multiple echoes</a></p>
-  </td>
-  <td width=1056 valign=top style='width:11.0in;padding:0in 5.4pt 0in 5.4pt'>
-  <h1><a name="_Toc200100837"></a><a name="_Hardware:_I/O_and_Sensors_1"></a><span
-  style='mso-bookmark:_Toc200100837'><span class=heading2colorchar><span
-  lang=EN-GB style='mso-ansi-language:EN-GB;font-style:normal'>Hardware: I/O
-  and Sensors</span></span></span></h1>
-  <p class=MsoBodyText>This section covers the classes for user input and
-  output, and also the NXT sensors.&nbsp; The NXT hardware has buttons for
-  input and a Liquid Crystal Display and a small speaker for output.&nbsp;
-  LejosNXJ provides software abstractions for all these bits of hardware.</p>
-  <h2><a name="_Toc198970801"></a><a name="_Toc200100838"></a><a
-  name="_Toc198969299"></a><a name="_LCD"></a><span style='mso-bookmark:_Toc198970801'>LCD</span>
-  </h2>
-  <p class=MsoBodyText3><span class=bodytext2charchar>The LCD class&nbsp; has
-  no instances (there being only one LCD on the NXT) so all the methods are
-  static.</span><br>
-  <span class=bodytext2charchar>It</span> can be used in text mode and graphics
-  mode.</p>
-  <h3><a name="_Toc200100839"></a><a name="_Text_LCD_methods"></a><span
-  style='mso-bookmark:_Toc200100839'><span lang=EN-GB style='mso-ansi-language:
-  EN-GB'>Text LCD methods</span></span></h3>
-  <p class=MsoBodyText3>As a text display, the NXT LCD screen is 16 characters
-  wide and eight characters deep. It is addressed using (x, y) co-ordinates as
-  follows:</p>
-  <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 align=left
-   style='mso-cellspacing:0in;mso-table-lspace:2.25pt;mso-table-rspace:2.25pt;
-   mso-table-anchor-vertical:paragraph;mso-table-anchor-horizontal:column;
-   mso-table-left:left;mso-padding-alt:0in 0in 0in 0in'>
-   <tr style='mso-yfti-irow:0;height:13.5pt'>
-    <td width=48 style='width:.5in;padding:0in 0in 0in 0in;height:13.5pt'>
-    <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt'><o:p>&nbsp;</o:p></p>
-    </td>
-   </tr>
-   <tr style='mso-yfti-irow:1;mso-yfti-lastrow:yes'>
-    <td style='padding:0in 0in 0in 0in'>
-    <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt'><o:p>&nbsp;</o:p></p>
-    </td>
-    <td style='padding:0in 0in 0in 0in'>
-    <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt'><img
-    border=0 width=384 height=182 id="_x0000_i1025"
-    src="LCD_Sensors_files/image001.gif"></p>
-    </td>
-   </tr>
-  </table>
-  <p class=MsoBodyText3 style='margin-left:0in'><a name="_top"></a>&nbsp;</p>
-  <p class=MsoBodyText3 style='margin-left:0in'>&nbsp;</p>
-  <p class=MsoBodyText3 style='margin-left:0in'>&nbsp;</p>
-  <p class=MsoBodyText3 style='margin-left:0in'>&nbsp;</p>
-  <p class=MsoBodyText3 style='margin-left:0in'>&nbsp;</p>
-  <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt'><br
-  clear=all style='mso-special-character:line-break'>
-  </p>
-  <p class=MsoBodyText3 style='margin-left:0in'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  x ranges from 0 to 15, and y from 0 to 7.</p>
-  <p class=MsoBodyText3 style='margin-left:0in'>&nbsp;</p>
-  <p class=MsoBodyText3>The methods to write to the LCD in text mode are:-</p>
-  <ul style='margin-top:0in' type=disc>
-   <li class=MsoNormal style='mso-list:l31 level1 lfo4;tab-stops:list .5in'>&nbsp;<a
-       href="../../../../lejosbeta5/lejos_nxj/docs/apidocs/lejos/nxt/LCD.html#drawString(java.lang.String, int, int)">drawString</a>(<a
-       href="../../../../lejosbeta5/lejos_nxj/docs/apidocs/java/lang/String.html"
-       title="class in java.lang">String</a>&nbsp;str, int&nbsp;x, int&nbsp;y);<br>
-       This draws a string of text to the LCD screen starting at text
-       co-ordinate (x, y).</li>
-   <li class=MsoNormal style='mso-list:l31 level1 lfo4;tab-stops:list .5in'><a
-       href="../../../../lejosbeta5/lejos_nxj/docs/apidocs/lejos/nxt/LCD.html#drawString(java.lang.String, int, int, boolean)">drawString</a>(<a
-       href="../../../../lejosbeta5/lejos_nxj/docs/apidocs/java/lang/String.html"
-       title="class in java.lang">String</a>&nbsp;str, int&nbsp;x, int&nbsp;y,
-       boolean&nbsp;invert);<br>
-       This variant of drawString supports inverting&nbsp; the text drawing
-       white characters on a black background.</li>
-   <li class=MsoNormal style='mso-list:l31 level1 lfo4;tab-stops:list .5in'>&nbsp;<a
-       href="../../../../lejosbeta5/lejos_nxj/docs/apidocs/lejos/nxt/LCD.html#drawInt(int, int, int)">drawInt</a>(int&nbsp;i,
-       int&nbsp;x, int&nbsp;y);<br>
-       This draws an integer starting at co-ordinate (x,y).&nbsp; The integer
-       is left aligned and takes up as many characters as are necessary.</li>
-   <li class=MsoNormal style='mso-list:l31 level1 lfo4;tab-stops:list .5in'><a
-       href="../../../../lejosbeta5/lejos_nxj/docs/apidocs/lejos/nxt/LCD.html#drawInt(int, int, int, int)">drawInt</a>(int&nbsp;i,
-       int&nbsp;places, int&nbsp;x, int&nbsp;y);<br>
-       This variant of drawInt right-aligns the integer and always uses the
-       number of characters indicated by places.</li>
-   <li class=MsoNormal style='mso-list:l31 level1 lfo4;tab-stops:list .5in'><a
-       href="../../../../lejosbeta5/lejos_nxj/docs/apidocs/lejos/nxt/LCD.html#drawChar(char, int, int, boolean)">drawChar</a>(char&nbsp;c,
-       int&nbsp;x, int&nbsp;y, boolean&nbsp;invert);<br>
-       This draws a character at text co-ordinate (x, y) with optional
-       inversion of the character.</li>
-   <li class=MsoNormal style='mso-list:l31 level1 lfo4;tab-stops:list .5in'><a
-       href="../../../../lejosbeta5/lejos_nxj/docs/apidocs/lejos/nxt/LCD.html#clear()">clear</a>();<br>
-       Clears the display.</li>
-  </ul>
-  <p class=MsoBodyText3>Example:</p>
-  <p class=MsoBodyText2><a name="_Toc198969300"></a><img border=0 width=749
-  height=427 id="_x0000_i1026" src="LCD_Sensors_files/image002.gif"></p>
-  <p class=MsoBodyText2 style='margin-left:0in'><span lang=EN-GB
-  style='mso-ansi-language:EN-GB'>&nbsp;</span></p>
-  <h3><a name="_Toc200100840"></a><a name="_LCD_graphics"></a><span
-  style='mso-bookmark:_Toc200100840'><span lang=EN-GB style='mso-ansi-language:
-  EN-GB'>LCD graphics</span></span><span lang=EN-GB style='mso-ansi-language:
-  EN-GB'> </span></h3>
-  <p class=MsoBodyText3><span lang=EN-GB style='mso-ansi-language:EN-GB'>To
-  display graphics on the LCD screen, you can&nbsp; use the Graphics class from
-  the package&nbsp; </span>javax.microedition.lcdui.&nbsp; <span lang=EN-GB
-  style='mso-ansi-language:EN-GB'>The API for the class is </span><a
-  href="http://lejos.sourceforge.net/p_technologies/nxt/nxj/api/javax/microedition/lcdui/Graphics.html"><span
-  lang=EN-GB style='mso-ansi-language:EN-GB'>here</span></a><span lang=EN-GB
-  style='mso-ansi-language:EN-GB'>.&nbsp; The LCD screen is 100 pixels wide and
-  64 pixels high, and all Graphics methods use this coordinate system.&nbsp;
-  With this class, you can draw lines, rectangles, arcs, and position strings
-  with pixel accuracy. </span></p>
-  <p class=MsoBodyText3><span lang=EN-GB style='mso-ansi-language:EN-GB'>&nbsp;</span></p>
-  <p class=MsoBodyText3><span lang=EN-GB style='mso-ansi-language:EN-GB'>&nbsp;</span></p>
-  <p class=MsoBodyText3><span lang=EN-GB style='mso-ansi-language:EN-GB'>&nbsp;</span></p>
-  <p class=MsoBodyText3><span lang=EN-GB style='mso-ansi-language:EN-GB'>&nbsp;</span></p>
-  <p class=MsoToc1><a name="_Toc198969301"></a><a name="_Toc198970802"></a><a
-  href="#_top">Back to Top </a></p>
-  <p class=MsoNormal>&nbsp;</p>
-  <p class=MsoNormal>&nbsp;</p>
-  <p class=MsoNormal>&nbsp;</p>
-  <h2><a name="_Toc200100841"></a><a name="_Buttons"></a><span
-  style='mso-bookmark:_Toc200100841'>Buttons</span></h2>
-  <p class=MsoBodyText2>The Button class has four instances,&nbsp; accessed by
-  static fields:</p>
-  <ul style='margin-top:0in' type=disc>
-   <li class=MsoNormal style='mso-list:l8 level1 lfo7;tab-stops:list .5in'>Button.ENTER</li>
-   <li class=MsoNormal style='mso-list:l8 level1 lfo7;tab-stops:list .5in'>Button.ESCAPE</li>
-   <li class=MsoNormal style='mso-list:l8 level1 lfo7;tab-stops:list .5in'>Button.LEFT</li>
-   <li class=MsoNormal style='mso-list:l8 level1 lfo7;tab-stops:list .5in'>Button.RIGHT</li>
-  </ul>
-  <p class=MsoBodyText2>To test if a button is pressed, you use:</p>
-  <p class=MsoBodyText2>boolean isPressed();</p>
-  <p class=MsoBodyText2>Example</p>
-  <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 align=left
-   style='mso-cellspacing:0in;mso-table-lspace:2.25pt;mso-table-rspace:2.25pt;
-   mso-table-anchor-vertical:paragraph;mso-table-anchor-horizontal:column;
-   mso-table-left:left;mso-padding-alt:0in 0in 0in 0in'>
-   <tr style='mso-yfti-irow:0;height:6.0pt;mso-row-margin-right:482.25pt'>
-    <td width=26 style='width:19.5pt;padding:0in 0in 0in 0in;height:6.0pt'>
-    <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt'><o:p>&nbsp;</o:p></p>
-    </td>
-    <td style='mso-cell-special:placeholder;border:none;border-bottom:solid black 1.0pt'
-    width=643><p class='MsoNormal'>&nbsp;</td>
-   </tr>
-   <tr style='mso-yfti-irow:1;mso-yfti-lastrow:yes;height:296.25pt'>
-    <td style='padding:0in 0in 0in 0in;height:296.25pt'>
-    <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt'><o:p>&nbsp;</o:p></p>
-    </td>
-    <td width=643 valign=top style='width:482.25pt;border:solid black 1.0pt;
-    mso-border-alt:solid black .75pt;background:white;padding:0in 0in 0in 0in;
-    height:296.25pt'><span style='position:absolute;z-index:3'>
-    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
-     width="100%" style='width:100.0%;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
-     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
-      <td style='padding:0in 0in 0in 0in'>
-      <div>
-      <p class=MsoNormal style='text-autospace:none'><b><span style='font-size:
-      9.0pt;font-family:"Courier New";color:#7F0055'>import</span></b><span
-      style='font-size:9.0pt;font-family:"Courier New";color:black'>
-      lejos.nxt.*;</span></p>
-      <p class=MsoNormal style='text-autospace:none'><span style='font-size:
-      9.0pt;font-family:"Courier New"'>&nbsp;</span></p>
-      <p class=MsoNormal style='text-autospace:none'><b><span style='font-size:
-      9.0pt;font-family:"Courier New";color:#7F0055'>public</span></b><span
-      style='font-size:9.0pt;font-family:"Courier New";color:black'> </span><b><span
-      style='font-size:9.0pt;font-family:"Courier New";color:#7F0055'>class</span></b><span
-      style='font-size:9.0pt;font-family:"Courier New";color:black'>
-      ButtonPresses</span></p>
-      <p class=MsoNormal style='text-autospace:none'><span style='font-size:
-      9.0pt;font-family:"Courier New";color:black'>{</span></p>
-      <p class=MsoNormal style='text-autospace:none'><span style='font-size:
-      9.0pt;font-family:"Courier New";color:black'>&nbsp;&nbsp;&nbsp; </span><b><span
-      style='font-size:9.0pt;font-family:"Courier New";color:#7F0055'>void</span></b><span
-      style='font-size:9.0pt;font-family:"Courier New";color:black'>&nbsp; public
-      static void main (String[] args)</span></p>
-      <p class=MsoNormal style='text-autospace:none'><b><span style='font-size:
-      9.0pt;font-family:"Courier New";color:#7F0055'>&nbsp;&nbsp;&nbsp; throws</span></b><span
-      style='font-size:9.0pt;font-family:"Courier New";color:black'> Exception</span></p>
-      <p class=MsoNormal style='text-autospace:none'><span style='font-size:
-      9.0pt;font-family:"Courier New";color:black'>&nbsp;&nbsp;&nbsp; {</span></p>
-      <p class=MsoNormal style='text-autospace:none'><b><span style='font-size:
-      9.0pt;font-family:"Courier New";color:#7F0055'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      while</span></b><span style='font-size:9.0pt;font-family:"Courier New";
-      color:black'> (</span><b><span style='font-size:9.0pt;font-family:"Courier New";
-      color:#7F0055'>true</span></b><span style='font-size:9.0pt;font-family:
-      "Courier New";color:black'>) {</span></p>
-      <p class=MsoNormal style='text-autospace:none'><span style='font-size:
-      9.0pt;font-family:"Courier New";color:black'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      LCD.<i>clear</i>();</span></p>
-      <p class=MsoNormal style='text-autospace:none'><b><span style='font-size:
-      9.0pt;font-family:"Courier New";color:#7F0055'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      If</span></b><span style='font-size:9.0pt;font-family:"Courier New";
-      color:black'> (Button.</span><i><span style='font-size:9.0pt;font-family:
-      "Courier New";color:#0000C0'>ENTER</span></i><span style='font-size:9.0pt;
-      font-family:"Courier New";color:black'>.isPressed()) LCD.<i>drawString</i>(</span><span
-      style='font-size:9.0pt;font-family:"Courier New";color:#2A00FF'>&quot;ENTER&quot;</span><span
-      style='font-size:9.0pt;font-family:"Courier New";color:black'>,0,0);</span></p>
-      <p class=MsoNormal style='text-autospace:none'><b><span style='font-size:
-      9.0pt;font-family:"Courier New";color:#7F0055'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      if</span></b><span style='font-size:9.0pt;font-family:"Courier New";
-      color:black'> (Button.</span><i><span style='font-size:9.0pt;font-family:
-      "Courier New";color:#0000C0'>ESCAPE</span></i><span style='font-size:
-      9.0pt;font-family:"Courier New";color:black'>.isPressed()) LCD.<i>drawString</i>(</span><span
-      style='font-size:9.0pt;font-family:"Courier New";color:#2A00FF'>&quot;ESCAPE&quot;</span><span
-      style='font-size:9.0pt;font-family:"Courier New";color:black'>,0,0);</span></p>
-      <p class=MsoNormal style='text-autospace:none'><b><span style='font-size:
-      9.0pt;font-family:"Courier New";color:#7F0055'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      if</span></b><span style='font-size:9.0pt;font-family:"Courier New";
-      color:black'> (Button.</span><i><span style='font-size:9.0pt;font-family:
-      "Courier New";color:#0000C0'>LEFT</span></i><span style='font-size:9.0pt;
-      font-family:"Courier New";color:black'>.isPressed()) LCD.<i>drawString</i>(</span><span
-      style='font-size:9.0pt;font-family:"Courier New";color:#2A00FF'>&quot;LEFT&quot;</span><span
-      style='font-size:9.0pt;font-family:"Courier New";color:black'>,0,0);</span></p>
-      <p class=MsoNormal style='text-autospace:none'><b><span style='font-size:
-      9.0pt;font-family:"Courier New";color:#7F0055'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      if</span></b><span style='font-size:9.0pt;font-family:"Courier New";
-      color:black'> (Button.</span><i><span style='font-size:9.0pt;font-family:
-      "Courier New";color:#0000C0'>RIGHT</span></i><span style='font-size:9.0pt;
-      font-family:"Courier New";color:black'>.isPressed()) LCD.<i>drawString</i>(</span><span
-      style='font-size:9.0pt;font-family:"Courier New";color:#2A00FF'>&quot;RIGHT&quot;</span><span
-      style='font-size:9.0pt;font-family:"Courier New";color:black'>,0,0);</span></p>
-      <p class=MsoNormal style='text-autospace:none'><span style='font-size:
-      9.0pt;font-family:"Courier New";color:black'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      }&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></p>
-      <p class=MsoNormal style='text-autospace:none'><span style='font-size:
-      9.0pt;font-family:"Courier New";color:black'>&nbsp;&nbsp;&nbsp; }</span></p>
-      <p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New";
-      color:black'>}</span></p>
-      </div>
-      </td>
-     </tr>
-    </table>
-    <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt'></span>&nbsp;</p>
-    </td>
-   </tr>
-  </table>
-  <p class=MsoNormal>&nbsp;</p>
-  <p class=MsoNormal>&nbsp;</p>
-  <p class=MsoNormal>&nbsp;</p>
-  <p class=MsoNormal>&nbsp;</p>
-  <p class=MsoNormal>&nbsp;</p>
-  <p class=MsoNormal>&nbsp;</p>
-  <p class=MsoNormal>&nbsp;</p>
-  <p class=MsoNormal>&nbsp;</p>
-  <p class=MsoNormal>&nbsp;</p>
-  <p class=MsoNormal>&nbsp;</p>
-  <p class=MsoNormal>&nbsp;</p>
-  <p class=MsoNormal>&nbsp;</p>
-  <p class=MsoNormal>&nbsp;</p>
-  <p class=MsoNormal>&nbsp;</p>
-  <p class=MsoNormal align=right style='text-align:right'>&nbsp;</p>
-  <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt'><br
-  clear=all style='mso-special-character:line-break'>
-  </p>
-  <p class=MsoBodyText2>To wait for a specific button to be pressed and
-  released, you use:</p>
-  <ul style='margin-top:0in' type=disc>
-   <li class=MsoNormal style='mso-list:l21 level1 lfo10;tab-stops:list .5in'>void
-       waitForPressAndRelease() throws InterruptedException;</li>
-  </ul>
-  <p class=MsoNormal>&nbsp;</p>
-  <p class=MsoBodyText2>Example:</p>
-  <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 align=left
-   style='mso-cellspacing:0in;mso-table-lspace:2.25pt;mso-table-rspace:2.25pt;
-   mso-table-anchor-vertical:paragraph;mso-table-anchor-horizontal:column;
-   mso-table-left:left;mso-padding-alt:0in 0in 0in 0in'>
-   <tr style='mso-yfti-irow:0;height:3.0pt;mso-row-margin-right:307.5pt'>
-    <td width=19 style='width:14.25pt;padding:0in 0in 0in 0in;height:3.0pt'>
-    <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt'><o:p>&nbsp;</o:p></p>
-    </td>
-    <td style='mso-cell-special:placeholder;border:none;border-bottom:solid black 1.0pt'
-    width=410><p class='MsoNormal'>&nbsp;</td>
-   </tr>
-   <tr style='mso-yfti-irow:1;mso-yfti-lastrow:yes;height:225.0pt'>
-    <td style='padding:0in 0in 0in 0in;height:225.0pt'>
-    <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt'><o:p>&nbsp;</o:p></p>
-    </td>
-    <td width=410 valign=top style='width:307.5pt;border:solid black 1.0pt;
-    mso-border-alt:solid black .75pt;background:white;padding:0in 0in 0in 0in;
-    height:225.0pt'><span style='position:absolute;z-index:4'>
-    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
-     width="100%" style='width:100.0%;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
-     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
-      <td style='padding:0in 0in 0in 0in'>
-      <div>
-      <p class=MsoNormal style='text-autospace:none'><b><span style='font-size:
-      9.0pt;font-family:"Courier New";color:#7F0055'>import</span></b><span
-      style='font-size:9.0pt;font-family:"Courier New";color:black'>
-      lejos.nxt.*;</span></p>
-      <p class=MsoNormal style='text-autospace:none'><span style='font-size:
-      9.0pt;font-family:"Courier New"'>&nbsp;</span></p>
-      <p class=MsoNormal style='text-autospace:none'><b><span style='font-size:
-      9.0pt;font-family:"Courier New";color:#7F0055'>public</span></b><span
-      style='font-size:9.0pt;font-family:"Courier New";color:black'> </span><b><span
-      style='font-size:9.0pt;font-family:"Courier New";color:#7F0055'>class</span></b><span
-      style='font-size:9.0pt;font-family:"Courier New";color:black'> ButtonTest</span></p>
-      <p class=MsoNormal style='text-autospace:none'><span style='font-size:
-      9.0pt;font-family:"Courier New";color:black'>{</span></p>
-      <p class=MsoNormal style='text-autospace:none'><span style='font-size:
-      9.0pt;font-family:"Courier New";color:black'>&nbsp;&nbsp;&nbsp; </span><b><span
-      style='font-size:9.0pt;font-family:"Courier New";color:#7F0055'>void</span></b><span
-      style='font-size:9.0pt;font-family:"Courier New";color:black'>&nbsp;
-      public static void main (String[] args)</span></p>
-      <p class=MsoNormal style='text-autospace:none'><span style='font-size:
-      9.0pt;font-family:"Courier New";color:black'>&nbsp;&nbsp;&nbsp; </span><b><span
-      style='font-size:9.0pt;font-family:"Courier New";color:#7F0055'>throws</span></b><span
-      style='font-size:9.0pt;font-family:"Courier New";color:black'> Exception</span></p>
-      <p class=MsoNormal style='text-autospace:none'><span style='font-size:
-      9.0pt;font-family:"Courier New";color:black'>&nbsp;&nbsp;&nbsp; {</span></p>
-      <p class=MsoNormal style='text-autospace:none'><span style='font-size:
-      9.0pt;font-family:"Courier New";color:black'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      Button.</span><i><span style='font-size:9.0pt;font-family:"Courier New";
-      color:#0000C0'>ENTER</span></i><span style='font-size:9.0pt;font-family:
-      "Courier New";color:black'>.waitForPressAndRelease();&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      </span></p>
-      <p class=MsoNormal style='text-autospace:none'><span style='font-size:
-      9.0pt;font-family:"Courier New";color:black'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      LCD.<i>drawString</i>(</span><span style='font-size:9.0pt;font-family:
-      "Courier New";color:#2A00FF'>&quot;Finished&quot;</span><span
-      style='font-size:9.0pt;font-family:"Courier New";color:black'>, 3, 4);</span></p>
-      <p class=MsoNormal style='text-autospace:none'><span style='font-size:
-      9.0pt;font-family:"Courier New";color:black'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      Thread.<i>sleep</i>(2000);</span></p>
-      <p class=MsoNormal style='text-autospace:none'><span style='font-size:
-      9.0pt;font-family:"Courier New";color:black'>&nbsp;&nbsp;&nbsp; }</span></p>
-      <p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New";
-      color:black'>}</span></p>
-      </div>
-      </td>
-     </tr>
-    </table>
-    <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt'></span>&nbsp;</p>
-    </td>
-   </tr>
-  </table>
-  <p class=MsoNormal>&nbsp;</p>
-  <p class=MsoNormal>&nbsp;</p>
-  <p class=MsoNormal>&nbsp;</p>
-  <p class=MsoNormal>&nbsp;</p>
-  <p class=MsoNormal>&nbsp;</p>
-  <p class=MsoNormal>&nbsp;</p>
-  <p class=MsoNormal>&nbsp;</p>
-  <p class=MsoNormal>&nbsp;</p>
-  <p class=MsoNormal>&nbsp;</p>
-  <p class=MsoNormal>&nbsp;</p>
-  <p class=MsoNormal>&nbsp;</p>
-  <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt'><br
-  clear=all style='mso-special-character:line-break'>
-  </p>
-  <p class=MsoBodyText2>To wait for any button to be pressed, you do:</p>
-  <ul style='margin-top:0in' type=disc>
-   <li class=MsoNormal style='mso-list:l9 level1 lfo13;tab-stops:list .5in'>static&nbsp;
-       int waitForPress();<br>
-       The returns the id code&nbsp; of the button that is pressed.</li>
-  </ul>
-  <p class=MsoNormal style='margin-left:.5in'><b>button&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  </b>ENTER&nbsp;&nbsp;&nbsp;&nbsp;
-  LEFT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; RIGHT&nbsp;&nbsp;&nbsp;&nbsp;
-  ESCAPE</p>
-  <p class=MsoNormal style='margin-left:.5in'><b>Code&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  </b>1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  4&nbsp;&nbsp; 8</p>
-  <p class=MsoNormal>&nbsp;</p>
-  <p class=MsoBodyText2>To specify a listener to listen for button events for
-  this button, you: use</p>
-  <ul style='margin-top:0in' type=disc>
-   <li class=MsoNormal style='mso-list:l24 level1 lfo16;tab-stops:list .5in'>void
-       addButtonListener (ButtonListener aListener)<br>
-       <br>
-       See “Listeners and Events” below for how button listeners work.</li>
-  </ul>
-  <p class=MsoBodyText2>&nbsp;</p>
-  <p class=MsoBodyText2>To read the current state of all the buttons, you do:</p>
-  <ul style='margin-top:0in' type=disc>
-   <li class=MsoNormal style='mso-list:l16 level1 lfo19;tab-stops:list .5in'>static
-       int readButtons();<br>
-       The&nbsp; return value is the sum of the codes of the buttons that are
-       pressed. </li>
-  </ul>
-  <p class=MsoBodyText2><code><span style='font-size:10.0pt'>&nbsp;</span></code></p>
-  <p class=MsoToc1><a href="LCD_Sensors.htm">Back to Top</a></p>
-  <p class=MsoNormal>&nbsp;</p>
-  <p class=MsoNormal>&nbsp;</p>
-  <h2><a name="_Toc198970803"></a><a name="_Toc200100842"></a><a
-  name="_Toc198969302"></a><a name="_Sound"></a><span style='mso-bookmark:_Toc198970803'>Sound</span></h2>
-  <p class=MsoNormal>&nbsp;</p>
-  <p class=MsoNormal>This class controls the single speaker so it has no
-  instances and&nbsp; all the methods are static.</p>
-  <p class=MsoNormal>To play a single tone, use</p>
-  <ul style='margin-top:0in' type=disc>
-   <li class=MsoNormal style='mso-list:l6 level1 lfo22;tab-stops:list .5in'><code><b><span
-       style='font-size:10.0pt'>&nbsp;void </span></b></code><a
-       href="http://lejos.sourceforge.net/p_technologies/nxt/nxj/api/lejos/nxt/Sound.html#playTone(int,%20int)"><b><span
-       style='font-family:"Courier New"'>playTone</span></b></a><code><span
-       style='font-size:10.0pt'>(int&nbsp;aFrequency, int&nbsp;aDuration);</span></code></li>
-  </ul>
-  <p class=MsoNormal>Example:</p>
-  <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 align=left
-   style='mso-cellspacing:0in;mso-table-lspace:2.25pt;mso-table-rspace:2.25pt;
-   mso-table-anchor-vertical:paragraph;mso-table-anchor-horizontal:column;
-   mso-table-left:left;mso-padding-alt:0in 0in 0in 0in'>
-   <tr style='mso-yfti-irow:0;mso-row-margin-right:499.5pt'>
-    <td width=10 style='width:.1in;padding:0in 0in 0in 0in'>
-    <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt'><o:p>&nbsp;</o:p></p>
-    </td>
-    <td style='mso-cell-special:placeholder;border:none;border-bottom:solid black 1.0pt'
-    width=666><p class='MsoNormal'>&nbsp;</td>
-   </tr>
-   <tr style='mso-yfti-irow:1;mso-yfti-lastrow:yes;height:415.5pt'>
-    <td style='padding:0in 0in 0in 0in;height:415.5pt'>
-    <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt'><o:p>&nbsp;</o:p></p>
-    </td>
-    <td width=666 valign=top style='width:499.5pt;border:solid black 1.0pt;
-    mso-border-alt:solid black .75pt;background:white;padding:0in 0in 0in 0in;
-    height:415.5pt'><span style='position:absolute;z-index:8'>
-    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
-     width="100%" style='width:100.0%;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
-     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
-      <td style='padding:0in 0in 0in 0in'>
-      <div>
-      <p class=MsoNormal style='text-autospace:none'><b><span style='font-size:
-      10.0pt;font-family:"Courier New";color:#7F0055'>import</span></b><span
-      style='font-size:10.0pt;font-family:"Courier New";color:black'>
-      lejos.nxt.*;</span></p>
-      <p class=MsoNormal style='text-autospace:none'><span style='font-size:
-      10.0pt;font-family:"Courier New"'>&nbsp;</span></p>
-      <p class=MsoNormal style='text-autospace:none'><b><span style='font-size:
-      10.0pt;font-family:"Courier New";color:#7F0055'>public</span></b><span
-      style='font-size:10.0pt;font-family:"Courier New";color:black'> </span><b><span
-      style='font-size:10.0pt;font-family:"Courier New";color:#7F0055'>class</span></b><span
-      style='font-size:10.0pt;font-family:"Courier New";color:black'> Tune {</span></p>
-      <p class=MsoNormal style='text-autospace:none'><span style='font-size:
-      10.0pt;font-family:"Courier New"'>&nbsp;</span></p>
-      <p class=MsoNormal style='text-autospace:none'><span style='font-size:
-      10.0pt;font-family:"Courier New"'>&nbsp;</span></p>
-      <p class=MsoNormal style='text-autospace:none'><span style='font-size:
-      10.0pt;font-family:"Courier New";color:black'>&nbsp;&nbsp; </span><span
-      style='font-size:10.0pt;font-family:"Courier New";color:#3F7F5F'>// NOTE:
-      This tune was generated from a midi using Guy </span></p>
-      <p class=MsoNormal style='text-autospace:none'><span style='font-size:
-      10.0pt;font-family:"Courier New";color:black'>&nbsp;&nbsp; </span><span
-      style='font-size:10.0pt;font-family:"Courier New";color:#3F7F5F'>// Truffelli's
-      Brick Music Studio www.aga.it/~guy/lego</span></p>
-      <p class=MsoNormal style='text-autospace:none'><span style='font-size:
-      10.0pt;font-family:"Courier New";color:black'>&nbsp;&nbsp; </span><b><span
-      style='font-size:10.0pt;font-family:"Courier New";color:#7F0055'>private</span></b><span
-      style='font-size:10.0pt;font-family:"Courier New";color:black'> </span><b><span
-      style='font-size:10.0pt;font-family:"Courier New";color:#7F0055'>static</span></b><span
-      style='font-size:10.0pt;font-family:"Courier New";color:black'> </span><b><span
-      style='font-size:10.0pt;font-family:"Courier New";color:#7F0055'>final</span></b><span
-      style='font-size:10.0pt;font-family:"Courier New";color:black'> </span><b><span
-      style='font-size:10.0pt;font-family:"Courier New";color:#7F0055'>short</span></b><span
-      style='font-size:10.0pt;font-family:"Courier New";color:black'> [] </span><i><span
-      style='font-size:10.0pt;font-family:"Courier New";color:#0000C0'>note</span></i><span
-      style='font-size:10.0pt;font-family:"Courier New";color:black'> = {</span></p>
-      <p class=MsoNormal style='text-autospace:none'><span style='font-size:
-      10.0pt;font-family:"Courier New";color:black'>&nbsp;&nbsp;&nbsp;
-      2349,115, 0,5, 1760,165, 0,35, 1760,28, 0,13, 1976,23, </span></p>
-      <p class=MsoNormal style='text-autospace:none'><span style='font-size:
-      10.0pt;font-family:"Courier New";color:black'>&nbsp;&nbsp;&nbsp; 0,18,
-      1760,18, 0,23, 1568,15, 0,25, 1480,103, 0,18, 1175,180, 0,20, 1760,18, </span></p>
-      <p class=MsoNormal style='text-autospace:none'><span style='font-size:
-      10.0pt;font-family:"Courier New";color:black'>&nbsp;&nbsp;&nbsp; 0,23, 1976,20,
-      0,20, 1760,15, 0,25, 1568,15, 0,25, 2217,98, 0,23, 1760,88, </span></p>
-      <p class=MsoNormal style='text-autospace:none'><span style='font-size:
-      10.0pt;font-family:"Courier New";color:black'>&nbsp;&nbsp;&nbsp; 0,33,
-      1760,75, 0,5, 1760,20, 0,20, 1760,20, 0,20, 1976,18, 0,23, 1760,18, </span></p>
-      <p class=MsoNormal style='text-autospace:none'><span style='font-size:
-      10.0pt;font-family:"Courier New";color:black'>&nbsp;&nbsp;&nbsp; 0,23,
-      2217,225, 0,15, 2217,218};</span></p>
-      <p class=MsoNormal style='text-autospace:none'><span style='font-size:
-      10.0pt;font-family:"Courier New"'>&nbsp;</span></p>
-      <p class=MsoNormal style='text-autospace:none'><span style='font-size:
-      10.0pt;font-family:"Courier New";color:black'>&nbsp;&nbsp; </span><b><span
-      style='font-size:10.0pt;font-family:"Courier New";color:#7F0055'>void</span></b><span
-      style='font-size:10.0pt;font-family:"Courier New";color:black'>&nbsp;
-      public static void main(String [] args) {</span></p>
-      <p class=MsoNormal style='text-autospace:none'><span style='font-size:
-      10.0pt;font-family:"Courier New";color:black'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      </span><b><span style='font-size:10.0pt;font-family:"Courier New";
-      color:#7F0055'>for</span></b><span style='font-size:10.0pt;font-family:
-      "Courier New";color:black'>(</span><b><span style='font-size:10.0pt;
-      font-family:"Courier New";color:#7F0055'>int</span></b><span
-      style='font-size:10.0pt;font-family:"Courier New";color:black'> i=0;i&lt;</span><i><span
-      style='font-size:10.0pt;font-family:"Courier New";color:#0000C0'>note</span></i><span
-      style='font-size:10.0pt;font-family:"Courier New";color:black'>.</span><span
-      style='font-size:10.0pt;font-family:"Courier New";color:#0000C0'>length</span><span
-      style='font-size:10.0pt;font-family:"Courier New";color:black'>; i+=2) {</span></p>
-      <p class=MsoNormal style='text-autospace:none'><span style='font-size:
-      10.0pt;font-family:"Courier New";color:black'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      </span><b><span style='font-size:10.0pt;font-family:"Courier New";
-      color:#7F0055'>final</span></b><span style='font-size:10.0pt;font-family:
-      "Courier New";color:black'> </span><b><span style='font-size:10.0pt;
-      font-family:"Courier New";color:#7F0055'>short</span></b><span
-      style='font-size:10.0pt;font-family:"Courier New";color:black'> w = </span><i><span
-      style='font-size:10.0pt;font-family:"Courier New";color:#0000C0'>note</span></i><span
-      style='font-size:10.0pt;font-family:"Courier New";color:black'>[i+1];</span></p>
-      <p class=MsoNormal style='text-autospace:none'><span style='font-size:
-      10.0pt;font-family:"Courier New";color:black'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      </span><b><span style='font-size:10.0pt;font-family:"Courier New";
-      color:#7F0055'>final</span></b><span style='font-size:10.0pt;font-family:
-      "Courier New";color:black'> </span><b><span style='font-size:10.0pt;
-      font-family:"Courier New";color:#7F0055'>int</span></b><span
-      style='font-size:10.0pt;font-family:"Courier New";color:black'> n = </span><i><span
-      style='font-size:10.0pt;font-family:"Courier New";color:#0000C0'>note</span></i><span
-      style='font-size:10.0pt;font-family:"Courier New";color:black'>[i];</span></p>
-      <p class=MsoNormal style='text-autospace:none'><span style='font-size:
-      10.0pt;font-family:"Courier New";color:black'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      </span><b><span style='font-size:10.0pt;font-family:"Courier New";
-      color:#7F0055'>if</span></b><span style='font-size:10.0pt;font-family:
-      "Courier New";color:black'> (n != 0) Sound.<i>playTone</i>(n, w*10);</span></p>
-      <p class=MsoNormal style='text-autospace:none'><span style='font-size:
-      10.0pt;font-family:"Courier New";color:black'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      </span><b><span style='font-size:10.0pt;font-family:"Courier New";
-      color:#7F0055'>try</span></b><span style='font-size:10.0pt;font-family:
-      "Courier New";color:black'> { Thread.<i>sleep</i>(w*10); } </span><b><span
-      style='font-size:10.0pt;font-family:"Courier New";color:#7F0055'>catch</span></b><span
-      style='font-size:10.0pt;font-family:"Courier New";color:black'>
-      (InterruptedException e) {}</span></p>
-      <p class=MsoNormal style='text-autospace:none'><span style='font-size:
-      10.0pt;font-family:"Courier New";color:black'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      }</span></p>
-      <p class=MsoNormal style='text-autospace:none'><span style='font-size:
-      10.0pt;font-family:"Courier New";color:black'>&nbsp;&nbsp; }</span></p>
-      </div>
-      </td>
-     </tr>
-    </table>
-    <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt'></span>&nbsp;</p>
-    </td>
-   </tr>
-  </table>
-  <p class=MsoNormal><code><span style='font-size:10.0pt'>&nbsp;</span></code></p>
-  <p class=MsoNormal>&nbsp;</p>
-  <p class=MsoNormal>&nbsp;</p>
-  <p class=MsoNormal>&nbsp;</p>
-  <p class=MsoNormal>&nbsp;</p>
-  <p class=MsoNormal>&nbsp;</p>
-  <p class=MsoNormal>&nbsp;</p>
-  <p class=MsoNormal>&nbsp;</p>
-  <p class=MsoNormal>&nbsp;</p>
-  <p class=MsoNormal>&nbsp;</p>
-  <p class=MsoNormal>&nbsp;</p>
-  <p class=MsoNormal>&nbsp;</p>
-  <p class=MsoNormal>&nbsp;</p>
-  <p class=MsoNormal>&nbsp;</p>
-  <p class=MsoNormal>&nbsp;</p>
-  <p class=MsoNormal>&nbsp;</p>
-  <p class=MsoNormal>&nbsp;</p>
-  <p class=MsoNormal>&nbsp;</p>
-  <p class=MsoNormal>&nbsp;</p>
-  <p class=MsoNormal>&nbsp;</p>
-  <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt'><br
-  clear=all style='mso-special-character:line-break'>
-  </p>
-  <p class=MsoNormal>&nbsp;</p>
-  <p class=MsoNormal>There are two ways to play system sounds.&nbsp;&nbsp; One
-  is:</p>
-  <ul style='margin-top:0in' type=disc>
-   <li class=MsoNormal style='mso-list:l29 level1 lfo25;tab-stops:list .5in'>void
-       systemSound (boolean aQueued, int aCode);<br>
-       The aQueued parameter is ignored on the NXT, it is here to be backwards
-       compatible with the RXC.</li>
-  </ul>
-  <p class=MsoNormal>The values of code are:</p>
-  <p class=MsoNormal style='margin-left:5.65pt'>code =
-  0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Short
-  beep</p>
-  <p class=MsoNormal style='margin-left:5.65pt'>code =
-  1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  Double beep</p>
-  <p class=MsoNormal style='margin-left:5.65pt'>code =
-  2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  Descending arpeggio</p>
-  <p class=MsoNormal style='margin-left:5.65pt'>code =
-  3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  Ascending arpeggio</p>
-  <p class=MsoNormal style='margin-left:5.65pt'>code =
-  4&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  Long, low buzz</p>
-  <p class=MsoNormal>&nbsp;</p>
-  <p class=MsoBodyText2>Iindividual methods to play a particular system sound,
-  if you don’t remember the code, are</p>
-  <ul style='margin-top:0in' type=disc>
-   <li class=MsoNormal style='mso-list:l2 level1 lfo28;tab-stops:list .5in'>void
-       beep();</li>
-   <li class=MsoNormal style='mso-list:l2 level1 lfo28;tab-stops:list .5in'>void
-       twoBeeps();</li>
-   <li class=MsoNormal style='mso-list:l2 level1 lfo28;tab-stops:list .5in'>void
-       beepSequence();</li>
-   <li class=MsoNormal style='mso-list:l2 level1 lfo28;tab-stops:list .5in'>void
-       beepSequenceUp();</li>
-   <li class=MsoNormal style='mso-list:l2 level1 lfo28;tab-stops:list .5in'>void
-       buzz();int playSample(File aWAVfile) </li>
-   <li class=MsoNormal style='mso-list:l2 level1 lfo28;tab-stops:list .5in'>int
-       playSample(File aWAVfile, int volume) </li>
-  </ul>
-  <p class=MsoNormal style='margin-left:.25in'>&nbsp;</p>
-  <p class=MsoNormal>This is also a method to produce a rest when playing a
-  tune; time in milliseconds</p>
-  <ul style='margin-top:0in' type=disc>
-   <li class=MsoNormal style='mso-list:l30 level1 lfo31;tab-stops:list .5in'>void
-       pause(int time);<br>
-       You can use this method anytime you want your program wait, and don’t
-       want to bother with the try/catch block required by System.sleep();</li>
-  </ul>
-  <p class=MsoNormal>&nbsp;</p>
-  <p class=MsoBodyText2>leJOS NXJ has methods that can also play 8-bit WAV
-  files.</p>
-  <ul style='margin-top:0in' type=disc>
-   <li class=MsoNormal style='mso-list:l3 level1 lfo34;tab-stops:list .5in'>int
-       playSample(File aWAVfile) </li>
-   <li class=MsoNormal style='mso-list:l3 level1 lfo34;tab-stops:list .5in'>int
-       playSample(File aWAVfile, int volume) </li>
-  </ul>
-  <p class=MsoBodyText3>The return value of milliseconds the sample will play
-  for or &lt; 0 if there is an error.</p>
-  <p class=MsoBodyText3>&nbsp;</p>
-  <p class=MsoBodyText3>To play a musical note, use&nbsp; </p>
-  <ul style='margin-top:0in' type=disc>
-   <li class=MsoNormal style='mso-list:l15 level1 lfo37;tab-stops:list .5in'>void
-       <a
-       href="http://lejos.sourceforge.net/p_technologies/nxt/nxj/api/lejos/nxt/Sound.html#playNote(int[],%20int,%20int)"><b><span
-       style='font-family:"Courier New"'>playNote</span></b></a>(int[]&nbsp;inst,int&nbsp;freq,
-       int&nbsp;len)<br>
-       The&nbsp; <i>inst</i> array contains the attack, decay, sustain and
-       release&nbsp; parameters for the note. The static constants for some
-       predefined instruments are: FLUTE, PIANO&nbsp; and XYLOPHONE.&nbsp; You
-       can also experiment with defining you own.</li>
-  </ul>
-  <pre style='margin-left:.25in'><span style='font-size:12.0pt;font-family:
-  "Times New Roman"'>&nbsp;</span></pre>
-  <p class=MsoBodyText3 style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>&nbsp;</p>
-  <p class=MsoToc1 style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'><a
-  href="LCD_Sensors.htm">Back to Top</a></p>
-  <p class=MsoNormal style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>&nbsp;</p>
-  <h2><a name="_Toc200100843"></a><a name="_Toc198969309"></a><a
-  name="_Toc198970804"></a><a name="_Battery"></a><st1:place>Battery</st1:place></h2>
-  <p class=MsoNormal style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>There
-  are two static methods to get the battery voltage:</p>
-  <ul style='margin-top:0in' type=disc>
-   <li class=MsoNormal style='mso-list:l10 level1 lfo40;tab-stops:list .5in'>&nbsp;
-       int getVoltageMilliVolt();</li>
-   <li class=MsoNormal style='mso-list:l10 level1 lfo40;tab-stops:list .5in'>&nbsp;
-       float getVoltage()</li>
-  </ul>
-  <p class=MsoNormal style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>Example:</p>
-  <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 align=left
-   style='mso-cellspacing:0in;mso-table-lspace:2.25pt;mso-table-rspace:2.25pt;
-   mso-table-anchor-vertical:paragraph;mso-table-anchor-horizontal:column;
-   mso-table-left:left;mso-padding-alt:0in 0in 0in 0in'>
-   <tr style='mso-yfti-irow:0;height:12.0pt;mso-row-margin-right:397.5pt'>
-    <td width=26 style='width:19.5pt;padding:0in 0in 0in 0in;height:12.0pt'>
-    <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt'><o:p>&nbsp;</o:p></p>
-    </td>
-    <td style='mso-cell-special:placeholder;border:none;border-bottom:solid black 1.0pt'
-    width=530><p class='MsoNormal'>&nbsp;</td>
-   </tr>
-   <tr style='mso-yfti-irow:1;mso-yfti-lastrow:yes;height:170.25pt'>
-    <td style='padding:0in 0in 0in 0in;height:170.25pt'>
-    <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt'><o:p>&nbsp;</o:p></p>
-    </td>
-    <td width=530 valign=top style='width:397.5pt;border:solid black 1.0pt;
-    mso-border-alt:solid black .75pt;background:white;padding:0in 0in 0in 0in;
-    height:170.25pt'><span style='position:absolute;z-index:9'>
-    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
-     width="100%" style='width:100.0%;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
-     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
-      <td style='padding:0in 0in 0in 0in'>
-      <div>
-      <p class=MsoNormal style='text-autospace:none'><b><span style='font-size:
-      10.0pt;font-family:"Courier New";color:#7F0055'>import</span></b><span
-      style='font-size:10.0pt;font-family:"Courier New";color:black'>
-      lejos.nxt.*;</span></p>
-      <p class=MsoNormal style='text-autospace:none'><span style='font-size:
-      10.0pt;font-family:"Courier New"'>&nbsp;</span></p>
-      <p class=MsoNormal style='text-autospace:none'><b><span style='font-size:
-      10.0pt;font-family:"Courier New";color:#7F0055'>public</span></b><span
-      style='font-size:10.0pt;font-family:"Courier New";color:black'> </span><b><span
-      style='font-size:10.0pt;font-family:"Courier New";color:#7F0055'>class</span></b><span
-      style='font-size:10.0pt;font-family:"Courier New";color:black'>
-      BatteryTest {</span></p>
-      <p class=MsoNormal style='text-autospace:none'><span style='font-size:
-      10.0pt;font-family:"Courier New";color:black'>&nbsp;&nbsp;&nbsp; </span><b><span
-      style='font-size:10.0pt;font-family:"Courier New";color:#7F0055'>void</span></b><span
-      style='font-size:10.0pt;font-family:"Courier New";color:black'> main
-      (String[] args) </span><b><span style='font-size:10.0pt;font-family:"Courier New";
-      color:#7F0055'>throws</span></b><span style='font-size:10.0pt;font-family:
-      "Courier New";color:black'> Exception {</span></p>
-      <p class=MsoNormal style='text-autospace:none'><span style='font-size:
-      10.0pt;font-family:"Courier New";color:black'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      LCD.<i>drawString</i>(</span><span style='font-size:10.0pt;font-family:
-      "Courier New";color:#2A00FF'>&quot;</span><st1:place><span
-       style='font-size:10.0pt;font-family:"Courier New";color:#2A00FF'>Battery</span></st1:place><span
-      style='font-size:10.0pt;font-family:"Courier New";color:#2A00FF'>: &quot;</span><span
-      style='font-size:10.0pt;font-family:"Courier New";color:black'> +
-      Battery.<i>getVoltage</i>(),0,0);</span></p>
-      <p class=MsoNormal style='text-autospace:none'><span style='font-size:
-      10.0pt;font-family:"Courier New";color:black'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      Thread.<i>sleep</i>(2000);</span></p>
-      <p class=MsoNormal style='text-autospace:none'><span style='font-size:
-      10.0pt;font-family:"Courier New";color:black'>&nbsp;&nbsp;&nbsp; }</span></p>
-      <p class=MsoNormal><span style='font-size:10.0pt;font-family:"Courier New";
-      color:black'>}</span></p>
-      </div>
-      </td>
-     </tr>
-    </table>
-    <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt'></span>&nbsp;</p>
-    </td>
-   </tr>
-  </table>
-  <p class=MsoNormal style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>&nbsp;</p>
-  <p class=MsoNormal style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>&nbsp;</p>
-  <p class=MsoNormal style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>&nbsp;</p>
-  <p class=MsoNormal style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>&nbsp;</p>
-  <p class=MsoNormal style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>&nbsp;</p>
-  <p class=MsoNormal style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>&nbsp;</p>
-  <p class=MsoNormal style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>&nbsp;</p>
-  <p class=MsoNormal style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>&nbsp;</p>
-  <p class=MsoNormal style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>&nbsp;</p>
-  <p class=MsoNormal style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>&nbsp;</p>
-  <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt;tab-stops:
-  45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'><br
-  clear=all style='mso-special-character:line-break'>
-  </p>
-  <p class=MsoToc1 style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'><a
-  href="LCD_Sensors.htm">Back to Top</a></p>
-  <p class=MsoNormal style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>&nbsp;</p>
-  <p class=MsoNormal style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>&nbsp;</p>
-  <h1><a name="_Toc198970805"></a><a name="_Toc200100844"></a><a
-  name="_Toc198969303"></a><a name="_Sensors"></a><span style='mso-bookmark:
-  _Toc198970805'><span lang=EN-GB style='mso-ansi-language:EN-GB'>Sensors</span></span></h1>
-  <p class=MsoNormal style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>The
-  NXT comes with four sensors; the touch sensor, the sound sensor, the light
-  sensor and the ultrasonic sensor.&nbsp; LejosNXJ provides software abstractions
-  of all these sensor types, as well as many provided by third parties.</p>
-  <p class=MsoNormal style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>A
-  physical sensor must be connected to a port, and the sensor object must know
-  which port this is.&nbsp; To provide this information, you create an instance
-  of the sensor, and pass this information in its constructor.&nbsp; The
-  possibilities are: SensorPort.S1, S2, S3 or S4.</p>
-  <h2><a name="_Toc198970806"></a><a name="_Toc200100845"></a><a
-  name="_Toc198969304"></a><a name="_Touch_Sensor"></a><span style='mso-bookmark:
-  _Toc198970806'>Touch Sensor</span></h2>
-  <p class=MsoBodyText2 style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>To
-  use a touch sensor, you create an instance of&nbsp; using the constructor:</p>
-  <ul style='margin-top:0in' type=disc>
-   <li class=MsoNormal style='mso-list:l32 level1 lfo43;tab-stops:list .5in'>TouchSensor(SensorPort
-       port);</li>
-  </ul>
-  <p class=MsoBodyText2 style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>To
-  test is the touch sensor is pressed, you use the isPressed() method:</p>
-  <ul style='margin-top:0in' type=disc>
-   <li class=MsoNormal style='mso-list:l26 level1 lfo46;tab-stops:list .5in'>boolean
-       isPressed();</li>
-  </ul>
-  <p class=MsoBodyText2 style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>Example:<b><span
-  style='font-size:9.0pt;font-family:"Courier New";color:#7F0055'> </span></b></p>
-  <p class=MsoBodyText2 style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'><b><span
-  style='font-size:9.0pt;font-family:"Courier New";color:#7F0055'><img
-  border=0 width=752 height=297 id="_x0000_i1027"
-  src="LCD_Sensors_files/image003.gif"></span></b></p>
-  <p class=MsoBodyText2 style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>&nbsp;</p>
-  <p class=MsoBodyText2 style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>&nbsp;</p>
-  <p class=MsoToc1 style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'><a
-  href="LCD_Sensors.htm">Back to Top</a></p>
-  <h2><a name="_Toc198970808"></a><a name="_Toc198970807"></a><a
-  name="_Toc198970360"></a><a name="_Toc198969305"></a><a name="_Toc200100846"></a><a
-  name="_Toc198969306"></a><a name="_Light_Sensor"></a><span style='mso-bookmark:
-  _Toc198970808'>Light Sensor</span></h2>
-  <p class=MsoNormal style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>&nbsp;</p>
-  <p class=MsoBodyText2 style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>To
-  use a light sensor, you create an instance of it using the constructor:</p>
-  <ul style='margin-top:0in' type=disc>
-   <li class=MsoNormal style='mso-list:l11 level1 lfo49;tab-stops:list .5in'>public
-       LightSensor(SensorPort port);</li>
-  </ul>
-  <p class=MsoNormal style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>&nbsp;</p>
-  <p class=MsoNormal style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>Example:</p>
-  <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 align=left
-   style='mso-cellspacing:0in;mso-table-lspace:2.25pt;mso-table-rspace:2.25pt;
-   mso-table-anchor-vertical:paragraph;mso-table-anchor-horizontal:column;
-   mso-table-left:left;mso-padding-alt:0in 0in 0in 0in'>
-   <tr style='mso-yfti-irow:0;height:.75pt;mso-row-margin-right:391.5pt'>
-    <td width=23 style='width:17.25pt;padding:0in 0in 0in 0in;height:.75pt'>
-    <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt'><o:p>&nbsp;</o:p></p>
-    </td>
-    <td style='mso-cell-special:placeholder;border:none;border-bottom:solid black 1.0pt'
-    width=522><p class='MsoNormal'>&nbsp;</td>
-   </tr>
-   <tr style='mso-yfti-irow:1;mso-yfti-lastrow:yes;height:317.25pt'>
-    <td style='padding:0in 0in 0in 0in;height:317.25pt'>
-    <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt'><o:p>&nbsp;</o:p></p>
-    </td>
-    <td width=522 valign=top style='width:391.5pt;border:solid black 1.0pt;
-    mso-border-alt:solid black .75pt;background:white;padding:0in 0in 0in 0in;
-    height:317.25pt'><span style='position:absolute;z-index:10'>
-    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
-     width="100%" style='width:100.0%;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
-     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
-      <td style='padding:0in 0in 0in 0in'>
-      <div>
-      <p class=MsoNormal style='text-autospace:none'><b><span style='font-size:
-      10.0pt;font-family:"Courier New";color:#7F0055'>import</span></b><span
-      style='font-size:10.0pt;font-family:"Courier New";color:black'>
-      lejos.nxt.*;</span></p>
-      <p class=MsoNormal style='text-autospace:none'><span style='font-size:
-      10.0pt;font-family:"Courier New"'>&nbsp;</span></p>
-      <p class=MsoNormal style='text-autospace:none'><b><span style='font-size:
-      10.0pt;font-family:"Courier New";color:#7F0055'>public</span></b><span
-      style='font-size:10.0pt;font-family:"Courier New";color:black'> </span><b><span
-      style='font-size:10.0pt;font-family:"Courier New";color:#7F0055'>class</span></b><span
-      style='font-size:10.0pt;font-family:"Courier New";color:black'> LightTest
-      {</span></p>
-      <p class=MsoNormal style='text-autospace:none'><b><span style='font-size:
-      10.0pt;font-family:"Courier New";color:#7F0055'>&nbsp;&nbsp;&nbsp;&nbsp;
-      void</span></b><span style='font-size:10.0pt;font-family:"Courier New";
-      color:black'> main (String[] args)</span></p>
-      <p class=MsoNormal style='text-autospace:none'><b><span style='font-size:
-      10.0pt;font-family:"Courier New";color:#7F0055'>&nbsp;&nbsp;&nbsp; throws</span></b><span
-      style='font-size:10.0pt;font-family:"Courier New";color:black'> Exception</span></p>
-      <p class=MsoNormal style='text-autospace:none'><span style='font-size:
-      10.0pt;font-family:"Courier New";color:black'>&nbsp;&nbsp;&nbsp; {</span></p>
-      <p class=MsoNormal style='text-autospace:none'><span style='font-size:
-      10.0pt;font-family:"Courier New";color:black'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      LightSensor light = </span><b><span style='font-size:10.0pt;font-family:
-      "Courier New";color:#7F0055'>new</span></b><span style='font-size:10.0pt;
-      font-family:"Courier New";color:black'> LightSensor(SensorPort.</span><i><span
-      style='font-size:10.0pt;font-family:"Courier New";color:#0000C0'>S1</span></i><span
-      style='font-size:10.0pt;font-family:"Courier New";color:black'>);</span></p>
-      <p class=MsoNormal style='text-autospace:none'><span style='font-size:
-      10.0pt;font-family:"Courier New";color:black'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      </span></p>
-      <p class=MsoNormal style='text-autospace:none'><b><span style='font-size:
-      10.0pt;font-family:"Courier New";color:#7F0055'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      while</span></b><span style='font-size:10.0pt;font-family:"Courier New";
-      color:black'> (</span><b><span style='font-size:10.0pt;font-family:"Courier New";
-      color:#7F0055'>true</span></b><span style='font-size:10.0pt;font-family:
-      "Courier New";color:black'>) {</span></p>
-      <p class=MsoNormal style='text-autospace:none'><span style='font-size:
-      10.0pt;font-family:"Courier New";color:black'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      LCD.<i>drawInt</i>(light.readValue(), 4, 0, 0);</span></p>
-      <p class=MsoNormal style='text-autospace:none'><span style='font-size:
-      10.0pt;font-family:"Courier New";color:black'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      LCD.<i>drawInt</i>(light.readNormalizedValue(), 4, 0, 1);</span></p>
-      <p class=MsoNormal style='text-autospace:none'><span style='font-size:
-      10.0pt;font-family:"Courier New";color:black'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      LCD.<i>drawInt</i>(SensorPort.</span><i><span style='font-size:10.0pt;
-      font-family:"Courier New";color:#0000C0'>S1</span></i><span
-      style='font-size:10.0pt;font-family:"Courier New";color:black'>.readRawValue(),
-      4,&nbsp; 0, 2);</span></p>
-      <p class=MsoNormal style='text-autospace:none'><span style='font-size:
-      10.0pt;font-family:"Courier New";color:black'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      LCD.<i>drawInt</i>(SensorPort.</span><i><span style='font-size:10.0pt;
-      font-family:"Courier New";color:#0000C0'>S1</span></i><span
-      style='font-size:10.0pt;font-family:"Courier New";color:black'>.<span
-      style='background:silver'>readValue</span>(), 4,&nbsp; 0, 3);</span></p>
-      <p class=MsoNormal style='text-autospace:none'><span style='font-size:
-      10.0pt;font-family:"Courier New";color:black'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      Thread.sleep(2000);</span></p>
-      <p class=MsoNormal style='text-autospace:none'><span style='font-size:
-      10.0pt;font-family:"Courier New";color:black'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      }</span></p>
-      <p class=MsoNormal style='text-autospace:none'><span style='font-size:
-      10.0pt;font-family:"Courier New";color:black'>&nbsp;&nbsp;&nbsp; }</span></p>
-      <p class=MsoNormal><span style='font-size:10.0pt;font-family:"Courier New";
-      color:black'>}</span></p>
-      </div>
-      </td>
-     </tr>
-    </table>
-    <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt'></span>&nbsp;</p>
-    </td>
-   </tr>
-  </table>
-  <p class=MsoNormal style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>&nbsp;</p>
-  <p class=MsoNormal style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>&nbsp;</p>
-  <p class=MsoNormal style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>&nbsp;</p>
-  <p class=MsoNormal style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>&nbsp;</p>
-  <p class=MsoNormal style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>&nbsp;</p>
-  <p class=MsoNormal style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>&nbsp;</p>
-  <p class=MsoNormal style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>&nbsp;</p>
-  <p class=MsoNormal style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>&nbsp;</p>
-  <p class=MsoNormal style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>&nbsp;</p>
-  <p class=MsoNormal style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>&nbsp;</p>
-  <p class=MsoNormal style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>&nbsp;</p>
-  <p class=MsoNormal style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>&nbsp;</p>
-  <p class=MsoNormal style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>&nbsp;</p>
-  <p class=MsoNormal style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>&nbsp;</p>
-  <p class=MsoNormal style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>&nbsp;</p>
-  <p class=MsoNormal style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>&nbsp;</p>
-  <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt;tab-stops:
-  45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'><br
-  clear=all style='mso-special-character:line-break'>
-  </p>
-  <p class=MsoToc1 style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'><a
-  href="LCD_Sensors.htm">Back to Top</a></p>
-  <p class=MsoNormal style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>&nbsp;</p>
-  <p class=MsoNormal style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>&nbsp;</p>
-  <h2><a name="_Toc198970809"></a><a name="_Toc200100847"></a><a
-  name="_Toc198969307"></a><a name="_Sound_Sensor"></a><span style='mso-bookmark:
-  _Toc198970809'>Sound Sensor</span></h2>
-  <p class=MsoNormal style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>&nbsp;</p>
-  <p class=MsoNormal style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>The
-  sound sensor supports two modes: DB and DBA.&nbsp;&nbsp; These modes
-  give&nbsp; different frequency response, so that it may be possible to get an
-  idea of the frequency of a sound by switching between modes. </p>
-  <p class=MsoNormal style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>There
-  are two constructors:</p>
-  <p class=MsoNormal style='margin-left:.6in;text-indent:-.25in;tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'><span
-  style='font-family:Symbol'>·</span><span style='font-size:7.0pt'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  </span>SoundSensor(SensorPort port) <br>
-  creates a sound sensor using DB mode.</p>
-  <p class=MsoNormal style='margin-left:.6in;text-indent:-.25in;tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'><span
-  style='font-family:Symbol'>·</span><span style='font-size:7.0pt'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  </span>SoundSensor(SensorPort port, dba)<br>
-  creates a sound sensor using DBA mode if the second parameter is <b><i>true</i></b>.</p>
-  <p class=MsoBodyText2 style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>You
-  can switch modes with:</p>
-  <p class=MsoNormal style='margin-left:48.6pt;text-indent:-.25in;tab-stops:
-  45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'><span
-  style='font-family:Symbol'>·</span><span style='font-size:7.0pt'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  </span>void setDBA(boolean dba)</p>
-  <p class=MsoNormal style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>&nbsp;</p>
-  <p class=MsoBodyText2 style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>Example
-  using DB mode only:</p>
-  <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 align=left
-   style='mso-cellspacing:0in;mso-table-lspace:2.25pt;mso-table-rspace:2.25pt;
-   mso-table-anchor-vertical:paragraph;mso-table-anchor-horizontal:column;
-   mso-table-left:left;mso-padding-alt:0in 0in 0in 0in'>
-   <tr style='mso-yfti-irow:0'>
-    <td width=40 style='width:30.0pt;padding:0in 0in 0in 0in'>
-    <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt'><o:p>&nbsp;</o:p></p>
-    </td>
-   </tr>
-   <tr style='mso-yfti-irow:1;mso-yfti-lastrow:yes'>
-    <td style='padding:0in 0in 0in 0in'>
-    <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt'><o:p>&nbsp;</o:p></p>
-    </td>
-    <td style='padding:0in 0in 0in 0in'>
-    <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt'><img
-    border=0 width=590 height=393 id="_x0000_i1028"
-    src="LCD_Sensors_files/image004.gif"
-    alt="Text Box: import lejos.nxt.*;&#13;&#10;&#13;&#10;public class SoundScope {&#13;&#10;	&#13;&#10;      void main (String[] args)	throws Exception {&#13;&#10;        SoundSensor sound = new SoundSensor(SensorPort.S1);&#13;&#10;		&#13;&#10;        while (!Button.ESCAPE.isPressed()) {&#13;&#10;            LCD.clear();&#13;&#10;            for(int i=0;i&lt;100;i++) {&#13;&#10;                LCD.setPixel(1,i,60 - (sound.readValue()/2));&#13;&#10;                Thread.sleep(20);&#13;&#10;            }&#13;&#10;	 }&#13;&#10;    }&#13;&#10;}&#13;&#10;"></p>
-    </td>
-   </tr>
-  </table>
-  <p class=MsoNormal style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'><br
-  clear=all style='mso-special-character:line-break'>
-  </p>
-  <p class=MsoNormal style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>The
-  above example gives a graphical display of the way the sound reading varies
-  over a two-second period.</p>
-  <p class=MsoNormal style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>&nbsp;</p>
-  <p class=MsoToc1 style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'><a
-  href="LCD_Sensors.htm">Back to Top</a></p>
-  <p class=MsoNormal style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>&nbsp;</p>
-  <p class=MsoNormal style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>&nbsp;</p>
-  <h2><a name="_Toc198970810"></a><a name="_Toc200100848"></a><a
-  name="_Toc198969308"></a><a name="_Ultrasonic_Sensor"></a><span
-  style='mso-bookmark:_Toc198970810'>Ultrasonic Sensor</span></h2>
-  <p class=MsoNormal style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>&nbsp;</p>
-  <p class=MsoBodyText style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>To
-  create an instance&nbsp; use the constructor:</p>
-  <p class=MsoNormal style='margin-left:48.6pt;text-indent:-.25in;tab-stops:
-  45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'><span
-  style='font-family:Symbol'>·</span><span style='font-size:7.0pt'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  </span>UltrasonicSensor( Port aSensorPort); </p>
-  <p class=MsoBodyText style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>The
-  sensor operates in two modes, continuous (defalt) and ping.&nbsp; When in
-  continuous mode the sensor sends out pings as often as it can and the most
-  recently obtained result is available via a call to</p>
-  <p class=MsoNormal style='margin-left:48.6pt;text-indent:-.25in;tab-stops:
-  45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'><span
-  style='font-family:Symbol'>·</span><span style='font-size:7.0pt'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  </span>int getDistance()<br>
-  The return value is in centimeters.&nbsp; If no echo was detected, the
-  returned value is 255.&nbsp; The maximum range of the sensor is about 170
-  cm.&nbsp; </p>
-  <p class=MsoBodyText style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>When
-  in ping mode, a ping is sent only when a call is made to</p>
-  <p class=MsoNormal style='margin-left:48.6pt;text-indent:-.25in;tab-stops:
-  45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'><span
-  style='font-family:Symbol'>·</span><span style='font-size:7.0pt'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  </span>void ping()<br>
-  This sets the sensor in ping mode and sends a single ping and up to 8 echoes
-  are captured.&nbsp; These may be read by making a call to</p>
-  <p class=MsoNormal style='margin-left:48.6pt;text-indent:-.25in;tab-stops:
-  45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'><span
-  style='font-family:Symbol'>·</span><span style='font-size:7.0pt'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  </span>int readDistances(int [] distances);<br>
-  You provide an integer array of length that contains the data after the
-  method returns.&nbsp; A delay of approximately 20ms is required between the
-  call to ping and getDistances. This delay is not included in the method.
-  Calls to getDistances before this period may result in an error or no data
-  being returned. The normal getDistance call may also be used with ping,
-  returning information for the first echo. <br>
-  Calling&nbsp; ping()&nbsp; will disable the default continuous mode. Toto
-  switch back to continuous mode, call</p>
-  <p class=MsoNormal style='margin-left:48.6pt;text-indent:-.25in;tab-stops:
-  45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'><span
-  style='font-family:Symbol'>·</span><span style='font-size:7.0pt'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  </span>int continuous()</p>
-  <p class=MsoNormal style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>Example:</p>
-  <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 align=left
-   style='mso-cellspacing:0in;mso-table-lspace:2.25pt;mso-table-rspace:2.25pt;
-   mso-table-anchor-vertical:paragraph;mso-table-anchor-horizontal:column;
-   mso-table-left:left;mso-padding-alt:0in 0in 0in 0in'>
-   <tr style='mso-yfti-irow:0;height:1.5pt;mso-row-margin-right:378.75pt'>
-    <td width=20 style='width:15.0pt;padding:0in 0in 0in 0in;height:1.5pt'>
-    <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt'><o:p>&nbsp;</o:p></p>
-    </td>
-    <td style='mso-cell-special:placeholder;border:none;border-bottom:solid black 1.0pt'
-    width=505><p class='MsoNormal'>&nbsp;</td>
-   </tr>
-   <tr style='mso-yfti-irow:1;mso-yfti-lastrow:yes;height:249.0pt'>
-    <td style='padding:0in 0in 0in 0in;height:249.0pt'>
-    <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt'><o:p>&nbsp;</o:p></p>
-    </td>
-    <td width=505 valign=top style='width:378.75pt;border:solid black 1.0pt;
-    mso-border-alt:solid black .75pt;background:white;padding:0in 0in 0in 0in;
-    height:249.0pt'><span style='position:absolute;z-index:6'>
-    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
-     width="100%" style='width:100.0%;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
-     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
-      <td style='padding:0in 0in 0in 0in'>
-      <div>
-      <p class=MsoNormal style='text-autospace:none'><b><span style='font-size:
-      10.0pt;font-family:"Courier New";color:#7F0055'>import</span></b><span
-      style='font-size:10.0pt;font-family:"Courier New";color:black'> <span
-      style='background:silver'>lejos.nxt.*</span>;</span></p>
-      <p class=MsoNormal style='text-autospace:none'><span style='font-size:
-      10.0pt;font-family:"Courier New"'>&nbsp;</span></p>
-      <p class=MsoNormal style='text-autospace:none'><b><span style='font-size:
-      10.0pt;font-family:"Courier New";color:#7F0055'>public</span></b><span
-      style='font-size:10.0pt;font-family:"Courier New";color:black'> </span><b><span
-      style='font-size:10.0pt;font-family:"Courier New";color:#7F0055'>class</span></b><span
-      style='font-size:10.0pt;font-family:"Courier New";color:black'> SonicTest
-      {&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></p>
-      <p class=MsoNormal style='text-autospace:none'><span style='font-size:
-      10.0pt;font-family:"Courier New";color:black'>&nbsp;&nbsp;&nbsp; </span><b><span
-      style='font-size:10.0pt;font-family:"Courier New";color:#7F0055'>void</span></b><span
-      style='font-size:10.0pt;font-family:"Courier New";color:black'> main(String[]
-      args) </span><b><span style='font-size:10.0pt;font-family:"Courier New";
-      color:#7F0055'>throws</span></b><span style='font-size:10.0pt;font-family:
-      "Courier New";color:black'> Exception {</span></p>
-      <p class=MsoNormal style='text-autospace:none'><span style='font-size:
-      10.0pt;font-family:"Courier New";color:black'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      UltrasonicSensor sonic = </span><b><span style='font-size:10.0pt;
-      font-family:"Courier New";color:#7F0055'>new</span></b></p>
-      <p class=MsoNormal style='margin-left:1.0in;text-indent:.5in;text-autospace:
-      none'><span style='font-size:10.0pt;font-family:"Courier New";color:black'>&nbsp;UltrasonicSensor(SensorPort.</span><i><span
-      style='font-size:10.0pt;font-family:"Courier New";color:#0000C0'>S1</span></i><span
-      style='font-size:10.0pt;font-family:"Courier New";color:black'>);</span></p>
-      <p class=MsoNormal style='text-autospace:none'><span style='font-size:
-      10.0pt;font-family:"Courier New";color:black'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      </span></p>
-      <p class=MsoNormal style='text-autospace:none'><span style='font-size:
-      10.0pt;font-family:"Courier New";color:black'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      </span><b><span style='font-size:10.0pt;font-family:"Courier New";
-      color:#7F0055'>while</span></b><span style='font-size:10.0pt;font-family:
-      "Courier New";color:black'>(!<span style='background:silver'>Button</span>.</span><i><span
-      style='font-size:10.0pt;font-family:"Courier New";color:#0000C0'>ESCAPE</span></i><span
-      style='font-size:10.0pt;font-family:"Courier New";color:black'>.isPressed())
-      {</span></p>
-      <p class=MsoNormal style='text-autospace:none'><span style='font-size:
-      10.0pt;font-family:"Courier New";color:black'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      LCD.<i>clear</i>();</span></p>
-      <p class=MsoNormal style='text-autospace:none'><span style='font-size:
-      10.0pt;font-family:"Courier New";color:black'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      LCD.<i>drawInt</i>(sonic.getDistance(), 0, 3);</span></p>
-      <p class=MsoNormal style='text-autospace:none'><span style='font-size:
-      10.0pt;font-family:"Courier New";color:black'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      }</span></p>
-      <p class=MsoNormal style='text-autospace:none'><span style='font-size:
-      10.0pt;font-family:"Courier New";color:black'>&nbsp;&nbsp;&nbsp; } </span></p>
-      <p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New";
-      color:black'>}</span></p>
-      </div>
-      </td>
-     </tr>
-    </table>
-    <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt'></span>&nbsp;</p>
-    </td>
-   </tr>
-  </table>
-  <p class=MsoNormal style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>&nbsp;</p>
-  <p class=MsoNormal style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>&nbsp;</p>
-  <p class=MsoNormal style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>&nbsp;</p>
-  <p class=MsoNormal style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>&nbsp;</p>
-  <p class=MsoNormal style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>&nbsp;</p>
-  <p class=MsoNormal style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>&nbsp;</p>
-  <p class=MsoNormal style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>&nbsp;</p>
-  <p class=MsoNormal style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>&nbsp;</p>
-  <p class=MsoNormal style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>&nbsp;</p>
-  <p class=MsoNormal style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>&nbsp;</p>
-  <p class=MsoNormal style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>&nbsp;</p>
-  <p class=MsoNormal style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>&nbsp;</p>
-  <p class=MsoNormal style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>&nbsp;</p>
-  <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt;tab-stops:
-  45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'><br
-  clear=all style='mso-special-character:line-break'>
-  </p>
-  <h3><a name="_Toc200100849"></a><a name="_Program:_multiple_echoes"></a><span
-  style='mso-bookmark:_Toc200100849'><span lang=EN-GB style='mso-ansi-language:
-  EN-GB'>Program: multiple echoes</span></span></h3>
-  <p class=MsoBodyText2 style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>Write
-  a program that displays the distances from multiple echoes in a column. The
-  program should make four calls to ping(), and display the four columns of results,
-  then wait for a button press.&nbsp;&nbsp; Exit if the ESCAPE button was
-  pressed. </p>
-  <p class=MsoToc1 style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>&nbsp;</p>
-  <p class=MsoNormal style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'><a
-  href="LCD_Sensors_files/USPingTest.html" target="_blank"><b>Solution</b></a></p>
-  <p class=MsoNormal style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>&nbsp;</p>
-  <p class=MsoNormal style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>&nbsp;</p>
-  <p class=MsoToc1 style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'><a
-  href="LCD_Sensors.htm">Back to Top</a></p>
-  <p class=MsoToc1 style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>&nbsp;</p>
-  </td>
- </tr>
-</table>
-
-<p class=MsoNormal><a name="_Hardware:_I/O_and_Sensors"></a>&nbsp;</p>
-
-<p class=MsoNormal><b>&nbsp;</b></p>
-
-<p class=MsoNormal>&nbsp;</p>
-
-</div>
-
-</body>
-
-</html>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=windows-1252">
+	<TITLE>leJOS NXJ Tutorial</TITLE>
+	<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.4  (Win32)">
+	<META NAME="AUTHOR" CONTENT="Roger">
+	<META NAME="CREATED" CONTENT="20080818;10210000">
+	<META NAME="CHANGED" CONTENT="20080818;13453601">
+	<STYLE TYPE="text/css">
+	<!--
+		@page { size: 11in 11in; margin-right: 1.25in; margin-top: 1in; margin-bottom: 1in }
+		P { margin-bottom: 0.08in; direction: ltr; color: #000000; text-align: left; widows: 2; orphans: 2 }
+		P.western { font-family: "Times New Roman", serif; font-size: 12pt; so-language: en-US }
+		P.cjk { font-family: "Times New Roman", serif; font-size: 12pt; so-language: zxx }
+		P.ctl { font-family: "Times New Roman", serif; font-size: 12pt; so-language: ar-SA }
+		H1 { margin-top: 0.19in; margin-bottom: 0.19in; direction: ltr; color: #ff6600; text-align: left; widows: 2; orphans: 2; page-break-after: auto }
+		H1.western { font-family: "Times New Roman", serif; so-language: en-US }
+		H1.cjk { font-family: "Times New Roman", serif; so-language: zxx }
+		H1.ctl { font-family: "Times New Roman", serif; so-language: ar-SA }
+		H2 { margin-top: 0.19in; margin-bottom: 0.19in; direction: ltr; color: #ff6600; text-align: left; widows: 2; orphans: 2; page-break-after: auto }
+		H2.western { so-language: en-US }
+		H2.cjk { font-family: "Times New Roman", serif; so-language: zxx }
+		H2.ctl { font-family: "Times New Roman", serif; so-language: ar-SA }
+		H3 { margin-top: 0.19in; margin-bottom: 0.19in; direction: ltr; color: #ff6600; text-align: left; widows: 2; orphans: 2; page-break-after: auto }
+		H3.western { font-size: 13pt; so-language: en-US }
+		H3.cjk { font-family: "Times New Roman", serif; font-size: 13pt; so-language: zxx }
+		H3.ctl { font-family: "Times New Roman", serif; font-size: 13pt; so-language: ar-SA }
+		A:link { color: #0000ff }
+		A:visited { color: #800080 }
+	-->
+	</STYLE>
+</HEAD>
+<BODY LANG="en-US" TEXT="#000000" LINK="#0000ff" VLINK="#800080" BGCOLOR="#ffffff" DIR="LTR">
+<P CLASS="western" STYLE="margin-bottom: 0.19in">&nbsp;</P>
+<TABLE WIDTH=810 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=4 CELLSPACING=0>
+	<COL WIDTH=137>
+	<COL WIDTH=655>
+	<TR VALIGN=TOP>
+		<TD WIDTH=137>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;<FONT COLOR="#0000ff"><U><A HREF="../index.htm">Tutorial
+			Start</A></U></FONT>&nbsp; 
+			</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><FONT COLOR="#0000ff"><U><A HREF="#_Hardware:_I/O_and_Sensors_2">Hardware:
+			I/O and Sensors</A></U></FONT></P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><FONT COLOR="#0000ff"><U><A HREF="#_LCD_1">LCD</A></U></FONT></P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><FONT COLOR="#0000ff"><U><A HREF="#_Text_LCD_methods_1">Text
+			LCD methods</A></U></FONT></P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><FONT COLOR="#0000ff"><U><A HREF="#_LCD_graphics">LCD
+			graphics</A></U></FONT></P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><FONT COLOR="#0000ff"><U><A HREF="#_Buttons">Buttons</A></U></FONT></P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><FONT COLOR="#0000ff"><U><A HREF="#_Sound_1">Sound</A></U></FONT></P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><FONT COLOR="#0000ff"><U><A HREF="#_Battery_1">Battery</A></U></FONT></P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><FONT COLOR="#0000ff"><U><A HREF="#_Sensors_1">Sensors</A></U></FONT></P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><FONT COLOR="#0000ff"><U><A HREF="#_Touch_Sensor_1">Touch
+			Sensor</A></U></FONT></P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><FONT COLOR="#0000ff"><U><A HREF="#_Light_Sensor_1">Light
+			Sensor</A></U></FONT></P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><FONT COLOR="#0000ff"><U><A HREF="#_Sound_Sensor_1">Sound
+			Sensor</A></U></FONT></P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><FONT COLOR="#0000ff"><U><A HREF="#_Ultrasonic_Sensor_1">Ultrasonic
+			Sensor</A></U></FONT><FONT COLOR="#0000ff"><U><A HREF="#_Program:_multiple_echoes">Program:
+			multiple echoes</A></U></FONT></P>
+			<P STYLE="margin-top: 0.19in"><FONT COLOR="#0000ff"><U><A HREF="#_Program:_multiple_echoes_1">Program:
+			multiple echoes</A></U></FONT></P>
+		</TD>
+		<TD WIDTH=655>
+			<H1 LANG="en-GB" CLASS="western"><A NAME="_Hardware%253A_I%252FO_and_Sensors_2"></A><A NAME="_Hardware%253A_I%252FO_and_Sensors_1"></A>
+			Hardware: I/O and Sensors</H1>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">This section
+			covers the classes for user input and output, and also the NXT
+			sensors.&nbsp; The NXT hardware has buttons for input and a Liquid
+			Crystal Display and a small speaker for output.&nbsp; LejosNXJ
+			provides software abstractions for all these bits of hardware.</P>
+			<H2 CLASS="western"><A NAME="_LCD_1"></A><A NAME="_LCD"></A>LCD 
+			</H2>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">The LCD
+			class&nbsp; has no instances (there being only one LCD on the NXT)
+			so all the methods are static.<BR>It can be used in text mode and
+			graphics mode.</P>
+			<H3 LANG="en-GB" CLASS="western"><A NAME="_Text_LCD_methods_1"></A><A NAME="_Text_LCD_methods"></A>
+			Text LCD methods</H3>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">As a text
+			display, the NXT LCD screen is 16 characters wide and eight
+			characters deep. It is addressed using (x, y) co-ordinates as
+			follows:</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;<TABLE DIR="LTR" ALIGN=LEFT WIDTH=432 HSPACE=1 BORDER=0 CELLPADDING=0 CELLSPACING=0>
+				<COL WIDTH=48>
+				<COL WIDTH=384>
+				<TR>
+					<TD WIDTH=48>
+						<P><A NAME="_top"></A>&nbsp;</P>
+					</TD>
+					<TD WIDTH=384 VALIGN=TOP>
+						<P CLASS="western"><BR>
+						</P>
+					</TD>
+				</TR>
+				<TR>
+					<TD WIDTH=48>
+						<P>&nbsp;</P>
+					</TD>
+					<TD WIDTH=384>
+						<P><A NAME="_x0000_i1025"></A><IMG SRC="LCD_Sensors_files/image001.gif" NAME="graphics1" ALIGN=BOTTOM WIDTH=384 HEIGHT=182 BORDER=0>
+						  
+						</P>
+					</TD>
+				</TR>
+			</TABLE> 
+			</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
+			<P STYLE="margin-bottom: 0in"><BR>
+			</P>
+			<P STYLE="margin-bottom: 0in">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</P>
+			<P STYLE="margin-bottom: 0in">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			x ranges from 0 to 15, and y from 0 to 7.</P>
+			<P STYLE="margin-bottom: 0in">&nbsp;</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">The methods
+			to write to the LCD in text mode are:-</P>
+			<UL>
+				<LI><P STYLE="margin-top: 0.19in; margin-bottom: 0in">&nbsp;<FONT COLOR="#0000ff"><U><A HREF="../../../../lejosbeta5/lejos_nxj/docs/apidocs/lejos/nxt/LCD.html#drawString(java.lang.String, int, int)">drawString</A></U></FONT>(<FONT COLOR="#0000ff"><U><A HREF="../../../../lejosbeta5/lejos_nxj/docs/apidocs/java/lang/String.html">String</A></U></FONT>&nbsp;str,
+				int&nbsp;x, int&nbsp;y);<BR>This draws a string of text to the
+				LCD screen starting at text co-ordinate (x, y). 
+				</P>
+				<LI><P STYLE="margin-bottom: 0in"><FONT COLOR="#0000ff"><U><A HREF="../../../../lejosbeta5/lejos_nxj/docs/apidocs/lejos/nxt/LCD.html#drawString(java.lang.String, int, int, boolean)">drawString</A></U></FONT>(<FONT COLOR="#0000ff"><U><A HREF="../../../../lejosbeta5/lejos_nxj/docs/apidocs/java/lang/String.html">String</A></U></FONT>&nbsp;str,
+				int&nbsp;x, int&nbsp;y, boolean&nbsp;invert);<BR>This variant of
+				drawString supports inverting&nbsp; the text drawing white
+				characters on a black background. 
+				</P>
+				<LI><P STYLE="margin-bottom: 0in">&nbsp;<FONT COLOR="#0000ff"><U><A HREF="../../../../lejosbeta5/lejos_nxj/docs/apidocs/lejos/nxt/LCD.html#drawInt(int, int, int)">drawInt</A></U></FONT>(int&nbsp;i,
+				int&nbsp;x, int&nbsp;y);<BR>This draws an integer starting at
+				co-ordinate (x,y).&nbsp; The integer is left aligned and takes up
+				as many characters as are necessary. 
+				</P>
+				<LI><P STYLE="margin-bottom: 0in"><FONT COLOR="#0000ff"><U><A HREF="../../../../lejosbeta5/lejos_nxj/docs/apidocs/lejos/nxt/LCD.html#drawInt(int, int, int, int)">drawInt</A></U></FONT>(int&nbsp;i,
+				int&nbsp;places, int&nbsp;x, int&nbsp;y);<BR>This variant of
+				drawInt right-aligns the integer and always uses the number of
+				characters indicated by places. 
+				</P>
+				<LI><P STYLE="margin-bottom: 0in"><FONT COLOR="#0000ff"><U><A HREF="../../../../lejosbeta5/lejos_nxj/docs/apidocs/lejos/nxt/LCD.html#drawChar(char, int, int, boolean)">drawChar</A></U></FONT>(char&nbsp;c,
+				int&nbsp;x, int&nbsp;y, boolean&nbsp;invert);<BR>This draws a
+				character at text co-ordinate (x, y) with optional inversion of
+				the character. 
+				</P>
+				<LI><P STYLE="margin-bottom: 0.19in"><FONT COLOR="#0000ff"><U><A HREF="../../../../lejosbeta5/lejos_nxj/docs/apidocs/lejos/nxt/LCD.html#clear()">clear</A></U></FONT>();<BR>Clears
+				the display. 
+				</P>
+			</UL>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">Example:</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">    
+			</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><IMG SRC="LCD_Sensors_htm_m2d6f14d8.png" NAME="graphics2" ALIGN=LEFT WIDTH=576 HEIGHT=368 BORDER=0><BR CLEAR=LEFT><BR><BR>
+			</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">  
+			</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
+			<H3 CLASS="western"><A NAME="_LCD_graphics"></A><SPAN LANG="en-GB">LCD
+			graphics</SPAN> 
+			</H3>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><SPAN LANG="en-GB">To
+			display graphics on the LCD screen, you can&nbsp; use the Graphics
+			class from the package&nbsp; </SPAN>javax.microedition.lcdui.&nbsp;
+			<SPAN LANG="en-GB">The API for the class is </SPAN><FONT COLOR="#0000ff"><U><A HREF="http://lejos.sourceforge.net/p_technologies/nxt/nxj/api/javax/microedition/lcdui/Graphics.html"><SPAN LANG="en-GB">here</SPAN></A></U></FONT><SPAN LANG="en-GB">.&nbsp;
+			The LCD screen is 100 pixels wide and 64 pixels high, and all
+			Graphics methods use this coordinate system.&nbsp; With this
+			class, you can draw lines, rectangles, arcs, and position strings
+			with pixel accuracy. </SPAN>
+			</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><FONT COLOR="#0000ff"><U><A HREF="#_top">Back
+			to Top </A></U></FONT>
+			</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
+			<H2 CLASS="western"><A NAME="_Buttons"></A>Buttons</H2>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">The Button
+			class has four instances,&nbsp; accessed by static fields:</P>
+			<UL>
+				<LI><P STYLE="margin-top: 0.19in; margin-bottom: 0in">Button.ENTER
+								</P>
+				<LI><P STYLE="margin-bottom: 0in">Button.ESCAPE 
+				</P>
+				<LI><P STYLE="margin-bottom: 0in">Button.LEFT 
+				</P>
+				<LI><P STYLE="margin-bottom: 0.19in">Button.RIGHT 
+				</P>
+			</UL>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">To test if a
+			button is pressed, you use:</P>
+			<UL>
+				<LI><P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">boolean
+				isPressed();</P>
+			</UL>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">Example:<SPAN ID="Frame2" DIR="LTR" STYLE="float: left; width: 6.72in; height: 3.84in; border: 1px solid #000000; padding: 0.05in 0.1in; background: #ffffff">
+				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in"><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt"><B>import</B></FONT></FONT></FONT>
+				<FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">lejos.nxt.*;</FONT></FONT></P>
+				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;</P>
+				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in"><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt"><B>public</B></FONT></FONT></FONT>
+				<FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt"><B>class</B></FONT></FONT></FONT>
+				<FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">ButtonPresses</FONT></FONT></P>
+				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">{</FONT></FONT></P>
+				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;&nbsp;
+				<FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt"><B>void</B></FONT></FONT></FONT>&nbsp;
+				<FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">public
+				static void main (String[] args)</FONT></FONT></P>
+				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in"><FONT COLOR="#7f0055">&nbsp;&nbsp;&nbsp;
+				</FONT><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt"><B>throws</B></FONT></FONT></FONT>
+				<FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">Exception</FONT></FONT></P>
+				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;&nbsp;
+				<FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">{</FONT></FONT></P>
+				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in"><FONT COLOR="#7f0055">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				</FONT><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt"><B>while</B></FONT></FONT></FONT>
+				<FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">(</FONT></FONT><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt"><B>true</B></FONT></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">)
+				{</FONT></FONT></P>
+				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">LCD.</FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt"><I>clear</I></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">();</FONT></FONT></P>
+				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in"><FONT COLOR="#7f0055">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				</FONT><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt"><B>If</B></FONT></FONT></FONT>
+				<FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">(Button.</FONT></FONT><FONT COLOR="#0000c0"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt"><I>ENTER</I></FONT></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">.isPressed())
+				LCD.</FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt"><I>drawString</I></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">(</FONT></FONT><FONT COLOR="#2a00ff"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;ENTER&quot;</FONT></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">,0,0);</FONT></FONT></P>
+				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in"><FONT COLOR="#7f0055">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				</FONT><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt"><B>if</B></FONT></FONT></FONT>
+				<FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">(Button.</FONT></FONT><FONT COLOR="#0000c0"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt"><I>ESCAPE</I></FONT></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">.isPressed())
+				LCD.</FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt"><I>drawString</I></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">(</FONT></FONT><FONT COLOR="#2a00ff"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;ESCAPE&quot;</FONT></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">,0,0);</FONT></FONT></P>
+				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in"><FONT COLOR="#7f0055">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				</FONT><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt"><B>if</B></FONT></FONT></FONT>
+				<FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">(Button.</FONT></FONT><FONT COLOR="#0000c0"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt"><I>LEFT</I></FONT></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">.isPressed())
+				LCD.</FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt"><I>drawString</I></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">(</FONT></FONT><FONT COLOR="#2a00ff"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;LEFT&quot;</FONT></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">,0,0);</FONT></FONT></P>
+				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in"><FONT COLOR="#7f0055">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				</FONT><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt"><B>if</B></FONT></FONT></FONT>
+				<FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">(Button.</FONT></FONT><FONT COLOR="#0000c0"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt"><I>RIGHT</I></FONT></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">.isPressed())
+				LCD.</FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt"><I>drawString</I></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">(</FONT></FONT><FONT COLOR="#2a00ff"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;RIGHT&quot;</FONT></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">,0,0);</FONT></FONT></P>
+				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				</FONT></FONT>
+				</P>
+				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;&nbsp;
+				<FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">}</FONT></FONT></P>
+				<P CLASS="western" STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
+				<BR><BR>
+				</P>
+			</SPAN><BR CLEAR=LEFT>
+			</P>
+			<P ALIGN=RIGHT STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><SPAN ID="Frame3" DIR="LTR" STYLE="float: left; width: 0.02in; height: 2.7in; border: none; padding: 0in; background: #ffffff">
+				<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><BR><BR>
+				</P>
+				<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><BR><BR>
+				</P>
+				<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><BR><BR>
+				</P>
+				<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><BR><BR>
+				</P>
+				<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><BR><BR>
+				</P>
+				<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><BR><BR>
+				</P>
+				<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><BR><BR>
+				</P>
+			</SPAN><BR><BR>
+			</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">To wait for a
+			specific button to be pressed and released, you use:</P>
+			<UL>
+				<LI><P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">void
+				waitForPressAndRelease() throws InterruptedException; 
+				</P>
+			</UL>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">Example:<SPAN ID="Frame4" DIR="LTR" STYLE="float: left; width: 6.72in; height: 2.6in; border: 1px solid #000000; padding: 0.05in 0.1in; background: #ffffff">
+				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in"><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt"><B>import</B></FONT></FONT></FONT>
+				<FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">lejos.nxt.*;</FONT></FONT></P>
+				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;</P>
+				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in"><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt"><B>public</B></FONT></FONT></FONT>
+				<FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt"><B>class</B></FONT></FONT></FONT>
+				<FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">ButtonTest</FONT></FONT></P>
+				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">{</FONT></FONT></P>
+				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;&nbsp;
+				<FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt"><B>void</B></FONT></FONT></FONT>&nbsp;
+				<FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">public
+				static void main (String[] args)</FONT></FONT></P>
+				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;&nbsp;
+				<FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt"><B>throws</B></FONT></FONT></FONT>
+				<FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">Exception</FONT></FONT></P>
+				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;&nbsp;
+				<FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">{</FONT></FONT></P>
+				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">Button.</FONT></FONT><FONT COLOR="#0000c0"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt"><I>ENTER</I></FONT></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">.waitForPressAndRelease();&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				</FONT></FONT>
+				</P>
+				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">LCD.</FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt"><I>drawString</I></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">(</FONT></FONT><FONT COLOR="#2a00ff"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;Finished&quot;</FONT></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">,
+				3, 4);</FONT></FONT></P>
+				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">Thread.</FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt"><I>sleep</I></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">(2000);</FONT></FONT></P>
+				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;&nbsp;
+				<FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">}</FONT></FONT></P>
+				<P CLASS="western" STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
+				<FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">}</FONT></FONT></P>
+			</SPAN><BR CLEAR=LEFT>
+			</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><BR><BR>
+			</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">To wait for
+			any button to be pressed, you do:</P>
+			<UL>
+				<LI><P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">static&nbsp;
+				int waitForPress();<BR>The returns the id code&nbsp; of the
+				button that is pressed. 
+				</P>
+			</UL>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><B>button&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			</B>ENTER&nbsp;&nbsp;&nbsp;&nbsp; LEFT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			RIGHT&nbsp;&nbsp;&nbsp;&nbsp; ESCAPE</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><B>Code&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			</B>1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			4&nbsp;&nbsp; 8</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">To specify a
+			listener to listen for button events for this button, you: use</P>
+			<UL>
+				<LI><P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">void
+				addButtonListener (ButtonListener aListener)<BR><BR>See
+				&ldquo;Listeners and Events&rdquo; below for how button listeners
+				work. 
+				</P>
+			</UL>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">To read the
+			current state of all the buttons, you do:</P>
+			<UL>
+				<LI><P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">static
+				int readButtons();<BR>The&nbsp; return value is the sum of the
+				codes of the buttons that are pressed. 
+				</P>
+			</UL>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><FONT COLOR="#0000ff"><U><A HREF="">Back
+			to Top</A></U></FONT></P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
+			<H2 CLASS="western"><A NAME="_Sound_1"></A><A NAME="_Sound"></A>Sound</H2>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">This class
+			controls the single speaker so it has no instances and&nbsp; all
+			the methods are static.</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">To play a
+			single tone, use</P>
+			<UL>
+				<LI><P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;<FONT FACE="Courier New, monospace"><FONT SIZE=2><B>void
+				</B></FONT></FONT><FONT COLOR="#0000ff"><U><A HREF="http://lejos.sourceforge.net/p_technologies/nxt/nxj/api/lejos/nxt/Sound.html#playTone(int, int)"><FONT FACE="Courier New, monospace"><B>playTone</B></FONT></A></U></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2>(int&nbsp;aFrequency,
+				int&nbsp;aDuration);</FONT></FONT> 
+				</P>
+			</UL>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><SPAN ID="Frame5" DIR="LTR" STYLE="float: left; width: 6.07in; height: 5.16in; border: 1px solid #000000; padding: 0.05in 0.1in; background: #ffffff">
+				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in"><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>import</B></FONT></FONT></FONT>
+				<FONT FACE="Courier New, monospace"><FONT SIZE=2>lejos.nxt.*;</FONT></FONT></P>
+				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;</P>
+				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in"><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>public</B></FONT></FONT></FONT>
+				<FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>class</B></FONT></FONT></FONT>
+				<FONT FACE="Courier New, monospace"><FONT SIZE=2>Tune {</FONT></FONT></P>
+				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;</P>
+				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;
+				<FONT COLOR="#3f7f5f"><FONT FACE="Courier New, monospace"><FONT SIZE=2>//
+				NOTE: This tune was generated from a midi using Guy </FONT></FONT></FONT>
+				</P>
+				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;
+				<FONT COLOR="#3f7f5f"><FONT FACE="Courier New, monospace"><FONT SIZE=2>//
+				Truffelli's Brick Music Studio www.aga.it/~guy/lego</FONT></FONT></FONT></P>
+				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;
+				<FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>private</B></FONT></FONT></FONT>
+				<FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>static</B></FONT></FONT></FONT>
+				<FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>final</B></FONT></FONT></FONT>
+				<FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>short</B></FONT></FONT></FONT>
+				<FONT FACE="Courier New, monospace"><FONT SIZE=2>[] </FONT></FONT><FONT COLOR="#0000c0"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>note</I></FONT></FONT></FONT>
+				<FONT FACE="Courier New, monospace"><FONT SIZE=2>= {</FONT></FONT></P>
+				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;&nbsp;
+				<FONT FACE="Courier New, monospace"><FONT SIZE=2>2349,115, 0,5,
+				1760,165, 0,35, 1760,28, 0,13, 1976,23, </FONT></FONT>
+				</P>
+				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;&nbsp;
+				<FONT FACE="Courier New, monospace"><FONT SIZE=2>0,18, 1760,18,
+				0,23, 1568,15, 0,25, 1480,103, 0,18, 1175,180, 0,20, 1760,18, </FONT></FONT>
+				</P>
+				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;&nbsp;
+				<FONT FACE="Courier New, monospace"><FONT SIZE=2>0,23, 1976,20,
+				0,20, 1760,15, 0,25, 1568,15, 0,25, 2217,98, 0,23, 1760,88, </FONT></FONT>
+				</P>
+				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;&nbsp;
+				<FONT FACE="Courier New, monospace"><FONT SIZE=2>0,33, 1760,75,
+				0,5, 1760,20, 0,20, 1760,20, 0,20, 1976,18, 0,23, 1760,18, </FONT></FONT>
+				</P>
+				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;&nbsp;
+				<FONT FACE="Courier New, monospace"><FONT SIZE=2>0,23, 2217,225,
+				0,15, 2217,218};</FONT></FONT></P>
+				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;</P>
+				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;
+				<FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>void</B></FONT></FONT></FONT>&nbsp;
+				<FONT FACE="Courier New, monospace"><FONT SIZE=2>public static
+				void main(String [] args) {</FONT></FONT></P>
+				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>for</B></FONT></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2>(</FONT></FONT><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>int</B></FONT></FONT></FONT>
+				<FONT FACE="Courier New, monospace"><FONT SIZE=2>i=0;i&lt;</FONT></FONT><FONT COLOR="#0000c0"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>note</I></FONT></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2>.</FONT></FONT><FONT COLOR="#0000c0"><FONT FACE="Courier New, monospace"><FONT SIZE=2>length</FONT></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2>;
+				i+=2) {</FONT></FONT></P>
+				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>final</B></FONT></FONT></FONT>
+				<FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>short</B></FONT></FONT></FONT>
+				<FONT FACE="Courier New, monospace"><FONT SIZE=2>w = </FONT></FONT><FONT COLOR="#0000c0"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>note</I></FONT></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2>[i+1];</FONT></FONT></P>
+				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>final</B></FONT></FONT></FONT>
+				<FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>int</B></FONT></FONT></FONT>
+				<FONT FACE="Courier New, monospace"><FONT SIZE=2>n = </FONT></FONT><FONT COLOR="#0000c0"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>note</I></FONT></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2>[i];</FONT></FONT></P>
+				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>if</B></FONT></FONT></FONT>
+				<FONT FACE="Courier New, monospace"><FONT SIZE=2>(n != 0)
+				Sound.</FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>playTone</I></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2>(n,
+				w*10);</FONT></FONT></P>
+				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>try</B></FONT></FONT></FONT>
+				<FONT FACE="Courier New, monospace"><FONT SIZE=2>{
+				Thread.</FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>sleep</I></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2>(w*10);
+				} </FONT></FONT><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>catch</B></FONT></FONT></FONT>
+				<FONT FACE="Courier New, monospace"><FONT SIZE=2>(InterruptedException
+				e) {}</FONT></FONT></P>
+				<P CLASS="western" STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <FONT FACE="Courier New, monospace"><FONT SIZE=2>}</FONT></FONT></P>
+			</SPAN><BR CLEAR=LEFT><BR><BR>
+			</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">Example:</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">There are two
+			ways to play system sounds.&nbsp;&nbsp; One is:</P>
+			<UL>
+				<LI><P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">void
+				systemSound (boolean aQueued, int aCode);<BR>The aQueued
+				parameter is ignored on the NXT, it is here to be backwards
+				compatible with the RXC. 
+				</P>
+			</UL>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">The values of
+			code are:</P>
+			<P STYLE="margin-left: 0.08in; margin-top: 0.19in; margin-bottom: 0.19in">
+			code = 0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			Short beep</P>
+			<P STYLE="margin-left: 0.08in; margin-top: 0.19in; margin-bottom: 0.19in">
+			code = 1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			Double beep</P>
+			<P STYLE="margin-left: 0.08in; margin-top: 0.19in; margin-bottom: 0.19in">
+			code = 2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			Descending arpeggio</P>
+			<P STYLE="margin-left: 0.08in; margin-top: 0.19in; margin-bottom: 0.19in">
+			code = 3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			Ascending arpeggio</P>
+			<P STYLE="margin-left: 0.08in; margin-top: 0.19in; margin-bottom: 0.19in">
+			code = 4&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			Long, low buzz</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">Iindividual
+			methods to play a particular system sound, if you don&rsquo;t
+			remember the code, are</P>
+			<UL>
+				<LI><P STYLE="margin-top: 0.19in; margin-bottom: 0in">void
+				beep(); 
+				</P>
+				<LI><P STYLE="margin-bottom: 0in">void twoBeeps(); 
+				</P>
+				<LI><P STYLE="margin-bottom: 0in">void beepSequence(); 
+				</P>
+				<LI><P STYLE="margin-bottom: 0in">void beepSequenceUp(); 
+				</P>
+				<LI><P STYLE="margin-bottom: 0in">void buzz();int playSample(File
+				aWAVfile) 
+				</P>
+				<LI><P STYLE="margin-bottom: 0.19in">int playSample(File
+				aWAVfile, int volume) 
+				</P>
+			</UL>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">This is also
+			a method to produce a rest when playing a tune; time in
+			milliseconds</P>
+			<UL>
+				<LI><P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">void
+				pause(int time);<BR>You can use this method anytime you want your
+				program wait, and don&rsquo;t want to bother with the try/catch
+				block required by System.sleep(); 
+				</P>
+			</UL>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">leJOS NXJ has
+			methods that can also play 8-bit WAV files.</P>
+			<UL>
+				<LI><P STYLE="margin-top: 0.19in; margin-bottom: 0in">int
+				playSample(File aWAVfile) 
+				</P>
+				<LI><P STYLE="margin-bottom: 0.19in">int playSample(File
+				aWAVfile, int volume) 
+				</P>
+			</UL>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">The return
+			value of milliseconds the sample will play for or &lt; 0 if there
+			is an error.</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">To play a
+			musical note, use&nbsp; 
+			</P>
+			<UL>
+				<LI><P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">void
+				<FONT COLOR="#0000ff"><U><A HREF="http://lejos.sourceforge.net/p_technologies/nxt/nxj/api/lejos/nxt/Sound.html#playNote(int[], int, int)"><FONT FACE="Courier New, monospace"><B>playNote</B></FONT></A></U></FONT>(int[]&nbsp;inst,int&nbsp;freq,
+				int&nbsp;len)<BR>The&nbsp; <I>inst</I> array contains the attack,
+				decay, sustain and release&nbsp; parameters for the note. The
+				static constants for some predefined instruments are: FLUTE,
+				PIANO&nbsp; and XYLOPHONE.&nbsp; You can also experiment with
+				defining you own. 
+				</P>
+			</UL>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><FONT COLOR="#0000ff"><U><A HREF="">Back
+			to Top</A></U></FONT></P>
+			<H2 CLASS="western"><A NAME="_Battery_1"></A><A NAME="_Battery"></A>
+			Battery</H2>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">There are two
+			static methods to get the battery voltage:</P>
+			<UL>
+				<LI><P STYLE="margin-top: 0.19in; margin-bottom: 0in">&nbsp; int
+				getVoltageMilliVolt(); 
+				</P>
+				<LI><P STYLE="margin-bottom: 0.19in">&nbsp; float getVoltage() 
+				</P>
+			</UL>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">Example:</P>
+			<P LANG="" STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><SPAN ID="Frame6" DIR="LTR" STYLE="float: left; width: 6.21in; height: 1.86in; border: 1px solid #000000; padding: 0.05in 0.1in; background: #ffffff">
+				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in"><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>import</B></FONT></FONT></FONT>
+				<FONT FACE="Courier New, monospace"><FONT SIZE=2>lejos.nxt.*;</FONT></FONT></P>
+				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;</P>
+				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in"><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>public</B></FONT></FONT></FONT>
+				<FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>class</B></FONT></FONT></FONT>
+				<FONT FACE="Courier New, monospace"><FONT SIZE=2>BatteryTest {</FONT></FONT></P>
+				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;&nbsp;
+				<FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>void</B></FONT></FONT></FONT>
+				<FONT FACE="Courier New, monospace"><FONT SIZE=2>main (String[]
+				args) </FONT></FONT><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>throws</B></FONT></FONT></FONT>
+				<FONT FACE="Courier New, monospace"><FONT SIZE=2>Exception {</FONT></FONT></P>
+				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<FONT FACE="Courier New, monospace"><FONT SIZE=2>LCD.</FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>drawString</I></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2>(</FONT></FONT><FONT COLOR="#2a00ff"><FONT FACE="Courier New, monospace"><FONT SIZE=2>&quot;Battery:
+				&quot;</FONT></FONT></FONT> <FONT FACE="Courier New, monospace"><FONT SIZE=2>+
+				Battery.</FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>getVoltage</I></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2>(),0,0);</FONT></FONT></P>
+				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<FONT FACE="Courier New, monospace"><FONT SIZE=2>Thread.</FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>sleep</I></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2>(2000);</FONT></FONT></P>
+				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;&nbsp;
+				<FONT FACE="Courier New, monospace"><FONT SIZE=2>}</FONT></FONT></P>
+				<P CLASS="western" STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
+				<FONT FACE="Courier New, monospace"><FONT SIZE=2>}</FONT></FONT></P>
+			</SPAN><BR CLEAR=LEFT><BR><BR>
+			</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><BR><BR>
+			</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><FONT COLOR="#0000ff"><U><A HREF="">Back
+			to Top</A></U></FONT></P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
+			<H1 LANG="en-GB" CLASS="western"><A NAME="_Sensors_1"></A><A NAME="_Sensors"></A>
+			Sensors</H1>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">The NXT comes
+			with four sensors; the touch sensor, the sound sensor, the light
+			sensor and the ultrasonic sensor.&nbsp; LejosNXJ provides software
+			abstractions of all these sensor types, as well as many provided
+			by third parties.</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">A physical
+			sensor must be connected to a port, and the sensor object must
+			know which port this is.&nbsp; To provide this information, you
+			create an instance of the sensor, and pass this information in its
+			constructor.&nbsp; The possibilities are: SensorPort.S1, S2, S3 or
+			S4.</P>
+			<H2 CLASS="western"><A NAME="_Touch_Sensor_1"></A><A NAME="_Touch_Sensor"></A>
+			Touch Sensor</H2>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">To use a
+			touch sensor, you create an instance of&nbsp; using the
+			constructor:</P>
+			<UL>
+				<LI><P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">TouchSensor(SensorPort
+				port); 
+				</P>
+			</UL>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">To test is
+			the touch sensor is pressed, you use the isPressed() method:</P>
+			<UL>
+				<LI><P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">boolean
+				isPressed(); 
+				</P>
+			</UL>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">Example:<FONT COLOR="#7f0055">
+			</FONT>
+			</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><IMG SRC="LCD_Sensors_htm_m18db06b6.png" NAME="graphics3" ALIGN=LEFT WIDTH=498 HEIGHT=270 BORDER=0><BR CLEAR=LEFT><BR><BR>
+			</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><BR><BR>
+			</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><A NAME="_x0000_i1027"></A>
+			 <FONT COLOR="#7f0055"> </FONT>
+			</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><FONT COLOR="#0000ff"><U><A HREF="">Back
+			to Top</A></U></FONT></P>
+			<H2 CLASS="western"><A NAME="_Light_Sensor_1"></A><A NAME="_Light_Sensor"></A>
+			Light Sensor</H2>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">To use a
+			light sensor, you create an instance of it using the constructor:</P>
+			<UL>
+				<LI><P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">public
+				LightSensor(SensorPort port); 
+				</P>
+			</UL>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">Example:</P>
+			<P LANG="" STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><SPAN ID="Frame7" DIR="LTR" STYLE="float: left; width: 6.14in; height: 5.84in; border: 1px solid #000000; padding: 0.05in 0.1in; background: #ffffff">
+				<P STYLE="margin-bottom: 0in"><BR>
+				</P>
+				<P STYLE="margin-bottom: 0in"><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>public</B></FONT></FONT></FONT>
+				<FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>class</B></FONT></FONT></FONT>
+				<FONT FACE="Courier New, monospace"><FONT SIZE=2>LightTest {</FONT></FONT></P>
+				<P STYLE="margin-bottom: 0in"><FONT COLOR="#7f0055">&nbsp;&nbsp;&nbsp;&nbsp;
+				</FONT><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>void</B></FONT></FONT></FONT>
+				<FONT FACE="Courier New, monospace"><FONT SIZE=2>main (String[]
+				args)</FONT></FONT></P>
+				<P STYLE="margin-bottom: 0in"><FONT COLOR="#7f0055">&nbsp;&nbsp;&nbsp;
+				</FONT><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>throws</B></FONT></FONT></FONT>
+				<FONT FACE="Courier New, monospace"><FONT SIZE=2>Exception</FONT></FONT></P>
+				<P STYLE="margin-bottom: 0in">&nbsp;&nbsp;&nbsp; <FONT FACE="Courier New, monospace"><FONT SIZE=2>{</FONT></FONT></P>
+				<P STYLE="margin-bottom: 0in">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<FONT FACE="Courier New, monospace"><FONT SIZE=2>LightSensor
+				light = </FONT></FONT><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>new</B></FONT></FONT></FONT>
+				<FONT FACE="Courier New, monospace"><FONT SIZE=2>LightSensor(SensorPort.</FONT></FONT><FONT COLOR="#0000c0"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>S1</I></FONT></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2>);</FONT></FONT></P>
+				<P STYLE="margin-bottom: 0in">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+								</P>
+				<P STYLE="margin-bottom: 0in"><FONT COLOR="#7f0055">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				</FONT><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>while</B></FONT></FONT></FONT>
+				<FONT FACE="Courier New, monospace"><FONT SIZE=2>(</FONT></FONT><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>true</B></FONT></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2>)
+				{</FONT></FONT></P>
+				<P STYLE="margin-bottom: 0in">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<FONT FACE="Courier New, monospace"><FONT SIZE=2>LCD.</FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>drawInt</I></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2>(light.readValue(),
+				4, 0, 0);</FONT></FONT></P>
+				<P STYLE="margin-bottom: 0in">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<FONT FACE="Courier New, monospace"><FONT SIZE=2>LCD.</FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>drawInt</I></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2>(light.readNormalizedValue(),
+				4, 0, 1);</FONT></FONT></P>
+				<P STYLE="margin-bottom: 0in">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<FONT FACE="Courier New, monospace"><FONT SIZE=2>LCD.</FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>drawInt</I></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2>(SensorPort.</FONT></FONT><FONT COLOR="#0000c0"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>S1</I></FONT></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2>.readRawValue(),
+				4,&nbsp; 0, 2);</FONT></FONT></P>
+				<P STYLE="margin-bottom: 0in">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<FONT FACE="Courier New, monospace"><FONT SIZE=2>LCD.</FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>drawInt</I></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2>(SensorPort.</FONT></FONT><FONT COLOR="#0000c0"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>S1</I></FONT></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2>.</FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2><SPAN STYLE="background: #c0c0c0">readValue</SPAN></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2>(),
+				4,&nbsp; 0, 3);</FONT></FONT></P>
+				<P STYLE="margin-bottom: 0in">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<FONT FACE="Courier New, monospace"><FONT SIZE=2>Thread.sleep(2000);</FONT></FONT></P>
+				<P STYLE="margin-bottom: 0in">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <FONT FACE="Courier New, monospace"><FONT SIZE=2>}</FONT></FONT></P>
+				<P CLASS="western" STYLE="margin-bottom: 0in">&nbsp;&nbsp;&nbsp;
+				<FONT FACE="Courier New, monospace"><FONT SIZE=2>}</FONT></FONT></P>
+			</SPAN><BR CLEAR=LEFT><BR><BR>
+			</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><BR><BR>
+			</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><FONT COLOR="#0000ff"><U><A HREF="">Back
+			to Top</A></U></FONT></P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
+			<H2 CLASS="western"><A NAME="_Sound_Sensor_1"></A><A NAME="_Sound_Sensor"></A>
+			Sound Sensor</H2>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">The sound
+			sensor supports two modes: DB and DBA.&nbsp;&nbsp; These modes
+			give&nbsp; different frequency response, so that it may be
+			possible to get an idea of the frequency of a sound by switching
+			between modes. 
+			</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">There are two
+			constructors:</P>
+			<UL>
+				<LI><P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;&nbsp;&nbsp;&nbsp;
+				SoundSensor(SensorPort port) <BR>creates a sound sensor using DB
+				mode.</P>
+				<LI><P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				SoundSensor(SensorPort port, dba)<BR>creates a sound sensor using
+				DBA mode if the second parameter is <I><B>true</B></I>.</P>
+			</UL>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">You can
+			switch modes with:</P>
+			<UL>
+				<LI><P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"> void
+				setDBA(boolean dba)</P>
+			</UL>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">Example using
+			DB mode only:</P>
+			<TABLE WIDTH=592 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=4 CELLSPACING=0 FRAME=RHS>
+				<COL WIDTH=8>
+				<COL WIDTH=567>
+				<TR VALIGN=TOP>
+					<TD WIDTH=8>
+						<P><BR>
+						</P>
+					</TD>
+					<TD WIDTH=567>
+						<P><IMG SRC="LCD_Sensors_files/image004.gif" NAME="graphics4" WIDTH=590 HEIGHT=393 BORDER=0>
+						  
+						</P>
+					</TD>
+				</TR>
+			</TABLE>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><A NAME="_x0000_i1028"></A>
+			<BR><BR>
+			</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">The above
+			example gives a graphical display of the way the sound reading
+			varies over a two-second period. 
+			</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;   
+			</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><FONT COLOR="#0000ff"><U><A HREF="">Back
+			to Top</A></U></FONT></P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
+			<H2 CLASS="western"><A NAME="_Ultrasonic_Sensor_1"></A><A NAME="_Ultrasonic_Sensor"></A>
+			Ultrasonic Sensor</H2>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">To create an
+			instance&nbsp; use the constructor:</P>
+			<UL>
+				<LI><P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">
+				UltrasonicSensor( Port aSensorPort); 
+				</P>
+			</UL>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">The sensor
+			operates in two modes, continuous (defalt) and ping.&nbsp; When in
+			continuous mode the sensor sends out pings as often as it can and
+			the most recently obtained result is available via a call to</P>
+			<UL>
+				<LI><P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				int getDistance()<BR>The return value is in centimeters.&nbsp; If
+				no echo was detected, the returned value is 255.&nbsp; The
+				maximum range of the sensor is about 170 cm.&nbsp; 
+				</P>
+			</UL>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">When in ping
+			mode, a ping is sent only when a call is made to</P>
+			<UL>
+				<LI><P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;&nbsp;&nbsp;&nbsp;
+					void ping()<BR>This sets the sensor in ping mode and sends a
+				single ping and up to 8 echoes are captured.&nbsp; These may be
+				read by making a call to</P>
+				<LI><P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;&nbsp;&nbsp;&nbsp;
+				int readDistances(int [] distances);<BR>You provide an integer
+				array of length that contains the data after the method returns.&nbsp;
+				A delay of approximately 20ms is required between the call to
+				ping and getDistances. This delay is not included in the method.
+				Calls to getDistances before this period may result in an error
+				or no data being returned. The normal getDistance call may also
+				be used with ping, returning information for the first echo.
+				<BR>Calling&nbsp; ping()&nbsp; will disable the default
+				continuous mode. Toto switch back to continuous mode, call</P>
+				<LI><P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;&nbsp;
+				int continuous()</P>
+			</UL>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">Example:</P>
+			<P LANG="" STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><SPAN ID="Frame8" DIR="LTR" STYLE="float: left; width: 5.25in; height: 3.18in; border: 1px solid #000000; padding: 0.05in 0.1in; background: #ffffff">
+				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in"><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>import</B></FONT></FONT></FONT>
+				<FONT FACE="Courier New, monospace"><FONT SIZE=2><SPAN STYLE="background: #c0c0c0">lejos.nxt.*</SPAN></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2>;</FONT></FONT></P>
+				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;</P>
+				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in"><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>public</B></FONT></FONT></FONT>
+				<FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>class</B></FONT></FONT></FONT>
+				<FONT FACE="Courier New, monospace"><FONT SIZE=2>SonicTest {&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				</FONT></FONT>
+				</P>
+				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;&nbsp;
+				<FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>void</B></FONT></FONT></FONT>
+				<FONT FACE="Courier New, monospace"><FONT SIZE=2>main(String[]
+				args) </FONT></FONT><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>throws</B></FONT></FONT></FONT>
+				<FONT FACE="Courier New, monospace"><FONT SIZE=2>Exception {</FONT></FONT></P>
+				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<FONT FACE="Courier New, monospace"><FONT SIZE=2>UltrasonicSensor
+				sonic = </FONT></FONT><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>new</B></FONT></FONT></FONT></P>
+				<P STYLE="margin-left: 1in; margin-top: 0.02in; margin-bottom: 0.02in">
+				&nbsp;<FONT FACE="Courier New, monospace"><FONT SIZE=2>UltrasonicSensor(SensorPort.</FONT></FONT><FONT COLOR="#0000c0"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>S1</I></FONT></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2>);</FONT></FONT></P>
+				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+								</P>
+				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>while</B></FONT></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2>(!</FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2><SPAN STYLE="background: #c0c0c0">Button</SPAN></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2>.</FONT></FONT><FONT COLOR="#0000c0"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>ESCAPE</I></FONT></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2>.isPressed())
+				{</FONT></FONT></P>
+				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<FONT FACE="Courier New, monospace"><FONT SIZE=2>LCD.</FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>clear</I></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2>();</FONT></FONT></P>
+				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<FONT FACE="Courier New, monospace"><FONT SIZE=2>LCD.</FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>drawInt</I></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2>(sonic.getDistance(),
+				0, 3);</FONT></FONT></P>
+				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<FONT FACE="Courier New, monospace"><FONT SIZE=2>}</FONT></FONT></P>
+				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;&nbsp;
+				<FONT FACE="Courier New, monospace"><FONT SIZE=2>} </FONT></FONT>
+				</P>
+				<P CLASS="western" STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
+				<FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">}</FONT></FONT></P>
+			</SPAN><BR><BR>
+			</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><BR><BR>
+			</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><BR><BR>
+			</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><BR><BR>
+			</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><BR><BR>
+			</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><BR><BR>
+			</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><BR><BR>
+			</P>
+			<P CLASS="western" STYLE="margin-bottom: 0in"><A NAME="_Program%253A_multiple_echoes_1"></A><A NAME="_Program%253A_multiple_echoes"></A>
+			<BR>
+			</P>
+			<H3 LANG="en-GB" CLASS="western">Program: multiple echoes</H3>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">Write a
+			program that displays the distances from multiple echoes in a
+			column. The program should make four calls to ping(), and display
+			the four columns of results, then wait for a button press.&nbsp;&nbsp;
+			Exit if the ESCAPE button was pressed. 
+			</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><FONT COLOR="#0000ff"><U><A HREF="LCD_Sensors_files/USPingTest.html" TARGET="_blank"><B>Solution</B></A></U></FONT></P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><FONT COLOR="#0000ff"><U><A HREF="">Back
+			to Top</A></U></FONT></P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
+			<P CLASS="western" STYLE="margin-top: 0.19in; margin-bottom: 0.19in">
+			<BR><BR>
+			</P>
+		</TD>
+	</TR>
+</TABLE>
+<P CLASS="western" STYLE="margin-bottom: 0.19in"><BR><BR>
+</P>
+<P CLASS="western" STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><BR><BR>
+</P>
+<H1 CLASS="western"></H1>
+</BODY>
+</HTML>
