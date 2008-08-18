@@ -130,14 +130,19 @@ boolean init_thread (Thread *thread)
     throw_exception(illegalStateException);
     return false;
   }
-  
+  // Protected the argument (that may have come from native code), from the GC
+  protectedRef[0] = (Object *)thread;
   // Allocate space for stack frames.
   thread->stackFrameArray = ptr2word (new_primitive_array (T_STACKFRAME, INITIAL_STACK_FRAMES));
   if (thread->stackFrameArray == JNULL)
+  {
+    protectedRef[0] = JNULL;
     return false;
+  }
     
   // Allocate actual stack storage (INITIAL_STACK_SIZE * 4 bytes)
   thread->stackArray = ptr2word (new_primitive_array (T_INT, INITIAL_STACK_SIZE));
+  protectedRef[0] = JNULL;
   if (thread->stackArray == JNULL)
   {
     free_array (ref2obj(thread->stackFrameArray));
