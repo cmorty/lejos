@@ -126,7 +126,7 @@ void throw_exception (Object *exception)
       if (instance_of (exception, gExceptionRecord->classIndex))
       {
         // Clear operand stack
-        init_sp (tempStackFrame, tempMethodRecord);
+        curStackTop = init_sp (tempStackFrame, tempMethodRecord);
         // Push the exception object
         push_ref_cur (ptr2word (exception));
         // Jump to handler:

@@ -168,12 +168,20 @@ void dispatch_special_checked (byte classIndex, byte methodIndex,
  */
 boolean dispatch_special (MethodRecord *methodRecord, byte *retAddr)
 {
+  /**
+   * Note: This code is a little tricky, particularly when used with
+   * a garbage collector. It manipulates the stack frame and in some cases
+   * may need to perform memory allocation. In all cases we must take care
+   * to ensure that if an allocation can be made then any live objects
+   * on the stack must be below the current stack pointer.
+   */
   #if DEBUG_METHODS
   int debug_ctr;
   #endif
 
   StackFrame *stackFrame;
   byte newStackFrameIndex;
+  STACKWORD *newStackTop;
 
   #if DEBUG_BYTECODE
   printf ("\n------ dispatch special - %d ------------------\n\n",
@@ -191,7 +199,6 @@ boolean dispatch_special (MethodRecord *methodRecord, byte *retAddr)
   printf ("-- max stack ptr= %d\n", (int) (currentThread->stackArray + (get_array_size(currentThread->stackArray))*2));
   #endif
 
-  pop_words_cur (methodRecord->numParameters);
   curPc = retAddr;
 
   if (is_native (methodRecord))
@@ -199,6 +206,13 @@ boolean dispatch_special (MethodRecord *methodRecord, byte *retAddr)
   #if DEBUG_METHODS
   printf ("-- native\n");
   #endif 
+    // WARNING: Once the instruction below has been executed we may have
+    // references on the stack that are above the stack pointer. If a GC
+    // gets run when in this state the reference may get collected as
+    // grabage. This means that any native functions that take a reference
+    // parameter and that may end up allocating memory *MUST* protect that
+    // reference before calling the allocator...
+    pop_words_cur (methodRecord->numParameters);
     dispatch_native (methodRecord->signatureId, get_stack_ptr_cur() + 1);
     // Stack frame not pushed
     return false;
@@ -248,6 +262,7 @@ boolean dispatch_special (MethodRecord *methodRecord, byte *retAddr)
     // Save OLD stackFrame state
     stackFrame = stackframe_array() + (newStackFrameIndex - 1);
     update_stack_frame (stackFrame);
+    stackFrame->stackTop = get_stack_ptr_cur() - methodRecord->numParameters;
     // Push NEW stack frame
     stackFrame++;
   }
@@ -256,7 +271,7 @@ boolean dispatch_special (MethodRecord *methodRecord, byte *retAddr)
   // Initialize rest of new stack frame
   stackFrame->methodRecord = methodRecord;
   stackFrame->monitor = null;
-  stackFrame->localsBase = get_stack_ptr_cur() + 1;
+  stackFrame->localsBase = (get_stack_ptr_cur() - methodRecord->numParameters) + 1;
   // Initialize auxiliary global variables (registers)
   curPc = get_code_ptr(methodRecord);
 
@@ -264,14 +279,14 @@ boolean dispatch_special (MethodRecord *methodRecord, byte *retAddr)
   printf ("pc set to 0x%X\n", (int) pc);
   #endif
 
-  init_sp (stackFrame, methodRecord);
+  newStackTop = init_sp(stackFrame, methodRecord);
   update_constant_registers (stackFrame);
   
   //printf ("m %d stack = %d\n", (int) methodRecord->signatureId, (int) (localsBase - stack_array())); 
   
   // Check for stack overflow
   // (stackTop + methodRecord->maxOperands) >= (stack_array() + STACK_SIZE);
-  if (is_stack_overflow (methodRecord))
+  if (is_stack_overflow (newStackTop, methodRecord))
   {
 #if !FIXED_STACK_SIZE
     StackFrame *stackBase;
@@ -281,7 +296,7 @@ boolean dispatch_special (MethodRecord *methodRecord, byte *retAddr)
     // int len = (int)(stackTop + methodRecord->maxOperands) - (int)(stack_array()) - HEADER_SIZE;
     
     // Need to compute new array size (as distinct from number of bytes in array).
-    int newlen = (((int)(curStackTop + methodRecord->maxOperands) - (int)(stack_array()) + 3) / 4) * 3 / 2;
+    int newlen = (((int)(newStackTop + methodRecord->maxOperands) - (int)(stack_array()) + 3) / 4) * 3 / 2;
     JINT newStackArray = ptr2word(reallocate_array(word2ptr(currentThread->stackArray), newlen));
 
     // If can't allocate new stack, give in!
@@ -295,7 +310,7 @@ boolean dispatch_special (MethodRecord *methodRecord, byte *retAddr)
     // Adjust pointers.
     newlen = array_start((Object *)newStackArray) - array_start((Object *)(currentThread->stackArray));
     stackBase = stackframe_array();
-    curStackTop = word2ptr(ptr2word(curStackTop) + newlen);
+    newStackTop = word2ptr(ptr2word(newStackTop) + newlen);
     curLocalsBase = word2ptr(ptr2word(curLocalsBase) + newlen);
 #if DEBUG_MEMORY
     printf("thread=%d, stackTop(%d), localsBase(%d)=%d\n", currentThread->threadId, (int)stackTop, (int)localsBase, (int)(*localsBase));
@@ -314,6 +329,7 @@ boolean dispatch_special (MethodRecord *methodRecord, byte *retAddr)
     currentThread->stackArray = newStackArray;
 #endif
   } 
+  curStackTop = newStackTop;
   return true;
 }
 

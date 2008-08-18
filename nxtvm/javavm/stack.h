@@ -25,9 +25,9 @@
 /**
  * Clears the operand stack for the given stack frame.
  */
-static inline void init_sp (StackFrame *stackFrame, MethodRecord *methodRecord)
+static inline STACKWORD * init_sp (StackFrame *stackFrame, MethodRecord *methodRecord)
 {
-  curStackTop = stackFrame->localsBase + methodRecord->numLocals - 1;
+  return stackFrame->localsBase + methodRecord->numLocals - 1;
 }
 
 /**
@@ -43,9 +43,9 @@ static inline void init_sp_pv (void)
 /**
  * With stack cleared, checks for stack overflow in given method.
  */
-static inline boolean is_stack_overflow (MethodRecord *methodRecord)
+static inline boolean is_stack_overflow (STACKWORD *stackTop, MethodRecord *methodRecord)
 {
-  return (curStackTop + methodRecord->maxOperands) >= (stack_array() + get_array_length((Object *) word2ptr (currentThread->stackArray)));
+  return (stackTop + methodRecord->maxOperands) >= (stack_array() + get_array_length((Object *) word2ptr (currentThread->stackArray)));
 }
 
 extern void update_stack_frame (StackFrame *stackFrame);
