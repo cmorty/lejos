@@ -1,0 +1,153 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=windows-1252">
+	<TITLE>Listeners and Events</TITLE>
+	<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.4  (Win32)">
+	<META NAME="AUTHOR" CONTENT="Roger">
+	<META NAME="CREATED" CONTENT="20080818;19560000">
+	<META NAME="CHANGED" CONTENT="20080818;20085939">
+	<STYLE TYPE="text/css">
+	<!--
+		@page { size: 8.5in 11in; margin-right: 1.25in; margin-top: 1in; margin-bottom: 1in }
+		P { margin-bottom: 0.08in; direction: ltr; color: #000000; widows: 2; orphans: 2 }
+		P.western { font-family: "Times New Roman", serif; font-size: 12pt; so-language: en-US }
+		P.cjk { font-family: "Times New Roman", serif; font-size: 12pt }
+		P.ctl { font-family: "Times New Roman", serif; font-size: 12pt; so-language: ar-SA }
+		H1 { margin-top: 0.19in; margin-bottom: 0.04in; direction: ltr; color: #ff6600; widows: 2; orphans: 2; page-break-after: auto }
+		H1.western { font-family: "Times New Roman", serif; so-language: en-US }
+		H1.cjk { font-family: "Times New Roman", serif }
+		H1.ctl { font-family: "Times New Roman", serif; so-language: ar-SA }
+		H2 { margin-top: 0.19in; margin-bottom: 0.08in; direction: ltr; color: #ff6600; widows: 2; orphans: 2; page-break-after: auto }
+		H2.western { so-language: en-US }
+		H2.cjk { font-family: "Times New Roman", serif }
+		H2.ctl { font-family: "Times New Roman", serif; so-language: ar-SA }
+		A:link { color: #0000ff }
+		A:visited { color: #800080 }
+	-->
+	</STYLE>
+</HEAD>
+<BODY LANG="en-US" TEXT="#000000" LINK="#0000ff" VLINK="#800080" DIR="LTR">
+<TABLE WIDTH=888 BORDER=0 CELLPADDING=4 CELLSPACING=0 STYLE="page-break-before: always">
+	<COL WIDTH=189>
+	<COL WIDTH=683>
+	<TR VALIGN=TOP>
+		<TD WIDTH=189>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.08in"><FONT COLOR="#0000ff"><U><A HREF="#_Threads,_Listeners_and_Events">Threads,
+			Listeners and Events</A></U></FONT></P>
+			<P STYLE="margin-left: 0.17in; margin-top: 0.19in; margin-bottom: 0.08in">
+			<FONT COLOR="#0000ff"><U><A HREF="#_Java_Threads">Java Threads</A></U></FONT></P>
+			<P STYLE="margin-left: 0.17in; margin-top: 0.19in; margin-bottom: 0.08in">
+			<FONT COLOR="#0000ff"><U><A HREF="#1.2.Listeners_and_Events|outline">Listeners
+			and Events</A></U></FONT></P>
+			<P STYLE="margin-top: 0.19in"><BR>
+			</P>
+		</TD>
+		<TD WIDTH=683>
+			<H1 CLASS="western"><A NAME="_Threads,_Listeners_and_Events"></A><A NAME="_Threads,_Listeners_and_Events_C"></A><A NAME="1.Threads,_Listeners_and_Events_;_|outli"></A>
+			<FONT FACE="Arial, sans-serif"><FONT SIZE=4 STYLE="font-size: 16pt">Threads,
+			Listeners and Events </FONT></FONT>
+			</H1>
+			<H2 CLASS="western"><A NAME="_Java_Threads"></A><A NAME="1.1.Java_Threads|outline"></A>
+			<FONT FACE="Arial, sans-serif"><FONT SIZE=4 STYLE="font-size: 13pt"><I>Java
+			Threads</I></FONT></FONT></H2>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.17in"><BR><BR>
+			</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.08in">When a Java
+			program starts, there is a single thread running &ndash; the main
+			thread.</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.08in">Many of the
+			leJOS classes start extra threads running for various purposes,
+			for example:</P>
+			<UL>
+				<LI><P STYLE="margin-top: 0.19in; margin-bottom: 0.08in">Button
+				and SensorPort star a listener thread if listeners are used</P>
+				<LI><P STYLE="margin-bottom: 0.08in">Each Motor has a regulator
+				thread</P>
+				<LI><P STYLE="margin-bottom: 0.08in">The Bluetooth class starts a
+				thread to talk to the separate Bluetooth chip</P>
+				<LI><P STYLE="margin-bottom: 0.19in">Each Timer object starts a
+				timer thread</P>
+			</UL>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.17in"><BR><BR>
+			</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.08in">User programs
+			can create their own threads by subclassing Thread, and then using
+			the start method to start the thread. Note that the Runnable
+			interface is not implemented by leJOS, so new threads cannot be
+			created by implementing Runnable classes. User threads in leJOS
+			must subclass Thread and implement the run() method.</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.08in">Background
+			threads that do not need to terminate in order for the user
+			program to terminate, should be marked as daemon threads by
+			calling setDaemon(true).</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.08in">When using
+			threads, care should be taken with concurrency issues. When data
+			items are accessed by multiple threads, synchronization is
+			necessary to ensure that data is not read when it is in an
+			inconsistent state.</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.08in">leJOS
+			supports the standard Java synchronization mechanisms:
+			synchronized methods and synchronized statements using a monitor
+			object. There are some restrictions in the way leJOS handles
+			concurrency and synchronization &ndash; see the leKOS NXJ
+			README.html file.</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.08in">As an example
+			of a leJOS thread, consider the Indicators thread in the leJOS
+			StartUpText menu. This is used to keep the display of the battery
+			level up to date, by reading its value every second, and to
+			indicate when the menu is uploading files or doing other
+			communication from the PC:</P>
+			<P CLASS="western" STYLE="margin-bottom: 0.17in"><BR><BR><BR>
+			</P>
+			<P LANG="" STYLE="margin-top: 0.19in; margin-bottom: 0.17in"><IMG SRC="Listeners%20_Events_html_m263acd46.gif" NAME="Frame1" ALT="Frame1" WIDTH=553 HEIGHT=523></P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0in">The main method
+			starts this thread by:</P>
+			<P LANG="" STYLE="margin-top: 0.19in; margin-bottom: 0in"><IMG SRC="Listeners%20_Events_html_12b536f0.gif" NAME="Frame2" ALT="Frame2"></P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.08in"><FONT COLOR="#0000ff"><U><A HREF="#1.Threads,_Listeners_and_Events_;_|outl">Back
+			to Top</A></U></FONT></P>
+			<H2 CLASS="western"><A NAME="1.2.Listeners_and_Events|outline"></A><A NAME="1.2.Listeners_and_Events|outline"></A>
+			<FONT FACE="Arial, sans-serif"><FONT SIZE=4 STYLE="font-size: 13pt"><I>Listeners
+			and Events</I></FONT></FONT></H2>
+			<P STYLE="margin-left: 0.1in; margin-top: 0.19in; margin-bottom: 0.08in">
+			leJOS implements a listener thread that listens for particular
+			events.</P>
+			<P STYLE="margin-left: 0.1in; margin-top: 0.19in; margin-bottom: 0.08in">
+			The listener thread supports:</P>
+			<UL>
+				<LI><P STYLE="margin-top: 0.19in; margin-bottom: 0.08in">Button
+				Listeners</P>
+				<LI><P STYLE="margin-bottom: 0.19in">Sensor Port Listeners</P>
+			</UL>
+			<P STYLE="margin-left: 0.1in; margin-top: 0.19in; margin-bottom: 0.08in">
+			Button listeners are used to detect when a button is pressed,
+			whatever your program is doing at the time.</P>
+			<P STYLE="margin-left: 0.1in; margin-top: 0.19in; margin-bottom: 0.08in">
+			To listen for a press of a specific button, you register as
+			listener for that button.</P>
+			<P STYLE="margin-left: 0.1in; margin-top: 0.19in; margin-bottom: 0.08in">
+			Example:</P>
+			<P STYLE="margin-left: 0.1in; margin-top: 0.19in; margin-bottom: 0.17in">
+			<BR><BR>
+			</P>
+			<P STYLE="margin-left: 0.1in; margin-top: 0.19in; margin-bottom: 0.08in">
+			<IMG SRC="Listeners_%20Events_doc_m20ac10ea.gif" NAME="graphics1" ALIGN=BOTTOM WIDTH=512 HEIGHT=462 BORDER=0>
+						</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.17in"><BR><BR>
+			</P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.08in"><FONT COLOR="#0000ff"><U><A HREF="#1.Threads,_Listeners_and_Events_;_|outl">Back
+			to Top</A></U></FONT></P>
+			<P STYLE="margin-top: 0.19in; margin-bottom: 0.17in"><BR><BR>
+			</P>
+			<P STYLE="margin-top: 0.19in"><BR>
+			</P>
+		</TD>
+	</TR>
+</TABLE>
+<P STYLE="margin-top: 0.19in; margin-bottom: 0.17in"><BR><BR>
+</P>
+<P STYLE="margin-top: 0.19in; margin-bottom: 0.17in"><A NAME="_Listeners_and_Events"></A>
+<BR><BR>
+</P>
+</BODY>
+</HTML>
