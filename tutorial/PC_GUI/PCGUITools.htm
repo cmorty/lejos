@@ -1,988 +1,308 @@
-<html xmlns:v="urn:schemas-microsoft-com:vml"
-xmlns:o="urn:schemas-microsoft-com:office:office"
-xmlns:w="urn:schemas-microsoft-com:office:word"
-xmlns="http://www.w3.org/TR/REC-html40">
-
-<head>
-<meta http-equiv=Content-Type content="text/html; charset=windows-1252">
-<meta name=ProgId content=Word.Document>
-<meta name=Generator content="Microsoft Word 10">
-<meta name=Originator content="Microsoft Word 10">
-<link rel=File-List href="PCGUITools_files/filelist.xml">
-<link rel=Edit-Time-Data href="PCGUITools_files/editdata.mso">
-<!--[if !mso]>
-<style>
-v\:* {behavior:url(#default#VML);}
-o\:* {behavior:url(#default#VML);}
-w\:* {behavior:url(#default#VML);}
-.shape {behavior:url(#default#VML);}
-</style>
-<![endif]-->
-<title>PC</title>
-<!--[if gte mso 9]><xml>
- <o:DocumentProperties>
-  <o:Author>Roger</o:Author>
-  <o:Template>NXJTutorialTemplate.dot</o:Template>
-  <o:LastAuthor>Roger</o:LastAuthor>
-  <o:Revision>5</o:Revision>
-  <o:TotalTime>874</o:TotalTime>
-  <o:Created>2008-06-29T21:35:00Z</o:Created>
-  <o:LastSaved>2008-08-04T18:45:00Z</o:LastSaved>
-  <o:Pages>1</o:Pages>
-  <o:Words>935</o:Words>
-  <o:Characters>5331</o:Characters>
-  <o:Company>UC Bereley</o:Company>
-  <o:Lines>44</o:Lines>
-  <o:Paragraphs>12</o:Paragraphs>
-  <o:CharactersWithSpaces>6254</o:CharactersWithSpaces>
-  <o:Version>10.4219</o:Version>
- </o:DocumentProperties>
-</xml><![endif]--><!--[if gte mso 9]><xml>
- <w:WordDocument>
-  <w:Zoom>118</w:Zoom>
-  <w:SpellingState>Clean</w:SpellingState>
-  <w:GrammarState>Clean</w:GrammarState>
-  <w:AttachedTemplate HRef="NXJTutorialTemplate.dot"></w:AttachedTemplate>
-  <w:UpdateStylesOnOpen/>
-  <w:Compatibility>
-   <w:BreakWrappedTables/>
-   <w:SnapToGridInCell/>
-   <w:WrapTextWithPunct/>
-   <w:UseAsianBreakRules/>
-  </w:Compatibility>
-  <w:BrowserLevel>MicrosoftInternetExplorer4</w:BrowserLevel>
- </w:WordDocument>
-</xml><![endif]-->
-<style>
-<!--
- /* Font Definitions */
- @font-face
-	{font-family:Wingdings;
-	panose-1:5 0 0 0 0 0 0 0 0 0;
-	mso-font-charset:2;
-	mso-generic-font-family:auto;
-	mso-font-pitch:variable;
-	mso-font-signature:0 268435456 0 0 -2147483648 0;}
- /* Style Definitions */
- p.MsoNormal, li.MsoNormal, div.MsoNormal
-	{mso-style-parent:"";
-	margin-top:0in;
-	margin-right:0in;
-	margin-bottom:6.0pt;
-	margin-left:0in;
-	mso-pagination:widow-orphan;
-	font-size:12.0pt;
-	font-family:"Times New Roman";
-	mso-fareast-font-family:"Times New Roman";}
-h1
-	{mso-style-next:"Body Text";
-	margin-top:12.0pt;
-	margin-right:0in;
-	margin-bottom:3.0pt;
-	margin-left:0in;
-	mso-pagination:widow-orphan;
-	page-break-after:avoid;
-	mso-outline-level:1;
-	font-size:16.0pt;
-	font-family:Arial;
-	color:#FF6600;
-	mso-font-kerning:16.0pt;}
-h2
-	{mso-style-parent:"Heading 1";
-	mso-style-next:"Body Text 2";
-	margin-top:12.0pt;
-	margin-right:0in;
-	margin-bottom:6.0pt;
-	margin-left:0in;
-	mso-pagination:widow-orphan;
-	page-break-after:avoid;
-	mso-outline-level:2;
-	font-size:14.0pt;
-	font-family:Arial;
-	color:#FF6600;
-	mso-font-kerning:16.0pt;
-	font-weight:normal;
-	font-style:italic;}
-h3
-	{mso-style-parent:"Heading 2";
-	mso-style-link:Char;
-	mso-style-next:"Body Text 3";
-	margin-top:12.0pt;
-	margin-right:0in;
-	margin-bottom:6.0pt;
-	margin-left:.2in;
-	mso-pagination:widow-orphan;
-	page-break-after:avoid;
-	mso-outline-level:3;
-	font-size:13.0pt;
-	font-family:Arial;
-	color:#FF6600;
-	mso-ansi-language:EN-GB;
-	mso-fareast-language:EN-GB;}
-h4
-	{mso-style-parent:"Heading 3";
-	mso-style-next:"Body Text 4";
-	margin-top:12.0pt;
-	margin-right:0in;
-	margin-bottom:3.0pt;
-	margin-left:.3in;
-	mso-pagination:widow-orphan;
-	page-break-after:avoid;
-	mso-outline-level:4;
-	font-size:12.0pt;
-	font-family:Arial;
-	color:black;
-	mso-ansi-language:EN-GB;
-	mso-fareast-language:EN-GB;
-	mso-bidi-font-weight:normal;
-	mso-bidi-font-style:italic;}
-p.MsoToc1, li.MsoToc1, div.MsoToc1
-	{mso-style-update:auto;
-	mso-style-noshow:yes;
-	mso-style-next:Normal;
-	margin-top:0in;
-	margin-right:0in;
-	margin-bottom:6.0pt;
-	margin-left:0in;
-	mso-pagination:widow-orphan;
-	font-size:12.0pt;
-	font-family:"Times New Roman";
-	mso-fareast-font-family:"Times New Roman";}
-p.MsoToc2, li.MsoToc2, div.MsoToc2
-	{mso-style-update:auto;
-	mso-style-noshow:yes;
-	mso-style-next:Normal;
-	margin-top:0in;
-	margin-right:0in;
-	margin-bottom:6.0pt;
-	margin-left:12.0pt;
-	mso-pagination:widow-orphan;
-	font-size:12.0pt;
-	font-family:"Times New Roman";
-	mso-fareast-font-family:"Times New Roman";}
-p.MsoToc3, li.MsoToc3, div.MsoToc3
-	{mso-style-update:auto;
-	mso-style-noshow:yes;
-	mso-style-next:Normal;
-	margin-top:0in;
-	margin-right:0in;
-	margin-bottom:6.0pt;
-	margin-left:24.0pt;
-	mso-pagination:widow-orphan;
-	font-size:12.0pt;
-	font-family:"Times New Roman";
-	mso-fareast-font-family:"Times New Roman";}
-p.MsoBodyText, li.MsoBodyText, div.MsoBodyText
-	{margin-top:0in;
-	margin-right:0in;
-	margin-bottom:6.0pt;
-	margin-left:0in;
-	mso-pagination:widow-orphan;
-	font-size:12.0pt;
-	font-family:"Times New Roman";
-	mso-fareast-font-family:"Times New Roman";}
-p.MsoBodyText2, li.MsoBodyText2, div.MsoBodyText2
-	{mso-style-parent:"Body Text";
-	margin-top:0in;
-	margin-right:0in;
-	margin-bottom:6.0pt;
-	margin-left:.1in;
-	mso-pagination:widow-orphan;
-	font-size:12.0pt;
-	font-family:"Times New Roman";
-	mso-fareast-font-family:"Times New Roman";}
-p.MsoBodyText3, li.MsoBodyText3, div.MsoBodyText3
-	{mso-style-parent:"Body Text 2";
-	margin-top:0in;
-	margin-right:0in;
-	margin-bottom:6.0pt;
-	margin-left:.2in;
-	mso-pagination:widow-orphan;
-	font-size:12.0pt;
-	mso-bidi-font-size:8.0pt;
-	font-family:"Times New Roman";
-	mso-fareast-font-family:"Times New Roman";}
-a:link, span.MsoHyperlink
-	{color:blue;
-	text-decoration:underline;
-	text-underline:single;}
-a:visited, span.MsoHyperlinkFollowed
-	{color:purple;
-	text-decoration:underline;
-	text-underline:single;}
-span.Char
-	{mso-style-name:Char;
-	mso-style-link:"Heading 3";
-	mso-ansi-font-size:13.0pt;
-	mso-bidi-font-size:13.0pt;
-	font-family:Arial;
-	mso-ascii-font-family:Arial;
-	mso-hansi-font-family:Arial;
-	mso-bidi-font-family:Arial;
-	color:#FF6600;
-	mso-ansi-language:EN-GB;
-	mso-fareast-language:EN-GB;
-	mso-bidi-language:AR-SA;
-	font-weight:bold;}
-p.BodyText4, li.BodyText4, div.BodyText4
-	{mso-style-name:"Body Text 4";
-	mso-style-parent:"Body Text 3";
-	margin-top:0in;
-	margin-right:0in;
-	margin-bottom:6.0pt;
-	margin-left:.3in;
-	mso-pagination:widow-orphan;
-	font-size:12.0pt;
-	mso-bidi-font-size:8.0pt;
-	font-family:"Times New Roman";
-	mso-fareast-font-family:"Times New Roman";}
-p.Heading1color, li.Heading1color, div.Heading1color
-	{mso-style-name:"Heading1 color";
-	mso-style-parent:"Heading 1";
-	mso-style-next:"Body Text";
-	margin-top:12.0pt;
-	margin-right:0in;
-	margin-bottom:3.0pt;
-	margin-left:0in;
-	mso-pagination:widow-orphan;
-	page-break-after:avoid;
-	mso-outline-level:1;
-	font-size:16.0pt;
-	font-family:Arial;
-	mso-fareast-font-family:"Times New Roman";
-	color:#FF6600;
-	mso-font-kerning:16.0pt;
-	font-weight:bold;}
-p.Heading2Color, li.Heading2Color, div.Heading2Color
-	{mso-style-name:"Heading2 Color";
-	mso-style-parent:"Heading 2";
-	mso-style-next:"Body Text 2";
-	margin-top:12.0pt;
-	margin-right:0in;
-	margin-bottom:6.0pt;
-	margin-left:0in;
-	mso-pagination:widow-orphan;
-	page-break-after:avoid;
-	mso-outline-level:2;
-	font-size:14.0pt;
-	font-family:Arial;
-	mso-fareast-font-family:"Times New Roman";
-	color:#FF6600;
-	mso-font-kerning:16.0pt;
-	font-style:italic;}
-p.Heading3color, li.Heading3color, div.Heading3color
-	{mso-style-name:"Heading3 color";
-	mso-style-update:auto;
-	mso-style-parent:"Heading 3";
-	mso-style-next:"Body Text 3";
-	margin-top:12.0pt;
-	margin-right:0in;
-	margin-bottom:6.0pt;
-	margin-left:.2in;
-	mso-pagination:widow-orphan;
-	page-break-after:avoid;
-	mso-outline-level:3;
-	font-size:13.0pt;
-	font-family:Arial;
-	mso-fareast-font-family:"Times New Roman";
-	color:#FF6600;
-	mso-ansi-language:EN-GB;
-	mso-fareast-language:EN-GB;
-	font-weight:bold;}
-span.SpellE
-	{mso-style-name:"";
-	mso-spl-e:yes;}
-span.GramE
-	{mso-style-name:"";
-	mso-gram-e:yes;}
-@page Section1
-	{size:8.5in 11.0in;
-	margin:1.0in 1.25in 1.0in 1.25in;
-	mso-header-margin:.5in;
-	mso-footer-margin:.5in;
-	mso-paper-source:0;}
-div.Section1
-	{page:Section1;}
- /* List Definitions */
- @list l0
-	{mso-list-id:-132;
-	mso-list-type:simple;
-	mso-list-template-ids:-1655899830;}
-@list l0:level1
-	{mso-level-tab-stop:1.25in;
-	mso-level-number-position:left;
-	margin-left:1.25in;
-	text-indent:-.25in;}
-@list l1
-	{mso-list-id:-131;
-	mso-list-type:simple;
-	mso-list-template-ids:-685490596;}
-@list l1:level1
-	{mso-level-tab-stop:1.0in;
-	mso-level-number-position:left;
-	margin-left:1.0in;
-	text-indent:-.25in;}
-@list l2
-	{mso-list-id:-130;
-	mso-list-type:simple;
-	mso-list-template-ids:948443036;}
-@list l2:level1
-	{mso-level-tab-stop:.75in;
-	mso-level-number-position:left;
-	margin-left:.75in;
-	text-indent:-.25in;}
-@list l3
-	{mso-list-id:-129;
-	mso-list-type:simple;
-	mso-list-template-ids:-871742908;}
-@list l3:level1
-	{mso-level-tab-stop:.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l4
-	{mso-list-id:-128;
-	mso-list-type:simple;
-	mso-list-template-ids:-1254185752;}
-@list l4:level1
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:1.25in;
-	mso-level-number-position:left;
-	margin-left:1.25in;
-	text-indent:-.25in;
-	font-family:Symbol;}
-@list l5
-	{mso-list-id:-127;
-	mso-list-type:simple;
-	mso-list-template-ids:-1802441078;}
-@list l5:level1
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:1.0in;
-	mso-level-number-position:left;
-	margin-left:1.0in;
-	text-indent:-.25in;
-	font-family:Symbol;}
-@list l6
-	{mso-list-id:-126;
-	mso-list-type:simple;
-	mso-list-template-ids:-48739110;}
-@list l6:level1
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:.75in;
-	mso-level-number-position:left;
-	margin-left:.75in;
-	text-indent:-.25in;
-	font-family:Symbol;}
-@list l7
-	{mso-list-id:-125;
-	mso-list-type:simple;
-	mso-list-template-ids:-1490543376;}
-@list l7:level1
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	font-family:Symbol;}
-@list l8
-	{mso-list-id:-120;
-	mso-list-type:simple;
-	mso-list-template-ids:-927711426;}
-@list l8:level1
-	{mso-level-tab-stop:.25in;
-	mso-level-number-position:left;
-	margin-left:.25in;
-	text-indent:-.25in;}
-@list l9
-	{mso-list-id:-119;
-	mso-list-type:simple;
-	mso-list-template-ids:1431183632;}
-@list l9:level1
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:.25in;
-	mso-level-number-position:left;
-	margin-left:.25in;
-	text-indent:-.25in;
-	font-family:Symbol;}
-@list l10
-	{mso-list-id:109134103;
-	mso-list-template-ids:-2048735070;}
-@list l10:level1
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l11
-	{mso-list-id:443042117;
-	mso-list-template-ids:733755854;}
-@list l11:level1
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:.25in;
-	mso-level-number-position:left;
-	margin-left:.25in;
-	text-indent:0in;
-	font-family:Symbol;}
-@list l11:level2
-	{mso-level-number-format:bullet;
-	mso-level-text:o;
-	mso-level-tab-stop:1.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	font-family:"Courier New";}
-@list l11:level3
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0A7;
-	mso-level-tab-stop:1.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	font-family:Wingdings;}
-@list l11:level4
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:2.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	font-family:Symbol;}
-@list l11:level5
-	{mso-level-number-format:bullet;
-	mso-level-text:o;
-	mso-level-tab-stop:2.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	font-family:"Courier New";}
-@list l11:level6
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0A7;
-	mso-level-tab-stop:3.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	font-family:Wingdings;}
-@list l11:level7
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:3.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	font-family:Symbol;}
-@list l11:level8
-	{mso-level-number-format:bullet;
-	mso-level-text:o;
-	mso-level-tab-stop:4.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	font-family:"Courier New";}
-@list l11:level9
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0A7;
-	mso-level-tab-stop:4.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	font-family:Wingdings;}
-@list l12
-	{mso-list-id:857041842;
-	mso-list-type:hybrid;
-	mso-list-template-ids:-1745708830 134807553 134807555 134807557 134807553 134807555 134807557 134807553 134807555 134807557;}
-@list l12:level1
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	font-family:Symbol;}
-@list l12:level2
-	{mso-level-tab-stop:1.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l12:level3
-	{mso-level-tab-stop:1.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l12:level4
-	{mso-level-tab-stop:2.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l12:level5
-	{mso-level-tab-stop:2.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l12:level6
-	{mso-level-tab-stop:3.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l12:level7
-	{mso-level-tab-stop:3.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l12:level8
-	{mso-level-tab-stop:4.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l12:level9
-	{mso-level-tab-stop:4.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l13
-	{mso-list-id:953512223;
-	mso-list-type:hybrid;
-	mso-list-template-ids:314469080 -1369821974 67698691 67698693 67698689 67698691 67698693 67698689 67698691 67698693;}
-@list l13:level1
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	font-family:Symbol;}
-@list l14
-	{mso-list-id:1196848569;
-	mso-list-type:hybrid;
-	mso-list-template-ids:733755854 1655733534 67698691 67698693 67698689 67698691 67698693 67698689 67698691 67698693;}
-@list l14:level1
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:.25in;
-	mso-level-number-position:left;
-	margin-left:.25in;
-	text-indent:0in;
-	font-family:Symbol;}
-@list l15
-	{mso-list-id:1921985629;
-	mso-list-template-ids:67698717;}
-@list l15:level1
-	{mso-level-text:"%1\)";
-	mso-level-tab-stop:.25in;
-	mso-level-number-position:left;
-	margin-left:.25in;
-	text-indent:-.25in;}
-@list l15:level2
-	{mso-level-number-format:alpha-lower;
-	mso-level-text:"%2\)";
-	mso-level-tab-stop:.5in;
-	mso-level-number-position:left;
-	margin-left:.5in;
-	text-indent:-.25in;}
-@list l15:level3
-	{mso-level-number-format:roman-lower;
-	mso-level-text:"%3\)";
-	mso-level-tab-stop:.75in;
-	mso-level-number-position:left;
-	margin-left:.75in;
-	text-indent:-.25in;}
-@list l15:level4
-	{mso-level-text:"\(%4\)";
-	mso-level-tab-stop:1.0in;
-	mso-level-number-position:left;
-	margin-left:1.0in;
-	text-indent:-.25in;}
-@list l15:level5
-	{mso-level-number-format:alpha-lower;
-	mso-level-text:"\(%5\)";
-	mso-level-tab-stop:1.25in;
-	mso-level-number-position:left;
-	margin-left:1.25in;
-	text-indent:-.25in;}
-@list l15:level6
-	{mso-level-number-format:roman-lower;
-	mso-level-text:"\(%6\)";
-	mso-level-tab-stop:1.5in;
-	mso-level-number-position:left;
-	margin-left:1.5in;
-	text-indent:-.25in;}
-@list l15:level7
-	{mso-level-tab-stop:1.75in;
-	mso-level-number-position:left;
-	margin-left:1.75in;
-	text-indent:-.25in;}
-@list l15:level8
-	{mso-level-number-format:alpha-lower;
-	mso-level-tab-stop:2.0in;
-	mso-level-number-position:left;
-	margin-left:2.0in;
-	text-indent:-.25in;}
-@list l15:level9
-	{mso-level-number-format:roman-lower;
-	mso-level-tab-stop:2.25in;
-	mso-level-number-position:left;
-	margin-left:2.25in;
-	text-indent:-.25in;}
-ol
-	{margin-bottom:0in;}
-ul
-	{margin-bottom:0in;}
--->
-</style>
-<!--[if gte mso 10]>
-<style>
- /* Style Definitions */
- table.MsoNormalTable
-	{mso-style-name:"Table Normal";
-	mso-tstyle-rowband-size:0;
-	mso-tstyle-colband-size:0;
-	mso-style-noshow:yes;
-	mso-style-parent:"";
-	mso-padding-alt:0in 5.4pt 0in 5.4pt;
-	mso-para-margin:0in;
-	mso-para-margin-bottom:.0001pt;
-	mso-pagination:widow-orphan;
-	font-size:10.0pt;
-	font-family:"Times New Roman";}
-table.MsoTableGrid
-	{mso-style-name:"Table Grid";
-	mso-tstyle-rowband-size:0;
-	mso-tstyle-colband-size:0;
-	border:solid windowtext 1.0pt;
-	mso-border-alt:solid windowtext .5pt;
-	mso-padding-alt:0in 5.4pt 0in 5.4pt;
-	mso-border-insideh:.5pt solid windowtext;
-	mso-border-insidev:.5pt solid windowtext;
-	mso-para-margin-top:0in;
-	mso-para-margin-right:0in;
-	mso-para-margin-bottom:6.0pt;
-	mso-para-margin-left:0in;
-	mso-pagination:widow-orphan;
-	font-size:10.0pt;
-	font-family:"Times New Roman";}
-table.MsoTableGridFirstRow
-	{mso-style-name:"Table Grid";
-	mso-table-condition:first-row;
-	mso-ansi-font-weight:bold;
-	mso-ansi-font-style:normal;}
-</style>
-<![endif]--><!--[if gte mso 9]><xml>
- <o:shapedefaults v:ext="edit" spidmax="4098"/>
-</xml><![endif]--><!--[if gte mso 9]><xml>
- <o:shapelayout v:ext="edit">
-  <o:idmap v:ext="edit" data="1"/>
- </o:shapelayout></xml><![endif]-->
-</head>
-
-<body lang=EN-US link=blue vlink=purple style='tab-interval:.5in'>
-
-<div class=Section1>
-
-<table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=803
- style='width:602.45pt;border-collapse:collapse;mso-yfti-tbllook:480;
- mso-padding-alt:0in 5.4pt 0in 5.4pt'>
- <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
-  <td width=179 valign=top style='width:134.45pt;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=MsoToc1 style='tab-stops:right dotted 539.5pt'><a name="_top"></a><a
-  href="../index.htm">Tutorial Start</a><span style='mso-spacerun:yes'> 
-  </span><o:p></o:p></p>
-  <p class=MsoToc1 style='tab-stops:right dotted 431.5pt'><!--[if supportFields]><span
-  style='mso-element:field-begin'></span><span
-  style='mso-spacerun:yes'> </span>TOC \o &quot;1-4&quot; \n \h \z \u <span
-  style='mso-element:field-separator'></span><![endif]--><span
-  class=MsoHyperlink><span style='mso-no-proof:yes'><a href="#_Toc202513546">PC
-  GUI Tools</a></span></span><span style='mso-no-proof:yes'><o:p></o:p></span></p>
-  <p class=MsoToc2 style='tab-stops:right dotted 431.5pt'><span
-  class=MsoHyperlink><span style='mso-no-proof:yes'><a href="#_Toc202513547">The
-  NXJ Browser</a></span></span><span style='mso-no-proof:yes'><o:p></o:p></span></p>
-  <p class=MsoToc3 style='tab-stops:right dotted 431.5pt'><span
-  class=MsoHyperlink><span style='mso-no-proof:yes'><a href="#_Toc202513548">Deleting
-  programs</a></span></span><span style='mso-no-proof:yes'><o:p></o:p></span></p>
-  <p class=MsoToc3 style='tab-stops:right dotted 431.5pt'><span
-  class=MsoHyperlink><span style='mso-no-proof:yes'><a href="#_Toc202513549">Uploading
-  files</a></span></span><span style='mso-no-proof:yes'><o:p></o:p></span></p>
-  <p class=MsoToc3 style='tab-stops:right dotted 431.5pt'><span
-  class=MsoHyperlink><span style='mso-no-proof:yes'><a href="#_Toc202513550">Downloading
-  files</a></span></span><span style='mso-no-proof:yes'><o:p></o:p></span></p>
-  <p class=MsoToc3 style='tab-stops:right dotted 431.5pt'><span
-  class=MsoHyperlink><span style='mso-no-proof:yes'><a href="#_Toc202513551">Running
-  programs</a></span></span><span style='mso-no-proof:yes'><o:p></o:p></span></p>
-  <p class=MsoToc3 style='tab-stops:right dotted 431.5pt'><span
-  class=MsoHyperlink><span style='mso-no-proof:yes'><a href="#_Toc202513552">De-fragmenting
-  the file system</a></span></span><span style='mso-no-proof:yes'><o:p></o:p></span></p>
-  <p class=MsoToc3 style='tab-stops:right dotted 431.5pt'><span
-  class=MsoHyperlink><span style='mso-no-proof:yes'><a href="#_Toc202513553">Setting
-  the friendly name of the NXT</a></span></span><span style='mso-no-proof:yes'><o:p></o:p></span></p>
-  <p class=MsoToc2 style='tab-stops:right dotted 431.5pt'><span
-  class=MsoHyperlink><span style='mso-no-proof:yes'><a href="#_Toc202513554">Remote
-  Monitoring and Tracing</a></span></span><span style='mso-no-proof:yes'><o:p></o:p></span></p>
-  <p class=MsoToc2 style='tab-stops:right dotted 431.5pt'><span
-  class=MsoHyperlink><span style='mso-no-proof:yes'><a href="#_Toc202513555">Data
-  Viewer</a></span></span><span style='mso-no-proof:yes'><o:p></o:p></span></p>
-  <p class=MsoToc2 style='tab-stops:right dotted 431.5pt'><span
-  class=MsoHyperlink><span style='mso-no-proof:yes'><a href="#_Toc202513556">Console
-  viewer</a></span></span><!--[if supportFields]><span style='mso-element:field-end'></span><![endif]--><span
-  style='mso-no-proof:yes'><o:p></o:p></span></p>
-  </td>
-  <td width=624 valign=top style='width:6.5in;padding:0in 5.4pt 0in 5.4pt'>
-  <h1><a name="_Toc202513546">PC GUI Tools</a></h1>
-  <h2><a name="_Toc202513547"><span class=Char><span style='mso-ansi-font-size:
-  14.0pt;mso-bidi-font-size:16.0pt;mso-ansi-language:EN-US;mso-fareast-language:
-  EN-US;font-weight:normal'>The NXJ Browser</span></span></a></h2>
-  <p class=MsoBodyText2><span class=SpellE><span class=GramE>leJOS</span></span>
-  NXJ includes a PC-based file browser for viewing and manipulating the files
-  on the NXT.</p>
-  <p class=MsoBodyText2>It is started by the <span class=SpellE>nxjbrowse</span>
-  script. If you are using an IDE, you can set NXJ Browse up as an external
-  tool.</p>
-  <p class=MsoBodyText2>The NXJ Browser <span class=GramE>need</span> the NXT
-  it is connecting to, to be turned on and to be running the <span
-  class=SpellE>leJOS</span> start-up menu. Although it should work while a user
-  program is running, if the program starts the <span class=SpellE>LCPBTResponder</span>
-  thread, this is not recommended.</p>
-  <p class=MsoBodyText2>The NXJ Browser first looks for a NXT connected by USB,
-  and if it finds one shows just that in the selection window.</p>
-  <p class=MsoBodyText2>If it cannot find a USB-connected NXT, it does a <span
-  class=SpellE>Bluetooth</span> inquiry to find any <span class=SpellE>NXTs</span>
-  in range and shows them in the selection window. You then select the one you
-  wish to connect to, and <span class=GramE>press connect</span>.</p>
-  <p class=MsoNormal><!--[if gte vml 1]><v:shapetype id="_x0000_t75"
-   coordsize="21600,21600" o:spt="75" o:preferrelative="t" path="m@4@5l@4@11@9@11@9@5xe"
-   filled="f" stroked="f">
-   <v:stroke joinstyle="miter"/>
-   <v:formulas>
-    <v:f eqn="if lineDrawn pixelLineWidth 0"/>
-    <v:f eqn="sum @0 1 0"/>
-    <v:f eqn="sum 0 0 @1"/>
-    <v:f eqn="prod @2 1 2"/>
-    <v:f eqn="prod @3 21600 pixelWidth"/>
-    <v:f eqn="prod @3 21600 pixelHeight"/>
-    <v:f eqn="sum @0 0 1"/>
-    <v:f eqn="prod @6 1 2"/>
-    <v:f eqn="prod @7 21600 pixelWidth"/>
-    <v:f eqn="sum @8 21600 0"/>
-    <v:f eqn="prod @7 21600 pixelHeight"/>
-    <v:f eqn="sum @10 21600 0"/>
-   </v:formulas>
-   <v:path o:extrusionok="f" gradientshapeok="t" o:connecttype="rect"/>
-   <o:lock v:ext="edit" aspectratio="t"/>
-  </v:shapetype><v:shape id="_x0000_i1025" type="#_x0000_t75" style='width:301.5pt;
-   height:321pt'>
-   <v:imagedata src="PCGUITools_files/image001.png" o:title="" blacklevel="-655f"/>
-  </v:shape><![endif]--><![if !vml]><img border=0 width=402 height=428
-  src="PCGUITools_files/image002.jpg" v:shapes="_x0000_i1025"><![endif]></p>
-  <p class=MsoNormal><o:p>&nbsp;</o:p></p>
-  <p class=MsoNormal>After pressing Connect, the main browser screen is shown:</p>
-  <p class=MsoNormal><!--[if gte vml 1]><v:shape id="_x0000_i1026" type="#_x0000_t75"
-   style='width:309.75pt;height:4in'>
-   <v:imagedata src="PCGUITools_files/image003.png" o:title=""/>
-  </v:shape><![endif]--><![if !vml]><img border=0 width=413 height=384
-  src="PCGUITools_files/image004.jpg" v:shapes="_x0000_i1026"><![endif]></p>
-  <p class=MsoNormal><o:p>&nbsp;</o:p></p>
-  <p class=MsoNormal><o:p>&nbsp;</o:p></p>
-  <p class=MsoBodyText2>The NXJ browser shows you all the files on your NXT,
-  together with their size in bytes and their location in the file system
-  (start page, end page). See “Understanding the <span class=SpellE>leJOS</span>
-  NXJ File System” to understand the meaning of the start and end pages.</p>
-  <p class=MsoBodyText3>The friendly name of the NXT you are connected to <span
-  class=GramE>is</span> shown in the title bar of the Windows – the name is
-  “NXT” in this case.</p>
-  <p class=MsoBodyText2>From this screen, you can:</p>
-  <ul style='margin-top:0in' type=disc>
-   <li class=MsoNormal style='mso-list:l12 level1 lfo3;tab-stops:list .5in'>Delete
-       programs</li>
-   <li class=MsoNormal style='mso-list:l12 level1 lfo3;tab-stops:list .5in'>Upload
-       programs and other files to the NXT</li>
-   <li class=MsoNormal style='mso-list:l12 level1 lfo3;tab-stops:list .5in'>Download
-       files from the NXT to the OC</li>
-   <li class=MsoNormal style='mso-list:l12 level1 lfo3;tab-stops:list .5in'>Run
-       programs</li>
-   <li class=MsoNormal style='mso-list:l12 level1 lfo3;tab-stops:list .5in'>De-fragment
-       the file system</li>
-   <li class=MsoNormal style='mso-list:l12 level1 lfo3;tab-stops:list .5in'>Set
-       the friendly name of the NXT</li>
-  </ul>
-  <h3><a name="_Toc202513548"><span lang=EN-GB>Deleting programs</span></a></h3>
-  <p class=MsoBodyText3>To delete files from the NXT, click the <b
-  style='mso-bidi-font-weight:normal'><i style='mso-bidi-font-style:normal'>Delete</i></b>
-  tick boxes and press <b style='mso-bidi-font-weight:normal'><i
-  style='mso-bidi-font-style:normal'>Delete Files</i></b>. The next will make a
-  chirping sound for each file deleted, and the NXJ Browser display will be
-  updated. If the NXT is on the Files menu, its LCD will also be updated. An
-  automatic defrag will occur when files are deleted, so there should be no
-  gaps in the file system.</p>
-  <h3><a name="_Toc202513549"><span lang=EN-GB>Uploading files</span></a></h3>
-  <p class=MsoBodyText2>When you click <b style='mso-bidi-font-weight:normal'><i
-  style='mso-bidi-font-style:normal'>Upload File, </i></b>an Open file dialog
-  box appears. Browse for the file you want to upload, select it, and<b
-  style='mso-bidi-font-weight:normal'><i style='mso-bidi-font-style:normal'> </i></b>click
-  <b style='mso-bidi-font-weight:normal'>Open</b>. NXJ Browse is not normally
-  used for uploading program files as this is better done using the <span
-  class=SpellE><b style='mso-bidi-font-weight:normal'><i style='mso-bidi-font-style:
-  normal'>nxj</i></b></span> or <span class=SpellE><b style='mso-bidi-font-weight:
-  normal'><i style='mso-bidi-font-style:normal'>nxjupload</i></b></span> tool
-  or the <span class=SpellE>leJOS</span> Eclipse <span class=SpellE>plugin</span>.
-  However, it is useful for uploading WAV files and data files for programs.</p>
-  <h3><a name="_Toc202513550"><span lang=EN-GB>Downloading files</span></a></h3>
-  <p class=MsoBodyText3>Files can be downloaded from the NXT to the PC by
-  selecting the NXT file and pressing “Download”. <span class=GramE>This open</span>
-  a dialog that allows you to select the folder and filename to download the
-  file to.</p>
-  <h3><a name="_Toc202513551"><span lang=EN-GB>Running programs</span></a></h3>
-  <p class=MsoBodyText3>A program on the NXT can be run by selecting it and
-  pressing “Run”. This shuts down NXJ Browser.</p>
-  <h3><a name="_Toc202513552"><span lang=EN-GB>De-fragmenting the file system</span></a></h3>
-  <p class=MsoBodyText3>The NXT file system cab be <span class=SpellE>defragmented</span>
-  (removing any gaps between files) by pressing “Defrag”. In the latest
-  versions of <span class=SpellE>leJOS</span> the file system does not normally
-  need to be <span class=SpellE>defragmented</span>.</p>
-  <p class=MsoNormal><a name="_Toc202513553"><span class=Char><span lang=EN-GB
-  style='font-size:13.0pt'>Setting the friendly name of the NXT</span></span></a><span
-  class=Char><span lang=EN-GB style='font-size:13.0pt'><o:p></o:p></span></span></p>
-  <p class=MsoBodyText3>The <span class=SpellE>Bluetooth</span> friendly name
-  of the NXT can be set by pressing “Set Name”, filling in the name (up to 16
-  characters) and pressing OK. Note that the <span class=SpellE>Bluetooth</span>
-  power <span class=GramE>be</span> on in order to set the friendly name, even
-  if the connection to the NXT is by USB.</p>
-  <p class=MsoNormal><span style='mso-spacerun:yes'>    </span><a href="#_top">Back
-  to Top</a></p>
-  <h2><a name="_Toc202513554">Remote Monitoring and Tracing</a></h2>
-  <p class=MsoBodyText2>You can monitor a <span class=SpellE>leJOS</span>
-  program over a <span class=SpellE>Bluetooth</span> connection while it is
-  running by starting the <span class=SpellE>LCPBTResponder</span> thread and
-  running the NXJ Monitor tool on the PC.</p>
-  <p class=MsoBodyText2>You an example of this, see the <span class=SpellE>MonitorTest</span>
-  sample.</p>
-  <p class=MsoBodyText2>NXJ Monitor lets you see the values of sensors, and the
-  values of motor tachometers, in near real-time, while your program executes.</p>
-  <p class=MsoBodyText2>It also lets you program displaying tracing messages to
-  indicate what it is doing. These are displayed on the NXJ Monitor screen.</p>
-  <p class=MsoBodyText2>The program being monitored should include the
-  following code in its start-up sequence:</p>
-  <p class=MsoNormal><!--[if gte vml 1]><v:shapetype id="_x0000_t202"
-   coordsize="21600,21600" o:spt="202" path="m,l,21600r21600,l21600,xe">
-   <v:stroke joinstyle="miter"/>
-   <v:path gradientshapeok="t" o:connecttype="rect"/>
-  </v:shapetype><v:shape id="_x0000_s1029" type="#_x0000_t202" style='position:absolute;
-   margin-left:6.95pt;margin-top:2.55pt;width:303.15pt;height:79.4pt;z-index:1;
-   mso-wrap-style:none;mso-position-vertical-relative:line'>
-   <v:textbox style='mso-next-textbox:#_x0000_s1029'/>
-  </v:shape><![endif]--><![if !vml]><span style='mso-ignore:vglayout'>
-  <table cellpadding=0 cellspacing=0 align=left>
-   <tr>
-    <td width=8 height=2></td>
-   </tr>
-   <tr>
-    <td></td>
-    <td width=410 height=112 bgcolor=white style='border:.75pt solid black;
-    vertical-align:top;background:white'><![endif]><![if !mso]><span
-    style='position:absolute;mso-ignore:vglayout;z-index:1'>
-    <table cellpadding=0 cellspacing=0 width="100%">
-     <tr>
-      <td><![endif]>
-      <div v:shape="_x0000_s1029" style='padding:3.6pt 7.2pt 3.6pt 7.2pt'
-      class=shape>
-      <p class=MsoNormal style='mso-layout-grid-align:none;text-autospace:none'><span
-      class=SpellE><span style='font-size:10.0pt;font-family:"Courier New";
-      color:black'>LCPBTResponder</span></span><span style='font-size:10.0pt;
-      font-family:"Courier New";color:black'> <span class=SpellE>lcpThread</span>
-      = </span><b><span style='font-size:10.0pt;font-family:"Courier New";
-      color:#7F0055'>new</span></b><span style='font-size:10.0pt;font-family:
-      "Courier New";color:black'> <span class=SpellE><span class=GramE>LCPBTResponder</span></span><span
-      class=GramE>(</span>);</span><span style='font-size:10.0pt;font-family:
-      "Courier New"'><o:p></o:p></span></p>
-      <p class=MsoNormal style='mso-layout-grid-align:none;text-autospace:none'><span
-      class=SpellE><span class=GramE><span style='font-size:10.0pt;font-family:
-      "Courier New";color:black'>lcpThread.setDaemon</span></span></span><span
-      class=GramE><span style='font-size:10.0pt;font-family:"Courier New";
-      color:black'>(</span></span><b><span style='font-size:10.0pt;font-family:
-      "Courier New";color:#7F0055'>true</span></b><span style='font-size:10.0pt;
-      font-family:"Courier New";color:black'>);</span><span style='font-size:
-      10.0pt;font-family:"Courier New"'><o:p></o:p></span></p>
-      <p class=MsoNormal><span class=SpellE><span class=GramE><span
-      style='font-size:10.0pt;font-family:"Courier New";color:black'>lcpThread.start</span></span></span><span
-      class=GramE><span style='font-size:10.0pt;font-family:"Courier New";
-      color:black'>(</span></span><span style='font-size:10.0pt;font-family:
-      "Courier New";color:black'>);<o:p></o:p></span></p>
-      </div>
-      <![if !mso]></td>
-     </tr>
-    </table>
-    </span><![endif]><![if !mso & !vml]>&nbsp;<![endif]><![if !vml]></td>
-   </tr>
-  </table>
-  </span><![endif]><o:p>&nbsp;</o:p></p>
-  <p class=MsoNormal><o:p>&nbsp;</o:p></p>
-  <p class=MsoNormal><o:p>&nbsp;</o:p></p>
-  <p class=MsoNormal><o:p>&nbsp;</o:p></p>
-  <p class=MsoNormal><o:p>&nbsp;</o:p></p>
-  <br style='mso-ignore:vglayout' clear=ALL>
-  <p class=MsoBodyText2>On the PC, the NXJ Monitor tool should be run. NXJ
-  Monitor lists the <span class=SpellE>NXTs</span> available over <span
-  class=SpellE>Bluetooth</span> in the same way as the NXJ Browser tool, and
-  lets you choose which one you wish to connect to.</p>
-  <p class=MsoBodyText2>When a connection has been made, the following window
-  is displayed:</p>
-  <p class=MsoNormal><o:p>&nbsp;</o:p></p>
-  <p class=MsoNormal><span style='mso-spacerun:yes'>   </span><a href="#_top">Back
-  to Top</a></p>
-  <h2><a name="_Toc202513555">Data Viewer</a></h2>
-  <p class=MsoBodyText2>The Data Viewer displays the output from <span
-  class=SpellE>DataLogger</span>.<span style='mso-spacerun:yes'>  </span>You
-  can cut and paste the data into a spreadsheet for further analysis.<span
-  style='mso-spacerun:yes'>  </span>It uses USB by default, but you can select <span
-  class=SpellE>Bluetooth</span> if you wish. When you start the program, this
-  window appears:</p>
-  <p class=MsoBodyText2><!--[if gte vml 1]><v:shape id="_x0000_i1027" type="#_x0000_t75"
-   style='width:412.5pt;height:200.25pt'>
-   <v:imagedata src="PCGUITools_files/image005.png" o:title=""/>
-  </v:shape><![endif]--><![if !vml]><img border=0 width=550 height=267
-  src="PCGUITools_files/image011.jpg" v:shapes="_x0000_i1027"><![endif]></p>
-  <p class=MsoBodyText2>It connects to the NXT <span class=GramE>via<span
-  style='mso-spacerun:yes'>  </span>USB</span> by default,<span
-  style='mso-spacerun:yes'>  </span>but if you click the <i style='mso-bidi-font-style:
-  normal'>Use <span class=SpellE>BlueTooth</span> </i>button, it will.. For the
-  fastest <span class=SpellE>BlueTooth</span> connection, enter the <span
-  class=SpellE>Bluetooth</span> address.<span style='mso-spacerun:yes'> 
-  </span>If you don’t know it, enter the NXT name.<span
-  style='mso-spacerun:yes'>  </span>Otherwise, the program will take some time
-  to search and complete the connection.<span style='mso-spacerun:yes'> 
-  </span>By default, the program displays 2 data values per row, but you can
-  enter any number you wish before starting to download.<span
-  style='mso-spacerun:yes'>   </span>The <span class=SpellE>DataLogger</span>
-  gives <span class=GramE>you<span style='mso-spacerun:yes'>  </span>the</span>
-  option to resending its data if you want to see it again (with a different
-  row length for example).<span style='mso-spacerun:yes'>  </span>If you do, <span
-  class=GramE>click <span style='mso-spacerun:yes'> </span>the</span> <i
-  style='mso-bidi-font-style:normal'>Start Download</i><span
-  style='mso-spacerun:yes'>  </span>button<span style='mso-spacerun:yes'> 
-  </span>again..</p>
-  <p class=MsoBodyText2><o:p>&nbsp;</o:p></p>
-  <p class=MsoBodyText2><span style='mso-spacerun:yes'>   </span><a href="#_top">Back
-  to Top</a></p>
-  <h2><a name="_Toc202513556">Console viewer</a></h2>
-  <p class=MsoBodyText2>The Console Viewer displays the output from <span
-  class=SpellE>RConsole</span>, which is described in the section of Error
-  Handling and Debugging. When you start the program, this window appears:</p>
-  <p class=MsoBodyText2><!--[if gte vml 1]><v:shape id="_x0000_i1028" type="#_x0000_t75"
-   style='width:375pt;height:232.5pt'>
-   <v:imagedata src="PCGUITools_files/image007.png" o:title=""/>
-  </v:shape><![endif]--><![if !vml]><img border=0 width=500 height=310
-  src="PCGUITools_files/image012.jpg" v:shapes="_x0000_i1028"><![endif]></p>
-  <p class=MsoBodyText2>It connects to the NXT via USB by default, but if you
-  click the <i style='mso-bidi-font-style:normal'>Use <span class=SpellE>BlueTooth</span>
-  </i>button, it will.<span style='mso-spacerun:yes'>  </span>For the fastest <span
-  class=SpellE>BlueTooth</span> connection, enter the <span class=SpellE>Bluetooth</span>
-  address.<span style='mso-spacerun:yes'>  </span>If you don’t know it, enter
-  the NXT name.<span style='mso-spacerun:yes'>  </span>Otherwise, the program
-  will take some time to search and complete the connection.</p>
-  <p class=MsoBodyText2><span class=GramE>The<span style='mso-spacerun:yes'> 
-  </span><i style='mso-bidi-font-style:normal'>Connect</i></span><span
-  style='mso-spacerun:yes'>   </span>button will initiate the connection with
-  the NXT provided that the <span class=SpellE>RConsole</span> program is
-  running on the NXT.<span style='mso-spacerun:yes'>  </span></p>
-  <p class=MsoBodyText2><o:p>&nbsp;</o:p></p>
-  <p class=MsoBodyText2><span style='mso-spacerun:yes'>   </span><a href="#_top">Back
-  to Top</a></p>
-  <p class=MsoNormal><o:p>&nbsp;</o:p></p>
-  </td>
- </tr>
-</table>
-
-<p class=MsoNormal><o:p>&nbsp;</o:p></p>
-
-<p class=MsoBodyText2><span style='mso-spacerun:yes'> </span></p>
-
-</div>
-
-</body>
-
-</html>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=windows-1252">
+	<TITLE>PC</TITLE>
+	<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.4  (Win32)">
+	<META NAME="AUTHOR" CONTENT="Roger">
+	<META NAME="CREATED" CONTENT="20080820;9510000">
+	<META NAME="CHANGED" CONTENT="20080820;12264254">
+	<STYLE TYPE="text/css">
+	<!--
+		@page { size: 8.5in 11in; margin-right: 1.25in; margin-top: 1in; margin-bottom: 1in }
+		P { margin-bottom: 0.08in; direction: ltr; color: #000000; widows: 2; orphans: 2 }
+		P.western { font-family: "Times New Roman", serif; font-size: 12pt; so-language: en-US }
+		P.cjk { font-family: "Times New Roman", serif; font-size: 12pt }
+		P.ctl { font-family: "Times New Roman", serif; font-size: 12pt; so-language: ar-SA }
+		H1 { margin-bottom: 0.04in; direction: ltr; color: #ff6600; widows: 2; orphans: 2 }
+		H1.western { font-family: "Arial", sans-serif; font-size: 16pt; so-language: en-US }
+		H1.cjk { font-family: "Times New Roman", serif; font-size: 16pt }
+		H1.ctl { font-family: "Arial", sans-serif; font-size: 16pt; so-language: ar-SA }
+		H2 { margin-bottom: 0.08in; direction: ltr; color: #ff6600; widows: 2; orphans: 2 }
+		H2.western { font-family: "Arial", sans-serif; font-size: 14pt; so-language: en-US; font-style: italic; font-weight: medium }
+		H2.cjk { font-family: "Times New Roman", serif; font-size: 14pt; font-style: italic; font-weight: medium }
+		H2.ctl { font-family: "Arial", sans-serif; font-size: 14pt; so-language: ar-SA; font-style: italic; font-weight: medium }
+		H3 { margin-left: 0.2in; margin-bottom: 0.08in; direction: ltr; color: #ff6600; widows: 2; orphans: 2 }
+		H3.western { font-family: "Arial", sans-serif; font-size: 13pt; so-language: en-GB; font-style: normal }
+		H3.cjk { font-family: "Times New Roman", serif; font-size: 13pt; font-style: normal }
+		H3.ctl { font-family: "Arial", sans-serif; font-size: 13pt; so-language: ar-SA; font-style: normal }
+		P.body-text-2-western { margin-left: 0.1in; font-family: "Times New Roman", serif; font-size: 12pt; so-language: en-US }
+		P.body-text-2-cjk { margin-left: 0.1in; font-family: "Times New Roman", serif; font-size: 12pt }
+		P.body-text-2-ctl { margin-left: 0.1in; font-family: "Times New Roman", serif; font-size: 12pt; so-language: ar-SA }
+		P.body-text-3-western { margin-left: 0.2in; font-family: "Times New Roman", serif; font-size: 12pt; so-language: en-US }
+		P.body-text-3-cjk { margin-left: 0.2in; font-family: "Times New Roman", serif; font-size: 12pt }
+		P.body-text-3-ctl { margin-left: 0.2in; font-family: "Times New Roman", serif; font-size: 8pt; so-language: ar-SA }
+		A:link { color: #0000ff }
+		A:visited { color: #800080 }
+	-->
+	</STYLE>
+</HEAD>
+<BODY LANG="en-US" TEXT="#000000" LINK="#0000ff" VLINK="#800080" DIR="LTR">
+<TABLE WIDTH=100% BORDER=0 CELLPADDING=4 CELLSPACING=0 STYLE="page-break-before: always">
+	<COL WIDTH=44*>
+	<COL WIDTH=212*>
+	<TR VALIGN=TOP>
+		<TD WIDTH=17%>
+			<P><A HREF="#1.PC GUI Tools|outline">PC GUI Tools</A></P>
+			<P STYLE="margin-left: 0.17in"><A HREF="#1.1.The NXJ Browser|outline">The
+			NXJ Browser</A></P>
+			<P STYLE="margin-left: 0.33in"><A HREF="#1.1.1.Deleting programs|outline">Deleting
+			programs</A></P>
+			<P STYLE="margin-left: 0.33in"><A HREF="#1.1.2.Uploading files|outline">Uploading
+			files</A></P>
+			<P STYLE="margin-left: 0.33in"><A HREF="#1.1.3.Downloading files|outline">Downloading
+			files</A></P>
+			<P STYLE="margin-left: 0.33in"><A HREF="#1.1.4.Running programs|outline">Running
+			programs</A></P>
+			<P STYLE="margin-left: 0.33in"><A HREF="#1.1.5.De-fragmenting the file system|outline">De-fragmenting
+			the file system</A></P>
+			<P STYLE="margin-left: 0.17in"><A HREF="#1.2.Remote Monitoring and Tracing|outline">Remote
+			Monitoring and Tracing</A></P>
+			<P STYLE="margin-left: 0.17in"><A HREF="#1.3.Data Viewer|outline">Data
+			Viewer</A></P>
+			<P STYLE="margin-left: 0.17in"><A HREF="#1.4.Console viewer|outline">Console
+			viewer</A></P>
+			<P STYLE="margin-left: 0.17in"><A HREF="#1.5.NXJFlashG|outline">NXJFlashG</A></P>
+			<P LANG="" STYLE="margin-left: 0.17in"><BR>
+			</P>
+		</TD>
+		<TD WIDTH=83%>
+			<H1 CLASS="western"><A NAME="1.PC GUI Tools|outline"></A><A NAME="1.PC GUI Tools|outline"></A><A NAME="1.PC GUI Tools|outline"></A><A NAME="1.PC GUI Tools|outline"></A><A NAME="1.PC GUI Tools|outline"></A><A NAME="1.PC GUI Tools|outline"></A>
+			PC GUI Tools</H1>
+			<H2 CLASS="western"><A NAME="1.1.The NXJ Browser|outline"></A><FONT COLOR="#ff6600"><FONT FACE="Arial, sans-serif"><FONT SIZE=3 STYLE="font-size: 13pt"><SPAN LANG="en-GB"><FONT SIZE=4><SPAN LANG="en-US"><SPAN STYLE="font-weight: medium">The
+			NXJ Browser</SPAN></SPAN></FONT></SPAN></FONT></FONT></FONT></H2>
+			<P CLASS="body-text-2-western">leJOS NXJ includes a PC-based file
+			browser for viewing and manipulating the files on the NXT.</P>
+			<P CLASS="body-text-2-western">It is started by the nxjbrowse
+			script. If you are using an IDE, you can set NXJ Browse up as an
+			external tool.</P>
+			<P CLASS="body-text-2-western">The NXJ Browser need the NXT it is
+			connecting to, to be turned on and to be running the leJOS
+			start-up menu. Although it should work while a user program is
+			running, if the program starts the LCPBTResponder thread, this is
+			not recommended.</P>
+			<P CLASS="body-text-2-western">The NXJ Browser first looks for a
+			NXT connected by USB, and if it finds one shows just that in the
+			selection window.</P>
+			<P CLASS="body-text-2-western">If it cannot find a USB-connected
+			NXT, it does a Bluetooth inquiry to find any NXTs in range and
+			shows them in the selection window. You then select the one you
+			wish to connect to, and press connect.</P>
+			<P CLASS="western"><FONT COLOR="#000000"><IMG SRC="PCGUITools_htm_m36c96efd.png" NAME="graphics1" ALIGN=BOTTOM WIDTH=381 HEIGHT=416 BORDER=1></FONT></P>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<P CLASS="western">After pressing Connect, the main browser screen
+			is shown:</P>
+			<P CLASS="western"><FONT COLOR="#000000"><IMG SRC="PCGUITools_htm_m72968f07.png" NAME="graphics2" ALIGN=BOTTOM WIDTH=392 HEIGHT=372 BORDER=1></FONT></P>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<P CLASS="body-text-2-western">The NXJ browser shows you all the
+			files on your NXT, together with their size in bytes and their
+			location in the file system (start page, end page). See
+			&ldquo;Understanding the leJOS NXJ File System&rdquo; to
+			understand the meaning of the start and end pages.</P>
+			<P CLASS="body-text-3-western">The friendly name of the NXT you
+			are connected to is shown in the title bar of the Windows &ndash;
+			the name is &ldquo;NXT&rdquo; in this case.</P>
+			<P CLASS="body-text-2-western">From this screen, you can:</P>
+			<UL>
+				<LI><P CLASS="western">Delete programs</P>
+				<LI><P CLASS="western">Upload programs and other files to the NXT</P>
+				<LI><P CLASS="western">Download files from the NXT to the OC</P>
+				<LI><P CLASS="western">Run programs</P>
+				<LI><P CLASS="western">De-fragment the file system</P>
+				<LI><P CLASS="western">Set the friendly name of the NXT</P>
+			</UL>
+			<H3 LANG="en-GB" CLASS="western"><A NAME="1.1.1.Deleting programs|outline"></A>
+			Deleting programs</H3>
+			<P CLASS="body-text-3-western">To delete files from the NXT, click
+			the <I><B>Delete</B></I> tick boxes and press <I><B>Delete Files</B></I>.
+			The next will make a chirping sound for each file deleted, and the
+			NXJ Browser display will be updated. If the NXT is on the Files
+			menu, its LCD will also be updated. An automatic defrag will occur
+			when files are deleted, so there should be no gaps in the file
+			system.</P>
+			<H3 LANG="en-GB" CLASS="western"><A NAME="1.1.2.Uploading files|outline"></A>
+			Uploading files</H3>
+			<P CLASS="body-text-2-western">When you click <I><B>Upload File,
+			</B></I>an Open file dialog box appears. Browse for the file you
+			want to upload, select it, and<I><B> </B></I>click <B>Open</B>.
+			NXJ Browse is not normally used for uploading program files as
+			this is better done using the <I><B>nxj</B></I> or <I><B>nxjupload</B></I>
+			tool or the leJOS Eclipse plugin. However, it is useful for
+			uploading WAV files and data files for programs.</P>
+			<H3 LANG="en-GB" CLASS="western"><A NAME="1.1.3.Downloading files|outline"></A>
+			Downloading files</H3>
+			<P CLASS="body-text-3-western">Files can be downloaded from the
+			NXT to the PC by selecting the NXT file and pressing &ldquo;Download&rdquo;.
+			This open a dialog that allows you to select the folder and
+			filename to download the file to.</P>
+			<H3 LANG="en-GB" CLASS="western"><A NAME="1.1.4.Running programs|outline"></A>
+			Running programs</H3>
+			<P CLASS="body-text-3-western">A program on the NXT can be run by
+			selecting it and pressing &ldquo;Run&rdquo;. This shuts down NXJ
+			Browser.</P>
+			<H3 LANG="en-GB" CLASS="western"><A NAME="1.1.5.De-fragmenting the file system|outline"></A>
+			De-fragmenting the file system</H3>
+			<P CLASS="body-text-3-western">The NXT file system cab be
+			defragmented (removing any gaps between files) by pressing
+			&ldquo;Defrag&rdquo;. In the latest versions of leJOS the file
+			system does not normally need to be defragmented.</P>
+			<P CLASS="western"><FONT COLOR="#ff6600"><FONT FACE="Arial, sans-serif"><FONT SIZE=3 STYLE="font-size: 13pt"><SPAN LANG="en-GB"><B>Setting
+			the friendly name of the NXT</B></SPAN></FONT></FONT></FONT></P>
+			<P CLASS="body-text-3-western">The Bluetooth friendly name of the
+			NXT can be set by pressing &ldquo;Set Name&rdquo;, filling in the
+			name (up to 16 characters) and pressing OK. Note that the
+			Bluetooth power be on in order to set the friendly name, even if
+			the connection to the NXT is by USB.</P>
+			<P CLASS="western">   <FONT COLOR="#0000ff"><U><A HREF="#1.PC GUI Tools|outline" NAME="Back to top">
+			   Back to top</A><A HREF="#_top">  </A></U></FONT>
+			</P>
+			<H2 CLASS="western"><A NAME="1.2.Remote Monitoring and Tracing|outline"></A>
+			Remote Monitoring and Tracing</H2>
+			<P CLASS="body-text-2-western">You can monitor a leJOS program
+			over a Bluetooth connection while it is running by starting the
+			LCPBTResponder thread and running the NXJ Monitor tool on the PC.</P>
+			<P CLASS="body-text-2-western">You an example of this, see the
+			MonitorTest sample.</P>
+			<P CLASS="body-text-2-western">NXJ Monitor lets you see the values
+			of sensors, and the values of motor tachometers, in near
+			real-time, while your program executes.</P>
+			<P CLASS="body-text-2-western">It also lets you program displaying
+			tracing messages to indicate what it is doing. These are displayed
+			on the NXJ Monitor screen.</P>
+			<P CLASS="body-text-2-western">The program being monitored should
+			include the following code in its start-up sequence:</P>
+			<P CLASS="western"><SPAN ID="Frame1" DIR="LTR" STYLE="float: left; width: 4.22in; height: 0.68in; border: 1px solid #000000; padding: 0.05in 0.1in; background: #ffffff">
+				<P CLASS="western" STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
+				<FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>LCPBTResponder
+				lcpThread = </FONT></FONT></FONT><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>new</B></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>
+				LCPBTResponder();</FONT></FONT></FONT></P>
+				<P CLASS="western" STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
+				<FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>lcpThread.setDaemon(</FONT></FONT></FONT><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>true</B></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>);</FONT></FONT></FONT></P>
+				<P CLASS="western" STYLE="margin-top: 0.02in"><FONT FACE="Courier New, monospace"><FONT SIZE=2>lcpThread.start();</FONT></FONT></P>
+			</SPAN><BR CLEAR=LEFT>    
+			</P>
+			<P CLASS="body-text-2-western">On the PC, the NXJ Monitor tool
+			should be run. NXJ Monitor lists the NXTs available over Bluetooth
+			in the same way as the NXJ Browser tool, and lets you choose which
+			one you wish to connect to.</P>
+			<P CLASS="body-text-2-western">When a connection has been made,
+			the following window is displayed:</P>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<P CLASS="western">  <FONT COLOR="#0000ff"><U><A HREF="#1.PC GUI Tools|outline" NAME="Back to top">
+			   Back to top</A><A HREF="#_top">  </A></U></FONT>
+			</P>
+			<H2 CLASS="western"><A NAME="1.3.Data Viewer|outline"></A>Data
+			Viewer</H2>
+			<P CLASS="body-text-2-western">The Data Viewer displays the output
+			from DataLogger.  You can cut and paste the data into a
+			spreadsheet for further analysis.  It uses USB by default, but you
+			can select Bluetooth if you wish. When you start the program, this
+			window appears:</P>
+			<P CLASS="body-text-2-western"><FONT COLOR="#000000"><IMG SRC="PCGUITools_htm_m7bed32b3.png" NAME="graphics3" ALIGN=BOTTOM WIDTH=529 HEIGHT=255 BORDER=1></FONT></P>
+			<P CLASS="body-text-2-western">It connects to the NXT via  USB by
+			default,  but if you click the <I>Use BlueTooth </I>button, it
+			will.. For the fastest BlueTooth connection, enter the Bluetooth
+			address.  If you don&rsquo;t know it, enter the NXT name. 
+			Otherwise, the program will take some time to search and complete
+			the connection.  By default, the program displays 2 data values
+			per row, but you can enter any number you wish before starting to
+			download.   The DataLogger gives you  the option to resending its
+			data if you want to see it again (with a different row length for
+			example).  If you do, click  the <I>Start Download</I>  button 
+			again..</P>
+			<P CLASS="body-text-2-western"><BR><BR>
+			</P>
+			<P CLASS="body-text-2-western">   <FONT COLOR="#0000ff"><U><A HREF="#1.PC GUI Tools|outline" NAME="Back to top">
+			   Back to top</A><A HREF="#_top">  </A></U></FONT>
+			</P>
+			<H2 CLASS="western"><A NAME="1.4.Console viewer|outline"></A>Console
+			viewer</H2>
+			<P CLASS="body-text-2-western">The Console Viewer displays the
+			output from RConsole, which is described in the section of Error
+			Handling and Debugging. When you start the program, this window
+			appears:</P>
+			<P CLASS="body-text-2-western"><FONT COLOR="#000000"><IMG SRC="PCGUITools_htm_3ac9fd0e.png" NAME="graphics4" ALIGN=BOTTOM WIDTH=479 HEIGHT=298 BORDER=1></FONT></P>
+			<P CLASS="body-text-2-western">It connects to the NXT via USB by
+			default, but if you click the <I>Use BlueTooth </I>button, it
+			will.  For the fastest BlueTooth connection, enter the Bluetooth
+			address.  If you don&rsquo;t know it, enter the NXT name. 
+			Otherwise, the program will take some time to search and complete
+			the connection.</P>
+			<P CLASS="body-text-2-western">The  <I>Connect</I>   button will
+			initiate the connection with the NXT provided that the RConsole
+			program is running on the NXT.  
+			</P>
+			<P CLASS="body-text-2-western"><BR><BR>
+			</P>
+			<P CLASS="body-text-2-western"> <FONT COLOR="#0000ff"><U><A HREF="#1.PC GUI Tools|outline" NAME="Back to top">
+			   Back to top</A><A HREF="#_top">  </A></U></FONT>
+			</P>
+			<P CLASS="body-text-2-western"><BR><BR>
+			</P>
+			<H2 CLASS="western"><A NAME="1.5.NXJFlashG|outline"></A>NXJFlashG</H2>
+			<P CLASS="western">This is the GUI version of NXJFlash.  It
+			installs the firmware into the flash memory of your NXT.  Your NXT
+			only needs to be turned on and connected  to the PC with the USB
+			cable. 
+			</P>
+			<P CLASS="western"> When the program opens, it looks like this:</P>
+			<P CLASS="western"><IMG SRC="PCGUITools_htm_161dd288.png" NAME="graphics5" ALIGN=LEFT WIDTH=442 HEIGHT=763 BORDER=0><BR CLEAR=LEFT>When
+			you click start you see this :</P>
+			<P CLASS="western"><IMG SRC="PCGUITools_htm_527e9211.png" NAME="graphics6" ALIGN=LEFT WIDTH=369 HEIGHT=118 BORDER=0><BR CLEAR=LEFT>The
+			next message is :</P>
+			<P CLASS="western"><IMG SRC="PCGUITools_htm_1ed3dec6.png" NAME="graphics7" ALIGN=LEFT WIDTH=295 HEIGHT=118 BORDER=0><BR CLEAR=LEFT><BR><BR>
+			</P>
+			<P CLASS="western">If you click Yes, the entire flash memory of 
+			the NXT will be cleared.   If you click no and the installation
+			fails, it might be because the   the flash memory has been badly
+			corrupted.  In  which case, try again and click Yes. 
+			</P>
+			<P CLASS="western">As the installation proceeds, the progress log
+			will be written.   At the end, you have a chance to install
+			firmware again.</P>
+			<P CLASS="western"> 
+			</P>
+			<P CLASS="western"><A HREF="#1.PC GUI Tools|outline" NAME="Back to top">
+			   Back to top</A>  
+			</P>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<P CLASS="western"><BR>
+			</P>
+		</TD>
+	</TR>
+</TABLE>
+<P><BR><BR>
+</P>
+<P><BR><BR>
+</P>
+<DIV ID="Table of Contents1" DIR="LTR">
+	<P LANG=""><BR><BR>
+	</P>
+</DIV>
+<H1 CLASS="western"></H1>
+<P CLASS="western"><BR><BR>
+</P>
+<P CLASS="western"><BR><BR>
+</P>
+<P CLASS="western"><BR><BR>
+</P>
+<P CLASS="western"><BR><BR>
+</P>
+<P CLASS="western"><BR><BR>
+</P>
+<P CLASS="western"><BR><BR>
+</P>
+<P CLASS="western"><BR><BR>
+</P>
+<P CLASS="body-text-2-western"> 
+</P>
+</BODY>
+</HTML>
