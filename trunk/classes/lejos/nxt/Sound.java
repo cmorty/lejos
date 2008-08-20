@@ -180,6 +180,20 @@ public class Sound
     static native void playSample(int page, int offset, int len, int freq, int vol);
 
     /**
+     * Read an LSB format
+     * @param d stream to read from
+     * @return the read int
+     * @throws java.io.IOException
+     */
+    private static int readLSBInt(DataInputStream d) throws IOException
+    {
+        int val = d.readByte() & 0xff;
+        val |= (d.readByte() & 0xff) << 8;
+        val |= (d.readByte() & 0xff) << 16;
+        val |= (d.readByte() & 0xff) << 24;
+        return val;
+    }
+    /**
      * Play a wav file
      * @param file the 8-bit PWM (WAV) sample file
      * @param vol the volume percentage 0 - 100
@@ -190,8 +204,9 @@ public class Sound
     {
         // First check that we have a wave file. File must be at least 44 bytes
         // in size to contain a RIFF header.
+        int offset = 0;
         if (file.length() < RIFF_HDR_SIZE)
-            return -1;
+            return -9;
         // Now check for a RIFF header
         FileInputStream f = new FileInputStream(file);
         DataInputStream d = new DataInputStream(f);
@@ -205,42 +220,50 @@ public class Sound
             d.readInt();
             // Check we have a wave file
             if (d.readInt() != RIFF_WAVE_SIG)
-                return -1;
+                return -2;
             if (d.readInt() != RIFF_FMT_SIG)
-                return -1;
+                return -3;
+            offset += 16;
             // Now check that the format is PCM, Mono 8 bits. Note that these
             // values are stored little endian.
-            d.readInt(); // Skip chunk size
+            int sz = readLSBInt(d);
             if (d.readShort() != RIFF_FMT_PCM)
-                return -1;
+                return -4;
             if (d.readShort() != RIFF_FMT_1CHAN)
-                return -1;
-            sampleRate = d.readByte() & 0xff;
-            sampleRate |= (d.readByte() & 0xff) << 8;
-            sampleRate |= (d.readByte() & 0xff) << 16;
-            sampleRate |= (d.readByte() & 0xff) << 24;
+                return -5;
+            sampleRate = readLSBInt(d);
             d.readInt();
             d.readShort();
             if (d.readShort() != RIFF_FMT_8BITS)
-                return -1;
-            // Make sure we now have a data chunk
-            if (d.readInt() != RIFF_DATA_SIG)
-                return -1;
-            dataLen = d.readByte() & 0xff;
-            dataLen |= (d.readByte() & 0xff) << 8;
-            dataLen |= (d.readByte() & 0xff) << 16;
-            dataLen |= (d.readByte() & 0xff) << 24;
+                return -6;
+            // Skip any data in this chunk after the 16 bytes above
+            sz -= 16;
+            offset += 20 + sz;
+            while (sz-- > 0)
+                d.readByte();
+            // Skip optional chunks until we find a data sig (or we hit eof!)
+            for(;;)
+            {
+                int chunk = d.readInt();
+                dataLen = readLSBInt(d); 
+                offset += 8;
+                if (chunk == RIFF_DATA_SIG) break;
+                // Skip to the start of the next chunk
+                offset += dataLen;
+                while(dataLen-- > 0)
+                    d.readByte();
+            }
             d.close();
         }
         catch (IOException e)
         {
-            return -1;
+            return -8;
         }
         if (vol >= 0)
             vol = (vol*masterVolume)/100;
         else
             vol = -vol;
-        playSample(file.getPage(), RIFF_HDR_SIZE, dataLen, sampleRate, vol);
+        playSample(file.getPage(), offset, dataLen, sampleRate, vol);
         return getTime();
     }
 
