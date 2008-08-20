@@ -31,6 +31,7 @@ unsigned int gNextProgram;
 unsigned int gNextProgramSize;
 unsigned int gProgramExecutions = 0;
 
+int curPcOffset = -1;
 byte *curPc;
 STACKWORD *curStackTop;
 STACKWORD *curLocalsBase;
@@ -122,14 +123,12 @@ Object *create_string (ConstantRecord *constantRecord,
   // printf ("char array at %d\n", (int) arr);
   
   store_word_ns( (byte *) &(((String *) ref)->characters), 4, obj2word(arr));
-  
   dst = jchar_array(arr);
   src = get_constant_ptr(constantRecord);
   src_end = src + constantRecord->constantSize;
 
   while( src < src_end)
     *dst++ = (JCHAR) (*src++);
-
   return ref;
 }
 
@@ -157,6 +156,8 @@ static int array_helper( byte *pc, STACKWORD* stackTop)
 
 #define SAVE_REGS() (curPc = pc, curStackTop = stackTop, curLocalsBase = localsBase)
 #define LOAD_REGS() (localsBase = curLocalsBase, stackTop = curStackTop, pc = curPc)
+#define SAVE_REGS2() (curPc = (pc), curStackTop = stackTop, curLocalsBase = localsBase, curPcOffset = 0)
+#define LOAD_REGS2() (localsBase = curLocalsBase, stackTop = curStackTop, pc = (curPc), curPcOffset = -1)
 
 /**
  * Everything runs inside here, essentially.
@@ -173,7 +174,33 @@ static int array_helper( byte *pc, STACKWORD* stackTop)
  * - Only the request handler may set gMakeRequest to false.
  * - The millisecond timer interrupt must set gMakeRequest to true
  *   for time slices to work.
- * 
+ * When executing instructions the value of pc does not point to the current
+ * instruction, it begins by pointing at pc+1 byte. However it may have a value
+ * of pc+1 to pc+n where n is the max size of an instruction. When not actually
+ * executing instructions pc will point to the next instruction. All of this
+ * presents a problem for operations like invoking methods and throwing
+ * exceptions, because they need a consistant state. So we define a set of rules
+ * to make things easier. We use the macro SAVE_REG/LOAD_REG to define a safe
+ * point and we must ensure that at these points the value of curPC is in a
+ * predictable state. In particular we require that...
+ * 1. A VM function can use the getPC macro to obtain a pointer to the
+ *    currently executing instruction. If the instruction is complete (during
+ *    a thread switch for example then getPC will return the instruction about
+ *    to be executed.
+ * 2. If a VM function wishes to perform a jump operation, then it can do so
+ *    by assigning directly to curPc. Note that in some cases (allocations and
+ *    exceptions) it may also need to take additional actions (returning JNULL)
+ *    to ensure that the current instruction is aborted.
+ * In particular the above rules ensure that the following sequence...
+ *   curPc = getPC();
+ * will result in the current instruction being re-started.
+ * The macros above enforce this condition. They use the addiional variable
+ * curPcOffset to allow correction of the value of curPc.
+ *
+ * We have a similar issue with the stack. In some cases (primarily method calls
+ * and memory allocation), we may need to be able to restart the instruction.
+ * to allow this the stack should be left unchanged until after the call to
+ * LOAD_REGS. 
  */
 
 
@@ -201,8 +228,7 @@ void engine()
   {
     byte requestCode = gRequestCode;
 
-    SAVE_REGS();
-
+    SAVE_REGS2();
     gMakeRequest = false;
     gRequestCode = REQUEST_TICK;
     
@@ -234,7 +260,7 @@ void engine()
       schedule_request( REQUEST_SWITCH_THREAD);
     }
 
-    LOAD_REGS();
+    LOAD_REGS2();
   }
 
   assert( gRequestCode == REQUEST_TICK, INTERPRETER2);

@@ -16,6 +16,9 @@ extern unsigned int gNextProgram;
 extern unsigned int gNextProgramSize;
 extern unsigned int gProgramExecutions;
 
+#define getPc() (curPc + curPcOffset)
+
+extern int curPcOffset;
 extern byte *curPc;
 extern STACKWORD *curStackTop;
 extern STACKWORD *curLocalsBase;

@@ -8,10 +8,12 @@ case OP_NEWARRAY:
   SAVE_REGS();
   tempStackWord = obj2ref(new_primitive_array (*pc, get_top_word()));
   LOAD_REGS();
-  pc++;
   // Do not modify the stack if an exception has been thrown
   if (tempStackWord != JNULL)
+  {
+    pc++;
     set_top_ref(tempStackWord);
+  }
   // Exceptions are taken care of
   goto LABEL_ENGINELOOP;
 

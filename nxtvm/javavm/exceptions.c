@@ -92,7 +92,8 @@ void throw_exception (Object *exception)
   #ifdef VERIFY
   assert (currentThread->state > DEAD, EXCEPTIONS1);
   #endif // VERIFY
-  
+  // abort the current instruction so things are in a consistant state
+  curPc = getPc();
   gExceptionPc = curPc;
   gExcepMethodRec = null;
 
