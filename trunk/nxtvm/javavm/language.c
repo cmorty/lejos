@@ -83,14 +83,17 @@ boolean dispatch_static_initializer (ClassRecord *aRec, byte *retAddr)
 {
   if (is_initialized (aRec))
     return false;
-  set_initialized (aRec);
   if (!has_clinit (aRec))
+  {
+    set_initialized (aRec);
     return false;
+  }
   #if DEBUG_METHODS
   printf ("dispatch_static_initializer: has clinit: %d, %d\n",
           (int) aRec, (int) retAddr);
   #endif
-  dispatch_special (find_method (aRec, _6clinit_7_4_5V), retAddr);
+  if (dispatch_special (find_method (aRec, _6clinit_7_4_5V), retAddr))
+    set_initialized (aRec);
   return true;
 }
 
@@ -174,6 +177,10 @@ boolean dispatch_special (MethodRecord *methodRecord, byte *retAddr)
    * may need to perform memory allocation. In all cases we must take care
    * to ensure that if an allocation can be made then any live objects
    * on the stack must be below the current stack pointer.
+   * In addition to the above we take great care so that this function can
+   * be restarted (to allow us to wait for available memory). To enable this
+   * we avoid making any commitments to changes to global state until both
+   * stacks have been commited.
    */
   #if DEBUG_METHODS
   int debug_ctr;
@@ -199,8 +206,8 @@ boolean dispatch_special (MethodRecord *methodRecord, byte *retAddr)
   printf ("-- max stack ptr= %d\n", (int) (currentThread->stackArray + (get_array_size(currentThread->stackArray))*2));
   #endif
 
-  curPc = retAddr;
 
+  // First deal with the easy case of a native call...
   if (is_native (methodRecord))
   {
   #if DEBUG_METHODS
@@ -213,7 +220,12 @@ boolean dispatch_special (MethodRecord *methodRecord, byte *retAddr)
     // parameter and that may end up allocating memory *MUST* protect that
     // reference before calling the allocator...
     pop_words_cur (methodRecord->numParameters);
-    dispatch_native (methodRecord->signatureId, get_stack_ptr_cur() + 1);
+    if (dispatch_native (methodRecord->signatureId, get_stack_ptr_cur() + 1))
+      curPc = retAddr;
+    else
+      // reset the stack frame
+      curStackTop += methodRecord->numParameters;
+      
     // Stack frame not pushed
     return false;
   }
@@ -238,7 +250,7 @@ boolean dispatch_special (MethodRecord *methodRecord, byte *retAddr)
     if (newStackFrameArray == JNULL)
     {
 #endif
-      throw_exception (stackOverflowError);
+      //throw_exception (stackOverflowError);
       return false;
 #if !FIXED_STACK_SIZE
     }
@@ -247,6 +259,10 @@ boolean dispatch_special (MethodRecord *methodRecord, byte *retAddr)
 #endif
   }
   
+  // Now start to build the new stack frames. We start by placing the
+  // the new stack pointer below any params. The params will become locals
+  // in the new frame.
+  newStackTop = get_stack_ptr_cur() - methodRecord->numParameters;
   if (newStackFrameIndex == 0)
   {
     // Assign NEW stack frame
@@ -259,28 +275,22 @@ boolean dispatch_special (MethodRecord *methodRecord, byte *retAddr)
       printf ("-- param[%d]    = %ld\n", debug_ctr, (long) get_stack_ptr()[debug_ctr+1]);  
     #endif
 
-    // Save OLD stackFrame state
+    // Setup OLD stackframe ready for return
     stackFrame = stackframe_array() + (newStackFrameIndex - 1);
-    update_stack_frame (stackFrame);
-    stackFrame->stackTop = get_stack_ptr_cur() - methodRecord->numParameters;
+    stackFrame->stackTop = newStackTop;
+    stackFrame->pc = retAddr;
     // Push NEW stack frame
     stackFrame++;
   }
-  // Increment size of stack frame array
-  currentThread->stackFrameArraySize++;
+  // Increment size of stack frame array but do not commit to it until we have
+  // completely built both new stacks.
+  newStackFrameIndex++;
   // Initialize rest of new stack frame
   stackFrame->methodRecord = methodRecord;
   stackFrame->monitor = null;
-  stackFrame->localsBase = (get_stack_ptr_cur() - methodRecord->numParameters) + 1;
-  // Initialize auxiliary global variables (registers)
-  curPc = get_code_ptr(methodRecord);
-
-  #if DEBUG_METHODS
-  printf ("pc set to 0x%X\n", (int) pc);
-  #endif
-
+  stackFrame->localsBase = newStackTop + 1;
+  // Allocate space for locals etc.
   newStackTop = init_sp(stackFrame, methodRecord);
-  update_constant_registers (stackFrame);
   
   //printf ("m %d stack = %d\n", (int) methodRecord->signatureId, (int) (localsBase - stack_array())); 
   
@@ -303,7 +313,7 @@ boolean dispatch_special (MethodRecord *methodRecord, byte *retAddr)
     if (newStackArray == JNULL)
     {
 #endif
-      throw_exception (stackOverflowError);
+      //throw_exception (stackOverflowError);
       return false;
 #if !FIXED_STACK_SIZE
     }
@@ -315,7 +325,7 @@ boolean dispatch_special (MethodRecord *methodRecord, byte *retAddr)
 #if DEBUG_MEMORY
     printf("thread=%d, stackTop(%d), localsBase(%d)=%d\n", currentThread->threadId, (int)stackTop, (int)localsBase, (int)(*localsBase));
 #endif
-    for (i=((byte)(currentThread->stackFrameArraySize))-1;
+    for (i=((byte)(newStackFrameIndex))-1;
          i >= 0;
          i--)
     {
@@ -328,8 +338,13 @@ boolean dispatch_special (MethodRecord *methodRecord, byte *retAddr)
     // Assign new array
     currentThread->stackArray = newStackArray;
 #endif
-  } 
+  }
+  // All set. So now we can finally commit to the new stack frames
+  currentThread->stackFrameArraySize = newStackFrameIndex;
+  update_constant_registers (stackFrame);
   curStackTop = newStackTop;
+  // and jump to the start of the new code
+  curPc = get_code_ptr(methodRecord);
   return true;
 }
 

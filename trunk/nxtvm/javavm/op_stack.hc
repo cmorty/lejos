@@ -21,23 +21,21 @@ case OP_SIPUSH:
 
 case OP_LDC_W:
   tempConstRec = get_constant_record (((TWOBYTES) pc[0] << 8) | pc[1]);
-  pc += 2;
-  tempInt = 3;
+  tempInt = 2;
   goto LDC_CONT;
 
 case OP_LDC_1:
 case OP_LDC_2:
 case OP_LDC_3:
   tempConstRec = get_constant_record ((*(pc-1) - OP_LDC_1 + 1)*256 + *pc);
-  pc++;
-  tempInt = 2;
+  tempInt = 1;
   goto LDC_CONT;
 
 case OP_LDC:
   // Stack size: +1
   // Arguments: 1
-  tempConstRec = get_constant_record (*pc++);
-  tempInt = 2;
+  tempConstRec = get_constant_record (*pc);
+  tempInt = 1;
 LDC_CONT:
   switch (tempConstRec->constantType)
   {
@@ -46,8 +44,8 @@ LDC_CONT:
       // T_REFERENCE is actually String
 
       SAVE_REGS();
-      tempWordPtr = (void *) create_string (tempConstRec, pc - tempInt);
-	  LOAD_REGS();
+      tempWordPtr = (void *) create_string (tempConstRec, pc - 1);
+      LOAD_REGS();
       if (tempWordPtr == JNULL)
         goto LABEL_ENGINELOOP;
       push_ref (ptr2word (tempWordPtr));
@@ -61,6 +59,7 @@ LDC_CONT:
       assert (false, INTERPRETER0);
     #endif
   }
+  pc += tempInt;
   goto LABEL_ENGINELOOP;
 
 case OP_LDC2_W:

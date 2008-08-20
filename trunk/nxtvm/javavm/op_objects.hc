@@ -215,19 +215,21 @@ case OP_PUTFIELD:
     if (tempStackWord == JNULL)
       goto LABEL_NULLPTR_EXCEPTION;
     fbase3 = ((byte *) word2ptr (tempStackWord)) + offset;
-    if (wideWord)
-      store_word_ns (fbase3 + 4, 4, pop_word());
 
     #if 0
     printf ("### put_field base=%d size=%d stored=%d\n", (int) fbase3, (int) fieldSize, (int) get_top_word());
     #endif
 
-#if RECORD_REFERENCES
     if (fieldType == T_REFERENCE)
+    {
       store_word_ns (fbase3, fieldSize, pop_ref());
+    }
     else
-#endif
-    store_word_ns (fbase3, fieldSize, pop_word());
+    {
+      if (wideWord)
+        store_word_ns (fbase3 + 4, 4, pop_word());
+      store_word_ns (fbase3, fieldSize, pop_word());
+    }
     just_pop_ref();
     pc += 2;
   }
@@ -337,14 +339,13 @@ case OP_CHECKCAST:
   // Stack: -1 +1 (same)
   // Arguments: 2
   // Ignore hi byte
-  pc++;
   tempStackWord = get_top_ref();
-  if (tempStackWord != JNULL && !instance_of (word2obj (tempStackWord), pc[0]))
+  if (tempStackWord != JNULL && !instance_of (word2obj (tempStackWord), pc[1]))
   {
     thrownException = classCastException;
     goto LABEL_THROW_EXCEPTION;
   }
-  pc++;
+  pc += 2;
   goto LABEL_ENGINELOOP;
 
 // Notes:

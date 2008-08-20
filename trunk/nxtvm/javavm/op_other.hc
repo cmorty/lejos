@@ -11,19 +11,21 @@ case OP_ATHROW:
 
 case OP_MONITORENTER:
   {
-    Object *obj = word2obj(pop_ref());
+    Object *obj = word2obj(get_top_ref());
     SAVE_REGS();
     enter_monitor (currentThread, obj);
     LOAD_REGS();
+    just_pop_ref();
   }
   goto LABEL_ENGINELOOP;
 
 case OP_MONITOREXIT:
   {
-    Object *obj = word2obj(pop_ref());
+    Object *obj = word2obj(get_top_ref());
     SAVE_REGS();
     exit_monitor (currentThread, obj);
     LOAD_REGS();
+    just_pop_ref();
   }
   goto LABEL_ENGINELOOP;
 
