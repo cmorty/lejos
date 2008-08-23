@@ -1,75 +1,64 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html dir="ltr" xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
-	<head>
-		<!-- CSS -->
-		<link rel="stylesheet" href="../r_css/lejos-tutorial.css" type="text/css" />
-
-		<!-- ICON -->
-		<link rel="shortcut icon" href="../favicon.ico" type="image/x-icon" />
-
-		<TITLE>Communications</TITLE>
-		<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.4  (Win32)">
-		<META NAME="AUTHOR" CONTENT="Roger">
-		<META NAME="CREATED" CONTENT="20080626;16090000">
-		<META NAME="CHANGED" CONTENT="20080819;19584545">
-		<STYLE TYPE="text/css">
-		<!--
-			@page { size: 11.5in 11in; margin-left: 0.79in; margin-right: 1.75in; margin-top: 1in; margin-bottom: 1in }
-			TD P { margin-bottom: 0.08in; direction: ltr; color: #000000; text-align: left; widows: 2; orphans: 2 }
-			TD P.western { font-family: "Times New Roman", serif; font-size: 12pt; so-language: en-US }
-			TD P.cjk { font-family: "Times New Roman", serif; font-size: 12pt; so-language: zxx }
-			TD P.ctl { font-family: "Times New Roman", serif; font-size: 12pt; so-language: ar-SA }
-			H1 { margin-bottom: 0.04in; direction: ltr; color: #ff6600; text-align: left; widows: 2; orphans: 2 }
-			H1.western { font-family: "Arial", sans-serif; font-size: 16pt; so-language: en-US }
-			H1.cjk { font-family: "Times New Roman", serif; font-size: 16pt; so-language: zxx }
-			H1.ctl { font-family: "Arial", sans-serif; font-size: 16pt; so-language: ar-SA }
-			P { margin-bottom: 0.08in; direction: ltr; color: #000000; text-align: left; widows: 2; orphans: 2 }
-			P.western { font-family: "Times New Roman", serif; font-size: 12pt; so-language: en-US }
-			P.cjk { font-family: "Times New Roman", serif; font-size: 12pt; so-language: zxx }
-			P.ctl { font-family: "Times New Roman", serif; font-size: 12pt; so-language: ar-SA }
-			H2 { margin-bottom: 0.08in; direction: ltr; color: #ff6600; text-align: left; widows: 2; orphans: 2 }
-			H2.western { font-family: "Arial", sans-serif; font-size: 14pt; so-language: en-US; font-style: italic; font-weight: medium }
-			H2.cjk { font-family: "Times New Roman", serif; font-size: 14pt; so-language: zxx; font-style: italic; font-weight: medium }
-			H2.ctl { font-family: "Arial", sans-serif; font-size: 14pt; so-language: ar-SA; font-style: italic; font-weight: medium }
-			H3 { margin-left: 0.2in; margin-bottom: 0.08in; direction: ltr; color: #ff6600; text-align: left; widows: 2; orphans: 2 }
-			H3.western { font-family: "Arial", sans-serif; font-size: 13pt; so-language: en-GB; font-style: normal; font-weight: medium }
-			H3.cjk { font-family: "Times New Roman", serif; font-size: 13pt; so-language: zxx; font-style: normal; font-weight: medium }
-			H3.ctl { font-family: "Arial", sans-serif; font-size: 13pt; so-language: ar-SA; font-style: normal; font-weight: medium }
-			H4 { margin-left: 0.3in; margin-bottom: 0.04in; direction: ltr; color: #000000; text-align: left; widows: 2; orphans: 2 }
-			H4.western { font-family: "Arial", sans-serif; so-language: en-GB; font-style: normal }
-			H4.cjk { font-family: "Times New Roman", serif; so-language: zxx; font-style: normal }
-			H4.ctl { font-family: "Arial", sans-serif; so-language: ar-SA; font-style: italic; font-weight: medium }
-			P.body-text-2-western { margin-left: 0.1in; font-family: "Times New Roman", serif; font-size: 12pt; so-language: en-US }
-			P.body-text-2-cjk { margin-left: 0.1in; font-family: "Times New Roman", serif; font-size: 12pt; so-language: zxx }
-			P.body-text-2-ctl { margin-left: 0.1in; font-family: "Times New Roman", serif; font-size: 12pt; so-language: ar-SA }
-			P.body-text-3-western { margin-left: 0.2in; font-family: "Times New Roman", serif; font-size: 12pt; so-language: en-US }
-			P.body-text-3-cjk { margin-left: 0.2in; font-family: "Times New Roman", serif; font-size: 12pt; so-language: zxx }
-			P.body-text-3-ctl { margin-left: 0.2in; font-family: "Times New Roman", serif; font-size: 8pt; so-language: ar-SA }
-			P.body-text-4-western { margin-left: 0.3in; font-family: "Times New Roman", serif; font-size: 12pt; so-language: en-US }
-			P.body-text-4-cjk { margin-left: 0.3in; font-family: "Times New Roman", serif; font-size: 12pt; so-language: zxx }
-			P.body-text-4-ctl { margin-left: 0.3in; font-family: "Times New Roman", serif; font-size: 8pt; so-language: ar-SA }
-			P.close-western { margin-top: 0.02in; margin-bottom: 0.02in; font-family: "Courier New", monospace; font-size: 10pt; so-language: en-US }
-			P.close-cjk { margin-top: 0.02in; margin-bottom: 0.02in; font-family: "Times New Roman", serif; font-size: 12pt; so-language: zxx }
-			P.close-ctl { margin-top: 0.02in; margin-bottom: 0.02in; font-family: "Times New Roman", serif; font-size: 12pt; so-language: ar-SA }
-			A:link { color: #0000ff }
-			A:visited { color: #800080 }
-		-->
-		</STYLE>
-	</head>
-	<body>
-		<a id="top" name="top"></a>
-		<!-- N1: HEADER -->
-		<table cellpadding="0" cellspacing="0" class="n1t1">
-			<tr>
-				<td><img src="../r_media/images/tutorial_header1.jpg" /></td>
-				<td align="right"><img src="../r_media/images/tutorial_header2.jpg" /></td>
-			</tr>
-		</table>
-		<!-- N2: CONTENTS -> NAVIGATION SYSTEMS AND CONTENTS -->
-		<table cellpadding="0" cellspacing="0" class="n2t1">
-			<tr>
-				<td class="n2t1r1c1">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=windows-1252">
+	<TITLE>Communications</TITLE>
+	<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.4  (Win32)">
+	<META NAME="AUTHOR" CONTENT="Roger">
+	<META NAME="CREATED" CONTENT="20080626;16090000">
+	<META NAME="CHANGED" CONTENT="20080819;19584545">
+	<STYLE TYPE="text/css">
+	<!--
+		@page { size: 11.5in 11in; margin-left: 0.79in; margin-right: 1.75in; margin-top: 1in; margin-bottom: 1in }
+		TD P { margin-bottom: 0.08in; direction: ltr; color: #000000; text-align: left; widows: 2; orphans: 2 }
+		TD P.western { font-family: "Times New Roman", serif; font-size: 12pt; so-language: en-US }
+		TD P.cjk { font-family: "Times New Roman", serif; font-size: 12pt; so-language: zxx }
+		TD P.ctl { font-family: "Times New Roman", serif; font-size: 12pt; so-language: ar-SA }
+		H1 { margin-bottom: 0.04in; direction: ltr; color: #ff6600; text-align: left; widows: 2; orphans: 2 }
+		H1.western { font-family: "Arial", sans-serif; font-size: 16pt; so-language: en-US }
+		H1.cjk { font-family: "Times New Roman", serif; font-size: 16pt; so-language: zxx }
+		H1.ctl { font-family: "Arial", sans-serif; font-size: 16pt; so-language: ar-SA }
+		P { margin-bottom: 0.08in; direction: ltr; color: #000000; text-align: left; widows: 2; orphans: 2 }
+		P.western { font-family: "Times New Roman", serif; font-size: 12pt; so-language: en-US }
+		P.cjk { font-family: "Times New Roman", serif; font-size: 12pt; so-language: zxx }
+		P.ctl { font-family: "Times New Roman", serif; font-size: 12pt; so-language: ar-SA }
+		H2 { margin-bottom: 0.08in; direction: ltr; color: #ff6600; text-align: left; widows: 2; orphans: 2 }
+		H2.western { font-family: "Arial", sans-serif; font-size: 14pt; so-language: en-US; font-style: italic; font-weight: medium }
+		H2.cjk { font-family: "Times New Roman", serif; font-size: 14pt; so-language: zxx; font-style: italic; font-weight: medium }
+		H2.ctl { font-family: "Arial", sans-serif; font-size: 14pt; so-language: ar-SA; font-style: italic; font-weight: medium }
+		H3 { margin-left: 0.2in; margin-bottom: 0.08in; direction: ltr; color: #ff6600; text-align: left; widows: 2; orphans: 2 }
+		H3.western { font-family: "Arial", sans-serif; font-size: 13pt; so-language: en-GB; font-style: normal; font-weight: medium }
+		H3.cjk { font-family: "Times New Roman", serif; font-size: 13pt; so-language: zxx; font-style: normal; font-weight: medium }
+		H3.ctl { font-family: "Arial", sans-serif; font-size: 13pt; so-language: ar-SA; font-style: normal; font-weight: medium }
+		H4 { margin-left: 0.3in; margin-bottom: 0.04in; direction: ltr; color: #000000; text-align: left; widows: 2; orphans: 2 }
+		H4.western { font-family: "Arial", sans-serif; so-language: en-GB; font-style: normal }
+		H4.cjk { font-family: "Times New Roman", serif; so-language: zxx; font-style: normal }
+		H4.ctl { font-family: "Arial", sans-serif; so-language: ar-SA; font-style: italic; font-weight: medium }
+		P.body-text-2-western { margin-left: 0.1in; font-family: "Times New Roman", serif; font-size: 12pt; so-language: en-US }
+		P.body-text-2-cjk { margin-left: 0.1in; font-family: "Times New Roman", serif; font-size: 12pt; so-language: zxx }
+		P.body-text-2-ctl { margin-left: 0.1in; font-family: "Times New Roman", serif; font-size: 12pt; so-language: ar-SA }
+		P.body-text-3-western { margin-left: 0.2in; font-family: "Times New Roman", serif; font-size: 12pt; so-language: en-US }
+		P.body-text-3-cjk { margin-left: 0.2in; font-family: "Times New Roman", serif; font-size: 12pt; so-language: zxx }
+		P.body-text-3-ctl { margin-left: 0.2in; font-family: "Times New Roman", serif; font-size: 8pt; so-language: ar-SA }
+		P.body-text-4-western { margin-left: 0.3in; font-family: "Times New Roman", serif; font-size: 12pt; so-language: en-US }
+		P.body-text-4-cjk { margin-left: 0.3in; font-family: "Times New Roman", serif; font-size: 12pt; so-language: zxx }
+		P.body-text-4-ctl { margin-left: 0.3in; font-family: "Times New Roman", serif; font-size: 8pt; so-language: ar-SA }
+		P.close-western { margin-top: 0.02in; margin-bottom: 0.02in; font-family: "Courier New", monospace; font-size: 10pt; so-language: en-US }
+		P.close-cjk { margin-top: 0.02in; margin-bottom: 0.02in; font-family: "Times New Roman", serif; font-size: 12pt; so-language: zxx }
+		P.close-ctl { margin-top: 0.02in; margin-bottom: 0.02in; font-family: "Times New Roman", serif; font-size: 12pt; so-language: ar-SA }
+		A:link { color: #0000ff }
+		A:visited { color: #800080 }
+	-->
+	</STYLE>
+</HEAD>
+<BODY LANG="en-US" TEXT="#000000" LINK="#0000ff" VLINK="#800080" BGCOLOR="#ffffff" DIR="LTR">
+<P CLASS="western"><BR><BR>
+</P>
+<TABLE WIDTH=848 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=4 CELLSPACING=0>
+	<COL WIDTH=126>
+	<COL WIDTH=704>
+	<TR VALIGN=TOP>
+		<TD WIDTH=126>
 			<P CLASS="western"><A HREF="#1.Communications|outline"><FONT COLOR="#0000ff"><U>Communications</U></FONT></A></P>
 			<P CLASS="western" STYLE="margin-left: 0.33in"><A HREF="#1.0.1.Receiver|outline"><FONT COLOR="#0000ff"><U>Receiver</U></FONT></A></P>
 			<P CLASS="western" STYLE="margin-left: 0.33in"><A HREF="#1.0.2.Streams|outline"><FONT COLOR="#0000ff"><U>Streams</U></FONT></A></P>
@@ -92,21 +81,10 @@
 			External Bluetooth devices</U></FONT></A></P>
 			<P CLASS="western" STYLE="text-indent: 0.25in"><A HREF="#2.3.Communicating with the RCX|outline"><FONT COLOR="#0000ff"><U>Communicating
 			with the RCX</U></FONT></A></P>
-				</td>
-				<td>
-		<!-- DO NOT MANINPULATE -->
-        <div id="BreadCrumbs">
-            <a href="../index.htm" target="_top">Home Page</a>
-        &gt;
-            <a href="#">Communications</a>
-
-        </div>
-        <div class="NavBit">
-                <a target="_top" href="../ErrorHandlingAndDebugging/Error_handling_and_debugging.htm">«&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../PC_GUI/PCGUITools.htm">Next&nbsp;»</a>
-        </div>
-		<!-- CONTENT TITLE -->
-        <div id="PageTitle">Communications</div>
-		<A NAME="1.Communications|outline"></A>
+		</TD>
+		<TD WIDTH=704>
+			<H1 CLASS="western"><A NAME="1.Communications|outline"></A><A NAME="1.Communications|outline"></A><A NAME="1.Communications|outline"></A><A NAME="1.Communications|outline"></A><A NAME="1.Communications|outline"></A><A NAME="1.Communications|outline"></A><A NAME="1.Communications|outline"></A><A NAME="1.Communications|outline"></A><A NAME="1.Communications|outline"></A>
+			Communications</H1>
 			<P CLASS="western">NXJ supports communications, by Bluetooth and
 			USB, The NXJ communications classes are designed so that most of
 			your code is independent of whether you are using Bluetooth or USB
@@ -957,16 +935,19 @@
 			to top</U></FONT></A></P>
 			<P CLASS="western"><BR><BR>
 			</P>
-				
-
-<!-- DO NOT TOUCH -->				
-				<br/>
-        <div class="NavBit">
-                <a target="_top" href="../ErrorHandlingAndDebugging/Error_handling_and_debugging.htm">«&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../PC_GUI/PCGUITools.htm">Next&nbsp;»</a>
-        </div>
-		<br />
-				<td>
-			</tr>
-		</table>
-	</body>
-</html>
+			<P CLASS="western" ALIGN=LEFT STYLE="widows: 2; orphans: 2"><BR>
+			</P>
+		</TD>
+	</TR>
+</TABLE>
+<P CLASS="western"><BR><BR>
+</P>
+<P CLASS="western" STYLE="margin-top: 0.02in; margin-bottom: 0.02in"><BR><BR>
+</P>
+<P CLASS="western"><BR><BR>
+</P>
+<P CLASS="western"><A NAME="_Communications"></A><A NAME="_Receiver"></A><A NAME="_Streams"></A><A NAME="_NXT_Initiator__-__Bluetooth"></A><A NAME="_NXT_Initiator__-  Bluetooth"></A><A NAME="_PC_Initiator"></A><A NAME="_Bluetooth_initiator"></A><A NAME="_USB_initiator"></A><A NAME="_Using_the_NXTInfo_object"></A><A NAME="_Advanced_Communications"></A><A NAME="_Communications_External_Bluetooth_d"></A><A NAME="_Communicating_with_the_RCX"></A>
+<BR><BR>
+</P>
+</BODY>
+</HTML>
