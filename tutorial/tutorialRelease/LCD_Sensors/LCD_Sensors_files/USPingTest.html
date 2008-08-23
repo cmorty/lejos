@@ -1,0 +1,55 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>USPingTest.java</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<style type="text/css">
+<!--
+body {color: #000000; background-color: #ffffff; font-family: Monospaced}
+table {color: #000000; background-color: #e9e8e2; font-family: Monospaced}
+.character {color: #0000ff}
+.ST0 {color: #993300; font-family: Monospaced; font-weight: bold}
+.comment {color: #339900}
+-->
+</style>
+</head>
+<body>
+<pre>
+<span class="ST0">import</span> lejos.nxt.*;
+
+<span class="comment">/**</span>
+<span class="comment"> * </span><span class="comment">Test</span> <span class="comment">of</span> <span class="comment">ping</span> <span class="comment">and</span> <span class="comment">mu</span><span class="comment">;</span><span class="comment">tiple</span> <span class="comment">distances</span> <span class="comment">for</span> <span class="comment">Ultrssonic</span> <span class="comment">Sensor</span> 
+ <span class="comment">*/</span>
+<span class="ST0">public</span> <span class="ST0">class</span> USPingTest 
+{ 
+    <span class="ST0">public</span> <span class="ST0">static</span> <span class="ST0">void</span> main( String[] args)
+    {
+        LCD.drawString(<span class="character">&quot;</span><span class="character"> USPing</span><span class="character">&quot;</span>,0,0);
+        Button.waitForPress();
+        LCD.clear();
+        UltrasonicSensor sonar = <span class="ST0">new</span> UltrasonicSensor(SensorPort.S3);
+        <span class="ST0">int</span>[] distances = <span class="ST0">new</span> <span class="ST0">int</span>[8];
+        <span class="ST0">int</span> col = 0;
+        <span class="ST0">boolean</span> more = <span class="ST0">true</span>;
+        <span class="ST0">while</span>(more)
+        {
+            sonar.ping();
+            Sound.pause(30);
+            sonar.getDistances(distances);
+            <span class="ST0">for</span>(<span class="ST0">int</span> i = 0; i&lt;distances.length;i++)
+            {
+                LCD.drawInt(distances[i], 4, 4*col,i);                              
+            }
+            col ++; 
+            <span class="ST0">if</span>(col &gt;4 )
+            {
+                more = Button.waitForPress()&lt;8;
+                col =  0;
+            }
+        }
+    }
+} 
+
+
+</pre></body>
+</html>
