@@ -1,19 +1,18 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html dir="ltr" xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
-	<head>
-		<!-- CSS -->
-		<link rel="stylesheet" href="../r_css/lejos-tutorial.css" type="text/css" />
-
-		<!-- ICON -->
-		<link rel="shortcut icon" href="../favicon.ico" type="image/x-icon" />
-		
-		<TITLE>Hardware: I/O and Sensors</TITLE>
-		<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.4  (Win32)">
-		<META NAME="AUTHOR" CONTENT="Roger">
-		<META NAME="CREATED" CONTENT="20080818;10210000">
-		<META NAME="CHANGED" CONTENT="20080818;13453601">
-		<STYLE TYPE="text/css">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html dir="ltr" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml"
+ lang="en">
+<head>
+<!-- CSS -->
+  <link rel="stylesheet" href="../r_css/lejos-tutorial.css"
+ type="text/css">
+<!-- ICON -->
+  <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon">
+  <title>Hardware: I/O and Sensors</title>
+  <meta name="GENERATOR" content="OpenOffice.org 2.4  (Win32)">
+  <meta name="AUTHOR" content="Roger">
+  <meta name="CREATED" content="20080818;10210000">
+  <meta name="CHANGED" content="20080818;13453601">
+  <style type="text/css">
 		<!--
 			@page { size: 11in 11in; margin-right: 1.25in; margin-top: 1in; margin-bottom: 1in }
 			P { margin-bottom: 0.08in; direction: ltr; color: #000000; text-align: left; widows: 2; orphans: 2 }
@@ -35,834 +34,1077 @@
 			A:link { color: #0000ff }
 			A:visited { color: #800080 }
 		-->
-		</STYLE>
-	</head>
-	<body>
-		<a id="top" name="top"></a>
-		<!-- N1: HEADER -->
-		<table cellpadding="0" cellspacing="0" class="n1t1">
-			<tr>
-				<td><img src="../r_media/images/tutorial_header1.jpg" /></td>
-				<td align="right"><img src="../r_media/images/tutorial_header2.jpg" /></td>
-			</tr>
-		</table>
-		<!-- N2: CONTENTS -> NAVIGATION SYSTEMS AND CONTENTS -->
-		<table cellpadding="0" cellspacing="0" class="n2t1">
-			<tr>
-				<td class="n2t1r1c1">
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><FONT COLOR="#0000ff"><U><A HREF="#_Hardware:_I/O_and_Sensors_2">Hardware:
-			I/O and Sensors</A></U></FONT></P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><FONT COLOR="#0000ff"><U><A HREF="#_LCD_1">LCD</A></U></FONT></P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><FONT COLOR="#0000ff"><U><A HREF="#_Text_LCD_methods_1">Text
-			LCD methods</A></U></FONT></P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><FONT COLOR="#0000ff"><U><A HREF="#_LCD_graphics">LCD
-			graphics</A></U></FONT></P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><FONT COLOR="#0000ff"><U><A HREF="#_Buttons">Buttons</A></U></FONT></P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><FONT COLOR="#0000ff"><U><A HREF="#_Sound_1">Sound</A></U></FONT></P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><FONT COLOR="#0000ff"><U><A HREF="#_Battery_1">Battery</A></U></FONT></P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><FONT COLOR="#0000ff"><U><A HREF="#_Sensors_1">Sensors</A></U></FONT></P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><FONT COLOR="#0000ff"><U><A HREF="#_Touch_Sensor_1">Touch
-			Sensor</A></U></FONT></P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><FONT COLOR="#0000ff"><U><A HREF="#_Light_Sensor_1">Light
-			Sensor</A></U></FONT></P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><FONT COLOR="#0000ff"><U><A HREF="#_Sound_Sensor_1">Sound
-			Sensor</A></U></FONT></P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><FONT COLOR="#0000ff"><U><A HREF="#_Ultrasonic_Sensor_1">Ultrasonic
-			Sensor</A></U></FONT><FONT COLOR="#0000ff"><U><A HREF="#_Program:_multiple_echoes">Program:
-			multiple echoes</A></U></FONT></P>
-			<P STYLE="margin-top: 0.19in"><FONT COLOR="#0000ff"><U><A HREF="#_Program:_multiple_echoes_1">Program:
-			multiple echoes</A></U></FONT></P>
-				</td>
-				<td valign="top">
-		<!-- DO NOT MANINPULATE -->
-        <div id="BreadCrumbs">
-            <a href="../index.htm" target="_top">Home Page</a>
-        &gt;
-            <a href="#">Hardware: I/O and Sensors</a>
-
-        </div>
-        <div class="NavBit">
-                <a target="_top" href="../WheeledVehicles/WheeledVehicles.htm">«&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../ListenersAndEvents/Listeners_Events.htm">Next&nbsp;»</a>
-        </div>
-		<!-- CONTENT TITLE -->
-        <div id="PageTitle">Hardware: I/O and Sensors</div>
-		<A NAME="_Hardware%253A_I%252FO_and_Sensors_2"></A>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">This section
-			covers the classes for user input and output, and also the NXT
-			sensors.&nbsp; The NXT hardware has buttons for input and a Liquid
-			Crystal Display and a small speaker for output.&nbsp; LejosNXJ
-			provides software abstractions for all these bits of hardware.</P>
-			<H2 CLASS="western"><A NAME="_LCD_1"></A><A NAME="_LCD"></A>LCD 
-			</H2>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">The LCD
-			class&nbsp; has no instances (there being only one LCD on the NXT)
-			so all the methods are static.<BR>It can be used in text mode and
-			graphics mode.</P>
-			<H3 LANG="en-GB" CLASS="western"><A NAME="_Text_LCD_methods_1"></A><A NAME="_Text_LCD_methods"></A>
-			Text LCD methods</H3>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">As a text
-			display, the NXT LCD screen is 16 characters wide and eight
-			characters deep. It is addressed using (x, y) co-ordinates as
-			follows:</P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;<TABLE DIR="LTR" ALIGN=LEFT WIDTH=432 HSPACE=1 BORDER=0 CELLPADDING=0 CELLSPACING=0>
-				<COL WIDTH=48>
-				<COL WIDTH=384>
-				<TR>
-					<TD WIDTH=48>
-						<P><A NAME="_top"></A>&nbsp;</P>
-					</TD>
-					<TD WIDTH=384 VALIGN=TOP>
-						<P CLASS="western"><BR>
-						</P>
-					</TD>
-				</TR>
-				<TR>
-					<TD WIDTH=48>
-						<P>&nbsp;</P>
-					</TD>
-					<TD WIDTH=384>
-						<P><A NAME="_x0000_i1025"></A><IMG SRC="LCD_Sensors_files/image001.gif" NAME="graphics1" ALIGN=BOTTOM WIDTH=384 HEIGHT=182 BORDER=0>
-						  
-						</P>
-					</TD>
-				</TR>
-			</TABLE> 
-			</P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
-			<P STYLE="margin-bottom: 0in"><BR>
-			</P>
-			<P STYLE="margin-bottom: 0in">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</P>
-			<P STYLE="margin-bottom: 0in">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			x ranges from 0 to 15, and y from 0 to 7.</P>
-			<P STYLE="margin-bottom: 0in">&nbsp;</P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">The methods
-			to write to the LCD in text mode are:-</P>
-			<UL>
-				<LI><P STYLE="margin-top: 0.19in; margin-bottom: 0in">&nbsp;<FONT COLOR="#0000ff"><U><A HREF="../../../../lejosbeta5/lejos_nxj/docs/apidocs/lejos/nxt/LCD.html#drawString(java.lang.String, int, int)">drawString</A></U></FONT>(<FONT COLOR="#0000ff"><U><A HREF="../../../../lejosbeta5/lejos_nxj/docs/apidocs/java/lang/String.html">String</A></U></FONT>&nbsp;str,
-				int&nbsp;x, int&nbsp;y);<BR>This draws a string of text to the
-				LCD screen starting at text co-ordinate (x, y). 
-				</P>
-				<LI><P STYLE="margin-bottom: 0in"><FONT COLOR="#0000ff"><U><A HREF="../../../../lejosbeta5/lejos_nxj/docs/apidocs/lejos/nxt/LCD.html#drawString(java.lang.String, int, int, boolean)">drawString</A></U></FONT>(<FONT COLOR="#0000ff"><U><A HREF="../../../../lejosbeta5/lejos_nxj/docs/apidocs/java/lang/String.html">String</A></U></FONT>&nbsp;str,
-				int&nbsp;x, int&nbsp;y, boolean&nbsp;invert);<BR>This variant of
-				drawString supports inverting&nbsp; the text drawing white
-				characters on a black background. 
-				</P>
-				<LI><P STYLE="margin-bottom: 0in">&nbsp;<FONT COLOR="#0000ff"><U><A HREF="../../../../lejosbeta5/lejos_nxj/docs/apidocs/lejos/nxt/LCD.html#drawInt(int, int, int)">drawInt</A></U></FONT>(int&nbsp;i,
-				int&nbsp;x, int&nbsp;y);<BR>This draws an integer starting at
-				co-ordinate (x,y).&nbsp; The integer is left aligned and takes up
-				as many characters as are necessary. 
-				</P>
-				<LI><P STYLE="margin-bottom: 0in"><FONT COLOR="#0000ff"><U><A HREF="../../../../lejosbeta5/lejos_nxj/docs/apidocs/lejos/nxt/LCD.html#drawInt(int, int, int, int)">drawInt</A></U></FONT>(int&nbsp;i,
-				int&nbsp;places, int&nbsp;x, int&nbsp;y);<BR>This variant of
-				drawInt right-aligns the integer and always uses the number of
-				characters indicated by places. 
-				</P>
-				<LI><P STYLE="margin-bottom: 0in"><FONT COLOR="#0000ff"><U><A HREF="../../../../lejosbeta5/lejos_nxj/docs/apidocs/lejos/nxt/LCD.html#drawChar(char, int, int, boolean)">drawChar</A></U></FONT>(char&nbsp;c,
-				int&nbsp;x, int&nbsp;y, boolean&nbsp;invert);<BR>This draws a
-				character at text co-ordinate (x, y) with optional inversion of
-				the character. 
-				</P>
-				<LI><P STYLE="margin-bottom: 0.19in"><FONT COLOR="#0000ff"><U><A HREF="../../../../lejosbeta5/lejos_nxj/docs/apidocs/lejos/nxt/LCD.html#clear()">clear</A></U></FONT>();<BR>Clears
-				the display. 
-				</P>
-			</UL>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">Example:</P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">    
-			</P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><IMG SRC="LCD_Sensors_htm_m2d6f14d8.png" NAME="graphics2" ALIGN=LEFT WIDTH=576 HEIGHT=368 BORDER=0><BR CLEAR=LEFT><BR><BR>
-			</P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">  
-			</P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
-			<H3 CLASS="western"><A NAME="_LCD_graphics"></A><SPAN LANG="en-GB">LCD
-			graphics</SPAN> 
-			</H3>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><SPAN LANG="en-GB">To
-			display graphics on the LCD screen, you can&nbsp; use the Graphics
-			class from the package&nbsp; </SPAN>javax.microedition.lcdui.&nbsp;
-			<SPAN LANG="en-GB">The API for the class is </SPAN><FONT COLOR="#0000ff"><U><A HREF="http://lejos.sourceforge.net/p_technologies/nxt/nxj/api/javax/microedition/lcdui/Graphics.html"><SPAN LANG="en-GB">here</SPAN></A></U></FONT><SPAN LANG="en-GB">.&nbsp;
-			The LCD screen is 100 pixels wide and 64 pixels high, and all
-			Graphics methods use this coordinate system.&nbsp; With this
-			class, you can draw lines, rectangles, arcs, and position strings
-			with pixel accuracy. </SPAN>
-			</P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><FONT COLOR="#0000ff"><U><A HREF="#_top">Back
-			to Top </A></U></FONT>
-			</P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
-			<H2 CLASS="western"><A NAME="_Buttons"></A>Buttons</H2>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">The Button
-			class has four instances,&nbsp; accessed by static fields:</P>
-			<UL>
-				<LI><P STYLE="margin-top: 0.19in; margin-bottom: 0in">Button.ENTER
-								</P>
-				<LI><P STYLE="margin-bottom: 0in">Button.ESCAPE 
-				</P>
-				<LI><P STYLE="margin-bottom: 0in">Button.LEFT 
-				</P>
-				<LI><P STYLE="margin-bottom: 0.19in">Button.RIGHT 
-				</P>
-			</UL>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">To test if a
-			button is pressed, you use:</P>
-			<UL>
-				<LI><P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">boolean
-				isPressed();</P>
-			</UL>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">Example:<SPAN ID="Frame2" DIR="LTR" STYLE="float: left; width: 6.72in; height: 3.84in; border: 1px solid #000000; padding: 0.05in 0.1in; background: #ffffff">
-				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in"><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt"><B>import</B></FONT></FONT></FONT>
-				<FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">lejos.nxt.*;</FONT></FONT></P>
-				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;</P>
-				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in"><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt"><B>public</B></FONT></FONT></FONT>
-				<FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt"><B>class</B></FONT></FONT></FONT>
-				<FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">ButtonPresses</FONT></FONT></P>
-				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">{</FONT></FONT></P>
-				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;&nbsp;
-				<FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt"><B>void</B></FONT></FONT></FONT>&nbsp;
-				<FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">public
-				static void main (String[] args)</FONT></FONT></P>
-				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in"><FONT COLOR="#7f0055">&nbsp;&nbsp;&nbsp;
-				</FONT><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt"><B>throws</B></FONT></FONT></FONT>
-				<FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">Exception</FONT></FONT></P>
-				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;&nbsp;
-				<FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">{</FONT></FONT></P>
-				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in"><FONT COLOR="#7f0055">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				</FONT><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt"><B>while</B></FONT></FONT></FONT>
-				<FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">(</FONT></FONT><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt"><B>true</B></FONT></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">)
-				{</FONT></FONT></P>
-				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				<FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">LCD.</FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt"><I>clear</I></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">();</FONT></FONT></P>
-				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in"><FONT COLOR="#7f0055">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				</FONT><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt"><B>If</B></FONT></FONT></FONT>
-				<FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">(Button.</FONT></FONT><FONT COLOR="#0000c0"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt"><I>ENTER</I></FONT></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">.isPressed())
-				LCD.</FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt"><I>drawString</I></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">(</FONT></FONT><FONT COLOR="#2a00ff"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;ENTER&quot;</FONT></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">,0,0);</FONT></FONT></P>
-				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in"><FONT COLOR="#7f0055">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				</FONT><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt"><B>if</B></FONT></FONT></FONT>
-				<FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">(Button.</FONT></FONT><FONT COLOR="#0000c0"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt"><I>ESCAPE</I></FONT></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">.isPressed())
-				LCD.</FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt"><I>drawString</I></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">(</FONT></FONT><FONT COLOR="#2a00ff"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;ESCAPE&quot;</FONT></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">,0,0);</FONT></FONT></P>
-				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in"><FONT COLOR="#7f0055">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				</FONT><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt"><B>if</B></FONT></FONT></FONT>
-				<FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">(Button.</FONT></FONT><FONT COLOR="#0000c0"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt"><I>LEFT</I></FONT></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">.isPressed())
-				LCD.</FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt"><I>drawString</I></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">(</FONT></FONT><FONT COLOR="#2a00ff"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;LEFT&quot;</FONT></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">,0,0);</FONT></FONT></P>
-				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in"><FONT COLOR="#7f0055">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				</FONT><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt"><B>if</B></FONT></FONT></FONT>
-				<FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">(Button.</FONT></FONT><FONT COLOR="#0000c0"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt"><I>RIGHT</I></FONT></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">.isPressed())
-				LCD.</FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt"><I>drawString</I></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">(</FONT></FONT><FONT COLOR="#2a00ff"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;RIGHT&quot;</FONT></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">,0,0);</FONT></FONT></P>
-				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				<FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				</FONT></FONT>
-				</P>
-				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;&nbsp;
-				<FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">}</FONT></FONT></P>
-				<P CLASS="western" STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
-				<BR><BR>
-				</P>
-			</SPAN><BR CLEAR=LEFT>
-			</P>
-			<P ALIGN=RIGHT STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><SPAN ID="Frame3" DIR="LTR" STYLE="float: left; width: 0.02in; height: 2.7in; border: none; padding: 0in; background: #ffffff">
-				<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><BR><BR>
-				</P>
-				<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><BR><BR>
-				</P>
-				<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><BR><BR>
-				</P>
-				<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><BR><BR>
-				</P>
-				<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><BR><BR>
-				</P>
-				<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><BR><BR>
-				</P>
-				<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><BR><BR>
-				</P>
-			</SPAN><BR><BR>
-			</P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">To wait for a
-			specific button to be pressed and released, you use:</P>
-			<UL>
-				<LI><P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">void
-				waitForPressAndRelease() throws InterruptedException; 
-				</P>
-			</UL>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">Example:<SPAN ID="Frame4" DIR="LTR" STYLE="float: left; width: 6.72in; height: 2.6in; border: 1px solid #000000; padding: 0.05in 0.1in; background: #ffffff">
-				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in"><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt"><B>import</B></FONT></FONT></FONT>
-				<FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">lejos.nxt.*;</FONT></FONT></P>
-				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;</P>
-				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in"><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt"><B>public</B></FONT></FONT></FONT>
-				<FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt"><B>class</B></FONT></FONT></FONT>
-				<FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">ButtonTest</FONT></FONT></P>
-				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">{</FONT></FONT></P>
-				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;&nbsp;
-				<FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt"><B>void</B></FONT></FONT></FONT>&nbsp;
-				<FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">public
-				static void main (String[] args)</FONT></FONT></P>
-				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;&nbsp;
-				<FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt"><B>throws</B></FONT></FONT></FONT>
-				<FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">Exception</FONT></FONT></P>
-				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;&nbsp;
-				<FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">{</FONT></FONT></P>
-				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				<FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">Button.</FONT></FONT><FONT COLOR="#0000c0"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt"><I>ENTER</I></FONT></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">.waitForPressAndRelease();&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				</FONT></FONT>
-				</P>
-				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				<FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">LCD.</FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt"><I>drawString</I></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">(</FONT></FONT><FONT COLOR="#2a00ff"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;Finished&quot;</FONT></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">,
-				3, 4);</FONT></FONT></P>
-				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				<FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">Thread.</FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt"><I>sleep</I></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">(2000);</FONT></FONT></P>
-				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;&nbsp;
-				<FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">}</FONT></FONT></P>
-				<P CLASS="western" STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
-				<FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">}</FONT></FONT></P>
-			</SPAN><BR CLEAR=LEFT>
-			</P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><BR><BR>
-			</P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">To wait for
-			any button to be pressed, you do:</P>
-			<UL>
-				<LI><P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">static&nbsp;
-				int waitForPress();<BR>The returns the id code&nbsp; of the
-				button that is pressed. 
-				</P>
-			</UL>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><B>button&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			</B>ENTER&nbsp;&nbsp;&nbsp;&nbsp; LEFT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			RIGHT&nbsp;&nbsp;&nbsp;&nbsp; ESCAPE</P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><B>Code&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			</B>1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			4&nbsp;&nbsp; 8</P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">To specify a
-			listener to listen for button events for this button, you: use</P>
-			<UL>
-				<LI><P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">void
-				addButtonListener (ButtonListener aListener)<BR><BR>See
-				&ldquo;Listeners and Events&rdquo; below for how button listeners
-				work. 
-				</P>
-			</UL>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">To read the
-			current state of all the buttons, you do:</P>
-			<UL>
-				<LI><P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">static
-				int readButtons();<BR>The&nbsp; return value is the sum of the
-				codes of the buttons that are pressed. 
-				</P>
-			</UL>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><FONT COLOR="#0000ff"><U><A HREF="">Back
-			to Top</A></U></FONT></P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
-			<H2 CLASS="western"><A NAME="_Sound_1"></A><A NAME="_Sound"></A>Sound</H2>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">This class
-			controls the single speaker so it has no instances and&nbsp; all
-			the methods are static.</P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">To play a
-			single tone, use</P>
-			<UL>
-				<LI><P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;<FONT FACE="Courier New, monospace"><FONT SIZE=2><B>void
-				</B></FONT></FONT><FONT COLOR="#0000ff"><U><A HREF="http://lejos.sourceforge.net/p_technologies/nxt/nxj/api/lejos/nxt/Sound.html#playTone(int, int)"><FONT FACE="Courier New, monospace"><B>playTone</B></FONT></A></U></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2>(int&nbsp;aFrequency,
-				int&nbsp;aDuration);</FONT></FONT> 
-				</P>
-			</UL>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><SPAN ID="Frame5" DIR="LTR" STYLE="float: left; width: 6.07in; height: 5.16in; border: 1px solid #000000; padding: 0.05in 0.1in; background: #ffffff">
-				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in"><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>import</B></FONT></FONT></FONT>
-				<FONT FACE="Courier New, monospace"><FONT SIZE=2>lejos.nxt.*;</FONT></FONT></P>
-				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;</P>
-				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in"><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>public</B></FONT></FONT></FONT>
-				<FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>class</B></FONT></FONT></FONT>
-				<FONT FACE="Courier New, monospace"><FONT SIZE=2>Tune {</FONT></FONT></P>
-				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;</P>
-				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;
-				<FONT COLOR="#3f7f5f"><FONT FACE="Courier New, monospace"><FONT SIZE=2>//
-				NOTE: This tune was generated from a midi using Guy </FONT></FONT></FONT>
-				</P>
-				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;
-				<FONT COLOR="#3f7f5f"><FONT FACE="Courier New, monospace"><FONT SIZE=2>//
-				Truffelli's Brick Music Studio www.aga.it/~guy/lego</FONT></FONT></FONT></P>
-				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;
-				<FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>private</B></FONT></FONT></FONT>
-				<FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>static</B></FONT></FONT></FONT>
-				<FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>final</B></FONT></FONT></FONT>
-				<FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>short</B></FONT></FONT></FONT>
-				<FONT FACE="Courier New, monospace"><FONT SIZE=2>[] </FONT></FONT><FONT COLOR="#0000c0"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>note</I></FONT></FONT></FONT>
-				<FONT FACE="Courier New, monospace"><FONT SIZE=2>= {</FONT></FONT></P>
-				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;&nbsp;
-				<FONT FACE="Courier New, monospace"><FONT SIZE=2>2349,115, 0,5,
-				1760,165, 0,35, 1760,28, 0,13, 1976,23, </FONT></FONT>
-				</P>
-				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;&nbsp;
-				<FONT FACE="Courier New, monospace"><FONT SIZE=2>0,18, 1760,18,
-				0,23, 1568,15, 0,25, 1480,103, 0,18, 1175,180, 0,20, 1760,18, </FONT></FONT>
-				</P>
-				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;&nbsp;
-				<FONT FACE="Courier New, monospace"><FONT SIZE=2>0,23, 1976,20,
-				0,20, 1760,15, 0,25, 1568,15, 0,25, 2217,98, 0,23, 1760,88, </FONT></FONT>
-				</P>
-				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;&nbsp;
-				<FONT FACE="Courier New, monospace"><FONT SIZE=2>0,33, 1760,75,
-				0,5, 1760,20, 0,20, 1760,20, 0,20, 1976,18, 0,23, 1760,18, </FONT></FONT>
-				</P>
-				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;&nbsp;
-				<FONT FACE="Courier New, monospace"><FONT SIZE=2>0,23, 2217,225,
-				0,15, 2217,218};</FONT></FONT></P>
-				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;</P>
-				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;
-				<FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>void</B></FONT></FONT></FONT>&nbsp;
-				<FONT FACE="Courier New, monospace"><FONT SIZE=2>public static
-				void main(String [] args) {</FONT></FONT></P>
-				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				<FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>for</B></FONT></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2>(</FONT></FONT><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>int</B></FONT></FONT></FONT>
-				<FONT FACE="Courier New, monospace"><FONT SIZE=2>i=0;i&lt;</FONT></FONT><FONT COLOR="#0000c0"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>note</I></FONT></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2>.</FONT></FONT><FONT COLOR="#0000c0"><FONT FACE="Courier New, monospace"><FONT SIZE=2>length</FONT></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2>;
-				i+=2) {</FONT></FONT></P>
-				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				<FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>final</B></FONT></FONT></FONT>
-				<FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>short</B></FONT></FONT></FONT>
-				<FONT FACE="Courier New, monospace"><FONT SIZE=2>w = </FONT></FONT><FONT COLOR="#0000c0"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>note</I></FONT></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2>[i+1];</FONT></FONT></P>
-				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				<FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>final</B></FONT></FONT></FONT>
-				<FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>int</B></FONT></FONT></FONT>
-				<FONT FACE="Courier New, monospace"><FONT SIZE=2>n = </FONT></FONT><FONT COLOR="#0000c0"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>note</I></FONT></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2>[i];</FONT></FONT></P>
-				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				<FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>if</B></FONT></FONT></FONT>
-				<FONT FACE="Courier New, monospace"><FONT SIZE=2>(n != 0)
-				Sound.</FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>playTone</I></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2>(n,
-				w*10);</FONT></FONT></P>
-				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				<FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>try</B></FONT></FONT></FONT>
-				<FONT FACE="Courier New, monospace"><FONT SIZE=2>{
-				Thread.</FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>sleep</I></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2>(w*10);
-				} </FONT></FONT><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>catch</B></FONT></FONT></FONT>
-				<FONT FACE="Courier New, monospace"><FONT SIZE=2>(InterruptedException
-				e) {}</FONT></FONT></P>
-				<P CLASS="western" STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <FONT FACE="Courier New, monospace"><FONT SIZE=2>}</FONT></FONT></P>
-			</SPAN><BR CLEAR=LEFT><BR><BR>
-			</P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">Example:</P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">There are two
-			ways to play system sounds.&nbsp;&nbsp; One is:</P>
-			<UL>
-				<LI><P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">void
-				systemSound (boolean aQueued, int aCode);<BR>The aQueued
-				parameter is ignored on the NXT, it is here to be backwards
-				compatible with the RXC. 
-				</P>
-			</UL>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">The values of
-			code are:</P>
-			<P STYLE="margin-left: 0.08in; margin-top: 0.19in; margin-bottom: 0.19in">
-			code = 0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			Short beep</P>
-			<P STYLE="margin-left: 0.08in; margin-top: 0.19in; margin-bottom: 0.19in">
-			code = 1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			Double beep</P>
-			<P STYLE="margin-left: 0.08in; margin-top: 0.19in; margin-bottom: 0.19in">
-			code = 2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			Descending arpeggio</P>
-			<P STYLE="margin-left: 0.08in; margin-top: 0.19in; margin-bottom: 0.19in">
-			code = 3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			Ascending arpeggio</P>
-			<P STYLE="margin-left: 0.08in; margin-top: 0.19in; margin-bottom: 0.19in">
-			code = 4&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			Long, low buzz</P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">Iindividual
-			methods to play a particular system sound, if you don&rsquo;t
-			remember the code, are</P>
-			<UL>
-				<LI><P STYLE="margin-top: 0.19in; margin-bottom: 0in">void
-				beep(); 
-				</P>
-				<LI><P STYLE="margin-bottom: 0in">void twoBeeps(); 
-				</P>
-				<LI><P STYLE="margin-bottom: 0in">void beepSequence(); 
-				</P>
-				<LI><P STYLE="margin-bottom: 0in">void beepSequenceUp(); 
-				</P>
-				<LI><P STYLE="margin-bottom: 0in">void buzz();int playSample(File
-				aWAVfile) 
-				</P>
-				<LI><P STYLE="margin-bottom: 0.19in">int playSample(File
-				aWAVfile, int volume) 
-				</P>
-			</UL>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">This is also
-			a method to produce a rest when playing a tune; time in
-			milliseconds</P>
-			<UL>
-				<LI><P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">void
-				pause(int time);<BR>You can use this method anytime you want your
-				program wait, and don&rsquo;t want to bother with the try/catch
-				block required by System.sleep(); 
-				</P>
-			</UL>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">leJOS NXJ has
-			methods that can also play 8-bit WAV files.</P>
-			<UL>
-				<LI><P STYLE="margin-top: 0.19in; margin-bottom: 0in">int
-				playSample(File aWAVfile) 
-				</P>
-				<LI><P STYLE="margin-bottom: 0.19in">int playSample(File
-				aWAVfile, int volume) 
-				</P>
-			</UL>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">The return
-			value of milliseconds the sample will play for or &lt; 0 if there
-			is an error.</P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">To play a
-			musical note, use&nbsp; 
-			</P>
-			<UL>
-				<LI><P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">void
-				<FONT COLOR="#0000ff"><U><A HREF="http://lejos.sourceforge.net/p_technologies/nxt/nxj/api/lejos/nxt/Sound.html#playNote(int[], int, int)"><FONT FACE="Courier New, monospace"><B>playNote</B></FONT></A></U></FONT>(int[]&nbsp;inst,int&nbsp;freq,
-				int&nbsp;len)<BR>The&nbsp; <I>inst</I> array contains the attack,
-				decay, sustain and release&nbsp; parameters for the note. The
-				static constants for some predefined instruments are: FLUTE,
-				PIANO&nbsp; and XYLOPHONE.&nbsp; You can also experiment with
-				defining you own. 
-				</P>
-			</UL>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><FONT COLOR="#0000ff"><U><A HREF="">Back
-			to Top</A></U></FONT></P>
-			<H2 CLASS="western"><A NAME="_Battery_1"></A><A NAME="_Battery"></A>
-			Battery</H2>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">There are two
-			static methods to get the battery voltage:</P>
-			<UL>
-				<LI><P STYLE="margin-top: 0.19in; margin-bottom: 0in">&nbsp; int
-				getVoltageMilliVolt(); 
-				</P>
-				<LI><P STYLE="margin-bottom: 0.19in">&nbsp; float getVoltage() 
-				</P>
-			</UL>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">Example:</P>
-			<P LANG="" STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><SPAN ID="Frame6" DIR="LTR" STYLE="float: left; width: 6.21in; height: 1.86in; border: 1px solid #000000; padding: 0.05in 0.1in; background: #ffffff">
-				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in"><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>import</B></FONT></FONT></FONT>
-				<FONT FACE="Courier New, monospace"><FONT SIZE=2>lejos.nxt.*;</FONT></FONT></P>
-				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;</P>
-				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in"><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>public</B></FONT></FONT></FONT>
-				<FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>class</B></FONT></FONT></FONT>
-				<FONT FACE="Courier New, monospace"><FONT SIZE=2>BatteryTest {</FONT></FONT></P>
-				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;&nbsp;
-				<FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>void</B></FONT></FONT></FONT>
-				<FONT FACE="Courier New, monospace"><FONT SIZE=2>main (String[]
-				args) </FONT></FONT><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>throws</B></FONT></FONT></FONT>
-				<FONT FACE="Courier New, monospace"><FONT SIZE=2>Exception {</FONT></FONT></P>
-				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				<FONT FACE="Courier New, monospace"><FONT SIZE=2>LCD.</FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>drawString</I></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2>(</FONT></FONT><FONT COLOR="#2a00ff"><FONT FACE="Courier New, monospace"><FONT SIZE=2>&quot;Battery:
-				&quot;</FONT></FONT></FONT> <FONT FACE="Courier New, monospace"><FONT SIZE=2>+
-				Battery.</FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>getVoltage</I></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2>(),0,0);</FONT></FONT></P>
-				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				<FONT FACE="Courier New, monospace"><FONT SIZE=2>Thread.</FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>sleep</I></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2>(2000);</FONT></FONT></P>
-				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;&nbsp;
-				<FONT FACE="Courier New, monospace"><FONT SIZE=2>}</FONT></FONT></P>
-				<P CLASS="western" STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
-				<FONT FACE="Courier New, monospace"><FONT SIZE=2>}</FONT></FONT></P>
-			</SPAN><BR CLEAR=LEFT><BR><BR>
-			</P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><BR><BR>
-			</P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><FONT COLOR="#0000ff"><U><A HREF="">Back
-			to Top</A></U></FONT></P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
-			<H1 LANG="en-GB" CLASS="western"><A NAME="_Sensors_1"></A><A NAME="_Sensors"></A>
-			Sensors</H1>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">The NXT comes
-			with four sensors; the touch sensor, the sound sensor, the light
-			sensor and the ultrasonic sensor.&nbsp; LejosNXJ provides software
-			abstractions of all these sensor types, as well as many provided
-			by third parties.</P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">A physical
-			sensor must be connected to a port, and the sensor object must
-			know which port this is.&nbsp; To provide this information, you
-			create an instance of the sensor, and pass this information in its
-			constructor.&nbsp; The possibilities are: SensorPort.S1, S2, S3 or
-			S4.</P>
-			<H2 CLASS="western"><A NAME="_Touch_Sensor_1"></A><A NAME="_Touch_Sensor"></A>
-			Touch Sensor</H2>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">To use a
-			touch sensor, you create an instance of&nbsp; using the
-			constructor:</P>
-			<UL>
-				<LI><P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">TouchSensor(SensorPort
-				port); 
-				</P>
-			</UL>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">To test is
-			the touch sensor is pressed, you use the isPressed() method:</P>
-			<UL>
-				<LI><P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">boolean
-				isPressed(); 
-				</P>
-			</UL>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">Example:<FONT COLOR="#7f0055">
-			</FONT>
-			</P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><IMG SRC="LCD_Sensors_htm_m18db06b6.png" NAME="graphics3" ALIGN=LEFT WIDTH=498 HEIGHT=270 BORDER=0><BR CLEAR=LEFT><BR><BR>
-			</P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><BR><BR>
-			</P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><A NAME="_x0000_i1027"></A>
-			 <FONT COLOR="#7f0055"> </FONT>
-			</P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><FONT COLOR="#0000ff"><U><A HREF="">Back
-			to Top</A></U></FONT></P>
-			<H2 CLASS="western"><A NAME="_Light_Sensor_1"></A><A NAME="_Light_Sensor"></A>
-			Light Sensor</H2>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">To use a
-			light sensor, you create an instance of it using the constructor:</P>
-			<UL>
-				<LI><P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">public
-				LightSensor(SensorPort port); 
-				</P>
-			</UL>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">Example:</P>
-			<P LANG="" STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><SPAN ID="Frame7" DIR="LTR" STYLE="float: left; width: 6.14in; height: 5.84in; border: 1px solid #000000; padding: 0.05in 0.1in; background: #ffffff">
-				<P STYLE="margin-bottom: 0in"><BR>
-				</P>
-				<P STYLE="margin-bottom: 0in"><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>public</B></FONT></FONT></FONT>
-				<FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>class</B></FONT></FONT></FONT>
-				<FONT FACE="Courier New, monospace"><FONT SIZE=2>LightTest {</FONT></FONT></P>
-				<P STYLE="margin-bottom: 0in"><FONT COLOR="#7f0055">&nbsp;&nbsp;&nbsp;&nbsp;
-				</FONT><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>void</B></FONT></FONT></FONT>
-				<FONT FACE="Courier New, monospace"><FONT SIZE=2>main (String[]
-				args)</FONT></FONT></P>
-				<P STYLE="margin-bottom: 0in"><FONT COLOR="#7f0055">&nbsp;&nbsp;&nbsp;
-				</FONT><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>throws</B></FONT></FONT></FONT>
-				<FONT FACE="Courier New, monospace"><FONT SIZE=2>Exception</FONT></FONT></P>
-				<P STYLE="margin-bottom: 0in">&nbsp;&nbsp;&nbsp; <FONT FACE="Courier New, monospace"><FONT SIZE=2>{</FONT></FONT></P>
-				<P STYLE="margin-bottom: 0in">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				<FONT FACE="Courier New, monospace"><FONT SIZE=2>LightSensor
-				light = </FONT></FONT><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>new</B></FONT></FONT></FONT>
-				<FONT FACE="Courier New, monospace"><FONT SIZE=2>LightSensor(SensorPort.</FONT></FONT><FONT COLOR="#0000c0"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>S1</I></FONT></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2>);</FONT></FONT></P>
-				<P STYLE="margin-bottom: 0in">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-								</P>
-				<P STYLE="margin-bottom: 0in"><FONT COLOR="#7f0055">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				</FONT><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>while</B></FONT></FONT></FONT>
-				<FONT FACE="Courier New, monospace"><FONT SIZE=2>(</FONT></FONT><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>true</B></FONT></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2>)
-				{</FONT></FONT></P>
-				<P STYLE="margin-bottom: 0in">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				<FONT FACE="Courier New, monospace"><FONT SIZE=2>LCD.</FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>drawInt</I></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2>(light.readValue(),
-				4, 0, 0);</FONT></FONT></P>
-				<P STYLE="margin-bottom: 0in">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				<FONT FACE="Courier New, monospace"><FONT SIZE=2>LCD.</FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>drawInt</I></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2>(light.readNormalizedValue(),
-				4, 0, 1);</FONT></FONT></P>
-				<P STYLE="margin-bottom: 0in">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				<FONT FACE="Courier New, monospace"><FONT SIZE=2>LCD.</FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>drawInt</I></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2>(SensorPort.</FONT></FONT><FONT COLOR="#0000c0"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>S1</I></FONT></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2>.readRawValue(),
-				4,&nbsp; 0, 2);</FONT></FONT></P>
-				<P STYLE="margin-bottom: 0in">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				<FONT FACE="Courier New, monospace"><FONT SIZE=2>LCD.</FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>drawInt</I></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2>(SensorPort.</FONT></FONT><FONT COLOR="#0000c0"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>S1</I></FONT></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2>.</FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2><SPAN STYLE="background: #c0c0c0">readValue</SPAN></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2>(),
-				4,&nbsp; 0, 3);</FONT></FONT></P>
-				<P STYLE="margin-bottom: 0in">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				<FONT FACE="Courier New, monospace"><FONT SIZE=2>Thread.sleep(2000);</FONT></FONT></P>
-				<P STYLE="margin-bottom: 0in">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <FONT FACE="Courier New, monospace"><FONT SIZE=2>}</FONT></FONT></P>
-				<P CLASS="western" STYLE="margin-bottom: 0in">&nbsp;&nbsp;&nbsp;
-				<FONT FACE="Courier New, monospace"><FONT SIZE=2>}</FONT></FONT></P>
-			</SPAN><BR CLEAR=LEFT><BR><BR>
-			</P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><BR><BR>
-			</P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><FONT COLOR="#0000ff"><U><A HREF="">Back
-			to Top</A></U></FONT></P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
-			<H2 CLASS="western"><A NAME="_Sound_Sensor_1"></A><A NAME="_Sound_Sensor"></A>
-			Sound Sensor</H2>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">The sound
-			sensor supports two modes: DB and DBA.&nbsp;&nbsp; These modes
-			give&nbsp; different frequency response, so that it may be
-			possible to get an idea of the frequency of a sound by switching
-			between modes. 
-			</P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">There are two
-			constructors:</P>
-			<UL>
-				<LI><P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;&nbsp;&nbsp;&nbsp;
-				SoundSensor(SensorPort port) <BR>creates a sound sensor using DB
-				mode.</P>
-				<LI><P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				SoundSensor(SensorPort port, dba)<BR>creates a sound sensor using
-				DBA mode if the second parameter is <I><B>true</B></I>.</P>
-			</UL>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">You can
-			switch modes with:</P>
-			<UL>
-				<LI><P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"> void
-				setDBA(boolean dba)</P>
-			</UL>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">Example using
-			DB mode only:</P>
-			<TABLE WIDTH=592 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=4 CELLSPACING=0 FRAME=RHS>
-				<COL WIDTH=8>
-				<COL WIDTH=567>
-				<TR VALIGN=TOP>
-					<TD WIDTH=8>
-						<P><BR>
-						</P>
-					</TD>
-					<TD WIDTH=567>
-						<P><IMG SRC="LCD_Sensors_files/image004.gif" NAME="graphics4" WIDTH=590 HEIGHT=393 BORDER=0>
-						  
-						</P>
-					</TD>
-				</TR>
-			</TABLE>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><A NAME="_x0000_i1028"></A>
-			<BR><BR>
-			</P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">The above
-			example gives a graphical display of the way the sound reading
-			varies over a two-second period. 
-			</P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;   
-			</P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><FONT COLOR="#0000ff"><U><A HREF="">Back
-			to Top</A></U></FONT></P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
-			<H2 CLASS="western"><A NAME="_Ultrasonic_Sensor_1"></A><A NAME="_Ultrasonic_Sensor"></A>
-			Ultrasonic Sensor</H2>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">To create an
-			instance&nbsp; use the constructor:</P>
-			<UL>
-				<LI><P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">
-				UltrasonicSensor( Port aSensorPort); 
-				</P>
-			</UL>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">The sensor
-			operates in two modes, continuous (defalt) and ping.&nbsp; When in
-			continuous mode the sensor sends out pings as often as it can and
-			the most recently obtained result is available via a call to</P>
-			<UL>
-				<LI><P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				int getDistance()<BR>The return value is in centimeters.&nbsp; If
-				no echo was detected, the returned value is 255.&nbsp; The
-				maximum range of the sensor is about 170 cm.&nbsp; 
-				</P>
-			</UL>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">When in ping
-			mode, a ping is sent only when a call is made to</P>
-			<UL>
-				<LI><P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;&nbsp;&nbsp;&nbsp;
-					void ping()<BR>This sets the sensor in ping mode and sends a
-				single ping and up to 8 echoes are captured.&nbsp; These may be
-				read by making a call to</P>
-				<LI><P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;&nbsp;&nbsp;&nbsp;
-				int readDistances(int [] distances);<BR>You provide an integer
-				array of length that contains the data after the method returns.&nbsp;
-				A delay of approximately 20ms is required between the call to
-				ping and getDistances. This delay is not included in the method.
-				Calls to getDistances before this period may result in an error
-				or no data being returned. The normal getDistance call may also
-				be used with ping, returning information for the first echo.
-				<BR>Calling&nbsp; ping()&nbsp; will disable the default
-				continuous mode. Toto switch back to continuous mode, call</P>
-				<LI><P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;&nbsp;
-				int continuous()</P>
-			</UL>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">Example:</P>
-			<P LANG="" STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><SPAN ID="Frame8" DIR="LTR" STYLE="float: left; width: 5.25in; height: 3.18in; border: 1px solid #000000; padding: 0.05in 0.1in; background: #ffffff">
-				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in"><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>import</B></FONT></FONT></FONT>
-				<FONT FACE="Courier New, monospace"><FONT SIZE=2><SPAN STYLE="background: #c0c0c0">lejos.nxt.*</SPAN></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2>;</FONT></FONT></P>
-				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;</P>
-				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in"><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>public</B></FONT></FONT></FONT>
-				<FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>class</B></FONT></FONT></FONT>
-				<FONT FACE="Courier New, monospace"><FONT SIZE=2>SonicTest {&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				</FONT></FONT>
-				</P>
-				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;&nbsp;
-				<FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>void</B></FONT></FONT></FONT>
-				<FONT FACE="Courier New, monospace"><FONT SIZE=2>main(String[]
-				args) </FONT></FONT><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>throws</B></FONT></FONT></FONT>
-				<FONT FACE="Courier New, monospace"><FONT SIZE=2>Exception {</FONT></FONT></P>
-				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				<FONT FACE="Courier New, monospace"><FONT SIZE=2>UltrasonicSensor
-				sonic = </FONT></FONT><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>new</B></FONT></FONT></FONT></P>
-				<P STYLE="margin-left: 1in; margin-top: 0.02in; margin-bottom: 0.02in">
-				&nbsp;<FONT FACE="Courier New, monospace"><FONT SIZE=2>UltrasonicSensor(SensorPort.</FONT></FONT><FONT COLOR="#0000c0"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>S1</I></FONT></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2>);</FONT></FONT></P>
-				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-								</P>
-				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				<FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>while</B></FONT></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2>(!</FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2><SPAN STYLE="background: #c0c0c0">Button</SPAN></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2>.</FONT></FONT><FONT COLOR="#0000c0"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>ESCAPE</I></FONT></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2>.isPressed())
-				{</FONT></FONT></P>
-				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				<FONT FACE="Courier New, monospace"><FONT SIZE=2>LCD.</FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>clear</I></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2>();</FONT></FONT></P>
-				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				<FONT FACE="Courier New, monospace"><FONT SIZE=2>LCD.</FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>drawInt</I></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2>(sonic.getDistance(),
-				0, 3);</FONT></FONT></P>
-				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				<FONT FACE="Courier New, monospace"><FONT SIZE=2>}</FONT></FONT></P>
-				<P STYLE="margin-top: 0.02in; margin-bottom: 0.02in">&nbsp;&nbsp;&nbsp;
-				<FONT FACE="Courier New, monospace"><FONT SIZE=2>} </FONT></FONT>
-				</P>
-				<P CLASS="western" STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
-				<FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">}</FONT></FONT></P>
-			</SPAN><BR><BR>
-			</P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><BR><BR>
-			</P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><BR><BR>
-			</P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><BR><BR>
-			</P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><BR><BR>
-			</P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><BR><BR>
-			</P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><BR><BR>
-			</P>
-			<P CLASS="western" STYLE="margin-bottom: 0in"><A NAME="_Program%253A_multiple_echoes_1"></A><A NAME="_Program%253A_multiple_echoes"></A>
-			<BR>
-			</P>
-			<H3 LANG="en-GB" CLASS="western">Program: multiple echoes</H3>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">Write a
-			program that displays the distances from multiple echoes in a
-			column. The program should make four calls to ping(), and display
-			the four columns of results, then wait for a button press.&nbsp;&nbsp;
-			Exit if the ESCAPE button was pressed. 
-			</P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><FONT COLOR="#0000ff"><U><A HREF="LCD_Sensors_files/USPingTest.html" TARGET="_blank"><B>Solution</B></A></U></FONT></P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in"><FONT COLOR="#0000ff"><U><A HREF="">Back
-			to Top</A></U></FONT></P>
-			<P STYLE="margin-top: 0.19in; margin-bottom: 0.19in">&nbsp;</P>
-			<P CLASS="western" STYLE="margin-top: 0.19in; margin-bottom: 0.19in">
-			<BR><BR>
-			</P>
-
-
-<!-- DO NOT TOUCH -->				
-				<br/>
-        <div class="NavBit">
-                <a target="_top" href="../Preliminaries/Intro.htm">«&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../ListenersAndEvents/Listeners_Events.htm">Next&nbsp;»</a>
-        </div>
-		<br />
-				<td>
-			</tr>
-		</table>
-	</body>
+		</style>
+</head>
+<body>
+<a id="top" name="top"></a><!-- N1: HEADER -->
+<table class="n1t1" cellpadding="0" cellspacing="0">
+  <tbody>
+    <tr>
+      <td><img src="../r_media/images/tutorial_header1.jpg"></td>
+      <td align="right"><img
+ src="../r_media/images/tutorial_header2.jpg"></td>
+    </tr>
+  </tbody>
+</table>
+<!-- N2: CONTENTS -> NAVIGATION SYSTEMS AND CONTENTS -->
+<table class="n2t1" cellpadding="0" cellspacing="0">
+  <tbody>
+    <tr>
+      <td class="n2t1r1c1">
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;"><font
+ color="#0000ff"><u><a href="#_Hardware:_I/O_and_Sensors_2">Hardware:
+I/O and Sensors</a></u></font></p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;"><font
+ color="#0000ff"><u><a href="#_LCD_1">LCD</a></u></font></p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;"><font
+ color="#0000ff"><u><a href="#_Text_LCD_methods_1">Text LCD methods</a></u></font></p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;"><font
+ color="#0000ff"><u><a href="#_LCD_graphics">LCD graphics</a></u></font></p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;"><font
+ color="#0000ff"><u><a href="#_Buttons">Buttons</a></u></font></p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;"><font
+ color="#0000ff"><u><a href="#_Sound_1">Sound</a></u></font></p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;"><font
+ color="#0000ff"><u><a href="#_Battery_1">Battery</a></u></font></p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;"><font
+ color="#0000ff"><u><a href="#_Sensors_1">Sensors</a></u></font></p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;"><font
+ color="#0000ff"><u><a href="#_Touch_Sensor_1">Touch Sensor</a></u></font></p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;"><font
+ color="#0000ff"><u><a href="#_Light_Sensor_1">Light Sensor</a></u></font></p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;"><font
+ color="#0000ff"><u><a href="#_Sound_Sensor_1">Sound Sensor</a></u></font></p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;"><font
+ color="#0000ff"><u><a href="#_Ultrasonic_Sensor_1">Ultrasonic Sensor</a></u></font><font
+ color="#0000ff"><u><a href="#_Program:_multiple_echoes">Program:
+multiple echoes</a></u></font></p>
+      <p style="margin-top: 0.19in;"><font color="#0000ff"><u><a
+ href="#_Program:_multiple_echoes_1">Program: multiple echoes</a></u></font></p>
+      </td>
+      <td valign="top"><!-- DO NOT MANINPULATE -->
+      <div id="BreadCrumbs"> <a href="../index.htm" target="_top">Home
+Page</a> &gt; <a href="#">Hardware: I/O and Sensors</a> </div>
+      <div class="NavBit"> <a target="_top"
+ href="../WheeledVehicles/WheeledVehicles.htm">&laquo;&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a
+ href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a
+ href="../ListenersAndEvents/Listeners_Events.htm">Next&nbsp;&raquo;</a>
+      </div>
+<!-- CONTENT TITLE -->
+      <div id="PageTitle">Hardware: I/O and Sensors</div>
+      <a name="_Hardware%3A_I%2FO_and_Sensors_2"></a>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">This
+section covers the classes for user input and output, and also the NXT
+sensors.&nbsp; The NXT hardware has buttons for input and a Liquid
+Crystal Display and a small speaker for output.&nbsp; LejosNXJ provides
+software abstractions for all these bits of hardware.</p>
+      <h2 class="western"><a name="_LCD_1"></a><a name="_LCD"></a>LCD </h2>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">The LCD
+class&nbsp; has no instances (there being only one LCD on the NXT) so
+all the methods are static.<br>
+It can be used in text mode and graphics mode.</p>
+      <h3 class="western" lang="en-GB"><a name="_Text_LCD_methods_1"></a><a
+ name="_Text_LCD_methods"></a> Text LCD methods</h3>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">As a text
+display, the NXT LCD screen is 16 characters wide and eight characters
+deep. It is addressed using (x, y) co-ordinates as follows:</p>
+      <p style="margin-bottom: 0in;">&nbsp;<img
+ src="LCD_Sensors_files/image001.gif" name="graphics1" align="bottom"
+ border="0" height="182" width="384"><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+x ranges from 0 to 15, and y from 0 to 7.</p>
+      <p style="margin-bottom: 0in;">&nbsp;</p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">The methods
+to write to the LCD in text mode are:-</p>
+      <ul>
+        <li>
+          <p style="margin-top: 0.19in; margin-bottom: 0in;">&nbsp;<font
+ color="#0000ff"><u><a
+ href="../../../../lejosbeta5/lejos_nxj/docs/apidocs/lejos/nxt/LCD.html#drawString%28java.lang.String,%20int,%20int%29">drawString</a></u></font>(<font
+ color="#0000ff"><u><a
+ href="../../../../lejosbeta5/lejos_nxj/docs/apidocs/java/lang/String.html">String</a></u></font>&nbsp;str,
+int&nbsp;x, int&nbsp;y);<br>
+This draws a string of text to the LCD screen starting at text
+co-ordinate (x, y). </p>
+        </li>
+        <li>
+          <p style="margin-bottom: 0in;"><font color="#0000ff"><u><a
+ href="../../../../lejosbeta5/lejos_nxj/docs/apidocs/lejos/nxt/LCD.html#drawString%28java.lang.String,%20int,%20int,%20boolean%29">drawString</a></u></font>(<font
+ color="#0000ff"><u><a
+ href="../../../../lejosbeta5/lejos_nxj/docs/apidocs/java/lang/String.html">String</a></u></font>&nbsp;str,
+int&nbsp;x, int&nbsp;y, boolean&nbsp;invert);<br>
+This variant of drawString supports inverting&nbsp; the text drawing
+white characters on a black background. </p>
+        </li>
+        <li>
+          <p style="margin-bottom: 0in;">&nbsp;<font color="#0000ff"><u><a
+ href="../../../../lejosbeta5/lejos_nxj/docs/apidocs/lejos/nxt/LCD.html#drawInt%28int,%20int,%20int%29">drawInt</a></u></font>(int&nbsp;i,
+int&nbsp;x, int&nbsp;y);<br>
+This draws an integer starting at co-ordinate (x,y).&nbsp; The integer
+is left aligned and takes up as many characters as are necessary. </p>
+        </li>
+        <li>
+          <p style="margin-bottom: 0in;"><font color="#0000ff"><u><a
+ href="../../../../lejosbeta5/lejos_nxj/docs/apidocs/lejos/nxt/LCD.html#drawInt%28int,%20int,%20int,%20int%29">drawInt</a></u></font>(int&nbsp;i,
+int&nbsp;places, int&nbsp;x, int&nbsp;y);<br>
+This variant of drawInt right-aligns the integer and always uses the
+number of characters indicated by places. </p>
+        </li>
+        <li>
+          <p style="margin-bottom: 0in;"><font color="#0000ff"><u><a
+ href="../../../../lejosbeta5/lejos_nxj/docs/apidocs/lejos/nxt/LCD.html#drawChar%28char,%20int,%20int,%20boolean%29">drawChar</a></u></font>(char&nbsp;c,
+int&nbsp;x, int&nbsp;y, boolean&nbsp;invert);<br>
+This draws a character at text co-ordinate (x, y) with optional
+inversion of the character. </p>
+        </li>
+        <li>
+          <p style="margin-bottom: 0.19in;"><font color="#0000ff"><u><a
+ href="../../../../lejosbeta5/lejos_nxj/docs/apidocs/lejos/nxt/LCD.html#clear%28%29">clear</a></u></font>();<br>
+Clears the display. </p>
+        </li>
+      </ul>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">Example:</p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;"> </p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;"><img
+ src="LCD_Sensors_htm_m2d6f14d8.png" name="graphics2" align="left"
+ border="0" height="368" width="576"><br clear="left">
+      <br>
+      <br>
+      </p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;"> </p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">&nbsp;</p>
+      <h3 class="western"><a name="_LCD_graphics"></a><span lang="en-GB">LCD
+graphics</span> </h3>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;"><span
+ lang="en-GB">To display graphics on the LCD screen, you can&nbsp; use
+the Graphics class from the package&nbsp; </span>javax.microedition.lcdui.&nbsp;
+      <span lang="en-GB">The API for the class is </span><font
+ color="#0000ff"><u><a
+ href="http://lejos.sourceforge.net/p_technologies/nxt/nxj/api/javax/microedition/lcdui/Graphics.html"><span
+ lang="en-GB">here</span></a></u></font><span lang="en-GB">.&nbsp; The
+LCD screen is 100 pixels wide and 64 pixels high, and all Graphics
+methods use this coordinate system.&nbsp; With this class, you can draw
+lines, rectangles, arcs, and position strings with pixel accuracy. </span>
+      </p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">&nbsp;</p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;"><font
+ color="#0000ff"><u><a href="#_top">Back to Top </a></u></font> </p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">&nbsp;</p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">&nbsp;</p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">&nbsp;</p>
+      <h2 class="western"><a name="_Buttons"></a>Buttons</h2>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">The Button
+class has four instances,&nbsp; accessed by static fields:</p>
+      <ul>
+        <li>
+          <p style="margin-top: 0.19in; margin-bottom: 0in;">Button.ENTER
+          </p>
+        </li>
+        <li>
+          <p style="margin-bottom: 0in;">Button.ESCAPE </p>
+        </li>
+        <li>
+          <p style="margin-bottom: 0in;">Button.LEFT </p>
+        </li>
+        <li>
+          <p style="margin-bottom: 0.19in;">Button.RIGHT </p>
+        </li>
+      </ul>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">To test if
+a button is pressed, you use:</p>
+      <ul>
+        <li>
+          <p style="margin-top: 0.19in; margin-bottom: 0.19in;">boolean
+isPressed();</p>
+        </li>
+      </ul>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">Example:<span
+ id="Frame2" dir="ltr"
+ style="border: 1px solid rgb(0, 0, 0); padding: 0.05in 0.1in; background: rgb(255, 255, 255) none repeat scroll 0%; float: left; width: 6.72in; height: 3.84in; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
+      <p style="margin-top: 0.02in; margin-bottom: 0.02in;"><font
+ color="#7f0055"><font face="Courier New, monospace"><font
+ style="font-size: 9pt;" size="2"><b>import</b></font></font></font> <font
+ face="Courier New, monospace"><font style="font-size: 9pt;" size="2">lejos.nxt.*;</font></font></p>
+      <p style="margin-top: 0.02in; margin-bottom: 0.02in;">&nbsp;</p>
+      <p style="margin-top: 0.02in; margin-bottom: 0.02in;"><font
+ color="#7f0055"><font face="Courier New, monospace"><font
+ style="font-size: 9pt;" size="2"><b>public</b></font></font></font> <font
+ color="#7f0055"><font face="Courier New, monospace"><font
+ style="font-size: 9pt;" size="2"><b>class</b></font></font></font> <font
+ face="Courier New, monospace"><font style="font-size: 9pt;" size="2">ButtonPresses</font></font></p>
+      <p style="margin-top: 0.02in; margin-bottom: 0.02in;"><font
+ face="Courier New, monospace"><font style="font-size: 9pt;" size="2">{</font></font></p>
+      <p style="margin-top: 0.02in; margin-bottom: 0.02in;">&nbsp;&nbsp;&nbsp;
+      <font color="#7f0055"><font face="Courier New, monospace"><font
+ style="font-size: 9pt;" size="2"><b>void</b></font></font></font>&nbsp;
+      <font face="Courier New, monospace"><font style="font-size: 9pt;"
+ size="2">public static void main (String[] args)</font></font></p>
+      <p style="margin-top: 0.02in; margin-bottom: 0.02in;"><font
+ color="#7f0055">&nbsp;&nbsp;&nbsp; </font><font color="#7f0055"><font
+ face="Courier New, monospace"><font style="font-size: 9pt;" size="2"><b>throws</b></font></font></font>
+      <font face="Courier New, monospace"><font style="font-size: 9pt;"
+ size="2">Exception</font></font></p>
+      <p style="margin-top: 0.02in; margin-bottom: 0.02in;">&nbsp;&nbsp;&nbsp;
+      <font face="Courier New, monospace"><font style="font-size: 9pt;"
+ size="2">{</font></font></p>
+      <p style="margin-top: 0.02in; margin-bottom: 0.02in;"><font
+ color="#7f0055">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font><font
+ color="#7f0055"><font face="Courier New, monospace"><font
+ style="font-size: 9pt;" size="2"><b>while</b></font></font></font> <font
+ face="Courier New, monospace"><font style="font-size: 9pt;" size="2">(</font></font><font
+ color="#7f0055"><font face="Courier New, monospace"><font
+ style="font-size: 9pt;" size="2"><b>true</b></font></font></font><font
+ face="Courier New, monospace"><font style="font-size: 9pt;" size="2">)
+{</font></font></p>
+      <p style="margin-top: 0.02in; margin-bottom: 0.02in;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <font face="Courier New, monospace"><font style="font-size: 9pt;"
+ size="2">LCD.</font></font><font face="Courier New, monospace"><font
+ style="font-size: 9pt;" size="2"><i>clear</i></font></font><font
+ face="Courier New, monospace"><font style="font-size: 9pt;" size="2">();</font></font></p>
+      <p style="margin-top: 0.02in; margin-bottom: 0.02in;"><font
+ color="#7f0055">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </font><font color="#7f0055"><font face="Courier New, monospace"><font
+ style="font-size: 9pt;" size="2"><b>If</b></font></font></font> <font
+ face="Courier New, monospace"><font style="font-size: 9pt;" size="2">(Button.</font></font><font
+ color="#0000c0"><font face="Courier New, monospace"><font
+ style="font-size: 9pt;" size="2"><i>ENTER</i></font></font></font><font
+ face="Courier New, monospace"><font style="font-size: 9pt;" size="2">.isPressed())
+LCD.</font></font><font face="Courier New, monospace"><font
+ style="font-size: 9pt;" size="2"><i>drawString</i></font></font><font
+ face="Courier New, monospace"><font style="font-size: 9pt;" size="2">(</font></font><font
+ color="#2a00ff"><font face="Courier New, monospace"><font
+ style="font-size: 9pt;" size="2">"ENTER"</font></font></font><font
+ face="Courier New, monospace"><font style="font-size: 9pt;" size="2">,0,0);</font></font></p>
+      <p style="margin-top: 0.02in; margin-bottom: 0.02in;"><font
+ color="#7f0055">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </font><font color="#7f0055"><font face="Courier New, monospace"><font
+ style="font-size: 9pt;" size="2"><b>if</b></font></font></font> <font
+ face="Courier New, monospace"><font style="font-size: 9pt;" size="2">(Button.</font></font><font
+ color="#0000c0"><font face="Courier New, monospace"><font
+ style="font-size: 9pt;" size="2"><i>ESCAPE</i></font></font></font><font
+ face="Courier New, monospace"><font style="font-size: 9pt;" size="2">.isPressed())
+LCD.</font></font><font face="Courier New, monospace"><font
+ style="font-size: 9pt;" size="2"><i>drawString</i></font></font><font
+ face="Courier New, monospace"><font style="font-size: 9pt;" size="2">(</font></font><font
+ color="#2a00ff"><font face="Courier New, monospace"><font
+ style="font-size: 9pt;" size="2">"ESCAPE"</font></font></font><font
+ face="Courier New, monospace"><font style="font-size: 9pt;" size="2">,0,0);</font></font></p>
+      <p style="margin-top: 0.02in; margin-bottom: 0.02in;"><font
+ color="#7f0055">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </font><font color="#7f0055"><font face="Courier New, monospace"><font
+ style="font-size: 9pt;" size="2"><b>if</b></font></font></font> <font
+ face="Courier New, monospace"><font style="font-size: 9pt;" size="2">(Button.</font></font><font
+ color="#0000c0"><font face="Courier New, monospace"><font
+ style="font-size: 9pt;" size="2"><i>LEFT</i></font></font></font><font
+ face="Courier New, monospace"><font style="font-size: 9pt;" size="2">.isPressed())
+LCD.</font></font><font face="Courier New, monospace"><font
+ style="font-size: 9pt;" size="2"><i>drawString</i></font></font><font
+ face="Courier New, monospace"><font style="font-size: 9pt;" size="2">(</font></font><font
+ color="#2a00ff"><font face="Courier New, monospace"><font
+ style="font-size: 9pt;" size="2">"LEFT"</font></font></font><font
+ face="Courier New, monospace"><font style="font-size: 9pt;" size="2">,0,0);</font></font></p>
+      <p style="margin-top: 0.02in; margin-bottom: 0.02in;"><font
+ color="#7f0055">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </font><font color="#7f0055"><font face="Courier New, monospace"><font
+ style="font-size: 9pt;" size="2"><b>if</b></font></font></font> <font
+ face="Courier New, monospace"><font style="font-size: 9pt;" size="2">(Button.</font></font><font
+ color="#0000c0"><font face="Courier New, monospace"><font
+ style="font-size: 9pt;" size="2"><i>RIGHT</i></font></font></font><font
+ face="Courier New, monospace"><font style="font-size: 9pt;" size="2">.isPressed())
+LCD.</font></font><font face="Courier New, monospace"><font
+ style="font-size: 9pt;" size="2"><i>drawString</i></font></font><font
+ face="Courier New, monospace"><font style="font-size: 9pt;" size="2">(</font></font><font
+ color="#2a00ff"><font face="Courier New, monospace"><font
+ style="font-size: 9pt;" size="2">"RIGHT"</font></font></font><font
+ face="Courier New, monospace"><font style="font-size: 9pt;" size="2">,0,0);</font></font></p>
+      <p style="margin-top: 0.02in; margin-bottom: 0.02in;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <font face="Courier New, monospace"><font style="font-size: 9pt;"
+ size="2">}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </font></font> </p>
+      <p style="margin-top: 0.02in; margin-bottom: 0.02in;">&nbsp;&nbsp;&nbsp;
+      <font face="Courier New, monospace"><font style="font-size: 9pt;"
+ size="2">}</font></font></p>
+      <p class="western"
+ style="margin-top: 0.02in; margin-bottom: 0.02in;"> <br>
+      <br>
+      </p>
+      </span><br clear="left">
+      </p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;"
+ align="right"><span id="Frame3" dir="ltr"
+ style="border: medium none ; padding: 0in; background: rgb(255, 255, 255) none repeat scroll 0%; float: left; width: 0.02in; height: 2.7in; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;"><br>
+      <br>
+      </p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;"><br>
+      <br>
+      </p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;"><br>
+      <br>
+      </p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;"><br>
+      <br>
+      </p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;"><br>
+      <br>
+      </p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;"><br>
+      <br>
+      </p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;"><br>
+      <br>
+      </p>
+      </span><br>
+      <br>
+      </p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">To wait for
+a specific button to be pressed and released, you use:</p>
+      <ul>
+        <li>
+          <p style="margin-top: 0.19in; margin-bottom: 0.19in;">void
+waitForPressAndRelease() throws InterruptedException; </p>
+        </li>
+      </ul>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">&nbsp;</p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">Example:<span
+ id="Frame4" dir="ltr"
+ style="border: 1px solid rgb(0, 0, 0); padding: 0.05in 0.1in; background: rgb(255, 255, 255) none repeat scroll 0%; float: left; width: 6.72in; height: 2.6in; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
+      <p style="margin-top: 0.02in; margin-bottom: 0.02in;"><font
+ color="#7f0055"><font face="Courier New, monospace"><font
+ style="font-size: 9pt;" size="2"><b>import</b></font></font></font> <font
+ face="Courier New, monospace"><font style="font-size: 9pt;" size="2">lejos.nxt.*;</font></font></p>
+      <p style="margin-top: 0.02in; margin-bottom: 0.02in;">&nbsp;</p>
+      <p style="margin-top: 0.02in; margin-bottom: 0.02in;"><font
+ color="#7f0055"><font face="Courier New, monospace"><font
+ style="font-size: 9pt;" size="2"><b>public</b></font></font></font> <font
+ color="#7f0055"><font face="Courier New, monospace"><font
+ style="font-size: 9pt;" size="2"><b>class</b></font></font></font> <font
+ face="Courier New, monospace"><font style="font-size: 9pt;" size="2">ButtonTest</font></font></p>
+      <p style="margin-top: 0.02in; margin-bottom: 0.02in;"><font
+ face="Courier New, monospace"><font style="font-size: 9pt;" size="2">{</font></font></p>
+      <p style="margin-top: 0.02in; margin-bottom: 0.02in;">&nbsp;&nbsp;&nbsp;
+      <font color="#7f0055"><font face="Courier New, monospace"><font
+ style="font-size: 9pt;" size="2"><b>void</b></font></font></font>&nbsp;
+      <font face="Courier New, monospace"><font style="font-size: 9pt;"
+ size="2">public static void main (String[] args)</font></font></p>
+      <p style="margin-top: 0.02in; margin-bottom: 0.02in;">&nbsp;&nbsp;&nbsp;
+      <font color="#7f0055"><font face="Courier New, monospace"><font
+ style="font-size: 9pt;" size="2"><b>throws</b></font></font></font> <font
+ face="Courier New, monospace"><font style="font-size: 9pt;" size="2">Exception</font></font></p>
+      <p style="margin-top: 0.02in; margin-bottom: 0.02in;">&nbsp;&nbsp;&nbsp;
+      <font face="Courier New, monospace"><font style="font-size: 9pt;"
+ size="2">{</font></font></p>
+      <p style="margin-top: 0.02in; margin-bottom: 0.02in;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <font face="Courier New, monospace"><font style="font-size: 9pt;"
+ size="2">Button.</font></font><font color="#0000c0"><font
+ face="Courier New, monospace"><font style="font-size: 9pt;" size="2"><i>ENTER</i></font></font></font><font
+ face="Courier New, monospace"><font style="font-size: 9pt;" size="2">.waitForPressAndRelease();&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </font></font> </p>
+      <p style="margin-top: 0.02in; margin-bottom: 0.02in;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <font face="Courier New, monospace"><font style="font-size: 9pt;"
+ size="2">LCD.</font></font><font face="Courier New, monospace"><font
+ style="font-size: 9pt;" size="2"><i>drawString</i></font></font><font
+ face="Courier New, monospace"><font style="font-size: 9pt;" size="2">(</font></font><font
+ color="#2a00ff"><font face="Courier New, monospace"><font
+ style="font-size: 9pt;" size="2">"Finished"</font></font></font><font
+ face="Courier New, monospace"><font style="font-size: 9pt;" size="2">,
+3, 4);</font></font></p>
+      <p style="margin-top: 0.02in; margin-bottom: 0.02in;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <font face="Courier New, monospace"><font style="font-size: 9pt;"
+ size="2">Thread.</font></font><font face="Courier New, monospace"><font
+ style="font-size: 9pt;" size="2"><i>sleep</i></font></font><font
+ face="Courier New, monospace"><font style="font-size: 9pt;" size="2">(2000);</font></font></p>
+      <p style="margin-top: 0.02in; margin-bottom: 0.02in;">&nbsp;&nbsp;&nbsp;
+      <font face="Courier New, monospace"><font style="font-size: 9pt;"
+ size="2">}</font></font></p>
+      <p class="western"
+ style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font
+ face="Courier New, monospace"><font style="font-size: 9pt;" size="2">}</font></font></p>
+      </span><br clear="left">
+      </p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;"><br>
+      <br>
+      </p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">To wait for
+any button to be pressed, you do:</p>
+      <ul>
+        <li>
+          <p style="margin-top: 0.19in; margin-bottom: 0.19in;">static&nbsp;
+int waitForPress();<br>
+The returns the id code&nbsp; of the button that is pressed. </p>
+        </li>
+      </ul>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;"><b>button&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </b>ENTER&nbsp;&nbsp;&nbsp;&nbsp;
+LEFT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+RIGHT&nbsp;&nbsp;&nbsp;&nbsp; ESCAPE</p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;"><b>Code&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </b>1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+4&nbsp;&nbsp; 8</p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">&nbsp;</p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">To specify
+a listener to listen for button events for this button, you: use</p>
+      <ul>
+        <li>
+          <p style="margin-top: 0.19in; margin-bottom: 0.19in;">void
+addButtonListener (ButtonListener aListener)<br>
+          <br>
+See &#8220;Listeners and Events&#8221; below for how button listeners work. </p>
+        </li>
+      </ul>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">&nbsp;</p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">To read the
+current state of all the buttons, you do:</p>
+      <ul>
+        <li>
+          <p style="margin-top: 0.19in; margin-bottom: 0.19in;">static
+int readButtons();<br>
+The&nbsp; return value is the sum of the codes of the buttons that are
+pressed. </p>
+        </li>
+      </ul>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">&nbsp;</p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;"><font
+ color="#0000ff"><u><a href="">Back to Top</a></u></font></p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">&nbsp;</p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">&nbsp;</p>
+      <h2 class="western"><a name="_Sound_1"></a><a name="_Sound"></a>Sound</h2>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">&nbsp;</p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">This class
+controls the single speaker so it has no instances and&nbsp; all the
+methods are static.</p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">To play a
+single tone, use</p>
+      <ul>
+        <li>
+          <p style="margin-top: 0.19in; margin-bottom: 0.19in;">&nbsp;<font
+ face="Courier New, monospace"><font size="2"><b>void </b></font></font><font
+ color="#0000ff"><u><a
+ href="http://lejos.sourceforge.net/p_technologies/nxt/nxj/api/lejos/nxt/Sound.html#playTone%28int,%20int%29"><font
+ face="Courier New, monospace"><b>playTone</b></font></a></u></font><font
+ face="Courier New, monospace"><font size="2">(int&nbsp;aFrequency,
+int&nbsp;aDuration);</font></font> </p>
+        </li>
+      </ul>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;"><span
+ id="Frame5" dir="ltr"
+ style="border: 1px solid rgb(0, 0, 0); padding: 0.05in 0.1in; background: rgb(255, 255, 255) none repeat scroll 0%; float: left; width: 6.07in; height: 5.16in; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
+      <p style="margin-top: 0.02in; margin-bottom: 0.02in;"><font
+ color="#7f0055"><font face="Courier New, monospace"><font size="2"><b>import</b></font></font></font>
+      <font face="Courier New, monospace"><font size="2">lejos.nxt.*;</font></font></p>
+      <p style="margin-top: 0.02in; margin-bottom: 0.02in;">&nbsp;</p>
+      <p style="margin-top: 0.02in; margin-bottom: 0.02in;"><font
+ color="#7f0055"><font face="Courier New, monospace"><font size="2"><b>public</b></font></font></font>
+      <font color="#7f0055"><font face="Courier New, monospace"><font
+ size="2"><b>class</b></font></font></font> <font
+ face="Courier New, monospace"><font size="2">Tune {</font></font></p>
+      <p style="margin-top: 0.02in; margin-bottom: 0.02in;">&nbsp;</p>
+      <p style="margin-top: 0.02in; margin-bottom: 0.02in;">&nbsp;&nbsp;
+      <font color="#3f7f5f"><font face="Courier New, monospace"><font
+ size="2">// NOTE: This tune was generated from a midi using Guy </font></font></font>
+      </p>
+      <p style="margin-top: 0.02in; margin-bottom: 0.02in;">&nbsp;&nbsp;
+      <font color="#3f7f5f"><font face="Courier New, monospace"><font
+ size="2">// Truffelli's Brick Music Studio www.aga.it/~guy/lego</font></font></font></p>
+      <p style="margin-top: 0.02in; margin-bottom: 0.02in;">&nbsp;&nbsp;
+      <font color="#7f0055"><font face="Courier New, monospace"><font
+ size="2"><b>private</b></font></font></font> <font color="#7f0055"><font
+ face="Courier New, monospace"><font size="2"><b>static</b></font></font></font>
+      <font color="#7f0055"><font face="Courier New, monospace"><font
+ size="2"><b>final</b></font></font></font> <font color="#7f0055"><font
+ face="Courier New, monospace"><font size="2"><b>short</b></font></font></font>
+      <font face="Courier New, monospace"><font size="2">[] </font></font><font
+ color="#0000c0"><font face="Courier New, monospace"><font size="2"><i>note</i></font></font></font>
+      <font face="Courier New, monospace"><font size="2">= {</font></font></p>
+      <p style="margin-top: 0.02in; margin-bottom: 0.02in;">&nbsp;&nbsp;&nbsp;
+      <font face="Courier New, monospace"><font size="2">2349,115, 0,5,
+1760,165, 0,35, 1760,28, 0,13, 1976,23, </font></font> </p>
+      <p style="margin-top: 0.02in; margin-bottom: 0.02in;">&nbsp;&nbsp;&nbsp;
+      <font face="Courier New, monospace"><font size="2">0,18, 1760,18,
+0,23, 1568,15, 0,25, 1480,103, 0,18, 1175,180, 0,20, 1760,18, </font></font>
+      </p>
+      <p style="margin-top: 0.02in; margin-bottom: 0.02in;">&nbsp;&nbsp;&nbsp;
+      <font face="Courier New, monospace"><font size="2">0,23, 1976,20,
+0,20, 1760,15, 0,25, 1568,15, 0,25, 2217,98, 0,23, 1760,88, </font></font>
+      </p>
+      <p style="margin-top: 0.02in; margin-bottom: 0.02in;">&nbsp;&nbsp;&nbsp;
+      <font face="Courier New, monospace"><font size="2">0,33, 1760,75,
+0,5, 1760,20, 0,20, 1760,20, 0,20, 1976,18, 0,23, 1760,18, </font></font>
+      </p>
+      <p style="margin-top: 0.02in; margin-bottom: 0.02in;">&nbsp;&nbsp;&nbsp;
+      <font face="Courier New, monospace"><font size="2">0,23,
+2217,225, 0,15, 2217,218};</font></font></p>
+      <p style="margin-top: 0.02in; margin-bottom: 0.02in;">&nbsp;</p>
+      <p style="margin-top: 0.02in; margin-bottom: 0.02in;">&nbsp;&nbsp;
+      <font color="#7f0055"><font face="Courier New, monospace"><font
+ size="2"><b>void</b></font></font></font>&nbsp; <font
+ face="Courier New, monospace"><font size="2">public static void
+main(String [] args) {</font></font></p>
+      <p style="margin-top: 0.02in; margin-bottom: 0.02in;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <font color="#7f0055"><font face="Courier New, monospace"><font
+ size="2"><b>for</b></font></font></font><font
+ face="Courier New, monospace"><font size="2">(</font></font><font
+ color="#7f0055"><font face="Courier New, monospace"><font size="2"><b>int</b></font></font></font>
+      <font face="Courier New, monospace"><font size="2">i=0;i&lt;</font></font><font
+ color="#0000c0"><font face="Courier New, monospace"><font size="2"><i>note</i></font></font></font><font
+ face="Courier New, monospace"><font size="2">.</font></font><font
+ color="#0000c0"><font face="Courier New, monospace"><font size="2">length</font></font></font><font
+ face="Courier New, monospace"><font size="2">; i+=2) {</font></font></p>
+      <p style="margin-top: 0.02in; margin-bottom: 0.02in;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <font color="#7f0055"><font face="Courier New, monospace"><font
+ size="2"><b>final</b></font></font></font> <font color="#7f0055"><font
+ face="Courier New, monospace"><font size="2"><b>short</b></font></font></font>
+      <font face="Courier New, monospace"><font size="2">w = </font></font><font
+ color="#0000c0"><font face="Courier New, monospace"><font size="2"><i>note</i></font></font></font><font
+ face="Courier New, monospace"><font size="2">[i+1];</font></font></p>
+      <p style="margin-top: 0.02in; margin-bottom: 0.02in;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <font color="#7f0055"><font face="Courier New, monospace"><font
+ size="2"><b>final</b></font></font></font> <font color="#7f0055"><font
+ face="Courier New, monospace"><font size="2"><b>int</b></font></font></font>
+      <font face="Courier New, monospace"><font size="2">n = </font></font><font
+ color="#0000c0"><font face="Courier New, monospace"><font size="2"><i>note</i></font></font></font><font
+ face="Courier New, monospace"><font size="2">[i];</font></font></p>
+      <p style="margin-top: 0.02in; margin-bottom: 0.02in;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <font color="#7f0055"><font face="Courier New, monospace"><font
+ size="2"><b>if</b></font></font></font> <font
+ face="Courier New, monospace"><font size="2">(n != 0) Sound.</font></font><font
+ face="Courier New, monospace"><font size="2"><i>playTone</i></font></font><font
+ face="Courier New, monospace"><font size="2">(n, w*10);</font></font></p>
+      <p style="margin-top: 0.02in; margin-bottom: 0.02in;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <font color="#7f0055"><font face="Courier New, monospace"><font
+ size="2"><b>try</b></font></font></font> <font
+ face="Courier New, monospace"><font size="2">{ Thread.</font></font><font
+ face="Courier New, monospace"><font size="2"><i>sleep</i></font></font><font
+ face="Courier New, monospace"><font size="2">(w*10); } </font></font><font
+ color="#7f0055"><font face="Courier New, monospace"><font size="2"><b>catch</b></font></font></font>
+      <font face="Courier New, monospace"><font size="2">(InterruptedException
+e) {}</font></font></p>
+      <p class="western"
+ style="margin-top: 0.02in; margin-bottom: 0.02in;">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <font face="Courier New, monospace"><font
+ size="2">}</font></font></p>
+      </span><br clear="left">
+      <br>
+      <br>
+      </p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">Example:</p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">There are
+two ways to play system sounds.&nbsp;&nbsp; One is:</p>
+      <ul>
+        <li>
+          <p style="margin-top: 0.19in; margin-bottom: 0.19in;">void
+systemSound (boolean aQueued, int aCode);<br>
+The aQueued parameter is ignored on the NXT, it is here to be backwards
+compatible with the RXC. </p>
+        </li>
+      </ul>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">The values
+of code are:</p>
+      <p
+ style="margin-left: 0.08in; margin-top: 0.19in; margin-bottom: 0.19in;">
+code =
+0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Short beep</p>
+      <p
+ style="margin-left: 0.08in; margin-top: 0.19in; margin-bottom: 0.19in;">
+code =
+1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Double beep</p>
+      <p
+ style="margin-left: 0.08in; margin-top: 0.19in; margin-bottom: 0.19in;">
+code =
+2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Descending arpeggio</p>
+      <p
+ style="margin-left: 0.08in; margin-top: 0.19in; margin-bottom: 0.19in;">
+code =
+3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Ascending arpeggio</p>
+      <p
+ style="margin-left: 0.08in; margin-top: 0.19in; margin-bottom: 0.19in;">
+code =
+4&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Long, low buzz</p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">&nbsp;</p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">Iindividual
+methods to play a particular system sound, if you don&#8217;t remember the
+code, are</p>
+      <ul>
+        <li>
+          <p style="margin-top: 0.19in; margin-bottom: 0in;">void
+beep(); </p>
+        </li>
+        <li>
+          <p style="margin-bottom: 0in;">void twoBeeps(); </p>
+        </li>
+        <li>
+          <p style="margin-bottom: 0in;">void beepSequence(); </p>
+        </li>
+        <li>
+          <p style="margin-bottom: 0in;">void beepSequenceUp(); </p>
+        </li>
+        <li>
+          <p style="margin-bottom: 0in;">void buzz();int
+playSample(File aWAVfile) </p>
+        </li>
+        <li>
+          <p style="margin-bottom: 0.19in;">int playSample(File
+aWAVfile, int volume) </p>
+        </li>
+      </ul>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">&nbsp;</p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">This is
+also a method to produce a rest when playing a tune; time in
+milliseconds</p>
+      <ul>
+        <li>
+          <p style="margin-top: 0.19in; margin-bottom: 0.19in;">void
+pause(int time);<br>
+You can use this method anytime you want your program wait, and don&#8217;t
+want to bother with the try/catch block required by System.sleep(); </p>
+        </li>
+      </ul>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">&nbsp;</p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">leJOS NXJ
+has methods that can also play 8-bit WAV files.</p>
+      <ul>
+        <li>
+          <p style="margin-top: 0.19in; margin-bottom: 0in;">int
+playSample(File aWAVfile) </p>
+        </li>
+        <li>
+          <p style="margin-bottom: 0.19in;">int playSample(File
+aWAVfile, int volume) </p>
+        </li>
+      </ul>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">The return
+value of milliseconds the sample will play for or &lt; 0 if there is an
+error.</p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">&nbsp;</p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">To play a
+musical note, use&nbsp; </p>
+      <ul>
+        <li>
+          <p style="margin-top: 0.19in; margin-bottom: 0.19in;">void <font
+ color="#0000ff"><u><a
+ href="http://lejos.sourceforge.net/p_technologies/nxt/nxj/api/lejos/nxt/Sound.html#playNote%28int%5B%5D,%20int,%20int%29"><font
+ face="Courier New, monospace"><b>playNote</b></font></a></u></font>(int[]&nbsp;inst,int&nbsp;freq,
+int&nbsp;len)<br>
+The&nbsp; <i>inst</i> array contains the attack, decay, sustain and
+release&nbsp; parameters for the note. The static constants for some
+predefined instruments are: FLUTE, PIANO&nbsp; and XYLOPHONE.&nbsp; You
+can also experiment with defining you own. </p>
+        </li>
+      </ul>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">&nbsp;</p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;"><font
+ color="#0000ff"><u><a href="">Back to Top</a></u></font></p>
+      <h2 class="western"><a name="_Battery_1"></a><a name="_Battery"></a>
+Battery</h2>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">There are
+two static methods to get the battery voltage:</p>
+      <ul>
+        <li>
+          <p style="margin-top: 0.19in; margin-bottom: 0in;">&nbsp; int
+getVoltageMilliVolt(); </p>
+        </li>
+        <li>
+          <p style="margin-bottom: 0.19in;">&nbsp; float getVoltage() </p>
+        </li>
+      </ul>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">Example:</p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;" lang=""><span
+ id="Frame6" dir="ltr"
+ style="border: 1px solid rgb(0, 0, 0); padding: 0.05in 0.1in; background: rgb(255, 255, 255) none repeat scroll 0%; float: left; width: 6.21in; height: 1.86in; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
+      <p style="margin-top: 0.02in; margin-bottom: 0.02in;"><font
+ color="#7f0055"><font face="Courier New, monospace"><font size="2"><b>import</b></font></font></font>
+      <font face="Courier New, monospace"><font size="2">lejos.nxt.*;</font></font></p>
+      <p style="margin-top: 0.02in; margin-bottom: 0.02in;">&nbsp;</p>
+      <p style="margin-top: 0.02in; margin-bottom: 0.02in;"><font
+ color="#7f0055"><font face="Courier New, monospace"><font size="2"><b>public</b></font></font></font>
+      <font color="#7f0055"><font face="Courier New, monospace"><font
+ size="2"><b>class</b></font></font></font> <font
+ face="Courier New, monospace"><font size="2">BatteryTest {</font></font></p>
+      <p style="margin-top: 0.02in; margin-bottom: 0.02in;">&nbsp;&nbsp;&nbsp;
+      <font color="#7f0055"><font face="Courier New, monospace"><font
+ size="2"><b>void</b></font></font></font> <font
+ face="Courier New, monospace"><font size="2">main (String[] args) </font></font><font
+ color="#7f0055"><font face="Courier New, monospace"><font size="2"><b>throws</b></font></font></font>
+      <font face="Courier New, monospace"><font size="2">Exception {</font></font></p>
+      <p style="margin-top: 0.02in; margin-bottom: 0.02in;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <font face="Courier New, monospace"><font size="2">LCD.</font></font><font
+ face="Courier New, monospace"><font size="2"><i>drawString</i></font></font><font
+ face="Courier New, monospace"><font size="2">(</font></font><font
+ color="#2a00ff"><font face="Courier New, monospace"><font size="2">"Battery:
+"</font></font></font> <font face="Courier New, monospace"><font
+ size="2">+ Battery.</font></font><font face="Courier New, monospace"><font
+ size="2"><i>getVoltage</i></font></font><font
+ face="Courier New, monospace"><font size="2">(),0,0);</font></font></p>
+      <p style="margin-top: 0.02in; margin-bottom: 0.02in;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <font face="Courier New, monospace"><font size="2">Thread.</font></font><font
+ face="Courier New, monospace"><font size="2"><i>sleep</i></font></font><font
+ face="Courier New, monospace"><font size="2">(2000);</font></font></p>
+      <p style="margin-top: 0.02in; margin-bottom: 0.02in;">&nbsp;&nbsp;&nbsp;
+      <font face="Courier New, monospace"><font size="2">}</font></font></p>
+      <p class="western"
+ style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font
+ face="Courier New, monospace"><font size="2">}</font></font></p>
+      </span><br clear="left">
+      <br>
+      <br>
+      </p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;"><br>
+      <br>
+      </p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;"><font
+ color="#0000ff"><u><a href="">Back to Top</a></u></font></p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">&nbsp;</p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">&nbsp;</p>
+      <h1 class="western" lang="en-GB"><a name="_Sensors_1"></a><a
+ name="_Sensors"></a> Sensors</h1>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">The NXT
+comes with four sensors; the touch sensor, the sound sensor, the light
+sensor and the ultrasonic sensor.&nbsp; LejosNXJ provides software
+abstractions of all these sensor types, as well as many provided by
+third parties.</p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">A physical
+sensor must be connected to a port, and the sensor object must know
+which port this is.&nbsp; To provide this information, you create an
+instance of the sensor, and pass this information in its
+constructor.&nbsp; The possibilities are: SensorPort.S1, S2, S3 or S4.</p>
+      <h2 class="western"><a name="_Touch_Sensor_1"></a><a
+ name="_Touch_Sensor"></a> Touch Sensor</h2>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">To use a
+touch sensor, you create an instance of&nbsp; using the constructor:</p>
+      <ul>
+        <li>
+          <p style="margin-top: 0.19in; margin-bottom: 0.19in;">TouchSensor(SensorPort
+port); </p>
+        </li>
+      </ul>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">To test is
+the touch sensor is pressed, you use the isPressed() method:</p>
+      <ul>
+        <li>
+          <p style="margin-top: 0.19in; margin-bottom: 0.19in;">boolean
+isPressed(); </p>
+        </li>
+      </ul>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">Example:<font
+ color="#7f0055"> </font> </p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;"><img
+ src="LCD_Sensors_htm_m18db06b6.png" name="graphics3" align="left"
+ border="0" height="270" width="498"><br clear="left">
+      <br>
+      <br>
+      </p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;"><br>
+      <br>
+      </p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;"><a
+ name="_x0000_i1027"></a> <font color="#7f0055"> </font> </p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;"><font
+ color="#0000ff"><u><a href="">Back to Top</a></u></font></p>
+      <h2 class="western"><a name="_Light_Sensor_1"></a><a
+ name="_Light_Sensor"></a> Light Sensor</h2>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">&nbsp;</p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">To use a
+light sensor, you create an instance of it using the constructor:</p>
+      <ul>
+        <li>
+          <p style="margin-top: 0.19in; margin-bottom: 0.19in;">public
+LightSensor(SensorPort port); </p>
+        </li>
+      </ul>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">&nbsp;</p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">Example:</p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;" lang=""><span
+ id="Frame7" dir="ltr"
+ style="border: 1px solid rgb(0, 0, 0); padding: 0.05in 0.1in; background: rgb(255, 255, 255) none repeat scroll 0%; float: left; width: 6.14in; height: 5.84in; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
+      <p style="margin-bottom: 0in;"><br>
+      </p>
+      <p style="margin-bottom: 0in;"><font color="#7f0055"><font
+ face="Courier New, monospace"><font size="2"><b>public</b></font></font></font>
+      <font color="#7f0055"><font face="Courier New, monospace"><font
+ size="2"><b>class</b></font></font></font> <font
+ face="Courier New, monospace"><font size="2">LightTest {</font></font></p>
+      <p style="margin-bottom: 0in;"><font color="#7f0055">&nbsp;&nbsp;&nbsp;&nbsp;
+      </font><font color="#7f0055"><font face="Courier New, monospace"><font
+ size="2"><b>void</b></font></font></font> <font
+ face="Courier New, monospace"><font size="2">main (String[] args)</font></font></p>
+      <p style="margin-bottom: 0in;"><font color="#7f0055">&nbsp;&nbsp;&nbsp;
+      </font><font color="#7f0055"><font face="Courier New, monospace"><font
+ size="2"><b>throws</b></font></font></font> <font
+ face="Courier New, monospace"><font size="2">Exception</font></font></p>
+      <p style="margin-bottom: 0in;">&nbsp;&nbsp;&nbsp; <font
+ face="Courier New, monospace"><font size="2">{</font></font></p>
+      <p style="margin-bottom: 0in;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <font
+ face="Courier New, monospace"><font size="2">LightSensor light = </font></font><font
+ color="#7f0055"><font face="Courier New, monospace"><font size="2"><b>new</b></font></font></font>
+      <font face="Courier New, monospace"><font size="2">LightSensor(SensorPort.</font></font><font
+ color="#0000c0"><font face="Courier New, monospace"><font size="2"><i>S1</i></font></font></font><font
+ face="Courier New, monospace"><font size="2">);</font></font></p>
+      <p style="margin-bottom: 0in;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </p>
+      <p style="margin-bottom: 0in;"><font color="#7f0055">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </font><font color="#7f0055"><font face="Courier New, monospace"><font
+ size="2"><b>while</b></font></font></font> <font
+ face="Courier New, monospace"><font size="2">(</font></font><font
+ color="#7f0055"><font face="Courier New, monospace"><font size="2"><b>true</b></font></font></font><font
+ face="Courier New, monospace"><font size="2">) {</font></font></p>
+      <p style="margin-bottom: 0in;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <font face="Courier New, monospace"><font size="2">LCD.</font></font><font
+ face="Courier New, monospace"><font size="2"><i>drawInt</i></font></font><font
+ face="Courier New, monospace"><font size="2">(light.readValue(), 4, 0,
+0);</font></font></p>
+      <p style="margin-bottom: 0in;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <font face="Courier New, monospace"><font size="2">LCD.</font></font><font
+ face="Courier New, monospace"><font size="2"><i>drawInt</i></font></font><font
+ face="Courier New, monospace"><font size="2">(light.readNormalizedValue(),
+4, 0, 1);</font></font></p>
+      <p style="margin-bottom: 0in;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <font face="Courier New, monospace"><font size="2">LCD.</font></font><font
+ face="Courier New, monospace"><font size="2"><i>drawInt</i></font></font><font
+ face="Courier New, monospace"><font size="2">(SensorPort.</font></font><font
+ color="#0000c0"><font face="Courier New, monospace"><font size="2"><i>S1</i></font></font></font><font
+ face="Courier New, monospace"><font size="2">.readRawValue(), 4,&nbsp;
+0, 2);</font></font></p>
+      <p style="margin-bottom: 0in;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <font face="Courier New, monospace"><font size="2">LCD.</font></font><font
+ face="Courier New, monospace"><font size="2"><i>drawInt</i></font></font><font
+ face="Courier New, monospace"><font size="2">(SensorPort.</font></font><font
+ color="#0000c0"><font face="Courier New, monospace"><font size="2"><i>S1</i></font></font></font><font
+ face="Courier New, monospace"><font size="2">.</font></font><font
+ face="Courier New, monospace"><font size="2"><span
+ style="background: rgb(192, 192, 192) none repeat scroll 0%; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">readValue</span></font></font><font
+ face="Courier New, monospace"><font size="2">(), 4,&nbsp; 0, 3);</font></font></p>
+      <p style="margin-bottom: 0in;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <font face="Courier New, monospace"><font size="2">Thread.sleep(2000);</font></font></p>
+      <p style="margin-bottom: 0in;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <font
+ face="Courier New, monospace"><font size="2">}</font></font></p>
+      <p class="western" style="margin-bottom: 0in;">&nbsp;&nbsp;&nbsp;
+      <font face="Courier New, monospace"><font size="2">}</font></font></p>
+      </span><br clear="left">
+      <br>
+      <br>
+      </p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;"><br>
+      <br>
+      </p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;"><font
+ color="#0000ff"><u><a href="">Back to Top</a></u></font></p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">&nbsp;</p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">&nbsp;</p>
+      <h2 class="western"><a name="_Sound_Sensor_1"></a><a
+ name="_Sound_Sensor"></a> Sound Sensor</h2>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">&nbsp;</p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">The sound
+sensor supports two modes: DB and DBA.&nbsp;&nbsp; These modes
+give&nbsp; different frequency response, so that it may be possible to
+get an idea of the frequency of a sound by switching between modes. </p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">There are
+two constructors:</p>
+      <ul>
+        <li>
+          <p style="margin-top: 0.19in; margin-bottom: 0.19in;">&nbsp;&nbsp;&nbsp;&nbsp;
+SoundSensor(SensorPort port) <br>
+creates a sound sensor using DB mode.</p>
+        </li>
+        <li>
+          <p style="margin-top: 0.19in; margin-bottom: 0.19in;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+SoundSensor(SensorPort port, dba)<br>
+creates a sound sensor using DBA mode if the second parameter is <i><b>true</b></i>.</p>
+        </li>
+      </ul>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">You can
+switch modes with:</p>
+      <ul>
+        <li>
+          <p style="margin-top: 0.19in; margin-bottom: 0.19in;"> void
+setDBA(boolean dba)</p>
+        </li>
+      </ul>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;"><a
+ name="_x0000_i1028"></a> Example using DB mode only:</p>
+      <p><img style="width: 590px; height: 393px;"
+ src="LCD_Sensors_files/image004.gif" name="graphics4" border="0"> </p>
+      <p> </p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;"><br>
+      </p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">The above
+example gives a graphical display of the way the sound reading varies
+over a two-second period. </p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">&nbsp; </p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;"><font
+ color="#0000ff"><u><a href="">Back to Top</a></u></font></p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">&nbsp;</p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">&nbsp;</p>
+      <h2 class="western"><a name="_Ultrasonic_Sensor_1"></a><a
+ name="_Ultrasonic_Sensor"></a> Ultrasonic Sensor</h2>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">&nbsp;</p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">To create
+an instance&nbsp; use the constructor:</p>
+      <ul>
+        <li>
+          <p style="margin-top: 0.19in; margin-bottom: 0.19in;">
+UltrasonicSensor( Port aSensorPort); </p>
+        </li>
+      </ul>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">The sensor
+operates in two modes, continuous (defalt) and ping.&nbsp; When in
+continuous mode the sensor sends out pings as often as it can and the
+most recently obtained result is available via a call to</p>
+      <ul>
+        <li>
+          <p style="margin-top: 0.19in; margin-bottom: 0.19in;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+int getDistance()<br>
+The return value is in centimeters.&nbsp; If no echo was detected, the
+returned value is 255.&nbsp; The maximum range of the sensor is about
+170 cm.&nbsp; </p>
+        </li>
+      </ul>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">When in
+ping mode, a ping is sent only when a call is made to</p>
+      <ul>
+        <li>
+          <p style="margin-top: 0.19in; margin-bottom: 0.19in;">&nbsp;&nbsp;&nbsp;&nbsp;
+void ping()<br>
+This sets the sensor in ping mode and sends a single ping and up to 8
+echoes are captured.&nbsp; These may be read by making a call to</p>
+        </li>
+        <li>
+          <p style="margin-top: 0.19in; margin-bottom: 0.19in;">&nbsp;&nbsp;&nbsp;&nbsp;
+int readDistances(int [] distances);<br>
+You provide an integer array of length that contains the data after the
+method returns.&nbsp; A delay of approximately 20ms is required between
+the call to ping and getDistances. This delay is not included in the
+method. Calls to getDistances before this period may result in an error
+or no data being returned. The normal getDistance call may also be used
+with ping, returning information for the first echo. <br>
+Calling&nbsp; ping()&nbsp; will disable the default continuous mode.
+Toto switch back to continuous mode, call</p>
+        </li>
+        <li>
+          <p style="margin-top: 0.19in; margin-bottom: 0.19in;">&nbsp;&nbsp;
+int continuous()</p>
+        </li>
+      </ul>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">Example:</p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;" lang=""><span
+ id="Frame8" dir="ltr"
+ style="border: 1px solid rgb(0, 0, 0); padding: 0.05in 0.1in; background: rgb(255, 255, 255) none repeat scroll 0%; float: left; width: 5.25in; height: 3.18in; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
+      <p style="margin-top: 0.02in; margin-bottom: 0.02in;"><font
+ color="#7f0055"><font face="Courier New, monospace"><font size="2"><b>import</b></font></font></font>
+      <font face="Courier New, monospace"><font size="2"><span
+ style="background: rgb(192, 192, 192) none repeat scroll 0%; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">lejos.nxt.*</span></font></font><font
+ face="Courier New, monospace"><font size="2">;</font></font></p>
+      <p style="margin-top: 0.02in; margin-bottom: 0.02in;">&nbsp;</p>
+      <p style="margin-top: 0.02in; margin-bottom: 0.02in;"><font
+ color="#7f0055"><font face="Courier New, monospace"><font size="2"><b>public</b></font></font></font>
+      <font color="#7f0055"><font face="Courier New, monospace"><font
+ size="2"><b>class</b></font></font></font> <font
+ face="Courier New, monospace"><font size="2">SonicTest
+{&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font></font> </p>
+      <p style="margin-top: 0.02in; margin-bottom: 0.02in;">&nbsp;&nbsp;&nbsp;
+      <font color="#7f0055"><font face="Courier New, monospace"><font
+ size="2"><b>void</b></font></font></font> <font
+ face="Courier New, monospace"><font size="2">main(String[] args) </font></font><font
+ color="#7f0055"><font face="Courier New, monospace"><font size="2"><b>throws</b></font></font></font>
+      <font face="Courier New, monospace"><font size="2">Exception {</font></font></p>
+      <p style="margin-top: 0.02in; margin-bottom: 0.02in;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <font face="Courier New, monospace"><font size="2">UltrasonicSensor
+sonic = </font></font><font color="#7f0055"><font
+ face="Courier New, monospace"><font size="2"><b>new</b></font></font></font></p>
+      <p
+ style="margin-left: 1in; margin-top: 0.02in; margin-bottom: 0.02in;">
+&nbsp;<font face="Courier New, monospace"><font size="2">UltrasonicSensor(SensorPort.</font></font><font
+ color="#0000c0"><font face="Courier New, monospace"><font size="2"><i>S1</i></font></font></font><font
+ face="Courier New, monospace"><font size="2">);</font></font></p>
+      <p style="margin-top: 0.02in; margin-bottom: 0.02in;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </p>
+      <p style="margin-top: 0.02in; margin-bottom: 0.02in;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <font color="#7f0055"><font face="Courier New, monospace"><font
+ size="2"><b>while</b></font></font></font><font
+ face="Courier New, monospace"><font size="2">(!</font></font><font
+ face="Courier New, monospace"><font size="2"><span
+ style="background: rgb(192, 192, 192) none repeat scroll 0%; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">Button</span></font></font><font
+ face="Courier New, monospace"><font size="2">.</font></font><font
+ color="#0000c0"><font face="Courier New, monospace"><font size="2"><i>ESCAPE</i></font></font></font><font
+ face="Courier New, monospace"><font size="2">.isPressed()) {</font></font></p>
+      <p style="margin-top: 0.02in; margin-bottom: 0.02in;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <font face="Courier New, monospace"><font size="2">LCD.</font></font><font
+ face="Courier New, monospace"><font size="2"><i>clear</i></font></font><font
+ face="Courier New, monospace"><font size="2">();</font></font></p>
+      <p style="margin-top: 0.02in; margin-bottom: 0.02in;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <font face="Courier New, monospace"><font size="2">LCD.</font></font><font
+ face="Courier New, monospace"><font size="2"><i>drawInt</i></font></font><font
+ face="Courier New, monospace"><font size="2">(sonic.getDistance(), 0,
+3);</font></font></p>
+      <p style="margin-top: 0.02in; margin-bottom: 0.02in;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <font face="Courier New, monospace"><font size="2">}</font></font></p>
+      <p style="margin-top: 0.02in; margin-bottom: 0.02in;">&nbsp;&nbsp;&nbsp;
+      <font face="Courier New, monospace"><font size="2">} </font></font>
+      </p>
+      <p class="western"
+ style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font
+ face="Courier New, monospace"><font style="font-size: 9pt;" size="2">}</font></font></p>
+      </span><br>
+      <br>
+      </p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;"><br>
+      <br>
+      </p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;"><br>
+      <br>
+      </p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;"><br>
+      <br>
+      </p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;"><br>
+      <br>
+      </p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;"><br>
+      <br>
+      </p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;"><br>
+      <br>
+      </p>
+      <p class="western" style="margin-bottom: 0in;"><a
+ name="_Program%3A_multiple_echoes_1"></a><a
+ name="_Program%3A_multiple_echoes"></a> <br>
+      </p>
+      <h3 class="western" lang="en-GB">Program: multiple echoes</h3>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">Write a
+program that displays the distances from multiple echoes in a column.
+The program should make four calls to ping(), and display the four
+columns of results, then wait for a button press.&nbsp;&nbsp; Exit if
+the ESCAPE button was pressed. </p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">&nbsp;</p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;"><font
+ color="#0000ff"><u><a href="LCD_Sensors_files/USPingTest.html"
+ target="_blank"><b>Solution</b></a></u></font></p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">&nbsp;</p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">&nbsp;</p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;"><font
+ color="#0000ff"><u><a href="">Back to Top</a></u></font></p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.19in;">&nbsp;</p>
+      <p class="western"
+ style="margin-top: 0.19in; margin-bottom: 0.19in;"> <br>
+      <br>
+      </p>
+<!-- DO NOT TOUCH --> <br>
+      <div class="NavBit"> <a target="_top"
+ href="../Preliminaries/Intro.htm">&laquo;&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a
+ href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a
+ href="../ListenersAndEvents/Listeners_Events.htm">Next&nbsp;&raquo;</a>
+      </div>
+      <br>
+      </td>
+      <td> <br>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</body>
 </html>
