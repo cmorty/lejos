@@ -156,5 +156,60 @@ public class LMotor extends I2CSensor{
 	 */	
 	public String getName(){
 		return this.name;
-	}	
+	}
+
+	/**
+	 * This class set the Pulse over a RC Servo or a DC Motor
+	 * 
+	 * @param pulse
+	 */
+	protected void setPulse(int pulse){
+		int I2C_Response;
+		byte h_byte;
+		byte l_byte;
+		
+		int servo = LSC_position;
+		h_byte = (byte)(0x80 | ((servo<<3) | (pulse >>8)));
+	    l_byte = (byte)pulse;
+		
+	    //High Byte Write
+		I2C_Response = this.sendData((int)this.SPI_PORT, h_byte);
+
+	    //Low Byte Write
+		I2C_Response = this.sendData((int)this.SPI_PORT, l_byte);
+	}
+
+	/**
+	 * This method return current pulse over a RC Servo or a DC Motor.
+	 * This method is used internally by LDCMotor Objects or LServo Objects
+	 * to get the speed or angle.
+	 * 
+	 * @return
+	 */
+	protected int getPulse(){
+		int I2C_Response;
+		byte[] bufReadResponse;
+		bufReadResponse = new byte[8];
+		byte h_byte;
+		byte l_byte;		
+		
+		int servo = LSC_position;
+	    //Write OP Code
+	    h_byte  = (byte)(servo << 3);
+		I2C_Response = this.sendData((int)this.SPI_PORT, h_byte);
+		
+	    //Read High Byte
+	    //I2CBytes(IN_3, bufReadValue, buflen, bufReadResponse);
+		I2C_Response = this.sendData((int)this.SPI_PORT, (byte)0x00);
+		I2C_Response = this.getData((int)this.SPI_PORT, bufReadResponse, 1);
+		
+	    h_byte = bufReadResponse[0];
+	    
+	    //Read Low Byte
+		I2C_Response = this.sendData((int)this.SPI_PORT, (byte)0x00);
+		I2C_Response = this.getData((int)this.SPI_PORT, bufReadResponse, 1);
+	    l_byte = bufReadResponse[0];
+	    
+	    return  ((h_byte & 0x07 ) << 8) +  (l_byte & 0x00000000FF);
+	}
 }
