@@ -1,5 +1,4 @@
 package java.util;
-//import java.util.*;
 
 /**
  * This class has been developed to parse strings with delimiters
@@ -14,7 +13,6 @@ public class StringTokenizer implements Enumeration{
 	private int total;
 	private int currentPosition;
 	private int nextPosition;
-	private boolean detectLastElement;//Detect lastElement
 	private String s;
 
 	/**
@@ -34,6 +32,12 @@ public class StringTokenizer implements Enumeration{
 		this.nextPosition = s.indexOf(delimiter, currentPosition);
 	}
 
+	/**
+	 * The constructor
+	 * 
+	 * @param s
+	 * @param _delimiter
+	 */
 	public StringTokenizer(String s, String _delimiter) {
 		String character = (String)s.substring(s.length()-1);
 		if(character != ","){
@@ -68,12 +72,10 @@ public class StringTokenizer implements Enumeration{
 	 * @return Next token
 	 * @throws NoSuchElementException If there is no token left
 	 */
-	public String nextToken() {// throws Exception
-		/*
+	public String nextToken() throws NoSuchElementException{// 
 		if (!hasMoreElements()){
-			throw new Exception();
+			throw new NoSuchElementException();
 		}
-		*/
 
 		String next = s.substring(currentPosition, nextPosition);
 
@@ -90,7 +92,7 @@ public class StringTokenizer implements Enumeration{
 		Object ne = null;
 		try{
 			ne = nextToken();
-		}catch(Exception  e){
+		}catch(NoSuchElementException e){
 			
 		}
 		return ne;
