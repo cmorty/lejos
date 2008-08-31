@@ -1,6 +1,5 @@
 package lejos.nxt;
 //import lejos.nxt.*;
-
 import java.util.ArrayList;
 
 /**
@@ -117,9 +116,9 @@ public class LSC extends I2CSensor {
 	* @param name
 	*
 	*/	
-	public void addDCMotor(int location, String name,int min_speed,int max_speed) throws ArrayIndexOutOfBoundsException{
+	public void addDCMotor(int location, String name,int forward_min_speed,int forward_max_speed,int backward_min_speed,int backward_max_speed) throws ArrayIndexOutOfBoundsException{
 		if(arrDCMotor.size() <=MAXIMUM_SERVOS_DCMOTORS){
-			LDCMotor dcm = new LDCMotor(this.portConnected,location, name,this.SPI_PORT,min_speed,max_speed);
+			LDCMotor dcm = new LDCMotor(this.portConnected,location, name,this.SPI_PORT,forward_min_speed,forward_max_speed,backward_min_speed,backward_max_speed);
 			arrDCMotor.add(dcm);
 		}else{
 			//throw new ArrayIndexOutOfBoundsException(ERROR_SERVO_DEFINITION);
