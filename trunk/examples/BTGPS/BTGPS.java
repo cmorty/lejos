@@ -6,6 +6,7 @@ import java.util.*;
 import java.io.*;
 import javax.bluetooth.*;
 import javax.microedition.location.*;
+import lejos.devices.*;
 
 /**
  * This example show how to:
@@ -38,7 +39,6 @@ public class BTGPS{
 
 	//2008/07/15: I don't know how to get a GPS using their Address
 	//If you connect with a defined GPS Device
-	private static String GPSAddress = "000B0D00031A";//BT Address
 	private static String GPSPattern = "HOLUX GPSlim240";//BT Name
 	private static final byte[] pin = {(byte) '0', (byte) '0', (byte) '0', (byte) '0'};//GPS Pin
 
@@ -207,7 +207,6 @@ public class BTGPS{
 		Stopwatch sw;
 
 		int sentenceCount = 0;
-		boolean flag = true;
 		sw = new Stopwatch();
 		int CMD = 1;
 		int GPSDataQuality = 0;
