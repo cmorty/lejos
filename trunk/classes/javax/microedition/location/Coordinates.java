@@ -1,4 +1,4 @@
-package javax.microedition.location.*;
+package javax.microedition.location;
 
 /**
  * This class has been designed to manage coordinates 
