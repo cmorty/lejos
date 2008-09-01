@@ -1,2642 +1,832 @@
-<html xmlns:v="urn:schemas-microsoft-com:vml"
-xmlns:o="urn:schemas-microsoft-com:office:office"
-xmlns:w="urn:schemas-microsoft-com:office:word"
-xmlns="http://www.w3.org/TR/REC-html40">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html dir="ltr" xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<!-- CSS -->
+		<link rel="stylesheet" href="../r_css/lejos-tutorial.css" type="text/css" />
 
-<head>
-<meta http-equiv=Content-Type content="text/html; charset=windows-1252">
-<meta name=ProgId content=Word.Document>
-<meta name=Generator content="Microsoft Word 10">
-<meta name=Originator content="Microsoft Word 10">
-<link rel=File-List href="ControllingMotors_files/filelist.xml">
-<title>Motor</title>
-<!--[if gte mso 9]><xml>
- <o:DocumentProperties>
-  <o:Author>Roger</o:Author>
-  <o:Template>NXJTutorialTemplate.dot</o:Template>
-  <o:LastAuthor>Roger</o:LastAuthor>
-  <o:Revision>7</o:Revision>
-  <o:TotalTime>6</o:TotalTime>
-  <o:Created>2008-06-01T21:35:00Z</o:Created>
-  <o:LastSaved>2008-08-04T18:40:00Z</o:LastSaved>
-  <o:Pages>1</o:Pages>
-  <o:Words>1674</o:Words>
-  <o:Characters>9548</o:Characters>
-  <o:Company>UC Bereley</o:Company>
-  <o:Lines>79</o:Lines>
-  <o:Paragraphs>22</o:Paragraphs>
-  <o:CharactersWithSpaces>11200</o:CharactersWithSpaces>
-  <o:Version>10.4219</o:Version>
- </o:DocumentProperties>
-</xml><![endif]--><!--[if gte mso 9]><xml>
- <w:WordDocument>
-  <w:Zoom>118</w:Zoom>
-  <w:AttachedTemplate HRef="NXJTutorialTemplate.dot"></w:AttachedTemplate>
-  <w:UpdateStylesOnOpen/>
-  <w:Compatibility>
-   <w:BreakWrappedTables/>
-   <w:SnapToGridInCell/>
-   <w:WrapTextWithPunct/>
-   <w:UseAsianBreakRules/>
-  </w:Compatibility>
-  <w:BrowserLevel>MicrosoftInternetExplorer4</w:BrowserLevel>
- </w:WordDocument>
-</xml><![endif]-->
-<style>
-<!--
- /* Font Definitions */
- @font-face
-	{font-family:Wingdings;
-	panose-1:5 0 0 0 0 0 0 0 0 0;
-	mso-font-charset:2;
-	mso-generic-font-family:auto;
-	mso-font-pitch:variable;
-	mso-font-signature:0 268435456 0 0 -2147483648 0;}
- /* Style Definitions */
- p.MsoNormal, li.MsoNormal, div.MsoNormal
-	{mso-style-name:"Normal\,Normal1";
-	mso-style-parent:"";
-	margin-top:0in;
-	margin-right:0in;
-	margin-bottom:6.0pt;
-	margin-left:0in;
-	mso-pagination:widow-orphan;
-	font-size:12.0pt;
-	font-family:"Times New Roman";
-	mso-fareast-font-family:"Times New Roman";}
-h1
-	{mso-style-next:"Body Text";
-	margin-top:12.0pt;
-	margin-right:0in;
-	margin-bottom:3.0pt;
-	margin-left:0in;
-	mso-pagination:widow-orphan;
-	page-break-after:avoid;
-	mso-outline-level:1;
-	font-size:16.0pt;
-	font-family:Arial;
-	color:#FF6600;
-	mso-font-kerning:16.0pt;
-	font-weight:bold;}
-h2
-	{mso-style-parent:"Heading 1";
-	mso-style-next:"Body Text 2";
-	margin-top:12.0pt;
-	margin-right:0in;
-	margin-bottom:6.0pt;
-	margin-left:0in;
-	mso-pagination:widow-orphan;
-	page-break-after:avoid;
-	mso-outline-level:2;
-	font-size:14.0pt;
-	font-family:Arial;
-	color:#FF6600;
-	mso-font-kerning:16.0pt;
-	font-weight:normal;
-	font-style:italic;}
-h3
-	{mso-style-parent:"Heading 2";
-	mso-style-next:"Body Text 3";
-	margin-top:12.0pt;
-	margin-right:0in;
-	margin-bottom:6.0pt;
-	margin-left:.2in;
-	mso-pagination:widow-orphan;
-	page-break-after:avoid;
-	mso-outline-level:3;
-	font-size:13.0pt;
-	font-family:Arial;
-	color:#FF6600;
-	mso-font-kerning:16.0pt;
-	font-weight:bold;
-	font-style:italic;}
-h4
-	{mso-style-parent:"Heading 3";
-	mso-style-next:"Body Text 4";
-	margin-top:12.0pt;
-	margin-right:0in;
-	margin-bottom:3.0pt;
-	margin-left:.3in;
-	mso-pagination:widow-orphan;
-	page-break-after:avoid;
-	mso-outline-level:4;
-	font-size:12.0pt;
-	font-family:Arial;
-	color:black;
-	font-weight:bold;
-	mso-bidi-font-weight:normal;
-	font-style:italic;
-	mso-bidi-font-style:normal;}
-h5
-	{mso-style-next:"Normal\,Normal1";
-	margin-top:12.0pt;
-	margin-right:0in;
-	margin-bottom:3.0pt;
-	margin-left:0in;
-	mso-pagination:widow-orphan;
-	mso-outline-level:5;
-	font-size:13.0pt;
-	font-family:"Times New Roman";
-	font-weight:bold;
-	font-style:italic;}
-h6
-	{mso-style-next:"Normal\,Normal1";
-	margin-top:12.0pt;
-	margin-right:0in;
-	margin-bottom:3.0pt;
-	margin-left:0in;
-	mso-pagination:widow-orphan;
-	mso-outline-level:6;
-	font-size:11.0pt;
-	font-family:"Times New Roman";
-	font-weight:bold;}
-p.MsoHeading7, li.MsoHeading7, div.MsoHeading7
-	{mso-style-next:"Normal\,Normal1";
-	margin-top:12.0pt;
-	margin-right:0in;
-	margin-bottom:3.0pt;
-	margin-left:0in;
-	mso-pagination:widow-orphan;
-	mso-outline-level:7;
-	font-size:12.0pt;
-	font-family:"Times New Roman";
-	mso-fareast-font-family:"Times New Roman";}
-p.MsoHeading8, li.MsoHeading8, div.MsoHeading8
-	{mso-style-next:"Normal\,Normal1";
-	margin-top:12.0pt;
-	margin-right:0in;
-	margin-bottom:3.0pt;
-	margin-left:0in;
-	mso-pagination:widow-orphan;
-	mso-outline-level:8;
-	font-size:12.0pt;
-	font-family:"Times New Roman";
-	mso-fareast-font-family:"Times New Roman";
-	font-style:italic;}
-p.MsoHeading9, li.MsoHeading9, div.MsoHeading9
-	{mso-style-next:"Normal\,Normal1";
-	margin-top:12.0pt;
-	margin-right:0in;
-	margin-bottom:3.0pt;
-	margin-left:0in;
-	mso-pagination:widow-orphan;
-	mso-outline-level:9;
-	font-size:11.0pt;
-	font-family:Arial;
-	mso-fareast-font-family:"Times New Roman";}
-p.MsoToc1, li.MsoToc1, div.MsoToc1
-	{mso-style-update:auto;
-	mso-style-noshow:yes;
-	mso-style-next:"Normal\,Normal1";
-	margin-top:0in;
-	margin-right:0in;
-	margin-bottom:6.0pt;
-	margin-left:0in;
-	mso-pagination:widow-orphan;
-	font-size:12.0pt;
-	font-family:"Times New Roman";
-	mso-fareast-font-family:"Times New Roman";}
-p.MsoToc2, li.MsoToc2, div.MsoToc2
-	{mso-style-update:auto;
-	mso-style-noshow:yes;
-	mso-style-next:"Normal\,Normal1";
-	margin-top:0in;
-	margin-right:0in;
-	margin-bottom:6.0pt;
-	margin-left:12.0pt;
-	mso-pagination:widow-orphan;
-	font-size:12.0pt;
-	font-family:"Times New Roman";
-	mso-fareast-font-family:"Times New Roman";}
-p.MsoToc3, li.MsoToc3, div.MsoToc3
-	{mso-style-update:auto;
-	mso-style-noshow:yes;
-	mso-style-next:"Normal\,Normal1";
-	margin-top:0in;
-	margin-right:0in;
-	margin-bottom:6.0pt;
-	margin-left:24.0pt;
-	mso-pagination:widow-orphan;
-	font-size:12.0pt;
-	font-family:"Times New Roman";
-	mso-fareast-font-family:"Times New Roman";}
-p.MsoToc4, li.MsoToc4, div.MsoToc4
-	{mso-style-update:auto;
-	mso-style-noshow:yes;
-	mso-style-next:"Normal\,Normal1";
-	margin-top:0in;
-	margin-right:0in;
-	margin-bottom:6.0pt;
-	margin-left:.5in;
-	mso-pagination:widow-orphan;
-	font-size:12.0pt;
-	font-family:"Times New Roman";
-	mso-fareast-font-family:"Times New Roman";}
-p.MsoToc5, li.MsoToc5, div.MsoToc5
-	{mso-style-update:auto;
-	mso-style-noshow:yes;
-	mso-style-next:"Normal\,Normal1";
-	margin-top:0in;
-	margin-right:0in;
-	margin-bottom:6.0pt;
-	margin-left:48.0pt;
-	mso-pagination:widow-orphan;
-	font-size:12.0pt;
-	font-family:"Times New Roman";
-	mso-fareast-font-family:"Times New Roman";}
-p.MsoToc6, li.MsoToc6, div.MsoToc6
-	{mso-style-update:auto;
-	mso-style-noshow:yes;
-	mso-style-next:"Normal\,Normal1";
-	margin-top:0in;
-	margin-right:0in;
-	margin-bottom:6.0pt;
-	margin-left:60.0pt;
-	mso-pagination:widow-orphan;
-	font-size:12.0pt;
-	font-family:"Times New Roman";
-	mso-fareast-font-family:"Times New Roman";}
-p.MsoToc7, li.MsoToc7, div.MsoToc7
-	{mso-style-update:auto;
-	mso-style-noshow:yes;
-	mso-style-next:"Normal\,Normal1";
-	margin-top:0in;
-	margin-right:0in;
-	margin-bottom:6.0pt;
-	margin-left:1.0in;
-	mso-pagination:widow-orphan;
-	font-size:12.0pt;
-	font-family:"Times New Roman";
-	mso-fareast-font-family:"Times New Roman";}
-p.MsoToc8, li.MsoToc8, div.MsoToc8
-	{mso-style-update:auto;
-	mso-style-noshow:yes;
-	mso-style-next:"Normal\,Normal1";
-	margin-top:0in;
-	margin-right:0in;
-	margin-bottom:6.0pt;
-	margin-left:84.0pt;
-	mso-pagination:widow-orphan;
-	font-size:12.0pt;
-	font-family:"Times New Roman";
-	mso-fareast-font-family:"Times New Roman";}
-p.MsoToc9, li.MsoToc9, div.MsoToc9
-	{mso-style-update:auto;
-	mso-style-noshow:yes;
-	mso-style-next:"Normal\,Normal1";
-	margin-top:0in;
-	margin-right:0in;
-	margin-bottom:6.0pt;
-	margin-left:96.0pt;
-	mso-pagination:widow-orphan;
-	font-size:12.0pt;
-	font-family:"Times New Roman";
-	mso-fareast-font-family:"Times New Roman";}
-p.MsoBodyText, li.MsoBodyText, div.MsoBodyText
-	{margin-top:0in;
-	margin-right:0in;
-	margin-bottom:6.0pt;
-	margin-left:0in;
-	mso-pagination:widow-orphan;
-	font-size:12.0pt;
-	font-family:"Times New Roman";
-	mso-fareast-font-family:"Times New Roman";}
-p.MsoBodyText2, li.MsoBodyText2, div.MsoBodyText2
-	{mso-style-parent:"Body Text";
-	margin-top:0in;
-	margin-right:0in;
-	margin-bottom:6.0pt;
-	margin-left:.1in;
-	mso-pagination:widow-orphan;
-	font-size:12.0pt;
-	font-family:"Times New Roman";
-	mso-fareast-font-family:"Times New Roman";}
-p.MsoBodyText3, li.MsoBodyText3, div.MsoBodyText3
-	{mso-style-parent:"Body Text 2";
-	margin-top:0in;
-	margin-right:0in;
-	margin-bottom:6.0pt;
-	margin-left:.2in;
-	mso-pagination:widow-orphan;
-	font-size:12.0pt;
-	mso-bidi-font-size:8.0pt;
-	font-family:"Times New Roman";
-	mso-fareast-font-family:"Times New Roman";}
-a:link, span.MsoHyperlink
-	{color:blue;
-	text-decoration:underline;
-	text-underline:single;}
-a:visited, span.MsoHyperlinkFollowed
-	{color:purple;
-	text-decoration:underline;
-	text-underline:single;}
-p
-	{margin-top:0in;
-	margin-right:0in;
-	margin-bottom:6.0pt;
-	margin-left:0in;
-	mso-pagination:widow-orphan;
-	font-size:12.0pt;
-	font-family:"Times New Roman";
-	mso-fareast-font-family:"Times New Roman";}
-code
-	{font-family:"Courier New";
-	mso-ascii-font-family:"Courier New";
-	mso-fareast-font-family:"Times New Roman";
-	mso-hansi-font-family:"Courier New";
-	mso-bidi-font-family:"Courier New";}
-p.BodyText4, li.BodyText4, div.BodyText4
-	{mso-style-name:"Body Text 4";
-	mso-style-parent:"Body Text 3";
-	margin-top:0in;
-	margin-right:0in;
-	margin-bottom:6.0pt;
-	margin-left:.3in;
-	mso-pagination:widow-orphan;
-	font-size:12.0pt;
-	mso-bidi-font-size:8.0pt;
-	font-family:"Times New Roman";
-	mso-fareast-font-family:"Times New Roman";}
-span.N1Char
-	{mso-style-name:"N1 Char";
-	mso-style-link:N1;
-	mso-ansi-font-size:12.0pt;
-	mso-bidi-font-size:12.0pt;
-	mso-ansi-language:EN-US;
-	mso-fareast-language:EN-US;
-	mso-bidi-language:AR-SA;}
-p.N1, li.N1, div.N1
-	{mso-style-name:N1;
-	mso-style-parent:"";
-	mso-style-link:"N1 Char";
-	margin:0in;
-	margin-bottom:.0001pt;
-	mso-pagination:widow-orphan;
-	font-size:12.0pt;
-	font-family:"Times New Roman";
-	mso-fareast-font-family:"Times New Roman";}
-span.N2Char
-	{mso-style-name:"N2 Char";
-	mso-style-parent:"N1 Char";
-	mso-style-link:N2;
-	mso-ansi-font-size:12.0pt;
-	mso-bidi-font-size:12.0pt;
-	mso-ansi-language:EN-US;
-	mso-fareast-language:EN-US;
-	mso-bidi-language:AR-SA;}
-p.N2, li.N2, div.N2
-	{mso-style-name:N2;
-	mso-style-parent:N1;
-	mso-style-link:"N2 Char";
-	margin-top:0in;
-	margin-right:0in;
-	margin-bottom:0in;
-	margin-left:.1in;
-	margin-bottom:.0001pt;
-	mso-pagination:widow-orphan;
-	font-size:12.0pt;
-	font-family:"Times New Roman";
-	mso-fareast-font-family:"Times New Roman";}
-p.N3, li.N3, div.N3
-	{mso-style-name:N3;
-	mso-style-parent:N2;
-	margin-top:0in;
-	margin-right:0in;
-	margin-bottom:0in;
-	margin-left:.1in;
-	margin-bottom:.0001pt;
-	mso-pagination:widow-orphan;
-	font-size:12.0pt;
-	font-family:"Times New Roman";
-	mso-fareast-font-family:"Times New Roman";}
-p.Heading1color, li.Heading1color, div.Heading1color
-	{mso-style-name:"Heading1 color";
-	mso-style-parent:"Heading 1";
-	mso-style-next:"Body Text";
-	margin-top:12.0pt;
-	margin-right:0in;
-	margin-bottom:3.0pt;
-	margin-left:0in;
-	mso-pagination:widow-orphan;
-	page-break-after:avoid;
-	mso-outline-level:1;
-	font-size:16.0pt;
-	font-family:Arial;
-	mso-fareast-font-family:"Times New Roman";
-	color:#FF6600;
-	mso-font-kerning:16.0pt;
-	font-weight:bold;}
-p.Heading2Color, li.Heading2Color, div.Heading2Color
-	{mso-style-name:"Heading2 Color";
-	mso-style-parent:"Heading 2";
-	mso-style-next:"Body Text 2";
-	margin-top:12.0pt;
-	margin-right:0in;
-	margin-bottom:6.0pt;
-	margin-left:0in;
-	mso-pagination:widow-orphan;
-	page-break-after:avoid;
-	mso-outline-level:2;
-	font-size:14.0pt;
-	font-family:Arial;
-	mso-fareast-font-family:"Times New Roman";
-	color:#FF6600;
-	mso-font-kerning:16.0pt;
-	font-style:italic;}
-p.Heading3color, li.Heading3color, div.Heading3color
-	{mso-style-name:"Heading3 color";
-	mso-style-update:auto;
-	mso-style-parent:"Heading 3";
-	mso-style-next:"Body Text 3";
-	margin-top:12.0pt;
-	margin-right:0in;
-	margin-bottom:6.0pt;
-	margin-left:.2in;
-	mso-pagination:widow-orphan;
-	page-break-after:avoid;
-	mso-outline-level:3;
-	font-size:13.0pt;
-	font-family:Arial;
-	mso-fareast-font-family:"Times New Roman";
-	color:#FF6600;
-	mso-font-kerning:16.0pt;
-	font-weight:bold;
-	font-style:italic;}
-@page Section1
-	{size:12.2in 13.0in;
-	margin:1.0in 2.1in 177.1pt 2.1in;
-	mso-header-margin:.5in;
-	mso-footer-margin:.5in;
-	mso-paper-source:0;}
-div.Section1
-	{page:Section1;}
- /* List Definitions */
- @list l0
-	{mso-list-id:-132;
-	mso-list-type:simple;
-	mso-list-template-ids:-1655899830;}
-@list l0:level1
-	{mso-level-tab-stop:1.25in;
-	mso-level-number-position:left;
-	margin-left:1.25in;
-	text-indent:-.25in;}
-@list l1
-	{mso-list-id:-131;
-	mso-list-type:simple;
-	mso-list-template-ids:-685490596;}
-@list l1:level1
-	{mso-level-tab-stop:1.0in;
-	mso-level-number-position:left;
-	margin-left:1.0in;
-	text-indent:-.25in;}
-@list l2
-	{mso-list-id:-130;
-	mso-list-type:simple;
-	mso-list-template-ids:948443036;}
-@list l2:level1
-	{mso-level-tab-stop:.75in;
-	mso-level-number-position:left;
-	margin-left:.75in;
-	text-indent:-.25in;}
-@list l3
-	{mso-list-id:-129;
-	mso-list-type:simple;
-	mso-list-template-ids:-871742908;}
-@list l3:level1
-	{mso-level-tab-stop:.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l4
-	{mso-list-id:-128;
-	mso-list-type:simple;
-	mso-list-template-ids:-1254185752;}
-@list l4:level1
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:1.25in;
-	mso-level-number-position:left;
-	margin-left:1.25in;
-	text-indent:-.25in;
-	font-family:Symbol;}
-@list l5
-	{mso-list-id:-127;
-	mso-list-type:simple;
-	mso-list-template-ids:-1802441078;}
-@list l5:level1
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:1.0in;
-	mso-level-number-position:left;
-	margin-left:1.0in;
-	text-indent:-.25in;
-	font-family:Symbol;}
-@list l6
-	{mso-list-id:-126;
-	mso-list-type:simple;
-	mso-list-template-ids:-48739110;}
-@list l6:level1
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:.75in;
-	mso-level-number-position:left;
-	margin-left:.75in;
-	text-indent:-.25in;
-	font-family:Symbol;}
-@list l7
-	{mso-list-id:-125;
-	mso-list-type:simple;
-	mso-list-template-ids:-1490543376;}
-@list l7:level1
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	font-family:Symbol;}
-@list l8
-	{mso-list-id:-120;
-	mso-list-type:simple;
-	mso-list-template-ids:-927711426;}
-@list l8:level1
-	{mso-level-tab-stop:.25in;
-	mso-level-number-position:left;
-	margin-left:.25in;
-	text-indent:-.25in;}
-@list l9
-	{mso-list-id:-119;
-	mso-list-type:simple;
-	mso-list-template-ids:1431183632;}
-@list l9:level1
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:.25in;
-	mso-level-number-position:left;
-	margin-left:.25in;
-	text-indent:-.25in;
-	font-family:Symbol;}
-@list l10
-	{mso-list-id:21177883;
-	mso-list-type:hybrid;
-	mso-list-template-ids:43563384 67698703 67698713 67698715 67698703 67698713 67698715 67698703 67698713 67698715;}
-@list l10:level1
-	{mso-level-tab-stop:.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l10:level2
-	{mso-level-tab-stop:1.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l10:level3
-	{mso-level-tab-stop:1.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l10:level4
-	{mso-level-tab-stop:2.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l10:level5
-	{mso-level-tab-stop:2.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l10:level6
-	{mso-level-tab-stop:3.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l10:level7
-	{mso-level-tab-stop:3.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l10:level8
-	{mso-level-tab-stop:4.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l10:level9
-	{mso-level-tab-stop:4.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l11
-	{mso-list-id:430666945;
-	mso-list-template-ids:-1133846298;}
-@list l11:level1
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l12
-	{mso-list-id:443042117;
-	mso-list-template-ids:733755854;}
-@list l12:level1
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:.25in;
-	mso-level-number-position:left;
-	margin-left:.25in;
-	text-indent:0in;
-	font-family:Symbol;}
-@list l12:level2
-	{mso-level-number-format:bullet;
-	mso-level-text:o;
-	mso-level-tab-stop:1.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	font-family:"Courier New";}
-@list l12:level3
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0A7;
-	mso-level-tab-stop:1.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	font-family:Wingdings;}
-@list l12:level4
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:2.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	font-family:Symbol;}
-@list l12:level5
-	{mso-level-number-format:bullet;
-	mso-level-text:o;
-	mso-level-tab-stop:2.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	font-family:"Courier New";}
-@list l12:level6
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0A7;
-	mso-level-tab-stop:3.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	font-family:Wingdings;}
-@list l12:level7
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:3.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	font-family:Symbol;}
-@list l12:level8
-	{mso-level-number-format:bullet;
-	mso-level-text:o;
-	mso-level-tab-stop:4.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	font-family:"Courier New";}
-@list l12:level9
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0A7;
-	mso-level-tab-stop:4.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	font-family:Wingdings;}
-@list l13
-	{mso-list-id:453328154;
-	mso-list-template-ids:-1706238266;}
-@list l14
-	{mso-list-id:605356288;
-	mso-list-template-ids:920007384;}
-@list l15
-	{mso-list-id:734820382;
-	mso-list-type:hybrid;
-	mso-list-template-ids:-1184732066 67698703 67698713 67698715 67698703 67698713 67698715 67698703 67698713 67698715;}
-@list l15:level1
-	{mso-level-tab-stop:.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l15:level2
-	{mso-level-tab-stop:1.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l15:level3
-	{mso-level-tab-stop:1.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l15:level4
-	{mso-level-tab-stop:2.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l15:level5
-	{mso-level-tab-stop:2.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l15:level6
-	{mso-level-tab-stop:3.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l15:level7
-	{mso-level-tab-stop:3.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l15:level8
-	{mso-level-tab-stop:4.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l15:level9
-	{mso-level-tab-stop:4.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l16
-	{mso-list-id:911308620;
-	mso-list-type:hybrid;
-	mso-list-template-ids:-729512006 67698703 67698691 67698693 67698689 67698691 67698693 67698689 67698691 67698693;}
-@list l16:level1
-	{mso-level-tab-stop:.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l16:level2
-	{mso-level-tab-stop:1.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l16:level3
-	{mso-level-tab-stop:1.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l16:level4
-	{mso-level-tab-stop:2.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l16:level5
-	{mso-level-tab-stop:2.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l16:level6
-	{mso-level-tab-stop:3.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l16:level7
-	{mso-level-tab-stop:3.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l16:level8
-	{mso-level-tab-stop:4.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l16:level9
-	{mso-level-tab-stop:4.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l17
-	{mso-list-id:953512223;
-	mso-list-type:hybrid;
-	mso-list-template-ids:314469080 -1369821974 67698691 67698693 67698689 67698691 67698693 67698689 67698691 67698693;}
-@list l17:level1
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	font-family:Symbol;}
-@list l18
-	{mso-list-id:1024746888;
-	mso-list-template-ids:-645501400;}
-@list l19
-	{mso-list-id:1196848569;
-	mso-list-type:hybrid;
-	mso-list-template-ids:733755854 1655733534 67698691 67698693 67698689 67698691 67698693 67698689 67698691 67698693;}
-@list l19:level1
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:.25in;
-	mso-level-number-position:left;
-	margin-left:.25in;
-	text-indent:0in;
-	font-family:Symbol;}
-@list l20
-	{mso-list-id:1508593447;
-	mso-list-template-ids:-1784242096;}
-@list l21
-	{mso-list-id:1637956492;
-	mso-list-template-ids:1002332796;}
-@list l22
-	{mso-list-id:1772239380;
-	mso-list-type:hybrid;
-	mso-list-template-ids:-1024304596 67698703 67698691 67698693 67698689 67698691 67698693 67698689 67698691 67698693;}
-@list l22:level1
-	{mso-level-tab-stop:.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l22:level2
-	{mso-level-tab-stop:1.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l22:level3
-	{mso-level-tab-stop:1.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l22:level4
-	{mso-level-tab-stop:2.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l22:level5
-	{mso-level-tab-stop:2.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l22:level6
-	{mso-level-tab-stop:3.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l22:level7
-	{mso-level-tab-stop:3.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l22:level8
-	{mso-level-tab-stop:4.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l22:level9
-	{mso-level-tab-stop:4.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l23
-	{mso-list-id:1825317709;
-	mso-list-template-ids:-209698784;}
-@list l23:level1
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l24
-	{mso-list-id:1829008014;
-	mso-list-type:hybrid;
-	mso-list-template-ids:219576772 67698703 67698713 67698715 67698703 67698713 67698715 67698703 67698713 67698715;}
-@list l24:level1
-	{mso-level-tab-stop:.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l24:level2
-	{mso-level-tab-stop:1.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l24:level3
-	{mso-level-tab-stop:1.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l24:level4
-	{mso-level-tab-stop:2.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l24:level5
-	{mso-level-tab-stop:2.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l24:level6
-	{mso-level-tab-stop:3.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l24:level7
-	{mso-level-tab-stop:3.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l24:level8
-	{mso-level-tab-stop:4.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l24:level9
-	{mso-level-tab-stop:4.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l25
-	{mso-list-id:1918788321;
-	mso-list-template-ids:460477308;}
-@list l25:level1
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l26
-	{mso-list-id:1921985629;
-	mso-list-template-ids:67698717;}
-@list l26:level1
-	{mso-level-text:"%1\)";
-	mso-level-tab-stop:.25in;
-	mso-level-number-position:left;
-	margin-left:.25in;
-	text-indent:-.25in;}
-@list l26:level2
-	{mso-level-number-format:alpha-lower;
-	mso-level-text:"%2\)";
-	mso-level-tab-stop:.5in;
-	mso-level-number-position:left;
-	margin-left:.5in;
-	text-indent:-.25in;}
-@list l26:level3
-	{mso-level-number-format:roman-lower;
-	mso-level-text:"%3\)";
-	mso-level-tab-stop:.75in;
-	mso-level-number-position:left;
-	margin-left:.75in;
-	text-indent:-.25in;}
-@list l26:level4
-	{mso-level-text:"\(%4\)";
-	mso-level-tab-stop:1.0in;
-	mso-level-number-position:left;
-	margin-left:1.0in;
-	text-indent:-.25in;}
-@list l26:level5
-	{mso-level-number-format:alpha-lower;
-	mso-level-text:"\(%5\)";
-	mso-level-tab-stop:1.25in;
-	mso-level-number-position:left;
-	margin-left:1.25in;
-	text-indent:-.25in;}
-@list l26:level6
-	{mso-level-number-format:roman-lower;
-	mso-level-text:"\(%6\)";
-	mso-level-tab-stop:1.5in;
-	mso-level-number-position:left;
-	margin-left:1.5in;
-	text-indent:-.25in;}
-@list l26:level7
-	{mso-level-tab-stop:1.75in;
-	mso-level-number-position:left;
-	margin-left:1.75in;
-	text-indent:-.25in;}
-@list l26:level8
-	{mso-level-number-format:alpha-lower;
-	mso-level-tab-stop:2.0in;
-	mso-level-number-position:left;
-	margin-left:2.0in;
-	text-indent:-.25in;}
-@list l26:level9
-	{mso-level-number-format:roman-lower;
-	mso-level-tab-stop:2.25in;
-	mso-level-number-position:left;
-	margin-left:2.25in;
-	text-indent:-.25in;}
-@list l27
-	{mso-list-id:1950158349;
-	mso-list-type:hybrid;
-	mso-list-template-ids:1549038714 67698689 67698691 67698693 67698689 67698691 67698693 67698689 67698691 67698693;}
-@list l27:level1
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	font-family:Symbol;}
-@list l27:level2
-	{mso-level-tab-stop:1.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l27:level3
-	{mso-level-tab-stop:1.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l27:level4
-	{mso-level-tab-stop:2.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l27:level5
-	{mso-level-tab-stop:2.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l27:level6
-	{mso-level-tab-stop:3.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l27:level7
-	{mso-level-tab-stop:3.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l27:level8
-	{mso-level-tab-stop:4.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l27:level9
-	{mso-level-tab-stop:4.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l28
-	{mso-list-id:2134982551;
-	mso-list-type:hybrid;
-	mso-list-template-ids:-552536534 134807553 134807555 134807557 134807553 134807555 134807557 134807553 134807555 134807557;}
-@list l28:level1
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	font-family:Symbol;}
-@list l28:level2
-	{mso-level-tab-stop:1.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l28:level3
-	{mso-level-tab-stop:1.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l28:level4
-	{mso-level-tab-stop:2.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l28:level5
-	{mso-level-tab-stop:2.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l28:level6
-	{mso-level-tab-stop:3.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l28:level7
-	{mso-level-tab-stop:3.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l28:level8
-	{mso-level-tab-stop:4.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l28:level9
-	{mso-level-tab-stop:4.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-ol
-	{margin-bottom:0in;}
-ul
-	{margin-bottom:0in;}
--->
-</style>
-<!--[if gte mso 10]>
-<style>
- /* Style Definitions */
- table.MsoNormalTable
-	{mso-style-name:"Table Normal";
-	mso-tstyle-rowband-size:0;
-	mso-tstyle-colband-size:0;
-	mso-style-noshow:yes;
-	mso-style-parent:"";
-	mso-padding-alt:0in 5.4pt 0in 5.4pt;
-	mso-para-margin:0in;
-	mso-para-margin-bottom:.0001pt;
-	mso-pagination:widow-orphan;
-	font-size:10.0pt;
-	font-family:"Times New Roman";}
-table.MsoTableColorful2
-	{mso-style-name:"Table Colorful 2";
-	mso-tstyle-rowband-size:0;
-	mso-tstyle-colband-size:0;
-	border:none;
-	border-bottom:solid black 1.5pt;
-	mso-padding-alt:0in 5.4pt 0in 5.4pt;
-	mso-tstyle-shading:white;
-	mso-para-margin:0in;
-	mso-para-margin-bottom:.0001pt;
-	mso-pagination:widow-orphan;
-	font-size:10.0pt;
-	font-family:"Times New Roman";}
-table.MsoTableColorful2FirstRow
-	{mso-style-name:"Table Colorful 2";
-	mso-table-condition:first-row;
-	mso-tstyle-shading:#FFFFCC;
-	color:windowtext;
-	mso-ansi-font-weight:bold;
-	mso-bidi-font-weight:bold;
-	mso-ansi-font-style:normal;
-	mso-bidi-font-style:italic;}
-table.MsoTableColorful2FirstCol
-	{mso-style-name:"Table Colorful 2";
-	mso-table-condition:first-column;
-	mso-tstyle-diagonal-down:0in none windowtext;
-	mso-tstyle-diagonal-up:0in none windowtext;
-	mso-ansi-font-weight:normal;
-	mso-bidi-font-weight:bold;
-	mso-ansi-font-style:normal;
-	mso-bidi-font-style:italic;}
-table.MsoTableColorful2LastCol
-	{mso-style-name:"Table Colorful 2";
-	mso-table-condition:last-column;
-	mso-tstyle-shading:white;}
-table.MsoTableColorful2SWCell
-	{mso-style-name:"Table Colorful 2";
-	mso-table-condition:sw-cell;
-	mso-tstyle-diagonal-down:0in none windowtext;
-	mso-tstyle-diagonal-up:0in none windowtext;
-	mso-ansi-font-weight:bold;
-	mso-bidi-font-weight:bold;
-	mso-ansi-font-style:normal;
-	mso-bidi-font-style:normal;}
-table.MsoTableGrid1
-	{mso-style-name:"Table Grid 1";
-	mso-tstyle-rowband-size:0;
-	mso-tstyle-colband-size:0;
-	border:solid black 1.0pt;
-	mso-border-alt:solid black .75pt;
-	mso-padding-alt:0in 5.4pt 0in 5.4pt;
-	mso-border-insideh:.75pt solid black;
-	mso-border-insidev:.75pt solid black;
-	mso-para-margin:0in;
-	mso-para-margin-bottom:.0001pt;
-	mso-pagination:widow-orphan;
-	font-size:10.0pt;
-	font-family:"Times New Roman";}
-table.MsoTableGrid1LastRow
-	{mso-style-name:"Table Grid 1";
-	mso-table-condition:last-row;
-	mso-tstyle-diagonal-down:0in none windowtext;
-	mso-tstyle-diagonal-up:0in none windowtext;
-	mso-ansi-font-style:italic;
-	mso-bidi-font-style:italic;}
-table.MsoTableGrid1LastCol
-	{mso-style-name:"Table Grid 1";
-	mso-table-condition:last-column;
-	mso-tstyle-diagonal-down:0in none windowtext;
-	mso-tstyle-diagonal-up:0in none windowtext;
-	mso-ansi-font-style:italic;
-	mso-bidi-font-style:italic;}
-table.MsoTableProfessional
-	{mso-style-name:"Table Professional";
-	mso-tstyle-rowband-size:0;
-	mso-tstyle-colband-size:0;
-	border:solid black 1.0pt;
-	mso-border-alt:solid black .75pt;
-	mso-padding-alt:0in 5.4pt 0in 5.4pt;
-	mso-border-insideh:.75pt solid black;
-	mso-border-insidev:.75pt solid black;
-	mso-para-margin:0in;
-	mso-para-margin-bottom:.0001pt;
-	mso-pagination:widow-orphan;
-	font-size:10.0pt;
-	font-family:"Times New Roman";}
-table.MsoTableProfessionalFirstRow
-	{mso-style-name:"Table Professional";
-	mso-table-condition:first-row;
-	mso-tstyle-shading:white;
-	mso-tstyle-pattern:solid black;
-	mso-tstyle-diagonal-down:0in none windowtext;
-	mso-tstyle-diagonal-up:0in none windowtext;
-	color:windowtext;
-	mso-ansi-font-weight:bold;
-	mso-bidi-font-weight:bold;}
-table.MsoTableGrid
-	{mso-style-name:"Table Grid";
-	mso-tstyle-rowband-size:0;
-	mso-tstyle-colband-size:0;
-	border:solid windowtext 1.0pt;
-	mso-border-alt:solid windowtext .5pt;
-	mso-padding-alt:0in 5.4pt 0in 5.4pt;
-	mso-border-insideh:.5pt solid windowtext;
-	mso-border-insidev:.5pt solid windowtext;
-	mso-para-margin-top:0in;
-	mso-para-margin-right:0in;
-	mso-para-margin-bottom:6.0pt;
-	mso-para-margin-left:0in;
-	mso-pagination:widow-orphan;
-	font-size:10.0pt;
-	font-family:"Times New Roman";}
-table.MsoTableGridFirstRow
-	{mso-style-name:"Table Grid";
-	mso-table-condition:first-row;
-	mso-ansi-font-weight:bold;
-	mso-ansi-font-style:normal;}
-</style>
-<![endif]--><!--[if gte mso 9]><xml>
- <o:shapedefaults v:ext="edit" spidmax="20482"/>
-</xml><![endif]--><!--[if gte mso 9]><xml>
- <o:shapelayout v:ext="edit">
-  <o:idmap v:ext="edit" data="1"/>
- </o:shapelayout></xml><![endif]-->
-</head>
+		<!-- ICON -->
+		<link rel="shortcut icon" href="../favicon.ico" type="image/x-icon" />
+		
+	<TITLE>Motor</TITLE>
+	<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.4  (Win32)">
+	<META NAME="AUTHOR" CONTENT="Roger">
+	<META NAME="CREATED" CONTENT="20080812;20000000">
+	<META NAME="CHANGED" CONTENT="20080829;11413268">
+	<STYLE TYPE="text/css">
+	<!--
+		@page { size: 12.2in 13in; margin-left: 0.79in; margin-right: 2.1in; margin-top: 1in; margin-bottom: 2.46in }
+		TD P { margin-bottom: 0.08in; direction: ltr; color: #000000; widows: 2; orphans: 2 }
+		TD P.western { font-family: "Times New Roman", serif; font-size: 12pt; so-language: en-US }
+		TD P.cjk { font-family: "Times New Roman", serif; font-size: 12pt }
+		TD P.ctl { font-family: "Times New Roman", serif; font-size: 12pt; so-language: ar-SA }
+		H1 { margin-bottom: 0.04in; direction: ltr; color: #ff6600; widows: 2; orphans: 2 }
+		H1.western { font-family: "Arial", sans-serif; font-size: 16pt; so-language: en-US }
+		H1.cjk { font-family: "Times New Roman", serif; font-size: 16pt }
+		H1.ctl { font-family: "Arial", sans-serif; font-size: 16pt; so-language: ar-SA }
+		P { margin-bottom: 0.08in; direction: ltr; color: #000000; widows: 2; orphans: 2 }
+		P.western { font-family: "Times New Roman", serif; font-size: 12pt; so-language: en-US }
+		P.cjk { font-family: "Times New Roman", serif; font-size: 12pt }
+		P.ctl { font-family: "Times New Roman", serif; font-size: 12pt; so-language: ar-SA }
+		H2 { margin-bottom: 0.08in; direction: ltr; color: #ff6600; widows: 2; orphans: 2 }
+		H2.western { font-family: "Arial", sans-serif; font-size: 14pt; so-language: en-US; font-style: italic; font-weight: medium }
+		H2.cjk { font-family: "Times New Roman", serif; font-size: 14pt; font-style: italic; font-weight: medium }
+		H2.ctl { font-family: "Arial", sans-serif; font-size: 14pt; so-language: ar-SA; font-style: italic; font-weight: medium }
+		H3 { margin-left: 0.2in; margin-bottom: 0.08in; direction: ltr; color: #ff6600; widows: 2; orphans: 2 }
+		H3.western { font-family: "Arial", sans-serif; font-size: 13pt; so-language: en-US; font-style: italic }
+		H3.cjk { font-family: "Times New Roman", serif; font-size: 13pt; font-style: italic }
+		H3.ctl { font-family: "Arial", sans-serif; font-size: 13pt; so-language: ar-SA; font-style: italic }
+		A:link { color: #0000ff }
+		A:visited { color: #800080 }
+	-->
+	</STYLE>
+	</head>
+	<body>
+		<a id="top" name="top"></a>
+		<!-- N1: HEADER -->
+		<table cellpadding="0" cellspacing="0" class="n1t1">
+			<tr>
+				<td><img src="../r_media/images/tutorial_header1.jpg" /></td>
+				<td align="right"><img src="../r_media/images/tutorial_header2.jpg" /></td>
+			</tr>
+		</table>
+		<!-- N2: CONTENTS -> NAVIGATION SYSTEMS AND CONTENTS -->
+		<table cellpadding="0" cellspacing="0" class="n2t1">
+			<tr>
+				<td class="n2t1r1c1">
+					<P CLASS="western"><A HREF="#1.Controlling the Motors|outline">Controlling
+					the Motors</A></P>
+					<P CLASS="western" STYLE="margin-left: 0.17in"><A HREF="#1.1.Introduction to the Motor class.|outline">Introduction
+					to the Motor class.</A></P>
+					<P CLASS="western" STYLE="margin-left: 0.17in"><A HREF="#1.2.Program 1 - Basic movement controls.|outline">Program
+					1 - Basic movement controls.</A></P>
+					<P CLASS="western" STYLE="margin-left: 0.17in"><A HREF="#1.3.Program 2: Using the Tachometer|outline">Program
+					2: Using the Tachometer</A></P>
+					<P CLASS="western" STYLE="margin-left: 0.17in"><A HREF="#1.4.Program 3:  Accurate rotation control|outline">Program
+					3: Accurate rotation control</A></P>
+					<P CLASS="western" STYLE="margin-left: 0.17in"><A HREF="#1.5.Program 4.  Interrupting rotation|outline">Program
+					4. Interrupting rotation</A></P>
+					<P CLASS="western"><A HREF="#2.Program 5: Regulating motor speed|outline">Program
+					5: Regulating motor speed</A></P>
+					<P CLASS="western" STYLE="margin-left: 0.17in"><A HREF="#2.1.Other Motor Methods|outline">Other
+					Motor Methods</A></P>
+				</td>
+				<td>
+		<!-- DO NOT MANINPULATE -->
+        <div id="BreadCrumbs">
+            <a href="../index.htm" target="_top">Home Page</a>
+        &gt;
+            <a href="#">Controlling the Motors</a>
 
-<body lang=EN-US link=blue vlink=purple style='tab-interval:.5in'>
+        </div>
+        <div class="NavBit">
+                <a target="_top" href="../Menusystem/MenuSystem.htm">«&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../WheeledVehicles/WheeledVehicles.htm">Next&nbsp;»</a>
+        </div>
+		<!-- CONTENT TITLE -->
+ 
+			<H1 CLASS="western"><A NAME="Top"></A><A NAME="1.Controlling the Motors|outline"></A>
+			Controlling the Motors</H1>
+			<H2 CLASS="western"><A NAME="1.1.Introduction to the Motor class.|outline"></A>
+			Introduction to the Motor class.</H2>
+			<P CLASS="western" STYLE="margin-left: 0.1in; margin-bottom: 0in"><BR>
+			</P>
+			<P CLASS="western" STYLE="margin-left: 0.1in; margin-bottom: 0in">This
+			class is an abstraction of a NXT motor. To be useful, a motor must
+			be connected toone of the three NXT motor ports. This class
+			provides an instance for each port. They are: Motor.A, Motor.B and
+			Motor.C. The class provides methods for controlling the motor, and
+			for finding out what the motor is doing. 
+			</P>
+			<P CLASS="western" STYLE="margin-left: 0.1in; margin-bottom: 0in">This
+			tutorial contains a set of five programs for you to write. With
+			them, you can perform experiments to understand how the NXT motor
+			performs. They are simple enough so you don&rsquo;t need much Java
+			experience to write them. Finally, there is a discussion of <A HREF="#_Other_Motor_Methods"><FONT COLOR="#0000ff"><U>other
+			motor methods</U></FONT></A> , not used in the programs, that you
+			might find useful. 
+			</P>
+			<P CLASS="western" STYLE="margin-bottom: 0in"><BR>
+			</P>
+			<H2 CLASS="western"><A NAME="1.2.Program 1 - Basic movement controls.|outline"></A>
+			Program 1 - Basic movement controls.</H2>
+			<P CLASS="western" STYLE="margin-left: 0.1in; margin-bottom: 0in">This
+			program uses the basic motor methods that control movement.</P>
+			<H3 CLASS="western">Methods used in this program</H3>
+			<DL>
+				<DD>
+				<TABLE WIDTH=548 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=7 CELLSPACING=0>
+					<COL WIDTH=64>
+					<COL WIDTH=166>
+					<COL WIDTH=274>
+					<TR VALIGN=TOP>
+						<TD WIDTH=64>
+							<P CLASS="western">Class</P>
+						</TD>
+						<TD WIDTH=166>
+							<P CLASS="western">Method name 
+							</P>
+						</TD>
+						<TD WIDTH=274>
+							<P CLASS="western">Notes</P>
+						</TD>
+					</TR>
+					<TR VALIGN=TOP>
+						<TD WIDTH=64>
+							<P CLASS="western"><FONT FACE="Courier New, monospace">Motor</FONT></P>
+						</TD>
+						<TD WIDTH=166>
+							<P CLASS="western"><FONT FACE="Courier New, monospace">forward()</FONT></P>
+						</TD>
+						<TD WIDTH=274>
+							<P CLASS="western">Start the motor rotating forward</P>
+						</TD>
+					</TR>
+					<TR VALIGN=TOP>
+						<TD WIDTH=64>
+							<P CLASS="western"><BR>
+							</P>
+						</TD>
+						<TD WIDTH=166>
+							<P CLASS="western"><FONT FACE="Courier New, monospace">backward()</FONT></P>
+						</TD>
+						<TD WIDTH=274>
+							<P CLASS="western">Start rotating backward 
+							</P>
+						</TD>
+					</TR>
+					<TR VALIGN=TOP>
+						<TD WIDTH=64>
+							<P CLASS="western"><BR>
+							</P>
+						</TD>
+						<TD WIDTH=166>
+							<P CLASS="western"><FONT FACE="Courier New, monospace">changeDirection()</FONT></P>
+						</TD>
+						<TD WIDTH=274>
+							<P CLASS="western">Reverse the direction of rotation</P>
+						</TD>
+					</TR>
+					<TR VALIGN=TOP>
+						<TD WIDTH=64>
+							<P CLASS="western"><BR>
+							</P>
+						</TD>
+						<TD WIDTH=166>
+							<P CLASS="western"><FONT FACE="Courier New, monospace">stop()</FONT></P>
+						</TD>
+						<TD WIDTH=274>
+							<P CLASS="western">Stop quickly</P>
+						</TD>
+					</TR>
+					<TR VALIGN=TOP>
+						<TD WIDTH=64>
+							<P CLASS="western"><FONT FACE="Courier New, monospace">Button</FONT></P>
+						</TD>
+						<TD WIDTH=166>
+							<P CLASS="western"><FONT FACE="Courier New, monospace">waitForPress()</FONT></P>
+						</TD>
+						<TD WIDTH=274>
+							<P CLASS="western">Wait till any button is pressed</P>
+						</TD>
+					</TR>
+					<TR VALIGN=TOP>
+						<TD WIDTH=64>
+							<P CLASS="western"><FONT FACE="Courier New, monospace">LCD</FONT></P>
+						</TD>
+						<TD WIDTH=166>
+							<P CLASS="western"><FONT FACE="Courier New, monospace">drawString(String
+							str,int x,int y)</FONT></P>
+						</TD>
+						<TD WIDTH=274>
+							<P CLASS="western">Draw a string. 
+							</P>
+						</TD>
+					</TR>
+				</TABLE>
+			</DL>
+			<H3 CLASS="western">What the program should do: 
+			</H3>
+			<OL>
+				<LI><P CLASS="western">Run motor A in the forward direction.</P>
+				<LI><P CLASS="western">Display FORWARD in the top line.</P>
+				<LI><P CLASS="western">Wait until a button is pressed.</P>
+				<LI><P CLASS="western">Run the motor backward.</P>
+				<LI><P CLASS="western">Display BACKWARD in next line.</P>
+				<LI><P CLASS="western">Wait until a button is pressed.</P>
+				<LI><P CLASS="western">Run motor A in the forward direction.</P>
+				<LI><P CLASS="western">Display FORWARD in the next line. 
+				</P>
+				<LI><P CLASS="western">Wait until a button is pressed.</P>
+				<LI><P CLASS="western">Stop the motor.</P>
+			</OL>
+			<P CLASS="western" STYLE="margin-left: 0.1in; margin-bottom: 0in">It
+			is possible to write this program using each Motor method only
+			once.</P>
+			<P CLASS="western" STYLE="margin-left: 0.1in; margin-bottom: 0in"><A HREF="#_Controlling_the_Motors"><FONT COLOR="#0000ff"><U>Solution</U></FONT></A></P>
+			<P CLASS="western" STYLE="margin-left: 0.1in; margin-bottom: 0in"><A HREF="#Top"><FONT COLOR="#0000ff"><U>Back
+			to top</U></FONT></A></P>
+			<H2 CLASS="western"><A NAME="1.3.Program 2: Using the Tachometer|outline"></A>
+			Program 2: Using the Tachometer</H2>
+			<P CLASS="western" STYLE="margin-left: 0.1in; margin-bottom: 0in">The
+			NXT motor has a built in tachometer that keeps track of the
+			current angle (in degrees) of the motor axel. The purpose of this
+			program is to use the tachometer to find out how quickly the motor
+			stops. 
+			</P>
+			<H3 CLASS="western">New methods used in this program</H3>
+			<TABLE WIDTH=656 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=7 CELLSPACING=0>
+				<COL WIDTH=64>
+				<COL WIDTH=202>
+				<COL WIDTH=346>
+				<TR VALIGN=TOP>
+					<TD WIDTH=64>
+						<P CLASS="western">Class</P>
+					</TD>
+					<TD WIDTH=202>
+						<P CLASS="western">Method name 
+						</P>
+					</TD>
+					<TD WIDTH=346>
+						<P CLASS="western">Notes</P>
+					</TD>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=64>
+						<P CLASS="western"><FONT FACE="Courier New, monospace">Motor</FONT></P>
+					</TD>
+					<TD WIDTH=202>
+						<P CLASS="western"><FONT FACE="Courier New, monospace">flt()</FONT></P>
+					</TD>
+					<TD WIDTH=346>
+						<P CLASS="western">Abbreviation for float. Turns off the power,
+						but does not apply the brake</P>
+					</TD>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=64>
+						<P CLASS="western"><BR>
+						</P>
+					</TD>
+					<TD WIDTH=202>
+						<P CLASS="western"><FONT FACE="Courier New, monospace">getTachoCount()</FONT></P>
+					</TD>
+					<TD WIDTH=346>
+						<P CLASS="western">Return s the motor angle in degrees</P>
+					</TD>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=64>
+						<P CLASS="western"><BR>
+						</P>
+					</TD>
+					<TD WIDTH=202>
+						<P CLASS="western"><FONT FACE="Courier New, monospace">resetTachocount()</FONT></P>
+					</TD>
+					<TD WIDTH=346>
+						<P CLASS="western">Sets the counter to zero</P>
+					</TD>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=64>
+						<P CLASS="western"><BR>
+						</P>
+					</TD>
+					<TD WIDTH=202>
+						<P CLASS="western"><FONT FACE="Courier New, monospace">setSpeed((int)speed)</FONT></P>
+					</TD>
+					<TD WIDTH=346>
+						<P CLASS="western">speed &ndash; degrees per second.. The
+						maximum speed that can be accurately maintained is about 110
+						times the battery voltage. 
+						</P>
+					</TD>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=64>
+						<P CLASS="western"><BR>
+						</P>
+					</TD>
+					<TD WIDTH=202>
+						<P CLASS="western"><FONT FACE="Courier New, monospace">(int)getActualSpeed()</FONT></P>
+					</TD>
+					<TD WIDTH=346>
+						<P CLASS="western">Returns the actual motor speed (deg/sec)</P>
+					</TD>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=64>
+						<P CLASS="western"><FONT FACE="Courier New, monospace">LCD</FONT></P>
+					</TD>
+					<TD WIDTH=202>
+						<P CLASS="western"><FONT FACE="Courier New, monospace">drawInt()</FONT></P>
+					</TD>
+					<TD WIDTH=346>
+						<P CLASS="western"><BR>
+						</P>
+					</TD>
+				</TR>
+			</TABLE>
+			<H3 CLASS="western">What the program should do</H3>
+			<OL>
+				<LI><P CLASS="western">Run Motor.A forward.</P>
+				<LI><P CLASS="western">Wait till the tacho count reaches 360.</P>
+				<LI><P CLASS="western">Stop the motor.</P>
+				<LI><P CLASS="western">Wait until the motor has stopped.</P>
+				<LI><P CLASS="western">Display the tachometer reading on the on
+				the LCD.</P>
+				<LI><P CLASS="western">Wait for a button press to give you time
+				to read the screen display.</P>
+				<LI><P CLASS="western">Set the motor speed to 720 (the default is
+				360).</P>
+				<LI><P CLASS="western">Reset the tachometer count to zero.</P>
+				<LI><P CLASS="western">Repeat steps 1 through 6. Note: you can
+				avoid duplicated code by writing a method that executes these
+				steps. 
+				</P>
+			</OL>
+			<P CLASS="western" STYLE="margin-left: 0.1in; margin-bottom: 0in">Repeat
+			the entire experiment by modifying your code to use flt() instead
+			of stop(); ( flt is the abbreviation for float, a Java reserved
+			word). This method sets the motor power to zero, but does not
+			apply the brake. 
+			</P>
+			<P CLASS="western" STYLE="margin-left: 0.1in; margin-bottom: 0in">Observe
+			that, even using the brake, the motor does not stop immediately,
+			because motor has inertia. 
+			</P>
+			<P CLASS="western"><A HREF="/C:%5CDocuments%20and%20Settings%5COwner%5CMy%20Documents%5Cieor140%5CNXT%5CnxjTutorial1%5CMotorTutorial%5CInertiaTest.htm" TARGET="_blank"><FONT COLOR="#0000ff"><U>Solution</U></FONT></A></P>
+			<P CLASS="western" STYLE="margin-left: 0.1in; margin-bottom: 0in"><A HREF="#Top"><FONT COLOR="#0000ff"><U>Back
+			to top</U></FONT></A></P>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<H2 CLASS="western">Program 3: Accurate rotation control</H2>
+			<P CLASS="western" STYLE="margin-left: 0.1in; margin-bottom: 0in">The
+			Motor class has a regulator thread that runs all the time. It has
+			two principle jobs, one of which is to stop the motor at a
+			specified angle. This program will test the accuracy of the
+			rotate() method.</P>
+			<H3 CLASS="western">New methods used in this program</H3>
+			<TABLE WIDTH=656 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=7 CELLSPACING=0>
+				<COL WIDTH=90>
+				<COL WIDTH=192>
+				<COL WIDTH=329>
+				<TR VALIGN=TOP>
+					<TD WIDTH=90>
+						<P CLASS="western">Class</P>
+					</TD>
+					<TD WIDTH=192>
+						<P CLASS="western">Method name 
+						</P>
+					</TD>
+					<TD WIDTH=329>
+						<P CLASS="western">Notes</P>
+					</TD>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=90>
+						<P CLASS="western"><FONT FACE="Courier New, monospace">Motor</FONT></P>
+					</TD>
+					<TD WIDTH=192>
+						<P CLASS="western"><FONT FACE="Courier New, monospace">rotate(angle)</FONT></P>
+					</TD>
+					<TD WIDTH=329>
+						<P CLASS="western">Rotates through <FONT FACE="Courier New, monospace">angle
+						</FONT>degrees</P>
+					</TD>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=90>
+						<P CLASS="western"><BR>
+						</P>
+					</TD>
+					<TD WIDTH=192>
+						<P CLASS="western"><FONT FACE="Courier New, monospace">rotateTo(angle)</FONT></P>
+					</TD>
+					<TD WIDTH=329>
+						<P CLASS="western">Rotates to <FONT FACE="Courier New, monospace">angle
+						</FONT>
+						</P>
+					</TD>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=90>
+						<P CLASS="western"><BR>
+						</P>
+					</TD>
+					<TD WIDTH=192>
+						<P CLASS="western"><FONT FACE="Courier New, monospace">rotateTo(angle,true)</FONT></P>
+					</TD>
+					<TD WIDTH=329>
+						<P CLASS="western">Sets the counter to zero</P>
+					</TD>
+				</TR>
+			</TABLE>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<H3 CLASS="western">What the program should do</H3>
+			<OL>
+				<LI><P CLASS="western">Rotate the motor one complete revolution.</P>
+				<LI><P CLASS="western">Display the tachometer reading on the on
+				the LCD, row 0.</P>
+				<LI><P CLASS="western">Rotate the motor to angle 0;</P>
+				<LI><P CLASS="western">Display the tachometer reading on the on
+				the LCD, row 1.</P>
+				<LI><P CLASS="western">Wait for a button press to give you time
+				to read the LCD.</P>
+				<LI><P CLASS="western">Clear the LCD.</P>
+				<LI><P CLASS="western">Set the speed to 720;</P>
+				<LI><P CLASS="western">Repeat steps 1 through 6. 
+				</P>
+			</OL>
+			<P CLASS="western" STYLE="margin-left: 0.25in">Note: you can avoid
+			duplicated code by writing a method that executes these steps.</P>
+			<P CLASS="western" STYLE="margin-left: 0.1in; margin-bottom: 0in"><FONT SIZE=3><SPAN LANG="en-US">Observe
+			the motor usually stops within 1 degree of the specified angle if
+			the motor regulator is doing its job. It </SPAN></FONT>works by
+			calculating how far the motor will continue to turn after the
+			brake has been applied. It applies the brake before reaching the
+			specified angle. It then makes minor adjustments to the motor
+			position till it is close enough. 
+			</P>
+			<P CLASS="western" STYLE="margin-left: 0.1in; margin-bottom: 0in"><A HREF="/C:%5CDocuments%20and%20Settings%5COwner%5CMy%20Documents%5Cieor140%5CNXT%5CnxjTutorial1%5CMotorTutorial%5CRotation.htm" TARGET="_blank"><FONT COLOR="#0000ff"><U>Solution</U></FONT></A></P>
+			<P CLASS="western" STYLE="margin-left: 0.1in; margin-bottom: 0in"><BR>
+			</P>
+			<P CLASS="western" STYLE="margin-left: 0.1in; margin-bottom: 0in"><A HREF="#Top"><FONT COLOR="#0000ff"><U>Back
+			to top</U></FONT></A></P>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<H2 CLASS="western">Program 4. Interrupting rotation</H2>
+			<P CLASS="western" STYLE="margin-left: 0.1in; margin-bottom: 0in">Sometimes
+			you will want the motor stop (or do something else) before it
+			reaches the specified angle. This program will detect a button
+			press to interrupt the rotation task if you press a button soon
+			enough. The rotate() methods will not return until the motor has
+			stopped at the target angle. But the new methods in this program
+			can return immediately. The motor will still stop at the specified
+			angle unless a new motor method is called in the meantime. 
+			</P>
+			<H3 CLASS="western">New methods used in this program</H3>
+			<TABLE WIDTH=641 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=7 CELLSPACING=0>
+				<COL WIDTH=57>
+				<COL WIDTH=307>
+				<COL WIDTH=233>
+				<COL WIDTH=0>
+				<COL WIDTH=0>
+				<COL WIDTH=0>
+				<TR VALIGN=TOP>
+					<TD WIDTH=57>
+						<P CLASS="western">Class</P>
+					</TD>
+					<TD WIDTH=307>
+						<P CLASS="western">Method name 
+						</P>
+					</TD>
+					<TD WIDTH=233>
+						<P CLASS="western">Notes</P>
+					</TD>
+					<TD></TD>
+					<TD></TD>
+					<TD></TD>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=57>
+						<P CLASS="western"><FONT FACE="Courier New, monospace">Motor</FONT></P>
+					</TD>
+					<TD WIDTH=307>
+						<P CLASS="western"><FONT FACE="Courier New, monospace">rotate(angle,immediateReturn)</FONT></P>
+					</TD>
+					<TD ROWSPAN=2 WIDTH=233>
+						<P CLASS="western">The method returns immediately if the
+						boolean parameter <FONT FACE="Courier New, monospace">immediateReturn</FONT>
+						is <B>true</B></P>
+					</TD>
+					<TD></TD>
+					<TD></TD>
+					<TD></TD>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=57>
+						<P CLASS="western"><BR>
+						</P>
+					</TD>
+					<TD WIDTH=307>
+						<P CLASS="western"><FONT FACE="Courier New, monospace">rotateTo(angle,immediateReturn)</FONT></P>
+					</TD>
+					<TD></TD>
+					<TD></TD>
+					<TD></TD>
+					<TD></TD>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=57>
+						<P CLASS="western"><BR>
+						</P>
+					</TD>
+					<TD WIDTH=307>
+						<P CLASS="western"><FONT FACE="Courier New, monospace">(boolean)isRotating()</FONT></P>
+					</TD>
+					<TD WIDTH=233>
+						<P CLASS="western">Returns <B>false</B> when the motor has
+						stopped at the specified angle</P>
+					</TD>
+					<TD></TD>
+					<TD></TD>
+					<TD></TD>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=57>
+						<P CLASS="western"><FONT FACE="Courier New, monospace">Button</FONT></P>
+					</TD>
+					<TD WIDTH=307>
+						<P CLASS="western"><FONT FACE="Courier New, monospace">int
+						readButtons()</FONT></P>
+					</TD>
+					<TD WIDTH=233>
+						<P CLASS="western">Returns the ID of the button pressed.</P>
+					</TD>
+					<TD></TD>
+					<TD></TD>
+					<TD></TD>
+				</TR>
+			</TABLE>
+			<H3 CLASS="western">What the program should do</H3>
+			<OL>
+				<LI><P CLASS="western">Start a rotation of 720 degrees.</P>
+				<LI><P CLASS="western">While the motor is rotating, display the
+				tacho count at the position of row 1.</P>
+				<LI><P CLASS="western">When a button is pressed, stop the motor.</P>
+				<LI><P CLASS="western">After the motor has stopped, display the
+				tacho count in the center of the row.</P>
+				<LI><P CLASS="western">Wait for a button press.</P>
+				<LI><P CLASS="western">Start a rotation to 0.</P>
+				<LI><P CLASS="western">Repeat steps 2,3,5.</P>
+			</OL>
+			<P CLASS="western" STYLE="margin-left: 0.25in">Observe: if you
+			press the button before the rotation is complete, the motor will
+			stop without completing its rotation. Otherwise, the stop() method
+			has no effect. 
+			</P>
+			<P CLASS="western" STYLE="margin-left: 0.25in"><A HREF="/C:%5CDocuments%20and%20Settings%5COwner%5CMy%20Documents%5Cieor140%5CNXT%5CnxjTutorial1%5CMotorTutorial%5CRotationInterrupt.htm" TARGET="_blank"><FONT COLOR="#0000ff"><U>Solution</U></FONT></A></P>
+			<P CLASS="western" STYLE="margin-left: 0.25in"><BR><BR>
+			</P>
+			<P CLASS="western" STYLE="margin-left: 0.1in; margin-bottom: 0in"><A HREF="#Top"><FONT COLOR="#0000ff"><U>Back
+			to top</U></FONT></A></P>
+			<P CLASS="western" STYLE="margin-left: 0.25in"><BR><BR>
+			</P>
+			<H1 CLASS="western"><A NAME="2.Program 5: Regulating motor speed|outline"></A>
+			Program 5: Regulating motor speed</H1>
+			<P CLASS="western" STYLE="margin-left: 0.1in; margin-bottom: 0in">The
+			other principle task of the regulator thread is to control the
+			motor speed. One reason for doing this is that a two wheel vehicle
+			will only travel in a straight line if both motors run at the same
+			speed.(obviously). The standard Lego software solves this problem
+			by directly synchronizing two motors. NXJ takes a different
+			approach: keeping each motor rotation synchronized to the system
+			clock. The regulator compares the tacho count (minus its reference
+			count) with speed times elapsed time, and adjust the power to keep
+			these two quantities closely matched. The regulator resets its
+			reference count and its elapsed time to zero and begins its
+			comparison again whenever you call any of the motor methods you
+			have used so far. 
+			</P>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<H3 CLASS="western">New methods used in this program</H3>
+			<TABLE WIDTH=641 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=7 CELLSPACING=0>
+				<COL WIDTH=86>
+				<COL WIDTH=294>
+				<COL WIDTH=217>
+				<TR VALIGN=TOP>
+					<TD WIDTH=86>
+						<P CLASS="western">Class</P>
+					</TD>
+					<TD WIDTH=294>
+						<P CLASS="western">Method name 
+						</P>
+					</TD>
+					<TD WIDTH=217>
+						<P CLASS="western">Notes</P>
+					</TD>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=86>
+						<P CLASS="western"><FONT FACE="Courier New, monospace"><I>Motor</I></FONT></P>
+					</TD>
+					<TD WIDTH=294>
+						<P CLASS="western"><FONT FACE="Courier New, monospace"><I>regulateSpeed(boolean
+						yes)</I></FONT></P>
+					</TD>
+					<TD WIDTH=217>
+						<P CLASS="western">Speed regulation is on by default. 
+						</P>
+					</TD>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=86>
+						<P CLASS="western"><FONT FACE="Courier New, monospace"><I>Stopwatch
+						</I></FONT>
+						</P>
+					</TD>
+					<TD WIDTH=294>
+						<P CLASS="western"><FONT FACE="Courier New, monospace"><I>elapsed()</I></FONT></P>
+					</TD>
+					<TD WIDTH=217>
+						<P CLASS="western">Returns elapsed time in milliseconds 
+						</P>
+					</TD>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=86>
+						<P CLASS="western"><BR>
+						</P>
+					</TD>
+					<TD WIDTH=294>
+						<P CLASS="western"><FONT FACE="Courier New, monospace"><I>reset()</I></FONT></P>
+					</TD>
+					<TD WIDTH=217>
+						<P CLASS="western">Resets the watch to 0. 
+						</P>
+					</TD>
+				</TR>
+			</TABLE>
+			<P CLASS="western" STYLE="margin-left: 0.1in; margin-bottom: 0in">The
+			stopwatch class is in the package lejos.util. 
+			</P>
+			<H3 CLASS="western">What the program should do:</H3>
+			<OL>
+				<LI><P CLASS="western">Create a new stopwatch.</P>
+				<LI><P CLASS="western">Start all three motors running at 2
+				revolutions/second.</P>
+				<LI><P CLASS="western">Every 200 ms, display all 3 tacho count
+				values in the same row. 
+				</P>
+				<LI><P CLASS="western">Repeat step 3, 8 times, using a different
+				row each time.</P>
+				<LI><P CLASS="western">Write down maximum difference you see
+				between the motor tacho counts. 
+				</P>
+				<LI><P CLASS="western">Turn off speed regulation</P>
+				<LI><P CLASS="western">Repeat steps 1 &ndash; 5</P>
+			</OL>
+			<P CLASS="western" STYLE="margin-left: 0.25in">With speed
+			regulation on, the motors should remain within a few degrees of
+			each other. When it is off, the difference in angle of rotation
+			get larger with time unless you have an unusually well matched set
+			of motors. 
+			</P>
+			<P CLASS="western" STYLE="margin-left: 0.25in"><A HREF="/C:%5CDocuments%20and%20Settings%5COwner%5CMy%20Documents%5Cieor140%5CNXT%5CnxjTutorial1%5CMotorTutorial%5CRegulationTest.htm" TARGET="_blank"><FONT COLOR="#0000ff"><U>Solution</U></FONT></A></P>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<P CLASS="western" STYLE="margin-left: 0.1in; margin-bottom: 0in"><A HREF="#Top"><FONT COLOR="#0000ff"><U>Back
+			to top</U></FONT></A></P>
+			<P CLASS="western" STYLE="margin-left: 0.25in"><BR><BR>
+			</P>
+			<H3 CLASS="western">When might you want to turn off speed
+			regulation? 
+			</H3>
+			<P CLASS="western" STYLE="margin-left: 0.1in; margin-bottom: 0in">In
+			some robots, the motor speed should not be constant but changed in
+			response to a sensor reading as for example in a line follower or
+			a balancing robot. If the speed corrections happen frequently,
+			there is no advantage in the regulator thread using CPU cycles in
+			adjusting the motor power to maintain constant speed between
+			adjustments. 
+			</P>
+			<H3 CLASS="western">When should you use speed regulation?</H3>
+			<P CLASS="western" STYLE="margin-left: 0.1in; margin-bottom: 0in">If
+			you specify a very slow speed, the power to maintain it may not be
+			enough overcome the motor internal friction, so the motor never
+			moves. In this case, a call to rotate() will never return. But
+			with speed regulation on, the regulator will keep increasing the
+			power until the motor comes up to speed. 
+			</P>
+			<P CLASS="western" STYLE="margin-left: 0.1in; margin-bottom: 0in"><A HREF="#_Controlling_the_Motors"><FONT COLOR="#0000ff"><U>Back
+			to top</U></FONT></A></P>
+			<P CLASS="western" STYLE="margin-left: 0.25in"><BR><BR>
+			</P>
+			<H2 CLASS="western"><A NAME="_Other_Motor_Methods"></A><A NAME="2.1.Other Motor Methods|outline"></A>
+			Other Motor Methods</H2>
+			<H3 CLASS="western">Finding out what the motor is doing</H3>
+			<UL>
+				<LI><P CLASS="western">boolean isMoving();<BR>This is useful to
+				test if the motor has finished rotating. isMoving() returns true
+				when the Motor is moving for any reason (e.g. forward() or
+				backward() have been called or a rotate() task is in progress) 
+				</P>
+				<LI><P CLASS="western">boolean isRotating()<BR>Specifically tests
+				if a rotate task is currently in progress</P>
+				<LI><P CLASS="western">int getLimitAngle()<BR>Returns the angle
+				to which the motor is currently rotating 
+				</P>
+				<LI><P CLASS="western">Boolean isRegulating()<BR>Used to test if
+				the speed regulation is turned on.</P>
+				<LI><P CLASS="western">int getSpeed()<BR>Returns the current
+				speed setting.</P>
+				<LI><P CLASS="western">int getActualSpeed()<BR>Returns the actual
+				speed of the motor. This is updated every 100 ms, and is accurate
+				to about +- 10 deg/sec. Use this method to detect if the motor
+				has stalled. 
+				</P>
+				<LI><P CLASS="western">int getPower()<BR>returns the current
+				power setting in the range of 0 to 100.</P>
+				<LI><P CLASS="western">int getMode() <BR>returns a code for the
+				current motor status</P>
+			</UL>
+			<DL>
+				<DL>
+					<DD>
+					<TABLE WIDTH=236 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=7 CELLSPACING=0>
+						<COL WIDTH=88>
+						<COL WIDTH=118>
+						<TR VALIGN=TOP>
+							<TD WIDTH=88>
+								<P CLASS="western" STYLE="margin-left: 0.25in"><B>Code</B></P>
+							</TD>
+							<TD WIDTH=118>
+								<P CLASS="western" STYLE="margin-left: 0.25in"><B>motor
+								status</B></P>
+							</TD>
+						</TR>
+						<TR VALIGN=TOP>
+							<TD WIDTH=88>
+								<P CLASS="western" STYLE="margin-left: 0.25in">1</P>
+							</TD>
+							<TD WIDTH=118>
+								<P CLASS="western" STYLE="margin-left: 0.25in"><I>forward</I></P>
+							</TD>
+						</TR>
+						<TR VALIGN=TOP>
+							<TD WIDTH=88>
+								<P CLASS="western" STYLE="margin-left: 0.25in">2</P>
+							</TD>
+							<TD WIDTH=118>
+								<P CLASS="western" STYLE="margin-left: 0.25in"><I>backward</I></P>
+							</TD>
+						</TR>
+						<TR VALIGN=TOP>
+							<TD WIDTH=88>
+								<P CLASS="western" STYLE="margin-left: 0.25in">3</P>
+							</TD>
+							<TD WIDTH=118>
+								<P CLASS="western" STYLE="margin-left: 0.25in"><I>stop</I></P>
+							</TD>
+						</TR>
+						<TR VALIGN=TOP>
+							<TD WIDTH=88>
+								<P CLASS="western" STYLE="margin-left: 0.25in"><I>4</I></P>
+							</TD>
+							<TD WIDTH=118>
+								<P CLASS="western" STYLE="margin-left: 0.25in"><I>float</I></P>
+							</TD>
+						</TR>
+					</TABLE>
+				</DL>
+			</DL>
+			<P CLASS="western">The following methods are another way to get
+			motor status:</P>
+			<UL>
+				<LI><P CLASS="western">boolean isForward()</P>
+				<LI><P CLASS="western">boolean isBackward()</P>
+				<LI><P CLASS="western">boolean isStopped()</P>
+				<LI><P CLASS="western">boolean isFloating()</P>
+			</UL>
+			<P CLASS="western" STYLE="margin-left: 0.25in"><BR><BR>
+			</P>
+			<H3 CLASS="western">Various other motor methods</H3>
+			<UL>
+				<LI><P CLASS="western">setPower(int aPower)<BR>Used to control
+				motor power directly. Use a value between 0 and 100. Don&rsquo;t
+				call this method if speed regulation is turned on because then
+				the regulator thread is continuously adjusting the power. 
+				</P>
+			</UL>
+			<UL>
+				<LI><P CLASS="western">resetTachoCount()<BR>This method not only
+				sets the tacho count to 0 but also resets the origin used by the
+				regulator thread in deciding when to stop a rotation task. 
+				</P>
+				<LI><P CLASS="western">lock()<BR>Ordinarily, when the motor is
+				stopped, it has some resistance to being rotated. But in some
+				applications, such a weight lifting robot, the force of gravity
+				may be enough to overcome this resistance. This method causes the
+				regulator thread to apply additional power in order to hold the
+				motor axel in position. 
+				</P>
+			</UL>
+			<P CLASS="western" STYLE="margin-left: 0.1in; margin-bottom: 0in"><A HREF="#Top"><FONT COLOR="#0000ff"><U>Back
+			to top</U></FONT></A></P>
+			<P CLASS="western" STYLE="margin-left: 0.25in"><BR><BR>
+			</P>
+				
 
-<div class=Section1>
-
-<p class=N1><a name="_Toc198367733"></a><a name="_Toc198369664"><span
-style='mso-bookmark:_Toc198367733'><o:p>&nbsp;</o:p></span></a></p>
-
-<table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=835
- style='width:626.1pt;border-collapse:collapse;mso-yfti-tbllook:480;mso-padding-alt:
- 0in 5.4pt 0in 5.4pt'>
- <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
-  <td width=151 valign=top style='width:113.4pt;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=MsoToc1 style='tab-stops:right dotted 539.5pt'><span
-  style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span><a
-  href="../index.htm"><span style='mso-bookmark:_Toc198369664'><span
-  style='mso-bookmark:_Toc198367733'>Tutorial Start</span></span><span
-  style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span></a><span
-  style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'><span
-  style='mso-spacerun:yes'>  </span><o:p></o:p></span></span></p>
-  <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-  style='mso-bookmark:_Toc198367733'><o:p>&nbsp;</o:p></span></span></p>
-  <p class=MsoToc1 style='tab-stops:right dotted 575.5pt'><span
-  style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span><!--[if supportFields]><span
-  style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span><span
-  style='mso-element:field-begin'></span><span style='mso-bookmark:_Toc198369664'><span
-  style='mso-bookmark:_Toc198367733'><span style='mso-spacerun:yes'> </span>TOC
-  \o &quot;2-2&quot; \n \h \z \t &quot;Heading 1,1&quot; <span
-  style='mso-element:field-separator'></span></span></span><![endif]--><span
-  style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span><a
-  href="#_Toc198794731"><span style='mso-bookmark:_Toc198369664'><span
-  style='mso-bookmark:_Toc198367733'><span style='mso-no-proof:yes'>Controlling
-  the Motors</span></span></span><span style='mso-bookmark:_Toc198369664'><span
-  style='mso-bookmark:_Toc198367733'></span></span></a><span style='mso-bookmark:
-  _Toc198369664'><span style='mso-bookmark:_Toc198367733'><span
-  class=MsoHyperlink><span style='mso-no-proof:yes'><o:p></o:p></span></span></span></span></p>
-  <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-  style='mso-bookmark:_Toc198367733'><o:p>&nbsp;</o:p></span></span></p>
-  <p class=MsoToc2 style='tab-stops:right dotted 575.5pt'><span
-  style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span><a
-  href="#_Toc198794732"><span style='mso-bookmark:_Toc198369664'><span
-  style='mso-bookmark:_Toc198367733'><span style='mso-no-proof:yes'>Introduction
-  to the Motor class.</span></span></span><span style='mso-bookmark:_Toc198369664'><span
-  style='mso-bookmark:_Toc198367733'></span></span></a><span style='mso-bookmark:
-  _Toc198369664'><span style='mso-bookmark:_Toc198367733'><span
-  class=MsoHyperlink><span style='mso-no-proof:yes'><o:p></o:p></span></span></span></span></p>
-  <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-  style='mso-bookmark:_Toc198367733'><o:p>&nbsp;</o:p></span></span></p>
-  <p class=MsoToc2 style='tab-stops:right dotted 575.5pt'><span
-  style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span><a
-  href="#_Toc198794733"><span style='mso-bookmark:_Toc198369664'><span
-  style='mso-bookmark:_Toc198367733'><span style='mso-no-proof:yes'>Progarm 1 -
-  Basic movement controls.</span></span></span><span style='mso-bookmark:_Toc198369664'><span
-  style='mso-bookmark:_Toc198367733'></span></span></a><span style='mso-bookmark:
-  _Toc198369664'><span style='mso-bookmark:_Toc198367733'><span
-  class=MsoHyperlink><span style='mso-no-proof:yes'><o:p></o:p></span></span></span></span></p>
-  <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-  style='mso-bookmark:_Toc198367733'><o:p>&nbsp;</o:p></span></span></p>
-  <p class=MsoToc2 style='tab-stops:right dotted 575.5pt'><span
-  style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span><a
-  href="#_Toc198794734"><span style='mso-bookmark:_Toc198369664'><span
-  style='mso-bookmark:_Toc198367733'><span style='mso-no-proof:yes'>Program 2:
-  Using the Tachometer</span></span></span><span style='mso-bookmark:_Toc198369664'><span
-  style='mso-bookmark:_Toc198367733'></span></span></a><span style='mso-bookmark:
-  _Toc198369664'><span style='mso-bookmark:_Toc198367733'><span
-  class=MsoHyperlink><span style='mso-no-proof:yes'><o:p></o:p></span></span></span></span></p>
-  <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-  style='mso-bookmark:_Toc198367733'><o:p>&nbsp;</o:p></span></span></p>
-  <p class=MsoToc2 style='tab-stops:right dotted 575.5pt'><span
-  style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span><a
-  href="#_Toc198794735"><span style='mso-bookmark:_Toc198369664'><span
-  style='mso-bookmark:_Toc198367733'><span style='mso-no-proof:yes'>Program
-  3:<span style='mso-spacerun:yes'>  </span>Accurate rotation control</span></span></span><span
-  style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span></a><span
-  style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'><span
-  class=MsoHyperlink><span style='mso-no-proof:yes'><o:p></o:p></span></span></span></span></p>
-  <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-  style='mso-bookmark:_Toc198367733'><o:p>&nbsp;</o:p></span></span></p>
-  <p class=MsoToc2 style='tab-stops:right dotted 575.5pt'><span
-  style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span><a
-  href="#_Toc198794736"><span style='mso-bookmark:_Toc198369664'><span
-  style='mso-bookmark:_Toc198367733'><span style='mso-no-proof:yes'>Program
-  4.<span style='mso-spacerun:yes'>  </span>Interrupting rotation</span></span></span><span
-  style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span></a><span
-  style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'><span
-  class=MsoHyperlink><span style='mso-no-proof:yes'><o:p></o:p></span></span></span></span></p>
-  <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-  style='mso-bookmark:_Toc198367733'><o:p>&nbsp;</o:p></span></span></p>
-  <p class=MsoToc2 style='tab-stops:right dotted 575.5pt'><span
-  style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span><a
-  href="#_Toc198794737"><span style='mso-bookmark:_Toc198369664'><span
-  style='mso-bookmark:_Toc198367733'><span style='mso-no-proof:yes'>Program 5:
-  Regulating motor speed</span></span></span><span style='mso-bookmark:_Toc198369664'><span
-  style='mso-bookmark:_Toc198367733'></span></span></a><span style='mso-bookmark:
-  _Toc198369664'><span style='mso-bookmark:_Toc198367733'><span
-  class=MsoHyperlink><span style='mso-no-proof:yes'><o:p></o:p></span></span></span></span></p>
-  <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-  style='mso-bookmark:_Toc198367733'><o:p>&nbsp;</o:p></span></span></p>
-  <p class=MsoToc2 style='tab-stops:right dotted 575.5pt'><span
-  style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span><a
-  href="#_Toc198794738"><span style='mso-bookmark:_Toc198369664'><span
-  style='mso-bookmark:_Toc198367733'><span style='mso-no-proof:yes'>Other Motor
-  Methods</span></span></span><span style='mso-bookmark:_Toc198369664'><span
-  style='mso-bookmark:_Toc198367733'></span></span></a><span style='mso-bookmark:
-  _Toc198369664'><span style='mso-bookmark:_Toc198367733'><span
-  style='mso-no-proof:yes'><o:p></o:p></span></span></span></p>
-  <p class=MsoNormal style='margin-top:12.0pt'><span style='mso-bookmark:_Toc198369664'><span
-  style='mso-bookmark:_Toc198367733'></span></span><!--[if supportFields]><span
-  style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span><span
-  style='mso-element:field-end'></span><![endif]--><span style='mso-bookmark:
-  _Toc198369664'><span style='mso-bookmark:_Toc198367733'><o:p>&nbsp;</o:p></span></span></p>
-  <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-  <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-  style='mso-bookmark:_Toc198367733'><o:p>&nbsp;</o:p></span></span></p>
-  </td>
-  <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-  <td width=684 valign=top style='width:512.7pt;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-  style='mso-bookmark:_Toc198367733'><o:p>&nbsp;</o:p></span></span></p>
-  <p class=Heading1color><span style='mso-bookmark:_Toc198369664'><span
-  style='mso-bookmark:_Toc198367733'><a name="_Toc198794731"></a><a
-  name="_Controlling_the_Motors"></a><span style='mso-bookmark:_Toc198794731'>Controlling
-  the Motors</span></span></span></p>
-  <p class=Heading2Color><span style='mso-bookmark:_Toc198369664'><span
-  style='mso-bookmark:_Toc198367733'><a name="_Toc198794732">Introduction to
-  the Motor class.</a></span></span></p>
-  <p class=N2><span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:
-  _Toc198367733'><o:p>&nbsp;</o:p></span></span></p>
-  <p class=N2><span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:
-  _Toc198367733'>This class is an abstraction of a NXT motor.<span
-  style='mso-spacerun:yes'>  </span>To be useful, a motor must be connected toone
-  of the three NXT motor ports.<span style='mso-spacerun:yes'>  </span>This
-  class provides an instance for each port.<span style='mso-spacerun:yes'> 
-  </span>They are: Motor.A, Motor.B and Motor.C.<span
-  style='mso-spacerun:yes'>  </span>The class provides methods for controlling
-  the motor, and for finding out what the motor is doing. </span></span></p>
-  <p class=N2><span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:
-  _Toc198367733'>This tutorial contains a set of five programs for you to
-  write.<span style='mso-spacerun:yes'>  </span>With them, you can perform
-  experiments to understand how the NXT motor performs.<span
-  style='mso-spacerun:yes'>  </span>They are simple enough so you don’t need
-  much Java experience to write them.<span style='mso-spacerun:yes'> 
-  </span>Finally, there is<span style='mso-spacerun:yes'>  </span>a discussion
-  of </span></span><a href="#_Other_Motor_Methods"><span style='mso-bookmark:
-  _Toc198369664'><span style='mso-bookmark:_Toc198367733'>other motor methods</span></span><span
-  style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span></a><span
-  style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'>
-  , not used in the programs, that you might find useful. </span></span></p>
-  <p class=N1><span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:
-  _Toc198367733'><o:p>&nbsp;</o:p></span></span></p>
-  <p class=Heading2Color><span style='mso-bookmark:_Toc198369664'><span
-  style='mso-bookmark:_Toc198367733'><a name="_Toc198794733">Program 1 - Basic
-  movement controls.</a></span></span></p>
-  <p class=N2><span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:
-  _Toc198367733'>This program uses the basic motor methods that control
-  movement.</span></span></p>
-  <h3><span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'>Methods
-  used in this program</span></span></h3>
-  <table class=MsoTableGrid border=1 cellspacing=0 cellpadding=0 width=547
-   style='width:5.7in;margin-left:28.5pt;border-collapse:collapse;border:none;
-   mso-border-alt:solid windowtext .5pt;mso-yfti-tbllook:480;mso-padding-alt:
-   0in 5.4pt 0in 5.4pt;mso-border-insideh:.5pt solid windowtext;mso-border-insidev:
-   .5pt solid windowtext'>
-   <tr style='mso-yfti-irow:-1'>
-    <td width=79 valign=top style='width:59.4pt;border:solid windowtext 1.0pt;
-    mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal style='mso-yfti-cnfc:1'><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'><b style='mso-bidi-font-weight:normal'>Class<o:p></o:p></b></span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-    <td width=180 valign=top style='width:135.0pt;border:solid windowtext 1.0pt;
-    border-left:none;mso-border-left-alt:solid windowtext .5pt;mso-border-alt:
-    solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal style='mso-yfti-cnfc:1'><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'><b style='mso-bidi-font-weight:normal'>Method
-    name <o:p></o:p></b></span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-    <td width=288 valign=top style='width:3.0in;border:solid windowtext 1.0pt;
-    border-left:none;mso-border-left-alt:solid windowtext .5pt;mso-border-alt:
-    solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal style='mso-yfti-cnfc:1'><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'><b style='mso-bidi-font-weight:normal'>Notes<o:p></o:p></b></span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-   </tr>
-   <tr style='mso-yfti-irow:0'>
-    <td width=79 valign=top style='width:59.4pt;border:solid windowtext 1.0pt;
-    border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:
-    solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'><span style='font-family:"Courier New"'>Motor<o:p></o:p></span></span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-    <td width=180 valign=top style='width:135.0pt;border-top:none;border-left:
-    none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
-    mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
-    mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'><span style='font-family:"Courier New"'>forward()<o:p></o:p></span></span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-    <td width=288 valign=top style='width:3.0in;border-top:none;border-left:
-    none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
-    mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
-    mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'>Start the motor rotating forward</span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-   </tr>
-   <tr style='mso-yfti-irow:1'>
-    <td width=79 valign=top style='width:59.4pt;border:solid windowtext 1.0pt;
-    border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:
-    solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'><span style='mso-bookmark:
-    _Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-    <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'><span style='font-family:"Courier New"'><o:p>&nbsp;</o:p></span></span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-    <td width=180 valign=top style='width:135.0pt;border-top:none;border-left:
-    none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
-    mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
-    mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'><span style='font-family:"Courier New"'>backward()<o:p></o:p></span></span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-    <td width=288 valign=top style='width:3.0in;border-top:none;border-left:
-    none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
-    mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
-    mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'>Start rotating backward </span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-   </tr>
-   <tr style='mso-yfti-irow:2'>
-    <td width=79 valign=top style='width:59.4pt;border:solid windowtext 1.0pt;
-    border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:
-    solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'><span style='mso-bookmark:
-    _Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-    <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'><span style='font-family:"Courier New"'><o:p>&nbsp;</o:p></span></span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-    <td width=180 valign=top style='width:135.0pt;border-top:none;border-left:
-    none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
-    mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
-    mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'><span style='font-family:"Courier New"'>changeDirection()<o:p></o:p></span></span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-    <td width=288 valign=top style='width:3.0in;border-top:none;border-left:
-    none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
-    mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
-    mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'>Reverse the direction of rotation</span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-   </tr>
-   <tr style='mso-yfti-irow:3'>
-    <td width=79 valign=top style='width:59.4pt;border:solid windowtext 1.0pt;
-    border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:
-    solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'><span style='mso-bookmark:
-    _Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-    <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'><span style='font-family:"Courier New"'><o:p>&nbsp;</o:p></span></span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-    <td width=180 valign=top style='width:135.0pt;border-top:none;border-left:
-    none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
-    mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
-    mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'><span style='font-family:"Courier New"'>stop()<o:p></o:p></span></span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-    <td width=288 valign=top style='width:3.0in;border-top:none;border-left:
-    none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
-    mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
-    mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'>Stop quickly</span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-   </tr>
-   <tr style='mso-yfti-irow:4'>
-    <td width=79 valign=top style='width:59.4pt;border:solid windowtext 1.0pt;
-    border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:
-    solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'><span style='font-family:"Courier New"'>Button<o:p></o:p></span></span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-    <td width=180 valign=top style='width:135.0pt;border-top:none;border-left:
-    none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
-    mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
-    mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'><span style='font-family:"Courier New"'>waitForPress()<o:p></o:p></span></span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-    <td width=288 valign=top style='width:3.0in;border-top:none;border-left:
-    none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
-    mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
-    mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'>Wait till any button is pressed</span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-   </tr>
-   <tr style='mso-yfti-irow:5;mso-yfti-lastrow:yes'>
-    <td width=79 valign=top style='width:59.4pt;border:solid windowtext 1.0pt;
-    border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:
-    solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'><span style='font-family:"Courier New"'>LCD<o:p></o:p></span></span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-    <td width=180 valign=top style='width:135.0pt;border-top:none;border-left:
-    none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
-    mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
-    mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'><span style='font-family:"Courier New"'>drawString(String
-    str,int x,int y)<o:p></o:p></span></span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-    <td width=288 valign=top style='width:3.0in;border-top:none;border-left:
-    none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
-    mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
-    mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'>Draw a string. </span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-   </tr>
-  </table>
-  <h3><span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'>What
-  the program should do: </span></span></h3>
-  <ol style='margin-top:0in' start=1 type=1>
-   <li class=MsoNormal style='mso-outline-level:2;mso-list:l22 level1 lfo3;
-       tab-stops:list .5in'><span style='mso-bookmark:_Toc198369664'><span
-       style='mso-bookmark:_Toc198367733'>Run motor A in the forward direction.</span></span></li>
-   <li class=MsoNormal style='mso-outline-level:2;mso-list:l22 level1 lfo3;
-       tab-stops:list .5in'><span style='mso-bookmark:_Toc198369664'><span
-       style='mso-bookmark:_Toc198367733'>Display FORWARD<span
-       style='mso-spacerun:yes'>  </span>in the top line.</span></span></li>
-   <li class=MsoNormal style='mso-outline-level:2;mso-list:l22 level1 lfo3;
-       tab-stops:list .5in'><span style='mso-bookmark:_Toc198369664'><span
-       style='mso-bookmark:_Toc198367733'>Wait until a button is pressed.</span></span></li>
-   <li class=MsoNormal style='mso-outline-level:2;mso-list:l22 level1 lfo3;
-       tab-stops:list .5in'><span style='mso-bookmark:_Toc198369664'><span
-       style='mso-bookmark:_Toc198367733'>Run<span style='mso-spacerun:yes'> 
-       </span>the motor backward.</span></span></li>
-   <li class=MsoNormal style='mso-outline-level:2;mso-list:l22 level1 lfo3;
-       tab-stops:list .5in'><span style='mso-bookmark:_Toc198369664'><span
-       style='mso-bookmark:_Toc198367733'>Display<span
-       style='mso-spacerun:yes'>  </span>BACKWARD in next line.</span></span></li>
-   <li class=MsoNormal style='mso-outline-level:2;mso-list:l22 level1 lfo3;
-       tab-stops:list .5in'><span style='mso-bookmark:_Toc198369664'><span
-       style='mso-bookmark:_Toc198367733'>Wait until a button is pressed.</span></span></li>
-   <li class=MsoNormal style='mso-outline-level:2;mso-list:l22 level1 lfo3;
-       tab-stops:list .5in'><span style='mso-bookmark:_Toc198369664'><span
-       style='mso-bookmark:_Toc198367733'>Run motor A in the forward direction.</span></span></li>
-   <li class=MsoNormal style='mso-outline-level:2;mso-list:l22 level1 lfo3;
-       tab-stops:list .5in'><span style='mso-bookmark:_Toc198369664'><span
-       style='mso-bookmark:_Toc198367733'>Display<span
-       style='mso-spacerun:yes'>  </span>FORWARD in the next line.<span
-       style='mso-spacerun:yes'>  </span></span></span></li>
-   <li class=MsoNormal style='mso-outline-level:2;mso-list:l22 level1 lfo3;
-       tab-stops:list .5in'><span style='mso-bookmark:_Toc198369664'><span
-       style='mso-bookmark:_Toc198367733'>Wait until a button is pressed.</span></span></li>
-   <li class=MsoNormal style='mso-outline-level:2;mso-list:l22 level1 lfo3;
-       tab-stops:list .5in'><span style='mso-bookmark:_Toc198369664'><span
-       style='mso-bookmark:_Toc198367733'>Stop the motor.</span></span></li>
-  </ol>
-  <p class=N2><span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:
-  _Toc198367733'>It is possible to write this program using each Motor method
-  only once. . </span></span></p>
-  <p class=N2><span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:
-  _Toc198367733'></span></span><a href="BasicMotor.htm" target="_blank"><span
-  style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'>Solution</span></span><span
-  style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span></a><span
-  style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'><span
-  class=MsoHyperlink><o:p></o:p></span></span></span></p>
-  <p class=N2><span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:
-  _Toc198367733'></span></span><a href="#_Controlling_the_Motors"><span
-  style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'>Back
-  to top</span></span><span style='mso-bookmark:_Toc198369664'><span
-  style='mso-bookmark:_Toc198367733'></span></span></a><span style='mso-bookmark:
-  _Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span></p>
-  <p class=Heading2Color><span style='mso-bookmark:_Toc198369664'><span
-  style='mso-bookmark:_Toc198367733'><a name="_Toc198794734">Program 2: Using
-  the Tachometer</a></span></span></p>
-  <p class=N2><span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:
-  _Toc198367733'>The NXT motor has a built in tachometer that keeps track of
-  the current angle (in degrees) of the motor axel.<span
-  style='mso-spacerun:yes'>  </span>The purpose of this program is to use the
-  tachometer to find out how quickly the motor stops.<span
-  style='mso-spacerun:yes'>  </span></span></span></p>
-  <h3><span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'>New
-  methods used in this program</span></span></h3>
-  <table class=MsoTableGrid border=1 cellspacing=0 cellpadding=0 width=655
-   style='width:491.4pt;margin-left:10.0pt;border-collapse:collapse;border:
-   none;mso-border-alt:solid windowtext .5pt;mso-yfti-tbllook:480;mso-padding-alt:
-   0in 5.4pt 0in 5.4pt;mso-border-insideh:.5pt solid windowtext;mso-border-insidev:
-   .5pt solid windowtext'>
-   <tr style='mso-yfti-irow:-1'>
-    <td width=79 valign=top style='width:59.4pt;border:solid windowtext 1.0pt;
-    mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal style='mso-yfti-cnfc:1'><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'><b style='mso-bidi-font-weight:normal'>Class<o:p></o:p></b></span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-    <td width=206 valign=top style='width:154.85pt;border:solid windowtext 1.0pt;
-    border-left:none;mso-border-left-alt:solid windowtext .5pt;mso-border-alt:
-    solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal style='mso-yfti-cnfc:1'><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'><b style='mso-bidi-font-weight:normal'>Method
-    name <o:p></o:p></b></span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-    <td width=370 valign=top style='width:277.15pt;border:solid windowtext 1.0pt;
-    border-left:none;mso-border-left-alt:solid windowtext .5pt;mso-border-alt:
-    solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal style='mso-yfti-cnfc:1'><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'><b style='mso-bidi-font-weight:normal'>Notes<o:p></o:p></b></span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-   </tr>
-   <tr style='mso-yfti-irow:0'>
-    <td width=79 valign=top style='width:59.4pt;border:solid windowtext 1.0pt;
-    border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:
-    solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'><span style='font-family:"Courier New"'>Motor<o:p></o:p></span></span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-    <td width=206 valign=top style='width:154.85pt;border-top:none;border-left:
-    none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
-    mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
-    mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'><span style='font-family:"Courier New";
-    color:black'>flt()<o:p></o:p></span></span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-    <td width=370 valign=top style='width:277.15pt;border-top:none;border-left:
-    none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
-    mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
-    mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'>Abbreviation for float. Turns off the
-    power, but does not apply the brake</span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-   </tr>
-   <tr style='mso-yfti-irow:1'>
-    <td width=79 valign=top style='width:59.4pt;border:solid windowtext 1.0pt;
-    border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:
-    solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'><span style='mso-bookmark:
-    _Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-    <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'><span style='font-family:"Courier New"'><o:p>&nbsp;</o:p></span></span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-    <td width=206 valign=top style='width:154.85pt;border-top:none;border-left:
-    none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
-    mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
-    mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'><span style='font-family:"Courier New";
-    color:black'>getTachoCount()<o:p></o:p></span></span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-    <td width=370 valign=top style='width:277.15pt;border-top:none;border-left:
-    none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
-    mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
-    mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'>Return s the motor angle in degrees</span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-   </tr>
-   <tr style='mso-yfti-irow:2'>
-    <td width=79 valign=top style='width:59.4pt;border:solid windowtext 1.0pt;
-    border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:
-    solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'><span style='mso-bookmark:
-    _Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-    <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'><span style='font-family:"Courier New"'><o:p>&nbsp;</o:p></span></span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-    <td width=206 valign=top style='width:154.85pt;border-top:none;border-left:
-    none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
-    mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
-    mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'><span style='font-family:"Courier New";
-    color:black'>resetTachocount()<o:p></o:p></span></span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-    <td width=370 valign=top style='width:277.15pt;border-top:none;border-left:
-    none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
-    mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
-    mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'>Sets the counter to zero</span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-   </tr>
-   <tr style='mso-yfti-irow:3'>
-    <td width=79 valign=top style='width:59.4pt;border:solid windowtext 1.0pt;
-    border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:
-    solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'><span style='mso-bookmark:
-    _Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-    <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'><span style='font-family:"Courier New"'><o:p>&nbsp;</o:p></span></span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-    <td width=206 valign=top style='width:154.85pt;border-top:none;border-left:
-    none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
-    mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
-    mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'><span style='font-family:"Courier New";
-    color:black'>setSpeed((int)speed)<o:p></o:p></span></span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-    <td width=370 valign=top style='width:277.15pt;border-top:none;border-left:
-    none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
-    mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
-    mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'>speed – degrees per second..<span
-    style='mso-spacerun:yes'>   </span>The maximum speed that can be accurately
-    maintained is about 110 times the battery voltage. </span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-   </tr>
-   <tr style='mso-yfti-irow:4'>
-    <td width=79 valign=top style='width:59.4pt;border:solid windowtext 1.0pt;
-    border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:
-    solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'><span style='mso-bookmark:
-    _Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-    <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'><span style='font-family:"Courier New"'><o:p>&nbsp;</o:p></span></span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-    <td width=206 valign=top style='width:154.85pt;border-top:none;border-left:
-    none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
-    mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
-    mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'><span style='font-family:"Courier New";
-    color:black'>(int)getActualSpeed()<o:p></o:p></span></span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-    <td width=370 valign=top style='width:277.15pt;border-top:none;border-left:
-    none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
-    mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
-    mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'>Returns the actual motor speed (deg/sec)</span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-   </tr>
-   <tr style='mso-yfti-irow:5;mso-yfti-lastrow:yes'>
-    <td width=79 valign=top style='width:59.4pt;border:solid windowtext 1.0pt;
-    border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:
-    solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'><span style='font-family:"Courier New"'>LCD<o:p></o:p></span></span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-    <td width=206 valign=top style='width:154.85pt;border-top:none;border-left:
-    none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
-    mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
-    mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'><span style='font-family:"Courier New";
-    color:black'>drawInt()<o:p></o:p></span></span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-    <td width=370 valign=top style='width:277.15pt;border-top:none;border-left:
-    none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
-    mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
-    mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'><span
-    style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-    <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'><span style='font-family:"Courier New"'><o:p>&nbsp;</o:p></span></span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-   </tr>
-  </table>
-  <h3><span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'>What
-  the program should do</span></span></h3>
-  <ol style='margin-top:0in' start=1 type=1>
-   <li class=MsoNormal style='mso-list:l16 level1 lfo6;tab-stops:list .5in'><span
-       style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'>Run
-       Motor.A forward.</span></span></li>
-   <li class=MsoNormal style='mso-list:l16 level1 lfo6;tab-stops:list .5in'><span
-       style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'>Wait
-       till the tacho count reaches 360.</span></span></li>
-   <li class=MsoNormal style='mso-list:l16 level1 lfo6;tab-stops:list .5in'><span
-       style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'>Stop
-       the motor.</span></span></li>
-   <li class=MsoNormal style='mso-list:l16 level1 lfo6;tab-stops:list .5in'><span
-       style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'>Wait
-       until the motor has stopped.</span></span></li>
-   <li class=MsoNormal style='mso-list:l16 level1 lfo6;tab-stops:list .5in'><span
-       style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'>Display
-       the tachometer reading on the on the LCD.</span></span></li>
-   <li class=MsoNormal style='mso-list:l16 level1 lfo6;tab-stops:list .5in'><span
-       style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'>Wait
-       for a button press to give you time to read the screen display.</span></span></li>
-   <li class=MsoNormal style='mso-list:l16 level1 lfo6;tab-stops:list .5in'><span
-       style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'>Set
-       the motor speed to 720 (the default is 360).</span></span></li>
-   <li class=MsoNormal style='mso-list:l16 level1 lfo6;tab-stops:list .5in'><span
-       style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'>Reset
-       the tachometer count to zero.</span></span></li>
-   <li class=MsoNormal style='mso-list:l16 level1 lfo6;tab-stops:list .5in'><span
-       style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'>Repeat
-       steps 1 through 6.<span style='mso-spacerun:yes'>  </span>Note: you can
-       avoid duplicated code by writing a method that executes these steps. </span></span></li>
-  </ol>
-  <p class=N2><span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:
-  _Toc198367733'>Repeat the entire experiment by modifying your code to
-  use<span style='mso-spacerun:yes'>  </span>flt()<span
-  style='mso-spacerun:yes'>  </span>instead of stop();<span
-  style='mso-spacerun:yes'>  </span>( flt is the abbreviation for float, a Java
-  reserved word).<span style='mso-spacerun:yes'>  </span>This method sets the
-  motor power to zero, but does not apply the brake. </span></span></p>
-  <p class=N2><span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:
-  _Toc198367733'>Observe that, even using the brake, the motor does not stop
-  immediately, because motor has inertia. </span></span></p>
-  <p class=N2><span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:
-  _Toc198367733'></span></span><a href="InertiaTest.htm" target="_blank"><span
-  style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'>Solution</span></span><span
-  style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span></a><span
-  style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'><span
-  class=MsoHyperlink><o:p></o:p></span></span></span></p>
-  <p class=N2><span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:
-  _Toc198367733'></span></span><a href="#_Controlling_the_Motors"><span
-  style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'>Back
-  to top</span></span><span style='mso-bookmark:_Toc198369664'><span
-  style='mso-bookmark:_Toc198367733'></span></span></a><span style='mso-bookmark:
-  _Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span></p>
-  <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-  style='mso-bookmark:_Toc198367733'><o:p>&nbsp;</o:p></span></span></p>
-  <p class=Heading2Color><span style='mso-bookmark:_Toc198369664'><span
-  style='mso-bookmark:_Toc198367733'><a name="_Toc198794735">Program 3:<span
-  style='mso-spacerun:yes'>  </span>Accurate rotation control</a></span></span></p>
-  <p class=N2><span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:
-  _Toc198367733'>The Motor class has a regulator thread that runs all the time.
-  It has two principle jobs, one of which is to stop the motor at a specified
-  angle.<span style='mso-spacerun:yes'>  </span>This program will test the
-  accuracy of the rotate() method.</span></span></p>
-  <h3><span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'>New
-  methods used in this program</span></span></h3>
-  <table class=MsoTableGrid border=1 cellspacing=0 cellpadding=0 width=655
-   style='width:491.4pt;margin-left:10.0pt;border-collapse:collapse;border:
-   none;mso-border-alt:solid windowtext .5pt;mso-yfti-tbllook:32;mso-padding-alt:
-   0in 5.4pt 0in 5.4pt;mso-border-insideh:.5pt solid windowtext;mso-border-insidev:
-   .5pt solid windowtext'>
-   <tr style='mso-yfti-irow:-1'>
-    <td width=104 valign=top style='width:78.25pt;border:solid windowtext 1.0pt;
-    mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal style='mso-yfti-cnfc:1'><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'><b style='mso-bidi-font-weight:normal'>Class<o:p></o:p></b></span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-    <td width=214 valign=top style='width:160.8pt;border:solid windowtext 1.0pt;
-    border-left:none;mso-border-left-alt:solid windowtext .5pt;mso-border-alt:
-    solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal style='mso-yfti-cnfc:1'><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'><b style='mso-bidi-font-weight:normal'>Method
-    name <o:p></o:p></b></span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-    <td width=336 valign=top style='width:252.35pt;border:solid windowtext 1.0pt;
-    border-left:none;mso-border-left-alt:solid windowtext .5pt;mso-border-alt:
-    solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal style='mso-yfti-cnfc:1'><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'><b style='mso-bidi-font-weight:normal'>Notes<o:p></o:p></b></span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-   </tr>
-   <tr style='mso-yfti-irow:0'>
-    <td width=104 valign=top style='width:78.25pt;border:solid windowtext 1.0pt;
-    border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:
-    solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'><span style='font-family:"Courier New"'>Motor<o:p></o:p></span></span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-    <td width=214 valign=top style='width:160.8pt;border-top:none;border-left:
-    none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
-    mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
-    mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'><span style='font-family:"Courier New"'>rotate(angle)<o:p></o:p></span></span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-    <td width=336 valign=top style='width:252.35pt;border-top:none;border-left:
-    none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
-    mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
-    mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'>Rotates through<span
-    style='mso-spacerun:yes'>   </span></span></span><span style='mso-bookmark:
-    _Toc198369664'><span style='mso-bookmark:_Toc198367733'><span
-    style='font-family:"Courier New"'>angle </span><span
-    style='mso-spacerun:yes'>  </span>degrees</span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-   </tr>
-   <tr style='mso-yfti-irow:1;mso-yfti-lastrow:yes'>
-    <td width=104 valign=top style='width:78.25pt;border:solid windowtext 1.0pt;
-    border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:
-    solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'><span style='mso-bookmark:
-    _Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-    <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'><span style='font-family:"Courier New"'><o:p>&nbsp;</o:p></span></span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-    <td width=214 valign=top style='width:160.8pt;border-top:none;border-left:
-    none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
-    mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
-    mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'><span style='font-family:"Courier New"'>rotateTo(angle)<o:p></o:p></span></span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-    <td width=336 valign=top style='width:252.35pt;border-top:none;border-left:
-    none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
-    mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
-    mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'>Rotates to<span
-    style='mso-spacerun:yes'>  </span></span></span><span style='mso-bookmark:
-    _Toc198369664'><span style='mso-bookmark:_Toc198367733'><span
-    style='font-family:"Courier New"'>angle </span><span
-    style='mso-spacerun:yes'>  </span></span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-   </tr>
-  </table>
-  <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-  style='mso-bookmark:_Toc198367733'><o:p>&nbsp;</o:p></span></span></p>
-  <h3><span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'>What
-  the program should do</span></span></h3>
-  <ol style='margin-top:0in' start=1 type=1>
-   <li class=MsoNormal style='mso-outline-level:3;mso-list:l10 level1 lfo9;
-       tab-stops:list .5in'><span style='mso-bookmark:_Toc198369664'><span
-       style='mso-bookmark:_Toc198367733'>Rotate the motor one complete
-       revolution.</span></span></li>
-   <li class=MsoNormal style='mso-outline-level:3;mso-list:l10 level1 lfo9;
-       tab-stops:list .5in'><span style='mso-bookmark:_Toc198369664'><span
-       style='mso-bookmark:_Toc198367733'>Display the tachometer reading on the
-       on the LCD, row 0.</span></span></li>
-   <li class=MsoNormal style='mso-outline-level:3;mso-list:l10 level1 lfo9;
-       tab-stops:list .5in'><span style='mso-bookmark:_Toc198369664'><span
-       style='mso-bookmark:_Toc198367733'>Rotate the motor to angle 0;</span></span></li>
-   <li class=MsoNormal style='mso-outline-level:3;mso-list:l10 level1 lfo9;
-       tab-stops:list .5in'><span style='mso-bookmark:_Toc198369664'><span
-       style='mso-bookmark:_Toc198367733'>Display the tachometer reading on the
-       on the LCD, row 1.</span></span></li>
-   <li class=MsoNormal style='mso-outline-level:3;mso-list:l10 level1 lfo9;
-       tab-stops:list .5in'><span style='mso-bookmark:_Toc198369664'><span
-       style='mso-bookmark:_Toc198367733'>Wait for a button press to give you
-       time to<span style='mso-spacerun:yes'>  </span>read the LCD.</span></span></li>
-   <li class=MsoNormal style='mso-outline-level:3;mso-list:l10 level1 lfo9;
-       tab-stops:list .5in'><span style='mso-bookmark:_Toc198369664'><span
-       style='mso-bookmark:_Toc198367733'>Clear the LCD.</span></span></li>
-   <li class=MsoNormal style='mso-outline-level:3;mso-list:l10 level1 lfo9;
-       tab-stops:list .5in'><span style='mso-bookmark:_Toc198369664'><span
-       style='mso-bookmark:_Toc198367733'>Set the speed to 720;</span></span></li>
-   <li class=MsoNormal style='mso-outline-level:3;mso-list:l10 level1 lfo9;
-       tab-stops:list .5in'><span style='mso-bookmark:_Toc198369664'><span
-       style='mso-bookmark:_Toc198367733'>Repeat steps 1 through 6.<span
-       style='mso-spacerun:yes'>  </span></span></span></li>
-  </ol>
-  <p class=MsoNormal style='margin-left:.25in;mso-outline-level:3'><span
-  style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'>Note:
-  you can avoid duplicated<span style='mso-spacerun:yes'>  </span>code by
-  writing a method that executes these steps.</span></span></p>
-  <p class=N3><span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:
-  _Toc198367733'><span class=N2Char>Observe<span style='mso-spacerun:yes'> 
-  </span>the motor<span style='mso-spacerun:yes'>  </span>usually stops within
-  1 degree of the specified angle if the motor regulator is doing its job.<span
-  style='mso-spacerun:yes'>  </span>It </span>works by calculating how far the
-  motor will continue to turn after the brake has been applied.<span
-  style='mso-spacerun:yes'>  </span>It applies the brake before reaching the
-  specified angle.<span style='mso-spacerun:yes'>  </span>It then makes minor
-  adjustments to the motor position till it is close enough. </span></span></p>
-  <p class=N2><span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:
-  _Toc198367733'></span></span><a href="Rotation.htm" target="_blank"><span
-  style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'>Solution</span></span><span
-  style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span></a><span
-  style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'><span
-  class=MsoHyperlink><o:p></o:p></span></span></span></p>
-  <p class=N2><span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:
-  _Toc198367733'></span></span><a href="#_Controlling_the_Motors"><span
-  style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'>Back
-  to top</span></span><span style='mso-bookmark:_Toc198369664'><span
-  style='mso-bookmark:_Toc198367733'></span></span></a><span style='mso-bookmark:
-  _Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span></p>
-  <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-  style='mso-bookmark:_Toc198367733'><o:p>&nbsp;</o:p></span></span></p>
-  <p class=Heading2Color><span style='mso-bookmark:_Toc198369664'><span
-  style='mso-bookmark:_Toc198367733'><a name="_Toc198794736">Program 4.<span
-  style='mso-spacerun:yes'>  </span>Interrupting rotation</a></span></span></p>
-  <p class=N2><span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:
-  _Toc198367733'>Sometimes you will want the motor stop (or do something else)
-  before it reaches the specified angle.<span style='mso-spacerun:yes'> 
-  </span>This program will detect a button press to interrupt the rotation task
-  if you press a button soon enough.<span style='mso-spacerun:yes'>  </span>The
-  rotate() methods will not return until the motor has stopped at the target
-  angle.<span style='mso-spacerun:yes'>  </span>But the new methods in this
-  program can return immediately.<span style='mso-spacerun:yes'>  </span>The
-  motor will still stop at the specified angle unless a new motor method is
-  called in the meantime. </span></span></p>
-  <h3><span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'>New
-  methods used in this program</span></span></h3>
-  <table class=MsoTableGrid border=1 cellspacing=0 cellpadding=0 width=641
-   style='width:480.55pt;margin-left:15.55pt;border-collapse:collapse;
-   border:none;mso-border-alt:solid windowtext .5pt;mso-yfti-tbllook:480;
-   mso-padding-alt:0in 5.4pt 0in 5.4pt;mso-border-insideh:.5pt solid windowtext;
-   mso-border-insidev:.5pt solid windowtext'>
-   <tr style='mso-yfti-irow:-1'>
-    <td width=67 valign=top style='width:.7in;border:solid windowtext 1.0pt;
-    mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal style='mso-yfti-cnfc:1'><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'><b style='mso-bidi-font-weight:normal'>Class<o:p></o:p></b></span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-    <td width=322 valign=top style='width:241.25pt;border:solid windowtext 1.0pt;
-    border-left:none;mso-border-left-alt:solid windowtext .5pt;mso-border-alt:
-    solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal style='mso-yfti-cnfc:1'><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'><b style='mso-bidi-font-weight:normal'>Method
-    name <o:p></o:p></b></span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-    <td width=252 valign=top style='width:188.9pt;border:solid windowtext 1.0pt;
-    border-left:none;mso-border-left-alt:solid windowtext .5pt;mso-border-alt:
-    solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal style='mso-yfti-cnfc:1'><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'><b style='mso-bidi-font-weight:normal'>Notes<o:p></o:p></b></span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-   </tr>
-   <tr style='mso-yfti-irow:0'>
-    <td width=67 valign=top style='width:.7in;border:solid windowtext 1.0pt;
-    border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:
-    solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'><span style='font-family:"Courier New"'>Motor<o:p></o:p></span></span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-    <td width=322 valign=top style='width:241.25pt;border-top:none;border-left:
-    none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
-    mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
-    mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'><span style='font-family:"Courier New"'>rotate(angle,immediateReturn)<o:p></o:p></span></span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-    <td width=252 rowspan=2 valign=top style='width:188.9pt;border-top:none;
-    border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
-    mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
-    mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'>The method returns immediately if the
-    boolean parameter </span></span><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'><span style='font-family:"Courier New"'><span
-    style='mso-spacerun:yes'> </span>immediateReturn</span> is <b
-    style='mso-bidi-font-weight:normal'>true</b></span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-   </tr>
-   <tr style='mso-yfti-irow:1'>
-    <td width=67 valign=top style='width:.7in;border:solid windowtext 1.0pt;
-    border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:
-    solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'><span style='mso-bookmark:
-    _Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-    <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'><span style='font-family:"Courier New"'><o:p>&nbsp;</o:p></span></span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-    <td width=322 valign=top style='width:241.25pt;border-top:none;border-left:
-    none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
-    mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
-    mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'><span style='font-family:"Courier New"'>rotateTo(angle,immediateReturn)<o:p></o:p></span></span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-   </tr>
-   <tr style='mso-yfti-irow:2'>
-    <td width=67 valign=top style='width:.7in;border:solid windowtext 1.0pt;
-    border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:
-    solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'><span style='mso-bookmark:
-    _Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-    <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'><span style='font-family:"Courier New"'><o:p>&nbsp;</o:p></span></span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-    <td width=322 valign=top style='width:241.25pt;border-top:none;border-left:
-    none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
-    mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
-    mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'><span style='font-family:"Courier New"'>(boolean)isRotating()<o:p></o:p></span></span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-    <td width=252 valign=top style='width:188.9pt;border-top:none;border-left:
-    none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
-    mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
-    mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'>Returns <b style='mso-bidi-font-weight:
-    normal'>false</b> when the motor has stopped at the specified angle</span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-   </tr>
-   <tr style='mso-yfti-irow:3;mso-yfti-lastrow:yes'>
-    <td width=67 valign=top style='width:.7in;border:solid windowtext 1.0pt;
-    border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:
-    solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'><span style='font-family:"Courier New"'>Button<o:p></o:p></span></span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-    <td width=322 valign=top style='width:241.25pt;border-top:none;border-left:
-    none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
-    mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
-    mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'><span style='font-family:"Courier New"'>int
-    readButtons()<o:p></o:p></span></span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-    <td width=252 valign=top style='width:188.9pt;border-top:none;border-left:
-    none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
-    mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
-    mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'>Returns the ID of the button pressed.</span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-   </tr>
-  </table>
-  <h3><span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'>What
-  the program should do</span></span></h3>
-  <ol style='margin-top:0in' start=1 type=1>
-   <li class=MsoNormal style='mso-list:l15 level1 lfo12;tab-stops:list .5in'><span
-       style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'>Start
-       a rotation of 720<span style='mso-spacerun:yes'>  </span>degrees.</span></span></li>
-   <li class=MsoNormal style='mso-list:l15 level1 lfo12;tab-stops:list .5in'><span
-       style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'>While
-       the motor is rotating, display the tacho count at the position of row 1.</span></span></li>
-   <li class=MsoNormal style='mso-list:l15 level1 lfo12;tab-stops:list .5in'><span
-       style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'>When
-       a button is pressed, stop the motor.</span></span></li>
-   <li class=MsoNormal style='mso-list:l15 level1 lfo12;tab-stops:list .5in'><span
-       style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'>After
-       the motor has stopped, display the tacho count in the center of the row.</span></span></li>
-   <li class=MsoNormal style='mso-list:l15 level1 lfo12;tab-stops:list .5in'><span
-       style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'>Wait
-       for a button press.</span></span></li>
-   <li class=MsoNormal style='mso-list:l15 level1 lfo12;tab-stops:list .5in'><span
-       style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'>Start
-       a rotation to 0.</span></span></li>
-   <li class=MsoNormal style='mso-list:l15 level1 lfo12;tab-stops:list .5in'><span
-       style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'>Repeat
-       steps 2,3,5.</span></span></li>
-  </ol>
-  <p class=MsoNormal style='margin-left:.25in'><span style='mso-bookmark:_Toc198369664'><span
-  style='mso-bookmark:_Toc198367733'>Observe:<span style='mso-spacerun:yes'> 
-  </span>if you press the button before the rotation is complete, the motor
-  will stop without completing its rotation.<span style='mso-spacerun:yes'> 
-  </span>Otherwise, the stop() method has no effect.<span
-  style='mso-spacerun:yes'>    </span></span></span></p>
-  <p class=MsoNormal style='margin-left:.25in'><span style='mso-bookmark:_Toc198369664'><span
-  style='mso-bookmark:_Toc198367733'></span></span><a href="RotInterrupt.htm"
-  target="_blank"><span style='mso-bookmark:_Toc198369664'><span
-  style='mso-bookmark:_Toc198367733'>Solution</span></span><span
-  style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span></a><span
-  style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span></p>
-  <p class=N3><span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:
-  _Toc198367733'><span style='mso-spacerun:yes'>    </span></span></span><a
-  href="#_Controlling_the_Motors"><span style='mso-bookmark:_Toc198369664'><span
-  style='mso-bookmark:_Toc198367733'>Back to top</span></span><span
-  style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span></a><span
-  style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span></p>
-  <p class=MsoNormal style='margin-left:.25in'><span style='mso-bookmark:_Toc198369664'><span
-  style='mso-bookmark:_Toc198367733'><o:p>&nbsp;</o:p></span></span></p>
-  <p class=Heading2Color><span style='mso-bookmark:_Toc198369664'><span
-  style='mso-bookmark:_Toc198367733'><a name="_Toc198794737">Program 5:
-  Regulating motor speed</a></span></span></p>
-  <p class=N2><span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:
-  _Toc198367733'>The other principle task of the regulator thread is to control
-  the motor speed.<span style='mso-spacerun:yes'>  </span>One reason for doing
-  this is that a two wheel vehicle will only travel in a straight line if both
-  motors run at the same speed.(obviously).<span style='mso-spacerun:yes'> 
-  </span>The standard Lego software solves this problem by directly
-  synchronizing two motors.<span style='mso-spacerun:yes'>   </span>NXJ takes a
-  different approach: keeping each motor rotation synchronized to the system
-  clock.<span style='mso-spacerun:yes'>  </span>The regulator compares the
-  tacho count (minus its reference count)<span style='mso-spacerun:yes'> 
-  </span>with speed times elapsed time, and adjust the power to keep these two
-  quantities closely matched.<span style='mso-spacerun:yes'>  </span>The
-  regulator resets its reference count<span style='mso-spacerun:yes'> 
-  </span>and its elapsed time to zero and begins its comparison<span
-  style='mso-spacerun:yes'>  </span>again whenever you call any of the motor
-  methods you have used so far.<span style='mso-spacerun:yes'>   </span></span></span></p>
-  <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-  style='mso-bookmark:_Toc198367733'><o:p>&nbsp;</o:p></span></span></p>
-  <h3><span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'>New
-  methods used in this program</span></span></h3>
-  <table class=MsoTableGrid border=1 cellspacing=0 cellpadding=0 width=641
-   style='width:480.55pt;margin-left:15.4pt;border-collapse:collapse;
-   border:none;mso-border-alt:solid windowtext .5pt;mso-yfti-tbllook:480;
-   mso-padding-alt:0in 5.4pt 0in 5.4pt;mso-border-insideh:.5pt solid windowtext;
-   mso-border-insidev:.5pt solid windowtext'>
-   <tr style='mso-yfti-irow:-1'>
-    <td width=101 valign=top style='width:75.65pt;border:solid windowtext 1.0pt;
-    mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal style='mso-yfti-cnfc:1'><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'><b style='mso-bidi-font-weight:normal'>Class<o:p></o:p></b></span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-    <td width=308 valign=top style='width:231.1pt;border:solid windowtext 1.0pt;
-    border-left:none;mso-border-left-alt:solid windowtext .5pt;mso-border-alt:
-    solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal style='mso-yfti-cnfc:1'><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'><b style='mso-bidi-font-weight:normal'>Method
-    name <o:p></o:p></b></span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-    <td width=232 valign=top style='width:173.8pt;border:solid windowtext 1.0pt;
-    border-left:none;mso-border-left-alt:solid windowtext .5pt;mso-border-alt:
-    solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal style='mso-yfti-cnfc:1'><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'><b style='mso-bidi-font-weight:normal'>Notes<o:p></o:p></b></span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-   </tr>
-   <tr style='mso-yfti-irow:0'>
-    <td width=101 valign=top style='width:75.65pt;border:solid windowtext 1.0pt;
-    border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:
-    solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'><i style='mso-bidi-font-style:normal'><span
-    style='font-family:"Courier New"'>Motor<o:p></o:p></span></i></span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-    <td width=308 valign=top style='width:231.1pt;border-top:none;border-left:
-    none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
-    mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
-    mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'><i style='mso-bidi-font-style:normal'><span
-    style='font-family:"Courier New"'>regulateSpeed(boolean yes)<o:p></o:p></span></i></span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-    <td width=232 valign=top style='width:173.8pt;border-top:none;border-left:
-    none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
-    mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
-    mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'>Speed regulation is on by default. </span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-   </tr>
-   <tr style='mso-yfti-irow:1'>
-    <td width=101 valign=top style='width:75.65pt;border:solid windowtext 1.0pt;
-    border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:
-    solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'><i style='mso-bidi-font-style:normal'><span
-    style='font-family:"Courier New"'>Stopwatch <o:p></o:p></span></i></span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-    <td width=308 valign=top style='width:231.1pt;border-top:none;border-left:
-    none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
-    mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
-    mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'><i style='mso-bidi-font-style:normal'><span
-    style='font-family:"Courier New"'>elapsed()<o:p></o:p></span></i></span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-    <td width=232 valign=top style='width:173.8pt;border-top:none;border-left:
-    none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
-    mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
-    mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'>Returns elapsed time in milliseconds </span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-   </tr>
-   <tr style='mso-yfti-irow:2;mso-yfti-lastrow:yes'>
-    <td width=101 valign=top style='width:75.65pt;border:solid windowtext 1.0pt;
-    border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:
-    solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'><span style='mso-bookmark:
-    _Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-    <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'><i style='mso-bidi-font-style:normal'><span
-    style='font-family:"Courier New"'><o:p>&nbsp;</o:p></span></i></span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-    <td width=308 valign=top style='width:231.1pt;border-top:none;border-left:
-    none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
-    mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
-    mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'><i style='mso-bidi-font-style:normal'><span
-    style='font-family:"Courier New"'>reset()<o:p></o:p></span></i></span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-    <td width=232 valign=top style='width:173.8pt;border-top:none;border-left:
-    none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
-    mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
-    mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-    style='mso-bookmark:_Toc198367733'>Resets the watch to 0. </span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-   </tr>
-  </table>
-  <p class=N2><span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:
-  _Toc198367733'>The stopwatch class is in the package lejos.util. </span></span></p>
-  <h3><span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'>What
-  the program should do:</span></span></h3>
-  <ol style='margin-top:0in' start=1 type=1>
-   <li class=MsoNormal style='mso-list:l24 level1 lfo15;tab-stops:list .5in'><span
-       style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'>Create
-       a new stopwatch.</span></span></li>
-   <li class=MsoNormal style='mso-list:l24 level1 lfo15;tab-stops:list .5in'><span
-       style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'>Start<span
-       style='mso-spacerun:yes'>  </span>all three motors running at 2
-       revolutions/second.</span></span></li>
-   <li class=MsoNormal style='mso-list:l24 level1 lfo15;tab-stops:list .5in'><span
-       style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'>Every
-       200 ms, <span style='mso-spacerun:yes'> </span>display all<span
-       style='mso-spacerun:yes'>  </span>3<span style='mso-spacerun:yes'> 
-       </span>tacho count values<span style='mso-spacerun:yes'>  </span>in the
-       same row. </span></span></li>
-   <li class=MsoNormal style='mso-list:l24 level1 lfo15;tab-stops:list .5in'><span
-       style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'>Repeat
-       step 3,<span style='mso-spacerun:yes'>    </span>8 times,<span
-       style='mso-spacerun:yes'>  </span>using a different row each time.</span></span></li>
-   <li class=MsoNormal style='mso-list:l24 level1 lfo15;tab-stops:list .5in'><span
-       style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'>Write
-       down maximum difference you see between the motor tacho counts.<span
-       style='mso-spacerun:yes'>  </span></span></span></li>
-   <li class=MsoNormal style='mso-list:l24 level1 lfo15;tab-stops:list .5in'><span
-       style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'>Turn
-       off speed regulation</span></span></li>
-   <li class=MsoNormal style='mso-list:l24 level1 lfo15;tab-stops:list .5in'><span
-       style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'>Repeat
-       steps 1 – 5</span></span></li>
-  </ol>
-  <p class=MsoNormal style='margin-left:.25in'><span style='mso-bookmark:_Toc198369664'><span
-  style='mso-bookmark:_Toc198367733'>With speed regulation on, the motors
-  should remain within a few degrees of each other.<span
-  style='mso-spacerun:yes'>  </span>When it is off, the difference in angle of
-  rotation get larger with time unless you have an unusually well matched set
-  of motors. </span></span></p>
-  <p class=MsoNormal style='margin-left:.25in'><span style='mso-bookmark:_Toc198369664'><span
-  style='mso-bookmark:_Toc198367733'></span></span><a href="RegulationTest.htm"
-  target="_blank"><span style='mso-bookmark:_Toc198369664'><span
-  style='mso-bookmark:_Toc198367733'>Solution</span></span><span
-  style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span></a><span
-  style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'><span
-  class=MsoHyperlink><o:p></o:p></span></span></span></p>
-  <p class=MsoNormal style='margin-left:.25in'><span style='mso-bookmark:_Toc198369664'><span
-  style='mso-bookmark:_Toc198367733'></span></span><a
-  href="#_Controlling_the_Motors"><span style='mso-bookmark:_Toc198369664'><span
-  style='mso-bookmark:_Toc198367733'>Back to top</span></span><span
-  style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span></a><span
-  style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span></p>
-  <p class=MsoNormal style='margin-left:.25in'><span style='mso-bookmark:_Toc198369664'><span
-  style='mso-bookmark:_Toc198367733'><o:p>&nbsp;</o:p></span></span></p>
-  <h3><span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'>When
-  might you want to turn off speed regulation?<span style='mso-spacerun:yes'> 
-  </span></span></span></h3>
-  <p class=N3><span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:
-  _Toc198367733'>In some robots, the motor speed should not be constant but
-  changed in response to a sensor reading as for example in a line follower or
-  a balancing robot.<span style='mso-spacerun:yes'>  </span>If the speed
-  corrections happen frequently, there is no advantage in the regulator thread
-  using CPU cycles in adjusting the motor power to maintain constant speed
-  between adjustments. </span></span></p>
-  <h3><span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'>When
-  should you use speed regulation?</span></span></h3>
-  <p class=N3><span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:
-  _Toc198367733'>If you specify a very slow speed, the power to maintain it may
-  not be enough overcome the motor internal friction, so the motor never
-  moves.<span style='mso-spacerun:yes'>  </span>In this case, a call to<span
-  style='mso-spacerun:yes'>  </span>rotate() will never return.<span
-  style='mso-spacerun:yes'>  </span>But with speed regulation on, the regulator
-  will keep increasing the power until the motor<span
-  style='mso-spacerun:yes'>  </span>comes up to speed. </span></span></p>
-  <p class=N3><span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:
-  _Toc198367733'></span></span><a href="#_Controlling_the_Motors"><span
-  style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'>Back
-  to top</span></span><span style='mso-bookmark:_Toc198369664'><span
-  style='mso-bookmark:_Toc198367733'></span></span></a><span style='mso-bookmark:
-  _Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span></p>
-  <p class=MsoNormal style='margin-left:.25in'><span style='mso-bookmark:_Toc198369664'><span
-  style='mso-bookmark:_Toc198367733'><o:p>&nbsp;</o:p></span></span></p>
-  <p class=Heading2Color><span style='mso-bookmark:_Toc198369664'><span
-  style='mso-bookmark:_Toc198367733'><a name="_Toc198794738"></a><a
-  name="_Other_Motor_Methods"></a><span style='mso-bookmark:_Toc198794738'>Other
-  Motor Methods</span></span></span></p>
-  <h3><span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'>Finding
-  out what the motor is doing</span></span></h3>
-  <ul style='margin-top:0in' type=disc>
-   <li class=MsoNormal style='mso-list:l28 level1 lfo18;tab-stops:list .5in'><span
-       style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'>boolean
-       isMoving();<br>
-       This is useful to test if the motor has finished rotating. isMoving()
-       returns true when the Motor is moving for any reason (e.g. forward() or
-       backward() have been called or a rotate() task is in progress) </span></span></li>
-   <li class=MsoNormal style='mso-list:l28 level1 lfo18;tab-stops:list .5in'><span
-       style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'>boolean
-       isRotating()<br>
-       Specifically tests if a rotate task is currently in progress</span></span></li>
-   <li class=MsoNormal style='mso-list:l28 level1 lfo18;tab-stops:list .5in'><span
-       style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'>int
-       getLimitAngle()<br>
-       Returns the angle to which<span style='mso-spacerun:yes'>  </span>the motor
-       is currently rotating </span></span></li>
-   <li class=MsoNormal style='mso-list:l28 level1 lfo18;tab-stops:list .5in'><span
-       style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'>Boolean
-       isRegulating()<br>
-       Used to test if the speed regulation is turned on.</span></span></li>
-   <li class=MsoNormal style='mso-list:l28 level1 lfo18;tab-stops:list .5in'><span
-       style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'>int
-       getSpeed()<br>
-       Returns the current speed setting.</span></span></li>
-   <li class=MsoNormal style='mso-list:l28 level1 lfo18;tab-stops:list .5in'><span
-       style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'>int
-       getActualSpeed()<br>
-       <span style='mso-spacerun:yes'> </span>Returns the actual speed of the
-       motor.<span style='mso-spacerun:yes'>  </span>This is updated every 100
-       ms, and is accurate to about +- 10 deg/sec.<span
-       style='mso-spacerun:yes'>  </span>Use this method to detect if the motor
-       has stalled. </span></span></li>
-   <li class=MsoNormal style='mso-list:l28 level1 lfo18;tab-stops:list .5in'><span
-       style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'>int
-       getPower()<br>
-       returns the current power setting in the range of 0 to 100.</span></span></li>
-   <li class=MsoNormal style='mso-list:l28 level1 lfo18;tab-stops:list .5in'><span
-       style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'>int
-       getMode() <br>
-       returns a code for the current motor status</span></span></li>
-  </ul>
-  <table class=MsoTableGrid border=1 cellspacing=0 cellpadding=0
-   style='margin-left:54.15pt;border-collapse:collapse;border:none;mso-border-alt:
-   solid windowtext .5pt;mso-yfti-tbllook:480;mso-padding-alt:0in 5.4pt 0in 5.4pt;
-   mso-border-insideh:.5pt solid windowtext;mso-border-insidev:.5pt solid windowtext'>
-   <tr style='mso-yfti-irow:-1'>
-    <td width=103 valign=top style='width:77.4pt;border:solid windowtext 1.0pt;
-    mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal style='margin-left:.25in;mso-yfti-cnfc:1'><span
-    style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'>Code<b
-    style='mso-bidi-font-weight:normal'><o:p></o:p></b></span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-    <td width=132 valign=top style='width:99.0pt;border:solid windowtext 1.0pt;
-    border-left:none;mso-border-left-alt:solid windowtext .5pt;mso-border-alt:
-    solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal style='margin-left:.25in;mso-yfti-cnfc:1'><span
-    style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'>motor
-    status<b style='mso-bidi-font-weight:normal'><o:p></o:p></b></span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-   </tr>
-   <tr style='mso-yfti-irow:0'>
-    <td width=103 valign=top style='width:77.4pt;border:solid windowtext 1.0pt;
-    border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:
-    solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal style='margin-left:.25in'><span style='mso-bookmark:
-    _Toc198369664'><span style='mso-bookmark:_Toc198367733'>1</span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-    <td width=132 valign=top style='width:99.0pt;border-top:none;border-left:
-    none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
-    mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
-    mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal style='margin-left:.25in'><span style='mso-bookmark:
-    _Toc198369664'><span style='mso-bookmark:_Toc198367733'><i
-    style='mso-bidi-font-style:normal'>forward</i></span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-   </tr>
-   <tr style='mso-yfti-irow:1'>
-    <td width=103 valign=top style='width:77.4pt;border:solid windowtext 1.0pt;
-    border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:
-    solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal style='margin-left:.25in'><span style='mso-bookmark:
-    _Toc198369664'><span style='mso-bookmark:_Toc198367733'>2</span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-    <td width=132 valign=top style='width:99.0pt;border-top:none;border-left:
-    none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
-    mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
-    mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal style='margin-left:.25in'><span style='mso-bookmark:
-    _Toc198369664'><span style='mso-bookmark:_Toc198367733'><i
-    style='mso-bidi-font-style:normal'>backward</i></span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-   </tr>
-   <tr style='mso-yfti-irow:2'>
-    <td width=103 valign=top style='width:77.4pt;border:solid windowtext 1.0pt;
-    border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:
-    solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal style='margin-left:.25in'><span style='mso-bookmark:
-    _Toc198369664'><span style='mso-bookmark:_Toc198367733'>3</span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-    <td width=132 valign=top style='width:99.0pt;border-top:none;border-left:
-    none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
-    mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
-    mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal style='margin-left:.25in'><span style='mso-bookmark:
-    _Toc198369664'><span style='mso-bookmark:_Toc198367733'><i
-    style='mso-bidi-font-style:normal'>stop</i></span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-   </tr>
-   <tr style='mso-yfti-irow:3;mso-yfti-lastrow:yes'>
-    <td width=103 valign=top style='width:77.4pt;border:solid windowtext 1.0pt;
-    border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:
-    solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal style='margin-left:.25in'><span style='mso-bookmark:
-    _Toc198369664'><span style='mso-bookmark:_Toc198367733'><i
-    style='mso-bidi-font-style:normal'>4</i></span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-    <td width=132 valign=top style='width:99.0pt;border-top:none;border-left:
-    none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
-    mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
-    mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
-    <p class=MsoNormal style='margin-left:.25in'><span style='mso-bookmark:
-    _Toc198369664'><span style='mso-bookmark:_Toc198367733'><i
-    style='mso-bidi-font-style:normal'>float</i></span></span></p>
-    </td>
-    <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-   </tr>
-  </table>
-  <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-  style='mso-bookmark:_Toc198367733'>The following methods are another way to
-  get motor status:</span></span></p>
-  <ul style='margin-top:0in' type=disc>
-   <li class=MsoNormal style='mso-list:l28 level1 lfo18;tab-stops:list .5in'><span
-       style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'>boolean
-       isForward()</span></span></li>
-   <li class=MsoNormal style='mso-list:l28 level1 lfo18;tab-stops:list .5in'><span
-       style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'>boolean
-       isBackward()</span></span></li>
-   <li class=MsoNormal style='mso-list:l28 level1 lfo18;tab-stops:list .5in'><span
-       style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'>boolean
-       isStopped()</span></span></li>
-   <li class=MsoNormal style='mso-list:l28 level1 lfo18;tab-stops:list .5in'><span
-       style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'>boolean
-       isFloating()</span></span></li>
-  </ul>
-  <p class=MsoNormal style='margin-left:.25in'><span style='mso-bookmark:_Toc198369664'><span
-  style='mso-bookmark:_Toc198367733'><o:p>&nbsp;</o:p></span></span></p>
-  <h3><span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'>Various
-  other motor methods</span></span></h3>
-  <p style='margin-left:.5in;text-indent:-.25in;mso-list:l27 level1 lfo21;
-  tab-stops:list .5in'><span style='mso-bookmark:_Toc198369664'><span
-  style='mso-bookmark:_Toc198367733'><![if !supportLists]><span
-  style='font-family:Symbol;mso-fareast-font-family:Symbol;mso-bidi-font-family:
-  Symbol'><span style='mso-list:Ignore'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  </span></span></span><![endif]>setPower(int aPower)<br>
-  Used to control<span style='mso-spacerun:yes'>  </span>motor power directly.
-  Use a value between 0 and 100.<span style='mso-spacerun:yes'>  </span>Don’t
-  call this method if speed regulation is turned on because then the regulator
-  thread is continuously adjusting the power.<span style='mso-spacerun:yes'> 
-  </span></span></span></p>
-  <ul style='margin-top:0in' type=disc>
-   <li class=MsoNormal style='mso-list:l28 level1 lfo18;tab-stops:list .5in'><span
-       style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'>resetTachoCount()<br>
-       This method not only<span style='mso-spacerun:yes'>  </span>sets the
-       tacho count to 0 but also resets the origin used by the regulator thread
-       in deciding when to stop a rotation task. </span></span></li>
-   <li class=MsoNormal style='mso-list:l28 level1 lfo18;tab-stops:list .5in'><span
-       style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'>lock()<br>
-       Ordinarily, when the motor is stopped, it has some resistance to being
-       rotated.<span style='mso-spacerun:yes'>  </span>But in some
-       applications, such a weight lifting robot, the force of gravity may be
-       enough to overcome this resistance.<span style='mso-spacerun:yes'> 
-       </span>This method causes the regulator thread to apply additional power
-       in order to hold the motor axel in position. </span></span></li>
-  </ul>
-  <p class=MsoNormal><span style='mso-bookmark:_Toc198369664'><span
-  style='mso-bookmark:_Toc198367733'></span></span><a
-  href="#_Controlling_the_Motors"><span style='mso-bookmark:_Toc198369664'><span
-  style='mso-bookmark:_Toc198367733'>Back to top</span></span><span
-  style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span></a><span
-  style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span></p>
-  <p class=MsoNormal style='margin-left:.25in'><span style='mso-bookmark:_Toc198369664'><span
-  style='mso-bookmark:_Toc198367733'><o:p>&nbsp;</o:p></span></span></p>
-  <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
-  <p class=MsoNormal style='margin-left:.25in'><span style='mso-bookmark:_Toc198369664'><span
-  style='mso-bookmark:_Toc198367733'><o:p>&nbsp;</o:p></span></span></p>
-  </td>
-  <span style='mso-bookmark:_Toc198369664'><span style='mso-bookmark:_Toc198367733'></span></span>
- </tr>
-</table>
-
-<span style='mso-bookmark:_Toc198367733'></span><span style='mso-bookmark:_Toc198369664'></span>
-
-<p class=MsoNormal><o:p>&nbsp;</o:p></p>
-
-<p class=MsoNormal><o:p>&nbsp;</o:p></p>
-
-</div>
-
-</body>
-
+<!-- DO NOT TOUCH -->				
+				<br/>
+        <div class="NavBit">
+                <a target="_top" href="../Menusystem/MenuSystem.htm">«&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../WheeledVehicles/WheeledVehicles.htm">Next&nbsp;»</a>
+        </div>
+		<br />
+				<td>
+			</tr>
+		</table>
+	</body>
 </html>
