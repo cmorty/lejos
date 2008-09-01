@@ -158,12 +158,12 @@ private void goBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:eve
                   updateDevice(nxt, memoryImage, format);
             } catch (Exception e)
             {
-               JOptionPane.showMessageDialog(msgPanel, "Bad news: An error has occurred +e",
+               JOptionPane.showMessageDialog(msgPanel, "Bad news: An error has occurred " +e,
                        "Fatal error ", JOptionPane.ERROR_MESSAGE);
                System.exit(1);
 
             }
-            more = 0 == JOptionPane.showConfirmDialog(msgPanel, "Do you want to flash firmeare again?",
+            more = 0 == JOptionPane.showConfirmDialog(msgPanel, "Do you want to flash firmware again?",
                     "Question", JOptionPane.YES_NO_OPTION);
          }
          System.exit(1);
