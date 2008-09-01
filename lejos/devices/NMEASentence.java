@@ -1,10 +1,12 @@
+package lejos.devices;
+
 import java.util.*;
 
 /**
  * Class designed to manage all NMEA Sentence.
  * 
  * GGA and RMC Sentence needs to validate data.
- * This class has methods to validate receivedad data
+ * This class has methods to validate received data
  * 
  * @author BB
  * @author Juan Antonio Brenha Moral
