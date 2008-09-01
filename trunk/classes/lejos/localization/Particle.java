@@ -1,6 +1,6 @@
 package lejos.localization;
 
-import lejos.ai.*;
+import lejos.math.*;
 import java.util.Random;
 
 /**
