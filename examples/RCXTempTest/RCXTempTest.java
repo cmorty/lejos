@@ -1,4 +1,6 @@
 import lejos.nxt.*;
+import lejos.addon.*;
+
 /**
  * Demo for RCXTemperatureSensor
  *  

@@ -1,4 +1,5 @@
 import lejos.nxt.*;
+import lejos.addon.*;
 
 /**
  * Test of the Mindsensors RCX Motor Multiplexer.

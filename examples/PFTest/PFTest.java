@@ -1,5 +1,6 @@
 
 import lejos.nxt.*;
+import lejos.addon.*;
 
 /**
  * Test of HiTechnic IRLink driving PF motors.
