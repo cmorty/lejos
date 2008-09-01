@@ -42,7 +42,7 @@ public class BTConnection implements NXTConnection
 	private static final int BTC_BUFSZ = 256;
     private static final int BTC_DEFHEADER = 2;
 	private static final int BTC_CLOSETIMEOUT1 = 1000;
-	private static final int BTC_CLOSETIMEOUT2 = 250;
+	private static final int BTC_CLOSETIMEOUT2 = 500;
 	private static final int BTC_FLUSH_WAIT = 10;
 	
 	public static final int AM_DISABLE = 0;
@@ -120,7 +120,7 @@ public class BTConnection implements NXTConnection
 	synchronized boolean disconnected()
 	{
 		// Connection has been closed wake up anything waiting
-		//1 Debug.out("Disconnected " + handle + "\n");
+		//RConsole.print("Disconnected " + handle + "\n");
 		notifyAll();
 		// don't allow multiple disconnects, or disconnect of a closed connection'
 		if (state <= CS_DISCONNECTED) return false;
@@ -135,39 +135,46 @@ public class BTConnection implements NXTConnection
 	 */
 	public void close()
 	{
-		//Debug.out("Close\n");
+		//RConsole.print("Close\n");
 		if (state == CS_IDLE) return;
 		synchronized (this)
 		{
 			if (state >= CS_CONNECTED)
 				state = CS_DISCONNECTING;
 		}
-		//Debug.out("Close1\n");
+		//RConsole.print("Close1\n");
 		// If we have any output pending give it chance to go... and discard
 		// any input. We allow longer if we have pending output, just in case we
 		// need to switch streams.
-		for(int i = 0; state == CS_DISCONNECTING && (i < BTC_CLOSETIMEOUT2 || (outCnt > 0 && i < BTC_CLOSETIMEOUT1)); i++ )
+        //RConsole.println("Closing 1 cnt is " + outCnt);
+		for(int i = 0; state == CS_DISCONNECTING && (outCnt > 0 && i < BTC_CLOSETIMEOUT1); i++ )
+		{
+			read(null, inBuf.length, false);
+			try{Thread.sleep(1);} catch (Exception e) {}
+		}
+        //RConsole.println("Closing 2 cnt is " + outCnt);
+		for(int i = 0; state == CS_DISCONNECTING && i < BTC_CLOSETIMEOUT2; i++ )
 		{
 			read(null, inBuf.length, false);
 			try{Thread.sleep(1);} catch (Exception e) {}
 		}
 		// Dump any remaining output
 		outCnt = 0;
-		//Debug.out("Close2\n");
+		//RConsole.print("Close2\n");
 		if (state == CS_DISCONNECTING)
 			// Must not be synchronized here or we get a deadlock
 			Bluetooth.closeConnection(handle);
 		synchronized(this)
 		{
-		//Debug.out("Close3\n");
+		//RConsole.print("Close3\n");
 			while (state == CS_DISCONNECTING)
 				try{wait();}catch(Exception e){}
-		//Debug.out("Close4\n");
+		//RConsole.print("Close4\n");
 			state = CS_IDLE;
 			inBuf = null;
 			outBuf = null;
 		}
-		//Debug.out("Close complete\n");
+		//RConsole.print("Close complete\n");
 
 	}
 	
@@ -178,22 +185,23 @@ public class BTConnection implements NXTConnection
 	 */
 	synchronized void send()
 	{
-		//Debug.out("send\n");
+		//RConsole.print("send\n");
 		if (outOffset >= outCnt) return;
+        //RConsole.println("Pending " + Bluetooth.btPending());
 		// Transmit the data in the output buffer
 		int cnt = Bluetooth.btWrite(outBuf, outOffset, outCnt - outOffset);
-		//1 Debug.out("Send " + cnt + "\n");
+		//1 RConsole.print("Send " + cnt + "\n");
 		outOffset += cnt;
 		if (outOffset >= outCnt)
 		{
-			//Debug.out("Send complete\n");
+			//RConsole.print("Send complete\n");
 			outOffset = 0;
 			outCnt = 0;
 			notifyAll();
 		}
 		else
 		{
-			//Debug.out("send remaining " + (outCnt - outOffset) + "\n");
+			//RConsole.print("send remaining " + (outCnt - outOffset) + "\n");
 		}
 	}
 
@@ -221,7 +229,7 @@ public class BTConnection implements NXTConnection
 		int offset = -header;
 		int hdr = len;
 
-		//1 Debug.out("write " + len +" bytes\n");
+		//1 RConsole.print("write " + len +" bytes\n");
 		if (state == CS_DATALOST)
 		{
 			state = CS_CONNECTED;
@@ -234,11 +242,11 @@ public class BTConnection implements NXTConnection
 		{
 			while (outCnt >= outBuf.length)
 			{
-				//Debug.out("Buffer cnt " + outCnt + "\n");
+				//RConsole.print("Buffer cnt " + outCnt + "\n");
 				if (!wait && header == 0) return offset;
-				//Debug.out("Waiting in write\n");
+				//RConsole.print("Waiting in write\n");
 				try {wait();} catch(Exception e){}
-				//Debug.out("Wakeup state " + state + "\n");
+				//RConsole.print("Wakeup state " + state + "\n");
 				if (state != CS_CONNECTED) return offset;
 			}
 			if (offset < 0)
@@ -271,18 +279,18 @@ public class BTConnection implements NXTConnection
 	 */
 	synchronized void recv()
 	{
-		//1 Debug.out("recv\n");
+		//1 RConsole.print("recv\n");
 		// Read data into the input buffer
 		while (inCnt < inBuf.length)
 		{
 			if (inCnt == 0) inOffset = 0;
 			int offset = (inOffset + inCnt) % inBuf.length;
 			int len = (offset >= inOffset ? inBuf.length - offset : inOffset - offset);
-			//Debug.out("inCnt " + inCnt + " inOffset " + inOffset + " offset " + offset + " len " + len + "\n");
+			//RConsole.print("inCnt " + inCnt + " inOffset " + inOffset + " offset " + offset + " len " + len + "\n");
 			int cnt = Bluetooth.btRead(inBuf, offset, len);
 			if (cnt <= 0) break;
 			inCnt += cnt;
-			//1 Debug.out("recv " + inCnt + "\n");
+			//1 RConsole.print("recv " + inCnt + "\n");
 		}
 		if (inCnt > 0) notifyAll();
 	}
@@ -310,7 +318,7 @@ public class BTConnection implements NXTConnection
 		// packet has a header and data is not large enough for the data then
 		// the next read will continue to read the packet
 		int offset = 0;
-		//Debug.out("read\n");
+		//RConsole.print("read\n");
 		if (header == 0)
 		{
 			// Stream mode just read what we can
@@ -327,15 +335,15 @@ public class BTConnection implements NXTConnection
 		if (!wait && inCnt <= 0) return 0;
 		while (pktOffset < pktLen)
 		{
-			//Debug.out(" inCnt " + inCnt + " pktOffset " + pktOffset + " pktLen " + pktLen + "\n");
+			//RConsole.print(" inCnt " + inCnt + " pktOffset " + pktOffset + " pktLen " + pktLen + "\n");
 			// Make sure we have something to read
 			while (inCnt <= 0)
 			{
-				//Debug.out("About to wait inOff " + inOffset + " inCnt " + inCnt + "\n");
+				//RConsole.print("About to wait inOff " + inOffset + " inCnt " + inCnt + "\n");
 				if (!wait) return offset;
 				try{wait();}catch(Exception e){}
 				if (state != CS_CONNECTED) return offset;
-				//Debug.out("wakeup cnt " + inCnt + "\n");
+				//RConsole.print("wakeup cnt " + inCnt + "\n");
 			}
 			if (pktOffset < 0)
 			{
@@ -343,7 +351,7 @@ public class BTConnection implements NXTConnection
 				pktLen += ((int) inBuf[inOffset++] & 0xff) << (header + pktOffset)*8;
 				pktOffset++;
 				inCnt--;
-				//Debug.out("Header len " +pktLen + " offset " + pktOffset + "\n");
+				//RConsole.print("Header len " +pktLen + " offset " + pktOffset + "\n");
 			}
 			else
 			{
@@ -364,7 +372,7 @@ public class BTConnection implements NXTConnection
 			inOffset = inOffset % inBuf.length;
 		}
 		// End of packet set things up for next time
-		//Debug.out("Read len " + offset + "\n");
+		//RConsole.println("Read len " + offset + " buf " + inCnt);
 		pktOffset = -header;
 		pktLen = 0;
 		return offset;
@@ -465,8 +473,8 @@ public class BTConnection implements NXTConnection
 	 */
 	synchronized boolean needsAttention()
 	{
-		//1 if (chanNo == 0) Debug.out("na s" + state + " i " + inCnt + "\n");
-		//Debug.out("needs attention\n");
+		//1 if (chanNo == 0) RConsole.print("na s" + state + " i " + inCnt + "\n");
+		//RConsole.print("needs attention\n");
 		// return true if we need to perform low level I/O on this channel
 		if (state < CS_CONNECTED || switchMode == AM_DISABLE) return false;
 		// If we have any output then need to send it
@@ -526,7 +534,7 @@ public class BTConnection implements NXTConnection
 		// Need to be sure that there is no input in the input buffer before
 		// we switch mode. 
 		if (state == CS_IDLE) return;
-		//Debug.out("Flush\n");
+		//RConsole.print("Flush\n");
 		// Try to empty the low level input buffer while giving the 
 		// application chance to help by reading the data.
 		int timeout = (int)System.currentTimeMillis() + BTC_FLUSH_WAIT;
@@ -539,7 +547,7 @@ public class BTConnection implements NXTConnection
 			try{wait(1);}catch(Exception e){}
 		}
 		if (!pendingInput()) return;
-		//1 Debug.out("Dropping packets\n");
+		//1 RConsole.print("Dropping packets\n");
 		// If we still have input we are now in big trouble we will have
 		// to discard data. Note even if we read all of the data we need
 		// to linger a little to see if more arrives.
