@@ -1,0 +1,473 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=windows-1252">
+	<TITLE>The leJOS NXJ Menu System</TITLE>
+	<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.4  (Win32)">
+	<META NAME="AUTHOR" CONTENT="Roger">
+	<META NAME="CREATED" CONTENT="20080601;14470000">
+	<META NAME="CHANGED" CONTENT="20080831;21502854">
+	<STYLE TYPE="text/css">
+	<!--
+		@page { size: 8.5in 11in; margin-right: 1.25in; margin-top: 1in; margin-bottom: 1in }
+		P { margin-bottom: 0.08in; direction: ltr; color: #000000; widows: 2; orphans: 2 }
+		P.western { font-family: "Times New Roman", serif; font-size: 12pt; so-language: en-US }
+		P.cjk { font-family: "Times New Roman", serif; font-size: 12pt }
+		P.ctl { font-family: "Times New Roman", serif; font-size: 12pt; so-language: ar-SA }
+		H1 { margin-bottom: 0.04in; direction: ltr; color: #ff6600; widows: 2; orphans: 2 }
+		H1.western { font-family: "Arial", sans-serif; font-size: 16pt; so-language: en-US }
+		H1.cjk { font-family: "Times New Roman", serif; font-size: 16pt }
+		H1.ctl { font-family: "Arial", sans-serif; font-size: 16pt; so-language: ar-SA }
+		H2 { margin-bottom: 0.08in; direction: ltr; color: #ff6600; widows: 2; orphans: 2 }
+		H2.western { font-family: "Arial", sans-serif; font-size: 14pt; so-language: en-US; font-style: italic; font-weight: medium }
+		H2.cjk { font-family: "Times New Roman", serif; font-size: 14pt; font-style: italic; font-weight: medium }
+		H2.ctl { font-family: "Arial", sans-serif; font-size: 14pt; so-language: ar-SA; font-style: italic; font-weight: medium }
+		H3 { margin-left: 0.2in; margin-bottom: 0.08in; direction: ltr; color: #ff950e; widows: 2; orphans: 2 }
+		H3.western { font-family: "Arial", sans-serif; font-size: 13pt; so-language: en-GB; font-style: normal }
+		H3.cjk { font-family: "Times New Roman", serif; font-size: 13pt; font-style: normal }
+		H3.ctl { font-family: "Arial", sans-serif; font-size: 13pt; so-language: ar-SA; font-style: normal }
+		H4 { margin-left: 0.3in; margin-bottom: 0.04in; direction: ltr; color: #000000; widows: 2; orphans: 2 }
+		H4.western { font-family: "Arial", sans-serif; so-language: en-GB; font-style: normal }
+		H4.cjk { font-family: "Times New Roman", serif; font-style: normal }
+		H4.ctl { font-family: "Arial", sans-serif; so-language: ar-SA; font-style: italic; font-weight: medium }
+		P.body-text-2-western { margin-left: 0.1in; font-family: "Times New Roman", serif; font-size: 12pt; so-language: en-US }
+		P.body-text-2-cjk { margin-left: 0.1in; font-family: "Times New Roman", serif; font-size: 12pt }
+		P.body-text-2-ctl { margin-left: 0.1in; font-family: "Times New Roman", serif; font-size: 12pt; so-language: ar-SA }
+		P.body-text-3-western { margin-left: 0.2in; font-family: "Times New Roman", serif; font-size: 12pt; so-language: en-US }
+		P.body-text-3-cjk { margin-left: 0.2in; font-family: "Times New Roman", serif; font-size: 12pt }
+		P.body-text-3-ctl { margin-left: 0.2in; font-family: "Times New Roman", serif; font-size: 8pt; so-language: ar-SA }
+		A:link { color: #0000ff }
+		A:visited { color: #800080 }
+	-->
+	</STYLE>
+</HEAD>
+<BODY LANG="en-US" TEXT="#000000" LINK="#0000ff" VLINK="#800080" DIR="LTR">
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
+<P CLASS="western"><BR><BR>
+</P>
+<TABLE WIDTH=810 BORDER=0 CELLPADDING=7 CELLSPACING=0>
+	<COL WIDTH=121>
+	<COL WIDTH=661>
+	<TR VALIGN=TOP>
+		<TD WIDTH=121>
+			<DIV ID="Table of Contents1" DIR="LTR">
+				<P STYLE="margin-left: 0.17in"> <A HREF="#0.1. The leJOS NXJ Menu System|outline">The
+				leJOS NXJ Menu System</A></P>
+				<P STYLE="margin-left: 0.33in"><A HREF="#0.1.1.Main menu|outline">Main
+				menu</A></P>
+				<P STYLE="margin-left: 0.33in"><A HREF="#0.1.2.Files menu|outline">Files
+				menu</A></P>
+				<P STYLE="margin-left: 0.33in"><A HREF="#0.1.3.System menu|outline">System
+				menu</A></P>
+				<P STYLE="margin-left: 0.33in"><A HREF="#0.1.4.Bluetooth menu|outline">Bluetooth
+				menu</A></P>
+				<P STYLE="margin-left: 0.5in"><A HREF="#0.1.5.Devices|outline">Devices</A></P>
+				<P STYLE="margin-left: 0.5in"><A HREF="#0.0.0.2.Search|outline">Search</A></P>
+				<P STYLE="margin-left: 0.33in"><A HREF="#0.1.6.Sound|outline">Sound</A></P>
+				<P STYLE="margin-left: 0.33in"><A HREF="#0.1.7.Version |outline">Version
+				</A>
+				</P>
+			</DIV>
+			<P CLASS="western"><BR>
+			</P>
+		</TD>
+		<TD WIDTH=661>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<H2 CLASS="western"><A NAME="0.1. The leJOS NXJ Menu System|outline"></A><A NAME="0.1. The leJOS NXJ Menu System|outline"></A><A NAME="0.1. The leJOS NXJ Menu System|outline"></A><A NAME="0.1. The leJOS NXJ Menu System|outline"></A><A NAME="0.1. The leJOS NXJ Menu System|outline"></A><A NAME="0.1. The leJOS NXJ Menu System|outline"></A>
+			<FONT COLOR="#000000"> </FONT>The leJOS NXJ Menu System</H2>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<H3 LANG="en-GB" CLASS="western"><A NAME="0.1.1.Main menu|outline"></A>
+			Main menu</H3>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<P CLASS="body-text-3-western">When leJOS NXJ starts, it displays
+			the leJOS NXJ logo for 3 seconds and then displays the main menu:</P>
+			<P CLASS="western"><SPAN ID="Frame1" DIR="LTR" STYLE="float: left; width: 1.92in; height: 1.58in; border: 1px solid #000000; padding: 0.05in 0.1in; background: #ffffff">
+				<P CLASS="western" ALIGN=CENTER STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
+				    <FONT FACE="Courier New, monospace">MYNXT     BT</FONT></P>
+				<P CLASS="western" STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
+				<FONT FACE="Courier New, monospace">&gt;Run Default</FONT></P>
+				<P CLASS="western" STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
+				 <FONT FACE="Courier New, monospace">Files</FONT></P>
+				<P CLASS="western" STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
+				 <FONT FACE="Courier New, monospace">Bluetooth</FONT></P>
+				<P CLASS="western" STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
+				 <FONT FACE="Courier New, monospace">Sound</FONT></P>
+				<P CLASS="western" STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
+				 <FONT FACE="Courier New, monospace">System</FONT></P>
+				<P CLASS="western" STYLE="margin-top: 0.02in"> <FONT FACE="Courier New, monospace">Version</FONT></P>
+			</SPAN><BR CLEAR=LEFT><BR><BR>
+			</P>
+			<P CLASS="western">The top line shows the battery voltage icon,
+			the name of the NXT, and the BlueTooth power icon.   In this
+			example, the power is on. 
+			</P>
+			<P CLASS="body-text-3-western">It then shows a menu implemented by
+			the TextMenu class.</P>
+			<P CLASS="body-text-3-western">Using the keys to navigate the
+			menu:</P>
+			<TABLE WIDTH=533 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=7 CELLSPACING=0>
+				<COL WIDTH=35>
+				<COL WIDTH=36>
+				<COL WIDTH=118>
+				<COL WIDTH=286>
+				<TR VALIGN=TOP>
+					<TD COLSPAN=2 WIDTH=85>
+						<P CLASS="body-text-3-western" STYLE="margin-left: 0in">Key</P>
+					</TD>
+					<TD WIDTH=118>
+						<P CLASS="body-text-3-western" STYLE="margin-left: 0in">Name</P>
+					</TD>
+					<TD WIDTH=286>
+						<P CLASS="body-text-3-western" STYLE="margin-left: 0in">Use</P>
+					</TD>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=35>
+						<P CLASS="body-text-3-western" STYLE="margin-left: 0in"><IMG SRC="MenuSystem_html_m177adeff.gif" NAME="graphics5" ALIGN=LEFT WIDTH=26 HEIGHT=30 BORDER=0>.
+						   
+						</P>
+						<P CLASS="body-text-3-western" STYLE="margin-left: 0in"><BR>
+						</P>
+					</TD>
+					<TD WIDTH=36>
+						<P CLASS="body-text-3-western" STYLE="margin-left: 0in"><IMG SRC="MenuSystem_html_5d8f2a7b.gif" NAME="graphics1" ALIGN=LEFT WIDTH=28 HEIGHT=30 BORDER=0><BR>
+						</P>
+					</TD>
+					<TD WIDTH=118>
+						<P CLASS="body-text-3-western" STYLE="margin-left: 0in">Left,
+						Right 
+						</P>
+					</TD>
+					<TD WIDTH=286>
+						<P CLASS="body-text-3-western" STYLE="margin-left: 0in">Scroll
+						up , down</P>
+					</TD>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD COLSPAN=2 WIDTH=85>
+						<P CLASS="body-text-3-western" STYLE="margin-left: 0in"><IMG SRC="MenuSystem_html_m203c959b.gif" NAME="graphics2" ALIGN=LEFT WIDTH=31 HEIGHT=31 BORDER=0><BR CLEAR=LEFT><BR>
+						</P>
+					</TD>
+					<TD WIDTH=118>
+						<P CLASS="body-text-3-western" STYLE="margin-left: 0in">Enter</P>
+					</TD>
+					<TD WIDTH=286>
+						<P CLASS="body-text-3-western" STYLE="margin-left: 0in">Select
+						the menu item</P>
+					</TD>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD COLSPAN=2 WIDTH=85>
+						<P CLASS="body-text-3-western" STYLE="margin-left: 0in"><IMG SRC="MenuSystem_html_1e8da1cd.gif" NAME="graphics3" ALIGN=LEFT WIDTH=28 HEIGHT=15 BORDER=0><BR CLEAR=LEFT><BR>
+						</P>
+					</TD>
+					<TD WIDTH=118>
+						<P CLASS="body-text-3-western" STYLE="margin-left: 0in">Escape</P>
+					</TD>
+					<TD WIDTH=286>
+						<P CLASS="body-text-3-western" STYLE="margin-left: 0in">Quit
+						the menu and return to the previous one..<BR>In the main menu,
+						shut down the NXT 
+						</P>
+					</TD>
+				</TR>
+			</TABLE>
+			<P CLASS="body-text-3-western"><BR><BR>
+			</P>
+			<P CLASS="body-text-3-western"><BR><BR>
+			</P>
+			<P CLASS="body-text-3-western"><FONT COLOR="#0000ff"><U><A HREF="#0.1. The leJOS NXJ Menu System|outline">Back
+			to top</A></U></FONT></P>
+			<P CLASS="body-text-3-western"><BR><BR>
+			</P>
+			<H3 LANG="en-GB" CLASS="western"><A NAME="0.1.2.Files menu|outline"></A>
+			Files menu</H3>
+			<P CLASS="western">When you select the &ldquo;Files&rdquo; menu
+			item, the list of files  is displayed:</P>
+			<P CLASS="western"><SPAN ID="Frame2" DIR="LTR" STYLE="float: left; width: 2.01in; height: 1.15in; border: 1px solid #000000; padding: 0.05in 0.1in; background: #ffffff">
+				<P CLASS="western" ALIGN=CENTER STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
+				    <FONT FACE="Courier New, monospace">MYNXT     BT</FONT></P>
+				<P CLASS="western" STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
+				<FONT FACE="Courier New, monospace">&gt;View.nxj</FONT></P>
+				<P CLASS="western" STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
+				 <FONT FACE="Courier New, monospace">SoundScope.nxj</FONT></P>
+				<P CLASS="western" STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
+				 <FONT FACE="Courier New, monospace">LCDTest.nxj</FONT></P>
+			</SPAN><BR CLEAR=LEFT><BR><BR>
+			</P>
+			<P CLASS="western">When you select a particular file, the file
+			submenu is displayed:</P>
+			<P CLASS="western"><SPAN ID="Frame3" DIR="LTR" STYLE="float: left; width: 1.9in; height: 1.44in; border: 1px solid #000000; padding: 0.05in 0.1in; background: #ffffff">
+				<P CLASS="western" ALIGN=CENTER STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
+				    <FONT FACE="Courier New, monospace">MYNXT     BT</FONT></P>
+				<P CLASS="western" STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
+				<FONT FACE="Courier New, monospace">View.nxj</FONT></P>
+				<P CLASS="western" STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
+				<FONT FACE="Courier New, monospace">&gt;Execute program</FONT></P>
+				<P CLASS="western" STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
+				 <FONT FACE="Courier New, monospace">Set as Default</FONT></P>
+				<P CLASS="western" STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
+				 <FONT FACE="Courier New, monospace">Delete file</FONT></P>
+			</SPAN><BR CLEAR=LEFT><BR><BR>
+			</P>
+			<P CLASS="body-text-3-western"><FONT COLOR="#0000ff"><U><A HREF="#0.1. The leJOS NXJ Menu System|outline">Back
+			to top</A></U></FONT></P>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<H3 LANG="en-GB" CLASS="western"><A NAME="0.1.3.System menu|outline"></A>
+			<FONT FACE="Arial, sans-serif"><FONT SIZE=3 STYLE="font-size: 13pt"><SPAN LANG="en-GB"><FONT SIZE=4><SPAN STYLE="font-weight: medium">System
+			menu</SPAN></FONT></SPAN></FONT></FONT></H3>
+			<P CLASS="body-text-3-western">This menu shows some information
+			about the status of the NXT, and allows you to change some of
+			these variables.</P>
+			<UL>
+				<LI><P CLASS="western">Free flash</P>
+				<LI><P CLASS="western">Battery voltage</P>
+				<LI><P CLASS="western">Free ram</P>
+				<LI><P CLASS="western">Format <BR>wipes out the flash memory,
+				deleting all files. 
+				</P>
+				<LI><P CLASS="western">Sleep Time<BR>is the number of seconds
+				before the NXT shuts down in the absence of any activity (button
+				presses or program running)   You can change the setting by
+				pressing the  ENTER button.   Zero means never. 
+				</P>
+				<LI><P CLASS="western">Auto run<BR>If this is turned on, the
+				default program immediately starts running when the NXT is
+				powered up,  instead of displaying the main menu.  You can
+				disable the auto run by holding down the left button during start
+				up.  
+				</P>
+			</UL>
+			<P CLASS="body-text-3-western"><BR><BR>
+			</P>
+			<P CLASS="body-text-3-western"><FONT COLOR="#0000ff"><U><A HREF="#0.1. The leJOS NXJ Menu System|outline">Back
+			to top</A></U></FONT></P>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<H3 LANG="en-GB" CLASS="western"><A NAME="0.1.4.Bluetooth menu|outline"></A>
+			Bluetooth menu</H3>
+			<P CLASS="western">This menu allows you to control the Bluetooth
+			chip.  When power is off, the menu looks like this:: 
+			</P>
+			<P CLASS="western"><SPAN ID="Frame4" DIR="LTR" STYLE="float: left; width: 2.01in; height: 1.32in; border: 1px solid #000000; padding: 0.05in 0.1in; background: #ffffff">
+				<P CLASS="western" ALIGN=CENTER STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
+				    <FONT FACE="Courier New, monospace">MYNXT     </FONT><FONT FACE="Courier New, monospace"><SPAN STYLE="background: #000000">BT</SPAN></FONT></P>
+				<P CLASS="western" ALIGN=CENTER STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
+				   <FONT FACE="Courier New, monospace">Bluetooth</FONT></P>
+				<P CLASS="western" STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
+				<FONT FACE="Courier New, monospace">Status off</FONT></P>
+				<P CLASS="western" STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
+				<FONT FACE="Courier New, monospace">&gt;Power on</FONT></P>
+			</SPAN><BR CLEAR=LEFT><BR><BR>
+			</P>
+			<P CLASS="western">This saves battery power, but Bluetooth
+			communication to or from the NXT is not possible.  Pressing Enter
+			turns the power on. 
+			</P>
+			<P CLASS="western">When the power is on, the menu looks like this</P>
+			<P CLASS="western"><SPAN ID="Frame5" DIR="LTR" STYLE="float: left; width: 1.94in; height: 2.01in; border: 1px solid #000000; padding: 0.05in 0.1in; background: #ffffff">
+				<P CLASS="western" ALIGN=CENTER STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
+				<FONT FACE="Courier New, monospace">	MYNXT     BT</FONT></P>
+				<P CLASS="western" ALIGN=CENTER STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
+				<FONT FACE="Courier New, monospace">	Bluetooth</FONT></P>
+				<P CLASS="western" STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
+				<FONT FACE="Courier New, monospace">Status on  vis</FONT></P>
+				<P CLASS="western" STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
+				<FONT FACE="Courier New, monospace">&gt;Power off</FONT></P>
+				<P CLASS="western" STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
+				<FONT FACE="Courier New, monospace">Search</FONT></P>
+				<P CLASS="western" STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
+				<FONT FACE="Courier New, monospace">Devices</FONT></P>
+				<P CLASS="western" STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
+				<FONT FACE="Courier New, monospace">Visibility</FONT></P>
+			</SPAN><BR CLEAR=LEFT><BR><BR>
+			</P>
+			<P CLASS="western">The status line shows if power is on and where
+			the device is visible to Bluetooth searches.</P>
+			<P CLASS="western">The Visibility menu item switches visibility of
+			the devices to Bluetooth inquiries on and off. When it is on the
+			status line displays &ldquo;vis&rdquo; and when it is off,
+			&ldquo;invis&rdquo;.</P>
+			<H3 LANG="en-GB" CLASS="western"><A NAME="0.1.5.Devices|outline"></A>
+			Devices</H3>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<P CLASS="western">The Devices menu item lists the devices
+			currently in the Known Devices list for you NXT.</P>
+			<P CLASS="western" ALIGN=CENTER><SPAN ID="Frame6" DIR="LTR" STYLE="float: left; width: 1.76in; height: 1.63in; border: 1px solid #000000; padding: 0.05in 0.1in; background: #ffffff">
+				<P LANG="fr-FR" CLASS="western" ALIGN=CENTER STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
+				<FONT FACE="Courier New, monospace">Devices</FONT></P>
+				<P LANG="fr-FR" CLASS="western" ALIGN=LEFT STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
+				<BR><BR>
+				</P>
+				<P LANG="fr-FR" CLASS="western" ALIGN=LEFT STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
+				<FONT FACE="Courier New, monospace">&gt;NXT1</FONT></P>
+				<P LANG="fr-FR" CLASS="western" ALIGN=LEFT STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
+				<FONT FACE="Courier New, monospace">&gt;NXT2</FONT></P>
+				<P LANG="fr-FR" CLASS="western" ALIGN=LEFT STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
+				<FONT FACE="Courier New, monospace">&gt;HOLUX_M-1200</FONT></P>
+				<P LANG="fr-FR" CLASS="western" ALIGN=LEFT STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
+				 
+				</P>
+			</SPAN><BR CLEAR=LEFT><BR><BR>
+			</P>
+			<P CLASS="western">Selecting a specific device will show details
+			of it:</P>
+			<P CLASS="western"><SPAN ID="Frame7" DIR="LTR" STYLE="float: left; width: 1.88in; height: 2in; border: 1px solid #000000; padding: 0.05in 0.1in; background: #ffffff">
+				<P CLASS="western" ALIGN=CENTER STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
+				   <FONT FACE="Courier New, monospace">Devices</FONT></P>
+				<P CLASS="western" STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
+				<FONT FACE="Courier New, monospace">NXT1</FONT></P>
+				<P CLASS="western" STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
+				<FONT FACE="Courier New, monospace">001653007848</FONT></P>
+				<P CLASS="western" STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
+				  <FONT FACE="Courier New, monospace">0   0   0   4</FONT></P>
+				<P CLASS="western" STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
+				<BR><BR>
+				</P>
+				<P CLASS="western" STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
+				<FONT FACE="Courier New, monospace">&gt;Remove</FONT></P>
+				<P CLASS="western" STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
+				<BR><BR>
+				</P>
+			</SPAN><BR CLEAR=LEFT><BR><BR>
+			</P>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<P CLASS="western">The first line give the name, the second the
+			address, and the third the status of the four possible Bluetooth
+			connections. 
+			</P>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<P CLASS="western">The &ldquo;Remove&rdquo; menu item allows the
+			device to be removed from the Known device list.</P>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<H4 LANG="en-GB" CLASS="western"><A NAME="0.0.0.2.Search|outline"></A>
+			Search</H4>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<P CLASS="western">Selecting &ldquo;Search&rdquo; from the
+			Bluetooth menu, starts a Bluetooth inquiry. The display is cleared
+			and the first line displays &ldquo;Searching&hellip;&rdquo;. This
+			takes about 10 seconds.</P>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<P CLASS="western">When the search is finished a menu of all the
+			Bluetooth devices found, is displayed:</P>
+			<P CLASS="western"><SPAN ID="Frame8" DIR="LTR" STYLE="float: left; width: 1.88in; height: 1.63in; border: 1px solid #000000; padding: 0.05in 0.1in; background: #ffffff">
+				<P CLASS="western" ALIGN=CENTER STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
+				   <FONT FACE="Courier New, monospace">Found</FONT></P>
+				<P CLASS="western" STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
+				<FONT FACE="Courier New, monospace">&gt;NXT1</FONT></P>
+				<P CLASS="western" STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
+				<FONT FACE="Courier New, monospace">&gt;HOLUX_M-1200</FONT></P>
+				<P CLASS="western" STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
+				<FONT FACE="Courier New, monospace">&gt;MyPhone</FONT></P>
+				<P CLASS="western" STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
+				<BR><BR>
+				</P>
+				<P CLASS="western" STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
+				<BR><BR>
+				</P>
+			</SPAN><BR CLEAR=LEFT><BR><BR>
+			</P>
+			<P CLASS="western">All discoverable devices that support an SPP
+			profile are displayed. This includes other NXT, GPS devices,
+			mobile phones etc.</P>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<P CLASS="western">Selecting one of the devices gives the
+			following display:</P>
+			<P CLASS="western"><SPAN ID="Frame9" DIR="LTR" STYLE="float: left; width: 1.88in; height: 1.63in; border: 1px solid #000000; padding: 0.05in 0.1in; background: #ffffff">
+				<P CLASS="western" ALIGN=CENTER STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
+				   <FONT FACE="Courier New, monospace">Found</FONT></P>
+				<P CLASS="western" STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
+				<FONT FACE="Courier New, monospace">NXT1</FONT></P>
+				<P CLASS="western" STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
+				<FONT FACE="Courier New, monospace">001653007848</FONT></P>
+				<P CLASS="western" STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
+				<BR><BR>
+				</P>
+				<P CLASS="western" STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
+				<FONT FACE="Courier New, monospace">&gt;Add</FONT></P>
+				<P CLASS="western" STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
+				<BR><BR>
+				</P>
+				<P CLASS="western" STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
+				<BR><BR>
+				</P>
+			</SPAN><BR CLEAR=LEFT><BR><BR>
+			</P>
+			<P CLASS="western">Selecting Add, adds the device to the list of
+			know devices. This makes connecting to the devices from leJOS
+			programs much easier.</P>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<P CLASS="body-text-3-western"><FONT COLOR="#0000ff"><U><A HREF="#0.1. The leJOS NXJ Menu System|outline">Back
+			to top</A></U></FONT></P>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<H3 LANG="en-GB" CLASS="western"><A NAME="0.1.6.Sound|outline"></A>
+			Sound</H3>
+			<P CLASS="western"><SPAN ID="Frame10" DIR="LTR" STYLE="float: left; width: 1.93in; height: 1.27in; border: 1px solid #000000; padding: 0.05in 0.1in; background: #ffffff">
+				<P CLASS="western" ALIGN=CENTER STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
+				    <FONT FACE="Courier New, monospace">MYNXT     BT</FONT></P>
+				<P CLASS="western" ALIGN=CENTER STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
+				   <FONT FACE="Courier New, monospace">Sound</FONT></P>
+				<P CLASS="western" STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
+				<FONT FACE="Courier New, monospace">&gt;Volume:      8</FONT></P>
+				<P CLASS="western" STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
+				 <FONT FACE="Courier New, monospace">KeyClick     6</FONT></P>
+				<P CLASS="western" STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
+				<BR><BR>
+				</P>
+			</SPAN><BR CLEAR=LEFT><BR><BR>
+			</P>
+			<P LANG="en-GB" CLASS="body-text-3-western">With this menu, you
+			can set the default system sound Volume and the Key Clock volume. 
+			 Click the  Enter key to scroll through the options.</P>
+			<H3 LANG="en-GB" CLASS="western"><A NAME="0.1.7.Version |outline"></A>
+			Version 
+			</H3>
+			<P LANG="en-GB" CLASS="body-text-3-western" STYLE="margin-left: 0in">
+			<SPAN ID="Frame11" DIR="LTR" STYLE="float: left; width: 1.94in; height: 1.63in; border: 1px solid #000000; padding: 0.05in 0.1in; background: #ffffff">
+				<P CLASS="western" ALIGN=CENTER STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
+				    <FONT FACE="Courier New, monospace">MYNXT     BT</FONT></P>
+				<P CLASS="western" STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
+				<FONT FACE="Courier New, monospace">Firmware Version</FONT></P>
+				<P CLASS="western" STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
+				<FONT FACE="Courier New, monospace">1.0 (rev. 2260)</FONT></P>
+				<P CLASS="western" STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
+				<FONT FACE="Courier New, monospace">Menu Version</FONT></P>
+				<P CLASS="western" STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
+				<FONT FACE="Courier New, monospace">1.0 (rev 2260)</FONT></P>
+				<P CLASS="western" STYLE="margin-top: 0.02in; margin-bottom: 0.02in">
+				<BR><BR>
+				</P>
+			</SPAN><BR CLEAR=LEFT>  
+			</P>
+			<P LANG="en-GB" CLASS="body-text-3-western">This menu is for
+			information only. 
+			</P>
+			<P LANG="en-GB" CLASS="body-text-3-western"><BR><BR>
+			</P>
+			<P CLASS="body-text-3-western"><FONT COLOR="#0000ff"><U><A HREF="#0.1. The leJOS NXJ Menu System|outline">Back
+			to top</A></U></FONT></P>
+			<P STYLE="margin-left: 0.17in"><BR><BR>
+			</P>
+		</TD>
+	</TR>
+</TABLE>
+<P CLASS="western"><BR><BR>
+</P>
+<P LANG="en-GB" CLASS="western"><BR><BR>
+</P>
+</BODY>
+</HTML>
