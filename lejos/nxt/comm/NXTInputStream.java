@@ -21,12 +21,13 @@ public class NXTInputStream extends InputStream {
      * Returns -1 if the end of the stream is reached.
      * Does not return till some bytes are available.
      */
-	public int read() 
+	public int read() throws IOException
     {
 	   if (bufIdx >= bufSize) bufSize = 0;
 	   if (bufSize <= 0)
 	   {
 		   bufSize = conn.read(buf, buf.length);
+           if (bufSize < -1) throw new IOException();
 		   if (bufSize <= 0) return -1;
 		   bufIdx = 0;
 	   }
@@ -36,12 +37,14 @@ public class NXTInputStream extends InputStream {
     /**
      * returns the number of bytes in the input buffer - can be read without blocking
      */
-    public int available()
+    public int available() throws IOException
     {
        if (bufIdx >= bufSize) bufSize = 0;
        if (bufSize == 0) {
     	   bufIdx = 0;
     	   bufSize = conn.read(buf, buf.length, false);
+           if (bufSize < -1) throw new IOException();
+           if (bufSize < 0) bufSize = 0;
        }
        return bufSize - bufIdx;
     }
