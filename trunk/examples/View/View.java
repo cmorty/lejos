@@ -1,4 +1,5 @@
 import lejos.nxt.*;
+import lejos.addon.*;
 
 public class View {
 	

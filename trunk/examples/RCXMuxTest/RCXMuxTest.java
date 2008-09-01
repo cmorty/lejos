@@ -5,6 +5,8 @@
  * @author Michael Smith <mdsmitty@gmail.com>
  */
 import lejos.nxt.*;
+import lejos.addon.*;
+
 public class RCXMuxTest{
 	public static void main(String[] args) throws Exception {
 		RCXSensorMultiplexer mux = new RCXSensorMultiplexer(SensorPort.S1);

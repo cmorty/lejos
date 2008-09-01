@@ -1,5 +1,6 @@
 
 import lejos.nxt.*;
+import lejos.addon.*;
 
 /**
  * Simple test of Acceleration (Tilt) sensors.

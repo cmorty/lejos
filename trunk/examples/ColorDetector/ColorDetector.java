@@ -1,4 +1,5 @@
 import lejos.nxt.*;
+import lejos.addon.*;
 
 /**
  * For testing the HiTechnic color sensor (see lejos.nxt.ColorSensor).

@@ -1,5 +1,5 @@
 
-import lejos.ai.*;
+import lejos.math.*;
 
 /**
  * Example created to test Matrix Class
