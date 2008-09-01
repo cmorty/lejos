@@ -35,6 +35,8 @@ public class DebugInterface
     public int fieldBase;
     public DebugThread[] threads;
 
+    private native static int getDataAddress (Object obj);
+    
     /**
      * Private constructor. Sets up the event interface in the kernel.
      */
@@ -82,6 +84,27 @@ public class DebugInterface
      * @return the value of the word at addr
      */
     protected native static final int peekWord(int addr);
+    
+    /**
+     * Allow access to VM data structures
+     * @param obj the object to peek into
+     * @param offset the address in the VM memory of a word
+     * @return the value of the word at addr
+     */
+    protected static final int peekWord(Object obj, int offset)
+    {
+        return peekWord(getAddress(obj) + offset);
+    }
+    
+    /**
+     * Return the actual VM address of an object.
+     * @param obj
+     * @return the address of the object
+     */
+    protected static final int getAddress(Object obj)
+    {
+        return getDataAddress(obj);
+    }
 
     /**
      * Allow events to be enabled/disabled/ignored. Disabled events will

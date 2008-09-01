@@ -2,6 +2,8 @@ package lejos.nxt.debug;
 
 import java.util.*;
 import lejos.nxt.*;
+import lejos.nxt.comm.*;
+import java.io.PrintStream;
 
 /**
  * Simple debug monitor that can be run alongside and nxj program. This class
@@ -25,7 +27,7 @@ public class DebugMonitor
         DebugObject oi = new DebugObject(info);
         System.err.println("Java Exception");
         System.err.println("Class: " + oi.getClassIndex(info.exception));
-        System.err.println("Method: " + info.method);
+        System.err.println("Method: " + info.method + "(" + info.pc + ")");
         int sp = info.frame - 1;
         for (int i = 3; i < 8 && sp-- > 0; i++)
             System.err.println("Called from: " + fi.getMethodIndex(info.thread, sp));
@@ -68,6 +70,7 @@ public class DebugMonitor
         DebugInterface monitor = DebugInterface.get();
         DebugInterface.eventOptions(DebugInterface.DBG_EXCEPTION, DebugInterface.DBG_EVENT_ENABLE);
         DebugInterface.eventOptions(DebugInterface.DBG_USER_INTERRUPT, DebugInterface.DBG_EVENT_ENABLE);
+
         // Start the real program in a new thread.
         Thread prog = new Thread()
         {
@@ -108,9 +111,9 @@ public class DebugMonitor
             // Enable user interrupts again
             DebugInterface.eventOptions(DebugInterface.DBG_USER_INTERRUPT, DebugInterface.DBG_EVENT_ENABLE);
             // and wait to see what the user wants to do
-            Button.waitForPress();
+            int pressed = Button.waitForPress();
             // If escape do soft-reboot
-            if (Button.ESCAPE.isPressed())
+            if ((Button.ESCAPE.getId() & pressed) != 0)
                 System.exit(1);
             // Otherwise try and continue gulp!
             LCD.clear();
