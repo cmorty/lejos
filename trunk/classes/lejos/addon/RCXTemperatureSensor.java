@@ -1,7 +1,7 @@
 package lejos.addon;
 
 
-import lejos.nxt.LegacySensorPort;
+
 import lejos.nxt.SensorConstants;
 
 /** 
