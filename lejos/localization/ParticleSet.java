@@ -1,6 +1,6 @@
 package lejos.localization;
 import java.awt.Rectangle;
-import lejos.ai.*;
+import lejos.math.*;
 
 /**
  * Represents a particle set for the particle filtering algorithm.
