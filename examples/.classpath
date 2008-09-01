@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="BTConnectTest/|BTGPS/|BTKeyboard/|BTReceive/|BlueStats/|BumperCar/|ColorDetector/|CompassTest/|DLTest/|ExceptionTest/|FileTest/|GraphicsSample/|HelloWorld/|I2CDevices/|KeyboardTest/|LCDUI/|LLCMonitor/|LLCTest/|LatteboxTest/|Line/|Listen/|MatrixTest/|MemoryTest/|MonitorTest/|NXTCamTest/|PFTest/|PerformanceTest/|PilotTester/|RCXEmulator/|RCXLinkTest/|RCXMMTest/|RCXMuxTest/|RCXPortTest/|RCXRemote/|RCXRemoteMotor/|RCXTempTest/|RemoteMotor/|RemoteNXTTest/|SerialTest/|SignalTest/|SocketTest/|SonicTest/|SoundSample/|SpeedTest/|Subsumption1/|Subsumption2/|TiltTest/|TimeTest/|Tune/|USBReceive/|View/" kind="src" path=""/>
+	<classpathentry excluding="BTConnectTest/|BTGPS/|BTKeyboard/|BTReceive/|BlueStats/|BumperCar/|ColorDetector/|CompassTest/|DLTest/|ExceptionTest/|FileTest/|GraphicsSample/|HelloWorld/|I2CDevices/|KeyboardTest/|LCDUI/|LLCMonitor/|LLCTest/|LatteboxTest/|Line/|Listen/|MatrixTest/|MemoryTest/|MonitorTest/|NXTCamTest/|PFTest/|PerformanceTest/|PilotTester/|RCXEmulator/|RCXLinkTest/|RCXMMTest/|RCXMuxTest/|RCXPortTest/|RCXRemote/|RCXRemoteMotor/|RCXTempTest/|RemoteMotor/|RemoteNXTTest/|SerialTest/|SignalTest/|SocketTest/|SonicTest/|SoundSample/|SpeedTest/|Subsumption1/|Subsumption2/|TiltTest/|TimeTest/|Tune/|USBReceive/|View/|BTTest/|DistanceTest/|STTest/" kind="src" path=""/>
+	<classpathentry kind="src" path="STTest"/>
+	<classpathentry kind="src" path="DistanceTest"/>
+	<classpathentry kind="src" path="BTTest"/>
 	<classpathentry kind="src" path="RCXTempTest"/>
 	<classpathentry kind="src" path="MatrixTest"/>
 	<classpathentry kind="src" path="LatteboxTest"/>
