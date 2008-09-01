@@ -151,7 +151,7 @@ public class USBConnection implements NXTConnection {
      * @param data byte array to store the results.
      * @param len max number of bytes to read
      * @param wait set true to block waiting for data
-     * @return actual number of bytes read, return -2 for eof
+     * @return actual number of bytes read, return < 0 for error
      */
     public int read(byte [] data, int len, boolean wait)
     {
@@ -163,7 +163,10 @@ public class USBConnection implements NXTConnection {
           {
               // eof indicator
               if (mode == PACKET)
+              {
                   state = CS_DISCONNECTED;
+                  ret = -1;
+              }
               else
                   ret = 0;
           }
@@ -176,7 +179,7 @@ public class USBConnection implements NXTConnection {
      * Perform an blocking read on the USB connection
      * @param data byte array to store the results.
      * @param len max number of bytes to read
-     * @return actual number of bytes read, return -2 for eof
+     * @return actual number of bytes read, return < 0 for error
      */
 
 	public int read(byte [] data, int len)
