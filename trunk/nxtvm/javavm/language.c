@@ -16,6 +16,7 @@
 #include "exceptions.h"
 #include "stack.h"
 #include "platform_hooks.h"
+
 #if 0
 #define get_stack_object(MREC_)  ((Object *) get_ref_at ((MREC_)->numParameters - 1))
 #endif
@@ -210,6 +211,7 @@ boolean dispatch_special (MethodRecord *methodRecord, byte *retAddr)
   // First deal with the easy case of a native call...
   if (is_native (methodRecord))
   {
+    byte *savedPc = curPc;
   #if DEBUG_METHODS
   printf ("-- native\n");
   #endif 
@@ -220,16 +222,17 @@ boolean dispatch_special (MethodRecord *methodRecord, byte *retAddr)
     // parameter and that may end up allocating memory *MUST* protect that
     // reference before calling the allocator...
     pop_words_cur (methodRecord->numParameters);
-    if (dispatch_native (methodRecord->signatureId, get_stack_ptr_cur() + 1))
-      curPc = retAddr;
-    else
+    curPc = retAddr;
+    if (!dispatch_native (methodRecord->signatureId, get_stack_ptr_cur() + 1))
+    {
       // reset the stack frame
       curStackTop += methodRecord->numParameters;
+      curPc = savedPc;
+    }
       
     // Stack frame not pushed
     return false;
   }
-
   newStackFrameIndex = currentThread->stackFrameArraySize;
   
   if (newStackFrameIndex >= get_array_length((Object *) word2ptr (currentThread->stackFrameArray)))
