@@ -1,6 +1,7 @@
 package lejos.rcxcomm;
 
 import lejos.nxt.*;
+import lejos.addon.*;
 
 /**
  * Emulation of the RCX Serial class with mindstorms NRLINK adapter.
