@@ -34,6 +34,6 @@ public class DebugStackFrame
     public int getMethodIndex(DebugThread thread, int frame)
     {
         // given a frame in the current stack return the associated method no.
-        return (DebugInterface.peekWord(thread.stackFrameArray.hashCode() + frame * FRAME_SIZE) - info.methodBase) / METHOD_SIZE;
+        return (DebugInterface.peekWord(thread.stackFrameArray, frame * FRAME_SIZE) - info.methodBase) / METHOD_SIZE;
     }
 }
