@@ -1,0 +1,585 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=windows-1252">
+	<TITLE>Preliminaries</TITLE>
+	<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.4  (Win32)">
+	<META NAME="AUTHOR" CONTENT="Roger">
+	<META NAME="CREATED" CONTENT="20080903;13360000">
+	<META NAME="CHANGED" CONTENT="20080903;13433328">
+	<STYLE TYPE="text/css">
+	<!--
+		@page { size: 10in 15in; margin-right: 1.25in; margin-top: 1in; margin-bottom: 4.46in }
+		P { margin-bottom: 0.08in; direction: ltr; color: #000000; widows: 2; orphans: 2 }
+		P.western { font-family: "Times New Roman", serif; font-size: 12pt; so-language: en-US }
+		P.cjk { font-family: "Times New Roman", serif; font-size: 12pt }
+		P.ctl { font-family: "Times New Roman", serif; font-size: 12pt; so-language: ar-SA }
+		H1 { margin-bottom: 0.04in; direction: ltr; color: #ff6600; widows: 2; orphans: 2 }
+		H1.western { font-family: "Arial", sans-serif; font-size: 16pt; so-language: en-US }
+		H1.cjk { font-family: "Times New Roman", serif; font-size: 16pt }
+		H1.ctl { font-family: "Arial", sans-serif; font-size: 16pt; so-language: ar-SA }
+		H2 { margin-bottom: 0.08in; direction: ltr; color: #ff6600; widows: 2; orphans: 2 }
+		H2.western { font-family: "Arial", sans-serif; font-size: 14pt; so-language: en-US; font-style: italic; font-weight: medium }
+		H2.cjk { font-family: "Times New Roman", serif; font-size: 14pt; font-style: italic; font-weight: medium }
+		H2.ctl { font-family: "Arial", sans-serif; font-size: 14pt; so-language: ar-SA; font-style: italic; font-weight: medium }
+		H3 { margin-left: 0.2in; margin-bottom: 0.08in; direction: ltr; color: #ff6600; widows: 2; orphans: 2 }
+		H3.western { font-family: "Arial", sans-serif; font-size: 13pt; so-language: en-US; font-style: italic }
+		H3.cjk { font-family: "Times New Roman", serif; font-size: 13pt; font-style: italic }
+		H3.ctl { font-family: "Arial", sans-serif; font-size: 13pt; so-language: ar-SA; font-style: italic }
+		H4 { margin-left: 0.3in; margin-bottom: 0.04in; direction: ltr; color: #000000; widows: 2; orphans: 2 }
+		H4.western { font-family: "Arial", sans-serif; so-language: en-US; font-style: italic }
+		H4.cjk { font-family: "Times New Roman", serif; font-style: italic }
+		H4.ctl { font-family: "Arial", sans-serif; so-language: ar-SA; font-style: normal; font-weight: medium }
+		P.body-text-2-western { margin-left: 0.1in; font-family: "Times New Roman", serif; font-size: 12pt; so-language: en-US }
+		P.body-text-2-cjk { margin-left: 0.1in; font-family: "Times New Roman", serif; font-size: 12pt }
+		P.body-text-2-ctl { margin-left: 0.1in; font-family: "Times New Roman", serif; font-size: 12pt; so-language: ar-SA }
+		P.body-text-3-western { margin-left: 0.2in; font-family: "Times New Roman", serif; font-size: 12pt; so-language: en-US }
+		P.body-text-3-cjk { margin-left: 0.2in; font-family: "Times New Roman", serif; font-size: 12pt }
+		P.body-text-3-ctl { margin-left: 0.2in; font-family: "Times New Roman", serif; font-size: 8pt; so-language: ar-SA }
+		P.body-text-4-western { margin-left: 0.3in; font-family: "Times New Roman", serif; font-size: 12pt; so-language: en-US }
+		P.body-text-4-cjk { margin-left: 0.3in; font-family: "Times New Roman", serif; font-size: 12pt }
+		P.body-text-4-ctl { margin-left: 0.3in; font-family: "Times New Roman", serif; font-size: 8pt; so-language: ar-SA }
+		A:link { color: #0000ff }
+		A:visited { color: #800080 }
+	-->
+	</STYLE>
+</HEAD>
+<BODY LANG="en-US" TEXT="#000000" LINK="#0000ff" VLINK="#800080" DIR="LTR">
+<P CLASS="western"><BR><BR>
+</P>
+<TABLE WIDTH=870 BORDER=0 CELLPADDING=7 CELLSPACING=0>
+	<COL WIDTH=162>
+	<COL WIDTH=680>
+	<TR VALIGN=TOP>
+		<TD WIDTH=162>
+			<P><A NAME="_top"></A><FONT COLOR="#0000ff"><U><A HREF="../index.htm">Tutorial
+			Start</A></U></FONT>  
+			</P>
+			<DIV ID="Table of Contents1" DIR="LTR">
+				<P><A HREF="#1.Compiling and Running NXJ programs|outline">Compiling
+				and Running NXJ programs</A></P>
+				<P STYLE="margin-left: 0.17in"><A HREF="#1.1.Using the leJOS NXJ command line tools|outline">Using
+				the leJOS NXJ command line tools</A></P>
+				<P STYLE="margin-left: 0.5in"><A HREF="#1.1.0.1.nxjc &ndash; compile a leJOS NXJ program|outline">nxjc
+				&ndash; compile  a programmer</A></P>
+				<P STYLE="margin-left: 0.5in"><A HREF="#1.1.0.2.nxjlink &ndash; link a leJOS NXJ program|outline">nxjlink
+				&ndash; link a programmer</A></P>
+				<P STYLE="margin-left: 0.5in"><A HREF="#1.1.0.3.nxjupload &ndash; upload a leJOS NXJ program|outline">nxjupload
+				&ndash; upload a program</A></P>
+				<P STYLE="margin-left: 0.5in"><A HREF="#1.1.0.4.nxj &ndash; link and upload and optional run a leJOS NXJ program|outline">nxj
+				&ndash; link, upload and optional run a  program</A></P>
+				<P STYLE="margin-left: 0.17in"><A HREF="#1.2.Using the Eclipse IDE|outline">Using
+				the Eclipse IDE</A></P>
+				<P STYLE="margin-left: 0.33in"><A HREF="#1.2.1.Setting up Eclipse|outline">Setting
+				up Eclipse</A></P>
+				<P STYLE="margin-left: 0.33in"><A HREF="#1.2.2.Creating a leJOS project|outline">Creating
+				a leJOS project</A></P>
+				<P STYLE="margin-left: 0.33in"><A HREF="#1.2.3.Creating external tools|outline">Creating
+				external tools</A></P>
+				<P STYLE="margin-left: 0.5in"><A HREF="#1.2.3.1.Creating a compiler tool|outline">Creating
+				a compiler tool</A></P>
+				<P STYLE="margin-left: 0.5in"><A HREF="#1.2.3.2.Creating a tool to link and upload, |outline">Creating
+				a tool to link and upload, </A>
+				</P>
+				<P STYLE="margin-left: 0.33in"><A HREF="#1.2.4.Using ant build files|outline">Using
+				ant build files</A></P>
+				<P STYLE="margin-left: 0.33in"><A HREF="#1.2.5.Installing and using the leJOS plugin|outline">Installing
+				and using the leJOS plugin</A></P>
+				<P STYLE="margin-left: 0.17in"><A HREF="#1.3.Using the NetBeans IDE|outline">Using
+				the NetBeans IDE</A></P>
+				<P STYLE="margin-left: 0.33in"><A HREF="#1.3.1.Getting Started with NetBeans|outline">Getting
+				Started with NetBeans</A></P>
+				<P STYLE="margin-left: 0.33in"><A HREF="#1.3.2.Installing and using the leJOSNXT plugin|outline">Installing
+				and using the leJOSNXT plugin</A></P>
+				<P STYLE="margin-left: 0.33in"><A HREF="#1.3.3.Using NetBeans with NXJ|outline">Using
+				NetBeans with NXJ</A></P>
+			</DIV>
+			<P CLASS="western"><BR>
+			</P>
+		</TD>
+		<TD WIDTH=680>
+			<H1 CLASS="western"><A NAME="_Preliminaries_1"></A><A NAME="1.Compiling and Running NXJ programs|outline"></A>
+			Compiling and Running NXJ programs</H1>
+			<H2 CLASS="western"><A NAME="1.1.Using the leJOS NXJ command line tools|outline"></A>
+			Using the leJOS NXJ command line tools</H2>
+			<P CLASS="body-text-2-western">The tools for compiling, linking
+			and uploading leJOS NXJ programs are:</P>
+			<UL>
+				<LI><P CLASS="western">nxjc</P>
+				<LI><P CLASS="western">nxjlink</P>
+				<LI><P CLASS="western">nxjupload</P>
+				<LI><P CLASS="western">nxj</P>
+			</UL>
+			<H4 CLASS="western"><A NAME="1.1.0.1.nxjc &ndash; compile a leJOS NXJ program|outline"></A>
+			nxjc &ndash; compile a leJOS NXJ program</H4>
+			<P CLASS="body-text-4-western">Compiles one or more java files.</P>
+			<P LANG="fr-FR" CLASS="body-text-4-western">Usage: nxjc
+			&lt;java-files&gt;</P>
+			<P LANG="fr-FR" CLASS="body-text-4-western">Example: 
+			</P>
+			<P CLASS="western"><SPAN ID="Frame1" DIR="LTR" STYLE="float: left; width: 1.76in; height: 0.34in; border: 1px solid #000000; padding: 0.05in 0.1in; background: #ffffff">
+				<P CLASS="western"><FONT FACE="Courier New, monospace">nxjc
+				View.java</FONT></P>
+			</SPAN><BR><BR>
+			</P>
+			<P CLASS="body-text-4-western">nxjc calls javac with parameters:</P>
+			<UL>
+				<LI><P CLASS="western">&ndash;source 1.3 
+				</P>
+				<LI><P CLASS="western">&ndash;target 1.1</P>
+				<LI><P CLASS="western">&ndash;bootclasspath &lt;bootclasspath&gt;
+								</P>
+				<LI><P CLASS="western">&lt;java-files&gt;</P>
+			</UL>
+			<P CLASS="body-text-4-western" STYLE="margin-left: 0.5in">-bootclasspath
+			is set because leJOS does not use the standard java.lang classes
+			but has its own versions in classes.jar.</P>
+			<P CLASS="body-text-4-western" STYLE="margin-left: 0.5in">-source
+			1.3 and &ndash;target 1.1 are set because the leJOS VM does not
+			support the latest java source and class file versions.</P>
+			<P CLASS="body-text-4-western"><BR><BR>
+			</P>
+			<H4 CLASS="western"><A NAME="1.1.0.2.nxjlink &ndash; link a leJOS NXJ program|outline"></A>
+			nxjlink &ndash; link a leJOS NXJ program</H4>
+			<P CLASS="body-text-4-western"><BR><BR>
+			</P>
+			<P CLASS="body-text-4-western">Calls the leJOS linker.</P>
+			<P CLASS="body-text-4-western">Usage:  nxjlink [-v|--verbose]
+			[-a|--all] class &ndash;o &lt;binary&gt;</P>
+			<P CLASS="body-text-4-western">Example:</P>
+			<P CLASS="western"><SPAN ID="Frame2" DIR="LTR" STYLE="float: left; width: 3.42in; height: 0.3in; border: 1px solid #000000; padding: 0.05in 0.1in; background: #ffffff">
+				<P CLASS="western"><FONT FACE="Courier New, monospace">nxjlink &ndash;v
+				Tune &ndash;o Tune.nxj</FONT></P>
+			</SPAN><BR><BR>
+			</P>
+			<P CLASS="body-text-4-western">Links the specified class with any
+			classes that it references in the current directory and with the
+			standard leJOS classes from classes.jar to produce a binary NXJ
+			program that can be uploaded and run.</P>
+			<P CLASS="body-text-4-western">The &ndash;v or &ndash;verbose flag
+			causes a list of class names and method signatures included in the
+			binary  to be output to the standard output.</P>
+			<P CLASS="body-text-4-western">The linker removes methods that are
+			not used. Specify &ndash;a or &ndash;all to include all  methods
+			whether they are used or not.</P>
+			<P CLASS="body-text-4-western">Use the &ndash;h or &ndash;help
+			flag to print out the options.</P>
+			<H4 CLASS="western"><A NAME="1.1.0.3.nxjupload &ndash; upload a leJOS NXJ program|outline"></A>
+			nxjupload &ndash; upload a leJOS NXJ program</H4>
+			<P CLASS="body-text-4-western">Usage: nxjupload [-b|--bluetooth]
+			[-u|--usb] [-d|--address address] [-n|--name name]  [-r|--run]
+			&lt;binary&gt;</P>
+			<P CLASS="body-text-4-western">Example 
+			</P>
+			<P CLASS="western"><SPAN ID="Frame3" DIR="LTR" STYLE="float: left; width: 2.12in; height: 0.37in; border: 1px solid #000000; padding: 0.05in 0.1in; background: #ffffff">
+				<P CLASS="western">nxjupload  Tune.nxj</P>
+			</SPAN><BR><BR>
+			</P>
+			<P CLASS="western" STYLE="margin-bottom: 0in"><BR>
+			</P>
+			<P CLASS="body-text-4-western">Uploads the binary (.nxj) file. By
+			default usb is tried first and then Bluetooth. If the &ndash;bluetooth
+			flag iset, only Bluetooth is tried. If &ndash;usb is set, only USB
+			is tried.</P>
+			<P CLASS="body-text-4-western">When Bluetooth is used, a search
+			for Bluetooth devices is done, unless the &ndash;address flag is
+			set, when a device with the given address is connected to.</P>
+			<P CLASS="body-text-4-western">The &ndash;name parameter limits
+			the search for a NXT with the given name. If this is not
+			specified, nxjupload tries to connect to each NXT that it finds
+			and will upload to the first NXT that is successfully connects to.</P>
+			<P CLASS="body-text-4-western">If the &ndash;run parameter is
+			specified, the program is run after it has been uploaded.</P>
+			<H4 CLASS="western"><A NAME="1.1.0.4.nxj &ndash; link and upload and optional run a leJOS NXJ program|outline"></A>
+			nxj &ndash; link and upload and optional run a leJOS NXJ program</H4>
+			<P CLASS="body-text-4-western">Usage: nxj [options] &lt;class&gt;</P>
+			<P CLASS="body-text-4-western">E<SPAN ID="Frame4" DIR="LTR" STYLE="float: left; width: 1.94in; height: 0.3in; border: 1px solid #000000; padding: 0.05in 0.1in; background: #ffffff">
+				<P CLASS="body-text-4-western"><FONT FACE="Courier New, monospace">nxj
+				&ndash;r Tune</FONT></P>
+				<P CLASS="western"><BR>
+				</P>
+			</SPAN>xample:
+			</P>
+			<P CLASS="body-text-4-western"><BR><BR>
+			</P>
+			<P CLASS="body-text-4-western"> The nxj command links and uploads
+			a lejOS NXJ program. It is the equivalent of nxjlink followed by
+			nxjupload.</P>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<P CLASS="body-text-2-western" STYLE="margin-left: 0in"><FONT COLOR="#0000ff"><U><A HREF="#_top">Back
+			to Top</A></U></FONT></P>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<H2 CLASS="western"><A NAME="1.2.Using the Eclipse IDE|outline"></A>
+			Using the Eclipse IDE</H2>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<P CLASS="body-text-2-western">Programming for leJOS NXJ is best
+			done using an Integrated Development Environment. IDEs have
+			syntax-directed editors that immediately show you any syntax
+			errors in your program, rather than waiting until you compile the
+			program and then showing a list of errors. This, together with
+			color coding of the source, automatic formatting of the code,
+			prompting for method names and signatures, expanding and
+			collapsing parts of your program, and many other editing features,
+			makes creating your program a much faster and more enjoyable
+			experience. But the advantages of the IDE do not end there: they
+			also help you with creating and building projects, debugging,
+			generating documentation, and creating user interfaces. Java IDEs
+			put all the Sun Java tools and a variety of third-party tools at
+			your fingertips. They make supporting new tools simple, either by
+			use of plug-ins or by integration of external tools.</P>
+			<P CLASS="body-text-2-western">IDEs are easy to set and use and
+			you should use them for all your leJOS programming &ndash; even
+			the simplest of projects.</P>
+			<P CLASS="body-text-2-western">This tutorial concentrates the
+			Eclipse Java Integrated Development Environment, as this is
+			currently the most popular one for leJOS programmers, but there
+			are many other Java IDEs, such as Netbeans and BlueJ, each with
+			their own strengths,</P>
+			<P CLASS="body-text-2-western">There are three ways of building
+			leJOS programs in Eclipse:</P>
+			<UL>
+				<LI><P CLASS="western">Using external tools</P>
+				<LI><P CLASS="western">Using ant build files</P>
+				<LI><P CLASS="western">Using a leJOS plug-in</P>
+			</UL>
+			<P CLASS="body-text-3-western">It is worth understanding all of
+			these techniques as they each have there advantages, and a
+			combination of the techniques may well work best for your
+			projects.</P>
+			<P CLASS="body-text-3-western">This tutorial assumes you are
+			familiar with Eclipse.  If not,  try some of the Eclipse
+			tutorials. 
+			</P>
+			<H3 CLASS="western"><A NAME="1.2.1.Setting up Eclipse|outline"></A>
+			Setting up Eclipse</H3>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<H3 CLASS="western"><A NAME="1.2.2.Creating a leJOS project|outline"></A>
+			Creating a leJOS project</H3>
+			<P CLASS="body-text-3-western">Since NXJ uses a subset of Java,
+			you should not develop  NXJ and regular Java applications in the
+			same project.  If you do, you the compiler is likely to produce
+			strange error messages and code that will not run.  Here is how to
+			crate a NXJ project&rdquo;</P>
+			<OL>
+				<LI><P CLASS="body-text-3-western">Navigate  to File &gt; New &gt;
+				Java project to open the New Project window.  
+				</P>
+				<LI><P CLASS="body-text-3-western">Enter the name.  In Project
+				Layout  select   &ldquo;Use Project Folder as root for source and
+				class files.&rdquo;.</P>
+				<LI><P CLASS="body-text-3-western">Click  next  to open the
+				Properties window.<BR>Select JavaBuildPath &gt; Libraries to see
+				the window below. 
+				</P>
+				<LI><P CLASS="body-text-3-western">Click  AddJars.   If the
+				JarSelection window shows classes, click on it.</P>
+				<LI><P CLASS="body-text-3-western">Otherwise, click on Add
+				External Jars and browse to lejos_nxj \lib and click on
+				classes.jar. .  (You will have to do this for every project.)</P>
+				<LI><P CLASS="body-text-3-western">Click OK.</P>
+			</OL>
+			<P CLASS="western"><FONT COLOR="#000000"><IMG SRC="CompileAndRun_html_m3ffea409.png" NAME="graphics1" ALIGN=LEFT HSPACE=12 WIDTH=717 HEIGHT=550 BORDER=1></FONT><BR><BR>
+			</P>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<P CLASS="body-text-2-western" STYLE="margin-left: 0in"><FONT COLOR="#0000ff"><U><A HREF="#_top">Back
+			to Top</A></U></FONT></P>
+			<P CLASS="body-text-2-western"> 
+			</P>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<H3 CLASS="western"><A NAME="1.2.3.Creating external tools|outline"></A>
+			Creating external tools</H3>
+			<P CLASS="body-text-3-western">You need to create external tools 
+			to compile and to  upload and link your programs.  These tools can
+			be used for all NXJ projects.   However, they should not be used
+			for programs that will run on a PC. Here is the procedure:</P>
+			<OL>
+				<LI><P CLASS="body-text-3-western">Select Run &gt; External tools
+				&gt; Open External lTools Dialog</P>
+				<LI><P CLASS="body-text-3-western">Click on the Launch New
+				Configuration button on the left of the menu bar. 
+				</P>
+				<LI><P CLASS="body-text-3-western">Click on the New Configuration
+				button to see this.</P>
+				<LI><P CLASS="body-text-3-western">Now your are ready to create a
+				compiler tool. by filling in the parameters.</P>
+			</OL>
+			<H4 CLASS="western"><A NAME="1.2.3.1.Creating a compiler tool|outline"></A>
+			Creating a compiler tool</H4>
+			<P CLASS="western"><FONT COLOR="#000000"><IMG SRC="CompileAndRun_html_30e69545.png" NAME="graphics2" ALIGN=LEFT HSPACE=12 WIDTH=742 HEIGHT=495 BORDER=1></FONT><BR><BR>
+			</P>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<P CLASS="western" STYLE="margin-left: 0.25in"><B>Compiler tool
+			parameters</B>:</P>
+			<UL>
+				<LI><P CLASS="western">Name: Compiler for example 
+				</P>
+				<LI><P CLASS="western">Location, browse to lejos_nxj\bin and
+				click on nxjc.bat..</P>
+				<LI><P CLASS="western">Working Directory, click on Variables .
+				and select ${Project_loc}.</P>
+				<LI><P CLASS="western">Arguments,  select ${java_type_name} from
+				Variables and type .java..  
+				</P>
+			</UL>
+			<P CLASS="body-text-4-western">The window should now look like
+			this. Then click Apply</P>
+			<P CLASS="body-text-4-western"><FONT COLOR="#000000"><IMG SRC="CompileAndRun_html_m70d7cd28.png" NAME="graphics3" ALIGN=LEFT HSPACE=12 WIDTH=707 HEIGHT=471 BORDER=1></FONT><BR><BR>
+			</P>
+			<P CLASS="body-text-4-western"><BR><BR>
+			</P>
+			<P CLASS="body-text-4-western"><BR><BR>
+			</P>
+			<P CLASS="body-text-4-western"><BR><BR>
+			</P>
+			<P CLASS="body-text-4-western"><BR><BR>
+			</P>
+			<P CLASS="body-text-4-western"><BR><BR>
+			</P>
+			<P CLASS="body-text-4-western"><BR><BR>
+			</P>
+			<P CLASS="body-text-4-western"><BR><BR>
+			</P>
+			<P CLASS="body-text-4-western"><BR><BR>
+			</P>
+			<P CLASS="body-text-4-western"><BR><BR>
+			</P>
+			<P CLASS="body-text-4-western"><BR><BR>
+			</P>
+			<P CLASS="body-text-4-western"><BR><BR>
+			</P>
+			<P CLASS="body-text-4-western"><BR><BR>
+			</P>
+			<P CLASS="body-text-4-western"><BR><BR>
+			</P>
+			<P CLASS="body-text-4-western"><BR><BR>
+			</P>
+			<P CLASS="body-text-4-western"><BR><BR>
+			</P>
+			<P CLASS="body-text-4-western"><BR><BR>
+			</P>
+			<P CLASS="body-text-4-western" STYLE="margin-left: 0in"><BR><BR>
+			</P>
+			<H4 CLASS="western"><A NAME="1.2.3.2.Creating a tool to link and upload, |outline"></A>
+			Creating a tool to link and upload, 
+			</H4>
+			<P CLASS="body-text-4-western">Just use the the same procedure
+			that you just used for the compiler tool. 
+			</P>
+			<P CLASS="body-text-3-western" STYLE="margin-left: 0.3in"><B>Link
+			and Upload tool parameters.</B>  
+			</P>
+			<UL>
+				<LI><P CLASS="western">Name:   whatever you want</P>
+				<LI><P CLASS="western">Location:  C:\lejos_nxj\bin\nxj.bat; 
+				</P>
+				<LI><P CLASS="western">Working Directory:: ${project_loc} 
+				</P>
+				<LI><P CLASS="western">Arguments:: ${java_type_name} -v 
+				</P>
+			</UL>
+			<P CLASS="body-text-3-western">Finally, click on Organize
+			Favorites and select your newly created tools.</P>
+			<P CLASS="body-text-2-western" STYLE="margin-left: 0in"><FONT COLOR="#0000ff"><U><A HREF="#_top">Back
+			to Top</A></U></FONT></P>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<H3 CLASS="western"><A NAME="1.2.4.Using ant build files|outline"></A>
+			Using ant build files</H3>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<H3 CLASS="western"><A NAME="1.2.5.Installing and using the leJOS plugin|outline"></A>
+			Installing and using the leJOS plugin</H3>
+			<P CLASS="body-text-2-western" STYLE="margin-left: 0in"><FONT COLOR="#0000ff"><U><A HREF="#_top">Back
+			to Top</A></U></FONT></P>
+			<H2 CLASS="western"><A NAME="1.3.Using the NetBeans IDE|outline"></A>
+			Using the NetBeans IDE</H2>
+			<P CLASS="body-text-2-western">First, download  Netbeans 6.1, 
+			BasicIDE  and also  JavaSE (if you don&rsquo;t already have it).</P>
+			<H3 CLASS="western"><A NAME="1.3.1.Getting Started with NetBeans|outline"></A>
+			Getting Started with NetBeans</H3>
+			<P CLASS="body-text-3-western">If you are not familiar with Net
+			Beans, try the NetBeans quick start tutorial
+			<FONT COLOR="#0000ff"><U><A HREF="http://www.netbeans.org/kb/60/java/quickstart.html">http://www.netbeans.org/kb/60/java/quickstart.html</A></U></FONT></P>
+			<P CLASS="body-text-3-western">For an introduction to developing
+			general Java applications, see
+			<FONT COLOR="#0000ff"><A HREF="http://www.netbeans.org/kb/60/java/javase-intro.html%23setup"><FONT COLOR="#000000"><SPAN STYLE="text-decoration: none">http://www.netbeans.org/kb/60/java/javase-intro.html#setup</SPAN></FONT></A></FONT></P>
+			<P CLASS="body-text-3-western">And to learn some shortcuts in
+			using the Editor, see
+			<FONT COLOR="#0000ff"><U><A HREF="http://www.netbeans.org/kb/60/java/editor-tips.html">http://www.netbeans.org/kb/60/java/editor-tips.html</A></U></FONT></P>
+			<P CLASS="body-text-3-western"><BR><BR>
+			</P>
+			<H3 CLASS="western"><A NAME="1.3.2.Installing and using the leJOSNXT plugin|outline"></A>
+			Installing and using the leJOSNXT plugin</H3>
+			<P CLASS="body-text-3-western">The simplest way to use NetBeans to
+			develop NXJ code is to use the plugin.</P>
+			<OL>
+				<LI><P CLASS="western">Go to
+				<FONT COLOR="#0000ff"><U><A HREF="http://homepages.feis.herts.ac.uk/~comqdhb/lego/default.php">http://homepages.feis.herts.ac.uk/~comqdhb/lego/default.php</A></U></FONT></P>
+				<LI><P CLASS="western">Click Netbeans Module  and <SPAN LANG="en-GB">
+				download the file </SPAN><FONT COLOR="#0000ff"><U><A HREF="http://homepages.feis.herts.ac.uk/%7Ecomqdhb/lego/org-dHb-lejosnxt.nbm"><FONT FACE="Courier New, monospace"><SPAN LANG="en-GB">org-dHb-lejosnxt.nbm</SPAN></FONT></A></U></FONT><FONT FACE="Courier New, monospace"><SPAN LANG="en-GB">.</SPAN></FONT></P>
+				<LI><P LANG="en-GB" CLASS="western" STYLE="margin-bottom: 0in">Open
+				NetBeans 
+				</P>
+				<LI><P CLASS="western" STYLE="margin-bottom: 0in"><SPAN LANG="en-GB">In
+				 Tools/Plugins  open the  </SPAN><SPAN LANG="en-GB"><I>Downloaded</I></SPAN><SPAN LANG="en-GB">..tab.</SPAN></P>
+				<LI><P LANG="en-GB" CLASS="western" STYLE="margin-bottom: 0in">Click
+				on addPlugins; (.nbm Files)'</P>
+				<LI><P CLASS="western" STYLE="margin-bottom: 0in"><SPAN LANG="en-GB">If
+				 LEJOSNXT does not appear, browse to  </SPAN><FONT COLOR="#0000ff"><U><A HREF="http://homepages.feis.herts.ac.uk/%7Ecomqdhb/lego/org-dHb-lejosnxt.nbm"><FONT FACE="Courier New, monospace"><SPAN LANG="en-GB">org-dHb-lejosnxt.nbm</SPAN></FONT></A></U></FONT><FONT FACE="Courier New, monospace"><SPAN LANG="en-GB">
+				</SPAN></FONT><SPAN LANG="en-GB"> and click open</SPAN></P>
+				<LI><P LANG="en-GB" CLASS="western" STYLE="margin-bottom: 0in">Click
+				on install (bottom left), and accept.   Ignore the warnings</P>
+				<LI><P LANG="en-GB" CLASS="western" STYLE="margin-bottom: 0in">If
+				you have been successful, the Plugins/Installed tab should show
+				leJOSNXT near the bottom of the list. 
+				</P>
+				<LI><P LANG="en-GB" CLASS="western" STYLE="margin-bottom: 0in">restart
+				NetBeans</P>
+				<LI><P LANG="en-GB" CLASS="western" STYLE="margin-bottom: 0in">Open
+				the Library Manager in  Tools/Libraries</P>
+				<LI><P LANG="en-GB" CLASS="western" STYLE="margin-bottom: 0in">There
+				you should find the library  LEJOS.   The  jar   files it
+				contains may not  be up to date, so replace them with the
+				corresponding files from lejos_nxj\lib.</P>
+				<LI><P LANG="en-GB" CLASS="western" STYLE="margin-bottom: 0.19in">
+				Create a new Library named PC_NXJ and add to it the four jar
+				files in lejos_nsj\3rdparty\lib.  You will need this to write
+				code on your PC that communicates with NXJ running on the NXT. 
+				</P>
+			</OL>
+			<H3 LANG="en-GB" CLASS="western"><A NAME="1.3.3.Using NetBeans with NXJ|outline"></A>
+			Using NetBeans with NXJ</H3>
+			<P LANG="en-GB" CLASS="body-text-3-western">Creating a new NXJ
+			project is almost the same as the procedure you used for a your
+			normal Java application in the tutorial.&nbsp; But there are a few
+			differences.</P>
+			<P LANG="en-GB" CLASS="body-text-3-western">After you have
+			installed the lejosNXT plugin and you click on new project&nbsp;
+			you should see this window.&nbsp;&nbsp; If the blue NXT icon does
+			not appear in the Projects column, click on the Samples folder.&nbsp;&nbsp;
+			Then click the Next &gt;&nbsp; button proceed as before.</P>
+			<P CLASS="body-text-3-western"> 
+			<FONT COLOR="#000000"><IMG SRC="CompileAndRun_html_2d2b53dd.png" NAME="graphics4" ALIGN=BOTTOM WIDTH=708 HEIGHT=487 BORDER=1></FONT></P>
+			<P LANG="en-GB" CLASS="western">Be sure your project contains the
+			LEJOS library.&nbsp; 
+			</P>
+			<P LANG="en-GB" CLASS="western">The new project will contain a
+			class&nbsp; Main.java which is yet another implementation of&nbsp;
+			&ldquo;Hello world&rdquo;.&nbsp;&nbsp; You can use it as a
+			template for your work.&nbsp;&nbsp; Change the&nbsp; Class&nbsp;
+			name to something more informative.&nbsp; To do this, &nbsp;select
+			the name, then use&nbsp; Refactor &gt; rename&nbsp; (keyboard
+			shortcut&nbsp;&nbsp; Ctrl &ndash; R).</P>
+			<P CLASS="western"><SPAN LANG="en-GB">This template class contains
+			the statement&nbsp;&nbsp; </SPAN><FONT FACE="Courier New, monospace"><SPAN LANG="en-GB">import
+			lejos.nxt.*;&nbsp; </SPAN></FONT><SPAN LANG="en-GB">&nbsp;which is
+			needed in all programs that run on the NXT. </SPAN>
+			</P>
+			<P LANG="en-GB" CLASS="western">Once the project is created, you
+			edit, compile&nbsp; and&nbsp; run your project&nbsp; using the
+			usual buttons or menus or keyboard shortcuts&nbsp; just as you
+			would with a normal java application development project.</P>
+			<P CLASS="body-text-3-western"><BR><BR>
+			</P>
+			<P CLASS="body-text-2-western" STYLE="margin-left: 0in"><FONT COLOR="#0000ff"><U><A HREF="#_top">Back
+			to Top</A></U></FONT></P>
+			<P CLASS="western"><BR><BR>
+			</P>
+			<P CLASS="western"><BR>
+			</P>
+		</TD>
+	</TR>
+</TABLE>
+<P CLASS="western"><BR><BR>
+</P>
+<P CLASS="western"><BR><BR>
+</P>
+<P CLASS="western"><BR><BR>
+</P>
+<P CLASS="western"><BR><BR>
+</P>
+<P CLASS="western"><BR><BR>
+</P>
+<P CLASS="western"><A NAME="_Preliminaries"></A><BR><BR>
+</P>
+</BODY>
+</HTML>
