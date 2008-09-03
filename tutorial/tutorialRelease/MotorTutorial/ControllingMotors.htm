@@ -1,19 +1,18 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html dir="ltr" xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
-	<head>
-		<!-- CSS -->
-		<link rel="stylesheet" href="../r_css/lejos-tutorial.css" type="text/css" />
-
-		<!-- ICON -->
-		<link rel="shortcut icon" href="../favicon.ico" type="image/x-icon" />
-		
-	<TITLE>Motor</TITLE>
-	<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.4  (Win32)">
-	<META NAME="AUTHOR" CONTENT="Roger">
-	<META NAME="CREATED" CONTENT="20080812;20000000">
-	<META NAME="CHANGED" CONTENT="20080829;11413268">
-	<STYLE TYPE="text/css">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html dir="ltr" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml"
+ lang="en">
+<head>
+<!-- CSS -->
+  <link rel="stylesheet" href="../r_css/lejos-tutorial.css"
+ type="text/css">
+<!-- ICON -->
+  <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon">
+  <title>Motor</title>
+  <meta name="GENERATOR" content="OpenOffice.org 2.4  (Win32)">
+  <meta name="AUTHOR" content="Roger">
+  <meta name="CREATED" content="20080812;20000000">
+  <meta name="CHANGED" content="20080829;11413268">
+  <style type="text/css">
 	<!--
 		@page { size: 12.2in 13in; margin-left: 0.79in; margin-right: 2.1in; margin-top: 1in; margin-bottom: 2.46in }
 		TD P { margin-bottom: 0.08in; direction: ltr; color: #000000; widows: 2; orphans: 2 }
@@ -39,794 +38,911 @@
 		A:link { color: #0000ff }
 		A:visited { color: #800080 }
 	-->
-	</STYLE>
-	</head>
-	<body>
-		<a id="top" name="top"></a>
-		<!-- N1: HEADER -->
-		<table cellpadding="0" cellspacing="0" class="n1t1">
-			<tr>
-				<td><img src="../r_media/images/tutorial_header1.jpg" /></td>
-				<td align="right"><img src="../r_media/images/tutorial_header2.jpg" /></td>
-			</tr>
-		</table>
-		<!-- N2: CONTENTS -> NAVIGATION SYSTEMS AND CONTENTS -->
-		<table cellpadding="0" cellspacing="0" class="n2t1">
-			<tr>
-				<td class="n2t1r1c1">
-					<P CLASS="western"><A HREF="#1.Controlling the Motors|outline">Controlling
-					the Motors</A></P>
-					<P CLASS="western" STYLE="margin-left: 0.17in"><A HREF="#1.1.Introduction to the Motor class.|outline">Introduction
-					to the Motor class.</A></P>
-					<P CLASS="western" STYLE="margin-left: 0.17in"><A HREF="#1.2.Program 1 - Basic movement controls.|outline">Program
-					1 - Basic movement controls.</A></P>
-					<P CLASS="western" STYLE="margin-left: 0.17in"><A HREF="#1.3.Program 2: Using the Tachometer|outline">Program
-					2: Using the Tachometer</A></P>
-					<P CLASS="western" STYLE="margin-left: 0.17in"><A HREF="#1.4.Program 3:  Accurate rotation control|outline">Program
-					3: Accurate rotation control</A></P>
-					<P CLASS="western" STYLE="margin-left: 0.17in"><A HREF="#1.5.Program 4.  Interrupting rotation|outline">Program
-					4. Interrupting rotation</A></P>
-					<P CLASS="western"><A HREF="#2.Program 5: Regulating motor speed|outline">Program
-					5: Regulating motor speed</A></P>
-					<P CLASS="western" STYLE="margin-left: 0.17in"><A HREF="#2.1.Other Motor Methods|outline">Other
-					Motor Methods</A></P>
-				</td>
-				<td>
-		<!-- DO NOT MANINPULATE -->
-        <div id="BreadCrumbs">
-            <a href="../index.htm" target="_top">Home Page</a>
-        &gt;
-            <a href="#">Controlling the Motors</a>
-
-        </div>
-        <div class="NavBit">
-                <a target="_top" href="../Menusystem/MenuSystem.htm">«&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../WheeledVehicles/WheeledVehicles.htm">Next&nbsp;»</a>
-        </div>
-		<!-- CONTENT TITLE -->
- 
-			<H1 CLASS="western"><A NAME="Top"></A><A NAME="1.Controlling the Motors|outline"></A>
-			Controlling the Motors</H1>
-			<H2 CLASS="western"><A NAME="1.1.Introduction to the Motor class.|outline"></A>
-			Introduction to the Motor class.</H2>
-			<P CLASS="western" STYLE="margin-left: 0.1in; margin-bottom: 0in"><BR>
-			</P>
-			<P CLASS="western" STYLE="margin-left: 0.1in; margin-bottom: 0in">This
-			class is an abstraction of a NXT motor. To be useful, a motor must
-			be connected toone of the three NXT motor ports. This class
-			provides an instance for each port. They are: Motor.A, Motor.B and
-			Motor.C. The class provides methods for controlling the motor, and
-			for finding out what the motor is doing. 
-			</P>
-			<P CLASS="western" STYLE="margin-left: 0.1in; margin-bottom: 0in">This
-			tutorial contains a set of five programs for you to write. With
-			them, you can perform experiments to understand how the NXT motor
-			performs. They are simple enough so you don&rsquo;t need much Java
-			experience to write them. Finally, there is a discussion of <A HREF="#_Other_Motor_Methods"><FONT COLOR="#0000ff"><U>other
-			motor methods</U></FONT></A> , not used in the programs, that you
-			might find useful. 
-			</P>
-			<P CLASS="western" STYLE="margin-bottom: 0in"><BR>
-			</P>
-			<H2 CLASS="western"><A NAME="1.2.Program 1 - Basic movement controls.|outline"></A>
-			Program 1 - Basic movement controls.</H2>
-			<P CLASS="western" STYLE="margin-left: 0.1in; margin-bottom: 0in">This
-			program uses the basic motor methods that control movement.</P>
-			<H3 CLASS="western">Methods used in this program</H3>
-			<DL>
-				<DD>
-				<TABLE WIDTH=548 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=7 CELLSPACING=0>
-					<COL WIDTH=64>
-					<COL WIDTH=166>
-					<COL WIDTH=274>
-					<TR VALIGN=TOP>
-						<TD WIDTH=64>
-							<P CLASS="western">Class</P>
-						</TD>
-						<TD WIDTH=166>
-							<P CLASS="western">Method name 
-							</P>
-						</TD>
-						<TD WIDTH=274>
-							<P CLASS="western">Notes</P>
-						</TD>
-					</TR>
-					<TR VALIGN=TOP>
-						<TD WIDTH=64>
-							<P CLASS="western"><FONT FACE="Courier New, monospace">Motor</FONT></P>
-						</TD>
-						<TD WIDTH=166>
-							<P CLASS="western"><FONT FACE="Courier New, monospace">forward()</FONT></P>
-						</TD>
-						<TD WIDTH=274>
-							<P CLASS="western">Start the motor rotating forward</P>
-						</TD>
-					</TR>
-					<TR VALIGN=TOP>
-						<TD WIDTH=64>
-							<P CLASS="western"><BR>
-							</P>
-						</TD>
-						<TD WIDTH=166>
-							<P CLASS="western"><FONT FACE="Courier New, monospace">backward()</FONT></P>
-						</TD>
-						<TD WIDTH=274>
-							<P CLASS="western">Start rotating backward 
-							</P>
-						</TD>
-					</TR>
-					<TR VALIGN=TOP>
-						<TD WIDTH=64>
-							<P CLASS="western"><BR>
-							</P>
-						</TD>
-						<TD WIDTH=166>
-							<P CLASS="western"><FONT FACE="Courier New, monospace">changeDirection()</FONT></P>
-						</TD>
-						<TD WIDTH=274>
-							<P CLASS="western">Reverse the direction of rotation</P>
-						</TD>
-					</TR>
-					<TR VALIGN=TOP>
-						<TD WIDTH=64>
-							<P CLASS="western"><BR>
-							</P>
-						</TD>
-						<TD WIDTH=166>
-							<P CLASS="western"><FONT FACE="Courier New, monospace">stop()</FONT></P>
-						</TD>
-						<TD WIDTH=274>
-							<P CLASS="western">Stop quickly</P>
-						</TD>
-					</TR>
-					<TR VALIGN=TOP>
-						<TD WIDTH=64>
-							<P CLASS="western"><FONT FACE="Courier New, monospace">Button</FONT></P>
-						</TD>
-						<TD WIDTH=166>
-							<P CLASS="western"><FONT FACE="Courier New, monospace">waitForPress()</FONT></P>
-						</TD>
-						<TD WIDTH=274>
-							<P CLASS="western">Wait till any button is pressed</P>
-						</TD>
-					</TR>
-					<TR VALIGN=TOP>
-						<TD WIDTH=64>
-							<P CLASS="western"><FONT FACE="Courier New, monospace">LCD</FONT></P>
-						</TD>
-						<TD WIDTH=166>
-							<P CLASS="western"><FONT FACE="Courier New, monospace">drawString(String
-							str,int x,int y)</FONT></P>
-						</TD>
-						<TD WIDTH=274>
-							<P CLASS="western">Draw a string. 
-							</P>
-						</TD>
-					</TR>
-				</TABLE>
-			</DL>
-			<H3 CLASS="western">What the program should do: 
-			</H3>
-			<OL>
-				<LI><P CLASS="western">Run motor A in the forward direction.</P>
-				<LI><P CLASS="western">Display FORWARD in the top line.</P>
-				<LI><P CLASS="western">Wait until a button is pressed.</P>
-				<LI><P CLASS="western">Run the motor backward.</P>
-				<LI><P CLASS="western">Display BACKWARD in next line.</P>
-				<LI><P CLASS="western">Wait until a button is pressed.</P>
-				<LI><P CLASS="western">Run motor A in the forward direction.</P>
-				<LI><P CLASS="western">Display FORWARD in the next line. 
-				</P>
-				<LI><P CLASS="western">Wait until a button is pressed.</P>
-				<LI><P CLASS="western">Stop the motor.</P>
-			</OL>
-			<P CLASS="western" STYLE="margin-left: 0.1in; margin-bottom: 0in">It
-			is possible to write this program using each Motor method only
-			once.</P>
-			<P CLASS="western" STYLE="margin-left: 0.1in; margin-bottom: 0in"><A HREF="#_Controlling_the_Motors"><FONT COLOR="#0000ff"><U>Solution</U></FONT></A></P>
-			<P CLASS="western" STYLE="margin-left: 0.1in; margin-bottom: 0in"><A HREF="#Top"><FONT COLOR="#0000ff"><U>Back
-			to top</U></FONT></A></P>
-			<H2 CLASS="western"><A NAME="1.3.Program 2: Using the Tachometer|outline"></A>
-			Program 2: Using the Tachometer</H2>
-			<P CLASS="western" STYLE="margin-left: 0.1in; margin-bottom: 0in">The
-			NXT motor has a built in tachometer that keeps track of the
-			current angle (in degrees) of the motor axel. The purpose of this
-			program is to use the tachometer to find out how quickly the motor
-			stops. 
-			</P>
-			<H3 CLASS="western">New methods used in this program</H3>
-			<TABLE WIDTH=656 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=7 CELLSPACING=0>
-				<COL WIDTH=64>
-				<COL WIDTH=202>
-				<COL WIDTH=346>
-				<TR VALIGN=TOP>
-					<TD WIDTH=64>
-						<P CLASS="western">Class</P>
-					</TD>
-					<TD WIDTH=202>
-						<P CLASS="western">Method name 
-						</P>
-					</TD>
-					<TD WIDTH=346>
-						<P CLASS="western">Notes</P>
-					</TD>
-				</TR>
-				<TR VALIGN=TOP>
-					<TD WIDTH=64>
-						<P CLASS="western"><FONT FACE="Courier New, monospace">Motor</FONT></P>
-					</TD>
-					<TD WIDTH=202>
-						<P CLASS="western"><FONT FACE="Courier New, monospace">flt()</FONT></P>
-					</TD>
-					<TD WIDTH=346>
-						<P CLASS="western">Abbreviation for float. Turns off the power,
-						but does not apply the brake</P>
-					</TD>
-				</TR>
-				<TR VALIGN=TOP>
-					<TD WIDTH=64>
-						<P CLASS="western"><BR>
-						</P>
-					</TD>
-					<TD WIDTH=202>
-						<P CLASS="western"><FONT FACE="Courier New, monospace">getTachoCount()</FONT></P>
-					</TD>
-					<TD WIDTH=346>
-						<P CLASS="western">Return s the motor angle in degrees</P>
-					</TD>
-				</TR>
-				<TR VALIGN=TOP>
-					<TD WIDTH=64>
-						<P CLASS="western"><BR>
-						</P>
-					</TD>
-					<TD WIDTH=202>
-						<P CLASS="western"><FONT FACE="Courier New, monospace">resetTachocount()</FONT></P>
-					</TD>
-					<TD WIDTH=346>
-						<P CLASS="western">Sets the counter to zero</P>
-					</TD>
-				</TR>
-				<TR VALIGN=TOP>
-					<TD WIDTH=64>
-						<P CLASS="western"><BR>
-						</P>
-					</TD>
-					<TD WIDTH=202>
-						<P CLASS="western"><FONT FACE="Courier New, monospace">setSpeed((int)speed)</FONT></P>
-					</TD>
-					<TD WIDTH=346>
-						<P CLASS="western">speed &ndash; degrees per second.. The
-						maximum speed that can be accurately maintained is about 110
-						times the battery voltage. 
-						</P>
-					</TD>
-				</TR>
-				<TR VALIGN=TOP>
-					<TD WIDTH=64>
-						<P CLASS="western"><BR>
-						</P>
-					</TD>
-					<TD WIDTH=202>
-						<P CLASS="western"><FONT FACE="Courier New, monospace">(int)getActualSpeed()</FONT></P>
-					</TD>
-					<TD WIDTH=346>
-						<P CLASS="western">Returns the actual motor speed (deg/sec)</P>
-					</TD>
-				</TR>
-				<TR VALIGN=TOP>
-					<TD WIDTH=64>
-						<P CLASS="western"><FONT FACE="Courier New, monospace">LCD</FONT></P>
-					</TD>
-					<TD WIDTH=202>
-						<P CLASS="western"><FONT FACE="Courier New, monospace">drawInt()</FONT></P>
-					</TD>
-					<TD WIDTH=346>
-						<P CLASS="western"><BR>
-						</P>
-					</TD>
-				</TR>
-			</TABLE>
-			<H3 CLASS="western">What the program should do</H3>
-			<OL>
-				<LI><P CLASS="western">Run Motor.A forward.</P>
-				<LI><P CLASS="western">Wait till the tacho count reaches 360.</P>
-				<LI><P CLASS="western">Stop the motor.</P>
-				<LI><P CLASS="western">Wait until the motor has stopped.</P>
-				<LI><P CLASS="western">Display the tachometer reading on the on
-				the LCD.</P>
-				<LI><P CLASS="western">Wait for a button press to give you time
-				to read the screen display.</P>
-				<LI><P CLASS="western">Set the motor speed to 720 (the default is
-				360).</P>
-				<LI><P CLASS="western">Reset the tachometer count to zero.</P>
-				<LI><P CLASS="western">Repeat steps 1 through 6. Note: you can
-				avoid duplicated code by writing a method that executes these
-				steps. 
-				</P>
-			</OL>
-			<P CLASS="western" STYLE="margin-left: 0.1in; margin-bottom: 0in">Repeat
-			the entire experiment by modifying your code to use flt() instead
-			of stop(); ( flt is the abbreviation for float, a Java reserved
-			word). This method sets the motor power to zero, but does not
-			apply the brake. 
-			</P>
-			<P CLASS="western" STYLE="margin-left: 0.1in; margin-bottom: 0in">Observe
-			that, even using the brake, the motor does not stop immediately,
-			because motor has inertia. 
-			</P>
-			<P CLASS="western"><A HREF="/C:%5CDocuments%20and%20Settings%5COwner%5CMy%20Documents%5Cieor140%5CNXT%5CnxjTutorial1%5CMotorTutorial%5CInertiaTest.htm" TARGET="_blank"><FONT COLOR="#0000ff"><U>Solution</U></FONT></A></P>
-			<P CLASS="western" STYLE="margin-left: 0.1in; margin-bottom: 0in"><A HREF="#Top"><FONT COLOR="#0000ff"><U>Back
-			to top</U></FONT></A></P>
-			<P CLASS="western"><BR><BR>
-			</P>
-			<H2 CLASS="western">Program 3: Accurate rotation control</H2>
-			<P CLASS="western" STYLE="margin-left: 0.1in; margin-bottom: 0in">The
-			Motor class has a regulator thread that runs all the time. It has
-			two principle jobs, one of which is to stop the motor at a
-			specified angle. This program will test the accuracy of the
-			rotate() method.</P>
-			<H3 CLASS="western">New methods used in this program</H3>
-			<TABLE WIDTH=656 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=7 CELLSPACING=0>
-				<COL WIDTH=90>
-				<COL WIDTH=192>
-				<COL WIDTH=329>
-				<TR VALIGN=TOP>
-					<TD WIDTH=90>
-						<P CLASS="western">Class</P>
-					</TD>
-					<TD WIDTH=192>
-						<P CLASS="western">Method name 
-						</P>
-					</TD>
-					<TD WIDTH=329>
-						<P CLASS="western">Notes</P>
-					</TD>
-				</TR>
-				<TR VALIGN=TOP>
-					<TD WIDTH=90>
-						<P CLASS="western"><FONT FACE="Courier New, monospace">Motor</FONT></P>
-					</TD>
-					<TD WIDTH=192>
-						<P CLASS="western"><FONT FACE="Courier New, monospace">rotate(angle)</FONT></P>
-					</TD>
-					<TD WIDTH=329>
-						<P CLASS="western">Rotates through <FONT FACE="Courier New, monospace">angle
-						</FONT>degrees</P>
-					</TD>
-				</TR>
-				<TR VALIGN=TOP>
-					<TD WIDTH=90>
-						<P CLASS="western"><BR>
-						</P>
-					</TD>
-					<TD WIDTH=192>
-						<P CLASS="western"><FONT FACE="Courier New, monospace">rotateTo(angle)</FONT></P>
-					</TD>
-					<TD WIDTH=329>
-						<P CLASS="western">Rotates to <FONT FACE="Courier New, monospace">angle
-						</FONT>
-						</P>
-					</TD>
-				</TR>
-				<TR VALIGN=TOP>
-					<TD WIDTH=90>
-						<P CLASS="western"><BR>
-						</P>
-					</TD>
-					<TD WIDTH=192>
-						<P CLASS="western"><FONT FACE="Courier New, monospace">rotateTo(angle,true)</FONT></P>
-					</TD>
-					<TD WIDTH=329>
-						<P CLASS="western">Sets the counter to zero</P>
-					</TD>
-				</TR>
-			</TABLE>
-			<P CLASS="western"><BR><BR>
-			</P>
-			<H3 CLASS="western">What the program should do</H3>
-			<OL>
-				<LI><P CLASS="western">Rotate the motor one complete revolution.</P>
-				<LI><P CLASS="western">Display the tachometer reading on the on
-				the LCD, row 0.</P>
-				<LI><P CLASS="western">Rotate the motor to angle 0;</P>
-				<LI><P CLASS="western">Display the tachometer reading on the on
-				the LCD, row 1.</P>
-				<LI><P CLASS="western">Wait for a button press to give you time
-				to read the LCD.</P>
-				<LI><P CLASS="western">Clear the LCD.</P>
-				<LI><P CLASS="western">Set the speed to 720;</P>
-				<LI><P CLASS="western">Repeat steps 1 through 6. 
-				</P>
-			</OL>
-			<P CLASS="western" STYLE="margin-left: 0.25in">Note: you can avoid
-			duplicated code by writing a method that executes these steps.</P>
-			<P CLASS="western" STYLE="margin-left: 0.1in; margin-bottom: 0in"><FONT SIZE=3><SPAN LANG="en-US">Observe
-			the motor usually stops within 1 degree of the specified angle if
-			the motor regulator is doing its job. It </SPAN></FONT>works by
-			calculating how far the motor will continue to turn after the
-			brake has been applied. It applies the brake before reaching the
-			specified angle. It then makes minor adjustments to the motor
-			position till it is close enough. 
-			</P>
-			<P CLASS="western" STYLE="margin-left: 0.1in; margin-bottom: 0in"><A HREF="/C:%5CDocuments%20and%20Settings%5COwner%5CMy%20Documents%5Cieor140%5CNXT%5CnxjTutorial1%5CMotorTutorial%5CRotation.htm" TARGET="_blank"><FONT COLOR="#0000ff"><U>Solution</U></FONT></A></P>
-			<P CLASS="western" STYLE="margin-left: 0.1in; margin-bottom: 0in"><BR>
-			</P>
-			<P CLASS="western" STYLE="margin-left: 0.1in; margin-bottom: 0in"><A HREF="#Top"><FONT COLOR="#0000ff"><U>Back
-			to top</U></FONT></A></P>
-			<P CLASS="western"><BR><BR>
-			</P>
-			<H2 CLASS="western">Program 4. Interrupting rotation</H2>
-			<P CLASS="western" STYLE="margin-left: 0.1in; margin-bottom: 0in">Sometimes
-			you will want the motor stop (or do something else) before it
-			reaches the specified angle. This program will detect a button
-			press to interrupt the rotation task if you press a button soon
-			enough. The rotate() methods will not return until the motor has
-			stopped at the target angle. But the new methods in this program
-			can return immediately. The motor will still stop at the specified
-			angle unless a new motor method is called in the meantime. 
-			</P>
-			<H3 CLASS="western">New methods used in this program</H3>
-			<TABLE WIDTH=641 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=7 CELLSPACING=0>
-				<COL WIDTH=57>
-				<COL WIDTH=307>
-				<COL WIDTH=233>
-				<COL WIDTH=0>
-				<COL WIDTH=0>
-				<COL WIDTH=0>
-				<TR VALIGN=TOP>
-					<TD WIDTH=57>
-						<P CLASS="western">Class</P>
-					</TD>
-					<TD WIDTH=307>
-						<P CLASS="western">Method name 
-						</P>
-					</TD>
-					<TD WIDTH=233>
-						<P CLASS="western">Notes</P>
-					</TD>
-					<TD></TD>
-					<TD></TD>
-					<TD></TD>
-				</TR>
-				<TR VALIGN=TOP>
-					<TD WIDTH=57>
-						<P CLASS="western"><FONT FACE="Courier New, monospace">Motor</FONT></P>
-					</TD>
-					<TD WIDTH=307>
-						<P CLASS="western"><FONT FACE="Courier New, monospace">rotate(angle,immediateReturn)</FONT></P>
-					</TD>
-					<TD ROWSPAN=2 WIDTH=233>
-						<P CLASS="western">The method returns immediately if the
-						boolean parameter <FONT FACE="Courier New, monospace">immediateReturn</FONT>
-						is <B>true</B></P>
-					</TD>
-					<TD></TD>
-					<TD></TD>
-					<TD></TD>
-				</TR>
-				<TR VALIGN=TOP>
-					<TD WIDTH=57>
-						<P CLASS="western"><BR>
-						</P>
-					</TD>
-					<TD WIDTH=307>
-						<P CLASS="western"><FONT FACE="Courier New, monospace">rotateTo(angle,immediateReturn)</FONT></P>
-					</TD>
-					<TD></TD>
-					<TD></TD>
-					<TD></TD>
-					<TD></TD>
-				</TR>
-				<TR VALIGN=TOP>
-					<TD WIDTH=57>
-						<P CLASS="western"><BR>
-						</P>
-					</TD>
-					<TD WIDTH=307>
-						<P CLASS="western"><FONT FACE="Courier New, monospace">(boolean)isRotating()</FONT></P>
-					</TD>
-					<TD WIDTH=233>
-						<P CLASS="western">Returns <B>false</B> when the motor has
-						stopped at the specified angle</P>
-					</TD>
-					<TD></TD>
-					<TD></TD>
-					<TD></TD>
-				</TR>
-				<TR VALIGN=TOP>
-					<TD WIDTH=57>
-						<P CLASS="western"><FONT FACE="Courier New, monospace">Button</FONT></P>
-					</TD>
-					<TD WIDTH=307>
-						<P CLASS="western"><FONT FACE="Courier New, monospace">int
-						readButtons()</FONT></P>
-					</TD>
-					<TD WIDTH=233>
-						<P CLASS="western">Returns the ID of the button pressed.</P>
-					</TD>
-					<TD></TD>
-					<TD></TD>
-					<TD></TD>
-				</TR>
-			</TABLE>
-			<H3 CLASS="western">What the program should do</H3>
-			<OL>
-				<LI><P CLASS="western">Start a rotation of 720 degrees.</P>
-				<LI><P CLASS="western">While the motor is rotating, display the
-				tacho count at the position of row 1.</P>
-				<LI><P CLASS="western">When a button is pressed, stop the motor.</P>
-				<LI><P CLASS="western">After the motor has stopped, display the
-				tacho count in the center of the row.</P>
-				<LI><P CLASS="western">Wait for a button press.</P>
-				<LI><P CLASS="western">Start a rotation to 0.</P>
-				<LI><P CLASS="western">Repeat steps 2,3,5.</P>
-			</OL>
-			<P CLASS="western" STYLE="margin-left: 0.25in">Observe: if you
-			press the button before the rotation is complete, the motor will
-			stop without completing its rotation. Otherwise, the stop() method
-			has no effect. 
-			</P>
-			<P CLASS="western" STYLE="margin-left: 0.25in"><A HREF="/C:%5CDocuments%20and%20Settings%5COwner%5CMy%20Documents%5Cieor140%5CNXT%5CnxjTutorial1%5CMotorTutorial%5CRotationInterrupt.htm" TARGET="_blank"><FONT COLOR="#0000ff"><U>Solution</U></FONT></A></P>
-			<P CLASS="western" STYLE="margin-left: 0.25in"><BR><BR>
-			</P>
-			<P CLASS="western" STYLE="margin-left: 0.1in; margin-bottom: 0in"><A HREF="#Top"><FONT COLOR="#0000ff"><U>Back
-			to top</U></FONT></A></P>
-			<P CLASS="western" STYLE="margin-left: 0.25in"><BR><BR>
-			</P>
-			<H1 CLASS="western"><A NAME="2.Program 5: Regulating motor speed|outline"></A>
-			Program 5: Regulating motor speed</H1>
-			<P CLASS="western" STYLE="margin-left: 0.1in; margin-bottom: 0in">The
-			other principle task of the regulator thread is to control the
-			motor speed. One reason for doing this is that a two wheel vehicle
-			will only travel in a straight line if both motors run at the same
-			speed.(obviously). The standard Lego software solves this problem
-			by directly synchronizing two motors. NXJ takes a different
-			approach: keeping each motor rotation synchronized to the system
-			clock. The regulator compares the tacho count (minus its reference
-			count) with speed times elapsed time, and adjust the power to keep
-			these two quantities closely matched. The regulator resets its
-			reference count and its elapsed time to zero and begins its
-			comparison again whenever you call any of the motor methods you
-			have used so far. 
-			</P>
-			<P CLASS="western"><BR><BR>
-			</P>
-			<H3 CLASS="western">New methods used in this program</H3>
-			<TABLE WIDTH=641 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=7 CELLSPACING=0>
-				<COL WIDTH=86>
-				<COL WIDTH=294>
-				<COL WIDTH=217>
-				<TR VALIGN=TOP>
-					<TD WIDTH=86>
-						<P CLASS="western">Class</P>
-					</TD>
-					<TD WIDTH=294>
-						<P CLASS="western">Method name 
-						</P>
-					</TD>
-					<TD WIDTH=217>
-						<P CLASS="western">Notes</P>
-					</TD>
-				</TR>
-				<TR VALIGN=TOP>
-					<TD WIDTH=86>
-						<P CLASS="western"><FONT FACE="Courier New, monospace"><I>Motor</I></FONT></P>
-					</TD>
-					<TD WIDTH=294>
-						<P CLASS="western"><FONT FACE="Courier New, monospace"><I>regulateSpeed(boolean
-						yes)</I></FONT></P>
-					</TD>
-					<TD WIDTH=217>
-						<P CLASS="western">Speed regulation is on by default. 
-						</P>
-					</TD>
-				</TR>
-				<TR VALIGN=TOP>
-					<TD WIDTH=86>
-						<P CLASS="western"><FONT FACE="Courier New, monospace"><I>Stopwatch
-						</I></FONT>
-						</P>
-					</TD>
-					<TD WIDTH=294>
-						<P CLASS="western"><FONT FACE="Courier New, monospace"><I>elapsed()</I></FONT></P>
-					</TD>
-					<TD WIDTH=217>
-						<P CLASS="western">Returns elapsed time in milliseconds 
-						</P>
-					</TD>
-				</TR>
-				<TR VALIGN=TOP>
-					<TD WIDTH=86>
-						<P CLASS="western"><BR>
-						</P>
-					</TD>
-					<TD WIDTH=294>
-						<P CLASS="western"><FONT FACE="Courier New, monospace"><I>reset()</I></FONT></P>
-					</TD>
-					<TD WIDTH=217>
-						<P CLASS="western">Resets the watch to 0. 
-						</P>
-					</TD>
-				</TR>
-			</TABLE>
-			<P CLASS="western" STYLE="margin-left: 0.1in; margin-bottom: 0in">The
-			stopwatch class is in the package lejos.util. 
-			</P>
-			<H3 CLASS="western">What the program should do:</H3>
-			<OL>
-				<LI><P CLASS="western">Create a new stopwatch.</P>
-				<LI><P CLASS="western">Start all three motors running at 2
-				revolutions/second.</P>
-				<LI><P CLASS="western">Every 200 ms, display all 3 tacho count
-				values in the same row. 
-				</P>
-				<LI><P CLASS="western">Repeat step 3, 8 times, using a different
-				row each time.</P>
-				<LI><P CLASS="western">Write down maximum difference you see
-				between the motor tacho counts. 
-				</P>
-				<LI><P CLASS="western">Turn off speed regulation</P>
-				<LI><P CLASS="western">Repeat steps 1 &ndash; 5</P>
-			</OL>
-			<P CLASS="western" STYLE="margin-left: 0.25in">With speed
-			regulation on, the motors should remain within a few degrees of
-			each other. When it is off, the difference in angle of rotation
-			get larger with time unless you have an unusually well matched set
-			of motors. 
-			</P>
-			<P CLASS="western" STYLE="margin-left: 0.25in"><A HREF="/C:%5CDocuments%20and%20Settings%5COwner%5CMy%20Documents%5Cieor140%5CNXT%5CnxjTutorial1%5CMotorTutorial%5CRegulationTest.htm" TARGET="_blank"><FONT COLOR="#0000ff"><U>Solution</U></FONT></A></P>
-			<P CLASS="western"><BR><BR>
-			</P>
-			<P CLASS="western" STYLE="margin-left: 0.1in; margin-bottom: 0in"><A HREF="#Top"><FONT COLOR="#0000ff"><U>Back
-			to top</U></FONT></A></P>
-			<P CLASS="western" STYLE="margin-left: 0.25in"><BR><BR>
-			</P>
-			<H3 CLASS="western">When might you want to turn off speed
-			regulation? 
-			</H3>
-			<P CLASS="western" STYLE="margin-left: 0.1in; margin-bottom: 0in">In
-			some robots, the motor speed should not be constant but changed in
-			response to a sensor reading as for example in a line follower or
-			a balancing robot. If the speed corrections happen frequently,
-			there is no advantage in the regulator thread using CPU cycles in
-			adjusting the motor power to maintain constant speed between
-			adjustments. 
-			</P>
-			<H3 CLASS="western">When should you use speed regulation?</H3>
-			<P CLASS="western" STYLE="margin-left: 0.1in; margin-bottom: 0in">If
-			you specify a very slow speed, the power to maintain it may not be
-			enough overcome the motor internal friction, so the motor never
-			moves. In this case, a call to rotate() will never return. But
-			with speed regulation on, the regulator will keep increasing the
-			power until the motor comes up to speed. 
-			</P>
-			<P CLASS="western" STYLE="margin-left: 0.1in; margin-bottom: 0in"><A HREF="#_Controlling_the_Motors"><FONT COLOR="#0000ff"><U>Back
-			to top</U></FONT></A></P>
-			<P CLASS="western" STYLE="margin-left: 0.25in"><BR><BR>
-			</P>
-			<H2 CLASS="western"><A NAME="_Other_Motor_Methods"></A><A NAME="2.1.Other Motor Methods|outline"></A>
-			Other Motor Methods</H2>
-			<H3 CLASS="western">Finding out what the motor is doing</H3>
-			<UL>
-				<LI><P CLASS="western">boolean isMoving();<BR>This is useful to
-				test if the motor has finished rotating. isMoving() returns true
-				when the Motor is moving for any reason (e.g. forward() or
-				backward() have been called or a rotate() task is in progress) 
-				</P>
-				<LI><P CLASS="western">boolean isRotating()<BR>Specifically tests
-				if a rotate task is currently in progress</P>
-				<LI><P CLASS="western">int getLimitAngle()<BR>Returns the angle
-				to which the motor is currently rotating 
-				</P>
-				<LI><P CLASS="western">Boolean isRegulating()<BR>Used to test if
-				the speed regulation is turned on.</P>
-				<LI><P CLASS="western">int getSpeed()<BR>Returns the current
-				speed setting.</P>
-				<LI><P CLASS="western">int getActualSpeed()<BR>Returns the actual
-				speed of the motor. This is updated every 100 ms, and is accurate
-				to about +- 10 deg/sec. Use this method to detect if the motor
-				has stalled. 
-				</P>
-				<LI><P CLASS="western">int getPower()<BR>returns the current
-				power setting in the range of 0 to 100.</P>
-				<LI><P CLASS="western">int getMode() <BR>returns a code for the
-				current motor status</P>
-			</UL>
-			<DL>
-				<DL>
-					<DD>
-					<TABLE WIDTH=236 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=7 CELLSPACING=0>
-						<COL WIDTH=88>
-						<COL WIDTH=118>
-						<TR VALIGN=TOP>
-							<TD WIDTH=88>
-								<P CLASS="western" STYLE="margin-left: 0.25in"><B>Code</B></P>
-							</TD>
-							<TD WIDTH=118>
-								<P CLASS="western" STYLE="margin-left: 0.25in"><B>motor
-								status</B></P>
-							</TD>
-						</TR>
-						<TR VALIGN=TOP>
-							<TD WIDTH=88>
-								<P CLASS="western" STYLE="margin-left: 0.25in">1</P>
-							</TD>
-							<TD WIDTH=118>
-								<P CLASS="western" STYLE="margin-left: 0.25in"><I>forward</I></P>
-							</TD>
-						</TR>
-						<TR VALIGN=TOP>
-							<TD WIDTH=88>
-								<P CLASS="western" STYLE="margin-left: 0.25in">2</P>
-							</TD>
-							<TD WIDTH=118>
-								<P CLASS="western" STYLE="margin-left: 0.25in"><I>backward</I></P>
-							</TD>
-						</TR>
-						<TR VALIGN=TOP>
-							<TD WIDTH=88>
-								<P CLASS="western" STYLE="margin-left: 0.25in">3</P>
-							</TD>
-							<TD WIDTH=118>
-								<P CLASS="western" STYLE="margin-left: 0.25in"><I>stop</I></P>
-							</TD>
-						</TR>
-						<TR VALIGN=TOP>
-							<TD WIDTH=88>
-								<P CLASS="western" STYLE="margin-left: 0.25in"><I>4</I></P>
-							</TD>
-							<TD WIDTH=118>
-								<P CLASS="western" STYLE="margin-left: 0.25in"><I>float</I></P>
-							</TD>
-						</TR>
-					</TABLE>
-				</DL>
-			</DL>
-			<P CLASS="western">The following methods are another way to get
-			motor status:</P>
-			<UL>
-				<LI><P CLASS="western">boolean isForward()</P>
-				<LI><P CLASS="western">boolean isBackward()</P>
-				<LI><P CLASS="western">boolean isStopped()</P>
-				<LI><P CLASS="western">boolean isFloating()</P>
-			</UL>
-			<P CLASS="western" STYLE="margin-left: 0.25in"><BR><BR>
-			</P>
-			<H3 CLASS="western">Various other motor methods</H3>
-			<UL>
-				<LI><P CLASS="western">setPower(int aPower)<BR>Used to control
-				motor power directly. Use a value between 0 and 100. Don&rsquo;t
-				call this method if speed regulation is turned on because then
-				the regulator thread is continuously adjusting the power. 
-				</P>
-			</UL>
-			<UL>
-				<LI><P CLASS="western">resetTachoCount()<BR>This method not only
-				sets the tacho count to 0 but also resets the origin used by the
-				regulator thread in deciding when to stop a rotation task. 
-				</P>
-				<LI><P CLASS="western">lock()<BR>Ordinarily, when the motor is
-				stopped, it has some resistance to being rotated. But in some
-				applications, such a weight lifting robot, the force of gravity
-				may be enough to overcome this resistance. This method causes the
-				regulator thread to apply additional power in order to hold the
-				motor axel in position. 
-				</P>
-			</UL>
-			<P CLASS="western" STYLE="margin-left: 0.1in; margin-bottom: 0in"><A HREF="#Top"><FONT COLOR="#0000ff"><U>Back
-			to top</U></FONT></A></P>
-			<P CLASS="western" STYLE="margin-left: 0.25in"><BR><BR>
-			</P>
-				
-
-<!-- DO NOT TOUCH -->				
-				<br/>
-        <div class="NavBit">
-                <a target="_top" href="../Menusystem/MenuSystem.htm">«&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../WheeledVehicles/WheeledVehicles.htm">Next&nbsp;»</a>
-        </div>
-		<br />
-				<td>
-			</tr>
-		</table>
-	</body>
+	</style>
+</head>
+<body>
+<a id="top" name="top"></a><!-- N1: HEADER -->
+<table class="n1t1" cellpadding="0" cellspacing="0">
+  <tbody>
+    <tr>
+      <td><img src="../r_media/images/tutorial_header1.jpg"></td>
+      <td align="right"><img
+ src="../r_media/images/tutorial_header2.jpg"></td>
+    </tr>
+  </tbody>
+</table>
+<!-- N2: CONTENTS -> NAVIGATION SYSTEMS AND CONTENTS -->
+<table class="n2t1" cellpadding="0" cellspacing="0">
+  <tbody>
+    <tr>
+      <td class="n2t1r1c1">
+      <p class="western"><a
+ href="#1.Controlling%20the%20Motors%7Coutline">Controlling the Motors</a></p>
+      <p class="western" style="margin-left: 0.17in;"><a
+ href="#1.1.Introduction%20to%20the%20Motor%20class.%7Coutline">Introduction
+to the Motor class.</a></p>
+      <p class="western" style="margin-left: 0.17in;"><a
+ href="#1.2.Program%201%20-%20Basic%20movement%20controls.%7Coutline">Program
+1 - Basic movement controls.</a></p>
+      <p class="western" style="margin-left: 0.17in;"><a
+ href="#1.3.Program%202:%20Using%20the%20Tachometer%7Coutline">Program
+2: Using the Tachometer</a></p>
+      <p class="western" style="margin-left: 0.17in;"><a
+ href="#1.4.Program%203:%20%20Accurate%20rotation%20control%7Coutline">Program
+3: Accurate rotation control</a></p>
+      <p class="western" style="margin-left: 0.17in;"><a
+ href="#1.5.Program%204.%20%20Interrupting%20rotation%7Coutline">Program
+4. Interrupting rotation</a></p>
+      <p class="western"><a
+ href="#2.Program%205:%20Regulating%20motor%20speed%7Coutline">Program
+5: Regulating motor speed</a></p>
+      <p class="western" style="margin-left: 0.17in;"><a
+ href="#2.1.Other%20Motor%20Methods%7Coutline">Other Motor Methods</a></p>
+      </td>
+      <td><!-- DO NOT MANINPULATE -->
+      <div id="BreadCrumbs"> <a href="../index.htm" target="_top"></a><a
+ href="#"><br>
+      </a> </div>
+      <div class="NavBit"> <a target="_top"
+ href="../Menusystem/MenuSystem.htm">&laquo;&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a
+ href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a
+ href="../WheeledVehicles/WheeledVehicles.htm">Next&nbsp;&raquo;</a> </div>
+<!-- CONTENT TITLE -->
+      <h1 class="western"><a name="Top"></a><a
+ name="1.Controlling the Motors|outline"></a> Controlling the Motors XXX<br>
+      </h1>
+      <h2 class="western"><a
+ name="1.1.Introduction to the Motor class.|outline"></a> Introduction
+to the Motor class.</h2>
+      <p class="western" style="margin-left: 0.1in; margin-bottom: 0in;"><br>
+      </p>
+      <p class="western" style="margin-left: 0.1in; margin-bottom: 0in;">This
+class is an abstraction of a NXT motor. To be useful, a motor must be
+connected toone of the three NXT motor ports. This class provides an
+instance for each port. They are: Motor.A, Motor.B and Motor.C. The
+class provides methods for controlling the motor, and for finding out
+what the motor is doing. </p>
+      <p class="western" style="margin-left: 0.1in; margin-bottom: 0in;">This
+tutorial contains a set of five programs for you to write. With them,
+you can perform experiments to understand how the NXT motor performs.
+They are simple enough so you don&#8217;t need much Java experience to write
+them. Finally, there is a discussion of <a href="#_Other_Motor_Methods"><font
+ color="#0000ff"><u>other motor methods</u></font></a> , not used in
+the programs, that you might find useful. </p>
+      <p class="western" style="margin-bottom: 0in;"><br>
+      </p>
+      <h2 class="western"><a
+ name="1.2.Program 1 - Basic movement controls.|outline"></a> Program 1
+- Basic movement controls.</h2>
+      <p class="western" style="margin-left: 0.1in; margin-bottom: 0in;">This
+program uses the basic motor methods that control movement.</p>
+      <h3 class="western">Methods used in this program</h3>
+      <dl>
+        <dd>
+          <table border="1" bordercolor="#000000" cellpadding="7"
+ cellspacing="0" width="548">
+            <col width="64"> <col width="166"> <col width="274"> <tbody>
+              <tr valign="top">
+                <td width="64">
+                <p class="western">Class</p>
+                </td>
+                <td width="166">
+                <p class="western">Method name </p>
+                </td>
+                <td width="274">
+                <p class="western">Notes</p>
+                </td>
+              </tr>
+              <tr valign="top">
+                <td width="64">
+                <p class="western"><font face="Courier New, monospace">Motor</font></p>
+                </td>
+                <td width="166">
+                <p class="western"><font face="Courier New, monospace">forward()</font></p>
+                </td>
+                <td width="274">
+                <p class="western">Start the motor rotating forward</p>
+                </td>
+              </tr>
+              <tr valign="top">
+                <td width="64">
+                <p class="western"><br>
+                </p>
+                </td>
+                <td width="166">
+                <p class="western"><font face="Courier New, monospace">backward()</font></p>
+                </td>
+                <td width="274">
+                <p class="western">Start rotating backward </p>
+                </td>
+              </tr>
+              <tr valign="top">
+                <td width="64">
+                <p class="western"><br>
+                </p>
+                </td>
+                <td width="166">
+                <p class="western"><font face="Courier New, monospace">changeDirection()</font></p>
+                </td>
+                <td width="274">
+                <p class="western">Reverse the direction of rotation</p>
+                </td>
+              </tr>
+              <tr valign="top">
+                <td width="64">
+                <p class="western"><br>
+                </p>
+                </td>
+                <td width="166">
+                <p class="western"><font face="Courier New, monospace">stop()</font></p>
+                </td>
+                <td width="274">
+                <p class="western">Stop quickly</p>
+                </td>
+              </tr>
+              <tr valign="top">
+                <td width="64">
+                <p class="western"><font face="Courier New, monospace">Button</font></p>
+                </td>
+                <td width="166">
+                <p class="western"><font face="Courier New, monospace">waitForPress()</font></p>
+                </td>
+                <td width="274">
+                <p class="western">Wait till any button is pressed</p>
+                </td>
+              </tr>
+              <tr valign="top">
+                <td width="64">
+                <p class="western"><font face="Courier New, monospace">LCD</font></p>
+                </td>
+                <td width="166">
+                <p class="western"><font face="Courier New, monospace">drawString(String
+str,int x,int y)</font></p>
+                </td>
+                <td width="274">
+                <p class="western">Draw a string. </p>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </dd>
+      </dl>
+      <h3 class="western">What the program should do: </h3>
+      <ol>
+        <li>
+          <p class="western">Run motor A in the forward direction.</p>
+        </li>
+        <li>
+          <p class="western">Display FORWARD in the top line.</p>
+        </li>
+        <li>
+          <p class="western">Wait until a button is pressed.</p>
+        </li>
+        <li>
+          <p class="western">Run the motor backward.</p>
+        </li>
+        <li>
+          <p class="western">Display BACKWARD in next line.</p>
+        </li>
+        <li>
+          <p class="western">Wait until a button is pressed.</p>
+        </li>
+        <li>
+          <p class="western">Run motor A in the forward direction.</p>
+        </li>
+        <li>
+          <p class="western">Display FORWARD in the next line. </p>
+        </li>
+        <li>
+          <p class="western">Wait until a button is pressed.</p>
+        </li>
+        <li>
+          <p class="western">Stop the motor.</p>
+        </li>
+      </ol>
+      <p class="western" style="margin-left: 0.1in; margin-bottom: 0in;">It
+is possible to write this program using each Motor method only once.</p>
+      <p class="western" style="margin-left: 0.1in; margin-bottom: 0in;"><a
+ href="file:///C:/Documents%20and%20Settings/Owner/My%20Documents/ieor140/NXT/NXJTutoral/tutorialRelease/MotorTutorial/BasicMotor.htm"><font
+ color="#0000ff"><u>Solution</u></font></a><br>
+      <br>
+      </p>
+      <p class="western" style="margin-left: 0.1in; margin-bottom: 0in;"><a
+ href="#Top"><font color="#0000ff"><u>Back to top</u></font></a></p>
+      <h2 class="western"><a
+ name="1.3.Program 2: Using the Tachometer|outline"></a> Program 2:
+Using the Tachometer</h2>
+      <p class="western" style="margin-left: 0.1in; margin-bottom: 0in;">The
+NXT motor has a built in tachometer that keeps track of the current
+angle (in degrees) of the motor axel. The purpose of this program is to
+use the tachometer to find out how quickly the motor stops. </p>
+      <h3 class="western">New methods used in this program</h3>
+      <table border="1" bordercolor="#000000" cellpadding="7"
+ cellspacing="0" width="656">
+        <col width="64"> <col width="202"> <col width="346"> <tbody>
+          <tr valign="top">
+            <td width="64">
+            <p class="western">Class</p>
+            </td>
+            <td width="202">
+            <p class="western">Method name </p>
+            </td>
+            <td width="346">
+            <p class="western">Notes</p>
+            </td>
+          </tr>
+          <tr valign="top">
+            <td width="64">
+            <p class="western"><font face="Courier New, monospace">Motor</font></p>
+            </td>
+            <td width="202">
+            <p class="western"><font face="Courier New, monospace">flt()</font></p>
+            </td>
+            <td width="346">
+            <p class="western">Abbreviation for float. Turns off the
+power, but does not apply the brake</p>
+            </td>
+          </tr>
+          <tr valign="top">
+            <td width="64">
+            <p class="western"><br>
+            </p>
+            </td>
+            <td width="202">
+            <p class="western"><font face="Courier New, monospace">getTachoCount()</font></p>
+            </td>
+            <td width="346">
+            <p class="western">Return s the motor angle in degrees</p>
+            </td>
+          </tr>
+          <tr valign="top">
+            <td width="64">
+            <p class="western"><br>
+            </p>
+            </td>
+            <td width="202">
+            <p class="western"><font face="Courier New, monospace">resetTachocount()</font></p>
+            </td>
+            <td width="346">
+            <p class="western">Sets the counter to zero</p>
+            </td>
+          </tr>
+          <tr valign="top">
+            <td width="64">
+            <p class="western"><br>
+            </p>
+            </td>
+            <td width="202">
+            <p class="western"><font face="Courier New, monospace">setSpeed((int)speed)</font></p>
+            </td>
+            <td width="346">
+            <p class="western">speed &#8211; degrees per second.. The maximum
+speed that can be accurately maintained is about 110 times the battery
+voltage. </p>
+            </td>
+          </tr>
+          <tr valign="top">
+            <td width="64">
+            <p class="western"><br>
+            </p>
+            </td>
+            <td width="202">
+            <p class="western"><font face="Courier New, monospace">(int)getActualSpeed()</font></p>
+            </td>
+            <td width="346">
+            <p class="western">Returns the actual motor speed (deg/sec)</p>
+            </td>
+          </tr>
+          <tr valign="top">
+            <td width="64">
+            <p class="western"><font face="Courier New, monospace">LCD</font></p>
+            </td>
+            <td width="202">
+            <p class="western"><font face="Courier New, monospace">drawInt()</font></p>
+            </td>
+            <td width="346">
+            <p class="western"><br>
+            </p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <h3 class="western">What the program should do</h3>
+      <ol>
+        <li>
+          <p class="western">Run Motor.A forward.</p>
+        </li>
+        <li>
+          <p class="western">Wait till the tacho count reaches 360.</p>
+        </li>
+        <li>
+          <p class="western">Stop the motor.</p>
+        </li>
+        <li>
+          <p class="western">Wait until the motor has stopped.</p>
+        </li>
+        <li>
+          <p class="western">Display the tachometer reading on the on
+the LCD.</p>
+        </li>
+        <li>
+          <p class="western">Wait for a button press to give you time
+to read the screen display.</p>
+        </li>
+        <li>
+          <p class="western">Set the motor speed to 720 (the default is
+360).</p>
+        </li>
+        <li>
+          <p class="western">Reset the tachometer count to zero.</p>
+        </li>
+        <li>
+          <p class="western">Repeat steps 1 through 6. Note: you can
+avoid duplicated code by writing a method that executes these steps. </p>
+        </li>
+      </ol>
+      <p class="western" style="margin-left: 0.1in; margin-bottom: 0in;">Repeat
+the entire experiment by modifying your code to use flt() instead of
+stop(); ( flt is the abbreviation for float, a Java reserved word).
+This method sets the motor power to zero, but does not apply the brake.
+      </p>
+      <p class="western" style="margin-left: 0.1in; margin-bottom: 0in;">Observe
+that, even using the brake, the motor does not stop immediately,
+because motor has inertia. </p>
+      <p class="western"><a href="InertiaTest.htm" target="_blank"><font
+ color="#0000ff"><u>Solution</u></font></a></p>
+      <p class="western" style="margin-left: 0.1in; margin-bottom: 0in;"><a
+ href="#Top"><font color="#0000ff"><u>Back to top</u></font></a></p>
+      <p class="western"><br>
+      <br>
+      </p>
+      <h2 class="western">Program 3: Accurate rotation control</h2>
+      <p class="western" style="margin-left: 0.1in; margin-bottom: 0in;">The
+Motor class has a regulator thread that runs all the time. It has two
+principle jobs, one of which is to stop the motor at a specified angle.
+This program will test the accuracy of the rotate() method.</p>
+      <h3 class="western">New methods used in this program</h3>
+      <table border="1" bordercolor="#000000" cellpadding="7"
+ cellspacing="0" width="656">
+        <col width="90"> <col width="192"> <col width="329"> <tbody>
+          <tr valign="top">
+            <td width="90">
+            <p class="western">Class</p>
+            </td>
+            <td width="192">
+            <p class="western">Method name </p>
+            </td>
+            <td width="329">
+            <p class="western">Notes</p>
+            </td>
+          </tr>
+          <tr valign="top">
+            <td width="90">
+            <p class="western"><font face="Courier New, monospace">Motor</font></p>
+            </td>
+            <td width="192">
+            <p class="western"><font face="Courier New, monospace">rotate(angle)</font></p>
+            </td>
+            <td width="329">
+            <p class="western">Rotates through <font
+ face="Courier New, monospace">angle </font>degrees</p>
+            </td>
+          </tr>
+          <tr valign="top">
+            <td width="90">
+            <p class="western"><br>
+            </p>
+            </td>
+            <td width="192">
+            <p class="western"><font face="Courier New, monospace">rotateTo(angle)</font></p>
+            </td>
+            <td width="329">
+            <p class="western">Rotates to <font
+ face="Courier New, monospace">angle </font> </p>
+            </td>
+          </tr>
+          <tr valign="top">
+            <td width="90">
+            <p class="western"><br>
+            </p>
+            </td>
+            <td width="192">
+            <p class="western"><font face="Courier New, monospace">rotateTo(angle,true)</font></p>
+            </td>
+            <td width="329">
+            <p class="western">Sets the counter to zero</p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="western"><br>
+      <br>
+      </p>
+      <h3 class="western">What the program should do</h3>
+      <ol>
+        <li>
+          <p class="western">Rotate the motor one complete revolution.</p>
+        </li>
+        <li>
+          <p class="western">Display the tachometer reading on the on
+the LCD, row 0.</p>
+        </li>
+        <li>
+          <p class="western">Rotate the motor to angle 0;</p>
+        </li>
+        <li>
+          <p class="western">Display the tachometer reading on the on
+the LCD, row 1.</p>
+        </li>
+        <li>
+          <p class="western">Wait for a button press to give you time
+to read the LCD.</p>
+        </li>
+        <li>
+          <p class="western">Clear the LCD.</p>
+        </li>
+        <li>
+          <p class="western">Set the speed to 720;</p>
+        </li>
+        <li>
+          <p class="western">Repeat steps 1 through 6. </p>
+        </li>
+      </ol>
+      <p class="western" style="margin-left: 0.25in;">Note: you can
+avoid duplicated code by writing a method that executes these steps.</p>
+      <p class="western" style="margin-left: 0.1in; margin-bottom: 0in;"><font
+ size="3"><span lang="en-US">Observe the motor usually stops within 1
+degree of the specified angle if the motor regulator is doing its job.
+It </span></font>works by calculating how far the motor will continue
+to turn after the brake has been applied. It applies the brake before
+reaching the specified angle. It then makes minor adjustments to the
+motor position till it is close enough. </p>
+      <p class="western" style="margin-left: 0.1in; margin-bottom: 0in;"><a
+ href="/C:%5CDocuments%20and%20Settings%5COwner%5CMy%20Documents%5Cieor140%5CNXT%5CnxjTutorial1%5CMotorTutorial%5CRotation.htm"
+ target="_blank"><font color="#0000ff"><u>Solution</u></font></a></p>
+      <p class="western" style="margin-left: 0.1in; margin-bottom: 0in;"><br>
+      </p>
+      <p class="western" style="margin-left: 0.1in; margin-bottom: 0in;"><a
+ href="#Top"><font color="#0000ff"><u>Back to top</u></font></a></p>
+      <p class="western"><br>
+      <br>
+      </p>
+      <h2 class="western">Program 4. Interrupting rotation</h2>
+      <p class="western" style="margin-left: 0.1in; margin-bottom: 0in;">Sometimes
+you will want the motor stop (or do something else) before it reaches
+the specified angle. This program will detect a button press to
+interrupt the rotation task if you press a button soon enough. The
+rotate() methods will not return until the motor has stopped at the
+target angle. But the new methods in this program can return
+immediately. The motor will still stop at the specified angle unless a
+new motor method is called in the meantime. </p>
+      <h3 class="western">New methods used in this program</h3>
+      <table border="1" bordercolor="#000000" cellpadding="7"
+ cellspacing="0" width="641">
+        <col width="57"> <col width="307"> <col width="233"> <col
+ width="0"> <col width="0"> <col width="0"> <tbody>
+          <tr valign="top">
+            <td width="57">
+            <p class="western">Class</p>
+            </td>
+            <td width="307">
+            <p class="western">Method name </p>
+            </td>
+            <td width="233">
+            <p class="western">Notes</p>
+            </td>
+            <td><br>
+            </td>
+            <td><br>
+            </td>
+            <td><br>
+            </td>
+          </tr>
+          <tr valign="top">
+            <td width="57">
+            <p class="western"><font face="Courier New, monospace">Motor</font></p>
+            </td>
+            <td width="307">
+            <p class="western"><font face="Courier New, monospace">rotate(angle,immediateReturn)</font></p>
+            </td>
+            <td rowspan="2" width="233">
+            <p class="western">The method returns immediately if the
+boolean parameter <font face="Courier New, monospace">immediateReturn</font>
+is <b>true</b></p>
+            </td>
+            <td><br>
+            </td>
+            <td><br>
+            </td>
+            <td><br>
+            </td>
+          </tr>
+          <tr valign="top">
+            <td width="57">
+            <p class="western"><br>
+            </p>
+            </td>
+            <td width="307">
+            <p class="western"><font face="Courier New, monospace">rotateTo(angle,immediateReturn)</font></p>
+            </td>
+            <td><br>
+            </td>
+            <td><br>
+            </td>
+            <td><br>
+            </td>
+            <td><br>
+            </td>
+          </tr>
+          <tr valign="top">
+            <td width="57">
+            <p class="western"><br>
+            </p>
+            </td>
+            <td width="307">
+            <p class="western"><font face="Courier New, monospace">(boolean)isRotating()</font></p>
+            </td>
+            <td width="233">
+            <p class="western">Returns <b>false</b> when the motor has
+stopped at the specified angle</p>
+            </td>
+            <td><br>
+            </td>
+            <td><br>
+            </td>
+            <td><br>
+            </td>
+          </tr>
+          <tr valign="top">
+            <td width="57">
+            <p class="western"><font face="Courier New, monospace">Button</font></p>
+            </td>
+            <td width="307">
+            <p class="western"><font face="Courier New, monospace">int
+readButtons()</font></p>
+            </td>
+            <td width="233">
+            <p class="western">Returns the ID of the button pressed.</p>
+            </td>
+            <td><br>
+            </td>
+            <td><br>
+            </td>
+            <td><br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <h3 class="western">What the program should do</h3>
+      <ol>
+        <li>
+          <p class="western">Start a rotation of 720 degrees.</p>
+        </li>
+        <li>
+          <p class="western">While the motor is rotating, display the
+tacho count at the position of row 1.</p>
+        </li>
+        <li>
+          <p class="western">When a button is pressed, stop the motor.</p>
+        </li>
+        <li>
+          <p class="western">After the motor has stopped, display the
+tacho count in the center of the row.</p>
+        </li>
+        <li>
+          <p class="western">Wait for a button press.</p>
+        </li>
+        <li>
+          <p class="western">Start a rotation to 0.</p>
+        </li>
+        <li>
+          <p class="western">Repeat steps 2,3,5.</p>
+        </li>
+      </ol>
+      <p class="western" style="margin-left: 0.25in;">Observe: if you
+press the button before the rotation is complete, the motor will stop
+without completing its rotation. Otherwise, the stop() method has no
+effect. </p>
+      <p class="western" style="margin-left: 0.25in;"><a
+ href="/C:%5CDocuments%20and%20Settings%5COwner%5CMy%20Documents%5Cieor140%5CNXT%5CnxjTutorial1%5CMotorTutorial%5CRotationInterrupt.htm"
+ target="_blank"><font color="#0000ff"><u>Solution</u></font></a></p>
+      <p class="western" style="margin-left: 0.25in;"><br>
+      <br>
+      </p>
+      <p class="western" style="margin-left: 0.1in; margin-bottom: 0in;"><a
+ href="#Top"><font color="#0000ff"><u>Back to top</u></font></a></p>
+      <p class="western" style="margin-left: 0.25in;"><br>
+      <br>
+      </p>
+      <h1 class="western"><a
+ name="2.Program 5: Regulating motor speed|outline"></a> Program 5:
+Regulating motor speed</h1>
+      <p class="western" style="margin-left: 0.1in; margin-bottom: 0in;">The
+other principle task of the regulator thread is to control the motor
+speed. One reason for doing this is that a two wheel vehicle will only
+travel in a straight line if both motors run at the same
+speed.(obviously). The standard Lego software solves this problem by
+directly synchronizing two motors. NXJ takes a different approach:
+keeping each motor rotation synchronized to the system clock. The
+regulator compares the tacho count (minus its reference count) with
+speed times elapsed time, and adjust the power to keep these two
+quantities closely matched. The regulator resets its reference count
+and its elapsed time to zero and begins its comparison again whenever
+you call any of the motor methods you have used so far. </p>
+      <p class="western"><br>
+      <br>
+      </p>
+      <h3 class="western">New methods used in this program</h3>
+      <table border="1" bordercolor="#000000" cellpadding="7"
+ cellspacing="0" width="641">
+        <col width="86"> <col width="294"> <col width="217"> <tbody>
+          <tr valign="top">
+            <td width="86">
+            <p class="western">Class</p>
+            </td>
+            <td width="294">
+            <p class="western">Method name </p>
+            </td>
+            <td width="217">
+            <p class="western">Notes</p>
+            </td>
+          </tr>
+          <tr valign="top">
+            <td width="86">
+            <p class="western"><font face="Courier New, monospace"><i>Motor</i></font></p>
+            </td>
+            <td width="294">
+            <p class="western"><font face="Courier New, monospace"><i>regulateSpeed(boolean
+yes)</i></font></p>
+            </td>
+            <td width="217">
+            <p class="western">Speed regulation is on by default. </p>
+            </td>
+          </tr>
+          <tr valign="top">
+            <td width="86">
+            <p class="western"><font face="Courier New, monospace"><i>Stopwatch
+            </i></font> </p>
+            </td>
+            <td width="294">
+            <p class="western"><font face="Courier New, monospace"><i>elapsed()</i></font></p>
+            </td>
+            <td width="217">
+            <p class="western">Returns elapsed time in milliseconds </p>
+            </td>
+          </tr>
+          <tr valign="top">
+            <td width="86">
+            <p class="western"><br>
+            </p>
+            </td>
+            <td width="294">
+            <p class="western"><font face="Courier New, monospace"><i>reset()</i></font></p>
+            </td>
+            <td width="217">
+            <p class="western">Resets the watch to 0. </p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="western" style="margin-left: 0.1in; margin-bottom: 0in;">The
+stopwatch class is in the package lejos.util. </p>
+      <h3 class="western">What the program should do:</h3>
+      <ol>
+        <li>
+          <p class="western">Create a new stopwatch.</p>
+        </li>
+        <li>
+          <p class="western">Start all three motors running at 2
+revolutions/second.</p>
+        </li>
+        <li>
+          <p class="western">Every 200 ms, display all 3 tacho count
+values in the same row. </p>
+        </li>
+        <li>
+          <p class="western">Repeat step 3, 8 times, using a different
+row each time.</p>
+        </li>
+        <li>
+          <p class="western">Write down maximum difference you see
+between the motor tacho counts. </p>
+        </li>
+        <li>
+          <p class="western">Turn off speed regulation</p>
+        </li>
+        <li>
+          <p class="western">Repeat steps 1 &#8211; 5</p>
+        </li>
+      </ol>
+      <p class="western" style="margin-left: 0.25in;">With speed
+regulation on, the motors should remain within a few degrees of each
+other. When it is off, the difference in angle of rotation get larger
+with time unless you have an unusually well matched set of motors. </p>
+      <p class="western" style="margin-left: 0.25in;"><a
+ href="/C:%5CDocuments%20and%20Settings%5COwner%5CMy%20Documents%5Cieor140%5CNXT%5CnxjTutorial1%5CMotorTutorial%5CRegulationTest.htm"
+ target="_blank"><font color="#0000ff"><u>Solution</u></font></a></p>
+      <p class="western"><br>
+      <br>
+      </p>
+      <p class="western" style="margin-left: 0.1in; margin-bottom: 0in;"><a
+ href="#Top"><font color="#0000ff"><u>Back to top</u></font></a></p>
+      <p class="western" style="margin-left: 0.25in;"><br>
+      <br>
+      </p>
+      <h3 class="western">When might you want to turn off speed
+regulation? </h3>
+      <p class="western" style="margin-left: 0.1in; margin-bottom: 0in;">In
+some robots, the motor speed should not be constant but changed in
+response to a sensor reading as for example in a line follower or a
+balancing robot. If the speed corrections happen frequently, there is
+no advantage in the regulator thread using CPU cycles in adjusting the
+motor power to maintain constant speed between adjustments. </p>
+      <h3 class="western">When should you use speed regulation?</h3>
+      <p class="western" style="margin-left: 0.1in; margin-bottom: 0in;">If
+you specify a very slow speed, the power to maintain it may not be
+enough overcome the motor internal friction, so the motor never moves.
+In this case, a call to rotate() will never return. But with speed
+regulation on, the regulator will keep increasing the power until the
+motor comes up to speed. </p>
+      <p class="western" style="margin-left: 0.1in; margin-bottom: 0in;"><a
+ href="#_Controlling_the_Motors"><font color="#0000ff"><u>Back to top</u></font></a></p>
+      <p class="western" style="margin-left: 0.25in;"><br>
+      <br>
+      </p>
+      <h2 class="western"><a name="_Other_Motor_Methods"></a><a
+ name="2.1.Other Motor Methods|outline"></a> Other Motor Methods</h2>
+      <h3 class="western">Finding out what the motor is doing</h3>
+      <ul>
+        <li>
+          <p class="western">boolean isMoving();<br>
+This is useful to test if the motor has finished rotating. isMoving()
+returns true when the Motor is moving for any reason (e.g. forward() or
+backward() have been called or a rotate() task is in progress) </p>
+        </li>
+        <li>
+          <p class="western">boolean isRotating()<br>
+Specifically tests if a rotate task is currently in progress</p>
+        </li>
+        <li>
+          <p class="western">int getLimitAngle()<br>
+Returns the angle to which the motor is currently rotating </p>
+        </li>
+        <li>
+          <p class="western">Boolean isRegulating()<br>
+Used to test if the speed regulation is turned on.</p>
+        </li>
+        <li>
+          <p class="western">int getSpeed()<br>
+Returns the current speed setting.</p>
+        </li>
+        <li>
+          <p class="western">int getActualSpeed()<br>
+Returns the actual speed of the motor. This is updated every 100 ms,
+and is accurate to about +- 10 deg/sec. Use this method to detect if
+the motor has stalled. </p>
+        </li>
+        <li>
+          <p class="western">int getPower()<br>
+returns the current power setting in the range of 0 to 100.</p>
+        </li>
+        <li>
+          <p class="western">int getMode() <br>
+returns a code for the current motor status</p>
+        </li>
+      </ul>
+      <dl>
+        <dl>
+          <dd>
+            <table border="1" bordercolor="#000000" cellpadding="7"
+ cellspacing="0" width="236">
+              <col width="88"> <col width="118"> <tbody>
+                <tr valign="top">
+                  <td width="88">
+                  <p class="western" style="margin-left: 0.25in;"><b>Code</b></p>
+                  </td>
+                  <td width="118">
+                  <p class="western" style="margin-left: 0.25in;"><b>motor
+status</b></p>
+                  </td>
+                </tr>
+                <tr valign="top">
+                  <td width="88">
+                  <p class="western" style="margin-left: 0.25in;">1</p>
+                  </td>
+                  <td width="118">
+                  <p class="western" style="margin-left: 0.25in;"><i>forward</i></p>
+                  </td>
+                </tr>
+                <tr valign="top">
+                  <td width="88">
+                  <p class="western" style="margin-left: 0.25in;">2</p>
+                  </td>
+                  <td width="118">
+                  <p class="western" style="margin-left: 0.25in;"><i>backward</i></p>
+                  </td>
+                </tr>
+                <tr valign="top">
+                  <td width="88">
+                  <p class="western" style="margin-left: 0.25in;">3</p>
+                  </td>
+                  <td width="118">
+                  <p class="western" style="margin-left: 0.25in;"><i>stop</i></p>
+                  </td>
+                </tr>
+                <tr valign="top">
+                  <td width="88">
+                  <p class="western" style="margin-left: 0.25in;"><i>4</i></p>
+                  </td>
+                  <td width="118">
+                  <p class="western" style="margin-left: 0.25in;"><i>float</i></p>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </dd>
+        </dl>
+      </dl>
+      <p class="western">The following methods are another way to get
+motor status:</p>
+      <ul>
+        <li>
+          <p class="western">boolean isForward()</p>
+        </li>
+        <li>
+          <p class="western">boolean isBackward()</p>
+        </li>
+        <li>
+          <p class="western">boolean isStopped()</p>
+        </li>
+        <li>
+          <p class="western">boolean isFloating()</p>
+        </li>
+      </ul>
+      <p class="western" style="margin-left: 0.25in;"><br>
+      <br>
+      </p>
+      <h3 class="western">Various other motor methods</h3>
+      <ul>
+        <li>
+          <p class="western">setPower(int aPower)<br>
+Used to control motor power directly. Use a value between 0 and 100.
+Don&#8217;t call this method if speed regulation is turned on because then
+the regulator thread is continuously adjusting the power. </p>
+        </li>
+      </ul>
+      <ul>
+        <li>
+          <p class="western">resetTachoCount()<br>
+This method not only sets the tacho count to 0 but also resets the
+origin used by the regulator thread in deciding when to stop a rotation
+task. </p>
+        </li>
+        <li>
+          <p class="western">lock()<br>
+Ordinarily, when the motor is stopped, it has some resistance to being
+rotated. But in some applications, such a weight lifting robot, the
+force of gravity may be enough to overcome this resistance. This method
+causes the regulator thread to apply additional power in order to hold
+the motor axel in position. </p>
+        </li>
+      </ul>
+      <p class="western" style="margin-left: 0.1in; margin-bottom: 0in;"><a
+ href="#Top"><font color="#0000ff"><u>Back to top</u></font></a></p>
+      <p class="western" style="margin-left: 0.25in;"><br>
+      <br>
+      </p>
+<!-- DO NOT TOUCH --> <br>
+      <div class="NavBit"> <a target="_top"
+ href="../Menusystem/MenuSystem.htm">&laquo;&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a
+ href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a
+ href="../WheeledVehicles/WheeledVehicles.htm">Next&nbsp;&raquo;</a> </div>
+      <br>
+      </td>
+      <td> <br>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</body>
 </html>
