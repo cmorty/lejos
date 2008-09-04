@@ -1,6 +1,6 @@
 
 import lejos.nxt.*;
-import lejos.addon.*;
+import lejos.nxt.addon.*;
 
 /*
  * Emulates the RCX Remote control
