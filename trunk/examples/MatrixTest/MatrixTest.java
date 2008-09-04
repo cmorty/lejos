@@ -1,5 +1,6 @@
 
 import lejos.math.*;
+import lejos.util.*;
 
 /**
  * Example created to test Matrix Class
