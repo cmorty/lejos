@@ -1,6 +1,7 @@
 
 import lejos.nxt.*;
-import lejos.addon.*;
+import lejos.nxt.addon.*;
+import lejos.util.*;
 
 /**
  * Example created to test Lattebox NXTe Kit

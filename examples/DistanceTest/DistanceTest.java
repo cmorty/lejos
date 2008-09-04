@@ -1,4 +1,4 @@
-import lejos.nxt.*;
+import lejos.util.*;
 import javax.microedition.location.*;
 
 /**

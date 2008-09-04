@@ -1,4 +1,5 @@
 import java.util.*;
+import lejos.util.*;
 
 /**
  * This test has been designed to test the class
