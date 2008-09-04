@@ -1,6 +1,6 @@
 
 import lejos.nxt.*;
-import lejos.addon.*;
+import lejos.nxt.addon.*;
 
 /**
  * Test of a remote RCX motor using a remote RCX as a controller.

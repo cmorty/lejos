@@ -1,5 +1,6 @@
 import lejos.nxt.*;
 import lejos.nxt.comm.*;
+import lejos.nxt.socket.*;
 import java.io.*;
 
 /**

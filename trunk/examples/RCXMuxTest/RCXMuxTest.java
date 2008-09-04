@@ -5,7 +5,7 @@
  * @author Michael Smith <mdsmitty@gmail.com>
  */
 import lejos.nxt.*;
-import lejos.addon.*;
+import lejos.nxt.addon.*;
 
 public class RCXMuxTest{
 	public static void main(String[] args) throws Exception {

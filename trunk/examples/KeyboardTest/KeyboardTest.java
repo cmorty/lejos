@@ -1,11 +1,10 @@
 import lejos.nxt.*;
 import lejos.nxt.comm.Bluetooth;
-import lejos.nxt.comm.RConsole;
 import lejos.nxt.comm.NXTConnection;
 
 import javax.bluetooth.RemoteDevice;
 import lejos.nxt.comm.BTConnection;
-import lejos.devices.*;
+import lejos.keyboard.*;
 
 import java.util.Vector;
 import java.io.*;
