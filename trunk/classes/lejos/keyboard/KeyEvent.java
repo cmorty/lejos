@@ -1,4 +1,4 @@
-package lejos.devices;
+package lejos.keyboard;
 
 public class KeyEvent {
 	
