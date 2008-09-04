@@ -4,7 +4,7 @@ import lejos.nxt.*;
  * Entry point for the program. This version uses
  * the enhanced Thread interface available in lejos1.0.2
  */
-public class Main {
+public class Subsumption2 {
 	public static void main (String[] arg)
 	  throws Exception {
 		// Won't return until the 'RUN' button is pressed.
@@ -14,10 +14,10 @@ public class Main {
 	/**
 	 * Return the FSM for wandering around aimlessly
 	 */
-	static Action[] getWanderFSM() {
-		Action[] actions = new Action[3];
+	static Action2[] getWanderFSM() {
+		Action2[] actions = new Action2[3];
 
-		actions[0] = new Action() {
+		actions[0] = new Action2() {
 			public int act() {
 				Motor.C.setSpeed(400); Motor.C.forward();
 				Motor.A.setSpeed(400); Motor.A.forward();
@@ -29,7 +29,7 @@ public class Main {
 			}
 		};
 		
-		actions[1] = new Action() {
+		actions[1] = new Action2() {
 			public int act() {
 				Motor.C.setSpeed(200);
 				return 2000;
@@ -40,7 +40,7 @@ public class Main {
 			}
 		};
 		
-		actions[2] = new Action() {
+		actions[2] = new Action2() {
 			public int act() {
 				Motor.C.setSpeed(200); Motor.C.backward();
 				return 700;
@@ -57,10 +57,10 @@ public class Main {
 	/**
 	 * Return the FSM for avoiding obstacles on the left.
 	 */
-	static Action[] getAvoidLeftFSM() {
-		Action[] actions = new Action[2];
+	static Action2[] getAvoidLeftFSM() {
+		Action2[] actions = new Action2[2];
 
-		actions[0] = new Action() {
+		actions[0] = new Action2() {
 			public int act() {
 				Motor.C.setSpeed(400); Motor.C.backward();
 				Motor.A.setSpeed(400); Motor.A.backward();
@@ -72,14 +72,14 @@ public class Main {
 			}
 		};
 		
-		actions[1] = new Action() {
+		actions[1] = new Action2() {
 			public int act() {
 				Motor.C.forward();
 				return 400;
 			}
 
 			public int nextState() {
-				return Action.END;
+				return Action2.END;
 			}
 		};
 
@@ -89,10 +89,10 @@ public class Main {
 	/**
 	 * Return the FSM for avoiding obstacles on the right.
 	 */
-	static Action[] getAvoidRightFSM() {
-		Action[] actions = new Action[2];
+	static Action2[] getAvoidRightFSM() {
+		Action2[] actions = new Action2[2];
 
-		actions[0] = new Action() {
+		actions[0] = new Action2() {
 			public int act() {
 				Motor.C.setSpeed(400); Motor.C.backward();
 				Motor.A.setSpeed(400); Motor.A.backward();
@@ -104,14 +104,14 @@ public class Main {
 			}
 		};
 		
-		actions[1] = new Action() {
+		actions[1] = new Action2() {
 			public int act() {
 				Motor.A.forward();
 				return 400;
 			}
 
 			public int nextState() {
-				return Action.END;
+				return Action2.END;
 			}
 		};
 
@@ -150,7 +150,7 @@ public class Main {
  * Functor interface. Or, to put it another way, the interface to
  * actions stored in a finite state machine (fsm).
  */
-interface Action {
+interface Action2 {
 	public static final int END = -1;
 	public static final int START = 0;
 
@@ -176,8 +176,8 @@ class Actuator extends Thread {
 	// monitor of 'arbitrator' is owned.
 	static Actuator owner;
 	
-	protected Action actions[];
-	protected int state = Action.END;
+	protected Action2 actions[];
+	protected int state = Action2.END;
 	
 	// Useful for debugging.	
 	public static int tcount = 0;
@@ -189,7 +189,7 @@ class Actuator extends Thread {
 	 *
 	 * @param actions an array of Action items to be executed.
 	 */
-	public Actuator(Action[] actions) {
+	public Actuator(Action2[] actions) {
 		this.actions = actions;
 		task = ++tcount;
 		setDaemon(true);
@@ -219,10 +219,10 @@ class Actuator extends Thread {
 				
 				// Set state to start because we might have been terminated
 				// prematurely and we always start from the beginning.
-				state = Action.START;
+				state = Action2.START;
 				
 				// Loop until we end or we loose ownership.				
-				while (owner == this && state != Action.END) {
+				while (owner == this && state != Action2.END) {
 					try  {
 						// Call wait() because it releases the arbitrator.
 						arbitrator.wait(actions[state].act());
@@ -232,7 +232,7 @@ class Actuator extends Thread {
 				}
 
 				// If we ran to completion signify no owner.				
-				if (state == Action.END)
+				if (state == Action2.END)
 					owner = null;
 				
 				arbitrator.notifyAll();	
