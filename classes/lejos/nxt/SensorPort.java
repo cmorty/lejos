@@ -1,5 +1,4 @@
 package lejos.nxt;
-import lejos.addon.*;
 
 /**
  * Abstraction for a NXT input port.

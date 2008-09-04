@@ -1,8 +1,6 @@
-package lejos.addon;
+package lejos.nxt.addon;
 
-
-import lejos.nxt.ADSensorPort;
-import lejos.nxt.SensorConstants;
+import lejos.nxt.*;
 
 /**
  * Abstraction for an RCX light sensor.

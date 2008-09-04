@@ -1,6 +1,6 @@
 package lejos.navigation;
 import lejos.nxt.*;
-import lejos.addon.*;
+import lejos.nxt.addon.*;
 
 /**
 * The CompassNavigatort class, like its superclass, can keep track of the robot position and the direction angle it faces. It uses a CompassPilot object to control NXT robot movements.<br>

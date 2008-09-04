@@ -1,4 +1,4 @@
-package lejos.addon;
+package lejos.nxt.addon;
 
 import lejos.nxt.I2CSensor;
 import lejos.nxt.I2CPort;
