@@ -1,6 +1,7 @@
-package lejos.nxt.comm;
+package lejos.nxt.socket;
 
 import java.io.*;
+import lejos.nxt.comm.*;
 
 /**
 * NXTSocket. Allows a NXT to establish a connection with a remote Socket
