@@ -6,7 +6,7 @@ import lejos.subsumption.*;
  * Entry point for the program. Creates an instance of Subsumption
  * and kicks of the lowest priority task (wander)
  */
-public class Main  {
+public class Subsumption1  {
 	public static Subsumption main;
 	public static void main (String[] arg)
 	  throws Exception {
@@ -159,7 +159,7 @@ abstract class Task extends Thread {
 		// Keep running until the program should exit.
 		do {
 			// Quiesce
-			while (state != START && Main.main.running) {
+			while (state != START && Subsumption1.main.running) {
 				yield();
 			}
 
@@ -167,7 +167,7 @@ abstract class Task extends Thread {
 			do {
 				int toSleepFor;
 				
-				synchronized (Main.main) {
+				synchronized (Subsumption1.main) {
 					toSleepFor = actions[state].act();
 					state = fsm[state];
 				}
@@ -179,26 +179,26 @@ abstract class Task extends Thread {
 				}
 				else	
 					yield();
-			} while (state != END && Main.main.running);
+			} while (state != END && Subsumption1.main.running);
 			
 			// Its over, release the actuators.
 			release();
-		} while (Main.main.running);
+		} while (Subsumption1.main.running);
 	}
 
 	/**
 	 * Inform the coordinator that we have released the actuators.
 	 */	
 	public void release()  {
-		Main.main.release(this);
+		Subsumption1.main.release(this);
 	}
 
 	/**
 	 * Request control of the actuators
 	 */	
 	public void execute() {
-		if (Main.main != null)
-			Main.main.execute(this);
+		if (Subsumption1.main != null)
+			Subsumption1.main.execute(this);
 	}
 
 	/**
@@ -214,7 +214,7 @@ abstract class Task extends Thread {
 	 * fact gated by the controller.
 	 */	
 	public void setMotor(Motor motor, int speed, boolean forward) {
-		Main.main.setMotor(this, motor, speed, forward);
+		Subsumption1.main.setMotor(this, motor, speed, forward);
 	}
 }
 

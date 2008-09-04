@@ -7,9 +7,9 @@
   <property environment = "env"/>
   <property file="../samples.properties"/>
   <property name="src" location="."/>
-  <property name="program" value="Main"/>
+  <basename property="program" file="."/>
   <property name="binary" value="${program}.nxj" />
-
+	
   <!-- deletes class files -->
   <target name="clean" description="clean up all generated files">
     <delete>
