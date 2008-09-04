@@ -1,7 +1,7 @@
-package lejos.devices;
+package lejos.gps;
+
 import java.io.*;
 import java.util.*;
-import lejos.nxt.*;
 
 /**
  * This class manages a data received from a GPS Device.
@@ -53,7 +53,6 @@ public class GPS extends Thread {
 	private float speed = 0;
 	private int RAWdate = 0;
 	private String azimuth = "";
-	private String azimuthLetter = "";
 	
 	private String sentence;
 
@@ -264,10 +263,6 @@ public class GPS extends Thread {
 				//Increase the list with more NMEA Sentences
 			}
 		}
-		
-		//Experimental
-		LCD.drawString("END",0,7);
-		LCD.refresh();
 	}
 
 	

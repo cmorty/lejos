@@ -1,4 +1,4 @@
-package lejos.devices;
+package lejos.gps;
 
 import java.util.*;
 
