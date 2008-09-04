@@ -1,7 +1,7 @@
-package lejos.nxt.comm;
+package lejos.nxt.remote;
 
 import java.io.*;
-
+import lejos.nxt.comm.*;
 import javax.bluetooth.RemoteDevice;
 
 /**

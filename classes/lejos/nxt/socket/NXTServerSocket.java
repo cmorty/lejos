@@ -1,11 +1,11 @@
-package lejos.nxt.comm;
+package lejos.nxt.socket;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
 import lejos.nxt.comm.BTConnection;
-import lejos.nxt.comm.NXTSocket;
+import lejos.nxt.socket.NXTSocket;
 import lejos.nxt.comm.USBConnection;
 
 /**
@@ -21,8 +21,6 @@ public class NXTServerSocket {
 	private USBConnection usbc;
 	private boolean isBluetooth;
 	private final boolean isServer = true;
-	
-	
 	
 	/**
 	 * Constructor. Creates a new Server Socket over an open bluetooth connection
@@ -55,8 +53,7 @@ public class NXTServerSocket {
 		dos.writeBoolean(isServer);
 		dos.writeInt(port);
 		dos.flush();
-		dos.close();
-		
+		dos.close();		
 	}
 	
 	private DataOutputStream openDataOutputStream() throws IOException{
@@ -74,7 +71,7 @@ public class NXTServerSocket {
 	}
 	
 	/**
-	 * Waits untill there is a socket connection available. When this becomes true
+	 * Waits until there is a socket connection available. When this becomes true
 	 * a new NXTSocket is returned
 	 * @return NXTSocket
 	 * @throws IOException 
@@ -89,8 +86,6 @@ public class NXTServerSocket {
 		dos.close();
 		dis.close();
 		if(isBluetooth){return new NXTSocket(btc);}
-		else{return new NXTSocket(usbc);}
-		
+		else{return new NXTSocket(usbc);}		
 	}
-
 }

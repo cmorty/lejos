@@ -1,4 +1,4 @@
-package lejos.nxt.comm;
+package lejos.nxt.remote;
 
 /**
  * Sensor input values for a remote NXT accessed via LCP.
