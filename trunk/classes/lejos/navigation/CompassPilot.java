@@ -1,7 +1,7 @@
 package lejos.navigation;
 
 import lejos.nxt.*;
-import lejos.addon.*;
+import lejos.nxt.addon.*;
 
 
 /**

@@ -1,4 +1,4 @@
-package lejos.addon;
+package lejos.nxt;
 
 
 import lejos.nxt.ADSensorPort;

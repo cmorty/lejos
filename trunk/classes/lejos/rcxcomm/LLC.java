@@ -1,7 +1,7 @@
 package lejos.rcxcomm;
 
 import lejos.nxt.*;
-import lejos.addon.*;
+import lejos.nxt.addon.*;
 
 /**
  * Emulates RCX LLC class using the RCXLink class.
