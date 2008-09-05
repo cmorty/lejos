@@ -31,7 +31,7 @@ public class NXTInfo {
 	public long nxtPtr;
 	
 	/**
-	 * The protocol used to conect to the NXT: USB or BLUETOOTH.
+	 * The protocol used to connect to the NXT: USB or BLUETOOTH.
 	 */
 	public int protocol = 0;
 
