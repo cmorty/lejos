@@ -42,7 +42,9 @@ public class LeJOSNXJPlugin extends AbstractUIPlugin {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
+	 * @see
+	 * org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext
+	 * )
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
@@ -52,7 +54,9 @@ public class LeJOSNXJPlugin extends AbstractUIPlugin {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
+	 * @see
+	 * org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext
+	 * )
 	 */
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
@@ -111,25 +115,25 @@ public class LeJOSNXJPlugin extends AbstractUIPlugin {
 			ConsolePlugin plugin = ConsolePlugin.getDefault();
 			IConsoleManager conMan = plugin.getConsoleManager();
 			conMan.addConsoles(new IConsole[] { _leJOSNXJConsole });
-			// make it visible
-			String id = IConsoleConstants.ID_CONSOLE_VIEW;
-			IWorkbench wb = PlatformUI.getWorkbench();
-			if (wb != null) {
-				IWorkbenchWindow win = wb.getActiveWorkbenchWindow();
-				if (win != null) {
-					IWorkbenchPage page = win.getActivePage();
-					if (page != null) {
-						try {
-							IConsoleView view = (IConsoleView) page
-									.showView(id);
-							view.display(_leJOSNXJConsole);
-						} catch (PartInitException p) {
-							log(p);
-						}
-					}
-				}
-			}
 		}
+
+//		// make it visible
+//		String id = IConsoleConstants.ID_CONSOLE_VIEW;
+//		IWorkbench wb = PlatformUI.getWorkbench();
+//		if (wb != null) {
+//			IWorkbenchWindow win = wb.getActiveWorkbenchWindow();
+//			if (win != null) {
+//				IWorkbenchPage page = win.getActivePage();
+//				if (page != null) {
+//					try {
+//						IConsoleView view = (IConsoleView) page.showView(id);
+//						view.display(_leJOSNXJConsole);
+//					} catch (PartInitException p) {
+//						log(p);
+//					}
+//				}
+//			}
+//		}
 		return _leJOSNXJConsole;
 	}
 }

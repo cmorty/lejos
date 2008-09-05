@@ -10,10 +10,13 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.progress.IProgressService;
 import org.lejos.nxt.ldt.LeJOSNXJPlugin;
 import org.lejos.nxt.ldt.preferences.PreferenceConstants;
@@ -51,7 +54,7 @@ public class LeJOSUploadFirmwareAction implements
 						// upload firmware
 						pm.beginTask("Uploading firmware...",
 								IProgressMonitor.UNKNOWN);
-						int result = uploadFirmware();
+						int result = flashFirmware();
 						pm.done();
 						if (result == 0)
 							LeJOSNXJUtil
@@ -96,7 +99,7 @@ public class LeJOSUploadFirmwareAction implements
 	public void init(IWorkbenchWindow window) {
 	}
 
-	private int uploadFirmware() throws LeJOSNXJException  {
+	private int flashFirmware() throws LeJOSNXJException  {
 		try {
 		// get runtime
 		Runtime rt = Runtime.getRuntime();
