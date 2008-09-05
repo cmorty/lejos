@@ -13,42 +13,35 @@ public class LeJOSNXJLogListener implements ToolsLogListener,
 
 	private boolean _verbose = false;
 
-	@Override
 	public void logEvent(String message) {
 		LeJOSNXJUtil.message(message);
 
 	}
 
-	@Override
 	public void logEvent(Throwable throwable) {
 		LeJOSNXJUtil.message(throwable);
 
 	}
 
-	@Override
 	public boolean isCanceled() {
 		return Thread.currentThread().isInterrupted();
 	}
 
-	@Override
 	public void log(String message) {
 		if (!_verbose)
 			return;
 		logEvent(message);
 	}
 
-	@Override
 	public void operation(String message) {
 		logEvent(message);
 	}
 
-	@Override
 	public void progress(int progress) {
 		String message = "\r  " + (progress / 10) + "%\r";
 		logEvent(message);
 	}
 
-	@Override
 	public void setVerbose(boolean verbose) {
 		_verbose = verbose;
 	}

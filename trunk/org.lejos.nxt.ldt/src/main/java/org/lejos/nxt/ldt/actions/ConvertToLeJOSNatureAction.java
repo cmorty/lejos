@@ -89,7 +89,7 @@ public class ConvertToLeJOSNatureAction implements IObjectActionDelegate {
 			// check setting of NXJ_HOME
 			String nxjHome = LeJOSNXJPlugin.getDefault().getPluginPreferences()
 					.getString(PreferenceConstants.P_NXJ_HOME);
-			if ((nxjHome == null) || (nxjHome.isEmpty()))
+			if ((nxjHome == null) || (nxjHome.length()==0))
 				throw new LeJOSNXJException(
 						"preference for NXJ_HOME is not set");
 			// add the nature
