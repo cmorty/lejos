@@ -1,5 +1,4 @@
 import java.util.*;
-import lejos.util.*;
 
 /**
  * This test has been designed to test the class
@@ -19,16 +18,28 @@ public class STTest{
 
 		dm.echo("Testing");
 		dm.echo("StringTokenizer");
+		dm.echo("");
+		dm.echo("Test1: NMEA Data");
 		try {Thread.sleep(1000);} catch (Exception e) {}
 		dm.clear();
-		Vector wordList = new Vector();
 		String message="$GPGGA,123519,4807.038,N,01131.000,E,1,08,0.9,545.4,M,46.9,M,,*47";
 		StringTokenizer st = new StringTokenizer(message,",");
-		while (st.hasMoreTokens()) // make sure there is stuff to get
+		while (st.hasMoreTokens())
 		{
 			dm.echo(st.nextToken());
 		}
 
+		dm.clear();
+		dm.echo("Test2: Data with");
+		dm.echo("delimiter @");
+		
+		String message2="DATA1@DATA2@DATA3@DATA4@DATA5";
+		StringTokenizer st2 = new StringTokenizer(message2,"@");
+		while (st2.hasMoreTokens()) // make sure there is stuff to get
+		{
+			dm.echo(st2.nextToken());
+		}
+		dm.echo("Test finished");
 		dm.clear();
 		credits();
 	}
