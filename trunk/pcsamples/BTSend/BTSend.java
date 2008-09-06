@@ -70,7 +70,7 @@ public class BTSend {
 			
 		nxtInfo[0] = new NXTInfo(args[0],args[1]);
 		
-		System.out.println("Connecting to " + nxtInfo[0].btResourceString);
+		System.out.println("Connecting to " + nxtInfo[0].name);
 
 		boolean opened = false;
 		
@@ -85,7 +85,7 @@ public class BTSend {
 			System.exit(1);
 		}
 		
-		System.out.println("Connected to " + nxtInfo[0].btResourceString);
+		System.out.println("Connected to " + nxtInfo[0].name);
 		
 		InputStream is = nxtComm.getInputStream();
 		OutputStream os = nxtComm.getOutputStream();
