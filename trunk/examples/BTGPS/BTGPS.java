@@ -5,8 +5,8 @@ import lejos.util.Stopwatch;
 import java.util.*;
 import java.io.*;
 import javax.bluetooth.*;
-//import javax.microedition.location.*;
-//import lejos.gps.*;
+import javax.microedition.location.*;
+import lejos.gps.*;
 
 /**
  * This example show how to:
