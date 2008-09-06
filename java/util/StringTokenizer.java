@@ -1,3 +1,4 @@
+//import java.util.*;
 package java.util;
 
 /**
@@ -22,8 +23,8 @@ public class StringTokenizer implements Enumeration{
 	 */
 	public StringTokenizer(String s){
 		String character = (String)s.substring(s.length()-1);
-		if(character != ","){
-			s += ",";
+		if(character != delimiter){
+			s += delimiter;
 		}
 
 		this.s = s;
@@ -40,8 +41,8 @@ public class StringTokenizer implements Enumeration{
 	 */
 	public StringTokenizer(String s, String _delimiter) {
 		String character = (String)s.substring(s.length()-1);
-		if(character != ","){
-			s += ",";
+		if(character != _delimiter){
+			s += _delimiter;
 		}
 		
 		this.delimiter = _delimiter;
