@@ -5,8 +5,8 @@ import lejos.util.Stopwatch;
 import java.util.*;
 import java.io.*;
 import javax.bluetooth.*;
-import javax.microedition.location.*;
-import lejos.gps.*;
+//import javax.microedition.location.*;
+//import lejos.gps.*;
 
 /**
  * This example show how to:
@@ -27,7 +27,7 @@ import lejos.gps.*;
  */
 public class BTGPS{
 	private static String appName = "GPS";
-	private static String appVersion = "v6.2";
+	private static String appVersion = "v6.3";
 
 	//Inquire code
 	private static byte[] cod = {0,0,0,0}; // 0,0,0,0 picks up every Bluetooth device regardless of Class of Device (cod).
@@ -37,10 +37,8 @@ public class BTGPS{
 	private static GPS gps = null;
 	private static InputStream in = null;
 
-	//2008/07/15: I don't know how to get a GPS using their Address
-	//If you connect with a defined GPS Device
-	private static String GPSPattern = "HOLUX_M-1200";//BT Name
-	private static final byte[] pin = {(byte) '0', (byte) '0', (byte) '0', (byte) '0'};//GPS Pin
+	//GPS Pin
+	private static final byte[] pin = {(byte) '0', (byte) '0', (byte) '0', (byte) '0'};
 
 	//private static BTGPSGUI GUIObj;
 	private static Date date;
@@ -49,8 +47,7 @@ public class BTGPS{
 	public static void main(String[] args) {
 
 		//Detect GPS Device
-		boolean GPSDetected = false;;
-		//GPSDetected = discoverBTDevice(GPSPattern);//A faster way when you work with the same GPS Receiver
+		boolean GPSDetected = false;
 		GPSDetected = discoverBTDevices();
 
 		if(GPSDetected){
@@ -73,42 +70,10 @@ public class BTGPS{
 			LCD.drawString("No detected GPS", 0, 3);
 			LCD.refresh();
 		}
+		
+		credits();
+		System.exit(0);
 	}//End main
-
-	/**
-	 * Methods used to discover a predefined GPS receiver and you need
-	 * to connect with it directly.
-	 * 
-	 * @param BTPatternName
-	 * @return
-	 */
-	static boolean discoverBTDevice(String BTPatternName){
-		boolean GPSDetected = false;
-		RemoteDevice btrd = null;
-		String BTDeviceName;
-
-		//Discover BT GPS Devices
-		LCD.drawString("Searching ...", 0, 0);
-		LCD.refresh();
-		//Vector devList = Bluetooth.inquire(5, 10,cod);
-		Vector devList = Bluetooth.getKnownDevicesList();
-
-		if(devList.size() > 0){
-			for (int i = 0; i < devList.size(); i++) {
-				btrd = ((RemoteDevice) devList.elementAt(i));
-
-				BTDeviceName = btrd.getFriendlyName(true);
-				if(BTDeviceName.indexOf(GPSPattern) != -1){
-					GPSDevice = btrd;
-					GPSDetected = true;
-					break;
-				}
-				
-			}
-		}
-
-		return GPSDetected;
-	}
 
 	/**
 	 * This method, show all BT Devices with BT Services enable
@@ -120,7 +85,7 @@ public class BTGPS{
 		boolean GPSDetected = false;
 		
 		LCD.clear();
-		LCD.drawString("Searching ...", 0, 0);
+		LCD.drawString("Searching...", 0, 0);
 		LCD.refresh();
 		//Make an BT inquire to get all Devices with BT Services enable
 		Vector devList = Bluetooth.inquire(5, 10,cod);
@@ -207,6 +172,7 @@ public class BTGPS{
 		Stopwatch sw;
 
 		int sentenceCount = 0;
+		boolean flag = true;
 		sw = new Stopwatch();
 		int CMD = 1;
 		int GPSDataQuality = 0;
@@ -252,8 +218,6 @@ public class BTGPS{
 			LCD.refresh();
 			try {Thread.sleep(1000);} catch (Exception e) {}
 		}
-		
-		System.exit(0);
 	}
 	
 	/**
@@ -303,5 +267,16 @@ public class BTGPS{
 		LCD.drawString("                     ", 0, 5);
 		LCD.drawString("                     ", 0, 6);
 		LCD.drawString("                     ", 0, 7);
+	}
+	
+	private static void credits(){
+		LCD.clear();
+		LCD.drawString("LEGO Mindstorms",0,1);
+		LCD.drawString("NXT Robots  ",0,2);
+		LCD.drawString("run better with",0,3);
+		LCD.drawString("Java leJOS",0,4);
+		LCD.drawString("www.lejos.org",0,6);
+		LCD.refresh();
+		try {Thread.sleep(20000);} catch (Exception e) {}
 	}
 }//End Class
