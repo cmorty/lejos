@@ -1,21 +1,17 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html dir="ltr" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml"
- lang="en">
-<head>
-<!-- CSS -->
-  <link rel="stylesheet" href="../r_css/lejos-tutorial.css"
- type="text/css">
-<!-- ICONO -->
-  <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon">
-</head>
+<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="en"><head><!-- CSS -->
+
+  <link rel="stylesheet" href="../r_css/lejos-tutorial.css" type="text/css" /><!-- ICONO -->
+
+  <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon" /></head>
+
 <body>
 <a id="top" name="top"></a><!-- N1: HEADER -->
 <table class="n1t1" cellpadding="0" cellspacing="0">
   <tbody>
     <tr>
-      <td><img src="../r_media/images/tutorial_header1.jpg"></td>
-      <td align="right"><img
- src="../r_media/images/tutorial_header2.jpg"></td>
+      <td><img src="../r_media/images/tutorial_header1.jpg" /></td>
+      <td align="right"><img src="../r_media/images/tutorial_header2.jpg" /></td>
     </tr>
   </tbody>
 </table>
@@ -35,19 +31,15 @@ Windows</a></div>
       <div class="linkAHEAD2"><a href="#7">6. Setting up environment
 variables</a></div>
       <div class="linkAHEAD2"><a href="#8">7. Using a Command Window</a></div>
-      <div class="linkAHEAD2"><a href="#9">8. Flashing the NXJ firmware</a></div>
+      <div class="linkAHEAD2"><a href="#9">8. Download&nbsp; firmware</a></div>
       <div class="linkAHEAD"><a href="#10">Compiling and running your
 first program</a></div>
       <div class="linkAHEAD"><a href="#11">Writing your first leJOS NXJ
 program</a></div>
       </td>
       <td>
-      <div id="BreadCrumbs"> <a href="../index.htm" target="_top">Home
-Page</a> &gt; <a href="#">Getting Started</a> </div>
-      <div class="NavBit"> <a target="_top"
- href="../Preliminaries/Intro.htm">&laquo;&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a
- href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a
- href="../Preliminaries/CompileAndRun.htm">Next&nbsp;&raquo;</a> </div>
+      <div id="BreadCrumbs"> <a href="#">d</a> </div>
+      <div class="NavBit"> <a target="_top" href="../Preliminaries/Intro.htm">«&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../Preliminaries/CompileAndRun.htm">Next&nbsp;»</a> </div>
       <div id="PageTitle">Getting Started</div>
       <a id="1" name="1"></a>
       <h4>Getting Started on Microsoft Windows</h4>
@@ -59,7 +51,7 @@ on your PC: </p>
       <ol>
         <li>The LEGO Mindstorms software..</li>
         <li>A Java Standard Edition SDK.</li>
-        <li>The Fantom drivers<br>
+        <li>The Fantom drivers<br />
         </li>
         <li>Apache ant (optional)</li>
         <li>The leJOS NXJ software.</li>
@@ -92,9 +84,8 @@ version
       <h5>3. Apache ant</h5>
       <p>
 Apache ant is useful for running the leJOS samples. If you have a Java
-IDE on your system, such as Eclipse, it might already be installed. You
-can download ant from <a href="http://ant.apache.org/bindownload.cgi"
- target="_blank">http://ant.apache.org/bindownload.cgi</a>. Installing
+IDE on your system, such as Eclipse, or NetBeans it might already be installed. You
+can download ant from <a href="http://ant.apache.org/bindownload.cgi" target="_blank">http://ant.apache.org/bindownload.cgi</a>. Installing
 ant is simple &#8211; you just unzip it into a folder of your choice (e.g.
 c:\ant). leJOS needs ant 1.7 or later
       </p>
@@ -105,8 +96,7 @@ c:\ant). leJOS needs ant 1.7 or later
 for a windows system. you can download an installer that takes care of
 a number tasks for you., </p>
       <p>
-You can download leJOS NXJ for Windows from <a
- href="http://lejos.sourceforge.net/nxj-downloads.php" target="_blank">http://lejos.sourceforge.net/nxj-downloads.php</a>.
+You can download leJOS NXJ for Windows from <a href="http://lejos.sourceforge.net/nxj-downloads.php" target="_blank">http://lejos.sourceforge.net/nxj-downloads.php</a>.
 Unzip it to a folder of your choice (e.g. c:\lejos0.6). Note that it
 creates a subfolder called lejos_nxj.
       </p>
@@ -115,8 +105,8 @@ creates a subfolder called lejos_nxj.
       <h5>5. Fantom Driver</h5>
 Download from
 http://www.robotc.net/content/lego_down/lego_down.html&nbsp; one of the
-required drivers, either the 32 bit version of the 64 bit version. <br>
-      <br>
+required drivers, either the 32 bit version of the 64 bit version. <br />
+      <br />
       <p> <a href="#top">Back to top</a> </p>
       <a id="7" name="7"></a>
       <h5>6. Setting up environment variables</h5>
@@ -148,7 +138,7 @@ You need to set:
           <tr>
             <td>PATH</td>
             <td>Add the bin folders for Java, leJOS and ANT</td>
-            <td>%NXJ_HOME%\bin;%JAVA_HOME%\bin;<br>
+            <td>%NXJ_HOME%\bin;%JAVA_HOME%\bin;<br />
 %ANT_HOME%\bin;%PATH%</td>
           </tr>
         </tbody>
@@ -170,15 +160,24 @@ correctly.
       </p>
       <p> <a href="#top">Back to top</a> </p>
       <a id="9" name="9"></a>
-      <h5>8. Flashing the NXJ firmware</h5>
+      <h5>8. Download the NXJ firmware to &nbsp;the NXT flash memory</h5>
       <p>
 Make sure your NXT is attached to the PC by its USB cable, and switch
-it on by pressing the orange button.
-      </p>
-      <p>
-Then in your command window, type nxjflash to flash the leJOS NXJ
-firmware. You will see some messages on your command window, and the
-NXT should show the leJOS splash screen and then the leJOS menu.
+it on by pressing the orange button.</p>
+      <p><span style="font-weight: bold;">Using the command Line.</span><br><br />Type
+nxjflash to flash the leJOS NXJ
+firmware.&nbsp;You will see some messages on your command window, and
+the
+NXT should show the leJOS splash screen and then the leJOS menu. &nbsp;
+If the program fails, it may be that an earlier version of &nbsp;NXJ
+was installed. &nbsp;In this case, you must put your NXT&nbsp; into firmware update mode. &nbsp;Press the reset button (at the back of the NXT , upper left corner) for more than 4 seconds. 
+&nbsp;A straightened ut paper clip could be useful for this. Your NXT will audibly tick when it is firmware update mode.&nbsp;Then try nxjflash again. &nbsp;</p><p><span style="font-weight: bold;">Using &nbsp;windows utility program. </span></p><p>The
+GUI version of nxjflash is NXJFlashG. You start it by running &nbsp;the
+file &nbsp;nxjflash.bat &nbsp;in &nbsp;lejos_nxj\bin. . &nbsp;When the
+program window opens, click on
+Start Progam and follow the instructions. &nbsp;A more complete
+explaination
+is in the tutorial &nbsp;PCGuiTools.
       </p>
       <p> <a href="#top">Back to top</a> </p>
       <a id="10" name="10"></a>
@@ -203,15 +202,15 @@ sample folder: </p>
       <p> Let us start with a simple &#8220;Hello World&#8221; program. We will
 create a HelloWorld class in the default java package: </p>
       <p> <code> </code></p>
-      <pre>public class HelloWorld<br>{<br><br>}<br>				</pre>
+      <pre>public class HelloWorld<br />{<br /><br />}<br />				</pre>
       <p> leJOS requires the standard main method for the program entry
 point: </p>
       <code> </code>
-      <pre>public class HelloWorld<br>{<br>	public static void main (String[] args)<br>{<br><br>}<br>}<br>				</pre>
+      <pre>public class HelloWorld<br />{<br />	public static void main (String[] args)<br />{<br /><br />}<br />}<br />				</pre>
       <p> leJOS NXJ supports the standard java System.out.println
 method and scroll the output on the NXT LCD screen. </p>
       <code> </code>
-      <pre>public class HelloWorld<br>{<br>  public static void main (String[] args)<br>  {<br>     System.out.println("Hello World");<br><br>  }<br>}<br>				</pre>
+      <pre>public class HelloWorld<br />{<br />  public static void main (String[] args)<br />  {<br />     System.out.println("Hello World");<br /><br />  }<br />}<br />				</pre>
       <p>If you run this program as it is, it will display Hello World&#8221;
 and then immediately return to the menu, so you will not be able to see
 what is displayed (unless you are very quick). </p>
@@ -228,19 +227,15 @@ documentation. the Click here. </p>
 included in the leJOS download in lejos_nxt/docs/apidocs/index.html. </p>
       <p>The complete HelloWorld program is: </p>
       <code> </code>
-      <pre>import lejos.nxt.*;<br><br>public class HelloWorld<br>{<br>  public static void main (String[] args)<br>  {<br>     System.out.println("Hello World");<br>     Button.waitForPress();<br>  }<br>}<br>				</pre>
+      <pre>import lejos.nxt.*;<br /><br />public class HelloWorld<br />{<br />  public static void main (String[] args)<br />  {<br />     System.out.println("Hello World");<br />     Button.waitForPress();<br />  }<br />}<br />				</pre>
       <p> <a href="#top">Back to top</a> </p>
-      <br>
-      <div class="NavBit"> <a target="_top"
- href="../Preliminaries/Intro.htm">&laquo;&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a
- href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a
- href="../Preliminaries/CompileAndRun.htm">Next&nbsp;&raquo;</a> </div>
-      <br>
+      <br />
+      <div class="NavBit"> <a target="_top" href="../Preliminaries/Intro.htm">«&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../Preliminaries/CompileAndRun.htm">Next&nbsp;»</a> </div>
+      <br />
       </td>
-      <td> <br>
+      <td> <br />
       </td>
     </tr>
   </tbody>
 </table>
-</body>
-</html>
+</body></html>
