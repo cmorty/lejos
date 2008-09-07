@@ -83,4 +83,9 @@
  */
 #define USE_VARSTAT                      0
 
+/**
+ * If not 0 include the Remote Console output functions
+ */
+#define REMOTE_CONSOLE                   0
+
 #endif

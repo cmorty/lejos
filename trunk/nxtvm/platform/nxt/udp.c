@@ -22,6 +22,7 @@
 #include "systick.h"
 #include "display.h"
 #include <string.h>
+#include "rconsole.h"
 
 #define EP_OUT    1
 #define EP_IN    2
@@ -77,6 +78,9 @@ static U8 *outPtr;
 static U32 outCnt;
 static U8 delayedEnable = 0;
 static U32 intCnt = 0;
+#if REMOTE_CONSOLE
+static U8 rConsole = 0;
+#endif
 // Device descriptor
 static const U8 dd[] = {
   0x12, 
@@ -707,6 +711,15 @@ udp_enable(int reset)
   /* Initialise the interrupt handler. We use a very low priority becuase
    * some of the USB operations can run for a relatively long time...
    */
+  if (reset & 0x2)
+  {
+#if REMOTE_CONSOLE
+    rConsole = 1;
+    printf("Firmware output enabled\n");
+#endif
+    return;
+  }
+    
   int i_state = interrupts_get_and_disable();
   aic_mask_off(AT91C_PERIPHERAL_ID_UDP);
   aic_set_vector(AT91C_PERIPHERAL_ID_UDP, AIC_INT_LEVEL_LOWEST,
@@ -754,3 +767,13 @@ udp_set_name(U8 *name, int len)
   } 
 }
 
+
+#if REMOTE_CONSOLE
+void
+udp_rconsole(U8 *buf, int cnt)
+{
+  if (!rConsole) return;
+  while (udp_write(buf, 0, cnt) == 0)
+    ;
+}
+#endif
