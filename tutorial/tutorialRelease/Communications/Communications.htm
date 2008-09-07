@@ -1,19 +1,18 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html dir="ltr" xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
-	<head>
-		<!-- CSS -->
-		<link rel="stylesheet" href="../r_css/lejos-tutorial.css" type="text/css" />
-
-		<!-- ICON -->
-		<link rel="shortcut icon" href="../favicon.ico" type="image/x-icon" />
-
-		<TITLE>Communications</TITLE>
-		<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.4  (Win32)">
-		<META NAME="AUTHOR" CONTENT="Roger">
-		<META NAME="CREATED" CONTENT="20080626;16090000">
-		<META NAME="CHANGED" CONTENT="20080819;19584545">
-		<STYLE TYPE="text/css">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html dir="ltr" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml"
+ lang="en">
+<head>
+<!-- CSS -->
+  <link rel="stylesheet" href="../r_css/lejos-tutorial.css"
+ type="text/css">
+<!-- ICON -->
+  <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon">
+  <title>Communications</title>
+  <meta name="GENERATOR" content="OpenOffice.org 2.4  (Win32)">
+  <meta name="AUTHOR" content="Roger">
+  <meta name="CREATED" content="20080626;16090000">
+  <meta name="CHANGED" content="20080819;19584545">
+  <style type="text/css">
 		<!--
 			@page { size: 11.5in 11in; margin-left: 0.79in; margin-right: 1.75in; margin-top: 1in; margin-bottom: 1in }
 			TD P { margin-bottom: 0.08in; direction: ltr; color: #000000; text-align: left; widows: 2; orphans: 2 }
@@ -55,918 +54,1447 @@
 			A:link { color: #0000ff }
 			A:visited { color: #800080 }
 		-->
-		</STYLE>
-	</head>
-	<body>
-		<a id="top" name="top"></a>
-		<!-- N1: HEADER -->
-		<table cellpadding="0" cellspacing="0" class="n1t1">
-			<tr>
-				<td><img src="../r_media/images/tutorial_header1.jpg" /></td>
-				<td align="right"><img src="../r_media/images/tutorial_header2.jpg" /></td>
-			</tr>
-		</table>
-		<!-- N2: CONTENTS -> NAVIGATION SYSTEMS AND CONTENTS -->
-		<table cellpadding="0" cellspacing="0" class="n2t1">
-			<tr>
-				<td class="n2t1r1c1">
-			<P CLASS="western"><A HREF="#1.Communications|outline"><FONT COLOR="#0000ff"><U>Communications</U></FONT></A></P>
-			<P CLASS="western" STYLE="margin-left: 0.33in"><A HREF="#1.0.1.Receiver|outline"><FONT COLOR="#0000ff"><U>Receiver</U></FONT></A></P>
-			<P CLASS="western" STYLE="margin-left: 0.33in"><A HREF="#1.0.2.Streams|outline"><FONT COLOR="#0000ff"><U>Streams</U></FONT></A></P>
-			<P CLASS="western" STYLE="margin-left: 0.33in"><FONT COLOR="#0000ff"><U><A HREF="#_NXT_Initiator__-__Bluetooth">NXT</A>
-			<A HREF="#1.0.3.NXT Initiator  -  Bluetooth|outline">Initiator</A></U></FONT></P>
-			<P CLASS="western" STYLE="margin-left: 0.33in"><A HREF="#1.0.4.PC Initiator |outline"><FONT COLOR="#0000ff"><U>PC
-			Initiator</U></FONT></A></P>
-			<P CLASS="western" STYLE="margin-left: 0.5in"><A HREF="#1.0.4.1.Bluetooth initiator|outline"><FONT COLOR="#0000ff"><U>Bluetooth
-			initiator</U></FONT></A></P>
-			<P CLASS="western" STYLE="margin-left: 0.5in"><FONT COLOR="#0000ff"><U><A HREF="#_USB_initiator">USB
-			</A><A HREF="#1.0.4.2.USB initiator|outline">USB initiator</A></U></FONT></P>
-			<P CLASS="western"><A HREF="#1.0.4.3.Using the NXTInfo object|outline"><FONT COLOR="#0000ff"><U>Using
-			the NXTInfo object</U></FONT></A></P>
-			<P CLASS="western" STYLE="text-indent: 0.25in"><FONT COLOR="#0000ff"><U><A HREF="#2.Advanced Communications|outline">Advanced
-			</A><A HREF="#2.Advanced Communications|outline">Advanced
-			Communications</A></U></FONT></P>
-			<P CLASS="western" STYLE="text-indent: 0.25in"><A HREF="#2.1.Controlling a remote NXT|outline"><FONT COLOR="#0000ff"><U>Controlling
-			a remote NXT</U></FONT></A></P>
-			<P CLASS="western" STYLE="text-indent: 0.25in"><A HREF="#2.2.Communications External Bluetooth devices|outline"><FONT COLOR="#0000ff"><U>Communications
-			External Bluetooth devices</U></FONT></A></P>
-			<P CLASS="western" STYLE="text-indent: 0.25in"><A HREF="#2.3.Communicating with the RCX|outline"><FONT COLOR="#0000ff"><U>Communicating
-			with the RCX</U></FONT></A></P>
-				</td>
-				<td>
-		<!-- DO NOT MANINPULATE -->
-        <div id="BreadCrumbs">
-            <a href="../index.htm" target="_top">Home Page</a>
-        &gt;
-            <a href="#">Communications</a>
-
-        </div>
-        <div class="NavBit">
-                <a target="_top" href="../ErrorHandlingAndDebugging/ErrorHandling_and_debugging.htm">«&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../PC_GUI/PCGUITools.htm">Next&nbsp;»</a>
-        </div>
-		<!-- CONTENT TITLE -->
-        <div id="PageTitle">Communications</div>
-		<A NAME="1.Communications|outline"></A>
-			<P CLASS="western">NXJ supports communications, by Bluetooth and
-			USB, The NXJ communications classes are designed so that most of
-			your code is independent of whether you are using Bluetooth or USB
-			&ndash; you can write applications that will use either one (See
-			the example below.). And you can use Java streams, which are a
-			very flexible and easy to use. 
-			</P>
-			<P CLASS="western">USB has the advantage of speed, but the cable
-			can be used only to connect a NXT to a PC. Bluetooth is slower,
-			but much flexible. It supports a multitude of methods of
-			communicating NXT to NXT, PC to NXT, Mobile phone to NXT, NXT to
-			remote Bluetooth device, etc. 
-			</P>
-			<P CLASS="western">The first step in communicating is to establish
-			a connection. A connection has an initiator and a receiver. The
-			receiver requests a connection from the initiator, and waits till
-			it has been established. Then both ends of the connection can use
-			it to supply input and output streams. The receiver program <B>only</B>
-			runs on a NXT. The initiator program may run on a PC (always for
-			USB) , a NXT, a mobile phone or another device that supports the
-			Bluetooth Serial Port Profile (SPP).</P>
-			<H3 LANG="en-GB" CLASS="western"><A NAME="1.0.1.Receiver|outline"></A>
-			Receiver</H3>
-			<P CLASS="western">The receiver program on the NXT requests a
-			connection by calling the waitForConnection() method in the
-			Bluetooth or USB class as :</P>
-			<UL>
-				<LI><P CLASS="western">BTConnection BTConnection
-				waitForConnection();</P>
-				<LI><P CLASS="western">USBConnection USBConnection
-				waitForConnection();</P>
-			</UL>
-			<P CLASS="western" STYLE="margin-left: 0.25in">Even though the
-			Bluetooth class returns a BTconnection object, and the USB class
-			returns a USBConnection object, both of classes implement the
-			NXTConnectiion interface.  So an object of either class can be
-			assigned to an reference variable  that implements that interface.
-						</P>
-			<P CLASS="western">BlueTooth Example:</P>
-			<P CLASS="close-western"><SPAN ID="Frame1" DIR="LTR" STYLE="float: left; width: 5.05in; height: 0.38in; border: 1px solid #000000; padding: 0.05in 0.1in; background: #ffffff">
-				<P CLASS="close-western"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>NXTConnection
-				connection = Bluetooth.</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>waitForConnection</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>();</FONT></FONT></FONT></P>
-			</SPAN><BR CLEAR=LEFT><BR><BR>
-			</P>
-			<P CLASS="western">You need to ensure that Bluetooth power and
-			visibility are on before calling this method. The leJOS NXJ
-			start-up menu can be used to do this.</P>
-			<P CLASS="western" ALIGN=LEFT STYLE="margin-bottom: 0in; widows: 0; orphans: 0">
-			<FONT FACE="Times New Roman, serif"><FONT SIZE=3>USB Example:</FONT></FONT></P>
-			<P CLASS="close-western"><SPAN ID="Frame2" DIR="LTR" STYLE="float: left; width: 4.64in; height: 0.38in; border: 1px solid #000000; padding: 0.05in 0.1in; background: #ffffff">
-				<P CLASS="close-western"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>NXTBConnection
-				connection = USB.</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>waitForConnection</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>();</FONT></FONT></FONT></P>
-			</SPAN><BR CLEAR=LEFT><BR><BR>
-			</P>
-			<P CLASS="western">You need to ensure that the USB cable is
-			connected before calling this method.</P>
-			<P CLASS="western">Here is an example program that selects between
-			USB and Bluetooth at run time:</P>
-			<P CLASS="western"><SPAN ID="Frame3" DIR="LTR" STYLE="float: left; width: 6.87in; height: 5.56in; border: 1px solid #000000; padding: 0.05in 0.1in; background: #ffffff">
-				<P CLASS="close-western"><FONT COLOR="#993300"><FONT FACE="Monospaced, Times New Roman, serif"><B>import</B></FONT></FONT><FONT COLOR="#000000">
-				lejos.nxt.*;</FONT></P>
-				<P CLASS="close-western"><FONT COLOR="#993300"><FONT FACE="Monospaced, Times New Roman, serif"><B>import</B></FONT></FONT><FONT COLOR="#000000">
-				lejos.nxt.comm.*;</FONT></P>
-				<P CLASS="close-western"><FONT COLOR="#993300"><FONT FACE="Monospaced, Times New Roman, serif"><B>import</B></FONT></FONT><FONT COLOR="#000000">
-				java.io.*;</FONT></P>
-				<P CLASS="close-western">/**</P>
-				<P CLASS="close-western">* sample of selecting channel at run
-				time</P>
-				<P CLASS="close-western">*/</P>
-				<P CLASS="close-western"><FONT COLOR="#993300"><FONT FACE="Monospaced, Times New Roman, serif"><B>public</B></FONT></FONT><FONT COLOR="#000000">
-				</FONT><FONT COLOR="#993300"><FONT FACE="Monospaced, Times New Roman, serif"><B>class</B></FONT></FONT><FONT COLOR="#000000">
-				CommTest </FONT>
-				</P>
-				<P CLASS="close-western">{</P>
-				<P CLASS="close-western" STYLE="margin-left: 0.41in"><FONT COLOR="#993300"><FONT FACE="Monospaced, Times New Roman, serif"><B>public</B></FONT></FONT><FONT COLOR="#000000">
-				</FONT><FONT COLOR="#993300"><FONT FACE="Monospaced, Times New Roman, serif"><B>static</B></FONT></FONT><FONT COLOR="#000000">
-				</FONT><FONT COLOR="#993300"><FONT FACE="Monospaced, Times New Roman, serif"><B>void</B></FONT></FONT><FONT COLOR="#000000">
-				main( String[] args)</FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 0.41in">{ 
-				</P>
-				<P CLASS="close-western" STYLE="margin-left: 0.79in"><FONT COLOR="#000000">LCD.drawString(</FONT><FONT COLOR="#0000ff">&quot;right
-				BT&quot;</FONT><FONT COLOR="#000000">,0, 0);</FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 0.79in"><FONT COLOR="#000000">NXTConnection
-				connection = </FONT><FONT COLOR="#993300"><FONT FACE="Monospaced, Times New Roman, serif"><B>null</B></FONT></FONT><FONT COLOR="#000000">;</FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 0.79in"><FONT COLOR="#993300"><FONT FACE="Monospaced, Times New Roman, serif"><B>if</B></FONT></FONT><FONT COLOR="#000000">(
-				4 == Button.waitForPress())</FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 0.79in">{</P>
-				<P CLASS="close-western" STYLE="margin-left: 1.2in"><FONT COLOR="#000000">LCD.drawString(</FONT><FONT COLOR="#0000ff">&quot;waiting
-				for BT&quot;</FONT><FONT COLOR="#000000">, 0,1 );</FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 1.2in">connection =
-				Bluetooth.waitForConnection();</P>
-				<P CLASS="close-western" STYLE="margin-left: 0.79in">}</P>
-				<P CLASS="close-western" STYLE="margin-left: 0.79in"><FONT COLOR="#993300"><FONT FACE="Monospaced, Times New Roman, serif"><B>else</B></FONT></FONT><FONT COLOR="#000000">
-				</FONT>
-				</P>
-				<P CLASS="close-western" STYLE="margin-left: 0.79in">{</P>
-				<P CLASS="close-western" STYLE="margin-left: 1.2in"><FONT COLOR="#000000">LCD.drawString(</FONT><FONT COLOR="#0000ff">&quot;waiting
-				for USB&quot;</FONT><FONT COLOR="#000000">, 0,1 );</FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 1.2in">connection =
-				USB.waitForConnection();</P>
-				<P CLASS="close-western" STYLE="margin-left: 0.79in">}</P>
-				<P CLASS="close-western" STYLE="margin-left: 0.79in">DataOutputStream
-				dataOut = connection.openDataOutputStream();</P>
-				<P CLASS="close-western" STYLE="margin-left: 0.79in"><FONT COLOR="#993300"><FONT FACE="Monospaced, Times New Roman, serif"><B>try</B></FONT></FONT><FONT COLOR="#000000">
-				{dataOut.writeInt(1234);} </FONT>
-				</P>
-				<P CLASS="close-western" STYLE="margin-left: 0.79in"><FONT COLOR="#993300"><FONT FACE="Monospaced, Times New Roman, serif"><B>catch</B></FONT></FONT><FONT COLOR="#000000">
-				(IOException e ) {System.out.println(</FONT><FONT COLOR="#0000ff">&quot;
-				write error &quot;</FONT><FONT COLOR="#000000">+e);} </FONT>
-				</P>
-				<P CLASS="close-western" STYLE="margin-left: 0.41in">}</P>
-				<P CLASS="close-western">}</P>
-			</SPAN><BR CLEAR=LEFT><BR><BR>
-			</P>
-			<P CLASS="western"><A HREF="#1.Communications|outline"><FONT COLOR="#0000ff"><U>Back
-			to top</U></FONT></A></P>
-			<H3 LANG="en-GB" CLASS="western"><A NAME="1.0.2.Streams|outline"></A>
-			Streams</H3>
-			<P CLASS="body-text-3-western">Once a connection has been
-			established, streams can then be opened by calling  any of the 
-			following methods in the NXTConnection interface:</P>
-			<UL>
-				<LI><P CLASS="western">InputStream openInputStream() throws
-				IOException;</P>
-				<LI><P CLASS="western">OutputStream openOutputStream() throws
-				IOException;</P>
-				<LI><P CLASS="western">DataInputStream openDataInputStream()
-				throws IOException;  (the example above did this) 
-				</P>
-				<LI><P CLASS="western">DataOutputStream openDataOutputStream()
-				throws IOException;</P>
-			</UL>
-			<P CLASS="body-text-3-western">Data items can then be read from
-			the DataInputStream by:</P>
-			<UL>
-				<LI><P CLASS="western">int read(byte b[]) throws IOException 
-				</P>
-				<LI><P CLASS="western">int read(byte b[], int off, int len)
-				throws IOException</P>
-				<LI><P CLASS="western">boolean readBoolean() throws IOException</P>
-				<LI><P CLASS="western">byte readByte() throws IOException</P>
-				<LI><P CLASS="western">short readShort() throws IOException</P>
-				<LI><P CLASS="western">readInt() throws IOException</P>
-				<LI><P CLASS="western">char readChar() throws IOException</P>
-				<LI><P CLASS="western">float readFloat() throws IOException</P>
-				<LI><P CLASS="western">String readLine() throws IOException</P>
-			</UL>
-			<P CLASS="body-text-2-western"><B>Be aware: </B>The stream read
-			methods are blocking &ndash; that is, they do not return until
-			data is read. If your program has other tasks that need attending
-			to while waiting for data, calls to the read methods should be
-			made in a separate thread. 
-			</P>
-			<P CLASS="body-text-2-western"><BR><BR>
-			</P>
-			<P CLASS="body-text-2-western">Data can be written to the
-			DataOutputStream by:</P>
-			<UL>
-				<LI><P CLASS="western">void write(byte b[], int off, int len)
-				throws IOException</P>
-				<LI><P CLASS="western">void writeBoolean(boolean v) throws
-				IOException</P>
-				<LI><P CLASS="western">void writeByte(int v) throws IOException</P>
-				<LI><P CLASS="western">void writeShort(int v) throws IOException</P>
-				<LI><P CLASS="western">void writeChar(int v) throws IOException</P>
-				<LI><P CLASS="western">void writeInt(int v) throws IOException</P>
-				<LI><P CLASS="western">void writeFloat(float v) throws
-				IOException;</P>
-				<LI><P CLASS="western">void writeChars (String value) throws
-				IOException</P>
-			</UL>
-			<P CLASS="body-text-2-western">Example. of reading and writing
-			integers using data streams (<FONT FACE="Courier New, monospace">dis
-			a</FONT><FONT FACE="Times New Roman, serif">nd </FONT><FONT FACE="Courier New, monospace">
-			dos a</FONT><FONT FACE="Times New Roman, serif">re  a
-			DataInputStream and DataOutputStream  that has been opened)</FONT></P>
-			<P CLASS="body-text-2-western"><SPAN ID="Frame4" DIR="LTR" STYLE="float: left; width: 3.88in; height: 1.49in; border: 1px solid #000000; padding: 0.05in 0.1in; background: #ffffff">
-				<P CLASS="close-western"><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>for</B></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>(</FONT></FONT></FONT><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>int</B></FONT></FONT></FONT><FONT COLOR="#000000">
-				</FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>i=0;i&lt;100;i++)
-				{</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 0.42in"><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>int</B></FONT></FONT></FONT><FONT COLOR="#000000">
-				</FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>n
-				= dis.readInt();</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 0.42in"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>LCD.</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>drawInt</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>(n,7,0,1);</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 0.42in"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>LCD.</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>refresh</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>();</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 0.42in">dos.writeInt(-n);</P>
-				<P CLASS="close-western" STYLE="margin-left: 0.42in">dos.flush();</P>
-				<P CLASS="close-western">}</P>
-				<P CLASS="close-western"><BR>
-				</P>
-			</SPAN><BR CLEAR=LEFT><BR><BR>
-			</P>
-			<P CLASS="body-text-2-western"><B>Be aware: </B>you must flush the
-			output stream to be sure the data is actually transmitted.
-			Furthermore, it is possible for transmission to fail without
-			throwing an exception. 
-			</P>
-			<P CLASS="body-text-2-western">The DataInputStream,
-			DataOutputstream and NXTConnection can then be closed using the
-			close() method.</P>
-			<P CLASS="body-text-2-western"><BR><BR>
-			</P>
-			<P CLASS="body-text-2-western">The full example using BlueTooth
-			is:</P>
-			<P CLASS="close-western"><SPAN ID="Frame5" DIR="LTR" STYLE="float: left; width: 6.66in; height: 6.61in; border: 1px solid #000000; padding: 0.05in 0.1in; background: #ffffff">
-				<P CLASS="close-western"><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>public</B></FONT></FONT></FONT><FONT COLOR="#000000">
-				</FONT><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>class</B></FONT></FONT></FONT><FONT COLOR="#000000">
-				</FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>BTReceive
-				{</FONT></FONT></FONT></P>
-				<P CLASS="close-western"><BR><BR>
-				</P>
-				<P CLASS="close-western" STYLE="margin-left: 0.42in"><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>public</B></FONT></FONT></FONT><FONT COLOR="#000000">
-				</FONT><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>static</B></FONT></FONT></FONT><FONT COLOR="#000000">
-				</FONT><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>void</B></FONT></FONT></FONT><FONT COLOR="#000000">
-				</FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>main(String
-				[] args) </FONT></FONT></FONT><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>throws</B></FONT></FONT></FONT><FONT COLOR="#000000">
-				</FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>Exception
-				</FONT></FONT></FONT>
-				</P>
-				<P CLASS="close-western" STYLE="margin-left: 0.42in">{</P>
-				<P CLASS="close-western" STYLE="margin-left: 0.79in"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>String
-				connected = </FONT></FONT></FONT><FONT COLOR="#2a00ff"><FONT FACE="Courier New, monospace"><FONT SIZE=2>&quot;Connected&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>;</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 0.79in"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>String
-				waiting = </FONT></FONT></FONT><FONT COLOR="#2a00ff"><FONT FACE="Courier New, monospace"><FONT SIZE=2>&quot;Waiting...&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>;</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 0.79in"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>String
-				closing = </FONT></FONT></FONT><FONT COLOR="#2a00ff"><FONT FACE="Courier New, monospace"><FONT SIZE=2>&quot;Closing...&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>;</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 0.79in"><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>while</B></FONT></FONT></FONT><FONT COLOR="#000000">
-				</FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>(</FONT></FONT></FONT><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>true</B></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>)</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 0.79in">{</P>
-				<P CLASS="close-western" STYLE="margin-left: 1.18in"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>LCD.</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>drawString</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>(waiting,0,0);</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 1.18in"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>NXTConnection
-				connection = Bluetooth.</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>waitForConnection</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>();</FONT></FONT></FONT>
-								</P>
-				<P CLASS="close-western" STYLE="margin-left: 1.18in"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>LCD.</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>clear</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>();</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 1.18in"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>LCD.</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>drawString</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>(connected,0,0);</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 1.18in">DataInputStream
-				dis = connection.openDataInputStream();</P>
-				<P CLASS="close-western" STYLE="margin-left: 1.18in">DataOutputStream
-				dos = connection.openDataOutputStream();</P>
-				<P CLASS="close-western" STYLE="margin-left: 1.18in"><BR><BR>
-				</P>
-				<P CLASS="close-western" STYLE="margin-left: 1.18in"><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>for</B></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>(</FONT></FONT></FONT><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>int</B></FONT></FONT></FONT><FONT COLOR="#000000">
-				</FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>i=0;i&lt;100;i++)
-				{</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 1.58in"><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>int</B></FONT></FONT></FONT><FONT COLOR="#000000">
-				</FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>n
-				= dis.readInt();</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 1.58in"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><SPAN LANG="fr-FR">LCD.</SPAN></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><SPAN LANG="fr-FR"><I>drawInt</I></SPAN></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><SPAN LANG="fr-FR">(n,7,0,1);</SPAN></FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 1.58in">dos.writeInt(-n);</P>
-				<P CLASS="close-western" STYLE="margin-left: 1.58in">dos.flush();</P>
-				<P CLASS="close-western" STYLE="margin-left: 1.18in">}</P>
-				<P CLASS="close-western" STYLE="margin-left: 1.18in">dis.close();</P>
-				<P CLASS="close-western" STYLE="margin-left: 1.18in">dos.close();</P>
-				<P CLASS="close-western" STYLE="margin-left: 1.18in"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>Thread.</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>sleep</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>(100);
-				</FONT></FONT></FONT><FONT COLOR="#3f7f5f"><FONT FACE="Courier New, monospace"><FONT SIZE=2>//
-				wait for data to drain</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 1.18in"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>LCD.</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>clear</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>();</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 1.18in"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>LCD.</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>drawString</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>(closing,0,0);</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 1.18in">btc.close();</P>
-				<P CLASS="close-western" STYLE="margin-left: 1.18in"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>LCD.</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>clear</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>();</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 0.79in">}</P>
-				<P CLASS="close-western" STYLE="margin-left: 0.42in">}</P>
-				<P CLASS="close-western">}</P>
-			</SPAN><BR CLEAR=LEFT><BR><BR>
-			</P>
-			<P CLASS="body-text-2-western">To modify this example to work with
-			USB, you only have to change Bluetooth.waitforconnection() to
-			USB.waitForconnectkon()</P>
-			<P CLASS="western"><BR><BR>
-			</P>
-			<P CLASS="western"><A HREF="#1.Communications|outline"><FONT COLOR="#0000ff"><U>Back
-			to top</U></FONT></A></P>
-			<P CLASS="western"><BR><BR>
-			</P>
-			<P CLASS="western"><BR><BR>
-			</P>
-			<H3 LANG="en-GB" CLASS="western">NXT Initiator - Bluetooth</H3>
-			<P CLASS="body-text-2-western"><BR><BR>
-			</P>
-			<P CLASS="body-text-3-western">To initiate a Bluetooth connection
-			from one NXT to another NXT, you first need to add the receiver
-			NXT to the initiator NXT&rsquo;s Bluetooth devices.</P>
-			<P CLASS="body-text-3-western">To do this, you go to the Bluetooth
-			menu in the leJOS NXJ start-up menu and select &ldquo;Search&rdquo;.
-			Providing the Bluetooth power is on and visibility is on for the
-			receiving NXT, it will be found and you can select &ldquo;Add&rdquo;
-			to add it to the initiator&rsquo;s Bluetooth devices.</P>
-			<P CLASS="body-text-3-western">To check it is in the Devices list,
-			you can select &ldquo;Devices&rdquo; from the Bluetooth menu of
-			the initiator NXT.</P>
-			<P CLASS="body-text-3-western">You can then create a
-			BTRemoteDevice class on the initiator NXT:</P>
-			<P CLASS="body-text-3-western">Example:</P>
-			<P CLASS="close-western"><SPAN ID="Frame6" DIR="LTR" STYLE="float: left; width: 5.59in; height: 0.45in; border: 1px solid #000000; padding: 0.05in 0.1in; background: #ffffff">
-				<P CLASS="close-western">BTRemoteDevice btrd =
-				Bluetooth.getKnownDevice(name);</P>
-			</SPAN><BR CLEAR=LEFT><BR><BR>
-			</P>
-			<P CLASS="body-text-3-western">You can connect to the remote
-			device by its address, which you can get by:</P>
-			<UL>
-				<LI><P CLASS="western">public byte[] getDeviceAddr()</P>
-			</UL>
-			<P CLASS="body-text-3-western"><BR><BR>
-			</P>
-			<P CLASS="body-text-3-western">You can then connect to the remote
-			device by calling one of the connect() methods in the Bluetooth
-			class:</P>
-			<UL>
-				<LI><P CLASS="western">BTConnection connect(BTRemoteDevice
-				remoteDevice)</P>
-			</UL>
-			<UL>
-				<LI><P CLASS="western">BTConnection connect(byte[] device_addr)</P>
-				<LI><P CLASS="western">BTConnection connect(byte[] device_addr,
-				byte[] pin)</P>
-			</UL>
-			<P CLASS="western"><BR><BR>
-			</P>
-			<P CLASS="western">Example:</P>
-			<P CLASS="close-western"><SPAN ID="Frame7" DIR="LTR" STYLE="float: left; width: 5.21in; height: 2.85in; border: 1px solid #000000; padding: 0.05in 0.1in; background: #ffffff">
-				<P CLASS="close-western"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>BTRemoteDevice
-				btrd = Bluetooth.</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>getKnownDevice</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>(name);</FONT></FONT></FONT></P>
-				<P CLASS="close-western"><BR><BR>
-				</P>
-				<P CLASS="close-western"><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>if</B></FONT></FONT></FONT><FONT COLOR="#000000">
-				</FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>(btrd
-				== </FONT></FONT></FONT><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>null</B></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>)
-				{</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 0.51in"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>LCD.</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>clear</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>();</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 0.51in"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>LCD.</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>drawString</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>(</FONT></FONT></FONT><FONT COLOR="#2a00ff"><FONT FACE="Courier New, monospace"><FONT SIZE=2>&quot;No
-				such device&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>,
-				0, 0);</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 0.51in">Button.waitForPress();</P>
-				<P CLASS="close-western" STYLE="margin-left: 0.51in"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>System.</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>exit</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>(1);</FONT></FONT></FONT></P>
-				<P CLASS="close-western">}</P>
-				<P CLASS="close-western"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>BTConnection
-				btc = Bluetooth.</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>connect</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>(btrd);</FONT></FONT></FONT></P>
-				<P CLASS="close-western"><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>if</B></FONT></FONT></FONT><FONT COLOR="#000000">
-				</FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>(btc
-				== </FONT></FONT></FONT><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>null</B></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>)
-				{</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 0.5in"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>LCD.</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>clear</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>();</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 0.5in"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>LCD.</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>drawString</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>(</FONT></FONT></FONT><FONT COLOR="#2a00ff"><FONT FACE="Courier New, monospace"><FONT SIZE=2>&quot;Connect
-				fail&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>,
-				0, 0);</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 0.5in">Button.waitForPress();</P>
-				<P CLASS="close-western" STYLE="margin-left: 0.5in"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>System.</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>exit</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>(1);</FONT></FONT></FONT></P>
-				<P CLASS="close-western">}</P>
-			</SPAN><BR CLEAR=LEFT><BR><BR>
-			</P>
-			<P CLASS="body-text-3-western">Having got a BTconnection object
-			you can open the data input and output streams and read data as in
-			the receiver example above.</P>
-			<P CLASS="body-text-3-western">The complete BTConnectTest example,
-			which works as the initiator program for the BTReceive receiver
-			program, is:</P>
-			<P CLASS="western"><SPAN ID="Frame8" DIR="LTR" STYLE="float: left; width: 5.79in; height: 9.26in; border: 1px solid #000000; padding: 0.05in 0.1in; background: #ffffff">
-				<P CLASS="close-western"><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>public</B></FONT></FONT></FONT><FONT COLOR="#000000">
-				</FONT><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>class</B></FONT></FONT></FONT><FONT COLOR="#000000">
-				</FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>BTConnectTest
-				{</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 0.43in"><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>public</B></FONT></FONT></FONT><FONT COLOR="#000000">
-				</FONT><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>static</B></FONT></FONT></FONT><FONT COLOR="#000000">
-				</FONT><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>void</B></FONT></FONT></FONT><FONT COLOR="#000000">
-				</FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>main(String[]
-				args) </FONT></FONT></FONT><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>throws</B></FONT></FONT></FONT><FONT COLOR="#000000">
-				</FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>Exception
-				{</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 0.79in"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>String
-				name = </FONT></FONT></FONT><FONT COLOR="#2a00ff"><FONT FACE="Courier New, monospace"><FONT SIZE=2>&quot;NXT&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>;</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 0.79in"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>LCD.</FONT></FONT></FONT></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>drawString</FONT></FONT></FONT></I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>(</FONT></FONT></FONT></FONT></FONT></FONT><FONT COLOR="#2a00ff"><FONT FACE="Courier New, monospace"><FONT SIZE=2><FONT COLOR="#2a00ff"><FONT FACE="Courier New, monospace"><FONT SIZE=2>&quot;Connecting...&quot;</FONT></FONT></FONT></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>,
-				0, 0);</FONT></FONT></FONT></FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 0.79in"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>BTRemoteDevice
-				btrd = Bluetooth.</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>getKnownDevice</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>(name);</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 0.79in"><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>if</B></FONT></FONT></FONT><FONT COLOR="#000000">
-				</FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>(btrd
-				== </FONT></FONT></FONT><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>null</B></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>)
-				{</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 1.19in"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>LCD.</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>clear</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>();</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 1.19in"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>LCD.</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>drawString</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>(</FONT></FONT></FONT><FONT COLOR="#2a00ff"><FONT FACE="Courier New, monospace"><FONT SIZE=2>&quot;No
-				such device&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>,
-				0, 0);</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 1.19in"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>Thread.</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>sleep</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>(2000);</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 1.19in"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>System.</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>exit</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>(1);</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 0.79in">}</P>
-				<P CLASS="close-western" STYLE="margin-left: 0.79in"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>BTConnection
-				btc = Bluetooth.</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>connect</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>(btrd);</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 0.79in"><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>if</B></FONT></FONT></FONT><FONT COLOR="#000000">
-				</FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>(btc
-				== </FONT></FONT></FONT><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>null</B></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>)
-				{</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 1.08in"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>LCD.</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>clear</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>();</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 1.08in"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>LCD.</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>drawString</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>(</FONT></FONT></FONT><FONT COLOR="#2a00ff"><FONT FACE="Courier New, monospace"><FONT SIZE=2>&quot;Connect
-				fail&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>,
-				0, 0);</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 1.08in"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>Thread.</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>sleep</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>(2000);</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 1.08in"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>System.</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>exit</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>(1);</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 0.79in">}</P>
-				<P CLASS="close-western" STYLE="margin-left: 0.79in"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>LCD.</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>clear</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>();</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 0.79in"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>LCD.</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>drawString</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>(</FONT></FONT></FONT><FONT COLOR="#2a00ff"><FONT FACE="Courier New, monospace"><FONT SIZE=2>&quot;Connected&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>,
-				0, 0);</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 0.79in">DataInputStream
-				dis = btc.openDataInputStream();</P>
-				<P CLASS="close-western" STYLE="margin-left: 0.79in">DataOutputStream
-				dos = btc.openDataOutputStream();</P>
-				<P CLASS="close-western" STYLE="margin-left: 0.79in"><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>for</B></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>(</FONT></FONT></FONT><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>int</B></FONT></FONT></FONT><FONT COLOR="#000000">
-				</FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>i=0;i&lt;100;i++)
-				{</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 1.13in"><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>try</B></FONT></FONT></FONT><FONT COLOR="#000000">
-				</FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>{</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 1.46in"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>LCD.</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>drawInt</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>(i*30000,
-				8, 0, 2);</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 1.46in"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>LCD.</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>refresh</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>();</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 1.46in">dos.writeInt(i*30000);</P>
-				<P CLASS="close-western" STYLE="margin-left: 1.46in">dos.flush();
-								</P>
-				<P CLASS="close-western" STYLE="margin-left: 1.46in"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>}
-				</FONT></FONT></FONT><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>catch</B></FONT></FONT></FONT><FONT COLOR="#000000">
-				</FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>(IOException
-				ioe) {</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 1.46in"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>LCD.</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>drawString</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>(</FONT></FONT></FONT><FONT COLOR="#2a00ff"><FONT FACE="Courier New, monospace"><FONT SIZE=2>&quot;Write
-				Exception&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>,
-				0, 0);</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 1.46in"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>LCD.</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>refresh</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>();</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 1.13in">}</P>
-				<P CLASS="close-western" STYLE="margin-left: 1.13in"><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>try</B></FONT></FONT></FONT><FONT COLOR="#000000">
-				</FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>{</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 1.33in"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>LCD.</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>drawInt</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>(dis.readInt(),8,
-				0,3);</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 1.33in"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>}
-				</FONT></FONT></FONT><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>catch</B></FONT></FONT></FONT><FONT COLOR="#000000">
-				</FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>(IOException
-				ioe) {</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 1.33in"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>LCD.</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>drawString</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>(</FONT></FONT></FONT><FONT COLOR="#2a00ff"><FONT FACE="Courier New, monospace"><FONT SIZE=2>&quot;Read
-				Exception &quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>,
-				0, 0);</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 1.13in">}</P>
-				<P CLASS="close-western" STYLE="margin-left: 0.79in">}</P>
-				<P CLASS="close-western" STYLE="margin-left: 0.79in"><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>try</B></FONT></FONT></FONT><FONT COLOR="#000000">
-				</FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>{</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 1.25in"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>LCD.</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>drawString</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>(</FONT></FONT></FONT><FONT COLOR="#2a00ff"><FONT FACE="Courier New, monospace"><FONT SIZE=2>&quot;Closing...
-				&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>,
-				0, 0);</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 1.25in">dis.close();</P>
-				<P CLASS="close-western" STYLE="margin-left: 1.25in">dos.close();</P>
-				<P CLASS="close-western" STYLE="margin-left: 1.25in">btc.close();</P>
-				<P CLASS="close-western" STYLE="margin-left: 1.25in"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>}
-				</FONT></FONT></FONT><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>catch</B></FONT></FONT></FONT><FONT COLOR="#000000">
-				</FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>(IOException
-				ioe) {</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 1.25in"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>LCD.</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>drawString</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>(</FONT></FONT></FONT><FONT COLOR="#2a00ff"><FONT FACE="Courier New, monospace"><FONT SIZE=2>&quot;Close
-				Exception&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>,
-				0, 0);</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 0.79in">}</P>
-				<P CLASS="close-western" STYLE="margin-left: 0.79in"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>LCD.</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>clear</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>();</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 0.79in"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>LCD.</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>drawString</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>(</FONT></FONT></FONT><FONT COLOR="#2a00ff"><FONT FACE="Courier New, monospace"><FONT SIZE=2>&quot;Finished&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>,3,
-				4);</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 0.79in">Button.waitForPress();</P>
-				<P CLASS="close-western" STYLE="margin-left: 0.43in">}</P>
-				<P CLASS="close-western">}</P>
-			</SPAN><BR CLEAR=LEFT><BR><BR>
-			</P>
-			<P CLASS="western" STYLE="text-indent: 0.2in"><A HREF="#_Communications"><FONT COLOR="#0000ff"><U>Back
-			to top</U></FONT></A></P>
-			<P CLASS="western"><BR><BR>
-			</P>
-			<H3 LANG="en-GB" CLASS="western"><A NAME="1.0.4.PC Initiator |outline"></A>
-			PC Initiator 
-			</H3>
-			<P CLASS="western"><BR><BR>
-			</P>
-			<P CLASS="body-text-3-western">A PC program can initiate a
-			connection to a NXT and open a Java data stream.</P>
-			<P CLASS="body-text-3-western">The API on the PC is different to
-			the NXT API. See pcapidocs.</P>
-			<P CLASS="body-text-3-western">To connect to the NXT, you need a
-			NXTComm object that can be obtained using the NXTCommFactory
-			class:</P>
-			<UL>
-				<LI><P CLASS="western">public static NXTComm createNXTComm(int
-				protocol)</P>
-			</UL>
-			<H4 LANG="en-GB" CLASS="western"><A NAME="1.0.4.1.Bluetooth initiator|outline"></A>
-			Bluetooth initiator</H4>
-			<P CLASS="body-text-4-western">Bluetooth Example:</P>
-			<P CLASS="western"><SPAN ID="Frame9" DIR="LTR" STYLE="float: left; width: 5.7in; height: 0.26in; border: 1px solid #000000; padding: 0.05in 0.1in; background: #ffffff">
-				<P CLASS="close-western"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">NXTComm
-				nxtComm = NXTCommFactory.</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt"><I>createNXTComm</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">(NXTCommFactory.</FONT></FONT></FONT><FONT COLOR="#0000c0"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt"><I>BLUETOOTH</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">);</FONT></FONT></FONT></P>
-			</SPAN><BR CLEAR=LEFT><BR><BR>
-			</P>
-			<P CLASS="body-text-4-western">The reason for using a factory
-			method is that there are several implementations of comms drivers
-			for Bluetooth and USB on the PC and the one that is used depends
-			on what operating system you are using and the contents of he
-			nxj.properties file.</P>
-			<P CLASS="body-text-4-western">You can connect to the NXT by
-			address or by do a Bluetooth inquiry:</P>
-			<P CLASS="body-text-4-western">To connect by address, you create a
-			NXTInfo object using the constructor:</P>
-			<UL>
-				<LI><P CLASS="western">public NXTInfo(String name, String
-				address)</P>
-			</UL>
-			<P CLASS="body-text-4-western">Example:</P>
-			<P CLASS="western"><SPAN ID="Frame10" DIR="LTR" STYLE="float: left; width: 5.05in; height: 0.45in; border: 1px solid #000000; padding: 0.05in 0.1in; background: #ffffff">
-				<P CLASS="close-western">NXTInfo nxtInfo = new NXTInfo(&ldquo;NXT&rdquo;,
-				&ldquo;00:16:53:00:78:48&rdquo;);</P>
-			</SPAN><BR CLEAR=LEFT><BR><BR>
-			</P>
-			<P CLASS="body-text-4-western">To find the available NXTs doing a
-			Bluetooth inquiry, you do:</P>
-			<UL>
-				<LI><P CLASS="western">NXTInfo[] nxtInfo = nxtComm.search(&ldquo;NXT&rdquo;,
-				NXTCommFactory.BLUETOOTH);</P>
-			</UL>
-			<P CLASS="body-text-4-western"><BR><BR>
-			</P>
-			<P CLASS="western"><BR><BR>
-			</P>
-			<P CLASS="western"><A HREF="#1.Communications|outline"><FONT COLOR="#0000ff"><U>Back
-			to top</U></FONT></A></P>
-			<P CLASS="western"><BR><BR>
-			</P>
-			<P CLASS="body-text-4-western"><BR><BR>
-			</P>
-			<H4 LANG="en-GB" CLASS="western"><A NAME="1.0.4.2.USB initiator|outline"></A>
-			USB initiator</H4>
-			<P CLASS="body-text-4-western">The initiator sequence using USB is
-			almost the same as for Bluetooth; You just have to use USB instead
-			of Bluetooth.in your code. While USB cannot use a device address ,
-			but you can use the NXT name. 
-			</P>
-			<P CLASS="western"><SPAN ID="Frame11" DIR="LTR" STYLE="float: left; width: 6.14in; height: 0.26in; border: 1px solid #000000; padding: 0.05in 0.1in; background: #ffffff">
-				<P CLASS="close-western"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">NXTComm
-				nxtComm = NXTCommFactory.</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt"><I>createNXTComm</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">(NXTCommFactory.</FONT></FONT></FONT><FONT COLOR="#0000c0"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt"><I>USB</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">);</FONT></FONT></FONT></P>
-			</SPAN><BR CLEAR=LEFT><BR><BR>
-			</P>
-			<P CLASS="body-text-4-western">To find the available NXT , you do:</P>
-			<UL>
-				<LI><P CLASS="western">NXTInfo[] nxtInfo =
-				nxtComm.search(&ldquo;MYNXT&rdquo;, NXTCommFactory.BLUETOOTH);</P>
-			</UL>
-			<P CLASS="body-text-4-western">If there is only one NXT connected,
-			you can use a null name parameter in the search() method. 
-			</P>
-			<P CLASS="western"><BR><BR>
-			</P>
-			<P CLASS="western"><A HREF="#1.Communications|outline"><FONT COLOR="#0000ff"><U>Back
-			to top</U></FONT></A></P>
-			<P CLASS="western"><BR><BR>
-			</P>
-			<P CLASS="western"><BR><BR>
-			</P>
-			<H4 LANG="en-GB" CLASS="western"><A NAME="1.0.4.3.Using the NXTInfo object|outline"></A>
-			Using the NXTInfo object</H4>
-			<P CLASS="body-text-4-western">Once you have a NXTInfo object, you
-			can call the open() method of the NXTComm object to connect to the
-			NXT:</P>
-			<UL>
-				<LI><P CLASS="western">public boolean open(NXTInfo nxt) throws
-				NXTCommException;</P>
-			</UL>
-			<P CLASS="body-text-4-western">Once the NXT is open, you can
-			obtain an InputStream and an OutputSttream, by calling the
-			getInputStream() anf getOutputStream() methods of the NXTComm
-			object:</P>
-			<UL>
-				<LI><P CLASS="western">public OutputStream getOutputStream();</P>
-				<LI><P CLASS="western">public InputStream getInputStream();</P>
-			</UL>
-			<P CLASS="body-text-4-western">From these you can construct a
-			DataInputStream and a DataOutputStream and send data to the
-			receiving NXT.</P>
-			<P CLASS="body-text-4-western"><BR><BR>
-			</P>
-			<P CLASS="body-text-4-western">The complete BTSend sample is in
-			the samples folder.</P>
-			<P CLASS="western"><BR><BR>
-			</P>
-			<P CLASS="western"><A HREF="#1.Communications|outline"><FONT COLOR="#0000ff"><U>Back
-			to top</U></FONT></A></P>
-			<P CLASS="western"><BR><BR>
-			</P>
-			<H1 CLASS="western" STYLE="page-break-after: avoid"><A NAME="2.Advanced Communications|outline"></A><A NAME="2.Advanced Communications|outline"></A>
-			Advanced Communications</H1>
-			<H2 CLASS="western"><A NAME="2.1.Controlling a remote NXT|outline"></A>
-			Controlling a remote NXT</H2>
-			<P CLASS="body-text-2-western">The RemoteNXT class allows one NXT
-			running leJOS to control another, remote NXT, running leJOS or the
-			standard LEGO firmware. It uses the LEGO Communications Protocol
-			(LCP) over Bluetooth to control the remote NXT.</P>
-			<P CLASS="body-text-2-western">Currently, the class is limited and
-			I2C and RCX sensors are not supported, and the motors must be used
-			in a simple way as the regulation thread is not used.</P>
-			<P CLASS="body-text-2-western">To access a remote NXT, you use the
-			constructor:</P>
-			<UL>
-				<LI><P CLASS="western">public RemoteNXT(String name) throws
-				IOException</P>
-			</UL>
-			<P CLASS="body-text-2-western">Example: 
-			</P>
-			<P CLASS="close-western"><SPAN ID="Frame12" DIR="LTR" STYLE="float: left; width: 4.35in; height: 2.22in; border: 1px solid #000000; padding: 0.05in 0.1in; background: #ffffff">
-				<P CLASS="close-western"><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>try</B></FONT></FONT></FONT><FONT COLOR="#000000">
-				</FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>{</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 0.79in"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>LCD.</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>drawString</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>(</FONT></FONT></FONT><FONT COLOR="#2a00ff"><FONT FACE="Courier New, monospace"><FONT SIZE=2>&quot;Connecting...&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>,0,0);</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 0.79in"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>nxt
-				= </FONT></FONT></FONT><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>new</B></FONT></FONT></FONT><FONT COLOR="#000000">
-				</FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>RemoteNXT(</FONT></FONT></FONT><FONT COLOR="#2a00ff"><FONT FACE="Courier New, monospace"><FONT SIZE=2>&quot;NXT&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>);</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 0.79in"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>LCD.</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>clear</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>();</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 0.79in"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>LCD.</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>drawString</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>(</FONT></FONT></FONT><FONT COLOR="#2a00ff"><FONT FACE="Courier New, monospace"><FONT SIZE=2>&quot;Connected&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>,0,0);</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 0.79in"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>Thread.</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>sleep</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>(2000);</FONT></FONT></FONT></P>
-				<P CLASS="close-western"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>}
-				</FONT></FONT></FONT><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>catch</B></FONT></FONT></FONT><FONT COLOR="#000000">
-				</FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>(IOException
-				ioe) {</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 0.79in"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>LCD.</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>clear</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>();</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 0.79in"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>LCD.</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>drawString</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>(</FONT></FONT></FONT><FONT COLOR="#2a00ff"><FONT FACE="Courier New, monospace"><FONT SIZE=2>&quot;Conn
-				Failed&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>,0,0);</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 0.79in"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>Thread.</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>sleep</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>(2000);</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 0.79in"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>System.</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>exit</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>(1);</FONT></FONT></FONT></P>
-				<P CLASS="close-western">}</P>
-			</SPAN><BR CLEAR=LEFT><BR><BR>
-			</P>
-			<P CLASS="body-text-2-western">The name of the remote NXT must
-			have already been added to the known devices of the initiating NXT
-			by do a Bluetooth search followed by &ldquo;Add&rdquo; fron the
-			leJOS NXJ Bluetooth menu.</P>
-			<P CLASS="body-text-2-western">The constructor opens the
-			connection and creates instances of the remote motor and sensor
-			ports.</P>
-			<P CLASS="body-text-2-western">It is then possible to get access
-			to information about the remote NXT by using the methods:</P>
-			<UL>
-				<LI><P CLASS="western">public String getBrickName()</P>
-				<LI><P CLASS="western">public String getBluetoothAddress()</P>
-				<LI><P CLASS="western">public int getFlashMemory()</P>
-				<LI><P CLASS="western">public String getFirmwareVersion()</P>
-				<LI><P CLASS="western">public String getProtocolVersion()</P>
-			</UL>
-			<P CLASS="body-text-2-western">Example:</P>
-			<P CLASS="western"><SPAN ID="Frame13" DIR="LTR" STYLE="float: left; width: 5.31in; height: 1.09in; border: 1px solid #000000; padding: 0.05in 0.1in; background: #ffffff">
-				<P CLASS="close-western"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>LCD.</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>drawString</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>(nxt.getBrickName(),
-				0, 6);</FONT></FONT></FONT></P>
-				<P CLASS="close-western"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>LCD.</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>drawString</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>(nxt.getFirmwareVersion(),
-				0, 7);</FONT></FONT></FONT></P>
-				<P CLASS="close-western"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>LCD.</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>drawString</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>(nxt.getProtocolVersion(),
-				4, 7);</FONT></FONT></FONT></P>
-				<P CLASS="close-western"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>LCD.</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>drawInt</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>(nxt.getFlashMemory(),
-				6, 8, 7);</FONT></FONT></FONT></P>
-			</SPAN><BR CLEAR=LEFT><BR><BR>
-			</P>
-			<P CLASS="body-text-2-western">There are also methods that act on
-			the remote NXT:</P>
-			<UL>
-				<LI><P CLASS="western">public byte deleteFlashMemory()</P>
-			</UL>
-			<P CLASS="western">A remote Battery object is created that can be
-			used to get the voltage of the remote battery using the normal
-			Battery methods.</P>
-			<P CLASS="western">Example:</P>
-			<P CLASS="western"><SPAN ID="Frame14" DIR="LTR" STYLE="float: left; width: 6.25in; height: 0.46in; border: 1px solid #000000; padding: 0.05in 0.1in; background: #ffffff">
-				<P CLASS="close-western"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">LCD.</FONT></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">drawString(
-				&quot;Battery: &quot; + </FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">nxt.</FONT></FONT></FONT><FONT COLOR="#0000c0"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">Battery</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">.getVoltageMilliVolt()</FONT></FONT></FONT>
-				<FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">0,4);</FONT></FONT></P>
-			</SPAN><BR CLEAR=LEFT><BR><BR>
-			</P>
-			<P CLASS="western">Objects are also created for the sensor ports
-			of the remote NXT. These are accessed as S1, S2, S3 and S4.</P>
-			<P CLASS="western">Local sensor objects can then be created using
-			these ports and use exactly as if they were connected to a local
-			sensor port.</P>
-			<P CLASS="western">Example:</P>
-			<P CLASS="western"><SPAN ID="Frame15" DIR="LTR" STYLE="float: left; width: 4.39in; height: 0.52in; border: 1px solid #000000; padding: 0.05in 0.1in; background: #ffffff">
-				<P CLASS="close-western">LightSensor light = new
-				LightSensor(nxt.S1);</P>
-				<P CLASS="close-western">LCD.drawString(&quot;Light: &quot; +
-				light.readValue(),0,5);</P>
-			</SPAN><BR CLEAR=LEFT><BR><BR>
-			</P>
-			<P CLASS="western">Motor objects are created for the remote
-			motors. They are named A, B and C.</P>
-			<P CLASS="western">These can be used in the normal way, e.g: 
-			</P>
-			<P CLASS="western" ALIGN=LEFT STYLE="margin-bottom: 0in; widows: 0; orphans: 0">
-			<SPAN ID="Frame16" DIR="LTR" STYLE="float: left; width: 2.51in; height: 1.06in; border: 1px solid #000000; padding: 0.05in 0.1in; background: #ffffff">
-				<P CLASS="close-western">nxt.A.setSpeed(360);</P>
-				<P CLASS="close-western">nxt.A.forward();</P>
-				<P CLASS="close-western">nxt.A.stop();</P>
-				<P CLASS="close-western">nxt.A.backward();</P>
-			</SPAN><BR CLEAR=LEFT><BR>
-			</P>
-			<P CLASS="western" ALIGN=LEFT STYLE="margin-bottom: 0in; widows: 0; orphans: 0">
-			<BR>
-			</P>
-			<P CLASS="western" ALIGN=LEFT STYLE="margin-bottom: 0in; widows: 0; orphans: 0">
-			<BR>
-			</P>
-			<P CLASS="western"><A HREF="#1.Communications|outline"><FONT COLOR="#0000ff"><U>Back
-			to top</U></FONT></A></P>
-			<H2 CLASS="western"><A NAME="2.2.Communications External Bluetooth devices|outline"></A>
-			<FONT COLOR="#ff6600"><FONT FACE="Arial, sans-serif"><FONT SIZE=3 STYLE="font-size: 13pt"><SPAN LANG="en-GB"><B>Communications</B></SPAN></FONT></FONT></FONT>
-			External Bluetooth devices</H2>
-			<P CLASS="western">The NXT can connect to external Bluetooth
-			devices that implement the Serial Port Profile (SPP).</P>
-			<P CLASS="western">Such devices can be searched for on the
-			Bluetooth menu and added to the known devices.</P>
-			<H3 LANG="en-GB" CLASS="western">GPS</H3>
-			<P CLASS="western">leJOS supports external Bluetooth GPS receivers
-			that support the NMEA protocol via the GPS and NMEASentence
-			classes. NMEASentence is a utility class used by GPS, and is not
-			directly accessed.</P>
-			<P CLASS="western">One such device that has been tested with leJOS
-			NXJ is the Holux M-1200.</P>
-			<P CLASS="western">Most such devices have a PIN that is required
-			to connect to them, but it may have a default value such as
-			&ldquo;0000&rdquo;.</P>
-			<P CLASS="western">To connect to a GPS device, you do:</P>
-			<P CLASS="close-western"><SPAN ID="Frame17" DIR="LTR" STYLE="float: left; width: 5.89in; height: 5.58in; border: 1px solid #000000; padding: 0.05in 0.1in; background: #ffffff">
-				<P CLASS="close-western">final byte[] pin = {(byte) '0', (byte)
-				'0', (byte) '0', (byte) '0'};</P>
-				<P CLASS="close-western">BTRemoteDevice btGPS =
-				Bluetooth.getKnownDevice(name); 
-				</P>
-				<P CLASS="close-western"><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>if</B></FONT></FONT></FONT><FONT COLOR="#000000">
-				</FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>(btrd
-				== </FONT></FONT></FONT><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>null</B></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>)
-				{</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 0.79in"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>LCD.</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>drawString</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>(</FONT></FONT></FONT><FONT COLOR="#2a00ff"><FONT FACE="Courier New, monospace"><FONT SIZE=2>&quot;No
-				such device&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>,
-				0, 0);</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 0.79in"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>Thread.</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>sleep</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>(2000);</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 0.79in"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>System.</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>exit</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>(1);</FONT></FONT></FONT></P>
-				<P CLASS="close-western">}</P>
-				<P CLASS="close-western">btGPS =
-				Bluetooth.connect(btrd.getDeviceAddr(), pin);</P>
-				<P CLASS="close-western"><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>if</B></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>(btGPS
-				== </FONT></FONT></FONT><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>null</B></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>)</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 0.79in"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>LCD.</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>drawString</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>(</FONT></FONT></FONT><FONT COLOR="#2a00ff"><FONT FACE="Courier New, monospace"><FONT SIZE=2>&quot;No
-				Connection&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>,
-				0, 1);</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 0.79in"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>Thread.</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>sleep</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>(2000);</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 0.79in"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>System.</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>exit</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>(1);</FONT></FONT></FONT></P>
-				<P CLASS="close-western"><FONT FACE="Courier New, monospace"><FONT SIZE=2>}
-				</FONT></FONT><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>else
-				{</B></FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 0.79in"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>LCD.</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>drawString</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>(</FONT></FONT></FONT><FONT COLOR="#2a00ff"><FONT FACE="Courier New, monospace"><FONT SIZE=2>&quot;Connected!&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>,
-				0, 1);</FONT></FONT></FONT></P>
-				<P CLASS="close-western">}</P>
-				<P CLASS="close-western"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>GPS
-				gps = </FONT></FONT></FONT><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>null</B></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>;</FONT></FONT></FONT></P>
-				<P CLASS="close-western">InputStream in;</P>
-				<P CLASS="close-western"><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>try</B></FONT></FONT></FONT><FONT COLOR="#000000">
-				</FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>{</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 0.79in">in =
-				btGPS.openInputStream();</P>
-				<P CLASS="close-western" STYLE="margin-left: 0.79in"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>gps
-				= </FONT></FONT></FONT><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>new</B></FONT></FONT></FONT><FONT COLOR="#000000">
-				</FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>GPS(in);</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 0.79in"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>LCD.</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>drawString</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>(</FONT></FONT></FONT><FONT COLOR="#2a00ff"><FONT FACE="Courier New, monospace"><FONT SIZE=2>&quot;GPS
-				Online&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>,
-				0, 6);</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 0.79in"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>}
-				</FONT></FONT></FONT><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>catch</B></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>(Exception
-				e) {</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 0.79in"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>LCD.</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>drawString</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>(</FONT></FONT></FONT><FONT COLOR="#2a00ff"><FONT FACE="Courier New, monospace"><FONT SIZE=2>&quot;GPS
-				Connect Fail&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>,
-				0, 6);</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 0.79in"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>Thread.</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>sleep</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>(2000);</FONT></FONT></FONT></P>
-				<P CLASS="close-western" STYLE="margin-left: 0.79in"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>System.</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>exit</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>(1);</FONT></FONT></FONT></P>
-				<P CLASS="close-western">}</P>
-			</SPAN><BR CLEAR=LEFT><BR><BR>
-			</P>
-			<P CLASS="western">As you see from this example, the GPS
-			constructor takes the input stream from the Bluetooth connection
-			as a parameter:</P>
-			<UL>
-				<LI><P CLASS="western">public GPS(InputStream in)</P>
-			</UL>
-			<P CLASS="western">It uses the NMEASentence class to process
-			messages (known as sentences) from the Bluetooth device. Current
-			only the $GPGGA sentence that gives the current latitude,
-			longitude and altitude, is processed.</P>
-			<P CLASS="western">To read the current values of latitude,
-			longitude and altitude, you use the methods:</P>
-			<UL>
-				<LI><P CLASS="western">public float getLatitude()</P>
-				<LI><P CLASS="western">public float getLongitude()</P>
-				<LI><P CLASS="western">public float getAltitude()</P>
-			</UL>
-			<P CLASS="western">You can also get the time stamp corresponding
-			to these values by:</P>
-			<UL>
-				<LI><P CLASS="western">public int getTime()</P>
-			</UL>
-			<P CLASS="western"><BR><BR>
-			</P>
-			<P CLASS="western"><A HREF="#1.Communications|outline"><FONT COLOR="#0000ff"><U>Back
-			to top</U></FONT></A></P>
-			<H2 CLASS="western"><A NAME="2.3.Communicating with the RCX|outline"></A>
-			Communicating with the RCX</H2>
-			<H3 LANG="en-GB" CLASS="western">RCXLink</H3>
-			<P CLASS="western">IR communication with the RCX can be done using
-			the Mindsensors NRLink RCX IR adapter. The software abstraction of
-			this device is the RCXLink class. The constructor is:</P>
-			<UL>
-				<LI><P CLASS="western">public RCXLink(I2CPort port)</P>
-			</UL>
-			<P CLASS="western">For example: 
-			</P>
-			<P CLASS="western"><SPAN ID="Frame18" DIR="LTR" STYLE="float: left; width: 3.72in; height: 0.48in; border: 1px solid #000000; padding: 0.05in 0.1in; background: #ffffff">
-				<P CLASS="close-western">RCXLink link = new
-				RCXLink(SensorPort.S1);</P>
-			</SPAN><BR CLEAR=LEFT><BR><BR>
-			</P>
-			<P CLASS="western">The NRLink-Nx supports a set of macros in ROM
-			and EEPROM that can be used to send messages to the RCX using the
-			LEGO RCX IR protocol. The EEPROM macos can be overwritten allowing
-			the user to define their own macros.</P>
-			<P CLASS="western">Macros can be run by:</P>
-			<UL>
-				<LI><P CLASS="western">public void runMacro(int addr)</P>
-			</UL>
-			<P CLASS="western">There are convenience methods for running the
-			ROM macros:</P>
-			<UL>
-				<LI><P CLASS="western">public void beep()</P>
-				<LI><P CLASS="western">public void runProgram(int programNumber)</P>
-				<LI><P CLASS="western">public void forwardStep(int id)</P>
-				<LI><P CLASS="western">public void backwardStep(int id)</P>
-				<LI><P CLASS="western">public void setRCXRangeShort()</P>
-				<LI><P CLASS="western">public void setRCXRangeLong()</P>
-				<LI><P CLASS="western">public void powerOff()</P>
-				<LI><P CLASS="western">public void stopAllPrograms()</P>
-			</UL>
-			<P CLASS="western">A new macro in the EEPROM address range can be
-			defined by:</P>
-			<UL>
-				<LI><P CLASS="western">public void defineMacro(int addr, byte[]
-				macro)</P>
-			</UL>
-			<P CLASS="western">There is a convenience method to define and run
-			a macro:</P>
-			<P CLASS="western"><BR><BR>
-			</P>
-			<P CLASS="western"><A HREF="#1.Communications|outline"><FONT COLOR="#0000ff"><U>Back
-			to top</U></FONT></A></P>
-			<P CLASS="western"><BR><BR>
-			</P>
-				
-
-<!-- DO NOT TOUCH -->				
-				<br/>
-        <div class="NavBit">
-                <a target="_top" href="../ErrorHandlingAndDebugging/ErrorHandling_and_debugging.htm">«&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../PC_GUI/PCGUITools.htm">Next&nbsp;»</a>
-        </div>
-		<br />
-				<td>
-			</tr>
-		</table>
-	</body>
+		</style>
+</head>
+<body>
+<a id="top" name="top"></a><!-- N1: HEADER -->
+<table class="n1t1" cellpadding="0" cellspacing="0">
+  <tbody>
+    <tr>
+      <td><img src="../r_media/images/tutorial_header1.jpg"></td>
+      <td align="right"><img
+ src="../r_media/images/tutorial_header2.jpg"></td>
+    </tr>
+  </tbody>
+</table>
+<!-- N2: CONTENTS -> NAVIGATION SYSTEMS AND CONTENTS -->
+<table class="n2t1" cellpadding="0" cellspacing="0">
+  <tbody>
+    <tr>
+      <td class="n2t1r1c1">
+      <p class="western"><a href="#1.Communications%7Coutline"><font
+ color="#0000ff"><u>Communications</u></font></a></p>
+      <p class="western" style="margin-left: 0.33in;"><a
+ href="#1.0.1.Receiver%7Coutline"><font color="#0000ff"><u>Receiver</u></font></a></p>
+      <p class="western" style="margin-left: 0.33in;"><a
+ href="#1.0.2.Streams%7Coutline"><font color="#0000ff"><u>Streams</u></font></a></p>
+      <p class="western" style="margin-left: 0.33in;"><font
+ color="#0000ff"><u><a href="#_NXT_Initiator__-__Bluetooth">NXT</a> <a
+ href="#1.0.3.NXT%20Initiator%20%20-%20%20Bluetooth%7Coutline">Initiator</a></u></font></p>
+      <p class="western" style="margin-left: 0.33in;"><a
+ href="#1.0.4.PC%20Initiator%20%7Coutline"><font color="#0000ff"><u>PC
+Initiator</u></font></a></p>
+      <p class="western" style="margin-left: 0.5in;"><a
+ href="#1.0.4.1.Bluetooth%20initiator%7Coutline"><font color="#0000ff"><u>Bluetooth
+initiator</u></font></a></p>
+      <p class="western" style="margin-left: 0.5in;"><font
+ color="#0000ff"><u><a href="#_USB_initiator">USB </a><a
+ href="#1.0.4.2.USB%20initiator%7Coutline">USB initiator</a></u></font></p>
+      <p class="western"><a
+ href="#1.0.4.3.Using%20the%20NXTInfo%20object%7Coutline"><font
+ color="#0000ff"><u>Using the NXTInfo object</u></font></a></p>
+      <p class="western" style="text-indent: 0.25in;"><font
+ color="#0000ff"><u><a href="#2.Advanced%20Communications%7Coutline">Advanced
+      </a><a href="#2.Advanced%20Communications%7Coutline">Advanced
+Communications</a></u></font></p>
+      <p class="western" style="text-indent: 0.25in;"><a
+ href="#2.1.Controlling%20a%20remote%20NXT%7Coutline"><font
+ color="#0000ff"><u>Controlling a remote NXT</u></font></a></p>
+      <p class="western" style="text-indent: 0.25in;"><a
+ href="#2.2.Communications%20External%20Bluetooth%20devices%7Coutline"><font
+ color="#0000ff"><u>Communications External Bluetooth devices</u></font></a></p>
+      <p class="western" style="text-indent: 0.25in;"><a
+ href="#2.3.Communicating%20with%20the%20RCX%7Coutline"><font
+ color="#0000ff"><u>Communicating with the RCX</u></font></a></p>
+      </td>
+      <td><!-- DO NOT MANINPULATE -->
+      <div id="BreadCrumbs"> <a href="../index.htm" target="_top">Home
+Page</a> &gt; <a href="#">Communications</a> </div>
+      <div class="NavBit"> <a target="_top"
+ href="../ErrorHandlingAndDebugging/ErrorHandling_and_debugging.htm">&laquo;&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a
+ href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a
+ href="../PC_GUI/PCGUITools.htm">Next&nbsp;&raquo;</a> </div>
+<!-- CONTENT TITLE -->
+      <div id="PageTitle">Communications</div>
+      <a name="1.Communications|outline"></a>
+      <p class="western">NXJ supports communications, by Bluetooth and
+USB, The NXJ communications classes are designed so that most of your
+code is independent of whether you are using Bluetooth or USB &#8211; you can
+write applications that will use either one (See the example below.).
+And you can use Java streams, which are a very flexible and easy to
+use. </p>
+      <p class="western">USB has the advantage of speed, but the cable
+can be used only to connect a NXT to a PC. Bluetooth is slower, but
+much flexible. It supports a multitude of methods of communicating NXT
+to NXT, PC to NXT, Mobile phone to NXT, NXT to remote Bluetooth device,
+etc. </p>
+      <p class="western">The first step in communicating is to
+establish a connection. A connection has an initiator and a receiver.
+The receiver requests a connection from the initiator, and waits till
+it has been established. Then both ends of the connection can use it to
+supply input and output streams. The receiver program <b>only</b> runs
+on a NXT. The initiator program may run on a PC (always for USB) , a
+NXT, a mobile phone or another device that supports the Bluetooth
+Serial Port Profile (SPP).</p>
+      <h3 class="western" lang="en-GB"><a name="1.0.1.Receiver|outline"></a>
+Receiver</h3>
+      <p class="western">The receiver program on the NXT requests a
+connection by calling the waitForConnection() method in the Bluetooth
+or USB class as :</p>
+      <ul>
+        <li>
+          <p class="western">BTConnection BTConnection
+waitForConnection();</p>
+        </li>
+        <li>
+          <p class="western">USBConnection USBConnection
+waitForConnection();</p>
+        </li>
+      </ul>
+      <p class="western" style="margin-left: 0.25in;">Even though the
+Bluetooth class returns a BTconnection object, and the USB class
+returns a USBConnection object, both of classes implement the
+NXTConnectiion interface. So an object of either class can be assigned
+to an reference variable that implements that interface. </p>
+      <p class="western">BlueTooth Example:</p>
+      <p class="close-western"><span id="Frame1" dir="ltr"
+ style="border: 1px solid rgb(0, 0, 0); padding: 0.05in 0.1in; background: rgb(255, 255, 255) none repeat scroll 0%; float: left; width: 5.05in; height: 0.38in; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
+      <p class="close-western"><font color="#000000"><font
+ face="Courier New, monospace"><font size="2">NXTConnection connection
+= Bluetooth.</font></font></font><font color="#000000"><font
+ face="Courier New, monospace"><font size="2"><i>waitForConnection</i></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">();</font></font></font></p>
+      </span><br clear="left">
+      <br>
+      <br>
+      </p>
+      <p class="western">You need to ensure that Bluetooth power and
+visibility are on before calling this method. The leJOS NXJ start-up
+menu can be used to do this.</p>
+      <p class="western"
+ style="margin-bottom: 0in; widows: 0; orphans: 0;" align="left"> <font
+ face="Times New Roman, serif"><font size="3">USB Example:</font></font></p>
+      <p class="close-western"><span id="Frame2" dir="ltr"
+ style="border: 1px solid rgb(0, 0, 0); padding: 0.05in 0.1in; background: rgb(255, 255, 255) none repeat scroll 0%; float: left; width: 4.64in; height: 0.38in; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
+      <p class="close-western"><font color="#000000"><font
+ face="Courier New, monospace"><font size="2">NXTBConnection connection
+= USB.</font></font></font><font color="#000000"><font
+ face="Courier New, monospace"><font size="2"><i>waitForConnection</i></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">();</font></font></font></p>
+      </span><br clear="left">
+      <br>
+      <br>
+      </p>
+      <p class="western">You need to ensure that the USB cable is
+connected before calling this method.</p>
+      <p class="western">Here is an example program that selects
+between USB and Bluetooth at run time:</p>
+      <p class="western"><span id="Frame3" dir="ltr"
+ style="border: 1px solid rgb(0, 0, 0); padding: 0.05in 0.1in; background: rgb(255, 255, 255) none repeat scroll 0%; float: left; width: 6.87in; height: 5.56in; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
+      <p class="close-western"><font color="#993300"><font
+ face="Monospaced, Times New Roman, serif"><b>import</b></font></font><font
+ color="#000000"> lejos.nxt.*;</font></p>
+      <p class="close-western"><font color="#993300"><font
+ face="Monospaced, Times New Roman, serif"><b>import</b></font></font><font
+ color="#000000"> lejos.nxt.comm.*;</font></p>
+      <p class="close-western"><font color="#993300"><font
+ face="Monospaced, Times New Roman, serif"><b>import</b></font></font><font
+ color="#000000"> java.io.*;</font></p>
+      <p class="close-western">/**</p>
+      <p class="close-western">* sample of selecting channel at run time</p>
+      <p class="close-western">*/</p>
+      <p class="close-western"><font color="#993300"><font
+ face="Monospaced, Times New Roman, serif"><b>public</b></font></font><font
+ color="#000000"> </font><font color="#993300"><font
+ face="Monospaced, Times New Roman, serif"><b>class</b></font></font><font
+ color="#000000"> CommTest </font> </p>
+      <p class="close-western">{</p>
+      <p class="close-western" style="margin-left: 0.41in;"><font
+ color="#993300"><font face="Monospaced, Times New Roman, serif"><b>public</b></font></font><font
+ color="#000000"> </font><font color="#993300"><font
+ face="Monospaced, Times New Roman, serif"><b>static</b></font></font><font
+ color="#000000"> </font><font color="#993300"><font
+ face="Monospaced, Times New Roman, serif"><b>void</b></font></font><font
+ color="#000000"> main( String[] args)</font></p>
+      <p class="close-western" style="margin-left: 0.41in;">{ </p>
+      <p class="close-western" style="margin-left: 0.79in;"><font
+ color="#000000">LCD.drawString(</font><font color="#0000ff">"right BT"</font><font
+ color="#000000">,0, 0);</font></p>
+      <p class="close-western" style="margin-left: 0.79in;"><font
+ color="#000000">NXTConnection connection = </font><font
+ color="#993300"><font face="Monospaced, Times New Roman, serif"><b>null</b></font></font><font
+ color="#000000">;</font></p>
+      <p class="close-western" style="margin-left: 0.79in;"><font
+ color="#993300"><font face="Monospaced, Times New Roman, serif"><b>if</b></font></font><font
+ color="#000000">( 4 == Button.waitForPress())</font></p>
+      <p class="close-western" style="margin-left: 0.79in;">{</p>
+      <p class="close-western" style="margin-left: 1.2in;"><font
+ color="#000000">LCD.drawString(</font><font color="#0000ff">"waiting
+for BT"</font><font color="#000000">, 0,1 );</font></p>
+      <p class="close-western" style="margin-left: 1.2in;">connection =
+Bluetooth.waitForConnection();</p>
+      <p class="close-western" style="margin-left: 0.79in;">}</p>
+      <p class="close-western" style="margin-left: 0.79in;"><font
+ color="#993300"><font face="Monospaced, Times New Roman, serif"><b>else</b></font></font><font
+ color="#000000"> </font> </p>
+      <p class="close-western" style="margin-left: 0.79in;">{</p>
+      <p class="close-western" style="margin-left: 1.2in;"><font
+ color="#000000">LCD.drawString(</font><font color="#0000ff">"waiting
+for USB"</font><font color="#000000">, 0,1 );</font></p>
+      <p class="close-western" style="margin-left: 1.2in;">connection =
+USB.waitForConnection();</p>
+      <p class="close-western" style="margin-left: 0.79in;">}</p>
+      <p class="close-western" style="margin-left: 0.79in;">DataOutputStream
+dataOut = connection.openDataOutputStream();</p>
+      <p class="close-western" style="margin-left: 0.79in;"><font
+ color="#993300"><font face="Monospaced, Times New Roman, serif"><b>try</b></font></font><font
+ color="#000000"> {dataOut.writeInt(1234);} </font> </p>
+      <p class="close-western" style="margin-left: 0.79in;"><font
+ color="#993300"><font face="Monospaced, Times New Roman, serif"><b>catch</b></font></font><font
+ color="#000000"> (IOException e ) {System.out.println(</font><font
+ color="#0000ff">" write error "</font><font color="#000000">+e);} </font>
+      </p>
+      <p class="close-western" style="margin-left: 0.41in;">}</p>
+      <p class="close-western">}</p>
+      </span><br clear="left">
+      <br>
+      <br>
+      </p>
+      <p class="western"><a href="#1.Communications%7Coutline"><font
+ color="#0000ff"><u>Back to top</u></font></a></p>
+      <h3 class="western" lang="en-GB"><a name="1.0.2.Streams|outline"></a>
+Streams</h3>
+      <p class="body-text-3-western">Once a connection has been
+established, streams can then be opened by calling any of the following
+methods in the NXTConnection interface:</p>
+      <ul>
+        <li>
+          <p class="western">InputStream openInputStream() throws
+IOException;</p>
+        </li>
+        <li>
+          <p class="western">OutputStream openOutputStream() throws
+IOException;</p>
+        </li>
+        <li>
+          <p class="western">DataInputStream openDataInputStream()
+throws IOException; (the example above did this) </p>
+        </li>
+        <li>
+          <p class="western">DataOutputStream openDataOutputStream()
+throws IOException;</p>
+        </li>
+      </ul>
+      <p class="body-text-3-western">Data items can then be read from
+the DataInputStream by:</p>
+      <ul>
+        <li>
+          <p class="western">int read(byte b[]) throws IOException </p>
+        </li>
+        <li>
+          <p class="western">int read(byte b[], int off, int len)
+throws IOException</p>
+        </li>
+        <li>
+          <p class="western">boolean readBoolean() throws IOException</p>
+        </li>
+        <li>
+          <p class="western">byte readByte() throws IOException</p>
+        </li>
+        <li>
+          <p class="western">short readShort() throws IOException</p>
+        </li>
+        <li>
+          <p class="western">readInt() throws IOException</p>
+        </li>
+        <li>
+          <p class="western">char readChar() throws IOException</p>
+        </li>
+        <li>
+          <p class="western">float readFloat() throws IOException</p>
+        </li>
+        <li>
+          <p class="western">String readLine() throws IOException</p>
+        </li>
+      </ul>
+      <p class="body-text-2-western"><b>Be aware: </b>The stream read
+methods are blocking &#8211; that is, they do not return until data is read.
+If your program has other tasks that need attending to while waiting
+for data, calls to the read methods should be made in a separate
+thread. </p>
+      <p class="body-text-2-western"><br>
+      <br>
+      </p>
+      <p class="body-text-2-western">Data can be written to the
+DataOutputStream by:</p>
+      <ul>
+        <li>
+          <p class="western">void write(byte b[], int off, int len)
+throws IOException</p>
+        </li>
+        <li>
+          <p class="western">void writeBoolean(boolean v) throws
+IOException</p>
+        </li>
+        <li>
+          <p class="western">void writeByte(int v) throws IOException</p>
+        </li>
+        <li>
+          <p class="western">void writeShort(int v) throws IOException</p>
+        </li>
+        <li>
+          <p class="western">void writeChar(int v) throws IOException</p>
+        </li>
+        <li>
+          <p class="western">void writeInt(int v) throws IOException</p>
+        </li>
+        <li>
+          <p class="western">void writeFloat(float v) throws
+IOException;</p>
+        </li>
+        <li>
+          <p class="western">void writeChars (String value) throws
+IOException</p>
+        </li>
+      </ul>
+      <p class="body-text-2-western">Example. of reading and writing
+integers using data streams (<font face="Courier New, monospace">dis a</font><font
+ face="Times New Roman, serif">nd </font><font
+ face="Courier New, monospace"> dos a</font><font
+ face="Times New Roman, serif">re a DataInputStream and
+DataOutputStream that has been opened)</font></p>
+      <p class="body-text-2-western"><span id="Frame4" dir="ltr"
+ style="border: 1px solid rgb(0, 0, 0); padding: 0.05in 0.1in; background: rgb(255, 255, 255) none repeat scroll 0%; float: left; width: 3.88in; height: 1.49in; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
+      <p class="close-western"><font color="#7f0055"><font
+ face="Courier New, monospace"><font size="2"><b>for</b></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">(</font></font></font><font
+ color="#7f0055"><font face="Courier New, monospace"><font size="2"><b>int</b></font></font></font><font
+ color="#000000"> </font><font color="#000000"><font
+ face="Courier New, monospace"><font size="2">i=0;i&lt;100;i++) {</font></font></font></p>
+      <p class="close-western" style="margin-left: 0.42in;"><font
+ color="#7f0055"><font face="Courier New, monospace"><font size="2"><b>int</b></font></font></font><font
+ color="#000000"> </font><font color="#000000"><font
+ face="Courier New, monospace"><font size="2">n = dis.readInt();</font></font></font></p>
+      <p class="close-western" style="margin-left: 0.42in;"><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">LCD.</font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2"><i>drawInt</i></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">(n,7,0,1);</font></font></font></p>
+      <p class="close-western" style="margin-left: 0.42in;"><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">LCD.</font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2"><i>refresh</i></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">();</font></font></font></p>
+      <p class="close-western" style="margin-left: 0.42in;">dos.writeInt(-n);</p>
+      <p class="close-western" style="margin-left: 0.42in;">dos.flush();</p>
+      <p class="close-western">}</p>
+      <p class="close-western"><br>
+      </p>
+      </span><br clear="left">
+      <br>
+      <br>
+      </p>
+      <p class="body-text-2-western"><b>Be aware: </b>you must flush
+the output stream to be sure the data is actually transmitted.
+Furthermore, it is possible for transmission to fail without throwing
+an exception. </p>
+      <p class="body-text-2-western">The DataInputStream,
+DataOutputstream and NXTConnection can then be closed using the close()
+method.</p>
+      <p class="body-text-2-western"><br>
+      <br>
+      </p>
+      <p class="body-text-2-western">The full example using BlueTooth
+is:</p>
+      <p class="close-western"><span id="Frame5" dir="ltr"
+ style="border: 1px solid rgb(0, 0, 0); padding: 0.05in 0.1in; background: rgb(255, 255, 255) none repeat scroll 0%; float: left; width: 6.66in; height: 6.61in; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
+      <p class="close-western"><font color="#7f0055"><font
+ face="Courier New, monospace"><font size="2"><b>public</b></font></font></font><font
+ color="#000000"> </font><font color="#7f0055"><font
+ face="Courier New, monospace"><font size="2"><b>class</b></font></font></font><font
+ color="#000000"> </font><font color="#000000"><font
+ face="Courier New, monospace"><font size="2">BTReceive {</font></font></font></p>
+      <p class="close-western"><br>
+      <br>
+      </p>
+      <p class="close-western" style="margin-left: 0.42in;"><font
+ color="#7f0055"><font face="Courier New, monospace"><font size="2"><b>public</b></font></font></font><font
+ color="#000000"> </font><font color="#7f0055"><font
+ face="Courier New, monospace"><font size="2"><b>static</b></font></font></font><font
+ color="#000000"> </font><font color="#7f0055"><font
+ face="Courier New, monospace"><font size="2"><b>void</b></font></font></font><font
+ color="#000000"> </font><font color="#000000"><font
+ face="Courier New, monospace"><font size="2">main(String [] args) </font></font></font><font
+ color="#7f0055"><font face="Courier New, monospace"><font size="2"><b>throws</b></font></font></font><font
+ color="#000000"> </font><font color="#000000"><font
+ face="Courier New, monospace"><font size="2">Exception </font></font></font>
+      </p>
+      <p class="close-western" style="margin-left: 0.42in;">{</p>
+      <p class="close-western" style="margin-left: 0.79in;"><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">String
+connected = </font></font></font><font color="#2a00ff"><font
+ face="Courier New, monospace"><font size="2">"Connected"</font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">;</font></font></font></p>
+      <p class="close-western" style="margin-left: 0.79in;"><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">String
+waiting = </font></font></font><font color="#2a00ff"><font
+ face="Courier New, monospace"><font size="2">"Waiting..."</font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">;</font></font></font></p>
+      <p class="close-western" style="margin-left: 0.79in;"><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">String
+closing = </font></font></font><font color="#2a00ff"><font
+ face="Courier New, monospace"><font size="2">"Closing..."</font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">;</font></font></font></p>
+      <p class="close-western" style="margin-left: 0.79in;"><font
+ color="#7f0055"><font face="Courier New, monospace"><font size="2"><b>while</b></font></font></font><font
+ color="#000000"> </font><font color="#000000"><font
+ face="Courier New, monospace"><font size="2">(</font></font></font><font
+ color="#7f0055"><font face="Courier New, monospace"><font size="2"><b>true</b></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">)</font></font></font></p>
+      <p class="close-western" style="margin-left: 0.79in;">{</p>
+      <p class="close-western" style="margin-left: 1.18in;"><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">LCD.</font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2"><i>drawString</i></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">(waiting,0,0);</font></font></font></p>
+      <p class="close-western" style="margin-left: 1.18in;"><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">NXTConnection
+connection = Bluetooth.</font></font></font><font color="#000000"><font
+ face="Courier New, monospace"><font size="2"><i>waitForConnection</i></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">();</font></font></font>
+      </p>
+      <p class="close-western" style="margin-left: 1.18in;"><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">LCD.</font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2"><i>clear</i></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">();</font></font></font></p>
+      <p class="close-western" style="margin-left: 1.18in;"><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">LCD.</font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2"><i>drawString</i></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">(connected,0,0);</font></font></font></p>
+      <p class="close-western" style="margin-left: 1.18in;">DataInputStream
+dis = connection.openDataInputStream();</p>
+      <p class="close-western" style="margin-left: 1.18in;">DataOutputStream
+dos = connection.openDataOutputStream();</p>
+      <p class="close-western" style="margin-left: 1.18in;"><br>
+      <br>
+      </p>
+      <p class="close-western" style="margin-left: 1.18in;"><font
+ color="#7f0055"><font face="Courier New, monospace"><font size="2"><b>for</b></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">(</font></font></font><font
+ color="#7f0055"><font face="Courier New, monospace"><font size="2"><b>int</b></font></font></font><font
+ color="#000000"> </font><font color="#000000"><font
+ face="Courier New, monospace"><font size="2">i=0;i&lt;100;i++) {</font></font></font></p>
+      <p class="close-western" style="margin-left: 1.58in;"><font
+ color="#7f0055"><font face="Courier New, monospace"><font size="2"><b>int</b></font></font></font><font
+ color="#000000"> </font><font color="#000000"><font
+ face="Courier New, monospace"><font size="2">n = dis.readInt();</font></font></font></p>
+      <p class="close-western" style="margin-left: 1.58in;"><font
+ color="#000000"><font face="Courier New, monospace"><font size="2"><span
+ lang="fr-FR">LCD.</span></font></font></font><font color="#000000"><font
+ face="Courier New, monospace"><font size="2"><span lang="fr-FR"><i>drawInt</i></span></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2"><span
+ lang="fr-FR">(n,7,0,1);</span></font></font></font></p>
+      <p class="close-western" style="margin-left: 1.58in;">dos.writeInt(-n);</p>
+      <p class="close-western" style="margin-left: 1.58in;">dos.flush();</p>
+      <p class="close-western" style="margin-left: 1.18in;">}</p>
+      <p class="close-western" style="margin-left: 1.18in;">dis.close();</p>
+      <p class="close-western" style="margin-left: 1.18in;">dos.close();</p>
+      <p class="close-western" style="margin-left: 1.18in;"><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">Thread.</font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2"><i>sleep</i></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">(100);
+      </font></font></font><font color="#3f7f5f"><font
+ face="Courier New, monospace"><font size="2">// wait for data to drain</font></font></font></p>
+      <p class="close-western" style="margin-left: 1.18in;"><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">LCD.</font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2"><i>clear</i></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">();</font></font></font></p>
+      <p class="close-western" style="margin-left: 1.18in;"><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">LCD.</font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2"><i>drawString</i></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">(closing,0,0);</font></font></font></p>
+      <p class="close-western" style="margin-left: 1.18in;">btc.close();</p>
+      <p class="close-western" style="margin-left: 1.18in;"><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">LCD.</font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2"><i>clear</i></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">();</font></font></font></p>
+      <p class="close-western" style="margin-left: 0.79in;">}</p>
+      <p class="close-western" style="margin-left: 0.42in;">}</p>
+      <p class="close-western">}</p>
+      </span><br clear="left">
+      <br>
+      <br>
+      </p>
+      <p class="body-text-2-western">To modify this example to work
+with USB, you only have to change Bluetooth.waitforconnection() to
+USB.waitForconnectkon()</p>
+      <p class="western"><br>
+      <br>
+      </p>
+      <p class="western"><a href="#1.Communications%7Coutline"><font
+ color="#0000ff"><u>Back to top</u></font></a></p>
+      <p class="western"><br>
+      <br>
+      </p>
+      <p class="western"><br>
+      <br>
+      </p>
+      <h3 class="western" lang="en-GB">NXT Initiator - Bluetooth</h3>
+      <p class="body-text-2-western"><br>
+      <br>
+      </p>
+      <p class="body-text-3-western">To initiate a Bluetooth connection
+from one NXT to another NXT, you first need to add the receiver NXT to
+the initiator NXT&#8217;s Bluetooth devices.</p>
+      <p class="body-text-3-western">To do this, you go to the
+Bluetooth menu in the leJOS NXJ start-up menu and select &#8220;Search&#8221;.
+Providing the Bluetooth power is on and visibility is on for the
+receiving NXT, it will be found and you can select &#8220;Add&#8221; to add it to
+the initiator&#8217;s Bluetooth devices.</p>
+      <p class="body-text-3-western">To check it is in the Devices
+list, you can select &#8220;Devices&#8221; from the Bluetooth menu of the initiator
+NXT.</p>
+      <p class="body-text-3-western">You can then create a
+BTRemoteDevice class on the initiator NXT:</p>
+      <p class="body-text-3-western">Example:</p>
+      <p class="close-western"><span id="Frame6" dir="ltr"
+ style="border: 1px solid rgb(0, 0, 0); padding: 0.05in 0.1in; background: rgb(255, 255, 255) none repeat scroll 0%; float: left; width: 5.59in; height: 0.45in; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
+      <p class="close-western">BTRemoteDevice btrd =
+Bluetooth.getKnownDevice(name);</p>
+      </span><br clear="left">
+      <br>
+      <br>
+      </p>
+      <p class="body-text-3-western">You can connect to the remote
+device by its address, which you can get by:</p>
+      <ul>
+        <li>
+          <p class="western">public byte[] getDeviceAddr()</p>
+        </li>
+      </ul>
+      <p class="body-text-3-western"><br>
+      </p>
+      <p class="body-text-3-western">You can then connect to the remote
+device by calling one of the connect() methods in the Bluetooth class:</p>
+      <ul>
+        <li>
+          <p class="western">BTConnection connect(BTRemoteDevice
+remoteDevice)</p>
+        </li>
+      </ul>
+      <ul>
+        <li>
+          <p class="western">BTConnection connect(byte[] device_addr)</p>
+        </li>
+        <li>
+          <p class="western">BTConnection connect(byte[] device_addr,
+byte[] pin)</p>
+        </li>
+      </ul>
+      <p class="western">Example:</p>
+      <p class="close-western"><span id="Frame7" dir="ltr"
+ style="border: 1px solid rgb(0, 0, 0); padding: 0.05in 0.1in; background: rgb(255, 255, 255) none repeat scroll 0%; float: left; width: 5.21in; height: 2.85in; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
+      <p class="close-western"><font color="#000000"><font
+ face="Courier New, monospace"><font size="2">BTRemoteDevice btrd =
+Bluetooth.</font></font></font><font color="#000000"><font
+ face="Courier New, monospace"><font size="2"><i>getKnownDevice</i></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">(name);</font></font></font><br>
+      <br>
+      </p>
+      <p class="close-western"><font color="#7f0055"><font
+ face="Courier New, monospace"><font size="2"><b>if</b></font></font></font><font
+ color="#000000"> </font><font color="#000000"><font
+ face="Courier New, monospace"><font size="2">(btrd == </font></font></font><font
+ color="#7f0055"><font face="Courier New, monospace"><font size="2"><b>null</b></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">) {</font></font></font></p>
+      <p class="close-western" style="margin-left: 0.51in;"><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">LCD.</font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2"><i>clear</i></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">();</font></font></font></p>
+      <p class="close-western" style="margin-left: 0.51in;"><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">LCD.</font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2"><i>drawString</i></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">(</font></font></font><font
+ color="#2a00ff"><font face="Courier New, monospace"><font size="2">"No
+such device"</font></font></font><font color="#000000"><font
+ face="Courier New, monospace"><font size="2">, 0, 0);</font></font></font></p>
+      <p class="close-western" style="margin-left: 0.51in;">Button.waitForPress();</p>
+      <p class="close-western" style="margin-left: 0.51in;"><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">System.</font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2"><i>exit</i></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">(1);</font></font></font></p>
+      <p class="close-western">}</p>
+      <p class="close-western"><font color="#000000"><font
+ face="Courier New, monospace"><font size="2">BTConnection btc =
+Bluetooth.</font></font></font><font color="#000000"><font
+ face="Courier New, monospace"><font size="2"><i>connect</i></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">(btrd);</font></font></font></p>
+      <p class="close-western"><font color="#7f0055"><font
+ face="Courier New, monospace"><font size="2"><b>if</b></font></font></font><font
+ color="#000000"> </font><font color="#000000"><font
+ face="Courier New, monospace"><font size="2">(btc == </font></font></font><font
+ color="#7f0055"><font face="Courier New, monospace"><font size="2"><b>null</b></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">) {</font></font></font></p>
+      <p class="close-western" style="margin-left: 0.5in;"><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">LCD.</font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2"><i>clear</i></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">();</font></font></font></p>
+      <p class="close-western" style="margin-left: 0.5in;"><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">LCD.</font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2"><i>drawString</i></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">(</font></font></font><font
+ color="#2a00ff"><font face="Courier New, monospace"><font size="2">"Connect
+fail"</font></font></font><font color="#000000"><font
+ face="Courier New, monospace"><font size="2">, 0, 0);</font></font></font></p>
+      <p class="close-western" style="margin-left: 0.5in;">Button.waitForPress();</p>
+      <p class="close-western" style="margin-left: 0.5in;"><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">System.</font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2"><i>exit</i></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">(1);</font></font></font></p>
+      <p class="close-western">}</p>
+      </span><br clear="left">
+      <br>
+      <br>
+      </p>
+      <p class="body-text-3-western">Having got a BTconnection object
+you can open the data input and output streams and read data as in the
+receiver example above.</p>
+      <p class="body-text-3-western">The complete BTConnectTest
+example, which works as the initiator program for the BTReceive
+receiver program, is:</p>
+      <p class="western"><span id="Frame8" dir="ltr"
+ style="border: 1px solid rgb(0, 0, 0); padding: 0.05in 0.1in; background: rgb(255, 255, 255) none repeat scroll 0%; float: left; width: 5.79in; height: 9.26in; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
+      <p class="close-western"><font color="#7f0055"><font
+ face="Courier New, monospace"><font size="2"><b>public</b></font></font></font><font
+ color="#000000"> </font><font color="#7f0055"><font
+ face="Courier New, monospace"><font size="2"><b>class</b></font></font></font><font
+ color="#000000"> </font><font color="#000000"><font
+ face="Courier New, monospace"><font size="2">BTConnectTest {</font></font></font></p>
+      <p class="close-western" style="margin-left: 0.43in;"><font
+ color="#7f0055"><font face="Courier New, monospace"><font size="2"><b>public</b></font></font></font><font
+ color="#000000"> </font><font color="#7f0055"><font
+ face="Courier New, monospace"><font size="2"><b>static</b></font></font></font><font
+ color="#000000"> </font><font color="#7f0055"><font
+ face="Courier New, monospace"><font size="2"><b>void</b></font></font></font><font
+ color="#000000"> </font><font color="#000000"><font
+ face="Courier New, monospace"><font size="2">main(String[] args) </font></font></font><font
+ color="#7f0055"><font face="Courier New, monospace"><font size="2"><b>throws</b></font></font></font><font
+ color="#000000"> </font><font color="#000000"><font
+ face="Courier New, monospace"><font size="2">Exception {</font></font></font></p>
+      <p class="close-western" style="margin-left: 0.79in;"><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">String
+name = </font></font></font><font color="#2a00ff"><font
+ face="Courier New, monospace"><font size="2">"NXT"</font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">;</font></font></font></p>
+      <p class="close-western" style="margin-left: 0.79in;"><font
+ color="#000000"><font face="Courier New, monospace"><font size="2"><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">LCD.</font></font></font></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2"><i><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">drawString</font></font></font></i></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2"><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">(</font></font></font></font></font></font><font
+ color="#2a00ff"><font face="Courier New, monospace"><font size="2"><font
+ color="#2a00ff"><font face="Courier New, monospace"><font size="2">"Connecting..."</font></font></font></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2"><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">,
+0, 0);</font></font></font></font></font></font></p>
+      <p class="close-western" style="margin-left: 0.79in;"><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">BTRemoteDevice
+btrd = Bluetooth.</font></font></font><font color="#000000"><font
+ face="Courier New, monospace"><font size="2"><i>getKnownDevice</i></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">(name);</font></font></font></p>
+      <p class="close-western" style="margin-left: 0.79in;"><font
+ color="#7f0055"><font face="Courier New, monospace"><font size="2"><b>if</b></font></font></font><font
+ color="#000000"> </font><font color="#000000"><font
+ face="Courier New, monospace"><font size="2">(btrd == </font></font></font><font
+ color="#7f0055"><font face="Courier New, monospace"><font size="2"><b>null</b></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">) {</font></font></font></p>
+      <p class="close-western" style="margin-left: 1.19in;"><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">LCD.</font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2"><i>clear</i></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">();</font></font></font></p>
+      <p class="close-western" style="margin-left: 1.19in;"><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">LCD.</font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2"><i>drawString</i></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">(</font></font></font><font
+ color="#2a00ff"><font face="Courier New, monospace"><font size="2">"No
+such device"</font></font></font><font color="#000000"><font
+ face="Courier New, monospace"><font size="2">, 0, 0);</font></font></font></p>
+      <p class="close-western" style="margin-left: 1.19in;"><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">Thread.</font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2"><i>sleep</i></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">(2000);</font></font></font></p>
+      <p class="close-western" style="margin-left: 1.19in;"><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">System.</font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2"><i>exit</i></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">(1);</font></font></font></p>
+      <p class="close-western" style="margin-left: 0.79in;">}</p>
+      <p class="close-western" style="margin-left: 0.79in;"><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">BTConnection
+btc = Bluetooth.</font></font></font><font color="#000000"><font
+ face="Courier New, monospace"><font size="2"><i>connect</i></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">(btrd);</font></font></font></p>
+      <p class="close-western" style="margin-left: 0.79in;"><font
+ color="#7f0055"><font face="Courier New, monospace"><font size="2"><b>if</b></font></font></font><font
+ color="#000000"> </font><font color="#000000"><font
+ face="Courier New, monospace"><font size="2">(btc == </font></font></font><font
+ color="#7f0055"><font face="Courier New, monospace"><font size="2"><b>null</b></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">) {</font></font></font></p>
+      <p class="close-western" style="margin-left: 1.08in;"><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">LCD.</font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2"><i>clear</i></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">();</font></font></font></p>
+      <p class="close-western" style="margin-left: 1.08in;"><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">LCD.</font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2"><i>drawString</i></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">(</font></font></font><font
+ color="#2a00ff"><font face="Courier New, monospace"><font size="2">"Connect
+fail"</font></font></font><font color="#000000"><font
+ face="Courier New, monospace"><font size="2">, 0, 0);</font></font></font></p>
+      <p class="close-western" style="margin-left: 1.08in;"><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">Thread.</font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2"><i>sleep</i></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">(2000);</font></font></font></p>
+      <p class="close-western" style="margin-left: 1.08in;"><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">System.</font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2"><i>exit</i></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">(1);</font></font></font></p>
+      <p class="close-western" style="margin-left: 0.79in;">}</p>
+      <p class="close-western" style="margin-left: 0.79in;"><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">LCD.</font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2"><i>clear</i></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">();</font></font></font></p>
+      <p class="close-western" style="margin-left: 0.79in;"><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">LCD.</font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2"><i>drawString</i></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">(</font></font></font><font
+ color="#2a00ff"><font face="Courier New, monospace"><font size="2">"Connected"</font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">,
+0, 0);</font></font></font></p>
+      <p class="close-western" style="margin-left: 0.79in;">DataInputStream
+dis = btc.openDataInputStream();</p>
+      <p class="close-western" style="margin-left: 0.79in;">DataOutputStream
+dos = btc.openDataOutputStream();</p>
+      <p class="close-western" style="margin-left: 0.79in;"><font
+ color="#7f0055"><font face="Courier New, monospace"><font size="2"><b>for</b></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">(</font></font></font><font
+ color="#7f0055"><font face="Courier New, monospace"><font size="2"><b>int</b></font></font></font><font
+ color="#000000"> </font><font color="#000000"><font
+ face="Courier New, monospace"><font size="2">i=0;i&lt;100;i++) {</font></font></font></p>
+      <p class="close-western" style="margin-left: 1.13in;"><font
+ color="#7f0055"><font face="Courier New, monospace"><font size="2"><b>try</b></font></font></font><font
+ color="#000000"> </font><font color="#000000"><font
+ face="Courier New, monospace"><font size="2">{</font></font></font></p>
+      <p class="close-western" style="margin-left: 1.46in;"><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">LCD.</font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2"><i>drawInt</i></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">(i*30000,
+8, 0, 2);</font></font></font></p>
+      <p class="close-western" style="margin-left: 1.46in;">dos.writeInt(i*30000);</p>
+      <p class="close-western" style="margin-left: 1.46in;">dos.flush();
+      </p>
+      <p class="close-western" style="margin-left: 1.46in;"><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">} </font></font></font><font
+ color="#7f0055"><font face="Courier New, monospace"><font size="2"><b>catch</b></font></font></font><font
+ color="#000000"> </font><font color="#000000"><font
+ face="Courier New, monospace"><font size="2">(IOException ioe) {</font></font></font></p>
+      <p class="close-western" style="margin-left: 1.46in;"><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">LCD.</font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2"><i>drawString</i></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">(</font></font></font><font
+ color="#2a00ff"><font face="Courier New, monospace"><font size="2">"Write
+Exception"</font></font></font><font color="#000000"><font
+ face="Courier New, monospace"><font size="2">, 0, 0);</font></font></font></p>
+      <p class="close-western" style="margin-left: 1.46in;"><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">LCD.</font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2"><i>refresh</i></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">();</font></font></font></p>
+      <p class="close-western" style="margin-left: 1.13in;">}</p>
+      <p class="close-western" style="margin-left: 1.13in;"><font
+ color="#7f0055"><font face="Courier New, monospace"><font size="2"><b>try</b></font></font></font><font
+ color="#000000"> </font><font color="#000000"><font
+ face="Courier New, monospace"><font size="2">{</font></font></font></p>
+      <p class="close-western" style="margin-left: 1.33in;"><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">LCD.</font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2"><i>drawInt</i></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">(dis.readInt(),8,
+0,3);</font></font></font></p>
+      <p class="close-western" style="margin-left: 1.33in;"><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">} </font></font></font><font
+ color="#7f0055"><font face="Courier New, monospace"><font size="2"><b>catch</b></font></font></font><font
+ color="#000000"> </font><font color="#000000"><font
+ face="Courier New, monospace"><font size="2">(IOException ioe) {</font></font></font></p>
+      <p class="close-western" style="margin-left: 1.33in;"><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">LCD.</font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2"><i>drawString</i></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">(</font></font></font><font
+ color="#2a00ff"><font face="Courier New, monospace"><font size="2">"Read
+Exception "</font></font></font><font color="#000000"><font
+ face="Courier New, monospace"><font size="2">, 0, 0);</font></font></font></p>
+      <p class="close-western" style="margin-left: 1.13in;">}</p>
+      <p class="close-western" style="margin-left: 0.79in;">}</p>
+      <p class="close-western" style="margin-left: 0.79in;"><font
+ color="#7f0055"><font face="Courier New, monospace"><font size="2"><b>try</b></font></font></font><font
+ color="#000000"> </font><font color="#000000"><font
+ face="Courier New, monospace"><font size="2">{</font></font></font></p>
+      <p class="close-western" style="margin-left: 1.25in;"><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">LCD.</font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2"><i>drawString</i></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">(</font></font></font><font
+ color="#2a00ff"><font face="Courier New, monospace"><font size="2">"Closing...
+"</font></font></font><font color="#000000"><font
+ face="Courier New, monospace"><font size="2">, 0, 0);</font></font></font></p>
+      <p class="close-western" style="margin-left: 1.25in;">dis.close();</p>
+      <p class="close-western" style="margin-left: 1.25in;">dos.close();</p>
+      <p class="close-western" style="margin-left: 1.25in;">btc.close();</p>
+      <p class="close-western" style="margin-left: 1.25in;"><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">} </font></font></font><font
+ color="#7f0055"><font face="Courier New, monospace"><font size="2"><b>catch</b></font></font></font><font
+ color="#000000"> </font><font color="#000000"><font
+ face="Courier New, monospace"><font size="2">(IOException ioe) {</font></font></font></p>
+      <p class="close-western" style="margin-left: 1.25in;"><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">LCD.</font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2"><i>drawString</i></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">(</font></font></font><font
+ color="#2a00ff"><font face="Courier New, monospace"><font size="2">"Close
+Exception"</font></font></font><font color="#000000"><font
+ face="Courier New, monospace"><font size="2">, 0, 0);</font></font></font></p>
+      <p class="close-western" style="margin-left: 0.79in;">}</p>
+      <p class="close-western" style="margin-left: 0.79in;"><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">LCD.</font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2"><i>drawString</i></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">(</font></font></font><font
+ color="#2a00ff"><font face="Courier New, monospace"><font size="2">"Finished"</font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">,3,
+4);</font></font></font></p>
+      <p class="close-western" style="margin-left: 0.79in;">Button.waitForPress();</p>
+      <p class="close-western" style="margin-left: 0.43in;">}</p>
+      <p class="close-western">}</p>
+      </span><br clear="left">
+      <br>
+      <br>
+      </p>
+      <p class="western" style="text-indent: 0.2in;"><a
+ href="#_Communications"><font color="#0000ff"><u>Back to top</u></font></a></p>
+      <p class="western"><br>
+      <br>
+      </p>
+      <h3 class="western" lang="en-GB"><a
+ name="1.0.4.PC Initiator |outline"></a> PC Initiator </h3>
+      <p class="western"><br>
+      <br>
+      </p>
+      <p class="body-text-3-western">A PC program can initiate a
+connection to a NXT and open a Java data stream.</p>
+      <p class="body-text-3-western">The API on the PC is different to
+the NXT API. See pcapidocs.</p>
+      <p class="body-text-3-western">To connect to the NXT, you need a
+NXTComm object that can be obtained using the NXTCommFactory class:</p>
+      <ul>
+        <li>
+          <p class="western">public static NXTComm createNXTComm(int
+protocol)</p>
+        </li>
+      </ul>
+      <h4 class="western" lang="en-GB"><a
+ name="1.0.4.1.Bluetooth initiator|outline"></a> Bluetooth initiator</h4>
+      <p class="body-text-4-western">Bluetooth Example:</p>
+      <p class="western"><span id="Frame9" dir="ltr"
+ style="border: 1px solid rgb(0, 0, 0); padding: 0.05in 0.1in; background: rgb(255, 255, 255) none repeat scroll 0%; float: left; width: 5.7in; height: 0.26in; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
+      <p class="close-western"><font color="#000000"><font
+ face="Courier New, monospace"><font style="font-size: 9pt;" size="2">NXTComm
+nxtComm = NXTCommFactory.</font></font></font><font color="#000000"><font
+ face="Courier New, monospace"><font style="font-size: 9pt;" size="2"><i>createNXTComm</i></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font
+ style="font-size: 9pt;" size="2">(NXTCommFactory.</font></font></font><font
+ color="#0000c0"><font face="Courier New, monospace"><font
+ style="font-size: 9pt;" size="2"><i>BLUETOOTH</i></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font
+ style="font-size: 9pt;" size="2">);</font></font></font></p>
+      </span><br clear="left">
+      <br>
+      <br>
+      </p>
+      <p class="body-text-4-western">The reason for using a factory
+method is that there are several implementations of comms drivers for
+Bluetooth and USB on the PC and the one that is used depends on what
+operating system you are using and the contents of he nxj.properties
+file.</p>
+      <p class="body-text-4-western">You can connect to the NXT by
+address or by do a Bluetooth inquiry:</p>
+      <p class="body-text-4-western">To connect by address, you create
+a NXTInfo object using the constructor:</p>
+      <ul>
+        <li>
+          <p class="western">public NXTInfo(String name, String address)</p>
+        </li>
+      </ul>
+      <p class="body-text-4-western">Example:</p>
+      <p class="western"><span id="Frame10" dir="ltr"
+ style="border: 1px solid rgb(0, 0, 0); padding: 0.05in 0.1in; background: rgb(255, 255, 255) none repeat scroll 0%; float: left; width: 5.05in; height: 0.45in; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
+      <p class="close-western">NXTInfo nxtInfo = new NXTInfo(&#8220;NXT&#8221;,
+&#8220;00:16:53:00:78:48&#8221;);</p>
+      </span><br clear="left">
+      <br>
+      <br>
+      </p>
+      <p class="body-text-4-western">To find the available NXTs doing a
+Bluetooth inquiry, you do:</p>
+      <ul>
+        <li>
+          <p class="western">NXTInfo[] nxtInfo = nxtComm.search(&#8220;NXT&#8221;,
+NXTCommFactory.BLUETOOTH);</p>
+        </li>
+      </ul>
+      <p class="body-text-4-western"><br>
+      <br>
+      </p>
+      <p class="western"><br>
+      <br>
+      </p>
+      <p class="western"><a href="#1.Communications%7Coutline"><font
+ color="#0000ff"><u>Back to top</u></font></a></p>
+      <p class="western"><br>
+      <br>
+      </p>
+      <p class="body-text-4-western"><br>
+      <br>
+      </p>
+      <h4 class="western" lang="en-GB"><a
+ name="1.0.4.2.USB initiator|outline"></a> USB initiator</h4>
+      <p class="body-text-4-western">The initiator sequence using USB
+is almost the same as for Bluetooth; You just have to use USB instead
+of Bluetooth.in your code. While USB cannot use a device address , but
+you can use the NXT name. </p>
+      <p class="western"><span id="Frame11" dir="ltr"
+ style="border: 1px solid rgb(0, 0, 0); padding: 0.05in 0.1in; background: rgb(255, 255, 255) none repeat scroll 0%; float: left; width: 6.14in; height: 0.26in; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
+      <p class="close-western"><font color="#000000"><font
+ face="Courier New, monospace"><font style="font-size: 9pt;" size="2">NXTComm
+nxtComm = NXTCommFactory.</font></font></font><font color="#000000"><font
+ face="Courier New, monospace"><font style="font-size: 9pt;" size="2"><i>createNXTComm</i></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font
+ style="font-size: 9pt;" size="2">(NXTCommFactory.</font></font></font><font
+ color="#0000c0"><font face="Courier New, monospace"><font
+ style="font-size: 9pt;" size="2"><i>USB</i></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font
+ style="font-size: 9pt;" size="2">);</font></font></font></p>
+      </span><br clear="left">
+      <br>
+      <br>
+      </p>
+      <p class="body-text-4-western">To find the available NXT , you do:</p>
+      <ul>
+        <li>
+          <p class="western">NXTInfo[] nxtInfo =
+nxtComm.search(&#8220;MYNXT&#8221;, NXTCommFactory.BLUETOOTH);</p>
+        </li>
+      </ul>
+      <p class="body-text-4-western">If there is only one NXT
+connected, you can use a null name parameter in the search() method. </p>
+      <p class="western"><br>
+      <br>
+      </p>
+      <p class="western"><a href="#1.Communications%7Coutline"><font
+ color="#0000ff"><u>Back to top</u></font></a></p>
+      <p class="western"><br>
+      <br>
+      </p>
+      <p class="western"><br>
+      <br>
+      </p>
+      <h4 class="western" lang="en-GB"><a
+ name="1.0.4.3.Using the NXTInfo object|outline"></a> Using the NXTInfo
+object</h4>
+      <p class="body-text-4-western">Once you have a NXTInfo object,
+you can call the open() method of the NXTComm object to connect to the
+NXT:</p>
+      <ul>
+        <li>
+          <p class="western">public boolean open(NXTInfo nxt) throws
+NXTCommException;</p>
+        </li>
+      </ul>
+      <p class="body-text-4-western">Once the NXT is open, you can
+obtain an InputStream and an OutputSttream, by calling the
+getInputStream() anf getOutputStream() methods of the NXTComm object:</p>
+      <ul>
+        <li>
+          <p class="western">public OutputStream getOutputStream();</p>
+        </li>
+        <li>
+          <p class="western">public InputStream getInputStream();</p>
+        </li>
+      </ul>
+      <p class="body-text-4-western">From these you can construct a
+DataInputStream and a DataOutputStream and send data to the receiving
+NXT.</p>
+      <p class="body-text-4-western"><br>
+      <br>
+      </p>
+      <p class="body-text-4-western">The complete BTSend sample is in
+the samples folder.</p>
+      <p class="western"><br>
+      <br>
+      </p>
+      <p class="western"><a href="#1.Communications%7Coutline"><font
+ color="#0000ff"><u>Back to top</u></font></a></p>
+      <p class="western"><br>
+      <br>
+      </p>
+      <h1 class="western" style="page-break-after: avoid;"><a
+ name="2.Advanced Communications|outline"></a><a
+ name="2.Advanced Communications|outline"></a> Advanced Communications</h1>
+      <h2 class="western"><a name="2.1.Controlling a remote NXT|outline"></a>
+Controlling a remote NXT</h2>
+      <p class="body-text-2-western">The RemoteNXT class allows one NXT
+running leJOS to control another, remote NXT, running leJOS or the
+standard LEGO firmware. It uses the LEGO Communications Protocol (LCP)
+over Bluetooth to control the remote NXT.</p>
+      <p class="body-text-2-western">Currently, the class is limited
+and I2C and RCX sensors are not supported, and the motors must be used
+in a simple way as the regulation thread is not used.</p>
+      <p class="body-text-2-western">To access a remote NXT, you use
+the constructor:</p>
+      <ul>
+        <li>
+          <p class="western">public RemoteNXT(String name) throws
+IOException</p>
+        </li>
+      </ul>
+      <p class="body-text-2-western">Example: </p>
+      <p class="close-western"><span id="Frame12" dir="ltr"
+ style="border: 1px solid rgb(0, 0, 0); padding: 0.05in 0.1in; background: rgb(255, 255, 255) none repeat scroll 0%; float: left; width: 4.35in; height: 2.22in; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
+      <p class="close-western"><font color="#7f0055"><font
+ face="Courier New, monospace"><font size="2"><b>try</b></font></font></font><font
+ color="#000000"> </font><font color="#000000"><font
+ face="Courier New, monospace"><font size="2">{</font></font></font></p>
+      <p class="close-western" style="margin-left: 0.79in;"><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">LCD.</font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2"><i>drawString</i></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">(</font></font></font><font
+ color="#2a00ff"><font face="Courier New, monospace"><font size="2">"Connecting..."</font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">,0,0);</font></font></font></p>
+      <p class="close-western" style="margin-left: 0.79in;"><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">nxt
+= </font></font></font><font color="#7f0055"><font
+ face="Courier New, monospace"><font size="2"><b>new</b></font></font></font><font
+ color="#000000"> </font><font color="#000000"><font
+ face="Courier New, monospace"><font size="2">RemoteNXT(</font></font></font><font
+ color="#2a00ff"><font face="Courier New, monospace"><font size="2">"NXT"</font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">);</font></font></font></p>
+      <p class="close-western" style="margin-left: 0.79in;"><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">LCD.</font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2"><i>clear</i></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">();</font></font></font></p>
+      <p class="close-western" style="margin-left: 0.79in;"><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">LCD.</font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2"><i>drawString</i></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">(</font></font></font><font
+ color="#2a00ff"><font face="Courier New, monospace"><font size="2">"Connected"</font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">,0,0);</font></font></font></p>
+      <p class="close-western" style="margin-left: 0.79in;"><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">Thread.</font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2"><i>sleep</i></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">(2000);</font></font></font></p>
+      <p class="close-western"><font color="#000000"><font
+ face="Courier New, monospace"><font size="2">} </font></font></font><font
+ color="#7f0055"><font face="Courier New, monospace"><font size="2"><b>catch</b></font></font></font><font
+ color="#000000"> </font><font color="#000000"><font
+ face="Courier New, monospace"><font size="2">(IOException ioe) {</font></font></font></p>
+      <p class="close-western" style="margin-left: 0.79in;"><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">LCD.</font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2"><i>clear</i></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">();</font></font></font></p>
+      <p class="close-western" style="margin-left: 0.79in;"><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">LCD.</font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2"><i>drawString</i></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">(</font></font></font><font
+ color="#2a00ff"><font face="Courier New, monospace"><font size="2">"Conn
+Failed"</font></font></font><font color="#000000"><font
+ face="Courier New, monospace"><font size="2">,0,0);</font></font></font></p>
+      <p class="close-western" style="margin-left: 0.79in;"><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">Thread.</font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2"><i>sleep</i></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">(2000);</font></font></font></p>
+      <p class="close-western" style="margin-left: 0.79in;"><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">System.</font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2"><i>exit</i></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">(1);</font></font></font></p>
+      <p class="close-western">}</p>
+      </span><br clear="left">
+      <br>
+      <br>
+      </p>
+      <p class="body-text-2-western">The name of the remote NXT must
+have already been added to the known devices of the initiating NXT by
+do a Bluetooth search followed by &#8220;Add&#8221; fron the leJOS NXJ Bluetooth
+menu.</p>
+      <p class="body-text-2-western">The constructor opens the
+connection and creates instances of the remote motor and sensor ports.</p>
+      <p class="body-text-2-western">It is then possible to get access
+to information about the remote NXT by using the methods:</p>
+      <ul>
+        <li>
+          <p class="western">public String getBrickName()</p>
+        </li>
+        <li>
+          <p class="western">public String getBluetoothAddress()</p>
+        </li>
+        <li>
+          <p class="western">public int getFlashMemory()</p>
+        </li>
+        <li>
+          <p class="western">public String getFirmwareVersion()</p>
+        </li>
+        <li>
+          <p class="western">public String getProtocolVersion()</p>
+        </li>
+      </ul>
+      <p class="body-text-2-western">Example:</p>
+      <p class="western"><span id="Frame13" dir="ltr"
+ style="border: 1px solid rgb(0, 0, 0); padding: 0.05in 0.1in; background: rgb(255, 255, 255) none repeat scroll 0%; float: left; width: 5.31in; height: 1.09in; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
+      <p class="close-western"><font color="#000000"><font
+ face="Courier New, monospace"><font size="2">LCD.</font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2"><i>drawString</i></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">(nxt.getBrickName(),
+0, 6);</font></font></font></p>
+      <p class="close-western"><font color="#000000"><font
+ face="Courier New, monospace"><font size="2">LCD.</font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2"><i>drawString</i></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">(nxt.getFirmwareVersion(),
+0, 7);</font></font></font></p>
+      <p class="close-western"><font color="#000000"><font
+ face="Courier New, monospace"><font size="2">LCD.</font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2"><i>drawString</i></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">(nxt.getProtocolVersion(),
+4, 7);</font></font></font></p>
+      <p class="close-western"><font color="#000000"><font
+ face="Courier New, monospace"><font size="2">LCD.</font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2"><i>drawInt</i></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">(nxt.getFlashMemory(),
+6, 8, 7);</font></font></font></p>
+      </span><br clear="left">
+      <br>
+      <br>
+      </p>
+      <p class="body-text-2-western">There are also methods that act on
+the remote NXT:</p>
+      <ul>
+        <li>
+          <p class="western">public byte deleteFlashMemory()</p>
+        </li>
+      </ul>
+      <p class="western">A remote Battery object is created that can be
+used to get the voltage of the remote battery using the normal Battery
+methods.</p>
+      <p class="western">Example:</p>
+      <p class="western"><span id="Frame14" dir="ltr"
+ style="border: 1px solid rgb(0, 0, 0); padding: 0.05in 0.1in; background: rgb(255, 255, 255) none repeat scroll 0%; float: left; width: 6.25in; height: 0.46in; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
+      <p class="close-western"><font color="#000000"><font
+ face="Courier New, monospace"><font style="font-size: 9pt;" size="2">LCD.</font></font></font><font
+ face="Courier New, monospace"><font style="font-size: 9pt;" size="2">drawString(
+"Battery: " + </font></font><font color="#000000"><font
+ face="Courier New, monospace"><font style="font-size: 9pt;" size="2">nxt.</font></font></font><font
+ color="#0000c0"><font face="Courier New, monospace"><font
+ style="font-size: 9pt;" size="2">Battery</font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font
+ style="font-size: 9pt;" size="2">.getVoltageMilliVolt()</font></font></font>
+      <font face="Courier New, monospace"><font style="font-size: 9pt;"
+ size="2">0,4);</font></font></p>
+      </span><br clear="left">
+      <br>
+      <br>
+      </p>
+      <p class="western">Objects are also created for the sensor ports
+of the remote NXT. These are accessed as S1, S2, S3 and S4.</p>
+      <p class="western">Local sensor objects can then be created using
+these ports and use exactly as if they were connected to a local sensor
+port.</p>
+      <p class="western">Example:</p>
+      <p class="western"><span id="Frame15" dir="ltr"
+ style="border: 1px solid rgb(0, 0, 0); padding: 0.05in 0.1in; background: rgb(255, 255, 255) none repeat scroll 0%; float: left; width: 4.39in; height: 0.52in; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
+      <p class="close-western">LightSensor light = new
+LightSensor(nxt.S1);</p>
+      <p class="close-western">LCD.drawString("Light: " +
+light.readValue(),0,5);</p>
+      </span><br clear="left">
+      <br>
+      <br>
+      </p>
+      <p class="western">Motor objects are created for the remote
+motors. They are named A, B and C.</p>
+      <p class="western">These can be used in the normal way, e.g: </p>
+      <p class="western"
+ style="margin-bottom: 0in; widows: 0; orphans: 0;" align="left"> <span
+ id="Frame16" dir="ltr"
+ style="border: 1px solid rgb(0, 0, 0); padding: 0.05in 0.1in; background: rgb(255, 255, 255) none repeat scroll 0%; float: left; width: 2.51in; height: 1.06in; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
+      <p class="close-western">nxt.A.setSpeed(360);</p>
+      <p class="close-western">nxt.A.forward();</p>
+      <p class="close-western">nxt.A.stop();</p>
+      <p class="close-western">nxt.A.backward();</p>
+      </span><br clear="left">
+      <br>
+      </p>
+      <p class="western"
+ style="margin-bottom: 0in; widows: 0; orphans: 0;" align="left"> <br>
+      </p>
+      <p class="western"
+ style="margin-bottom: 0in; widows: 0; orphans: 0;" align="left"> <br>
+      </p>
+      <p class="western"><a href="#1.Communications%7Coutline"><font
+ color="#0000ff"><u>Back to top</u></font></a></p>
+      <h2 class="western"><a
+ name="2.2.Communications External Bluetooth devices|outline"></a> <font
+ color="#ff6600"><font face="Arial, sans-serif"><font
+ style="font-size: 13pt;" size="3"><span lang="en-GB"><b>Communications</b></span></font></font></font>
+External Bluetooth devices</h2>
+      <p class="western">The NXT can connect to external Bluetooth
+devices that implement the Serial Port Profile (SPP).</p>
+      <p class="western">Such devices can be searched for on the
+Bluetooth menu and added to the known devices.</p>
+      <h3 class="western" lang="en-GB">GPS</h3>
+      <p class="western">leJOS supports external Bluetooth GPS
+receivers that support the NMEA protocol via the GPS and NMEASentence
+classes. NMEASentence is a utility class used by GPS, and is not
+directly accessed.</p>
+      <p class="western">One such device that has been tested with
+leJOS NXJ is the Holux M-1200.</p>
+      <p class="western">Most such devices have a PIN that is required
+to connect to them, but it may have a default value such as &#8220;0000&#8221;.</p>
+      <p class="western">To connect to a GPS device, you do:</p>
+      <p class="close-western"><span id="Frame17" dir="ltr"
+ style="border: 1px solid rgb(0, 0, 0); padding: 0.05in 0.1in; background: rgb(255, 255, 255) none repeat scroll 0%; float: left; width: 5.89in; height: 5.58in; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
+      <p class="close-western">final byte[] pin = {(byte) '0', (byte)
+'0', (byte) '0', (byte) '0'};</p>
+      <p class="close-western">BTRemoteDevice btGPS =
+Bluetooth.getKnownDevice(name); </p>
+      <p class="close-western"><font color="#7f0055"><font
+ face="Courier New, monospace"><font size="2"><b>if</b></font></font></font><font
+ color="#000000"> </font><font color="#000000"><font
+ face="Courier New, monospace"><font size="2">(btrd == </font></font></font><font
+ color="#7f0055"><font face="Courier New, monospace"><font size="2"><b>null</b></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">) {</font></font></font></p>
+      <p class="close-western" style="margin-left: 0.79in;"><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">LCD.</font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2"><i>drawString</i></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">(</font></font></font><font
+ color="#2a00ff"><font face="Courier New, monospace"><font size="2">"No
+such device"</font></font></font><font color="#000000"><font
+ face="Courier New, monospace"><font size="2">, 0, 0);</font></font></font></p>
+      <p class="close-western" style="margin-left: 0.79in;"><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">Thread.</font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2"><i>sleep</i></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">(2000);</font></font></font></p>
+      <p class="close-western" style="margin-left: 0.79in;"><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">System.</font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2"><i>exit</i></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">(1);</font></font></font></p>
+      <p class="close-western">}</p>
+      <p class="close-western">btGPS =
+Bluetooth.connect(btrd.getDeviceAddr(), pin);</p>
+      <p class="close-western"><font color="#7f0055"><font
+ face="Courier New, monospace"><font size="2"><b>if</b></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">(btGPS
+== </font></font></font><font color="#7f0055"><font
+ face="Courier New, monospace"><font size="2"><b>null</b></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">)</font></font></font></p>
+      <p class="close-western" style="margin-left: 0.79in;"><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">LCD.</font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2"><i>drawString</i></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">(</font></font></font><font
+ color="#2a00ff"><font face="Courier New, monospace"><font size="2">"No
+Connection"</font></font></font><font color="#000000"><font
+ face="Courier New, monospace"><font size="2">, 0, 1);</font></font></font></p>
+      <p class="close-western" style="margin-left: 0.79in;"><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">Thread.</font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2"><i>sleep</i></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">(2000);</font></font></font></p>
+      <p class="close-western" style="margin-left: 0.79in;"><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">System.</font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2"><i>exit</i></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">(1);</font></font></font></p>
+      <p class="close-western"><font face="Courier New, monospace"><font
+ size="2">} </font></font><font color="#7f0055"><font
+ face="Courier New, monospace"><font size="2"><b>else {</b></font></font></font></p>
+      <p class="close-western" style="margin-left: 0.79in;"><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">LCD.</font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2"><i>drawString</i></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">(</font></font></font><font
+ color="#2a00ff"><font face="Courier New, monospace"><font size="2">"Connected!"</font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">,
+0, 1);</font></font></font></p>
+      <p class="close-western">}</p>
+      <p class="close-western"><font color="#000000"><font
+ face="Courier New, monospace"><font size="2">GPS gps = </font></font></font><font
+ color="#7f0055"><font face="Courier New, monospace"><font size="2"><b>null</b></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">;</font></font></font></p>
+      <p class="close-western">InputStream in;</p>
+      <p class="close-western"><font color="#7f0055"><font
+ face="Courier New, monospace"><font size="2"><b>try</b></font></font></font><font
+ color="#000000"> </font><font color="#000000"><font
+ face="Courier New, monospace"><font size="2">{</font></font></font></p>
+      <p class="close-western" style="margin-left: 0.79in;">in =
+btGPS.openInputStream();</p>
+      <p class="close-western" style="margin-left: 0.79in;"><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">gps
+= </font></font></font><font color="#7f0055"><font
+ face="Courier New, monospace"><font size="2"><b>new</b></font></font></font><font
+ color="#000000"> </font><font color="#000000"><font
+ face="Courier New, monospace"><font size="2">GPS(in);</font></font></font></p>
+      <p class="close-western" style="margin-left: 0.79in;"><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">LCD.</font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2"><i>drawString</i></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">(</font></font></font><font
+ color="#2a00ff"><font face="Courier New, monospace"><font size="2">"GPS
+Online"</font></font></font><font color="#000000"><font
+ face="Courier New, monospace"><font size="2">, 0, 6);</font></font></font></p>
+      <p class="close-western" style="margin-left: 0.79in;"><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">} </font></font></font><font
+ color="#7f0055"><font face="Courier New, monospace"><font size="2"><b>catch</b></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">(Exception
+e) {</font></font></font></p>
+      <p class="close-western" style="margin-left: 0.79in;"><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">LCD.</font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2"><i>drawString</i></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">(</font></font></font><font
+ color="#2a00ff"><font face="Courier New, monospace"><font size="2">"GPS
+Connect Fail"</font></font></font><font color="#000000"><font
+ face="Courier New, monospace"><font size="2">, 0, 6);</font></font></font></p>
+      <p class="close-western" style="margin-left: 0.79in;"><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">Thread.</font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2"><i>sleep</i></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">(2000);</font></font></font></p>
+      <p class="close-western" style="margin-left: 0.79in;"><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">System.</font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2"><i>exit</i></font></font></font><font
+ color="#000000"><font face="Courier New, monospace"><font size="2">(1);</font></font></font></p>
+      <p class="close-western">}</p>
+      </span><br clear="left">
+      <br>
+      <br>
+      </p>
+      <p class="western">As you see from this example, the GPS
+constructor takes the input stream from the Bluetooth connection as a
+parameter:</p>
+      <ul>
+        <li>
+          <p class="western">public GPS(InputStream in)</p>
+        </li>
+      </ul>
+      <p class="western">It uses the NMEASentence class to process
+messages (known as sentences) from the Bluetooth device. Current only
+the $GPGGA sentence that gives the current latitude, longitude and
+altitude, is processed.</p>
+      <p class="western">To read the current values of latitude,
+longitude and altitude, you use the methods:</p>
+      <ul>
+        <li>
+          <p class="western">public float getLatitude()</p>
+        </li>
+        <li>
+          <p class="western">public float getLongitude()</p>
+        </li>
+        <li>
+          <p class="western">public float getAltitude()</p>
+        </li>
+      </ul>
+      <p class="western">You can also get the time stamp corresponding
+to these values by:</p>
+      <ul>
+        <li>
+          <p class="western">public int getTime()</p>
+        </li>
+      </ul>
+      <p class="western"><br>
+      <br>
+      </p>
+      <p class="western"><a href="#1.Communications%7Coutline"><font
+ color="#0000ff"><u>Back to top</u></font></a></p>
+      <h2 class="western"><a
+ name="2.3.Communicating with the RCX|outline"></a> Communicating with
+the RCX</h2>
+      <h3 class="western" lang="en-GB">RCXLink</h3>
+      <p class="western">IR communication with the RCX can be done
+using the Mindsensors NRLink RCX IR adapter. The software abstraction
+of this device is the RCXLink class. The constructor is:</p>
+      <ul>
+        <li>
+          <p class="western">public RCXLink(I2CPort port)</p>
+        </li>
+      </ul>
+      <p class="western">For example: </p>
+      <p class="western"><span id="Frame18" dir="ltr"
+ style="border: 1px solid rgb(0, 0, 0); padding: 0.05in 0.1in; background: rgb(255, 255, 255) none repeat scroll 0%; float: left; width: 3.72in; height: 0.48in; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
+      <p class="close-western">RCXLink link = new
+RCXLink(SensorPort.S1);</p>
+      </span><br clear="left">
+      <br>
+      <br>
+      </p>
+      <p class="western">The NRLink-Nx supports a set of macros in ROM
+and EEPROM that can be used to send messages to the RCX using the LEGO
+RCX IR protocol. The EEPROM macos can be overwritten allowing the user
+to define their own macros.</p>
+      <p class="western">Macros can be run by:</p>
+      <ul>
+        <li>
+          <p class="western">public void runMacro(int addr)</p>
+        </li>
+      </ul>
+      <p class="western">There are convenience methods for running the
+ROM macros:</p>
+      <ul>
+        <li>
+          <p class="western">public void beep()</p>
+        </li>
+        <li>
+          <p class="western">public void runProgram(int programNumber)</p>
+        </li>
+        <li>
+          <p class="western">public void forwardStep(int id)</p>
+        </li>
+        <li>
+          <p class="western">public void backwardStep(int id)</p>
+        </li>
+        <li>
+          <p class="western">public void setRCXRangeShort()</p>
+        </li>
+        <li>
+          <p class="western">public void setRCXRangeLong()</p>
+        </li>
+        <li>
+          <p class="western">public void powerOff()</p>
+        </li>
+        <li>
+          <p class="western">public void stopAllPrograms()</p>
+        </li>
+      </ul>
+      <p class="western">A new macro in the EEPROM address range can be
+defined by:</p>
+      <ul>
+        <li>
+          <p class="western">public void defineMacro(int addr, byte[]
+macro)</p>
+        </li>
+      </ul>
+      <p class="western">There is a convenience method to define and
+run a macro:</p>
+      <p class="western"><br>
+      <br>
+      </p>
+      <p class="western"><a href="#1.Communications%7Coutline"><font
+ color="#0000ff"><u>Back to top</u></font></a></p>
+      <p class="western"><br>
+      <br>
+      </p>
+<!-- DO NOT TOUCH --> <br>
+      <div class="NavBit"> <a target="_top"
+ href="../ErrorHandlingAndDebugging/ErrorHandling_and_debugging.htm">&laquo;&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a
+ href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a
+ href="../PC_GUI/PCGUITools.htm">Next&nbsp;&raquo;</a> </div>
+      <br>
+      </td>
+      <td> <br>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</body>
 </html>
