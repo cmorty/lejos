@@ -1,0 +1,206 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html dir="ltr" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml"
+ lang="en">
+<head>
+<!-- CSS -->
+  <link rel="stylesheet" href="../r_css/lejos-tutorial.css"
+ type="text/css">
+<!-- ICON -->
+  <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon">
+  <title>Listeners and Events</title>
+  <meta name="GENERATOR" content="OpenOffice.org 2.4  (Win32)">
+  <meta name="AUTHOR" content="Roger">
+  <meta name="CREATED" content="20080818;19560000">
+  <meta name="CHANGED" content="20080818;20085939">
+  <style type="text/css">
+		<!--
+			@page { size: 8.5in 11in; margin-right: 1.25in; margin-top: 1in; margin-bottom: 1in }
+			P { margin-bottom: 0.08in; direction: ltr; color: #000000; widows: 2; orphans: 2 }
+			P.western { font-family: "Times New Roman", serif; font-size: 12pt; so-language: en-US }
+			P.cjk { font-family: "Times New Roman", serif; font-size: 12pt }
+			P.ctl { font-family: "Times New Roman", serif; font-size: 12pt; so-language: ar-SA }
+			H1 { margin-top: 0.19in; margin-bottom: 0.04in; direction: ltr; color: #ff6600; widows: 2; orphans: 2; page-break-after: auto }
+			H1.western { font-family: "Times New Roman", serif; so-language: en-US }
+			H1.cjk { font-family: "Times New Roman", serif }
+			H1.ctl { font-family: "Times New Roman", serif; so-language: ar-SA }
+			H2 { margin-top: 0.19in; margin-bottom: 0.08in; direction: ltr; color: #ff6600; widows: 2; orphans: 2; page-break-after: auto }
+			H2.western { so-language: en-US }
+			H2.cjk { font-family: "Times New Roman", serif }
+			H2.ctl { font-family: "Times New Roman", serif; so-language: ar-SA }
+			A:link { color: #0000ff }
+			A:visited { color: #800080 }
+		-->
+		</style>
+</head>
+<body>
+<a id="top" name="top"></a><!-- N1: HEADER -->
+<table class="n1t1" cellpadding="0" cellspacing="0">
+  <tbody>
+    <tr>
+      <td><img src="../r_media/images/tutorial_header1.jpg"></td>
+      <td align="right"><img
+ src="../r_media/images/tutorial_header2.jpg"></td>
+    </tr>
+  </tbody>
+</table>
+<!-- N2: CONTENTS -> NAVIGATION SYSTEMS AND CONTENTS -->
+<table class="n2t1" cellpadding="0" cellspacing="0">
+  <tbody>
+    <tr>
+      <td class="n2t1r1c1">
+      <p style="margin-top: 0.19in; margin-bottom: 0.08in;"><font
+ color="#0000ff"><u><a href="#_Threads,_Listeners_and_Events">Threads,
+Listeners and Events</a></u></font></p>
+      <p
+ style="margin-left: 0.17in; margin-top: 0.19in; margin-bottom: 0.08in;">
+      <font color="#0000ff"><u><a href="#_Java_Threads">Java Threads</a></u></font></p>
+      <p
+ style="margin-left: 0.17in; margin-top: 0.19in; margin-bottom: 0.08in;">
+      <font color="#0000ff"><u><a
+ href="#1.2.Listeners_and_Events%7Coutline">Listeners and Events</a></u></font></p>
+      <p style="margin-top: 0.19in;"><br>
+      </p>
+      </td>
+      <td><!-- DO NOT MANINPULATE -->
+      <div id="BreadCrumbs"> <a href="../index.htm" target="_top"></a><a
+ href="#"><br>
+      </a> </div>
+      <div class="NavBit"> <a target="_top"
+ href="../LCD_Sensors/LCD_Sensors.htm">&laquo;&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a
+ href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a
+ href="../ErrorHandlingAndDebugging/ErrorHandling_and_debugging.htm">Next&nbsp;&raquo;</a>
+      </div>
+<!-- CONTENT TITLE -->
+      <h1 class="western"><a name="_Threads,_Listeners_and_Events"></a><a
+ name="_Threads,_Listeners_and_Events_C"></a><a
+ name="1.Threads,_Listeners_and_Events_;_|outli"></a> <font
+ face="Arial, sans-serif"><font style="font-size: 16pt;" size="4">Threads,
+Listeners and Events </font></font> </h1>
+      <h2 class="western"><a name="_Java_Threads"></a><a
+ name="1.1.Java_Threads|outline"></a> <font face="Arial, sans-serif"><font
+ style="font-size: 13pt;" size="4"><i>Java Threads</i></font></font></h2>
+      <p style="margin-top: 0.19in; margin-bottom: 0.17in;"><br>
+      <br>
+      </p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.08in;">When a Java
+program starts, there is a single thread running &#8211; the main thread.</p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.08in;">Many of the
+leJOS classes start extra threads running for various purposes, for
+example:</p>
+      <ul>
+        <li>
+          <p style="margin-top: 0.19in; margin-bottom: 0.08in;">Button
+and SensorPort star a listener thread if listeners are used</p>
+        </li>
+        <li>
+          <p style="margin-bottom: 0.08in;">Each Motor has a regulator
+thread</p>
+        </li>
+        <li>
+          <p style="margin-bottom: 0.08in;">The Bluetooth class starts
+a thread to talk to the separate Bluetooth chip</p>
+        </li>
+        <li>
+          <p style="margin-bottom: 0.19in;">Each Timer object starts a
+timer thread</p>
+        </li>
+      </ul>
+      <p style="margin-top: 0.19in; margin-bottom: 0.17in;"><br>
+      <br>
+      </p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.08in;">User
+programs can create their own threads by subclassing Thread, and then
+using the start method to start the thread. Note that the Runnable
+interface is not implemented by leJOS, so new threads cannot be created
+by implementing Runnable classes. User threads in leJOS must subclass
+Thread and implement the run() method.</p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.08in;">Background
+threads that do not need to terminate in order for the user program to
+terminate, should be marked as daemon threads by calling
+setDaemon(true).</p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.08in;">When using
+threads, care should be taken with concurrency issues. When data items
+are accessed by multiple threads, synchronization is necessary to
+ensure that data is not read when it is in an inconsistent state.</p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.08in;">leJOS
+supports the standard Java synchronization mechanisms: synchronized
+methods and synchronized statements using a monitor object. There are
+some restrictions in the way leJOS handles concurrency and
+synchronization &#8211; see the leKOS NXJ README.html file.</p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.08in;">As an
+example of a leJOS thread, consider the Indicators thread in the leJOS
+StartUpText menu. This is used to keep the display of the battery level
+up to date, by reading its value every second, and to indicate when the
+menu is uploading files or doing other communication from the PC:</p>
+      <p class="western" style="margin-bottom: 0.17in;"><br>
+      <br>
+      <br>
+      </p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.17in;" lang=""><img
+ src="Listeners%20_Events_html_m263acd46.gif" name="Frame1" alt="Frame1"
+ height="523" width="553"></p>
+      <p style="margin-top: 0.19in; margin-bottom: 0in;">The main
+method starts this thread by:</p>
+      <p style="margin-top: 0.19in; margin-bottom: 0in;" lang=""><img
+ src="Listeners%20_Events_html_12b536f0.gif" name="Frame2" alt="Frame2"></p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.08in;"><font
+ color="#0000ff"><u><a href="#_Threads,_Listeners_and_Events">Back to
+Top</a></u></font></p>
+      <h2 class="western"><a name="1.2.Listeners_and_Events|outline"></a><a
+ name="1.2.Listeners_and_Events|outline"></a> <font
+ face="Arial, sans-serif"><font style="font-size: 13pt;" size="4"><i>Listeners
+and Events</i></font></font></h2>
+      <p
+ style="margin-left: 0.1in; margin-top: 0.19in; margin-bottom: 0.08in;">leJOS
+implements a listener thread that listens for particular events.</p>
+      <p
+ style="margin-left: 0.1in; margin-top: 0.19in; margin-bottom: 0.08in;">The
+listener thread supports:</p>
+      <ul>
+        <li>
+          <p style="margin-top: 0.19in; margin-bottom: 0.08in;">Button
+Listeners</p>
+        </li>
+        <li>
+          <p style="margin-bottom: 0.19in;">Sensor Port Listeners</p>
+        </li>
+      </ul>
+      <p
+ style="margin-left: 0.1in; margin-top: 0.19in; margin-bottom: 0.08in;">Button
+listeners are used to detect when a button is pressed, whatever
+your program is doing at the time.</p>
+      <p
+ style="margin-left: 0.1in; margin-top: 0.19in; margin-bottom: 0.08in;">To
+listen for a press of a specific button, you register as listener
+for that button.</p>
+      <p
+ style="margin-left: 0.1in; margin-top: 0.19in; margin-bottom: 0.08in;">Example:</p>
+      <p
+ style="margin-left: 0.1in; margin-top: 0.19in; margin-bottom: 0.17in;">
+      <br>
+      </p>
+      <p
+ style="margin-left: 0.1in; margin-top: 0.19in; margin-bottom: 0.08in;">
+      <img style="border: 0px solid ; width: 512px; height: 287px;"
+ alt="" src="Listeners%20_Events_html_m43d2e83f.gif" name="graphics1"> </p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.17in;"><br>
+      <br>
+      </p>
+      <p style="margin-top: 0.19in; margin-bottom: 0.08in;"><font
+ color="#0000ff"><u><a href="#_Threads,_Listeners_and_Events">Back to
+Top</a></u></font></p>
+<!-- DO NOT TOUCH --> <br>
+      <div class="NavBit"> <a target="_top"
+ href="../LCD_Sensors/LCD_Sensors.htm">&laquo;&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a
+ href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a
+ href="../ErrorHandlingAndDebugging/ErrorHandling_and_debugging.htm">Next&nbsp;&raquo;</a>
+      </div>
+      <br>
+      </td>
+      <td> <br>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</body>
+</html>
