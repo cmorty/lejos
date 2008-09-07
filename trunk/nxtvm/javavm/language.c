@@ -16,7 +16,6 @@
 #include "exceptions.h"
 #include "stack.h"
 #include "platform_hooks.h"
-
 #if 0
 #define get_stack_object(MREC_)  ((Object *) get_ref_at ((MREC_)->numParameters - 1))
 #endif
@@ -80,22 +79,31 @@ MethodRecord *find_method (ClassRecord *classRecord, int methodSignature)
   return null;
 }
 
-boolean dispatch_static_initializer (ClassRecord *aRec, byte *retAddr)
+/**
+ * Exceute the static initializer if required.
+ * @return An indication of how the VM should proceed
+ */
+int dispatch_static_initializer (ClassRecord *aRec, byte *retAddr)
 {
+  // Are we needed?
   if (is_initialized (aRec))
-    return false;
+    return EXEC_CONTINUE;
+  // Do we have one?
   if (!has_clinit (aRec))
   {
     set_initialized (aRec);
-    return false;
+    return EXEC_CONTINUE;
   }
   #if DEBUG_METHODS
   printf ("dispatch_static_initializer: has clinit: %d, %d\n",
           (int) aRec, (int) retAddr);
   #endif
-  if (dispatch_special (find_method (aRec, _6clinit_7_4_5V), retAddr))
-    set_initialized (aRec);
-  return true;
+  // Can we run it?
+  if (!dispatch_special (find_method (aRec, _6clinit_7_4_5V), retAddr))
+    return EXEC_RETRY;
+  // Mark for next time
+  set_initialized (aRec);
+  return EXEC_RUN;
 }
 
 void dispatch_virtual (Object *ref, int signature, byte *retAddr)
@@ -157,9 +165,11 @@ void dispatch_special_checked (byte classIndex, byte methodIndex,
           classIndex, methodIndex, (int) retAddr, (int) btAddr);
   #endif
 
+  // If we need to run the initializer then the real method will get called
+  // later, when we re-run the current instruction.
   classRecord = get_class_record (classIndex);
   if (!is_initialized_idx (classIndex))
-    if (dispatch_static_initializer (classRecord, btAddr))
+    if (dispatch_static_initializer (classRecord, btAddr) != EXEC_CONTINUE)
       return;
   dispatch_special (get_method_record (classRecord, methodIndex), retAddr);
 }
@@ -222,14 +232,20 @@ boolean dispatch_special (MethodRecord *methodRecord, byte *retAddr)
     // parameter and that may end up allocating memory *MUST* protect that
     // reference before calling the allocator...
     pop_words_cur (methodRecord->numParameters);
-    curPc = retAddr;
-    if (!dispatch_native (methodRecord->signatureId, get_stack_ptr_cur() + 1))
+    switch(dispatch_native (methodRecord->signatureId, get_stack_ptr_cur() + 1))
     {
-      // reset the stack frame
-      curStackTop += methodRecord->numParameters;
-      curPc = savedPc;
+      case EXEC_RETRY:
+        // Need to re-start the instruction, so reset the state of the stack
+        curStackTop += methodRecord->numParameters;
+        break;
+      case EXEC_CONTINUE:
+        // Normal completion return to the requested point.
+        curPc = retAddr;
+        break;
+      case EXEC_RUN:
+        // We are running new code, curPc will be set. Nothing to do.
+        break;
     }
-      
     // Stack frame not pushed
     return false;
   }
@@ -303,6 +319,8 @@ boolean dispatch_special (MethodRecord *methodRecord, byte *retAddr)
   {
 #if !FIXED_STACK_SIZE
     StackFrame *stackBase;
+    byte *oldStart = array_start((Object *)(currentThread->stackArray));
+    int offset;
     int i;
     
     // Need at least this many bytes
@@ -321,10 +339,10 @@ boolean dispatch_special (MethodRecord *methodRecord, byte *retAddr)
 #if !FIXED_STACK_SIZE
     }
     // Adjust pointers.
-    newlen = array_start((Object *)newStackArray) - array_start((Object *)(currentThread->stackArray));
+    offset = array_start((Object *)newStackArray) - oldStart;
     stackBase = stackframe_array();
-    newStackTop = word2ptr(ptr2word(newStackTop) + newlen);
-    curLocalsBase = word2ptr(ptr2word(curLocalsBase) + newlen);
+    newStackTop = word2ptr(ptr2word(newStackTop) + offset);
+    curLocalsBase = word2ptr(ptr2word(curLocalsBase) + offset);
 #if DEBUG_MEMORY
     printf("thread=%d, stackTop(%d), localsBase(%d)=%d\n", currentThread->threadId, (int)stackTop, (int)localsBase, (int)(*localsBase));
 #endif
@@ -332,8 +350,8 @@ boolean dispatch_special (MethodRecord *methodRecord, byte *retAddr)
          i >= 0;
          i--)
     {
-      stackBase[i].localsBase = word2ptr(ptr2word(stackBase[i].localsBase) + newlen);
-      stackBase[i].stackTop = word2ptr(ptr2word(stackBase[i].stackTop) + newlen);
+      stackBase[i].localsBase = word2ptr(ptr2word(stackBase[i].localsBase) + offset);
+      stackBase[i].stackTop = word2ptr(ptr2word(stackBase[i].stackTop) + offset);
 #if DEBUG_MEMORY
       printf("stackBase[%d].localsBase(%d) = %d\n", i, (int)stackBase[i].localsBase, (int)(*stackBase[i].localsBase));
 #endif
@@ -429,6 +447,43 @@ STACKWORD instance_of (Object *obj, byte classIndex)
     return 0;
   rtType = get_class_record(rtType)->parentClass;
   goto LABEL_INSTANCE;
+}
+
+/**
+ * Exceute a "program" on the current thread.
+ * @return An indication of how the VM should proceed.
+ */
+int execute_program(int prog)
+{
+  /* We run an internal program. Note that we need to take great care to
+   * ensure that this function can be re-started (for the garbage collector).
+   * so we must not modify the stack until we are ready to go.
+   */
+  // Save the current state in case we need to back out!
+  int curStackFrameSize = currentThread->stackFrameArraySize;
+  STACKWORD *sp = curStackTop;
+  update_stack_frame(current_stackframe());
+  // Now find the class
+  MethodRecord *mRec;
+  ClassRecord *classRecord;
+  classRecord = get_class_record (get_entry_class (prog));
+  if (classRecord == null) return EXEC_CONTINUE;
+  // reserve space for the argument to main, but do not modify the stack
+  // contents yet, in case we need to restart the instruction. 
+  curStackTop++;
+  // Push stack frame for main method:
+  mRec = find_method (classRecord, main_4_1Ljava_3lang_3String_2_5V);
+  if (dispatch_special (mRec, curPc) && (dispatch_static_initializer (classRecord, curPc) != EXEC_RETRY))
+  {
+    // Everything is ready to go. So now update the stack
+    *sp = JNULL;
+    return EXEC_RUN;
+  }
+  // We need to wait and re-try the instruction, set things back the way they
+  // were...
+  currentThread->stackFrameArraySize = curStackFrameSize;
+  update_registers(current_stackframe());
+  return EXEC_RETRY;
 }
 
 

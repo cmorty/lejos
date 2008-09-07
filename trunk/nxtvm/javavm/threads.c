@@ -113,8 +113,12 @@ void init_threads()
  * Insert into run list
  * Mark thread as STARTED
  */
-boolean init_thread (Thread *thread)
+int init_thread (Thread *thread)
 {
+  /* Create a new thread and allocate the resources for it. When being used
+   * with the GC we must take steps to allow the calling instruction to be
+   * re-started. So take care of any changes to global state.
+   */
   thread->threadId = gThreadCounter + 1;
   
   // Catch the primordial thread
@@ -128,7 +132,7 @@ boolean init_thread (Thread *thread)
   if (thread->state != NEW)
   {
     throw_exception(illegalStateException);
-    return false;
+    return EXEC_CONTINUE;
   }
   // Protected the argument (that may have come from native code), from the GC
   protectedRef[0] = (Object *)thread;
@@ -137,7 +141,7 @@ boolean init_thread (Thread *thread)
   if (thread->stackFrameArray == JNULL)
   {
     protectedRef[0] = JNULL;
-    return false;
+    return EXEC_RETRY;
   }
     
   // Allocate actual stack storage (INITIAL_STACK_SIZE * 4 bytes)
@@ -147,7 +151,7 @@ boolean init_thread (Thread *thread)
   {
     free_array (ref2obj(thread->stackFrameArray));
     thread->stackFrameArray = JNULL;
-    return false;    
+    return EXEC_RETRY;    
   }
   
   gThreadCounter++;
@@ -164,7 +168,7 @@ boolean init_thread (Thread *thread)
     
   enqueue_thread(thread);
 
-  return true;
+  return EXEC_CONTINUE;
 }
 
 /**

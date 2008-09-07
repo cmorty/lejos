@@ -112,7 +112,8 @@ case OP_AASTORE:
   just_pop_word();
   if( tempInt < 0)
     goto LABEL_ARRAY_EXCEPTION;
-  just_pop_ref();
+  tempWordPtr = (STACKWORD *)pop_ref();
+  update_array((Object *) tempWordPtr);
   ref_array_ptr(arrayStart)[tempInt] = tempStackWord;
   goto LABEL_ENGINELOOP;
 

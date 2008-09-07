@@ -136,9 +136,10 @@ extern void dispatch_virtual (Object *obj, int signature, byte *rAddr);
 extern MethodRecord *find_method (ClassRecord *classRec, int signature);
 extern STACKWORD instance_of (Object *obj, byte classIndex);
 extern void do_return (int numWords);
-extern boolean dispatch_static_initializer (ClassRecord *aRec, byte *rAddr);
+extern int dispatch_static_initializer (ClassRecord *aRec, byte *rAddr);
 extern boolean dispatch_special (MethodRecord *methodRecord, byte *retAddr);
 void dispatch_special_checked (byte classIndex, byte methodIndex, byte *retAddr, byte *btAddr);
+int execute_program(int prog);
 //extern void handle_field (byte hiByte, byte loByte, boolean doPut, boolean aStatic, byte *btAddr);
 
 void install_binary( void* ptr);
@@ -228,7 +229,12 @@ static inline void initialize_binary()
   {
     set_uninitialized (get_class_record (i)); 	  
   }
-}  
+}
+
+// return codes used to indicate the state of byte code execution
+#define EXEC_RETRY   -1 /* a retry of the current instrucion is required */
+#define EXEC_CONTINUE 0 /* No action required simply return/continue */
+#define EXEC_RUN      1 /* Execute from the new value now in curPc */
 
 #endif // _LANGUAGE_H
 

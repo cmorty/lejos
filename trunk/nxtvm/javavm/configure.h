@@ -63,10 +63,12 @@
 #define PI_AVOIDANCE                     1
 
 /**
- * If not 0, use a garbage collector. It consumes about
- * 1300 bytes of flash and about 1800 bytes of ram.
+ * Choose the type of memory allocator to use:
  */
-#define GARBAGE_COLLECTOR                1
+#define MEM_SIMPLE                       0
+#define MEM_MARKSWEEP                    1
+#define MEM_CONCURRENT                   2
+#define GARBAGE_COLLECTOR                MEM_CONCURRENT
 
 /**
  * Max number of VM objects that we need to protect, from the gc.

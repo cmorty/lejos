@@ -38,7 +38,7 @@ static const struct
 {{{{
     .arrays.length=BIGARRAYLEN,
     .arrays.type = T_BYTE,
-    .arrays.mark = 1,
+    .arrays.mark = 3,
     .arrays.isArray = 1,
     .arrays.isAllocated = 1
    },
@@ -556,7 +556,7 @@ display_init(void)
   display_array.arrayHdr.hdr.flags.arrays.isArray = 1;
   // NOTE This object must always be marked, otherwise very, very bad
   // things will happen!
-  display_array.arrayHdr.hdr.flags.arrays.mark = 1;
+  display_array.arrayHdr.hdr.flags.arrays.mark = 3;
   display_array.arrayHdr.hdr.flags.arrays.length = BIGARRAYLEN;
   display_array.arrayHdr.hdr.flags.arrays.isAllocated = 1;
   display_array.arrayHdr.hdr.flags.arrays.type = T_INT;
