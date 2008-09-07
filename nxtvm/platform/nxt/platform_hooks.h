@@ -57,6 +57,6 @@ extern void handle_uncaught_exception(Object * exception,
 /**
  * Dispatches a native method.
  */
-extern boolean dispatch_native(TWOBYTES signature, STACKWORD * paramBase);
+extern int dispatch_native(TWOBYTES signature, STACKWORD * paramBase);
 
 #endif // _PLATFORM_HOOKS_H

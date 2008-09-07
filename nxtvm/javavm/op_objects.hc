@@ -222,6 +222,7 @@ case OP_PUTFIELD:
 
     if (fieldType == T_REFERENCE)
     {
+      update_object((Object *) tempStackWord);
       store_word_ns (fbase3, fieldSize, pop_ref());
     }
     else

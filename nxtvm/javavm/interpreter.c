@@ -107,6 +107,7 @@ Object *create_string (ConstantRecord *constantRecord,
   JCHAR *dst;
   byte *src;
   byte *src_end;
+  boolean retry = is_gc_retry();
 
   ref = new_object_checked (JAVA_LANG_STRING, btAddr);
   if (ref == JNULL)
@@ -118,6 +119,8 @@ Object *create_string (ConstantRecord *constantRecord,
   if (arr == JNULL)
   {
     deallocate (obj2ptr(ref), class_size (JAVA_LANG_STRING));    
+    // If this is the 2nd attempt at creating this object give up!
+    if (retry) throw_exception(outOfMemoryError);
     return JNULL;
   }
   // printf ("char array at %d\n", (int) arr);
@@ -206,7 +209,7 @@ static int array_helper( byte *pc, STACKWORD* stackTop)
 
 void engine()
 {
-  byte ticks_until_switch = TICKS_PER_TIME_SLICE;
+  FOURBYTES switch_time = get_sys_time() + TICKS_PER_TIME_SLICE;;
   STACKWORD tempStackWord;
   STACKWORD *tempWordPtr;
   ConstantRecord *tempConstRec;
@@ -227,9 +230,11 @@ void engine()
   while( gMakeRequest)
   {
     byte requestCode = gRequestCode;
+    FOURBYTES now;
 
     SAVE_REGS2();
     gMakeRequest = false;
+    now = get_sys_time();
     gRequestCode = REQUEST_TICK;
     
     tick_hook();
@@ -238,22 +243,25 @@ void engine()
     {
       return;
     }
-
-    if( requestCode == REQUEST_TICK)
-      ticks_until_switch--;
-
     if( requestCode == REQUEST_SWITCH_THREAD
-        || ticks_until_switch == 0){
-      ticks_until_switch = TICKS_PER_TIME_SLICE;
+        || now >= switch_time){
 #if DEBUG_THREADS
       printf ("switching thread: %d\n", (int)ticks_until_switch);
 #endif
+      if ((int)(switch_time - now) >= 1)
+      {
+        run_collector();
+        gMakeRequest = 0;
+      }
+      switch_time = get_sys_time() + TICKS_PER_TIME_SLICE;
       switch_thread();
 #if DEBUG_THREADS
       printf ("done switching thread\n");
 #endif
       switch_thread_hook();
     }
+    else if (switch_time - now == 1)
+      run_collector();
     if( currentThread == null   /* no runnable thread */
         && gRequestCode == REQUEST_TICK){ /* no important request */
       idle_hook();

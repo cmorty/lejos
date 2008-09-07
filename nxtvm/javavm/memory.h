@@ -5,15 +5,13 @@
 #ifndef _MEMORY_H
 #define _MEMORY_H
 
-#define DEBUG_RCX_MEMORY 0
-
 extern const byte typeSize[];
 extern Object *protectedRef[];
 extern void memory_init ();
 extern void memory_add_region (byte *region, byte *end);
 
+extern void deallocate(TWOBYTES *objectRef, TWOBYTES sz);
 extern void free_array (Object *objectRef);
-extern void deallocate (TWOBYTES *ptr, TWOBYTES size);
 extern Object *new_object_checked (const byte classIndex, byte *btAddr);
 extern Object *new_object_for_class (const byte classIndex);
 extern Object *new_primitive_array (const byte primitiveType, STACKWORD length);
@@ -30,12 +28,30 @@ extern void zero_mem (TWOBYTES *ptr, TWOBYTES numWords);
 extern int getHeapSize();
 extern int getHeapFree();
 extern int getRegionAddress();
-extern void garbage_collect( int size);
 extern int sys_diagn( int code, int param);
+extern int garbage_collect();
 
-#if DEBUG_RCX_MEMORY
-extern void scan_memory (TWOBYTES *numNodes, TWOBYTES *biggest, TWOBYTES *freeMem);
-#endif // DEBUG_RCX_MEMORY
+#if GARBAGE_COLLECTOR == MEM_CONCURRENT
+#define GC_IDLE 0
+#define GC_MARKROOTS 1
+#define GC_MARK 2
+#define GC_SWEEP 3
+extern int gcPhase;
+extern void gc_update_array(Object *obj);
+extern void gc_update_object(Object *obj);
+extern void gc_run_collector(void);
+extern Object gcLock;
+
+#define is_gc_retry() (gcLock.threadId == currentThread->threadId)
+#define update_array(obj) {if(gcPhase == GC_MARK && ((*(TWOBYTES *)(obj)) & GC_MASK) != GC_MASK) gc_update_array((obj));}
+#define update_object(obj) {if(gcPhase == GC_MARK && ((*(TWOBYTES *)(obj)) & GC_MASK) != GC_MASK) gc_update_object((obj));}
+#define run_collector() (gcPhase != GC_IDLE ? gc_run_collector(), 1 : 0)
+#else
+#define update_array(obj)
+#define update_object(obj)
+#define run_collector()
+#define is_gc_retry() 0
+#endif
 
 #define HEADER_SIZE (sizeof(Object))
 // Size of object header in 2-byte words

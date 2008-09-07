@@ -221,7 +221,7 @@ run(int jsize)
   bootThread = (Thread *) new_object_for_class(JAVA_LANG_THREAD);
 
   init_threads();
-  if (!init_thread(bootThread)) {
+  if (init_thread(bootThread) != EXEC_CONTINUE) {
     return;
   }
   //printf("Executing Interpreter\n");
@@ -293,7 +293,6 @@ nxt_main(int bin, int size)
   //      printf("Running\n");
 
   run(jsize);
-
   return 0;
 }
 

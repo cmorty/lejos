@@ -11,7 +11,7 @@
 #define CLASS_MASK      0x00FF
 #define CLASS_SHIFT     0
 
-#define GC_MASK         0x2000
+#define GC_MASK         0x3000
 #define GC_SHIFT        13
 
 #define IS_ARRAY_MASK   0x4000
@@ -71,8 +71,8 @@ typedef struct S_Object
      struct _objects
      {
        byte     class;
-       byte     padding:5;
-       byte     mark:1;
+       byte     padding:4;
+       byte     mark:2;
        byte     isArray:1;
        byte     isAllocated:1;
      }  __attribute__((packed)) objects;
@@ -80,8 +80,7 @@ typedef struct S_Object
      {
        TWOBYTES length:8;
        TWOBYTES type:4;
-       TWOBYTES padding:1;
-       TWOBYTES mark:1;
+       TWOBYTES mark:2;
        TWOBYTES isArray:1;
        TWOBYTES isAllocated:1;
      } __attribute__((packed)) arrays;

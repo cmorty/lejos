@@ -52,7 +52,7 @@ typedef struct S_StackFrame
 } StackFrame;
 
 extern void init_threads();
-extern boolean init_thread (Thread *thread);
+extern int init_thread (Thread *thread);
 extern StackFrame *current_stackframe();
 extern void enter_monitor (Thread *pThread, Object* obj);
 extern void exit_monitor (Thread *pThread, Object* obj);
