@@ -68,20 +68,20 @@ to the Motor class.</a></p>
  href="#1.3.Program%202:%20Using%20the%20Tachometer%7Coutline">Program
 2: Using the Tachometer</a></p>
       <p class="western" style="margin-left: 0.17in;"><a
- href="#1.4.Program%203:%20%20Accurate%20rotation%20control%7Coutline">Program
+ href="#Program_3">Program
 3: Accurate rotation control</a></p>
       <p class="western" style="margin-left: 0.17in;"><a
- href="#1.5.Program%204.%20%20Interrupting%20rotation%7Coutline">Program
+ href="#Program4">Program
 4. Interrupting rotation</a></p>
-      <p class="western"><a
+      <p class="western" style="margin-left: 0.17in;"><a
  href="#2.Program%205:%20Regulating%20motor%20speed%7Coutline">Program
 5: Regulating motor speed</a></p>
       <p class="western" style="margin-left: 0.17in;"><a
- href="#2.1.Other%20Motor%20Methods%7Coutline">Other Motor Methods</a></p>
+ href="#2.1.Other%20Motor%20Methods%7Coutline">Other Motor Methods<br>
+      </a></p>
       </td>
       <td><!-- DO NOT MANINPULATE -->
-      <div id="BreadCrumbs"> <a href="../index.htm" target="_top"></a><a
- href="#"><br>
+      <div id="BreadCrumbs"> <a href="#"><br>
       </a> </div>
       <div class="NavBit"> <a target="_top"
  href="../Menusystem/MenuSystem.htm">&laquo;&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a
@@ -89,7 +89,7 @@ to the Motor class.</a></p>
  href="../WheeledVehicles/WheeledVehicles.htm">Next&nbsp;&raquo;</a> </div>
 <!-- CONTENT TITLE -->
       <h1 class="western"><a name="Top"></a><a
- name="1.Controlling the Motors|outline"></a> Controlling the Motors XXX<br>
+ name="1.Controlling the Motors|outline"></a> Controlling the Motors<br>
       </h1>
       <h2 class="western"><a
  name="1.1.Introduction to the Motor class.|outline"></a> Introduction
@@ -109,7 +109,7 @@ They are simple enough so you don&#8217;t need much Java experience to write
 them. Finally, there is a discussion of <a href="#_Other_Motor_Methods"><font
  color="#0000ff"><u>other motor methods</u></font></a> , not used in
 the programs, that you might find useful. </p>
-      <p class="western" style="margin-bottom: 0in;"><br>
+      <p class="western" style="margin-bottom: 0in;">&nbsp; <br>
       </p>
       <h2 class="western"><a
  name="1.2.Program 1 - Basic movement controls.|outline"></a> Program 1
@@ -243,8 +243,7 @@ str,int x,int y)</font></p>
       <p class="western" style="margin-left: 0.1in; margin-bottom: 0in;">It
 is possible to write this program using each Motor method only once.</p>
       <p class="western" style="margin-left: 0.1in; margin-bottom: 0in;"><a
- href="BasicMotor.htm" target="_blank"><font
- color="#0000ff"><u>Solution</u></font></a><br>
+ href="BasicMotor.htm" target="_blank"><font color="#0000ff"><u>Solution</u></font></a><br>
       <br>
       </p>
       <p class="western" style="margin-left: 0.1in; margin-bottom: 0in;"><a
@@ -396,7 +395,8 @@ because motor has inertia. </p>
       <p class="western"><br>
       <br>
       </p>
-      <h2 class="western">Program 3: Accurate rotation control</h2>
+      <h2 class="western"><a name="Program_3"></a>Program 3: Accurate
+rotation control</h2>
       <p class="western" style="margin-left: 0.1in; margin-bottom: 0in;">The
 Motor class has a regulator thread that runs all the time. It has two
 principle jobs, one of which is to stop the motor at a specified angle.
@@ -498,8 +498,7 @@ to turn after the brake has been applied. It applies the brake before
 reaching the specified angle. It then makes minor adjustments to the
 motor position till it is close enough. </p>
       <p class="western" style="margin-left: 0.1in; margin-bottom: 0in;"><a
- href="Rotation.htm"
- target="_blank"><font color="#0000ff"><u>Solution</u></font></a></p>
+ href="Rotation.htm" target="_blank"><font color="#0000ff"><u>Solution</u></font></a></p>
       <p class="western" style="margin-left: 0.1in; margin-bottom: 0in;"><br>
       </p>
       <p class="western" style="margin-left: 0.1in; margin-bottom: 0in;"><a
@@ -507,7 +506,8 @@ motor position till it is close enough. </p>
       <p class="western"><br>
       <br>
       </p>
-      <h2 class="western">Program 4. Interrupting rotation</h2>
+      <h2 class="western"><a name="Program4"></a>Program 4.
+Interrupting rotation</h2>
       <p class="western" style="margin-left: 0.1in; margin-bottom: 0in;">Sometimes
 you will want the motor stop (or do something else) before it reaches
 the specified angle. This program will detect a button press to
@@ -517,25 +517,19 @@ target angle. But the new methods in this program can return
 immediately. The motor will still stop at the specified angle unless a
 new motor method is called in the meantime. </p>
       <h3 class="western">New methods used in this program</h3>
-      <table border="1" bordercolor="#000000" cellpadding="7"
- cellspacing="0" width="641">
+      <table style="width: 641px;" border="2" bordercolor="#000000"
+ cellpadding="7" cellspacing="0">
         <col width="57"> <col width="307"> <col width="233"> <col
  width="0"> <col width="0"> <col width="0"> <tbody>
           <tr valign="top">
-            <td width="57">
+            <td style="width: 57px; font-weight: bold;">
             <p class="western">Class</p>
             </td>
-            <td width="307">
+            <td style="width: 307px; font-weight: bold;">
             <p class="western">Method name </p>
             </td>
-            <td width="233">
+            <td style="font-weight: bold;" width="233">
             <p class="western">Notes</p>
-            </td>
-            <td><br>
-            </td>
-            <td><br>
-            </td>
-            <td><br>
             </td>
           </tr>
           <tr valign="top">
@@ -550,12 +544,6 @@ new motor method is called in the meantime. </p>
 boolean parameter <font face="Courier New, monospace">immediateReturn</font>
 is <b>true</b></p>
             </td>
-            <td><br>
-            </td>
-            <td><br>
-            </td>
-            <td><br>
-            </td>
           </tr>
           <tr valign="top">
             <td width="57">
@@ -564,12 +552,6 @@ is <b>true</b></p>
             </td>
             <td width="307">
             <p class="western"><font face="Courier New, monospace">rotateTo(angle,immediateReturn)</font></p>
-            </td>
-            <td><br>
-            </td>
-            <td><br>
-            </td>
-            <td><br>
             </td>
             <td><br>
             </td>
@@ -586,12 +568,6 @@ is <b>true</b></p>
             <p class="western">Returns <b>false</b> when the motor has
 stopped at the specified angle</p>
             </td>
-            <td><br>
-            </td>
-            <td><br>
-            </td>
-            <td><br>
-            </td>
           </tr>
           <tr valign="top">
             <td width="57">
@@ -603,12 +579,6 @@ readButtons()</font></p>
             </td>
             <td width="233">
             <p class="western">Returns the ID of the button pressed.</p>
-            </td>
-            <td><br>
-            </td>
-            <td><br>
-            </td>
-            <td><br>
             </td>
           </tr>
         </tbody>
@@ -644,8 +614,7 @@ press the button before the rotation is complete, the motor will stop
 without completing its rotation. Otherwise, the stop() method has no
 effect. </p>
       <p class="western" style="margin-left: 0.25in;"><a
- href="RotInterrupt.htm"
- target="_blank"><font color="#0000ff"><u>Solution</u></font></a></p>
+ href="RotInterrupt.htm" target="_blank"><font color="#0000ff"><u>Solution</u></font></a></p>
       <p class="western" style="margin-left: 0.25in;"><br>
       <br>
       </p>
@@ -654,9 +623,9 @@ effect. </p>
       <p class="western" style="margin-left: 0.25in;"><br>
       <br>
       </p>
-      <h1 class="western"><a
+      <h2 class="western"><a
  name="2.Program 5: Regulating motor speed|outline"></a> Program 5:
-Regulating motor speed</h1>
+Regulating motor speed</h2>
       <p class="western" style="margin-left: 0.1in; margin-bottom: 0in;">The
 other principle task of the regulator thread is to control the motor
 speed. One reason for doing this is that a two wheel vehicle will only
@@ -760,8 +729,7 @@ regulation on, the motors should remain within a few degrees of each
 other. When it is off, the difference in angle of rotation get larger
 with time unless you have an unusually well matched set of motors. </p>
       <p class="western" style="margin-left: 0.25in;"><a
- href="RegulationTest.htm"
- target="_blank"><font color="#0000ff"><u>Solution</u></font></a></p>
+ href="RegulationTest.htm" target="_blank"><font color="#0000ff"><u>Solution</u></font></a></p>
       <p class="western"><br>
       <br>
       </p>
