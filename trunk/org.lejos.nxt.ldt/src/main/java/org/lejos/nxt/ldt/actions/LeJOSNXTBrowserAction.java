@@ -11,7 +11,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.lejos.nxt.ldt.LeJOSNXJPlugin;
 import org.lejos.nxt.ldt.util.LeJOSNXJUtil;
-import org.lejos.nxt.ldt.views.NXTBrowserView;
+import org.lejos.nxt.ldt.views.browser.NXTBrowserView;
 
 /**
  * 
