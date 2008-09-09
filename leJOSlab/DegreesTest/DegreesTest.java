@@ -1,5 +1,6 @@
 import lejos.util.*;
 import lejos.gps.*;
+import lejos.util.*;
 
 /**
  * @author Juan Antonio Brenha Moral
