@@ -3,7 +3,7 @@ AllowLanguageSelection
 No
 
 AppName
-{leJOS NXJ 0.6}
+{leJOS NXJ}
 
 ApplicationID
 253252E2-EFAE-4AA8-96B6-0828619E536C
@@ -119,6 +119,9 @@ PackageSummary
 PackageVersion
 <%MajorVersion%>.<%MinorVersion%>
 
+PreserveFileAttributes
+Yes
+
 PreserveFilePermissions
 Yes
 
@@ -126,7 +129,7 @@ ProjectID
 9F458DC6-2D1D-47C9-BC5B-96658DDEE5F1
 
 ProjectVersion
-1.2.6.0
+1.2.9.0
 
 SaveOnlyToplevelDirs
 No
@@ -135,10 +138,13 @@ ScriptExt
 .bat
 
 ShortAppName
-{leJOS NXJ 0.6}
+{leJOS NXJ}
 
 SkipUnusedFileGroups
 Yes
+
+SystemLanguage
+en_gb
 
 Theme
 Modern_Wizard
@@ -1176,15 +1182,15 @@ SetupType ::6C6EB7CE-AB45-4145-9D38-7D57BE4807F2 -setup Install -active Yes -pla
 SetupType ::7873207E-5AA3-4491-9544-BD3EC5F48D78 -setup Install -active Yes -platforms {AIX-ppc FreeBSD-4-x86 FreeBSD-x86 HPUX-hppa Linux-x86 MacOS-X Solaris-sparc Windows} -name Custom -parent SetupTypes
 
 InstallComponent E3CE5D6E-1F59-45F5-AFFB-D154A771D21B -setup Install -type pane -title {Welcome Screen} -component Welcome -command reorder -active Yes -parent StandardInstall
-InstallComponent 36E6FB50-375B-4B44-A060-2120BC76845A -setup Install -type pane -conditions {7D6FCFEE-6237-44E5-A6C8-67C58D62AAC0 B0827C4F-72DE-4896-9D47-15D73177AD58} -title {Custom Text Pane 1} -component CustomTextPane1 -command reorder -active Yes -parent StandardInstall
-Condition 7D6FCFEE-6237-44E5-A6C8-67C58D62AAC0 -active Yes -parent 36E6FB50-375B-4B44-A060-2120BC76845A -title {Execute Script Condition} -component ExecuteScriptCondition
-Condition B0827C4F-72DE-4896-9D47-15D73177AD58 -active Yes -parent 36E6FB50-375B-4B44-A060-2120BC76845A -title {File Exists Condition} -component FileExistsCondition
+InstallComponent 36E6FB50-375B-4B44-A060-2120BC76845A -setup Install -type pane -conditions {7D6FCFEE-6237-44E5-A6C8-67C58D62AAC0 B0827C4F-72DE-4896-9D47-15D73177AD58} -title {Custom Text Pane 1} -component CustomTextPane1 -command insert -active Yes -parent StandardInstall
+Condition 7D6FCFEE-6237-44E5-A6C8-67C58D62AAC0 -active Yes -parent 36E6FB50-375B-4B44-A060-2120BC76845A -title {Execute Script Condition} -component ExecuteScriptCondition -TreeObject::id 7D6FCFEE-6237-44E5-A6C8-67C58D62AAC0
+Condition B0827C4F-72DE-4896-9D47-15D73177AD58 -active Yes -parent 36E6FB50-375B-4B44-A060-2120BC76845A -title {File Exists Condition} -component FileExistsCondition -TreeObject::id B0827C4F-72DE-4896-9D47-15D73177AD58
 InstallComponent F6F11D84-22F8-49A3-918D-03A8EF17D87B -setup Install -type action -title {Launch Web Browser} -component LaunchWebBrowser -command reorder -active Yes -parent 36E6FB50-375B-4B44-A060-2120BC76845A
 InstallComponent FCF679A0-2B02-495D-BA7A-B4C99FEE93B8 -setup Install -type pane -conditions {81B7D747-99EA-4757-B9E3-CDC7CAC26EB0 DF91F224-3899-424E-879F-8E5F60C06E24} -title {Select Destination} -component SelectDestination -command insert -active Yes -parent StandardInstall
-Condition 81B7D747-99EA-4757-B9E3-CDC7CAC26EB0 -active Yes -parent FCF679A0-2B02-495D-BA7A-B4C99FEE93B8 -title {Script Condition} -component ScriptCondition
-Condition DF91F224-3899-424E-879F-8E5F60C06E24 -active Yes -parent FCF679A0-2B02-495D-BA7A-B4C99FEE93B8 -title {File Permission Condition} -component FilePermissionCondition
-InstallComponent AE0C668C-FB50-4AA0-924A-8A4EF992E7BD -setup Install -type pane -conditions 7CDC350B-9C0A-43BE-9C43-EFE450DE6185 -title {Custom Text Pane 1} -component CustomTextPane1 -command reorder -active Yes -parent StandardInstall
-Condition 7CDC350B-9C0A-43BE-9C43-EFE450DE6185 -active Yes -parent AE0C668C-FB50-4AA0-924A-8A4EF992E7BD -title {Execute Script Condition} -component ExecuteScriptCondition
+Condition 81B7D747-99EA-4757-B9E3-CDC7CAC26EB0 -active Yes -parent FCF679A0-2B02-495D-BA7A-B4C99FEE93B8 -title {Script Condition} -component ScriptCondition -TreeObject::id 81B7D747-99EA-4757-B9E3-CDC7CAC26EB0
+Condition DF91F224-3899-424E-879F-8E5F60C06E24 -active Yes -parent FCF679A0-2B02-495D-BA7A-B4C99FEE93B8 -title {File Permission Condition} -component FilePermissionCondition -TreeObject::id DF91F224-3899-424E-879F-8E5F60C06E24
+InstallComponent AE0C668C-FB50-4AA0-924A-8A4EF992E7BD -setup Install -type pane -conditions 7CDC350B-9C0A-43BE-9C43-EFE450DE6185 -title {Custom Text Pane 1} -component CustomTextPane1 -command insert -active Yes -parent StandardInstall
+Condition 7CDC350B-9C0A-43BE-9C43-EFE450DE6185 -active Yes -parent AE0C668C-FB50-4AA0-924A-8A4EF992E7BD -title {Execute Script Condition} -component ExecuteScriptCondition -TreeObject::id 7CDC350B-9C0A-43BE-9C43-EFE450DE6185
 InstallComponent C567D000-B29A-4EEF-9003-51BDE7CB5E95 -setup Install -type action -title {Execute External Program} -component ExecuteExternalProgram -active Yes -parent AE0C668C-FB50-4AA0-924A-8A4EF992E7BD
 InstallComponent A06DD6A5-A619-4713-8EA7-C1010EB4800F -setup Install -type pane -title {Start Copying Files} -component StartCopyingFiles -active Yes -parent StandardInstall
 InstallComponent BC0409EB-AB66-4D71-895E-E9F8377574D8 -setup Install -type pane -title {Copying Files} -component CopyFiles -active Yes -parent StandardInstall
@@ -1199,9 +1205,9 @@ InstallComponent E3F39B14-0441-492F-AC14-CA3EAF4F0E27 -setup Install -type actio
 InstallComponent 6B8FE306-976D-49F6-A84E-5CF7A80643EB -setup Install -type pane -title {Setup Complete} -component SetupComplete -active Yes -parent DefaultInstall
 InstallComponent B53D1E8D-8B34-4F6F-B894-78020CA6231D -setup Install -type action -title {Console Ask Yes Or No} -component ConsoleAskYesOrNo -active Yes -parent ConsoleInstall
 InstallComponent 6A2A84CC-B4CD-44AB-B51A-8A589DB5D613 -setup Install -type action -conditions 4DA7EA73-19F5-4B17-A1DB-B7963F650223 -title Exit -component Exit -command insert -active Yes -parent ConsoleInstall
-Condition 4DA7EA73-19F5-4B17-A1DB-B7963F650223 -active Yes -parent 6A2A84CC-B4CD-44AB-B51A-8A589DB5D613 -title {String Is Condition} -component StringIsCondition
+Condition 4DA7EA73-19F5-4B17-A1DB-B7963F650223 -active Yes -parent 6A2A84CC-B4CD-44AB-B51A-8A589DB5D613 -title {String Is Condition} -component StringIsCondition -TreeObject::id 4DA7EA73-19F5-4B17-A1DB-B7963F650223
 InstallComponent 16C944AD-C102-410B-A75B-3C63E59429F4 -setup Install -type action -conditions 407A22BB-EB05-4A04-9855-B8FAF6A0EF41 -title {Console Get User Input} -component ConsoleGetUserInput -command insert -active Yes -parent ConsoleInstall
-Condition 407A22BB-EB05-4A04-9855-B8FAF6A0EF41 -active Yes -parent 16C944AD-C102-410B-A75B-3C63E59429F4 -title {File Permission Condition} -component FilePermissionCondition
+Condition 407A22BB-EB05-4A04-9855-B8FAF6A0EF41 -active Yes -parent 16C944AD-C102-410B-A75B-3C63E59429F4 -title {File Permission Condition} -component FilePermissionCondition -TreeObject::id 407A22BB-EB05-4A04-9855-B8FAF6A0EF41
 InstallComponent 7BDE520D-4F83-4E61-946D-0D2A630FC6B1 -setup Install -type action -title {Console Message} -component ConsoleMessage -active Yes -parent ConsoleInstall
 InstallComponent 3F05A986-ED3D-4D1E-A1C7-FE825393A1BC -setup Install -type action -title {Execute Action} -component ExecuteAction -active Yes -parent ConsoleInstall
 InstallComponent E2CBC5B8-8152-442F-8D30-33F028FA0F28 -setup Install -type action -title {Console Message} -component ConsoleMessage -active Yes -parent ConsoleInstall
@@ -1211,8 +1217,8 @@ InstallComponent 95D2767E-F5AA-4A5E-BB8E-70920EFF1CC4 -setup Install -type actio
 InstallComponent F403ED4B-D2AB-4CA0-9AC0-1DCA4A1EBE5E -setup Install -type actiongroup -title {Setup Actions} -alias {Setup Actions} -active Yes -parent ActionGroupsInstall
 InstallComponent 9C1BF614-0A4B-4B3E-82AA-32CA148FDA63 -setup Install -type actiongroup -title {Startup Actions} -alias {Startup Actions} -active Yes -parent ActionGroupsInstall
 InstallComponent 8F0CC273-D105-4F82-8D7D-EB6618629BB7 -setup Install -type action -conditions {E20050A5-74E8-4DB3-82AC-ED90E44B3EDF F93C8E33-27CA-42EE-8D96-24856D5CA1AB} -title Exit -component Exit -command insert -active Yes -parent 9C1BF614-0A4B-4B3E-82AA-32CA148FDA63
-Condition E20050A5-74E8-4DB3-82AC-ED90E44B3EDF -active Yes -parent 8F0CC273-D105-4F82-8D7D-EB6618629BB7 -title {String Is Condition} -component StringIsCondition
-Condition F93C8E33-27CA-42EE-8D96-24856D5CA1AB -active Yes -parent 8F0CC273-D105-4F82-8D7D-EB6618629BB7 -title {Ask Yes or No} -component AskYesOrNo
+Condition E20050A5-74E8-4DB3-82AC-ED90E44B3EDF -active Yes -parent 8F0CC273-D105-4F82-8D7D-EB6618629BB7 -title {String Is Condition} -component StringIsCondition -TreeObject::id E20050A5-74E8-4DB3-82AC-ED90E44B3EDF
+Condition F93C8E33-27CA-42EE-8D96-24856D5CA1AB -active Yes -parent 8F0CC273-D105-4F82-8D7D-EB6618629BB7 -title {Ask Yes or No} -component AskYesOrNo -TreeObject::id F93C8E33-27CA-42EE-8D96-24856D5CA1AB
 InstallComponent 7CACE910-41EE-4D16-B8DE-9D346336018F -setup Install -type action -title {Execute Script} -component ExecuteScript -active Yes -parent 9C1BF614-0A4B-4B3E-82AA-32CA148FDA63
 InstallComponent 22B22D81-67CF-4BFD-A7FE-5FECA55B49A4 -setup Install -type action -title {Execute Script} -component ExecuteScript -active Yes -parent 9C1BF614-0A4B-4B3E-82AA-32CA148FDA63
 InstallComponent 2B058846-92EC-4F3C-910C-E3203A5DFEC7 -setup Install -type action -title {Check for Previous Install} -component CheckForPreviousInstall -active Yes -parent 9C1BF614-0A4B-4B3E-82AA-32CA148FDA63
@@ -1221,15 +1227,15 @@ InstallComponent 81F49E9C-C47F-4165-B259-ED915E461415 -setup Install -type actio
 InstallComponent A9CD20EB-9BAC-4E7D-9327-7724C2A7F535 -setup Install -type action -title {Add Environment Variable} -component AddEnvironmentVariable -active Yes -parent 81F49E9C-C47F-4165-B259-ED915E461415
 InstallComponent 4B5ECD32-5DF6-420F-82CF-CB83E5F49A8D -setup Install -type action -title {Add Directory To Path} -component AddDirectoryToPath -active Yes -parent 81F49E9C-C47F-4165-B259-ED915E461415
 InstallComponent C540F45D-8580-4AD9-94F7-9A75F09A6593 -setup Install -type action -title {Install Selected Files} -component InstallSelectedFiles -active Yes -parent 81F49E9C-C47F-4165-B259-ED915E461415
-InstallComponent 44AD6793-47A7-4193-AE57-BDDB69799092 -setup Install -type action -conditions {F8696E5A-43F4-4369-B835-DB74A17A46CE C2089508-7FED-4F5A-8B2B-D77CC570FF4F} -title {Execute External Program} -component ExecuteExternalProgram -command reorder -active Yes -parent 81F49E9C-C47F-4165-B259-ED915E461415
-Condition F8696E5A-43F4-4369-B835-DB74A17A46CE -active Yes -parent 44AD6793-47A7-4193-AE57-BDDB69799092 -title {Execute Script Condition} -component ExecuteScriptCondition
-Condition C2089508-7FED-4F5A-8B2B-D77CC570FF4F -active Yes -parent 44AD6793-47A7-4193-AE57-BDDB69799092 -title {File Exists Condition} -component FileExistsCondition
+InstallComponent 44AD6793-47A7-4193-AE57-BDDB69799092 -setup Install -type action -conditions {F8696E5A-43F4-4369-B835-DB74A17A46CE C2089508-7FED-4F5A-8B2B-D77CC570FF4F} -title {Execute External Program} -component ExecuteExternalProgram -command insert -active Yes -parent 81F49E9C-C47F-4165-B259-ED915E461415
+Condition F8696E5A-43F4-4369-B835-DB74A17A46CE -active Yes -parent 44AD6793-47A7-4193-AE57-BDDB69799092 -title {Execute Script Condition} -component ExecuteScriptCondition -TreeObject::id F8696E5A-43F4-4369-B835-DB74A17A46CE
+Condition C2089508-7FED-4F5A-8B2B-D77CC570FF4F -active Yes -parent 44AD6793-47A7-4193-AE57-BDDB69799092 -title {File Exists Condition} -component FileExistsCondition -TreeObject::id C2089508-7FED-4F5A-8B2B-D77CC570FF4F
 InstallComponent 0CF8A941-C6B7-4DF9-8DEB-BE87A57CA285 -setup Install -type action -conditions A7C66696-4708-4099-B907-EAE7B0C4C3AD -title {Install Uninstaller} -component InstallUninstaller -command insert -active Yes -parent 81F49E9C-C47F-4165-B259-ED915E461415
-Condition A7C66696-4708-4099-B907-EAE7B0C4C3AD -active Yes -parent 0CF8A941-C6B7-4DF9-8DEB-BE87A57CA285 -title {String Is Condition} -component StringIsCondition
+Condition A7C66696-4708-4099-B907-EAE7B0C4C3AD -active Yes -parent 0CF8A941-C6B7-4DF9-8DEB-BE87A57CA285 -title {String Is Condition} -component StringIsCondition -TreeObject::id A7C66696-4708-4099-B907-EAE7B0C4C3AD
 InstallComponent 0B440438-4277-4EF2-AEC5-724E6AE64293 -setup Install -type action -conditions B8183471-3C13-4A0C-A155-C3FA70B2CB42 -title {Windows Uninstall Registry} -component AddWindowsUninstallEntry -command insert -active Yes -parent 81F49E9C-C47F-4165-B259-ED915E461415
-Condition B8183471-3C13-4A0C-A155-C3FA70B2CB42 -active Yes -parent 0B440438-4277-4EF2-AEC5-724E6AE64293 -title {String Is Condition} -component StringIsCondition
+Condition B8183471-3C13-4A0C-A155-C3FA70B2CB42 -active Yes -parent 0B440438-4277-4EF2-AEC5-724E6AE64293 -title {String Is Condition} -component StringIsCondition -TreeObject::id B8183471-3C13-4A0C-A155-C3FA70B2CB42
 InstallComponent 6CF27022-0C55-43FA-95CF-821D60A3FDBE -setup Install -type action -conditions 80858315-2FDE-4485-AE60-DCB2A06271A2 -title {Uninstall Shortcut} -component InstallProgramFolderShortcut -command insert -active Yes -parent 81F49E9C-C47F-4165-B259-ED915E461415
-Condition 80858315-2FDE-4485-AE60-DCB2A06271A2 -active Yes -parent 6CF27022-0C55-43FA-95CF-821D60A3FDBE -title {String Is Condition} -component StringIsCondition
+Condition 80858315-2FDE-4485-AE60-DCB2A06271A2 -active Yes -parent 6CF27022-0C55-43FA-95CF-821D60A3FDBE -title {String Is Condition} -component StringIsCondition -TreeObject::id 80858315-2FDE-4485-AE60-DCB2A06271A2
 InstallComponent FFD36C32-E334-4451-8B85-8EF64FC14A78 -setup Install -type actiongroup -title {Finish Actions} -alias {Finish Actions} -active Yes -parent ActionGroupsInstall
 InstallComponent 7F977B76-1808-405B-9FEA-F30DAC0A8CB7 -setup Install -type actiongroup -title {Cancel Actions} -alias {Cancel Actions} -active Yes -parent ActionGroupsInstall
 InstallComponent C44ED22A-F9ED-46FE-B276-C45D197EBD67 -setup Uninstall -type pane -title Uninstall -component Uninstall -active Yes -parent StandardUninstall
@@ -1237,11 +1243,11 @@ InstallComponent E9C6B194-416D-44C0-BDF8-DFB7CB9055CB -setup Uninstall -type act
 InstallComponent 3CBBB764-3C18-4E64-B7B6-28AADD8C0599 -setup Uninstall -type action -title {Execute Action} -component ExecuteAction -active Yes -parent C44ED22A-F9ED-46FE-B276-C45D197EBD67
 InstallComponent 7BCBB06C-6BB2-4F43-BDFA-0683BA805A0E -setup Uninstall -type action -title {Move Forward} -component MoveForward -active Yes -parent C44ED22A-F9ED-46FE-B276-C45D197EBD67
 InstallComponent 761101CD-B1D6-480A-9B3C-EAC7879A5576 -setup Uninstall -type pane -conditions EDCABD7B-7770-4EF5-A2C9-B976C9067A3F -title {Uninstall Details} -component UninstallDetails -command insert -active Yes -parent StandardUninstall
-Condition EDCABD7B-7770-4EF5-A2C9-B976C9067A3F -active Yes -parent 761101CD-B1D6-480A-9B3C-EAC7879A5576 -title {String Is Condition} -component StringIsCondition
+Condition EDCABD7B-7770-4EF5-A2C9-B976C9067A3F -active Yes -parent 761101CD-B1D6-480A-9B3C-EAC7879A5576 -title {String Is Condition} -component StringIsCondition -TreeObject::id EDCABD7B-7770-4EF5-A2C9-B976C9067A3F
 InstallComponent FEF5CE97-BF58-472B-9CEC-3AADF9AC1A54 -setup Uninstall -type pane -title {Uninstall Complete} -component UninstallComplete -active Yes -parent StandardUninstall
 InstallComponent 04EBA609-5B24-46C1-A727-6D4BCEE47532 -setup Uninstall -type action -title {Console Ask Yes Or No} -component ConsoleAskYesOrNo -active Yes -parent ConsoleUninstall
 InstallComponent 47EC0F76-8D70-4BF5-B8BD-809F0F2A2865 -setup Uninstall -type action -conditions 83025D41-BC90-4E38-B864-42839441C553 -title Exit -component Exit -command insert -active Yes -parent ConsoleUninstall
-Condition 83025D41-BC90-4E38-B864-42839441C553 -active Yes -parent 47EC0F76-8D70-4BF5-B8BD-809F0F2A2865 -title {String Is Condition} -component StringIsCondition
+Condition 83025D41-BC90-4E38-B864-42839441C553 -active Yes -parent 47EC0F76-8D70-4BF5-B8BD-809F0F2A2865 -title {String Is Condition} -component StringIsCondition -TreeObject::id 83025D41-BC90-4E38-B864-42839441C553
 InstallComponent 16BB9D62-382F-4718-A4FF-3324824370A9 -setup Uninstall -type action -title {Console Message} -component ConsoleMessage -active Yes -parent ConsoleUninstall
 InstallComponent B07B6C31-8A4D-4A77-AF27-150B2E6ADAAC -setup Uninstall -type action -title {Execute Action} -component ExecuteAction -active Yes -parent ConsoleUninstall
 InstallComponent 890E2588-9587-41B2-AB58-F912364F99BE -setup Uninstall -type action -title {Console Message} -component ConsoleMessage -active Yes -parent ConsoleUninstall
@@ -1251,8 +1257,8 @@ InstallComponent 9CF70E2B-31E0-4FF5-B918-6E882DD6322F -setup Uninstall -type act
 InstallComponent 3956C52B-8918-4C01-86A6-293452079DD7 -setup Uninstall -type actiongroup -title {Setup Actions} -alias {Setup Actions} -active Yes -parent ActionGroupsUninstall
 InstallComponent 41EC040C-5F66-4A2F-8CED-91D603432622 -setup Uninstall -type actiongroup -title {Startup Actions} -alias {Startup Actions} -active Yes -parent ActionGroupsUninstall
 InstallComponent BB26CF22-4AA5-4DE7-9A7F-4C74579A1B58 -setup Uninstall -type action -conditions {509E17E9-D0B6-401B-A111-35B43A1768CF 5A9AB28A-139C-406A-8F53-94EDA701192B} -title Exit -component Exit -command insert -active Yes -parent 41EC040C-5F66-4A2F-8CED-91D603432622
-Condition 509E17E9-D0B6-401B-A111-35B43A1768CF -active Yes -parent BB26CF22-4AA5-4DE7-9A7F-4C74579A1B58 -title {String Is Condition} -component StringIsCondition
-Condition 5A9AB28A-139C-406A-8F53-94EDA701192B -active Yes -parent BB26CF22-4AA5-4DE7-9A7F-4C74579A1B58 -title {Ask Yes or No} -component AskYesOrNo
+Condition 509E17E9-D0B6-401B-A111-35B43A1768CF -active Yes -parent BB26CF22-4AA5-4DE7-9A7F-4C74579A1B58 -title {String Is Condition} -component StringIsCondition -TreeObject::id 509E17E9-D0B6-401B-A111-35B43A1768CF
+Condition 5A9AB28A-139C-406A-8F53-94EDA701192B -active Yes -parent BB26CF22-4AA5-4DE7-9A7F-4C74579A1B58 -title {Ask Yes or No} -component AskYesOrNo -TreeObject::id 5A9AB28A-139C-406A-8F53-94EDA701192B
 InstallComponent 8DE28FB2-3277-43CD-9DDF-1CF83CFB0178 -setup Uninstall -type actiongroup -title {Uninstall Actions} -alias {Uninstall Actions} -active Yes -parent ActionGroupsUninstall
 InstallComponent 4160048A-9C4E-43BA-A8F4-3D45CAE7A787 -setup Uninstall -type action -title {Uninstall Selected Files} -component UninstallSelectedFiles -active Yes -parent 8DE28FB2-3277-43CD-9DDF-1CF83CFB0178
 InstallComponent 5F23D154-6797-499A-AEE4-E14BE6DB46B4 -setup Uninstall -type actiongroup -title {Finish Actions} -alias {Finish Actions} -active Yes -parent ActionGroupsUninstall
@@ -1299,7 +1305,7 @@ InstallDir
 <%InstallDir%>
 
 20C58F69-C30F-497D-A4BA-E1B395EC15A7,FileSize
-11300522
+11615914
 
 20C58F69-C30F-497D-A4BA-E1B395EC15A7,Name
 {Program Files}
@@ -1402,7 +1408,13 @@ Yes
 {0 conditions}
 
 4B5ECD32-5DF6-420F-82CF-CB83E5F49A8D,Directory
-{%NXJ_HOME%\\bin}
+{<%InstallDir%>\\bin}
+
+4B5ECD32-5DF6-420F-82CF-CB83E5F49A8D,Level
+system
+
+4B5ECD32-5DF6-420F-82CF-CB83E5F49A8D,Location
+beginning
 
 4DA7EA73-19F5-4B17-A1DB-B7963F650223,CheckCondition
 {Before Action is Executed}
@@ -1718,6 +1730,9 @@ A7C66696-4708-4099-B907-EAE7B0C4C3AD,String
 
 A9CD20EB-9BAC-4E7D-9327-7724C2A7F535,Conditions
 {0 conditions}
+
+A9CD20EB-9BAC-4E7D-9327-7724C2A7F535,Level
+system
 
 A9CD20EB-9BAC-4E7D-9327-7724C2A7F535,Value
 <%InstallDir%>
@@ -2279,57 +2294,6 @@ No
 Linux-x86,RootInstallDir
 /usr/local/<%ShortAppName%>
 
-MacOS-X,Active
-No
-
-MacOS-X,DefaultDirectoryPermission
-0755
-
-MacOS-X,DefaultFilePermission
-0755
-
-MacOS-X,Executable
-<%AppName%>-<%Version%>-<%Platform%>-Install<%Ext%>
-
-MacOS-X,FallBackToConsole
-Yes
-
-MacOS-X,InstallDir
-<%Home%>/<%ShortAppName%>
-
-MacOS-X,InstallMode
-Standard
-
-MacOS-X,InstallType
-Typical
-
-MacOS-X,ProgramExecutable
-{}
-
-MacOS-X,ProgramFolderAllUsers
-No
-
-MacOS-X,ProgramFolderName
-<%AppName%>
-
-MacOS-X,ProgramLicense
-<%InstallDir%>/LICENSE.txt
-
-MacOS-X,ProgramName
-{}
-
-MacOS-X,ProgramReadme
-<%InstallDir%>/README.txt
-
-MacOS-X,PromptForRoot
-Yes
-
-MacOS-X,RequireRoot
-No
-
-MacOS-X,RootInstallDir
-/usr/local/<%ShortAppName%>
-
 Solaris-sparc,Active
 No
 
@@ -2627,9 +2591,7 @@ E3CE5D6E-1F59-45F5-AFFB-D154A771D21B,Message
 
 It is recommended that you close all other applications before  continuing.
 
-Click Next to continue or Cancel to exit Setup.
-
-There is a previous version in <%PreviousInstallDir%>}
+Click Next to continue or Cancel to exit Setup.}
 
 F93C8E33-27CA-42EE-8D96-24856D5CA1AB,Message
 <%InstallStartupText%>

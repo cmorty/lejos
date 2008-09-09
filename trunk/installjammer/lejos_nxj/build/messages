@@ -1,0 +1,711 @@
+::msgcat::mcmset en {
+15DAE539-105B-4492-B815-135A1843117F,Description
+<%ProgramFilesDescription%>
+
+16BB9D62-382F-4718-A4FF-3324824370A9,Message
+<%UninstallingApplicationText%>
+
+36E6FB50-375B-4B44-A060-2120BC76845A,Caption
+{Please install the latest JDK from the Sun web site.}
+
+36E6FB50-375B-4B44-A060-2120BC76845A,Subtitle
+{No suitable Java Development Kit found}
+
+36E6FB50-375B-4B44-A060-2120BC76845A,Text
+{<%JDKDescription%>
+
+leJOS NXJ requires JDK 1.5 or later.  
+
+You browser will be started and you will be sent to the Sun Java web site to install the JDK. Once you have done this, press Next.}
+
+36E6FB50-375B-4B44-A060-2120BC76845A,Title
+{JDK Not Found}
+
+5A9AB28A-139C-406A-8F53-94EDA701192B,Message
+<%UninstallStartupText%>
+
+5A9AB28A-139C-406A-8F53-94EDA701192B,Title
+<%UninstallApplicationText%>
+
+6C6EB7CE-AB45-4145-9D38-7D57BE4807F2,Description
+<%TypicalInstallDescription%>
+
+7873207E-5AA3-4491-9544-BD3EC5F48D78,Description
+<%CustomInstallDescription%>
+
+7BDE520D-4F83-4E61-946D-0D2A630FC6B1,Message
+<%InstallingApplicationText%>
+
+890E2588-9587-41B2-AB58-F912364F99BE,Message
+<%UninstallCompleteText%>
+
+A06DD6A5-A619-4713-8EA7-C1010EB4800F,Message
+{}
+
+A06DD6A5-A619-4713-8EA7-C1010EB4800F,Text
+{Install Directory:
+            <%InstallDir%>
+
+    Setup Type:
+            <%InstallType%>}
+
+AE0C668C-FB50-4AA0-924A-8A4EF992E7BD,Caption
+{The previous version will be uninstalled.}
+
+AE0C668C-FB50-4AA0-924A-8A4EF992E7BD,Subtitle
+{The directory exists and contains a previous version of leJOS NXJ}
+
+AE0C668C-FB50-4AA0-924A-8A4EF992E7BD,Text
+{Press Next to uninstall the previous version from <%PreviousInstallDir%> or Back to go back and change the destination directory.}
+
+AE0C668C-FB50-4AA0-924A-8A4EF992E7BD,Title
+{Uninstall Previous Version}
+
+ApplicationReadmeText
+{<%AppName%> Readme}
+
+Back
+Back
+
+Browse
+Browse...
+
+BuildFileText
+{Building <%Tail <%FileBeingInstalled%>%>...}
+
+BuildUninstallText
+{Building uninstall...}
+
+Cancel
+Cancel
+
+ChooseComponents,BackButton
+{< <%Back%>}
+
+ChooseComponents,CancelButton
+<%Cancel%>
+
+ChooseComponents,Caption
+{Select the components you want to install and deselect the components  you do not want to install.}
+
+ChooseComponents,DescriptionLabel
+Description
+
+ChooseComponents,Message
+{<%SpaceRequiredText%> of space required}
+
+ChooseComponents,NextButton
+{<%Next%> >}
+
+ChooseComponents,Subtitle
+{Select the components setup will install.}
+
+ChooseComponents,Title
+{Select Components}
+
+CleanupInstallText
+{Cleaning up install...}
+
+Close
+Close
+
+ConsolePause,Message
+<%ConsolePauseText%>
+
+ConsolePauseQuitText
+{-- Press space to continue or 'q' to quit --}
+
+ConsolePauseText
+{-- Press space to continue --}
+
+ConsoleSelectDestinationText
+{Where do you want to install <%AppName%>?}
+
+CopyFiles,BackButton
+{< <%Back%>}
+
+CopyFiles,CancelButton
+<%Cancel%>
+
+CopyFiles,Caption
+{Please wait while Setup installs <%AppName%> on your computer.}
+
+CopyFiles,FileLabel
+<%Status%>
+
+CopyFiles,Message
+{}
+
+CopyFiles,NextButton
+{<%Next%> >}
+
+CopyFiles,ProgressValue
+<%InstallPercentComplete%>
+
+CopyFiles,Subtitle
+{Installing <%AppName%>}
+
+CopyFiles,Title
+Installing
+
+CreateDesktopShortcutText
+{Create Desktop Shortcut}
+
+CreateQuickLaunchShortcutText
+{Create Quick Launch Shortcut}
+
+CustomBlankPane1,BackButton
+{< <%Back%>}
+
+CustomBlankPane1,CancelButton
+<%Cancel%>
+
+CustomBlankPane1,Caption
+{Caption goes here.}
+
+CustomBlankPane1,Message
+{Message goes here.}
+
+CustomBlankPane1,NextButton
+{<%Next%> >}
+
+CustomBlankPane2,BackButton
+{< <%Back%>}
+
+CustomBlankPane2,CancelButton
+<%Cancel%>
+
+CustomBlankPane2,Caption
+Caption
+
+CustomBlankPane2,Message
+Message
+
+CustomBlankPane2,NextButton
+{<%Next%> >}
+
+CustomBlankPane2,Subtitle
+Subtitle
+
+CustomBlankPane2,Title
+Title
+
+CustomInstallDescription
+{Select custom components for installation.}
+
+CustomTextPane1,BackButton
+{< <%Back%>}
+
+CustomTextPane1,CancelButton
+<%Cancel%>
+
+CustomTextPane1,Caption
+Caption
+
+CustomTextPane1,Message
+Message
+
+CustomTextPane1,NextButton
+{<%Next%> >}
+
+CustomTextPane1,Subtitle
+Subtitle
+
+CustomTextPane1,Text
+{Put your custom text here.}
+
+CustomTextPane1,Title
+Title
+
+DirectoryNameErrorText
+{A directory name cannot contain any of the following characters:
+        \ / : * ? " < > |}
+
+DirectoryPermissionText
+{You do not have permission to write to <%Dir%>.}
+
+DisplayName
+<%AppName%>
+
+DownloadingFilesText
+{Downloading files...}
+
+E2CBC5B8-8152-442F-8D30-33F028FA0F28,Message
+<%InstallationCompleteText%>
+
+E3CE5D6E-1F59-45F5-AFFB-D154A771D21B,Message
+{This will install leJOS NXJ version <%Version%> on your computer. 
+
+It is recommended that you close all other applications before  continuing.
+
+Click Next to continue or Cancel to exit Setup.}
+
+ExitText
+{Are you sure you want to exit this setup?}
+
+F93C8E33-27CA-42EE-8D96-24856D5CA1AB,Message
+<%InstallStartupText%>
+
+F93C8E33-27CA-42EE-8D96-24856D5CA1AB,Title
+<%InstallApplicationText%>
+
+FCF679A0-2B02-495D-BA7A-B4C99FEE93B8,Caption
+{Setup will install <%AppName%> in the following folder.
+
+To install  to this folder, click Next.  To install to a different folder, click  Browse and select another folder.
+
+<%JDKDescription%>}
+
+FCF679A0-2B02-495D-BA7A-B4C99FEE93B8,Message
+{}
+
+FileBeingInstalledText
+{Copying <%FileBeingInstalled%>}
+
+FileBeingUninstalledText
+{Removing <%FileBeingUninstalled%>}
+
+FileOverwriteText
+{The file <%FileBeingInstalled%> already exists.  Do you want to overwrite it?}
+
+Finish
+Finish
+
+GroupBeingInstalledText
+{Installing <%GroupBeingInstalled%>...}
+
+GroupBeingUninstalledText
+{Removing <%GroupBeingUninstalled%>}
+
+Help
+Help
+
+InstallApplicationText
+{Install <%AppName%>}
+
+InstallCompleteText
+{File installation complete...}
+
+InstallPassword,BackButton
+{< <%Back%>}
+
+InstallPassword,CancelButton
+<%Cancel%>
+
+InstallPassword,Caption
+{Please enter a password.}
+
+InstallPassword,Message
+{}
+
+InstallPassword,NextButton
+{<%Next%> >}
+
+InstallPassword,Subtitle
+{This installation requires a password to continue.}
+
+InstallPassword,Title
+{Install Password}
+
+InstallPrepareText
+{Preparing to install...}
+
+InstallStartupText
+{This will install <%AppName%> on your computer.  Continue?}
+
+InstallTitleText
+{<%AppName%> Setup}
+
+InstallationCompleteText
+{Installation complete.}
+
+InstallingApplicationText
+{Installing <%AppName%>...}
+
+LaunchApplicationText
+{Launch <%AppName%>}
+
+License,AcceptRadiobutton
+{I accept the terms of the license agreement.}
+
+License,BackButton
+{< <%Back%>}
+
+License,CancelButton
+<%No%>
+
+License,DeclineRadiobutton
+{I do not accept the terms of the license agreement.}
+
+License,NextButton
+<%Yes%>
+
+License,Subtitle
+{Please read the following license agreement carefully.}
+
+License,Text
+{Put your license agreement here.}
+
+License,Title
+{License Agreement}
+
+LocateJavaRuntime,PromptMessage
+{Please tell us where your Java Runtime is located}
+
+LocateJavaRuntime,StatusMessage
+{Locating Java Runtime...}
+
+Next
+Next
+
+No
+No
+
+OK
+OK
+
+PasswordIncorrectText
+{Password is incorrect.}
+
+ProgramFilesDescription
+{Common Program Files}
+
+PromptForDirectoryMessage
+{Please choose a directory, then select OK.}
+
+PromptForDirectoryNewFolderText
+{Make New Folder}
+
+PromptForDirectoryTitle
+{Browse for Folder}
+
+PromptForRootText
+{Please enter your root password.}
+
+Readme,BackButton
+{< <%Back%>}
+
+Readme,CancelButton
+<%Cancel%>
+
+Readme,Caption
+{}
+
+Readme,Message
+{}
+
+Readme,NextButton
+{<%Next%> >}
+
+Readme,Subtitle
+{Readme Information for <%AppName%>}
+
+Readme,Text
+{Put your readme information here.}
+
+Readme,Title
+{Readme Information}
+
+RequireRootText
+{You must be root to run this installer.}
+
+SelectDestination,BackButton
+{< <%Back%>}
+
+SelectDestination,BrowseButton
+<%Browse%>
+
+SelectDestination,BrowseText
+{To continue, click Next.  If you would like to select a different  folder, click Browse.}
+
+SelectDestination,CancelButton
+<%Cancel%>
+
+SelectDestination,Caption
+{Setup will install <%AppName%> in the following folder.
+
+To install  to this folder, click Next.  To install to a different folder, click  Browse and select another folder.}
+
+SelectDestination,DestinationLabel
+{Destination Folder}
+
+SelectDestination,Message
+{}
+
+SelectDestination,NextButton
+{<%Next%> >}
+
+SelectDestination,Subtitle
+{Where should <%AppName%> be installed?}
+
+SelectDestination,Title
+{Choose Destination Location}
+
+SelectProgramFolder,AllUsersCheckbutton
+{Create program folder for all users}
+
+SelectProgramFolder,BackButton
+{< <%Back%>}
+
+SelectProgramFolder,CancelButton
+<%Cancel%>
+
+SelectProgramFolder,Caption
+{Setup will add the program icons to the Program Folder listed below.   You may type a new folder name or select from the existing folders list.   Click Next to continue.}
+
+SelectProgramFolder,FolderListLabel
+{Exising Folders:}
+
+SelectProgramFolder,Message
+{}
+
+SelectProgramFolder,NextButton
+{<%Next%> >}
+
+SelectProgramFolder,ProgramFolderLabel
+{Program Folder:}
+
+SelectProgramFolder,Subtitle
+{Please select a program folder.}
+
+SelectProgramFolder,Title
+{Select Program Folder}
+
+SeparatorText
+InstallJammer
+
+SetupComplete,BackButton
+{< <%Back%>}
+
+SetupComplete,CancelButton
+<%Cancel%>
+
+SetupComplete,Caption
+{InstallJammer Wizard Complete}
+
+SetupComplete,Message
+{The InstallJammer Wizard has successfully installed <%AppName%>.   Click Finish to exit the wizard.}
+
+SetupComplete,NextButton
+<%Finish%>
+
+SetupType,BackButton
+{< <%Back%>}
+
+SetupType,CancelButton
+<%Cancel%>
+
+SetupType,Caption
+{Click the type of Setup you prefer.}
+
+SetupType,DescriptionLabel
+Description
+
+SetupType,Message
+{}
+
+SetupType,NextButton
+{<%Next%> >}
+
+SetupType,Subtitle
+{Select the setup type that best suits your needs.}
+
+SetupType,Title
+{Setup Type}
+
+StartCopyingFiles,BackButton
+{< <%Back%>}
+
+StartCopyingFiles,CancelButton
+<%Cancel%>
+
+StartCopyingFiles,Caption
+{Setup has enough information to start copying the program files.  If  you want to review or change any settings, click Back.  If you are  satisfied with the settings, click Next to begin copying files.}
+
+StartCopyingFiles,Message
+{}
+
+StartCopyingFiles,NextButton
+{<%Next%> >}
+
+StartCopyingFiles,Subtitle
+{Review settings before copying files}
+
+StartCopyingFiles,Text
+{Install Directory:
+            <%InstallDir%>
+
+    Setup Type:
+            <%InstallType%>}
+
+StartCopyingFiles,Title
+{Start Copying Files}
+
+TextWindow,Caption
+Caption
+
+TextWindow,CloseButton
+<%Close%>
+
+TextWindow,Message
+{Message goes here.}
+
+TextWindow,Title
+{Window Title}
+
+TypicalInstallDescription
+{A typical installation.}
+
+Uninstall,BackButton
+{< <%Back%>}
+
+Uninstall,CancelButton
+<%Cancel%>
+
+Uninstall,Caption
+<%GroupBeingUninstalledText%>
+
+Uninstall,FileValue
+<%Status%>
+
+Uninstall,Message
+{}
+
+Uninstall,NextButton
+{<%Next%> >}
+
+Uninstall,ProgressValue
+<%UninstallPercentComplete%>
+
+Uninstall,Subtitle
+{Uninstalling <%AppName%>}
+
+Uninstall,Title
+Uninstalling
+
+UninstallApplicationText
+{Uninstall <%AppName%>}
+
+UninstallComplete,BackButton
+{< <%Back%>}
+
+UninstallComplete,CancelButton
+<%Cancel%>
+
+UninstallComplete,Caption
+{Uninstall Complete}
+
+UninstallComplete,Message
+{<%AppName%> has been removed from your system.}
+
+UninstallComplete,NextButton
+<%Finish%>
+
+UninstallCompleteText
+{Uninstall complete.}
+
+UninstallDetails,BackButton
+{< <%Back%>}
+
+UninstallDetails,CancelButton
+<%Cancel%>
+
+UninstallDetails,Caption
+{The following errors occurred during removal:}
+
+UninstallDetails,Message
+{}
+
+UninstallDetails,NextButton
+{<%Next%> >}
+
+UninstallDetails,Subtitle
+{Errors occurred during removal}
+
+UninstallDetails,Text
+<%Errors%>
+
+UninstallDetails,Title
+{Uninstall Details}
+
+UninstallLeftoverText
+{Some components could not be removed.  Do you wish to delete them anyway (not recommended)?}
+
+UninstallPrepareText
+{Preparing to uninstall...}
+
+UninstallStartupText
+{This will completely remove <%AppName%> from your system.  Are you sure you want to do this?}
+
+UninstallTitleText
+{Uninstall <%AppName%>}
+
+UninstallingApplicationText
+{Uninstalling <%AppName%>...}
+
+UnpackingFilesText
+{Unpacking files...}
+
+UnzipFile,StatusText
+<%FileBeingInstalledText%>
+
+UpdateRegistryText
+{Updating Windows Registry...}
+
+UserInformation,BackButton
+{< <%Back%>}
+
+UserInformation,CancelButton
+<%Cancel%>
+
+UserInformation,Caption
+{Please enter your name and the name of the company for which you work.}
+
+UserInformation,CompanyLabel
+Company:
+
+UserInformation,Message
+{}
+
+UserInformation,NextButton
+{<%Next%> >}
+
+UserInformation,Subtitle
+{Please enter your information.}
+
+UserInformation,Title
+{Customer Information}
+
+UserInformation,UserNameLabel
+{User Name:}
+
+VersionHelpText
+{This program will install <%AppName%> version <%Version%>.}
+
+ViewReadmeText
+{View Readme}
+
+Welcome,BackButton
+{< <%Back%>}
+
+Welcome,CancelButton
+<%Cancel%>
+
+Welcome,Caption
+{Welcome to the InstallJammer Wizard for <%AppName%>}
+
+Welcome,Message
+{This will install <%AppName%> version <%Version%> on your computer. 
+
+It is recommended that you close all other applications before  continuing.
+
+Click Next to continue or Cancel to exit Setup.}
+
+Welcome,NextButton
+{<%Next%> >}
+
+Yes
+Yes
+
+}
+
