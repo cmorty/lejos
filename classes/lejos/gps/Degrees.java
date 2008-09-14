@@ -9,13 +9,10 @@ package lejos.gps;
 public class Degrees{
 
 	//Data from GPS device
-	protected double RAWGPS_data;
-	//Precision1: DecimalDegrees
+	protected double RAWGPS_data = 0.0d;
 	protected double decimalDegrees = 0.0d;
-	//Precision2: Degrees,Minutes,Seconds
-	protected int degrees = 0;
-	protected double minutes = 0;
-	protected double seconds = 0.0d;
+	protected int minuteInt = 0;
+	protected float minuteFract = 0;
 
 	//Direction
 	protected String direction = "";
@@ -23,32 +20,40 @@ public class Degrees{
 	/*Constructor*/
 	
 	/**
-	 * 
+	 * Constructor, which needs a initial value, data extracted from 
+	 * GPS Receiver
 	 */
 	public Degrees(double deg){
 		RAWGPS_data = deg;
 	}
 
 	/* Getters & Setters */
-	
+
+	/**
+	 * Return Latitude/Longitude Letter
+	 */
 	public String getDirectionLeter(){
 		return direction;
 	}
+
+	/**
+	 * Return MinuteInt
+	 * 
+	 * @return
+	 */
+	public int getMinuteInt(){
+		minuteInt = degreesMinutesToIntegerMinutes();
+		return minuteInt;
+	}
 	
-	public double getDecimalDegrees(){
-		return decimalDegrees;
-	}
-
-	public int getDegrees(){
-		return degrees;
-	}
-
-	public double getMinutes(){
-		return minutes;
-	}
-
-	public double getSeconds(){
-		return seconds;
+	/**
+	 * Return MinuteFract
+	 * 
+	 * @return
+	 */
+	public float getMinuteFract() {
+		minuteFract = degreesMinutesToFractionalMinutes();
+		return minuteFract;
 	}
 
 
@@ -73,13 +78,14 @@ public class Degrees{
 	 * @param CoordenateType
 	 * @return
 	 */
-	protected float degreesMinToDegrees(String DD_MM,int CoordenateType) {//throws NumberFormatException
+	protected float degreesMinToDegrees(int CoordenateType) {//throws NumberFormatException
 		float decDegrees = 0;
 		float tempDegrees = 0;
 		float tempMinutes = 0;
 		float tempSeconds = 0;
 		String doubleCharacterSeparator = ".";
-		String DDMM;
+		String DD_MM = "" + RAWGPS_data;
+		String DDMM = "";
 
 		//1. Count characters until character '.'
 		int dotPosition = DD_MM.indexOf(doubleCharacterSeparator);
@@ -121,10 +127,51 @@ public class Degrees{
 		
 		return decDegrees;
 	}
+
+	/**
+	 * Convert DegreesMinutes to IntegerMinutes
+	 * 
+	 * @return
+	 */
+	protected int degreesMinutesToIntegerMinutes() {//throws NumberFormatException
+
+		int ddmmVal = 0;
+		int minutes = 0;
+		String doubleCharacterSeparator = ".";
+		String DD_MM = "" + RAWGPS_data;
+		String DDMM;
+
+		//1. Count characters until character '.'
+		int dotPosition = DD_MM.indexOf(doubleCharacterSeparator);
+
+		DDMM = DD_MM.substring(0, dotPosition-1);
+		
+		ddmmVal = Integer.parseInt(DDMM);
+		
+		// Now change the wierd dddmm value to minutes
+		minutes = (ddmmVal / 100 ) * 60 + (ddmmVal % 100);
+		return minutes;
+	}
 	
-	protected void decimalDegreesToDMS(){
-		degrees =(int)Math.floor(decimalDegrees);
-		minutes = Math.floor(60.0*(decimalDegrees-degrees));
-		seconds =((60.0*(decimalDegrees-degrees))-minutes)*60;
+	/**
+	 * Convert DegreesMinutes to FractionalMinutes
+	 * 
+	 * @return
+	 */
+	protected float degreesMinutesToFractionalMinutes() {//throws NumberFormatException
+
+		float fractionalMinutes = 0.0f;
+		String doubleCharacterSeparator = ".";
+		String DD_MM = "" + RAWGPS_data;
+		String DDMM;
+
+		//1. Count characters until character '.'
+		int dotPosition = DD_MM.indexOf(doubleCharacterSeparator);
+
+		DDMM = DD_MM.substring(dotPosition);
+		
+		fractionalMinutes = Float.parseFloat(DDMM);
+		
+		return fractionalMinutes;
 	}
 }
