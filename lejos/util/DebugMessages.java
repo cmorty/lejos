@@ -2,70 +2,95 @@ package lejos.util;
 import lejos.nxt.LCD;
 
 /**
- * Displays debugging messages on the LCD screen. 
+ * This class has been developed to use it in case of you have
+ * to tests leJOS programs and you need to show in NXT Display data
+ * but you don't need to design a User Interface.
+ * 
+ * This class is very useful to debug algorithms in your NXT brick.
  * 
  * @author Juan Antonio Brenha Moral
  *
  */
-
 public class DebugMessages {
-	private int LINE_COUNTER = 0;
-	private int STEP = 0;
-	private final int MAXIMUM_LCD_LINES = 7;
-	private int LCD_LINES = 7;
-	private boolean show_step = false;
-	private int DELAY_MS = 250;
-	private boolean delayEnabled = false;
+	private int lineCounter = 0;//Used to know in what row LCD is showing the messages
+	private final int maximumLCDLines = 7;//NXT Brick has a LCD with 7 lines
+	private int LCDLines = maximumLCDLines;//By default, Debug Messages show messages in maximumLCDLines
+	private int delayMS = 250;//By default, the value to establish a delay
+	private boolean delayEnabled = false;//By default, DebugMessages show messages without any delay
 	
-	//Constructors
+	/*
+	 * Constructors
+	 */
+	
+	/*
+	 * Constructor with default features
+	 */
 	public DebugMessages(){
-
+		//Empty
 	}
 
 	/**
-	 * Another constructor to set Line which start to 
-	 * show Debug Data
+	 * Constructor which the user establish in what line start showing messages
 	 * 
-	 * @param INIT
-
+	 * @param init
 	 */
-	public DebugMessages(int INIT){
-		LINE_COUNTER = INIT;
+	public DebugMessages(int init){
+		lineCounter = init;
 	}
 	
+	/*
+	 * Getters & Setters
+	 */
+
+	/**
+	 * Set the number of lines to show in the screen.
+	 * 
+	 * @param lines
+	 */
+	public void setLCDLines(int lines){
+		if(lines <= maximumLCDLines){
+			LCDLines = lines;
+		}
+	}
+	
+	/**
+	 * Enable/Disabled if you need to show output with delay
+	 * 
+	 * @param de
+	 */
+	public void setDelayEnabled(boolean de){
+		delayEnabled = de;
+	}
+
 	/**
 	 * Set the delay measured in MS.
 	 * 
-	 * @param DELAY_MS
+	 * @param dMs
 	 */	
-	public void setDelay(int DELAY_MS){
-		this.DELAY_MS = DELAY_MS;
+	public void setDelay(int dMs){
+		delayMS = dMs;
 	}
 
-	public void setStep(boolean enable){
-		this.show_step = enable;
-	}
-
+	/*
+	 * Public Methods
+	 */
+	
 	/**
 	 * Show in NXT Screen a message
 	 * 
 	 * @param message
 	 */
 	public void echo(String message){
-		if(LINE_COUNTER > this.LCD_LINES){
-			LINE_COUNTER = 0;
+		if(lineCounter > LCDLines){
+			lineCounter = 0;
 			LCD.clear();			
 		}else{
-			//if(show_step){
-				//LCD.drawString(""message, 0, LINE_COUNTER);
-			//}else{
-				LCD.drawString(message, 0, LINE_COUNTER);
-			//}
+			LCD.drawString(message, 0, lineCounter);
 			LCD.refresh();
-			LINE_COUNTER++;
+			lineCounter++;
 		}
 		if(delayEnabled){
-			try {Thread.sleep(this.DELAY_MS);} catch (Exception e) {}
+			try {Thread.sleep(delayMS);} catch (Exception e) {}
 		}		
 	}
 	
@@ -75,33 +100,29 @@ public class DebugMessages {
 	 * @param message
 	 */	
 	public void echo(int message){
-		if(LINE_COUNTER > this.LCD_LINES){
-			LINE_COUNTER = 0;
+		if(lineCounter > LCDLines){
+			lineCounter = 0;
 			LCD.clear();
 		}else{
-			LCD.drawInt(message, 0, LINE_COUNTER);
+			LCD.drawInt(message, 0, lineCounter);
 			LCD.refresh();			
-			LINE_COUNTER++;
+			lineCounter++;
 		}
 		if(delayEnabled){
-			try {Thread.sleep(this.DELAY_MS);} catch (Exception e) {}
+			try {Thread.sleep(delayMS);} catch (Exception e) {}
 		}
 	}
 	
-	public void setLCDLines(int lines){
-		this.LCD_LINES = lines;
-	}
-	
-	public void setDelayEnabled(boolean delayEnabled){
-		this.delayEnabled = delayEnabled;
-	}
-	
+
+	/**
+	 * Clear LCD
+	 */
 	public void clear(){
 		LCD.clear();
-		LINE_COUNTER = 0;
+		lineCounter = 0;
 
 		if(delayEnabled){
-			try {Thread.sleep(this.DELAY_MS);} catch (Exception e) {}
+			try {Thread.sleep(delayMS);} catch (Exception e) {}
 		}
 	}
 }
