@@ -2,6 +2,7 @@ package lejos.gps;
 
 import java.io.*;
 import java.util.*;
+import lejos.nxt.*;
 
 /**
  * This class manages a data received from a GPS Device.
@@ -10,16 +11,8 @@ import java.util.*;
  * GPGGA
  * GPRMC
  * GPVTG
- * 
- * Processing this NMEA Classes, it is possible receive the following data:
- * 
- * Latitude
- * Longitude
- * Altitude
- * Number of Satellites tracked
- * Time & Date
- * Speed in Kilometers per Hour
- * Azimuth
+ * GPGSV
+ * GPGSA
  * 
  * @author BB
  * @author Juan Antonio Brenha Moral
@@ -42,32 +35,53 @@ public class GPS extends Thread {
 	
 	//GGA
 	private int RAWtime = 0;
-	private float latitude = 0;
+	private float latitudeRAW = 0;
+	private Latitude latitude;// = new Latitude(0);
 	private String latitudeDirection = "";
-	private float longitude = 0;
+	private float longitudeRAW = 0;
+	private Longitude longitude;// = new Longitude(0);
 	private String longitudeDirection = "";
 	private float altitude = 0;
 	private int satellitesTracked = 0;
+	private float hdop = 0;
+	private float quality = 0;
 	
 	//RMC
 	private float speed = 0;
 	private int RAWdate = 0;
 	private String azimuth = "";
+	private String azimuthLetter = "";
+	private String compassDegrees  ="";
+	
+	//GSV
+	private NMEASatellite[] ns;// = new NMEASatellite[4];
+	
+	//GSA
+	private String mode1 = "";
+	private int mode2 = 0;
+	private int[] SV;
+	private float PDOP = 0;
+	private float HDOP = 0;
+	private float VDOP = 0;
 	
 	private String sentence;
 
 	private StringTokenizer tokenizer;
 
-	//Classes which manages GGA, RMC, VTG Sentences
+	//Classes which manages GGA, RMC, VTG, GSV, GSA Sentences
 	private GGASentence ggaSentence;
 	private RMCSentence rmcSentence;
 	private VTGSentence vtgSentence;
+	private GSVSentence gsvSentence;
+	private GSASentence gsaSentence;
 
 	//Date Object with use GGA & RMC Sentence
 	private Date date;
 
+	//Security
 	private boolean shutdown = false;
-	private boolean UPDATE_MODE = false;
+	private boolean updateMode = false;
+	private boolean internalError = false;
 	
 	// Use Vector to keep compatibility with J2ME
 	private Vector listeners = new Vector();
@@ -81,11 +95,15 @@ public class GPS extends Thread {
 		ggaSentence = new GGASentence();
 		rmcSentence = new RMCSentence();
 		vtgSentence = new VTGSentence();
-
+		gsvSentence = new GSVSentence();
+		ns = new NMEASatellite[4];
+		gsaSentence = new GSASentence();
+		SV = new int[12];
+		
 		date = new Date();
 		
 		this.in = in;
-		this.setDaemon(true); // Must be set before thread starts
+		//this.setDaemon(true); // Must be set before thread starts
 		this.start();
 	}
 	
@@ -106,11 +124,22 @@ public class GPS extends Thread {
 	 * 
 	 * @return
 	 */
-	public synchronized float getLatitude() {
+	public synchronized Latitude getLatitude() {
 		notify();
+		latitude = new Latitude(this.latitudeRAW);
 		return latitude;
 	}
 
+	/**
+	 * Get Latitude
+	 * 
+	 * @return
+	 */
+	public synchronized float getLatitudeRAW() {
+		notify();
+		return latitudeRAW;
+	}
+	
 	/**
 	 * Get Latitude Direction
 	 * 
@@ -126,9 +155,20 @@ public class GPS extends Thread {
 	 * 
 	 * @return
 	 */
-	public synchronized float getLongitude() {
+	public synchronized Longitude getLongitude() {
 		notify();
+		longitude = new Longitude(this.longitudeRAW);
 		return longitude;
+	}
+
+	/**
+	 * Get Longitude
+	 * 
+	 * @return
+	 */
+	public synchronized float getLongitudeRAW() {
+		notify();
+		return longitudeRAW;
 	}
 
 	/**
@@ -163,6 +203,26 @@ public class GPS extends Thread {
 	}
 
 	/**
+	 * Get GGA HDOP
+	 * 
+	 * @return
+	 */
+	public synchronized float getGGAHDOP(){
+		notify();
+		return hdop;
+	}
+
+	/**
+	 * Get GPS Quality Data
+	 * 
+	 * @return
+	 */
+	public synchronized float getQuality(){
+		notify();
+		return quality;
+	}
+	
+	/**
 	 * Get speed in kilometers per hour
 	 * 
 	 * @return
@@ -182,6 +242,15 @@ public class GPS extends Thread {
 	}
 
 	/**
+	 * Return Compass Degrees
+	 * 
+	 * @return
+	 */
+	public String getCompassDegrees(){
+		return compassDegrees;
+	}
+	
+	/**
 	 * Return a Date Object with data from GGA and RMC NMEA Sentence
 	 * 
 	 * @return
@@ -191,17 +260,88 @@ public class GPS extends Thread {
 		return date;
 	}
 
+	/**
+	 * 
+	 * Get NMEA Satellite
+	 * 
+	 * @param index
+	 * @return
+	 */
+	public synchronized NMEASatellite getSatellite(int index){
+		notify();
+		return ns[index];
+	}
 	
+	/**
+	 * Get Mode1
+	 * 
+	 * @return
+	 */
+	public synchronized String getMode1(){
+		notify();
+		return mode1;
+	}
+
+	/**
+	 * Get Mode2
+	 * 
+	 * @return
+	 */
+	public synchronized int getMode2(){
+		notify();
+		return mode2;
+	}
+	
+	/**
+	 * Get an Array with Satellite ID
+	 * 
+	 * @return
+	 */
+	public synchronized int[] getSV(){
+		notify();
+		return SV;
+	}
+	
+	/**
+	 * Get PDOP
+	 * 
+	 * @return
+	 */
+	public synchronized float getPDOP(){
+		notify();
+		return PDOP;
+	}
+
+	/**
+	 * Get HDOP
+	 * 
+	 * @return
+	 */
+	public synchronized float getHDOP(){
+		notify();
+		return HDOP;
+	}
+
+	/**
+	 * Get VDOP
+	 * 
+	 * @return
+	 */
+	public synchronized float getVDOP(){
+		notify();
+		return VDOP;
+	}
+
 	/**
 	 * Set if GPS Object is going to update internal values or not.
 	 * this method is critic to avoid to Crash VM
 	 * 
 	 * With this way the robot get GPS data onDemand
 	 * 
-	 * @param STATUS
+	 * @param status
 	 */
-	public void updateValues(boolean STATUS){
-		UPDATE_MODE = STATUS;
+	public void updateValues(boolean status){
+		updateMode = status;
 	}
 
 	/**
@@ -211,20 +351,25 @@ public class GPS extends Thread {
 		this.shutdown = true;
 	}
 	
+	public boolean existInternalError(){
+		return internalError;
+	}
+	
 	/**
 	 * Keeps reading sentences from GPS receiver stream and extracting data.
 	 * This is a daemon thread so when program ends it won't keep running.
 	 */
 	public void run() {
 		String token;
+		String s;
 		
 		while(!shutdown) {
-			String s = getNextString();
-
+			
 			//2008/08/02
 			//If update mode is True, internal values can be updated
 			//It is a way to save CPU
-			if(UPDATE_MODE){
+			if(updateMode){
+				s = getNextString();
 
 				// Check if sentence is valid:
 				if(s.indexOf('*') < 0) { 
@@ -244,11 +389,14 @@ public class GPS extends Thread {
 
 						if (token.equals(GGASentence.HEADER)){
 							parseGGA(s);
-
 						}else if (token.equals(RMCSentence.HEADER)){
 							parseRMC(s);
 						}else if (token.equals(VTGSentence.HEADER)){
 							parseVTG(s);
+						}else if (token.equals(GSVSentence.HEADER)){
+							parseGSV(s);
+						}else if (token.equals(GSASentence.HEADER)){
+							parseGSA(s);
 						}
 					}
 				}catch(StringIndexOutOfBoundsException e){
@@ -263,6 +411,10 @@ public class GPS extends Thread {
 				//Increase the list with more NMEA Sentences
 			}
 		}
+		
+		//Experimental
+		LCD.drawString("END",0,7);
+		LCD.refresh();
 	}
 
 	
@@ -272,12 +424,17 @@ public class GPS extends Thread {
 	 */
 	private String getNextString() {
 		boolean done = false;
-		do {
+		String sentence = "";
+		int endIndex = 0;
+
+		do{
 			// Read in buf length of sentence
 			try {
 				in.read(segment);
-			} catch (IOException e) {
+			}catch (IOException e) {
 				// How to handle error?
+			}catch(Exception e){
+				// ??
 			}
 			// Append char[] data into currentSentence
 			for(int i=0;i<BUFF;i++)
@@ -288,13 +445,32 @@ public class GPS extends Thread {
 				done = true;
 			}
 			
+			//I have found the bug
+			//In case of turn off GPS Device / GPS Device with low batteries / Other scenarios
+			if(currentSentence.length() >= 500){
+				//2008/09/06 : JAB
+				//Reset
+				//currentSentence = new StringBuffer();
+				//segment = new byte[BUFF];
+
+				//If detect a problem with InputStream
+				//System detect the event and notify the problem with the
+				//Enabling the flag internalError
+				internalError = true;
+				updateMode = false;
+				return "";
+			}
 		}while(!done);
-		
-		int endIndex = currentSentence.indexOf(START_CHAR, 1);
-		String sentence = currentSentence.substring(0, endIndex);
-		
-		// Crop print current sentence
-		currentSentence.delete(0, endIndex);
+
+		try{
+			endIndex = currentSentence.indexOf(START_CHAR, 1);
+			sentence = currentSentence.substring(0, endIndex);
+			
+			// Crop print current sentence
+			currentSentence.delete(0, endIndex);
+		}catch(Exception e){
+			
+		}
 		
 		return sentence;
 	}
@@ -314,17 +490,14 @@ public class GPS extends Thread {
 		this.RAWtime = ggaSentence.getTime();
 		updateTime();
 
-		this.latitude = ggaSentence.getLatitude();
+		this.latitudeRAW = ggaSentence.getLatitudeRAW();
 		this.latitudeDirection = ggaSentence.getLatitudeDirection();
-		this.longitude = ggaSentence.getLongitude();
+		this.longitudeRAW = ggaSentence.getLongitudeRAW();
 		this.longitudeDirection = ggaSentence.getLongitudeDirection();
 		this.satellitesTracked = ggaSentence.getSatellitesTracked();
 		this.altitude = ggaSentence.getAltitude();
-
-		//JSR-179
-		//coor.setLatitude((double)ggaSentence.getLatitude());
-		//coor.setLongitude((double)ggaSentence.getLongitude());
-		//coor.setAltitude((double)ggaSentence.getAltitude());
+		this.hdop = ggaSentence.getHDOP();
+		this.quality = ggaSentence.getQuality();
 
 		//Events
 		fireGGASentenceReceived(ggaSentence);
@@ -371,6 +544,7 @@ public class GPS extends Thread {
 		//Is better use VTG instead of RMC
 		//this.speed = rmcSentence.getSpeed();
 		this.RAWdate = rmcSentence.getDate();
+		this.compassDegrees = rmcSentence.getCompassDegrees();
 		
 		updateDate();
 
@@ -420,6 +594,44 @@ public class GPS extends Thread {
 
 		//Events
 		fireVTGSentenceReceived (vtgSentence);
+	}
+
+	/**
+	 * This method parse a GSV Sentence
+	 * 
+	 * @param nmeaSentece
+	 */
+	private void parseGSV(String nmeaSentence){
+		gsvSentence.setSentence(nmeaSentence);
+		gsvSentence.parse();
+
+		this.ns[0] = gsvSentence.getSatellite(0);
+		this.ns[1] = gsvSentence.getSatellite(1);
+		this.ns[2] = gsvSentence.getSatellite(2);
+		this.ns[3] = gsvSentence.getSatellite(3);
+
+		//Events
+		fireGSVSentenceReceived(gsvSentence);
+	}
+
+	/**
+	 * This method parse a GSV Sentence
+	 * 
+	 * @param nmeaSentece
+	 */
+	private void parseGSA(String nmeaSentence){
+		gsaSentence.setSentence(nmeaSentence);
+		gsaSentence.parse();
+		
+		mode1 = gsaSentence.getMode1();
+		mode2 = gsaSentence.getMode2();
+		SV = gsaSentence.getSV();
+		PDOP = gsaSentence.getPDOP();
+		HDOP = gsaSentence.getHDOP();
+		VDOP = gsaSentence.getVDOP();
+
+		//Events
+		fireGSASentenceReceived(gsaSentence);
 	}
 
 	/* EVENTS*/
@@ -488,6 +700,40 @@ public class GPS extends Thread {
 			try{
 				GPSL = (GPSListener)listeners.elementAt(i);
 				GPSL.vtgSentenceReceived(this, vtgSentence);
+			}catch(Throwable t){
+
+			}
+		}
+	}
+
+	/**
+	 * Method which is used when system parse a GSV Sentence
+	 * 
+	 * @param GSVSentence
+	 */
+	private void fireGSVSentenceReceived (GSVSentence gsvSentence){
+		GPSListener GPSL;
+		for(int i=0; i<listeners.size();i++){
+			try{
+				GPSL = (GPSListener)listeners.elementAt(i);
+				GPSL.gsvSentenceReceived(this, gsvSentence);
+			}catch(Throwable t){
+
+			}
+		}
+	}
+
+	/**
+	 * Method which is used when system parse a GSV Sentence
+	 * 
+	 * @param GSVSentence
+	 */
+	private void fireGSASentenceReceived (GSASentence gsaSentence){
+		GPSListener GPSL;
+		for(int i=0; i<listeners.size();i++){
+			try{
+				GPSL = (GPSListener)listeners.elementAt(i);
+				GPSL.gsaSentenceReceived(this, gsaSentence);
 			}catch(Throwable t){
 
 			}

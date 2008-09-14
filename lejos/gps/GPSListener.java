@@ -15,4 +15,9 @@ public interface GPSListener extends EventListener{
 	public void rmcSentenceReceived (GPS gpsReceiver, RMCSentence rmcSentence);
 
 	public void vtgSentenceReceived (GPS gpsReceiver, VTGSentence vtgSentence);
+
+	public void gsvSentenceReceived (GPS gpsReceiver, GSVSentence gsvSentence);
+
+	public void gsaSentenceReceived (GPS gpsReceiver, GSASentence gsagSentence);
+
 }

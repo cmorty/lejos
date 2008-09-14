@@ -1,5 +1,4 @@
-package lejos.gps;
-
+package.gps;
 import java.util.*;
 
 /**
@@ -39,13 +38,13 @@ public class GGASentence extends NMEASentence{
 	//GGA
 	private String nmeaHeader = "";
 	private float dateTimeOfFix = 0;
-	private float latitude = 0;
+	private float latitudeRAW = 0;
 	private String latitudeDirection = "";
-	private float longitude = 0;
+	private float longitudeRAW = 0;
 	private String longitudeDirection = "";
-	private String quality;
+	private float quality;
 	private float satellitesTracked = 0;
-	private float horizontalDilution = 0;
+	private float hdop = 0;
 	private float altitude = 0;
 	private String altitudeUnits;
 	private float geoidalSeparation;
@@ -62,8 +61,8 @@ public class GGASentence extends NMEASentence{
 	 * Get Latitude
 	 * 
 	 */
-	public float getLatitude() {
-		return latitude;
+	public float getLatitudeRAW() {
+		return latitudeRAW;
 	}
 	
 	/**
@@ -79,8 +78,8 @@ public class GGASentence extends NMEASentence{
 	 * Get Longitude
 	 * 
 	 */
-	public float getLongitude() {
-		return longitude;
+	public float getLongitudeRAW() {
+		return longitudeRAW;
 	}
 
 	/**
@@ -112,11 +111,31 @@ public class GGASentence extends NMEASentence{
 	/**
 	 * Returns the number of satellites being tracked to
 	 * determine the coordinates.
+	 * 
 	 * @return Number of satellites e.g. 8
 	 */
 	public int getSatellitesTracked() {
 		return Math.round(satellitesTracked);
 	}
+
+	/**
+	 * Return HDOP from GGA Sentence
+	 * 
+	 * @return
+	 */
+	public float getHDOP(){
+		return hdop;
+	}
+
+	/**
+	 * Get GPS Quality Data
+	 * 
+	 * @return
+	 */
+	public float getQuality(){
+		return quality;
+	}
+
 	
 	/**
 	 * Method used to parse a GGA Sentence
@@ -124,20 +143,34 @@ public class GGASentence extends NMEASentence{
 	public void parse(){
 		//StringTokenizer st = new StringTokenizer(nmeaSentence,",");
 		st = new StringTokenizer(nmeaSentence,",");
+		String q = "";
+		String h = "";
 		
 		try{
 			nmeaHeader = st.nextToken();//Global Positioning System Fix Data
 			dateTimeOfFix = Float.parseFloat((String)st.nextToken());//UTC Time
-			//latitude = Float.parseFloat((String)(st.nextToken());
-			latitude = degreesMinToDegrees(st.nextToken(),0);
+			latitudeRAW = Float.parseFloat((String)(st.nextToken()));
+			//latitude = degreesMinToDegrees(st.nextToken(),0);
 			latitudeDirection = st.nextToken();//N
-			//longitude = Float.parseFloat((String)st.nextToken());
-			longitude = degreesMinToDegrees(st.nextToken(),1);
+			longitudeRAW = Float.parseFloat((String)st.nextToken());
+			//longitude = degreesMinToDegrees(st.nextToken(),1);
 			longitudeDirection = st.nextToken();//E
-			quality = st.nextToken();//Fix quality
+			q = st.nextToken();
+			if(q.length() == 0){
+				quality = 0;
+			}else{
+				quality = Float.parseFloat(q);//Fix quality
+			}
+			//quality = Float.parseFloat(st.nextToken());//Fix quality
 			satellitesTracked = Float.parseFloat((String)st.nextToken());//Number of satellites being tracked
-			//horizontalDilution = Float.parseFloat((String)st.nextToken());//Horizontal dilution of position
-			st.nextToken();
+
+			h = st.nextToken();
+			if(h.length() == 0){
+				hdop = 0;
+			}else{
+				hdop = Float.parseFloat(h);//Horizontal dilution of position
+			}
+			//hdop = Float.parseFloat(st.nextToken());//Horizontal dilution of position
 			altitude = Float.parseFloat((String)st.nextToken());
 		}catch(NoSuchElementException e){
 			//Empty
@@ -145,13 +178,6 @@ public class GGASentence extends NMEASentence{
 			//Empty
 		}
 
-		//Improve quality data
-		if (longitudeDirection.equals("E") == false) {
-			longitude = -longitude;
-		}
-		if (latitudeDirection.equals("N") == false) {
-			latitude = -latitude;
-		}
 	}//End parse
 	
 }//End class

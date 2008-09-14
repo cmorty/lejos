@@ -1,5 +1,4 @@
 package lejos.gps;
-
 /**
  * This class models a GPS Latitude
  * 
@@ -7,19 +6,20 @@ package lejos.gps;
  */
 public class Latitude extends Degrees{
 
+	/**
+	 * Constructor
+	 * 
+	 * @param latDegrees
+	 */
 	public Latitude(double latDegrees){
 		super(latDegrees);
 
-		//Establish letter and sign
+		//Establish letter
 		if(latDegrees >0)
 			direction = "N";
 		else{
 			direction = "S";
-			RAWGPS_data= -latDegrees;
 		}
-		//Calculate values
-		decimalDegrees = this.degreesMinToDegrees("" + latDegrees, 0);
-		decimalDegreesToDMS();
 
 		/*
 		if((degrees >= -90) && (degrees <= 90)){
@@ -28,5 +28,29 @@ public class Latitude extends Degrees{
 			throw new NumberFormatException();
 		}
 		*/
+	}
+	
+	/**
+	 * Get Latitude in format Decimal Degrees.
+	 * This format is used with Coordinates Objects
+	 * 
+	 * @return
+	 */
+	public double getDecimalDegrees(){
+		String RAWData = "" + RAWGPS_data;
+		if(RAWData.length() >= 8){
+			decimalDegrees = this.degreesMinToDegrees(0);
+
+			//Establish the sign
+			if(decimalDegrees >0){
+				//
+			}else{
+				decimalDegrees= -decimalDegrees;
+			}
+		}else{
+			decimalDegrees = 0.0d;
+		}
+
+		return decimalDegrees;
 	}
 }

@@ -52,7 +52,7 @@ public class RMCSentence extends NMEASentence{
 	 * Get Latitude
 	 * 
 	 */
-	public float getLatitude(){
+	public float getLatitudeRAW(){
 		return latitude;  
 	}
 
@@ -61,7 +61,7 @@ public class RMCSentence extends NMEASentence{
 	 * 
 	 * @return
 	 */
-	public float getLongitude(){
+	public float getLongitudeRAW(){
 		return longitude;
 	}
 
@@ -94,6 +94,15 @@ public class RMCSentence extends NMEASentence{
 	}
 
 	/**
+	 * Return compass value from GPS
+	 * 
+	 * @return
+	 */
+	public String getCompassDegrees(){
+		return courseMadeGood;
+	}
+	
+	/**
 	 * Parase a RMC Sentence
 	 * 
 	 * $GPRMC,081836,A,3751.65,S,14507.36,E,000.0,360.0,130998,011.3,E*62
@@ -106,30 +115,22 @@ public class RMCSentence extends NMEASentence{
 			nmeaHeader = (String)st.nextToken();//$GPRMC
 			dateTimeOfFix = Float.parseFloat((String)st.nextToken());
 			warning = (String)st.nextToken();
-			//latitude = Float.parseFloat((String)(st.nextToken());
-			latitude = degreesMinToDegrees(st.nextToken(),0);
+			latitude = Float.parseFloat((String)(st.nextToken()));
+			//latitude = degreesMinToDegrees(st.nextToken(),0);
 			latitudeDirection = (String)st.nextToken();
-			//longitude = Float.parseFloat((String)st.nextToken());
-			longitude = degreesMinToDegrees(st.nextToken(),1);
+			longitude = Float.parseFloat((String)st.nextToken());
+			//longitude = degreesMinToDegrees(st.nextToken(),1);
 			longitudeDirection = (String)st.nextToken();
 			String s = st.nextToken();
 			groundSpeed = s.equals("") ? 0 : Float.parseFloat(s);
-			courseMadeGood = (String)st.nextToken();
+			courseMadeGood = st.nextToken();
 			dateOfFix = Float.parseFloat((String)st.nextToken());
-			magneticVariation = (String)st.nextToken();//Float.parseFloat((String)st.nextToken());
+			magneticVariation = st.nextToken();//Float.parseFloat((String)st.nextToken());
 			//magneticVariationLetter = (String)st.nextToken();
 		}catch(NoSuchElementException e){
 			//Empty
 		}catch(NumberFormatException e2){
 			//Empty
-		}
-
-		//Improve quality data
-		if (longitudeDirection.equals("E") == false) {
-			longitude = -longitude;
-		}
-		if (latitudeDirection.equals("N") == false) {
-			latitude = -latitude;
 		}
 
 		//Speed
