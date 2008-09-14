@@ -1,4 +1,4 @@
-package lejos.pgs;
+package lejos.gps;
 
 import java.util.*;
 
