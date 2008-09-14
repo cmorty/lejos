@@ -1,4 +1,5 @@
 package lejos.gps;
+import java.util.*;
 
 /**
  * This class has been designed to manage a GSA Sentence
