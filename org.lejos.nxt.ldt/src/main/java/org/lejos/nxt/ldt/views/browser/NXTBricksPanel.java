@@ -3,7 +3,6 @@ package org.lejos.nxt.ldt.views.browser;
 import java.util.Collection;
 import java.util.HashSet;
 
-import lejos.pc.comm.NXTCommException;
 import lejos.pc.comm.NXTCommFactory;
 import lejos.pc.comm.NXTCommand;
 import lejos.pc.comm.NXTInfo;
@@ -24,6 +23,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -33,11 +33,17 @@ import org.lejos.nxt.ldt.util.LeJOSNXJUtil;
 public class NXTBricksPanel {
 
 	private TableViewer bricksTable;
+	private Group bricksGroup;
 	private Collection<IConnectionListener> collectionListeners;
 
 	public NXTBricksPanel(Composite parent) {
 		collectionListeners = new HashSet<IConnectionListener>();
 		init(parent);
+
+		// TODO deactivate
+		NXTInfo testInfo = new NXTInfo("test", "xyz");
+		NXTInfo[] testinfos = { testInfo };
+		updateBricksTable(testinfos);
 	}
 
 	public void addConnectionListener(IConnectionListener listener) {
@@ -48,9 +54,13 @@ public class NXTBricksPanel {
 		collectionListeners.remove(listener);
 	}
 
+	public Control getControl() {
+		return bricksGroup;
+	}
+
 	private void init(Composite parent) {
 		// bricks group
-		Group bricksGroup = new Group(parent, SWT.NULL);
+		bricksGroup = new Group(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 1;
 		GridData gridData = new GridData();
@@ -67,8 +77,7 @@ public class NXTBricksPanel {
 	}
 
 	private void createBricksTable(Group parent) {
-		// TODO select complete line
-		bricksTable = new TableViewer(parent);
+		bricksTable = new TableViewer(parent, SWT.SINGLE | SWT.FULL_SELECTION);
 		bricksTable.setContentProvider(new ArrayContentProvider());
 		bricksTable.setLabelProvider(new BricksTableLabelProvider());
 		final Table table = bricksTable.getTable();
@@ -84,17 +93,18 @@ public class NXTBricksPanel {
 		table.setLayoutData(gridData);
 		final TableColumn nameColumn = new TableColumn(table, SWT.NONE);
 		nameColumn.setText("Name");
-		ColumnWeightData nameLayoutData = new ColumnWeightData(30, true);
+		nameColumn.setWidth(500);
+		ColumnWeightData nameLayoutData = new ColumnWeightData(50, true);
 		tableLayout.addColumnData(nameLayoutData);
 		final TableColumn connectionTypeColumn = new TableColumn(table,
 				SWT.NONE);
 		connectionTypeColumn.setText("Connection type");
-		ColumnWeightData connectionTypeLayoutData = new ColumnWeightData(40,
+		ColumnWeightData connectionTypeLayoutData = new ColumnWeightData(25,
 				true);
 		tableLayout.addColumnData(connectionTypeLayoutData);
 		final TableColumn statusColumn = new TableColumn(table, SWT.NONE);
 		statusColumn.setText("Address");
-		ColumnWeightData statusLayoutData = new ColumnWeightData(30, true);
+		ColumnWeightData statusLayoutData = new ColumnWeightData(25, true);
 		tableLayout.addColumnData(statusLayoutData);
 	}
 
@@ -155,7 +165,7 @@ public class NXTBricksPanel {
 		try {
 			System.out.println("Connecting to " + info.name);
 			brickConnected = NXTCommand.getSingleton().open(info);
-		} catch(Throwable t) {
+		} catch (Throwable t) {
 			LeJOSNXJUtil.message(t);
 		}
 		if (!brickConnected) {
@@ -185,7 +195,7 @@ public class NXTBricksPanel {
 				return info.name;
 			case 1:
 				if (info.protocol == NXTCommFactory.BLUETOOTH)
-					return "BT";
+					return "Bluetooth";
 				else
 					return "USB";
 			case 2:

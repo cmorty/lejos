@@ -3,12 +3,14 @@ package org.lejos.nxt.ldt.views.browser;
 import lejos.pc.comm.NXTCommFactory;
 import lejos.pc.comm.NXTCommand;
 import lejos.pc.comm.NXTInfo;
-import lejos.pc.comm.NXTProtocol;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.part.ViewPart;
 import org.lejos.nxt.ldt.comm.IConnectionListener;
 import org.lejos.nxt.ldt.util.LeJOSNXJUtil;
@@ -17,9 +19,12 @@ import org.lejos.nxt.ldt.util.LeJOSNXJUtil;
  * 
  * @author Matthias Paul Scholz
  * 
- * TODO correct setting of brick panel contents when connection fails due to the fact that the brick is already connected
- * TODO correct setting of brick panel contents when browser window is closed and reopened in one session
- *
+ *         TODO correct setting of brick panel contents when connection fails
+ *         due to the fact that the brick is already connected 
+ *         TODO correct
+ *         setting of brick panel contents when browser window is closed and
+ *         reopened in one session
+ * 
  */
 public class NXTBrowserView extends ViewPart {
 
@@ -53,15 +58,31 @@ public class NXTBrowserView extends ViewPart {
 	}
 
 	private void createTabbedPane(Composite parent) {
-		// TODO create tabs
-		// add bricks tab
-		createBricksPanel(parent);
-
-	}
-
-	private void createBricksPanel(Composite parent) {
-		NXTBricksPanel bricksPanel = new NXTBricksPanel(parent);
+		Group tabGroup = new Group(parent, SWT.NULL);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 1;
+		GridData gridData = new GridData();
+		gridData.grabExcessHorizontalSpace = true;
+		gridData.horizontalAlignment = GridData.FILL;
+		gridData.grabExcessVerticalSpace = true;
+		gridData.verticalAlignment = GridData.FILL;
+		tabGroup.setLayoutData(gridData);
+		tabGroup.setLayout(layout);
+		TabFolder tabs = new TabFolder(tabGroup, SWT.TOP);
+		tabs.setLayoutData(gridData);
+		// create tabs
+		// add communication tab
+		NXTBricksPanel bricksPanel = new NXTBricksPanel(tabs);
 		bricksPanel.addConnectionListener(new NXTBrowserConnectionListener());
+		TabItem bricksPanelItem = new TabItem(tabs, SWT.NONE);
+		bricksPanelItem.setControl(bricksPanel.getControl());
+		bricksPanelItem.setText("Communication");
+		// add memory tab
+		NXTMemoryPanel memoryPanel = new NXTMemoryPanel(tabs);
+		TabItem memoryPanelItem = new TabItem(tabs, SWT.NONE);
+		memoryPanelItem.setControl(memoryPanel.getControl());
+		memoryPanelItem.setText("Memory");
+		tabs.pack();
 
 	}
 
