@@ -3,6 +3,7 @@ package org.lejos.nxt.ldt.views.browser;
 import java.util.Collection;
 import java.util.HashSet;
 
+import lejos.pc.comm.NXTCommException;
 import lejos.pc.comm.NXTCommFactory;
 import lejos.pc.comm.NXTCommand;
 import lejos.pc.comm.NXTInfo;
@@ -146,12 +147,39 @@ public class NXTBricksPanel {
 
 	private NXTInfo[] searchForNXTBricks() {
 		NXTInfo[] nxtBricks = null;
+		NXTInfo[] nxtUSBBricks = null;
+		NXTInfo[] nxtBluetoothBricks = null;
 		// TODO show progress and hour glass
+		NXTCommand nxtCommand = NXTCommand.getSingleton();
 		try {
-			NXTCommand nxtCommand = NXTCommand.getSingleton();
-			nxtBricks = nxtCommand.search(null, NXTCommFactory.USB);
-		} catch (Throwable t) {
-			LeJOSNXJUtil.message(t);
+			nxtUSBBricks = nxtCommand.search(null, NXTCommFactory.USB);
+		} catch (NXTCommException nce) {
+			LeJOSNXJUtil.message(nce);
+		}
+		try {
+			nxtBluetoothBricks = nxtCommand.search(null,
+					NXTCommFactory.BLUETOOTH);
+		} catch (NXTCommException nce) {
+			LeJOSNXJUtil.message("something went wrong when searching for NXT bricks via Bluetooth: " + nce.getMessage());
+		}
+		int noOfUSBBricksFound = 0;
+		if (nxtUSBBricks != null) {
+			noOfUSBBricksFound = nxtUSBBricks.length;
+		}
+		int noOfBluetoothBricksFound = 0;
+		if (nxtBluetoothBricks != null) {
+			noOfBluetoothBricksFound = nxtBluetoothBricks.length;
+		}
+		int noOfBricksFound = noOfUSBBricksFound + noOfBluetoothBricksFound;
+		if (noOfBricksFound > 0) {
+			nxtBricks = new NXTInfo[noOfBricksFound];
+			int i = 0;
+			for (int j = 0; j < noOfUSBBricksFound; j++) {
+				nxtBricks[i++] = nxtUSBBricks[j];
+			}
+			for (int j = 0; j < noOfBluetoothBricksFound; j++) {
+				nxtBricks[i++] = nxtBluetoothBricks[j];
+			}
 		}
 		return nxtBricks;
 	}

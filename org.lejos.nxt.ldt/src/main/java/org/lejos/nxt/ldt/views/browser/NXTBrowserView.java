@@ -21,8 +21,7 @@ import org.lejos.nxt.ldt.util.LeJOSNXJUtil;
  * 
  *         TODO correct setting of brick panel contents when connection fails
  *         due to the fact that the brick is already connected 
- *         TODO correct
- *         setting of brick panel contents when browser window is closed and
+ *         TODO correct setting of brick panel contents when browser window is closed and
  *         reopened in one session
  * 
  */
@@ -30,10 +29,6 @@ public class NXTBrowserView extends ViewPart {
 
 	public static String VIEW_ID = "org.lejos.nxt.ldt.views.NXTBrowserView";
 	private NXTBrickPanel brickPanel;
-
-	public NXTBrowserView() {
-		// TODO Auto-generated constructor stub
-	}
 
 	@Override
 	public void createPartControl(Composite parent) {
@@ -53,8 +48,7 @@ public class NXTBrowserView extends ViewPart {
 
 	@Override
 	public void setFocus() {
-		// TODO Auto-generated method stub
-
+		// do nothing
 	}
 
 	private void createTabbedPane(Composite parent) {
@@ -110,8 +104,7 @@ public class NXTBrowserView extends ViewPart {
 		}
 
 		public void brickDetached(NXTInfo info) {
-			// TODO Auto-generated method stub
-
+			// do nothing
 		}
 
 	}

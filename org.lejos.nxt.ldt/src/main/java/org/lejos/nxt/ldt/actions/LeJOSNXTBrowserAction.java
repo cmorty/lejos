@@ -1,7 +1,5 @@
 package org.lejos.nxt.ldt.actions;
 
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IWorkbenchPage;
@@ -9,7 +7,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.lejos.nxt.ldt.LeJOSNXJPlugin;
 import org.lejos.nxt.ldt.util.LeJOSNXJUtil;
 import org.lejos.nxt.ldt.views.browser.NXTBrowserView;
 
@@ -22,16 +19,14 @@ import org.lejos.nxt.ldt.views.browser.NXTBrowserView;
  */
 public class LeJOSNXTBrowserAction implements IWorkbenchWindowActionDelegate {
 
-	private NXTBrowserView browserView;
+	// private NXTBrowserView browserView;
 
 	public void dispose() {
-		// TODO Auto-generated method stub
-
+		// do nothing
 	}
 
 	public void init(IWorkbenchWindow window) {
-		// TODO Auto-generated method stub
-
+		// do nothing
 	}
 
 	public void run(IAction action) {
@@ -39,8 +34,7 @@ public class LeJOSNXTBrowserAction implements IWorkbenchWindowActionDelegate {
 	}
 
 	public void selectionChanged(IAction action, ISelection selection) {
-		// TODO Auto-generated method stub
-
+		// do nothing
 	}
 
 	private void showNXTBrowserView() {
