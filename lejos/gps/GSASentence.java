@@ -1,5 +1,4 @@
 package lejos.gps;
-import java.util.*;
 
 /**
  * This class has been designed to manage a GSA Sentence
@@ -24,11 +23,12 @@ import java.util.*;
  * @author Juan Antonio Brenha Moral
  * 
  */
+
 public class GSASentence extends NMEASentence{
 	//GSA
 	private String nmeaHeader = "";
-	private String mode1 = "";
-	private int mode2 = 0;
+	private String mode = "";
+	private int modeValue = 0;
 	private final int maximumSV = 12;
 	private int[] SV;
 	private float PDOP = 0;
@@ -58,8 +58,8 @@ public class GSASentence extends NMEASentence{
 	 * A=Automatic, 3D/2D
 	 * 
 	 */
-	public String getMode1(){
-		return mode1;
+	public String getMode(){
+		return mode;
 	}
 
 	/**
@@ -71,8 +71,8 @@ public class GSASentence extends NMEASentence{
 	 * 3=3D
 	 * 
 	 */
-	public int getMode2(){
-		return mode2;
+	public int getModeValue(){
+		return modeValue;
 	}
 
 	/**
@@ -121,8 +121,8 @@ public class GSASentence extends NMEASentence{
 
 		try{
 			nmeaHeader = st.nextToken();//Global Positioning System Fix Data
-			mode1 = st.nextToken();
-			mode2 = Integer.parseInt(st.nextToken());
+			mode = st.nextToken();
+			modeValue = Integer.parseInt(st.nextToken());
 
 			for(int i=0;i<=11;i++){
 				sv = st.nextToken();

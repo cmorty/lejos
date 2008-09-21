@@ -84,22 +84,18 @@ public class RMCSentence extends NMEASentence{
 	}
 
 	/**
-	 * Returns the azimuth of the current direction of the movement. So if the gps device is still,
-	 * the value will most likely random. Returns 0 if cannot be determined yet.
-	 *
-	 * @return The azimuth in degrees.
-	 */
-	public String getAzimuth() {
-		return magneticVariation;
-	}
-
-	/**
 	 * Return compass value from GPS
 	 * 
 	 * @return
 	 */
-	public String getCompassDegrees(){
-		return courseMadeGood;
+	public float getCompassDegrees(){
+		float compassDegrees = 0;
+		if(courseMadeGood == ""){
+			compassDegrees = 0;
+		}else{
+			compassDegrees = Float.parseFloat(courseMadeGood);
+		}
+		return compassDegrees;
 	}
 	
 	/**
@@ -112,25 +108,33 @@ public class RMCSentence extends NMEASentence{
 		st = new StringTokenizer(nmeaSentence,",");
 
 		try{
-			nmeaHeader = (String)st.nextToken();//$GPRMC
+			nmeaHeader = st.nextToken();//$GPRMC
 			dateTimeOfFix = Float.parseFloat((String)st.nextToken());
-			warning = (String)st.nextToken();
-			latitude = Float.parseFloat((String)(st.nextToken()));
-			//latitude = degreesMinToDegrees(st.nextToken(),0);
-			latitudeDirection = (String)st.nextToken();
-			longitude = Float.parseFloat((String)st.nextToken());
-			//longitude = degreesMinToDegrees(st.nextToken(),1);
-			longitudeDirection = (String)st.nextToken();
+			warning = st.nextToken();
+			//latitude = Float.parseFloat(st.nextToken());
+			latitude = degreesMinToDegrees(st.nextToken(),0);
+			latitudeDirection = st.nextToken();
+			//longitude = Float.parseFloat(st.nextToken());
+			longitude = degreesMinToDegrees(st.nextToken(),1);
+			longitudeDirection = st.nextToken();
 			String s = st.nextToken();
 			groundSpeed = s.equals("") ? 0 : Float.parseFloat(s);
 			courseMadeGood = st.nextToken();
-			dateOfFix = Float.parseFloat((String)st.nextToken());
+			dateOfFix = Float.parseFloat(st.nextToken());
 			magneticVariation = st.nextToken();//Float.parseFloat((String)st.nextToken());
 			//magneticVariationLetter = (String)st.nextToken();
 		}catch(NoSuchElementException e){
 			//Empty
 		}catch(NumberFormatException e2){
 			//Empty
+		}
+
+		//Improve quality data
+		if (longitudeDirection.equals("E") == false) {
+			longitude = -longitude;
+		}
+		if (latitudeDirection.equals("N") == false) {
+			latitude = -latitude;
 		}
 
 		//Speed
