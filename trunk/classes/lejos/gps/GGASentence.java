@@ -1,4 +1,5 @@
-package lejos.gps;
+package.gps;
+
 import java.util.*;
 
 /**
@@ -38,9 +39,9 @@ public class GGASentence extends NMEASentence{
 	//GGA
 	private String nmeaHeader = "";
 	private float dateTimeOfFix = 0;
-	private float latitudeRAW = 0;
+	private float latitude = 0;
 	private String latitudeDirection = "";
-	private float longitudeRAW = 0;
+	private float longitude = 0;
 	private String longitudeDirection = "";
 	private float quality;
 	private float satellitesTracked = 0;
@@ -61,8 +62,8 @@ public class GGASentence extends NMEASentence{
 	 * Get Latitude
 	 * 
 	 */
-	public float getLatitudeRAW() {
-		return latitudeRAW;
+	public float getLatitude() {
+		return latitude;
 	}
 	
 	/**
@@ -78,8 +79,8 @@ public class GGASentence extends NMEASentence{
 	 * Get Longitude
 	 * 
 	 */
-	public float getLongitudeRAW() {
-		return longitudeRAW;
+	public float getLongitude() {
+		return longitude;
 	}
 
 	/**
@@ -119,21 +120,12 @@ public class GGASentence extends NMEASentence{
 	}
 
 	/**
-	 * Return HDOP from GGA Sentence
-	 * 
-	 * @return
-	 */
-	public float getHDOP(){
-		return hdop;
-	}
-
-	/**
 	 * Get GPS Quality Data
 	 * 
 	 * @return
 	 */
-	public float getQuality(){
-		return quality;
+	public int getQuality(){
+		return Math.round(quality);
 	}
 
 	
@@ -149,11 +141,9 @@ public class GGASentence extends NMEASentence{
 		try{
 			nmeaHeader = st.nextToken();//Global Positioning System Fix Data
 			dateTimeOfFix = Float.parseFloat((String)st.nextToken());//UTC Time
-			latitudeRAW = Float.parseFloat((String)(st.nextToken()));
-			//latitude = degreesMinToDegrees(st.nextToken(),0);
+			latitude = degreesMinToDegrees(st.nextToken(),0);
 			latitudeDirection = st.nextToken();//N
-			longitudeRAW = Float.parseFloat((String)st.nextToken());
-			//longitude = degreesMinToDegrees(st.nextToken(),1);
+			longitude = degreesMinToDegrees(st.nextToken(),1);
 			longitudeDirection = st.nextToken();//E
 			q = st.nextToken();
 			if(q.length() == 0){
@@ -172,6 +162,15 @@ public class GGASentence extends NMEASentence{
 			}
 			//hdop = Float.parseFloat(st.nextToken());//Horizontal dilution of position
 			altitude = Float.parseFloat((String)st.nextToken());
+
+			//Improve quality data
+			if (longitudeDirection.equals("E") == false) {
+				longitude = -longitude;
+			}
+			if (latitudeDirection.equals("N") == false) {
+				latitude = -latitude;
+			}
+
 		}catch(NoSuchElementException e){
 			//Empty
 		}catch(NumberFormatException e2){

@@ -35,39 +35,33 @@ public class GPS extends Thread {
 	
 	//GGA
 	private int RAWtime = 0;
-	private float latitudeRAW = 0;
-	private Latitude latitude;// = new Latitude(0);
+	private float latitude;
 	private String latitudeDirection = "";
-	private float longitudeRAW = 0;
-	private Longitude longitude;// = new Longitude(0);
+	private float longitude;
 	private String longitudeDirection = "";
 	private float altitude = 0;
 	private int satellitesTracked = 0;
+	static final int MINIMUN_SATELLITES_TO_WORK = 4;
+	static final int MAXIMUM_SATELLITES_TO_WORK = 12;
 	private float hdop = 0;
-	private float quality = 0;
+	private int quality = 0;
 	
 	//RMC
 	private float speed = 0;
 	private int RAWdate = 0;
-	private String azimuth = "";
-	private String azimuthLetter = "";
-	private String compassDegrees  ="";
+	private float compassDegrees  = 0;
 	
 	//GSV
-	private NMEASatellite[] ns;// = new NMEASatellite[4];
+	private NMEASatellite[] ns;
 	
 	//GSA
-	private String mode1 = "";
-	private int mode2 = 0;
+	private String mode = "";
+	private int modeValue = 0;
 	private int[] SV;
 	private float PDOP = 0;
 	private float HDOP = 0;
 	private float VDOP = 0;
 	
-	private String sentence;
-
-	private StringTokenizer tokenizer;
-
 	//Classes which manages GGA, RMC, VTG, GSV, GSA Sentences
 	private GGASentence ggaSentence;
 	private RMCSentence rmcSentence;
@@ -82,6 +76,10 @@ public class GPS extends Thread {
 	private boolean shutdown = false;
 	private boolean updateMode = false;
 	private boolean internalError = false;
+
+	//Data
+	private String sentence;
+	private StringTokenizer tokenizer;
 	
 	// Use Vector to keep compatibility with J2ME
 	private Vector listeners = new Vector();
@@ -124,51 +122,28 @@ public class GPS extends Thread {
 	 * 
 	 * @return
 	 */
-	public synchronized Latitude getLatitude() {
-		notify();
-		latitude = new Latitude(this.latitudeRAW);
+	public float getLatitude() {
 		return latitude;
 	}
 
-	/**
-	 * Get Latitude
-	 * 
-	 * @return
-	 */
-	public synchronized float getLatitudeRAW() {
-		notify();
-		return latitudeRAW;
-	}
 	
 	/**
 	 * Get Latitude Direction
 	 * 
 	 * @return
 	 */
-	public synchronized String getLatitudeDirection(){
-		notify();
+	public String getLatitudeDirection(){
 		return latitudeDirection;
 	}
 
-	/**
-	 * Get Longitude
-	 * 
-	 * @return
-	 */
-	public synchronized Longitude getLongitude() {
-		notify();
-		longitude = new Longitude(this.longitudeRAW);
-		return longitude;
-	}
 
 	/**
 	 * Get Longitude
 	 * 
 	 * @return
 	 */
-	public synchronized float getLongitudeRAW() {
-		notify();
-		return longitudeRAW;
+	public float getLongitude() {
+		return longitude;
 	}
 
 	/**
@@ -176,8 +151,7 @@ public class GPS extends Thread {
 	 * 
 	 * @return
 	 */
-	public synchronized String getLongitudeDirection(){
-		notify();
+	public String getLongitudeDirection(){
 		return longitudeDirection;
 	}
 
@@ -187,8 +161,7 @@ public class GPS extends Thread {
 	 * 
 	 * @return Meters above sea level e.g. 545.4
 	 */
-	public synchronized float getAltitude(){
-		notify();
+	public float getAltitude(){
 		return altitude;
 	}
 
@@ -197,19 +170,8 @@ public class GPS extends Thread {
 	 * determine the coordinates.
 	 * @return Number of satellites e.g. 8
 	 */
-	public synchronized int getSatellitesTracked(){
-		notify();
+	public int getSatellitesTracked(){
 		return satellitesTracked;
-	}
-
-	/**
-	 * Get GGA HDOP
-	 * 
-	 * @return
-	 */
-	public synchronized float getGGAHDOP(){
-		notify();
-		return hdop;
 	}
 
 	/**
@@ -217,8 +179,7 @@ public class GPS extends Thread {
 	 * 
 	 * @return
 	 */
-	public synchronized float getQuality(){
-		notify();
+	public int getQuality(){
 		return quality;
 	}
 	
@@ -227,27 +188,18 @@ public class GPS extends Thread {
 	 * 
 	 * @return
 	 */
-	public synchronized float getSpeed() {
-		notify();
+	public float getSpeed() {
 		return speed;
 	}
 
 	/**
-	 * Return the Azimuth
-	 * 
-	 * @return
-	 */
-	public String getAzimuth() {
-		return azimuth;
-	}
-
-	/**
 	 * Return Compass Degrees
+	 * in a range: 0-359
 	 * 
 	 * @return
 	 */
-	public String getCompassDegrees(){
-		return compassDegrees;
+	public int getCompassDegrees(){
+		return Math.round(compassDegrees);
 	}
 	
 	/**
@@ -255,8 +207,7 @@ public class GPS extends Thread {
 	 * 
 	 * @return
 	 */
-	public synchronized Date getDate(){
-		notify();
+	public Date getDate(){
 		return date;
 	}
 
@@ -267,8 +218,7 @@ public class GPS extends Thread {
 	 * @param index
 	 * @return
 	 */
-	public synchronized NMEASatellite getSatellite(int index){
-		notify();
+	public NMEASatellite getSatellite(int index){
 		return ns[index];
 	}
 	
@@ -277,9 +227,8 @@ public class GPS extends Thread {
 	 * 
 	 * @return
 	 */
-	public synchronized String getMode1(){
-		notify();
-		return mode1;
+	public String getMode(){
+		return mode;
 	}
 
 	/**
@@ -287,9 +236,8 @@ public class GPS extends Thread {
 	 * 
 	 * @return
 	 */
-	public synchronized int getMode2(){
-		notify();
-		return mode2;
+	public int getModeValue(){
+		return modeValue;
 	}
 	
 	/**
@@ -297,8 +245,7 @@ public class GPS extends Thread {
 	 * 
 	 * @return
 	 */
-	public synchronized int[] getSV(){
-		notify();
+	public int[] getSV(){
 		return SV;
 	}
 	
@@ -307,8 +254,7 @@ public class GPS extends Thread {
 	 * 
 	 * @return
 	 */
-	public synchronized float getPDOP(){
-		notify();
+	public float getPDOP(){
 		return PDOP;
 	}
 
@@ -317,8 +263,7 @@ public class GPS extends Thread {
 	 * 
 	 * @return
 	 */
-	public synchronized float getHDOP(){
-		notify();
+	public float getHDOP(){
 		return HDOP;
 	}
 
@@ -327,11 +272,30 @@ public class GPS extends Thread {
 	 * 
 	 * @return
 	 */
-	public synchronized float getVDOP(){
-		notify();
+	public float getVDOP(){
 		return VDOP;
 	}
 
+	/**
+	 * Get true or false in relation to 2 factors:
+	 * 
+	 * + Number of Satellites GGA -> Number of Satellites
+	 * + Quality of data GSA -> Mode: A & Value:3
+	 * 
+	 * @return
+	 */
+	public boolean getGPSStatus(){
+		boolean status = false;
+		if(
+			(satellitesTracked >= MINIMUN_SATELLITES_TO_WORK) && 
+			//(mode.equals("A")) &&
+			(modeValue == 3)){
+			
+			status = true;
+		}
+		return status;
+	}
+	
 	/**
 	 * Set if GPS Object is going to update internal values or not.
 	 * this method is critic to avoid to Crash VM
@@ -490,13 +454,12 @@ public class GPS extends Thread {
 		this.RAWtime = ggaSentence.getTime();
 		updateTime();
 
-		this.latitudeRAW = ggaSentence.getLatitudeRAW();
+		this.latitude = ggaSentence.getLatitude();
 		this.latitudeDirection = ggaSentence.getLatitudeDirection();
-		this.longitudeRAW = ggaSentence.getLongitudeRAW();
+		this.longitude = ggaSentence.getLongitude();
 		this.longitudeDirection = ggaSentence.getLongitudeDirection();
 		this.satellitesTracked = ggaSentence.getSatellitesTracked();
 		this.altitude = ggaSentence.getAltitude();
-		this.hdop = ggaSentence.getHDOP();
 		this.quality = ggaSentence.getQuality();
 
 		//Events
@@ -512,7 +475,6 @@ public class GPS extends Thread {
 		int mm;
 		int ss;
 
-		//LCD.drawString("                        ", 0, 2);
 		if(rt.length()<6){
 			hh = Integer.parseInt(rt.substring(0, 1));
 			mm = Integer.parseInt(rt.substring(1, 3));
@@ -527,8 +489,6 @@ public class GPS extends Thread {
 		date.setHours(hh);
 		date.setMinutes(mm);
 		date.setSeconds(ss);
-		
-		//p.setTimeStamp(this.RAWtime);
 	}
 
 	/**
@@ -548,9 +508,6 @@ public class GPS extends Thread {
 		
 		updateDate();
 
-		this.azimuth = rmcSentence.getAzimuth();
-		//this.azimuthLetter = rmcSentence.getAzimuthLetter();
-		
 		//Events
 		fireRMCSentenceReceived(rmcSentence);
 	}
@@ -564,7 +521,6 @@ public class GPS extends Thread {
 		int mm;
 		int dd;
 
-		//LCD.drawString("                        ", 0, 2);
 		if(rd.length()<6){
 			dd = Integer.parseInt(rd.substring(0, 1));
 			mm = Integer.parseInt(rd.substring(1, 3));
@@ -623,8 +579,8 @@ public class GPS extends Thread {
 		gsaSentence.setSentence(nmeaSentence);
 		gsaSentence.parse();
 		
-		mode1 = gsaSentence.getMode1();
-		mode2 = gsaSentence.getMode2();
+		mode = gsaSentence.getMode();
+		modeValue = gsaSentence.getModeValue();
 		SV = gsaSentence.getSV();
 		PDOP = gsaSentence.getPDOP();
 		HDOP = gsaSentence.getHDOP();
