@@ -5,7 +5,7 @@ import lejos.util.Stopwatch;
 import java.util.*;
 import java.io.*;
 import javax.bluetooth.*;
-//import javax.microedition.location.*;
+import javax.microedition.location.*;
 import lejos.gps.*;
 
 /**
@@ -17,23 +17,20 @@ import lejos.gps.*;
  * + Get Data from VTG NMEA Sentence
  * + Get Data from GSV NMEA Sentence
  * + Get Data from GSA NMEA Sentence
+ * + Use JRS-179 Objects
  * + Use Date Objects with leJOS
+ * 
  * 
  * This example is experimental. It is necessary to test more time
  * 
  * Click on left and right button to show to show more data about GPS.
  * 
- * Usage Notes:
- * Please, wait 20 seconds until GPS receiver get all data.
- * Sometimes, if you read GSV/GSA without this waiting, it is possible that
- * you see a exception.
- * 
  * @author BB
  * @author Juan Antonio Brenha Moral
  */
-public class BTGPS{
+public class BTGPS2{
 	private static String appName = "GPS";
-	private static String appVersion = "v6.7";
+	private static String appVersion = "v6.8";
 
 	//Inquire code
 	private static byte[] cod = {0,0,0,0}; // 0,0,0,0 picks up every Bluetooth device regardless of Class of Device (cod).
@@ -46,8 +43,12 @@ public class BTGPS{
 	//GPS Pin
 	private static final byte[] pin = {(byte) '0', (byte) '0', (byte) '0', (byte) '0'};
 
-	private static Date date;
+	//GPS Data
+	private static Date connectionMoment;
+	private static Date now;
 	private static NMEASatellite ns;
+	private static Coordinates origin;
+	private static Coordinates current;
 
 	public static void main(String[] args) {
 
@@ -69,14 +70,15 @@ public class BTGPS{
 				}else if(connectionStatus == -2){
 					LCD.drawString("Something goes bad", 0, 7);
 				}
+				try {Thread.sleep(2000);} catch (Exception e) {}
 			}
 			LCD.refresh();
 		}else{
 			LCD.drawString("No detected GPS", 0, 3);
 			LCD.refresh();
+			try {Thread.sleep(2000);} catch (Exception e) {}
 		}
-		try {Thread.sleep(2000);} catch (Exception e) {}
-		//credits(3);
+		credits(2);
 		System.exit(0);
 	}//End main
 	
@@ -180,29 +182,69 @@ public class BTGPS{
 		sw = new Stopwatch();
 
 		boolean flag = true;
+		int NSAT = 0;
 		int GPSDataQuality = 0;
+		int checkTime = 10000;
 		
 		//Circular System
 		int GPSScreens = 8;
 		int GPSCurrentScreen = 1;
 
 		LCD.drawString(appName + " " + appVersion, 0,0);
+		
+		//FirstConnection
+		boolean firstMomentFlag = false;
 
 		while(!Button.ESCAPE.isPressed()){
-			LCD.drawInt(++sentenceCount, 10, 0);
-			GPSDataQuality = gps.getSatellitesTracked();
+			NSAT = gps.getSatellitesTracked();
+			GPSDataQuality = Math.round((NSAT * 100)/GPS.MAXIMUM_SATELLITES_TO_WORK);
+			
+			LCD.drawString("        ", 9, 0);
+			LCD.drawString(GPSDataQuality + "%", 9, 0);
+			if(gps.getGPSStatus()){
+				LCD.drawString("OK", 13, 0);
+			}else{
+				LCD.drawString("--", 13, 0);
+			}
 
-			if(sw.elapsed() >= 10000){
+			if(sw.elapsed() >= checkTime){
 				sw.reset();
-				if(GPSDataQuality >=4){
+				if(GPSDataQuality >=8){
 					Sound.twoBeeps();
-				}else{
+				}else if(GPSDataQuality >=4){
 					Sound.beep();
+				}else{
+					//Sound.buzz();
 				}
 			}
 			
-			date = gps.getDate();
+			if(!firstMomentFlag){
+				Date tempDate = gps.getDate();
+				int hours = tempDate.getHours();
+				int minutes = tempDate.getMinutes();
+				int seconds = tempDate.getSeconds();
+				connectionMoment = new Date();
+				connectionMoment.setHours(hours);
+				connectionMoment.setMinutes(minutes);
+				connectionMoment.setSeconds(seconds);
+				
+				
+				origin = new Coordinates(gps.getLatitude(),gps.getLongitude(),gps.getAltitude());
+				
+				//Repeat the operation until you have valid data:
+				if(
+					(seconds != 0) && 
+					(gps.getLatitude() != 0) &&
+					(gps.getGPSStatus())){
+					
+					firstMomentFlag = true;
+				}
+			}
+			
+			now = gps.getDate();
+			current = new Coordinates(gps.getLatitude(),gps.getLongitude(),gps.getAltitude());
 
+			
 			//Circular System
 			if (Button.LEFT.isPressed()){
 				if(GPSCurrentScreen == 1){
@@ -225,26 +267,26 @@ public class BTGPS{
 				GPSCurrentScreen  =1;
 			}
 
-			if(GPSCurrentScreen==1){
-				showGGAUIBasic();
+			if(GPSCurrentScreen == 1){
+				showGGAUI();
 			}else if(GPSCurrentScreen == 2){
-				showGGAUIAdvanced();
-			}else if(GPSCurrentScreen == 3){
 				showRMCUI();
-			}else if(GPSCurrentScreen == 4){
+			}else if(GPSCurrentScreen == 3){
 				showVTGUI();
-			}else if(GPSCurrentScreen == 5){
+			}else if(GPSCurrentScreen == 4){
 				showGPSTimeUI();
+			}else if(GPSCurrentScreen == 5){
+				//By Security
+				if(gps.getSatellitesTracked() >= GPS.MINIMUN_SATELLITES_TO_WORK){
+					showSatTableUI();
+				}
 			}else if(GPSCurrentScreen == 6){
-				showSatTableUI();
-			}else if(GPSCurrentScreen == 7){
 				showSatUI();
-			}else if(GPSCurrentScreen == 8){
+			}else if(GPSCurrentScreen == 7){
 				showSatIDUI();
+			}else if(GPSCurrentScreen == 8){
+				showCoordinatesUI();
 			}
-			
-			
-			
 
 			LCD.refresh();
 			try {Thread.sleep(1000);} catch (Exception e) {}
@@ -254,29 +296,18 @@ public class BTGPS{
 	/**
 	 * Show GGA Basic Data from GPS
 	 */
-	private static void showGGAUIBasic(){
+	private static void showGGAUI(){
 		refreshSomeLCDLines();
-		LCD.drawString("GGA Basic", 0, 2);
+		LCD.drawString("GGA", 0, 2);
 
-		LCD.drawString("Tim " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds() + "", 0, 3);
-		LCD.drawString("Lat " + gps.getLatitude().getDecimalDegrees(), 0, 4);
+		LCD.drawString("Tim " + now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds() + "", 0, 3);
+		LCD.drawString("Lat " + gps.getLatitude(), 0, 4);
 		LCD.drawString("" + gps.getLatitudeDirection() , 15, 4);
-		LCD.drawString("Lon " + gps.getLongitude().getDecimalDegrees(), 0, 5);
+		LCD.drawString("Lon " + gps.getLongitude(), 0, 5);
 		LCD.drawString("" + gps.getLongitudeDirection() , 15, 5);
 		LCD.drawString("Alt " + gps.getAltitude(), 0, 6);
-		LCD.refresh();
-	}
-
-	/**
-	 * Show GGA Advanced Data from GPS
-	 */
-	private static void showGGAUIAdvanced(){
-		refreshSomeLCDLines();
-		LCD.drawString("GGA Advanced", 0, 2);
-		
-		LCD.drawString("Sat  " + gps.getSatellitesTracked(), 0, 3);
-		LCD.drawString("HDOP " + gps.getGGAHDOP(), 0, 4);
-		LCD.drawString("QOS  " + gps.getQuality(), 0, 5);
+		LCD.drawString("Sat " + gps.getSatellitesTracked(), 0, 7);
+		LCD.drawString("QOS " + gps.getQuality(), 6, 7);
 		LCD.refresh();
 	}
 
@@ -287,9 +318,8 @@ public class BTGPS{
 		refreshSomeLCDLines();
 		LCD.drawString("RMC", 0, 2);
 		
-		LCD.drawString("Dat " + date.getDay() + "/" + date.getMonth() + "/" + date.getYear() + "", 0, 3);
-		LCD.drawString("Azi " + gps.getAzimuth(), 0, 4);
-		LCD.drawString("Com " + gps.getCompassDegrees(), 0, 5);
+		LCD.drawString("Dat " + now.getDay() + "/" + now.getMonth() + "/" + now.getYear() + "", 0, 3);
+		LCD.drawString("Com " + gps.getCompassDegrees(), 0, 4);
 		LCD.refresh();
 	}
 
@@ -299,7 +329,7 @@ public class BTGPS{
 	private static void showVTGUI(){
 		refreshSomeLCDLines();
 		LCD.drawString("VTG", 0, 2);
-		
+
 		LCD.drawString("Spe " + gps.getSpeed(), 0, 3);
 		LCD.refresh();
 	}
@@ -309,16 +339,16 @@ public class BTGPS{
 	 */
 	private static void showGPSTimeUI(){
 		refreshSomeLCDLines();
-		LCD.drawString("GPS Time data", 0, 2);
+		LCD.drawString("GPS time data", 0, 2);
 
-		LCD.drawString("Tim " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds() + "", 0, 3);
-		LCD.drawString("Dat " + date.getDay() + "/" + date.getMonth() + "/" + date.getYear() + "", 0, 4);
+		LCD.drawString("Tim " + now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds() + "", 0, 3);
+		LCD.drawString("Dat " + now.getDay() + "/" + now.getMonth() + "/" + now.getYear() + "", 0, 4);
 		LCD.refresh();
 	}
 
 	private static void showSatTableUI(){
 		refreshSomeLCDLines();
-		LCD.drawString("Sat Table", 0, 2);
+		LCD.drawString("Sat table", 0, 2);
 		
 		
 		NMEASatellite ns1 = gps.getSatellite(0);
@@ -327,10 +357,10 @@ public class BTGPS{
 		NMEASatellite ns4 = gps.getSatellite(3);
 		
 		LCD.drawString(" PRN Ele Azi SRN",0,3);
-		LCD.drawString("1" + ns1.getPRN(),0,4);
-		LCD.drawString("2" + ns2.getPRN(),0,5);
-		LCD.drawString("3" + ns3.getPRN(),0,6);
-		LCD.drawString("4" + ns4.getPRN(),0,7);
+		LCD.drawString("1 " + ns1.getPRN(),0,4);
+		LCD.drawString("2 " + ns2.getPRN(),0,5);
+		LCD.drawString("3 " + ns3.getPRN(),0,6);
+		LCD.drawString("4 " + ns4.getPRN(),0,7);
 		LCD.drawString("" + ns1.getElevation(),5,4);
 		LCD.drawString("" + ns2.getElevation(),5,5);
 		LCD.drawString("" + ns3.getElevation(),5,6);
@@ -351,13 +381,14 @@ public class BTGPS{
 	 */
 	private static void showSatUI(){
 		refreshSomeLCDLines();
-		LCD.drawString("Sat data", 0, 2);
+		LCD.drawString("Sat quality data", 0, 2);
 
-		LCD.drawString("Mode1 " + gps.getMode1(), 0, 3);
-		LCD.drawString("Mode2 " + gps.getMode2(), 0, 4);
-		LCD.drawString("PDOP  " + gps.getPDOP(), 0, 5);
-		LCD.drawString("HDOP  " + gps.getHDOP(), 0, 6);
-		LCD.drawString("VDOP  " + gps.getVDOP(), 0, 7);
+		LCD.drawString("Mode " + gps.getMode(), 0, 3);
+		LCD.drawString("Value " + gps.getModeValue(), 8, 3);
+		LCD.drawString("NSat " + gps.getSatellitesTracked(), 0, 4);
+		LCD.drawString("PDOP " + gps.getPDOP(), 0, 5);
+		LCD.drawString("HDOP " + gps.getHDOP(), 0, 6);
+		LCD.drawString("VDOP " + gps.getVDOP(), 0, 7);
 		LCD.refresh();
 	}
 
@@ -366,11 +397,11 @@ public class BTGPS{
 	 */
 	private static void showSatIDUI(){
 		refreshSomeLCDLines();
-		LCD.drawString("Satellite Table", 0, 2);
+		LCD.drawString("Sat detected", 0, 2);
 
 		int SV[] = gps.getSV();
 		
-		int cols[] = {0,5,9,13};
+		int cols[] = {0,4,8,12};
 		int rows[] = {3,4,5};
 
 		LCD.drawString("" + SV[0], cols[0], rows[0]);
@@ -388,6 +419,24 @@ public class BTGPS{
 		LCD.refresh();
 	}
 
+	/**
+	 * Show Sat Data
+	 */
+	private static void showCoordinatesUI(){
+		refreshSomeLCDLines();
+		LCD.drawString("GPS Session", 0, 2);
+
+		LCD.drawString("Ini " + connectionMoment.getHours() + ":" + connectionMoment.getMinutes() + ":" + connectionMoment.getSeconds() + "", 0, 3);
+		LCD.drawString("Now " + now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds() + "", 0, 4);
+
+		LCD.drawString("Dis " + Math.round((float)origin.distance(current)), 0, 5);
+		LCD.drawString("Azi " + Math.round((float)origin.azimuthTo(current)), 0, 6);
+		LCD.drawString("Com " + gps.getCompassDegrees(), 0, 7);
+		LCD.drawString("N", 8, 6);
+		LCD.drawString("N", 8, 7);
+		LCD.refresh();
+	}
+	
 	/**
 	 * Clear some LCD lines
 	 */
