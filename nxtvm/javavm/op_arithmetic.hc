@@ -67,37 +67,128 @@ case OP_FDIV:
   goto LABEL_ENGINEFASTLOOP;
 
 case OP_FNEG:
-case OP_DNEG:
   just_set_top_word (jfloat2word(-word2jfloat(get_top_word())));
   goto LABEL_ENGINEFASTLOOP;
+
+case OP_DNEG:
+  {
+    JDOUBLE d;
+    pop_jdouble(&d);
+    d.dnum = -d.dnum;
+    push_jdouble(&d);
+    goto LABEL_ENGINEFASTLOOP;
+  }
 
 case OP_DSUB:
-  just_set_top_word (jfloat2word(-word2jfloat(get_top_word())));
-  // Fall through!
+  {
+    JDOUBLE d1, d2;
+    pop_jdouble(&d1);
+    pop_jdouble(&d2);
+    d2.dnum -= d1.dnum;
+    push_jdouble(&d2);
+    goto LABEL_ENGINEFASTLOOP;
+  }
+
 case OP_DADD:
-  tempStackWord = get_top_word();
-  pop_words(2);
-  just_set_top_word (jfloat2word(word2jfloat(get_top_word()) +
-                    word2jfloat(tempStackWord)));
-  goto LABEL_ENGINEFASTLOOP;
+  {
+    JDOUBLE d1, d2;
+    pop_jdouble(&d1);
+    pop_jdouble(&d2);
+    d2.dnum += d1.dnum;
+    push_jdouble(&d2);
+    goto LABEL_ENGINEFASTLOOP;
+  }
 
 case OP_DMUL:
-  tempStackWord = get_top_word();
-  pop_words(2);
-  just_set_top_word (jfloat2word(word2jfloat(get_top_word()) *
-                    word2jfloat(tempStackWord)));
-  goto LABEL_ENGINEFASTLOOP;
+  {
+    JDOUBLE d1, d2;
+    pop_jdouble(&d1);
+    pop_jdouble(&d2);
+    d2.dnum *= d1.dnum;
+    push_jdouble(&d2);
+    goto LABEL_ENGINEFASTLOOP;
+  }
 
 case OP_DDIV:
-  // TBD: no division by zero?
-  tempStackWord = get_top_word();
-  pop_words(2);
-  just_set_top_word (jfloat2word(word2jfloat(get_top_word()) /
-                    word2jfloat(tempStackWord)));
-  goto LABEL_ENGINEFASTLOOP;
+  {
+    JDOUBLE d1, d2;
+    pop_jdouble(&d1);
+    pop_jdouble(&d2);
+    d2.dnum /= d1.dnum;
+    push_jdouble(&d2);
+    goto LABEL_ENGINEFASTLOOP;
+  }
 
 #endif // FP_ARITHMETIC
 
+case OP_LNEG:
+  {
+    JLONG l;
+    pop_jlong(&l);
+    l.lnum = -l.lnum;
+    push_jlong(&l);
+    goto LABEL_ENGINEFASTLOOP;
+  }
+
+case OP_LADD:
+  {
+    JLONG l1, l2;
+    pop_jlong(&l1);
+    pop_jlong(&l2);
+    l2.lnum += l1.lnum;
+    push_jlong(&l2);
+    goto LABEL_ENGINEFASTLOOP;
+  }
+
+case OP_LSUB:
+  {
+    JLONG l1, l2;
+    pop_jlong(&l1);
+    pop_jlong(&l2);
+    l2.lnum -= l1.lnum;
+    push_jlong(&l2);
+    goto LABEL_ENGINEFASTLOOP;
+  }
+
+case OP_LMUL:
+  {
+    JLONG l1, l2;
+    pop_jlong(&l1);
+    pop_jlong(&l2);
+    l2.lnum *= l1.lnum;
+    push_jlong(&l2);
+    goto LABEL_ENGINEFASTLOOP;
+  }
+
+case OP_LDIV:
+  {
+    JLONG l1, l2;
+    pop_jlong(&l1);
+    pop_jlong(&l2);
+    if (l1.lnum == 0)
+    {
+      thrownException = arithmeticException;
+      goto LABEL_THROW_EXCEPTION;
+    }
+    l2.lnum /= l1.lnum;
+    push_jlong(&l2);
+    goto LABEL_ENGINEFASTLOOP;
+  }
+
+case OP_LREM:
+  {
+    JLONG l1, l2;
+    pop_jlong(&l1);
+    pop_jlong(&l2);
+    if (l1.lnum == 0)
+    {
+      thrownException = arithmeticException;
+      goto LABEL_THROW_EXCEPTION;
+    }
+    l2.lnum %= l1.lnum;
+    push_jlong(&l2);
+    goto LABEL_ENGINEFASTLOOP;
+  }
 // Notes:
 // - Not supported: LADD, LSUB, LMUL, LREM, FREM, DREM
 // - Operations on doubles are truncated to low float

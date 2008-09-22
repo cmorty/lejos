@@ -70,7 +70,11 @@ static inline void update_constant_registers (StackFrame *stackFrame)
 #define pop_jint()          ((JINT)word2jint(*stackTop--))
 #define pop_word_or_ref()   (*stackTop--)
 
-#define pop_jlong(lword)    (lword->lo = *stackTop--, lword->hi = *stackTop--)
+#define pop_jlong(lword)    ((lword)->sw.lo = *stackTop--, (lword)->sw.hi = *stackTop--)
+#define push_jlong(lword)   (*++stackTop = (lword)->sw.hi, *++stackTop = (lword)->sw.lo)
+
+#define pop_jdouble(jd)     ((jd)->sw.lo = *stackTop--, (jd)->sw.hi = *stackTop--)
+#define push_jdouble(jd)   (*++stackTop = (jd)->sw.hi, *++stackTop = (jd)->sw.lo)
 
 #define pop_words(aNum)     (stackTop -= aNum)
 #define pop_words_cur(aNum) (curStackTop -= aNum)
