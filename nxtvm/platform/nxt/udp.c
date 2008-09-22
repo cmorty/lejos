@@ -745,6 +745,9 @@ udp_disable()
   currentFeatures = 0;
   if (i_state)
     interrupts_enable(); 
+#if REMOTE_CONSOLE
+  rConsole = 0;
+#endif
 }
 
 void
