@@ -549,21 +549,8 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
 
             case OP_GOTO_W:
             case OP_JSR_W:
-            case OP_LADD:
-            case OP_LSUB:
-            case OP_LMUL:
-            case OP_LDIV:
-            case OP_LREM:
-            case OP_LNEG:
-            case OP_LCMP:
             case OP_FREM:
             case OP_DREM:
-            case OP_LSHL:
-            case OP_LSHR:
-            case OP_LUSHR:
-            case OP_LAND:
-            case OP_LOR:
-            case OP_LXOR:
                exitOnBadOpCode(pOpCode);
                break;
             case OP_BREAKPOINT:
@@ -690,21 +677,8 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
                 // Fall Through
             case OP_GOTO_W:
             case OP_JSR_W:
-            case OP_LADD:
-            case OP_LSUB:
-            case OP_LMUL:
-            case OP_LDIV:
-            case OP_LREM:
-            case OP_LNEG:
-            case OP_LCMP:
             case OP_FREM:
             case OP_DREM:
-            case OP_LSHL:
-            case OP_LSHR:
-            case OP_LUSHR:
-            case OP_LAND:
-            case OP_LOR:
-            case OP_LXOR:
                exitOnBadOpCode(pOpCode);
                break;             
             default:

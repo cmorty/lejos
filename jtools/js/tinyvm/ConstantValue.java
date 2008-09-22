@@ -129,6 +129,7 @@ public class ConstantValue extends WritableDataWithOffset
          if (_value instanceof Double)
          {
             double doubleValue = ((Double) _value).doubleValue();
+            /*
             float floatValue = (float) doubleValue;
             if (doubleValue != 0.0
                && Math.abs((doubleValue - floatValue) / doubleValue) > 0.1)
@@ -137,7 +138,10 @@ public class ConstantValue extends WritableDataWithOffset
                   + " truncated to " + floatValue + "f.");
             }
             writer.writeInt(0);
-            writer.writeInt(Float.floatToIntBits(floatValue));
+            writer.writeInt(Float.floatToIntBits(floatValue));*/
+            long longValue = Double.doubleToLongBits(doubleValue);
+            writer.writeInt((int)(longValue >> 32));
+            writer.writeInt((int)(longValue & 0xffffffff));
          }
          else if (_value instanceof Float)
          {
@@ -151,6 +155,7 @@ public class ConstantValue extends WritableDataWithOffset
          else if (_value instanceof Long)
          {
             long longValue = ((Long) _value).longValue();
+            /*
             int intValue = (int) longValue;
             if (intValue != longValue)
             {
@@ -158,7 +163,9 @@ public class ConstantValue extends WritableDataWithOffset
                   + "L truncated to " + intValue + ".");
             }
             writer.writeInt(0);
-            writer.writeInt(intValue);
+            writer.writeInt(intValue);*/
+            writer.writeInt((int)(longValue >> 32));
+            writer.writeInt((int)(longValue & 0xffffffff));
          }
          else if (_value instanceof String)
          {
