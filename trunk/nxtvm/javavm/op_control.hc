@@ -80,14 +80,10 @@ case OP_DCMPL:
 case OP_DCMPG:
   // TBD: no distinction between opcodes
   {
-    STACKWORD wrd1;
-    STACKWORD wrd2;
-
-    wrd2 = pop_word();
-    just_pop_word();
-    wrd1 = pop_word();
-    just_pop_word();
-    push_word( do_fcmp (word2jfloat(wrd1), word2jfloat (wrd2), 0));
+    JDOUBLE d1, d2;
+    pop_jdouble(&d2);
+    pop_jdouble(&d1);
+    push_word( do_dcmp (d1.dnum, d2.dnum, 0));
   }
   goto LABEL_ENGINELOOP;
 
@@ -100,23 +96,18 @@ case OP_FCMPG:
   
 #endif // FP_ARITHMETIC
 
-#if 0
-  
 case OP_LCMP:
   // Arguments: 0
   // Stack: -4 + 1
   {
     JLONG l1, l2;
-    JINT c;
 
     pop_jlong (&l2);
     pop_jlong (&l1);
-    c = jlong_compare (l1, l2);
-    push_word ((c == 0) ? 0 : ((c < 0) ? -1 : +1));
+    push_word(do_lcmp(l1.lnum, l2.lnum, 0));
   }
   goto LABEL_ENGINELOOP;    
 
-#endif // 0
 
 case OP_LOOKUPSWITCH:
   {

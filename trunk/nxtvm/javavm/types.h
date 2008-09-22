@@ -22,6 +22,8 @@ typedef JBYTE        JBOOLEAN;
 typedef JSHORT       JCHAR;
 typedef FOURBYTES    REFERENCE;
 typedef FOURBYTES    STACKWORD;
+typedef long long    LLONG;
+typedef unsigned long long    ULLONG;
 
 typedef union
 {
@@ -29,11 +31,19 @@ typedef union
   STACKWORD sword;
 } AuxConvUnion1;
 
-typedef struct
+// Map stackwords onto native long long
+typedef union
 {
-  STACKWORD hi;
-  STACKWORD lo;
+  LLONG lnum;
+  struct { STACKWORD lo; STACKWORD hi; } sw;
 } JLONG;
+
+// Map stackwords onto native double
+typedef union
+{
+  double dnum;
+  struct { STACKWORD hi; STACKWORD lo; } sw;
+} JDOUBLE; 
 
 
 #ifndef LITTLE_ENDIAN
@@ -58,15 +68,6 @@ typedef struct
 #define ptr2ref(PTR_)       ((REFERENCE) ptr2word(PTR_))
 #define ref2ptr(REF_)       word2ptr((STACKWORD) (REF_))
 #define ref2obj(REF_)       ((Object *) ref2ptr(REF_))
-
-#if 0
-static inline JINT jlong_compare (JLONG a1, JLONG a2)
-{
-  if (a1.hi == a2.hi)
-    return a1.lo - a2.lo;
-  return a1.hi - a2.hi;
-}
-#endif
 
 #endif // _TYPES_H
 

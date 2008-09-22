@@ -16,7 +16,6 @@
 #include "stack.h"
 #include "poll.h"
 
-
 #define F_OFFSET_MASK  0x0F
 
 #if DEBUG_BYTECODE
@@ -93,7 +92,38 @@ STACKWORD do_fcmp (JFLOAT f1, JFLOAT f2, STACKWORD def)
   return res;
 }
 
+STACKWORD do_dcmp (double f1, double f2, STACKWORD def)
+{
+  STACKWORD res;
+
+  if (f1 > f2)
+    res = 1;
+  else if (f1 == f2)
+    res = 0;
+  else if (f1 < f2)
+    res = -1;
+  else 
+    res = def;
+
+  return res;
+}
+
 #endif
+STACKWORD do_lcmp (LLONG l1, LLONG l2, STACKWORD def)
+{
+  STACKWORD res;
+
+  if (l1 > l2)
+    res = 1;
+  else if (l1 == l2)
+    res = 0;
+  else if (l1 < l2)
+    res = -1;
+  else 
+    res = def;
+
+  return res;
+}
 
 /**
  * @return A String instance, or JNULL if an exception was thrown
@@ -206,7 +236,6 @@ static int array_helper( byte *pc, STACKWORD* stackTop)
  * LOAD_REGS. 
  */
 
-
 void engine()
 {
   FOURBYTES switch_time = get_sys_time() + TICKS_PER_TIME_SLICE;;
@@ -226,7 +255,6 @@ void engine()
   instruction_hook();
 
   assert( currentThread != null, INTERPRETER1);
-
   while( gMakeRequest)
   {
     byte requestCode = gRequestCode;
@@ -288,7 +316,6 @@ void engine()
 
   // uncomment the following line if you want to see the opcode after data abort
   // old_pc = pc;
-  
   switch (*pc++)
   {
     case OP_NOP:

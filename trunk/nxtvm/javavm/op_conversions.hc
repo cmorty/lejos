@@ -15,27 +15,41 @@ case OP_I2C:
   goto LABEL_ENGINELOOP;   
 
 case OP_F2D:
-  // Arguments: 0
-  // Stack: -1 +2
-  // Temporary is necessary because these are macros
-  tempStackWord = get_top_word();
-  push_word (tempStackWord);
-  goto LABEL_ENGINELOOP;
+  {
+    // Arguments: 0
+    // Stack: -1 +2
+    JDOUBLE d;
+    d.dnum = (double)word2jfloat(pop_word());
+    push_jdouble(&d);
+    goto LABEL_ENGINELOOP;
+  }
 
 case OP_D2F:
+  {
+    // Arguments: 0
+    // Stack: -2 +1
+    JDOUBLE d;
+    pop_jdouble(&d);
+    push_word(jfloat2word((float) d.dnum));
+    goto LABEL_ENGINELOOP;
+  }
 case OP_L2I:
-  // Arguments: 0
-  // Stack: -2 +1
-  // Temporary is necessary because mixing macros is bad!
-  tempStackWord = pop_word();
-  just_set_top_word (tempStackWord);
-  goto LABEL_ENGINELOOP;
+  {
+    // Arguments: 0
+    // Stack: -2 +1
+    JLONG l;
+    pop_jlong(&l);
+    push_word((JINT) l.lnum);
+    goto LABEL_ENGINELOOP;
+  }
 
 case OP_I2L:
-  tempStackWord = get_top_word();
-  just_set_top_word (0);
-  push_word (tempStackWord);
-  goto LABEL_ENGINELOOP;
+  {
+    JLONG l;
+    l.lnum = (LLONG) pop_jint();
+    push_jlong(&l);
+    goto LABEL_ENGINELOOP;
+  }
 
 #if FP_ARITHMETIC
 
@@ -46,11 +60,14 @@ case OP_I2F:
   goto LABEL_ENGINELOOP;
 
 case OP_I2D:
-  // Arguments: 0
-  // Stack: -1 +2
-  tempStackWord = get_top_word();
-  push_word (jfloat2word ((JFLOAT) word2jint(tempStackWord)));
-  goto LABEL_ENGINELOOP;
+  {
+    // Arguments: 0
+    // Stack: -1 +2
+    JDOUBLE d;
+    d.dnum = (double) (int) pop_word();
+    push_jdouble(&d);
+    goto LABEL_ENGINELOOP;
+  }
 
 case OP_F2I:
   // Arguments: 0
@@ -59,33 +76,51 @@ case OP_F2I:
   goto LABEL_ENGINELOOP;
 
 case OP_D2I:
-  // Arguments: 0
-  // Stack: -2 +1  
-  // Temporary is necessary because mixing macros is bad!
-  tempStackWord = (JINT) word2jfloat (pop_word());
-  just_set_top_word (tempStackWord);
-  goto LABEL_ENGINELOOP;
+  {
+    // Arguments: 0
+    // Stack: -2 +1  
+    JDOUBLE d;
+    pop_jdouble(&d);
+    push_word((JINT) d.dnum);
+    goto LABEL_ENGINELOOP;
+  }
 
 case OP_L2F:
-  tempStackWord = pop_word();
-  just_set_top_word (jfloat2word ((JFLOAT) tempStackWord));
-  goto LABEL_ENGINELOOP;
+  {
+    JLONG l;
+    pop_jlong(&l);
+    push_word (jfloat2word ((JFLOAT) l.lnum));
+    goto LABEL_ENGINELOOP;
+  }
 
 case OP_L2D:
-  just_set_top_word (jfloat2word ((JFLOAT) get_top_word()));
-  goto LABEL_ENGINELOOP;
+  {
+    JDOUBLE d;
+    JLONG l;
+    pop_jlong(&l);
+    d.dnum = (double) l.lnum;
+    push_jdouble(&d);
+    goto LABEL_ENGINELOOP;
+  }
 
 case OP_F2L:
-  tempStackWord = get_top_word();
-  just_set_top_word (0);
-  push_word ((JINT) word2jfloat(tempStackWord));
-  goto LABEL_ENGINELOOP;
+  {
+    JLONG l;
+    tempStackWord = pop_word();
+    l.lnum = (LLONG)word2jfloat(tempStackWord);
+    push_jlong(&l);
+    goto LABEL_ENGINELOOP;
+  }
 
 case OP_D2L:
-  tempStackWord = pop_word();
-  just_set_top_word (0);
-  push_word ((JINT) word2jfloat(tempStackWord));
-  goto LABEL_ENGINELOOP;
+  {
+    JDOUBLE d;
+    JLONG l;
+    pop_jdouble(&d);
+    l.lnum = (LLONG)d.dnum;
+    push_jlong(&l);
+    goto LABEL_ENGINELOOP;
+  }
 
 #endif
 

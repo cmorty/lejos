@@ -76,7 +76,6 @@ case OP_LDC2_W:
     tempBytePtr = get_constant_ptr (tempConstRec);
     push_word(get_word_4_swp (tempBytePtr));
     push_word(get_word_4_swp (tempBytePtr + 4));
-
     pc += 2;
   }
   goto LABEL_ENGINELOOP;
@@ -192,11 +191,14 @@ case OP_FCONST_2:
   goto LABEL_ENGINELOOP;
 
 case OP_DCONST_1:
-  // Stack size: +2
-  // Arguments: 0
-  push_word (0);
-  push_word (jfloat2word((JFLOAT) 1.0));
-  goto LABEL_ENGINELOOP;
+  {
+    // Stack size: +2
+    // Arguments: 0
+    JDOUBLE d;
+    d.dnum = 1.0;
+    push_jdouble(&d);
+    goto LABEL_ENGINELOOP;
+  }
 
 #endif // FP_ARITHMETIC
 
