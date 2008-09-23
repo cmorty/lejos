@@ -28,7 +28,7 @@ import lejos.gps.*;
  * @author BB
  * @author Juan Antonio Brenha Moral
  */
-public class BTGPS2{
+public class BTGPS{
 	private static String appName = "GPS";
 	private static String appVersion = "v6.8";
 
@@ -277,7 +277,7 @@ public class BTGPS2{
 				showGPSTimeUI();
 			}else if(GPSCurrentScreen == 5){
 				//By Security
-				if(gps.getSatellitesTracked() >= GPS.MINIMUN_SATELLITES_TO_WORK){
+				if(gps.getSatellitesTracked() >= GPS.MINIMUM_SATELLITES_TO_WORK){
 					showSatTableUI();
 				}
 			}else if(GPSCurrentScreen == 6){
