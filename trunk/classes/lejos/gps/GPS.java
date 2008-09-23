@@ -41,8 +41,8 @@ public class GPS extends Thread {
 	private String longitudeDirection = "";
 	private float altitude = 0;
 	private int satellitesTracked = 0;
-	static final int MINIMUN_SATELLITES_TO_WORK = 4;
-	static final int MAXIMUM_SATELLITES_TO_WORK = 12;
+	public static final int MINIMUM_SATELLITES_TO_WORK = 4;
+	public static final int MAXIMUM_SATELLITES_TO_WORK = 12;
 	private float hdop = 0;
 	private int quality = 0;
 	
@@ -287,7 +287,7 @@ public class GPS extends Thread {
 	public boolean getGPSStatus(){
 		boolean status = false;
 		if(
-			(satellitesTracked >= MINIMUN_SATELLITES_TO_WORK) && 
+			(satellitesTracked >= MINIMUM_SATELLITES_TO_WORK) && 
 			//(mode.equals("A")) &&
 			(modeValue == 3)){
 			
