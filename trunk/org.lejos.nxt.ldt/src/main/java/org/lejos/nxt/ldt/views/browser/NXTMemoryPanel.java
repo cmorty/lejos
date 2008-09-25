@@ -1,5 +1,8 @@
 package org.lejos.nxt.ldt.views.browser;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import lejos.pc.comm.FileInfo;
 import lejos.pc.comm.NXTCommand;
 
@@ -34,18 +37,22 @@ public class NXTMemoryPanel {
 		init(parent);
 
 		// TODO deactivate
-		FileInfo testFile1 = new FileInfo("test1.java");
-		FileInfo testFile2 = new FileInfo("test2.java");
-		FileInfo[] testFiles = { testFile1, testFile2 };
-		update(testFiles);
+		Collection<FileInfo> testFileInfos = new ArrayList<FileInfo>();
+		testFileInfos.add(new FileInfo("test1.java"));
+		testFileInfos.add(new FileInfo("test2.java"));
+		update(testFileInfos);
 	}
 
 	public Control getControl() {
 		return filesGroup;
 	}
 
-	public void update(FileInfo[] files) {
-		filesTable.setInput(files);
+	public void update(Collection<FileInfo> fileInfos) {
+		filesTable.setInput(fileInfos);
+	}
+	
+	public void reset() {
+		filesTable.setInput(null);
 	}
 
 	private void init(Composite parent) {
@@ -127,7 +134,8 @@ public class NXTMemoryPanel {
 		} catch (Throwable t) {
 			LeJOSNXJUtil.message(t);
 		}
-		// TODO update table
+		// update table
+		filesTable.remove(file);
 		// updateFilesTable(nxtBricks);
 	}
 
