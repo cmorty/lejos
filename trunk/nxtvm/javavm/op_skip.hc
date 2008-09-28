@@ -2,7 +2,6 @@
  * This is included inside a switch statement.
  */
 
-case OP_NOP:
-  goto LABEL_ENGINELOOP;
-
+OPCODE(OP_NOP)
+  DISPATCH;
 /*end*/

@@ -15,8 +15,11 @@
 
 #include "nxt_motors.h"
 #include "nxt_avr.h"
+#include "interpreter.h"
 
 extern volatile unsigned char gMakeRequest;
+extern const int * volatile disptab;
+extern const int * forceswitch;
 
 #define PIT_FREQ 1000		/* Hz */
 
@@ -34,7 +37,7 @@ void
 systick_low_priority_C(void)
 {
   *AT91C_AIC_ICCR = (1 << LOW_PRIORITY_IRQ);
-  gMakeRequest = 1;		// trigger Java tick request
+  FORCE_EVENT_CHECK();
   nxt_avr_1kHz_update();
   nxt_motor_1kHz_process();
 }

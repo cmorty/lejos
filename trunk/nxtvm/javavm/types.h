@@ -22,8 +22,13 @@ typedef JBYTE        JBOOLEAN;
 typedef JSHORT       JCHAR;
 typedef FOURBYTES    REFERENCE;
 typedef FOURBYTES    STACKWORD;
+#if LONG_ARITHMETIC
 typedef long long    LLONG;
 typedef unsigned long long    ULLONG;
+#else
+typedef long    LLONG;
+typedef unsigned long    ULLONG;
+#endif
 
 typedef union
 {

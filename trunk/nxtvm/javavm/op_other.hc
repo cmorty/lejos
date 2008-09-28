@@ -2,14 +2,14 @@
  * This is included inside a switch statement.
  */
 
-case OP_ATHROW:
+OPCODE(OP_ATHROW)
   tempStackWord = pop_ref();
   if (tempStackWord == JNULL)
     goto LABEL_NULLPTR_EXCEPTION;
   thrownException = word2obj (tempStackWord);
   goto LABEL_THROW_EXCEPTION;
 
-case OP_MONITORENTER:
+OPCODE(OP_MONITORENTER)
   {
     Object *obj = word2obj(get_top_ref());
     SAVE_REGS();
@@ -17,9 +17,9 @@ case OP_MONITORENTER:
     LOAD_REGS();
     just_pop_ref();
   }
-  goto LABEL_ENGINELOOP;
+  DISPATCH_CHECKED;
 
-case OP_MONITOREXIT:
+OPCODE(OP_MONITOREXIT)
   {
     Object *obj = word2obj(get_top_ref());
     SAVE_REGS();
@@ -27,13 +27,13 @@ case OP_MONITOREXIT:
     LOAD_REGS();
     just_pop_ref();
   }
-  goto LABEL_ENGINELOOP;
+  DISPATCH_CHECKED;
 
 LABEL_THROW_EXCEPTION:
   SAVE_REGS();
   throw_exception( thrownException);
   LOAD_REGS();
-  goto LABEL_ENGINELOOP;
+  DISPATCH_CHECKED;
 
 // Notes:
 // - Not supported: BREAKPOINT

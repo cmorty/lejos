@@ -2,69 +2,69 @@
  * This is included inside a switch statement.
  */
 
-case OP_IF_ICMPEQ:
-case OP_IF_ACMPEQ:
+OPCODE(OP_IF_ICMPEQ)
+OPCODE(OP_IF_ACMPEQ)
   // Arguments: 2
   // Stack: -2
   do_isub();
   // Fall through!
-case OP_IFEQ:
-case OP_IFNULL:
+OPCODE(OP_IFEQ)
+OPCODE(OP_IFNULL)
   // Arguments: 2
   // Stack: -1
   pc = do_goto (pc, pop_word() == 0);
-  goto LABEL_ENGINELOOP;
+  DISPATCH_CHECKED;
 
-case OP_IF_ICMPNE:
-case OP_IF_ACMPNE:
+OPCODE(OP_IF_ICMPNE)
+OPCODE(OP_IF_ACMPNE)
   do_isub();
   // Fall through!
-case OP_IFNE:
-case OP_IFNONNULL:
+OPCODE(OP_IFNE)
+OPCODE(OP_IFNONNULL)
   pc = do_goto (pc, pop_word() != 0);
-  goto LABEL_ENGINELOOP;
+  DISPATCH_CHECKED;
 
-case OP_IF_ICMPLT:
+OPCODE(OP_IF_ICMPLT)
   do_isub();
   // Fall through!
-case OP_IFLT:
+OPCODE(OP_IFLT)
   pc = do_goto (pc, pop_jint() < 0);
-  goto LABEL_ENGINELOOP;
+  DISPATCH_CHECKED;
 
-case OP_IF_ICMPLE:
+OPCODE(OP_IF_ICMPLE)
   do_isub();
   // Fall through!
-case OP_IFLE:
+OPCODE(OP_IFLE)
   pc = do_goto (pc, pop_jint() <= 0);
-  goto LABEL_ENGINELOOP;
+  DISPATCH_CHECKED;
 
-case OP_IF_ICMPGE:
+OPCODE(OP_IF_ICMPGE)
   do_isub();
   // Fall through!
-case OP_IFGE:
+OPCODE(OP_IFGE)
   pc = do_goto (pc, pop_jint() >= 0);
-  goto LABEL_ENGINELOOP;
+  DISPATCH_CHECKED;
 
-case OP_IF_ICMPGT:
+OPCODE(OP_IF_ICMPGT)
   do_isub();
   // Fall through!
-case OP_IFGT:
+OPCODE(OP_IFGT)
   pc = do_goto (pc, pop_jint() > 0);
-  goto LABEL_ENGINELOOP;
+  DISPATCH_CHECKED;
 
-case OP_JSR:
+OPCODE(OP_JSR)
   // Arguments: 2
   // Stack: +1
   push_word (ptr2word (pc + 2));
   // Fall through!
-case OP_GOTO:
+OPCODE(OP_GOTO)
   // Arguments: 2
   // Stack: +0
   pc = do_goto (pc, true);
   // No pc increment!
-  goto LABEL_ENGINELOOP;
+  DISPATCH_CHECKED;
 
-case OP_RET:
+OPCODE(OP_RET)
   // Arguments: 1
   // Stack: +0
   pc = word2ptr (get_local_word (pc[0]));
@@ -72,44 +72,47 @@ case OP_RET:
   printf ("\n  OP_RET: returning to %d\n", (int) pc);
   #endif
   // No pc increment!
-  goto LABEL_ENGINELOOP;
+  DISPATCH_CHECKED;
 
 #if FP_ARITHMETIC
 
-case OP_DCMPL:
-case OP_DCMPG:
+OPCODE(OP_DCMPL)
+OPCODE(OP_DCMPG)
   // TBD: no distinction between opcodes
   {
-    JDOUBLE d1, d2;
+    //JDOUBLE d1, d2;
     pop_jdouble(&d2);
     pop_jdouble(&d1);
     push_word( do_dcmp (d1.dnum, d2.dnum, 0));
   }
-  goto LABEL_ENGINELOOP;
+  DISPATCH;
 
-case OP_FCMPL:
-case OP_FCMPG:
+OPCODE(OP_FCMPL)
+OPCODE(OP_FCMPG)
   // TBD: no distinction between opcodes
   tempStackWord = pop_word();
   just_set_top_word( do_fcmp (word2jfloat(get_top_word()), word2jfloat(tempStackWord), 0));
-  goto LABEL_ENGINELOOP;
+  DISPATCH;
   
 #endif // FP_ARITHMETIC
 
-case OP_LCMP:
+#if LONG_ARITHMETIC
+  
+OPCODE(OP_LCMP)
   // Arguments: 0
   // Stack: -4 + 1
   {
-    JLONG l1, l2;
+    //JLONG l1, l2;
 
     pop_jlong (&l2);
     pop_jlong (&l1);
-    push_word(do_lcmp(l1.lnum, l2.lnum, 0));
+    push_word (do_lcmp(l1.lnum, l2.lnum, 0));
   }
-  goto LABEL_ENGINELOOP;    
+  DISPATCH;    
 
+#endif
 
-case OP_LOOKUPSWITCH:
+OPCODE(OP_LOOKUPSWITCH)
   {
     // padding removed while linking
     int off, npairs, idx, idx8;
@@ -133,9 +136,9 @@ case OP_LOOKUPSWITCH:
 
     pc += off - 1;
   }
-  goto LABEL_ENGINELOOP;    
+  DISPATCH_CHECKED;    
 
-case OP_TABLESWITCH:
+OPCODE(OP_TABLESWITCH)
   {
     // padding removed while linking
     int off, low, hig, idx;
@@ -150,7 +153,7 @@ case OP_TABLESWITCH:
 
     pc += off - 1;
   }
-  goto LABEL_ENGINELOOP;    
+  DISPATCH_CHECKED;    
 
 // Notes:
 // - Not supported: GOTO_W, JSR_W, LCMP

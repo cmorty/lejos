@@ -2,29 +2,29 @@
  * This is included inside a switch statement.
  */
 
-case OP_ISUB:
+OPCODE(OP_ISUB)
   // Arguments: 0
   // Stack: -2 +1
   tempStackWord = pop_word();
   just_set_top_word (word2jint(get_top_word()) - word2jint(tempStackWord));
-  goto LABEL_ENGINEFASTLOOP;
+  DISPATCH;
 
-case OP_IADD:
+OPCODE(OP_IADD)
   // Arguments: 0
   // Stack: -2 +1
   tempStackWord = pop_word();
   just_set_top_word (word2jint(get_top_word()) + word2jint(tempStackWord));
-  goto LABEL_ENGINEFASTLOOP;
+  DISPATCH;
 
-case OP_IMUL:
+OPCODE(OP_IMUL)
   // Arguments: 0
   // Stack: -2 +1
   tempStackWord = pop_word();
   just_set_top_word (word2jint(get_top_word()) * word2jint(tempStackWord));
-  goto LABEL_ENGINEFASTLOOP;
+  DISPATCH;
 
-case OP_IDIV:
-case OP_IREM:
+OPCODE(OP_IDIV)
+OPCODE(OP_IREM)
   tempInt = word2jint(pop_word());
   if (tempInt == 0)
   {
@@ -33,136 +33,137 @@ case OP_IREM:
   }
   just_set_top_word ((*(pc-1) == OP_IDIV) ? word2jint(get_top_word()) / tempInt :
                                             word2jint(get_top_word()) % tempInt);
-  goto LABEL_ENGINEFASTLOOP;
+  DISPATCH;
 
-case OP_INEG:
+OPCODE(OP_INEG)
   just_set_top_word (-word2jint(get_top_word()));
-  goto LABEL_ENGINEFASTLOOP;
+  DISPATCH;
 
 #if FP_ARITHMETIC
 
-case OP_FSUB:
+OPCODE(OP_FSUB)
   tempStackWord = pop_word();
   just_set_top_word (jfloat2word(word2jfloat(get_top_word()) - 
                      word2jfloat(tempStackWord)));
-  goto LABEL_ENGINEFASTLOOP;
+  DISPATCH;
 
-case OP_FADD:
+OPCODE(OP_FADD)
   tempStackWord = pop_word();
   just_set_top_word (jfloat2word(word2jfloat(get_top_word()) + 
                      word2jfloat(tempStackWord)));
-  goto LABEL_ENGINEFASTLOOP;
+  DISPATCH;
 
-case OP_FMUL:
+OPCODE(OP_FMUL)
   tempStackWord = pop_word();
   just_set_top_word (jfloat2word(word2jfloat(get_top_word()) * 
                      word2jfloat(tempStackWord)));
-  goto LABEL_ENGINEFASTLOOP;
+  DISPATCH;
 
-case OP_FDIV:
+OPCODE(OP_FDIV)
   // TBD: no division by zero?
   tempStackWord = pop_word();
   just_set_top_word (jfloat2word(word2jfloat(get_top_word()) / 
                      word2jfloat(tempStackWord)));
-  goto LABEL_ENGINEFASTLOOP;
+  DISPATCH;
 
-case OP_FNEG:
+OPCODE(OP_FNEG)
   just_set_top_word (jfloat2word(-word2jfloat(get_top_word())));
-  goto LABEL_ENGINEFASTLOOP;
+  DISPATCH;
 
-case OP_DNEG:
+OPCODE(OP_DNEG)
   {
-    JDOUBLE d;
-    pop_jdouble(&d);
-    d.dnum = -d.dnum;
-    push_jdouble(&d);
-    goto LABEL_ENGINEFASTLOOP;
+    //JDOUBLE d1;
+    pop_jdouble(&d1);
+    d1.dnum = -d1.dnum;
+    push_jdouble(&d1);
+    DISPATCH;
   }
 
-case OP_DSUB:
+OPCODE(OP_DSUB)
   {
-    JDOUBLE d1, d2;
+    //JDOUBLE d1, d2;
     pop_jdouble(&d1);
     pop_jdouble(&d2);
     d2.dnum -= d1.dnum;
     push_jdouble(&d2);
-    goto LABEL_ENGINEFASTLOOP;
+    DISPATCH;
   }
 
-case OP_DADD:
+OPCODE(OP_DADD)
   {
-    JDOUBLE d1, d2;
+    //JDOUBLE d1, d2;
     pop_jdouble(&d1);
     pop_jdouble(&d2);
     d2.dnum += d1.dnum;
     push_jdouble(&d2);
-    goto LABEL_ENGINEFASTLOOP;
+    DISPATCH;
   }
 
-case OP_DMUL:
+OPCODE(OP_DMUL)
   {
-    JDOUBLE d1, d2;
+    //JDOUBLE d1, d2;
     pop_jdouble(&d1);
     pop_jdouble(&d2);
     d2.dnum *= d1.dnum;
     push_jdouble(&d2);
-    goto LABEL_ENGINEFASTLOOP;
+    DISPATCH;
   }
 
-case OP_DDIV:
+OPCODE(OP_DDIV)
   {
-    JDOUBLE d1, d2;
+    //JDOUBLE d1, d2;
     pop_jdouble(&d1);
     pop_jdouble(&d2);
     d2.dnum /= d1.dnum;
     push_jdouble(&d2);
-    goto LABEL_ENGINEFASTLOOP;
+    DISPATCH;
   }
 
 #endif // FP_ARITHMETIC
 
-case OP_LNEG:
+#if LONG_ARITHMETIC
+OPCODE(OP_LNEG)
   {
-    JLONG l;
-    pop_jlong(&l);
-    l.lnum = -l.lnum;
-    push_jlong(&l);
-    goto LABEL_ENGINEFASTLOOP;
+    //JLONG l;
+    pop_jlong(&l1);
+    l1.lnum = -l1.lnum;
+    push_jlong(&l1);
+    DISPATCH;
   }
 
-case OP_LADD:
+OPCODE(OP_LADD)
   {
-    JLONG l1, l2;
+    //JLONG l1, l2;
     pop_jlong(&l1);
     pop_jlong(&l2);
     l2.lnum += l1.lnum;
     push_jlong(&l2);
-    goto LABEL_ENGINEFASTLOOP;
+    DISPATCH;
   }
 
-case OP_LSUB:
+OPCODE(OP_LSUB)
   {
-    JLONG l1, l2;
+    //JLONG l1, l2;
     pop_jlong(&l1);
     pop_jlong(&l2);
     l2.lnum -= l1.lnum;
     push_jlong(&l2);
-    goto LABEL_ENGINEFASTLOOP;
+    DISPATCH;
   }
 
-case OP_LMUL:
+OPCODE(OP_LMUL)
   {
-    JLONG l1, l2;
+    //JLONG l1, l2;
     pop_jlong(&l1);
     pop_jlong(&l2);
     l2.lnum *= l1.lnum;
     push_jlong(&l2);
-    goto LABEL_ENGINEFASTLOOP;
+    DISPATCH;
   }
 
-case OP_LDIV:
+OPCODE(OP_LDIV)
   {
-    JLONG l1, l2;
+    //JLONG l1, l2;
     pop_jlong(&l1);
     pop_jlong(&l2);
     if (l1.lnum == 0)
@@ -172,12 +173,12 @@ case OP_LDIV:
     }
     l2.lnum /= l1.lnum;
     push_jlong(&l2);
-    goto LABEL_ENGINEFASTLOOP;
+    DISPATCH;
   }
 
-case OP_LREM:
+OPCODE(OP_LREM)
   {
-    JLONG l1, l2;
+    //JLONG l1, l2;
     pop_jlong(&l1);
     pop_jlong(&l2);
     if (l1.lnum == 0)
@@ -187,10 +188,12 @@ case OP_LREM:
     }
     l2.lnum %= l1.lnum;
     push_jlong(&l2);
-    goto LABEL_ENGINEFASTLOOP;
+    DISPATCH;
   }
-// Notes:
-// - Not supported: LADD, LSUB, LMUL, LREM, FREM, DREM
+#endif
+
+// Notes)
+// - Not supported) LADD, LSUB, LMUL, LREM, FREM, DREM
 // - Operations on doubles are truncated to low float
 
 /*end*/

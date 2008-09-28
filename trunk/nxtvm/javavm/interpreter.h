@@ -32,10 +32,18 @@ extern unsigned int debug_word1, debug_word2;
 //extern STACKWORD tempStackWord;
 
 extern void engine();
+#if FAST_DISPATCH == 1
+typedef const short DISPATCH_LABEL;
+extern DISPATCH_LABEL * volatile dispatchTable;
+extern DISPATCH_LABEL *checkEvent;
+#define FORCE_EVENT_CHECK() (gMakeRequest = true, dispatchTable = checkEvent)
+#else
+#define FORCE_EVENT_CHECK() (gMakeRequest = true)
+#endif
 
 static inline void schedule_request (const byte aCode)
 {
-  gMakeRequest = true;
+  FORCE_EVENT_CHECK();
   gRequestCode = aCode;
 }
 

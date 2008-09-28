@@ -19,6 +19,7 @@ S_OBJECTS := $(S_SOURCES:.s=.o)
 C_OBJECTS := $(C_SOURCES:.c=.o) $(C_RAMSOURCES:.c=.oram)
 
 C_OPTIMISATION_FLAGS = -Os
+#C_OPTIMISATION_FLAGS = -Os -Xassembler -aslh
 #C_OPTIMISATION_FLAGS = -O0
 
 SVNDEF := -D'SVN_REV="$(shell svnversion -n ../..)"'
@@ -37,7 +38,7 @@ ASFLAGS = -mthumb-interwork  -mfpu=softfpa
 def_target: all
 
 
-ALL_TARGETS := $(RAM_TARGET) $(ROM_TARGET) $(ROMBIN_TARGET) $(SAMBA_TARGET)
+ALL_TARGETS := $(ROM_TARGET) $(ROMBIN_TARGET) 
 
 
 .PHONY:  all
@@ -98,7 +99,7 @@ $(SAMBA_TARGET): $(SAMBA_TARGET)_elf
 
 ../../javavm/interpreter.o: ../../javavm/interpreter.c
 	@echo "Compiling $< to $@"
-	$(CC) $(CFLAGS) -O2 -o $@ $< 
+	$(CC) $(CFLAGS) -O3 -o $@ $< 
 
 %.asm: %.c
 	@echo "Compiling $< to $@"
@@ -106,7 +107,7 @@ $(SAMBA_TARGET): $(SAMBA_TARGET)_elf
 
 ../../javavm/interpreter.asm: ../../javavm/interpreter.c
 	@echo "Compiling $< to $@"
-	$(CC) -S $(CFLAGS) -g0 -O2 -o $@ $< 
+	$(CC) -S $(CFLAGS) -g0 -O3 -o $@ $< 
 
 %.oram: %.c
 	@echo "Compiling $< to $@"
