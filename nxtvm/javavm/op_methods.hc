@@ -2,7 +2,7 @@
  * This is included inside a switch statement.
  */
 
-case OP_INVOKEVIRTUAL:
+OPCODE(OP_INVOKEVIRTUAL)
   // Stack: (see method)
   // Arguments: 2
   // Note: pc is updated by dispatch method
@@ -10,44 +10,44 @@ case OP_INVOKEVIRTUAL:
   dispatch_virtual (word2obj (get_ref_at (pc[0] >> 4)), 
       (TWOBYTES) pc[1] | ((TWOBYTES)(pc[0] & 0x0F) << 8), pc + 2);
   LOAD_REGS();
-  goto LABEL_ENGINELOOP;
+  DISPATCH_CHECKED;
 
-case OP_INVOKESPECIAL:
-case OP_INVOKESTATIC:
+OPCODE(OP_INVOKESPECIAL)
+OPCODE(OP_INVOKESTATIC)
   // Stack: (see method)
   // Arguments: 2
   // Note: pc is updated by dispatch method
   SAVE_REGS();
   dispatch_special_checked (pc[0], pc[1], pc + 2, pc - 1);
   LOAD_REGS();
-  goto LABEL_ENGINELOOP;
+  DISPATCH_CHECKED;
 
-case OP_IRETURN:
-case OP_FRETURN:
-case OP_ARETURN:
+OPCODE(OP_IRETURN)
+OPCODE(OP_FRETURN)
+OPCODE(OP_ARETURN)
   // Stack: 1 word copied up
   // Arguments: 0
   SAVE_REGS();
   do_return (1);
   LOAD_REGS();
-  goto LABEL_ENGINELOOP;
+  DISPATCH_CHECKED;
 
-case OP_LRETURN:
-case OP_DRETURN:
+OPCODE(OP_LRETURN)
+OPCODE(OP_DRETURN)
   // Stack: 2 words copied up
   // Arguments: 0
   SAVE_REGS();
   do_return (2);
   LOAD_REGS();
-  goto LABEL_ENGINELOOP;
+  DISPATCH_CHECKED;
 
-case OP_RETURN:
+OPCODE(OP_RETURN)
   // Stack: unchanged
   // Arguments: 0
   SAVE_REGS();
   do_return (0);
   LOAD_REGS();
-  goto LABEL_ENGINELOOP;
+  DISPATCH_CHECKED;
 
 
 // Notes:

@@ -15,6 +15,7 @@
 #include "fields.h"
 #include "stack.h"
 #include "poll.h"
+#include "rconsole.h"
 
 #define F_OFFSET_MASK  0x0F
 
@@ -109,6 +110,8 @@ STACKWORD do_dcmp (double f1, double f2, STACKWORD def)
 }
 
 #endif
+
+#if LONG_ARITHMETIC
 STACKWORD do_lcmp (LLONG l1, LLONG l2, STACKWORD def)
 {
   STACKWORD res;
@@ -119,11 +122,12 @@ STACKWORD do_lcmp (LLONG l1, LLONG l2, STACKWORD def)
     res = 0;
   else if (l1 < l2)
     res = -1;
-  else 
+  else
     res = def;
 
   return res;
 }
+#endif
 
 /**
  * @return A String instance, or JNULL if an exception was thrown
@@ -150,6 +154,7 @@ Object *create_string (ConstantRecord *constantRecord,
   {
     deallocate (obj2ptr(ref), class_size (JAVA_LANG_STRING));    
     // If this is the 2nd attempt at creating this object give up!
+ if(retry)printf("OOM in string size %d\n", constantRecord->constantSize);
     if (retry) throw_exception(outOfMemoryError);
     return JNULL;
   }
@@ -234,7 +239,35 @@ static int array_helper( byte *pc, STACKWORD* stackTop)
  * and memory allocation), we may need to be able to restart the instruction.
  * to allow this the stack should be left unchanged until after the call to
  * LOAD_REGS. 
+ *
+ * The following macros allow two types of dispatch to be defined. One using
+ * a conventional switch statement, the other using a dispatch table. Note
+ * that the dispatch table uses a relative offset to allow the table to be
+ * stored in flash memory.
  */
+#if FAST_DISPATCH == 1
+// Fast byte code dispatch. Uses the GCC labels as values extension.
+#define OPCODE(op) L_##op: 
+#define UNUSED_OPCODE(op) 
+#define DISPATCH goto *(&&CHECK_EVENT + dispatchTable[*pc++])
+#define DISPATCH_CHECKED {instruction_hook(); DISPATCH;}
+#define START_DISPATCH DISPATCH;
+#define END_DISPATCH
+#define DISPATCH_EVENTS CHECK_EVENT: (pc--, dispatchTable = dispatch);
+#define INIT_DISPATCH (pc++, checkEvent = forceCheck, dispatchTable = dispatch);
+DISPATCH_LABEL * volatile dispatchTable;
+DISPATCH_LABEL *checkEvent;
+#else
+// Standard dispatch code uses a switch statement
+#define OPCODE(op) case op:
+#define UNUSED_OPCODE(op) case op: 
+#define DISPATCH_CHECKED goto CHECK_EVENT
+#define DISPATCH goto DISPATCH_NEXT
+#define START_DISPATCH DISPATCH_NEXT: switch(*pc++) {
+#define END_DISPATCH }
+#define DISPATCH_EVENTS CHECK_EVENT: instruction_hook();
+#define INIT_DISPATCH
+#endif
 
 void engine()
 {
@@ -243,18 +276,289 @@ void engine()
   STACKWORD *tempWordPtr;
   ConstantRecord *tempConstRec;
   int tempInt;
+  // Note the following structs were originally declared for each opcode
+  // that required them. However GCC does not seem to like sharing stack space
+  // between blocks and so this resulted in a large amount of wasted stack
+  // space. So for now we declare them here.
+  JLONG l1, l2;
+  JDOUBLE d1, d2;
   byte *pc = curPc;
   STACKWORD *stackTop = curStackTop;
   STACKWORD *localsBase = curLocalsBase;
+#if FAST_DISPATCH == 1
+// The following table provides the main opcode dispatch table.
+// One entry per opcode, in opcode order. The subtraction makes
+// the value a relative offset allowing a smaller table and
+// allowing the table to be stored in ROM
+static DISPATCH_LABEL dispatch[] = 
+{
+  &&L_OP_NOP - &&CHECK_EVENT,
+  &&L_OP_ACONST_NULL - &&CHECK_EVENT,
+  &&L_OP_ICONST_M1 - &&CHECK_EVENT,
+  &&L_OP_ICONST_0 - &&CHECK_EVENT,
+  &&L_OP_ICONST_1 - &&CHECK_EVENT,
+  &&L_OP_ICONST_2 - &&CHECK_EVENT,
+  &&L_OP_ICONST_3 - &&CHECK_EVENT,
+  &&L_OP_ICONST_4 - &&CHECK_EVENT,
+  &&L_OP_ICONST_5 - &&CHECK_EVENT,
+  &&L_OP_LCONST_0 - &&CHECK_EVENT,
+  &&L_OP_LCONST_1 - &&CHECK_EVENT,
+  &&L_OP_FCONST_0 - &&CHECK_EVENT,
+  &&L_OP_FCONST_1 - &&CHECK_EVENT,
+  &&L_OP_FCONST_2 - &&CHECK_EVENT,
+  &&L_OP_DCONST_0 - &&CHECK_EVENT,
+  &&L_OP_DCONST_1 - &&CHECK_EVENT,
+  &&L_OP_BIPUSH - &&CHECK_EVENT,
+  &&L_OP_SIPUSH - &&CHECK_EVENT,
+  &&L_OP_LDC - &&CHECK_EVENT,
+  &&L_OP_LDC_W - &&CHECK_EVENT,
+  &&L_OP_LDC2_W - &&CHECK_EVENT,
+  &&L_OP_ILOAD - &&CHECK_EVENT,
+  &&L_OP_LLOAD - &&CHECK_EVENT,
+  &&L_OP_FLOAD - &&CHECK_EVENT,
+  &&L_OP_DLOAD - &&CHECK_EVENT,
+  &&L_OP_ALOAD - &&CHECK_EVENT,
+  &&L_OP_ILOAD_0 - &&CHECK_EVENT,
+  &&L_OP_ILOAD_1 - &&CHECK_EVENT,
+  &&L_OP_ILOAD_2 - &&CHECK_EVENT,
+  &&L_OP_ILOAD_3 - &&CHECK_EVENT,
+  &&L_OP_LLOAD_0 - &&CHECK_EVENT,
+  &&L_OP_LLOAD_1 - &&CHECK_EVENT,
+  &&L_OP_LLOAD_2 - &&CHECK_EVENT,
+  &&L_OP_LLOAD_3 - &&CHECK_EVENT,
+  &&L_OP_FLOAD_0 - &&CHECK_EVENT,
+  &&L_OP_FLOAD_1 - &&CHECK_EVENT,
+  &&L_OP_FLOAD_2 - &&CHECK_EVENT,
+  &&L_OP_FLOAD_3 - &&CHECK_EVENT,
+  &&L_OP_DLOAD_0 - &&CHECK_EVENT,
+  &&L_OP_DLOAD_1 - &&CHECK_EVENT,
+  &&L_OP_DLOAD_2 - &&CHECK_EVENT,
+  &&L_OP_DLOAD_3 - &&CHECK_EVENT,
+  &&L_OP_ALOAD_0 - &&CHECK_EVENT,
+  &&L_OP_ALOAD_1 - &&CHECK_EVENT,
+  &&L_OP_ALOAD_2 - &&CHECK_EVENT,
+  &&L_OP_ALOAD_3 - &&CHECK_EVENT,
+  &&L_OP_IALOAD - &&CHECK_EVENT,
+  &&L_OP_LALOAD - &&CHECK_EVENT,
+  &&L_OP_FALOAD - &&CHECK_EVENT,
+  &&L_OP_DALOAD - &&CHECK_EVENT,
+  &&L_OP_AALOAD - &&CHECK_EVENT,
+  &&L_OP_BALOAD - &&CHECK_EVENT,
+  &&L_OP_CALOAD - &&CHECK_EVENT,
+  &&L_OP_SALOAD - &&CHECK_EVENT,
+  &&L_OP_ISTORE - &&CHECK_EVENT,
+  &&L_OP_LSTORE - &&CHECK_EVENT,
+  &&L_OP_FSTORE - &&CHECK_EVENT,
+  &&L_OP_DSTORE - &&CHECK_EVENT,
+  &&L_OP_ASTORE - &&CHECK_EVENT,
+  &&L_OP_ISTORE_0 - &&CHECK_EVENT,
+  &&L_OP_ISTORE_1 - &&CHECK_EVENT,
+  &&L_OP_ISTORE_2 - &&CHECK_EVENT,
+  &&L_OP_ISTORE_3 - &&CHECK_EVENT,
+  &&L_OP_LSTORE_0 - &&CHECK_EVENT,
+  &&L_OP_LSTORE_1 - &&CHECK_EVENT,
+  &&L_OP_LSTORE_2 - &&CHECK_EVENT,
+  &&L_OP_LSTORE_3 - &&CHECK_EVENT,
+  &&L_OP_FSTORE_0 - &&CHECK_EVENT,
+  &&L_OP_FSTORE_1 - &&CHECK_EVENT,
+  &&L_OP_FSTORE_2 - &&CHECK_EVENT,
+  &&L_OP_FSTORE_3 - &&CHECK_EVENT,
+  &&L_OP_DSTORE_0 - &&CHECK_EVENT,
+  &&L_OP_DSTORE_1 - &&CHECK_EVENT,
+  &&L_OP_DSTORE_2 - &&CHECK_EVENT,
+  &&L_OP_DSTORE_3 - &&CHECK_EVENT,
+  &&L_OP_ASTORE_0 - &&CHECK_EVENT,
+  &&L_OP_ASTORE_1 - &&CHECK_EVENT,
+  &&L_OP_ASTORE_2 - &&CHECK_EVENT,
+  &&L_OP_ASTORE_3 - &&CHECK_EVENT,
+  &&L_OP_IASTORE - &&CHECK_EVENT,
+  &&L_OP_LASTORE - &&CHECK_EVENT,
+  &&L_OP_FASTORE - &&CHECK_EVENT,
+  &&L_OP_DASTORE - &&CHECK_EVENT,
+  &&L_OP_AASTORE - &&CHECK_EVENT,
+  &&L_OP_BASTORE - &&CHECK_EVENT,
+  &&L_OP_CASTORE - &&CHECK_EVENT,
+  &&L_OP_SASTORE - &&CHECK_EVENT,
+  &&L_OP_POP - &&CHECK_EVENT,
+  &&L_OP_POP2 - &&CHECK_EVENT,
+  &&L_OP_DUP - &&CHECK_EVENT,
+  &&L_OP_DUP_X1 - &&CHECK_EVENT,
+  &&L_OP_DUP_X2 - &&CHECK_EVENT,
+  &&L_OP_DUP2 - &&CHECK_EVENT,
+  &&L_OP_DUP2_X1 - &&CHECK_EVENT,
+  &&L_OP_DUP2_X2 - &&CHECK_EVENT,
+  &&L_OP_SWAP - &&CHECK_EVENT,
+  &&L_OP_IADD - &&CHECK_EVENT,
+  &&L_OP_LADD - &&CHECK_EVENT,
+  &&L_OP_FADD - &&CHECK_EVENT,
+  &&L_OP_DADD - &&CHECK_EVENT,
+  &&L_OP_ISUB - &&CHECK_EVENT,
+  &&L_OP_LSUB - &&CHECK_EVENT,
+  &&L_OP_FSUB - &&CHECK_EVENT,
+  &&L_OP_DSUB - &&CHECK_EVENT,
+  &&L_OP_IMUL - &&CHECK_EVENT,
+  &&L_OP_LMUL - &&CHECK_EVENT,
+  &&L_OP_FMUL - &&CHECK_EVENT,
+  &&L_OP_DMUL - &&CHECK_EVENT,
+  &&L_OP_IDIV - &&CHECK_EVENT,
+  &&L_OP_LDIV - &&CHECK_EVENT,
+  &&L_OP_FDIV - &&CHECK_EVENT,
+  &&L_OP_DDIV - &&CHECK_EVENT,
+  &&L_OP_IREM - &&CHECK_EVENT,
+  &&L_OP_LREM - &&CHECK_EVENT,
+  &&L_OP_FREM - &&CHECK_EVENT,
+  &&L_OP_DREM - &&CHECK_EVENT,
+  &&L_OP_INEG - &&CHECK_EVENT,
+  &&L_OP_LNEG - &&CHECK_EVENT,
+  &&L_OP_FNEG - &&CHECK_EVENT,
+  &&L_OP_DNEG - &&CHECK_EVENT,
+  &&L_OP_ISHL - &&CHECK_EVENT,
+  &&L_OP_LSHL - &&CHECK_EVENT,
+  &&L_OP_ISHR - &&CHECK_EVENT,
+  &&L_OP_LSHR - &&CHECK_EVENT,
+  &&L_OP_IUSHR - &&CHECK_EVENT,
+  &&L_OP_LUSHR - &&CHECK_EVENT,
+  &&L_OP_IAND - &&CHECK_EVENT,
+  &&L_OP_LAND - &&CHECK_EVENT,
+  &&L_OP_IOR - &&CHECK_EVENT,
+  &&L_OP_LOR - &&CHECK_EVENT,
+  &&L_OP_IXOR - &&CHECK_EVENT,
+  &&L_OP_LXOR - &&CHECK_EVENT,
+  &&L_OP_IINC - &&CHECK_EVENT,
+  &&L_OP_I2L - &&CHECK_EVENT,
+  &&L_OP_I2F - &&CHECK_EVENT,
+  &&L_OP_I2D - &&CHECK_EVENT,
+  &&L_OP_L2I - &&CHECK_EVENT,
+  &&L_OP_L2F - &&CHECK_EVENT,
+  &&L_OP_L2D - &&CHECK_EVENT,
+  &&L_OP_F2I - &&CHECK_EVENT,
+  &&L_OP_F2L - &&CHECK_EVENT,
+  &&L_OP_F2D - &&CHECK_EVENT,
+  &&L_OP_D2I - &&CHECK_EVENT,
+  &&L_OP_D2L - &&CHECK_EVENT,
+  &&L_OP_D2F - &&CHECK_EVENT,
+  &&L_OP_I2B - &&CHECK_EVENT,
+  &&L_OP_I2C - &&CHECK_EVENT,
+  &&L_OP_I2S - &&CHECK_EVENT,
+  &&L_OP_LCMP - &&CHECK_EVENT,
+  &&L_OP_FCMPL - &&CHECK_EVENT,
+  &&L_OP_FCMPG - &&CHECK_EVENT,
+  &&L_OP_DCMPL - &&CHECK_EVENT,
+  &&L_OP_DCMPG - &&CHECK_EVENT,
+  &&L_OP_IFEQ - &&CHECK_EVENT,
+  &&L_OP_IFNE - &&CHECK_EVENT,
+  &&L_OP_IFLT - &&CHECK_EVENT,
+  &&L_OP_IFGE - &&CHECK_EVENT,
+  &&L_OP_IFGT - &&CHECK_EVENT,
+  &&L_OP_IFLE - &&CHECK_EVENT,
+  &&L_OP_IF_ICMPEQ - &&CHECK_EVENT,
+  &&L_OP_IF_ICMPNE - &&CHECK_EVENT,
+  &&L_OP_IF_ICMPLT - &&CHECK_EVENT,
+  &&L_OP_IF_ICMPGE - &&CHECK_EVENT,
+  &&L_OP_IF_ICMPGT - &&CHECK_EVENT,
+  &&L_OP_IF_ICMPLE - &&CHECK_EVENT,
+  &&L_OP_IF_ACMPEQ - &&CHECK_EVENT,
+  &&L_OP_IF_ACMPNE - &&CHECK_EVENT,
+  &&L_OP_GOTO - &&CHECK_EVENT,
+  &&L_OP_JSR - &&CHECK_EVENT,
+  &&L_OP_RET - &&CHECK_EVENT,
+  &&L_OP_TABLESWITCH - &&CHECK_EVENT,
+  &&L_OP_LOOKUPSWITCH - &&CHECK_EVENT,
+  &&L_OP_IRETURN - &&CHECK_EVENT,
+  &&L_OP_LRETURN - &&CHECK_EVENT,
+  &&L_OP_FRETURN - &&CHECK_EVENT,
+  &&L_OP_DRETURN - &&CHECK_EVENT,
+  &&L_OP_ARETURN - &&CHECK_EVENT,
+  &&L_OP_RETURN - &&CHECK_EVENT,
+  &&L_OP_GETSTATIC - &&CHECK_EVENT,
+  &&L_OP_PUTSTATIC - &&CHECK_EVENT,
+  &&L_OP_GETFIELD - &&CHECK_EVENT,
+  &&L_OP_PUTFIELD - &&CHECK_EVENT,
+  &&L_OP_INVOKEVIRTUAL - &&CHECK_EVENT,
+  &&L_OP_INVOKESPECIAL - &&CHECK_EVENT,
+  &&L_OP_INVOKESTATIC - &&CHECK_EVENT,
+  &&L_OP_INVOKEINTERFACE - &&CHECK_EVENT,
+  &&L_OP_XXXUNUSEDXXX - &&CHECK_EVENT,
+  &&L_OP_NEW - &&CHECK_EVENT,
+  &&L_OP_NEWARRAY - &&CHECK_EVENT,
+  &&L_OP_ANEWARRAY - &&CHECK_EVENT,
+  &&L_OP_ARRAYLENGTH - &&CHECK_EVENT,
+  &&L_OP_ATHROW - &&CHECK_EVENT,
+  &&L_OP_CHECKCAST - &&CHECK_EVENT,
+  &&L_OP_INSTANCEOF - &&CHECK_EVENT,
+  &&L_OP_MONITORENTER - &&CHECK_EVENT,
+  &&L_OP_MONITOREXIT - &&CHECK_EVENT,
+  &&L_OP_WIDE - &&CHECK_EVENT,
+  &&L_OP_MULTIANEWARRAY - &&CHECK_EVENT,
+  &&L_OP_IFNULL - &&CHECK_EVENT,
+  &&L_OP_IFNONNULL - &&CHECK_EVENT,
+  &&L_OP_GOTO_W - &&CHECK_EVENT,
+  &&L_OP_JSR_W - &&CHECK_EVENT,
+  &&L_OP_BREAKPOINT - &&CHECK_EVENT,
+  &&L_OP_GETSTATIC_1 - &&CHECK_EVENT,
+  &&L_OP_PUTSTATIC_1 - &&CHECK_EVENT,
+  &&L_OP_GETSTATIC_2 - &&CHECK_EVENT,
+  &&L_OP_PUTSTATIC_2 - &&CHECK_EVENT,
+  &&L_OP_GETSTATIC_3 - &&CHECK_EVENT,
+  &&L_OP_PUTSTATIC_3 - &&CHECK_EVENT,
+  #if 0
+  // Following opcodes are not currently used
+  &&L_OP_GETFIELD_S1 - &&CHECK_EVENT,
+  &&L_OP_PUTFIELD_S1 - &&CHECK_EVENT,
+  &&L_OP_GETFIELD_S2 - &&CHECK_EVENT,
+  &&L_OP_PUTFIELD_S2 - &&CHECK_EVENT,
+  &&L_OP_GETFIELD_U2 - &&CHECK_EVENT,
+  &&L_OP_PUTFIELD_U2 - &&CHECK_EVENT,
+  &&L_OP_GETFIELD_W4 - &&CHECK_EVENT,
+  &&L_OP_PUTFIELD_W4 - &&CHECK_EVENT,
+  &&L_OP_GETFIELD_A4 - &&CHECK_EVENT,
+  &&L_OP_PUTFIELD_A4 - &&CHECK_EVENT,
+  #else
+  &&L_OP_XXXUNUSEDXXX - &&CHECK_EVENT,
+  &&L_OP_XXXUNUSEDXXX - &&CHECK_EVENT,
+  &&L_OP_XXXUNUSEDXXX - &&CHECK_EVENT,
+  &&L_OP_XXXUNUSEDXXX - &&CHECK_EVENT,
+  &&L_OP_XXXUNUSEDXXX - &&CHECK_EVENT,
+  &&L_OP_XXXUNUSEDXXX - &&CHECK_EVENT,
+  &&L_OP_XXXUNUSEDXXX - &&CHECK_EVENT,
+  &&L_OP_XXXUNUSEDXXX - &&CHECK_EVENT,
+  &&L_OP_XXXUNUSEDXXX - &&CHECK_EVENT,
+  &&L_OP_XXXUNUSEDXXX - &&CHECK_EVENT,
+  #endif
+  &&L_OP_LDC_1 - &&CHECK_EVENT,
+  &&L_OP_LDC_2 - &&CHECK_EVENT,
+  &&L_OP_LDC_3 - &&CHECK_EVENT};
+
+// The following table is used to force the interpreter to jump to the
+// check event code rather than the next instruction. Basically causes a 
+// jump to the check event code.
+static DISPATCH_LABEL forceCheck[] = 
+{
+ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+};
+#endif
 
   assert( currentThread != null, INTERPRETER0);
-
+  INIT_DISPATCH
   schedule_request( REQUEST_SWITCH_THREAD);
 
- LABEL_ENGINELOOP: 
-  instruction_hook();
-
   assert( currentThread != null, INTERPRETER1);
+  DISPATCH_EVENTS
   while( gMakeRequest)
   {
     byte requestCode = gRequestCode;
@@ -311,15 +615,10 @@ void engine()
   printf ("OPCODE (0x%X) %s\n", (int) *pc, OPCODE_NAME[*pc]);
   #endif
 
-  // experimental feature: "fast loop", to disable place this label just next to LABEL_ENGINELOOP
- LABEL_ENGINEFASTLOOP: 
+  START_DISPATCH
 
-  // uncomment the following line if you want to see the opcode after data abort
-  // old_pc = pc;
-  switch (*pc++)
-  {
-    case OP_NOP:
-        goto LABEL_ENGINELOOP;
+    OPCODE(OP_NOP)
+      DISPATCH;
 
     #include "op_stack.hc"
     #include "op_locals.hc"
@@ -332,32 +631,70 @@ void engine()
     #include "op_arithmetic.hc"
     #include "op_methods.hc"
 
-/*
-#ifdef VERIFY
-	default:
-		assert(false, (TWOBYTES)(pc-1) % 10000);
-		break;
+    OPCODE(OP_BREAKPOINT)
+    OPCODE(OP_JSR_W)
+    OPCODE(OP_GOTO_W)
+    OPCODE(OP_ANEWARRAY);
+    OPCODE(OP_XXXUNUSEDXXX)
+    OPCODE(OP_INVOKEINTERFACE)
+#if !LONG_ARITHMETIC
+    OPCODE(OP_LCMP)
+    OPCODE(OP_LXOR)
+    OPCODE(OP_LOR)
+    OPCODE(OP_LAND)
+    OPCODE(OP_LUSHR)
+    OPCODE(OP_LSHR)
+    OPCODE(OP_LSHL)
+    OPCODE(OP_LNEG)
+    OPCODE(OP_LREM)
+    OPCODE(OP_LDIV)
+    OPCODE(OP_LMUL)
+    OPCODE(OP_LSUB)
+    OPCODE(OP_LADD)
 #endif
-*/
-  }
+    OPCODE(OP_DREM)
+    OPCODE(OP_FREM)
+    UNUSED_OPCODE(222)
+    UNUSED_OPCODE(223)
+    UNUSED_OPCODE(224)
+    UNUSED_OPCODE(225)
+    UNUSED_OPCODE(226)
+    UNUSED_OPCODE(227)
+    UNUSED_OPCODE(228)
+    UNUSED_OPCODE(229)
+    UNUSED_OPCODE(230)
+    UNUSED_OPCODE(231)
+    UNUSED_OPCODE(232)
+    UNUSED_OPCODE(233)
+    UNUSED_OPCODE(234)
+    UNUSED_OPCODE(235)
+    UNUSED_OPCODE(236)
+    UNUSED_OPCODE(237)
+    UNUSED_OPCODE(238)
+    UNUSED_OPCODE(239)
+    UNUSED_OPCODE(240)
+    UNUSED_OPCODE(241)
+    UNUSED_OPCODE(242)
+    UNUSED_OPCODE(243)
+    UNUSED_OPCODE(244)
+    UNUSED_OPCODE(245)
+    UNUSED_OPCODE(246)
+    UNUSED_OPCODE(247)
+    UNUSED_OPCODE(248)
+    UNUSED_OPCODE(249)
+    UNUSED_OPCODE(250)
+    UNUSED_OPCODE(251)
+    UNUSED_OPCODE(252)
+    UNUSED_OPCODE(253)
+    UNUSED_OPCODE(254)
+    UNUSED_OPCODE(255)
+      throw_exception (noSuchMethodError);
+      DISPATCH;
 
+  END_DISPATCH
   //-----------------------------------------------
   // SWITCH ENDS HERE
   //-----------------------------------------------
-
-   #if !FP_ARITHMETIC
-
-   throw_exception (noSuchMethodError);
-
-   #else
-  
-   // This point should never be reached
-
-   #ifdef VERIFY
-   assert (false, 1000 + *pc);
-   #endif // VERIFY
-
-   #endif // FP_ARITHMETIC
 }
 
 

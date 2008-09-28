@@ -90,4 +90,15 @@
  */
 #define REMOTE_CONSOLE                   0
 
+/**
+ * Choose the type of interpreter loop to use. Set to none zero
+ * for the faster, gcc specific direct jump code.
+ */
+#define FAST_DISPATCH                    1
+
+/**
+ * Include support for LONG operations
+ */
+#define LONG_ARITHMETIC                  1
+
 #endif

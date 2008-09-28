@@ -2,7 +2,7 @@
  * This is included inside a switch statement.
  */
 
-case OP_NEWARRAY:
+OPCODE(OP_NEWARRAY)
   // Stack size: unchanged
   // Arguments: 1
   SAVE_REGS();
@@ -15,9 +15,9 @@ case OP_NEWARRAY:
     set_top_ref(tempStackWord);
   }
   // Exceptions are taken care of
-  goto LABEL_ENGINELOOP;
+  DISPATCH_CHECKED;
 
-case OP_MULTIANEWARRAY:
+OPCODE(OP_MULTIANEWARRAY)
   // Stack size: -N + 1
   // Arguments: 3
   {
@@ -34,7 +34,7 @@ case OP_MULTIANEWARRAY:
       set_top_ref (ptr2ref (tempBytePtr));
     }
   }
-  goto LABEL_ENGINELOOP;
+  DISPATCH_CHECKED;
 
 LABEL_NULLPTR_EXCEPTION:
   thrownException = nullPointerException;
@@ -46,7 +46,7 @@ LABEL_ARRAY_EXCEPTION:
   thrownException = arrayIndexOutOfBoundsException;
   goto LABEL_THROW_EXCEPTION;
  
-case OP_AALOAD:
+OPCODE(OP_AALOAD)
   // Stack size: -2 + 1
   // Arguments: 0
   tempInt = array_helper( pc, stackTop);
@@ -55,10 +55,10 @@ case OP_AALOAD:
     goto LABEL_ARRAY_EXCEPTION;
   // arrayStart set by call above
   set_top_ref (word_array_ptr(arrayStart)[tempInt]);
-  goto LABEL_ENGINELOOP;
+  DISPATCH;
 
-case OP_IALOAD:
-case OP_FALOAD:
+OPCODE(OP_IALOAD)
+OPCODE(OP_FALOAD)
   // Stack size: -2 + 1
   // Arguments: 0
   tempInt = array_helper( pc, stackTop);
@@ -66,34 +66,34 @@ case OP_FALOAD:
   if( tempInt < 0)
     goto LABEL_ARRAY_EXCEPTION;
   set_top_word (word_array_ptr(arrayStart)[tempInt]);
-  goto LABEL_ENGINELOOP;
+  DISPATCH;
 
-case OP_CALOAD:
+OPCODE(OP_CALOAD)
   tempInt = array_helper( pc, stackTop);
   just_pop_word();
   if( tempInt < 0)
     goto LABEL_ARRAY_EXCEPTION;
   set_top_word (jchar_array_ptr(arrayStart)[tempInt]);
-  goto LABEL_ENGINELOOP;
+  DISPATCH;
 
-case OP_SALOAD:
+OPCODE(OP_SALOAD)
   tempInt = array_helper( pc, stackTop);
   just_pop_word();
   if( tempInt < 0)
     goto LABEL_ARRAY_EXCEPTION;
   set_top_word (jshort_array_ptr(arrayStart)[tempInt]);
-  goto LABEL_ENGINELOOP;
+  DISPATCH;
 
-case OP_BALOAD:
+OPCODE(OP_BALOAD)
   tempInt = array_helper( pc, stackTop);
   just_pop_word();
   if( tempInt < 0)
     goto LABEL_ARRAY_EXCEPTION;
   set_top_word (jbyte_array_ptr(arrayStart)[tempInt]);
-  goto LABEL_ENGINELOOP;
+  DISPATCH;
 
-case OP_LALOAD:
-case OP_DALOAD:
+OPCODE(OP_LALOAD)
+OPCODE(OP_DALOAD)
   // Stack size: -2 + 2
   // Arguments: 0
   tempInt = array_helper( pc, stackTop);
@@ -103,9 +103,9 @@ case OP_DALOAD:
   tempInt *= 2;
   set_top_word (word_array_ptr(arrayStart)[tempInt++]);
   push_word (word_array_ptr(arrayStart)[tempInt]);
-  goto LABEL_ENGINELOOP;
+  DISPATCH;
 
-case OP_AASTORE:
+OPCODE(OP_AASTORE)
   // Stack size: -3
   tempStackWord = pop_ref();
   tempInt = array_helper( pc, stackTop);
@@ -115,10 +115,10 @@ case OP_AASTORE:
   tempWordPtr = (STACKWORD *)pop_ref();
   update_array((Object *) tempWordPtr);
   ref_array_ptr(arrayStart)[tempInt] = tempStackWord;
-  goto LABEL_ENGINELOOP;
+  DISPATCH;
 
-case OP_IASTORE:
-case OP_FASTORE:
+OPCODE(OP_IASTORE)
+OPCODE(OP_FASTORE)
   // Stack size: -3
   tempStackWord = pop_word();
   tempInt = array_helper( pc, stackTop);
@@ -127,10 +127,10 @@ case OP_FASTORE:
     goto LABEL_ARRAY_EXCEPTION;
   just_pop_ref();
   jint_array_ptr(arrayStart)[tempInt] = tempStackWord;
-  goto LABEL_ENGINELOOP;
+  DISPATCH;
 
-case OP_CASTORE:
-case OP_SASTORE:
+OPCODE(OP_CASTORE)
+OPCODE(OP_SASTORE)
   // Stack size: -3
   tempStackWord = pop_word();
   tempInt = array_helper( pc, stackTop);
@@ -139,9 +139,9 @@ case OP_SASTORE:
     goto LABEL_ARRAY_EXCEPTION;
   just_pop_ref();
   jshort_array_ptr(arrayStart)[tempInt] = tempStackWord;
-  goto LABEL_ENGINELOOP;
+  DISPATCH;
 
-case OP_BASTORE:
+OPCODE(OP_BASTORE)
   // Stack size: -3
   tempStackWord = pop_word();
   tempInt = array_helper( pc, stackTop);
@@ -150,10 +150,10 @@ case OP_BASTORE:
     goto LABEL_ARRAY_EXCEPTION;
   just_pop_ref();
   jbyte_array_ptr(arrayStart)[tempInt] = tempStackWord;
-  goto LABEL_ENGINELOOP;
+  DISPATCH;
 
-case OP_DASTORE:
-case OP_LASTORE:
+OPCODE(OP_DASTORE)
+OPCODE(OP_LASTORE)
   // Stack size: -4
   {
     STACKWORD tempStackWord2;
@@ -169,9 +169,9 @@ case OP_LASTORE:
     jint_array_ptr(arrayStart)[tempInt++] = tempStackWord;
     jint_array_ptr(arrayStart)[tempInt] = tempStackWord2;
   }
-  goto LABEL_ENGINELOOP;
+  DISPATCH;
 
-case OP_ARRAYLENGTH:
+OPCODE(OP_ARRAYLENGTH)
   // Stack size: -1 + 1
   // Arguments: 0
   {
@@ -185,7 +185,7 @@ case OP_ARRAYLENGTH:
       goto LABEL_NULLPTR_EXCEPTION;
     set_top_word (get_array_length (word2obj (tempRef)));
   }
-  goto LABEL_ENGINELOOP;
+  DISPATCH;
 
 
 // Notes:

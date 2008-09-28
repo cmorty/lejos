@@ -2,14 +2,14 @@
  * This is included inside a switch statement.
  */
 
-case OP_BIPUSH:
+OPCODE(OP_BIPUSH)
   // Stack size: +1
   // Arguments: 1
   // TBD: check negatives
   push_word ((JBYTE) (*pc++));
-  goto LABEL_ENGINEFASTLOOP;
+  DISPATCH;
 
-case OP_SIPUSH:
+OPCODE(OP_SIPUSH)
   // Stack size: +1
   // Arguments: 2
   #if 0
@@ -17,21 +17,21 @@ case OP_SIPUSH:
   #endif
   push_word ((JSHORT) (((TWOBYTES) pc[0] << 8) | pc[1]));
   pc += 2;
-  goto LABEL_ENGINEFASTLOOP;
+  DISPATCH;
 
-case OP_LDC_W:
+OPCODE(OP_LDC_W)
   tempConstRec = get_constant_record (((TWOBYTES) pc[0] << 8) | pc[1]);
   tempInt = 2;
   goto LDC_CONT;
 
-case OP_LDC_1:
-case OP_LDC_2:
-case OP_LDC_3:
+OPCODE(OP_LDC_1)
+OPCODE(OP_LDC_2)
+OPCODE(OP_LDC_3)
   tempConstRec = get_constant_record ((*(pc-1) - OP_LDC_1 + 1)*256 + *pc);
   tempInt = 1;
   goto LDC_CONT;
 
-case OP_LDC:
+OPCODE(OP_LDC)
   // Stack size: +1
   // Arguments: 1
   tempConstRec = get_constant_record (*pc);
@@ -47,7 +47,7 @@ LDC_CONT:
       tempWordPtr = (void *) create_string (tempConstRec, pc - 1);
       LOAD_REGS();
       if (tempWordPtr == JNULL)
-        goto LABEL_ENGINELOOP;
+        DISPATCH_CHECKED;
       push_ref (ptr2word (tempWordPtr));
       break;
     case T_INT:
@@ -60,9 +60,9 @@ LDC_CONT:
     #endif
   }
   pc += tempInt;
-  goto LABEL_ENGINELOOP;
+  DISPATCH;
 
-case OP_LDC2_W:
+OPCODE(OP_LDC2_W)
   // Stack size: +2
   // Arguments: 2
   {
@@ -78,132 +78,132 @@ case OP_LDC2_W:
     push_word(get_word_4_swp (tempBytePtr + 4));
     pc += 2;
   }
-  goto LABEL_ENGINELOOP;
+  DISPATCH;
 
-case OP_ACONST_NULL:
+OPCODE(OP_ACONST_NULL)
   // Stack size: +1
   // Arguments: 0
   push_ref (JNULL);
-  goto LABEL_ENGINEFASTLOOP;
+  DISPATCH;
 
-case OP_ICONST_M1:
+OPCODE(OP_ICONST_M1)
   push_word (-1);
-  goto LABEL_ENGINEFASTLOOP;
+  DISPATCH;
 
-case OP_ICONST_0:
+OPCODE(OP_ICONST_0)
   push_word (0);
-  goto LABEL_ENGINEFASTLOOP;
+  DISPATCH;
 
-case OP_ICONST_1:
+OPCODE(OP_ICONST_1)
   push_word (1);
-  goto LABEL_ENGINEFASTLOOP;
+  DISPATCH;
 
-case OP_ICONST_2:
+OPCODE(OP_ICONST_2)
   push_word (2);
-  goto LABEL_ENGINEFASTLOOP;
+  DISPATCH;
 
-case OP_ICONST_3:
+OPCODE(OP_ICONST_3)
   push_word (3);
-  goto LABEL_ENGINEFASTLOOP;
+  DISPATCH;
 
-case OP_ICONST_4:
+OPCODE(OP_ICONST_4)
   push_word (4);
-  goto LABEL_ENGINEFASTLOOP;
+  DISPATCH;
 
-case OP_ICONST_5:
+OPCODE(OP_ICONST_5)
   push_word (5);
-  goto LABEL_ENGINEFASTLOOP;
+  DISPATCH;
 
-case OP_LCONST_0:
-case OP_LCONST_1:
+OPCODE(OP_LCONST_0)
+OPCODE(OP_LCONST_1)
   // Stack size: +2
   // Arguments: 0
   push_word (0);
   push_word (*(pc-1) - OP_LCONST_0);
-  goto LABEL_ENGINELOOP;
+  DISPATCH;
 
-case OP_DCONST_0:
+OPCODE(OP_DCONST_0)
   push_word (0);
   // Fall through!
-case OP_FCONST_0:
+OPCODE(OP_FCONST_0)
   push_word (0);
-  goto LABEL_ENGINEFASTLOOP;  
+  DISPATCH;  
 
-case OP_POP2:
+OPCODE(OP_POP2)
   // Stack size: -2
   // Arguments: 0
   just_pop_word();
   // Fall through
-case OP_POP:
+OPCODE(OP_POP)
   // Stack size: -1
   // Arguments: 0
   just_pop_word();
-  goto LABEL_ENGINELOOP;
+  DISPATCH;
 
-case OP_DUP:
+OPCODE(OP_DUP)
   // Stack size: +1
   // Arguments: 0
   dup();
-  goto LABEL_ENGINEFASTLOOP;
+  DISPATCH;
 
-case OP_DUP2:
+OPCODE(OP_DUP2)
   // Stack size: +2
   // Arguments: 0
   dup2();
-  goto LABEL_ENGINELOOP;
+  DISPATCH;
 
-case OP_DUP_X1:
+OPCODE(OP_DUP_X1)
   // Stack size: +1
   // Arguments: 0
   dup_x1();
-  goto LABEL_ENGINELOOP;
+  DISPATCH;
 
-case OP_DUP2_X1:
+OPCODE(OP_DUP2_X1)
   // Stack size: +2
   // Arguments: 0
   dup2_x1();
-  goto LABEL_ENGINELOOP;
+  DISPATCH;
 
-case OP_DUP_X2:
+OPCODE(OP_DUP_X2)
   // Stack size: +1
   // Arguments: 0
   dup_x2();
-  goto LABEL_ENGINELOOP;
+  DISPATCH;
 
-case OP_DUP2_X2:
+OPCODE(OP_DUP2_X2)
   // Stack size: +2
   // Arguments: 0
   dup2_x2();
-  goto LABEL_ENGINELOOP;
+  DISPATCH;
 
-case OP_SWAP:
+OPCODE(OP_SWAP)
   swap(); 
-  goto LABEL_ENGINELOOP;
+  DISPATCH;
 
 #if FP_ARITHMETIC
   
-case OP_FCONST_1:
+OPCODE(OP_FCONST_1)
   push_word (jfloat2word((JFLOAT) 1.0));
-  goto LABEL_ENGINELOOP;
+  DISPATCH;
 
-case OP_FCONST_2:
+OPCODE(OP_FCONST_2)
   push_word (jfloat2word((JFLOAT) 2.0));
-  goto LABEL_ENGINELOOP;
+  DISPATCH;
 
-case OP_DCONST_1:
+OPCODE(OP_DCONST_1)
   {
     // Stack size: +2
     // Arguments: 0
-    JDOUBLE d;
-    d.dnum = 1.0;
-    push_jdouble(&d);
-    goto LABEL_ENGINELOOP;
+    //JDOUBLE d1;
+    d1.dnum = 1.0;
+    push_jdouble(&d1);
+    DISPATCH;
   }
 
 #endif // FP_ARITHMETIC
 
   
-// Notes:
+// Notes)
 // - LDC_W should not occur in TinyVM or CompactVM.
 // - Arguments of LDC and LDC2_W are postprocessed.
 // - NOP is in op_skip.hc.
