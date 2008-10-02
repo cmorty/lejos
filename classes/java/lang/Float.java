@@ -137,7 +137,12 @@ package java.lang;
 		return negative ? -result : result;
 	}
 	
-	public String toString(float f) {
+	/**
+	 * Convert a float to a String
+	 * @param f the float to be converted
+	 * @return the String representation of the float
+	 */
+	public static String toString(float f) {
 		return "" + f;
 	}
 }
