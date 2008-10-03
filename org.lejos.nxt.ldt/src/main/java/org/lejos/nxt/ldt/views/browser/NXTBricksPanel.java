@@ -1,5 +1,6 @@
 package org.lejos.nxt.ldt.views.browser;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -7,7 +8,6 @@ import lejos.pc.comm.NXTCommException;
 import lejos.pc.comm.NXTCommFactory;
 import lejos.pc.comm.NXTCommand;
 import lejos.pc.comm.NXTInfo;
-
 
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnWeightData;
@@ -29,6 +29,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.lejos.nxt.ldt.LeJOSNXJPlugin;
 import org.lejos.nxt.ldt.comm.IConnectionListener;
 import org.lejos.nxt.ldt.comm.ISearchListener;
 import org.lejos.nxt.ldt.comm.NXTBrowserInfo;
@@ -48,9 +49,10 @@ public class NXTBricksPanel {
 		init(parent);
 
 		// TODO deactivate
-		NXTBrowserInfo testInfo = new NXTBrowserInfo(new NXTInfo("test", "xyz"));
-		NXTBrowserInfo[] testinfos = { testInfo };
-		updateBricksTable(testinfos);
+		// NXTBrowserInfo testInfo = new NXTBrowserInfo(new NXTInfo("test",
+		// "xyz"));
+		// NXTBrowserInfo[] testinfos = { testInfo };
+		// updateBricksTable(testinfos);
 	}
 
 	public void addConnectionListener(IConnectionListener listener) {
@@ -64,7 +66,7 @@ public class NXTBricksPanel {
 	public void addSearchlistener(ISearchListener listener) {
 		searchListeners.add(listener);
 	}
-	
+
 	public void removeSearchlistener(ISearchListener listener) {
 		searchListeners.remove(listener);
 	}
@@ -142,8 +144,24 @@ public class NXTBricksPanel {
 						&& (selection instanceof IStructuredSelection)) {
 					Object selected = ((IStructuredSelection) selection)
 							.getFirstElement();
-					if ((selected != null) && (selected instanceof NXTBrowserInfo)) {
-						connectToBrick((NXTBrowserInfo) selected);
+					if ((selected != null)
+							&& (selected instanceof NXTBrowserInfo)) {
+						NXTBrowserInfo browserInfo = (NXTBrowserInfo) selected;
+						if (!LeJOSNXJPlugin.getDefault().getConnectionManager()
+								.connectToBrick(browserInfo)) {
+							LeJOSNXJUtil.message("Brick "
+									+ browserInfo.getNXTInfo().name
+									+ " could not be connected");
+						} else {
+							// update table
+							updateTable(browserInfo,
+									NXTConnectionState.CONNECTED);
+							// notify listeners
+							for (IConnectionListener listener : connectionListeners) {
+								listener.brickConnected(browserInfo);
+							}
+						}
+
 					}
 				}
 			}
@@ -157,8 +175,24 @@ public class NXTBricksPanel {
 						&& (selection instanceof IStructuredSelection)) {
 					Object selected = ((IStructuredSelection) selection)
 							.getFirstElement();
-					if ((selected != null) && (selected instanceof NXTBrowserInfo)) {
-						detachFromBrick((NXTBrowserInfo) selected);
+					if ((selected != null)
+							&& (selected instanceof NXTBrowserInfo)) {
+						LeJOSNXJPlugin.getDefault().getConnectionManager()
+								.detachFromBricks();
+						NXTBrowserInfo browserInfo = (NXTBrowserInfo) selected;
+						// update table
+						updateTable(browserInfo,
+								NXTConnectionState.DISCONNECTED);
+						// notify listeners
+						for (IConnectionListener listener : connectionListeners) {
+							listener.brickDetached(browserInfo);
+						}
+						// do a re-search
+						final NXTBrowserInfo[] nxtBricks = LeJOSNXJPlugin
+								.getDefault().getConnectionManager()
+								.searchForNXTBricks();
+						updateBricksTable(nxtBricks);
+
 					}
 				}
 			}
@@ -168,11 +202,13 @@ public class NXTBricksPanel {
 		search.setText("Search");
 		search.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				for(ISearchListener listener : searchListeners) {
+				for (ISearchListener listener : searchListeners) {
 					listener.searchStarted();
 				}
-				final NXTBrowserInfo[] nxtBricks = searchForNXTBricks();
-				for(ISearchListener listener : searchListeners) {
+				// TODO show progress and hour glass
+				final NXTBrowserInfo[] nxtBricks = LeJOSNXJPlugin.getDefault()
+						.getConnectionManager().searchForNXTBricks();
+				for (ISearchListener listener : searchListeners) {
 					listener.searchFinished();
 				}
 				updateBricksTable(nxtBricks);
@@ -180,96 +216,21 @@ public class NXTBricksPanel {
 		});
 	}
 
-	private NXTBrowserInfo[] searchForNXTBricks() {
-		NXTBrowserInfo[] nxtBricks = null;
-		NXTInfo[] nxtUSBBricks = null;
-		NXTInfo[] nxtBluetoothBricks = null;
-		// TODO show progress and hour glass
-		NXTCommand nxtCommand = NXTCommand.getSingleton();
-		try {
-			nxtUSBBricks = nxtCommand.search(null, NXTCommFactory.USB);
-		} catch (NXTCommException nce) {
-			LeJOSNXJUtil.message("something went wrong when searching for NXT bricks via USB: " + nce.getMessage());
-		}
-		try {
-			nxtBluetoothBricks = nxtCommand.search(null,
-					NXTCommFactory.BLUETOOTH);
-		} catch (NXTCommException nce) {
-			LeJOSNXJUtil.message("something went wrong when searching for NXT bricks via Bluetooth: " + nce.getMessage());
-		}
-		int noOfUSBBricksFound = 0;
-		if (nxtUSBBricks != null) {
-			noOfUSBBricksFound = nxtUSBBricks.length;
-		}
-		int noOfBluetoothBricksFound = 0;
-		if (nxtBluetoothBricks != null) {
-			noOfBluetoothBricksFound = nxtBluetoothBricks.length;
-		}
-		int noOfBricksFound = noOfUSBBricksFound + noOfBluetoothBricksFound;
-		if (noOfBricksFound > 0) {
-			nxtBricks = new NXTBrowserInfo[noOfBricksFound];
-			int i = 0;
-			for (int j = 0; j < noOfUSBBricksFound; j++) {
-				nxtBricks[i++] = new NXTBrowserInfo(nxtUSBBricks[j]);
-			}
-			for (int j = 0; j < noOfBluetoothBricksFound; j++) {
-				nxtBricks[i++] = new NXTBrowserInfo(nxtBluetoothBricks[j]);
-			}
-		}
-		return nxtBricks;
-	}
-
 	private void updateBricksTable(NXTBrowserInfo[] nxtBricks) {
 		bricksTable.setInput(nxtBricks);
 	}
 
-	private void connectToBrick(NXTBrowserInfo browserInfo) {
-		boolean brickConnected = false;
-		try {
-			brickConnected = NXTCommand.getSingleton().open(browserInfo.getNXTInfo());
-		} catch (Throwable t) {
-			LeJOSNXJUtil.message(t);
-		}
-		if (!brickConnected) {
-			LeJOSNXJUtil.message("Brick " + browserInfo.getNXTInfo().name + " could not be connected");
-		} else {
-			// update table
-			updateTable(browserInfo,NXTConnectionState.CONNECTED);
-			// notify listeners
-			for (IConnectionListener listener : connectionListeners) {
-				listener.brickConnected(browserInfo);
-			}
-		}
-	}
-
-	private void detachFromBrick(NXTBrowserInfo browserInfo) {
-		try {
-			NXTCommand.getSingleton().close();
-			// update table
-			updateTable(browserInfo,NXTConnectionState.DISCONNECTED);
-			// notify listeners
-			for (IConnectionListener listener : connectionListeners) {
-				listener.brickDetached(browserInfo);
-			}
-			// do a re-search
-			final NXTBrowserInfo[] nxtBricks = searchForNXTBricks();
-			updateBricksTable(nxtBricks);
-		} catch (Throwable t) {
-			LeJOSNXJUtil.message(t);
-		}
-	}
-
-	private void updateTable(NXTBrowserInfo info,NXTConnectionState state) {
-		NXTBrowserInfo[] infos = (NXTBrowserInfo[])bricksTable.getInput();
+	private void updateTable(NXTBrowserInfo info, NXTConnectionState state) {
+		NXTBrowserInfo[] infos = (NXTBrowserInfo[]) bricksTable.getInput();
 		for (NXTBrowserInfo browserInfo : infos) {
-			if(browserInfo.equals(browserInfo)) {
+			if (browserInfo.equals(browserInfo)) {
 				browserInfo.setConnectionState(state);
 				break;
 			}
 		}
 		bricksTable.setInput(infos);
 	}
-	
+
 	class BricksTableLabelProvider extends LabelProvider implements
 			ITableLabelProvider {
 
