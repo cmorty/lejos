@@ -15,6 +15,7 @@ import org.eclipse.ui.console.IConsoleManager;
 import org.eclipse.ui.console.IConsoleView;
 import org.eclipse.ui.console.MessageConsole;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.lejos.nxt.ldt.comm.NXTConnectionManager;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -32,6 +33,9 @@ public class LeJOSNXJPlugin extends AbstractUIPlugin {
 
 	// the leJOS NXJ console
 	private MessageConsole _leJOSNXJConsole;
+	
+	// the connection manager
+	private NXTConnectionManager connectionManager;
 
 	/**
 	 * The constructor
@@ -104,6 +108,12 @@ public class LeJOSNXJPlugin extends AbstractUIPlugin {
 		Status status = new Status(IStatus.ERROR, PLUGIN_ID, throwable
 				.getMessage(), throwable);
 		getDefault().getLog().log(status);
+	}
+
+	public NXTConnectionManager getConnectionManager() {
+		if(connectionManager==null)
+			connectionManager = new NXTConnectionManager();
+		return connectionManager;
 	}
 
 	public MessageConsole getLeJOSNXJConsole() {
