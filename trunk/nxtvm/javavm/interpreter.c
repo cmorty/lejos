@@ -154,11 +154,9 @@ Object *create_string (ConstantRecord *constantRecord,
   {
     deallocate (obj2ptr(ref), class_size (JAVA_LANG_STRING));    
     // If this is the 2nd attempt at creating this object give up!
- if(retry)printf("OOM in string size %d\n", constantRecord->constantSize);
     if (retry) throw_exception(outOfMemoryError);
     return JNULL;
   }
-  // printf ("char array at %d\n", (int) arr);
   
   store_word_ns( (byte *) &(((String *) ref)->characters), 4, obj2word(arr));
   dst = jchar_array(arr);

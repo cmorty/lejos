@@ -341,7 +341,7 @@ OPCODE(OP_CHECKCAST)
   // Arguments: 2
   // Ignore hi byte
   tempStackWord = get_top_ref();
-  if (tempStackWord != JNULL && !instance_of (word2obj (tempStackWord), pc[1]))
+  if (tempStackWord != JNULL && !instance_of (word2obj (tempStackWord), pc[1] | (pc[0] << 8)))
   {
     thrownException = classCastException;
     goto LABEL_THROW_EXCEPTION;

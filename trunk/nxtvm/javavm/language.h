@@ -116,6 +116,9 @@ typedef struct S_ConstantRecord
 
 typedef TWOBYTES STATICFIELD;
 
+// Flags used for INSTANCE and CAST checks
+#define CC_ARRAY 0x8000
+
 extern void *installedBinary;
 
 extern ConstantRecord* constantTableBase;
@@ -134,7 +137,7 @@ extern byte *classStatusBase;
 extern byte get_class_index (Object *obj);
 extern void dispatch_virtual (Object *obj, int signature, byte *rAddr);
 extern MethodRecord *find_method (ClassRecord *classRec, int signature);
-extern STACKWORD instance_of (Object *obj, byte classIndex);
+extern STACKWORD instance_of (Object *obj, TWOBYTES classIndex);
 extern void do_return (int numWords);
 extern int dispatch_static_initializer (ClassRecord *aRec, byte *rAddr);
 extern boolean dispatch_special (MethodRecord *methodRecord, byte *retAddr);

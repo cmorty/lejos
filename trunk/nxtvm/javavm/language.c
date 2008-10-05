@@ -16,6 +16,7 @@
 #include "exceptions.h"
 #include "stack.h"
 #include "platform_hooks.h"
+#include "rconsole.h"
 #if 0
 #define get_stack_object(MREC_)  ((Object *) get_ref_at ((MREC_)->numParameters - 1))
 #endif
@@ -71,7 +72,6 @@ MethodRecord *find_method (ClassRecord *classRecord, int methodSignature)
 {
   MethodRecord* mr0 = get_method_table( classRecord);
   MethodRecord* mr = mr0 + classRecord->numMethods;
-
   while( -- mr >= mr0)
     if( mr->signatureId == methodSignature)
       return mr;
@@ -120,7 +120,6 @@ void dispatch_virtual (Object *ref, int signature, byte *retAddr)
     throw_exception (nullPointerException);
     return;
   }
-
   classIndex = get_class_index(ref);
  LABEL_METHODLOOKUP:
   classRecord = get_class_record (classIndex);
@@ -159,7 +158,6 @@ void dispatch_special_checked (byte classIndex, byte methodIndex,
                                byte *retAddr, byte *btAddr)
 {
   ClassRecord *classRecord;
-
   #if DEBUG_METHODS
   printf ("dispatch_special_checked: %d, %d, %d, %d\n",
           classIndex, methodIndex, (int) retAddr, (int) btAddr);
@@ -221,7 +219,6 @@ boolean dispatch_special (MethodRecord *methodRecord, byte *retAddr)
   // First deal with the easy case of a native call...
   if (is_native (methodRecord))
   {
-    byte *savedPc = curPc;
   #if DEBUG_METHODS
   printf ("-- native\n");
   #endif 
@@ -430,12 +427,20 @@ void do_return (int numWords)
 /**
  * @return 1 or 0.
  */
-STACKWORD instance_of (Object *obj, byte classIndex)
+STACKWORD instance_of (Object *obj, TWOBYTES classIndex)
 {
   byte rtType;
 
   if (obj == null)
     return 0;
+  // Check for special case of arrays
+  if (classIndex & CC_ARRAY)
+  {
+    // and deal with the array note that we could do a lot more here. We
+    // have the class of the element and the number of dimensions...
+    if (!is_array(obj)) return 0;
+    return 1;
+  }
   rtType = get_class_index(obj);
   // TBD: support for interfaces
   if (is_interface (get_class_record(classIndex)))
