@@ -343,7 +343,28 @@ public class ClassRecord implements WritableData
       }
       return getParent().getVirtualMethodRecord(aSig);
    }
-
+   
+   MethodRecord getInterfaceMethodRecord (Signature aSig)
+   {
+      /* Search for a method defined by an interface. First search the current
+       * interface then search all super interfaces.
+       */
+      MethodRecord pRec = getMethodRecord(aSig);
+      if (pRec != null)
+         return pRec;
+       String []interfaces = iCF.getInterfaceNames();
+       if (interfaces == null) return null;
+       for(int i = 0; i < interfaces.length; i++)
+       {
+           // _logger.log(Level.INFO, "Interface name " + interfaces[i]);
+           ClassRecord pInterfaceRecord = iBinary.getClassRecord(interfaces[i].replace('.', '/'));
+           pRec = pInterfaceRecord.getInterfaceMethodRecord(aSig);
+           if (pRec != null)
+               return pRec;
+       }
+       return null;
+   }
+   
    int getMethodIndex (MethodRecord aRecord)
    {
       return iMethodTable.indexOf(aRecord);
@@ -351,6 +372,10 @@ public class ClassRecord implements WritableData
 
    int getApparentInstanceFieldOffset (String aName) throws TinyVMException
    {
+      /* Locate the record for the field called aName starting at the current
+       * class and if needed searching parent fields. When found return the
+       * offset of the field within the current class.
+       */
       int pOffset = hasParent()? getParent().getClassSize() : 0;
       for (Iterator iter = iInstanceFields.iterator(); iter.hasNext();)
       {
@@ -359,12 +384,18 @@ public class ClassRecord implements WritableData
             return pOffset;
          pOffset += pRec.getFieldSize();
       }
+      if (hasParent())
+          return getParent().getApparentInstanceFieldOffset(aName);
       return -1;
    }
 
    public int getInstanceFieldOffset (String aName) throws TinyVMException
    {
-      return getApparentInstanceFieldOffset(aName) + 4;
+      int offset = getApparentInstanceFieldOffset(aName);
+      if (offset < 0)
+          return offset;
+      // Return the offset allowing for the class header.
+      return offset + 4;
    }
 
    /**
@@ -390,7 +421,27 @@ public class ClassRecord implements WritableData
    
    public StaticFieldRecord getStaticFieldRecord(String aName)
    {
-      return (StaticFieldRecord) iStaticFields.get(aName);       
+      /* Locate the record for the static field call aName. First search the
+       * current class, then if it is not found examine any interfaces and
+       * parent classes.
+       */
+      // First look to see if it is local
+      StaticFieldRecord pRec = (StaticFieldRecord) iStaticFields.get(aName); 
+      if (pRec != null) return pRec;
+      // now search any interfaces
+      String []interfaces = iCF.getInterfaceNames();
+      if (interfaces != null)
+         for(int i = 0; i < interfaces.length; i++)
+         {
+            ClassRecord pInterfaceRecord = iBinary.getClassRecord(interfaces[i].replace('.', '/'));
+            pRec = pInterfaceRecord.getStaticFieldRecord(aName);
+            if (pRec != null)
+               return pRec;
+         } 
+      // Now try any parent class
+      if (hasParent())
+          return getParent().getStaticFieldRecord(aName);
+      return null;
    }
 
    public void storeConstants (RecordTable aConstantTable,
