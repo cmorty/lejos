@@ -623,7 +623,7 @@ public class Binary
 			MethodRecord mr = (MethodRecord) (rt.get(j));
             if ((mr.iFlags & TinyVMConstants.M_NATIVE) == 0)
                 monitor.log("Method " + methodNo + ": Class: " + mr.iClassRecord.getName() + " Signature: " + 
-                             ((Signature)iSignatures.elementAt(mr.iSignatureId)).getImage() + " PC " + mr.getCodeStart());
+                             ((Signature)iSignatures.elementAt(mr.iSignatureId)).getImage() + " PC " + mr.getCodeStart() + " Signature id " + mr.iSignatureId);
             else
                 monitor.log("Method " + methodNo + ": Class: " + mr.iClassRecord.getName() + " Signature: " + 
                              ((Signature)iSignatures.elementAt(mr.iSignatureId)).getImage() + " Native id " + mr.iSignatureId);

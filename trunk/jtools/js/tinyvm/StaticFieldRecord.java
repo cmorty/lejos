@@ -68,5 +68,9 @@ public class StaticFieldRecord implements WritableData
        return isUsed;
    }
 
+   public ClassRecord getClassRecord()
+   {
+       return iClassRecord;
+   }
 }
 

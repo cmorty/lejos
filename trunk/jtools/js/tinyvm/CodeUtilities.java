@@ -84,9 +84,9 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
       String pClassName = pClassEntry.getBytes(iCF.getConstantPool());
       if (pClassName.startsWith("["))
       {
-         throw new TinyVMException("In " + iFullName
-            + ": Operations instanceof or " + "checkcast on array classes ("
-            + pClassName + " in this case) are not yet supported by TinyVM.");
+         // Handle the special case of array types.
+         int[] pTypeDim = getTypeAndDimensions(pClassName);
+         return (pTypeDim[0] & 0xff) | ((pTypeDim[1] & 0xff) << 8) | TinyVMConstants.CC_ARRAY;
       }
       int pIdx = iBinary.getClassIndex(pClassName);
       if (pIdx == -1)
@@ -113,6 +113,11 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
 
       assert pTypeDim[0] <= 0xFF: "Check: correct type";
       assert pTypeDim[1] > 0 && pTypeDim[1] <= 0xFF: "Check: correct dimension";
+      if (pTypeDim[1] > TinyVMConstants.MAX_DIMS)
+      {
+         throw new TinyVMException("In " + iFullName
+            + ": Multi-dimensional arrays are limited to " + TinyVMConstants.MAX_DIMS );
+      }
 
       return pTypeDim[0] << 8 | pTypeDim[1];
    }
@@ -124,7 +129,7 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
          i++;
       return new int[]
       {
-         Utility.typeOfSignature(aMultiArrayDesc.substring(i)), i
+         TinyVMType.tinyVMTypeFromSignature(aMultiArrayDesc.substring(i)).type(), i
       };
    }
 
@@ -156,9 +161,16 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
       String pName = cnat.getName(iCF.getConstantPool());
       if (aStatic)
       {
-         int pClassIndex = iBinary.getClassIndex(pClassRecord);
+         // First find the actual defining class
+         StaticFieldRecord pFieldRecord = pClassRecord.getStaticFieldRecord(pName);
+         if (pFieldRecord == null)
+         {
+             throw new TinyVMException("Failed to locate static field " + pName +
+                     " refrenced via class " + className + " from class " + iCF.getClassName());            
+         }
+         int pClassIndex = iBinary.getClassIndex(pFieldRecord.getClassRecord());
          assert pClassIndex >= 0 && pClassIndex <= 0xFF: "Check: class index in range";
-         int pFieldIndex = pClassRecord.getStaticFieldIndex(pName);
+         int pFieldIndex = pFieldRecord.getClassRecord().getStaticFieldIndex(pName);
          assert pFieldIndex >= 0 && pFieldIndex <= 0x03FF: "Check: field index in range";
 
          return (pClassIndex << 16) | pFieldIndex;
@@ -174,13 +186,12 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
          assert pOffset <= TinyVMConstants.MAX_FIELD_OFFSET: "Check: field offset in range";
          TinyVMType fieldType = TinyVMType.tinyVMTypeFromSignature(cnat
             .getSignature(iCF.getConstantPool()));
-
          return (fieldType.type() << TinyVMConstants.F_SIZE_SHIFT) | pOffset;
       }
    }
  
    /**
-    * Make the class as being used.
+    * Mark the class as being used.
     * @param aPoolIndex
     * @return
     * @throws js.tinyvm.TinyVMException
@@ -196,6 +207,9 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
       }
       ConstantClass pClassEntry = (ConstantClass) pEntry;
       String pClassName = pClassEntry.getBytes(iCF.getConstantPool());
+      // No need to mark arrays
+      if (pClassName.startsWith("["))
+        return;
       ClassRecord pClassRecord = iBinary.getClassRecord(pClassName);
       if (pClassRecord == null)
       {
@@ -231,9 +245,15 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
       ConstantNameAndType cnat = (ConstantNameAndType) iCF.getConstantPool()
          .getConstant(pFieldEntry.getNameAndTypeIndex());
       String pName = cnat.getName(iCF.getConstantPool());
-
       iBinary.markClassUsed(pClassRecord);
-      pClassRecord.getStaticFieldRecord(pName).markUsed();
+      StaticFieldRecord pFieldRecord = pClassRecord.getStaticFieldRecord(pName);
+      if (pFieldRecord == null)
+      {
+          throw new TinyVMException("Failed to locate static field " + pName +
+                 " refrenced via class " + className + " from class " + iCF.getClassName());
+      }
+      iBinary.markClassUsed(pFieldRecord.getClassRecord());
+      pFieldRecord.markUsed();
    }
 
    /**
@@ -241,7 +261,7 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
     *         opcode.
     * @throws TinyVMException
     */
-   int processMethod (int aMethodIndex, boolean aSpecial)
+   int processMethod (int aMethodIndex, boolean aSpecial, boolean aInterface)
       throws TinyVMException
    {
       Constant pEntry = iCF.getConstantPool().getConstant(aMethodIndex); // TODO catch all (runtime) exceptions
@@ -264,7 +284,11 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
          .getConstant(pMethodEntry.getNameAndTypeIndex());
       Signature pSig = new Signature(pNT.getName(iCF.getConstantPool()), pNT
          .getSignature(iCF.getConstantPool()));
-      MethodRecord pMethod = pClassRecord.getVirtualMethodRecord(pSig);
+      MethodRecord pMethod;
+      if (aInterface)
+        pMethod = pClassRecord.getInterfaceMethodRecord(pSig);
+      else
+        pMethod = pClassRecord.getVirtualMethodRecord(pSig);
       if (pMethod == null)
       {
          throw new TinyVMException("Method " + pSig + " not found  in "
@@ -288,7 +312,6 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
          assert pNumParams < TinyVMConstants.MAX_PARAMETER_WORDS: "Check: number of parameters not to high";
          int pSignature = pMethod.getSignatureId();
          assert pSignature < TinyVMConstants.MAX_SIGNATURES: "Check: signature in range";
-
          return (pNumParams << TinyVMConstants.M_ARGS_SHIFT) | pSignature;
       }
    }
@@ -297,7 +320,7 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
     *         opcode.
     * @throws TinyVMException
     */
-   MethodRecord findMethod (int aMethodIndex, boolean aSpecial)
+   MethodRecord findMethod (int aMethodIndex, boolean aSpecial, boolean aInterface)
       throws TinyVMException
    {
       Constant pEntry = iCF.getConstantPool().getConstant(aMethodIndex); // TODO catch all (runtime) exceptions
@@ -320,7 +343,11 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
          .getConstant(pMethodEntry.getNameAndTypeIndex());
       Signature pSig = new Signature(pNT.getName(iCF.getConstantPool()), pNT
          .getSignature(iCF.getConstantPool()));
-      MethodRecord pMethod = pClassRecord.getVirtualMethodRecord(pSig);
+      MethodRecord pMethod;
+      if (aInterface)
+        pMethod = pClassRecord.getInterfaceMethodRecord(pSig);
+      else
+        pMethod = pClassRecord.getVirtualMethodRecord(pSig);
       //if (pMethod == null)
           // _logger.log(Level.INFO, "Failed to find " + pSig + " class " + className);
       return pMethod;
@@ -362,6 +389,7 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
          int pOpCode = pOutCode[i] & 0xFF;
 
          i++;
+         //System.out.println("Opcode " + OPCODE_NAME[pOpCode] + " addr " + i);
          switch (pOpCode)
          {
             case OP_LDC:
@@ -385,7 +413,7 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
             case OP_ANEWARRAY:
                // Opcode is changed: ANEWARRAY -> NEWARRAY
                pOutCode[i - 1] = (byte) OP_NEWARRAY;
-               pOutCode[i++] = (byte) TinyVMType.T_ARRAY_TYPE;
+               pOutCode[i++] = (byte) TinyVMType.T_REFERENCE_TYPE;
                pOutCode[i++] = (byte) OP_NOP;
                break;
             case OP_MULTIANEWARRAY:
@@ -399,14 +427,19 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
                pOutCode[i] = aCode[i];
                i++;
                break;
-            case OP_NEW:
             case OP_CHECKCAST:
             case OP_INSTANCEOF:
                int pIdx3 = processClassIndex((aCode[i] & 0xFF) << 8
                   | (aCode[i + 1] & 0xFF));
-               assert pIdx3 < TinyVMConstants.MAX_CLASSES: "Check: class index in range";
                pOutCode[i++] = (byte) (pIdx3 >> 8);
                pOutCode[i++] = (byte) (pIdx3 & 0xFF);
+               break;
+            case OP_NEW:
+               int pIdx4 = processClassIndex((aCode[i] & 0xFF) << 8
+                  | (aCode[i + 1] & 0xFF));
+               assert pIdx4 < TinyVMConstants.MAX_CLASSES: "Check: class index in range";
+               pOutCode[i++] = (byte) (pIdx4 >> 8);
+               pOutCode[i++] = (byte) (pIdx4 & 0xFF);
                break;
             case OP_PUTSTATIC:
             case OP_GETSTATIC:
@@ -473,7 +506,7 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
                // Opcode is changed:
                pOutCode[i - 1] = (byte) OP_INVOKEVIRTUAL;
                int pWord3 = processMethod((aCode[i] & 0xFF) << 8
-                  | (aCode[i + 1] & 0xFF), false);
+                  | (aCode[i + 1] & 0xFF), false, true);
                pOutCode[i++] = (byte) (pWord3 >> 8);
                pOutCode[i++] = (byte) (pWord3 & 0xFF);
                pOutCode[i++] = (byte) OP_NOP; // before: count
@@ -483,14 +516,14 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
             case OP_INVOKESTATIC:
                // Opcode is changed:
                int pWord4 = processMethod((aCode[i] & 0xFF) << 8
-                  | (aCode[i + 1] & 0xFF), true);
+                  | (aCode[i + 1] & 0xFF), true, false);
                pOutCode[i++] = (byte) (pWord4 >> 8);
                pOutCode[i++] = (byte) (pWord4 & 0xFF);
                break;
             case OP_INVOKEVIRTUAL:
                // Opcode is changed:
                int pWord5 = processMethod((aCode[i] & 0xFF) << 8
-                  | (aCode[i + 1] & 0xFF), false);
+                  | (aCode[i + 1] & 0xFF), false, false);
                pOutCode[i++] = (byte) (pWord5 >> 8);
                pOutCode[i++] = (byte) (pWord5 & 0xFF);
                break;
@@ -581,7 +614,7 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
          int pOpCode = aCode[i] & 0xFF;
 
          i++;
-         //System.out.println("Opcode " + OPCODE_NAME[pOpCode]);
+         //System.out.println("Opcode " + OPCODE_NAME[pOpCode] + " addr " + i);
          switch (pOpCode)
          {
             case OP_LDC:
@@ -618,14 +651,14 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
                // Opcode is changed:
                // _logger.log(Level.INFO, "Interface");
                MethodRecord pMeth0 = findMethod((aCode[i] & 0xFF) << 8
-                  | (aCode[i + 1] & 0xFF), false); 
+                  | (aCode[i + 1] & 0xFF), false, true); 
                if (pMeth0 != null) pMeth0.getClassRecord().markMethod(pMeth0, true);
                i += 4;
                break;
             case OP_INVOKEVIRTUAL:
                // Opcode is changed:
                MethodRecord pMeth1 = findMethod((aCode[i] & 0xFF) << 8
-                  | (aCode[i + 1] & 0xFF), false); 
+                  | (aCode[i + 1] & 0xFF), false, false); 
                if (pMeth1 != null) pMeth1.getClassRecord().markMethod(pMeth1, true);
                i += 2;
                break;
@@ -633,7 +666,7 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
             case OP_INVOKESTATIC:
                // Opcode is changed:
                MethodRecord pMeth2 = findMethod((aCode[i] & 0xFF) << 8
-                  | (aCode[i + 1] & 0xFF), true); 
+                  | (aCode[i + 1] & 0xFF), true, false); 
                if (pMeth2 != null) pMeth2.getClassRecord().markMethod(pMeth2, true);
                i += 2;
                break;
