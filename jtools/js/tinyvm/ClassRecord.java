@@ -277,6 +277,11 @@ public class ClassRecord implements WritableData
             ClassRecord pClassRec = (ClassRecord) aClasses.get(className);
             if (pClassRec == null)
             {
+               if (className.startsWith("["))
+               {
+                  // _logger.log(Level.INFO, "Skipping array: " + pClassName);
+                  continue;
+               }
                pClassRec = ClassRecord.getClassRecord(className, aClassPath,
                   iBinary);
                aClasses.put(className, pClassRec);
