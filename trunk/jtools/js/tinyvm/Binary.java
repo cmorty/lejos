@@ -384,6 +384,8 @@ public class Binary
       do {
          classCount = usedClassCount;
          markGeneration++;
+         // First make sure all interfaces implementors and hidden 
+         // methods are exposed
          for (int pIndex = 0; pIndex < pSize; pIndex++)
          {
             ClassRecord classRecord = (ClassRecord) iClassTable.get(pIndex);
@@ -391,7 +393,15 @@ public class Binary
             {
                classRecord.addInterfaces(classRecord);
                classRecord.findHiddenMethods();
-
+            }
+         } 
+         // Now recursively mark any classes that can be called directly by
+         // the VM
+         for (int pIndex = 0; pIndex < pSize; pIndex++)
+         {
+            ClassRecord classRecord = (ClassRecord) iClassTable.get(pIndex);
+            if (classRecord.used())
+            {
 
                if (classRecord.hasMethod(runMethod, false))
                {
@@ -406,6 +416,7 @@ public class Binary
                }
             }
          }
+         // Finally mark starting from all of the entry classes
          for (int i = 0; i < entryClassNames.length; i++)
          {
             ClassRecord classRecord = getClassRecord(entryClassNames[i]);
