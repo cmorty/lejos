@@ -1,542 +1,156 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="en"><head><!-- CSS -->
-		
-		<link rel="stylesheet" href="../r_css/lejos-tutorial.css" type="text/css" /><!-- ICON -->
+<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="en">
+<head><!-- CSS -->		
+	<link rel="stylesheet" href="../r_css/lejos-tutorial.css" type="text/css" /><!-- ICON -->
+	<link rel="shortcut icon" href="../favicon.ico" type="image/x-icon" />		
+	<title>Compiling and Running NXJ programs</title>
+	<meta name="AUTHOR" content="Roger Glassey" />
+	<meta name="AUTHOR" content="Lawrie Griffiths" />
+</head>
+<body>
+	<a id="top" name="top"></a>
+	<!-- N1: HEADER -->
+	<table class="n1t1" cellpadding="0" cellspacing="0">
+		<tr>
+			<td><img src="../r_media/images/tutorial_header1.jpg" /></td>
+			<td align="right"><img src="../r_media/images/tutorial_header2.jpg" /></td>
+		</tr>
+	</table>
+	<!-- N2: CONTENTS -> NAVIGATION SYSTEMS AND CONTENTS -->
+	<table class="n2t1" cellpadding="0" cellspacing="0">
+		<tr>
+			<td class="n2t1r1c1">
+				<div class="nolinkLESSON">Compiling and Running NXJ programs</a></div>
+				<div class="linkAHEAD"><a href="#1">Using the leJOS NXJ command line tools</a></div>
+				<div class="linkAHEAD2"><a href="#2">nxjc &#8211; compile  a program</a></div>
+				<div class="linkAHEAD2"><a href="#3">nxjlink &#8211; link a program</a></div>
+				<div class="linkAHEAD2"><a href="#4">nxjupload &#8211; upload a program</a></div>
+				<div class="linkAHEAD2"><a href="#5">nxj &#8211; link, upload and run a  program</a></div>
+			</td>
+			<td>
+				<!-- DO NOT MANINPULATE -->
+        		<div id="BreadCrumbs">
+            		<a href="../index.htm" target="_top">Home Page</a> &gt; <a href="#">Compiling and Running NXJ programs</a>
 
-		
-		<link rel="shortcut icon" href="../favicon.ico" type="image/x-icon" />
-		
-	
-	<title>Compiling and Running NXJ programs</title><meta name="GENERATOR" content="OpenOffice.org 2.4  (Win32)" />
-	<meta name="AUTHOR" content="Roger" />
-	<meta name="CREATED" content="20080903;13360000" />
-	<meta name="CHANGED" content="20080903;13433328" />
-	<style type="text/css">
-	<!--
-		@page { size: 10in 15in; margin-right: 1.25in; margin-top: 1in; margin-bottom: 4.46in }
-		P { margin-bottom: 0.08in; direction: ltr; color: #000000; widows: 2; orphans: 2 }
-		P.western { font-family: "Times New Roman", serif; font-size: 12pt; so-language: en-US }
-		P.cjk { font-family: "Times New Roman", serif; font-size: 12pt }
-		P.ctl { font-family: "Times New Roman", serif; font-size: 12pt; so-language: ar-SA }
-		H1 { margin-bottom: 0.04in; direction: ltr; color: #ff6600; widows: 2; orphans: 2 }
-		H1.western { font-family: "Arial", sans-serif; font-size: 16pt; so-language: en-US }
-		H1.cjk { font-family: "Times New Roman", serif; font-size: 16pt }
-		H1.ctl { font-family: "Arial", sans-serif; font-size: 16pt; so-language: ar-SA }
-		H2 { margin-bottom: 0.08in; direction: ltr; color: #ff6600; widows: 2; orphans: 2 }
-		H2.western { font-family: "Arial", sans-serif; font-size: 14pt; so-language: en-US; font-style: italic; font-weight: medium }
-		H2.cjk { font-family: "Times New Roman", serif; font-size: 14pt; font-style: italic; font-weight: medium }
-		H2.ctl { font-family: "Arial", sans-serif; font-size: 14pt; so-language: ar-SA; font-style: italic; font-weight: medium }
-		H3 { margin-left: 0.2in; margin-bottom: 0.08in; direction: ltr; color: #ff6600; widows: 2; orphans: 2 }
-		H3.western { font-family: "Arial", sans-serif; font-size: 13pt; so-language: en-US; font-style: italic }
-		H3.cjk { font-family: "Times New Roman", serif; font-size: 13pt; font-style: italic }
-		H3.ctl { font-family: "Arial", sans-serif; font-size: 13pt; so-language: ar-SA; font-style: italic }
-		H4 { margin-left: 0.3in; margin-bottom: 0.04in; direction: ltr; color: #000000; widows: 2; orphans: 2 }
-		H4.western { font-family: "Arial", sans-serif; so-language: en-US; font-style: italic }
-		H4.cjk { font-family: "Times New Roman", serif; font-style: italic }
-		H4.ctl { font-family: "Arial", sans-serif; so-language: ar-SA; font-style: normal; font-weight: medium }
-		P.body-text-2-western { margin-left: 0.1in; font-family: "Times New Roman", serif; font-size: 12pt; so-language: en-US }
-		P.body-text-2-cjk { margin-left: 0.1in; font-family: "Times New Roman", serif; font-size: 12pt }
-		P.body-text-2-ctl { margin-left: 0.1in; font-family: "Times New Roman", serif; font-size: 12pt; so-language: ar-SA }
-		P.body-text-3-western { margin-left: 0.2in; font-family: "Times New Roman", serif; font-size: 12pt; so-language: en-US }
-		P.body-text-3-cjk { margin-left: 0.2in; font-family: "Times New Roman", serif; font-size: 12pt }
-		P.body-text-3-ctl { margin-left: 0.2in; font-family: "Times New Roman", serif; font-size: 8pt; so-language: ar-SA }
-		P.body-text-4-western { margin-left: 0.3in; font-family: "Times New Roman", serif; font-size: 12pt; so-language: en-US }
-		P.body-text-4-cjk { margin-left: 0.3in; font-family: "Times New Roman", serif; font-size: 12pt }
-		P.body-text-4-ctl { margin-left: 0.3in; font-family: "Times New Roman", serif; font-size: 8pt; so-language: ar-SA }
-		A:link { color: #0000ff }
-		A:visited { color: #800080 }
-	-->
-	</style></head>
-
-	<body>
-		<a id="top" name="top"></a>
-		<!-- N1: HEADER -->
-		<table class="n1t1" cellpadding="0" cellspacing="0">
-			<tbody><tr>
-				<td><img src="../r_media/images/tutorial_header1.jpg" /></td>
-				<td align="right"><img src="../r_media/images/tutorial_header2.jpg" /></td>
-			</tr>
-		</tbody></table>
-		<!-- N2: CONTENTS -> NAVIGATION SYSTEMS AND CONTENTS -->
-		<table class="n2t1" cellpadding="0" cellspacing="0">
-			<tbody><tr>
-				<td class="n2t1r1c1">
-				<p><a href="#1.Compiling%20and%20Running%20NXJ%20programs%7Coutline">Compiling
-				and Running NXJ programs</a></p>
-				<p style="margin-left: 0.17in;"><a href="#1.1.Using%20the%20leJOS%20NXJ%20command%20line%20tools%7Coutline">Using
-				the leJOS NXJ command line tools</a></p>
-				<p style="margin-left: 0.5in;"><a href="#nxjc">nxjc
-				&#8211; compile  a programmer</a></p>
-				<p style="margin-left: 0.5in;"><a href="#1.1.0.2.nxjlink+%3F+link+a+leJOS+NXJ+program%7Coutline">nxjlink
-				&#8211; link a programmer</a></p>
-				<p style="margin-left: 0.5in;"><a href="#1.1.0.3.nxjupload+%3F+upload+a+leJOS+NXJ+program%7Coutline">nxjupload
-				&#8211; upload a program</a></p>
-				<p style="margin-left: 0.5in;"><a href="#1.1.0.4.nxj+%3F+link+and+upload+and+optional+run+a+leJOS+NXJ+program%7Coutline">nxj
-				&#8211; link, upload and optional run a  program</a></p>
-				<p style="margin-left: 0.17in;"><a href="#1.2.Using%20the%20Eclipse%20IDE%7Coutline">Using
-				the Eclipse IDE</a></p>
-				<p style="margin-left: 0.33in;"><a href="#1.2.1.Setting%20up%20Eclipse%7Coutline">Setting
-				up Eclipse</a></p>
-				<p style="margin-left: 0.33in;"><a href="#1.2.2.Creating%20a%20leJOS%20project%7Coutline">Creating
-				a leJOS project</a></p>
-				<p style="margin-left: 0.33in;"><a href="#1.2.3.Creating%20external%20tools%7Coutline">Creating
-				external tools</a></p>
-				<p style="margin-left: 0.5in;"><a href="#1.2.3.1.Creating%20a%20compiler%20tool%7Coutline">Creating
-				a compiler tool</a></p>
-				<p style="margin-left: 0.5in;"><a href="#1.2.3.2.Creating%20a%20tool%20to%20link%20and%20upload,%20%7Coutline">Creating
-				a tool to link and upload, </a>
-				</p>
-				<p style="margin-left: 0.33in;"><a href="#1.2.4.Using%20ant%20build%20files%7Coutline">Using
-				ant build files</a></p>
-				<p style="margin-left: 0.33in;"><a href="#1.2.5.Installing%20and%20using%20the%20leJOS%20plugin%7Coutline">Installing
-				and using the leJOS plugin</a></p>
-				<p style="margin-left: 0.17in;"><a href="#1.3.Using%20the%20NetBeans%20IDE%7Coutline">Using
-				the NetBeans IDE</a></p>
-				<p style="margin-left: 0.33in;"><a href="#1.3.1.Getting%20Started%20with%20NetBeans%7Coutline">Getting
-				Started with NetBeans</a></p>
-				<p style="margin-left: 0.33in;"><a href="#1.3.2.Installing%20and%20using%20the%20leJOSNXT%20plugin%7Coutline">Installing
-				and using the leJOSNXT plugin</a></p>
-				<p style="margin-left: 0.33in;"><a href="#1.3.3.Using%20NetBeans%20with%20NXJ%7Coutline">Using
-				NetBeans with NXJ</a></p>
-				</td>
-				<td>
-		<!-- DO NOT MANINPULATE -->
-        <div id="BreadCrumbs">
-            <a href="../index.htm" target="_top">Home Page</a>
-        &gt;
-            <a href="#">Compiling and Running NXJ programs</a>
-
-        </div>
-        <div class="NavBit">
-                <a target="_top" href="../Preliminaries/GettingStarted.htm">�&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../Menusystem/MenuSystem.htm">Next&nbsp;�</a>
-        </div>
-			<h1 class="western"><a name="_Preliminaries_1"></a><a name="1.Compiling and Running NXJ programs|outline"></a>
-			Compiling and Running NXJ programs</h1>
-			<h2 class="western"><a name="1.1.Using%20the%20leJOS%20NXJ%20command%20line%20tools%7Coutline"></a>
-			Using the leJOS NXJ command line tools</h2>
-			<p class="body-text-2-western">The tools for compiling, linking
-			and uploading leJOS NXJ programs are:</p>
-			<ul>
-				<li><p class="western">nxjc</p>
-				</li><li><p class="western">nxjlink</p>
-				</li><li><p class="western">nxjupload</p>
-				</li><li><p class="western">nxj</p>
-			</li></ul>
-			<h3 class="western"><a name="nxjc"></a>
-			nxjc &#8211; compile a leJOS NXJ program</h3>
-			<p class="body-text-4-western">Compiles one or more java files.</p>
-			<p class="body-text-4-western" lang="fr-FR">Usage: nxjc
-			&lt;java-files&gt;</p>
-			<p class="body-text-4-western" lang="fr-FR">Example: 
-			</p>
-			<p class="western"><span id="Frame1" style="border: 1px solid rgb(0, 0, 0); padding: 0.05in 0.1in; background: rgb(255, 255, 255) none repeat scroll 0%; float: left; width: 1.76in; height: 0.34in; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;" dir="ltr">
-				<p class="western"><font face="Courier New, monospace">nxjc
-				View.java</font></p>
-			</span><br /><br><br />
-			</p>
-			<p class="body-text-4-western">nxjc calls javac with parameters:</p>
-			<ul>
-				<li><p class="western">&#8211;source 1.3 
-				</p>
-				</li><li><p class="western">&#8211;target 1.1</p>
-				</li><li><p class="western">&#8211;bootclasspath &lt;bootclasspath&gt;
-								</p>
-				</li><li><p class="western">&lt;java-files&gt;</p>
-			</li></ul>
-			<p class="body-text-4-western" style="margin-left: 0.5in;">-bootclasspath
-			is set because leJOS does not use the standard java.lang classes
-			but has its own versions in classes.jar.</p>
-			<p class="body-text-4-western" style="margin-left: 0.5in;">-source
-			1.3 and &#8211;target 1.1 are set because the leJOS VM does not
-			support the latest java source and class file versions.</p>
-			<p class="body-text-4-western"><br /><br />
-			</p>
-			<h3 class="western"><a name="1.1.0.2.nxjlink+%3F+link+a+leJOS+NXJ+program%7Coutline"></a>
-			nxjlink &#8211; link a leJOS NXJ program</h3>
-			<p class="body-text-4-western"><br /><br />
-			</p>
-			<p class="body-text-4-western">Calls the leJOS linker.</p>
-			<p class="body-text-4-western">Usage:  nxjlink [-v|--verbose]
-			[-a|--all] class &#8211;o &lt;binary&gt;</p>
-			<p class="body-text-4-western">Example:</p>
-			<p class="western"><span id="Frame2" style="border: 1px solid rgb(0, 0, 0); padding: 0.05in 0.1in; background: rgb(255, 255, 255) none repeat scroll 0%; float: left; width: 3.42in; height: 0.3in; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;" dir="ltr">
-				<p class="western"><font face="Courier New, monospace">nxjlink &#8211;v
-				Tune &#8211;o Tune.nxj</font></p>
-			</span><br /><br><br />
-			</p>
-			<p class="body-text-4-western">Links the specified class with any
-			classes that it references in the current directory and with the
-			standard leJOS classes from classes.jar to produce a binary NXJ
-			program that can be uploaded and run.</p>
-			<p class="body-text-4-western">The &#8211;v or &#8211;verbose flag
-			causes a list of class names and method signatures included in the
-			binary  to be output to the standard output.</p>
-			<p class="body-text-4-western">The linker removes methods that are
-			not used. Specify &#8211;a or &#8211;all to include all  methods
-			whether they are used or not.</p>
-			<p class="body-text-4-western">Use the &#8211;h or &#8211;help
-			flag to print out the options.</p>
-			<h3 class="western"><a name="1.1.0.3.nxjupload+%3F+upload+a+leJOS+NXJ+program%7Coutline"></a>
-			nxjupload &#8211; upload a leJOS NXJ program</h3>
-			<p class="body-text-4-western">Usage: nxjupload [-b|--bluetooth]
-			[-u|--usb] [-d|--address address] [-n|--name name]  [-r|--run]
-			&lt;binary&gt;</p>
-			<p class="body-text-4-western">Example 
-			</p>
-			<p class="western"><span id="Frame3" style="border: 1px solid rgb(0, 0, 0); padding: 0.05in 0.1in; background: rgb(255, 255, 255) none repeat scroll 0%; float: left; width: 2.12in; height: 0.37in; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;" dir="ltr">
-				<p class="western">nxjupload  Tune.nxj</p>
-			</span><br /><br />
-			</p>
-			<p class="western" style="margin-bottom: 0in;"><br />
-			</p>
-			<p class="body-text-4-western">Uploads the binary (.nxj) file. By
-			default usb is tried first and then Bluetooth. If the &#8211;bluetooth
-			flag iset, only Bluetooth is tried. If &#8211;usb is set, only USB
-			is tried.</p>
-			<p class="body-text-4-western">When Bluetooth is used, a search
-			for Bluetooth devices is done, unless the &#8211;address flag is
-			set, when a device with the given address is connected to.</p>
-			<p class="body-text-4-western">The &#8211;name parameter limits
-			the search for a NXT with the given name. If this is not
-			specified, nxjupload tries to connect to each NXT that it finds
-			and will upload to the first NXT that is successfully connects to.</p>
-			<p class="body-text-4-western">If the &#8211;run parameter is
-			specified, the program is run after it has been uploaded.</p>
-			<h3 class="western"><a name="1.1.0.4.nxj+%3F+link+and+upload+and+optional+run+a+leJOS+NXJ+program%7Coutline"></a>
-			nxj &#8211; link and upload and optional run a leJOS NXJ program</h3>
-			<p class="body-text-4-western">Usage: nxj [options] &lt;class&gt;</p>
-			<p class="body-text-4-western">Example:
-			</p>
-			<p class="body-text-4-western"><br><span id="Frame4" style="border: 1px solid rgb(0, 0, 0); padding: 0.05in 0.1in; background: rgb(255, 255, 255) none repeat scroll 0%; float: left; width: 1.94in; height: 0.3in; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;" dir="ltr">
-				<p class="body-text-4-western"><font face="Courier New, monospace">nxj
-				&#8211;r Tune</font></p>
+        		</div>
+        		<div class="NavBit">
+                	<a target="_top" href="../Preliminaries/GettingStarted.htm">�&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../Menusystem/MenuSystem.htm">Next&nbsp;�</a>
+        		</div>
+				<div id="PageTitle">Compiling and Running NXJ programs</Div>
+				<p>This section describes how to compile and run leJOS NXJ programs from a command window.</p>
 				
-			</span><br><br><br />
-			</p>
-			<p class="body-text-4-western"> The nxj command links and uploads
-			a lejOS NXJ program. It is the equivalent of nxjlink followed by
-			nxjupload.</p>
-			<p class="western"><br /><br />
-			</p>
-			<p class="body-text-2-western" style="margin-left: 0in;"><font color="#0000ff"><u><a href="#1.Compiling%20and%20Running%20NXJ%20programs%7Coutline">Back
-			to Top</a></u></font></p>
-			<p class="western"><br /><br />
-			</p>
-			<h2 class="western"><a name="1.2.Using the Eclipse IDE|outline"></a>
-			Using the Eclipse IDE</h2>
-			<p class="western"><br /><br />
-			</p>
-			<p class="body-text-2-western">Programming for leJOS NXJ is best
-			done using an Integrated Development Environment. IDEs have
-			syntax-directed editors that immediately show you any syntax
-			errors in your program, rather than waiting until you compile the
-			program and then showing a list of errors. This, together with
-			color coding of the source, automatic formatting of the code,
-			prompting for method names and signatures, expanding and
-			collapsing parts of your program, and many other editing features,
-			makes creating your program a much faster and more enjoyable
-			experience. But the advantages of the IDE do not end there: they
-			also help you with creating and building projects, debugging,
-			generating documentation, and creating user interfaces. Java IDEs
-			put all the Sun Java tools and a variety of third-party tools at
-			your fingertips. They make supporting new tools simple, either by
-			use of plug-ins or by integration of external tools.</p>
-			<p class="body-text-2-western">IDEs are easy to set and use and
-			you should use them for all your leJOS programming &#8211; even
-			the simplest of projects.</p>
-			<p class="body-text-2-western">This tutorial concentrates the
-			Eclipse Java Integrated Development Environment, as this is
-			currently the most popular one for leJOS programmers, but there
-			are many other Java IDEs, such as Netbeans and BlueJ, each with
-			their own strengths,</p>
-			<p class="body-text-2-western">There are three ways of building
-			leJOS programs in Eclipse:</p>
-			<ul>
-				<li><p class="western">Using external tools</p>
-				</li><li><p class="western">Using ant build files</p>
-				</li><li><p class="western">Using a leJOS plug-in</p>
-			</li></ul>
-			<p class="body-text-3-western">It is worth understanding all of
-			these techniques as they each have there advantages, and a
-			combination of the techniques may well work best for your
-			projects.</p>
-			<p class="body-text-3-western">This tutorial assumes you are
-			familiar with Eclipse.  If not,  try some of the Eclipse
-			tutorials. 
-			</p>
-			<h3 class="western"><a name="1.2.1.Setting up Eclipse|outline"></a>
-			Setting up Eclipse</h3>
-			<p class="western"><br /><br />
-			</p>
-			<h3 class="western"><a name="1.2.2.Creating a leJOS project|outline"></a>
-			Creating a leJOS project</h3>
-			<p class="body-text-3-western">Since NXJ uses a subset of Java,
-			you should not develop  NXJ and regular Java applications in the
-			same project.  If you do, you the compiler is likely to produce
-			strange error messages and code that will not run.  Here is how to
-			crate a NXJ project&#8221;</p>
-			<ol>
-				<li><p class="body-text-3-western">Navigate  to File &gt; New &gt;
-				Java project to open the New Project window.  
+				<p>However, programming for leJOS NXJ is best
+				done using an Integrated Development Environment. IDEs have
+				syntax-directed editors that immediately show you any syntax
+				errors in your program, rather than waiting until you compile the
+				program and then showing a list of errors. This, together with
+				color coding of the source, automatic formatting of the code,
+				prompting for method names and signatures, expanding and
+				collapsing parts of your program, and many other editing features,
+				makes creating your program a much faster and more enjoyable
+				experience. But the advantages of the IDE do not end there: they
+				also help you with creating and building projects, debugging,
+				generating documentation, and creating user interfaces. Java IDEs
+				put all the Sun Java tools and a variety of third-party tools at
+				your fingertips. They make supporting new tools simple, either by
+				use of plug-ins or by integration of external tools.</p>
+				<p>IDEs are easy to set up and use and
+				you should use them for all your leJOS programming &#8211; even
+				the simplest of projects.</p>
+				<p>You can produce leJOS NXJ programs with any Java IDE. This tutorial currently has sections on how to use two of the most popular Jave IDEs: Eclipse and Netbeans.
 				</p>
-				</li><li><p class="body-text-3-western">Enter the name.  In Project
-				Layout  select   &#8220;Use Project Folder as root for source and
-				class files.&#8221;.</p>
-				</li><li><p class="body-text-3-western">Click  next  to open the
-				Properties window.<br />Select JavaBuildPath &gt; Libraries to see
-				the window below. 
-				</p>
-				</li><li><p class="body-text-3-western">Click  AddJars.   If the
-				JarSelection window shows classes, click on it.</p>
-				</li><li><p class="body-text-3-western">Otherwise, click on Add
-				External Jars and browse to lejos_nxj \lib and click on
-				classes.jar. .  (You will have to do this for every project.)</p>
-				</li><li><p class="body-text-3-western">Click OK.</p>
-			</li></ol>
-			<p class="western"><font color="#000000"><img style="border: 1px solid ; width: 717px; height: 550px; float: left;" alt="" src="Compile%20and%20run_files/image001.png" name="graphics1" hspace="12" /></font><br /><br />
-			</p>
-			<p class="western"><br /><br />
-			</p>
-			<p class="western"><br /><br />
-			</p>
-			<p class="western"><br /><br />
-			</p>
-			<p class="western"><br /><br />
-			</p>
-			<p class="western"><br /><br />
-			</p>
-			<p class="western"><br /><br />
-			</p>
-			<p class="western"><br /><br />
-			</p>
-			<p class="western"><br /><br />
-			</p>
+				<p>To learn how to create, compile and run your programs from an Integrated Development Environment, go to one of the following sections:</p>
+				<ul class="BlueArrows">
+					<li><a href="UsingEclipse.htm">Eclipse</a></li>
+				</ul>	
+				<a name="#1"></a>
+				<h4>Using the leJOS NXJ command line tools</h4>
+				<p>The tools for compiling, linking and uploading leJOS NXJ programs are:</p>
+				<ul class="BlueArrows">
+					<li>nxjc</li>
+					<li>nxjlink</li>
+					<li>nxjupload</li>
+					<li>nxj</li>
+				</ul>
+				<p>Note that you normally only need to use the <code>nxjc</code> and <code>nxj</code> commands,
+				   as <code>nxj</code> does the equivalent of <code>nxjlink</code> followed by <code>nxjupload</code>.</p>
+				<p>You need to open a command window to run these commands. </p>
+				<a name="#2"></a>
+				<h5>nxjc &#8211; compile a program</h5>
+				<p>Compiles one or more java files.</p>
+				<p>Usage: nxjc &lt;java-files&gt;</p>
+				<p>Example: </p>
+				<code>nxjc View.java</code>
+				<p>nxjc calls javac with parameters:</p>
+				<ul class="BlueArrows">
+					<li>-bootclasspath &lt;path to classes.jar&gt;</li>
+					<li>&lt;java-files&gt;</li>
+				</ul>
+				<p>-bootclasspath is set because leJOS does not use the standard java.lang classes
+						but has its own versions in classes.jar.</p>
+		
+				<a name="#3"></a>
+				<h5>nxjlink &#8211; link a program</h5>
+				<p>Calls the leJOS NXJ linker.</p>
+				<p>Usage:  nxjlink [-v|--verbose] [-g|--debug] [-a|--all] main-class &#8211;o &lt;binary&gt;</p>
+				<p>Example:</p>
+				<code>nxjlink -v Tune -o Tune.nxj</code>
+				<p>Links the specified main class with any
+						classes that it references in the current directory and with the
+						standard leJOS classes from classes.jar to produce a binary NXJ
+						program that can be uploaded and run.</p>
+				<p>The -v or --verbose flag
+						causes a list of class names and method signatures  included in the
+						binary   to be sent to the standard output. This output is extremely useful for debugging.</p>
+				<p>The -g or --debug flag causes a debug monitor to be included with the program. This allows the program
+				   to be interrupted while is running (by pressing ENTER+ESCAPE) and gives stack dumps when untrapped
+				   exceptions occur.</p>
+				<p>The linker removes methods that are
+						not used. Specify &#8211;a or &#8211;all to include all  methods
+						whether they are used or not. This should never be necessary.</p>
+				<p>Use the -h or --help flag to print out the options.</p>
+				<a name="#4"></a>
+				<h5>nxjupload &#8211; upload a program</h5>
+				<p>Usage: nxjupload [-b|--bluetooth] [-u|--usb] [-d|--address address] [-n|--name name]  [-r|--run]	&lt;binary&gt;</p>
+				<p>Example:</p>
+				<p>nxjupload  Tune.nxj</p>
+				<p>Uploads the binary (.nxj) file. By default USB is tried first and then Bluetooth. If the --bluetooth
+					flag is specified, only Bluetooth is tried. If --usb is specified, only USB
+					is tried.</p>
+				<p>When Bluetooth is used, a search
+					for Bluetooth devices is done, unless the -address flag is
+					set, when a device with the given address is connected to.</p>
+				<p>The --name parameter limits
+					the search for a NXT with the given name. If this is not
+					specified, nxjupload tries to connect to each NXT that it finds
+					and will upload to the first NXT that is successfully connects to.</p>
+				<p>If the --run parameter is
+					specified, the program is run after it has been uploaded.</p>
+		
+				<a name="#5"></a>
+				<h5>nxj &#8211; link, upload and run a program</h5>
+				<p>Usage: nxj [options] main-class</p>
+				<p >Example:	</p>
+				<code>nxj -r Tune</code>
+				<p> The nxj command links and uploads a leJOS NXJ program. It is the equivalent of nxjlink followed by nxjupload.</p>
 			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			<p class="western"><br />
-			</p><p class="western"><br /><br><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
-			</p>
-			<p class="body-text-2-western" style="margin-left: 0in;"><font color="#0000ff"><u><a href="#1.Compiling%20and%20Running%20NXJ%20programs%7Coutline">Back
-			to Top</a></u></font></p>
-			<p class="body-text-2-western"> 
-			</p>
-			<p class="western"><br /><br />
-			</p>
-			<h3 class="western"><a name="1.2.3.Creating external tools|outline"></a>
-			Creating external tools</h3>
-			<p class="body-text-3-western">You need to create external tools 
-			to compile and to  upload and link your programs.  These tools can
-			be used for all NXJ projects.   However, they should not be used
-			for programs that will run on a PC. Here is the procedure:</p>
-			<ol>
-				<li><p class="body-text-3-western">Select Run &gt; External tools
-				&gt; Open External lTools Dialog</p>
-				</li><li><p class="body-text-3-western">Click on the Launch New
-				Configuration button on the left of the menu bar. 
-				</p>
-				</li><li><p class="body-text-3-western">Click on the New Configuration
-				button to see this.</p>
-				</li><li><p class="body-text-3-western">Now your are ready to create a
-				compiler tool. by filling in the parameters.</p>
-			</li></ol>
-			<h4 class="western"><a name="1.2.3.1.Creating a compiler tool|outline"></a>
-			Creating a compiler tool</h4>
-			<p class="western"><br /><img style="width: 960px; height: 640px;" alt="" src="Compile%20and%20run_files/image003.png" /><br />
-			</p>
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			<p class="western" style="margin-left: 0.25in;"><b>Compiler tool
-			parameters</b>:</p>
-			<ul>
-				<li><p class="western">Name: Compiler for example 
-				</p>
-				</li><li><p class="western">Location, browse to lejos_nxj\bin and
-				click on nxjc.bat..</p>
-				</li><li><p class="western">Working Directory, click on Variables .
-				and select ${Project_loc}.</p>
-				</li><li><p class="western">Arguments,  select ${java_type_name} from
-				Variables and type .java..  
-				</p>
-			</li></ul>
-			<p class="body-text-4-western">The window should now look like
-			this. Then click Apply</p>
-			<p class="body-text-4-western"></p><p class="body-text-4-western"><img style="width: 960px; height: 640px;" alt="" src="Compile%20and%20run_files/image005.png" /><br />
-			</p>
-			<p class="body-text-4-western"><br /><br /></p>
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			<h4 class="western"><a name="1.2.3.2.Creating a tool to link and upload, |outline"></a>
-			Creating a tool to link and upload, 
-			</h4>
-			<p class="body-text-4-western">Just use the the same procedure
-			that you just used for the compiler tool. 
-			</p>
-			<p class="body-text-3-western" style="margin-left: 0.3in;"><b>Link
-			and Upload tool parameters.</b>  
-			</p>
-			<ul>
-				<li><p class="western">Name:   whatever you want</p>
-				</li><li><p class="western">Location:  C:\lejos_nxj\bin\nxj.bat; 
-				</p>
-				</li><li><p class="western">Working Directory:: ${project_loc} 
-				</p>
-				</li><li><p class="western">Arguments:: ${java_type_name} -v 
-				</p>
-			</li></ul>
-			<p class="body-text-3-western">Finally, click on Organize
-			Favorites and select your newly created tools.</p>
-			<p class="body-text-2-western" style="margin-left: 0in;"><font color="#0000ff"><u><a href="#1.Compiling%20and%20Running%20NXJ%20programs%7Coutline">Back
-			to Top</a></u></font></p>
-			<p class="western"><br /><br />
-			</p>
-			<h3 class="western"><a name="1.2.4.Using ant build files|outline"></a>
-			Using ant build files</h3>
-			<p class="western"><br /><br />
-			</p>
-			<h3 class="western"><a name="1.2.5.Installing and using the leJOS plugin|outline"></a>
-			Installing and using the leJOS plugin</h3>
-			<p class="body-text-2-western" style="margin-left: 0in;"><font color="#0000ff"><u><a href="#1.Compiling%20and%20Running%20NXJ%20programs%7Coutline">Back
-			to Top</a></u></font></p>
-			<h2 class="western"><a name="1.3.Using the NetBeans IDE|outline"></a>
-			Using the NetBeans IDE</h2>
-			<p class="body-text-2-western">First, download  Netbeans 6.1, 
-			BasicIDE  and also  JavaSE (if you don&#8217;t already have it).</p>
-			<h3 class="western"><a name="1.3.1.Getting Started with NetBeans|outline"></a>
-			Getting Started with NetBeans</h3>
-			<p class="body-text-3-western">If you are not familiar with Net
-			Beans, try the NetBeans quick start tutorial
-			<font color="#0000ff"><u><a href="http://www.netbeans.org/kb/60/java/quickstart.html">http://www.netbeans.org/kb/60/java/quickstart.html</a></u></font></p>
-			<p class="body-text-3-western">For an introduction to developing
-			general Java applications, see
-			<font color="#0000ff"><a href="http://www.netbeans.org/kb/60/java/javase-intro.html%23setup"><font color="#000000"><span style="text-decoration: none;">http://www.netbeans.org/kb/60/java/javase-intro.html#setup</span></font></a></font></p>
-			<p class="body-text-3-western">And to learn some shortcuts in
-			using the Editor, see
-			<font color="#0000ff"><u><a href="http://www.netbeans.org/kb/60/java/editor-tips.html">http://www.netbeans.org/kb/60/java/editor-tips.html</a></u></font></p>
-			<p class="body-text-3-western"><br /><br />
-			</p>
-			<h3 class="western"><a name="1.3.2.Installing and using the leJOSNXT plugin|outline"></a>
-			Installing and using the leJOSNXT plugin</h3>
-			<p class="body-text-3-western">The simplest way to use NetBeans to
-			develop NXJ code is to use the plugin.</p>
-			<ol>
-				<li><p class="western">Go to
-				<font color="#0000ff"><u><a href="http://homepages.feis.herts.ac.uk/%7Ecomqdhb/lego/default.php">http://homepages.feis.herts.ac.uk/~comqdhb/lego/default.php</a></u></font></p>
-				</li><li><p class="western">Click Netbeans Module  and <span lang="en-GB">
-				download the file </span><font color="#0000ff"><u><a href="http://homepages.feis.herts.ac.uk/%7Ecomqdhb/lego/org-dHb-lejosnxt.nbm"><font face="Courier New, monospace"><span lang="en-GB">org-dHb-lejosnxt.nbm</span></font></a></u></font><font face="Courier New, monospace"><span lang="en-GB">.</span></font></p>
-				</li><li><p class="western" style="margin-bottom: 0in;" lang="en-GB">Open
-				NetBeans 
-				</p>
-				</li><li><p class="western" style="margin-bottom: 0in;"><span lang="en-GB">In
-				 Tools/Plugins  open the  </span><span lang="en-GB"><i>Downloaded</i></span><span lang="en-GB">..tab.</span></p>
-				</li><li><p class="western" style="margin-bottom: 0in;" lang="en-GB">Click
-				on addPlugins; (.nbm Files)'</p>
-				</li><li><p class="western" style="margin-bottom: 0in;"><span lang="en-GB">If
-				 LEJOSNXT does not appear, browse to  </span><font color="#0000ff"><u><a href="http://homepages.feis.herts.ac.uk/%7Ecomqdhb/lego/org-dHb-lejosnxt.nbm"><font face="Courier New, monospace"><span lang="en-GB">org-dHb-lejosnxt.nbm</span></font></a></u></font><font face="Courier New, monospace"><span lang="en-GB">
-				</span></font><span lang="en-GB"> and click open</span></p>
-				</li><li><p class="western" style="margin-bottom: 0in;" lang="en-GB">Click
-				on install (bottom left), and accept.   Ignore the warnings</p>
-				</li><li><p class="western" style="margin-bottom: 0in;" lang="en-GB">If
-				you have been successful, the Plugins/Installed tab should show
-				leJOSNXT near the bottom of the list. 
-				</p>
-				</li><li><p class="western" style="margin-bottom: 0in;" lang="en-GB">restart
-				NetBeans</p>
-				</li><li><p class="western" style="margin-bottom: 0in;" lang="en-GB">Open
-				the Library Manager in  Tools/Libraries</p>
-				</li><li><p class="western" style="margin-bottom: 0in;" lang="en-GB">There
-				you should find the library  LEJOS.   The  jar   files it
-				contains may not  be up to date, so replace them with the
-				corresponding files from lejos_nxj\lib.</p>
-				</li><li><p class="western" style="margin-bottom: 0.19in;" lang="en-GB">
-				Create a new Library named PC_NXJ and add to it the four jar
-				files in lejos_nsj\3rdparty\lib.  You will need this to write
-				code on your PC that communicates with NXJ running on the NXT. 
-				</p>
-			</li></ol>
-			<h3 class="western" lang="en-GB"><a name="1.3.3.Using NetBeans with NXJ|outline"></a>
-			Using NetBeans with NXJ</h3>
-			<p class="body-text-3-western" lang="en-GB">Creating a new NXJ
-			project is almost the same as the procedure you used for a your
-			normal Java application in the tutorial.&nbsp; But there are a few
-			differences.</p>
-			<p class="body-text-3-western" lang="en-GB">After you have
-			installed the lejosNXT plugin and you click on new project&nbsp;
-			you should see this window.&nbsp;&nbsp; If the blue NXT icon does
-			not appear in the Projects column, click on the Samples folder.&nbsp;&nbsp;
-			Then click the Next &gt;&nbsp; button proceed as before.</p>
-			<p class="body-text-3-western"> 
-			<font color="#000000"><img style="width: 729px; height: 499px;" alt="" src="Compile%20and%20run_files/image010.png" /><br /></font></p>
-			<p class="western" lang="en-GB">Be sure your project contains the
-			LEJOS library.&nbsp; 
-			</p>
-			<p class="western" lang="en-GB">The new project will contain a
-			class&nbsp; Main.java which is yet another implementation of&nbsp;
-			&#8220;Hello world&#8221;.&nbsp;&nbsp; You can use it as a
-			template for your work.&nbsp;&nbsp; Change the&nbsp; Class&nbsp;
-			name to something more informative.&nbsp; To do this, &nbsp;select
-			the name, then use&nbsp; Refactor &gt; rename&nbsp; (keyboard
-			shortcut&nbsp;&nbsp; Ctrl &#8211; R).</p>
-			<p class="western"><span lang="en-GB">This template class contains
-			the statement&nbsp;&nbsp; </span><font face="Courier New, monospace"><span lang="en-GB">import
-			lejos.nxt.*;&nbsp; </span></font><span lang="en-GB">&nbsp;which is
-			needed in all programs that run on the NXT. </span>
-			</p>
-			<p class="western" lang="en-GB">Once the project is created, you
-			edit, compile&nbsp; and&nbsp; run your project&nbsp; using the
-			usual buttons or menus or keyboard shortcuts&nbsp; just as you
-			would with a normal java application development project.</p>
-			<p class="body-text-3-western"><br /><br />
-			</p>
-			<p class="body-text-2-western" style="margin-left: 0in;"><font color="#0000ff"><u><a href="#1.Compiling%20and%20Running%20NXJ%20programs%7Coutline">Back
-			to Top</a></u></font></p>
+				<p>Any of the options for <code>nxjlink</code> and <code>nxjupload</code> can be specified.</p>
+				<p>The default binary name is &lt;main-class&gt;.nxj, e.g. Tune.nxj.</p>
 				
+				<!-- WEB TOOL TO GO TO TOP OF THE DOCUMENT -->
+				<a href="#top">Back to top</a>
+				<br/>
 
-<!-- DO NOT TOUCH -->				
+				<!-- END CONTENT AREA -->
+
+				<!-- NAVIGATION TOOL -->				
+				<br/>
+        		<div class="NavBit">
+               		<a target="_top" href="../Preliminaries/GettingStarted.htm">�&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../Menusystem/MenuSystem.htm">Next&nbsp;�</a>
+        		</div>
 				<br />
-        <div class="NavBit">
-                <a target="_top" href="../Preliminaries/GettingStarted.htm">�&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../Menusystem/MenuSystem.htm">Next&nbsp;�</a>
-        </div>
-		<br />
-				</td><td>
-			</td></tr>
-		</tbody></table>
-	</body></html>
+			</td>
+		</tr>
+	</table>
+</body>
+</html>
