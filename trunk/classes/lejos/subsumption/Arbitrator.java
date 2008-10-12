@@ -24,7 +24,7 @@ public class Arbitrator
     * Monitor is an inner class.  It polls the behavior array to find the behavior of hightst
     * priority.  If higher than the current active behavior, it calls current.suppress()
     */
-   private Monitor monitor;
+   private Monitor monitor ;
 
    /**
     * Allocates an Arbitrator object and initializes it with an array of
@@ -41,9 +41,7 @@ public class Arbitrator
    {
       _behavior = behaviorList;
       _returnWhenInactive = returnWhenInactive;
-      Monitor monitor = new Monitor();
-      monitor.start();        
-      while(_highestPriority == NONE);//wait for some behavior to take control
+       monitor = new Monitor();    
    }
 
    /**
@@ -61,6 +59,8 @@ public class Arbitrator
     */
    public void start() 
    {
+      monitor.start();  
+      while(_highestPriority == NONE);//wait for some behavior to take control
       while(true)
       {   
          if(_highestPriority != NONE)
@@ -69,15 +69,8 @@ public class Arbitrator
             _behavior[_current].action();
             _current = NONE;  // no active behavior at the moment
          }
-         else
-         {
-            if (_returnWhenInactive)
-            {
-               monitor.more = false;
-               return;
-            }
-         }
-         Thread.yield();
+         else if (_returnWhenInactive) return;
+         Thread.yield();      
       }
    }
    /**
@@ -86,6 +79,7 @@ public class Arbitrator
     */
    private class Monitor extends Thread 
    {
+     
       boolean more = true;
       int maxPriority = _behavior.length - 1;
       public void run()
@@ -93,7 +87,8 @@ public class Arbitrator
          while(more)
          {
             //FIND HIGHEST PRIORITY BEHAVIOR THAT WANTS CONTROL
-            for(int i = maxPriority; i >= 0; i--)
+           _highestPriority = NONE;
+            for( int i = maxPriority; i >= 0; i--)
             {
                if(_behavior[i].takeControl())
                {
@@ -104,7 +99,7 @@ public class Arbitrator
             if(_highestPriority > _current && _current != NONE)
             {
                _behavior[_current].suppress();
-            }
+            }                    
             Thread.yield();
          }
       }
