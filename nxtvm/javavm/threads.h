@@ -15,6 +15,7 @@
 #define MON_WAITING      4 // Trying to enter a synchronized block
 #define CONDVAR_WAITING  5 // Someone called wait() on us in a synchronized block.
 #define SLEEPING         6 // ZZZZZzzzzzzzz
+#define JOIN             7 // Waiting for another thread to exit
 #define SUSPENDED        0x80 // Or with the above to suspend
 
 #define INTERRUPT_CLEARED    0
@@ -57,7 +58,7 @@ extern StackFrame *current_stackframe();
 extern void enter_monitor (Thread *pThread, Object* obj);
 extern void exit_monitor (Thread *pThread, Object* obj);
 extern boolean switch_thread();
-extern void join_thread(Thread *thread);
+extern void join_thread(Thread *thread, const FOURBYTES time);
 extern void dequeue_thread(Thread *thread);
 extern void enqueue_thread(Thread *thread);
 extern void monitor_wait(Object *obj, const FOURBYTES time);

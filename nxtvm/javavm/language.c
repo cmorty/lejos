@@ -260,7 +260,7 @@ boolean dispatch_special (MethodRecord *methodRecord, byte *retAddr)
       if (newlen > 255)
         newlen = 255;
       // increase the stack frame size
-      newStackFrameArray = ptr2word(reallocate_array(word2ptr(currentThread->stackFrameArray), newlen));
+      newStackFrameArray = ptr2ref(reallocate_array(word2ptr(currentThread->stackFrameArray), newlen));
     }
     // If can't allocate new stack, give in!
     if (newStackFrameArray == JNULL)
@@ -325,7 +325,7 @@ boolean dispatch_special (MethodRecord *methodRecord, byte *retAddr)
     
     // Need to compute new array size (as distinct from number of bytes in array).
     int newlen = (((int)(newStackTop + methodRecord->maxOperands) - (int)(stack_array()) + 3) / 4) * 3 / 2;
-    JINT newStackArray = ptr2word(reallocate_array(word2ptr(currentThread->stackArray), newlen));
+    REFERENCE newStackArray = ptr2ref(reallocate_array(word2ptr(currentThread->stackArray), newlen));
 
     // If can't allocate new stack, give in!
     if (newStackArray == JNULL)

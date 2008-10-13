@@ -4,7 +4,7 @@ package java.lang;
  * A thread of execution (or task). Now handles priorities, daemon threads
  * and interruptions.
  */
-public abstract class Thread
+public class Thread implements Runnable
 {
   /**
    * The minimum priority that a thread can have. The value is 1.
@@ -29,10 +29,10 @@ public abstract class Thread
   // to say, they are read-only.
 
   private Thread _TVM_nextThread;
-  private int _TVM_waitingOn;
+  private Object _TVM_waitingOn;
   private int _TVM_sleepUntil;
-  private int _TVM_stackFrameArray;
-  private int _TVM_stackArray;
+  private Object _TVM_stackFrameArray;
+  private Object _TVM_stackArray;
   private byte _TVM_stackFrameArraySize;
   private byte _TVM_monitorCount;
   private byte _TVM_threadId; 
@@ -49,23 +49,53 @@ public abstract class Thread
   {
     return _TVM_state > 1;
   }    
-	  
-  public Thread()
-  {
-    this ("");
-  }
 
-  public Thread (String name)
+  private void init(String name, Runnable target)
   {
   	Thread t = currentThread();
 	if (t == null)
 		setPriority(NORM_PRIORITY);
 	else
-		setPriority(t.getPriority());	
+    {
+		setPriority(t.getPriority());
+        setDaemon(t.isDaemon());
+    }
     this.name = name;
+    // This is a little naughty. We should not really use the internal fields
+    // of the task block. However the waitingOn field can not and is not used
+    // until after the thread has been started, so it is reasonably safe to use
+    // it to hold the target since this will only be used when the thread
+    // is first run. Also this saves haveing an extra ref. in such a basic
+    // type.
+    this._TVM_waitingOn = target;
+  }
+  
+  public Thread()
+  {
+    init("", null);
   }
 
-  public abstract void run();
+  public Thread (String name)
+  {
+    init(name, null);
+  }
+
+  public Thread(Runnable target)
+  {
+      init("", target);
+  }
+  
+  public Thread(String name, Runnable target)
+  {
+      init(name, target);
+  }
+  public void run()
+  {
+    // If the thead was created with a runnable it will be stored in waitingOn
+    // Note it is not safe to use this field again after this point.
+    if (_TVM_waitingOn != null)
+      ((Runnable)_TVM_waitingOn).run();
+  }
   
   public final native void start();
   public static native void yield();
