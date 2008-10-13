@@ -108,10 +108,10 @@ typedef struct S_Thread
   Object _super;	     // Superclass object storage
 
   REFERENCE nextThread;      // Intrinsic circular list of threads
-  JINT waitingOn;            // Object who's monitor we want
+  REFERENCE waitingOn;       // Object who's monitor we want
   JINT sleepUntil;           // Time to wake up
-  JINT stackFrameArray;      // Array of stack frames
-  JINT stackArray;           // The stack itself
+  REFERENCE stackFrameArray; // Array of stack frames
+  REFERENCE stackArray;      // The stack itself
   JBYTE stackFrameArraySize; // Number of stack frames in use.
   JBYTE monitorCount;        // Saved monitor depth for context switches
   JBYTE threadId;            // Unique thread ID

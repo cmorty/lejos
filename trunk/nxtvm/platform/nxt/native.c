@@ -123,10 +123,10 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
     push_word(((Thread *) word2ptr(paramBase[0]))->daemon);
     return EXEC_CONTINUE;
   case join_4_5V:
-    join_thread((Thread *) word2ptr(paramBase[0]));
+    join_thread((Thread *) word2ptr(paramBase[0]), 0);
     return EXEC_CONTINUE;
   case join_4J_5V:
-    join_thread((Thread *) word2obj(paramBase[0]));
+    join_thread((Thread *) word2obj(paramBase[0]), paramBase[2]);
     return EXEC_CONTINUE;
   case exit_4I_5V:
     schedule_request(REQUEST_EXIT);

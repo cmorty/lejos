@@ -137,7 +137,7 @@ int init_thread (Thread *thread)
   // Protected the argument (that may have come from native code), from the GC
   protectedRef[0] = (Object *)thread;
   // Allocate space for stack frames.
-  thread->stackFrameArray = ptr2word (new_primitive_array (T_STACKFRAME, INITIAL_STACK_FRAMES));
+  thread->stackFrameArray = ptr2ref (new_primitive_array (T_STACKFRAME, INITIAL_STACK_FRAMES));
   if (thread->stackFrameArray == JNULL)
   {
     protectedRef[0] = JNULL;
@@ -145,7 +145,7 @@ int init_thread (Thread *thread)
   }
     
   // Allocate actual stack storage (INITIAL_STACK_SIZE * 4 bytes)
-  thread->stackArray = ptr2word (new_primitive_array (T_INT, INITIAL_STACK_SIZE));
+  thread->stackArray = ptr2ref (new_primitive_array (T_INT, INITIAL_STACK_SIZE));
   protectedRef[0] = JNULL;
   if (thread->stackArray == JNULL)
   {
@@ -354,6 +354,21 @@ done_pi:
           
           }
           break;
+        case JOIN:
+          {
+            Thread *pThread = (Thread *)word2obj(candidate->waitingOn);
+            if (pThread->state == DEAD ||
+                candidate->interruptState != INTERRUPT_CLEARED ||
+                (candidate->sleepUntil > 0 && get_sys_time() >= (FOURBYTES)candidate->sleepUntil))
+            {
+              candidate->state = RUNNING;
+              candidate->waitingOn = JNULL;
+              candidate->sleepUntil = 0;
+              if (candidate->interruptState != INTERRUPT_CLEARED)
+                candidate->interruptState = INTERRUPT_GRANTED;
+            }
+            break;
+          }
         case SLEEPING:
           if (candidate->interruptState != INTERRUPT_CLEARED
               || (get_sys_time() >= (FOURBYTES) candidate->sleepUntil))
@@ -396,7 +411,7 @@ done_pi:
             }
             else
             {
-              set_top_ref_cur (ptr2word (candidate));
+              set_top_ref_cur (ptr2ref (candidate));
               dispatch_virtual ((Object *) candidate, run_4_5V, null);
             }
             // The following is needed because the current stack frame
@@ -510,7 +525,7 @@ void monitor_wait(Object *obj, const FOURBYTES time)
   currentThread->monitorCount = get_monitor_count(obj);
   
   // Save the object who's monitor we will want back
-  currentThread->waitingOn = ptr2word (obj);
+  currentThread->waitingOn = ptr2ref (obj);
   
   // Might be an alarm set too.
   if (time > 0)
@@ -569,7 +584,7 @@ void monitor_notify_unchecked(Object *obj, const boolean all)
     do {
       // Remember threadQ[i] is the last thread on the queue
       pThread = word2ptr(pThread->nextThread);
-      if (pThread->state == CONDVAR_WAITING && pThread->waitingOn == ptr2word (obj))
+      if (pThread->state == CONDVAR_WAITING && pThread->waitingOn == ptr2ref (obj))
       {
         // might have been interrupted while waiting
         if (pThread->interruptState != INTERRUPT_CLEARED)
@@ -608,7 +623,7 @@ void enter_monitor (Thread *pThread, Object* obj)
     // There is an owner, but its not us.
     // Make thread wait until the monitor is relinquished.
     pThread->state = MON_WAITING;
-    pThread->waitingOn = ptr2word (obj);
+    pThread->waitingOn = ptr2ref (obj);
     pThread->monitorCount = 1;
     // Gotta yield
     schedule_request (REQUEST_SWITCH_THREAD);    
@@ -652,8 +667,19 @@ void exit_monitor (Thread *pThread, Object* obj)
  *
  * throws InterruptedException
  */
-void join_thread(Thread *thread)
+void join_thread(Thread *thread, const FOURBYTES time)
 {
+  // Make a note of the thread we are waiting for...
+  currentThread->waitingOn = ptr2ref (thread);
+  // Might be an alarm set too.
+  if (time > 0)
+    currentThread->sleepUntil = get_sys_time() + time; 	
+  else
+    currentThread->sleepUntil = 0;
+  // Change our state
+  currentThread->state = JOIN;
+  // Gotta yield
+  schedule_request (REQUEST_SWITCH_THREAD);    
 }
 
 void dequeue_thread(Thread *thread)
@@ -694,11 +720,11 @@ void enqueue_thread(Thread *thread)
   Thread *previous = threadQ[cIndex];
   threadQ[cIndex] = thread;
   if (previous == null)
-    thread->nextThread = ptr2word(thread);
+    thread->nextThread = ptr2ref(thread);
   else {
     Thread *pNext = word2ptr(previous->nextThread);
-    thread->nextThread = ptr2word(pNext);
-    previous->nextThread = ptr2word(thread);
+    thread->nextThread = ptr2ref(pNext);
+    previous->nextThread = ptr2ref(thread);
   }
 }
 
