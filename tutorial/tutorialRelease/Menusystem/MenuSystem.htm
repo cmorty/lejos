@@ -1,621 +1,313 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html dir="ltr" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml"
- lang="en">
+<html dir="ltr" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
-<!-- CSS -->
-  <link rel="stylesheet" href="../r_css/lejos-tutorial.css"
- type="text/css">
-<!-- ICON -->
-  <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon">
-  <title>The leJOS NXJ Menu System</title>
-  <meta name="GENERATOR" content="OpenOffice.org 2.4  (Win32)">
-  <meta name="AUTHOR" content="Roger">
-  <meta name="CREATED" content="20080601;14470000">
-  <meta name="CHANGED" content="20080831;21502854">
-  <style type="text/css">
-	<!--
-		@page { size: 8.5in 11in; margin-right: 1.25in; margin-top: 1in; margin-bottom: 1in }
-		P { margin-bottom: 0.08in; direction: ltr; color: #000000; widows: 2; orphans: 2 }
-		P.western { font-family: "Times New Roman", serif; font-size: 12pt; so-language: en-US }
-		P.cjk { font-family: "Times New Roman", serif; font-size: 12pt }
-		P.ctl { font-family: "Times New Roman", serif; font-size: 12pt; so-language: ar-SA }
-		H1 { margin-bottom: 0.04in; direction: ltr; color: #ff6600; widows: 2; orphans: 2 }
-		H1.western { font-family: "Arial", sans-serif; font-size: 16pt; so-language: en-US }
-		H1.cjk { font-family: "Times New Roman", serif; font-size: 16pt }
-		H1.ctl { font-family: "Arial", sans-serif; font-size: 16pt; so-language: ar-SA }
-		H2 { margin-bottom: 0.08in; direction: ltr; color: #ff6600; widows: 2; orphans: 2 }
-		H2.western { font-family: "Arial", sans-serif; font-size: 14pt; so-language: en-US; font-style: italic; font-weight: medium }
-		H2.cjk { font-family: "Times New Roman", serif; font-size: 14pt; font-style: italic; font-weight: medium }
-		H2.ctl { font-family: "Arial", sans-serif; font-size: 14pt; so-language: ar-SA; font-style: italic; font-weight: medium }
-		H3 { margin-left: 0.2in; margin-bottom: 0.08in; direction: ltr; color: #ff950e; widows: 2; orphans: 2 }
-		H3.western { font-family: "Arial", sans-serif; font-size: 13pt; so-language: en-GB; font-style: normal }
-		H3.cjk { font-family: "Times New Roman", serif; font-size: 13pt; font-style: normal }
-		H3.ctl { font-family: "Arial", sans-serif; font-size: 13pt; so-language: ar-SA; font-style: normal }
-		H4 { margin-left: 0.3in; margin-bottom: 0.04in; direction: ltr; color: #000000; widows: 2; orphans: 2 }
-		H4.western { font-family: "Arial", sans-serif; so-language: en-GB; font-style: normal }
-		H4.cjk { font-family: "Times New Roman", serif; font-style: normal }
-		H4.ctl { font-family: "Arial", sans-serif; so-language: ar-SA; font-style: italic; font-weight: medium }
-		P.body-text-2-western { margin-left: 0.1in; font-family: "Times New Roman", serif; font-size: 12pt; so-language: en-US }
-		P.body-text-2-cjk { margin-left: 0.1in; font-family: "Times New Roman", serif; font-size: 12pt }
-		P.body-text-2-ctl { margin-left: 0.1in; font-family: "Times New Roman", serif; font-size: 12pt; so-language: ar-SA }
-		P.body-text-3-western { margin-left: 0.2in; font-family: "Times New Roman", serif; font-size: 12pt; so-language: en-US }
-		P.body-text-3-cjk { margin-left: 0.2in; font-family: "Times New Roman", serif; font-size: 12pt }
-		P.body-text-3-ctl { margin-left: 0.2in; font-family: "Times New Roman", serif; font-size: 8pt; so-language: ar-SA }
-		A:link { color: #0000ff }
-		A:visited { color: #800080 }
-	-->
-	</style>
+	<title>The leJOS NXJ Menu System</title>
+	
+	<!-- METADATA -->
+	<meta name="title" content="The leJOS NXJ Menu System" />
+	<meta name="DC.Title" content="The leJOS NXJ Menu System" />
+	<meta http-equiv="title" content="The leJOS NXJ Menu System" />
+	<meta name="description" content="The leJOS NXJ Menu System" />
+	<meta http-equiv="description" content="The leJOS NXJ Menu System" />
+	<meta http-equiv="DC.Description" content="The leJOS NXJ Menu System" />
+	<meta name="keywords" content="Java, leJOS, leJOS project, NXJ, NXJ Tutorial" />
+	<meta http-equiv="keywords" content="Java, leJOS, leJOS project, NXJ, NXJ Tutorial" />
+	<meta name='VW96.objecttype' content='Document' />
+	<meta http-equiv='content-language' content='en'>
+	<meta name='DC.Language' SCHEME='RFC1766' CONTENT='English' />
+	<meta name='distribution' content='global' />
+	<meta name='resource-type' content='document' />
+
+	<!-- SEARCH ENGINE -->
+	<meta name='robots' content='all' />
+
+	<!-- AUTHOR METADATA -->
+	<meta name='Author' content='Lawrie Griffiths' />
+	<meta name='Author' content='Roger Glassey' />
+		
+	<!-- CSS -->
+	<link rel="stylesheet" href="../r_css/lejos-tutorial.css" type="text/css" />
+
+	<!-- ICON -->
+	<link rel="shortcut icon" href="../favicon.ico" type="image/x-icon" />
 </head>
 <body>
-<a id="top" name="top"></a><!-- N1: HEADER -->
-<table class="n1t1" cellpadding="0" cellspacing="0">
-  <tbody>
-    <tr>
-      <td><img src="../r_media/images/tutorial_header1.jpg"></td>
-      <td align="right"><img
- src="../r_media/images/tutorial_header2.jpg"></td>
-    </tr>
-  </tbody>
-</table>
-<!-- N2: CONTENTS -> NAVIGATION SYSTEMS AND CONTENTS -->
-<table class="n2t1" cellpadding="0" cellspacing="0">
-  <tbody>
-    <tr>
-      <td class="n2t1r1c1">
-      <p style="margin-left: 0.17in;"> <a
- href="#0.1.%20The%20leJOS%20NXJ%20Menu%20System%7Coutline">The leJOS
-NXJ Menu System</a></p>
-      <p style="margin-left: 0.33in;"><a
- href="#0.1.1.Main%20menu%7Coutline">Main menu</a></p>
-      <p style="margin-left: 0.33in;"><a
- href="#0.1.2.Files%20menu%7Coutline">Files menu</a></p>
-      <p style="margin-left: 0.33in;"><a
- href="#0.1.3.System%20menu%7Coutline">System menu</a></p>
-      <p style="margin-left: 0.33in;"><a
- href="#0.1.4.Bluetooth%20menu%7Coutline">Bluetooth menu</a></p>
-      <p style="margin-left: 0.5in;"><a href="#0.1.5.Devices%7Coutline">Devices</a></p>
-      <p style="margin-left: 0.5in;"><a href="#0.0.0.2.Search%7Coutline">Search</a></p>
-      <p style="margin-left: 0.33in;"><a href="#0.1.6.Sound%7Coutline">Sound</a></p>
-      <p style="margin-left: 0.33in;"><a
- href="#0.1.7.Version%20%7Coutline">Version </a> </p>
-      </td>
-      <td><!-- DO NOT MANINPULATE -->
-      <div id="BreadCrumbs"> <a href="../index.htm" target="_top">Home
-Page</a> &gt; <a href="#">The leJOS NXJ Menu System</a> </div>
-      <div class="NavBit"> <a target="_top"
- href="../Preliminaries/CompileAndRun.htm">&laquo;&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a
- href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a
- href="../MotorTutorial/ControllingMotors.htm">Next&nbsp;&raquo;</a> </div>
-<!-- CONTENT TITLE -->
-      <h2 class="western"><a
- name="0.1. The leJOS NXJ Menu System|outline"></a><a
- name="0.1. The leJOS NXJ Menu System|outline"></a><a
- name="0.1. The leJOS NXJ Menu System|outline"></a><a
- name="0.1. The leJOS NXJ Menu System|outline"></a><a
- name="0.1. The leJOS NXJ Menu System|outline"></a><a
- name="0.1. The leJOS NXJ Menu System|outline"></a> <font
- color="#000000"> </font>The leJOS NXJ Menu System<br>
-      </h2>
-      <p class="western"><br>
-      <br>
-      </p>
-      <h3 class="western" lang="en-GB"><a name="0.1.1.Main menu|outline"></a>Main
-menu</h3>
-      <p class="western"><br>
-      <br>
-      </p>
-      <p class="body-text-3-western">When leJOS NXJ starts, it displays
-the leJOS NXJ logo for 3 seconds and then displays the main menu:</p>
-      <p class="western"><span id="Frame1" dir="ltr"
- style="border: 1px solid rgb(0, 0, 0); padding: 0.05in 0.1in; background: rgb(255, 255, 255) none repeat scroll 0% 50%; float: left; width: 1.92in; height: 1.58in; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
-      <p class="western"
- style="margin-top: 0.02in; margin-bottom: 0.02in;" align="center"> <font
- face="Courier New, monospace">MYNXT BT</font></p>
-      <p class="western"
- style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font
- face="Courier New, monospace">&gt;Run Default</font></p>
-      <p class="western"
- style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font
- face="Courier New, monospace">Files</font></p>
-      <p class="western"
- style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font
- face="Courier New, monospace">Bluetooth</font></p>
-      <p class="western"
- style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font
- face="Courier New, monospace">Sound</font></p>
-      <p class="western"
- style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font
- face="Courier New, monospace">System</font></p>
-      <p class="western" style="margin-top: 0.02in;"> <font
- face="Courier New, monospace">Version</font></p>
-      </span><br clear="left">
-      <br>
-      <br>
-      </p>
-      <p class="western">The top line shows the battery voltage icon,
-the name of the NXT, and the BlueTooth power icon. In this example, the
-power is on. </p>
-      <p class="body-text-3-western">It then shows a menu implemented
-by the TextMenu class.</p>
-      <p class="body-text-3-western">Using the keys to navigate the
-menu:</p>
-      <table border="1" bordercolor="#000000" cellpadding="7"
- cellspacing="0" width="533">
-        <col width="35"> <col width="36"> <col width="118"> <col
- width="286"> <tbody>
-          <tr valign="top">
-            <td colspan="2" width="85">
-            <p class="body-text-3-western" style="margin-left: 0in;">Key</p>
-            </td>
-            <td width="118">
-            <p class="body-text-3-western" style="margin-left: 0in;">Name</p>
-            </td>
-            <td width="286">
-            <p class="body-text-3-western" style="margin-left: 0in;">Use</p>
-            </td>
-          </tr>
-          <tr valign="top">
-            <td width="35">
-            <p class="body-text-3-western" style="margin-left: 0in;"><img
- style="border: 0px solid ; width: 26px; height: 30px;" alt="Left Buton"
- src="MenuSystem_html_m177adeff.gif" name="graphics5" align="left">. </p>
-            <p class="body-text-3-western" style="margin-left: 0in;"><br>
-            </p>
-            </td>
-            <td width="36">
-            <p class="body-text-3-western" style="margin-left: 0in;"><img
- title="Right Button"
- style="border: 0px solid ; width: 28px; height: 30px;" alt=""
- src="MenuSystem_html_5d8f2a7b.gif" name="graphics1" align="left"><br>
-            </p>
-            </td>
-            <td width="118">
-            <p class="body-text-3-western" style="margin-left: 0in;">Left,
-Right </p>
-            </td>
-            <td width="286">
-            <p class="body-text-3-western" style="margin-left: 0in;">Scroll
-up , down</p>
-            </td>
-          </tr>
-          <tr valign="top">
-            <td colspan="2" width="85">
-            <p class="body-text-3-western" style="margin-left: 0.3in;"><img
- style="border: 0px solid ; width: 31px; height: 31px;"
- alt="Enter Button" src="MenuSystem_html_m203c959b.gif" name="graphics2"
- align="left"><br clear="left">
-            <br>
-            </p>
-            </td>
-            <td width="118">
-            <p class="body-text-3-western" style="margin-left: 0in;">Enter</p>
-            </td>
-            <td width="286">
-            <p class="body-text-3-western" style="margin-left: 0in;">Select
-the menu item</p>
-            </td>
-          </tr>
-          <tr valign="top">
-            <td colspan="2" width="85">
-            <p class="body-text-3-western" style="margin-left: 0.3in;"><img
- style="border: 0px solid ; width: 28px; height: 15px;" alt=""
- src="MenuSystem_html_1e8da1cd.gif" name="graphics3" align="left"><br
- clear="left">
-            <br>
-            </p>
-            </td>
-            <td width="118">
-            <p class="body-text-3-western" style="margin-left: 0in;">Escape</p>
-            </td>
-            <td width="286">
-            <p class="body-text-3-western" style="margin-left: 0in;">Quit
-the menu and return to the previous one..<br>
-In the main menu, shut down the NXT </p>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <p class="body-text-3-western"><br>
-      <br>
-      </p>
-      <p class="body-text-3-western"><br>
-      <br>
-      </p>
-      <p class="body-text-3-western"><font color="#0000ff"><u><a
- href="#0.1.%20The%20leJOS%20NXJ%20Menu%20System%7Coutline">Back to top</a></u></font></p>
-      <p class="body-text-3-western"><br>
-      <br>
-      </p>
-      <h3 class="western" lang="en-GB"><a
- name="0.1.2.Files menu|outline"></a> Files menu</h3>
-      <p class="western">When you select the &#8220;Files&#8221; menu item, the
-list of files is displayed:</p>
-      <p class="western"><span id="Frame2" dir="ltr"
- style="border: 1px solid rgb(0, 0, 0); padding: 0.05in 0.1in; background: rgb(255, 255, 255) none repeat scroll 0% 50%; float: left; width: 2.01in; height: 1.15in; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
-      <p class="western"
- style="margin-top: 0.02in; margin-bottom: 0.02in;" align="center"> <font
- face="Courier New, monospace">MYNXT BT</font></p>
-      <p class="western"
- style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font
- face="Courier New, monospace">&gt;View.nxj</font></p>
-      <p class="western"
- style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font
- face="Courier New, monospace">SoundScope.nxj</font></p>
-      <p class="western"
- style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font
- face="Courier New, monospace">LCDTest.nxj</font></p>
-      </span><br clear="left">
-      <br>
-      <br>
-      </p>
-      <p class="western">When you select a particular file, the file
-submenu is displayed:</p>
-      <p class="western"><span id="Frame3" dir="ltr"
- style="border: 1px solid rgb(0, 0, 0); padding: 0.05in 0.1in; background: rgb(255, 255, 255) none repeat scroll 0% 50%; float: left; width: 1.9in; height: 1.44in; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
-      <p class="western"
- style="margin-top: 0.02in; margin-bottom: 0.02in;" align="center"> <font
- face="Courier New, monospace">MYNXT BT</font></p>
-      <p class="western"
- style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font
- face="Courier New, monospace">View.nxj</font></p>
-      <p class="western"
- style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font
- face="Courier New, monospace">&gt;Execute program</font></p>
-      <p class="western"
- style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font
- face="Courier New, monospace">Set as Default</font></p>
-      <p class="western"
- style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font
- face="Courier New, monospace">Delete file</font></p>
-      </span><br clear="left">
-      <br>
-      <br>
-      </p>
-      <p class="body-text-3-western"><font color="#0000ff"><u><a
- href="#0.1.%20The%20leJOS%20NXJ%20Menu%20System%7Coutline">Back to top</a></u></font></p>
-      <p class="western"><br>
-      <br>
-      </p>
-      <h3 class="western" lang="en-GB"><a
- name="0.1.3.System menu|outline"></a> <font face="Arial, sans-serif"><font
- style="font-size: 13pt;" size="3"><span lang="en-GB"><font size="4"><span
- style="">System menu</span></font></span></font></font></h3>
-      <p class="body-text-3-western">This menu shows some information
-about the status of the NXT, and allows you to change some of these
-variables.</p>
-      <ul>
-        <li>
-          <p class="western">Free flash</p>
-        </li>
-        <li>
-          <p class="western">Battery voltage</p>
-        </li>
-        <li>
-          <p class="western">Free ram</p>
-        </li>
-        <li>
-          <p class="western">Format <br>
-wipes out the flash memory, deleting all files. </p>
-        </li>
-        <li>
-          <p class="western">Sleep Time<br>
-is the number of seconds before the NXT shuts down in the absence of
-any activity (button presses or program running) You can change the
-setting by pressing the ENTER button. Zero means never. </p>
-        </li>
-        <li>
-          <p class="western">Auto run<br>
-If this is turned on, the default program immediately starts running
-when the NXT is powered up, instead of displaying the main menu. You
-can disable the auto run by holding down the left button during start
-up. </p>
-        </li>
-      </ul>
-      <p class="body-text-3-western"><br>
-      <br>
-      </p>
-      <p class="body-text-3-western"><font color="#0000ff"><u><a
- href="#0.1.%20The%20leJOS%20NXJ%20Menu%20System%7Coutline">Back to top</a></u></font></p>
-      <p class="western"><br>
-      <br>
-      </p>
-      <h3 class="western" lang="en-GB"><a
- name="0.1.4.Bluetooth menu|outline"></a> Bluetooth menu</h3>
-      <p class="western">This menu allows you to control the Bluetooth
-chip. When power is off, the menu looks like this:: </p>
-      <p class="western"><span id="Frame4" dir="ltr"
- style="border: 1px solid rgb(0, 0, 0); padding: 0.05in 0.1in; background: rgb(255, 255, 255) none repeat scroll 0% 50%; float: left; width: 2.01in; height: 1.32in; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
-      <p class="western"
- style="margin-top: 0.02in; margin-bottom: 0.02in;" align="center"> <font
- face="Courier New, monospace">MYNXT </font><font
- face="Courier New, monospace"><span
- style="background: rgb(0, 0, 0) none repeat scroll 0% 50%; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">BT</span></font></p>
-      <p class="western"
- style="margin-top: 0.02in; margin-bottom: 0.02in;" align="center"> <font
- face="Courier New, monospace">Bluetooth</font></p>
-      <p class="western"
- style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font
- face="Courier New, monospace">Status off</font></p>
-      <p class="western"
- style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font
- face="Courier New, monospace">&gt;Power on</font></p>
-      </span><br clear="left">
-      <br>
-      <br>
-      </p>
-      <p class="western">This saves battery power, but Bluetooth
-communication to or from the NXT is not possible. Pressing Enter turns
-the power on. </p>
-      <p class="western">When the power is on, the menu looks like this</p>
-      <p class="western"><span id="Frame5" dir="ltr"
- style="border: 1px solid rgb(0, 0, 0); padding: 0.05in 0.1in; background: rgb(255, 255, 255) none repeat scroll 0% 50%; float: left; width: 1.94in; height: 2.01in; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
-      <p class="western"
- style="margin-top: 0.02in; margin-bottom: 0.02in;" align="center"> <font
- face="Courier New, monospace"> MYNXT BT</font></p>
-      <p class="western"
- style="margin-top: 0.02in; margin-bottom: 0.02in;" align="center"> <font
- face="Courier New, monospace"> Bluetooth</font></p>
-      <p class="western"
- style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font
- face="Courier New, monospace">Status on vis</font></p>
-      <p class="western"
- style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font
- face="Courier New, monospace">&gt;Power off</font></p>
-      <p class="western"
- style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font
- face="Courier New, monospace">Search</font></p>
-      <p class="western"
- style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font
- face="Courier New, monospace">Devices</font></p>
-      <p class="western"
- style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font
- face="Courier New, monospace">Visibility</font></p>
-      </span><br clear="left">
-      <br>
-      <br>
-      </p>
-      <p class="western">The status line shows if power is on and where
-the device is visible to Bluetooth searches.</p>
-      <p class="western">The Visibility menu item switches visibility
-of the devices to Bluetooth inquiries on and off. When it is on the
-status line displays &#8220;vis&#8221; and when it is off, &#8220;invis&#8221;.</p>
-      <h3 class="western" lang="en-GB"><a name="0.1.5.Devices|outline"></a>Devices</h3>
-      <p class="western"><br>
-      <br>
-      </p>
-      <p class="western">The Devices menu item lists the devices
-currently in the Known Devices list for you NXT.</p>
-      <p class="western" align="center"><span id="Frame6" dir="ltr"
- style="border: 1px solid rgb(0, 0, 0); padding: 0.05in 0.1in; background: rgb(255, 255, 255) none repeat scroll 0% 50%; float: left; width: 1.76in; height: 1.63in; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
-      <p class="western"
- style="margin-top: 0.02in; margin-bottom: 0.02in;" align="center"
- lang="fr-FR"> <font face="Courier New, monospace">Devices</font></p>
-      <p class="western"
- style="margin-top: 0.02in; margin-bottom: 0.02in;" align="left"
- lang="fr-FR"> <br>
-      <br>
-      </p>
-      <p class="western"
- style="margin-top: 0.02in; margin-bottom: 0.02in;" align="left"
- lang="fr-FR"> <font face="Courier New, monospace">&gt;NXT1</font></p>
-      <p class="western"
- style="margin-top: 0.02in; margin-bottom: 0.02in;" align="left"
- lang="fr-FR"> <font face="Courier New, monospace">&gt;NXT2</font></p>
-      <p class="western"
- style="margin-top: 0.02in; margin-bottom: 0.02in;" align="left"
- lang="fr-FR"> <font face="Courier New, monospace">&gt;HOLUX_M-1200</font></p>
-      <p class="western"
- style="margin-top: 0.02in; margin-bottom: 0.02in;" align="left"
- lang="fr-FR"> </p>
-      </span><br clear="left">
-      <br>
-      <br>
-      </p>
-      <p class="western">Selecting a specific device will show details
-of it:</p>
-      <p class="western"><span id="Frame7" dir="ltr"
- style="border: 1px solid rgb(0, 0, 0); padding: 0.05in 0.1in; background: rgb(255, 255, 255) none repeat scroll 0% 50%; float: left; width: 1.88in; height: 2in; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
-      <p class="western"
- style="margin-top: 0.02in; margin-bottom: 0.02in;" align="center"> <font
- face="Courier New, monospace">Devices</font></p>
-      <p class="western"
- style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font
- face="Courier New, monospace">NXT1</font></p>
-      <p class="western"
- style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font
- face="Courier New, monospace">001653007848</font></p>
-      <p class="western"
- style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font
- face="Courier New, monospace">0 0 0 4</font></p>
-      <p class="western"
- style="margin-top: 0.02in; margin-bottom: 0.02in;"> <br>
-      <br>
-      </p>
-      <p class="western"
- style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font
- face="Courier New, monospace">&gt;Remove</font></p>
-      <p class="western"
- style="margin-top: 0.02in; margin-bottom: 0.02in;"> <br>
-      <br>
-      </p>
-      </span><br clear="left">
-      <br>
-      <br>
-      </p>
-      <p class="western"><br>
-      <br>
-      </p>
-      <p class="western">The first line give the name, the second the
-address, and the third the status of the four possible Bluetooth
-connections. </p>
-      <p class="western"><br>
-      <br>
-      </p>
-      <p class="western">The &#8220;Remove&#8221; menu item allows the device to be
-removed from the Known device list.</p>
-      <p class="western"><br>
-      <br>
-      </p>
-      <h4 class="western" lang="en-GB"><a name="0.0.0.2.Search|outline"></a>Search</h4>
-      <p class="western"><br>
-      <br>
-      </p>
-      <p class="western">Selecting &#8220;Search&#8221; from the Bluetooth menu,
-starts a Bluetooth inquiry. The display is cleared and the first line
-displays &#8220;Searching&#8230;&#8221;. This takes about 10 seconds.</p>
-      <p class="western"><br>
-      <br>
-      </p>
-      <p class="western">When the search is finished a menu of all the
-Bluetooth devices found, is displayed:</p>
-      <p class="western"><span id="Frame8" dir="ltr"
- style="border: 1px solid rgb(0, 0, 0); padding: 0.05in 0.1in; background: rgb(255, 255, 255) none repeat scroll 0% 50%; float: left; width: 1.88in; height: 1.63in; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
-      <p class="western"
- style="margin-top: 0.02in; margin-bottom: 0.02in;" align="center"> <font
- face="Courier New, monospace">Found</font></p>
-      <p class="western"
- style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font
- face="Courier New, monospace">&gt;NXT1</font></p>
-      <p class="western"
- style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font
- face="Courier New, monospace">&gt;HOLUX_M-1200</font></p>
-      <p class="western"
- style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font
- face="Courier New, monospace">&gt;MyPhone</font></p>
-      <p class="western"
- style="margin-top: 0.02in; margin-bottom: 0.02in;"> <br>
-      <br>
-      </p>
-      <p class="western"
- style="margin-top: 0.02in; margin-bottom: 0.02in;"> <br>
-      <br>
-      </p>
-      </span><br clear="left">
-      <br>
-      <br>
-      </p>
-      <p class="western">All discoverable devices that support an SPP
-profile are displayed. This includes other NXT, GPS devices, mobile
-phones etc.</p>
-      <p class="western"><br>
-      <br>
-      </p>
-      <p class="western">Selecting one of the devices gives the
-following display:</p>
-      <p class="western"><span id="Frame9" dir="ltr"
- style="border: 1px solid rgb(0, 0, 0); padding: 0.05in 0.1in; background: rgb(255, 255, 255) none repeat scroll 0% 50%; float: left; width: 1.88in; height: 1.63in; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
-      <p class="western"
- style="margin-top: 0.02in; margin-bottom: 0.02in;" align="center"> <font
- face="Courier New, monospace">Found</font></p>
-      <p class="western"
- style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font
- face="Courier New, monospace">NXT1</font></p>
-      <p class="western"
- style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font
- face="Courier New, monospace">001653007848</font></p>
-      <p class="western"
- style="margin-top: 0.02in; margin-bottom: 0.02in;"> <br>
-      <br>
-      </p>
-      <p class="western"
- style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font
- face="Courier New, monospace">&gt;Add</font></p>
-      <p class="western"
- style="margin-top: 0.02in; margin-bottom: 0.02in;"> <br>
-      <br>
-      </p>
-      <p class="western"
- style="margin-top: 0.02in; margin-bottom: 0.02in;"> <br>
-      <br>
-      </p>
-      </span><br clear="left">
-      <br>
-      <br>
-      </p>
-      <p class="western">Selecting Add, adds the device to the list of
-know devices. This makes connecting to the devices from leJOS programs
-much easier.</p>
-      <p class="western"><br>
-      <br>
-      </p>
-      <p class="body-text-3-western"><font color="#0000ff"><u><a
- href="#0.1.%20The%20leJOS%20NXJ%20Menu%20System%7Coutline">Back to top</a></u></font></p>
-      <p class="western"><br>
-      <br>
-      </p>
-      <h3 class="western" lang="en-GB"><a name="0.1.6.Sound|outline"></a>Sound</h3>
-      <p class="western"><span id="Frame10" dir="ltr"
- style="border: 1px solid rgb(0, 0, 0); padding: 0.05in 0.1in; background: rgb(255, 255, 255) none repeat scroll 0% 50%; float: left; width: 1.93in; height: 1.27in; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
-      <p class="western"
- style="margin-top: 0.02in; margin-bottom: 0.02in;" align="center"> <font
- face="Courier New, monospace">MYNXT BT</font></p>
-      <p class="western"
- style="margin-top: 0.02in; margin-bottom: 0.02in;" align="center"> <font
- face="Courier New, monospace">Sound</font></p>
-      <p class="western"
- style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font
- face="Courier New, monospace">&gt;Volume: 8</font></p>
-      <p class="western"
- style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font
- face="Courier New, monospace">KeyClick 6</font></p>
-      <p class="western"
- style="margin-top: 0.02in; margin-bottom: 0.02in;"> <br>
-      <br>
-      </p>
-      </span><br clear="left">
-      <br>
-      <br>
-      </p>
-      <p class="body-text-3-western" lang="en-GB">With this menu, you
-can set the default system sound Volume and the Key Clock volume. Click
-the Enter key to scroll through the options.</p>
-      <h3 class="western" lang="en-GB"><a name="0.1.7.Version |outline"></a>Version
-      </h3>
-      <p class="body-text-3-western" style="margin-left: 0in;"
- lang="en-GB"> <span id="Frame11" dir="ltr"
- style="border: 1px solid rgb(0, 0, 0); padding: 0.05in 0.1in; background: rgb(255, 255, 255) none repeat scroll 0% 50%; float: left; width: 1.94in; height: 1.63in; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
-      <p class="western"
- style="margin-top: 0.02in; margin-bottom: 0.02in;" align="center"> <font
- face="Courier New, monospace">MYNXT BT</font></p>
-      <p class="western"
- style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font
- face="Courier New, monospace">Firmware Version</font></p>
-      <p class="western"
- style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font
- face="Courier New, monospace">1.0 (rev. 2260)</font></p>
-      <p class="western"
- style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font
- face="Courier New, monospace">Menu Version</font></p>
-      <p class="western"
- style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font
- face="Courier New, monospace">1.0 (rev 2260)</font></p>
-      <p class="western"
- style="margin-top: 0.02in; margin-bottom: 0.02in;"> <br>
-      <br>
-      </p>
-      </span><br clear="left">
-      </p>
-      <p class="body-text-3-western" lang="en-GB">This menu is for
-information only. </p>
-      <p class="body-text-3-western" lang="en-GB"><br>
-      <br>
-      </p>
-      <p class="body-text-3-western"><font color="#0000ff"><u><a
- href="#0.1.%20The%20leJOS%20NXJ%20Menu%20System%7Coutline">Back to top</a></u></font></p>
-      <p style="margin-left: 0.17in;"><br>
-      <br>
-      </p>
-<!-- DO NOT TOUCH --> <br>
-      <div class="NavBit"> <a target="_top"
- href="../Preliminaries/CompileAndRun.htm">&laquo;&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a
- href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a
- href="../MotorTutorial/ControllingMotors.htm">Next&nbsp;&raquo;</a> </div>
-      <br>
-      </td>
-      <td> <br>
-      </td>
-    </tr>
-  </tbody>
-</table>
+	<a id="top" name="top"></a>
+	<!-- N1: HEADER -->
+	<table class="n1t1" cellpadding="0" cellspacing="0">
+   		<tr>
+      		<td><img src="../r_media/images/tutorial_header1.jpg"></td>
+      		<td align="right"><img src="../r_media/images/tutorial_header2.jpg"></td>
+   		</tr>
+	</table>
+	
+	<!-- N2: CONTENTS -> NAVIGATION SYSTEMS AND CONTENTS -->
+	<table class="n2t1" cellpadding="0" cellspacing="0">
+    	<tr>
+      		<td class="n2t1r1c1">
+				<!-- LEFT NAVIGATION SYSTEM -->
+				<div class="nolinkLESSON">The leJOS NXJ Menu System</div>
+				<div class="linkAHEAD"><a href="#1">Main menu</a></div>
+				<div class="linkAHEAD"><a href="#2">Files menu</a></div>
+				<div class="linkAHEAD"><a href="#3">System menu</a></div>
+				<div class="linkAHEAD"><a href="#4">Bluetooth menu</a></div>
+				<div class="linkAHEAD2"><a href="#5">Devices</a></div>
+				<div class="linkAHEAD2"><a href="#6">Search</a></div>
+				<div class="linkAHEAD2"><a href="#7">Sound</a></div>
+				<div class="linkAHEAD"><a href="#8">Version menu</a></div>
+      		</td>
+      		<td>
+				<!-- BREADCRUMBS -->
+				<div id="BreadCrumbs">
+					<a href="../index.htm" target="_top">Home Page</a>&gt;
+			        <a href="#">The leJOS NXJ Menu System</a>
+				</div>
+				<!-- NAVIGATION TOOL -->
+				<div class="NavBit">
+					<a target="_top" href="../Preliminaries/CompileAndRun.htm">«&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../MotorTutorial/ControllingMotors.htm">Next&nbsp;»</a>
+				</div>
+					
+				<!-- CONTENT AREA -->
+					
+				<!-- CONTENT TITLE -->
+				<div id="PageTitle">The leJOS NXJ Menu System</div>
+				
+				<a name="1"></a>
+				<h4>Main menu</h4>
+      			<p>When leJOS NXJ starts, it displays the leJOS NXJ logo for 3 seconds and then displays the main menu:</p>
+      			<div style="border: 1px solid rgb(0, 0, 0); width: 200px; font-family: monospace;">
+      				<p style="margin-top: 0.02in; margin-bottom: 0.02in;" align="center">&nbsp;&nbsp;&nbsp;MYNXT&nbsp;&nbsp;BT</p>
+      				<p style="margin-top: 0.02in; margin-bottom: 0.02in;">&gt;Run Default</p>
+      				<p style="margin-top: 0.02in; margin-bottom: 0.02in;">&nbsp;Files</p>
+      				<p style="margin-top: 0.02in; margin-bottom: 0.02in;">&nbsp;Bluetooth</p>
+      				<p style="margin-top: 0.02in; margin-bottom: 0.02in;">&nbsp;Sound</p>
+      				<p style="margin-top: 0.02in; margin-bottom: 0.02in;">&nbsp;System</p>
+      				<p style="margin-top: 0.02in; margin-bottom: 0.02in;">&nbsp;Version</p>
+      			</div>
+      			<p>The top line shows the battery voltage icon,the name of the NXT, and the BlueTooth power icon. In this example, the
+				power is on. </p>
+      			<p>It then shows a menu implemented by the TextMenu class.
+      			   You can use the keys to navigate the menu:</p>
+      			<table border="1" bordercolor="#000000" cellpadding="7" cellspacing="0" width="533">
+        			<col width="35"> <col width="36"> <col width="118"> <col width="286"> 
+        			<tbody>
+          				<tr valign="top">
+            				<td colspan="2" width="85">
+            					<p class="body-text-3-western" style="margin-left: 0in;">Key</p>
+            				</td>
+            				<td width="118">
+            					<p class="body-text-3-western" style="margin-left: 0in;">Name</p>
+            				</td>
+            				<td width="286">
+            					<p class="body-text-3-western" style="margin-left: 0in;">Use</p>
+            				</td>
+          				</tr>
+          				<tr valign="top">
+            				<td width="35">
+            					<p class="body-text-3-western" style="margin-left: 0in;">
+            					<img  style="border: 0px solid ; width: 26px; height: 30px;" alt="Left Button"  src="MenuSystem_html_m177adeff.gif" name="graphics5" align="left">. </p>
+            					<p class="body-text-3-western" style="margin-left: 0in;"><br>
+            					</p>
+            				</td>
+            				<td width="36">
+            					<p class="body-text-3-western" style="margin-left: 0in;">
+            					<img  title="Right Button"  style="border: 0px solid ; width: 28px; height: 30px;" alt="" src="MenuSystem_html_5d8f2a7b.gif" name="graphics1" align="left"><br>
+            					</p>
+            				</td>
+            				<td width="118">
+            					<p class="body-text-3-western" style="margin-left: 0in;">Left,Right </p>
+            				</td>
+            				<td width="286">
+            					<p class="body-text-3-western" style="margin-left: 0in;">Scroll up , down</p>
+            				</td>
+          				</tr>
+          				<tr valign="top">
+            				<td colspan="2" width="85">
+            					<p class="body-text-3-western" style="margin-left: 0.3in;">
+            					<img  style="border: 0px solid ; width: 31px; height: 31px;"  alt="Enter Button" src="MenuSystem_html_m203c959b.gif" name="graphics2" align="left"><br clear="left">
+            					<br>
+            					</p>
+            				</td>
+            				<td width="118">
+            					<p class="body-text-3-western" style="margin-left: 0in;">Enter</p>
+            				</td>
+            				<td width="286">
+            					<p class="body-text-3-western" style="margin-left: 0in;">Select the menu item</p>
+            				</td>
+          				</tr>
+          				<tr valign="top">
+            				<td colspan="2" width="85">
+            					<p class="body-text-3-western" style="margin-left: 0.3in;">
+            					<img  style="border: 0px solid ; width: 28px; height: 15px;" alt=""  src="MenuSystem_html_1e8da1cd.gif" name="graphics3" align="left">
+            					<br  clear="left">
+            					<br>
+            					</p>
+            				</td>
+            				<td width="118">
+            					<p class="body-text-3-western" style="margin-left: 0in;">Escape</p>
+            				</td>
+            				<td width="286">
+            					<p class="body-text-3-western" style="margin-left: 0in;">Quit the menu and return to the previous one..
+            					<br>In the main menu, shut down the NXT </p>
+            				</td>
+          				</tr>
+        			</tbody>
+      			</table>
+      			<p/>
+      			<a href="#top">Back to top</a>
+      			<p/>
+      			
+      			<a name="#2"></a>
+      			<h4>Files menu</h4>
+      			<p>When you select the &#8220;Files&#8221; menu item, the list of files is displayed:</p>
+      			<p/>
+      			<div style="border: 1px solid rgb(0, 0, 0); width: 200px; font-family: monospace;">
+      				<p style="margin-top: 0.02in; margin-bottom: 0.02in;" align="center">MYNXT BT</p>
+      				<p style="margin-top: 0.02in; margin-bottom: 0.02in;">&gt;View.nxj</p>
+      				<p style="margin-top: 0.02in; margin-bottom: 0.02in;">&nbsp;SoundScope.nxj</p>
+      				<p style="margin-top: 0.02in; margin-bottom: 0.02in;">&nbsp;LCDTest.nxj</p>
+      			</div>
+      			<p>When you select a particular file, the file submenu is displayed:</p>
+      			<div style="border: 1px solid rgb(0, 0, 0); width: 200px;">
+      				<p class="western"  style="margin-top: 0.02in; margin-bottom: 0.02in;" align="center"> <font face="Courier New, monospace">MYNXT BT</font></p>
+      				<p class="western"  style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font face="Courier New, monospace">View.nxj</font></p>
+      				<p class="western" style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font face="Courier New, monospace">&gt;Execute program</font></p>
+      				<p class="western" style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font face="Courier New, monospace">&nbsp;Set as Default</font></p>
+      				<p class="western" style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font face="Courier New, monospace">&nbsp;Delete file</font></p>
+      			</div>
+      			<p/>
+      			<a href="#top">Back to top</a>
+      			<p/>
+      			
+      			<a name="#3"></a>
+      			<h4>System menu</h4>
+      			<p>This menu shows some information about the status of the NXT, and allows you to change some of these variables.</p>
+      			<ul class="BlueArrows">
+        			<li>Free flash</li>
+        			<li>Battery voltage</li>
+        			<li>Free ram</li>
+        			<li>Format <br>Wipes out the flash memory, deleting all files.</li>
+        			<li>Sleep Time<br>is the number of seconds before the NXT shuts down in the absence of
+						any activity (button presses or program running) You can change the
+						setting by pressing the ENTER button. Zero means never.
+        			</li>
+        			<li>Auto run<br>
+						If this is turned on, the default program immediately starts running
+						when the NXT is powered up, instead of displaying the main menu. You
+						can disable the auto run by holding down the left button during start
+						up.
+        			</li>
+      			</ul>
+      			<p/>
+      			<a href="#top">Back to top</a>
+      			<p/>
+      			
+      			<a name="#4"></a>
+      			<h4>Bluetooth menu</h4>
+      			<p>This menu allows you to control the Bluetooth chip. When power is off, the menu looks like this:: </p>
+      			<div style="border: 1px solid rgb(0, 0, 0); width: 200px;">
+      				<p class="western" style="margin-top: 0.02in; margin-bottom: 0.02in;" align="center"> <font face="Courier New, monospace">MYNXT BT</font>
+      				<p class="western"  style="margin-top: 0.02in; margin-bottom: 0.02in;" align="center"> <font  face="Courier New, monospace">Bluetooth</font></p>
+      				<p class="western" style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font face="Courier New, monospace">Status off</font></p>
+      				<p class="western" style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font face="Courier New, monospace">&gt;Power on</font></p>
+      			</div>
+      			<p>This saves battery power, but Bluetooth communication to or from the NXT is not possible. Pressing Enter turns the power on. </p>
+      			<p>When the power is on, the menu looks like this</p>
+      			<div style="border: 1px solid rgb(0, 0, 0); width: 200px">
+      				<p class="western" style="margin-top: 0.02in; margin-bottom: 0.02in;" align="center"> <font face="Courier New, monospace"> MYNXT BT</font></p>
+      				<p class="western"  style="margin-top: 0.02in; margin-bottom: 0.02in;" align="center"> <font  face="Courier New, monospace"> Bluetooth</font></p>
+      				<p class="western" style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font  face="Courier New, monospace">Status on vis</font></p>
+      				<p class="western"  style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font face="Courier New, monospace">&gt;Power off</font></p>
+      				<p class="western"  style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font  face="Courier New, monospace">&nbsp;Search</font></p>
+      				<p class="western"  style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font  face="Courier New, monospace">&nbsp;Devices</font></p>
+      				<p class="western"  style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font  face="Courier New, monospace">&nbsp;Visibility</font></p>
+      			</div>
+      			<p>The status line shows if power is on and where the device is visible to Bluetooth searches.</p>
+      			<p>The Visibility menu item switches visibility of the devices to Bluetooth inquiries on and off. When it is on the status line displays &#8220;vis&#8221; and when it is off, &#8220;invis&#8221;.</p>
+				<a href="#top">Back to top</a>
+				<p/>
+				
+				<a name="#5"></a>
+      			<h4>Devices</h4>
+      			<p>The Devices menu item lists the devices currently in the Known Devices list for you NXT.</p>
+      			<div style="border: 1px solid rgb(0, 0, 0); width: 200px">
+      				<p class="western"  style="margin-top: 0.02in; margin-bottom: 0.02in;" align="center"  lang="fr-FR"> <font face="Courier New, monospace">Devices</font></p>
+      				<p class="western" style="margin-top: 0.02in; margin-bottom: 0.02in;" align="left" lang="fr-FR"> <font face="Courier New, monospace">&gt;NXT1</font></p>
+      				<p class="western"  style="margin-top: 0.02in; margin-bottom: 0.02in;" align="left" lang="fr-FR"> <font face="Courier New, monospace">&nbsp;NXT2</font></p>
+      				<p class="western"  style="margin-top: 0.02in; margin-bottom: 0.02in;" align="left"  lang="fr-FR"> <font face="Courier New, monospace">&nbsp;HOLUX_M-1200</font></p>
+      				<p class="western"  style="margin-top: 0.02in; margin-bottom: 0.02in;" align="left"  lang="fr-FR"> </p>
+      			</div>
+      			<p>Selecting a specific device will show details of it:</p>
+      			<div style="border: 1px solid rgb(0, 0, 0); width: 200px;">
+      				<p class="western" style="margin-top: 0.02in; margin-bottom: 0.02in;" align="center"> <font face="Courier New, monospace">Devices</font></p>
+      				<p class="western" style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font face="Courier New, monospace">NXT1</font></p>
+      				<p class="western" style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font face="Courier New, monospace">001653007848</font></p>
+      				<p class="western" style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font face="Courier New, monospace">0 0 0 4</font></p>
+      				<p class="western" style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font face="Courier New, monospace">&gt;Remove</font></p>
+      			</div>
+     			<p>The first line give the name, the second the address, and the third the status of the four possible Bluetooth connections. </p>
+      			<p >The &#8220;Remove&#8221; menu item allows the device to be removed from the Known device list.</p>
+				<a href="#top">Back to top</a>
+				<p/>
+				
+      			<a name="#7"></a>
+      			<h4>Search</h4>
+      			<p>Selecting &#8220;Search&#8221; from the Bluetooth menu, starts a Bluetooth inquiry. The display is cleared and the first line displays &#8220;Searching&#8230;&#8221;. This takes about 10 seconds.</p>
+      			<p>When the search is finished a menu of all the Bluetooth devices found, is displayed:</p>
+      			<div style="border: 1px solid rgb(0, 0, 0); width: 200px;">
+      				<p class="western" style="margin-top: 0.02in; margin-bottom: 0.02in;" align="center"> <font face="Courier New, monospace">Found</font></p>
+      				<p class="western" style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font face="Courier New, monospace">&gt;NXT1</font></p>
+      				<p class="western" style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font  face="Courier New, monospace">&nbsp;HOLUX_M-1200</font></p>
+      				<p class="western" style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font  face="Courier New, monospace">&nbsp;MyPhone</font></p>
+      				 </div>
+      			<p class="western">All discoverable devices that support an SPP profile are displayed. This includes other NXT, GPS devices, mobile phones etc.</p>
+      			<p class="western">Selecting one of the devices gives the following display:</p>
+      			<p class="western">
+      			<div style="border: 1px solid rgb(0, 0, 0); width: 200px;">
+      				<p class="western" style="margin-top: 0.02in; margin-bottom: 0.02in;" align="center"> <font face="Courier New, monospace">Found</font></p>
+      				<p class="western" style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font face="Courier New, monospace">NXT1</font></p>
+      				<p class="western" style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font face="Courier New, monospace">001653007848</font></p>
+      				<p class="western" style="margin-top: 0.02in; margin-bottom: 0.02in;"> <br>
+      				<p class="western"  style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font face="Courier New, monospace">&gt;Add</font></p>
+      				<p class="western" style="margin-top: 0.02in; margin-bottom: 0.02in;"> <br>
+      			</div>
+      			<p class="western">Selecting Add, adds the device to the list of know devices. This makes connecting to the devices from leJOS programs much easier.</p>    			
+      			<a href="#top">Back to top</a>
+      			<p/>
+      			
+      			<a name="#7"></a>
+      			<h4>Sound</h4>
+      			<p/>
+      			<div style="border: 1px solid rgb(0, 0, 0); width: 200px">
+      				<p class="western" style="margin-top: 0.02in; margin-bottom: 0.02in;" align="center"> <font face="Courier New, monospace">MYNXT BT</font></p>
+      				<p class="western" style="margin-top: 0.02in; margin-bottom: 0.02in;" align="center"> <font face="Courier New, monospace">Sound</font></p>
+      				<p class="western" style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font face="Courier New, monospace">&gt;Volume: 8</font></p>
+      				<p class="western" style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font face="Courier New, monospace">&nbsp;KeyClick 6</font></p>
+      				<p class="western" style="margin-top: 0.02in; margin-bottom: 0.02in;"> <br>
+      			</div>
+      			<p>With this menu, you can set the default system sound Volume and the Key Clock volume. Click the Enter key to scroll through the options.</p>
+      			
+      			<a name="#7"></a>
+      			<h4>Version</h4>
+      			<p/>
+      			<div style="border: 1px solid rgb(0, 0, 0); width: 200px;">
+      				<p class="western"  style="margin-top: 0.02in; margin-bottom: 0.02in;" align="center"> <font  face="Courier New, monospace">MYNXT BT</font></p>
+      				<p class="western"  style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font  face="Courier New, monospace">Firmware Version</font></p>
+      				<p class="western"  style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font  face="Courier New, monospace">1.0 (rev. 2260)</font></p>
+      				<p class="western" style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font face="Courier New, monospace">Menu Version</font></p>
+      				<p class="western"  style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font face="Courier New, monospace">1.0 (rev 2260)</font></p>
+      			</div>
+      			<p>This menu is for information only.</p>
+				
+      			<a href="#top">Back to top</a>  
+      			<p/>			
+      			<div class="NavBit"> 
+      				<a target="_top"  href="../Preliminaries/CompileAndRun.htm">&laquo;&nbsp;Previous</a>&nbsp;&#8226;&nbsp;
+      				<a  href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;
+      				<a  href="../MotorTutorial/ControllingMotors.htm">Next&nbsp;&raquo;</a> 
+      			</div>
+      		</td>
+    	</tr>
+	</table>
 </body>
 </html>
