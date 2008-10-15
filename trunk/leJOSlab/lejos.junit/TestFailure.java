@@ -51,21 +51,4 @@ public class TestFailure extends Object {
     }
 
 
-    /**
-     * Returns a short description of the failure.
-     * @return a string representation of a test failure
-     */
-    public String toString() {
-        // do NOT use a StringBuffer
-        // StringBuffer buffer = new StringBuffer();
-        // buffer.append(failedTest + ": " + thrownException.getMessage());
-        // return buffer.toString();
-/*
-    	String s1 = String.valueOf (failedTest);
-        String s2 = ": ";
-        String s3 = thrownException.getMessage ();
-        return Util.concat (s1, s2, s3);
-*/
-    	return "";
-    }
 }
