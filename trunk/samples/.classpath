@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry excluding="BTConnectTest/|BTGPS/|BTKeyboard/|BTReceive/|BlueStats/|BumperCar/|ColorDetector/|CompassTest/|DLTest/|ExceptionTest/|FileTest/|GraphicsSample/|HelloWorld/|I2CDevices/|KeyboardTest/|LCDUI/|LLCMonitor/|LLCTest/|LatteboxTest/|Line/|Listen/|MatrixTest/|MemoryTest/|MonitorTest/|NXTCamTest/|PFTest/|PerformanceTest/|PilotTester/|RCXEmulator/|RCXLinkTest/|RCXMMTest/|RCXMuxTest/|RCXPortTest/|RCXRemote/|RCXRemoteMotor/|RCXTempTest/|RemoteMotor/|RemoteNXTTest/|SerialTest/|SignalTest/|SocketTest/|SonicTest/|SoundSample/|SpeedTest/|Subsumption1/|Subsumption2/|TiltTest/|TimeTest/|Tune/|USBReceive/|View/|BTTest/|DistanceTest/|STTest/|RCNavigator/" kind="src" path=""/>
+	<classpathentry kind="src" path="BlueStats"/>
+	<classpathentry kind="src" path="BTConnectTest"/>
+	<classpathentry kind="src" path="BTGPS"/>
+	<classpathentry kind="src" path="BTReceive"/>
+	<classpathentry kind="src" path="BTTest"/>
+	<classpathentry kind="src" path="BumperCar"/>
+	<classpathentry kind="src" path="ColorDetector"/>
+	<classpathentry kind="src" path="CompassTest"/>
+	<classpathentry kind="src" path="DistanceTest"/>
+	<classpathentry kind="src" path="DLTest"/>
+	<classpathentry kind="src" path="ExceptionTest"/>
+	<classpathentry kind="src" path="FileTest"/>
+	<classpathentry kind="src" path="GraphicsSample"/>
+	<classpathentry kind="src" path="HelloWorld"/>
+	<classpathentry kind="src" path="I2CDevices"/>
+	<classpathentry kind="src" path="KeyboardTest"/>
+	<classpathentry kind="src" path="LatteboxTest"/>
+	<classpathentry kind="src" path="LCDUI"/>
+	<classpathentry kind="src" path="Line"/>
+	<classpathentry kind="src" path="Listen"/>
+	<classpathentry kind="src" path="LLCMonitor"/>
+	<classpathentry kind="src" path="MatrixTest"/>
+	<classpathentry kind="src" path="MemoryTest"/>
+	<classpathentry kind="src" path="MonitorTest"/>
+	<classpathentry kind="src" path="NXTCamTest"/>
+	<classpathentry kind="src" path="PerformanceTest"/>
+	<classpathentry kind="src" path="PFTest"/>
+	<classpathentry kind="src" path="PilotTester"/>
+	<classpathentry kind="src" path="RCNavigator"/>
+	<classpathentry kind="src" path="RCXEmulator"/>
+	<classpathentry kind="src" path="RCXMMTest"/>
+	<classpathentry kind="src" path="RCXMuxTest"/>
+	<classpathentry kind="src" path="RCXPortTest"/>
+	<classpathentry kind="src" path="RCXRemote"/>
+	<classpathentry kind="src" path="RCXRemoteMotor"/>
+	<classpathentry kind="src" path="RCXTempTest"/>
+	<classpathentry kind="src" path="RemoteNXTTest"/>
+	<classpathentry kind="src" path="SignalTest"/>
+	<classpathentry kind="src" path="SocketTest"/>
+	<classpathentry kind="src" path="SonicTest"/>
+	<classpathentry kind="src" path="SoundSample"/>
+	<classpathentry kind="src" path="SpeedTest"/>
+	<classpathentry kind="src" path="STTest"/>
+	<classpathentry kind="src" path="Subsumption1"/>
+	<classpathentry kind="src" path="Subsumption2"/>
+	<classpathentry kind="src" path="TiltTest"/>
+	<classpathentry kind="src" path="TimeTest"/>
+	<classpathentry kind="src" path="Tune"/>
+	<classpathentry kind="src" path="USBReceive"/>
+	<classpathentry kind="src" path="View"/>
+	<classpathentry exported="true" kind="lib" path="/classes/lib/classes.jar" sourcepath="/classes">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/C:/Users/Lawrie/workspace/classes/doc/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="output" path="build"/>
+</classpath>

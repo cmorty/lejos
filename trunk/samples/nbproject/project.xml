@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://www.netbeans.org/ns/project/1">
+    <type>org.netbeans.modules.java.j2seproject</type>
+    <configuration>
+        <data xmlns="http://www.netbeans.org/ns/j2se-project/3">
+            <name>samples</name>
+            <minimum-ant-version>1.6.5</minimum-ant-version>
+            <source-roots>
+                <root id="src.BlueStats.dir"/>
+                <root id="src.BTConnectTest.dir"/>
+                <root id="src.BTGPS.dir"/>
+                <root id="src.BTReceive.dir"/>
+                <root id="src.BTTest.dir"/>
+                <root id="src.build.dir"/>
+                <root id="src.BumperCar.dir"/>
+                <root id="src.ColorDetector.dir"/>
+                <root id="src.CompassTest.dir"/>
+                <root id="src.DistanceTest.dir"/>
+                <root id="src.DLTest.dir"/>
+                <root id="src.ExceptionTest.dir"/>
+                <root id="src.FileTest.dir"/>
+                <root id="src.GraphicsSample.dir"/>
+                <root id="src.HelloWorld.dir"/>
+                <root id="src.I2CDevices.dir"/>
+                <root id="src.KeyboardTest.dir"/>
+                <root id="src.LatteboxTest.dir"/>
+                <root id="src.LCDUI.dir"/>
+                <root id="src.Line.dir"/>
+                <root id="src.Listen.dir"/>
+                <root id="src.LLCMonitor.dir"/>
+                <root id="src.MatrixTest.dir"/>
+                <root id="src.MemoryTest.dir"/>
+                <root id="src.MonitorTest.dir"/>
+                <root id="src.NXTCamTest.dir"/>
+                <root id="src.PerformanceTest.dir"/>
+                <root id="src.PFTest.dir"/>
+                <root id="src.PilotTester.dir"/>
+                <root id="src.RCNavigator.dir"/>
+                <root id="src.RCXEmulator.dir"/>
+                <root id="src.RCXMMTest.dir"/>
+                <root id="src.RCXMuxTest.dir"/>
+                <root id="src.RCXPortTest.dir"/>
+                <root id="src.RCXRemote.dir"/>
+                <root id="src.RCXRemoteMotor.dir"/>
+                <root id="src.RCXTempTest.dir"/>
+                <root id="src.RemoteNXTTest.dir"/>
+                <root id="src.SignalTest.dir"/>
+                <root id="src.SocketTest.dir"/>
+                <root id="src.SonicTest.dir"/>
+                <root id="src.SoundSample.dir"/>
+                <root id="src.SpeedTest.dir"/>
+                <root id="src.STTest.dir"/>
+                <root id="src.Subsumption1.dir"/>
+                <root id="src.Subsumption2.dir"/>
+                <root id="src.TiltTest.dir"/>
+                <root id="src.TimeTest.dir"/>
+                <root id="src.Tune.dir"/>
+                <root id="src.USBReceive.dir"/>
+                <root id="src.View.dir"/>
+            </source-roots>
+            <test-roots/>
+        </data>
+    </configuration>
+</project>
