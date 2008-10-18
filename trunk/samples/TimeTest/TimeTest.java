@@ -8,59 +8,48 @@ import java.io.*;
 * @author Lawrie Griffiths
 *
 */
-public class TimeTest {
-	
+public class TimeTest {	
 	private String host = "time.nist.gov";
 	private int port = 13;
 	private DataInputStream ins;
 	private DataOutputStream outs;
 	private BTConnection btc = null;
 	private NXTSocket sock = null;
-	private String connected = "connected";
-	private String waiting = "waiting";
-	boolean con = false;
+	private String connected = "Connected";
+	private String waiting = "Waiting...";
 
 	public TimeTest() throws Exception{
-		while(true){
-			connect();
-			ins = sock.getDataInputStream();
-			outs = sock.getDataOutputStream();
-			for(int i=0;i<23;i++) {
-				try{
-					char[] c = new char[1];
-					c[0] = (char) ins.read();
-					if (i >= 7) {
-					  String s = new String(c,0,1);
-					  print(s,i-7);
-					}
-				}catch(IOException e){
-					LCD.drawString("ERROR",0,1);
-					LCD.refresh();
-				}				
-			}
-			ins.close();
-			outs.close();
+		connect();
+		ins = sock.getDataInputStream();
+		outs = sock.getDataOutputStream();
+		StringBuffer sb = new StringBuffer();
+		char c;
+		int b;
+		while (true) {
+			try {
+				b = ins.read();
+				if (b < 0) break;
+				c =  (char) b;
+				if (c == '*') break;
+				sb.append(c);
+			} catch(IOException e){
+				System.out.println("IO Exception");
+			}				
 		}
+		System.out.println(sb.toString());
+		ins.close();
+		outs.close();
+		sock.close();
+		Button.waitForPress();
 	}
 
 	public void connect()throws IOException{
-		if(!con){
-			LCD.clear();
-			LCD.drawString(waiting,0,0);
-			LCD.refresh();
-			btc = Bluetooth.waitForConnection();
-			LCD.clear();
-			sock = new NXTSocket(host,port,btc);
-			con = true;
-			LCD.drawString(connected,0,0);
-			LCD.refresh();
-		}
-	}
-
-	public void print(String i, int n){
-		LCD.drawString("Received ", 0, 0);
-		LCD.drawString(i,n,1);
-		LCD.refresh();
+		LCD.clear();
+		LCD.drawString(waiting, 0, 0);
+		btc = Bluetooth.waitForConnection();
+		LCD.clear();
+		sock = new NXTSocket(host, port, btc);
+		LCD.drawString(connected, 0, 0);
 	}
 
 	public static void main(String [] args)  throws Exception
