@@ -1,12 +1,7 @@
 package lejos.nxt.socket;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-
-import lejos.nxt.comm.BTConnection;
-import lejos.nxt.socket.NXTSocket;
-import lejos.nxt.comm.USBConnection;
+import java.io.*;
+import lejos.nxt.comm.*;
 
 /**
  * 
@@ -17,38 +12,22 @@ import lejos.nxt.comm.USBConnection;
 public class NXTServerSocket {
 
 	private int port;
-	private BTConnection btc;
-	private USBConnection usbc;
-	private boolean isBluetooth;
+	private NXTConnection nxtc;
 	private final boolean isServer = true;
 	
 	/**
-	 * Constructor. Creates a new Server Socket over an open bluetooth connection
+	 * Constructor. Creates a new Server Socket over a Bluetooth or USB connection
 	 * @param port The port to listen on
-	 * @param btc The bluetooth connection to open
+	 * @param nxtc The connection to open
 	 * @throws IOException 
 	 */
-	public NXTServerSocket(int port, BTConnection btc) throws IOException{
+	public NXTServerSocket(int port, NXTConnection nxtc) throws IOException {
 		this.port = port;
-		this.btc = btc;
-		isBluetooth = true;
+		this.nxtc = nxtc;
 		negotiateConnection();
 	}
 	
-	/**
-	 * Constructor. Creates a new Server Socket over an open usb connection
-	 * @param port The port to listen on
-	 * @param usbc The usb connection to open
-	 * @throws IOException 
-	 */
-	public NXTServerSocket(int port, USBConnection usbc) throws IOException{
-		this.port = port;
-		this.usbc = usbc;
-		isBluetooth = false;
-		negotiateConnection();
-	}
-	
-	private void negotiateConnection() throws IOException{
+	private void negotiateConnection() throws IOException {
 		DataOutputStream dos = openDataOutputStream();
 		dos.writeBoolean(isServer);
 		dos.writeInt(port);
@@ -56,36 +35,34 @@ public class NXTServerSocket {
 		dos.close();		
 	}
 	
-	private DataOutputStream openDataOutputStream() throws IOException{
+	private DataOutputStream openDataOutputStream() throws IOException {
 		DataOutputStream dos;
-		if(isBluetooth){dos = new DataOutputStream(btc.openOutputStream());}
-		else{dos = new DataOutputStream(usbc.openOutputStream());}
+		dos = new DataOutputStream(nxtc.openOutputStream());
 		return dos;
 	}
 	
-	private DataInputStream openDataInputStream() throws IOException{
+	private DataInputStream openDataInputStream() throws IOException {
 		DataInputStream dis;
-		if(isBluetooth){dis = new DataInputStream(btc.openInputStream());}
-		else{dis = new DataInputStream(usbc.openInputStream());}
+		dis = new DataInputStream(nxtc.openInputStream());
 		return dis;
 	}
 	
 	/**
 	 * Waits until there is a socket connection available. When this becomes true
 	 * a new NXTSocket is returned
-	 * @return NXTSocket
+	 * @return NXTSocket the socket
 	 * @throws IOException 
 	 */
-	public NXTSocket accept() throws IOException{
+	public NXTSocket accept() throws IOException {
 		DataOutputStream dos = openDataOutputStream();
-		DataInputStream dis = openDataInputStream();
-		// inform the proxy of the command
+		DataInputStream dis = openDataInputStream(); 
+		
+		// Inform the proxy of the command
 		dos.writeByte(1);
 		dos.flush();
 		dis.readBoolean();
 		dos.close();
 		dis.close();
-		if(isBluetooth){return new NXTSocket(btc);}
-		else{return new NXTSocket(usbc);}		
+		return new NXTSocket(nxtc);		
 	}
 }

@@ -6,58 +6,37 @@ import lejos.nxt.comm.*;
 /**
 * NXTSocket. Allows a NXT to establish a connection with a remote Socket
 * server via a proxy server.
+* 
+* Version 1.1 uses NXTConnection and does not need to distinguish between USB and Bluetooth.
 *
-* @author Ranulf Green
-* @version 1.0
+* @author Ranulf Green & Lawrie Griffiths
+* @version 1.1
 */
-
 public class NXTSocket{
-
 	private DataOutputStream outToProxy;
 	private DataInputStream inFromProxy;
-	private BTConnection btc;
-	private USBConnection usbc;
+	private NXTConnection nxtc;
 	private String host;
 	private int port;
-	private boolean isBluetooth;
 	private boolean isServer = false;
-
-	/**
-	 * Constructor: Pass an open bluetooth connection and socket details.
-	 * @param host The name of the host with which the socket will be opened
-	 * @param port The port to connect to
-	 * @param btc The bluetooth connection
-	 * @throws IOException If the bluetooth does not respond or the proxy is
-	 * 	not running
-	 */
-	public NXTSocket(String host, int port, BTConnection btc) throws IOException{
-		this.host = host;
-		this.port = port;
-		this.btc = btc;
-		inFromProxy = new DataInputStream(btc.openInputStream());
-		outToProxy = new DataOutputStream(btc.openOutputStream());
-		isBluetooth = true;
-		negotiateConnection();
-		outToProxy.close();
-		inFromProxy.close();
-		
-	}
+	private NXTSocketOutputStream os;
+	
+	private static final int BUFFER_SIZE = 64;
 	
 	/**
-	 * Constructor: Pass an open USB connection and socket details.
+	 * Constructor: Pass an open NXT connection and socket details.
 	 * @param host The name of the host with which the socket will be opened
 	 * @param port The port to connect to
-	 * @param usbc The USB connection
-	 * @throws IOException If the bluetooth does not respond or the proxy is
+	 * @param nxtc The NXT connection
+	 * @throws IOException If the host does not respond or the proxy is
 	 * 	not running
 	 */
-	public NXTSocket(String host, int port, USBConnection usbc) throws IOException{
+	public NXTSocket(String host, int port, NXTConnection nxtc) throws IOException {
 		this.host = host;
 		this.port = port;
-		this.usbc = usbc;
-		inFromProxy = new DataInputStream(btc.openInputStream());
-		outToProxy = new DataOutputStream(btc.openOutputStream());
-		isBluetooth = false;
+		this.nxtc = nxtc;
+		inFromProxy = new DataInputStream(nxtc.openInputStream());
+		outToProxy = new DataOutputStream(nxtc.openOutputStream());
 		negotiateConnection();
 		outToProxy.close();
 		inFromProxy.close();
@@ -65,20 +44,10 @@ public class NXTSocket{
 	
 	/**
 	 * Constructor. Use if the socket is intended not to connect to a host
-	 * @param btc the connection the socket is made over
+	 * @param nxtc the connection the socket is made over
 	 */
-	public NXTSocket(BTConnection btc){
-		this.btc = btc;
-		isBluetooth = true;
-	}
-	
-	/**
-	 * Constructor for usb connnection. Does not connect to a host
-	 * @param usbc The USB connection to use;
-	 */
-	public NXTSocket(USBConnection usbc){
-		this.usbc = usbc;
-		isBluetooth = false;
+	public NXTSocket(NXTConnection nxtc) {
+		this.nxtc = nxtc;
 	}
 	
 	/**
@@ -86,17 +55,17 @@ public class NXTSocket{
 	 * Negotiates a connection between NXT and socket proxy
 	 * @throws IOException if host name is invalid or connection fails
 	 */
-	private void negotiateConnection() throws IOException{
-		if(host.length()==0) throw new IOException ();
-		else{
-			outToProxy = new DataOutputStream(btc.openOutputStream());
+	private void negotiateConnection() throws IOException {
+		if (host.length()==0) throw new IOException ();
+		else {
+			outToProxy = new DataOutputStream(nxtc.openOutputStream());
 			outToProxy.writeBoolean(isServer);
 			outToProxy.writeByte(host.length());
 			outToProxy.writeChars(host);
 			outToProxy.writeInt(port);
 			outToProxy.flush();
 		}
-		if(!inFromProxy.readBoolean()){
+		if (!inFromProxy.readBoolean()) {
 			throw new IOException();
 		}
 	}
@@ -106,9 +75,8 @@ public class NXTSocket{
 	 * @return The data input stream of the socket
 	 * @throws IOException
 	 */
-	public DataInputStream getDataInputStream() throws IOException{
-		if(isBluetooth){return new DataInputStream(btc.openInputStream());}
-		else{return new DataInputStream(usbc.openInputStream());}
+	public DataInputStream getDataInputStream() throws IOException {
+		return new DataInputStream(getInputStream());
 	}
 
 	/**
@@ -116,9 +84,8 @@ public class NXTSocket{
 	 * @return The data output stream of the socket
 	 * @throws IOException
 	 */
-	public DataOutputStream getDataOutputStream() throws IOException{
-		if(isBluetooth){return new DataOutputStream(btc.openOutputStream());}
-		else{return new DataOutputStream(usbc.openOutputStream());}
+	public DataOutputStream getDataOutputStream() throws IOException {
+		return new DataOutputStream(getOutputStream());
 	}
 	
 	/**
@@ -126,9 +93,9 @@ public class NXTSocket{
 	 * @return The output stream
 	 * @throws IOException
 	 */
-	public OutputStream getOutputStream() throws IOException{
-		if(isBluetooth){return btc.openOutputStream();}
-		else {return usbc.openOutputStream();}
+	public OutputStream getOutputStream() throws IOException {
+		os =  new NXTSocketOutputStream(nxtc, BUFFER_SIZE);
+		return os;
 	}
 	
 	/**
@@ -136,11 +103,18 @@ public class NXTSocket{
 	 * @return The input stream
 	 * @throws IOException
 	 */
-	public InputStream getInputStream() throws IOException{
-		if(isBluetooth){return btc.openInputStream();}
-		else{return usbc.openInputStream();}
+	public InputStream getInputStream() throws IOException {
+		return nxtc.openInputStream();
 	}
 	
+	/**
+	 * Write Escape sequence to indicate end of file
+	 */
+	public void close() {
+		try {
+			os.writeClose();
+		} catch (IOException e) {}
+	}	
 }
 
 
