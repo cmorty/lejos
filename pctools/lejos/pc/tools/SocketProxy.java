@@ -14,11 +14,10 @@ import lejos.pc.comm.*;
 *
 * Currently only supports TCP connections
 *
-* @author Ranulf Green
-* @version 1.0
+* @author Ranulf Green and Lawrie Griffiths
+* @version 1.1
 */
 public class SocketProxy {
-
 	private String host;
 	private int port;
 	private DataInputStream inFromNXT;
@@ -28,16 +27,16 @@ public class SocketProxy {
 
 	/**
 	 * Constructor
-	 * An instance of Socket proxy will allow for transparent forwarding
+	 * An instance of SocketProxy will allow for transparent forwarding
 	 * of messages between server and NXT using a socket connection
 	 * @param NXTName The name of the NXT to connect to
 	 * @param NXTaddress The physical address of the NXT
 	 */
-	public SocketProxy(String NXTName, String NXTaddress){
+	public SocketProxy(String NXTName, String NXTaddress) {
 		try {
 			NXTComm nxtComm = null;
 			
-			//  create a Bluetooth connection with the NXT
+			//  Create a Bluetooth connection with the NXT
 			try {
 				 nxtComm = NXTCommFactory.createNXTComm(NXTCommFactory.BLUETOOTH);
 			} catch (NXTCommException e) {
@@ -47,15 +46,15 @@ public class SocketProxy {
 			
 			NXTInfo[] nxtInfo = new NXTInfo[1];
 
-			nxtInfo[0] = new NXTInfo(NXTName,NXTaddress);
+			nxtInfo[0] = new NXTInfo(NXTName, NXTaddress);
 
-			System.out.println("Connecting to " + nxtInfo[0].btResourceString);
+			System.out.println("Connecting to " + nxtInfo[0].name);
 
-			// check to see if NXT really exists, if not exit
+			// Check to see if NXT really exists, if not exit
 			boolean isOpen = false;
 			try {
 				isOpen = nxtComm.open(nxtInfo[0]);
-			} catch(NXTCommException n) {
+			} catch (NXTCommException n) {
 				System.err.println(n.getMessage());
 				isOpen = false;
 			}
@@ -67,11 +66,11 @@ public class SocketProxy {
 			inFromNXT = new DataInputStream(nxtComm.getInputStream());
 			outToNXT = new DataOutputStream(nxtComm.getOutputStream());
 			
-			// check to see if socket is a server or a client
+			// Check to see if socket is a server or a client
 			boolean isServer = inFromNXT.readBoolean();
-			if(isServer){
+			if (isServer) {
 				newSocketServer();
-			}else{
+			} else {
 				newSocketConnection();
 			}
 		}
@@ -83,42 +82,45 @@ public class SocketProxy {
 	 * Creates a new socket server if instructed by the NXT
 	 * @throws IOException
 	 */
-	private void newSocketServer() throws IOException{
+	private void newSocketServer() throws IOException {
 		int port = inFromNXT.readInt();
+		System.out.println("Waiting on " + port);
 		serverSocket = new ServerSocket(port);
-		boolean cmdMode = true;
-		while(cmdMode){
-			// wait for command from NXT
+		while (true) {
+			// Wait for command from NXT
 			byte command = inFromNXT.readByte();
+			//System.out.println("Command = " + command);
 			if(command == 1){
 				waitForConnection();
-				cmdMode = false;
 			}
-			// TODO support for other socket server functions
 		}
 	}
 
 	/**
 	 * Allows negotiation of the accept() method of Socket server
+	 * Executes a single accept and waits until the Socket is closed
+	 * 
 	 * @throws IOException
 	 */
-	private void waitForConnection()throws IOException{
-		while(true){
-			sock = serverSocket.accept();
+	private void waitForConnection() throws IOException {
+		sock = serverSocket.accept();
+		//System.out.println("Accepted");
 
-			//	inform the NXT of the new Connection
-			outToNXT.writeBoolean(true);
-			outToNXT.flush();
+		//	inform the NXT of the new Connection
+		outToNXT.writeBoolean(true);
+		outToNXT.flush();
 
-			DataInputStream inFromSocket = new DataInputStream(sock.getInputStream());
-			DataOutputStream outToSocket = new DataOutputStream(sock.getOutputStream());
+		DataInputStream inFromSocket = new DataInputStream(sock.getInputStream());
+		DataOutputStream outToSocket = new DataOutputStream(sock.getOutputStream());
 
-			// listen for incoming data from socket
-			new forward(sock, inFromSocket, outToNXT);
+		// Listen for incoming data from socket
+		new Forward(sock, inFromSocket, outToNXT);
 
-			// listen for incoming data from NXT
-			new forwardNXT(sock, inFromNXT, outToSocket);
-		}
+		// Listen for incoming data from NXT
+		new ForwardNXT(sock, inFromNXT, outToSocket);
+		
+		// Wait for socket to close	
+		while (!sock.isClosed()) Thread.yield();
 	}
 
 	/**
@@ -128,21 +130,22 @@ public class SocketProxy {
 	 */
 	private void newSocketConnection() throws UnknownHostException, IOException 
 	{
-		// the first byte from the NXT contains the length of the host name in chars
+		// The first byte from the NXT contains the length of the host name in chars
 		int len = inFromNXT.readByte();
 		char[] hostChars = new char[len];
 
-		// following the first byte the host name is transmitted
+		// Following the first byte the host name is transmitted
 		for(int i=0;i<len;i++){
 			hostChars[i] = inFromNXT.readChar();
 		}
-		// following the host name an int containing the port number of the socket to connect to
+		
+		// Following the host name an int containing the port number of the socket to connect to
 		// is transmitted
 		port = inFromNXT.readInt();
 		host = new String(hostChars);
 
 		System.out.println("Host: " + host + " port: " + port);
-		// create a socket connection with the specified host using the specified port
+		// Create a socket connection with the specified host using the specified port
 
 		sock = new Socket(host, port);
 		outToNXT.writeBoolean(true);
@@ -153,21 +156,20 @@ public class SocketProxy {
 		DataOutputStream outToSocket = new 
 		DataOutputStream(sock.getOutputStream());
 
-		// listen for incoming data from socket
-		new forward(sock, inFromSocket, outToNXT);
+		// Listen for incoming data from socket
+		new Forward(sock, inFromSocket, outToNXT);
 
-		// listen for incoming data from NXT
-		new forwardNXT(sock, inFromNXT, outToSocket);
+		// Listen for incoming data from NXT
+		new ForwardNXT(sock, inFromNXT, outToSocket);
 	}
 
 	/**
 	 * Allows for the forwarding of messages from Socket to NXT
 	 * @author Ranulf Green
 	 */
-	private class forward extends Thread{
+	private class Forward extends Thread{
 		private DataOutputStream dout;
 		private DataInputStream din;
-
 		private Socket sock;
 
 		/**
@@ -176,7 +178,7 @@ public class SocketProxy {
 		 * @param dis the input stream to read
 		 * @param dos the output stream to forward to
 		 */
-		public forward(Socket sock, DataInputStream dis, DataOutputStream dos){
+		public Forward(Socket sock, DataInputStream dis, DataOutputStream dos){
 			super();
 			din=dis;
 			dout=dos;
@@ -188,31 +190,17 @@ public class SocketProxy {
 		 */
 		public void run(){
 			try{
-				boolean flushed = true;
 				while(true){
-					int a = din.available();
-					if(a>0){
-						//System.out.println("Reading!" + a);
-						flushed = false;
-						int in = din.readUnsignedByte();
-						if(in<0){
-							//System.out.println("In Thread: Socket closed:" + in);
-							sock.close();
-							return;
-						}
-						//System.out.println("Sending " + in);
-						dout.writeByte(in);
-					}else if(!flushed){
-						//System.out.println("Flushing");
-						dout.flush();
-						flushed = true;
+					int in = din.read();
+					if(in<0){ 
+						//System.out.println("In Thread: Socket closed: " + in);
+						sock.close();
+						return;
 					}
-					try {
-						Thread.sleep(100);
-						Thread.yield();
-					} catch (InterruptedException e) {}
+					dout.writeByte(in);
+					dout.flush();
 				}
-			}catch(IOException ioe){ioe.printStackTrace();};
+			} catch (IOException ioe) {}
 		}
 	}
 
@@ -221,7 +209,10 @@ public class SocketProxy {
 	 * @author Ranulf Green
 	 *
 	 */
-	private class forwardNXT extends Thread{
+	private class ForwardNXT extends Thread {
+		private static final byte ESCAPE = (byte) 0xFF;
+		private static final byte ESCAPE_CLOSE = 1;
+		
 		private DataOutputStream dout;
 		private DataInputStream din;
 
@@ -233,7 +224,7 @@ public class SocketProxy {
 		 * @param dis input stream from NXT
 		 * @param dos output stream to socket
 		 */
-		public forwardNXT(Socket sock, DataInputStream dis, DataOutputStream dos){
+		public ForwardNXT(Socket sock, DataInputStream dis, DataOutputStream dos){
 			super();
 			din=dis;
 			dout=dos;
@@ -242,34 +233,39 @@ public class SocketProxy {
 		}
 
 		/**
-		 * causes a new thread to be invoked
+		 * Causes a new thread to be invoked
 		 */
-		public void run(){
-			try{
-				while(true){
-					int in = din.readUnsignedByte();
-					if(in<0){
-						System.out.println("In Thread: Socket closed:" + in);
+		public void run() {
+			try {
+				while(true) {
+					int in = din.read();
+					//System.out.println("Reply: " + in);
+					if (in < 0) {
+						//System.out.println("Out Thread: Socket closed: " + in);
 						sock.close();
 						return;
 					}
-					if(in!=0){
-						dout.writeByte(in);
-						dout.flush();
+					// Process ESCAPE sequence
+					if ((byte) in == ESCAPE) {
+						//System.out.println("Escape Sequence");
+						in = din.read();
+						if ((byte) in == ESCAPE_CLOSE) {
+							//System.out.println("Out Thread: Socket closed:" + in);
+							sock.close();
+							return;							
+						} else in = ESCAPE;
 					}
-					try {
-						Thread.sleep(10);
-						Thread.yield();
-					} catch (InterruptedException e) {}
+					dout.writeByte(in);
+					dout.flush();
 				}
-			}catch(IOException ioe){ioe.printStackTrace();};
+			} catch (IOException ioe) {ioe.printStackTrace();}
 		}
 	}
 
 	public static void main(String[] args) {
-		if(args.length!=2){
+		if(args.length!=2) {
 			System.out.println("USAGE: java lejos.pc.tools.SocketProxy <NXTName> <NXTAddress>");
-			System.exit(0);
+			System.exit(1);
 		}
 		new SocketProxy(args[0],args[1]);
 	}
