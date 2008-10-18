@@ -18,55 +18,35 @@ public class SocketTest {
 	private NXTSocket sock = null;
 	private String connected = "connected";
 	private String waiting = "waiting";
-	boolean con = false;
 
 	public  SocketTest() throws Exception{
+		connect();
 		while(true){
-			connect();
 			ins = sock.getDataInputStream();
 			outs = sock.getDataOutputStream();
-			try{
+			try {
 				String s = ins.readLine();
-				print(s);
+				System.out.println(s);
+				if (s.equals("bye")) break;
 				s = "not " + s + '\n';
 				outs.writeChars(s);
 				outs.flush();
 			}catch(IOException e){
-				LCD.drawString("ERROR",0,1);
-				LCD.refresh();
+				System.out.println("IO Exception");
 			}
-			closeStream();
 		}
+		ins.close();
+		outs.close();
+		sock.close();
+		
 	}
 
 	public void connect()throws IOException{
-		if(!con){
-			LCD.clear();
-			LCD.drawString(waiting,0,0);
-			LCD.refresh();
-			btc = Bluetooth.waitForConnection();
-			LCD.clear();
-			sock = new NXTSocket("localhost",8081,btc);
-			con = true;
-			LCD.drawString(connected,0,0);
-			LCD.refresh();
-		}
-	}
-
-	public void print(String i){
+		LCD.drawString(waiting,0,0);
+		btc = Bluetooth.waitForConnection();
 		LCD.clear();
+		sock = new NXTSocket("localhost", 8081, btc);
 		LCD.drawString(connected,0,0);
-		LCD.drawString(i,0,1);
-		LCD.refresh();
-	}
-
-	public void closeStream() throws IOException{
-		ins.close();
-		outs.close();
-		try{
-			Thread.sleep(1000);
-		}catch(InterruptedException e){
-		}
 	}
 
 	public static void main(String [] args)  throws Exception
