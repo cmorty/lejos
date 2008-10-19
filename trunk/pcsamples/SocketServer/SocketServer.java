@@ -4,6 +4,33 @@ import java.io.*;
 import java.net.*;
 import javax.swing.*;
 
+/**
+ * This PC sample works with the leJOS NXJ sample, SocketTest.
+ * 
+ * It shows you how to connect a program running on the NXT to a TCP/IP server
+ * on your PC, intranet on the Internet. The host program uses the standard Java
+ * SocketServer class, and the NXT program uses the NXTSocket class.
+ * 
+ * To run the sample, first start SocketTest on the NXT and it will wait for
+ * a connection to the Socket Proxy. 
+ * 
+ * Then run this program and it will display a small GUI window. Change the port 
+ * it listens on if 8081 is used on your PC. If you do this you will need to change
+ * SocketTest as well.
+ * 
+ * Then run the Socket Proxy (nxjsocketproxy command) passing the name and
+ * address of the NXT you want to connect to. This will cause Socket Proxy to
+ * connect to SocketTest on the NXT and SocketTest to connect to this socket server. 
+ * 
+ * You can then type words in the GUI and see the responses come back from the NXT (
+ * on the standard output stream).
+ * 
+ * Type "bye" to cause SocketTest on the NXT to stop.
+ * 
+ *
+ * @author Ranulf Green and Lawrie Griffiths
+ *
+ */
 public class SocketServer {
 
 	DataOutputStream outToSocket = null;
