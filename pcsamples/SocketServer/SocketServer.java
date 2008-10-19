@@ -13,24 +13,10 @@ public class SocketServer {
 		JFrame f = new JFrame();
 		JPanel p = new JPanel(new FlowLayout());
 		final JTextField t = new JTextField(10);
-		JButton b = new JButton("SEND");
 		JButton c = new JButton("Echo");
 
 		p.add(t);
-		p.add(b);
 		p.add(c);
-		b.addActionListener(new ActionListener(){
-
-			public void actionPerformed(ActionEvent arg0) {
-				String s = t.getText();
-				s+='\n';
-				try {
-					System.out.println("Sending " + s);
-					outToSocket.writeChars(s);
-					outToSocket.flush();
-				} catch (IOException e) {}
-
-			}});
 
 		c.addActionListener(new ActionListener(){
 
@@ -41,9 +27,15 @@ public class SocketServer {
 					System.out.println("Sending " + s);
 					outToSocket.writeChars(s);
 					outToSocket.flush();
-					System.out.println("Read : " + inFromSocket.readLine());
-
-
+					if (s.equals("bye\n")) return;
+					// Read the reply line
+					StringBuffer sb = new StringBuffer();
+					char c;
+					do {
+						c = inFromSocket.readChar();
+						sb.append(c);
+					} while (c != '\n');
+					System.out.println(sb.toString());
 				} catch (IOException e) {}
 			}});
 		
