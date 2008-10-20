@@ -20,10 +20,18 @@ public class NXTCommand implements NXTProtocol {
 	private boolean open = false;
 	private static String hexChars = "01234567890abcdef";
 
-	private NXTCommand() {
+	public NXTCommand() {
 		fLogListeners = new ArrayList<NXTCommLogListener>();
 	}
 
+	/**
+	 * Search for NXTs
+	 * 
+	 * @param name the name of the NXT or null, if any
+	 * @param protocol USB, Bluetooth or either (uses NXTCommFactory constants)
+	 * @return an array of NXTInfo objects representing all the NXTs found
+	 * @throws NXTCommException if comms drivers cannot be loaded
+	 */
 	public NXTInfo[] search(String name, int protocol) throws NXTCommException {
 		NXTInfo[] nxtInfos;
 
@@ -75,13 +83,39 @@ public class NXTCommand implements NXTProtocol {
 		return new NXTInfo[0];
 	}
 
+	/**
+	 * Set the protocol to Bluetooth. Should now be unnecessary.
+	 * 
+	 * @throws NXTCommException if the comms driver fails to load
+	 */
 	public void setNXTCommBlueTooth() throws NXTCommException {
-		if (nxtComm == null) {
-			nxtComm = NXTCommFactory.createNXTComm(NXTCommFactory.BLUETOOTH);
+		if (nxtCommBluetooth == null) {
+			nxtCommBluetooth = NXTCommFactory.createNXTComm(NXTCommFactory.BLUETOOTH);
 		}
+		nxtComm = nxtCommBluetooth;
 	}
 
+	/**
+	 * Open a connection to the NXT 
+	 * 
+	 * @param nxt the NXTInfo object returned by search or constructed 
+	 * @return true if the open succeeded, else false
+	 * @throws NXTCommException if a comms driver could not be loaded
+	 */
 	public boolean open(NXTInfo nxt) throws NXTCommException {
+	    int protocol = nxt.protocol;
+	    
+	    if (protocol == NXTCommFactory.BLUETOOTH) {
+	    	if (nxtCommBluetooth == null) {
+	    		nxtCommBluetooth = NXTCommFactory.createNXTComm(NXTCommFactory.BLUETOOTH);
+	    	}
+	    	nxtComm = nxtCommBluetooth;
+	    } else {
+	    	if (nxtCommUSB == null ) {
+	    		nxtCommUSB = NXTCommFactory.createNXTComm(NXTCommFactory.USB);
+	    	}
+	    	nxtComm = nxtCommUSB;
+	    }
 		return open = nxtComm.open(nxt, NXTComm.LCP);
 	}
 
@@ -206,6 +240,13 @@ public class NXTCommand implements NXTProtocol {
 		return sendSystemRequest(request, 4);
 	}
 
+	/**
+	 * Delete a file on the NXT
+	 * 
+	 * @param fileName the name of the file
+	 * @return the error code 0 = success
+	 * @throws IOException
+	 */
 	public byte delete(String fileName) throws IOException {
 		byte[] request = { SYSTEM_COMMAND_REPLY, DELETE };
 		request = appendString(request, fileName);
