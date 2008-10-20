@@ -9,7 +9,7 @@
 	<target name="build" description="generate pctools jar">
 		<mkdir dir="build"/>
 		<!-- generate tools -->
-		<javac srcdir="." destdir="build" fork="yes" optimize="on" debug="on">
+		<javac srcdir="." destdir="build" fork="yes" optimize="on" debug="on" source="1.5" target="1.5">
 			<classpath location="../jtools/lib/jtools.jar"/>
 			<classpath location="../pccomms/lib/pccomm.jar"/>
 			<classpath location="../jtools/3rdparty/lib/commons-cli-1.0.jar"/>
