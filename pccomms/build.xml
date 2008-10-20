@@ -9,7 +9,7 @@
   	<target name="build"  description="generate pccomm jar">
     	<mkdir dir="build"/>
     	<!-- generate jar file -->
-		<javac srcdir="." destdir="build" fork="yes" optimize="on" debug="on">
+		<javac srcdir="." destdir="build" fork="yes" optimize="on" debug="on" source="1.5" target="1.5">
 			<classpath location="3rdparty/lib/bluecove.jar"/>
 		</javac>
     	<jar destfile="lib/pccomm.jar" basedir="build" update="false">
