@@ -9,7 +9,7 @@
 	<target name="build" description="generate jtools jar">
 		<mkdir dir="build" />
 		<!-- generate constants first -->
-		<javac srcdir="." destdir="build" fork="yes" optimize="on" debug="on" includes="**/GenerateConstants.java">
+		<javac srcdir="." destdir="build" fork="yes" optimize="on" debug="on"  source="1.5" target="1.5" includes="**/GenerateConstants.java">
 		</javac>
 		<java classpath="build" classname="js.tinyvm.GenerateConstants" fork="yes">
 			<sysproperty key="tinyvm.home" value=".." />
