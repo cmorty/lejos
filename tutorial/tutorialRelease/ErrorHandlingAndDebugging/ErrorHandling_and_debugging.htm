@@ -1,240 +1,192 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="en"><head>
-<!-- CSS -->
-<link rel="stylesheet" href="../r_css/lejos-tutorial.css" type="text/css" />
-<!-- ICON -->
-<link rel="shortcut icon" href="../favicon.ico" type="image/x-icon" /><title>Error handling and debugging</title>
+<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="en">
+<head>
+	<title>Error Handling and Debugging</title>
+	
+	<!-- METADATA -->
+	<meta name="title" content="Error Handling and Debugging" />
+	<meta name="DC.Title" content="Error Handling and Debugging" />
+	<meta http-equiv="title" content="Error Handling and Debugging" />
+	
+	<meta name="description" content="Error Handling and Debugging" />
+	<meta http-equiv="description" content="Error Handling and Debugging" />
+	<meta http-equiv="DC.Description" content="Error Handling and Debugging" />
 
-<meta name="GENERATOR" content="OpenOffice.org 2.4 (Win32)" />
-<meta name="AUTHOR" content="Roger" />
-<meta name="CREATED" content="20080818;20200000" />
-<meta name="CHANGED" content="20080818;20445046" />
-<style type="text/css">
-<!--
-@page { size: 11in 11in; margin-right: 1.25in; margin-top: 1in; margin-bottom: 1in }
-P { margin-bottom: 0.08in; direction: ltr; color: #000000; widows: 2; orphans: 2 }
-P.western { font-family: "Times New Roman", serif; font-size: 12pt; so-language: en-US }
-P.cjk { font-family: "Times New Roman", serif; font-size: 12pt }
-P.ctl { font-family: "Times New Roman", serif; font-size: 12pt; so-language: ar-SA }
-H1 { margin-bottom: 0.04in; direction: ltr; color: #ff6600; widows: 2; orphans: 2 }
-H1.western { font-family: "Arial", sans-serif; font-size: 16pt; so-language: en-US }
-H1.cjk { font-family: "Times New Roman", serif; font-size: 16pt }
-H1.ctl { font-family: "Arial", sans-serif; font-size: 16pt; so-language: ar-SA }
-H2 { margin-bottom: 0.08in; direction: ltr; color: #ff6600; widows: 2; orphans: 2 }
-H2.western { font-family: "Arial", sans-serif; font-size: 14pt; so-language: en-US; font-style: italic; font-weight: medium }
-H2.cjk { font-family: "Times New Roman", serif; font-size: 14pt; font-style: italic; font-weight: medium }
-H2.ctl { font-family: "Arial", sans-serif; font-size: 14pt; so-language: ar-SA; font-style: italic; font-weight: medium }
-P.body-text-2-western { margin-left: 0.1in; font-family: "Times New Roman", serif; font-size: 12pt; so-language: en-US }
-P.body-text-2-cjk { margin-left: 0.1in; font-family: "Times New Roman", serif; font-size: 12pt }
-P.body-text-2-ctl { margin-left: 0.1in; font-family: "Times New Roman", serif; font-size: 12pt; so-language: ar-SA }
-P.text-body-indent-western { margin-left: 0.2in; font-family: "Times New Roman", serif; font-size: 12pt; so-language: en-US }
-P.text-body-indent-cjk { margin-left: 0.2in; font-family: "Times New Roman", serif; font-size: 12pt }
-P.text-body-indent-ctl { margin-left: 0.2in; font-family: "Times New Roman", serif; font-size: 12pt; so-language: ar-SA }
-A:link { color: #0000ff }
-A:visited { color: #800080 }
--->
-</style>
+	<meta name="keywords" content="Java, leJOS, leJOS project, NXJ, NXJ Tutorial" />
+	<meta http-equiv="keywords" content="Java, leJOS, leJOS project, NXJ, NXJ Tutorial" />
+
+	<meta name='VW96.objecttype' content='Document' />
+	<meta http-equiv='content-language' content='en'>
+	<meta name='DC.Language' SCHEME='RFC1766' CONTENT='English' />
+	<meta name='distribution' content='global' />
+	<meta name='resource-type' content='document' />
+
+	<!-- SEARCH ENGINE -->
+	<meta name='robots' content='all' />
+
+	<!-- AUTHOR METADATA -->	
+	<meta name="AUTHOR" content="Roger Glassey" />
+	<meta name="AUTHOR" content="Lawrie Griffiths" />
+	<!-- CSS -->
+	<link rel="stylesheet" href="../r_css/lejos-tutorial.css" type="text/css" />
+	<!-- ICON -->
+	<link rel="shortcut icon" href="../favicon.ico" type="image/x-icon" /><title>Error handling and debugging</title>
 </head>
+<body>
+	<a id="top" name="top"></a>
+	<!-- N1: HEADER -->
+	<table class="n1t1" cellpadding="0" cellspacing="0">
+	<tr>
+		<td>
+			<img src="../r_media/images/tutorial_header1.jpg" />
+		</td>
+		<td align="right">
+			<img src="../r_media/images/tutorial_header2.jpg" />
+		</td>
+	</tr>
+	</table>
+	<!-- N2: CONTENTS -> NAVIGATION SYSTEMS AND CONTENTS -->
+	<table class="n2t1" cellpadding="0" cellspacing="0">
+	<tr>
+		<td class="n2t1r1c1">
+			<div class="nolinkLESSON">Error Handling and Debugging</div>
+			<div class="linkAHEAD"><a href="#1">Exceptions</a></div>
+			<div class="linkAHEAD"><a href="#2">Data Aborts</a></div>
+			<div class="linkAHEAD"><a href="#3">Remote Debugging</a></div>
+		</td>
+		<td>
+			<!-- BREADCRUMBS -->
+			<div id="BreadCrumbs">
+				<a href="../index.htm" target="_top">Home Page</a>&gt;
+				<a href="#">Error Handling and Debugging</a>
+			</div>
+			
+			<!-- NAVIGATION TOOL -->
+			<div class="NavBit">
+				<a target="_top" href="../ListenersAndEvents/Listeners_Events.htm">�&nbsp;Previous</a>
+				&nbsp;&#8226;&nbsp;
+				<a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../Communications/Communications.htm">Next&nbsp;�</a>
+			</div>
 
-	<body>
-<a id="top" name="top"></a><!-- N1: HEADER -->
-<table class="n1t1" cellpadding="0" cellspacing="0">
-<tbody>
-<tr>
-<td><img src="../r_media/images/tutorial_header1.jpg" /></td>
-<td align="right"><img src="../r_media/images/tutorial_header2.jpg" /></td>
-</tr>
-</tbody>
-</table>
-<!-- N2: CONTENTS -> NAVIGATION SYSTEMS AND CONTENTS -->
-<table class="n2t1" cellpadding="0" cellspacing="0">
-<tbody>
-<tr>
-<td class="n2t1r1c1">
-<p><a href="#1.Error%20Handling%20and%20Debugging%7Coutline">Error
-Handling and Debugging</a></p>
-<p style="margin-left: 0.17in;"><a href="#1.1.Exceptions%7Coutline">Exceptions</a></p>
-<p style="margin-left: 0.17in;"><a href="#1.2.Data%20Aborts%7Coutline">Data Aborts</a></p>
-<p style="margin-left: 0.17in;"><a href="#1.3.Remote%20%20Debugging%7Coutline">Remote Debugging</a></p>
-</td>
-<td><!-- DO NOT MANINPULATE -->
-<div id="BreadCrumbs"> <a href="../index.htm" target="_top">Home Page</a> &gt; <a href="#">Error
-Handling and Debugging</a> </div>
-<div class="NavBit"> <a target="_top" href="../ListenersAndEvents/Listeners_Events.htm">�&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../Communications/Communications.htm">Next&nbsp;�</a>
-</div>
-<!-- CONTENT TITLE -->
-<h1 class="western"><a name="Top"></a><a name="1.Error Handling and Debugging|outline"></a><a name="1.Error Handling and Debugging|outline"></a>
-Error Handling and Debugging</h1>
-<p class="western">leJOS NXJ provides several
-features for error handling and debugging, including:</p>
-<ul>
-<li>
-<p class="western">Exceptions</p>
-</li>
-<li>
-<p class="western">Data Aborts</p>
-</li>
-<li>
-<p class="western">Debugging</p>
-</li>
-</ul>
-<p class="western" style="margin-left: 0.25in;">The
-Remote Monitoring and Tracing facility, which is described in its own
-section below, can also be used for debugging.</p>
-<h2 class="western"><a name="1.1.Exceptions|outline"></a>Exceptions</h2>
-<p class="body-text-2-western">Most of the standard
-Java language exception classes are supported by leJOS, and user can
-create their own exception classes.</p>
-<p class="body-text-2-western">Example:</p>
-<p class="body-text-2-western">The following
-simplified version of the ExceptionTest example demonstrates what
-happens for an exception that is not caught &#8211; in this case an
-ArrayIndexOutOfBounds exception.</p>
-<p class="body-text-2-western" style="margin-left: 0in;"><span id="Frame1" style="border: 1px solid rgb(0, 0, 0); padding: 0.05in 0.1in; background: rgb(255, 255, 255) none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial; float: left; width: 4.26in; height: 1.79in;" dir="ltr">
-<p class="western" style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font color="#7f0055"><font face="Courier New, monospace"><font style="font-size: 9pt;" size="2"><b>import</b></font></font></font><font color="#000000"><font face="Courier New, monospace"><font style="font-size: 9pt;" size="2"> lejos.nxt.*;</font></font></font></p>
-<p class="western" style="margin-top: 0.02in; margin-bottom: 0.02in;"> <br />
-<br />
-</p>
-<p class="western" style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font color="#7f0055"><font face="Courier New, monospace"><font style="font-size: 9pt;" size="2"><b>public</b></font></font></font><font color="#000000"><font face="Courier New, monospace"><font style="font-size: 9pt;" size="2"> </font></font></font><font color="#7f0055"><font face="Courier New, monospace"><font style="font-size: 9pt;" size="2"><b>class</b></font></font></font><font color="#000000"><font face="Courier New, monospace"><font style="font-size: 9pt;" size="2"> ExceptionTest {</font></font></font></p>
-<p class="western" style="margin-left: 0.5in; margin-top: 0.02in; margin-bottom: 0.02in;">
-<font color="#000000"><font face="Courier New, monospace"><font style="font-size: 9pt;" size="2"><b> </b></font></font></font><font color="#7f0055"><font face="Courier New, monospace"><font style="font-size: 9pt;" size="2"><b>public</b></font></font></font><font color="#000000"><font face="Courier New, monospace"><font style="font-size: 9pt;" size="2"> </font></font></font><font color="#7f0055"><font face="Courier New, monospace"><font style="font-size: 9pt;" size="2"><b>static</b></font></font></font><font color="#000000"><font face="Courier New, monospace"><font style="font-size: 9pt;" size="2"> </font></font></font><font color="#7f0055"><font face="Courier New, monospace"><font style="font-size: 9pt;" size="2"><b>void</b></font></font></font><font color="#000000"><font face="Courier New, monospace"><font style="font-size: 9pt;" size="2"> main (String[] args)</font></font></font></p>
-<p class="western" style="margin-left: 0.5in; margin-top: 0.02in; margin-bottom: 0.02in;">
-<font face="Courier New, monospace"><font style="font-size: 9pt;" size="2"> {</font></font></p>
-<p class="western" style="margin-left: 1in; margin-top: 0.02in; margin-bottom: 0.02in;">
-<font color="#000000"><font face="Courier New, monospace"><font style="font-size: 9pt;" size="2"> SensorPort p =
-SensorPort.</font></font></font><font color="#0000c0"><font face="Courier New, monospace"><font style="font-size: 9pt;" size="2"><i>PORTS</i></font></font></font><font color="#000000"><font face="Courier New, monospace"><font style="font-size: 9pt;" size="2">[5];</font></font></font></p>
-<p class="western" style="margin-left: 0.5in; margin-top: 0.02in; margin-bottom: 0.02in;">
-<font face="Courier New, monospace"><font style="font-size: 9pt;" size="2"> }</font></font></p>
-<p class="western" style="margin-top: 0.02in;"><font face="Courier New, monospace"><font style="font-size: 9pt;" size="2">}</font></font></p>
-</span><br clear="left" />
-<br />
-<br />
-</p>
-<h2 class="western"><a name="1.2.Data Aborts|outline"></a>Data Aborts</h2>
-<p class="body-text-2-western">If the leJOS firmware
-crashes you will normally a Data Abort. The screen shows the PC value
-where the failure occurred, and other details of the failure.</p>
-<p class="body-text-2-western">The screen is
-something like:</p>
-<p class="western"><span id="Frame2" style="border: 1pt solid rgb(0, 0, 0); padding: 0.07in 0.12in; background: rgb(255, 255, 255) none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial; float: left; width: 2.2in;" dir="ltr">
-<p class="western" style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font face="Courier New, monospace">DATA ABORT</font></p>
-<p class="western" style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font face="Courier New, monospace">PC 00140BAC</font></p>
-<p class="western" style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font face="Courier New, monospace">AASR 1831BF01</font></p>
-<p class="western" style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font face="Courier New, monospace">ASR 00020601</font></p>
-<p class="western" style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font face="Courier New, monospace">OPCODE ???</font></p>
-<p class="western" style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font face="Courier New, monospace">DEBUG1 00020010</font></p>
-<p class="western" style="margin-top: 0.02in;"><font face="Courier New, monospace">DEBUG2 00000000</font></p>
-</span><br clear="left" />
-<br />
-<br />
-</p>
-<p class="text-body-indent-western">The most common
-reason for data aborts is executing a file that is not a leJOS NXJ
-binary, or executing an incomplete leJOS NXJ file.</p>
-<p class="text-body-indent-western">If you get a
-data abort in any other case, you should report trhe error to the leJOS
-development team by posting the details on the leJOS NXJ forums.</p>
-<p class="western"><br />
-<br />
-</p>
-<p class="western"><font color="#0000ff"><u><a href="#Top">Back to top</a></u></font></p>
-<p class="western"><br />
-<br />
-</p>
-<h2 class="western"><a name="1.3.Remote Debugging|outline"></a>Remote
-Debugging</h2>
-<p class="body-text-2-western">You can use your PC
-as a remote console to display tracing statements generated your NXJ
-program. The lejos.nxt.comm.RConsole class has methods to it. Since
-there are no instances of this class, all methods are static. </p>
-<p class="body-text-2-western">To start debugging,
-you use one of these methods:</p>
-<ul>
-<li>
-<p class="western">void open()<br />
-opens a USB connection with no timeout</p>
-</li>
-<li>
-<p class="western">void openUSB(int timeout)</p>
-</li>
-<li>
-<p class="western">void openBluetooth(int
-timeout)</p>
-</li>
-</ul>
-<p class="body-text-2-western">The NXT displays <span style="font-family: Courier New,Courier,monospace;">USB
-Console..</span> <span lang=""> </span>or <span style="font-family: Courier New,Courier,monospace;">BT
-Console..</span></p>
-<p class="body-text-2-western">and waits for the PC
-based monitor to connect.</p>
-<p class="body-text-2-western">Then execute the <i><b>nxjconsole
-</b></i>program on your PC. When the connection is
-established, the NXT displays <span style="font-family: Courier New,Courier,monospace;">Got
-Connection <span style="font-family: Times New Roman,Times,serif;">&nbsp;and,
-after some seconds, </span></span>both the NXT and the PC
-display <span style="font-family: Courier New,Courier,monospace;">Console open.</span> </p>
-<p class="body-text-2-western">If you use the
-variant of open with a timeout, it waits the specified number of
-seconds and if the debug monitor has not connected, proceeds without
-debugging. If the timeout is zero, it waits indefinitely. </p>
-<p class="body-text-2-western">You can also use the <font color="#0000ff"><u><a href="../PC_GUI/PCGUITools.htm#_Toc202513556">ConsoleViewer</a></u></font>
-application to display the output.</p>
-<p class="body-text-2-western">Debug statements can
-be output using one of the methods::</p>
-<ul>
-<li>
-<p class="western">void println(String s)</p>
-</li>
-<li>
-<p class="western">void print(String s);</p>
-</li>
-</ul>
-<p class="text-body-indent-western">If no successful
-open statement has been executed, the debug output is discarded. If
-there was a successful output, the string appears on standard out in
-the window or terminal that <i><b>nxjconsole </b></i>
-was run from, on the PC.</p>
-<p class="text-body-indent-western">When debugging
-is completed, you should call:</p>
-<ul>
-<li>
-<p class="western"> void close()</p>
-</li>
-</ul>
-<p class="body-text-2-western">This closes the USB
-or Bluetooth connection. </p>
-<p class="western">Example:&nbsp;</p>
-<table style="text-align: left; width: 375px; height: 372px;" border="1" cellpadding="2" cellspacing="2">
-<tbody>
-<tr>
-<td><title>TestRConsole.java</title>
+			<!-- CONTENT AREA -->
+					
+			<!-- CONTENT TITLE -->
+			<div id="PageTitle">Error Handling and Debugging</div>
+			<p>leJOS NXJ provides several features for error handling and debugging, including:</p>
+			<ul class="BlueArrows">
+				<li>Exceptions</li>
+				<li>Data Aborts</li>
+				<li>Debugging</li>
+			</ul>
+			<p>The Remote Monitoring and Tracing facility, which is described in its own section below, can also be used for debugging.</p>
 
-<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-<style type="text/css">
-<!--
-body {color: #000000; background-color: #ffffff; font-family: Monospaced}
-table {color: #000000; background-color: #ffffff; font-family: Monospaced}
-.character {color: #0000ff}
-.ST1 {color: #0000ff; font-family: Monospaced; font-weight: bold}
-.ST0 {color: #993300; font-family: Monospaced; font-weight: bold}
-.comment {color: #339900}
--->
-</style>
-<pre><span class="ST0">import</span> lejos.nxt.*;<br /><span class="ST0">import</span> lejos.nxt.comm.*;<br /><span class="comment">/**</span><br /><span class="comment"> * </span><span class="comment">example</span> <span class="comment">using</span> <span class="comment">RConsole</span><br /><span class="comment">*/</span><br /><span class="ST0">public</span> <span class="ST0">class</span> TestRConsole<br />{<br /><span class="ST0">  public</span> <span class="ST0">static</span> <span class="ST0">void</span> main(String[] args)<br />  {<br />    RConsole.open();<br />    RConsole.println(<span class="character">"</span><span class="character">Start for loop </span><span class="character">"</span>);<br /><span class="ST0">    for</span> (<span class="ST0">int</span> i = 0; i &lt; 5; i++)<br />    {<br />      RConsole.print(<span class="character">"</span> <span class="character">"</span> + i);<br />      LCD.drawInt(i, 2, 2 * i, 4);<br />    }<br />    RConsole.println(<span class="character">"</span><span class="ST1">\n</span><span class="character"> done </span><span class="character">"</span>);<br />    RConsole.close();<br />    Button.waitForPress();<br />  }<br />}<br /></pre>
-</td>
-</tr>
-</tbody>
-</table>
-<p class="western"></p>
+			<a name="1"></a>
+			<h4>Exceptions</h4>
+			<p>Most of the standard Java language exception classes are supported by leJOS, and user can create their own exception classes.</p>
+			<p>Example:</p>
+			<p>The following simplified version of the ExceptionTest example demonstrates what happens for an exception that is not caught &#8211; in this case an
+			ArrayIndexOutOfBounds exception.</p>
+			<p class="body-text-2-western" style="margin-left: 0in;"><span id="Frame1" style="border: 1px solid rgb(0, 0, 0); padding: 0.05in 0.1in; background: rgb(255, 255, 255) none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial; float: left; width: 4.26in; height: 1.79in;" dir="ltr">
+			<p class="western" style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font color="#7f0055"><font face="Courier New, monospace"><font style="font-size: 9pt;" size="2"><b>import</b></font></font></font><font color="#000000"><font face="Courier New, monospace"><font style="font-size: 9pt;" size="2"> lejos.nxt.*;</font></font></font></p>
 
-<p class="western"><font color="#0000ff"><u><a href="#Top">Back to top</a></u></font></p>
-<!-- DO NOT TOUCH --> <br />
-<div class="NavBit"> <a target="_top" href="../ListenersAndEvents/Listeners_Events.htm">�&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../Communications/Communications.htm">Next&nbsp;�</a>
-</div>
-<br />
-</td>
-<td> </td>
-</tr>
-</tbody>
-</table>
-</body></html>
+			<p class="western" style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font color="#7f0055"><font face="Courier New, monospace"><font style="font-size: 9pt;" size="2"><b>public</b></font></font></font><font color="#000000"><font face="Courier New, monospace"><font style="font-size: 9pt;" size="2"> </font></font></font><font color="#7f0055"><font face="Courier New, monospace"><font style="font-size: 9pt;" size="2"><b>class</b></font></font></font><font color="#000000"><font face="Courier New, monospace"><font style="font-size: 9pt;" size="2"> ExceptionTest {</font></font></font></p>
+			<p class="western" style="margin-left: 0.5in; margin-top: 0.02in; margin-bottom: 0.02in;">
+			<font color="#000000"><font face="Courier New, monospace"><font style="font-size: 9pt;" size="2"><b> </b></font></font></font><font color="#7f0055"><font face="Courier New, monospace"><font style="font-size: 9pt;" size="2"><b>public</b></font></font></font><font color="#000000"><font face="Courier New, monospace"><font style="font-size: 9pt;" size="2"> </font></font></font><font color="#7f0055"><font face="Courier New, monospace"><font style="font-size: 9pt;" size="2"><b>static</b></font></font></font><font color="#000000"><font face="Courier New, monospace"><font style="font-size: 9pt;" size="2"> </font></font></font><font color="#7f0055"><font face="Courier New, monospace"><font style="font-size: 9pt;" size="2"><b>void</b></font></font></font><font color="#000000"><font face="Courier New, monospace"><font style="font-size: 9pt;" size="2"> main (String[] args)</font></font></font></p>
+			<p class="western" style="margin-left: 0.5in; margin-top: 0.02in; margin-bottom: 0.02in;">
+			<font face="Courier New, monospace"><font style="font-size: 9pt;" size="2"> {</font></font></p>
+			<p class="western" style="margin-left: 1in; margin-top: 0.02in; margin-bottom: 0.02in;">
+			<font color="#000000"><font face="Courier New, monospace"><font style="font-size: 9pt;" size="2"> SensorPort p =
+			SensorPort.</font></font></font><font color="#0000c0"><font face="Courier New, monospace"><font style="font-size: 9pt;" size="2"><i>PORTS</i></font></font></font><font color="#000000"><font face="Courier New, monospace"><font style="font-size: 9pt;" size="2">[5];</font></font></font></p>
+			<p class="western" style="margin-left: 0.5in; margin-top: 0.02in; margin-bottom: 0.02in;">
+			<font face="Courier New, monospace"><font style="font-size: 9pt;" size="2"> }</font></font></p>
+			<p class="western" style="margin-top: 0.02in;"><font face="Courier New, monospace"><font style="font-size: 9pt;" size="2">}</font></font></p>
+			</span><br clear="left" />
+
+			<a name="2"></a>
+			<h4>Data Aborts</h4>
+			<p>If the leJOS firmware crashes you will normally a Data Abort. The screen shows the PC value
+			where the failure occurred, and other details of the failure.</p>
+			<p>The screen is something like:</p>
+			<p class="western"><span id="Frame2" style="border: 1pt solid rgb(0, 0, 0); padding: 0.07in 0.12in; background: rgb(255, 255, 255) none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial; float: left; width: 2.2in;" dir="ltr">
+			<p class="western" style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font face="Courier New, monospace">DATA ABORT</font></p>
+			<p class="western" style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font face="Courier New, monospace">PC 00140BAC</font></p>
+			<p class="western" style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font face="Courier New, monospace">AASR 1831BF01</font></p>
+			<p class="western" style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font face="Courier New, monospace">ASR 00020601</font></p>
+			<p class="western" style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font face="Courier New, monospace">OPCODE ???</font></p>
+			<p class="western" style="margin-top: 0.02in; margin-bottom: 0.02in;"> <font face="Courier New, monospace">DEBUG1 00020010</font></p>
+			<p class="western" style="margin-top: 0.02in;"><font face="Courier New, monospace">DEBUG2 00000000</font></p>
+			</span><br clear="left" />
+
+			<p>The most common reason for data aborts is executing a file that is not a leJOS NXJ binary, or executing an incomplete leJOS NXJ file.</p>
+			<p>If you get a data abort in any other case, you should report the error to the leJOS development team by posting the details on the leJOS NXJ forums.</p>
+
+			<!-- WEB TOOL TO GO TO TOP OF THE DOCUMENT -->
+			<p>
+			<a href="#top">Back to top</a>
+			
+			
+			<a name="3"></a>
+			<h4>Remote Debugging</h4>
+			<p>You can use your PC as a remote console to display tracing statements generated your NXJ
+			program. The lejos.nxt.comm.RConsole class has methods to it. Since
+			there are no instances of this class, all methods are static. </p>
+			<p>To start debugging, you use one of these methods:</p>
+			<ul class="BlueArrows">
+				<li><p>void open()<br />opens a USB connection with no timeout</p></li>
+				<li><p>void openUSB(int timeout)</p></li>
+				<li><p class="western">void openBluetooth(int timeout)</p></li>
+			</ul>
+			<p>The NXT displays <span style="font-family: Courier New,Courier,monospace;">USB
+			Console..</span> <span lang=""> </span>or <span style="font-family: Courier New,Courier,monospace;">BT
+			Console..</span></p>
+			<p>and waits for the PC based monitor to connect.</p>
+			<p class="body-text-2-western">Then execute the <i><b>nxjconsole</b></i>program on your PC. When the connection is
+			established, the NXT displays <span style="font-family: Courier New,Courier,monospace;">Got
+			Connection <span style="font-family: Times New Roman,Times,serif;">&nbsp;and,
+			after some seconds, </span></span>both the NXT and the PC
+			display <span style="font-family: Courier New,Courier,monospace;">Console open.</span> </p>
+			<p class="body-text-2-western">If you use the
+			variant of open with a timeout, it waits the specified number of
+			seconds and if the debug monitor has not connected, proceeds without
+			debugging. If the timeout is zero, it waits indefinitely. </p>
+			<p>You can also use the <font color="#0000ff"><u><a href="../PC_GUI/PCGUITools.htm#_Toc202513556">ConsoleViewer</a></u></font>
+			application to display the output.</p>
+			<p class="body-text-2-western">Debug statements can be output using one of the methods::</p>
+			<ul>
+				<li>
+					<p class="western">void println(String s)</p>
+				</li>
+				<li>
+					<p class="western">void print(String s);</p>
+				</li>
+			</ul>
+			<p>If no successful open statement has been executed, the debug output is discarded. If
+			there was a successful output, the string appears on standard out in
+			the window or terminal that <i><b>nxjconsole </b></i>was run from, on the PC.</p>
+			<p>When debugging is completed, you should call:</p>
+			<ul>
+				<li>
+					<p class="western"> void close()</p>
+				</li>
+			</ul>
+			<p>This closes the USB or Bluetooth connection. </p>
+			<p>Example:&nbsp;</p>
+			<table style="text-align: left; width: 375px; height: 372px;" border="1" cellpadding="2" cellspacing="2">
+			<tr>
+				<td><title>TestRConsole.java</title>
+					<pre><span class="ST0">import</span> lejos.nxt.*;<br /><span class="ST0">import</span> lejos.nxt.comm.*;<br /><span class="comment">/**</span><br /><span class="comment"> * </span><span class="comment">example</span> <span class="comment">using</span> <span class="comment">RConsole</span><br /><span class="comment">*/</span><br /><span class="ST0">public</span> <span class="ST0">class</span> TestRConsole<br />{<br /><span class="ST0">  public</span> <span class="ST0">static</span> <span class="ST0">void</span> main(String[] args)<br />  {<br />    RConsole.open();<br />    RConsole.println(<span class="character">"</span><span class="character">Start for loop </span><span class="character">"</span>);<br /><span class="ST0">    for</span> (<span class="ST0">int</span> i = 0; i &lt; 5; i++)<br />    {<br />      RConsole.print(<span class="character">"</span> <span class="character">"</span> + i);<br />      LCD.drawInt(i, 2, 2 * i, 4);<br />    }<br />    RConsole.println(<span class="character">"</span><span class="ST1">\n</span><span class="character"> done </span><span class="character">"</span>);<br />    RConsole.close();<br />    Button.waitForPress();<br />  }<br />}<br /></pre>
+				</td>
+			</tr>
+			</table>
+			<p/>
+
+			<p class="western"><font color="#0000ff"><u><a href="#Top">Back to top</a></u></font></p>
+
+			<div class="NavBit"> <a target="_top" href="../ListenersAndEvents/Listeners_Events.htm">�&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../Communications/Communications.htm">Next&nbsp;�</a>
+			</div>
+			<br/>
+		</td>
+	</tr>
+	</table>
+</body>
+</html>
