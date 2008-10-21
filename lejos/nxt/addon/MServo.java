@@ -6,6 +6,8 @@ import lejos.nxt.*;
  * MServo, is a abstraction to model any RC Servo (continous and non continous)  plugged to
  * 
  * @author Juan Antonio Brenha Moral
+  * @author Luis Bunuel
+   * @author Lawrie Griffiths
  */
 public class MServo extends I2CSensor{
 	private String name = "";//String to describe any Motor connected to LSC
