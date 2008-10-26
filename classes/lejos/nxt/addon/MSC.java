@@ -12,8 +12,6 @@ import java.util.ArrayList;
  * Many thanks to Luis Bunuel (bunuel66@hotmail.com) in Testing process 
  * 
  * @author Juan Antonio Brenha Moral
-  * @author Luis Bunuel
-   * @author Lawrie Griffiths
  */
 public class MSC extends I2CSensor {
 
