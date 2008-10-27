@@ -1,0 +1,63 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>RotationTest.java</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<style type="text/css">
+<!--
+body {color: #000000; background-color: #ffffff; font-family: Monospaced}
+table {color: #000000; background-color: #e9e8e2; font-family: Monospaced}
+.character {color: #0000ff}
+.ST0 {color: #993300; font-family: Monospaced; font-weight: bold}
+.comment {color: #339900}
+.ST1 {color: #339900; font-family: Monospaced; font-weight: bold}
+-->
+</style>
+</head>
+<body>
+<pre>
+<span class="ST0">import</span> lejos.nxt.*;
+
+<span class="comment">/**</span>
+<span class="comment"> * </span><span class="comment">A</span> <span class="comment">more</span> <span class="comment">object</span><span class="comment"> - </span><span class="comment">oriented</span> <span class="comment">code</span><span class="comment">.</span>  <span class="comment">the</span> <span class="comment">main</span> <span class="comment">method</span> <span class="comment">just</span> <span class="comment">starts</span> <span class="comment">the</span> <span class="comment">program</span>
+<span class="comment"> * </span><span class="ST1">@author</span> <span class="comment">Roger</span>
+ <span class="comment">*/</span>
+<span class="ST0">public</span> <span class="ST0">class</span> RotationTest
+{
+
+    <span class="ST0">public</span> <span class="ST0">static</span> <span class="ST0">void</span> main(String args[])
+    {
+        LCD.drawString(<span class="character">&quot;</span><span class="character">Rotation</span><span class="character">&quot;</span>, 0, 0);<span class="comment">//display program name before running</span>
+        Button.waitForPress();
+        LCD.clear();
+        RotationTest robot = <span class="ST0">new</span> RotationTest();
+        robot.go();<span class="comment">// create an instance of the class and calls go</span>
+
+    }
+
+    <span class="comment">/**</span>
+<span class="comment">     * </span><span class="comment">this</span> <span class="comment">method</span> <span class="comment">does</span> <span class="comment">the</span> <span class="comment">actual</span> <span class="comment">work</span>
+     <span class="comment">*/</span>
+    <span class="ST0">public</span> <span class="ST0">void</span> go()
+    {
+        rotate720();
+        Motor.A.setSpeed(800);
+        rotate720();
+    }
+
+    <span class="comment">/**</span>
+<span class="comment">     * </span><span class="comment">helper</span> <span class="comment">method</span> <span class="comment">for</span> <span class="comment">go</span><span class="comment">(); </span><span class="comment">stops</span> <span class="comment">motor</span> <span class="comment">when</span> <span class="comment">button</span> <span class="comment">ia</span> <span class="comment">pressed</span>
+     <span class="comment">*/</span>
+    <span class="ST0">public</span> <span class="ST0">void</span> rotate720()
+    {
+        Motor.A.rotate(720);
+        LCD.drawInt(Motor.A.getTachoCount(), 4, 0, 1);
+        Motor.A.rotateTo(0);
+        LCD.drawInt(Motor.A.getTachoCount(), 4, 0, 2);
+        Button.waitForPress();
+    }
+}
+
+
+</pre></body>
+</html>

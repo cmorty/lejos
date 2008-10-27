@@ -1,0 +1,309 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html dir="ltr" xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title>PC GUI Tools</title>
+	<!-- METADATA -->
+	<meta name="title" content="PC GUI Tools" />
+	<meta name="DC.Title" content="PC GUI Tools" />
+	<meta http-equiv="title" content="PC GUI Tools" />
+	
+	<meta name="description" content="PC GUI Tools" />
+	<meta http-equiv="description" content="PC GUI Tools" />
+	<meta http-equiv="DC.Description" content="PC GUI Tools" />
+
+	<meta name="keywords" content="Java, leJOS, leJOS project, NXJ, NXJ Tutorial" />
+	<meta http-equiv="keywords" content="Java, leJOS, leJOS project, NXJ, NXJ Tutorial" />
+
+	<meta name='VW96.objecttype' content='Document' />
+	<meta http-equiv='content-language' content='en'>
+	<meta name='DC.Language' SCHEME='RFC1766' CONTENT='English' />
+	<meta name='distribution' content='global' />
+	<meta name='resource-type' content='document' />
+
+	<!-- SEARCH ENGINE -->
+	<meta name='robots' content='all' />
+
+	<!-- AUTHOR METADATA -->
+	
+	<meta name="Author" content="Roger Glassey">
+	<meta name="Author" content="Lawrie Griffiths">
+	
+	<!-- CSS -->
+	<link rel="stylesheet" href="../r_css/lejos-tutorial.css" type="text/css" />
+
+	<!-- ICON -->
+	<link rel="shortcut icon" href="../favicon.ico" type="image/x-icon" />
+</head>
+<body>
+	<a id="top" name="top"></a>
+	<!-- N1: HEADER -->
+	<table cellpadding="0" cellspacing="0" class="n1t1">
+		<tr>
+			<td><img src="../r_media/images/tutorial_header1.jpg" /></td>
+			<td align="right"><img src="../r_media/images/tutorial_header2.jpg" /></td>
+		</tr>
+	</table>
+	<!-- N2: CONTENTS -> NAVIGATION SYSTEMS AND CONTENTS -->
+	<table cellpadding="0" cellspacing="0" class="n2t1">
+		<tr>
+			<td class="n2t1r1c1">
+				<!-- LEFT NAVIGATION SYSTEM -->
+				<div class="nolinkLESSON">PC GUI Tools</div>
+				<div class="linkAHEAD"><a href="#1">The NXJ Browser</a></div>
+				<div class="linkAHEAD2"><a href="#2">Deleting programs</a></div>
+				<div class="linkAHEAD2"><a href="#3">Uploading files</a></div>
+				<div class="linkAHEAD2"><a href="#4">Downloading files</a></div>
+				<div class="linkAHEAD2"><a href="#5">Running programs</a></div>
+				<div class="linkAHEAD2"><a href="#6">De-fragmenting the file system</a></div>
+				<div class="linkAHEAD2"><a href="#7">Setting the friendly name of the NXT</a></div>
+				<div class="linkAHEAD"><a href="#8">Remote Monitoring and Tracing</a></div>
+				<div class="linkAHEAD"><a href="#9">Data Viewer</a></div>
+				<div class="linkAHEAD"><a href="#10">Console viewer</a></div>
+				<div class="linkAHEAD"><a href="#11">NXJFlashG</a></div>
+
+			</td>
+			<td>
+
+	        	<div id="BreadCrumbs">
+	            	<a href="../index.htm" target="_top">Home Page</a>
+	        		&gt;
+	            	<a href="#">PC GUI Tools</a>
+	        	</div>
+	        	<div class="NavBit">
+	                <a target="_top" href="../Communications/Communications.htm">«&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../Utilities/LejosUtilities.htm">Next&nbsp;»</a>
+	        	</div>
+	        	
+				<!-- CONTENT TITLE -->
+	        	<div id="PageTitle">PC GUI Tools</div>
+        	
+	        	<a name="1"></a>
+				<h4>The NXJ Browser</h4>
+	
+				<p>leJOS NXJ includes a PC-based file browser for viewing and manipulating the files on the NXT.</p>
+				
+				<p>It is started by the nxjbrowse script. If you are using an IDE, you can set NXJ Browse up as an external tool.</p>
+				
+				<p>The NXJ Browser need the NXT it is
+				connecting to, to be turned on and to be running the leJOS
+				start-up menu. Although it should work while a user program is
+				running, if the program starts the LCPBTResponder thread, this is
+				not recommended.</p>
+			
+				<p>The NXJ Browser first looks for a NXT connected by USB, and if it finds one shows just that in the selection window.</p>
+				
+				<p>If it cannot find a USB-connected
+				NXT, it does a Bluetooth inquiry to find any NXTs in range and
+				shows them in the selection window. You then select the one you
+				wish to connect to, and press connect.</p>
+				
+				<img src="nxjbrowseselect.png" border=1/>
+
+				<p>After pressing Connect, the main browser screen is shown:</p>
+				
+				<img src="nxjbrowser.png" border=1/>
+
+				<p>The NXJ browser shows you all the
+				files on your NXT, together with their size in bytes and their
+				location in the file system (start page, end page). See
+				&ldquo;Understanding the leJOS NXJ File System&rdquo; to
+				understand the meaning of the start and end pages.</p>
+			
+				<p>The friendly name of the NXT you
+				are connected to is shown in the title bar of the Windows &ndash;
+				the name is &ldquo;NXT&rdquo; in this case.</p>
+				
+				<p>From this screen, you can:</p>
+				
+				<ul class="BlueArrows">
+					<li><p>Delete programs</p>
+					<li><p>Upload programs and other files to the NXT</p>
+					<li><p>Download files from the NXT to the OC</p>
+					<li><p>Run programs</p>
+					<li><p>De-fragment the file system</p>
+					<li><p>Set the friendly name of the NXT</p>
+				</ul>
+
+	        	<a name="2"></a>
+				<h5>Deleting programs</h5>
+			
+				<p>To delete files from the NXT, click
+				the <i><b>Delete</b></I> tick boxes and press <i><b>Delete Files</b></i>.
+				The next will make a chirping sound for each file deleted, and the
+				NXJ Browser display will be updated. If the NXT is on the Files
+				menu, its LCD will also be updated. An automatic defrag will occur
+				when files are deleted, so there should be no gaps in the file
+				system.</p>
+				
+				<a name="3"></a>
+				<h5>Uploading files</h5>
+
+				<p>When you click <i><b>Upload File,
+				</b></i>an Open file dialog box appears. Browse for the file you
+				want to upload, select it, and click <b>Open</b>. NXJ Browse is
+				not normally used for uploading program files as this is better
+				done using the <i><b>nxj</b></i> or <i><b>nxjupload</b></i> tool
+				or the leJOS Eclipse plugin. However, it is useful for uploading
+				WAV files and data files for programs.</p>
+				
+				<a name="4"></a>
+				<h5>Downloading files</h5>				
+
+				<p>Files can be downloaded from the
+				NXT to the PC by selecting the NXT file and pressing &ldquo;Download&rdquo;.
+				This open a dialog that allows you to select the folder and
+				filename to download the file to.</p>
+				
+				<a name="5"></a>
+				<h5>Running programs</h5>
+
+				<p>A program on the NXT can be run by
+				selecting it and pressing &ldquo;Run&rdquo;. This shuts down NXJ
+				Browser.</p>
+				
+				<a name="6"></a>
+				<h5>De-fragmenting the file system</h5>				
+
+				<p>The NXT file system cab be
+				defragmented (removing any gaps between files) by pressing
+				&ldquo;Defrag&rdquo;. In the latest versions of leJOS the file
+				system does not normally need to be defragmented.</p>
+				
+				<a name="7"></a>
+				<h5>Setting the friendly name of the NXT</h5>
+
+				<p>The Bluetooth friendly name of the
+				NXT can be set by pressing &ldquo;Set Name&rdquo;, filling in the
+				name (up to 16 characters) and pressing OK. Note that the
+				Bluetooth power be on in order to set the friendly name, even if
+				the connection to the NXT is by USB.</p>
+				
+				<p><a href="#top" NAME="Back to top">Back to top</a></p>
+				
+	        	<a name="8"></a>
+				<h4>Remote Monitoring and Tracing</h4>				
+
+				<p>You can monitor a leJOS program
+				over a Bluetooth connection while it is running by starting the
+				LCPBTResponder thread and running the NXJ Monitor tool on the PC.</p>
+				<p>You an example of this, see the
+				MonitorTest sample.</p>
+				
+				<p>NXJ Monitor lets you see the values
+				of sensors, and the values of motor tachometers, in near
+				real-time, while your program executes.</p>
+				
+				<p>It also lets you program displaying
+				tracing messages to indicate what it is doing. These are displayed
+				on the NXJ Monitor screen.</p>
+				
+				<p>The program being monitored should
+				include the following code in its start-up sequence:</p>
+				
+				<div class="CodeBox">
+				<pre><code>
+LCPBTResponder lcpThread = new LCPBTResponder();
+lcpThread.setDaemon(true);
+lcpThread.start();
+				</code></pre>
+				</div>
+			
+				<p>On the PC, the NXJ Monitor tool
+				should be run. NXJ Monitor lists the NXTs available over Bluetooth
+				in the same way as the NXJ Browser tool, and lets you choose which
+				one you wish to connect to.</p>
+				<p>When a connection has been made,
+				the following window is displayed:</p>
+
+				<p><a href="#top">Back to top</a></p>
+				
+				<a name="9"></a>
+				<h4>Data Viewer</h4>
+
+				<p>The Data Viewer displays the output
+				from DataLogger. You can cut and paste the data into a spreadsheet
+				for further analysis. It uses USB by default, but you can select
+				Bluetooth if you wish. When you start the program, this window
+				appears:</p>
+				
+				<img src="nxjdataviewer.png" border=1/>
+				
+				<p>It connects to the NXT via USB by
+				default, but if you click the <i>Use BlueTooth </i>button, it
+				will.. For the fastest BlueTooth connection, enter the Bluetooth
+				address. If you don&rsquo;t know it, enter the NXT name.
+				Otherwise, the program will take some time to search and complete
+				the connection. By default, the program displays 2 data values per
+				row, but you can enter any number you wish before starting to
+				download. The DataLogger gives you the option to resending its
+				data if you want to see it again (with a different row length for
+				example). If you do, click the <i>Start Download</i> button
+				again..</p>
+
+				<p><a href="#top">Back to top</a></p>
+				
+				<a name="10"></a>
+				<h4>The Console viewer</h4>
+
+				<p>The Console Viewer displays the
+				output from RConsole, which is described in the section of Error
+				Handling and Debugging. When you start the program, this window
+				appears:</p>
+				
+				<img src="nxjdataviewer.png" border=1/>
+			
+				<p>It connects to the NXT via USB by
+				default, but if you click the <i>Use BlueTooth </i>button, it
+				will. For the fastest BlueTooth connection, enter the Bluetooth
+				address. If you don&rsquo;t know it, enter the NXT name.
+				Otherwise, the program will take some time to search and complete
+				the connection.</p>
+				
+				<p>The <i>Connect</i> button will
+				initiate the connection with the NXT provided that the RConsole
+				program is running on the NXT. 
+				</p>
+				
+				<p><a href="#top">Back	to top</a></p>
+							
+	        	<a name="11"></a>
+				<h4>NXJFlashG</h4>
+
+				<p>This is the GUI version of NXJFlash. It
+				installs the firmware into the flash memory of your NXT.  If your
+				NXT has a recent version of the firmware already installed,  it
+				only needs to be turned on and connected to the PC with the USB
+				cable. Otherwise, it needs to be put into firmware update mode by 
+				pressing the reset button for 4 seconds or more.</p>
+				
+				<p>When the program opens, it looks like this:</p>
+				
+				<img src="nxjflashg.png" border=1/>
+				
+				<p>When	you click start you see this :</p>
+				
+				<img src="clickok.png" border=1/>
+				
+				<p>The next message is :</p>
+				
+				<img src="clearmemory.png" border=1/>
+				
+				<p>If you click Yes, the entire flash memory of
+				the NXT will be cleared. If you click no and the installation
+				fails, it might be because the the flash memory has been badly
+				corrupted. In which case, try again and click Yes. 
+				</p>
+				
+				<p>As the installation proceeds, the progress log
+				will be written. At the end, you have a chance to install firmware
+				again.</p>
+			
+				<p><a href="#top">Back to top</a></p>	
+
+        		<div class="NavBit">
+                		<a target="_top" href="../Communications/Communications.htm">«&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../Utilities/LejosUtilities.htm">Next&nbsp;»</a>
+        		</div>
+			<td>
+		</tr>
+	</table>
+</body>
+</html>
