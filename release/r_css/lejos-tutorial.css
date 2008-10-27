@@ -1,0 +1,240 @@
+/*
+PROJECT: LEJOS NXJ TUTORIAL
+AUTHOR: Juan Antonio Breña Moral
+EMAIL: bren@juanantonio.info
+DESCRIPTION: CSS file for leJOS tutorial
+CREATION DATE 01/07/2008
+LAST UPDATE: 20/07/2008
+*/
+
+/********************
+***** HTML TAGS *****
+********************/
+
+table {
+	border : 0px none;
+}
+
+body {
+	margin: 20px 0px 0px 20px;
+	background: #fffff;
+}
+
+form {
+	margin : 0px 0px 0px 0px;
+}
+
+ul {
+	list-style: square;
+	margin-bottom: 0px;
+	margin-top: 0px;
+	padding-bottom: 0px;
+	padding-top: 0px;
+}
+
+img {
+	border : 0px none;
+}
+
+pre, code {
+	margin: 5px 5px 5px 5px;
+	padding: 0 0 0 0;
+}
+
+
+/*****************************
+***** WEB SITE STRUCTURE *****
+*****************************/
+
+/* LEVEL 1 */
+
+table.n1t1{
+	width: 98%;
+	background-image: url(../r_media/images/tutorial_header_background.jpg);
+	background-repeat: repeat-x;
+}
+
+/* LEVEL 2 */
+
+table.n2t1{
+	width: 98%;
+	padding: 10px 20px 0px 20px;
+}
+
+td.n2t1r1c1{
+	width: 200px;
+	vertical-align: top;
+	padding-right: 10px;
+}
+
+/* JAVA TUTORIAL CSS */
+
+h3 {
+	font-family: sans-serif; 
+	color: #E76F00;
+	margin-bottom: 3px;
+}
+
+h4 {
+	font-family: sans-serif; 
+	color: #E76F00;
+	margin-bottom: 3px;
+}
+
+h5 {
+	font-family: sans-serif; 
+	color: #E76F00;
+	margin-bottom: 3px;
+}
+
+h6 {
+	font-family: sans-serif; 
+	color: #E76F00;
+	margin-bottom: 3px;
+}
+
+#PageTitle {
+	margin: 0 5px 0.5em 0;
+	color: #E76F00;
+	font-family: sans-serif; 
+	font-weight: bold;
+	font-size: 20px;
+}
+
+#Contents {
+	float: left;
+	font-family: sans-serif; 
+}
+	 
+div.nolinkLESSON{
+	font-family: sans-serif; 
+}
+	 
+div.linkAHEAD{
+	font-family: sans-serif; 
+}
+	 
+.linkAHEAD a {
+	color: blue;
+}
+	 
+.linkAHEAD a:visited, .linkAHEAD a:link {
+	text-decoration: none;
+}
+
+.linkAHEAD a:hover, .linkAHEAD a:active {
+	text-decoration: underline;
+}
+	 
+div.linkAHEAD2{
+	font-family: sans-serif;
+}
+	 
+.linkAHEAD2 a {
+	color: blue;
+}
+	 
+.linkAHEAD2 a:visited, .linkAHEAD2 a:link {
+	text-decoration: none;
+}
+    
+.linkAHEAD2 a:hover, .linkAHEAD2 a:active {
+	text-decoration: underline;
+}
+
+.linkAHEAD2  {
+        margin-left: 3.5em;
+        text-indent: -0.5em
+}
+
+.LCDBox {
+	border: 1px solid rgb(0, 0, 0); 
+	width: 200px; 
+	font-family: monospace;
+	height: 160px;
+}
+
+.LCDBox p {
+	margin-bottom: 3px;
+	margin-top: 3px;
+}
+
+.CodeBox {
+	border: 1px solid rgb(0, 0, 0);
+	margin: 0 0 0 0;
+	padding: 0 0 0 0;
+	background: #eee;
+} 
+	 
+.NavBit  {
+	padding: 4px 5px 0.5em 0;
+	font-family: sans-serif; 
+}
+	 
+.NavBit a:visited, .NavBit a:link {
+	text-decoration: none;
+}
+
+.NavBit a:hover, .NavBit a:active {  
+	text-decoration: underline;
+}
+
+#BreadCrumbs {
+	padding: 4px 5px 0.5em 0;
+	font-family: sans-serif; 
+	float: right;
+}
+    
+#BreadCrumbs a {
+	color: blue;
+}
+    
+#BreadCrumbs a:visited, #BreadCrumbs a:link {
+	text-decoration: none;
+}
+    
+#BreadCrumbs a:hover, #BreadCrumbs a:active {
+	text-decoration: underline;
+}
+
+ul.BlueArrows {
+	list-style-image: url(../r_media/images/ar_dbl_blue.gif);
+}
+
+ul.BlueArrows a:visited, ul.BlueArrows a:link {
+	text-decoration: none;
+}
+    
+ul.BlueArrows a:hover, ul.BlueArrows a:active {
+	text-decoration: underline;
+}
+
+ul.BlueArrows2 {
+	list-style-image: url(../r_media/images/ar_dbl_blue.gif);
+}
+
+#Contents {
+	float: left;
+    font-family: sans-serif; 
+}
+	 
+.linkLESSON, .nolinkLESSON {
+        margin-left: 0.5em;
+        text-indent: -0.5em
+}
+.linkAHEAD, .nolinkAHEAD, .linkQUESTIONS, .nolinkQUESTIONS   {
+        margin-left: 1.5em; 
+        text-indent: -0.5em
+}
+.linkBHEAD, .nolinkBHEAD   {
+        margin-left: 2.5em;
+        text-indent: -0.5em
+}
+.linkCHEAD, .nolinkCHEAD   {
+        margin-left: 3.5em;
+        text-indent: -0.5em
+}
+.nolinkLESSON, .nolinkAHEAD, .nolinkBHEAD, .nolinkCHEAD, .nolinkQUESTIONS {
+        font-weight: bold;
+        color: #E76F00;
+}

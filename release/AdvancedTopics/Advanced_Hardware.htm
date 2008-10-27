@@ -1,0 +1,734 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html dir="ltr" xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title>Advanced Motors, Sensors and Third Party Hardware</title>
+
+	<!-- METADATA -->
+	<meta name="title" content="Advanced Motors, Sensors and Third Party Hardware" />
+	<meta name="DC.Title" content="Advanced Motors, Sensors and Third Party Hardware" />
+	<meta http-equiv="title" content="Advanced Motors, Sensors and Third Party Hardware" />
+	
+	<meta name="description" content="Advanced Motors, Sensors and Third Party Hardware" />
+	<meta http-equiv="description" content="Advanced Motors, Sensors and Third Party Hardware" />
+	<meta http-equiv="DC.Description" content="Advanced Motors, Sensors and Third Party Hardware" />
+
+	<meta name="keywords" content="Java, leJOS, leJOS project, NXJ, NXJ Tutorial" />
+	<meta http-equiv="keywords" content="Java, leJOS, leJOS project, NXJ, NXJ Tutorial" />
+
+	<meta name='VW96.objecttype' content='Document' />
+	<meta http-equiv='content-language' content='en'>
+	<meta name='DC.Language' SCHEME='RFC1766' CONTENT='English' />
+	<meta name='distribution' content='global' />
+	<meta name='resource-type' content='document' />
+
+	<!-- SEARCH ENGINE -->
+	<meta name='robots' content='all' />
+
+	<!-- AUTHOR METADATA -->	
+	<meta name="Author" CONTENT="Lawrie Griffiths">		
+
+	<!-- CSS -->
+	<link rel="stylesheet" href="../r_css/lejos-tutorial.css" type="text/css" />
+
+	<!-- ICON -->
+	<link rel="shortcut icon" href="../favicon.ico" type="image/x-icon" />
+</head>
+<body>
+	<a id="top" name="top"></a>
+	<!-- N1: HEADER -->
+	<table cellpadding="0" cellspacing="0" class="n1t1">
+		<tr>
+			<td><img src="../r_media/images/tutorial_header1.jpg" /></td>
+			<td align="right"><img src="../r_media/images/tutorial_header2.jpg" /></td>
+		</tr>
+	</table>
+	<!-- N2: CONTENTS -> NAVIGATION SYSTEMS AND CONTENTS -->
+	<table cellpadding="0" cellspacing="0" class="n2t1">
+		<tr>
+			<td class="n2t1r1c1">
+				<!-- LEFT NAVIGATION SYSTEM -->
+				<div class="nolinkLESSON">Advanced Motors, Sensors and Third Party Hardware</div>
+				<div class="linkAHEAD"><a href="#1">Motor classes</a></div>
+				<div class="linkAHEAD2"><a href="#2">BasicMotor</a></div>
+				<div class="linkAHEAD2"><a href="#3">RCXMotor</a></div>
+				<div class="linkAHEAD2"><a href="#4">Motor</a></div>
+				<div class="linkAHEAD"><a href="#5">Motor Port classes</a></div>
+				<div class="linkAHEAD"><a href="#6">Sensor Ports</a></div>
+				<div class="linkAHEAD"><a href="#7">Sensors</a></div>
+				<div class="linkAHEAD"><a href="#8">RCX Sensors</a></div>
+				<div class="linkAHEAD2"><a href="#9">RCX Light Sensor</a></div>
+				<div class="linkAHEAD2"><a href="#10">RCX Touch Sensor</a></div>
+				<div class="linkAHEAD2"><a href="#11">RCX Rotation Sensor</a></div>
+				<div class="linkAHEAD2"><a href="#12">RCX Temperature Sensor</a></div>
+				<div class="linkAHEAD"><a href="#13">Third	Party sensors and other devices</a></div>
+				<div class="linkAHEAD"><a href="#14">I2CSensor</a></div>
+			</td>
+			<td>
+        		<div id="BreadCrumbs">
+            		<a href="../index.htm" target="_top">Home Page</a>
+        			&gt;
+            		<a href="#">Advanced Motors, Sensors and Third Party Hardware</a>
+        		</div>
+        		<div class="NavBit">
+                	<a target="_top" href="../Utilities/LejosUtilities.htm">«&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../AdvancedTopics/UnderstandingFilesLCPMemTools.htm">Next&nbsp;»</a>
+        		</div>
+        		
+				<!-- CONTENT TITLE -->
+        		<div id="PageTitle">Advanced Motors, Sensors and Third Party Hardware</div>
+
+				<a name="1"></a>
+				<h4>Motor classes</h4>
+				
+				<a name="2"></a>
+				<h5>BasicMotor</h5>				
+
+				<p>All leJOS NXJ Motor classes extend the abstract BasicMotor class. 
+				BasicMotor defines the methods that any type of leJOS NXJ motor must support and 
+				provides implementations for some of them. The methods are:</p>
+				
+				<ul class="BlueArrows">
+					<li>public void setPower(int power)
+					<li>public int getPower()
+					<li>public void forward()
+					<li>public boolean isForward()
+					<li>public void backward()
+					<li>public boolean isBackward()
+					<li>public void reverseDirection()
+					<li>public boolean isMoving()
+					<li>public void flt()
+					<li>public boolean isFloating()
+					<li>public void stop()
+					<li>public boolean isStopped()
+					<li>public int getMode()
+				</ul>
+				
+				<a name="3"></a>
+				<h5>RCXMotor</h5>	
+			
+				<p>The RCX motors do not have an in-built
+				tachometer and so cannot support the advanced functions of the NXT
+				motors such as the rotate and rotateTo methods and the speed
+				regulation.</p>
+			
+				<p>A simpler class is used to support
+				the RCX motors. It has similar methods to the Motor class in the
+				RCX version of leJOS (which are the same as those supported by the BasicMotor class).</p>
+			
+				<p>To use an RCX motor you create an
+				instance of the RCXMotor class using the constructor:</p>
+				
+				<ul class="BlueArrows">
+					<li><p>public RCXMotor(BasicMotorPort port)</p>
+				</ul>
+				
+				<p>Example:</p>
+				
+				<div class="CodeBox">
+				<pre><code>
+RCXMotor rcxMotor = new RCXMotor(MotorPort.A);				
+				</code></pre>
+				</div>
+				
+				<p>You can use RCX Motors with leJOS NXJ by connecting them with the conversion cables that can be purchased from 
+				LEGO (and are bundled with the LEGO MINDSTORMS NXT educational kits). You can also use the RCXMotor class to control
+				RCX motors connected to a remote RCX - see the "Communications" tutorial.</p>
+
+				<a name="4"></a>
+				<h5>Motor</h5>	
+			
+				<p>This class controls the NXT motors which have a built in tachometer, and is
+				described in <a href="../MotorTutorial/ControllingMotors.htm">Controlling the Motors</a></p>
+				
+				<a name="5"></a>
+				<h4>MotorPort classes</h4>
+				
+				<p>To use the NXT motors it is not
+				necessary to explicitly use the MotorPort class: you can just use
+				the variables Motor.A, Motor.B and Motor.C.   So if you are only
+				using NXT motors, you can skip this section.</p>
+				
+				<p>However it is useful to understand how motor ports work as they are used by:</p>
+				
+				<ul class="BlueArrows">
+					<li><p>The Motor class</p>
+					<li><p>The RCXMotor class</p>
+					<li><p>The RemoteNXT class</p>
+					<li><p>The RCXMotorMultiplexer class</p>
+					<li><p>Remote RCX motors accessed via the RCXLink class</p>
+				</ul>
+				
+				<p>There is a hierarchy of interfaces defined for motor ports:</p>
+				
+				<ul class="BlueArrows">
+					<li><p>BasicMotorPort</p>
+					<li><p>Tachometer</p>
+					<li><p>TachoMotorPort</p>
+				</ul>
+				
+				<p>All motor ports support the
+				BasicMotorPort interface which allows control of a motors power
+				and mode (forward, backward, stop, float).</p>
+				
+				<p>Ports that supports this include:</p>
+				
+				<ul class="BlueArrows">
+					<li><p>NXT ports connected to NXT motors</p>
+					<li><p>NXT ports connected via the RCX conversion cable to RCX motors</p>
+					<li><p>Ports on the RCXMotorMultiplexer adapter</p>
+					<li><p>Ports on remote NXTs accessed via the RemoteNXT class</p>
+					<li><p>Ports on remote RCXs accessed via the RCXLink class</p>
+				</ul>
+				
+				<p>The implementations of BasicMotorPort include:</p>
+				
+				<ul class="BlueArrows">
+					<li><p>MotorPort</p>
+					<li><p>RemoteMotorPort</p>
+					<li><p>RCXPlexedMotorPort</p>
+					<li><p>RCXRemoteMotorPort</p>
+				</ul>
+
+				<p>The tachometers that are built in to the NXT motors support the Tachometer interface.</p>
+				
+				<p>NXT motor ports support the TachoMotorPort interface which includes the BasicMotorPort and Tachometer interfaces.</p>
+				
+				<p>Implementations of TachoMotorPort include:</p>
+				
+				<ul class="BlueArrows">
+					<li><p>MotorPort</p>
+					<li><p>RemoteMotorPort</p>
+				</ul>
+
+				<p>All this sounds rather complicated, but is simple to use:</p>
+				
+				<ul class="BlueArrows">
+					<li><p>For NXT motors, you use Motor.A, Motor.B	and Motor.C</p>
+					<li><p>For RCX motors connected by the conversion cable you use RCXMotor(MotorPort.A), RCXMotor(MotorPort.B) or
+						RCXMotor(MotorPort.C)</p>
+					<li><p>For NXT motors on a remote NXT, you use remoteNXT.Motor.A, remoteNXT.Motor.B or remoteNXT.Motor.C where
+						remoteNXT is an instance of RemoteNXT.</p>
+					<li><p>For RCX motors connected by the RCX Motor Multiplexer, you use rcxMotorMultiplexer.A,
+						rcxMotorMultiplexer.B, rcxMotorMultiPlexer.C or	rcxMotorMultiplexer.D, 
+						where rcxMotorMultiplexer is an instance of RCXMotorMultiPlexer.</p>
+					<li><p>For RCX motors connected t remote RCXs via the RCXLink class you use rcxLink.A, rcxLink.B or rcxLink.C where
+						rcxLink is an instance of the RCXLink class.</p>
+				</ul>
+
+				<p><a href="#top">Back to top</a></p>
+
+				<a name="6"></a>
+				<h4>Sensor Ports</h4>
+				
+				<p>If you are using a sensor connected
+				directly to a NXT sensor port, you can use the SensorPort class
+				and you can probably skip this section.</p><p> But if you are using a
+				port splitter, or a remote NXT or RCX, it may be of interest. 
+				</p>
+				
+				<p>The NXT sensor ports support three
+				different types of sensor:</p>
+				
+				<ul class="BlueArrows">
+					<li><p>NXT Analog/Digital Sensors</p>
+					<li><p>I2C Sensors 
+					</p>
+					<li><p>Legacy RCX sensors</p>
+				</ul>
+				
+				<p>Corresponding to each of the
+				different types of sensor, there is a corresponding interface:</p>
+				
+				<ul class="BlueArrows">
+					<li><p>ADSensorPort which extends BasicSensorPort</p>
+					<li><p>I2CPort extends BasicSensorPort 
+					</p>
+					<li><p>LegacySensorPort extends ADSensorPort</p>
+				</ul>
+				
+				<p>At the top of the interface
+				hierarchy is the BasicSensorPort.  All sensor port classes
+				implement this interface.  This interface allows the type and mode
+				of a sensor to be set.  These type and mode constants are defined
+				by the interface SensorConstants, which is inherited by the
+				BasicSensorPort interface. 
+				</p>
+				
+				<p>The types of sensors are:</p>
+
+				<TABLE DIR="LTR" WIDTH=394 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=7 CELLSPACING=0>
+					<COL WIDTH=213>
+					<COL WIDTH=152>
+					<TR VALIGN=TOP>
+						<TD WIDTH=213>
+							<p>Sensor Type</p>
+						</TD>
+						<TD WIDTH=152>
+							<p>Code 
+							</p>
+						</TD>
+					</TR>
+					<TR VALIGN=TOP>
+						<TD WIDTH=213>
+							<p><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>int</B></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>
+							</FONT></FONT></FONT><FONT COLOR="#0000c0"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>TYPE_NO_SENSOR</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>
+							</FONT></FONT></FONT>
+							</p>
+						</TD>
+						<TD WIDTH=152>
+							<p> <FONT FACE="Courier New, monospace"><FONT SIZE=2>0x00;</FONT></FONT></p>
+						</TD>
+					</TR>
+					<TR VALIGN=TOP>
+						<TD WIDTH=213>
+							<p><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>int</B></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>
+							</FONT></FONT></FONT><FONT COLOR="#0000c0"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>TYPE_SWITCH</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>
+							</FONT></FONT></FONT>
+							</p>
+						</TD>
+						<TD WIDTH=152>
+							<p> <FONT FACE="Courier New, monospace"><FONT SIZE=2>0x01;</FONT></FONT></p>
+						</TD>
+					</TR>
+					<TR VALIGN=TOP>
+						<TD WIDTH=213>
+							<p><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>int</B></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>
+							</FONT></FONT></FONT><FONT COLOR="#0000c0"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>TYPE_TEMPERATURE</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>
+							</FONT></FONT></FONT>
+							</p>
+						</TD>
+						<TD WIDTH=152>
+							<p> <FONT FACE="Courier New, monospace"><FONT SIZE=2>0x02;</FONT></FONT></p>
+						</TD>
+					</TR>
+					<TR VALIGN=TOP>
+						<TD WIDTH=213>
+							<p><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>int</B></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>
+							</FONT></FONT></FONT><FONT COLOR="#0000c0"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>TYPE_REFLECTION</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>
+							</FONT></FONT></FONT>
+							</p>
+						</TD>
+						<TD WIDTH=152>
+							<p> <FONT FACE="Courier New, monospace"><FONT SIZE=2>0x03;</FONT></FONT></p>
+						</TD>
+					</TR>
+					<TR VALIGN=TOP>
+						<TD WIDTH=213>
+							<p><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>int</B></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>
+							</FONT></FONT></FONT><FONT COLOR="#0000c0"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>TYPE_ANGLE</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>
+							</FONT></FONT></FONT>
+							</p>
+						</TD>
+						<TD WIDTH=152>
+							<p> <FONT FACE="Courier New, monospace"><FONT SIZE=2>0x04;</FONT></FONT></p>
+						</TD>
+					</TR>
+					<TR VALIGN=TOP>
+						<TD WIDTH=213>
+							<p><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>int</B></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>
+							</FONT></FONT></FONT><FONT COLOR="#0000c0"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>TYPE_LIGHT_ACTIVE</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>
+							</FONT></FONT></FONT>
+							</p>
+						</TD>
+						<TD WIDTH=152>
+							<p> <FONT FACE="Courier New, monospace"><FONT SIZE=2>0x05;</FONT></FONT></p>
+						</TD>
+					</TR>
+					<TR VALIGN=TOP>
+						<TD WIDTH=213>
+							<p><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>int</B></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>
+							</FONT></FONT></FONT><FONT COLOR="#0000c0"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>TYPE_LIGHT_INACTIVE</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>
+							</FONT></FONT></FONT>
+							</p>
+						</TD>
+						<TD WIDTH=152>
+							<p> <FONT FACE="Courier New, monospace"><FONT SIZE=2>0x06;</FONT></FONT></p>
+						</TD>
+					</TR>
+					<TR VALIGN=TOP>
+						<TD WIDTH=213>
+							<p><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>int</B></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>
+							</FONT></FONT></FONT><FONT COLOR="#0000c0"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>TYPE_SOUND_DB</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>
+							</FONT></FONT></FONT>
+							</p>
+						</TD>
+						<TD WIDTH=152>
+							<p> <FONT FACE="Courier New, monospace"><FONT SIZE=2>0x07;
+							</FONT></FONT>
+							</p>
+						</TD>
+					</TR>
+					<TR VALIGN=TOP>
+						<TD WIDTH=213>
+							<p><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>int</B></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>
+							</FONT></FONT></FONT><FONT COLOR="#0000c0"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>TYPE_SOUND_DBA</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>
+							</FONT></FONT></FONT>
+							</p>
+						</TD>
+						<TD WIDTH=152>
+							<p> <FONT FACE="Courier New, monospace"><FONT SIZE=2>0x08;</FONT></FONT></p>
+						</TD>
+					</TR>
+					<TR VALIGN=TOP>
+						<TD WIDTH=213>
+							<p><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>int</B></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>
+							</FONT></FONT></FONT><FONT COLOR="#0000c0"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>TYPE_CUSTOM</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>
+							</FONT></FONT></FONT>
+							</p>
+						</TD>
+						<TD WIDTH=152>
+							<p> <FONT FACE="Courier New, monospace"><FONT SIZE=2>0x09;</FONT></FONT></p>
+						</TD>
+					</TR>
+					<TR VALIGN=TOP>
+						<TD WIDTH=213>
+							<p><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>int</B></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>
+							</FONT></FONT></FONT><FONT COLOR="#0000c0"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>TYPE_LOWSPEED</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>
+							</FONT></FONT></FONT>
+							</p>
+						</TD>
+						<TD WIDTH=152>
+							<p> <FONT FACE="Courier New, monospace"><FONT SIZE=2>0x0A;</FONT></FONT></p>
+						</TD>
+					</TR>
+					<TR VALIGN=TOP>
+						<TD WIDTH=213>
+							<p><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>int</B></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>
+							</FONT></FONT></FONT><FONT COLOR="#0000c0"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>TYPE_LOWSPEED_9V</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>
+							</FONT></FONT></FONT>
+							</p>
+						</TD>
+						<TD WIDTH=152>
+							<p> <FONT FACE="Courier New, monospace"><FONT SIZE=2>0x0B;</FONT></FONT></p>
+						</TD>
+					</TR>
+				</TABLE>
+				
+				<p>and the modes are:</p>
+				
+				<TABLE DIR="LTR" WIDTH=394 HSPACE=24 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=7 CELLSPACING=0>
+					<COL WIDTH=196>
+					<COL WIDTH=168>
+					<TR VALIGN=TOP>
+						<TD WIDTH=196>
+							<p>Mode</p>
+						</TD>
+						<TD WIDTH=168>
+							<p>Code</p>
+						</TD>
+					</TR>
+					<TR VALIGN=TOP>
+						<TD WIDTH=196>
+							<p><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>int</B></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>
+							</FONT></FONT></FONT><FONT COLOR="#0000c0"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>MODE_RAW</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>
+							</FONT></FONT></FONT>
+							</p>
+						</TD>
+						<TD WIDTH=168>
+							<p> <FONT FACE="Courier New, monospace"><FONT SIZE=2>0x00;</FONT></FONT></p>
+						</TD>
+					</TR>
+					<TR VALIGN=TOP>
+						<TD WIDTH=196>
+							<p><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>int</B></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>
+							</FONT></FONT></FONT><FONT COLOR="#0000c0"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>MODE_BOOLEAN</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>
+							</FONT></FONT></FONT>
+							</p>
+						</TD>
+						<TD WIDTH=168>
+							<p> <FONT FACE="Courier New, monospace"><FONT SIZE=2>0x20;</FONT></FONT></p>
+						</TD>
+					</TR>
+					<TR VALIGN=TOP>
+						<TD WIDTH=196>
+							<p><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>int</B></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>
+							</FONT></FONT></FONT><FONT COLOR="#0000c0"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>MODE_TRANSITIONCNT</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>
+							</FONT></FONT></FONT>
+							</p>
+						</TD>
+						<TD WIDTH=168>
+							<p> <FONT FACE="Courier New, monospace"><FONT SIZE=2>0x40;</FONT></FONT></p>
+						</TD>
+					</TR>
+					<TR VALIGN=TOP>
+						<TD WIDTH=196>
+							<p><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>int</B></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>
+							</FONT></FONT></FONT><FONT COLOR="#0000c0"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>MODE_PERIODCOUNTER</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>
+							</FONT></FONT></FONT>
+							</p>
+						</TD>
+						<TD WIDTH=168>
+							<p> <FONT FACE="Courier New, monospace"><FONT SIZE=2>0x60;</FONT></FONT></p>
+						</TD>
+					</TR>
+					<TR VALIGN=TOP>
+						<TD WIDTH=196>
+							<p><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>int</B></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>
+							</FONT></FONT></FONT><FONT COLOR="#0000c0"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>MODE_PCTFULLSCALE</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>
+							</FONT></FONT></FONT>
+							</p>
+						</TD>
+						<TD WIDTH=168>
+							<p> <FONT FACE="Courier New, monospace"><FONT SIZE=2>0x80;</FONT></FONT></p>
+						</TD>
+					</TR>
+					<TR VALIGN=TOP>
+						<TD WIDTH=196>
+							<p><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>int</B></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>
+							</FONT></FONT></FONT><FONT COLOR="#0000c0"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>MODE_CELSIUS</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>
+							</FONT></FONT></FONT>
+							</p>
+						</TD>
+						<TD WIDTH=168>
+							<p> <FONT FACE="Courier New, monospace"><FONT SIZE=2>0xA0;</FONT></FONT></p>
+						</TD>
+					</TR>
+					<TR VALIGN=TOP>
+						<TD WIDTH=196>
+							<p><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>int</B></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>
+							</FONT></FONT></FONT><FONT COLOR="#0000c0"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>MODE_FARENHEIT</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>
+							</FONT></FONT></FONT>
+							</p>
+						</TD>
+						<TD WIDTH=168>
+							<p> <FONT FACE="Courier New, monospace"><FONT SIZE=2>0xC0;</FONT></FONT></p>
+						</TD>
+					</TR>
+					<TR VALIGN=TOP>
+						<TD WIDTH=196>
+							<p><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>int</B></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>
+							</FONT></FONT></FONT><FONT COLOR="#0000c0"><FONT FACE="Courier New, monospace"><FONT SIZE=2><I>MODE_ANGLESTEP</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>
+							</FONT></FONT></FONT>
+							</p>
+						</TD>
+						<TD WIDTH=168>
+							<p> <FONT FACE="Courier New, monospace"><FONT SIZE=2>0xE0;</FONT></FONT></p>
+						</TD>
+					</TR>
+				</TABLE>
+
+				<p>The BasicSensorPort interface
+				defines the methods:</p>
+				
+				<ul class="BlueArrows">
+					<li><p><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>public</B></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>
+					</FONT></FONT></FONT><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>int</B></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>
+					getMode();</FONT></FONT></FONT></p>
+					<li><p><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>public</B></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>
+					</FONT></FONT></FONT><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>int</B></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>
+					getType();</FONT></FONT></FONT></p>
+					<li><p><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><SPAN LANG="fr-FR"><B>public</B></SPAN></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><SPAN LANG="fr-FR">
+					</SPAN></FONT></FONT></FONT><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><SPAN LANG="fr-FR"><B>void</B></SPAN></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><SPAN LANG="fr-FR">
+					setMode(</SPAN></FONT></FONT></FONT><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><SPAN LANG="fr-FR"><B>int</B></SPAN></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2><SPAN LANG="fr-FR">
+					mode);</SPAN></FONT></FONT></FONT></p>
+					<li><p><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>public</B></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>
+					</FONT></FONT></FONT><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>void</B></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>
+					setType(</FONT></FONT></FONT><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>int</B></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>
+					type);</FONT></FONT></FONT></p>
+					<li><p><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>public</B></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>
+					</FONT></FONT></FONT><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>void</B></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>
+					setTypeAndMode(</FONT></FONT></FONT><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>int</B></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>
+					type, </FONT></FONT></FONT><FONT COLOR="#7f0055"><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>int</B></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=2>
+					mode);</FONT></FONT></FONT></p>
+				</ul>
+				
+				<p>Most of the time, with leJOS NXJ,
+				these types and modes do not need to be set explicitly as it is
+				done by the constructor for the sensor class being used, e.g.
+				TouchSensor, LightSensor and UltrasonicSensor.</p>
+				
+				<p>The implementation of the NXT
+				sensor port &ndash; SensorPort &ndash; supports all these
+				interfaces.  The reason for separating out the different
+				interfaces is that there are other implementations of sensor ports
+				that only support a subset of these interfaces, and different
+				types of sensors only require particular interfaces to be
+				implemented:</p>
+				
+				<ul class="BlueArrows">
+					<li><p>I2C Sensors just require I2CPort</p>
+					<li><p>NXT Analog/Digital sensors just require
+					ADSensorPort</p>
+					<li><p>RCX sensors such as the RCX Light sensor
+					require LegacySensorPort</p>
+				</ul>
+				
+				<p>Port splitters like the Mindsensors
+				Split-Nx only support I2C sensors and thus, effectively, only
+				support the I2CPort interface.</p>
+				
+				<p>There are other implementations
+				that only support the other interfaces. For example the current
+				implementation of remote sensor ports &ndash; RemoteSensorPort &ndash;
+				currently only supports the ADSensorPort interface.</p>
+			
+				<p>The classes for RCX Sensors
+				multiplexers &ndash; such as the forthcoming Mindsensors version &ndash;
+				will only support the LegacySensorPort interface.</p>
+
+				<p><a href="#top">Back to top</a></p>
+
+				<a name="7"></a>
+				<h4>Sensors</h4>
+				
+				<p>Each sensor supported by leJOS NXJ
+				has a specific class that is used to access the sensor. Each of
+				these sensor classes has, as a parameter, a sensor port that
+				supports the required interface. Any sensor port class that
+				implements the interface can be specified as the parameter.  As
+				the SensorPort class supports all the interfaces, if the sensor
+				being accessed is directly connected to the NXT, the parameter
+				should be one of SensorPort.S1, SensorPort.S2, SensorPort.S3 or
+				SensorPort.S4. 
+				</p>
+				
+				<p>If a port splitter is used the
+				parameter again should be one of SensorPort.S1, SensorPort.S2,
+				SensorPort.S3 or SensorPort.S4. This specifies the port that the
+				splitter is connected to. If multiple sensors are connected to the
+				splitter they must each have different I2C addresses. Most I2C
+				sensors can have their address changed &ndash; see the
+				manufacturers instructions. To specify the address that a sensor
+				uses, if it is not the default, the setAddress method of I2CSensor
+				should be used.</p>
+				
+				<p>The sensor ports supported by leJOS
+				NXJ together with the class that supports them and the type of
+				sensor port they require is given in the following table:</p>
+				
+				<img src="sensorclasses.gif">
+			
+				<a name="8"></a>
+				<h4>RCX Sensors</h4>
+			
+				<p>RCX sensors, other than the touch
+				sensor, are active sensors that have voltage applied for all but
+				the short period every three milliseconds when the measurement is
+				taken.</p>
+				
+				<a name="9"></a>
+				<h5>RCX Light Sensor</h5>
+				
+				<p>The RCX light sensor is supported by the RCXLightSensor class.</p>
+				
+				<p>The constructor is:</p>
+				
+				<ul class="BlueArrows">
+					<li><p>public RCXLightSensor(LegacySensorPort port)</p>
+				</ul>
+				
+				<p>For example:</p>
+				
+				<div class="CodeBox">
+				<pre><code>
+RCXLightSensor light = new RCXLightSensor(SensorPort.S1);
+				</code></pre>
+				</div>
+				
+				<p>The RCX light sensor is automatically activated, so current is applied to it and the LED
+				comes on. It can be passivated and activated explicitly.</p>
+				<p>The methods are:</p>
+				
+				<ul class="BlueArrows">
+					<li><p>public int readValue()</p>
+					<li><p>public void activate()</p>
+					<li><p>public void passivate()</p>
+				</ul>
+			
+				<a name="10"></a>
+				<h5>RCX Touch Sensor</h5>
+			
+				<p>As the RCX touch sensor is a
+				passive sensor similar to the NXT version, it is supported by the
+				standard TouchSensor class.</p>
+				
+				<a name="11"></a>
+				<h5>RCX Rotation Sensor</h5>
+				
+				<p>The RCX rotation sensor is not currently supported by leJOS NXJ.</p>
+				
+				<a name="12"></a>
+				<h5>RCX Temperature Sensor</h5>
+				
+				<p>The constructor is:</p>
+				
+				<ul class="BlueArrows">
+					<li><p>public RCXTemperatureSensor(LegacySensorPort port)</p>
+					<li><p>The methods are:</p>
+					<li><p>int readValue()</p><p>returns raw value</p>
+					<li><p>float getCelcius()</p><p>return the temperature in degrees Celcius</p>
+					<li><p>float getFarenheit()</p><p>return the temperature in degrees Farenheit</p>
+				</ul>
+				
+				<a name="13"></a>
+				<h4>Third party sensors and other devices</h4>
+			
+				<p>leJOS NXJ supports many third party sensors. The two main vendors of third party sensors are
+				Mindsensors and HiTechnic.</p>
+			
+				<p>Most of the third party sensors and I2C sensors and extend the I2CSensor class but there are also
+				Analog/Digital sensors such as the HiTechnic Gyro sensor and the IR Seeker.</p>
+			
+				<p>There are also other I2C devices	supplied by the third parties, that are not sensors, but are
+				multiplexers or adapters.</p>
+			
+				<p>The RCX Motor Multiplexer from Mindsensors is an example of a multiplexer. It allows up to 4 RCX
+				motors to be  connected to a NXT sensor port and to be independently controlled.</p>
+			
+				<p>The Mindstorms NRLink-Nx  infra-red communications adapter is an example of an adapter.  It allows
+				two-way communication between the NXT and RCXs. It also allows control of Power Function motors. 
+				</p>
+			
+				<a name="14"></a>
+				<h4>I2CSensor</h4>
+			
+				<p>The I2CSensor class implements the basic methods for accessing I2C sensors including getData and	SendData.</p>
+			
+				<p>It also includes methods that are implemented by all the I2C sensors, including getVersion,
+				getProductID and getSensorType.</p>
+			
+				<p>The method signatures are:</p>
+			
+				<ul class="BlueArrows">
+					<li><p>public int getData(int register, byte []	buf, int len)</p>
+					<li><p>public int sendData(int register, byte [] buf, int len)</p>
+					<li><p>public int sendData(int register, byte value)</p>
+					<li><p>public String getVersion()</p>
+					<li><p>public String getProductID()</p>
+					<li><p>public String getSensorType()</p>
+				</ul>
+			
+				<p>leJOS NXJ uses 7-bit I2C addresses,
+				whereas I2C device specification often give them as 8-bit
+				addresses with the least significant bit set to zero. Most I2C
+				sensors use a default address of 0x01, which such specifications
+				give as 0x02. Most I2C devices allow the address to be changed.</p>
+			
+				<p>The setAddress method can be used
+				to set the address used to talk to the I2C device &ndash; it
+				defaults to 0x01.</p>
+			
+				<p>Individual I2C devices have
+				registers that can be read and written and registers that can be
+				used to execute commands. Each I2C device has a class that extends
+				I2CSensor and has methods to access the registers and execute the
+				commands specific to that sensor.</p>
+			
+				<p>The I2CSensor class can be used to
+				implement an I2C device explorer that reports what devices are
+				connected to which sensor sing which address &ndash; see the
+				I2CDevices sample. This is possible as all the NXT I2C sensors and
+				other devices support the getVersion, getProductID and
+				getSensorType methods.</p>
+				
+				<p>See the table above for the complete list of  sensors and other third party devices. </p>
+
+				<p><a href="#top">Back to top</a></p>
+
+        		<div class="NavBit">
+                	<a target="_top" href="../Utilities/LejosUtilities.htm">«&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../AdvancedTopics/UnderstandingFilesLCPMemTools.htm">Next&nbsp;»</a>
+        		</div>
+			<td>
+		</tr>
+	</table>
+</body>
+</html>

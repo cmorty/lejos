@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>RotInterrupt.java</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<style type="text/css">
+<!--
+body {color: #000000; background-color: #ffffff; font-family: Monospaced}
+table {color: #000000; background-color: #e9e8e2; font-family: Monospaced}
+.character {color: #0000ff}
+.ST2 {color: #0000ff; font-family: Monospaced; font-weight: bold}
+.ST0 {color: #993300; font-family: Monospaced; font-weight: bold}
+.comment {color: #339900}
+.ST1 {color: #339900; font-family: Monospaced; font-weight: bold}
+-->
+</style>
+</head>
+<body>
+<pre>
+<span class="ST0">import</span> lejos.nxt.*;
+<span class="comment">/**</span>
+<span class="comment"> * </span><span class="comment">allows</span> <span class="comment">interruption</span> <span class="comment">of</span> <span class="comment">a</span> <span class="comment">rotation</span> <span class="comment">task</span>
+<span class="comment"> * </span><span class="ST1">@author</span> <span class="comment">Roger</span>
+ <span class="comment">*/</span>
+<span class="ST0">public</span> <span class="ST0">class</span> RotInterrupt
+{
+    <span class="comment">/**</span>
+<span class="comment">     * </span><span class="comment">This</span> <span class="comment">method</span> <span class="comment">has</span> <span class="comment">the</span> <span class="comment">logic</span><span class="comment"> - </span><span class="comment">rotate</span><span class="comment"> 720, </span><span class="comment">return</span><span class="comment">, </span><span class="comment">wait</span> <span class="comment">for</span> <span class="comment">button</span>
+<span class="comment">     * </span><span class="comment">then</span> <span class="comment">rotate</span> <span class="comment">to</span><span class="comment"> 0 - </span><span class="comment">wait</span> <span class="comment">for</span> <span class="comment">button</span>
+<span class="comment">     * </span><span class="comment">Another</span> <span class="comment">way</span> <span class="comment">to</span> <span class="comment">get</span> <span class="comment">results</span> <span class="comment">to</span> <span class="comment">the</span> <span class="comment">lcd</span>
+     <span class="comment">*/</span>
+    <span class="ST0">public</span> <span class="ST0">void</span> go()
+    {
+        System.out.println(<span class="character">&quot;</span><span class="character">Interrupt  </span><span class="ST2">\n</span><span class="character"> rotation</span><span class="character">&quot;</span>);
+        Sound.twoBeeps();
+        Button.waitForPress();
+        Motor.A.rotate(720,<span class="ST0">true</span>);
+        showRotation(1);
+        Motor.A.rotateTo(0,<span class="ST0">true</span>);
+        showRotation(1);
+    }
+    <span class="comment">/**</span> 
+<span class="comment">     * </span><span class="comment">helper</span> <span class="comment">method</span><span class="comment"> - </span><span class="comment">saves</span> <span class="comment">repeated</span> <span class="comment">code</span>
+     <span class="comment">*/</span>
+     <span class="ST0">public</span> <span class="ST0">void</span> showRotation(<span class="ST0">int</span> row )
+    {
+        <span class="ST0">while</span>(Motor.A.isRotating())
+        {
+            LCD.drawInt(Motor.A.getTachoCount(),4, 0, row);
+            <span class="ST0">if</span>(Button.readButtons()&gt;0) Motor.A.stop();
+        }
+        <span class="ST0">while</span>(Motor.A.getActualSpeed()&gt;0);
+        LCD.drawInt(Motor.A.getTachoCount(), 4,8,row);
+        Button.waitForPress();
+    }
+    <span class="comment">/**</span>
+<span class="comment">     *  </span><span class="comment">Main</span> <span class="comment">reduced</span> <span class="comment">to</span> <span class="comment">one</span> <span class="comment">line</span>
+     <span class="comment">*/</span>
+    <span class="ST0">public</span> <span class="ST0">static</span> <span class="ST0">void</span> main(String[] args)
+    {
+        <span class="ST0">new</span> RotInterrupt().go();
+    }
+
+}
+
+
+</pre></body>
+</html>

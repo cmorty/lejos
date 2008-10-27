@@ -1,0 +1,803 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html dir="ltr" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+	<title>Controlling the Motors</title>
+	<!-- METADATA -->
+	<meta name="title" content="Controlling the Motors" />
+	<meta name="DC.Title" content="Controlling the Motors" />
+	<meta http-equiv="title" content="Controlling the Motors" />
+		
+	<meta name="description" content="Controlling the Motors" />
+	<meta http-equiv="description" content="Controlling the Motors" />
+	<meta http-equiv="DC.Description" content="Controlling the Motors" />
+
+	<meta name="keywords" content="Java, leJOS, leJOS project, NXJ, NXJ Tutorial" />
+	<meta http-equiv="keywords" content="Java, leJOS, leJOS project, NXJ, NXJ Tutorial" />
+	<meta name='VW96.objecttype' content='Document' />
+	<meta http-equiv='content-language' content='en'>
+	<meta name='DC.Language' SCHEME='RFC1766' CONTENT='English' />
+	<meta name='distribution' content='global' />
+	<meta name='resource-type' content='document' />
+
+	<!-- SEARCH ENGINE -->
+	<meta name='robots' content='all' />
+
+	<!-- AUTHOR METADATA -->
+	<meta name="AUTHOR" content="Roger Glassey">
+
+	<!-- CSS -->
+  	<link rel="stylesheet" href="../r_css/lejos-tutorial.css" type="text/css">
+	
+	<!-- ICON -->
+  	<link rel="shortcut icon" href="../favicon.ico" type="image/x-icon">
+</head>
+<body>
+	<a id="top" name="top"></a>
+	<!-- N1: HEADER -->
+	<table class="n1t1" cellpadding="0" cellspacing="0">
+    <tr>
+      <td><img src="../r_media/images/tutorial_header1.jpg"></td>
+      <td align="right"><img src="../r_media/images/tutorial_header2.jpg"></td>
+    </tr>
+	</table>
+	
+	<!-- N2: CONTENTS -> NAVIGATION SYSTEMS AND CONTENTS -->
+	<table class="n2t1" cellpadding="0" cellspacing="0">
+    <tr>
+    	<td class="n2t1r1c1">
+    		<!-- LEFT NAVIGATION SYSTEM -->
+			<div class="nolinkLESSON">Controlling the Motors</div>
+			<div class="linkAHEAD"><a href="#1">Introduction to the Motor class.</a></div>
+			<div class="linkAHEAD"><a href="#2">Program 1 - Basic movement controls.</a></div>
+			<div class="linkAHEAD"><a href="#3">Program 2: Using the Tachometer</a></div>
+			<div class="linkAHEAD"><a href="#4">Program 3: Accurate rotation control</a></div>
+			<div class="linkAHEAD"><a href="#5">Program 4. Interrupting rotation</a></div>
+			<div class="linkAHEAD"><a href="#6">Program 5: Regulating motor speed</a></div>
+			<div class="linkAHEAD"><a href="#7">Other Motor Methods</a></div>
+		</td>
+		<td>
+			<!-- BREADCRUMBS -->
+			<div id="BreadCrumbs">
+				<a href="../index.htm" target="_top">Home Page</a>&gt;
+			    <a href="#">Controlling the Motors</a>
+			</div>
+			<!-- NAVIGATION TOOL -->
+			<div class="NavBit">
+			   	<a target="_top" href="../Menusystem/MenuSystem.htm">«&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../WheeledVehicles/WheeledVehicles.htm">Next&nbsp;»</a>
+			</div>
+					
+			<!-- CONTENT AREA -->
+					
+			<!-- CONTENT TITLE -->
+			<div id="PageTitle">Controlling the Motors</div>
+				
+			<a name="1"></a>
+			<h4> Introduction to the Motor class.</h4>
+
+      		<p>This class is an abstraction of a NXT motor. To be useful, a motor must be
+			connected to one of the three NXT motor ports. This class provides an
+			instance for each port. They are: Motor.A, Motor.B and Motor.C. The
+			class provides methods for controlling the motor, and for finding out
+			what the motor is doing. </p>
+      		<p>This	tutorial contains a set of five programs for you to write. With them,
+			you can perform experiments to understand how the NXT motor performs.
+			They are simple enough so you don&#8217;t need much Java experience to write
+			them. Finally, there is a discussion of <a href="#_Other_Motor_Methods"><font  color="#0000ff"><u>other motor methods</u></font></a> , not used in
+			the programs, that you might find useful. </p>
+			
+			<a name="2"></a>
+			<h4>Program 1 - Basic movement controls.</h4>
+			
+      		<p>This program uses the basic motor methods that control movement.</p>
+      		<h5>Methods used in this program</h5>
+      		<dl>
+        		<dd>
+          		<table border="1" bordercolor="#000000" cellpadding="7"  cellspacing="0" width="548">
+            		<col width="64"> <col width="166"> <col width="274"> 
+            		<tbody>
+              			<tr valign="top">
+                			<td width="64">
+                				<p>Class</p>
+                			</td>
+               	 			<td width="166">
+                				<p>Method name </p>
+                			</td>
+                			<td width="274">
+                				<p>Notes</p>
+                			</td>
+              			</tr>
+              			<tr valign="top">
+                			<td width="64">
+                				<p><code>Motor</font></p>
+                			</td>
+                			<td width="166">
+                				<p><code>forward()</code></p>
+                			</td>
+                			<td width="274">
+                				<p>Start the motor rotating forward</p>
+                			</td>
+              			</tr>
+              			<tr valign="top">
+                			<td width="64">
+                				<p>&nbsp;</p>
+                			</td>
+                			<td width="166">
+                				<p><code>backward()</code></p>
+                			</td>
+                			<td width="274">
+                				<p>Start rotating backward </p>
+                			</td>
+              			</tr>
+              			<tr valign="top">
+                			<td width="64">
+                				<p>&nbsp;</p>
+                			</td>
+                			<td width="166">
+                				<p><code>changeDirection()</code></p>
+                			</td>
+                			<td width="274">
+                				<p>Reverse the direction of rotation</p>
+                			</td>
+              			</tr>
+              			<tr valign="top">
+                			<td width="64">
+                				<p>&nbsp;</p>
+                			</td>
+                			<td width="166">
+                				<p><code>stop()</code></p>
+                			</td>
+                			<td width="274">
+                				<p>Stop quickly</p>
+                			</td>
+              			</tr>
+              			<tr valign="top">
+                			<td width="64">
+                				<p><code>Button</code></p>
+                			</td>
+                			<td width="166">
+                				<p><code>waitForPress()</code></p>
+                			</td>
+                			<td width="274">
+                				<p>Wait till any button is pressed</p>
+                			</td>
+              			</tr>
+              			<tr valign="top">
+                			<td width="64">
+                				<p><code>LCD</code></p>
+                			</td>
+                			<td width="166">
+                				<p><code>drawString(String str, int x, int y)</code></p>
+                			</td>
+                			<td width="274">
+                				<p>Draw a string. </p>
+                			</td>
+              			</tr>
+            		</tbody>
+          		</table>
+        		</dd>
+     		</dl>
+     	
+      		<h5 class="western">What the program should do: </h5>
+      		<ol>
+        		<li>
+          			<p>Run motor A in the forward direction.</p>
+        		</li>
+        		<li>
+          			<p>Display FORWARD in the top line.</p>
+        		</li>
+        		<li>
+          			<p>Wait until a button is pressed.</p>
+        		</li>
+        		<li>
+          			<p>Run the motor backward.</p>
+        		</li>
+        		<li>
+          			<p>Display BACKWARD in next line.</p>
+        		</li>
+        		<li>
+          			<p>Wait until a button is pressed.</p>
+        		</li>
+        		<li>
+          			<p>Run motor A in the forward direction.</p>
+        		</li>
+        		<li>
+          			<p>Display FORWARD in the next line. </p>
+        		</li>
+        		<li>
+          			<p>Wait until a button is pressed.</p>
+        		</li>
+        		<li>
+          			<p>Stop the motor.</p>
+        		</li>
+      		</ol>
+      		<p>It is possible to write this program using each Motor method only once.</p>
+      		<p><a href="BasicMotor.htm" target="_blank"><font color="#0000ff"><u>Solution</u></font></a><br>
+
+      		<p><a href="#top"><font color="#0000ff"><u>Back to top</u></font></a></p>
+      				
+      		<a name="3"></a>
+			<h4>Program 2 - Using the Tachometer.</h4>
+			
+      		<p>The NXT motor has a built in tachometer that keeps track of the current
+			angle (in degrees) of the motor axel. The purpose of this program is to
+			use the tachometer to find out how quickly the motor stops. </p>
+      		
+      		<h5 class="western">New methods used in this program</h5>
+      		<table border="1" bordercolor="#000000" cellpadding="7" cellspacing="0" width="656">
+        		<col width="64"> <col width="202"> <col width="346"> <tbody>
+          		<tr valign="top">
+            		<td width="64">
+            			<p>Class</p>
+            		</td>
+            		<td width="202">
+            			<p>Method name </p>
+            		</td>
+            		<td width="346">
+            			<p>Notes</p>
+            		</td>
+          		</tr>
+          		<tr valign="top">
+            		<td width="64">
+            			<p><code>Motor</code></p>
+            		</td>
+            		<td width="202">
+            			<p><code>flt()</code></p>
+            		</td>
+            		<td width="346">
+            			<p>Abbreviation for float. Turns off the power, but does not apply the brake</p>
+            		</td>
+          		</tr>
+          		<tr valign="top">
+            		<td width="64">
+            			<p>&nbsp;<p/>
+            		</td>
+            		<td width="202">
+            			<p><code>getTachoCount()</code></p>
+            		</td>
+            		<td width="346">
+            			<p>Return s the motor angle in degrees</p>
+            		</td>
+          		</tr>
+          		<tr valign="top">
+            		<td width="64">
+            			<p>&nbsp;<p/>
+            		</td>
+            		<td width="202">
+            			<p><code>resetTachocount()</code></p>
+            		</td>
+            		<td width="346">
+            			<p>Sets the counter to zero</p>
+            		</td>
+          		</tr>
+          		<tr valign="top">
+            		<td width="64">
+            			<p>&nbsp;<p/>
+            		</td>
+            		<td width="202">
+            			<p><code>setSpeed(int speed)</code></p>
+            		</td>
+            		<td width="346">
+            			<p>speed &#8211; degrees per second.. The maximum speed that can be accurately maintained is about 110 times the battery voltage. </p>
+            		</td>
+          		</tr>
+          		<tr valign="top">
+            		<td width="64">
+            			<p>&nbsp;<p/>
+            		</td>
+            		<td width="202">
+            			<p><code>int getActualSpeed()</code></p>
+            		</td>
+            		<td width="346">
+            			<p>Returns the actual motor speed (deg/sec)</p>
+            		</td>
+          		</tr>
+          		<tr valign="top">
+            		<td width="64">
+            			<p><code>LCD</code></p>
+            		</td>
+            		<td width="202">
+            			<p><code>drawInt()</code></p>
+            		</td>
+            		<td width="346">
+            			<p>&nbsp;<p/>
+            		</td>
+          		</tr>
+        	</tbody>
+      	</table>
+      	
+      	<h5>What the program should do</h5>
+      	<ol>
+        	<li>
+          		<p>Run Motor.A forward.</p>
+        	</li>
+        	<li>
+          		<p>Wait till the tacho count reaches 360.</p>
+        	</li>
+        	<li>
+          		<p>Stop the motor.</p>
+        	</li>
+        	<li>
+          		<p>Wait until the motor has stopped.</p>
+        	</li>
+        	<li>
+          		<p>Display the tachometer reading on the on the LCD.</p>
+        	</li>
+        	<li>
+          		<p>Wait for a button press to give you time to read the screen display.</p>
+        	</li>
+        	<li>
+          		<p>Set the motor speed to 720 (the default is 360).</p>
+        	</li>
+        	<li>
+          		<p>Reset the tachometer count to zero.</p>
+        	</li>
+        	<li>
+          		<p>Repeat steps 1 through 6. Note: you can avoid duplicated code by writing a method that executes these steps. </p>
+        	</li>
+      	</ol>
+      	<p>Repeat the entire experiment by modifying your code to use flt() instead of stop(); ( flt is the abbreviation for float, a Java reserved word).
+		This method sets the motor power to zero, but does not apply the brake.
+      	</p>
+      	<p>Observe that, even using the brake, the motor does not stop immediately, because motor has inertia. </p>
+      	<p><a href="InertiaTest.htm" target="_blank"><u>Solution</u></a></p>
+      	<p><a href="#top"><u>Back to top</u></font></p>
+
+		<a name="4"></a>
+		<h4>Program 3 - Accurate rotation control.</h4>
+		
+      	<p>The Motor class has a regulator thread that runs all the time. It has two
+		principle jobs, one of which is to stop the motor at a specified angle.
+		This program will test the accuracy of the rotate() method.</p>
+		
+      	<h5>New methods used in this program</h5>
+      	<table border="1" bordercolor="#000000" cellpadding="7" cellspacing="0" width="656">
+        <col width="90"> <col width="192"> <col width="329"> <tbody>
+          	<tr valign="top">
+            	<td width="90">
+            		<p>Class</p>
+            	</td>
+            	<td width="192">
+            		<p>Method name </p>
+            	</td>
+            	<td width="329">
+            	<p>Notes</p>
+            </td>
+          </tr>
+          <tr valign="top">
+            <td width="90">
+            <p><code>Motor</code></p>
+            </td>
+            <td width="192">
+            <p><code>rotate(angle)</code></p>
+            </td>
+            <td width="329">
+            <p>Rotates through <i>angle </i>degrees</p>
+            </td>
+          </tr>
+          <tr valign="top">
+            <td width="90">
+            &nbsp;
+            </td>
+            <td width="192">
+            <p><code>rotateTo(angle)</code></p>
+            </td>
+            <td width="329">
+            <p>Rotates to <i>angle </i> </p>
+            </td>
+          </tr>
+          <tr valign="top">
+            <td width="90">
+            &nbsp;
+            </td>
+            <td width="192">
+            <p><code>rotateTo(angle,true)</code></p>
+            </td>
+            <td width="329">
+            <p>Sets the counter to zero</p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h5>What the program should do</h5>
+      <ol>
+        <li>
+          <p>Rotate the motor one complete revolution.</p>
+        </li>
+        <li>
+          <p>Display the tachometer reading on the on the LCD, row 0.</p>
+        </li>
+        <li>
+          <p>Rotate the motor to angle 0.</p>
+        </li>
+        <li>
+          <p>Display the tachometer reading on the on the LCD, row 1.</p>
+        </li>
+        <li>
+          <p>Wait for a button press to give you time to read the LCD.</p>
+        </li>
+        <li>
+          <p>Clear the LCD.</p>
+        </li>
+        <li>
+          <p>Set the speed to 720.</p>
+        </li>
+        <li>
+          <p>Repeat steps 1 through 6. </p>
+        </li>
+      </ol>
+      <p>Note: you can avoid duplicated code by writing a method that executes these steps.</p>
+      <p>Observe the motor usually stops within 1 degree of the specified angle if the motor regulator is doing its job.
+		It works by calculating how far the motor will continue
+		to turn after the brake has been applied. It applies the brake before
+		reaching the specified angle. It then makes minor adjustments to the
+		motor position till it is close enough. </p>
+      	<p><a href="Rotation.htm" target="_blank"><u>Solution</u></a></p>
+
+      	<p/>
+      	<a href="#top">Back to top</a>
+
+      	<a name="5"></a>
+		<h4>Program 4.Interrupting rotation</h4>
+      
+      	<p>Sometimes you will want the motor stop (or do something else) before it reaches
+		the specified angle. This program will detect a button press to
+		interrupt the rotation task if you press a button soon enough. The
+		rotate() methods will not return until the motor has stopped at the
+		target angle. But the new methods in this program can return
+		immediately. The motor will still stop at the specified angle unless a
+		new motor method is called in the meantime. </p>
+		
+      <h5>New methods used in this program</h5>
+      <table style="width: 641px;" border="2" bordercolor="#000000" cellpadding="7" cellspacing="0">
+        <col width="57"> <col width="307"> <col width="233"> 
+        <col width="0"> 
+        <col width="0"> <col width="0"> 
+        <tbody>
+          <tr valign="top">
+            <td style="width: 57px; font-weight: bold;">
+            	<p>Class</p>
+            </td>
+            <td style="width: 307px; font-weight: bold;">
+            	<p>Method name </p>
+            </td>
+            <td style="font-weight: bold;" width="233">
+            	<p>Notes</p>
+            </td>
+          </tr>
+          <tr valign="top">
+            <td width="57">
+           	 <p><code>Motor</code></p>
+            </td>
+            <td width="307">
+            <p><code>rotate(angle,immediateReturn)</code></p>
+            </td>
+            <td rowspan="2" width="233">
+            <p>The method returns immediately if the boolean parameter <i>immediateReturn</i> is <b>true</b></p>
+            </td>
+          </tr>
+          <tr valign="top">
+            <td width="57">
+            <p><br>
+            </p>
+            </td>
+            <td width="307">
+            <p><code>rotateTo(angle,immediateReturn)</code></p>
+            </td>
+            <td><br>
+            </td>
+          </tr>
+          <tr valign="top">
+            <td width="57">
+            <p><br>
+            </p>
+            </td>
+            <td width="307">
+            <p><code>(boolean)isRotating()</code></p>
+            </td>
+            <td width="233">
+            <p>Returns <b>false</b> when the motor has stopped at the specified angle</p>
+            </td>
+          </tr>
+          <tr valign="top">
+            <td width="57">
+            <p><code>Button</code></p>
+            </td>
+            <td width="307">
+            <p><code>int readButtons()</font></p>
+            </td>
+            <td width="233">
+            <p>Returns the ID of the button pressed.</p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      
+      <h5>What the program should do</h5>
+      <ol>
+        <li>
+          <p>Start a rotation of 720 degrees.</p>
+        </li>
+        <li>
+          <p>While the motor is rotating, display the tacho count at the position of row 1.</p>
+        </li>
+        <li>
+          <p>When a button is pressed, stop the motor.</p>
+        </li>
+        <li>
+          <p>After the motor has stopped, display the tacho count in the center of the row.</p>
+        </li>
+        <li>
+          <p>Wait for a button press.</p>
+        </li>
+        <li>
+          <p>Start a rotation to 0.</p>
+        </li>
+        <li>
+          <p>Repeat steps 2,3,5.</p>
+        </li>
+      </ol>
+      <p>Observe: if youpress the button before the rotation is complete, the motor will stop
+		without completing its rotation. Otherwise, the stop() method has no
+		effect. </p>
+      	<p><a href="RotInterrupt.htm" target="_blank"><u>Solution</u></a></p>
+
+      	<p/>
+      	<a href="#top">Back to top</a>
+
+      	<a name="6"></a>
+		<h4>Program 5: Regulating motor speed</h4>
+      <p>The other principle task of the regulator thread is to control the motor
+		speed. One reason for doing this is that a two wheel vehicle will only
+		travel in a straight line if both motors run at the same
+		speed.(obviously). The standard Lego software solves this problem by
+		directly synchronizing two motors. NXJ takes a different approach:
+		keeping each motor rotation synchronized to the system clock. The
+		regulator compares the tacho count (minus its reference count) with
+		speed times elapsed time, and adjust the power to keep these two
+		quantities closely matched. The regulator resets its reference count
+		and its elapsed time to zero and begins its comparison again whenever
+		you call any of the motor methods you have used so far. </p>
+
+      <h5>New methods used in this program</h5>
+      <table border="1" bordercolor="#000000" cellpadding="7" cellspacing="0" width="641">
+        <col width="86"> <col width="294"> <col width="217"> 
+        <tbody>
+          <tr valign="top">
+            <td width="86">
+            	<p>Class</p>
+            </td>
+            <td width="294">
+            	<p>Method name </p>
+            </td>
+            <td width="217">
+            	<p>Notes</p>
+            </td>
+          </tr>
+          <tr valign="top">
+            <td width="86">
+            	<p><code>Motor</p>
+            </td>
+            <td width="294">
+            	<p><code>regulateSpeed(booleanyes)</code></p>
+            </td>
+            <td width="217">
+            	<p>Speed regulation is on by default. </p>
+            </td>
+          </tr>
+          <tr valign="top">
+            <td width="86">
+            	<p><code>Stopwatch</code></p>
+            </td>
+            <td width="294">
+            	<p><code>elapsed()</code></p>
+            </td>
+            <td width="217">
+            	<p>Returns elapsed time in milliseconds </p>
+            </td>
+          </tr>
+          <tr valign="top">
+            <td width="86">
+            	&nbsp;
+            </td>
+            <td width="294">
+            	<p><code>reset()</code></p>
+            </td>
+            <td width="217">
+            	<p>Resets the watch to 0. </p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <p>The Stopwatch class is in the package lejos.util. </p>
+      
+      <h5>What the program should do:</h5>
+      <ol>
+        <li>
+          <p>Create a new stopwatch.</p>
+        </li>
+        <li>
+          <p>Start all three motors running at 2 revolutions/second.</p>
+        </li>
+        <li>
+          <p>Every 200 ms, display all 3 tacho count values in the same row. </p>
+        </li>
+        <li>
+          <p>Repeat step 3, 8 times, using a different row each time.</p>
+        </li>
+        <li>
+          <p>Write down maximum difference you see between the motor tacho counts. </p>
+        </li>
+        <li>
+          <p>Turn off speed regulation.</p>
+        </li>
+        <li>
+          <p>Repeat steps 1 &#8211; 5.</p>
+        </li>
+      </ol>
+      <p>With speed regulation on, the motors should remain within a few degrees of each
+		other. When it is off, the difference in angle of rotation get larger
+		with time unless you have an unusually well matched set of motors. </p>
+      <p><a href="RegulationTest.htm" target="_blank"><u>Solution</u></a></p>
+
+      <p/>
+      <a href="#top">Back to top</a>
+
+      <h5>When might you want to turn off speed regulation? </h5>
+      <p>In some robots, the motor speed should not be constant but changed in
+		response to a sensor reading as for example in a line follower or a
+		balancing robot. If the speed corrections happen frequently, there is
+		no advantage in the regulator thread using CPU cycles in adjusting the
+		motor power to maintain constant speed between adjustments. </p>
+		
+      <h5>When should you use speed regulation?</h5>
+      <p>If you specify a very slow speed, the power to maintain it may not be
+		enough overcome the motor internal friction, so the motor never moves.
+		In this case, a call to rotate() will never return. But with speed
+		regulation on, the regulator will keep increasing the power until the
+		motor comes up to speed. </p>
+      <p/>
+      <a href="#top">Back to top</a></p>
+
+      	<a name="7"></a>
+		<h4> Other Motor Methods</h4>
+
+      <h5>Finding out what the motor is doing</h5>
+      <p/>
+      <ul class="BlueArrows">
+        <li>
+          <p>boolean isMoving();</p><p>
+			This is useful to test if the motor has finished rotating. isMoving()
+			returns true when the Motor is moving for any reason (e.g. forward() or
+			backward() have been called or a rotate() task is in progress) </p>
+        </li>
+        <li>
+          <p>boolean isRotating()</p><p>Specifically tests if a rotate task is currently in progress</p>
+        </li>
+        <li>
+          <p>int getLimitAngle()</p><p>Returns the angle to which the motor is currently rotating </p>
+        </li>
+        <li>
+          <p>boolean isRegulating()</p><p>Used to test if the speed regulation is turned on.</p>
+        </li>
+        <li>
+          <p>int getSpeed()</p><p>Returns the current speed setting.</p>
+        </li>
+        <li>
+          <p>int getActualSpeed()</p><p>Returns the actual speed of the motor. This is updated every 100 ms,
+			and is accurate to about +- 10 deg/sec. Use this method to detect if
+			the motor has stalled. </p>
+        </li>
+        <li>
+          <p>int getPower()</p><p>returns the current power setting in the range of 0 to 100.</p>
+        </li>
+        <li>
+          <p>int getMode()</p><p>returns a code for the current motor status</p>
+        </li>
+      </ul>
+      <dl>
+        <dl>
+          <dd>
+            <table border="1" bordercolor="#000000" cellpadding="7" cellspacing="0" width="236">
+              <col width="88"> <col width="118"> <tbody>
+                <tr valign="top">
+                  <td width="88">
+                  	<p><b>Code</b></p>
+                  </td>
+                  <td width="118">
+                  	<p><b>motor status</b></p>
+                  </td>
+                </tr>
+                <tr valign="top">
+                  <td width="88">
+                  	<p>1</p>
+                  </td>
+                  <td width="118">
+                  	<p>forward</p>
+                  </td>
+                </tr>
+                <tr valign="top">
+                  <td width="88">
+                  	<p>2</p>
+                  </td>
+                  <td width="118">
+                  	<p>backward</p>
+                  </td>
+                </tr>
+                <tr valign="top">
+                  <td width="88">
+                  	<p>3</p>
+                  </td>
+                  <td width="118">
+                  	<p>stop</p>
+                  </td>
+                </tr>
+                <tr valign="top">
+                  <td width="88">
+                  	<p>4</p>
+                  </td>
+                  <td width="118">
+                  	<p>float</p>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </dd>
+        </dl>
+      </dl>
+      <p>The following methods are another way to get motor status:</p>
+      <ul class="BlueArrows">
+        <li>
+          <p>boolean isForward()</p>
+        </li>
+        <li>
+          <p>boolean isBackward()</p>
+        </li>
+        <li>
+          <p>boolean isStopped()</p>
+        </li>
+        <li>
+          <p>boolean isFloating()</p>
+        </li>
+      </ul>
+
+      <h5>Various other motor methods</h5>
+      <p/>
+      <ul class="BlueArrows">
+        <li>
+          <p>setPower(int aPower)</p><p>
+			Used to control motor power directly. Use a value between 0 and 100.
+			Don&#8217;t call this method if speed regulation is turned on because then
+			the regulator thread is continuously adjusting the power. </p>
+        </li>
+        <li>
+          <p>resetTachoCount()</p><p>
+			This method not only sets the tacho count to 0 but also resets the
+			origin used by the regulator thread in deciding when to stop a rotation
+			task. </p>
+        </li>
+        <li>
+          <p>lock()</p><p>
+			Ordinarily, when the motor is stopped, it has some resistance to being
+			rotated. But in some applications, such a weight lifting robot, the
+			force of gravity may be enough to overcome this resistance. This method
+			causes the regulator thread to apply additional power in order to hold
+			the motor axel in position. </p>
+        </li>
+      </ul>
+      <p/>
+      <a href="#top">Back to top</a>
+      <p/>
+
+      <div class="NavBit"> 
+      	<a target="_top" href="../Menusystem/MenuSystem.htm">&laquo;&nbsp;Previous</a>
+      	&nbsp;&#8226;&nbsp;
+      	<a href="../index.htm">TOC</a>
+      	&nbsp;&#8226;&nbsp;
+      	<a href="../WheeledVehicles/WheeledVehicles.htm">Next&nbsp;&raquo;</a>
+      </div>
+    </tr>
+  </tbody>
+</table>
+</body>
+</html>
