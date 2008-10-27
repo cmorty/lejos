@@ -1,0 +1,201 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html dir="ltr" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+	<title>Listeners and Events</title>
+	<!-- METADATA -->
+	<title>Web Template Title</title>
+	<meta name="title" content="Threads, Listeners and Events" />
+	<meta name="DC.Title" content="Threads, Listeners and Events" />
+	<meta http-equiv="title" content="Threads, Listeners and Events" />
+		
+	<meta name="description" content="Threads, Listeners and Events" />
+	<meta http-equiv="description" content="Threads, Listeners and Events" />
+	<meta http-equiv="DC.Description" content="Threads, Listeners and Events" />
+
+	<meta name="keywords" content="Java, leJOS, leJOS project, NXJ, NXJ Tutorial" />
+	<meta http-equiv="keywords" content="Java, leJOS, leJOS project, NXJ, NXJ Tutorial" />
+
+	<meta name='VW96.objecttype' content='Document' />
+	<meta http-equiv='content-language' content='en'>
+	<meta name='DC.Language' SCHEME='RFC1766' CONTENT='English' />
+	<meta name='distribution' content='global' />
+	<meta name='resource-type' content='document' />
+
+	<!-- SEARCH ENGINE -->
+	<meta name='robots' content='all' />
+
+	<!-- AUTHOR METADATA -->
+	<meta name="AUTHOR" content="Roger Glassey">
+	<meta name="AUTHOR" content="Lawrie Griffiths">
+	<!-- CSS -->
+  	<link rel="stylesheet" href="../r_css/lejos-tutorial.css" type="text/css">
+	<!-- ICON -->
+  	<link rel="shortcut icon" href="../favicon.ico" type="image/x-icon">
+</head>
+<body>
+	<a id="top" name="top"></a>
+	<!-- N1: HEADER -->
+	<table class="n1t1" cellpadding="0" cellspacing="0">
+    <tr>
+      <td><img src="../r_media/images/tutorial_header1.jpg"></td>
+      <td align="right"><img src="../r_media/images/tutorial_header2.jpg"></td>
+    </tr>
+	</table>
+	<!-- N2: CONTENTS -> NAVIGATION SYSTEMS AND CONTENTS -->
+	<table class="n2t1" cellpadding="0" cellspacing="0">
+    <tr>
+		<td class="n2t1r1c1">
+      		<div class="nolinkLESSON">Threads, Listeners and Events</div>
+      		<div class="linkAHEAD"><a href="#1">Java Threads</a></div>
+      		<div class="linkAHEAD"><a href="#2">Listeners and Events</a></div>
+      	</td>
+		<td>
+			<div id="BreadCrumbs">
+				<a href="../index.htm" target="_top">Home Page</a>
+        		&gt;
+        		<a href="#">Threads, Listeners and Events</a>
+ 	  		</div>
+      		<div class="NavBit"> 
+      			<a target="_top"  href="../LCD_Sensors/LCD_Sensors.htm">&laquo;&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a  href="../index.htm">TOC</a>
+      			&nbsp;&#8226;&nbsp;
+      			<a  href="../ErrorHandlingAndDebugging/ErrorHandling_and_debugging.htm">Next&nbsp;&raquo;</a>
+      		</div>
+					
+			<!-- CONTENT AREA -->
+				
+			<!-- CONTENT TITLE -->
+			<div id="PageTitle">Threads, Listeners and Events</div>
+
+      		<a name="1"></a>
+      		<h4>Java Threads</h4>
+			<p>When a Java program starts, there is a single thread running &#8211; the main thread.</p>
+			<p>Many of the leJOS classes start extra threads running for various purposes, for example:</p>
+      		<ul class="BlueArrows">
+        		<li>Button and SensorPort start a listener thread if listeners are used </li>
+        		<li>Each Motor has a regulator thread</li>
+        		<li>The Bluetooth class starts a thread to talk to the separate Bluetooth chip</li>
+        		<li>Each Timer object starts a timer thread</li>
+        	</ul>
+
+      		<p>User programs can create their own threads by subclassing Thread, and then
+			using the start method to start the thread. In leJOS NXJ 0.7, Threads can be created from any class that implements the Runnable interface. 
+			</p>
+      		<p>Background threads that do not need to terminate in order for the user program to
+			terminate, should be marked as daemon threads by calling
+			setDaemon(true).</p>
+      		<p>When using threads, care should be taken with concurrency issues. When data items
+			are accessed by multiple threads, synchronization is necessary to
+			ensure that data is not read when it is in an inconsistent state.</p>
+      		<p>leJOS supports the standard Java synchronization mechanisms: synchronized
+			methods and synchronized statements using a monitor object. There are
+			some restrictions in the way leJOS handles concurrency and
+			synchronization &#8211; see the leJOS NXJ README.html file.</p>
+      		<p>As an example of a leJOS thread, consider the Indicators thread in the leJOS
+			StartUpText menu. This is used to keep the display of the battery level
+			up to date, by reading its value every second, and to indicate when the
+			menu is uploading files or doing other communication from the PC:</p>
+
+  			<div class="CodeBox">
+  			<pre><code>
+import lejos.nxt.LCD;
+
+class Indicators extends Thread {
+  private boolean io = false;
+
+  public void ioActive() {
+    io = true;
+  }
+
+  public void run() {
+    String[] ioProgress = { ".   ", " .  ", "  . " };
+    int ioIndex = 0;
+    boolean rewrite = false;
+    while (true) {
+      try {
+        if (io) {
+          StartUpText.g.drawString("     ", 76, 0);
+          ioIndex = (ioIndex + 1) % ioProgress.length;
+          StartUpText.g.drawString(ioProgress[ioIndex], 78, 0);
+          io = false;
+          rewrite = true;
+        } else if (rewrite) {
+          LCD.drawString("   ", 13, 0);
+          // invert when power is off
+          StartUpText.g.drawString(" BT", 82, 0, !StartUpText.btPowerOn);
+          StartUpText.g.refresh();
+          rewrite = false;
+        }
+        Thread.sleep(1000);
+      } catch (InterruptedException ie) {
+      }
+    }
+  }
+}			</code></pre>
+			</div>
+
+      		<p>The main method starts this thread by:</p>
+      		<div class="CodeBox">
+  			<pre><code>
+  Indicators ind = new Indicators();
+  ind.setDaemon(true);	
+  ind.start();
+  			</code></pre>
+  			</div>
+      
+			<!-- WEB TOOL TO GO TO TOP OF THE DOCUMENT -->
+			<p>
+			<a href="#top">Back to top</a>
+		
+			<a name="2"></a>
+			<h4>Listeners and Events</h4>
+      		<p>leJOS implements a listener thread that listens for particular events.</p>
+      		<p>The listener thread supports:</p>
+      		<ul class="BlueArrows">
+        		<li>Button Listeners</li>
+        		<li>Sensor Port Listeners</li>
+      		</ul>
+      		<p>Button listeners are used to detect when a button is pressed, whatever your program is doing at the time.</p>
+      		<p>To listen for a press of a specific button, you register as listener for that button.</p>
+      		<p>Example:</p>
+      		<div class="CodeBox">
+  			<pre><code>
+import lejos.nxt.*;
+
+public class ListenForButtons {
+  public static void main(String[] args) throws Exception {
+    Button.ENTER.addButtonListener(new ButtonListener() {
+      public void buttonPressed(Button b) {
+        LCD.drawString("ENTER pressed", 0, 0);
+      }
+
+      public void buttonReleased(Button b) {
+        LCD.clear();
+      }
+    });
+
+    Button.ESCAPE.waitForPressAndRelease();
+  }
+}
+  			</code></pre>
+  			</div>
+		
+			<!-- WEB TOOL TO GO TO TOP OF THE DOCUMENT -->
+			<p>
+			<a href="#top">Back to top</a>
+			<p/>
+			<!-- END CONTENT AREA -->
+					
+			<!-- NAVIGATION TOOL -->
+      		<div class="NavBit"> 
+      			<a target="_top" href="../LCD_Sensors/LCD_Sensors.htm">&laquo;&nbsp;Previous</a>
+      			&nbsp;&#8226;&nbsp;
+      			<a  href="../index.htm">TOC</a>
+      			&nbsp;&#8226;&nbsp;
+      			<a href="../ErrorHandlingAndDebugging/ErrorHandling_and_debugging.htm">Next&nbsp;&raquo;</a>
+     		</div>
+      		<br/>
+      	</td>
+    </tr>
+	</table>
+</body>
+</html>

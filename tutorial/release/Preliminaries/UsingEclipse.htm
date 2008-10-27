@@ -1,0 +1,460 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html dir="ltr" xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<!-- METADATA -->
+		<title>Using Eclipse</title>
+		<meta name="title" content="Using Eclipse" />
+		<meta name="DC.Title" content="Using Eclipse" />
+		<meta http-equiv="title" content="Using Eclipse" />
+		
+		<meta name="description" content="How to use Eclipse for leJOS NXJ" />
+		<meta http-equiv="description" content="How to use Eclipse for leJOS NXJ" />
+		<meta http-equiv="DC.Description" content="How to use Eclipse for leJOS NXJ" />
+
+		<meta name="keywords" content="Java, leJOS, leJOS project, NXJ, NXJ Tutorial" />
+		<meta http-equiv="keywords" content="Java, leJOS, leJOS project, NXJ, NXJ Tutorial" />
+
+		<meta name='VW96.objecttype' content='Document' />
+		<meta http-equiv='content-language' content='en'>
+		<meta name='DC.Language' SCHEME='RFC1766' CONTENT='English' />
+		<meta name='distribution' content='global' />
+		<meta name='resource-type' content='document' />
+
+		<!-- SEARCH ENGINE -->
+		<meta name='robots' content='all' />
+
+		<!-- AUTHOR METADATA -->
+		<meta name='Author' content='Lawrie Griffiths' />
+		
+		<!-- CSS -->
+		<link rel="stylesheet" href="../r_css/lejos-tutorial.css" type="text/css" />
+
+		<!-- ICON -->
+		<link rel="shortcut icon" href="../favicon.ico" type="image/x-icon" />
+	</head>
+	<body>
+		<a id="top" name="top"></a>
+		<!-- N1: HEADER -->
+		<table cellpadding="0" cellspacing="0" class="n1t1">
+			<tr>
+				<td valign="top"><img src="../r_media/images/tutorial_header1.jpg" /></td>
+				<td align="right" valign="top"><img src="../r_media/images/tutorial_header2.jpg" /></td>
+			</tr>
+		</table>
+		<!-- N2: CONTENTS -> NAVIGATION SYSTEMS AND CONTENTS -->
+		<table cellpadding="0" cellspacing="0" class="n2t1">
+			<tr>
+				<td class="n2t1r1c1">
+					<!-- LEFT NAVIGATION SYSTEM -->
+					<div class="nolinkLESSON">Using Eclipse</div>
+					<div class="linkAHEAD"><a href="#1">Installing Eclipse</a></div>
+					<div class="linkAHEAD"><a href="#2">Using the samples project</a></div>
+					<div class="linkAHEAD"><a href="#3">Using the pcsamples project</a></div>
+					<div class="linkAHEAD"><a href="#4">Creating your own project</a></div>
+					<div class="linkAHEAD"><a href="#5">Installing the leJOS Plugin</a></div>
+					<div class="linkAHEAD"><a href="#6">Using the leJOS Plugin</a></div>
+					<div class="linkAHEAD"><a href="#7">Setting up the leJOS GUI tools</a></div>
+				</td>
+				<td>
+					<!-- BREADCRUMBS -->
+			        <div id="BreadCrumbs">
+			            <a href="../index.htm" target="_top">Home Page</a>&gt;
+			            <a href="#">Using Eclipse</a>
+			        </div>
+					<!-- NAVIGATION TOOL -->
+			        <div class="NavBit">
+			            <a target="_top" href="../Preliminaries/GettingStarted.htm">«&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../Menusystem/MenuSystem.htm">Next&nbsp;»</a>
+			        </div>
+					
+					<!-- CONTENT AREA -->
+					
+					<!-- CONTENT TITLE -->
+			        <div id="PageTitle">Using Eclipse</div>
+				
+					<a name="1"></a>
+					<h4>Installing Eclipse</h4>
+					<p>
+					You can download Eclipse from <a href="http://www.eclipse.org/downloads/">Eclipse downloads</a>.
+					If you are only going to use Eclipse for leJOS NXJ programs, you will only need standard Java development capabilities - 
+					you will not need a version that supports the Java Enterprise Edition or other languages such as C++ or Eclipse plugin development.
+					A package such as "Eclipse IDE for Java Developers" is sufficient for leJOS NXJ. Make sure you download a package for your operating system. The examples in this
+					section are for Microsoft Windows, but the installation process is similar for other operating systems.
+					</p>
+					<p>Unzip the package you downloaded to a folder. If you extract all files to C:\ then your Eclipse folder will be C:\eclipse.</p>
+					<p> You can start Eclipse by running eclipse.exe from your Eclipse folder. You may want to put a shortcut to eclipse.exe on your desktop.</p>
+					<p> When you first start Eclipse, you are asked to select a workspace:</p>
+					<img src="eclipseworkspace.jpg"/>
+					<p>You can leave this as the default, but if you are only using Eclipse for leJOS NXJ, you might want to make the folder
+					   where leJOS NXJ installed the samples your workspace. This is usually leJOSProjects in the home folder for your user, so you just change "workspace" to "leJOSProjects". Eclipse will then start. You can close the Welcome window and start  developing leJOS programs.</p>
+					
+					<!-- WEB TOOL TO GO TO TOP OF THE DOCUMENT -->
+					<a href="#top">Back to top</a>
+					<p/>
+					
+					<a name="2"></a>
+					<h4>Using the samples project</h4>
+					<p> You first need to import the leJOS projects into your Eclipse workspace. The easiest way to do this is to select File > Import... and then choose General > Existing Projects into Workspace. Browse to the folder where you installed the leJOS projects, and select them all to import.</p>
+					<p> You should then see several projects  in your Package Explorer window including samples. Try exploring the samples project. You can open up folders by clicking on the expand/collapse toggles next to the folder name, and you can open files by double-clicking on file names. 
+					Try expanding the "BlueStats" folder, and its "default package" folder and opening BlueStats.java. You should see:</p>
+					<img src="eclipsesamples.jpg"/>
+					<p> There is a source folder within the samples project for each sample. Each folder contains a build.xml file which is a build file for the sample written using "ant". Ant is a build system specially designed for Java - it comes bundled with Eclipse.</p>
+					<p> There are other ways of building, uploading and running leJOS NXJ programs, such as using the leJOS Eclipse plugin, but the ant build files are easy to use, so we will start with them.
+					<p> Ant build files have different "targets". The default target for the sample build.xml files is "uploadandrun". 
+					This means that if you run the build.xml file it will compile the Java source, link it with the standard leJOS classes (classes.jar) to produce a binary file and then upload ad run the binary file.</p>
+					<p>Turn on your NXT, make sure it is connected by USB or can be connected to via Bluetooth.  Then right-click on the build.xml and select "Run As" and "Ant Build":</p>
+					<img src="eclipsebuild.jpg"/>
+					<p> You should see output like the following in the Console window:</p>
+					<pre><font size=-2">
+Buildfile: C:\Users\Lawrie\leJOSProjects\samples\BlueStats\build.xml
+clean:
+compile:
+    [javac] Compiling 1 source file to C:\Users\Lawrie\leJOSProjects\samples\BlueStats
+link:
+     [java] Class 0: java.lang.Object
+     [java] Class 1: java.lang.Thread
+     [java] Class 2: java.lang.String
+     [java] Class 3: java.lang.Throwable
+     [java] Class 4: java.lang.Error
+     [java] Class 5: java.lang.OutOfMemoryError
+     [java] Class 6: java.lang.NoSuchMethodError
+     [java] Class 7: java.lang.StackOverflowError
+     [java] Class 8: java.lang.NullPointerException
+     [java] Class 9: java.lang.ClassCastException
+     [java] Class 10: java.lang.ArithmeticException
+     [java] Class 11: java.lang.ArrayIndexOutOfBoundsException
+     [java] Class 12: java.lang.IllegalArgumentException
+     [java] Class 13: java.lang.InterruptedException
+     [java] Class 14: java.lang.IllegalStateException
+     [java] Class 15: java.lang.IllegalMonitorStateException
+     [java] Class 16: java.lang.ThreadDeath
+     [java] Class 17: BlueStats
+     [java] Class 18: java.lang.Runnable
+     [java] Class 19: java.lang.System
+     [java] Class 20: java.lang.RuntimeException
+     [java] Class 21: java.lang.Exception
+     [java] Class 22: java.lang.StringBuffer
+     [java] Class 23: lejos.nxt.Button
+     [java] Class 24: lejos.nxt.comm.Bluetooth
+     [java] Class 25: lejos.nxt.LCD
+     [java] Class 26: java.lang.StringBuilder
+     [java] Class 27: java.io.PrintStream
+     [java] Class 28: lejos.nxt.LCDOutputStream
+     [java] Class 29: lejos.nxt.Poll
+     [java] Class 30: lejos.nxt.Sound
+     [java] Class 31: lejos.nxt.SystemSettings
+     [java] Class 32: lejos.nxt.comm.BTConnection
+     [java] Class 33: lejos.nxt.comm.Bluetooth$BTThread
+     [java] Class 34: java.io.OutputStream
+     [java] Class 35: java.io.IOException
+     [java] Class 36: java.lang.Integer
+     [java] Class 37: java.lang.NumberFormatException
+     [java] Class 38: lejos.nxt.Flash
+     [java] Method 0: Class: java.lang.Object Signature: <init>()V PC 3222 Signature id 2
+     [java] Method 1: Class: java.lang.Object Signature: notifyAll()V Native id 5
+     [java] Method 2: Class: java.lang.Object Signature: wait()V Native id 6
+     [java] Method 3: Class: java.lang.Object Signature: wait(J)V Native id 7
+     [java] Method 4: Class: java.lang.Object Signature: toString()Ljava/lang/String; PC 3223 Signature id 95
+     [java] Method 5: Class: java.lang.Thread Signature: init(Ljava/lang/String;Ljava/lang/Runnable;)V PC 3226 Signature id 97
+     [java] Method 6: Class: java.lang.Thread Signature: <init>()V PC 3269 Signature id 2
+     [java] Method 7: Class: java.lang.Thread Signature: run()V PC 3281 Signature id 1
+     [java] Method 8: Class: java.lang.Thread Signature: start()V Native id 9
+     [java] Method 9: Class: java.lang.Thread Signature: yield()V Native id 10
+     [java] Method 10: Class: java.lang.Thread Signature: sleep(J)V Native id 11
+     [java] Method 11: Class: java.lang.Thread Signature: currentThread()Ljava/lang/Thread; Native id 12
+     [java] Method 12: Class: java.lang.Thread Signature: getPriority()I Native id 13
+     [java] Method 13: Class: java.lang.Thread Signature: setPriority(I)V Native id 14
+     [java] Method 14: Class: java.lang.Thread Signature: isDaemon()Z Native id 19
+     [java] Method 15: Class: java.lang.Thread Signature: setDaemon(Z)V Native id 18
+     [java] Method 16: Class: java.lang.String Signature: <init>([CII)V PC 3301 Signature id 101
+     [java] Method 17: Class: java.lang.String Signature: <init>([C)V PC 3329 Signature id 102
+     [java] Method 18: Class: java.lang.String Signature: length()I PC 3338 Signature id 103
+     [java] Method 19: Class: java.lang.String Signature: charAt(I)C PC 3344 Signature id 104
+     [java] Method 20: Class: java.lang.String Signature: toCharArray()[C PC 3351 Signature id 111
+     [java] Method 21: Class: java.lang.String Signature: valueOf(Ljava/lang/Object;)Ljava/lang/String; PC 3374 Signature id 113
+     [java] Method 22: Class: java.lang.String Signature: toString()Ljava/lang/String; PC 3388 Signature id 95
+     [java] Method 23: Class: java.lang.String Signature: equals(Ljava/lang/Object;)Z PC 3390 Signature id 94
+     [java] Method 24: Class: java.lang.Throwable Signature: <init>()V PC 3462 Signature id 2
+     [java] Method 25: Class: java.lang.Throwable Signature: getMessage()Ljava/lang/String; PC 3467 Signature id 30
+     [java] Method 26: Class: java.lang.Throwable Signature: toString()Ljava/lang/String; PC 3472 Signature id 95
+     [java] Method 27: Class: java.lang.IllegalArgumentException Signature: <init>()V PC 3477 Signature id 2
+     [java] Method 28: Class: BlueStats Signature: <init>()V PC 3482 Signature id 2
+     [java] Method 29: Class: BlueStats Signature: main([Ljava/lang/String;)V PC 3487 Signature id 0
+     [java] Method 30: Class: BlueStats Signature: byteArrayToString([B)Ljava/lang/String; PC 3736 Signature id 115
+     [java] Method 31: Class: BlueStats Signature: getAddressString([B)Ljava/lang/String; PC 3774 Signature id 116
+     [java] Method 32: Class: BlueStats Signature: <clinit>()V PC 3840 Signature id 3
+     [java] Method 33: Class: java.lang.Runnable Signature: run()V PC 0 Signature id 1
+     [java] Method 34: Class: java.lang.System Signature: arraycopy(Ljava/lang/Object;ILjava/lang/Object;II)V Native id 25
+     [java] Method 35: Class: java.lang.System Signature: currentTimeMillis()J Native id 22
+     [java] Method 36: Class: java.lang.System Signature: <clinit>()V PC 3938 Signature id 3
+     [java] Method 37: Class: java.lang.RuntimeException Signature: <init>()V PC 3973 Signature id 2
+     [java] Method 38: Class: java.lang.Exception Signature: <init>()V PC 3978 Signature id 2
+     [java] Method 39: Class: java.lang.StringBuffer Signature: <init>(I)V PC 3983 Signature id 114
+     [java] Method 40: Class: java.lang.StringBuffer Signature: append(C)Ljava/lang/StringBuffer; PC 4000 Signature id 119
+     [java] Method 41: Class: java.lang.StringBuffer Signature: appendInternal(Ljava/lang/String;)Ljava/lang/StringBuffer; PC 4021 Signature id 122
+     [java] Method 42: Class: java.lang.StringBuffer Signature: toString()Ljava/lang/String; PC 4111 Signature id 95
+     [java] Method 43: Class: java.lang.StringBuffer Signature: <clinit>()V PC 4128 Signature id 3
+     [java] Method 44: Class: lejos.nxt.Button Signature: <init>(I)V PC 4141 Signature id 114
+     [java] Method 45: Class: lejos.nxt.Button Signature: isPressed()Z PC 4159 Signature id 124
+     [java] Method 46: Class: lejos.nxt.Button Signature: getButtons()I Native id 51
+     [java] Method 47: Class: lejos.nxt.Button Signature: readButtons()I PC 4176 Signature id 125
+     [java] Method 48: Class: lejos.nxt.Button Signature: loadSettings()V PC 4220 Signature id 127
+     [java] Method 49: Class: lejos.nxt.Button Signature: <clinit>()V PC 4294 Signature id 3
+     [java] Method 50: Class: lejos.nxt.comm.Bluetooth Signature: btWrite([BII)I Native id 69
+     [java] Method 51: Class: lejos.nxt.comm.Bluetooth Signature: btRead([BII)I Native id 70
+     [java] Method 52: Class: lejos.nxt.comm.Bluetooth Signature: btPending()I Native id 71
+     [java] Method 53: Class: lejos.nxt.comm.Bluetooth Signature: btSetArmCmdMode(I)V Native id 65
+     [java] Method 54: Class: lejos.nxt.comm.Bluetooth Signature: btGetBC4CmdMode()I Native id 64
+     [java] Method 55: Class: lejos.nxt.comm.Bluetooth Signature: btSetResetLow()V Native id 67
+     [java] Method 56: Class: lejos.nxt.comm.Bluetooth Signature: btSetResetHigh()V Native id 68
+     [java] Method 57: Class: lejos.nxt.comm.Bluetooth Signature: cmdInit(IIII)V PC 4395 Signature id 128
+     [java] Method 58: Class: lejos.nxt.comm.Bluetooth Signature: startTimeout(I)V PC 4424 Signature id 129
+     [java] Method 59: Class: lejos.nxt.comm.Bluetooth Signature: checkTimeout()Z PC 4434 Signature id 130
+     [java] Method 60: Class: lejos.nxt.comm.Bluetooth Signature: cancelTimeout()V PC 4456 Signature id 131
+     [java] Method 61: Class: lejos.nxt.comm.Bluetooth Signature: waitState(I)I PC 4461 Signature id 132
+     [java] Method 62: Class: lejos.nxt.comm.Bluetooth Signature: cmdStart()V PC 4514 Signature id 133
+     [java] Method 63: Class: lejos.nxt.comm.Bluetooth Signature: cmdComplete()V PC 4535 Signature id 134
+     [java] Method 64: Class: lejos.nxt.comm.Bluetooth Signature: cmdWait(IIII)I PC 4565 Signature id 135
+     [java] Method 65: Class: lejos.nxt.comm.Bluetooth Signature: closePort()[B PC 4652 Signature id 140
+     [java] Method 66: Class: lejos.nxt.comm.Bluetooth Signature: getFriendlyName()[B PC 4713 Signature id 146
+     [java] Method 67: Class: lejos.nxt.comm.Bluetooth Signature: getLocalAddress()[B PC 4788 Signature id 147
+     [java] Method 68: Class: lejos.nxt.comm.Bluetooth Signature: getConnectionStatus()[B PC 4863 Signature id 150
+     [java] Method 69: Class: lejos.nxt.comm.Bluetooth Signature: getVersion()[B PC 4924 Signature id 151
+     [java] Method 70: Class: lejos.nxt.comm.Bluetooth Signature: getStatus()I PC 4985 Signature id 152
+     [java] Method 71: Class: lejos.nxt.comm.Bluetooth Signature: getVisibility()I PC 5052 Signature id 153
+     [java] Method 72: Class: lejos.nxt.comm.Bluetooth Signature: getPortOpen()I PC 5102 Signature id 154
+     [java] Method 73: Class: lejos.nxt.comm.Bluetooth Signature: getOperatingMode()I PC 5152 Signature id 155
+     [java] Method 74: Class: lejos.nxt.comm.Bluetooth Signature: setOperatingMode(B)I PC 5202 Signature id 156
+     [java] Method 75: Class: lejos.nxt.comm.Bluetooth Signature: reset()V PC 5248 Signature id 157
+     [java] Method 76: Class: lejos.nxt.comm.Bluetooth Signature: setPower(Z)V PC 5280 Signature id 158
+     [java] Method 77: Class: lejos.nxt.comm.Bluetooth Signature: access$000()V PC 5397 Signature id 161
+     [java] Method 78: Class: lejos.nxt.comm.Bluetooth Signature: access$100()Z PC 5401 Signature id 162
+     [java] Method 79: Class: lejos.nxt.comm.Bluetooth Signature: access$200(I)V PC 5405 Signature id 163
+     [java] Method 80: Class: lejos.nxt.comm.Bluetooth Signature: access$300(IIII)V PC 5410 Signature id 164
+     [java] Method 81: Class: lejos.nxt.comm.Bluetooth Signature: access$400()[B PC 5418 Signature id 165
+     [java] Method 82: Class: lejos.nxt.comm.Bluetooth Signature: <clinit>()V PC 5422 Signature id 3
+     [java] Method 83: Class: lejos.nxt.LCD Signature: drawString(Ljava/lang/String;II)V Native id 40
+     [java] Method 84: Class: lejos.nxt.LCD Signature: drawInt(III)V Native id 41
+     [java] Method 85: Class: lejos.nxt.LCD Signature: drawInt(IIII)V Native id 42
+     [java] Method 86: Class: lejos.nxt.LCD Signature: refresh()V Native id 43
+     [java] Method 87: Class: lejos.nxt.LCD Signature: getDisplay()[B Native id 46
+     [java] Method 88: Class: lejos.nxt.LCD Signature: getSystemFont()[B Native id 49
+     [java] Method 89: Class: lejos.nxt.LCD Signature: <clinit>()V PC 5607 Signature id 3
+     [java] Method 90: Class: java.lang.StringBuilder Signature: <init>()V PC 5620 Signature id 2
+     [java] Method 91: Class: java.lang.StringBuilder Signature: append(Ljava/lang/String;)Ljava/lang/StringBuilder; PC 5638 Signature id 171
+     [java] Method 92: Class: java.lang.StringBuilder Signature: append(I)Ljava/lang/StringBuilder; PC 5649 Signature id 172
+     [java] Method 93: Class: java.lang.StringBuilder Signature: appendInternal(Ljava/lang/String;)Ljava/lang/StringBuilder; PC 5839 Signature id 173
+     [java] Method 94: Class: java.lang.StringBuilder Signature: toString()Ljava/lang/String; PC 5929 Signature id 95
+     [java] Method 95: Class: java.lang.StringBuilder Signature: <clinit>()V PC 5946 Signature id 3
+     [java] Method 96: Class: java.io.PrintStream Signature: <init>(Ljava/io/OutputStream;)V PC 5959 Signature id 175
+     [java] Method 97: Class: lejos.nxt.LCDOutputStream Signature: <init>()V PC 5969 Signature id 2
+     [java] Method 98: Class: lejos.nxt.Poll Signature: <init>(Z)V PC 5979 Signature id 196
+     [java] Method 99: Class: lejos.nxt.Poll Signature: <init>()V PC 5988 Signature id 2
+     [java] Method 100: Class: lejos.nxt.Poll Signature: setPoller()V Native id 34
+     [java] Method 101: Class: lejos.nxt.Poll Signature: <clinit>()V PC 5993 Signature id 3
+     [java] Method 102: Class: lejos.nxt.Sound Signature: playFreq(III)V Native id 59
+     [java] Method 103: Class: lejos.nxt.Sound Signature: playTone(III)V PC 6005 Signature id 203
+     [java] Method 104: Class: lejos.nxt.Sound Signature: loadSettings()V PC 6031 Signature id 127
+     [java] Method 105: Class: lejos.nxt.Sound Signature: <clinit>()V PC 6042 Signature id 3
+     [java] Method 106: Class: lejos.nxt.SystemSettings Signature: getSlot(Ljava/lang/String;)I PC 6151 Signature id 208
+     [java] Method 107: Class: lejos.nxt.SystemSettings Signature: setSlot(ILjava/lang/String;)V PC 6183 Signature id 209
+     [java] Method 108: Class: lejos.nxt.SystemSettings Signature: getValue(I)Ljava/lang/String; PC 6241 Signature id 210
+     [java] Method 109: Class: lejos.nxt.SystemSettings Signature: getStringSetting(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String; PC 6313 Signature id 211
+     [java] Method 110: Class: lejos.nxt.SystemSettings Signature: getIntSetting(Ljava/lang/String;I)I PC 6340 Signature id 212
+     [java] Method 111: Class: lejos.nxt.SystemSettings Signature: setSetting(Ljava/lang/String;Ljava/lang/String;)V PC 6360 Signature id 213
+     [java] Method 112: Class: lejos.nxt.SystemSettings Signature: <clinit>()V PC 6382 Signature id 3
+     [java] Method 113: Class: lejos.nxt.comm.BTConnection Signature: <init>(I)V PC 6488 Signature id 114
+     [java] Method 114: Class: lejos.nxt.comm.BTConnection Signature: reset()V PC 6523 Signature id 157
+     [java] Method 115: Class: lejos.nxt.comm.BTConnection Signature: disconnected()Z PC 6543 Signature id 216
+     [java] Method 116: Class: lejos.nxt.comm.BTConnection Signature: send()V PC 6569 Signature id 218
+     [java] Method 117: Class: lejos.nxt.comm.BTConnection Signature: recv()V PC 6638 Signature id 221
+     [java] Method 118: Class: lejos.nxt.comm.BTConnection Signature: read([BIZ)I PC 6745 Signature id 222
+     [java] Method 119: Class: lejos.nxt.comm.BTConnection Signature: needsAttention()Z PC 7125 Signature id 227
+     [java] Method 120: Class: lejos.nxt.comm.BTConnection Signature: pendingInput()Z PC 7176 Signature id 228
+     [java] Method 121: Class: lejos.nxt.comm.BTConnection Signature: flushInput()V PC 7190 Signature id 229
+     [java] Method 122: Class: lejos.nxt.comm.BTConnection Signature: <clinit>()V PC 7321 Signature id 3
+     [java] Method 123: Class: lejos.nxt.comm.Bluetooth$BTThread Signature: <init>()V PC 7334 Signature id 2
+     [java] Method 124: Class: lejos.nxt.comm.Bluetooth$BTThread Signature: sendCommand()V PC 7435 Signature id 251
+     [java] Method 125: Class: lejos.nxt.comm.Bluetooth$BTThread Signature: recvReply()I PC 7519 Signature id 252
+     [java] Method 126: Class: lejos.nxt.comm.Bluetooth$BTThread Signature: reset()V PC 7684 Signature id 157
+     [java] Method 127: Class: lejos.nxt.comm.Bluetooth$BTThread Signature: processReply()V PC 7920 Signature id 253
+     [java] Method 128: Class: lejos.nxt.comm.Bluetooth$BTThread Signature: processCommands()V PC 8221 Signature id 254
+     [java] Method 129: Class: lejos.nxt.comm.Bluetooth$BTThread Signature: selectChan()I PC 8289 Signature id 255
+     [java] Method 130: Class: lejos.nxt.comm.Bluetooth$BTThread Signature: processStreams()V PC 8343 Signature id 256
+     [java] Method 131: Class: lejos.nxt.comm.Bluetooth$BTThread Signature: waitSwitch(IZ)I PC 8500 Signature id 257
+     [java] Method 132: Class: lejos.nxt.comm.Bluetooth$BTThread Signature: switchToStream(I)Z PC 8567 Signature id 258
+     [java] Method 133: Class: lejos.nxt.comm.Bluetooth$BTThread Signature: switchToCmd()V PC 8638 Signature id 259
+     [java] Method 134: Class: lejos.nxt.comm.Bluetooth$BTThread Signature: bc4Mode()I PC 8759 Signature id 260
+     [java] Method 135: Class: lejos.nxt.comm.Bluetooth$BTThread Signature: waitInit()V PC 8774 Signature id 261
+     [java] Method 136: Class: lejos.nxt.comm.Bluetooth$BTThread Signature: run()V PC 8809 Signature id 1
+     [java] Method 137: Class: java.io.OutputStream Signature: <init>()V PC 8827 Signature id 2
+     [java] Method 138: Class: java.lang.Integer Signature: parseInt(Ljava/lang/String;I)I PC 8832 Signature id 291
+     [java] Method 139: Class: java.lang.Integer Signature: parseInt(Ljava/lang/String;)I PC 9061 Signature id 292
+     [java] Method 140: Class: java.lang.Integer Signature: digit(CI)I PC 9068 Signature id 293
+     [java] Method 141: Class: java.lang.Integer Signature: digit(II)I PC 9074 Signature id 294
+     [java] Method 142: Class: java.lang.Integer Signature: toString(I)Ljava/lang/String; PC 9183 Signature id 295
+     [java] Method 143: Class: java.lang.Integer Signature: toString()Ljava/lang/String; PC 9296 Signature id 95
+     [java] Method 144: Class: java.lang.Integer Signature: <clinit>()V PC 9304 Signature id 3
+     [java] Method 145: Class: java.lang.NumberFormatException Signature: <init>()V PC 9332 Signature id 2
+     [java] Method 146: Class: lejos.nxt.Flash Signature: readPage([BI)V Native id 76
+     [java] Method 147: Class: lejos.nxt.Flash Signature: writePage([BI)V Native id 75
+     [java] Method 148: Class: lejos.nxt.Flash Signature: <clinit>()V PC 9337 Signature id 3
+     [java] Master record    : 16 bytes.
+     [java] Class records    : 39 (390 bytes).
+     [java] Field records    : 80 (80 bytes).
+     [java] Static fields    : 53 (106 bytes).
+     [java] Static state     : 53 (202 bytes).
+     [java] Constant records : 26 (104 bytes).
+     [java] Constant values  : 26 (252 bytes).
+     [java] Method records   : 149 (1788 bytes).
+     [java] Exception records: 67 (536 bytes).
+     [java] Code             : 117 (6122 bytes).
+     [java] Total            : 9597 bytes.
+uploadandrun:
+     [java] Found nxt name NOISY address 001653007848
+     [java] leJOS NXJ> Upload successful in 1974 milliseconds
+BUILD SUCCESSFUL
+Total time: 4 seconds
+</font></pre>
+					<p> This verbose output from the leJOS linker tells you all the classes and methods that have been included in your program. It is very useful for debugging your programs.</p>  
+					<p> You should see the Bluetooth statistics on your NXT LCD screen. You can stop the BlueStats program by pressing ESC on the NXT.</p>
+					<p> You can browse through the samples and try them out. Some of the samples need to communicate with a program on the PC - see "Using the PC samples project" below. 
+					Other samples need specific sensors attached to the NXT or a robot with specific characteristics - such as a steerable wheeled vehicle. 
+					See the comments at the start of each of the Java files to understand the requirements of the sample.</p>
+					<p>Note that the samples project uses default package names for simplicity. This is not good practice for Java programming so when
+					we create our own project, we will use a proper package name.</p>
+					<p>Note also that the samples project contains multiple programs each with a main method. This is convenient for showing lots
+					of examples of leJOS NXJ programming in one project, but is not best practice. When we create our own projects, we will have a separate Eclipse project for each leJOS NXJ program</p>
+					
+					<!-- WEB TOOL TO GO TO TOP OF THE DOCUMENT -->
+					<a href="#top">Back to top</a>
+					<p/>
+					
+					<a name="3"></a>
+					<h4>Using the PC samples project</h4>
+					<p> </p>
+					
+					<a name="4"></a>
+					<h4>Creating your own project</h4>
+					<p> To create a project, select File > New > Java Project. Give the project a name, e.g. "myproject" and press Finish to accept all the defaults.</p>
+					<p> You should now see "myproject" in the Package Explorer.</p>
+					<p> You will need to add classes.jar to your project. To do this right-click on "myproject", select "Properties" and then "Java Build Path".
+					Then select Libraries and then "Add external Jar". Browse for classes.jar in your NXJ installation and select it. Then go to the "Order and Export" tab and move classes.jar up so that it is above JRE System Library.
+					You will  now see classes.jar under "Referenced Libraries" in myproject.</p>
+					<p> You should use a package name for your project. We will call our project "org.me.myproject". </p>
+					<p>Select the "src" folder in myproject, right-click on it and select New > Package
+					   and type your package name.</p>
+					<p> We now want to create main class.To do this, select the package you have just created, right-click on it and
+					select New > Class. Type in the class name - we will use "HelloWorld". Select the "public static void main(String[] args)" option.
+					
+					You should now have a HelloWorld.java program containing:
+					
+					<code><pre>
+package org.me.mypackage;
+
+public class HelloWorld {
+
+    /**
+     * @param args
+     */
+    public static void main(String[] args) {
+        // TODO Auto-generated method stub
+    }
+}
+				    </pre></code>
+				    
+				    <p>Edit the source so it reads:</p>
+				    					<code><pre>
+package org.me.mypackage;
+
+import lejos.nxt.*;
+
+public class HelloWorld {
+
+    /**
+     * @param args
+     */
+    public static void main(String[] args) {
+        System.out.println("Hello World");
+        Button.waitForPress();
+    }
+}
+				    </pre></code>
+				    <p> You will now need to build your project. One way to do this is to use an ant build file in the same way that the samples do.
+				    To do this, select a build.xml file from one of the samples, right-click on it and select "Copy". Then go to org.me.mypackage, right-click on it and select "Paste".</p>
+				    <p>Double-click on build.xml to edit it and change the name and description attributes. Then change the line that reads:</p>
+				    <p>&lt;basename property="program" file="."/&gt;</p>			    
+				    <p>to</p> 
+				    <p>&lt;property name="program" value="HelloWorld"&gt;</p>			    
+				    <p>and add a new property:</p>
+				   
+                    <p>&lt;property name="class" value="org.me.myproject.HelloWorld"&gt;</p>
+
+				    <p>Then, in the link target, change the line that reads:</p>
+				    <p>&lt;arg value="${program}"/&gt;</p>
+				    <p>to </p>
+				    <p>&lt;arg value="${class}"/&gt;</p>
+				    <p>Finally copy the "sample.properties" file from the sample project into your project. You are then ready to upload and run your first leJOS NXJ project.
+				    This is done in the same way as for the samples: by right-clicking on the build.xml file and selecting "Ant Build". Make sure your NXT is switched on.</p>
+				    <p>You should the verbose linker output in the Console window, and your program should be uploaded to the NXT and run. You should see "Hello World" on the NXT LCD screen. 
+				    Press any key on the NXT to stop the program.</p>
+				    
+					<!-- WEB TOOL TO GO TO TOP OF THE DOCUMENT -->
+					<a href="#top">Back to top</a>
+					<p/>
+					
+					<a name="5"></a>
+					<h4>Installing the leJOS plugin</h4>
+					<p> </p>
+
+					
+					<a name="6"></a>
+					<h4>Using the leJOS plugin</h4>
+					<p> </p>
+					
+					<a name="7"></a>
+					<h4>Setting up the leJOS GUI Tools</h4>
+					<p> leJOS NXJ comes with a set of GUI tools that can be using for flashing the firmware, exploring files on the NXT,
+					    monitoring and debugging programs on the NXT, downloading data logs, etc. 
+					    It is useful to be able to run these tools within Eclipse, and to do this you need to set them up as external tools.</p>
+					<p> To create external tools click on the down array next to the Run External Tools Icon on the toolbar and select "Extenal Tools Configuration":</p>
+					<img src="eclipseexternal.jpg"/>
+					<p> Then select Program and click on the New Launch Configuration button and you should see:</p>
+					<img src="eclipseconfiguration.jpg"/>
+					<p> Type the name of your configuration, such as NXJ Flash and click on Browse File System and find the bin directory
+					of where you installed leJOS NXJ and select nxjflash.bat.</p>
+					If you have multiple installations of leJOS you can go to the Environment tab and set NXJ_HOME to the one you wish to use.</p>
+					 
+					<p>Other GUI tools you should set up include:</p>
+					<ul class="BlueArrows">
+						<li>nxjbrowse - an Explorer for NXJ files</li>
+						<li>nxjconsoleviewer - GUI viewer for RConsole debug output</li>
+						<li>nxjmonitor - Remote monitoring of programs running on the NXT</li>
+						<li>nxjdataviewer - GUI tool to download data logs from NXT</li>
+					</ul></p>
+					
+					<p>You may also want to set up command line tools such as:</p>
+					<ul class="BlueArrows">
+						<li>nxjflash - command line firmware flash tool</li>
+						<li>nxjconsole - command line viewer for RConsole debugging output</li>
+						<li>nxjsocketproxy - proxy for communicating with PC and Internet program using sockets</li>
+					</ul></p>
+					
+					
+					<!-- WEB TOOL TO GO TO TOP OF THE DOCUMENT -->
+					
+					<a href="#top">Back to top</a>
+					<br/>
+					<!-- END CONTENT AREA -->
+					
+					<!-- NAVIGATION TOOL -->			
+					<br/>
+			        <div class="NavBit">
+			        	<a target="_top" href="../Preliminaries/GettingStarted.htm">«&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../Menusystem/MenuSystem.htm">Next&nbsp;»</a>
+			        </div>
+					<br />
+				</td>
+			</tr>
+		</table>
+	</body>
+</html>
