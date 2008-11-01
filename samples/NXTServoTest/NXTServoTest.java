@@ -66,9 +66,9 @@ public class NXTServoTest{
 	 * Internal method used to clear some rows in User Interface
 	 */
 	private static void clearRows(){
-		LCD.drawString("          ", 0, 3);
-		LCD.drawString("          ", 0, 4);
-		LCD.drawString("          ", 0, 5);
+		LCD.drawString("               ", 0, 3);
+		LCD.drawString("               ", 0, 4);
+		LCD.drawString("               ", 0, 5);
 	}
 
 	/**
