@@ -74,9 +74,8 @@ public class Degrees{
 	 * If Latitude then CoordenateType = 0
 	 * If Longitude then CoordenateType = 1
 	 * 
-	 * @param DD_MM
-	 * @param CoordenateType
-	 * @return
+	 * @param CoordenateType the coordinate type
+	 * @return the decimal degrees
 	 */
 	protected float degreesMinToDegrees(int CoordenateType) {//throws NumberFormatException
 		float decDegrees = 0;
@@ -131,7 +130,7 @@ public class Degrees{
 	/**
 	 * Convert DegreesMinutes to IntegerMinutes
 	 * 
-	 * @return
+	 * @return the integer minutes
 	 */
 	protected int degreesMinutesToIntegerMinutes() {//throws NumberFormatException
 
@@ -156,7 +155,7 @@ public class Degrees{
 	/**
 	 * Convert DegreesMinutes to FractionalMinutes
 	 * 
-	 * @return
+	 * @return the fractional minutes
 	 */
 	protected float degreesMinutesToFractionalMinutes() {//throws NumberFormatException
 
