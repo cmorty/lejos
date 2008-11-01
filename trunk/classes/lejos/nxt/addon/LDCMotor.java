@@ -44,7 +44,7 @@ public class LDCMotor extends LMotor{
 	/**
 	 * Method to set the speed in a DC Motor 
 	 * 
-	 * @param angle
+	 * @param speed the speed
 	 * 
 	 */
 	public void setSpeed(int speed){
@@ -55,7 +55,7 @@ public class LDCMotor extends LMotor{
 	 * 
 	 * Method to get speed from the DC Motor
 	 *
-	 * @return
+	 * @return the speed
 	 * 
 	 */
 	public int getSpeed(){

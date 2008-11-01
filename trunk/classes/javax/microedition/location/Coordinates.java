@@ -52,7 +52,7 @@ public class Coordinates{
 	/**
 	 * Get latitude
 	 * 
-	 * @return
+	 * @return the latitude
 	 */
 	public double getLatitude() {
 		return latitude;
@@ -75,7 +75,7 @@ public class Coordinates{
 	/**
 	 * Get Longitude
 	 * 
-	 * @return
+	 * @return the longitude
 	 */
 	public double getLongitude() {
 		return longitude;
@@ -91,7 +91,7 @@ public class Coordinates{
 	/**
 	 * Get Altitude
 	 * 
-	 * @return
+	 * @return the altitude
 	 */
 	public double getAltitude() {
 		return altitude;
@@ -140,8 +140,8 @@ public class Coordinates{
      * However, it is required that the result is within 0.36% of 
      * the correct result.
 	 * 
-	 * @param to
-	 * @return
+	 * @param to the point to calculate the geodetic to
+	 * @return the distance
 	 */
 	public double distance(Coordinates to){
 		if(to == null){

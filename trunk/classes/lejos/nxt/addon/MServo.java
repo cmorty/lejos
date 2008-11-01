@@ -92,7 +92,7 @@ public class MServo extends I2CSensor{
 	/**
 	 * Return the pulse used in last operation
 	 * 
-	 * @return
+	 * @return the pulse
 	 *
 	 */
 	public int getPulse(){
@@ -102,7 +102,7 @@ public class MServo extends I2CSensor{
 	/**
 	 * Method to set an Angle in a RC Servo. 
 	 * 
-	 * @param angle
+	 * @param angle the angle
 	 * 
 	 */
 	public void setAngle(int angle){
@@ -114,7 +114,7 @@ public class MServo extends I2CSensor{
 	/**
 	 * Return the angle used in last operation
 	 * 
-	 * @return
+	 * @return the angle
 	 *
 	 */
 	public int getAngle(){
@@ -125,7 +125,7 @@ public class MServo extends I2CSensor{
 	/**
 	 * Method to set the Speed in a RC Servo. 
 	 * 
-	 * @param angle
+	 * @param speed the speed
 	 * 
 	 */
 	public void setSpeed(int speed){

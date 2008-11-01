@@ -36,7 +36,7 @@ public class Date {
 	/**
 	 * Get year
 	 * 
-	 * @return
+	 * @return the year
 	 */
 	public int getYear(){
 		return year;
@@ -45,7 +45,7 @@ public class Date {
 	/**
 	 * Set Month
 	 * 
-	 * @param mm
+	 * @param mm the month
 	 */
 	public void setMonth(int mm){
 		if((mm >= 1) && (mm<=12)){
@@ -56,7 +56,7 @@ public class Date {
 	/**
 	 * Get Month
 	 * 
-	 * @return
+	 * @return the month
 	 */
 	public int getMonth(){
 		return month;
@@ -65,7 +65,7 @@ public class Date {
 	/**
 	 * Set Day
 	 * 
-	 * @param dd
+	 * @param dd the day
 	 */
 	public void setDay(int dd){
 		if((dd>=1) && (dd<=31)){
@@ -76,7 +76,7 @@ public class Date {
 	/**
 	 * Get Day
 	 * 
-	 * @return
+	 * @return the day
 	 */
 	public int getDay(){
 		return day;
@@ -85,7 +85,7 @@ public class Date {
 	/**
 	 * Set hours
 	 * 
-	 * @param hh
+	 * @param hh the hours
 	 */
 	public void setHours(int hh){
 		if((hh >= 0) && (hh<= 23)){
@@ -96,7 +96,7 @@ public class Date {
 	/**
 	 * Get Hours
 	 * 
-	 * @return
+	 * @return the hours
 	 */
 	public int getHours(){
 		return hours;
@@ -105,7 +105,7 @@ public class Date {
 	/**
 	 * Set Minutes
 	 * 
-	 * @param mm
+	 * @param mm the minutes
 	 */
 	public void setMinutes(int mm){
 		if((mm >= 0) && (mm <= 59)){
@@ -116,7 +116,7 @@ public class Date {
 	/**
 	 * Get Minutes
 	 * 
-	 * @return
+	 * @return the minutes
 	 */
 	public int getMinutes(){
 		return minutes;
@@ -125,7 +125,7 @@ public class Date {
 	/**
 	 * Set Seconds
 	 * 
-	 * @param ss
+	 * @param ss the seconds
 	 */
 	public void setSeconds(int ss){
 		if((ss >= 0) && (ss <= 59)){
@@ -136,7 +136,7 @@ public class Date {
 	/**
 	 * Get Seconds
 	 * 
-	 * @return
+	 * @return the seconds
 	 */
 	public int getSeconds(){
 		return seconds;
@@ -150,7 +150,7 @@ public class Date {
 	 * Compare 2 Date objects to know if current Date object is before 
 	 * than parameter
 	 * 
-	 * @param when
+	 * @param when the date to compare with
 	 */
 	public boolean before(Date when) {
 		return getMillisOf(this) < getMillisOf(when);
@@ -160,7 +160,7 @@ public class Date {
 	 * Compare 2 Date objects to know if current Date object is after 
 	 * than parameter
 	 * 
-	 * @param when
+	 * @param when the date to compare with
 	 */
 	public boolean after(Date when) {
 		return getMillisOf(this) > getMillisOf(when);
@@ -169,7 +169,7 @@ public class Date {
 	/**
 	 * Returns the millisecond value of this <code>Date</code> object
 	 * without affecting its internal state.
-	 * return the amount of time in milisecons from 1/1/1970
+	 * return the amount of time in milliseconds from 1/1/1970
 	 */
 	private int getMillisOf(Date date){
 		return 1;

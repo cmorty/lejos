@@ -26,10 +26,10 @@ public class LMotor extends I2CSensor{
 	/**
 	 * Constructor
 	 * 
-	 * @param port
-	 * @param location
-	 * @param servoName
-	 * @param SPI_PORT
+	 * @param port the port
+	 * @param location the location 
+	 * @param name the name of the servo
+	 * @param SPI_PORT the SPI port
 	 *  
 	 */
 	public LMotor(SensorPort port, int location, String name, byte SPI_PORT){
@@ -83,7 +83,7 @@ public class LMotor extends I2CSensor{
 	/**
 	 * Method to know if Servo is moving to a determinated angle
 	 * 
-	 * @return
+	 * @return true iff the servo is moving
 	 */
 	public boolean isMoving(){
 		boolean flag = false;
@@ -96,8 +96,7 @@ public class LMotor extends I2CSensor{
 	/**
 	 * Set a delay in a Motor
 	 * 
-	 * @param Servo
-	 * @param delay
+	 * @param delay the delay
 	 */
 	public void setDelay(int delay){
 		int I2C_Response;
@@ -134,7 +133,6 @@ public class LMotor extends I2CSensor{
 	/**
 	 * Load Servo located in a position X
 	 * 
-	 * @param location
 	 */
 	public void load(){
 		int I2C_Response;

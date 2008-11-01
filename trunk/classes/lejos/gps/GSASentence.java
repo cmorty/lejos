@@ -78,7 +78,7 @@ public class GSASentence extends NMEASentence{
 	/**
 	 * Return an Array with Satellite IDs
 	 * 
-	 * @return
+	 * @return the array of satellite IDs
 	 */
 	public int[] getSV(){
 		return SV;
@@ -87,7 +87,7 @@ public class GSASentence extends NMEASentence{
 	/**
 	 * Return PDOP
 	 * 
-	 * @return
+	 * @return the PDOP
 	 */
 	public float getPDOP(){
 		return PDOP;
@@ -96,7 +96,7 @@ public class GSASentence extends NMEASentence{
 	/**
 	 * Return HDOP
 	 * 
-	 * @return
+	 * @return the HDOP
 	 */
 	public float getHDOP(){
 		return HDOP;
@@ -105,7 +105,7 @@ public class GSASentence extends NMEASentence{
 	/**
 	 * Return VDOP
 	 * 
-	 * @return
+	 * @return the VDOP
 	 */
 	public float getVDOP(){
 		return VDOP;

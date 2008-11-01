@@ -46,8 +46,8 @@ public class MSC extends I2CSensor {
 	/**
 	 * Method to add  a RC servo to current LSC
 	 * 
-	 * @param index
-	 * @param name
+	 * @param location the locatoion
+	 * @param name of the servo
 	 * @throws ArrayIndexOutOfBoundsException
 	 *
 	 */
@@ -63,10 +63,10 @@ public class MSC extends I2CSensor {
 
 	
 	/**
-	 * Method to get a rRC Servo in a LSC
+	 * Method to get an RC Servo in a LSC
 	 * 
-	 * @param index
-	 * @return
+	 * @param index in the array
+	 * @return the MServo object
 	 * 
 	 */
 	public MServo getServo(int index){
@@ -75,9 +75,9 @@ public class MSC extends I2CSensor {
 
 	/**
 	 * Read the battery voltage data from
-	 * NXTServo module (in mili-volts)
+	 * NXTServo module (in milli-volts)
 	 * 
-	 * @return
+	 * @return the battery voltage in millivolts
 	 */
 	public int getBattery(){
 		int I2C_Response = 0;

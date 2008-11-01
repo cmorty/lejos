@@ -52,8 +52,8 @@ public class LSC extends I2CSensor {
 	/**
 	 * Method to add  a RC servo to current LSC
 	 * 
-	 * @param index
-	 * @param name
+	 * @param location the location
+	 * @param name the name of the servo
 	 * @throws ArrayIndexOutOfBoundsException
 	 *
 	 */
@@ -70,8 +70,8 @@ public class LSC extends I2CSensor {
 	/**
 	 * Method to add  a RC servo to current LSC
 	 * 
-	 * @param index
-	 * @param name
+	 * @param location the location
+	 * @param name the name of the servo
 	 * @throws ArrayIndexOutOfBoundsException
 	 *
 	 */
@@ -86,10 +86,10 @@ public class LSC extends I2CSensor {
 	}	
 	
 	/**
-	 * Method to get a rRC Servo in a LSC
+	 * Method to get an RC Servo in a LSC
 	 * 
-	 * @param index
-	 * @return
+	 * @param index in the array
+	 * @return the LServo object
 	 * 
 	 */
 	public LServo getServo(int index){
@@ -99,8 +99,8 @@ public class LSC extends I2CSensor {
 	/**
 	* Method to add a DC Motor
 	*
-	* @param location
-	* @param name
+	* @param location the location
+	* @param name the name of the motor
 	*
 	*/	
 	public void addDCMotor(int location, String name) throws ArrayIndexOutOfBoundsException{
@@ -131,10 +131,10 @@ public class LSC extends I2CSensor {
 	}	
 	
 	/**
-	 * Method to get a rRC Servo in a LSC
+	 * Method to get an LDC Motor 
 	 * 
-	 * @param index
-	 * @return
+	 * @param index the index in the array
+	 * @return the LDC Motor
 	 * 
 	 */
 	public LDCMotor getDCMotor(int index){
