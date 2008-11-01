@@ -34,7 +34,7 @@ public class Latitude extends Degrees{
 	 * Get Latitude in format Decimal Degrees.
 	 * This format is used with Coordinates Objects
 	 * 
-	 * @return
+	 * @return the latitude in decimal degrees
 	 */
 	public double getDecimalDegrees(){
 		String RAWData = "" + RAWGPS_data;

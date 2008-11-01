@@ -111,7 +111,7 @@ public class GPS extends Thread {
 	/**
 	 * Get NMEA Sentence
 	 * 
-	 * @return
+	 * @return the NMEA Sentence
 	 */
 	public String getSentence(){
 		return sentence;
@@ -120,7 +120,7 @@ public class GPS extends Thread {
 	/**
 	 * Get Latitude
 	 * 
-	 * @return
+	 * @return the latitude
 	 */
 	public float getLatitude() {
 		return latitude;
@@ -130,7 +130,7 @@ public class GPS extends Thread {
 	/**
 	 * Get Latitude Direction
 	 * 
-	 * @return
+	 * @return the latitude direction
 	 */
 	public String getLatitudeDirection(){
 		return latitudeDirection;
@@ -140,7 +140,7 @@ public class GPS extends Thread {
 	/**
 	 * Get Longitude
 	 * 
-	 * @return
+	 * @return the longitude
 	 */
 	public float getLongitude() {
 		return longitude;
@@ -149,7 +149,7 @@ public class GPS extends Thread {
 	/**
 	 * Get Longitude Direction
 	 * 
-	 * @return
+	 * @return the longitude direction
 	 */
 	public String getLongitudeDirection(){
 		return longitudeDirection;
@@ -177,7 +177,7 @@ public class GPS extends Thread {
 	/**
 	 * Get GPS Quality Data
 	 * 
-	 * @return
+	 * @return the quality
 	 */
 	public int getQuality(){
 		return quality;
@@ -186,7 +186,7 @@ public class GPS extends Thread {
 	/**
 	 * Get speed in kilometers per hour
 	 * 
-	 * @return
+	 * @return the speed in kilometers per hour
 	 */
 	public float getSpeed() {
 		return speed;
@@ -196,7 +196,7 @@ public class GPS extends Thread {
 	 * Return Compass Degrees
 	 * in a range: 0-359
 	 * 
-	 * @return
+	 * @return the compass degrees
 	 */
 	public int getCompassDegrees(){
 		return Math.round(compassDegrees);
@@ -205,7 +205,7 @@ public class GPS extends Thread {
 	/**
 	 * Return a Date Object with data from GGA and RMC NMEA Sentence
 	 * 
-	 * @return
+	 * @return the date
 	 */
 	public Date getDate(){
 		return date;
@@ -215,8 +215,8 @@ public class GPS extends Thread {
 	 * 
 	 * Get NMEA Satellite
 	 * 
-	 * @param index
-	 * @return
+	 * @param index the satellite index
+	 * @return the NMEASaltellite object for the selected satellite
 	 */
 	public NMEASatellite getSatellite(int index){
 		return ns[index];
@@ -225,7 +225,7 @@ public class GPS extends Thread {
 	/**
 	 * Get Mode1
 	 * 
-	 * @return
+	 * @return mode1
 	 */
 	public String getMode(){
 		return mode;
@@ -234,7 +234,7 @@ public class GPS extends Thread {
 	/**
 	 * Get Mode2
 	 * 
-	 * @return
+	 * @return mode2
 	 */
 	public int getModeValue(){
 		return modeValue;
@@ -243,7 +243,7 @@ public class GPS extends Thread {
 	/**
 	 * Get an Array with Satellite ID
 	 * 
-	 * @return
+	 * @return array of satellite IDs
 	 */
 	public int[] getSV(){
 		return SV;
@@ -252,7 +252,7 @@ public class GPS extends Thread {
 	/**
 	 * Get PDOP
 	 * 
-	 * @return
+	 * @return the PDOP
 	 */
 	public float getPDOP(){
 		return PDOP;
@@ -261,7 +261,7 @@ public class GPS extends Thread {
 	/**
 	 * Get HDOP
 	 * 
-	 * @return
+	 * @return the HDOP
 	 */
 	public float getHDOP(){
 		return HDOP;
@@ -270,7 +270,7 @@ public class GPS extends Thread {
 	/**
 	 * Get VDOP
 	 * 
-	 * @return
+	 * @return the VDOP
 	 */
 	public float getVDOP(){
 		return VDOP;
@@ -282,7 +282,7 @@ public class GPS extends Thread {
 	 * + Number of Satellites GGA -> Number of Satellites
 	 * + Quality of data GSA -> Mode: A & Value:3
 	 * 
-	 * @return
+	 * @return GPS status
 	 */
 	public boolean getGPSStatus(){
 		boolean status = false;

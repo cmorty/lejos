@@ -71,8 +71,8 @@ public class GSVSentence extends NMEASentence{
 	/**
 	 * Return a NMEA Satellite object
 	 * 
-	 * @param index
-	 * @return
+	 * @param index the index of the satellite
+	 * @return theNMEASatellite object for the selected satellite
 	 */
 	public NMEASatellite getSatellite(int index){
 		NMEASatellite ns = new NMEASatellite();

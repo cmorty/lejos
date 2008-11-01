@@ -41,7 +41,7 @@ public class VTGSentence extends NMEASentence{
 	/**
 	 * Get Speed in Kilometers
 	 * 
-	 * @return
+	 * @return the speed in kilometers per ???
 	 */
 	public float getSpeed(){
 		return speed;  

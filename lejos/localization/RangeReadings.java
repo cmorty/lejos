@@ -52,8 +52,6 @@ public class RangeReadings {
   
   /**
    * Get the number of readings in a set
-   * 
-   * @param num the number of readings
    */
   public static short getNumReadings() {
     return numReadings;

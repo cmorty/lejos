@@ -55,7 +55,7 @@ public class StringTokenizer implements Enumeration{
 	/**
 	 * Method used to know if exists new tokens
 	 * 
-	 * @return
+	 * @return true iff there are more tokens
 	 */
 	public boolean hasMoreTokens(){
 		return ((nextPosition != -1) && (currentPosition <= nextPosition));
