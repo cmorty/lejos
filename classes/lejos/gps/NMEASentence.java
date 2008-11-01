@@ -38,7 +38,7 @@ public class NMEASentence {
 	/**
 	 * Return if your NMEA Sentence is valid or not
 	 * 
-	 * @return
+	 * @return true iff the NMEA Sentence is true
 	 */
 	static public boolean isValid(){
 		int end = nmeaSentence.indexOf('*');
@@ -50,8 +50,8 @@ public class NMEASentence {
 	/**
 	 * Return if your NMEA Sentence is valid or not
 	 * 
-	 * @param sentence
-	 * @return
+	 * @param sentence the NMEA sentence
+	 * @return tue iff the NMEA Sentence is valid
 	 */
 	static public boolean isValid(String sentence){
 		nmeaSentence = sentence;

@@ -69,8 +69,8 @@ public class NXTe  extends I2CSensor{
 	/**
 	 * Get a LSC, Lattebox Servo Controller
 	 * 
-	 * @param index
-	 * @return
+	 * @param index in the array
+	 * @return the LSC object
 	 */
 	public LSC getLSC(int index){
 		return (LSC) arrLSC.get(index);

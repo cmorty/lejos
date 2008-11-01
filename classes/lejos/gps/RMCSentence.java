@@ -59,7 +59,7 @@ public class RMCSentence extends NMEASentence{
 	/**
 	 * Get Longitude
 	 * 
-	 * @return
+	 * @return the raw longitude
 	 */
 	public float getLongitudeRAW(){
 		return longitude;
@@ -68,7 +68,7 @@ public class RMCSentence extends NMEASentence{
 	/**
 	 * Get Speed in Kilometers
 	 * 
-	 * @return
+	 * @return the speed in kilometers per ???
 	 */
 	public float getSpeed(){
 		return speed;  
@@ -77,7 +77,7 @@ public class RMCSentence extends NMEASentence{
 	/**
 	 * Get date in integer format
 	 * 
-	 * @return
+	 * @return the date in integer format
 	 */
 	public int getDate(){
 		return Math.round(dateOfFix);
@@ -86,7 +86,7 @@ public class RMCSentence extends NMEASentence{
 	/**
 	 * Return compass value from GPS
 	 * 
-	 * @return
+	 * @return the compass value in degrees
 	 */
 	public float getCompassDegrees(){
 		float compassDegrees = 0;

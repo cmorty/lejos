@@ -39,7 +39,7 @@ public class Degrees{
 	/**
 	 * Return MinuteInt
 	 * 
-	 * @return
+	 * @return the minutes integer value
 	 */
 	public int getMinuteInt(){
 		minuteInt = degreesMinutesToIntegerMinutes();
@@ -49,7 +49,7 @@ public class Degrees{
 	/**
 	 * Return MinuteFract
 	 * 
-	 * @return
+	 * @return the minutes fractional value
 	 */
 	public float getMinuteFract() {
 		minuteFract = degreesMinutesToFractionalMinutes();

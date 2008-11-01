@@ -85,7 +85,7 @@ public class LServo extends LMotor{
 	 * 
 	 * Method to know the angle
 	 *
-	 * @return
+	 * @return the angle
 	 *
 	 */
 	public int getAngle(){
@@ -95,7 +95,7 @@ public class LServo extends LMotor{
 	/**
 	 * Set Minimal angle. Useful method to calibrate a Servo
 	 * 
-	 * @param minAngle
+	 * @param minAngle the minimum angle
 	 * 
 	 */
 	public void setMinAngle(int minAngle){
