@@ -186,7 +186,7 @@ public class LMotor extends I2CSensor{
 	 * This method is used internally by LDCMotor Objects or LServo Objects
 	 * to get the speed or angle.
 	 * 
-	 * @return
+	 * @return the pulse
 	 */
 	protected int getPulse(){
 		int I2C_Response;

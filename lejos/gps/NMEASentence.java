@@ -122,9 +122,9 @@ public class NMEASentence {
 	 * Latitude values has the range: -90 <-> 90
 	 * Longitude values has the range: -180 <-> 180
 	 * 
-	 * @param DD_MM
-	 * @param CoordenateType
-	 * @return
+	 * @param DD_MM the day and month
+	 * @param CoordenateType the coordinate type
+	 * @return the decimal degrees
 	 */
 	protected float degreesMinToDegrees(String DD_MM,int CoordenateType) {//throws NumberFormatException
 		float decDegrees = 0;
