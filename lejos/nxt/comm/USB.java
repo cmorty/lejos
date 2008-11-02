@@ -8,17 +8,18 @@ import lejos.nxt.*;
  *
  */
 public class USB {
-    public static final int RESET = 0x40000000;
     public static final String SERIAL_NO = "lejos.usb_serno";
     public static final String NAME = "lejos.usb_name";
-    static final int USB_BUFSZ = 64;
+
+    public static final int RESET = 0x40000000;
+    static final int BUFSZ = 64;
     static final int USB_STREAM = 1;
     static final int USB_STATE_MASK = 0xf0000000;
     static final int USB_STATE_CONNECTED = 0x10000000;
     static final int USB_CONFIG_MASK = 0xf000000;
     static final int USB_WRITABLE = 0x100000;
     static final int USB_READABLE = 0x200000;
-
+    
     // Private versions of LCP values. We don't want to pull in all of the
     // LCP code.
     private static final byte SYSTEM_COMMAND_REPLY = 0x01;
@@ -29,27 +30,22 @@ public class USB {
 
     private static String serialNo = "123";
     private static String name = "xxx";
-    
-    /**
-     * Static contstructor to force loading of system settings
-     */
+
     static {
         loadSettings();
     }
-
+    
+    
 	private USB()
 	{		
 	}
-    
-    private static void flushInput(byte [] buf)
+
+    private static void flushInput(NXTConnection conn)
     {
-        // Discard any input that may have been left by a previous user of the
-        // USB connection.
-        while (usbRead(buf, 0, buf.length) > 0)
-            ;
+        conn.discardInput();
     }
     
-    private static boolean isConnected(byte [] cmd)
+    private static boolean isConnected(NXTConnection conn, byte [] cmd)
     {
         // This method provides support for packet mode connections.
         // We wait for the PC to tell us that the connection has been established.
@@ -57,8 +53,9 @@ public class USB {
         // of the device.
         int len = 3;
         boolean ret = false;
+        if (conn.available() < 2) return false;
         // Look for a system command
-        if (usbRead(cmd, 0, cmd.length) >= 2 && cmd[0] == SYSTEM_COMMAND_REPLY)
+        if (conn.read(cmd, cmd.length, false) >= 2 && cmd[0] == SYSTEM_COMMAND_REPLY)
         {
             cmd[2] = (byte)0xff;
             if (cmd[1] == GET_FIRMWARE_VERSION) 
@@ -90,11 +87,11 @@ public class USB {
                 len = 3;
             }
             cmd[0] = REPLY_COMMAND;
-            usbWrite(cmd, 0, len);
+            conn.write(cmd, len, false);
         }
         return ret;
     }
-    
+
     
 	/**
      * Wait for the USB interface to become available and for a PC side program
@@ -107,11 +104,14 @@ public class USB {
     {
         // Allocate buffer here for use by other methods. Saves repeated
         // allocations.
-        byte [] buf = new byte [USB_BUFSZ];
+        byte [] buf = new byte [BUFSZ];
+        USBConnection conn = new USBConnection(NXTConnection.RAW);
+        usbSetName(name);
+        usbSetSerialNo(serialNo);
         usbEnable(((mode & RESET) != 0 ? 1 : 0));
         mode &= ~RESET;
         // Discard any left over input
-        flushInput(buf);
+        flushInput(conn);
         if (timeout == 0) timeout = 0x7fffffff;
         while(timeout-- > 0)
         {
@@ -122,11 +122,13 @@ public class USB {
             {
                 if (mode == NXTConnection.RAW ||
                     (mode == NXTConnection.LCP && ((status & (USB_READABLE|USB_WRITABLE)) == (USB_READABLE|USB_WRITABLE))) ||
-                    (mode == NXTConnection.PACKET && isConnected(buf)))
-                    return new USBConnection(mode);
+                    (mode == NXTConnection.PACKET && isConnected(conn, buf)))
+                {
+                    conn.setIOMode(mode);
+                    return conn;
+                }
             }
-            if (timeout == 0 || timeout-- > 0)
-                try{Thread.sleep(1);}catch(Exception e){}          
+            try{Thread.sleep(1);}catch(Exception e){}          
         }
         usbDisable();
         return null;
@@ -143,17 +145,14 @@ public class USB {
     
     /**
      * Wait for the remote side of the connection to close down.
+     * @param conn The connection associated with this device.
      * @param timeout
      */
-    public static void waitForDisconnect(int timeout)
+    public static void waitForDisconnect(USBConnection conn, int timeout)
     {
-        // Allocate buffer here for use by other methods. Saves repeated
-        // allocations.
-        byte [] buf = new byte [USB_BUFSZ];
-
         while(timeout-- > 0)
         {
-            flushInput(buf);
+            flushInput(conn);
             int status = usbStatus();
             // Wait for the interface to be down
             if ((status & USB_STATE_MASK) != USB_STATE_CONNECTED || (status & USB_CONFIG_MASK) == 0)
@@ -162,15 +161,14 @@ public class USB {
         }
         usbDisable();
     }
-    
-    /**
+
+        /**
      * Set the USB serial number. Should be a unique 12 character String
      * @param sn
      */
     public static void setSerialNo(String sn)
     {
         serialNo = sn;
-        usbSetSerialNo(sn);
     }
     
     /**
@@ -189,7 +187,6 @@ public class USB {
     public static void setName(String nam)
     {
         name = nam;
-        usbSetName(nam);
     }
     
     /**
@@ -208,9 +205,10 @@ public class USB {
      */
     public static void loadSettings()
     {
-        setSerialNo(SystemSettings.getStringSetting(SERIAL_NO, "123456780090"));
-        setName(SystemSettings.getStringSetting(NAME, "nxt"));
+        serialNo = SystemSettings.getStringSetting(SERIAL_NO, "123456780090");
+        name = SystemSettings.getStringSetting(NAME, "nxt");
     }
+
     
 	public static native void usbEnable(int reset);
 	public static native void usbDisable();

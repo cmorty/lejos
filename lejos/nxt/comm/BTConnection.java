@@ -1,7 +1,8 @@
 package lejos.nxt.comm;
 
 import java.io.*;
-import javax.microedition.io.*;
+import lejos.nxt.*;
+
 
 
 /**
@@ -31,41 +32,19 @@ import javax.microedition.io.*;
  * each packet (and is expected to be present on each incoming packet). Use this
  * mode when talking to other leJOS/Lego devices.
  */
-public class BTConnection implements NXTConnection
+public class BTConnection extends NXTConnection
 {
-	static final int CS_IDLE = 0;
-	static final int CS_DISCONNECTED = 1;
-	static final int CS_CONNECTED = 2;
-	static final int CS_DATALOST = 3;
-	static final int CS_DISCONNECTING = 4;
 	
-	private static final int BTC_BUFSZ = 256;
     private static final int BTC_DEFHEADER = 2;
-	private static final int BTC_CLOSETIMEOUT1 = 1000;
-	private static final int BTC_CLOSETIMEOUT2 = 500;
 	private static final int BTC_FLUSH_WAIT = 10;
 	
 	public static final int AM_DISABLE = 0;
 	public static final int AM_ALWAYS = 1;
 	public static final int AM_OUTPUT = 2;
 
-	int state = CS_IDLE;
 	int chanNo;
 	byte handle;
-	int header = BTC_DEFHEADER;
 	int switchMode;
-	byte [] inBuf;
-	byte [] outBuf;
-	int inCnt;
-	int inOffset;
-	int outCnt;
-	int outOffset;
-	int pktOffset;
-	int pktLen;
-	InputStream is;
-	OutputStream os;
-	static int inBufSz = BTC_BUFSZ;
-	static int outBufSz = BTC_BUFSZ;
 	byte [] bt_address;
 
 	public BTConnection(int chan)
@@ -97,9 +76,10 @@ public class BTConnection implements NXTConnection
 	synchronized void bind(byte handle, byte [] address, int mode)
 	{
 		if (inBuf == null )
-			inBuf = new byte[inBufSz];
+			inBuf = new byte[Bluetooth.BUFSZ];
 		if (outBuf == null)
-			outBuf = new byte[outBufSz];
+			outBuf = new byte[Bluetooth.BUFSZ];
+        setIOMode(mode);
 		inCnt = 0;
 		inOffset = 0;
 		outCnt = 0;
@@ -107,76 +87,29 @@ public class BTConnection implements NXTConnection
 		state = CS_CONNECTED;
 		switchMode = AM_ALWAYS;
 		this.handle = handle;
-		pktOffset = -header;
 		pktLen = 0;
 		bt_address = address;
-        setIOMode(mode);
 	}
 
-	/**
-	 * Called when the remote side of the connection disconnects.
-	 * Mark the connection as now disconected.
-	 */
-	synchronized boolean disconnected()
-	{
-		// Connection has been closed wake up anything waiting
-		//RConsole.print("Disconnected " + handle + "\n");
-		notifyAll();
-		// don't allow multiple disconnects, or disconnect of a closed connection'
-		if (state <= CS_DISCONNECTED) return false;
-		state = CS_DISCONNECTED;
-		outCnt = 0;
-		return true;
-	}
-	
-	/**
-	 * Close the connection. Flush any pending output. Inform the remote side
-	 * that the connection is now closed. Free resources.
-	 */
-	public void close()
-	{
-		//RConsole.print("Close\n");
-		if (state == CS_IDLE) return;
-		synchronized (this)
-		{
-			if (state >= CS_CONNECTED)
-				state = CS_DISCONNECTING;
-		}
-		//RConsole.print("Close1\n");
-		// If we have any output pending give it chance to go... and discard
-		// any input. We allow longer if we have pending output, just in case we
-		// need to switch streams.
-        //RConsole.println("Closing 1 cnt is " + outCnt);
-		for(int i = 0; state == CS_DISCONNECTING && (outCnt > 0 && i < BTC_CLOSETIMEOUT1); i++ )
-		{
-			read(null, inBuf.length, false);
-			try{Thread.sleep(1);} catch (Exception e) {}
-		}
-        //RConsole.println("Closing 2 cnt is " + outCnt);
-		for(int i = 0; state == CS_DISCONNECTING && i < BTC_CLOSETIMEOUT2; i++ )
-		{
-			read(null, inBuf.length, false);
-			try{Thread.sleep(1);} catch (Exception e) {}
-		}
-		// Dump any remaining output
-		outCnt = 0;
-		//RConsole.print("Close2\n");
-		if (state == CS_DISCONNECTING)
-			// Must not be synchronized here or we get a deadlock
-			Bluetooth.closeConnection(handle);
-		synchronized(this)
-		{
-		//RConsole.print("Close3\n");
-			while (state == CS_DISCONNECTING)
-				try{wait();}catch(Exception e){}
-		//RConsole.print("Close4\n");
-			state = CS_IDLE;
-			inBuf = null;
-			outBuf = null;
-		}
-		//RConsole.print("Close complete\n");
 
-	}
+    /**
+     * Send an EOF packet to the remote system.
+     */
+    synchronized void sendEOF()
+    {
+        // Nothing to do for Bluetooth. We rely on the underlying transport
+        // for EOF
+    }
+
+    /**
+     * Disconnect the device/channel
+     */
+    void disconnect()
+    {
+        //LCD.drawString("disconnect", 0, 5);
+        Bluetooth.closeConnection(handle);
+    }
+    
 	
 	/**
 	 * Low level output function. Take any data in the output buffer and write
@@ -205,74 +138,22 @@ public class BTConnection implements NXTConnection
 		}
 	}
 
-	/**
-	 * Attempt to write bytes to the Bluetooth connection. Optionally wait if it
-	 * is not possible to write at the moment. Supports both packet and stream
-	 * write opperations. If in packet mode a set of header bytes indicating
-	 * the size of the packet will be sent ahead of the data.
-	 * NOTE: If in packet mode and writing large packets (> 254 bytes), then
-	 * the blocking mode (wait = true), should be used to ensure that the packet
-	 * is sent correctly.
-	 * @param	data	The data to be written.
-	 * @param	len		The number of bytes to write.
-	 * @param	wait	True if the call should block until all of the data has
-	 *					been sent.
-	 * @return			> 0 number of bytes written.
-	 *					0 Request would have blocked (and wait was false).
-	 *					-1 An error occurred
-	 *					-2 Data has been lost (See notes above).
-	 */
-	public synchronized int write(byte [] data, int len, boolean wait)
-	{
-		// Place the data to be sent in the output buffer. If there is no
-		// space and wait is true then wait for space.
-		int offset = -header;
-		int hdr = len;
+    /**
+     * Write all of the current output buffer to the device.
+     * NOTE: To ensure correct operation of packet mode, this function should
+     * only return 1 if all of the data will eventually be written. It should
+     * avoid writing part of the data. 
+     * @param wait if true wait until the output has been written
+     * @return -ve if error, 0 if not written, +ve if written
+     */
+    synchronized int flushBuffer(boolean wait)
+    {
+        if (outOffset >= outCnt) return 1;
+        if (wait)
+            try {wait();} catch(Exception e){}
+        return outCnt - outOffset;
+    }
 
-		//1 RConsole.print("write " + len +" bytes\n");
-		if (state == CS_DATALOST)
-		{
-			state = CS_CONNECTED;
-			return -2;
-		}
-		if (state != CS_CONNECTED) return -1;
-		if (outCnt > 0 && !wait) return 0;
-		// Make sure we have a place to put the data
-		while (offset < len)
-		{
-			while (outCnt >= outBuf.length)
-			{
-				//RConsole.print("Buffer cnt " + outCnt + "\n");
-				if (!wait && header == 0) return offset;
-				//RConsole.print("Waiting in write\n");
-				try {wait();} catch(Exception e){}
-				//RConsole.print("Wakeup state " + state + "\n");
-				if (state != CS_CONNECTED) return offset;
-			}
-			if (offset < 0)
-			{
-				// need to add header byte(s)
-				outBuf[outCnt++] = (byte) hdr;
-				hdr >>= 8;
-				offset++;
-			}
-			else
-			{
-				int cnt = (outBuf.length - outCnt);
-				if (cnt > len - offset) cnt = len - offset;
-				System.arraycopy(data, offset, outBuf, outCnt, cnt);
-				outCnt += cnt;
-				offset += cnt;
-			}
-		}
-		return offset;
-	}
-
-	public int write(byte [] data, int len)
-	{
-		return write(data, len, true);
-	}
-	
 	/**
 	 * Low level input function. Called by the Bluetooth thread to transfer
 	 * input from the system into the input buffer.
@@ -294,177 +175,21 @@ public class BTConnection implements NXTConnection
 		}
 		if (inCnt > 0) notifyAll();
 	}
-	
-	/**
-	 * Attempt to read data from the connection. Optionally wait for data to
-	 * become available. Supports both packet and stream mode operations. When
-	 * in packet mode the packet length bytes are automatically processed. The
-	 * read will return just a single packet. If the packet is larger then the
-	 * requested length then the rest of the packet will be returned in the
-	 * following reads. If wait is true then in packet mode the call will wait
-	 * until either the entire packet can be read or outLen bytes are available.
-	 * In stream mode the call will return if at least 1 byte has been read.
-	 * @param	data	Location to return the data. If null the data is discarded.
-	 * @param	outLen	Max number of bytes to read.
-	 * @param	wait	Should the call block waiting for data.
-	 * @return			> 0 number of bytes read.
-	 * @return			0 no bytes available (and wait was false).
-	 *					-1 an error occurred.
-	 *					-2 data lost (see notes).
-	 */
-	public synchronized int read(byte [] data, int outLen, boolean wait)
-	{
-		// If wait is true wait until we can read at least one byte. if the
-		// packet has a header and data is not large enough for the data then
-		// the next read will continue to read the packet
-		int offset = 0;
-		//RConsole.print("read\n");
-		if (header == 0)
-		{
-			// Stream mode just read what we can
-			pktOffset = 0;
-			pktLen = outLen;
-		}
-		if (state == CS_IDLE) return -1;
-		if (state == CS_DATALOST)
-		{
-			state = CS_CONNECTED;
-			return -2;
-		}
-		if (state == CS_DISCONNECTED && inCnt <= 0) return -1;
-		if (!wait && inCnt <= 0) return 0;
-		while (pktOffset < pktLen)
-		{
-			//RConsole.print(" inCnt " + inCnt + " pktOffset " + pktOffset + " pktLen " + pktLen + "\n");
-			// Make sure we have something to read
-			while (inCnt <= 0)
-			{
-				//RConsole.print("About to wait inOff " + inOffset + " inCnt " + inCnt + "\n");
-				if (!wait) return offset;
-				try{wait();}catch(Exception e){}
-				if (state != CS_CONNECTED) return offset;
-				//RConsole.print("wakeup cnt " + inCnt + "\n");
-			}
-			if (pktOffset < 0)
-			{
-				// Deal with the header, at this point we have at least one header byte
-				pktLen += ((int) inBuf[inOffset++] & 0xff) << (header + pktOffset)*8;
-				pktOffset++;
-				inCnt--;
-				//RConsole.print("Header len " +pktLen + " offset " + pktOffset + "\n");
-			}
-			else
-			{
-				if (offset >= outLen) return offset;
-				// Transfer as much as we can in one go...
-				int len = (inOffset + inCnt > inBuf.length ? inBuf.length - inOffset : inCnt);
-				if (len > outLen - offset) len = outLen - offset;
-				if (len > pktLen - pktOffset) len = pktLen - pktOffset;
-				if (data != null)
-					System.arraycopy(inBuf, inOffset, data, offset, len);
-				offset += len;
-				inOffset += len;
-				pktOffset += len;
-				inCnt -= len;
-				// If not in packet mode we can return anytime now we have some data
-				if (header == 0) wait = false;
-			}
-			inOffset = inOffset % inBuf.length;
-		}
-		// End of packet set things up for next time
-		//RConsole.println("Read len " + offset + " buf " + inCnt);
-		pktOffset = -header;
-		pktLen = 0;
-		return offset;
-	}
-	
-	public int read(byte [] data, int len)
-	{
-		return read(data, len, true);
-	}
-	
-	/**
-	 * Indicate the number of bytes available to be read. Supports both packet
-	 * mode and stream connections. 
-	 * @param	what	0 (all modes) return the number of bytes that can be
-	 *					read without blocking.
-	 *					1 (packet mode) return the number of bytes still to be
-	 *					read from the current packet.
-	 *					2 (packet mode) return the length of the current packet.
-	 */
-	public synchronized int available(int what)
-	{
-		if (state == CS_IDLE) return -1;
-		if (state == CS_DATALOST)
-		{
-			state = CS_CONNECTED;
-			return -2;
-		}
-		if (header > 0)
-		{
-			// if not in a packet try and read the header
-			if (pktOffset < 0) read(null, 0, false);
-			if (pktOffset < 0) return 0;
-			if (what == 2) return pktLen; 
-			int ret = pktLen - pktOffset;
-			// If we have been asked what is actually available limit it.
-			// otherwise we return the number of bytes in the current packet
-			if (what == 0 && ret > inCnt) ret = inCnt;
-			return ret;
-		}
-		else
-			return inCnt;
-	}
-	
-	public int available()
-	{
-		return available(0);
-	}
-	
-	/**
-	 * Set operating mode. Controls the packet/stream mode of this channel.
-	 * For packet mode it defines the header size to be used.
-	 * @param mode	I/O mode to be used for this connection
-	 */
-	public void setIOMode(int mode)
-	{
-        if (mode == PACKET || mode == LCP)
-            header = BTC_DEFHEADER;
-        else
-            header = 0;
-	}
-	
-	/**
-	 * Read a packet from the stream. Do not block and for small packets
-	 * (< 254 bytes), do not return a partial packet.
-	 * @param	buf		Buffer to read data into.
-	 * @param	len		Number of bytes to read.
-	 * @return			> 0 number of bytes read.
-	 *					other values see read.
-	 */
-	public int readPacket(byte buf[], int len)
-	{
-		// Check to see if we have a full packet if the packet is small
-		int pkt = available(1);
-		if (pkt == -2) return -2;
-		if (pkt < 255 && available(0) < pkt) return 0;
-		return read(buf, len, false);
-	}
-	
-	/**
-	 * Send a data packet.
-	 * Must be in data mode.
-	 * @param buf the data to send
-	 * @param bufLen the number of bytes to send
-	 */
-	public void sendPacket(byte [] buf, int bufLen)
-	{
-		if (bufLen <= 254)
-	    {
-			write(buf, bufLen, false);
-	    }
-	}
-	
+
+    /**
+     * Get any available data into the input buffer.
+     * @param wait if true wait for data to be available.
+     * @return -ve if error, 0 if not read, +ve if read
+     */
+    synchronized int fillBuffer(boolean wait)
+    {
+        if (inCnt > 0) return inCnt;
+        if (wait)
+            try{wait();}catch(Exception e){}   
+        return inCnt;
+    }
+
+			
 	/**
 	 * Low level function called by the Bluetooth thread. It basically answers
 	 * the question: Should I switch to this channel and perform I/O? The answer
@@ -476,7 +201,7 @@ public class BTConnection implements NXTConnection
 		//1 if (chanNo == 0) RConsole.print("na s" + state + " i " + inCnt + "\n");
 		//RConsole.print("needs attention\n");
 		// return true if we need to perform low level I/O on this channel
-		if (state < CS_CONNECTED || switchMode == AM_DISABLE) return false;
+		if (state < CS_DISCONNECTING || switchMode == AM_DISABLE) return false;
 		// If we have any output then need to send it
 		if (outOffset < outCnt) return true;
 		if (switchMode == AM_OUTPUT) return false;
@@ -497,25 +222,6 @@ public class BTConnection implements NXTConnection
 		switchMode = mode;
 	}
 
-	/**
-	 * Set the size to be used for the input buffer. This will effect all
-	 * new connections after this call is made.
-	 * @param	sz	The required size. if < 0 the default size will be used
-	 */
-	public static void setInputBufferSize(int sz)
-	{
-		inBufSz = (sz >= 0 ? sz : BTC_BUFSZ);
-	}
-	
-	/**
-	 * Set the size to be used for the output buffer. This will effect all
-	 * new connections after this call is made.
-	 * @param	sz	The required size. if < 0 the default size will be used
-	 */
-	public static void setOutputBufferSize(int sz)
-	{
-		outBufSz = (sz >= 0 ? sz : BTC_BUFSZ);
-	}
 	
 	private boolean pendingInput()
 	{
@@ -563,45 +269,6 @@ public class BTConnection implements NXTConnection
 			state = CS_DATALOST;
 	}
 	
-	/**
-	 * Return the InputStream for this connection.
-	 * 
-	 * @return the input stream
-	 */
-	public InputStream openInputStream() {
-		return (is != null ? is : new NXTInputStream(this, BTC_BUFSZ));
-	}
-
-	/**
-	 * Return the OutputStream for this connection
-	 * 
-	 * @return the output stream
-	 */
-	/*
-	 * DEVELOPER NOTES: Should this switch to stream mode
-	 * from packet mode automatically before returning os? - BB 
-	 */
-	public OutputStream openOutputStream() {
-		return (os != null ? os : new NXTOutputStream(this, BTC_BUFSZ-BTC_DEFHEADER));
-	}
-
-	/**
-	 * Return the DataInputStream for this connect
-	 * 
-	 * @return the data input stream
-	 */
-	public DataInputStream openDataInputStream() {
-		return new DataInputStream(openInputStream());
-	}
-
-	/**
-	 * Return the DataOutputStream for this connection.
-	 * 
-	 * @return the data output stream
-	 */
-	public DataOutputStream openDataOutputStream() {
-		return new DataOutputStream(openOutputStream());
-	}
 
 	/**
 	 * Close the stream for this connection.

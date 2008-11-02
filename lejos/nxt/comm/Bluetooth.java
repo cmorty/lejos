@@ -74,6 +74,8 @@ public class Bluetooth
 	
 	public static final byte BT_PENDING_INPUT = 1;
 	public static final byte BT_PENDING_OUTPUT = 2;
+    
+    static final int BUFSZ = 256;
 
 	private static final byte CHANCNT = 4;
 	private static final byte RS_INIT = -1;
