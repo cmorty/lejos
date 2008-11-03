@@ -1,3 +1,92 @@
+leJOS NXJ 0.7 beta
+------------------
+
+Andy Shaw has added:
+
+- Changed low-level protocol used by USB to work better with MAC OS X
+- Added USB support with fantom API on Windows and made this the default.
+- Converged libusb and fantom USB support and improved USB support in firmware
+- Support for communication with SAM-BA in Java
+- Rewrote nxjflash in Java
+- Software support for booting firmware into firmware update mode, so user
+  does not need to do a long reset when running nxjflash
+- changes to .nxj binary format (e.g. byte rather than word sizes)
+- True incremental garbage collection with much smaller delays
+- Many bug fixes to the firmware
+- Improvements to sound support
+- Improved firmware debugging including remote tracing to PC compatible with RConsole
+- Support for double and full support for long data type
+- Support for latest class file format and latest Java source version
+- Added Thread.join and running threads using the Runnable interface
+- Support for checking casts on arrays
+- Convergence of USB and Bluetooth comms to share more code and prepare for RS485 support
+- Improvements to firmware memory usage
+- Linker improvements
+- StringBuilder class
+
+Roger Glassey has added:
+
+- GUI version of nxjflash
+- GUI version of nxjconsole
+- Convergence of GUI of Data Viewer and Console Viewer
+- Improved Behavior and Arbitrator support
+- Graphics bug fix
+- Stopwatch utility class
+- Pilot and Navigator fixes
+- Remote Navigator sample
+- Button.waitForPress no waits for release 
+- ButtonCounter bug fix
+- Removed recycler utility classes
+- Additions to Float class
+- Improved Connector class
+
+Lawrie Griffiths, Roger Glassey, and Juan Antonio Brenha Moral have added:
+
+- A tutorial on the web site
+
+Lawrie Griffiths and Roger Glassey have added:
+
+- Restructuring of lejos packages including moving third party sensors to lejos.nxt.addon
+
+Lawrie Griffiths has added:
+
+- A Windows installer
+- Improved support for samples and other projects in Eclipse and Netbeans
+- A localization API including support for Monte Carlo Localization
+- Improvements to NXTSocket and NXTServerSocket
+- Improvements to NXTCommand
+- Support for HiTechic IRLink driving PF motors
+- New and modified scripts to support other changes
+- PC Java build files use -source 1.5 -target 1.5 to support MAC OS X
+- Changes to release build for Windows installer and other changes
+- New sample project that replaces examples
+- New pcsamples project for pcsamples
+
+Juan Antonio Brenha Moral has added:
+
+- Support for Mindsensors NXTServo, with sample
+- Improved GPS support and start of support for the location API, including new samples
+- Improved Lattebox support
+- StringTokenizer class and sample
+- Matrix math support with sample
+- RuntimeException class
+- IllegalArgumentException class
+- ArrayIndexOutofBoundsException class
+- Enumerator interface
+
+Brian Bagnall has added:
+
+- Start of support for J2ME library for use with mobile phones
+
+
+Michael Smith has contributed
+
+- Support for HiTechic EOPD sensor
+
+Soren Hiller has contributed:
+
+- RCX Temperature Sensor support
+
 leJOS NXJ 0.6 beta
 ------------------
 

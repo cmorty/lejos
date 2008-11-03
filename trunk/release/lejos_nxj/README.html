@@ -41,7 +41,7 @@ These are some of the features offered:
   <li>Recursion</li>
   <li>Synchronization</li>
   <li>Exceptions</li>
-  <li>Java types including float, long, String, but with some restrictions</li>
+  <li>Java types including float, double, long and String</li>
   <li>Math class</li>
   <li>Well-documented Robotics API</li>
 </ul>
@@ -63,23 +63,12 @@ the NXT motors have enabled much improved control over speed, steering and navig
 of the JDK.</li>
   <li>On systems other than Microsoft Windows, you will need to build the distribution, so your PATH must
 contain the ant binary (ant 1.7 or above).</li>
-  <li>You need libusb installed. On Microsoft Windows you should use the libusb-Win32 filter driver. 
-      On Windows Vista it must be run in XP compatibility mode - see below.</li>
   <li>On Microsoft Windows and MAC OS X you will need the LEGO Mindstorms NXT software installed, as its USB drivers are used.</li>
   <li>On MAC OS X systems, you will need the OS X developer tools installed.</li>
-  
 </ul>
 
-The libusb filter driver for Microsoft Windows can be obtained from <a href="http://libusb-win32.sourceforge.net/#downloads">http://libusb-win32.sourceforge.net/#downloads</a>. 
-This does not currently work properly under Windows Vista - see "Known Bugs and Limitations in leJOS NXJ" below.
-However, it works if you install on Vista under Windows XP compatibility mode:<br/>
-<ol>
-<li>Download libusb-win32-filter-bin-0.1.12.1.exe (the version current @ 27/09/07)
-<li>Right click on this file. Select Properties | Compatibility Click the "Run this program in compatibility mode" box and select "Windows XP (Service Pack2)" from the drop down list.
-<li>Right click again and select "Run as Administrator". Follow the installation instructions. Run the test program will list the usb devices plugged into your computer, but not new devices.
-</ol>
 
-libusb for other systems can be obtained from <a href="http://libusb.sourceforge.net">http://libusb.sourceforge.net</a>.<br/><br/>
+libusb must be installed on Linux and MAC OS X and can be obtained from <a href="http://libusb.sourceforge.net">http://libusb.sourceforge.net</a>.<br/><br/>
 
 On Linux systems, if you are running leJOS NXJ from a non-root user, you will need to ensure that you have read and write access the NXT USB device in /dev/bus/usb.
 If you can identify the device in /dev/bus/usb, you can do this by:<br/><br/>
@@ -178,8 +167,10 @@ To compile, link and download the Tune sample:
 <li><em>nxjlink</em> - links a program</li>
 <li><em>nxjupload</em> - uploads and optionally runs a program</li>
 <li><em>nxjbrowse</em> - explorer for NXJ files</li>
+<li><em>nxjflashg</em> - GUI version of nxjflash</li>
 <li><em>nxjmonitor</em> - remote monitoring and tracing over Bluetooth</li>
 <li><em>nxjconsole</em> - remote debugging over USB</li>
+<li><em>nxjconsoleviewer</em> - GUI version of nxjconsole</li>
 <li><em>nxjdataviewer</em> - remote viewer for Datalogger files</li>
 <li><em>nxjproxyserver</em> - proxy server for Socket and SocketServer connections</li>
 <li><em>emu-lejosrun</em> - emulate a leJOS NXJ program on Unix</li>
@@ -199,8 +190,8 @@ To pick a specific NXT to connect to by name, use the <em>--name</em> flag. In t
 and the connection will be much faster. Use <em>nxjbrowse</em> to list the addresses of your NXT devices. An address is 12 hex digits with optional colons
 between the hex pairs.</p>
 
-<p>The leJOS NXJ tools can use different comms driver to connect to the NXT. The only driver available for USB is NXTCommLibnxt, 
-which uses David Anderson's libnxt library and the libusb open source library. This works on all operating systems. 
+<p>The leJOS NXJ tools can use different comms driver to connect to the NXT. The default driver for USB on Windows is NXTCommFantom which uses the LEGO fantom API
+and on other systems is NXTCommLibnxt, which uses David Anderson's libnxt library and the libusb open source library.  
 For Bluetooth on Windows and MAC OS X, NXTCommBluecove, which uses the Bluecove open source library, is used. 
 On Linux, NXTCommBluez, which uses the open source Bluez project, is used for Bluetooth. However,
 there is now a version of Bluecove that works on Linux, but it
@@ -210,8 +201,6 @@ is included in the release. Bluecove uses Bluez, but provides
 a JSR-82 Java Bluetooth interface. To use Bluecove on Linux,
 set NXTCommBluetooth=lejos.pc.comm.NXTCommBluecove in the nxj.properties 
 file (see below).</p>
-
-<p>A future version of leJOS NXJ is expected to support the LEGO Fantom API, which should work for both USB and Bluetooth.</p>
 
 <p>The properties file, lejos_nxt/bin/nxj.properties, can be modified to select different comms drivers.</p>
 
@@ -232,6 +221,7 @@ start of your leJOS program, and RConsole.close() at the end. A stream such as s
 be redirected to the remote console by <em>System.setErr(new PrintStream(RConsole.openOutputStream()));</em>.
 openBluetooth(0) can be used instead of openUSB(0). </p>
 
+<p><em>nxjconsoleviewer</em> is a GUI version of nxjconsole</p> 
 
 <p><em>nxjdataviewer</em> views data log file produced by the Datalogger class - see the DLTest sample.<p>
 <p><em>nxjproxyserver</em> runs a proxy server that can be used to support Socket and SocketServer connections between
@@ -264,8 +254,6 @@ Due to size constraints, some Java language
 features have been omitted. Others just haven't been implemented yet.
 Known limitations with all versions of leJOS are: </a>
 <ul>
-  <li>Arithmetic operations on variables of type long are not
-supported, although you can cast ints to longs and vice versa</li>
   <li>The instanceof operation will always be true for interfaces. In
 bytecode, CHECKCAST succeeds on all interface classes (which is a bit
 unsafe)</li>
@@ -298,8 +286,6 @@ initialized, when multiple threads use a class</li>
 <li>Occasionally, after flashing the firmware with with nxjflash, the battery level shows as empty (0,0) and buttons do not respond. If this happens, a battery must be removed and re-inserted. It is not necessary to repeat the nxjflash.
 </li>
 <li>It is a good idea to restart the brick after flashing leJOS. If not problems with motors can occur.</li>
-<li>There is an issue with the use of the libusb-win32 filter driver on Windows Vista.  Installing libusb-win32 in Windows XP compatibility mode is necessary to circumvent the problem.
-</li>
 <li>Occasionally, after pressing the orange (ENTER) button to start leJOS NXJ, the LCD remains blank. If this occurs, and is not due to low batteries, it is necessary to shut down leJOS, by pressing the orange and dark gray buttons (ENTER + ESCAPE), and try again.
 </li>
 <li>Only one file can be open at a time.
@@ -315,8 +301,6 @@ initialized, when multiple threads use a class</li>
 <li>Support for sound sample files is limited to 8-bit WAV files.
 </li>
 <li>Data aborts occur if there is a failure in the NXJ VM. If a data abort occurs, it is necessary to remove and re-insert a battery.
-</li>
-<li>leJOS NXJ does not work with the LEGO Mindstorms PC software, or the LEGO Mindstorms Fantom API.
 </li>
 <li>On Windows, using the Bluecove library, NXTs that have been paired with the PC are in the list of available NXTs, even when they are not switched on. This does not happen with Bluez on Linux.
 </li>
