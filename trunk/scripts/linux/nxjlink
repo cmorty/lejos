@@ -18,7 +18,7 @@ fi
 THIRDPARTY_LIBS="$NXJ_HOME/3rdparty/lib"
 
 if [ `uname` == "Linux" ]; then
-  BLUECOVELIBS="$THIRDPARTY_LIBS/bluecove203.jar$SEP$THIRDPARTY_LIBS/bluecove-gpl.jar"
+  BLUECOVELIBS="$THIRDPARTY_LIBS/bluecove.jar$SEP$THIRDPARTY_LIBS/bluecove-gpl.jar"
 else
   BLUECOVELIBS="$THIRDPARTY_LIBS/bluecove.jar"
 fi
