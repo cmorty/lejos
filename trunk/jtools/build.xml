@@ -15,7 +15,7 @@
 			<sysproperty key="tinyvm.home" value=".." />
 		</java>
 		<!-- generate tools -->
-		<javac srcdir="." destdir="build" fork="yes" optimize="on" debug="on">
+		<javac srcdir="." destdir="build" fork="yes" source="1.5" target="1.5" optimize="on" debug="on">
 			<classpath location="3rdparty/lib/commons-cli-1.0.jar" />
 			<classpath location="3rdparty/lib/bcel-5.1.jar" />
 		</javac>
