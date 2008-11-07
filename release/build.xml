@@ -17,12 +17,12 @@
 	<property name="src" value="${lejos.root}"/>
 	<property name="javasrc" value="${src}"/>
 	<property name="javavm.src" value="${src}/nxtvm/javavm"/>
-	<property name="release.tmp" value="${release}/tmp"/>
 	<property name="release.lib" value="${release.nxj}/lib"/>
 	<property name="release.src" value="${release.nxj}/src"/>
+	<property name="release.projects" value="${release.nxj}/projects"/>
 	<property name="release.dist" value="${release}/dist"/>
-	<property name="release.docs" value="${release.nxj}/docs"/>
-	<property name="release.samples" value="${release.nxj}/samples"/>
+	<property name="release.classes.docs" value="${release.nxj}/projects/classes/doc"/>
+	<property name="release.pc.docs" value="${release.nxj}/projects/pccomms/doc"/>
 	<property name="release.3rdparty.libs" value="${release.nxj}/3rdparty/lib"/>
 	<property name="plat.unix.src" value="${src}/nxtvm/platform/unix"/>
 	<property name="plat.nxt.src" value="${src}/nxtvm/platform/nxt"/>
@@ -41,7 +41,7 @@
 	</typedef>
 	
 	<!-- release leJOS NXJ --> 
-	<target name="release" depends ="clean,create.folders,lejos.sources,libs,scripts,samples,platform.doc, pc.doc"
+	<target name="release" depends ="clean,create.folders,lejos.sources,libs,scripts,samples,pcsamples,platform.doc, pc.doc"
 		description="releases leJOS NXJ">
 		<!-- clean distribution -->
 		<delete>
@@ -69,8 +69,7 @@
 		<delete dir="${release.bin}"/>
 		<delete dir="${release.lib}"/>
 	  	<delete dir="${release.src}"/>
-	  	<delete dir="${release.docs}"/>
-	  	<delete dir="${release.samples}"/>
+	  	<delete dir="${release.projects}"/>
 		<!-- delete compiled and generated artifacts -->
 		<delete>
 			<fileset dir="${lejos.root}"> 
@@ -92,16 +91,41 @@
   	
 	<!-- copies the lejos sources -->
 	<target name="lejos.sources" description="copies the lejos sources">
-		<copy todir="${release.src}/java">
+		<copy todir="${release.projects}">
 			<fileset dir="${javasrc}">
-        		<include name="classes/**/*.java"/>
-				<include name="classes/**/*package.html"/>
-        		<include name="jtools/**/*.java"/>
-				<include name="pctools/**/*.java"/>
-				<exclude name="pctools//**/BatteryLevel.java"/>
-				<include name="pccomms/**/*.java"/>
-				<include name="pccomms/**/*package.html"/>
-				<include name="startup/**/*.java"/>
+        		<include name="classes/**"/>
+      			<exclude name="classes/**/.svn"/>
+      			<exclude name="classes/.settings/**"/>
+      			<exclude name="classes/.externalToolBuilders/**"/>
+      			<exclude name="classes/build/**"/>
+      			<exclude name="classes/nbproject/private/**"/>
+        		<include name="jtools/**"/>
+      			<exclude name="jtools/**/.svn"/>
+      			<exclude name="jtools/.settings/**"/>
+      			<exclude name="jtools/.externalToolBuilders/**"/>
+      			<exclude name="jtools/build/**"/>
+      			<exclude name="jtools/nbproject/private/**"/>
+				<exclude name="jtools/3rdparty/**"/>
+				<include name="pctools/**"/>
+				<exclude name="pctools/**/BatteryLevel.java"/>
+      			<exclude name="pctools/**/.svn"/>
+      			<exclude name="pctools/.settings/**"/>
+      			<exclude name="pctools/.externalToolBuilders/**"/>
+      			<exclude name="pctools/build/**"/>
+      			<exclude name="pctools/nbproject/private/**"/>
+				<include name="pccomms/**"/>
+      			<exclude name="pccomms/**/.svn"/>
+      			<exclude name="pccomms/.settings/**"/>
+      			<exclude name="pccomms/.externalToolBuilders/**"/>
+      			<exclude name="pccomms/build/**"/>
+      			<exclude name="pccomms/nbproject/private/**"/>
+				<exclude name="pccomms/3rdparty/**"/>
+				<include name="startup/**"/>
+      			<exclude name="startup/**/.svn"/>
+      			<exclude name="startup/.settings/**"/>
+      			<exclude name="startup/.externalToolBuilders/**"/>
+      			<exclude name="startup/build/**"/>
+      			<exclude name="startup/nbproject/private/**"/>
       		</fileset>
 		</copy>
 
@@ -162,6 +186,15 @@
           	</fileset>
 		</copy>
 		
+		<copy todir="${release.src}/jfantom">
+          	<fileset dir="${src}/jfantom">
+            	<include name="**/*.cpp"/>
+            	<include name="**/*.h"/>
+          		<include name="build.sh"/>
+          		<include name="build.bat"/>
+          	</fileset>
+		</copy>
+		
 	</target>
 
 	<!-- makes a timestamp and creates some required folders -->
@@ -170,8 +203,7 @@
     	<mkdir dir="${release.bin}"/>
     	<mkdir dir="${release.lib}"/>
     	<mkdir dir="${release.src}"/>
-    	<mkdir dir="${release.docs}"/>
-    	<mkdir dir="${release.samples}"/>
+    	<mkdir dir="${release.projects}"/>
   	</target>
 
 	<!-- copies the run scripts and other binaries -->
@@ -184,9 +216,11 @@
       			<include name="nxjupload"/>
       			<include name="nxjbrowse"/>
       			<include name="nxjconsole"/>
+      			<include name="nxjconsoleviewer"/>
       			<include name="nxjdataviewer"/>
       			<include name="nxjmonitor"/>
       			<include name="nxjsocketproxy"/>
+      			<include name="nxjflashg"/>
       		</fileset>
       		<fileset dir="${lejos.root}/scripts/windows">
         		<include name="*.bat"/>
@@ -195,13 +229,8 @@
 		
 		<copy todir="${release.bin}">
       		<fileset dir="${lejos.root}/snapshot/bin">
-        		<include name="nxjflash.exe"/>
+        		<include name="jfantom.dll"/>
       			<include name="jlibnxt.dll"/>
-      		</fileset>
-    	</copy>
-		
-		<copy todir="${release.bin}">
-      		<fileset dir="${plat.nxt.src}">
       			<include name="lejos_nxt_rom.bin"/>
       			<include name="StartUpText.bin"/>
       		</fileset>
@@ -241,12 +270,30 @@
 
 	<!-- copies the samples -->
 	<target name="samples" depends="create.folders" description="copies the samples">
-		<copy todir="${release.samples}">
-      		<fileset dir="${lejos.root}/examples">
+		<copy todir="${release.projects}/samples">
+      		<fileset dir="${lejos.root}/samples">
 			 	<exclude name="BTTest/**"/>
-			 	<exclude name="BtTestPC/**"/>
       			<exclude name="**/*.nxj"/>
-      			<exclude name="**/.*"/>
+      			<exclude name="**/.svn"/>
+      			<exclude name=".settings/**"/>
+      			<exclude name=".externalToolBuilders/**"/>
+      			<exclude name="build/**"/>
+      			<exclude name="nbproject/private/**"/>
+      		</fileset>
+    	</copy>
+	</target>
+	
+	<!-- copies the pc samples -->
+	<target name="pcsamples" depends="create.folders" description="copies the samples">
+		<copy todir="${release.projects}/pcsamples">
+      		<fileset dir="${lejos.root}/pcsamples">
+			 	<exclude name="BtTestPC/**"/>
+      			<exclude name="**/.svn"/>
+      			<exclude name=".settings/**"/>
+      			<exclude name=".externalToolBuilders/**"/>
+      			<exclude name="build/**"/>
+      			<exclude name="bin/**"/>
+      			<exclude name="nbproject/private/**"/>
       		</fileset>
     	</copy>
 	</target>
@@ -264,12 +311,11 @@
 			    <include name="lejos_nxj/lib/*.jar"/>
 			    <include name="lejos_nxj/src/**"/>
 			    <include name="lejos_nxj/bin/*"/>
+			 	<include name="lejos_nxj/projects/**"/>
 			 	<exclude name="lejos_nxj/bin/*.xml"/>
 			 	<exclude name="lejos_nxj/bin/*.exe"/>
 			 	<exclude name="lejos_nxj/bin/*.dll"/>
 			 	<exclude name="lejos_nxj/bin/*.bat"/>
-			    <include name="lejos_nxj/samples/**"/>
-			 	<exclude name="lejos_nxj/samples/**/README"/>
 			 	<include name="lejos_nxj/build/*"/>
 			 	<include name="lejos_nxj/3rdparty/**"/>
 			 	<exclude name="lejos_nxj/3rdparty/lib/*.exe"/>
@@ -290,6 +336,7 @@
 			 	<include name="lejos_nxj/LEGAL"/>
 			 	<include name="lejos_nxj/ACKNOWLEDGMENTS"/>
 			    <include name="lejos_nxj/lib/*.jar"/>
+			 	<include name="lejos_nxj/projects/**"/>
 			    <include name="lejos_nxj/src/**"/>
 			 	<exclude name="lejos_nxj/src/jbluez/**"/>
 			    <include name="lejos_nxj/bin/*"/>
@@ -304,24 +351,22 @@
 			 	<exclude name="lejos_nxj/bin/nxjconsole"/>
 			 	<exclude name="lejos_nxj/bin/nxjdataviewer"/>
 			 	<exclude name="lejos_nxj/bin/nxjsocketproxy"/>
+			 	<exclude name="lejos_nxj/bin/nxjflashg"/>
 			 	<exclude name="lejos_nxj/bin/*.so"/>
-			    <include name="lejos_nxj/samples/**"/>
-			 	<exclude name="lejos_nxj/samples/**/README"/>
 			 	<include name="lejos_nxj/3rdparty/**"/>
 				<exclude name="lejos_nxj/3rdparty/lib/bluecove203.jar"/>
 			 	<exclude name="lejos_nxj/3rdparty/lib/bluecove-gpl.jar"/>
-			 	<include name="lejos_nxj/docs/**"/>
 			  </fileset>
 		</zip>
 	</target>
 
 	<!-- creates the platform API doc -->
   <target name="platform.doc" depends="" description="generate the platform API doc">
-    <mkdir dir="${release.docs}/apidocs"/>
+    <mkdir dir="${release.classes.docs}"/>
     <javadoc protected="true"
-             windowtitle="leJOS NXT API documentation"
+             windowtitle="leJOS NXJ API documentation"
              author="true"
-             destdir="${release.docs}/apidocs"
+             destdir="${release.classes.docs}"
              source="1.3"
              defaultexcludes="yes">
       <fileset dir="${javasrc}/classes">
@@ -337,11 +382,11 @@
 	
 	<!-- creates the PC API doc -->
   <target name="pc.doc" depends="" description="generate the platform API doc">
-    <mkdir dir="${release.docs}/apidocs"/>
+    <mkdir dir="${release.pc.docs}"/>
     <javadoc protected="true"
-             windowtitle="leJOS NXT PC API documentation"
+             windowtitle="leJOS NXJ PC API documentation"
              author="true"
-             destdir="${release.docs}/pcapidocs"
+             destdir="${release.pc.docs}"
              source="1.5"
     	     classpath="${javasrc}/pccomms/3rdparty/lib/bluecove.jar"
              defaultexcludes="yes">
@@ -357,5 +402,4 @@
       </fileset>
     </javadoc>
   </target>
-
 </project>
