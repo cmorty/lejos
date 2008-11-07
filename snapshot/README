@@ -1,10 +1,8 @@
 To run lejos NXT Java test programs on Windows using this snapshot, you need to do the following:
 
 - Install the Lego Mindstorms NXT software
-- Install the libusb Filter Driver.
 - Install an SVN client for Windows.
 - Checkout the snapshot project from SVN into <snapshot directory>
-- Do a long reset on your NXT
 - Plug-in your NXT to a USB port
 - Set NXJ_HOME to <snapshot directory>
 - Add <snapshot directory>\bin to the PATH
@@ -13,11 +11,6 @@ To run lejos NXT Java test programs on Windows using this snapshot, you need to 
 - Run programs with nxj
 
 See below for how to compile and link your own program.
-
-Install the libusb filter driver
---------------------------------
-
-See http://libusb-win32.sourceforge.net/#downloads
 
 Install an SVN client for Windows
 ---------------------------------
