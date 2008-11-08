@@ -10,7 +10,6 @@
   	<property file="build.properties"/>
 	<property environment="env"/>
 	<property name="lejos.root" value="${basedir}/.."/>
-	<property name="3rdparty.libs" value="${lejos.root}/jtools/3rdparty/lib" />
 	<property name="release" value="${lejos.root}/release"/>
 	<property name="release.nxj" value="${release}/lejos_nxj"/>
 	<property name="release.bin" value="${release.nxj}/bin"/>
@@ -26,17 +25,16 @@
 	<property name="release.3rdparty.libs" value="${release.nxj}/3rdparty/lib"/>
 	<property name="plat.unix.src" value="${src}/nxtvm/platform/unix"/>
 	<property name="plat.nxt.src" value="${src}/nxtvm/platform/nxt"/>
-	<property name="release.3rdparty.cp" value="${release.3rdparty.libs}/commons-cli-1.0.jar:${release.3rdparty.libs}/bcel-5.1.jar"/>
 
 	<!-- cpptasks task & type def -->
 	<taskdef resource="cpptasks.tasks">
 	  <classpath>
-	    <pathelement location="${3rdparty.libs}/cpptasks.jar"/>
+	    <pathelement location="${release.3rdparty.libs}/cpptasks.jar"/>
 	  </classpath>
 	</taskdef>
 	<typedef resource="cpptasks.types">
 	  <classpath>
-	    <pathelement location="${3rdparty.libs}/cpptasks.jar"/>
+	    <pathelement location="${release.3rdparty.libs}/cpptasks.jar"/>
 	  </classpath>
 	</typedef>
 	
