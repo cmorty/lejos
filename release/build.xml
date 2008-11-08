@@ -370,6 +370,7 @@
       <fileset dir="${javasrc}/classes">
       		<exclude name="doc/**"/>
       	    <exclude name="build/**"/>
+      		<exclude name="nbproject/**"/>
       	    <exclude name="lib/**"/>
       	    <exclude name="**/.*/**"/>
       	    <exclude name="**/package.html"/>
@@ -391,6 +392,7 @@
       <fileset dir="${javasrc}/pccomms">
       		<exclude name="doc/**"/>
       	    <exclude name="build/**"/>
+      		<exclude name="nbproject/**"/>
       	    <exclude name="**/pccomm.jar"/>
       		<exclude name="3rdparty/**"/>
       	    <exclude name="**/.*/**"/>
