@@ -10,5 +10,6 @@
 	<classpathentry kind="src" path="SocketServer"/>
 	<classpathentry kind="src" path="BTSend"/>
 	<classpathentry kind="lib" path="/pccomms/3rdparty/lib/bluecove.jar"/>
+	<classpathentry kind="lib" path="/pctools/lib/pctools.jar" sourcepath="/pctools"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
