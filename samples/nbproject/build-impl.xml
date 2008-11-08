@@ -94,6 +94,7 @@ is divided into following sections:
                 <available file="${src.MemoryTest.dir}"/>
                 <available file="${src.MonitorTest.dir}"/>
                 <available file="${src.NXTCamTest.dir}"/>
+                <available file="${src.NXTServoTest.dir}"/>
                 <available file="${src.PerformanceTest.dir}"/>
                 <available file="${src.PFTest.dir}"/>
                 <available file="${src.PilotTester.dir}"/>
@@ -198,6 +199,7 @@ is divided into following sections:
         <fail unless="src.MemoryTest.dir">Must set src.MemoryTest.dir</fail>
         <fail unless="src.MonitorTest.dir">Must set src.MonitorTest.dir</fail>
         <fail unless="src.NXTCamTest.dir">Must set src.NXTCamTest.dir</fail>
+        <fail unless="src.NXTServoTest.dir">Must set src.NXTServoTest.dir</fail>
         <fail unless="src.PerformanceTest.dir">Must set src.PerformanceTest.dir</fail>
         <fail unless="src.PFTest.dir">Must set src.PFTest.dir</fail>
         <fail unless="src.PilotTester.dir">Must set src.PilotTester.dir</fail>
@@ -243,7 +245,7 @@ is divided into following sections:
     </target>
     <target name="-init-macrodef-javac">
         <macrodef name="javac" uri="http://www.netbeans.org/ns/j2se-project/3">
-            <attribute default="${src.BlueStats.dir}:${src.BTConnectTest.dir}:${src.BTGPS.dir}:${src.BTReceive.dir}:${src.BTTest.dir}:${src.build.dir}:${src.BumperCar.dir}:${src.ColorDetector.dir}:${src.CompassTest.dir}:${src.DistanceTest.dir}:${src.DLTest.dir}:${src.ExceptionTest.dir}:${src.FileTest.dir}:${src.GraphicsSample.dir}:${src.HelloWorld.dir}:${src.I2CDevices.dir}:${src.KeyboardTest.dir}:${src.LatteboxTest.dir}:${src.LCDUI.dir}:${src.Line.dir}:${src.Listen.dir}:${src.LLCMonitor.dir}:${src.MatrixTest.dir}:${src.MemoryTest.dir}:${src.MonitorTest.dir}:${src.NXTCamTest.dir}:${src.PerformanceTest.dir}:${src.PFTest.dir}:${src.PilotTester.dir}:${src.RCNavigator.dir}:${src.RCXEmulator.dir}:${src.RCXMMTest.dir}:${src.RCXMuxTest.dir}:${src.RCXPortTest.dir}:${src.RCXRemote.dir}:${src.RCXRemoteMotor.dir}:${src.RCXTempTest.dir}:${src.RemoteNXTTest.dir}:${src.SignalTest.dir}:${src.SocketTest.dir}:${src.SonicTest.dir}:${src.SoundSample.dir}:${src.SpeedTest.dir}:${src.STTest.dir}:${src.Subsumption1.dir}:${src.Subsumption2.dir}:${src.TiltTest.dir}:${src.TimeTest.dir}:${src.Tune.dir}:${src.USBReceive.dir}:${src.View.dir}" name="srcdir"/>
+            <attribute default="${src.BlueStats.dir}:${src.BTConnectTest.dir}:${src.BTGPS.dir}:${src.BTReceive.dir}:${src.BTTest.dir}:${src.build.dir}:${src.BumperCar.dir}:${src.ColorDetector.dir}:${src.CompassTest.dir}:${src.DistanceTest.dir}:${src.DLTest.dir}:${src.ExceptionTest.dir}:${src.FileTest.dir}:${src.GraphicsSample.dir}:${src.HelloWorld.dir}:${src.I2CDevices.dir}:${src.KeyboardTest.dir}:${src.LatteboxTest.dir}:${src.LCDUI.dir}:${src.Line.dir}:${src.Listen.dir}:${src.LLCMonitor.dir}:${src.MatrixTest.dir}:${src.MemoryTest.dir}:${src.MonitorTest.dir}:${src.NXTCamTest.dir}:${src.NXTServoTest.dir}:${src.PerformanceTest.dir}:${src.PFTest.dir}:${src.PilotTester.dir}:${src.RCNavigator.dir}:${src.RCXEmulator.dir}:${src.RCXMMTest.dir}:${src.RCXMuxTest.dir}:${src.RCXPortTest.dir}:${src.RCXRemote.dir}:${src.RCXRemoteMotor.dir}:${src.RCXTempTest.dir}:${src.RemoteNXTTest.dir}:${src.SignalTest.dir}:${src.SocketTest.dir}:${src.SonicTest.dir}:${src.SoundSample.dir}:${src.SpeedTest.dir}:${src.STTest.dir}:${src.Subsumption1.dir}:${src.Subsumption2.dir}:${src.TiltTest.dir}:${src.TimeTest.dir}:${src.Tune.dir}:${src.USBReceive.dir}:${src.View.dir}" name="srcdir"/>
             <attribute default="${build.classes.dir}" name="destdir"/>
             <attribute default="${javac.classpath}" name="classpath"/>
             <attribute default="${includes}" name="includes"/>
@@ -262,7 +264,7 @@ is divided into following sections:
             </sequential>
         </macrodef>
         <macrodef name="depend" uri="http://www.netbeans.org/ns/j2se-project/3">
-            <attribute default="${src.BlueStats.dir}:${src.BTConnectTest.dir}:${src.BTGPS.dir}:${src.BTReceive.dir}:${src.BTTest.dir}:${src.build.dir}:${src.BumperCar.dir}:${src.ColorDetector.dir}:${src.CompassTest.dir}:${src.DistanceTest.dir}:${src.DLTest.dir}:${src.ExceptionTest.dir}:${src.FileTest.dir}:${src.GraphicsSample.dir}:${src.HelloWorld.dir}:${src.I2CDevices.dir}:${src.KeyboardTest.dir}:${src.LatteboxTest.dir}:${src.LCDUI.dir}:${src.Line.dir}:${src.Listen.dir}:${src.LLCMonitor.dir}:${src.MatrixTest.dir}:${src.MemoryTest.dir}:${src.MonitorTest.dir}:${src.NXTCamTest.dir}:${src.PerformanceTest.dir}:${src.PFTest.dir}:${src.PilotTester.dir}:${src.RCNavigator.dir}:${src.RCXEmulator.dir}:${src.RCXMMTest.dir}:${src.RCXMuxTest.dir}:${src.RCXPortTest.dir}:${src.RCXRemote.dir}:${src.RCXRemoteMotor.dir}:${src.RCXTempTest.dir}:${src.RemoteNXTTest.dir}:${src.SignalTest.dir}:${src.SocketTest.dir}:${src.SonicTest.dir}:${src.SoundSample.dir}:${src.SpeedTest.dir}:${src.STTest.dir}:${src.Subsumption1.dir}:${src.Subsumption2.dir}:${src.TiltTest.dir}:${src.TimeTest.dir}:${src.Tune.dir}:${src.USBReceive.dir}:${src.View.dir}" name="srcdir"/>
+            <attribute default="${src.BlueStats.dir}:${src.BTConnectTest.dir}:${src.BTGPS.dir}:${src.BTReceive.dir}:${src.BTTest.dir}:${src.build.dir}:${src.BumperCar.dir}:${src.ColorDetector.dir}:${src.CompassTest.dir}:${src.DistanceTest.dir}:${src.DLTest.dir}:${src.ExceptionTest.dir}:${src.FileTest.dir}:${src.GraphicsSample.dir}:${src.HelloWorld.dir}:${src.I2CDevices.dir}:${src.KeyboardTest.dir}:${src.LatteboxTest.dir}:${src.LCDUI.dir}:${src.Line.dir}:${src.Listen.dir}:${src.LLCMonitor.dir}:${src.MatrixTest.dir}:${src.MemoryTest.dir}:${src.MonitorTest.dir}:${src.NXTCamTest.dir}:${src.NXTServoTest.dir}:${src.PerformanceTest.dir}:${src.PFTest.dir}:${src.PilotTester.dir}:${src.RCNavigator.dir}:${src.RCXEmulator.dir}:${src.RCXMMTest.dir}:${src.RCXMuxTest.dir}:${src.RCXPortTest.dir}:${src.RCXRemote.dir}:${src.RCXRemoteMotor.dir}:${src.RCXTempTest.dir}:${src.RemoteNXTTest.dir}:${src.SignalTest.dir}:${src.SocketTest.dir}:${src.SonicTest.dir}:${src.SoundSample.dir}:${src.SpeedTest.dir}:${src.STTest.dir}:${src.Subsumption1.dir}:${src.Subsumption2.dir}:${src.TiltTest.dir}:${src.TimeTest.dir}:${src.Tune.dir}:${src.USBReceive.dir}:${src.View.dir}" name="srcdir"/>
             <attribute default="${build.classes.dir}" name="destdir"/>
             <attribute default="${javac.classpath}" name="classpath"/>
             <sequential>
@@ -311,13 +313,13 @@ is divided into following sections:
             </sequential>
         </macrodef>
     </target>
-    <target depends="-init-debug-args" name="-init-macrodef-nbjpda">
+    <target name="-init-macrodef-nbjpda">
         <macrodef name="nbjpdastart" uri="http://www.netbeans.org/ns/j2se-project/1">
             <attribute default="${main.class}" name="name"/>
             <attribute default="${debug.classpath}" name="classpath"/>
             <attribute default="" name="stopclassname"/>
             <sequential>
-                <nbjpdastart addressproperty="jpda.address" name="@{name}" stopclassname="@{stopclassname}" transport="${debug-transport}">
+                <nbjpdastart addressproperty="jpda.address" name="@{name}" stopclassname="@{stopclassname}" transport="dt_socket">
                     <classpath>
                         <path path="@{classpath}"/>
                     </classpath>
@@ -348,12 +350,6 @@ is divided into following sections:
         <condition else="-Xdebug" property="debug-args-line" value="-Xdebug -Xnoagent -Djava.compiler=none">
             <istrue value="${have-jdk-older-than-1.4}"/>
         </condition>
-        <condition else="dt_socket" property="debug-transport-by-os" value="dt_shmem">
-            <os family="windows"/>
-        </condition>
-        <condition else="${debug-transport-by-os}" property="debug-transport" value="${debug.transport}">
-            <isset property="debug.transport"/>
-        </condition>
     </target>
     <target depends="-init-debug-args" name="-init-macrodef-debug">
         <macrodef name="debug" uri="http://www.netbeans.org/ns/j2se-project/3">
@@ -363,7 +359,7 @@ is divided into following sections:
             <sequential>
                 <java classname="@{classname}" dir="${work.dir}" fork="true">
                     <jvmarg line="${debug-args-line}"/>
-                    <jvmarg value="-Xrunjdwp:transport=${debug-transport},address=${jpda.address}"/>
+                    <jvmarg value="-Xrunjdwp:transport=dt_socket,address=${jpda.address}"/>
                     <jvmarg line="${run.jvmargs}"/>
                     <classpath>
                         <path path="@{classpath}"/>
@@ -410,13 +406,6 @@ is divided into following sections:
                 ===================
             -->
     <target depends="init" name="deps-jar" unless="no.deps"/>
-    <target depends="init,-check-automatic-build,-clean-after-automatic-build" name="-verify-automatic-build"/>
-    <target depends="init" name="-check-automatic-build">
-        <available file="${build.classes.dir}/.netbeans_automatic_build" property="netbeans.automatic.build"/>
-    </target>
-    <target depends="init" if="netbeans.automatic.build" name="-clean-after-automatic-build">
-        <antcall target="clean"/>
-    </target>
     <target depends="init,deps-jar" name="-pre-pre-compile">
         <mkdir dir="${build.classes.dir}"/>
     </target>
@@ -456,6 +445,7 @@ is divided into following sections:
             <fileset dir="${src.MemoryTest.dir}" excludes="${build.classes.excludes},${excludes}" includes="${includes}"/>
             <fileset dir="${src.MonitorTest.dir}" excludes="${build.classes.excludes},${excludes}" includes="${includes}"/>
             <fileset dir="${src.NXTCamTest.dir}" excludes="${build.classes.excludes},${excludes}" includes="${includes}"/>
+            <fileset dir="${src.NXTServoTest.dir}" excludes="${build.classes.excludes},${excludes}" includes="${includes}"/>
             <fileset dir="${src.PerformanceTest.dir}" excludes="${build.classes.excludes},${excludes}" includes="${includes}"/>
             <fileset dir="${src.PFTest.dir}" excludes="${build.classes.excludes},${excludes}" includes="${includes}"/>
             <fileset dir="${src.PilotTester.dir}" excludes="${build.classes.excludes},${excludes}" includes="${includes}"/>
@@ -487,7 +477,7 @@ is divided into following sections:
         <!-- Empty placeholder for easier customization. -->
         <!-- You can override this target in the ../build.xml file. -->
     </target>
-    <target depends="init,deps-jar,-verify-automatic-build,-pre-pre-compile,-pre-compile,-do-compile,-post-compile" description="Compile project." name="compile"/>
+    <target depends="init,deps-jar,-pre-pre-compile,-pre-compile,-do-compile,-post-compile" description="Compile project." name="compile"/>
     <target name="-pre-compile-single">
         <!-- Empty placeholder for easier customization. -->
         <!-- You can override this target in the ../build.xml file. -->
@@ -495,7 +485,7 @@ is divided into following sections:
     <target depends="init,deps-jar,-pre-pre-compile" name="-do-compile-single">
         <fail unless="javac.includes">Must select some files in the IDE or set javac.includes</fail>
         <j2seproject3:force-recompile/>
-        <j2seproject3:javac excludes="" includes="${javac.includes}" sourcepath="${src.BlueStats.dir}:${src.BTConnectTest.dir}:${src.BTGPS.dir}:${src.BTReceive.dir}:${src.BTTest.dir}:${src.build.dir}:${src.BumperCar.dir}:${src.ColorDetector.dir}:${src.CompassTest.dir}:${src.DistanceTest.dir}:${src.DLTest.dir}:${src.ExceptionTest.dir}:${src.FileTest.dir}:${src.GraphicsSample.dir}:${src.HelloWorld.dir}:${src.I2CDevices.dir}:${src.KeyboardTest.dir}:${src.LatteboxTest.dir}:${src.LCDUI.dir}:${src.Line.dir}:${src.Listen.dir}:${src.LLCMonitor.dir}:${src.MatrixTest.dir}:${src.MemoryTest.dir}:${src.MonitorTest.dir}:${src.NXTCamTest.dir}:${src.PerformanceTest.dir}:${src.PFTest.dir}:${src.PilotTester.dir}:${src.RCNavigator.dir}:${src.RCXEmulator.dir}:${src.RCXMMTest.dir}:${src.RCXMuxTest.dir}:${src.RCXPortTest.dir}:${src.RCXRemote.dir}:${src.RCXRemoteMotor.dir}:${src.RCXTempTest.dir}:${src.RemoteNXTTest.dir}:${src.SignalTest.dir}:${src.SocketTest.dir}:${src.SonicTest.dir}:${src.SoundSample.dir}:${src.SpeedTest.dir}:${src.STTest.dir}:${src.Subsumption1.dir}:${src.Subsumption2.dir}:${src.TiltTest.dir}:${src.TimeTest.dir}:${src.Tune.dir}:${src.USBReceive.dir}:${src.View.dir}"/>
+        <j2seproject3:javac excludes="" includes="${javac.includes}" sourcepath="${src.BlueStats.dir}:${src.BTConnectTest.dir}:${src.BTGPS.dir}:${src.BTReceive.dir}:${src.BTTest.dir}:${src.build.dir}:${src.BumperCar.dir}:${src.ColorDetector.dir}:${src.CompassTest.dir}:${src.DistanceTest.dir}:${src.DLTest.dir}:${src.ExceptionTest.dir}:${src.FileTest.dir}:${src.GraphicsSample.dir}:${src.HelloWorld.dir}:${src.I2CDevices.dir}:${src.KeyboardTest.dir}:${src.LatteboxTest.dir}:${src.LCDUI.dir}:${src.Line.dir}:${src.Listen.dir}:${src.LLCMonitor.dir}:${src.MatrixTest.dir}:${src.MemoryTest.dir}:${src.MonitorTest.dir}:${src.NXTCamTest.dir}:${src.NXTServoTest.dir}:${src.PerformanceTest.dir}:${src.PFTest.dir}:${src.PilotTester.dir}:${src.RCNavigator.dir}:${src.RCXEmulator.dir}:${src.RCXMMTest.dir}:${src.RCXMuxTest.dir}:${src.RCXPortTest.dir}:${src.RCXRemote.dir}:${src.RCXRemoteMotor.dir}:${src.RCXTempTest.dir}:${src.RemoteNXTTest.dir}:${src.SignalTest.dir}:${src.SocketTest.dir}:${src.SonicTest.dir}:${src.SoundSample.dir}:${src.SpeedTest.dir}:${src.STTest.dir}:${src.Subsumption1.dir}:${src.Subsumption2.dir}:${src.TiltTest.dir}:${src.TimeTest.dir}:${src.Tune.dir}:${src.USBReceive.dir}:${src.View.dir}"/>
     </target>
     <target name="-post-compile-single">
         <!-- Empty placeholder for easier customization. -->
@@ -705,6 +695,9 @@ is divided into following sections:
                 <filename name="**/*.java"/>
             </fileset>
             <fileset dir="${src.NXTCamTest.dir}" excludes="${excludes}" includes="${includes}">
+                <filename name="**/*.java"/>
+            </fileset>
+            <fileset dir="${src.NXTServoTest.dir}" excludes="${excludes}" includes="${includes}">
                 <filename name="**/*.java"/>
             </fileset>
             <fileset dir="${src.PerformanceTest.dir}" excludes="${excludes}" includes="${includes}">

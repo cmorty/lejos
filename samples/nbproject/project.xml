@@ -32,6 +32,7 @@
                 <root id="src.MemoryTest.dir"/>
                 <root id="src.MonitorTest.dir"/>
                 <root id="src.NXTCamTest.dir"/>
+                <root id="src.NXTServoTest.dir"/>
                 <root id="src.PerformanceTest.dir"/>
                 <root id="src.PFTest.dir"/>
                 <root id="src.PilotTester.dir"/>
