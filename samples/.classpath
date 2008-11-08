@@ -54,7 +54,7 @@
 	<classpathentry kind="src" path="View"/>
 	<classpathentry exported="true" kind="lib" path="/classes/lib/classes.jar" sourcepath="/classes">
 		<attributes>
-			<attribute name="javadoc_location" value="file:/C:/Users/Lawrie/workspace/classes/doc/"/>
+			<attribute name="javadoc_location" value="http://lejos.sourceforge.net/p_technologies/nxt/nxj/api/index.html"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
