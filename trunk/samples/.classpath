@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry excluding="BTConnectTest/|BTGPS/|BTKeyboard/|BTReceive/|BlueStats/|BumperCar/|ColorDetector/|CompassTest/|DLTest/|ExceptionTest/|FileTest/|GraphicsSample/|HelloWorld/|I2CDevices/|KeyboardTest/|LCDUI/|LLCMonitor/|LLCTest/|LatteboxTest/|Line/|Listen/|MatrixTest/|MemoryTest/|MonitorTest/|NXTCamTest/|PFTest/|PerformanceTest/|PilotTester/|RCXEmulator/|RCXLinkTest/|RCXMMTest/|RCXMuxTest/|RCXPortTest/|RCXRemote/|RCXRemoteMotor/|RCXTempTest/|RemoteMotor/|RemoteNXTTest/|SerialTest/|SignalTest/|SocketTest/|SonicTest/|SoundSample/|SpeedTest/|Subsumption1/|Subsumption2/|TiltTest/|TimeTest/|Tune/|USBReceive/|View/|BTTest/|DistanceTest/|STTest/|RCNavigator/|NXTServoTest/" kind="src" path=""/>
-	<classpathentry kind="src" path="NXTServoTest"/>
 	<classpathentry kind="src" path="BlueStats"/>
 	<classpathentry kind="src" path="BTConnectTest"/>
 	<classpathentry kind="src" path="BTGPS"/>
@@ -27,6 +26,7 @@
 	<classpathentry kind="src" path="MemoryTest"/>
 	<classpathentry kind="src" path="MonitorTest"/>
 	<classpathentry kind="src" path="NXTCamTest"/>
+	<classpathentry kind="src" path="NXTServoTest"/>
 	<classpathentry kind="src" path="PerformanceTest"/>
 	<classpathentry kind="src" path="PFTest"/>
 	<classpathentry kind="src" path="PilotTester"/>
