@@ -347,6 +347,7 @@
 			 	<exclude name="lejos_nxj/bin/nxjflash"/>
 				<exclude name="lejos_nxj/bin/nxjmonitor"/>
 			 	<exclude name="lejos_nxj/bin/nxjconsole"/>
+			 	<exclude name="lejos_nxj/bin/nxjconsoleviewer"/>
 			 	<exclude name="lejos_nxj/bin/nxjdataviewer"/>
 			 	<exclude name="lejos_nxj/bin/nxjsocketproxy"/>
 			 	<exclude name="lejos_nxj/bin/nxjflashg"/>
