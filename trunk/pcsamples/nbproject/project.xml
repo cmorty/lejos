@@ -11,15 +11,32 @@
             <properties/>
             <folders>
                 <source-folder>
-                    <label>Source Packages</label>
+                    <label>pcsamples</label>
                     <location>.</location>
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
-                    <label>Source Packages</label>
+                    <label>RCNavigationControl</label>
                     <type>java</type>
-                    <location>.</location>
-                    <excludes>bin/**,build.xml,build/**,nbproject/**</excludes>
+                    <location>RCNavigationControl</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>SocketServer</label>
+                    <type>java</type>
+                    <location>SocketServer</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>USBSend</label>
+                    <type>java</type>
+                    <location>USBSend</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>BTSend</label>
+                    <type>java</type>
+                    <location>BTSend</location>
                     <encoding>UTF-8</encoding>
                 </source-folder>
             </folders>
@@ -38,9 +55,20 @@
             <view>
                 <items>
                     <source-folder style="packages">
-                        <label>Source Packages</label>
-                        <location>.</location>
-                        <excludes>bin/**,build.xml,build/**,nbproject/**</excludes>
+                        <label>RCNavigationControl</label>
+                        <location>RCNavigationControl</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>SocketServer</label>
+                        <location>SocketServer</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>USBSend</label>
+                        <location>USBSend</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>BTSend</label>
+                        <location>BTSend</location>
                     </source-folder>
                     <source-file>
                         <location>build.xml</location>
@@ -56,8 +84,11 @@
         </general-data>
         <java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/1">
             <compilation-unit>
-                <package-root>.</package-root>
-                <classpath mode="compile">../pccomms/lib/pccomm.jar;../pccomms/3rdparty/lib/bluecove.jar;../pctools/lib/pctools.jar</classpath>
+                <package-root>RCNavigationControl</package-root>
+                <package-root>SocketServer</package-root>
+                <package-root>USBSend</package-root>
+                <package-root>BTSend</package-root>
+                <classpath mode="compile">../pccomms/lib/pccomm.jar;../pctools/lib/pctools.jar</classpath>
                 <source-level>1.5</source-level>
             </compilation-unit>
         </java-data>
