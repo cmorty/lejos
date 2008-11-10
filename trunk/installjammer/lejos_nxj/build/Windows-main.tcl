@@ -70,7 +70,7 @@ namespace eval ::InstallAPI {}
 namespace eval ::InstallJammer {}
 set conf(version)     1.2.9
 set info(Platform)    Windows
-set info(InstallerID) 4D4F5E6B-8B2C-4AF8-BD61-B7E2A326002D
+set info(InstallerID) 4A1DF5C2-1785-4D69-9598-956C328DCEA6
 array set ::InstallJammer::languagecodes {en English}
 array set info {
 AllowLanguageSelection
@@ -128,7 +128,7 @@ InstallType
 Typical
 
 InstallVersion
-0.6.0.0
+0.7.0.0
 
 MajorVersion
 1
@@ -181,6 +181,9 @@ ProgramName
 ProgramReadme
 <%InstallDir%>/README.html
 
+ProjectsDir
+{<%Home%>\leJOSNXJProjects}
+
 ShortAppName
 {leJOS NXJ}
 
@@ -188,7 +191,7 @@ UpgradeApplicationID
 {}
 
 Version
-0.6
+0.7
 
 WizardHeight
 365
@@ -317,6 +320,69 @@ No
 0CF8A941-C6B7-4DF9-8DEB-BE87A57CA285,UninstallFilename
 uninstall<%Ext%>
 
+0E644024-FB21-44E6-92F4-EAB4D4B4284C,Active
+Yes
+
+0E644024-FB21-44E6-92F4-EAB4D4B4284C,Component
+{}
+
+0E644024-FB21-44E6-92F4-EAB4D4B4284C,Conditions
+{0 conditions}
+
+0E644024-FB21-44E6-92F4-EAB4D4B4284C,ConsoleTitle
+{<%AppName%> Setup}
+
+0E644024-FB21-44E6-92F4-EAB4D4B4284C,ExecuteAction
+2
+
+0E644024-FB21-44E6-92F4-EAB4D4B4284C,ExecuteAsRoot
+No
+
+0E644024-FB21-44E6-92F4-EAB4D4B4284C,ExecuteInConsole
+No
+
+0E644024-FB21-44E6-92F4-EAB4D4B4284C,ID
+{}
+
+0E644024-FB21-44E6-92F4-EAB4D4B4284C,IgnoreErrors
+No
+
+0E644024-FB21-44E6-92F4-EAB4D4B4284C,Include
+0
+
+0E644024-FB21-44E6-92F4-EAB4D4B4284C,IncludeStderr
+No
+
+0E644024-FB21-44E6-92F4-EAB4D4B4284C,ProgramCommandLine
+nxjflashginst
+
+0E644024-FB21-44E6-92F4-EAB4D4B4284C,ProgressiveOutputWidget
+{}
+
+0E644024-FB21-44E6-92F4-EAB4D4B4284C,ResultVirtualText
+ExternalProgramResult
+
+0E644024-FB21-44E6-92F4-EAB4D4B4284C,ShowProgressiveOutput
+No
+
+0E644024-FB21-44E6-92F4-EAB4D4B4284C,StatusVirtualText
+ExternalProgramStatus
+
+0E644024-FB21-44E6-92F4-EAB4D4B4284C,WaitForProgram
+Yes
+
+0E644024-FB21-44E6-92F4-EAB4D4B4284C,WatchProgressiveOutput
+No
+
+0E644024-FB21-44E6-92F4-EAB4D4B4284C,WatchRegularExpression
+{^:([^ ]+) (.*):$}
+
+0E644024-FB21-44E6-92F4-EAB4D4B4284C,WatchVirtualText
+Status
+
+0E644024-FB21-44E6-92F4-EAB4D4B4284C,WorkingDirectory
+<%InstallDir%>/bin
+
 15DAE539-105B-4492-B815-135A1843117F,Active
 Yes
 
@@ -333,7 +399,7 @@ Yes
 1
 
 15DAE539-105B-4492-B815-135A1843117F,FileGroups
-20C58F69-C30F-497D-A4BA-E1B395EC15A7
+{20C58F69-C30F-497D-A4BA-E1B395EC15A7 AD765739-B160-40DD-B1D3-2E618C29A519}
 
 15DAE539-105B-4492-B815-135A1843117F,ID
 {}
@@ -399,7 +465,7 @@ Yes
 <%InstallDir%>
 
 20C58F69-C30F-497D-A4BA-E1B395EC15A7,FileSize
-11615914
+4708225
 
 20C58F69-C30F-497D-A4BA-E1B395EC15A7,FileUpdateMethod
 0
@@ -467,7 +533,6 @@ JDKDescription
 22B22D81-67CF-4BFD-A7FE-5FECA55B49A4,TclScript
 {catch { exec javac.exe -version } output
 set firstline [lindex [split $output \n] 0]
-set firstline [lindex [split $output :] 0]
 set firstword [lindex $firstline 0]
 if {$firstword != "javac"} {
   return "No JDK Installed"
@@ -651,69 +716,6 @@ Yes
 407A22BB-EB05-4A04-9855-B8FAF6A0EF41,Permission
 {can create}
 
-44AD6793-47A7-4193-AE57-BDDB69799092,Active
-Yes
-
-44AD6793-47A7-4193-AE57-BDDB69799092,Component
-{}
-
-44AD6793-47A7-4193-AE57-BDDB69799092,Conditions
-{2 conditions}
-
-44AD6793-47A7-4193-AE57-BDDB69799092,ConsoleTitle
-{<%AppName%> Setup}
-
-44AD6793-47A7-4193-AE57-BDDB69799092,ExecuteAction
-1
-
-44AD6793-47A7-4193-AE57-BDDB69799092,ExecuteAsRoot
-No
-
-44AD6793-47A7-4193-AE57-BDDB69799092,ExecuteInConsole
-No
-
-44AD6793-47A7-4193-AE57-BDDB69799092,ID
-{}
-
-44AD6793-47A7-4193-AE57-BDDB69799092,IgnoreErrors
-No
-
-44AD6793-47A7-4193-AE57-BDDB69799092,Include
-0
-
-44AD6793-47A7-4193-AE57-BDDB69799092,IncludeStderr
-No
-
-44AD6793-47A7-4193-AE57-BDDB69799092,ProgramCommandLine
-{<%InstallDir%>\\lejos_nxj\\3rdparty\\lib\\libusb-win32-filter-bin-0.1.12.1.exe}
-
-44AD6793-47A7-4193-AE57-BDDB69799092,ProgressiveOutputWidget
-{}
-
-44AD6793-47A7-4193-AE57-BDDB69799092,ResultVirtualText
-ExternalProgramResult
-
-44AD6793-47A7-4193-AE57-BDDB69799092,ShowProgressiveOutput
-Yes
-
-44AD6793-47A7-4193-AE57-BDDB69799092,StatusVirtualText
-ExternalProgramStatus
-
-44AD6793-47A7-4193-AE57-BDDB69799092,WaitForProgram
-Yes
-
-44AD6793-47A7-4193-AE57-BDDB69799092,WatchProgressiveOutput
-No
-
-44AD6793-47A7-4193-AE57-BDDB69799092,WatchRegularExpression
-{^:([^ ]+) (.*):$}
-
-44AD6793-47A7-4193-AE57-BDDB69799092,WatchVirtualText
-Status
-
-44AD6793-47A7-4193-AE57-BDDB69799092,WorkingDirectory
-{}
-
 4B5ECD32-5DF6-420F-82CF-CB83E5F49A8D,Active
 Yes
 
@@ -727,7 +729,7 @@ Yes
 {0 conditions}
 
 4B5ECD32-5DF6-420F-82CF-CB83E5F49A8D,Directory
-{<%InstallDir%>\\bin}
+<%InstallDir%>/bin
 
 4B5ECD32-5DF6-420F-82CF-CB83E5F49A8D,ExecuteAction
 1
@@ -809,6 +811,60 @@ No
 
 5896FAD3-E5EB-4488-BD20-4FA9615D4583,Include
 0
+
+601FD68B-A90A-4DF8-B04D-E8FBC93E2D22,Active
+Yes
+
+601FD68B-A90A-4DF8-B04D-E8FBC93E2D22,BackButton,subst
+1
+
+601FD68B-A90A-4DF8-B04D-E8FBC93E2D22,BrowseButton,subst
+1
+
+601FD68B-A90A-4DF8-B04D-E8FBC93E2D22,BrowseText,subst
+1
+
+601FD68B-A90A-4DF8-B04D-E8FBC93E2D22,Buttons
+Back/Next/Cancel
+
+601FD68B-A90A-4DF8-B04D-E8FBC93E2D22,CancelButton,subst
+1
+
+601FD68B-A90A-4DF8-B04D-E8FBC93E2D22,Caption,subst
+1
+
+601FD68B-A90A-4DF8-B04D-E8FBC93E2D22,Component
+{}
+
+601FD68B-A90A-4DF8-B04D-E8FBC93E2D22,Conditions
+{2 conditions}
+
+601FD68B-A90A-4DF8-B04D-E8FBC93E2D22,DestinationLabel,subst
+0
+
+601FD68B-A90A-4DF8-B04D-E8FBC93E2D22,ID
+{}
+
+601FD68B-A90A-4DF8-B04D-E8FBC93E2D22,Icon
+<%Icon%>
+
+601FD68B-A90A-4DF8-B04D-E8FBC93E2D22,Include
+0
+
+601FD68B-A90A-4DF8-B04D-E8FBC93E2D22,Message,subst
+0
+
+601FD68B-A90A-4DF8-B04D-E8FBC93E2D22,NextButton,subst
+1
+
+601FD68B-A90A-4DF8-B04D-E8FBC93E2D22,Subtitle,subst
+1
+
+601FD68B-A90A-4DF8-B04D-E8FBC93E2D22,Title,subst
+1
+
+601FD68B-A90A-4DF8-B04D-E8FBC93E2D22,VirtualText
+ProjectsDir
 
 68C6794D-56E8-4272-B2B2-62B1B81544C8,Active
 Yes
@@ -1080,7 +1136,6 @@ JDKVersion
 7CACE910-41EE-4D16-B8DE-9D346336018F,TclScript
 {catch { exec javac.exe -version } output
 set firstline [lindex [split $output \n] 0]
-set firstline [lindex [split $output :] 0]
 set firstword [lindex $firstline 0]
 if {$firstword != "javac"} {
   return "0"
@@ -1459,7 +1514,7 @@ A9CD20EB-9BAC-4E7D-9327-7724C2A7F535,Include
 0
 
 A9CD20EB-9BAC-4E7D-9327-7724C2A7F535,Level
-system
+user
 
 A9CD20EB-9BAC-4E7D-9327-7724C2A7F535,RestoreOnUninstall
 No
@@ -1499,6 +1554,39 @@ AD4D435F-1633-4921-8003-469AF004E7F8,Text
 
 AD4D435F-1633-4921-8003-469AF004E7F8,Widget
 {Back Button;Next Button}
+
+AD765739-B160-40DD-B1D3-2E618C29A519,Active
+Yes
+
+AD765739-B160-40DD-B1D3-2E618C29A519,Attributes
+{}
+
+AD765739-B160-40DD-B1D3-2E618C29A519,CompressionMethod
+{}
+
+AD765739-B160-40DD-B1D3-2E618C29A519,Destination
+<%ProjectsDir%>
+
+AD765739-B160-40DD-B1D3-2E618C29A519,FileSize
+12239047
+
+AD765739-B160-40DD-B1D3-2E618C29A519,FileUpdateMethod
+0
+
+AD765739-B160-40DD-B1D3-2E618C29A519,ID
+{}
+
+AD765739-B160-40DD-B1D3-2E618C29A519,Name
+Projects
+
+AD765739-B160-40DD-B1D3-2E618C29A519,Permissions
+{}
+
+AD765739-B160-40DD-B1D3-2E618C29A519,Size
+{}
+
+AD765739-B160-40DD-B1D3-2E618C29A519,Version
+{}
 
 AE0C668C-FB50-4AA0-924A-8A4EF992E7BD,Active
 Yes
@@ -1782,33 +1870,6 @@ No
 BF950757-3DD1-4280-B6B0-1B6D0D5B6215,Include
 0
 
-C2089508-7FED-4F5A-8B2B-D77CC570FF4F,Active
-Yes
-
-C2089508-7FED-4F5A-8B2B-D77CC570FF4F,CheckCondition
-6
-
-C2089508-7FED-4F5A-8B2B-D77CC570FF4F,Component
-{}
-
-C2089508-7FED-4F5A-8B2B-D77CC570FF4F,FailureFocus
-{}
-
-C2089508-7FED-4F5A-8B2B-D77CC570FF4F,FailureMessage
-{}
-
-C2089508-7FED-4F5A-8B2B-D77CC570FF4F,Filename
-<%SYSTEM32%>/libusb0.dll
-
-C2089508-7FED-4F5A-8B2B-D77CC570FF4F,ID
-{}
-
-C2089508-7FED-4F5A-8B2B-D77CC570FF4F,Include
-0
-
-C2089508-7FED-4F5A-8B2B-D77CC570FF4F,Operator
-{does not exist}
-
 C540F45D-8580-4AD9-94F7-9A75F09A6593,Active
 Yes
 
@@ -1898,6 +1959,33 @@ Status
 
 C567D000-B29A-4EEF-9003-51BDE7CB5E95,WorkingDirectory
 {}
+
+DD53434F-BB71-4187-A376-262F7D9240D1,Active
+Yes
+
+DD53434F-BB71-4187-A376-262F7D9240D1,CheckCondition
+1
+
+DD53434F-BB71-4187-A376-262F7D9240D1,Component
+{}
+
+DD53434F-BB71-4187-A376-262F7D9240D1,FailureFocus
+{}
+
+DD53434F-BB71-4187-A376-262F7D9240D1,FailureMessage
+<%DirectoryPermissionText%>
+
+DD53434F-BB71-4187-A376-262F7D9240D1,Filename
+<%ProjectsDir%>
+
+DD53434F-BB71-4187-A376-262F7D9240D1,ID
+{}
+
+DD53434F-BB71-4187-A376-262F7D9240D1,Include
+0
+
+DD53434F-BB71-4187-A376-262F7D9240D1,Permission
+{can create}
 
 DF91F224-3899-424E-879F-8E5F60C06E24,Active
 Yes
@@ -2046,6 +2134,33 @@ No
 E3F39B14-0441-492F-AC14-CA3EAF4F0E27,Include
 0
 
+E43A2C3B-61FA-4CDA-95CF-7473810F72F1,Active
+Yes
+
+E43A2C3B-61FA-4CDA-95CF-7473810F72F1,CheckCondition
+3
+
+E43A2C3B-61FA-4CDA-95CF-7473810F72F1,Comment
+{Do not display this pane if this is an upgrade install unless there is more than one installation present}
+
+E43A2C3B-61FA-4CDA-95CF-7473810F72F1,Component
+{}
+
+E43A2C3B-61FA-4CDA-95CF-7473810F72F1,FailureFocus
+{}
+
+E43A2C3B-61FA-4CDA-95CF-7473810F72F1,FailureMessage
+{}
+
+E43A2C3B-61FA-4CDA-95CF-7473810F72F1,ID
+{}
+
+E43A2C3B-61FA-4CDA-95CF-7473810F72F1,Include
+0
+
+E43A2C3B-61FA-4CDA-95CF-7473810F72F1,Script
+{!<%UpgradeInstall%> || <%PreviousInstallCount%> != 1}
+
 F403ED4B-D2AB-4CA0-9AC0-1DCA4A1EBE5E,Active
 Yes
 
@@ -2081,38 +2196,6 @@ F6F11D84-22F8-49A3-918D-03A8EF17D87B,Include
 
 F6F11D84-22F8-49A3-918D-03A8EF17D87B,URL
 http://java.sun.com/javase/downloads/index.jsp
-
-F8696E5A-43F4-4369-B835-DB74A17A46CE,Active
-Yes
-
-F8696E5A-43F4-4369-B835-DB74A17A46CE,CheckCondition
-6
-
-F8696E5A-43F4-4369-B835-DB74A17A46CE,Component
-{}
-
-F8696E5A-43F4-4369-B835-DB74A17A46CE,FailureFocus
-{}
-
-F8696E5A-43F4-4369-B835-DB74A17A46CE,FailureMessage
-{}
-
-F8696E5A-43F4-4369-B835-DB74A17A46CE,ID
-{}
-
-F8696E5A-43F4-4369-B835-DB74A17A46CE,Include
-0
-
-F8696E5A-43F4-4369-B835-DB74A17A46CE,ResultVirtualText
-ScriptResult
-
-F8696E5A-43F4-4369-B835-DB74A17A46CE,Script
-{if { $::tcl_platform(osVersion) == "6.0" } {
-  return false
-}
-return true
-
-}
 
 F93C8E33-27CA-42EE-8D96-24856D5CA1AB,Active
 Yes
@@ -2538,7 +2621,7 @@ Windows,Active
 Yes
 
 Windows,Executable
-<%AppName%>-Setup<%Ext%>
+{<%AppName%> <%Version%>-Setup<%Ext%>}
 
 Windows,IncludeTWAPI
 No
@@ -2751,6 +2834,33 @@ proc CreateWindow.CopyFiles {wizard id} {
     $id widget set ProgressValue -widget $frame.progress -type progress
 }
 
+proc CreateWindow.SelectDestination {wizard id} {
+    variable info
+
+    CreateWindow.CustomBlankPane2 $wizard $id
+
+    set base [$id widget get ClientArea]
+
+    set varName [$id get VirtualText]
+
+    grid rowconfigure    $base 0 -weight 1
+    grid columnconfigure $base 0 -weight 1
+
+    labelframe $base.frame -relief groove -bd 2
+    grid $base.frame -row 0 -column 0 -sticky sew
+    $id widget set DestinationLabel -widget $base.frame
+
+    grid rowconfigure    $base.frame 0 -weight 1
+    grid columnconfigure $base.frame 0 -weight 1
+
+    Label $base.frame.destination -anchor nw -textvariable ::info($varName)  -elide 1 -elideside center -ellipsis {[...]}
+    grid  $base.frame.destination -row 0 -column 0 -sticky ew -padx 5 -pady 3
+
+    Button $base.frame.browse -command  [list ::InstallAPI::PromptForDirectory -virtualtext $varName]
+    grid $base.frame.browse -row 0 -column 1 -sticky nw -padx 5 -pady [list 0 5]
+    $id widget set BrowseButton -widget $base.frame.browse
+}
+
 proc CreateWindow.CustomTextPane1 {wizard id} {
     CreateWindow.CustomBlankPane2 $wizard $id
 
@@ -2901,985 +3011,1512 @@ proc CreateWindow.CustomTextPane1 {wizard id} {
 
 
 array set ::InstallJammer::files {files.tcl {proc ::InstallJammer::InitFiles {} {
-File ::3240A57C-45CE-44E5-98B2-3DA4EF95E7CD -name 3rdparty -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/3rdparty -mtime 1220953694 -attributes 0000 -filemethod 0
-File ::12D02F1F-58CF-40C6-9087-4EF42500F1DA -name lib -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/3rdparty/lib -size 4096 -mtime 1220953700 -attributes 0000 -filemethod 0
-File ::643321ED-6BA8-4BBD-9712-143392551A89 -name bcel-5.1-src.zip -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/3rdparty/lib -size 840130 -mtime 1220953695 -attributes 1000 -filemethod 0
-File ::B6F61E3B-C043-4D77-AC16-2610A82E1299 -name bcel-5.1.jar -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/3rdparty/lib -size 515920 -mtime 1220953697 -attributes 1000 -filemethod 0
-File ::B6FA8D82-B501-4C15-856C-756A033DCDE2 -name bluecove-2.0.2-sources.tar.gz -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/3rdparty/lib -size 277223 -mtime 1220953697 -attributes 1000 -filemethod 0
-File ::B0E600C8-F3B1-4881-AFBA-BFF724910DFE -name bluecove.jar -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/3rdparty/lib -size 455162 -mtime 1220953698 -attributes 1000 -filemethod 0
-File ::08461F71-16DD-48C6-B7EA-EE111DAF74FB -name commons-cli-1.0.jar -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/3rdparty/lib -size 30117 -mtime 1220953699 -attributes 1000 -filemethod 0
-File ::24C4A65C-C91F-45E0-BA24-6C8E736059F3 -name cpptasks.jar -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/3rdparty/lib -size 276513 -mtime 1220953699 -attributes 1000 -filemethod 0
-File ::43E3BD1B-E556-4159-8CFE-9D088B599A0B -name libusb-win32-filter-bin-0.1.12.1.exe -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/3rdparty/lib -size 416687 -mtime 1220953700 -attributes 1000 -filemethod 0
-File ::625ADBA6-B673-4399-B22D-D60E719CBD54 -name bin -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/bin -size 4096 -mtime 1220953811 -attributes 0000 -filemethod 0
-File ::FB5CDB93-68B8-43B2-B69B-652F54A6455E -name jlibnxt.dll -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/bin -size 8704 -mtime 1220953809 -attributes 1000 -filemethod 0
-File ::DB8FF39C-30E5-4274-AD58-51E5694CEEF6 -name lejos_nxt_rom.bin -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/bin -size 35216 -mtime 1220953809 -attributes 1000 -filemethod 0
-File ::85EBE195-8F53-49F4-937A-5821800B10EA -name lejosdl.bat -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/bin -size 408 -mtime 1220953809 -attributes 1000 -filemethod 0
-File ::67C6E139-E60D-4561-9AE8-755B96D30005 -name lejosfirmdl.bat -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/bin -size 1116 -mtime 1220953809 -attributes 1000 -filemethod 0
-File ::8BFA4E79-3602-4A53-A206-5C81D1218D63 -name lejosjc.bat -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/bin -size 406 -mtime 1220953809 -attributes 1000 -filemethod 0
-File ::A34687CC-F0DA-4BF7-9AC7-DF9BCCABD1F4 -name nxj.bat -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/bin -size 554 -mtime 1220953810 -attributes 1000 -filemethod 0
-File ::FB8F0B92-090C-4F4E-8A92-CC25719811BC -name nxjbrowse.bat -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/bin -size 456 -mtime 1220953810 -attributes 1000 -filemethod 0
-File ::FB557A7A-79CD-4006-8C07-B0F9250211AF -name nxjc.bat -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/bin -size 189 -mtime 1220953810 -attributes 1000 -filemethod 0
-File ::D0AA8323-B536-431C-A3C4-EBEB85D6555E -name nxjconsole.bat -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/bin -size 415 -mtime 1220953810 -attributes 1000 -filemethod 0
-File ::03E12ED2-5AF8-4F87-8001-2A0EA303B46D -name nxjdataviewer.bat -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/bin -size 418 -mtime 1220953810 -attributes 1000 -filemethod 0
-File ::9D09AFE4-DAC2-4D27-8F73-ED243C218D93 -name nxjflash.exe -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/bin -size 62622 -mtime 1220953810 -attributes 1000 -filemethod 0
-File ::BD0B2FB6-4BDA-4213-924B-3FB969E229DB -name nxjlink.bat -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/bin -size 425 -mtime 1220953810 -attributes 1000 -filemethod 0
-File ::E757CDC9-291F-4C47-9A76-8279DA4307E8 -name nxjmonitor.bat -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/bin -size 418 -mtime 1220953810 -attributes 1000 -filemethod 0
-File ::95B424F5-49C5-40C2-B711-927678E7D31E -name nxjsocketproxy.bat -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/bin -size 419 -mtime 1220953810 -attributes 1000 -filemethod 0
-File ::F65EA2CC-A6A1-41FB-B135-B5070F66E9FA -name nxjupload.bat -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/bin -size 462 -mtime 1220953811 -attributes 1000 -filemethod 0
-File ::A65859D8-4292-4FF9-A2C1-F61F913F248C -name StartUpText.bin -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/bin -size 31592 -mtime 1220953809 -attributes 1000 -filemethod 0
-File ::F7B3236B-0764-4921-9D06-32DDFF7CCB6F -name docs -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/docs -mtime 1220953733 -attributes 0000 -filemethod 0
-File ::86ACCED0-65AF-4D14-B817-6D78F4916358 -name apidocs -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/docs/apidocs -size 4096 -mtime 1220953733 -attributes 0000 -filemethod 0
-File ::E5992C0B-8F1B-421B-8278-F0917FFDB7E3 -name allclasses-frame.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs -size 23088 -mtime 1220953700 -attributes 1000 -filemethod 0
-File ::D65B05B1-0C3D-4F82-BC5E-ABB8EB9F7EB5 -name allclasses-noframe.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs -size 19148 -mtime 1220953700 -attributes 1000 -filemethod 0
-File ::01C2CAF4-54AC-43DA-B8E5-91AC9B3FD920 -name constant-values.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs -size 183375 -mtime 1220953700 -attributes 1000 -filemethod 0
-File ::C749A081-910B-448F-A6EE-F25AC1F88971 -name deprecated-list.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs -size 4828 -mtime 1220953700 -attributes 1000 -filemethod 0
-File ::77BCDC50-AA6E-4548-8337-9BCAE3D56FFA -name help-doc.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs -size 8927 -mtime 1220953700 -attributes 1000 -filemethod 0
-File ::11C67FF1-D064-49BE-AC8E-22307D4D22F7 -name index-all.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs -size 544359 -mtime 1220953701 -attributes 1000 -filemethod 0
-File ::3F6BD49D-0BD6-4C4F-BE33-99F85180DF64 -name index.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs -size 1334 -mtime 1220953701 -attributes 1000 -filemethod 0
-File ::10D1232F-0B46-4B88-A832-A31984A9FD80 -name overview-frame.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs -size 2835 -mtime 1220953701 -attributes 1000 -filemethod 0
-File ::7A793FC5-D6BA-4938-B1F7-A2E7BA43222B -name overview-summary.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs -size 7749 -mtime 1220953701 -attributes 1000 -filemethod 0
-File ::8AE47BB2-268D-454C-ABF3-6D17E02E0348 -name overview-tree.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs -size 36935 -mtime 1220953701 -attributes 1000 -filemethod 0
-File ::EA7A4E6D-97F4-427A-9814-1229637D94D6 -name package-list -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs -size 232 -mtime 1220953701 -attributes 1000 -filemethod 0
-File ::B3CA9592-6FB3-4EAC-BE3C-B42301B0826B -name serialized-form.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs -size 152492 -mtime 1220953702 -attributes 1000 -filemethod 0
-File ::125B4EEB-7FE1-4303-BBF3-EE88FF63E232 -name stylesheet.css -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs -size 1202 -mtime 1220953702 -attributes 1000 -filemethod 0
-File ::02990CF4-B28A-40E1-8798-A998C4736877 -name java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/docs/apidocs/java -mtime 1220953709 -attributes 0000 -filemethod 0
-File ::AF490CFC-3620-416B-8E33-45F6346525E6 -name awt -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/docs/apidocs/java/awt -size 4096 -mtime 1220953703 -attributes 0000 -filemethod 0
-File ::E5D396CB-D6FF-41DD-AD7C-45F9B6AC7AE0 -name package-frame.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/java/awt -size 848 -mtime 1220953703 -attributes 1000 -filemethod 0
-File ::0864A5B8-3CDE-4FA5-A790-38043F0C4B78 -name package-summary.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/java/awt -size 5883 -mtime 1220953703 -attributes 1000 -filemethod 0
-File ::74A950A0-86B2-4542-9B65-EC71B89C4C9A -name package-tree.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/java/awt -size 5471 -mtime 1220953703 -attributes 1000 -filemethod 0
-File ::7197097B-061E-4C77-9BDD-3F12C1111C74 -name Rectangle.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/java/awt -size 11235 -mtime 1220953702 -attributes 1000 -filemethod 0
-File ::2276CFC5-0230-410A-9C3F-170D08E77756 -name io -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/docs/apidocs/java/io -size 4096 -mtime 1220953705 -attributes 0000 -filemethod 0
-File ::30485C00-481C-4190-80C9-F2CCDB55E47A -name BufferedWriter.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/java/io -size 12370 -mtime 1220953703 -attributes 1000 -filemethod 0
-File ::B792797F-0590-4172-932D-DE975771B3F0 -name DataInputStream.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/java/io -size 28776 -mtime 1220953703 -attributes 1000 -filemethod 0
-File ::D024E946-9A1F-49DE-83FD-C458507AF540 -name DataOutputStream.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/java/io -size 27202 -mtime 1220953703 -attributes 1000 -filemethod 0
-File ::0798AD41-1E0F-44E3-B3A5-2259E96B42CF -name EOFException.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/java/io -size 11775 -mtime 1220953703 -attributes 1000 -filemethod 0
-File ::53F53C70-5073-4774-BE12-AF7904A688F0 -name File.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/java/io -size 24528 -mtime 1220953703 -attributes 1000 -filemethod 0
-File ::56B05C08-B117-4134-B21D-51C50E0F83D8 -name FileInputStream.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/java/io -size 14873 -mtime 1220953703 -attributes 1000 -filemethod 0
-File ::399451DD-DE90-47CD-B7D8-0E26D44E55D9 -name FileOutputStream.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/java/io -size 15510 -mtime 1220953704 -attributes 1000 -filemethod 0
-File ::67C438D9-F29D-4230-96AA-03741A38628E -name InputStream.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/java/io -size 27926 -mtime 1220953704 -attributes 1000 -filemethod 0
-File ::50B8FE7A-BA05-4582-9B00-D1C50F84641B -name IOException.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/java/io -size 11724 -mtime 1220953704 -attributes 1000 -filemethod 0
-File ::D012C16A-0FD3-4E58-BD53-7A51846EC531 -name OutputStream.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/java/io -size 17697 -mtime 1220953704 -attributes 1000 -filemethod 0
-File ::24DBCE6D-8141-4148-8E0C-BA53789BBE83 -name package-frame.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/java/io -size 2281 -mtime 1220953704 -attributes 1000 -filemethod 0
-File ::29A771AB-A5DC-4049-B550-623627F203E7 -name package-summary.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/java/io -size 8988 -mtime 1220953705 -attributes 1000 -filemethod 0
-File ::FF429788-0F9E-4DB2-A1D8-FE3024E45871 -name package-tree.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/java/io -size 7200 -mtime 1220953705 -attributes 1000 -filemethod 0
-File ::D2C6D4BA-738E-45A2-8469-FDEFC6837639 -name PrintStream.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/java/io -size 14133 -mtime 1220953704 -attributes 1000 -filemethod 0
-File ::DF81F9A3-2204-45BD-BE58-3F7776447E39 -name Serializable.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/java/io -size 6106 -mtime 1220953704 -attributes 1000 -filemethod 0
-File ::62B5D621-FD0A-4C92-A82B-73FBC71591CD -name lang -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/docs/apidocs/java/lang -size 12288 -mtime 1220953709 -attributes 0000 -filemethod 0
-File ::DC9D6B31-FD99-48D9-BB4C-95F16BD8AB10 -name ArithmeticException.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/java/lang -size 9788 -mtime 1220953705 -attributes 1000 -filemethod 0
-File ::D04DC3AE-7330-4217-8485-05343E9F1873 -name ArrayIndexOutOfBoundsException.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/java/lang -size 10284 -mtime 1220953705 -attributes 1000 -filemethod 0
-File ::0FF77115-B151-4CDC-A906-FB301BC68FCC -name Class.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/java/lang -size 10355 -mtime 1220953705 -attributes 1000 -filemethod 0
-File ::0CE31D5A-77AE-4327-B17B-111F8722C532 -name ClassCastException.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/java/lang -size 10098 -mtime 1220953705 -attributes 1000 -filemethod 0
-File ::D441DD8D-EF19-43B4-AE99-C826D14227C3 -name ClassNotFoundException.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/java/lang -size 9978 -mtime 1220953705 -attributes 1000 -filemethod 0
-File ::E659C274-0138-43A1-A590-D9886A8031D8 -name Cloneable.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/java/lang -size 6267 -mtime 1220953705 -attributes 1000 -filemethod 0
-File ::7CEC5981-DA91-4F4F-B946-9D62046799AC -name Error.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/java/lang -size 10072 -mtime 1220953705 -attributes 1000 -filemethod 0
-File ::A78A87A5-F310-4523-8525-F50614D717C3 -name Exception.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/java/lang -size 10764 -mtime 1220953706 -attributes 1000 -filemethod 0
-File ::52D71C29-2F21-4E14-8FC6-EF4D3AFBD150 -name Float.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/java/lang -size 14103 -mtime 1220953706 -attributes 1000 -filemethod 0
-File ::7289D213-80BB-40CA-B541-49D05618463D -name IllegalArgumentException.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/java/lang -size 10368 -mtime 1220953706 -attributes 1000 -filemethod 0
-File ::3210A21E-EE6F-4283-A4BD-9A745A841FAA -name IllegalMonitorStateException.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/java/lang -size 10294 -mtime 1220953706 -attributes 1000 -filemethod 0
-File ::55137F45-919B-4ADC-8CC0-513830EA6DDF -name IllegalStateException.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/java/lang -size 10162 -mtime 1220953706 -attributes 1000 -filemethod 0
-File ::BA1C6B33-C0D0-45FA-B718-0BAA1EF7BB5A -name Integer.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/java/lang -size 19564 -mtime 1220953706 -attributes 1000 -filemethod 0
-File ::63CB6735-7B73-4DF2-A102-1A6428C56DFC -name InterruptedException.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/java/lang -size 9906 -mtime 1220953706 -attributes 1000 -filemethod 0
-File ::E6B25D33-33C9-46AC-83FB-36E46594EBAD -name Math.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/java/lang -size 25147 -mtime 1220953706 -attributes 1000 -filemethod 0
-File ::179AC6D1-87D3-4E0A-97D3-7B9A5976A58C -name NoClassDefFoundError.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/java/lang -size 10120 -mtime 1220953706 -attributes 1000 -filemethod 0
-File ::377D5541-1527-4A7C-B3BC-299776FFA297 -name NoSuchMethodError.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/java/lang -size 9900 -mtime 1220953707 -attributes 1000 -filemethod 0
-File ::D51F2D00-22B5-4806-A0E1-D9B1F113FB26 -name NullPointerException.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/java/lang -size 10152 -mtime 1220953707 -attributes 1000 -filemethod 0
-File ::93B1E033-5323-4BA4-9463-F22F485370CE -name NumberFormatException.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/java/lang -size 10358 -mtime 1220953707 -attributes 1000 -filemethod 0
-File ::B18942E2-4904-4CF1-A014-728861569C3C -name Object.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/java/lang -size 13822 -mtime 1220953707 -attributes 1000 -filemethod 0
-File ::C6B73729-53AC-45EA-B212-2B8AF3D07FD6 -name OutOfMemoryError.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/java/lang -size 9830 -mtime 1220953707 -attributes 1000 -filemethod 0
-File ::A9FC7CCC-3FC0-429E-95CE-9413A4F0C089 -name package-frame.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/java/lang -size 4477 -mtime 1220953709 -attributes 1000 -filemethod 0
-File ::61E70465-475C-4FAB-9BBD-E443FC88ADA3 -name package-summary.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/java/lang -size 12701 -mtime 1220953709 -attributes 1000 -filemethod 0
-File ::FB181475-C2C4-4933-8C33-50E982B49F90 -name package-tree.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/java/lang -size 9398 -mtime 1220953709 -attributes 1000 -filemethod 0
-File ::2C15CD6A-405F-4783-94E9-FAB98F228851 -name Runtime.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/java/lang -size 10081 -mtime 1220953708 -attributes 1000 -filemethod 0
-File ::3FE4E3D9-AD5C-4930-8423-70AF3C3E08C7 -name RuntimeException.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/java/lang -size 10930 -mtime 1220953708 -attributes 1000 -filemethod 0
-File ::94C16A5D-1077-4F3A-B057-1ED7AB327798 -name StackOverflowError.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/java/lang -size 9880 -mtime 1220953708 -attributes 1000 -filemethod 0
-File ::E7164942-E253-4749-B869-8127482F8C8A -name String.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/java/lang -size 21384 -mtime 1220953708 -attributes 1000 -filemethod 0
-File ::882E269A-5664-479B-A616-0ECE73856DB9 -name StringBuffer.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/java/lang -size 23870 -mtime 1220953708 -attributes 1000 -filemethod 0
-File ::458903F9-558E-406E-98AF-2BE41049079C -name StringIndexOutOfBoundsException.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/java/lang -size 10288 -mtime 1220953708 -attributes 1000 -filemethod 0
-File ::F397877C-252F-4A96-8F93-DA1E3A0BEB3B -name System.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/java/lang -size 18602 -mtime 1220953708 -attributes 1000 -filemethod 0
-File ::C3AD5210-C146-4F10-97A2-5AC9FEDDCAE0 -name Thread.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/java/lang -size 21953 -mtime 1220953709 -attributes 1000 -filemethod 0
-File ::BD36EE28-860D-4728-80A9-7B3C947EBA42 -name ThreadDeath.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/java/lang -size 9858 -mtime 1220953709 -attributes 1000 -filemethod 0
-File ::15E7176E-244B-4AF6-9A7A-256D7D8DCA91 -name Throwable.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/java/lang -size 11388 -mtime 1220953709 -attributes 1000 -filemethod 0
-File ::50853E8D-AE98-4A2F-A52B-33909D58A9C0 -name util -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/docs/apidocs/java/util -size 4096 -mtime 1220953711 -attributes 0000 -filemethod 0
-File ::E72DCFF5-8411-4EBC-B714-C5F3692E570E -name ArrayList.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/java/util -size 20271 -mtime 1220953709 -attributes 1000 -filemethod 0
-File ::163FC87E-C15D-4351-9D04-F8EEEDF1B8B2 -name BitSet.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/java/util -size 10589 -mtime 1220953710 -attributes 1000 -filemethod 0
-File ::51075C6F-49E4-4A63-8858-BCDDEA5BDBD7 -name EmptyQueueException.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/java/util -size 10301 -mtime 1220953710 -attributes 1000 -filemethod 0
-File ::D53BFF20-A904-4A2D-BCC2-91FB13494A3A -name EmptyStackException.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/java/util -size 10319 -mtime 1220953710 -attributes 1000 -filemethod 0
-File ::547ADBE0-2797-46AA-9B5C-C3FB85753DAF -name Enumeration.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/java/util -size 8278 -mtime 1220953710 -attributes 1000 -filemethod 0
-File ::FA01FDED-A2FE-48D6-A43F-BF6601C81F19 -name Hashtable.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/java/util -size 11748 -mtime 1220953710 -attributes 1000 -filemethod 0
-File ::839B75AA-37A9-4092-A9EF-4CF2A7327C64 -name Iterator.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/java/util -size 8854 -mtime 1220953710 -attributes 1000 -filemethod 0
-File ::4E5FA4BE-E2C1-45C6-AE4E-9533C4F575B5 -name package-frame.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/java/util -size 2252 -mtime 1220953711 -attributes 1000 -filemethod 0
-File ::B6D9F7C0-ABB6-462F-A159-AB595BD4B215 -name package-summary.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/java/util -size 8815 -mtime 1220953711 -attributes 1000 -filemethod 0
-File ::430A2E56-B154-41E6-B590-CA94C13F4FBE -name package-tree.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/java/util -size 7358 -mtime 1220953711 -attributes 1000 -filemethod 0
-File ::66629BD1-1A5B-4E12-95B5-6D57CF29098B -name Properties.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/java/util -size 18381 -mtime 1220953710 -attributes 1000 -filemethod 0
-File ::FF30F0E2-6FC2-4865-944A-21F4987AF8BA -name Queue.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/java/util -size 15853 -mtime 1220953710 -attributes 1000 -filemethod 0
-File ::49C00A0F-F41B-434B-A7B1-EA0F04025717 -name Random.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/java/util -size 12652 -mtime 1220953711 -attributes 1000 -filemethod 0
-File ::0146F1A1-7052-446D-A72B-90AC199380E2 -name Stack.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/java/util -size 15828 -mtime 1220953711 -attributes 1000 -filemethod 0
-File ::52F8FECD-95DE-428E-A458-316AEEDB27A2 -name Vector.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/java/util -size 25009 -mtime 1220953711 -attributes 1000 -filemethod 0
-File ::CD1A0725-87D0-42AF-B9DB-956099F91BBF -name javax -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/docs/apidocs/javax -mtime 1220953712 -attributes 0000 -filemethod 0
-File ::9D44E868-8724-4A22-81C3-239ADF2F4A47 -name bluetooth -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/docs/apidocs/javax/bluetooth -size 4096 -mtime 1220953712 -attributes 0000 -filemethod 0
-File ::B49D597D-7DB8-43F1-B5F0-6AF4B817263E -name BluetoothStateException.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/javax/bluetooth -size 10655 -mtime 1220953711 -attributes 1000 -filemethod 0
-File ::B4BE321C-AF4F-429D-8412-A6A01E0549AA -name DeviceClass.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/javax/bluetooth -size 12414 -mtime 1220953711 -attributes 1000 -filemethod 0
-File ::E5B0930E-2268-4073-BEB9-2F36ED457BBA -name LocalDevice.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/javax/bluetooth -size 18012 -mtime 1220953711 -attributes 1000 -filemethod 0
-File ::1F39F97F-5F7E-404D-BFE2-81FD1E3E37A8 -name package-frame.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/javax/bluetooth -size 1399 -mtime 1220953712 -attributes 1000 -filemethod 0
-File ::0868E00B-B301-406A-AE0A-DE586D71F96B -name package-summary.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/javax/bluetooth -size 6764 -mtime 1220953712 -attributes 1000 -filemethod 0
-File ::3A15C782-22F8-43D7-AA19-9C95C4977874 -name package-tree.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/javax/bluetooth -size 6488 -mtime 1220953712 -attributes 1000 -filemethod 0
-File ::F92A35E4-6DD7-4FE1-AD83-9F3289A441A6 -name RemoteDevice.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/javax/bluetooth -size 17465 -mtime 1220953712 -attributes 1000 -filemethod 0
-File ::38107CE1-BAF2-453A-8BD6-818ABD77ED93 -name microedition -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/docs/apidocs/javax/microedition -mtime 1220953713 -attributes 0000 -filemethod 0
-File ::71FDCD5A-8B69-4B45-836C-F75585F787CF -name io -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/docs/apidocs/javax/microedition/io -size 4096 -mtime 1220953713 -attributes 0000 -filemethod 0
-File ::5B70952B-24F7-4C0F-9431-C345DA1061F6 -name Connection.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/javax/microedition/io -size 8400 -mtime 1220953712 -attributes 1000 -filemethod 0
-File ::2FCA41A4-7340-4DD8-BD7C-1C0BDDDFD72A -name InputConnection.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/javax/microedition/io -size 10304 -mtime 1220953712 -attributes 1000 -filemethod 0
-File ::9E161E63-2788-4A7C-8D2D-06E06589F84A -name OutputConnection.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/javax/microedition/io -size 10349 -mtime 1220953712 -attributes 1000 -filemethod 0
-File ::874C581B-9F22-475A-B03B-49E2EB6F3BCC -name package-frame.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/javax/microedition/io -size 1317 -mtime 1220953713 -attributes 1000 -filemethod 0
-File ::14C8B317-CA40-4274-880E-251602967206 -name package-summary.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/javax/microedition/io -size 6872 -mtime 1220953713 -attributes 1000 -filemethod 0
-File ::AF8A8202-4F9D-4003-840F-1A788C3AB119 -name package-tree.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/javax/microedition/io -size 6734 -mtime 1220953713 -attributes 1000 -filemethod 0
-File ::A1677106-97BB-4C34-8100-36872DA82487 -name StreamConnection.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/javax/microedition/io -size 10766 -mtime 1220953712 -attributes 1000 -filemethod 0
-File ::A350697A-B68A-4FCD-BCE7-C7CEA356907E -name lcdui -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/docs/apidocs/javax/microedition/lcdui -size 8192 -mtime 1220953716 -attributes 0000 -filemethod 0
-File ::A016ED88-6DC6-4BBC-8E79-7E28C01CD41F -name Alert.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/javax/microedition/lcdui -size 31425 -mtime 1220953713 -attributes 1000 -filemethod 0
-File ::01E03E9F-67AF-475D-8CAD-A5FDBF284959 -name Choice.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/javax/microedition/lcdui -size 20955 -mtime 1220953713 -attributes 1000 -filemethod 0
-File ::A97CE970-388C-46D2-8721-69BC2D6F729B -name ChoiceGroup.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/javax/microedition/lcdui -size 33242 -mtime 1220953713 -attributes 1000 -filemethod 0
-File ::67987A10-CD58-4E3E-B1CA-1B6DBAE91725 -name Command.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/javax/microedition/lcdui -size 17859 -mtime 1220953713 -attributes 1000 -filemethod 0
-File ::EB51643E-381E-4F94-94CE-A82E70EA06ED -name CommandListener.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/javax/microedition/lcdui -size 8565 -mtime 1220953713 -attributes 1000 -filemethod 0
-File ::5F580F28-1FD6-45D6-9A8E-F60F2F45C8F8 -name Display.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/javax/microedition/lcdui -size 18000 -mtime 1220953714 -attributes 1000 -filemethod 0
-File ::69F07F5C-DEC2-4A9D-A294-08AE83C652D2 -name Displayable.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/javax/microedition/lcdui -size 26487 -mtime 1220953714 -attributes 1000 -filemethod 0
-File ::54B69EF0-31E1-4C75-8958-489D7DBE4740 -name Font.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/javax/microedition/lcdui -size 10616 -mtime 1220953714 -attributes 1000 -filemethod 0
-File ::A203930D-8165-4135-9964-EE9C18501161 -name Form.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/javax/microedition/lcdui -size 27988 -mtime 1220953714 -attributes 1000 -filemethod 0
-File ::7E66EDAC-2429-40D7-8146-EE2DD34BCA99 -name Gauge.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/javax/microedition/lcdui -size 17892 -mtime 1220953714 -attributes 1000 -filemethod 0
-File ::644C99DF-50A2-44DA-9129-93A840A22802 -name Graphics.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/javax/microedition/lcdui -size 29380 -mtime 1220953714 -attributes 1000 -filemethod 0
-File ::C2D1BC0C-E668-454F-935B-0C532E151FF4 -name Image.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/javax/microedition/lcdui -size 11033 -mtime 1220953714 -attributes 1000 -filemethod 0
-File ::4D2FC138-0728-4177-B9C1-5DDDE400B8FA -name Item.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/javax/microedition/lcdui -size 25901 -mtime 1220953714 -attributes 1000 -filemethod 0
-File ::D886BC90-E446-4C93-A5CC-9B92C8DCF264 -name ItemCommandListener.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/javax/microedition/lcdui -size 8417 -mtime 1220953714 -attributes 1000 -filemethod 0
-File ::CC8E8FDB-E440-44A0-8EF8-7B5C2B0574E9 -name ItemStateListener.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/javax/microedition/lcdui -size 8083 -mtime 1220953715 -attributes 1000 -filemethod 0
-File ::F112A9DC-E637-41A1-8A1D-8048E89E7688 -name List.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/javax/microedition/lcdui -size 33914 -mtime 1220953715 -attributes 1000 -filemethod 0
-File ::2490F7F8-5C83-467A-A8FD-B8267A00E05A -name package-frame.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/javax/microedition/lcdui -size 3343 -mtime 1220953716 -attributes 1000 -filemethod 0
-File ::9D7D3D88-5B9F-433B-A201-527BDE1C6205 -name package-summary.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/javax/microedition/lcdui -size 10808 -mtime 1220953716 -attributes 1000 -filemethod 0
-File ::9D3DF90B-5EDA-43A8-8CFD-CC5321958E03 -name package-tree.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/javax/microedition/lcdui -size 9776 -mtime 1220953716 -attributes 1000 -filemethod 0
-File ::1CDD03DE-A92B-4150-9F1E-A0C977E813DA -name Screen.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/javax/microedition/lcdui -size 17069 -mtime 1220953715 -attributes 1000 -filemethod 0
-File ::6EBD3198-CA55-4A8A-9D93-C28DAF856028 -name Spacer.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/javax/microedition/lcdui -size 18023 -mtime 1220953715 -attributes 1000 -filemethod 0
-File ::D6861474-1210-42B1-A233-9544E442C102 -name StringItem.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/javax/microedition/lcdui -size 16627 -mtime 1220953715 -attributes 1000 -filemethod 0
-File ::2EFDAE93-FB27-4F59-9C92-38A40D2BF136 -name TextBox.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/javax/microedition/lcdui -size 19519 -mtime 1220953715 -attributes 1000 -filemethod 0
-File ::F3895CE7-E224-452E-B1BF-A780DF68C142 -name TextField.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/javax/microedition/lcdui -size 25265 -mtime 1220953715 -attributes 1000 -filemethod 0
-File ::DA51F9F6-7B44-4C44-8517-45CE98E4023A -name Ticker.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/javax/microedition/lcdui -size 10722 -mtime 1220953715 -attributes 1000 -filemethod 0
-File ::83412925-BFD2-41EB-8C1F-FC5893B948B6 -name lejos -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/docs/apidocs/lejos -size 4096 -mtime 1220953732 -attributes 0000 -filemethod 0
-File ::51FD7BFE-EA20-42F2-956E-53C3CC6DDC6F -name devices -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/docs/apidocs/lejos/devices -size 4096 -mtime 1220953717 -attributes 0000 -filemethod 0
-File ::7F787031-A6D6-44E9-8085-4FD33AEAC88F -name GPS.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/devices -size 18698 -mtime 1220953716 -attributes 1000 -filemethod 0
-File ::B26DF420-70A9-4CF0-8D87-D119073ADC89 -name Keyboard.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/devices -size 15523 -mtime 1220953716 -attributes 1000 -filemethod 0
-File ::19A5ABC9-2EBF-48A4-B4D7-8CB4400BCACA -name KeyEvent.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/devices -size 27320 -mtime 1220953716 -attributes 1000 -filemethod 0
-File ::4C774D4E-E217-4A3D-93F1-0CD2A66D984B -name KeyListener.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/devices -size 10135 -mtime 1220953716 -attributes 1000 -filemethod 0
-File ::816B2F51-5D03-4041-B772-23C39563E90D -name NMEASentence.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/devices -size 14132 -mtime 1220953716 -attributes 1000 -filemethod 0
-File ::8154828F-3B46-40CB-8F57-9FF5B336C8CB -name package-frame.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/devices -size 1441 -mtime 1220953716 -attributes 1000 -filemethod 0
-File ::73737197-F45E-461D-BE29-87CFB7DDB387 -name package-summary.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/devices -size 7072 -mtime 1220953717 -attributes 1000 -filemethod 0
-File ::B898289D-48FA-48A0-AACC-D232ED87530C -name package-tree.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/devices -size 6342 -mtime 1220953717 -attributes 1000 -filemethod 0
-File ::A46CEF21-678F-4540-9569-6A8E1B7CB422 -name navigation -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/docs/apidocs/lejos/navigation -size 4096 -mtime 1220953718 -attributes 0000 -filemethod 0
-File ::D6BCF9E7-FAF4-49BC-A7C9-DCB670953A5F -name CompassNavigator.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/navigation -size 27837 -mtime 1220953717 -attributes 1000 -filemethod 0
-File ::E39F52E7-C0A5-4E10-A978-931B52CEF783 -name CompassPilot.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/navigation -size 33135 -mtime 1220953717 -attributes 1000 -filemethod 0
-File ::1518FCEE-713D-451E-9C75-568AE3F56A76 -name Navigator.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/navigation -size 25430 -mtime 1220953717 -attributes 1000 -filemethod 0
-File ::8692258C-6C9D-42B0-98B8-39BCF53ADDBE -name package-frame.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/navigation -size 1496 -mtime 1220953717 -attributes 1000 -filemethod 0
-File ::CEC9F09B-43B3-4528-AB27-9BF513A68B8F -name package-summary.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/navigation -size 7676 -mtime 1220953718 -attributes 1000 -filemethod 0
-File ::892ABA71-A258-4994-B12E-ACE511B8DFFD -name package-tree.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/navigation -size 6426 -mtime 1220953718 -attributes 1000 -filemethod 0
-File ::DCBE811B-B86E-4EDF-8B26-9D87B6E5C527 -name Pilot.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/navigation -size 37047 -mtime 1220953717 -attributes 1000 -filemethod 0
-File ::B42C700C-A7F5-4D00-8327-1AAC96CA17B7 -name TachoNavigator.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/navigation -size 45632 -mtime 1220953717 -attributes 1000 -filemethod 0
-File ::A936B6C6-6556-43AD-9772-F4ACC543EBB8 -name nxt -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/docs/apidocs/lejos/nxt -size 20480 -mtime 1220953728 -attributes 0000 -filemethod 0
-File ::4C8AE74F-F78B-40E1-8092-82AE70BD2359 -name ADSensorPort.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt -size 12399 -mtime 1220953718 -attributes 1000 -filemethod 0
-File ::7B242E3C-1024-4FEA-9305-7A4BBC2C1E27 -name BasicMotor.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt -size 16974 -mtime 1220953718 -attributes 1000 -filemethod 0
-File ::00082F89-5D01-4AB3-86BE-DAC8D8875036 -name BasicMotorPort.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt -size 10663 -mtime 1220953718 -attributes 1000 -filemethod 0
-File ::3348F740-5E82-4E85-A0A3-DD9057A6662C -name BasicSensorPort.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt -size 12914 -mtime 1220953718 -attributes 1000 -filemethod 0
-File ::05881592-1D6D-4681-8456-2D3E2DA1AF6B -name Battery.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt -size 9366 -mtime 1220953718 -attributes 1000 -filemethod 0
-File ::2277155C-E578-4EC9-BC1B-3812502179B9 -name Button.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt -size 23204 -mtime 1220953719 -attributes 1000 -filemethod 0
-File ::CC81579D-489E-4132-BF7E-282DA0E808AF -name ButtonListener.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt -size 8518 -mtime 1220953719 -attributes 1000 -filemethod 0
-File ::8F0FAF4C-311C-485D-8A79-601DC10552AE -name ColorSensor.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt -size 22874 -mtime 1220953719 -attributes 1000 -filemethod 0
-File ::39DB5D55-57FB-45A4-8611-001529F4CBE9 -name CompassSensor.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt -size 16995 -mtime 1220953719 -attributes 1000 -filemethod 0
-File ::5DF28FDB-C5A9-452C-A6E8-28756250C974 -name Flash.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt -size 11980 -mtime 1220953719 -attributes 1000 -filemethod 0
-File ::EE4C984E-A7CB-49FD-B886-3BEE15141D6B -name GyroSensor.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt -size 13371 -mtime 1220953719 -attributes 1000 -filemethod 0
-File ::23037574-DD44-40B8-9FE4-EB3CE4EDB433 -name I2CPort.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt -size 13046 -mtime 1220953719 -attributes 1000 -filemethod 0
-File ::8C1E44C9-FB04-4986-87E9-83ACC51D41F3 -name I2CSensor.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt -size 20210 -mtime 1220953719 -attributes 1000 -filemethod 0
-File ::F4B59661-FACF-4135-A95B-9217397B3DD2 -name IRSeeker.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt -size 14459 -mtime 1220953719 -attributes 1000 -filemethod 0
-File ::0B5CB57B-E708-444A-A5DA-F444738D356D -name LCD.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt -size 44320 -mtime 1220953720 -attributes 1000 -filemethod 0
-File ::DDEC16B0-CDFD-4948-8AE9-F26D2E17F1FA -name LCDOutputStream.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt -size 11861 -mtime 1220953720 -attributes 1000 -filemethod 0
-File ::585E3093-3ABE-4DC1-A264-A3A954B85DCF -name LegacySensorPort.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt -size 12594 -mtime 1220953720 -attributes 1000 -filemethod 0
-File ::A2E5A0F4-49BE-4B6C-BE83-817DF12ABF7D -name LightSensor.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt -size 19667 -mtime 1220953720 -attributes 1000 -filemethod 0
-File ::EC14FE75-3E41-4433-A6FE-522F1BB9C059 -name ListenerCaller.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt -size 7691 -mtime 1220953720 -attributes 1000 -filemethod 0
-File ::29C37BC9-5C69-4C4C-A7C6-622906B4D792 -name LSC.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt -size 18099 -mtime 1220953720 -attributes 1000 -filemethod 0
-File ::CCFB5C7A-193A-4CCC-AB83-4E51C30DDC3E -name LServo.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt -size 22641 -mtime 1220953720 -attributes 1000 -filemethod 0
-File ::E5969767-0279-4044-9EC3-8A21956AD35F -name Motor.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt -size 38943 -mtime 1220953721 -attributes 1000 -filemethod 0
-File ::92817C4C-8452-4E51-80C5-F55C7FF10F90 -name Motor.Regulator.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt -size 13488 -mtime 1220953720 -attributes 1000 -filemethod 0
-File ::C4207B1C-B5D4-4A16-BD27-50ABDA93401E -name MotorPort.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt -size 16195 -mtime 1220953721 -attributes 1000 -filemethod 0
-File ::C725F887-2CF1-4417-B098-C1812CC792E6 -name NXTCam.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt -size 16079 -mtime 1220953721 -attributes 1000 -filemethod 0
-File ::01594C16-CE75-45B5-BB28-7AD22EC5A623 -name NXTe.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt -size 16437 -mtime 1220953721 -attributes 1000 -filemethod 0
-File ::351B0C08-1D53-42B3-9363-A90BE1310FCF -name OpticalDistanceSensor.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt -size 37940 -mtime 1220953721 -attributes 1000 -filemethod 0
-File ::5E04FA34-A8E1-4A2B-AC6F-07937DDAE360 -name package-frame.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt -size 5624 -mtime 1220953724 -attributes 1000 -filemethod 0
-File ::96C622AC-3028-40EB-83EE-268177F126FF -name package-summary.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt -size 17564 -mtime 1220953724 -attributes 1000 -filemethod 0
-File ::F625708F-D90E-42DB-BA13-244AF74FC010 -name package-tree.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt -size 13816 -mtime 1220953724 -attributes 1000 -filemethod 0
-File ::C57B98B9-E2E8-4B35-B74B-469987FAC129 -name Poll.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt -size 19475 -mtime 1220953721 -attributes 1000 -filemethod 0
-File ::E5427379-54CE-4B7C-AB6E-9E82CC0712A1 -name PSPNXController.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt -size 18524 -mtime 1220953721 -attributes 1000 -filemethod 0
-File ::94990E5B-4816-41E3-B6FD-A84FA49A3579 -name RCXLightSensor.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt -size 14394 -mtime 1220953722 -attributes 1000 -filemethod 0
-File ::78BC49FF-D041-4589-8294-24AC555CACC4 -name RCXLink.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt -size 52841 -mtime 1220953722 -attributes 1000 -filemethod 0
-File ::198966C7-AD45-4400-BE7D-887E870554A8 -name RCXMotor.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt -size 10697 -mtime 1220953722 -attributes 1000 -filemethod 0
-File ::1EC1EAFB-0CE8-4A64-B14A-8E4F284B9299 -name RCXMotorMultiplexer.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt -size 18226 -mtime 1220953722 -attributes 1000 -filemethod 0
-File ::2B906A22-DD92-41B3-A790-8802395DBE4E -name RCXPlexedMotorPort.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt -size 12669 -mtime 1220953722 -attributes 1000 -filemethod 0
-File ::171400B5-4500-4591-865E-A574D68FB3DD -name RCXRemoteMotorPort.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt -size 12607 -mtime 1220953722 -attributes 1000 -filemethod 0
-File ::B81F83FA-5AB9-48F8-8FBF-981A3457DB67 -name RCXSensorMultiplexer.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt -size 16419 -mtime 1220953722 -attributes 1000 -filemethod 0
-File ::126C4321-1931-490E-A93A-DFC847D5C1A3 -name SensorConstants.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt -size 21481 -mtime 1220953722 -attributes 1000 -filemethod 0
-File ::6C0DB40C-7DDB-4665-BBF9-9E06954A35AB -name SensorPort.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt -size 32681 -mtime 1220953722 -attributes 1000 -filemethod 0
-File ::CF37C2AF-2603-41C5-BF7A-10CE25190F13 -name SensorPortListener.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt -size 8327 -mtime 1220953723 -attributes 1000 -filemethod 0
-File ::BA82E19B-B3B0-43E5-A57C-4C175D19824E -name Settings.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt -size 12794 -mtime 1220953723 -attributes 1000 -filemethod 0
-File ::BD07A851-FD6B-4A49-A78D-C487423092DA -name Sound.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt -size 22667 -mtime 1220953723 -attributes 1000 -filemethod 0
-File ::E51A5002-F483-418D-B969-36D5B0F10579 -name SoundSensor.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt -size 14618 -mtime 1220953723 -attributes 1000 -filemethod 0
-File ::0506B4A9-56B0-4687-BE8E-397B3DEC6A5C -name SystemSettings.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt -size 11956 -mtime 1220953723 -attributes 1000 -filemethod 0
-File ::017C5050-F5A0-4D6D-B258-0EA86ED3395B -name Tachometer.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt -size 8411 -mtime 1220953723 -attributes 1000 -filemethod 0
-File ::D68F7CFD-0A7D-4DD0-A685-5E467E46716C -name TachoMotorPort.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt -size 9522 -mtime 1220953723 -attributes 1000 -filemethod 0
-File ::43081652-970C-4C09-AAF7-55CEE159C607 -name TextMenu.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt -size 19365 -mtime 1220953724 -attributes 1000 -filemethod 0
-File ::37CDF091-C51F-4816-BA23-9DA9F793CB04 -name TiltSensor.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt -size 17019 -mtime 1220953724 -attributes 1000 -filemethod 0
-File ::29847FE1-8D4E-4367-A032-D86AEA615090 -name TouchSensor.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt -size 13094 -mtime 1220953724 -attributes 1000 -filemethod 0
-File ::B409814B-45B3-4932-A04D-4A0CC50A7E89 -name UltrasonicSensor.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt -size 27256 -mtime 1220953724 -attributes 1000 -filemethod 0
-File ::2D50F3D2-DC59-48E0-B34D-4A21858739DC -name comm -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/docs/apidocs/lejos/nxt/comm -size 8192 -mtime 1220953727 -attributes 0000 -filemethod 0
-File ::21CDAD66-F851-43E4-B706-50B46116EAB5 -name Bluetooth.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt/comm -size 87602 -mtime 1220953725 -attributes 1000 -filemethod 0
-File ::074510C2-D6C4-447B-8DEF-4FF2D47F1A51 -name BTConnection.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt/comm -size 33611 -mtime 1220953725 -attributes 1000 -filemethod 0
-File ::2C88DC68-0E8D-4D75-A127-39AD6F5AF6C1 -name DeviceInfo.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt/comm -size 12400 -mtime 1220953725 -attributes 1000 -filemethod 0
-File ::573278C9-774A-4B06-BE8E-AC4E6BC946EB -name FirmwareInfo.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt/comm -size 11578 -mtime 1220953725 -attributes 1000 -filemethod 0
-File ::D5ADD16A-0DFD-4BDE-86DF-EF0BF23646E3 -name InputValues.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt/comm -size 14776 -mtime 1220953725 -attributes 1000 -filemethod 0
-File ::44959141-CC04-4C1A-9999-B5A09FC728F9 -name LCP.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt/comm -size 42151 -mtime 1220953725 -attributes 1000 -filemethod 0
-File ::39FD2A48-3943-4328-81CD-018D462A1E17 -name LCPBTResponder.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt/comm -size 12825 -mtime 1220953725 -attributes 1000 -filemethod 0
-File ::88A1FF7D-B222-4752-8CFC-3AD06BF2F120 -name NXTComm.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt/comm -size 12404 -mtime 1220953725 -attributes 1000 -filemethod 0
-File ::C24DB1AD-00DB-43AF-8DBF-F96106454715 -name NXTCommand.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt/comm -size 30402 -mtime 1220953726 -attributes 1000 -filemethod 0
-File ::507AF4DB-0FE2-4FC4-B767-1EF0F0DDFEC6 -name NXTConnection.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt/comm -size 13129 -mtime 1220953726 -attributes 1000 -filemethod 0
-File ::E33327DE-E670-465C-AB31-19ECA59D22B5 -name NXTInputStream.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt/comm -size 12304 -mtime 1220953726 -attributes 1000 -filemethod 0
-File ::121ECAAA-C29B-4A04-A7D9-72F6CF3F69A9 -name NXTOutputStream.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt/comm -size 11872 -mtime 1220953726 -attributes 1000 -filemethod 0
-File ::40160667-7BCE-49B2-8E49-2638F5ADA480 -name NXTProtocol.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt/comm -size 55518 -mtime 1220953726 -attributes 1000 -filemethod 0
-File ::6C83B664-D2BD-4E90-B073-2AB880DF0518 -name NXTServerSocket.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt/comm -size 12610 -mtime 1220953726 -attributes 1000 -filemethod 0
-File ::99E53EE1-2F1A-41D9-A0A0-0CB8BF700E38 -name NXTSocket.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt/comm -size 18164 -mtime 1220953726 -attributes 1000 -filemethod 0
-File ::5037FDB2-6278-4852-B9CF-3BCAB2308D60 -name package-frame.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt/comm -size 2775 -mtime 1220953727 -attributes 1000 -filemethod 0
-File ::17F66591-37DE-407B-A4D6-1ED97057DFF3 -name package-summary.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt/comm -size 10349 -mtime 1220953727 -attributes 1000 -filemethod 0
-File ::EC759897-ED08-41FC-818C-E3A5EE5ADAE7 -name package-tree.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt/comm -size 10259 -mtime 1220953727 -attributes 1000 -filemethod 0
-File ::FA7772D3-062E-45FD-A817-BA8720287AB1 -name RConsole.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt/comm -size 13953 -mtime 1220953726 -attributes 1000 -filemethod 0
-File ::AAFAAC82-4962-44F0-B3EE-8311A52AB6B2 -name USB.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt/comm -size 22722 -mtime 1220953727 -attributes 1000 -filemethod 0
-File ::906783C1-C8FE-42D2-B4B9-B00904029794 -name USBConnection.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt/comm -size 20624 -mtime 1220953727 -attributes 1000 -filemethod 0
-File ::5BC76409-023E-414C-9BA3-08A0428F42DB -name debug -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/docs/apidocs/lejos/nxt/debug -size 4096 -mtime 1220953728 -attributes 0000 -filemethod 0
-File ::AB5DDE19-52B3-4079-8500-C806109B1DB3 -name DebugInterface.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt/debug -size 22061 -mtime 1220953727 -attributes 1000 -filemethod 0
-File ::73D19918-155E-4427-BC70-F01E1DDB3C60 -name DebugMonitor.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt/debug -size 10792 -mtime 1220953727 -attributes 1000 -filemethod 0
-File ::D5986AFB-AB56-40DB-846D-15B4EB939FCD -name DebugObject.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt/debug -size 10836 -mtime 1220953727 -attributes 1000 -filemethod 0
-File ::ECA07E57-B727-4BC3-90F1-9BEA1290D6E5 -name DebugStackFrame.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt/debug -size 11198 -mtime 1220953728 -attributes 1000 -filemethod 0
-File ::BA22B7EB-A146-495B-B00F-0777B466AE30 -name DebugThread.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt/debug -size 15695 -mtime 1220953728 -attributes 1000 -filemethod 0
-File ::5E42EED7-1F74-44E1-AB3F-D38CC32277E9 -name DebugThreads.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt/debug -size 14179 -mtime 1220953728 -attributes 1000 -filemethod 0
-File ::462BC13C-2FD8-4A63-91F3-486FE979F7A8 -name package-frame.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt/debug -size 1416 -mtime 1220953728 -attributes 1000 -filemethod 0
-File ::6A01C694-F11B-4642-A5BD-7E64D3F1B192 -name package-summary.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt/debug -size 7107 -mtime 1220953728 -attributes 1000 -filemethod 0
-File ::D4AE2F1A-FEE8-4EAE-AA55-76C3FADAFC90 -name package-tree.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt/debug -size 6458 -mtime 1220953728 -attributes 1000 -filemethod 0
-File ::E363BD81-AE52-4E60-AD9C-DBD76D6890D8 -name remote -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/docs/apidocs/lejos/nxt/remote -size 4096 -mtime 1220953729 -attributes 0000 -filemethod 0
-File ::8C1A2D74-322C-4AC8-8239-6E05BB1BE2BD -name package-frame.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt/remote -size 1222 -mtime 1220953729 -attributes 1000 -filemethod 0
-File ::0F822EEA-BBDE-47BD-8532-460A124C3728 -name package-summary.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt/remote -size 6885 -mtime 1220953729 -attributes 1000 -filemethod 0
-File ::A2CF282A-40F4-48A7-B13B-FD8B145E1306 -name package-tree.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt/remote -size 6801 -mtime 1220953729 -attributes 1000 -filemethod 0
-File ::DAACEE60-69FA-4417-939C-446335FBD141 -name RemoteBattery.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt/remote -size 18581 -mtime 1220953728 -attributes 1000 -filemethod 0
-File ::956088DC-C424-447E-B1F9-8938E02D1789 -name RemoteMotorPort.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt/remote -size 21774 -mtime 1220953728 -attributes 1000 -filemethod 0
-File ::949DB880-3B54-4396-876A-8AB5DCE83574 -name RemoteNXT.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt/remote -size 19721 -mtime 1220953729 -attributes 1000 -filemethod 0
-File ::EA48E1FD-1C8B-4193-A24E-8AA3D014CF1E -name RemoteSensorPort.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/nxt/remote -size 26830 -mtime 1220953729 -attributes 1000 -filemethod 0
-File ::D947DEA2-BBE6-4FF7-B8E4-196D821A0CCE -name rcxcomm -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/docs/apidocs/lejos/rcxcomm -size 4096 -mtime 1220953730 -attributes 0000 -filemethod 0
-File ::D0AE19B7-844B-4F42-98EA-83F68A866AB2 -name LLC.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/rcxcomm -size 15015 -mtime 1220953729 -attributes 1000 -filemethod 0
-File ::D124F121-7B89-4D72-B7FA-5136138944F3 -name LLCHandler.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/rcxcomm -size 16426 -mtime 1220953729 -attributes 1000 -filemethod 0
-File ::AF442FC8-5D8B-43D1-A201-7707F8CD07C6 -name LLCReliableHandler.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/rcxcomm -size 15620 -mtime 1220953729 -attributes 1000 -filemethod 0
-File ::AD620F76-E30E-40D2-A65E-C5BE1AFAE515 -name Opcode.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/rcxcomm -size 74466 -mtime 1220953730 -attributes 1000 -filemethod 0
-File ::3FE30C10-15CD-4BAA-8F49-E4DD09F33D01 -name package-frame.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/rcxcomm -size 1744 -mtime 1220953730 -attributes 1000 -filemethod 0
-File ::77FF9A6D-F1A3-42F5-87D6-7F280393DA18 -name package-summary.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/rcxcomm -size 8231 -mtime 1220953730 -attributes 1000 -filemethod 0
-File ::AC23A14A-5C1F-4628-94D2-E2BADB210E4E -name package-tree.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/rcxcomm -size 6631 -mtime 1220953730 -attributes 1000 -filemethod 0
-File ::240FB65F-B478-49AC-B022-B77A00FB59CE -name PacketHandler.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/rcxcomm -size 18050 -mtime 1220953730 -attributes 1000 -filemethod 0
-File ::88617DEF-E2FC-4F93-83A4-01E41EEC180F -name RCXAbstractPort.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/rcxcomm -size 16029 -mtime 1220953730 -attributes 1000 -filemethod 0
-File ::BDC5980F-0787-4FE0-BAE2-3E9D62438845 -name RCXPort.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/rcxcomm -size 12162 -mtime 1220953730 -attributes 1000 -filemethod 0
-File ::ABB8B697-B4D8-43DC-BACF-1CF5907ECFBB -name Serial.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/rcxcomm -size 14149 -mtime 1220953730 -attributes 1000 -filemethod 0
-File ::F082BB64-1022-4976-A35E-13D5FA6DE7FA -name subsumption -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/docs/apidocs/lejos/subsumption -size 4096 -mtime 1220953732 -attributes 0000 -filemethod 0
-File ::E43DD661-933D-4BB1-9167-9B7C63D66A19 -name Activity.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/subsumption -size 22214 -mtime 1220953731 -attributes 1000 -filemethod 0
-File ::28F942DE-F047-427D-97BA-3B504EACAB23 -name ActivityBase.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/subsumption -size 13221 -mtime 1220953731 -attributes 1000 -filemethod 0
-File ::D8DC1350-3B7E-4CBA-84B5-3C137EBD6462 -name Arbitrator.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/subsumption -size 11401 -mtime 1220953731 -attributes 1000 -filemethod 0
-File ::25151976-87F2-44C3-BEE1-8069170F74F2 -name Arbitrator2.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/subsumption -size 12884 -mtime 1220953731 -attributes 1000 -filemethod 0
-File ::9E6517EC-8BB5-41BD-B769-903643B51F21 -name Behavior.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/subsumption -size 11221 -mtime 1220953731 -attributes 1000 -filemethod 0
-File ::501F9E90-B4BC-4805-A614-09D9B849D923 -name Behavior2.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/subsumption -size 10448 -mtime 1220953731 -attributes 1000 -filemethod 0
-File ::E656EFA3-C75C-4FD0-B7B5-A4F7338E87D4 -name package-frame.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/subsumption -size 1891 -mtime 1220953731 -attributes 1000 -filemethod 0
-File ::3DE02078-D380-4E18-B4ED-6CF819D3315B -name package-summary.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/subsumption -size 8381 -mtime 1220953731 -attributes 1000 -filemethod 0
-File ::35EBA4DF-EC44-40AC-AEA6-7CEEDC156037 -name package-tree.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/subsumption -size 6970 -mtime 1220953732 -attributes 1000 -filemethod 0
-File ::89668741-C5B3-4B81-BDD4-DD4D022514E0 -name StopException.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/subsumption -size 9993 -mtime 1220953731 -attributes 1000 -filemethod 0
-File ::23B986D7-C908-4B83-B792-EB04D8C01FEA -name util -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/docs/apidocs/lejos/util -size 4096 -mtime 1220953733 -attributes 0000 -filemethod 0
-File ::608468E6-DEE7-4D35-ABED-6CF7FB587F5F -name AbstractRecyclable.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/util -size 13834 -mtime 1220953732 -attributes 1000 -filemethod 0
-File ::6BAFA9BA-825B-45CC-B7BB-4CBFAB757E68 -name ArrayRecycler.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/util -size 12832 -mtime 1220953732 -attributes 1000 -filemethod 0
-File ::76BF8D14-1D2F-4035-A195-5723069C536B -name Assertion.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/util -size 11873 -mtime 1220953732 -attributes 1000 -filemethod 0
-File ::A697E783-6CB7-4780-8895-C1E33AF3C5F1 -name ButtonCounter.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/util -size 15389 -mtime 1220953732 -attributes 1000 -filemethod 0
-File ::4BC90B2A-A0D0-4A66-B1BB-D86504A10730 -name Datalogger.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/util -size 12873 -mtime 1220953732 -attributes 1000 -filemethod 0
-File ::14957BF4-CA6B-46A8-8C2F-D32B029BCE64 -name package-frame.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/util -size 1939 -mtime 1220953733 -attributes 1000 -filemethod 0
-File ::63AA8D1A-30ED-4718-AA75-1B5109E99BC1 -name package-summary.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/util -size 8135 -mtime 1220953733 -attributes 1000 -filemethod 0
-File ::0F4A4415-EED5-48DB-9B1D-0289C98CD1A0 -name package-tree.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/util -size 6813 -mtime 1220953733 -attributes 1000 -filemethod 0
-File ::04188953-1A9D-4F59-A7F2-B7D146C8286C -name Recyclable.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/util -size 10424 -mtime 1220953732 -attributes 1000 -filemethod 0
-File ::03026860-2AC8-472D-8C3C-99579BF0D3DB -name RecyclableArray.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/util -size 13517 -mtime 1220953732 -attributes 1000 -filemethod 0
-File ::7132F8A8-B756-4BEF-9150-905468D4C913 -name Recycler.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/util -size 12550 -mtime 1220953733 -attributes 1000 -filemethod 0
-File ::19A6E8DE-B12B-40F5-B98F-648FD1614A2E -name Timer.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/util -size 12122 -mtime 1220953733 -attributes 1000 -filemethod 0
-File ::8587902C-1B5D-44ED-9B41-98C86F713452 -name TimerListener.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/lejos/util -size 7555 -mtime 1220953733 -attributes 1000 -filemethod 0
-File ::81AB3C3B-AC7C-4A29-B16C-9A8F68DB1DA5 -name resources -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/docs/apidocs/resources -mtime 1220953733 -attributes 0000 -filemethod 0
-File ::F8D57D34-001E-4082-AFE5-BB1987B733F7 -name inherit.gif -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/apidocs/resources -size 57 -mtime 1220953733 -attributes 1000 -filemethod 0
-File ::04E488A5-92C2-49BA-996C-5DB5F737EE26 -name pcapidocs -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/docs/pcapidocs -size 4096 -mtime 1220953737 -attributes 0000 -filemethod 0
-File ::1974B7BE-60A3-4BBF-9ECA-037913D4B546 -name allclasses-frame.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/pcapidocs -size 2606 -mtime 1220953733 -attributes 1000 -filemethod 0
-File ::1B1855B3-BC84-440F-8827-5E85A53D2A90 -name allclasses-noframe.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/pcapidocs -size 2266 -mtime 1220953733 -attributes 1000 -filemethod 0
-File ::93DDC5A4-9086-4DBE-A1AF-F8C3A591D03B -name constant-values.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/pcapidocs -size 35733 -mtime 1220953733 -attributes 1000 -filemethod 0
-File ::C2A046F2-7F3F-457A-8960-78429E7CE7EE -name deprecated-list.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/pcapidocs -size 4658 -mtime 1220953734 -attributes 1000 -filemethod 0
-File ::080A655D-19E7-47FE-AEC9-E0C4C41FC3AD -name help-doc.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/pcapidocs -size 8478 -mtime 1220953734 -attributes 1000 -filemethod 0
-File ::8EC06C6F-5ABB-4661-91E4-07FC7E24E650 -name index-all.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/pcapidocs -size 67490 -mtime 1220953734 -attributes 1000 -filemethod 0
-File ::85ACBBCE-F2B7-417B-9719-9004B458B636 -name index.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/pcapidocs -size 1211 -mtime 1220953734 -attributes 1000 -filemethod 0
-File ::D4FDA51A-5D1D-444A-A35E-719368497A78 -name overview-tree.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/pcapidocs -size 7973 -mtime 1220953734 -attributes 1000 -filemethod 0
-File ::D877150D-41AC-4A9B-80DE-0431C57831D6 -name package-list -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/pcapidocs -size 14 -mtime 1220953734 -attributes 1000 -filemethod 0
-File ::671EB140-D1A0-43F4-95E8-B1219AAC2EC0 -name serialized-form.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/pcapidocs -size 5898 -mtime 1220953734 -attributes 1000 -filemethod 0
-File ::0B43071F-AA0B-4D3C-90ED-D032B7E98DC3 -name stylesheet.css -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/pcapidocs -size 1202 -mtime 1220953734 -attributes 1000 -filemethod 0
-File ::4FAE4461-141A-4956-8C11-35553C6EBA1F -name lejos -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/docs/pcapidocs/lejos -mtime 1220953734 -attributes 0000 -filemethod 0
-File ::3E5D52CA-A145-43BD-ACBD-5EBF39FFC731 -name pc -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/docs/pcapidocs/lejos/pc -mtime 1220953734 -attributes 0000 -filemethod 0
-File ::6A82C666-9EF9-418C-A28F-BB5B5E05A39D -name comm -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/docs/pcapidocs/lejos/pc/comm -size 8192 -mtime 1220953737 -attributes 0000 -filemethod 0
-File ::4768FA3F-A957-4E47-8943-ECED5DEEA7FF -name BlueZException.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/pcapidocs/lejos/pc/comm -size 9475 -mtime 1220953735 -attributes 1000 -filemethod 0
-File ::F802F528-B0F3-413F-9D7B-C42660C3FB7F -name FileInfo.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/pcapidocs/lejos/pc/comm -size 11610 -mtime 1220953735 -attributes 1000 -filemethod 0
-File ::B540608B-0B5D-45D2-9A76-1E5E80EA0A12 -name InputValues.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/pcapidocs/lejos/pc/comm -size 14497 -mtime 1220953735 -attributes 1000 -filemethod 0
-File ::9CB808A3-EC5B-4647-8E28-25AD49F4B389 -name NXTComm.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/pcapidocs/lejos/pc/comm -size 15044 -mtime 1220953735 -attributes 1000 -filemethod 0
-File ::2B524CB4-A801-4627-91BE-647C7711E71D -name NXTCommand.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/pcapidocs/lejos/pc/comm -size 36352 -mtime 1220953736 -attributes 1000 -filemethod 0
-File ::EA478553-A434-4F32-825E-72174BEC6754 -name NXTCommBluecove.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/pcapidocs/lejos/pc/comm -size 25208 -mtime 1220953735 -attributes 1000 -filemethod 0
-File ::68E8667A-DC79-42D3-AABA-2B98AE8FFF6E -name NXTCommBluez.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/pcapidocs/lejos/pc/comm -size 21226 -mtime 1220953735 -attributes 1000 -filemethod 0
-File ::FAA9C858-3DF2-4D0C-9FA2-2BB20AC853DB -name NXTCommException.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/pcapidocs/lejos/pc/comm -size 11684 -mtime 1220953735 -attributes 1000 -filemethod 0
-File ::0B0FDF05-E06D-4471-8503-140F28F356F8 -name NXTCommFactory.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/pcapidocs/lejos/pc/comm -size 11535 -mtime 1220953736 -attributes 1000 -filemethod 0
-File ::013FA03A-8864-4427-85ED-44B945C08B08 -name NXTCommFantom.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/pcapidocs/lejos/pc/comm -size 22842 -mtime 1220953736 -attributes 1000 -filemethod 0
-File ::AFBA47C9-DF62-4C42-AA76-5229441FFE2F -name NXTCommInputStream.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/pcapidocs/lejos/pc/comm -size 11958 -mtime 1220953736 -attributes 1000 -filemethod 0
-File ::D6807A12-4BA4-44CD-AE5E-D0A2AAB3AA5B -name NXTCommLibnxt.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/pcapidocs/lejos/pc/comm -size 24127 -mtime 1220953736 -attributes 1000 -filemethod 0
-File ::C3EA04A7-14F5-4F68-B57F-3205E85BA30B -name NXTCommLogListener.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/pcapidocs/lejos/pc/comm -size 8070 -mtime 1220953736 -attributes 1000 -filemethod 0
-File ::E0284DC5-ED73-4D12-AC80-B4F4E0CDD628 -name NXTCommOutputStream.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/pcapidocs/lejos/pc/comm -size 10954 -mtime 1220953736 -attributes 1000 -filemethod 0
-File ::1196136C-791F-4298-B8FB-6947F2F43AD3 -name NXTInfo.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/pcapidocs/lejos/pc/comm -size 12601 -mtime 1220953736 -attributes 1000 -filemethod 0
-File ::A9469686-FF96-4ED1-A83E-E54676C7E538 -name NXTProtocol.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/pcapidocs/lejos/pc/comm -size 57162 -mtime 1220953736 -attributes 1000 -filemethod 0
-File ::33605CE1-8AC8-4A6A-920A-8428F5095E01 -name OutputState.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/pcapidocs/lejos/pc/comm -size 15067 -mtime 1220953737 -attributes 1000 -filemethod 0
-File ::8EE84FD1-3DC6-428E-9BE4-E36689A195FB -name package-frame.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/pcapidocs/lejos/pc/comm -size 2929 -mtime 1220953737 -attributes 1000 -filemethod 0
-File ::8C80D576-29F6-4856-BDEC-EB42BEF7D659 -name package-summary.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/pcapidocs/lejos/pc/comm -size 10155 -mtime 1220953737 -attributes 1000 -filemethod 0
-File ::0B21EC3C-9DF4-43F6-8EFE-F29FB53B0367 -name package-tree.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/pcapidocs/lejos/pc/comm -size 8258 -mtime 1220953737 -attributes 1000 -filemethod 0
-File ::C1A40423-3673-40BC-ACE9-0DB79471BA3D -name resources -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/docs/pcapidocs/resources -mtime 1220953737 -attributes 0000 -filemethod 0
-File ::C6243652-07B6-4699-A29A-CF89F77F0A1A -name inherit.gif -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/docs/pcapidocs/resources -size 57 -mtime 1220953737 -attributes 1000 -filemethod 0
-File ::8D98B303-3DA2-4C85-A9D4-67AF5F665929 -name lib -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/lib -mtime 1220953811 -attributes 0000 -filemethod 0
-File ::3E98A71B-21C9-4DD3-BC1D-FC4A5E607701 -name classes.jar -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/lib -size 239836 -mtime 1220953811 -attributes 1000 -filemethod 0
-File ::FB143C8B-534D-487E-A096-D4CF8339680F -name jtools.jar -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/lib -size 78666 -mtime 1220953811 -attributes 1000 -filemethod 0
-File ::F0F528AA-CD77-4ECA-965C-8783B4AC7CA3 -name pccomm.jar -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/lib -size 24857 -mtime 1220953811 -attributes 1000 -filemethod 0
-File ::DF865BE6-2753-4146-A241-99183A14FAF8 -name pctools.jar -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/lib -size 55747 -mtime 1220953811 -attributes 1000 -filemethod 0
-File ::0AF5FDAE-2E01-4412-AC72-00A7B4381895 -name samples -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/samples -size 16384 -mtime 1220953748 -attributes 0000 -filemethod 0
-File ::D41391BE-6291-4EF0-B07B-3748E508FB57 -name samples.properties -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples -size 167 -mtime 1220953737 -attributes 1000 -filemethod 0
-File ::28D55D76-9FCE-470B-8AEE-501777A1E677 -name BlueStats -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/samples/BlueStats -mtime 1220953738 -attributes 0000 -filemethod 0
-File ::DC4DB813-DADF-4E5C-BC23-3E0F834EFFEC -name BlueStats.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/BlueStats -size 2334 -mtime 1220953738 -attributes 1000 -filemethod 0
-File ::AE4C9DEC-D1BD-400C-9F9A-2A2E88CC0CDC -name build.xml -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/BlueStats -size 3176 -mtime 1220953738 -attributes 1000 -filemethod 0
-File ::E35515F2-AA03-4A7B-810F-0DA310DC7A4C -name BTConnectTest -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/samples/BTConnectTest -mtime 1220953737 -attributes 0000 -filemethod 0
-File ::4C070788-BA7F-4C9A-B3B6-9444C1D63B42 -name BTConnectTest.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/BTConnectTest -size 2518 -mtime 1220953737 -attributes 1000 -filemethod 0
-File ::F7DE7775-EAF4-48F5-9AC1-C8C2C781642F -name build.xml -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/BTConnectTest -size 3176 -mtime 1220953737 -attributes 1000 -filemethod 0
-File ::2DF09FD7-077A-47BD-9993-B5C514A67E72 -name BTGPS -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/samples/BTGPS -mtime 1220953738 -attributes 0000 -filemethod 0
-File ::1B0F6CFD-A842-42BC-8A2E-7076BBC0F190 -name BTGPS.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/BTGPS -size 3018 -mtime 1220953738 -attributes 1000 -filemethod 0
-File ::109129B7-44F8-44CE-9672-1580FDD8BB9F -name build.xml -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/BTGPS -size 3176 -mtime 1220953738 -attributes 1000 -filemethod 0
-File ::96FF6826-DB7D-4E78-A3D2-8969C91AB432 -name BTReceive -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/samples/BTReceive -mtime 1220953738 -attributes 0000 -filemethod 0
-File ::9A751CB8-A234-45F9-AAE6-0DB88B17F16B -name BTReceive.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/BTReceive -size 1212 -mtime 1220953738 -attributes 1000 -filemethod 0
-File ::CE68F0E0-7236-485D-876A-FE0A36011407 -name build.xml -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/BTReceive -size 3176 -mtime 1220953738 -attributes 1000 -filemethod 0
-File ::B751673F-4BC0-4F3F-B0EC-03BE904BA78A -name BTSend -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/samples/BTSend -mtime 1220953738 -attributes 0000 -filemethod 0
-File ::E46E1A48-97B0-48A5-A31C-566084B96F96 -name BTSend.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/BTSend -size 3209 -mtime 1220953738 -attributes 1000 -filemethod 0
-File ::D2DA65C6-3CEF-4065-B4F8-47F053C7D26F -name BumperCar -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/samples/BumperCar -size 4096 -mtime 1220953739 -attributes 0000 -filemethod 0
-File ::0B9BB75C-8666-4724-B1CC-32D12A0129EA -name build.xml -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/BumperCar -size 3176 -mtime 1220953739 -attributes 1000 -filemethod 0
-File ::D9474789-A0C1-460D-8438-FAF4230DEE54 -name BumperCar.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/BumperCar -size 643 -mtime 1220953738 -attributes 1000 -filemethod 0
-File ::9F28AE69-79C5-42A9-9CE9-83234C88779C -name DriveForward.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/BumperCar -size 318 -mtime 1220953739 -attributes 1000 -filemethod 0
-File ::D421685C-C40D-46D3-BC40-75824010257D -name HitWall.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/BumperCar -size 651 -mtime 1220953739 -attributes 1000 -filemethod 0
-File ::E0D8CD55-C037-49D9-BD4D-44991899212C -name ColorDetector -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/samples/ColorDetector -mtime 1220953739 -attributes 0000 -filemethod 0
-File ::2E00F98A-71C9-4393-B68A-FE638025C611 -name build.xml -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/ColorDetector -size 3176 -mtime 1220953739 -attributes 1000 -filemethod 0
-File ::4F1AA208-9E21-4ED8-879B-FBE134EC106B -name ColorDetector.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/ColorDetector -size 959 -mtime 1220953739 -attributes 1000 -filemethod 0
-File ::821F79C7-5D48-44B0-84C3-27A2AA8200B4 -name CompassTest -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/samples/CompassTest -mtime 1220953739 -attributes 0000 -filemethod 0
-File ::22A38933-2837-4FC4-819D-195796F39666 -name build.xml -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/CompassTest -size 3176 -mtime 1220953739 -attributes 1000 -filemethod 0
-File ::76777268-C579-4797-B44E-C4788A06B9AC -name CompassTest.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/CompassTest -size 469 -mtime 1220953739 -attributes 1000 -filemethod 0
-File ::0F225242-738B-4DB1-9B84-8E593C409B67 -name DLTest -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/samples/DLTest -mtime 1220953739 -attributes 0000 -filemethod 0
-File ::BA3A4F4D-344A-4E62-8E46-C0C010C52B7B -name build.xml -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/DLTest -size 3176 -mtime 1220953739 -attributes 1000 -filemethod 0
-File ::EA9E1186-8C53-4CD6-BE6B-03B59EAAD0B3 -name DLTest.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/DLTest -size 1095 -mtime 1220953739 -attributes 1000 -filemethod 0
-File ::4DC878A5-205E-4CF0-B678-40ED8E147390 -name ExceptionTest -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/samples/ExceptionTest -mtime 1220953740 -attributes 0000 -filemethod 0
-File ::C6661258-974D-4E5E-A4A5-952318B76531 -name build.xml -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/ExceptionTest -size 3176 -mtime 1220953740 -attributes 1000 -filemethod 0
-File ::8EB27B06-62F3-47BA-93D4-9F8D4ECE481A -name ExceptionTest.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/ExceptionTest -size 403 -mtime 1220953739 -attributes 1000 -filemethod 0
-File ::18AD0FD0-FDF2-447B-84BA-035CC98AED6C -name FileTest -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/samples/FileTest -mtime 1220953740 -attributes 0000 -filemethod 0
-File ::C1519386-67B1-4A42-9F69-C1EFB1A5579B -name build.xml -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/FileTest -size 3176 -mtime 1220953740 -attributes 1000 -filemethod 0
-File ::C47963D3-35B5-408E-A3D5-E40EA66F25B1 -name FileTest.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/FileTest -size 4198 -mtime 1220953740 -attributes 1000 -filemethod 0
-File ::30B653A5-8B36-47EB-B68D-4BB9AD346258 -name GraphicsSample -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/samples/GraphicsSample -mtime 1220953740 -attributes 0000 -filemethod 0
-File ::BDD8B87F-3D15-49FE-A19E-ECD3012D9CC7 -name build.xml -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/GraphicsSample -size 3176 -mtime 1220953740 -attributes 1000 -filemethod 0
-File ::C53C4FF7-0A71-4159-90B0-AE835240FCDB -name GraphicsSample.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/GraphicsSample -size 454 -mtime 1220953740 -attributes 1000 -filemethod 0
-File ::F35D2486-C74B-42C7-A5D1-720727BB7964 -name HelloWorld -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/samples/HelloWorld -mtime 1220953741 -attributes 0000 -filemethod 0
-File ::83C15044-76C1-413A-834D-2411D7BFDCC9 -name build.xml -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/HelloWorld -size 3176 -mtime 1220953741 -attributes 1000 -filemethod 0
-File ::9488836D-F38F-4D49-A2C4-BBA96E634C4B -name HelloWorld.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/HelloWorld -size 290 -mtime 1220953740 -attributes 1000 -filemethod 0
-File ::1298EA27-E242-4ED7-B15C-ECC31A492DFF -name I2CDevices -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/samples/I2CDevices -mtime 1220953741 -attributes 0000 -filemethod 0
-File ::39BC4E4E-555A-4DF4-AAF7-4DE4BF315F69 -name build.xml -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/I2CDevices -size 3176 -mtime 1220953741 -attributes 1000 -filemethod 0
-File ::C35BA5F3-3022-4406-8305-3D0D91C35C16 -name I2CDevices.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/I2CDevices -size 727 -mtime 1220953741 -attributes 1000 -filemethod 0
-File ::2E22DCC6-5B0D-45B3-A2C0-01445946881E -name KeyboardTest -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/samples/KeyboardTest -mtime 1220953741 -attributes 0000 -filemethod 0
-File ::3A59FB31-3C9F-4269-BB90-4454D4FD4943 -name build.xml -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/KeyboardTest -size 3183 -mtime 1220953741 -attributes 1000 -filemethod 0
-File ::5E874453-4AAB-4878-BB64-93D6371E70EF -name KeyboardTest.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/KeyboardTest -size 4152 -mtime 1220953741 -attributes 1000 -filemethod 0
-File ::115FC9A8-8DD0-440E-A23D-546D734D5065 -name LatteboxTest -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/samples/LatteboxTest -size 4096 -mtime 1220953742 -attributes 0000 -filemethod 0
-File ::89B068B9-FC50-40B2-83B0-E2BDE2DEE166 -name build.xml -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/LatteboxTest -size 3176 -mtime 1220953742 -attributes 1000 -filemethod 0
-File ::3A9AE35F-D85F-4520-938D-D84E8110BAA5 -name DebugMessages.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/LatteboxTest -size 1692 -mtime 1220953742 -attributes 1000 -filemethod 0
-File ::8CE6309E-E49A-48BA-A8DB-8E290027CECF -name LatteboxTest.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/LatteboxTest -size 2176 -mtime 1220953742 -attributes 1000 -filemethod 0
-File ::8F8FB3EF-45A2-4B83-838D-4FC1AC133602 -name LCDUI -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/samples/LCDUI -mtime 1220953741 -attributes 0000 -filemethod 0
-File ::5D34D891-B651-466E-B803-721B615434A0 -name build.xml -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/LCDUI -size 3176 -mtime 1220953741 -attributes 1000 -filemethod 0
-File ::FAD7BCCB-7186-47C5-BF5B-696811162B08 -name LCDUI.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/LCDUI -size 12802 -mtime 1220953741 -attributes 1000 -filemethod 0
-File ::7B0A77CD-887D-48D5-9D7E-FCFC7F47355A -name Line -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/samples/Line -mtime 1220953742 -attributes 0000 -filemethod 0
-File ::BC425FA7-9BAA-486A-BAE9-F5BDA35658B7 -name build.xml -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/Line -size 3176 -mtime 1220953742 -attributes 1000 -filemethod 0
-File ::E6787368-964C-403E-8281-98A2F6958D4B -name Line.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/Line -size 1794 -mtime 1220953742 -attributes 1000 -filemethod 0
-File ::4D47C129-533B-426C-8629-70748E44610A -name Listen -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/samples/Listen -mtime 1220953742 -attributes 0000 -filemethod 0
-File ::824FE862-6849-45BB-8973-19BE80B30572 -name build.xml -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/Listen -size 3176 -mtime 1220953742 -attributes 1000 -filemethod 0
-File ::E110FD80-A505-46C6-883F-6639DDDFD587 -name Listen.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/Listen -size 1421 -mtime 1220953742 -attributes 1000 -filemethod 0
-File ::D30A41C9-DC1E-47C8-81C4-DB719C44F001 -name LLCMonitor -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/samples/LLCMonitor -mtime 1220953742 -attributes 0000 -filemethod 0
-File ::C07A5DF5-4F55-441C-B586-9261339F62AE -name build.xml -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/LLCMonitor -size 3176 -mtime 1220953741 -attributes 1000 -filemethod 0
-File ::B66E9530-7225-46A3-8205-F1B1EF616E53 -name LLCMonitor.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/LLCMonitor -size 645 -mtime 1220953741 -attributes 1000 -filemethod 0
-File ::F0134811-361F-4E7E-8536-8833248AC8AE -name MemoryTest -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/samples/MemoryTest -mtime 1220953742 -attributes 0000 -filemethod 0
-File ::A48C4C43-ED4F-4BCA-A8DD-15FCC1950EE2 -name build.xml -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/MemoryTest -size 3176 -mtime 1220953742 -attributes 1000 -filemethod 0
-File ::BF4D0012-ABD8-48E5-8D6D-58473273ACF8 -name MemoryTest.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/MemoryTest -size 579 -mtime 1220953742 -attributes 1000 -filemethod 0
-File ::B2F02384-14F4-4B2F-ADBF-6BB7ED8E3E36 -name MonitorTest -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/samples/MonitorTest -mtime 1220953743 -attributes 0000 -filemethod 0
-File ::ED9AC2C4-993D-449D-B18C-FE85E5EAD73B -name build.xml -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/MonitorTest -size 3176 -mtime 1220953743 -attributes 1000 -filemethod 0
-File ::BEDB06DA-FD80-4795-9BED-5C98040B7EE4 -name MonitorTest.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/MonitorTest -size 3448 -mtime 1220953742 -attributes 1000 -filemethod 0
-File ::1B76498F-9EBB-495A-AFB1-41AE8B3E88E4 -name NXTCamTest -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/samples/NXTCamTest -mtime 1220953743 -attributes 0000 -filemethod 0
-File ::7D010AAA-4CA9-4B6D-8B0A-4B9BBA63F932 -name build.xml -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/NXTCamTest -size 3176 -mtime 1220953743 -attributes 1000 -filemethod 0
-File ::AF6F3607-2FF3-458C-A36C-0EF53D118729 -name NXTCamTest.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/NXTCamTest -size 1183 -mtime 1220953743 -attributes 1000 -filemethod 0
-File ::1CAEEA61-8D52-4EAB-8148-36006F57B2C2 -name PerformanceTest -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/samples/PerformanceTest -mtime 1220953743 -attributes 0000 -filemethod 0
-File ::A7E7EA7A-805D-48B5-AABF-4A7DCB9DE1CC -name build.xml -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/PerformanceTest -size 3176 -mtime 1220953743 -attributes 1000 -filemethod 0
-File ::8227FF6C-D046-4946-882B-86D8FA875668 -name PerformanceTest.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/PerformanceTest -size 3195 -mtime 1220953743 -attributes 1000 -filemethod 0
-File ::F3274871-52B3-4488-A1DE-C62EAB6C518F -name PilotTester -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/samples/PilotTester -mtime 1220953743 -attributes 0000 -filemethod 0
-File ::B1DFDCFA-1209-4741-A686-599995D8D1C4 -name build.xml -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/PilotTester -size 3176 -mtime 1220953743 -attributes 1000 -filemethod 0
-File ::305BBBC9-E9B8-48D0-97DC-E74414471A28 -name PilotTester.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/PilotTester -size 1958 -mtime 1220953743 -attributes 1000 -filemethod 0
-File ::74BE1B6B-D26C-4944-8A9C-3F4DCA34A414 -name RCXEmulator -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/samples/RCXEmulator -mtime 1220953743 -attributes 0000 -filemethod 0
-File ::09C1FF7D-C856-4D7E-9771-7AECEBCE8694 -name build.xml -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/RCXEmulator -size 3176 -mtime 1220953743 -attributes 1000 -filemethod 0
-File ::0846F050-FC8C-4933-A255-63777907BD12 -name RCXEmulator.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/RCXEmulator -size 3591 -mtime 1220953743 -attributes 1000 -filemethod 0
-File ::4E2D6417-5940-4EDB-9EA0-51FEABAAC9E7 -name RCXMMTest -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/samples/RCXMMTest -mtime 1220953744 -attributes 0000 -filemethod 0
-File ::766AB72F-DC94-446C-AF61-E65C66E3556E -name build.xml -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/RCXMMTest -size 3176 -mtime 1220953744 -attributes 1000 -filemethod 0
-File ::B21C8997-D0F4-469C-A534-FB4CC765EE78 -name RCXMMTest.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/RCXMMTest -size 685 -mtime 1220953744 -attributes 1000 -filemethod 0
-File ::843128E6-4BAD-45E1-B114-2C0E066A28B8 -name RCXMuxTest -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/samples/RCXMuxTest -mtime 1220953744 -attributes 0000 -filemethod 0
-File ::18B5DCA8-19A9-4B76-8E9C-939B99D5A7E1 -name build.xml -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/RCXMuxTest -size 3176 -mtime 1220953744 -attributes 1000 -filemethod 0
-File ::5FF3D4DC-F982-48B3-AEBF-28BFD5C3CDC9 -name RCXMuxTest.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/RCXMuxTest -size 742 -mtime 1220953744 -attributes 1000 -filemethod 0
-File ::89C1F275-B01B-4303-8ECD-9752BBBA7BE7 -name RCXPortTest -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/samples/RCXPortTest -mtime 1220953744 -attributes 0000 -filemethod 0
-File ::1D134193-EF5A-434A-9001-FF9A245BED53 -name build.xml -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/RCXPortTest -size 3176 -mtime 1220953744 -attributes 1000 -filemethod 0
-File ::C9091E94-6B82-45FD-A215-00FF828E4134 -name RCXPortTest.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/RCXPortTest -size 1512 -mtime 1220953744 -attributes 1000 -filemethod 0
-File ::09A1DCCC-B3C4-4548-BF1C-5DBFBB2EA5FE -name RCXRemote -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/samples/RCXRemote -mtime 1220953744 -attributes 0000 -filemethod 0
-File ::BE4E256B-18A3-4E54-8F98-55BD100C49C1 -name build.xml -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/RCXRemote -size 3176 -mtime 1220953744 -attributes 1000 -filemethod 0
-File ::9D09115B-569D-4316-8FA7-5963F8173218 -name RCXRemote.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/RCXRemote -size 1458 -mtime 1220953744 -attributes 1000 -filemethod 0
-File ::8F1D4357-34E5-47EA-90C0-23850B190C30 -name RCXRemoteMotor -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/samples/RCXRemoteMotor -mtime 1220953745 -attributes 0000 -filemethod 0
-File ::4B1921E6-8419-4743-BBC9-5B0EAB2B93E2 -name build.xml -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/RCXRemoteMotor -size 3176 -mtime 1220953745 -attributes 1000 -filemethod 0
-File ::DA50617F-A773-497F-B577-22A2F484B0D1 -name RCXRemoteMotor.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/RCXRemoteMotor -size 1713 -mtime 1220953744 -attributes 1000 -filemethod 0
-File ::8B23AE0E-D20C-45C2-89B2-8C17C66BF573 -name RemoteNXTTest -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/samples/RemoteNXTTest -mtime 1220953745 -attributes 0000 -filemethod 0
-File ::7E50B070-043A-4641-865C-D4C3A5321B51 -name build.xml -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/RemoteNXTTest -size 3176 -mtime 1220953745 -attributes 1000 -filemethod 0
-File ::EAAF5209-15E3-43FD-9276-660DE470F288 -name RemoteNXTTest.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/RemoteNXTTest -size 2375 -mtime 1220953745 -attributes 1000 -filemethod 0
-File ::60B5C805-854D-4781-8354-81DCB32D0A6C -name SignalTest -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/samples/SignalTest -mtime 1220953745 -attributes 0000 -filemethod 0
-File ::B77CD176-245F-4120-93F2-6A482F665381 -name build.xml -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/SignalTest -size 3176 -mtime 1220953745 -attributes 1000 -filemethod 0
-File ::59EB043C-0B2D-4987-96B6-457210B7B761 -name SignalTest.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/SignalTest -size 953 -mtime 1220953745 -attributes 1000 -filemethod 0
-File ::E656071C-D008-4F8D-90AF-E4F1B63528D9 -name SocketServer -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/samples/SocketServer -mtime 1220953745 -attributes 0000 -filemethod 0
-File ::1C7E99FA-8789-415D-BD5C-AEBF33295505 -name SocketServer.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/SocketServer -size 1929 -mtime 1220953745 -attributes 1000 -filemethod 0
-File ::2229AA02-9F8D-446F-9EFD-D729629CD4C6 -name SocketTest -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/samples/SocketTest -mtime 1220953745 -attributes 0000 -filemethod 0
-File ::33793A13-6099-420D-B601-201E3BC8197E -name build.xml -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/SocketTest -size 3176 -mtime 1220953745 -attributes 1000 -filemethod 0
-File ::BB2213CD-18B6-4C6D-9E55-A6742B323F9C -name SocketTest.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/SocketTest -size 1543 -mtime 1220953745 -attributes 1000 -filemethod 0
-File ::4C0A8483-5A44-4AA0-A235-DA28EED21FC9 -name SonicTest -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/samples/SonicTest -mtime 1220953746 -attributes 0000 -filemethod 0
-File ::114E887A-AFBB-4708-AEAB-8A473D4C3983 -name build.xml -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/SonicTest -size 3176 -mtime 1220953746 -attributes 1000 -filemethod 0
-File ::45170C31-8AAE-4AE0-9BAC-2047C4D00C6C -name SonicTest.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/SonicTest -size 573 -mtime 1220953746 -attributes 1000 -filemethod 0
-File ::0385B30D-C531-44C3-A121-7565E402305C -name SoundSample -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/samples/SoundSample -mtime 1220953746 -attributes 0000 -filemethod 0
-File ::4C2A09C3-77DD-4BBF-893D-209AB3DB30DB -name build.xml -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/SoundSample -size 3176 -mtime 1220953746 -attributes 1000 -filemethod 0
-File ::1065009E-8BF4-4C6B-A521-A16375A38135 -name SoundSample.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/SoundSample -size 1440 -mtime 1220953746 -attributes 1000 -filemethod 0
-File ::3F291D24-C1A0-45C0-B962-2E103E5A8099 -name SpeedTest -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/samples/SpeedTest -mtime 1220953746 -attributes 0000 -filemethod 0
-File ::71A426F3-FC5A-4ADF-88C9-A4EED83F9228 -name build.xml -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/SpeedTest -size 3176 -mtime 1220953746 -attributes 1000 -filemethod 0
-File ::135B6FBC-4951-410F-AF5C-2522DE3A03B7 -name SpeedTest.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/SpeedTest -size 1613 -mtime 1220953746 -attributes 1000 -filemethod 0
-File ::9AB69B42-D66F-4CDA-A4B7-48534F251EC5 -name Subsumption1 -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/samples/Subsumption1 -mtime 1220953746 -attributes 0000 -filemethod 0
-File ::BA1FBC66-19C1-44E1-B5B6-76BA85618799 -name build.xml -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/Subsumption1 -size 3175 -mtime 1220953746 -attributes 1000 -filemethod 0
-File ::99079005-CE6D-42BE-996E-5343F2FA48DA -name Main.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/Subsumption1 -size 8493 -mtime 1220953746 -attributes 1000 -filemethod 0
-File ::5DEAE894-AB2C-46A6-88AA-E7A741450262 -name Subsumption2 -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/samples/Subsumption2 -mtime 1220953747 -attributes 0000 -filemethod 0
-File ::C4DD8E54-D98F-4097-A997-4AD6BEA9CA78 -name build.xml -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/Subsumption2 -size 3175 -mtime 1220953747 -attributes 1000 -filemethod 0
-File ::61186C82-98CF-4B62-A08A-844F73AF51B6 -name Main.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/Subsumption2 -size 8399 -mtime 1220953747 -attributes 1000 -filemethod 0
-File ::3FFD7BDB-F3BC-4E68-A1C5-7EB13C1B179E -name TiltTest -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/samples/TiltTest -mtime 1220953747 -attributes 0000 -filemethod 0
-File ::F1F61B2C-3565-4C2D-AD08-8384E7517C68 -name build.xml -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/TiltTest -size 3176 -mtime 1220953747 -attributes 1000 -filemethod 0
-File ::C130E463-72C1-4B6B-B48A-5964058447DE -name TiltTest.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/TiltTest -size 691 -mtime 1220953747 -attributes 1000 -filemethod 0
-File ::31C18895-0589-42A1-80C0-1E2C4A8C3D05 -name TimeTest -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/samples/TimeTest -mtime 1220953747 -attributes 0000 -filemethod 0
-File ::2F63714E-458D-4DCC-8BE4-C77D060E7E9D -name build.xml -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/TimeTest -size 3176 -mtime 1220953747 -attributes 1000 -filemethod 0
-File ::115CD679-A520-499B-B670-8D4E962B63B4 -name TimeTest.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/TimeTest -size 1482 -mtime 1220953747 -attributes 1000 -filemethod 0
-File ::03924898-DD20-4387-9AE4-9090045084F8 -name Tune -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/samples/Tune -mtime 1220953747 -attributes 0000 -filemethod 0
-File ::F10D1ACA-3F85-4231-8A1F-13B79BD5DA1C -name build.xml -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/Tune -size 3176 -mtime 1220953747 -attributes 1000 -filemethod 0
-File ::1D55B189-34EC-49A9-AA2A-8741A3B7ADD9 -name Tune.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/Tune -size 827 -mtime 1220953747 -attributes 1000 -filemethod 0
-File ::2C6FB0DF-CA6D-4BA1-A515-BCB97F7C40C6 -name USBReceive -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/samples/USBReceive -mtime 1220953747 -attributes 0000 -filemethod 0
-File ::5C357D95-96FE-431E-AD91-1F1E7A7C82EE -name build.xml -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/USBReceive -size 3176 -mtime 1220953747 -attributes 1000 -filemethod 0
-File ::8DD4870E-FCB8-409C-8476-63D8B750ABF5 -name USBReceive.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/USBReceive -size 768 -mtime 1220953747 -attributes 1000 -filemethod 0
-File ::D8A39A05-F8C8-447E-AE06-4834F2F9D0CA -name USBSend -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/samples/USBSend -mtime 1220953748 -attributes 0000 -filemethod 0
-File ::D485C170-1891-4F2F-BD9E-92C63ABDFF9C -name USBSend.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/USBSend -size 1919 -mtime 1220953748 -attributes 1000 -filemethod 0
-File ::CD6258F5-0227-4BA6-A2BB-F7AA304F41D5 -name View -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/samples/View -mtime 1220953748 -attributes 0000 -filemethod 0
-File ::B5DFB4DC-FE45-4CCE-BFEF-B80E0BAD7E6D -name build.xml -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/View -size 3176 -mtime 1220953748 -attributes 1000 -filemethod 0
-File ::419837AD-CCD3-4AF3-B7E7-5B6D5A0236A5 -name View.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/samples/View -size 6107 -mtime 1220953748 -attributes 1000 -filemethod 0
-File ::1F978CF4-0509-4F3E-9015-CD939F6FAE15 -name src -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/src -mtime 1220953792 -attributes 0000 -filemethod 0
-File ::33FB5589-A2E5-4282-A1BE-6F1A5FC9512F -name java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/src/java -mtime 1220953787 -attributes 0000 -filemethod 0
-File ::0C1EC7B8-FFA8-4919-A968-DC40968329B7 -name classes -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/src/java/classes -mtime 1220953760 -attributes 0000 -filemethod 0
-File ::803A3DAA-18DA-4ABF-A8BB-1F43D4B0B323 -name java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/src/java/classes/java -mtime 1220953754 -attributes 0000 -filemethod 0
-File ::5354D947-433E-4BEE-92AB-3A41C4D10699 -name awt -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/src/java/classes/java/awt -mtime 1220953748 -attributes 0000 -filemethod 0
-File ::BC6F2458-5087-4F8F-91E6-7D145DCDA555 -name package.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/java/awt -size 53 -mtime 1220953748 -attributes 1000 -filemethod 0
-File ::13239741-19B2-4BE0-97BE-AB9B60504411 -name Rectangle.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/java/awt -size 313 -mtime 1220953748 -attributes 1000 -filemethod 0
-File ::CAF55AFB-146E-4B61-B570-25009CED8797 -name io -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/src/java/classes/java/io -size 4096 -mtime 1220953750 -attributes 0000 -filemethod 0
-File ::6DD61961-140E-4B56-8B56-A6F11CF1A677 -name BufferedWriter.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/java/io -size 1248 -mtime 1220953748 -attributes 1000 -filemethod 0
-File ::3239F367-539E-4D50-BA85-C437410A6C13 -name DataInputStream.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/java/io -size 4327 -mtime 1220953748 -attributes 1000 -filemethod 0
-File ::F2E94C9B-5F27-4B12-8BF5-2CBB7CF40B3F -name DataOutputStream.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/java/io -size 8944 -mtime 1220953748 -attributes 1000 -filemethod 0
-File ::A8871C41-BB48-4DCA-8943-BA338A6C80FA -name EOFException.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/java/io -size 1249 -mtime 1220953748 -attributes 1000 -filemethod 0
-File ::7EFC4BFC-37EA-47F6-B6A1-13D439533B47 -name File.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/java/io -size 22436 -mtime 1220953749 -attributes 1000 -filemethod 0
-File ::47005945-604D-45C0-B6FC-F9F5F919E066 -name FileInputStream.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/java/io -size 1350 -mtime 1220953749 -attributes 1000 -filemethod 0
-File ::98E96EF0-2EC6-4F1E-8260-6ED71D1C9243 -name FileOutputStream.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/java/io -size 2832 -mtime 1220953749 -attributes 1000 -filemethod 0
-File ::124E708A-55CF-4503-B5D3-780FB4BA6C8A -name InputStream.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/java/io -size 14661 -mtime 1220953750 -attributes 1000 -filemethod 0
-File ::6467A1BE-0F90-4C66-A993-6075D8893BE7 -name IOException.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/java/io -size 1160 -mtime 1220953749 -attributes 1000 -filemethod 0
-File ::29CE2E3B-14F0-448D-8E47-1823E3C8B887 -name OutputStream.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/java/io -size 5132 -mtime 1220953750 -attributes 1000 -filemethod 0
-File ::9EC310EF-5079-4534-9155-F37DA0C97C27 -name package.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/java/io -size 34 -mtime 1220953750 -attributes 1000 -filemethod 0
-File ::989A7116-38C4-4CC1-8355-ADB487301A86 -name PrintStream.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/java/io -size 1148 -mtime 1220953750 -attributes 1000 -filemethod 0
-File ::B3164EF8-D2E0-46A4-9A08-ADB54AB64049 -name Serializable.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/java/io -size 129 -mtime 1220953750 -attributes 1000 -filemethod 0
-File ::5EC409F8-AA95-4C5D-9058-FD0E6473817D -name lang -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/src/java/classes/java/lang -size 12288 -mtime 1220953754 -attributes 0000 -filemethod 0
-File ::6206E669-F58F-494D-89A1-2CF57834F533 -name ArithmeticException.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/java/lang -size 75 -mtime 1220953751 -attributes 1000 -filemethod 0
-File ::A49EBE2B-9E22-4310-B758-7D5FB09B645A -name ArrayIndexOutOfBoundsException.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/java/lang -size 93 -mtime 1220953751 -attributes 1000 -filemethod 0
-File ::3C925F5B-DA6B-42A9-BC47-8B4EA48611B5 -name Class.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/java/lang -size 319 -mtime 1220953751 -attributes 1000 -filemethod 0
-File ::BA1B6503-C31A-4FAD-9693-C9DBD3D48693 -name ClassCastException.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/java/lang -size 81 -mtime 1220953751 -attributes 1000 -filemethod 0
-File ::ECCA893B-F683-4C72-A4D3-1F560F90ECDA -name ClassNotFoundException.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/java/lang -size 78 -mtime 1220953751 -attributes 1000 -filemethod 0
-File ::CB8D6FC9-3F4D-407E-8D8E-6678B0713494 -name Cloneable.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/java/lang -size 128 -mtime 1220953751 -attributes 1000 -filemethod 0
-File ::6F65DEFE-EB62-41A5-8153-81DD1B87D383 -name Error.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/java/lang -size 65 -mtime 1220953751 -attributes 1000 -filemethod 0
-File ::CC40B544-0895-4E9E-96AA-8D6130650D28 -name Exception.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/java/lang -size 160 -mtime 1220953751 -attributes 1000 -filemethod 0
-File ::68A3DE0E-28A6-466F-A893-6195173885DA -name Float.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/java/lang -size 4762 -mtime 1220953752 -attributes 1000 -filemethod 0
-File ::3F32408C-FBE9-4BEE-AE73-9F71B507F319 -name IllegalArgumentException.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/java/lang -size 87 -mtime 1220953752 -attributes 1000 -filemethod 0
-File ::5058860D-DB4D-4E0E-8EE7-66B69622FB6C -name IllegalMonitorStateException.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/java/lang -size 91 -mtime 1220953752 -attributes 1000 -filemethod 0
-File ::836A7B61-3C61-465F-9001-41FD7BFABE1B -name IllegalStateException.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/java/lang -size 84 -mtime 1220953752 -attributes 1000 -filemethod 0
-File ::E148B470-A3DB-40AA-B7C2-D0BDDB0EA13D -name Integer.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/java/lang -size 6320 -mtime 1220953752 -attributes 1000 -filemethod 0
-File ::7256B79A-8AA1-4889-BBDC-DC8A4513446B -name InterruptedException.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/java/lang -size 76 -mtime 1220953752 -attributes 1000 -filemethod 0
-File ::56F50105-7E14-484C-86A2-11DA54D915D6 -name Math.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/java/lang -size 8327 -mtime 1220953752 -attributes 1000 -filemethod 0
-File ::D0B08839-F167-42AF-A7E0-225CDEB2D92F -name NoClassDefFoundError.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/java/lang -size 128 -mtime 1220953752 -attributes 1000 -filemethod 0
-File ::D6419009-6E23-4D86-852D-DCB48F7B6262 -name NoSuchMethodError.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/java/lang -size 69 -mtime 1220953752 -attributes 1000 -filemethod 0
-File ::C4A313BD-12DC-4748-8C9D-AE6512659B43 -name NullPointerException.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/java/lang -size 83 -mtime 1220953753 -attributes 1000 -filemethod 0
-File ::15030137-0D44-4D91-9D76-3C46B96131B9 -name NumberFormatException.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/java/lang -size 98 -mtime 1220953753 -attributes 1000 -filemethod 0
-File ::6E725495-2BE1-4E6E-9FD8-D9830453F1B8 -name Object.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/java/lang -size 1735 -mtime 1220953753 -attributes 1000 -filemethod 0
-File ::05914B27-A2BC-4883-A38B-0C8587B77ED3 -name OutOfMemoryError.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/java/lang -size 68 -mtime 1220953753 -attributes 1000 -filemethod 0
-File ::10482600-D030-4313-BBB3-7EEFA60E5215 -name package.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/java/lang -size 31 -mtime 1220953754 -attributes 1000 -filemethod 0
-File ::C6E16FE4-40F9-4BDA-BC0F-850642410932 -name Runtime.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/java/lang -size 723 -mtime 1220953753 -attributes 1000 -filemethod 0
-File ::DF203A37-31FA-4AA0-93F7-B5912F59D752 -name RuntimeException.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/java/lang -size 72 -mtime 1220953753 -attributes 1000 -filemethod 0
-File ::9BA251B3-B8E5-4209-9BD3-AE24BBA510FE -name StackOverflowError.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/java/lang -size 70 -mtime 1220953753 -attributes 1000 -filemethod 0
-File ::5CC54F52-2D42-4CD5-8B73-E63EC30CA7D8 -name String.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/java/lang -size 8658 -mtime 1220953753 -attributes 1000 -filemethod 0
-File ::EE8BF560-135F-4B28-AC74-C7D79DA29F6D -name StringBuffer.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/java/lang -size 7794 -mtime 1220953753 -attributes 1000 -filemethod 0
-File ::4B3540CC-2A99-4369-B6A6-093785B83DA0 -name StringIndexOutOfBoundsException.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/java/lang -size 100 -mtime 1220953753 -attributes 1000 -filemethod 0
-File ::119734A4-C495-47B7-B461-19A65802B3E8 -name System.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/java/lang -size 1851 -mtime 1220953754 -attributes 1000 -filemethod 0
-File ::46F76740-66FE-4FA9-9C41-3CAC0A135FED -name Thread.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/java/lang -size 3179 -mtime 1220953754 -attributes 1000 -filemethod 0
-File ::4D34245F-46F1-464B-842A-EEB28CFF3DB7 -name ThreadDeath.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/java/lang -size 171 -mtime 1220953754 -attributes 1000 -filemethod 0
-File ::10BAF8E7-C777-489D-8A52-0CCED996ECD3 -name Throwable.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/java/lang -size 356 -mtime 1220953754 -attributes 1000 -filemethod 0
-File ::1C9BA39F-4D55-4466-BBAC-6CF2A50416D3 -name util -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/src/java/classes/java/util -size 4096 -mtime 1220953756 -attributes 0000 -filemethod 0
-File ::D770D504-6DD8-4909-A03D-F4B6D09E1C77 -name ArrayList.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/java/util -size 3762 -mtime 1220953754 -attributes 1000 -filemethod 0
-File ::A512853C-EEF0-4AA5-8793-3C09B5C6D5C8 -name BitSet.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/java/util -size 526 -mtime 1220953754 -attributes 1000 -filemethod 0
-File ::57EB97A2-0E3E-419A-B76B-F71B5ECEBE82 -name EmptyQueueException.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/java/util -size 935 -mtime 1220953754 -attributes 1000 -filemethod 0
-File ::A4196064-B6F5-43F9-AA94-7ACC557D90EE -name EmptyStackException.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/java/util -size 935 -mtime 1220953755 -attributes 1000 -filemethod 0
-File ::CED0ECE9-5EF7-488E-9E05-24CD7122416C -name Enumeration.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/java/util -size 370 -mtime 1220953755 -attributes 1000 -filemethod 0
-File ::8D8E5CCA-8C01-4F97-82EC-36B734C9FB2A -name Hashtable.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/java/util -size 4060 -mtime 1220953755 -attributes 1000 -filemethod 0
-File ::C0633401-C87D-47FA-8650-25E58B630D88 -name Iterator.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/java/util -size 581 -mtime 1220953755 -attributes 1000 -filemethod 0
-File ::3C07F6B6-8416-4ABB-96A9-E03FAC5BC726 -name package.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/java/util -size 23 -mtime 1220953756 -attributes 1000 -filemethod 0
-File ::5CAC570C-8950-4087-ABE6-62E4015000DE -name Properties.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/java/util -size 16677 -mtime 1220953755 -attributes 1000 -filemethod 0
-File ::40E0EBC2-8C7F-4907-BFFB-99E3A038896C -name Queue.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/java/util -size 2242 -mtime 1220953755 -attributes 1000 -filemethod 0
-File ::C71AB736-34CD-4DA8-97A8-3D7EED0D6F35 -name Random.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/java/util -size 2222 -mtime 1220953755 -attributes 1000 -filemethod 0
-File ::8CA32F6D-86DB-4467-94E4-C9B1DB57C3BC -name Stack.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/java/util -size 2315 -mtime 1220953755 -attributes 1000 -filemethod 0
-File ::8E84256C-BB23-4365-9F61-A9E4DAF8E57E -name Vector.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/java/util -size 7097 -mtime 1220953756 -attributes 1000 -filemethod 0
-File ::3AF5857B-4E50-4FD1-8FFA-D651FA98F143 -name javax -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/src/java/classes/javax -mtime 1220953756 -attributes 0000 -filemethod 0
-File ::C6DAD0E1-351D-48D4-B9BF-1508962995DC -name bluetooth -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/src/java/classes/javax/bluetooth -size 4096 -mtime 1220953756 -attributes 0000 -filemethod 0
-File ::51F7B1F3-B011-4B39-A841-364496464176 -name BluetoothStateException.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/javax/bluetooth -size 298 -mtime 1220953756 -attributes 1000 -filemethod 0
-File ::33CFBEA8-3708-4AE6-8766-2A063D46E177 -name DeviceClass.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/javax/bluetooth -size 2018 -mtime 1220953756 -attributes 1000 -filemethod 0
-File ::AAC9369F-6A3C-4F06-BE5F-488B0273932E -name LocalDevice.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/javax/bluetooth -size 4641 -mtime 1220953756 -attributes 1000 -filemethod 0
-File ::161E6483-CC08-4E86-A07E-AA6BE78BC97C -name RemoteDevice.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/javax/bluetooth -size 3697 -mtime 1220953756 -attributes 1000 -filemethod 0
-File ::A5FDA534-BCA6-4B70-90CD-47E5A9937397 -name microedition -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/src/java/classes/javax/microedition -mtime 1220953757 -attributes 0000 -filemethod 0
-File ::D4CD20C3-8B23-4A45-B75B-8E7D96384FF9 -name io -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/src/java/classes/javax/microedition/io -size 4096 -mtime 1220953757 -attributes 0000 -filemethod 0
-File ::0C99B0B1-BFB5-4511-9176-DA3DEFD05AEB -name Connection.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/javax/microedition/io -size 141 -mtime 1220953756 -attributes 1000 -filemethod 0
-File ::BDAA8675-D64B-4BB9-A4D0-9B2065865DBA -name InputConnection.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/javax/microedition/io -size 418 -mtime 1220953757 -attributes 1000 -filemethod 0
-File ::BAA96940-3EA1-4EEB-B36A-AA53CA841787 -name OutputConnection.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/javax/microedition/io -size 421 -mtime 1220953757 -attributes 1000 -filemethod 0
-File ::BE7D4EE9-BC81-446C-926B-940C1C574B51 -name package.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/javax/microedition/io -size 22 -mtime 1220953757 -attributes 1000 -filemethod 0
-File ::25FB7B54-A7CD-4BAB-AE10-63A977AB96D0 -name StreamConnection.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/javax/microedition/io -size 607 -mtime 1220953757 -attributes 1000 -filemethod 0
-File ::D2B3B64E-4A27-4FF8-A3B4-E2EF215F28D7 -name lcdui -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/src/java/classes/javax/microedition/lcdui -size 8192 -mtime 1220953760 -attributes 0000 -filemethod 0
-File ::C12F263A-9407-423B-9E81-3282A7548081 -name Alert.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/javax/microedition/lcdui -size 5915 -mtime 1220953757 -attributes 1000 -filemethod 0
-File ::5D9702AA-570F-4333-9C87-313D0E207389 -name Choice.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/javax/microedition/lcdui -size 1245 -mtime 1220953757 -attributes 1000 -filemethod 0
-File ::69837867-FCD7-4EAE-B25D-7624470604E2 -name ChoiceGroup.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/javax/microedition/lcdui -size 8623 -mtime 1220953758 -attributes 1000 -filemethod 0
-File ::5E07B75B-1CFF-43C9-BA5E-5483B3F7B0FD -name Command.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/javax/microedition/lcdui -size 1126 -mtime 1220953758 -attributes 1000 -filemethod 0
-File ::083AD63B-293B-408A-B590-6A18F9845500 -name CommandListener.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/javax/microedition/lcdui -size 172 -mtime 1220953758 -attributes 1000 -filemethod 0
-File ::67E85CB9-7D06-4CAD-B6C3-970932AC0074 -name Display.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/javax/microedition/lcdui -size 8638 -mtime 1220953758 -attributes 1000 -filemethod 0
-File ::2D2FC660-F6EB-4658-86FE-B0FC11D866AC -name Displayable.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/javax/microedition/lcdui -size 1766 -mtime 1220953758 -attributes 1000 -filemethod 0
-File ::1CAB91F4-AECF-4A2E-AF9B-43A14394B5D9 -name Font.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/javax/microedition/lcdui -size 274 -mtime 1220953759 -attributes 1000 -filemethod 0
-File ::0EFFC899-F47F-48D1-9666-1B9CF75BFABD -name Form.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/javax/microedition/lcdui -size 7504 -mtime 1220953759 -attributes 1000 -filemethod 0
-File ::C1C0CFAB-48F8-446A-9B32-5E87B90EA9E9 -name Gauge.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/javax/microedition/lcdui -size 2150 -mtime 1220953759 -attributes 1000 -filemethod 0
-File ::9B71D033-8493-4CE2-8079-78077C51D16A -name Graphics.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/javax/microedition/lcdui -size 13959 -mtime 1220953759 -attributes 1000 -filemethod 0
-File ::74C722B3-BB95-4194-BCC5-8EBFA05405C1 -name Image.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/javax/microedition/lcdui -size 451 -mtime 1220953759 -attributes 1000 -filemethod 0
-File ::A08457E6-1BF0-4C56-A32F-A4C63971227F -name Item.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/javax/microedition/lcdui -size 2056 -mtime 1220953759 -attributes 1000 -filemethod 0
-File ::9AFA786F-8C1C-4302-80D5-EA2C99A543DF -name ItemCommandListener.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/javax/microedition/lcdui -size 169 -mtime 1220953759 -attributes 1000 -filemethod 0
-File ::573F730C-B001-48AC-A499-AD979618755A -name ItemStateListener.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/javax/microedition/lcdui -size 163 -mtime 1220953759 -attributes 1000 -filemethod 0
-File ::5DD55C72-7D01-4EF6-9238-78FB1CAD1C84 -name List.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/javax/microedition/lcdui -size 7404 -mtime 1220953760 -attributes 1000 -filemethod 0
-File ::25B7FF7E-BA8E-4E56-B9EE-762729DD09BC -name package.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/javax/microedition/lcdui -size 45 -mtime 1220953760 -attributes 1000 -filemethod 0
-File ::CA1F7F80-CB4B-4AD5-994B-0F6CC010AB53 -name Screen.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/javax/microedition/lcdui -size 376 -mtime 1220953760 -attributes 1000 -filemethod 0
-File ::020B7390-0745-4BFA-9D88-2CA38281AC63 -name Spacer.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/javax/microedition/lcdui -size 699 -mtime 1220953760 -attributes 1000 -filemethod 0
-File ::3039B47C-13D0-49EF-8149-D576403E9C74 -name StringItem.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/javax/microedition/lcdui -size 1134 -mtime 1220953760 -attributes 1000 -filemethod 0
-File ::1A3E7CD6-646C-4943-9856-8DB07E077F3D -name TextBox.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/javax/microedition/lcdui -size 4588 -mtime 1220953760 -attributes 1000 -filemethod 0
-File ::7A03CD31-1079-4DE8-A3D5-F9AE6BB2B164 -name TextField.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/javax/microedition/lcdui -size 2021 -mtime 1220953760 -attributes 1000 -filemethod 0
-File ::23E32E50-7722-4EB5-96EC-8C30765A059F -name Ticker.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/javax/microedition/lcdui -size 257 -mtime 1220953760 -attributes 1000 -filemethod 0
-File ::3AFF23F1-E58F-40E7-8717-18A0D0C9155C -name lejos -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/src/java/classes/lejos -size 4096 -mtime 1220953774 -attributes 0000 -filemethod 0
-File ::9BF343F0-8463-4A5B-848D-F4F53258D5B1 -name devices -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/src/java/classes/lejos/devices -size 4096 -mtime 1220953761 -attributes 0000 -filemethod 0
-File ::EFF54147-A90A-4878-B228-7C0ECBB3AC71 -name GPS.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/devices -size 5101 -mtime 1220953761 -attributes 1000 -filemethod 0
-File ::75F00186-E513-4741-A012-0D30CEFB1095 -name Keyboard.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/devices -size 6246 -mtime 1220953761 -attributes 1000 -filemethod 0
-File ::F153B2C4-BF91-4432-8FB8-DE11F213472B -name KeyEvent.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/devices -size 2464 -mtime 1220953761 -attributes 1000 -filemethod 0
-File ::2E8A4268-C494-417A-868D-501533E7F171 -name KeyListener.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/devices -size 923 -mtime 1220953761 -attributes 1000 -filemethod 0
-File ::7818BF13-8945-48A8-9E4F-365C22201835 -name NMEASentence.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/devices -size 4427 -mtime 1220953761 -attributes 1000 -filemethod 0
-File ::15FD422A-AF11-49B3-BD71-90F27ECFEB15 -name navigation -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/src/java/classes/lejos/navigation -size 4096 -mtime 1220953762 -attributes 0000 -filemethod 0
-File ::1532004C-EE52-4E48-8E04-C09B81DD1E21 -name CompassNavigator.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/navigation -size 6002 -mtime 1220953761 -attributes 1000 -filemethod 0
-File ::3374FB94-451A-4375-9170-1AC8BDEFB65A -name CompassPilot.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/navigation -size 9786 -mtime 1220953761 -attributes 1000 -filemethod 0
-File ::105DCD46-2359-42DE-9575-A514DCE7A425 -name Navigator.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/navigation -size 6514 -mtime 1220953761 -attributes 1000 -filemethod 0
-File ::B65E1C95-5373-4780-A2F0-CF4A5DD0DD04 -name package.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/navigation -size 32 -mtime 1220953762 -attributes 1000 -filemethod 0
-File ::AF7EE97B-B40F-4AB1-81B0-E78F00373F4B -name Pilot.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/navigation -size 13187 -mtime 1220953762 -attributes 1000 -filemethod 0
-File ::D0E8AEB6-BDF5-4393-A894-5630C7E7B3CE -name TachoNavigator.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/navigation -size 15663 -mtime 1220953762 -attributes 1000 -filemethod 0
-File ::FBDBFE7C-129F-49C7-931F-6FC7EEFF406E -name nxt -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/src/java/classes/lejos/nxt -size 20480 -mtime 1220953771 -attributes 0000 -filemethod 0
-File ::2CBC074C-25DA-4192-80DA-BF1B30673A4C -name ADSensorPort.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt -size 282 -mtime 1220953762 -attributes 1000 -filemethod 0
-File ::0659A3FE-A351-4600-A2BD-752F91096FA2 -name BasicMotor.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt -size 2570 -mtime 1220953762 -attributes 1000 -filemethod 0
-File ::330B8E0B-9FD7-4996-8FD8-C784A546772E -name BasicMotorPort.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt -size 372 -mtime 1220953762 -attributes 1000 -filemethod 0
-File ::19E5A2CB-4637-46B4-A7DF-7E33350D923E -name BasicSensorPort.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt -size 399 -mtime 1220953762 -attributes 1000 -filemethod 0
-File ::11AB70B7-3655-4593-8D73-D96BD15ECE0E -name Battery.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt -size 501 -mtime 1220953762 -attributes 1000 -filemethod 0
-File ::311DC371-AB78-4FA9-BB12-C8B03FF07CC7 -name Button.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt -size 5698 -mtime 1220953763 -attributes 1000 -filemethod 0
-File ::C137D5C0-A3A1-4F93-8D77-55FD38A7091F -name ButtonListener.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt -size 234 -mtime 1220953763 -attributes 1000 -filemethod 0
-File ::8A00D6D3-72D5-4ECB-B342-A769A2D430F3 -name ColorSensor.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt -size 5325 -mtime 1220953763 -attributes 1000 -filemethod 0
-File ::E7532EFB-FA2E-4819-A5C3-6EC43978D994 -name CompassSensor.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt -size 3014 -mtime 1220953763 -attributes 1000 -filemethod 0
-File ::BA577347-ED56-4B23-ADF2-48809CB0943D -name Flash.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt -size 670 -mtime 1220953763 -attributes 1000 -filemethod 0
-File ::B4F2C677-5405-430D-90E0-F39D2BB875A3 -name GyroSensor.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt -size 651 -mtime 1220953763 -attributes 1000 -filemethod 0
-File ::61546978-312D-42B7-8202-6CA962954EDD -name I2CPort.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt -size 403 -mtime 1220953763 -attributes 1000 -filemethod 0
-File ::69824B8D-5D6C-42CF-8EBD-A6E3F846CC08 -name I2CSensor.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt -size 3513 -mtime 1220953763 -attributes 1000 -filemethod 0
-File ::0F56A1E7-14D3-4E28-B1F0-B2B6E547C0CD -name IRSeeker.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt -size 741 -mtime 1220953764 -attributes 1000 -filemethod 0
-File ::923D2C7E-7723-47A0-9B29-ECDC8E1C3031 -name LCD.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt -size 8556 -mtime 1220953764 -attributes 1000 -filemethod 0
-File ::B82653F1-CDAF-45A1-A237-3977D7BEE29A -name LCDOutputStream.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt -size 748 -mtime 1220953764 -attributes 1000 -filemethod 0
-File ::2059D29C-322C-41B4-8BE2-7247F8129CDA -name LegacySensorPort.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt -size 238 -mtime 1220953764 -attributes 1000 -filemethod 0
-File ::DC15E449-E662-4267-BD07-5E5393EC1F58 -name LightSensor.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt -size 3015 -mtime 1220953764 -attributes 1000 -filemethod 0
-File ::FA30C599-EFC3-49DC-BD24-09C9218A5DDC -name ListenerCaller.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt -size 148 -mtime 1220953764 -attributes 1000 -filemethod 0
-File ::99257E0D-B165-4FB8-BF26-53CA54DD09C1 -name ListenerThread.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt -size 2026 -mtime 1220953764 -attributes 1000 -filemethod 0
-File ::F1AF0EF8-4CD5-4AAB-A789-FC08CD5AA9FD -name LSC.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt -size 3249 -mtime 1220953764 -attributes 1000 -filemethod 0
-File ::B295244F-4E67-4A4E-9ECB-89C50B2F6187 -name LServo.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt -size 5212 -mtime 1220953764 -attributes 1000 -filemethod 0
-File ::5632F0CF-2E04-442F-BCE9-061C5AEF669E -name Motor.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt -size 19628 -mtime 1220953765 -attributes 1000 -filemethod 0
-File ::347E7739-4B6A-4497-8293-AEFA29F94FAF -name MotorPort.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt -size 1544 -mtime 1220953765 -attributes 1000 -filemethod 0
-File ::531A1E56-941E-4FA5-877E-596C98DCC9D4 -name NXTCam.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt -size 1464 -mtime 1220953765 -attributes 1000 -filemethod 0
-File ::4ADAC682-42DA-4390-931B-FF2BF12E8136 -name NXTe.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt -size 2171 -mtime 1220953765 -attributes 1000 -filemethod 0
-File ::794235C9-1FAC-4893-A00B-70B75AD87A26 -name OpticalDistanceSensor.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt -size 9994 -mtime 1220953765 -attributes 1000 -filemethod 0
-File ::C2C7D88C-6555-4382-851E-DAE68249446C -name package.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt -size 49 -mtime 1220953768 -attributes 1000 -filemethod 0
-File ::7C5AF81A-0A53-40B4-835B-D27A22820D0E -name Poll.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt -size 3177 -mtime 1220953765 -attributes 1000 -filemethod 0
-File ::C9192F38-EF25-42A5-9A7C-A9004AA38FF1 -name PSPNXController.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt -size 3611 -mtime 1220953765 -attributes 1000 -filemethod 0
-File ::A8F4CD17-5E5C-490C-9C6F-31C2235BFB3A -name RCXLightSensor.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt -size 1054 -mtime 1220953765 -attributes 1000 -filemethod 0
-File ::FD8AE4E3-0CF4-4CC5-996D-42E1AA0B21FE -name RCXLink.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt -size 6247 -mtime 1220953765 -attributes 1000 -filemethod 0
-File ::57313FC1-325F-460D-AAA2-C7281DA45AB9 -name RCXMotor.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt -size 175 -mtime 1220953766 -attributes 1000 -filemethod 0
-File ::CE35B979-3314-4D7F-B4E2-4A638299CA0B -name RCXMotorMultiplexer.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt -size 1027 -mtime 1220953766 -attributes 1000 -filemethod 0
-File ::00AFD328-D3C3-49A7-9925-6554C6324E73 -name RCXPlexedMotorPort.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt -size 700 -mtime 1220953766 -attributes 1000 -filemethod 0
-File ::5E6F05BC-F970-4F3E-9F1E-F86F257E83D7 -name RCXRemoteMotorPort.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt -size 1215 -mtime 1220953766 -attributes 1000 -filemethod 0
-File ::C7829CE1-68FE-46C5-B53A-AD8F10594F31 -name RCXSensorMultiplexer.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt -size 1384 -mtime 1220953766 -attributes 1000 -filemethod 0
-File ::5315AC9F-BC4F-4F7A-9190-0CC747FA0F6C -name SensorConstants.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt -size 1090 -mtime 1220953766 -attributes 1000 -filemethod 0
-File ::6E96ECAD-6827-49D8-8BC1-9969C1C05ECE -name SensorPort.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt -size 6819 -mtime 1220953766 -attributes 1000 -filemethod 0
-File ::07BBA760-E822-4437-9055-32957FAB8B4E -name SensorPortListener.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt -size 549 -mtime 1220953766 -attributes 1000 -filemethod 0
-File ::988C3B22-D873-4E4C-8DDF-32A355FE698E -name Settings.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt -size 1513 -mtime 1220953767 -attributes 1000 -filemethod 0
-File ::0BBF5AE8-9E57-474D-BA7A-FDAE4E196AD0 -name Sound.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt -size 11160 -mtime 1220953767 -attributes 1000 -filemethod 0
-File ::8F2C284E-1DE8-41D7-802C-697617E45498 -name SoundSensor.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt -size 1211 -mtime 1220953767 -attributes 1000 -filemethod 0
-File ::ABB88D04-EA35-40B6-9B52-DC49FAA56C2D -name SystemSettings.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt -size 3661 -mtime 1220953767 -attributes 1000 -filemethod 0
-File ::413A8863-111F-481A-B1D7-A0250E604C10 -name Tachometer.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt -size 218 -mtime 1220953767 -attributes 1000 -filemethod 0
-File ::357DFD3F-2651-46AB-8BF1-6D85B9E4285C -name TachoMotorPort.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt -size 208 -mtime 1220953767 -attributes 1000 -filemethod 0
-File ::E5DAC5CF-D424-4ACE-AEAF-68049A1BE8C1 -name TextMenu.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt -size 6503 -mtime 1220953767 -attributes 1000 -filemethod 0
-File ::55ECF91B-713B-478A-B378-0E8922602C44 -name TiltSensor.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt -size 3380 -mtime 1220953767 -attributes 1000 -filemethod 0
-File ::DE244778-DBC1-4F87-B4E3-F09C7108F290 -name TouchSensor.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt -size 619 -mtime 1220953767 -attributes 1000 -filemethod 0
-File ::C95A9AA3-714A-4935-9E98-300433BD6120 -name UltrasonicSensor.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt -size 10620 -mtime 1220953767 -attributes 1000 -filemethod 0
-File ::5E756821-363C-42F8-8C89-CA908B453011 -name comm -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/src/java/classes/lejos/nxt/comm -size 8192 -mtime 1220953770 -attributes 0000 -filemethod 0
-File ::AEB1A711-59A5-4EC8-B00D-410CD3112565 -name Bluetooth.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt/comm -size 44200 -mtime 1220953768 -attributes 1000 -filemethod 0
-File ::757A9AC3-E8DE-41C9-BADD-7D79395EA9E1 -name BTConnection.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt/comm -size 18419 -mtime 1220953768 -attributes 1000 -filemethod 0
-File ::8830C521-526E-494D-B0F7-80F0A4E2E2AA -name DeviceInfo.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt/comm -size 256 -mtime 1220953768 -attributes 1000 -filemethod 0
-File ::0BAC7606-B6BC-49F0-866F-1CFA2479F5CF -name FirmwareInfo.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt/comm -size 224 -mtime 1220953768 -attributes 1000 -filemethod 0
-File ::2253A1F3-DAC3-4622-94E2-E158EAD8F45D -name InputValues.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt/comm -size 1018 -mtime 1220953768 -attributes 1000 -filemethod 0
-File ::0AF15C85-A7DC-4D0A-96FB-46EFC65AD62B -name LCP.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt/comm -size 16179 -mtime 1220953768 -attributes 1000 -filemethod 0
-File ::224A71F7-281A-4366-BF93-90A120678497 -name LCPBTResponder.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt/comm -size 955 -mtime 1220953769 -attributes 1000 -filemethod 0
-File ::E20FAE76-FCDD-498D-875C-D4444E2BB944 -name NXTComm.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt/comm -size 1157 -mtime 1220953769 -attributes 1000 -filemethod 0
-File ::8EC4FA66-3404-4D6A-8554-3503F4F4F5A6 -name NXTCommand.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt/comm -size 7666 -mtime 1220953769 -attributes 1000 -filemethod 0
-File ::E567B1A3-D4A3-444B-969B-9257C52C36DB -name NXTConnection.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt/comm -size 460 -mtime 1220953769 -attributes 1000 -filemethod 0
-File ::A28D5A06-4949-4448-9BC5-0CD223B7BF88 -name NXTInputStream.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt/comm -size 1375 -mtime 1220953769 -attributes 1000 -filemethod 0
-File ::60B18AA8-3059-40A5-ABD5-E3DA537B3F4C -name NXTOutputStream.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt/comm -size 617 -mtime 1220953769 -attributes 1000 -filemethod 0
-File ::C96CB62F-87B5-474C-9F53-46E8FBB4E39D -name NXTProtocol.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt/comm -size 4985 -mtime 1220953769 -attributes 1000 -filemethod 0
-File ::FE7D66BF-1C0F-4A60-8F8D-5EBED402E7FF -name NXTServerSocket.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt/comm -size 2549 -mtime 1220953770 -attributes 1000 -filemethod 0
-File ::1372AD9A-8A21-4961-9C26-E68D155DB6CE -name NXTSocket.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt/comm -size 4152 -mtime 1220953770 -attributes 1000 -filemethod 0
-File ::0CE42F55-3D92-40A4-A33E-B267C5E5D65F -name package.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt/comm -size 38 -mtime 1220953770 -attributes 1000 -filemethod 0
-File ::0F84F4E3-CA3F-4F0C-A473-748542C800F9 -name RConsole.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt/comm -size 2537 -mtime 1220953770 -attributes 1000 -filemethod 0
-File ::C1FC42FB-D2B9-4282-A227-9C51DD0B78AD -name USB.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt/comm -size 4667 -mtime 1220953770 -attributes 1000 -filemethod 0
-File ::0A3A6467-CD9F-4608-8AB3-D378B19DC89A -name USBConnection.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt/comm -size 4046 -mtime 1220953770 -attributes 1000 -filemethod 0
-File ::590B2298-903D-4352-ADF7-26B7DE18B6A0 -name debug -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/src/java/classes/lejos/nxt/debug -size 4096 -mtime 1220953771 -attributes 0000 -filemethod 0
-File ::8D9C56CA-56EE-4263-8AD6-17FB5E06BFCE -name DebugInterface.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt/debug -size 3010 -mtime 1220953770 -attributes 1000 -filemethod 0
-File ::702BBD52-8ACB-4633-980D-F0135CB430C1 -name DebugMonitor.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt/debug -size 4715 -mtime 1220953770 -attributes 1000 -filemethod 0
-File ::EFBC408F-013B-4F29-AF02-D3F1A336189D -name DebugObject.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt/debug -size 713 -mtime 1220953770 -attributes 1000 -filemethod 0
-File ::1879F542-F4C3-43A0-9815-6DAA5A70D96E -name DebugStackFrame.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt/debug -size 1119 -mtime 1220953771 -attributes 1000 -filemethod 0
-File ::E1D33A5F-2004-4F91-A9E9-24BDA685268D -name DebugThread.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt/debug -size 1014 -mtime 1220953771 -attributes 1000 -filemethod 0
-File ::39CC9901-1EC6-4DBE-AEEB-D1BC6B235F50 -name DebugThreads.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt/debug -size 2436 -mtime 1220953771 -attributes 1000 -filemethod 0
-File ::1574CE8E-8891-46E4-B48E-AE8ECE87E515 -name remote -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/src/java/classes/lejos/nxt/remote -size 4096 -mtime 1220953772 -attributes 0000 -filemethod 0
-File ::33DB3764-0FB7-4F86-8AEB-82CC6F9AEDF5 -name package.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt/remote -size 46 -mtime 1220953772 -attributes 1000 -filemethod 0
-File ::073BD6E9-0E86-40ED-83A5-F88515B98156 -name RemoteBattery.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt/remote -size 813 -mtime 1220953771 -attributes 1000 -filemethod 0
-File ::3C71793E-6034-40DF-9E6C-7A2128D3FD7E -name RemoteMotorPort.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt/remote -size 1446 -mtime 1220953771 -attributes 1000 -filemethod 0
-File ::0D1F1FB4-4432-4520-8945-2601B97AAEC5 -name RemoteNXT.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt/remote -size 2683 -mtime 1220953772 -attributes 1000 -filemethod 0
-File ::FE2026E9-BD09-4B30-B19F-C039EBFE495B -name RemoteSensorPort.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/nxt/remote -size 1889 -mtime 1220953772 -attributes 1000 -filemethod 0
-File ::09ABD612-0E79-4F3B-B834-53B5453A2434 -name rcxcomm -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/src/java/classes/lejos/rcxcomm -size 4096 -mtime 1220953773 -attributes 0000 -filemethod 0
-File ::EBF518D8-9118-4E50-B77D-6BCD2C70A515 -name LLC.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/rcxcomm -size 2599 -mtime 1220953772 -attributes 1000 -filemethod 0
-File ::EEC8B296-DDFB-4471-A01C-03AD8837C543 -name LLCHandler.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/rcxcomm -size 2753 -mtime 1220953772 -attributes 1000 -filemethod 0
-File ::C5587DBB-F403-4A50-9149-3EB30C2527E4 -name LLCReliableHandler.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/rcxcomm -size 2888 -mtime 1220953772 -attributes 1000 -filemethod 0
-File ::0E76EC40-5C93-4EA9-BB75-86E6E339C66E -name Opcode.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/rcxcomm -size 7057 -mtime 1220953772 -attributes 1000 -filemethod 0
-File ::72CA514A-43C8-4271-91F9-2DDFD83FAC0F -name package.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/rcxcomm -size 51 -mtime 1220953773 -attributes 1000 -filemethod 0
-File ::332FC310-A527-43DB-8176-D7B5AE45CA8F -name PacketHandler.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/rcxcomm -size 1952 -mtime 1220953773 -attributes 1000 -filemethod 0
-File ::4A8336BA-A8D3-439E-B0C0-A43605FA9BAE -name RCXAbstractPort.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/rcxcomm -size 6116 -mtime 1220953773 -attributes 1000 -filemethod 0
-File ::DD6FD55C-55BA-45BF-A0BF-BEC573869388 -name RCXPort.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/rcxcomm -size 887 -mtime 1220953773 -attributes 1000 -filemethod 0
-File ::356FFD78-7A62-46F2-8496-02055BD5D82F -name Serial.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/rcxcomm -size 5935 -mtime 1220953773 -attributes 1000 -filemethod 0
-File ::BD928065-12D9-4A34-9C0E-01FF6D6A07E8 -name subsumption -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/src/java/classes/lejos/subsumption -size 4096 -mtime 1220953774 -attributes 0000 -filemethod 0
-File ::6E85350F-F8F2-46EA-8642-072097F3BB3B -name Activity.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/subsumption -size 6806 -mtime 1220953773 -attributes 1000 -filemethod 0
-File ::96334F05-962D-416E-81BF-C072D96BD20F -name ActivityBase.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/subsumption -size 515 -mtime 1220953773 -attributes 1000 -filemethod 0
-File ::FE2FB99D-4B3A-4B28-84E1-24B8DEE70B6C -name Arbitrator.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/subsumption -size 3235 -mtime 1220953774 -attributes 1000 -filemethod 0
-File ::C8275C1F-8301-46ED-A4BC-40EDF87729E0 -name Arbitrator2.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/subsumption -size 3184 -mtime 1220953774 -attributes 1000 -filemethod 0
-File ::361EB7D9-BA19-4D22-8EB3-FB1D116B308E -name Behavior.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/subsumption -size 2583 -mtime 1220953774 -attributes 1000 -filemethod 0
-File ::A2B3A5F0-F4CA-49ED-9ACC-0C222FCFD539 -name Behavior2.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/subsumption -size 1533 -mtime 1220953774 -attributes 1000 -filemethod 0
-File ::3DBFA38B-360E-40BA-89B2-A889C7C55B75 -name package.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/subsumption -size 315 -mtime 1220953774 -attributes 1000 -filemethod 0
-File ::2B38526F-C47B-4B53-9101-4B3DEC3C751C -name StopException.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/subsumption -size 186 -mtime 1220953774 -attributes 1000 -filemethod 0
-File ::BED9FFDE-F10B-497E-84E1-CFB2F909FEA2 -name util -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/src/java/classes/lejos/util -size 4096 -mtime 1220953776 -attributes 0000 -filemethod 0
-File ::F4A9AD5B-59F7-4971-A21F-247EEFC9922C -name AbstractRecyclable.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/util -size 775 -mtime 1220953774 -attributes 1000 -filemethod 0
-File ::9D4E6470-3CE2-442E-BB95-275BDB0E030D -name ArrayRecycler.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/util -size 1308 -mtime 1220953775 -attributes 1000 -filemethod 0
-File ::2085DEE4-62BA-4163-8770-55582E3C1401 -name Assertion.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/util -size 972 -mtime 1220953775 -attributes 1000 -filemethod 0
-File ::1084ECC4-6CD7-4117-AE3F-FF8838A80629 -name ButtonCounter.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/util -size 3126 -mtime 1220953775 -attributes 1000 -filemethod 0
-File ::353CE173-8790-4B8E-9E23-369BA452E072 -name Datalogger.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/util -size 3763 -mtime 1220953775 -attributes 1000 -filemethod 0
-File ::DDE0F8FE-CD65-41D6-95B2-E778F7EC7165 -name package.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/util -size 34 -mtime 1220953776 -attributes 1000 -filemethod 0
-File ::14BDC611-311A-42B1-890C-27FEF4E4C719 -name Recyclable.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/util -size 749 -mtime 1220953775 -attributes 1000 -filemethod 0
-File ::005ACFED-B8A4-4595-9B67-4F09D09CA241 -name RecyclableArray.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/util -size 1088 -mtime 1220953775 -attributes 1000 -filemethod 0
-File ::3A6435AA-34A2-4175-B59A-D7526A2FB78B -name Recycler.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/util -size 1511 -mtime 1220953775 -attributes 1000 -filemethod 0
-File ::1A07EAFE-7B36-4FE8-9E8B-4161411A3243 -name Timer.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/util -size 1864 -mtime 1220953775 -attributes 1000 -filemethod 0
-File ::BD83B385-1991-43B8-98D4-E23458A33A27 -name TimerListener.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/classes/lejos/util -size 281 -mtime 1220953776 -attributes 1000 -filemethod 0
-File ::E6258B73-6A6B-48C9-A986-A91F3C11C180 -name jtools -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/src/java/jtools -mtime 1220953776 -attributes 0000 -filemethod 0
-File ::5632C53C-611A-4A5D-A1BB-003754A656EB -name js -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/src/java/jtools/js -mtime 1220953782 -attributes 0000 -filemethod 0
-File ::403D1B3E-5F9A-4E7D-8B1B-D41F5B2D2C1E -name common -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/src/java/jtools/js/common -size 4096 -mtime 1220953777 -attributes 0000 -filemethod 0
-File ::4143B21F-63C4-4A7E-9D22-47393E50B60C -name AbstractTool.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/jtools/js/common -size 964 -mtime 1220953776 -attributes 1000 -filemethod 0
-File ::D8695CBA-062D-49AF-A6F8-92B44D34C472 -name CLIToolProgressMonitor.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/jtools/js/common -size 1376 -mtime 1220953776 -attributes 1000 -filemethod 0
-File ::F97F7B2B-BA5D-4DA5-9356-74F7CB636E53 -name NullToolProgressMonitor.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/jtools/js/common -size 889 -mtime 1220953776 -attributes 1000 -filemethod 0
-File ::240367DB-7982-4DFF-9CD8-3B3C1DA4062B -name ToolException.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/jtools/js/common -size 602 -mtime 1220953776 -attributes 1000 -filemethod 0
-File ::3FCD6452-E802-417A-A792-7C5A98BA22DA -name ToolProgressMonitor.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/jtools/js/common -size 753 -mtime 1220953777 -attributes 1000 -filemethod 0
-File ::4FB01733-2CEB-4ED9-8F3D-2296348C2204 -name tinyvm -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/src/java/jtools/js/tinyvm -size 12288 -mtime 1220953781 -attributes 0000 -filemethod 0
-File ::4F969486-CB4D-4B1A-BF37-B70D31C1CFA5 -name Binary.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/jtools/js/tinyvm -size 22128 -mtime 1220953777 -attributes 1000 -filemethod 0
-File ::695DD677-E28A-4112-9527-63EB1183F5F9 -name BinaryReport.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/jtools/js/tinyvm -size 2202 -mtime 1220953777 -attributes 1000 -filemethod 0
-File ::FEC2768D-EE98-427B-9664-F8500ED1DFC2 -name ClassPath.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/jtools/js/tinyvm -size 804 -mtime 1220953777 -attributes 1000 -filemethod 0
-File ::9C7FAACD-9D41-4024-97F5-6BD7180ADB1E -name ClassRecord.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/jtools/js/tinyvm -size 23123 -mtime 1220953777 -attributes 1000 -filemethod 0
-File ::A9DB47F2-B8F7-4FB5-8A55-229AC75C40BA -name CodeSequence.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/jtools/js/tinyvm -size 858 -mtime 1220953777 -attributes 1000 -filemethod 0
-File ::397860CF-2039-4681-A30E-4B5F395DEAF9 -name CodeUtilities.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/jtools/js/tinyvm -size 28884 -mtime 1220953777 -attributes 1000 -filemethod 0
-File ::7ABAC82A-9CE6-404B-916A-BDC639F125D9 -name ConstantRecord.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/jtools/js/tinyvm -size 2110 -mtime 1220953778 -attributes 1000 -filemethod 0
-File ::45C7815A-0773-422C-9A09-79DA0DEA33AA -name ConstantValue.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/jtools/js/tinyvm -size 5697 -mtime 1220953778 -attributes 1000 -filemethod 0
-File ::E710DD51-83BE-4342-8506-05D0424AA5C6 -name EntryClassIndex.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/jtools/js/tinyvm -size 727 -mtime 1220953778 -attributes 1000 -filemethod 0
-File ::4DA42FC1-3B5F-4DB5-871A-CD47CC991B8D -name ExceptionRecord.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/jtools/js/tinyvm -size 2630 -mtime 1220953778 -attributes 1000 -filemethod 0
-File ::5498B097-4AE7-4367-93CD-6747398EFB14 -name GenerateConstants.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/jtools/js/tinyvm -size 5921 -mtime 1220953778 -attributes 1000 -filemethod 0
-File ::880426AA-0432-4584-B48C-C117FAB0B6D2 -name IClassPath.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/jtools/js/tinyvm -size 425 -mtime 1220953778 -attributes 1000 -filemethod 0
-File ::E4B4D3F6-DA0F-440B-8416-435AD775783F -name InstanceFieldRecord.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/jtools/js/tinyvm -size 1100 -mtime 1220953778 -attributes 1000 -filemethod 0
-File ::2067ABB0-6C46-47A4-AEFD-C00C7D878BF2 -name MasterRecord.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/jtools/js/tinyvm -size 2096 -mtime 1220953778 -attributes 1000 -filemethod 0
-File ::911F5819-7658-497F-8FDC-30259F321B7B -name MethodRecord.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/jtools/js/tinyvm -size 10226 -mtime 1220953779 -attributes 1000 -filemethod 0
-File ::C35C71BB-4BC8-4696-977F-B7BF82257C9E -name OpCodeConstants.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/jtools/js/tinyvm -size 4926 -mtime 1220953779 -attributes 1000 -filemethod 0
-File ::9BAF08D2-C352-4272-B011-647E90AF0D79 -name OpCodeInfo.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/jtools/js/tinyvm -size 4289 -mtime 1220953779 -attributes 1000 -filemethod 0
-File ::021D5915-A0DA-423E-B222-21B084D03CDB -name RecordTable.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/jtools/js/tinyvm -size 4872 -mtime 1220953779 -attributes 1000 -filemethod 0
-File ::E5478551-1AE2-4AFE-ABBB-FBD1549F9185 -name Signature.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/jtools/js/tinyvm -size 792 -mtime 1220953779 -attributes 1000 -filemethod 0
-File ::711AED40-C407-4230-8E00-2AD517642A26 -name SpecialClassConstants.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/jtools/js/tinyvm -size 733 -mtime 1220953779 -attributes 1000 -filemethod 0
-File ::0B9222CE-7AEF-4773-B22A-66ED2A4FB343 -name SpecialSignatureConstants.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/jtools/js/tinyvm -size 2480 -mtime 1220953779 -attributes 1000 -filemethod 0
-File ::4DFDE3E9-4D19-4328-9333-35F0672EB972 -name StaticFieldRecord.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/jtools/js/tinyvm -size 1426 -mtime 1220953779 -attributes 1000 -filemethod 0
-File ::826A9921-7FA6-4B6E-8A89-7C088C091A4B -name StaticValue.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/jtools/js/tinyvm -size 2090 -mtime 1220953780 -attributes 1000 -filemethod 0
-File ::23F70428-5E62-4FF2-8BCB-ED4D2609800D -name TinyVM.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/jtools/js/tinyvm -size 2363 -mtime 1220953780 -attributes 1000 -filemethod 0
-File ::95039A9B-C90D-40E6-81A9-7040B1078D3B -name TinyVMConstants.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/jtools/js/tinyvm -size 1379 -mtime 1220953780 -attributes 1000 -filemethod 0
-File ::B6444BA6-9483-4590-AE0F-3CDC19AD8A21 -name TinyVMException.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/jtools/js/tinyvm -size 650 -mtime 1220953780 -attributes 1000 -filemethod 0
-File ::59D707B0-AE29-4BD2-856A-AA0AA90063F9 -name TinyVMTool.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/jtools/js/tinyvm -size 4073 -mtime 1220953780 -attributes 1000 -filemethod 0
-File ::CE595EC5-49F4-49E5-92C7-419BEDAFE003 -name TinyVMType.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/jtools/js/tinyvm -size 4631 -mtime 1220953780 -attributes 1000 -filemethod 0
-File ::E8F1A8C9-B70B-403E-8567-683DDEBA4515 -name WritableData.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/jtools/js/tinyvm -size 414 -mtime 1220953780 -attributes 1000 -filemethod 0
-File ::E1061F95-4266-424E-A412-694F81830FF2 -name WritableDataWithOffset.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/jtools/js/tinyvm -size 1069 -mtime 1220953780 -attributes 1000 -filemethod 0
-File ::115A039E-610D-4FBB-9CFD-4F691464BA58 -name io -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/src/java/jtools/js/tinyvm/io -size 4096 -mtime 1220953781 -attributes 0000 -filemethod 0
-File ::7FB95581-1D8D-43F4-A6D8-49F48756E27C -name BEByteWriter.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/jtools/js/tinyvm/io -size 602 -mtime 1220953781 -attributes 1000 -filemethod 0
-File ::71B3AE09-9993-4E4A-897E-D076066974E0 -name ByteWriter.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/jtools/js/tinyvm/io -size 2698 -mtime 1220953781 -attributes 1000 -filemethod 0
-File ::CC65238F-F852-41F6-B792-691E04EAD9F6 -name IByteWriter.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/jtools/js/tinyvm/io -size 1074 -mtime 1220953781 -attributes 1000 -filemethod 0
-File ::CFA9F91A-EA42-4D67-88A8-57F29BCE1C9C -name IOUtilities.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/jtools/js/tinyvm/io -size 885 -mtime 1220953781 -attributes 1000 -filemethod 0
-File ::301A285F-DF8F-45E2-B6BB-7D7C6A29C652 -name LEByteWriter.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/jtools/js/tinyvm/io -size 1321 -mtime 1220953781 -attributes 1000 -filemethod 0
-File ::C964C3A2-D17A-4AF9-A01A-B10B39AAB467 -name util -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/src/java/jtools/js/tinyvm/util -mtime 1220953782 -attributes 0000 -filemethod 0
-File ::B567B52E-4D07-41A9-99D7-9567C6BF3C48 -name HashVector.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/jtools/js/tinyvm/util -size 1862 -mtime 1220953781 -attributes 1000 -filemethod 0
-File ::B1A34572-F480-4E81-B124-8E718719B4EC -name TinyVMCommandLineParser.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/jtools/js/tinyvm/util -size 3542 -mtime 1220953782 -attributes 1000 -filemethod 0
-File ::25628804-8438-45B7-9B7B-9B9208F6ED99 -name tools -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/src/java/jtools/js/tools -mtime 1220953782 -attributes 0000 -filemethod 0
-File ::340A673F-2393-4050-9D8E-C8A716CE0E0F -name CodePacker.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/jtools/js/tools -size 7581 -mtime 1220953782 -attributes 1000 -filemethod 0
-File ::1BB86EFE-2D8A-44B7-8C49-97ED39444F87 -name ListReader.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/jtools/js/tools -size 798 -mtime 1220953782 -attributes 1000 -filemethod 0
-File ::956F2910-9EE9-4EBC-802B-A708A9A6CDED -name pccomms -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/src/java/pccomms -mtime 1220953782 -attributes 0000 -filemethod 0
-File ::18AE5CB5-9E06-4C84-B731-4BE2656DFCEC -name lejos -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/src/java/pccomms/lejos -mtime 1220953782 -attributes 0000 -filemethod 0
-File ::9C5C1533-8440-48EE-ABE0-D1D957A83152 -name pc -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/src/java/pccomms/lejos/pc -mtime 1220953782 -attributes 0000 -filemethod 0
-File ::CDF6DEB5-26BF-4690-AEE4-AD6C7F74DC8D -name comm -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/src/java/pccomms/lejos/pc/comm -size 8192 -mtime 1220953784 -attributes 0000 -filemethod 0
-File ::0668B367-0ED6-45F2-B418-F4004054BF45 -name BlueZException.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/pccomms/lejos/pc/comm -size 296 -mtime 1220953782 -attributes 1000 -filemethod 0
-File ::CA92A21F-948E-4412-89A9-61E5B55A6A88 -name FileInfo.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/pccomms/lejos/pc/comm -size 580 -mtime 1220953782 -attributes 1000 -filemethod 0
-File ::207AC937-867C-42C0-BF3F-E1ED67CE8E2A -name InputValues.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/pccomms/lejos/pc/comm -size 1368 -mtime 1220953782 -attributes 1000 -filemethod 0
-File ::D82DDB6C-F791-4850-816A-8C400F55350E -name NXTComm.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/pccomms/lejos/pc/comm -size 2194 -mtime 1220953782 -attributes 1000 -filemethod 0
-File ::0DA55AEE-BA9A-4D5F-A70F-B5EFC207C0CC -name NXTCommand.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/pccomms/lejos/pc/comm -size 15622 -mtime 1220953784 -attributes 1000 -filemethod 0
-File ::2D494C56-0003-43CD-8764-D773DD681473 -name NXTCommBluecove.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/pccomms/lejos/pc/comm -size 6517 -mtime 1220953783 -attributes 1000 -filemethod 0
-File ::427A8E03-6CD6-40E8-9646-B2722A7F05C2 -name NXTCommBluez.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/pccomms/lejos/pc/comm -size 6460 -mtime 1220953783 -attributes 1000 -filemethod 0
-File ::8BDE6E00-DA25-423F-9028-DA2A627FC2AE -name NXTCommException.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/pccomms/lejos/pc/comm -size 650 -mtime 1220953783 -attributes 1000 -filemethod 0
-File ::0A5594FC-1D49-4B17-A493-5E36AAD2ED9A -name NXTCommFactory.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/pccomms/lejos/pc/comm -size 2386 -mtime 1220953783 -attributes 1000 -filemethod 0
-File ::446045E1-494C-4D8A-B707-2A5A6696C281 -name NXTCommFantom.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/pccomms/lejos/pc/comm -size 2471 -mtime 1220953783 -attributes 1000 -filemethod 0
-File ::54364FBF-DE0B-42A6-A40A-D3BFFDF34C8C -name NXTCommInputStream.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/pccomms/lejos/pc/comm -size 1327 -mtime 1220953783 -attributes 1000 -filemethod 0
-File ::70CA3416-C27F-4804-8A4B-F50F4C7BB7F6 -name NXTCommLibnxt.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/pccomms/lejos/pc/comm -size 3515 -mtime 1220953783 -attributes 1000 -filemethod 0
-File ::79C27A7D-310A-4B33-89FB-90E5EEABB84E -name NXTCommLogListener.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/pccomms/lejos/pc/comm -size 239 -mtime 1220953784 -attributes 1000 -filemethod 0
-File ::152B82F9-46B2-47F1-B563-A13F64560716 -name NXTCommOutputStream.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/pccomms/lejos/pc/comm -size 538 -mtime 1220953784 -attributes 1000 -filemethod 0
-File ::BDF939CA-D20E-413B-97EC-CDF7C0F16855 -name NXTInfo.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/pccomms/lejos/pc/comm -size 1127 -mtime 1220953784 -attributes 1000 -filemethod 0
-File ::72C64DD4-7D80-4DBB-AD92-086DFB83104D -name NXTProtocol.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/pccomms/lejos/pc/comm -size 5059 -mtime 1220953784 -attributes 1000 -filemethod 0
-File ::F9B274BC-D6D6-4AAF-B495-2480650732CA -name OutputState.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/pccomms/lejos/pc/comm -size 1352 -mtime 1220953784 -attributes 1000 -filemethod 0
-File ::2FC554A9-BC88-47E4-BA0B-0F97B645697F -name package.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/pccomms/lejos/pc/comm -size 50 -mtime 1220953784 -attributes 1000 -filemethod 0
-File ::6EBE563E-D51B-4DC8-86F3-CADC0017EDFF -name pctools -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/src/java/pctools -mtime 1220953784 -attributes 0000 -filemethod 0
-File ::2EB081AC-D4C2-427E-A332-FD904B12EA5C -name lejos -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/src/java/pctools/lejos -mtime 1220953784 -attributes 0000 -filemethod 0
-File ::455F0C71-B3DA-4898-90CB-05DDBCFB2AC9 -name pc -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/src/java/pctools/lejos/pc -mtime 1220953784 -attributes 0000 -filemethod 0
-File ::2FBC7ECF-1311-4088-BBDD-C108410D376E -name tools -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/src/java/pctools/lejos/pc/tools -size 8192 -mtime 1220953787 -attributes 0000 -filemethod 0
-File ::CEAD490D-852E-44AC-ADAE-446A90DB6A26 -name Connector.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/pctools/lejos/pc/tools -size 4305 -mtime 1220953784 -attributes 1000 -filemethod 0
-File ::C9C93080-F346-4960-8437-2B326055A347 -name Console.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/pctools/lejos/pc/tools -size 1489 -mtime 1220953785 -attributes 1000 -filemethod 0
-File ::4498D42D-3C8B-455F-9139-8136853086A3 -name ConsoleViewer.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/pctools/lejos/pc/tools -size 4759 -mtime 1220953785 -attributes 1000 -filemethod 0
-File ::97517912-5B9A-4194-A527-CFF16B7656F2 -name DataViewer.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/pctools/lejos/pc/tools -size 4664 -mtime 1220953785 -attributes 1000 -filemethod 0
-File ::B48A635A-8D57-44B9-846B-1C15286576B2 -name NXJBrowser.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/pctools/lejos/pc/tools -size 11811 -mtime 1220953785 -attributes 1000 -filemethod 0
-File ::1A76A933-2B48-4934-9E92-E2CD325719C9 -name NXJBrowserCommandLineParser.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/pctools/lejos/pc/tools -size 2077 -mtime 1220953785 -attributes 1000 -filemethod 0
-File ::DC32CA09-B6A4-4F1B-ADFD-006A7B059ACE -name NXJCommandLineParser.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/pctools/lejos/pc/tools -size 3769 -mtime 1220953785 -attributes 1000 -filemethod 0
-File ::80869625-C414-410C-83CF-46475A1ECD93 -name NXJLinkAndUpload.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/pctools/lejos/pc/tools -size 4279 -mtime 1220953785 -attributes 1000 -filemethod 0
-File ::45712ADD-0A16-458A-94D8-8592F5285BF9 -name NXJMonitor.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/pctools/lejos/pc/tools -size 11332 -mtime 1220953785 -attributes 1000 -filemethod 0
-File ::BF85A76B-14CE-4F95-8B2E-9BBD015E53E9 -name NXJUpload.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/pctools/lejos/pc/tools -size 1722 -mtime 1220953786 -attributes 1000 -filemethod 0
-File ::90ACF16B-AF12-4BCF-903F-2764F4BEA1B2 -name NXJUploadCommandLineParser.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/pctools/lejos/pc/tools -size 2616 -mtime 1220953786 -attributes 1000 -filemethod 0
-File ::E3D94681-624A-4687-A716-93E63B6F0074 -name NXJUploadException.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/pctools/lejos/pc/tools -size 599 -mtime 1220953786 -attributes 1000 -filemethod 0
-File ::C26BD614-4CDC-4338-B92E-179AD6672695 -name NXTTableModel.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/pctools/lejos/pc/tools -size 1341 -mtime 1220953786 -attributes 1000 -filemethod 0
-File ::2964FAB6-82BD-48BA-A976-9C876D479E24 -name SendFile.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/pctools/lejos/pc/tools -size 1224 -mtime 1220953786 -attributes 1000 -filemethod 0
-File ::2C23C17E-D242-41C9-8103-6044123F9001 -name SocketProxy.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/pctools/lejos/pc/tools -size 7355 -mtime 1220953786 -attributes 1000 -filemethod 0
-File ::529056A9-495A-4AEF-A069-29E018A6D8AB -name ToolsLogger.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/pctools/lejos/pc/tools -size 300 -mtime 1220953786 -attributes 1000 -filemethod 0
-File ::181CCF24-A9CA-46A3-86E2-F6B381270B64 -name ToolsLogListener.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/pctools/lejos/pc/tools -size 227 -mtime 1220953786 -attributes 1000 -filemethod 0
-File ::0EE8AB37-310B-4204-9B58-761751DC76FF -name Upload.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/pctools/lejos/pc/tools -size 2382 -mtime 1220953787 -attributes 1000 -filemethod 0
-File ::A853315D-3AFE-4A9D-8A28-70F4E4823E00 -name startup -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/src/java/startup -mtime 1220953787 -attributes 0000 -filemethod 0
-File ::D2BBBADA-FD74-44DB-B541-2C18E2956C34 -name StartUpText.java -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/java/startup -size 23073 -mtime 1220953787 -attributes 1000 -filemethod 0
-File ::904CADC5-FB2D-40F4-B8A3-C0199ABF31B4 -name libnxt -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/src/libnxt -size 4096 -mtime 1220953790 -attributes 0000 -filemethod 0
-File ::991223C0-218C-4E03-9B27-4541AAF6AE5C -name AUTHORS -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/libnxt -size 93 -mtime 1220953787 -attributes 1000 -filemethod 0
-File ::CEB32CCF-C6D5-4085-AE15-EA6A36073101 -name build.xml -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/libnxt -size 3420 -mtime 1220953787 -attributes 1000 -filemethod 0
-File ::47A2BE0F-A283-4758-BE4D-0FFCC92231C4 -name COPYING -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/libnxt -size 15145 -mtime 1220953787 -attributes 1000 -filemethod 0
-File ::3C5D96E5-FE18-4BC7-9179-3332C3FF4DC8 -name error.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/libnxt -size 1283 -mtime 1220953787 -attributes 1000 -filemethod 0
-File ::1E428E85-F887-4547-B895-FBD374C91E6A -name error.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/libnxt -size 1460 -mtime 1220953788 -attributes 1000 -filemethod 0
-File ::886DA21E-F95E-4280-8C2F-1A092F5134C8 -name firmware.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/libnxt -size 3678 -mtime 1220953788 -attributes 1000 -filemethod 0
-File ::DE9274C9-224E-45CE-A9FC-B157FED28B27 -name firmware.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/libnxt -size 1326 -mtime 1220953788 -attributes 1000 -filemethod 0
-File ::B0546E24-2D8A-4132-8AC6-7687339C5EC6 -name flash.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/libnxt -size 2579 -mtime 1220953788 -attributes 1000 -filemethod 0
-File ::3A02D327-18B5-4E31-B84A-2A9E1622F6CC -name flash.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/libnxt -size 1264 -mtime 1220953788 -attributes 1000 -filemethod 0
-File ::F07F3E95-AA81-442E-B916-FB9A9EF8EF03 -name flash_routine.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/libnxt -size 2035 -mtime 1220953788 -attributes 1000 -filemethod 0
-File ::7E1533B6-2168-421C-AC7E-C51EB10D6A9B -name flash_routine.h.base -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/libnxt -size 1211 -mtime 1220953788 -attributes 1000 -filemethod 0
-File ::35D25B55-04C8-4205-99D3-3BD59E7CB613 -name jlibnxt.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/libnxt -size 1758 -mtime 1220953789 -attributes 1000 -filemethod 0
-File ::2749AEE4-4770-4DC4-9D97-E57246581D53 -name lowlevel.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/libnxt -size 6679 -mtime 1220953789 -attributes 1000 -filemethod 0
-File ::05DBC1D9-2D92-46EB-B30C-1DB964F8305C -name lowlevel.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/libnxt -size 1617 -mtime 1220953789 -attributes 1000 -filemethod 0
-File ::502DB560-810E-4F96-92D5-C95897768AA6 -name main_fwflash.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/libnxt -size 3125 -mtime 1220953789 -attributes 1000 -filemethod 0
-File ::01DAD2F3-F8FA-42F5-92AC-B3181C1EDDEC -name main_jlibnxt.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/libnxt -size 4154 -mtime 1220953789 -attributes 1000 -filemethod 0
-File ::83D82BBF-7F2A-4A99-95CB-9607F99AB06C -name main_nxjflash.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/libnxt -size 5539 -mtime 1220953789 -attributes 1000 -filemethod 0
-File ::65B320D2-23F2-41F8-8D2B-33CE400F9DB5 -name main_runc.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/libnxt -size 3259 -mtime 1220953789 -attributes 1000 -filemethod 0
-File ::F6A5B4B8-D531-4732-97DA-A182C0E48F3D -name main_sambaget.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/libnxt -size 3215 -mtime 1220953789 -attributes 1000 -filemethod 0
-File ::2F855557-0D43-4C88-A698-81A8127D0E23 -name make_flash_header.py -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/libnxt -size 1131 -mtime 1220953790 -attributes 1000 -filemethod 0
-File ::B0EE03E8-AD27-482B-B38E-72823B0C3E2C -name README -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/libnxt -size 4112 -mtime 1220953787 -attributes 1000 -filemethod 0
-File ::BB3AF42D-17F2-4149-BDD4-5E8E10B04790 -name samba.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/libnxt -size 3921 -mtime 1220953790 -attributes 1000 -filemethod 0
-File ::77D1789B-8E7C-4F0B-9A11-74EA59C5C109 -name samba.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/libnxt -size 1876 -mtime 1220953790 -attributes 1000 -filemethod 0
-File ::F3CCFC3E-6A8F-4003-B5F0-0C9BBB0B9CE7 -name SConstruct -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/libnxt -size 1100 -mtime 1220953787 -attributes 1000 -filemethod 0
-File ::E2A43BAB-25CC-4B60-BE02-754A3813EE9E -name docs -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/src/libnxt/docs -mtime 1220953790 -attributes 0000 -filemethod 0
-File ::A5EA6EBB-F297-4B56-A7A8-7606FE5C7216 -name design -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/src/libnxt/docs/design -mtime 1220953790 -attributes 0000 -filemethod 0
-File ::AA174B8F-D8B2-4F59-BB3E-65A59AA8E286 -name libnxt.dia -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/libnxt/docs/design -size 2753 -mtime 1220953790 -attributes 1000 -filemethod 0
-File ::DC57C0EB-E127-42CB-84CF-1796BBF8FC7B -name reversing -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/src/libnxt/docs/reversing -mtime 1220953790 -attributes 0000 -filemethod 0
-File ::9E4ADAC4-4EC2-4516-A8DE-79D74B8436D6 -name samba.fw.asm -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/libnxt/docs/reversing -size 387168 -mtime 1220953790 -attributes 1000 -filemethod 0
-File ::8469E1F2-DBF2-4672-B382-2420CBAA47DD -name samba.th.asm -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/libnxt/docs/reversing -size 386252 -mtime 1220953790 -attributes 1000 -filemethod 0
-File ::D1ED1280-6A79-447A-9F2B-A9B76ADF2813 -name flash_write -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/src/libnxt/flash_write -mtime 1220953792 -attributes 0000 -filemethod 0
-File ::A762203A-8705-48DC-B115-8741F1C5AE66 -name crt0.s -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/libnxt/flash_write -size 1057 -mtime 1220953791 -attributes 1000 -filemethod 0
-File ::51409A97-DC07-4D0B-8E39-DB34B0D9BF28 -name flash.asm -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/libnxt/flash_write -size 1308 -mtime 1220953792 -attributes 1000 -filemethod 0
-File ::F906C047-1A90-4D18-BD05-FBF5FBA2B2BB -name flash.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/libnxt/flash_write -size 1504 -mtime 1220953792 -attributes 1000 -filemethod 0
-File ::36CF7E93-12BC-4525-A345-CF6B115775EB -name Makefile -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/libnxt/flash_write -size 699 -mtime 1220953791 -attributes 1000 -filemethod 0
-File ::AC388A6F-10DE-4F73-9505-7983AF52EEF3 -name nxtvm -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/src/nxtvm -mtime 1220953799 -attributes 0000 -filemethod 0
-File ::314E8C70-2253-4935-8E1B-8972F7F08BEA -name javavm -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/src/nxtvm/javavm -size 8192 -mtime 1220953799 -attributes 0000 -filemethod 0
-File ::9E3FB873-51E3-4123-9387-A7B87640F447 -name classes.db -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 700 -mtime 1220953792 -attributes 1000 -filemethod 0
-File ::445AE197-DC16-464F-92B2-9415FF7272D6 -name classes.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 4037 -mtime 1220953792 -attributes 1000 -filemethod 0
-File ::8468E88A-9C34-4B5D-8C75-B15EEDE685A8 -name configure.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 1671 -mtime 1220953792 -attributes 1000 -filemethod 0
-File ::9D675D1A-7F72-4B19-B718-3551BDBCBAA9 -name constants.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 337 -mtime 1220953792 -attributes 1000 -filemethod 0
-File ::E583C721-71B6-4629-BD7A-933B9E460013 -name debug.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 2402 -mtime 1220953793 -attributes 1000 -filemethod 0
-File ::E85155B6-39C7-46AE-8594-823BF17436B9 -name debug.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 1162 -mtime 1220953793 -attributes 1000 -filemethod 0
-File ::51A395AC-6EF3-4496-971A-989F156FDE40 -name exceptions.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 4786 -mtime 1220953793 -attributes 1000 -filemethod 0
-File ::788C76DC-1E75-4E0E-9526-E71AA8F7FECE -name exceptions.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 675 -mtime 1220953793 -attributes 1000 -filemethod 0
-File ::80338A58-2DEF-421F-ADF1-AEBF6B91856C -name fields.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 243 -mtime 1220953793 -attributes 1000 -filemethod 0
-File ::D5A87403-F6C3-4E04-A7BF-45783D9335D7 -name gc.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 1007 -mtime 1220953794 -attributes 1000 -filemethod 0
-File ::59F4FC8C-3939-46BE-803F-EB32B7FC0FF7 -name interpreter.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 6814 -mtime 1220953794 -attributes 1000 -filemethod 0
-File ::98872B00-8853-43B9-8C46-308FA2F16E82 -name interpreter.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 782 -mtime 1220953794 -attributes 1000 -filemethod 0
-File ::F2A70742-56EB-4DEA-B438-23EC62E32C30 -name language.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 10736 -mtime 1220953794 -attributes 1000 -filemethod 0
-File ::0C466F8B-7E6C-4444-A188-97C7EBA3C4C9 -name language.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 7190 -mtime 1220953794 -attributes 1000 -filemethod 0
-File ::75D44516-D520-45D0-A151-5CE2CB8BA2E5 -name limits.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 73 -mtime 1220953794 -attributes 1000 -filemethod 0
-File ::F484D975-268F-4464-9D4B-DEE1D1198BAC -name magic.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 65 -mtime 1220953795 -attributes 1000 -filemethod 0
-File ::B25F4821-E4D5-4057-A92C-8D9E2454EFDC -name memory.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 35442 -mtime 1220953795 -attributes 1000 -filemethod 0
-File ::D6BAA504-2498-42F1-815E-03F8ACAB057E -name memory.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 3426 -mtime 1220953795 -attributes 1000 -filemethod 0
-File ::EA7E220B-0D18-41EF-A9E4-19C0BBFE341D -name op_arithmetic.hc -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 2907 -mtime 1220953795 -attributes 1000 -filemethod 0
-File ::E208CF3C-B49E-428D-B026-5F9093BE225E -name op_arrays.hc -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 4696 -mtime 1220953795 -attributes 1000 -filemethod 0
-File ::553F4708-AE44-4C65-9CFD-2CEE1A91E864 -name op_control.hc -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 3233 -mtime 1220953795 -attributes 1000 -filemethod 0
-File ::C07FCA3F-2088-4342-B3DA-E72A890EEDEE -name op_conversions.hc -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 2113 -mtime 1220953795 -attributes 1000 -filemethod 0
-File ::C5923641-4138-4A2F-8338-5689DEA8C22B -name op_locals.hc -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 3840 -mtime 1220953796 -attributes 1000 -filemethod 0
-File ::73BC435A-8A53-4F05-95A4-DFBB3D4269C3 -name op_logical.hc -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 1034 -mtime 1220953796 -attributes 1000 -filemethod 0
-File ::997681D0-A789-4604-9456-BD030AD88ACD -name op_methods.hc -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 1177 -mtime 1220953796 -attributes 1000 -filemethod 0
-File ::6957A449-AE9C-4916-962C-4D0E2126F410 -name op_objects.hc -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 8548 -mtime 1220953796 -attributes 1000 -filemethod 0
-File ::9734D155-1799-423C-8300-0940F2E3742F -name op_other.hc -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 746 -mtime 1220953797 -attributes 1000 -filemethod 0
-File ::7D8901CE-F6A9-47BC-846F-B65F38AE9348 -name op_skip.hc -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 103 -mtime 1220953797 -attributes 1000 -filemethod 0
-File ::7214281E-2845-4E9B-825D-CE64970F3A6D -name op_stack.hc -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 4005 -mtime 1220953797 -attributes 1000 -filemethod 0
-File ::481425EC-122F-4B1A-A422-058EF6FB33F1 -name opcodes.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 5147 -mtime 1220953797 -attributes 1000 -filemethod 0
-File ::60F0435E-9E72-4854-8FE4-A1C71CAD31B3 -name poll.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 2220 -mtime 1220953798 -attributes 1000 -filemethod 0
-File ::24519D92-C917-43BD-B0B1-4D971327BCC4 -name poll.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 585 -mtime 1220953798 -attributes 1000 -filemethod 0
-File ::D3835C03-A6B0-4581-B851-A08B650DA55D -name signatures.db -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 2523 -mtime 1220953798 -attributes 1000 -filemethod 0
-File ::5B6FA29F-9D68-48F0-B90E-B40A0A8F8436 -name specialclasses.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 769 -mtime 1220953798 -attributes 1000 -filemethod 0
-File ::B2540438-FF26-42AA-B323-BAADA5A1D412 -name specialsignatures.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 3066 -mtime 1220953799 -attributes 1000 -filemethod 0
-File ::9A50103B-9F78-4554-8149-A8CD9571F83A -name stack.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 3899 -mtime 1220953799 -attributes 1000 -filemethod 0
-File ::5B0625F3-CE1B-43AB-9C90-B5318055C4A3 -name threads.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 21119 -mtime 1220953799 -attributes 1000 -filemethod 0
-File ::FFF0312C-DF4A-45B1-8231-8A8086E1DD90 -name threads.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 3591 -mtime 1220953799 -attributes 1000 -filemethod 0
-File ::C561C76C-D7ED-4493-980F-DA3A814F22A7 -name trace.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 1837 -mtime 1220953799 -attributes 1000 -filemethod 0
-File ::BD228B13-91DD-4CE8-863E-013DE1289D21 -name types.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 1453 -mtime 1220953799 -attributes 1000 -filemethod 0
-File ::1DD42C81-C461-4B65-B0A3-D8FAE048A0D2 -name platform -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/src/nxtvm/platform -mtime 1220953807 -attributes 0000 -filemethod 0
-File ::3E1A8B64-D2C0-4B4B-B889-458A386126C2 -name nxt -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 12288 -mtime 1220953807 -attributes 0000 -filemethod 0
-File ::26146168-2C11-45F5-8482-18F2072C9238 -name aic.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 3756 -mtime 1220953800 -attributes 1000 -filemethod 0
-File ::C5A04BE7-7E7B-409F-BFD2-D60D1AAF8E03 -name aic.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 704 -mtime 1220953800 -attributes 1000 -filemethod 0
-File ::495FDA88-AAAB-4FF5-AAA2-AE84388B543C -name AT91SAM7.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 61 -mtime 1220953800 -attributes 1000 -filemethod 0
-File ::E696C111-97F6-4E12-8421-1855A89B115E -name at91sam7s256.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 149717 -mtime 1220953800 -attributes 1000 -filemethod 0
-File ::7996C0DB-3524-4C0D-9D28-6480F981C721 -name bt.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 8662 -mtime 1220953800 -attributes 1000 -filemethod 0
-File ::FB795549-A9F4-4CCA-8E61-8EE0CDD05B50 -name bt.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 2422 -mtime 1220953801 -attributes 1000 -filemethod 0
-File ::120FDD3B-965C-48CF-A836-7C4476CF728D -name byte_fifo.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 2860 -mtime 1220953801 -attributes 1000 -filemethod 0
-File ::43E8A9BA-3896-4D47-8C73-77F1AE6EF95A -name byte_fifo.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 897 -mtime 1220953801 -attributes 1000 -filemethod 0
-File ::A6C4F74D-E705-4F5C-AC05-A76BC5EE9497 -name data_abort.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 898 -mtime 1220953801 -attributes 1000 -filemethod 0
-File ::1FC90FC8-98EA-4BE1-8520-038B88EF8632 -name display.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 16372 -mtime 1220953801 -attributes 1000 -filemethod 0
-File ::1BF2A0D4-1579-4435-B4FD-8DAB8DA6C0FC -name display.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 824 -mtime 1220953801 -attributes 1000 -filemethod 0
-File ::8AC78AB1-FAA1-4C56-B476-7237A8086F52 -name environment.mak -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 776 -mtime 1220953802 -attributes 1000 -filemethod 0
-File ::15C8842B-33E2-45CE-B880-25835A14C785 -name flashprog.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 2017 -mtime 1220953802 -attributes 1000 -filemethod 0
-File ::A350331E-BA1B-4C39-81C2-FCF73917D336 -name flashprog.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 572 -mtime 1220953802 -attributes 1000 -filemethod 0
-File ::C2AF1A5C-EDE8-47CC-AD62-68AE36B05449 -name i2c.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 13251 -mtime 1220953802 -attributes 1000 -filemethod 0
-File ::447FF994-5120-4EE9-89D7-FD6750EB8AD1 -name i2c.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 487 -mtime 1220953802 -attributes 1000 -filemethod 0
-File ::353DF9FE-813E-448A-ADD5-64F6DD1B2E0E -name init.s -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 6465 -mtime 1220953802 -attributes 1000 -filemethod 0
-File ::2CC29517-E6F5-43DE-ACF2-E73AC166EBD0 -name interrupts.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 129 -mtime 1220953802 -attributes 1000 -filemethod 0
-File ::0EBBF65C-B054-4471-97E0-21408CBACCBC -name interrupts.s -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 1115 -mtime 1220953803 -attributes 1000 -filemethod 0
-File ::1121B45C-5046-4255-8E38-A3F5F4B11E96 -name irq.s -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 2893 -mtime 1220953803 -attributes 1000 -filemethod 0
-File ::AE5BC82C-4F54-49B1-AEA2-C7BC1CEDC101 -name java_binary.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 36926 -mtime 1220953803 -attributes 1000 -filemethod 0
-File ::1E5D8B40-A1E9-4974-929B-2DC742EE8777 -name lejos_nxt.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 118 -mtime 1220953803 -attributes 1000 -filemethod 0
-File ::38BF3B72-DA91-4674-AB4E-EBE0FFA9229A -name main.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 11052 -mtime 1220953803 -attributes 1000 -filemethod 0
-File ::DA937A60-6D48-4DCE-B08D-5A82DA2DEA7B -name Make.mak -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 3409 -mtime 1220953800 -attributes 1000 -filemethod 0
-File ::418029AD-EFB2-4803-A4DE-7FEC74134402 -name Makefile -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 18 -mtime 1220953800 -attributes 1000 -filemethod 0
-File ::C864982F-39BE-4DFA-B916-1243308674B7 -name mytypes.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 209 -mtime 1220953803 -attributes 1000 -filemethod 0
-File ::F622731C-B8F7-4FDA-BD84-6C5264DB25F0 -name native.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 13090 -mtime 1220953803 -attributes 1000 -filemethod 0
-File ::689DAB3C-3A82-4D97-8CC9-0A8F4437E61F -name nxt_avr.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 6238 -mtime 1220953803 -attributes 1000 -filemethod 0
-File ::337F5A73-E903-49F3-AE2B-7ADBD533217F -name nxt_avr.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 503 -mtime 1220953803 -attributes 1000 -filemethod 0
-File ::CA13DA32-2CF2-4824-810F-D128EF39A01D -name nxt_lcd.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 2534 -mtime 1220953804 -attributes 1000 -filemethod 0
-File ::F2456CB8-0933-4B70-955C-4B1E1DDE57FB -name nxt_lcd.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 282 -mtime 1220953804 -attributes 1000 -filemethod 0
-File ::08876ABB-7175-4732-A577-27538DEE7BA6 -name nxt_motors.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 3472 -mtime 1220953804 -attributes 1000 -filemethod 0
-File ::DA1A9504-8ED4-422E-B66A-AE79066C20D8 -name nxt_motors.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 465 -mtime 1220953804 -attributes 1000 -filemethod 0
-File ::01859862-E0D6-4979-AB14-9EC3EAD92986 -name nxt_spi.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 5386 -mtime 1220953804 -attributes 1000 -filemethod 0
-File ::2558DD08-7337-4CE0-8226-3CAB1A67B6CA -name nxt_spi.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 545 -mtime 1220953804 -attributes 1000 -filemethod 0
-File ::87C76CEB-67A3-414E-919D-FCDE7F0E73AB -name platform_config.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 780 -mtime 1220953804 -attributes 1000 -filemethod 0
-File ::2FB36156-D114-4B56-A5D9-12DC5B99360D -name platform_hooks.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 136 -mtime 1220953804 -attributes 1000 -filemethod 0
-File ::3853EF9F-6E9C-41A0-811A-22061EBD3D08 -name platform_hooks.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 1143 -mtime 1220953805 -attributes 1000 -filemethod 0
-File ::7F2A23A7-D701-4E70-AAB0-7FDC12B96700 -name README -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 522 -mtime 1220953800 -attributes 1000 -filemethod 0
-File ::9C149698-223F-435F-8E94-901A18B22336 -name sam7.lds -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 5466 -mtime 1220953805 -attributes 1000 -filemethod 0
-File ::B77BD9B9-1875-4C9E-846C-0F611807DC99 -name sensors.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 2428 -mtime 1220953805 -attributes 1000 -filemethod 0
-File ::F86BE612-6D66-4134-8A96-EC94526A53EC -name sensors.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 503 -mtime 1220953805 -attributes 1000 -filemethod 0
-File ::C48B45C6-B42D-4F12-B725-90226E77CBE0 -name sound.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 14498 -mtime 1220953805 -attributes 1000 -filemethod 0
-File ::C41D83AF-754A-42B6-8BDC-19D37484A885 -name sound.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 431 -mtime 1220953805 -attributes 1000 -filemethod 0
-File ::3FC965DB-5276-48A2-A4CC-4229316FA560 -name systick.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 2645 -mtime 1220953806 -attributes 1000 -filemethod 0
-File ::68CAC153-7459-4AFE-845B-DF31A6132731 -name systick.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 321 -mtime 1220953806 -attributes 1000 -filemethod 0
-File ::7D2A6140-694F-4A1C-A454-38E77272C488 -name systime.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 101 -mtime 1220953806 -attributes 1000 -filemethod 0
-File ::55834896-1A52-4B51-9181-220DD250C3DD -name targetdef.mak -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 896 -mtime 1220953806 -attributes 1000 -filemethod 0
-File ::2EE71F9B-E31E-4EC9-8EF0-F5170B8BB9DF -name twi.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 4558 -mtime 1220953806 -attributes 1000 -filemethod 0
-File ::D3F156E0-F58A-46FD-B575-1FD87BC41A95 -name twi.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 390 -mtime 1220953806 -attributes 1000 -filemethod 0
-File ::C2E698B5-FF23-46DC-A9DC-02708A69CCEE -name uart.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 6141 -mtime 1220953806 -attributes 1000 -filemethod 0
-File ::5710F6A6-4EA3-4294-96A2-B6C549959097 -name uart.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 448 -mtime 1220953806 -attributes 1000 -filemethod 0
-File ::CAF86C51-8B92-4BE4-A028-4CEB92772583 -name udp.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 18101 -mtime 1220953806 -attributes 1000 -filemethod 0
-File ::6CB5F958-1DF3-4939-9BBB-529D40F84FD7 -name udp.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 1548 -mtime 1220953807 -attributes 1000 -filemethod 0
-File ::AFC357DD-5A6D-4536-9A9A-D54E0852155A -name vectors.s -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 1142 -mtime 1220953807 -attributes 1000 -filemethod 0
-File ::BC9ECE24-2D00-4FB3-BD78-1189C52B303D -name version.mak -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 38 -mtime 1220953807 -attributes 1000 -filemethod 0
-File ::DEB44F5F-28AE-4470-AA73-80877CEF0F3A -name unix -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/src/nxtvm/platform/unix -size 4096 -mtime 1220953809 -attributes 0000 -filemethod 0
-File ::E14E5667-0D2C-477A-8B85-53D531A53069 -name build.xml -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/unix -size 3115 -mtime 1220953807 -attributes 1000 -filemethod 0
-File ::59D1BAC0-7593-41FF-997C-142C8F7FCD97 -name dump.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/unix -size 3311 -mtime 1220953807 -attributes 1000 -filemethod 0
-File ::66F86B09-0810-4534-8350-BA0628C8F944 -name dump_config.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/unix -size 1880 -mtime 1220953807 -attributes 1000 -filemethod 0
-File ::47BE380F-8078-4227-9696-590B099AAD9B -name load.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/unix -size 1321 -mtime 1220953807 -attributes 1000 -filemethod 0
-File ::60C10BF2-FA24-42BC-AFA4-3901565D7720 -name load.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/unix -size 141 -mtime 1220953808 -attributes 1000 -filemethod 0
-File ::B7101829-4F5F-4F95-85B8-303B181F449E -name nativeemul.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/unix -size 21758 -mtime 1220953808 -attributes 1000 -filemethod 0
-File ::591753BC-7377-403C-A5C9-CEDBFA5EE327 -name opcodeinfo.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/unix -size 4318 -mtime 1220953808 -attributes 1000 -filemethod 0
-File ::D28147D4-5DBB-4FF7-B423-B2431DC5F73B -name platform_config.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/unix -size 766 -mtime 1220953808 -attributes 1000 -filemethod 0
-File ::621B064D-BCA3-4467-8A26-1B83A0570531 -name platform_hooks.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/unix -size 1079 -mtime 1220953808 -attributes 1000 -filemethod 0
-File ::160CB77A-87E8-494D-B18D-CF755FF69F9C -name sensors.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/unix -size 1008 -mtime 1220953808 -attributes 1000 -filemethod 0
-File ::87E86D4A-159A-437D-BE55-D0DA2D2B314D -name sensors.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/unix -size 394 -mtime 1220953808 -attributes 1000 -filemethod 0
-File ::D95720A5-0B15-41EC-9980-962745DFAEEE -name systime.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/unix -size 99 -mtime 1220953808 -attributes 1000 -filemethod 0
-File ::03049189-D8CA-49A0-8E07-CA1C104C7CA4 -name traceemul.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/unix -size 187 -mtime 1220953809 -attributes 1000 -filemethod 0
-File ::A3BA8E63-CDBE-40B0-8EED-E366DDA25557 -name tvmemul.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/unix -size 6046 -mtime 1220953809 -attributes 1000 -filemethod 0
-File ::CA0F3620-D1AD-4CE9-90AC-E88DD15834B8 -name verbose.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/unix -size 21208 -mtime 1220953809 -attributes 1000 -filemethod 0
-File ::23736DE2-FD34-4645-80EE-E62D19D1D409 -name RELEASENOTES -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%> -size 27134 -mtime 1220953694 -attributes 1000 -filemethod 0
-File ::092E8552-EB8D-4F01-9958-4FB9061410E3 -name ACKNOWLEDGMENTS -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%> -size 3485 -mtime 1220953693 -attributes 1000 -filemethod 0
-File ::CBA1FA3C-827D-4C41-A6E0-3BA436572737 -name LEGAL -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%> -size 1032 -mtime 1220953693 -attributes 1000 -filemethod 0
-File ::F81018D1-5399-4EF2-B9BF-EFD6F1150634 -name LICENSE -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%> -size 19663 -mtime 1220953694 -attributes 1000 -filemethod 0
-File ::2AC011C1-8AB1-48CE-976A-B091F292C03D -name README.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%> -size 20551 -mtime 1220953694 -attributes 1000 -filemethod 0
+File ::B6E4AFF0-0B75-43A6-8BCD-A9454C8D9C65 -name lib -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/lib -mtime 1226326890 -attributes 0000 -filemethod 0
+File ::98BFDE1F-9166-426D-A04C-35A6891629C9 -name classes.jar -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/lib -size 283785 -mtime 1226326678 -attributes 0000 -filemethod 0
+File ::0CD51C30-3E8E-44EF-A514-A6195AD5D2B2 -name jtools.jar -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/lib -size 79098 -mtime 1226326678 -attributes 0000 -filemethod 0
+File ::40995531-B663-4FDA-A776-AECBB4F84680 -name pccomm.jar -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/lib -size 31459 -mtime 1226326678 -attributes 0000 -filemethod 0
+File ::F65F4340-0268-48D5-B3BE-D44F76FD18CA -name pctools.jar -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/lib -size 67980 -mtime 1226326678 -attributes 0000 -filemethod 0
+File ::61BD525D-A63D-4A8A-A59B-DB8D139BB1BD -name src -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/src -mtime 1226326879 -attributes 0000 -filemethod 0
+File ::61D2E997-9C06-4516-949F-A6AB43DAE7C8 -name jfantom -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/src/jfantom -mtime 1226326875 -attributes 0000 -filemethod 0
+File ::5ECAE770-8D38-4835-B575-0FFA0F713120 -name build.bat -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/jfantom -size 221 -mtime 1226326678 -attributes 0000 -filemethod 0
+File ::0DF8E56A-63DC-4CF8-9D97-5B22EE905D21 -name build.sh -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/jfantom -size 731 -mtime 1226326678 -attributes 0000 -filemethod 0
+File ::31663306-DFC4-4436-8F1F-3E59B85F7DB2 -name jfantom.cpp -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/jfantom -size 3665 -mtime 1226326678 -attributes 0000 -filemethod 0
+File ::4D152940-B3D5-4BAA-A4BE-5BC06B8A49B1 -name jfantom.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/jfantom -size 1537 -mtime 1226326678 -attributes 0000 -filemethod 0
+File ::03C8AC61-D522-4AEC-9669-46EB98502097 -name libnxt -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/src/libnxt -size 4096 -mtime 1226326879 -attributes 0000 -filemethod 0
+File ::91C532A9-8953-4401-A795-DFA7BB9A2A33 -name AUTHORS -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/libnxt -size 93 -mtime 1226326678 -attributes 0000 -filemethod 0
+File ::2A5C93B3-F501-4A0B-BE1E-F0B940899441 -name build.xml -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/libnxt -size 3420 -mtime 1226326678 -attributes 0000 -filemethod 0
+File ::92051657-522D-44B5-8B70-B956DAAE8E06 -name COPYING -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/libnxt -size 15145 -mtime 1226326678 -attributes 0000 -filemethod 0
+File ::1D446B00-62D6-40EA-BB84-D5B7A0203ED0 -name error.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/libnxt -size 1283 -mtime 1226326678 -attributes 0000 -filemethod 0
+File ::EE2BD310-CC96-4D5C-BA7C-F88B2B383062 -name error.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/libnxt -size 1460 -mtime 1226326678 -attributes 0000 -filemethod 0
+File ::E9ACC327-3C93-4F58-85CD-9E56DFAE2750 -name firmware.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/libnxt -size 3678 -mtime 1226326678 -attributes 0000 -filemethod 0
+File ::58E26FD4-F78E-4EA0-A016-8B7523D5C0E6 -name firmware.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/libnxt -size 1326 -mtime 1226326678 -attributes 0000 -filemethod 0
+File ::88BBA31D-618F-4A79-9E4F-959477C47495 -name flash.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/libnxt -size 2579 -mtime 1226326678 -attributes 0000 -filemethod 0
+File ::A69E6BAB-0055-4824-9CA8-EAB27A51934E -name flash.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/libnxt -size 1264 -mtime 1226326678 -attributes 0000 -filemethod 0
+File ::BEEE1D23-9C27-4B69-8CC3-09B187353C42 -name flash_routine.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/libnxt -size 2035 -mtime 1226326678 -attributes 0000 -filemethod 0
+File ::623C62BD-D43A-43C9-81E0-414FCB48C9A4 -name flash_routine.h.base -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/libnxt -size 1211 -mtime 1226326678 -attributes 0000 -filemethod 0
+File ::495A86A1-3820-4014-9C53-5167CF126913 -name jlibnxt.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/libnxt -size 1537 -mtime 1226326678 -attributes 0000 -filemethod 0
+File ::12356244-6B74-4E77-A550-5AA038E43761 -name lowlevel.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/libnxt -size 8362 -mtime 1226326678 -attributes 0000 -filemethod 0
+File ::66F45929-AC80-4A1A-B2A2-6CCC2746B0F0 -name lowlevel.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/libnxt -size 1633 -mtime 1226326678 -attributes 0000 -filemethod 0
+File ::EFE02470-5BDF-4D7B-B4B1-848F7D6C3E43 -name main_fwflash.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/libnxt -size 3125 -mtime 1226326678 -attributes 0000 -filemethod 0
+File ::D4C2EB02-5460-4159-8824-49B854F964EF -name main_jlibnxt.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/libnxt -size 3190 -mtime 1226326678 -attributes 0000 -filemethod 0
+File ::318E9723-D7B9-484C-97D4-FCBD18E338BB -name main_nxjflash.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/libnxt -size 5539 -mtime 1226326678 -attributes 0000 -filemethod 0
+File ::C06FD9CA-6C15-4DB4-B039-91D86E33AA71 -name main_runc.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/libnxt -size 3259 -mtime 1226326678 -attributes 0000 -filemethod 0
+File ::64491B30-30D7-470A-AF0B-76383E30AC00 -name main_sambaget.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/libnxt -size 3215 -mtime 1226326678 -attributes 0000 -filemethod 0
+File ::772FDB75-AB79-402F-8700-82E9656B9413 -name make_flash_header.py -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/libnxt -size 1633 -mtime 1226326678 -attributes 0000 -filemethod 0
+File ::5FAAADCD-9118-49C5-9A99-0658EA82FF29 -name README -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/libnxt -size 4112 -mtime 1226326678 -attributes 0000 -filemethod 0
+File ::287FE34B-6EA0-4506-B9E9-38CA93FD4ED0 -name samba.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/libnxt -size 3921 -mtime 1226326678 -attributes 0000 -filemethod 0
+File ::B89DD30F-3C90-47E6-AE52-D95FAB40770A -name samba.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/libnxt -size 1876 -mtime 1226326678 -attributes 0000 -filemethod 0
+File ::77FE1467-DC51-47D4-AF24-D64A94EAC65B -name SConstruct -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/libnxt -size 1100 -mtime 1226326678 -attributes 0000 -filemethod 0
+File ::7B4624BB-322C-41D0-B6D9-4F75B2537DA5 -name docs -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/src/libnxt/docs -mtime 1226326879 -attributes 0000 -filemethod 0
+File ::A599CFAD-B025-43CC-A6A3-9F39CA4C8E4E -name design -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/src/libnxt/docs/design -mtime 1226326879 -attributes 0000 -filemethod 0
+File ::3B55BE17-C165-45E9-96F5-86CA0077E51F -name libnxt.dia -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/libnxt/docs/design -size 2753 -mtime 1226326678 -attributes 0000 -filemethod 0
+File ::6BFCA88C-192F-4DCB-B8EF-4D554BE4640D -name reversing -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/src/libnxt/docs/reversing -mtime 1226326879 -attributes 0000 -filemethod 0
+File ::93AAF591-1519-45F2-9B16-346D16AF6169 -name samba.fw.asm -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/libnxt/docs/reversing -size 387168 -mtime 1226326678 -attributes 0000 -filemethod 0
+File ::CB069AE1-1D2A-4120-8AEC-15B2DAA891D2 -name samba.th.asm -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/libnxt/docs/reversing -size 386252 -mtime 1226326678 -attributes 0000 -filemethod 0
+File ::161798D9-A296-4618-B064-65C7285D6009 -name flash_write -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/src/libnxt/flash_write -mtime 1226326879 -attributes 0000 -filemethod 0
+File ::BDA79A25-959E-495B-A83C-FECB21A79AC7 -name crt0.s -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/libnxt/flash_write -size 1057 -mtime 1226326678 -attributes 0000 -filemethod 0
+File ::15AD92BB-3AAE-422C-92BB-EC6560633485 -name flash.asm -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/libnxt/flash_write -size 1308 -mtime 1226326678 -attributes 0000 -filemethod 0
+File ::9E50D675-9311-4B05-B3AA-B79A9D8F42DE -name flash.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/libnxt/flash_write -size 1504 -mtime 1226326678 -attributes 0000 -filemethod 0
+File ::42122BE7-5ED3-437E-A674-F3D9C67D5F2E -name Makefile -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/libnxt/flash_write -size 699 -mtime 1226326678 -attributes 0000 -filemethod 0
+File ::5344123F-36DE-47EA-91CF-F65E8E563CA4 -name nxtvm -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/src/nxtvm -mtime 1226326882 -attributes 0000 -filemethod 0
+File ::F393BB85-2222-4305-BEA2-6DCC8377BF5F -name javavm -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/src/nxtvm/javavm -size 8192 -mtime 1226326882 -attributes 0000 -filemethod 0
+File ::7C5EC6C8-9852-4E4D-A8B8-8E2FB87FE593 -name classes.db -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 700 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::DEFB0E36-4919-4498-8A5C-7DF0B16BCBAF -name classes.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 4010 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::1BE0A499-73AB-45AC-86B6-E16D3E89AF50 -name configure.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 2117 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::64623968-169A-4690-8E09-650281A6CCFC -name constants.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 404 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::B7F608B5-4A10-480E-9895-51171464EAE4 -name debug.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 2402 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::DF224C02-D726-4847-AB00-DE092A289C0D -name debug.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 1162 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::1DEF7D80-075C-49A9-9844-9781CD667FB2 -name exceptions.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 4887 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::CDD1A310-B4F5-49DF-B7EB-A0764323305F -name exceptions.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 675 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::346B6EA5-9FFA-4EB7-993D-4E371754F79D -name fields.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 243 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::7EDF7B77-BF29-422B-8CC6-F19ABE022224 -name gc.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 1007 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::7EC5DE65-D4D9-4F4F-94E7-ABE34BE433B5 -name interpreter.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 21008 -mtime 1226326676 -attributes 0000 -filemethod 0
+File ::1AC847CF-20BF-4689-921F-99F34A6A8120 -name interpreter.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 1128 -mtime 1226326676 -attributes 0000 -filemethod 0
+File ::AE1964E8-A573-4956-9EE2-81C1CD804091 -name language.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 14998 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::914F2D1C-B705-40CA-8EF8-1C35E740182D -name language.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 7677 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::3329C4EB-A5FE-4200-8BB8-0A2E2CB281A7 -name limits.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 73 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::D53E05B7-1BDA-4FC7-9462-06DC070D3B66 -name magic.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 65 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::1B1DD802-7626-43C7-A569-7167777CCE89 -name memory.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 68614 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::68ABD88D-DD72-4533-BB4A-621C0A8EDA7C -name memory.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 4041 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::448CFEAF-8A5F-468E-9F89-9B7E6B0952DB -name op_arithmetic.hc -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 3821 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::F27A93EF-6E5D-4A4E-9C7F-57DDF088AD44 -name op_arrays.hc -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 4640 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::768A3309-E941-4A02-8253-D6F121A8D8A1 -name op_control.hc -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 3073 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::2ECA6B97-3A1E-4D3B-80B7-CD15E566AE26 -name op_conversions.hc -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 2071 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::5BE338F8-3F0A-46F5-AB6F-3017118E80FD -name op_locals.hc -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 3373 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::43EACBAC-2296-4639-B6E5-CDC46F49B66A -name op_logical.hc -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 2080 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::ADA61021-A607-409A-BDD5-1957D7AD5919 -name op_methods.hc -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 1170 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::6BEF55D6-65F0-4EB2-8DCA-A57238B3C5FD -name op_objects.hc -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 8469 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::B41DDE9C-59C0-448E-814E-25A559EBA436 -name op_other.hc -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 785 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::8E2AC07F-1506-4230-8707-477D08377FBE -name op_skip.hc -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 91 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::DA89F0A8-9DBE-4C5B-8331-12C8C5314507 -name op_stack.hc -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 3699 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::2A8ECA06-6E77-42DC-949C-8FE3943E5D99 -name opcodes.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 5147 -mtime 1226326676 -attributes 0000 -filemethod 0
+File ::864D902E-ECB6-42DD-8ABF-0A1736737693 -name poll.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 2220 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::CBD902E3-1F9C-44F5-B3F5-0E78187A528F -name poll.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 585 -mtime 1226326676 -attributes 0000 -filemethod 0
+File ::C1F9CA7F-D958-4BF8-96C9-C8DB85D038D1 -name signatures.db -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 2540 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::9182D996-D0D3-461A-A852-11D9B7E7110E -name specialclasses.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 793 -mtime 1226326676 -attributes 0000 -filemethod 0
+File ::67D115A3-0227-4772-B796-6EA6470472E8 -name specialsignatures.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 3188 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::33E91252-FE87-4B0D-86EB-35B5E2984A65 -name stack.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 4182 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::3881F72C-F9BC-490D-B36C-20B7B2535854 -name threads.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 22542 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::94655C84-F6F0-4156-9E01-CA6B29E08F0C -name threads.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 3674 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::88C2A5B3-657F-44A6-AC29-D97859AA395D -name trace.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 1837 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::4F60E0C7-093B-4F20-B595-32B7991FB210 -name types.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/javavm -size 1656 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::385C1262-75D6-42BA-95D2-806B7C80DCC3 -name platform -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/src/nxtvm/platform -mtime 1226326887 -attributes 0000 -filemethod 0
+File ::E2C6A5DB-4EE8-42D6-A225-88EB68D36027 -name nxt -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 12288 -mtime 1226326887 -attributes 0000 -filemethod 0
+File ::7D22A360-C8DD-45F8-8814-1517E7EE1D94 -name aic.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 3756 -mtime 1226326678 -attributes 0000 -filemethod 0
+File ::0FCB0EB2-6E6A-4651-AEBF-D82FB2569BA6 -name aic.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 704 -mtime 1226326678 -attributes 0000 -filemethod 0
+File ::65C876E4-41F2-40D9-9C38-CB984151F825 -name AT91SAM7.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 61 -mtime 1226326678 -attributes 0000 -filemethod 0
+File ::38B1311C-DE80-4337-900A-8276ED0268CD -name at91sam7s256.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 149717 -mtime 1226326676 -attributes 0000 -filemethod 0
+File ::B4C63564-3D3A-4B5D-A2EE-D894CE200C50 -name bt.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 8662 -mtime 1226326676 -attributes 0000 -filemethod 0
+File ::4E41E801-4954-4203-865D-6527E35078CD -name bt.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 2422 -mtime 1226326676 -attributes 0000 -filemethod 0
+File ::4878440A-791E-4377-BE08-D142EC852F38 -name byte_fifo.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 2860 -mtime 1226326678 -attributes 0000 -filemethod 0
+File ::1965859C-7B72-4918-AA02-8121FE8C7CF1 -name byte_fifo.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 897 -mtime 1226326678 -attributes 0000 -filemethod 0
+File ::E2BD460E-EE1C-4B30-8DAA-50A54B8C754C -name data_abort.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 898 -mtime 1226326676 -attributes 0000 -filemethod 0
+File ::E39C603D-481C-4C24-8FBD-C618E3110E2D -name display.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 16372 -mtime 1226326676 -attributes 0000 -filemethod 0
+File ::CF472F0F-4860-48E9-8B43-D3994985DB18 -name display.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 824 -mtime 1226326676 -attributes 0000 -filemethod 0
+File ::61C8FF15-B1E6-4D25-9EC0-81CEBF9BDEE7 -name environment.mak -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 754 -mtime 1226326676 -attributes 0000 -filemethod 0
+File ::61FC7D58-5CFC-4AE5-A880-BD6FDA001593 -name flashprog.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 2017 -mtime 1226326676 -attributes 0000 -filemethod 0
+File ::3867E6D3-A675-46FB-84B2-2B6F3E30F8B7 -name flashprog.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 572 -mtime 1226326676 -attributes 0000 -filemethod 0
+File ::6B3398BD-BA45-4B90-9695-850F980D938B -name i2c.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 13251 -mtime 1226326676 -attributes 0000 -filemethod 0
+File ::8AE92E22-2EBD-4C2C-9D84-108B4E19F73D -name i2c.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 487 -mtime 1226326676 -attributes 0000 -filemethod 0
+File ::5B27BB99-14E6-48FD-8C4A-788089AF5808 -name init.s -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 6465 -mtime 1226326676 -attributes 0000 -filemethod 0
+File ::049BCBE7-DF84-4DD7-9BB6-E6FCAABBC74B -name interrupts.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 129 -mtime 1226326676 -attributes 0000 -filemethod 0
+File ::8542D4F4-38C2-4670-A9A9-64EC297DDC94 -name interrupts.s -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 1115 -mtime 1226326676 -attributes 0000 -filemethod 0
+File ::58DD5791-28E0-4605-8942-93DB4A7A0520 -name irq.s -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 2893 -mtime 1226326676 -attributes 0000 -filemethod 0
+File ::E0676834-CFE2-4143-9EBE-D6D19DE62BDD -name java_binary.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 36926 -mtime 1226326676 -attributes 0000 -filemethod 0
+File ::2EDEBE5B-E4FF-4937-81FA-77CBA731079C -name lejos_nxt.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 118 -mtime 1226326676 -attributes 0000 -filemethod 0
+File ::EE6B6B47-3A06-4D4B-975F-1D7FD7E810AF -name main.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 11076 -mtime 1226326676 -attributes 0000 -filemethod 0
+File ::BB08C588-178C-4CA3-8BF3-626C48B6B407 -name Make.mak -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 3427 -mtime 1226326676 -attributes 0000 -filemethod 0
+File ::307EAEF0-5DF3-4BCD-9DE5-17612505D58B -name Makefile -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 18 -mtime 1226326676 -attributes 0000 -filemethod 0
+File ::B6D10A9C-14B3-438E-98F7-6B9A34151CEA -name mytypes.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 209 -mtime 1226326676 -attributes 0000 -filemethod 0
+File ::CBCF8280-0499-4209-A324-7EBCA1B4857F -name native.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 14507 -mtime 1226326676 -attributes 0000 -filemethod 0
+File ::82702456-39E0-439F-B9EE-B7118956F0B2 -name nxt_avr.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 6238 -mtime 1226326676 -attributes 0000 -filemethod 0
+File ::97F9C997-1C15-4609-AE4A-9062FEDB5E7F -name nxt_avr.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 545 -mtime 1226326676 -attributes 0000 -filemethod 0
+File ::FB7E7C44-F85A-463F-89D1-6F45F1012444 -name nxt_lcd.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 2534 -mtime 1226326676 -attributes 0000 -filemethod 0
+File ::8891123F-03DE-4D07-89B5-F1018703D653 -name nxt_lcd.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 282 -mtime 1226326676 -attributes 0000 -filemethod 0
+File ::D7617A92-59E1-42F7-81AD-FB16940EC69E -name nxt_motors.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 3472 -mtime 1226326676 -attributes 0000 -filemethod 0
+File ::3CDCBA2A-5848-4626-ABC4-B879A1FFF1A1 -name nxt_motors.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 465 -mtime 1226326676 -attributes 0000 -filemethod 0
+File ::1460EA38-DB61-4868-98B4-DA4CB07966EC -name nxt_spi.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 5386 -mtime 1226326676 -attributes 0000 -filemethod 0
+File ::C79073AE-EC53-4611-9EC6-A52E3A61FB2B -name nxt_spi.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 545 -mtime 1226326676 -attributes 0000 -filemethod 0
+File ::73E095E7-999A-4138-B011-581FC2D7D18C -name platform_config.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 780 -mtime 1226326676 -attributes 0000 -filemethod 0
+File ::22844C84-C92A-484E-9A16-C2FA0D681E8D -name platform_hooks.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 136 -mtime 1226326676 -attributes 0000 -filemethod 0
+File ::C672B33E-2E4C-41A6-9BE1-DAA1A9271EE7 -name platform_hooks.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 1142 -mtime 1226326676 -attributes 0000 -filemethod 0
+File ::1C28F1D9-91B5-405F-B6AC-5AE08F1D3583 -name printf.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 6590 -mtime 1226326676 -attributes 0000 -filemethod 0
+File ::9C204EAA-7361-47B6-862E-ED9A6BA3DAE2 -name rconsole.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 114 -mtime 1226326676 -attributes 0000 -filemethod 0
+File ::7D8461B3-C930-4D47-B628-6FF3FED547DC -name README -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 522 -mtime 1226326678 -attributes 0000 -filemethod 0
+File ::E6EE4024-A665-4CC0-99FD-D18748A24D57 -name sam7.lds -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 5466 -mtime 1226326678 -attributes 0000 -filemethod 0
+File ::BD9E3FF5-E80C-44B6-B7E3-AC743FAD29D1 -name sensors.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 2428 -mtime 1226326678 -attributes 0000 -filemethod 0
+File ::7EE926D7-941C-43D0-AE99-62F7920D94A3 -name sensors.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 503 -mtime 1226326678 -attributes 0000 -filemethod 0
+File ::9D47C400-A858-4548-AF11-473DE17CCEBD -name sound.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 14498 -mtime 1226326676 -attributes 0000 -filemethod 0
+File ::08A55828-44A9-4A60-B3B9-A5DEF51BBEA6 -name sound.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 431 -mtime 1226326676 -attributes 0000 -filemethod 0
+File ::E8A745F7-384E-4C3F-AD70-B5C464EEE92B -name systick.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 2712 -mtime 1226326676 -attributes 0000 -filemethod 0
+File ::66D9588C-422E-41BB-A7FD-1E6D6BC590EE -name systick.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 321 -mtime 1226326676 -attributes 0000 -filemethod 0
+File ::3C92819C-4D82-4F4D-BBB6-727D4F8861C6 -name systime.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 101 -mtime 1226326676 -attributes 0000 -filemethod 0
+File ::87648912-967D-49F8-8EB8-670C288D1645 -name targetdef.mak -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 908 -mtime 1226326676 -attributes 0000 -filemethod 0
+File ::827B4CB1-D98B-4A31-8686-B151DD078C0B -name twi.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 4558 -mtime 1226326676 -attributes 0000 -filemethod 0
+File ::12A0D9A9-C0B1-41A5-9BB0-63AB249D7F56 -name twi.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 390 -mtime 1226326676 -attributes 0000 -filemethod 0
+File ::99227A95-C1CC-4472-80FA-163B50124071 -name uart.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 6141 -mtime 1226326678 -attributes 0000 -filemethod 0
+File ::B3AB208B-B832-447C-AA07-7B5E10AFE160 -name uart.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 448 -mtime 1226326678 -attributes 0000 -filemethod 0
+File ::869737AF-09A9-4963-8F03-08E1632797F3 -name udp.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 20135 -mtime 1226326678 -attributes 0000 -filemethod 0
+File ::DE0FA62E-2AA6-47DE-8DF1-36A66492CEF9 -name udp.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 1585 -mtime 1226326678 -attributes 0000 -filemethod 0
+File ::B56A11F2-1AFC-4C79-900B-F462CD920651 -name vectors.s -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 1142 -mtime 1226326676 -attributes 0000 -filemethod 0
+File ::DD362C00-5487-48EE-A1C0-7C83EFAA5D07 -name version.mak -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/nxt -size 38 -mtime 1226326676 -attributes 0000 -filemethod 0
+File ::94903329-6411-4861-9E58-EF5158F9D000 -name unix -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/src/nxtvm/platform/unix -size 4096 -mtime 1226326888 -attributes 0000 -filemethod 0
+File ::F905EAC3-E05B-4F65-8A95-00BE280B724E -name build.xml -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/unix -size 3115 -mtime 1226326676 -attributes 0000 -filemethod 0
+File ::6EC5F9D0-EE64-48F4-8B46-149460C1776E -name dump.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/unix -size 3311 -mtime 1226326676 -attributes 0000 -filemethod 0
+File ::B92C05C2-72C0-4D5A-860F-7F1EE675F15C -name dump_config.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/unix -size 1880 -mtime 1226326676 -attributes 0000 -filemethod 0
+File ::B834E4FE-CF2F-4455-837D-06CB0282C483 -name load.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/unix -size 1321 -mtime 1226326676 -attributes 0000 -filemethod 0
+File ::12C86700-0C8F-4250-9717-52726525B4D5 -name load.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/unix -size 141 -mtime 1226326676 -attributes 0000 -filemethod 0
+File ::21984D28-2B2A-4454-B2B7-557057AC5F4A -name nativeemul.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/unix -size 21758 -mtime 1226326676 -attributes 0000 -filemethod 0
+File ::AB2426FC-8721-4CA5-8BB2-86D9A2DC970D -name opcodeinfo.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/unix -size 4318 -mtime 1226326676 -attributes 0000 -filemethod 0
+File ::47C8646E-780A-4214-8FBC-B8AC10A7360B -name platform_config.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/unix -size 766 -mtime 1226326676 -attributes 0000 -filemethod 0
+File ::B5914C89-4905-41DA-B411-091CC5382B6C -name platform_hooks.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/unix -size 1079 -mtime 1226326676 -attributes 0000 -filemethod 0
+File ::87C2BEF1-3BAB-48FE-B510-F0F7A0299795 -name sensors.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/unix -size 1008 -mtime 1226326676 -attributes 0000 -filemethod 0
+File ::3D7CE368-19B5-43DF-B6C5-B8025F295C7D -name sensors.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/unix -size 394 -mtime 1226326676 -attributes 0000 -filemethod 0
+File ::896AF091-9715-4074-8836-6321DB12B2D2 -name systime.h -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/unix -size 99 -mtime 1226326676 -attributes 0000 -filemethod 0
+File ::48F06CBE-DEDB-4862-A9BE-D8A88746B781 -name traceemul.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/unix -size 187 -mtime 1226326676 -attributes 0000 -filemethod 0
+File ::F51E287E-29E6-4C8D-B1E6-A0EA556C2C89 -name tvmemul.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/unix -size 6046 -mtime 1226326676 -attributes 0000 -filemethod 0
+File ::C2F564F1-584D-42E9-8645-0451DED0C8F2 -name verbose.c -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/src/nxtvm/platform/unix -size 21208 -mtime 1226326676 -attributes 0000 -filemethod 0
+File ::E5439A35-531A-469C-A12C-8665BC9FE604 -name ACKNOWLEDGMENTS -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%> -size 3481 -mtime 1226087992 -attributes 0000 -filemethod 0
+File ::04B9ADCE-4D1C-43BE-9381-08EF9753E144 -name LEGAL -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%> -size 1181 -mtime 1226088264 -attributes 0000 -filemethod 0
+File ::80188274-8E10-417D-A69C-D2FD0D654719 -name LICENSE -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%> -size 19663 -mtime 1218932456 -attributes 0000 -filemethod 0
+File ::A3120A70-43EA-4313-B13C-EEBBAA0D88AE -name README.html -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%> -size 19180 -mtime 1225663554 -attributes 0000 -filemethod 0
+File ::129764A2-77E3-4987-BC56-A9641CE3715A -name RELEASENOTES -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%> -size 30201 -mtime 1225669254 -attributes 0000 -filemethod 0
+File ::560726DD-5C79-4EE7-90DB-6E96476F8E51 -name 3rdparty -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/3rdparty -mtime 1226326773 -attributes 0000 -filemethod 0
+File ::1D1852DE-28D6-42B5-969E-6377B6C13CB7 -name lib -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/3rdparty/lib -size 4096 -mtime 1226326777 -attributes 0000 -filemethod 0
+File ::98B6A746-8E04-4463-817B-0AE76287A758 -name bcel-5.1-src.zip -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/3rdparty/lib -size 840130 -mtime 1218932454 -attributes 0000 -filemethod 0
+File ::56798AE2-CD07-4DD8-8DF1-FD708DD3DEE6 -name bcel-5.1.jar -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/3rdparty/lib -size 515920 -mtime 1218932454 -attributes 0000 -filemethod 0
+File ::F523B7A9-DAF7-475C-B448-DCDD3CEA70AD -name bluecove-2.0.3-sources.tar.gz -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/3rdparty/lib -size 313703 -mtime 1226085632 -attributes 0000 -filemethod 0
+File ::6C982E68-4AA6-4EF5-B2F1-C447B80A2F68 -name bluecove-gpl-2.0.3-sources.tar.gz -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/3rdparty/lib -size 46238 -mtime 1226085660 -attributes 0000 -filemethod 0
+File ::1519029A-D6BA-4381-BD24-D76AFBB6665B -name bluecove.jar -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/3rdparty/lib -size 491638 -mtime 1226085546 -attributes 0000 -filemethod 0
+File ::598B98D5-9788-47EA-851E-A6DFE3D1320F -name commons-cli-1.0.jar -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/3rdparty/lib -size 30117 -mtime 1218932454 -attributes 0000 -filemethod 0
+File ::64F18E65-047A-4E3E-8461-64DAA2369F4F -name cpptasks.jar -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/3rdparty/lib -size 276513 -mtime 1218932454 -attributes 0000 -filemethod 0
+File ::9E94AAD1-9DD1-4E80-A44D-F52710EF1DFB -name bin -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -type dir -directory <%InstallDir%>/bin -size 4096 -mtime 1226326890 -attributes 0000 -filemethod 0
+File ::DCFFC7F7-E71F-4C5E-9B34-0837C6D574EF -name jfantom.dll -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/bin -size 7168 -mtime 1226326680 -attributes 0000 -filemethod 0
+File ::681FD42A-8C68-4096-8CCB-CCF0B8EDD1FC -name jlibnxt.dll -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/bin -size 9216 -mtime 1226326680 -attributes 0000 -filemethod 0
+File ::8B7079F0-3D19-43DE-A8A0-A7ECB5CCA154 -name lejos_nxt_rom.bin -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/bin -size 48096 -mtime 1226326680 -attributes 0000 -filemethod 0
+File ::36D303FC-2E47-4977-92AE-A1558FDF682C -name lejosdl.bat -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/bin -size 408 -mtime 1226326680 -attributes 0000 -filemethod 0
+File ::4B23F24B-EC85-425D-850A-9EF84E44E936 -name lejosfirmdl.bat -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/bin -size 414 -mtime 1226326678 -attributes 0000 -filemethod 0
+File ::D38BFE8B-34EC-4214-8C8B-880133A7B7BB -name lejosjc.bat -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/bin -size 406 -mtime 1226326678 -attributes 0000 -filemethod 0
+File ::6CC735A2-1AFF-4BBB-A3BC-934ABCD86137 -name nxj.bat -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/bin -size 554 -mtime 1226326680 -attributes 0000 -filemethod 0
+File ::CB195000-6BA4-43FE-8CE3-647E44F0CBBE -name nxjbrowse.bat -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/bin -size 456 -mtime 1226326678 -attributes 0000 -filemethod 0
+File ::2B71F47D-89B2-4DE0-A95D-3F2DDA467B27 -name nxjc.bat -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/bin -size 165 -mtime 1226326680 -attributes 0000 -filemethod 0
+File ::E34E0CE8-55BE-4E08-8F48-B79DFCDE6759 -name nxjconsole.bat -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/bin -size 415 -mtime 1226326680 -attributes 0000 -filemethod 0
+File ::8C1BD45C-7FA2-46F7-8019-103414218A2E -name nxjconsoleviewer.bat -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/bin -size 421 -mtime 1226326680 -attributes 0000 -filemethod 0
+File ::7357175C-A34E-4F76-AAD0-A7648EFFBC42 -name nxjdataviewer.bat -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/bin -size 418 -mtime 1226326678 -attributes 0000 -filemethod 0
+File ::205C734C-480D-4E07-BDB6-B2C9934A9B82 -name nxjflash.bat -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/bin -size 442 -mtime 1226326680 -attributes 0000 -filemethod 0
+File ::046F5269-566A-4170-94D4-BFBEA62E9F16 -name nxjflashg.bat -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/bin -size 270 -mtime 1226326680 -attributes 0000 -filemethod 0
+File ::8150CD4F-8D58-44C9-BDA0-CDA568521575 -name nxjlink.bat -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/bin -size 425 -mtime 1226326680 -attributes 0000 -filemethod 0
+File ::18DAAC6D-688C-4E85-8DCF-9C3DFF8AA90F -name nxjmonitor.bat -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/bin -size 418 -mtime 1226326680 -attributes 0000 -filemethod 0
+File ::22D50C4C-6CBC-4FF2-BF5D-1FD9693D74FF -name nxjsocketproxy.bat -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/bin -size 419 -mtime 1226326680 -attributes 0000 -filemethod 0
+File ::B63547E1-CC54-4596-A52E-2C77DE7F1710 -name nxjupload.bat -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/bin -size 462 -mtime 1226326680 -attributes 0000 -filemethod 0
+File ::925FC20D-4BDA-4A83-8EE2-E4AB005698F3 -name StartUpText.bin -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/bin -size 32195 -mtime 1226326680 -attributes 0000 -filemethod 0
+File ::0AE4C160-E387-401F-99FA-ECDF87509E2A -name nxjflashginst.bat -parent 20C58F69-C30F-497D-A4BA-E1B395EC15A7 -directory <%InstallDir%>/bin -size 244 -mtime 1226326680 -attributes 0000 -filemethod 0
+File ::704FA975-5818-4A3F-9C0F-56B0AEEBCEDB -name jtools -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/jtools -size 4096 -mtime 1226326854 -attributes 0000 -filemethod 0
+File ::8A7ACABE-86D7-45AF-829C-A6D42FA5CF23 -name .classpath -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/jtools -size 405 -mtime 1226326662 -attributes 0000 -filemethod 0
+File ::D201CB47-A33A-462D-9BB8-D82985870AF4 -name .project -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/jtools -size 365 -mtime 1226326666 -attributes 0000 -filemethod 0
+File ::55106A5C-2F01-483D-AB0B-9020EFFFB9B1 -name build.xml -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/jtools -size 1079 -mtime 1226326668 -attributes 0000 -filemethod 0
+File ::4D0FA4CF-F5DE-46D7-BF4C-B453CE711D3F -name js -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/jtools/js -mtime 1226326854 -attributes 0000 -filemethod 0
+File ::E2FD6DA1-1F45-42F1-8898-34FCF9BBA9E9 -name common -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/jtools/js/common -size 4096 -mtime 1226326850 -attributes 0000 -filemethod 0
+File ::E680C61C-CF52-43C8-AE3D-3168016417CD -name AbstractTool.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/jtools/js/common -size 964 -mtime 1226326654 -attributes 0000 -filemethod 0
+File ::31D8B51F-747F-463C-A80B-5A964B036DC1 -name CLIToolProgressMonitor.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/jtools/js/common -size 1376 -mtime 1226326670 -attributes 0000 -filemethod 0
+File ::0353DFA0-7B77-4A14-8C4E-F846CF1F2022 -name NullToolProgressMonitor.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/jtools/js/common -size 889 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::24B53B76-91F8-46D6-8014-1EAB283FAE7A -name ToolException.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/jtools/js/common -size 602 -mtime 1226326668 -attributes 0000 -filemethod 0
+File ::C39917E4-A382-42E3-BCAF-065C9E0C0593 -name ToolProgressMonitor.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/jtools/js/common -size 753 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::8CF20647-F5CC-4DF5-9F52-D5BA11B2A636 -name tinyvm -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/jtools/js/tinyvm -size 12288 -mtime 1226326854 -attributes 0000 -filemethod 0
+File ::03947895-3FAF-4895-851B-26657A202F22 -name Binary.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/jtools/js/tinyvm -size 23007 -mtime 1226326658 -attributes 0000 -filemethod 0
+File ::118CA034-0DA7-4893-BDA9-E386605D66D9 -name BinaryReport.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/jtools/js/tinyvm -size 2202 -mtime 1226326658 -attributes 0000 -filemethod 0
+File ::A3162081-00B6-4D6A-B8FE-51EAF689DC74 -name ClassPath.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/jtools/js/tinyvm -size 804 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::89B23D1C-CCCF-429B-9573-43501CF949A1 -name ClassRecord.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/jtools/js/tinyvm -size 25893 -mtime 1226326668 -attributes 0000 -filemethod 0
+File ::1330E94A-E5FE-4127-A883-DA3201C08A29 -name CodeSequence.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/jtools/js/tinyvm -size 858 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::80189F56-FA1C-416A-B9DE-64D5D5B1D76C -name CodeUtilities.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/jtools/js/tinyvm -size 29915 -mtime 1226326670 -attributes 0000 -filemethod 0
+File ::EFCACEB0-16E0-4058-8144-66E1A153EF32 -name ConstantRecord.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/jtools/js/tinyvm -size 2110 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::5C6C3CD4-4943-4105-9D5F-BB16411B0CEA -name ConstantValue.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/jtools/js/tinyvm -size 6024 -mtime 1226326666 -attributes 0000 -filemethod 0
+File ::792B8006-8F50-464D-BD2E-714A8294D3F8 -name EntryClassIndex.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/jtools/js/tinyvm -size 727 -mtime 1226326662 -attributes 0000 -filemethod 0
+File ::687919B5-7997-4BD6-BF10-4B102BD09176 -name ExceptionRecord.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/jtools/js/tinyvm -size 2630 -mtime 1226326660 -attributes 0000 -filemethod 0
+File ::D3DA7664-C22F-40BD-9141-3786223123C5 -name GenerateConstants.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/jtools/js/tinyvm -size 5921 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::29B18B35-693E-4AD2-AB28-411100C236C6 -name IClassPath.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/jtools/js/tinyvm -size 425 -mtime 1226326670 -attributes 0000 -filemethod 0
+File ::FBFDE893-780D-4845-9F9C-775BC023C932 -name InstanceFieldRecord.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/jtools/js/tinyvm -size 1100 -mtime 1226326670 -attributes 0000 -filemethod 0
+File ::44A6DB89-0320-488D-AEB1-CAB84FF7D59C -name MasterRecord.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/jtools/js/tinyvm -size 2086 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::2ED57649-BA54-4955-89E9-900738242A05 -name MethodRecord.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/jtools/js/tinyvm -size 10226 -mtime 1226326670 -attributes 0000 -filemethod 0
+File ::E9AE6FB9-99A0-4E1E-A72A-6BD0168A39E0 -name OpCodeConstants.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/jtools/js/tinyvm -size 4926 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::51D97C03-46D9-407F-9358-EE6A0D8256B4 -name OpCodeInfo.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/jtools/js/tinyvm -size 4289 -mtime 1226326660 -attributes 0000 -filemethod 0
+File ::A05CA28C-A722-4A29-9237-6A1542223CFD -name RecordTable.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/jtools/js/tinyvm -size 4872 -mtime 1226326654 -attributes 0000 -filemethod 0
+File ::8BE60AB4-9C7A-43CC-BA37-D1415EC19EA5 -name Signature.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/jtools/js/tinyvm -size 792 -mtime 1226326656 -attributes 0000 -filemethod 0
+File ::20790600-D68C-48D4-A737-8D8171653F06 -name SpecialClassConstants.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/jtools/js/tinyvm -size 759 -mtime 1226326668 -attributes 0000 -filemethod 0
+File ::FC479A63-0D28-4D74-A816-298EA707883F -name SpecialSignatureConstants.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/jtools/js/tinyvm -size 2598 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::F68A2ADB-36D5-4BC5-8E10-50A3BB3AEA3B -name StaticFieldRecord.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/jtools/js/tinyvm -size 1503 -mtime 1226326662 -attributes 0000 -filemethod 0
+File ::DB6DDCED-412F-4B09-9283-51A481696738 -name StaticValue.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/jtools/js/tinyvm -size 2090 -mtime 1226326660 -attributes 0000 -filemethod 0
+File ::775A2DD9-E0FD-4B88-B4DC-2CB696E7C406 -name TinyVM.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/jtools/js/tinyvm -size 2363 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::DF90C286-F6D8-469A-BEB9-0BF8AA0C8688 -name TinyVMConstants.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/jtools/js/tinyvm -size 1514 -mtime 1226326670 -attributes 0000 -filemethod 0
+File ::00A9A4AF-ECD2-42D6-88F4-40F1B3E7C989 -name TinyVMException.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/jtools/js/tinyvm -size 650 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::78F32658-F144-466C-A023-EDA17184F42C -name TinyVMTool.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/jtools/js/tinyvm -size 4073 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::A3FE60E9-1C72-4CC5-8747-24FC81F2A718 -name TinyVMType.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/jtools/js/tinyvm -size 4631 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::E24B23BA-E618-4A54-A089-8ED8B8DC0485 -name WritableData.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/jtools/js/tinyvm -size 414 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::9FC6DA53-1097-4A35-9C0A-08E5D6D6AE1A -name WritableDataWithOffset.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/jtools/js/tinyvm -size 1069 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::64164855-F3E2-458D-A2A0-14A5E49343F9 -name io -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/jtools/js/tinyvm/io -size 4096 -mtime 1226326854 -attributes 0000 -filemethod 0
+File ::8938814A-7FE8-4A98-A6F3-F9C9603F0E3A -name BEByteWriter.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/jtools/js/tinyvm/io -size 602 -mtime 1226326668 -attributes 0000 -filemethod 0
+File ::6587CCA6-C4E9-4710-9E77-2C42AAAF27B5 -name ByteWriter.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/jtools/js/tinyvm/io -size 2698 -mtime 1226326662 -attributes 0000 -filemethod 0
+File ::52F0D3F6-78B8-46AB-93D6-0249E505A75E -name IByteWriter.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/jtools/js/tinyvm/io -size 1074 -mtime 1226326666 -attributes 0000 -filemethod 0
+File ::E3DC9128-A825-4F21-B93B-AAEE4EF3B449 -name IOUtilities.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/jtools/js/tinyvm/io -size 885 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::FEA33FF4-7361-4384-BBF5-81A0BE3031D1 -name LEByteWriter.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/jtools/js/tinyvm/io -size 1321 -mtime 1226326670 -attributes 0000 -filemethod 0
+File ::F6EB18E7-CF42-487F-9B54-489E9474FD76 -name util -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/jtools/js/tinyvm/util -mtime 1226326854 -attributes 0000 -filemethod 0
+File ::52EEBB66-F0D5-40C0-A7B9-25EDAB793E56 -name HashVector.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/jtools/js/tinyvm/util -size 1862 -mtime 1226326670 -attributes 0000 -filemethod 0
+File ::AF16FF47-2440-49F7-9346-B32861CEF5D1 -name TinyVMCommandLineParser.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/jtools/js/tinyvm/util -size 3542 -mtime 1226326662 -attributes 0000 -filemethod 0
+File ::1BD71556-FEB5-4017-909C-17D936D826E3 -name tools -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/jtools/js/tools -mtime 1226326854 -attributes 0000 -filemethod 0
+File ::9D0F53BF-A972-48EE-8C9A-5A5A229ABA9B -name CodePacker.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/jtools/js/tools -size 7581 -mtime 1226326664 -attributes 0000 -filemethod 0
+File ::C3CF4ED9-A6D5-4F83-9649-729E5DFC3054 -name ListReader.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/jtools/js/tools -size 798 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::797BED6B-C1B2-4811-9DA7-FE2C72F713C8 -name lib -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/jtools/lib -mtime 1226326854 -attributes 0000 -filemethod 0
+File ::B0A896CF-6566-42FB-9449-CC48128C5CEE -name jtools.jar -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/jtools/lib -size 79098 -mtime 1226326662 -attributes 0000 -filemethod 0
+File ::3C7307C4-21E2-4A91-BDFF-EF6CDF00B367 -name nbproject -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/jtools/nbproject -mtime 1226326854 -attributes 0000 -filemethod 0
+File ::FC73AA0F-FF13-4424-A2A1-E52BF59272C6 -name project.xml -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/jtools/nbproject -size 2760 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::8E883523-55FA-4F50-AE3D-F5336B47DFCE -name pcsamples -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/pcsamples -size 4096 -mtime 1226326862 -attributes 0000 -filemethod 0
+File ::ABBB374A-440C-4E89-A821-633042DB63C9 -name .classpath -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pcsamples -size 726 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::9FEFE6EB-0A35-4E51-84CA-8C9BF088CD60 -name .project -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pcsamples -size 385 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::BC1E6EA1-BD63-4D47-AD27-3F46178D988A -name BTSend -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/pcsamples/BTSend -mtime 1226326862 -attributes 0000 -filemethod 0
+File ::BA17208E-0B8F-4BA3-9F37-D8F3DFFA857F -name BTSend.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pcsamples/BTSend -size 3185 -mtime 1226326684 -attributes 0000 -filemethod 0
+File ::BF1492E9-6F60-4FF2-B108-9B0A79305634 -name RCNavigationControl -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/pcsamples/RCNavigationControl -mtime 1226326862 -attributes 0000 -filemethod 0
+File ::BEFE9973-4858-4E39-BEE5-BD3D7C0E58E8 -name RCNavigationControl.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pcsamples/RCNavigationControl -size 17850 -mtime 1226326684 -attributes 0000 -filemethod 0
+File ::74AB76FA-7D59-4C3C-831F-808DDCA84F8F -name SocketServer -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/pcsamples/SocketServer -mtime 1226326862 -attributes 0000 -filemethod 0
+File ::6193624F-DE19-4B46-A405-6F110A128D2B -name SocketServer.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pcsamples/SocketServer -size 2898 -mtime 1226326684 -attributes 0000 -filemethod 0
+File ::611F54AC-6A72-4A78-AD5F-D1697A9D8CC0 -name USBSend -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/pcsamples/USBSend -mtime 1226326862 -attributes 0000 -filemethod 0
+File ::A64E901A-BA38-4E63-BB2B-BFA22BA8B002 -name USBSend.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pcsamples/USBSend -size 2038 -mtime 1226326684 -attributes 0000 -filemethod 0
+File ::43BA9E0C-B69C-4A1F-8890-E9AACD1C0A10 -name build.xml -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pcsamples -size 818 -mtime 1226326684 -attributes 0000 -filemethod 0
+File ::A4A20E9E-44BC-4816-A768-F069ABE572B9 -name nbproject -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/pcsamples/nbproject -mtime 1226326862 -attributes 0000 -filemethod 0
+File ::6E79E0DF-DEE7-4FA9-9D95-F4BED2857B36 -name project.xml -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pcsamples/nbproject -size 2842 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::58FF6FEC-2CD8-4943-9104-AD66FB5E6F55 -name pctools -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/pctools -size 4096 -mtime 1226326865 -attributes 0000 -filemethod 0
+File ::6257ADF6-634D-42CD-813E-56B2C1559EB2 -name .classpath -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pctools -size 969 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::BE157ACC-7A7C-445F-B049-33A63FBA6E98 -name .project -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pctools -size 366 -mtime 1226326662 -attributes 0000 -filemethod 0
+File ::1FB1A088-95F5-454D-919A-CE113CD398A3 -name build.xml -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pctools -size 884 -mtime 1226326656 -attributes 0000 -filemethod 0
+File ::EE660684-D86C-4D30-88FF-18BAC15821E0 -name lejos -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/pctools/lejos -mtime 1226326863 -attributes 0000 -filemethod 0
+File ::54646B50-1AE8-4620-8298-B0B445DBFAE3 -name pc -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/pctools/lejos/pc -mtime 1226326863 -attributes 0000 -filemethod 0
+File ::988AD915-1EA8-474D-9239-6D20B395C75C -name tools -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/pctools/lejos/pc/tools -size 8192 -mtime 1226326865 -attributes 0000 -filemethod 0
+File ::6CD955C2-6ECF-4286-B002-B2AD649980BC -name Connector.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pctools/lejos/pc/tools -size 4260 -mtime 1226326660 -attributes 0000 -filemethod 0
+File ::EA407A03-77D9-4F86-B296-721EE8B80C76 -name Console.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pctools/lejos/pc/tools -size 1489 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::0D20F5C9-790E-47AF-93EA-D8B699FA4429 -name ConsoleViewer.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pctools/lejos/pc/tools -size 5788 -mtime 1226326664 -attributes 0000 -filemethod 0
+File ::1466B1A9-D722-46EA-8FF3-B49336A4B8E2 -name DataViewer.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pctools/lejos/pc/tools -size 6437 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::D4F26F7B-A06F-4E7A-9DB9-C0A0D76D65B8 -name NXJBrowser.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pctools/lejos/pc/tools -size 11811 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::39053403-E829-457F-B3B2-234F3338E67C -name NXJBrowserCommandLineParser.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pctools/lejos/pc/tools -size 2077 -mtime 1226326664 -attributes 0000 -filemethod 0
+File ::7EA19589-1E38-4FF9-ACCD-325B9AB421E8 -name NXJCommandLineParser.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pctools/lejos/pc/tools -size 3769 -mtime 1226326660 -attributes 0000 -filemethod 0
+File ::E57AC09C-4CA5-4CD2-9FC3-FD54EA2C4951 -name NXJFlash.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pctools/lejos/pc/tools -size 10794 -mtime 1226326662 -attributes 0000 -filemethod 0
+File ::C2F82E74-1700-4EBF-A202-10DBB1B7ECE6 -name NXJFlashG.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pctools/lejos/pc/tools -size 14337 -mtime 1226326670 -attributes 0000 -filemethod 0
+File ::10A97FAC-C63C-487E-B33E-AAC900F75408 -name NXJLinkAndUpload.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pctools/lejos/pc/tools -size 4279 -mtime 1226326660 -attributes 0000 -filemethod 0
+File ::555343C1-E2D3-4CD7-9FD3-A834B11AC469 -name NXJMonitor.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pctools/lejos/pc/tools -size 11332 -mtime 1226326656 -attributes 0000 -filemethod 0
+File ::B7D58272-4A58-4B1A-ACD8-9119F4D40623 -name NXJUpload.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pctools/lejos/pc/tools -size 1722 -mtime 1226326664 -attributes 0000 -filemethod 0
+File ::5E2ECDFD-FB29-4A69-8D8E-8083CB74453D -name NXJUploadCommandLineParser.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pctools/lejos/pc/tools -size 2616 -mtime 1226326662 -attributes 0000 -filemethod 0
+File ::5226E02B-A124-4CA8-8367-E8EFC71505A8 -name NXJUploadException.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pctools/lejos/pc/tools -size 599 -mtime 1226326660 -attributes 0000 -filemethod 0
+File ::7B0FC9DE-40F2-4CE2-9109-D33B25048916 -name NXTTableModel.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pctools/lejos/pc/tools -size 1341 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::DB37F443-A710-43CB-865E-E98D109BE87F -name SendFile.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pctools/lejos/pc/tools -size 1224 -mtime 1226326670 -attributes 0000 -filemethod 0
+File ::0A3B75BF-892A-457C-8CD3-A13741BF24D8 -name SocketProxy.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pctools/lejos/pc/tools -size 7437 -mtime 1226326662 -attributes 0000 -filemethod 0
+File ::F79A0E9A-62C9-4A7D-A2D5-E36C9B04C62A -name ToolsLogger.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pctools/lejos/pc/tools -size 300 -mtime 1226326660 -attributes 0000 -filemethod 0
+File ::D8D90A8A-F113-4A3F-8CA4-CFACD4DA0292 -name ToolsLogListener.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pctools/lejos/pc/tools -size 227 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::2BCF41DF-D006-4989-BC45-FED65FA19203 -name Upload.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pctools/lejos/pc/tools -size 2382 -mtime 1226326666 -attributes 0000 -filemethod 0
+File ::7FEE0719-E360-4824-9467-529A3721FA25 -name lib -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/pctools/lib -mtime 1226326865 -attributes 0000 -filemethod 0
+File ::5409C2D6-7AFA-4077-86B7-B82B3E40261D -name pctools.jar -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pctools/lib -size 67980 -mtime 1226326660 -attributes 0000 -filemethod 0
+File ::5C47837B-ED17-40CA-9F5D-DEA1315AACE1 -name nbproject -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/pctools/nbproject -mtime 1226326865 -attributes 0000 -filemethod 0
+File ::474FF108-37F5-4ED3-8264-47EB811D5B95 -name project.xml -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pctools/nbproject -size 2842 -mtime 1226326660 -attributes 0000 -filemethod 0
+File ::9EFF6137-312A-4AC6-AEB6-B1E5ED848F29 -name samples -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/samples -size 16384 -mtime 1226326875 -attributes 0000 -filemethod 0
+File ::9BC092CB-138F-480F-93C1-46ED1EE9F67C -name .classpath -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples -size 3666 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::59570558-56FA-4DD6-B512-5727EFE03AFC -name .project -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples -size 395 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::342E26D5-B5CA-44E1-AC8B-9403859A9DFC -name build.xml -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples -size 3358 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::311F98AE-9726-446A-B20F-02712FE2E012 -name manifest.mf -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples -size 85 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::3BFED070-42B5-4250-BBCA-9A8A859FF486 -name samples.properties -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples -size 167 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::2E818177-DCA5-4081-8DDE-072C23389482 -name BlueStats -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/samples/BlueStats -mtime 1226326866 -attributes 0000 -filemethod 0
+File ::68300D2D-64D6-4CC7-87B9-9427372ADFC8 -name BlueStats.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/BlueStats -size 2334 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::7760C23E-0365-4F19-9611-50533BD6939B -name build.xml -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/BlueStats -size 3155 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::3849534D-41B2-42E7-B9C3-143E90C4C1BA -name BTConnectTest -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/samples/BTConnectTest -mtime 1226326866 -attributes 0000 -filemethod 0
+File ::626D577B-D1EC-43AB-9565-46E5A7EE9F35 -name BTConnectTest.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/BTConnectTest -size 2518 -mtime 1226326680 -attributes 0000 -filemethod 0
+File ::668C1491-2925-4549-B029-8FA3732F0CAC -name build.xml -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/BTConnectTest -size 3163 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::9F8A80C3-C961-4524-A76A-6AD5A5EF0E79 -name BTGPS -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/samples/BTGPS -mtime 1226326866 -attributes 0000 -filemethod 0
+File ::985C7E74-AD8D-47E5-9B91-E72A0376A9FA -name BTGPS.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/BTGPS -size 12787 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::E2608D92-C66A-4F09-8667-1CB5D23CE297 -name build.xml -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/BTGPS -size 3147 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::4D64867D-0388-4DE4-B0D7-37ED4481573B -name BTReceive -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/samples/BTReceive -mtime 1226326866 -attributes 0000 -filemethod 0
+File ::FA2D8C1B-B802-4655-B6EF-562C0A5BC840 -name BTReceive.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/BTReceive -size 1212 -mtime 1226326680 -attributes 0000 -filemethod 0
+File ::FA0B1062-7AE5-451F-98FC-2902BBF8A3B1 -name build.xml -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/BTReceive -size 3181 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::579B159F-42BD-4E4D-801D-52CD63D86307 -name BumperCar -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/samples/BumperCar -size 4096 -mtime 1226326866 -attributes 0000 -filemethod 0
+File ::5053CB1D-5942-4BF5-98F5-B58C1216BCA8 -name build.xml -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/BumperCar -size 3155 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::13DB93AA-5A58-410D-86E9-F8BD89930B14 -name BumperCar.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/BumperCar -size 643 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::F3575AB7-8AAF-44AB-93C3-1762A3FFA008 -name DriveForward.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/BumperCar -size 318 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::14C3C4C4-74D7-4735-8CAA-23AC47F945E1 -name HitWall.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/BumperCar -size 651 -mtime 1226326680 -attributes 0000 -filemethod 0
+File ::4339913D-FE0B-4C7E-BA5D-8FE76DE45104 -name ColorDetector -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/samples/ColorDetector -mtime 1226326866 -attributes 0000 -filemethod 0
+File ::74A2C0F9-A187-45E2-AAD5-FB99889A95A1 -name build.xml -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/ColorDetector -size 3163 -mtime 1226326680 -attributes 0000 -filemethod 0
+File ::6599CF76-F8FC-41C7-8E69-ABD18018B407 -name ColorDetector.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/ColorDetector -size 986 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::9FA4E699-ADBD-46EF-9774-A231DC7B6FFC -name CompassTest -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/samples/CompassTest -mtime 1226326866 -attributes 0000 -filemethod 0
+File ::9E88E955-FE18-4240-9F17-744D3FF0ED1E -name build.xml -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/CompassTest -size 3159 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::19AD5A14-A682-4AE0-BE78-23CB7BDC895F -name CompassTest.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/CompassTest -size 495 -mtime 1226326680 -attributes 0000 -filemethod 0
+File ::9D9989DB-A59A-4D6E-B783-B56623224982 -name DistanceTest -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/samples/DistanceTest -mtime 1226326867 -attributes 0000 -filemethod 0
+File ::8B7659C5-88E1-4B28-AEEA-D0FBA7939CEE -name build.xml -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/DistanceTest -size 3161 -mtime 1226326680 -attributes 0000 -filemethod 0
+File ::62B7C9C2-4C0D-4CE6-9996-9C4AF908A9DD -name DistanceTest.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/DistanceTest -size 2962 -mtime 1226326680 -attributes 0000 -filemethod 0
+File ::21EF23A1-95F0-421A-B22C-9208241DD95A -name DLTest -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/samples/DLTest -mtime 1226326867 -attributes 0000 -filemethod 0
+File ::0C66A689-D639-449B-BAE4-0B1B83BA93A3 -name build.xml -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/DLTest -size 3149 -mtime 1226326680 -attributes 0000 -filemethod 0
+File ::B19824D5-B13E-43A9-A348-EFBA28BF8920 -name DLTest.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/DLTest -size 1095 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::A533B7BB-BF0A-4A92-856B-64B4D6428208 -name ExceptionTest -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/samples/ExceptionTest -mtime 1226326867 -attributes 0000 -filemethod 0
+File ::398BB2C2-4254-4718-99C7-ADA3586A373D -name build.xml -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/ExceptionTest -size 3163 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::D78E8CF9-5AA1-44B0-9373-0980C235F29E -name ExceptionTest.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/ExceptionTest -size 403 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::4ED2F8D8-6570-4B17-AB04-8BFBB5213299 -name FileTest -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/samples/FileTest -mtime 1226326867 -attributes 0000 -filemethod 0
+File ::CCFDA59E-2C80-4DFA-BC29-C18F2B8FC1F3 -name build.xml -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/FileTest -size 3153 -mtime 1226326680 -attributes 0000 -filemethod 0
+File ::F356C155-B819-47B7-9393-D8C99F7529EA -name FileTest.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/FileTest -size 4198 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::3F3E98B1-0965-42F3-A3D2-85D293E0D862 -name GraphicsSample -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/samples/GraphicsSample -mtime 1226326867 -attributes 0000 -filemethod 0
+File ::A18EA17A-4607-4C00-82C1-53FEC170B225 -name build.xml -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/GraphicsSample -size 3165 -mtime 1226326680 -attributes 0000 -filemethod 0
+File ::A347D43B-B677-40F2-9ACC-7C63BBDAD647 -name GraphicsSample.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/GraphicsSample -size 454 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::4A305608-C36C-4C14-9DCE-80647D185A64 -name HelloWorld -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/samples/HelloWorld -mtime 1226326867 -attributes 0000 -filemethod 0
+File ::AB7E9F68-0507-4997-9A14-C08EECF3BCDE -name build.xml -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/HelloWorld -size 3157 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::C30BEE46-B6FE-4B71-BA59-D4EE82BFA6C8 -name HelloWorld.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/HelloWorld -size 290 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::480690AC-CBE0-443C-8642-D5AFCB001FB2 -name I2CDevices -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/samples/I2CDevices -mtime 1226326867 -attributes 0000 -filemethod 0
+File ::43BF3A69-C63E-42C6-A5C9-6DFEE0775DAB -name build.xml -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/I2CDevices -size 3157 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::D1B5BDBE-0AFE-4AEE-90E1-AFF137E8719C -name I2CDevices.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/I2CDevices -size 727 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::62F18B6C-46B5-4009-8A54-13816C636985 -name KeyboardTest -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/samples/KeyboardTest -mtime 1226326867 -attributes 0000 -filemethod 0
+File ::1A3828CF-D9F2-42C0-81D7-98F4D411FA2C -name build.xml -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/KeyboardTest -size 3168 -mtime 1226326680 -attributes 0000 -filemethod 0
+File ::77C53EE7-4362-45A4-9B39-21B7156DFA35 -name KeyboardTest.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/KeyboardTest -size 4253 -mtime 1226326680 -attributes 0000 -filemethod 0
+File ::9CF16433-C4B1-444D-B61F-FC659C509925 -name LatteboxTest -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/samples/LatteboxTest -mtime 1226326870 -attributes 0000 -filemethod 0
+File ::84250FA5-C30F-4738-8A6A-60F5B898DEF5 -name build.xml -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/LatteboxTest -size 3161 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::071B9AE0-8FDB-44E7-9A98-463A184FA812 -name LatteboxTest.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/LatteboxTest -size 2501 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::871AE585-44CA-46C7-BBCC-F1DF5B3188CE -name LCDUI -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/samples/LCDUI -mtime 1226326870 -attributes 0000 -filemethod 0
+File ::AC9D945D-41A5-4C18-A660-CD28029985FF -name build.xml -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/LCDUI -size 3147 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::16B5C39B-064A-40A8-B53C-5A570744D866 -name LCDUI.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/LCDUI -size 12802 -mtime 1226326680 -attributes 0000 -filemethod 0
+File ::4FD3D842-542C-418C-A2CC-E32EAEDEDCDE -name Line -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/samples/Line -mtime 1226326870 -attributes 0000 -filemethod 0
+File ::673E8C1E-8B90-4031-B99F-3929EBE83FC7 -name build.xml -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/Line -size 3145 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::6F3DF616-D236-490E-89A2-02C09FC13564 -name Line.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/Line -size 1793 -mtime 1226326680 -attributes 0000 -filemethod 0
+File ::6C693193-6FC9-4A4E-ABFE-9FFF03F1198E -name Listen -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/samples/Listen -mtime 1226326870 -attributes 0000 -filemethod 0
+File ::B0EB261B-5503-46D9-8F01-2FC9429D2C25 -name build.xml -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/Listen -size 3149 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::CC78448D-1053-493A-AC5C-C745BA54C3BE -name Listen.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/Listen -size 1421 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::9A28F965-4A52-47BD-9F6B-19CC2A66448D -name LLCMonitor -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/samples/LLCMonitor -mtime 1226326870 -attributes 0000 -filemethod 0
+File ::40DF0848-F689-40A5-AC05-392448A60C85 -name build.xml -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/LLCMonitor -size 3157 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::68137BE4-F3E8-4D5F-B0E4-B11A69C482F1 -name LLCMonitor.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/LLCMonitor -size 645 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::837A9D85-C06E-41DA-AF1B-8C91883A3A5C -name MatrixTest -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/samples/MatrixTest -mtime 1226326871 -attributes 0000 -filemethod 0
+File ::6CA19904-2D1A-43F6-8908-BCFF31664D78 -name build.xml -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/MatrixTest -size 3157 -mtime 1226326680 -attributes 0000 -filemethod 0
+File ::B5B7117D-4F8A-46FB-9AC8-8424DA6F7BB3 -name MatrixTest.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/MatrixTest -size 615 -mtime 1226326680 -attributes 0000 -filemethod 0
+File ::DB86760A-B28D-4A4D-9CBA-4A5390DB519F -name MemoryTest -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/samples/MemoryTest -mtime 1226326871 -attributes 0000 -filemethod 0
+File ::DB23A166-E94B-47B7-A8FE-3E64B41E9A8E -name build.xml -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/MemoryTest -size 3157 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::CC64CF88-6021-42B8-A178-9BE15FCAE9E3 -name MemoryTest.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/MemoryTest -size 579 -mtime 1226326680 -attributes 0000 -filemethod 0
+File ::2F33FC8C-7B6B-490A-847D-2E4E54759DFF -name MonitorTest -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/samples/MonitorTest -mtime 1226326871 -attributes 0000 -filemethod 0
+File ::370307C7-B63A-42D3-AD14-CC95FB204110 -name build.xml -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/MonitorTest -size 3159 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::1FF060F9-0245-4460-927D-0DBC40959C1A -name MonitorTest.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/MonitorTest -size 3448 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::5AC42FA4-02FD-4C3C-AF86-65298AE46F8B -name nbproject -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/samples/nbproject -size 4096 -mtime 1226326875 -attributes 0000 -filemethod 0
+File ::4969DC4D-3B0F-483F-9CD1-B40E61E4FBA4 -name build-impl.xml -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/nbproject -size 57605 -mtime 1226326680 -attributes 0000 -filemethod 0
+File ::770F91E1-5D3D-453B-A44D-C500233BA44F -name genfiles.properties -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/nbproject -size 455 -mtime 1226326680 -attributes 0000 -filemethod 0
+File ::3614D18A-C65D-4722-B7A2-87DA10890A71 -name project.properties -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/nbproject -size 4060 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::982AB680-FD45-4031-91F6-902FB3C5755E -name project.xml -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/nbproject -size 2997 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::36E11157-9CFC-40AD-9E9A-89C4B17AFBC7 -name NXTCamTest -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/samples/NXTCamTest -mtime 1226326871 -attributes 0000 -filemethod 0
+File ::1E3D1BB8-F3F8-4D98-B943-8D055BBE12C9 -name build.xml -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/NXTCamTest -size 3157 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::675E1331-A79F-48C3-BD15-36D5A84DBC80 -name NXTCamTest.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/NXTCamTest -size 1210 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::A2792EB1-A844-4B19-B82B-9ED85ECFDA4B -name NXTServoTest -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/samples/NXTServoTest -mtime 1226326871 -attributes 0000 -filemethod 0
+File ::B7A27212-BFD5-4B9E-9B06-93DDAF65E666 -name build.xml -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/NXTServoTest -size 3162 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::60656693-76A6-4A5C-B845-5DB9840D3C19 -name NXTServoTest.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/NXTServoTest -size 2167 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::6A7E712E-8861-46E3-8092-EFC55D1F20E1 -name PerformanceTest -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/samples/PerformanceTest -mtime 1226326872 -attributes 0000 -filemethod 0
+File ::60388DC9-56B6-4C24-9A5F-051AD3AD53DC -name build.xml -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/PerformanceTest -size 3167 -mtime 1226326680 -attributes 0000 -filemethod 0
+File ::354E8096-E839-4B1F-8D3C-B4A70388EB6A -name PerformanceTest.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/PerformanceTest -size 3195 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::41CED5EC-3A72-4376-A162-29F3AB6FCEE0 -name PFTest -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/samples/PFTest -mtime 1226326871 -attributes 0000 -filemethod 0
+File ::0B46B7D6-CCC7-4E6A-9071-A5483E30FCDE -name build.xml -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/PFTest -size 3156 -mtime 1226326680 -attributes 0000 -filemethod 0
+File ::8441A373-3AB8-4415-AEED-FD071F854C43 -name PFTest.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/PFTest -size 637 -mtime 1226326680 -attributes 0000 -filemethod 0
+File ::9935C6BA-B41D-49D4-BE2C-B4BA402D149B -name PilotTester -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/samples/PilotTester -mtime 1226326872 -attributes 0000 -filemethod 0
+File ::AAD43448-1915-452B-A04F-2426C1603B28 -name build.xml -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/PilotTester -size 3159 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::ECF5D92D-CF55-4FE7-8B41-793CEFF8742B -name PilotTester.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/PilotTester -size 1958 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::B467CB9F-0C05-4BCB-B1E1-38B0930BF323 -name RCNavigator -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/samples/RCNavigator -mtime 1226326872 -attributes 0000 -filemethod 0
+File ::EF433706-FF69-4C58-86B1-DA8A869EF5C8 -name build.xml -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/RCNavigator -size 3166 -mtime 1226326680 -attributes 0000 -filemethod 0
+File ::6E888291-6B4C-4C48-84F4-60575989009E -name RCNavigator.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/RCNavigator -size 2695 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::5E6B4671-8DF4-47F0-92F6-57291B2A8426 -name RCXEmulator -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/samples/RCXEmulator -mtime 1226326872 -attributes 0000 -filemethod 0
+File ::FE18FA67-3A62-45A0-9282-50B8167E1629 -name build.xml -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/RCXEmulator -size 3159 -mtime 1226326680 -attributes 0000 -filemethod 0
+File ::3E676DA7-C342-48D2-A394-B187C6F0D950 -name RCXEmulator.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/RCXEmulator -size 3618 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::5142B1FE-3409-4776-987C-FB0D47BB95A4 -name RCXMMTest -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/samples/RCXMMTest -mtime 1226326872 -attributes 0000 -filemethod 0
+File ::EC59E813-D74C-4C8E-BF41-E95F67213A17 -name build.xml -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/RCXMMTest -size 3155 -mtime 1226326680 -attributes 0000 -filemethod 0
+File ::115D1EA8-DC5F-45BC-BFA4-5F5185D28A8D -name RCXMMTest.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/RCXMMTest -size 712 -mtime 1226326680 -attributes 0000 -filemethod 0
+File ::3FEF5874-52A2-40E4-8AD3-E45EF2B96923 -name RCXMuxTest -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/samples/RCXMuxTest -mtime 1226326872 -attributes 0000 -filemethod 0
+File ::0144491E-3169-4B66-AF4F-FF5642CB3F11 -name build.xml -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/RCXMuxTest -size 3157 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::3B1A9EAD-C2CB-4272-ABF1-B8B081890D50 -name RCXMuxTest.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/RCXMuxTest -size 771 -mtime 1226326680 -attributes 0000 -filemethod 0
+File ::AF8FE293-9DBD-40C0-B907-90F9255B50CC -name RCXPortTest -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/samples/RCXPortTest -mtime 1226326872 -attributes 0000 -filemethod 0
+File ::DDC51668-FA31-46BE-B14B-722383091F7B -name build.xml -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/RCXPortTest -size 3159 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::F0FEE1D2-5BA4-4A68-BFC5-80AB910137C2 -name RCXPortTest.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/RCXPortTest -size 1512 -mtime 1226326680 -attributes 0000 -filemethod 0
+File ::F5460ED0-0D8F-45DF-AE6F-A16A094991F7 -name RCXRemote -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/samples/RCXRemote -mtime 1226326872 -attributes 0000 -filemethod 0
+File ::98EC411E-4870-4183-B9C3-D16F4B07FA95 -name build.xml -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/RCXRemote -size 3155 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::33E126C1-97BF-4D16-B58F-D9B32B9DC924 -name RCXRemote.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/RCXRemote -size 1485 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::F1DE0E52-DA3D-4E7C-8F61-DBB06C70B2B9 -name RCXRemoteMotor -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/samples/RCXRemoteMotor -mtime 1226326872 -attributes 0000 -filemethod 0
+File ::5F59EFF8-EFEE-48D1-8998-FD82D9A0F5ED -name build.xml -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/RCXRemoteMotor -size 3165 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::A1ED1C59-2DF6-4508-8389-CEB144D2F62F -name RCXRemoteMotor.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/RCXRemoteMotor -size 1740 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::B012BFFF-A7CF-4ADF-ABBA-9B6141A89B09 -name RCXTempTest -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/samples/RCXTempTest -mtime 1226326873 -attributes 0000 -filemethod 0
+File ::EFC3282F-2A37-4CC9-A439-6243054183BD -name build.xml -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/RCXTempTest -size 3159 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::E90E7FFF-A48F-4B18-9BFD-C36782204D66 -name RCXTempTest.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/RCXTempTest -size 677 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::1CA2FEC2-E318-4F78-88E1-E6EE9C095ABA -name RemoteNXTTest -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/samples/RemoteNXTTest -mtime 1226326873 -attributes 0000 -filemethod 0
+File ::4C3AF9DA-DA78-4DCE-B8EC-11C98ED14F1E -name build.xml -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/RemoteNXTTest -size 3163 -mtime 1226326680 -attributes 0000 -filemethod 0
+File ::8D93249A-C0C2-434E-9059-83BF98471142 -name RemoteNXTTest.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/RemoteNXTTest -size 2375 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::4588FCCE-1AC6-4A7F-A279-D0866C0C1DDA -name SignalTest -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/samples/SignalTest -mtime 1226326873 -attributes 0000 -filemethod 0
+File ::7B8E8949-3205-4090-AF06-157A61DF544F -name build.xml -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/SignalTest -size 3157 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::0BC60586-D048-4BA9-970C-6918D5329011 -name SignalTest.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/SignalTest -size 953 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::A143CFFB-0626-43E0-81D2-C00CBBFF8B9D -name SocketTest -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/samples/SocketTest -mtime 1226326873 -attributes 0000 -filemethod 0
+File ::1859837C-7ACF-4E5A-8A76-EEA20F54E916 -name build.xml -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/SocketTest -size 3157 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::CE2DCCA5-0C25-4BFB-A1C2-5A237677CE84 -name SocketTest.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/SocketTest -size 1234 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::FF9D10C1-CC77-45D8-871F-B993F857D121 -name SonicTest -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/samples/SonicTest -mtime 1226326873 -attributes 0000 -filemethod 0
+File ::0D905E40-1CAD-40E6-AA85-5DF7818A9B84 -name build.xml -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/SonicTest -size 3155 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::BCB65B8D-DBD0-4AD1-A2E7-8CAA51BDBC62 -name SonicTest.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/SonicTest -size 573 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::B808CFF2-5845-4D85-90A2-F73EE180B299 -name SoundSample -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/samples/SoundSample -mtime 1226326873 -attributes 0000 -filemethod 0
+File ::D7DC3A4A-9FF0-408E-B0D1-E103E54B1DDB -name build.xml -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/SoundSample -size 3159 -mtime 1226326680 -attributes 0000 -filemethod 0
+File ::F6BC5C2E-EF23-482B-8494-57365C0F77B6 -name SoundSample.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/SoundSample -size 1440 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::95F919A4-95B6-4627-B990-BFA65FCCE2C2 -name SpeedTest -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/samples/SpeedTest -mtime 1226326874 -attributes 0000 -filemethod 0
+File ::D2C76246-A2A1-4AC2-8455-A9C53676A8A5 -name build.xml -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/SpeedTest -size 3155 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::79F30C0E-39BF-4A32-93DE-D3CB74E2D29C -name SpeedTest.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/SpeedTest -size 1613 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::C68A33E7-67F0-41E2-9150-0D0E7D7D5BF8 -name STTest -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/samples/STTest -mtime 1226326873 -attributes 0000 -filemethod 0
+File ::003616BB-4282-4667-AC6D-F4E234CAE6F6 -name build.xml -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/STTest -size 3149 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::0B89B1D6-13C0-4DCC-BB27-6E2925FC2D5D -name STTest.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/STTest -size 1437 -mtime 1226326680 -attributes 0000 -filemethod 0
+File ::864EE84A-365F-40A0-BF92-D4DE181351E5 -name Subsumption1 -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/samples/Subsumption1 -mtime 1226326874 -attributes 0000 -filemethod 0
+File ::DBF79E1B-DCD7-4D3B-83C3-731841A81A6A -name build.xml -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/Subsumption1 -size 3161 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::3429E445-DD27-4C34-8EF2-053ED812E6A3 -name Subsumption1.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/Subsumption1 -size 8565 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::9DF8D80A-A285-4DDA-BE02-676BD5AAFF6E -name Subsumption2 -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/samples/Subsumption2 -mtime 1226326874 -attributes 0000 -filemethod 0
+File ::56DA902D-96B7-4A7C-919C-08CE60732CF5 -name build.xml -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/Subsumption2 -size 3161 -mtime 1226326680 -attributes 0000 -filemethod 0
+File ::9966A6B6-7B64-4F50-B342-C749BC4FF81B -name Subsumption2.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/Subsumption2 -size 8432 -mtime 1226326680 -attributes 0000 -filemethod 0
+File ::A212D9EC-B885-412C-8D07-B98D18866890 -name TiltTest -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/samples/TiltTest -mtime 1226326874 -attributes 0000 -filemethod 0
+File ::3F13B96C-6D58-4CF0-9906-58E62B46436E -name build.xml -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/TiltTest -size 3153 -mtime 1226326680 -attributes 0000 -filemethod 0
+File ::42559800-71B4-4F5E-8B36-4DF8AB370D6F -name TiltTest.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/TiltTest -size 717 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::8BEFA076-16FE-4E95-BC9B-4C9D78D73B24 -name TimeTest -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/samples/TimeTest -mtime 1226326874 -attributes 0000 -filemethod 0
+File ::BA6AE3A9-6EF7-417A-A42D-43C6F5153929 -name build.xml -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/TimeTest -size 3153 -mtime 1226326680 -attributes 0000 -filemethod 0
+File ::5A620B07-09D8-4E82-B85E-3C45D9F09387 -name TimeTest.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/TimeTest -size 1339 -mtime 1226326680 -attributes 0000 -filemethod 0
+File ::B2CEAA19-7498-4919-91CB-888A8E27B4EA -name Tune -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/samples/Tune -mtime 1226326874 -attributes 0000 -filemethod 0
+File ::321C144B-3754-45C6-9AB2-05AF0EFF14DB -name build.xml -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/Tune -size 3145 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::EF0C3516-6444-4D28-BF34-6DF6642ECA4A -name Tune.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/Tune -size 827 -mtime 1226326680 -attributes 0000 -filemethod 0
+File ::DA086320-FA1A-4A3C-8BD4-EC5D92EF4C0F -name USBReceive -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/samples/USBReceive -mtime 1226326874 -attributes 0000 -filemethod 0
+File ::575E373F-D72E-451E-A896-48B50FA05218 -name build.xml -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/USBReceive -size 3186 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::D58B19BC-0A92-4D8E-862F-DE1543932870 -name USBReceive.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/USBReceive -size 768 -mtime 1226326680 -attributes 0000 -filemethod 0
+File ::BABC392D-5511-492A-9809-B1CF730FBDCE -name View -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/samples/View -mtime 1226326874 -attributes 0000 -filemethod 0
+File ::34038F29-9512-422F-B537-DBF2B9CAB811 -name build.xml -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/View -size 3145 -mtime 1226326680 -attributes 0000 -filemethod 0
+File ::B8B1BD55-911B-4556-92C5-44AC6A699877 -name View.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/samples/View -size 6133 -mtime 1226326682 -attributes 0000 -filemethod 0
+File ::A4C4DCC2-E461-4660-BDC2-D85027CD4485 -name startup -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/startup -size 4096 -mtime 1226326875 -attributes 0000 -filemethod 0
+File ::EB27E201-3B81-4FED-B781-D08077A09AF8 -name .classpath -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/startup -size 480 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::F19FA11A-5881-4711-A2ED-37B634CEC464 -name .project -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/startup -size 366 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::DB855AB6-BC17-40B7-973D-272DF26DB754 -name build.xml -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/startup -size 1677 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::37D34263-30AB-4759-9B78-910DE036114A -name StartUpText.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/startup -size 23362 -mtime 1226326662 -attributes 0000 -filemethod 0
+File ::1C9F5BB7-6403-4D33-9345-5A9B276EEDE4 -name nbproject -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/startup/nbproject -mtime 1226326875 -attributes 0000 -filemethod 0
+File ::1F653307-20A7-4C0F-9CE9-53B9A72BFD72 -name project.xml -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/startup/nbproject -size 2701 -mtime 1226326668 -attributes 0000 -filemethod 0
+File ::ABC7BADB-E208-4A24-AA79-09A2CEED8C89 -name classes -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes -size 4096 -mtime 1226326849 -attributes 0000 -filemethod 0
+File ::DC0520BD-D609-4812-AE5C-35ADA989681A -name .classpath -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes -size 280 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::EE98AA3A-9FB6-40D6-AF57-6EA520F7B6C2 -name .project -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes -size 682 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::63761BFE-93F5-4C8B-8CF9-10E992126CE3 -name build.xml -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes -size 787 -mtime 1226326656 -attributes 0000 -filemethod 0
+File ::0F0873D0-C36D-4056-97FA-BD32AC357A50 -name doc -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/doc -size 4096 -mtime 1226326832 -attributes 0000 -filemethod 0
+File ::6F81A0ED-D2B9-4C9E-B28B-5FE25011AE94 -name allclasses-frame.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc -size 27142 -mtime 1226326692 -attributes 0000 -filemethod 0
+File ::9A323274-B83D-4B85-9EF7-0DA90B68FFD7 -name allclasses-noframe.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc -size 22602 -mtime 1226326692 -attributes 0000 -filemethod 0
+File ::67313F85-1117-44DE-804A-4D1DDA0DB7A4 -name constant-values.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc -size 198526 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::FD114B6E-71F2-4AF9-8E5E-2AC8601CFC38 -name deprecated-list.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc -size 5086 -mtime 1226326692 -attributes 0000 -filemethod 0
+File ::2A3CA2FB-33F2-42EA-B311-4ED3929F3679 -name help-doc.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc -size 9258 -mtime 1226326692 -attributes 0000 -filemethod 0
+File ::C3CC4E66-5442-4866-B8EE-6CDBDA22A5A3 -name index-all.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc -size 637466 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::10DF1337-129F-4138-9F7A-09F10488EA19 -name index.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc -size 1447 -mtime 1226326692 -attributes 0000 -filemethod 0
+File ::6AAE5D2F-CCCE-47C6-8CBF-387C05DC8501 -name overview-frame.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc -size 3696 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::E5257D94-8FEF-45D3-B486-5697CCE12EF4 -name overview-summary.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc -size 9260 -mtime 1226326692 -attributes 0000 -filemethod 0
+File ::99547D00-0122-4271-BBF0-F012498BA77C -name overview-tree.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc -size 41626 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::7D028F7F-A145-44A3-9CC3-E83A9B513F81 -name package-list -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc -size 356 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::04D76041-AD29-4B55-B2B1-2B2C2BE964E7 -name serialized-form.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc -size 165446 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::8EB2606F-5F0E-40A5-8A40-DD2368ECE0D2 -name stylesheet.css -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc -size 1420 -mtime 1226326692 -attributes 0000 -filemethod 0
+File ::DCC55E47-F06E-4219-8200-E416586B9448 -name java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/doc/java -mtime 1226326789 -attributes 0000 -filemethod 0
+File ::9A925656-E110-40B1-9D80-71AE71B583E1 -name awt -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/doc/java/awt -size 4096 -mtime 1226326782 -attributes 0000 -filemethod 0
+File ::649D0ABA-1DAF-47D1-AF19-DF11A075D3A4 -name package-frame.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/awt -size 870 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::D1B91F37-D8F4-4EEA-ADB1-5CC167B4FC87 -name package-summary.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/awt -size 6117 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::85441DE3-7D46-449C-8D79-0079DA904B4A -name package-tree.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/awt -size 5736 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::A3A1A2B3-D833-4D37-AFF5-352A4FC0EF9A -name Rectangle.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/awt -size 11617 -mtime 1226326686 -attributes 0000 -filemethod 0
+File ::84CE8FD6-44BF-4C80-87F3-24732B6F3961 -name package-use.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/awt -size 7507 -mtime 1226326658 -attributes 0000 -filemethod 0
+File ::B6E471B2-A5F4-4403-84EC-3BBC2755976E -name class-use -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/doc/java/awt/class-use -mtime 1226326782 -attributes 0000 -filemethod 0
+File ::BECC782B-231C-4603-8F3F-11511B33421F -name Rectangle.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/awt/class-use -size 10432 -mtime 1226326670 -attributes 0000 -filemethod 0
+File ::2B01AD80-4721-4ABE-8650-71A355A212EF -name io -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/doc/java/io -size 4096 -mtime 1226326783 -attributes 0000 -filemethod 0
+File ::31A9FB22-71B8-4283-AF18-3CE63A3B657B -name BufferedWriter.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/io -size 12735 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::EC80D025-907E-4D70-A671-61A6533D0DB2 -name DataInputStream.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/io -size 29409 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::F44BA054-3B58-41AC-AB72-654BBE984628 -name DataOutputStream.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/io -size 27854 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::522A2ED0-2479-4E7E-8A66-2BB7B18A3E04 -name EOFException.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/io -size 12096 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::C8170DEB-37D8-42A1-843F-D6C9C1B8A495 -name File.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/io -size 25299 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::3643AF42-68B3-4E4D-803A-1A29679D194A -name FileInputStream.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/io -size 15256 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::E91D012A-9753-4582-AD11-2524FFDCE3B6 -name FileOutputStream.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/io -size 15915 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::6335814D-3969-4808-88A1-5EB682E620BA -name InputStream.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/io -size 28455 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::E7FA9924-CCA4-49BC-8327-BF6D37B109FC -name IOException.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/io -size 12048 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::E8577207-E6F9-4E62-87B6-4005E833554D -name OutputStream.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/io -size 18247 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::5A2FB806-B0F2-4825-A41A-BC95D6D5AC66 -name package-frame.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/io -size 2344 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::C4D537D1-2B55-4297-882F-9DD28392954B -name package-summary.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/io -size 9287 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::1C903127-277C-44D9-9833-680525930E64 -name package-tree.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/io -size 7480 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::0B27F4FC-0D1C-4C4B-886D-808652AE1D23 -name PrintStream.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/io -size 14528 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::6ECD983F-DDB3-48FA-9B3D-FCD23E9B7B0C -name Serializable.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/io -size 6326 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::E6683BA7-E4E3-4F77-8F4D-192B5AD85954 -name package-use.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/io -size 23363 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::9E27E927-6293-4EF8-A626-D56824B68A06 -name class-use -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/doc/java/io/class-use -size 4096 -mtime 1226326784 -attributes 0000 -filemethod 0
+File ::2C8793CC-366A-4EB2-B4B7-0A961629EC67 -name BufferedWriter.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/io/class-use -size 5806 -mtime 1226326668 -attributes 0000 -filemethod 0
+File ::F744EFE5-E75C-4C5A-BC7B-DC25651A7DF3 -name DataInputStream.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/io/class-use -size 10622 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::05FDB0AB-93AD-4DBD-8506-492CB4E04D5D -name DataOutputStream.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/io/class-use -size 10666 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::198FAA40-1CD6-42A3-9FB6-AD83320320C6 -name EOFException.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/io/class-use -size 5786 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::651B22D5-D8C0-4585-9479-CA84036046EB -name File.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/io/class-use -size 10707 -mtime 1226326656 -attributes 0000 -filemethod 0
+File ::F41F4EC0-6558-446F-ADDA-48ADA7D251DF -name FileInputStream.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/io/class-use -size 5816 -mtime 1226326662 -attributes 0000 -filemethod 0
+File ::C3B05C5A-732A-4C90-BAEF-1BB431BDA607 -name FileOutputStream.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/io/class-use -size 5826 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::F8F5B246-6631-4EC2-9818-CBF52AA4F15E -name InputStream.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/io/class-use -size 19260 -mtime 1226326660 -attributes 0000 -filemethod 0
+File ::13E6BEC4-9341-469A-A31C-2A1ABECAFB79 -name IOException.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/io/class-use -size 51473 -mtime 1226326660 -attributes 0000 -filemethod 0
+File ::BD98D5A8-9AF5-4972-9EE2-59788D9C3B73 -name OutputStream.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/io/class-use -size 21999 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::EA281616-DCFD-4F34-81E9-333EF4563F0A -name PrintStream.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/io/class-use -size 10478 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::1437D920-2354-4644-A970-CF028342ECBD -name Serializable.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/io/class-use -size 7385 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::A57ED331-FB91-4BAB-9885-E01A393A4E46 -name lang -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/doc/java/lang -size 16384 -mtime 1226326787 -attributes 0000 -filemethod 0
+File ::10CF128C-AEDC-40FA-BD62-246003E2BBD4 -name ArithmeticException.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/lang -size 10066 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::A851488F-3352-46F2-9D69-1CB217412B2B -name ArrayIndexOutOfBoundsException.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/lang -size 12478 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::55BE1FFA-8C08-4B45-9476-E052AEAE26A6 -name Class.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/lang -size 10671 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::621B59D4-B9A3-4C40-80A0-B05626FD3F79 -name ClassCastException.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/lang -size 10378 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::024CDE09-994E-499A-8D59-DC31BC08D04C -name ClassNotFoundException.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/lang -size 10253 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::D88ADA7C-91DA-4F5B-8D55-8C6EA3E40526 -name Cloneable.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/lang -size 6488 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::058652AD-1DCE-4376-9E41-892E65739FCA -name Error.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/lang -size 10366 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::409AE804-BC89-4F81-918D-AFAE06621454 -name Exception.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/lang -size 11068 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::7B9D8CD2-DD35-4523-A066-79EE492CBB38 -name Float.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/lang -size 16726 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::B938E624-3384-478E-A743-EDEAE239D175 -name IllegalArgumentException.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/lang -size 11685 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::65288025-CE8A-463B-B783-E78B604DB550 -name IllegalMonitorStateException.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/lang -size 10564 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::AC2B6F04-20A2-457D-98C2-53DE345E2941 -name IllegalStateException.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/lang -size 10439 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::0A40393C-50FB-473A-97B1-B1910FE8048D -name Integer.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/lang -size 20710 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::923BCC75-80E0-4814-80B6-6ED64B9BB761 -name InterruptedException.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/lang -size 10183 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::3A3EA253-B08A-4617-906E-B9A22931EFC5 -name Math.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/lang -size 25980 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::1F5FFBF1-023B-4B6D-B912-B5A342A50898 -name NoClassDefFoundError.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/lang -size 10397 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::329B4B24-4877-47BB-A0AB-74D03FE25FD7 -name NoSuchMethodError.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/lang -size 10180 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::67080820-20C5-4E86-8C2D-2B101B0345EC -name NullPointerException.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/lang -size 10430 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::784F5F38-20E7-4EC5-808F-2EC3578B67A6 -name NumberFormatException.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/lang -size 10636 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::648A47E1-0E53-441F-8650-E62015D21398 -name Object.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/lang -size 14275 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::84D90C0F-4341-4795-BD62-CFEA509024CA -name OutOfMemoryError.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/lang -size 10121 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::1594FECC-F4A4-4AC4-9CFD-BE15032291C6 -name package-frame.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/lang -size 4788 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::37BFD555-AB5A-4AE2-880C-9D8744955D0F -name package-summary.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/lang -size 13516 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::0338143B-2CC8-4BFB-95FB-E79AEF4A8412 -name package-tree.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/lang -size 10029 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::60524AF9-2C2C-4195-82EE-A9D919DE9E9A -name Runnable.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/lang -size 9089 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::E19BE039-E66F-40F7-A7A8-4282CDF09900 -name Runtime.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/lang -size 10401 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::9E29B0F3-42EC-470B-ACC0-2DA4A5766AED -name RuntimeException.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/lang -size 12455 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::BA7B661C-F34D-467C-A7AF-209824BD91E0 -name StackOverflowError.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/lang -size 10159 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::868530EC-B5D1-46D7-9088-CE4021435DD8 -name String.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/lang -size 22029 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::120AF7A0-E592-432A-AAAD-B6DFC35F2BAD -name StringBuffer.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/lang -size 24551 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::85AB61AF-4128-46ED-8B55-C242D9EB193D -name StringBuilder.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/lang -size 24679 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::88E98F01-E207-48B5-B21E-82A369692F4C -name StringIndexOutOfBoundsException.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/lang -size 10557 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::2F651DAC-E052-4DE6-8456-B771893D4D41 -name System.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/lang -size 19715 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::89FAD5D5-BEE6-4F75-88F4-B987316480DF -name Thread.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/lang -size 25290 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::D83C0C2C-EBD7-4C35-9613-9759BCA0D178 -name ThreadDeath.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/lang -size 10148 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::22DF6892-8EC2-4255-ACCD-3576451F9D28 -name Throwable.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/lang -size 11739 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::6A30C1F8-8A7F-4B4E-92F9-9E640943E142 -name package-use.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/lang -size 37407 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::72F8E783-F267-4A61-B4B2-43CD256CA9AD -name class-use -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/doc/java/lang/class-use -size 12288 -mtime 1226326789 -attributes 0000 -filemethod 0
+File ::1FB6BDD9-2EB0-4ABE-A32E-FEFE3CFADA5C -name ArithmeticException.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/lang/class-use -size 5876 -mtime 1226326656 -attributes 0000 -filemethod 0
+File ::9741CBD6-02D6-48AE-93F3-1AAE0368A72B -name ArrayIndexOutOfBoundsException.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/lang/class-use -size 13678 -mtime 1226326670 -attributes 0000 -filemethod 0
+File ::30CC0041-FA67-4D78-9F05-50C34D8DF182 -name Class.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/lang/class-use -size 7862 -mtime 1226326662 -attributes 0000 -filemethod 0
+File ::F0E54202-1CB1-416A-92F8-8BF792619C6B -name ClassCastException.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/lang/class-use -size 5866 -mtime 1226326660 -attributes 0000 -filemethod 0
+File ::0FEF34D1-EA51-41E7-BE89-440578029E80 -name ClassNotFoundException.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/lang/class-use -size 7689 -mtime 1226326660 -attributes 0000 -filemethod 0
+File ::C047408E-7ED0-4A36-9146-09716FDAEDD3 -name Cloneable.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/lang/class-use -size 7370 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::FBE4C6B0-9302-4293-9537-5B74CA224E01 -name Error.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/lang/class-use -size 8752 -mtime 1226326658 -attributes 0000 -filemethod 0
+File ::76A4A7DC-34D7-442E-9FC6-392239C3494C -name Exception.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/lang/class-use -size 26093 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::CE39E572-533B-433C-B0BE-4C493941BB7D -name Float.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/lang/class-use -size 5736 -mtime 1226326660 -attributes 0000 -filemethod 0
+File ::AABB16B2-4971-4F8A-B271-A269309A2207 -name IllegalArgumentException.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/lang/class-use -size 9797 -mtime 1226326656 -attributes 0000 -filemethod 0
+File ::B4BFC83D-840E-421D-A4F7-5DFE08ADEB7C -name IllegalMonitorStateException.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/lang/class-use -size 5966 -mtime 1226326658 -attributes 0000 -filemethod 0
+File ::200B4CB4-6596-438C-986F-C8F35FD864B4 -name IllegalStateException.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/lang/class-use -size 5896 -mtime 1226326666 -attributes 0000 -filemethod 0
+File ::4EBEC14B-E0F0-4695-9CEF-41F04D4894EF -name Integer.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/lang/class-use -size 5756 -mtime 1226326654 -attributes 0000 -filemethod 0
+File ::75205E3D-DD85-41EF-A5D8-2961A5B455FA -name InterruptedException.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/lang/class-use -size 12131 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::82D0D9C6-3F9F-47E2-95F8-E261251E559F -name Math.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/lang/class-use -size 5726 -mtime 1226326670 -attributes 0000 -filemethod 0
+File ::BC7A8842-3961-45F6-9857-E360377E0F93 -name NoClassDefFoundError.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/lang/class-use -size 5886 -mtime 1226326658 -attributes 0000 -filemethod 0
+File ::2DD478DC-E08A-493E-8191-8163A74A7F91 -name NoSuchMethodError.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/lang/class-use -size 5856 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::6E8AA08A-0924-4CCE-AE2A-861FF6B5805A -name NullPointerException.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/lang/class-use -size 5886 -mtime 1226326660 -attributes 0000 -filemethod 0
+File ::B2DD49F3-5693-45F0-A937-72F1D0D33899 -name NumberFormatException.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/lang/class-use -size 8586 -mtime 1226326662 -attributes 0000 -filemethod 0
+File ::2C85C24E-49AC-4B12-82B6-AEA4DBD6BE0A -name Object.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/lang/class-use -size 131682 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::A1FE51CF-9BBC-4D3E-B934-507D8C862604 -name OutOfMemoryError.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/lang/class-use -size 5846 -mtime 1226326662 -attributes 0000 -filemethod 0
+File ::1B38276F-769D-4B1F-8404-65144257546B -name Runnable.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/lang/class-use -size 15768 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::1C7A8AB2-EDD1-485F-8713-2A0D8FAD97D1 -name Runtime.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/lang/class-use -size 7851 -mtime 1226326658 -attributes 0000 -filemethod 0
+File ::5F075976-1F98-44ED-8F8F-896B8FAA75F0 -name RuntimeException.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/lang/class-use -size 12277 -mtime 1226326656 -attributes 0000 -filemethod 0
+File ::74B99431-9D53-4EB5-AE90-C69B99FE0433 -name StackOverflowError.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/lang/class-use -size 5866 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::D9CDE32A-1077-410D-9C5C-6C68A5BA70D3 -name String.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/lang/class-use -size 129869 -mtime 1226326658 -attributes 0000 -filemethod 0
+File ::36CCCF13-EDF8-4C7C-AE25-5F37C83C52F3 -name StringBuffer.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/lang/class-use -size 11265 -mtime 1226326664 -attributes 0000 -filemethod 0
+File ::13ABD545-5841-4BB3-A801-8073D920E92F -name StringBuilder.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/lang/class-use -size 11316 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::5F6E5BEE-6289-474F-8176-2BB5C12FD929 -name StringIndexOutOfBoundsException.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/lang/class-use -size 5996 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::5905ECDA-D1FE-45F5-9B0F-08090BDEFB0D -name System.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/lang/class-use -size 5746 -mtime 1226326660 -attributes 0000 -filemethod 0
+File ::90841BB1-CA37-491B-B782-E522395811E0 -name Thread.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/lang/class-use -size 16066 -mtime 1226326660 -attributes 0000 -filemethod 0
+File ::E544E3A2-C3D9-4F60-90F2-2898FDCED097 -name ThreadDeath.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/lang/class-use -size 5796 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::9FC88CD2-11F5-436B-910A-A916715DE282 -name Throwable.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/lang/class-use -size 20566 -mtime 1226326656 -attributes 0000 -filemethod 0
+File ::0003D088-F1B3-4D99-BA9F-728ECA71626A -name util -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/doc/java/util -size 8192 -mtime 1226326791 -attributes 0000 -filemethod 0
+File ::F7959A01-0947-496B-91A5-4DBF14366517 -name ArrayList.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/util -size 20918 -mtime 1226326686 -attributes 0000 -filemethod 0
+File ::70BC67D8-EA11-4075-8EA9-F209ABA9E60C -name BitSet.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/util -size 10909 -mtime 1226326686 -attributes 0000 -filemethod 0
+File ::593D44B7-B039-46B8-B80A-65098713EEF6 -name Date.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/util -size 17773 -mtime 1226326686 -attributes 0000 -filemethod 0
+File ::9CF4DA02-570E-4F41-99B2-CF17639A9A9E -name EmptyQueueException.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/util -size 10582 -mtime 1226326686 -attributes 0000 -filemethod 0
+File ::0D001640-DCFA-488E-8965-E3E6C8F514F5 -name EmptyStackException.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/util -size 10604 -mtime 1226326686 -attributes 0000 -filemethod 0
+File ::4BB2D984-D21E-45EB-A753-F32A519F1B0C -name Enumeration.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/util -size 8735 -mtime 1226326686 -attributes 0000 -filemethod 0
+File ::1026F343-2472-4726-BE53-406F9DC5915E -name EventListener.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/util -size 6721 -mtime 1226326686 -attributes 0000 -filemethod 0
+File ::7777A3BB-802A-426E-9166-3991AE4BAEDA -name Hashtable.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/util -size 12105 -mtime 1226326686 -attributes 0000 -filemethod 0
+File ::2B43FB7F-4E2E-4D5B-8BBD-9351D069D617 -name Iterator.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/util -size 9184 -mtime 1226326686 -attributes 0000 -filemethod 0
+File ::AFBAE45A-9860-4E0A-AC33-8C1EFCB1AF56 -name NoSuchElementException.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/util -size 11198 -mtime 1226326686 -attributes 0000 -filemethod 0
+File ::34DFFE69-03DA-428D-BA1D-1B7B304D7126 -name package-frame.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/util -size 2732 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::4D43C5BF-DBEC-4DCC-A930-8342533E838D -name package-summary.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/util -size 10052 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::04490FDE-6AE2-4357-953F-8760DA9DAA32 -name package-tree.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/util -size 8257 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::960B8F16-B8C5-48BA-8CC2-AEC09FB036D4 -name Properties.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/util -size 18901 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::114D7134-D632-49E1-8101-84285925EE3E -name Queue.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/util -size 16271 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::0D7A4E35-BC11-4A82-A1B7-9759CFA1A692 -name Random.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/util -size 13064 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::6E8F0E7F-BE7F-4E7D-911E-B1B475474830 -name Stack.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/util -size 16264 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::62E41C11-6F2C-4235-9C3B-73CFB4B4AED2 -name StringTokenizer.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/util -size 14844 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::D514DDE9-EED7-4B88-A5E8-FCB7238DA750 -name Vector.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/util -size 25827 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::4CC7768D-CA69-4EBF-B521-D757E0D27632 -name package-use.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/util -size 11535 -mtime 1226326664 -attributes 0000 -filemethod 0
+File ::021C704F-48C9-4FE9-9A98-98A4DE452E03 -name class-use -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/doc/java/util/class-use -size 4096 -mtime 1226326792 -attributes 0000 -filemethod 0
+File ::1D574786-F2AC-419B-8626-6CAD3F0DA83A -name ArrayList.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/util/class-use -size 5776 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::8B3C246E-CC0C-45ED-BDC1-CC3C2444742F -name BitSet.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/util/class-use -size 5746 -mtime 1226326668 -attributes 0000 -filemethod 0
+File ::02445986-9924-4DBF-B690-4237DCAEED4B -name Date.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/util/class-use -size 9259 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::42EE0CB0-3937-4730-A64A-C3DE98BB65CE -name EmptyQueueException.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/util/class-use -size 8037 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::3F7858B1-3E2E-4E1E-87C2-9BFB09759784 -name EmptyStackException.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/util/class-use -size 8022 -mtime 1226326666 -attributes 0000 -filemethod 0
+File ::4E0ADB33-07EE-406F-B306-8F506EA09D34 -name Enumeration.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/util/class-use -size 8691 -mtime 1226326656 -attributes 0000 -filemethod 0
+File ::4BE66808-47BA-44D5-8732-D2AA6A17ADF0 -name EventListener.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/util/class-use -size 7457 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::E0282E80-CCA6-466A-8C64-DE67BB282B28 -name Hashtable.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/util/class-use -size 7397 -mtime 1226326660 -attributes 0000 -filemethod 0
+File ::105C3C10-2E82-4C1F-A618-047305B60728 -name Iterator.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/util/class-use -size 5786 -mtime 1226326662 -attributes 0000 -filemethod 0
+File ::3A0C1CD4-1581-466E-B1AF-AAA11808E06F -name NoSuchElementException.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/util/class-use -size 7596 -mtime 1226326666 -attributes 0000 -filemethod 0
+File ::E1FA6063-3DF5-4D14-A25B-AD8B1C1BE536 -name Properties.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/util/class-use -size 8785 -mtime 1226326666 -attributes 0000 -filemethod 0
+File ::7E6DEB48-662A-4E12-B0A4-84E4A60BA82B -name Queue.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/util/class-use -size 7371 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::F58A5A72-A11C-45A5-A4D5-BDEF4B4B28D0 -name Random.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/util/class-use -size 5746 -mtime 1226326664 -attributes 0000 -filemethod 0
+File ::450920D5-F42D-4445-A7B0-496660270D8B -name Stack.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/util/class-use -size 5736 -mtime 1226326666 -attributes 0000 -filemethod 0
+File ::5FD03600-6BF9-46A1-84A1-2527A7263505 -name StringTokenizer.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/util/class-use -size 5836 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::F3ACD6B5-2B70-466B-831D-794E901693B6 -name Vector.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/java/util/class-use -size 9611 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::149F6DC0-BE5B-4432-A6B9-222DDDB9BDE5 -name javax -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/doc/javax -mtime 1226326793 -attributes 0000 -filemethod 0
+File ::864B39C5-6F62-449C-805B-1E660D3BE92E -name bluetooth -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/doc/javax/bluetooth -size 4096 -mtime 1226326793 -attributes 0000 -filemethod 0
+File ::6482B9A9-4F15-4D08-BBCA-87AD0643682D -name BluetoothStateException.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/bluetooth -size 10938 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::55DA4BFD-7BD2-4197-863B-40E7ED6BB825 -name DeviceClass.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/bluetooth -size 12763 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::61AEB97E-A069-42A7-882B-85B497E14E95 -name LocalDevice.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/bluetooth -size 18506 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::F35B3512-F84E-492E-8D46-6C50F89CFACF -name package-frame.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/bluetooth -size 1429 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::BDFA032C-E2D2-44F9-A0AC-0CCCADD2F1E8 -name package-summary.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/bluetooth -size 7309 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::16C9DC33-D32B-4CAB-A411-27332C21DA64 -name package-tree.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/bluetooth -size 6759 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::2DE40D30-D2F8-45A6-A5CF-EEBB27FD2CBB -name RemoteDevice.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/bluetooth -size 17979 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::0660E8ED-E4FE-47B3-89A1-D2CD163FF206 -name package-use.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/bluetooth -size 8425 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::2670AF82-FEAA-41AB-ADD4-9FC48A20F3A2 -name class-use -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/doc/javax/bluetooth/class-use -size 4096 -mtime 1226326793 -attributes 0000 -filemethod 0
+File ::F84DB527-4241-4BE1-9491-FA4B21B72DD1 -name BluetoothStateException.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/bluetooth/class-use -size 8243 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::88E5F2D2-2BCF-49DB-B7D2-0FD7FA555717 -name DeviceClass.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/bluetooth/class-use -size 7662 -mtime 1226326656 -attributes 0000 -filemethod 0
+File ::9DD1FBAB-529A-4985-A897-B072D91C4887 -name LocalDevice.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/bluetooth/class-use -size 7617 -mtime 1226326662 -attributes 0000 -filemethod 0
+File ::0D64E9B6-B8B3-4448-AB25-7E5F849705B7 -name RemoteDevice.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/bluetooth/class-use -size 11548 -mtime 1226326666 -attributes 0000 -filemethod 0
+File ::FEAE298B-2486-40E5-B778-5A2058EB8DC5 -name microedition -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/doc/javax/microedition -mtime 1226326807 -attributes 0000 -filemethod 0
+File ::3C7B83F7-1480-48FF-8CC0-5D9C4969BDC3 -name io -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/doc/javax/microedition/io -size 4096 -mtime 1226326793 -attributes 0000 -filemethod 0
+File ::D1E429D0-EE07-4202-944C-50FFE734262F -name Connection.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/microedition/io -size 8647 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::AB431633-DF5A-414E-AF9C-06675F4DCE4E -name InputConnection.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/microedition/io -size 10586 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::4E1155D9-9B10-4A11-8EF0-43EED9359D91 -name OutputConnection.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/microedition/io -size 10630 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::3DCFE3D4-67F2-4CFC-9971-974F015B3DB8 -name package-frame.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/microedition/io -size 1332 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::356B5C73-0FB7-426A-BDCD-6D2FBF695252 -name package-summary.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/microedition/io -size 7105 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::55FC067C-26C8-4218-8F05-D1A37E3F5A8D -name package-tree.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/microedition/io -size 7005 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::F5DA0BFE-ADF9-4706-89D7-E8D28AE66D31 -name StreamConnection.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/microedition/io -size 10374 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::79D9CE57-0D99-4128-AB19-16D3A04E8CDC -name package-use.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/microedition/io -size 9839 -mtime 1226326658 -attributes 0000 -filemethod 0
+File ::9756F504-08C8-421C-85F0-B19C240C407D -name class-use -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/doc/javax/microedition/io/class-use -size 4096 -mtime 1226326794 -attributes 0000 -filemethod 0
+File ::DDE4FF21-5A5B-4A56-A037-7940A9AA4CE0 -name Connection.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/microedition/io/class-use -size 12596 -mtime 1226326668 -attributes 0000 -filemethod 0
+File ::14C5595D-6F2D-4510-BA8D-16996DE4709B -name InputConnection.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/microedition/io/class-use -size 10222 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::F18B1677-197F-4E42-BFEB-37FA9D780418 -name OutputConnection.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/microedition/io/class-use -size 10241 -mtime 1226326662 -attributes 0000 -filemethod 0
+File ::31B689D8-4A39-48C8-900F-F51E3137F678 -name StreamConnection.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/microedition/io/class-use -size 8692 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::2A14FC11-CC2C-457C-B93D-DE5AC3901039 -name lcdui -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/doc/javax/microedition/lcdui -size 8192 -mtime 1226326796 -attributes 0000 -filemethod 0
+File ::ACE24723-B563-4113-8C06-72DA9CAF79F4 -name Alert.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/microedition/lcdui -size 32204 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::94A42FB3-F369-4C4D-A8E1-DB2F593E6D06 -name Choice.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/microedition/lcdui -size 21589 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::C60A1090-C236-4240-A3D8-99A7B4C2498E -name ChoiceGroup.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/microedition/lcdui -size 33996 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::3B863F59-456E-40BD-8365-C856A13DEF9B -name Command.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/microedition/lcdui -size 18398 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::E7D9E06B-AD66-42D0-9C9B-CF4DCCE63FF0 -name CommandListener.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/microedition/lcdui -size 8808 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::3C4C702E-4F52-44E6-9141-630E1636EAFD -name Display.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/microedition/lcdui -size 18506 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::E37C090F-0146-4B2D-9343-C6B9D75AE01D -name Displayable.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/microedition/lcdui -size 27285 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::26057A47-37C6-47C2-9C06-B2F5ECBCE3D7 -name Font.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/microedition/lcdui -size 10934 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::28C07004-9BA3-4FFF-89E6-1C6861FABB33 -name Form.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/microedition/lcdui -size 28683 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::10538AF4-11F2-4756-911F-271C48AE7A33 -name Gauge.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/microedition/lcdui -size 18335 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::83130935-DDEC-4977-B310-6C2747B20C82 -name Graphics.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/microedition/lcdui -size 30302 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::09FD8084-A9AD-414A-BF8B-1BE740BA8CBC -name Image.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/microedition/lcdui -size 11373 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::8D0A854C-D319-4C24-9045-88040AB6C041 -name Item.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/microedition/lcdui -size 26700 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::154B8458-3D37-48AA-8F82-B6A406279CA2 -name ItemCommandListener.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/microedition/lcdui -size 8653 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::6BA6803D-2D0F-44A0-8C75-0E850CCEC71B -name ItemStateListener.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/microedition/lcdui -size 8319 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::4112521B-BC94-44EF-9087-5123DCB534DA -name List.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/microedition/lcdui -size 34675 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::7398D4F6-7788-4BFA-9E08-797DF7E5CBE6 -name package-frame.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/microedition/lcdui -size 3400 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::E8CDE19D-5D7F-4DEC-9F6E-B4BC0C71E1FF -name package-summary.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/microedition/lcdui -size 11148 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::66BB14AA-0998-43F2-B92E-4F49EAFF777C -name package-tree.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/microedition/lcdui -size 10083 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::CFCEAAA6-8D50-43A5-9984-5FAA28267A0F -name Screen.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/microedition/lcdui -size 17473 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::FC5DF0DA-CC96-4D4A-8DD8-FEDF2930C413 -name Spacer.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/microedition/lcdui -size 18447 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::6C53AE02-19A9-4EB2-923F-75D938AE6AD3 -name StringItem.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/microedition/lcdui -size 17001 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::B18E7F6B-EC64-4EF7-AF82-B394A4A9A161 -name TextBox.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/microedition/lcdui -size 19960 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::B04D47AF-43EC-40E0-84FB-13B7A54E5F75 -name TextField.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/microedition/lcdui -size 25907 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::DEA693BD-8E98-4433-AA14-112CF1F72A36 -name Ticker.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/microedition/lcdui -size 11034 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::01732B6B-799E-413F-A6A0-A34FFD22F404 -name package-use.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/microedition/lcdui -size 10485 -mtime 1226326660 -attributes 0000 -filemethod 0
+File ::055D0181-4266-442A-A3A8-AF69C66715AB -name class-use -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/doc/javax/microedition/lcdui/class-use -size 8192 -mtime 1226326807 -attributes 0000 -filemethod 0
+File ::A66D4CAB-EB49-4E3E-81FF-908C34223882 -name Alert.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/microedition/lcdui/class-use -size 8032 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::ECED18B6-933F-4340-90E6-478BCAA83163 -name Choice.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/microedition/lcdui/class-use -size 8122 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::A5BCE020-29F9-4EF4-A990-78AC9E231267 -name ChoiceGroup.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/microedition/lcdui/class-use -size 5997 -mtime 1226326666 -attributes 0000 -filemethod 0
+File ::35B27761-EDA6-483B-BC8E-8767FC524B01 -name Command.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/microedition/lcdui/class-use -size 12591 -mtime 1226326660 -attributes 0000 -filemethod 0
+File ::E7488620-E830-4324-9ED7-F4DF510452AE -name CommandListener.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/microedition/lcdui/class-use -size 8912 -mtime 1226326656 -attributes 0000 -filemethod 0
+File ::A524577A-86BC-4759-AEB1-62EA9A5529F8 -name Display.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/microedition/lcdui/class-use -size 7836 -mtime 1226326662 -attributes 0000 -filemethod 0
+File ::031ACB2C-6A89-45FD-A39C-C06881A2650A -name Displayable.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/microedition/lcdui/class-use -size 12031 -mtime 1226326658 -attributes 0000 -filemethod 0
+File ::EDB3F39D-54FD-47E9-87BF-F306AC194403 -name Font.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/microedition/lcdui/class-use -size 7775 -mtime 1226326656 -attributes 0000 -filemethod 0
+File ::53358D4D-34F1-44E3-9AF5-253A429AAEA6 -name Form.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/microedition/lcdui/class-use -size 5927 -mtime 1226326670 -attributes 0000 -filemethod 0
+File ::8CE77B77-1AEE-47FE-B7FF-8D10FA9F45FF -name Gauge.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/microedition/lcdui/class-use -size 8754 -mtime 1226326670 -attributes 0000 -filemethod 0
+File ::9B52657F-237A-44D9-9752-17B0C7502369 -name Graphics.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/microedition/lcdui/class-use -size 11451 -mtime 1226326656 -attributes 0000 -filemethod 0
+File ::D6055AE4-1DE2-41A5-9081-E7FDBA0C3796 -name Image.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/microedition/lcdui/class-use -size 22103 -mtime 1226326656 -attributes 0000 -filemethod 0
+File ::A43B572F-34F8-4344-B168-27749EE8F631 -name Item.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/microedition/lcdui/class-use -size 13325 -mtime 1226326668 -attributes 0000 -filemethod 0
+File ::65BFCD41-C6A7-468A-9AC2-C547EAE016BE -name ItemCommandListener.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/microedition/lcdui/class-use -size 8155 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::7415B337-EB04-4CFE-BEE3-6C498770E167 -name ItemStateListener.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/microedition/lcdui/class-use -size 8115 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::6281C564-E5EE-4C79-8EDA-1EA78B692A6E -name List.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/microedition/lcdui/class-use -size 5927 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::18B2A51C-0D1C-4B77-AF67-08B8B45EB12F -name Screen.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/microedition/lcdui/class-use -size 10458 -mtime 1226326668 -attributes 0000 -filemethod 0
+File ::3D7611E4-2D7B-4FC1-BA9D-245A9C1A86E7 -name Spacer.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/microedition/lcdui/class-use -size 5947 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::E96C5AF9-AF87-4229-A8F1-7DB71EF7430B -name StringItem.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/microedition/lcdui/class-use -size 5987 -mtime 1226326658 -attributes 0000 -filemethod 0
+File ::E6E0EEFF-303A-4A8B-BB7B-803D5722E9B4 -name TextBox.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/microedition/lcdui/class-use -size 5957 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::94248E03-5BA3-4B28-A6C8-A8C9120786CE -name TextField.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/microedition/lcdui/class-use -size 5977 -mtime 1226326668 -attributes 0000 -filemethod 0
+File ::683F1265-8DA8-42B5-82BB-FCEFB7704652 -name Ticker.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/microedition/lcdui/class-use -size 8785 -mtime 1226326658 -attributes 0000 -filemethod 0
+File ::08FBD5A9-2D7A-49FE-97E5-B7FB407322E4 -name location -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/doc/javax/microedition/location -size 4096 -mtime 1226326807 -attributes 0000 -filemethod 0
+File ::B200F8FB-AAE4-4B8C-9177-E4C8BEB4FF98 -name Coordinates.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/microedition/location -size 21091 -mtime 1226326686 -attributes 0000 -filemethod 0
+File ::F57780AF-B56B-438C-A138-5E40A98A8F8A -name package-frame.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/microedition/location -size 956 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::2CBD2C12-CB19-42EC-B53D-6F98A0A515A9 -name package-summary.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/microedition/location -size 6516 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::B04F3346-B919-45FE-B824-7B6F18FBF967 -name package-tree.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/microedition/location -size 6102 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::C2FE61DF-37D6-40B8-8582-8884E0C3F594 -name package-use.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/microedition/location -size 6990 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::DC748CB3-FE94-4D2A-81D2-3E44DCFBEF14 -name class-use -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/doc/javax/microedition/location/class-use -mtime 1226326807 -attributes 0000 -filemethod 0
+File ::EA05950D-0FC4-4DB4-B056-55FD3833CACF -name Coordinates.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/javax/microedition/location/class-use -size 8744 -mtime 1226326654 -attributes 0000 -filemethod 0
+File ::3AFED0FA-678A-42E7-A0D2-B56A919EAA60 -name lejos -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/doc/lejos -size 4096 -mtime 1226326831 -attributes 0000 -filemethod 0
+File ::083230D3-6F30-42FC-9A18-2C065BB4EB72 -name gps -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/doc/lejos/gps -size 4096 -mtime 1226326808 -attributes 0000 -filemethod 0
+File ::B6F1D47A-1BFD-4BCA-A22D-45C02C7601AA -name Degrees.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/gps -size 17939 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::8CB6CD9F-0EB5-4CDC-B313-4F52F4DB5C70 -name GGASentence.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/gps -size 19468 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::CD45CE8B-6FA5-4ED7-A437-9A481409A0A5 -name GPS.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/gps -size 31048 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::105A7B86-FA5A-43B1-B8FD-167B6555987E -name GPSListener.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/gps -size 12728 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::3CB7F535-1420-4F03-9E9C-6A69014DB345 -name GSASentence.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/gps -size 17107 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::7BD70EB8-504B-4ECC-807D-267F6FD3F587 -name GSVSentence.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/gps -size 15607 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::823DBFBA-CC96-4FCD-80FA-AB9E97F8723E -name Latitude.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/gps -size 12798 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::84F811EB-9790-47BC-8464-0C51238D87C0 -name Longitude.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/gps -size 12817 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::3ECE3E36-FC9D-485D-98B9-88BEC70037BF -name NMEASatellite.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/gps -size 15236 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::56CA001C-D9CB-4B19-9686-602153D87BA4 -name NMEASentence.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/gps -size 16366 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::92A45E87-B9DF-46F9-8F59-71CCFE3B5B69 -name package-frame.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/gps -size 2120 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::69100D98-BE46-465C-B8DA-637EE5A7304F -name package-summary.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/gps -size 9521 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::0F645C06-A492-4C84-80DF-EA0D8F30AB15 -name package-tree.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/gps -size 7650 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::8CF66E9E-8438-4417-BAC0-649617038D1B -name RMCSentence.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/gps -size 16933 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::189D8D40-0D10-4A13-8920-A8E77623FF00 -name VTGSentence.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/gps -size 14385 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::E27261B2-1683-4310-AC3E-794394FEB275 -name package-use.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/gps -size 9605 -mtime 1226326670 -attributes 0000 -filemethod 0
+File ::4A5FF382-8E17-4FD3-9F0E-EEBB0C01C0C1 -name class-use -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/doc/lejos/gps/class-use -size 4096 -mtime 1226326809 -attributes 0000 -filemethod 0
+File ::93F9A080-1229-4E5E-B409-210BAE819C11 -name Degrees.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/gps/class-use -size 7669 -mtime 1226326670 -attributes 0000 -filemethod 0
+File ::EAF510D4-B16A-42EA-B0DB-C09F26FC8110 -name GGASentence.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/gps/class-use -size 7637 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::C07E5501-0186-4E27-8244-0CEDCED01FB0 -name GPS.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/gps/class-use -size 9998 -mtime 1226326658 -attributes 0000 -filemethod 0
+File ::228363D6-BD95-4C07-9D80-9AD9AC7A3AB4 -name GPSListener.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/gps/class-use -size 8024 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::96E8CABB-1B92-49AC-A2C0-3C74495420CE -name GSASentence.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/gps/class-use -size 7638 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::B9BD0CD0-1D0E-4BBF-9D97-EB28C78BF212 -name GSVSentence.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/gps/class-use -size 7637 -mtime 1226326658 -attributes 0000 -filemethod 0
+File ::D1D635AC-6A27-4407-8969-19CB8A7D25D8 -name Latitude.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/gps/class-use -size 5766 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::38AD80E6-D4E3-4D91-BADA-4662996BD4D2 -name Longitude.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/gps/class-use -size 5776 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::202070F2-7CCA-4E1C-953B-16B5FEC6B613 -name NMEASatellite.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/gps/class-use -size 7971 -mtime 1226326668 -attributes 0000 -filemethod 0
+File ::27EF0EE4-1F03-46A6-9A16-B01C3E703249 -name NMEASentence.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/gps/class-use -size 9297 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::2A3FC8E8-1ACC-4B2A-8894-D5159AD0D655 -name RMCSentence.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/gps/class-use -size 7637 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::E2AB3D70-48A2-4F2F-9024-6051A95BAF61 -name VTGSentence.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/gps/class-use -size 7637 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::AAE668B5-A062-4C05-819F-FA6A93C6040E -name keyboard -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/doc/lejos/keyboard -size 4096 -mtime 1226326810 -attributes 0000 -filemethod 0
+File ::B403DA40-3B23-4F65-B3CB-8828DD5EC30C -name Keyboard.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/keyboard -size 16669 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::EF5D2618-980A-4E3B-8B74-C78B729F321E -name KeyEvent.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/keyboard -size 28275 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::3A1A42BC-3490-4AAC-ACD7-60716213AAEB -name KeyListener.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/keyboard -size 10291 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::D4345385-CB87-422B-BE93-A942A2AE1232 -name package-frame.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/keyboard -size 1293 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::B634F9B5-9FCF-4B0C-96A2-8C0E53E804B8 -name package-summary.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/keyboard -size 7004 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::A1A48137-7980-4979-8215-1B97BBB8AEDA -name package-tree.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/keyboard -size 6461 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::860ED0DF-3907-46BB-8755-8609F922D2A3 -name package-use.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/keyboard -size 6919 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::BB4FE31C-2E91-497D-9074-D8CD4AEA53B1 -name class-use -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/doc/lejos/keyboard/class-use -size 4096 -mtime 1226326810 -attributes 0000 -filemethod 0
+File ::C3A2F197-99CF-457A-B5F8-0DFB017A0DF3 -name Keyboard.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/keyboard/class-use -size 5816 -mtime 1226326668 -attributes 0000 -filemethod 0
+File ::D91AF866-060D-4D79-BD4F-A9857BBA04E4 -name KeyEvent.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/keyboard/class-use -size 8647 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::F3EEAA16-2B37-4F3B-BE52-32FEB7A55F12 -name KeyListener.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/keyboard/class-use -size 8161 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::E2F93B60-5DD2-4FD3-98F1-FE605E399B69 -name localization -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/doc/lejos/localization -size 4096 -mtime 1226326811 -attributes 0000 -filemethod 0
+File ::D2D2499F-B21E-482D-9297-16F67A9290FE -name Line.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/localization -size 13884 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::D6C77AF3-3789-4007-B496-799E2722F9B2 -name LineMap.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/localization -size 14214 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::4CEA86C1-7AC2-4184-9A46-854C5ECC04E3 -name Map.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/localization -size 9671 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::B53FBCF0-E457-4139-A521-6AF4DC630158 -name Move.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/localization -size 11535 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::7292C109-A87C-4D55-A1CE-F970E9D38F3F -name package-frame.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/localization -size 1885 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::146550A2-2960-47BE-ADAD-7523A37CEDB4 -name package-summary.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/localization -size 8619 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::9C99DB82-D7B3-44F2-B203-BB56C36788FB -name package-tree.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/localization -size 7219 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::C832FD6C-BDF9-43BB-A054-985A5931EF98 -name Particle.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/localization -size 16111 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::4A5C5A0E-C271-40C2-83EF-E0CB961A8E0D -name ParticleSet.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/localization -size 21416 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::457F06B0-6913-40EC-833A-DD8A201E40B1 -name Point.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/localization -size 11024 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::C91AC4FE-54F8-4661-926B-0C6BBC7430AA -name Pose.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/localization -size 13512 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::9192120E-CB00-492F-A5A1-3120F347594B -name RangeReadings.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/localization -size 14120 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::E7654897-FCB1-4D4B-9428-A1C8B587DBC6 -name package-use.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/localization -size 8549 -mtime 1226326670 -attributes 0000 -filemethod 0
+File ::F2A813A6-691B-4B7A-8CFC-F9AFF792BBCC -name class-use -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/doc/lejos/localization/class-use -size 4096 -mtime 1226326812 -attributes 0000 -filemethod 0
+File ::B47CE963-2F8E-4D1F-9E67-DCBF71B68974 -name Line.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/localization/class-use -size 9607 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::717261A4-ACAC-4BE8-A419-9DCA2680F58B -name LineMap.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/localization/class-use -size 5846 -mtime 1226326654 -attributes 0000 -filemethod 0
+File ::8A51EA97-8CF7-47C3-8006-AC46699B87F4 -name Map.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/localization/class-use -size 10804 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::15F2D2BF-A2A5-4048-BC74-F4376A1085D1 -name Move.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/localization/class-use -size 9013 -mtime 1226326662 -attributes 0000 -filemethod 0
+File ::05D95197-DC01-4DC8-B404-ED55A506125D -name Particle.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/localization/class-use -size 7653 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::61EA2F98-0B4C-446F-A9C7-3C1D0FDB3763 -name ParticleSet.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/localization/class-use -size 5886 -mtime 1226326668 -attributes 0000 -filemethod 0
+File ::A5CA651A-4F98-46B8-A5D1-0EE71C10E28C -name Point.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/localization/class-use -size 9108 -mtime 1226326668 -attributes 0000 -filemethod 0
+File ::D3EDA0AB-26BD-4CFE-8E61-6A6916AB2848 -name Pose.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/localization/class-use -size 10213 -mtime 1226326654 -attributes 0000 -filemethod 0
+File ::6D0FBCE4-EC1F-4B76-A007-5A5D323B6A1F -name RangeReadings.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/localization/class-use -size 8696 -mtime 1226326660 -attributes 0000 -filemethod 0
+File ::7CD412C0-3F69-4527-85A8-1C65B4D72E3E -name math -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/doc/lejos/math -size 4096 -mtime 1226326812 -attributes 0000 -filemethod 0
+File ::1B832D86-B95C-4F68-AEF7-59FD226860BB -name Matrix.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/math -size 52164 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::D919739E-548E-46AF-90CC-21D82574A925 -name package-frame.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/math -size 872 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::CBA23850-8D68-4ABE-B1A0-769DFBC57F10 -name package-summary.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/math -size 6230 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::84033573-E671-47EB-8E07-5FF336E879DE -name package-tree.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/math -size 6100 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::35E577F2-2EEE-4113-8086-784FC975ABB6 -name package-use.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/math -size 6553 -mtime 1226326654 -attributes 0000 -filemethod 0
+File ::6C8C6765-0D38-4B80-8D8E-65B51B0CDBAE -name class-use -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/doc/lejos/math/class-use -mtime 1226326812 -attributes 0000 -filemethod 0
+File ::B97C61AC-BE32-454E-861B-9F96BAA1AFC5 -name Matrix.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/math/class-use -size 27222 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::F4F4BA2C-171C-4D9E-A43D-6632AC5573B6 -name navigation -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/doc/lejos/navigation -size 4096 -mtime 1226326813 -attributes 0000 -filemethod 0
+File ::8A1B089F-17CE-4190-BE76-61916639CB68 -name CompassNavigator.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/navigation -size 28499 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::54F41583-CCC4-45AB-BF22-1B3FEEFBD3D9 -name CompassPilot.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/navigation -size 34167 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::81244FE7-3A23-489F-8098-2BC24A1CCDAB -name Navigator.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/navigation -size 26159 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::82C2BB7B-AB00-4B04-B44A-8D9F87EA7443 -name package-frame.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/navigation -size 1527 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::1E55239C-67FE-477D-961E-A5DA62C7D52D -name package-summary.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/navigation -size 7922 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::4F2A438E-931D-43A9-AAB6-8F8F396B4152 -name package-tree.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/navigation -size 6695 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::EF2E3FBD-B558-4F8B-9A33-A48E0E0BE27E -name Pilot.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/navigation -size 38554 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::1088F69C-685D-496E-9F1C-2822CC30C510 -name TachoNavigator.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/navigation -size 47226 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::0B8B0539-DC66-4DA0-9D69-DF392DE2CFB3 -name package-use.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/navigation -size 7903 -mtime 1226326658 -attributes 0000 -filemethod 0
+File ::336C5088-CA2C-4389-B41B-1B95F7EC84E1 -name class-use -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/doc/lejos/navigation/class-use -size 4096 -mtime 1226326813 -attributes 0000 -filemethod 0
+File ::5B6E0CCE-AF00-493D-A66C-30BE54C1224C -name CompassNavigator.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/navigation/class-use -size 5916 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::B04CD4F9-7C94-4E1C-AFB8-D89C70C53928 -name CompassPilot.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/navigation/class-use -size 7664 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::B20C61A9-6242-4B04-9A7E-E238703418C5 -name Navigator.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/navigation/class-use -size 8339 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::B0E0FF95-E08C-4E35-80F0-243B39D65C9D -name Pilot.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/navigation/class-use -size 9110 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::7CE2A23A-688E-4B9F-B3CC-7512E10A63DF -name TachoNavigator.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/navigation/class-use -size 7688 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::FCC65758-4EB7-4428-AF17-3303FA7E935B -name nxt -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/doc/lejos/nxt -size 16384 -mtime 1226326827 -attributes 0000 -filemethod 0
+File ::8BB25DB1-3499-495B-B089-41AD4010871A -name ADSensorPort.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt -size 12742 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::60194A41-98BA-4BBD-ADDA-C06E367F425D -name BasicMotor.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt -size 17559 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::6EDD42B7-1DDB-4A3D-8D51-BF3D0ACFEF5D -name BasicMotorPort.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt -size 11026 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::6D277DA1-D7FB-4A59-A3AA-8DE23A472362 -name BasicSensorPort.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt -size 13291 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::2F1FC7E3-E37C-464D-9834-94168DC61DD6 -name Battery.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt -size 9669 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::C8E9C210-D5D6-4247-8636-BE78D4F04F09 -name Button.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt -size 23982 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::4EA3B2B6-150B-4907-947A-E57B09287243 -name ButtonListener.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt -size 8781 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::A9DA98D2-C2D8-455F-BA8A-46A1889FEAF4 -name Flash.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt -size 12378 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::AAD72245-F27D-4D3B-9942-2DD17C919AE6 -name I2CPort.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt -size 13413 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::471C05EA-9DBD-4629-90F7-5955A184823C -name I2CSensor.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt -size 21144 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::807F17ED-6D41-4E6A-96D3-22E8BA157ABF -name LCD.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt -size 45665 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::56EC4964-1107-4D2E-8E73-5616F2711C3C -name LCDOutputStream.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt -size 12184 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::ADCE0428-7B62-4FDB-B844-D4EA0436B3A6 -name LegacySensorPort.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt -size 12917 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::7367F8A2-5849-4F2D-BB48-D9E50FDA5664 -name LightSensor.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt -size 20218 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::E1471563-8EBB-410C-92F9-70344AD6EB4E -name ListenerCaller.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt -size 7952 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::EF3662A4-D7F5-41C5-BDB7-6CCBC136FD2F -name Motor.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt -size 40074 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::5F17F12B-68A2-4BA4-B7C5-E14FC4F528EC -name Motor.Regulator.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt -size 14195 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::6FD62581-26DB-4DA6-8718-2FC3C455727A -name MotorPort.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt -size 16678 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::137BE5DF-E430-44EB-BA52-A56E99D449D9 -name package-frame.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt -size 3976 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::665B7A7B-94E2-497D-977F-BD17F05DCA4D -name package-summary.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt -size 13173 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::EA48AB2C-A46E-4F35-BB99-78D996601B1B -name package-tree.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt -size 11438 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::C2A6EF17-1A0F-4E6D-82C2-A854330BBF83 -name Poll.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt -size 20056 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::EE0CDD55-8308-42B0-9B25-D1AE8C4FE89D -name SensorConstants.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt -size 22873 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::8E5C4768-B029-4943-ADBA-F37621E22037 -name SensorPort.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt -size 33595 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::56E57DF0-8356-4DFB-9057-03DEEB683B3B -name SensorPortListener.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt -size 8583 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::9522AD1C-9CCF-40FB-8A5C-AE25E681A2E4 -name Settings.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt -size 13158 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::9AADAE29-30EE-423F-94AC-2C33668010B0 -name Sound.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt -size 23404 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::4A5194A0-9144-464B-B73A-FB35D3CC6974 -name SoundSensor.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt -size 15000 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::CD1B7373-0CDE-4D6C-A322-976E598BE57D -name SystemSettings.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt -size 12293 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::EB2DD1A4-43C4-4E32-B07D-694C115B2D30 -name Tachometer.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt -size 8698 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::C941A5E1-9D74-4299-8357-CE8C4235C392 -name TachoMotorPort.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt -size 9794 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::9693A6F8-3D03-48FE-B2DD-B12A35EB8CC9 -name TextMenu.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt -size 19915 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::7418942A-B7DE-4F4D-8170-5715583BA977 -name TouchSensor.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt -size 13428 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::4BE76343-F9B2-44DD-8437-7CBD467DA4CF -name UltrasonicSensor.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt -size 27938 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::03481C78-D473-4E97-9498-C76EF931B570 -name addon -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/doc/lejos/nxt/addon -size 12288 -mtime 1226326818 -attributes 0000 -filemethod 0
+File ::966C95CC-3B21-42CA-9883-A03726880C8C -name ColorSensor.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/addon -size 23700 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::C5891CCF-D4F7-4524-A947-B2407ACAB0FE -name CompassSensor.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/addon -size 17741 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::023CFDE4-953A-456B-8081-9C9A11727E21 -name EOPD.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/addon -size 16269 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::3664D29C-40BF-4141-A396-68B295B74224 -name GyroSensor.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/addon -size 13989 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::ADEE4805-9DEC-458F-813C-C903A36E1FC4 -name IRLink.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/addon -size 18329 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::5F065AC8-6495-4989-8A62-666DCFC64D53 -name IRSeeker.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/addon -size 15126 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::04021CE0-09A4-43F5-93E2-D4FFC67E5D1C -name LDCMotor.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/addon -size 21445 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::7FBE3B96-78E8-4AC8-8831-F02CDA20D0FC -name LMotor.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/addon -size 21490 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::E6BFB15B-DE22-4D93-A364-54382B94E88B -name LSC.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/addon -size 23108 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::A9D81DD6-DDE8-4776-AE1E-055ECF3860F9 -name LServo.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/addon -size 25371 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::F8226C70-76B8-4F38-87F0-710BB1ABA025 -name MSC.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/addon -size 17873 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::D38F4B89-0CD9-4BBD-9476-0BF6417F0705 -name MServo.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/addon -size 19006 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::D84D17CE-9104-4FF8-894C-538EB7D83209 -name NXTCam.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/addon -size 16805 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::F8D0AD61-2337-4023-9FE0-9E817084465C -name NXTe.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/addon -size 17003 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::C5D12FCA-895D-4A54-86B7-865C33AD7341 -name OpticalDistanceSensor.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/addon -size 39646 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::3BA70D3C-BF1C-4963-975C-5F54696CA3B4 -name package-frame.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/addon -size 3358 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::70FD4204-1587-46A5-B6A6-FFC9D11BA8EC -name package-summary.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/addon -size 13173 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::34664267-A0F4-4F8D-96F2-4D240D8DCCB1 -name package-tree.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/addon -size 10625 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::F578E915-7EBC-41AF-907A-CDD9EA8C5FD9 -name PSPNXController.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/addon -size 19413 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::76ED6E72-C6BD-4E88-84E1-41AF8D207297 -name RCXLightSensor.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/addon -size 15053 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::343857D8-390C-4614-AD27-0BC0BB0D49E3 -name RCXLink.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/addon -size 55604 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::2A70E67F-497F-487F-AB60-E2D10720F449 -name RCXMotor.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/addon -size 11217 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::3472B851-4DFD-42F7-A961-61F76E333D9C -name RCXMotorMultiplexer.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/addon -size 19173 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::02E1B3B0-DA58-46DD-930B-045169865821 -name RCXPlexedMotorPort.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/addon -size 13284 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::FCD485DE-65D0-4CE1-85CB-656A3C1A1755 -name RCXRemoteMotorPort.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/addon -size 13222 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::AEF20269-466B-4857-BFB5-4A96B266920D -name RCXSensorMultiplexer.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/addon -size 17166 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::B7D3D618-4DD7-4FC3-B24F-2F718C0D9BC4 -name RCXTemperatureSensor.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/addon -size 15327 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::76E76985-4A5F-43D6-A6DB-EDA5835DD470 -name TiltSensor.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/addon -size 17636 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::4CF74DA9-1EBD-4FC8-9DB0-4CFA62AC6DA1 -name package-use.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/addon -size 10763 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::B00032A6-162C-45EA-A236-00191EEE1C40 -name class-use -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/doc/lejos/nxt/addon/class-use -size 8192 -mtime 1226326820 -attributes 0000 -filemethod 0
+File ::9A487644-B4CF-4F82-A5F4-F14A2FEA8A63 -name ColorSensor.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/addon/class-use -size 5907 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::DD0A2152-92E2-4278-9449-5DFFA36C8C52 -name CompassSensor.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/addon/class-use -size 10659 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::706C1478-FC74-4743-9F72-BF057A7D3F06 -name EOPD.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/addon/class-use -size 5837 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::23CEA417-7209-4E1A-B28C-628FD1CAEC43 -name GyroSensor.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/addon/class-use -size 5897 -mtime 1226326660 -attributes 0000 -filemethod 0
+File ::FDB3DE17-CA4F-467F-83A7-9DB67DC1B783 -name IRLink.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/addon/class-use -size 5857 -mtime 1226326664 -attributes 0000 -filemethod 0
+File ::4D8F82FE-D717-4FD6-A7CB-81761E78398D -name IRSeeker.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/addon/class-use -size 5877 -mtime 1226326654 -attributes 0000 -filemethod 0
+File ::20109BDD-5FA3-4E6F-934A-55DA3F0AE103 -name LDCMotor.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/addon/class-use -size 7723 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::A0ACBF74-A6EB-424C-919F-CBC5F703C01E -name LMotor.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/addon/class-use -size 8154 -mtime 1226326668 -attributes 0000 -filemethod 0
+File ::41E0E90F-7AB7-41EA-9AA7-B65F39E2D70A -name LSC.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/addon/class-use -size 7642 -mtime 1226326668 -attributes 0000 -filemethod 0
+File ::CEA3109A-E80C-40C3-95A9-5398ADA0400D -name LServo.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/addon/class-use -size 7693 -mtime 1226326666 -attributes 0000 -filemethod 0
+File ::E4EEC9FE-025B-459E-8422-C54DAD936D85 -name MSC.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/addon/class-use -size 5827 -mtime 1226326660 -attributes 0000 -filemethod 0
+File ::1EFE6EA2-9848-400F-AD28-4D695D7A0CEF -name MServo.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/addon/class-use -size 7693 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::D95B9812-2312-468A-B918-FD576CA9AD4D -name NXTCam.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/addon/class-use -size 5857 -mtime 1226326666 -attributes 0000 -filemethod 0
+File ::852B48BE-78B2-4839-BAED-2B187F16601E -name NXTe.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/addon/class-use -size 5837 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::E6050A94-BDD2-43BD-B511-A80CF951E7D7 -name OpticalDistanceSensor.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/addon/class-use -size 6007 -mtime 1226326668 -attributes 0000 -filemethod 0
+File ::1848EB0B-995C-4971-9CEF-2B931CD6C9D3 -name PSPNXController.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/addon/class-use -size 5947 -mtime 1226326660 -attributes 0000 -filemethod 0
+File ::4D2A69C3-873A-4846-9233-FE7D5EE888B4 -name RCXLightSensor.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/addon/class-use -size 5937 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::B3CDC3A0-DD4A-4DF1-918D-28D648A776A6 -name RCXLink.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/addon/class-use -size 9639 -mtime 1226326662 -attributes 0000 -filemethod 0
+File ::C8FE257A-BFB3-46CD-9853-B0F1994C67E1 -name RCXMotor.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/addon/class-use -size 10293 -mtime 1226326666 -attributes 0000 -filemethod 0
+File ::2B62234E-E351-4368-8729-BA35D55D65BE -name RCXMotorMultiplexer.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/addon/class-use -size 7900 -mtime 1226326664 -attributes 0000 -filemethod 0
+File ::EE9EBD27-5B4B-4E7E-9C66-C2B5C95E7C5A -name RCXPlexedMotorPort.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/addon/class-use -size 5977 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::4AE950AB-1FE7-4A46-8EA6-B74C25AE3ABF -name RCXRemoteMotorPort.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/addon/class-use -size 5977 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::BC3E7688-0C32-4B0D-809B-61E04AED4A04 -name RCXSensorMultiplexer.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/addon/class-use -size 5997 -mtime 1226326670 -attributes 0000 -filemethod 0
+File ::6E05F2AB-3C5A-4EF2-9987-A03A63E382DA -name RCXTemperatureSensor.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/addon/class-use -size 5997 -mtime 1226326660 -attributes 0000 -filemethod 0
+File ::2AC716D1-5F1D-48B6-A879-9C3F310BB67F -name TiltSensor.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/addon/class-use -size 5897 -mtime 1226326656 -attributes 0000 -filemethod 0
+File ::E78681E1-5789-40FE-836E-A7346AD93803 -name comm -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/doc/lejos/nxt/comm -size 4096 -mtime 1226326824 -attributes 0000 -filemethod 0
+File ::19993456-91EC-4DCA-A091-6E81B02C0C05 -name Bluetooth.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/comm -size 90342 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::0CECA207-A0F6-4B13-8B7A-C8ACA06A9E44 -name BTConnection.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/comm -size 20213 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::701D0EA1-433E-4E31-A7E6-D527580CC9EF -name LCP.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/comm -size 44072 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::297C8E18-6CEC-4FE1-A7DA-4CEFE9ABBCC7 -name LCPBTResponder.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/comm -size 14067 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::29CAC12E-46DC-4FC0-881F-7341B1E5B20B -name NXTConnection.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/comm -size 29656 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::AE924434-3293-45BC-8515-8EB49BAAF459 -name NXTInputStream.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/comm -size 13138 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::9D3427E8-F766-4D64-95EF-D5297323E666 -name NXTOutputStream.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/comm -size 12793 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::8668EFFB-9FD7-453D-94AF-F8A27ECD9193 -name package-frame.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/comm -size 1810 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::318A0478-C367-4D10-8FD1-13C9519E9D3F -name package-summary.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/comm -size 8593 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::C99927B8-5C9E-448D-86CD-947E7B34E7E6 -name package-tree.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/comm -size 7899 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::10B60C6B-B79D-49F7-94DA-A50E3CD94643 -name RConsole.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/comm -size 14403 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::90020C4A-1135-488F-9112-209F8F8A8A5C -name USB.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/comm -size 23269 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::82DDEFDE-643A-46A6-9933-9CB62DA92E1E -name USBConnection.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/comm -size 14784 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::DE6B5B7A-A086-48E6-8D36-2EA2A16DD55E -name package-use.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/comm -size 8256 -mtime 1226326658 -attributes 0000 -filemethod 0
+File ::0172F825-1464-4C14-BB28-7BA0C3C06C3E -name class-use -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/doc/lejos/nxt/comm/class-use -size 4096 -mtime 1226326824 -attributes 0000 -filemethod 0
+File ::9A9E17EB-C779-4DF3-8C0A-6D475CBA00D4 -name Bluetooth.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/comm/class-use -size 5877 -mtime 1226326660 -attributes 0000 -filemethod 0
+File ::ECEA20D5-C754-4D9C-A95A-74ADE7593526 -name BTConnection.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/comm/class-use -size 10084 -mtime 1226326658 -attributes 0000 -filemethod 0
+File ::AB042F12-12A5-45F6-B7DA-D89B521AB740 -name LCP.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/comm/class-use -size 5817 -mtime 1226326668 -attributes 0000 -filemethod 0
+File ::ED30ACCB-9DED-4162-B230-E197AE414F1F -name LCPBTResponder.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/comm/class-use -size 5927 -mtime 1226326660 -attributes 0000 -filemethod 0
+File ::21429F4E-CDDA-4582-BF54-5F549F60E4D9 -name NXTConnection.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/comm/class-use -size 10588 -mtime 1226326658 -attributes 0000 -filemethod 0
+File ::04CEA372-FEA8-46FD-B263-83988C84A2C6 -name NXTInputStream.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/comm/class-use -size 5927 -mtime 1226326656 -attributes 0000 -filemethod 0
+File ::54B228D0-3A25-4405-8203-627544EE20D5 -name NXTOutputStream.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/comm/class-use -size 5937 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::66898B6B-0190-460F-8F2B-F874AA6C6970 -name RConsole.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/comm/class-use -size 5867 -mtime 1226326668 -attributes 0000 -filemethod 0
+File ::71B933CE-CA1E-4AFC-AA59-4683705AA55C -name USB.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/comm/class-use -size 5817 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::07746B06-9EDD-49AE-B5A1-79E2FF80D61B -name USBConnection.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/comm/class-use -size 9360 -mtime 1226326668 -attributes 0000 -filemethod 0
+File ::197A9F8F-3504-4FD9-A7F9-5B322FE10CAE -name debug -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/doc/lejos/nxt/debug -size 4096 -mtime 1226326825 -attributes 0000 -filemethod 0
+File ::08D444A3-A5FF-4D59-9148-82F3533E30EE -name DebugInterface.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/debug -size 24701 -mtime 1226326686 -attributes 0000 -filemethod 0
+File ::7BFA537C-1015-4AD6-AB47-4A6B2DA487D9 -name DebugMonitor.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/debug -size 11099 -mtime 1226326686 -attributes 0000 -filemethod 0
+File ::D7CD91B7-8D99-4636-8CCE-D9947F869F3B -name DebugObject.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/debug -size 11148 -mtime 1226326686 -attributes 0000 -filemethod 0
+File ::224D41CA-449F-439B-ADE8-0EC1C7F47BB7 -name DebugStackFrame.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/debug -size 11508 -mtime 1226326686 -attributes 0000 -filemethod 0
+File ::9E46255D-A7CF-4F84-91E3-BF921E39C820 -name DebugThread.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/debug -size 16206 -mtime 1226326686 -attributes 0000 -filemethod 0
+File ::E17C49FD-ECDA-4151-9776-F98B5683BB0A -name DebugThreads.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/debug -size 14554 -mtime 1226326686 -attributes 0000 -filemethod 0
+File ::56A9BE82-C05C-49E0-AC68-FA16584B518E -name package-frame.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/debug -size 1441 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::074DFF95-683A-41E2-A503-BDE59E771198 -name package-summary.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/debug -size 7646 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::BDB5AB24-A57F-4127-BBB0-02464E03ED19 -name package-tree.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/debug -size 6723 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::A4056C67-25D9-443F-95DE-7A2A5C43D194 -name package-use.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/debug -size 7060 -mtime 1226326660 -attributes 0000 -filemethod 0
+File ::3380828D-01AB-4953-B3C8-980C34744FCA -name class-use -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/doc/lejos/nxt/debug/class-use -size 4096 -mtime 1226326825 -attributes 0000 -filemethod 0
+File ::16CD3028-B04E-46F1-9BE7-71B8B2DEC4E7 -name DebugInterface.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/debug/class-use -size 9437 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::AFCCEF7F-6D27-4C78-81D1-A03F31851566 -name DebugMonitor.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/debug/class-use -size 5917 -mtime 1226326662 -attributes 0000 -filemethod 0
+File ::8877751E-BD6B-4018-90CA-FDD3D7552F18 -name DebugObject.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/debug/class-use -size 5907 -mtime 1226326666 -attributes 0000 -filemethod 0
+File ::3A9FD8CF-E351-441F-9FA7-2B3BAE343A9C -name DebugStackFrame.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/debug/class-use -size 5947 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::EA3E8896-82FF-453E-8360-755C4BDDA598 -name DebugThread.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/debug/class-use -size 10859 -mtime 1226326668 -attributes 0000 -filemethod 0
+File ::BE2809BC-87E5-4529-8A27-D8A8E5A0A589 -name DebugThreads.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/debug/class-use -size 5917 -mtime 1226326658 -attributes 0000 -filemethod 0
+File ::A9191B3B-816D-4DB4-8F22-A9A88A9E20B5 -name remote -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/doc/lejos/nxt/remote -size 4096 -mtime 1226326827 -attributes 0000 -filemethod 0
+File ::31E7EE34-5C5C-4DF1-A80C-9633929E963C -name DeviceInfo.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/remote -size 12621 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::E50414A0-F7AF-4CCD-9DF4-36BCE78E8795 -name FirmwareInfo.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/remote -size 11955 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::5A24D05D-8E97-406F-9BB5-0DA608CF8301 -name InputValues.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/remote -size 15296 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::EA2A2A17-E218-4E42-8579-F6AB7D72F9A6 -name NXTComm.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/remote -size 12807 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::74D03CC0-86D4-47F7-9148-BA6B6FE0AF54 -name NXTCommand.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/remote -size 31308 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::73D054CE-15D6-45ED-8FE3-5BE6B5314CC7 -name NXTProtocol.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/remote -size 57501 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::CDFC63FF-E92A-402C-A4BD-0EFDA2C751D0 -name package-frame.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/remote -size 2059 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::3092F7CC-AA29-4705-8779-707B606D62A6 -name package-summary.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/remote -size 8783 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::B6B09CF7-7980-4BE6-B405-8063C49288F3 -name package-tree.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/remote -size 8137 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::EFFDB75D-8BE1-425A-9108-492D847D48ED -name RemoteBattery.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/remote -size 19319 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::D8E199BF-1C9B-4F36-A14E-3F6198EEEF6B -name RemoteMotorPort.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/remote -size 22361 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::FBFE6204-BD2F-4033-B572-25F00DCB0FD1 -name RemoteNXT.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/remote -size 20301 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::902CD760-6CDC-4AD3-92D5-3D1CACFC7679 -name RemoteSensorPort.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/remote -size 27530 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::07EE35D0-A36E-46ED-B723-E214B6F9291B -name package-use.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/remote -size 8450 -mtime 1226326660 -attributes 0000 -filemethod 0
+File ::71A5579B-9064-43BE-94AC-A11F5E7A71EE -name class-use -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/doc/lejos/nxt/remote/class-use -size 4096 -mtime 1226326827 -attributes 0000 -filemethod 0
+File ::99F2E1A9-E4AD-4574-8DF4-99ED27475B60 -name DeviceInfo.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/remote/class-use -size 7693 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::8401B604-BD41-4044-9CE5-E2CC3B7FC46F -name FirmwareInfo.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/remote/class-use -size 7737 -mtime 1226326670 -attributes 0000 -filemethod 0
+File ::0F583DC4-640C-46F2-9286-9F7C68379652 -name InputValues.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/remote/class-use -size 7728 -mtime 1226326664 -attributes 0000 -filemethod 0
+File ::338233D8-94E9-4494-B1FE-CC17A2C22335 -name NXTComm.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/remote/class-use -size 5877 -mtime 1226326662 -attributes 0000 -filemethod 0
+File ::D9FFC154-7E4B-4670-8B31-1EE4F57B8B19 -name NXTCommand.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/remote/class-use -size 8525 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::7AB6638E-6F8B-4C8F-AD6B-010CAC830057 -name NXTProtocol.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/remote/class-use -size 8877 -mtime 1226326670 -attributes 0000 -filemethod 0
+File ::64F82E4C-B6BA-496D-9CC7-C9307D61A0F2 -name RemoteBattery.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/remote/class-use -size 7725 -mtime 1226326666 -attributes 0000 -filemethod 0
+File ::A0784CA5-C101-4618-8F5E-7ACF92B822C5 -name RemoteMotorPort.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/remote/class-use -size 5957 -mtime 1226326666 -attributes 0000 -filemethod 0
+File ::F49736BA-8656-409F-9CED-3DF8A54F8AAD -name RemoteNXT.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/remote/class-use -size 5897 -mtime 1226326664 -attributes 0000 -filemethod 0
+File ::C7E73C9E-DF00-432B-81C2-80C3B6381DF8 -name RemoteSensorPort.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/remote/class-use -size 9104 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::ED8AC62D-DF19-4A4F-AB43-D3B600E6CDDC -name socket -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/doc/lejos/nxt/socket -size 4096 -mtime 1226326828 -attributes 0000 -filemethod 0
+File ::86340682-6A41-4BA4-A97F-FFDCEBAF6DE7 -name NXTServerSocket.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/socket -size 11592 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::DB2ACDBB-7EBD-4AB1-BE66-89BA31F3169D -name NXTSocket.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/socket -size 16967 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::E167F011-E1E0-483F-B282-83C8563C6337 -name NXTSocketOutputStream.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/socket -size 13600 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::17CA806D-5ABD-44A3-B9A9-EEFFB2D72D48 -name package-frame.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/socket -size 1144 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::7CAB383F-AE95-42E3-8078-9A209DE2D5A7 -name package-summary.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/socket -size 7001 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::327AF9C5-A64E-45B8-A9F2-9C6D43E5F813 -name package-tree.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/socket -size 6450 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::8DBB898C-BDDB-49CE-924D-B7BF224BDA47 -name package-use.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/socket -size 6726 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::5DFE85CC-12F1-453A-ABE1-2E996A216D9B -name class-use -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/doc/lejos/nxt/socket/class-use -size 4096 -mtime 1226326828 -attributes 0000 -filemethod 0
+File ::E2A7E324-5236-48A1-95CD-6677554F6665 -name NXTServerSocket.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/socket/class-use -size 5957 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::AE4637A5-1E81-49DE-8E97-5BB2F97990F3 -name NXTSocket.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/socket/class-use -size 7723 -mtime 1226326666 -attributes 0000 -filemethod 0
+File ::A0513790-897B-42FF-8EC0-69CA6C0927EB -name NXTSocketOutputStream.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/socket/class-use -size 6017 -mtime 1226326664 -attributes 0000 -filemethod 0
+File ::BB45ABC3-60EB-4D57-8A04-C954C8C30570 -name package-use.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt -size 19031 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::0AC52AEE-6B6F-4686-976F-060B941E619D -name class-use -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/doc/lejos/nxt/class-use -size 12288 -mtime 1226326823 -attributes 0000 -filemethod 0
+File ::A6B990D4-EE96-4F1B-8741-F64C94A12D22 -name ADSensorPort.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/class-use -size 14003 -mtime 1226326654 -attributes 0000 -filemethod 0
+File ::31B05BA9-625B-4D59-9E85-33C9922FDD12 -name BasicMotor.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/class-use -size 8784 -mtime 1226326656 -attributes 0000 -filemethod 0
+File ::5D9A76A6-438B-437F-9DBA-E9979182D60D -name BasicMotorPort.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/class-use -size 12439 -mtime 1226326670 -attributes 0000 -filemethod 0
+File ::9E5BA992-F7D9-4F05-AE9A-93FE25A54211 -name BasicSensorPort.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/class-use -size 10506 -mtime 1226326668 -attributes 0000 -filemethod 0
+File ::182E62C5-91F3-481B-88E5-839CE5940378 -name Battery.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/class-use -size 5756 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::8A93CF58-FFD9-4C25-B017-D420F24DD518 -name Button.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/class-use -size 10388 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::CC980667-0431-4043-A427-B5E88FF627A3 -name ButtonListener.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/class-use -size 7635 -mtime 1226326656 -attributes 0000 -filemethod 0
+File ::5E4A7C38-A12C-4613-81A5-7C2C23F6F6AB -name Flash.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/class-use -size 5736 -mtime 1226326670 -attributes 0000 -filemethod 0
+File ::8AA9851B-3C67-4757-95FC-75D4CFF50E3E -name I2CPort.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/class-use -size 13918 -mtime 1226326654 -attributes 0000 -filemethod 0
+File ::B67DA5D3-A237-49C5-A0AA-C6966084D87E -name I2CSensor.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/class-use -size 16348 -mtime 1226326658 -attributes 0000 -filemethod 0
+File ::1D1425EE-D4F5-476A-B497-0935721FCF75 -name LCD.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/class-use -size 5716 -mtime 1226326670 -attributes 0000 -filemethod 0
+File ::08BF7116-47A5-4505-A3A2-4D28DC0066CB -name LCDOutputStream.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/class-use -size 5836 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::32A2E673-6A1C-4E41-930A-F66928477261 -name LegacySensorPort.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/class-use -size 9530 -mtime 1226326664 -attributes 0000 -filemethod 0
+File ::6FAE668D-776A-4391-B91F-D5AFF4AAEABD -name LightSensor.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/class-use -size 5796 -mtime 1226326660 -attributes 0000 -filemethod 0
+File ::FCCC4BEE-0225-486A-AEBF-1E333C7475D8 -name ListenerCaller.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/class-use -size 7836 -mtime 1226326670 -attributes 0000 -filemethod 0
+File ::F405983B-052F-4340-8CB6-73324C35301B -name Motor.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/class-use -size 20716 -mtime 1226326660 -attributes 0000 -filemethod 0
+File ::3F9952DB-0C76-4C8A-A2AB-176A4A213888 -name Motor.Regulator.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/class-use -size 7511 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::8665CBB2-CEE7-404B-9CA0-6F8EAE8BA677 -name MotorPort.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/class-use -size 8243 -mtime 1226326666 -attributes 0000 -filemethod 0
+File ::97D1F163-4606-4D88-80B1-DF96AAFE5809 -name Poll.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/class-use -size 5726 -mtime 1226326668 -attributes 0000 -filemethod 0
+File ::341161BC-4DD3-4374-8E7B-F794C62D91B7 -name SensorConstants.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/class-use -size 23560 -mtime 1226326668 -attributes 0000 -filemethod 0
+File ::84F06C60-06F1-474F-B5FF-3089823A0B93 -name SensorPort.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/class-use -size 26066 -mtime 1226326670 -attributes 0000 -filemethod 0
+File ::9FE494F9-0241-4970-AD9A-CDC1BFE29F3D -name SensorPortListener.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/class-use -size 7711 -mtime 1226326662 -attributes 0000 -filemethod 0
+File ::7E743900-6BC2-47A5-855E-3B80943E3686 -name Settings.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/class-use -size 5766 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::7712538E-E144-4EEC-9B9A-F5B67BFF2933 -name Sound.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/class-use -size 5736 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::85A0BE56-A64E-4C79-A37F-1ABC3061D593 -name SoundSensor.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/class-use -size 5796 -mtime 1226326656 -attributes 0000 -filemethod 0
+File ::4FBE5778-00D7-427C-AF62-177E271613DB -name SystemSettings.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/class-use -size 5826 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::AC5DC0EB-A7AB-47B2-925B-DED5E1A08BFD -name Tachometer.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/class-use -size 9621 -mtime 1226326670 -attributes 0000 -filemethod 0
+File ::829C5431-FE18-447F-B03E-5EA7EF8BC38C -name TachoMotorPort.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/class-use -size 10537 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::C80953A9-DDE1-4C81-85D3-779C88B7EECC -name TextMenu.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/class-use -size 5766 -mtime 1226326662 -attributes 0000 -filemethod 0
+File ::FBAA0841-EE2F-40FC-9B1A-7AEE21D222AA -name TouchSensor.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/class-use -size 5796 -mtime 1226326670 -attributes 0000 -filemethod 0
+File ::6FC4C02C-DCC0-4CAC-B735-61C5D2F26675 -name UltrasonicSensor.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/nxt/class-use -size 5846 -mtime 1226326656 -attributes 0000 -filemethod 0
+File ::7925B1CC-7155-4D6F-A792-3A5BA41D44D1 -name rcxcomm -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/doc/lejos/rcxcomm -size 4096 -mtime 1226326829 -attributes 0000 -filemethod 0
+File ::302ACF42-F4A4-406A-B4C8-4AC0926ABE6D -name LLC.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/rcxcomm -size 15537 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::B5F7A83A-D786-4242-B471-92C522759B7D -name LLCHandler.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/rcxcomm -size 16866 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::A4BBE9F8-C12D-4AC7-BF6A-091CAD09FD3F -name LLCReliableHandler.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/rcxcomm -size 16026 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::AE916E84-691F-4430-A91B-7D3FCBBF12A8 -name Opcode.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/rcxcomm -size 76573 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::60891ACA-C745-477F-87CE-C61E22D337C5 -name package-frame.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/rcxcomm -size 1784 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::C8BC0C82-A165-4C1D-9466-E9A3F3C29BEF -name package-summary.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/rcxcomm -size 8499 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::05521E28-05B9-4C73-882A-C0E253B05AC6 -name package-tree.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/rcxcomm -size 6905 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::2078A7FA-7552-4C13-AA6F-AC96B4B6B733 -name PacketHandler.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/rcxcomm -size 18602 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::6A1B532C-357D-4C77-B609-C0942C66294A -name RCXAbstractPort.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/rcxcomm -size 16488 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::3D14A640-E8EE-40E1-BB04-9FB845896991 -name RCXPort.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/rcxcomm -size 12478 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::338A1EAB-1939-4EAC-A7DA-F7092A48F45B -name Serial.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/rcxcomm -size 14631 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::DB8884A1-3378-4C4E-A978-2F206621EAA4 -name package-use.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/rcxcomm -size 7989 -mtime 1226326666 -attributes 0000 -filemethod 0
+File ::93E1E509-7A64-444B-B88B-545E3D05C2F5 -name class-use -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/doc/lejos/rcxcomm/class-use -size 4096 -mtime 1226326830 -attributes 0000 -filemethod 0
+File ::238B8F13-2577-4E7D-8AE4-354ECDF76DCA -name LLC.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/rcxcomm/class-use -size 5756 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::C34E3F11-6CD3-4771-A75E-ADCF65D1D96B -name LLCHandler.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/rcxcomm/class-use -size 5826 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::320FBF6A-A407-4B7F-B5A8-FCD051273B0E -name LLCReliableHandler.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/rcxcomm/class-use -size 5906 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::82708A58-00E7-446C-B682-5F57AD50A2C0 -name Opcode.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/rcxcomm/class-use -size 7545 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::FD605A36-DDED-49EE-843D-301F7F2B3E63 -name PacketHandler.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/rcxcomm/class-use -size 9632 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::E179540F-0DBD-446B-8BCA-1B7E0036F33C -name RCXAbstractPort.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/rcxcomm/class-use -size 7683 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::FAB78CDE-3F11-4E75-B8E3-AC5F7953C4E6 -name RCXPort.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/rcxcomm/class-use -size 5796 -mtime 1226326666 -attributes 0000 -filemethod 0
+File ::B11844FE-C822-47FE-9CFB-17BAEB7F9F4B -name Serial.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/rcxcomm/class-use -size 5786 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::A393D787-12B1-4A2E-96FA-54278B999C6D -name subsumption -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/doc/lejos/subsumption -size 4096 -mtime 1226326830 -attributes 0000 -filemethod 0
+File ::155D54EC-1B5A-4A83-9418-A7664D07C6B8 -name Activity.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/subsumption -size 23028 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::A3AE0B92-5CCC-4437-A7C6-565080E44D94 -name ActivityBase.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/subsumption -size 13701 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::ABF59DA6-1B04-400F-B77E-F4165AAC2888 -name Arbitrator.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/subsumption -size 13108 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::73948529-44C9-4D0B-BDA9-B28B483AD2AA -name Behavior.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/subsumption -size 11364 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::0D7F1D98-1958-4FF7-A817-6F7E60D85E3B -name package-frame.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/subsumption -size 1717 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::DF77465B-19DE-4CBB-BA9F-52D27BF6CE29 -name package-summary.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/subsumption -size 8132 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::824262CA-CB2D-43C4-B661-D2917DC255D3 -name package-tree.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/subsumption -size 7058 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::DB2CB7DD-B65F-47A5-AB7F-2CDA67349737 -name StopException.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/subsumption -size 10275 -mtime 1226326688 -attributes 0000 -filemethod 0
+File ::122518E8-3963-40AE-ADDA-2054042A5EC8 -name package-use.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/subsumption -size 7028 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::CE32F2BB-1BD0-4445-9ADB-3A084BD650C2 -name class-use -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/doc/lejos/subsumption/class-use -size 4096 -mtime 1226326831 -attributes 0000 -filemethod 0
+File ::0C0316C9-57D7-490D-927E-0A7E80DF518B -name Activity.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/subsumption/class-use -size 5846 -mtime 1226326658 -attributes 0000 -filemethod 0
+File ::3A619384-482C-488E-B4F6-8198E6869541 -name ActivityBase.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/subsumption/class-use -size 7628 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::0412A5D3-C102-4DFB-89FD-27C41239F2E0 -name Arbitrator.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/subsumption/class-use -size 5866 -mtime 1226326668 -attributes 0000 -filemethod 0
+File ::D0254CE7-854D-4DAF-BB3B-BECB255D3A12 -name Behavior.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/subsumption/class-use -size 8158 -mtime 1226326666 -attributes 0000 -filemethod 0
+File ::9D8574C7-DC7A-4761-A4E4-18218DD812D1 -name StopException.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/subsumption/class-use -size 5896 -mtime 1226326668 -attributes 0000 -filemethod 0
+File ::219D3A87-B855-4C51-BAA7-AFCE49A9625F -name util -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/doc/lejos/util -size 4096 -mtime 1226326832 -attributes 0000 -filemethod 0
+File ::1EC53D44-CC20-490B-AEF9-CBFE952CA2CD -name Assertion.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/util -size 12046 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::C16945C7-FF2C-4539-A4D3-A1496D16A04A -name ButtonCounter.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/util -size 15832 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::370FC197-8CB1-4A01-9EC5-2B6AA550730A -name Datalogger.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/util -size 13267 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::9C8771C4-35DC-4B33-B723-435354BDE5BC -name DebugMessages.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/util -size 14311 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::05F490C4-4BF6-4F31-86E3-263FA5E39598 -name package-frame.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/util -size 1663 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::7F05868C-03B7-4CCD-9CDC-687497550478 -name package-summary.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/util -size 7959 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::E8F034B2-79FC-462E-A67E-0CF7A681B7DA -name package-tree.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/util -size 6555 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::C682DF3D-EBFF-4D74-AFE5-9C51CEE99FB6 -name Stopwatch.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/util -size 10691 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::5D337101-7101-4842-9AFB-E9530E66E89F -name Timer.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/util -size 12509 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::AD1EB5EA-AA2A-4225-86D6-E59C08624B79 -name TimerListener.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/util -size 7815 -mtime 1226326690 -attributes 0000 -filemethod 0
+File ::BAAB79BB-2B57-4D14-ADA5-C9864D47A1CE -name package-use.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/util -size 6578 -mtime 1226326656 -attributes 0000 -filemethod 0
+File ::A465DCEF-944A-4F73-8F60-6E1102FE5C7E -name class-use -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/doc/lejos/util/class-use -size 4096 -mtime 1226326832 -attributes 0000 -filemethod 0
+File ::B8B7FF68-6C0C-4B23-B72D-642434C81244 -name Assertion.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/util/class-use -size 5786 -mtime 1226326670 -attributes 0000 -filemethod 0
+File ::9823715B-03BA-43FB-BE91-3CD8C0B40DF9 -name ButtonCounter.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/util/class-use -size 5826 -mtime 1226326668 -attributes 0000 -filemethod 0
+File ::9B8986E2-DAFD-4C29-A76E-074E5720AD6D -name Datalogger.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/util/class-use -size 5796 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::5D771CCC-A69F-43F8-BA8E-5FF0C4536BD4 -name DebugMessages.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/util/class-use -size 5826 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::D6A28804-D9DE-4AE7-A40B-3690C36FB576 -name Stopwatch.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/util/class-use -size 5786 -mtime 1226326656 -attributes 0000 -filemethod 0
+File ::8DC05036-6994-4084-8276-7BB5C577A525 -name Timer.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/util/class-use -size 5746 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::69E6917B-BFF6-4531-86C4-B1806A9807A8 -name TimerListener.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/lejos/util/class-use -size 7510 -mtime 1226326656 -attributes 0000 -filemethod 0
+File ::6D1877B1-4F58-4580-A6DE-194C8013C962 -name resources -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/doc/resources -mtime 1226326832 -attributes 0000 -filemethod 0
+File ::6E62FDF6-3645-4753-A99D-72C767035E0B -name inherit.gif -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/resources -size 57 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::AF0DE747-60C6-476C-B11A-4D36342C1709 -name index-files -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/doc/index-files -size 8192 -mtime 1226326782 -attributes 0000 -filemethod 0
+File ::B86CF4FB-F66D-4740-AF7B-AA1B83A51F52 -name index-1.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/index-files -size 38161 -mtime 1226326664 -attributes 0000 -filemethod 0
+File ::BB107A1E-87A7-4D15-A4C1-D55494B281AB -name index-2.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/index-files -size 24902 -mtime 1226326666 -attributes 0000 -filemethod 0
+File ::23CAC415-6AAB-4BBC-92EF-6ED2B5460F3D -name index-3.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/index-files -size 39613 -mtime 1226326668 -attributes 0000 -filemethod 0
+File ::ED71A890-340D-40D7-AA2D-6CF706B6A0CD -name index-4.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/index-files -size 33092 -mtime 1226326670 -attributes 0000 -filemethod 0
+File ::B6D21B7F-70B1-4E0D-8E58-6BD838227F07 -name index-5.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/index-files -size 18552 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::B0DEBF4F-A37A-4B2C-ACF4-37C7C276AB1B -name index-6.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/index-files -size 21254 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::11EFE51C-CCF6-4698-912E-EF007D1EE371 -name index-7.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/index-files -size 109756 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::D4BA4D98-B1FA-46C7-A38B-FC8B9D4C867D -name index-8.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/index-files -size 10340 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::B3665B89-4FEF-43B9-911D-544E13F1DE2C -name index-9.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/index-files -size 40561 -mtime 1226326654 -attributes 0000 -filemethod 0
+File ::3D83E473-5257-415D-995C-053A42822EE1 -name index-10.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/index-files -size 8345 -mtime 1226326670 -attributes 0000 -filemethod 0
+File ::029ABFF1-0F77-459F-8D5A-E4FC9B995ACE -name index-11.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/index-files -size 11505 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::7E1D56DB-C287-4077-860C-3561DE623E68 -name index-12.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/index-files -size 28645 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::50DCC326-E240-419E-88D5-9C5EB7C9DA9A -name index-13.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/index-files -size 39212 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::DF178D96-A1AC-4370-90C4-7E423CA5F5DA -name index-14.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/index-files -size 24725 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::F9A265A8-72E4-47F7-8C21-9E444A3724C1 -name index-15.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/index-files -size 43167 -mtime 1226326654 -attributes 0000 -filemethod 0
+File ::337399A6-5D56-430F-AFE0-9A25AA92FF38 -name index-16.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/index-files -size 31525 -mtime 1226326658 -attributes 0000 -filemethod 0
+File ::79B7139A-9321-447C-AD3F-55CCC8D21074 -name index-17.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/index-files -size 7776 -mtime 1226326660 -attributes 0000 -filemethod 0
+File ::375BD095-67EE-4907-AA65-701ED7992C3D -name index-18.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/index-files -size 61763 -mtime 1226326662 -attributes 0000 -filemethod 0
+File ::E45AF8CF-5388-4BD5-A63E-9CA44295ABF6 -name index-19.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/index-files -size 100222 -mtime 1226326666 -attributes 0000 -filemethod 0
+File ::35B531B7-EB8C-42CB-8477-6F918BEB1717 -name index-20.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/index-files -size 31997 -mtime 1226326666 -attributes 0000 -filemethod 0
+File ::C22D6242-28B6-4081-B03A-19F591E6BE2A -name index-21.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/index-files -size 12761 -mtime 1226326668 -attributes 0000 -filemethod 0
+File ::5D8154E8-E5FD-46D6-8827-2987C1B2A0B2 -name index-22.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/index-files -size 10554 -mtime 1226326670 -attributes 0000 -filemethod 0
+File ::85C16819-8B85-4A25-9D95-704709649A5F -name index-23.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/index-files -size 17553 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::BE39B21B-2765-4D25-AC82-5CD14AA2F4C3 -name index-24.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/index-files -size 8101 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::B3B65D68-5B1D-46EE-BE11-0EA572BDD740 -name index-25.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/index-files -size 8098 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::0921FD67-15DD-4CAB-B5FD-02559962652A -name index-26.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/doc/index-files -size 8556 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::9D06EDD2-B0FA-406E-8703-F2E3D7A9D513 -name java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/java -mtime 1226326835 -attributes 0000 -filemethod 0
+File ::1AFA501E-1E81-48C0-97D7-20A4AACEBAF3 -name awt -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/java/awt -mtime 1226326832 -attributes 0000 -filemethod 0
+File ::B06198CD-AD49-48C5-B39E-70057489224B -name package.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/java/awt -size 53 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::02E4B10C-9036-4608-B16A-841E8D766406 -name Rectangle.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/java/awt -size 313 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::0EF4447A-2055-44E1-B4DA-40F5068EA8CA -name io -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/java/io -size 4096 -mtime 1226326833 -attributes 0000 -filemethod 0
+File ::D531FBD9-C8F1-4A92-83AC-D61BAD37F66E -name BufferedWriter.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/java/io -size 1248 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::34405B2D-6283-4D75-B5E1-B4954E1D6E77 -name DataInputStream.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/java/io -size 4327 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::6BBE7AA0-064E-4E01-BA59-D084EEE91D2D -name DataOutputStream.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/java/io -size 8944 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::56CAA9B1-C300-4FB0-98AC-3B4833AC206C -name EOFException.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/java/io -size 1249 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::4F3B959C-BC22-41CC-8C41-61B8FC5F844E -name File.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/java/io -size 22436 -mtime 1226326662 -attributes 0000 -filemethod 0
+File ::6B2720E0-9992-4628-B07E-608CAD7C2351 -name FileInputStream.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/java/io -size 1350 -mtime 1226326660 -attributes 0000 -filemethod 0
+File ::5FDE5A3B-7B38-4468-AE4C-74D66C305CFD -name FileOutputStream.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/java/io -size 2832 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::285B8487-03D4-49B7-9944-EEA881798B89 -name InputStream.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/java/io -size 14661 -mtime 1226326664 -attributes 0000 -filemethod 0
+File ::268B5CE5-C8AD-428C-B252-0F77A98365D3 -name IOException.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/java/io -size 1160 -mtime 1226326666 -attributes 0000 -filemethod 0
+File ::8C3656CD-C983-4B8A-8088-5D823A612AB4 -name OutputStream.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/java/io -size 5132 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::707646A9-B0E8-44BF-B6C0-377122BD296A -name package.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/java/io -size 34 -mtime 1226326658 -attributes 0000 -filemethod 0
+File ::91EC6C85-68EA-4666-BB05-950AD0131E54 -name PrintStream.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/java/io -size 1148 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::FAEDB600-2C16-4487-9C50-D7C687139AB8 -name Serializable.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/java/io -size 129 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::76052A0E-DC63-4976-95CE-3FCDE85DE8F8 -name lang -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/java/lang -size 12288 -mtime 1226326835 -attributes 0000 -filemethod 0
+File ::58F5CF4E-9E3D-4D35-BF64-3300BB28E739 -name ArithmeticException.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/java/lang -size 75 -mtime 1226326666 -attributes 0000 -filemethod 0
+File ::59E3D38C-18F3-42E5-A60E-257858CC410A -name ArrayIndexOutOfBoundsException.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/java/lang -size 839 -mtime 1226326658 -attributes 0000 -filemethod 0
+File ::53220823-1FAB-44E8-9DB4-5A18E3606318 -name Class.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/java/lang -size 319 -mtime 1226326656 -attributes 0000 -filemethod 0
+File ::D8F9BC5F-F309-4355-BFC3-B69E7A697BE4 -name ClassCastException.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/java/lang -size 81 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::E8E97511-C037-4198-B15C-F66E035EAE4F -name ClassNotFoundException.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/java/lang -size 78 -mtime 1226326656 -attributes 0000 -filemethod 0
+File ::F6509C1C-8299-489D-B986-BF0E5DB1DF75 -name Cloneable.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/java/lang -size 128 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::176CDD13-AB88-4FE1-AF74-C60AF331100E -name Error.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/java/lang -size 65 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::FC54C4AC-4BDC-4AA2-8ADF-8628D92B08DA -name Exception.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/java/lang -size 160 -mtime 1226326668 -attributes 0000 -filemethod 0
+File ::1180B23A-B7DA-4797-87E3-52D336F46127 -name Float.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/java/lang -size 5362 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::D93A17E9-664B-4D38-80EC-9F3A7174BED5 -name IllegalArgumentException.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/java/lang -size 464 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::EC2A999C-D2BA-464E-A06C-5B69D053DECB -name IllegalMonitorStateException.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/java/lang -size 91 -mtime 1226326654 -attributes 0000 -filemethod 0
+File ::04111412-4B67-4310-9C09-37A6C565715A -name IllegalStateException.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/java/lang -size 84 -mtime 1226326660 -attributes 0000 -filemethod 0
+File ::A187E778-6D30-438C-BCB0-93ACD9B10946 -name Integer.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/java/lang -size 6483 -mtime 1226326668 -attributes 0000 -filemethod 0
+File ::521FF1FB-C555-49BE-A599-5555FCB63AB3 -name InterruptedException.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/java/lang -size 76 -mtime 1226326656 -attributes 0000 -filemethod 0
+File ::FCC40CCA-CFFC-46E5-A5D6-2979E5D78DFC -name Math.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/java/lang -size 8327 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::C72AD7BD-A5E0-45D4-BB83-C83B5C1E58CA -name NoClassDefFoundError.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/java/lang -size 128 -mtime 1226326656 -attributes 0000 -filemethod 0
+File ::E727B217-6966-4A53-8861-6F2D8A067E2C -name NoSuchMethodError.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/java/lang -size 69 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::2A18DB1F-D75A-4ACD-BB56-53A6638D2A6F -name NullPointerException.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/java/lang -size 83 -mtime 1226326658 -attributes 0000 -filemethod 0
+File ::35A39767-4A4F-486A-A1AA-41F961E55359 -name NumberFormatException.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/java/lang -size 98 -mtime 1226326658 -attributes 0000 -filemethod 0
+File ::86867D73-5A91-438D-86FD-FC1728D43210 -name Object.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/java/lang -size 1735 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::CFBFB5A1-6AE5-40E9-AAC2-B924BA17DB92 -name OutOfMemoryError.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/java/lang -size 68 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::042C072E-5E3C-4F60-AF4B-A052F67A2C45 -name package.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/java/lang -size 31 -mtime 1226326666 -attributes 0000 -filemethod 0
+File ::814F7B67-191A-4AE3-9E28-8851FA801B7D -name Runnable.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/java/lang -size 698 -mtime 1226326666 -attributes 0000 -filemethod 0
+File ::15089BEC-33E1-43FA-8C5E-7A9571A199B0 -name Runtime.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/java/lang -size 723 -mtime 1226326670 -attributes 0000 -filemethod 0
+File ::38F0A9C3-A367-43CB-899D-3427AC7A10F6 -name RuntimeException.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/java/lang -size 608 -mtime 1226326666 -attributes 0000 -filemethod 0
+File ::716FB659-7047-41BF-8441-B36F1C18A16F -name StackOverflowError.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/java/lang -size 70 -mtime 1226326670 -attributes 0000 -filemethod 0
+File ::96EC701D-84D3-4F68-9466-F794107A9AAF -name String.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/java/lang -size 8658 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::2F3F6176-C038-4F94-9AE4-CDD12D29B317 -name StringBuffer.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/java/lang -size 7794 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::D4456347-C821-49E0-B3B3-D385D4D14652 -name StringBuilder.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/java/lang -size 7804 -mtime 1226326660 -attributes 0000 -filemethod 0
+File ::7641CFE5-EA1C-4EEF-984D-51F5E3C6AE4B -name StringIndexOutOfBoundsException.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/java/lang -size 100 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::8956F34E-39BB-44DB-A911-FD9D77CB440F -name System.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/java/lang -size 1934 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::D75EDD80-8F98-4B2A-99A3-26C149E7C85B -name Thread.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/java/lang -size 4126 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::58857416-CB20-4913-BC91-EA9DA442E61E -name ThreadDeath.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/java/lang -size 171 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::6CEB5483-1820-49AA-86E7-99AA8E4741FD -name Throwable.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/java/lang -size 356 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::053EFD56-B152-47C5-962C-948844CE54B9 -name util -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/java/util -size 4096 -mtime 1226326837 -attributes 0000 -filemethod 0
+File ::068A4699-28C1-4FA9-A4DA-B45D1FC65682 -name ArrayList.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/java/util -size 3762 -mtime 1226326662 -attributes 0000 -filemethod 0
+File ::C1DB1655-FE15-4B6C-9DB8-1E3317E1A2C3 -name BitSet.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/java/util -size 526 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::96CF7396-E7F6-41F2-8128-0E787E62355D -name Date.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/java/util -size 2672 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::602F4307-F1FD-4F03-ACE4-E818C050F4AD -name EmptyQueueException.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/java/util -size 935 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::A64503B4-5A3E-41DA-B69F-24965F96291E -name EmptyStackException.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/java/util -size 935 -mtime 1226326662 -attributes 0000 -filemethod 0
+File ::D35AF2F7-695E-4BD8-BC01-8C32769E4486 -name Enumeration.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/java/util -size 370 -mtime 1226326666 -attributes 0000 -filemethod 0
+File ::2E7DC420-CC83-4558-B883-377D9962C493 -name EventListener.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/java/util -size 161 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::B04A7E29-0087-4A11-8A9F-0015EAB37C1F -name Hashtable.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/java/util -size 4060 -mtime 1226326670 -attributes 0000 -filemethod 0
+File ::59D39AA5-9FE7-425C-ACEF-34D4933A5773 -name Iterator.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/java/util -size 581 -mtime 1226326666 -attributes 0000 -filemethod 0
+File ::BE6C73BA-B872-4CB6-9937-3A37D1E83C10 -name NoSuchElementException.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/java/util -size 334 -mtime 1226326668 -attributes 0000 -filemethod 0
+File ::D33C8417-9B06-43A0-A411-BFF762962DAC -name package.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/java/util -size 23 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::F594EC56-8E54-48D8-8C6E-CC15502D599E -name Properties.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/java/util -size 16677 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::9A6F3A40-67AA-45CE-BC64-5D2D41DCEF46 -name Queue.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/java/util -size 2242 -mtime 1226326656 -attributes 0000 -filemethod 0
+File ::75C1007D-9D36-4B3C-BD28-311B11142AEF -name Random.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/java/util -size 2222 -mtime 1226326668 -attributes 0000 -filemethod 0
+File ::78414364-080F-4015-B06E-14925BFD0FB5 -name Stack.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/java/util -size 2315 -mtime 1226326670 -attributes 0000 -filemethod 0
+File ::B55CB4E1-E545-43B1-A8C9-7CB336C2E1BB -name StringTokenizer.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/java/util -size 2171 -mtime 1226326670 -attributes 0000 -filemethod 0
+File ::79476C67-AECA-45C9-9946-4B9D5395F9C2 -name Vector.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/java/util -size 7097 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::FEB8654F-61D5-40DD-B1F2-2F71B1C238CB -name javax -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/javax -mtime 1226326837 -attributes 0000 -filemethod 0
+File ::94977F1F-0439-48FF-B736-BC75EBD4CEC7 -name bluetooth -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/javax/bluetooth -size 4096 -mtime 1226326837 -attributes 0000 -filemethod 0
+File ::2343068C-CFCF-4511-9E46-CAE827277FE3 -name BluetoothStateException.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/javax/bluetooth -size 298 -mtime 1226326668 -attributes 0000 -filemethod 0
+File ::2484A998-ED31-4742-95F8-DECFE485DF54 -name DeviceClass.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/javax/bluetooth -size 2018 -mtime 1226326666 -attributes 0000 -filemethod 0
+File ::90ABC49E-6C5D-42A3-82D7-39923AE6D083 -name LocalDevice.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/javax/bluetooth -size 4641 -mtime 1226326670 -attributes 0000 -filemethod 0
+File ::774D3D39-3EA6-4B4B-9ABE-B602C4463E6D -name package.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/javax/bluetooth -size 40 -mtime 1226326666 -attributes 0000 -filemethod 0
+File ::9305C206-CB02-4B99-83B4-828DBF792E75 -name RemoteDevice.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/javax/bluetooth -size 3697 -mtime 1226326660 -attributes 0000 -filemethod 0
+File ::79A2DFE0-69B9-492E-99E7-918A05E6E21A -name microedition -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/javax/microedition -mtime 1226326839 -attributes 0000 -filemethod 0
+File ::44079CB2-A362-4695-9E26-0488164F5D87 -name io -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/javax/microedition/io -size 4096 -mtime 1226326838 -attributes 0000 -filemethod 0
+File ::2479CA4C-2C62-4C39-B26B-911DA52C3F25 -name Connection.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/javax/microedition/io -size 141 -mtime 1226326660 -attributes 0000 -filemethod 0
+File ::7D3C07DD-9B2B-47DD-8694-EA80EA55CACF -name InputConnection.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/javax/microedition/io -size 418 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::2662A26D-C7EA-417C-856B-44AE8AC1C6C7 -name OutputConnection.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/javax/microedition/io -size 421 -mtime 1226326662 -attributes 0000 -filemethod 0
+File ::EA5BB10D-18ED-44A1-BA05-ACBE18633894 -name package.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/javax/microedition/io -size 22 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::A7689FD0-B2D8-455F-AD03-A34A446135D8 -name StreamConnection.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/javax/microedition/io -size 607 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::31AD0D65-145A-4FED-8B25-60880C78648F -name lcdui -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/javax/microedition/lcdui -size 8192 -mtime 1226326839 -attributes 0000 -filemethod 0
+File ::C6177671-5079-4614-95AA-56929192BC4C -name Alert.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/javax/microedition/lcdui -size 5915 -mtime 1226326662 -attributes 0000 -filemethod 0
+File ::428EBE8E-E489-4724-8152-5B0B40B00B38 -name Choice.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/javax/microedition/lcdui -size 1245 -mtime 1226326670 -attributes 0000 -filemethod 0
+File ::29B22B72-F276-4F57-8B9D-96F2F7623FB0 -name ChoiceGroup.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/javax/microedition/lcdui -size 8623 -mtime 1226326662 -attributes 0000 -filemethod 0
+File ::CBA39613-41AC-4FDB-AF36-FC98E334FC54 -name Command.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/javax/microedition/lcdui -size 1126 -mtime 1226326660 -attributes 0000 -filemethod 0
+File ::155E8BB2-86FA-4C31-9F78-8CB4820F6DCE -name CommandListener.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/javax/microedition/lcdui -size 172 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::1F4006E3-0F5B-4617-91EA-7345F1F83B88 -name Display.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/javax/microedition/lcdui -size 8638 -mtime 1226326664 -attributes 0000 -filemethod 0
+File ::6B42444B-E4E9-4946-B7BF-8E107355ED9F -name Displayable.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/javax/microedition/lcdui -size 1766 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::0E71F5C3-137C-4575-BA4E-0E60CAA1A13E -name Font.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/javax/microedition/lcdui -size 274 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::4FC61560-0B86-463C-924B-9A9D13B85BDD -name Form.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/javax/microedition/lcdui -size 7504 -mtime 1226326664 -attributes 0000 -filemethod 0
+File ::B065681B-8703-4DCC-B692-896A92C16153 -name Gauge.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/javax/microedition/lcdui -size 2150 -mtime 1226326654 -attributes 0000 -filemethod 0
+File ::DE84E212-7C3B-4DA9-BCD1-509360E7AEF3 -name Graphics.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/javax/microedition/lcdui -size 17198 -mtime 1226326666 -attributes 0000 -filemethod 0
+File ::053C633F-B8EC-484A-ACA5-2C1BA5812A9A -name Image.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/javax/microedition/lcdui -size 451 -mtime 1226326668 -attributes 0000 -filemethod 0
+File ::61EB35A2-859F-4881-B758-8042D1AC5E69 -name Item.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/javax/microedition/lcdui -size 2056 -mtime 1226326666 -attributes 0000 -filemethod 0
+File ::CBCDD8DC-8863-496A-9FF0-BD56C9213928 -name ItemCommandListener.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/javax/microedition/lcdui -size 169 -mtime 1226326668 -attributes 0000 -filemethod 0
+File ::CB872C74-EA0E-4ABB-A444-52A09A2541EC -name ItemStateListener.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/javax/microedition/lcdui -size 163 -mtime 1226326666 -attributes 0000 -filemethod 0
+File ::BA126D98-6BFB-4E46-8800-2D5B6EA61EF3 -name List.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/javax/microedition/lcdui -size 7404 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::C8F984EF-6EF9-4202-8DBC-76A725D50774 -name package.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/javax/microedition/lcdui -size 45 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::8E2ABA4F-0A93-43A6-A871-3ACF7730BC93 -name Screen.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/javax/microedition/lcdui -size 376 -mtime 1226326660 -attributes 0000 -filemethod 0
+File ::B9B4119C-0414-41A8-8A5E-56A5A8F2A4EC -name Spacer.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/javax/microedition/lcdui -size 699 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::89788943-45EC-4351-9BD1-ED4FE4891B1B -name StringItem.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/javax/microedition/lcdui -size 1134 -mtime 1226326658 -attributes 0000 -filemethod 0
+File ::021986B4-FDC6-478A-931B-58A8D3B9B301 -name TextBox.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/javax/microedition/lcdui -size 4588 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::E8B01544-8654-4F91-A5B7-31C693043D31 -name TextField.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/javax/microedition/lcdui -size 2021 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::A0B682E4-B16B-4490-92A4-829E077D676C -name Ticker.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/javax/microedition/lcdui -size 257 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::018F8DF9-B1B7-4087-B4C9-176B6F265A99 -name location -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/javax/microedition/location -mtime 1226326839 -attributes 0000 -filemethod 0
+File ::945D4A77-08AB-4892-B808-86C9DB1431BA -name Coordinates.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/javax/microedition/location -size 7733 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::B3F30A38-B8CF-4E2D-BA2B-EA393E023FF6 -name package.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/javax/microedition/location -size 26 -mtime 1226326658 -attributes 0000 -filemethod 0
+File ::115A24FA-4CE0-4BAF-8E99-7E62D8C5EE3E -name lejos -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/lejos -size 4096 -mtime 1226326849 -attributes 0000 -filemethod 0
+File ::F2B159CC-D82E-4E39-B345-175EEA2641BE -name gps -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/lejos/gps -size 4096 -mtime 1226326840 -attributes 0000 -filemethod 0
+File ::D85140F8-21CC-48D0-91D1-81E7E63E7E69 -name Degrees.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/gps -size 4709 -mtime 1226326668 -attributes 0000 -filemethod 0
+File ::3D96ACB8-CB4A-423E-A60A-447A293E7657 -name GGASentence.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/gps -size 4673 -mtime 1226326668 -attributes 0000 -filemethod 0
+File ::407D93F9-A9D6-4482-9042-C16E56BF861A -name GPS.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/gps -size 14815 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::8DFCC617-9CEB-4304-A3A0-B45FC149818E -name GPSListener.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/gps -size 615 -mtime 1226326668 -attributes 0000 -filemethod 0
+File ::BA933562-2A57-4BB0-8180-2370073E302B -name GSASentence.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/gps -size 2726 -mtime 1226326666 -attributes 0000 -filemethod 0
+File ::1ADEB56E-43CE-46B6-B164-409009F82B63 -name GSVSentence.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/gps -size 4339 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::0E5E1670-4BC1-4E5C-B606-539364719F98 -name Latitude.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/gps -size 1002 -mtime 1226326656 -attributes 0000 -filemethod 0
+File ::D369A354-9732-4D1C-AE4B-E52237B88715 -name Longitude.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/gps -size 992 -mtime 1226326656 -attributes 0000 -filemethod 0
+File ::1569B41A-CF92-4429-8376-BF9C1C2B880C -name NMEASatellite.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/gps -size 1718 -mtime 1226326658 -attributes 0000 -filemethod 0
+File ::917B788B-007C-40C0-B3AF-113E783466A5 -name NMEASentence.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/gps -size 4893 -mtime 1226326656 -attributes 0000 -filemethod 0
+File ::4430E056-4B8E-4637-BCB4-B70F1DEA6B37 -name package.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/gps -size 25 -mtime 1226326668 -attributes 0000 -filemethod 0
+File ::DFD31E4B-BAD6-44DD-B7ED-69C4A3432B94 -name RMCSentence.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/gps -size 3958 -mtime 1226326666 -attributes 0000 -filemethod 0
+File ::7D96DACC-6628-4345-9D29-5BC4E5188E9C -name VTGSentence.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/gps -size 1994 -mtime 1226326670 -attributes 0000 -filemethod 0
+File ::6B1613B1-F325-448A-B05D-A9E331631BD2 -name keyboard -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/lejos/keyboard -size 4096 -mtime 1226326840 -attributes 0000 -filemethod 0
+File ::42B668B6-061C-45A4-916E-85D2F1B5ACF0 -name Keyboard.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/keyboard -size 6247 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::0C283A26-790F-470A-975C-0735F2F0E988 -name KeyEvent.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/keyboard -size 2465 -mtime 1226326662 -attributes 0000 -filemethod 0
+File ::B19445E2-496A-4AB6-A11A-C1E53B8C9C31 -name KeyListener.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/keyboard -size 924 -mtime 1226326666 -attributes 0000 -filemethod 0
+File ::6494B19C-E5BA-403F-BA39-B07C2C7374A9 -name package.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/keyboard -size 39 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::FC863D0C-004B-4BFE-9BB0-967BC24DB553 -name localization -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/lejos/localization -size 4096 -mtime 1226326841 -attributes 0000 -filemethod 0
+File ::EA29BC2A-CC4A-4B12-876F-D43F2157FC12 -name Line.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/localization -size 2380 -mtime 1226326670 -attributes 0000 -filemethod 0
+File ::42915524-5A10-4F8E-B159-52DBABCC1183 -name LineMap.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/localization -size 2215 -mtime 1226326654 -attributes 0000 -filemethod 0
+File ::80DF41DD-8CBB-4209-9DDE-5C34292B7782 -name Map.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/localization -size 475 -mtime 1226326662 -attributes 0000 -filemethod 0
+File ::CD8EE4AD-878D-47CA-B456-1F7934839235 -name Move.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/localization -size 944 -mtime 1226326658 -attributes 0000 -filemethod 0
+File ::878B1D6B-D771-499C-ADFF-D90EB660838C -name package.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/localization -size 34 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::ADE4BC9D-3ABC-450F-878C-89733315908B -name Particle.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/localization -size 3497 -mtime 1226326662 -attributes 0000 -filemethod 0
+File ::6EFEC7B8-7514-4E51-AF97-C4FB116F0D5A -name ParticleSet.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/localization -size 7122 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::27A22192-6421-426D-A1F9-92DD3444DE88 -name Point.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/localization -size 253 -mtime 1226326666 -attributes 0000 -filemethod 0
+File ::49D1CD93-8D7B-46CD-A09E-E8463A291041 -name Pose.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/localization -size 1002 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::A2350D83-AEDD-4E58-A942-0BA9F7C30768 -name RangeReadings.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/localization -size 1202 -mtime 1226326654 -attributes 0000 -filemethod 0
+File ::EF4C631A-51CF-4D52-8F91-38206431D7DC -name math -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/lejos/math -mtime 1226326841 -attributes 0000 -filemethod 0
+File ::29203B62-463B-49D8-AA52-ECDBBE55524D -name Matrix.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/math -size 21156 -mtime 1226326666 -attributes 0000 -filemethod 0
+File ::0B4515BE-8F2E-4BD8-AEFD-51CB2C7B564D -name package.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/math -size 42 -mtime 1226326658 -attributes 0000 -filemethod 0
+File ::E07ADF19-1AD8-4AA4-9934-9C9142C8E716 -name navigation -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/lejos/navigation -size 4096 -mtime 1226326841 -attributes 0000 -filemethod 0
+File ::BC2E2591-02B7-4C87-96C5-52F1BB10A15A -name CompassNavigator.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/navigation -size 6028 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::13311C6A-8D30-47B8-94B7-59F1118DAFCE -name CompassPilot.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/navigation -size 9493 -mtime 1226326662 -attributes 0000 -filemethod 0
+File ::A2933722-7054-457C-8EAF-FAEF071793CE -name Navigator.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/navigation -size 6514 -mtime 1226326660 -attributes 0000 -filemethod 0
+File ::08CD5451-2A75-47AC-BBA9-A342734F0446 -name package.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/navigation -size 32 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::4ADE4E11-FBD3-48A0-ABBF-351C6BC19DF4 -name Pilot.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/navigation -size 14012 -mtime 1226326668 -attributes 0000 -filemethod 0
+File ::D6037D42-B3F3-4D51-A983-6DA80420811A -name TachoNavigator.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/navigation -size 15722 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::90192250-ED26-4039-AC8C-3456698C02B2 -name nxt -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/lejos/nxt -size 12288 -mtime 1226326848 -attributes 0000 -filemethod 0
+File ::E237FCDB-AA00-4ABD-B4B7-B2C512B970E4 -name ADSensorPort.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt -size 282 -mtime 1226326654 -attributes 0000 -filemethod 0
+File ::16B13821-91EC-4A6B-BE66-B19D495D8925 -name BasicMotor.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt -size 2570 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::7605D275-DF3D-4F03-84C0-697E4A9AB622 -name BasicMotorPort.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt -size 372 -mtime 1226326658 -attributes 0000 -filemethod 0
+File ::9F6156F7-E388-45A8-BC7E-3859DCA9C9D9 -name BasicSensorPort.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt -size 399 -mtime 1226326670 -attributes 0000 -filemethod 0
+File ::FC466784-3753-4F4C-B1CC-8D73775CB2A1 -name Battery.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt -size 501 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::EB4F93CE-8185-4E1D-B38D-7AAEE35C1B86 -name Button.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt -size 5776 -mtime 1226326658 -attributes 0000 -filemethod 0
+File ::B7491397-8EF2-4664-B22E-84179C021EAF -name ButtonListener.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt -size 234 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::272D8298-1DE9-4F80-AFC3-B5D6975FE583 -name Flash.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt -size 670 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::5AB5B405-5E71-4685-AC09-FAF73F7F6811 -name I2CPort.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt -size 403 -mtime 1226326656 -attributes 0000 -filemethod 0
+File ::55E78666-3E15-4FE6-99C6-633BBFF7A773 -name I2CSensor.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt -size 3513 -mtime 1226326658 -attributes 0000 -filemethod 0
+File ::D56325F5-23A6-4D41-944A-0F0D6F3D269C -name LCD.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt -size 8556 -mtime 1226326660 -attributes 0000 -filemethod 0
+File ::E133F1CC-EE22-4C09-A953-A98940FA4B3D -name LCDOutputStream.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt -size 748 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::EFD0629F-D2E4-415B-AAE2-5A95170E0D4C -name LegacySensorPort.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt -size 305 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::863475BC-8389-4492-BF1A-2AF5E930CAA1 -name LightSensor.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt -size 3015 -mtime 1226326668 -attributes 0000 -filemethod 0
+File ::FA474FDF-33ED-4EAD-88FF-C6CCFD947285 -name ListenerCaller.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt -size 148 -mtime 1226326658 -attributes 0000 -filemethod 0
+File ::73FDD7AD-5D09-49E6-9CDB-DE85AFA60F30 -name ListenerThread.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt -size 2026 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::B9A26D27-FE4E-4925-A2BD-CB08963E9108 -name Motor.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt -size 19628 -mtime 1226326664 -attributes 0000 -filemethod 0
+File ::C68E1F6B-E9EF-4F3D-A9AF-6607474FD352 -name MotorPort.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt -size 1544 -mtime 1226326666 -attributes 0000 -filemethod 0
+File ::1707297A-BE87-4B43-8129-49FD329155E5 -name package.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt -size 49 -mtime 1226326668 -attributes 0000 -filemethod 0
+File ::0FFB8C73-0D87-4274-B540-D527C16BF13D -name Poll.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt -size 3177 -mtime 1226326666 -attributes 0000 -filemethod 0
+File ::F423AFF4-9F68-4DBD-B841-5490C742246A -name SensorConstants.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt -size 1090 -mtime 1226326664 -attributes 0000 -filemethod 0
+File ::BD9D0D71-6B65-42B2-8B09-5441506D1E81 -name SensorPort.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt -size 6819 -mtime 1226326662 -attributes 0000 -filemethod 0
+File ::A609B059-988D-476E-8CB0-CAF230CD3D76 -name SensorPortListener.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt -size 549 -mtime 1226326660 -attributes 0000 -filemethod 0
+File ::6F8E8E32-2862-400E-8B46-6C38A8FE56BA -name Settings.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt -size 1513 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::DD2FD394-9778-485B-9070-B58BB593E24C -name Sound.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt -size 11739 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::BB2F0A58-8C93-4436-8D30-01C4DCC616C7 -name SoundSensor.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt -size 1211 -mtime 1226326660 -attributes 0000 -filemethod 0
+File ::A443D52A-EA58-4DF1-8729-8E8795DE16CF -name SystemSettings.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt -size 3661 -mtime 1226326662 -attributes 0000 -filemethod 0
+File ::2D9695D7-2891-456B-9FD4-D6BFF351B38C -name Tachometer.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt -size 218 -mtime 1226326660 -attributes 0000 -filemethod 0
+File ::D5EEBEF4-88DE-488A-A655-F198A72A4E0C -name TachoMotorPort.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt -size 208 -mtime 1226326668 -attributes 0000 -filemethod 0
+File ::EA246791-6C0F-40FD-BCB1-8555EF383514 -name TextMenu.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt -size 6503 -mtime 1226326658 -attributes 0000 -filemethod 0
+File ::D218BCB3-39C0-464A-85A5-3835AA4B259B -name TouchSensor.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt -size 619 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::75B6B917-DCD9-42E0-879E-735F964AC8BC -name UltrasonicSensor.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt -size 10620 -mtime 1226326668 -attributes 0000 -filemethod 0
+File ::465FF639-9529-44AF-8B1D-486A2828FCCF -name addon -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/lejos/nxt/addon -size 8192 -mtime 1226326845 -attributes 0000 -filemethod 0
+File ::4978B602-317D-4098-95D9-52480ACAC8E0 -name ColorSensor.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt/addon -size 5389 -mtime 1226326654 -attributes 0000 -filemethod 0
+File ::195F57B0-83B0-40BE-BEA4-95A54E38F252 -name CompassSensor.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt/addon -size 3075 -mtime 1226326670 -attributes 0000 -filemethod 0
+File ::ABBB20E8-4BF1-4B43-96DC-4ADA770BB1BB -name EOPD.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt/addon -size 1533 -mtime 1226326660 -attributes 0000 -filemethod 0
+File ::67DDF76B-97D7-4EAE-AD23-163EE1DD760A -name GyroSensor.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt/addon -size 733 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::4044E55D-FD8D-4870-A46C-87A68111C94A -name IRLink.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt/addon -size 2711 -mtime 1226326654 -attributes 0000 -filemethod 0
+File ::760EFE72-5E74-4FAC-B734-EBCEF8E2ED68 -name IRSeeker.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt/addon -size 807 -mtime 1226326656 -attributes 0000 -filemethod 0
+File ::A0FE76B1-45C9-4402-91CB-EE635DAA1F89 -name LDCMotor.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt/addon -size 1861 -mtime 1226326670 -attributes 0000 -filemethod 0
+File ::2B252201-2B8D-4B05-B6DF-F478FDAFB9AE -name LMotor.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt/addon -size 5495 -mtime 1226326658 -attributes 0000 -filemethod 0
+File ::69C9597A-8890-440D-A1A0-E44F1F5F3E70 -name LSC.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt/addon -size 5728 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::C5089DFA-9781-4E3E-96FC-25EF077CB968 -name LServo.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt/addon -size 3168 -mtime 1226326658 -attributes 0000 -filemethod 0
+File ::3FD6C0B2-8BCE-4ABC-9FA1-D3825741E180 -name MSC.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt/addon -size 2361 -mtime 1226326666 -attributes 0000 -filemethod 0
+File ::D0E7D7D8-C32D-4A08-B8B3-26B49AA3DEF4 -name MServo.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt/addon -size 3368 -mtime 1226326664 -attributes 0000 -filemethod 0
+File ::61175805-8D53-4191-81C1-BAD538DE0469 -name NXTCam.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt/addon -size 1528 -mtime 1226326656 -attributes 0000 -filemethod 0
+File ::A7D54A70-98E7-4B1D-96C7-8A2FA72B69A1 -name NXTe.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt/addon -size 1981 -mtime 1226326658 -attributes 0000 -filemethod 0
+File ::011A147C-F026-4571-99C5-D414CCD449FF -name OpticalDistanceSensor.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt/addon -size 10058 -mtime 1226326670 -attributes 0000 -filemethod 0
+File ::DB6B7D3F-9AC9-4DC3-885C-153C4BF1527F -name package.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt/addon -size 118 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::6368C821-FBB5-4ECA-A3DE-D59C4563B43A -name PSPNXController.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt/addon -size 3675 -mtime 1226326670 -attributes 0000 -filemethod 0
+File ::3227816F-280A-440E-A08F-2A139F1A6A0D -name RCXLightSensor.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt/addon -size 1081 -mtime 1226326656 -attributes 0000 -filemethod 0
+File ::1B5C9E0E-C11E-4381-B68C-59E848101774 -name RCXLink.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt/addon -size 6348 -mtime 1226326668 -attributes 0000 -filemethod 0
+File ::AF2415C8-3FDD-4E4C-82CE-674EC6D1B7CF -name RCXMotor.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt/addon -size 266 -mtime 1226326662 -attributes 0000 -filemethod 0
+File ::AE203625-3153-4528-BE6C-D4983BDF8D64 -name RCXMotorMultiplexer.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt/addon -size 1093 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::4F1D1DA5-8B67-4BB4-9923-428AC35A2DF8 -name RCXPlexedMotorPort.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt/addon -size 746 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::F099AE5D-FB37-4FB5-9509-CBDB21256874 -name RCXRemoteMotorPort.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt/addon -size 1270 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::6A1E82E9-6535-4AC3-AB75-1EC49A55769F -name RCXSensorMultiplexer.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt/addon -size 1452 -mtime 1226326656 -attributes 0000 -filemethod 0
+File ::C2EA403F-D485-4778-B593-6D8ACD9D53A0 -name RCXTemperatureSensor.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt/addon -size 1210 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::E40EB710-4445-4CC1-9895-DEC98E1291CD -name TiltSensor.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt/addon -size 3442 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::BC524DCB-32E4-4FEB-8487-C9B6172069F7 -name comm -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/lejos/nxt/comm -size 4096 -mtime 1226326846 -attributes 0000 -filemethod 0
+File ::808A95DC-3B0A-4B7D-AD46-9FDEA65EB11E -name Bluetooth.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt/comm -size 45162 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::885D75ED-2924-4C02-BD08-601789F20C09 -name BTConnection.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt/comm -size 9017 -mtime 1226326664 -attributes 0000 -filemethod 0
+File ::FD43C800-D744-42B0-AC06-0D4FD0626A49 -name LCP.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt/comm -size 16235 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::49A68874-E221-4342-A7FA-5E9DD79258C6 -name LCPBTResponder.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt/comm -size 981 -mtime 1226326662 -attributes 0000 -filemethod 0
+File ::CE012E0B-0304-4476-A41D-6FF3D16A2410 -name NXTConnection.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt/comm -size 16314 -mtime 1226326668 -attributes 0000 -filemethod 0
+File ::FBCF96ED-DBB0-4D3F-9A15-462AFE98E34F -name NXTInputStream.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt/comm -size 1561 -mtime 1226326662 -attributes 0000 -filemethod 0
+File ::46BB2FF9-9A74-47D4-97A4-29C93F8283A8 -name NXTOutputStream.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt/comm -size 688 -mtime 1226326654 -attributes 0000 -filemethod 0
+File ::E76556BD-A06E-4E96-A9D3-571B6F8231BA -name package.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt/comm -size 38 -mtime 1226326660 -attributes 0000 -filemethod 0
+File ::63508F64-0DAF-4842-840D-EFE239189B41 -name RConsole.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt/comm -size 2559 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::3B3ADA7E-7018-4A7F-9F70-3881C6F36377 -name USB.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt/comm -size 6985 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::440B807D-6EC1-4F72-85A5-066B3059B637 -name USBConnection.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt/comm -size 3215 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::33EC8ADB-61F0-410E-AB60-BF80A716DEB6 -name debug -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/lejos/nxt/debug -size 4096 -mtime 1226326847 -attributes 0000 -filemethod 0
+File ::9F24F5FD-9F53-4D6D-A287-7FEE67114E90 -name DebugInterface.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt/debug -size 3666 -mtime 1226326660 -attributes 0000 -filemethod 0
+File ::F9CB1C81-714E-4AAB-ABC2-A76F98AB22D0 -name DebugMonitor.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt/debug -size 4821 -mtime 1226326656 -attributes 0000 -filemethod 0
+File ::32A4932E-E5C6-4BEC-B23B-28845093ACAD -name DebugObject.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt/debug -size 702 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::F85B684B-0520-46F4-8CC4-37E30A23D89D -name DebugStackFrame.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt/debug -size 1107 -mtime 1226326660 -attributes 0000 -filemethod 0
+File ::94A29224-2E01-4D2E-A4DA-73A96D00842F -name DebugThread.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt/debug -size 1014 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::B98246C3-D38A-461B-AE21-E808F439B8D9 -name DebugThreads.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt/debug -size 2436 -mtime 1226326656 -attributes 0000 -filemethod 0
+File ::F5013014-F459-4A54-B74D-B12211EB5ADD -name package.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt/debug -size 38 -mtime 1226326666 -attributes 0000 -filemethod 0
+File ::CECBA838-1275-4C35-B01A-22EDFF5FB5E6 -name remote -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/lejos/nxt/remote -size 4096 -mtime 1226326847 -attributes 0000 -filemethod 0
+File ::93DBC894-4D3F-47E5-B076-21F4F6D29F50 -name DeviceInfo.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt/remote -size 258 -mtime 1226326654 -attributes 0000 -filemethod 0
+File ::E982CA73-F8E7-4125-B5F9-C58E4A3AA3C3 -name FirmwareInfo.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt/remote -size 226 -mtime 1226326664 -attributes 0000 -filemethod 0
+File ::489D04F7-6E61-47FF-8412-2A05A1689829 -name InputValues.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt/remote -size 1020 -mtime 1226326662 -attributes 0000 -filemethod 0
+File ::7842C070-02B9-4633-8C37-21F542CB5389 -name NXTComm.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt/remote -size 1183 -mtime 1226326658 -attributes 0000 -filemethod 0
+File ::1812F4B3-2675-4207-98D2-75EAE5D74EEC -name NXTCommand.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt/remote -size 7668 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::697EB641-1EC3-4D99-9470-0EE116F49C1F -name NXTProtocol.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt/remote -size 4987 -mtime 1226326670 -attributes 0000 -filemethod 0
+File ::9EF07A5C-FDCC-416A-BA8D-0ECC353D3046 -name package.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt/remote -size 46 -mtime 1226326670 -attributes 0000 -filemethod 0
+File ::8EA44302-DCE6-4712-A5C8-8182ADE6E985 -name RemoteBattery.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt/remote -size 787 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::D7A9B008-7E7E-4287-BED8-40A931C935C9 -name RemoteMotorPort.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt/remote -size 1420 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::ED77E45E-70A8-44E6-8386-3DD41702418B -name RemoteNXT.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt/remote -size 2657 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::6CA05FB8-22A6-4D9F-9402-2B4FA679888E -name RemoteSensorPort.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt/remote -size 1863 -mtime 1226326658 -attributes 0000 -filemethod 0
+File ::C81EFACB-DE9A-45FA-83D5-68358CF3513A -name socket -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/lejos/nxt/socket -size 4096 -mtime 1226326848 -attributes 0000 -filemethod 0
+File ::10FDA335-0BA1-4782-817C-8E54BB9DD64D -name NXTServerSocket.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt/socket -size 1735 -mtime 1226326670 -attributes 0000 -filemethod 0
+File ::20A93A91-4080-43FC-82DF-0570507FA97D -name NXTSocket.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt/socket -size 3273 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::F771979E-B333-4FF4-9F5F-F0BF37FB74A6 -name NXTSocketOutputStream.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt/socket -size 1292 -mtime 1226326662 -attributes 0000 -filemethod 0
+File ::EB66294B-A2EE-4FAE-8FA1-66513FA1FC7D -name package.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/nxt/socket -size 52 -mtime 1226326668 -attributes 0000 -filemethod 0
+File ::E08F1B49-317D-4FDB-B88E-F970E62D19B1 -name rcxcomm -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/lejos/rcxcomm -size 4096 -mtime 1226326848 -attributes 0000 -filemethod 0
+File ::471E4686-6864-4FC4-ABD9-EA9D80643CC3 -name LLC.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/rcxcomm -size 2626 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::B021B6F8-152A-47FA-A7F9-36868BD3F860 -name LLCHandler.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/rcxcomm -size 2753 -mtime 1226326666 -attributes 0000 -filemethod 0
+File ::CD34702B-D416-4A89-A6BA-1C183BFA380A -name LLCReliableHandler.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/rcxcomm -size 2888 -mtime 1226326664 -attributes 0000 -filemethod 0
+File ::6FF3E4BB-6491-4C01-8D7A-53B43D02B004 -name Opcode.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/rcxcomm -size 7057 -mtime 1226326662 -attributes 0000 -filemethod 0
+File ::74D670CC-1BF2-434B-9C6D-91CBA3FED607 -name package.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/rcxcomm -size 51 -mtime 1226326664 -attributes 0000 -filemethod 0
+File ::172AEFE5-0315-427A-BD23-E74DBC8A3DE9 -name PacketHandler.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/rcxcomm -size 1952 -mtime 1226326658 -attributes 0000 -filemethod 0
+File ::1D06F472-6846-4C29-BCB0-47A8F1543DF6 -name RCXAbstractPort.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/rcxcomm -size 6116 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::A1061C3A-58B9-4ECA-AEE4-7B4054CC22C2 -name RCXPort.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/rcxcomm -size 887 -mtime 1226326662 -attributes 0000 -filemethod 0
+File ::885826EE-48B9-46BE-9270-675E2C145A7E -name Serial.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/rcxcomm -size 5963 -mtime 1226326664 -attributes 0000 -filemethod 0
+File ::F6FE8DE1-7A62-4306-865F-11501635B036 -name subsumption -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/lejos/subsumption -size 4096 -mtime 1226326849 -attributes 0000 -filemethod 0
+File ::357C1492-BC48-44CE-AB47-439181AE779D -name Activity.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/subsumption -size 6806 -mtime 1226326670 -attributes 0000 -filemethod 0
+File ::CDF90A46-D688-4D66-9FFA-5CCDCEBE7F75 -name ActivityBase.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/subsumption -size 515 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::F0522974-216B-4565-8B61-01EFDD31D95E -name Arbitrator.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/subsumption -size 3945 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::F1109EB2-35CF-46F0-874B-FC741297C178 -name Behavior.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/subsumption -size 2583 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::C6D42B71-47DA-411E-93C6-DDC68CCEBBF8 -name package.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/subsumption -size 315 -mtime 1226326668 -attributes 0000 -filemethod 0
+File ::22293826-D878-4035-8FF1-BF7002290661 -name StopException.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/subsumption -size 186 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::AEAAADDE-0425-44DA-944F-A613A6BFEE5B -name util -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/lejos/util -size 4096 -mtime 1226326849 -attributes 0000 -filemethod 0
+File ::5FE0AF64-A922-4A84-8658-B310A868B9DE -name Assertion.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/util -size 972 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::0BAF4291-E25B-446F-B39A-E6204551A2FA -name ButtonCounter.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/util -size 2766 -mtime 1226326666 -attributes 0000 -filemethod 0
+File ::F711CC4C-5041-43C3-869A-5612ECB6C9F2 -name Datalogger.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/util -size 3738 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::ED533723-9F5A-4E91-B4B3-86238573CFB9 -name DebugMessages.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/util -size 2594 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::415C8B35-CE2B-4556-A1D9-AFF4DE5C0416 -name package.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/util -size 34 -mtime 1226326658 -attributes 0000 -filemethod 0
+File ::14052835-E546-4DB7-83CD-646CB45BFACF -name Stopwatch.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/util -size 559 -mtime 1226326658 -attributes 0000 -filemethod 0
+File ::ED9143F0-7721-46EE-9E7F-E523E7F7984B -name Timer.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/util -size 1864 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::056D15F9-6AB3-4936-ACA4-11C05B99CB59 -name TimerListener.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lejos/util -size 281 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::756323AB-9179-41F0-8A00-07000AE5E859 -name lib -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/lib -mtime 1226326849 -attributes 0000 -filemethod 0
+File ::83D7BD44-97C4-48CA-891C-FED1B5A4307F -name classes.jar -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/lib -size 283785 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::59E99075-FC7B-420C-8216-74D21CA2798F -name nbproject -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/classes/nbproject -mtime 1226326849 -attributes 0000 -filemethod 0
+File ::CE9DD1AD-B4F1-4147-8692-CEC3085BA624 -name project.xml -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/classes/nbproject -size 2542 -mtime 1226326670 -attributes 0000 -filemethod 0
+File ::4FBC1273-3E48-4873-8C79-518D0CB2600B -name pccomms -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/pccomms -size 4096 -mtime 1226326862 -attributes 0000 -filemethod 0
+File ::A006DD67-0729-4D99-9669-AE74376F90FB -name .classpath -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms -size 283 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::B6F83A6F-C0D1-46F9-9758-BEA108EE189D -name .project -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms -size 366 -mtime 1226326666 -attributes 0000 -filemethod 0
+File ::C5508258-8018-405A-8385-B2A67EEDB7EA -name build.xml -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms -size 722 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::DA344511-11B8-4C97-B7F4-A2E75D9AEBB0 -name doc -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/pccomms/doc -size 4096 -mtime 1226326860 -attributes 0000 -filemethod 0
+File ::E370997E-F115-40F8-8418-111E7065148F -name allclasses-frame.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc -size 2931 -mtime 1226326694 -attributes 0000 -filemethod 0
+File ::C2103C0A-D38D-450A-AA60-A3363A083B3D -name allclasses-noframe.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc -size 2551 -mtime 1226326694 -attributes 0000 -filemethod 0
+File ::62D83109-7192-439F-886C-5516CFD81B4D -name constant-values.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc -size 38828 -mtime 1226326694 -attributes 0000 -filemethod 0
+File ::392492E6-FCA5-4C34-885D-916EFEBB624B -name deprecated-list.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc -size 4914 -mtime 1226326694 -attributes 0000 -filemethod 0
+File ::D0C0CE56-E237-492F-9717-44189F9C8BAF -name help-doc.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc -size 8801 -mtime 1226326694 -attributes 0000 -filemethod 0
+File ::7B6EDE81-53A3-4667-AEFF-D6A9CB50C8CD -name index-all.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc -size 72674 -mtime 1226326694 -attributes 0000 -filemethod 0
+File ::7822DD9C-CE8B-4579-AA19-05A732892485 -name index.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc -size 1321 -mtime 1226326694 -attributes 0000 -filemethod 0
+File ::5E2CDB64-1DC1-440D-ADA4-C75D78E9FD79 -name overview-tree.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc -size 8400 -mtime 1226326694 -attributes 0000 -filemethod 0
+File ::E0F42FEE-A914-440E-AF66-17F6EA0516E4 -name package-list -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc -size 15 -mtime 1226326694 -attributes 0000 -filemethod 0
+File ::03701673-6EBF-49B8-AF35-2E0278CE947D -name serialized-form.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc -size 6188 -mtime 1226326694 -attributes 0000 -filemethod 0
+File ::8CAA6320-7168-4669-B7F7-D72258A1FCBC -name stylesheet.css -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc -size 1420 -mtime 1226326694 -attributes 0000 -filemethod 0
+File ::6097C8A5-E815-4016-89D1-015E7C165F8E -name lejos -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/pccomms/doc/lejos -mtime 1226326857 -attributes 0000 -filemethod 0
+File ::C287AD83-F8A1-4351-A5A4-FBB5C3754419 -name pc -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/pccomms/doc/lejos/pc -mtime 1226326857 -attributes 0000 -filemethod 0
+File ::42ACF83F-97F1-4C9B-BB84-AB49ABBCECF2 -name comm -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/pccomms/doc/lejos/pc/comm -size 8192 -mtime 1226326859 -attributes 0000 -filemethod 0
+File ::E72546CE-0184-455A-BABD-1ECE32D011C1 -name BlueZException.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc/lejos/pc/comm -size 9775 -mtime 1226326692 -attributes 0000 -filemethod 0
+File ::CC7715B5-A6D1-4996-B97D-007699388C0B -name FileInfo.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc/lejos/pc/comm -size 12004 -mtime 1226326692 -attributes 0000 -filemethod 0
+File ::C22CFA1B-3D21-4296-ACD7-6D40700297BB -name InputValues.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc/lejos/pc/comm -size 14974 -mtime 1226326692 -attributes 0000 -filemethod 0
+File ::200A2C6A-9765-4B5D-9E51-9A546294C5C9 -name NXTComm.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc/lejos/pc/comm -size 19344 -mtime 1226326692 -attributes 0000 -filemethod 0
+File ::52C0BE72-29FC-43AE-98DA-DA40328D8C44 -name NXTCommand.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc/lejos/pc/comm -size 39961 -mtime 1226326694 -attributes 0000 -filemethod 0
+File ::8175DC38-0EE0-493D-92CC-1E6EE593BE8C -name NXTCommBluecove.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc/lejos/pc/comm -size 28317 -mtime 1226326694 -attributes 0000 -filemethod 0
+File ::6FA3F7C1-FEC2-4B19-9F85-74D663F3E122 -name NXTCommBluez.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc/lejos/pc/comm -size 24839 -mtime 1226326694 -attributes 0000 -filemethod 0
+File ::FA73B5C2-CD5B-47CF-B4C0-FBB6FD842BA6 -name NXTCommException.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc/lejos/pc/comm -size 12043 -mtime 1226326694 -attributes 0000 -filemethod 0
+File ::9D6F4D17-5ADD-4E5A-B4CB-01C1C0B69693 -name NXTCommFactory.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc/lejos/pc/comm -size 11890 -mtime 1226326694 -attributes 0000 -filemethod 0
+File ::71FEC154-3A24-467C-8F34-1CD84825AA57 -name NXTCommFantom.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc/lejos/pc/comm -size 15435 -mtime 1226326694 -attributes 0000 -filemethod 0
+File ::14110B73-FD8B-4585-8D84-998B7A703574 -name NXTCommInputStream.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc/lejos/pc/comm -size 12327 -mtime 1226326694 -attributes 0000 -filemethod 0
+File ::547D9246-E051-49D0-A9F7-199FE06F4F72 -name NXTCommLibnxt.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc/lejos/pc/comm -size 15019 -mtime 1226326694 -attributes 0000 -filemethod 0
+File ::52B83221-69B8-436C-A8BE-8E94B3F351BE -name NXTCommLogListener.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc/lejos/pc/comm -size 8337 -mtime 1226326694 -attributes 0000 -filemethod 0
+File ::F56CC8C0-7216-4D53-8BBC-A7F2836F8D05 -name NXTCommOutputStream.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc/lejos/pc/comm -size 11297 -mtime 1226326694 -attributes 0000 -filemethod 0
+File ::B49D9542-E77A-4573-84E2-9CEF1DA48934 -name NXTCommUSB.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc/lejos/pc/comm -size 22817 -mtime 1226326694 -attributes 0000 -filemethod 0
+File ::74BD6496-9569-4F02-BD6D-BA4A8C15E39B -name NXTInfo.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc/lejos/pc/comm -size 13000 -mtime 1226326694 -attributes 0000 -filemethod 0
+File ::BC54C536-E399-41FB-B3EE-9BE5DF3964C0 -name NXTProtocol.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc/lejos/pc/comm -size 59518 -mtime 1226326694 -attributes 0000 -filemethod 0
+File ::88364EF9-9151-4BFA-8A03-7D2988D90001 -name NXTSamba.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc/lejos/pc/comm -size 19814 -mtime 1226326694 -attributes 0000 -filemethod 0
+File ::2D277F46-64EB-4999-AF9F-5893D8111BE1 -name OutputState.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc/lejos/pc/comm -size 15570 -mtime 1226326694 -attributes 0000 -filemethod 0
+File ::72D806B7-9706-43A7-8568-A34E7C27D75D -name package-frame.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc/lejos/pc/comm -size 3190 -mtime 1226326694 -attributes 0000 -filemethod 0
+File ::6AE0C421-D819-418C-BE44-92F164AA7F1F -name package-summary.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc/lejos/pc/comm -size 10984 -mtime 1226326694 -attributes 0000 -filemethod 0
+File ::5608E777-39A7-46DC-81AE-D9346CF14A44 -name package-tree.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc/lejos/pc/comm -size 8692 -mtime 1226326694 -attributes 0000 -filemethod 0
+File ::347F3913-8D38-449A-BC54-0EF1908FE814 -name package-use.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc/lejos/pc/comm -size 8652 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::E2413A91-8064-40EE-91A6-D9F243DDAAF3 -name class-use -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/pccomms/doc/lejos/pc/comm/class-use -size 8192 -mtime 1226326860 -attributes 0000 -filemethod 0
+File ::85ED3210-C607-4EC4-8D62-63EC2BF4805D -name BlueZException.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc/lejos/pc/comm/class-use -size 5649 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::478C76A8-7651-4868-80D5-19DB90609E12 -name FileInfo.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc/lejos/pc/comm/class-use -size 7838 -mtime 1226326664 -attributes 0000 -filemethod 0
+File ::6FF819C3-60B0-4C8D-9D93-95E79988B7F8 -name InputValues.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc/lejos/pc/comm/class-use -size 6889 -mtime 1226326666 -attributes 0000 -filemethod 0
+File ::F9B04742-4954-4313-81FC-EAD124EAFC79 -name NXTComm.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc/lejos/pc/comm/class-use -size 10594 -mtime 1226326670 -attributes 0000 -filemethod 0
+File ::D60757B6-9E45-462E-B786-497B0D554F0E -name NXTCommand.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc/lejos/pc/comm/class-use -size 6860 -mtime 1226326654 -attributes 0000 -filemethod 0
+File ::732F8A57-8AAF-4307-AFF3-B72905034583 -name NXTCommBluecove.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc/lejos/pc/comm/class-use -size 5659 -mtime 1226326664 -attributes 0000 -filemethod 0
+File ::78A0F358-0D83-4626-9A5C-06FF339B2CCB -name NXTCommBluez.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc/lejos/pc/comm/class-use -size 5629 -mtime 1226326668 -attributes 0000 -filemethod 0
+File ::F24EA348-EF9E-42B5-ADFA-1F24301F6C03 -name NXTCommException.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc/lejos/pc/comm/class-use -size 13388 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::F15269DE-8A08-48CC-95F5-3E96AAEB3AD2 -name NXTCommFactory.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc/lejos/pc/comm/class-use -size 5649 -mtime 1226326660 -attributes 0000 -filemethod 0
+File ::8015D8FF-25B2-44AA-A896-7D2779696A43 -name NXTCommFantom.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc/lejos/pc/comm/class-use -size 5639 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::A503BD70-2E1D-4637-AE3B-7360AB82BF87 -name NXTCommInputStream.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc/lejos/pc/comm/class-use -size 5689 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::78326682-1194-40F4-B08D-E7AEEBBA3066 -name NXTCommLibnxt.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc/lejos/pc/comm/class-use -size 5639 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::9F315E82-5988-4E17-8518-26971814D19D -name NXTCommLogListener.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc/lejos/pc/comm/class-use -size 7635 -mtime 1226326660 -attributes 0000 -filemethod 0
+File ::982BE344-05C6-4CC7-A97F-C9E97BFC56AB -name NXTCommOutputStream.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc/lejos/pc/comm/class-use -size 5699 -mtime 1226326658 -attributes 0000 -filemethod 0
+File ::DE5F764E-433C-4270-9594-A07E1A29C7B6 -name NXTCommUSB.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc/lejos/pc/comm/class-use -size 7207 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::9605F6B5-82D3-4DD6-AE79-952DB91FD60E -name NXTInfo.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc/lejos/pc/comm/class-use -size 14941 -mtime 1226326666 -attributes 0000 -filemethod 0
+File ::4D63916C-E098-468E-AB77-D5A54B44C74B -name NXTProtocol.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc/lejos/pc/comm/class-use -size 6845 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::B81116A3-043D-4C0F-8777-3D5FFDDE78A8 -name NXTSamba.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc/lejos/pc/comm/class-use -size 5589 -mtime 1226326654 -attributes 0000 -filemethod 0
+File ::BAD299A8-F4A5-46BE-89A9-32321012465E -name OutputState.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc/lejos/pc/comm/class-use -size 6929 -mtime 1226326670 -attributes 0000 -filemethod 0
+File ::4F165EBA-8C18-4B1F-AE3F-1FEF45DBDBC5 -name resources -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/pccomms/doc/resources -mtime 1226326860 -attributes 0000 -filemethod 0
+File ::C9CE0A6F-997E-4B57-8482-E58D99F2DBE2 -name inherit.gif -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc/resources -size 57 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::F6383819-0C5D-4E9D-897C-8B102641291B -name index-files -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/pccomms/doc/index-files -size 8192 -mtime 1226326857 -attributes 0000 -filemethod 0
+File ::AE441BC5-394A-4091-9ACB-55CF5419E485 -name index-1.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc/index-files -size 8446 -mtime 1226326658 -attributes 0000 -filemethod 0
+File ::0F0693BC-5605-4D09-9482-7E9EFF205CD1 -name index-2.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc/index-files -size 9136 -mtime 1226326662 -attributes 0000 -filemethod 0
+File ::149AF93E-C1F6-4F60-B672-F8C367EF09BB -name index-3.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc/index-files -size 9585 -mtime 1226326664 -attributes 0000 -filemethod 0
+File ::73A5323B-7928-484D-9E59-4AA760FD8105 -name index-4.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc/index-files -size 8244 -mtime 1226326666 -attributes 0000 -filemethod 0
+File ::36708353-E1F7-4274-9765-2B4D081A097E -name index-5.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc/index-files -size 9059 -mtime 1226326668 -attributes 0000 -filemethod 0
+File ::451F80A0-C8F5-4D5F-9B27-B9BB3B985497 -name index-6.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc/index-files -size 11934 -mtime 1226326670 -attributes 0000 -filemethod 0
+File ::6DDF4124-C90F-4353-807E-ACA11AB84054 -name index-7.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc/index-files -size 6707 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::5BDF63EF-7339-4731-98E5-94B6A159B004 -name index-8.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc/index-files -size 7708 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::ACF5FCC9-8FE2-4FD8-AB4B-857F6CEBEE24 -name index-9.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc/index-files -size 9320 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::715EEFE1-A146-4F34-A618-DE0666507634 -name index-10.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc/index-files -size 6699 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::AC660058-BFF8-4CA7-A4D2-164FA400ACE2 -name index-11.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc/index-files -size 9019 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::0A2DA690-3A19-4244-9134-18A0571F2E82 -name index-12.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc/index-files -size 9040 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::446376D1-F0CB-4CDE-84A3-1E5CF4359FE6 -name index-13.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc/index-files -size 16874 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::16CD451E-35BB-402D-84C2-AAAB6972479D -name index-14.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc/index-files -size 11895 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::C533CB71-70F3-448E-853F-807B2F8E1FBE -name index-15.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc/index-files -size 9085 -mtime 1226326656 -attributes 0000 -filemethod 0
+File ::ED76F047-D690-46C9-8AAC-05FD85151AB8 -name index-16.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc/index-files -size 12907 -mtime 1226326658 -attributes 0000 -filemethod 0
+File ::2BB1ACFD-A0E3-4179-B983-65DF66E90A29 -name index-17.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc/index-files -size 15471 -mtime 1226326662 -attributes 0000 -filemethod 0
+File ::A4778773-10B2-492A-A02B-B872CD016E3A -name index-18.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc/index-files -size 7685 -mtime 1226326664 -attributes 0000 -filemethod 0
+File ::C9FDDB65-5F86-4EC8-9212-50861457479B -name index-19.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc/index-files -size 6951 -mtime 1226326666 -attributes 0000 -filemethod 0
+File ::91C3B8DD-57D5-44DE-91B1-F7C00BE85A07 -name index-20.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc/index-files -size 6748 -mtime 1226326668 -attributes 0000 -filemethod 0
+File ::A01AD189-FD91-494F-A876-DAA91320DCB9 -name index-21.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/doc/index-files -size 9175 -mtime 1226326670 -attributes 0000 -filemethod 0
+File ::ED644D40-3065-404D-9CB9-91A7748387D9 -name lejos -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/pccomms/lejos -mtime 1226326860 -attributes 0000 -filemethod 0
+File ::5F603CAF-D4EE-403B-AF83-9E5324FB1ADB -name pc -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/pccomms/lejos/pc -mtime 1226326860 -attributes 0000 -filemethod 0
+File ::6B26FDB4-9F03-4204-9F92-CD2A0EF76376 -name comm -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/pccomms/lejos/pc/comm -size 8192 -mtime 1226326861 -attributes 0000 -filemethod 0
+File ::DD7ADFAF-652A-4638-93C3-80A366A5B651 -name BlueZException.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/lejos/pc/comm -size 296 -mtime 1226326660 -attributes 0000 -filemethod 0
+File ::362A709E-AB66-4E11-A7ED-0364DDBA16A1 -name FileInfo.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/lejos/pc/comm -size 580 -mtime 1226326662 -attributes 0000 -filemethod 0
+File ::7BF79F0A-5931-4C14-B076-D2A1FFB5C4B2 -name FlaswWrite.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/lejos/pc/comm -size 1832 -mtime 1226326662 -attributes 0000 -filemethod 0
+File ::E4C07BFD-9518-4313-B940-D1D897608FD8 -name InputValues.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/lejos/pc/comm -size 1368 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::C45DD3DB-1C2F-4E3E-AA40-D64BE3A8B460 -name NXTComm.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/lejos/pc/comm -size 2667 -mtime 1226326670 -attributes 0000 -filemethod 0
+File ::257C1B08-5D6F-4F99-8513-6F7AE99E6324 -name NXTCommand.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/lejos/pc/comm -size 17256 -mtime 1226326666 -attributes 0000 -filemethod 0
+File ::C7141E8B-694D-4C5D-90B1-092C56702D07 -name NXTCommBluecove.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/lejos/pc/comm -size 6789 -mtime 1226326664 -attributes 0000 -filemethod 0
+File ::A9525689-A550-4216-A2F7-C0D49DA23ABC -name NXTCommBluez.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/lejos/pc/comm -size 6686 -mtime 1226326658 -attributes 0000 -filemethod 0
+File ::7B92968C-214D-49ED-BE94-A9199C42F3FA -name NXTCommException.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/lejos/pc/comm -size 650 -mtime 1226326664 -attributes 0000 -filemethod 0
+File ::3E91F08D-01A6-4CCF-8C74-67400F89D300 -name NXTCommFactory.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/lejos/pc/comm -size 2420 -mtime 1226326668 -attributes 0000 -filemethod 0
+File ::40B9E5C1-4CF7-41FD-A2EC-E986FBCE0638 -name NXTCommFantom.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/lejos/pc/comm -size 2571 -mtime 1226326656 -attributes 0000 -filemethod 0
+File ::24658B77-B834-4208-9EB0-E2CA689DD83D -name NXTCommInputStream.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/lejos/pc/comm -size 1327 -mtime 1226326672 -attributes 0000 -filemethod 0
+File ::327D061A-5F86-4D39-B54B-53EA6E7A5EB8 -name NXTCommLibnxt.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/lejos/pc/comm -size 1470 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::8D443B86-4303-4050-BEE3-A5A2E033612D -name NXTCommLogListener.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/lejos/pc/comm -size 239 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::D4493992-38FD-4C37-817B-95E59AA2E9F9 -name NXTCommOutputStream.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/lejos/pc/comm -size 538 -mtime 1226326662 -attributes 0000 -filemethod 0
+File ::2DEED823-2BEC-4029-8BC7-4CA38DDC1B49 -name NXTCommUSB.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/lejos/pc/comm -size 14949 -mtime 1226326658 -attributes 0000 -filemethod 0
+File ::64F2BB9F-3551-4F3F-9ACE-D67A3BCCD95D -name NXTInfo.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/lejos/pc/comm -size 1079 -mtime 1226326666 -attributes 0000 -filemethod 0
+File ::F008713A-D8FA-4696-B1AA-965367254442 -name NXTProtocol.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/lejos/pc/comm -size 5112 -mtime 1226326664 -attributes 0000 -filemethod 0
+File ::A00B0116-AD1D-4BC5-AFE1-11B9E32EBC66 -name NXTSamba.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/lejos/pc/comm -size 9335 -mtime 1226326674 -attributes 0000 -filemethod 0
+File ::FD489957-C428-4415-ADB0-BF351D06EB48 -name OutputState.java -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/lejos/pc/comm -size 1352 -mtime 1226326658 -attributes 0000 -filemethod 0
+File ::CD84170D-F1B9-413E-9A4D-FD3163A175BD -name package.html -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/lejos/pc/comm -size 50 -mtime 1226326656 -attributes 0000 -filemethod 0
+File ::47D32977-7C63-4B9D-A56A-BD05471E17BF -name lib -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/pccomms/lib -mtime 1226326861 -attributes 0000 -filemethod 0
+File ::44E28924-D879-4BE6-84EA-312513D16EF1 -name pccomm.jar -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/lib -size 31459 -mtime 1226326658 -attributes 0000 -filemethod 0
+File ::AD86656A-9167-45C1-9638-9534C3B007B4 -name nbproject -parent AD765739-B160-40DD-B1D3-2E618C29A519 -type dir -directory <%ProjectsDir%>/pccomms/nbproject -mtime 1226326862 -attributes 0000 -filemethod 0
+File ::48CE7194-DA93-4990-B05B-70ED3C71FBC8 -name project.xml -parent AD765739-B160-40DD-B1D3-2E618C29A519 -directory <%ProjectsDir%>/pccomms/nbproject -size 2729 -mtime 1226326662 -attributes 0000 -filemethod 0
 
 }
 } gui.tcl {proc ::InitGui {} {
@@ -3932,7 +4569,7 @@ tile::setTheme jammer
 }
 
 bind TButton <Return> "%W invoke; break"
-array set ::images {BC0409EB-AB66-4D71-895E-E9F8377574D8,Icon <%Icon%> E3CE5D6E-1F59-45F5-AFFB-D154A771D21B,Image <%Image%> FEF5CE97-BF58-472B-9CEC-3AADF9AC1A54,Image <%Image%> 36E6FB50-375B-4B44-A060-2120BC76845A,Icon <%Icon%> C44ED22A-F9ED-46FE-B276-C45D197EBD67,Icon <%Icon%> AE0C668C-FB50-4AA0-924A-8A4EF992E7BD,Icon <%Icon%> 761101CD-B1D6-480A-9B3C-EAC7879A5576,Icon <%Icon%> 68C6794D-56E8-4272-B2B2-62B1B81544C8,Icon <%Icon%> 6B8FE306-976D-49F6-A84E-5CF7A80643EB,Image <%Image%> A06DD6A5-A619-4713-8EA7-C1010EB4800F,Icon <%Icon%> 7DF6F9D7-CF7E-4A69-B0AB-440813123C44,Image <%Image%> FCF679A0-2B02-495D-BA7A-B4C99FEE93B8,Icon <%Icon%>}
+array set ::images {601FD68B-A90A-4DF8-B04D-E8FBC93E2D22,Icon <%Icon%> BC0409EB-AB66-4D71-895E-E9F8377574D8,Icon <%Icon%> E3CE5D6E-1F59-45F5-AFFB-D154A771D21B,Image <%Image%> FEF5CE97-BF58-472B-9CEC-3AADF9AC1A54,Image <%Image%> C44ED22A-F9ED-46FE-B276-C45D197EBD67,Icon <%Icon%> 36E6FB50-375B-4B44-A060-2120BC76845A,Icon <%Icon%> AE0C668C-FB50-4AA0-924A-8A4EF992E7BD,Icon <%Icon%> 761101CD-B1D6-480A-9B3C-EAC7879A5576,Icon <%Icon%> 68C6794D-56E8-4272-B2B2-62B1B81544C8,Icon <%Icon%> 6B8FE306-976D-49F6-A84E-5CF7A80643EB,Image <%Image%> A06DD6A5-A619-4713-8EA7-C1010EB4800F,Icon <%Icon%> 7DF6F9D7-CF7E-4A69-B0AB-440813123C44,Image <%Image%> FCF679A0-2B02-495D-BA7A-B4C99FEE93B8,Icon <%Icon%>}
 set "::images(Modern/Small/SetupModernSmall01.gif)" [image create photo -data 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]
 set "::images(Modern/SetupModern01.gif)" [image create photo -data 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]
 
@@ -15382,6 +16019,7 @@ FileGroup ::FileGroups
 Component ::Components
 SetupType ::SetupTypes
 FileGroup ::20C58F69-C30F-497D-A4BA-E1B395EC15A7 -setup Install -active Yes -platforms {AIX-ppc FreeBSD-4-x86 FreeBSD-x86 HPUX-hppa Linux-x86 MacOS-X Solaris-sparc Windows TarArchive ZipArchive} -name {Program Files} -parent FileGroups
+FileGroup ::AD765739-B160-40DD-B1D3-2E618C29A519 -setup Install -active Yes -platforms {AIX-ppc FreeBSD-4-x86 FreeBSD-x86 HPUX-hppa Linux-x86 Solaris-sparc Windows TarArchive ZipArchive} -name Projects -parent FileGroups
 Component ::15DAE539-105B-4492-B815-135A1843117F -setup Install -active Yes -platforms {AIX-ppc FreeBSD-4-x86 FreeBSD-x86 HPUX-hppa Linux-x86 MacOS-X Solaris-sparc Windows} -name {Default Component} -parent Components
 SetupType ::6C6EB7CE-AB45-4145-9D38-7D57BE4807F2 -setup Install -active Yes -platforms {AIX-ppc FreeBSD-4-x86 FreeBSD-x86 HPUX-hppa Linux-x86 MacOS-X Solaris-sparc Windows} -name Typical -parent SetupTypes
 SetupType ::7873207E-5AA3-4491-9544-BD3EC5F48D78 -setup Install -active Yes -platforms {AIX-ppc FreeBSD-4-x86 FreeBSD-x86 HPUX-hppa Linux-x86 MacOS-X Solaris-sparc Windows} -name Custom -parent SetupTypes
@@ -21647,7 +22285,7 @@ Windows,Active
 Yes
 
 Windows,Executable
-<%AppName%>-Setup<%Ext%>
+{<%AppName%> <%Version%>-Setup<%Ext%>}
 
 Windows,IncludeTWAPI
 No
@@ -24360,9 +24998,6 @@ InstallComponent 81F49E9C-C47F-4165-B259-ED915E461415 -setup Install -type actio
 InstallComponent A9CD20EB-9BAC-4E7D-9327-7724C2A7F535 -setup Install -type action -title {Add Environment Variable} -component AddEnvironmentVariable -active Yes -parent 81F49E9C-C47F-4165-B259-ED915E461415
 InstallComponent 4B5ECD32-5DF6-420F-82CF-CB83E5F49A8D -setup Install -type action -title {Add Directory To Path} -component AddDirectoryToPath -active Yes -parent 81F49E9C-C47F-4165-B259-ED915E461415
 InstallComponent C540F45D-8580-4AD9-94F7-9A75F09A6593 -setup Install -type action -title {Install Selected Files} -component InstallSelectedFiles -active Yes -parent 81F49E9C-C47F-4165-B259-ED915E461415
-InstallComponent 44AD6793-47A7-4193-AE57-BDDB69799092 -setup Install -type action -conditions {F8696E5A-43F4-4369-B835-DB74A17A46CE C2089508-7FED-4F5A-8B2B-D77CC570FF4F} -title {Execute External Program} -component ExecuteExternalProgram -command insert -active Yes -parent 81F49E9C-C47F-4165-B259-ED915E461415
-Condition F8696E5A-43F4-4369-B835-DB74A17A46CE -active Yes -parent 44AD6793-47A7-4193-AE57-BDDB69799092 -title {Execute Script Condition} -component ExecuteScriptCondition -TreeObject::id F8696E5A-43F4-4369-B835-DB74A17A46CE
-Condition C2089508-7FED-4F5A-8B2B-D77CC570FF4F -active Yes -parent 44AD6793-47A7-4193-AE57-BDDB69799092 -title {File Exists Condition} -component FileExistsCondition -TreeObject::id C2089508-7FED-4F5A-8B2B-D77CC570FF4F
 InstallComponent 0CF8A941-C6B7-4DF9-8DEB-BE87A57CA285 -setup Install -type action -conditions A7C66696-4708-4099-B907-EAE7B0C4C3AD -title {Install Uninstaller} -component InstallUninstaller -command insert -active Yes -parent 81F49E9C-C47F-4165-B259-ED915E461415
 Condition A7C66696-4708-4099-B907-EAE7B0C4C3AD -active Yes -parent 0CF8A941-C6B7-4DF9-8DEB-BE87A57CA285 -title {String Is Condition} -component StringIsCondition -TreeObject::id A7C66696-4708-4099-B907-EAE7B0C4C3AD
 InstallComponent 0B440438-4277-4EF2-AEC5-724E6AE64293 -setup Install -type action -conditions B8183471-3C13-4A0C-A155-C3FA70B2CB42 -title {Windows Uninstall Registry} -component AddWindowsUninstallEntry -command insert -active Yes -parent 81F49E9C-C47F-4165-B259-ED915E461415
@@ -24370,6 +25005,7 @@ Condition B8183471-3C13-4A0C-A155-C3FA70B2CB42 -active Yes -parent 0B440438-4277
 InstallComponent 6CF27022-0C55-43FA-95CF-821D60A3FDBE -setup Install -type action -conditions 80858315-2FDE-4485-AE60-DCB2A06271A2 -title {Uninstall Shortcut} -component InstallProgramFolderShortcut -command insert -active Yes -parent 81F49E9C-C47F-4165-B259-ED915E461415
 Condition 80858315-2FDE-4485-AE60-DCB2A06271A2 -active Yes -parent 6CF27022-0C55-43FA-95CF-821D60A3FDBE -title {String Is Condition} -component StringIsCondition -TreeObject::id 80858315-2FDE-4485-AE60-DCB2A06271A2
 InstallComponent FFD36C32-E334-4451-8B85-8EF64FC14A78 -setup Install -type actiongroup -title {Finish Actions} -alias {Finish Actions} -active Yes -parent ActionGroups
+InstallComponent 0E644024-FB21-44E6-92F4-EAB4D4B4284C -setup Install -type action -title {Execute External Program} -component ExecuteExternalProgram -active Yes -parent FFD36C32-E334-4451-8B85-8EF64FC14A78
 InstallComponent 7F977B76-1808-405B-9FEA-F30DAC0A8CB7 -setup Install -type actiongroup -title {Cancel Actions} -alias {Cancel Actions} -active Yes -parent ActionGroups
 
 
@@ -25443,6 +26079,9 @@ InstallComponent F6F11D84-22F8-49A3-918D-03A8EF17D87B -setup Install -type actio
 InstallComponent FCF679A0-2B02-495D-BA7A-B4C99FEE93B8 -setup Install -type pane -conditions {81B7D747-99EA-4757-B9E3-CDC7CAC26EB0 DF91F224-3899-424E-879F-8E5F60C06E24} -title {Select Destination} -component SelectDestination -command insert -active Yes -parent Standard
 Condition 81B7D747-99EA-4757-B9E3-CDC7CAC26EB0 -active Yes -parent FCF679A0-2B02-495D-BA7A-B4C99FEE93B8 -title {Script Condition} -component ScriptCondition -TreeObject::id 81B7D747-99EA-4757-B9E3-CDC7CAC26EB0
 Condition DF91F224-3899-424E-879F-8E5F60C06E24 -active Yes -parent FCF679A0-2B02-495D-BA7A-B4C99FEE93B8 -title {File Permission Condition} -component FilePermissionCondition -TreeObject::id DF91F224-3899-424E-879F-8E5F60C06E24
+InstallComponent 601FD68B-A90A-4DF8-B04D-E8FBC93E2D22 -setup Install -type pane -conditions {E43A2C3B-61FA-4CDA-95CF-7473810F72F1 DD53434F-BB71-4187-A376-262F7D9240D1} -title {Select Destination} -component SelectDestination -command insert -active Yes -parent Standard
+Condition E43A2C3B-61FA-4CDA-95CF-7473810F72F1 -active Yes -parent 601FD68B-A90A-4DF8-B04D-E8FBC93E2D22 -title {Script Condition} -component ScriptCondition -TreeObject::id 81B7D747-99EA-4757-B9E3-CDC7CAC26EB0
+Condition DD53434F-BB71-4187-A376-262F7D9240D1 -active Yes -parent 601FD68B-A90A-4DF8-B04D-E8FBC93E2D22 -title {File Permission Condition} -component FilePermissionCondition -TreeObject::id DF91F224-3899-424E-879F-8E5F60C06E24
 InstallComponent AE0C668C-FB50-4AA0-924A-8A4EF992E7BD -setup Install -type pane -conditions 7CDC350B-9C0A-43BE-9C43-EFE450DE6185 -title {Custom Text Pane 1} -component CustomTextPane1 -command insert -active Yes -parent Standard
 Condition 7CDC350B-9C0A-43BE-9C43-EFE450DE6185 -active Yes -parent AE0C668C-FB50-4AA0-924A-8A4EF992E7BD -title {Execute Script Condition} -component ExecuteScriptCondition -TreeObject::id 7CDC350B-9C0A-43BE-9C43-EFE450DE6185
 InstallComponent C567D000-B29A-4EEF-9003-51BDE7CB5E95 -setup Install -type action -title {Execute External Program} -component ExecuteExternalProgram -active Yes -parent AE0C668C-FB50-4AA0-924A-8A4EF992E7BD

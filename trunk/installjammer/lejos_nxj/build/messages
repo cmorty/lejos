@@ -27,6 +27,40 @@ You browser will be started and you will be sent to the Sun Java web site to ins
 5A9AB28A-139C-406A-8F53-94EDA701192B,Title
 <%UninstallApplicationText%>
 
+601FD68B-A90A-4DF8-B04D-E8FBC93E2D22,BackButton
+{< <%Back%>}
+
+601FD68B-A90A-4DF8-B04D-E8FBC93E2D22,BrowseButton
+<%Browse%>
+
+601FD68B-A90A-4DF8-B04D-E8FBC93E2D22,BrowseText
+{To continue, click Next.  If you would like to select a different  folder, click Browse.}
+
+601FD68B-A90A-4DF8-B04D-E8FBC93E2D22,CancelButton
+<%Cancel%>
+
+601FD68B-A90A-4DF8-B04D-E8FBC93E2D22,Caption
+{Setup will install <%AppName%> projects in the following folder.
+
+To install  to this folder, click Next.  To install to a different folder, click  Browse and select another folder.
+
+The default folder is <%ProjectsDir%>}
+
+601FD68B-A90A-4DF8-B04D-E8FBC93E2D22,DestinationLabel
+{Projects Folder}
+
+601FD68B-A90A-4DF8-B04D-E8FBC93E2D22,Message
+{}
+
+601FD68B-A90A-4DF8-B04D-E8FBC93E2D22,NextButton
+{<%Next%> >}
+
+601FD68B-A90A-4DF8-B04D-E8FBC93E2D22,Subtitle
+{Where should <%AppName%> projects be installed?}
+
+601FD68B-A90A-4DF8-B04D-E8FBC93E2D22,Title
+{Choose Projects Location}
+
 6C6EB7CE-AB45-4145-9D38-7D57BE4807F2,Description
 <%TypicalInstallDescription%>
 
@@ -35,6 +69,15 @@ You browser will be started and you will be sent to the Sun Java web site to ins
 
 7BDE520D-4F83-4E61-946D-0D2A630FC6B1,Message
 <%InstallingApplicationText%>
+
+7DF6F9D7-CF7E-4A69-B0AB-440813123C44,Message
+{The InstallJammer Wizard has successfully installed <%AppName%>.   Click Finish to exit the wizard.
+
+When you click Finish, the firmware flash program titled "Install NXJ Firmware in NXT" will run. Follow the instructions on the screen and it will update the firmware on your NXT to <%AppName%> <%Version%>.
+
+When you exit the firmware flash program, this setup program will finish.
+
+If the firmware flash program does not run, go to the bin folder in your installation directory and run nxjflashg.bat.}
 
 890E2588-9587-41B2-AB58-F912364F99BE,Message
 <%UninstallCompleteText%>
@@ -45,6 +88,9 @@ A06DD6A5-A619-4713-8EA7-C1010EB4800F,Message
 A06DD6A5-A619-4713-8EA7-C1010EB4800F,Text
 {Install Directory:
             <%InstallDir%>
+
+Projects Directory:
+            <%ProjectsDir%>
 
     Setup Type:
             <%InstallType%>}
@@ -234,7 +280,7 @@ E2CBC5B8-8152-442F-8D30-33F028FA0F28,Message
 <%InstallationCompleteText%>
 
 E3CE5D6E-1F59-45F5-AFFB-D154A771D21B,Message
-{This will install leJOS NXJ version <%Version%> on your computer. 
+{This will install <%AppName%> version <%Version%> on your computer. 
 
 It is recommended that you close all other applications before  continuing.
 
