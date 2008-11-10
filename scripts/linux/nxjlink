@@ -1,9 +1,9 @@
 #!/bin/bash
 
 #
-# lnxjlink: Java tool to link java programs for LeJOS NXJ
+# nxjlink: Java tool to link java programs for leJOS NXJ
 #
-# 12/12/02  created L. Griffiths
+# 12/12/02  created Lawrie Griffiths
 
 if [ -z "$NXJ_HOME" ]; then 
   NXJ_HOME="$(dirname $(dirname $0))"

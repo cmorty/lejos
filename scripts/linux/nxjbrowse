@@ -3,7 +3,7 @@
 #
 # nxjbrowse: Browses files on the NXT
 #
-# June 7, 2007  created L. Griffiths
+# June 7, 2007  created Lawrie Griffiths
 
 if [ -z "$NXJ_HOME" ]; then 
   NXJ_HOME="$(dirname $(dirname $0))"

@@ -3,7 +3,7 @@
 #
 # nxjsocketproxy: Socket Proxy for leJOS NXJ
 #
-# Jan 13, 2008  created L. Griffiths
+# Lawrie Griffiths
 
 if [ -z "$NXJ_HOME" ]; then 
   NXJ_HOME="$(dirname $(dirname $0))"

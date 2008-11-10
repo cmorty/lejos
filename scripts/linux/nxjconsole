@@ -1,9 +1,9 @@
 #!/bin/bash
 
 #
-# nxjdebug: Remote tracing over USB
+# nxjconsole: Remote tracing over USB
 #
-# Jan 13, 2008  created L. Griffiths
+# Lawrie Griffiths
 
 if [ -z "$NXJ_HOME" ]; then 
   NXJ_HOME="$(dirname $(dirname $0))"
