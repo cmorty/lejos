@@ -64,8 +64,7 @@ public class NXTCommFactory {
 		}
 		        
 		// Look for a Bluetooth one
-		String defaultDriver = (windows || mac ? "lejos.pc.comm.NXTCommBluecove"
-				: "lejos.pc.comm.NXTCommBluez");
+		String defaultDriver = "lejos.pc.comm.NXTCommBluecove";
 
 		if ((protocol & NXTCommFactory.BLUETOOTH) != 0) {
 			String nxtCommName = props.getProperty("NXTCommBluetooth",
