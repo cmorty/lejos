@@ -103,7 +103,6 @@
       			<exclude name="jtools/.externalToolBuilders/**"/>
       			<exclude name="jtools/build/**"/>
       			<exclude name="jtools/nbproject/private/**"/>
-				<exclude name="jtools/3rdparty/**"/>
 				<include name="pctools/**"/>
 				<exclude name="pctools/**/BatteryLevel.java"/>
       			<exclude name="pctools/**/.svn"/>
@@ -117,7 +116,6 @@
       			<exclude name="pccomms/.externalToolBuilders/**"/>
       			<exclude name="pccomms/build/**"/>
       			<exclude name="pccomms/nbproject/private/**"/>
-				<exclude name="pccomms/3rdparty/**"/>
 				<include name="startup/**"/>
       			<exclude name="startup/**/.svn"/>
       			<exclude name="startup/.settings/**"/>
@@ -202,6 +200,10 @@
     	<mkdir dir="${release.lib}"/>
     	<mkdir dir="${release.src}"/>
     	<mkdir dir="${release.projects}"/>
+ 		<mkdir dir="${release.projects}/nxtvm"/>
+ 		<mkdir dir="${release.projects}/nxtvm/javavm"/>
+ 		<mkdir dir="${release.projects}/nxtvm/platform"/>
+ 		<mkdir dir="${release.projects}/nxtvm/platform/nxt"/>
   	</target>
 
 	<!-- copies the run scripts and other binaries -->
@@ -316,7 +318,6 @@
 			 	<exclude name="lejos_nxj/bin/*.bat"/>
 			 	<include name="lejos_nxj/build/*"/>
 			 	<include name="lejos_nxj/3rdparty/**"/>
-			 	<exclude name="lejos_nxj/3rdparty/lib/*.exe"/>
 			 	<include name="lejos_nxj/docs/**"/>
 			  </tarfileset>
 		</tar>
@@ -353,7 +354,6 @@
 			 	<exclude name="lejos_nxj/bin/nxjflashg"/>
 			 	<exclude name="lejos_nxj/bin/*.so"/>
 			 	<include name="lejos_nxj/3rdparty/**"/>
-				<exclude name="lejos_nxj/3rdparty/lib/bluecove203.jar"/>
 			 	<exclude name="lejos_nxj/3rdparty/lib/bluecove-gpl.jar"/>
 			  </fileset>
 		</zip>
