@@ -348,12 +348,14 @@ public abstract class NXTCommUSB implements NXTComm {
      * Close the current device.
      */
 	public void close() {
+        if (nxtInfo == null || nxtInfo.nxtPtr == 0) return;
         if (packetMode)
         {
             writeEOF();
             if (!EOF) waitEOF();
         }
 		devClose(nxtInfo.nxtPtr);
+        nxtInfo.nxtPtr = 0;
 	}
 
     /**
