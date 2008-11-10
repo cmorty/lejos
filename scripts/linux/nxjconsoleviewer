@@ -9,6 +9,7 @@ if [ -z "$NXJ_HOME" ]; then
 fi
 
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$NXJ_HOME/bin
+export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:$NXJ_HOME/bin
 
 if [ $OSTYPE == "cygwin" ]; then
   SEP=";"
