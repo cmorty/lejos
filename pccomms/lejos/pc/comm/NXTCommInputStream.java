@@ -52,6 +52,6 @@ public class NXTCommInputStream extends InputStream {
      */
     public void close() throws IOException
     { 
-       nxtComm.close();
+        endOfFile = true;
     }
 }
