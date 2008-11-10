@@ -57,7 +57,7 @@
         <java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/1">
             <compilation-unit>
                 <package-root>.</package-root>
-                <classpath mode="compile">C:\Users\Lawrie\workspace\pccomms\lib\pccomm.jar;C:\Users\Lawrie\workspace\jtools\3rdparty\lib\commons-cli-1.0.jar;C:\Users\Lawrie\workspace\jtools\lib\jtools.jar</classpath>
+                <classpath mode="compile">../pccomms/lib/pccomm.jar;../jtools/3rdparty/lib/commons-cli-1.0.jar;../jtools/lib/jtools.jar</classpath>
                 <source-level>1.5</source-level>
             </compilation-unit>
         </java-data>
