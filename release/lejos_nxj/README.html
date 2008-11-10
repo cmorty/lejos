@@ -10,7 +10,7 @@
   <li><a href="#installation_and_set_up">Installation and Set Up</a></li>
   <li><a href="#using-lejos">Using leJOS NXJ</a></li>
   <li><a href="#compiling">Compiling and running your first code</a></li>
-  <li><a href="#tools">LeJOS NXJ Tools</a></li>
+  <li><a href="#tools">leJOS NXJ Tools</a></li>
   <li><a href="#debugmonitor">Using the debug monitor</a></li>
   <li><a href="#limitations">Known limitations in leJOS</a></li>
   <li><a href="#bugs">Known bugs in leJOS</a></li>
@@ -20,7 +20,7 @@
   <li><a href="#questions">Questions and Problems</a></li>
 </ul>
 <h1><a name="what_is_lejos">What is leJOS NXJ?</a></h1>
-<p>leJOS (pronounced like the Spanish word "lejos" for "far") is a 
+<p>leJOS (sometimes pronounced like the Spanish word "lejos" for "far") is a 
 tiny Java-based operating system that has been ported to the following platforms:</p>
 <ul>
   <li>LEGO Mindstorms NXT</li>
@@ -29,7 +29,7 @@ tiny Java-based operating system that has been ported to the following platforms
   </a>
 </ul>
 <p>leJOS was originally forked out of the </a><a
- href="http://tinyvm.sourceforge.net">TinyVM project</a>. <br>
+ href="http://tinyvm.sourceforge.net">TinyVM project</a>. 
 It contains a VM for Java bytecodes and additional software to load and
 run Java programs.</p>
 
@@ -59,8 +59,7 @@ the NXT motors have enabled much improved control over speed, steering and navig
 <ul>
   <li>You need a Java Development Kit (JDK), version 1.5 or later.</li>
   <li>Your PATH must contain the JDK's bin directory.</li>
-  <li>Make sure you have set JAVA_HOME properly to the root directory
-of the JDK.</li>
+  <li>Make sure you have set JAVA_HOME properly to the root directory of the JDK (necessary if you use <em>ant</em>.</li>
   <li>On systems other than Microsoft Windows, you will need to build the distribution, so your PATH must
 contain the ant binary (ant 1.7 or above).</li>
   <li>On Microsoft Windows and MAC OS X you will need the LEGO Mindstorms NXT software installed, as its USB drivers are used.</li>
@@ -144,7 +143,7 @@ To compile, link and download the Tune sample:
   <li>Open a command window</li>
   <li>Check that java and lejos_nxj are on your PATH</li>
   <li>Check that the NXJ_HOME environment variable is defined</li>
-  <li>Change to the lejos_nxj\samples\Tune directory</li>
+  <li>Change to the projects\samples\Tune directory</li>
   <li>Type <em>nxjc Tune.java</em></li>
   <li>Check that your USB cable is connected</li>
   <li>Check that the NXT is turned on</li>
@@ -157,7 +156,7 @@ To compile, link and download the Tune sample:
 
 <p>You can navigate through the leJOS NXJ menus using the left and right buttons. You select a menu item by pressing ENTER, and exit from a menu by pressing ESCAPE. There are 3 menus: Files, Bluetooth ands System. To select a program, go to the Files menu, scroll down to your program and press the ENTER button. You will then see a sub-menu that lets you execute or delete the program.</p>
 
-<h1><a name="tools">LeJOS NXJ Tools</a></h1>
+<h1><a name="tools">leJOS NXJ Tools</a></h1>
 <p>The following tools are available with leJOS NXJ:</p>
 
 <ul>
@@ -169,11 +168,10 @@ To compile, link and download the Tune sample:
 <li><em>nxjbrowse</em> - explorer for NXJ files</li>
 <li><em>nxjflashg</em> - GUI version of nxjflash</li>
 <li><em>nxjmonitor</em> - remote monitoring and tracing over Bluetooth</li>
-<li><em>nxjconsole</em> - remote debugging over USB</li>
+<li><em>nxjconsole</em> - remote debugging over USB or Bluetooth</li>
 <li><em>nxjconsoleviewer</em> - GUI version of nxjconsole</li>
 <li><em>nxjdataviewer</em> - remote viewer for Datalogger files</li>
 <li><em>nxjproxyserver</em> - proxy server for Socket and SocketServer connections</li>
-<li><em>emu-lejosrun</em> - emulate a leJOS NXJ program on Unix</li>
 </ul>
 
 <p><em>nxj</em>, <em>nxjupload</em> and <em>nxjbrowse</em> can be used over Bluetooth or USB.
@@ -192,22 +190,14 @@ between the hex pairs.</p>
 
 <p>The leJOS NXJ tools can use different comms driver to connect to the NXT. The default driver for USB on Windows is NXTCommFantom which uses the LEGO fantom API
 and on other systems is NXTCommLibnxt, which uses David Anderson's libnxt library and the libusb open source library.  
-For Bluetooth on Windows and MAC OS X, NXTCommBluecove, which uses the Bluecove open source library, is used. 
-On Linux, NXTCommBluez, which uses the open source Bluez project, is used for Bluetooth. However,
-there is now a version of Bluecove that works on Linux, but it
-has not been officially released yet. A snapshot release of
-the two jar files needed on Linux, bluecove203.jar and bluecove-gpl.jar
-is included in the release. Bluecove uses Bluez, but provides
-a JSR-82 Java Bluetooth interface. To use Bluecove on Linux,
-set NXTCommBluetooth=lejos.pc.comm.NXTCommBluecove in the nxj.properties 
-file (see below).</p>
+At this release, all systems use NXTCommBluecove as the Bluetooth comms driver. This uses libraries from the Bluecove open source project.</p>
 
 <p>The properties file, lejos_nxt/bin/nxj.properties, can be modified to select different comms drivers.</p>
 
 <p><em>nxjbrowse</em> lists the files on the NXT and includes their size, and start and end pages. 
 It can be used to delete, upload and download programs and other files. 
 It can also run programs, change the name of the NXT and defrag the files,
-moving them all to the start of user flash memory. .</p> 
+moving them all to the start of user flash memory.</p> 
 
 <p><em>nxjmonitor</em> can be used to monitor a running program on the NXT. 
 The program being monitored should run the LCPBTResponder thread and can output trace
@@ -224,6 +214,7 @@ openBluetooth(0) can be used instead of openUSB(0). </p>
 <p><em>nxjconsoleviewer</em> is a GUI version of nxjconsole</p> 
 
 <p><em>nxjdataviewer</em> views data log file produced by the Datalogger class - see the DLTest sample.<p>
+
 <p><em>nxjproxyserver</em> runs a proxy server that can be used to support Socket and SocketServer connections between
 programs running on the NXT and Java programs on a PC or across the Internet - see the SocketTest, SocketServer and TimeTest samples.<p>
 
@@ -304,7 +295,7 @@ initialized, when multiple threads use a class</li>
 </li>
 <li>On Windows, using the Bluecove library, NXTs that have been paired with the PC are in the list of available NXTs, even when they are not switched on. This does not happen with Bluez on Linux.
 </li>
-<li>Is usually necessary to pair your NXT using the Operating System before it can be connected to by the lejOS NXJ PC tools and libraries.
+<li>Is usually necessary to pair your NXT using the Operating System before it can be connected to by the leJOS NXJ PC tools and libraries.
 </li>
 <li>Discovery of Bluetooth devices is slow, taking at least 10 seconds. It is slower still with Bluez on Linux. For Java streams connections from user programs, you can connect directly by Bluetooth address, which is much faster.
 </li>
@@ -313,16 +304,15 @@ initialized, when multiple threads use a class</li>
 The API docs for leJOS NXJ is included in the download. You can also access them on the leJOS web site.
 <h1><a name="license">License</a></h1>
 We are continuing to release under the Mozilla Public License
-(see the LICENSE file). The nxjflash utility using David Anderson's libnxt
+(see the LICENSE file). The nxjflash utility uses David Anderson's libnxt
 which is release under a GPL v2 license (see COPYING in the libnxt directory).
-<h1><a name="questions">Questions and Problems</a></h1>
+Bluecove on Linux uses a GPL v3 license. See the LEGAL and ACKNOWLEDGMENTS files for more detail.<h1><a name="questions">Questions and Problems</a></h1>
 Please direct feedback to the lejos-discussion
 mailing list mailto:lejos-discussion@lists.sourceforge.net. <br>
 To subscribe, see </a><a
  href="http://lists.sourceforge.net/lists/listinfo/lejos-discussion">http://lists.sourceforge.net/lists/listinfo/lejos-discussion</a>.
-<p> Feel free to take a look at the <a href="http://www.lejos.org">LeJOS
-website</a> or its <a href="http://sourceforge.net/projects/lejos">project
-page</a>. </p>
+<p> Feel free to take a look at the <a href="http://www.lejos.org">leJOS website</a>
+ or its <a href="http://sourceforge.net/projects/lejos">project page</a>. </p>
 
 <p>There are forums on the web site that can be used to ask questions, share information on projects, etc.</p>
 </body>

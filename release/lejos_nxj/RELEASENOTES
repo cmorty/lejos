@@ -61,6 +61,7 @@ Lawrie Griffiths has added:
 - Changes to release build for Windows installer and other changes
 - New sample project that replaces examples
 - New pcsamples project for pcsamples
+- Omitted emulator from the build as it is probably not used
 
 Juan Antonio Brenha Moral has added:
 
