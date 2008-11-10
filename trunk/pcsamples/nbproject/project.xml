@@ -57,7 +57,7 @@
         <java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/1">
             <compilation-unit>
                 <package-root>.</package-root>
-                <classpath mode="compile">C:\Users\Lawrie\workspace\pccomms\lib\pccomm.jar;C:\Users\Lawrie\workspace\pccomms\3rdparty\lib\bluecove.jar;C:\Users\Lawrie\workspace\pctools\lib\pctools.jar</classpath>
+                <classpath mode="compile">../pccomms/lib/pccomm.jar;../pccomms/3rdparty/lib/bluecove.jar;../pctools/lib/pctools.jar</classpath>
                 <source-level>1.5</source-level>
             </compilation-unit>
         </java-data>
