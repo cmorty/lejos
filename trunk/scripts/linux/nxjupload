@@ -4,7 +4,7 @@
 # nxjupload: Uploads a program or other file to the NXT
 #            and optionally runs it
 #
-# June 1st, 2007  created L. Griffiths
+# June 1st, 2007  created Lawrie Griffiths
 
 if [ -z "$NXJ_HOME" ]; then 
   NXJ_HOME="$(dirname $(dirname $0))"

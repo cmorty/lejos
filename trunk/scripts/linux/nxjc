@@ -1,9 +1,9 @@
 #!/bin/bash
 
 #
-# nxjc: Java tool for compiling java programs for LeJOS NXJ
+# nxjc: Java tool for compiling java programs for leJOS NXJ
 #
-# July 7, 2007  created L. Griffiths
+# July 7, 2007  created Lawrie Griffiths
 
 if [ -z "$NXJ_HOME" ]; then
   NXJ_HOME="$(dirname $(dirname $0))"

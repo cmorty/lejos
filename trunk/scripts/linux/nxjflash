@@ -1,9 +1,9 @@
 #!/bin/bash
 
 #
-# nxjdebug: Remote tracing over USB
+# nxjflash: Run Java command line flash utility
 #
-# Jan 13, 2008  created L. Griffiths
+# Andy Shaw
 
 if [ -z "$NXJ_HOME" ]; then 
   NXJ_HOME="$(dirname $(dirname $0))"

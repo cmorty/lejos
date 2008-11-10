@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #
-# nxjconsoleviewer: GUI Viewer for RConsole outout
+# nxjconsoleviewer: GUI Viewer for RConsole output
 #
 
 if [ -z "$NXJ_HOME" ]; then 
