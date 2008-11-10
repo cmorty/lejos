@@ -24,4 +24,4 @@ else
   BLUECOVELIBS="$THIRDPARTY_LIBS/bluecove.jar"
 fi
 
-java -Djava.library.path="$NXJ_HOME/bin" -Dnxj.home="$NXJ_HOME" -classpath "$NXJ_HOME/lib/pctools.jar$SEP$NXJ_HOME/lib/pccomm.jar$SEP$BLUECOVELIBS" "$@"
+java -Djava.library.path="$NXJ_HOME/bin" -Dnxj.home="$NXJ_HOME" -classpath "$NXJ_HOME/lib/pctools.jar$SEP$NXJ_HOME/lib/pccomm.jar$SEP$BLUECOVELIBS$SEP." "$@"
