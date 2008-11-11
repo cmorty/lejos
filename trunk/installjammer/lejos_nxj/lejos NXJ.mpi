@@ -1726,9 +1726,8 @@ SetupType ::6C6EB7CE-AB45-4145-9D38-7D57BE4807F2 -setup Install -active Yes -pla
 SetupType ::7873207E-5AA3-4491-9544-BD3EC5F48D78 -setup Install -active Yes -platforms {AIX-ppc FreeBSD-4-x86 FreeBSD-x86 HPUX-hppa Linux-x86 MacOS-X Solaris-sparc Windows} -name Custom -parent SetupTypes
 
 InstallComponent E3CE5D6E-1F59-45F5-AFFB-D154A771D21B -setup Install -type pane -title {Welcome Screen} -component Welcome -command reorder -active Yes -parent StandardInstall
-InstallComponent 36E6FB50-375B-4B44-A060-2120BC76845A -setup Install -type pane -conditions {7D6FCFEE-6237-44E5-A6C8-67C58D62AAC0 B0827C4F-72DE-4896-9D47-15D73177AD58} -title {Custom Text Pane 1} -component CustomTextPane1 -command insert -active Yes -parent StandardInstall
+InstallComponent 36E6FB50-375B-4B44-A060-2120BC76845A -setup Install -type pane -conditions 7D6FCFEE-6237-44E5-A6C8-67C58D62AAC0 -title {Custom Text Pane 1} -component CustomTextPane1 -command reorder -active Yes -parent StandardInstall
 Condition 7D6FCFEE-6237-44E5-A6C8-67C58D62AAC0 -active Yes -parent 36E6FB50-375B-4B44-A060-2120BC76845A -title {Execute Script Condition} -component ExecuteScriptCondition -TreeObject::id 7D6FCFEE-6237-44E5-A6C8-67C58D62AAC0
-Condition B0827C4F-72DE-4896-9D47-15D73177AD58 -active Yes -parent 36E6FB50-375B-4B44-A060-2120BC76845A -title {File Exists Condition} -component FileExistsCondition -TreeObject::id B0827C4F-72DE-4896-9D47-15D73177AD58
 InstallComponent F6F11D84-22F8-49A3-918D-03A8EF17D87B -setup Install -type action -title {Launch Web Browser} -component LaunchWebBrowser -command reorder -active Yes -parent 36E6FB50-375B-4B44-A060-2120BC76845A
 InstallComponent FCF679A0-2B02-495D-BA7A-B4C99FEE93B8 -setup Install -type pane -conditions {81B7D747-99EA-4757-B9E3-CDC7CAC26EB0 DF91F224-3899-424E-879F-8E5F60C06E24} -title {Select Destination} -component SelectDestination -command insert -active Yes -parent StandardInstall
 Condition 81B7D747-99EA-4757-B9E3-CDC7CAC26EB0 -active Yes -parent FCF679A0-2B02-495D-BA7A-B4C99FEE93B8 -title {Script Condition} -component ScriptCondition -TreeObject::id 81B7D747-99EA-4757-B9E3-CDC7CAC26EB0
@@ -1736,7 +1735,7 @@ Condition DF91F224-3899-424E-879F-8E5F60C06E24 -active Yes -parent FCF679A0-2B02
 InstallComponent 601FD68B-A90A-4DF8-B04D-E8FBC93E2D22 -setup Install -type pane -conditions {E43A2C3B-61FA-4CDA-95CF-7473810F72F1 DD53434F-BB71-4187-A376-262F7D9240D1} -title {Select Destination} -component SelectDestination -command insert -active Yes -parent StandardInstall
 Condition E43A2C3B-61FA-4CDA-95CF-7473810F72F1 -active Yes -parent 601FD68B-A90A-4DF8-B04D-E8FBC93E2D22 -title {Script Condition} -component ScriptCondition -TreeObject::id 81B7D747-99EA-4757-B9E3-CDC7CAC26EB0
 Condition DD53434F-BB71-4187-A376-262F7D9240D1 -active Yes -parent 601FD68B-A90A-4DF8-B04D-E8FBC93E2D22 -title {File Permission Condition} -component FilePermissionCondition -TreeObject::id DF91F224-3899-424E-879F-8E5F60C06E24
-InstallComponent AE0C668C-FB50-4AA0-924A-8A4EF992E7BD -setup Install -type pane -conditions 7CDC350B-9C0A-43BE-9C43-EFE450DE6185 -title {Custom Text Pane 1} -component CustomTextPane1 -command insert -active Yes -parent StandardInstall
+InstallComponent AE0C668C-FB50-4AA0-924A-8A4EF992E7BD -setup Install -type pane -conditions 7CDC350B-9C0A-43BE-9C43-EFE450DE6185 -title {Custom Text Pane 1} -component CustomTextPane1 -command reorder -active Yes -parent StandardInstall
 Condition 7CDC350B-9C0A-43BE-9C43-EFE450DE6185 -active Yes -parent AE0C668C-FB50-4AA0-924A-8A4EF992E7BD -title {Execute Script Condition} -component ExecuteScriptCondition -TreeObject::id 7CDC350B-9C0A-43BE-9C43-EFE450DE6185
 InstallComponent C567D000-B29A-4EEF-9003-51BDE7CB5E95 -setup Install -type action -title {Execute External Program} -component ExecuteExternalProgram -active Yes -parent AE0C668C-FB50-4AA0-924A-8A4EF992E7BD
 InstallComponent A06DD6A5-A619-4713-8EA7-C1010EB4800F -setup Install -type pane -title {Start Copying Files} -component StartCopyingFiles -active Yes -parent StandardInstall
@@ -1862,7 +1861,7 @@ InstallDir
 <%InstallDir%>
 
 20C58F69-C30F-497D-A4BA-E1B395EC15A7,FileSize
-4707136
+4707154
 
 20C58F69-C30F-497D-A4BA-E1B395EC15A7,Name
 {Program Files}
@@ -1879,11 +1878,11 @@ JDKDescription
 22B22D81-67CF-4BFD-A7FE-5FECA55B49A4,TclScript
 {catch { exec javac.exe -version } output
 set firstline [lindex [split $output \n] 0]
-set firstword [lindex $firstline 0]
+set firstword [lindex [split $firstline] 0]
 if {$firstword != "javac"} {
   return "No JDK Installed"
 }
-set lastword [lindex $firstline end]
+set lastword [lindex [split $firstline] end]
 return "JDK version is $lastword"
 
 }
@@ -1904,7 +1903,7 @@ Yes
 1
 
 36E6FB50-375B-4B44-A060-2120BC76845A,Conditions
-{2 conditions}
+{1 condition}
 
 36E6FB50-375B-4B44-A060-2120BC76845A,Message,subst
 1
@@ -2155,11 +2154,11 @@ JDKVersion
 7CACE910-41EE-4D16-B8DE-9D346336018F,TclScript
 {catch { exec javac.exe -version } output
 set firstline [lindex [split $output \n] 0]
-set firstword [lindex $firstline 0]
+set firstword [lindex [split $firstline] 0]
 if {$firstword != "javac"} {
   return "0"
 }
-return [lindex $firstline end]
+return [lindex [split $firstline] end]
 }
 
 7CDC350B-9C0A-43BE-9C43-EFE450DE6185,Script
@@ -2329,7 +2328,7 @@ AD765739-B160-40DD-B1D3-2E618C29A519,Destination
 <%ProjectsDir%>
 
 AD765739-B160-40DD-B1D3-2E618C29A519,FileSize
-13357561
+13358866
 
 AD765739-B160-40DD-B1D3-2E618C29A519,Name
 Projects
@@ -2420,12 +2419,6 @@ AIX-ppc,RootInstallDir
 
 B07B6C31-8A4D-4A77-AF27-150B2E6ADAAC,Action
 {Uninstall Actions}
-
-B0827C4F-72DE-4896-9D47-15D73177AD58,Filename
-<%SYSTEM32%>/libusb0.dll
-
-B0827C4F-72DE-4896-9D47-15D73177AD58,Operator
-{does not exist}
 
 B53D1E8D-8B34-4F6F-B894-78020CA6231D,Default
 Yes
@@ -3156,7 +3149,9 @@ E2CBC5B8-8152-442F-8D30-33F028FA0F28,Message
 
 leJOS NXJ requires JDK 1.5 or later.  
 
-You browser will be started and you will be sent to the Sun Java web site to install the JDK. Once you have done this, press Next.}
+You browser will be started and you will be sent to the Sun Java web site to install the JDK.  Make sure you install the JDK not just the JRE. When the JDK has been installed, ensure that its bin folder is on the PATH by adding it to the user or system PATH environment variable in Control Panel > System > Advanced > Environment Variables. It is also a good idea to set the JAVA_HOME environment variable to the JDK directory as this is used by than "ant" build tool.
+
+Once you have done this, press Next.}
 
 36E6FB50-375B-4B44-A060-2120BC76845A,Title
 {JDK Not Found}
