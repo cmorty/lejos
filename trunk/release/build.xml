@@ -220,7 +220,9 @@
       			<include name="nxjdataviewer"/>
       			<include name="nxjmonitor"/>
       			<include name="nxjsocketproxy"/>
+      			<include name="nxjflash"/>
       			<include name="nxjflashg"/>
+      			<include name="nxjpccomm"/>
       		</fileset>
       		<fileset dir="${lejos.root}/scripts/windows">
         		<include name="*.bat"/>
@@ -352,6 +354,8 @@
 			 	<exclude name="lejos_nxj/bin/nxjdataviewer"/>
 			 	<exclude name="lejos_nxj/bin/nxjsocketproxy"/>
 			 	<exclude name="lejos_nxj/bin/nxjflashg"/>
+			 	<exclude name="lejos_nxj/bin/nxjflash"/>
+			 	<exclude name="lejos_nxj/bin/nxjpccomm"/>
 			 	<exclude name="lejos_nxj/bin/*.so"/>
 			 	<include name="lejos_nxj/3rdparty/**"/>
 			 	<exclude name="lejos_nxj/3rdparty/lib/bluecove-gpl.jar"/>
