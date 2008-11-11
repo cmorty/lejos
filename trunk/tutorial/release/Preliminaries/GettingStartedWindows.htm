@@ -53,7 +53,7 @@
       <a id="2" name="2"></a>
       <h5>USB Driver</h5>     
       <p> To run leJOS NXJ on Microsoft Windows you will need a suitable USB driver on your PC. 
-      If you have installed the standard LEGO Mindstorms software, a suitable driver will already be on your PC. 
+      If you have installed the standard LEGO Mindstorms software, a suitable driver will already be installed. 
       If you do not wish to install the LEGO software on your PC you can get a driver 
       from <a href="http://www.robotc.net/content/lego_down/lego_down.html" target="_blank">The RobotC site<a>.
       </p>
@@ -69,6 +69,8 @@
       <p>You will need to add the JDK bin directory to your system or user PATH,
        so that commands such as <code>javac</code> and <code>java</code> can be called from a command prompt. If you do not know how to do this, 
        see the "Setting up environment variables" section below.</p>
+       <p> It is also a good idea to set the environment variable JAVA_HOME to the folder where you installed the JDK, as it is necessary
+           if you use the <code>ant</code> build system.</p>
       <a id="4" name="4"></a>
       <h5>Bluetooth Stack</h5> 
       <p> If you want to communicate with the NXT over Bluetooth, you will need a Bluetooth dongle or built-in support on your PC, 
@@ -83,8 +85,90 @@
       <p> <a href="#top">Back to top</a> </p>
       <a id="6" name="6"></a>
       <h4>Running the GUI installer</h4>
-      <p> Run <code>leJOS NXJ installer.exe</code> and you will see the following screen:
+      <p> Run <code>leJOS_NXJ_0.7-Setup.exe</code> and you will see the following screen:
       </p>
+      <img src="installquestion.jpg"/>
+      <p> Select "Yes" and you will see:</p>
+      <img src="installwelcome.jpg"/>
+      <p>Note that Installjammer is the open source software we have used to produce the installer.</p>
+      <p>Click "Next and you will see:</p>
+      <img src="installdestination.jpg"/>
+      <p>You can change the destination if you need to. Click on the "Browse" button
+      to change the destination.</p>
+      
+      <p> The JDK version that we have detected is displayed on this screen<p>
+      
+      <p>Once you have selected the destination, click "Next" and you will see: </p>
+      
+      <img src="installprojects.jpg"/>
+      
+      <p> Again you can change the destination for the leJOS projects. It defaults to leJOSNXJProjects in the users
+      home directory. On Windows Vista this is C:\Users\<i>user</i> and on XP it is C:\Documents and Settings\<i>user</i>.</p>
+      
+      <p>All the Java source in leJOS NXJ is issued as projects that can be opened in Eclipse and Netbeans.</p>
+      
+      <p>Once you have selected the projects destination, the installation will start. If you already
+         have leJOS NXJ installed in the selected destination, you will see:</p>
+         
+      <img src="installprevious.jpg"/> 
+      <p> Click next and the previous version will be uninstalled:</p>
+      <img src="uninstallquestion.jpg"/>
+      
+      <p>Once you have confirmed that you want the old version uninstalled, you will see:</p>
+      <img src="uninstalling.jpg"/>
+      
+      <p> and then: </p>
+      
+      <img src="uninstallcomplete.jpg"/>
+      
+      <p>After any previous version has been uninstalled, the installation of the new version starts and you see:</p>
+      
+      <img src="installcopying.jpg"/>
+      
+      <p>Check that the destination directories are correct and click "Next". You will see:</p>
+      
+      <img src="installing.jpg"/>
+      
+      <p> When the software installation is complete, you see:</p>
+      
+      <img src="installfinish.jpg"/>
+      
+      <p>When you click "Finish" the GUI version of the NXJ firmware flash utility will start bto allow you to update the firmware
+      on one of more NXTs. <p>
+      
+      <p>You will see:</p>
+
+      <img src="nxjflashg.jpg"/>
+      
+      <p>Click "Start Program" and you will be asked:</p>
+      
+      <img src="nxjflashgconnected.jpg"/>
+      
+      <p>Click OK and you will be asked:</p>
+      
+      <img src="nxjflashgerase.jpg"/>
+      
+      <p>If you select "Yes" all current files on the NXT are erased. It is a good idea to select this
+      as old .nxj files may not work with the new firmware.</p>
+      
+      <p> You will then see:</p>
+      
+      <img src="nxjflashgconnected.jpg"/>
+      
+      <p>Make sure that your NXT is connected to the PC by the USB cable and witched on. Then press "OK" and
+      you should see some progess messages, such as:</p>
+      
+      <img src="nxjflashgprogress.jpg"/>
+      
+      <p>When your NXT has been updated, you will be asked:</p>
+      
+      <img src="nxjflashgagain.jpg"/>
+      
+      <p>If you have more NXTs to update, click "Yes". When you have finished click "No" and the flash utility will
+      terminate and then the installer will terminate, and you are done.</p>
+      
+      <p> Skip to the section below on testing your installation.</p>
+      
       <p> <a href="#top">Back to top</a> </p>
       <a id="7" name="7"></a>
       <h4>Manual installation</h4>
@@ -106,7 +190,7 @@
           <tr>
             <td>NXJ_HOME</td>
             <td>The folder you installed leJOS NXJ into</td>
-            <td>C:\lejos0.6\lejos_nxt</td>
+            <td>C:\lejosbeta7\lejos_nxt</td>
           </tr>
           <tr>
             <td>JAVA_HOME</td>
@@ -116,7 +200,7 @@
           <tr>
             <td>PATH</td>
             <td>Add the bin folders for the JDK and leJOS</td>
-            <td>C:\Program Files\Java\jdk1.6.0_06;C:\lejos0.6\lejos_nxt\bin;</td>
+            <td>C:\Program Files\Java\jdk1.6.0_06;C:\lejosbeta7\lejos_nxt\bin;</td>
           </tr>
         </tbody>
       </table>
