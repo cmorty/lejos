@@ -55,7 +55,7 @@ public class StaticFieldRecord implements WritableData
 
    public int hashCode ()
    {
-      return iField.hashCode();
+      return iField.hashCode() ^ iClassRecord.hashCode();
    }
    
    public void markUsed()

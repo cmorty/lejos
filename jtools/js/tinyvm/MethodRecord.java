@@ -254,12 +254,13 @@ public class MethodRecord implements WritableData
    {
       if (!(aOther instanceof MethodRecord))
          return false;
-      return ((MethodRecord) aOther).iMethod.equals(iMethod);
+      return ((MethodRecord) aOther).iMethod.equals(iMethod) &&
+              ((MethodRecord) aOther).iClassRecord.equals(iClassRecord);
    }
 
    public int hashCode ()
    {
-      return iMethod.hashCode();
+      return iMethod.hashCode() ^ iClassRecord.hashCode();
    }
 
    private static final Logger _logger = Logger.getLogger("TinyVM");
@@ -304,7 +305,9 @@ public class MethodRecord implements WritableData
        // We need to mark all such methods if this method is ever marked.
        // _logger.log(Level.INFO, "Count is " + iIsHiddenBy.size());
        if (!iIsHiddenBy.contains(pRec))
+       {
           iIsHiddenBy.add(pRec);
+       }
    }
    
    public RecordTable getExceptions()
