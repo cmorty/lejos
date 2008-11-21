@@ -98,6 +98,11 @@ public interface SpecialSignatureConstants {
     "getFirmwareMinorVersion()I",
     "usbSetSerialNo(Ljava/lang/String;)V",
     "usbSetName(Ljava/lang/String;)V",
-    "boot()V"
+    "boot()V",
+    "hsEnable()V",
+    "hsDisable()V",
+    "hsWrite([BII)I",
+    "hsRead([BII)I",
+    "hsPending()I"
   };
 }

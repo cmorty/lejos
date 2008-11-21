@@ -98,4 +98,9 @@
 #define usbSetSerialNo_4Ljava_3lang_3String_2_5V 91
 #define usbSetName_4Ljava_3lang_3String_2_5V 92
 #define boot_4_5V 93
+#define hsEnable_4_5V 94
+#define hsDisable_4_5V 95
+#define hsWrite_4_1BII_5I 96
+#define hsRead_4_1BII_5I 97
+#define hsPending_4_5I 98
 #endif // _SPECIALSIGNATURES_H

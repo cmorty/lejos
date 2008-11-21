@@ -25,6 +25,7 @@ C_PLATFORM_SOURCES := \
 	i2c.c \
 	sound.c \
 	bt.c \
+	hs.c \
 	printf.c
 
 C_HOOK_SOURCES := \

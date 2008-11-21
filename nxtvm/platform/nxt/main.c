@@ -39,6 +39,7 @@
 #include "bt.h"
 #include "udp.h"
 #include "flashprog.h"
+#include "hs.h"
 #include "debug.h"
 
 #include <string.h>
@@ -283,6 +284,7 @@ nxt_main(int bin, int size)
   init_sensors();
   nxt_motor_reset_all();
   bt_reset(); 
+  hs_disable();
   udp_disable();
   display_clear(1);
   display_set_auto_update(1);
@@ -477,6 +479,7 @@ main(void)
   nxt_motor_init();
   i2c_init();
   bt_init();
+  hs_init();
   udp_init();
   systick_wait_ms(1000); // wait for LCD to stabilize
   display_init();
