@@ -3,8 +3,8 @@ package lejos.nxt;
 /**
  * Abstraction for a NXT sound sensor.
  * 
- */public class SoundSensor implements SensorConstants {
-
+ */
+public class SoundSensor implements SensorConstants {
 	ADSensorPort port;
 	
 	/**
@@ -52,5 +52,4 @@ package lejos.nxt;
 	{
 		return ((1023 - port.readRawValue()) * 100/ 1023);  
 	}
-
 }
