@@ -156,3 +156,11 @@ usbSetName(Ljava/lang/String;)V
 
 #System
 boot()V
+
+#RS485/Hispeed
+hsEnable()V
+hsDisable()V
+hsWrite([BII)I
+hsRead([BII)I
+hsPending()I
+

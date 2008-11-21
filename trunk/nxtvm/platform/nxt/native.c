@@ -25,6 +25,7 @@
 #include "i2c.h"
 #include "sound.h"
 #include "bt.h"
+#include "hs.h"
 #include "udp.h"
 #include "flashprog.h"
 #include "debug.h"
@@ -458,6 +459,35 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
     return EXEC_CONTINUE;
   case getFirmwareMinorVersion_4_5I:
     push_word((STACKWORD) MINOR_VERSION); 
+    return EXEC_CONTINUE;
+  case hsEnable_4_5V:
+    {
+      hs_enable();
+    }
+    return EXEC_CONTINUE;
+  case hsDisable_4_5V:
+    {
+      hs_disable();
+    }
+    return EXEC_CONTINUE;
+  case hsWrite_4_1BII_5I:
+    {
+      Object *p = word2ptr(paramBase[0]);
+      byte *byteArray = (byte *) jbyte_array(p);
+      push_word(hs_write(byteArray, paramBase[1], paramBase[2]));                      
+    }
+    return EXEC_CONTINUE;
+  case hsRead_4_1BII_5I:
+    {
+      Object *p = word2ptr(paramBase[0]);
+      byte *byteArray = (byte *) jbyte_array(p);
+      push_word(hs_read(byteArray, paramBase[1], paramBase[2]));                      
+    }
+    return EXEC_CONTINUE;
+  case hsPending_4_5I:
+    {
+      push_word(hs_pending());
+    }
     return EXEC_CONTINUE;
   default:
     throw_exception(noSuchMethodError);
