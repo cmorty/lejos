@@ -142,7 +142,7 @@ public class NXJFlashG extends javax.swing.JFrame
                        JOptionPane.WARNING_MESSAGE);
                return null;
             }
-            progressTxt.append("\n found " + nxts[0].name + " Bluetooth address  " + nxts[0].btDeviceAddress);
+            progressTxt.append("\n found " + nxts[0].name + " Bluetooth address  " + nxts[0].deviceAddress);
             if (!cmd.open(nxts[0]))
             {
                JOptionPane.showMessageDialog(msgPanel,
@@ -278,11 +278,9 @@ public class NXJFlashG extends javax.swing.JFrame
       private static final String MENU = "StartUpText.bin";
    }
    // Variables declaration - do not modify//GEN-BEGIN:variables
-   private javax.swing.JPanel dialogs;
    private javax.swing.JButton goB;
    private javax.swing.JPanel msgPanel;
    private javax.swing.JLabel progressLabel;
-   private javax.swing.JScrollPane progressScroll;
    private javax.swing.JTextArea progressTxt;
    // End of variables declaration//GEN-END:variables
    private Flasher flasher;

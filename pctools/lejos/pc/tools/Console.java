@@ -1,35 +1,27 @@
 package lejos.pc.tools;
+
 import lejos.pc.comm.*;
 import java.io.*;
+
 /**
  * Console output monitor class.
- * This class provides access to console output from an nxt program. The program
- * simply writes strings using the nxt RConsole class. These are sent to the
+ * This class provides access to console output from a NXT program. The program
+ * simply writes strings using the NXT RConsole class. These are sent to the
  * PC via the USB (or Bluetooth) connection.
  *
  */ 
 public class Console {
-	
 	public static void main(String[] args) throws Exception {
-        NXTCommand nxtCommand = NXTCommand.getSingleton();
-		NXTComm nxtComm = null;
-		NXTInfo[] nxtInfo = null;
-		
-        // Locate the nxt either via USB or Bluetooth
-        nxtInfo = nxtCommand.search(null, NXTCommFactory.USB | NXTCommFactory.BLUETOOTH);
-		if (nxtInfo.length == 0) {
-			System.out.println("No NXT Found");
-			System.exit(1);
+		NXTConnector conn = new NXTConnector();
+		conn.addLogListener(new ToolsLogger());
+		int connected = conn.connectTo();
+		if (connected != 0) {
+			System.err.println("No NXT Found");
+			return;
 		}
-        try {
-            nxtComm = NXTCommFactory.createNXTComm(nxtInfo[0].protocol);
-            nxtComm.open(nxtInfo[0]);
-        } catch (Exception e)
-        {
-            System.out.println("Failed to connect to NXT");
-			System.exit(1);            
-        }
+		NXTComm nxtComm = conn.getNXTComm();
         System.out.println("Connected...");
+        
         // Send handshake to NXT
         byte [] hello = new byte [] {'C', 'O', 'N'};
         nxtComm.write(hello);
@@ -41,7 +33,6 @@ public class Console {
            System.out.print((char)input);
 		try {
             nxtComm.close();
-		} catch (IOException ioe) {System.out.println("Got exception in close");}
+		} catch (IOException ioe) {System.out.println("Exception in close");}
 	}
-
 }

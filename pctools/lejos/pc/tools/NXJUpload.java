@@ -1,33 +1,51 @@
 package lejos.pc.tools;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 import lejos.pc.comm.*;
 import org.apache.commons.cli.CommandLine;
 
-public class NXJUpload {
-
-	private Collection<ToolsLogListener> fLogListeners;
+/**
+ * Command-line utility to upload a linked binary to the NXT.
+ * 
+ * @author Lawrie Griffiths
+ *
+ */
+public class NXJUpload extends NXTCommLoggable {
 	private NXJUploadCommandLineParser fParser;
 	private Upload fUpload;
 
+	/** 
+	 * Create a NXJUpload object
+	 */
 	public NXJUpload() {
+		super();
 		fParser = new NXJUploadCommandLineParser();
-		fLogListeners = new ArrayList<ToolsLogListener>();
 		fUpload = new Upload(); 
 	}
 
+	/**
+	 * Main entry point
+	 * 
+	 * @param args command line arguments
+	 */
 	public static void main(String[] args) {
 		try {
 			NXJUpload instance = new NXJUpload();
 			instance.addLogListener(new ToolsLogger());
 			instance.run(args);
 		} catch(Throwable t) {
-			System.err.println("an error occurred: " + t.getMessage());
+			System.err.println("An error occurred: " + t.getMessage());
 		}
 	}
 	
+	/** 
+	 * Run the utility.
+	 * Note that this method can be called from other tools such as the Eclipse plug-in.
+	 * 
+	 * @param args the command line arguments
+	 * 
+	 * @throws js.tinyvm.TinyVMException
+	 * @throws NXJUploadException
+	 */
 	public void run(String[] args) throws js.tinyvm.TinyVMException, NXJUploadException {
 		int protocols = 0;
 		
@@ -47,7 +65,7 @@ public class NXJUpload {
 	}	
 	
 	/**
-	 * register log listener
+	 * Register log listener
 	 * 
 	 * @param listener
 	 */
@@ -57,7 +75,7 @@ public class NXJUpload {
 	}
 	
 	/**
-	 * unregister log listener
+	 * Unregister log listener
 	 * 
 	 * @param listener
 	 */
@@ -65,5 +83,4 @@ public class NXJUpload {
 		fLogListeners.remove(listener);
 		fUpload.removeLogListener(listener);
 	}
-
 }

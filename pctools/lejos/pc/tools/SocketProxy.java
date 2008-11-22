@@ -32,39 +32,17 @@ public class SocketProxy {
 	 * @param NXTName The name of the NXT to connect to
 	 * @param NXTaddress The physical address of the NXT
 	 */
-	public SocketProxy(String NXTName, String NXTaddress) {
+	public SocketProxy() {
 		try {
-			NXTComm nxtComm = null;
-			
-			//  Create a Bluetooth connection with the NXT
-			try {
-				 nxtComm = NXTCommFactory.createNXTComm(NXTCommFactory.BLUETOOTH);
-			} catch (NXTCommException e) {
-				System.err.println("Failed to load comms driver: " + e.getMessage());
-				System.exit(1);
-			}
-			
-			NXTInfo[] nxtInfo = new NXTInfo[1];
-
-			nxtInfo[0] = new NXTInfo(NXTName, NXTaddress);
-
-			System.out.println("Connecting to " + nxtInfo[0].name);
-
-			// Check to see if NXT really exists, if not exit
-			boolean isOpen = false;
-			try {
-				isOpen = nxtComm.open(nxtInfo[0]);
-			} catch (NXTCommException n) {
-				System.err.println(n.getMessage());
-				isOpen = false;
-			}
-			if (!isOpen) {
-				System.out.println("Failed to open " + nxtInfo[0].name);
+			NXTConnector conn = new NXTConnector();
+			conn.addLogListener(new ToolsLogger());
+			if (conn.connectTo(null, null, NXTCommFactory.BLUETOOTH, false) != 0) {
+				System.err.println("Failed to connect to NXT");
 				System.exit(1);
 			}
 
-			inFromNXT = new DataInputStream(nxtComm.getInputStream());
-			outToNXT = new DataOutputStream(nxtComm.getOutputStream());
+			inFromNXT = conn.getDataIn();
+			outToNXT = conn.getDataOut();
 			
 			// Check to see if socket is a server or a client
 			boolean isServer = inFromNXT.readBoolean();
@@ -263,11 +241,11 @@ public class SocketProxy {
 	}
 
 	public static void main(String[] args) {
-		if(args.length!=2) {
-			System.out.println("USAGE: java lejos.pc.tools.SocketProxy <NXTName> <NXTAddress>");
+		if(args.length!=0) {
+			System.out.println("USAGE: java lejos.pc.tools.SocketProxy");
 			System.exit(1);
 		}
-		new SocketProxy(args[0],args[1]);
+		new SocketProxy();
 	}
 }
 

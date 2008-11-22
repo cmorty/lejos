@@ -12,6 +12,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 import java.io.*;
+import lejos.pc.comm.*;
 
 /**
  * Downloads  data from the RConsole running on a MXT <br>
@@ -36,7 +37,7 @@ public class ConsoleViewer extends JFrame implements ActionListener
    private InputStream is = null;
    private DataInputStream dataIn = null;
    private OutputStream os = null;
-   private Connector con ;
+   private NXTConnector con ;
    private boolean _connected = false;
 
    /**
@@ -106,18 +107,18 @@ public class ConsoleViewer extends JFrame implements ActionListener
    private void connect()
    {
       String addr = addrField.getText();
-      if(addr.length()>8) _nxt = addr;
-      else _nxt = nameField.getText(); 
+      _nxt = nameField.getText(); 
       setMessage("Connecting");
       System.out.println(" connecting to "+_nxt+" "+addr);
-      con = new Connector();
-      if (! con.connectTo(_nxt,_useUSB)) System.exit(1);
+      con = new NXTConnector();
+      con.addLogListener(new ToolsLogger());
+      if (con.connectTo(_nxt,addr,(_useUSB ? NXTCommFactory.USB : NXTCommFactory.BLUETOOTH), false) != 0) System.exit(1);
       is = con.getInputStream();
       if( is != null)System.out.println(" input stream OK");
       else System.out.println( " NULL is ");
       _connected = true;
-      String name = con.getNXTInfo()[0].name;
-      addr = con.getNXTInfo()[0].btDeviceAddress;
+      String name = con.getNXTInfo().name;
+      addr = con.getNXTInfo().deviceAddress;
       nameField.setText(name);
       addrField.setText(addr);     
    }
