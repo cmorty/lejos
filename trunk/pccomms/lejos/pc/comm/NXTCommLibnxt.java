@@ -10,9 +10,7 @@ import java.util.Vector;
  * you are using.
  *
  */
-public class NXTCommLibnxt extends NXTCommUSB {
-	private NXTInfo nxtInfo;
-	
+public class NXTCommLibnxt extends NXTCommUSB {	
 	public native String[] jlibnxt_find();
 	public native long jlibnxt_open(String nxt);
 	public native void jlibnxt_close(long nxt);
