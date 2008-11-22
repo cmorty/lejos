@@ -14,21 +14,21 @@ public class NXTInfo {
 	public String name;
 	
 	/**
-	 * The Bluetooth address.
+	 * The device address.
 	 */
-	public String btDeviceAddress;
+	public String deviceAddress;
 	
 	/**
 	 * A string used to locate the NXT. Dependent on
 	 * the version of NXTComm used.
 	 */
-	public String btResourceString;
+	String btResourceString;
 	
 	/**
 	 * A pointer to the NXT. Dependent on the
 	 * version of NXTComm used.
 	 */
-	public long nxtPtr;
+	long nxtPtr;
 	
 	/**
 	 * The protocol used to connect to the NXT: USB or BLUETOOTH.
@@ -37,17 +37,17 @@ public class NXTInfo {
 
 	public NXTInfo() {}
 	
-
 	/**
 	 * Create a NXTInfo that is used to connect to 
 	 * a NXT via Bluetooth using the Bluetooth address.
 	 * 
+	 * @param protocol the protocol to use (USB or BLUETOOTH)
 	 * @param name the name of the NXT
 	 * @param address the Bluetooth address with optional colons between hex pairs.
-	 */
-	public NXTInfo(String name, String address) {
+	 */	
+	public NXTInfo(int protocol, String name, String address) {
 		this.name = name;
-		this.btDeviceAddress = address;
-		this.protocol = NXTCommFactory.BLUETOOTH;
+		this.deviceAddress = address;
+		this.protocol = protocol;
 	}
 }

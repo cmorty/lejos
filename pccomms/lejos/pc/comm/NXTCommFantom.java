@@ -1,6 +1,5 @@
 package lejos.pc.comm;
 
-import java.io.*;
 import java.util.Vector;
 
 /**

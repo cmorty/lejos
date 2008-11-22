@@ -253,7 +253,7 @@ public abstract class NXTCommUSB implements NXTComm {
             if (getAddressString(addr, 2).equals(VENDOR_ATMEL) && 
                     getAddressString(addr, 3).equals(PRODUCT_SAMBA))
                 info.name = "%%NXT-SAMBA%%";
-            info.btDeviceAddress = getAddressString(addr, -2);
+            info.deviceAddress = getAddressString(addr, -2);
             nxtInfos.addElement(info);
         }
         return nxtInfos;
@@ -275,8 +275,8 @@ public abstract class NXTCommUSB implements NXTComm {
         while (devs.hasNext())
         {
             NXTInfo nxt = devs.next();
-            if (nxt.btDeviceAddress == null)
-                nxt.btDeviceAddress = "000000000000";
+            if (nxt.deviceAddress == null)
+                nxt.deviceAddress = "000000000000";
             if (nxt.name == null)
             {
                 nxt.name = getName(nxt);
@@ -285,7 +285,7 @@ public abstract class NXTCommUSB implements NXTComm {
             if (name != null && !name.equals(nxt.name))
                 devs.remove();
             else
-                System.out.println("Found nxt name " + nxt.name + " address " + nxt.btDeviceAddress);
+                System.out.println("Found nxt name " + nxt.name + " address " + nxt.deviceAddress);
         }
 		NXTInfo[] nxts = new NXTInfo[nxtInfos.size()];
 		for (int i = 0; i < nxts.length; i++)
@@ -305,13 +305,13 @@ public abstract class NXTCommUSB implements NXTComm {
         {
             System.out.println("device is not valid");
             // not valid so search for it.
-            String addr = nxtInfo.btDeviceAddress;
+            String addr = nxtInfo.deviceAddress;
             if (addr == null || addr.length() == 0)
                 return false;
             NXTInfo[] nxts = search(null, NXTCommFactory.USB);
             nxtInfo = null;
             for(int i = 0; i < nxts.length; i++)
-                if (addr.equals(nxts[i].btDeviceAddress))
+                if (addr.equals(nxts[i].deviceAddress))
                 {
                     nxtInfo = nxts[i];
                     break;

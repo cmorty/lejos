@@ -63,7 +63,7 @@ public class NXTSamba {
     
     /**
      * Helper function perform a write with timeout.
-     * @param data Data to be writen to the device.
+     * @param data Data to be written to the device.
      * @throws java.io.IOException
      */
     private void write(byte[] data) throws IOException
@@ -74,7 +74,7 @@ public class NXTSamba {
     
     /**
      * Helper function, send a string to the device. Convert from Unicode to
-     * ASCII and sens the string.
+     * ASCII and send the string.
      * @param str String to be sent.
      * @throws java.io.IOException
      */
@@ -198,7 +198,7 @@ public class NXTSamba {
 
     /**
      * Write a single page to flash memory. We write the page to ram and then
-     * use the FlashWriter code to trnasfer this data to flash. The FlashWriter
+     * use the FlashWriter code to transfer this data to flash. The FlashWriter
      * code must have already been downloaded.
      * @param page
      * @param data

@@ -46,8 +46,8 @@ public class NXTCommBluecove implements NXTComm, DiscoveryListener {
 			}
 		}
 
-		for (Enumeration enum_d = devices.elements(); enum_d.hasMoreElements();) {
-			RemoteDevice d = (RemoteDevice) enum_d.nextElement();
+		for (Enumeration<RemoteDevice> enum_d = devices.elements(); enum_d.hasMoreElements();) {
+			RemoteDevice d = enum_d.nextElement();
 
 			try {
 				nxtInfo = new NXTInfo();
@@ -55,7 +55,7 @@ public class NXTCommBluecove implements NXTComm, DiscoveryListener {
 				nxtInfo.name = d.getFriendlyName(false);
 				if (nxtInfo.name == null || nxtInfo.name.length() == 0)
 					nxtInfo.name = "Unknown";
-				nxtInfo.btDeviceAddress = d.getBluetoothAddress();
+				nxtInfo.deviceAddress = d.getBluetoothAddress();
 				nxtInfo.protocol = NXTCommFactory.BLUETOOTH;
 
 				if (name == null || name.equals(nxtInfo.name))
@@ -112,7 +112,7 @@ public class NXTCommBluecove implements NXTComm, DiscoveryListener {
 		if (nxt.btResourceString == null || nxt.btResourceString.length() < 5
 				|| !(nxt.btResourceString.substring(0, 5).equals("btspp"))) {
 			nxt.btResourceString = "btspp://"
-					+ stripColons(nxt.btDeviceAddress)
+					+ stripColons(nxt.deviceAddress)
 					+ ":1;authenticate=false;encrypt=false";
 		}
 

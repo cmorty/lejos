@@ -42,7 +42,7 @@ public class NXTCommBluez implements NXTComm {
 				}
 				int sep = btString[i].indexOf("::");
 				//System.out.println("Setting address to " + btAddress);
-				nxtInfo.btDeviceAddress =  btString[i].substring(sep+2);
+				nxtInfo.deviceAddress =  btString[i].substring(sep+2);
 				nxtInfo.name = btString[i].substring(0, sep);
 				nxtInfo.protocol = NXTCommFactory.BLUETOOTH;
 				nxtInfo.btResourceString = btString[i];
@@ -69,7 +69,7 @@ public class NXTCommBluez implements NXTComm {
 
         if (mode == RAW) throw new NXTCommException("RAW mode not implemented");
 		try {
-			open(BDADDR_ANY, nxt.btDeviceAddress, 1);
+			open(BDADDR_ANY, nxt.deviceAddress, 1);
 			return true;
 		} catch (BlueZException e) {
 			System.err.println("Error from open: " + e.getMessage());
