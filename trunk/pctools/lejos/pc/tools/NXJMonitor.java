@@ -6,6 +6,7 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.*;
 import lejos.pc.comm.*;
+
 import java.io.*;
 
 /**
@@ -53,7 +54,7 @@ public class NXJMonitor extends JFrame implements ActionListener {
 			"I2C 9V"};
 	
 	private String title = "NXJ Monitor";
-	private NXTCommand nxtCommand = null;
+	private NXTCommand nxtCommand = new NXTCommand();
 	private Timer timer;
 	private SensorPanel [] sensorPanels = {
 			new SensorPanel("Sensor 1"),
@@ -90,17 +91,32 @@ public class NXJMonitor extends JFrame implements ActionListener {
 	}
 	
 	public void run() throws NXTCommException {
-	    nxtCommand = NXTCommand.getSingleton();
 	    int protocols = NXTCommFactory.USB | NXTCommFactory.BLUETOOTH;
-	    final NXTInfo[] nxts = nxtCommand.search(null, protocols);
 	    final JFrame frame = this;
-	   
-	    if (nxts.length == 0) {
-	      System.err.println("No NXT found - is it switched on and plugged in (for USB)?");
-	      System.exit(1);
+	    
+		NXTConnector conn = new NXTConnector();
+		conn.addLogListener(new ToolsLogger());
+		
+		int connected = conn.connectTo(null, null, protocols, true);
+		
+	    if (connected < 0) {
+	        System.err.println("No NXT found - is it switched on and plugged in (for USB)?");
+	        System.exit(1);
+	    }
+		
+	    final NXTInfo[] nxts = conn.getNXTInfos();
+	    
+	    // See if we have already connected to the only available NXT
+	    if (connected == 0) {
+	    	nxtCommand.setNXTComm(conn.getNXTComm());
+	    	showMonitor(nxts[0].name);
+	    	return;
 	    }
 	    
-	    final NXTTableModel nm = new NXTTableModel(this, nxts, nxts.length);
+	    // Otherwise display a list of NXTs
+
+	    
+	    final NXTTableModel nm = new NXTTableModel(nxts, nxts.length);
 	    
 	    final JTable nxtTable = new JTable(nm);
 	    
@@ -184,6 +200,7 @@ public class NXJMonitor extends JFrame implements ActionListener {
 		contentPanel.add(motorsPanel, BorderLayout.SOUTH);
 		
 		pack();
+		setVisible(true);
 	    
 		timer = new Timer(1000, this);
 		timer.setInitialDelay(2000);
@@ -267,6 +284,7 @@ public class NXJMonitor extends JFrame implements ActionListener {
 }
 
 class SensorPanel  extends Panel {
+	private static final long serialVersionUID = 3592127880184905255L;
 	LabeledGauge rawGauge, scaledGauge;
 	String name;
 	JLabel nameLabel;
@@ -313,6 +331,7 @@ class SensorPanel  extends Panel {
 
 
 class LabeledGauge  extends Panel {
+	private static final long serialVersionUID = -9123004104811474687L;
 	Gauge gauge;
 	String name;
 	JLabel nameLabel;
@@ -344,14 +363,15 @@ class LabeledGauge  extends Panel {
 }
 
 class Gauge extends JComponent {
-	int value = 0, MAX_VALUE = 1024;
-	Dimension size;
-	double gaugeWidth, gaugeHeight;
-	int    centerX,  centerY;
-	double zeroAngle = 225.0;
-	double maxAngle  = -45; 
-	double range = zeroAngle - maxAngle;
-	double offsetX, offsetY;
+	private static final long serialVersionUID = -4319426278542773674L;
+	private int value = 0, MAX_VALUE = 1024;
+	private Dimension size;
+	private double gaugeWidth, gaugeHeight;
+	private int    centerX,  centerY;
+	private double zeroAngle = 225.0;
+	private double maxAngle  = -45; 
+	private double range = zeroAngle - maxAngle;
+	private double offsetX, offsetY;
 	
 	public Gauge() {
 		size = new Dimension(100,100);

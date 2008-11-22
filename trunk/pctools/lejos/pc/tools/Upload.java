@@ -1,26 +1,31 @@
 package lejos.pc.tools;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Collection;
-
 import lejos.pc.comm.*;
 
-public class Upload {
-	
-	private Collection<ToolsLogListener> fLogListeners;
+/**
+ * Utility class used by the nxj and nxjupload command line tools.
+ * It checks the file, connects to the NXT, uploads the file, optionally runs it,
+ * and disconnects. This class is also used by the Eclipse plugin.
+ * 
+ * @author Lawrie Griffiths
+ *
+ */
+public class Upload extends NXTCommLoggable {	
 	private NXTCommand fNXTCommand;
+	private NXTConnector fConnector;
 	
 	public Upload() {
-		fLogListeners = new ArrayList<ToolsLogListener>();
-		fNXTCommand = NXTCommand.getSingleton();
+		super();
+		fConnector = new NXTConnector();
+		fNXTCommand = new NXTCommand();
 	}
 
 	public void upload(String name, String address, int protocols,
 			String fileName, boolean run) throws NXJUploadException {
-
+		
 		File f = new File(fileName);
-
+		
 		if (!f.exists()) {
 			throw new NXJUploadException(fileName + ": No such file");
 		}
@@ -33,52 +38,26 @@ public class Upload {
 		if (protocols == 0)
 			protocols = NXTCommFactory.USB | NXTCommFactory.BLUETOOTH;
 
-		NXTInfo[] nxtInfo;
-
-		if (address != null) {
-			try {
-				fNXTCommand.setNXTCommBlueTooth();
-			} catch (NXTCommException e) {
-				throw new NXJUploadException(e);
-			}
-			nxtInfo = new NXTInfo[1];
-			nxtInfo[0] = new NXTInfo((name == null ? "Unknown" : name), address);
-		} else {
-			try {
-				nxtInfo = fNXTCommand.search(name, protocols);
-			} catch (Throwable t) {
-				throw new NXJUploadException(t);
-			}
-		}
-
-		boolean connected = false;
+		int connected = fConnector.connectTo(name, address, protocols, false);
+		
+		if (connected != 0)
+			throw new NXJUploadException(
+					"No NXT found - is it switched on and plugged in (for USB)?");
+		
+		fNXTCommand.setNXTComm(fConnector.getNXTComm());
 
 		try {
-			for (int i = 0; i < nxtInfo.length; i++) {
-				try {
-					connected = fNXTCommand.open(nxtInfo[i]);
-				} catch (NXTCommException e) {
-					connected = false;
-				}
-				if (!connected)
-					continue;
-				String result = SendFile.sendFile(fNXTCommand, f);
-				for (ToolsLogListener listener : fLogListeners) {
-					listener.logEvent(result);
-				}
-				if (run) {
-					fNXTCommand.setVerify(false);
-					fNXTCommand.startProgram(f.getName());
-				}
-				fNXTCommand.close();
-				break;
+			log(fNXTCommand.uploadFile(f));
+			
+			if (run) {
+				fNXTCommand.setVerify(false);
+				fNXTCommand.startProgram(f.getName());
 			}
+			
+			fNXTCommand.close();
 		} catch (Throwable t) {
 			throw new NXJUploadException("Exception during upload", t);
 		}
-		if (!connected)
-			throw new NXJUploadException(
-					"No NXT found - is it switched on and plugged in (for USB)?");
 	}
 	
 	/**
@@ -89,6 +68,7 @@ public class Upload {
 	public void addLogListener(ToolsLogListener listener) {
 		fLogListeners.add(listener);
 		fNXTCommand.addLogListener(listener);
+		fConnector.addLogListener(listener);
 	}
 	
 	/**
@@ -99,6 +79,6 @@ public class Upload {
 	public void removeLogListener(ToolsLogListener listener) {
 		fLogListeners.remove(listener);
 		fNXTCommand.removeLogListener(listener);
+		fConnector.removeLogListener(listener);
 	}
-
 }

@@ -199,7 +199,7 @@ public class NXJFlash
             {
                 System.out.println("The following NXT devices have been found:");
                 for (int i = 0; i < nxts.length; i++)
-                    System.out.println("  " + (i + 1) + ":  " + nxts[i].name + "  " + nxts[i].btDeviceAddress);
+                    System.out.println("  " + (i + 1) + ":  " + nxts[i].name + "  " + nxts[i].deviceAddress);
                 System.out.println("Select the device to update, or enter 0 to exit.");
                 System.out.print("Device number to update: ");
                 devNo = getChoice();

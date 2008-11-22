@@ -73,14 +73,29 @@ public class NXJBrowser {
 	
 	if (protocols == 0) protocols = NXTCommFactory.USB | NXTCommFactory.BLUETOOTH;
 	
-    final NXTInfo[] nxts = nxtCommand.search(name, protocols);
+	NXTConnector conn = new NXTConnector();
+	conn.addLogListener(new ToolsLogger());
+	
+	int connected = conn.connectTo(name, null, protocols, true);
+	
+    if (connected < 0) {
+        System.err.println("No NXT found - is it switched on and plugged in (for USB)?");
+        System.exit(1);
+    }
+	
+    final NXTInfo[] nxts = conn.getNXTInfos();
     
-    if (nxts.length == 0) {
-      System.err.println("No NXT found - is it switched on and plugged in (for USB)?");
-      System.exit(1);
+    // See if we have already connected to the only available NXT
+    if (connected == 0) {
+    	nxtCommand = new NXTCommand();
+    	nxtCommand.setNXTComm(conn.getNXTComm());
+    	showFiles(frame,nxts[0]);
+    	return;
     }
     
-    final NXTTableModel nm = new NXTTableModel(frame, nxts, nxts.length);
+    // Otherwise display a list of NXTs
+    
+    final NXTTableModel nm = new NXTTableModel(nxts, nxts.length);
     
     final JTable nxtTable = new JTable(nm);
     
@@ -200,7 +215,7 @@ public class NXJBrowser {
         	  if (file.getName().length() > 20) {
         		  showMessage("File name is more than 20 characters");
         	  } else {   	
-		          SendFile.sendFile(nxtCommand, file);
+		          nxtCommand.uploadFile(file);
 		          fetchFiles();
 		          fm.setData(files, numFiles);
 		          table.invalidate();
