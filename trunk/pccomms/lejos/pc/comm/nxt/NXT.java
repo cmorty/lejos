@@ -12,7 +12,8 @@ public class NXT {
 			FirmwareInfo f = nxtCommand.getFirmwareVersion();
 			return Float.parseFloat(f.firmwareVersion);
 		} catch (IOException ioe) {
-			return 0;
+			System.out.println(ioe.getMessage());
+			return 0f;
 		}		
 	}
 	
@@ -21,7 +22,8 @@ public class NXT {
 			FirmwareInfo f = nxtCommand.getFirmwareVersion();
 			return Float.parseFloat(f.protocolVersion);
 		} catch (IOException ioe) {
-			return 0;
+			System.out.println(ioe.getMessage());
+			return 0f;
 		}	
 	}
 	
@@ -34,6 +36,7 @@ public class NXT {
 			DeviceInfo i = nxtCommand.getDeviceInfo();
 			return i.freeFlash;
 		} catch (IOException ioe) {
+			System.out.println(ioe.getMessage());
 			return 0;
 		}	 
 	}
@@ -46,7 +49,8 @@ public class NXT {
 		try {
 			return nxtCommand.deleteUserFlash(); 
 		} catch (IOException ioe) {
-			return 0;
+			System.out.println(ioe.getMessage());
+			return -1;
 		}
 	}
 	
@@ -55,6 +59,7 @@ public class NXT {
 			DeviceInfo i = nxtCommand.getDeviceInfo();
 			return i.NXTname;
 		} catch (IOException ioe) {
+			System.out.println(ioe.getMessage());
 			return null;
 		}
 		
@@ -64,7 +69,8 @@ public class NXT {
 		try {
 			return nxtCommand.setFriendlyName(newName);
 		} catch (IOException ioe) {
-			return 0;
+			System.out.println(ioe.getMessage());
+			return -1;
 		}
 	}
 	
@@ -77,7 +83,8 @@ public class NXT {
 			DeviceInfo i = nxtCommand.getDeviceInfo();
 			return i.signalStrength;
 		} catch (IOException ioe) {
-			return 0;
+			System.out.println(ioe.getMessage());
+			return -1;
 		}		
 	}	
 }

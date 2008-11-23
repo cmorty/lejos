@@ -78,7 +78,8 @@ public class Motor implements NXTProtocol {
 		try {
 			return nxtCommand.setOutputState(id, (byte)power, this.mode + MOTORON, regulationMode, turnRatio, runState, 0);
 		} catch (IOException ioe) {
-			return 0;
+			System.out.println(ioe.getMessage());
+			return -1;
 		}
 	}
 	
@@ -91,7 +92,8 @@ public class Motor implements NXTProtocol {
 		try {
 			return nxtCommand.setOutputState(id, (byte)-power, this.mode + MOTORON, regulationMode, turnRatio, runState, 0);
 		} catch (IOException ioe) {
-			return 0;
+			System.out.println(ioe.getMessage());
+			return -1;
 		}
 	}
 	
@@ -127,7 +129,8 @@ public class Motor implements NXTProtocol {
 			OutputState state = nxtCommand.getOutputState(id);
 			return state.rotationCount;
 		} catch (IOException ioe) {
-			return 0;
+			System.out.println(ioe.getMessage());
+			return -1;
 		}
 	}
 	
@@ -158,6 +161,7 @@ public class Motor implements NXTProtocol {
 			OutputState state = nxtCommand.getOutputState(id);
 			return state.blockTachoCount;
 		} catch (IOException ioe) {
+			System.out.println(ioe.getMessage());
 			return 0;
 		}	
 	}
@@ -181,7 +185,9 @@ public class Motor implements NXTProtocol {
 				nxtCommand.setOutputState(id, power, this.mode + MOTORON, regulationMode, turnRatio, runState, (int)count); // Note using tachoLimit with Lego FW
 			else
 				nxtCommand.setOutputState(id, (byte)-power, this.mode + MOTORON, regulationMode, turnRatio, runState, (int)Math.abs(count)); // Note using tachoLimit with Lego FW			
-		} catch (IOException ioe) {}
+		} catch (IOException ioe) {
+			System.out.println(ioe.getMessage());
+		}
 		if(returnNow)
 			return status;
 		else {
@@ -197,6 +203,7 @@ public class Motor implements NXTProtocol {
 			// return ((MOTORON & o.mode) == MOTORON);
 			return o.runState != MOTOR_RUN_STATE_IDLE; // Peter's bug fix
 		} catch (IOException ioe) {
+			System.out.println(ioe.getMessage());
 			return false;
 		}
 	}
@@ -266,7 +273,8 @@ public class Motor implements NXTProtocol {
 		try {
 			return nxtCommand.resetMotorPosition(this.id, false);
 		} catch (IOException ioe) {
-			return 0;
+			System.out.println(ioe.getMessage());
+			return -1;
 		}
 	}
 	
@@ -297,7 +305,8 @@ public class Motor implements NXTProtocol {
 		try {
 			return nxtCommand.resetMotorPosition(this.id, true);
 		} catch (IOException ioe) {
-			return 0;
+			System.out.println(ioe.getMessage());
+			return -1;
 		}
 	}
 	
@@ -312,7 +321,8 @@ public class Motor implements NXTProtocol {
 		try {
 			return nxtCommand.setOutputState(id, (byte)0, BRAKE + MOTORON + REGULATED, regulationMode, turnRatio, runState, 0);
 		} catch (IOException ioe) {
-			return 0;
+			System.out.println(ioe.getMessage());
+			return -1;
 		}
 	}
 	
@@ -327,7 +337,8 @@ public class Motor implements NXTProtocol {
 		try {
 			return nxtCommand.setOutputState(id, (byte)0, 0x00, regulationMode, turnRatio, runState, 0);
 		} catch (IOException ioe) {
-			return 0;
+			System.out.println(ioe.getMessage());
+			return -1;
 		}
 	}
 }
