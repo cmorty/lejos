@@ -15,7 +15,8 @@ public class Inbox {
 		try {
 			return nxtCommand.messageWrite(message, (byte)inbox);
 		} catch (IOException ioe) {
-			return 0;
+			System.out.println(ioe.getMessage());
+			return -1;
 		}
 	}
 	
@@ -23,6 +24,7 @@ public class Inbox {
 		try {
 			return nxtCommand.messageRead((byte)remoteInbox, (byte)localInbox, remove);
 		} catch (IOException ioe) {
+			System.out.println(ioe.getMessage());
 			return null;
 		}
 	}	

@@ -21,12 +21,16 @@ public class FileSystem {
 			data = new byte[in.available()];
 			in.read(data);
 			in.close();
+		} catch (IOException ioe) {
+			System.out.println(ioe.getMessage());
+			return -1;
+		}
+		try {
 			byte handle = nxtCommand.openWrite(localSource.getName(), data.length);
 			success = nxtCommand.writeFile(handle, data);
 			nxtCommand.closeFile(handle);
-		} catch (IOException e) {
-			System.out.println("File read didn't work");
-			e.printStackTrace();
+		} catch (IOException ioe) {
+			System.out.println(ioe.getMessage());
 			return -1;
 		}
 				
@@ -52,6 +56,7 @@ public class FileSystem {
 			data = nxtCommand.readFile(finfo.fileHandle, finfo.fileSize);
 			nxtCommand.closeFile(finfo.fileHandle);
 		} catch (IOException ioe) {
+			System.out.println(ioe.getMessage());
 			return null;
 		}
 		return data;
@@ -79,8 +84,7 @@ public class FileSystem {
 				out.close();
 			}
 		} catch (IOException e) {
-			System.out.println("File write didn't work");
-			e.printStackTrace();
+			System.out.println("File write failed");
 			return -1;
 		}
 		return 0;
@@ -107,7 +111,7 @@ public class FileSystem {
 		try {
 			return nxtCommand.delete(fileName);
 		} catch (IOException ioe) {
-			return 0;
+			return -1;
 		}	
 	}
 	
@@ -142,6 +146,7 @@ public class FileSystem {
 			String [] returnArray = new String [1];
 			return (String [])names.toArray(returnArray);
 		} catch (IOException ioe) {
+			System.out.println(ioe.getMessage());
 			return null;
 		}
 	}
@@ -154,6 +159,7 @@ public class FileSystem {
 		try {
 			return nxtCommand.getCurrentProgramName();
 		} catch (IOException ioe) {
+			System.out.println(ioe.getMessage());
 			return null;
 		}
 	}
@@ -167,7 +173,8 @@ public class FileSystem {
 		try {
 			return nxtCommand.startProgram(fileName);
 		} catch (IOException ioe) {
-			return 0;
+			System.out.println(ioe.getMessage());
+			return -1;
 		}
 	}
 	
@@ -180,7 +187,8 @@ public class FileSystem {
 		try {
 			return nxtCommand.stopProgram();
 		} catch (IOException ioe) {
-			return 0;
+			System.out.println(ioe.getMessage());
+			return -1;
 		}
 	}
 }

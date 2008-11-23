@@ -20,7 +20,8 @@ public class Sound {
 		try {
 			return nxtCommand.playTone(frequency, duration);
 		} catch (IOException ioe) {
-			return 0;
+			System.out.println(ioe.getMessage());
+			return -1;
 		}
 	}
 	
@@ -37,7 +38,8 @@ public class Sound {
 		try {
 			return nxtCommand.playSoundFile(fileName, repeat);
 		} catch (IOException ioe) {
-			return 0;
+			System.out.println(ioe.getMessage());
+			return -1;
 		}
 	}
 	
@@ -61,7 +63,8 @@ public class Sound {
 		try {
 			return nxtCommand.stopSoundPlayback();
 		} catch (IOException ioe) {
-			return 0;
+			System.out.println(ioe.getMessage());
+			return -1;
 		}
 	}
 }

@@ -29,7 +29,8 @@ public class Battery implements NXTProtocol {
 		int voltage;
 		try {
 			voltage = nxtCommand.getBatteryLevel();
-		} catch (IOException ex) {
+		} catch (IOException ioe) {
+			System.out.println(ioe.getMessage());
 			return 0;
 		}
 		return voltage;

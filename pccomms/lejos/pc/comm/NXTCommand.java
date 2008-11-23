@@ -17,6 +17,7 @@ public class NXTCommand extends NXTCommLoggable implements NXTProtocol {
 	private boolean open = false;
 	private static final String hexChars = "01234567890abcdef";
 	private static final int MAX_BUFFER_SIZE = 60;
+	private NXTConnector conn = new NXTConnector();
 
 	/**
 	 * Create a NXTCommand object. 
@@ -40,7 +41,6 @@ public class NXTCommand extends NXTCommLoggable implements NXTProtocol {
 	 * @return true if connected
 	 */
 	public boolean open() throws IOException {
-		NXTConnector conn = new NXTConnector();
 		int connected = conn.connectTo(NXTComm.LCP);
 		nxtComm = conn.getNXTComm();
 		return (connected == 0);
@@ -867,5 +867,25 @@ public class NXTCommand extends NXTCommLoggable implements NXTProtocol {
 	public static NXTCommand getSingleton() {
 		if (singleton == null) singleton = new NXTCommand();
 		return singleton;
+	}
+	
+	/**
+	 * register log listener
+	 * 
+	 * @param listener
+	 */
+	public void addLogListener(NXTCommLogListener listener) {
+		fLogListeners.add(listener);
+		conn.addLogListener(listener);
+	}
+	
+	/**
+	 * unregister log listener
+	 * 
+	 * @param listener
+	 */
+	public void removeLogListener(NXTCommLogListener listener) {
+		fLogListeners.remove(listener);
+		conn.removeLogListener(listener);
 	}
 }
