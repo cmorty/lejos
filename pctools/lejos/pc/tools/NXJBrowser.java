@@ -65,6 +65,7 @@ public class NXJBrowser {
     String name = commandLine.getOptionValue("n");
 	boolean blueTooth = commandLine.hasOption("b");
 	boolean usb = commandLine.hasOption("u");
+	String address = commandLine.getOptionValue("d");
 	
     int protocols = 0;
     
@@ -76,7 +77,7 @@ public class NXJBrowser {
 	NXTConnector conn = new NXTConnector();
 	conn.addLogListener(new ToolsLogger());
 	
-	int connected = conn.connectTo(name, null, protocols, true);
+	int connected = conn.connectTo(name, address, protocols, NXTComm.LCP, true);
 	
     if (connected < 0) {
         System.err.println("No NXT found - is it switched on and plugged in (for USB)?");

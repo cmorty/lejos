@@ -39,6 +39,11 @@ public class NXJBrowserCommandLineParser
       nameOption.setArgName("name");
       options.addOption(nameOption);
       
+      Option addressOption = new Option("d", "address", true,
+		 "look for NXT with given address");
+      addressOption.setArgName("address");
+      options.addOption(addressOption);
+      
       CommandLine result;
       try
       {
