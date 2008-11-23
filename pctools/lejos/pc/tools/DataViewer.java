@@ -29,7 +29,8 @@ import lejos.pc.comm.*;
  */
 public class DataViewer extends JFrame implements ActionListener
 {
-    private JButton startButton = new JButton("Start download");
+	private static final long serialVersionUID = 4196717806576232148L;
+	private JButton startButton = new JButton("Start download");
     private JButton connectButton = new JButton("Connect");
     private JToggleButton btButton = new JToggleButton("Use Bluetooth");
     private TextField statusField = new TextField(20);
