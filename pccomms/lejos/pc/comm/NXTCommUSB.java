@@ -303,7 +303,6 @@ public abstract class NXTCommUSB implements NXTComm {
         // Is the info vaild enough to connect directly?
         if (!devIsValid(nxtInfo))
         {
-            System.out.println("device is not valid");
             // not valid so search for it.
             String addr = nxtInfo.deviceAddress;
             if (addr == null || addr.length() == 0)
