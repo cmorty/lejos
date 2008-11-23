@@ -362,6 +362,7 @@ public class NXJBrowser {
 }
 
 class FileModel extends AbstractTableModel {
+  private static final long serialVersionUID = -6173853132812064498L;
   private static final String[] columnNames = {"File","Size", "Start Page", "End Page", "Delete"};
   private static final int NUM_COLUMNS = 5;
 
@@ -416,7 +417,7 @@ class FileModel extends AbstractTableModel {
     return columnNames[column];
   }
 
-  public Class getColumnClass(int column) {
+  public Class<?> getColumnClass(int column) {
     return fileData[0][column].getClass();
   }
 

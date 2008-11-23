@@ -16,7 +16,7 @@ import java.io.*;
  *
  */
 public class NXJMonitor extends JFrame implements ActionListener {
-
+	private static final long serialVersionUID = 2107625009450493352L;
 	public static final int MODE_RAW = 0x00;
 	public static final int MODE_BOOLEAN = 0x20;
 	public static final int MODE_TRANSITIONCNT = 0x40;

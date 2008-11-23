@@ -27,6 +27,7 @@ import lejos.pc.comm.*;
  */
 public class ConsoleViewer extends JFrame implements ActionListener
 {
+   private static final long serialVersionUID = -4789857573625988062L;
    private JButton connectButton = new JButton("Connect");
    private JToggleButton usbButton = new JToggleButton("Use BlueTooth");
    private TextField statusField = new TextField(20);
@@ -35,7 +36,6 @@ public class ConsoleViewer extends JFrame implements ActionListener
    private String _nxt = "NXT"; 
    private boolean _useUSB = true;
    private InputStream is = null;
-   private DataInputStream dataIn = null;
    private OutputStream os = null;
    private NXTConnector con ;
    private boolean _connected = false;
