@@ -29,21 +29,23 @@ public class NXTCommand extends NXTCommLoggable implements NXTProtocol {
 	/**
 	 * Set the NXTComm used to communicate with the NXT.
 	 * 
-	 * @param nxtComm
+	 * @param nxtComm a nxtComm instance which must be connected to a NXT
 	 */
 	public void setNXTComm(NXTComm nxtComm) {
+		open = true;
 		this.nxtComm = nxtComm;
 	}
 	
 	/**
-	 * Search for any available NXT.
+	 * Open any available NXT.
 	 * 
 	 * @return true if connected
 	 */
 	public boolean open() throws IOException {
 		int connected = conn.connectTo(NXTComm.LCP);
 		nxtComm = conn.getNXTComm();
-		return (connected == 0);
+		open = (connected == 0);
+		return open;
 	}
 
 	/**

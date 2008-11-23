@@ -196,7 +196,7 @@ public class NXTConnector extends NXTCommLoggable
 			}
 		
 			// If none found, do a Bluetooth inquiry
-			if (nxtInfos == null) {
+			if (nxtInfos == null || nxtInfos.length == 0) {
 				log("Searching for " + searchFor + " using Bluetooth");
 				try {
 					nxtInfos = nxtComm.search(searchParam, NXTCommFactory.BLUETOOTH);
@@ -223,7 +223,7 @@ public class NXTConnector extends NXTCommLoggable
 		}
 		
 		// If nothing found, fail
-		if (nxtInfos == null) {
+		if (nxtInfos == null || nxtInfos.length == 0) {
 			log("Failed to find any NXTs");
 			return -1;
 		}
