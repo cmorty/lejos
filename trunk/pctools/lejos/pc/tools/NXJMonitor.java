@@ -97,7 +97,7 @@ public class NXJMonitor extends JFrame implements ActionListener {
 		NXTConnector conn = new NXTConnector();
 		conn.addLogListener(new ToolsLogger());
 		
-		int connected = conn.connectTo(null, null, protocols, true);
+		int connected = conn.connectTo(null, null, protocols, NXTComm.LCP, true);
 		
 	    if (connected < 0) {
 	        System.err.println("No NXT found - is it switched on and plugged in (for USB)?");
