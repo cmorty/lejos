@@ -53,6 +53,7 @@
         description="upload the binary" >
     <java classname="lejos.pc.tools.NXJUpload" fork="true">
       <jvmarg value="-Djava.library.path=${nxj.library.path}"/>
+      <jvmarg value="-Dnxj.home=${nxj.home}"/>
       <arg value="${binary}"/>
       <classpath>
         <pathelement location="${nxj.jtools.jar}"/>
@@ -70,6 +71,7 @@
         description="upload and run the binary" >
     <java classname="lejos.pc.tools.NXJUpload" fork="true">
       <jvmarg value="-Djava.library.path=${nxj.library.path}"/>
+      <jvmarg value="-Dnxj.home=${nxj.home}"/>
       <arg value="${binary}"/>
       <arg value="-r"/>
       <classpath>
