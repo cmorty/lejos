@@ -432,6 +432,12 @@ udp_enumerate()
     display_string(hex4(len));
     display_update();
   }*/
+  // If we are disabled we respond to requests with a stall
+  if (configured & USB_DISABLED)
+  {
+    udp_send_stall();
+    return;
+  }
   switch(req)
   {
     case STD_GET_DESCRIPTOR: 
@@ -632,9 +638,6 @@ display_string(hex4(*AT91C_UDP_ISR));
 display_goto_xy(4,3);
 display_string(hex4(intCnt++));*/
 
-  // Should never get here if disabled, but just in case!
-  if (configured & USB_DISABLED) return;
-
   if (*AT91C_UDP_ISR & END_OF_BUS_RESET) 
   { 
     //display_goto_xy(0,2);
@@ -739,8 +742,6 @@ udp_disable()
 {
   /* Disable processing of USB requests */
   int i_state = interrupts_get_and_disable();
-  aic_mask_off(AT91C_PERIPHERAL_ID_UDP);
-  *AT91C_UDP_IDR = (AT91C_UDP_EPINT0 | AT91C_UDP_RXSUSP | AT91C_UDP_RXRSM);
   configured |= USB_DISABLED;
   currentFeatures = 0;
   if (i_state)

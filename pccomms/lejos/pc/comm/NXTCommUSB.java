@@ -254,7 +254,14 @@ public abstract class NXTCommUSB implements NXTComm {
                     getAddressString(addr, 3).equals(PRODUCT_SAMBA))
                 info.name = "%%NXT-SAMBA%%";
             info.deviceAddress = getAddressString(addr, -2);
-            nxtInfos.addElement(info);
+            // if the device address is "000000000000" then it is not
+            // supplying a serial number. This is either a very old version
+            // of leJOS, or leJOS is not responding. Either way we ignore
+            // this device.
+            if (info.deviceAddress != null && !info.deviceAddress.equals("000000000000"))
+                nxtInfos.addElement(info);
+            else
+                System.out.println("Ignoring device " + addr);
         }
         return nxtInfos;
     }
