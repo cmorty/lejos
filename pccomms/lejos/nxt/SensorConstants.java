@@ -1,4 +1,4 @@
-package lejos.pc.comm.nxt;
+package lejos.nxt;
 
 /**
  * 

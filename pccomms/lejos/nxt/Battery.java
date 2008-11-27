@@ -1,4 +1,4 @@
-package lejos.pc.comm.nxt;
+package lejos.nxt;
 
 import lejos.pc.comm.*;
 import java.io.*;
@@ -7,13 +7,12 @@ import java.io.*;
  * Battery class.
  * Usage: int x = Battery.getVoltageMilliVolt();
  * @author <a href="mailto:bbagnall@mts.net">Brian Bagnall</a>
- * @version 0.2  4-September-2006 
  *
  */
 
 public class Battery implements NXTProtocol {
 	
-	private static final NXTCommand nxtCommand = NXTCommand.getSingleton();
+	private static final NXTCommand nxtCommand = NXTCommand.getSingletonOpen();
 	
 	// Ensure no one tries to instantiate this.
 	private Battery() {}

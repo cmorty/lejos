@@ -1,6 +1,7 @@
-package lejos.pc.comm.nxt;
+package lejos.nxt;
 
 import lejos.pc.comm.*;
+
 import java.io.*;
 
 /**
@@ -10,9 +11,9 @@ import java.io.*;
  * @version 0.3  29-October-2006 
  *
  */
-public class SensorPort implements NXTProtocol, ADSensorPort {
+public class SensorPort implements NXTProtocol, LegacySensorPort  {
 	
-	private static final NXTCommand nxtCommand = NXTCommand.getSingleton();
+	private static final NXTCommand nxtCommand = NXTCommand.getSingletonOpen();
 	
 	private int id;
 	
@@ -139,5 +140,19 @@ public class SensorPort implements NXTProtocol, ADSensorPort {
 			return 0;
 		}
 		return vals.scaledValue;
+	}
+	
+	/**
+	 * Activate an RCX Light Sensor
+	 */
+	public void activate() {
+		setType(REFLECTION);
+	}
+	
+	/**
+	 * Passivate an RCX Light Sensor
+	 */
+	public void passivate() {
+		setType(NO_SENSOR);
 	}
 }

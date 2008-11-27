@@ -1,12 +1,17 @@
-package lejos.pc.comm.nxt;
+package lejos.nxt;
 
 import lejos.pc.comm.*;
 import java.io.*;
 import java.util.ArrayList;
 
+/**
+ * Support for remote file operations
+ * 
+ * @author Brian Bagnall
+ *
+ */
 public class FileSystem {
-	
-	private static final NXTCommand nxtCommand = NXTCommand.getSingleton();
+	private static final NXTCommand nxtCommand = NXTCommand.getSingletonOpen();
 		
 	// Make sure no one tries to instantiate this.
 	private FileSystem() {}
@@ -18,13 +23,15 @@ public class FileSystem {
 		byte success;
 		try {
 			FileInputStream in = new FileInputStream(localSource);
-			data = new byte[in.available()];
+			data = new byte[(int) localSource.length()];
 			in.read(data);
 			in.close();
 		} catch (IOException ioe) {
 			System.out.println(ioe.getMessage());
 			return -1;
 		}
+		
+		// Now send the data to the NXT
 		try {
 			byte handle = nxtCommand.openWrite(localSource.getName(), data.length);
 			success = nxtCommand.writeFile(handle, data);

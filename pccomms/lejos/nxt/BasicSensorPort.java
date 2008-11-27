@@ -1,4 +1,5 @@
-package lejos.pc.comm.nxt;
+package lejos.nxt;
+
 
 /**
  * An abstraction for a sensor port that supports 

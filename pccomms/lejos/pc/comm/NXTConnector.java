@@ -80,6 +80,7 @@ public class NXTConnector extends NXTCommLoggable
 		
 		log("Protocols = " + protocols);
 		log("Mode = " + mode);
+		log("Search Param = " + searchParam);
 		
 		// Try USB first
 		if ((protocols & NXTCommFactory.USB) != 0) {
@@ -160,6 +161,8 @@ public class NXTConnector extends NXTCommLoggable
 					Hashtable<String,String> nxtNames = new Hashtable<String,String>();
 					Enumeration<?> enProps = props.propertyNames();
 					
+					log("Searching properties file");
+					
 					// Populate hashTable from NXT_<name> entries, filtering by name, if supplied
 				    for (; enProps.hasMoreElements(); ) {
 				        // Get property name
@@ -169,6 +172,7 @@ public class NXTConnector extends NXTCommLoggable
 				        	String nxtName = propName.substring(4);
 					        
 				        	if (searchParam == null || nxtName.equals(nxt)) {
+				        		log("Adding " + nxtName + " to nxtInfos");
 				        		nxtNames.put(nxtName, (String)props.get(propName));
 				        	}				        	
 				        }				    
@@ -184,7 +188,7 @@ public class NXTConnector extends NXTCommLoggable
 						int i=0;
 					    for (; enNXTs.hasMoreElements(); ) {
 					    	String ne = (String)enNXTs.nextElement();
-					    	log("Setting nxtInfo " + i + " to " + ne);
+					    	log("Setting nxtInfos " + i + " to " + ne);
 					    	nxtInfos[i++] = new NXTInfo(NXTCommFactory.BLUETOOTH, ne, nxtNames.get(ne));			    							
 					    }				    	
 				    }
@@ -197,7 +201,7 @@ public class NXTConnector extends NXTCommLoggable
 		
 			// If none found, do a Bluetooth inquiry
 			if (nxtInfos == null || nxtInfos.length == 0) {
-				log("Searching for " + searchFor + " using Bluetooth");
+				log("Searching for " + searchFor + " using Bluetooth inquiry");
 				try {
 					nxtInfos = nxtComm.search(searchParam, NXTCommFactory.BLUETOOTH);
 				} catch (NXTCommException ex) { 

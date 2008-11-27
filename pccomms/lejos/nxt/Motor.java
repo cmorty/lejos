@@ -1,29 +1,24 @@
-package lejos.pc.comm.nxt;
+package lejos.nxt;
 
 import lejos.pc.comm.*;
 import java.io.*;
-
-
 
 /**
  * Motor class. Contains three instances of Motor.
  * Usage: Motor.A.forward(5000);
  *  
  * @author <a href="mailto:bbagnall@mts.net">Brian Bagnall</a>
- * @version 0.2  4-September-2006 
  *
  */
 public class Motor implements NXTProtocol {
-	
-	private static final NXTCommand nxtCommand = NXTCommand.getSingleton();
+	private static final NXTCommand nxtCommand = NXTCommand.getSingletonOpen();
 	
 	private int id;
 	private byte power;
 	private int mode;
 	private int regulationMode;
 	public byte turnRatio;
-	private int runState;
-		
+	private int runState;	
 	private boolean _rotating = false;
 	
 	/**
