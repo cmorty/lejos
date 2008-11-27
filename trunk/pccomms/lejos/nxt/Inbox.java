@@ -1,4 +1,4 @@
-package lejos.pc.comm.nxt;
+package lejos.nxt;
 
 import lejos.pc.comm.NXTCommand;
 import java.io.*;
@@ -9,7 +9,7 @@ import java.io.*;
  *
  */
 public class Inbox {
-	private static final NXTCommand nxtCommand = NXTCommand.getSingleton();
+	private static final NXTCommand nxtCommand = NXTCommand.getSingletonOpen();
 		
 	public static int sendMessage(byte [] message, int inbox) {
 		try {

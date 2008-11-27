@@ -872,6 +872,35 @@ public class NXTCommand extends NXTCommLoggable implements NXTProtocol {
 	}
 	
 	/**
+	 * Test is connection is open
+	 * 
+	 * @return true iff the connection is open
+	 */
+	public boolean isOpen() {
+		return open;
+	}
+	
+	
+	/**
+	 * Get the singleton NXTCommand object. Use of this is optional.
+	 * 
+	 * @return the singleton NXTCommand instance
+	 */
+	public static NXTCommand getSingletonOpen() {
+		if (singleton == null) singleton = new NXTCommand();
+		if (!singleton.isOpen()) {
+			try {
+				boolean opened = singleton.open();
+				if (!opened) throw new IOException();
+			} catch (IOException ioe) {
+				System.err.println("Failed to open connection to the NXT");
+				System.exit(1);
+			}
+		}
+		return singleton;
+	}
+	
+	/**
 	 * register log listener
 	 * 
 	 * @param listener

@@ -1,4 +1,5 @@
-package lejos.pc.comm.nxt;
+package lejos.nxt;
+
 
 /**
  * Abstraction for a NXT sound sensor.

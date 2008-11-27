@@ -1,4 +1,4 @@
-package lejos.pc.comm.nxt;
+package lejos.nxt;
 
 import lejos.pc.comm.*;
 import java.io.*;
@@ -7,11 +7,9 @@ import java.io.*;
  * Sound class.
  * Usage: SoundSensor.playTone(500, 1000);
  * @author <a href="mailto:bbagnall@mts.net">Brian Bagnall</a>
- * @version 0.1  10-August-2006 
  */
-public class Sound {
-	
-	private static final NXTCommand nxtCommand = NXTCommand.getSingleton();
+public class Sound {	
+	private static final NXTCommand nxtCommand = NXTCommand.getSingletonOpen();
 	
 	// Make sure no one tries to instantiate this.
 	private Sound() {}

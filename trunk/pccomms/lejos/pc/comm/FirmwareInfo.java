@@ -1,7 +1,7 @@
 package lejos.pc.comm;
 
 /**
- * Structure that describes the (emulated) firmware vceresion on the NXT.
+ * Structure that describes the (emulated) firmware version on the NXT.
  *
  */
 public class FirmwareInfo {

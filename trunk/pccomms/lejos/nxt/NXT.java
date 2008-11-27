@@ -1,12 +1,22 @@
-package lejos.pc.comm.nxt;
+package lejos.nxt;
 
 import lejos.pc.comm.*;
 import java.io.*;
 
+/**
+ * Abstraction for the local NXT device.
+ * 
+ * @author Lawrie Griffiths and Brian Bagnall
+ *
+ */
 public class NXT {
-	
-	private static NXTCommand nxtCommand = NXTCommand.getSingleton();
-			
+	private static NXTCommand nxtCommand = NXTCommand.getSingletonOpen();
+
+	/**
+	 * Get the (emulated) standard LEGO firmware version number
+	 * 
+	 * @return the version number
+	 */
 	public static float getFirmwareVersion() {
 		try {
 			FirmwareInfo f = nxtCommand.getFirmwareVersion();
@@ -16,7 +26,12 @@ public class NXT {
 			return 0f;
 		}		
 	}
-	
+
+	/**
+	 * Get the LEGO Communication Protocol version number 
+	 * 
+	 * @return the version number
+	 */
 	public static float getProtocolVersion() {
 		try {
 			FirmwareInfo f = nxtCommand.getFirmwareVersion();
@@ -54,6 +69,11 @@ public class NXT {
 		}
 	}
 	
+	/**
+	 * Get the friendly name of the brick
+	 * 
+	 * @return the friendly name
+	 */
 	public static String getBrickName() {
 		try {
 			DeviceInfo i = nxtCommand.getDeviceInfo();
@@ -64,7 +84,12 @@ public class NXT {
 		}
 		
 	}
-	
+
+	/**
+	 * Set the friendly name of the brick
+	 * 
+	 * @return the status code
+	 */
 	public static byte setBrickName(String newName) {
 		try {
 			return nxtCommand.setFriendlyName(newName);
@@ -86,5 +111,18 @@ public class NXT {
 			System.out.println(ioe.getMessage());
 			return -1;
 		}		
-	}	
+	}
+	
+	/**
+	 * Close the connection to the NXT and exit
+	 * 
+	 * @param code the exit code
+	 */
+	public static void exit(int code) {
+		try {
+			NXTCommand.getSingleton().close();
+		} catch (IOException ioe) {}
+		
+		System.exit(code);
+	}
 }
