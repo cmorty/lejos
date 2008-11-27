@@ -163,9 +163,9 @@ ioloop: while (offset < len)
 	 * @param	wait	Should the call block waiting for data.
 	 * @return			> 0 number of bytes read.
 	 *      			0 no bytes available (and wait was false).
-	 *					-1 an error occurred.
+	 *					-1 EOF/Connection closed.
 	 *					-2 data lost (see notes).
-     *                  -3 Zero length packet (EOF)
+     *                  -3 Some other error
 	 */
 	public synchronized int read(byte [] data, int outLen, boolean wait)
 	{
@@ -174,7 +174,7 @@ ioloop: while (offset < len)
 		// the next read will continue to read the packet
 		int offset = 0;
 		//RConsole.print("read\n");
-		if (state == CS_IDLE) return -1;
+		if (state == CS_IDLE) return -3;
 		if (state == CS_DATALOST)
 		{
 			state = CS_CONNECTED;
@@ -184,7 +184,7 @@ ioloop: while (offset < len)
         {
             inCnt = 0;
             inOffset = 0;
-            return -3;
+            return -1;
         }
         if (fillBuffer(false) < 0) disconnected();
 		if (state == CS_DISCONNECTED && inCnt <= 0) return -1;
@@ -205,7 +205,7 @@ ioloop: while (offset < len)
 				//if (debug)RConsole.print("About to wait inOff " + inOffset + " inCnt " + inCnt + "\n");
 				if (!wait) return offset;
 				if (fillBuffer(true) < 0) disconnected();
-				if (state != CS_CONNECTED) return offset;
+				if (state != CS_CONNECTED) return (offset > 0 ? offset : -3);
 				//if (debug)RConsole.print("wakeup cnt " + inCnt + "\n");
 			}
 			if (pktOffset < 0)
@@ -242,7 +242,7 @@ ioloop: while (offset < len)
         if (header > 0 && offset == 0)
         {
             state = CS_EOF;
-            return -3;
+            return -1;
         }
 		return offset;
 	}
