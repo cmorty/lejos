@@ -2,6 +2,9 @@
 <classpath>
 	<classpathentry kind="src" path="USBSend"/>
 	<classpathentry kind="src" path="RCNavigationControl"/>
+	<classpathentry kind="src" path="SensorTest"/>
+	<classpathentry kind="src" path="TachoCount"/>
+	<classpathentry kind="src" path="AccelDemo"/>
 	<classpathentry kind="lib" path="/pccomms/lib/pccomm.jar" sourcepath="/pccomms">
 		<attributes>
 			<attribute name="javadoc_location" value="http://lejos.sourceforge.net/nxt/pc/api/index.html"/>
