@@ -24,8 +24,7 @@ public class FileOutputStream extends OutputStream {
 	 * A buffer of the same size as a page of flash memory.
 	 */
 	private byte [] buff;
-	
-	private boolean append = false;
+
 	/**
 	 * File attached to this stream
 	 */
@@ -43,10 +42,9 @@ public class FileOutputStream extends OutputStream {
 /**
  * create a new OutputStream to write to this file
  * @param f  the file this stream writes to
- * @param append  if true this sream will start writing at the end of the file, otherwise at the beginning
+ * @param append  if true this stream will start writing at the end of the file, otherwise at the beginning
  */	
 	public FileOutputStream(File f, boolean append) {
-       this.append = append;
         file = f;
 		buff = new byte[Flash.BYTES_PER_PAGE];
 		page_pointer = file.page_location;
@@ -88,7 +86,7 @@ public class FileOutputStream extends OutputStream {
 	
 	/**
 	 * Write the buffer to flash memory and update the file parameters in flash.
-	 * Resets pointers, so file can be writen again from beginning with the same output stream.
+	 * Resets pointers, so file can be written again from beginning with the same output stream.
 	 */	
 	public void close() throws IOException {
 		// !! Alternate implementation: If this is a new file, perhaps only 

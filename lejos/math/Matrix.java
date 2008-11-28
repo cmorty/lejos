@@ -6,7 +6,9 @@ public class Matrix implements Cloneable, java.io.Serializable {
    Class variables
  * ------------------------ */
 
-   /** Array for internal storage of elements.
+	private static final long serialVersionUID = 5724948160773341967L;
+
+/** Array for internal storage of elements.
    @serial internal array storage.
    */
    private double[][] A;
