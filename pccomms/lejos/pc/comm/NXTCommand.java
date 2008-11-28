@@ -386,23 +386,6 @@ public class NXTCommand extends NXTCommLoggable implements NXTProtocol {
 		System.arraycopy(array2, 0, array, array1.length, array2.length);
 		return array;
 	}
-	
-	/**
-	 * Version of appendBytes where the number of bytes in the second array 
-	 * is inj a seperate parameter.
-	 * 
-	 * @param array1 the first array
-	 * @param array2 the second array
-	 * @param len the number of bytes to append
-	 * 
-	 * @return the concatenated array
-	 */
-	private byte[] appendBytes(byte[] array1, byte[] array2, int len) {
-		byte[] array = new byte[array1.length + len];
-		System.arraycopy(array1, 0, array, 0, array1.length);
-		System.arraycopy(array2, 0, array, array1.length, len);
-		return array;
-	}
 
 	/**
 	 * Get the battery reading
@@ -709,9 +692,9 @@ public class NXTCommand extends NXTCommLoggable implements NXTProtocol {
 	 * @param port 0-3
 	 * @return
 	 */
-	public byte LSWrite(byte port, byte [] txData, int len, byte rxDataLength) throws IOException {
-		byte [] request = {DIRECT_COMMAND_NOREPLY, LS_WRITE, port, (byte) len, rxDataLength};
-		request = appendBytes(request, txData, len);
+	public byte LSWrite(byte port, byte [] txData, byte rxDataLength) throws IOException {
+		byte [] request = {DIRECT_COMMAND_NOREPLY, LS_WRITE, port, (byte)txData.length, rxDataLength};
+		request = appendBytes(request, txData);
 		return sendRequest(request, 3);
 	}
 	

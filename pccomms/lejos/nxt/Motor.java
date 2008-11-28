@@ -307,10 +307,10 @@ public class Motor implements NXTProtocol {
 	
 	/**
 	 * Stops the motor using brakes.
-	 * @return Error value. 0 means succcess. See icommand.nxtcomm.ErrorMessages for details.
+	 * @return Error value. 0 means success. See lejos.pc.comm.ErrorMessages for details.
 	 */
 	// !! Setting power to 0 seems to make it lock motor.
-	public int stop() throws IOException {
+	public int stop() {
 		this.runState = MOTOR_RUN_STATE_RUNNING;
 		//this.regulationMode = REGULATION_MODE_MOTOR_SPEED;
 		try {

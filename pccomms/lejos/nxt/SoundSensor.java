@@ -27,7 +27,7 @@ public class SoundSensor implements SensorConstants {
 	 * @param port port, e.g. Port.S1
 	 * @param dba true to set DBA mode, false for DB mode.
 	 */
-	public SoundSensor(SensorPort port, boolean dba)
+	public SoundSensor(ADSensorPort port, boolean dba)
 	{
 	   this.port = port;
        port.setTypeAndMode(
