@@ -8,8 +8,8 @@ import java.io.*;
  * Compile this program with javac (not nxjc), and run it 
  * with java.
  * 
- * You need pccomm.jar on the CLASSPATH and the jlibnxt
- * DLL or shared library on the Java library path.
+ * You need pccomm.jar on the CLASSPATH and the jfantom.dll
+ * DLL or liblibnxt.so shared library on the Java library path.
  * 
  * Run the program by:
  * 
@@ -20,39 +20,17 @@ import java.io.*;
  * @author Lawrie Griffiths
  *
  */
-public class USBSend {
-	
+public class USBSend {	
 	public static void main(String[] args) {
-		NXTComm nxtComm = null;
-		try {
-			nxtComm = NXTCommFactory.createNXTComm(NXTCommFactory.USB);
-		} catch (NXTCommException e) {
-			System.out.println("Failure to load comms driver");
-		}
-		
-		NXTInfo[] nxtInfo = null;
-		
-		try {
-			nxtInfo = nxtComm.search(null, NXTCommFactory.USB);
-		} catch (NXTCommException e) {
-			System.out.println("Exception in search");
-		}
-		
-		if (nxtInfo.length == 0) {
-			System.out.println("No NXT Found");
+		NXTConnector conn = new NXTConnector();
+		if (conn.connectTo("usb://") != 0){
+			System.err.println("No NXT find using USB");
 			System.exit(1);
 		}
-
-		try {
-			nxtComm.open(nxtInfo[0]);
-		} catch (NXTCommException e) {
-			System.out.println("Exception in open");
-		}
 		
-		InputStream is = nxtComm.getInputStream();
-		OutputStream os = nxtComm.getOutputStream();
-		DataInputStream inDat = new DataInputStream(is);
-		DataOutputStream outDat = new DataOutputStream(os);
+		DataInputStream inDat = conn.getDataIn();
+		DataOutputStream outDat = conn.getDataOut();
+		
 		int x = 0;
 		for(int i=0;i<100;i++) 
 		{
@@ -61,29 +39,30 @@ public class USBSend {
 			   outDat.flush();
 	
 			} catch (IOException ioe) {
-				System.out.println("IO Exception writing bytes");
+				System.err.println("IO Exception writing bytes");
 			}
-	         try {x = inDat.readInt();}
-	         catch (IOException ioe) {
-	           System.out.println("IO Exception reading reply");
-	         }            
-	       System.out.println("Sent "+i+ " Received "+x);
+	        
+			try {
+	        	 x = inDat.readInt();
+	        } catch (IOException ioe) {
+	           System.err.println("IO Exception reading reply");
+	        }            
+	        System.out.println("Sent " +i + " Received " + x);
 		}
 		
 		try {
 			inDat.close();
 			outDat.close();
+			System.out.println("Closed data streams");
 		} catch (IOException ioe) {
-			System.out.println("IO Exception Closing connection");
+			System.err.println("IO Exception Closing connection");
 		}
 		
 		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException ie) {}
-		
-		try {
-			nxtComm.close();
-		} catch (IOException ioe) {}
+			conn.close();
+			System.out.println("Closed connection");
+		} catch (IOException ioe) {
+			System.err.println("IO Exception Closing connection");
+		}
 	}
-
 }
