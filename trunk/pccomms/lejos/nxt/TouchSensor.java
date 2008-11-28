@@ -1,6 +1,5 @@
 package lejos.nxt;
 
-
 /**
  * Abstraction for a NXT touch sensor.
  * Also works with RCX touch sensors.
@@ -11,13 +10,14 @@ public class TouchSensor implements SensorConstants {
 	
 	/**
 	 * Create a touch sensor object attached to the specified port.
-	 * @param port port, e.g. Port.S1
+	 * @param port an Analog/Digital port, e.g. SensorPort.S1
 	 */
 	public TouchSensor(ADSensorPort port)
 	{
 	   this.port = port;
 	   port.setTypeAndMode(TYPE_SWITCH, MODE_BOOLEAN);
 	}
+	
 	/**
 	 * Check if the sensor is pressed.
 	 * @return <code>true</code> if sensor is pressed, <code>false</code> otherwise.
@@ -26,5 +26,4 @@ public class TouchSensor implements SensorConstants {
 	{
 		return (port.readRawValue() < 600);  
 	}
-
 }

@@ -11,7 +11,7 @@ import java.io.*;
  * @version 0.3  29-October-2006 
  *
  */
-public class SensorPort implements NXTProtocol, LegacySensorPort  {
+public class SensorPort implements NXTProtocol, LegacySensorPort, I2CPort  {
 	
 	private static final NXTCommand nxtCommand = NXTCommand.getSingletonOpen();
 	
