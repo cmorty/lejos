@@ -63,8 +63,23 @@ public class Vector
 
   }
 
-
-
+  /**
+   * UNTESTED by Brian Bagnall yet.
+   * @return
+   */
+  public Enumeration elements() {
+	  
+	  return new Enumeration() {
+		  int cur = 0;
+		  public boolean hasMoreElements() {
+			  return (size() > cur);
+		  }
+		  
+		  public Object nextElement() {
+			  return elementAt(cur++);
+		  }
+	  };
+  }
 
 
   public synchronized void addElement (Object aObj)
