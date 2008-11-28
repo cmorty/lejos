@@ -19,7 +19,6 @@ public class Serial {
 	private static int paramsRead;
 	private static int paramsRequired;
 	private static int checkSum;
-	private static byte lastOpcode = 0;
 		
 	private Serial() {		
 	}
@@ -165,7 +164,6 @@ public class Serial {
 			if (complement(buf1[0], checkDigit) &&
 			    (checkDigit & 0xFF) == (checkSum & 0xFF)) {
 				gotPacket = true;
-				lastOpcode = packet[0];
 			} else {
 				// Skip to header if complement check
 				// or checksum fails

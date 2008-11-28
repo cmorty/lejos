@@ -106,7 +106,7 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
   }
 
   /**
-   * Passivates an RCX sensor sensor. 
+   * Passivates an RCX sensor. 
    */
   public final void passivate()
   {
