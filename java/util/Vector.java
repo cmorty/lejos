@@ -64,8 +64,8 @@ public class Vector
   }
 
   /**
-   * UNTESTED by Brian Bagnall yet.
-   * @return
+   * Returns a convenient Enumaration object to cycle through elements in Vector.
+   * @return an Enumeration of all the objects in the Vector
    */
   public Enumeration elements() {
 	  

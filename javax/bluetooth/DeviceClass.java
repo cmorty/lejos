@@ -3,13 +3,23 @@ package javax.bluetooth;
 /**
  * The DeviceClass class represents the class of device (CoD) record as defined by the Bluetooth specification. This record is defined in the Bluetooth Assigned Numbers document and contains information on the type of the device and the type of services available on the device.
  * The Bluetooth Assigned Numbers document ( http://www.bluetooth.org/assigned-numbers/baseband.htm) defines the service class, major device class, and minor device class. The table below provides some examples of possible return values and their meaning:
- * Method	Return Value	Class of Device
- * getServiceClasses() 	0x22000 	Networking and Limited Discoverable Major Service Classes
- * getServiceClasses() 	0x100000 	Object Transfer Major Service Class
- * getMajorDeviceClass() 	0x00 	Miscellaneous Major Device Class
- * getMajorDeviceClass() 	0x200 	Phone Major Device Class
- * getMinorDeviceClass() 	0x0C	With a Computer Major Device Class, Laptop Minor Device Class
- * getMinorDeviceClass() 	0x04	With a Phone Major Device Class, Cellular Minor Device Class
+ * <table border="1">
+ * <tr>
+ * <td>Method</td><td>Return Value</td><td>Class of Device</td>
+ * </tr><tr>
+ * <td>getServiceClasses()</td><td>0x22000</td><td>Networking and Limited Discoverable Major Service Classes</td>
+ * </tr><tr>
+ * <td>getServiceClasses()</td><td>0x100000</td><td>Object Transfer Major Service Class</td>
+ * </tr><tr>
+ * <td>getMajorDeviceClass()</td><td>0x00</td><td>Miscellaneous Major Device Class</td>
+ * </tr><tr>
+ * <td>getMajorDeviceClass()</td><td>0x200</td><td>Phone Major Device Class</td>
+ * </tr><tr>
+ * <td>getMinorDeviceClass()</td><td>0x0C</td><td>With a Computer Major Device Class, Laptop Minor Device Class</td>
+ * </tr><tr>
+ * <td>getMinorDeviceClass()</td><td>0x04</td><td>With a Phone Major Device Class, Cellular Minor Device Class</td>
+ * </tr>
+ * </table>
  * @author BB
  *
  */

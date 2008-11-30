@@ -12,8 +12,11 @@ import lejos.nxt.comm.Bluetooth;
 public class LocalDevice {
 	
 	private static LocalDevice localDevice;
+	private DiscoveryAgent discoveryAgent;
 		
-	private LocalDevice() {}
+	private LocalDevice() {
+		discoveryAgent = new DiscoveryAgent();
+	}
 
 	/*
 	 * DEVELOPER NOTES: Technically the constructor doesn't throw
@@ -26,6 +29,15 @@ public class LocalDevice {
 		return localDevice;
 	}
 	
+	/**
+	 * Returns the discovery agent for this device. Multiple calls to this method will 
+	 * return the same object. This method will never return null.
+	 * @return the discovery agent for the local device
+	 */
+	public DiscoveryAgent getDiscoveryAgent() {
+		return discoveryAgent;
+	}
+
 	/**
 	 * Returns the friendly name of a Bluetooth device. 
 	 * NOTE: If you want to set the friendly name, it can be done 
@@ -80,9 +92,10 @@ public class LocalDevice {
 	}
 	
 	/**
+	 * The Bluetooth device class for the LEGO NXT brick. 
 	 * The Lego Bluecore code can't retrieve this from the chip.
 	 * Always returns hardcoded 0x3e0100 DeviceClass
-	 * Untested if this is correct.
+	 * Untested if this is correct device class or not.
 	 * @return the device class
 	 */
 	public DeviceClass getDeviceClass() {

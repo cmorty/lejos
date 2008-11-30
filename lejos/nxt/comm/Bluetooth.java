@@ -927,6 +927,7 @@ public class Bluetooth
 	 * Connects to a Device by it's Byte-Device-Address Array
 	 * 
 	 * @param device_addr byte-Array with device-Address
+	 * @param mode The data mode. Either PACKET, LCP, or RAW found in <code>NXTConnection</code>
 	 * @param pin the pin to use
 	 * @return BTConnection Object or null
 	 */
@@ -1171,7 +1172,7 @@ public class Bluetooth
 	}
 	
 	/**
-	 * Add device to known devices
+	 * Remove device from known devices
 	 * @param d Remote Device
 	 * @return true iff remove was successful
 	 */
