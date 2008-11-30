@@ -83,19 +83,10 @@
                label="Upload &amp;Firmware"
                icon="icons/nxj.jpg"
                class="org.lejos.nxt.ldt.actions.LeJOSUploadFirmwareAction"
-               tooltip="Downloads the firmware to the NXT brick"
+               tooltip="Uploads the leJOS NXJ firmware to the NXT brick"
                menubarPath="leJOSNXJMenu/leJOSNXJGroup"
                toolbarPath="org.lejos.nxt.ldt/DownloadFirmware"
                id="org.lejos.nxt.ldt.actions.LeJOSFirmwareDownloadAction">
-         </action>
-         <action
-               class="org.lejos.nxt.ldt.actions.LeJOSNXTBrowserAction"
-               icon="icons/nxj.jpg"
-               id="org.lejos.nxt.ldt.action.LeJOSNXTBrowserAction"
-               label="NXT &amp;Browser"
-               menubarPath="leJOSNXJMenu/leJOSNXJGroup"
-               toolbarPath="org.lejos.nxt.ldt/NXTBrowser"
-               tooltip="Opens the NXT browser">
          </action>
       </actionSet>
    </extension>
@@ -119,20 +110,6 @@
       <initializer
             class="org.lejos.nxt.ldt.preferences.PreferenceInitializer">
       </initializer>
-   </extension>
-   <extension
-         point="org.eclipse.ui.views">
-      <category
-            id="org.lejos.nxt.ldt.views"
-            name="LeJOS NXJ">
-      </category>
-      <view
-            category="org.lejos.nxt.ldt.views"
-            class="org.lejos.nxt.ldt.views.browser.NXTBrowserView"
-            icon="icons/nxj.jpg"
-            id="org.lejos.nxt.ldt.views.NXTBrowserView"
-            name="NXT Browser">
-      </view>
    </extension>
 
 </plugin>
