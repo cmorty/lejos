@@ -2,7 +2,6 @@ package lejos.gps;
 
 import java.io.*;
 import java.util.*;
-import lejos.nxt.*;
 
 /**
  * This class manages a data received from a GPS Device.
@@ -375,10 +374,6 @@ public class GPS extends Thread {
 				//Increase the list with more NMEA Sentences
 			}
 		}
-		
-		//Experimental
-		LCD.drawString("END",0,7);
-		LCD.refresh();
 	}
 
 	

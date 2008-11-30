@@ -7,6 +7,11 @@ package java.util;
  * 
  * @author Juan Antonio Brenha Moral
  */
+/*
+ * DEVELOPER NOTES: Since 1.1 Sun has used Calendar for the setXXX() methods and has
+ * removed them from the Date class. I'm not sure why Juan chose to implement an outdated
+ * class here rather than the newer ones. -BB 
+ */
 public class Date {
 	private int year = 2000;
 	private int month = 1;
