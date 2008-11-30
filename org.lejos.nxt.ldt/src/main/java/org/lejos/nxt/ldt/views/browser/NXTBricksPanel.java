@@ -1,13 +1,9 @@
 package org.lejos.nxt.ldt.views.browser;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
 
-import lejos.pc.comm.NXTCommException;
 import lejos.pc.comm.NXTCommFactory;
-import lejos.pc.comm.NXTCommand;
-import lejos.pc.comm.NXTInfo;
 
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnWeightData;

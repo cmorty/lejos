@@ -2,7 +2,7 @@
 <feature
       id="org.lejos.nxt.ldt.feature"
       label="leJOS NXJ Eclipse features"
-      version="0.5.0"
+      version="0.7.0.qualifier"
       provider-name="www.lejos.org">
 
    <description url="http://www.lejos.org">
@@ -16,6 +16,10 @@
    <license url="http://www.lejos.org">
       Licensed under the GPL
    </license>
+
+   <url>
+      <update label="leJOS" url="http://lejos.sourceforge.net/tools/eclipse/plugin/nxj/"/>
+   </url>
 
    <plugin
          id="org.lejos.nxt.ldt"
