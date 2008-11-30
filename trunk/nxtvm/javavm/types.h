@@ -19,7 +19,7 @@ typedef byte boolean;
 
 typedef float        JFLOAT;
 typedef JBYTE        JBOOLEAN;
-typedef JSHORT       JCHAR;
+typedef TWOBYTES       JCHAR;
 typedef FOURBYTES    REFERENCE;
 typedef FOURBYTES    STACKWORD;
 #if LONG_ARITHMETIC
