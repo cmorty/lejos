@@ -122,7 +122,7 @@ public class NXTCommBluecove implements NXTComm, DiscoveryListener {
 			is = con.openInputStream();
 			return true;
 		} catch (IOException e) {
-			throw new NXTCommException("Open of " + nxt.name + " failed");
+			throw new NXTCommException("Open of " + nxt.name + " failed: " + e.getMessage());
 		}
 	}
 
@@ -179,7 +179,8 @@ public class NXTCommBluecove implements NXTComm, DiscoveryListener {
 		int lengthMSB = is.read(); // Most Significant Byte value
 		length = (0xFF & length) | ((0xFF & lengthMSB) << 8);
 		reply = new byte[length];
-		is.read(reply);
+		int len = is.read(reply);
+		if (len != replyLen) throw new IOException("Unexpected reply length");
 
 		return (reply == null) ? new byte[0] : reply;
 	}

@@ -232,7 +232,7 @@ public class NXTConnector extends NXTCommLoggable
 			return -1;
 		}
 	
-		if (choose && nxtInfos.length > 1) {
+		if (choose) {
 			log("List of NXTS available to choose from");
 			return 1;
 		}
