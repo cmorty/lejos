@@ -1,5 +1,4 @@
-
-
+package lejos.subsumption;
 
 /**
 * The Behavior interface represents an object embodying a specific

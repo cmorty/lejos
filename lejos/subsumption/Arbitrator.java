@@ -1,3 +1,4 @@
+package lejos.subsumption;
 
 /**
  * Arbitrator controls which behavior should currently be active in 
