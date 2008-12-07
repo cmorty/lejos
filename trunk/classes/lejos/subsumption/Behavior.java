@@ -1,4 +1,6 @@
 package lejos.subsumption;
+/**
+
 
 /**
 * The Behavior interface represents an object embodying a specific
@@ -21,7 +23,7 @@ package lejos.subsumption;
 * @version 0.4  27-November-2008
 */
 public interface Behavior {
-     
+   
    /**
    * The boolean return  indicates  if this behavior should seize control of the robot.
    * For example, a robot that reacts if a touch sensor is pressed: <BR>
@@ -39,11 +41,8 @@ public interface Behavior {
    * <B>The contract for implementing this method is:</B><BR>
    * Any action can be started in this method. If the action is complete, the
     * method should return.  It <B> must </B> return when the suppress() method 
-    * is called, even if it runs in a  separate thread. <br>
-    * The Arbitrator will only call suppress() if the action() method is still 
-    * running. 
-    * If some side effects remain after it returns, such as motor are still 
-    * moving, the other behaviors  must cope this condition.  
+    * is called, even if it runs  a  separate thread. <br>
+    * 
     *    
    */
    public void action();
@@ -54,10 +53,8 @@ public interface Behavior {
    * as navigational coordinates). <BR>
    * <B>The contract for implementing this method is:</B><BR>
    * This method will stop the action running in this Behavior class and cause action()
-    * to exit promptly. This method
-   * must <I>not</I> return until that action has been stopped. It is acceptable for a 
-   * delay to occur while the action() method finishes up, but the next behavior cannot 
-    * begin its action before the current behavior action() exits. 
+    * to exit promptly. If action() is not running, this method should leave the robot
+    * in a safe state for any other Behavior to run.
    */
    public void suppress();
    
