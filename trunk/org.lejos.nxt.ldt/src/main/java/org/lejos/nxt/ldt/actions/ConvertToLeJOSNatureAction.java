@@ -101,11 +101,12 @@ public class ConvertToLeJOSNatureAction implements IObjectActionDelegate {
 			// update classpath
 			updateClasspath(project);
 			// set "compliance 1.5" option
-			project.setOption(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM,
-					JavaCore.VERSION_1_5);
-			project.setOption(JavaCore.COMPILER_COMPLIANCE,
-					JavaCore.VERSION_1_5);
-			project.setOption(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_5);
+//			project.setOption(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM,
+//					JavaCore.VERSION_1_5);
+//			project.setOption(JavaCore.COMPILER_COMPLIANCE,
+//					JavaCore.VERSION_1_5);
+//			project.setOption(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_5);
+			// TODO set Javadoc location to classes.jar
 			// log
 			LeJOSNXJUtil.message("project " + project.getProject().getName()
 					+ " now is a leJOS NXJ project");
