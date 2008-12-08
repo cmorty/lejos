@@ -158,6 +158,7 @@ void dispatch_special_checked (byte classIndex, byte methodIndex,
                                byte *retAddr, byte *btAddr)
 {
   ClassRecord *classRecord;
+  MethodRecord *methodRecord;
   #if DEBUG_METHODS
   printf ("dispatch_special_checked: %d, %d, %d, %d\n",
           classIndex, methodIndex, (int) retAddr, (int) btAddr);
@@ -169,7 +170,16 @@ void dispatch_special_checked (byte classIndex, byte methodIndex,
   if (!is_initialized_idx (classIndex))
     if (dispatch_static_initializer (classRecord, btAddr) != EXEC_CONTINUE)
       return;
-  dispatch_special (get_method_record (classRecord, methodIndex), retAddr);
+  methodRecord = get_method_record (classRecord, methodIndex);
+  if(dispatch_special (methodRecord, retAddr))
+  {
+    if (is_synchronized(methodRecord))
+    {
+      Object *ref = (Object *)curLocalsBase[0];
+      current_stackframe()->monitor = ref;
+      enter_monitor (currentThread, ref);
+    }
+  }
 }
 
 /**
