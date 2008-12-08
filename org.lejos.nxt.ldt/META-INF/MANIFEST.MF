@@ -15,7 +15,6 @@ Require-Bundle: org.eclipse.core.runtime,
 Eclipse-LazyStart: true
 Bundle-ClassPath: lejosnxj.jar,
  .,
- lib/classes.jar,
  lib/jtools.jar,
  lib/pccomm.jar,
  lib/pctools.jar,

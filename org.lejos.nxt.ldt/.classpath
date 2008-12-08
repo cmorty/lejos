@@ -3,7 +3,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="src" path="src/main/java"/>
-	<classpathentry exported="true" kind="lib" path="lib/classes.jar" sourcepath="org.lejos.nxt.ldtsrc.zip"/>
 	<classpathentry exported="true" kind="lib" path="lib/jtools.jar" sourcepath="org.lejos.nxt.ldtsrc.zip"/>
 	<classpathentry exported="true" kind="lib" path="lib/pccomm.jar" sourcepath="org.lejos.nxt.ldtsrc.zip"/>
 	<classpathentry kind="lib" path="lib/pctools.jar" sourcepath="/pctools"/>

@@ -90,7 +90,7 @@ public class LeJOSNXJUtil {
 			IJavaElement parent = javaElement.getParent();
 			if (parent != null) {
 				String packages = parent.getElementName().trim();
-				if(packages.length()>0)
+				if (packages.length() > 0)
 					fullQualifiedName += packages + ".";
 			}
 			// get class name
@@ -119,7 +119,7 @@ public class LeJOSNXJUtil {
 		} else {
 			binaryName = Long.toHexString(new Date().getTime());
 		}
-		binaryName += ".bin";
+		binaryName += ".nxj";
 		return binaryName;
 	}
 

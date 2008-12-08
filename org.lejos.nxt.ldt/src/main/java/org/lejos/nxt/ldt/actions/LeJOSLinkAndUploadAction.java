@@ -175,11 +175,15 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 			args[argsCounter++] = "LE";
 			// name of binary
 			args[argsCounter++] = "-o";
-			args[argsCounter++] = LeJOSNXJUtil.getBinaryName(javaElement);
+			File targetDir = LeJOSNXJUtil.getAbsoluteProjectTargetDir(project);
+			String binaryName = LeJOSNXJUtil.getBinaryName(javaElement);
+			args[argsCounter++] = new File(targetDir,binaryName).getAbsolutePath();
 			// connection type
 			String connectionType = LeJOSNXJPlugin.getDefault()
 					.getPluginPreferences().getString(
 							PreferenceConstants.P_CONNECTION_TYPE);
+			if((connectionType==null)||(connectionType.trim().length()==0))
+				connectionType = "u";
 			args[argsCounter++] = "-" + connectionType;
 			// run after download?
 			if (runAfterDownload)
