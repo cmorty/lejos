@@ -1,5 +1,4 @@
 package lejos.subsumption;
-/**
 
 
 /**
@@ -19,8 +18,8 @@ package lejos.subsumption;
 * Arbitrator object.
 *
 * @see Arbitrator
-
-* @version 0.4  27-November-2008
+  
+* @version 0.7  28 Dec-2008
 */
 public interface Behavior {
    
@@ -41,9 +40,7 @@ public interface Behavior {
    * <B>The contract for implementing this method is:</B><BR>
    * Any action can be started in this method. If the action is complete, the
     * method should return.  It <B> must </B> return when the suppress() method 
-    * is called, even if it runs  a  separate thread. <br>
-    * 
-    *    
+    * is called, even if it runs  a  separate thread. <br>   
    */
    public void action();
    
