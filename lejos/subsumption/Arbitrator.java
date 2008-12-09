@@ -1,4 +1,5 @@
 package lejos.subsumption;
+
 /**
  * Arbitrator controls which behavior should currently be active in 
  * a behavior control system. Make sure to call start() after the 
@@ -12,16 +13,18 @@ package lejos.subsumption;
  * <br> Requirement for a Behavior:  When suppress() is called, terminate  action() immediately. 
  * @see Behavior
  * @author Roger Glassey
- */ 
-public class Arbitrator {
-      
+ */
+public class Arbitrator
+{
+
     private final int NONE = -1;
     private Behavior[] _behavior;
     // highest priority behavior that wants control
     private int _highestPriority = NONE;
     private int _current = NONE; // currently active behavior
-    private int _lastActive;
+    private int _lastActive = NONE; // last acative behavior
     private boolean _returnWhenInactive;
+
     /**
      * Monitor is an inner class.  It polls the behavior array to find the behavior of hightst
      * priority.  If higher than the current active behavior, it calls current.suppress()
@@ -39,7 +42,8 @@ public class Arbitrator {
      * @param behaviorList an array of Behavior objects.
      * @param returnWhenInactive if <B>true</B>, the <B>start()</B> method returns when no Behavior is active.
      */
-    public Arbitrator(Behavior[] behaviorList, boolean returnWhenInactive) {
+    public Arbitrator(Behavior[] behaviorList, boolean returnWhenInactive)
+    {
         _behavior = behaviorList;
         _returnWhenInactive = returnWhenInactive;
         monitor = new Monitor();
@@ -47,11 +51,12 @@ public class Arbitrator {
     }
 
     /**
-     * Same as Arbitrator(behaviorList, true).
+     * Same as Arbitrator(behaviorList, false) Arbitrator start never exits
      * @param behaviorList An array of Behavior objects.
      */
-    public Arbitrator(Behavior[] behaviorList) {
-        this(behaviorList, true);
+    public Arbitrator(Behavior[] behaviorList)
+    {
+        this(behaviorList, false);
     }
 
     /**
@@ -61,27 +66,29 @@ public class Arbitrator {
      * <br>2. no behavior  takeControl()
      * returns <B> true </B>  and  <br> 3. the <i>returnWhenInacative </i> flag is true,
      */
-    public void start() {
-        _lastActive =1+_behavior.length;
+    public void start()
+    {
+        _lastActive = NONE;
         monitor.start();
-        while (_highestPriority == NONE) {
+        while (_highestPriority == NONE)
+        {
             Thread.yield();//wait for some behavior to take contro                    
         }
-              
-        while (true) 
+        while (true)
         {
-            if (_highestPriority != NONE ) 
+            if (_highestPriority != NONE)
             {
-                if ( _highestPriority!= _lastActive)  // no reptition of action()
+                if (_highestPriority != _lastActive) // no reptition of action()
                 {
-                    synchronized(monitor){
-                    _current = _highestPriority;
+                    synchronized (monitor)
+                    {
+                        _current = _highestPriority;
                     }
                     _behavior[_current].action();
-                    synchronized(monitor)
+                    synchronized (monitor)
                     {
-                    _lastActive = _current;
-                    _current = NONE;  // no active behavior at the moment
+                        _lastActive = _current;
+                        _current = NONE;  // no active behavior at the moment
                     }
                 }
             } else if (_returnWhenInactive)
@@ -98,40 +105,50 @@ public class Arbitrator {
      * If this priority is higher than the current behavior, it calls current.suppress().
      * If there is no current behavior, calls suppress() on the most recently acrive behavior.
      */
-    private class Monitor extends Thread {
+    private class Monitor extends Thread
+    {
 
         boolean more = true;
         int maxPriority = _behavior.length - 1;
 
-        public void run() 
+        public void run()
         {
-            while (more) 
+            while (more)
             {
                 //FIND HIGHEST PRIORITY BEHAVIOR THAT WANTS CONTROL
                 int wantsControl = NONE;
-                synchronized(this)
+                synchronized (this)
                 {
-                for (int i = maxPriority; i >= 0; i--) 
-                {
-                    if (_behavior[i].takeControl()) {
-                        wantsControl = i;
-                        break;
+                    for (int i = maxPriority; i >= 0; i--)
+                    {
+                        if (_behavior[i].takeControl())
+                        {
+                            wantsControl = i;
+                            break;
+                        }
                     }
-                }
-                int current = _current;
-                _highestPriority = wantsControl;
-                if (wantsControl > current && current != NONE) 
-                {
-                    _behavior[current].suppress();
-                }
-                else if(wantsControl > _lastActive && _lastActive != NONE )
-                {
-                    _behavior[_lastActive].suppress();
-                    _lastActive = NONE;
-                }
-                }
+                    int current = _current;
+                    if (current != NONE)
+                    {
+                        if (wantsControl > current)
+                        {
+                            _highestPriority = wantsControl;
+                            _behavior[current].suppress();
+                        }
+                    } else // current == NONE
+                    {
+                        if (_lastActive != NONE && wantsControl != NONE &&
+                                wantsControl != _lastActive)
+                        {
+                            _behavior[_lastActive].suppress();
+                            _lastActive = NONE;
+                        }
+                        _highestPriority = wantsControl;
+                    }
+                }// end sync
                 Thread.yield();
             }
         }
     }
 }
+  
