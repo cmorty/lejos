@@ -1,21 +1,24 @@
-package lejos.subsumption;
+//package lejos.subsumption;
 
 /**
- * Arbitrator controls which behavior should currently be active in 
+ * ArbitratorS controls which behavior should currently be active in 
  * a behavior control system. Make sure to call start() after the 
- * Arbitrator is instantiated.<br>
+ * ArbitratorS is instantiated.<br>
  *  This class has three major responsibilities: <br> 
  * 1. Determine the highest priority  behavior that returns <b> true </b> to takeControl()<br>   
  * 2. Suppress the currently active behavior if its prioirty is less than highest
- * priority. If no action() method is running, and some Behavior should take control,
- * suppress the last active behavior; <br>
- * 3. When the active behavior  exits its action() method, activate  the behavior of highest priority 
- * (unless it was the most recently active behavior.)     
- * <br> Requirement for a Behavior:  When suppress() is called, terminate  action() immediately. 
+ * priority. <br>   
+ * 3. When the action() method exits, it calls action() on the Behavior of highest priority.
+ * this class ia a  simplified version of Arbitrator. The differences are:
+ * <br> It assumes that a Behavior is no longer active when action() exits.
+ * <br> Therefore it will only call suppress() on the Behavior whose action() method is running.
+ * <br> It can make consecutives calls of action() on the same Behavior.
+ * <br> Requirements for a Behavior:
+ * <br>When suppress() is called, terminate  action() immediately.
  * @see Behavior
  * @author Roger Glassey
  */
-public class Arbitrator
+public class ArbitratorS
 {
 
     private final int NONE = -1;
@@ -23,9 +26,8 @@ public class Arbitrator
     // highest priority behavior that wants control
     private int _highestPriority = NONE;
     private int _current = NONE; // currently active behavior
-    private int _lastActive = NONE; // last acative behavior
+//    private int _lastActive = NONE; // last acative behavior
     private boolean _returnWhenInactive;
-
     /**
      * Monitor is an inner class.  It polls the behavior array to find the behavior of hightst
      * priority.  If higher than the current active behavior, it calls current.suppress()
@@ -43,7 +45,7 @@ public class Arbitrator
      * @param behaviorList an array of Behavior objects.
      * @param returnWhenInactive if <B>true</B>, the <B>start()</B> method returns when no Behavior is active.
      */
-    public Arbitrator(Behavior[] behaviorList, boolean returnWhenInactive)
+    public ArbitratorS(Behavior[] behaviorList, boolean returnWhenInactive)
     {
         _behavior = behaviorList;
         _returnWhenInactive = returnWhenInactive;
@@ -55,7 +57,7 @@ public class Arbitrator
      * Same as Arbitrator(behaviorList, false) Arbitrator start never exits
      * @param behaviorList An array of Behavior objects.
      */
-    public Arbitrator(Behavior[] behaviorList)
+    public ArbitratorS(Behavior[] behaviorList)
     {
         this(behaviorList, false);
     }
@@ -69,8 +71,8 @@ public class Arbitrator
      */
     public void start()
     {
-        _lastActive = NONE;
         monitor.start();
+//        RConsole.open();
         while (_highestPriority == NONE)
         {
             Thread.yield();//wait for some behavior to take contro                    
@@ -79,19 +81,16 @@ public class Arbitrator
         {
             if (_highestPriority != NONE)
             {
-                if (_highestPriority != _lastActive) // no reptition of action()
+                synchronized (monitor)
                 {
-                    synchronized (monitor)
-                    {
-                        _current = _highestPriority;
-                    }
-                    _behavior[_current].action();
-                    synchronized (monitor)
-                    {
-                        _lastActive = _current;
-                        _current = NONE;  // no active behavior at the moment
-                    }
+                    _current = _highestPriority;
                 }
+                _behavior[_current].action();
+                synchronized (monitor)
+                {
+                    _current = NONE;  // no active behavior at the moment
+                }
+
             } else if (_returnWhenInactive)
             {// no behavior wants to run
                 monitor.more = false;// shut down monitor thread
@@ -133,21 +132,12 @@ public class Arbitrator
                     {
                         if (wantsControl > current)
                         {
-                            _highestPriority = wantsControl;
                             _behavior[current].suppress();
                             _current = NONE;
                         }
-                    } else // current == NONE
-                    {
-                        if (wantsControl != NONE &&_lastActive != NONE
-                                &&  wantsControl != _lastActive )
-                            // don't suppres suppress if it wants  stull should run
-                        {
-                            _behavior[_lastActive].suppress();
-                            _lastActive = NONE;
-                        }
-                        _highestPriority = wantsControl;
+                        
                     }
+                     _highestPriority = wantsControl;
                 }// end sync
                 Thread.yield();
             }
