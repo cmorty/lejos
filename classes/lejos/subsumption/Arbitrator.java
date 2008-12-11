@@ -71,32 +71,33 @@ public class Arbitrator
     {
         _lastActive = NONE;
         monitor.start();
+        
         while (_highestPriority == NONE)
         {
-            Thread.yield();//wait for some behavior to take contro                    
+            Thread.yield();//wait for some behavior to take control                   
         }
+        
         while (true)
         {
-            if (_highestPriority != NONE)
-            {
-                if (_highestPriority != _lastActive) // no reptition of action()
-                {
-                    synchronized (monitor)
-                    {
-                        _current = _highestPriority;
-                    }
-                    _behavior[_current].action();
-                    synchronized (monitor)
-                    {
-                        _lastActive = _current;
-                        _current = NONE;  // no active behavior at the moment
-                    }
-                }
-            } else if (_returnWhenInactive)
-            {// no behavior wants to run
-                monitor.more = false;// shut down monitor thread
-                return;
-            }
+        	synchronized (monitor) {
+	            if (_highestPriority != NONE)
+	            {
+	                if (_highestPriority != _lastActive) // no repetition of action()
+	                {
+	                     _current = _highestPriority;
+	             		_lastActive = _current;
+	                }
+	            } else if (_returnWhenInactive)
+	            {// no behavior wants to run
+	                monitor.more = false;// shut down monitor thread
+	                return;
+	            }
+        	}
+        	// monitor released, so _current could be suppressed before run
+        	if (_current != NONE) {
+        		_behavior[_current].action(); // Run the action
+        		_current = NONE;
+        	}
             Thread.yield();
         }
     }
@@ -104,7 +105,7 @@ public class Arbitrator
     /**
      * Finds the highest priority behavior that returns <B>true </B> to takeControl();
      * If this priority is higher than the current behavior, it calls current.suppress().
-     * If there is no current behavior, calls suppress() on the most recently acrive behavior.
+     * If there is no current behavior, calls suppress() on the most recently active behavior.
      */
     private class Monitor extends Thread
     {
@@ -117,36 +118,33 @@ public class Arbitrator
             while (more)
             {
                 //FIND HIGHEST PRIORITY BEHAVIOR THAT WANTS CONTROL
-                int wantsControl = NONE;
                 synchronized (this)
                 {
                     for (int i = maxPriority; i >= 0; i--)
                     {
                         if (_behavior[i].takeControl())
                         {
-                            wantsControl = i;
+                            _highestPriority = i;
                             break;
                         }
                     }
-                    int current = _current;
-                    if (current != NONE)
+                    if (_current != NONE)
                     {
-                        if (wantsControl > current)
+                        if (_highestPriority > _current)
                         {
-                            _highestPriority = wantsControl;
-                            _behavior[current].suppress();
+                            _behavior[_current].suppress();
                             _current = NONE;
+                            _lastActive = NONE;
                         }
                     } else // current == NONE
                     {
-                        if (wantsControl != NONE &&_lastActive != NONE
-                                &&  wantsControl != _lastActive )
-                            // don't suppres suppress if it wants  stull should run
+                    	// When current is finished, 
+                    	// suppress the last active unless it still should run
+                        if (_lastActive != NONE  &&  _highestPriority != _lastActive )
                         {
                             _behavior[_lastActive].suppress();
                             _lastActive = NONE;
                         }
-                        _highestPriority = wantsControl;
                     }
                 }// end sync
                 Thread.yield();
