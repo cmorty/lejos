@@ -48,7 +48,6 @@ public class Line {
 
 			public void suppress() {
 				suppress = true;
-				while (suppress) Thread.yield();
 			}
 			
 			public void action() {
