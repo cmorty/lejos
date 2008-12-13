@@ -5,7 +5,7 @@ import javax.bluetooth.RemoteDevice;
 
 
 /**
- * Provides Bluetooth comminications.
+ * Provides Bluetooth communications.
  * Allows inbound and outbound connections.
  * Provides access to to device registration.
  */

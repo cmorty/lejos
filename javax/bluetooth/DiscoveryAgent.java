@@ -173,7 +173,10 @@ public class DiscoveryAgent {
                 }
                 // TODO Start inquiry here using Bluetooth.inquire().
                 // !! Will make alternate method to pass Listener object, then it can notify
-                // the listener real time as they are found!
+                // the listener real time as they are found! Also will have to make inner
+                // class of Bluetooth.inquire() that is Runnable so it starts method but returns
+                // immediately.
+                // Or perhaps make my own method that returns immediately similar to inquire()?
                 return false;
         }
 
