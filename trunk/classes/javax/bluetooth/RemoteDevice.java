@@ -39,7 +39,7 @@ public class RemoteDevice {
 		this.getFriendlyName(true); // Refresh name
 	}
 	
-	// !! DEV NOTES: Remove this eventually.
+	// !! DEV NOTES: Remove this whole method eventually.
 	public RemoteDevice(char[] friendlyNameCharArray, int len, byte[] deviceAddr, byte [] devclass) {
 		setFriendlyName(friendlyNameCharArray, len);
 		setDeviceAddr(deviceAddr);
