@@ -1,4 +1,3 @@
-
 import java.io.*;
 import java.util.Vector;
 import javax.microedition.lcdui.*;
@@ -195,7 +194,7 @@ public class StartUpText
 		TextMenu wavMenu = new TextMenu(wavMenuData,2);
 		String[] fileNames = new String[File.MAX_FILES];
 		TextMenu menu = topMenu;
-		String[] blueMenuData = {"Power off", "Search", "Devices","Visibility", "Change PIN"};
+		String[] blueMenuData = {"Power off", "Search and Pair", "Devices","Visibility", "Change PIN"};
 		String[] blueOffMenuData = {"Power on"};
 		TextMenu blueMenu = new TextMenu(blueMenuData,3);
 		TextMenu blueOffMenu = new TextMenu(blueOffMenuData,3);
@@ -438,7 +437,7 @@ public class StartUpText
 		    			}
 		    				
 		    			TextMenu searchMenu = new TextMenu(names,1);
-		    			String[] subItems = {"Add"};
+		    			String[] subItems = {"Pair"};
 		    			TextMenu subMenu = new TextMenu(subItems,4);
 		    			
 		    			int selected;
@@ -455,7 +454,23 @@ public class StartUpText
 		    					LCD.drawString(btrd.getBluetoothAddress(), 0, 2);
 		    					int subSelection = subMenu.select(0, timeout);
 		    					if (subSelection == -3) System.shutDown();
-		    					if (subSelection == 0) Bluetooth.addDevice(btrd);
+		    					if (subSelection == 0) {
+		    						Bluetooth.addDevice(btrd);
+		    						byte [] pin = enterNumber(4, "Enter PIN of " + btrd.getFriendlyName(false), null); // !! Assuming 4 length
+		    						LCD.drawString("Please wait...", 0, 4);
+		    						LCD.refresh();
+		    						BTConnection connection = Bluetooth.connect(btrd.getDeviceAddr(), 0, pin);
+		    						// Indicate Success or failure:
+		    						if (connection != null) {
+		    							LCD.drawString("Pair Success", 0, 6);
+		    							connection.close();
+		    						} else {
+		    							LCD.drawString("UNSUCCESSFUL", 0, 6);
+		    							Bluetooth.removeDevice(btrd);
+		    						}
+		    						LCD.refresh();
+		    						Thread.sleep(2500);
+		    					}
 		    				}
 		    			} while (selected >= 0);
 
