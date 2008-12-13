@@ -4,6 +4,7 @@ import java.util.Vector;
 import javax.microedition.lcdui.*;
 import lejos.nxt.comm.*;
 import lejos.nxt.*;
+
 import javax.bluetooth.*;
 
 
@@ -15,6 +16,7 @@ public class StartUpText
    static final String defaultProgramProperty = "lejos.default_program"; 
    static final String defaultProgramAutoRunProperty = "lejos.default_autoRun";
    static final String sleepTimeProperty = "lejos.sleep_time";
+   static final String pinProperty = "lejos.bluetooth_pin";
    static final int defaultSleepTime = 2;
    static final int maxSleepTime = 10;
    static final String revision = "$Revision$";
@@ -104,6 +106,67 @@ public class StartUpText
        }
 	}
 	
+	/**
+	 * Clears the screen, displays a number and allows user to change
+	 * the digits of the number individually using the NXT buttons.
+	 * 
+	 * @param digits Number of digits in the PIN.
+	 * @param title The text to display above the numbers.
+	 * @param defaultNumber Start with a default PIN. Array of bytes up to 8 length.
+	 * @return
+	 */
+	private static byte [] enterNumber(int digits, String title, byte [] defaultNumber) {
+		// !! Should probably check to make sure defaultNumber is digits in size
+		char spacer = ' ';
+		byte [] number = new byte[digits];
+		int curDigit = 0;
+		boolean done = false;
+		
+		if (defaultNumber != null)
+			number = defaultNumber;
+				
+		LCD.clear();
+		while(!done) {
+			g.clear();
+			LCD.drawString(title, 0, 0);
+			String str = "";
+			for(int i=0;i<digits;i++) {
+				str = str + spacer + number[i];
+			}
+			LCD.drawString(str, 0, 2);
+			LCD.refresh();
+			g.drawRect(curDigit * 12 + 3, 14 , 10, 10);
+			g.refresh();
+			
+			int ret = Button.waitForPress();
+			switch(ret) {
+				case 0x01: { // ENTER
+					curDigit++;
+					if(curDigit >= digits) done = true;
+					break;
+				}
+				case 0x02: { // LEFT
+					number[curDigit]--;
+					if(number[curDigit] < 0) number[curDigit] = 9;
+					break;
+				}
+				case 0x04: { // RIGHT
+					number[curDigit]++;
+					if(number[curDigit] > 9) number[curDigit] = 0;
+					break;
+				}
+				case 0x08: { // ESCAPE
+					curDigit--;
+					// Return null if user backs out
+					if(curDigit <0) return null;
+					break;
+				}
+			}
+		}
+		return number;
+	}
+
+	
 	public static void main(String[] args) throws Exception {
 		Indicators ind = new Indicators();
 		USBRespond usb = new USBRespond();
@@ -132,7 +195,7 @@ public class StartUpText
 		TextMenu wavMenu = new TextMenu(wavMenuData,2);
 		String[] fileNames = new String[File.MAX_FILES];
 		TextMenu menu = topMenu;
-		String[] blueMenuData = {"Power off", "Search", "Devices","Visibility"};
+		String[] blueMenuData = {"Power off", "Search", "Devices","Visibility", "Change PIN"};
 		String[] blueOffMenuData = {"Power on"};
 		TextMenu blueMenu = new TextMenu(blueMenuData,3);
 		TextMenu blueOffMenu = new TextMenu(blueOffMenuData,3);
@@ -413,7 +476,26 @@ public class StartUpText
 		        }else if (selection == 3) // Visibility
 		        {
 		        	Bluetooth.setVisibility((byte) (visibility == 1 ? 0 : 1));
-		        } else if (selection == -1) {
+		        } else if (selection == 4) // Change PIN
+		        {
+		    		// 1. Retrieve PIN from System properties
+		        	String pinStr = SystemSettings.getStringSetting(pinProperty, "1234");
+		        	byte [] pin = new byte[pinStr.length()];
+		        	for(int i=0;i<pinStr.length();i++)
+		        		pin[i] = (byte)(((byte)pinStr.charAt(i)) - 48);
+		        	
+		        	// 2. Call enterNumber() method
+		        	pin = enterNumber(4, "Enter NXT PIN", pin);
+		        	
+		        	// 3. Set PIN in system memory.
+		        	String pinSet = "";
+		        	if(pin != null) {
+		        		for(int i=0;i<pin.length;i++)
+		        	     	pinSet += pin[i];
+		        		Settings.setProperty(pinProperty, pinSet);
+		        	}
+		        	
+		    	} else if (selection == -1) {
 		    		menu = topMenu;
 		    	}
 		    	
