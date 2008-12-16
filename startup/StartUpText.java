@@ -467,14 +467,15 @@ public class StartUpText
 		    						BTConnection connection = Bluetooth.connect(btrd.getDeviceAddr(), 0, pin);
 		    						// Indicate Success or failure:
 		    						if (connection != null) {
-		    							LCD.drawString("Pair Success", 0, 6);
+		    							LCD.drawString("Paired!", 0, 6);
 		    							connection.close();
 		    						} else {
 		    							LCD.drawString("UNSUCCESSFUL", 0, 6);
 		    							Bluetooth.removeDevice(btrd);
 		    						}
+		    						LCD.drawString("Press any key", 0, 7);
 		    						LCD.refresh();
-		    						Thread.sleep(2500);
+		    						Button.waitForPress();
 		    					}
 		    				}
 		    			} while (selected >= 0);
