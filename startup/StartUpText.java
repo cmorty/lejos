@@ -108,6 +108,7 @@ public class StartUpText
 	/**
 	 * Clears the screen, displays a number and allows user to change
 	 * the digits of the number individually using the NXT buttons.
+	 * Note the array of bytes represent ASCII characters, not actual numbers.
 	 * 
 	 * @param digits Number of digits in the PIN.
 	 * @param title The text to display above the numbers.
@@ -130,7 +131,7 @@ public class StartUpText
 			LCD.drawString(title, 0, 0);
 			String str = "";
 			for(int i=0;i<digits;i++) {
-				str = str + spacer + number[i];
+				str = str + spacer + (char)number[i];
 			}
 			LCD.drawString(str, 0, 2);
 			LCD.refresh();
@@ -146,12 +147,12 @@ public class StartUpText
 				}
 				case 0x02: { // LEFT
 					number[curDigit]--;
-					if(number[curDigit] < 0) number[curDigit] = 9;
+					if(number[curDigit] < '0') number[curDigit] = '9';
 					break;
 				}
 				case 0x04: { // RIGHT
 					number[curDigit]++;
-					if(number[curDigit] > 9) number[curDigit] = 0;
+					if(number[curDigit] > '9') number[curDigit] = '0';
 					break;
 				}
 				case 0x08: { // ESCAPE
@@ -167,6 +168,9 @@ public class StartUpText
 
 	
 	public static void main(String[] args) throws Exception {
+		
+		//1 RConsole.open();
+				
 		Indicators ind = new Indicators();
 		USBRespond usb = new USBRespond();
 		BTRespond bt = new BTRespond();
@@ -456,7 +460,8 @@ public class StartUpText
 		    					if (subSelection == -3) System.shutDown();
 		    					if (subSelection == 0) {
 		    						Bluetooth.addDevice(btrd);
-		    						byte [] pin = enterNumber(4, "Enter PIN of " + btrd.getFriendlyName(false), null); // !! Assuming 4 length
+		    						byte [] tempPin = {'0', '0', '0', '0'};
+		    						byte [] pin = enterNumber(4, "Enter PIN of " + btrd.getFriendlyName(false), tempPin); // !! Assuming 4 length
 		    						LCD.drawString("Please wait...", 0, 4);
 		    						LCD.refresh();
 		    						BTConnection connection = Bluetooth.connect(btrd.getDeviceAddr(), 0, pin);
@@ -497,7 +502,7 @@ public class StartUpText
 		        	String pinStr = SystemSettings.getStringSetting(pinProperty, "1234");
 		        	byte [] pin = new byte[pinStr.length()];
 		        	for(int i=0;i<pinStr.length();i++)
-		        		pin[i] = (byte)(((byte)pinStr.charAt(i)) - 48);
+		        		pin[i] = (byte)pinStr.charAt(i);
 		        	
 		        	// 2. Call enterNumber() method
 		        	pin = enterNumber(4, "Enter NXT PIN", pin);
@@ -506,7 +511,7 @@ public class StartUpText
 		        	String pinSet = "";
 		        	if(pin != null) {
 		        		for(int i=0;i<pin.length;i++)
-		        	     	pinSet += pin[i];
+		        	     	pinSet += (char)pin[i];
 		        		Settings.setProperty(pinProperty, pinSet);
 		        	}
 		        	

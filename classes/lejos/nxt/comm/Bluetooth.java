@@ -3,6 +3,8 @@ import java.util.*;
 
 import javax.bluetooth.RemoteDevice;
 
+import lejos.nxt.SystemSettings;
+
 
 /**
  * Provides Bluetooth communications.
@@ -116,9 +118,9 @@ public class Bluetooth
 	static int resetCnt;
 	static boolean powerOn;
 	static boolean publicPowerOn = false;
-	public final static byte[] defaultPin = 
-	    {(byte) '1', (byte) '2', (byte) '3', (byte) '4'};
-	private static byte [] pin = defaultPin;
+	/*public final static byte[] defaultPin = 
+	    {(byte) '1', (byte) '2', (byte) '3', (byte) '4'}; */ // Now storing PIN in SystemSettings
+	private static byte [] pin; //!! = defaultPin;
 	static Object sync = new Object();
 	static byte[] cachedName;
 	static byte[] cachedAddress;
@@ -920,7 +922,13 @@ public class Bluetooth
 	 * @return BTConnection Object or null
 	 */
 	public static BTConnection connect(byte[] device_addr) {
-		return connect(device_addr, 0, null);
+		// Retrieve default PIN from System properties
+    	String pinStr = SystemSettings.getStringSetting("lejos.bluetooth_pin", "1234");
+    	byte [] defaultPin = new byte[pinStr.length()];
+    	for(int i=0;i<pinStr.length();i++)
+    		pin[i] = (byte)pinStr.charAt(i);
+    	
+		return connect(device_addr, 0, defaultPin);
 	}
 	
 	/**
@@ -928,12 +936,12 @@ public class Bluetooth
 	 * 
 	 * @param device_addr byte-Array with device-Address
 	 * @param mode The data mode. Either PACKET, LCP, or RAW found in <code>NXTConnection</code>
-	 * @param pin the pin to use
+	 * @param pin the pin to use. Must be ASCII code, so '0' = 48
 	 * @return BTConnection Object or null
 	 */
 	public static BTConnection connect(byte[] device_addr, int mode, byte[] pin) {
 		
-		//1 RConsole.print("Connect\n");
+		//1 RConsole.print("Connect\n"); 
 		synchronized(Bluetooth.sync)
 		{
 			BTConnection ret = null;
@@ -948,7 +956,7 @@ public class Bluetooth
 			System.arraycopy(device_addr, 0, cmdBuf, 2, 7);
 			if (cmdWait(RS_REPLY, RS_CMD, MSG_CONNECT_RESULT, TO_LONG) >= 0)
 			{
-				//1 RConsole.print("Connect result " + (int)replyBuf[2] + " handle " + (int)replyBuf[3] + "\n");
+				//1 RConsole.print("Connect result " + (int)replyBuf[2] + " handle " + (int)replyBuf[3] + "\n"); 
 				if (replyBuf[2] != 0)
 				{
 					byte handle = replyBuf[3];
