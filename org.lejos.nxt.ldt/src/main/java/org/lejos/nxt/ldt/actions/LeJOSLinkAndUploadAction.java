@@ -6,9 +6,7 @@ import js.common.CLIToolProgressMonitor;
 import js.tinyvm.TinyVM;
 import lejos.pc.comm.NXTCommand;
 import lejos.pc.comm.NXTInfo;
-import lejos.pc.tools.NXJCommandLineParser;
 import lejos.pc.tools.NXJUploadException;
-import lejos.pc.tools.SendFile;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -28,7 +26,6 @@ import org.eclipse.ui.progress.IProgressService;
 import org.lejos.nxt.ldt.LeJOSNXJPlugin;
 import org.lejos.nxt.ldt.preferences.PreferenceConstants;
 import org.lejos.nxt.ldt.util.LeJOSNXJException;
-import org.lejos.nxt.ldt.util.LeJOSNXJLogListener;
 import org.lejos.nxt.ldt.util.LeJOSNXJUtil;
 
 /**
@@ -41,17 +38,17 @@ import org.lejos.nxt.ldt.util.LeJOSNXJUtil;
 public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 
 	private ISelection _selection;
-//	private LeJOSNXJLogListener _logListener;
+	// private LeJOSNXJLogListener _logListener;
 	// TODO remove when no longer needed
-//	private NXJCommandLineParser _parser;
+	// private NXJCommandLineParser _parser;
 	private TinyVM _tinyVM;
 
 	/**
 	 * The constructor.
 	 */
 	public LeJOSLinkAndUploadAction() {
-//		_logListener = new LeJOSNXJLogListener();
-//		_parser = new NXJCommandLineParser();
+		// _logListener = new LeJOSNXJLogListener();
+		// _parser = new NXJCommandLineParser();
 		_tinyVM = new TinyVM();
 		_tinyVM.addProgressMonitor(new CLIToolProgressMonitor());
 	}
@@ -162,11 +159,11 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 			if (isVerbose)
 				tinyVMArgs[argsCounter++] = "--verbose";
 			// log
-//			String argsString = "arguments";
-//			for (int arg = 0; arg < tinyVMArgs.length; arg++) {
-//				argsString += " " + tinyVMArgs[arg];
-//			}
-//			LeJOSNXJUtil.message("linking using " + argsString);
+			// String argsString = "arguments";
+			// for (int arg = 0; arg < tinyVMArgs.length; arg++) {
+			// argsString += " " + tinyVMArgs[arg];
+			// }
+			// LeJOSNXJUtil.message("linking using " + argsString);
 			// run linker
 			_tinyVM = new TinyVM();
 			_tinyVM.start(tinyVMArgs);
@@ -178,6 +175,8 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 
 	/**
 	 * TODO honor property "run after upload"
+	 * TODO check result of upload
+	 * 
 	 * @param binName
 	 * @throws NXJUploadException
 	 */
@@ -191,7 +190,7 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 			// send file
 			try {
 				File f = new File(binName);
-				String result = SendFile.sendFile(NXTCommand.getSingleton(), f);
+				String result = NXTCommand.getSingleton().uploadFile(f);
 			} catch (Throwable t) {
 				throw new NXJUploadException("Exception during upload", t);
 			}

@@ -3,7 +3,7 @@
    <description url="http://mynxt.matthiaspaulscholz.eu/lejos/eclipse">
       Eclipse features for leJOS NXJ.
    </description>
-   <feature url="features/org.lejos.nxt.ldt.feature_0.8.0.qualifier.jar" id="org.lejos.nxt.ldt.feature" version="0.8.0.qualifier">
+   <feature url="features/org.lejos.nxt.ldt.feature_0.8.0.200812171624.jar" id="org.lejos.nxt.ldt.feature" version="0.8.0.200812171624">
       <category name="leJOS NXJ Eclipse"/>
    </feature>
    <category-def name="leJOS NXJ Eclipse" label="leJOS NXJ Eclipse">
