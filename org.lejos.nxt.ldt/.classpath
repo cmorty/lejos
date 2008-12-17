@@ -3,11 +3,14 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="src" path="src/main/java"/>
-	<classpathentry exported="true" kind="lib" path="lib/jtools.jar" sourcepath="org.lejos.nxt.ldtsrc.zip"/>
-	<classpathentry exported="true" kind="lib" path="lib/pccomm.jar" sourcepath="org.lejos.nxt.ldtsrc.zip"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/jtools"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/pccomms"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/pctools"/>
+	<classpathentry kind="lib" path="lib/jtools.jar" sourcepath="org.lejos.nxt.ldtsrc.zip"/>
+	<classpathentry kind="lib" path="lib/pccomm.jar" sourcepath="org.lejos.nxt.ldtsrc.zip"/>
 	<classpathentry kind="lib" path="lib/pctools.jar" sourcepath="/pctools"/>
-	<classpathentry exported="true" kind="lib" path="lib/bcel-5.1.jar" sourcepath="org.lejos.nxt.ldtsrc.zip"/>
-	<classpathentry exported="true" kind="lib" path="lib/commons-cli-1.0.jar" sourcepath="org.lejos.nxt.ldtsrc.zip"/>
-	<classpathentry exported="true" kind="lib" path="lib/bluecove.jar" sourcepath="org.lejos.nxt.ldtsrc.zip"/>
+	<classpathentry kind="lib" path="lib/bcel-5.1.jar" sourcepath="org.lejos.nxt.ldtsrc.zip"/>
+	<classpathentry kind="lib" path="lib/commons-cli-1.0.jar" sourcepath="org.lejos.nxt.ldtsrc.zip"/>
+	<classpathentry kind="lib" path="lib/bluecove.jar" sourcepath="org.lejos.nxt.ldtsrc.zip"/>
 	<classpathentry kind="output" path="target"/>
 </classpath>

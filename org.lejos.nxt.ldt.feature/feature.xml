@@ -2,8 +2,9 @@
 <feature
       id="org.lejos.nxt.ldt.feature"
       label="leJOS NXJ Eclipse features"
-      version="0.7.0.qualifier"
-      provider-name="www.lejos.org">
+      version="0.8.0.qualifier"
+      provider-name="www.lejos.org"
+      plugin="org.lejos.nxt.ldt">
 
    <description url="http://www.lejos.org">
       Eclipse features for leJOS NXJ
