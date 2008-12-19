@@ -83,7 +83,7 @@ class CommandLineParser
 public class NXJFlash
 {
 
-    private static final int MAX_FIRMWARE_PAGES = 320;
+    private static final int MAX_FIRMWARE_PAGES = 336;
     private static final String VM = "lejos_nxt_rom.bin";
     private static final String MENU = "StartUpText.bin";
 
