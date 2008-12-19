@@ -53,8 +53,8 @@ extern U32 __extra_ram_end__;
 byte *region;
 Thread *bootThread;
 static unsigned int menu_address;
-static unsigned int menu_length_address = 0x00113ffc;
-static unsigned int menu_address_address = 0x00113ff8;
+static unsigned int menu_length_address = 0x00114ffc;
+static unsigned int menu_address_address = 0x00114ff8;
 
 void
 wait_for_power_down_signal()

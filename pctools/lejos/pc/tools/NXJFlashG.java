@@ -274,7 +274,7 @@ public class NXJFlashG extends javax.swing.JFrame
          mem[offset++] = (byte) ((val >> 16) & 0xff);
          mem[offset++] = (byte) ((val >> 24) & 0xff);
        }
-      private static final int MAX_FIRMWARE_PAGES = 320;
+      private static final int MAX_FIRMWARE_PAGES = 336;
       private static final String VM = "lejos_nxt_rom.bin";
       private static final String MENU = "StartUpText.bin";
    }
