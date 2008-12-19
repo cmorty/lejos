@@ -103,4 +103,6 @@
 #define hsWrite_4_1BII_5I 96
 #define hsRead_4_1BII_5I 97
 #define hsPending_4_5I 98
+#define hsSend_4BB_1BII_1C_5I 99
+#define hsRecv_4_1BI_1CI_5I 100
 #endif // _SPECIALSIGNATURES_H

@@ -163,4 +163,5 @@ hsDisable()V
 hsWrite([BII)I
 hsRead([BII)I
 hsPending()I
-
+hsSend(BB[BII[C)I
+hsRecv([BI[CI)I
