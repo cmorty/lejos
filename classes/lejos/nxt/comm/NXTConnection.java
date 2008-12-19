@@ -449,10 +449,14 @@ ioloop: while (offset < len)
 			read(null, inBuf.length, false);
 			try{Thread.sleep(1);} catch (Exception e) {}
 		}
-		// Dump any remaining output
-        //LCD.drawInt(4, 8, 0, 6);
-        //LCD.drawInt(state, 8, 8, 6);
-		outCnt = 0;
+        synchronized(this)
+        {
+            // Dump any remaining output
+            //LCD.drawInt(4, 8, 0, 6);
+            //LCD.drawInt(state, 8, 8, 6);
+            outCnt = 0;
+            if (state == CS_EOF) state = CS_DISCONNECTING;
+        }
 		if (state == CS_DISCONNECTING)
 			// Must not be synchronized here or we get a deadlock
 			disconnect();
