@@ -11,6 +11,11 @@ package lejos.nxt;
  */
 public class Button implements ListenerCaller
 {
+  public static final int ID_ENTER = 0x1;
+  public static final int ID_LEFT = 0x2;
+  public static final int ID_RIGHT = 0x4;
+  public static final int ID_ESCAPE = 0x8;
+  
   private int iCode;
   private ButtonListener[] iListeners = new ButtonListener[4];
   private int iNumListeners;
@@ -33,19 +38,19 @@ public class Button implements ListenerCaller
   /**
    * The Enter button.
    */
-  public static final Button ENTER = new Button (0x01);
+  public static final Button ENTER = new Button (ID_ENTER);
   /**
    * The Left button.
    */
-  public static final Button LEFT = new Button (0x02);
+  public static final Button LEFT = new Button (ID_LEFT);
   /**
    * The Right button.
    */
-  public static final Button RIGHT = new Button (0x04);
+  public static final Button RIGHT = new Button (ID_RIGHT);
   /**
    * The Escape button.
    */
-  public static final Button ESCAPE = new Button (0x08);
+  public static final Button ESCAPE = new Button (ID_ESCAPE);
   
 	
   /**
