@@ -1211,6 +1211,7 @@ public class Bluetooth
 		Vector retVec = new Vector();
 		byte[] device = new byte[7];
 		char[] name = new char[16];
+        byte[] retCod = new byte[4];
 		synchronized (Bluetooth.sync)
 		{
 			int state = RS_CMD;
@@ -1227,9 +1228,9 @@ public class Bluetooth
 					int nameLen = 0;
 					for(;nameLen<16 && replyBuf[9+nameLen] != 0;nameLen++)
 						name[nameLen] = (char) replyBuf[9+nameLen];
-					System.arraycopy(replyBuf, 25, cod, 0, 4);
+					System.arraycopy(replyBuf, 25, retCod, 0, 4);
 					// add the Element to the Vector List
-					retVec.addElement(new RemoteDevice(name, nameLen, device, cod));					
+					retVec.addElement(new RemoteDevice(name, nameLen, device, retCod));					
 				}
 				else if (replyBuf[1] == MSG_INQUIRY_STOPPED)
 				{
