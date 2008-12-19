@@ -103,6 +103,8 @@ public interface SpecialSignatureConstants {
     "hsDisable()V",
     "hsWrite([BII)I",
     "hsRead([BII)I",
-    "hsPending()I"
+    "hsPending()I",
+    "hsSend(BB[BII[C)I",
+    "hsRecv([BI[CI)I"
   };
 }
