@@ -14,7 +14,7 @@ public class Flash {
 	 * firmware changes.
 	 * 
 	 */
-	public static final int MAX_USER_PAGES = 704;
+	public static final int MAX_USER_PAGES = 688;
 	
 	/**
 	 * Indicates the # of bytes per page in a page of Flash memory.
