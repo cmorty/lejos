@@ -489,6 +489,25 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
       push_word(hs_pending());
     }
     return EXEC_CONTINUE;
+  case hsSend_4BB_1BII_1C_5I:
+    {
+      Object *p = word2ptr(paramBase[2]);
+      U8 *data = (U8 *)jbyte_array(p);
+      p = word2ptr(paramBase[5]);
+      U16 *crc = (U16 *)jchar_array(p);
+      push_word(hs_send((U8) paramBase[0], (U8)paramBase[1], data, paramBase[3], paramBase[4], crc));
+    }
+    return EXEC_CONTINUE;
+  case hsRecv_4_1BI_1CI_5I:
+    {
+      Object *p = word2ptr(paramBase[0]);
+      U8 *data = (U8 *)jbyte_array(p);
+      p = word2ptr(paramBase[2]);
+      U16 *crc = (U16 *)jchar_array(p);
+      push_word(hs_recv(data, paramBase[1], crc, paramBase[3]));
+    }
+    return EXEC_CONTINUE;
+    
   default:
     throw_exception(noSuchMethodError);
   }
