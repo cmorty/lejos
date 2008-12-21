@@ -17,7 +17,7 @@ public class NXTConnectionManager {
 		return connectedNXT;
 	}
 
-	public NXTBrowserInfo[] searchForNXTBricks() {
+	public NXTInfo[] searchForNXTBricks() {
 		// disconnect
 		NXTCommand nxtCommand = NXTCommand.getSingleton();
 		try {
@@ -29,7 +29,7 @@ public class NXTConnectionManager {
 							+ ioe.getMessage());
 		}
 		// search for bricks
-		NXTBrowserInfo[] nxtBricks = null;
+		NXTInfo[] nxtBricks = null;
 		NXTInfo[] nxtUSBBricks = null;
 		NXTInfo[] nxtBluetoothBricks = null;
 		try {
@@ -57,27 +57,27 @@ public class NXTConnectionManager {
 		}
 		int noOfBricksFound = noOfUSBBricksFound + noOfBluetoothBricksFound;
 		if (noOfBricksFound > 0) {
-			nxtBricks = new NXTBrowserInfo[noOfBricksFound];
+			nxtBricks = new NXTInfo[noOfBricksFound];
 			int i = 0;
 			for (int j = 0; j < noOfUSBBricksFound; j++) {
-				nxtBricks[i++] = new NXTBrowserInfo(nxtUSBBricks[j]);
+				nxtBricks[i++] = new NXTInfo(nxtUSBBricks[j]);
 			}
 			for (int j = 0; j < noOfBluetoothBricksFound; j++) {
-				nxtBricks[i++] = new NXTBrowserInfo(nxtBluetoothBricks[j]);
+				nxtBricks[i++] = new NXTInfo(nxtBluetoothBricks[j]);
 			}
 		}
 		return nxtBricks;
 	}
 
-	public boolean connectToBrick(NXTBrowserInfo browserInfo) {
+	public boolean connectToBrick(NXTInfo browserInfo) {
 		boolean brickConnected = false;
 		try {
-			brickConnected = NXTCommand.getSingleton().open(browserInfo.getNXTInfo());
+			brickConnected = NXTCommand.getSingleton().open(browserInfo);
 		} catch (Throwable t) {
 			LeJOSNXJUtil.message(t);
 		}
 		if(brickConnected)
-			connectedNXT = browserInfo.getNXTInfo();
+			connectedNXT = browserInfo;
 		return brickConnected;
 	}
 	

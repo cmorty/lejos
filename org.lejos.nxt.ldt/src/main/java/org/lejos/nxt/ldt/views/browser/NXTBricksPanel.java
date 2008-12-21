@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.HashSet;
 
 import lejos.pc.comm.NXTCommFactory;
+import lejos.pc.comm.NXTConnectionState;
+import lejos.pc.comm.NXTInfo;
 
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnWeightData;
@@ -28,8 +30,6 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.lejos.nxt.ldt.LeJOSNXJPlugin;
 import org.lejos.nxt.ldt.comm.IConnectionListener;
 import org.lejos.nxt.ldt.comm.ISearchListener;
-import org.lejos.nxt.ldt.comm.NXTBrowserInfo;
-import org.lejos.nxt.ldt.comm.NXTConnectionState;
 import org.lejos.nxt.ldt.util.LeJOSNXJUtil;
 
 public class NXTBricksPanel {
@@ -141,12 +141,12 @@ public class NXTBricksPanel {
 					Object selected = ((IStructuredSelection) selection)
 							.getFirstElement();
 					if ((selected != null)
-							&& (selected instanceof NXTBrowserInfo)) {
-						NXTBrowserInfo browserInfo = (NXTBrowserInfo) selected;
+							&& (selected instanceof NXTInfo)) {
+						NXTInfo browserInfo = (NXTInfo) selected;
 						if (!LeJOSNXJPlugin.getDefault().getConnectionManager()
 								.connectToBrick(browserInfo)) {
 							LeJOSNXJUtil.message("Brick "
-									+ browserInfo.getNXTInfo().name
+									+ browserInfo.name
 									+ " could not be connected");
 						} else {
 							// update table
@@ -172,10 +172,10 @@ public class NXTBricksPanel {
 					Object selected = ((IStructuredSelection) selection)
 							.getFirstElement();
 					if ((selected != null)
-							&& (selected instanceof NXTBrowserInfo)) {
+							&& (selected instanceof NXTInfo)) {
 						LeJOSNXJPlugin.getDefault().getConnectionManager()
 								.detachFromBricks();
-						NXTBrowserInfo browserInfo = (NXTBrowserInfo) selected;
+						NXTInfo browserInfo = (NXTInfo) selected;
 						// update table
 						updateTable(browserInfo,
 								NXTConnectionState.DISCONNECTED);
@@ -184,7 +184,7 @@ public class NXTBricksPanel {
 							listener.brickDetached(browserInfo);
 						}
 						// do a re-search
-						final NXTBrowserInfo[] nxtBricks = LeJOSNXJPlugin
+						final NXTInfo[] nxtBricks = LeJOSNXJPlugin
 								.getDefault().getConnectionManager()
 								.searchForNXTBricks();
 						updateBricksTable(nxtBricks);
@@ -202,7 +202,7 @@ public class NXTBricksPanel {
 					listener.searchStarted();
 				}
 				// TODO show progress and hour glass
-				final NXTBrowserInfo[] nxtBricks = LeJOSNXJPlugin.getDefault()
+				final NXTInfo[] nxtBricks = LeJOSNXJPlugin.getDefault()
 						.getConnectionManager().searchForNXTBricks();
 				for (ISearchListener listener : searchListeners) {
 					listener.searchFinished();
@@ -212,15 +212,15 @@ public class NXTBricksPanel {
 		});
 	}
 
-	private void updateBricksTable(NXTBrowserInfo[] nxtBricks) {
+	private void updateBricksTable(NXTInfo[] nxtBricks) {
 		bricksTable.setInput(nxtBricks);
 	}
 
-	private void updateTable(NXTBrowserInfo info, NXTConnectionState state) {
-		NXTBrowserInfo[] infos = (NXTBrowserInfo[]) bricksTable.getInput();
-		for (NXTBrowserInfo browserInfo : infos) {
+	private void updateTable(NXTInfo info, NXTConnectionState state) {
+		NXTInfo[] infos = (NXTInfo[]) bricksTable.getInput();
+		for (NXTInfo browserInfo : infos) {
 			if (browserInfo.equals(browserInfo)) {
-				browserInfo.setConnectionState(state);
+				browserInfo.connectionState = state;
 				break;
 			}
 		}
@@ -236,19 +236,19 @@ public class NXTBricksPanel {
 		}
 
 		public String getColumnText(Object element, int columnIndex) {
-			if (!(element instanceof NXTBrowserInfo))
+			if (!(element instanceof NXTInfo))
 				return null;
-			NXTBrowserInfo info = (NXTBrowserInfo) element;
+			NXTInfo info = (NXTInfo) element;
 			switch (columnIndex) {
 			case 0:
-				return info.getNXTInfo().name;
+				return info.name;
 			case 1:
-				if (info.getNXTInfo().protocol == NXTCommFactory.BLUETOOTH)
+				if (info.protocol == NXTCommFactory.BLUETOOTH)
 					return "Bluetooth";
 				else
 					return "USB";
 			case 2:
-				return info.getConnectionState().name();
+				return info.connectionState.name();
 			default:
 				return null;
 			}
