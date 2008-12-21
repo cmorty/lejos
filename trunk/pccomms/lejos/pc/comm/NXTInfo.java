@@ -8,6 +8,7 @@ package lejos.pc.comm;
  *
  */
 public class NXTInfo {
+	
 	/**
 	 * Friendly name of the NXT.
 	 */
@@ -35,6 +36,11 @@ public class NXTInfo {
 	 */
 	public int protocol = 0;
 
+	/**
+	 * the present connection state of the NXT
+	 */
+	public NXTConnectionState connectionState = NXTConnectionState.UNKNOWN;
+	
 	public NXTInfo() {}
 	
 	/**
@@ -50,4 +56,19 @@ public class NXTInfo {
 		this.deviceAddress = address;
 		this.protocol = protocol;
 	}
+
+	/**
+	 * copy constructor
+	 * @param info
+	 */
+	public NXTInfo(NXTInfo info) {
+		super();
+		this.btResourceString = info.btResourceString;
+		this.connectionState = info.connectionState;
+		this.deviceAddress = info.deviceAddress;
+		this.name = info.name;
+		this.nxtPtr = info.nxtPtr;
+		this.protocol = info.protocol;
+	}
+	
 }
