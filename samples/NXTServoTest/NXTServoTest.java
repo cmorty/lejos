@@ -9,7 +9,7 @@ import lejos.nxt.*;
  */
 public class NXTServoTest{
 	private static String appName = "NXTServo Test";
-	private static String appVersion = "v0.2";
+	private static String appVersion = "v0.3";
 
 	private static MSC msc;
 	
@@ -19,9 +19,8 @@ public class NXTServoTest{
 		LCD.drawString("#################", 0, 6);
 
 		msc = new MSC(SensorPort.S1);
-		msc.addServo(1,"Mindsensors RC Servo 9Gr");
 		//Set to initial angle
-		msc.getServo(0).setAngle(0);
+		msc.servo1.setAngle(90);
 		
 		int angle = 0;
 		int pulse = 0;
@@ -32,28 +31,28 @@ public class NXTServoTest{
 
 			if (Button.LEFT.isPressed()){
 				angle = 0;
-				msc.getServo(0).setAngle(angle);
+				msc.servo1.setAngle(angle);
 			}
 			
 			if (Button.ENTER.isPressed()){
 				angle = 90;
-				msc.getServo(0).setAngle(angle);
+				msc.servo1.setAngle(angle);
 			}
 
 			if (Button.RIGHT.isPressed()){
 				angle = 180;
-				msc.getServo(0).setAngle(angle);
+				msc.servo1.setAngle(angle);
 			}
 			
 			clearRows();
 			LCD.drawString("Battery: " + NXTServoBattery, 0, 3);
-			LCD.drawString("Pulse:   " + msc.getServo(0).getPulse(), 0, 4);
-			LCD.drawString("Angle:   " + msc.getServo(0).getAngle(), 0, 5);
+			LCD.drawString("Pulse:   " + msc.servo1.getPulse(), 0, 4);
+			LCD.drawString("Angle:   " + msc.servo1.getAngle(), 0, 5);
 			LCD.refresh();
 		}
 
 		//Set to initial angle
-		msc.getServo(0).setAngle(0);
+		msc.servo1.setAngle(90);
 
 		LCD.drawString("Test finished",0,7);
 		LCD.refresh();
