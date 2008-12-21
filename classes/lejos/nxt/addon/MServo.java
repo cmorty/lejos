@@ -8,7 +8,7 @@ import lejos.nxt.*;
  * @author Juan Antonio Brenha Moral
  */
 public class MServo extends I2CSensor{
-	private SensorPort portConnected;//Where is plugged in NXT Brick
+	//private SensorPort portConnected;//Where is plugged in NXT Brick
 	private String name = "";//String to describe any Motor connected to LSC
 	private int servoPosition = 0; //Position where Servo has been plugged
 	private final byte servoPositions[] = {0x5A,0x5B,0x5C,0x5D,0x5E,0x5F,0x60,0x61};//The place where RC Servo has been plugged
@@ -19,8 +19,23 @@ public class MServo extends I2CSensor{
 	private int pulse = 0;
 	private int minAngle = 0;//Degree
 	private int maxAngle = 180;//Degrees
-	private int minPulse = 500;//Ms
-	private int maxPulse = 2500;//Ms
+	private int minPulse = 650;//500;//Ms
+	private int maxPulse = 2350;//2500;//Ms
+
+	/**
+	 *
+	 * The initial Constructor.
+	 * This constructor establish where is plugged NXTServo on NXT Brick, 
+	 * where the RC Servo is plugged into NXTServo
+	 *
+	 * @param port
+	 * @param location
+	 *
+	 */
+	public MServo(SensorPort port, int location){
+		super(port);
+		this.servoPosition = location;
+	}
 
 	/**
 	 *
@@ -64,7 +79,7 @@ public class MServo extends I2CSensor{
 	 * http://h10025.www1.hp.com/ewfrf/wc/fastFaqLiteDocument?lc=es&cc=mx&docname=bsia5214&dlc=es&product=20037
 	 *
 	 */
-	private float getLinealInterpolation(int x,int x1, int x2, int y1, int y2){
+	private float getLinearInterpolation(float x,float x1, float x2, float y1, float y2){
 		float y;
 		y = ((y2-y1)/(x2-x1))*(x-x1) + y1;
 		
@@ -83,10 +98,10 @@ public class MServo extends I2CSensor{
 	public void setPulse(int pulse){
 		this.pulse = pulse;
 		int internalPulse = Math.round(pulse/10);
-		int I2C_Response = 0;
+		int i2cResponse = 0;
 		this.setAddress(MSC.NXTSERVO_ADDRESS);
 		int index = servoPosition - 1;
-		I2C_Response = this.sendData((int)servoPositions[index], (byte)internalPulse);
+		i2cResponse = this.sendData((int)servoPositions[index], (byte)internalPulse);
 	}
 	
 	/**
@@ -107,7 +122,7 @@ public class MServo extends I2CSensor{
 	 */
 	public void setAngle(int angle){
 		this.angle = angle;
-		this.pulse = Math.round(getLinealInterpolation(angle,minAngle,maxAngle,minPulse,maxPulse));
+		this.pulse = Math.round(getLinearInterpolation(angle,minAngle,maxAngle,minPulse,maxPulse));
 		this.setPulse(pulse);
 	}
 
@@ -129,9 +144,9 @@ public class MServo extends I2CSensor{
 	 * 
 	 */
 	public void setSpeed(int speed){
-		int I2C_Response = 0;
+		int i2cResponse = 0;
 		this.setAddress(MSC.NXTSERVO_ADDRESS);
 		int index = servoPosition - 1;
-		I2C_Response = this.sendData((int)servoPositions[index], (byte)speed);
+		i2cResponse = this.sendData((int)servoSpeeds[index], (byte)speed);
 	}
 }

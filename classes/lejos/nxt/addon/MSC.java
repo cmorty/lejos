@@ -16,17 +16,20 @@ import java.util.ArrayList;
 public class MSC extends I2CSensor {
 
 	//Servo Management
-	private ArrayList arrServo;//ServoController manage until 10 RC Servos
-	private final int MAXIMUM_SERVOS_DCMOTORS = 8;//MSC Suports until 10 RC Servos
-	
-	//Exception handling
-	private final String ERROR_SERVO_DEFINITION =  "Error with Servo definition";
-	private final String ERROR_SERVO_LOCATION =  "Error with Servo location";
-	
+	public static MServo servo1;
+	public static MServo servo2;
+	public static MServo servo3;
+	public static MServo servo4;
+	public static MServo servo5;
+	public static MServo servo6;
+	public static MServo servo7;
+	public static MServo servo8;
+	private MServo[] arrServo;//ServoController manage until 10 RC Servos
+
 	//I2C	
 	private SensorPort portConnected;
 	public static final byte NXTSERVO_ADDRESS = (byte)0x58;
-	
+
 	/**
 	 * 
 	 * Constructor
@@ -37,42 +40,43 @@ public class MSC extends I2CSensor {
 	public MSC(SensorPort port){
 		super(port);
 		port.setType(TYPE_LOWSPEED_9V);
-		this.setAddress(MSC.NXTSERVO_ADDRESS);
+		this.setAddress(NXTSERVO_ADDRESS);
 		
 		this.portConnected = port;
-		arrServo = new ArrayList();
-	}
-	
-	/**
-	 * Method to add  a RC servo to current LSC
-	 * 
-	 * @param location the locatoion
-	 * @param name of the servo
-	 * @throws ArrayIndexOutOfBoundsException
-	 *
-	 */
-	public void addServo(int location, String name) throws ArrayIndexOutOfBoundsException{
-		if(arrServo.size() <=MAXIMUM_SERVOS_DCMOTORS){
-			MServo s = new MServo(this.portConnected,location, name);
-			arrServo.add(s);
-		}else{
-			//throw new ArrayIndexOutOfBoundsException(ERROR_SERVO_DEFINITION);
-			throw new ArrayIndexOutOfBoundsException();
-		}
+		//arrServo = new ArrayList();
+		
+		servo1 = new MServo(this.portConnected,1);
+		servo2 = new MServo(this.portConnected,2);
+		servo3 = new MServo(this.portConnected,3);
+		servo4 = new MServo(this.portConnected,4);
+		servo5 = new MServo(this.portConnected,5);
+		servo6 = new MServo(this.portConnected,6);
+		servo7 = new MServo(this.portConnected,7);
+		servo8 = new MServo(this.portConnected,8);
+
+		arrServo = new MServo[8];
+		arrServo[0] = servo1;
+		arrServo[1] = servo2;
+		arrServo[2] = servo3;
+		arrServo[3] = servo4;
+		arrServo[4] = servo5;
+		arrServo[5] = servo6;
+		arrServo[6] = servo7;
+		arrServo[7] = servo8;
 	}
 
-	
 	/**
-	 * Method to get an RC Servo in a LSC
+	 * Method to get an RC Servo in from NXTServo
 	 * 
 	 * @param index in the array
 	 * @return the MServo object
 	 * 
 	 */
 	public MServo getServo(int index){
-		return (MServo) this.arrServo.get(index);
+		return (MServo) this.arrServo[index-1];
 	}
 
+	
 	/**
 	 * Read the battery voltage data from
 	 * NXTServo module (in milli-volts)
