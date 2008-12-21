@@ -20,7 +20,8 @@ Bundle-ClassPath: lejosnxj.jar,
  lib/pctools.jar,
  lib/bcel-5.1.jar,
  lib/commons-cli-1.0.jar,
- lib/bluecove.jar
+ lib/bluecove.jar,
+ lib/bluecove-gpl.jar
 Export-Package: com.intel.bluetooth;uses:="javax.bluetooth,new com.intel.bluetooth,javax.microedition.io",
  com.intel.bluetooth.btgoep;uses:="javax.obex,com.ibm.oti.connection,javax.microedition.io",
  com.intel.bluetooth.btspp;

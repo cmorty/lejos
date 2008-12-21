@@ -6,6 +6,7 @@ import java.util.Collection;
 import lejos.pc.comm.FileInfo;
 import lejos.pc.comm.NXTCommFactory;
 import lejos.pc.comm.NXTCommand;
+import lejos.pc.comm.NXTConnectionState;
 import lejos.pc.comm.NXTInfo;
 
 import org.eclipse.swt.SWT;
@@ -18,8 +19,6 @@ import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.part.ViewPart;
 import org.lejos.nxt.ldt.comm.IConnectionListener;
 import org.lejos.nxt.ldt.comm.ISearchListener;
-import org.lejos.nxt.ldt.comm.NXTBrowserInfo;
-import org.lejos.nxt.ldt.comm.NXTConnectionState;
 import org.lejos.nxt.ldt.util.LeJOSNXJUtil;
 
 /**
@@ -128,16 +127,16 @@ public class NXTBrowserView extends ViewPart {
 
 	class NXTBrowserConnectionListener implements IConnectionListener {
 
-		public void brickConnected(NXTBrowserInfo info) {
+		public void brickConnected(NXTInfo info) {
 			brickPanel.reset();
 			if (info != null) {
-				info.setConnectionState(NXTConnectionState.CONNECTED);
-				updateBrickPanel(info.getNXTInfo());
-				updateMemoryPanel(info.getNXTInfo());
+				info.connectionState = NXTConnectionState.CONNECTED;
+				updateBrickPanel(info);
+				updateMemoryPanel(info);
 			}
 		}
 
-		public void brickDetached(NXTBrowserInfo info) {
+		public void brickDetached(NXTInfo info) {
 			if (info != null) {
 				updateBrickPanel(null);
 				updateMemoryPanel(null);
