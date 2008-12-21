@@ -39,7 +39,7 @@ public interface NXTComm {
 	 * Connect to a NXT found by a search or created from mname and address.
 	 * 
 	 * @param nxt the NXTInfo object for the NXT
-	 * @return true iff the open succeeded
+	 * @return true if the open succeeded
 	 * @throws NXTCommException
 	 */
 	public boolean open(NXTInfo nxt) throws NXTCommException;
