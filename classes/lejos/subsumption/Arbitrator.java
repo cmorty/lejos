@@ -1,4 +1,4 @@
-package subsumption;
+package lejos.subsumption;
                                      
 
 /**
