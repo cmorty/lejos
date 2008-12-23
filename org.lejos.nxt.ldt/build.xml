@@ -3,44 +3,51 @@
   Buildfile for copying the required libraries to the plugin's lib folder
   ==================================================
 -->
-<project name="leJOS NXJ plugin" default="libs" basedir=".">
-	
+<project name="leJOS NXJ plugin" default="copyLibs" basedir=".">
+
 	<!-- Setting up the global properties for the build -->
 	<property name="plugin.libs" value="${basedir}/lib" />
-	<property name="lejos.root" value="${basedir}/.."/>
-	<property name="release" value="${lejos.root}/release"/>
-	<property name="release.nxj" value="${release}/lejos_nxj"/>
+	<property name="lejos.root" value="${basedir}/.." />
+	<property name="release" value="${lejos.root}/release" />
+	<property name="release.nxj" value="${release}/lejos_nxj" /> 
 	<property name="3rdparty.libs" value="${release.nxj}/3rdparty/lib" />
 
-	<!-- copies the jar files -->
-	<target name="libs" description="copies the lejos NXJ jar files to the plugin's lib folder">
-		<copy todir="${plugin.libs}">
-      		<fileset dir="${3rdparty.libs}">
-        		<include name="bcel*.jar"/>
-        		<include name="bluecove.jar"/>
-        		<include name="commons-cli*.jar"/>
-      		</fileset>
-    	</copy>
-		<copy todir="${plugin.libs}">
-      		<fileset dir="${lejos.root}/jtools/lib">
-        		<include name="*.jar"/>
-      		</fileset>
-    	</copy>
-		<copy todir="${plugin.libs}">
-      		<fileset dir="${lejos.root}/pctools/lib">
-        		<include name="*.jar"/>
-      		</fileset>
-    	</copy>
-		<copy todir="${plugin.libs}">
-      		<fileset dir="${lejos.root}/pccomms/lib">
-        		<include name="*.jar"/>
-      		</fileset>
-    	</copy>
-		<copy todir="${plugin.libs}">
-      		<fileset dir="${lejos.root}/classes/lib">
-        		<include name="*.jar"/>
-      		</fileset>
-    	</copy>
+	<!-- builds the jar files -->
+	<target name="buildLibs" description="copies the lejos NXJ jar files to the plugin's lib folder">
+		<ant dir="${lejos.root}/classes" />
+		<ant dir="${lejos.root}/jtools" />
+		<ant dir="${lejos.root}/pccomms" />
 	</target>
-	
+
+	<!-- copies the jar files -->
+	<target name="copyLibs" depends="buildLibs" description="copies the lejos NXJ jar files to the plugin's lib folder">
+		<copy todir="${plugin.libs}">
+			<fileset dir="${3rdparty.libs}">
+				<include name="bcel*.jar" />
+				<include name="bluecove*.jar" />
+				<include name="commons-cli*.jar" />
+			</fileset>
+		</copy>
+		<copy todir="${plugin.libs}">
+			<fileset dir="${lejos.root}/jtools/lib">
+				<include name="*.jar" />
+			</fileset>
+		</copy>
+		<copy todir="${plugin.libs}">
+			<fileset dir="${lejos.root}/pctools/lib">
+				<include name="*.jar" />
+			</fileset>
+		</copy>
+		<copy todir="${plugin.libs}">
+			<fileset dir="${lejos.root}/pccomms/lib">
+				<include name="*.jar" />
+			</fileset>
+		</copy>
+		<copy todir="${plugin.libs}">
+			<fileset dir="${lejos.root}/classes/lib">
+				<include name="*.jar" />
+			</fileset>
+		</copy>
+	</target>
+
 </project>
