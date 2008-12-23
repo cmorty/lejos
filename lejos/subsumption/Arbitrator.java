@@ -1,4 +1,5 @@
-package lejos.subsumption;
+package subsumption;
+                                     
 
 /**
  * Arbitrator controls which behavior should currently be active in 
@@ -13,7 +14,7 @@ package lejos.subsumption;
  * (unless it was the most recently active behavior.)     
  * <br> Requirement for a Behavior:  When suppress() is called, terminate  action() immediately. 
  * @see Behavior
- * @author Roger Glassey
+ * @author Roger Glassey  and Lawrie Griffith
  */
 public class Arbitrator
 {
@@ -58,6 +59,7 @@ public class Arbitrator
     public Arbitrator(Behavior[] behaviorList)
     {
         this(behaviorList, false);
+
     }
 
     /**
@@ -120,6 +122,7 @@ public class Arbitrator
                 //FIND HIGHEST PRIORITY BEHAVIOR THAT WANTS CONTROL
                 synchronized (this)
                 {
+                    _highestPriority = NONE;
                     for (int i = maxPriority; i >= 0; i--)
                     {
                         if (_behavior[i].takeControl())
