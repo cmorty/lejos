@@ -1,5 +1,8 @@
 package org.lejos.nxt.ldt;
 
+import lejos.pc.comm.NXTCommLogListener;
+import lejos.pc.comm.NXTConnectionManager;
+
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -8,7 +11,6 @@ import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleManager;
 import org.eclipse.ui.console.MessageConsole;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.lejos.nxt.ldt.comm.NXTConnectionManager;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -16,7 +18,7 @@ import org.osgi.framework.BundleContext;
  * 
  * @author Matthias Paul Scholz
  */
-public class LeJOSNXJPlugin extends AbstractUIPlugin {
+public class LeJOSNXJPlugin extends AbstractUIPlugin implements NXTCommLogListener {
 
 	// The plug-in ID
 	public static final String PLUGIN_ID = "org.lejos.nxt.ldt";
@@ -56,6 +58,9 @@ public class LeJOSNXJPlugin extends AbstractUIPlugin {
 	 * )
 	 */
 	public void stop(BundleContext context) throws Exception {
+		if(connectionManager!=null) {
+			connectionManager.removeLogListener(this);
+		}
 		plugin = null;
 		super.stop(context);
 	}
@@ -86,7 +91,8 @@ public class LeJOSNXJPlugin extends AbstractUIPlugin {
 	 * 
 	 * @param message
 	 */
-	public void log(String message) {
+	public void logEvent(String message) {
+		// TODO log messages to console instead of error log
 		Status status = new Status(IStatus.INFO, PLUGIN_ID, IStatus.OK,
 				message, null);
 		getDefault().getLog().log(status);
@@ -97,15 +103,17 @@ public class LeJOSNXJPlugin extends AbstractUIPlugin {
 	 * 
 	 * @param message
 	 */
-	public void log(Throwable throwable) {
+	public void logEvent(Throwable throwable) {
 		Status status = new Status(IStatus.ERROR, PLUGIN_ID, throwable
 				.getMessage(), throwable);
 		getDefault().getLog().log(status);
 	}
 
 	public NXTConnectionManager getConnectionManager() {
-		if(connectionManager==null)
+		if(connectionManager==null) {
 			connectionManager = new NXTConnectionManager();
+			connectionManager.addLogListener(this);
+		}
 		return connectionManager;
 	}
 

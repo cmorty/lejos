@@ -181,19 +181,21 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 	 * @throws NXJUploadException
 	 */
 	private void uploadProgram(String binName) throws NXJUploadException {
-		// NXT brick connected?
-		NXTInfo connectedBrick = LeJOSNXJPlugin.getDefault()
-				.getConnectionManager().getConnectedNXT();
-		if (connectedBrick == null) {
-			throw new NXJUploadException("no NXT brick connected");
-		} else {
-			// send file
-			try {
-				File f = new File(binName);
-				String result = NXTCommand.getSingleton().uploadFile(f);
-			} catch (Throwable t) {
-				throw new NXJUploadException("Exception during upload", t);
-			}
+		// TODO uploadProgram
+//		// NXT brick connected?
+//		NXTInfo connectedBrick = LeJOSNXJPlugin.getDefault()
+//				.getConnectionManager().getConnectedNXT();
+//		if (connectedBrick == null) {
+//			throw new NXJUploadException("no NXT brick connected");
+//		} else {
+//			// send file
+//			try {
+//				File f = new File(binName);
+//				String result = NXTCommand.getSingleton().uploadFile(f);
+//			} catch (Throwable t) {
+//				throw new NXJUploadException("Exception during upload", t);
+//			}
+		
 			// // instantiate link and upload delegate
 			// NXJLinkAndUpload delegate = new NXJLinkAndUpload();
 			// delegate.addToolsLogListener(_logListener);
@@ -301,7 +303,7 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 			// } catch (Throwable e) {
 			// throw new LeJOSNXJException(e);
 			// }
-		}
+//		}
 	}
 
 	private void enableDueToSelection(IAction action) {
