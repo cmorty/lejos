@@ -3,7 +3,7 @@ package lejos.nxt.addon;
 import lejos.nxt.*;
 
 /**
- * MServo, is a abstraction to model any RC Servo (continous and non continous)  plugged to
+ * MServo, is a abstraction to model any RC Servo (continuous and non continuous)  plugged to
  * 
  * @author Juan Antonio Brenha Moral
  */
@@ -11,8 +11,8 @@ public class MServo extends I2CSensor{
 	//private SensorPort portConnected;//Where is plugged in NXT Brick
 	private String name = "";//String to describe any Motor connected to LSC
 	private int servoPosition = 0; //Position where Servo has been plugged
-	private final byte servoPositions[] = {0x5A,0x5B,0x5C,0x5D,0x5E,0x5F,0x60,0x61};//The place where RC Servo has been plugged
-	private final byte servoSpeeds[] = {0x52,0x53,0x54,0x55,0x56,0x57,0x58,0x59};
+	private final byte SERVO1_POSITION = 0x5A; //The place where RC Servo has been plugged
+	private final byte SERVO1_SPEED = 0x52;
 
 	//Default Values
 	private int angle = 0;
@@ -73,7 +73,7 @@ public class MServo extends I2CSensor{
 	}
 
 	/*
-	 * Used to make a Lineal Interpolation
+	 * Used to make a Linear Interpolation
 	 * 
 	 * From the HP Calculator idea:
 	 * http://h10025.www1.hp.com/ewfrf/wc/fastFaqLiteDocument?lc=es&cc=mx&docname=bsia5214&dlc=es&product=20037
@@ -92,16 +92,14 @@ public class MServo extends I2CSensor{
 	 * Note:Pulse range is: 500-2500, but internally
 	 * it is necessary to divide into 2
 	 * 
-	 * @param pulse
+	 * @param pulse the pulse width
 	 * 
 	 */
 	public void setPulse(int pulse){
 		this.pulse = pulse;
 		int internalPulse = Math.round(pulse/10);
-		int i2cResponse = 0;
 		this.setAddress(MSC.NXTSERVO_ADDRESS);
-		int index = servoPosition - 1;
-		i2cResponse = this.sendData((int)servoPositions[index], (byte)internalPulse);
+		sendData((int)(SERVO1_POSITION + servoPosition - 1), (byte)internalPulse);
 	}
 	
 	/**
@@ -144,9 +142,7 @@ public class MServo extends I2CSensor{
 	 * 
 	 */
 	public void setSpeed(int speed){
-		int i2cResponse = 0;
 		this.setAddress(MSC.NXTSERVO_ADDRESS);
-		int index = servoPosition - 1;
-		i2cResponse = this.sendData((int)servoSpeeds[index], (byte)speed);
+		sendData((int) (SERVO1_SPEED + servoPosition - 1), (byte)speed);
 	}
 }
