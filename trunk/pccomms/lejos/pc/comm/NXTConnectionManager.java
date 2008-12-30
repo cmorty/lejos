@@ -7,7 +7,6 @@ import lejos.pc.comm.NXTCommand;
 import lejos.pc.comm.NXTConnector;
 import lejos.pc.comm.NXTInfo;
 
-
 public class NXTConnectionManager {
 
 	private ArrayList<NXTCommand> nxtCommands;
@@ -19,31 +18,51 @@ public class NXTConnectionManager {
 	}
 
 	/**
-	 * searches for available NXT bricks
-	 * automatically connects to the first one found (TODO: correct?)
-	 * @return an array of available NXTInfo objects or null, if no brick is found
+	 * searches for available NXT bricks automatically connects to the first one
+	 * found (TODO: correct?)
+	 * 
+	 * @return an array of available NXTInfo objects or null, if no brick is
+	 *         found
 	 */
 	public NXTInfo[] search() {
-		// TODO is it really good that NXTConnector always connects the first one found 
+		// TODO is it really good that NXTConnector always connects the first
+		// one found
 		// on search even if there are multiple ones? Does it do this?
 		// TODO the return value is not very intuitive
-		switch(nxtConnector.connectTo()) {
+		switch (nxtConnector.connectTo()) {
 		case -1: // none found
 			return null;
-		default: // some bricks found and successfully connected to the first one
+		default: // some bricks found and successfully connected to the first
+			// one
 			return nxtConnector.getNXTInfos();
 		}
 	}
-	
+
+	/**
+	 * connects to a NXT brick
+	 * 
+	 * @param nxtInfo
+	 * @return true, if connection was successful
+	 */
+	public boolean connectToBrick(NXTInfo nxtInfo) {
+		boolean brickConnected = false;
+		if (nxtInfo != null)
+			brickConnected = (nxtConnector.connectTo(nxtInfo.name,
+					nxtInfo.deviceAddress, nxtInfo.protocol, false) == 0);
+		return brickConnected;
+	}
+
 	public void closeAll() throws IOException {
 		for (NXTCommand nxtCommand : nxtCommands) {
 			nxtCommand.close();
 		}
 	}
-	
+
 	/**
 	 * register log listener
-	 * @param listener the log listener
+	 * 
+	 * @param listener
+	 *            the log listener
 	 */
 	public void addLogListener(NXTCommLogListener listener) {
 		nxtConnector.addLogListener(listener);
@@ -51,12 +70,14 @@ public class NXTConnectionManager {
 
 	/**
 	 * unregister log listener
-	 * @param listener the log listener
+	 * 
+	 * @param listener
+	 *            the log listener
 	 */
 	public void removeLogListener(NXTCommLogListener listener) {
 		nxtConnector.removeLogListener(listener);
 	}
-	
+
 	/*
 	 * public NXTInfo connectedNXT;
 	 * 

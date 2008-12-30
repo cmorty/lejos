@@ -8,7 +8,7 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/pccomms"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/pctools"/>
 	<classpathentry kind="lib" path="lib/jtools.jar" sourcepath="org.lejos.nxt.ldtsrc.zip"/>
-	<classpathentry kind="lib" path="lib/pccomm.jar" sourcepath="org.lejos.nxt.ldtsrc.zip"/>
+	<classpathentry kind="lib" path="lib/pccomm.jar" sourcepath="/pccomms"/>
 	<classpathentry kind="lib" path="lib/pctools.jar" sourcepath="/pctools"/>
 	<classpathentry kind="lib" path="lib/bcel-5.1.jar" sourcepath="org.lejos.nxt.ldtsrc.zip"/>
 	<classpathentry kind="lib" path="lib/commons-cli-1.0.jar" sourcepath="org.lejos.nxt.ldtsrc.zip"/>

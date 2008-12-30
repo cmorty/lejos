@@ -117,6 +117,7 @@ public class NXJBrowser {
         		  open = nxtCommand.open(nxts[row]);
         	  } catch(NXTCommException n) {
         		  open = false;
+        		  JOptionPane.showMessageDialog(frame, "Failed to connect: " + n.getMessage());
         	  }
         	  if (!open) {
         		  JOptionPane.showMessageDialog(frame, "Failed to connect");
