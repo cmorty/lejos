@@ -214,8 +214,8 @@ public class NXTBricksPanel {
 		try {
 			LeJOSNXJPlugin.getDefault().getConnectionManager().closeAll();
 			// TODO show progress and hour glass
-			nxtBricks = LeJOSNXJPlugin.getDefault()
-					.getConnectionManager().search();
+			nxtBricks = LeJOSNXJPlugin.getDefault().getConnectionManager()
+					.search();
 		} catch (IOException ioExc) {
 			LeJOSNXJUtil.message(ioExc);
 		}
@@ -226,7 +226,14 @@ public class NXTBricksPanel {
 	}
 
 	private void connectToBrick(NXTInfo nxtInfo) {
-		// TODO connectToBrick
+		if (nxtInfo == null)
+			return;
+		LeJOSNXJUtil.message("Connecting to NXT brick " + nxtInfo.name);
+		if (LeJOSNXJPlugin.getDefault().getConnectionManager().connectToBrick(
+				nxtInfo))
+			LeJOSNXJUtil.message("NXT brick " + nxtInfo.name
+					+ " successfully connected");
+		updateTable(nxtInfo);
 	}
 
 	private void detachFromBrick(NXTInfo nxtInfo) {
@@ -237,16 +244,16 @@ public class NXTBricksPanel {
 		bricksTable.setInput(nxtBricks);
 	}
 
-	// private void updateTable(NXTInfo info, NXTConnectionState state) {
-	// NXTInfo[] infos = (NXTInfo[]) bricksTable.getInput();
-	// for (NXTInfo browserInfo : infos) {
-	// if (browserInfo.equals(browserInfo)) {
-	// browserInfo.connectionState = state;
-	// break;
-	// }
-	// }
-	// bricksTable.setInput(infos);
-	// }
+	private void updateTable(NXTInfo info) {
+		NXTInfo[] infos = (NXTInfo[]) bricksTable.getInput();
+		for (NXTInfo nxtInfo : infos) {
+			if (nxtInfo.equals(info)) {
+				nxtInfo.connectionState = info.connectionState;
+				break;
+			}
+		}
+		bricksTable.setInput(infos);
+	}
 
 	class BricksTableLabelProvider extends LabelProvider implements
 			ITableLabelProvider {

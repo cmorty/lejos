@@ -120,8 +120,10 @@ public class NXTCommBluecove implements NXTComm, DiscoveryListener {
 			con = (StreamConnection) Connector.open(nxt.btResourceString);
 			os = con.openOutputStream();
 			is = con.openInputStream();
+			nxt.connectionState = NXTConnectionState.CONNECTED;
 			return true;
 		} catch (IOException e) {
+			nxt.connectionState = NXTConnectionState.DISCONNECTED;
 			throw new NXTCommException("Open of " + nxt.name + " failed: " + e.getMessage());
 		}
 	}

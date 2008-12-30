@@ -70,8 +70,10 @@ public class NXTCommBluez implements NXTComm {
         if (mode == RAW) throw new NXTCommException("RAW mode not implemented");
 		try {
 			open(BDADDR_ANY, nxt.deviceAddress, 1);
+			nxt.connectionState = NXTConnectionState.CONNECTED;
 			return true;
 		} catch (BlueZException e) {
+			nxt.connectionState = NXTConnectionState.DISCONNECTED;
 			System.err.println("Error from open: " + e.getMessage());
 			return false;
 		}
