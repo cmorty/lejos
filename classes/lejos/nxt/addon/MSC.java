@@ -1,40 +1,76 @@
 package lejos.nxt.addon;
 
 import lejos.nxt.*;
-import java.util.ArrayList;
 
 /**
  * 
  * This class has been designed to manage the device
- * MSC8, Mindsensors NXT Servo which
- * manage until 8 RC Servos
+ * MSC8, Mindsensors NXT Servo which manages up to 8 RC Servos.
+ * 
+ * For example, do: 
+ * 
+ *   <code>msc.servo1.setAngle(angle)</code> 
+ *   
+ * to set the angle of the servo at location 1.
  * 
  * Many thanks to Luis Bunuel (bunuel66@hotmail.com) in Testing process 
  * 
  * @author Juan Antonio Brenha Moral
  */
 public class MSC extends I2CSensor {
+	public static final byte NXTSERVO_ADDRESS = (byte)0x58;
+	public static final byte MSC8_VBATT = 0x41;//The I2C Register to read the battery 
 
-	//Servo Management
-	public static MServo servo1;
-	public static MServo servo2;
-	public static MServo servo3;
-	public static MServo servo4;
-	public static MServo servo5;
-	public static MServo servo6;
-	public static MServo servo7;
-	public static MServo servo8;
-	private MServo[] arrServo;//ServoController manage until 10 RC Servos
+	/**
+	 * Servo at location 1
+	 */
+	public MServo servo1;
+	
+	/**
+	 * Servo at location 2
+	 */
+	public MServo servo2;
+	
+	/**
+	 * Servo at location 3
+	 */
+	public MServo servo3;
+	
+	/**
+	 * Servo at location 4
+	 */
+	public MServo servo4;
+	
+	/**
+	 * Servo at location 5
+	 */
+	public MServo servo5;
+	
+	/**
+	 * Servo at location 6
+	 */
+	public MServo servo6;
+	
+	/**
+	 * Servo at location 7
+	 */
+	public MServo servo7;
+	
+	/**
+	 * Servo at location 8
+	 */
+	public MServo servo8;
+	
+	private MServo[] arrServo; //ServoController manages up to 8 RC Servos
 
 	//I2C	
 	private SensorPort portConnected;
-	public static final byte NXTSERVO_ADDRESS = (byte)0x58;
 
 	/**
 	 * 
 	 * Constructor
 	 * 
-	 * @param port
+	 * @param port the NXTServo is connected to
 	 * 
 	 */
 	public MSC(SensorPort port){
@@ -42,17 +78,16 @@ public class MSC extends I2CSensor {
 		port.setType(TYPE_LOWSPEED_9V);
 		this.setAddress(NXTSERVO_ADDRESS);
 		
-		this.portConnected = port;
-		//arrServo = new ArrayList();
+		portConnected = port;
 		
-		servo1 = new MServo(this.portConnected,1);
-		servo2 = new MServo(this.portConnected,2);
-		servo3 = new MServo(this.portConnected,3);
-		servo4 = new MServo(this.portConnected,4);
-		servo5 = new MServo(this.portConnected,5);
-		servo6 = new MServo(this.portConnected,6);
-		servo7 = new MServo(this.portConnected,7);
-		servo8 = new MServo(this.portConnected,8);
+		servo1 = new MServo(portConnected,1);
+		servo2 = new MServo(portConnected,2);
+		servo3 = new MServo(portConnected,3);
+		servo4 = new MServo(portConnected,4);
+		servo5 = new MServo(portConnected,5);
+		servo6 = new MServo(portConnected,6);
+		servo7 = new MServo(portConnected,7);
+		servo8 = new MServo(portConnected,8);
 
 		arrServo = new MServo[8];
 		arrServo[0] = servo1;
@@ -66,32 +101,28 @@ public class MSC extends I2CSensor {
 	}
 
 	/**
-	 * Method to get an RC Servo in from NXTServo
+	 * Method to get an RC Servo in from the NXTServo
 	 * 
-	 * @param index in the array
+	 * @param location location of the servo (from 1 to 8) 
 	 * @return the MServo object
 	 * 
 	 */
-	public MServo getServo(int index){
-		return (MServo) this.arrServo[index-1];
+	public MServo getServo(int location){
+		return (MServo) arrServo[location-1];
 	}
 
 	
 	/**
 	 * Read the battery voltage data from
-	 * NXTServo module (in milli-volts)
+	 * NXTServo module (in millivolts)
 	 * 
 	 * @return the battery voltage in millivolts
 	 */
 	public int getBattery(){
-		int I2C_Response = 0;
-		byte[] bufReadResponse;
-		bufReadResponse = new byte[8];
-		byte kSc8_Vbatt = 0x41;//The I2C Register to read the battery 
+		byte[] bufReadResponse= new byte[1];
+		getData(MSC8_VBATT, bufReadResponse, 1);
 
-		I2C_Response = this.getData(kSc8_Vbatt, bufReadResponse, 1);
-
-		// 37 is calculated fromsupply from NXT =4700 mv /128
-		return(37*(0x00FF & bufReadResponse[0]));
+		// 37 is calculated from 4700 mv /128
+		return(37*(0xFF & bufReadResponse[0]));
 	}
 }
