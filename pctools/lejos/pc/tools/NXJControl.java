@@ -17,6 +17,7 @@ import java.io.*;
  *  @author Lawrie Griffiths
  */
 public class NXJControl implements ListSelectionListener {
+  // Constants
   public static final int MAX_FILES = 30;
   private static final Dimension frameSize = new Dimension(800,600);
   private static final Dimension filesAreaSize = new Dimension(780,300);
@@ -24,22 +25,16 @@ public class NXJControl implements ListSelectionListener {
   private static final Dimension nxtButtonsPanelSize = new Dimension(200,100);
   private static final Dimension filesButtonsPanelSize = new Dimension(605,100);
   private static final Dimension nxtTableSize = new Dimension(450,100);
+  private static final Dimension otherPanelSize = new Dimension(300,100);
   private static final String title = "NXJ Control Center";
-  
-  private int numFiles;
-  private FileInfo[] files= new FileInfo[MAX_FILES];
-  private NXTCommand nxtCommand;
-  private NXTCommand[] nxtCommands;
+
+  // GUI components
   private Cursor hourglassCursor = new Cursor(Cursor.WAIT_CURSOR);
   private Cursor normalCursor = new Cursor(Cursor.DEFAULT_CURSOR);
   private JFrame frame = new JFrame(title); 
-  private NXTConnector conn = new NXTConnector();
-  private NXTInfo[] nxts;
-  private NXTConnectionModel nm;
   private JTable nxtTable = new JTable();
   private JScrollPane nxtTablePane;
   private JTextField nameText = new JTextField(8);
-  private FileModel fm;
   private JTable table;
   private JScrollPane tablePane;
   private JPanel filesPanel = new JPanel();
@@ -48,26 +43,43 @@ public class NXJControl implements ListSelectionListener {
   private JPanel controlPanel = new JPanel();
   private JPanel dataPanel = new JPanel();
   private JPanel otherPanel = new JPanel();
-  private int currentRow;
-  private NXJControl control;
   private JTextArea theConsoleLog = new JTextArea(20,68);
   private JTextArea theDataLog = new JTextArea(20,68);
-  private DataOutputStream os;
-  private DataInputStream is;
-  private ReaderThread readerThread;
   private LabeledGauge batteryGauge = new LabeledGauge("Battery", 10000);
   private JSlider aSlide = new JSlider(-100,100);
   private JSlider bSlide = new JSlider(-100,100);
-  private JSlider cSlide = new JSlider(-100,100);
+  private JSlider cSlide = new JSlider(-100,100); 
   private JButton connectButton = new JButton("Connect");
   private JButton dataConnectButton = new JButton("Connect");
-  private boolean consoleConnected = false;
-  private boolean dataConnected = false;
+  private JButton searchButton = new JButton("Search");
+  private JButton consoleConnectButton = new JButton("Connect");
+  private JButton monitorUpdateButton = new JButton("Update");
+  private JButton controlUpdateButton = new JButton("Update");
+  private JButton deleteButton = new JButton("Delete Files");
+  private JButton uploadButton = new JButton("Upload file");
+  private JButton downloadButton = new JButton("Download file");
+  private JButton runButton = new JButton("Run program");
+  private JButton nameButton = new JButton("Set Name"); 
   private JRadioButton usbButton = new JRadioButton("USB");
   private JRadioButton bluetoothButton = new JRadioButton("Bluetooth");
   private JRadioButton bothButton = new JRadioButton("Both", true);
+  
+  // Other instance data
+  private NXTConnectionModel nm;
+  private ExtendedFileModel fm;
   private NXTComm nxtCommConsole;
   private NXTComm nxtCommData;
+  private boolean consoleConnected = false;
+  private boolean dataConnected = false;
+  private int currentRow;
+  private NXJControl control;
+  private DataOutputStream os;
+  private DataInputStream is;
+  private ReaderThread readerThread;
+  private NXTCommand nxtCommand;
+  private NXTCommand[] nxtCommands;
+  private NXTConnector conn = new NXTConnector();
+  private NXTInfo[] nxts;
   
   /**
    * Command line entry point
@@ -99,13 +111,7 @@ public class NXJControl implements ListSelectionListener {
     frame.addWindowListener(listener);
 	conn.addLogListener(new ToolsLogger());	
 	control = this;
-	
-    // Create buttons
-    JButton searchButton = new JButton("Search");
-    final JButton consoleConnectButton = new JButton("Connect");
-    JButton monitorUpdateButton = new JButton("Update");
-    JButton controlUpdateButton = new JButton("Update");
-    
+
     // Search Button: search for NXTs
     searchButton.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent ae) {
@@ -298,92 +304,17 @@ public class NXJControl implements ListSelectionListener {
         }
       });
     
-    // Lay out NXT Selection panel
-    JPanel nxtPanel = new JPanel();  
-    nxtTablePane = new JScrollPane(nxtTable);
-    nxtTablePane.setPreferredSize(nxtTableSize);
-    nxtPanel.add(new JScrollPane(nxtTablePane), BorderLayout.WEST);   
-    frame.getContentPane().add(nxtPanel, BorderLayout.NORTH);
-    nxtTable.setPreferredScrollableViewportSize(nxtButtonsPanelSize);   
-    JLabel nameLabel = new JLabel("Name: ");
-    JPanel namePanel = new JPanel();
-    namePanel.add(nameLabel);
-    namePanel.add(nameText);
-    JPanel nxtButtonPanel = new JPanel(); 
-    nxtButtonPanel.add(namePanel);
-    nxtButtonPanel.add(searchButton);
-    nxtButtonPanel.add(connectButton);
-	nxtButtonPanel.add(usbButton);
-	nxtButtonPanel.add(bluetoothButton);
-	nxtButtonPanel.add(bothButton);
-	ButtonGroup protocolButtonGroup = new ButtonGroup();
-	protocolButtonGroup.add(usbButton);
-	protocolButtonGroup.add(bluetoothButton);
-	protocolButtonGroup.add(bothButton);
-    nxtButtonPanel.setPreferredSize(new Dimension(200,100));   
-    nxtPanel.add(nxtButtonPanel, BorderLayout.EAST);
-    
-    // Lay out Console Panel
-    JLabel consoleTitleLabel = new JLabel("Output from RConsole");
-    consolePanel.add(consoleTitleLabel, BorderLayout.NORTH);
-    consolePanel.add(new JScrollPane(theConsoleLog), BorderLayout.CENTER);
-    consolePanel.add(consoleConnectButton, BorderLayout.SOUTH);
-    
-    // Lay out Data Panel
-    JLabel dataTitleLabel = new JLabel("Data Log");
-    dataPanel.add(dataTitleLabel, BorderLayout.NORTH);
-    dataPanel.add(new JScrollPane(theDataLog), BorderLayout.CENTER);
-    dataPanel.add(dataConnectButton, BorderLayout.SOUTH);
-    
-    // Lay out Monitor Panel
-    monitorPanel.add(batteryGauge, BorderLayout.NORTH);
-    monitorPanel.add(monitorUpdateButton,BorderLayout.SOUTH);
-    
-    // Lay out Control Panel
-    JPanel motorPanel = new JPanel();
-    motorPanel.setLayout(new GridLayout(3,1));   
-    JPanel aPanel = new JPanel();   
-    aSlide.setMajorTickSpacing(100);
-    aSlide.setMinorTickSpacing(10);
-    aSlide.setPaintLabels(true);
-    aSlide.setPaintTicks(true);   
-    JLabel aLabel = new JLabel("Motor.A:  ");
-    aPanel.add(aLabel);
-    aPanel.add(aSlide);  
-    JPanel bPanel = new JPanel();    
-    bSlide.setMajorTickSpacing(100);
-    bSlide.setMinorTickSpacing(10);
-    bSlide.setPaintLabels(true);
-    bSlide.setPaintTicks(true);    
-    JLabel bLabel = new JLabel("Motor.B:  ");
-    bPanel.add(bLabel);
-    bPanel.add(bSlide);    
-    JPanel cPanel = new JPanel();   
-    cSlide.setMajorTickSpacing(100);
-    cSlide.setMinorTickSpacing(10);
-    cSlide.setPaintLabels(true);
-    cSlide.setPaintTicks(true);   
-    JLabel cLabel = new JLabel("Motor.C:  ");
-    cPanel.add(cLabel);
-    cPanel.add(cSlide);    
-    motorPanel.add(aPanel);
-    motorPanel.add(bPanel);
-    motorPanel.add(cPanel);   
-    controlPanel.add(motorPanel);
-    controlPanel.add(controlUpdateButton);
+    // Create the panels
+    createNXTSelectionPanel();
+    createConsolePanel();
+    createDataPanel();
+    createMonitorPanel();
+    createControlPanel();
 
     // set the size of the files panel
     filesPanel.setPreferredSize(filesPanelSize); 
     
-    // Create the tabs
-    JTabbedPane tabbedPane = new JTabbedPane();
-    tabbedPane.addTab("Files", filesPanel);
-    tabbedPane.addTab("Console", consolePanel);
-    tabbedPane.addTab("Data Log", dataPanel);
-    tabbedPane.addTab("Monitor", monitorPanel);
-    tabbedPane.addTab("Control", controlPanel);
-    tabbedPane.addTab("Miscellaneous", otherPanel);
-    frame.getContentPane().add(tabbedPane, BorderLayout.SOUTH);
+    createTabs();
 
     // Set up the frame
     frame.setPreferredSize(frameSize);
@@ -427,68 +358,20 @@ public class NXJControl implements ListSelectionListener {
   /**
    * Get files from the NXT and display them in the files panel
    */
-  private void showFiles() {
-	// Fetch the files
-    fetchFiles();
+  private void showFiles() { 
+	// Layout and populate files table
+	createFilesTable();
     
-    // Set up the files table
-    fm = new FileModel(frame, files, numFiles);     
-    table = new JTable(fm);
-    table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);    
-    TableColumn col = table.getColumnModel().getColumn(0);
-    col.setPreferredWidth(300);
-    tablePane = new JScrollPane(table);
-    tablePane.setPreferredSize(filesAreaSize);
+    // Remove current content of files panel and recreate it
+    filesPanel.removeAll();   
+    createFilesPanel();
     
-    // Remove current content of files panel
-    filesPanel.removeAll();
-    
-    // Set up the files panel
-    filesPanel.add(tablePane, BorderLayout.CENTER);
-    JPanel buttonPanel = new JPanel();
-    JButton deleteButton = new JButton("Delete Files");
-    JButton uploadButton = new JButton("Upload file");
-    JButton downloadButton = new JButton("Download file");
-    JButton runButton = new JButton("Run program");
-  
-    buttonPanel.add(deleteButton);
-    buttonPanel.add(uploadButton);
-    buttonPanel.add(downloadButton);
-    buttonPanel.add(runButton); 
-    buttonPanel.setPreferredSize(filesButtonsPanelSize);
-    filesPanel.add(buttonPanel, BorderLayout.SOUTH);
-    
-    // Remove existing content from the others panel
+    // Remove existing content from the others panel and recreate it
     otherPanel.removeAll();
-   
-    // Populate the Other Panel
-    JButton nameButton = new JButton("Set Name"); 
-    JPanel infoPanel = new JPanel();
-    DeviceInfo di;
-    FirmwareInfo fi;
-    infoPanel.setLayout(new GridLayout(3,2));
-    infoPanel.setPreferredSize(new Dimension(300,100));  
-    try {
-    	di = nxtCommand.getDeviceInfo();
-    	JLabel freeFlashLabel = new JLabel("Free flash:  ");
-    	JLabel freeFlash = new JLabel(""+di.freeFlash);
-    	infoPanel.add(freeFlashLabel);
-    	infoPanel.add(freeFlash);
-    	fi = nxtCommand.getFirmwareVersion();
-    	JLabel firmwareVersionLabel = new JLabel("Firmware version: ");
-    	JLabel firmwareVersion = new JLabel("" + fi.firmwareVersion);
-    	infoPanel.add(firmwareVersionLabel);
-    	infoPanel.add(firmwareVersion);
-    	JLabel protocolVersionLabel = new JLabel("Protocol version:  ");
-    	JLabel protocolVersion = new JLabel("" + fi.protocolVersion);
-    	infoPanel.add(protocolVersionLabel);
-    	infoPanel.add(protocolVersion);
-    	otherPanel.add(infoPanel);
-        otherPanel.add(nameButton);
-    } catch (IOException ioe) {
-    	showMessage("IO Exception getting device information");
-    }
-
+    createMiscellaneousPanel();
+    
+    // Process buttons
+    
     // Delete Button: delete a file from the NXT
     deleteButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent ae) {
@@ -499,9 +382,7 @@ public class NXJControl implements ListSelectionListener {
 	          boolean deleteIt = b.booleanValue();
 	          String fileName = (String) fm.getValueAt(i,0);
 	          if (deleteIt) {
-	            nxtCommand.delete(fileName); 
-		        fm.delete(i);
-		        numFiles--;
+		        fm.delete(fileName, i);
 		        i--;
 		        table.invalidate();
 		        tablePane.revalidate();   
@@ -528,8 +409,8 @@ public class NXJControl implements ListSelectionListener {
         		  showMessage("File name is more than 20 characters");
         	  } else {   	
 		          nxtCommand.uploadFile(file);
-		          fetchFiles();
-		          fm.setData(files, numFiles);
+		          String msg = fm.fetchFiles();
+		          if (msg != null) showMessage(msg);
 		          table.invalidate();
 		          tablePane.revalidate();
         	  }
@@ -546,8 +427,8 @@ public class NXJControl implements ListSelectionListener {
       public void actionPerformed(ActionEvent ae) {
         int i = table.getSelectedRow();
         if (i<0) return;
-        String fileName = files[i].fileName;
-        int size = files[i].fileSize;
+        String fileName = fm.getFile(i).fileName;
+        int size = fm.getFile(i).fileSize;
         JFileChooser fc = new JFileChooser();
         fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
         fc.setSelectedFile(new File(fileName)); 
@@ -566,9 +447,9 @@ public class NXJControl implements ListSelectionListener {
         public void actionPerformed(ActionEvent ae) {
       	  int row = table.getSelectedRow();
       	  if (row<0) return;
-          String fileName = files[row].fileName;
+          String fileName = fm.getFile(row).fileName;
           try {
-        	  runProgram(fileName);
+        	  nxtCommand.startProgram(fileName);
         	  nxtCommand.close();
         	  updateConnectionStatus(row,false);
         	  clearFiles();
@@ -598,30 +479,6 @@ public class NXJControl implements ListSelectionListener {
     
     // Pack the frame
     frame.pack();
-  }
-
-  /**
-   * Fetch filenames from the NXT into an array of FileInfo structures
-   */
-  private void fetchFiles() {
-	numFiles = 0;
-    try {
-      files[0] = nxtCommand.findFirst("*.*");
-	
-	  if (files[0] != null) {
-	    numFiles = 1;
-	
-	    for(int i=1;i<MAX_FILES;i++) {
-	      files[i] = nxtCommand.findNext(files[i-1].fileHandle);
-	      if (files[i] == null) break;
-	      else {
-	        numFiles++;
-	      }
-	    }
-	  }
-    } catch (IOException ioe) {
-    	showMessage("IOException fetching files");
-    }
   }
 
   /**
@@ -657,17 +514,6 @@ public class NXJControl implements ListSelectionListener {
     }
   }
 
-  /**
-   * Run a program on the NXT
-   * 
-   * @param fileName the program to run
-   * 
-   * @throws IOException
-   */
-  public void runProgram(String fileName) throws IOException {
-    nxtCommand.startProgram(fileName);
-  }
-  
   /**
    * Show a pop-up message
    * 
@@ -730,6 +576,9 @@ public class NXJControl implements ListSelectionListener {
     nxtCommands = new NXTCommand[nxts.length];
   }
   
+  /**
+   * Close all connections
+   */
   private void closeAll() {
 	  if (nxtCommands == null) return;
 	  for(int i=0;i<nxtCommands.length;i++) {
@@ -748,6 +597,11 @@ public class NXJControl implements ListSelectionListener {
 	  if (!connected) nxtCommands[row] = null;
   }
   
+  /**
+   * Toggle Connect button detween Connect and Disconnect
+   * 
+   * @param connected
+   */
   private void updateConnectButton(boolean connected) {
 	  connectButton.setText((connected ? "Disconnect" : "Connect"));
   }
@@ -760,5 +614,154 @@ public class NXJControl implements ListSelectionListener {
 	  return protocols;
   }
   
+  // Lay out NXT Selection panel
+  private void createNXTSelectionPanel() {
+    JPanel nxtPanel = new JPanel();  
+    nxtTablePane = new JScrollPane(nxtTable);
+    nxtTablePane.setPreferredSize(nxtTableSize);
+    nxtPanel.add(new JScrollPane(nxtTablePane), BorderLayout.WEST);   
+    frame.getContentPane().add(nxtPanel, BorderLayout.NORTH);
+    nxtTable.setPreferredScrollableViewportSize(nxtButtonsPanelSize);   
+    JLabel nameLabel = new JLabel("Name: ");
+    JPanel namePanel = new JPanel();
+    namePanel.add(nameLabel);
+    namePanel.add(nameText);
+    JPanel nxtButtonPanel = new JPanel(); 
+    nxtButtonPanel.add(namePanel);
+    nxtButtonPanel.add(searchButton);
+    nxtButtonPanel.add(connectButton);
+	nxtButtonPanel.add(usbButton);
+	nxtButtonPanel.add(bluetoothButton);
+	nxtButtonPanel.add(bothButton);
+	ButtonGroup protocolButtonGroup = new ButtonGroup();
+	protocolButtonGroup.add(usbButton);
+	protocolButtonGroup.add(bluetoothButton);
+	protocolButtonGroup.add(bothButton);
+    nxtButtonPanel.setPreferredSize(new Dimension(200,100));   
+    nxtPanel.add(nxtButtonPanel, BorderLayout.EAST);
+  }
+  
+  // Lay out Console Panel
+  private void createConsolePanel() {
+    JLabel consoleTitleLabel = new JLabel("Output from RConsole");
+    consolePanel.add(consoleTitleLabel, BorderLayout.NORTH);
+    consolePanel.add(new JScrollPane(theConsoleLog), BorderLayout.CENTER);
+    consolePanel.add(consoleConnectButton, BorderLayout.SOUTH);
+  }
+  
+  // Lay out Data Console Panel
+  private void createDataPanel() {
+    JLabel dataTitleLabel = new JLabel("Data Log");
+    dataPanel.add(dataTitleLabel, BorderLayout.NORTH);
+    dataPanel.add(new JScrollPane(theDataLog), BorderLayout.CENTER);
+    dataPanel.add(dataConnectButton, BorderLayout.SOUTH);
+  }
+  
+  // Lay out Monitor Panel
+  private void createMonitorPanel() {
+    monitorPanel.add(batteryGauge, BorderLayout.NORTH);
+    monitorPanel.add(monitorUpdateButton,BorderLayout.SOUTH);  
+  }
+  
+  // Lay out Control Panel
+  private void createControlPanel() {
+    JPanel motorPanel = new JPanel();
+    motorPanel.setLayout(new GridLayout(3,1));   
+    JPanel aPanel = new JPanel();   
+    aSlide.setMajorTickSpacing(100);
+    aSlide.setMinorTickSpacing(10);
+    aSlide.setPaintLabels(true);
+    aSlide.setPaintTicks(true);   
+    JLabel aLabel = new JLabel("Motor.A:  ");
+    aPanel.add(aLabel);
+    aPanel.add(aSlide);  
+    JPanel bPanel = new JPanel();    
+    bSlide.setMajorTickSpacing(100);
+    bSlide.setMinorTickSpacing(10);
+    bSlide.setPaintLabels(true);
+    bSlide.setPaintTicks(true);    
+    JLabel bLabel = new JLabel("Motor.B:  ");
+    bPanel.add(bLabel);
+    bPanel.add(bSlide);    
+    JPanel cPanel = new JPanel();   
+    cSlide.setMajorTickSpacing(100);
+    cSlide.setMinorTickSpacing(10);
+    cSlide.setPaintLabels(true);
+    cSlide.setPaintTicks(true);   
+    JLabel cLabel = new JLabel("Motor.C:  ");
+    cPanel.add(cLabel);
+    cPanel.add(cSlide);    
+    motorPanel.add(aPanel);
+    motorPanel.add(bPanel);
+    motorPanel.add(cPanel);   
+    controlPanel.add(motorPanel);
+    controlPanel.add(controlUpdateButton);
+  }
+  
+  // Create the tabs
+  private void createTabs() {
+    JTabbedPane tabbedPane = new JTabbedPane();
+    tabbedPane.addTab("Files", filesPanel);
+    tabbedPane.addTab("Console", consolePanel);
+    tabbedPane.addTab("Data Log", dataPanel);
+    tabbedPane.addTab("Monitor", monitorPanel);
+    tabbedPane.addTab("Control", controlPanel);
+    tabbedPane.addTab("Miscellaneous", otherPanel);
+    frame.getContentPane().add(tabbedPane, BorderLayout.SOUTH);
+  }
+  
+  // Set up the files panel
+  private void createFilesPanel() {
+    filesPanel.add(tablePane, BorderLayout.CENTER);
+    JPanel buttonPanel = new JPanel();
+
+  
+    buttonPanel.add(deleteButton);
+    buttonPanel.add(uploadButton);
+    buttonPanel.add(downloadButton);
+    buttonPanel.add(runButton); 
+    buttonPanel.setPreferredSize(filesButtonsPanelSize);
+    filesPanel.add(buttonPanel, BorderLayout.SOUTH);
+  }
+  
+  // Populate the Other Panel
+  private void createMiscellaneousPanel() {
+    JPanel infoPanel = new JPanel();
+    DeviceInfo di;
+    FirmwareInfo fi;
+    infoPanel.setLayout(new GridLayout(3,2));
+    infoPanel.setPreferredSize(otherPanelSize);  
+    try {
+    	di = nxtCommand.getDeviceInfo();
+    	JLabel freeFlashLabel = new JLabel("Free flash:  ");
+    	JLabel freeFlash = new JLabel(""+di.freeFlash);
+    	infoPanel.add(freeFlashLabel);
+    	infoPanel.add(freeFlash);
+    	fi = nxtCommand.getFirmwareVersion();
+    	JLabel firmwareVersionLabel = new JLabel("Firmware version: ");
+    	JLabel firmwareVersion = new JLabel("" + fi.firmwareVersion);
+    	infoPanel.add(firmwareVersionLabel);
+    	infoPanel.add(firmwareVersion);
+    	JLabel protocolVersionLabel = new JLabel("Protocol version:  ");
+    	JLabel protocolVersion = new JLabel("" + fi.protocolVersion);
+    	infoPanel.add(protocolVersionLabel);
+    	infoPanel.add(protocolVersion);
+    	otherPanel.add(infoPanel);
+        otherPanel.add(nameButton);
+    } catch (IOException ioe) {
+    	showMessage("IO Exception getting device information");
+    }
+  }
+  
+  // Set up the files table
+  private void createFilesTable() {
+    fm = new ExtendedFileModel(nxtCommand);     
+    table = new JTable(fm);
+    table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);    
+    TableColumn col = table.getColumnModel().getColumn(0);
+    col.setPreferredWidth(300);
+    tablePane = new JScrollPane(table);
+    tablePane.setPreferredSize(filesAreaSize);
+  }
 }
 
