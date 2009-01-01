@@ -1,7 +1,7 @@
 /**
  * High Speed / RS485 Interface
  * This module provides basic access to the NXT RS485 hardware
- * Include additional routines to perform lowlevel BitBus packet I/O
+ * Includes additional routines to perform lowlevel BitBus packet I/O
  * functions.
  * Author: Andy Shaw
  */
@@ -190,17 +190,23 @@ U32 hs_read(U8 * buf, U32 off, U32 len)
 #define ST_ESCAPE  1
 #define ST_DATA  2
 
-U8 *frame;
-U16 frameCRC;
-U32 frameLen;
-U32 state;
-U16 *CRCTable;
+// "Class vars"
+U8 *frame; // pointer to he curent frame
+U16 frameCRC; // Accumulated CRC value
+U32 frameLen; // current frame length
+U32 state; // input state
+U16 *CRCTable; // pointer to initialised CRC lookup table
 
+/**
+ * Add a single byte to the current frame. Include the value in the CRC. Byte
+ * stuff if needed.
+ */
 static void addByte(U8 b)
 {
   //RConsole.println("Add byte " + b + " len " + frameLen + " max " + frame.length);
   // update crc
   frameCRC = (U16)((frameCRC << 8) ^ CRCTable[(b ^ (frameCRC >> 8)) & 0xff]);
+  // Byte stuff?
   if (b == BB_FLAG || b == BB_ESCAPE)
   {
     frame[frameLen++] = BB_ESCAPE;
@@ -210,6 +216,9 @@ static void addByte(U8 b)
     frame[frameLen++] = b;
 }
 
+/**
+ * Add a series of bytes to the current frame, add to CRC, byte stuff if needed
+ */
 static void addBytes(U8 *data, int len)
 {
   while (len-- > 0)
@@ -226,12 +235,19 @@ static void addBytes(U8 *data, int len)
   }
 }
 
+/**
+ * Add the CRC value (FCS Frame Check Sum). Note this value must be byte stuffed
+ * but must not impact the actual CRC.
+ */
 static void addFCS(U16 FCS)
 {
   addByte((U8)(FCS >> 8));
   addByte((U8)FCS);
 }
 
+/**
+ * Create and send a frame.
+ */
 int hs_send(U8 address, U8 control, U8 *data, int offset, int len, U16 *CRCTab)
 {
   // Make sure we have room
@@ -259,13 +275,18 @@ int hs_send(U8 address, U8 control, U8 *data, int offset, int len, U16 *CRCTab)
   return frameLen;
 }
 
+/**
+ * Return a single byte from the input queue. return -1 if no data avalable.
+ */
 int getByte()
 {
   int bytes_ready, total_bytes_ready;
   int ret;
   U8* tmp_ptr;
   
+  // Assume no data
   ret = -1;
+  // first buffer al used up?
   if (*AT91C_US0_RNCR == 0) {
     bytes_ready = IN_BUF_SZ;
     total_bytes_ready = IN_BUF_SZ*2 - *AT91C_US0_RCR;
@@ -273,6 +294,7 @@ int getByte()
   else
     total_bytes_ready = bytes_ready = IN_BUF_SZ - *AT91C_US0_RCR;
   
+  // Anything new?
   if (total_bytes_ready > in_buf_idx)
   {
     if (bytes_ready >= in_buf_idx + 1)
@@ -289,7 +311,7 @@ int getByte()
     } 
   }
   
-  // Current buffer full and fully processed
+  // Current buffer full and fully processed?
   
   if (in_buf_idx >= IN_BUF_SZ && *AT91C_US0_RNCR == 0)
   { 	
@@ -303,49 +325,56 @@ int getByte()
   return ret;   
 }
 
+/**
+ * Assemble and return a packet. Uses a state machine to track packet
+ * content. Return
+ * > 0 packet length
+ * < 0 packet not yet started. 
+ * == 0 packet being assembled but not yet complete.
+ */
 int hs_recv(U8 *data, int len, U16 *CRCTab, int reset)
 {
   int cur;
 
+  // Set things up
   frame = data;
   CRCTable = CRCTab;
+  // If we have timed out we may need to reset.
   if (reset) state = ST_FLAG;
   while ((cur = getByte()) >= 0)
   {
     switch(state)
     {
       case ST_FLAG:
+        // Waiting for packet start
         if (cur == BB_FLAG)
         {
           frameLen = 0;
           frameCRC = CRC_INIT;
           state = ST_DATA;
-          //start = (int)System.currentTimeMillis();
         }
         break;
       case ST_ESCAPE:
+        // Previous byte was an escape, so escap current byte
         cur ^= BB_XOR;
         if (frameLen >= len)
           state = ST_FLAG;
         else
         {
+          // Add the byte into the frame.
           frame[frameLen++] = (U8)cur;
           frameCRC = (U16)((frameCRC << 8) ^ CRCTable[(cur ^ (frameCRC >> 8)) & 0xff]);
-          //RConsole.println("rec esc byte " + cur + " len " + frameLen + " CRC " + frameCRC);
         }
         state = ST_DATA;
         break;
       case ST_DATA:
+        // Check for end of frame
         if (cur == BB_FLAG)
         {
-          //RConsole.println("EOF CRC " + frameCRC + " len " + frameLen);
           // Check that we have a good CRC
-          //RConsole.println("Frame time " + ((int)System.currentTimeMillis() - start));
           state = ST_FLAG;
           if (frameCRC == 0) 
             return frameLen;
-          //else
-            //RConsole.println("Bad csum " + (int)frameCRC + " len " + frameLen);
         }
         else if (cur == BB_ESCAPE)
           state = ST_ESCAPE;
@@ -355,7 +384,6 @@ int hs_recv(U8 *data, int len, U16 *CRCTab, int reset)
         {
           frame[frameLen++] = (U8)cur;
           frameCRC = (U16)((frameCRC << 8) ^ CRCTable[(cur ^ (frameCRC >> 8)) & 0xff]);
-          //RConsole.println("rec byte " + cur + " len " + frameLen + " CRC " + frameCRC);
         }
         break;
     }
