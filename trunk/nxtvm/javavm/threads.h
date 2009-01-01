@@ -16,6 +16,7 @@
 #define CONDVAR_WAITING  5 // Someone called wait() on us in a synchronized block.
 #define SLEEPING         6 // ZZZZZzzzzzzzz
 #define JOIN             7 // Waiting for another thread to exit
+#define SYSTEM_WAITING   8 // Waiting on a system var
 #define SUSPENDED        0x80 // Or with the above to suspend
 
 #define INTERRUPT_CLEARED    0
@@ -61,6 +62,8 @@ extern boolean switch_thread();
 extern void join_thread(Thread *thread, const FOURBYTES time);
 extern void dequeue_thread(Thread *thread);
 extern void enqueue_thread(Thread *thread);
+extern void system_wait(Object *obj);
+extern void system_notify(Object *obj, const boolean all);
 extern void monitor_wait(Object *obj, const FOURBYTES time);
 extern void monitor_notify(Object *obj, const boolean all);
 extern void monitor_notify_unchecked(Object *obj, const boolean all);

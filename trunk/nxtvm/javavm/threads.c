@@ -420,6 +420,8 @@ done_pi:
             update_stack_frame (stackFrame);
           }
           break;
+        case SYSTEM_WAITING:
+          // Just keep on waiting
         case RUNNING:
           // Its running already
         case DEAD:
@@ -501,6 +503,71 @@ printf ("currentThread=%d, ndr=%d\n", (int) currentThread, (int)nonDaemonRunnabl
   
   return false;
 }
+
+/*
+ * Current thread will wait on the specified object, waiting for a 
+ * system_notify. Note the thread does not need to own the object,
+ * to wait on it. However it will wait to own the monitor for the
+ * objevt once the wait is complete.
+ */
+void system_wait(Object *obj)
+{
+#if DEBUG_MONITOR
+  printf("system_wait of %d, thread %d(%d)\n",(int)obj, (int)currentThread, currentThread->threadId);
+#endif
+  // Indicate the we are waiting for a system notify
+  currentThread->state = SYSTEM_WAITING;
+  
+  // Set the monitor count for when we resume (always 1).
+  currentThread->monitorCount = 1;
+  
+  // Save the object who's monitor we will want back
+  currentThread->waitingOn = ptr2ref (obj);
+  
+  // no time out
+  currentThread->sleepUntil = 0;
+  
+#if DEBUG_MONITOR
+  printf("system_wait of %d, thread %d(%d)\n",(int)obj, (int)currentThread, currentThread->threadId);
+#endif
+
+  // Gotta yield
+  schedule_request( REQUEST_SWITCH_THREAD);
+}
+
+
+/*
+ * wake up any objects waiting on the passed system object.
+ * Note unlike ordinary waits, we do not allow system waits to be interrupted.
+ */
+void system_notify(Object *obj, const boolean all)
+{
+  short i;
+  Thread *pThread;
+  
+#if DEBUG_MONITOR
+  printf("system_notify_ of %d, thread %d(%d)\n",(int)obj, (int)currentThread, currentThread->threadId);
+#endif
+  // Find a thread waiting on us and move to WAIT state.
+  for (i=MAX_PRIORITY-1; i >= 0; i--)
+  {
+    pThread = threadQ[i];
+    if (!pThread)
+      continue;
+      
+    do {
+      // Remember threadQ[i] is the last thread on the queue
+      pThread = word2ptr(pThread->nextThread);
+      if (pThread->state == SYSTEM_WAITING && pThread->waitingOn == ptr2ref (obj))
+      {
+        pThread->state = MON_WAITING;
+        if (!all)
+          return;
+      }
+    } while (pThread != threadQ[i]);
+  }
+}
+
 
 /*
  * Current thread owns object's monitor (we hope) and wishes to relinquish

@@ -1573,9 +1573,9 @@ static Object *java_allocate (TWOBYTES size)
   if (gcPhase == GC_IDLE) gcPhase = GC_MARKROOTS;
   // restart the current instruction when we are woken up
   curPc = getPc();
-  enter_monitor(currentThread, &gcLock);
-  monitor_wait(&gcLock, 0);
+  //enter_monitor(currentThread, &gcLock);
   // Say how much memory we need...
+  system_wait(&gcLock);
   memRequired += 2*size;
   varstat_adjust(&mem_alloctm_vs, varstat_gettime() - t0);
   return JNULL;
@@ -2133,7 +2133,8 @@ void gc_run_collector(void)
       {
         // We may have enough free space to meet current requests, so wake up
         // any threads that are waiting for memory.
-        monitor_notify_unchecked(&gcLock, true);
+        //monitor_notify_unchecked(&gcLock, true);
+        system_notify(&gcLock, true);
         memRequired = 0;
         newlyFreed = 0;
       }
@@ -2144,7 +2145,7 @@ void gc_run_collector(void)
       memRequired = 0;
       gcPhase = GC_IDLE;
       // Notify any waiting threads that there may now be more memory
-      monitor_notify_unchecked(&gcLock, true);
+      system_notify(&gcLock, true);
   }
 exit:
   varstat_adjust(&gc_run_vs, varstat_gettime() - t0);
@@ -2167,8 +2168,9 @@ int garbage_collect()
   if (gcPhase == GC_IDLE) gcPhase = GC_MARKROOTS;
   // restart the current instruction when we are woken up
   curPc = getPc();
-  enter_monitor(currentThread, &gcLock);
-  monitor_wait(&gcLock, 0);
+  //enter_monitor(currentThread, &gcLock);
+  //monitor_wait(&gcLock, 0);
+  system_wait(&gcLock);
   varstat_adjust(&gc_total_vs, varstat_gettime() - t0);
   return EXEC_RETRY;
 }
