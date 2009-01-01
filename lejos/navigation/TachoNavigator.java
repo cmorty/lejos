@@ -230,7 +230,7 @@ public class TachoNavigator implements Navigator
    public void rotate(float angle,boolean immediateReturn)
    {
       _updated = false; 
-      int turnAngle = Math.round(normalize(angle));
+      int turnAngle = Math.round(angle);
       _pilot.resetTachoCount();
       _right0 = 0;
       _left0 = 0;
