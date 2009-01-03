@@ -1,17 +1,20 @@
 package lejos.pc.tools;
 
+import lejos.pc.comm.*;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.TextArea;
 import java.awt.TextField;
 import java.awt.event.*;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
-import javax.swing.JToggleButton;
+import javax.swing.JRadioButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import java.io.*;
-import lejos.pc.comm.*;
+
 
 /**
  * Downloads  data from the DataLogger running on a MXT <br>
@@ -29,22 +32,17 @@ import lejos.pc.comm.*;
  */
 public class DataViewer extends JFrame implements ActionListener
 {
-	private static final long serialVersionUID = 4196717806576232148L;
-	private JButton startButton = new JButton("Start download");
+    private JButton startButton = new JButton("Download");
     private JButton connectButton = new JButton("Connect");
-    private JToggleButton btButton = new JToggleButton("Use Bluetooth");
+    private JRadioButton btButton = new JRadioButton("Bluetooth");
+    private JRadioButton usbButton = new JRadioButton("USB");
     private TextField statusField = new TextField(20);
     private TextField lengthField = new TextField(2);
     private TextField nameField = new TextField(10);
     private TextField addrField = new TextField(12);
-    private int _recordCount = 0;
-    private int _rowLength = 4;
-    private String _nxt = "NXT";
-    private boolean _useUSB = true;
-    private DataInputStream dataIn = null;
-    private OutputStream os = null;
-    private NXTConnector con;
-    private boolean _connected = false;
+    private int _recordCount = 0;  //used by append()
+    private int _rowLength = 4; // used by append();
+    private DataViewComms comm;
     /**
      * screen area to hold the downloaded data
      */
@@ -58,39 +56,43 @@ public class DataViewer extends JFrame implements ActionListener
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setTitle("View output from NXJ Datalogger");
         setSize(550, 600);
-        JPanel p1 = new JPanel();  //holds  button and text field
+        buildGUI();
+        comm = new DataViewComms(this);
+    }
 
-        p1.add(connectButton);
+    private void buildGUI()
+    {
+        JPanel connectPanel = new JPanel();  //holds  button and text field
+        ButtonGroup choiceGroup = new ButtonGroup();
+        choiceGroup.add(usbButton);
+        usbButton.setSelected(true);
+        choiceGroup.add(btButton);
+        connectPanel.add(usbButton);
+        connectPanel.add(btButton);
+        connectPanel.add(connectButton);
         connectButton.addActionListener(this);
-        p1.add(btButton);
-        btButton.addActionListener(this);
-        p1.add(new JLabel(" Name "));
-        p1.add(nameField);
-        p1.add(new JLabel(" Addr "));
-        p1.add(addrField);
+        connectPanel.add(new JLabel(" Name "));
+        connectPanel.add(nameField);
+        connectPanel.add(new JLabel(" Addr "));
+        connectPanel.add(addrField);
 
-        JPanel p2 = new JPanel();//  holds label and text field
-
-        p2.add(startButton);
-        p2.add(new JLabel("Row Length:"));
-        p2.add(lengthField);
+        JPanel downLoadPanel = new JPanel();//  holds label and text field
+        downLoadPanel.add(startButton);
+        downLoadPanel.add(new JLabel("Row Length:"));
+        downLoadPanel.add(lengthField);
         lengthField.setText("2");
         startButton.addActionListener(this);
+        downLoadPanel.add(new JLabel("  Status:"));
+        downLoadPanel.add(statusField);
 
-        p2.add(new JLabel("  Status:"));
-        p2.add(statusField);
-
-        JPanel panel = new JPanel();  // North area of the frame
-
-        panel.setLayout(new GridLayout(2, 1));
-        panel.add(p1);
-        panel.add(p2);
-        add(panel, BorderLayout.NORTH);
+        JPanel topPanel = new JPanel();  // North area of the frame
+        topPanel.setLayout(new GridLayout(2, 1));
+        topPanel.add(connectPanel);
+        topPanel.add(downLoadPanel);
+        add(topPanel, BorderLayout.NORTH);
         theLog = new TextArea(40, 40); // Center area of the frame
-
         getContentPane().add(theLog, BorderLayout.CENTER);
-        statusField.setText("using  USB");
-
+        setMessage("Waiting to Connect");
     }
 
     /**
@@ -98,28 +100,67 @@ public class DataViewer extends JFrame implements ActionListener
      */
     public void actionPerformed(ActionEvent e)
     {
+        String name = nameField.getText();
+        String address = addrField.getText();
+        boolean useUSB;
         if (e.getSource() == connectButton)
         {
-            connect();
-        }
-        if (e.getSource() == startButton)
-        {
-            _rowLength = Integer.parseInt(lengthField.getText());
-            _nxt = nameField.getText();
-            _recordCount = 0;
-            startDownload();
-        }
-        if (e.getSource() == btButton)
-        {
-            _useUSB = !_useUSB;
-            if (_useUSB)
+            useUSB = usbButton.isSelected();
+            if (useUSB)
             {
-                setMessage("using USB");
+                setMessage("using USB ");
             } else
             {
                 setMessage("using Bluetooth");
             }
+            if (!comm.connecTo(name, address, useUSB))
+            {
+                setMessage("Connect Failed");
+                if (useUSB)
+                {
+                    JOptionPane.showMessageDialog(null, "Sorry... but USB did not connect.\n" +
+                            "You might want to check:\n " +
+                            " Is the NXT turned on and connected? \n " +
+                            " Does it display  'wait for USB'? ", "We have a connection problem.",
+                            JOptionPane.PLAIN_MESSAGE);
+
+                } else
+                {
+                    JOptionPane.showMessageDialog(null, "Sorry... Bluetooth did not connect. \n" +
+                            "You might want to check:\n" +
+                            " Is the dongle plugged in?\n" +
+                            " Is the NXT turned on?\n" +
+                            " Does it display  'wait for BT'? ",
+                            "We have a connection problem.",
+                            JOptionPane.PLAIN_MESSAGE);
+                }
+            }
+            _recordCount = 0;
+        } else if (e.getSource() == startButton)
+        {
+            _rowLength = Integer.parseInt(lengthField.getText());
+//            name = nameField.getText();
+//            address = addrField.getText();
+            _recordCount = 0;
+            comm.startDownload();
         }
+    }
+
+    public void connectedTo(String name, String address)
+    {
+        nameField.setText(name);
+        addrField.setText(address);
+        setMessage("Connected ");
+    }
+
+    public void append(float value)
+    {
+        if (0 == _recordCount % _rowLength)
+        {
+            theLog.append("\n");
+        }
+        theLog.append(value + "\t ");
+        _recordCount++;
     }
 
     /**
@@ -131,54 +172,88 @@ public class DataViewer extends JFrame implements ActionListener
         frame.setVisible(true);
     }
 
-    private void connect()
+    /**
+     *messages generated show in the status Field
+     */
+    public void setMessage(String s)
     {
-        System.out.println("connecting");
-        String addr = addrField.getText();
-        _nxt = nameField.getText();
+        statusField.setText(s);
+    }
+}
+class DataViewComms
+{
 
-        if (_useUSB)
+    private NXTConnector con;
+    private boolean _connected = false;
+    private DataViewer viewer;
+    OutputStream os;
+    InputStream is;
+    DataOutputStream dataOut;
+    DataInputStream dataIn;
+    String _name;
+    String _address;
+    boolean _useUSB;
+
+    public DataViewComms(DataViewer viewer)
+    {
+        this.viewer = viewer;
+    }
+
+    public boolean connecTo(String name, String address, boolean useUSB)
+    {
+        int protocol = 0;
+        _useUSB = useUSB;
+        _name = name;
+        _address = address;
+        if (useUSB)
         {
-            setMessage("Connecting USB");
+            protocol = NXTCommFactory.USB;
+            viewer.setMessage("Connecting USB");
         } else
         {
-            setMessage("Connecting BT");
+            viewer.setMessage("Connecting BT");
+            protocol = NXTCommFactory.BLUETOOTH;
         }
-        System.out.println(" connecting to " + _nxt + " " + addr);
+        System.out.println(" connecting to " + name + " " + address);
         con = new NXTConnector();
-        con.addLogListener(new ToolsLogger());
-        if (con.connectTo(_nxt, addr, (_useUSB ? NXTCommFactory.USB : NXTCommFactory.BLUETOOTH), false) != 0)
+        int res = con.connectTo(name, address, protocol, false);
+        System.out.println("Connect result " + res);
+        if (0 != res)
         {
             System.out.println(" Connection failed ");
-            System.exit(1);
+            return false;
         }
         os = con.getOutputStream();
         dataIn = con.getDataIn();
         if (dataIn == null)
         {
             System.out.println(" NULL input stream ");
+            return false;
         } else
         {
             if (os == null)
             {
                 System.out.println(" OS NULL");
+                return false;
             } else
             {
                 _connected = true;
             }
         }
-        String name = con.getNXTInfo().name;
-        addr = con.getNXTInfo().deviceAddress;
-        nameField.setText(name);
-        addrField.setText(addr);
-        setMessage("Connected " + name + " " + addr);
-
-//    the NXT is waiting for an incoming byte before it starts transmitting 
+        name = con.getNXTInfo().name;
+        address = con.getNXTInfo().deviceAddress;
+        viewer.connectedTo(name, address);
+        return true;
     }
 
-    private void startDownload()
+    public void startDownload()
     {
-        if (!_connected) connect();
+        if (!_connected)
+        {
+          System.out.println("not yet connected");
+            return;
+
+        }
         int b = 15;
         try //handshake - ready to read data
         {
@@ -188,29 +263,17 @@ public class DataViewer extends JFrame implements ActionListener
         {
             System.out.println(e + " handshake failed ");
         }
-        float x = 0;
         try
         {
             int length = dataIn.readInt();
-            setMessage(" reading length " + length);
+            viewer.setMessage(" reading length " + length);
             for (int i = 0; i < length; i++)
             {
-                if (0 == _recordCount % _rowLength) theLog.append("\n");
-                x = dataIn.readFloat();
-                theLog.append(x + "\t ");
-                _recordCount++;
+                viewer.append(dataIn.readFloat());
             }
         } catch (IOException e)
         {
             System.out.println("read error " + e);
         }
-    }
-
-    /**
-     *messages generated show in the status Field
-     */
-    public void setMessage(String s)
-    {
-        statusField.setText(s);
     }
 }	
