@@ -157,14 +157,13 @@ public class UltrasonicSensor extends I2CSensor
 	 * The sensor operates in two modes, continuous and ping. When in continuous
 	 * mode the sensor sends out pings as often as it can and the most recently
 	 * obtained result is available via a call to getDistance. When in ping mode
-	 * a ping is only transmitted when a call is made to ping. This sends a
+	 * a ping is only transmitted when a call is made to this method. This sends a
 	 * single ping and up to 8 echoes are captured. These may be read by making
 	 * a call to getDistance and passing a suitable array. A delay of
-	 * approximately 20ms is required between the call to ping and getDistance.
-	 * This delay is not included in the method. Calls to getDistance before
-	 * this period may result in an error or no data being returned. The normal
+	 * approximately 20ms is required between the call to ping and obtaining the
+     * results. The getDistance call automatically takes care of this. The normal
 	 * getDistance call may also be used with ping, returning information for
-	 * the first echo. Calling this method will disable teh default continuous
+	 * the first echo. Calling this method will disable the default continuous
 	 * mode, to switch back to continuous mode call continuous.
 	 *
 	 * @return 0 if ok <> 0 otherwise
