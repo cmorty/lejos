@@ -30,6 +30,7 @@ public class USBConnection extends NXTConnection
  	public USBConnection(int mode)
 	{
 		state = CS_CONNECTED;
+        bufSz = USB.BUFSZ;
         inBuf = new byte[USB.BUFSZ];
         outBuf = new byte[USB.BUFSZ];
         is = null;
@@ -90,6 +91,15 @@ public class USBConnection extends NXTConnection
         USB.waitForDisconnect(this, CLOSETIMEOUT2);
         super.disconnect();
 	}
+
+   /**
+     * Tell the lower levels that they can release any resources for this
+     * connection.
+     */
+    void freeConnection()
+    {
+        USB.usbDisable();
+    }
 
 
     /**

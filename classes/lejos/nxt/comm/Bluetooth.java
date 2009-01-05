@@ -11,7 +11,7 @@ import lejos.nxt.SystemSettings;
  * Allows inbound and outbound connections.
  * Provides access to to device registration.
  */
-public class Bluetooth
+public class Bluetooth extends NXTCommDevice
 {
 	public static  final byte MSG_BEGIN_INQUIRY = 0;
 	public static  final byte MSG_CANCEL_INQUIRY = 1;
@@ -76,7 +76,8 @@ public class Bluetooth
 	
 	public static final byte BT_PENDING_INPUT = 1;
 	public static final byte BT_PENDING_OUTPUT = 2;
-    
+
+    public static final String PIN = "lejos.bluetooth_pin";
     static final int BUFSZ = 256;
 
 	private static final byte CHANCNT = 4;
@@ -104,9 +105,8 @@ public class Bluetooth
 	
 	private static final byte CN_NONE = -1;
 	private static final int CN_IDLE = 0x7ffffff;
-	
-	protected static final char[] cs = {'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
-	
+
+		
 	static BTConnection [] Chans = new BTConnection[CHANCNT];
 	static byte [] cmdBuf = new byte[128];
 	static byte [] replyBuf = new byte[256];
@@ -118,12 +118,10 @@ public class Bluetooth
 	static int resetCnt;
 	static boolean powerOn;
 	static boolean publicPowerOn = false;
-	/*public final static byte[] defaultPin = 
-	    {(byte) '1', (byte) '2', (byte) '3', (byte) '4'}; */ // Now storing PIN in SystemSettings
-	private static byte [] pin; //!! = defaultPin;
-	static Object sync = new Object();
-	static byte[] cachedName;
-	static byte[] cachedAddress;
+	private static byte [] pin;
+	static final Object sync = new Object();
+	static String cachedName;
+	static String cachedAddress;
 
 	/**
 	 * Low-level method to write BT data
@@ -160,7 +158,9 @@ public class Bluetooth
 	
 	/**
 	 * Low-level method to get the BC4 chip mode
-	 */
+     *
+     * @return the current mode
+     */
 	public static native int btGetBC4CmdMode();
 	
 	/**
@@ -253,6 +253,8 @@ public class Bluetooth
 			connected = 0;
 			listening = false;
 			cancelTimeout();
+            // Load the pin etc.
+            loadSettings();
 			setDaemon(true);
 			start();
 			// Setup initial state
@@ -849,7 +851,9 @@ public class Bluetooth
 			// Wait for special connect indication
 			while (listening && reqState != RS_REQUESTCONNECT)
             {
-				try{Bluetooth.sync.wait(timeout < 1000 ? timeout : 1000);}catch(Exception e){}
+				try{
+                    Bluetooth.sync.wait(timeout < 1000 ? timeout : 1000);
+                } catch(InterruptedException e){listening=false;}
                 timeout -= 1000;
                 if (timeout <= 0) listening = false;
             }
@@ -858,8 +862,8 @@ public class Bluetooth
 				//1 RConsole.print("Got connect request\n");
 				
 				// !Kludge Alert! Extract address here:
-				byte [] addr = new byte[7];
-				for(byte i=0;i<addr.length;i++) addr[i] = replyBuf[i+2];
+				byte [] addr = new byte[ADDRESS_LEN];
+                System.arraycopy(replyBuf, 2, addr, 0, ADDRESS_LEN);
 				//RConsole.print("waitForConnect() Address: " + Bluetooth.addressToString(addr) + "\n"); 
 				
 				// Restore state
@@ -878,7 +882,7 @@ public class Bluetooth
 						if (handle >= 0 && handle < Chans.length)
 						{
 							// Assert(Chans[handle].state == CS_IDLE);
-							Chans[handle].bind(handle, addr, mode);
+							Chans[handle].bind(handle, addressToString(addr), mode);
 							// now have one more connected
 							connected++;
 							ret = Chans[handle];
@@ -903,7 +907,18 @@ public class Bluetooth
 	{
 		return waitForConnection(0, 0, null);
 	}
-	
+
+	/**
+	 * Uses the current default PIN
+     * @param timeout time in ms to wait for connection, 0 == wait for ever
+     * @param mode the I/O mode to be used for this connection
+     * @return the Bluetooth connection
+	 */
+	public static BTConnection waitForConnection(int timeout, int mode)
+	{
+		return waitForConnection(timeout, mode, null);
+	}
+
 	/**
 	 * Connects to a remote device. Uses the current default pin. 
 	 * 
@@ -912,8 +927,45 @@ public class Bluetooth
 	 */
 	public static BTConnection connect(RemoteDevice remoteDevice) {
 		if (remoteDevice == null) return null;
-		return connect(remoteDevice.getDeviceAddr());
+		return connect(stringToAddress(remoteDevice.getDeviceAddr()));
 	}
+
+    /**
+     * Conect to the specified device, either by name or address
+     * @param target String name or address
+     * @param mode I/O mode for this connection
+     * @param pin The pin to use for this connection
+     * @return BTConnection object or null
+     */
+    public static BTConnection connect(String target, int mode, byte[] pin)
+    {
+        if (target == null) return null;
+        if (isAddress(target))
+            return connect(stringToAddress(target), mode, pin);
+        else
+        {
+            // We have a device name. Try and locate it in the list of known
+            // devices
+            RemoteDevice dev = getKnownDevice(target);
+            if (dev != null)
+                // Found a match connect to it
+                return connect(stringToAddress(dev.getBluetoothAddress()), mode, pin);
+            return null;
+        }
+    }
+
+    /**
+     * Conect to the specified device, either by name or address
+     * @param target String name or address
+     * @param mode I/O mode for this connection
+     * @return BTConnection object or null
+     */
+    public static BTConnection connect(String target, int mode)
+    {
+        return connect(target, mode, null);
+    }
+
+
 	/**
 	 * Connects to a Device by it's Byte-Device-Address Array
 	 * Uses the current default pin
@@ -921,14 +973,8 @@ public class Bluetooth
 	 * @param device_addr byte-Array with device-Address
 	 * @return BTConnection Object or null
 	 */
-	public static BTConnection connect(byte[] device_addr) {
-		// Retrieve default PIN from System properties
-    	String pinStr = SystemSettings.getStringSetting("lejos.bluetooth_pin", "1234");
-    	byte [] defaultPin = new byte[pinStr.length()];
-    	for(int i=0;i<pinStr.length();i++)
-    		pin[i] = (byte)pinStr.charAt(i);
-    	
-		return connect(device_addr, 0, defaultPin);
+	private static BTConnection connect(byte[] device_addr) {
+		return connect(device_addr, 0, null);
 	}
 	
 	/**
@@ -939,7 +985,7 @@ public class Bluetooth
 	 * @param pin the pin to use. Must be ASCII code, so '0' = 48
 	 * @return BTConnection Object or null
 	 */
-	public static BTConnection connect(byte[] device_addr, int mode, byte[] pin) {
+	private static BTConnection connect(byte[] device_addr, int mode, byte[] pin) {
 		
 		//1 RConsole.print("Connect\n"); 
 		synchronized(Bluetooth.sync)
@@ -953,7 +999,7 @@ public class Bluetooth
             }
 			cmdStart();
 			cmdInit(MSG_CONNECT, 8, 0, 0);
-			System.arraycopy(device_addr, 0, cmdBuf, 2, 7);
+			System.arraycopy(device_addr, 0, cmdBuf, 2, ADDRESS_LEN);
 			if (cmdWait(RS_REPLY, RS_CMD, MSG_CONNECT_RESULT, TO_LONG) >= 0)
 			{
 				//1 RConsole.print("Connect result " + (int)replyBuf[2] + " handle " + (int)replyBuf[3] + "\n"); 
@@ -966,7 +1012,7 @@ public class Bluetooth
 					if (reqState == RS_WAIT && handle >= 0 && handle < Chans.length)
 					{
 						// Got a connection
-						Chans[handle].bind(handle, device_addr, mode);
+						Chans[handle].bind(handle, addressToString(device_addr), mode);
 						// now have one more connected
 						connected++;
 						ret = Chans[handle];
@@ -979,34 +1025,13 @@ public class Bluetooth
 		}
 	}
 
-	/**
-	 * Helper method to convert address byte array to String. Used
-	 * by LocalDevice, RemoteDevice, and BTConnection.
-	 * @param addr A byte array of 7 bytes containing the address. 
-	 * @return String representation of Bluetooth address.
-	 */
-	public static String addressToString(byte [] addr) {
-		char[] caddr = new char[12];
-		
-		int ci = 0;
-		int nr = 0;
-		int addri = 0;
-		
-		for(int i=0; i<6; i++) {
-			addri = (int)addr[i];
-			nr = (addri>=0) ? addri : (256 + addri);	
-			caddr[ci++] = cs[nr / 16];
-			caddr[ci++] = cs[nr % 16];
-		}
-		return new String(caddr);
-	}
 	
 	/**
 	 * Get the Bluetooth signal strength (link quality)
 	 * Higher values mean stronger signal.
-	 * 
-	 * 
-	 * @return link quality value 0 to 255. 
+	 *
+     * @param handle The handle/channel of the connection
+     * @return link quality value 0 to 255.
 	 * 
 	 */
 	public static int getSignalStrength(byte handle) {
@@ -1029,8 +1054,8 @@ public class Bluetooth
 	 * Get the friendly name of the local device
 	 * @return the friendly name
 	 */
-	public static byte [] getFriendlyName() {
-		byte[] result = new byte[16];
+	public static String getFriendlyName() {
+		byte[] result = new byte[NAME_LEN];
 		//1 RConsole.print("getFriendlyName\n");
 		synchronized (Bluetooth.sync)
 		{
@@ -1041,24 +1066,26 @@ public class Bluetooth
 			if (cmdWait(RS_REPLY, RS_CMD, MSG_GET_FRIENDLY_NAME_RESULT, TO_SHORT) < 0)	
 				result = null;
 			else
-				System.arraycopy(replyBuf, 2, result, 0, 16);
+				System.arraycopy(replyBuf, 2, result, 0, NAME_LEN);
 			cmdComplete();
-			return result;
+			return nameToString(result);
 		}
 	}
 		
 	/**
 	 * Set the name of the local device
-	 * @param name the friendly name for the device
+     * @param strName the friendly name for the device
+     * @return true if ok false if there is an error
 	 */
-	public static boolean setFriendlyName(byte[] name) {
+	public static boolean setFriendlyName(String strName) {
 		//1 RConsole.print("setFriendlyName\n");
 		synchronized (Bluetooth.sync)
 		{
 			boolean ret=false;
 			cmdStart();
 			cmdInit(MSG_SET_FRIENDLY_NAME, 17, 0, 0);
-			System.arraycopy(name, 0, cmdBuf, 2, 16);
+            byte[] name = stringToName(strName);
+			System.arraycopy(name, 0, cmdBuf, 2, NAME_LEN);
 			if (cmdWait(RS_REPLY, RS_CMD, MSG_SET_FRIENDLY_NAME_ACK, TO_LONG) >= 0)	
 				ret = true;
 			cmdComplete();
@@ -1070,8 +1097,8 @@ public class Bluetooth
 	 * get the Bluetooth address of the local device
 	 * @return the local address
 	 */
-	public static byte[] getLocalAddress() {
-		byte[] result = new byte[7];
+	public static String getLocalAddress() {
+		byte[] result = new byte[ADDRESS_LEN];
 		//1 RConsole.print("getLocalAddress\n");
 		synchronized (Bluetooth.sync)
 		{
@@ -1082,9 +1109,9 @@ public class Bluetooth
 			if (cmdWait(RS_REPLY, RS_CMD, MSG_GET_LOCAL_ADDR_RESULT, TO_SHORT) < 0)	
 				result = null;
 			else
-				System.arraycopy(replyBuf, 2, result, 0, 7);
+				System.arraycopy(replyBuf, 2, result, 0, ADDRESS_LEN);
 			cmdComplete();
-			return result;
+			return addressToString(result);
 		}
 	}	
 	
@@ -1103,9 +1130,9 @@ public class Bluetooth
 		synchronized(Bluetooth.sync)
 		{
 			int state = RS_CMD;
-			byte[] device = new byte[7];
+			byte[] device = new byte[ADDRESS_LEN];
 			byte[] devclass = new byte[4];
-			char[] name = new char[16];
+			byte[] name = new byte[NAME_LEN];
 			Vector retVec = new Vector(1);
 			RemoteDevice curDevice;
 			cmdStart();
@@ -1115,12 +1142,10 @@ public class Bluetooth
 				state = RS_WAIT;
 				if (replyBuf[1] == MSG_LIST_ITEM)
 				{
-					System.arraycopy(replyBuf, 2, device, 0, 7);
-					int nl = 0;
-					for(; nl < 16 && replyBuf[nl+9] != 0; nl++)
-						name[nl] = (char)replyBuf[nl+9];
+					System.arraycopy(replyBuf, 2, device, 0, ADDRESS_LEN);
+                    System.arraycopy(replyBuf, 9, name, 0, NAME_LEN);
 					System.arraycopy(replyBuf, 25, devclass, 0, 4);
-					curDevice = new RemoteDevice(name, nl, device, devclass);
+					curDevice = new RemoteDevice(nameToString(name), addressToString(device), devclass);
 					//1 RConsole.print("got name " + curDevice.getFriendlyName() + "\n");
 					retVec.addElement(curDevice);
 				}
@@ -1159,7 +1184,7 @@ public class Bluetooth
 	 * @return true iff add was successful
 	 */
 	public static boolean addDevice(RemoteDevice d) {
-		byte [] addr = d.getDeviceAddr();
+		String addr = d.getDeviceAddr();
 		String name = d.getFriendlyName(false);
 		byte[] cod = d.getDeviceClass();
 		//1 RConsole.print("addDevice " + name + "\n");
@@ -1168,10 +1193,9 @@ public class Bluetooth
 			boolean ret=false;
 			cmdStart();
 			cmdInit(MSG_ADD_DEVICE, 28, 0, 0);
-			System.arraycopy(addr, 0, cmdBuf, 2, 7);
+			System.arraycopy(stringToAddress(addr), 0, cmdBuf, 2, ADDRESS_LEN);
 			System.arraycopy(cod, 0, cmdBuf, 25, 4);
-			for(int i=0;i<name.length();i++)  cmdBuf[i+9] = (byte) name.charAt(i);
-			for(int i=name.length(); i < 16; i++) cmdBuf[i+9] = 0;
+            System.arraycopy(stringToName(name), 0, cmdBuf, 9, NAME_LEN);
 			if (cmdWait(RS_REPLY, RS_CMD, MSG_LIST_RESULT, TO_LONG) >= 0)	
 				ret = replyBuf[2] == 0x50;
 			cmdComplete();
@@ -1185,13 +1209,13 @@ public class Bluetooth
 	 * @return true iff remove was successful
 	 */
 	public static boolean removeDevice(RemoteDevice d) {
-		byte [] addr = d.getDeviceAddr();
+		String addr = d.getDeviceAddr();
 		synchronized (Bluetooth.sync)
 		{
 			boolean ret = false;
 			cmdStart();
 			cmdInit(MSG_REMOVE_DEVICE, 8, 0, 0);
-			System.arraycopy(addr, 0, cmdBuf, 2, 7);	
+			System.arraycopy(stringToAddress(addr), 0, cmdBuf, 2, ADDRESS_LEN);
 			if (cmdWait(RS_REPLY, RS_CMD, MSG_LIST_RESULT, TO_LONG) >= 0)	
 				ret = replyBuf[2] == 0x53;
 			cmdComplete();
@@ -1209,8 +1233,8 @@ public class Bluetooth
 	 */
 	public static Vector inquire(int maxDevices,  int timeout, byte[] cod) {
 		Vector retVec = new Vector();
-		byte[] device = new byte[7];
-		char[] name = new char[16];
+		byte[] device = new byte[ADDRESS_LEN];
+		byte[] name = new byte[NAME_LEN];
         byte[] retCod = new byte[4];
 		synchronized (Bluetooth.sync)
 		{
@@ -1224,13 +1248,11 @@ public class Bluetooth
 				state = RS_WAIT;
 				if (replyBuf[1] == MSG_INQUIRY_RESULT)
 				{
-					System.arraycopy(replyBuf, 2, device, 0, 7);
-					int nameLen = 0;
-					for(;nameLen<16 && replyBuf[9+nameLen] != 0;nameLen++)
-						name[nameLen] = (char) replyBuf[9+nameLen];
+					System.arraycopy(replyBuf, 2, device, 0, ADDRESS_LEN);
+                    System.arraycopy(replyBuf, 9, name, 0, NAME_LEN);
 					System.arraycopy(replyBuf, 25, retCod, 0, 4);
 					// add the Element to the Vector List
-					retVec.addElement(new RemoteDevice(name, nameLen, device, retCod));					
+					retVec.addElement(new RemoteDevice(nameToString(name), addressToString(device), retCod));
 				}
 				else if (replyBuf[1] == MSG_INQUIRY_STOPPED)
 				{
@@ -1241,7 +1263,7 @@ public class Bluetooth
 						String s = btrd.getFriendlyName(false);
 						if (s.length() == 0) {
 							String nm = lookupName(btrd.getDeviceAddr());
-							btrd.setFriendlyName(nm.toCharArray(),nm.length());
+							btrd.setFriendlyName(nm);
 						}
 					}
 					return retVec;
@@ -1258,22 +1280,22 @@ public class Bluetooth
 	 * @param addr device address
 	 * @return friendly name of device
 	 */
-	public static String lookupName(byte [] addr) {
-		char[] name = new char[16];
+	public static String lookupName(String addr) {
+		char[] name = new char[NAME_LEN];
 		synchronized (Bluetooth.sync)
 		{
 			String ret = "";
 			int state = RS_CMD;
 			cmdStart();
 			cmdInit(MSG_LOOKUP_NAME, 8, 0, 0);
-			System.arraycopy(addr, 0, cmdBuf, 2, 7);	
+			System.arraycopy(stringToAddress(addr), 0, cmdBuf, 2, ADDRESS_LEN);
 			while (cmdWait(RS_REPLY, state, MSG_ANY, TO_LONG) >= 0)
 			{
 				state = RS_WAIT;
 				if (replyBuf[1] == MSG_LOOKUP_NAME_RESULT)
 				{
 					int len = 0;
-					for(; len < 16 && replyBuf[len+9] != 0; len++)
+					for(; len < NAME_LEN && replyBuf[len+9] != 0; len++)
 						name[len] = (char)replyBuf[len+9];
 					ret = new String(name, 0, len);
 					break;
@@ -1452,7 +1474,8 @@ public class Bluetooth
 	 * Reset the settings of the BC4 chip to the factory defaults.
 	 * The NXT should be restarted after this.
 	 *
-	 */
+     * @return 0 if ok < 0 if error
+     */
 	public static int setFactorySettings() {
 		//1 RConsole.print("setFactorySettings\n");
 		synchronized (Bluetooth.sync)
@@ -1561,6 +1584,18 @@ public class Bluetooth
 	{
 		return resetCnt;
 	}
+
+    public static void loadSettings()
+    {
+        // Retrieve default PIN from System properties
+    	String pinStr = SystemSettings.getStringSetting(PIN, "1234");
+    	byte [] defaultPin = new byte[pinStr.length()];
+        pin = defaultPin;
+    	for(int i=0;i<pinStr.length();i++)
+    		pin[i] = (byte)pinStr.charAt(i);
+    }
+
+
 	/**
 	 * The following are provided for compatibility with the old Bluetooth
 	 * class. They should not be used, in new programs and should probably

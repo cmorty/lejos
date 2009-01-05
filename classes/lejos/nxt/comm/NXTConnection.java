@@ -37,15 +37,16 @@ public abstract class NXTConnection implements StreamConnection {
 
 	static final int CS_IDLE = 0;
 	static final int CS_DISCONNECTED = 1;
-	static final int CS_DISCONNECTING = 2;
-	static final int CS_CONNECTED = 3;
-	static final int CS_DATALOST = 4;
-    static final int CS_EOF = 5;
-    
+    static final int CS_DISCONNECTING2 = 2;
+	static final int CS_DISCONNECTING = 3;
+	static final int CS_CONNECTED = 4;
+	static final int CS_DATALOST = 5;
+    static final int CS_EOF = 6;
+
     static final int DEF_HEADER = 2;
 	private static final int CLOSETIMEOUT1 = 1000;
 	private static final int CLOSETIMEOUT2 = 500;
-    
+
 	int state = CS_IDLE;
 	int header;
 	byte [] inBuf;
@@ -56,23 +57,26 @@ public abstract class NXTConnection implements StreamConnection {
 	int outOffset;
 	int pktOffset;
 	int pktLen;
+    int bufSz;
     InputStream is;
 	OutputStream os;
-    //boolean debug = false;
+    String address;
 
-    
-    
+	public String getAddress() {
+		return address;
+	}
+
     
     /**
      * Write all of the current output buffer to the device.
      * NOTE: To ensure correct operation of packet mode, this function should
      * only return 1 if all of the data will eventually be written. It should
-     * avoid writing part of the data. 
+     * avoid writing part of the data.
      * @param wait if true wait until the output has been written
      * @return -ve if error, 0 if not written, +ve if written
      */
     abstract int flushBuffer(boolean wait);
-    
+
 	/**
 	 * Attempt to write bytes to the Bluetooth connection. Optionally wait if it
 	 * is not possible to write at the moment. Supports both packet and stream
@@ -180,7 +184,7 @@ ioloop: while (offset < len)
 			state = CS_CONNECTED;
 			return -2;
 		}
-        if (state == CS_EOF) 
+        if (state == CS_EOF)
         {
             inCnt = 0;
             inOffset = 0;
@@ -246,10 +250,10 @@ ioloop: while (offset < len)
         }
 		return offset;
 	}
-	
+
 	/**
 	 * Indicate the number of bytes available to be read. Supports both packet
-	 * mode and stream connections. 
+	 * mode and stream connections.
 	 * @param	what	0 (all modes) return the number of bytes that can be
 	 *					read without blocking.
 	 *					1 (packet mode) return the number of bytes still to be
@@ -271,7 +275,7 @@ ioloop: while (offset < len)
 			// if not in a packet try and read the header
 			if (pktOffset < 0) read(null, 0, false);
 			if (pktOffset < 0) return 0;
-			if (what == 2) return pktLen; 
+			if (what == 2) return pktLen;
 			int ret = pktLen - pktOffset;
 			// If we have been asked what is actually available limit it.
 			// otherwise we return the number of bytes in the current packet
@@ -281,13 +285,13 @@ ioloop: while (offset < len)
 		else
 			return inCnt;
 	}
-	
+
 	public int available()
 	{
 		return available(0);
 	}
-    
-        
+
+
     void setHeader(int sz)
     {
         header = sz;
@@ -329,29 +333,29 @@ ioloop: while (offset < len)
 	{
 		return write(data, len, true);
 	}
-    
+
 	/**
 	 * Return the InputStream for this connection.
-	 * 
+	 *
 	 * @return the input stream
 	 */
 	public InputStream openInputStream() {
-		return (is != null ? is : (is = new NXTInputStream(this, inBuf.length - header)));
+		return (is != null ? is : (is = new NXTInputStream(this, bufSz - header)));
 	}
 
 	/**
 	 * Return the OutputStream for this connection
-	 * 
+	 *
 	 * @return the output stream
 	 */
 	public OutputStream openOutputStream() {
-		return (os != null ? os : (os = new NXTOutputStream(this, outBuf.length - header)));
+		return (os != null ? os : (os = new NXTOutputStream(this, bufSz - header)));
 	}
-    
-    
+
+
 	/**
 	 * Return the DataInputStream for this connect
-	 * 
+	 *
 	 * @return the data input stream
 	 */
 	public DataInputStream openDataInputStream() {
@@ -360,13 +364,13 @@ ioloop: while (offset < len)
 
 	/**
 	 * Return the DataOutputStream for this connection.
-	 * 
+	 *
 	 * @return the data output stream
 	 */
 	public DataOutputStream openDataOutputStream() {
 		return new DataOutputStream(openOutputStream());
 	}
-    
+
 	/**
 	 * Called when the remote side of the connection disconnects.
 	 * Mark the connection as now disconected.
@@ -376,8 +380,13 @@ ioloop: while (offset < len)
 		// Connection has been closed wake up anything waiting
 		//RConsole.print("Disconnected " + handle + "\n");
 		notifyAll();
+        //RConsole.println("Disconnected state " + state);
 		// don't allow multiple disconnects, or disconnect of a closed connection'
 		if (state <= CS_DISCONNECTED) return false;
+        // Free any associated connection structures
+        // NOTE We do this before changing state so that the underlying code
+        // can access the current state.
+        freeConnection();
 		state = CS_DISCONNECTED;
 		outCnt = 0;
 		return true;
@@ -408,10 +417,18 @@ ioloop: while (offset < len)
     {
         disconnected();
     }
-    
+
+    /**
+     * Tell the lower levels that they can release any resources for this
+     * connection.
+     */
+    void freeConnection()
+    {
+
+    }
 	/**
 	 * Close the connection. Flush any pending output. Inform the remote side
-	 * that the connection is now closed. Free resources. 
+	 * that the connection is now closed. Free resources.
 	 */
 	public void close()
 	{
@@ -467,7 +484,7 @@ ioloop: while (offset < len)
         //LCD.drawInt(6, 8, 0, 6);
         //LCD.drawInt(state, 8, 8, 6);
 		//RConsole.print("Close3\n");
-			while (state == CS_DISCONNECTING)
+			while (state > CS_DISCONNECTED)
 				try{wait();}catch(Exception e){}
         //LCD.drawInt(7, 8, 0, 6);
         //LCD.drawInt(state, 8, 8, 6);
@@ -479,7 +496,7 @@ ioloop: while (offset < len)
 		//RConsole.print("Close complete\n");
 
 	}
-    
+
     /**
      * Discard and input
      * Dumps any input data
@@ -495,10 +512,10 @@ ioloop: while (offset < len)
         // Reset packet stream
         setHeader(header);
     }
-    
+
 	/**
 	 * Read a packet from the stream. Do not block and for small packets
-	 * (< 254 bytes), do not return a partial packet.
+	 * (< bufSz), do not return a partial packet.
 	 * @param	buf		Buffer to read data into.
 	 * @param	len		Number of bytes to read.
 	 * @return			> 0 number of bytes read.
@@ -509,10 +526,10 @@ ioloop: while (offset < len)
 		// Check to see if we have a full packet if the packet is small
 		int pkt = available(1);
 		if (pkt == -2) return -2;
-		if (pkt < inBuf.length && available(0) < pkt) return 0;
+		if (pkt < bufSz && available(0) < pkt) return 0;
 		return read(buf, len, false);
 	}
-	
+
 	/**
 	 * Send a data packet.
 	 * Must be in data mode.
