@@ -19,11 +19,10 @@ public class BlueStats {
 		String connsString = "Conns";
 
 		while(!Button.ESCAPE.isPressed()) {
-			byte[] name = Bluetooth.getFriendlyName();
 			byte[] version = Bluetooth.getVersion();
-			String fn = byteArrayToString(name);
+			String fn = Bluetooth.getFriendlyName();;
 			byte [] connections = Bluetooth.getConnectionStatus();
-			String addr = getAddressString(Bluetooth.getLocalAddress());
+			String addr = Bluetooth.getLocalAddress();
 			
 			// Friendly name of local device
 			LCD.drawString(nameString,0,0);
@@ -59,26 +58,4 @@ public class BlueStats {
 			LCD.refresh();			
 		} 	
     }
-	
-	private static String byteArrayToString(byte [] ba) {
-		StringBuffer sb = new StringBuffer(ba.length);
-		for(int i=0;i<ba.length;i++) {
-			sb.append((char) ba[i]);
-		}
-		return sb.toString();
-	}
-
-	private static final char[] hexChars = {'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
-
-	private static String getAddressString(byte [] addr) {
-		char[] caddr = new char[12];
-
-		for(int i=0; i<6; i++) {
-			int nr = addr[i] & 0xFF;	
-			caddr[i*2] = hexChars[nr & 0x0F];
-			caddr[i*2+1] = hexChars[nr >> 4];
-		}
-		return new String(caddr, 0, 12);
-	}
-
 }

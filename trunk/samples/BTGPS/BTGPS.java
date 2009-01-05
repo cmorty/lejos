@@ -150,7 +150,7 @@ public class BTGPS{
 		Bluetooth.addDevice(GPSDevice);
 
 		BTConnection btGPS = null;
-		btGPS = Bluetooth.connect(GPSDevice.getDeviceAddr(), NXTConnection.RAW,pin);
+		btGPS = Bluetooth.connect(GPSDevice.getDeviceAddr(), NXTConnection.RAW, pin);
 		
 		if(btGPS == null){
 			result  = -1;//No connection

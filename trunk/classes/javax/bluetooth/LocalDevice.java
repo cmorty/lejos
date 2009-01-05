@@ -46,9 +46,7 @@ public class LocalDevice {
 	 * @return the friendly name
 	 */
 	public String getFriendlyName() {
-		char [] nameChars = convertBytesToChars(Bluetooth.getFriendlyName());
-		String fName = new String(nameChars);  
-		return fName.substring(0, fName.indexOf(0)); // Clip off extra chars
+		return Bluetooth.getFriendlyName();
 	}
 	
 	/**
@@ -57,40 +55,14 @@ public class LocalDevice {
 	 * because not all Bluetooth devices can change their friendly name.
 	 * This method does not work. Technically this should be done
 	 * through LCP so USB can also change it.
+     * @param name new friendly name
 	 * @return true = success, false = failed
 	 */
 	public boolean setFriendlyName(String name) {
-		byte[] nameBytes = convertCharsToBytes(name.toCharArray(), 16);
-		return Bluetooth.setFriendlyName(nameBytes);
+		return Bluetooth.setFriendlyName(name);
 	}
 	
-	/*
-	 * !! DEV NOTES: If we get javax.bluetooth and lejos.nxt.comm classes
-	 * working with the same data types more consistently can probably
-	 * get rid of some of these convert helper methods.
-	 * e.g. Bluetooth.setFriendlyName accepts char[] and casts when
-	 * it sends the data.
-	 */
-	protected byte[] convertCharsToBytes(char [] charArray, int length) {
-		byte [] byteArray = new byte[length];
-		for(byte i=0;i<charArray.length;i++)
-			byteArray[i] = (byte)charArray[i];
-		return byteArray;
-	}
-	
-	/*
-	 * !! DEV NOTES: If we get javax.bluetooth and lejos.nxt.comm classes
-	 * working with the same data types more consistently can probably
-	 * get rid of some of these convert helper methods.
-	 * e.g. Bluetooth.getFriendlyName returns char[] or String instead.
-	 */
-	protected char [] convertBytesToChars(byte [] byteArray) {
-		char [] charArray = new char[byteArray.length];
-		for(byte i=0;i<charArray.length;i++)
-			charArray[i] = (char)byteArray[i];
-		return charArray;
-	}
-	
+		
 	/**
 	 * The Bluetooth device class for the LEGO NXT brick. 
 	 * The Lego Bluecore code can't retrieve this from the chip.
@@ -152,8 +124,6 @@ public class LocalDevice {
 	 * @return the address
 	 */
 	public String getBluetoothAddress() {
-		byte [] addr = Bluetooth.getLocalAddress();
-		// !! DEV NOTES: What if it doesn't return proper data?
-		return Bluetooth.addressToString(addr);
+		return Bluetooth.getLocalAddress();
 	}
 }

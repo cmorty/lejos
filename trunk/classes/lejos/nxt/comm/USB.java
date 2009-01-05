@@ -1,16 +1,11 @@
 package lejos.nxt.comm;
-import lejos.nxt.*;
-
 /**
  * Low-level USB access.
  * 
  * @author Lawrie Griffiths, extended to support streams by Andy Shaw
  *
  */
-public class USB {
-    public static final String SERIAL_NO = "lejos.usb_serno";
-    public static final String NAME = "lejos.usb_name";
-
+public class USB extends NXTCommDevice {
     public static final int RESET = 0x40000000;
     static final int BUFSZ = 64;
     static final int USB_STREAM = 1;
@@ -27,9 +22,6 @@ public class USB {
 	private static final byte GET_FIRMWARE_VERSION = (byte)0x88;
 	private static final byte GET_DEVICE_INFO = (byte)0x9B;
     private static final byte NXJ_PACKET_MODE = (byte)0xFF;
-
-    private static String serialNo = "123";
-    private static String name = "xxx";
 
     static {
         loadSettings();
@@ -72,8 +64,8 @@ public class USB {
             if (cmd[1] == GET_DEVICE_INFO) 
             {
                 cmd[2] = 0;
-                // We only send back the device name.
-                for(int i=0;i<name.length();i++) cmd[3+i] = (byte)name.charAt(i);
+                // We only send back the device devName.
+                for(int i=0;i<devName.length();i++) cmd[3+i] = (byte)devName.charAt(i);
                 len = 33;
             }	
              // Switch to packet mode
@@ -106,8 +98,8 @@ public class USB {
         // allocations.
         byte [] buf = new byte [BUFSZ];
         USBConnection conn = new USBConnection(NXTConnection.RAW);
-        usbSetName(name);
-        usbSetSerialNo(serialNo);
+        usbSetName(devName);
+        usbSetSerialNo(devAddress);
         usbEnable(((mode & RESET) != 0 ? 1 : 0));
         mode &= ~RESET;
         // Discard any left over input
@@ -128,7 +120,7 @@ public class USB {
                     return conn;
                 }
             }
-            try{Thread.sleep(1);}catch(Exception e){}          
+            try{Thread.sleep(1);}catch(InterruptedException e){break;}
         }
         usbDisable();
         return null;
@@ -160,53 +152,6 @@ public class USB {
             try{Thread.sleep(1);}catch(Exception e){}          
         }
         usbDisable();
-    }
-
-        /**
-     * Set the USB serial number. Should be a unique 12 character String
-     * @param sn
-     */
-    public static void setSerialNo(String sn)
-    {
-        serialNo = sn;
-    }
-    
-    /**
-     * Return the current USB serial number.
-     * @return the serial number
-     */
-    public static String getSerialNo()
-    {
-        return serialNo;
-    }
-    
-    /**
-     * Set the USB name. Can be up to 16 character String
-     * @param nam the mame
-     */
-    public static void setName(String nam)
-    {
-        name = nam;
-    }
-    
-    /**
-     * Return the current USB name.
-     * @return the name
-     */
-    public static String getName()
-    {
-        return name;
-    }
-    
-    /**
-     * Load the current system settings associated with this class. Called
-     * automatically to initialize the class. May be called if it is required
-     * to reload any settings.
-     */
-    public static void loadSettings()
-    {
-        serialNo = SystemSettings.getStringSetting(SERIAL_NO, "123456780090");
-        name = SystemSettings.getStringSetting(NAME, "nxt");
     }
 
     

@@ -38,12 +38,8 @@ public class StartUpText
       // 2.5 v shows as empty, 9 as full;
       int b = -5+Battery.getVoltageMilliVolt()/500 ;
       g.fillRect(0,2, b,4);
-      byte [] nam = Bluetooth.getFriendlyName();
-      for(int i=0; i<nam.length; i++)
-      {
-         if(nam[i] <32)break;
-         g.drawChar((char)nam[i],(4+i)*6,0,false);
-      }
+      String nam = Bluetooth.getFriendlyName();
+      g.drawString(nam, 24, 0, false);
       g.drawString(" BT",82, 0,!btPowerOn);  // invert when power is off
       g.refresh();    
    }
@@ -653,21 +649,13 @@ class USBRespond extends Thread
     {
         // Ensure the USB address property is set correctly. We use the
         // Bluetooth address as our serial number.
-        String SerialNo = Bluetooth.addressToString(Bluetooth.getLocalAddress());
-        if (!SerialNo.equals(USB.getSerialNo()))
+        String addr = Bluetooth.getLocalAddress();
+        if (!addr.equals(USB.getAddress()))
         {
-            Settings.setProperty(USB.SERIAL_NO, SerialNo);
-            USB.setSerialNo(SerialNo);
+            Settings.setProperty(USB.SERIAL_NO, addr);
+            USB.setAddress(addr);
         }
-        byte[] fName = Bluetooth.getFriendlyName();
-        char []cName = new char[fName.length];
-        int cNameLen = 0;
-        while (cNameLen < fName.length && fName[cNameLen] != 0)
-        {
-            cName[cNameLen] = (char)fName[cNameLen];
-            cNameLen++;
-        }
-        String name = new String(cName, 0, cNameLen);
+        String name = Bluetooth.getFriendlyName();
         if (!name.equals(USB.getName()))
         {
             Settings.setProperty(USB.NAME, name);
