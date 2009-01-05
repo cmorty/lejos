@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.HashSet;
 
 import lejos.pc.comm.NXTCommFactory;
+import lejos.pc.comm.NXTConnectionState;
 import lejos.pc.comm.NXTInfo;
 
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -18,6 +19,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -27,6 +29,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
 import org.lejos.nxt.ldt.LeJOSNXJPlugin;
 import org.lejos.nxt.ldt.comm.IConnectionListener;
 import org.lejos.nxt.ldt.comm.ISearchListener;
@@ -38,6 +41,8 @@ public class NXTBricksPanel {
 	private Group bricksGroup;
 	private Collection<IConnectionListener> connectionListeners;
 	private Collection<ISearchListener> searchListeners;
+	private Button connect;
+	private Button detach;
 
 	public NXTBricksPanel(Composite parent) {
 		connectionListeners = new HashSet<IConnectionListener>();
@@ -119,6 +124,9 @@ public class NXTBricksPanel {
 		statusColumn.setText("Status");
 		ColumnWeightData statusLayoutData = new ColumnWeightData(25, true);
 		tableLayout.addColumnData(statusLayoutData);
+		// selection listener
+		table.addSelectionListener(new BricksTableSelectionListener());
+
 	}
 
 	private void createButtons(Composite parent) {
@@ -130,9 +138,9 @@ public class NXTBricksPanel {
 		layout.numColumns = 3;
 		buttons.setLayout(layout);
 		// connect
-		// TODO enable/disable
-		Button connect = new Button(buttons, SWT.NULL);
+		connect = new Button(buttons, SWT.NULL);
 		connect.setText("Connect");
+		connect.setEnabled(false);
 		connect.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				ISelection selection = bricksTable.getSelection();
@@ -163,8 +171,9 @@ public class NXTBricksPanel {
 				}
 			}
 		});
-		Button detach = new Button(buttons, SWT.NULL);
+		detach = new Button(buttons, SWT.NULL);
 		detach.setText("Detach");
+		detach.setEnabled(false);
 		detach.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				ISelection selection = bricksTable.getSelection();
@@ -222,7 +231,12 @@ public class NXTBricksPanel {
 		for (ISearchListener listener : searchListeners) {
 			listener.searchFinished();
 		}
+		// update bricks table
 		updateBricksTable(nxtBricks);
+		// disable connect and detach buttons
+		connect.setEnabled(false);
+		detach.setEnabled(false);
+		
 	}
 
 	private void connectToBrick(NXTInfo nxtInfo) {
@@ -282,5 +296,36 @@ public class NXTBricksPanel {
 			}
 		}
 
+	}
+
+	private class BricksTableSelectionListener implements SelectionListener {
+
+		public void widgetDefaultSelected(SelectionEvent e) {
+			// ignore
+		}
+
+		public void widgetSelected(SelectionEvent e) {
+			// get selected brick
+			NXTInfo selectedNxtInfo = null;
+			final Table table = bricksTable.getTable();
+			int selectedIndex = table.getSelectionIndex();
+			if (selectedIndex >= 0) {
+				TableItem item = table.getItem(selectedIndex);
+				if (item != null) {
+					selectedNxtInfo = (NXTInfo) item.getData();
+				}
+			}
+			// enable/disable connect and detach buttons dependent of state of
+			// selected brick
+			if (selectedNxtInfo == null) {
+				connect.setEnabled(false);
+				detach.setEnabled(false);
+			} else {
+				connect.setEnabled(!selectedNxtInfo.connectionState
+						.equals(NXTConnectionState.CONNECTED));
+				detach.setEnabled(selectedNxtInfo.connectionState
+						.equals(NXTConnectionState.CONNECTED));
+			}
+		}
 	}
 }
