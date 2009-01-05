@@ -5,6 +5,7 @@ import java.io.IOException;
 import javax.microedition.io.Connection;
 import lejos.nxt.comm.Bluetooth;
 import lejos.nxt.comm.BTConnection;
+import lejos.nxt.comm.Bluetooth;
 
 /**
  * Represents a remote Bluetooth device.
@@ -14,13 +15,10 @@ import lejos.nxt.comm.BTConnection;
  */
 public class RemoteDevice {
 
-	private byte[] addr = new byte[7];
+	private String addr;
 	
 	private String friendlyName;
 	
-	// !! Delete next two once redundant:
-	private char[] friendlyNameCAr = new char[16];
-	private int friendlyNameLen = 0;
 	private byte[] deviceClass = new byte[4];
 	
 	/**
@@ -28,7 +26,7 @@ public class RemoteDevice {
 	 * uses a String rather than byte[]. Protected so shouldn't matter.
 	 * @param addr
 	 */
-	protected RemoteDevice(byte [] addr) {
+	protected RemoteDevice(String addr) {
 		// Set Address:
 		this.addr = addr;
 		
@@ -40,8 +38,8 @@ public class RemoteDevice {
 	}
 	
 	// !! DEV NOTES: Remove this whole method eventually.
-	public RemoteDevice(char[] friendlyNameCharArray, int len, byte[] deviceAddr, byte [] devclass) {
-		setFriendlyName(friendlyNameCharArray, len);
+	public RemoteDevice(String name, String deviceAddr, byte [] devclass) {
+		setFriendlyName(name);
 		setDeviceAddr(deviceAddr);
 		setDeviceClass(devclass);
 	}
@@ -58,20 +56,19 @@ public class RemoteDevice {
 		return new RemoteDevice(btc.getAddress());
 	}
 	
-	public void setDeviceAddr(byte[] deviceAddr) {
-		for(int i=0;i<7;i++) addr[i] = deviceAddr[i];		
+	public void setDeviceAddr(String deviceAddr) {
+        addr = deviceAddr;
 	}
 	
-	public byte[] getDeviceAddr() {
+	public String getDeviceAddr() {
 		return addr;
 	}
 	
 	/*
 	 * DELETE THIS:
 	 */
-	public void setFriendlyName(char[] friendlyNameCharArray, int len) {
-		for(int i=0; i<len; i++) this.friendlyNameCAr[i] = friendlyNameCharArray[i];
-		this.friendlyNameLen = len;
+	public void setFriendlyName(String fName) {
+		this.friendlyName = fName;
 
 	}
 	
@@ -83,23 +80,11 @@ public class RemoteDevice {
 	public String getFriendlyName(boolean alwaysAsk) {
 		
 		if(alwaysAsk) {
-			String name = Bluetooth.lookupName(addr);
-			// NOTE: friendlyNameCAr array length changes to < 16:
-			friendlyNameCAr = name.toCharArray();
-			friendlyNameLen = name.length();
+			friendlyName = Bluetooth.lookupName(addr);
 		}
-		return new String(this.friendlyNameCAr, 0 ,this.friendlyNameLen);
+		return friendlyName;
 	}
 	
-	/*
-	 * !! DELETE THIS. UNUSED. Then move to all String usage for name.
-	 * Get the FriendlyName of the BTRemoteDevice as Char-Array 
-	 * @params: 
-	 */
-	public int getFriendlyName(char[] friendlyNameCharArray) {
-		for(int i=0; i<friendlyNameLen; i++) friendlyNameCharArray[i] = this.friendlyNameCAr[i];
-		return friendlyNameLen;
-	}
 	
 	/*
 	 * REMOVE EVENTUALLY
@@ -110,7 +95,7 @@ public class RemoteDevice {
 	}
 	
 	public String getBluetoothAddress() {
-		return Bluetooth.addressToString(addr);
+		return addr;
 	}
 	
 	/**

@@ -45,18 +45,14 @@ public class BTConnection extends NXTConnection
 	int chanNo;
 	byte handle;
 	int switchMode;
-	byte [] bt_address;
 
 	public BTConnection(int chan)
 	{
 		state = CS_IDLE;
 		chanNo = chan;
+        bufSz = Bluetooth.BUFSZ;
 		is = null;
 		os = null;
-	}
-	
-	public byte [] getAddress() {
-		return bt_address;
 	}
 	
 	synchronized void reset()
@@ -73,7 +69,7 @@ public class BTConnection extends NXTConnection
 	 * Bind the low level I/O handle to a connection object
 	 * set things up ready to go.
 	 */
-	synchronized void bind(byte handle, byte [] address, int mode)
+	synchronized void bind(byte handle, String address, int mode)
 	{
 		if (inBuf == null )
 			inBuf = new byte[Bluetooth.BUFSZ];
@@ -88,7 +84,7 @@ public class BTConnection extends NXTConnection
 		switchMode = AM_ALWAYS;
 		this.handle = handle;
 		pktLen = 0;
-		bt_address = address;
+		this.address = address;
 	}
 
 

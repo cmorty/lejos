@@ -167,10 +167,12 @@ public class LCP {
 		// GET DEVICE INFO
 		if (cmdId == GET_DEVICE_INFO) 
 		{
-            byte [] name = Bluetooth.getFriendlyName();
+            byte []name = Bluetooth.stringToName(Bluetooth.getFriendlyName());
+            // Note this is very odd. The set commmand allows for 16 characters
+            // but the get command only allows for 15!
             for(int i=0;i<15;i++) reply[3+i] = name[i];
-            byte [] address = Bluetooth.getLocalAddress();
-            for(int i=0;i<7;i++) reply[18+i] = address[i];
+            byte [] address = Bluetooth.stringToAddress(Bluetooth.getLocalAddress());
+            for(int i=0;i<Bluetooth.ADDRESS_LEN;i++) reply[18+i] = address[i];
             setReplyInt(File.freeMemory(),reply,29);
 			len = 33;
 		}	
@@ -179,8 +181,8 @@ public class LCP {
 		if (cmdId == SET_BRICK_NAME) 
 		{
             byte [] name = new byte[16];
-            for(int i=0;i<16;i++) name[i] = cmd[i+2];
-            Bluetooth.setFriendlyName(name);
+            for(int i=0;i<Bluetooth.NAME_LEN;i++) name[i] = cmd[i+2];
+            Bluetooth.setFriendlyName(Bluetooth.nameToString(name));
 			len = 4;
 		}	
 		
