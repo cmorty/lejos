@@ -171,6 +171,7 @@ public class NXTBricksPanel {
 				}
 			}
 		});
+		// detach
 		detach = new Button(buttons, SWT.NULL);
 		detach.setText("Detach");
 		detach.setEnabled(false);
@@ -202,6 +203,14 @@ public class NXTBricksPanel {
 						//
 					}
 				}
+			}
+		});
+		// detach all
+		Button detachAll = new Button(buttons, SWT.NULL);
+		detachAll.setText("Detach All");
+		detachAll.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				detachAllBricks();
 			}
 		});
 		// search
@@ -236,9 +245,10 @@ public class NXTBricksPanel {
 		// disable connect and detach buttons
 		connect.setEnabled(false);
 		detach.setEnabled(false);
-		
+
 	}
 
+	// TODO connection state gets not set correctly when brick has been detached before
 	private void connectToBrick(NXTInfo nxtInfo) {
 		if (nxtInfo == null)
 			return;
@@ -252,6 +262,21 @@ public class NXTBricksPanel {
 
 	private void detachFromBrick(NXTInfo nxtInfo) {
 		// TODO detachFromBrick
+	}
+
+	private void detachAllBricks() {
+		try {
+			// close all
+			LeJOSNXJPlugin.getDefault().getConnectionManager().closeAll();
+			// reset table
+			NXTInfo[] infos = (NXTInfo[]) bricksTable.getInput();
+			for (NXTInfo nxtInfo : infos) {
+				nxtInfo.connectionState = NXTConnectionState.DISCONNECTED;
+			}
+			bricksTable.setInput(infos);			
+		} catch (IOException ioExc) {
+			LeJOSNXJUtil.message(ioExc);
+		}
 	}
 
 	private void updateBricksTable(NXTInfo[] nxtBricks) {
