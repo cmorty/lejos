@@ -1,6 +1,7 @@
 package lejos.localization;
+
 import java.awt.Rectangle;
-import lejos.math.*;
+import java.io.*;
 
 /**
  * Represents a particle set for the particle filtering algorithm.
@@ -13,11 +14,6 @@ public class ParticleSet {
   private static final int MAX_ITERATIONS = 1000;
   private static final float BIG_FLOAT = 10000f;
   
-  /**
-   * Minimum distance from a wall where the particle is placed.
-   */
-  public static final int BORDER = 20;
-  
   // Instance variables
   private int numParticles;
   private Particle[] particles;
@@ -25,6 +21,11 @@ public class ParticleSet {
   private float estimatedX, estimatedY, estimatedAngle;
   private float minX, maxX, minY, maxY;
   private float maxWeight;
+  
+  /**
+   * Minimum distance from a wall where the particle is placed.
+   */
+  private int border = 10;
 
   /**
    * Create a set of particles randomly distributed with the given map.
@@ -38,6 +39,7 @@ public class ParticleSet {
     for (int i = 0; i < numParticles; i++) {
       particles[i] = generateParticle();
     }
+    resetEstimate();
   }
 
   /**
@@ -48,8 +50,8 @@ public class ParticleSet {
   private Particle generateParticle() {
     float x, y, angle;
     Rectangle bound = map.getBoundingRect();
-    Rectangle innerRect = new Rectangle(bound.x + BORDER, bound.y + BORDER,
-        bound.width - BORDER * 2, bound.height - BORDER * 2);
+    Rectangle innerRect = new Rectangle(bound.x + border, bound.y + border,
+        bound.width - border * 2, bound.height - border * 2);
 
     // Generate x, y values in bounding rectangle
     for (;;) { // infinite loop that we break out of when we have
@@ -140,7 +142,7 @@ public class ParticleSet {
           if (y < minY) minY = y;
           if (y > maxY) maxY = y;
 
-          // Create a new instance of the particle and set its weight to zero
+          // Create a new instance of the particle and set its weight
           particles[count] = new Particle(new Pose(x, y, angle));
           particles[count++].setWeight(oldParticles[i].getWeight());
         }
@@ -166,7 +168,7 @@ public class ParticleSet {
         maxWeight = weight;
       }
     }
-    System.out.println("Max weight = " + maxWeight);
+    System.out.println("Max = " + maxWeight);
   }
 
   /**
@@ -233,10 +235,11 @@ public class ParticleSet {
     estimatedX = 0;
     estimatedY = 0;
     estimatedAngle = 0;
-    maxX = 0;
-    maxY = 0;
-    minX = BIG_FLOAT;
-    minY = BIG_FLOAT;
+    Rectangle bound = map.getBoundingRect();
+    minX = bound.x + bound.width;
+    minY = bound.y + bound.height;
+    maxX = bound.x;
+    maxY = bound.y;
   }
   
   /**
@@ -246,6 +249,22 @@ public class ParticleSet {
    */
   public float getMaxWeight() {
     return maxWeight;
+  }
+  
+  /**
+   * Get border
+   */
+  public int getBorder() {
+	  return border;
+  }
+  
+  /**
+   * Set border
+   * 
+   * @param border the border where no particles should be generated
+   */
+  public void setBorder(int border) {
+	  this.border = border;
   }
   
   /**
@@ -269,5 +288,101 @@ public class ParticleSet {
       }
     }
     return index;
+  }
+  
+  /**
+   * Serialize the particle set to a data output stream
+   * 
+   * @param dos the data output stream
+   * @throws IOException
+   */
+  public void dumpParticles(DataOutputStream dos) throws IOException {
+      dos.writeInt(numParticles());
+      for (int i = 0; i < numParticles(); i++) {
+          Particle part = getParticle(i);
+          Pose pose = part.getPose();
+          float weight = part.getWeight();
+          dos.writeFloat(pose.x);
+          dos.writeFloat(pose.y);
+          dos.writeFloat(pose.angle);
+          dos.writeFloat(weight);
+          dos.flush();
+      }
+  }
+  
+  /**
+   * Load serialized particles from a data input stream
+   * @param dis the data input stream
+   * @throws IOException
+   */
+  public void loadParticles(DataInputStream dis) throws IOException {
+	numParticles = dis.readInt();
+    particles = new Particle[numParticles];
+    for (int i = 0; i < numParticles; i++) {
+      float x = dis.readFloat();
+      float y = dis.readFloat();
+      float angle = dis.readFloat();
+      Pose pose = new Pose(x, y, angle);
+      particles[i] = new Particle(pose);
+      particles[i].setWeight(dis.readFloat());
+    }  
+  }
+  
+  /**
+   * Dump the serialized estimate of pose to a data output stream
+   * @param dos the data output stream
+   * @throws IOException
+   */
+  public void dumpEstimation(DataOutputStream dos) throws IOException {
+      Pose pose = getEstimatedPose();
+      float minX = getMinX();
+      float maxX = getMaxX();
+      float minY = getMinY();
+      float maxY = getMaxY();
+
+      dos.writeFloat(pose.x);
+      dos.writeFloat(pose.y);
+      dos.writeFloat(pose.angle);
+      dos.writeFloat(minX);
+      dos.writeFloat(maxX);
+      dos.writeFloat(minY);
+      dos.writeFloat(maxY);
+      dos.flush();
+  }
+  
+  /**
+   * Load serialized estimated pose from a data input stream
+   * @param dis the data imput stream
+   * @throws IOException
+   */
+  public void loadEstimation(DataInputStream dis) throws IOException {
+      estimatedX = dis.readFloat();
+      estimatedY = dis.readFloat();
+      estimatedAngle = dis.readFloat();
+      minX = dis.readFloat();
+      maxX = dis.readFloat();
+      minY = dis.readFloat();
+      maxY = dis.readFloat();
+  }
+  
+  /**
+   * Find the closest particle to specified coordinates and dump its
+   * details to a data output stream.
+   * 
+   * @param dos the data output stream
+   * @param x the x-coordinate
+   * @param y the y-coordinate
+   * @throws IOException
+   */
+  public void dumpClosest(DataOutputStream dos, float x, float y) throws IOException {
+      int closest = findClosest(x, y);
+      Particle p = getParticle(closest);
+      p.takeReadings(map);
+      dos.writeInt(closest);
+      dos.writeFloat(p.getReading(0));
+      dos.writeFloat(p.getReading(1));
+      dos.writeFloat(p.getReading(2));
+      dos.writeFloat(p.getWeight());
+      dos.flush();
   }
 }
