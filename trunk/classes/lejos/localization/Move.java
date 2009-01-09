@@ -2,14 +2,13 @@ package lejos.localization;
 
 /**
  * Represents a robot move consisting of a drive forward and a turn
- * 
  * Supports generating of a random move.
  * 
  * @author Lawrie Griffiths
  * 
  */
 public class Move {
-  private static float maxDistance = 80f;
+  private static float maxDistance = 40f;
   public float angle, distance;
 
   /**
@@ -18,7 +17,7 @@ public class Move {
    * @param angle the angle to turn
    * @param distance the distance to travel
    */
-  private Move(float angle, float distance) {
+  public Move(float angle, float distance) {
     this.angle = angle;
     this.distance = distance;
   }
@@ -36,6 +35,11 @@ public class Move {
     return new Move(a, d);
   }
   
+  /**
+   * Set the maximum distance for a random move
+   * 
+   * @param distance the maximum distance
+   */
   public static void setMaxDistance(float distance) {
     maxDistance = distance;
   } 
