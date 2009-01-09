@@ -10,7 +10,7 @@ package lejos.localization;
  * 
  */
 public class Pose {
-  private static float maxRange = 550f;
+  private static float maxRange = 254f;
   public float x, y, angle;
 
   public Pose(float x, float y, float angle) {

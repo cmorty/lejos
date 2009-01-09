@@ -1,4 +1,5 @@
 package lejos.localization;
+import java.io.*;
 
 /**
  * Represents a set of range readings.
@@ -7,6 +8,8 @@ package lejos.localization;
  */
 public class RangeReadings {
   public static short numReadings = 3;
+  public static final float INVALID_READING = -1f;
+  
   private float[] ranges = new float[numReadings];
 
   /**
@@ -36,7 +39,7 @@ public class RangeReadings {
    */
   public boolean incomplete() {
     for (int i = 0; i < numReadings; i++) {
-      if (ranges[i] < 0) return true;
+      if (ranges[i] == INVALID_READING) return true;
     }
     return false;
   }
@@ -55,6 +58,29 @@ public class RangeReadings {
    */
   public static short getNumReadings() {
     return numReadings;
+  }
+  
+  /**
+   * Dump the readings to a DataOutputStream
+   * @param dos the stream
+   * @throws IOException
+   */
+  public void dumpReadings(DataOutputStream dos) throws IOException {
+    for (int i = 0; i < getNumReadings(); i++)
+      dos.writeFloat(getRange(i));
+    dos.flush();
+  }
+  
+  /**
+   * Load the readings from a DataInputStream
+   * @param dis the stream
+   * @throws IOException
+   */
+  public void loadReadings(DataInputStream dis) throws IOException {
+    for (int i = 0; i < getNumReadings(); i++) {
+      ranges[i] = dis.readFloat();
+      System.out.println("Range " + i + " = " + ranges[i] + "cm");
+    }        
   }
 }
 
