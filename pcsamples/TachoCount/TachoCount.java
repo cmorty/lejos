@@ -1,5 +1,4 @@
 import lejos.nxt.*;
-import lejos.pc.comm.*;
 
 /**
  * Sample to spin motors and output Tachometer counts.
