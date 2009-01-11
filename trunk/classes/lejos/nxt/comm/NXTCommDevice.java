@@ -2,10 +2,8 @@ package lejos.nxt.comm;
 import lejos.nxt.*;
 
 /**
- * Base class for nxt communications devices. Provides a common address/devName
- * plus utility functions. Note these settings were originally used just by the
- * USB code. However they have now been extended for use by all none Bluetooth
- * devices.
+ * Base class for nxt communications devices. Provides a common address/name,
+ * plus utility functions. 
  * @author andy
  */
 abstract public class NXTCommDevice
