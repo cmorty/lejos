@@ -735,6 +735,21 @@ udp_enable(int reset)
     interrupts_enable(); 
   if (reset)
     udp_reset();
+  else
+  {
+    if (configured & USB_CONFIGURED)
+    {
+      *AT91C_UDP_CSR1 = (AT91C_UDP_EPEDS | AT91C_UDP_EPTYPE_BULK_OUT); 
+      *AT91C_UDP_CSR2 = (AT91C_UDP_EPEDS | AT91C_UDP_EPTYPE_BULK_IN);
+      *AT91C_UDP_CSR3 = (AT91C_UDP_EPTYPE_INT_IN);      
+      (*AT91C_UDP_RSTEP) |= AT91C_UDP_EP1;
+      (*AT91C_UDP_RSTEP) &= ~AT91C_UDP_EP1;
+      (*AT91C_UDP_RSTEP) |= AT91C_UDP_EP2;
+      (*AT91C_UDP_RSTEP) &= ~AT91C_UDP_EP2;
+      (*AT91C_UDP_RSTEP) |= AT91C_UDP_EP3;
+      (*AT91C_UDP_RSTEP) &= ~AT91C_UDP_EP3;
+    }
+  }
 }
 
 void
