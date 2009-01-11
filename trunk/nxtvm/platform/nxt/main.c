@@ -48,13 +48,11 @@ extern U32 __free_ram_start__;
 extern U32 __free_ram_end__;
 extern U32 __extra_ram_start__;
 extern U32 __extra_ram_end__;
-
+extern const U32 menu_address;
+extern const U32 menu_length;
 
 byte *region;
 Thread *bootThread;
-static unsigned int menu_address;
-static unsigned int menu_length_address = 0x00114ffc;
-static unsigned int menu_address_address = 0x00114ff8;
 
 void
 wait_for_power_down_signal()
@@ -254,9 +252,9 @@ nxt_main(int bin, int size)
     // Execute flash menu
 
     bin = (unsigned *) menu_address;
-    size = *((unsigned *) menu_length_address);
+    size = menu_length;
     size = (size + 3) & ~3;
-  	binary = (char *) bin;
+    binary = (char *) bin;
     jsize = size - 4;
   }
 #else
@@ -270,7 +268,7 @@ nxt_main(int bin, int size)
     // Execute flash menu
 
     bin = (unsigned *) menu_address;
-    size = *((unsigned *) menu_length_address);
+    size = menu_length;
     size = (size + 3) & ~3;
     temp = ((unsigned *) (&__free_ram_end__)) - (size >> 2);   
     memcpy(temp,bin,size);
@@ -485,9 +483,6 @@ main(void)
   display_init();
   show_splash(3000); 
   
-  // Get the address of the menu
-  menu_address = 0x00100000 + *((unsigned *) menu_address_address); 
- 
   gNextProgram = 0;
   do 
   {

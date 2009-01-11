@@ -37,6 +37,15 @@
 	
 	.global start	
 	.extern main
+	.global menu_address
+	.global menu_length
+	.global flash_start_page
+menu_address:
+	.long	0
+menu_length:
+	.long	0
+flash_start_page:
+	.long	0
 
 @ Flash is always a 1MB
 @ RAM is always at 2MB
