@@ -510,6 +510,7 @@ public class StartUpText
 		        		for(int i=0;i<pin.length;i++)
 		        	     	pinSet += (char)pin[i];
 		        		Settings.setProperty(pinProperty, pinSet);
+                        Bluetooth.setPin(pin);
 		        	}
 		        	
 		    	} else if (selection == -1) {
