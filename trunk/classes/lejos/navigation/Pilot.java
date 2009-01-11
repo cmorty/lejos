@@ -2,404 +2,468 @@ package lejos.navigation;
 
 import lejos.nxt.Motor;
 
+/**
+* The Pilot class is a software abstraction of the Pilot mechanism of a NXT robot. It contains methods to control
+* robot movements: travel forward or backward in a straight line or a circular path or rotate to a new direction.<br>
+* Note: this class will only work with two independently controlled Pilot motors to steer differentially, so it
+* can rotate within its own footprint (i.e. turn on one spot).<br>
+* It can be used with robots that have reversed motor design: the robot moves in the direction opposite to the the
+* direction of motor rotation. Uses the Motor class, which regulates motor speed using the NXT motor's built in
+* tachometer.<br>
+* Some methods optionally return immediately so the thread that called the method can monitor sensors and call
+* stop() if necessary.<br>
+* Uses the smoothAcceleration property of Motors to improve motor synchronization when starting a movement.
+* Example:<p>
+* <code><pre>
+* Pilot pilot = new Pilot(2.1f,4.4f,Motor.A, Motor.C,true);
+* pilot.setSpeed(720);
+* pilot.travel(12);
+* pilot.rotate(-90);
+* pilot.travel(-12,true);
+* while(pilot.isMoving())Thread.yield();
+* pilot.rotate(-90);
+* pilot.rotateTo(270);
+* pilot.steer(-50,180,true);
+* while(pilot.isMoving())Thread.yield();
+* pilot.steer(100);
+* try{Thread.sleep(1000);}
+* catch(InterruptedException e){}
+* pilot.stop();
+* </pre></code>
+ * Revised 2009/01/10 to include drift correction, thanks to Dirk
+**/
+public class Pilot
+{
+/**
+* Left motor
+*/
+protected Motor _left;
 
 /**
- * The Pilot class is a software abstraction of the Pilot mechanism of a NXT robot. It contains methods to control robot movents: travel forward or backward in a straight line or a circular path or rotate to a new direction.  <br>
- * Note: this class will only work with two independently controlled Pilot motors to steer differentially, so it can rotate within its own footprint (i.e. turn on one spot).<br>
- * It can be used with robots that have reversed motor design: the robot moves in the direction opposite to the the dirction of motor rotation.
- * Uses the Motor class, which regulates motor speed using the NXT motor's built in tachometer. <br>
- * Some methods optionally return immediately so the thread that called the method can monitor sensors and call stop() if necessary.  <br>  
- * Uses the smoothAcceleration  property of Motors to improve motor synchronization when starting a movement. 
- *  Example:<p>
- * <code><pre>
- *	Pilot pilot = new Pilot(2.1f,4.4f,Motor.A, Motor.C,true);
- *   pilot.setSpeed(720);// 2 RPM
- *	pilot.travel(12);
- *	pilot.rotate(-90);
- *	pilot.travel(-12,true);
- *	while(pilot.isMoving())Thread.yield();
- *	pilot.rotate(-90);
- *	pilot.rotateTo(270);
- *	pilot.steer(-50,180,true);
- *	while(pilot.isMoving())Thread.yield();
- *	pilot.steer(100);
- *	try{Thread.sleep(1000);}
- *   catch(InterruptedException e){}
- *	pilot.stop();
- * </pre></code>
- **/
-
-public class Pilot 
-{
-   /**
-    *left motor
-    */
-   protected Motor _left;
-
-   /**
-    * right motor
-    */
-   protected Motor _right;
-
-   /**
-    * motor degrees per unit of travel
-    */	
-   public final float _degPerDistance;
-
-   /**
-    * Motor revolutions for 360 degree rotation of robot (motors running in opposite directions.
-    * calculated from wheel diameter and track width.  Used by rotate() and steer() methods
-    **/
-   private final float _turnRatio; 
-
-   /** 
-    * motor speed  degrees per second. Used by all methods that cause movememt
-    */
-   protected int _speed = 360;
-
-   /**
-    * Motor rotation forward makes robot move forward iff parity == 1.
-    */ 
-   private byte _parity = 1;
-
-   /**
-    * if true, motor speed regulation is turned on
-    */
-   private boolean _regulating = true;
-
-
-   /**
-    * distance between wheels - used in steer() 
-    */
-   public  final float _trackWidth;
-
-   /**
-    *	diameter of tires
-    */
-   public final float _wheelDiameter;
-
-   /**
-    *  Allocates a Pilot object, and sets the physical parameters of the NXT robot. <br>
-    *  Assumes  Motor.forward() causes the robot to move forward);
-    *  @param wheelDiameter  Diameter of the tire, in any convenient units.  (The diameter in mm is usually printed on the tire). 
-    *  @param trackWidth Distance between center of right tire and center of left tire, in same units as wheelDiameter
-    */
-   public Pilot(float wheelDiameter,float trackWidth,Motor leftMotor, Motor rightMotor)
-   {
-      _left = leftMotor;
-      _right = rightMotor;
-      _degPerDistance = 360/((float)Math.PI*wheelDiameter);
-      _turnRatio = trackWidth/wheelDiameter;;
-      _trackWidth = trackWidth;
-      _wheelDiameter = wheelDiameter;
-   }
-
-   /**
-    *  Allocates a Pilot object, and sets the physical parameters of the NXT robot. <br>
-    *  @param wheelDiameter  Diameter of the tire, in any convenient units.  (The diameter in mm is usually printed on the tire). 
-    *  @param trackWidth Distance between center of right tire and center of left tire, in the same units as wheelDiameter
-    *  @param reverse if true, the NXT robot moves forward when the motors are running backward.
-    */
-   public Pilot(float wheelDiameter,float trackWidth,Motor leftMotor, Motor rightMotor, boolean reverse)
-   {
-      this(wheelDiameter, trackWidth,leftMotor,rightMotor);
-      if(reverse) _parity = -1;
-      else _parity = 1;
-   }
-
-   /**
-    * returns left motor
-    * @return left motor
-    */
-   public Motor getLeft() { return _left;}
-
-   /**
-    * returns right motor
-    * @return right motor
-    */  
-   public Motor getRight() {return _right;}
-
-   /**
-    *  returns tachoCount of left motor; Positive value means motor has moved the robot forward;
-    */
-   public int getLeftCount(){ return _parity*_left.getTachoCount();}
-
-   /**
-    *returns tachoCount of the right motor; Positive value means motor has moved the robot forward;
-    */
-   public int getRightCount(){ return _parity*_right.getTachoCount();}
-
-   /**
-    *returns actual speed of left motor in degrees per second; a negative value if motor is rotating backwards  <br>
-    * Updated avery 100 ms.
-    **/
-   public int getLeftActualSpeed(){ return _left.getActualSpeed();}
-
-   /**
-    *returns actual speed of right motor in deg/sec;  a negative value if motor is rotating backwards. <br>
-    *  Updated avery 100 ms.
-    **/	
-   public int getRightActualSpeed() { return _right.getActualSpeed();}
-
-   /**
-    * return ratatio of Motor revolutions per 360 degree rotation of the robot
-    */
-   public float getTurnRatio(){ return _turnRatio;}
-
-   /**
-    * return current speed setting
-    * @return current speed
-    */
-   public int getSpeed(){return _speed;}
-
-   /**
-    * Sets speed of both motors,  degrees/sec; also sets regulate speed true 
-    */
-   public void setSpeed(int speed) 
-   {
-      _speed = speed;
-      _left.regulateSpeed(_regulating);
-      _left.smoothAcceleration(!isMoving());
-      _right.regulateSpeed(_regulating);
-      _right.smoothAcceleration(!isMoving());
-      if(_left.getSpeed() != speed)_left.setSpeed(speed);
-      if(_right.getSpeed() != speed) _right.setSpeed(speed);
-   }
-
-   /**
-    *  Moves the NXT robot forward until stop() is called.
-    */
-   public void forward() 
-   {	
-      setSpeed(_speed);//both motors run at same speed
-      if(_parity == 1) fwd();
-      else bak();
-   }
-
-   /**
-    * Moves the NXT robot backward until stop() is called.
-    */
-   public void backward() 
-   {
-      setSpeed(_speed);//both motors run at same speed
-      if(_parity == 1)bak();
-      else fwd();
-   }
-
-   /**
-    * Rotates the  NXT robot through a specific angle; Rotates left if angle is positive, right if negative,
-    * Returns when angle is reached.
-    * Wheels turn in opposite directions producing a  zero radius turn.
-    * @param angle  degrees. Positive angle rotates to the left (clockwise); negative to the right. <br>Requires correct values for wheel diameter and track width.
-    */
-   public void rotate(int angle)
-   {
-      rotate(angle,false);
-   }
-
-   /**
-    * Rotates the  NXT robot through a specific angle; Rotates left if angle is positive, right if negative;
-    * Returns immediately  iff immediateReturn is true.
-    * Wheels turn in opposite directions producing a  zero radius turn.
-    * @param angle  degrees. Positive angle rotates to the left; negative to the right. <br>Requires correct values for wheel diameter and track width.
-    * @param immediateReturn if true this method returns immediately 
-    */
-   public void rotate(int angle, boolean immediateReturn )
-   {
-      setSpeed(_speed);//both motors run at same speed
-      int ta = _parity*(int)( angle*_turnRatio);
-      _left.rotate(-ta,true);
-      _right.rotate(ta,true);
-      if(immediateReturn)return;
-      while(isMoving())Thread.yield();
-   }
-
-   /**
-    * returns the angle of rotation of the robot since last call to reset of tacho count;
-    */
-   public int getAngle()
-   {
-      return  _parity*Math.round((getRightCount()-getLeftCount())/(2*_turnRatio));
-   }
-
-   /**
-    * Stops the NXT robot
-    */
-   public void stop()
-   {
-      _left.stop();
-      _right.stop();
-   }
-
-   /**
-    * returns true iff the NXT robot is moving
-    **/
-   public boolean isMoving()
-   {
-      return _left.isMoving()||_right.isMoving()||_left.isRotating()||_right.isRotating();
-   }
-
-   /**
-    *resets tacho count for both motors
-    **/
-   public void resetTachoCount()
-   {
-      _left.resetTachoCount();
-      _right.resetTachoCount();
-   }
-
-   /**
-    * returns distance taveled since last reset of tacho count
-    **/ 
-   public float getTravelDistance()
-   {
-      int avg =( _left.getTachoCount()+_right.getTachoCount())/2;
-      return  _parity*avg/_degPerDistance;
-   }
-
-   /**
-    * Moves the NXT robot a specific distance;<br>
-    * A positive distance causes forward motion;  negative distance  moves backward.  
-    * @param  distance of robot movement. Unit of measure for distance must be same as wheelDiameter and trackWidth
-    **/
-   public void travel(float distance)
-   {
-      travel(distance,false);
-   }
-
-   /**
-    * Moves the NXT robot a specific distance; if immediateReturn is true, method returns immediately. <br>
-    * A positive distance causes forward motion; negative distance moves backward.  
-    * @param immediateReturn  If true, method returns immediately, and robot stops after traveling the distance.  If false, method returns immediately.
-    */
-   public void travel(float distance,boolean immediateReturn)
-   {
-      setSpeed(_speed);// both motors at same speed
-      _left.rotate((int)(_parity*distance*_degPerDistance),true);
-      _right.rotate((int)(_parity*distance*_degPerDistance),true);
-      if(immediateReturn)return;
-      while(isMoving())Thread.yield();
-   }
-
-   /**
-    * Moves the NXT robot in a circular path at a specific turn rate. <br>
-    * The center of the turning circle is on the right side of the robot iff parameter turnRate is negative;  <br>
-    * turnRate values are between -200 and +200;
-    * @param turnRate If positive, the left wheel is on the inside of the turn.  If negative, the left wheel is on the outside.
-    * This parameter determines the ratio of inner wheel speed to outer wheel speed (as a percent). <br>
-    * <I>Formula:</i>    ratio  =  100 - abs(turnRate). When the ratio is negative, the outer and inner wheels rotate in opposite directions.<br>
-    * Examples: <UL><LI> steer(25)-> inner wheel turns at 75% of the speed of the outer wheel <br>
-    *           <li>steer(100) -> inner wheel stops.<br>
-    * 			 <li>steer(200) -> means that the inner wheel turns at the same speed as the outer wheel - a zero radius turn. <br></UL>
-    */
-   public void steer(int turnRate)
-   {
-      steer(turnRate,Integer.MAX_VALUE,true);
-   }
-
-   /**
-    * Moves the NXT robot in a circular path through a specific angle; <br>
-    * Negative turnRate means center of turning circle is on right side of the robot; <br>
-    * Range of turnRate values : -200 : 200 ; 
-    * Robot will stop when total rotation equals angle. If angle is negative, robot will move travel backwards.
-    * @param turnRate If positive, the left wheel is on the inside of the turn.  If negative, the left wheel is on the outside.
-    * This parameter determines the ratio of inner wheel speed to outer wheel speed (as a percent). <br>
-    * @param angle  the angle through which the robot will rotate and then stop. If negative, robot traces the turning circle backwards. 
-    */
-   public void steer(int turnRate, int angle)
-   {
-      steer(turnRate,angle,false);
-   }
-
-   /**
-    * Moves the NXT robot in a circular path, and stops when the direction it is facing has changed by a specific angle;  <br>
-    * Returns immediately if immediateReturn is true.  The robot will stop automatically when the turm is complete. 
-    * The center of the turning circle is on right side of the robot iff parameter turnRate is negative  <br>
-    * turnRate values are between -200 and +200; <br>
-    * post condition:  motor speeds are not equal when method returns.
-    * @param turnRate If positive, the left wheel is on the inside of the turn.  If negative, the left wheel is on the outside.
-    * This parameter determines the ratio of inner wheel speed to outer wheel speed (as a percent). <br>
-    * @param angle  the angle through which the robot will rotate and then stop. If negative, robot traces the turning circle backwards. 
-    * @param immediateReturn iff true, method returns immedediately.
-    *
-    */
-   public void steer(int turnRate, int angle, boolean immediateReturn)
-   {
-      Motor inside;
-      Motor outside;
-      int rate = turnRate;
-      if(rate <- 200)rate = -200;
-      if(rate > 200)rate = 200;
-      if(rate==0)
-      {
-         if(angle<0)backward();
-         else forward();
-         return;
-      }
-      if (turnRate<0)
-      {
-         inside = _right;
-         outside = _left;
-         rate = -rate;
-      } 
-      else
-      {
-         inside = _left;
-         outside = _right;
-      }
-      outside.setSpeed(_speed);
-      float steerRatio = 1 - rate/100.0f;
-      inside.setSpeed((int)(_speed*steerRatio));
-      if(angle == Integer.MAX_VALUE) //no limit angle for turn
-      {
-         if(_parity == 1) outside.forward();
-         else outside.backward();
-         if( _parity*steerRatio > 0) inside.forward();
-         else inside.backward();
-         return;
-      }
-      float rotAngle  = angle*_trackWidth*2/(_wheelDiameter*(1-steerRatio));
-      inside.rotate(_parity*(int)(rotAngle*steerRatio),true);
-      outside.rotate(_parity*(int)rotAngle,true);
-      if(immediateReturn)return;
-      while (isMoving())Thread.yield();
-      inside.setSpeed(outside.getSpeed());
-   }
-   /** 
-    * @return either motor actual speed is zero
-    */
-   public boolean stalled()
-   {
-      return (0 == _left.getActualSpeed()) || (0 == _right.getActualSpeed());
-   }
+* Right motor
+*/
+protected Motor _right;
 
 /**
- * motors backward  called by forward() and backward()
- */
-private void bak() 
+* Motor degrees per unit of travel
+*/
+public final float _degPerDistance;
+
+/**
+* Motor revolutions for 360 degree rotation of robot (motors running in opposite directions).
+* Calculated from wheel diameter and track width. Used by rotate() and steer() methods.
+**/
+private final float _turnRatio;
+
+/**
+* Motor speed degrees per second. Used by all methods that cause movement.
+*/
+protected int _speed = 360;
+
+/**
+* Motor rotation forward makes robot move forward if parity == 1.
+*/
+private byte _parity = 1;
+
+/**
+* If true, motor speed regulation is turned on.
+*/
+private boolean _regulating = true;
+
+
+/**
+* Distance between wheels. Used in steer().
+*/
+public final float _trackWidth;
+
+/**
+* Diameter of tires.
+*/
+public final float _wheelDiameter;
+
+/**
+* A correction factor to compensate for small differences in wheel size (causing the robot to "drift" to one side).
+*/
+private float _driftCorrection = 1;
+
+/**
+* Allocates a Pilot object, and sets the physical parameters of the NXT robot.<br>
+* Assumes Motor.forward() causes the robot to move forward).
+* @param wheelDiameter Diameter of the tire, in any convenient units (the diameter in mm is usually printed on the tire).
+* @param trackWidth Distance between center of right tire and center of left tire, in same units as wheelDiameter.
+* @param leftMotor The left Motor (e.g., Motor.C).
+* @param rightMotor The right Motor (e.g., Motor.A).
+*/
+public Pilot(float wheelDiameter,float trackWidth,Motor leftMotor, Motor rightMotor)
 {
-   _left.backward();
-   _right.backward();
+this(wheelDiameter, trackWidth,leftMotor,rightMotor, false);
 }
 /**
- *Sets motor speed regulation   on = true (default) or off = false; <br>
- *Allows steer() method to be called by (for example)
- *a line tracker or compass navigator so direction control is from sensor inputs 
- */	
+* Allocates a Pilot object, and sets the physical parameters of the NXT robot.<br>
+* @param wheelDiameter Diameter of the tire, in any convenient units (the diameter in mm is usually printed on the tire).
+* @param trackWidth Distance between center of right tire and center of left tire, in same units as wheelDiameter.
+* @param leftMotor The left Motor (e.g., Motor.C).
+* @param rightMotor The right Motor (e.g., Motor.A).
+*/
+public Pilot(float wheelDiameter,float trackWidth,Motor leftMotor, Motor rightMotor, boolean reverse)
+{
+_left = leftMotor;
+_right = rightMotor;
+_degPerDistance = 360/((float)Math.PI*wheelDiameter);
+_turnRatio = trackWidth/wheelDiameter;
+_trackWidth = trackWidth;
+_wheelDiameter = wheelDiameter;
+if(reverse) _parity = -1;
+else _parity = 1;
+}
+
+/**
+ * 
+* Allocates a Pilot object, and sets the physical parameters of the NXT robot.<br>
+* About <i>drift correction</i>: If your robot has problems traveling long distances (many meters) without deviating
+* too much (>2%) this might be due to a <b>small</b> (sub millimeter) differences in wheel size. To correct this kind
+* of "drift" you can specify a drift correction factor (e.g., a 2 wheel robot (5,6cm wheel diameter and 11cm track width)
+* had a deviation of 16cm to the right after traveling 400cm in a "straight" line. A drift correction of -0.001f did
+* correct this).
+*
+* @param wheelDiameter Diameter of the tire, in any convenient units (the diameter in mm is usually printed on the tire).
+* @param trackWidth Distance between center of right tire and center of left tire, in same units as wheelDiameter.
+* @param driftCorrection A correction factor to compensate for <b>small</b> differences in wheel size.
+* @param leftMotor The left Motor (e.g., Motor.C).
+* @param rightMotor The right Motor (e.g., Motor.A).
+* @param reverse If true, the NXT robot moves forward when the motors are running backward.
+*/
+public Pilot(float wheelDiameter, float trackWidth, float driftCorrection, Motor leftMotor, Motor rightMotor, boolean reverse)
+{
+this(wheelDiameter, trackWidth,leftMotor,rightMotor, reverse);
+_driftCorrection = 1.0f + driftCorrection;
+} 
+
+/**
+* @return left motor.
+*/
+public Motor getLeft() { return _left;}
+
+/**
+* @return right motor.
+*/
+public Motor getRight() {return _right;}
+
+/**
+* @return tachoCount of left motor. Positive value means motor has moved the robot forward.
+*/
+public int getLeftCount(){ return _parity*_left.getTachoCount();}
+
+/**
+* @return tachoCount of the right motor. Positive value means motor has moved the robot forward.
+*/
+public int getRightCount(){ return _parity*_right.getTachoCount();}
+
+/**
+* @return actual speed of left motor in degrees per second. A negative value if motor is rotating backwards.
+* Updated every 100 ms.
+**/
+public int getLeftActualSpeed(){ return _left.getActualSpeed();}
+
+/**
+* @return actual speed of right motor in degrees per second. A negative value if motor is rotating backwards.
+* Updated every 100 ms.
+**/
+public int getRightActualSpeed() { return _right.getActualSpeed();}
+
+/**
+* @return ratio of motor revolutions per 360 degree rotation of the robot.
+*/
+public float getTurnRatio(){ return _turnRatio;}
+
+/**
+* @return current speed.
+*/
+public int getSpeed(){return _speed;}
+
+/**
+* Sets speed of both motors and sets regulate speed to true. If a drift correction has been specified in the constructor
+* it will be applied to the left motor.
+*
+* @param speed The wanted speed in degrees per second.
+*/
+public void setSpeed(int speed)
+{
+_speed = speed;
+_left.regulateSpeed(_regulating);
+_left.smoothAcceleration(!isMoving());
+_right.regulateSpeed(_regulating);
+_right.smoothAcceleration(!isMoving());
+//if(_left.getSpeed() != speed).
+        _left.setSpeed((int)(speed*_driftCorrection));
+//if(_right.getSpeed() != speed)
+  _right.setSpeed(speed);
+}
+
+/**
+* Moves the NXT robot forward until stop() is called.
+*/
+public void forward()
+{
+setSpeed(_speed);
+if(_parity == 1) fwd();
+else bak();
+}
+
+/**
+* Moves the NXT robot backward until stop() is called.
+*/
+public void backward()
+{
+setSpeed(_speed);
+if(_parity == 1)bak();
+else fwd();
+}
+
+/**
+* Rotates the NXT robot through a specific angle. Returns when angle is reached. Wheels turn in
+* opposite directions producing a zero radius turn.<br>
+* Note: Requires correct values for wheel diameter and track width.
+*
+* @param angle The wanted angle of rotation in degrees. Positive angle rotate left (clockwise), negative right.
+*/
+public void rotate(int angle)
+{
+rotate(angle,false);
+}
+
+/**
+* Rotates the NXT robot through a specific angle. Returns when angle is reached. Wheels turn in
+* opposite directions producing a zero radius turn.<br>
+* Note: Requires correct values for wheel diameter and track width.
+*
+* @param angle The wanted angle of rotation in degrees. Positive angle rotate left (clockwise), negative right.
+* @param immediateReturn If true this method returns immediately.
+*/
+public void rotate(int angle, boolean immediateReturn )
+{
+setSpeed(_speed);
+int ta = _parity*(int)( angle*_turnRatio);
+_left.rotate(-ta,true);
+_right.rotate(ta,true);
+if(immediateReturn)return;
+while(isMoving())Thread.yield();
+}
+
+/**
+* @return the angle of rotation of the robot since last call to reset of tacho count;
+*/
+public int getAngle()
+{
+return _parity*Math.round((getRightCount()-getLeftCount())/(2*_turnRatio));
+}
+
+/**
+* Stops the NXT robot.
+*/
+public void stop()
+{
+_left.stop();
+_right.stop();
+}
+
+/**
+* @return true if the NXT robot is moving.
+**/
+public boolean isMoving()
+{
+return _left.isMoving()||_right.isMoving()||_left.isRotating()||_right.isRotating();
+}
+
+/**
+* Resets tacho count for both motors.
+**/
+public void resetTachoCount()
+{
+_left.resetTachoCount();
+_right.resetTachoCount();
+}
+
+/**
+* @return distance traveled since last reset of tacho count.
+**/
+public float getTravelDistance()
+{
+int avg =( _left.getTachoCount()+_right.getTachoCount())/2;
+return _parity*avg/_degPerDistance;
+}
+
+/**
+* Moves the NXT robot a specific distance in an (hopefully) straight line.<br>
+* A positive distance causes forward motion, a negative distance moves backward. If a drift correction
+* has been specified in the constructor it will be applied to the left motor.
+*
+* @param distance The distance to move. Unit of measure for distance must be same as wheelDiameter and trackWidth.
+**/
+public void travel(float distance)
+{
+travel(distance,false);
+}
+
+/**
+* Moves the NXT robot a specific distance in an (hopefully) straight line.<br>
+* A positive distance causes forward motion, a negative distance moves backward. If a drift correction
+* has been specified in the constructor it will be applied to the left motor.
+*
+* @param distance The distance to move. Unit of measure for distance must be same as wheelDiameter and trackWidth.
+* @param immediateReturn If true this method returns immediately.
+*/
+public void travel(float distance,boolean immediateReturn)
+{
+setSpeed(_speed);// both motors at same speed
+_left.rotate((int)(_parity*distance*_degPerDistance*_driftCorrection), true);
+_right.rotate((int)(_parity*distance*_degPerDistance),true);
+if(immediateReturn)return;
+while(isMoving())Thread.yield();
+}
+
+/**
+* Moves the NXT robot in a circular path at a specific turn rate. The center of the turning circle is
+* on the right side of the robot if parameter turnRate is negative. Values for turnRate are between -200 and +200.
+* The turnRate determines the ratio of inner wheel speed to outer wheel speed (as a percent).<br>
+* <I>Formula:</I> ratio = 100 - abs(turnRate). When the ratio is negative, the outer and inner wheels rotate in
+* opposite directions.<br>
+* Examples:
+* <UL>
+* <LI>steer(25) -> inner wheel turns at 75% of the speed of the outer wheel
+* <LI>steer(100) -> inner wheel stops
+* <LI>steer(200) -> means that the inner wheel turns at the same speed as the outer wheel - a zero radius turn.
+* </UL>
+* Note: Even if you have specified a drift correction in the constructor it will not be applied in this method.
+*
+* @param turnRate If positive, the left wheel is on the inside of the turn. If negative, the left wheel is on the outside.
+*/
+public void steer(int turnRate)
+{
+steer(turnRate,Integer.MAX_VALUE,true);
+}
+
+/**
+* Moves the NXT robot in a circular path at a specific turn rate. The center of the turning circle is
+* on the right side of the robot if parameter turnRate is negative. Values for turnRate are between -200 and +200.
+* The turnRate determines the ratio of inner wheel speed to outer wheel speed (as a percent).<br>
+* <I>Formula:</I> ratio = 100 - abs(turnRate). When the ratio is negative, the outer and inner wheels rotate in
+* opposite directions.<br>
+* Examples:
+* <UL>
+* <LI>steer(25) -> inner wheel turns at 75% of the speed of the outer wheel
+* <LI>steer(100) -> inner wheel stops
+* <LI>steer(200) -> means that the inner wheel turns at the same speed as the outer wheel - a zero radius turn.
+* </UL>
+* Note: Even if you have specified a drift correction in the constructor it will not be applied in this method.
+*
+* @param turnRate If positive, the left wheel is on the inside of the turn. If negative, the left wheel is on the outside.
+* @param angle The angle through which the robot will rotate. If negative, robot traces the turning circle backwards.
+*/
+public void steer(int turnRate, int angle)
+{
+steer(turnRate,angle,false);
+}
+
+/**
+* Moves the NXT robot in a circular path at a specific turn rate. The center of the turning circle is
+* on the right side of the robot if parameter turnRate is negative. Values for turnRate are between -200 and +200.
+* The turnRate determines the ratio of inner wheel speed to outer wheel speed (as a percent).<br>
+* <I>Formula:</I> ratio = 100 - abs(turnRate). When the ratio is negative, the outer and inner wheels rotate in
+* opposite directions.<br>
+* Examples:
+* <UL>
+* <LI>steer(25) -> inner wheel turns at 75% of the speed of the outer wheel
+* <LI>steer(100) -> inner wheel stops
+* <LI>steer(200) -> means that the inner wheel turns at the same speed as the outer wheel - a zero radius turn.
+* </UL>
+* Note: Even if you have specified a drift correction in the constructor it will not be applied in this method.
+*
+* @param turnRate If positive, the left wheel is on the inside of the turn. If negative, the left wheel is on the outside.
+* @param angle The angle through which the robot will rotate. If negative, robot traces the turning circle backwards.
+* @param immediateReturn If true this method returns immediately.
+*/
+public void steer(int turnRate, int angle, boolean immediateReturn)
+{
+Motor inside;
+Motor outside;
+int rate = turnRate;
+if(rate <- 200)rate = -200;
+if(rate > 200)rate = 200;
+if(rate==0)
+{
+if(angle<0)backward();
+else forward();
+return;
+}
+if (turnRate<0)
+{
+inside = _right;
+outside = _left;
+rate = -rate;
+}
+else
+{
+inside = _left;
+outside = _right;
+}
+outside.setSpeed(_speed);
+float steerRatio = 1 - rate/100.0f;
+inside.setSpeed((int)(_speed*steerRatio));
+if(angle == Integer.MAX_VALUE) //no limit angle for turn
+{
+if(_parity == 1) outside.forward();
+else outside.backward();
+if( _parity*steerRatio > 0) inside.forward();
+else inside.backward();
+return;
+}
+float rotAngle = angle*_trackWidth*2/(_wheelDiameter*(1-steerRatio));
+inside.rotate(_parity*(int)(rotAngle*steerRatio),true);
+outside.rotate(_parity*(int)rotAngle,true);
+if(immediateReturn)return;
+while (isMoving())Thread.yield();
+inside.setSpeed(outside.getSpeed());
+}
+
+/**
+* @return true if either motor actual speed is zero.
+*/
+public boolean stalled()
+{
+return (0 == _left.getActualSpeed()) || (0 == _right.getActualSpeed());
+}
+
+/**
+* Motors backward. This is called by forward() and backward().
+*/
+private void bak()
+{
+_left.backward();
+_right.backward();
+}
+
+/**
+* Sets motor speed regulation (default is true).<br>
+* Allows steer() method to be called by (for example) a line tracker or compass navigator
+* so direction control is from sensor inputs.
+*
+* @param yes Set motor speed regulation on = true or off = false.
+*/
 public void regulateSpeed(boolean yes)
 {
-   _regulating = yes;
-   _left.regulateSpeed(yes);
-   _right.regulateSpeed(yes);
+_regulating = yes;
+_left.regulateSpeed(yes);
+_right.regulateSpeed(yes);
 }
 
 /**
- * motors forward called by forward() and backward()
- */
+* Motors forward. This is called by forward() and backward().
+*/
 private void fwd()
 {
-   _left.forward();
-   _right.forward();
+_left.forward();
+_right.forward();
+}
 }
 
-}
