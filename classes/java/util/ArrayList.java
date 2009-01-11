@@ -6,159 +6,238 @@ package java.util;
  * @author Andre Nijholt
  */
 public class ArrayList {
-	private static final int INITIAL_CAPACITY 	= 7;
-	private static final int CAPACITY_INCREMENT = 3;
-	
-	protected Object[] elementData;
-	protected int capacityIncrement;
-	protected int elementCount;
+  private static final int INITIAL_CAPACITY   = 7;
 
-	public ArrayList(int initialCapacity) {
-	    if (initialCapacity < 0) initialCapacity = 0;
-		elementData = new Object[initialCapacity];
-		capacityIncrement = CAPACITY_INCREMENT;
-		elementCount = 0;
-	}
-	
-	public ArrayList(Object[] elements) {
-		// Set initial capacity to 130% (normally specified 110%)
-		this((elements.length * 13) / 10);
-		addAll(elements);
-	}
+  private static final int CAPACITY_INCREMENT = 3;
 
-	public ArrayList() {
-		this(INITIAL_CAPACITY);
-	}
+  protected Object[]       elementData;
 
-	public void add(int index, Object element) {
-		if (index > elementCount) {
-			throw new ArrayIndexOutOfBoundsException();
-		}
+  protected int            capacityIncrement;
 
-		ensureCapacity(elementCount + 1);
-		for (int i = elementCount; i > index; i--) {
-			elementData[i] = elementData[i - 1];
-		}
-		elementData[index] = element;
-		elementCount++;
-	}
-	
+  protected int            elementCount;
 
-	public void add(Object o) {
-	    ensureCapacity(elementCount + 1);
-	    elementData[elementCount++] = o;
-	}
-	
-	public void addAll(Object [] elements) {
-		if (elements == null) return;
-		ensureCapacity(elementCount + elements.length);
-		
-		for (int i = 0; i < elements.length; i++) {
-			elementData[elementCount++] = elements[i];
-		}
-	}
-	
-	public void addAll(int index, Object [] elements) {
-		if (elements == null) return;
-		if (index > elementCount) {
-			throw new ArrayIndexOutOfBoundsException();
-		}
+  /**
+   * Create an array list.
+   * 
+   * @param initialCapacity The initial size of the array list.
+   */
+  public ArrayList(int initialCapacity) {
+    elementData = new Object[initialCapacity < 0 ? 0 : initialCapacity];
+    capacityIncrement = CAPACITY_INCREMENT;
+    elementCount = 0;
+  }
 
-		ensureCapacity(elementCount + elements.length);
-		for (int i = elementCount + elements.length - 1; i > index; i--) {
-			elementData[i] = elementData[i - elements.length];
-		}
-		for (int i = 0; i < elements.length; i++) {
-			elementData[i + index] = elements[i];
-			elementCount++;
-		}
-	}
-	
-	public void clear() {
-		for (int i = 0; i < elementCount; i++) {
-			elementData[i] = null;
-		}
-	}
-	
-	public boolean contains(Object o) {
-		for (int i = 0; i < elementCount; i++) {
-			if (elementData[i].equals(o)) return true;
-		}
-		
-		return false;
-	}
-	
-	public Object get(int index) {
-		if (index > elementCount) {
-			throw new ArrayIndexOutOfBoundsException();
-		}
+  /**
+   * Create an array list.
+   * 
+   * @param elements The initial elements in the array list.
+   */
+  public ArrayList(Object[] elements) {
+    this((elements.length * 13) / 10);
+    addAll(elements);
+  }
 
-		return elementData[index];
-	}
-	
-	public int indexOf(Object o) {
-		for (int i = 0; i < elementCount; i++) {
-			if (elementData[i].equals(o)) return i;
-		}
-		
-		return -1;
-	}
+  /**
+   * Create an array list.
+   */
+  public ArrayList() {
+    this(INITIAL_CAPACITY);
+  }
 
-	public int lastIndexOf(Object o) {
-		for (int i = elementCount - 1; i >= 0; i--) {
-			if (elementData[i].equals(o)) return i;
-		}
-		
-		return -1;
-	}
-	
-	public boolean isEmpty() {
-		return (elementCount == 0);
-	}
+  /**
+   * Add a element at a specific index.
+   * 
+   * @param index The index at which the element should be added.
+   * @param element The element to add.
+   */
+  public void add(int index, Object element) {
+    if (index > elementCount) {
+      throw new ArrayIndexOutOfBoundsException();
+    }
 
-	public Object remove(int index) {
-		if (index > elementCount) {
-			throw new ArrayIndexOutOfBoundsException();
-		}
+    ensureCapacity(elementCount + 1);
+    for (int i = elementCount; i > index; i--) {
+      elementData[i] = elementData[i - 1];
+    }
+    elementData[index] = element;
+    elementCount++;
+  }
 
-		Object o = elementData[index];
-		for (int i = index; i < elementCount; i++) {
-			elementData[i] = elementData[i + 1];
-		}
-		elementCount--;
-		return o;
-	}
-	
-	public Object set(int index, Object element) {
-		if (index > elementCount) {
-			throw new ArrayIndexOutOfBoundsException();
-		}
+  /**
+   * Add a element at the end of the array list.
+   * 
+   * @param element The element to add.
+   */
+  public void add(Object element) {
+    ensureCapacity(elementCount + 1);
+    elementData[elementCount++] = element;
+  }
 
-		Object o = elementData[index];
-		elementData[index] = element;
-		return o;
-	}
-	
-	public int size() {
-		return elementCount;
-	}
+  /**
+   * Add all elements from the array to the array list.
+   * 
+   * @param elements The array of elements to add.
+   */
+  public void addAll(Object[] elements) {
+    if (elements == null) return;
+    ensureCapacity(elementCount + elements.length);
 
-	private void ensureCapacity(int minCapacity) {
-	    if (elementData.length < minCapacity) {
-	    	int newCapacity = (capacityIncrement > 0)
-	    		? (elementData.length + capacityIncrement)
-	    		: (elementData.length * 2);
-	    	if (newCapacity < minCapacity) {
-	    		newCapacity = minCapacity;
-	    	}
+    for (int i = 0; i < elements.length; i++) {
+      elementData[elementCount++] = elements[i];
+    }
+  }
 
-	    	Object oldData[] = elementData;
-	    	elementData = new Object[newCapacity];
-	    	System.arraycopy(oldData, 0, elementData, 0, elementCount);
-	    }
-	}
-	
+  /**
+   * Add all elements from the array to the array list at a specific index.
+   * 
+   * @param index The index to start adding elements.
+   * @param elements The array of elements to add.
+   */
+  public void addAll(int index, Object[] elements) {
+    if (elements == null) return;
+    if (index > elementCount) {
+      throw new ArrayIndexOutOfBoundsException();
+    }
 
+    ensureCapacity(elementCount + elements.length);
+    for (int i = elementCount + elements.length - 1; i > index; i--) {
+      elementData[i] = elementData[i - elements.length];
+    }
+    for (int i = 0; i < elements.length; i++) {
+      elementData[i + index] = elements[i];
+      elementCount++;
+    }
+  }
 
+  /**
+   * Clear the array list.
+   */
+  public void clear() {
+    for (int i = 0; i < elementCount; i++) {
+      elementData[i] = null;
+    }
+  }
 
+  /**
+   * Check if a specific element is contained in the array list.
+   * 
+   * @param element The element in question.
+   * @return true, if the element is contained in the array list.
+   */
+  public boolean contains(Object element) {
+    for (int i = 0; i < elementCount; i++) {
+      if (elementData[i].equals(element)) return true;
+    }
+
+    return false;
+  }
+
+  /**
+   * Get a specific element.
+   * 
+   * @param index The index of the wanted element.
+   * @return The wanted element.
+   */
+  public Object get(int index) {
+    if (index > elementCount) {
+      throw new ArrayIndexOutOfBoundsException();
+    }
+
+    return elementData[index];
+  }
+
+  /**
+   * Get the first index of a specific element.
+   * 
+   * @param element The wanted element.
+   * @return The index of the wanted element, or -1 if not found.
+   */
+  public int indexOf(Object element) {
+    for (int i = 0; i < elementCount; i++) {
+      if (elementData[i].equals(element)) return i;
+    }
+
+    return -1;
+  }
+
+  /**
+   * Get the last index of a specific element.
+   * 
+   * @param element The wanted element.
+   * @return The index of the wanted element, or -1 if not found.
+   */
+  public int lastIndexOf(Object element) {
+    for (int i = elementCount - 1; i >= 0; i--) {
+      if (elementData[i].equals(element)) return i;
+    }
+
+    return -1;
+  }
+
+  /**
+   * Check if array list is empty.
+   * 
+   * @return true if the array list is empty.
+   */
+  public boolean isEmpty() {
+    return (elementCount == 0);
+  }
+
+  /**
+   * Remove a element at a specific index.
+   * 
+   * @param index The index of the element to remove.
+   * @return the removed element.
+   */
+  public Object remove(int index) {
+    if (index > elementCount) {
+      throw new ArrayIndexOutOfBoundsException();
+    }
+
+    Object element = elementData[index];
+    for (int i = index; i < elementCount; i++) {
+      elementData[i] = elementData[i + 1];
+    }
+    elementCount--;
+    return element;
+  }
+
+  /**
+   * Replace an element at a specific index with a new element.
+   * 
+   * @param index The index of the element to set.
+   * @param element The new element.
+   * @return the old element.
+   */
+  public Object set(int index, Object element) {
+    if (index > elementCount) {
+      throw new ArrayIndexOutOfBoundsException();
+    }
+
+    Object o = elementData[index];
+    elementData[index] = element;
+    return o;
+  }
+
+  /**
+   * Get the number of elements in this array list.
+   * 
+   * @return the number of elements.
+   */
+  public int size() {
+    return elementCount;
+  }
+
+  private void ensureCapacity(int minCapacity) {
+    if (elementData.length <= minCapacity) {
+      int newCapacity = (capacityIncrement > 0) ? (elementData.length + capacityIncrement) : (elementData.length * 2);
+      if (newCapacity < minCapacity) {
+        newCapacity = minCapacity;
+      }
+
+      Object oldData[] = elementData;
+      elementData = new Object[newCapacity];
+      System.arraycopy(oldData, 0, elementData, 0, elementCount);
+    }
+  }
 }
