@@ -39,6 +39,8 @@ class CommandLineParser
         Options options = new Options();
         options.addOption("h", "help", false, "help");
         options.addOption("f", "format", false, "format file system");
+        options.addOption("v", "verify", false, "verify flash updates");
+        options.addOption("q", "quiet", false, "quiet mode - do not report progress");
 
         CommandLine result;
         try
@@ -80,81 +82,24 @@ class CommandLineParser
     }
 }
 
-public class NXJFlash
+
+
+public class NXJFlash implements NXJFlashUI
 {
+    NXJFlashUpdate updater = new NXJFlashUpdate(this);
 
-    private static final int MAX_FIRMWARE_PAGES = 336;
-    private static final String VM = "lejos_nxt_rom.bin";
-    private static final String MENU = "StartUpText.bin";
-
-    /**
-     * Format and store a 32 bit value into a memory image.
-     * @param mem The image in which to store the value
-     * @param offset The location in bytes in the image
-     * @param val The value to be stored.
-     */
-    void storeWord(byte[] mem, int offset, int val)
+    public void message(String str)
     {
-        mem[offset++] = (byte) (val & 0xff);
-        mem[offset++] = (byte) ((val >> 8) & 0xff);
-        mem[offset++] = (byte) ((val >> 16) & 0xff);
-        mem[offset++] = (byte) ((val >> 24) & 0xff);
+        System.out.println(str);
     }
-
-    /**
-     * Create the memory image ready to be flashed to the device. Load the
-     * firmware and menu images into memory ready for flashing. The command
-     * line provides details of the location of the image files to be used.
-     * @param commandLine Options for the location of the firmware and menu.
-     * @return Memory image ready to be flashed to the device.
-     */
-    byte[] createImage(CommandLine commandLine) throws IOException, FileNotFoundException
+    
+    public void progress(String str, int percent)
     {
-        byte[] memoryImage = new byte[MAX_FIRMWARE_PAGES * NXTSamba.PAGE_SIZE];
-        String vmName = null;
-        String menuName = null;
-        if (commandLine.getArgs().length == 0)
-        {
-            // No files specified on the command line. Use defaults.
-            String home = System.getProperty("nxj.home");
-            if (home == null)
-                home = System.getenv("NXJ_HOME");
-            if (home == null)
-                home = "";
-            String SEP = System.getProperty("file.separator");
-            vmName = home + SEP + "bin" + SEP + VM;
-            menuName = home + SEP + "bin" + SEP + MENU;
-        }
-        else
-        {
-            vmName = commandLine.getArgs()[0];
-            menuName = commandLine.getArgs()[1];
-        }
-        System.out.println("VM file: " + vmName);
-        System.out.println("Menu file: " + menuName);
-        FileInputStream vm = new FileInputStream(vmName);
-        FileInputStream menu = new FileInputStream(menuName);
-        int vmLen = vm.read(memoryImage, 0, memoryImage.length);
-        // Round up to page and use as base for the menu location
-        int menuStart = ((vmLen + NXTSamba.PAGE_SIZE - 1) / NXTSamba.PAGE_SIZE) * NXTSamba.PAGE_SIZE;
-        // Read the menu. Note we may read less than the full size of the menu.
-        // If so this will be caught by the overall size check below.
-        int menuLen = menu.read(memoryImage, menuStart, memoryImage.length - menuStart);
-        // We store the length and location of the Menu in the last page.
-        storeWord(memoryImage, memoryImage.length - 4, menuLen);
-        storeWord(memoryImage, memoryImage.length - 8, menuStart);
-        // Check overall size allow for size/length markers in last block.
-        if (menuStart + menuLen + 8 > memoryImage.length)
-        {
-            System.out.println("Combined size of VM and Menu > " + memoryImage.length);
-            return null;
-        }
-        System.out.println("VM size: " + vmLen + " bytes.");
-        System.out.println("Menu size: " + menuLen + " bytes.");
-        System.out.println("Total image size " + (menuStart + menuLen) + "/" + memoryImage.length + " bytes.");
-        return memoryImage;
+        System.out.printf("%s %3d%%\r", str, percent);
+        System.out.flush();
     }
-
+    
+    
     int getChoice() throws IOException
     {
         // flush any old input
@@ -177,15 +122,16 @@ public class NXJFlash
      * @param commandLine
      * @return
      */
-    NXTSamba openDevice(CommandLine commandLine) throws NXTCommException, IOException
+    NXTSamba openDevice() throws NXTCommException, IOException
     {
-        NXTSamba samba = new NXTSamba();
+        // First look to see if there are any devices already in SAM-BA mode
+        NXTSamba samba = updater.openSambaDevice(0);
 
         // Look for devices in SAM-BA mode
-        NXTInfo[] nxts = samba.search();
-        if (nxts.length == 0)
+        if (samba == null)
         {
-            System.out.println("No devices in firmware update mode were found.\nSearching for other NXT devices...");
+            NXTInfo[] nxts;
+            System.out.println("No devices in firmware update mode were found.\nSearching for other NXT devices.");
             NXTCommand cmd = NXTCommand.getSingleton();
             nxts = cmd.search(null, NXTCommFactory.USB);
             if (nxts.length <= 0)
@@ -205,71 +151,14 @@ public class NXJFlash
             } while (devNo < 0 || devNo > nxts.length);
             if (devNo == 0)
                 return null;
-            if (!cmd.open(nxts[devNo - 1]))
-            {
-                System.err.println("Failed to open device in command mode.");
-                return null;
-            }
-            // Force into firmware update mode.
-            cmd.boot();
-            System.out.println("Waiting for device to re-boot...");
-            for (int i = 0; i < 30; i++)
-            {
-                nxts = samba.search();
-                if (nxts.length > 0)
-                    break;
-                try
-                {
-                    Thread.sleep(1000);
-                }
-                catch (Exception e)
-                {
-                }
-            }
+            updater.resetDevice(nxts[devNo - 1]);
+            samba = updater.openSambaDevice(30000);
         }
-        if (nxts.length > 1)
-        {
-            System.err.println("Too many devices in firmware update mode.");
-            return null;
-        }
-        if (nxts.length == 0)
-        {
-            System.err.println("Unable to locate the device in firmware update mode.\nPlease place the device in reset mode and try again.");
-            return null;
-        }
-        // Must be just the one. Try and open it!
-        if (!samba.open(nxts[0]))
-        {
-            System.out.println("Failed to open device in SAM-BA mode.");
-            return null;
-        }
+        if (samba == null)
+            System.out.println("No NXT found. Please check that the device is turned on and connected.");
         return samba;
     }
 
-    /**
-     * Update the NXT with the new memory image.
-     * @param nxt Device to update, must be open in SAM-BA mode.
-     * @param memoryImage New image for the device
-     * @param commandLine Update options
-     */
-    void updateDevice(NXTSamba nxt, byte[] memoryImage, CommandLine commandLine) throws IOException
-    {
-        System.out.println("NXT now open in firmware update mode.");
-        System.out.println("Unlocking pages.");
-        nxt.unlockAllPages();
-        System.out.println("Writing memory image...");
-        nxt.writePages(0, memoryImage, 0, memoryImage.length);
-        if (commandLine.hasOption("f"))
-        {
-            System.out.println("Formatting...");
-            byte[] zeroPage = new byte[NXTSamba.PAGE_SIZE];
-            for (int i = 0; i < 3; i++)
-                nxt.writePage(MAX_FIRMWARE_PAGES + i, zeroPage, 0);
-        }
-        System.out.println("Starting new image.");
-        nxt.jump(0x00100000);
-        nxt.close();
-    }
 
     /**
      * Run the flash command.
@@ -280,11 +169,19 @@ public class NXJFlash
     {
         CommandLineParser parser = new CommandLineParser();
         CommandLine commandLine = parser.parse(args);
-
-        byte[] memoryImage = createImage(commandLine);
-        NXTSamba nxt = openDevice(commandLine);
+        String vmFile = null;
+        String menuFile = null;
+        if (commandLine.getArgs().length > 0)
+            vmFile = commandLine.getArgs()[0];
+        if (commandLine.getArgs().length > 1)
+            menuFile = commandLine.getArgs()[1];
+        byte[] memoryImage = updater.createFirmwareImage(vmFile, menuFile);
+        byte [] fs = null;
+        if (commandLine.hasOption("f"))
+            fs = updater.createFilesystemImage();
+        NXTSamba nxt = openDevice();
         if (nxt != null)
-            updateDevice(nxt, memoryImage, commandLine);
+            updater.updateDevice(nxt, memoryImage, fs, commandLine.hasOption("v"));
     }
 
     /**
