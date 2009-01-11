@@ -79,7 +79,13 @@ public class NXTCommFantom extends NXTCommUSB {
     }
 	
 	static {
-		System.loadLibrary("jfantom");
+        try{
+            System.loadLibrary("jfantom");
+        } catch(Exception e)
+        {
+            System.out.println("Caught exception " + e + "while trying to load driver");
+            throw (RuntimeException)e;
+        }
 	}
 
 }
