@@ -11,6 +11,7 @@ import java.io.IOException;
 public class NXTSamba {
 
     public static final int PAGE_SIZE = 256;
+    public static final int FLASH_BASE = 0x00100000;
     
 	private NXTCommUSB nxtComm = null;
     private String version;
@@ -237,7 +238,49 @@ public class NXTSamba {
             offset += PAGE_SIZE;
         }
     }
-    
+
+    /**
+     * Read a single page from flash memory.
+     * @param page
+     * @param data
+     * @param offset
+     * @throws java.io.IOException
+     */
+    public void readPage(int page, byte[] data, int offset) throws IOException
+    {
+        //System.out.println("Write page " + page);
+        int addr = FLASH_BASE + page*PAGE_SIZE;
+        for(int i = 0; i < PAGE_SIZE/4; i++)
+        {
+            int w = readWord(addr);
+            data[offset++] = (byte) w;
+            data[offset++] = (byte) (w >> 8);
+            data[offset++] = (byte) (w >> 16);
+            data[offset++] = (byte) (w >> 24);
+            addr += 4;
+        }
+    }
+
+    /**
+     * Read a series of pages from flash memory.
+     * @param first
+     * @param data
+     * @param start
+     * @param len
+     * @throws java.io.IOException
+     */
+    public void readPages(int first, byte[] data, int start, int len) throws IOException
+    {
+        int offset = start;
+        int page = first;
+        while (offset < start + len)
+        {
+            readPage(page, data, offset);
+            page++;
+            offset += PAGE_SIZE;
+        }
+    }
+
     /**
      * Open the specified USB device and check that it is in SAM-BA mode. We
      * switch the device into "quiet" mode and also download the FlashWrite

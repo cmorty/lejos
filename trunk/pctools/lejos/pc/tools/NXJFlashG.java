@@ -41,19 +41,31 @@ public class NXJFlashG extends javax.swing.JFrame
       p1.add(goB);
       add(p1, BorderLayout.NORTH);  
       msgPanel = new javax.swing.JPanel();
-      msgPanel.setPreferredSize(new Dimension(400, 200));
+      msgPanel.setPreferredSize(new Dimension(400, 160));
       add(msgPanel, BorderLayout.SOUTH);
     
       progressTxt = new javax.swing.JTextArea();
-      progressLabel = new javax.swing.JLabel("Progress Log");
+      progressLabel = new javax.swing.JLabel("Progress Log", JLabel.CENTER);
       progressTxt.setColumns(30);
-      progressTxt.setRows(60);
+      progressTxt.setRows(70);
 
-      JPanel progress = new JPanel();
-      progress.setMinimumSize(new Dimension(350,400));
+      JPanel progress = new JPanel(new BorderLayout());
+      progress.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
+      progress.setMinimumSize(new Dimension(350,550));
       progress.add(progressLabel, BorderLayout.NORTH);
       progress.add(progressTxt, BorderLayout.CENTER);
+
+      JPanel progBarPanel = new JPanel(new BorderLayout());
+      progBarPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
+      progBarPanel.setMinimumSize(new Dimension(300,50));
+      progBarLabel = new javax.swing.JLabel(" ", JLabel.CENTER);
+      progBar = new javax.swing.JProgressBar(0, 100);
+      progBar.setStringPainted(true);
+      progBarPanel.add(progBar, BorderLayout.NORTH);
+      progBarPanel.add(progBarLabel, BorderLayout.SOUTH);
+      progress.add(progBarPanel, BorderLayout.SOUTH);
       add(progress, BorderLayout.CENTER);
+
 
       goB.setText("Start program");
       goB.addActionListener(new java.awt.event.ActionListener()
@@ -84,8 +96,24 @@ public class NXJFlashG extends javax.swing.JFrame
    /**
     * Inner class to to the real work
     */
-   private class Flasher extends Thread
+   private class Flasher extends Thread implements NXJFlashUI
    {
+     NXJFlashUpdate updater = new NXJFlashUpdate(this);
+
+      public void message(String str)
+      {
+        progressTxt.append(str+"\n");
+      }
+
+      public void progress(String str, int percent)
+      {
+        if (str.isEmpty())
+          progBarLabel.setText(" ");
+        else
+          progBarLabel.setText(str);
+        progBar.setValue(percent);
+      }
+
 
       public void run()
        {
@@ -96,13 +124,15 @@ public class NXJFlashG extends javax.swing.JFrame
                     "Click OK when your NXT is turned on and connected ");
             try
             {
-               byte[] memoryImage = createImage();
+               byte[] memoryImage = updater.createFirmwareImage(null, null);
                boolean format = 0 == JOptionPane.showConfirmDialog(msgPanel, "Do you want to erase all NXT files now?",
                        "Clear memory first", JOptionPane.YES_NO_OPTION);
-
+               byte[] fs = null;
+               if (format)
+                  fs = updater.createFilesystemImage();
                NXTSamba nxt = openDevice();
                if (nxt != null)
-                  updateDevice(nxt, memoryImage, format);
+                  updater.updateDevice(nxt, memoryImage, fs, true);
             } catch (Exception e)
             {
                JOptionPane.showMessageDialog(msgPanel, "Bad news: An error has occurred " + e,
@@ -125,14 +155,12 @@ public class NXJFlashG extends javax.swing.JFrame
        */
       NXTSamba openDevice() throws NXTCommException, IOException
        {
-         NXTSamba samba = new NXTSamba();
-
-         // Look for devices in SAM-BA mode
-         NXTInfo[] nxts = samba.search();
-         System.out.println(" Samba search 1 found:" + nxts.length);
-         if (nxts.length == 0)
+         // First look to see if there are any devices already in SAM-BA mode
+         NXTSamba samba = updater.openSambaDevice(0);
+         if (samba == null)
          {
-            progressTxt.append("\n No devices in firmware update mode were found.\nSearching for other NXT devices...\n");
+            NXTInfo[] nxts;
+            progressTxt.append("\nNo devices in firmware update mode were found.\nSearching for other NXT devices.\n");
             NXTCommand cmd = NXTCommand.getSingleton();
             nxts = cmd.search(null, NXTCommFactory.USB);
             if (nxts.length <= 0)
@@ -143,140 +171,19 @@ public class NXJFlashG extends javax.swing.JFrame
                        JOptionPane.WARNING_MESSAGE);
                return null;
             }
-            progressTxt.append("\n found " + nxts[0].name + " Bluetooth address  " + nxts[0].deviceAddress);
-            if (!cmd.open(nxts[0]))
-            {
-               JOptionPane.showMessageDialog(msgPanel,
-                       "Failed to open device in command mode.",
-                       "Error",
-                       JOptionPane.ERROR_MESSAGE);
-               return null;
-            }
+            progressTxt.append("Found " + nxts[0].name + " Bluetooth address  " + nxts[0].deviceAddress + "\n\n");
             // Force into firmware update mode.
-            cmd.boot();
-            progressTxt.append("\n Waiting for device to re-boot...");
-            int n = 0;
-            int count = 1;
-            while (n == 0)
-            {
-               nxts = samba.search();
-               n = nxts.length;
-               System.out.println("searching " + n);
-               progressTxt.append(" . ");
-               try
-               {
-                  Thread.sleep(1000);
-               } catch (Exception e)
-               {
-               }
-               if (0 == count++ % 5)
-                  progressTxt.append("\n still waiting");
-            }
+            updater.resetDevice(nxts[0]);
+            samba = updater.openSambaDevice(30000);
          }
-         if (nxts.length > 1)
-         {
-            System.err.println("Too many devices in firmware update mode.");
-            return null;
-         }
-         if (nxts.length == 0)
+         if (samba == null)
          {
             System.err.println("Unable to locate the device in firmware update mode.\nPlease place the device in reset mode and try again.");
-            return null;
-         }
-         // Must be just the one. Try and open it!
-         if (!samba.open(nxts[0]))
-         {
-            System.out.println("Failed to open device in SAM-BA mode.");
-            return null;
          }
          return samba;
        }
 
-      private void updateDevice(NXTSamba nxt, byte[] memoryImage, boolean format) throws IOException
-       {
 
-         progressTxt.append("\n NXT now open in firmware update mode.");
-         progressTxt.append("\n Unlocking pages.");
-         nxt.unlockAllPages();
-         progressTxt.append("\nWriting memory image...");
-         nxt.writePages(0, memoryImage, 0, memoryImage.length);
-         if (format)
-         {
-            progressTxt.append("\nFormatting...");
-            byte[] zeroPage = new byte[NXTSamba.PAGE_SIZE];
-            for (int i = 0; i < 3; i++)
-            {
-               nxt.writePage(MAX_FIRMWARE_PAGES + i, zeroPage, 0);
-            }
-         }
-         nxt.jump(0x00100000);
-         nxt.close();
-         progressTxt.append("\n The NXT is starting  - using the new image");
-       }
-
-      /**
-       * Create the memory image ready to be flashed to the device. Load the
-       * firmware and menu images into memory ready for flashing. The command
-       * line provides details of the location of the image files to be used.
-       * @param commandLine Options for the location of the firmware and menu.
-       * @return Memory image ready to be flashed to the device.
-       */
-      byte[] createImage() throws IOException, FileNotFoundException
-       {
-         progressTxt.append("\n Building Firmware Image ");
-         byte[] memoryImage = new byte[MAX_FIRMWARE_PAGES * NXTSamba.PAGE_SIZE];
-         String vmName = null;
-         String menuName = null;
-
-         String home = System.getProperty("nxj.home");
-         if (home == null)
-            home = System.getenv("NXJ_HOME");
-         if (home == null)
-            home = "";
-         String SEP = System.getProperty("file.separator");
-         vmName = home + SEP + "bin" + SEP + VM;
-         menuName = home + SEP + "bin" + SEP + MENU;
-         progressTxt.append("\nVM file: " + vmName);
-         progressTxt.append("\nMenu file: " + menuName);
-         FileInputStream vm = new FileInputStream(vmName);
-         FileInputStream menu = new FileInputStream(menuName);
-         int vmLen = vm.read(memoryImage, 0, memoryImage.length);
-         // Round up to page and use as base for the menu location
-         int menuStart = ((vmLen + NXTSamba.PAGE_SIZE - 1) / NXTSamba.PAGE_SIZE) * NXTSamba.PAGE_SIZE;
-         // Read the menu. Note we may read less than the full size of the menu.
-         // If so this will be caught by the overall size check below.
-         int menuLen = menu.read(memoryImage, menuStart, memoryImage.length - menuStart);
-         // We store the length and location of the Menu in the last page.
-         storeWord(memoryImage, memoryImage.length - 4, menuLen);
-         storeWord(memoryImage, memoryImage.length - 8, menuStart);
-         // Check overall size allow for size/length markers in last block.
-         if (menuStart + menuLen + 8 > memoryImage.length)
-         {
-            progressTxt.append("\nCombined size of VM and Menu > " + memoryImage.length);
-            return null;
-         }
-         progressTxt.append("\nVM size: " + vmLen + " bytes.");
-         progressTxt.append("\nMenu size: " + menuLen + " bytes.");
-         progressTxt.append("\nTotal image size " + (menuStart + menuLen) + "/" + memoryImage.length + " bytes.");
-         return memoryImage;
-       }
-
-      /**
-       * Format and store a 32 bit value into a memory image.
-       * @param mem The image in which to store the value
-       * @param offset The location in bytes in the image
-       * @param val The value to be stored.
-       */
-      void storeWord(byte[] mem, int offset, int val)
-       {
-         mem[offset++] = (byte) (val & 0xff);
-         mem[offset++] = (byte) ((val >> 8) & 0xff);
-         mem[offset++] = (byte) ((val >> 16) & 0xff);
-         mem[offset++] = (byte) ((val >> 24) & 0xff);
-       }
-      private static final int MAX_FIRMWARE_PAGES = 336;
-      private static final String VM = "lejos_nxt_rom.bin";
-      private static final String MENU = "StartUpText.bin";
    }
    // Variables declaration - do not modify//GEN-BEGIN:variables
    private javax.swing.JButton goB;
@@ -284,6 +191,8 @@ public class NXJFlashG extends javax.swing.JFrame
    private javax.swing.JLabel progressLabel;
    private javax.swing.JTextArea progressTxt;
    // End of variables declaration//GEN-END:variables
+   private javax.swing.JLabel progBarLabel;
+   private javax.swing.JProgressBar progBar;
    private Flasher flasher;
    public static final int DEFAULT_WIDTH = 400;
    public static final int DEFAULT_HEIGHT = 700;
