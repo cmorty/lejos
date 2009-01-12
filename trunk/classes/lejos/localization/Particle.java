@@ -99,11 +99,12 @@ public class Particle {
     float startAngle = pose.angle;
     readings[forwardReading] = map.range(pose);
     for(int i=forwardReading-1;i>=0;i--) {
-      pose.angle = pose.angle - rangeReadingAngle;
+      pose.angle -= rangeReadingAngle;
       readings[i] = map.range(pose);
     }
     pose.angle = startAngle;
     for(int i=forwardReading+1;i<numReadings;i++) {
+      pose.angle += rangeReadingAngle;
       readings[i] = map.range(pose);
     }
     pose.angle = startAngle;
