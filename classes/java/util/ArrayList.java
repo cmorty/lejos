@@ -185,20 +185,22 @@ public class ArrayList {
 
   /**
    * Remove a element at a specific index.
-   * 
+   *
    * @param index The index of the element to remove.
    * @return the removed element.
    */
   public Object remove(int index) {
+
     if (index > elementCount) {
       throw new ArrayIndexOutOfBoundsException();
     }
 
     Object element = elementData[index];
-    for (int i = index; i < elementCount; i++) {
+    for (int i = index; i < elementCount - 1; i++) {
       elementData[i] = elementData[i + 1];
     }
-    elementCount--;
+    elementData[--elementCount] = null;
+
     return element;
   }
 
@@ -228,8 +230,13 @@ public class ArrayList {
     return elementCount;
   }
 
+  /**
+   * Ensure that we have suffiecient capacity in the array to store
+   * the requested number of elements. Expand the array if required.
+   * @param minCapacity
+   */
   private void ensureCapacity(int minCapacity) {
-    if (elementData.length <= minCapacity) {
+    if (elementData.length < minCapacity) {
       int newCapacity = (capacityIncrement > 0) ? (elementData.length + capacityIncrement) : (elementData.length * 2);
       if (newCapacity < minCapacity) {
         newCapacity = minCapacity;
