@@ -171,13 +171,19 @@ public class DiscoveryAgent {
                 if ((accessCode != LIAC) && (accessCode != GIAC) && ((accessCode < 0x9E8B00) || (accessCode > 0x9E8B3F))) {
                         throw new IllegalArgumentException("Invalid accessCode " + accessCode);
                 }
-                // TODO Start inquiry here using Bluetooth.inquire().
-                // !! Will make alternate method to pass Listener object, then it can notify
-                // the listener real time as they are found! Also will have to make inner
-                // class of Bluetooth.inquire() that is Runnable so it starts method but returns
-                // immediately.
-                // Or perhaps make my own method that returns immediately similar to inquire()?
-                return false;
+                                
+                // TODO: Spawn a separate thread to notify so it returns immediately:
+				/*Thread t = new Thread() {
+					public void run() {
+						
+					}
+				};
+				t.start();*/
+				
+                // TODO Only finds 5 max at present. Expand
+                Bluetooth.startInquire(5, 10, listener);
+                
+                return true;
         }
 
 
