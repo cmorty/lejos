@@ -124,7 +124,8 @@ public class Bluetooth extends NXTCommDevice
 	static final Object sync = new Object();
 	static String cachedName;
 	static String cachedAddress;
-
+	static boolean user_canceled = false; // Used by cancelInquiry()
+	
 	/**
 	 * Low-level method to write BT data
 	 * 
@@ -1225,6 +1226,23 @@ public class Bluetooth extends NXTCommDevice
 		}	
 	}
 	
+	public static void cancelInquiry() {
+		//cmdStart() ; // Do not use because waits for other command to end.
+		// int state = RS_CMD; // Use this?
+		user_canceled = true;
+		cmdInit(MSG_CANCEL_INQUIRY,1,0,0);
+		
+		// TODO cmdWait() is synchronized so never returns, but won't work without calling it.
+		cmdWait(RS_REPLY, RS_CMD, MSG_CANCEL_INQUIRY, TO_SHORT); 
+		// TODO Perhaps if cmdWait() return value is -ve return false?
+		
+		System.err.println("Cancel sent.");
+				
+		// Note: this does not handle the MSG_INQUIRYSTOPPED result because startInquire() and
+		// inquire() already have code to handle this.
+		
+	}
+	
 	/**
 	 * Start a Bluetooth inquiry process.
 	 * 
@@ -1292,7 +1310,11 @@ public class Bluetooth extends NXTCommDevice
 					Thread t = new Thread() {
 						public void run() {
 							// Return proper completion identifier:
-							listy.inquiryCompleted(DiscoveryListener.INQUIRY_COMPLETED);
+							if(user_canceled) {
+								listy.inquiryCompleted(DiscoveryListener.INQUIRY_TERMINATED);
+								user_canceled = false;
+							} else						
+								listy.inquiryCompleted(DiscoveryListener.INQUIRY_COMPLETED);
 						}
 					};
 					// TODO: Daemon thread?
