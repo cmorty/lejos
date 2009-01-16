@@ -211,15 +211,13 @@ public class DiscoveryAgent {
          * @exception NullPointerException
          *                if <code>listener</code> is <code>null</code>
          */
-        public boolean cancelInquiry(DiscoveryListener listener) {
+        public boolean cancelInquiry(final DiscoveryListener listener) {
                 if (listener == null) {
                         throw new NullPointerException();
                 }
-                // TODO Now cancel the inquiry - probably need to write code in Bluetooth
-                // for this. There is a MSG_CANCEL_INQUIRY
-                
-                // Notify DiscoveryListener:
-                listener.inquiryCompleted(DiscoveryListener.INQUIRY_TERMINATED);
+                // TODO Potentially return true/false value from Bluetooth and pass on below.
+                Bluetooth.cancelInquiry();
+                                
                 return true;
         }
 }
