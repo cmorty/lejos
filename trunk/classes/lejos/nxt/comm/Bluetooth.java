@@ -1240,8 +1240,7 @@ public class Bluetooth extends NXTCommDevice
 	 * the menu system does not use any javax.bluetooth classes (other than RemoteDevice) and
 	 * therefore the linker will cut this method out, resulting in more efficient memory use.
 	 */
-	public static Vector startInquire(int maxDevices,  int timeout, final DiscoveryListener listy) {
-		Vector retVec = new Vector();
+	public static void startInquire(int maxDevices,  int timeout, final DiscoveryListener listy) {
 		byte [] cod = {0,0,0,0}; // find all devices
 		byte[] device = new byte[ADDRESS_LEN];
 		byte[] name = new byte[NAME_LEN];
@@ -1259,16 +1258,9 @@ public class Bluetooth extends NXTCommDevice
 				state = RS_WAIT;
 				if (replyBuf[1] == MSG_INQUIRY_RESULT)
 				{
-					System.err.println("Found something:");
-					
 					System.arraycopy(replyBuf, 2, device, 0, ADDRESS_LEN);
                     System.arraycopy(replyBuf, 9, name, 0, NAME_LEN);
 					System.arraycopy(replyBuf, 25, retCod, 0, 4);
-					
-					for(int i=9;i<9+NAME_LEN;i++) {
-						System.err.print("" + (char)replyBuf[i]);
-					}
-					System.err.println(" : END OF NAME");
 					
 					for(int i=0;i<retCod.length;i++) {
 						System.err.print(" " + retCod[i]);
@@ -1286,6 +1278,8 @@ public class Bluetooth extends NXTCommDevice
 							listy.deviceDiscovered(rd, deviceClass);
 						}
 					};
+					// TODO: Set Daemon?
+					t.setDaemon(true);
 					t.start();
 					
 				}
@@ -1297,26 +1291,16 @@ public class Bluetooth extends NXTCommDevice
 					// Spawn a separate thread to notify in case doesn't return immediately:
 					Thread t = new Thread() {
 						public void run() {
-							// TODO: Return proper completion identifier:
+							// Return proper completion identifier:
 							listy.inquiryCompleted(DiscoveryListener.INQUIRY_COMPLETED);
 						}
 					};
-					t.start();
-					
-					// Fill in the names	
-					for (int i = 0; i < retVec.size(); i++) {
-						RemoteDevice btrd = ((RemoteDevice) retVec.elementAt(i));
-						String s = btrd.getFriendlyName(false);
-						if (s.length() == 0) {
-							String nm = lookupName(btrd.getDeviceAddr());
-							btrd.setFriendlyName(nm);
-						}
-					}
-					return retVec;
+					// TODO: Daemon thread?
+					t.setDaemon(true);
+					t.start();	
 				}
 			}
 			cmdComplete();
-			return retVec;
 		}			
 	}
 	
@@ -1351,7 +1335,6 @@ public class Bluetooth extends NXTCommDevice
 					System.arraycopy(replyBuf, 25, retCod, 0, 4);
 					// add the Element to the Vector List
 					retVec.addElement(new RemoteDevice(nameToString(name), addressToString(device), retCod));
-					// TODO Fill in name information here
 				}
 				else if (replyBuf[1] == MSG_INQUIRY_STOPPED)
 				{

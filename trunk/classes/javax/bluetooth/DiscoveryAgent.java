@@ -164,7 +164,7 @@ public class DiscoveryAgent {
          *                started due to other operations that are being performed
          *                by the device
          */
-        public boolean startInquiry(int accessCode, DiscoveryListener listener) throws BluetoothStateException {
+        public boolean startInquiry(int accessCode, final DiscoveryListener listener) throws BluetoothStateException {
                 if (listener == null) {
                         throw new NullPointerException();
                 }
@@ -172,17 +172,18 @@ public class DiscoveryAgent {
                         throw new IllegalArgumentException("Invalid accessCode " + accessCode);
                 }
                                 
-                // TODO: Spawn a separate thread to notify so it returns immediately:
-				/*Thread t = new Thread() {
+                // Spawn a separate thread to notify so it returns immediately:
+				Thread t = new Thread() {
 					public void run() {
-						
+						// !! 5 x 1.28 = 6.4 second timeout long enough? Seems good.
+						// !! Only finds 10 devices max at present. Good enough?
+						Bluetooth.startInquire(10, 5, listener);
 					}
 				};
-				t.start();*/
+				// TODO: Daemon thread?
+				t.setDaemon(true);
+				t.start();
 				
-                // TODO Only finds 5 max at present. Expand
-                Bluetooth.startInquire(5, 10, listener);
-                
                 return true;
         }
 
@@ -216,7 +217,9 @@ public class DiscoveryAgent {
                 }
                 // TODO Now cancel the inquiry - probably need to write code in Bluetooth
                 // for this. There is a MSG_CANCEL_INQUIRY
-                // !! Needs to notify DiscoveryListener in inquiryCompleted()
-                return false;
+                
+                // Notify DiscoveryListener:
+                listener.inquiryCompleted(DiscoveryListener.INQUIRY_TERMINATED);
+                return true;
         }
 }
