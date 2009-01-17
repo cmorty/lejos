@@ -923,4 +923,49 @@ public class RS485 extends NXTCommDevice {
      * @return
      */
     public static native int hsWrite(byte[] buf, int offset, int len);
+    
+    /**
+     * Class to provide polymorphic access to the connection methods.
+     * Gets returned as a singleton by getConnector and can be used to create
+     * connections.
+     */
+    static class Connector extends NXTCommConnector
+    {
+        /**
+         * Open a connection to the specified name/address using the given I/O mode
+         * @param target The name or address of the device/host to connect to.
+         * @param mode The I/O mode to use for this connection
+         * @return A NXTConnection object for the new connection or null if error.
+         */
+        public NXTConnection connect(String target, int mode)
+        {
+            return RS485.connect(target, mode);
+        }
+
+        /**
+         * Wait for an incomming connection, or for the request to timeout.
+         * @param timeout Time in ms to wait for the connection to be made
+         * @param mode I/O mode to be used for the accpeted connection.
+         * @return A NXTConnection object for the new connection or null if error.
+         */
+        public NXTConnection waitForConnection(int timeout, int mode)
+        {
+            return RS485.waitForConnection(timeout, mode);
+        }
+    }
+    
+    static NXTCommConnector connector = null;
+
+    /**
+     * Provides access to the singleton connection object.
+     * This object can be used to create new connections.
+     * @return the connector object
+     */
+    public static NXTCommConnector getConnector()
+    {
+        if (connector == null)
+            connector = new Connector();
+        return connector;
+    }
+
 }
