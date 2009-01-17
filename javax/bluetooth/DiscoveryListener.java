@@ -55,8 +55,9 @@ public interface DiscoveryListener {
 
         /**
          * Called when a device is found during an inquiry. An inquiry searches for
-         * devices that are discoverable. The same device may be returned multiple
-         * times.
+         * devices that are discoverable. NOTE: If a device is found that has not yet
+         * been paired with the NXT brick, the name field of RemoteDevice will be blank.
+         * Make sure to pair your devices through the leJOS NXJ Bluetooth menu on your NXT.
          *
          * @param btDevice the device that was found during the inquiry
          * @param cod - the service classes, major device class, and minor device

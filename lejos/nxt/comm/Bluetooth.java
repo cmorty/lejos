@@ -1234,22 +1234,23 @@ public class Bluetooth extends NXTCommDevice
     /**
      * Cancel a Bluetooth inquiry process that has been started using startInquire
      */
-	public static void cancelInquiry() {
+	public static boolean cancelInquiry() {
 		synchronized (Bluetooth.sync)
 		{
             // Are we running an inquiry?
-            if (inquiryState != IS_RUNNING) return;
+            if (inquiryState != IS_RUNNING) return false;
             // Make sure we are in a "safe" state to issue the cancel
             while (reqState != RS_WAIT && inquiryState == IS_RUNNING)
                 try {Bluetooth.sync.wait(1);}catch(Exception e){}
             // Make sure we are still doing the inquiry
-            if (inquiryState != IS_RUNNING) return;
+            if (inquiryState != IS_RUNNING) return false;
             // Issue the cancel command and return, the state will be reset to
             // RS_WAIT once the command has been sent.
             cmdInit(MSG_CANCEL_INQUIRY, 1, 0, 0);
             reqState = RS_CMD;
             // Mark the inquiry as being aborted
             inquiryState = IS_CANCELED;
+            return true;
         }
 	}
 	
@@ -1261,8 +1262,9 @@ public class Bluetooth extends NXTCommDevice
      * @param listy The listener to notify
 	 */
 	/*
-	 * DEV NOTES: Would prefer this hidden from users.
-	 * This method contains some redundant code in inquire(int, int, byte []).
+	 * DEV NOTES: - Would prefer this hidden from users.
+	 * - It isn't performed in a thread. Method does not return immediately yet. 
+	 * - This method contains some redundant code in inquire(int, int, byte []).
 	 * It seemed better to use redundant code rather than try to amalgamate these methods because
 	 * the menu system does not use any javax.bluetooth classes (other than RemoteDevice) and
 	 * therefore the linker will cut this method out, resulting in more efficient memory use.
@@ -1272,7 +1274,7 @@ public class Bluetooth extends NXTCommDevice
 		byte[] device = new byte[ADDRESS_LEN];
 		byte[] name = new byte[NAME_LEN];
         byte[] retCod = new byte[4];
-		synchronized (Bluetooth.sync)
+        synchronized (Bluetooth.sync)
 		{
 			int state = RS_CMD;
 			cmdStart();
@@ -1311,24 +1313,31 @@ public class Bluetooth extends NXTCommDevice
 				}
 			}
             // At this stage we have completed the inquiry. inquiryState will
-            // tell us how we have compelted things...
+            // tell us how we have completed things...
             // IS_RUNNING: Some sort of error (typically a reset).
             // IS_CANCELED: Inquiry was aborted.
             // IS_COMPLETE: Normal completion.
             // Spawn a separate thread to notify in case doesn't return immediately:
-            Thread t;
+            
+			Thread t;
             if (inquiryState == IS_COMPLETE)
                 t = new Thread() {
                     public void run() {
                             listy.inquiryCompleted(DiscoveryListener.INQUIRY_COMPLETED);
                     }
                 };
-            else
+            else if (inquiryState == IS_CANCELED)
                 t = new Thread() {
                     public void run() {
                             listy.inquiryCompleted(DiscoveryListener.INQUIRY_TERMINATED);
                     }
-                };                 
+                };
+            else 
+                t = new Thread() {
+                    public void run() {
+                            listy.inquiryCompleted(DiscoveryListener.INQUIRY_ERROR);
+                    }
+                };
             // TODO: Daemon thread?
             t.setDaemon(true);
             t.start();	
