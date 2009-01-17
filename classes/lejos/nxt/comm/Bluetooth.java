@@ -107,6 +107,11 @@ public class Bluetooth extends NXTCommDevice
 	
 	private static final byte CN_NONE = -1;
 	private static final int CN_IDLE = 0x7ffffff;
+    
+    private static final byte IS_IDLE = 0;
+    private static final byte IS_RUNNING = 1;
+    private static final byte IS_COMPLETE = 2;
+    private static final byte IS_CANCELED = 3;
 
 		
 	static BTConnection [] Chans = new BTConnection[CHANCNT];
@@ -124,7 +129,7 @@ public class Bluetooth extends NXTCommDevice
 	static final Object sync = new Object();
 	static String cachedName;
 	static String cachedAddress;
-	static boolean user_canceled = false; // Used by cancelInquiry()
+    static byte inquiryState = IS_IDLE;
 	
 	/**
 	 * Low-level method to write BT data
@@ -1225,31 +1230,35 @@ public class Bluetooth extends NXTCommDevice
 			return ret;
 		}	
 	}
-	
+
+    /**
+     * Cancel a Bluetooth inquiry process that has been started using startInquire
+     */
 	public static void cancelInquiry() {
-		//cmdStart() ; // Do not use because waits for other command to end.
-		// int state = RS_CMD; // Use this?
-		user_canceled = true;
-		cmdInit(MSG_CANCEL_INQUIRY,1,0,0);
-		
-		// TODO cmdWait() is synchronized so never returns, but won't work without calling it.
-		cmdWait(RS_REPLY, RS_CMD, MSG_CANCEL_INQUIRY, TO_SHORT); 
-		// TODO Perhaps if cmdWait() return value is -ve return false?
-		
-		System.err.println("Cancel sent.");
-				
-		// Note: this does not handle the MSG_INQUIRYSTOPPED result because startInquire() and
-		// inquire() already have code to handle this.
-		
+		synchronized (Bluetooth.sync)
+		{
+            // Are we running an inquiry?
+            if (inquiryState != IS_RUNNING) return;
+            // Make sure we are in a "safe" state to issue the cancel
+            while (reqState != RS_WAIT && inquiryState == IS_RUNNING)
+                try {Bluetooth.sync.wait(1);}catch(Exception e){}
+            // Make sure we are still doing the inquiry
+            if (inquiryState != IS_RUNNING) return;
+            // Issue the cancel command and return, the state will be reset to
+            // RS_WAIT once the command has been sent.
+            cmdInit(MSG_CANCEL_INQUIRY, 1, 0, 0);
+            reqState = RS_CMD;
+            // Mark the inquiry as being aborted
+            inquiryState = IS_CANCELED;
+        }
 	}
 	
 	/**
 	 * Start a Bluetooth inquiry process.
 	 * 
 	 * @param maxDevices the maximum number of devices to discover
-	 * @param timeout the timeout value in units of 1.28 seconds
-	 * @param cod the class of device to look for
-	 * @return a vector of all the devices found
+     * @param timeout the timeout value in units of 1.28 seconds
+     * @param listy The listener to notify
 	 */
 	/*
 	 * DEV NOTES: Would prefer this hidden from users.
@@ -1270,7 +1279,7 @@ public class Bluetooth extends NXTCommDevice
 			cmdInit(MSG_BEGIN_INQUIRY, 8, maxDevices, 0);
 			cmdBuf[4] = (byte)timeout;
 			System.arraycopy(cod, 0, cmdBuf, 5, 4);	
-			
+			inquiryState = IS_RUNNING;
 			while (cmdWait(RS_REPLY, state, MSG_ANY, TO_LONG) >= 0)
 			{
 				state = RS_WAIT;
@@ -1279,12 +1288,6 @@ public class Bluetooth extends NXTCommDevice
 					System.arraycopy(replyBuf, 2, device, 0, ADDRESS_LEN);
                     System.arraycopy(replyBuf, 9, name, 0, NAME_LEN);
 					System.arraycopy(replyBuf, 25, retCod, 0, 4);
-					
-					for(int i=0;i<retCod.length;i++) {
-						System.err.print(" " + retCod[i]);
-					}
-					System.err.println(" : END OF COD");
-					
 					// TODO Test that COD data is valid:
 					int codRecord = retCod[3] << retCod[2] << retCod[1] << retCod[0];
 					final DeviceClass deviceClass = new DeviceClass(codRecord);
@@ -1303,26 +1306,35 @@ public class Bluetooth extends NXTCommDevice
 				}
 				else if (replyBuf[1] == MSG_INQUIRY_STOPPED)
 				{
-					System.err.println("All done.");
-					cmdComplete();
-					
-					// Spawn a separate thread to notify in case doesn't return immediately:
-					Thread t = new Thread() {
-						public void run() {
-							// Return proper completion identifier:
-							if(user_canceled) {
-								listy.inquiryCompleted(DiscoveryListener.INQUIRY_TERMINATED);
-								user_canceled = false;
-							} else						
-								listy.inquiryCompleted(DiscoveryListener.INQUIRY_COMPLETED);
-						}
-					};
-					// TODO: Daemon thread?
-					t.setDaemon(true);
-					t.start();	
+                    if (inquiryState == IS_RUNNING) inquiryState = IS_COMPLETE;
+                    break;
 				}
 			}
+            // At this stage we have completed the inquiry. inquiryState will
+            // tell us how we have compelted things...
+            // IS_RUNNING: Some sort of error (typically a reset).
+            // IS_CANCELED: Inquiry was aborted.
+            // IS_COMPLETE: Normal completion.
+            // Spawn a separate thread to notify in case doesn't return immediately:
+            Thread t;
+            if (inquiryState == IS_COMPLETE)
+                t = new Thread() {
+                    public void run() {
+                            listy.inquiryCompleted(DiscoveryListener.INQUIRY_COMPLETED);
+                    }
+                };
+            else
+                t = new Thread() {
+                    public void run() {
+                            listy.inquiryCompleted(DiscoveryListener.INQUIRY_TERMINATED);
+                    }
+                };                 
+            // TODO: Daemon thread?
+            t.setDaemon(true);
+            t.start();	
+            inquiryState = IS_IDLE;
 			cmdComplete();
+            
 		}			
 	}
 	
