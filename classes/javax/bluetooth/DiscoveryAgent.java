@@ -30,8 +30,12 @@ import java.util.Vector;
  * inquiry, but provides a quick way to get a list of devices that may be in the
  * area.
  *
+ * WARNING: If a device is found that has not yet been paired with the NXT brick, the name 
+ * field of RemoteDevice will be blank. Make sure to pair your devices through the leJOS 
+ * NXJ Bluetooth menu on your NXT.
+ *
  * @author BB
- * @version 1.0 November 30, 2008
+ * @version 1.0 January 17, 2009
  *
  */
 public class DiscoveryAgent {
@@ -137,6 +141,9 @@ public class DiscoveryAgent {
          * <code>deviceDiscovered()</code> of the interface
          * <code>DiscoveryListener</code>. The <code>cancelInquiry()</code>
          * method is called to stop the inquiry.
+         * NOTE: If a device is found that has not yet been paired with the NXT brick, 
+         * the name field of RemoteDevice will be blank. Make sure to pair your devices 
+         * through the leJOS NXJ Bluetooth menu on your NXT.
          *
          * @see #cancelInquiry
          * @see #GIAC
@@ -164,27 +171,28 @@ public class DiscoveryAgent {
          *                started due to other operations that are being performed
          *                by the device
          */
-        public boolean startInquiry(int accessCode, final DiscoveryListener listener) throws BluetoothStateException {
-                if (listener == null) {
-                        throw new NullPointerException();
-                }
-                if ((accessCode != LIAC) && (accessCode != GIAC) && ((accessCode < 0x9E8B00) || (accessCode > 0x9E8B3F))) {
-                        throw new IllegalArgumentException("Invalid accessCode " + accessCode);
-                }
-                                
-                // Spawn a separate thread to notify so it returns immediately:
-				Thread t = new Thread() {
-					public void run() {
-						// !! 5 x 1.28 = 6.4 second timeout long enough? Seems good.
-						// !! Only finds 10 devices max at present. Good enough?
-						Bluetooth.startInquire(10, 5, listener);
-					}
-				};
-				// TODO: Daemon thread?
-				t.setDaemon(true);
-				t.start();
-				
-                return true;
+        public boolean startInquiry(int accessCode, DiscoveryListener listener) throws BluetoothStateException {
+            final DiscoveryListener listy = listener;
+        	if (listener == null) {
+                    throw new NullPointerException();
+            }
+            if ((accessCode != LIAC) && (accessCode != GIAC) && ((accessCode < 0x9E8B00) || (accessCode > 0x9E8B3F))) {
+                    throw new IllegalArgumentException("Invalid accessCode " + accessCode);
+            }
+            
+            // Spawn a separate thread to notify so it returns immediately:
+			Thread t = new Thread() {
+				public void run() {
+					// !! 5 x 1.28 = 6.4 second timeout long enough? Seems good.
+					// !! Only finds 10 devices max at present. Good enough?
+					Bluetooth.startInquire(10, 5, listy);
+				}
+			};
+			// Daemon thread?
+			t.setDaemon(true);
+			t.start();
+			
+            return true;
         }
 
 
@@ -211,13 +219,11 @@ public class DiscoveryAgent {
          * @exception NullPointerException
          *                if <code>listener</code> is <code>null</code>
          */
-        public boolean cancelInquiry(final DiscoveryListener listener) {
+        public boolean cancelInquiry(DiscoveryListener listener) {
                 if (listener == null) {
                         throw new NullPointerException();
                 }
-                // TODO Potentially return true/false value from Bluetooth and pass on below.
-                Bluetooth.cancelInquiry();
-                                
-                return true;
+                // Return true/false value from Bluetooth class
+                return Bluetooth.cancelInquiry();
         }
 }
