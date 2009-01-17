@@ -162,14 +162,33 @@ public class StartUpText
 		return number;
 	}
 
+    private static void setAddress()
+    {
+        // Ensure the USB address property is set correctly. We use the
+        // Bluetooth address as our serial number.
+        String addr = Bluetooth.getLocalAddress();
+        if (!addr.equals(USB.getAddress()))
+        {
+            Settings.setProperty(USB.SERIAL_NO, addr);
+            USB.setAddress(addr);
+        }
+        String name = Bluetooth.getFriendlyName();
+        if (!name.equals(USB.getName()))
+        {
+            Settings.setProperty(USB.NAME, name);
+            USB.setName(name);
+        }
+    }
 	
 	public static void main(String[] args) throws Exception {
 		
 		//1 RConsole.open();
 				
 		Indicators ind = new Indicators();
-		USBRespond usb = new USBRespond();
-		BTRespond bt = new BTRespond();
+		//USBRespond usb = new USBRespond();
+		//BTRespond bt = new BTRespond();
+        Responder usb = new Responder(USB.getConnector());
+        Responder bt = new Responder(Bluetooth.getConnector());
 		String devices = "Devices";
 		String found = "Found";
 		String status = "Status ";
@@ -230,6 +249,7 @@ public class StartUpText
 		File[] files = null;
 		boolean quit = false;
 		int visibility = 0;
+        setAddress();
 		btPowerOn = setBluetoothPower(Bluetooth.getStatus() == 0, false);		
 		ind.setDaemon(true);	
 		ind.start();
@@ -633,167 +653,84 @@ class Indicators extends Thread
 	}
 }
 
-class USBRespond extends Thread 
+/**
+ * Class to handle commands from USB/Bluetooth connections.
+ * @author andy
+ */
+class Responder extends LCPResponder 
 {
 	TextMenu menu;
 	Indicators ind;
-	
+
+    /**
+     * Create an object for the required connection type.
+     * @param con Connector object for the underlying protocol.
+     */
+    public Responder(NXTCommConnector con)
+    {
+        super(con);
+    }
+    
+    /**
+     * Hook the menu to allow remote activity to interact with it.
+     * @param menu The system menu.
+     */
 	public void setMenu(TextMenu menu) {
 		this.menu = menu;
 	}
 	
+    /**
+     * Hook up the activity inidicator...
+     * @param ind
+     */
 	public void setIndicator(Indicators ind) {
 		this.ind = ind;
 	}
     
-    private void setAddress()
+    /**
+     * We over-ride the pre command stage of processing to provide activity
+     * indication.
+     * @param inMsg
+     * @param len
+     * @return
+     */
+    protected int preCommand(byte[] inMsg, int len)
     {
-        // Ensure the USB address property is set correctly. We use the
-        // Bluetooth address as our serial number.
-        String addr = Bluetooth.getLocalAddress();
-        if (!addr.equals(USB.getAddress()))
+        if (len > 0)
         {
-            Settings.setProperty(USB.SERIAL_NO, addr);
-            USB.setAddress(addr);
+            ind.ioActive();
+            menu.resetTimeout();
         }
-        String name = Bluetooth.getFriendlyName();
-        if (!name.equals(USB.getName()))
-        {
-            Settings.setProperty(USB.NAME, name);
-            USB.setName(name);
-        }
+        return super.preCommand(inMsg, len);
     }
-	
-	public void run() {
-		byte[] inMsg = new byte[64];
-		byte [] reply = new byte[64];
-		boolean cmdMode = true;
-        USBConnection conn = null;
-		int len;
-
-        setAddress();
-        
-		while (true)
-		{
-            conn = USB.waitForConnection(0, NXTConnection.LCP);
-            if (conn == null) {
-                continue;
+    
+    /**
+     * We over-ride the post command processing to allow us to do menu
+     * specific processing of some commands.
+     * @param inMsg
+     * @param inLen
+     * @param replyMsg
+     * @param replyLen
+     */
+    protected void postCommand(byte[] inMsg, int inLen, byte[] replyMsg, int replyLen)
+    {
+        if (inMsg[1] == LCP.CLOSE|| inMsg[1] == LCP.DELETE) {
+            if (inMsg[1] == LCP.DELETE) {
+                try {
+                    File.defrag();
+                } catch (IOException ioe) {
+                    File.reset();
+                }
             }
-            cmdMode = false;
-			while(!cmdMode)
-			{
-				len = conn.read(inMsg,64);
-
-				if (len > 0)
-				{
-					ind.ioActive();
-					menu.resetTimeout();
-					int replyLen = LCP.emulateCommand(inMsg,len, reply);
-					if ((inMsg[0] & 0x80) == 0) conn.write(reply, replyLen);
-					if (inMsg[1] == LCP.CLOSE|| inMsg[1] == LCP.DELETE) {
-						if (inMsg[1] == LCP.DELETE) {
-							try {
-								File.defrag();
-							} catch (IOException ioe) {
-								File.reset();
-							}
-						}
-						Sound.beepSequenceUp();
-						menu.quit();
-					}
-                    if (inMsg[1] == LCP.BOOT)
-                    {
-                        // Reboot into firmware update mode. Only supported
-                        // for USB connections.
-                        System.boot();
-                    }
-					if (inMsg[1] == LCP.NXJ_DISCONNECT) { 
-						conn.close(); 
-						cmdMode = true;
-					}
-				}
-				else if (len < 0)
-				{
-					conn.close();
-					cmdMode = true;
-				}
-				Thread.yield();
-			}
-		}
-	}
+            Sound.beepSequenceUp();
+            menu.quit();
+        }
+        if (inMsg[1] == LCP.BOOT)
+        {
+            // Reboot into firmware update mode. Only supported
+            System.boot();
+        }
+        super.postCommand(inMsg, inLen, replyMsg, replyLen);
+    }
 }
-
-class BTRespond  extends Thread {
-	TextMenu menu;
-	Indicators ind;
-	
-	public void setMenu(TextMenu menu) {
-		this.menu = menu;
-	}
-	
-	public void setIndicator(Indicators ind) {
-		this.ind = ind;
-	}
-	
-	public void run() 
-	{
-		byte[] inMsg = new byte[64];
-		byte [] reply = new byte[64];
-		boolean cmdMode = true;
-		BTConnection conn = null;
-		int len;
-		
-		while (true)
-		{
-			// Wait for power on
-			while (!Bluetooth.getPower())
-			{
-				try {
-					Thread.sleep(500);
-				} catch (InterruptedException e) {}				
-			}
-            conn = Bluetooth.waitForConnection(0, NXTConnection.LCP, null);
-            if (conn == null) {
-                continue;
-            }
-			cmdMode = false;
-
-			while(!cmdMode)
-			{
-				len = conn.read(inMsg,64);
-
-				if (len > 0)
-				{
-					ind.ioActive();
-					menu.resetTimeout();
-					int replyLen = LCP.emulateCommand(inMsg,len, reply);
-					if ((inMsg[0] & 0x80) == 0) conn.write(reply, replyLen);
-					if (inMsg[1] == LCP.CLOSE|| inMsg[1] == LCP.DELETE) {
-						if (inMsg[1] == LCP.DELETE) {
-							try {
-								File.defrag();
-							} catch (IOException ioe) {
-								File.reset();
-							}
-						}
-						Sound.beepSequenceUp();
-						menu.quit();
-					}
-					if (inMsg[1] == LCP.NXJ_DISCONNECT) { 
-						conn.close(); 
-						cmdMode = true;
-					}
-				}
-				else if (len < 0)
-				{
-					conn.close();
-					cmdMode = true;
-				}
-				Thread.yield();
-			}
-		}
-	}
-}
-
-
 
