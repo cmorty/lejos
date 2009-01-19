@@ -231,7 +231,7 @@ public class ArrayList {
   }
 
   /**
-   * Ensure that we have suffiecient capacity in the array to store
+   * Ensure that we have sufficient capacity in the array to store
    * the requested number of elements. Expand the array if required.
    * @param minCapacity
    */
