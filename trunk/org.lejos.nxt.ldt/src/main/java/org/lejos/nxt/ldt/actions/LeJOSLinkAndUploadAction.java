@@ -357,11 +357,12 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 	        // Do we need this? Probably yes...
 	        break;
 	      case IClasspathEntry.CPE_CONTAINER: // set of entries referenced indirectly via a classpath container
-          // Do we need this? Probably yes...
+	        // Do we need this? Probably yes...
 	        break;		      
 	    }
-	    return classPath;
 	  }
+	  return classPath;
+	}
 
 	/**
 	 * links a file TODO this is a copy of NXJLinkAndUpload.run from pctools
