@@ -29,7 +29,8 @@ import lejos.nxt.Motor;
  * try{Thread.sleep(1000);}
  * catch(InterruptedException e){}
  * pilot.stop();
- * </pre></code> Revised 2009/01/10 to include drift correction, thanks to Dirk
+ * </pre></code>
+ * </p>
  **/
 public class Pilot {
   /**
@@ -85,10 +86,9 @@ public class Pilot {
 
   /**
    * Allocates a Pilot object, and sets the physical parameters of the NXT robot.<br>
-   * Assumes Motor.forward() causes the robot to move forward).
+   * Assumes Motor.forward() causes the robot to move forward.
    * 
-   * @param wheelDiameter Diameter of the tire, in any convenient units (the diameter in mm is usually printed on the
-   *          tire).
+   * @param wheelDiameter Diameter of the tire, in any convenient units (diameter in mm is usually printed on the tire).
    * @param trackWidth Distance between center of right tire and center of left tire, in same units as wheelDiameter.
    * @param leftMotor The left Motor (e.g., Motor.C).
    * @param rightMotor The right Motor (e.g., Motor.A).
@@ -100,8 +100,7 @@ public class Pilot {
   /**
    * Allocates a Pilot object, and sets the physical parameters of the NXT robot.<br>
    * 
-   * @param wheelDiameter Diameter of the tire, in any convenient units (the diameter in mm is usually printed on the
-   *          tire).
+   * @param wheelDiameter Diameter of the tire, in any convenient units (diameter in mm is usually printed on the tire).
    * @param trackWidth Distance between center of right tire and center of left tire, in same units as wheelDiameter.
    * @param leftMotor The left Motor (e.g., Motor.C).
    * @param rightMotor The right Motor (e.g., Motor.A).
@@ -129,8 +128,7 @@ public class Pilot {
    * width) had a deviation of 16cm to the right after traveling 400cm in a "straight" line. A drift correction of
    * -0.001f did correct this).
    * 
-   * @param wheelDiameter Diameter of the tire, in any convenient units (the diameter in mm is usually printed on the
-   *          tire).
+   * @param wheelDiameter Diameter of the tire, in any convenient units (diameter in mm is usually printed on the tire).
    * @param trackWidth Distance between center of right tire and center of left tire, in same units as wheelDiameter.
    * @param driftCorrection A correction factor to compensate for <b>small</b> differences in wheel size.
    * @param leftMotor The left Motor (e.g., Motor.C).
