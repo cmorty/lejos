@@ -335,19 +335,33 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 	 * @throws JavaModelException
 	 */
 	private String createClassPath(IJavaProject project)
-			throws JavaModelException {
-		String classPath = LeJOSNXJUtil.getAbsoluteProjectTargetDir(project)
-				.getAbsolutePath();
-		// path separator
-		String pathSeparator = System.getProperty("path.separator");
-		// project's classpath
-		IClasspathEntry[] entries = project.getResolvedClasspath(true);
-		// build string
-		for (IClasspathEntry classpathEntry : entries) {
-			classPath += pathSeparator + classpathEntry.getPath().toOSString();
-		}
-		return classPath;
-	}
+	throws JavaModelException {
+	  String classPath = LeJOSNXJUtil.getAbsoluteProjectTargetDir(project)
+	  .getAbsolutePath();
+	  // path separator
+	  String pathSeparator = System.getProperty("path.separator");
+	  // project's classpath
+	  IClasspathEntry[] entries = project.getResolvedClasspath(true);
+	  // build string
+	  for (IClasspathEntry classpathEntry : entries) {
+	    switch(classpathEntry.getEntryKind()) {
+	      case IClasspathEntry.CPE_SOURCE: // source => ignore
+	        break;
+	      case IClasspathEntry.CPE_LIBRARY: // directory with classes or jar => append
+	        classPath += pathSeparator + classpathEntry.getPath().toOSString();
+	        break;
+	      case IClasspathEntry.CPE_PROJECT: // another project => append all its classpath
+	        // TODO: how to add these classpath ???
+	        break;
+	      case IClasspathEntry.CPE_VARIABLE: // a project or library indirectly via a classpath variable in the first segment of the path
+	        // Do we need this? Probably yes...
+	        break;
+	      case IClasspathEntry.CPE_CONTAINER: // set of entries referenced indirectly via a classpath container
+          // Do we need this? Probably yes...
+	        break;		      
+	    }
+	    return classPath;
+	  }
 
 	/**
 	 * links a file TODO this is a copy of NXJLinkAndUpload.run from pctools
