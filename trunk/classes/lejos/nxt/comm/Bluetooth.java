@@ -130,7 +130,8 @@ public class Bluetooth extends NXTCommDevice
 	static String cachedName;
 	static String cachedAddress;
     static byte inquiryState = IS_IDLE;
-	
+	static boolean notifyToken = false;
+    
 	/**
 	 * Low-level method to write BT data
 	 * 
@@ -1255,21 +1256,21 @@ public class Bluetooth extends NXTCommDevice
 	}
 	
 	/**
-	 * Start a Bluetooth inquiry process.
+	 * Start a Bluetooth inquiry process and notify listener of each device found. This method
+	 * is primarily used by DiscoveryAgent.startInquiry() and is run in a separate thread.
 	 * 
 	 * @param maxDevices the maximum number of devices to discover
      * @param timeout the timeout value in units of 1.28 seconds
      * @param listy The listener to notify
 	 */
 	/*
-	 * DEV NOTES: - Would prefer this hidden from users.
-	 * - It isn't performed in a thread. Method does not return immediately yet. 
-	 * - This method contains some redundant code in inquire(int, int, byte []).
+	 * DEV NOTES: 
+	 * This method contains some redundant code in inquire(int, int, byte []).
 	 * It seemed better to use redundant code rather than try to amalgamate these methods because
 	 * the menu system does not use any javax.bluetooth classes (other than RemoteDevice) and
 	 * therefore the linker will cut this method out, resulting in more efficient memory use.
 	 */
-	public static void startInquire(int maxDevices,  int timeout, final DiscoveryListener listy) {
+	public static void inquireNotify(int maxDevices,  int timeout, final DiscoveryListener listy) {
 		byte [] cod = {0,0,0,0}; // find all devices
 		byte[] device = new byte[ADDRESS_LEN];
 		byte[] name = new byte[NAME_LEN];
@@ -1290,15 +1291,23 @@ public class Bluetooth extends NXTCommDevice
 					System.arraycopy(replyBuf, 2, device, 0, ADDRESS_LEN);
                     System.arraycopy(replyBuf, 9, name, 0, NAME_LEN);
 					System.arraycopy(replyBuf, 25, retCod, 0, 4);
-					// TODO Test that COD data is valid:
-					int codRecord = retCod[3] << retCod[2] << retCod[1] << retCod[0];
+					
+					int codRecord = (retCod[0] << 8) + retCod[1];
+					codRecord = (codRecord << 8) + retCod[2];
+					codRecord = (codRecord << 8) + retCod[3];
+					
 					final DeviceClass deviceClass = new DeviceClass(codRecord);
 					final RemoteDevice rd = new RemoteDevice(nameToString(name), addressToString(device), retCod);
 					
 					// Spawn a separate thread to notify in case doesn't return immediately:
 					Thread t = new Thread() {
 						public void run() {
-							listy.deviceDiscovered(rd, deviceClass);
+							// Make sure only one notify thread is running at a time using notifyToken
+							while(notifyToken) {Thread.yield();}
+							notifyToken = true; // indicate this notify is executing
+							if(inquiryState != IS_CANCELED) 
+								listy.deviceDiscovered(rd, deviceClass);
+							notifyToken = false; // when notify returns set back to false
 						}
 					};
 					// TODO: Set Daemon?
