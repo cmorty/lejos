@@ -33,10 +33,21 @@ public class DeviceClass {
 	int minor;
 	int service;
 		
+	/**
+	 * 
+	 * @param record
+	 * 
+	 * @exception IllegalArgumentException if <code>record</code> has any bits
+     * between 24 and 31 set
+	 */
 	public DeviceClass(int record) {
+		
 		major = record & MAJOR_MASK; 
 		minor = record & MINOR_MASK;
 		service = record & SERVICE_MASK;
+		
+		if ((record & 0xff000000) != 0)
+            throw new IllegalArgumentException();
 	}
 	
 	/**

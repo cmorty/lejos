@@ -1,11 +1,9 @@
 package javax.bluetooth;
 
-import lejos.nxt.comm.RConsole; // DELETE ME!!
 import java.io.IOException;
 import javax.microedition.io.Connection;
 import lejos.nxt.comm.Bluetooth;
 import lejos.nxt.comm.BTConnection;
-import lejos.nxt.comm.Bluetooth;
 
 /**
  * Represents a remote Bluetooth device.
