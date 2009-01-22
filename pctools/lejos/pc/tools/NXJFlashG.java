@@ -130,9 +130,11 @@ public class NXJFlashG extends javax.swing.JFrame
                byte[] fs = null;
                if (format)
                   fs = updater.createFilesystemImage();
+               boolean verify = 0 == JOptionPane.showConfirmDialog(msgPanel, "Do you want to verify ? (takes several minutes)",
+                       "Verify firmware after flash", JOptionPane.YES_NO_OPTION);
                NXTSamba nxt = openDevice();
                if (nxt != null)
-                  updater.updateDevice(nxt, memoryImage, fs, true);
+                  updater.updateDevice(nxt, memoryImage, fs, verify);
             } catch (Exception e)
             {
                JOptionPane.showMessageDialog(msgPanel, "Bad news: An error has occurred " + e,
