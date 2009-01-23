@@ -165,3 +165,6 @@ hsRead([BII)I
 hsPending()I
 hsSend(BB[BII[C)I
 hsRecv([BI[CI)I
+
+#System
+getUserPages()I

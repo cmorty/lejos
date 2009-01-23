@@ -105,6 +105,7 @@ public interface SpecialSignatureConstants {
     "hsRead([BII)I",
     "hsPending()I",
     "hsSend(BB[BII[C)I",
-    "hsRecv([BI[CI)I"
+    "hsRecv([BI[CI)I",
+    "getUserPages()I"
   };
 }

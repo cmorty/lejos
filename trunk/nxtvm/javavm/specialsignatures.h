@@ -105,4 +105,5 @@
 #define hsPending_4_5I 98
 #define hsSend_4BB_1BII_1C_5I 99
 #define hsRecv_4_1BI_1CI_5I 100
+#define getUserPages_4_5I 101
 #endif // _SPECIALSIGNATURES_H

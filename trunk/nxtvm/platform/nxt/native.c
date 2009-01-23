@@ -508,6 +508,10 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
     }
     return EXEC_CONTINUE;
     
+  case getUserPages_4_5I:
+    push_word(FLASH_MAX_PAGES - flash_start_page);
+    return EXEC_CONTINUE;
+
   default:
     throw_exception(noSuchMethodError);
   }
