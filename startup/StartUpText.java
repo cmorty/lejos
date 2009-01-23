@@ -181,7 +181,8 @@ public class StartUpText
     }
 	
 	public static void main(String[] args) throws Exception {
-		
+        playTune();
+
 		//1 RConsole.open();
 				
 		Indicators ind = new Indicators();
@@ -237,9 +238,8 @@ public class StartUpText
 		                         System.getFirmwareRevision() + ")";
         String menuVersion = "Menu Version";
         
-        playTune();
         
- // Run default program if required
+        // Run default program if required
         if( System.getProgramExecutionsCount() == 1 &&
             (Button.readButtons() & 2) != 2 &&  //left button down? 
             Settings.getProperty(defaultProgramAutoRunProperty, "").equals("ON")
