@@ -24,8 +24,9 @@
 #include <string.h>
 #include "rconsole.h"
 
+#define MAX_BUF   64
 #define EP_OUT    1
-#define EP_IN    2
+#define EP_IN     2
 
 #define AT91C_PERIPHERAL_ID_UDP        11
 
@@ -39,25 +40,45 @@
 #define AT91C_UDP_FDR2  ((AT91_REG *)   0xFFFB0058) 
 #define AT91C_UDP_FDR3  ((AT91_REG *)   0xFFFB005C) 
 
-// Set or clear flag(s) in a register
-#define SET(register, flags)        ((register) = (register) | (flags))
-#define CLEAR(register, flags)      ((register) &= ~(flags))
+// The following functions are used to set/clear bits in the control
+// register. This must be synchronized against the actual hardware.
+// Care must also be taken to avoid clearing bits that may have been
+// set by the hardware during the operation. The actual code comes
+// from the Atmel sample drivers.
+/// Bitmap for all status bits in CSR.
+#define AT91C_UDP_STALLSENT AT91C_UDP_ISOERROR
+#define REG_NO_EFFECT_1_ALL      AT91C_UDP_RX_DATA_BK0 | AT91C_UDP_RX_DATA_BK1 \
+                                |AT91C_UDP_STALLSENT   | AT91C_UDP_RXSETUP \
+                                |AT91C_UDP_TXCOMP
 
-// Poll the status of flags in a register
-#define ISSET(register, flags)      (((register) & (flags)) == (flags))
-#define ISCLEARED(register, flags)  (((register) & (flags)) == 0)
+/// Sets the specified bit(s) in the UDP_CSR register.
+/// \param endpoint The endpoint number of the CSR to process.
+/// \param flags The bitmap to set to 1.
+#define UDP_SETEPFLAGS(csr, flags) \
+    { \
+        volatile unsigned int reg; \
+        reg = (csr) ; \
+        reg |= REG_NO_EFFECT_1_ALL; \
+        reg |= (flags); \
+        do (csr) = reg; \
+        while ( ((csr) & (flags)) != (flags)); \
+    }
 
-#define UDP_CLEAREPFLAGS(register, dFlags) { \
-    while (!ISCLEARED((register), dFlags)) \
-        CLEAR((register), dFlags); \
-}
-
-#define UDP_SETEPFLAGS(register, dFlags) { \
-    while (ISCLEARED((register), dFlags)) \
-        SET((register), dFlags); \
-}
+/// Clears the specified bit(s) in the UDP_CSR register.
+/// \param endpoint The endpoint number of the CSR to process.
+/// \param flags The bitmap to clear to 0.
+#define UDP_CLEAREPFLAGS(csr, flags) \
+    { \
+        volatile unsigned int reg; \
+        reg = (csr); \
+        reg |= REG_NO_EFFECT_1_ALL; \
+        reg &= ~(flags); \
+        do (csr) = reg; \
+        while ( ((csr) & (flags)) != 0); \
+    }
 
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
+
 // USB States
 #define USB_READY       0
 #define USB_CONFIGURED  1
@@ -68,6 +89,9 @@
 #define USB_WRITEABLE   0x100000
 #define USB_READABLE    0x200000
 
+// Critical section macros. Disable and enable interrupts
+#define ENTER() (*AT91C_UDP_IDR = (AT91C_UDP_EPINT0 | AT91C_UDP_RXSUSP | AT91C_UDP_RXRSM))
+#define LEAVE() (*AT91C_UDP_IER = (AT91C_UDP_EPINT0 | AT91C_UDP_RXSUSP | AT91C_UDP_RXRSM))
 
 static U8 currentConfig;
 static U32 currentFeatures;
@@ -206,7 +230,7 @@ reset()
   // setup config state.
   currentConfig = 0;
   currentRxBank = AT91C_UDP_RX_DATA_BK0;
-  configured = USB_READY;
+  configured = (configured & USB_DISABLED) | USB_READY;
   currentFeatures = 0;
   newAddress = -1;
   outCnt = 0;
@@ -269,17 +293,17 @@ udp_read(U8* buf, int off, int len)
    */
   int packetSize = 0, i;
   
-  if (configured != USB_CONFIGURED) return -1;
   if (len == 0) return 0;
   if ((*AT91C_UDP_CSR1) & currentRxBank) // data to read
   {
     packetSize = ((*AT91C_UDP_CSR1) & AT91C_UDP_RXBYTECNT) >> 16;
     if (packetSize > len) packetSize = len;
-     
+    // Transfer the data 
     for(i=0;i<packetSize;i++) buf[off+i] = *AT91C_UDP_FDR1;
-     
-    *AT91C_UDP_CSR1 &= ~(currentRxBank);    
+
     // Flip bank
+    ENTER();
+    UDP_CLEAREPFLAGS(*AT91C_UDP_CSR1, currentRxBank); 
     if (currentRxBank == AT91C_UDP_RX_DATA_BK0) {    
       currentRxBank = AT91C_UDP_RX_DATA_BK1;
     } else {
@@ -287,18 +311,21 @@ udp_read(U8* buf, int off, int len)
     }
     // We may have an enable/reset pending do it now if there is no data
     // in the buffers.
-    if (delayedEnable && ((*AT91C_UDP_CSR) & AT91C_UDP_RXBYTECNT) == 0)
+    if (delayedEnable && ((*AT91C_UDP_CSR1) & AT91C_UDP_RXBYTECNT) == 0)
     {
       delayedEnable = 0;
-      (*AT91C_UDP_CSR1) = (AT91C_UDP_EPEDS | AT91C_UDP_EPTYPE_BULK_OUT);
+      UDP_CLEAREPFLAGS(*AT91C_UDP_CSR1, AT91C_UDP_FORCESTALL);
       (*AT91C_UDP_RSTEP) |= AT91C_UDP_EP1;
       (*AT91C_UDP_RSTEP) &= ~AT91C_UDP_EP1;
     }
+    LEAVE();
+
     // use special case for a real zero length packet so we can use it to
     // indicate EOF
     if (packetSize == 0) return -2;
     return packetSize;
   }
+  if (configured != USB_CONFIGURED) return -1;
   return 0;
 }
 
@@ -314,11 +341,13 @@ udp_write(U8* buf, int off, int len)
   // Can we write ?
   if ((*AT91C_UDP_CSR2 & AT91C_UDP_TXPKTRDY) != 0) return 0;
   // Limit to max transfer size
-  if (len > 64) len = 64;
+  if (len > MAX_BUF) len = MAX_BUF;
   for(i=0;i<len;i++) *AT91C_UDP_FDR2 = buf[off+i];
   
+  ENTER();
   UDP_SETEPFLAGS(*AT91C_UDP_CSR2, AT91C_UDP_TXPKTRDY);
   UDP_CLEAREPFLAGS(*AT91C_UDP_CSR2, AT91C_UDP_TXCOMP);
+  LEAVE();
   return len;
 }
 
@@ -477,14 +506,34 @@ udp_enumerate()
         
     case STD_SET_CONFIGURATION:
 
-      configured = (val ? USB_CONFIGURED : USB_READY);
       currentConfig = val;
+      if (val)
+      {
+        configured = USB_CONFIGURED;
+        *AT91C_UDP_GLBSTATE  = AT91C_UDP_CONFG;
+        delayedEnable = 0;
+        // Make sure we are not stalled
+        UDP_CLEAREPFLAGS(*AT91C_UDP_CSR1, AT91C_UDP_FORCESTALL);
+        UDP_CLEAREPFLAGS(*AT91C_UDP_CSR2, AT91C_UDP_FORCESTALL);
+        UDP_CLEAREPFLAGS(*AT91C_UDP_CSR3, AT91C_UDP_FORCESTALL);
+        // Now enable the endpoints
+        UDP_SETEPFLAGS(*AT91C_UDP_CSR1, (AT91C_UDP_EPEDS | AT91C_UDP_EPTYPE_BULK_OUT));
+        UDP_SETEPFLAGS(*AT91C_UDP_CSR2, (AT91C_UDP_EPEDS | AT91C_UDP_EPTYPE_BULK_IN));
+        UDP_SETEPFLAGS(*AT91C_UDP_CSR3, AT91C_UDP_EPTYPE_INT_IN);
+        // and reset them...
+        (*AT91C_UDP_RSTEP) |= (AT91C_UDP_EP1|AT91C_UDP_EP2|AT91C_UDP_EP3);
+        (*AT91C_UDP_RSTEP) &= ~(AT91C_UDP_EP1|AT91C_UDP_EP2|AT91C_UDP_EP3);
+      }
+      else
+      {
+        configured = USB_READY;
+        *AT91C_UDP_GLBSTATE  = AT91C_UDP_FADDEN;
+        delayedEnable = 0;
+        UDP_CLEAREPFLAGS(*AT91C_UDP_CSR1, AT91C_UDP_EPEDS|AT91C_UDP_FORCESTALL);
+        UDP_CLEAREPFLAGS(*AT91C_UDP_CSR2, AT91C_UDP_EPEDS|AT91C_UDP_FORCESTALL);
+        *AT91C_UDP_CSR3 = 0;
+      }
       udp_send_null(); 
-      *AT91C_UDP_GLBSTATE  = (val) ? AT91C_UDP_CONFG : AT91C_UDP_FADDEN;
-      delayedEnable = 0;
-      *AT91C_UDP_CSR1 = (val) ? (AT91C_UDP_EPEDS | AT91C_UDP_EPTYPE_BULK_OUT) : 0; 
-      *AT91C_UDP_CSR2 = (val) ? (AT91C_UDP_EPEDS | AT91C_UDP_EPTYPE_BULK_IN)  : 0;
-      *AT91C_UDP_CSR3 = (val) ? (AT91C_UDP_EPTYPE_INT_IN)   : 0;      
       
       break;
       
@@ -496,15 +545,15 @@ udp_enumerate()
       {
         switch (ind)
         {
-          case 1:   
-            (*AT91C_UDP_CSR1) = 0;
+          case 1:
+            UDP_SETEPFLAGS(*AT91C_UDP_CSR1, AT91C_UDP_FORCESTALL);
             delayedEnable = 0;
             break;
           case 2:   
-            (*AT91C_UDP_CSR2) = 0;
+            UDP_SETEPFLAGS(*AT91C_UDP_CSR2, AT91C_UDP_FORCESTALL);
             break;
           case 3:   
-            (*AT91C_UDP_CSR3) = 0;
+            UDP_SETEPFLAGS(*AT91C_UDP_CSR3, AT91C_UDP_FORCESTALL);
             break;
         }
         udp_send_null();
@@ -517,35 +566,38 @@ udp_enumerate()
 
       if ((val == 0) && ind && (ind <= 3))
       {
-        // Enable and reset the end point                                             
-        if (ind == 1) {
-          // We need to take special care for the input end point because
-          // we may have data in the hardware buffer. If we do then the reset
-          // will cause this to be lost. To prevent this loss we delay the
-          // enable until the data has been read.
-          if (((*AT91C_UDP_CSR1) & AT91C_UDP_RXBYTECNT) == 0)
-          {
-            (*AT91C_UDP_CSR1) = (AT91C_UDP_EPEDS | AT91C_UDP_EPTYPE_BULK_OUT); 
-            (*AT91C_UDP_RSTEP) |= AT91C_UDP_EP1;
-            (*AT91C_UDP_RSTEP) &= ~AT91C_UDP_EP1;
-            delayedEnable = 0;
-          }
-          else
-          {
-            // Use delayed anable. We also force the ep disabled to prevent
-            // any I/O using the wrong data toggle.
-            (*AT91C_UDP_CSR1) &= ~AT91C_UDP_EPEDS;
-            delayedEnable = 1;
-          }
-        } else if (ind == 2) {
-          (*AT91C_UDP_CSR2) = (AT91C_UDP_EPEDS | AT91C_UDP_EPTYPE_BULK_IN);
-          (*AT91C_UDP_RSTEP) |= AT91C_UDP_EP2;
-          (*AT91C_UDP_RSTEP) &= ~AT91C_UDP_EP2;
-        } else if (ind == 3) {
-          (*AT91C_UDP_CSR3) = (AT91C_UDP_EPEDS | AT91C_UDP_EPTYPE_INT_IN);
-          (*AT91C_UDP_RSTEP) |= AT91C_UDP_EP3;
-          (*AT91C_UDP_RSTEP) &= ~AT91C_UDP_EP3; 
+        // Enable and reset the end point
+        int res = 0;
+        switch (ind)
+        {
+          case 1:
+            // We need to take special care for the input end point because
+            // we may have data in the hardware buffer. If we do then the reset
+            // will cause this to be lost. To prevent this loss we delay the
+            // enable until the data has been read.
+            if ((*AT91C_UDP_CSR1) & currentRxBank) 
+            {
+              UDP_SETEPFLAGS(*AT91C_UDP_CSR1, AT91C_UDP_FORCESTALL);
+              delayedEnable = 1;
+            }
+            else
+            {
+              UDP_CLEAREPFLAGS(*AT91C_UDP_CSR1, AT91C_UDP_FORCESTALL);
+              delayedEnable = 0;
+              res = AT91C_UDP_EP1;
+            }
+            break;
+          case 2:   
+            UDP_CLEAREPFLAGS(*AT91C_UDP_CSR2, AT91C_UDP_FORCESTALL);
+            res = AT91C_UDP_EP2;
+            break;
+          case 3:   
+            UDP_CLEAREPFLAGS(*AT91C_UDP_CSR3, AT91C_UDP_FORCESTALL);
+            res = AT91C_UDP_EP3;
+            break;
         }
+        (*AT91C_UDP_RSTEP) |= res;
+        (*AT91C_UDP_RSTEP) &= ~res;
         udp_send_null();
       }
       else udp_send_stall();
@@ -579,13 +631,13 @@ udp_enumerate()
         switch (ind)
         {
           case 1: 
-            status = ((*AT91C_UDP_CSR1) & AT91C_UDP_EPEDS) ? 0 : 1; 
+            status = ((*AT91C_UDP_CSR1) & AT91C_UDP_FORCESTALL) ? 1 : 0; 
             break;
           case 2: 
-            status = ((*AT91C_UDP_CSR2) & AT91C_UDP_EPEDS) ? 0 : 1;
+            status = ((*AT91C_UDP_CSR2) & AT91C_UDP_FORCESTALL) ? 1 : 0; 
             break;
           case 3: 
-            status = ((*AT91C_UDP_CSR3) & AT91C_UDP_EPEDS) ? 0 : 1;
+            status = ((*AT91C_UDP_CSR3) & AT91C_UDP_FORCESTALL) ? 1 : 0; 
             break;
         }
         udp_send_control((U8 *) &status, MIN(sizeof(status), len));
@@ -661,8 +713,10 @@ display_string(hex4(intCnt++));*/
     //display_goto_xy(0,2);
     //display_string("Suspend      ");
     //display_update();
-    if (configured == USB_CONFIGURED) configured = USB_SUSPENDED;
-    else configured = USB_READY;
+    if ((configured & ~USB_DISABLED) == USB_CONFIGURED)
+      configured = (configured & USB_DISABLED) | USB_SUSPENDED;
+    else
+      configured = (configured & USB_DISABLED) | USB_READY;
     *AT91C_UDP_ICR = SUSPEND_INT;
     currentRxBank = AT91C_UDP_RX_DATA_BK0;
   }
@@ -671,8 +725,10 @@ display_string(hex4(intCnt++));*/
     //display_goto_xy(0,2);
     //display_string("Resume     ");
     //display_update();
-    if (configured == USB_SUSPENDED) configured = USB_CONFIGURED;
-    else configured = USB_READY;
+    if ((configured & ~USB_DISABLED) == USB_SUSPENDED)
+      configured = (configured & USB_DISABLED) | USB_CONFIGURED;
+    else
+      configured = (configured & USB_DISABLED) | USB_READY;
     *AT91C_UDP_ICR = WAKEUP;
     *AT91C_UDP_ICR = SUSPEND_RESUME;
   }
@@ -699,6 +755,7 @@ udp_status()
    * connection.
    */
   int ret = (configured << 28) | (currentConfig << 24) | (currentFeatures & 0xffff);
+
   if (configured == USB_CONFIGURED)
   {
     if ((*AT91C_UDP_CSR1) & currentRxBank) ret |= USB_READABLE;
@@ -735,27 +792,16 @@ udp_enable(int reset)
     interrupts_enable(); 
   if (reset)
     udp_reset();
-  else
-  {
-    if (configured & USB_CONFIGURED)
-    {
-      *AT91C_UDP_CSR1 = (AT91C_UDP_EPEDS | AT91C_UDP_EPTYPE_BULK_OUT); 
-      *AT91C_UDP_CSR2 = (AT91C_UDP_EPEDS | AT91C_UDP_EPTYPE_BULK_IN);
-      *AT91C_UDP_CSR3 = (AT91C_UDP_EPTYPE_INT_IN);      
-      (*AT91C_UDP_RSTEP) |= AT91C_UDP_EP1;
-      (*AT91C_UDP_RSTEP) &= ~AT91C_UDP_EP1;
-      (*AT91C_UDP_RSTEP) |= AT91C_UDP_EP2;
-      (*AT91C_UDP_RSTEP) &= ~AT91C_UDP_EP2;
-      (*AT91C_UDP_RSTEP) |= AT91C_UDP_EP3;
-      (*AT91C_UDP_RSTEP) &= ~AT91C_UDP_EP3;
-    }
-  }
 }
 
 void
 udp_disable()
 {
   /* Disable processing of USB requests */
+  U8 buf[MAX_BUF];
+  // Discard any input
+  while (udp_read(buf, 0, sizeof(buf)) > 0)
+    ;
   int i_state = interrupts_get_and_disable();
   configured |= USB_DISABLED;
   currentFeatures = 0;
