@@ -10,11 +10,10 @@ public class Flash {
 	
 	/**
 	 * Maximum number of pages available to user flash memory.
-	 * Change this if the start of user flash memory in the
-	 * firmware changes.
+     * This value is obtained automatically from the firmware.
 	 * 
 	 */
-	public static final int MAX_USER_PAGES = 688;
+	public static final int MAX_USER_PAGES = NXT.getUserPages();
 	
 	/**
 	 * Indicates the # of bytes per page in a page of Flash memory.

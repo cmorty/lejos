@@ -57,4 +57,12 @@ public class NXT {
 	  * @return the revision number
 	  */
 	 public static native int getFirmwareRevision();
+     
+     /**
+      * Return the number of flash pages available to user programs.
+      * Normally these pages are used to hold the leJOS file system.
+      * 
+      * @return The number of user pages.
+      */
+     public static native int getUserPages();
 }

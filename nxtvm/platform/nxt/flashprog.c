@@ -16,7 +16,7 @@ flash_write_page(U32 *page, int page_num)
    */
   int i, istate;
   
-  if (page_num + flash_start_page > 1023) return 0;
+  if (page_num + flash_start_page >= 1024) return 0;
   /* We must disbale interrupts. However we need to try and ensure that all
    * current interrupt activity is complete before we do that. We talk to
    * the avr every 1ms and this uses interrupt driven I/O so we try to make
