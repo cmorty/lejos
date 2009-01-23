@@ -45,7 +45,6 @@ struct nxt_t {
   int is_in_reset_mode;
 };
 
-
 nxt_error_t nxt_init(nxt_t **nxt)
 {
   usb_init();
@@ -224,6 +223,7 @@ long
 nxt_open0(long hdev)
 {
   struct usb_dev_handle *hdl;
+  struct usb_device *dev = (struct usb_device *)hdev;
   int ret;
   char buf[64];
   hdl = usb_open((struct usb_device *) hdev);
@@ -235,7 +235,16 @@ nxt_open0(long hdev)
       usb_close(hdl);
       return 0;
     }
-  ret = usb_claim_interface(hdl, 0);
+  // If we are in SAMBA mode we need interface 1, otherwise 0
+  if (dev->descriptor.idVendor == VENDOR_ATMEL &&
+                   dev->descriptor.idProduct == PRODUCT_SAMBA)
+  {
+    ret = usb_claim_interface(hdl, 1);
+  }
+  else
+  {
+    ret = usb_claim_interface(hdl, 0);
+  }
 
   if (ret < 0)
     {
@@ -257,7 +266,10 @@ void nxt_close0(long hhdl)
   // Discard any data that is left in the buffer
   while (usb_bulk_read(hdl, 0x82, buf, sizeof(buf), 1) > 0)
     ;
+  // Release interface. This is a little iffy we do not know which interface
+  // we are actually using. Releasing both seems to work... but...
   usb_release_interface(hdl, 0);
+  usb_release_interface(hdl, 1);
   usb_close(hdl);
 }
 
