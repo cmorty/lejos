@@ -21,7 +21,6 @@ public class NXTReceive
 
     public static void main(String[] args) throws Exception
     {
-        RConsole.openUSB(0);
         String[] connectionStrings = new String[]{"Bluetooth", "USB", "RS485"};
         TextMenu connectionMenu = new TextMenu(connectionStrings, 0, "Connection");
         String[] modeStrings = new String[] {"Packet", "Raw"};
