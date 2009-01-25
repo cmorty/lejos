@@ -297,7 +297,7 @@ public final class Math {
    */
   public static double acos(double a) {
     if ((a<-1)||(a>1)) {
-      return Double.NaN;
+      return NaN;
     }
     return PI/2 - atan(a/sqrt(1 - a * a));
   }
