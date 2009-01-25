@@ -238,7 +238,7 @@ public class Bluetooth extends NXTCommDevice
 	
 	/**
 	 * The main Bluetooth control thread. This controls access to the Bluetooth
-	 * interface. It controls and peforms all low level access to the device.
+	 * interface. It controls and performs all low level access to the device.
 	 * Switches it between data channels and command streams as required.
 	 */
 	static class BTThread extends Thread
@@ -769,7 +769,6 @@ public class Bluetooth extends NXTCommDevice
 			cmdInit(MSG_CLOSE_CONNECTION, 2, handle, 0);
 			if (cmdWait(RS_REPLY, RS_CMD, MSG_CLOSE_CONNECTION_RESULT, TO_SHORT) >= 0)
 				ret = (int)replyBuf[2];
-			int retryCnt = 5;
 			do {
 				// We may have a race condition here, or have triggered a reset
 				// wait for things to settle
@@ -940,7 +939,7 @@ public class Bluetooth extends NXTCommDevice
 	}
 
     /**
-     * Conect to the specified device, either by name or address
+     * Connect to the specified device, either by name or address
      * @param target String name or address
      * @param mode I/O mode for this connection
      * @param pin The pin to use for this connection
@@ -964,7 +963,7 @@ public class Bluetooth extends NXTCommDevice
     }
 
     /**
-     * Conect to the specified device, either by name or address
+     * Connect to the specified device, either by name or address
      * @param target String name or address
      * @param mode I/O mode for this connection
      * @return BTConnection object or null
@@ -1190,7 +1189,7 @@ public class Bluetooth extends NXTCommDevice
 	/**
 	 * Add device to known devices
 	 * @param d Remote Device
-	 * @return true iff add was successful
+	 * @return true if add was successful
 	 */
 	public static boolean addDevice(RemoteDevice d) {
 		String addr = d.getDeviceAddr();
@@ -1215,7 +1214,7 @@ public class Bluetooth extends NXTCommDevice
 	/**
 	 * Remove device from known devices
 	 * @param d Remote Device
-	 * @return true iff remove was successful
+	 * @return true if remove was successful
 	 */
 	public static boolean removeDevice(RemoteDevice d) {
 		String addr = d.getDeviceAddr();
@@ -1234,6 +1233,7 @@ public class Bluetooth extends NXTCommDevice
 
     /**
      * Cancel a Bluetooth inquiry process that has been started using startInquire
+     * @return true if the request is cancelled false if there is an error.
      */
 	public static boolean cancelInquiry() {
 		synchronized (Bluetooth.sync)
