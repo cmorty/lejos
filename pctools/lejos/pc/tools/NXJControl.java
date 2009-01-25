@@ -51,7 +51,8 @@ public class NXJControl implements ListSelectionListener {
   private JSlider bSlide = new JSlider(-100,100);
   private JSlider cSlide = new JSlider(-100,100); 
   private JButton connectButton = new JButton("Connect");
-  private JButton dataConnectButton = new JButton("Connect");
+  private JButton dataConnectButton = new JButton("Download");
+  private TextField dataColumns = new TextField("8",2);
   private JButton searchButton = new JButton("Search");
   private JButton consoleConnectButton = new JButton("Connect");
   private JButton monitorUpdateButton = new JButton("Update");
@@ -248,8 +249,13 @@ public class NXJControl implements ListSelectionListener {
           
               int b = 15;
               int recordCount = 0;
-              // TODO: allow to set this
-              int rowLength = 8;
+              int rowLength = 8; // default
+              try {
+                rowLength = Integer.parseInt(dataColumns.getText());
+              }
+              catch (NumberFormatException ex) {
+                System.out.println(dataColumns.getText() + " is not a number, default reset to 8");
+              }
               try { //handshake - ready to read data
                 os.write(b);
                 os.flush();
@@ -658,7 +664,11 @@ public class NXJControl implements ListSelectionListener {
     JLabel dataTitleLabel = new JLabel("Data Log");
     dataPanel.add(dataTitleLabel, BorderLayout.NORTH);
     dataPanel.add(new JScrollPane(theDataLog), BorderLayout.CENTER);
-    dataPanel.add(dataConnectButton, BorderLayout.SOUTH);
+    JPanel commandPanel = new JPanel();
+    commandPanel.add(new JLabel("Columns:"));
+    commandPanel.add(dataColumns);
+    commandPanel.add(dataConnectButton);
+    dataPanel.add(commandPanel, BorderLayout.SOUTH);
   }
   
   // Lay out Monitor Panel
