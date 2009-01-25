@@ -35,7 +35,6 @@ import lejos.nxt.*;
 public class BTConnection extends NXTConnection
 {
 	
-    private static final int BTC_DEFHEADER = 2;
 	private static final int BTC_FLUSH_WAIT = 10;
 	
 	public static final int AM_DISABLE = 0;
@@ -291,7 +290,7 @@ public class BTConnection extends NXTConnection
 	 * @return a value from 0 to 255
 	 */
 	public int getSignalStrength() {
-		int strength = Bluetooth.getSignalStrength((byte) handle); 
+		int strength = Bluetooth.getSignalStrength(handle); 
 		return strength;
 	}
 }

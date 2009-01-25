@@ -80,7 +80,7 @@ public abstract class NXTConnection implements StreamConnection {
 	/**
 	 * Attempt to write bytes to the Bluetooth connection. Optionally wait if it
 	 * is not possible to write at the moment. Supports both packet and stream
-	 * write opperations. If in packet mode a set of header bytes indicating
+	 * write operations. If in packet mode a set of header bytes indicating
 	 * the size of the packet will be sent ahead of the data.
 	 * NOTE: If in packet mode and writing large packets (> 254 bytes), then
 	 * the blocking mode (wait = true), should be used to ensure that the packet
@@ -177,7 +177,7 @@ ioloop: while (offset < len)
 		// packet has a header and data is not large enough for the data then
 		// the next read will continue to read the packet
 		int offset = 0;
-		//RConsole.print("read\n");
+		//RConsole.println("read state " + state + " incnt " + inCnt);
 		if (state == CS_IDLE) return -3;
 		if (state == CS_DATALOST)
 		{
@@ -200,7 +200,7 @@ ioloop: while (offset < len)
 			pktOffset = 0;
 			pktLen = outLen;
 		}
-		while (pktOffset < pktLen)
+		ioloop:while (pktOffset < pktLen)
 		{
 			//if (debug)RConsole.print(" inCnt " + inCnt + " pktOffset " + pktOffset + " pktLen " + pktLen + "\n");
 			// Make sure we have something to read
@@ -208,8 +208,21 @@ ioloop: while (offset < len)
 			{
 				//if (debug)RConsole.print("About to wait inOff " + inOffset + " inCnt " + inCnt + "\n");
 				if (!wait) return offset;
+                // We have no data in the input buffer, check for errors.
+				if (state != CS_CONNECTED)
+                {
+                    //RConsole.println("Wait read state " + state + " offset " + offset);
+                    // return partial data if we have it...
+                    if (offset > 0) break ioloop;
+                    if (state == CS_DISCONNECTED) return -1;
+                    if (state == CS_DATALOST)
+                    {
+                        state = CS_CONNECTED;
+                        return -2;
+                    }
+                    return -3;
+                }
 				if (fillBuffer(true) < 0) disconnected();
-				if (state != CS_CONNECTED) return (offset > 0 ? offset : -3);
 				//if (debug)RConsole.print("wakeup cnt " + inCnt + "\n");
 			}
 			if (pktOffset < 0)
@@ -218,8 +231,7 @@ ioloop: while (offset < len)
 				pktLen += ((int) inBuf[inOffset++] & 0xff) << (header + pktOffset)*8;
 				pktOffset++;
 				inCnt--;
-                //.drawInt(pktLen, 4, 8, 3);
-				//if (debug)RConsole.print("Header len " +pktLen + " offset " + pktOffset + "\n");
+				//RConsole.print("Header len " +pktLen + " offset " + pktOffset + "\n");
 			}
 			else
 			{
@@ -240,9 +252,10 @@ ioloop: while (offset < len)
 			inOffset = inOffset % inBuf.length;
 		}
 		// End of packet set things up for next time
-		//if (debug)RConsole.println("Read len " + offset + " buf " + inCnt);
+		//RConsole.println("Read len " + offset + " buf " + inCnt);
 		pktOffset = -header;
 		pktLen = 0;
+        // Check for EOF
         if (header > 0 && offset == 0)
         {
             state = CS_EOF;
