@@ -9,6 +9,7 @@ import javax.swing.event.*;
 import javax.swing.table.*;
 import java.awt.event.*;
 import java.io.*;
+import java.text.NumberFormat;
 
 /**
  * 
@@ -71,7 +72,6 @@ public class NXJControl implements ListSelectionListener {
   private NXTComm nxtCommData;
   private boolean consoleConnected = false;
   private boolean dataConnected = false;
-  private int currentRow;
   private NXJControl control;
   private DataOutputStream os;
   private DataInputStream is;
@@ -81,10 +81,13 @@ public class NXJControl implements ListSelectionListener {
   private NXTConnector conn = new NXTConnector();
   private NXTInfo[] nxts;
   
+  // Formatter
+  private static final NumberFormat FORMAT_FLOAT = NumberFormat.getNumberInstance();
+
   /**
    * Command line entry point
    * 
-   * @param args
+   * @param args Arguments are ignored.
    */
   public static void main(String args[]) {
 	try {
@@ -143,7 +146,7 @@ public class NXJControl implements ListSelectionListener {
         		  nxtCommand = new NXTCommand();
         		  nxtCommand.addLogListener(new ToolsLogger());
         		  nxtCommands[row] = nxtCommand;
-        		  currentRow = row;
+//        		  currentRow = row;
         		  System.out.println("Opening " + nxts[row].name);
         		  open = nxtCommand.open(nxts[row]);       		  
         	  } catch(NXTCommException e) {
@@ -245,6 +248,7 @@ public class NXJControl implements ListSelectionListener {
           
               int b = 15;
               int recordCount = 0;
+              // TODO: allow to set this
               int rowLength = 8;
               try { //handshake - ready to read data
                 os.write(b);
@@ -260,7 +264,7 @@ public class NXJControl implements ListSelectionListener {
                 for (int i = 0; i < length; i++) {
                   if (0 == recordCount % rowLength) theDataLog.append("\n");
                   x = is.readFloat();
-                  theDataLog.append(x + "\t ");
+                  theDataLog.append(FORMAT_FLOAT.format(x) + "\t ");
                   recordCount++;
                 }
                 nxtCommData.close();
