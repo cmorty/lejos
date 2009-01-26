@@ -42,6 +42,8 @@ public final class Math {
 	* less than the argument and is equal to a mathematical integer.
  	*/
 	public static double ceil(double a) {
+		//TODO fix for large values bigger then Integer.MAX_VALUE
+		//TODO actually use long instead of int
 		return ((a<0)?(int)a:(int)(a+1));	
 	}
 	
@@ -49,7 +51,9 @@ public final class Math {
 	* Returns the largest (closest to positive infinity) double value that is not
 	* greater than the argument and is equal to a mathematical integer.
 	*/
-	public static double floor(double a) {	
+	public static double floor(double a) {
+		//TODO fix for large values bigger then Integer.MAX_VALUE
+		//TODO actually use long instead of int
 		return ((a<0)?(int)(a-1):(int)a);	
 	}
 	
@@ -68,21 +72,49 @@ public final class Math {
 	}
 	
 	/**
-	*Returns the lesser of two double values.
+	* Returns the lesser of two long values.
+	*/
+	public static long min(long a, long b) {	
+		return ((a<b)?a:b);
+	}
+	
+	/**
+	* Returns the lesser of two float values.
+	*/
+	public static float min(float a, float b) {	
+		return ((a<b)?a:b);
+	}
+	
+	/**
+	* Returns the lesser of two double values.
 	*/
 	public static double min(double a, double b) {	
 		return ((a<b)?a:b);
 	}
 	
 	/**
-	*Returns the greater of two integer values.
+	* Returns the greater of two integer values.
 	*/
 	public static int max(int a, int b) {	
 		return ((a>b)?a:b);
 	}
 	
 	/**
-	*Returns the greater of two double values.
+	* Returns the greater of two long values.
+	*/
+	public static long max(long a, long b) {	
+		return ((a>b)?a:b);
+	}
+	
+	/**
+	* Returns the greater of two float values.
+	*/
+	public static float max(float a, float b) {	
+		return ((a>b)?a:b);
+	}
+	
+	/**
+	* Returns the greater of two double values.
 	*/
 	public static double max(double a, double b) {	
 		return ((a>b)?a:b);
@@ -187,17 +219,35 @@ public final class Math {
 	
 	/**
 	* Returns the absolute value of a double value. If the argument is not negative, the argument is
-   * returned. If the argument is negative, the negation of the argument is returned.
+	* returned. If the argument is negative, the negation of the argument is returned.
 	*/
 	public static double abs(double a) {
 		return ((a<0)?-a:a);
 	}
 
 	/**
+	* Returns the absolute value of a float value. If the argument is not negative, the argument is
+	* returned. If the argument is negative, the negation of the argument is returned.
+	*/
+	public static float abs(float a) {
+		return ((a<0)?-a:a);
+	}
+	
+	/**
+	* Returns the absolute value of a long value. If the argument is not negative, the argument is
+	* returned. If the argument is negative, the negation of the argument is returned.
+	*/
+	public static long abs(long a) {
+		//TODO document that Long.MIN_VALUE == -Long.MIN_VALUE
+		return ((a<0)?-a:a);
+	}
+	
+	/**
 	* Returns the absolute value of an integer value. If the argument is not negative, the argument is
-   * returned. If the argument is negative, the negation of the argument is returned.
+	* returned. If the argument is negative, the negation of the argument is returned.
 	*/
 	public static int abs(int a) {
+		//TODO document that Integer.MIN_VALUE == -Integer.MIN_VALUE
 		return ((a<0)?-a:a);
 	}
 	
@@ -236,6 +286,7 @@ public final class Math {
   */
   public static double sqrt(double x)
   {
+	//TODO improve precision
     double root = x, guess=0;
 
     if(x<0) return NaN;
