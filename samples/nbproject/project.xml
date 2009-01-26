@@ -6,65 +6,62 @@
             <name>samples</name>
             <minimum-ant-version>1.6.5</minimum-ant-version>
             <source-roots>
+                <root id="src.BlueStats.dir"/>
+                <root id="src.BTConnectTest.dir"/>
+                <root id="src.BTGPS.dir"/>
+                <root id="src.BTReceive.dir"/>
+                <root id="src.BTTest.dir"/>
+                <root id="src.build.dir"/>
+                <root id="src.BumperCar.dir"/>
+                <root id="src.ColorDetector.dir"/>
+                <root id="src.CompassTest.dir"/>
+                <root id="src.DistanceTest.dir"/>
+                <root id="src.DLTest.dir"/>
+                <root id="src.ExceptionTest.dir"/>
+                <root id="src.FileTest.dir"/>
+                <root id="src.GraphicsSample.dir"/>
+                <root id="src.HelloWorld.dir"/>
+                <root id="src.I2CDevices.dir"/>
+                <root id="src.KeyboardTest.dir"/>
+                <root id="src.LatteboxTest.dir"/>
+                <root id="src.LCDUI.dir"/>
+                <root id="src.Line.dir"/>
+                <root id="src.Listen.dir"/>
+                <root id="src.LLCMonitor.dir"/>
+                <root id="src.MatrixTest.dir"/>
+                <root id="src.MemoryTest.dir"/>
+                <root id="src.MonitorTest.dir"/>
+                <root id="src.NXTCamTest.dir"/>
                 <root id="src.NXTConnectTest.dir"/>
                 <root id="src.NXTReceive.dir"/>
-                <root id="src.BlueStats.dir" name="Source Packages"/>
-                <root id="src.BTConnectTest.dir" name="BlueStats"/>
-                <root id="src.BTGPS.dir" name="BTConnectTest"/>
-                <root id="src.BTReceive.dir" name="BTGPS"/>
-                <root id="src.BTTest.dir" name="BTReceive"/>
-                <root id="src.build.dir" name="BTTest"/>
-                <root id="src.BumperCar.dir" name="build"/>
-                <root id="src.ColorDetector.dir" name="BumperCar"/>
-                <root id="src.CompassTest.dir" name="ColorDetector"/>
-                <root id="src.DistanceTest.dir" name="CompassTest"/>
-                <root id="src.DLTest.dir" name="DistanceTest"/>
-                <root id="src.ExceptionTest.dir" name="DLTest"/>
-                <root id="src.FileTest.dir" name="ExceptionTest"/>
-                <root id="src.GraphicsSample.dir" name="FileTest"/>
-                <root id="src.HelloWorld.dir" name="GraphicsSample"/>
-                <root id="src.I2CDevices.dir" name="HelloWorld"/>
-                <root id="src.KeyboardTest.dir" name="I2CDevices"/>
-                <root id="src.LatteboxTest.dir" name="KeyboardTest"/>
-                <root id="src.LCDUI.dir" name="LatteboxTest"/>
-                <root id="src.Line.dir" name="LCDUI"/>
-                <root id="src.Listen.dir" name="Line"/>
-                <root id="src.LLCMonitor.dir" name="Listen"/>
-                <root id="src.MatrixTest.dir" name="LLCMonitor"/>
-                <root id="src.MemoryTest.dir" name="MatrixTest"/>
-                <root id="src.MonitorTest.dir" name="MemoryTest"/>
-                <root id="src.NXTCamTest.dir" name="MonitorTest"/>
-                <root id="src.NXTServoTest.dir" name="NXTCamTest"/>
-                <root id="src.PerformanceTest.dir" name="NXTServoTest"/>
-                <root id="src.PFTest.dir" name="PerformanceTest"/>
-                <root id="src.PilotTester.dir" name="PFTest"/>
-                <root id="src.RCNavigator.dir" name="PilotTester"/>
-                <root id="src.RCXEmulator.dir" name="RCNavigator"/>
-                <root id="src.RCXMMTest.dir" name="RCXEmulator"/>
-                <root id="src.RCXMuxTest.dir" name="RCXMMTest"/>
-                <root id="src.RCXPortTest.dir" name="RCXMuxTest"/>
-                <root id="src.RCXRemote.dir" name="RCXPortTest"/>
-                <root id="src.RCXRemoteMotor.dir" name="RCXRemote"/>
-                <root id="src.RCXTempTest.dir" name="RCXRemoteMotor"/>
-                <root id="src.RemoteNXTTest.dir" name="RCXTempTest"/>
-                <root id="src.SignalTest.dir" name="RemoteNXTTest"/>
-                <root id="src.SocketTest.dir" name="SignalTest"/>
-                <root id="src.SonicTest.dir" name="SocketTest"/>
-                <root id="src.SoundSample.dir" name="SonicTest"/>
-                <root id="src.SpeedTest.dir" name="SoundSample"/>
-                <root id="src.STTest.dir" name="SpeedTest"/>
-                <root id="src.Subsumption1.dir" name="STTest"/>
-                <root id="src.Subsumption2.dir" name="Subsumption1"/>
-                <root id="src.TiltTest.dir" name="Subsumption2"/>
-                <root id="src.TimeTest.dir" name="TiltTest"/>
-                <root id="src.Tune.dir" name="TimeTest"/>
-                <root id="src.USBReceive.dir" name="Tune"/>
-                <root id="src.View.dir" name="USBReceive"/>
+                <root id="src.NXTServoTest.dir"/>
+                <root id="src.PerformanceTest.dir"/>
+                <root id="src.PFTest.dir"/>
+                <root id="src.PilotTester.dir"/>
+                <root id="src.RCNavigator.dir"/>
+                <root id="src.RCXEmulator.dir"/>
+                <root id="src.RCXMMTest.dir"/>
+                <root id="src.RCXMuxTest.dir"/>
+                <root id="src.RCXPortTest.dir"/>
+                <root id="src.RCXRemote.dir"/>
+                <root id="src.RCXRemoteMotor.dir"/>
+                <root id="src.RCXTempTest.dir"/>
+                <root id="src.RemoteNXTTest.dir"/>
+                <root id="src.SignalTest.dir"/>
+                <root id="src.SocketTest.dir"/>
+                <root id="src.SonicTest.dir"/>
+                <root id="src.SoundSample.dir"/>
+                <root id="src.SpeedTest.dir"/>
+                <root id="src.STTest.dir"/>
+                <root id="src.Subsumption1.dir"/>
+                <root id="src.Subsumption2.dir"/>
+                <root id="src.TiltTest.dir"/>
+                <root id="src.TimeTest.dir"/>
+                <root id="src.Tune.dir"/>
+                <root id="src.USBReceive.dir"/>
+                <root id="src.View.dir"/>
             </source-roots>
             <test-roots/>
         </data>
-        <spellchecker-wordlist xmlns="http://www.netbeans.org/ns/spellchecker-wordlist/1">
-            <word>Bluetooth</word>
-        </spellchecker-wordlist>
     </configuration>
 </project>
