@@ -44,12 +44,12 @@ public class TachoNavigator implements Navigator
     */
    public TachoNavigator(float wheelDiameter, float trackWidth, Motor leftMotor, Motor rightMotor, boolean reverse) 
    {
-      _pilot = new Pilot(wheelDiameter,trackWidth,leftMotor, rightMotor,reverse);
+      _pilot = new TachoPilot(wheelDiameter,trackWidth,leftMotor, rightMotor,reverse);
    }
 
    public TachoNavigator(float wheelDiameter, float trackWidth, Motor leftMotor, Motor rightMotor) 
    {
-      _pilot = new Pilot(wheelDiameter,trackWidth,leftMotor, rightMotor);
+      _pilot = new TachoPilot(wheelDiameter,trackWidth,leftMotor, rightMotor);
    }
 
 
@@ -121,7 +121,7 @@ public class TachoNavigator implements Navigator
    public void forward() 
    {
       _updated = false;
-      _pilot.resetTachoCount();
+      _pilot.reset();
       _right0 = 0;
       _left0 = 0;
       _pilot.forward();
@@ -133,7 +133,7 @@ public class TachoNavigator implements Navigator
    public void backward() 
    {
       _updated = false;
-      _pilot.resetTachoCount();
+      _pilot.reset();
       _right0 = 0;
       _left0 = 0;
       _pilot.backward();
@@ -179,7 +179,7 @@ public class TachoNavigator implements Navigator
    public void travel(float distance,boolean immediateReturn) 
    {
       _updated = false;
-      _pilot.resetTachoCount();
+      _pilot.reset();
       _right0 = 0;
       _left0 = 0;
       _pilot.travel(distance,immediateReturn);
@@ -192,7 +192,7 @@ public class TachoNavigator implements Navigator
    public void rotateLeft()
    {
       _updated = false;
-      _pilot.resetTachoCount();
+      _pilot.reset();
       _right0 = 0;
       _left0 = 0;
       _pilot.steer(200);
@@ -204,7 +204,7 @@ public class TachoNavigator implements Navigator
    public void rotateRight()
    {
       _updated = false;
-      _pilot.resetTachoCount();
+      _pilot.reset();
       _right0 = 0;
       _left0 = 0;
       _pilot.steer(-200);
@@ -231,7 +231,7 @@ public class TachoNavigator implements Navigator
    {
       _updated = false; 
       int turnAngle = Math.round(angle);
-      _pilot.resetTachoCount();
+      _pilot.reset();
       _right0 = 0;
       _left0 = 0;
       _pilot.rotate(turnAngle,immediateReturn);
