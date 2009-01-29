@@ -43,7 +43,7 @@ public class RemoteDevice {
 	}
 
 	/*
-	 * UNIMPLEMENTED
+	 * TODO: UNIMPLEMENTED
 	 * DEV NOTES: Internally this just casts the Connection object 
 	 * into a BTConnection object. However, how to pull information 
 	 * from it, such as friendly name, address, etc... ??
