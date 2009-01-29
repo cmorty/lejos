@@ -13,6 +13,6 @@ public interface OutputConnection extends Connection {
 	 * Open and return an output stream for a connection.
 	 * @return the output stream
 	 */
-	OutputStream openOutputStream();
+	public OutputStream openOutputStream();
      
 }
