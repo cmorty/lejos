@@ -23,7 +23,7 @@ import lejos.navigation.*;
  */
 public class PilotTester
 {
-	static Pilot robot = new Pilot(5.6f,16.0f,Motor.A, Motor.C,true);
+	static TachoPilot robot = new TachoPilot(5.6f,16.0f,Motor.A, Motor.C,true);
  
 	public static void main(String[] args ) throws Exception
 	{
