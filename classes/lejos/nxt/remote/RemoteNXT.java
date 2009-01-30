@@ -267,7 +267,6 @@ public class RemoteNXT {
 		try {
 			return nxtCommand.playSoundFile(fileName, repeat);
 		} catch (IOException ioe) {
-			System.out.println(ioe.getMessage());
 			return -1;
 		}
 	}
@@ -290,7 +289,6 @@ public class RemoteNXT {
 		try {
 			return nxtCommand.stopSoundPlayback();
 		} catch (IOException ioe) {
-			System.out.println(ioe.getMessage());
 			return -1;
 		}
 	}
