@@ -8,7 +8,7 @@ import lejos.nxt.Flash;
  * @author Brian Bagnall
  *
  */
-public class FileInputStream extends InputStream{
+public class FileInputStream extends InputStream {
 	
 	int pointer;
 	int page_pointer;
@@ -16,7 +16,7 @@ public class FileInputStream extends InputStream{
 	byte [] buff;
 	File file;
 	
-	public FileInputStream(File f) {
+	public FileInputStream(File f) throws FileNotFoundException  {
         file = f;
 		buff = new byte[Flash.BYTES_PER_PAGE];
 		page_pointer = file.page_location;
