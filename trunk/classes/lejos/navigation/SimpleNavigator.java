@@ -10,7 +10,7 @@ import lejos.nxt.*;
  * It must use a Pilot that can turn in place, for example using 2 wheel differential steering.
  * The assumed initial position of the robot is at (0,0) and initial angle 0 i.e. pointing in the +X direction. 
  */
-public class SimpleNavigator
+public class SimpleNavigator implements Navigator
 {
   // orientation and co-ordinate data
 
@@ -101,9 +101,9 @@ public class SimpleNavigator
   }
 
   /**
-   *sets the motor speed of the robot, in degrees/second.
+   *sets the motor speed of the  motors, in degrees/second.
    */
-  public void setSpeed(float speed)
+  public void setSpeed(int speed)
   {
     _pilot.setSpeed(speed);
   }
