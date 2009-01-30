@@ -36,7 +36,9 @@ package java.lang;
 	private static int LOWER_CHAR = 'A'; 
 	private static int UPPER_CHAR = 'Z'; 
 	
-    
+    private static final char[] hexDigits = {'0','1','2','3','4','5','6','7', 
+        '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+
     /**
      * The value of the Integer.
      *
@@ -225,8 +227,25 @@ package java.lang;
     *          base&nbsp;10.
     */
     public String toString() {
-	return toString(value);
+    	return toString(value);
+    }
+    
+    /**
+     * Return the hex representation of an int as a String
+     * @param i the int
+     * @return the hex string
+     */
+    public static String toHexString(int i) {
+        char[] buf = new char[8];
+        int pos = 8;
+        do {
+            buf[--pos] = hexDigits[i & 0xF];
+            i >>>= 4;
+        } while (i != 0);
+
+        return new String(buf, pos, (8 - pos));
     }
 }
 
    
+              
