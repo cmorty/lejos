@@ -255,8 +255,8 @@ public class File {
 	 * Returns the length of the file denoted by this file name.
 	 * @return The length, in bytes, of the file denoted by this file name, or 0 if the file does not exist.
 	 */
-	public int length() {
-		return file_length;
+	public long length() {
+		return (long) file_length;
 	}
 	
 	/**
@@ -576,7 +576,7 @@ public class File {
 		File  top = files[totalFiles - 1]; // file at top of flash memory
 		// !! Is the 1 value below problematic? I want to expand
 		// past 1 page for table. Actually is looks okay.
-		int page = 1+ top.getPage()+top.length()/Flash.BYTES_PER_PAGE;  
+		int page = 1+ top.getPage()+ (int) top.length()/Flash.BYTES_PER_PAGE;  
 		int length = file_length;
 		moveTo(page);	
 		delete(); // remove from files[] array
@@ -599,7 +599,7 @@ public class File {
 			last_page = -1;
 		} else {
 			File  top = files[totalFiles - 1]; // file at top of flash memory
-			last_page = top.getPage()+(top.length()-1)/Flash.BYTES_PER_PAGE;
+			last_page = top.getPage()+((int) top.length()-1)/Flash.BYTES_PER_PAGE;
 		}
 		return (Flash.MAX_USER_PAGES - 1 - last_page) * Flash.BYTES_PER_PAGE;
 	}
@@ -649,7 +649,7 @@ public class File {
 		{
 			file = files[i];
 			if(file.page_location > page_pointer) file.moveTo(page_pointer);					
-			page_pointer = file.page_location + file.length()/Flash.BYTES_PER_PAGE ;
+			page_pointer = file.page_location + (int) file.length()/Flash.BYTES_PER_PAGE ;
 			if (file.length()%Flash.BYTES_PER_PAGE >0 ) page_pointer++;	
 		}
 		writeTable(files);	// update the file data in flash memory	
