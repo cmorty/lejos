@@ -353,7 +353,7 @@ public class LCP {
 			file = new File(getFile(cmd,2));
             try {
             	in = new FileInputStream(file);
-            	int size = file.length();
+            	int size = (int) file.length();
             	setReplyInt(size,reply,4);         	
             } catch (Exception e) {
             	reply[2] = FILE_NOT_FOUND;
@@ -436,7 +436,7 @@ public class LCP {
 			{
 				for(int i=0;i<fileNames[0].length();i++) reply[4+i] = (byte) fileNames[0].charAt(i);
 				fileIdx = 1;
-            	int size = files[0].length();
+            	int size = (int) files[0].length();
             	setReplyInt(size,reply,24);
     			
     			if (cmdId == NXJ_FIND_FIRST) {
@@ -455,7 +455,7 @@ public class LCP {
 			else
 			{
 				for(int i=0;i<fileNames[fileIdx].length();i++) reply[4+i] = (byte) fileNames[fileIdx].charAt(i);
-            	int size = files[fileIdx].length();
+            	int size = (int) files[fileIdx].length();
             	setReplyInt(size,reply,24);   			
     			if (cmdId == NXJ_FIND_NEXT) {
     				int startPage = files[fileIdx].getPage();
