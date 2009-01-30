@@ -217,7 +217,7 @@ public class TachoPilot implements Pilot
  */
   public void setRobotSpeed(float speed)
   {
-    setSpeed(_degPerDistance*_robotSeed);
+    setSpeed((int)(_degPerDistance*_robotSeed));
   }
   /**
    * Sets speed of both motors and sets regulate speed to true. If a drift correction has been specified in the
@@ -225,7 +225,7 @@ public class TachoPilot implements Pilot
    * 
    * @param speed The wanted speed in degrees per second.
    */
-  public void setSpeed(float speed)
+  public void setSpeed(int speed)
   {
     _robotSeed = speed/_degPerDistance;
     _motorSpeed = (int)(speed);
