@@ -17,7 +17,7 @@ public class RemoteNXTTest {
 		
         try {
             LCD.drawString("Connecting...",0,0);
-        	nxt = new RemoteNXT("NOISY");
+        	nxt = new RemoteNXT("NXT");
         	LCD.clear();
             LCD.drawString("Connected",0,0);
             Thread.sleep(2000);
