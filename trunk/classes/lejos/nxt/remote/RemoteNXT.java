@@ -1,7 +1,10 @@
 package lejos.nxt.remote;
 
 import lejos.nxt.*;
+
 import java.io.*;
+import java.util.ArrayList;
+import lejos.nxt.comm.*;
 
 /**
  * 
@@ -13,13 +16,16 @@ import java.io.*;
 public class RemoteNXT {
 	
 	private NXTCommand nxtCommand = new NXTCommand();
+	private NXTCommBluetooth nxtComm = new NXTCommBluetooth();
 	
 	public Motor A, B, C; 
 	public RemoteBattery Battery;
 	public RemoteSensorPort S1, S2, S3, S4;
 	
 	public RemoteNXT(String name) throws IOException {
-		nxtCommand.open(name);
+		boolean open = nxtComm.open(name, NXTConnection.LCP);
+		if (!open) throw new IOException("Failed to connect to " + name);
+		nxtCommand.setNXTComm(nxtComm);
 		//nxtCommand.setVerify(true);
 		A =  new Motor(new RemoteMotorPort(nxtCommand,0));
 		A.regulateSpeed(false);
@@ -52,7 +58,7 @@ public class RemoteNXT {
 	}
 	
 	/**
-	 * Get the bluetooth address of the remorte device
+	 * Get the bluetooth address of the remote device
 	 * 
 	 * @return address with hex pairs separated by colons
 	 */
@@ -66,7 +72,7 @@ public class RemoteNXT {
 	}
 	
 	/**
-	 * 
+	 * Get the free flash memory on the remote NXT
 	 * @return Free memory remaining in FLASH
 	 */
 	public int getFlashMemory() {
@@ -79,7 +85,7 @@ public class RemoteNXT {
 	}
 	
 	/**
-	 * Return Lego firmware vserion
+	 * Return the (emulated) Lego firmware version on the remote NXT
 	 * 
 	 * @return <major>.<minor>
 	 */
@@ -114,6 +120,177 @@ public class RemoteNXT {
 		try {
 			return nxtCommand.deleteUserFlash(); 
 		} catch (IOException ioe) {
+			return -1;
+		}
+	}
+	
+	/**
+	 * Returns a list of files on NXT brick.
+	 * @param searchCriteria "*.*" or [FileName].* or or *.[Extension] or [FileName].[Extension]
+	 * @return An array on file names, or NULL if nothing found.
+	 */
+	// This method could provide file sizes by returning FileInfo objects
+	// instead. It's simpler for users to return fileNames.
+	public String [] getFileNames(String searchCriteria) {
+		try {
+			ArrayList names = new ArrayList();
+			FileInfo f = nxtCommand.findFirst(searchCriteria);
+			if(f == null)
+				return null;
+			do {
+				names.add(f.fileName);
+				if(f != null)
+					nxtCommand.closeFile(f.fileHandle); // According to protocol, must be closed when done with it.
+					f = nxtCommand.findNext(f.fileHandle);
+			} while (f != null);
+			
+			String [] returnArray = new String [names.size()];
+			for(int i=0;i<names.size();i++) {
+				returnArray[i] = (String) names.get(i);
+			}
+			return returnArray;
+		} catch (IOException ioe) {
+			return null;
+		}
+	}
+	
+	/**
+	 * Returns a list of all files on NXT brick.
+	 * @return An array on file names, or NULL if no files found.
+	 */
+	public String [] getFileNames() {
+		return getFileNames("*.*");
+	}
+	
+	/**
+	 * Delete a file from the NXT.
+	 * @param fileName
+	 * @return 0 = success
+	 */
+	public byte delete(String fileName) {
+		try {
+			return nxtCommand.delete(fileName);
+		} catch (IOException ioe) {
+			return -1;
+		}	
+	}
+	
+	/**
+	 * Starts a Lego executable file on the NXT.
+	 * @param fileName
+	 * @return the status (0 = success)
+	 */
+	public byte startProgram(String fileName) {
+		try {
+			return nxtCommand.startProgram(fileName);
+		} catch (IOException ioe) {
+			return -1;
+		}
+	}
+	
+	/**
+	 * Stops the currently running Lego executable on the NXT.
+	 * @param fileName
+	 * @return the status (0 = success)
+	 */
+	public byte stopProgram() {
+		try {
+			return nxtCommand.stopProgram();
+		} catch (IOException ioe) {
+			return -1;
+		}
+	}
+	
+	/**
+	 * Retrieves the file name of the Lego executable currently running on the NXT.
+	 * @return the status (0 = success)
+	 */
+	public String getCurrentProgramName() {
+		try {
+			return nxtCommand.getCurrentProgramName();
+		} catch (IOException ioe) {
+			return null;
+		}
+	}
+	
+	/**
+	 * Send a message to a remote inbox
+	 * @param message the message
+	 * @param inbox the remote inbox
+	 * @return the status (0 = success)
+	 */
+	public int sendMessage(byte [] message, int inbox) {
+		try {
+			return nxtCommand.messageWrite(message, (byte)inbox);
+		} catch (IOException ioe) {
+			return -1;
+		}
+	}
+	
+	/**
+	 * Get a message from a remote index to a local inbox
+	 * @param remoteInbox the remote inbox
+	 * @param localInbox the local inbox
+	 * @param remove true iff the message should be removed from the remote inbox
+	 * @return the message or null if mailed
+	 */
+	public byte [] receiveMessage(int remoteInbox, int localInbox, boolean remove) {
+		try {
+			return nxtCommand.messageRead((byte)remoteInbox, (byte)localInbox, remove);
+		} catch (IOException ioe) {
+			return null;
+		}
+	}
+	
+	/**
+	 * Play a tone on the remote NXT
+	 * @param frequency the frequency of the tone
+	 * @param duration the duration in milliseconds
+	 * @return the status (0 = success)
+	 */
+	public int playTone(int frequency, int duration) {
+		try {
+			return nxtCommand.playTone(frequency, duration);
+		} catch (IOException ioe) {
+			return -1;
+		}
+	}
+	
+	/**
+	 * Plays a sound file on the remote NXT. 
+	 * @param fileName e.g. "Woops.wav"
+	 * @param repeat true = repeat, false = play once.
+	 * @return If you receive a non-zero number, the filename is probably wrong
+	 * or the file is not uploaded to the remote NXT brick.
+	 */
+	public byte playSoundFile(String fileName, boolean repeat) {
+		try {
+			return nxtCommand.playSoundFile(fileName, repeat);
+		} catch (IOException ioe) {
+			System.out.println(ioe.getMessage());
+			return -1;
+		}
+	}
+	
+	/**
+	 * Plays a sound file on the remote NXT. 
+	 * @param fileName e.g. "Woops.wav"
+	 * @return If you receive a non-zero number, the filename is probably wrong
+	 * or the file is not uploaded to the remote NXT brick.
+	 */
+	public byte playSoundFile(String fileName) {
+		return playSoundFile(fileName, false);
+	}
+	
+	/**
+	 * Stops a sound file that has been playing/repeating on the remote NXT.
+	 * @return Error code.
+	 */
+	public int stopSoundPlayback() {
+		try {
+			return nxtCommand.stopSoundPlayback();
+		} catch (IOException ioe) {
+			System.out.println(ioe.getMessage());
 			return -1;
 		}
 	}
