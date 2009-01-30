@@ -25,10 +25,33 @@ public final class String
     System.arraycopy (c, off, characters, 0, len);
   }
   
+  /**
+   * Create a String from a character array
+   * @param c the character array
+   */
   public String (char [] c) {
 	  this(c, 0, c.length);
   }
+  
+  /**
+   * Create a String from a byte array
+   * @param b the byte array
+   */
+  public String (byte[] b) {
+	  int l = b.length;
+	  characters = new char[l];
+	  for(int i = 0;i<l;i++) characters[i] = (char) b[i];
+  }
 
+  /**
+   * Create a String from a byte array
+   * @param b the byte array
+   * @param charset ignored - assumed to be US ASCII
+   */
+  public String (byte[] b, String charset) {
+	  this(b);
+  }
+ 
   /**
    * Return the length of the String in characters
    * @return the length of the String
@@ -91,7 +114,7 @@ public final class String
   /**
 	 * Finds the location of a string within this string
 	 * 
-	 * @param str
+	 * @param str the String
 	 * @return Index of string location, -1 if string does not exist.
 	 */
   public int indexOf(String str) {
@@ -99,21 +122,31 @@ public final class String
   }
   
   /**
-   * 
-   * @param str
-   * @param fromIndex
+   * Find location of String starting at a given index
+   * @param str the String
+   * @param fromIndex the starting position
    * @return Index of string location, -1 if string does not exist.
-   */
-   
+   */  
   public synchronized int indexOf(String str, int fromIndex) {
       return String.indexOf(characters, 0, characters.length,
                             str.toCharArray(), 0, str.length(), fromIndex);
   }
   
+  /**
+   * Find the last occurrence of a String
+   * @param str the String
+   * @return index of string location, -1 if string does not exist.
+   */
   public int lastIndexOf(String str) {
       return lastIndexOf(str, characters.length);
   }
 
+  /**
+   * Find last occurrence of s string from a given index
+   * @param str the String
+   * @param fromIndex the starting point
+   * @return index of string location, -1 if string does not exist.
+   */
   public int lastIndexOf(String str, int fromIndex) {
       return lastIndexOf(characters, 0, characters.length,
                          str.characters, 0, str.length(), fromIndex);
@@ -241,10 +274,21 @@ public final class String
     return ca;
   }
 
+  /**
+   * Return substring from starting position to the end of the String
+   * @param start the starting position
+   * @return the substring
+   */
   public synchronized String substring(int start) {
       return substring(start, characters.length);
   }
 
+  /**
+   * Return substring from starting index to position before end index
+   * @param start the start index
+   * @param end the end index (not included)
+   * @return the substring
+   */
   public synchronized String substring(int start, int end) {  
 	  if (start < 0 || end > characters.length || start > end) {
 		  throw new StringIndexOutOfBoundsException();
@@ -300,6 +344,9 @@ public final class String
     return false;
   }
   
+  /**
+   * Special version of hash that returns the same value the same String values
+   */
   public int hashCode() {
       int h = hash;
         if (h == 0) {
@@ -309,6 +356,17 @@ public final class String
             hash = h;
         }
         return h;
+  }
+  
+  /**
+   * Get bytes in US Acsii
+   * @param charset ignored
+   * @return the ascii bytes
+   */
+  public byte[] getBytes(String charset) {
+	  byte[] b = new byte[characters.length];
+	  for(int i=0;i<characters.length;i++) b[i] = (byte) characters[i];
+	  return b;
   }
 }
 
