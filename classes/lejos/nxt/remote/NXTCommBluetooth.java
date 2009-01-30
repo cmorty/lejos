@@ -2,25 +2,21 @@ package lejos.nxt.remote;
 
 import java.io.*;
 import lejos.nxt.comm.*;
-import javax.bluetooth.RemoteDevice;
 
 /**
  * 
  * Initiates communication to a remote NXT. Used by NXTCommand
- * to implement the Lego Communications Protocol (LCP).
+ * to implement the Lego Communications Protocol (LCP) over Bluetooth.
  *
  */
-public class NXTComm {
+public class NXTCommBluetooth implements NXTCommRequest {    
 	private static BTConnection btc;
 	private static DataInputStream dis;
 	private static DataOutputStream dos;
 	byte[] buf = new byte[64];
 	
-	public boolean open(String name) throws IOException {
-		RemoteDevice btrd = Bluetooth.getKnownDevice(name);	
-		if (btrd == null) return false;
-		
-		btc = Bluetooth.connect(btrd);
+	public boolean open(String name, int mode) throws IOException {		
+		btc = Bluetooth.connect(name, mode);
 		if (btc == null) return false;
 		
 		dis = btc.openDataInputStream();
@@ -29,12 +25,12 @@ public class NXTComm {
 		return true;
 	}
 	
-	public void sendData(byte [] data) throws IOException {
+	private void sendData(byte [] data) throws IOException {
 		dos.write(data, 0, data.length);
 		dos.flush();
 	}
 	
-	public byte[] readData() throws IOException {	
+	private byte[] readData() throws IOException {	
 		int len = 0;
 		
 		while (len == 0) len = btc.readPacket(buf, 64);
@@ -42,6 +38,12 @@ public class NXTComm {
 		for(int i=0;i<len;i++) data[i] = buf[i];
 		return data;
 
+	}
+	
+	public byte[] sendRequest(byte [] message, int replyLen) throws IOException {
+		sendData(message);
+		if (replyLen == 0) return new byte[0];
+		return readData();
 	}
 	
 	public void close() throws IOException {
