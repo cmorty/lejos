@@ -1,5 +1,7 @@
 package lejos.navigation;
 
+//package.lejos.navigation;
+
 import lejos.nxt.*;
 import lejos.nxt.addon.*;
 
@@ -7,7 +9,7 @@ import lejos.nxt.addon.*;
 /**
  * A Pilot that keeps track of direction using a CompassSensor.
  */
-public class CompassPilot extends Pilot {
+public class CompassPilot extends TachoPilot {
 
 	protected CompassSensor compass;
 	private  Regulator regulator = new Regulator(); // inner regulator for thread
@@ -117,7 +119,7 @@ public class CompassPilot extends Pilot {
 	 */
 	public void calibrate()
 	{
-		int spd = _speed;
+		int spd =_motorSpeed;
 		setSpeed(100);
 		regulateSpeed(true);
 		compass.startCalibration();
@@ -148,7 +150,7 @@ public class CompassPilot extends Pilot {
 	public void travel(float distance, boolean immediateReturn)
 	{
 		regulateSpeed(false);
-		resetTachoCount();
+		reset();
 		_distance = distance;
 		if(_distance > 0)
 		   {
