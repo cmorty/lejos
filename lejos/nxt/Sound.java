@@ -208,7 +208,10 @@ public class Sound
         if (file.length() < RIFF_HDR_SIZE)
             return -9;
         // Now check for a RIFF header
-        FileInputStream f = new FileInputStream(file);
+        FileInputStream f = null;
+        try {
+        	f = new FileInputStream(file);
+        } catch (FileNotFoundException e) {}
         DataInputStream d = new DataInputStream(f);
         int sampleRate = 0;
         int dataLen = 0;
