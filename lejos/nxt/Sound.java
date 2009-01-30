@@ -205,18 +205,17 @@ public class Sound
         // First check that we have a wave file. File must be at least 44 bytes
         // in size to contain a RIFF header.
         int offset = 0;
+    	int sampleRate = 0;
+    	int dataLen = 0;
+    	
         if (file.length() < RIFF_HDR_SIZE)
             return -9;
         // Now check for a RIFF header
-        FileInputStream f = null;
-        try {
-        	f = new FileInputStream(file);
-        } catch (FileNotFoundException e) {}
-        DataInputStream d = new DataInputStream(f);
-        int sampleRate = 0;
-        int dataLen = 0;
         try
         {
+        	FileInputStream f = new FileInputStream(file);
+        	DataInputStream d = new DataInputStream(f);
+
             if (d.readInt() != RIFF_RIFF_SIG)
                 return -1;
             // Skip chunk size
