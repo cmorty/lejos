@@ -19,7 +19,7 @@ import lejos.nxt.Motor;
  * @author Lawrie Griffiths
  *
  */
-public abstract class TachoLocalizer extends TachoNavigator implements Localizer{
+public abstract class TachoLocalizer extends SimpleNavigator implements Localizer{
 
   public TachoLocalizer(Map map, int numParticles, float wheelDiameter, float trackWidth,
 			Motor leftMotor, Motor rightMotor, float projection, boolean reverse
