@@ -24,7 +24,7 @@ public class Line {
 		// direction you want to be "forward" for your vehicle.
 		// The wheel and axle dimension parameters should be
 		// set for your robot, but are not critical.
-		final Pilot pilot = new Pilot(5.6f,16.0f,Motor.A, Motor.C, true);
+		final Pilot pilot = new TachoPilot(5.6f,16.0f,Motor.A, Motor.C, true);
 		final LightSensor light = new LightSensor(SensorPort.S1);
 		
 		Behavior DriveForward = new Behavior()

@@ -17,7 +17,7 @@ import lejos.navigation.*;
 public class RCNavigator
 {
 
-   public RCNavigator(TachoNavigator aNavigator)
+   public RCNavigator(SimpleNavigator aNavigator)
     {
       navigator = aNavigator;
     }
@@ -27,8 +27,8 @@ public class RCNavigator
  */
    public static void main(String[] args)
     {
-      Pilot p = new Pilot(5.6f, 14.3f, Motor.A, Motor.C);
-      TachoNavigator nav = new TachoNavigator(p);
+      Pilot p = new TachoPilot(5.6f, 14.3f, Motor.A, Motor.C);
+      SimpleNavigator nav = new SimpleNavigator(p);
       new RCNavigator(nav).go();
     }
 /**
@@ -107,7 +107,7 @@ public class RCNavigator
       while (true)readData();
     }
    
-   TachoNavigator navigator;
+   SimpleNavigator navigator;
    BTConnection connection;
    DataInputStream dataIn;
    DataOutputStream dataOut;
