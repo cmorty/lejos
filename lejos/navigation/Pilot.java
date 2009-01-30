@@ -39,7 +39,7 @@ public interface Pilot
    * sets drive motor speed deg/sec
    * @param speed
    */
-  public void setSpeed(float speed);
+  public void setSpeed(int speed);
 
  /**
    * Moves the NXT robot a specific distance. A positive value moves it forward and
