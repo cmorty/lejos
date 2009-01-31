@@ -93,7 +93,7 @@ public abstract class NXTCommUSB implements NXTComm {
      * double colon separated USB address. Note that first entry in a string is
      * entry 1 (not 0), -ve values may be used to access the address in reverse
      * so that the last entry is entry -1.
-     * @param addr The adrress containing the string
+     * @param addr The address containing the string
      * @param loc The location of the entry.
      * @return The string at location loc or null if not found.
      */
@@ -296,7 +296,7 @@ public abstract class NXTCommUSB implements NXTComm {
         }
 		NXTInfo[] nxts = new NXTInfo[nxtInfos.size()];
 		for (int i = 0; i < nxts.length; i++)
-			nxts[i] = (NXTInfo) nxtInfos.elementAt(i);
+			nxts[i] = nxtInfos.elementAt(i);
 		return nxts;
 	}
 
@@ -315,14 +315,17 @@ public abstract class NXTCommUSB implements NXTComm {
             String addr = nxtInfo.deviceAddress;
             if (addr == null || addr.length() == 0)
                 return false;
-            NXTInfo[] nxts = search(null, NXTCommFactory.USB);
-            nxtInfo = null;
-            for(int i = 0; i < nxts.length; i++)
-                if (addr.equals(nxts[i].deviceAddress))
+    		Vector<NXTInfo> nxtInfos = devFind();
+            Iterator<NXTInfo> devs = nxtInfos.iterator();
+            while (devs.hasNext())
+            {
+                NXTInfo nxt = devs.next();
+                if (addr.equalsIgnoreCase(nxt.deviceAddress))
                 {
-                    nxtInfo = nxts[i];
+                    nxtInfo = nxt;
                     break;
                 }
+            }
         }
         if (nxtInfo == null) return false;
 		this.nxtInfo = nxtInfo;
