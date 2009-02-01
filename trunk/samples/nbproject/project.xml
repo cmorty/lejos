@@ -33,6 +33,7 @@
                 <root id="src.MonitorTest.dir"/>
                 <root id="src.NXTCamTest.dir"/>
                 <root id="src.NXTConnectTest.dir"/>
+                <root id="src.NXTLCPRespond.dir"/>
                 <root id="src.NXTReceive.dir"/>
                 <root id="src.NXTServoTest.dir"/>
                 <root id="src.PerformanceTest.dir"/>
