@@ -9,6 +9,7 @@ package lejos.nxt.comm;
 public class LCPResponder extends Thread {
     protected NXTCommConnector connector = null;
     protected NXTConnection conn = null;
+    protected boolean running = true;
 
     /**
      * Create a Responder using the provided connector
@@ -22,22 +23,23 @@ public class LCPResponder extends Thread {
     }
 
     /**
-     * Method called whrn the responder is waiting for a new connection.
+     * Method called when the responder is waiting for a new connection.
      * Default action is to wait for the new connection and return.
      */
-    protected void waitConnect()
+    protected synchronized void waitConnect()
     {
-        while ((conn = connector.waitForConnection(0, NXTConnection.LCP)) == null)
-            try{Thread.sleep(500);}catch(Exception e){}
+        while (running && (conn = connector.waitForConnection(0, NXTConnection.LCP)) == null)
+            try{wait(500);}catch(Exception e){}
     }
     
     /**
-     * Method called to disconnect the reponder connect.
+     * Method called to disconnect the responder connect.
      * Default action is to close the underlying connection object.
      */
-    protected void disconnect()
+    protected synchronized void disconnect()
     {
-        conn.close();
+        if (conn != null)
+            conn.close();
         conn = null;
     }
     
@@ -80,7 +82,7 @@ public class LCPResponder extends Thread {
 		byte [] reply = new byte[64];
 		int len;
 		
-		while (true)
+		while (running)
 		{
             waitConnect();
             while (conn != null)
@@ -97,4 +99,18 @@ public class LCPResponder extends Thread {
             }
 		}
 	}
+
+    /**
+     * Terminate the responder. Abort any listening operation and close
+     * any open connections (this will also abort any current read requests).
+     */
+    public synchronized void shutdown()
+    {
+        running = false;
+        // Abort any listening operation, or in progress read
+        if (conn == null)
+            super.interrupt();
+        else
+            disconnect();
+    }
 }
