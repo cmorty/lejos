@@ -1067,8 +1067,9 @@ public class Bluetooth extends NXTCommDevice
 		//1 RConsole.print("getFriendlyName\n");
 		synchronized (Bluetooth.sync)
 		{
-			// If power is off return the cached name.
-			if (!powerOn) return cachedName;
+            // If we have one return the cached address, saves switching into
+            // command mode, or powering up the device...
+			if (cachedName != null) return cachedName;
 			cmdStart();
 			cmdInit(MSG_GET_FRIENDLY_NAME, 1, 0, 0);
 			if (cmdWait(RS_REPLY, RS_CMD, MSG_GET_FRIENDLY_NAME_RESULT, TO_SHORT) < 0)	
@@ -1076,7 +1077,8 @@ public class Bluetooth extends NXTCommDevice
 			else
 				System.arraycopy(replyBuf, 2, result, 0, NAME_LEN);
 			cmdComplete();
-			return nameToString(result);
+            if (result != null) cachedName = nameToString(result);
+			return cachedName;
 		}
 	}
 		
@@ -1097,6 +1099,7 @@ public class Bluetooth extends NXTCommDevice
 			if (cmdWait(RS_REPLY, RS_CMD, MSG_SET_FRIENDLY_NAME_ACK, TO_LONG) >= 0)	
 				ret = true;
 			cmdComplete();
+            if (ret) cachedName = nameToString(name);
 			return ret;
 		}	
 	}
@@ -1110,8 +1113,9 @@ public class Bluetooth extends NXTCommDevice
 		//1 RConsole.print("getLocalAddress\n");
 		synchronized (Bluetooth.sync)
 		{
-			// If power is off return cached name.
-			if (!powerOn) return cachedAddress;
+            // If we have one return the cached address... Saves switching
+            // into command mode.
+            if (cachedAddress != null) return cachedAddress;
 			cmdStart();
 			cmdInit(MSG_GET_LOCAL_ADDR, 1, 0, 0);
 			if (cmdWait(RS_REPLY, RS_CMD, MSG_GET_LOCAL_ADDR_RESULT, TO_SHORT) < 0)	
@@ -1119,7 +1123,8 @@ public class Bluetooth extends NXTCommDevice
 			else
 				System.arraycopy(replyBuf, 2, result, 0, ADDRESS_LEN);
 			cmdComplete();
-			return addressToString(result);
+			if (result != null) cachedAddress = addressToString(result);
+            return cachedAddress;
 		}
 	}	
 	
