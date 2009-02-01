@@ -16,13 +16,14 @@ import lejos.nxt.comm.*;
 public class RemoteNXT {
 	
 	private NXTCommand nxtCommand = new NXTCommand();
-	private NXTCommBluetooth nxtComm = new NXTCommBluetooth();
+	private NXTComm nxtComm;
 	
 	public Motor A, B, C; 
 	public RemoteBattery Battery;
 	public RemoteSensorPort S1, S2, S3, S4;
 	
-	public RemoteNXT(String name) throws IOException {
+	public RemoteNXT(String name, NXTCommConnector connector) throws IOException {
+        nxtComm = new NXTComm(connector);
 		boolean open = nxtComm.open(name, NXTConnection.LCP);
 		if (!open) throw new IOException("Failed to connect to " + name);
 		nxtCommand.setNXTComm(nxtComm);
