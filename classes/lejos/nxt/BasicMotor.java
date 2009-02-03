@@ -16,7 +16,7 @@ public abstract class BasicMotor
 
 	int _mode = FLOAT;
 	int _power = 50;
-	BasicMotorPort _port;
+	protected BasicMotorPort _port;
 
 	/**
 	 * Sets power.
