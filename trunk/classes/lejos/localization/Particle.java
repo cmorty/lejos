@@ -15,18 +15,8 @@ import java.util.Random;
  * 
  */
 public class Particle {
-  // Constants
-  private static final float TWO_SIGMA_SQUARED = 250f;
-  private static final float DISTANCE_NOISE_FACTOR = 0.02f;
-  private static final float ANGLE_NOISE_FACTOR = 0.02f;
-  
-  // Static variables
-  private static int numReadings = 3; // Must be odd so there is a forward reading
-  private static float readings[];
-  private static Random rand = new Random();
-  private static int rangeReadingAngle = 45;
-  private static int forwardReading = 1;
-  
+  public static Random rand = new Random();
+ 
   // Instance variables (kept to minimum to allow maximum number of particles)
   private Pose pose;
   private float weight = 0;
@@ -38,7 +28,6 @@ public class Particle {
    */
   public Particle(Pose pose) {
     this.pose = pose;
-    readings = new float[numReadings];
   }
 
   /**
@@ -78,15 +67,15 @@ public class Particle {
     weight = 1;
     takeReadings(map);
 
-    for (int i = 0; i < RangeReadings.getNumReadings(); i++) {
-      float myReading = readings[i];
+    for (int i = 0; i < rr.getNumReadings(); i++) {
+      float myReading = ParticleSet.readings[i];
       if (myReading < 0) { // Weight zero if any wall is out of range
         weight = 0;
         return;
       }
       float robotReading = rr.getRange(i);
       float diff = robotReading - myReading;
-      weight *= (float) Math.exp(-(diff * diff) / TWO_SIGMA_SQUARED);
+      weight *= (float) Math.exp(-(diff * diff) / ParticleSet.twoSigmaSquared);
     }
   }
   
@@ -97,15 +86,15 @@ public class Particle {
    */
   public void takeReadings(Map map) {
     float startAngle = pose.angle;
-    readings[forwardReading] = map.range(pose);
-    for(int i=forwardReading-1;i>=0;i--) {
-      pose.angle -= rangeReadingAngle;
-      readings[i] = map.range(pose);
+    ParticleSet.readings[ParticleSet.forwardReading] = map.range(pose);
+    for(int i=ParticleSet.forwardReading-1;i>=0;i--) {
+      pose.angle -= ParticleSet.rangeReadingAngle;
+      ParticleSet.readings[i] = map.range(pose);
     }
     pose.angle = startAngle;
-    for(int i=forwardReading+1;i<numReadings;i++) {
-      pose.angle += rangeReadingAngle;
-      readings[i] = map.range(pose);
+    for(int i=ParticleSet.forwardReading+1;i<ParticleSet.numReadings;i++) {
+      pose.angle += ParticleSet.rangeReadingAngle;
+      ParticleSet.readings[i] = map.range(pose);
     }
     pose.angle = startAngle;
   }
@@ -117,7 +106,7 @@ public class Particle {
    * @return the reading
    */
   public float getReading(int i) {
-    return readings[i];
+    return ParticleSet.readings[i];
   }
 
   /**
@@ -129,10 +118,10 @@ public class Particle {
     float ym = (move.distance * ((float) Math.sin(Math.toRadians(pose.angle))));
     float xm = (move.distance * ((float) Math.cos(Math.toRadians(pose.angle))));
 
-    pose.x += xm + (DISTANCE_NOISE_FACTOR * xm * rand.nextGaussian());
-    pose.y += ym + (DISTANCE_NOISE_FACTOR * ym * rand.nextGaussian());
+    pose.x += xm + (ParticleSet.distanceNoiseFactor * xm * rand.nextGaussian());
+    pose.y += ym + (ParticleSet.distanceNoiseFactor * ym * rand.nextGaussian());
     pose.angle += move.angle
-        + (ANGLE_NOISE_FACTOR * move.angle * rand.nextGaussian());
+        + (ParticleSet.angleNoiseFactor * move.angle * rand.nextGaussian());
     pose.angle = (float) ((int) (pose.angle + 0.5f) % 360);
   }
 }

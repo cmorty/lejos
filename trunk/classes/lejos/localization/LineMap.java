@@ -45,6 +45,12 @@ public class LineMap implements Map {
     this.lines = lines;
     this.boundingRect = boundingRect;
   }
+  
+  /**
+   * Constructor to use when map will be loaded from a data stream
+   */
+  public LineMap() {
+  }
 
   /**
    * Check if a point is within the mapped area

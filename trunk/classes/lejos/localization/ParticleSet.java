@@ -11,9 +11,27 @@ import java.io.*;
  */
 public class ParticleSet {
   // Constants
-  private static final int MAX_ITERATIONS = 1000;
+  
   private static final float BIG_FLOAT = 10000f;
   
+  // Static variables
+  // These global parameters apply to all particle sets and all particles
+  // They are not set per particle or per particle set as this would
+  // increase the size of a particle object which needs to be as small
+  // as possible on the NXT
+  public static int maxIterations = 1000;
+  public static float twoSigmaSquared = 250f;
+  public static float distanceNoiseFactor = 0.02f;
+  public static float angleNoiseFactor = 0.02f;
+  public static int numReadings = 3; // Must be odd so there is a forward reading
+  public static int rangeReadingAngle = 45; // The angle between range readings
+  public static int forwardReading = 1; // the range reading that represents straight ahead
+  public static  int border = 10; // The minimum distance from the edge of the map
+                                  // to generate a particle.
+  
+  // Static variables
+  public static float readings[];
+
   // Instance variables
   private int numParticles;
   private Particle[] particles;
@@ -21,11 +39,6 @@ public class ParticleSet {
   private float estimatedX, estimatedY, estimatedAngle;
   private float minX, maxX, minY, maxY;
   private float maxWeight;
-  
-  /**
-   * Minimum distance from a wall where the particle is placed.
-   */
-  private int border = 10;
 
   /**
    * Create a set of particles randomly distributed with the given map.
@@ -33,6 +46,7 @@ public class ParticleSet {
    * @param map the map of the enclosed environment
    */
   public ParticleSet(Map map, int numParticles) {
+	readings = new float[numReadings];
     this.map = map;
     this.numParticles = numParticles;
     particles = new Particle[numParticles];
@@ -109,7 +123,7 @@ public class ParticleSet {
 
     while (count < numParticles) {
       iterations++;
-      if (iterations >= MAX_ITERATIONS) {
+      if (iterations >= maxIterations) {
         System.out.println("Lost: count = " + count);
         if (count > 0) { // Set the rest to the first one
           for (int i = count; i < numParticles; i++) {
@@ -178,6 +192,7 @@ public class ParticleSet {
    */
   public void applyMove(Move move) {
     resetEstimate();
+	maxWeight = 0f;
     for (int i = 0; i < numParticles; i++) {
       particles[i].applyMove(move);
     }
@@ -252,19 +267,68 @@ public class ParticleSet {
   }
   
   /**
-   * Get border
-   */
-  public int getBorder() {
-	  return border;
-  }
-  
-  /**
    * Set border
    * 
    * @param border the border where no particles should be generated
    */
-  public void setBorder(int border) {
-	  this.border = border;
+  public static void setBorder(int border) {
+    ParticleSet.border = border;
+  }
+  
+  /**
+   * Set the standard deviation for the sensor probability model
+   * @param sigma the standard deviation
+   */
+  public static void setSigma(float sigma) {
+    twoSigmaSquared = 2 * sigma * sigma;
+  }
+  
+  /**
+   * Set the distance noise factor
+   * @param factor the distance noise factor
+   */
+  public static void setDistanceNoiseFactor(float factor) {
+    distanceNoiseFactor = factor;
+  }
+  
+  /**
+   * Set the distance angle factor
+   * @param factor the distance angle factor
+   */
+  public static void setAngleNoiseFactor(float factor) {
+    angleNoiseFactor = factor;
+  }
+  
+  /**
+   * Set the range reading angle
+   * @param angle the angle between range readings
+   */
+  public static void setRangeReadingAngle(int angle) {
+    rangeReadingAngle = angle;
+  }
+  
+  /**
+   * Set the index of the reading that is straight ahead
+   * @param index the forward reading index
+   */
+  public static void setForwardReading(int index) {
+    forwardReading = index;
+  }
+  
+  /**
+   * Set the number of range readings
+   * @param num the number of range readings
+   */
+  public static void setNumReadings(int num) {
+    numReadings = num;
+  }
+  
+  /**
+   * Set the maximum iterations for the resample algorithm
+   * @param max the maximum iterations
+   */
+  public static void setMaxIterations(int max) {
+    maxIterations = max;
   }
   
   /**
