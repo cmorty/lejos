@@ -10,7 +10,6 @@ import lejos.nxt.BasicMotorPort;
  *
  */
 public class RCXMotor extends BasicMotor {
-	BasicMotorPort _port;
 	public RCXMotor(BasicMotorPort port)
 	{
 		_port = port;
