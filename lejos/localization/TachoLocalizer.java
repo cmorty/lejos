@@ -19,26 +19,28 @@ import lejos.nxt.Motor;
  * @author Lawrie Griffiths
  *
  */
-public abstract class TachoLocalizer extends SimpleNavigator implements Localizer{
-
-  public TachoLocalizer(Map map, int numParticles, float wheelDiameter, float trackWidth,
-			Motor leftMotor, Motor rightMotor, float projection, boolean reverse
-			) {
-    super(wheelDiameter, trackWidth, leftMotor, rightMotor, reverse);
-    this.projection = projection;
-    this.numParticles = numParticles;
-    this.map = map;
-    particles = new ParticleSet(map, numParticles);
-  }
-
-  protected RangeReadings readings = new RangeReadings();
+public abstract class TachoLocalizer extends SimpleNavigator implements Localizer {	
+  protected RangeReadings readings;
   protected float projection;
   protected Map map;
   protected int numParticles;
   protected ParticleSet particles;
   protected float angle, distance;
   protected Move mv = new Move(angle, distance);
-  
+  protected int numReadings;
+
+  public TachoLocalizer(Map map, int numParticles, int numReadings,
+		    float wheelDiameter, float trackWidth,
+			Motor leftMotor, Motor rightMotor, float projection, boolean reverse) {
+    super(wheelDiameter, trackWidth, leftMotor, rightMotor, reverse);
+    this.projection = projection;
+    this.numParticles = numParticles;
+    this.map = map;
+    particles = new ParticleSet(map, numParticles);
+    this.numReadings = numReadings;
+    readings = new RangeReadings(numReadings);
+  }
+
   public abstract void takeReadings();
   
   public void rotate(float angle, boolean immediateReturn) {

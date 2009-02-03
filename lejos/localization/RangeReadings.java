@@ -7,10 +7,14 @@ import java.io.*;
  * @author Lawrie Griffiths
  */
 public class RangeReadings {
-  public static short numReadings = 3;
   public static final float INVALID_READING = -1f;
   
+  private int numReadings = 3;
   private float[] ranges = new float[numReadings];
+  
+  public RangeReadings(int numReadings) {
+    this.numReadings = numReadings;
+  }
 
   /**
    * Set a range reading
@@ -49,14 +53,14 @@ public class RangeReadings {
    * 
    * @param num the number of readings
    */
-  public static void setNumReadings(short num) {
+  public void setNumReadings(short num) {
     numReadings = num;
   }
   
   /**
    * Get the number of readings in a set
    */
-  public static short getNumReadings() {
+  public int getNumReadings() {
     return numReadings;
   }
   
@@ -79,7 +83,8 @@ public class RangeReadings {
   public void loadReadings(DataInputStream dis) throws IOException {
     for (int i = 0; i < getNumReadings(); i++) {
       ranges[i] = dis.readFloat();
-      System.out.println("Range " + i + " = " + ranges[i] + "cm");
+      System.out.println("Range " + i + " = " + 
+    		  (ranges[i] < 0 ? "Invalid" : ranges[i] + "cm"));
     }        
   }
 }
