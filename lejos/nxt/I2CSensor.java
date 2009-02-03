@@ -82,20 +82,7 @@ public class I2CSensor implements SensorConstants {
 	 * @return 8-byte string
 	 */
 	public String getVersion() {
-	/* NOTE! getVersion(), getProductID(), getSensorType() and
-	 * UltrasonicSensor.getUnits() are all about the same. 
-	 * Should probably make one helper method with appropriate arguments.
-	 * - BB
-	 */	
-		int ret = getData(0x00, byteBuff, 8);
-		if(ret != 0)
-			return BLANK;
-		char [] charBuff = new char[8];
-		for(int i=0;i<8;i++)
-			charBuff[i] = (char)byteBuff[i];
-		version = new String(charBuff, 0, 8);
-			
-		return version;
+		return fetchString(0x00);
 	}
 	
 	/**
@@ -104,15 +91,7 @@ public class I2CSensor implements SensorConstants {
 	 * @return 8-byte string
 	 */
 	public String getProductID() {
-		int ret = getData(0x08, byteBuff, 8);
-		if(ret != 0)
-			return BLANK;
-		char [] charBuff = new char[8];
-		for(int i=0;i<8;i++)
-			charBuff[i] = (char)byteBuff[i];
-		productID = new String(charBuff, 0, 8);
-					
-		return productID;
+		return fetchString(0x08);
 	}
 	
 	/**
@@ -121,15 +100,17 @@ public class I2CSensor implements SensorConstants {
 	 * @return 8-byte string
 	 */
 	public String getSensorType() {
-		int ret = getData(0x10, byteBuff, 8);
+		return fetchString(0x10);
+	}
+	
+	private String fetchString(int register) {
+		int ret = getData(register, byteBuff, 8);
 		if(ret != 0)
 			return BLANK;
 		char [] charBuff = new char[8];
 		for(int i=0;i<8;i++)
-			charBuff[i] = (char)byteBuff[i];
-		sensorType = new String(charBuff, 0, 8);
-					
-		return sensorType;
+			charBuff[i] = (byteBuff[i] == 0 ? ' ' : (char)byteBuff[i]);
+		return new String(charBuff, 0, 8);	
 	}
 	
 	/**
