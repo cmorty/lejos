@@ -17,9 +17,62 @@
 #include <time.h>
 
 #include "jfantom.h"
-
 #define MAX_DEVS 64
 #define MAX_WRITE 64
+
+
+// Pointer type as integer
+typedef long INTPTR;
+
+#if (defined(__WIN32__) || defined(_MSC_VER))
+// Locking version for Windows
+#include <windows.h>
+HANDLE lockDevice(const ViChar* name)
+{
+   /*
+    * Windows device locking code. The Fantom driver does not prevent
+    * two processes from opening the same USB device. So we provide
+    * our own locking. We use a Windows mutex to provide the lock
+    * since this will be automatically released by the system in the
+    * event of a program crash. We use the documented feature of a 
+    * mutex that the first user of a mutex will create it and subsequent 
+    * calls to create will simply open it and will set an error code
+    * to indicate that the mutex already exists. The mutex is automatically
+    * deleted on the last close.
+    */
+   HANDLE h = CreateMutex(NULL, FALSE, name);
+   if (h == NULL) return NULL;
+   if (GetLastError() == NOERROR) return h;
+   CloseHandle(h);
+   return NULL;
+}
+
+void unlockDevice(HANDLE h)
+{
+   // Release the lock
+   if (h != NULL)
+      CloseHandle(h);
+}
+#else
+// Non Windows version, do nothing
+typedef void *  HANDLE;
+HANDLE lockDevice(const ViChar* name)
+{
+    return (HANDLE)1;
+}
+
+void unlockDevice(HANDLE h)
+{
+}
+#endif
+
+// Hold information about the USB device
+typedef struct 
+{
+   HANDLE hLock;
+   nFANTOM100_iNXT nxtPtr;
+} NXTDev;
+
 
 JNIEXPORT jobjectArray JNICALL Java_lejos_pc_comm_NXTCommFantom_jfantom_1find
   (JNIEnv *env, jobject obj)
@@ -77,26 +130,43 @@ JNIEXPORT jlong JNICALL Java_lejos_pc_comm_NXTCommFantom_jfantom_1open
    ViStatus status=0;;
    ViChar resourceString[256];
    nFANTOM100_iNXT nxtPtr; 
+   NXTDev *dev = (NXTDev *)malloc(sizeof(NXTDev));
+   // Make sure we have space to store the device info.
+   if (dev == NULL) return 0;
 
+   // Try and lock the device
    const ViChar* cstr = env->GetStringUTFChars(nxt, 0);
-
-   strcpy(resourceString, cstr);
-   nxtPtr = nFANTOM100_createNXT(resourceString, &status, false);
-   if (status < VI_SUCCESS) {
-      return 0;
+   HANDLE hLock = lockDevice(cstr);
+   if (hLock != NULL)
+   {
+      // Device locked, try and open it
+      strcpy(resourceString, cstr);
+      nxtPtr = nFANTOM100_createNXT(resourceString, &status, false);
+      if (status >= VI_SUCCESS) 
+      {
+         // Remember the details
+         dev->hLock = hLock;
+         dev->nxtPtr = nxtPtr;
+         return (jlong) (INTPTR)dev;
+      }
+      // Open failed release the lock
+      unlockDevice(hLock);
    }
-   return (jlong) nxtPtr;
+   // failed clean things up.
+   free(dev);
+   return 0;
 }
 
 
 JNIEXPORT void JNICALL Java_lejos_pc_comm_NXTCommFantom_jfantom_1close
   (JNIEnv *env, jobject obj, jlong nxt)
 {
+   NXTDev *dev = (NXTDev *)(INTPTR)nxt;
+   if (dev == NULL) return;
    ViStatus status=0;;
-   nFANTOM100_destroyNXT( (nFANTOM100_iNXT) nxt, &status );
-   //if (status < VI_SUCCESS)
-      //printf("Failed to close nxt\n");
-
+   nFANTOM100_destroyNXT( dev->nxtPtr, &status );
+   unlockDevice(dev->hLock);
+   free(dev);
 }
 
 JNIEXPORT jint JNICALL Java_lejos_pc_comm_NXTCommFantom_jfantom_1send_1data
@@ -104,12 +174,12 @@ JNIEXPORT jint JNICALL Java_lejos_pc_comm_NXTCommFantom_jfantom_1send_1data
 {
    ViStatus status=0;
    int ret;
-
-
+   NXTDev *dev = (NXTDev *)(INTPTR)nxt;
+   if (dev == NULL) return -1;
 
    jbyte *jb = env->GetByteArrayElements(jdata, 0);
    if (len > MAX_WRITE) len = MAX_WRITE;
-   ret = nFANTOM100_iNXT_write((nFANTOM100_iNXT)nxt, (const unsigned char *) jb + offset, len, &status);
+   ret = nFANTOM100_iNXT_write(dev->nxtPtr, (const unsigned char *) jb + offset, len, &status);
    env->ReleaseByteArrayElements(jdata, jb, 0);
    return ret;
 }
@@ -120,8 +190,11 @@ JNIEXPORT jint JNICALL Java_lejos_pc_comm_NXTCommFantom_jfantom_1read_1data
    ViStatus status=0;
    int read_len;
    char *data;
+   NXTDev *dev = (NXTDev *)(INTPTR)nxt;
+   if (dev == NULL) return -1;
+
    jbyte *jb = env->GetByteArrayElements(jdata, 0);
-   read_len = nFANTOM100_iNXT_read((nFANTOM100_iNXT)nxt, (unsigned char *)jb + offset, len, &status);
+   read_len = nFANTOM100_iNXT_read(dev->nxtPtr, (unsigned char *)jb + offset, len, &status);
    env->ReleaseByteArrayElements(jdata, jb, 0);
    return read_len;
 }
