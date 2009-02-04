@@ -278,6 +278,9 @@ public abstract class NXTCommUSB implements NXTComm {
 		Vector<NXTInfo> nxtInfos = devFind();
         if (nxtInfos.size() == 0) return new NXTInfo[0];
         Iterator<NXTInfo> devs = nxtInfos.iterator();
+        // Keep track of how many of the devices have names... We put these
+        // first in the returned list
+        int nameCnt = 0;
         // Filter the list against name
         while (devs.hasNext())
         {
@@ -287,16 +290,31 @@ public abstract class NXTCommUSB implements NXTComm {
             if (nxt.name == null)
             {
                 nxt.name = getName(nxt);
-                if (nxt.name == null) nxt.name = "Unknown";
             }
-            if (name != null && !name.equals(nxt.name))
+            if (name != null && (nxt.name == null || !name.equals(nxt.name)))
                 devs.remove();
             else
-                System.out.println("Found nxt name " + nxt.name + " address " + nxt.deviceAddress);
+                if (nxt.name != null)
+                    nameCnt++;
         }
 		NXTInfo[] nxts = new NXTInfo[nxtInfos.size()];
+        int named = 0;
+        int unnamed = nameCnt;
+        // Copy the elements over placing the ones with names first.
 		for (int i = 0; i < nxts.length; i++)
-			nxts[i] = nxtInfos.elementAt(i);
+        {
+            NXTInfo nxt = nxtInfos.elementAt(i);
+            if (nxt.name == null)
+            {
+                nxt.name = "Unknown";
+                nxts[unnamed++] = nxt;
+            }
+            else
+                nxts[named++] = nxt;
+        }
+        // Print out the list
+		for (int i = 0; i < nxts.length; i++)
+            System.out.println("Found NXT: " + nxts[i].name + " " + nxts[i].deviceAddress);
 		return nxts;
 	}
 
