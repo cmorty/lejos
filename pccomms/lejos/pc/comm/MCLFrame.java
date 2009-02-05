@@ -39,7 +39,7 @@ public class MCLFrame extends RemoteFrame{
   private Line[] lines;
   private LineMap map; // the map
   private ParticleSet particles; // the particle set
-  private RangeReadings readings = new RangeReadings();   
+  private RangeReadings readings = new RangeReadings(ParticleSet.numReadings);   
   private int closest = -1;
   private int numParticles;
   
