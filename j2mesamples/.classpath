@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="res"/>
+	<classpathentry kind="con" path="J2MELIB"/>
+	<classpathentry exported="true" kind="lib" path="/j2mecomms/deployed/j2mecomms.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
