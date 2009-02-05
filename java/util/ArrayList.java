@@ -116,6 +116,7 @@ public class ArrayList {
     for (int i = 0; i < elementCount; i++) {
       elementData[i] = null;
     }
+    elementCount = 0;
   }
 
   /**
