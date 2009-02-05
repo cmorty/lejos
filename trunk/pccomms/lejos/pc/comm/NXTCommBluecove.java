@@ -164,6 +164,7 @@ public class NXTCommBluecove implements NXTComm, DiscoveryListener {
 		os.write((byte) MSB);
 
 		os.write(message);
+		os.flush();
 
 		if (replyLen == 0)
 			return new byte[0];
