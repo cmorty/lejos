@@ -41,16 +41,31 @@ public class Connector {
      */
     public static Connection open(String name) throws IOException {
         Connection c = null;
-    	
+    	// TODO Sometimes the address will include the channel number, as in:
+        // "btspp://001BC1016D10:3" If we add support for channel in Bluetooth might want
+        // to pass this along too. If not, take care of it here.
+        
     	// 1. Parse out scheme, target, and possibly parameters from string.
     	String scheme = parseScheme(name);
-    	String target = parseTarget(name);
+    	final String target = parseTarget(name);
     	// 2. If scheme = "btspp" then continue else throw ConnectionNotFound exception
     	if(scheme.equals("btspp")) {
     		// 3. Use Bluetooth.connect to get a BTConnection and return it.
-        	c = Bluetooth.connect(target, 0);
+        	c = new StreamConnectionNotifier() {
+        		
+        		private StreamConnection sc = null;
+        		
+				public StreamConnection acceptAndOpen() throws IOException {
+					sc = Bluetooth.connect(target, 0);
+					return sc;
+				}
+
+				public void close() throws IOException {
+					if(sc != null) sc.close();
+				}
+        	};
     	} else
-    		throw new ConnectionNotFoundException(scheme + " is not a known Connection protocol type");
+    		throw new ConnectionNotFoundException(scheme + " not a known protocol");
     	
     	return c;
     }
@@ -60,6 +75,14 @@ public class Connector {
     	return name.substring(0, end);
     }
     
+    /**
+     * This method parses out only the target. If the target has a colon for a port
+     * or channel, it will include this as the target! e.g. "btspp://001BC1016D10:3;PIN=1234"
+     * will return "001BC1016D10:3"
+     * TODO: Perhaps this method should ignore a port for now? Will crash if user includes port.
+     * @param name
+     * @return
+     */
     private static String parseTarget(String name) {
     	int start = name.indexOf("://") + 3;
     	int end = name.indexOf(';', start);
