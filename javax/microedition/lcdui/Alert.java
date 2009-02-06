@@ -1,7 +1,6 @@
 package javax.microedition.lcdui;
 
 import lejos.nxt.Sound;
-import lejos.nxt.LCD;
 
 /**
  * 
