@@ -1,7 +1,5 @@
 package lejos.nxt.remote;
 
-import lejos.nxt.*;
-
 import java.io.*;
 import java.util.ArrayList;
 import lejos.nxt.comm.*;
@@ -18,7 +16,7 @@ public class RemoteNXT {
 	private NXTCommand nxtCommand = new NXTCommand();
 	private NXTComm nxtComm;
 	
-	public Motor A, B, C; 
+	public RemoteMotor A, B, C; 
 	public RemoteBattery Battery;
 	public RemoteSensorPort S1, S2, S3, S4;
 	
@@ -28,15 +26,9 @@ public class RemoteNXT {
 		if (!open) throw new IOException("Failed to connect to " + name);
 		nxtCommand.setNXTComm(nxtComm);
 		//nxtCommand.setVerify(true);
-		A =  new Motor(new RemoteMotorPort(nxtCommand,0));
-		A.regulateSpeed(false);
-		A.shutdown();
-		B = new Motor(new RemoteMotorPort(nxtCommand,1));
-		B.regulateSpeed(false);
-		B.shutdown();
-		C = new Motor(new RemoteMotorPort(nxtCommand,2));
-		C.regulateSpeed(false);
-		C.shutdown();
+		A =  new RemoteMotor(nxtCommand, 0);
+		B = new RemoteMotor(nxtCommand, 1);
+		C = new RemoteMotor(nxtCommand, 1);
 		Battery = new RemoteBattery(nxtCommand);
 		S1 = new RemoteSensorPort(nxtCommand, 0);
 		S2 = new RemoteSensorPort(nxtCommand, 1);
@@ -292,6 +284,17 @@ public class RemoteNXT {
 		} catch (IOException ioe) {
 			return -1;
 		}
+	}
+	
+	/**
+	 * Close the connection to the remote NXT
+	 */
+	public void close() {
+		try {
+			if (nxtCommand.isOpen()) {
+				nxtCommand.close();
+			}
+		} catch (IOException e) {}
 	}
 }
 
