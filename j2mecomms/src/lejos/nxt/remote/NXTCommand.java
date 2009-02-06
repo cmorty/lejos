@@ -16,7 +16,6 @@ public class NXTCommand implements NXTProtocol {
 	private boolean verifyCommand = false;
 	private boolean open = false;
 	private static final String hexChars = "01234567890abcdef";
-	private static final int MAX_BUFFER_SIZE = 60;
 
 	/**
 	 * Create a NXTCommand object. 
@@ -749,5 +748,4 @@ public class NXTCommand implements NXTProtocol {
 	public boolean isOpen() {
 		return open;
 	}
-
 }
