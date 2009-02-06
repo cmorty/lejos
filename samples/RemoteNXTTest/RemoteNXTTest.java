@@ -50,7 +50,7 @@ public class RemoteNXTTest {
         }
 
         LCD.clear();
-		Motor[] motors = {nxt.A, nxt.B, nxt.C};
+		RemoteMotor[] motors = {nxt.A, nxt.B, nxt.C};
 		LightSensor light = new LightSensor(nxt.S2);
 		while (true) {
 			// Get data from the remote NXT and display it
@@ -90,6 +90,7 @@ public class RemoteNXTTest {
                     LCD.drawString("Closing...", 0, 0);
                     for(int i = 0; i < motors.length; i++)
                         motors[i].flt();
+                    nxt.close();
                     Thread.sleep(2000);
                     System.exit(0);
                 }
