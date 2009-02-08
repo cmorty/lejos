@@ -1,7 +1,6 @@
 
 import lejos.nxt.*;
 import lejos.nxt.comm.*;
-import java.io.*;
 
 /**
  * Create an LCP responder to handle LCP requests. Allow the
