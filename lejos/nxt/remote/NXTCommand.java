@@ -16,7 +16,7 @@ public class NXTCommand implements NXTProtocol {
 	private boolean verifyCommand = false;
 	private boolean open = false;
 	private static final String hexChars = "01234567890abcdef";
-	private static final int MAX_BUFFER_SIZE = 60;
+	private static final int MAX_BUFFER_SIZE = 58;
 
 	/**
 	 * Create a NXTCommand object. 
@@ -341,12 +341,22 @@ public class NXTCommand implements NXTProtocol {
      * @throws IOException
      */
 	public byte writeFile(byte handle, byte[] data) throws IOException {
-		byte[] request = new byte[data.length + 3];
-		byte[] command = { SYSTEM_COMMAND_NOREPLY, WRITE, handle };
-		System.arraycopy(command, 0, request, 0, command.length);
-		System.arraycopy(data, 0, request, 3, data.length);
+		byte[] command = { SYSTEM_COMMAND_NOREPLY, WRITE, handle };		
+		int remaining = data.length;
+		int chunkStart = 0;
+		while (remaining > 0) {
+			int chunkLen = MAX_BUFFER_SIZE;
+			if (remaining < chunkLen) chunkLen = remaining;
+			byte [] request = new byte[chunkLen + 3];
+			System.arraycopy(command, 0, request, 0, command.length);
+			System.arraycopy(data, chunkStart, request, 3, chunkLen);
 
-		return sendSystemRequest(request, 6);
+			byte status = sendSystemRequest(request, 6);
+			if (status != 0) return status;
+			remaining -= chunkLen;
+			chunkStart += chunkLen;
+		}
+		return 0;
 	}
 	
 	/**
@@ -398,13 +408,22 @@ public class NXTCommand implements NXTProtocol {
 	 * @return the bytes requested
 	 */
 	public byte[] readFile(byte handle, int length) throws IOException {
-		byte[] request = { SYSTEM_COMMAND_REPLY, READ, handle, (byte) length,
-				(byte) (length >>> 8) };
-		byte[] reply1 = nxtComm.sendRequest(request, length + 6);
-		int dataLen = (reply1[4] & 0xFF) + ((reply1[5] << 8) & 0xFF);
-		byte[] reply = new byte[dataLen];
-		for (int i = 0; i < dataLen; i++)
-			reply[i] = reply1[i + 6];
+		int remaining = length;
+		int chunkStart = 0;
+		byte[] reply = new byte[length];
+		while (remaining > 0) {
+			int chunkLen = MAX_BUFFER_SIZE;
+			if (chunkLen > remaining) chunkLen = remaining;
+			byte[] request = { SYSTEM_COMMAND_REPLY, READ, handle, (byte) chunkLen,
+					(byte) (chunkLen >>> 8) };
+			byte[] reply1 = nxtComm.sendRequest(request, chunkLen + 6);
+			int dataLen = (reply1[4] & 0xFF) + ((reply1[5] << 8) & 0xFF);
+			for (int i = 0; i < dataLen; i++)
+				reply[chunkStart+i] = reply1[i + 6];
+			chunkStart += chunkLen;
+			remaining -= chunkLen;
+		}
+
 		return reply;
 	}
 
@@ -559,14 +578,6 @@ public class NXTCommand implements NXTProtocol {
 	public byte [] LSGetStatus(byte port) throws IOException{
 		byte [] request = {DIRECT_COMMAND_REPLY, LS_GET_STATUS, port};
 		byte [] reply = nxtComm.sendRequest(request,4);
-		if (reply[2] == ErrorMessages.COMMUNICATION_BUS_ERROR)
-			System.out.println("NXTCommand.LSGetStatus() error: Communications Bus Error");
-		else if(reply[2] == ErrorMessages.PENDING_COMMUNICATION_TRANSACTION_IN_PROGRESS)
-			System.out.println("NXTCommand.LSGetStatus() error: Pending communication transaction in progress");
-		else if(reply[2] == ErrorMessages.SPECIFIED_CHANNEL_CONNECTION_NOT_CONFIGURED_OR_BUSY)
-			System.out.println("NXTCommand.LSGetStatus() error: Specified channel connection not configured or busy");
-		else if(reply[2] != 0)
-			System.out.println("NXTCommand.LSGetStatus() Error Number " + reply[2]);
 		byte [] returnData = {reply[2], reply[3]}; 
 		return returnData;
 	}
@@ -588,11 +599,7 @@ public class NXTCommand implements NXTProtocol {
 		byte [] rxData = new byte[rxLength];
 		if(reply[2] == 0) {
 			System.arraycopy(reply, 4, rxData, 0, rxLength);
-		} else if(reply[2] == ErrorMessages.SPECIFIED_CHANNEL_CONNECTION_NOT_CONFIGURED_OR_BUSY) {
-			System.out.println("NXTCommand.LSRead error: Specified channel connection not configured or busy.");
-			return null;
 		} else {
-			System.out.println("NXTCommand.LSRead error: " + reply[2]);
 			return null;
 		}
 		return rxData;
@@ -748,7 +755,7 @@ public class NXTCommand implements NXTProtocol {
 		if(info.status == 0) {
 			info.protocolVersion = reply[4] + "." + reply[3];
 			info.firmwareVersion = reply[6] + "." + reply[5];
-		} else System.out.println("Status = " + info.status);
+		}
 		return info;
 	}
 	
@@ -781,5 +788,4 @@ public class NXTCommand implements NXTProtocol {
 	public boolean isOpen() {
 		return open;
 	}
-
 }

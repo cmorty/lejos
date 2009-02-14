@@ -12,7 +12,6 @@ import lejos.nxt.comm.*;
  *
  */
 public class RemoteNXT {
-	
 	private NXTCommand nxtCommand = new NXTCommand();
 	private NXTComm nxtComm;
 	
@@ -25,7 +24,6 @@ public class RemoteNXT {
 		boolean open = nxtComm.open(name, NXTConnection.LCP);
 		if (!open) throw new IOException("Failed to connect to " + name);
 		nxtCommand.setNXTComm(nxtComm);
-		//nxtCommand.setVerify(true);
 		A =  new RemoteMotor(nxtCommand, 0);
 		B = new RemoteMotor(nxtCommand, 1);
 		C = new RemoteMotor(nxtCommand, 1);
@@ -295,6 +293,81 @@ public class RemoteNXT {
 				nxtCommand.close();
 			}
 		} catch (IOException e) {}
+	}
+	
+	// Consider using String instead of File?
+	public byte upload(String fileName) {
+		// FIRST get data from file
+		byte [] data;
+		byte success;
+		File localSource = new File(fileName);
+		try {
+			FileInputStream in = new FileInputStream(localSource);
+			data = new byte[(int) localSource.length()];
+			in.read(data);
+			in.close();
+		} catch (IOException ioe) {
+			return -1;
+		}
+		
+		// Now send the data to the NXT
+		try {
+			byte handle = nxtCommand.openWrite(localSource.getName(), data.length);
+			success = nxtCommand.writeFile(handle, data);
+			nxtCommand.closeFile(handle);
+		} catch (IOException ioe) {
+			return -1;
+		}
+				
+		return success;
+	}
+	
+	/**
+	 * Download a file from the remote NXT.
+	 * 
+	 * @param fileName The name of the file on the NXT, including filename extension.
+	 * @return The file data, as an array of bytes. If there is a problem, the array will
+	 * contain one byte with the error code.
+	 */
+	public byte [] download(String fileName) {
+		byte [] data;
+		
+		try {
+			FileInfo finfo = nxtCommand.openRead(fileName);
+			if(finfo.status != 0) { // Return error message
+				data = new byte[1];
+				data[0] = finfo.status;
+				return data;
+			}
+			data = nxtCommand.readFile(finfo.fileHandle, finfo.fileSize);
+			nxtCommand.closeFile(finfo.fileHandle);
+		} catch (IOException ioe) {
+			return null;
+		}
+		return data;
+	}
+	
+	/**
+	 * Download a file from the NXT and save it to a file.
+	 * @param fileName
+	 * @param destination Where the file will be saved. 
+	 * @return Error code.
+	 */
+	public byte download(String fileName, File destination) {
+		byte [] data = download(fileName);
+		File fullFile = destination;
+
+		try {	
+			if (fullFile.exists()) fullFile.delete();
+			if (fullFile.createNewFile()) {
+				FileOutputStream out = new FileOutputStream(fullFile);
+				out.write(data);
+				out.close();
+			}
+		} catch (IOException e) {
+			return -1;
+		}
+		return 0;
 	}
 }
 
