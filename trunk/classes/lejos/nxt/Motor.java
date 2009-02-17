@@ -114,7 +114,7 @@ public class Motor extends BasicMotor// implements TimerListener
       _port = port;
       port.setPWMMode(TachoMotorPort.PWM_BRAKE);
       regulator.setDaemon(true);
-      regulator.setPriority(Thread.MAX_PRIORITY);
+//      regulator.setPriority(Thread.MAX_PRIORITY);
       regulator.start();
       _voltage = Battery.getVoltage();       
    }
