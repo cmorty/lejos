@@ -596,13 +596,13 @@ public class NXTCommand implements NXTProtocol {
 		byte [] reply = nxtComm.sendRequest(request, 20);
 		
 		byte rxLength = reply[3];
-		byte [] rxData = new byte[rxLength];
-		if(reply[2] == 0) {
+		if(reply[2] == 0 && rxLength >= 0) {
+            byte [] rxData = new byte[rxLength];
 			System.arraycopy(reply, 4, rxData, 0, rxLength);
+            return rxData;
 		} else {
 			return null;
 		}
-		return rxData;
 	}
 	
 	/**

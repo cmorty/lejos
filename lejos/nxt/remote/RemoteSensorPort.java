@@ -146,7 +146,7 @@ public class RemoteSensorPort implements NXTProtocol, ADSensorPort, I2CPort {
 	/**
 	 * Enable I2C on the port - null for remote ports
 	 */
-	public void i2cEnable() {
+	public void i2cEnable(int mode) {
 		
 	}
 
@@ -157,7 +157,7 @@ public class RemoteSensorPort implements NXTProtocol, ADSensorPort, I2CPort {
 	 * @param numInternalBytes not used
 	 * @param buffer the buffer for reading or writing data
 	 * @param numBytes the number of bytes to read or write
-	 * @param tranfertype 0 for read, 1 for write
+	 * @param transferType 0 for read, 1 for write
 	 * @return the status value
 	 */
 	public int i2cStart(int address, int internalAddress, int numInternalBytes,
@@ -177,13 +177,22 @@ public class RemoteSensorPort implements NXTProtocol, ADSensorPort, I2CPort {
 		
 		if (status != 0) return status;
 		
+		return 0;
+	}
+
+    public int i2cComplete(byte[] buffer, int numBytes)
+    {
 		try {
 			byte [] ret = nxtCommand.LSRead((byte) id);
+            if (ret == null) return -1;
+            if (numBytes > ret.length) numBytes = ret.length;
 			System.arraycopy(ret, 0, buffer, 0, numBytes);
 		} catch (IOException ioe) {
 			return -1;
 		}
-		return 0;
-	}
+
+		return numBytes;
+
+    }
 }
 
