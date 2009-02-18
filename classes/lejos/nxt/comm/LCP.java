@@ -319,30 +319,30 @@ public class LCP {
 			byte port = cmd[2];
 			byte txLen = cmd[3];
 			byte rxLen = cmd[4];
-			SensorPort.i2cEnableById(port);
+			SensorPort.i2cEnableById(port, I2CPort.LEGO_MODE);
 			try {Thread.sleep(100);} catch(InterruptedException ie) {}
-			int ret = SensorPort.i2cStartById(port, cmd[5] >> 1, cmd[6], rxLen, i2cReply, rxLen, 0);
-
+			int ret = SensorPort.i2cStartById(port, cmd[5] >> 1, cmd[6], 1, i2cReply, rxLen, 0);
 			while (SensorPort.i2cBusyById(port) != 0) {
 				Thread.yield();
 			}
 			try {Thread.sleep(100);} catch(InterruptedException ie) {}
-			i2cLen = rxLen;
 		}
 		
 		// LSREAD
 		if (cmdId == LS_READ)
 		{
-			reply[3] = (byte) i2cLen;
-			for(int i=0;i<16;i++) reply[i+4] = i2cReply[i];
+			byte port = cmd[2];
+            int ret = SensorPort.i2cCompleteById(port, i2cReply, i2cReply.length);
+			reply[3] = (byte) ret;
+			for(int i=0;i<ret;i++) reply[i+4] = i2cReply[i];
 			len = 20;
-			i2cLen = 0;
 		}
 		
 		// LSGETSTATUS
 		if (cmdId == LS_GET_STATUS)
 		{
-			reply[3] = (byte) i2cLen;
+			byte port = cmd[2];
+			reply[3] = (byte) SensorPort.i2cBusyById(port);
 			len = 4;
 		}
 		

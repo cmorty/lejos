@@ -97,7 +97,7 @@ controlMotorById(III)V
 resetTachoCountById(I)V
 
 #lejos.nxt.SensorPort
-i2cEnableById(I)V
+i2cEnableById(II)V
 i2cBusyById(I)I
 i2cStartById(IIII[BII)I
 i2cDisableById(I)V
@@ -168,3 +168,7 @@ hsRecv([BI[CI)I
 
 #System
 getUserPages()I
+
+#i2c
+i2cCompleteById(I[BI)I
+

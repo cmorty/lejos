@@ -59,7 +59,7 @@
 #define getTachoCountById_4I_5I 52
 #define controlMotorById_4III_5V 53
 #define resetTachoCountById_4I_5V 54
-#define i2cEnableById_4I_5V 55
+#define i2cEnableById_4II_5V 55
 #define i2cBusyById_4I_5I 56
 #define i2cStartById_4IIII_1BII_5I 57
 #define i2cDisableById_4I_5V 58
@@ -106,4 +106,5 @@
 #define hsSend_4BB_1BII_1C_5I 99
 #define hsRecv_4_1BI_1CI_5I 100
 #define getUserPages_4_5I 101
+#define i2cCompleteById_4I_1BI_5I 102
 #endif // _SPECIALSIGNATURES_H

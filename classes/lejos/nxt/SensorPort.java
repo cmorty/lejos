@@ -236,32 +236,55 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
   
   /**
    * Low-level method to enable I2C on the port.
+   * @param aPortId The port number for this device
+   * @param mode I/O mode to use
    */
-  public static native void i2cEnableById(int aPortId);
+  public static native void i2cEnableById(int aPortId, int mode);
   
   /**
    * Low-level method to disable I2C on the port.
    * 
+   * @param aPortId The port number for this device
    */
   public static native void i2cDisableById(int aPortId);
   
   /**
    * Low-level method to test if I2C connection is busy.
+   * @param aPortId The port number for this device
+   * @return > 0 if busy 0 if not
    */
   public static native int i2cBusyById(int aPortId);
   
   /**
    * Low-level method to start an I2C transaction.
+   * @param aPortId The port number for this device
+   * @param address The I2C address of the device
+   * @param internalAddress The internal address to use for this operation
+   * @param numInternalBytes The number of bytes in the internal address
+   * @param buffer The buffer for write operations
+   * @param numBytes Number of bytes to write or read
+   * @param transferType 1==write 0==read
+   * @return < 0 if there is an error
    */
   public static native int i2cStartById(int aPortId, int address,
 		                            int internalAddress, int numInternalBytes,
 		                            byte [] buffer, int numBytes, int transferType);
   
   /**
-   * Low-level method to enable I2C on the port.
+   * Complete and I2C operation and retrieve any data read.
+   * @param aPortId The Port number for the device
+   * @param buffer The buffer to be used for read operations
+   * @param numBytes Number of bytes to read
+   * @return < 0 if the is an error, or number of bytes transferred
    */
-  public void i2cEnable() {
-	  i2cEnableById(iPortId);
+  public static native int i2cCompleteById(int aPortId, byte[] buffer, int numBytes);
+  
+  /**
+   * Low-level method to enable I2C on the port.
+   * @param mode The operating mode for the device
+   */
+  public void i2cEnable(int mode) {
+	  i2cEnableById(iPortId, mode);
   }
   
   /**
@@ -274,6 +297,7 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
   
   /**
    * Low-level method to test if I2C connection is busy.
+   * @return > 0 if the device is busy 0 if it is not
    */
   public int i2cBusy() {
 	  return i2cBusyById(iPortId);
@@ -281,6 +305,13 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
   
   /**
    * Low-level method to start an I2C transaction.
+   * @param address Address of the device
+   * @param internalAddress Internal register address for this operation
+   * @param numInternalBytes Size of the internal address
+   * @param buffer Buffer for write operations
+   * @param numBytes Number of bytes to read/write
+   * @param transferType 1==write 0 ==read
+   * @return < 0 error
    */
   public int i2cStart(int address, int internalAddress,
 		              int numInternalBytes, byte[] buffer,
@@ -289,6 +320,17 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
 	  return i2cStartById(iPortId, address, internalAddress,
 			              numInternalBytes, buffer,
 			              numBytes, transferType);
+  }
+
+  /**
+   * Complete an I2C operation and transfer any read bytes
+   * @param buffer Buffer for read data
+   * @param numBytes Number of bytes to read
+   * @return < 0 error otherwise number of bytes read.
+   */
+  public int i2cComplete(byte[] buffer, int numBytes)
+  {
+      return i2cCompleteById(iPortId, buffer, numBytes);
   }
 }
 
