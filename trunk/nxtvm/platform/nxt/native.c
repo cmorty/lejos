@@ -254,8 +254,8 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
   case resetTachoCountById_4I_5V:
     nxt_motor_set_count(paramBase[0], 0);
     return EXEC_CONTINUE;
-  case i2cEnableById_4I_5V:
-    i2c_enable(paramBase[0]);
+  case i2cEnableById_4II_5V:
+    i2c_enable(paramBase[0], paramBase[1]);
     return EXEC_CONTINUE;
   case i2cDisableById_4I_5V:
     i2c_disable(paramBase[0]);
@@ -267,13 +267,22 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
     {
     	Object *p = word2ptr(paramBase[4]);
     	byte *byteArray = (byte *) jbyte_array(p);
-    	push_word(i2c_start_transaction(paramBase[0],
-    	                                paramBase[1],
-    	                                paramBase[2],
-    	                                paramBase[3],
-    	                                byteArray,
-    	                                paramBase[5],
-    	                                paramBase[6]));                      
+    	push_word(i2c_start(paramBase[0],
+    	                    paramBase[1],
+    	                    paramBase[2],
+    	                    paramBase[3],
+    	                    byteArray,
+    	                    paramBase[5],
+    	                    paramBase[6]));                      
+    }
+    return EXEC_CONTINUE; 
+  case i2cCompleteById_4I_1BI_5I:
+    {
+    	Object *p = word2ptr(paramBase[1]);
+    	byte *byteArray = (byte *) jbyte_array(p);
+    	push_word(i2c_complete(paramBase[0],
+    	                       byteArray,
+    	                       paramBase[2]));
     }
     return EXEC_CONTINUE; 
   case playFreq_4III_5V:

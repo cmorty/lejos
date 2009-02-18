@@ -173,7 +173,11 @@ twi_init(void)
   /* Todo: set up interrupt */
   *AT91C_TWI_IDR = ~0;		/* Disable all interrupt sources */
   aic_mask_off(AT91C_ID_TWI);
-  aic_set_vector(AT91C_ID_TWI, AIC_INT_LEVEL_ABOVE_NORMAL,
+  // We used to run the int handler at a high priority, but this does not
+  // seem to be necessary...
+  //aic_set_vector(AT91C_ID_TWI, AIC_INT_LEVEL_ABOVE_NORMAL,
+//		 twi_isr_entry);
+  aic_set_vector(AT91C_ID_TWI, AIC_INT_LEVEL_NORMAL,
 		 twi_isr_entry);
   aic_mask_on(AT91C_ID_TWI);
 

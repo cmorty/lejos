@@ -17,13 +17,18 @@ public class I2CSensor implements SensorConstants {
 	byte [] byteBuff = new byte[8];
 	byte [] buf1 = new byte[1];
 	String BLANK = "        ";
-	
-	public I2CSensor(I2CPort port)
+
+	public I2CSensor(I2CPort port, int mode)
 	{
 		this.port = port;
-		port.i2cEnable();
+		port.i2cEnable(mode);
 		port.setType(TYPE_LOWSPEED);
 	}
+
+	public I2CSensor(I2CPort port)
+	{
+        this(port, I2CPort.LEGO_MODE);
+    }
 	
 	/**
 	 * Executes an I2C read transaction and waits for the result.
@@ -31,10 +36,10 @@ public class I2CSensor implements SensorConstants {
 	 * @param register I2C register, e.g 0x41
 	 * @param buf Buffer to return data
 	 * @param len Length of the return data
-	 * @return status zero=success, non-zero=failure
+	 * @return status == 0 success, != 0 failure
 	 */
 	public int getData(int register, byte [] buf, int len) {	
-		int ret = port.i2cStart(address, register, len, buf, len, 0);
+		int ret = port.i2cStart(address, register, 1, null, len, 0);
 		
 		if (ret != 0) return ret;
 		
@@ -42,7 +47,7 @@ public class I2CSensor implements SensorConstants {
 			Thread.yield();
 		}
 		
-		return 0;
+		return (port.i2cComplete(buf, len) == len ? 0 : -1);
 	}
 	
 	/**
@@ -54,14 +59,14 @@ public class I2CSensor implements SensorConstants {
 	 * @return status zero=success, non-zero=failure
 	 */
 	public int sendData(int register, byte [] buf, int len) {
-        int ret = port.i2cStart(address, register, len, buf, len, 1);
+        int ret = port.i2cStart(address, register, 1, buf, len, 1);
 		if (ret != 0) return ret;
 		
 		while (port.i2cBusy() != 0) {
 			Thread.yield();
 		}
 		
-		return 0;
+		return port.i2cComplete(null, 0);
 	}
 	
 	/**

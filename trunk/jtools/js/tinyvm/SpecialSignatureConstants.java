@@ -60,7 +60,7 @@ public interface SpecialSignatureConstants {
     "getTachoCountById(I)I",
     "controlMotorById(III)V",
     "resetTachoCountById(I)V",
-    "i2cEnableById(I)V",
+    "i2cEnableById(II)V",
     "i2cBusyById(I)I",
     "i2cStartById(IIII[BII)I",
     "i2cDisableById(I)V",
@@ -106,6 +106,7 @@ public interface SpecialSignatureConstants {
     "hsPending()I",
     "hsSend(BB[BII[C)I",
     "hsRecv([BI[CI)I",
-    "getUserPages()I"
+    "getUserPages()I",
+    "i2cCompleteById(I[BI)I"
   };
 }
