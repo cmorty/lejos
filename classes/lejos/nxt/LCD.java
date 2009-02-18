@@ -79,6 +79,9 @@ public class LCD {
 	}	
 	/**
 	 * Method to set a pixel to screen.
+	 * @param rgbColor the pixel color (0 = white, 1 = black)
+	 * @param x the x coordinate
+	 * @param y the y coordinate
 	 */
 	public static void setPixel(int rgbColor, int x, int y) {
 		if (x < 0 || x >= SCREEN_WIDTH || y < 0 || y >= SCREEN_HEIGHT) return; // Test-Modify for speed
@@ -86,6 +89,20 @@ public class LCD {
 		int index = (y/8)*DISPLAY_WIDTH + x;
 		displayBuf[index] = (byte)((displayBuf[index] & ~(1 << bit)) | (rgbColor << bit));
 	}
+	
+	/**
+	 * Method to get a pixel from the screen.
+	 * @param x the x coordinate
+	 * @param y the y coordinate
+	 * @return the pixel color (0 = white, 1 = black)
+	 */
+	public static int getPixel(int x, int y) {
+		if (x < 0 || x >= SCREEN_WIDTH || y < 0 || y >= SCREEN_HEIGHT) return 0; 
+		int bit = (y & 0x7);
+		int index = (y/8)*DISPLAY_WIDTH + x;
+		return ((displayBuf[index] >> bit) & 1);
+	}
+	
 	/**
 	 * Output a string to the display. Allow any location. Allow the string to
 	 * be inverted.
