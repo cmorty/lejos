@@ -11,7 +11,7 @@ public final class Byte extends Number
 	public static final int SIZE = 8;
 	
 	//MISSING public static final Class TYPE
-	
+	//MISSING public static Byte decode(String)
 	
 	private final byte value;
 	
@@ -22,7 +22,7 @@ public final class Byte extends Number
 	
 	public Byte(String s)
 	{
-		this(parseByte(s));
+		this.value = Byte.parseByte(s);
 	}
 
 	public byte byteValue()
