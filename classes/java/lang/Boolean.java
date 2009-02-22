@@ -54,8 +54,18 @@ public final class Boolean implements Comparable
 	
 	public static boolean parseBoolean(String s)
 	{
-		//FIXME actually, this should be equalsIgnoreCase
-		return "true".equals(s);
+		if (s.length() != 4)
+			return false;
+		
+		char c0 = s.charAt(0);
+		char c1 = s.charAt(1);
+		char c2 = s.charAt(2);
+		char c3 = s.charAt(3);
+		
+		return (c0 == 't' || c0 == 'T')
+			&& (c1 == 'r' || c1 == 'R')
+			&& (c2 == 'u' || c2 == 'U')
+			&& (c3 == 'e' || c3 == 'E');
 	}
 	
 	public String toString()
