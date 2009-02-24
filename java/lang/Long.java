@@ -33,13 +33,13 @@ public class Long extends Number implements Comparable
 		//I didn't understand http://www-graphics.stanford.edu/~seander/bithacks.html#CountBitsSetParallel
 		//So I made up my own algorithm
 		
-		//first sum up every 1st and 2nd bit, the result fill fit into 2 bits each
+		//first sum up every 1st and 2nd bit, the result are 2bit counters
 		v = (v & 0x5555555555555555L)  + ((v >>> 1) & 0x5555555555555555L);
-		//then sum up every 1-2nd with every 3-4th
+		//then sum up every 1st and 2nd of the 2-bit counters => 4bit counters
 		v = (v & 0x3333333333333333L)  + ((v >>> 2) & 0x3333333333333333L);
-		//then sum up every 1-4th with 5-8th bit
-		v = (v & 0x0F0F0F0F0F0F0F0FL)  + ((v >>> 4) & 0x0F0F0F0F0F0F0F0FL);
-		//at this point, we have a bit counter every 8 bits. Now we just have sum up all of them:
+		//then sum up every i-th and (i+1)-th of the 4bit counters and throw away some of them
+		v = (v + (v >>> 4)) & 0x0F0F0F0F0F0F0F0FL;
+		//at this point, we have 8bit counters. now we just need to sum them up:
 		int i = ((int)v) + ((int)(v >>> 32));
 		i += (i >>> 16);
 		i += (i >>> 8);
