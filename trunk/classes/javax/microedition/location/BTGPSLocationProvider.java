@@ -17,6 +17,12 @@ class BTGPSLocationProvider extends LocationProvider implements DiscoveryListene
 	GPS gps = null;
 	DiscoveryAgent da;
 	RemoteDevice btDevice = null;
+	/**
+	 * doneInq is used to ensure the code doesn't try to connect to the GPS device
+	 * before the Bluecore chip is done the inquiry. If you try to connect before the inquiry is
+	 * done it will cause a malfunction. This is due to our Bluecove code in leJOS, which requires
+	 * the programmer to be very careful. 
+	 */
 	boolean doneInq = false;
 		
 	private static final int GPS_MAJOR = 0x1F00;
