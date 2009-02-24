@@ -6,11 +6,10 @@ import java.util.*;
  * Class designed to manage all NMEA Sentence.
  * 
  * GGA and RMC Sentence needs to validate data.
- * This class has methods to validate receivedad data
+ * This class has methods to validate received data
  * 
  * @author BB
  * @author Juan Antonio Brenha Moral
- *
  */
 public class NMEASentence {
 
@@ -37,21 +36,9 @@ public class NMEASentence {
 	
 	/**
 	 * Return if your NMEA Sentence is valid or not
-	 * 
-	 * @return true iff the NMEA Sentence is true
-	 */
-	static public boolean isValid(){
-		int end = nmeaSentence.indexOf('*');
-		String checksumStr = nmeaSentence.substring(end + 1, end + 3);
-		checksum = convertChecksum(checksumStr);
-		return(getChecksum() == calcChecksum());
-	}
-
-	/**
-	 * Return if your NMEA Sentence is valid or not
-	 * 
+	 *
 	 * @param sentence the NMEA sentence
-	 * @return tue iff the NMEA Sentence is valid
+	 * @return true iff the NMEA Sentence is true
 	 */
 	static public boolean isValid(String sentence){
 		nmeaSentence = sentence;
@@ -61,7 +48,6 @@ public class NMEASentence {
 		return(getChecksum() == calcChecksum());
 	}
 	
-
 	/**
 	 * Method designed to calculate a checksum using data
 	 * 
