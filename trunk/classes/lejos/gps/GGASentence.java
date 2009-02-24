@@ -40,9 +40,9 @@ public class GGASentence extends NMEASentence{
 	private String nmeaHeader = "";
 	private float dateTimeOfFix = 0;
 	private float latitude = 0;
-	private String latitudeDirection = "";
+	private char latitudeDirection;
 	private float longitude = 0;
-	private String longitudeDirection = "";
+	private char longitudeDirection;
 	private float quality;
 	private float satellitesTracked = 0;
 	private float hdop = 0;
@@ -71,7 +71,7 @@ public class GGASentence extends NMEASentence{
 	 * 
 	 * @return the latitude direction
 	 */
-	public String getLatitudeDirection(){
+	public char getLatitudeDirection(){
 		return latitudeDirection;
 	}
 	
@@ -87,7 +87,7 @@ public class GGASentence extends NMEASentence{
 	 * Get Longitude Direction
 	 * @return the longitude direction
 	 */
-	public String getLongitudeDirection(){
+	public char getLongitudeDirection(){
 		return longitudeDirection;
 	}
 	
@@ -142,9 +142,9 @@ public class GGASentence extends NMEASentence{
 			nmeaHeader = st.nextToken();//Global Positioning System Fix Data
 			dateTimeOfFix = Float.parseFloat((String)st.nextToken());//UTC Time
 			latitude = degreesMinToDegrees(st.nextToken(),0);
-			latitudeDirection = st.nextToken();//N
+			latitudeDirection = st.nextToken().charAt(0);//N
 			longitude = degreesMinToDegrees(st.nextToken(),1);
-			longitudeDirection = st.nextToken();//E
+			longitudeDirection = st.nextToken().charAt(0);//E
 			q = st.nextToken();
 			if(q.length() == 0){
 				quality = 0;
@@ -164,10 +164,10 @@ public class GGASentence extends NMEASentence{
 			altitude = Float.parseFloat((String)st.nextToken());
 
 			//Improve quality data
-			if (longitudeDirection.equals("E") == false) {
+			if (longitudeDirection != 'E') {
 				longitude = -longitude;
 			}
-			if (latitudeDirection.equals("N") == false) {
+			if (latitudeDirection != 'N') {
 				latitude = -latitude;
 			}
 

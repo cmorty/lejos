@@ -28,16 +28,16 @@ public class BasicGPS extends Thread {
 	private InputStream in;
 	
 	//GGA
-	private int RAWtime = 0;
+	protected int RAWtime = 0;
 	private float latitude;
-	private String latitudeDirection = "";
+	private char latitudeDirection;
 	private float longitude;
-	private String longitudeDirection = "";
+	private char longitudeDirection;
 	private float altitude = 0;
-	private int satellitesTracked = 0;
+	protected int satellitesTracked = 0;
 	public static final int MINIMUM_SATELLITES_TO_WORK = 4;
 	public static final int MAXIMUM_SATELLITES_TO_WORK = 12;
-	private float hdop = 0;
+	//private float hdop = 0; // TODO Seems unused.
 	private int quality = 0;
 	
 	// VTG
@@ -45,17 +45,13 @@ public class BasicGPS extends Thread {
 	private float heading = 0;
 	
 	//Classes which manages GGA, VTG Sentences
-	private GGASentence ggaSentence;
-	private VTGSentence vtgSentence;
+	protected GGASentence ggaSentence;
+	protected VTGSentence vtgSentence;
 	
-	//Date Object with use GGA & RMC Sentence
-	private Date date;
-
 	//Security
 	private boolean shutdown = false;
 	private boolean updateMode = false;
-	private boolean internalError = false;
-
+	
 	//Data
 	private String sentence;
 	private StringTokenizer tokenizer;
@@ -68,8 +64,6 @@ public class BasicGPS extends Thread {
 	public BasicGPS(InputStream in) {
 		ggaSentence = new GGASentence();
 		vtgSentence = new VTGSentence();
-		
-		date = new Date();
 		
 		this.in = in;
 		// Juan: Don't comment out the next line! This should be a daemon thread so VM exits when user program terminates.
@@ -104,8 +98,7 @@ public class BasicGPS extends Thread {
 	 * 
 	 * @return the latitude direction
 	 */
-	public String getLatitudeDirection(){
-		// TODO: Should this return char? More efficient use of memory.
+	public char getLatitudeDirection(){
 		return latitudeDirection;
 	}
 
@@ -124,8 +117,7 @@ public class BasicGPS extends Thread {
 	 * 
 	 * @return the longitude direction
 	 */
-	public String getLongitudeDirection(){
-		// TODO: Should this return char? More efficient use of memory.
+	public char getLongitudeDirection(){
 		return longitudeDirection;
 	}
 
@@ -169,16 +161,7 @@ public class BasicGPS extends Thread {
 	public float getCourse() {
 		return heading;
 	}
-	
-	/**
-	 * Return a Date Object with data from GGA and RMC NMEA Sentence
-	 * 
-	 * @return the date
-	 */
-	public Date getDate(){
-		return date;
-	}
-	
+		
 	/**
 	 * Set if GPS Object is going to update internal values or not.
 	 * this method is critic to avoid to Crash VM
@@ -187,6 +170,7 @@ public class BasicGPS extends Thread {
 	 * 
 	 * @param status
 	 */
+	// TODO This method needs to go.
 	public void updateValues(boolean status){
 		updateMode = status;
 	}
@@ -194,13 +178,9 @@ public class BasicGPS extends Thread {
 	/**
 	 * Method used to finish the Thread
 	 */
+	// TODO Not sure why we care about shutting down this thread. It is a daemon.
 	public void shutDown(){
 		this.shutdown = true;
-	}
-
-	// TODO Is this really needed?
-	public boolean existInternalError(){
-		return internalError;
 	}
 	
 	/**
@@ -235,12 +215,8 @@ public class BasicGPS extends Thread {
 					if(NMEASentence.isValid(s)){
 						tokenizer = new StringTokenizer(s);
 						token = tokenizer.nextToken();
-
-						if (token.equals(GGASentence.HEADER)){
-							parseGGA(s);
-						}else if (token.equals(VTGSentence.HEADER)){
-							parseVTG(s);
-						}
+						// Choose which type of sentence to parse
+						sentenceChooser(token, s); // Method to make subclass more efficient - no redundant code.
 					}
 				}catch(StringIndexOutOfBoundsException e){
 					//Sound.beep();
@@ -255,6 +231,18 @@ public class BasicGPS extends Thread {
 		}
 	}
 
+	/**
+	 * Internal helper method to aid in the subclass architecture. Overwritten by subclass.
+	 * @param token
+	 * @param s
+	 */
+	protected void sentenceChooser(String token, String s) {
+		if (token.equals(GGASentence.HEADER)){
+			parseGGA(s);
+		}else if (token.equals(VTGSentence.HEADER)){
+			parseVTG(s);
+		}
+	}
 	
 	/**
 	 * Pulls the next NMEA sentence as a string
@@ -294,7 +282,8 @@ public class BasicGPS extends Thread {
 				//If detect a problem with InputStream
 				//System detect the event and notify the problem with the
 				//Enabling the flag internalError
-				internalError = true;
+				// TODO: Note I deleted internalError from this. Still in subclass though. Might
+				// mess up Juan's bug fix but I think this will all go away.
 				updateMode = false;
 				return "";
 			}
@@ -320,14 +309,13 @@ public class BasicGPS extends Thread {
 	 * 
 	 * @param nmeaSentece
 	 */
-	private void parseGGA(String nmeaSentence){
+	protected void parseGGA(String nmeaSentence){
 
 		ggaSentence.setSentence(nmeaSentence);
 		ggaSentence.parse();
 		
 		this.RAWtime = ggaSentence.getTime();
-		updateTime();
-
+		
 		this.latitude = ggaSentence.getLatitude();
 		this.latitudeDirection = ggaSentence.getLatitudeDirection();
 		this.longitude = ggaSentence.getLongitude();
@@ -335,42 +323,14 @@ public class BasicGPS extends Thread {
 		this.satellitesTracked = ggaSentence.getSatellitesTracked();
 		this.altitude = ggaSentence.getAltitude();
 		this.quality = ggaSentence.getQuality();
-
-		// TODO In subclass GPS it should call this method and then fireGGASentenceReceived 
-		// fireGGASentenceReceived(ggaSentence);
 	}
-
-	/**
-	 * Update Time values
-	 */
-	private void updateTime(){
-		String rt = Integer.toString(this.RAWtime);
-		int hh;
-		int mm;
-		int ss;
-
-		if(rt.length()<6){
-			hh = Integer.parseInt(rt.substring(0, 1));
-			mm = Integer.parseInt(rt.substring(1, 3));
-			ss = Integer.parseInt(rt.substring(3, 5));
-		}else{
-			hh = Integer.parseInt(rt.substring(0, 2));
-			mm = Integer.parseInt(rt.substring(2, 4));
-			ss = Integer.parseInt(rt.substring(4, 6));
-		}
-
-		//updateTimeValues(hh, mm, ss);
-		date.setHours(hh);
-		date.setMinutes(mm);
-		date.setSeconds(ss);
-	}
-	
+		
 	/**
 	 * This method parse a VTG Sentence
 	 * 
 	 * @param nmeaSentece
 	 */
-	private void parseVTG(String nmeaSentence){
+	protected void parseVTG(String nmeaSentence){
 		vtgSentence.setSentence(nmeaSentence);
 		vtgSentence.parse();
 		
@@ -378,7 +338,5 @@ public class BasicGPS extends Thread {
 		this.heading = vtgSentence.getTrueCourse();
 		// On my Holux-1200 the VTG sentence leaves this blank:
 		//this.compassDegrees = vtgSentence.getMagneticCourse();
-
-		// TODO In subclass GPS it should call this method and then fireGGASentenceReceived
 	}
 }
