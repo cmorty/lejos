@@ -211,11 +211,13 @@ public class Long extends Number implements Comparable
 	
 	public static long rotateLeft(long v, int bits)
 	{
+		// v >>> -bits is the same as v >>> (64-bits) 
 		return (v << bits) | (v >>> -bits);
 	}
 	
 	public static long rotateRight(long v, int bits)
 	{
+		// v << -bits is the same as v << (64-bits) 
 		return (v >>> bits) | (v << -bits);
 	}
 	
