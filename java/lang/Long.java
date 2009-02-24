@@ -30,11 +30,15 @@ public class Long extends Number implements Comparable
 	
 	public int bitCount(long v)
 	{
-		//I didn't understand http://www-graphics.stanford.edu/~seander/bithacks.html#CountBitsSetParallel
-		//So I made up my own algorithm
+		//See http://www-graphics.stanford.edu/~seander/bithacks.html#CountBitsSetParallel
 		
 		//first sum up every 1st and 2nd bit, the result are 2bit counters
-		v = (v & 0x5555555555555555L)  + ((v >>> 1) & 0x5555555555555555L);
+		//but do it with some nice trick:
+		//  11 - (11 >> 1) = 10
+		//  10 - (10 >> 1) = 01
+		//  01 - (01 >> 1) = 01
+		//  00 - (00 >> 1) = 00
+		v = v - ((v >>> 1) & 0x5555555555555555L);		
 		//then sum up every 1st and 2nd of the 2-bit counters => 4bit counters
 		v = (v & 0x3333333333333333L)  + ((v >>> 2) & 0x3333333333333333L);
 		//then sum up every i-th and (i+1)-th of the 4bit counters and throw away some of them
