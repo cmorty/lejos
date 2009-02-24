@@ -101,8 +101,8 @@ public class CompassPilot extends TachoPilot {
 	/**
 	 * Returns the compass angle in degrees, Cartesian (increasing counter clockwise) i.e. the actual robot heading
 	 */
-	public int getAngle() {
-		return (int)compass.getDegreesCartesian();
+	public float getAngle() {
+		return compass.getDegreesCartesian();
 	}
 	
 	/**
@@ -134,7 +134,7 @@ public class CompassPilot extends TachoPilot {
 	 */
 	private int getHeadingError() 
 	{
-	   int  err = getAngle() - _heading;
+	   int  err = (int)getAngle() - _heading;
 		// Handles the wrap-around problem:
 		while (err < -180) err = err + 360;
 		while (err > 180) err = err - 360;
