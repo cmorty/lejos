@@ -29,7 +29,9 @@ public class VTGSentence extends NMEASentence{
 
 	//RMC Sentence
 	private String nmeaHeader = "";
-	private float speed = 0;
+	private float speed = 0; // TODO Probably default values should be negative?
+	private float trueCourse = 0;
+	private float magneticCourse = 0;
 
 	//Header
 	public static final String HEADER = "$GPVTG";
@@ -48,18 +50,35 @@ public class VTGSentence extends NMEASentence{
 	}
 
 	/**
+	 * Get true course, in degrees.
+	 * 
+	 * @return the true course in degrees 0.0 to 360.0
+	 */
+	public float getTrueCourse(){
+		return trueCourse;
+	}
+	
+	/**
+	 * Get magnetic course, in degrees.
+	 * 
+	 * @return the magnetic course in degrees 0.0 to 360.0
+	 */
+	public float getMagneticCourse(){
+		return magneticCourse;
+	}
+	
+	/**
 	 * Parase a RMC Sentence
 	 * 
 	 * $GPVTG,054.7,T,034.4,M,005.5,N,010.2,K,A*53
 	 */
 	public void parse (){
 		st = new StringTokenizer(nmeaSentence,",");
-
 		try{
 			nmeaHeader = st.nextToken();//$GPVTG
-			st.nextToken();//True course made good over ground, degrees
+			trueCourse = Float.parseFloat((String)st.nextToken());//True course made good over ground, degrees
 			st.nextToken();//Letter
-			st.nextToken();//Magnetic course made good over ground
+			magneticCourse = Float.parseFloat((String)st.nextToken());//Magnetic course made good over ground
 			st.nextToken();//Letter
 			st.nextToken();//Ground speed, N=Knots
 			st.nextToken();//Letter
