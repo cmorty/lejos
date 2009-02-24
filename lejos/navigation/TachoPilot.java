@@ -1,5 +1,6 @@
 package lejos.navigation;
 
+import lejos.nxt.Battery;
 import lejos.nxt.Motor;
 
 /**
@@ -15,10 +16,10 @@ import lejos.nxt.Motor;
  * Uses the smoothAcceleration property of Motors to improve motor synchronization when starting a movement. Example:
  * <p>
  * <code><pre>
- * Pilot pilot = new Pilot(2.1f,4.4f,Motor.A, Motor.C,true);  parameters inches
- * pilot.setRobotSpeed(10);// inches/sec
- * pilot.travel(12);
- * pilot.rotate(-90);
+ * Pilot pilot = new TachoPilot(2.1f, 4.4f, Motor.A, Motor.C, true);  // parameters in inches
+ * pilot.setRobotSpeed(10);                                           // inches per second
+ * pilot.travel(12);                                                  // inches
+ * pilot.rotate(-90);                                                 // degree clockwise
  * pilot.travel(-12,true);
  * while(pilot.isMoving())Thread.yield();
  * pilot.rotate(-90);
@@ -34,36 +35,56 @@ import lejos.nxt.Motor;
  **/
 public class TachoPilot implements Pilot
 {
+  /**
+   * Left motor.
+   */
+  protected final Motor _left;
+  
+  /**
+   * Right motor.
+   */
+  protected final Motor _right;
+  
+  /**
+   * Left motor degrees per unit of travel.
+   */
+  protected final float _leftDegPerDistance;
+  
+  /**
+   * Right motor degrees per unit of travel.
+   */
+  protected final float _rightDegPerDistance;
 
   /**
-   * Left motor
-   */
-  protected Motor _left;
-  /**
-   * Right motor
-   */
-  protected Motor _right;
-  /**
-   * Motor degrees per unit of travel
-   */
-  public final float _degPerDistance;
-  /**
-   * Motor revolutions for 360 degree rotation of robot (motors running in opposite directions). Calculated from wheel
+   * Left motor revolutions for 360 degree rotation of robot (motors running in opposite directions). Calculated from wheel
    * diameter and track width. Used by rotate() and steer() methods.
    **/
-  private final float _turnRatio;
+  protected final float _leftTurnRatio;
+  
   /**
-   * speed of robot in wheel diameter units per sec
+   * Right motor revolutions for 360 degree rotation of robot (motors running in opposite directions). Calculated from wheel
+   * diameter and track width. Used by rotate() and steer() methods.
+   **/
+  protected final float _rightTurnRatio;
+  
+  /**
+   * Speed of robot for moving in wheel diameter units per seconds.
    */
-  protected float _robotSeed;
+  protected float _robotMoveSpeed;
+  
+  /**
+   * Speed of robot for turning in degree per seconds.
+   */
+  protected float _robotTurnSpeed;
+
   /**
    * Motor speed degrees per second. Used by all methods that cause movement.
    */
-  protected int _motorSpeed = 360;
+  protected int _motorSpeed;
   /**
    * Motor rotation forward makes robot move forward if parity == 1.
    */
-  private byte _parity = 1;
+  private byte _parity;
   /**
    * If true, motor speed regulation is turned on.
    */
@@ -71,15 +92,17 @@ public class TachoPilot implements Pilot
   /**
    * Distance between wheels. Used in steer().
    */
-  public final float _trackWidth;
+  protected final float _trackWidth;
+  
   /**
-   * Diameter of tires.
+   * Diameter of left wheel.
    */
-  public final float _wheelDiameter;
+  protected final float _leftWheelDiameter;
+
   /**
-   * A correction factor to compensate for small differences in wheel size (causing the robot to "drift" to one side).
+   * Diameter of right wheel.
    */
-  private float _driftCorrection = 1;
+  protected final float _rightWheelDiameter;
 
   /**
    * Allocates a Pilot object, and sets the physical parameters of the NXT robot.<br>
@@ -90,7 +113,7 @@ public class TachoPilot implements Pilot
    * @param leftMotor The left Motor (e.g., Motor.C).
    * @param rightMotor The right Motor (e.g., Motor.A).
    */
-  public TachoPilot(float wheelDiameter, float trackWidth, Motor leftMotor, Motor rightMotor)
+  public TachoPilot(final float wheelDiameter, final float trackWidth, final Motor leftMotor, final Motor rightMotor)
   {
     this(wheelDiameter, trackWidth, leftMotor, rightMotor, false);
   }
@@ -104,46 +127,41 @@ public class TachoPilot implements Pilot
    * @param rightMotor The right Motor (e.g., Motor.A).
    * @param reverse If true, the NXT robot moves forward when the motors are running backward.
    */
-  public TachoPilot(float wheelDiameter, float trackWidth, Motor leftMotor, Motor rightMotor, boolean reverse)
+  public TachoPilot(final float wheelDiameter, final float trackWidth, final Motor leftMotor, final Motor rightMotor, final boolean reverse)
   {
-    _left = leftMotor;
-    _right = rightMotor;
-    _degPerDistance = 360 / ((float) Math.PI * wheelDiameter);
-    _motorSpeed = 360;
-    _robotSeed = _motorSpeed/_degPerDistance;
-    _turnRatio = trackWidth / wheelDiameter;
-    _trackWidth = trackWidth;
-    _wheelDiameter = wheelDiameter;
-    if (reverse)
-    {
-      _parity = -1;
-    } else
-    {
-      _parity = 1;
-    }
+    this(wheelDiameter, wheelDiameter, trackWidth, leftMotor, rightMotor, reverse);
   }
 
   /**
-   * 
    * Allocates a Pilot object, and sets the physical parameters of the NXT robot.<br>
-   * About <i>drift correction</i>: If your robot has problems traveling long distances (many meters) without deviating
-   * too much (>2%) this might be due to a <b>small</b> (sub millimeter) differences in wheel size. To correct this kind
-   * of "drift" you can specify a drift correction factor (e.g., a 2 wheel robot (5,6cm wheel diameter and 11cm track
-   * width) had a deviation of 16cm to the right after traveling 400cm in a "straight" line. A drift correction of
-   * -0.001f did correct this).
    * 
-   * @param wheelDiameter Diameter of the tire, in any convenient units (diameter in mm is usually printed on the tire).
+   * @param leftWheelDiameter Diameter of the left wheel, in any convenient units (diameter in mm is usually printed on
+   *          the tire).
+   * @param rightWheelDiameter Diameter of the right wheel. You can actually fit intentionally wheels with different
+   *          size to your robot. If you fitted wheels with the same size, but your robot is not going straight, try
+   *          swapping the wheels and see if it deviates into the other direction. That would indicate a small
+   *          difference in wheel size. Adjust wheel size accordingly.
    * @param trackWidth Distance between center of right tire and center of left tire, in same units as wheelDiameter.
-   * @param driftCorrection A correction factor to compensate for <b>small</b> differences in wheel size.
    * @param leftMotor The left Motor (e.g., Motor.C).
    * @param rightMotor The right Motor (e.g., Motor.A).
    * @param reverse If true, the NXT robot moves forward when the motors are running backward.
    */
-  public TachoPilot(float wheelDiameter, float trackWidth, float driftCorrection, Motor leftMotor, Motor rightMotor,
-          boolean reverse)
-  {
-    this(wheelDiameter, trackWidth, leftMotor, rightMotor, reverse);
-    _driftCorrection = 1.0f + driftCorrection;
+  public TachoPilot(final float leftWheelDiameter, final float rightWheelDiameter, final float trackWidth, final Motor leftMotor,
+      final Motor rightMotor, final boolean reverse) {
+    // left
+    _left = leftMotor;
+    _leftWheelDiameter = leftWheelDiameter;
+    _leftTurnRatio = trackWidth / leftWheelDiameter;
+    _leftDegPerDistance = 360 / ((float) Math.PI * leftWheelDiameter);
+    // right
+    _right = rightMotor;
+    _rightWheelDiameter = rightWheelDiameter;
+    _rightTurnRatio = trackWidth / rightWheelDiameter;
+    _rightDegPerDistance = 360 / ((float) Math.PI * rightWheelDiameter);
+    // both
+    _trackWidth = trackWidth;
+    _parity = (byte) (reverse ? -1 : 1);
+    setSpeed(360);
   }
 
   /**
@@ -197,44 +215,80 @@ public class TachoPilot implements Pilot
   }
 
   /**
-   * @return ratio of motor revolutions per 360 degree rotation of the robot.
+   * @return ratio of motor revolutions per 360 degree rotation of the robot. If your robot has wheels with different
+   *         size, it is the average.
    */
-  public float getTurnRatio()
-  {
-    return _turnRatio;
+  public float getTurnRatio() {
+    return (_leftTurnRatio + _rightTurnRatio) / 2.0f;
   }
 
   /**
-   * @return current robot speed.
-   */
-  public float getRobotSpeed()
-  {
-    return _robotSeed;
-  }
-/**
- * sets robot speed in wheel diameter units per second
- * @param speed
- */
-  public void setRobotSpeed(float speed)
-  {
-    setSpeed((int)(_degPerDistance*_robotSeed));
-  }
-  /**
-   * Sets speed of both motors and sets regulate speed to true. If a drift correction has been specified in the
-   * constructor it will be applied to the left motor.
+   * Sets speed of both motors and sets regulate speed to true. Only use if your wheels have teh same size.
    * 
    * @param speed The wanted speed in degrees per second.
    */
-  public void setSpeed(int speed)
-  {
-    _robotSeed = speed/_degPerDistance;
-    _motorSpeed = (int)(speed);
+  public void setSpeed(final int speed) {
+    _motorSpeed = speed;
+    _robotMoveSpeed = speed/Math.max(_leftDegPerDistance, _rightDegPerDistance);
+    _robotTurnSpeed = speed/Math.max(_leftTurnRatio, _rightTurnRatio);
+    setSpeed(speed, speed);
+  }
+  
+  private void setSpeed(final int leftSpeed, final int rightSpeed){
     _left.regulateSpeed(_regulating);
     _left.smoothAcceleration(!isMoving());
     _right.regulateSpeed(_regulating);
     _right.smoothAcceleration(!isMoving());
-    _left.setSpeed((int) (_motorSpeed * _driftCorrection));
-    _right.setSpeed(_motorSpeed);
+    _left.setSpeed(leftSpeed);
+    _right.setSpeed(rightSpeed);
+  }
+
+  /**
+   * @see lejos.navigation.Pilot#setMoveSpeed(float)
+   */
+  public void setMoveSpeed(float speed) {
+    _robotMoveSpeed=speed;
+    setSpeed(Math.round(speed * _leftDegPerDistance), Math.round(speed * _rightDegPerDistance));
+  }
+
+  /**
+   * @see lejos.navigation.Pilot#getMoveSpeed()
+   */
+  public float getMoveSpeed() {
+    return _robotMoveSpeed;
+  }
+
+  /**
+   * @see lejos.navigation.Pilot#getMoveMaxSpeed()
+   */
+  public float getMoveMaxSpeed() {
+    // it is generally assumed, that the maximum accurate speed of Motor is 100 degree/second * Voltage
+    return Battery.getVoltage() * 100.0f / Math.max(_leftDegPerDistance, _rightDegPerDistance);
+    // max degree/second divided by degree/unit = unit/second
+  }
+
+  /**
+   * @see lejos.navigation.Pilot#setTurnSpeed(float)
+   */
+  public void setTurnSpeed(float speed) {
+    _robotTurnSpeed=speed;
+    setSpeed(Math.round(speed * _leftTurnRatio), Math.round(speed * _rightTurnRatio));
+  }
+
+  /**
+   * @see lejos.navigation.Pilot#getTurnSpeed()
+   */
+  public float getTurnSpeed() {
+    return _robotTurnSpeed;
+  }
+
+  /**
+   * @see lejos.navigation.Pilot#getTurnMaxSpeed()
+   */
+  public float getTurnMaxSpeed() {
+    // it is generally assumed, that the maximum accurate speed of Motor is 100 degree/second * Voltage
+    return Battery.getVoltage() * 100.0f / Math.max(_leftTurnRatio, _rightTurnRatio);
+    // max degree/second divided by degree/unit = unit/second
   }
 
   /**
@@ -274,7 +328,7 @@ public class TachoPilot implements Pilot
    * 
    * @param angle The wanted angle of rotation in degrees. Positive angle rotate left (clockwise), negative right.
    */
-  public void rotate(float angle)
+  public void rotate(final float angle)
   {
     rotate(angle, false);
   }
@@ -287,20 +341,21 @@ public class TachoPilot implements Pilot
    * @param angle The wanted angle of rotation in degrees. Positive angle rotate left (clockwise), negative right.
    * @param immediateReturn If true this method returns immediately.
    */
-  public void rotate(float  angle, boolean immediateReturn)
+  public void rotate(final float  angle, final boolean immediateReturn)
   {
-    setSpeed(_motorSpeed);
-    int ta = _parity * (int) (angle * _turnRatio);
-    _left.rotate(-ta, true);
-    _right.rotate(ta, immediateReturn);
+    setSpeed(Math.round(_robotTurnSpeed * _leftTurnRatio), Math.round(_robotTurnSpeed * _rightTurnRatio));
+    int rotateAngleLeft = _parity * (int) (angle * _leftTurnRatio);
+    int rotateAngleRight = _parity * (int) (angle * _rightTurnRatio);
+    _left.rotate(-rotateAngleLeft, true);
+    _right.rotate(rotateAngleRight, immediateReturn);
   }
 
   /**
    * @return the angle of rotation of the robot since last call to reset of tacho count;
    */
-  public int getAngle()
+  public float getAngle()
   {
-    return _parity * Math.round((getRightCount() - getLeftCount()) / (2 * _turnRatio));
+    return ((_right.getTachoCount()/_rightTurnRatio) - (_left.getTachoCount()/_leftTurnRatio)) / 2.0f;
   }
 
   /**
@@ -317,7 +372,7 @@ public class TachoPilot implements Pilot
    **/
   public boolean isMoving()
   {
-    return _left.isMoving() || _right.isMoving() || _left.isRotating() || _right.isRotating();
+    return _left.isMoving() || _right.isMoving();
   }
 
   /**
@@ -334,8 +389,9 @@ public class TachoPilot implements Pilot
    **/
   public float getTravelDistance()
   {
-    int avg = (_left.getTachoCount() + _right.getTachoCount()) / 2;
-    return _parity * avg / _degPerDistance;
+    float left = _left.getTachoCount() / _leftDegPerDistance;
+    float right = _right.getTachoCount() / _rightDegPerDistance;
+    return _parity * (left + right) / 2.0f;
   }
 
   /**
@@ -345,7 +401,7 @@ public class TachoPilot implements Pilot
    * 
    * @param distance The distance to move. Unit of measure for distance must be same as wheelDiameter and trackWidth.
    **/
-  public void travel(float distance)
+  public void travel(final float distance)
   {
     travel(distance, false);
   }
@@ -358,11 +414,11 @@ public class TachoPilot implements Pilot
    * @param distance The distance to move. Unit of measure for distance must be same as wheelDiameter and trackWidth.
    * @param immediateReturn If true this method returns immediately.
    */
-  public void travel(float distance, boolean immediateReturn)
+  public void travel(final float distance, final boolean immediateReturn)
   {
-    setSpeed(_motorSpeed);// both motors at same speed
-    _left.rotate((int) (_parity * distance * _degPerDistance * _driftCorrection), true);
-    _right.rotate((int) (_parity * distance * _degPerDistance), immediateReturn);
+    setSpeed(Math.round(_robotMoveSpeed * _leftDegPerDistance), Math.round(_robotMoveSpeed * _rightDegPerDistance));
+    _left.rotate((int) (_parity * distance * _leftDegPerDistance ), true);
+    _right.rotate((int) (_parity * distance * _rightDegPerDistance), immediateReturn);
   }
 
   /**
@@ -377,12 +433,12 @@ public class TachoPilot implements Pilot
    * <LI>steer(100) -> inner wheel stops
    * <LI>steer(200) -> means that the inner wheel turns at the same speed as the outer wheel - a zero radius turn.
    * </UL>
-   * Note: Even if you have specified a drift correction in the constructor it will not be applied in this method.
+   * Note: Not supported for a robot with wheels of different size.
    * 
    * @param turnRate If positive, the left wheel is on the inside of the turn. If negative, the left wheel is on the
    *          outside.
    */
-  public void steer(int turnRate)
+  public void steer(final int turnRate)
   {
     steer(turnRate, Integer.MAX_VALUE, true);
   }
@@ -399,13 +455,13 @@ public class TachoPilot implements Pilot
    * <LI>steer(100) -> inner wheel stops
    * <LI>steer(200) -> means that the inner wheel turns at the same speed as the outer wheel - a zero radius turn.
    * </UL>
-   * Note: Even if you have specified a drift correction in the constructor it will not be applied in this method.
+   * Note: Not supported for a robot with wheels of different size.
    * 
    * @param turnRate If positive, the left wheel is on the inside of the turn. If negative, the left wheel is on the
    *          outside.
    * @param angle The angle through which the robot will rotate. If negative, robot traces the turning circle backwards.
    */
-  public void steer(int turnRate, int angle)
+  public void steer(final int turnRate, int angle)
   {
     steer(turnRate, angle, false);
   }
@@ -422,15 +478,16 @@ public class TachoPilot implements Pilot
    * <LI>steer(100) -> inner wheel stops
    * <LI>steer(200) -> means that the inner wheel turns at the same speed as the outer wheel - a zero radius turn.
    * </UL>
-   * Note: Even if you have specified a drift correction in the constructor it will not be applied in this method.
+   * Note: Not supported for a robot with wheels of different size.
    * 
    * @param turnRate If positive, the left wheel is on the inside of the turn. If negative, the left wheel is on the
    *          outside.
    * @param angle The angle through which the robot will rotate. If negative, robot traces the turning circle backwards.
    * @param immediateReturn If true this method returns immediately.
    */
-  public void steer(int turnRate, int angle, boolean immediateReturn)
+  public void steer(final int turnRate, final int angle, final boolean immediateReturn)
   {
+    // TODO: make this work with wheels of different size
     Motor inside;
     Motor outside;
     int rate = turnRate;
@@ -484,7 +541,7 @@ public class TachoPilot implements Pilot
       }
       return;
     }
-    float rotAngle = angle * _trackWidth * 2 / (_wheelDiameter * (1 - steerRatio));
+    float rotAngle = angle * _trackWidth * 2 / (_leftWheelDiameter * (1 - steerRatio));
     inside.rotate(_parity * (int) (rotAngle * steerRatio), true);
     outside.rotate(_parity * (int) rotAngle, immediateReturn);
     if (immediateReturn)
@@ -518,7 +575,7 @@ public class TachoPilot implements Pilot
    * 
    * @param yes Set motor speed regulation on = true or off = false.
    */
-  public void regulateSpeed(boolean yes)
+  public void regulateSpeed(final boolean yes)
   {
     _regulating = yes;
     _left.regulateSpeed(yes);
@@ -537,9 +594,10 @@ public class TachoPilot implements Pilot
    * Moves the NXT robot in a circular path with a specified radius. <br>
    * The center of the turning circle is on the right side of the robot iff parameter radius is negative;  <br>
    * Postcondition:  Motor speeds are unpredictable.
+   * Note: Not supported for a robot with wheels of different size.
    * @param radius of the circular path. If positive, the left wheel is on the inside of the turn.  If negative, the left wheel is on the outside.
    */
-  public void turn(float radius)
+  public void turn(final float radius)
   {
     steer(turnRate(radius));
   }
@@ -548,21 +606,23 @@ public class TachoPilot implements Pilot
    * Moves the NXT robot in a circular arc through the specificd angle;  <br>
    * The center of the turning circle is on the right side of the robot iff parameter radius is negative.
    * Robot will stop when total rotation equals angle. If angle is negative, robot will move travel backwards.
+   * Note: Not supported for a robot with wheels of different size.
    * @param radius radius of the turning circle
    * @param angle The sign of the angle determines the direction of robot motion
    */
-  public void turn(float radius, int angle)
+  public void turn(final float radius, final int angle)
   {
     steer(turnRate(radius),angle);
   }
   /**
    *  Move in a circular arc with specified radius; the center of the turning circle <br>
  * is on the right side of the robot if the radius is negative.
-   * @param radius
-   * @param angle
-   * @param immediateReturn
+   * Note: Not supported for a robot with wheels of different size.
+   * @param radius radius of the turning circle
+   * @param angle The sign of the angle determines the direction of robot motion
+   * @param immediateReturn If true this method returns immediately.
    */
-  public void turn(float radius, int angle, boolean immediateReturn)
+  public void turn(final float radius, final int angle, final boolean immediateReturn)
   {
     steer(turnRate(radius),angle,immediateReturn);
   }
@@ -576,6 +636,7 @@ public class TachoPilot implements Pilot
    */
   private int turnRate(float radius)
   {
+    // TODO: parameter should be final
     int direction = 1;
     if (radius < 0)
     {
