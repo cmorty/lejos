@@ -40,10 +40,10 @@ public class Long extends Number implements Comparable
 		//then sum up every 1-4th with 5-8th bit
 		v = (v & 0x0F0F0F0F0F0F0F0FL)  + ((v >>> 4) & 0x0F0F0F0F0F0F0F0FL);
 		//at this point, we have a bit counter every 8 bits. Now we just have sum up all of them:
-		v += v >>> 8;
-		v += v >>> 16;
-		v += v >>> 32;
-		return ((int)v) & 0xFF;
+		int i = ((int)v) + ((int)(v >>> 32));
+		i += (i >>> 16);
+		i += (i >>> 8);
+		return i & 0xFF;
 	}
 	
 	public byte byteValue()
