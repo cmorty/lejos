@@ -58,6 +58,7 @@ class GSASentence extends NMEASentence{
 	 * 
 	 */
 	public String getMode(){
+		checkRefresh();
 		return mode;
 	}
 
@@ -71,6 +72,7 @@ class GSASentence extends NMEASentence{
 	 * 
 	 */
 	public int getModeValue(){
+		checkRefresh();
 		return modeValue;
 	}
 
@@ -80,6 +82,7 @@ class GSASentence extends NMEASentence{
 	 * @return the array of satellite IDs
 	 */
 	public int[] getSV(){
+		checkRefresh(); 
 		return SV;
 	}
 
@@ -89,6 +92,7 @@ class GSASentence extends NMEASentence{
 	 * @return the PDOP
 	 */
 	public float getPDOP(){
+		checkRefresh();
 		return PDOP;
 	}
 
@@ -98,6 +102,7 @@ class GSASentence extends NMEASentence{
 	 * @return the HDOP
 	 */
 	public float getHDOP(){
+		checkRefresh();
 		return HDOP;
 	}
 
@@ -107,6 +112,7 @@ class GSASentence extends NMEASentence{
 	 * @return the VDOP
 	 */
 	public float getVDOP(){
+		checkRefresh();
 		return VDOP;
 	}
 
