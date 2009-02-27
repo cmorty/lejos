@@ -25,10 +25,9 @@ import java.util.*;
  * 
  * @author Juan Antonio Brenha Moral
  */
-public class VTGSentence extends NMEASentence{
+class VTGSentence extends NMEASentence{
 
 	//RMC Sentence
-	private String nmeaHeader = "";
 	private float speed = 0; // TODO Probably default values should be negative?
 	private float trueCourse = 0;
 	private float magneticCourse = 0;
@@ -46,6 +45,7 @@ public class VTGSentence extends NMEASentence{
 	 * @return the speed in kilometers per ???
 	 */
 	public float getSpeed(){
+		checkRefresh();
 		return speed;  
 	}
 
@@ -55,6 +55,7 @@ public class VTGSentence extends NMEASentence{
 	 * @return the true course in degrees 0.0 to 360.0
 	 */
 	public float getTrueCourse(){
+		checkRefresh();
 		return trueCourse;
 	}
 	
@@ -64,6 +65,7 @@ public class VTGSentence extends NMEASentence{
 	 * @return the magnetic course in degrees 0.0 to 360.0
 	 */
 	public float getMagneticCourse(){
+		checkRefresh();
 		return magneticCourse;
 	}
 	
@@ -75,10 +77,12 @@ public class VTGSentence extends NMEASentence{
 	public void parse (){
 		st = new StringTokenizer(nmeaSentence,",");
 		try{
-			nmeaHeader = st.nextToken();//$GPVTG
+			st.nextToken();//skip header $GPVTG
 			trueCourse = Float.parseFloat((String)st.nextToken());//True course made good over ground, degrees
 			st.nextToken();//Letter
-			magneticCourse = Float.parseFloat((String)st.nextToken());//Magnetic course made good over ground
+			String sTemp = (String)st.nextToken();
+			if(sTemp.length() > 0) // This is blank with Holux-1200	
+				magneticCourse = Float.parseFloat(sTemp);//Magnetic course made good over ground
 			st.nextToken();//Letter
 			st.nextToken();//Ground speed, N=Knots
 			st.nextToken();//Letter
@@ -86,7 +90,7 @@ public class VTGSentence extends NMEASentence{
 			//st.nextToken();//Letter
 		}catch(NoSuchElementException e){
 			//Empty
-		}catch(NumberFormatException e2){
+		}catch(NumberFormatException e){
 			//Empty
 		}
 	}//End Parse

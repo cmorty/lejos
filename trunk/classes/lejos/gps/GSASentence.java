@@ -24,9 +24,8 @@ import java.util.*;
  * 
  */
 
-public class GSASentence extends NMEASentence{
+class GSASentence extends NMEASentence{
 	//GSA
-	private String nmeaHeader = "";
 	private String mode = "";
 	private int modeValue = 0;
 	private final int maximumSV = 12;
@@ -120,7 +119,7 @@ public class GSASentence extends NMEASentence{
 		String sv = "";
 
 		try{
-			nmeaHeader = st.nextToken();//Global Positioning System Fix Data
+			st.nextToken(); // Skip header $GPGSA
 			mode = st.nextToken();
 			modeValue = Integer.parseInt(st.nextToken());
 

@@ -27,16 +27,12 @@ import java.util.*;
  * 
  * @author Juan Antonio Brenha Moral
  */
-public class GSVSentence extends NMEASentence{
+class GSVSentence extends NMEASentence{
 	
 	//GGA
-	private String nmeaHeader = "";
 	private float satellitesTracked = 0;
 	private final int maximumSatellites = 4;//0,1,2,3
-	NMEASatellite ns1;
-	NMEASatellite ns2;
-	NMEASatellite ns3;
-	NMEASatellite ns4;
+	NMEASatellite [] ns;
 	
 	//Header
 	public static final String HEADER = "$GPGSV";
@@ -45,18 +41,13 @@ public class GSVSentence extends NMEASentence{
 	 * Constructor
 	 */
 	public GSVSentence(){
-		//ns = new NMEASatellite[maximumSatellites];
-		ns1 = new NMEASatellite();
-		ns2 = new NMEASatellite();
-		ns3 = new NMEASatellite();
-		ns4 = new NMEASatellite();
+		// TODO: Does GPS really only connect to four? Why not more?
+		ns = new NMEASatellite[maximumSatellites];
 	}
-	
 	
 	/*
 	 * GETTERS & SETTERS
 	 */
-
 	
 	/**
 	 * Returns the number of satellites being tracked to
@@ -65,7 +56,9 @@ public class GSVSentence extends NMEASentence{
 	 * @return Number of satellites e.g. 8
 	 */
 	public int getSatellitesTracked() {
+		checkRefresh();
 		return Math.round(satellitesTracked);
+		// TODO: Why is Juan using Math.round()?
 	}
 
 	/**
@@ -75,19 +68,9 @@ public class GSVSentence extends NMEASentence{
 	 * @return theNMEASatellite object for the selected satellite
 	 */
 	public NMEASatellite getSatellite(int index){
-		NMEASatellite ns = new NMEASatellite();
-		if(index == 0){
-			ns = ns1;
-		}else if(index == 1){
-			ns = ns2;
-		}else if(index == 2){
-			ns = ns3;
-		}else if(index == 3){
-			ns = ns4;
-		}
-		return ns;
+		checkRefresh();
+		return ns[index];
 	}
-
 	
 	/**
 	 * Method used to parse a GSV Sentence
@@ -102,42 +85,43 @@ public class GSVSentence extends NMEASentence{
 
 		
 		try{
-			nmeaHeader = st.nextToken();//GPS Satellites in view
+			st.nextToken(); // Skip header $GPGSV
 			st.nextToken();//Message number
 			satellitesTracked = Float.parseFloat((String)st.nextToken());//Number of satellites being tracked
 
+			// TODO: This code has redundancies! Should use array of Satellites.
 			PRN = Float.parseFloat((String)st.nextToken());
 			elevation = Float.parseFloat((String)st.nextToken());
 			azimuth = Float.parseFloat((String)st.nextToken());
 			SNR = Float.parseFloat((String)st.nextToken());
-			ns1.setPRN(Math.round(PRN));
-			ns1.setElevation(Math.round(elevation));
-			ns1.setAzimuth(Math.round(azimuth));
-			ns1.setSNR(Math.round(SNR));
+			ns[0].setPRN(Math.round(PRN));
+			ns[0].setElevation(Math.round(elevation));
+			ns[0].setAzimuth(Math.round(azimuth));
+			ns[0].setSNR(Math.round(SNR));
 			PRN = Float.parseFloat((String)st.nextToken());
 			elevation = Float.parseFloat((String)st.nextToken());
 			azimuth = Float.parseFloat((String)st.nextToken());
 			SNR = Float.parseFloat((String)st.nextToken());
-			ns2.setPRN(Math.round(PRN));
-			ns2.setElevation(Math.round(elevation));
-			ns2.setAzimuth(Math.round(azimuth));
-			ns2.setSNR(Math.round(SNR));
+			ns[1].setPRN(Math.round(PRN));
+			ns[1].setElevation(Math.round(elevation));
+			ns[1].setAzimuth(Math.round(azimuth));
+			ns[1].setSNR(Math.round(SNR));
 			PRN = Float.parseFloat((String)st.nextToken());
 			elevation = Float.parseFloat((String)st.nextToken());
 			azimuth = Float.parseFloat((String)st.nextToken());
 			SNR = Float.parseFloat((String)st.nextToken());
-			ns3.setPRN(Math.round(PRN));
-			ns3.setElevation(Math.round(elevation));
-			ns3.setAzimuth(Math.round(azimuth));
-			ns3.setSNR(Math.round(SNR));
+			ns[2].setPRN(Math.round(PRN));
+			ns[2].setElevation(Math.round(elevation));
+			ns[2].setAzimuth(Math.round(azimuth));
+			ns[2].setSNR(Math.round(SNR));
 			PRN = Float.parseFloat((String)st.nextToken());
 			elevation = Float.parseFloat((String)st.nextToken());
 			azimuth = Float.parseFloat((String)st.nextToken());
 			SNR = Float.parseFloat((String)st.nextToken());
-			ns4.setPRN(Math.round(PRN));
-			ns4.setElevation(Math.round(elevation));
-			ns4.setAzimuth(Math.round(azimuth));
-			ns4.setSNR(Math.round(SNR));
+			ns[3].setPRN(Math.round(PRN));
+			ns[3].setElevation(Math.round(elevation));
+			ns[3].setAzimuth(Math.round(azimuth));
+			ns[3].setSNR(Math.round(SNR));
 		}catch(NoSuchElementException e){
 			//Empty
 		}catch(NumberFormatException e2){

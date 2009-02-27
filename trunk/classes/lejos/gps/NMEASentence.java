@@ -11,10 +11,10 @@ import java.util.*;
  * @author BB
  * @author Juan Antonio Brenha Moral
  */
-public class NMEASentence {
+abstract class NMEASentence {
 
 	static byte checksum;
-	static protected String nmeaSentence = "";
+	protected String nmeaSentence = null;
 	protected StringTokenizer st;
 
 	/* GETTERS & SETTERS */
@@ -28,10 +28,23 @@ public class NMEASentence {
 		nmeaSentence = sentence;
 	}
 
-	private static byte getChecksum() {
-		return checksum;
+	/**
+	 *  This method is called by all the getter methods. It checks if a new sentence has 
+	 *  been received since the last call. 
+	 *  It sets nmeaSentence to null to act as flag for when method called again.
+	 */
+	protected void checkRefresh() {
+		if(nmeaSentence != null) {
+			parse();
+			nmeaSentence = null; // Once data is parsed, discard string (used as flag)
+		}
 	}
-
+	
+	/**
+	 * Abstract method to parse out all relevant data from the nmeaSentence.
+	 */
+	abstract protected void parse();
+	
 	/* CHECKSUM METHODS */
 	
 	/**
@@ -40,12 +53,11 @@ public class NMEASentence {
 	 * @param sentence the NMEA sentence
 	 * @return true iff the NMEA Sentence is true
 	 */
-	static public boolean isValid(String sentence){
-		nmeaSentence = sentence;
-		int end = nmeaSentence.indexOf('*');
-		String checksumStr = nmeaSentence.substring(end + 1, end + 3);
-		checksum = convertChecksum(checksumStr);
-		return(getChecksum() == calcChecksum());
+	public static boolean isValid(String sentence){
+		int end = sentence.indexOf('*');
+		String checksumStr = sentence.substring(end + 1, end + 3);
+		byte checksumByte = convertChecksum(checksumStr);
+		return(checksumByte == calcChecksum(sentence));
 	}
 	
 	/**
@@ -53,15 +65,15 @@ public class NMEASentence {
 	 * 
 	 * @return
 	 */
-	private static byte calcChecksum() {
-		int start = nmeaSentence.indexOf('$');
-		int end = nmeaSentence.indexOf('*');
+	private static byte calcChecksum(String sentence) {
+		int start = sentence.indexOf('$');
+		int end = sentence.indexOf('*');
 		if(end < 0) {
-			end = nmeaSentence.length();
+			end = sentence.length();
 		}
-		byte checksum = (byte) nmeaSentence.charAt(start + 1);
+		byte checksum = (byte) sentence.charAt(start + 1);
 		for (int index = start + 2; index < end; ++index) {
-			checksum ^= (byte) nmeaSentence.charAt(index);
+			checksum ^= (byte) sentence.charAt(index);
 		}
 		return checksum;
 	}
@@ -109,51 +121,35 @@ public class NMEASentence {
 	 * Longitude values has the range: -180 <-> 180
 	 * 
 	 * @param DD_MM the day and month
-	 * @param CoordenateType the coordinate type
+	 * @param CoordinateType the coordinate type
 	 * @return the decimal degrees
 	 */
-	protected float degreesMinToDegrees(String DD_MM,int CoordenateType) {//throws NumberFormatException
+	protected float degreesMinToDegrees(String DD_MM) {
 		float decDegrees = 0;
 		float degrees = 0;
 		float minutes = 0;
 		float seconds = 0;
 		String doubleCharacterSeparator = ".";
 		String DDMM;
-
 		//1. Count characters until character '.'
 		int dotPosition = DD_MM.indexOf(doubleCharacterSeparator);
-		if(CoordenateType == 0){
-			//Latitude Management
-			DDMM = DD_MM.substring(0, dotPosition);
-			if(DDMM.length() == 4){
-				degrees = Float.parseFloat(DDMM.substring(0, 2));
-				minutes = Float.parseFloat(DD_MM.substring(2));
-			}else if(DDMM.length() == 3){
-				degrees = Float.parseFloat(DDMM.substring(0, 1));
-				minutes = Float.parseFloat(DD_MM.substring(1));
-			}
-
+		DDMM = DD_MM.substring(0, dotPosition);
+		 	
+		//Longitude and Latitude Management
+		degrees = Float.parseFloat(DDMM.substring(0, DDMM.length() - 2));
+		minutes = Float.parseFloat(DD_MM.substring(DDMM.length() - 2));
+		
+		/* TODO: I don't think we need this. I removed CoordinateType:
+		if(CoordinateType == 0){
 			if((degrees >=0) && (degrees <=90)){
-				//throw new NumberFormatException();
+				throw new NumberFormatException();
 			}
 		}else{
-			//Latitude Management
-			DDMM = DD_MM.substring(0, dotPosition);
-			if(DDMM.length() == 5){
-				degrees = Float.parseFloat(DDMM.substring(0, 3));
-				minutes = Float.parseFloat(DD_MM.substring(3));
-			}else if(DDMM.length() == 4){
-				degrees = Float.parseFloat(DDMM.substring(0, 2));
-				minutes = Float.parseFloat(DD_MM.substring(2));
-			}else if(DDMM.length() == 3){
-				degrees = Float.parseFloat(DDMM.substring(0, 1));
-				minutes = Float.parseFloat(DD_MM.substring(1));
-			}
-
 			if((degrees >=0) && (degrees <=180)){
-				//throw new NumberFormatException();
+				throw new NumberFormatException();
 			}
-		}
+		}*/
+		
 		//Idea
 		//http://id.mind.net/%7Ezona/mmts/trigonometryRealms/degMinSec/degMinSec.htm
 		decDegrees = (float)(degrees + (minutes * (1.0 / 60.0)) + (seconds * (1.0 / 3600.0)));

@@ -3,12 +3,15 @@ package lejos.gps;
 import java.io.*;
 import java.util.*;
 
+import lejos.nxt.Sound; // TODO Eliminate
+
 /**
  * This class manages data received from a GPS Device.
- * BasicGPS Class manages the following NMEA Sentences:
+ * BasicGPS Class manages the following NMEA Sentences
+ * which supply location, heading, and speed data:
  * 
- * GPGGA
- * GPVTG
+ * GPGGA (location data)
+ * GPVTG (heading and speed data)
  * 
  * @author BB
  */
@@ -27,33 +30,20 @@ public class BasicGPS extends Thread {
 	
 	private InputStream in;
 	
-	//GGA
-	protected int RAWtime = 0;
-	private float latitude;
-	private char latitudeDirection;
-	private float longitude;
-	private char longitudeDirection;
-	private float altitude = 0;
-	protected int satellitesTracked = 0;
-	public static final int MINIMUM_SATELLITES_TO_WORK = 4;
-	public static final int MAXIMUM_SATELLITES_TO_WORK = 12;
-	//private float hdop = 0; // TODO Seems unused.
-	private int quality = 0;
-	
-	// VTG
-	private float speed = 0;
-	private float heading = 0;
-	
+	//protected int RAWtime = 0; TODO: Delete me?
+	//protected int satellitesTracked = 0; TODO: DELETE ME?
+	//private float hdop = 0; // TODO Seems unused. Maybe use for QualifiedCoordinates?
+		
 	//Classes which manages GGA, VTG Sentences
-	protected GGASentence ggaSentence;
-	protected VTGSentence vtgSentence;
+	protected GGASentence ggaSentence = null;
+	protected VTGSentence vtgSentence = null;
 	
-	//Security
+	//Security TODO: This "bug fix" needs to go.
 	private boolean shutdown = false;
-	private boolean updateMode = false;
+	private boolean updateMode = true; // Start reading GPS sentences as soon as instantiated.
+	private boolean internalError = false;
 	
 	//Data
-	private String sentence;
 	private StringTokenizer tokenizer;
 	
 	/**
@@ -62,26 +52,18 @@ public class BasicGPS extends Thread {
 	 * @param in An input stream from the GPS receiver
 	 */
 	public BasicGPS(InputStream in) {
+		this.in = in;
+		
 		ggaSentence = new GGASentence();
 		vtgSentence = new VTGSentence();
 		
-		this.in = in;
-		// Juan: Don't comment out the next line! This should be a daemon thread so VM exits when user program terminates.
+		// Juan: Don't comment out the next line. 
+		// This should be a daemon thread so VM exits when user program terminates.
 		this.setDaemon(true); // Must be set before thread starts
 		this.start();
 	}
 	
-
 	/* GETTERS & SETTERS */
-
-	/**
-	 * Get NMEA Sentence
-	 * 
-	 * @return the NMEA Sentence
-	 */
-	public String getSentence(){
-		return sentence;
-	}
 
 	/**
 	 * Get Latitude
@@ -89,7 +71,7 @@ public class BasicGPS extends Thread {
 	 * @return the latitude
 	 */
 	public float getLatitude() {
-		return latitude;
+		return ggaSentence.getLatitude();
 	}
 
 	
@@ -99,7 +81,7 @@ public class BasicGPS extends Thread {
 	 * @return the latitude direction
 	 */
 	public char getLatitudeDirection(){
-		return latitudeDirection;
+		return ggaSentence.getLatitudeDirection();
 	}
 
 
@@ -109,7 +91,7 @@ public class BasicGPS extends Thread {
 	 * @return the longitude
 	 */
 	public float getLongitude() {
-		return longitude;
+		return ggaSentence.getLongitude();
 	}
 
 	/**
@@ -118,7 +100,7 @@ public class BasicGPS extends Thread {
 	 * @return the longitude direction
 	 */
 	public char getLongitudeDirection(){
-		return longitudeDirection;
+		return ggaSentence.getLongitudeDirection();
 	}
 
 	
@@ -128,7 +110,7 @@ public class BasicGPS extends Thread {
 	 * @return Meters above sea level e.g. 545.4
 	 */
 	public float getAltitude(){
-		return altitude;
+		return ggaSentence.getAltitude();
 	}
 
 	/**
@@ -137,7 +119,7 @@ public class BasicGPS extends Thread {
 	 * @return Number of satellites e.g. 8
 	 */
 	public int getSatellitesTracked(){
-		return satellitesTracked;
+		return ggaSentence.getSatellitesTracked();
 	}
 
 	/**
@@ -146,7 +128,16 @@ public class BasicGPS extends Thread {
 	 * @return the quality
 	 */
 	public int getQuality(){
-		return quality;
+		return ggaSentence.getQuality();
+	}
+	
+	/**
+	 * Get the last time stamp from the satellite for GGA sentence.
+	 * 
+	 * @return Time as a UTC integer. 123459 = 12:34:59 UTC
+	 */
+	public int getTimeStamp() { 
+		return ggaSentence.getTime();
 	}
 	
 	/**
@@ -155,11 +146,15 @@ public class BasicGPS extends Thread {
 	 * @return the speed in kilometers per hour
 	 */
 	public float getSpeed() {
-		return speed;
+		return vtgSentence.getSpeed();
 	}
 
+	/**
+	 * Get the course heading of the GPS unit.
+	 * @return course (0.0 to 360.0)
+	 */
 	public float getCourse() {
-		return heading;
+		return vtgSentence.getTrueCourse();
 	}
 		
 	/**
@@ -175,12 +170,18 @@ public class BasicGPS extends Thread {
 		updateMode = status;
 	}
 
+	// TODO Is this really needed? In Java exceptions are used for error reporting.
+	public boolean existInternalError(){
+		return internalError;
+	}
+		
 	/**
-	 * Method used to finish the Thread
+	 * Method used to close connection. There is no real need to call this method.
+	 * Included in case programmer wants absolutely clean exit. 
 	 */
-	// TODO Not sure why we care about shutting down this thread. It is a daemon.
-	public void shutDown(){
+	public void close() throws IOException {
 		this.shutdown = true;
+		in.close();
 	}
 	
 	/**
@@ -198,8 +199,6 @@ public class BasicGPS extends Thread {
 			//It is a way to save CPU
 			if(updateMode){
 				s = getNextString();
-				System.err.println("String: " + s);
-
 				// Check if sentence is valid:
 				if(s.indexOf('*') < 0) { 
 					continue;
@@ -211,19 +210,22 @@ public class BasicGPS extends Thread {
 				//2008/07/28
 				//Debug checksum validation
 				//Class 19: java.lang.StringIndexOutOfBoundsException
+				// TODO: I suspect we don't need this try-catch block anymore.
 				try{
 					if(NMEASentence.isValid(s)){
 						tokenizer = new StringTokenizer(s);
 						token = tokenizer.nextToken();
-						// Choose which type of sentence to parse
+						// Choose which type of sentence to parse:
 						sentenceChooser(token, s); // Method to make subclass more efficient - no redundant code.
 					}
 				}catch(StringIndexOutOfBoundsException e){
-					//Sound.beep();
+					System.err.println("BasicGPS.run() error. StringIndexOutOfBounds");
+					Sound.beep();
 				}catch(ArrayIndexOutOfBoundsException e2){
 					//Jab
 					//Bug detected: 06/08/2008
-					//Sound.buzz();
+					System.err.println("BasicGPS.run() error. ArrayIndexOutOfBounds");
+					Sound.buzz();
 				}
 				//2008/07/18
 				//Increase the list with more NMEA Sentences
@@ -238,9 +240,9 @@ public class BasicGPS extends Thread {
 	 */
 	protected void sentenceChooser(String token, String s) {
 		if (token.equals(GGASentence.HEADER)){
-			parseGGA(s);
+			ggaSentence.setSentence(s);
 		}else if (token.equals(VTGSentence.HEADER)){
-			parseVTG(s);
+			vtgSentence.setSentence(s);
 		}
 	}
 	
@@ -278,12 +280,14 @@ public class BasicGPS extends Thread {
 				//Reset
 				//currentSentence = new StringBuffer();
 				//segment = new byte[BUFF];
-
+				System.err.println("Bug in BasicGPS.getNextString() detected. > 500");
+				System.err.println("Sentence: " + currentSentence.toString());
+				lejos.nxt.Sound.beepSequenceUp();
+				
 				//If detect a problem with InputStream
 				//System detect the event and notify the problem with the
 				//Enabling the flag internalError
-				// TODO: Note I deleted internalError from this. Still in subclass though. Might
-				// mess up Juan's bug fix but I think this will all go away.
+				internalError = true;
 				updateMode = false;
 				return "";
 			}
@@ -296,47 +300,10 @@ public class BasicGPS extends Thread {
 			// Crop print current sentence
 			currentSentence.delete(0, endIndex);
 		}catch(Exception e){
-			
+			// TODO: Why catch a runtime exception here?
+			System.err.println("Exception in BasicGPS.getNextString() " + e.getMessage());
 		}
 		
 		return sentence;
-	}
-
-	/* NMEA */
-
-	/**
-	 * This method parse a GGA Sentence
-	 * 
-	 * @param nmeaSentece
-	 */
-	protected void parseGGA(String nmeaSentence){
-
-		ggaSentence.setSentence(nmeaSentence);
-		ggaSentence.parse();
-		
-		this.RAWtime = ggaSentence.getTime();
-		
-		this.latitude = ggaSentence.getLatitude();
-		this.latitudeDirection = ggaSentence.getLatitudeDirection();
-		this.longitude = ggaSentence.getLongitude();
-		this.longitudeDirection = ggaSentence.getLongitudeDirection();
-		this.satellitesTracked = ggaSentence.getSatellitesTracked();
-		this.altitude = ggaSentence.getAltitude();
-		this.quality = ggaSentence.getQuality();
-	}
-		
-	/**
-	 * This method parse a VTG Sentence
-	 * 
-	 * @param nmeaSentece
-	 */
-	protected void parseVTG(String nmeaSentence){
-		vtgSentence.setSentence(nmeaSentence);
-		vtgSentence.parse();
-		
-		this.speed = vtgSentence.getSpeed();
-		this.heading = vtgSentence.getTrueCourse();
-		// On my Holux-1200 the VTG sentence leaves this blank:
-		//this.compassDegrees = vtgSentence.getMagneticCourse();
 	}
 }

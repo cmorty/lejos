@@ -34,10 +34,9 @@ import java.util.*;
  * 
  * @author Juan Antonio Brenha Moral
  */
-public class GGASentence extends NMEASentence{
+class GGASentence extends NMEASentence{
 	
 	//GGA
-	private String nmeaHeader = "";
 	private float dateTimeOfFix = 0;
 	private float latitude = 0;
 	private char latitudeDirection;
@@ -53,7 +52,7 @@ public class GGASentence extends NMEASentence{
 
 	//Header
 	public static final String HEADER = "$GPGGA";
-
+	
 	/*
 	 * GETTERS & SETTERS
 	 */
@@ -63,6 +62,7 @@ public class GGASentence extends NMEASentence{
 	 * 
 	 */
 	public float getLatitude() {
+		checkRefresh();
 		return latitude;
 	}
 	
@@ -72,6 +72,7 @@ public class GGASentence extends NMEASentence{
 	 * @return the latitude direction
 	 */
 	public char getLatitudeDirection(){
+		checkRefresh();
 		return latitudeDirection;
 	}
 	
@@ -80,6 +81,7 @@ public class GGASentence extends NMEASentence{
 	 * 
 	 */
 	public float getLongitude() {
+		checkRefresh();
 		return longitude;
 	}
 
@@ -88,6 +90,7 @@ public class GGASentence extends NMEASentence{
 	 * @return the longitude direction
 	 */
 	public char getLongitudeDirection(){
+		checkRefresh();
 		return longitudeDirection;
 	}
 	
@@ -97,6 +100,7 @@ public class GGASentence extends NMEASentence{
 	 * @return the altitude
 	 */
 	public float getAltitude(){
+		checkRefresh();
 		return altitude;
 	}
 
@@ -106,6 +110,8 @@ public class GGASentence extends NMEASentence{
 	 * @return The time as a UTC integer. 123519 = 12:35:19 UTC
 	 */
 	public int getTime(){
+		checkRefresh();
+		// TODO: Why is he using Math.round?
 		return Math.round(dateTimeOfFix);
 	}
 	
@@ -116,6 +122,8 @@ public class GGASentence extends NMEASentence{
 	 * @return Number of satellites e.g. 8
 	 */
 	public int getSatellitesTracked() {
+		checkRefresh();
+		// TODO: Why is he using Math.round?
 		return Math.round(satellitesTracked);
 	}
 
@@ -125,9 +133,10 @@ public class GGASentence extends NMEASentence{
 	 * @return the quality
 	 */
 	public int getQuality(){
+		checkRefresh();
+		// TODO: Why is he using Math.round?
 		return Math.round(quality);
 	}
-
 	
 	/**
 	 * Method used to parse a GGA Sentence
@@ -135,15 +144,17 @@ public class GGASentence extends NMEASentence{
 	public void parse(){
 		//StringTokenizer st = new StringTokenizer(nmeaSentence,",");
 		st = new StringTokenizer(nmeaSentence,",");
+		// TODO: What's with all these Strings defined as ""?
 		String q = "";
 		String h = "";
 		
+		// TODO: Should this really be in a try-catch block? Didn't do anything until I added System.err output.
 		try{
-			nmeaHeader = st.nextToken();//Global Positioning System Fix Data
+			st.nextToken(); // skip $GPGGA header
 			dateTimeOfFix = Float.parseFloat((String)st.nextToken());//UTC Time
-			latitude = degreesMinToDegrees(st.nextToken(),0);
+			latitude = degreesMinToDegrees(st.nextToken());
 			latitudeDirection = st.nextToken().charAt(0);//N
-			longitude = degreesMinToDegrees(st.nextToken(),1);
+			longitude = degreesMinToDegrees(st.nextToken());
 			longitudeDirection = st.nextToken().charAt(0);//E
 			q = st.nextToken();
 			if(q.length() == 0){
@@ -173,8 +184,10 @@ public class GGASentence extends NMEASentence{
 
 		}catch(NoSuchElementException e){
 			//Empty
-		}catch(NumberFormatException e2){
+			System.err.println("NoSuchElementException thrown: " + e.getMessage());
+		}catch(NumberFormatException e){
 			//Empty
+			System.err.println("NumberFormatException thrown: " + e.getMessage());
 		}
 
 	}//End parse
