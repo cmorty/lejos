@@ -32,12 +32,13 @@ import java.util.*;
  *      (empty field) DGPS station ID number
  *      *47          the checksum data, always begins with *
  * 
- * @author Juan Antonio Brenha Moral
+ * @author BB
  */
 class GGASentence extends NMEASentence{
 	
 	//GGA
-	private float dateTimeOfFix = 0;
+	// TODO: Convert all/most of Juan's floats to int
+	private float dateTimeOfFix = -1;
 	private float latitude = 0;
 	private char latitudeDirection;
 	private float longitude = 0;
@@ -151,6 +152,7 @@ class GGASentence extends NMEASentence{
 		// TODO: Should this really be in a try-catch block? Didn't do anything until I added System.err output.
 		try{
 			st.nextToken(); // skip $GPGGA header
+			// TODO: I attempted Integer.parseInt and it threw a NumberFormatException. 
 			dateTimeOfFix = Float.parseFloat((String)st.nextToken());//UTC Time
 			latitude = degreesMinToDegrees(st.nextToken());
 			latitudeDirection = st.nextToken().charAt(0);//N

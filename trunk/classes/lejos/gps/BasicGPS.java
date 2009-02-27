@@ -29,14 +29,12 @@ public class BasicGPS extends Thread {
 	private String START_CHAR = "$";
 	
 	private InputStream in;
-	
-	//protected int RAWtime = 0; TODO: Delete me?
-	//protected int satellitesTracked = 0; TODO: DELETE ME?
-	//private float hdop = 0; // TODO Seems unused. Maybe use for QualifiedCoordinates?
 		
+	public int errors = 0; // TODO: DELETE ME
+	
 	//Classes which manages GGA, VTG Sentences
-	protected GGASentence ggaSentence = null;
-	protected VTGSentence vtgSentence = null;
+	protected GGASentence ggaSentence;
+	protected VTGSentence vtgSentence;
 	
 	//Security TODO: This "bug fix" needs to go.
 	private boolean shutdown = false;
@@ -260,9 +258,9 @@ public class BasicGPS extends Thread {
 			try {
 				in.read(segment);
 			}catch (IOException e) {
-				// How to handle error?
+				// TODO: How to handle error?
 			}catch(Exception e){
-				// ??
+				// TODO: ??
 			}
 			// Append char[] data into currentSentence
 			for(int i=0;i<BUFF;i++)
@@ -275,7 +273,9 @@ public class BasicGPS extends Thread {
 			
 			//I have found the bug
 			//In case of turn off GPS Device / GPS Device with low batteries / Other scenarios
+			// TODO: What about if they turn off GPS? Does this address that scenario? - BB
 			if(currentSentence.length() >= 500){
+				errors++;
 				//2008/09/06 : JAB
 				//Reset
 				//currentSentence = new StringBuffer();

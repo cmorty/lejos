@@ -21,12 +21,13 @@ import java.util.*;
  *      003.1,W      Magnetic Variation
  *      *6A          The checksum data, always begins with *
  * 
- * @author Juan Antonio Brenha Moral
+ * @author Juan Antonio Brenha Moral (major recoding by BB)
  */
 public class RMCSentence extends NMEASentence{
 
 	//RMC Sentence
-	private float dateTimeOfFix = 0;
+	// TODO: Convert all/most of these floats to int
+	private int dateTimeOfFix = -1;
 	private String warning = "";
 	private float latitude = 0;
 	private String latitudeDirection = "";
@@ -34,7 +35,7 @@ public class RMCSentence extends NMEASentence{
 	private String longitudeDirection = "";
 	private float groundSpeed;//In knots
 	private String courseMadeGood = null;
-	private float dateOfFix = 0;
+	private int dateOfFix = -1;
 	private String magneticVariation = "";
 	//private String magneticVariationLetter = "";
 
@@ -83,8 +84,7 @@ public class RMCSentence extends NMEASentence{
 	 */
 	public int getDate(){
 		checkRefresh();
-		return Math.round(dateOfFix);
-		// TODO: Why is Juan using Math.round()?
+		return dateOfFix;
 	}
 
 	/**
@@ -112,7 +112,7 @@ public class RMCSentence extends NMEASentence{
 
 		try{
 			st.nextToken(); // skip header $GPRMC
-			dateTimeOfFix = Float.parseFloat((String)st.nextToken());
+			dateTimeOfFix = Integer.parseInt((String)st.nextToken());
 			warning = st.nextToken();
 			//latitude = Float.parseFloat(st.nextToken());
 			latitude = degreesMinToDegrees(st.nextToken());
@@ -123,7 +123,7 @@ public class RMCSentence extends NMEASentence{
 			String s = st.nextToken();
 			groundSpeed = s.equals("") ? 0 : Float.parseFloat(s);
 			courseMadeGood = st.nextToken();
-			dateOfFix = Float.parseFloat(st.nextToken());
+			dateOfFix = Integer.parseInt(st.nextToken());
 			magneticVariation = st.nextToken();//Float.parseFloat((String)st.nextToken());
 			//magneticVariationLetter = (String)st.nextToken();
 		}catch(NoSuchElementException e){
@@ -131,12 +131,12 @@ public class RMCSentence extends NMEASentence{
 		}catch(NumberFormatException e2){
 			//Empty
 		}
-
+		
 		//Improve quality data
-		if (longitudeDirection.equals("E") == false) {
+		if (!longitudeDirection.equals("E")) {
 			longitude = -longitude;
 		}
-		if (latitudeDirection.equals("N") == false) {
+		if (!latitudeDirection.equals("N")) {
 			latitude = -latitude;
 		}
 

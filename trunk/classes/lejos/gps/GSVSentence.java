@@ -25,13 +25,15 @@ import java.util.*;
  * 12-15= Information about third SV, same as field 4-7
  * 16-19= Information about fourth SV, same as field 4-7
  * 
- * @author Juan Antonio Brenha Moral
+ * @author Juan Antonio Brenha Moral (major recoding by BB)
  */
 class GSVSentence extends NMEASentence{
 	
+	// TODO: Is this correct to limit maximumSatellites to 4? Perhaps it changes as 
+	// satellitesTracked changes. Maybe this should just use satellitesTracked?
 	//GGA
-	private float satellitesTracked = 0;
-	private final int maximumSatellites = 4;//0,1,2,3
+	private int satellitesTracked = 0;
+	public static final int MAXIMUM_SATELLITES = 4;//0,1,2,3
 	NMEASatellite [] ns;
 	
 	//Header
@@ -42,7 +44,11 @@ class GSVSentence extends NMEASentence{
 	 */
 	public GSVSentence(){
 		// TODO: Does GPS really only connect to four? Why not more?
-		ns = new NMEASatellite[maximumSatellites];
+		// Check if GSV sentences cycle through diff't sat ids. If so this
+		// will affect how data is allocated to satellites in array.
+		ns = new NMEASatellite[MAXIMUM_SATELLITES];
+		for(int i=0;i<MAXIMUM_SATELLITES;i++)
+			ns[i] = new NMEASatellite();
 	}
 	
 	/*
@@ -57,8 +63,7 @@ class GSVSentence extends NMEASentence{
 	 */
 	public int getSatellitesTracked() {
 		checkRefresh();
-		return Math.round(satellitesTracked);
-		// TODO: Why is Juan using Math.round()?
+		return satellitesTracked;
 	}
 
 	/**
@@ -78,53 +83,28 @@ class GSVSentence extends NMEASentence{
 	public void parse(){
 		//StringTokenizer st = new StringTokenizer(nmeaSentence,",");
 		st = new StringTokenizer(nmeaSentence,",");
-		float PRN = 0;
-		float elevation = 0;
-		float azimuth = 0;
-		float SNR = 0;
-
 		
+		// TODO: I don't see any reason for using try-catch block here.
 		try{
 			st.nextToken(); // Skip header $GPGSV
 			st.nextToken();//Message number
-			satellitesTracked = Float.parseFloat((String)st.nextToken());//Number of satellites being tracked
+			satellitesTracked = Integer.parseInt((String)st.nextToken());//Number of satellites being tracked
 
-			// TODO: This code has redundancies! Should use array of Satellites.
-			PRN = Float.parseFloat((String)st.nextToken());
-			elevation = Float.parseFloat((String)st.nextToken());
-			azimuth = Float.parseFloat((String)st.nextToken());
-			SNR = Float.parseFloat((String)st.nextToken());
-			ns[0].setPRN(Math.round(PRN));
-			ns[0].setElevation(Math.round(elevation));
-			ns[0].setAzimuth(Math.round(azimuth));
-			ns[0].setSNR(Math.round(SNR));
-			PRN = Float.parseFloat((String)st.nextToken());
-			elevation = Float.parseFloat((String)st.nextToken());
-			azimuth = Float.parseFloat((String)st.nextToken());
-			SNR = Float.parseFloat((String)st.nextToken());
-			ns[1].setPRN(Math.round(PRN));
-			ns[1].setElevation(Math.round(elevation));
-			ns[1].setAzimuth(Math.round(azimuth));
-			ns[1].setSNR(Math.round(SNR));
-			PRN = Float.parseFloat((String)st.nextToken());
-			elevation = Float.parseFloat((String)st.nextToken());
-			azimuth = Float.parseFloat((String)st.nextToken());
-			SNR = Float.parseFloat((String)st.nextToken());
-			ns[2].setPRN(Math.round(PRN));
-			ns[2].setElevation(Math.round(elevation));
-			ns[2].setAzimuth(Math.round(azimuth));
-			ns[2].setSNR(Math.round(SNR));
-			PRN = Float.parseFloat((String)st.nextToken());
-			elevation = Float.parseFloat((String)st.nextToken());
-			azimuth = Float.parseFloat((String)st.nextToken());
-			SNR = Float.parseFloat((String)st.nextToken());
-			ns[3].setPRN(Math.round(PRN));
-			ns[3].setElevation(Math.round(elevation));
-			ns[3].setAzimuth(Math.round(azimuth));
-			ns[3].setSNR(Math.round(SNR));
+			for(int i=0;i<MAXIMUM_SATELLITES;i++) {
+				int PRN = Integer.parseInt((String)st.nextToken());
+				// TODO: Elevation and azimuth have no decimals?
+				int elevation = Integer.parseInt((String)st.nextToken());
+				int azimuth = Integer.parseInt((String)st.nextToken());
+				int SNR = Integer.parseInt((String)st.nextToken());
+				
+				ns[i].setPRN(PRN);
+				ns[i].setElevation(elevation);
+				ns[i].setAzimuth(azimuth);
+				ns[i].setSNR(SNR);
+			}
 		}catch(NoSuchElementException e){
 			//Empty
-		}catch(NumberFormatException e2){
+		}catch(NumberFormatException e){
 			//Empty
 		}
 
