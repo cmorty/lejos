@@ -18,21 +18,9 @@ import java.util.*;
  *
  */
 public class GPS extends BasicGPS {
-
-	//RMC
-	private int RAWdate = 0;
-	private float compassDegrees  = 0;
-	
-	//GSV
-	private NMEASatellite[] ns;
 	
 	//GSA
-	private String mode = "";
-	private int modeValue = 0;
-	private int[] SV;
-	private float PDOP = 0;
-	private float HDOP = 0;
-	private float VDOP = 0;
+	private int[] SV; // TODO: The hell is this?
 	
 	//Classes which manages GGA, RMC, VTG, GSV, GSA Sentences
 	private RMCSentence rmcSentence;
@@ -41,13 +29,13 @@ public class GPS extends BasicGPS {
 
 	//Date Object with use GGA & RMC Sentence
 	private Date date;
-
-	//Security
-	private boolean internalError = false;
 	
 	// Use Vector to keep compatibility with J2ME
 	private Vector listeners = new Vector();
 
+	public static final int MINIMUM_SATELLITES_TO_WORK = 4;
+	public static final int MAXIMUM_SATELLITES_TO_WORK = 12;
+	
 	/**
 	 * The constructor. It needs an InputStream
 	 * 
@@ -57,7 +45,6 @@ public class GPS extends BasicGPS {
 		super(in);
 		rmcSentence = new RMCSentence();
 		gsvSentence = new GSVSentence();
-		ns = new NMEASatellite[4];
 		gsaSentence = new GSASentence();
 		SV = new int[12];
 		
@@ -69,12 +56,12 @@ public class GPS extends BasicGPS {
 
 	/**
 	 * Return Compass Degrees
-	 * in a range: 0-359
+	 * in a range: 0.0-359.9
 	 * 
 	 * @return the compass degrees
 	 */
-	public int getCompassDegrees(){
-		return Math.round(compassDegrees);
+	public float getCompassDegrees(){
+		return rmcSentence.getCompassDegrees();	
 	}
 	
 	/**
@@ -83,6 +70,8 @@ public class GPS extends BasicGPS {
 	 * @return the date
 	 */
 	public Date getDate(){
+		updateDate();
+		updateTime();
 		return date;
 	}
 
@@ -94,7 +83,7 @@ public class GPS extends BasicGPS {
 	 * @return the NMEASaltellite object for the selected satellite
 	 */
 	public NMEASatellite getSatellite(int index){
-		return ns[index];
+		return gsvSentence.getSatellite(index);
 	}
 	
 	/**
@@ -103,7 +92,7 @@ public class GPS extends BasicGPS {
 	 * @return mode1
 	 */
 	public String getMode(){
-		return mode;
+		return gsaSentence.getMode();
 	}
 
 	/**
@@ -112,7 +101,7 @@ public class GPS extends BasicGPS {
 	 * @return mode2
 	 */
 	public int getModeValue(){
-		return modeValue;
+		return gsaSentence.getModeValue();
 	}
 	
 	/**
@@ -121,7 +110,7 @@ public class GPS extends BasicGPS {
 	 * @return array of satellite IDs
 	 */
 	public int[] getSV(){
-		return SV;
+		return gsaSentence.getSV();
 	}
 	
 	/**
@@ -130,7 +119,7 @@ public class GPS extends BasicGPS {
 	 * @return the PDOP
 	 */
 	public float getPDOP(){
-		return PDOP;
+		return gsaSentence.getPDOP();
 	}
 
 	/**
@@ -139,7 +128,7 @@ public class GPS extends BasicGPS {
 	 * @return the HDOP
 	 */
 	public float getHDOP(){
-		return HDOP;
+		return gsaSentence.getHDOP();
 	}
 
 	/**
@@ -148,7 +137,7 @@ public class GPS extends BasicGPS {
 	 * @return the VDOP
 	 */
 	public float getVDOP(){
-		return VDOP;
+		return gsaSentence.getVDOP();
 	}
 
 	/**
@@ -162,20 +151,16 @@ public class GPS extends BasicGPS {
 	public boolean getGPSStatus(){
 		boolean status = false;
 		if(
-			(satellitesTracked >= MINIMUM_SATELLITES_TO_WORK) && 
+			(ggaSentence.getSatellitesTracked() >= MINIMUM_SATELLITES_TO_WORK) && 
 			//(mode.equals("A")) &&
-			(modeValue == 3)){
+			(getModeValue() == 3)){
 			
 			status = true;
 		}
 		return status;
 	}
 	
-	// TODO Is this really needed? In Java exceptions are used for error reporting.
-	public boolean existInternalError(){
-		return internalError;
-	}
-
+	
 	/**
 	 * Internal helper method to aid in the subclass architecture. Overwrites the superclass
 	 * method and calls it internally.
@@ -184,40 +169,37 @@ public class GPS extends BasicGPS {
 	 * @param s
 	 */
 	protected void sentenceChooser(String token, String s) {
-		super.sentenceChooser(token, s);
-		if (token.equals(RMCSentence.HEADER)){
-			parseRMC(s);
+		//super.sentenceChooser(token, s); // Fires listener here
+		if (token.equals(GGASentence.HEADER)){
+			ggaSentence.setSentence(s);
+			fireGGASentenceReceived(ggaSentence);
+		}else if (token.equals(VTGSentence.HEADER)){
+			vtgSentence.setSentence(s);
+			fireVTGSentenceReceived(vtgSentence);
+		}else if (token.equals(RMCSentence.HEADER)){
+			rmcSentence.setSentence(s);
+			fireRMCSentenceReceived(rmcSentence);
 		}else if (token.equals(GSVSentence.HEADER)){
-			parseGSV(s);
+			gsvSentence.setSentence(s);
+			fireGSVSentenceReceived(gsvSentence);
 		}else if (token.equals(GSASentence.HEADER)){
-			parseGSA(s);
+			gsaSentence.setSentence(s);
+			fireGSASentenceReceived(gsaSentence);
 		}
 	}
 	
 	/* NMEA */
 
 	/**
-	 * This method parse a GGA Sentence. Overwirtes superclass version.
-	 * 
-	 * @param nmeaSentece
-	 */
-	protected void parseGGA(String nmeaSentence){
-
-		super.parseGGA(nmeaSentence);
-		updateTime(); // TODO: Only update when method is called?
-		//Events
-		fireGGASentenceReceived(ggaSentence);
-	}
-
-	/**
 	 * Update Time values
 	 */
 	private void updateTime(){
-		String rt = Integer.toString(this.RAWtime);
+		String rt = Integer.toString(ggaSentence.getTime());
 		int hh;
 		int mm;
 		int ss;
 
+		// TODO: More redundant coding here. This can be minimized in half
 		if(rt.length()<6){
 			hh = Integer.parseInt(rt.substring(0, 1));
 			mm = Integer.parseInt(rt.substring(1, 3));
@@ -234,36 +216,17 @@ public class GPS extends BasicGPS {
 		date.setSeconds(ss);
 	}
 
-	/**
-	 * This method parse a RMC Sentence
-	 * 
-	 * @param nmeaSentece
-	 */
-	private void parseRMC(String nmeaSentence){
-		rmcSentence.setSentence(nmeaSentence);
-		rmcSentence.parse();
-		
-		//Charles Manning notes
-		//Is better use VTG instead of RMC
-		//this.speed = rmcSentence.getSpeed();
-		this.RAWdate = rmcSentence.getDate();
-		this.compassDegrees = rmcSentence.getCompassDegrees();
-		
-		updateDate(); // TODO Only update when getDate() method called?
-
-		//Events
-		fireRMCSentenceReceived(rmcSentence);
-	}
 
 	/**
 	 * Update Date values
 	 */
 	private void updateDate(){
-		String rd = Integer.toString(this.RAWdate);
+		String rd = Integer.toString(rmcSentence.getDate());
 		int yy;
 		int mm;
 		int dd;
 
+		// TODO: More bloated code. Easily reduced in half
 		if(rd.length()<6){
 			dd = Integer.parseInt(rd.substring(0, 1));
 			mm = Integer.parseInt(rd.substring(1, 3));
@@ -279,56 +242,7 @@ public class GPS extends BasicGPS {
 		date.setMonth(mm);
 		date.setYear(yy);
 	}
-
-	/**
-	 * This method parse a VTG Sentence
-	 * 
-	 * @param nmeaSentece
-	 */
-	protected void parseVTG(String nmeaSentence){
-		super.parseVTG(nmeaSentence);
-		//Events
-		fireVTGSentenceReceived (vtgSentence);
-	}
-
-	/**
-	 * This method parse a GSV Sentence
-	 * 
-	 * @param nmeaSentece
-	 */
-	private void parseGSV(String nmeaSentence){
-		gsvSentence.setSentence(nmeaSentence);
-		gsvSentence.parse();
-
-		this.ns[0] = gsvSentence.getSatellite(0);
-		this.ns[1] = gsvSentence.getSatellite(1);
-		this.ns[2] = gsvSentence.getSatellite(2);
-		this.ns[3] = gsvSentence.getSatellite(3);
-
-		//Events
-		fireGSVSentenceReceived(gsvSentence);
-	}
-
-	/**
-	 * This method parse a GSV Sentence
-	 * 
-	 * @param nmeaSentece
-	 */
-	private void parseGSA(String nmeaSentence){
-		gsaSentence.setSentence(nmeaSentence);
-		gsaSentence.parse();
-		
-		mode = gsaSentence.getMode();
-		modeValue = gsaSentence.getModeValue();
-		SV = gsaSentence.getSV();
-		PDOP = gsaSentence.getPDOP();
-		HDOP = gsaSentence.getHDOP();
-		VDOP = gsaSentence.getVDOP();
-
-		//Events
-		fireGSASentenceReceived(gsaSentence);
-	}
-
+	
 	/* EVENTS*/
 
 	/**

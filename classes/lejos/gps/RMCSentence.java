@@ -26,7 +26,6 @@ import java.util.*;
 public class RMCSentence extends NMEASentence{
 
 	//RMC Sentence
-	private String nmeaHeader = "";
 	private float dateTimeOfFix = 0;
 	private String warning = "";
 	private float latitude = 0;
@@ -34,7 +33,7 @@ public class RMCSentence extends NMEASentence{
 	private float longitude = 0;
 	private String longitudeDirection = "";
 	private float groundSpeed;//In knots
-	private String courseMadeGood;
+	private String courseMadeGood = null;
 	private float dateOfFix = 0;
 	private String magneticVariation = "";
 	//private String magneticVariationLetter = "";
@@ -53,6 +52,7 @@ public class RMCSentence extends NMEASentence{
 	 * 
 	 */
 	public float getLatitudeRAW(){
+		checkRefresh();
 		return latitude;  
 	}
 
@@ -62,6 +62,7 @@ public class RMCSentence extends NMEASentence{
 	 * @return the raw longitude
 	 */
 	public float getLongitudeRAW(){
+		checkRefresh();
 		return longitude;
 	}
 
@@ -71,7 +72,8 @@ public class RMCSentence extends NMEASentence{
 	 * @return the speed in kilometers per ???
 	 */
 	public float getSpeed(){
-		return speed;  
+		checkRefresh();
+		return speed;
 	}
 
 	/**
@@ -80,19 +82,20 @@ public class RMCSentence extends NMEASentence{
 	 * @return the date in integer format
 	 */
 	public int getDate(){
+		checkRefresh();
 		return Math.round(dateOfFix);
+		// TODO: Why is Juan using Math.round()?
 	}
 
 	/**
 	 * Return compass value from GPS
 	 * 
-	 * @return the compass value in degrees
+	 * @return the compass value in degrees. -1 means it hasn't been obtained yet.
 	 */
 	public float getCompassDegrees(){
-		float compassDegrees = 0;
-		if(courseMadeGood == ""){
-			compassDegrees = 0;
-		}else{
+		checkRefresh();
+		float compassDegrees = -1;
+		if(courseMadeGood != null){
 			compassDegrees = Float.parseFloat(courseMadeGood);
 		}
 		return compassDegrees;
@@ -108,14 +111,14 @@ public class RMCSentence extends NMEASentence{
 		st = new StringTokenizer(nmeaSentence,",");
 
 		try{
-			nmeaHeader = st.nextToken();//$GPRMC
+			st.nextToken(); // skip header $GPRMC
 			dateTimeOfFix = Float.parseFloat((String)st.nextToken());
 			warning = st.nextToken();
 			//latitude = Float.parseFloat(st.nextToken());
-			latitude = degreesMinToDegrees(st.nextToken(),0);
+			latitude = degreesMinToDegrees(st.nextToken());
 			latitudeDirection = st.nextToken();
 			//longitude = Float.parseFloat(st.nextToken());
-			longitude = degreesMinToDegrees(st.nextToken(),1);
+			longitude = degreesMinToDegrees(st.nextToken());
 			longitudeDirection = st.nextToken();
 			String s = st.nextToken();
 			groundSpeed = s.equals("") ? 0 : Float.parseFloat(s);
@@ -143,6 +146,7 @@ public class RMCSentence extends NMEASentence{
 			speed = (float) ((groundSpeed) * 1.852);
 		}
 		// A negative speed doesn't make sense.
+		// TODO: This seems iffy. Why set it arbitrarily to zero?
 		if (speed < 0) {
 			speed = 0;
 		}
