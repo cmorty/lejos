@@ -1,5 +1,7 @@
 package lejos.gps;
 
+import java.util.EventListener;
+
 /**
  * This is the interface to manage events with GPS
  * 
@@ -7,7 +9,7 @@ package lejos.gps;
  *
  */
 
-public interface GPSListener {
+public interface GPSListener extends EventListener{
 	
 	public void ggaSentenceReceived (GPS gpsReceiver, GGASentence ggaSentence);
 	
