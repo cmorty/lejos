@@ -20,7 +20,7 @@ import java.util.*;
  * 16   = HDOP
  * 17   = VDOP
  * 
- * @author Juan Antonio Brenha Moral
+ * @author Juan Antonio Brenha Moral (major recoding by BB)
  * 
  */
 
