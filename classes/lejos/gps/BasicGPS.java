@@ -30,7 +30,7 @@ public class BasicGPS extends Thread {
 	
 	private InputStream in;
 		
-	public int errors = 0; // TODO: DELETE ME
+	public int errors = 0; // TODO: DELETE ME. Testing purposes only.
 	
 	//Classes which manages GGA, VTG Sentences
 	protected GGASentence ggaSentence;

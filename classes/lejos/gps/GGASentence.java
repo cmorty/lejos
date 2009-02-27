@@ -152,7 +152,8 @@ class GGASentence extends NMEASentence{
 		// TODO: Should this really be in a try-catch block? Didn't do anything until I added System.err output.
 		try{
 			st.nextToken(); // skip $GPGGA header
-			// TODO: I attempted Integer.parseInt and it threw a NumberFormatException. 
+			// TODO: I attempted Integer.parseInt and it threw a NumberFormatException because
+			// UTC looks like 175958.000. Is it wrong to discard decimals? Always seem to be 000.
 			dateTimeOfFix = Float.parseFloat((String)st.nextToken());//UTC Time
 			latitude = degreesMinToDegrees(st.nextToken());
 			latitudeDirection = st.nextToken().charAt(0);//N

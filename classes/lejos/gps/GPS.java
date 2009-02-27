@@ -89,11 +89,10 @@ public class GPS extends BasicGPS {
 	 * and returns the number from the GSV sentence.
 	 * @return Number of satellites e.g. 8
 	 */
-	/* TODO: Uncomment if this isn't bug
 	public int getSatellitesTracked(){
 		return gsvSentence.getSatellitesTracked();
 	}
-	*/
+	
 	/**
 	 * Get Mode1
 	 * 
