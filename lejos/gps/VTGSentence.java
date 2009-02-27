@@ -23,11 +23,12 @@ import java.util.*;
  *            A            Mode indicator (A=Autonomous, D=Differential,
  *                         E=Estimated, N=Data not valid)
  * 
- * @author Juan Antonio Brenha Moral
+ * @author Juan Antonio Brenha Moral (major recoding by BB)
  */
 class VTGSentence extends NMEASentence{
 
 	//RMC Sentence
+	// TODO: Convert any of these floats to int?
 	private float speed = 0; // TODO Probably default values should be negative?
 	private float trueCourse = 0;
 	private float magneticCourse = 0;

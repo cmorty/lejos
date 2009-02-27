@@ -19,9 +19,6 @@ import java.util.*;
  */
 public class GPS extends BasicGPS {
 	
-	//GSA
-	private int[] SV; // TODO: The hell is this?
-	
 	//Classes which manages GGA, RMC, VTG, GSV, GSA Sentences
 	private RMCSentence rmcSentence;
 	private GSVSentence gsvSentence;
@@ -46,7 +43,6 @@ public class GPS extends BasicGPS {
 		rmcSentence = new RMCSentence();
 		gsvSentence = new GSVSentence();
 		gsaSentence = new GSASentence();
-		SV = new int[12];
 		
 		date = new Date();
 	}
@@ -86,6 +82,18 @@ public class GPS extends BasicGPS {
 		return gsvSentence.getSatellite(index);
 	}
 	
+	
+	/**
+	 * Returns the number of satellites being tracked to
+	 * determine the coordinates. This method overwrites the superclass method
+	 * and returns the number from the GSV sentence.
+	 * @return Number of satellites e.g. 8
+	 */
+	/* TODO: Uncomment if this isn't bug
+	public int getSatellitesTracked(){
+		return gsvSentence.getSatellitesTracked();
+	}
+	*/
 	/**
 	 * Get Mode1
 	 * 
@@ -194,53 +202,37 @@ public class GPS extends BasicGPS {
 	 * Update Time values
 	 */
 	private void updateTime(){
-		String rt = Integer.toString(ggaSentence.getTime());
-		int hh;
-		int mm;
-		int ss;
-
-		// TODO: More redundant coding here. This can be minimized in half
-		if(rt.length()<6){
-			hh = Integer.parseInt(rt.substring(0, 1));
-			mm = Integer.parseInt(rt.substring(1, 3));
-			ss = Integer.parseInt(rt.substring(3, 5));
-		}else{
-			hh = Integer.parseInt(rt.substring(0, 2));
-			mm = Integer.parseInt(rt.substring(2, 4));
-			ss = Integer.parseInt(rt.substring(4, 6));
+		
+		int timeStamp = ggaSentence.getTime();
+		
+		if(timeStamp >0) {
+			String rt = Integer.toString(timeStamp);
+			int hh = Integer.parseInt(rt.substring(0, rt.length() - 4));
+			int mm = Integer.parseInt(rt.substring(rt.length() - 4, rt.length()-2));
+			int ss = Integer.parseInt(rt.substring(rt.length()-2, rt.length()));
+		
+			date.setHours(hh);
+			date.setMinutes(mm);
+			date.setSeconds(ss);
 		}
-
-		//updateTimeValues(hh, mm, ss);
-		date.setHours(hh);
-		date.setMinutes(mm);
-		date.setSeconds(ss);
 	}
-
 
 	/**
 	 * Update Date values
 	 */
 	private void updateDate(){
-		String rd = Integer.toString(rmcSentence.getDate());
-		int yy;
-		int mm;
-		int dd;
-
-		// TODO: More bloated code. Easily reduced in half
-		if(rd.length()<6){
-			dd = Integer.parseInt(rd.substring(0, 1));
-			mm = Integer.parseInt(rd.substring(1, 3));
-			yy = Integer.parseInt(rd.substring(3, 5));
-		}else{
-			dd = Integer.parseInt(rd.substring(0, 2));
-			mm = Integer.parseInt(rd.substring(2, 4));
-			yy = Integer.parseInt(rd.substring(4, 6));
+		int dateStamp = rmcSentence.getDate();
+		
+		if(dateStamp > 0) {
+			String rd = Integer.toString(dateStamp);
+			int dd = Integer.parseInt(rd.substring(0, rd.length() - 4));
+			int mm = Integer.parseInt(rd.substring(rd.length() - 4, rd.length()-2));
+			int yy = Integer.parseInt(rd.substring(rd.length()-2, rd.length()));
+			
+			date.setDay(dd);
+			date.setMonth(mm);
+			date.setYear(yy);
 		}
-
-		//updateDateValues(dd,mm,yy);
-		date.setDay(dd);
-		date.setMonth(mm);
-		date.setYear(yy);
 	}
 	
 	/* EVENTS*/
@@ -272,6 +264,7 @@ public class GPS extends BasicGPS {
 	private void fireGGASentenceReceived (GGASentence ggaSentence){
 		GPSListener GPSL;
 		for(int i=0; i<listeners.size();i++){
+			// TODO: Why the try-catch block?
 			try{
 				GPSL = (GPSListener)listeners.elementAt(i);
 				GPSL.ggaSentenceReceived(this, ggaSentence);
