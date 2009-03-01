@@ -241,20 +241,41 @@ public class Long extends Number implements Comparable
 	
 	public static String toBinaryString(long v)
 	{
-		//FIXME
-		throw new UnsupportedOperationException();
-	}
-	
-	public static String toHexString(long v)
-	{
-		//FIXME
-		throw new UnsupportedOperationException();
+		return toUnsignedString(v, 64, 1, 1);
 	}
 	
 	public static String toOctalString(long v)
 	{
-		//FIXME
-		throw new UnsupportedOperationException();
+		return toUnsignedString(v, 22, 7, 3);
+	}
+	
+	public static String toHexString(long v)
+	{
+		return toUnsignedString(v, 16, 15, 4);
+	}
+	
+	private static String toUnsignedString(long v, int maxlen, int mask, int shift)
+	{
+		char[] buf = new char[maxlen];
+		int p = maxlen;
+		
+		do
+		{
+			buf[--p] = digit(mask & (int)v);
+			v >>>= shift;
+		} while (v != 0);
+		
+		return new String(buf, p, maxlen-p);
+	}
+	
+	private static char digit(int i)
+	{
+		//FIXME use Character class
+		
+		if (i < 10)
+			return (char)('0' + i);
+		else
+			return (char)('a' - 10 + i);
 	}
 	
 	public String toString()
