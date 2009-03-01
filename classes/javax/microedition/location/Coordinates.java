@@ -5,7 +5,7 @@ package javax.microedition.location;
  * using JSR-179 Location API
  * http://www.jcp.org/en/jsr/detail?id=179
  * 
- * @author Juan Antonio Brenha Moral
+ * @author Juan Antonio Brenha Moral (calculateDistanceAndAzimuth copied from elsewhere)
  */
 public class Coordinates{
 	private double latitude;
@@ -26,6 +26,7 @@ public class Coordinates{
 
 	static final double EARTH_RADIUS = 6378137D;
 	
+	// TODO: What is this? Why dividing 0 by 0?
 	static float calculatedDistance = (0.0F / 0.0F);
 	static float calculatedAzimuth = (0.0F / 0.0F);
 	
@@ -121,12 +122,12 @@ public class Coordinates{
 		}
 	}
 	
-	//ToDo
+	//TODO
 	static public String convert(double coordinate, int outputType){
 		return "";
 	}
 
-	//ToDo
+	//TODO
 	static public float convert(String coordinate){
 		return 0;
 	}
@@ -173,11 +174,13 @@ public class Coordinates{
 	}
 
 	private static void calculateDistanceAndAzimuth(double d, double d1, double d2, double d3){
-        double d4 = toRadians(d);
+        // TODO: This code is huge. Can it be minimized?
+		double d4 = toRadians(d);
         double d5 = toRadians(d1);
         double d6 = toRadians(d2);
         double d7 = toRadians(d3);
         double d8 = 0.0033528106647474805D;
+        // TODO: Why are these given 0 values?
         double d9 = 0.0D;
         double d10 = 0.0D;
         double d20 = 0.0D;

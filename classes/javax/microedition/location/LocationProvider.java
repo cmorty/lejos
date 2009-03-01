@@ -1,5 +1,6 @@
 package javax.microedition.location;
 
+
 import java.util.Enumeration;
 import java.util.Vector;
 
@@ -49,12 +50,18 @@ public abstract class LocationProvider {
 	 * the LocationProvider is the class ??? i.e. a Bluetooth GPS unit. It looks through all the paired
 	 * Bluetooth devices on your NXT brick and tries connecting to any that are identified as
 	 * GPS units.
-	 * @param criteria
-	 * @return
+	 * @param criteria Just use null instead of an actual Criteria object
+	 * @return a LocationProvider that is a Bluetooth GPS already paired with your NXT brick 
 	 * @throws LocationException
 	 */
+	
+	/*
+	 * DEVELOPER NOTES: Currently leJOS only supports BT GPS units. If we ever decide to allow
+	 * Google KLM files or some sort of bridge to mobile phone GPS units, then we could
+	 * allow the user to select the appropriate source via a Properties file. - BB
+	 */
 	public static LocationProvider getInstance(Criteria criteria) throws LocationException {
-		return null;
+		return new BTGPSLocationProvider();
 	}
 	
 	/**
@@ -77,7 +84,7 @@ public abstract class LocationProvider {
 	 * <p>
 	 * Only one listener can be registered with each LocationProvider instance. Setting the listener replaces any possibly previously set listener. Setting the listener to null cancels the registration of any previously set listener. 
 	 * @param listener 
-	 * 		the listener to be registered. If set to null the registration of any previously set listener is cancelled.
+	 * 		the listener to be registered. If set to null the registration of any previously set listener is canceled.
 	 * @param interval
 	 * 		the interval in seconds. -1 is used for the default interval of this provider. 0 is used to indicate that the application wants to receive only provider status updates and not location updates at all.
 	 * @param timeout
@@ -103,6 +110,10 @@ public abstract class LocationProvider {
 	 * @return a location object. null is returned if the implementation doesn't have any previous location information.
 	 */
 	public static Location getLastKnownLocation() {
+		/*
+		 * DEV NOTES: This can be a Location object that is updated every time
+		 * the GPS class gets a new location in BTGPSLocationProvider.
+		 */
 		return null;
 	}
 	
@@ -130,7 +141,7 @@ public abstract class LocationProvider {
 		if ((listener == null) || (coordinates == null))
 			throw new NullPointerException();
 
-		if ((proximityRadius <= 0.0))
+		if (proximityRadius <= 0.0)
 			throw new IllegalArgumentException();
 		
 		Float radius = new Float(proximityRadius);
@@ -152,7 +163,7 @@ public abstract class LocationProvider {
 		if (listener == null)
 			throw new NullPointerException();
 
-		// synchronise because this is temporarily breaking the Enumeration
+		// Synchronize because this is temporarily breaking the Enumeration
 		synchronized (listeners) {
 			// can't use Enumeration because we are removing elements
 			Object[] list = new Object[listeners.size()];
