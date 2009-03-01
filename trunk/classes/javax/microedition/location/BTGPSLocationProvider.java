@@ -4,17 +4,17 @@ import java.io.*;
 import javax.bluetooth.*;
 import javax.microedition.io.*;
 
-import lejos.gps.GPS;
+import lejos.gps.BasicGPS;
 
 /**
- * This class is not visible to users and should not be instantiated directly. Instead you should
- * retrieve it from the factory method LocationProvider.getInstance().
+ * This class is not visible to users and should not be instantiated directly. Instead it
+ * is retrieved from the factory method LocationProvider.getInstance().
  * @author BB
  *
  */
 class BTGPSLocationProvider extends LocationProvider implements DiscoveryListener {
 
-	GPS gps = null;
+	BasicGPS gps = null;
 	DiscoveryAgent da;
 	RemoteDevice btDevice = null;
 	/**
@@ -29,58 +29,57 @@ class BTGPSLocationProvider extends LocationProvider implements DiscoveryListene
 	private static final int LOCATOR_SERVICE = 0x1F0000;
 	
 	protected BTGPSLocationProvider() {
-		System.err.println("We're in the constructor");
-		
+		// TODO: The problem here is that it searches every time. Slow. Need to try Properties?
 		try {
 			da = LocalDevice.getLocalDevice().getDiscoveryAgent();
-			System.err.println("Made DiscoveryAgent");
-			
 			da.startInquiry(DiscoveryAgent.GIAC, this);
-			System.err.println("Started inquiry");
-			
 		} catch (BluetoothStateException e) {
-			System.err.println("BT State Exception!");
+			System.err.println("BT State Exception! " + e.getMessage());
 		}
 		
 		while(!doneInq) {Thread.yield();}
 		
-		try {Thread.sleep(1000);} catch (Exception e) {} // TODO NEEDED? REDUCE? NEED TO CLOSE SOMETHING?
+		// TODO NEEDED? REDUCE? NEED TO CLOSE SOMETHING?
+		try {Thread.sleep(1000);} catch (Exception e) {} 
 		
-		System.err.println("Search complete!");
+		// TODO: WHat is the procedure if it fails to connect?
 		if(btDevice == null) System.err.println("Nothing found. It should exit here.");
+		
 		String address = btDevice.getBluetoothAddress();
-		System.err.println("Got address " + address);
 		String btaddy = "btspp://" + address;
-		System.err.println(btaddy);
 		try {
 			StreamConnectionNotifier scn = (StreamConnectionNotifier)Connector.open(btaddy);
-			if(scn == null)
-				System.err.println("OOPS It is null!");
+			// TODO: What is procedure if it fails to connect?
+			if(scn == null)	System.err.println("BTGPSLOcationProvider.scn is null!");
 			
-			System.err.println("About to open StreamConnection");
 			StreamConnection c = scn.acceptAndOpen();
-			System.err.println("About to open stream");
 			InputStream in = c.openInputStream();
 			if(in != null) {
-				System.err.println("Success");
-				gps = new GPS(in);
-				gps.updateValues(true); // TODO: REMOVE IF THIS BUG IS ADDRESSED ELSEWHERE
-				System.err.println("Got GPS");
-				System.err.println("Mode: " + gps.getMode());
-				
-				// c.close(); // Clean up when done. HOW TO HANDLE IN LOCATION?
+				gps = new BasicGPS(in);
+				// c.close(); // TODO: Clean up when done. HOW TO HANDLE IN LOCATION?
 			}
 		} catch(IOException e) {
-			System.err.println("Oopsies! IOException in BTLocationProvider");	
-		}
-		
+			System.err.println("IOException in BTLocationProvider");	
+		}		
 	}
 	
 	public Location getLocation(int timeout) throws LocationException,
 			InterruptedException {
-		// TODO Auto-generated method stub
-		return null;
+		// TODO The timeout might play to the fact that it is still acquiring satellites!
+		// I was wondering about that before. Maybe it makes sense to have timeout in BasicGPS?
+		// TODO: Solution! Keep asking for altitude until is positive? (longitude can be negative)
+		// Or perhaps just until speed positive? (set those after)
+		
+		//TODO: Is the purpose of the timeout that it gets a new updated location that
+		// is not the previously returned or cached one?
+		
+		QualifiedCoordinates qc = new QualifiedCoordinates(gps.getLatitude(), gps.getLongitude(), gps.getAltitude());
+		Location loc = new Location(qc, gps.getSpeed(), gps.getCourse(), gps.getTimeStamp(),
+				0,null); // TODO: Location method and extraInfo
+		
+		return loc;
 	}
+	
 
 	public int getState() {
 		// TODO Auto-generated method stub
@@ -98,22 +97,21 @@ class BTGPSLocationProvider extends LocationProvider implements DiscoveryListene
 	}
 
 	public void deviceDiscovered(RemoteDevice btDevice, DeviceClass cod) {
+		/*
 		System.err.println(btDevice.getFriendlyName(false) + " discovered.");
 		System.err.println("Major = " + cod.getMajorDeviceClass());
 		System.err.println("Minor = " + cod.getMinorDeviceClass());
 		System.err.println("Service = " + cod.getServiceClasses());
 		System.err.println("GPS_MAJOR = " + GPS_MAJOR);
-		// TODO: It should use bitwise to determine major?
+		*/
+		// TODO: It should use bitwise to determine major
 		if(cod.getMajorDeviceClass() == GPS_MAJOR) {
 			this.btDevice = btDevice;
-			System.err.println("About to cancel inquiry()");
 			da.cancelInquiry(this);
-			System.err.println("Canceled it within method.");
 		}	
 	}
 
 	public void inquiryCompleted(int discType) {
-		System.err.println("Inquiry completed!");
 		doneInq = true;
 	}
 }
