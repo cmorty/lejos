@@ -35,7 +35,7 @@ package lejos.nxt;
  * @author Roger Glassey revised 9 Feb 2008 - added lock() method. 
  */
 public class Motor extends BasicMotor// implements TimerListener
-{  
+{   
 
    public TachoMotorPort _port;//** private
    /*
@@ -114,7 +114,7 @@ public class Motor extends BasicMotor// implements TimerListener
       _port = port;
       port.setPWMMode(TachoMotorPort.PWM_BRAKE);
       regulator.setDaemon(true);
-//      regulator.setPriority(Thread.MAX_PRIORITY);
+      regulator.setPriority(Thread.MAX_PRIORITY);
       regulator.start();
       _voltage = Battery.getVoltage();       
    }
@@ -302,22 +302,22 @@ public class Motor extends BasicMotor// implements TimerListener
       /**
        * set by reset, used  to regulate  motor speed
        */ 
-      float basePower = 0;
+      int basePower = 0; // power x 10 for accurate integer arithmetic
       /**
        * time regulating started
        */
       int time0 = 0;
-      float error = 0;
-      float e0 = 0;
+     int error = 0;
+      int e0 = 0;
       /**
        * helper method - used by reset and setSpeed()
        */
       int calcPower(int speed)
       {   
-         float pwr = 100 -11*_voltage + 0.11f*_speed;
+         int pwr = 100 -(int)(11*_voltage) +11*_speed/100;
          if(pwr<0) return 0;
          if(pwr>100)return 100;
-         else return (int)pwr;
+         else return pwr;
       }
 
       /**
@@ -332,6 +332,7 @@ public class Motor extends BasicMotor// implements TimerListener
          angle0 = getTachoCount();
          basePower = calcPower(_speed);
          setPower((int)basePower);
+         basePower *=10;  // scale for better integer arithmetic
          e0 = 0;
       }
 
@@ -340,8 +341,8 @@ public class Motor extends BasicMotor// implements TimerListener
        */
       public void run()
       {
-         float power =  0;
-         float ts = 120;//time to reach speed 
+         int power =  0;
+        int ts = 120;//time to reach speed
          int tick = 100+ (int)System.currentTimeMillis(); // 
          while(_keepGoing)
          { synchronized(this)
@@ -377,28 +378,28 @@ public class Motor extends BasicMotor// implements TimerListener
                   {   
                      if(elapsed<ts)// not at speed yet
                      {
-                        error = elapsed*elapsed*_speed*.77f/(ts*2000); //constant acceleration
-                        error = error+  elapsed*_speed*.15f/1000;//constant speed
-                        error = error -absA;
+                        error = elapsed*elapsed*_speed*7/(ts*2000); //constant acceleration
+                        error = error+  elapsed*_speed*3/2000;//constant speed
+                        error = error - 10*absA;
                      }
                      else  // adjust elapsed time for acceleration time - don't try to catch up
                      {
-                        error = ((elapsed - ts/2)* _speed)/1000f - absA;
+                        error = ((elapsed - ts/2)* _speed)/100 - 10*absA;
                      }
                   } //end if ramp up
-                  else 	error = (elapsed*_speed/1000f)- absA;// no ramp
-                  float gain = 5f;
-                  float extrap = 4f;
-                  power = basePower + gain*(error + extrap*(error - e0));
+                  else 	error = (elapsed*_speed/100)- 10*absA;// no ramp
+                 int gain = 5;
+                  int extrap = 4;
+                  power = basePower/10 + gain*(error + extrap*(error - e0))/10;
                   e0 = error;                 
                   if(power < 0) power = 0;
                   if(power > 100) power = 100;
-                  float smooth = 0.012f;// another magic number from experiment
-                  basePower = basePower + smooth*(power-basePower); 
-                  setPower((int)power);
+                  int smooth = 12;//  /.012 another magic number from experiment
+                  basePower = basePower +smooth*(10*power-basePower)/1000;
+                  setPower(power);
                }// end speed regulation 
             }// end synchronized block
-         try {sleep(1);} catch(InterruptedException ie ) {}
+         try {sleep(4);} catch(InterruptedException ie ) {}
          }	// end keep going loop
       }// end run
       /**
@@ -554,16 +555,17 @@ public class Motor extends BasicMotor// implements TimerListener
     */
    private int overshoot(int angle)
    {
-      float ratio =0.06f; // overshoot/speed  - magic number from experiments
+      float ratio =0.06f; // overshoot/speed  - magic number from experiments  .064
       if(!_regulate)ratio = -0.173f + 0.029f * _voltage;// more magic numbers - fit to data
       if (angle < 0 ) angle = -angle;
-      float endRamp = _speed*0.15f;  //angle at end of ramp up to speed
-     if( angle < endRamp) 
+//      float endRamp = _speed*0.15f;  //angle at end of ramp up to speed
+       float endRamp = _speed*0.12f;
+     if( angle < endRamp)
      { // more complicated calculation in this case
       float a  = angle/endRamp;// normalized angle
-      ratio = .052f*( 1 - (1 - a)*(1 - a)); // quadratic in normalized angle
+      ratio = .05f*( 1 - (1 - a)*(1 - a)); // quadratic in normalized angle
      }
-      return (int) (ratio* _speed);    
+      return (int) (ratio* _speed);
    }
 
    /**
@@ -641,7 +643,7 @@ public class Motor extends BasicMotor// implements TimerListener
     */
    public float getBasePower()
    {
-      return regulator.basePower;
+      return regulator.basePower/10;
    }   
    public void setBrakePower(int pwr) {_brakePower = pwr;}
 }
