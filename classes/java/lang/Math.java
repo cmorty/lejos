@@ -138,8 +138,8 @@ public final class Math {
 	
 	/**
 	* Exponential function.  Returns E^x (where E is the base of natural logarithms).
-	* Thanks to David Edwards of England for conceiving the code and Martin E. Nielsen
-	* for modifying it to handle large arguments.
+	* @author David Edwards (original code)
+	* @author Martin E. Nielsen (modified code to handle large arguments)
         * = sum a^n/n!, i.e. 1 + x + x^2/2! + x^3/3!
         * <P>
         * Seems to work better for +ve numbers so force argument to be +ve.
@@ -211,7 +211,7 @@ public final class Math {
 
 	/**
 	* Power function.  This is a slow but accurate method.
-	* Thanks to David Edwards of England for conceiving the code.
+	* @author David Edwards
 	*/
 	public static double pow(double a, double b) {
 		return exp(b * log(a));
@@ -252,7 +252,8 @@ public final class Math {
 	}
 	
   /**
-  * Sine function using a Chebyshev-Pade approximation. Thanks to Paulo Costa for donating the code.
+  * Sine function using a Chebyshev-Pade approximation.
+  * @author Paulo Costa
   */
   public static double sin(double x)  // Using a Chebyshev-Pade approximation
   {
@@ -266,7 +267,8 @@ public final class Math {
   }
 
   /**
-  * Cosine function using a Chebyshev-Pade approximation. Thanks to Paulo Costa for donating the code.
+  * Cosine function using a Chebyshev-Pade approximation.
+  * @author Paulo Costa
   */
   public static double cos(double x)
   {
@@ -282,7 +284,8 @@ public final class Math {
   }
 
    /**
-  * Square root - thanks to Paulo Costa for donating the code.
+  * Square root
+  * @author Paulo Costa
   */
   public static double sqrt(double x)
   {
@@ -308,7 +311,7 @@ public final class Math {
    }
 		
   /**
-  * Arc tangent function. Thanks to Paulo Costa for donating the code.
+  * Arc tangent function.
   */
   public static double atan(double x)
   {
@@ -318,7 +321,8 @@ public final class Math {
    /**
   * Arc tangent function valid to the four quadrants
   * y and x can have any value without sigificant precision loss
-  * atan2(0,0) returns 0. Thanks to Paulo Costa for donating the code.
+  * atan2(0,0) returns 0. 
+  * @author Paulo Costa
   */
   public static double atan2(double y, double x)
   {
