@@ -223,10 +223,10 @@ public class Long extends Number implements Comparable
 			
 			if (r < limit + digit)
 				throw new NumberFormatException("number is too big");			
-			r += digit;
+			r -= digit;
 		}
 
-		//r is always negative, because the negative space is bigger than the positive space
+		//r is always <= 0, because the negative space is bigger than the positive space
 		return negative ? r : -r;
 	}
 	
