@@ -183,8 +183,51 @@ public class Long extends Number implements Comparable
 	
 	public static long parseLong(String s, int radix)
 	{
-		//FIXME
-		throw new UnsupportedOperationException();
+		if (s == null)
+			throw new NumberFormatException("string is null");
+		
+		//FIXME check radix
+		
+		int len = s.length();
+				
+		int p;
+		long limit;
+		boolean negative;
+		
+		if (len > 0 && s.charAt(0) == '-')
+		{
+			p = 1;
+			limit = MIN_VALUE;
+			negative = true;
+		}
+		else
+		{
+			p = 0;
+			limit = -MAX_VALUE;
+			negative = false;
+		}
+				
+		if (len <= p)
+			throw new NumberFormatException("string doesn't contain any digits");
+		
+		long multlimit = limit / radix;
+		
+		long r = 0;
+		while (p < len)
+		{
+			int digit = parseDigit(s.charAt(p++), radix);
+			
+			if (r < multlimit)
+				throw new NumberFormatException("number is too big");			
+			r *= radix;
+			
+			if (r < limit + digit)
+				throw new NumberFormatException("number is too big");			
+			r += digit;
+		}
+
+		//r is always negative, because the negative space is bigger than the positive space
+		return negative ? r : -r;
 	}
 	
 	public static long reverse(long v)
@@ -266,6 +309,26 @@ public class Long extends Number implements Comparable
 		} while (v != 0);
 		
 		return new String(buf, p, maxlen-p);
+	}
+	
+	private static int parseDigit(char c, int radix)
+	{
+		//FIXME use Character class
+		
+		int r;
+		if (c >= '0' && c <= '9')
+			r = c - '0';
+		else if (c >= 'a' && c <= 'z')
+			r = c - ('a'  - 10);
+		else if (c >= 'A' && c <= 'Z')
+			r = c - ('A'  - 10);
+		else
+			throw new NumberFormatException("illegal digit character");
+		
+		if (r >= radix)
+			throw new NumberFormatException("digit greater than radix");
+		
+		return r;
 	}
 	
 	private static char digit(int i)
