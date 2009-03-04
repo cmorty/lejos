@@ -1,4 +1,5 @@
 package lejos.nxt;
+import java.io.IOException;
 
 /**
  * Read and write access to flash memory in pages.
@@ -24,9 +25,43 @@ public class Flash {
 	{
 	}
 	
-	public static native void readPage(byte[] buf, int pageNum);
+	static native int flashReadPage(byte[] buf, int pageNum);
 
-	public static native void writePage(byte[] buf, int pageNum);
+	static native int flashWritePage(byte[] buf, int pageNum);
 	
-	public static native void exec(int pageNum, int size);
+	static native int flashExec(int pageNum, int size);
+
+    public static void readPage(byte[] buf, int pageNum) throws FlashError
+    {
+       if (flashReadPage(buf, pageNum) < 0)
+           throw new FlashError("FRead:Bad address");
+    }
+
+    public static void writePage(byte[] buf, int pageNum) throws FlashError
+    {
+        String msg;
+        int ret = flashWritePage(buf, pageNum);
+        if (ret >= 0) return;
+        switch(ret)
+        {
+            case -1:
+                msg = "FWrite:TWI";
+                break;
+            case -2:
+                msg = "FWrite:FTO";
+                break;
+            case -3:
+                msg = "FWrite:Bad address";
+                break;
+            default:
+                msg = "FWrite:Unkown" + ret;
+                break;
+       }
+       throw new FlashError(msg);
+    }
+
+    public static void exec(int pageNum, int size) throws FlashError
+    {
+        if (flashExec(pageNum, size) < 0) throw new FlashError("FExec");
+    }
 }
