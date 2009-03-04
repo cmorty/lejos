@@ -147,9 +147,11 @@ Object *create_string (ConstantRecord *constantRecord,
   if (ref == JNULL)
     return JNULL;
   // Guard the partially created object against the GC
-  protectedRef[0] = ref;
+  //protectedRef[0] = ref;
+  protect_obj(ref);
   arr = new_primitive_array (T_CHAR, constantRecord->constantSize);
-  protectedRef[0] = JNULL;
+  //protectedRef[0] = JNULL;
+  unprotect_obj(ref);
   if (arr == JNULL)
   {
     deallocate (obj2ptr(ref), class_size (JAVA_LANG_STRING));    

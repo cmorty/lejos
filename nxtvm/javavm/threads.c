@@ -135,18 +135,21 @@ int init_thread (Thread *thread)
     return EXEC_CONTINUE;
   }
   // Protected the argument (that may have come from native code), from the GC
-  protectedRef[0] = (Object *)thread;
+  //protectedRef[0] = (Object *)thread;
+  protect_obj(thread);
   // Allocate space for stack frames.
   thread->stackFrameArray = ptr2ref (new_primitive_array (T_STACKFRAME, INITIAL_STACK_FRAMES));
   if (thread->stackFrameArray == JNULL)
   {
-    protectedRef[0] = JNULL;
+    //protectedRef[0] = JNULL;
+    unprotect_obj(thread);
     return EXEC_RETRY;
   }
     
   // Allocate actual stack storage (INITIAL_STACK_SIZE * 4 bytes)
   thread->stackArray = ptr2ref (new_primitive_array (T_INT, INITIAL_STACK_SIZE));
-  protectedRef[0] = JNULL;
+  //protectedRef[0] = JNULL;
+  unprotect_obj(thread);
   if (thread->stackArray == JNULL)
   {
     free_array (ref2obj(thread->stackFrameArray));

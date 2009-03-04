@@ -29,6 +29,7 @@ public class StartUpText
       {
          Sound.playNote(Sound.XYLOPHONE, freq[i], (i==3 ? 500 : 300));   
       }
+      Sound.pause(300);
    }
    static void drawTopRow()
    {
@@ -181,13 +182,15 @@ public class StartUpText
     }
 	
 	public static void main(String[] args) throws Exception {
-        playTune();
-
+       Thread tuneThread = new Thread() {
+                    public void run() {
+                        playTune();
+                    }
+                };
+        tuneThread.start();
 		//1 RConsole.open();
 				
 		Indicators ind = new Indicators();
-		//USBRespond usb = new USBRespond();
-		//BTRespond bt = new BTRespond();
         Responder usb = new Responder(USB.getConnector());
         Responder bt = new Responder(Bluetooth.getConnector());
 		String devices = "Devices";
@@ -259,18 +262,18 @@ public class StartUpText
 		bt.setDaemon(true);
 		bt.setIndicator(ind);
 		bt.start();		
+        // Make a note of starting volumes so we know if it changes        
+        for(int i = 0; i < Volumes.length; i++)
+            Volumes[i][3] = Volumes[i][0];
 		// Defrag the file system	
 		files = File.listFiles();
+        tuneThread.join();
 		try {
 			File.defrag();
 		}
 		catch (IOException ioe) {
 			File.reset();
 		}
-        
-        // Make a note of starting volumes so we know if it changes        
-        for(int i = 0; i < Volumes.length; i++)
-            Volumes[i][3] = Volumes[i][0];
 
 		while (!quit) 
 		{ 

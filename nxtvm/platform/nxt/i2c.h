@@ -6,7 +6,8 @@
 #define I2C_N_PORTS 4
 
 void i2c_disable(int port);
-void i2c_enable(int port, int mode);
+int i2c_enable(int port, int mode);
+void i2c_disable_all(void);
 
 void i2c_init(void);
 

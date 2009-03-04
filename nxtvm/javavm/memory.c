@@ -56,6 +56,7 @@ static unsigned int memory_free;    /* total number of free words in heap */
 
 TWOBYTES failed_alloc_size;
 
+#if USE_VARSTAT
 VarStat gc_run_vs;
 VarStat gc_sweep_vs;
 VarStat gc_total_vs;
@@ -65,12 +66,8 @@ VarStat mem_usedblk_vs;
 VarStat gc_overflow_vs;
 VarStat gc_mark_vs;
 VarStat gc_roots_vs;
-
+#endif
 static Object *java_allocate (TWOBYTES size);
-
-Object *protectedRef[MAX_VM_REFS];
-
-
 
 
 /**
@@ -242,7 +239,7 @@ Object *new_object_for_class (const byte classIndex)
   ((is_std_array(obj) ? NORM_OBJ_SIZE : BA_OBJ_SIZE) + comp_array_size(get_array_length(obj), get_element_type(obj)))
 
 
-static inline void set_array (Object *obj, const byte elemType, const TWOBYTES length, const int baLength)
+static void set_array (Object *obj, const byte elemType, const TWOBYTES length, const int baLength)
 {
   #ifdef VERIFY
   assert (elemType <= (ELEM_TYPE_MASK >> ELEM_TYPE_SHIFT), MEMORY0); 
@@ -340,7 +337,7 @@ Object *new_multi_array (byte elemType, byte totalDimensions,
     return JNULL;
   // Make sure we protect each level from the gc. Once we have returned
   // the ref it will be protected by the level above.
-  protectedRef[totalDimensions] = ref;
+  protect_obj(ref);
   
   ne = *numElemPtr;
   while (ne--)
@@ -348,12 +345,12 @@ Object *new_multi_array (byte elemType, byte totalDimensions,
     ref2 = new_multi_array (elemType, totalDimensions - 1, reqDimensions - 1, numElemPtr + 1);
     if (ref2 == JNULL)
     {
-      protectedRef[totalDimensions] = JNULL;
+      unprotect_obj(ref);
       return JNULL;
     }
     ref_array(ref)[ne] = ptr2word (ref2);
   }
-  protectedRef[totalDimensions] = JNULL;
+  unprotect_obj(ref);
 
   return ref;
 }
@@ -414,6 +411,41 @@ Object *reallocate_array(Object *obj, STACKWORD newlen)
   return newArray;
 }
 #endif
+
+/**
+ * System level alocator. Allocate memory of sz bytes.
+ */
+byte *system_allocate(int sz)
+{
+  Object *ref;
+  unsigned int allocSize;
+
+  // We actually use an integer array for the storage, so round up
+  sz = (sz + sizeof(JINT) - 1)/sizeof(JINT);
+  allocSize = comp_array_size (sz, T_INT);
+  // We always use big array format so the header is a known fixed size
+  ref = java_allocate (allocSize + BA_OBJ_SIZE);
+  if (ref == null)
+    return JNULL;
+  set_array (ref, T_INT, BIGARRAYLEN, sz);
+  // Lock the memory to prevent it being collected
+  protect_obj(ref);
+  // and return a pointer to the actual memory
+  return (byte *) array_start(ref);
+}
+
+/**
+ * System level memory free
+ */
+void system_free(byte *mem)
+{
+  Object *ref;
+  if (!mem) return;
+  // Get a pointer to the object header
+  ref = (Object *)(mem - BA_OBJ_SIZE*2);
+  unprotect_obj(ref);
+  free_array(ref);
+}
 
 /**
  * Problem here is bigendian v. littleendian. Java has its
@@ -855,9 +887,6 @@ static void mark_local_objects()
   // Make sure the stack frame for the current thread is up to date.
   StackFrame *currentFrame = current_stackframe();
   if (currentFrame != null) update_stack_frame(currentFrame);
-  // If needed make sure we protect the VM temporary references
-  for(i=0; i < MAX_VM_REFS; i++)
-    if (protectedRef[i] != JNULL) mark_object(protectedRef[i]);
   if (threads) mark_object((Object *)threads);
   for( i = 0; i < MAX_PRIORITY; i ++)
   {
@@ -1698,9 +1727,6 @@ static void mark_local_objects()
     StackFrame *currentFrame = current_stackframe();
     if (currentFrame != null) update_stack_frame(currentFrame);
   }
-  // If needed make sure we protect the VM temporary references
-  for(i=0; i < MAX_VM_REFS; i++)
-    if (protectedRef[i] != JNULL) mark_object(protectedRef[i], 0);
   if (threads) mark_object((Object *)threads, 0);
   for(i = 0; i < MAX_PRIORITY; i ++)
   {
