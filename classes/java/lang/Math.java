@@ -3,7 +3,7 @@ package java.lang;
 /**
  * Mathematical functions.
  *
- * @author <a href="mailto:bbagnall@escape.ca">Brian Bagnall</a>
+ * @author <a href="mailto:bbagnall@mst.net">Brian Bagnall</a>
  */
 public final class Math {
 		
@@ -138,12 +138,14 @@ public final class Math {
 	
 	/**
 	* Exponential function.  Returns E^x (where E is the base of natural logarithms).
-	* @author David Edwards (original code)
-	* @author Martin E. Nielsen (modified code to handle large arguments)
-        * = sum a^n/n!, i.e. 1 + x + x^2/2! + x^3/3!
-        * <P>
-        * Seems to work better for +ve numbers so force argument to be +ve.
-	*/	
+	* author David Edwards
+	* 
+	*/
+	/* DEVELOPER NOTES:
+	 * Martin E. Nielsen - modified code to handle large arguments.
+	 * = sum a^n/n!, i.e. 1 + x + x^2/2! + x^3/3!
+	 * Seems to work better for +ve numbers so force argument to be +ve.
+	 */
 	public static double exp(double a)
 	{
 	    boolean neg = a < 0 ? true : false;
@@ -211,7 +213,7 @@ public final class Math {
 
 	/**
 	* Power function.  This is a slow but accurate method.
-	* @author David Edwards
+	* author David Edwards
 	*/
 	public static double pow(double a, double b) {
 		return exp(b * log(a));
@@ -253,7 +255,7 @@ public final class Math {
 	
   /**
   * Sine function using a Chebyshev-Pade approximation.
-  * @author Paulo Costa
+  * author Paulo Costa
   */
   public static double sin(double x)  // Using a Chebyshev-Pade approximation
   {
@@ -268,7 +270,7 @@ public final class Math {
 
   /**
   * Cosine function using a Chebyshev-Pade approximation.
-  * @author Paulo Costa
+  * author Paulo Costa
   */
   public static double cos(double x)
   {
@@ -285,7 +287,7 @@ public final class Math {
 
    /**
   * Square root
-  * @author Paulo Costa
+  * author Paulo Costa
   */
   public static double sqrt(double x)
   {
@@ -322,7 +324,7 @@ public final class Math {
   * Arc tangent function valid to the four quadrants
   * y and x can have any value without sigificant precision loss
   * atan2(0,0) returns 0. 
-  * @author Paulo Costa
+  * author Paulo Costa
   */
   public static double atan2(double y, double x)
   {
