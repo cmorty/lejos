@@ -79,9 +79,9 @@
 #define usbRead_4_1BII_5I 72
 #define usbWrite_4_1BII_5I 73
 #define usbReset_4_5V 74
-#define writePage_4_1BI_5V 75
-#define readPage_4_1BI_5V 76
-#define exec_4II_5V 77
+#define flashWritePage_4_1BI_5I 75
+#define flashReadPage_4_1BI_5I 76
+#define flashExec_4II_5I 77
 #define executeProgram_4I_5V 78
 #define setDebug_4_5V 79
 #define peekWord_4I_5I 80
@@ -107,4 +107,6 @@
 #define hsRecv_4_1BI_1CI_5I 100
 #define getUserPages_4_5I 101
 #define i2cCompleteById_4I_1BI_5I 102
+#define btEnable_4_5V 103
+#define btDisable_4_5V 104
 #endif // _SPECIALSIGNATURES_H

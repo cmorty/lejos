@@ -1,3 +1,14 @@
+/*
+ * This module handles communications between the NXT main ARM processor and
+ * the AVR processor. The AVR provides support for the motors, analogue sensors
+ * keyboard and power. The two processors are linked via a TWI connection. This
+ * is used to exchange a message every 1ms. The message alternates between
+ * sending commands to the AVR and receiving status from it.
+ * NOTES:
+ * The time window for read requests is very tight. On some NXT devices it can
+ * be exceeded. This code has been optimized to maximize the read window and
+ * to handle the times that the window is exceeded.
+ */
 #include "nxt_avr.h"
 
 
@@ -7,36 +18,43 @@
 #include "systick.h"
 #include <string.h>
 #include "display.h"
-
-
+#include "at91sam7s256.h"
 
 #define NXT_AVR_ADDRESS 1
 #define NXT_AVR_N_OUTPUTS 4
 #define NXT_AVR_N_INPUTS  4
 
+// Link states
+#define LS_CLOSED 0
+#define LS_INIT1 1
+#define LS_INIT2 2
+#define LS_RUNNING 3
+#define LS_RETRY 4
+#define LS_RESET 5
 
+// This string is used to establish communictions with the AVR
 const char avr_brainwash_string[] =
   "\xCC" "Let's samba nxt arm in arm, (c)LEGO System A/S";
-
-static U32 nxt_avr_initialised;
-
+// The following Raw values are read/written directly to the AVR. so byte
+// order, packing etc. must match
 static struct {
+  // Raw values
   U8 power;
   U8 pwm_frequency;
   S8 output_percent[NXT_AVR_N_OUTPUTS];
   U8 output_mode;
   U8 input_power;
-} io_to_avr;
+} __attribute__((packed)) io_to_avr;
 
 
 static struct {
+  // Raw values
   U16 adc_value[NXT_AVR_N_INPUTS];
+  U16 buttonsVal;
+  U16 extra;
+  // processed values
   U16 buttons;
-  U16 battery_is_AA;
-  U16 battery_mV;
-  U8 avr_fw_version_major;
-  U8 avr_fw_version_minor;
-} io_from_avr;
+} __attribute__((packed)) io_from_avr;
 
 static U8 data_from_avr[(2 * NXT_AVR_N_INPUTS) + 5];
 
@@ -50,38 +68,44 @@ static U16 debounce_state;
 static U16 debounce_cnt;
 
 
-/* We're assuming that we get good packing */
 
+/**
+ * Start to read the status data from the AVR. The actual I/O takes place
+ * via DMA/Interrupt handling
+ */
 static void
 nxt_avr_start_read(void)
 {
-  memset(data_from_avr, 0, sizeof(data_from_avr));
-  twi_start_read(NXT_AVR_ADDRESS, 0, 0, data_from_avr, sizeof(data_from_avr));
+  //memset(data_from_avr, 0, sizeof(data_from_avr));
+  twi_start_read(NXT_AVR_ADDRESS, data_from_avr, sizeof(data_from_avr));
 }
 
+/**
+ * Start to send command data to the AVR
+ */
 static void
 nxt_avr_start_send(void)
 {
-  int i;
-  U8 checkByte = 0;
+  U32 checkByte = 0;
   U8 *a = data_to_avr;
   U8 *b = (U8 *) (&io_to_avr);
+  U8 *e = b + sizeof(io_to_avr);
 
-  i = sizeof(io_to_avr);
-  while (i) {
-    *a = *b;
+  // Copy over the data and create the checksum
+  while (b < e) {
     checkByte += *b;
-    a++;
-    b++;
-    i--;
+    *a++ = *b++;
   }
 
   *a = ~checkByte;
 
-  twi_start_write(NXT_AVR_ADDRESS, 0, 0, data_to_avr, sizeof(data_to_avr));
+  twi_start_write(NXT_AVR_ADDRESS, data_to_avr, sizeof(data_to_avr));
 
 }
 
+/**
+ * Tell the AVR to power down the NXT
+ */
 void
 nxt_avr_power_down(void)
 {
@@ -90,6 +114,9 @@ nxt_avr_power_down(void)
 }
 
 
+/**
+ * Tell the AVR to enter SAMBA mode
+ */
 void
 nxt_avr_firmware_update_mode(void)
 {
@@ -97,21 +124,16 @@ nxt_avr_firmware_update_mode(void)
   io_to_avr.pwm_frequency = 0x5A;
 }
 
+/**
+ * Initialise the link with the AVR by sending the handshake string. Note that
+ * because of the length of this string we need to allow more than 1ms for it
+ * to go.
+ */
 void
 nxt_avr_link_init(void)
 {
-  twi_start_write(NXT_AVR_ADDRESS, 0, 0, (const U8 *) avr_brainwash_string,
+  twi_start_write(NXT_AVR_ADDRESS, (const U8 *) avr_brainwash_string,
 		  strlen(avr_brainwash_string));
-}
-
-
-static U16
-Unpack16(const U8 *x)
-{
-  U16 retval;
-
-  retval = (((U16) (x[0])) & 0xff) | ((((U16) (x[1])) << 8) & 0xff00);
-  return retval;
 }
 
 
@@ -123,93 +145,79 @@ static struct {
   U32 not_ok;
 } nxt_avr_stats;
 
+/**
+ * Unpack the status data from the AVR. Also need to check the checksum byte
+ * is ok.
+ */
 static void
 nxt_avr_unpack(void)
 {
-  U8 check_sum;
+  U8 check_sum=0;;
   U8 *p;
+  U8 *d;
+  U8 *end;
   U16 buttonsVal;
   U16 newState;
-  U32 voltageVal;
-  int i;
 
+  // Copy data over and calc the checksum
   p = data_from_avr;
-
-  for (check_sum = i = 0; i < sizeof(data_from_avr); i++) {
+  end = p + sizeof(data_from_avr) - 1;
+  d = (U8 *)&io_from_avr;
+  while(p < end) {
     check_sum += *p;
-    p++;
+    *d++ = *p++;
   }
-
+  check_sum += *p;
   if (check_sum != 0xff) {
     nxt_avr_stats.bad_rx++;
     return;
   }
 
   nxt_avr_stats.good_rx++;
-
-  p = data_from_avr;
-
-  // Marshall
-  for (i = 0; i < NXT_AVR_N_INPUTS; i++) {
-    io_from_avr.adc_value[i] = Unpack16(p);
-    p += 2;
-  }
-
-  buttonsVal = Unpack16(p);
-  p += 2;
-
-  // Process the buttons. First we drop any noisy inputs
-  if (buttonsVal != prev_buttons)
-    prev_buttons = buttonsVal;
-  else
+  buttonsVal = io_from_avr.buttonsVal;
+  if (buttonsVal > 60 || button_state)
   {
-    // Work out which buttons are down. We allowing chording of the enter
-    // button with other buttons
-    newState = 0;
-    if (buttonsVal > 1500) {
-      newState |= 1;
-      buttonsVal -= 0x7ff;
-    }
-
-    if (buttonsVal > 720)
-      newState |= 0x08;
-    else if (buttonsVal > 270)
-      newState |= 0x04;
-    else if (buttonsVal > 60)
-      newState |= 0x02;
-    // Debounce things...
-    if (newState != debounce_state)
-    {
-      debounce_cnt = BUTTON_DEBOUNCE_CNT;
-      debounce_state = newState;
-    }
-    else if (debounce_cnt > 0)
-      debounce_cnt--;
+    // Process the buttons. First we drop any noisy inputs
+    if (buttonsVal != prev_buttons)
+      prev_buttons = buttonsVal;
     else
-      // Got a good key, make a note of it
-      button_state = debounce_state;
+    {
+      // Work out which buttons are down. We allow chording of the enter
+      // button with other buttons
+      newState = 0;
+      if (buttonsVal > 1500) {
+        newState |= 1;
+        buttonsVal -= 0x7ff;
+      }
+  
+      if (buttonsVal > 720)
+        newState |= 0x08;
+      else if (buttonsVal > 270)
+        newState |= 0x04;
+      else if (buttonsVal > 60)
+        newState |= 0x02;
+      // Debounce things...
+      if (newState != debounce_state)
+      {
+        debounce_cnt = BUTTON_DEBOUNCE_CNT;
+        debounce_state = newState;
+      }
+      else if (debounce_cnt > 0)
+        debounce_cnt--;
+      else
+        // Got a good key, make a note of it
+        button_state = debounce_state;
+    }
+    io_from_avr.buttons = button_state;
   }
-  io_from_avr.buttons = button_state;
-
-  voltageVal = Unpack16(p);
-
-  io_from_avr.battery_is_AA = (voltageVal & 0x8000) ? 1 : 0;
-  io_from_avr.avr_fw_version_major = (voltageVal >> 13) & 3;
-  io_from_avr.avr_fw_version_minor = (voltageVal >> 10) & 7;
-
-
-  // Figure out voltage
-  // The units are 13.848 mV per bit.
-  // To prevent fp, we substitute 13.848 with 14180/1024
-
-  voltageVal &= 0x3ff;		// Toss unwanted bits.
-  voltageVal *= 14180;
-  voltageVal >>= 10;
-  io_from_avr.battery_mV = voltageVal;
-
 }
 
+static U32 update_count;
+static U32 link_state = LS_CLOSED;
 
+/**
+ * Set things up ready to start talking to the AVR.
+ */
 void
 nxt_avr_init(void)
 {
@@ -222,68 +230,102 @@ nxt_avr_init(void)
   prev_buttons = 0;
   debounce_state = 0;
   debounce_cnt = BUTTON_DEBOUNCE_CNT;
-  nxt_avr_initialised = 1;
+  link_state = LS_RESET;
 }
 
-static U32 update_count;
-static U32 link_init_wait;
-static U32 link_running;
 
+/**
+ * Main procssing function. Called from a low priority interrupt every 1ms.
+ */
 void
 nxt_avr_1kHz_update(void)
 {
+  int state;
+  switch(link_state)
+  {
+  case LS_CLOSED:
+    break;
 
-  if (!nxt_avr_initialised)
-    return;
+  case LS_INIT1:
+  case LS_INIT2:
+    // Add extra wait states during initialisation
+    link_state++;
+    break;
 
-  if (link_init_wait) {
-    link_init_wait--;
-    return;
-  }
+  case LS_RUNNING:
+  case LS_RETRY:
+    // Check to make sure the link is ok
+    state = twi_status();
+    if (state == 0) {
+      // Everything looks good, so do the real work
+      if (update_count++ & 1) {
+        nxt_avr_start_read();
+      } else {
+        nxt_avr_start_send();
+        nxt_avr_unpack();
+      }
+      link_state = LS_RUNNING;
+    }
+    else {
+      if (state < 0) {
+        nxt_avr_stats.not_ok++;
+        link_state = LS_RESET;
+      }
+      else {
+        nxt_avr_stats.still_busy++;
+        // If the link is still busy (normally it should not be). We allow it
+        // a little extra time to see if it will complete. If not then reset
+        // it.
+        if (link_state == LS_RUNNING)
+          link_state = LS_RETRY;
+        else
+          link_state = LS_RESET;
+      }
+    }
+    break;
 
-  if (!twi_ok()) {
-    nxt_avr_stats.not_ok++;
-    link_running = 0;
-  }
-
-  if (twi_busy()) {
-    nxt_avr_stats.still_busy++;
-    link_running = 0;
-  }
-
-
-  if (!twi_ok() || twi_busy() || !link_running) {
+  case LS_RESET:
+  default:
+    // Either we are just starting or we have had a problem. So reset the
+    // hardware and try and re-establish the link.
     twi_init();
     memset(data_from_avr, 0, sizeof(data_from_avr));
-    link_running = 1;
     nxt_avr_link_init();
-    link_init_wait = 2;
     update_count = 0;
     nxt_avr_stats.resets++;
-    return;
+    link_state = LS_INIT1;
+    break;
   }
-
-  if (update_count & 1) {
-    nxt_avr_start_read();
-  } else {
-    nxt_avr_unpack();
-    nxt_avr_start_send();
-  }
-  update_count++;
 }
-
+  
+/**
+ * Return a bitmask giving the current (debounced) button state
+ */
 U32
 buttons_get(void)
 {
   return io_from_avr.buttons;
 }
 
+/**
+ * Return the current state of the battery
+ */
 U32
 battery_voltage(void)
 {
-  return io_from_avr.battery_mV;
+  // Figure out voltage
+  // The units are 13.848 mV per bit.
+  // To prevent fp, we substitute 13.848 with 14180/1024
+  U32 voltageVal = io_from_avr.extra;
+  voltageVal &= 0x3ff;		// Toss unwanted bits.
+  voltageVal *= 14180;
+  voltageVal >>= 10;
+  return voltageVal;
 }
 
+/**
+ * Return the requests sensor analoge reading.
+ */
 U32
 sensor_adc(U32 n)
 {
@@ -294,6 +336,9 @@ sensor_adc(U32 n)
 }
 
 
+/**
+ * Set the motor power for a particular motor
+ */
 void
 nxt_avr_set_motor(U32 n, int power_percent, int brake)
 {
@@ -306,6 +351,9 @@ nxt_avr_set_motor(U32 n, int power_percent, int brake)
   }
 }
 
+/**
+ * Control the power supplied to an input sensor
+ */
 void
 nxt_avr_set_input_power(U32 n, U32 power_type)
 {

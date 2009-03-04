@@ -125,9 +125,9 @@ usbWrite([BII)I
 usbReset()V
 
 #lejos.nxt.Flash
-writePage([BI)V
-readPage([BI)V
-exec(II)V
+flashWritePage([BI)I
+flashReadPage([BI)I
+flashExec(II)I
 
 #lejos.nxt.DebugInterface
 executeProgram(I)V
@@ -171,4 +171,8 @@ getUserPages()I
 
 #i2c
 i2cCompleteById(I[BI)I
+
+#Bluetooth
+btEnable()V
+btDisable()V
 

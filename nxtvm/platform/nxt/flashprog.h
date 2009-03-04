@@ -3,13 +3,15 @@
 #  include "mytypes.h"
 
 int flash_write_page(U32 *buf, int page_num);
-void flash_erase_range(U32 addr, U32 nBytes);
-void flash_write(U32 addr, void *buffer, U32 nBytes);
-void flash_set_mode(U32 fmcn); 
+int flash_read_page(U32 *buf, int page_num);
+
+// First usable page 
 extern const U32 flash_start_page;
 #define VINTPTR(addr) ((volatile unsigned int *)(addr))
 #define VINT(addr) (*(VINTPTR(addr)))
 
+// Page size in WORDS
+#define FLASH_PAGE_SIZE 64
 #define FLASH_MAX_PAGES 1024
 #define FLASH_ADDRESS 0x00100000
 #define FLASH_BASE VINTPTR(FLASH_ADDRESS + (flash_start_page * 256))
