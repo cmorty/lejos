@@ -378,6 +378,9 @@ public class Long extends Number implements Comparable
 		return Long.valueOf(Long.parseLong(s, radix));
 	}
 	
+	/**
+	 * For {@link #approxStringLength(int)}. 
+	 */
 	private static int floorLog2(int v)
 	{
 		//min radix is 2
@@ -394,6 +397,9 @@ public class Long extends Number implements Comparable
 		return 5;
 	}
 	
+	/**
+	 * For {@link StringBuilder#append(long)}.
+	 */
 	static int getChars(char[] buf, int p, long v, int radix)
 	{
 		long v2 = (v <= 0) ? v : -v;
@@ -411,12 +417,18 @@ public class Long extends Number implements Comparable
 		return p;
 	}
 	
+	/**
+	 * For {@link StringBuilder#append(long)}.
+	 */
 	static int approxStringLength(int radix)
 	{
 		//the following is >= ceil(64 / log(2, radix)) +1 which is the maximum number of digits + sign
 		return 63 / floorLog2(radix) + 2;
 	}
 	
+	/**
+	 * For {@link StringBuilder#append(long)}.
+	 */
 	static int exactStringLength(long v, int radix)
 	{
 		int c = (v < 0) ? 2 : 1;
