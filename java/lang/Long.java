@@ -302,11 +302,12 @@ public class Long extends Number implements Comparable
 		char[] buf = new char[maxlen];
 		int p = maxlen;
 		
-		do
+		buf[--p] = digit(mask & (int)v);
+		while (v != 0)
 		{
 			buf[--p] = digit(mask & (int)v);
 			v >>>= shift;
-		} while (v != 0);
+		}
 		
 		return new String(buf, p, maxlen-p);
 	}
@@ -353,8 +354,13 @@ public class Long extends Number implements Comparable
 	
 	public static String toString(long v, int radix)
 	{
-		//FIXME
-		throw new UnsupportedOperationException();
+		//FIXME check radix
+		
+		int len = Long.exactStringLength(v, radix);		
+		char[] buf = new char[len];
+		
+		getChars(buf, len, v, radix);		
+		return new String(buf);
 	}
 	
 	public static Long valueOf(long v)
@@ -370,5 +376,55 @@ public class Long extends Number implements Comparable
 	public static Long valueOf(String s, int radix)
 	{
 		return Long.valueOf(Long.parseLong(s, radix));
+	}
+	
+	private static int floorLog2(int v)
+	{
+		//min radix is 2
+		if (v < 4)
+			return 1;
+		if (v < 8)
+			return 2;
+		if (v < 16)
+			return 3;
+		if (v < 32)
+			return 4;
+		
+		//max radix is 36
+		return 5;
+	}
+	
+	static int getChars(char[] buf, int p, long v, int radix)
+	{
+		long v2 = (v <= 0) ? v : -v;
+		
+		buf[--p] = digit(-(int)(v2 % radix));
+		while (v2 != 0)
+		{
+			buf[--p] = digit(-(int)(v2 % radix));
+			v2 /= radix;
+		}
+		
+		if (v < 0)
+			buf[--p] = '-';
+		
+		return p;
+	}
+	
+	static int approxStringLength(int radix)
+	{
+		//the following is >= ceil(64 / log(2, radix)) +1 which is the maximum number of digits + sign
+		return 63 / floorLog2(radix) + 2;
+	}
+	
+	static int exactStringLength(long v, int radix)
+	{
+		int c = (v < 0) ? 2 : 1;
+		while (v != 0)
+		{
+			c++;
+			v /= radix;
+		}
+		return c;
 	}
 }
