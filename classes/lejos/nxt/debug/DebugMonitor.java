@@ -28,6 +28,9 @@ public class DebugMonitor
         System.err.println("Java Exception");
         System.err.println("Class: " + oi.getClassIndex(info.exception));
         System.err.println("Method: " + info.method + "(" + info.pc + ")");
+        String msg = info.exception.getMessage();
+        if (msg != null && msg.length() > 0)
+            System.err.println("Msg: " + msg);
         int sp = info.frame - 1;
         for (int i = 3; i < 8 && sp-- > 0; i++)
             System.err.println("Called from: " + fi.getMethodIndex(info.thread, sp));
