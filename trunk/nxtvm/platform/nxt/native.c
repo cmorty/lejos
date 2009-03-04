@@ -32,6 +32,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "at91sam7s256.h"
+
 
 #undef push_word()
 #undef push_ref()
@@ -255,8 +257,10 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
     nxt_motor_set_count(paramBase[0], 0);
     return EXEC_CONTINUE;
   case i2cEnableById_4II_5V:
-    i2c_enable(paramBase[0], paramBase[1]);
-    return EXEC_CONTINUE;
+    if (i2c_enable(paramBase[0], paramBase[1]) == 0)
+      return EXEC_RETRY;
+    else
+      return EXEC_CONTINUE;
   case i2cDisableById_4I_5V:
     i2c_disable(paramBase[0]);
     return EXEC_CONTINUE;
@@ -288,29 +292,12 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
   case playFreq_4III_5V:
     sound_freq(paramBase[0],paramBase[1], paramBase[2]);
     return EXEC_CONTINUE;
-  case btSend_4_1BI_5V:
-    {
-      Object *p = word2ptr(paramBase[0]);
-      byte *byteArray = (byte *) jbyte_array(p);
-      bt_send(byteArray,paramBase[1]);                      
-    }
-    return EXEC_CONTINUE;
-  case btReceive_4_1B_5V:
-    {
-      Object *p = word2ptr(paramBase[0]);
-      byte *byteArray = (byte *) jbyte_array(p);
-      bt_receive(byteArray);                      
-    }
-    return EXEC_CONTINUE;
   case btGetBC4CmdMode_4_5I:
     push_word(bt_get_mode());
     return EXEC_CONTINUE;
   case btSetArmCmdMode_4I_5V:
     if (paramBase[0] == 0) bt_set_arm7_cmd();
     else bt_clear_arm7_cmd(); 
-    return EXEC_CONTINUE;
-  case btStartADConverter_4_5V:
-    bt_start_ad_converter();
     return EXEC_CONTINUE;
   case btSetResetLow_4_5V:
     bt_set_reset_low();
@@ -337,11 +324,19 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
       push_word(bt_pending());
     }
     return EXEC_CONTINUE;
+  case btEnable_4_5V:
+    if (bt_enable() == 0)
+      return EXEC_RETRY;
+    else
+      return EXEC_CONTINUE;
+  case btDisable_4_5V:
+    bt_disable();
+    return EXEC_CONTINUE;
   case usbRead_4_1BII_5I:
      {
       Object *p = word2ptr(paramBase[0]);
       byte *byteArray = (byte *) jbyte_array(p);
-      push_word(udp_read(byteArray,paramBase[1], paramBase[2]));                      
+      push_word(udp_read(byteArray,paramBase[1], paramBase[2]));
     } 
     return EXEC_CONTINUE;
   case usbWrite_4_1BII_5I:
@@ -389,28 +384,29 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
       udp_set_name((U8 *)jchar_array(charArray), len);
     }
     return EXEC_CONTINUE;
-  case writePage_4_1BI_5V:
+  case flashWritePage_4_1BI_5I:
     {
       Object *p = word2ptr(paramBase[0]);
       unsigned long *intArray = (unsigned long *) jint_array(p);
-      flash_write_page(intArray,paramBase[1]);                      
+      push_word(flash_write_page(intArray,paramBase[1]));                      
     }
     return EXEC_CONTINUE;
-  case readPage_4_1BI_5V:
+  case flashReadPage_4_1BI_5I:
     {
-      int i;
       Object *p = word2ptr(paramBase[0]);
       unsigned long *intArray = (unsigned long *) jint_array(p);
-      for(i=0;i<64;i++) intArray[i] = FLASH_BASE[(paramBase[1]*64)+i];                       
+      push_word(flash_read_page(intArray,paramBase[1]));                      
     }
     return EXEC_CONTINUE;
-  case exec_4II_5V:
-    gNextProgram = (unsigned int) &FLASH_BASE[(paramBase[0]*64)];
+  case flashExec_4II_5I:
+    gNextProgram = (unsigned int) &FLASH_BASE[(paramBase[0]*FLASH_PAGE_SIZE)];
     gNextProgramSize = paramBase[1];
     schedule_request(REQUEST_EXIT);
+    // Not sure if we need this or not, but best to be safe
+    push_word(0);
     return EXEC_CONTINUE;
   case playSample_4IIIII_5V:
-    sound_play_sample(((unsigned char *) &FLASH_BASE[(paramBase[0]*64)]) + paramBase[1],paramBase[2],paramBase[3],paramBase[4]);
+    sound_play_sample(((unsigned char *) &FLASH_BASE[(paramBase[0]*FLASH_PAGE_SIZE)]) + paramBase[1],paramBase[2],paramBase[3],paramBase[4]);
     return EXEC_CONTINUE;
   case getTime_4_5I:
     push_word(sound_get_time());
@@ -471,7 +467,8 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
     return EXEC_CONTINUE;
   case hsEnable_4_5V:
     {
-      hs_enable();
+      if (hs_enable() == 0)
+        return EXEC_RETRY;
     }
     return EXEC_CONTINUE;
   case hsDisable_4_5V:

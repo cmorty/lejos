@@ -80,9 +80,9 @@ public interface SpecialSignatureConstants {
     "usbRead([BII)I",
     "usbWrite([BII)I",
     "usbReset()V",
-    "writePage([BI)V",
-    "readPage([BI)V",
-    "exec(II)V",
+    "flashWritePage([BI)I",
+    "flashReadPage([BI)I",
+    "flashExec(II)I",
     "executeProgram(I)V",
     "setDebug()V",
     "peekWord(I)I",
@@ -107,6 +107,8 @@ public interface SpecialSignatureConstants {
     "hsSend(BB[BII[C)I",
     "hsRecv([BI[CI)I",
     "getUserPages()I",
-    "i2cCompleteById(I[BI)I"
+    "i2cCompleteById(I[BI)I",
+    "btEnable()V",
+    "btDisable()V"
   };
 }

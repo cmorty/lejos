@@ -1,3 +1,18 @@
+/*
+ * I2C/TWI comminications driver
+ * Provide read/write to an I2C/TWI device (in this case the ATMega
+ * co-processor). Uses the hardware TWI device in interrupt mode.
+ * NOTES
+ * This code does not support single byte read/write operation.
+ * This code does not support internal register addressing.
+ * Runs at high priority interrupt to minimise chance of early
+ * write termination (have never seen this but...).
+ * For read operations we do not wait for the complete event before 
+ * marking the read as over. We do this because the time window for
+ * a read when talking to the ATMega is very tight, so finishing
+ * slightly early avoids a data over-run. It is a little iffy though!
+ */
+
 
 #include "mytypes.h"
 #include "twi.h"
@@ -13,6 +28,9 @@
 // Calculate required clock divisor
 #define   I2CClk                        400000L
 #define   CLDIV                         (((CLOCK_FREQUENCY/I2CClk)/2)-3)
+// Pins
+#define TWCK (1 << 4)
+#define TWD (1 << 3)
 
 
 extern void twi_isr_entry(void);
@@ -20,17 +38,19 @@ extern void twi_isr_entry(void);
 
 static enum {
   TWI_UNINITIALISED = 0,
+  TWI_FAILED,
   TWI_IDLE,
-  TWI_TX_BUSY,
-  TWI_TX_DONE,
+  TWI_DONE,
   TWI_RX_BUSY,
-  TWI_RX_DONE,
-  TWI_FAILED
+  TWI_TX_BUSY,
 } twi_state;
 
 static U32 twi_pending;
 static U8 *twi_ptr;
+static U32 twi_mask;
 
+// Accumlate stats
+#ifdef USE_STATS
 static struct {
   U32 rx_done;
   U32 tx_done;
@@ -40,94 +60,81 @@ static struct {
   U32 ovre;
   U32 nack;
 } twi_stats;
+#define STATS(code) code;
+#else
+#define STATS(code)
+#endif
 
 
 
-
+/**
+ * Return the status of the twi device.
+ * 0 == Ready for use
+ * 1 == Busy
+ * -1 == Error or closed
+ */
 int
-twi_busy(void)
+twi_status(void)
 {
-  return (twi_state == TWI_TX_BUSY || twi_state == TWI_RX_BUSY);
+  return (twi_state > TWI_DONE ? 1 : (twi_state < TWI_IDLE ? -1 : 0));
 }
 
-int
-twi_ok(void)
-{
-  return (twi_state >= TWI_IDLE && twi_state <= TWI_RX_DONE);
-}
-
+/**
+ * Process TWI interrupts.
+ * Assumes that only valid interrupts will be enabled and that twi_mask
+ * will have been set to only contain the valid bits for the current
+ * I/O state. This means that we do not have to test this state at
+ * interrupt time.
+ */
 void
 twi_isr_C(void)
 {
-  U32 status = *AT91C_TWI_SR;
-
-  if ((status & AT91C_TWI_RXRDY) && twi_state == TWI_RX_BUSY) {
-
-
-    if (twi_pending) {
-      twi_stats.bytes_rx++;
-      *twi_ptr = *AT91C_TWI_RHR;
-      twi_ptr++;
-      twi_pending--;
-      if (twi_pending == 1) {
-	/* second last byte -- issue a stop on the next byte */
-	*AT91C_TWI_CR = AT91C_TWI_STOP;
-      }
-      if (!twi_pending) {
-	twi_stats.rx_done++;
-	twi_state = TWI_RX_DONE;
-      }
+  U32 status = *AT91C_TWI_SR & twi_mask;
+  if (status & AT91C_TWI_RXRDY) {
+    STATS(twi_stats.bytes_rx++)
+    *twi_ptr++ = *AT91C_TWI_RHR;
+    twi_pending--;
+    if (twi_pending == 1) {
+      /* second last byte -- issue a stop on the next byte */
+      *AT91C_TWI_CR = AT91C_TWI_STOP;
     }
-
+    if (!twi_pending) {
+      // All bytes have been sent. Mark operation as complete.
+      STATS(twi_stats.rx_done++)
+      twi_state = TWI_DONE;
+      *AT91C_TWI_IDR = AT91C_TWI_RXRDY;
+    }
   }
-
-  if ((status & AT91C_TWI_TXRDY) && twi_state == TWI_TX_BUSY) {
+  else if (status & AT91C_TWI_TXRDY) {
     if (twi_pending) {
       /* Still Stuff to send */
-      *AT91C_TWI_CR = AT91C_TWI_MSEN | AT91C_TWI_START;
-      if (twi_pending == 1) {
-	*AT91C_TWI_CR = AT91C_TWI_STOP;
-      }
-      *AT91C_TWI_THR = *twi_ptr;
-      twi_stats.bytes_tx++;
-
-      twi_ptr++;
+      *AT91C_TWI_THR = *twi_ptr++;
       twi_pending--;
-
+      STATS(twi_stats.bytes_tx++)
     } else {
-      /* everything has been sent */
-      twi_state = TWI_TX_DONE;
-      *AT91C_TWI_IDR = ~0;
-      twi_stats.tx_done++;
+      // everything has been sent, now wait for complete 
+      STATS(twi_stats.tx_done++);
+      *AT91C_TWI_IDR = AT91C_TWI_TXRDY;
+      *AT91C_TWI_IER = AT91C_TWI_TXCOMP;
+      twi_mask = AT91C_TWI_TXCOMP|AT91C_TWI_NACK;
     }
   }
-
-  if (status & AT91C_TWI_OVRE) {
-    /* */
-    twi_stats.ovre++;
-    *AT91C_TWI_CR = AT91C_TWI_STOP;
-    *AT91C_TWI_IDR = ~0;
-    twi_state = TWI_FAILED;
-
-  }
-
-  if (status & AT91C_TWI_UNRE) {
-    /* */
-    twi_stats.unre++;
-    *AT91C_TWI_IDR = ~0;
-    twi_state = TWI_FAILED;
+  else if (status & AT91C_TWI_TXCOMP) {
+    twi_state = TWI_DONE;
+    *AT91C_TWI_IDR = AT91C_TWI_TXCOMP;
   }
 
   if (status & AT91C_TWI_NACK) {
-    /* */
-    twi_stats.nack++;
+    STATS(twi_stats.nack++)
     *AT91C_TWI_IDR = ~0;
     twi_state = TWI_UNINITIALISED;
   }
 }
 
 
-
+/**
+ * Force a device reset. 
+ */
 void
 twi_reset(void)
 {
@@ -136,33 +143,37 @@ twi_reset(void)
   *AT91C_TWI_IDR = ~0;
 
   *AT91C_PMC_PCER = (1 << AT91C_ID_PIOA) |	/* Need PIO too */
-    (1 << AT91C_ID_TWI);	/* TWI clock domain */
+                    (1 << AT91C_ID_TWI);	/* TWI clock domain */
 
   /* Set up pin as an IO pin for clocking till clean */
-  *AT91C_PIOA_MDER = (1 << 3) | (1 << 4);
-  *AT91C_PIOA_PER = (1 << 3) | (1 << 4);
-  *AT91C_PIOA_ODR = (1 << 3);
-  *AT91C_PIOA_OER = (1 << 4);
+  *AT91C_PIOA_MDER = TWD | TWCK;
+  *AT91C_PIOA_PER = TWD | TWCK;
+  *AT91C_PIOA_ODR = TWD;
+  *AT91C_PIOA_OER = TWCK;
 
-  while (clocks > 0 && !(*AT91C_PIOA_PDSR & (1 << 3))) {
+  while (clocks > 0 && !(*AT91C_PIOA_PDSR & TWD)) {
 
-    *AT91C_PIOA_CODR = (1 << 4);
+    *AT91C_PIOA_CODR = TWCK;
     systick_wait_ns(1500);
-    *AT91C_PIOA_SODR = (1 << 4);
+    *AT91C_PIOA_SODR = TWCK;
     systick_wait_ns(1500);
     clocks--;
   }
 
-  *AT91C_PIOA_PDR = (1 << 3) | (1 << 4);
-  *AT91C_PIOA_ASR = (1 << 3) | (1 << 4);
+  *AT91C_PIOA_PDR = TWD | TWCK;
+  *AT91C_PIOA_ASR = TWD | TWCK;
 
-  *AT91C_TWI_CR = 0x88;		/* Disable & reset */
+  *AT91C_TWI_CR = AT91C_TWI_SWRST|AT91C_TWI_MSDIS;/* Disable & reset */
 
-  //*AT91C_TWI_CWGR = 0x020f0f;	/* Set for 380kHz */
   *AT91C_TWI_CWGR = ((CLDIV << 8)|CLDIV);       /* Set for 400kHz */
-  *AT91C_TWI_CR = 0x04;		/* Enable as master */
+  *AT91C_TWI_CR = AT91C_TWI_MSEN;		/* Enable as master */
+  *AT91C_TWI_IER = AT91C_TWI_NACK;
+  twi_mask = 0;
 }
 
+/**
+ * Initialize the device.
+ */
 int
 twi_init(void)
 {
@@ -170,15 +181,10 @@ twi_init(void)
 
   i_state = interrupts_get_and_disable();
 
-  /* Todo: set up interrupt */
   *AT91C_TWI_IDR = ~0;		/* Disable all interrupt sources */
   aic_mask_off(AT91C_ID_TWI);
-  // We used to run the int handler at a high priority, but this does not
-  // seem to be necessary...
-  //aic_set_vector(AT91C_ID_TWI, AIC_INT_LEVEL_ABOVE_NORMAL,
-//		 twi_isr_entry);
-  aic_set_vector(AT91C_ID_TWI, AIC_INT_LEVEL_NORMAL,
-		 twi_isr_entry);
+  aic_set_vector(AT91C_ID_TWI, AIC_INT_LEVEL_ABOVE_NORMAL,
+		 (int)twi_isr_entry);
   aic_mask_on(AT91C_ID_TWI);
 
 
@@ -195,47 +201,45 @@ twi_init(void)
 }
 
 
-
+/**
+ * Start a read operation to the device. The operation will complete
+ * asynchronously and can be monitored using twi_status. Note that we
+ * do not support single byte reads, or internal register addresses.
+ */
 void
-twi_start_read(U32 dev_addr, U32 int_addr_bytes, U32 int_addr, U8 *data,
-	       U32 nBytes)
+twi_start_read(U32 dev_addr, U8 *data, U32 nBytes)
 {
-  U32 mode =
-    ((dev_addr & 0x7f) << 16) | ((int_addr_bytes & 3) << 8) | (1 << 12);
-  U32 dummy;
-
-  if (!twi_busy()) {
-
+  if (twi_state < TWI_RX_BUSY) {
     twi_state = TWI_RX_BUSY;
-    *AT91C_TWI_IDR = ~0;	/* Disable all interrupts */
     twi_ptr = data;
     twi_pending = nBytes;
-    dummy = *AT91C_TWI_SR;
-    dummy = *AT91C_TWI_RHR;
-//      *AT91C_AIC_ICCR = ( 1<< AT91C_ID_TWI);
-    *AT91C_TWI_MMR = mode;
-    *AT91C_TWI_CR = AT91C_TWI_START | AT91C_TWI_MSEN;
-//      dummy = *AT91C_TWI_SR;
-    *AT91C_TWI_IER = 0x01C2;
+    *AT91C_TWI_MMR = AT91C_TWI_IADRSZ_NO|AT91C_TWI_MREAD|((dev_addr & 0x7f) << 16);
+    twi_mask = AT91C_TWI_RXRDY|AT91C_TWI_NACK;
+    *AT91C_TWI_CR = AT91C_TWI_START;
+    *AT91C_TWI_IER = AT91C_TWI_RXRDY;
   }
 
 }
 
+/**
+ * Start a write operation to the device. The operation will complete
+ * asynchronously and can be monitored using twi_status. Note that we
+ * do not support single byte reads, or internal register addresses.
+ */
 void
-twi_start_write(U32 dev_addr, U32 int_addr_bytes, U32 int_addr,
-		const U8 *data, U32 nBytes)
+twi_start_write(U32 dev_addr, const U8 *data, U32 nBytes)
 {
-  U32 mode = ((dev_addr & 0x7f) << 16) | ((int_addr_bytes & 3) << 8);
-
-  if (!twi_busy()) {
+  if (twi_state < TWI_RX_BUSY) {
     twi_state = TWI_TX_BUSY;
-    *AT91C_TWI_IDR = ~0;	/* Disable all interrupts */
-    twi_ptr = data;
+    twi_ptr = (U8 *)data;
     twi_pending = nBytes;
 
-    *AT91C_TWI_MMR = mode;
-    *AT91C_TWI_CR = AT91C_TWI_START | AT91C_TWI_MSEN;
-    *AT91C_TWI_IER = 0x1C4;
+    *AT91C_TWI_MMR = AT91C_TWI_IADRSZ_NO|((dev_addr & 0x7f) << 16);
+    *AT91C_TWI_THR = *twi_ptr++;
+    twi_pending--;
+    STATS(twi_stats.bytes_tx++)
+    twi_mask = AT91C_TWI_TXRDY|AT91C_TWI_NACK;
+    *AT91C_TWI_IER = AT91C_TWI_TXRDY;
   }
 
 }
