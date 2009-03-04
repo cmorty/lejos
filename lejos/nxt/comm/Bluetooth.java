@@ -8,6 +8,7 @@ import javax.bluetooth.RemoteDevice;
 import lejos.nxt.SystemSettings;
 
 
+
 /**
  * Provides Bluetooth communications.
  * Allows inbound and outbound connections.
@@ -96,6 +97,7 @@ public class Bluetooth extends NXTCommDevice
 	
 	private static final short TO_SWITCH = 500;
 	private static final short TO_REPLY = 250;
+    private static final short TO_CHECK = 500;
 	private static final short TO_SHORT = 2000;
 	private static final short TO_LONG = 30000;
 	private static final short TO_RESET = 5000;
@@ -204,6 +206,10 @@ public class Bluetooth extends NXTCommDevice
 	 */
 	public static native void btReceive(byte[] buf);
 
+    public static native void btEnable();
+
+    public static native void btDisable();
+
 	/**
 	 * Prevent users from instantiating this (all static members).
 	 */
@@ -255,6 +261,7 @@ public class Bluetooth extends NXTCommDevice
 			reqState = RS_INIT;
 			curChan = CN_NONE;
 			resetCnt = 0;
+            btEnable();
 			// Make sure power is on(may cause a reset!)
 			btSetResetHigh();
 			for(int i = 0; i < CHANCNT; i++)
@@ -265,7 +272,9 @@ public class Bluetooth extends NXTCommDevice
             // Load the pin etc.
             loadSettings();
 			setDaemon(true);
-			start();
+            start();
+            //powerOn = true;
+            //Bluetooth.reset();
 			// Setup initial state
 			powerOn = false;
 			setPower(true);
@@ -366,7 +375,7 @@ public class Bluetooth extends NXTCommDevice
 					startTimeout(TO_RESET);
 					while ((len = recvReply()) == 0 || ( len > 0 && replyBuf[1] != MSG_RESET_INDICATION))
 							Thread.yield();
-					//1 if (len < 0) RConsole.print("Reset timed out");
+                    //1 if (len < 0) RConsole.print("Reset timed out");
 					// Check things are working
 					//1 RConsole.print("Send mode cmd\n");
 					cmdInit(MSG_GET_OPERATING_MODE, 1, 0, 0);
@@ -392,6 +401,7 @@ public class Bluetooth extends NXTCommDevice
 				if (reqState > RS_IDLE)	reqState = RS_ERROR;
 				Bluetooth.sync.notifyAll();
 				resetCnt++;
+
 			}
 		}
 		
@@ -1667,6 +1677,20 @@ public class Bluetooth extends NXTCommDevice
 			cmdComplete();
 		}		
 	}
+
+    private static int checkDevice()
+    {
+		synchronized (Bluetooth.sync)
+		{
+			int ret = -1;
+			cmdStart();
+			cmdInit(MSG_GET_OPERATING_MODE, 1, 0, 0);
+			if (cmdWait(RS_REPLY, RS_CMD, MSG_OPERATING_MODE_RESULT, TO_CHECK) >= 0)
+				ret = replyBuf[2];
+			cmdComplete();
+			return ret;
+		}
+    }
 	
 	/**
 	 * Set the power to the module
@@ -1684,7 +1708,7 @@ public class Bluetooth extends NXTCommDevice
 				powerOn = true;
 				// Now make sure things have settled
 				for(int i =0; i < 5; i++)
-					if (getOperatingMode() >= 0) break;
+					if (checkDevice() >= 0) break;
 			}
 			else
 			{
@@ -1794,9 +1818,9 @@ public class Bluetooth extends NXTCommDevice
         }
 
         /**
-         * Wait for an incomming connection, or for the request to timeout.
+         * Wait for an incoming connection, or for the request to timeout.
          * @param timeout Time in ms to wait for the connection to be made
-         * @param mode I/O mode to be used for the accpeted connection.
+         * @param mode I/O mode to be used for the accepted connection.
          * @return A NXTConnection object for the new connection or null if error.
          */
         public NXTConnection waitForConnection(int timeout, int mode)
