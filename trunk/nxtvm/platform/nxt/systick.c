@@ -25,8 +25,6 @@ extern const int * forceswitch;
 
 #define LOW_PRIORITY_IRQ 10
 
-static volatile U32 systick_sec;
-static volatile U32 systick_sub_sec;
 static volatile U32 systick_ms;
 
 extern void systick_isr_entry(void);
@@ -48,25 +46,19 @@ systick_isr_C(void)
 {
   U32 status;
 
-  /* Read status to confirm interrupt */
+  // Read status to confirm interrupt 
   status = *AT91C_PITC_PIVR;
-
-//  systick_low_priority_C();
-
-  systick_ms++;
-
-  systick_sub_sec++;
-
-  if (systick_sub_sec >= PIT_FREQ) {
-    systick_sub_sec = 0;
-    systick_sec++;
-  }
+  // Update with number of ticks since last time
+  systick_ms += (status & AT91C_PITC_PICNT) >> 20;
   // Trigger low priority task
   *AT91C_AIC_ISCR = (1 << LOW_PRIORITY_IRQ);
 }
 
 
-
+/**
+ * Return the system elapse time in milliseconds.
+ * NOTE This time is not updated if the timer interrupt is disabled.
+ */
 U32
 systick_get_ms(void)
 {
@@ -74,7 +66,6 @@ systick_get_ms(void)
   // don't need to do any locking here.
   return systick_ms;
 }
-
 
 void
 systick_wait_ms(U32 ms)
@@ -114,20 +105,6 @@ systick_init(void)
   *AT91C_PITC_PIMR = ((CLOCK_FREQUENCY / 16 / PIT_FREQ) - 1) | 0x03000000;	/* Enable, enable interrupts */
 
   if (i_state)
-    interrupts_enable();
-}
-
-void
-systick_get_time(U32 *sec, U32 *usec)
-{
-  int istate = interrupts_get_and_disable();
-
-  if (sec)
-    *sec = systick_sec;
-  if (usec)
-    *usec = systick_sub_sec * (1000000 / PIT_FREQ);
-
-  if (istate)
     interrupts_enable();
 }
 
