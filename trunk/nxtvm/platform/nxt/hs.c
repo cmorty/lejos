@@ -12,6 +12,7 @@
 #include  <string.h>
 #include "display.h"
 #include "systick.h"
+#include "memory.h"
 // Buffer sizes etc,
 // NOTE: The input code for this device assumes that 2 buffers are in use.
 // Max data size
@@ -19,25 +20,36 @@
 // Extra bytes needed for packet header etc.
 #define EXTRA 6
 // max size of a a packet assuming worse case byte stuffing
-#define MAXBUF (BUFSZ+EXTRA)*2
-#define IN_BUF_SZ MAXBUF/2
+#define MAXBUF ((BUFSZ+EXTRA)*2)
+#define IN_BUF_SZ (MAXBUF/2)
 #define OUT_BUF_SZ MAXBUF
 #define IN_BUF_CNT 2
 #define OUT_BUF_CNT 2
 #define BAUD_RATE 921600
-static U8 in_buf[IN_BUF_CNT][IN_BUF_SZ];
+static U8 *in_buf[IN_BUF_CNT];
+static U8 *out_buf[OUT_BUF_CNT];
 static U8 in_buf_in_ptr, out_buf_ptr;
-static U8 out_buf[OUT_BUF_CNT][OUT_BUF_SZ];
 
 static U8* buf_ptr;
 
 static int in_buf_idx = 0;
 
 	
-void hs_enable(void)
+int hs_enable(void)
 {
-  // Initialize the device
   U8 trash;
+  if (in_buf[0] == NULL)
+  {
+    // do memory allocation for buffer space
+    U8 *mem = system_allocate(IN_BUF_CNT*IN_BUF_SZ+OUT_BUF_CNT*OUT_BUF_SZ);
+    if (mem == NULL) return 0;
+    in_buf[0] = mem;
+    in_buf[1] = mem + IN_BUF_SZ;
+    out_buf[0] = mem + 2*IN_BUF_SZ;
+    out_buf[1] = mem + 2*IN_BUF_SZ + OUT_BUF_SZ;
+  }
+
+  // Initialize the device
   in_buf_in_ptr = out_buf_ptr = 0; 
   in_buf_idx = 0;
   
@@ -79,6 +91,7 @@ void hs_enable(void)
   *AT91C_US0_PTCR = (AT91C_PDC_RXTEN | AT91C_PDC_TXTEN); 
   
   buf_ptr = &(in_buf[0][0]);
+  return 1;
 }
 
 void hs_disable(void)
@@ -89,11 +102,15 @@ void hs_disable(void)
   *AT91C_PIOA_PPUDR = HS_RX_PIN | HS_TX_PIN | HS_RTS_PIN; 
   *AT91C_PIOA_OER = HS_RX_PIN | HS_TX_PIN | HS_RTS_PIN; 
   *AT91C_PIOA_CODR = HS_RX_PIN | HS_TX_PIN | HS_RTS_PIN; 
+  // free memory if we have any
+  if (in_buf[0] != NULL) system_free((byte*)in_buf[0]);
+  in_buf[0] = NULL;
 }
 
 void hs_init(void)
 {
   // Initial state is off
+  in_buf[0] = NULL;
   hs_disable();
 }
 

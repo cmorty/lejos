@@ -6,7 +6,6 @@
 #define _MEMORY_H
 
 extern const byte typeSize[];
-extern Object *protectedRef[];
 extern void memory_init ();
 extern void memory_add_region (byte *region, byte *end);
 
@@ -18,6 +17,8 @@ extern Object *new_primitive_array (const byte primitiveType, STACKWORD length);
 extern Object *reallocate_array(Object *obj, STACKWORD newlen);
 extern Object *new_multi_array (byte elemType, byte totalDimensions, byte reqDimensions, STACKWORD *numElemPtr);
 extern void arraycopy(Object *src, int srcOff, Object *dst, int dstOff, int len);
+extern byte *system_allocate(int sz);
+extern void system_free(byte *mem);
 extern void store_word_swp (byte *ptr, int aSize, STACKWORD aWord);
 extern STACKWORD get_word_swp(byte *ptr, int aSize);
 extern STACKWORD get_word_4_swp(byte *ptr);
@@ -60,7 +61,6 @@ extern Object gcLock;
 #define BA_OBJ_SIZE ((sizeof(BigArray) + 1) / 2)
 
 #define fields_start(OBJ_)  ((byte *) (OBJ_) + HEADER_SIZE)
-//#define array_start(OBJ_)   ((byte *) (OBJ_) + HEADER_SIZE)
 // Generic access to array data given an array object
 #define array_start(OBJ_)   (is_std_array((Object *)(OBJ_)) ? (byte *) (OBJ_) + HEADER_SIZE : (byte *)(OBJ_) + sizeof(BigArray))
 // Typed access to the data
@@ -83,6 +83,9 @@ extern Object gcLock;
 #define jfloat_array_ptr(PTR_)  ((JFLOAT *) PTR_)
 
 #define get_array_element_ptr(ARR_,ESIZE_,IDX_) (array_start((ARR_)) + (IDX_) * (ESIZE_))
+
+#define protect_obj(OBJ) ((Object *)OBJ)->monitorCount++
+#define unprotect_obj(OBJ) ((Object *)OBJ)->monitorCount--
 
 extern TWOBYTES failed_alloc_size;
 

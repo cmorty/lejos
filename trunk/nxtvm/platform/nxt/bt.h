@@ -67,13 +67,12 @@
 #define   BT_ARM7_CMD_PIN  AT91C_PIO_PA27
 
 void bt_init(void);
+int bt_enable(void);
+void bt_disable(void);
 void bt_clear_arm7_cmd(void);
 void bt_set_arm7_cmd(void);
 void bt_set_reset_high(void);
 void bt_set_reset_low(void);
-void bt_start_ad_converter(void);
-void bt_send(U8 *buf, U32 len);
-void bt_receive(U8 * buf);
 U32 bt_get_mode(void);
 void bt_reset(void);
 U32 bt_write(U8 *buf, U32 off, U32 len);

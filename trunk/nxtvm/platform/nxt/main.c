@@ -280,11 +280,7 @@ nxt_main(int bin, int size)
   // reset all motors, sensors and devices
 
   init_sensors();
-  nxt_motor_reset_all();
-  bt_reset(); 
-  hs_disable();
-  udp_disable();
-  display_clear(1);
+  //display_clear(1);
   display_set_auto_update(1);
   //       printf("Installing Binary\n");
 
@@ -293,6 +289,13 @@ nxt_main(int bin, int size)
   //      printf("Running\n");
 
   run(jsize);
+  nxt_motor_reset_all();
+  bt_reset();
+  bt_disable();
+  udp_disable();
+  hs_disable();
+  i2c_disable_all();
+  display_clear(1);
   return 0;
 }
 
@@ -308,7 +311,7 @@ const U8 splash_data[4 * 26] = {
 };
 
 void
-show_splash(U32 milliseconds)
+show_splash()
 {
   display_clear(0);
   display_bitmap_copy(splash_data, 26, 4, 37, 1);
@@ -316,8 +319,6 @@ show_splash(U32 milliseconds)
   display_goto_xy(6, 6);
   display_string("LEJOS");
   display_update();
-
-  systick_wait_ms(milliseconds);
 }
 
 
@@ -481,7 +482,7 @@ main(void)
   udp_init();
   systick_wait_ms(1000); // wait for LCD to stabilize
   display_init();
-  show_splash(3000); 
+  show_splash(); 
   
   gNextProgram = 0;
   do 

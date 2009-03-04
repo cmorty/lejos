@@ -9,6 +9,7 @@
 #include "interrupts.h"
 #include "aic.h"
 #include "systick.h"
+#include "memory.h"
 
 #include <string.h>
 
@@ -143,7 +144,7 @@ typedef enum {
   I2C_STOP3,
 } i2c_port_state;
 
-struct i2c_port_struct {
+typedef struct {
   U32 scl_pin;
   U32 sda_pin;
   U8  addr_int[I2C_ADDRESS_SIZE+1]; /* Device ddress with internal address */
@@ -162,14 +163,14 @@ struct i2c_port_struct {
   U8 lego_mode:1;
   U8 always_active:1;
   U16 nbytes;
-};
+} i2c_port;
 
-static struct i2c_port_struct i2c_port[I2C_N_PORTS];
+static i2c_port *i2c_ports[I2C_N_PORTS];
 // We maintain an active port list of those ports that currently need
 // attention at interrupt time. This list is double buffered and is built
 // dynamically as required.
-static struct i2c_port_struct *i2c_active[2][I2C_N_PORTS+1];
-static struct i2c_port_struct **active_list = i2c_active[0];
+static i2c_port *i2c_active[2][I2C_N_PORTS+1];
+static i2c_port **active_list = i2c_active[0];
 
 // The I2C state machines are pumped by a timer interrupt
 // running at 2x the bit speed. This state machine has been
@@ -183,8 +184,8 @@ void
 i2c_timer_isr_C(void)
 {
   U32 dummy = *AT91C_TC0_SR;
-  struct i2c_port_struct **ap;
-  struct i2c_port_struct *p;
+  i2c_port **ap;
+  i2c_port *p;
 //*AT91C_PIOA_SODR = 1<<29;
   for(ap = active_list; (p = *ap); ap++){
     switch (p->state) {
@@ -426,12 +427,12 @@ build_active_list()
    * If the list is empty disable the timer. If not start it...
    */
   int i;
-  struct i2c_port_struct **new_list = (active_list == i2c_active[0] ? i2c_active[1] : i2c_active[0]);
-  struct i2c_port_struct **ap = new_list;
+  i2c_port **new_list = (active_list == i2c_active[0] ? i2c_active[1] : i2c_active[0]);
+  i2c_port **ap = new_list;
   // build the list
   for(i=0; i < I2C_N_PORTS; i++)
-    if (i2c_port[i].state > I2C_IDLE)
-      *ap++ = &i2c_port[i];
+    if (i2c_ports[i] && i2c_ports[i]->state > I2C_IDLE)
+      *ap++ = i2c_ports[i];
   *ap = NULL;
   // Install the new list, on a 32 bit system this operation is atomic
   // and safe...
@@ -457,22 +458,43 @@ build_active_list()
 void
 i2c_disable(int port)
 {
-  if (port >= 0 && port < I2C_N_PORTS) {
-    struct i2c_port_struct *p = &i2c_port[port];
+  if (port >= 0 && port < I2C_N_PORTS && i2c_ports[port]) {
+    i2c_port *p = i2c_ports[port];
+
     U32 pinmask = p->scl_pin | p->sda_pin;
-    p->state = I2C_DISABLED;
     build_active_list();
     *AT91C_PIOA_ODR = pinmask;
+    system_free((byte *)p);
+    i2c_ports[port] = NULL;
   }
 }
 
-// Enable an I2C port
 void
-i2c_enable(int port, int mode)
+i2c_disable_all()
+{
+  int i;
+  for(i = 0; i < I2C_N_PORTS; i++)
+    i2c_disable(i);
+}
+
+
+// Enable an I2C port
+// returns > 0 OK, == 0 no memory < 0 error
+int i2c_enable(int port, int mode)
 {
   if (port >= 0 && port < I2C_N_PORTS) {
-    struct i2c_port_struct *p = &i2c_port[port];
-    U32 pinmask = p->scl_pin | p->sda_pin;
+    U32 pinmask;
+    i2c_port *p = i2c_ports[port];
+    // Allocate memory if required
+    if (!p)
+    {
+      p = (i2c_port *) system_allocate(sizeof(i2c_port));
+      if (!p) return 0;
+      i2c_ports[port] = p;
+    }
+    p->scl_pin = i2c_pin[port].scl;
+    p->sda_pin = i2c_pin[port].sda;
+    pinmask = p->scl_pin | p->sda_pin;
     p->state = I2C_IDLE;
     if (mode & I2C_LEGO_MODE)
       p->lego_mode = 1;
@@ -495,7 +517,9 @@ i2c_enable(int port, int mode)
     }
     else
       p->always_active = 0;
+    return 1;
   }
+  return -1;
 }
 
 // Initialise the module
@@ -504,14 +528,10 @@ i2c_init(void)
 {
   int i;
   int istate;
-  struct i2c_port_struct *p = i2c_port;
   U32 dummy; 
   for (i = 0; i < I2C_N_PORTS; i++) {
-    p->state = I2C_IDLE;
-    p->scl_pin = i2c_pin[i].scl;
-    p->sda_pin = i2c_pin[i].sda;
-    i2c_disable(i);
-    p++;
+    i2c_ports[i] = NULL;
+    *AT91C_PIOA_ODR = i2c_pin[i].scl|i2c_pin[i].sda;
   }
   
   istate = interrupts_get_and_disable();
@@ -526,7 +546,7 @@ i2c_init(void)
   *AT91C_TC0_RC = (CLOCK_FREQUENCY/2)/(2 * I2C_CLOCK);
   *AT91C_TC0_IER = AT91C_TC_CPCS;
   aic_mask_off(AT91C_ID_TC0);
-  aic_set_vector(AT91C_ID_TC0, AIC_INT_LEVEL_NORMAL, i2c_timer_isr_entry);
+  aic_set_vector(AT91C_ID_TC0, AIC_INT_LEVEL_NORMAL, (int)i2c_timer_isr_entry);
   aic_mask_on(AT91C_ID_TC0);
   
   if(istate)
@@ -538,8 +558,8 @@ i2c_init(void)
 int
 i2c_busy(int port)
 {
-  if(port >= 0 && port < I2C_N_PORTS)
-    return (i2c_port[port].state > I2C_COMPLETE2);
+  if(port >= 0 && (port < I2C_N_PORTS) && i2c_ports[port])
+    return (i2c_ports[port]->state > I2C_COMPLETE2);
   return 0;
 }
 
@@ -554,16 +574,16 @@ i2c_start(int port,
           U32 nbytes,
           int write)
 { 
-  struct i2c_port_struct *p;
+  i2c_port *p;
   struct i2c_partial_transaction *pt;
-  if(port < 0 || port >= I2C_N_PORTS)
+  if(port < 0 || port >= I2C_N_PORTS || !i2c_ports[port])
     return -1;
     
   if(i2c_busy(port))
     return -1;
   if (nbytes > I2C_BUF_SIZE) return -1;   
   if (n_internal_address_bytes > I2C_ADDRESS_SIZE) return -1;
-  p = &i2c_port[port];
+  p = i2c_ports[port];
   pt = p->partial_transaction;
   p->current_pt = pt;
   //memset(pt,0,sizeof(p->partial_transaction));
@@ -638,13 +658,13 @@ i2c_complete(int port,
              U8 *data,
              U32 nbytes)
 {
-  struct i2c_port_struct *p;
-  if(port < 0 || port >= I2C_N_PORTS)
+  i2c_port *p;
+  if(port < 0 || port >= I2C_N_PORTS || !i2c_ports[port])
     return -1;
     
   if(i2c_busy(port))
     return -2;
-  p = &i2c_port[port];
+  p = i2c_ports[port];
   if (p->fault)
     return -3;
   if (nbytes > I2C_BUF_SIZE) return -4;

@@ -350,6 +350,8 @@ display_int(int val, U32 places)
 void
 display_bitmap_copy(const U8 *data, U32 width, U32 depth, U32 x, U32 y)
 {
+  display_bitblt((byte *)data, width, depth*8, 0, 0, (byte *)display_buffer, DISPLAY_WIDTH, DISPLAY_DEPTH*8, x, y*8, width, depth*8, 0x0000ff00); 
+/*
   U32 i;
   U32 j;
   U32 dy;
@@ -362,7 +364,7 @@ display_bitmap_copy(const U8 *data, U32 width, U32 depth, U32 x, U32 y)
 
       if (dx < DISPLAY_WIDTH && dy < DISPLAY_DEPTH)
         display_buffer[y + i][x + j] = data[width * i + j];
-    }
+    }*/
 }
 
 void display_bitblt(byte *src, int sw, int sh, int sx, int sy, byte *dst, int dw, int dh, int dx, int dy, int w, int h, int rop)
