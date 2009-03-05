@@ -6,32 +6,11 @@ package java.lang;
  */
 class WrapperUtils
 {
-	static char digit(int i)
-	{
-		//FIXME use Character class
-		
-		if (i < 10)
-			return (char)('0' + i);
-		else
-			return (char)('a' - 10 + i);
-	}
-
 	static int parseDigit(char c, int radix)
 	{
-		//FIXME use Character class
-		
-		int r;
-		if (c >= '0' && c <= '9')
-			r = c - '0';
-		else if (c >= 'a' && c <= 'z')
-			r = c - ('a'  - 10);
-		else if (c >= 'A' && c <= 'Z')
-			r = c - ('A'  - 10);
-		else
+		int r = Character.digit((int)c, radix);		
+		if (r < 0)
 			throw new NumberFormatException("illegal digit character");
-		
-		if (r >= radix)
-			throw new NumberFormatException("digit greater than radix");
 		
 		return r;
 	}
@@ -68,7 +47,7 @@ class WrapperUtils
 		
 		do
 		{
-			buf[--p] = digit(-(v2 % radix));
+			buf[--p] = Character.forDigit(-(v2 % radix), radix);
 			v2 /= radix;
 		} while (v2 != 0);
 		
@@ -87,7 +66,7 @@ class WrapperUtils
 		
 		do
 		{
-			buf[--p] = digit(-(int)(v2 % radix));
+			buf[--p] = Character.forDigit(-(int)(v2 % radix), radix);
 			v2 /= radix;
 		} while (v2 != 0);
 		
