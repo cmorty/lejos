@@ -299,12 +299,11 @@ public class Long extends Number implements Comparable
 		char[] buf = new char[maxlen];
 		int p = maxlen;
 		
-		buf[--p] = WrapperUtils.digit(mask & (int)v);
-		while (v != 0)
+		do
 		{
 			buf[--p] = WrapperUtils.digit(mask & (int)v);
 			v >>>= shift;
-		}
+		} while (v != 0);
 		
 		return new String(buf, p, maxlen-p);
 	}
