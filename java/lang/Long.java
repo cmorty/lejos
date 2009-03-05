@@ -183,10 +183,7 @@ public class Long extends Number implements Comparable
 	
 	public static long parseLong(String s, int radix)
 	{
-		if (s == null)
-			throw new NumberFormatException("string is null");
-		
-		//FIXME check radix
+		WrapperUtils.throwNumberFormat(s, radix);
 		
 		int len = s.length();
 				
@@ -215,7 +212,7 @@ public class Long extends Number implements Comparable
 		long r = 0;
 		while (p < len)
 		{
-			int digit = parseDigit(s.charAt(p++), radix);
+			int digit = WrapperUtils.parseDigit(s.charAt(p++), radix);
 			
 			if (r < multlimit)
 				throw new NumberFormatException("number is too big");			
@@ -302,44 +299,14 @@ public class Long extends Number implements Comparable
 		char[] buf = new char[maxlen];
 		int p = maxlen;
 		
-		buf[--p] = digit(mask & (int)v);
+		buf[--p] = WrapperUtils.digit(mask & (int)v);
 		while (v != 0)
 		{
-			buf[--p] = digit(mask & (int)v);
+			buf[--p] = WrapperUtils.digit(mask & (int)v);
 			v >>>= shift;
 		}
 		
 		return new String(buf, p, maxlen-p);
-	}
-	
-	private static int parseDigit(char c, int radix)
-	{
-		//FIXME use Character class
-		
-		int r;
-		if (c >= '0' && c <= '9')
-			r = c - '0';
-		else if (c >= 'a' && c <= 'z')
-			r = c - ('a'  - 10);
-		else if (c >= 'A' && c <= 'Z')
-			r = c - ('A'  - 10);
-		else
-			throw new NumberFormatException("illegal digit character");
-		
-		if (r >= radix)
-			throw new NumberFormatException("digit greater than radix");
-		
-		return r;
-	}
-	
-	private static char digit(int i)
-	{
-		//FIXME use Character class
-		
-		if (i < 10)
-			return (char)('0' + i);
-		else
-			return (char)('a' - 10 + i);
 	}
 	
 	public String toString()
@@ -354,12 +321,12 @@ public class Long extends Number implements Comparable
 	
 	public static String toString(long v, int radix)
 	{
-		//FIXME check radix
+		radix = WrapperUtils.invalidRadixTo10(radix);
 		
-		int len = Long.exactStringLength(v, radix);		
+		int len = WrapperUtils.exactStringLength(v, radix);		
 		char[] buf = new char[len];
 		
-		getChars(buf, len, v, radix);		
+		WrapperUtils.getChars(buf, len, v, radix);		
 		return new String(buf);
 	}
 	
@@ -376,67 +343,5 @@ public class Long extends Number implements Comparable
 	public static Long valueOf(String s, int radix)
 	{
 		return Long.valueOf(Long.parseLong(s, radix));
-	}
-	
-	/**
-	 * For {@link #approxStringLength(int)}. 
-	 */
-	private static int floorLog2(int v)
-	{
-		//min radix is 2
-		if (v < 4)
-			return 1;
-		if (v < 8)
-			return 2;
-		if (v < 16)
-			return 3;
-		if (v < 32)
-			return 4;
-		
-		//max radix is 36
-		return 5;
-	}
-	
-	/**
-	 * For {@link StringBuilder#append(long)}.
-	 */
-	static int getChars(char[] buf, int p, long v, int radix)
-	{
-		long v2 = (v <= 0) ? v : -v;
-		
-		buf[--p] = digit(-(int)(v2 % radix));
-		while (v2 != 0)
-		{
-			buf[--p] = digit(-(int)(v2 % radix));
-			v2 /= radix;
-		}
-		
-		if (v < 0)
-			buf[--p] = '-';
-		
-		return p;
-	}
-	
-	/**
-	 * For {@link StringBuilder#append(long)}.
-	 */
-	static int approxStringLength(int radix)
-	{
-		//the following is >= ceil(64 / log(2, radix)) +1 which is the maximum number of digits + sign
-		return 63 / floorLog2(radix) + 2;
-	}
-	
-	/**
-	 * For {@link StringBuilder#append(long)}.
-	 */
-	static int exactStringLength(long v, int radix)
-	{
-		int c = (v < 0) ? 2 : 1;
-		while (v != 0)
-		{
-			c++;
-			v /= radix;
-		}
-		return c;
 	}
 }
