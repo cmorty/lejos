@@ -301,7 +301,7 @@ public class Long extends Number implements Comparable
 		
 		do
 		{
-			buf[--p] = WrapperUtils.digit(mask & (int)v);
+			buf[--p] = Character.forDigit(mask & (int)v, 16);
 			v >>>= shift;
 		} while (v != 0);
 		
