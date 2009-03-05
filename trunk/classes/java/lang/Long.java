@@ -7,7 +7,7 @@ package java.lang;
 public class Long extends Number implements Comparable
 {
 	public static final long MAX_VALUE = 0x7FFFFFFFFFFFFFFFL;
-	public static final long MIN_VALUE = 0x1000000000000000L;	
+	public static final long MIN_VALUE = 0x8000000000000000L;	
 	public static final int SIZE = 64;
 	
 	//MISSING public static final Class TYPE
