@@ -66,12 +66,11 @@ class WrapperUtils
 	{
 		int v2 = (v <= 0) ? v : -v;
 		
-		buf[--p] = digit(-(int)(v2 % radix));
-		while (v2 != 0)
+		do
 		{
-			buf[--p] = digit(-(int)(v2 % radix));
+			buf[--p] = digit(-(v2 % radix));
 			v2 /= radix;
-		}
+		} while (v2 != 0);
 		
 		if (v < 0)
 			buf[--p] = '-';
@@ -86,12 +85,11 @@ class WrapperUtils
 	{
 		long v2 = (v <= 0) ? v : -v;
 		
-		buf[--p] = digit(-(int)(v2 % radix));
-		while (v2 != 0)
+		do
 		{
 			buf[--p] = digit(-(int)(v2 % radix));
 			v2 /= radix;
-		}
+		} while (v2 != 0);
 		
 		if (v < 0)
 			buf[--p] = '-';
@@ -141,12 +139,13 @@ class WrapperUtils
 	 */
 	static int exactStringLength(int v, int radix)
 	{
-		int c = (v < 0) ? 2 : 1;
-		while (v != 0)
+		int c = (v < 0) ? 1 : 0;
+		do
 		{
 			c++;
 			v /= radix;
-		}
+		} while (v != 0);
+		
 		return c;
 	}
 
@@ -155,12 +154,13 @@ class WrapperUtils
 	 */
 	static int exactStringLength(long v, int radix)
 	{
-		int c = (v < 0) ? 2 : 1;
-		while (v != 0)
+		int c = (v < 0) ? 1 : 0;
+		do
 		{
 			c++;
 			v /= radix;
-		}
+		} while (v != 0);
+		
 		return c;
 	}
 }
