@@ -11,10 +11,10 @@ public class Long extends Number implements Comparable
 	public static final int SIZE = 64;
 	
 	//MISSING public static final Class TYPE
-	//MISSING public Long decode(String nm)
-	//MISSING public static getLong(String)
-	//MISSING public static getLong(String, long)
-	//MISSING public static getLong(String, Long)
+	//MISSING public static Long decode(String nm)
+	//MISSING public static Long getLong(String)
+	//MISSING public static Long getLong(String, long)
+	//MISSING public static Long getLong(String, Long)
 	
 	private final long value;
 	
@@ -116,7 +116,7 @@ public class Long extends Number implements Comparable
 		return v & -v;
 	}
 	
-	public static long numberOfLedingZeros(long v)
+	public static int numberOfLedingZeros(long v)
 	{
 		//initialize with one, because we assume that the sign bit is zero.
 		//if not, we subtract it again at the end of the method.
@@ -146,7 +146,7 @@ public class Long extends Number implements Comparable
 		return c - (i >>> 31);
 	}
 	
-	public static long numberOfTrailingZeros(long v)
+	public static int numberOfTrailingZeros(long v)
 	{
 		//initialize with one, because we assume that the last bit is zero.
 		//if not, we subtract it again at the end of the method.
