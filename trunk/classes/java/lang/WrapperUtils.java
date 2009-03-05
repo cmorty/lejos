@@ -44,8 +44,7 @@ class WrapperUtils
 		if (s == null)
 			throw new NumberFormatException("string is null");
 		
-		//FIXME use Character constants		
-		if (radix < 2 || radix > 36)
+		if (radix < Character.MIN_RADIX || radix > Character.MAX_RADIX)
 			throw new NumberFormatException("given radix is invalid");
 	}
 	
@@ -54,8 +53,7 @@ class WrapperUtils
 	 */
 	static int invalidRadixTo10(int radix)
 	{
-		//FIXME use Character constants		
-		if (radix < 2 || radix > 36)
+		if (radix < Character.MIN_RADIX || radix > Character.MAX_RADIX)
 			return 10;
 		
 		return radix;
