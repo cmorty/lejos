@@ -3,8 +3,8 @@ package javax.microedition.location;
 import java.io.*;
 import javax.bluetooth.*;
 import javax.microedition.io.*;
-
 import lejos.gps.SimpleGPS;
+import java.util.*;
 
 /**
  * This class is not visible to users and should not be instantiated directly. Instead it
@@ -17,6 +17,8 @@ class BTGPSLocationProvider extends LocationProvider implements DiscoveryListene
 	SimpleGPS gps = null;
 	DiscoveryAgent da;
 	RemoteDevice btDevice = null;
+	LocationListener locationListener = null;
+		
 	/**
 	 * doneInq is used to ensure the code doesn't try to connect to the GPS device
 	 * before the Bluecore chip is done the inquiry. If you try to connect before the inquiry is
@@ -101,9 +103,13 @@ class BTGPSLocationProvider extends LocationProvider implements DiscoveryListene
 	 * Only one listener is allowed according to the API.
 	 * 
 	 */
+	/**
+	 * TODO: Copy the docs from regular API source code (formatting too)
+	 */
 	public void setLocationListener(LocationListener listener, int interval,
 			int timeout, int maxAge) {
-		// TODO Auto-generated method stub
+		this.locationListener = listener;
+		// TODO: Figure out interval and stuff
 	}
 
 	public void deviceDiscovered(RemoteDevice btDevice, DeviceClass cod) {

@@ -1,5 +1,6 @@
 package lejos.gps;
 
+
 import java.util.*;
 
 /**
@@ -49,9 +50,17 @@ public class RMCSentence extends NMEASentence{
 	 */
 	
 	/**
+	 * Returns the NMEA header for this sentence.
+	 */
+	public String getHeader() {
+		return HEADER;
+	}
+		
+	/**
 	 * Get Latitude
 	 * 
 	 */
+	// TODO: Why is this specified as RAW?
 	public float getLatitudeRAW(){
 		checkRefresh();
 		return latitude;  
@@ -62,6 +71,7 @@ public class RMCSentence extends NMEASentence{
 	 * 
 	 * @return the raw longitude
 	 */
+	// TODO: Why is this specified as RAW?
 	public float getLongitudeRAW(){
 		checkRefresh();
 		return longitude;
@@ -112,7 +122,8 @@ public class RMCSentence extends NMEASentence{
 
 		try{
 			st.nextToken(); // skip header $GPRMC
-			dateTimeOfFix = Integer.parseInt((String)st.nextToken());
+			// TODO: Maybe leave this as a float for greater accuracy?
+			dateTimeOfFix = (int)Float.parseFloat((String)st.nextToken());
 			warning = st.nextToken();
 			//latitude = Float.parseFloat(st.nextToken());
 			latitude = degreesMinToDegrees(st.nextToken());
@@ -127,9 +138,9 @@ public class RMCSentence extends NMEASentence{
 			magneticVariation = st.nextToken();//Float.parseFloat((String)st.nextToken());
 			//magneticVariationLetter = (String)st.nextToken();
 		}catch(NoSuchElementException e){
-			//Empty
-		}catch(NumberFormatException e2){
-			//Empty
+			System.err.println("Threw a NoSuch exception");
+		}catch(NumberFormatException e){
+			System.err.println("Threw a NumFormat exception");
 		}
 		
 		//Improve quality data
