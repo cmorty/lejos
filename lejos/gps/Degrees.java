@@ -6,6 +6,7 @@ package lejos.gps;
  * @author Juan Antonio Brenha Moral
  *
  */
+// TODO: Is this class used for anything? Wondering if these should be static methods.
 public class Degrees{
 
 	//Data from GPS device
@@ -32,7 +33,7 @@ public class Degrees{
 	/**
 	 * Return Latitude/Longitude Letter
 	 */
-	public String getDirectionLeter(){
+	public String getDirectionLetter(){
 		return direction;
 	}
 

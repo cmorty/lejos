@@ -8,11 +8,12 @@ package java.util;
  * @author Juan Antonio Brenha Moral
  */
 /*
- * DEVELOPER NOTES: Since 1.1 Sun has used Calendar for the setXXX() methods and has
+ * TODO: DEVELOPER NOTES: Since 1.1 Sun has used Calendar for the setXXX() methods and has
  * removed them from the Date class. I'm not sure why Juan chose to implement an outdated
  * class here rather than the newer ones. -BB 
  */
 public class Date {
+	// TODO: These values seem kind of arbitrary
 	private int year = 2000;
 	private int month = 1;
 	private int day = 1;
@@ -24,6 +25,8 @@ public class Date {
 	public Date(){
 		//Empty
 	}
+	
+	// TODO: Juan didn't override toString()
 	
 	/*
 	 * GETTERS & SETTERS

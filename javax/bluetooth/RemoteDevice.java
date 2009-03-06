@@ -71,6 +71,15 @@ public class RemoteDevice {
 	}
 	
 	/**
+	 * Indicates if the remote device has been properly paired (authenticated).
+	 * @return
+	 */
+	public boolean isAuthenticated() {
+		// When a RemoteDevice is retrieved, the name is blank unless it has been previously
+		// added to the BC4 chip cache. This method exploits this quirk to do calculation.
+		return !this.friendlyName.equals("");
+	}
+	/**
 	 * 
 	 * @param alwaysAsk true causes the method to contact the remote device for the name. false and it will use the known name. 
 	 * @return the friendly name

@@ -114,6 +114,7 @@ public abstract class LocationProvider {
 		 * DEV NOTES: This can be a Location object that is updated every time
 		 * the GPS class gets a new location in BTGPSLocationProvider.
 		 */
+		// TODO
 		return null;
 	}
 	

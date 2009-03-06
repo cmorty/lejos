@@ -117,6 +117,7 @@ public class Coordinates{
 		if(to == null){
 			throw new NullPointerException();
 		}else{
+			// TODO: Is there some way to make it not recalculate if it already calculated for these coordinates? Keep in mind coordinates can change.
 			calculateDistanceAndAzimuth(getLatitude(), getLongitude(), to.getLatitude(), to.getLongitude());
 			return calculatedAzimuth;
 		}
@@ -124,7 +125,7 @@ public class Coordinates{
 	
 	//TODO
 	static public String convert(double coordinate, int outputType){
-		return "";
+		return null;
 	}
 
 	//TODO
@@ -148,37 +149,19 @@ public class Coordinates{
 		if(to == null){
 			throw new NullPointerException();
 		}else{
+			// TODO: Is there some way to make it not recalculate if it already 
+			// calculated for these coordinates? Keep in mind coordinates can change.
 			calculateDistanceAndAzimuth(getLatitude(), getLongitude(), to.getLatitude(), to.getLongitude());
 			return calculatedDistance / 1000;//To get values in Kilometers
 		}
 	}
 
-	/**
-	 * Convert a value in Radians into Degrees
-	 * 
-	 * @param d
-	 * @return
-	 */
-	private static double toDegrees(double d){
-		return (d * 360D) / 6.2831853071795862D;
-	}
-
-	/**
-	 * Convert a value in degrees in Radians
-	 * 
-	 * @param d
-	 * @return
-	 */
-	private static double toRadians(double d){
-		return (d * 6.2831853071795862D) / 360D;
-	}
-
 	private static void calculateDistanceAndAzimuth(double d, double d1, double d2, double d3){
         // TODO: This code is huge. Can it be minimized?
-		double d4 = toRadians(d);
-        double d5 = toRadians(d1);
-        double d6 = toRadians(d2);
-        double d7 = toRadians(d3);
+		double d4 = Math.toRadians(d);
+        double d5 = Math.toRadians(d1);
+        double d6 = Math.toRadians(d2);
+        double d7 = Math.toRadians(d3);
         double d8 = 0.0033528106647474805D;
         // TODO: Why are these given 0 values?
         double d9 = 0.0D;

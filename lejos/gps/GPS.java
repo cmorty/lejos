@@ -17,7 +17,7 @@ import java.util.*;
  * @author Juan Antonio Brenha Moral
  *
  */
-public class GPS extends BasicGPS {
+public class GPS extends SimpleGPS {
 	
 	//Classes which manages GGA, RMC, VTG, GSV, GSA Sentences
 	private RMCSentence rmcSentence;
@@ -27,9 +27,6 @@ public class GPS extends BasicGPS {
 	//Date Object with use GGA & RMC Sentence
 	private Date date;
 	
-	// Use Vector to keep compatibility with J2ME
-	private Vector listeners = new Vector();
-
 	public static final int MINIMUM_SATELLITES_TO_WORK = 4;
 	public static final int MAXIMUM_SATELLITES_TO_WORK = 12;
 	
@@ -83,6 +80,11 @@ public class GPS extends BasicGPS {
 	}
 	
 	
+	/* TODO: Might be worth overwriting the SimpleGPS method for lat, long, speed, course, 
+	and maybe time because they can be gotten from two sources (RMC). Perhaps check if
+	== -1, if so try getting it from another sentence. Also check time-stamp for both to 
+	see which is more recent. */
+	
 	/**
 	 * Returns the number of satellites being tracked to
 	 * determine the coordinates. This method overwrites the superclass method
@@ -90,6 +92,8 @@ public class GPS extends BasicGPS {
 	 * @return Number of satellites e.g. 8
 	 */
 	public int getSatellitesTracked(){
+		// TODO: This can be gotten from two sources. Use the one with greater time stamp.
+		// (If getTimeStamp == -1, it will be less than the other one.)
 		return gsvSentence.getSatellitesTracked();
 	}
 	
@@ -176,7 +180,7 @@ public class GPS extends BasicGPS {
 	 * @param s
 	 */
 	protected void sentenceChooser(String token, String s) {
-		//super.sentenceChooser(token, s); // Fires listener here
+		//super.sentenceChooser(token, s); // Fires listener here TODO: Uncomment once notifier mechanism done
 		if (token.equals(GGASentence.HEADER)){
 			ggaSentence.setSentence(s);
 			fireGGASentenceReceived(ggaSentence);
@@ -234,27 +238,7 @@ public class GPS extends BasicGPS {
 		}
 	}
 	
-	/* EVENTS*/
-
-	/**
-	 * add a listener to manage events with GPS
-	 * 
-	 * @param listener
-	 */
-	public void addListener (GPSListener listener){
-		listeners.addElement(listener); 
-	}
-
-	/**
-	 * Remove a listener
-	 * 
-	 * @param listener
-	 */
-	public void removeListener (GPSListener listener)
-	{
-		listeners.removeElement(listener); 
-	}
-
+	// TODO: Get rid of all these, replace with one method to notify with NMEASentence.
 	/**
 	 * Method which is used when system parse a GGA Sentence
 	 * 
@@ -266,7 +250,7 @@ public class GPS extends BasicGPS {
 			// TODO: Why the try-catch block?
 			try{
 				GPSL = (GPSListener)listeners.elementAt(i);
-				GPSL.ggaSentenceReceived(this, ggaSentence);
+				//GPSL.ggaSentenceReceived(this, ggaSentence);
 			}catch(Throwable t){
 
 			}
@@ -283,7 +267,7 @@ public class GPS extends BasicGPS {
 		for(int i=0; i<listeners.size();i++){
 			try{
 				GPSL = (GPSListener)listeners.elementAt(i);
-				GPSL.rmcSentenceReceived(this, rmcSentence);
+				//GPSL.rmcSentenceReceived(this, rmcSentence);
 			}catch(Throwable t){
 
 			}
@@ -300,7 +284,7 @@ public class GPS extends BasicGPS {
 		for(int i=0; i<listeners.size();i++){
 			try{
 				GPSL = (GPSListener)listeners.elementAt(i);
-				GPSL.vtgSentenceReceived(this, vtgSentence);
+				//GPSL.vtgSentenceReceived(this, vtgSentence);
 			}catch(Throwable t){
 
 			}
@@ -317,7 +301,7 @@ public class GPS extends BasicGPS {
 		for(int i=0; i<listeners.size();i++){
 			try{
 				GPSL = (GPSListener)listeners.elementAt(i);
-				GPSL.gsvSentenceReceived(this, gsvSentence);
+				//GPSL.gsvSentenceReceived(this, gsvSentence);
 			}catch(Throwable t){
 
 			}
@@ -334,7 +318,7 @@ public class GPS extends BasicGPS {
 		for(int i=0; i<listeners.size();i++){
 			try{
 				GPSL = (GPSListener)listeners.elementAt(i);
-				GPSL.gsaSentenceReceived(this, gsaSentence);
+				//GPSL.gsaSentenceReceived(this, gsaSentence);
 			}catch(Throwable t){
 
 			}

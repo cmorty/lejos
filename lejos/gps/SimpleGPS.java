@@ -7,7 +7,7 @@ import lejos.nxt.Sound; // TODO Eliminate
 
 /**
  * This class manages data received from a GPS Device.
- * BasicGPS Class manages the following NMEA Sentences
+ * SimpleGPS Class manages the following NMEA Sentences
  * which supply location, heading, and speed data:
  * 
  * GPGGA (location data)
@@ -15,7 +15,7 @@ import lejos.nxt.Sound; // TODO Eliminate
  * 
  * @author BB
  */
-public class BasicGPS extends Thread {
+public class SimpleGPS extends Thread {
 
 	/**
 	 * BUFF is the amount of bytes to read from the stream at once.
@@ -36,20 +36,22 @@ public class BasicGPS extends Thread {
 	protected GGASentence ggaSentence;
 	protected VTGSentence vtgSentence;
 	
-	//Security TODO: This "bug fix" needs to go.
-	private boolean shutdown = false;
-	private boolean updateMode = true; // Start reading GPS sentences as soon as instantiated.
-	private boolean internalError = false;
-	
 	//Data
 	private StringTokenizer tokenizer;
+	
+	// Security
+	private boolean shutdown = false;
+	
+	// Listener-notifier
+	static protected Vector listeners = new Vector();
+
 	
 	/**
 	 * The constructor. It needs an InputStream
 	 * 
 	 * @param in An input stream from the GPS receiver
 	 */
-	public BasicGPS(InputStream in) {
+	public SimpleGPS(InputStream in) {
 		this.in = in;
 		
 		ggaSentence = new GGASentence();
@@ -154,25 +156,7 @@ public class BasicGPS extends Thread {
 	public float getCourse() {
 		return vtgSentence.getTrueCourse();
 	}
-		
-	/**
-	 * Set if GPS Object is going to update internal values or not.
-	 * this method is critic to avoid to Crash VM
-	 * 
-	 * With this way the robot get GPS data onDemand
-	 * 
-	 * @param status
-	 */
-	// TODO This method needs to go.
-	public void updateValues(boolean status){
-		updateMode = status;
-	}
-
-	// TODO Is this really needed? In Java exceptions are used for error reporting.
-	public boolean existInternalError(){
-		return internalError;
-	}
-		
+			
 	/**
 	 * Method used to close connection. There is no real need to call this method.
 	 * Included in case programmer wants absolutely clean exit. 
@@ -192,42 +176,38 @@ public class BasicGPS extends Thread {
 		
 		while(!shutdown) {
 			
-			//2008/08/02
-			//If update mode is True, internal values can be updated
-			//It is a way to save CPU
-			if(updateMode){
-				s = getNextString();
-				// Check if sentence is valid:
-				if(s.indexOf('*') < 0) { 
-					continue;
-				}
-				if(s.indexOf('$') < 0) {
-					continue;
-				}
-	
-				//2008/07/28
-				//Debug checksum validation
-				//Class 19: java.lang.StringIndexOutOfBoundsException
-				// TODO: I suspect we don't need this try-catch block anymore.
-				try{
-					if(NMEASentence.isValid(s)){
-						tokenizer = new StringTokenizer(s);
-						token = tokenizer.nextToken();
-						// Choose which type of sentence to parse:
-						sentenceChooser(token, s); // Method to make subclass more efficient - no redundant code.
-					}
-				}catch(StringIndexOutOfBoundsException e){
-					System.err.println("BasicGPS.run() error. StringIndexOutOfBounds");
-					Sound.beep();
-				}catch(ArrayIndexOutOfBoundsException e2){
-					//Jab
-					//Bug detected: 06/08/2008
-					System.err.println("BasicGPS.run() error. ArrayIndexOutOfBounds");
-					Sound.buzz();
-				}
-				//2008/07/18
-				//Increase the list with more NMEA Sentences
+			s = getNextString();
+			// Check if sentence is valid:
+			if(s.indexOf('*') < 0) { 
+				continue;
 			}
+			if(s.indexOf('$') < 0) {
+				continue;
+			}
+
+			//2008/07/28
+			//Debug checksum validation
+			//Class 19: java.lang.StringIndexOutOfBoundsException
+			// TODO: I suspect we don't need this try-catch block anymore.
+			try{
+				if(NMEASentence.isValid(s)){
+					tokenizer = new StringTokenizer(s);
+					token = tokenizer.nextToken();
+					// Choose which type of sentence to parse:
+					sentenceChooser(token, s); // Method to make subclass more efficient - no redundant code.
+				}
+			}catch(StringIndexOutOfBoundsException e){
+				System.err.println("SimpleGPS.run() error. StringIndexOutOfBounds");
+				Sound.beep();
+			}catch(ArrayIndexOutOfBoundsException e2){
+				//Jab
+				//Bug detected: 06/08/2008
+				System.err.println("SimpleGPS.run() error. ArrayIndexOutOfBounds");
+				Sound.buzz();
+			}
+			//2008/07/18
+			//Increase the list with more NMEA Sentences
+		
 		}
 	}
 
@@ -238,11 +218,27 @@ public class BasicGPS extends Thread {
 	 */
 	protected void sentenceChooser(String token, String s) {
 		if (token.equals(GGASentence.HEADER)){
-			ggaSentence.setSentence(s);
+			this.ggaSentence.setSentence(s);
+			notifyListeners(this.ggaSentence);
+			
 		}else if (token.equals(VTGSentence.HEADER)){
-			vtgSentence.setSentence(s);
+			this.vtgSentence.setSentence(s);
+			notifyListeners(this.vtgSentence);
 		}
 	}
+	
+	static protected void notifyListeners(NMEASentence sen){
+		/* TODO: Problem is ggaSentence is a reused object in this API.
+		 * Should really pass a copy of the NMEASentence to notify (and the copy
+		 * must have all the appropriate GGA data, not just NMEA). However, check
+		 *  if there are any listeners before making unnecessary copy. */
+		
+		for(int i=0; i<listeners.size();i++){
+			GPSListener gpsl = (GPSListener)listeners.elementAt(i);
+			gpsl.sentenceReceived(sen);
+		}
+	}
+
 	
 	/**
 	 * Pulls the next NMEA sentence as a string
@@ -256,6 +252,9 @@ public class BasicGPS extends Thread {
 		do{
 			// Read in buf length of sentence
 			try {
+				// TODO: Does in.read() pause the thread or does this eat up unnecessary
+				// CPU cycles? Maybe add a Thread.sleep here that cuts out CPU waste.
+				// This in.read() method reads in BUFF length of bytes every time.
 				in.read(segment);
 			}catch (IOException e) {
 				// TODO: How to handle error?
@@ -271,25 +270,21 @@ public class BasicGPS extends Thread {
 				done = true;
 			}
 			
-			//I have found the bug
-			//In case of turn off GPS Device / GPS Device with low batteries / Other scenarios
-			// TODO: What about if they turn off GPS? Does this address that scenario? - BB
+			// TODO: Probably better to throw exception here if GPS disconnects
+			//In case user turns off GPS Device / GPS Device has low batteries / Other disconnect scenarios
 			if(currentSentence.length() >= 500){
 				errors++;
 				//2008/09/06 : JAB
 				//Reset
 				//currentSentence = new StringBuffer();
 				//segment = new byte[BUFF];
-				System.err.println("Bug in BasicGPS.getNextString() detected. > 500");
+				System.err.println("Bug in SimpleGPS.getNextString() detected. > 500");
 				System.err.println("Sentence: " + currentSentence.toString());
-				lejos.nxt.Sound.beepSequenceUp();
 				
 				//If detect a problem with InputStream
 				//System detect the event and notify the problem with the
 				//Enabling the flag internalError
-				internalError = true;
-				updateMode = false;
-				return "";
+				return null;
 			}
 		}while(!done);
 
@@ -301,9 +296,32 @@ public class BasicGPS extends Thread {
 			currentSentence.delete(0, endIndex);
 		}catch(Exception e){
 			// TODO: Why catch a runtime exception here?
-			System.err.println("Exception in BasicGPS.getNextString() " + e.getMessage());
+			System.err.println("Exception in SimpleGPS.getNextString() " + e.getMessage());
 		}
 		
 		return sentence;
 	}
+	
+	/* EVENTS*/
+
+	/**
+	 * add a listener to manage events with GPS
+	 * 
+	 * @param listener
+	 */
+	static public void addListener (GPSListener listener){
+		listeners.addElement(listener); 
+	}
+
+	/**
+	 * Remove a listener
+	 * 
+	 * @param listener
+	 */
+	static public void removeListener (GPSListener listener)
+	{
+		listeners.removeElement(listener); 
+	}
+
+	
 }
