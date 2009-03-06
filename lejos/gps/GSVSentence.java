@@ -1,5 +1,6 @@
 package lejos.gps;
 
+
 import java.util.*;
 
 /**
@@ -55,6 +56,13 @@ public class GSVSentence extends NMEASentence{
 	 * GETTERS & SETTERS
 	 */
 	
+	/**
+	 * Returns the NMEA header for this sentence.
+	 */
+	public String getHeader() {
+		return HEADER;
+	}
+		
 	/**
 	 * Returns the number of satellites being tracked to
 	 * determine the coordinates.

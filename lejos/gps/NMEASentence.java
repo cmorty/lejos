@@ -1,5 +1,6 @@
 package lejos.gps;
 
+
 import java.util.*;
 
 /**
@@ -25,7 +26,7 @@ abstract public class NMEASentence {
 	 * TODO: Maybe getSentenceType()?
 	 * TODO: Should it return the $ too, or maybe have a list of constants?
 	 */
-	//abstract public String getHeader();
+	abstract public String getHeader();
 	
 	/**
 	 * Set a new nmea sentence into the object
