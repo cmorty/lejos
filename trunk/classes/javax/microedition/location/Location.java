@@ -123,11 +123,11 @@ public class Location {
 	
 	/**
 	 * Returns the AddressInfo associated with this Location object. If no address is
-	 * available, null is returned.
+	 * available, null is returned. In leJOS NXJ, null is always returned.
 	 *
 	 * @return an AddressInfo associated with this Location object
 	 */
-	// TODO: Probably won't implement this method.
+	// TODO: Probably no need to really implement this method.
 	/*public AddressInfo getAddressInfo() {
 		return null;
 	}*/

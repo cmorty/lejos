@@ -11,13 +11,21 @@ import java.util.*;
  * @author BB
  * @author Juan Antonio Brenha Moral
  */
-abstract class NMEASentence {
-
+abstract public class NMEASentence {
+	
 	static byte checksum;
 	protected String nmeaSentence = null;
 	protected StringTokenizer st;
-
+	private long timeStamp = -1;
+	
 	/* GETTERS & SETTERS */
+	
+	/**
+	 * Retrieve the header constant for this sentence.
+	 * TODO: Maybe getSentenceType()?
+	 * TODO: Should it return the $ too, or maybe have a list of constants?
+	 */
+	//abstract public String getHeader();
 	
 	/**
 	 * Set a new nmea sentence into the object
@@ -25,9 +33,23 @@ abstract class NMEASentence {
 	 * @param sentence
 	 */
 	public void setSentence(String sentence){
+		this.timeStamp = System.currentTimeMillis();
 		nmeaSentence = sentence;
 	}
 
+	/**
+	 * This method returns the system time at which the data for the NMEA Sentence 
+	 * was collected. It uses System.currentTimeMillis() to create the time stamp.
+	 * Note: It might seem strange not to use the satellite time to time-stamp the
+	 * data, but in fact the javax.microedition.location API calls for the system time.
+	 * @return system time when the data was collected
+	 */
+	public long getTimeStamp() {
+		// TODO leJOS returns an int internally, so this is limited to about 24 days worth
+		// of continuous operation. If a program runs longer than this the timestamp is invalid.
+		return timeStamp;
+	}
+	
 	/**
 	 *  This method is called by all the getter methods. It checks if a new sentence has 
 	 *  been received since the last call. 

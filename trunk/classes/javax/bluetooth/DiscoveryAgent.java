@@ -180,6 +180,10 @@ public class DiscoveryAgent {
                     throw new IllegalArgumentException("Invalid accessCode " + accessCode);
             }
             
+            // TODO: In the Bluetooth.inquireNotify() method:
+            // 1. Should probably NOT be daemon threads
+            // 2. Spawn new thread for each notify? Need to check the JSR spec.
+            
             // Spawn a separate thread to notify so it returns immediately:
 			Thread t = new Thread() {
 				public void run() {

@@ -25,7 +25,7 @@ import java.util.*;
  * 
  * @author Juan Antonio Brenha Moral (major recoding by BB)
  */
-class VTGSentence extends NMEASentence{
+public class VTGSentence extends NMEASentence{
 
 	//RMC Sentence
 	// TODO: Convert any of these floats to int?

@@ -56,16 +56,16 @@ public class Connector {
         		private StreamConnection sc = null;
         		
 				public StreamConnection acceptAndOpen() throws IOException {
-					sc = Bluetooth.connect(target, 0);
-					return sc;
+					return Bluetooth.connect(target, 0);
 				}
 
 				public void close() throws IOException {
 					if(sc != null) sc.close();
 				}
         	};
-    	} else
+    	} else {
     		throw new ConnectionNotFoundException(scheme + " not a known protocol");
+    	}
     	
     	return c;
     }

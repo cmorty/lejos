@@ -24,7 +24,7 @@ import java.util.*;
  * 
  */
 
-class GSASentence extends NMEASentence{
+public class GSASentence extends NMEASentence{
 	//GSA
 	private String mode = "";
 	private int modeValue = 0;
