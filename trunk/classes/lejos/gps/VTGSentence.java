@@ -1,5 +1,6 @@
 package lejos.gps;
 
+
 import java.util.*;
 
 /**
@@ -40,6 +41,13 @@ public class VTGSentence extends NMEASentence{
 	 * GETTERS & SETTERS
 	 */
 
+	/**
+	 * Returns the NMEA header for this sentence.
+	 */
+	public String getHeader() {
+		return HEADER;
+	}
+		
 	/**
 	 * Get Speed in Kilometers
 	 * 

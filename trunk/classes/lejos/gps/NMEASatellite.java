@@ -1,5 +1,6 @@
 package lejos.gps;
 
+
 /**
  * This class models data extracted from NMEA GSV Sentence
  * 

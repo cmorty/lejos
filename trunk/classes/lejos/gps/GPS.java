@@ -63,6 +63,7 @@ public class GPS extends SimpleGPS {
 	 * @return the date
 	 */
 	public Date getDate(){
+		// TODO: Would be more proper to return a new Date object instead of recycled Date.
 		updateDate();
 		updateTime();
 		return date;
@@ -180,23 +181,17 @@ public class GPS extends SimpleGPS {
 	 * @param s
 	 */
 	protected void sentenceChooser(String token, String s) {
-		//super.sentenceChooser(token, s); // Fires listener here TODO: Uncomment once notifier mechanism done
-		if (token.equals(GGASentence.HEADER)){
-			ggaSentence.setSentence(s);
-			fireGGASentenceReceived(ggaSentence);
-		}else if (token.equals(VTGSentence.HEADER)){
-			vtgSentence.setSentence(s);
-			fireVTGSentenceReceived(vtgSentence);
-		}else if (token.equals(RMCSentence.HEADER)){
+		if (token.equals(RMCSentence.HEADER)){
 			rmcSentence.setSentence(s);
-			fireRMCSentenceReceived(rmcSentence);
+			notifyListeners(this.rmcSentence);
 		}else if (token.equals(GSVSentence.HEADER)){
 			gsvSentence.setSentence(s);
-			fireGSVSentenceReceived(gsvSentence);
+			notifyListeners(this.gsvSentence);
 		}else if (token.equals(GSASentence.HEADER)){
 			gsaSentence.setSentence(s);
-			fireGSASentenceReceived(gsaSentence);
-		}
+			notifyListeners(this.gsaSentence);
+		} else
+			super.sentenceChooser(token, s);  // Check superclass sentences.
 	}
 	
 	/* NMEA */
@@ -235,93 +230,6 @@ public class GPS extends SimpleGPS {
 			date.setDay(dd);
 			date.setMonth(mm);
 			date.setYear(yy);
-		}
-	}
-	
-	// TODO: Get rid of all these, replace with one method to notify with NMEASentence.
-	/**
-	 * Method which is used when system parse a GGA Sentence
-	 * 
-	 * @param ggaSentence
-	 */
-	private void fireGGASentenceReceived (GGASentence ggaSentence){
-		GPSListener GPSL;
-		for(int i=0; i<listeners.size();i++){
-			// TODO: Why the try-catch block?
-			try{
-				GPSL = (GPSListener)listeners.elementAt(i);
-				//GPSL.ggaSentenceReceived(this, ggaSentence);
-			}catch(Throwable t){
-
-			}
-		}
-	}
-
-	/**
-	 * Method which is used when system parse a RMC Sentence
-	 * 
-	 * @param rmcSentence
-	 */
-	private void fireRMCSentenceReceived (RMCSentence rmcSentence){
-		GPSListener GPSL;
-		for(int i=0; i<listeners.size();i++){
-			try{
-				GPSL = (GPSListener)listeners.elementAt(i);
-				//GPSL.rmcSentenceReceived(this, rmcSentence);
-			}catch(Throwable t){
-
-			}
-		}
-	}
-
-	/**
-	 * Method which is used when system parse a VTG Sentence
-	 * 
-	 * @param VTGSentence
-	 */
-	private void fireVTGSentenceReceived (VTGSentence vtgSentence){
-		GPSListener GPSL;
-		for(int i=0; i<listeners.size();i++){
-			try{
-				GPSL = (GPSListener)listeners.elementAt(i);
-				//GPSL.vtgSentenceReceived(this, vtgSentence);
-			}catch(Throwable t){
-
-			}
-		}
-	}
-
-	/**
-	 * Method which is used when system parse a GSV Sentence
-	 * 
-	 * @param GSVSentence
-	 */
-	private void fireGSVSentenceReceived (GSVSentence gsvSentence){
-		GPSListener GPSL;
-		for(int i=0; i<listeners.size();i++){
-			try{
-				GPSL = (GPSListener)listeners.elementAt(i);
-				//GPSL.gsvSentenceReceived(this, gsvSentence);
-			}catch(Throwable t){
-
-			}
-		}
-	}
-
-	/**
-	 * Method which is used when system parse a GSV Sentence
-	 * 
-	 * @param GSVSentence
-	 */
-	private void fireGSASentenceReceived (GSASentence gsaSentence){
-		GPSListener GPSL;
-		for(int i=0; i<listeners.size();i++){
-			try{
-				GPSL = (GPSListener)listeners.elementAt(i);
-				//GPSL.gsaSentenceReceived(this, gsaSentence);
-			}catch(Throwable t){
-
-			}
 		}
 	}
 }

@@ -1,4 +1,5 @@
 package lejos.gps;
+
 import java.util.*;
 /**
  * This class has been designed to manage a GSA Sentence
@@ -49,6 +50,14 @@ public class GSASentence extends NMEASentence{
 	 * GETTERS & SETTERS
 	 */
 
+	/**
+	 * Returns the NMEA header for this sentence.
+	 */
+	public String getHeader() {
+		return HEADER;
+	}
+	
+	
 	/**
 	 * Return Mode1.
 	 * Mode1 can receive the following values:

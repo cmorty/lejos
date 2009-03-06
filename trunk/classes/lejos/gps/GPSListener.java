@@ -1,5 +1,6 @@
 package lejos.gps;
 
+
 import java.util.EventListener;
 import javax.microedition.location.Coordinates;
 

@@ -1,4 +1,5 @@
 package lejos.gps;
+
 /**
  * This class models a GPS Latitude
  * 
