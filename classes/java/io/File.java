@@ -24,13 +24,17 @@ import lejos.nxt.Flash;
  * and continue running in background. Would need to synchronize critical operations on the 
  * same object, and make sure thread operations are kept non-daemon so they complete before 
  * JVM exits (we don't want a partial write to occur because the JVM terminates). 
- * 3) Instead of mirroring the file table data in memory via the files array and totalFiles
+ * 3) Directories is a pretty standard feature of a file system. Useful if we want to 
+ * assign a specific directory to dump our NXT on-board applications (future goal). 
+ * 4) Instead of mirroring the file table data in memory via the files array and totalFiles
  * variables, I'd rather read this data live from flash memory every time it is used within
  * a method (i.e. keep no persistent variables of file table). That might save memory and prevent
  * possible bugs where local data becomes unsynchronized from flash memory file table.
- * 4) If we got really ambitious, allow > 1 file open for writing at a time. It would be very
+ * However, cached operations might become suspect if a program tries to read file information
+ * before it is done writing. Might not be a great idea actually. 
+ * 5) If we got really ambitious, allow > 1 file open for writing at a time. It would be very
  * difficult to implement given our contiguous file requirement.
- * 5) Implement the J2ME solution for writing persistent data, to coexist alongside this class.
+ * 6) Implement the J2ME solution for writing persistent data, to coexist alongside this class.
  * The File class might use some methods in that solution.
  * 
  */

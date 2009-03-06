@@ -3,7 +3,7 @@ package javax.microedition.location;
 /**
  * This interface represents a listener to events associated with detecting proximity to
  * some registered coordinates. Applications implement this interface and register it with
- * a static method in LocationProvider to obtain notfications when proximity to registered
+ * a static method in LocationProvider to obtain notifications when proximity to registered
  * coordinates is detected.
  * <p>
  * This listener is called when the terminal enters the proximity of the registered
@@ -11,7 +11,7 @@ package javax.microedition.location;
  * combined with the horizontal accuracy of the current sampled location.
  * <p>
  * The listener is called only once when the terminal enters the proximity of the
- * registered coordinates. The registration with these coordinates is cancelled when the
+ * registered coordinates. The registration with these coordinates is canceled when the
  * listener is called. If the application wants to be notified again about these
  * coordinates, it must re-register the coordinates and the listener.
  * @author BB

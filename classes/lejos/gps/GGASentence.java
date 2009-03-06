@@ -34,7 +34,7 @@ import java.util.*;
  * 
  * @author BB
  */
-class GGASentence extends NMEASentence{
+public class GGASentence extends NMEASentence{
 	
 	//GGA
 	// TODO: Convert all/most of Juan's floats to int

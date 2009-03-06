@@ -4,7 +4,7 @@ import java.io.*;
 import javax.bluetooth.*;
 import javax.microedition.io.*;
 
-import lejos.gps.BasicGPS;
+import lejos.gps.SimpleGPS;
 
 /**
  * This class is not visible to users and should not be instantiated directly. Instead it
@@ -14,7 +14,7 @@ import lejos.gps.BasicGPS;
  */
 class BTGPSLocationProvider extends LocationProvider implements DiscoveryListener {
 
-	BasicGPS gps = null;
+	SimpleGPS gps = null;
 	DiscoveryAgent da;
 	RemoteDevice btDevice = null;
 	/**
@@ -30,6 +30,10 @@ class BTGPSLocationProvider extends LocationProvider implements DiscoveryListene
 	
 	protected BTGPSLocationProvider() {
 		// TODO: The problem here is that it searches every time. Slow. Need to try Properties?
+		// TODO: BIG ONE: Should only connect to GPS that isPaired() (from menu). Will
+		// allow some degree of control over which GPS is connects to in classroom.
+		// TODO: Move this to searchConnect method?
+		
 		try {
 			da = LocalDevice.getLocalDevice().getDiscoveryAgent();
 			da.startInquiry(DiscoveryAgent.GIAC, this);
@@ -40,9 +44,9 @@ class BTGPSLocationProvider extends LocationProvider implements DiscoveryListene
 		while(!doneInq) {Thread.yield();}
 		
 		// TODO NEEDED? REDUCE? NEED TO CLOSE SOMETHING?
-		try {Thread.sleep(1000);} catch (Exception e) {} 
+		//try {Thread.sleep(200);} catch (Exception e) {} 
 		
-		// TODO: WHat is the procedure if it fails to connect?
+		// TODO: WHat is the procedure if it fails to connect? Throw BT exception?
 		if(btDevice == null) System.err.println("Nothing found. It should exit here.");
 		
 		String address = btDevice.getBluetoothAddress();
@@ -55,7 +59,7 @@ class BTGPSLocationProvider extends LocationProvider implements DiscoveryListene
 			StreamConnection c = scn.acceptAndOpen();
 			InputStream in = c.openInputStream();
 			if(in != null) {
-				gps = new BasicGPS(in);
+				gps = new SimpleGPS(in);
 				// c.close(); // TODO: Clean up when done. HOW TO HANDLE IN LOCATION?
 			}
 		} catch(IOException e) {
@@ -66,7 +70,7 @@ class BTGPSLocationProvider extends LocationProvider implements DiscoveryListene
 	public Location getLocation(int timeout) throws LocationException,
 			InterruptedException {
 		// TODO The timeout might play to the fact that it is still acquiring satellites!
-		// I was wondering about that before. Maybe it makes sense to have timeout in BasicGPS?
+		// I was wondering about that before. Maybe it makes sense to have timeout in SimpleGPS?
 		// TODO: Solution! Keep asking for altitude until is positive? (longitude can be negative)
 		// Or perhaps just until speed positive? (set those after)
 		
@@ -91,23 +95,34 @@ class BTGPSLocationProvider extends LocationProvider implements DiscoveryListene
 
 	}
 
+	/* DEVELOPER NOTES:
+	 * Just read GPS every 'interval' seconds. I wonder if the default time they talk about
+	 * has it read as soon as a measurement is acquired? That would be cooler.
+	 * Only one listener is allowed according to the API.
+	 * 
+	 */
 	public void setLocationListener(LocationListener listener, int interval,
 			int timeout, int maxAge) {
 		// TODO Auto-generated method stub
 	}
 
 	public void deviceDiscovered(RemoteDevice btDevice, DeviceClass cod) {
-		/*
 		System.err.println(btDevice.getFriendlyName(false) + " discovered.");
+		/*
 		System.err.println("Major = " + cod.getMajorDeviceClass());
 		System.err.println("Minor = " + cod.getMinorDeviceClass());
 		System.err.println("Service = " + cod.getServiceClasses());
 		System.err.println("GPS_MAJOR = " + GPS_MAJOR);
 		*/
+		
+		System.err.println("Authenticated? " + btDevice.isAuthenticated());
+		
 		// TODO: It should use bitwise to determine major
 		if(cod.getMajorDeviceClass() == GPS_MAJOR) {
-			this.btDevice = btDevice;
-			da.cancelInquiry(this);
+			if(btDevice.isAuthenticated()) { // Check if paired.
+				this.btDevice = btDevice;
+				da.cancelInquiry(this);
+			}
 		}	
 	}
 

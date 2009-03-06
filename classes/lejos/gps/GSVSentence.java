@@ -27,7 +27,7 @@ import java.util.*;
  * 
  * @author Juan Antonio Brenha Moral (major recoding by BB)
  */
-class GSVSentence extends NMEASentence{
+public class GSVSentence extends NMEASentence{
 	
 	// TODO: Is this correct to limit maximumSatellites to 4? Perhaps it changes as 
 	// satellitesTracked changes. Maybe this should just use satellitesTracked?
