@@ -305,7 +305,7 @@ public final class Integer extends Number implements Comparable
 	
 	/**
 	 * Return the hex representation of an int as a String
-	 * @param i the int
+	 * @param v the int
 	 * @return the hex string
 	 */
 	public static String toHexString(int v)
@@ -346,7 +346,7 @@ public final class Integer extends Number implements Comparable
 	 * as a string, exactly as if the argument and radix <tt>10</tt> were 
 	 * given as arguments to the toString(int, int) method.
 	 *
-	 * @param   i   an integer to be converted.
+	 * @param   v   an integer to be converted.
 	 * @return  a string representation of the argument in base&nbsp;10.
 	 */
 	public static String toString(int v)
