@@ -269,13 +269,13 @@ public final class Integer extends Number implements Comparable
 	
 	public static int rotateLeft(int v, int bits)
 	{
-		// v >>> -bits is the same as v >>> (64-bits) 
+		// v >>> -bits is the same as v >>> (32-bits) 
 		return (v << bits) | (v >>> -bits);
 	}
 	
 	public static int rotateRight(int v, int bits)
 	{
-		// v << -bits is the same as v << (64-bits) 
+		// v << -bits is the same as v << (32-bits) 
 		return (v >>> bits) | (v << -bits);
 	}
 	
@@ -286,11 +286,11 @@ public final class Integer extends Number implements Comparable
 	
 	public static int signnum(long i)
 	{
-		//If i is negative, then i >> 63 is -1 because of the signed shift
+		//If i is negative, then i >> 31 is -1 because of the signed shift
 		//and the rest of the term can be ignored because -1 | anything is -1 again.		
-		//If i is positive, then i >> 63 will be zero, but (-i >>> 63) will be 1
+		//If i is positive, then i >> 31 will be zero, but (-i >>> 31) will be 1
 		//because the result of unsigned shift is the sign bit of -i.
-		return ((int)(i >> 63)) | ((int)(-i >>> 63));
+		return ((int)(i >> 31)) | ((int)(-i >>> 31));
 	}
 	
 	public static String toBinaryString(int v)
