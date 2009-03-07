@@ -12,9 +12,6 @@
 #  include "poll.h"
 #  include "display.h"
 
-extern void poll_sensors(void);
-
-extern int last_sys_time;
 extern int last_ad_time;
 
 static inline void
@@ -31,7 +28,6 @@ tick_hook(void)
 
   if (st >= last_ad_time + 3) {
     last_ad_time = st;
-    poll_sensors();
     poll_inputs();
   }
   if (st > display_update_time)
@@ -58,5 +54,16 @@ extern void handle_uncaught_exception(Object * exception,
  * Dispatches a native method.
  */
 extern int dispatch_native(TWOBYTES signature, STACKWORD * paramBase);
+
+/**
+ * Sensor interface
+ */
+#define N_SENSORS (4)
+extern int read_sensor(int port);
+
+/**
+ * Button interface
+ */
+extern int buttons_get();
 
 #endif // _PLATFORM_HOOKS_H

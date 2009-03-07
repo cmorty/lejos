@@ -1,6 +1,7 @@
 #include "platform_config.h"
 
 #include "types.h"
+#include "mytypes.h"
 #include "stack.h"
 #include "threads.h"
 #include "classes.h"
@@ -10,133 +11,64 @@
 #include "AT91SAM7.h"
 #include "nxt_avr.h"
 
-extern int verbose;
-
-sensor_t sensors[N_SENSORS] = {
-  {0, 0, 0, 0, 0},
-  {0, 0, 0, 0, 0},
-  {0, 0, 0, 0, 0},
-  {0, 0, 0, 0, 0}
+// Sensor port digital pins
+const port_pins sensor_pins[4] = {
+  {AT91C_PIO_PA23, AT91C_PIO_PA18},
+  {AT91C_PIO_PA28, AT91C_PIO_PA19},
+  {AT91C_PIO_PA29, AT91C_PIO_PA20},
+  {AT91C_PIO_PA30, AT91C_PIO_PA2}
 };
+
+
+/**
+ * Reset the port to a known state
+ */
+void
+reset_sensor(int port)
+{
+  // Reset the port to be normal digital I/O
+  U32 pins = sensor_pins[port].digi0 | sensor_pins[port].digi1;
+  *AT91C_PIOA_PER = pins;
+  *AT91C_PIOA_OER = pins;
+  // and set the output to be zero
+  *AT91C_PIOA_CODR |= pins;
+  // If this is port with RS485 on it, reset those pins as well
+  if (port == RS485_PORT)
+  {
+    *AT91C_PIOA_PER |= AT91C_PIO_PA5 | AT91C_PIO_PA6 | AT91C_PIO_PA7;
+    *AT91C_PIOA_PPUDR |= AT91C_PIO_PA5 | AT91C_PIO_PA6 | AT91C_PIO_PA7;
+    *AT91C_PIOA_OER |= AT91C_PIO_PA5 | AT91C_PIO_PA6 | AT91C_PIO_PA7;
+    *AT91C_PIOA_CODR |= AT91C_PIO_PA5 | AT91C_PIO_PA6 | AT91C_PIO_PA7;
+  }
+  // reset the power being supplied to the port
+  nxt_avr_set_input_power(port, 0);
+}
+
 
 void
 init_sensors(void)
 {
   int i;
 
-  for (i = 0; i < N_SENSORS; i++) {
-    unset_digi0(i);
-    unset_digi1(i);
-    nxt_avr_set_input_power(i, 0);
-  }
-  /* Ensure RS485 is inactive. Otherwise it can interfere with
-   * the operation of port 4.
-   */
-  *AT91C_PIOA_PER |= AT91C_PIO_PA5 | AT91C_PIO_PA6 | AT91C_PIO_PA7;
-  *AT91C_PIOA_PPUDR |= AT91C_PIO_PA5 | AT91C_PIO_PA6 | AT91C_PIO_PA7;
-  *AT91C_PIOA_OER |= AT91C_PIO_PA5 | AT91C_PIO_PA6 | AT91C_PIO_PA7;
-  *AT91C_PIOA_CODR |= AT91C_PIO_PA5 | AT91C_PIO_PA6 | AT91C_PIO_PA7;
+  for (i = 0; i < N_SENSORS; i++)
+    reset_sensor(i);
 }
 
-/**
- * Read sensor values
- */
-void
-poll_sensors(void)
+int
+read_sensor(int port)
 {
-  byte i;
-  sensor_t *pSensor = sensors;
-
-  for (i = 0; i < N_SENSORS; i++, pSensor++) {
-    pSensor->value = sensor_adc(i);
-  }
+    return sensor_adc(port);
 }
 
 void
-read_buttons(int dummy, short *output)
+set_sensor(int port, int setting)
 {
-  *output = (short) buttons_get();
-}
-
-
-void
-check_for_data(char *valid, char **nextbyte)
-{
-  *valid = 0;
-}
-
-void
-set_digi0(int sensor)
-{
-  /* Enable output on the pin */
-
-  int functions[] = { AT91C_PIO_PA23, AT91C_PIO_PA28,
-    AT91C_PIO_PA29, AT91C_PIO_PA30
-  };
-
-  *AT91C_PIOA_PER |= functions[sensor];
-
-  *AT91C_PIOA_OER |= functions[sensor];
-
-  /* Set high */
-
-  *AT91C_PIOA_SODR |= functions[sensor];
-
-}
-
-void
-unset_digi0(int sensor)
-{
-  /* Enable output on the pin */
-
-  int functions[] = { AT91C_PIO_PA23, AT91C_PIO_PA28,
-    AT91C_PIO_PA29, AT91C_PIO_PA30
-  };
-
-  *AT91C_PIOA_PER |= functions[sensor];
-
-  *AT91C_PIOA_OER |= functions[sensor];
-
-  /* Set low */
-
-  *AT91C_PIOA_CODR |= functions[sensor];
-
-}
-
-void
-set_digi1(int sensor)
-{
-  /* Enable output on the pin */
-
-  int functions[] = { AT91C_PIO_PA18, AT91C_PIO_PA19,
-    AT91C_PIO_PA20, AT91C_PIO_PA2
-  };
-
-  *AT91C_PIOA_PER |= functions[sensor];
-
-  *AT91C_PIOA_OER |= functions[sensor];
-
-  /* Set high */
-
-  *AT91C_PIOA_SODR |= functions[sensor];
-
-}
-
-void
-unset_digi1(int sensor)
-{
-  /* Enable output on the pin */
-
-  int functions[] = { AT91C_PIO_PA18, AT91C_PIO_PA19,
-    AT91C_PIO_PA20, AT91C_PIO_PA2
-  };
-
-  *AT91C_PIOA_PER |= functions[sensor];
-
-  *AT91C_PIOA_OER |= functions[sensor];
-
-  /* Set low */
-
-  *AT91C_PIOA_CODR |= functions[sensor];
-
+  if (setting & 1)
+    *AT91C_PIOA_SODR = sensor_pins[port].digi0;
+  else
+    *AT91C_PIOA_CODR = sensor_pins[port].digi0;
+  if (setting & 2)
+    *AT91C_PIOA_SODR = sensor_pins[port].digi1;
+  else
+    *AT91C_PIOA_CODR = sensor_pins[port].digi1;
 }

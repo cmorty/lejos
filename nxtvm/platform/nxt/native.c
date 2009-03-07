@@ -4,6 +4,7 @@
  * Native method handling for nxt.
  */
 #include "types.h"
+#include "mytypes.h"
 #include "trace.h"
 #include "constants.h"
 #include "specialsignatures.h"
@@ -145,14 +146,7 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
     push_word(sensor_adc(paramBase[0]));
     return EXEC_CONTINUE;
   case setADTypeById_4II_5V:
-    if (paramBase[1] & 1)
-      set_digi0(paramBase[0]);
-    else
-      unset_digi0(paramBase[0]);
-    if (paramBase[1] & 2)
-      set_digi1(paramBase[0]);
-    else
-      unset_digi1(paramBase[0]);
+    set_sensor(paramBase[0], paramBase[1]);
     return EXEC_CONTINUE;
   case setPowerTypeById_4II_5V:
     nxt_avr_set_input_power(paramBase[0], paramBase[1]);
