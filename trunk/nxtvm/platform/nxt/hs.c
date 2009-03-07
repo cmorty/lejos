@@ -13,6 +13,8 @@
 #include "display.h"
 #include "systick.h"
 #include "memory.h"
+#include "sensors.h"
+
 // Buffer sizes etc,
 // NOTE: The input code for this device assumes that 2 buffers are in use.
 // Max data size
@@ -98,10 +100,7 @@ void hs_disable(void)
 {
   // Turn off the device and make the pins available for other uses
   *AT91C_PMC_PCDR = (1 << AT91C_ID_US0);
-  *AT91C_PIOA_PER = HS_RX_PIN | HS_TX_PIN | HS_RTS_PIN; 
-  *AT91C_PIOA_PPUDR = HS_RX_PIN | HS_TX_PIN | HS_RTS_PIN; 
-  *AT91C_PIOA_OER = HS_RX_PIN | HS_TX_PIN | HS_RTS_PIN; 
-  *AT91C_PIOA_CODR = HS_RX_PIN | HS_TX_PIN | HS_RTS_PIN; 
+  reset_sensor(RS485_PORT);
   // free memory if we have any
   if (in_buf[0] != NULL) system_free((byte*)in_buf[0]);
   in_buf[0] = NULL;

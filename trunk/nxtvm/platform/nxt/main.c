@@ -24,8 +24,6 @@
 #include "poll.h"
 #include "debug.h"
 #include "sensors.h"
-#include "platform_hooks.h"
-//#include "java_binary.h"
 
 #include "nxt_avr.h"
 #include "nxt_lcd.h"

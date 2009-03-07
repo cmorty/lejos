@@ -10,6 +10,7 @@
 #include "aic.h"
 #include "systick.h"
 #include "memory.h"
+#include "sensors.h"
 
 #include <string.h>
 
@@ -26,18 +27,6 @@
 
 // Delay used when in Lego mode
 #define I2C_LEGO_DELAY 5
-
-//Pins for each port
-struct i2c_pin_pair {
-  U32 scl;
-  U32 sda;
-};
-static const struct i2c_pin_pair i2c_pin[4] = {
-  {1 << 23, 1 << 18},
-  {1 << 28, 1 << 19},
-  {1 << 29, 1 << 20},
-  {1 << 30, 1 << 2}
-};
 
 // A partial transaction has the following form:
 // 1. It has a transaction start state, to indicate the type of transaction
@@ -462,10 +451,11 @@ i2c_disable(int port)
     i2c_port *p = i2c_ports[port];
 
     U32 pinmask = p->scl_pin | p->sda_pin;
-    build_active_list();
     *AT91C_PIOA_ODR = pinmask;
     system_free((byte *)p);
     i2c_ports[port] = NULL;
+    build_active_list();
+    reset_sensor(port);
   }
 }
 
@@ -492,8 +482,8 @@ int i2c_enable(int port, int mode)
       if (!p) return 0;
       i2c_ports[port] = p;
     }
-    p->scl_pin = i2c_pin[port].scl;
-    p->sda_pin = i2c_pin[port].sda;
+    p->scl_pin = sensor_pins[port].digi0;
+    p->sda_pin = sensor_pins[port].digi1;
     pinmask = p->scl_pin | p->sda_pin;
     p->state = I2C_IDLE;
     if (mode & I2C_LEGO_MODE)
@@ -531,7 +521,6 @@ i2c_init(void)
   U32 dummy; 
   for (i = 0; i < I2C_N_PORTS; i++) {
     i2c_ports[i] = NULL;
-    *AT91C_PIOA_ODR = i2c_pin[i].scl|i2c_pin[i].sda;
   }
   
   istate = interrupts_get_and_disable();

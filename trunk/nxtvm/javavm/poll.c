@@ -1,8 +1,8 @@
 #include "constants.h"
 
 #include "poll.h"
-#include "sensors.h"
 #include "threads.h"
+#include "platform_hooks.h"
 
 #define SENSOR_POS		0
 #define BUTTON_POS		4
@@ -22,7 +22,7 @@ void set_poller(Poll *_poller)
   poller = _poller;
   old_button_state = 0;
   for (i=0; i<N_SENSORS; i++)
-    old_sensor_values[i] = sensors[i].value;
+    old_sensor_values[i] = read_sensor(i);
 }
 
 
@@ -31,8 +31,8 @@ void poll_inputs()
   short changed = 0;
   short button_state = 0;    
   short i;
+  short port = 0;
   short *pOldValue = old_sensor_values;
-  sensor_t *pSensor = &sensors[0];
   char packet_available;
 
   throttle_count--;
@@ -49,26 +49,28 @@ void poll_inputs()
     // anyway.
       
     // Check the sensor canonical values.
-    for (i = 1<<SENSOR_POS; i<(1<<BUTTON_POS); i <<= 1, pOldValue++, pSensor++)
+    for (i = 1<<SENSOR_POS; i<(1<<BUTTON_POS); i <<= 1, pOldValue++, port)
     {
-      if (*pOldValue != pSensor->value) {
+      short val = (short)read_sensor(port);
+      if (*pOldValue != val) {
         changed |= i;
-        *pOldValue = pSensor->value;
+        *pOldValue = val;
       }
     }
 
     // Check the button status
-    read_buttons (0x3000, &button_state);
+    button_state = buttons_get();
     button_state <<= BUTTON_POS; // Shift into poll position  
     changed |= button_state ^ old_button_state;
     old_button_state = button_state;
 
+    /*
     // Check serial status
     check_for_data ( &packet_available, null);
     if (packet_available) {
         changed |= 1 << SERIAL_RECEIVED_POS;
     }
-
+    */
     // Only wake threads up if things have changed since
     // we last looked.    
     if (changed)
