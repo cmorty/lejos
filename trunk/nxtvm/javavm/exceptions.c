@@ -165,6 +165,12 @@ void throw_exception (Object *exception)
     }
     return;
   }
+  // After the return the address will point to the next, instruction, we need
+  // to back it off to point to the actual caller...Not that this does not 
+  // need to point at the start of the instruction since the only use made of
+  // PC here is to locate the exception handler, so we can get away with it
+  // pointing into the middle...
+  curPc--;
   goto LABEL_PROPAGATE; 
 }
 
