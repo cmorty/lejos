@@ -53,13 +53,16 @@ public final class StringBuffer
 
   public StringBuffer append (String s)
   {
-    s = String.valueOf(s);
-    return this.appendInternal(s);
+	  if (s == null)
+		  s = "null";
+	  
+	  return this.appendInternal(s);
   }
 
-  public StringBuffer append (java.lang.Object aObject)
+  public StringBuffer append (Object aObject)
   {
-    return this.appendInternal(String.valueOf(aObject));
+	  String s = (aObject == null) ? "null" : aObject.toString();
+	  return this.appendInternal(s);
   }
 
   public StringBuffer append (boolean aBoolean)
