@@ -37,28 +37,30 @@ const char avr_brainwash_string[] =
   "\xCC" "Let's samba nxt arm in arm, (c)LEGO System A/S";
 // The following Raw values are read/written directly to the AVR. so byte
 // order, packing etc. must match
-static struct {
+typedef struct{
   // Raw values
   U8 power;
   U8 pwm_frequency;
   S8 output_percent[NXT_AVR_N_OUTPUTS];
   U8 output_mode;
   U8 input_power;
-} __attribute__((packed)) io_to_avr;
+} __attribute__((packed)) to_avr;
+static to_avr io_to_avr;
+// Output data is double buffered via the following (note extra space for csum
+static U8 data_to_avr[5 + NXT_AVR_N_OUTPUTS];
 
 
-static struct {
+typedef struct {
   // Raw values
   U16 adc_value[NXT_AVR_N_INPUTS];
   U16 buttonsVal;
   U16 extra;
-  // processed values
-  U16 buttons;
-} __attribute__((packed)) io_from_avr;
-
-static U8 data_from_avr[(2 * NXT_AVR_N_INPUTS) + 5];
-
-static U8 data_to_avr[5 + NXT_AVR_N_OUTPUTS];
+  U8 csum;
+} __attribute__((packed)) from_avr;
+static from_avr data_from_avr[2], *io_from_avr;
+// Input data is double buffered by buffer flipping
+static U32 from_buf;
+#define NEXT_BUF() ((from_buf + 1) & 0x1)
 
 // 50ms Debounce time. Button read is called every other 1000Hz tick
 #define BUTTON_DEBOUNCE_CNT 50/2;
@@ -77,7 +79,7 @@ static void
 nxt_avr_start_read(void)
 {
   //memset(data_from_avr, 0, sizeof(data_from_avr));
-  twi_start_read(NXT_AVR_ADDRESS, data_from_avr, sizeof(data_from_avr));
+  twi_start_read(NXT_AVR_ADDRESS, (U8 *)(&data_from_avr[from_buf]), sizeof(from_avr));
 }
 
 /**
@@ -154,27 +156,27 @@ nxt_avr_unpack(void)
 {
   U8 check_sum=0;;
   U8 *p;
-  U8 *d;
   U8 *end;
   U16 buttonsVal;
   U16 newState;
 
-  // Copy data over and calc the checksum
-  p = data_from_avr;
-  end = p + sizeof(data_from_avr) - 1;
-  d = (U8 *)&io_from_avr;
+  // calc the checksum
+  p = (U8 *) (&data_from_avr[from_buf]);
+  end = p + sizeof(from_avr);
   while(p < end) {
-    check_sum += *p;
-    *d++ = *p++;
+    check_sum += *p++;
   }
-  check_sum += *p;
   if (check_sum != 0xff) {
     nxt_avr_stats.bad_rx++;
     return;
   }
 
+  // Got good data
   nxt_avr_stats.good_rx++;
-  buttonsVal = io_from_avr.buttonsVal;
+  // Flip the buffers
+  io_from_avr = &data_from_avr[from_buf];
+  from_buf = NEXT_BUF();
+  buttonsVal = io_from_avr->buttonsVal;
   if (buttonsVal > 60 || button_state)
   {
     // Process the buttons. First we drop any noisy inputs
@@ -208,7 +210,6 @@ nxt_avr_unpack(void)
         // Got a good key, make a note of it
         button_state = debounce_state;
     }
-    io_from_avr.buttons = button_state;
   }
 }
 
@@ -231,6 +232,8 @@ nxt_avr_init(void)
   debounce_state = 0;
   debounce_cnt = BUTTON_DEBOUNCE_CNT;
   link_state = LS_RESET;
+  from_buf = 0;
+  io_from_avr = &data_from_avr[1];
 }
 
 
@@ -304,7 +307,7 @@ nxt_avr_1kHz_update(void)
 U32
 buttons_get(void)
 {
-  return io_from_avr.buttons;
+  return button_state;
 }
 
 /**
@@ -316,7 +319,7 @@ battery_voltage(void)
   // Figure out voltage
   // The units are 13.848 mV per bit.
   // To prevent fp, we substitute 13.848 with 14180/1024
-  U32 voltageVal = io_from_avr.extra;
+  U32 voltageVal = io_from_avr->extra;
   voltageVal &= 0x3ff;		// Toss unwanted bits.
   voltageVal *= 14180;
   voltageVal >>= 10;
@@ -330,7 +333,7 @@ U32
 sensor_adc(U32 n)
 {
   if (n < 4)
-    return io_from_avr.adc_value[n];
+    return io_from_avr->adc_value[n];
   else
     return 0;
 }
