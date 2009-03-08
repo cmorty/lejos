@@ -161,7 +161,7 @@ public class BTGPS{
 		try{
 			in = btGPS.openInputStream();
 			gps = new GPS(in);
-			gps.updateValues(true);
+			//gps.updateValues(true);
 
 			result = 2;//
 		}catch(Exception e) {
