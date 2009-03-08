@@ -118,6 +118,20 @@ public class SimpleNavigator implements Navigator
     _pilot.setSpeed(speed);
   }
 
+   /**
+   * set the movement speed of the robot, wheel diameter units/sec
+   */
+  public void setMoveSpeed(float speed)
+  {
+    _pilot.setMoveSpeed(speed);
+  }
+  /**
+   * sets the rotation speed of the robot in deg/secm when robot is turning in place
+   */
+  public void setTurnSpeed(float speed)
+  {
+    _pilot.setTurnSpeed(speed);
+  }
   /**
    * Moves the NXT robot forward until stop() is called.
    * @see Navigator#stop().

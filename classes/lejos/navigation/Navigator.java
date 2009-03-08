@@ -40,10 +40,15 @@ public interface Navigator
    */
   public boolean isMoving();
   
+
   /**
-   *sets the motor speed of the robot, in degrees/second. 
+   * set the movement speed of the robot, wheel diameter units/sec
    */
-  public void setSpeed(int speed);
+  public void setMoveSpeed(float speed);
+  /**
+   * sets the rotation speed of the robot in deg/secm when robot is turning in place
+   */
+  public void setTurnSpeed(float speed);
 
   /**
    * Moves the NXT robot forward until stop() is called.
