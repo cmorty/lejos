@@ -1,5 +1,7 @@
 package lejos.navigation;
 
+
+
 import lejos.nxt.Battery;
 import lejos.nxt.Motor;
 
@@ -348,6 +350,10 @@ public class TachoPilot implements Pilot
     int rotateAngleRight = _parity * (int) (angle * _rightTurnRatio);
     _left.rotate(-rotateAngleLeft, true);
     _right.rotate(rotateAngleRight, immediateReturn);
+    if(!immediateReturn)
+    {
+      while(_left.isRotating())Thread.yield();
+    }
   }
 
   /**
@@ -419,6 +425,10 @@ public class TachoPilot implements Pilot
     setSpeed(Math.round(_robotMoveSpeed * _leftDegPerDistance), Math.round(_robotMoveSpeed * _rightDegPerDistance));
     _left.rotate((int) (_parity * distance * _leftDegPerDistance ), true);
     _right.rotate((int) (_parity * distance * _rightDegPerDistance), immediateReturn);
+    if(!immediateReturn)
+    {
+      while(_left.isRotating())Thread.yield();
+    }
   }
 
   /**
@@ -548,6 +558,7 @@ public class TachoPilot implements Pilot
     {
       return;
     }
+    while(inside.isRotating())Thread.yield();
     inside.setSpeed(outside.getSpeed());
   }
 
