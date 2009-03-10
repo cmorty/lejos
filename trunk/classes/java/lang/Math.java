@@ -10,7 +10,6 @@ public final class Math {
 	// Math constants
 	public static final double E  = 2.718281828459045;
 	public static final double PI = 3.141592653589793;
-   public static final double NaN       = 0.0f / 0.0f;
    
    static final float PI2 = 1.570796326794897f;
 	static final double ln10      = 2.30258509299405;
@@ -180,7 +179,8 @@ public final class Math {
 	*/
 	public static double log(double x)
 	{
-		    if (x == 0) return NaN;
+			// TODO: We don't have Double.NaN yet, so using Float for now.
+		    if (x == 0) return Float.NaN;
 		    
 	        if (x < 1.0)
 	                return -log(1.0/x);
@@ -294,7 +294,7 @@ public final class Math {
 	//TODO improve precision
     double root = x, guess=0;
 
-    if(x<0) return NaN;
+    if(x<0) return Float.NaN; // TODO: We don't have Double.NaN yet, so using Float for now. 
 
     // the accuarcy test is percentual
     for(int i=0; (i<16) && ((guess > x*(1+5e-7f)) || (guess < x*(1-5e-7f))); i++)
@@ -354,7 +354,7 @@ public final class Math {
    */
   public static double acos(double a) {
     if ((a<-1)||(a>1)) {
-      return NaN;
+      return Float.NaN; // TODO: We don't have Double.NaN yet, so using Float for now.
     }
     return PI/2 - atan(a/sqrt(1 - a * a));
   }
