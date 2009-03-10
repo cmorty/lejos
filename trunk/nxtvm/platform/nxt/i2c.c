@@ -569,13 +569,12 @@ i2c_start(int port,
     return -1;
     
   if(i2c_busy(port))
-    return -1;
-  if (nbytes > I2C_BUF_SIZE) return -1;   
-  if (n_internal_address_bytes > I2C_ADDRESS_SIZE) return -1;
+    return -2;
+  if (nbytes > I2C_BUF_SIZE) return -4;   
+  if (n_internal_address_bytes > I2C_ADDRESS_SIZE) return -5;
   p = i2c_ports[port];
   pt = p->partial_transaction;
   p->current_pt = pt;
-  //memset(pt,0,sizeof(p->partial_transaction));
   
   
   if(n_internal_address_bytes > 0){
@@ -642,6 +641,7 @@ i2c_start(int port,
   return 0;
 }
 
+// Check for the operation to be complete and return and read data.
 int
 i2c_complete(int port,
              U8 *data,
