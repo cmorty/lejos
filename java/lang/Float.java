@@ -8,9 +8,12 @@ package java.lang;
  */
   public final class Float {
 
+	  public static final float NaN = 0.0f / 0.0f;
+	  
     private Float() {
     }
     private float value;
+    
     /**
      * Constructs a newly allocated Float object that represents the primitive float argument.
      * @param value - the value to be represented by the Float.
@@ -19,6 +22,15 @@ package java.lang;
     {
       this.value = value;
     }
+    
+    public boolean isNaN() {
+    	return(Float.isNaN(this.value));
+    }
+    
+    static public boolean isNaN(float val) {
+    	return(val == Float.NaN);
+    }
+    
     /**
      * Returns the float value of this Float  object.
      * @return the float value represented by this object
