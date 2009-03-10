@@ -47,7 +47,8 @@ public class I2CSensor implements SensorConstants {
 			Thread.yield();
 		}
 		
-		return (port.i2cComplete(buf, len) == len ? 0 : -1);
+		ret = port.i2cComplete(buf, len);
+        return (ret < 0 ? ret : (ret == len ? 0 : -1));
 	}
 	
 	/**
@@ -107,8 +108,13 @@ public class I2CSensor implements SensorConstants {
 	public String getSensorType() {
 		return fetchString(0x10);
 	}
-	
-	private String fetchString(int register) {
+
+    /**
+     * Internal helper function, read a string from the device
+     * @param register
+     * @return the requested string
+     */
+	protected String fetchString(int register) {
 		int ret = getData(register, byteBuff, 8);
 		if(ret != 0)
 			return BLANK;
