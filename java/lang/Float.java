@@ -10,8 +10,6 @@ package java.lang;
 
 	  public static final float NaN = 0.0f / 0.0f;
 	  
-    private Float() {
-    }
     private float value;
     
     /**
