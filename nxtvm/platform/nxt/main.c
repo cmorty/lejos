@@ -469,6 +469,7 @@ main(void)
    * interrupts are off, but the AIC has not been initialised.
    */
   aic_initialise();
+  init_sensors();
   interrupts_enable();
   systick_init();
   sound_init();
