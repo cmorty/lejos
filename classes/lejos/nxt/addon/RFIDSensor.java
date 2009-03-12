@@ -46,7 +46,7 @@ public class RFIDSensor extends I2CSensor
 
     // Various delays
     private static final int DELAY_WAKEUP = 5;
-    private static final int DELAY_FIRMWARE = 10;
+    private static final int DELAY_FIRMWARE = 100;
     private static final int DELAY_ACQUIRE = 250;
     private static final int DELAY_READ = 200;
 
@@ -59,14 +59,16 @@ public class RFIDSensor extends I2CSensor
      * @param port The sensor port to use for this device.
      */
     public RFIDSensor(I2CPort port)
-	{
+    {
         super(port, I2CPort.STANDARD_MODE);
         // We need 9V to make the sensor work
         port.setType(I2CPort.TYPE_LOWSPEED_9V);
         // Default address is not standard
         setAddress(DEFAULT_ADDRESS);
+        // We seem to need to give the device a bit of a kick to get it going
+        // doing a read seems to do the job...
         wakeUp();
-        startFirmware();
+        readTransponder(false);
     }
 
     /**
