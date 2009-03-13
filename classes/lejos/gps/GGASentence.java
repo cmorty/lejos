@@ -41,9 +41,9 @@ public class GGASentence extends NMEASentence{
 	// TODO: Convert all/most of Juan's floats to int
 	private float dateTimeOfFix = -1;
 	private float latitude = 0;
-	private char latitudeDirection;
+	private char latitudeDirection; // TODO: Delete me? Maybe used briefly in calc.
 	private float longitude = 0;
-	private char longitudeDirection;
+	private char longitudeDirection; // ToDO: Delete me?
 	private float quality;
 	private float satellitesTracked = 0;
 	private float hdop = 0;
@@ -80,6 +80,7 @@ public class GGASentence extends NMEASentence{
 	 * 
 	 * @return the latitude direction
 	 */
+	// TODO: I think this is a useless method because we just use + or - in coordinates.
 	public char getLatitudeDirection(){
 		checkRefresh();
 		return latitudeDirection;
@@ -98,6 +99,7 @@ public class GGASentence extends NMEASentence{
 	 * Get Longitude Direction
 	 * @return the longitude direction
 	 */
+	// TODO: I think this is a useless method because we just use + or - in coordinates.
 	public char getLongitudeDirection(){
 		checkRefresh();
 		return longitudeDirection;

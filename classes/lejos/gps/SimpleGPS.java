@@ -221,7 +221,6 @@ public class SimpleGPS extends Thread {
 		if (token.equals(GGASentence.HEADER)){
 			this.ggaSentence.setSentence(s);
 			notifyListeners(this.ggaSentence);
-			
 		}else if (token.equals(VTGSentence.HEADER)){
 			this.vtgSentence.setSentence(s);
 			notifyListeners(this.vtgSentence);
@@ -273,6 +272,7 @@ public class SimpleGPS extends Thread {
 			
 			// TODO: Probably better to throw exception here if GPS disconnects
 			//In case user turns off GPS Device / GPS Device has low batteries / Other disconnect scenarios
+			// There is also the listener of LocationProvider.
 			if(currentSentence.length() >= 500){
 				errors++;
 				//2008/09/06 : JAB
