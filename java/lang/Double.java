@@ -28,7 +28,7 @@ public class Double {
 	 * @param s String representation of float. Must only contain numbers and an optional decimal, and optional - sign at front.
 	 * @return float number
 	 */
-	public static double parseFloat(String s) throws NumberFormatException {
+	public static double parseDouble(String s) throws NumberFormatException {
 		boolean negative = (s.charAt(0) == '-'); // Check if negative symbol.
 		double result = 0.0D; // Starting value
 		int index = s.indexOf('.');

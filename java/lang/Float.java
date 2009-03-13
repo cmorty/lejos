@@ -114,7 +114,7 @@ package java.lang;
 	 * @return float number
 	 */
 	public static float parseFloat(String s) throws NumberFormatException {
-		return (float)Double.parseFloat(s);
+		return (float)Double.parseDouble(s);
 	}
 	
 	/**
