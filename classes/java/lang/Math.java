@@ -9,15 +9,15 @@ public final class Math {
 		
 	// Math constants
 	public static final double E  = 2.718281828459045;
-	public static final double PI = 3.141592653589793;
-   
-   static final float PI2 = 1.570796326794897f;
+	public static final double PI = 3.1415926535897931D;
+	
+   static final double PI2 = 1.570796326794897D;
 	static final double ln10      = 2.30258509299405;
 	static final double ln2       = 0.69314718055995;
 	
         // Used by log() and exp() methods
-	private static final float LOWER_BOUND = 0.9999999f;
-	private static final float UPPER_BOUND = 1.0f;
+	private static final double LOWER_BOUND = 0.999999f;
+	private static final double UPPER_BOUND = 1.0D;
 
 	// Used to generate random numbers.
 	private static java.util.Random RAND = new java.util.Random(System.currentTimeMillis());
@@ -166,9 +166,9 @@ public final class Math {
 	        end = sum/oldsum;
       	    } while (end < LOWER_BOUND || end > UPPER_BOUND);
 
-            sum += 1.0f;
+            sum += 1.0;
             
-	    return neg ? 1.0f/sum : sum;
+	    return neg ? 1.0/sum : sum;
 	}
 	
 	/**
@@ -179,8 +179,7 @@ public final class Math {
 	*/
 	public static double log(double x)
 	{
-			// TODO: We don't have Double.NaN yet, so using Float for now.
-		    if (x == 0) return Float.NaN;
+			if (x == 0) return Double.NaN;
 		    
 	        if (x < 1.0)
 	                return -log(1.0/x);
