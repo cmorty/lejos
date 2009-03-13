@@ -32,7 +32,7 @@ public abstract class LocationProvider {
 	 * <li>[2] is the proximityRadius as a Float</li>
 	 * </ul>
 	 */
-	private static final Vector listeners = new Vector();
+	protected static final Vector listeners = new Vector();
 	
 	/**
 	 * Empty constructor to help implementations and extensions. This is not intended to be used by applications. Applications should not make subclasses of this class and invoke this constructor from the subclass.
@@ -138,7 +138,7 @@ public abstract class LocationProvider {
 	 * 		if the platform does not have resources to add a new listener and coordinates to be monitored or does not support proximity monitoring at all
 	 */
 	public static void addProximityListener(ProximityListener listener, Coordinates coordinates, float proximityRadius) throws LocationException {
-		
+		// TODO: This doesn't seem like a minimal leJOS-level implementation. Vector is easy.
 		if ((listener == null) || (coordinates == null))
 			throw new NullPointerException();
 
@@ -161,6 +161,7 @@ public abstract class LocationProvider {
 	 * 		the listener to remove
 	 */
 	public static void removeProximityListener(ProximityListener listener) {
+		// TODO: This doesn't seem like a minimal leJOS-level implementation. Vector is easy.
 		if (listener == null)
 			throw new NullPointerException();
 

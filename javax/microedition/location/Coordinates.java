@@ -5,7 +5,7 @@ package javax.microedition.location;
  * using JSR-179 Location API
  * http://www.jcp.org/en/jsr/detail?id=179
  * 
- * @author Juan Antonio Brenha Moral (calculateDistanceAndAzimuth copied from elsewhere)
+ * @author Juan Antonio Brenha Moral (calculateDistanceAndAzimuth by Charles Manning)
  */
 public class Coordinates{
 	private double latitude;
@@ -26,9 +26,8 @@ public class Coordinates{
 
 	static final double EARTH_RADIUS = 6378137D;
 	
-	// TODO: What is this? Why dividing 0 by 0?
-	static float calculatedDistance = (0.0F / 0.0F);
-	static float calculatedAzimuth = (0.0F / 0.0F);
+	static float calculatedDistance = Float.NaN;
+	static float calculatedAzimuth = Float.NaN;
 	
 	/* Constructor */
 
@@ -124,11 +123,17 @@ public class Coordinates{
 	}
 	
 	//TODO
+	/**
+	 * This method is part of JSR-179. Currently not implemented.
+	 */
 	static public String convert(double coordinate, int outputType){
 		return null;
 	}
 
 	//TODO
+	/**
+	 * This method is part of JSR-179. Currently not implemented.
+	 */
 	static public float convert(String coordinate){
 		return 0;
 	}
@@ -152,7 +157,7 @@ public class Coordinates{
 			// TODO: Is there some way to make it not recalculate if it already 
 			// calculated for these coordinates? Keep in mind coordinates can change.
 			calculateDistanceAndAzimuth(getLatitude(), getLongitude(), to.getLatitude(), to.getLongitude());
-			return calculatedDistance / 1000;//To get values in Kilometers
+			return calculatedDistance;
 		}
 	}
 
@@ -160,10 +165,10 @@ public class Coordinates{
         // TODO: This code is huge. Can it be minimized?
 		double d4 = Math.toRadians(d);
         double d5 = Math.toRadians(d1);
-        double d6 = Math.toRadians(d2);
-        double d7 = Math.toRadians(d3);
-        double d8 = 0.0033528106647474805D;
-        // TODO: Why are these given 0 values?
+		double d6 = Math.toRadians(d2);
+		double d7 = Math.toRadians(d3);
+		double d8 = 0.0033528106647474805D;
+		// TODO: Why are these given 0 values?
         double d9 = 0.0D;
         double d10 = 0.0D;
         double d20 = 0.0D;
@@ -185,6 +190,8 @@ public class Coordinates{
             calculatedAzimuth = 0.0F;
             return;
         }
+        
+        // TODO: Use our version of PI.
         if(d4 + d6 == 0.0D && Math.abs(d5 - d7) == 3.1415926535897931D)
             d4 += 1.0000000000000001E-05D;
         double d11 = 1.0D - d8;
@@ -197,6 +204,7 @@ public class Coordinates{
         double d18 = d17 * d13;
         double d19 = d18 * d12;
         d9 = d7 - d5;
+        
         for(d32 = d9 + 1.0D; i < byte0 && Math.abs(d32 - d9) > d33; d9 = ((1.0D - d31) * d9 * d8 + d7) - d5)
         {
             i++;
@@ -217,7 +225,7 @@ public class Coordinates{
             d32 = d9;
             d9 = ((d30 * d25 * d31 + d29) * d24 * d31 + d10) * d27;
         }
-
+        
         double d34 = mod(Math.atan2(d12, d13), 6.2831853071795862D);
         d9 = Math.sqrt((1.0D / (d11 * d11) - 1.0D) * d28 + 1.0D);
         d9++;
@@ -225,6 +233,7 @@ public class Coordinates{
         d31 = ((d9 * d9) / 4D + 1.0D) / (1.0D - d9);
         d32 = (d9 * d9 * 0.375D - 1.0D) * d9;
         d9 = d30 * d25;
+        
         double d35 = ((((((d24 * d24 * 4D - 3D) * (1.0D - d30 - d30) * d29 * d32) / 6D - d9) * d32) / 4D + d29) * d24 * d32 + d10) * d31 * 6378137D * d11;
         if((double)Math.abs(i - byte0) < d33)
         {

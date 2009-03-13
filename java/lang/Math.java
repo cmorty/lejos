@@ -16,7 +16,8 @@ public final class Math {
 	static final double ln2       = 0.69314718055995;
 	
         // Used by log() and exp() methods
-	private static final double LOWER_BOUND = 0.999999f;
+	// TODO: The lower bound is probably important for accuracy. Expand when double working.
+	private static final double LOWER_BOUND = 0.9999999f;
 	private static final double UPPER_BOUND = 1.0D;
 
 	// Used to generate random numbers.

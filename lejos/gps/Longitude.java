@@ -1,5 +1,6 @@
 package lejos.gps;
 
+// TODO: Is this class even used anywhere?
 
 /**
  * This class models a GPS Latitude

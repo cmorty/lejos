@@ -85,6 +85,7 @@ public class GPS extends SimpleGPS {
 	and maybe time because they can be gotten from two sources (RMC). Perhaps check if
 	== -1, if so try getting it from another sentence. Also check time-stamp for both to 
 	see which is more recent. */
+	/* ANSWER: With Holux-1200, GGA gets values before RMC. Ignore RMC? */ 
 	
 	/**
 	 * Returns the number of satellites being tracked to
