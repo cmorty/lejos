@@ -513,7 +513,7 @@ public class File {
 	
 	/**
 	 * Essentially formats the file system by writing TABLE_ID characters to 
-	 * the first page of flash memroy. Also writes 0 as the number of files
+	 * the first page of flash memory. Also writes 0 as the number of files
 	 * in the file system, so it can be used to restart/erase all files.
 	 */
 	public static void format() {
