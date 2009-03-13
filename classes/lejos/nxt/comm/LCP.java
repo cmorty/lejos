@@ -547,8 +547,14 @@ public class LCP {
 					reply[5+i] = (byte) msg.charAt(i);
 				}
 			}
-			LCD.refresh();
 			len = 64;
+		}
+		
+		// DELETE USE FLASH
+		if (cmdId == DELETE_USER_FLASH) {
+			File.format();
+			files = null;
+			numFiles = 0;
 		}
 		
 		return len;
