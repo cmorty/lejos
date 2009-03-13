@@ -455,7 +455,6 @@ public class File {
 			++page_pointer;
 			// Throw exception here if > FILE_TABLE_PAGES - 1:
 			if(page_pointer >= FILE_TABLE_PAGES){
-				File.dumpFileTable();
 				throw new IOException("File table is full. Try deleting some files.");
 			}
 			byte_pointer = 0;
@@ -465,13 +464,11 @@ public class File {
 		++byte_pointer;
 	}
 	
-	/**
-	 * Debugger method. Comment out when no longer buggy.
-	 *
-	 */
+	/*
+	 * Old debugger method. Comment out when no longer buggy.
 	public static void dumpFileTable() {
 		if(files == null) listFiles(); // Fill list
-		/*
+		
 		RConsole.print("byte_pointer = " + byte_pointer + "\n");
 		RConsole.print("page_pointer = " + page_pointer + "\n");
 		RConsole.print("FILE_TABLE_PAGES = " + FILE_TABLE_PAGES + "\n");
@@ -491,8 +488,9 @@ public class File {
 			}
 		}
 		RConsole.print("Please copy and paste this into an email to bbagnall@mts.net");
-         */
+         
 	}
+	*/
 	
 	/**
 	 * Writes the current page in buff[] to flash
@@ -662,6 +660,7 @@ public class File {
 	 * Assumptions: the files[] array has no nulls, and is in increasing order by page_location.
 	 * This scheme moves moves each file down to fill in the empty pages. 
 	 */	
+	// TODO: This isn't a standard Java API method and should not be public. - BB
 	public static void defrag() throws IOException
 	{
 		File file;
@@ -682,6 +681,7 @@ public class File {
 	 * 
 	 * @return page number
 	 */
+	// TODO: This isn't a standard Java API method and should not be public. It is used by  LCP and Sound. - BB
 	public int getPage() {
 		return page_location;
 	}
@@ -690,6 +690,7 @@ public class File {
 	 * Reset the files array after an error.
 	 * Forces listFiles to read from the file table.
 	 */
+	// TODO: This isn't a standard Java API method and should not be public. Used by LCP. - BB
 	public static void reset() {
 		files = null;
 	}

@@ -10,8 +10,7 @@ public final class Math {
 	// Math constants
 	public static final double E  = 2.718281828459045;
 	public static final double PI = 3.141592653589793;
-   public static final double NaN = 0.0D/0.0D; // TODO: Move to Double when available.
-	
+   
    static final float PI2 = 1.570796326794897f;
 	static final double ln10      = 2.30258509299405;
 	static final double ln2       = 0.69314718055995;
@@ -28,12 +27,6 @@ public final class Math {
 	//}
 	
 	private Math() {} // To make sure this class is not instantiated
-
-	// TODO: Move to Double when available.
-	static public boolean isNaN(double val) {
-    	return(val == Math.NaN);
-    }
-    
 	
    // Private because it only works when -1 < x < 1 but it is used by atan2
    private static double ArcTan(double x)  // Using a Chebyshev-Pade approximation
