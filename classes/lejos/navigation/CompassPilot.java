@@ -88,7 +88,7 @@ public class CompassPilot extends TachoPilot {
 	public CompassPilot(CompassSensor compass,  float wheelDiameter,float trackWidth,Motor leftMotor, Motor rightMotor, boolean reverse) {
 		super(wheelDiameter, trackWidth, leftMotor, rightMotor, reverse);
 		this.compass = compass;
-		_heading = (int)compass.getDegreesCartesian(); // Current compass direction = heading target
+		_heading = Math.round(getAngle()); // Current compass direction = heading target
 		regulator.setDaemon(true);
 		regulator.start();
 	}
@@ -117,22 +117,24 @@ public class CompassPilot extends TachoPilot {
 	/**
 	 * Rotates the robot 360 degrees while calibrating the compass
 	 */
-	public void calibrate()
+	public synchronized void calibrate()
 	{
 		int spd =_motorSpeed;
 		setSpeed(100);
 		regulateSpeed(true);
 		compass.startCalibration();
 		super.rotate(360,false);
-		compass.stopCalibration();
+        compass.stopCalibration();
 		setSpeed(spd);
+		_heading = Math.round(getAngle()); // Current compass direction = heading target
+
 	}
 		
 	/**
 	 * Determines the difference between actual compass direction and desired  heading in degrees  
 	 * @return error (in degrees)
 	 */
-	private int getHeadingError() 
+	private int getHeadingError()
 	{
 	   int  err = (int)getAngle() - _heading;
 		// Handles the wrap-around problem:
@@ -181,21 +183,21 @@ public class CompassPilot extends TachoPilot {
  * @param angle   Desired compass heading
  * @param immediateReturn  if TRUE, method returns immediately; robot stops facing in specified direction
  */		
-	public void rotateTo(int angle, boolean immediateReturn)
-	{	
-		_heading = angle;
+	public void rotateTo(float angle, boolean immediateReturn)
+	{
+		_heading = Math.round(angle);
 		_traveling = false;
 		regulateSpeed(true); // accurate use of tacho count to regulate speed;
 		_rotating = true;
 		if(immediateReturn)return;
 		while(_rotating) Thread.yield();
-		_heading = (int) compass.getDegreesCartesian();
+		_heading = Math.round(getAngle());
 	}
 	/**
 	 * robot rotates to the specified compass heading;
 	 * @param heading   Desired compass heading
 	 */	
-	public void rotateTo(int heading)
+	public void rotateTo(float heading)
 	{
 		rotateTo(heading,false);
 	}
@@ -205,7 +207,7 @@ public class CompassPilot extends TachoPilot {
 	 * @param  immediateReturn  - if true, method returns immediately. <br>
 	 * Robot stops when specified angle is reached
 	 */
-	public void rotate(int angle, boolean immediateReturn) 
+	public void rotate(float angle, boolean immediateReturn)
 	{
 		super.rotate(angle,immediateReturn);
 		if(immediateReturn)return;
@@ -219,7 +221,7 @@ public class CompassPilot extends TachoPilot {
 	 * Wheels turn in opposite directions producing a  zero radius turn.
 	 * @param angle  degrees. Positive angle rotates to the left (clockwise); negative to the right. <br>Requires correct values for wheel diameter and track width.
 	 */
-	public void rotate(int angle) 
+	public void rotate(float angle)
 	{
 		rotate(angle,false);
 	}
@@ -270,7 +272,7 @@ public class CompassPilot extends TachoPilot {
 				}
 				if(_rotating && ! pilotIsMoving())
 				{
-					int error = (int) getHeadingError();
+					int error = getHeadingError();
 					if(Math.abs(error) > 3) performRotation(-error);
 					else 
 					{
