@@ -1,15 +1,13 @@
 package lejos.navigation;
 
-
-
 import lejos.nxt.Battery;
 import lejos.nxt.Motor;
 
 /**
- * The TachoPilot class is a software abstraction of the Pilot mechanism of a NXT robot. It contains methods to control robot
- * movements: travel forward or backward in a straight line or a circular path or rotate to a new direction.<br>
- * Note: this class will only work with two independently controlled  motors to steer differentially, so it can
- * rotate within its own footprint (i.e. turn on one spot).<br>
+ * The TachoPilot class is a software abstraction of the Pilot mechanism of a NXT robot. It contains methods to control
+ * robot movements: travel forward or backward in a straight line or a circular path or rotate to a new direction.<br>
+ * Note: this class will only work with two independently controlled motors to steer differentially, so it can rotate
+ * within its own footprint (i.e. turn on one spot).<br>
  * It can be used with robots that have reversed motor design: the robot moves in the direction opposite to the the
  * direction of motor rotation. Uses the Motor class, which regulates motor speed using the NXT motor's built in
  * tachometer.<br>
@@ -35,67 +33,69 @@ import lejos.nxt.Motor;
  * </pre></code>
  * </p>
  **/
-public class TachoPilot implements Pilot
-{
+public class TachoPilot implements Pilot {
   /**
    * Left motor.
    */
   protected final Motor _left;
-  
+
   /**
    * Right motor.
    */
   protected final Motor _right;
-  
+
   /**
    * Left motor degrees per unit of travel.
    */
   protected final float _leftDegPerDistance;
-  
+
   /**
    * Right motor degrees per unit of travel.
    */
   protected final float _rightDegPerDistance;
 
   /**
-   * Left motor revolutions for 360 degree rotation of robot (motors running in opposite directions). Calculated from wheel
-   * diameter and track width. Used by rotate() and steer() methods.
+   * Left motor revolutions for 360 degree rotation of robot (motors running in opposite directions). Calculated from
+   * wheel diameter and track width. Used by rotate() and steer() methods.
    **/
   protected final float _leftTurnRatio;
-  
+
   /**
-   * Right motor revolutions for 360 degree rotation of robot (motors running in opposite directions). Calculated from wheel
-   * diameter and track width. Used by rotate() and steer() methods.
+   * Right motor revolutions for 360 degree rotation of robot (motors running in opposite directions). Calculated from
+   * wheel diameter and track width. Used by rotate() and steer() methods.
    **/
   protected final float _rightTurnRatio;
-  
+
   /**
    * Speed of robot for moving in wheel diameter units per seconds.
    */
-  protected float _robotMoveSpeed;
-  
+  protected float       _robotMoveSpeed;
+
   /**
    * Speed of robot for turning in degree per seconds.
    */
-  protected float _robotTurnSpeed;
+  protected float       _robotTurnSpeed;
 
   /**
    * Motor speed degrees per second. Used by all methods that cause movement.
    */
-  protected int _motorSpeed;
+  protected int         _motorSpeed;
+
   /**
    * Motor rotation forward makes robot move forward if parity == 1.
    */
-  private byte _parity;
+  private byte          _parity;
+
   /**
    * If true, motor speed regulation is turned on.
    */
-  private boolean _regulating = true;
+  private boolean       _regulating = true;
+
   /**
    * Distance between wheels. Used in steer().
    */
   protected final float _trackWidth;
-  
+
   /**
    * Diameter of left wheel.
    */
@@ -115,8 +115,7 @@ public class TachoPilot implements Pilot
    * @param leftMotor The left Motor (e.g., Motor.C).
    * @param rightMotor The right Motor (e.g., Motor.A).
    */
-  public TachoPilot(final float wheelDiameter, final float trackWidth, final Motor leftMotor, final Motor rightMotor)
-  {
+  public TachoPilot(final float wheelDiameter, final float trackWidth, final Motor leftMotor, final Motor rightMotor) {
     this(wheelDiameter, trackWidth, leftMotor, rightMotor, false);
   }
 
@@ -129,8 +128,8 @@ public class TachoPilot implements Pilot
    * @param rightMotor The right Motor (e.g., Motor.A).
    * @param reverse If true, the NXT robot moves forward when the motors are running backward.
    */
-  public TachoPilot(final float wheelDiameter, final float trackWidth, final Motor leftMotor, final Motor rightMotor, final boolean reverse)
-  {
+  public TachoPilot(final float wheelDiameter, final float trackWidth, final Motor leftMotor, final Motor rightMotor,
+      final boolean reverse) {
     this(wheelDiameter, wheelDiameter, trackWidth, leftMotor, rightMotor, reverse);
   }
 
@@ -148,8 +147,8 @@ public class TachoPilot implements Pilot
    * @param rightMotor The right Motor (e.g., Motor.A).
    * @param reverse If true, the NXT robot moves forward when the motors are running backward.
    */
-  public TachoPilot(final float leftWheelDiameter, final float rightWheelDiameter, final float trackWidth, final Motor leftMotor,
-      final Motor rightMotor, final boolean reverse) {
+  public TachoPilot(final float leftWheelDiameter, final float rightWheelDiameter, final float trackWidth,
+      final Motor leftMotor, final Motor rightMotor, final boolean reverse) {
     // left
     _left = leftMotor;
     _leftWheelDiameter = leftWheelDiameter;
@@ -169,32 +168,28 @@ public class TachoPilot implements Pilot
   /**
    * @return left motor.
    */
-  public Motor getLeft()
-  {
+  public Motor getLeft() {
     return _left;
   }
 
   /**
    * @return right motor.
    */
-  public Motor getRight()
-  {
+  public Motor getRight() {
     return _right;
   }
 
   /**
    * @return tachoCount of left motor. Positive value means motor has moved the robot forward.
    */
-  public int getLeftCount()
-  {
+  public int getLeftCount() {
     return _parity * _left.getTachoCount();
   }
 
   /**
    * @return tachoCount of the right motor. Positive value means motor has moved the robot forward.
    */
-  public int getRightCount()
-  {
+  public int getRightCount() {
     return _parity * _right.getTachoCount();
   }
 
@@ -202,8 +197,7 @@ public class TachoPilot implements Pilot
    * @return actual speed of left motor in degrees per second. A negative value if motor is rotating backwards. Updated
    *         every 100 ms.
    **/
-  public int getLeftActualSpeed()
-  {
+  public int getLeftActualSpeed() {
     return _left.getActualSpeed();
   }
 
@@ -211,8 +205,7 @@ public class TachoPilot implements Pilot
    * @return actual speed of right motor in degrees per second. A negative value if motor is rotating backwards. Updated
    *         every 100 ms.
    **/
-  public int getRightActualSpeed()
-  {
+  public int getRightActualSpeed() {
     return _right.getActualSpeed();
   }
 
@@ -231,12 +224,12 @@ public class TachoPilot implements Pilot
    */
   public void setSpeed(final int speed) {
     _motorSpeed = speed;
-    _robotMoveSpeed = speed/Math.max(_leftDegPerDistance, _rightDegPerDistance);
-    _robotTurnSpeed = speed/Math.max(_leftTurnRatio, _rightTurnRatio);
+    _robotMoveSpeed = speed / Math.max(_leftDegPerDistance, _rightDegPerDistance);
+    _robotTurnSpeed = speed / Math.max(_leftTurnRatio, _rightTurnRatio);
     setSpeed(speed, speed);
   }
-  
-  private void setSpeed(final int leftSpeed, final int rightSpeed){
+
+  private void setSpeed(final int leftSpeed, final int rightSpeed) {
     _left.regulateSpeed(_regulating);
     _left.smoothAcceleration(!isMoving());
     _right.regulateSpeed(_regulating);
@@ -249,7 +242,7 @@ public class TachoPilot implements Pilot
    * @see lejos.navigation.Pilot#setMoveSpeed(float)
    */
   public void setMoveSpeed(float speed) {
-    _robotMoveSpeed=speed;
+    _robotMoveSpeed = speed;
     setSpeed(Math.round(speed * _leftDegPerDistance), Math.round(speed * _rightDegPerDistance));
   }
 
@@ -273,7 +266,7 @@ public class TachoPilot implements Pilot
    * @see lejos.navigation.Pilot#setTurnSpeed(float)
    */
   public void setTurnSpeed(float speed) {
-    _robotTurnSpeed=speed;
+    _robotTurnSpeed = speed;
     setSpeed(Math.round(speed * _leftTurnRatio), Math.round(speed * _rightTurnRatio));
   }
 
@@ -296,14 +289,12 @@ public class TachoPilot implements Pilot
   /**
    * Moves the NXT robot forward until stop() is called.
    */
-  public void forward()
-  {
+  public void forward() {
     setSpeed(_motorSpeed);
-    if (_parity == 1)
-    {
+    if (_parity == 1) {
       fwd();
-    } else
-    {
+    }
+    else {
       bak();
     }
   }
@@ -311,14 +302,12 @@ public class TachoPilot implements Pilot
   /**
    * Moves the NXT robot backward until stop() is called.
    */
-  public void backward()
-  {
+  public void backward() {
     setSpeed(_motorSpeed);
-    if (_parity == 1)
-    {
+    if (_parity == 1) {
       bak();
-    } else
-    {
+    }
+    else {
       fwd();
     }
   }
@@ -330,8 +319,7 @@ public class TachoPilot implements Pilot
    * 
    * @param angle The wanted angle of rotation in degrees. Positive angle rotate left (clockwise), negative right.
    */
-  public void rotate(final float angle)
-  {
+  public void rotate(final float angle) {
     rotate(angle, false);
   }
 
@@ -343,32 +331,29 @@ public class TachoPilot implements Pilot
    * @param angle The wanted angle of rotation in degrees. Positive angle rotate left (clockwise), negative right.
    * @param immediateReturn If true this method returns immediately.
    */
-  public void rotate(final float  angle, final boolean immediateReturn)
-  {
+  public void rotate(final float angle, final boolean immediateReturn) {
     setSpeed(Math.round(_robotTurnSpeed * _leftTurnRatio), Math.round(_robotTurnSpeed * _rightTurnRatio));
     int rotateAngleLeft = _parity * (int) (angle * _leftTurnRatio);
     int rotateAngleRight = _parity * (int) (angle * _rightTurnRatio);
     _left.rotate(-rotateAngleLeft, true);
     _right.rotate(rotateAngleRight, immediateReturn);
-    if(!immediateReturn)
-    {
-      while(_left.isRotating())Thread.yield();
+    if (!immediateReturn) {
+      while (_left.isRotating())
+        Thread.yield();
     }
   }
 
   /**
    * @return the angle of rotation of the robot since last call to reset of tacho count;
    */
-  public float getAngle()
-  {
-    return ((_right.getTachoCount()/_rightTurnRatio) - (_left.getTachoCount()/_leftTurnRatio)) / 2.0f;
+  public float getAngle() {
+    return _parity * ((_right.getTachoCount() / _rightTurnRatio) - (_left.getTachoCount() / _leftTurnRatio)) / 2.0f;
   }
 
   /**
    * Stops the NXT robot.
    */
-  public void stop()
-  {
+  public void stop() {
     _left.stop();
     _right.stop();
   }
@@ -376,16 +361,14 @@ public class TachoPilot implements Pilot
   /**
    * @return true if the NXT robot is moving.
    **/
-  public boolean isMoving()
-  {
+  public boolean isMoving() {
     return _left.isMoving() || _right.isMoving();
   }
 
   /**
    * Resets tacho count for both motors.
    **/
-  public void reset()
-  {
+  public void reset() {
     _left.resetTachoCount();
     _right.resetTachoCount();
   }
@@ -393,8 +376,7 @@ public class TachoPilot implements Pilot
   /**
    * @return distance traveled since last reset of tacho count.
    **/
-  public float getTravelDistance()
-  {
+  public float getTravelDistance() {
     float left = _left.getTachoCount() / _leftDegPerDistance;
     float right = _right.getTachoCount() / _rightDegPerDistance;
     return _parity * (left + right) / 2.0f;
@@ -407,8 +389,7 @@ public class TachoPilot implements Pilot
    * 
    * @param distance The distance to move. Unit of measure for distance must be same as wheelDiameter and trackWidth.
    **/
-  public void travel(final float distance)
-  {
+  public void travel(final float distance) {
     travel(distance, false);
   }
 
@@ -420,14 +401,13 @@ public class TachoPilot implements Pilot
    * @param distance The distance to move. Unit of measure for distance must be same as wheelDiameter and trackWidth.
    * @param immediateReturn If true this method returns immediately.
    */
-  public void travel(final float distance, final boolean immediateReturn)
-  {
+  public void travel(final float distance, final boolean immediateReturn) {
     setSpeed(Math.round(_robotMoveSpeed * _leftDegPerDistance), Math.round(_robotMoveSpeed * _rightDegPerDistance));
-    _left.rotate((int) (_parity * distance * _leftDegPerDistance ), true);
+    _left.rotate((int) (_parity * distance * _leftDegPerDistance), true);
     _right.rotate((int) (_parity * distance * _rightDegPerDistance), immediateReturn);
-    if(!immediateReturn)
-    {
-      while(_left.isRotating())Thread.yield();
+    if (!immediateReturn) {
+      while (_left.isRotating())
+        Thread.yield();
     }
   }
 
@@ -448,8 +428,7 @@ public class TachoPilot implements Pilot
    * @param turnRate If positive, the left wheel is on the inside of the turn. If negative, the left wheel is on the
    *          outside.
    */
-  public void steer(final int turnRate)
-  {
+  public void steer(final int turnRate) {
     steer(turnRate, Integer.MAX_VALUE, true);
   }
 
@@ -471,8 +450,7 @@ public class TachoPilot implements Pilot
    *          outside.
    * @param angle The angle through which the robot will rotate. If negative, robot traces the turning circle backwards.
    */
-  public void steer(final int turnRate, int angle)
-  {
+  public void steer(final int turnRate, int angle) {
     steer(turnRate, angle, false);
   }
 
@@ -495,38 +473,32 @@ public class TachoPilot implements Pilot
    * @param angle The angle through which the robot will rotate. If negative, robot traces the turning circle backwards.
    * @param immediateReturn If true this method returns immediately.
    */
-  public void steer(final int turnRate, final int angle, final boolean immediateReturn)
-  {
+  public void steer(final int turnRate, final int angle, final boolean immediateReturn) {
     // TODO: make this work with wheels of different size
     Motor inside;
     Motor outside;
     int rate = turnRate;
-    if (rate < -200)
-    {
+    if (rate < -200) {
       rate = -200;
     }
-    if (rate > 200)
-    {
+    if (rate > 200) {
       rate = 200;
     }
-    if (rate == 0)
-    {
-      if (angle < 0)
-      {
+    if (rate == 0) {
+      if (angle < 0) {
         backward();
-      } else
-      {
+      }
+      else {
         forward();
       }
       return;
     }
-    if (turnRate < 0)
-    {
+    if (turnRate < 0) {
       inside = _right;
       outside = _left;
       rate = -rate;
-    } else
-    {
+    }
+    else {
       inside = _left;
       outside = _right;
     }
@@ -535,18 +507,16 @@ public class TachoPilot implements Pilot
     inside.setSpeed((int) (_motorSpeed * steerRatio));
     if (angle == Integer.MAX_VALUE) // no limit angle for turn
     {
-      if (_parity == 1)
-      {
+      if (_parity == 1) {
         outside.forward();
-      } else
-      {
+      }
+      else {
         outside.backward();
       }
-      if (_parity * steerRatio > 0)
-      {
+      if (_parity * steerRatio > 0) {
         inside.forward();
-      } else
-      {
+      }
+      else {
         inside.backward();
       }
       return;
@@ -554,27 +524,25 @@ public class TachoPilot implements Pilot
     float rotAngle = angle * _trackWidth * 2 / (_leftWheelDiameter * (1 - steerRatio));
     inside.rotate(_parity * (int) (rotAngle * steerRatio), true);
     outside.rotate(_parity * (int) rotAngle, immediateReturn);
-    if (immediateReturn)
-    {
+    if (immediateReturn) {
       return;
     }
-    while(inside.isRotating())Thread.yield();
+    while (inside.isRotating())
+      Thread.yield();
     inside.setSpeed(outside.getSpeed());
   }
 
   /**
    * @return true if either motor actual speed is zero.
    */
-  public boolean stalled()
-  {
+  public boolean stalled() {
     return (0 == _left.getActualSpeed()) || (0 == _right.getActualSpeed());
   }
 
   /**
    * Motors backward. This is called by forward() and backward().
    */
-  private void bak()
-  {
+  private void bak() {
     _left.backward();
     _right.backward();
   }
@@ -586,8 +554,7 @@ public class TachoPilot implements Pilot
    * 
    * @param yes Set motor speed regulation on = true or off = false.
    */
-  public void regulateSpeed(final boolean yes)
-  {
+  public void regulateSpeed(final boolean yes) {
     _regulating = yes;
     _left.regulateSpeed(yes);
     _right.regulateSpeed(yes);
@@ -596,65 +563,68 @@ public class TachoPilot implements Pilot
   /**
    * Motors forward. This is called by forward() and backward().
    */
-  private void fwd()
-  {
+  private void fwd() {
     _left.forward();
     _right.forward();
   }
- /**
+
+  /**
    * Moves the NXT robot in a circular path with a specified radius. <br>
-   * The center of the turning circle is on the right side of the robot iff parameter radius is negative;  <br>
-   * Postcondition:  Motor speeds are unpredictable.
-   * Note: Not supported for a robot with wheels of different size.
-   * @param radius of the circular path. If positive, the left wheel is on the inside of the turn.  If negative, the left wheel is on the outside.
+   * The center of the turning circle is on the right side of the robot iff parameter radius is negative; <br>
+   * Postcondition: Motor speeds are unpredictable. Note: Not supported for a robot with wheels of different size.
+   * 
+   * @param radius of the circular path. If positive, the left wheel is on the inside of the turn. If negative, the left
+   *          wheel is on the outside.
    */
-  public void turn(final float radius)
-  {
+  public void turn(final float radius) {
     steer(turnRate(radius));
   }
 
- /**
-   * Moves the NXT robot in a circular arc through the specificd angle;  <br>
-   * The center of the turning circle is on the right side of the robot iff parameter radius is negative.
-   * Robot will stop when total rotation equals angle. If angle is negative, robot will move travel backwards.
-   * Note: Not supported for a robot with wheels of different size.
+  /**
+   * Moves the NXT robot in a circular arc through the specificd angle; <br>
+   * The center of the turning circle is on the right side of the robot iff parameter radius is negative. Robot will
+   * stop when total rotation equals angle. If angle is negative, robot will move travel backwards. Note: Not supported
+   * for a robot with wheels of different size.
+   * 
    * @param radius radius of the turning circle
    * @param angle The sign of the angle determines the direction of robot motion
    */
-  public void turn(final float radius, final int angle)
-  {
-    steer(turnRate(radius),angle);
+  public void turn(final float radius, final int angle) {
+    steer(turnRate(radius), angle);
   }
+
   /**
-   *  Move in a circular arc with specified radius; the center of the turning circle <br>
- * is on the right side of the robot if the radius is negative.
-   * Note: Not supported for a robot with wheels of different size.
+   * Move in a circular arc with specified radius; the center of the turning circle <br>
+   * is on the right side of the robot if the radius is negative. Note: Not supported for a robot with wheels of
+   * different size.
+   * 
    * @param radius radius of the turning circle
    * @param angle The sign of the angle determines the direction of robot motion
    * @param immediateReturn If true this method returns immediately.
    */
-  public void turn(final float radius, final int angle, final boolean immediateReturn)
-  {
-    steer(turnRate(radius),angle,immediateReturn);
+  public void turn(final float radius, final int angle, final boolean immediateReturn) {
+    steer(turnRate(radius), angle, immediateReturn);
   }
+
   /**
    * Calculates the turn rate corresponding to the turn radius; <br>
-   * use as the parameter for steer()
-   * negative argument means center of turn is on right, so angle of turn is negative
+   * use as the parameter for steer() negative argument means center of turn is on right, so angle of turn is negative
+   * 
    * @param radius
-   * @return
-   * steer()
+   * @return steer()
    */
-  private int turnRate(float radius)
-  {
-    // TODO: parameter should be final
-    int direction = 1;
-    if (radius < 0)
-    {
+  private int turnRate(final float radius) {
+    int direction;
+    float radiusToUse;
+    if (radius < 0) {
       direction = -1;
-      radius = -radius;
+      radiusToUse = -radius;
     }
-    float ratio = (2 * radius - _trackWidth) / (2 * radius + _trackWidth);
+    else {
+      direction = 1;
+      radiusToUse = radius;
+    }
+    float ratio = (2 * radiusToUse - _trackWidth) / (2 * radiusToUse + _trackWidth);
     return Math.round(direction * 100 * (1 - ratio));
   }
 }
