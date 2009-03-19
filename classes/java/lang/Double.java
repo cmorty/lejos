@@ -2,31 +2,31 @@ package java.lang;
 
 /**
  * Minimal Double implementation to support parseDouble(), isNaN(), and NaN.
- * @author bb
- *
+ * 
+ * @author bb, Sven Köhler
  */
 public class Double
 {
-    public static final double POSITIVE_INFINITY = 1.0d / 0.0d;
-    public static final double NEGATIVE_INFINITY = -1.0d / 0.0d;
+	public static final double POSITIVE_INFINITY = 1.0d / 0.0d;
+	public static final double NEGATIVE_INFINITY = -1.0d / 0.0d;
 	public static final double NaN = 0.0d / 0.0d;
 	
-    public static final int SIZE = 64;
-    
-    //MISSING implements Comparable
-    //MISSING public static Class TYPE
-    //MISSING public static int compare(double, double)
-    //MISSING public static long doubleToLongBits(double)
-    //MISSING public static long doubleToRawLongBits(double)
-    //MISSING public boolean equals(Object obj)
-    //MISSING public int hashCode()
-    //MISSING public boolean isNaN()
-    //MISSING public static boolean isNaN(double)
-    //MISSING public static double longBitsToDouble(long)
-    //MISSING public static String toHexString(double)
-    //MISSING public String toString()
-    //MISSING public static String toString(double)
-    
+	public static final int SIZE = 64;
+	
+	//MISSING implements Comparable
+	//MISSING public static Class TYPE
+	//MISSING public static int compare(double, double)
+	//MISSING public static long doubleToLongBits(double)
+	//MISSING public static long doubleToRawLongBits(double)
+	//MISSING public boolean equals(Object obj)
+	//MISSING public int hashCode()
+	//MISSING public boolean isNaN()
+	//MISSING public static boolean isNaN(double)
+	//MISSING public static double longBitsToDouble(long)
+	//MISSING public static String toHexString(double)
+	//MISSING public String toString()
+	//MISSING public static String toString(double)
+	
 	private double value;
 	
 	public Double(double val)
@@ -64,15 +64,15 @@ public class Double
 		return Double.isInfinite(this.value);
 	}
 	
-    public static boolean isInfinite(double v)
-    {
-    	return (v == POSITIVE_INFINITY) || (v == NEGATIVE_INFINITY);
-    }
+	public static boolean isInfinite(double v)
+	{
+		return (v == POSITIVE_INFINITY) || (v == NEGATIVE_INFINITY);
+	}
 
-    public long longValue()
-    {
-    	return (long)this.value;
-    }
+	public long longValue()
+	{
+		return (long)this.value;
+	}
 	
 	/**
 	 * Converts a String value into a float 
