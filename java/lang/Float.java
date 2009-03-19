@@ -150,13 +150,12 @@ public final class Float
 	
 	public boolean isNaN()
 	{
-		return(Float.isNaN(this.value));
+		return Float.isNaN(this.value);
 	}
 	
 	public static boolean isNaN(float val)
 	{
-		//TODO does this actually work?
-		return(val == Float.NaN);
+		return val != val;
 	}
 	
 	public long longValue()

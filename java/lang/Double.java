@@ -21,8 +21,6 @@ public class Double
 	//MISSING public static long doubleToRawLongBits(double)
 	//MISSING public boolean equals(Object obj)
 	//MISSING public int hashCode()
-	//MISSING public boolean isNaN()
-	//MISSING public static boolean isNaN(double)
 	//MISSING public static double longBitsToDouble(long)
 	//MISSING public static String toHexString(double)
 	//MISSING public String toString()
@@ -70,6 +68,16 @@ public class Double
 		return v == POSITIVE_INFINITY || v == NEGATIVE_INFINITY;
 	}
 
+	public boolean isNaN()
+	{
+		return Double.isNaN(this.value);
+	}
+	
+	public static boolean isNaN(double val)
+	{
+		return val != val;
+	}
+	
 	public long longValue()
 	{
 		return (long)this.value;
