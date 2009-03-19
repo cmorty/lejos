@@ -36,7 +36,7 @@ public class Double
 	
 	public Double(String val)
 	{
-		this.value = parseDouble(val);
+		this.value = Double.parseDouble(val);
 	}
 	
 	public byte byteValue()
