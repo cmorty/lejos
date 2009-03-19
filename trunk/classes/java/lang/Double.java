@@ -5,22 +5,73 @@ package java.lang;
  * @author bb
  *
  */
-public class Double {
-
+public class Double
+{
+    public static final double POSITIVE_INFINITY = 1.0d / 0.0d;
+    public static final double NEGATIVE_INFINITY = -1.0d / 0.0d;
+	public static final double NaN = 0.0d / 0.0d;
+	
+    public static final int SIZE = 64;
+    
+    //MISSING implements Comparable
+    //MISSING public static Class TYPE
+    //MISSING public static int compare(double, double)
+    //MISSING public static long doubleToLongBits(double)
+    //MISSING public static long doubleToRawLongBits(double)
+    //MISSING public boolean equals(Object obj)
+    //MISSING public int hashCode()
+    //MISSING public boolean isNaN()
+    //MISSING public static boolean isNaN(double)
+    //MISSING public static double longBitsToDouble(long)
+    //MISSING public static String toHexString(double)
+    //MISSING public String toString()
+    //MISSING public static String toString(double)
+    
 	private double value;
 	
-	public static final double NaN = 0.0D / 0.0D;
-	
-	public Double(double val) {
+	public Double(double val)
+	{
 		this.value = val;
 	}
 	
-	static public boolean isNaN(double val) {
-    	return(val == Double.NaN);
-    }
+	public Double(String val)
+	{
+		this.value = parseDouble(val);
+	}
 	
-	public boolean isNaN() {
-    	return(this.value == Double.NaN);
+	public byte byteValue()
+	{
+		return (byte)this.value;
+	}
+	
+	public double doubleValue()
+	{
+		return this.value;
+	}
+	
+	public float floatValue()
+	{
+		return (float)this.value;
+	}
+	
+	public int intValue()
+	{
+		return (int)this.value;
+	}
+	
+	public boolean isInfinite()
+	{
+		return Double.isInfinite(this.value);
+	}
+	
+    public static boolean isInfinite(double v)
+    {
+    	return (v == POSITIVE_INFINITY) || (v == NEGATIVE_INFINITY);
+    }
+
+    public long longValue()
+    {
+    	return (long)this.value;
     }
 	
 	/**
@@ -44,11 +95,13 @@ public class Double {
 				result += (curVal/divisor);
 			}
 		}
+		else {
+			index = s.length(); // If number string had no decimal
+		}
+			
 		
 		// Now add number characters to left of decimal
 		int multiplier = 1;
-		if(index < 0) // i.e. -1
-			index = s.length(); // If number string had no decimal
 		int finish = negative ? 1 : 0; // Determine finishing position
 		
 		for(int i=index-1;i>= finish;i--) {
@@ -60,5 +113,20 @@ public class Double {
 		}	
 		
 		return negative ? -result : result;
+	}
+	
+	public short shortValue()
+	{
+		return (short)this.value;
+	}
+	
+	public static Double valueOf(double d)
+	{
+		return new Double(d);
+	}
+	
+	public static Double valueOf(String s)
+	{
+		return new Double(s);
 	}
 }
