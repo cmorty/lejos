@@ -77,21 +77,32 @@ OPCODE(OP_RET)
 #if FP_ARITHMETIC
 
 OPCODE(OP_DCMPL)
-OPCODE(OP_DCMPG)
-  // TBD: no distinction between opcodes
   {
     //JDOUBLE d1, d2;
     pop_jdouble(&d2);
     pop_jdouble(&d1);
-    push_word( do_dcmp (d1.dnum, d2.dnum, 0));
+    push_word( do_dcmp (d1.dnum, d2.dnum, -1));
+  }
+  DISPATCH;
+
+OPCODE(OP_DCMPG)
+  {
+    //JDOUBLE d1, d2;
+    pop_jdouble(&d2);
+    pop_jdouble(&d1);
+    push_word( do_dcmp (d1.dnum, d2.dnum, 1));
   }
   DISPATCH;
 
 OPCODE(OP_FCMPL)
+  tempStackWord = pop_word();
+  just_set_top_word( do_fcmp (word2jfloat(get_top_word()), word2jfloat(tempStackWord), -1));
+  DISPATCH;
+
 OPCODE(OP_FCMPG)
   // TBD: no distinction between opcodes
   tempStackWord = pop_word();
-  just_set_top_word( do_fcmp (word2jfloat(get_top_word()), word2jfloat(tempStackWord), 0));
+  just_set_top_word( do_fcmp (word2jfloat(get_top_word()), word2jfloat(tempStackWord), 1));
   DISPATCH;
   
 #endif // FP_ARITHMETIC
