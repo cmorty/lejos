@@ -16,6 +16,7 @@ public class Double
 	//MISSING implements Comparable
 	//MISSING public static Class TYPE
 	//MISSING public static int compare(double, double)
+	//MISSING public int compareTo(Object)
 	//MISSING public static long doubleToLongBits(double)
 	//MISSING public static long doubleToRawLongBits(double)
 	//MISSING public boolean equals(Object obj)
@@ -66,7 +67,7 @@ public class Double
 	
 	public static boolean isInfinite(double v)
 	{
-		return (v == POSITIVE_INFINITY) || (v == NEGATIVE_INFINITY);
+		return v == POSITIVE_INFINITY || v == NEGATIVE_INFINITY;
 	}
 
 	public long longValue()
