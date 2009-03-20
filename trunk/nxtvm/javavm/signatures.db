@@ -70,7 +70,7 @@ test(Ljava/lang/String;Z)V
 testEQ(Ljava/lang/String;II)V
 
 # java.lang.Float
-floatToIntBits(F)I
+floatToRawIntBits(F)I
 intBitsToFloat(I)F
 
 #lejos.nxt.LCD
@@ -175,4 +175,8 @@ i2cCompleteById(I[BI)I
 #Bluetooth
 btEnable()V
 btDisable()V
+
+# java.lang.Double
+doubleToRawLongBits(D)J
+longBitsToDouble(J)D
 
