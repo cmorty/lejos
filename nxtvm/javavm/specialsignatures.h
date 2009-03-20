@@ -42,7 +42,7 @@
 #define setThrottle_4I_5V 35
 #define test_4Ljava_3lang_3String_2Z_5V 36
 #define testEQ_4Ljava_3lang_3String_2II_5V 37
-#define floatToIntBits_4F_5I 38
+#define floatToRawIntBits_4F_5I 38
 #define intBitsToFloat_4I_5F 39
 #define drawString_4Ljava_3lang_3String_2II_5V 40
 #define drawInt_4III_5V 41
@@ -109,4 +109,6 @@
 #define i2cCompleteById_4I_1BI_5I 102
 #define btEnable_4_5V 103
 #define btDisable_4_5V 104
+#define doubleToRawLongBits_4D_5J 105
+#define longBitsToDouble_4J_5D 106
 #endif // _SPECIALSIGNATURES_H

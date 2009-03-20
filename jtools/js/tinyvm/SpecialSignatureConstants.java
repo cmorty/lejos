@@ -43,7 +43,7 @@ public interface SpecialSignatureConstants {
     "setThrottle(I)V",
     "test(Ljava/lang/String;Z)V",
     "testEQ(Ljava/lang/String;II)V",
-    "floatToIntBits(F)I",
+    "floatToRawIntBits(F)I",
     "intBitsToFloat(I)F",
     "drawString(Ljava/lang/String;II)V",
     "drawInt(III)V",
@@ -109,6 +109,8 @@ public interface SpecialSignatureConstants {
     "getUserPages()I",
     "i2cCompleteById(I[BI)I",
     "btEnable()V",
-    "btDisable()V"
+    "btDisable()V",
+    "doubleToRawLongBits(D)J",
+    "longBitsToDouble(J)D"
   };
 }

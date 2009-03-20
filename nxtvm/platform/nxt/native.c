@@ -169,9 +169,19 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
       throw_exception(error);
     }
     return EXEC_CONTINUE;
-  case floatToIntBits_4F_5I:	// Fall through
+  case floatToRawIntBits_4F_5I:	// Fall through
   case intBitsToFloat_4I_5F:
     push_word(paramBase[0]);
+    return EXEC_CONTINUE;
+  case doubleToRawLongBits_4D_5J:	// Fall through
+  case longBitsToDouble_4J_5D:
+    //push_word(paramBase[0]);
+    {
+      U32 w1 = paramBase[0];
+      U32 w2 = paramBase[1];
+      push_word(w1);
+      push_word(w2);
+    }
     return EXEC_CONTINUE;
   case drawString_4Ljava_3lang_3String_2II_5V:
     {
