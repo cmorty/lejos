@@ -55,7 +55,7 @@ public final class Float
 	}
 	
 	/**
-	 * Returns the bit represention of a single-float value.
+	 * Returns the bit representation of a single-float value.
 	 * The result is a representation of the floating-point argument 
 	 * according to the IEEE 754 floating-point "single 
 	 * precision" bit layout. 
@@ -74,8 +74,7 @@ public final class Float
 	 * <code>0xff800000</code>.
 	 * <p>
 	 * If the argument is NaN, the result is the integer
-	 * representing the actual NaN value.  The lejos implementation 
-	 * behaves like floatToRawIntBits and does not collapse NaN values.
+	 * representing the actual NaN value.  
 	 * </ul>
 	 * In all cases, the result is an integer that, when given to the 
 	 * {@link #intBitsToFloat(int)} method, will produce a floating-point 
@@ -84,8 +83,30 @@ public final class Float
 	 * @param   value   a floating-point number.
 	 * @return  the bits that represent the floating-point number.
 	 */
-	public static native int floatToIntBits(float value);
+	public static native int floatToRawIntBits(float value);
 
+    /**
+	 * Returns the bit representation of a single-float value.
+	 * The result is a representation of the floating-point argument
+	 * according to the IEEE 754 floating-point "single
+	 * precision" bit layout. Unlike <code>floatToRawIntBits</code> this
+     * method does collapse all NaN values into a standard single value. This
+     * value is <code>0x7fc00000</code>.
+     * @param value a floating-point number.
+     * @return the bits that represent the floating-point number.
+     */
+    public static int floatToIntBits(float value)
+    {
+        int i = floatToRawIntBits(value);
+        // Collapse any NaN values
+        // Mask out the sign bit for the tests
+        int j = i & 0x7fffffff;
+        // and check for being in the NaN range
+        if (j >= 0x7f800001 && j <= 0x7fffffff)
+            return 0x7fc00000;
+        else
+            return i;
+    }
 	/**
 	 * Returns the float value of this Float  object.
 	 * @return the float value represented by this object

@@ -138,4 +138,80 @@ public class Double
 	{
 		return new Double(s);
 	}
+
+	/**
+	 * Returns the bit representation of a double-float value.
+	 * The result is a representation of the floating-point argument 
+	 * according to the IEEE 754 floating-point "double 
+	 * precision" bit layout. 
+	 * <ul>
+	 * <li>If the argument is positive infinity, the result is 
+	 * <code>0x7ff0000000000000</code>.
+	 * <li>If the argument is negative infinity, the result is 
+	 * <code>0xfff0000000000000</code>.
+	 * <p>
+	 * If the argument is NaN, the result is the integer
+	 * representing the actual NaN value.  
+	 * </ul>
+	 * In all cases, the result is an integer that, when given to the 
+	 * {@link #longBitsToDouble(long)} method, will produce a floating-point
+	 * value equal to the argument to <code>doubleToRawLongBits</code>.
+	 * 
+	 * @param   d   a floating-point number.
+	 * @return  the bits that represent the floating-point number.
+	 */    
+    public static native long doubleToRawLongBits(double d);
+
+
+    /**
+	 * Returns the bit representation of a double-float value.
+	 * The result is a representation of the floating-point argument
+	 * according to the IEEE 754 floating-point "double
+	 * precision" bit layout. Unlike <code>doubleToRawLongBits</code> this
+     * method does collapse all NaN values into a standard single value. This
+     * value is <code>0x7ff8000000000000</code>.
+     * @param value a floating-point number.
+     * @return the bits that represent the floating-point number.
+     */
+    public static long doubleToLongBits(double value)
+    {
+        long l = doubleToRawLongBits(value);
+        // Collapse any NaN values
+        // Mask out the sign bit for the tests
+        long m = l & 0x7fffffffffffffffL;
+        // and check for being in the NaN range
+        if (m >= 0x7ff0000000000001L && m <= 0x7fffffffffffffffL)
+            return 0x7ff8000000000000L;
+        else
+            return l;
+    }
+
+	/**
+	 * Returns the double-float corresponding to a given bit representation.
+	 * The argument is considered to be a representation of a
+	 * floating-point value according to the IEEE 754 floating-point
+	 * "double precision" bit layout.
+	 * <p>
+	 * If the argument is <code>0x7ff0000000000000</code>, the result is positive
+	 * infinity.
+	 * <p>
+	 * If the argument is <code>0xfff0000000000000</code>, the result is negative
+	 * infinity.
+	 * <p>
+     * If the argument is any value in the range 0x7ff0000000000001L through
+     * 0x7fffffffffffffffL or in the range 0xfff0000000000001L through
+     * 0xffffffffffffffffL, the result is a NaN.
+     * All IEEE 754 NaN values of type <code>float</code> are, in effect,
+	 * lumped together by the Java programming language into a single
+	 * <code>double</code> value called NaN.  Distinct values of NaN are only
+	 * accessible by use of the <code>Double.doubleToRawLongBits</code> method.
+	 * <p>
+	 *
+	 * @param   l a long.
+	 * @return  the double-format floating-point value with the same bit
+	 *		  pattern.
+	 */
+    public static native double longBitsToDouble(long l);
+
+
 }
