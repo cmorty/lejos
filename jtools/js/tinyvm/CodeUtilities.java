@@ -216,7 +216,7 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
          throw new TinyVMException("Bug CU-3: Didn't find class " + pClassName
             + " from class " + iCF.getClassName());
       }
-      iBinary.markClassUsed(pClassRecord);
+      iBinary.markClassUsed(pClassRecord, true);
    }
 
    /**
@@ -245,14 +245,14 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
       ConstantNameAndType cnat = (ConstantNameAndType) iCF.getConstantPool()
          .getConstant(pFieldEntry.getNameAndTypeIndex());
       String pName = cnat.getName(iCF.getConstantPool());
-      iBinary.markClassUsed(pClassRecord);
+      iBinary.markClassUsed(pClassRecord, false);
       StaticFieldRecord pFieldRecord = pClassRecord.getStaticFieldRecord(pName);
       if (pFieldRecord == null)
       {
           throw new TinyVMException("Failed to locate static field " + pName +
                  " refrenced via class " + className + " from class " + iCF.getClassName());
       }
-      iBinary.markClassUsed(pFieldRecord.getClassRecord());
+      iBinary.markClassUsed(pFieldRecord.getClassRecord(), false);
       pFieldRecord.markUsed();
    }
 

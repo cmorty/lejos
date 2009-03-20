@@ -150,8 +150,13 @@ public class Binary
     * 
     * @param classRecord the class to be marked
     */
-   public void markClassUsed(ClassRecord classRecord)
+   public void markClassUsed(ClassRecord classRecord, boolean instance)
    {
+       if (instance && !classRecord.instanceUsed())
+       {
+           classRecord.markInstanceUsed();
+           usedClassCount++;
+       }
        if (!classRecord.used())
        {
            classRecord.markUsed();
@@ -160,8 +165,8 @@ public class Binary
    }
 
    /**
-    * Return the current marking gneration. This is used to ensure that for
-    * each new itteration (or generation) of the recusrsive mark we will 
+    * Return the current marking generation. This is used to ensure that for
+    * each new iteration (or generation) of the recursive mark we will
     * walk all of the code at least once.
     * @return current generation
     */
@@ -362,6 +367,7 @@ public class Binary
          String className = specialClasses[i];
          ClassRecord classRecord = getClassRecord(className);
          classRecord.markUsed();
+         classRecord.markInstanceUsed();
       }
       // Add the run method that is called directly from the vm
       Signature staticInit = new Signature("<clinit>()V");
@@ -372,6 +378,7 @@ public class Binary
       {
          ClassRecord classRecord = getClassRecord(entryClassNames[i]);
          classRecord.markUsed();
+         classRecord.markInstanceUsed();
          classRecord.markMethods();
       }
 
@@ -392,7 +399,8 @@ public class Binary
             if (classRecord.used())
             {
                classRecord.addInterfaces(classRecord);
-               classRecord.findHiddenMethods();
+               if (classRecord.instanceUsed())
+                  classRecord.findHiddenMethods();
             }
          } 
          // Now recursively mark any classes that can be called directly by

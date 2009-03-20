@@ -54,6 +54,7 @@ public class ClassRecord implements WritableData
    boolean iUseAllMethods = false;
    final Vector iImplementedBy = new Vector();
    private boolean isUsed = false;
+   private boolean isInstanceUsed = false;
 
    public void useAllMethods ()
    {
@@ -604,7 +605,7 @@ public class ClassRecord implements WritableData
    public void markMethod(MethodRecord pRec, boolean directCall) throws TinyVMException
    {
        // Is this a simple class?
-       if (directCall) iBinary.markClassUsed(this);
+       if (directCall) iBinary.markClassUsed(this, (pRec.getFlags() & TinyVMConstants.M_STATIC) == 0);
        pRec.markCalled(iCF, iBinary);
        if (!iImplementedBy.isEmpty())
        {
@@ -736,10 +737,24 @@ public class ClassRecord implements WritableData
           getParent().markUsed();
        isUsed = true;
    }
+
+
+   public void markInstanceUsed()
+   {
+       if (!isInstanceUsed && hasParent())
+          getParent().markInstanceUsed();
+       isInstanceUsed = true;
+       markUsed();
+   }
    
    public boolean used()
    {
        return isUsed;
+   }
+
+   public boolean instanceUsed()
+   {
+       return isInstanceUsed;
    }
    // private static final Logger _logger = Logger.getLogger("TinyVM");
 }
