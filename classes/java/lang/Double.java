@@ -17,11 +17,8 @@ public class Double
 	//MISSING public static Class TYPE
 	//MISSING public static int compare(double, double)
 	//MISSING public int compareTo(Object)
-	//MISSING public static long doubleToLongBits(double)
-	//MISSING public static long doubleToRawLongBits(double)
 	//MISSING public boolean equals(Object obj)
 	//MISSING public int hashCode()
-	//MISSING public static double longBitsToDouble(long)
 	//MISSING public static String toHexString(double)
 	//MISSING public String toString()
 	//MISSING public static String toString(double)
