@@ -19,7 +19,6 @@ public final class Float
 	//MISSING public static int compare(float, float)
 	//MISSING public int compareTo(Object)
 	//MISSING public boolean equals(Object obj)
-	//MISSING public static int floatToRawIntBits(float)
 	//MISSING public int hashCode()
 	//MISSING public static String toHexString(float)
 
