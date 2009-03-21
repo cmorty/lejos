@@ -5,7 +5,7 @@ package java.lang;
  * 
  * @author bb, Sven Köhler
  */
-public class Double
+public final class Double
 {
 	public static final double POSITIVE_INFINITY = 1.0d / 0.0d;
 	public static final double NEGATIVE_INFINITY = -1.0d / 0.0d;
@@ -17,8 +17,6 @@ public class Double
 	//MISSING public static Class TYPE
 	//MISSING public static int compare(double, double)
 	//MISSING public int compareTo(Object)
-	//MISSING public boolean equals(Object obj)
-	//MISSING public int hashCode()
 	//MISSING public static String toHexString(double)
 	//MISSING public String toString()
 	//MISSING public static String toString(double)
@@ -45,9 +43,22 @@ public class Double
 		return this.value;
 	}
 	
+	public boolean equals(Object o)
+	{
+		//instanceof returns false for o==null
+		return (o instanceof Double)
+			&& (doubleToLongBits(this.value) == doubleToLongBits(((Double)o).value));
+	}
+	
 	public float floatValue()
 	{
 		return (float)this.value;
+	}
+	
+	public int hashCode()
+	{
+		long l = doubleToLongBits(this.value);
+		return ((int)l) ^ ((int)(l >>> 32));
 	}
 	
 	public int intValue()
