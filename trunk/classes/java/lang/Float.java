@@ -18,8 +18,6 @@ public final class Float
 	//MISSING public static Class TYPE
 	//MISSING public static int compare(float, float)
 	//MISSING public int compareTo(Object)
-	//MISSING public boolean equals(Object obj)
-	//MISSING public int hashCode()
 	//MISSING public static String toHexString(float)
 
 	private float value;
@@ -51,6 +49,13 @@ public final class Float
 	public double doubleValue()
 	{
 		return this.value;
+	}
+	
+	public boolean equals(Object o)
+	{
+		//instanceof returns false for o==null
+		return (o instanceof Float)
+			&& (floatToIntBits(this.value) == floatToIntBits(((Float)o).value));
 	}
 	
 	/**
@@ -115,6 +120,11 @@ public final class Float
 	   return value;
 	}
   
+	public int hashCode()
+	{
+		return floatToIntBits(this.value);
+	}
+	
 	/**
 	 * Returns the single-float corresponding to a given bit represention.
 	 * The argument is considered to be a representation of a
