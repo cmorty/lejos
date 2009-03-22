@@ -18,7 +18,7 @@
                     <label>Source Packages</label>
                     <type>java</type>
                     <location>.</location>
-                    <excludes>build/**,doc/**,build.xml,nbproject/**,lib/**</excludes>
+                    <includes>lejos/**,java/**,javax/**</includes>
                 </source-folder>
             </folders>
             <ide-actions>
@@ -41,7 +41,7 @@
                     <source-folder style="packages">
                         <label>Source Packages</label>
                         <location>.</location>
-                        <excludes>build/**,doc/**,build.xml,nbproject/**,lib/**</excludes>
+                        <includes>lejos/**,java/**,javax/**</includes>
                     </source-folder>
                     <source-file>
                         <location>build.xml</location>
