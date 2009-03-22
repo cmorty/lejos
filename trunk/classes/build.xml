@@ -62,6 +62,7 @@
 	
 	<!-- generate javadocs -->
 	<target name="docs" description="generate javadocs">
+		<delete dir="${docs.dir}" />
     	<mkdir dir="${docs.dir}" />
 		<javadoc
 			sourcepath="${source.dir}"
