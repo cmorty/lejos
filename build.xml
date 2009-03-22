@@ -75,6 +75,7 @@
 			windowtitle="leJOS NXJ API documentation"
 			verbose="false"
 		>
+	    	<arg value="-quiet"/>
 			<fileset
 				dir="${source.dir}"
 	    		includes="${source.include}"
