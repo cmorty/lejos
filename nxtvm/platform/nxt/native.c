@@ -175,7 +175,6 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
     return EXEC_CONTINUE;
   case doubleToRawLongBits_4D_5J:	// Fall through
   case longBitsToDouble_4J_5D:
-    //push_word(paramBase[0]);
     {
       U32 w1 = paramBase[0];
       U32 w2 = paramBase[1];
