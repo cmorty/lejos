@@ -23,14 +23,17 @@
             </folders>
             <ide-actions>
                 <action name="build">
-                    <target>build</target>
+                    <target>classes</target>
                 </action>
                 <action name="clean">
                     <target>clean</target>
                 </action>
                 <action name="rebuild">
                     <target>clean</target>
-                    <target>build</target>
+                    <target>classes</target>
+                </action>
+                <action name="javadoc">
+                    <target>docs</target>
                 </action>
             </ide-actions>
             <view>
@@ -48,6 +51,7 @@
                     <ide-action name="build"/>
                     <ide-action name="rebuild"/>
                     <ide-action name="clean"/>
+                    <ide-action name="javadoc"/>
                 </context-menu>
             </view>
             <subprojects/>
