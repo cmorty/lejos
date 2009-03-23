@@ -1,6 +1,6 @@
 package java.lang;
 
-public final class Character implements Comparable
+public final class Character implements Comparable<Character>
 {
     public static final int MIN_RADIX = 2;
     public static final int MAX_RADIX = 36;
@@ -19,7 +19,7 @@ public final class Character implements Comparable
     	return this.charValue();
     }
     
-	public int compareTo(Object o)
+	public int compareTo(Character o)
 	{
 		Character ob = (Character)o;
 		if (this.value == ob.value)

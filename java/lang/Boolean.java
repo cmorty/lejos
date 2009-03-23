@@ -4,7 +4,7 @@ package java.lang;
  * Wrapper class for booleans.
  * @author Sven Köhler
  */
-public final class Boolean implements Comparable
+public final class Boolean implements Comparable<Boolean>
 {
 	public static final Boolean FALSE = new Boolean(false);
 	public static final Boolean TRUE = new Boolean(true);
@@ -30,7 +30,7 @@ public final class Boolean implements Comparable
 		return this.value;
 	}
 	
-	public int compareTo(Object o)
+	public int compareTo(Boolean o)
 	{
 		Boolean ob = (Boolean)o;
 		if (this.value == ob.value)
