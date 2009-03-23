@@ -76,9 +76,8 @@ public final class Integer extends Number implements Comparable<Integer>
 		return (byte)this.value;
 	}
 	
-	public int compareTo(Integer o)
+	public int compareTo(Integer ob)
 	{
-		Integer ob = (Integer)o;
 		if (this.value == ob.value)
 			return 0;
 		

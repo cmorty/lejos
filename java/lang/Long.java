@@ -55,9 +55,8 @@ public class Long extends Number implements Comparable<Long>
 		return (byte)this.value;
 	}
 	
-	public int compareTo(Long o)
+	public int compareTo(Long ob)
 	{
-		Long ob = (Long)o;
 		if (this.value == ob.value)
 			return 0;
 		
