@@ -4,7 +4,7 @@ package java.lang;
  * Wrapper class for long integers.
  * @author Sven Köhler
  */
-public class Long extends Number implements Comparable
+public class Long extends Number implements Comparable<Long>
 {
 	public static final long MAX_VALUE = 0x7FFFFFFFFFFFFFFFL;
 	public static final long MIN_VALUE = 0x8000000000000000L;	
@@ -55,7 +55,7 @@ public class Long extends Number implements Comparable
 		return (byte)this.value;
 	}
 	
-	public int compareTo(Object o)
+	public int compareTo(Long o)
 	{
 		Long ob = (Long)o;
 		if (this.value == ob.value)
