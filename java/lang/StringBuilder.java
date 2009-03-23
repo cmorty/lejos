@@ -120,7 +120,13 @@ public class StringBuilder
 
   public StringBuilder append (long aLong)
   {
-        return this.appendInternal("<longs not supported>");
+	  int len = WrapperUtils.exactStringLength(aLong, 10);
+	  char[] buf = new char[len];
+	  
+	  WrapperUtils.getChars(buf, len, aLong, 10);
+	  this.append(new String(buf));
+	  
+	  return this;
   }
 
   public StringBuilder append (float aFloat)
