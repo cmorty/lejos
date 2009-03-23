@@ -19,9 +19,8 @@ public final class Character implements Comparable<Character>
     	return this.charValue();
     }
     
-	public int compareTo(Character o)
+	public int compareTo(Character ob)
 	{
-		Character ob = (Character)o;
 		if (this.value == ob.value)
 			return 0;
 		

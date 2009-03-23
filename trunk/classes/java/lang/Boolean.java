@@ -30,9 +30,8 @@ public final class Boolean implements Comparable<Boolean>
 		return this.value;
 	}
 	
-	public int compareTo(Boolean o)
+	public int compareTo(Boolean ob)
 	{
-		Boolean ob = (Boolean)o;
 		if (this.value == ob.value)
 			return 0;
 		
