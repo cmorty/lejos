@@ -5,7 +5,7 @@ package java.lang;
  * @author others
  * @author Sven Köhler
  */
-public final class Integer extends Number implements Comparable
+public final class Integer extends Number implements Comparable<Integer>
 {
 	/**
 	 * The largest value of type <code>int</code>. The constant 
@@ -76,7 +76,7 @@ public final class Integer extends Number implements Comparable
 		return (byte)this.value;
 	}
 	
-	public int compareTo(Object o)
+	public int compareTo(Integer o)
 	{
 		Integer ob = (Integer)o;
 		if (this.value == ob.value)
