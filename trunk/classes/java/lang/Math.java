@@ -294,10 +294,10 @@ public final class Math {
 	//TODO improve precision
     double root = x, guess=0;
 
-    if(x<0) return Float.NaN; // TODO: We don't have Double.NaN yet, so using Float for now. 
+    if(x<0) return Double.NaN; 
 
-    // the accuarcy test is percentual
-    for(int i=0; (i<16) && ((guess > x*(1+5e-7f)) || (guess < x*(1-5e-7f))); i++)
+    // the accuracy test is percentual
+    for(int i=0; (i<22) && ((guess > x*(1+5e-7f)) || (guess < x*(1-5e-7f))); i++)
     {
       root = (root+x/root)*0.5f; // a multiplication is faster than a division
       guess=root*root;   // cache the square to the test
