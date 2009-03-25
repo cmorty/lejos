@@ -370,13 +370,13 @@ public final class Math {
    * Converts radians to degrees.
    */
    public static double toDegrees(double angrad) {
-      return angrad * (360.0 / (2 * PI));
+      return angrad * (180.0 /  PI);
    }
 	
    /**
     * Converts degrees to radians.
     */
    public static double toRadians(double angdeg) {
-      return angdeg * ((2 * PI) / 360.0);
+      return angdeg * (PI / 180.0);
    }
 }
