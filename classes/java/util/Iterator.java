@@ -2,7 +2,9 @@ package java.util;
 
 /**
  * An iterator over a collection. Iterator takes the place of Enumeration in the Java collections framework
- * @author Juan Antonio Brena Moral, Sven Köhler
+ * 
+ * @author Juan Antonio Brena Moral
+ * @author Sven Köhler
  */
 public interface Iterator<T> 
 {
