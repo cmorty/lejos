@@ -4,7 +4,8 @@ package java.lang;
  * Minimal Float implementation that supports 
  * floatToIntBits and intBitsToFloat
  *
- * @author Lawrie Griffiths, Sven Köhler
+ * @author Lawrie Griffiths
+ * @author Sven Köhler
  */
 public final class Float
 {
