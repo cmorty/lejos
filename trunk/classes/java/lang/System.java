@@ -36,6 +36,12 @@ public final class System
   	return Runtime.getRuntime();
   }
   
+  public static int identityHashCode(Object obj) {
+	  return System.getDataAddress(obj);
+  }
+	
+  private native static int getDataAddress (Object obj);
+  
   /**
    * Collect garbage
    */
