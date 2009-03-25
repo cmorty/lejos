@@ -1,11 +1,11 @@
 package java.util;
+
 /**
  * An iterator over a collection. Iterator takes the place of Enumeration in the Java collections framework
- * @author Juan Antonio Brena Moral
- *
+ * @author Juan Antonio Brena Moral, Sven Köhler
  */
-public interface Iterator {
-
+public interface Iterator<T> 
+{
 	/**
 	 * 
 	 * @return Returns true if the iteration has more elements.
@@ -16,7 +16,7 @@ public interface Iterator {
 	 * 
 	 * @return Returns the next element in the interation.
 	 */
-	public Object next();
+	public T next();
 	
 	/**
 	 * 
