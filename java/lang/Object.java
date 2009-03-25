@@ -5,67 +5,87 @@ package java.lang;
  */
 public class Object
 {
-  public boolean equals (Object aOther)
-  {
-    return this == aOther;
-  }
+	protected Object clone() throws CloneNotSupportedException
+	{
+		throw new CloneNotSupportedException("LeJOS doesn't support cloning");
+	}
+	
+	public boolean equals (Object aOther)
+	{
+		return this == aOther;
+	}
+	
+	/**
+	 * @deprecated not implemented in leJOS 
+	 */
+	protected void finalize()
+	{
+		//nothing
+	}
 
-  public int hashCode()
-  {
-    return getDataAddress (this);
-  }
+	/**
+	 *Returns <code>null</code>. It's here to satisfy javac.
+	 */
+	public final Class<?> getClass()
+	{
+		throw new UnsupportedOperationException();
+	}
 
-  /**
-   * Wake up one thread blocked on a wait(). Must be synchronized on
-   * this object otherwise an IllegalMonitorStateException will be thrown.
-   * <P>
-   * If multiple threads are waiting, higher priority threads will be woken
-   * in preference, otherwise the thread that gets woken is essentially
-   * random. 
-   */
-  public final native void notify();
+	public int hashCode()
+	{
+		return getDataAddress(this);
+	}
 
-  /**
-   * Wake up all threads blocked on a wait(). Must be synchronized on
-   * this object otherwise an IllegalMonitorStateException will be thrown.
-   */
-  public final native void notifyAll();
-
-  /**
-   * This is the same as calling wait(0).
-   */
-  public final native void wait() throws InterruptedException;
-
-  /**
-   * Wait until notified. Must be synchronized on this object otherwise
-   * an IllegalMonitorStateException will be thrown. The wait can
-   * terminate if one of the following things occurs:
-   * <ol>
-   * <li>notify() or notifyAll() is called.
-   * <li>The calling thread is interrupted.
-   * <li>The timeout expires.
-   * </ol>
-   * @param timeout maximum time in milliseconds to wait. Zero means forever.
-   */
-  public final native void wait(long timeout) throws InterruptedException;
-  
-  /**
-   * Returns the empty string. It's here to satisfy javac.
-   */
-  public String toString()
-  {
-    return "";
-  }
-
-  /**
-   * Returns <code>null</code>. It's here to satisfy javac.
-   */
-  public final Class getClass()
-  {
-    return null;
-  }
-
-  private native static int getDataAddress (Object obj);
+	/**
+	 * Wake up one thread blocked on a wait(). Must be synchronized on
+	 * this object otherwise an IllegalMonitorStateException will be thrown.
+	 * <P>
+	 * If multiple threads are waiting, higher priority threads will be woken
+	 * in preference, otherwise the thread that gets woken is essentially
+	 * random. 
+	 */
+	public final native void notify();
+	
+	/**
+	 * Wake up all threads blocked on a wait(). Must be synchronized on
+	 * this object otherwise an IllegalMonitorStateException will be thrown.
+	 */
+	public final native void notifyAll();
+	
+	public String toString()
+	{
+		return "Object@"+Integer.toHexString(getDataAddress(this));
+	}
+	
+	/**
+	 * This is the same as calling wait(0).
+	 * TODO make this a Java method that calls wait(0) since native methods are expensive?
+	 */
+	public final native void wait() throws InterruptedException;
+	
+	/**
+	 * Wait until notified. Must be synchronized on this object otherwise
+	 * an IllegalMonitorStateException will be thrown. The wait can
+	 * terminate if one of the following things occurs:
+	 * <ol>
+	 * <li>notify() or notifyAll() is called.
+	 * <li>The calling thread is interrupted.
+	 * <li>The timeout expires.
+	 * </ol>
+	 * @param timeout maximum time in milliseconds to wait. Zero means forever.
+	 */
+	public final native void wait(long timeout) throws InterruptedException;
+	
+	public final void wait(long timeout, int nanos) throws InterruptedException
+	{
+		//rounding up
+		if (nanos > 0)
+			timeout++;
+		
+		this.wait(timeout);
+	}
+	
+	private native static int getDataAddress (Object obj);
 }
 
 
