@@ -33,7 +33,7 @@ public class Object
 
 	public int hashCode()
 	{
-		return getDataAddress(this);
+		return System.identityHashCode(this);
 	}
 
 	/**
@@ -54,7 +54,8 @@ public class Object
 	
 	public String toString()
 	{
-		return "Object@"+Integer.toHexString(getDataAddress(this));
+		int hash = System.identityHashCode(this);
+		return "Object@"+Integer.toHexString(hash);
 	}
 	
 	/**
@@ -84,8 +85,6 @@ public class Object
 		
 		this.wait(timeout);
 	}
-	
-	private native static int getDataAddress (Object obj);
 }
 
 
