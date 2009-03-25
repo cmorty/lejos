@@ -3,7 +3,8 @@ package java.lang;
 /**
  * Minimal Double implementation to support parseDouble(), isNaN(), and NaN.
  * 
- * @author bb, Sven Köhler
+ * @author bb
+ * @author Sven Köhler
  */
 public final class Double
 {
