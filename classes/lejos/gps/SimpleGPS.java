@@ -4,8 +4,6 @@ package lejos.gps;
 import java.io.*;
 import java.util.*;
 
-import lejos.nxt.Sound; // TODO Eliminate
-
 /**
  * This class manages data received from a GPS Device.
  * SimpleGPS Class manages the following NMEA Sentences
@@ -199,12 +197,10 @@ public class SimpleGPS extends Thread {
 				}
 			}catch(StringIndexOutOfBoundsException e){
 				System.err.println("SimpleGPS.run() error. StringIndexOutOfBounds");
-				Sound.beep();
 			}catch(ArrayIndexOutOfBoundsException e2){
 				//Jab
 				//Bug detected: 06/08/2008
 				System.err.println("SimpleGPS.run() error. ArrayIndexOutOfBounds");
-				Sound.buzz();
 			}
 			//2008/07/18
 			//Increase the list with more NMEA Sentences
