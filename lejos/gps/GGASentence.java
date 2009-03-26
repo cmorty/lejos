@@ -40,9 +40,9 @@ public class GGASentence extends NMEASentence{
 	//GGA
 	// TODO: Convert all/most of Juan's floats to int
 	private float dateTimeOfFix = -1;
-	private float latitude = 0;
+	private double latitude = 0;
 	private char latitudeDirection; // TODO: Delete me? Maybe used briefly in calc.
-	private float longitude = 0;
+	private double longitude = 0;
 	private char longitudeDirection; // ToDO: Delete me?
 	private float quality;
 	private float satellitesTracked = 0;
@@ -70,7 +70,7 @@ public class GGASentence extends NMEASentence{
 	 * Get Latitude
 	 * 
 	 */
-	public float getLatitude() {
+	public double getLatitude() {
 		checkRefresh();
 		return latitude;
 	}
@@ -90,7 +90,7 @@ public class GGASentence extends NMEASentence{
 	 * Get Longitude
 	 * 
 	 */
-	public float getLongitude() {
+	public double getLongitude() {
 		checkRefresh();
 		return longitude;
 	}

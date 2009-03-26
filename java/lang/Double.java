@@ -110,7 +110,7 @@ public final class Double
 				int curVal = (s.charAt(i)-48); // Convert char to int
 				if(curVal > 9|curVal < 0)
 					throw new NumberFormatException();
-				result += (curVal/divisor);
+				result += ((double)curVal/divisor);
 			}
 		}
 		else {
@@ -120,6 +120,8 @@ public final class Double
 		
 		// Now add number characters to left of decimal
 		int multiplier = 1;
+		// TODO: Note: Sven removed a test here for no decimal place. Unsure if needed.
+		// Check old version of SVN to see old line.
 		int finish = negative ? 1 : 0; // Determine finishing position
 		
 		for(int i=index-1;i>= finish;i--) {

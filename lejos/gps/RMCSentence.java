@@ -30,9 +30,9 @@ public class RMCSentence extends NMEASentence{
 	// TODO: Convert all/most of these floats to int
 	private int dateTimeOfFix = -1;
 	private String warning = "";
-	private float latitude = 0;
+	private double latitude = 0;
 	private String latitudeDirection = "";
-	private float longitude = 0;
+	private double longitude = 0;
 	private String longitudeDirection = "";
 	private float groundSpeed;//In knots
 	private String courseMadeGood = null;
@@ -61,7 +61,7 @@ public class RMCSentence extends NMEASentence{
 	 * 
 	 */
 	// TODO: Why is this specified as RAW?
-	public float getLatitudeRAW(){
+	public double getLatitudeRAW(){
 		checkRefresh();
 		return latitude;  
 	}
@@ -72,7 +72,7 @@ public class RMCSentence extends NMEASentence{
 	 * @return the raw longitude
 	 */
 	// TODO: Why is this specified as RAW?
-	public float getLongitudeRAW(){
+	public double getLongitudeRAW(){
 		checkRefresh();
 		return longitude;
 	}
