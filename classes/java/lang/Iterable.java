@@ -6,9 +6,9 @@ import java.util.Iterator;
  * Interface needed by Java foreach loops. It just provides an Iterator.
  * 
  * @author Sven Köhler
- * @param <T> type of the elements
+ * @param <E> type of the elements
  */
-public interface Iterable<T>
+public interface Iterable<E>
 {
-	Iterator<T> iterator();
+	Iterator<E> iterator();
 }
