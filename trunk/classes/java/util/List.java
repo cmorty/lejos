@@ -1,5 +1,9 @@
 package java.util;
 
+/**
+ * @author Sven Köhler
+ * @param <E> type of the elements
+ */
 public interface List<E> extends Collection<E>
 {
 	void add(int index, E e);

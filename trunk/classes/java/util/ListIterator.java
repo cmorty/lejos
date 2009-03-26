@@ -1,5 +1,9 @@
 package java.util;
 
+/**
+ * @author Sven Köhler
+ * @param <E> type of the elements
+ */
 public interface ListIterator<E> extends Iterator<E>
 {
 	int nextIndex();
