@@ -71,7 +71,7 @@ public class SimpleGPS extends Thread {
 	 * 
 	 * @return the latitude
 	 */
-	public float getLatitude() {
+	public double getLatitude() {
 		return ggaSentence.getLatitude();
 	}
 
@@ -91,7 +91,7 @@ public class SimpleGPS extends Thread {
 	 * 
 	 * @return the longitude
 	 */
-	public float getLongitude() {
+	public double getLongitude() {
 		return ggaSentence.getLongitude();
 	}
 

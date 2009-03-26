@@ -147,36 +147,17 @@ abstract public class NMEASentence {
 	 * @param CoordinateType the coordinate type
 	 * @return the decimal degrees
 	 */
-	protected float degreesMinToDegrees(String DD_MM) {
-		float decDegrees = 0;
-		float degrees = 0;
-		float minutes = 0;
-		float seconds = 0;
-		String doubleCharacterSeparator = ".";
-		String DDMM;
+	protected double degreesMinToDegrees(String DD_MM) {
+		char charSeparator = '.';
+		
 		//1. Count characters until character '.'
-		int dotPosition = DD_MM.indexOf(doubleCharacterSeparator);
-		DDMM = DD_MM.substring(0, dotPosition);
-		 	
-		//Longitude and Latitude Management
-		degrees = Float.parseFloat(DDMM.substring(0, DDMM.length() - 2));
-		minutes = Float.parseFloat(DD_MM.substring(DDMM.length() - 2));
+		int dotPosition = DD_MM.indexOf(charSeparator);
+		String DDMM = DD_MM.substring(0, dotPosition);
 		
-		/* TODO: I don't think we need this. I removed CoordinateType:
-		if(CoordinateType == 0){
-			if((degrees >=0) && (degrees <=90)){
-				throw new NumberFormatException();
-			}
-		}else{
-			if((degrees >=0) && (degrees <=180)){
-				throw new NumberFormatException();
-			}
-		}*/
+		double degrees = Double.parseDouble(DDMM.substring(0, DDMM.length() - 2));
+		double minutes = Double.parseDouble(DD_MM.substring(DDMM.length() - 2));
 		
-		//Idea
-		//http://id.mind.net/%7Ezona/mmts/trigonometryRealms/degMinSec/degMinSec.htm
-		decDegrees = (float)(degrees + (minutes * (1.0 / 60.0)) + (seconds * (1.0 / 3600.0)));
-		
-		return decDegrees;
+		return (degrees + (minutes / 60.0));
+		// OLD (degrees + (minutes * (1.0 / 60.0)) + (seconds * (1.0 / 3600.0)));
 	}
 }
