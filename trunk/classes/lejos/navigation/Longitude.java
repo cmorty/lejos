@@ -1,6 +1,7 @@
-package lejos.gps;
+package lejos.navigation;
 
-// TODO: Is this class even used anywhere?
+//TODO: Charles Manning recommends using the Degrees, Latitude, Longitude classes for 
+//GPS navigation around a local origin point. Uses meters.
 
 /**
  * This class models a GPS Latitude
@@ -8,7 +9,7 @@ package lejos.gps;
  * @author Juan Antonio Brenha Moral
  *
  */
-public class Longitude extends Degrees{
+class Longitude extends Degrees{
 
 	/**
 	 * Constructor
