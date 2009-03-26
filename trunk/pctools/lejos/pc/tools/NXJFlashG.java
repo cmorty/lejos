@@ -107,7 +107,7 @@ public class NXJFlashG extends javax.swing.JFrame
 
       public void progress(String str, int percent)
       {
-        if (str.isEmpty())
+        if (str.length() <= 0)
           progBarLabel.setText(" ");
         else
           progBarLabel.setText(str);
