@@ -1,13 +1,14 @@
-package lejos.gps;
+package lejos.navigation;
 
 /**
  * This class has been developed to model Latitude and Longitude
  * 
- * @author Juan Antonio Brenha Moral
+ * @author Charles Manning, Juan Antonio Brenha Moral
  *
  */
-// TODO: Is this class used for anything? Wondering if these should be static methods.
-public class Degrees{
+// TODO: Charles Manning recommends using the Degrees, Latitude, Longitude classes for 
+// GPS navigation around a local origin point. Uses meters.
+class Degrees{
 
 	//Data from GPS device
 	protected double RAWGPS_data = 0.0d;
@@ -79,6 +80,10 @@ public class Degrees{
 	 * @return the decimal degrees
 	 */
 	protected float degreesMinToDegrees(int CoordenateType) {//throws NumberFormatException
+		
+		// TODO: NOTE: This is a duplicate of the same method in NMEASentence. 
+		// Also it is much smaller now. Redundant code.
+		
 		float decDegrees = 0;
 		float tempDegrees = 0;
 		float tempMinutes = 0;

@@ -10,7 +10,6 @@ import java.util.*;
  * This class has methods to validate received data
  * 
  * @author BB
- * @author Juan Antonio Brenha Moral
  */
 abstract public class NMEASentence {
 	
