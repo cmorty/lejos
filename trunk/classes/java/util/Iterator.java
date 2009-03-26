@@ -5,8 +5,9 @@ package java.util;
  * 
  * @author Juan Antonio Brena Moral
  * @author Sven Köhler
+ * @param <E> type of the elements
  */
-public interface Iterator<T> 
+public interface Iterator<E> 
 {
 	/**
 	 * 
@@ -18,7 +19,7 @@ public interface Iterator<T>
 	 * 
 	 * @return Returns the next element in the interation.
 	 */
-	public T next();
+	public E next();
 	
 	/**
 	 * 
