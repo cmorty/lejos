@@ -24,12 +24,12 @@ public class DegreesTest{
 		lon = new Longitude(longitudeExample);
 		dm.echo("RAW Lat:" + latitudeExample);
 		dm.echo("DD  Lat:" + lat.getDecimalDegrees());
-		dm.echo("L   Lat:" + lat.getDirectionLeter());
+		//dm.echo("L   Lat:" + lat.getDirectionLeter());
 		dm.echo("");
 		dm.echo("DMS Lat:");
-		dm.echo("D   Lat:" + lat.getDegrees() + "º");
-		dm.echo("M   Lat:" + lat.getMinutes() + "'");
-		dm.echo("S   Lat:" + lat.getSeconds() + "''");
+		//dm.echo("D   Lat:" + lat.getDegrees() + "º");
+		//dm.echo("M   Lat:" + lat.getMinutes() + "'");
+		//dm.echo("S   Lat:" + lat.getSeconds() + "''");
 		try {Thread.sleep(10000);} catch (Exception e) {}
 		
 		dm.clear();
