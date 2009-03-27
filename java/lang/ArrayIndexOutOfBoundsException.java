@@ -1,6 +1,6 @@
 package java.lang;
 
-public class ArrayIndexOutOfBoundsException extends RuntimeException{
+public class ArrayIndexOutOfBoundsException extends IndexOutOfBoundsException{
 
     /**
      * Constructs an <code>ArrayIndexOutOfBoundsException</code> with no
