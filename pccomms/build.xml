@@ -8,30 +8,8 @@
   	<!-- creates the pccomm jar -->
   	<target name="build"  description="generate pccomm jar">
     	<mkdir dir="build"/>
-  		<copy todir="build">
-  			<fileset dir="../classes/build/classes">
-  				<include name="lejos/localization/*.class"/>
-  			</fileset>
-  		</copy>
-  		<mkdir dir="build/lejos/nxt"/>
-  		<copy todir="build">
-  			<fileset dir="../classes/build/classes/">
-  				<include name="lejos/nxt/ADSensorPort.class"/>
-  				<include name="lejos/nxt/BasicSensorPort.class"/>
-  				<include name="lejos/nxt/LegacySensorPort.class"/>
-  				<include name="lejos/nxt/LightSensor.class"/>
-  				<include name="lejos/nxt/SensorConstants.class"/>
-  				<include name="lejos/nxt/SoundSensor.class"/>
-  				<include name="lejos/nxt/TouchSensor.class"/>
-  				<include name="lejos/nxt/UltrasonicSensor.class"/>
-  			</fileset>
-  		</copy>
-  		<mkdir dir="build/lejos/nxt/addon"/>
-  		<copy todir="build">
-  			<fileset dir="../classes/build/classes">
-  				<include name="lejos/nxt/addon/*.class"/>
-  			</fileset>
-  		</copy>
+  		<!-- Copy common classes -->
+  		<ant antfile="copy.xml" target="copy"/>
     	<!-- generate jar file -->
 		<javac srcdir="." destdir="build" fork="yes" optimize="on" debug="on" source="1.5" target="1.5">
 			<classpath location="build"/>
@@ -42,6 +20,7 @@
     	</jar>
 
   	</target>
+	
     <target name="clean" description="cleans the build folder">
 		<delete dir="build"/>
 	</target>

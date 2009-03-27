@@ -2,10 +2,8 @@ package lejos.pc.comm;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import lejos.nxt.remote.*;
 
-import lejos.pc.comm.NXTCommand;
-import lejos.pc.comm.NXTConnector;
-import lejos.pc.comm.NXTInfo;
 
 public class NXTConnectionManager {
 
@@ -25,17 +23,7 @@ public class NXTConnectionManager {
 	 *         found
 	 */
 	public NXTInfo[] search() {
-		// TODO is it really good that NXTConnector always connects the first
-		// one found
-		// on search even if there are multiple ones? Does it do this?
-		// TODO the return value is not very intuitive
-		switch (nxtConnector.connectTo()) {
-		case -1: // none found
-			return null;
-		default: // some bricks found and successfully connected to the first
-			// one
-			return nxtConnector.getNXTInfos();
-		}
+		return nxtConnector.search(null,null,NXTCommFactory.ALL_PROTOCOLS);
 	}
 
 	/**
@@ -47,8 +35,7 @@ public class NXTConnectionManager {
 	public boolean connectToBrick(NXTInfo nxtInfo) {
 		boolean brickConnected = false;
 		if (nxtInfo != null)
-			brickConnected = (nxtConnector.connectTo(nxtInfo.name,
-					nxtInfo.deviceAddress, nxtInfo.protocol, false) == 0);
+			brickConnected = nxtConnector.connectTo(nxtInfo, NXTComm.LCP);
 		return brickConnected;
 	}
 
