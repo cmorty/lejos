@@ -2,6 +2,7 @@ package lejos.nxt;
 
 import lejos.pc.comm.*;
 import java.io.*;
+import lejos.nxt.remote.*;
 
 /**
  * Abstraction for the local NXT device.
@@ -10,7 +11,7 @@ import java.io.*;
  *
  */
 public class NXT {
-	private static NXTCommand nxtCommand = NXTCommand.getSingletonOpen();
+	private static NXTCommand nxtCommand = NXTCommandConnector.getSingletonOpen();
 
 	/**
 	 * Get the (emulated) standard LEGO firmware version number

@@ -1,7 +1,7 @@
 package lejos.nxt;
 
 import lejos.pc.comm.*;
-
+import lejos.nxt.remote.*;
 import java.io.*;
 
 /**
@@ -11,9 +11,8 @@ import java.io.*;
  * @version 0.3  29-October-2006 
  *
  */
-public class SensorPort implements NXTProtocol, LegacySensorPort, I2CPort  {
-	
-	private static final NXTCommand nxtCommand = NXTCommand.getSingletonOpen();
+public class SensorPort implements NXTProtocol, LegacySensorPort, I2CPort  {	
+	private static final NXTCommand nxtCommand = NXTCommandConnector.getSingletonOpen();
 	
 	private int id;
 	

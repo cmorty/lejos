@@ -1,6 +1,7 @@
 package lejos.pc.comm;
 
 import java.io.*;
+import lejos.nxt.remote.*;
 
 /**
  * 
@@ -8,14 +9,11 @@ import java.io.*;
  * with the NXT.
  *
  */
-public interface NXTComm {
+public interface NXTComm extends NXTCommRequest {
     public static final int PACKET = 0;
     public static final int LCP = 1;
     public static final int RAW = 2;
             
-            
-            
-	
 	/**
 	 * Search for NXTs over USB, Bluetooth or both
 	 * @param name name of the NXT or null
@@ -43,24 +41,7 @@ public interface NXTComm {
 	 * @throws NXTCommException
 	 */
 	public boolean open(NXTInfo nxt) throws NXTCommException;
-	
-	/**
-	 * Closes the connection to the NXT.
-	 * 
-	 * @throws IOException
-	 */
-	public void close() throws IOException;
-	
-	/**
-	 * Send an LCP message to the NXT and receive a reply
-	 * 
-	 * @param message the LCP message
-	 * @param replyLen the reply length expected
-	 * @return the reply
-	 * @throws IOException
-	 */
-	public byte[] sendRequest(byte [] message, int replyLen) throws IOException;
-	
+		
 	/**
 	 * Read data from a NXT that has an open connection.
 	 * Used for stream connections.

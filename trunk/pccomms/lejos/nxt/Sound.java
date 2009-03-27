@@ -2,6 +2,7 @@ package lejos.nxt;
 
 import lejos.pc.comm.*;
 import java.io.*;
+import lejos.nxt.remote.*;
 
 /**
  * Sound class.
@@ -9,7 +10,7 @@ import java.io.*;
  * @author <a href="mailto:bbagnall@mts.net">Brian Bagnall</a>
  */
 public class Sound {	
-	private static final NXTCommand nxtCommand = NXTCommand.getSingletonOpen();
+	private static final NXTCommand nxtCommand = NXTCommandConnector.getSingletonOpen();
 	
 	// Make sure no one tries to instantiate this.
 	private Sound() {}

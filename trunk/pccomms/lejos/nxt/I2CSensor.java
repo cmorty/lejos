@@ -1,7 +1,7 @@
 package lejos.nxt;
 
 import java.io.IOException;
-
+import lejos.nxt.remote.*;
 import lejos.pc.comm.*;
 
 /**
@@ -14,9 +14,9 @@ import lejos.pc.comm.*;
  * @author BB
  */
 public class I2CSensor implements SensorConstants {
-	private static final NXTCommand nxtCommand = NXTCommand.getSingletonOpen();
+	private static final NXTCommand nxtCommand = NXTCommandConnector.getSingletonOpen();
 		
-	protected static byte DEFAULT_ADDRESS = 0x02; // the default I2C address for a port. You can change address of compass sensor (see docs) and then communicate with multiple sensors on same physical port.
+	protected static byte address = 0x02; // the default I2C address for a port. You can change address of compass sensor (see docs) and then communicate with multiple sensors on same physical port.
 	protected static byte STOP = 0x00; // Commands don't seem to use this?
 	protected static String BLANK = "       ";
 	
@@ -47,9 +47,10 @@ public class I2CSensor implements SensorConstants {
 	public I2CSensor(I2CPort s, byte sensorType) {
 		port = (byte)s.getId();
 		s.setTypeAndMode(sensorType, NXTProtocol.RAWMODE);
+		// Flushes out any existing data
 		try {
-			nxtCommand.LSGetStatus(this.port); // Dick says to flush out data with Poll?
-			nxtCommand.LSRead(this.port); // Dick says to flush out data with Poll?
+			nxtCommand.LSGetStatus(this.port); 
+			nxtCommand.LSRead(this.port); 
 		} catch (IOException ioe) {
 			System.out.println(ioe.getMessage());
 		}
@@ -75,8 +76,8 @@ public class I2CSensor implements SensorConstants {
 	 * @param length Length of data to read (minimum 1, maximum 16) 
 	 * @return
 	 */
-	protected int getData(int register, byte [] buf, int length) {
-		byte [] txData = {DEFAULT_ADDRESS, (byte) register};
+	public int getData(int register, byte [] buf, int length) {
+		byte [] txData = {address, (byte) register};
 		try {
 			nxtCommand.LSWrite(port, txData, (byte)length);
 		} catch (IOException ioe) {
@@ -95,7 +96,7 @@ public class I2CSensor implements SensorConstants {
 				
 		try {
 			byte [] ret = nxtCommand.LSRead(port);
-			System.arraycopy(ret, 0,buf, 0, ret.length);
+			if (ret != null) System.arraycopy(ret, 0,buf, 0, ret.length);
 		} catch (IOException ioe) {
 			System.out.println(ioe.getMessage());
 			return -1;
@@ -109,7 +110,7 @@ public class I2CSensor implements SensorConstants {
 	 * @param register
 	 * @return
 	 */
-	protected int getData(byte register) {
+	public int getData(byte register) {
 		byte [] buf1 = new byte[1];
 		return getData(register, buf1 ,1);
 	}
@@ -119,8 +120,8 @@ public class I2CSensor implements SensorConstants {
 	 * @param register A data register in the I2C sensor. e.g. ACTUAL_ZERO
 	 * @param value The data value.
 	 */
-	protected int sendData(int register, byte value) {
-		byte [] txData = {DEFAULT_ADDRESS, (byte) register, value};
+	public int sendData(int register, byte value) {
+		byte [] txData = {address, (byte) register, value};
 		try {
 			return nxtCommand.LSWrite(this.port, txData, (byte)0);
 		} catch (IOException ioe) {
@@ -134,11 +135,11 @@ public class I2CSensor implements SensorConstants {
 	 * @param register A data register in the I2C sensor. e.g. ACTUAL_ZERO
 	 * @param value The data value.
 	 */
-	protected int sendData(int register, byte [] data, int length) {
-		byte [] txData = {DEFAULT_ADDRESS, (byte) register};
+	public int sendData(int register, byte [] data, int length) {
+		byte [] txData = {address, (byte) register};
 		byte [] sendData = new byte[length+2];
 		System.arraycopy(txData,0,sendData,0,2);
-		System.arraycopy(txData,0,sendData,2,length);
+		System.arraycopy(data,0,sendData,2,length);
 		try {
 			return nxtCommand.LSWrite(this.port, sendData, (byte)0);
 		} catch (IOException ioe) {
@@ -181,7 +182,7 @@ public class I2CSensor implements SensorConstants {
 	 * @param constantEnumeration e.g. I2CProtocol.VERSION
 	 * @return
 	 */
-	protected String fetchString(byte constantEnumeration, int rxLength) {
+	private String fetchString(byte constantEnumeration, int rxLength) {
 		byte [] stringBytes = new byte[rxLength];
 		getData(constantEnumeration, stringBytes, rxLength);
 		
@@ -192,5 +193,17 @@ public class I2CSensor implements SensorConstants {
 		}
 		String s = new String(stringBytes).substring(0,zeroPos);
 		return s;
+	}
+	
+	/**
+	 * Set the address of the port 
+	 * Note that addresses are from 0x01 to 0x7F not
+	 * even numbers from 0x02 to 0xFE as given in some I2C device specifications.
+	 * They are 7-bit addresses not 8-bit addresses.
+	 * 
+	 * @param addr 1 to 0x7F 
+	 */
+	public void setAddress(int addr) {
+		address = (byte) (addr << 1);
 	}
 }
