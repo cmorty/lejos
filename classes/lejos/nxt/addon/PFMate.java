@@ -1,14 +1,16 @@
+package lejos.nxt.addon;
+
+import lejos.nxt.*;
+
 /**
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ * 
  * Supports Mindsensors PF Mate<br>
  * This device is used to control Lego Power Function IR receiver<br>
  * 
  * @author Michael Smith <mdsmitty@gmail.com>
  */
-
-package lejos.nxt.addon;
-
-import lejos.nxt.*;
-
 public class PFMate extends I2CSensor{
 	public PFMateMotor A;
 	public PFMateMotor B;

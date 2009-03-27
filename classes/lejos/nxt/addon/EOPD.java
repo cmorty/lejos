@@ -2,6 +2,9 @@ package lejos.nxt.addon;
 
 import lejos.nxt.*;
 /**
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ * 
  * Supports HiTechnics EOPD (Electro Optical Proximity Detector) sensor.<br>
  * This sensor is used to detect objects and small changes in distance to a target.
  *  Unlike the lego light sensor it is not affected by other light sources.

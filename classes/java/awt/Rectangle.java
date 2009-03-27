@@ -43,7 +43,7 @@ public class Rectangle {
 	
 	/**
 	 * Get the x coordinate as a double
-	 * @return
+	 * @return the x coordinate
 	 */
 	public double getX() {
 		return (double) x;
@@ -51,7 +51,7 @@ public class Rectangle {
 	
 	/**
 	 * Get the y coordinate as a double
-	 * @return
+	 * @return the y coordinate
 	 */
 	public double getY() {
 		return (double) y;
@@ -59,7 +59,7 @@ public class Rectangle {
 	
 	/**
 	 * Get the width as a double
-	 * @return
+	 * @return the width
 	 */
 	public double getWidth() {
 		return (double) width;
@@ -67,7 +67,7 @@ public class Rectangle {
 	
 	/**
 	 * Get the height as a double
-	 * @return
+	 * @return the height
 	 */
 	public double getHeight() {
 		return (double) height;
@@ -84,8 +84,8 @@ public class Rectangle {
 	}
 	
 	/**
-	 * Return true iff the rectangle is empty
-	 * @return
+	 * Test if the rectangle is empty
+	 * @return true iff the rectangle is empty
 	 */
 	public boolean isEmpty() {
 		return (width <= 0 || height <= 0);

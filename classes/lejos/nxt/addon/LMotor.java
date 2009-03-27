@@ -1,17 +1,18 @@
 package lejos.nxt.addon;
 
-
-import lejos.nxt.I2CPort;
 import lejos.nxt.SensorPort;
 import lejos.nxt.I2CSensor;
 
 /**
-* Generic abstraction to manage RC Servos and DC Motor.
-* LServo and LDCMotor uses inherits from this class
-*
-* @author Juan Antonio Brenha Moral
-*
-*/
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ * 
+ * Generic abstraction to manage RC Servos and DC Motor.
+ * LServo and LDCMotor uses inherits from this class
+ *
+ * @author Juan Antonio Brenha Moral
+ *
+ */
 public class LMotor extends I2CSensor{
 	private String name = "";//String to describe any Motor connected to LSC
 	protected int LSC_position; //Position where Servo has been plugged

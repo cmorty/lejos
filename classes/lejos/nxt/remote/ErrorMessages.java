@@ -1,5 +1,8 @@
 package lejos.nxt.remote;
 /**
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ * 
  * Error messages that can be returned after a call to the NXT brick.
  * e.g. The return value comes from method calls like Motor.backward(), 
  * SoundSensor.playTone(), etc... Actual values are only returned if you enable 

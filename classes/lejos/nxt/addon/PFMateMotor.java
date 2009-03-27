@@ -1,11 +1,13 @@
+package lejos.nxt.addon;
+
 /**
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ * 
  * Motor class for PFMate class
  * 
  * @author Michael Smith <mdsmitty@gmail.com>
  **/
-
-package lejos.nxt.addon;
-
 public class PFMateMotor{
 	private PFMate recever;
 	private int operReg, speedReg;

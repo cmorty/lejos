@@ -5,6 +5,9 @@ import lejos.nxt.I2CSensor;
 import java.util.*;
 
 /**
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ * 
  * Supports for HiTechnic IRLink - see  http://www.hitechnic.com/.
  * 
  * @author Lawrie Griffiths

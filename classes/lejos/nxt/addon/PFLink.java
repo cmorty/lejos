@@ -4,8 +4,10 @@ import lejos.nxt.I2CSensor;
 import lejos.nxt.I2CPort; 
 
 /** 
- * Class for controlling PF Motors with MindSensors NRLink-Nx 
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
  * 
+ * Class for controlling PF Motors with MindSensors NRLink-Nx 
  * 
  * @author Alexander Vegh <alex@vegh.ch> 
  */ 

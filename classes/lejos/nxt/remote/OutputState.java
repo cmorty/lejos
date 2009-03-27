@@ -1,6 +1,9 @@
 package lejos.nxt.remote;
 
 /**
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ * 
  * Container for holding the output state values.
  * @author <a href="mailto:bbagnall@mts.net">Brian Bagnall</a>
  * @version 0.2 September 9, 2006

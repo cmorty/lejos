@@ -1,10 +1,12 @@
 package lejos.nxt.addon;
 
-
 import lejos.nxt.I2CPort;
 import lejos.nxt.I2CSensor;
 
 /**
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ * 
  * Supports Mindsensors RXMux<br>
  * This sensor allows you to connect up to four RCX type sensors toa single port.
  * Be aware that the sensor does not track the ticks of the rotation sensor when
@@ -12,7 +14,6 @@ import lejos.nxt.I2CSensor;
  * 
  * @author Michael Smith <mdsmitty@gmail.com>
  */
-
 public class RCXSensorMultiplexer extends I2CSensor{
 	private final static byte CONTROL = 0x00;
 	private final static int CHANNEL1 = 0xfe;
