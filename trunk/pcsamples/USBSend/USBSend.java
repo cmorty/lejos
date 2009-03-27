@@ -23,7 +23,7 @@ import java.io.*;
 public class USBSend {	
 	public static void main(String[] args) {
 		NXTConnector conn = new NXTConnector();
-		if (conn.connectTo("usb://") != 0){
+		if (!conn.connectTo("usb://")){
 			System.err.println("No NXT find using USB");
 			System.exit(1);
 		}
