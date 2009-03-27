@@ -39,7 +39,7 @@
 	</typedef>
 	
 	<!-- release leJOS NXJ --> 
-	<target name="release" depends ="clean,create.folders,lejos.sources,libs,scripts,samples,pcsamples,platform.doc, pc.doc"
+	<target name="release" depends ="clean,create.folders,lejos.sources,libs,scripts,samples,pcsamples,platform.doc,pc.doc"
 		description="releases leJOS NXJ">
 		<!-- clean distribution -->
 		<delete>
@@ -196,6 +196,7 @@
 	<!-- makes a timestamp and creates some required folders -->
  	<target name="create.folders" description="setup build">
     	<tstamp/>
+ 		<mkdir dir="${release.dist}"/>
     	<mkdir dir="${release.bin}"/>
     	<mkdir dir="${release.lib}"/>
     	<mkdir dir="${release.src}"/>
