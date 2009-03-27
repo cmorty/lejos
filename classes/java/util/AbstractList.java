@@ -15,6 +15,7 @@ abstract class AbstractList<E> extends AbstractCollection<E> implements List<E>
 		return this.indexOf(o) >= 0;
 	}
 	
+	@Override
 	public boolean equals(Object o)
 	{
 		if (o == this)
