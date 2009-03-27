@@ -8,6 +8,8 @@ package java.util;
  */
 abstract class AbstractCollection<E> implements Collection<E>
 {
+	//TODO toString
+	
 	public boolean addAll(Collection<? extends E> c)
 	{
 		boolean r = false;
