@@ -17,7 +17,7 @@ public class RCNavComms
 
 
     /**
-     * constructor establixhes  call back path ot the RCNavigationControl
+     * constructor establishes  call back path of the RCNavigationControl
      * @param control
      */
     public RCNavComms(RCNavigationControl control)
@@ -36,9 +36,8 @@ public class RCNavComms
 
         System.out.println(" connecting to " + name + " " + address);
         connector = new NXTConnector();
-        int res =  connector.connectTo(name, address, NXTCommFactory.BLUETOOTH, false);
-        System.out.println(" connect result "+res);
-       boolean connected = res == 0;
+        boolean connected =  connector.connectTo(name, address, NXTCommFactory.BLUETOOTH);
+        System.out.println(" connect result "+connected);
       if(!connected) return connected;
         dataIn = connector.getDataIn();
         dataOut = connector.getDataOut();
@@ -55,8 +54,8 @@ public class RCNavComms
     }
 
     /**
-     * inner claSS to montior for an incoming message after a command has been sent <br>
-     * calls showRobotPosition() on the conrtroller
+     * inner class to monitor for an incoming message after a command has been sent <br>
+     * calls showRobotPosition() on the controller
      */
     class Reader extends Thread
     {
