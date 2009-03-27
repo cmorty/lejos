@@ -1,11 +1,11 @@
 package lejos.nxt.addon;
 
-
 import lejos.nxt.SensorPort;
-import lejos.nxt.I2CSensor;
-
 
 /**
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ * 
  * LDCMotor, Lattebox DC Motor, is a abstraction to model any DCMotor connected to
  * LSC, Lattebox Servo Controller. 
  * 

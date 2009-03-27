@@ -1,6 +1,9 @@
 package lejos.nxt.remote;
 
 /**
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ * 
  * Sensor input values for a remote NXT accessed via LCP.
  * 
  * @author <a href="mailto:bbagnall@mts.net">Brian Bagnall</a>

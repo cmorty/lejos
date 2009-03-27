@@ -4,6 +4,9 @@ import java.awt.Rectangle;
 import java.io.*;
 
 /**
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ * 
  * A map of a room or other closed environment, represented by line segments
  * 
  * @author Lawrie Griffiths

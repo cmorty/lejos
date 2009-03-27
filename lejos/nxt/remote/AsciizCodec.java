@@ -3,6 +3,9 @@ package lejos.nxt.remote;
 import java.io.UnsupportedEncodingException;
 
 /**
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ * 
  * Methods to encode and decode ASCIIZ.
  * ASCIIZ is ASCII terminated by Zero.
  */

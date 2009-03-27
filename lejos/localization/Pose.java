@@ -1,6 +1,9 @@
 package lejos.localization;
 
 /**
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ *
  * Represents a pose of the robot. 
  * The pose is its x,y position and its heading angle.
  * Also supports generation of a line representing a range

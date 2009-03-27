@@ -3,6 +3,8 @@ package lejos.nxt.remote;
 import java.io.*;
 
 /**
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
  * 
  * Sends LCP requests to the NXT and receives replies.
  * Uses an object that implements the NXTComm interface 
