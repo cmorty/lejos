@@ -1,5 +1,7 @@
 package lejos.pc.tools;
 import lejos.pc.comm.*;
+import lejos.nxt.remote.*;
+
 import java.io.*;
 
 /**
@@ -179,11 +181,13 @@ public class NXJFlashUpdate
     public void resetDevice(NXTInfo nxt) throws NXTCommException, IOException
     {
         ui.message("Attempting to reboot the device.");
+		NXTComm nxtComm = NXTCommFactory.createNXTComm(nxt.protocol);
         NXTCommand cmd = NXTCommand.getSingleton();
-        if (!cmd.open(nxt))
+        if (!nxtComm.open(nxt, NXTComm.LCP))
         {
             throw new NXTCommException("Failed to open device in command mode.");
         }
+        cmd.setNXTComm(nxtComm);
         // Force into firmware update mode.
         cmd.boot();
         cmd.close();

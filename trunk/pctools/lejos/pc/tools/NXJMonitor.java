@@ -2,7 +2,7 @@ package lejos.pc.tools;
 
 import java.awt.*;
 import java.awt.event.*;
-
+import lejos.nxt.remote.*;
 import javax.swing.*;
 import javax.swing.border.*;
 import lejos.pc.comm.*;
@@ -97,24 +97,14 @@ public class NXJMonitor extends JFrame implements ActionListener {
 		NXTConnector conn = new NXTConnector();
 		conn.addLogListener(new ToolsLogger());
 		
-		int connected = conn.connectTo(null, null, protocols, NXTComm.LCP, true);
+		final NXTInfo[] nxts = conn.search(null, null, protocols);
 		
-	    if (connected < 0) {
+	    if (nxts.length == 0) {
 	        System.err.println("No NXT found - is it switched on and plugged in (for USB)?");
 	        System.exit(1);
 	    }
-		
-	    final NXTInfo[] nxts = conn.getNXTInfos();
 	    
-	    // See if we have already connected to the only available NXT
-	    if (connected == 0) {
-	    	nxtCommand.setNXTComm(conn.getNXTComm());
-	    	showMonitor(nxts[0].name);
-	    	return;
-	    }
-	    
-	    // Otherwise display a list of NXTs
-
+	    // Display a list of NXT
 	    
 	    final NXTConnectionModel nm = new NXTConnectionModel(nxts, nxts.length);
 	    
@@ -134,7 +124,9 @@ public class NXJMonitor extends JFrame implements ActionListener {
 	          if (row >= 0) {
 	        	  boolean open = false;
 	        	  try {
-	        		  open = nxtCommand.open(nxts[row]);
+	        		  NXTComm nxtComm = NXTCommFactory.createNXTComm(nxts[row].protocol);
+	        		  open = nxtComm.open(nxts[row], NXTComm.LCP);
+	        		  nxtCommand.setNXTComm(nxtComm);
 	        	  } catch(NXTCommException n) {
 	        		  open = false;
 	        	  }
@@ -280,52 +272,6 @@ public class NXJMonitor extends JFrame implements ActionListener {
 		} catch (Exception e) {
 			System.err.println(e.getMessage());
 		}
-	}
-}
-
-class SensorPanel  extends Panel {
-	private static final long serialVersionUID = 3592127880184905255L;
-	LabeledGauge rawGauge, scaledGauge;
-	String name;
-	JLabel nameLabel;
-	JLabel typeLabel = new JLabel("No Sensor");
-	
-	public SensorPanel(String name) {
-		this.name = name;
-		//this.setBackground(Color.YELLOW);
-		nameLabel = new JLabel(name);
-		rawGauge = new LabeledGauge("Raw", 1024);
-		scaledGauge = new LabeledGauge("Scaled", 100);
-		
-		add(nameLabel);
-		add(rawGauge);
-		add(scaledGauge);		
-		add(typeLabel);
-
-		Dimension size = new Dimension(110,350);
-		setSize(size);
-		setMaximumSize(size);
-		setPreferredSize(size);
-	}
-	
-	public void setRawVal(int val) {
-		rawGauge.setVal(val);
-	}
-	
-	public void setRawMaxVal(int val) {
-		rawGauge.setMaxVal(val);
-	}
-	
-	public void setScaledVal(int val) {
-		scaledGauge.setVal(val);
-	}
-	
-	public void setScaledMaxVal(int val) {
-		scaledGauge.setMaxVal(val);
-	}
-	
-	public void setType(String type) {
-		typeLabel.setText(type);
 	}
 }
 

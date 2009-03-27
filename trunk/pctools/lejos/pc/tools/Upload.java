@@ -1,6 +1,7 @@
 package lejos.pc.tools;
 
 import java.io.*;
+import lejos.nxt.remote.*;
 import lejos.pc.comm.*;
 
 /**
@@ -38,9 +39,9 @@ public class Upload extends NXTCommLoggable {
 		if (protocols == 0)
 			protocols = NXTCommFactory.USB | NXTCommFactory.BLUETOOTH;
 
-		int connected = fConnector.connectTo(name, address, protocols, false);
+		boolean connected = fConnector.connectTo(name, address, protocols);
 		
-		if (connected != 0)
+		if (!connected)
 			throw new NXJUploadException(
 					"No NXT found - is it switched on and plugged in (for USB)?");
 		
@@ -67,7 +68,6 @@ public class Upload extends NXTCommLoggable {
 	 */
 	public void addLogListener(ToolsLogListener listener) {
 		fLogListeners.add(listener);
-		fNXTCommand.addLogListener(listener);
 		fConnector.addLogListener(listener);
 	}
 	
@@ -78,7 +78,6 @@ public class Upload extends NXTCommLoggable {
 	 */
 	public void removeLogListener(ToolsLogListener listener) {
 		fLogListeners.remove(listener);
-		fNXTCommand.removeLogListener(listener);
 		fConnector.removeLogListener(listener);
 	}
 }

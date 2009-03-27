@@ -170,7 +170,7 @@ class ConsoleViewComms
     {
         con = new NXTConnector();
         con.addLogListener(new ToolsLogger());
-        if (con.connectTo(name, address, (useUSB ? NXTCommFactory.USB : NXTCommFactory.BLUETOOTH), false) != 0)
+        if (!con.connectTo(name, address, (useUSB ? NXTCommFactory.USB : NXTCommFactory.BLUETOOTH)))
         {
             return false;
         } else

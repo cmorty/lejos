@@ -1,10 +1,8 @@
 package lejos.pc.tools;
 
 import java.io.IOException;
-
-import javax.swing.JFrame;
+import lejos.nxt.remote.*;
 import javax.swing.table.AbstractTableModel;
-import lejos.pc.comm.*;
 
 public class ExtendedFileModel extends AbstractTableModel {
   private static final long serialVersionUID = -6173853132812064498L;

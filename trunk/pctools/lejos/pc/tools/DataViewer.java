@@ -216,9 +216,9 @@ class DataViewComms
         }
         System.out.println(" connecting to " + name + " " + address);
         con = new NXTConnector();
-        int res = con.connectTo(name, address, protocol, false);
+        boolean res = con.connectTo(name, address, protocol);
         System.out.println("Connect result " + res);
-        if (0 != res)
+        if (!res)
         {
             System.out.println(" Connection failed ");
             return false;

@@ -132,8 +132,8 @@ public class NXJFlash implements NXJFlashUI
         {
             NXTInfo[] nxts;
             System.out.println("No devices in firmware update mode were found.\nSearching for other NXT devices.");
-            NXTCommand cmd = NXTCommand.getSingleton();
-            nxts = cmd.search(null, NXTCommFactory.USB);
+            NXTConnector conn = new NXTConnector();
+            nxts = conn.search(null, null, NXTCommFactory.USB);
             if (nxts.length <= 0)
             {
                 System.out.println("No NXT found. Please check that the device is turned on and connected.");

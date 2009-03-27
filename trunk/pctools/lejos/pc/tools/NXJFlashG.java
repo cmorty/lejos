@@ -163,8 +163,8 @@ public class NXJFlashG extends javax.swing.JFrame
          {
             NXTInfo[] nxts;
             progressTxt.append("\nNo devices in firmware update mode were found.\nSearching for other NXT devices.\n");
-            NXTCommand cmd = NXTCommand.getSingleton();
-            nxts = cmd.search(null, NXTCommFactory.USB);
+            NXTConnector conn = new NXTConnector();
+            nxts = conn.search(null, null, NXTCommFactory.USB);
             if (nxts.length <= 0)
             {
                JOptionPane.showMessageDialog(msgPanel,

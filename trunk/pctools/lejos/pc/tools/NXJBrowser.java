@@ -1,7 +1,7 @@
 package lejos.pc.tools;
 
 import lejos.pc.comm.*;
-
+import lejos.nxt.remote.*;
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.table.*;
@@ -22,8 +22,6 @@ import java.io.*;
  */
 public class NXJBrowser {
   public static final int MAX_FILES = 30;
-  private int numFiles;
-  private FileInfo[] files= new FileInfo[MAX_FILES];
   private NXTCommand nxtCommand;
   private Cursor hourglassCursor = new Cursor(Cursor.WAIT_CURSOR);
   private Cursor normalCursor = new Cursor(Cursor.DEFAULT_CURSOR);
@@ -77,24 +75,14 @@ public class NXJBrowser {
 	NXTConnector conn = new NXTConnector();
 	conn.addLogListener(new ToolsLogger());
 	
-	int connected = conn.connectTo(name, address, protocols, NXTComm.LCP, true);
+	final NXTInfo[] nxts = conn.search(name, address, protocols);
 	
-    if (connected < 0) {
+    if (nxts.length == 0) {
         System.err.println("No NXT found - is it switched on and plugged in (for USB)?");
         System.exit(1);
     }
-	
-    final NXTInfo[] nxts = conn.getNXTInfos();
     
-    // See if we have already connected to the only available NXT
-    if (connected == 0) {
-    	nxtCommand = new NXTCommand();
-    	nxtCommand.setNXTComm(conn.getNXTComm());
-    	showFiles(frame,nxts[0]);
-    	return;
-    }
-    
-    // Otherwise display a list of NXTs
+    // Display a list of NXTs
     
     final NXTConnectionModel nm = new NXTConnectionModel(nxts, nxts.length);
     
@@ -114,10 +102,11 @@ public class NXJBrowser {
           if (row >= 0) {
         	  boolean open = false;
         	  try {
-        		  open = nxtCommand.open(nxts[row]);
+        		  NXTComm nxtComm = NXTCommFactory.createNXTComm(nxts[row].protocol);
+        		  open = nxtComm.open(nxts[row], NXTComm.LCP);
+        		  nxtCommand.setNXTComm(nxtComm);
         	  } catch(NXTCommException n) {
         		  open = false;
-        		  JOptionPane.showMessageDialog(frame, "Failed to connect: " + n.getMessage());
         	  }
         	  if (!open) {
         		  JOptionPane.showMessageDialog(frame, "Failed to connect");
@@ -145,10 +134,8 @@ public class NXJBrowser {
 	}
 	
     frame.getContentPane().removeAll();
-    
-    fetchFiles();
 
-    final FileModel fm = new FileModel(frame, files, numFiles);
+    final ExtendedFileModel fm = new ExtendedFileModel(nxtCommand);
       
     final JTable table = new JTable(fm);
     table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -191,8 +178,7 @@ public class NXJBrowser {
 	          if (deleteIt) {
 	            //System.out.println("Deleting " + fileName);
 	            nxtCommand.delete(fileName); 
-		        fm.delete(i);
-		        numFiles--;
+		        fm.delete(fileName, i);
 		        i--;
 		        table.invalidate();
 		        tablePane.revalidate();   
@@ -218,8 +204,8 @@ public class NXJBrowser {
         		  showMessage("File name is more than 20 characters");
         	  } else {   	
 		          nxtCommand.uploadFile(file);
-		          fetchFiles();
-		          fm.setData(files, numFiles);
+		          String s = fm.fetchFiles();
+		          if (s != null) throw new IOException();
 		          table.invalidate();
 		          tablePane.revalidate();
         	  }
@@ -235,8 +221,8 @@ public class NXJBrowser {
       public void actionPerformed(ActionEvent ae) {
         int i = table.getSelectedRow();
         if (i<0) return;
-        String fileName = files[i].fileName;
-        int size = files[i].fileSize;
+        String fileName = fm.getFile(i).fileName;
+        int size = fm.getFile(i).fileSize;
         JFileChooser fc = new JFileChooser();
         fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
         fc.setSelectedFile(new File(fileName)); 
@@ -255,8 +241,8 @@ public class NXJBrowser {
           frame.setCursor(hourglassCursor);
           try {
         	  nxtCommand.defrag();
-	          fetchFiles();
-	          fm.setData(files, numFiles);
+	          String s = fm.fetchFiles();
+	          if (s != null) throw new IOException();
 	          table.invalidate();
 	          tablePane.revalidate();
 	          tablePane.repaint();
@@ -271,7 +257,7 @@ public class NXJBrowser {
         public void actionPerformed(ActionEvent ae) {
       	  int i = table.getSelectedRow();
       	  if (i<0) return;
-          String fileName = files[i].fileName;
+      	  String fileName = fm.getFile(i).fileName;
           try {
         	  runProgram(fileName);
         	  System.exit(0);
@@ -303,28 +289,6 @@ public class NXJBrowser {
     frame.setVisible(true);
   }
 
-  private void fetchFiles() {
-	numFiles = 0;
-    try {
-      files[0] = nxtCommand.findFirst("*.*");
-	  //System.out.println(files[0].startPage);
-	
-	  if (files[0] != null) {
-	    numFiles = 1;
-	
-	    for(int i=1;i<MAX_FILES;i++) {
-	      files[i] = nxtCommand.findNext(files[i-1].fileHandle);
-	      if (files[i] == null) break;
-	      else {
-	        //System.out.println(files[i].startPage);
-	        numFiles++;
-	      }
-	    }
-	  }
-    } catch (IOException ioe) {
-    	showMessage("IOException fetching files");
-    }
-  }
 
   public void getFile(File file, String fileName, int size) {
     FileOutputStream out = null; 

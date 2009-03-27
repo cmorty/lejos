@@ -36,7 +36,7 @@ public class SocketProxy {
 		try {
 			NXTConnector conn = new NXTConnector();
 			conn.addLogListener(new ToolsLogger());
-			if (conn.connectTo(null, null, NXTCommFactory.BLUETOOTH, false) != 0) {
+			if (!conn.connectTo(null, null, NXTCommFactory.BLUETOOTH)) {
 				System.err.println("Failed to connect to NXT");
 				System.exit(1);
 			}
