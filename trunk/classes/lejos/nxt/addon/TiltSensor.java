@@ -1,12 +1,13 @@
 package lejos.nxt.addon;
 
-
 import lejos.nxt.I2CPort;
 import lejos.nxt.I2CSensor;
 
 /**
- * Abstraction for a Mindsensors
- * acceleration (tilt) sensor.
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ * 
+ * Abstraction for a Mindsensors acceleration (tilt) sensor.
  * 
  */
 public class TiltSensor extends I2CSensor {

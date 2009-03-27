@@ -2,6 +2,9 @@ package lejos.localization;
 import java.io.*;
 
 /**
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+
  * Represents a set of range readings.
  * 
  * @author Lawrie Griffiths

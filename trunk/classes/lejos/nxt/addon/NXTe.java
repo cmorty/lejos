@@ -1,20 +1,20 @@
 package lejos.nxt.addon;
 
-
-import lejos.nxt.I2CPort;
 import lejos.nxt.SensorPort;
 import lejos.nxt.I2CSensor;
-
 import java.util.ArrayList;
 
 /**
-*
-* Abstraction for a  Lattebox NXT Extension Kit with  Lattebox 10-Axis Servo Kit
-* http://www.lattebox.com
-* UML: http://www.juanantonio.info/p_research/robotics/lejos/nxj/lattebox/LatteboxNXTeKit.png
-*
-* @author Juan Antonio Brenha Moral
-*/
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ * 
+ *
+ * Abstraction for a  Lattebox NXT Extension Kit with  Lattebox 10-Axis Servo Kit
+ * http://www.lattebox.com
+ * UML: http://www.juanantonio.info/p_research/robotics/lejos/nxj/lattebox/LatteboxNXTeKit.png
+ *
+ * @author Juan Antonio Brenha Moral
+ */
 public class NXTe  extends I2CSensor{
 	//LSC
 	private ArrayList arrLSC;

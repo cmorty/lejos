@@ -1,6 +1,9 @@
 package lejos.rcxcomm;
 
 /**
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ *
  * Abstract packet handler. 
  * Implementations must include sendPacket, receivePacket and
  * isPacketAvailable(). The other methods are optional.
