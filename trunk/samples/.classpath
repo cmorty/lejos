@@ -54,10 +54,6 @@
 	<classpathentry excluding="build.xml" kind="src" path="USBReceive"/>
 	<classpathentry excluding="build.xml" kind="src" path="View"/>
 	<classpathentry kind="src" path="PFLinkTest"/>
-	<classpathentry kind="lib" path="/classes/lib/classes.jar" sourcepath="/classes">
-		<attributes>
-			<attribute name="javadoc_location" value="http://lejos.sourceforge.net/p_technologies/nxt/nxj/api/index.html"/>
-		</attributes>
-	</classpathentry>
+	<classpathentry combineaccessrules="false" kind="src" path="/classes"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>
