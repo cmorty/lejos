@@ -3,6 +3,7 @@ package lejos.pc.tools;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import javax.swing.plaf.metal.*;
 
 import javax.swing.JComponent;
 
@@ -41,11 +42,12 @@ public class Gauge extends JComponent {
 		x2 += (int)( Math.cos(Math.toRadians(angle))*(gaugeWidth/2));
 		y2 -= (int)( Math.sin(Math.toRadians(angle))*(gaugeHeight/2));
 
-		g.setColor(Color.black);
+		g.setColor(MetalLookAndFeel.getPrimaryControlShadow());
 		g.fillRect(0, 0, size.width, size.height);
-		g.setColor(Color.white);
+		g.setColor(MetalLookAndFeel.getPrimaryControl());
 		g.fillOval((int) offsetX, (int) offsetY, (int)gaugeWidth, (int)gaugeHeight);
-		g.setColor( Color.blue);
+		g.setColor( MetalLookAndFeel.getBlack());
+		g.drawOval((int) offsetX, (int) offsetY, (int)gaugeWidth, (int)gaugeHeight);
 		g.drawArc( (int) offsetX+10, (int) offsetY+10, (int)gaugeWidth-20, (int)gaugeHeight-20, -45, 270);
 		g.setColor(Color.red);
 		g.drawLine(x1, y1, x2, y2 );

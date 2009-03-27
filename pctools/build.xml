@@ -1,6 +1,6 @@
 <!--
   ==================================================
-  Buildfile for building jtools
+  Buildfile for building pctools
   ==================================================
 -->
 <project name="pctools" default="build" basedir=".">

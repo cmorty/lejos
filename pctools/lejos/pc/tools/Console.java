@@ -14,8 +14,8 @@ public class Console {
 	public static void main(String[] args) throws Exception {
 		NXTConnector conn = new NXTConnector();
 		conn.addLogListener(new ToolsLogger());
-		int connected = conn.connectTo();
-		if (connected != 0) {
+		boolean connected = conn.connectTo();
+		if (!connected) {
 			System.err.println("No NXT Found");
 			return;
 		}

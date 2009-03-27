@@ -1,781 +1,1652 @@
 package lejos.pc.tools;
 
 import lejos.pc.comm.*;
-
+import lejos.nxt.remote.*;
 import java.awt.*;
-
 import javax.swing.*;
 import javax.swing.event.*;
-import javax.swing.table.*;
+import javax.swing.border.*;
 import java.awt.event.*;
 import java.io.*;
 import java.text.NumberFormat;
 
 /**
  * 
- *  Graphical control center for leJOS NXJ.
- *
- *  @author Lawrie Griffiths
+ * Graphical control center for leJOS NXJ.
+ * 
+ * @author Lawrie Griffiths
  */
-public class NXJControl implements ListSelectionListener {
-  // Constants
-  public static final int MAX_FILES = 30;
-  private static final Dimension frameSize = new Dimension(800,600);
-  private static final Dimension filesAreaSize = new Dimension(780,300);
-  private static final Dimension filesPanelSize = new Dimension(500, 400);
-  private static final Dimension nxtButtonsPanelSize = new Dimension(200,100);
-  private static final Dimension filesButtonsPanelSize = new Dimension(605,100);
-  private static final Dimension nxtTableSize = new Dimension(450,100);
-  private static final Dimension otherPanelSize = new Dimension(300,100);
-  private static final String title = "NXJ Control Center";
-
-  // GUI components
-  private Cursor hourglassCursor = new Cursor(Cursor.WAIT_CURSOR);
-  private Cursor normalCursor = new Cursor(Cursor.DEFAULT_CURSOR);
-  private JFrame frame = new JFrame(title); 
-  private JTable nxtTable = new JTable();
-  private JScrollPane nxtTablePane;
-  private JTextField nameText = new JTextField(8);
-  private JTable table;
-  private JScrollPane tablePane;
-  private JPanel filesPanel = new JPanel();
-  private JPanel consolePanel = new JPanel();
-  private JPanel monitorPanel = new JPanel();
-  private JPanel controlPanel = new JPanel();
-  private JPanel dataPanel = new JPanel();
-  private JPanel otherPanel = new JPanel();
-  private JTextArea theConsoleLog = new JTextArea(20,68);
-  private JTextArea theDataLog = new JTextArea(20,68);
-  private LabeledGauge batteryGauge = new LabeledGauge("Battery", 10000);
-  private JSlider aSlide = new JSlider(-100,100);
-  private JSlider bSlide = new JSlider(-100,100);
-  private JSlider cSlide = new JSlider(-100,100); 
-  private JButton connectButton = new JButton("Connect");
-  private JButton dataConnectButton = new JButton("Download");
-  private TextField dataColumns = new TextField("8",2);
-  private JButton searchButton = new JButton("Search");
-  private JButton consoleConnectButton = new JButton("Connect");
-  private JButton monitorUpdateButton = new JButton("Update");
-  private JButton controlUpdateButton = new JButton("Update");
-  private JButton deleteButton = new JButton("Delete Files");
-  private JButton uploadButton = new JButton("Upload file");
-  private JButton downloadButton = new JButton("Download file");
-  private JButton runButton = new JButton("Run program");
-  private JButton nameButton = new JButton("Set Name"); 
-  private JRadioButton usbButton = new JRadioButton("USB");
-  private JRadioButton bluetoothButton = new JRadioButton("Bluetooth");
-  private JRadioButton bothButton = new JRadioButton("Both", true);
-  
-  // Other instance data
-  private NXTConnectionModel nm;
-  private ExtendedFileModel fm;
-  private NXTComm nxtCommConsole;
-  private NXTComm nxtCommData;
-  private boolean consoleConnected = false;
-  private boolean dataConnected = false;
-  private NXJControl control;
-  private DataOutputStream os;
-  private DataInputStream is;
-  private ReaderThread readerThread;
-  private NXTCommand nxtCommand;
-  private NXTCommand[] nxtCommands;
-  private NXTConnector conn = new NXTConnector();
-  private NXTInfo[] nxts;
-  
-  // Formatter
-  private static final NumberFormat FORMAT_FLOAT = NumberFormat.getNumberInstance();
-
-  /**
-   * Command line entry point
-   * 
-   * @param args Arguments are ignored.
-   */
-  public static void main(String args[]) {
-	try {
-		NXJControl instance = new NXJControl();
-		instance.run();
-	} catch(Throwable t) {
-         System.err.println("Error: " + t.getMessage());
-	}
-  }
-  
-  /**
-   * Run the program
-   * 
-   * @throws NXTCommException
-   */
-  public void run() {
-	// Close connection and exit when frame windows closed
-    WindowListener listener = new WindowAdapter() {
-      public void windowClosing(WindowEvent w) {
-    	closeAll();
-        System.exit(0);
-      }
-    };
-    frame.addWindowListener(listener);
-	conn.addLogListener(new ToolsLogger());	
-	control = this;
-
-    // Search Button: search for NXTs
-    searchButton.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent ae) {
-          search();
-        }
-      });
-     
-    // Connect Button: connect to selected NXT
-    connectButton.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent ae) {
-          int row = nxtTable.getSelectedRow();
-          if (row >= 0) {
-        	  if (nxtCommands[row] != null) {// Connected, so disconnect
-        		  try {
-        			  nxtCommand = nxtCommands[row];
-        			  nxtCommand.close();
-        		  } catch (IOException ioe) {
-        			showMessage("IOException while disconnecting");  
-        		  }
-        		  updateConnectionStatus(row,false);
-        		  clearFiles();
-        		  return;
-        	  }
-        	  
-        	  // Connect
-        	  boolean open = false;
-        	  try {
-        		  clearFiles();
-        		  nxtCommand = new NXTCommand();
-        		  nxtCommand.addLogListener(new ToolsLogger());
-        		  nxtCommands[row] = nxtCommand;
-//        		  currentRow = row;
-        		  System.out.println("Opening " + nxts[row].name);
-        		  open = nxtCommand.open(nxts[row]);       		  
-        	  } catch(NXTCommException e) {
-        		  //showMessage("Exception opening NXT: " + e.getMessage());
-        		  open = false;
-        	  }
-        	  if (!open) {
-        		  showMessage("Failed to connect");
-        	  } else {
-        		  updateConnectionStatus(row, true);
-        		  showFiles();
-        	  }
-          }
-        }
-      });
-    
-    // Console Connect Button: connect the RConsole viewer
-    consoleConnectButton.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent ae) {
-          if (consoleConnected) {
-        	  try {
-        		  nxtCommConsole.close();
-        	  } catch (IOException ioe) {
-        		 showMessage("Failed to close connection: " + ioe.getMessage());
-        	  }
-        	  consoleConnected = false;
-        	  consoleConnectButton.setText("Connect");
-        	  return;
-          }
-          int row = nxtTable.getSelectedRow();
-          if (row >= 0) {
-            boolean open = false;
-      	    theConsoleLog.setText("");
-        	try {
-        		nxtCommConsole = NXTCommFactory.createNXTComm(nxts[row].protocol);
-        		open = nxtCommConsole.open(nxts[row]);
-        	} catch (NXTCommException e) {
-        		showMessage("Exception in open:" + e.getMessage());
-        		open = false;
-        	}
-        	
-	        if (!open) {
-	          showMessage("Failed to connect");
-	          return;
-	        }
-	        
-	        consoleConnected = true;
-	        os = new DataOutputStream(nxtCommConsole.getOutputStream());
-	        is = new DataInputStream(nxtCommConsole.getInputStream());
+public class NXJControl implements ListSelectionListener, NXTProtocol {
+	// Constants
+	public static final int MAX_FILES = 30;
 	
-	        try { // handshake
-	          byte[] hello = new byte[] {'C', 'O', 'N'};
-	          os.write(hello);
-	          os.flush();
-	        } catch (IOException e){
-	          showMessage("Handshake failed");
-	        }
-	        consoleConnectButton.setText("Disconnect");
-	        readerThread = new ReaderThread();
-	        readerThread.start();
-          }
-        }
-      });
-    
-    // Data log Connect Button: connect to the Data Logger
-    dataConnectButton.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent ae) {
-            if (dataConnected) {
-          	  try {
-          		  nxtCommData.close();
-          	  } catch (IOException ioe) {
-          		 showMessage("Failed to close connection: " + ioe.getMessage());
-          	  }
-          	  dataConnected = false;
-          	  dataConnectButton.setText("Disconnect");
-          	  return;
-            }
-            
-            int row = nxtTable.getSelectedRow();
-            if (row >= 0) {
-              boolean open = false;
-        	  theDataLog.setText("");
-          	  try {
-          		nxtCommData = NXTCommFactory.createNXTComm(nxts[row].protocol);
-          		open = nxtCommData.open(nxts[row]);
-          	  } catch (NXTCommException e) {
-          	    showMessage("Exception in open:" + e.getMessage());
-          	    open = false;
-          	  }
-          	
-  	          if (!open) {
-  	            showMessage("Failed to connect");
-  	            return;
-  	          }
-  	        
-  	          dataConnected = true;
-  	          os = new DataOutputStream(nxtCommData.getOutputStream());
-  	          is = new DataInputStream(nxtCommData.getInputStream());
-          
-              int b = 15;
-              int recordCount = 0;
-              int rowLength = 8; // default
-              try {
-                rowLength = Integer.parseInt(dataColumns.getText());
-              }
-              catch (NumberFormatException ex) {
-                System.out.println(dataColumns.getText() + " is not a number, default reset to 8");
-              }
-              try { //handshake - ready to read data
-                os.write(b);
-                os.flush();
-              } catch (IOException e) {
-                System.out.println(e + " handshake failed ");
-              }
-              float x = 0;
-              try
-              {
-                int length = is.readInt();
-                System.out.println(" reading length " + length);
-                for (int i = 0; i < length; i++) {
-                  if (0 == recordCount % rowLength) theDataLog.append("\n");
-                  x = is.readFloat();
-                  theDataLog.append(FORMAT_FLOAT.format(x) + "\t ");
-                  recordCount++;
-                }
-                nxtCommData.close();
-              } catch (IOException e) {
-                System.out.println("read error " + e);
-              }
-               System.out.println("Read all data");  
-               dataConnected = false;
-            }
-        }
-      });
-    
-    // Monitor Update Button: get values being monitored
-    monitorUpdateButton.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent ae) {      	
-          int mv = 0;
-          try {
-        	  if (nxtCommand == null) return;
-        	  mv = nxtCommand.getBatteryLevel();
-        	  System.out.println("Millivolts = " + mv);
-          } catch (IOException ioe) {
-        	  showMessage("IOException updating monitor " + ioe.getMessage());
-          }
-          batteryGauge.setVal(mv);
-        }
-      });
-    
-    // Control Update Button: send new control values
-    controlUpdateButton.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent ae) {      	
-          int mv = 0;
-          try {
-        	  if (nxtCommand == null) return;
-        	  nxtCommand.setOutputState(0, (byte) aSlide.getValue(), 0, 0, 0, 0, 0);
-        	  nxtCommand.setOutputState(1, (byte) bSlide.getValue(), 0, 0, 0, 0, 0);
-        	  nxtCommand.setOutputState(2, (byte) cSlide.getValue(), 0, 0, 0, 0, 0);
-          } catch (IOException ioe) {
-        	  showMessage("IOException updating control");
-          }
-          batteryGauge.setVal(mv);
-        }
-      });
-    
-    // Create the panels
-    createNXTSelectionPanel();
-    createConsolePanel();
-    createDataPanel();
-    createMonitorPanel();
-    createControlPanel();
+	private static final int LCP = 0;
+	private static final int RCONSOLE = 1;
+	private static final int DATALOG = 2;
+	
+	private static final Dimension frameSize = new Dimension(800, 620);
+	private static final Dimension filesAreaSize = new Dimension(780, 300);
+	private static final Dimension filesPanelSize = new Dimension(500, 400);
+	private static final Dimension nxtButtonsPanelSize = new Dimension(220, 130);
+	private static final Dimension filesButtonsPanelSize = new Dimension(700,100);
+	private static final Dimension nxtTableSize = new Dimension(450, 100);	
+	private static final Dimension labelSize = new Dimension(60, 20);
+	private static final Dimension sliderSize = new Dimension(150, 50);
+	private static final Dimension tachoSize = new Dimension(100, 20);
+	private static final Dimension infoPanelSize = new Dimension(300, 110);
+	private static final Dimension namePanelSize = new Dimension(300, 110);
+	private static final Dimension innerInfoPanelSize = new Dimension(280, 70);
+	private static final Dimension tonePanelSize = new Dimension(300, 110);
+	private static final Dimension i2cPanelSize = new Dimension(480, 170);
+	private static final int fileNameColumnWidth = 200;
+	
+	private static final String title = "NXJ Control Center";
 
-    // set the size of the files panel
-    filesPanel.setPreferredSize(filesPanelSize); 
-    
-    createTabs();
+	private static final String[] sensorTypes = { "No Sensor", "Touch Sensor",
+			"Temperature", "RCX Light", "RCX Rotation", "Light Active",
+			"Light Inactive", "Sound DB", "Sound DBA", "Custom", "I2C",
+			"I2C 9V" };
 
-    // Set up the frame
-    frame.setPreferredSize(frameSize);
-    frame.pack();
-    frame.setVisible(true);
-  }
-  
-  /**
-   * Thread to display RConsole output
-   *
-   */
-  private class ReaderThread extends Thread
-  {
-     public  void run()
-     {     
-        while(consoleConnected)
-        {
-          try
-          {  
-             int input;
-             while ((input = is.read()) >= 0) 
-             {   
-                theConsoleLog.append(""+(char)input);
-                //System.out.print(""+(char)input);
-             } 
-             is.close();
-          }
-          catch(IOException e) 
-          {
-             //System.out.println( "read error"); 
-             consoleConnected = false;
-          }
-          Thread.yield();
-        }
-        try {
-       	 nxtCommConsole.close();
-        } catch (IOException ioe) {}
-     }
-  }
-  
-  /**
-   * Get files from the NXT and display them in the files panel
-   */
-  private void showFiles() { 
-	// Layout and populate files table
-	createFilesTable();
-    
-    // Remove current content of files panel and recreate it
-    filesPanel.removeAll();   
-    createFilesPanel();
-    
-    // Remove existing content from the others panel and recreate it
-    otherPanel.removeAll();
-    createMiscellaneousPanel();
-    
-    // Process buttons
-    
-    // Delete Button: delete a file from the NXT
-    deleteButton.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent ae) {
-    	frame.setCursor(hourglassCursor);      
-    	try {
-	        for(int i=0;i<fm.getRowCount();i++) {
-	          Boolean b = (Boolean) fm.getValueAt(i,4);
-	          boolean deleteIt = b.booleanValue();
-	          String fileName = (String) fm.getValueAt(i,0);
-	          if (deleteIt) {
-		        fm.delete(fileName, i);
-		        i--;
-		        table.invalidate();
-		        tablePane.revalidate();   
-	          }
-	        }
-        } catch (IOException ioe) {
-        	showMessage("IOException deleting files");
-        }
-        frame.setCursor(normalCursor);
-      }
-    });
+	private static final int[] sensorTypeValues = { NO_SENSOR, SWITCH, TEMPERATURE,
+			REFLECTION, ANGLE, LIGHT_ACTIVE, LIGHT_INACTIVE, SOUND_DB,
+			SOUND_DBA, CUSTOM, LOWSPEED, LOWSPEED_9V };
 
-    // Upload Button: upload a file to the NXT
-    uploadButton.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent ae) {       
-        JFileChooser fc = new JFileChooser();
+	private static final String[] sensors = { "S1", "S2", "S3", "S4" };
 
-        int returnVal = fc.showOpenDialog(frame);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-          frame.setCursor(hourglassCursor);
-          try {
-        	  File file = fc.getSelectedFile();
-        	  if (file.getName().length() > 20) {
-        		  showMessage("File name is more than 20 characters");
-        	  } else {   	
-		          nxtCommand.uploadFile(file);
-		          String msg = fm.fetchFiles();
-		          if (msg != null) showMessage(msg);
-		          table.invalidate();
-		          tablePane.revalidate();
-        	  }
-          } catch (IOException ioe) {
-        	  showMessage("IOException uploading file");
-          }
-          frame.setCursor(normalCursor);
-        }
-      }
-    });
-    
-    // Download Button: download a file from from the NXT
-    downloadButton.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent ae) {
-        int i = table.getSelectedRow();
-        if (i<0) return;
-        String fileName = fm.getFile(i).fileName;
-        int size = fm.getFile(i).fileSize;
-        JFileChooser fc = new JFileChooser();
-        fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        fc.setSelectedFile(new File(fileName)); 
-	    int returnVal = fc.showSaveDialog(frame);
-        if (returnVal == 0) {
-          File file = fc.getSelectedFile();
-          frame.setCursor(hourglassCursor);
-          getFile(file, fileName, size);
-          frame.setCursor(normalCursor);
-        }
-      }
-    });
-    
-    // Run Button: run a program on the NXT
-    runButton.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent ae) {
-      	  int row = table.getSelectedRow();
-      	  if (row<0) return;
-          String fileName = fm.getFile(row).fileName;
-          try {
-        	  nxtCommand.startProgram(fileName);
-        	  nxtCommand.close();
-        	  updateConnectionStatus(row,false);
-        	  clearFiles();
-          } catch (IOException ioe) {
-        	  showMessage("IOException running program");
-          }
-        }
-      });
-    
-    // Set Name Button: set a new name for the NXT
-    nameButton.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent ae) {
-          String name = JOptionPane.showInputDialog(frame,"New Name");
-          
-          if (name != null && name.length() <= 16) {
-        	  frame.setCursor(hourglassCursor);        
-              try {
-            	  nxtCommand.setFriendlyName(name);
-            	  frame.setTitle(title + " : " + name);
-              } catch (IOException ioe) {
-            	  showMessage("IOException setting friendly name");
-              }
-        	  frame.setCursor(normalCursor);
-          }
-        }
-      });
-    
-    // Pack the frame
-    frame.pack();
-  }
+	private static final String[] sensorModes = { "Raw", "Boolean", "Percentage" };
 
-  /**
-   * Download a file from the NXT
-   * 
-   * @param file the destination PC file
-   * @param fileName the NXT filename
-   * @param size the size in bytes of the NXT file
-   */
-  public void getFile(File file, String fileName, int size) {
-    FileOutputStream out = null; 
-    int received = 0;
+	private static final int[] sensorModeValues = { RAWMODE, BOOLEANMODE, PCTFULLSCALEMODE };
+	
+	private final String[] motorNames = { "A", "B", "C" };
 
-    try {
-      out = new FileOutputStream(file);
-    } catch (FileNotFoundException e) {}
+	// GUI components
+	private Cursor hourglassCursor = new Cursor(Cursor.WAIT_CURSOR);
+	private Cursor normalCursor = new Cursor(Cursor.DEFAULT_CURSOR);
+	private JFrame frame = new JFrame(title);
+	private JTable nxtTable = new JTable();
+	private JScrollPane nxtTablePane;
+	private JTextField nameText = new JTextField(8);
+	private JTable table;
+	private JScrollPane tablePane;
+	private JPanel filesPanel = new JPanel();
+	private JPanel consolePanel = new JPanel();
+	private JPanel monitorPanel = new JPanel();
+	private JPanel controlPanel = new JPanel();
+	private JPanel dataPanel = new JPanel();
+	private JPanel otherPanel = new JPanel();
+	private JTextArea theConsoleLog = new JTextArea(22, 68);
+	private JTextArea theDataLog = new JTextArea(20, 68);
+	private LabeledGauge batteryGauge = new LabeledGauge("Battery", 10000);
+	private JSlider[] sliders = new JSlider[3];
+	private JLabel[] tachos = new JLabel[3];
+	private JCheckBox[] selectors = new JCheckBox[3];
+	private JCheckBox[] reversors = new JCheckBox[3];
+	private JTextField[] limits = new JTextField[3];
+	private JButton[] resetButtons = new JButton[3];
+	private JButton connectButton = new JButton("Connect");
+	private JButton dataDownloadButton = new JButton("Download");
+	private TextField dataColumns = new TextField("8", 2);
+	private JButton searchButton = new JButton("Search");
+	private JButton monitorUpdateButton = new JButton("Update");
+	private JButton forwardButton = new JButton("Forward");
+	private JButton backwardButton = new JButton("Backward");
+	private JButton leftButton = new JButton("Turn Left");
+	private JButton rightButton = new JButton("Turn Right");
+	private JButton deleteButton = new JButton("Delete Files");
+	private JButton uploadButton = new JButton("Upload file");
+	private JButton downloadButton = new JButton("Download file");
+	private JButton runButton = new JButton("Run program");
+	private JButton nameButton = new JButton("Set Name");
+	private JButton formatButton = new JButton("Format");
+	private JRadioButton usbButton = new JRadioButton("USB");
+	private JRadioButton bluetoothButton = new JRadioButton("Bluetooth");
+	private JRadioButton bothButton = new JRadioButton("Both", true);
+	private JRadioButton lcpButton = new JRadioButton("LCP", true);
+	private JRadioButton rconsoleButton = new JRadioButton("RConsole");
+	private JRadioButton datalogButton = new JRadioButton("Data Log");
+	private JFormattedTextField freq = new JFormattedTextField(new Integer(500));
+	private JFormattedTextField duration = new JFormattedTextField(new Integer(1000));
+	private JComboBox sensorList = new JComboBox(sensors);
+	private JComboBox sensorList2 = new JComboBox(sensors);
+	private JComboBox sensorModeList = new JComboBox(sensorModes);
+	private JComboBox sensorTypeList = new JComboBox(sensorTypes);
+	private SensorPanel[] sensorPanels = { new SensorPanel("Sensor Port 1"),
+			new SensorPanel("Sensor Port 2"), new SensorPanel("Sensor Port 3"),
+			new SensorPanel("Sensor Port 4") };
+	private JFormattedTextField txData = new JFormattedTextField();
+	private JFormattedTextField rxDataLength = new JFormattedTextField(new Integer(1));
+	private JLabel rxData = new JLabel();
+	private Border etchedBorder = BorderFactory.createEtchedBorder();
+	private JButton soundButton = new JButton("Play Sound File");
+	private JTextField newName = new JTextField(16);
+	private JTabbedPane tabbedPane = new JTabbedPane();
+	
+	// Other instance data
+	private NXTConnectionModel nm;
+	private ExtendedFileModel fm;
+	private NXJControl control;
+	private DataOutputStream os;
+	private DataInputStream is;
+	private ReaderThread readerThread;
+	private NXTCommand nxtCommand;
+	private NXTCommand[] nxtCommands;
+	private NXTComm nxtComm;
+	private NXTComm[] nxtComms;
+	private NXTConnector conn = new NXTConnector();
+	private NXTInfo[] nxts;
+	private InputValues[] sensorValues = new InputValues[4];
+	private int mv;
+	private int rowLength = 8; // default
+	private int appProtocol = LCP;
+	private int currentRow = -1;
 
-    try {  	
-      nxtCommand.openRead(fileName);
-      do
-      {
-        byte [] data = nxtCommand.readFile((byte) 0,(size-received < 51 ? size-received : 51));
-        received += data.length;
-      
-        out.write(data);
+	// Formatter
+	private static final NumberFormat FORMAT_FLOAT = NumberFormat.getNumberInstance();
 
-      } while (received < size);
+	/**
+	 * Command line entry point
+	 */
+	public static void main(String args[]) {
+		try {
+			NXJControl instance = new NXJControl();
+			instance.run();
+		} catch (Throwable t) {
+			System.err.println("Error: " + t.getMessage());
+		}
+	}
 
-      nxtCommand.closeFile((byte) 0);
-      out.close();
-    } catch (IOException ioe) {
-    	showMessage("IOException downloading file");
-    }
-  }
+	/**
+	 * Run the program
+	 */
+	private void run() {
+		// Close connection and exit when frame windows closed
+		WindowListener listener = new WindowAdapter() {
+			public void windowClosing(WindowEvent w) {
+				closeAll();
+				System.exit(0);
+			}
+		};
+		frame.addWindowListener(listener);
+		conn.addLogListener(new ToolsLogger());
+		control = this;
 
-  /**
-   * Show a pop-up message
-   * 
-   * @param msg the message
-   */
-  public void showMessage(String msg) {
-	  JOptionPane.showMessageDialog(frame, msg);
-  }
-  
-  /**
-   * Clear the files tab.
-   */
-  private void clearFiles() {
-	  filesPanel.removeAll();
-	  filesPanel.repaint();  
-  }
-  
-  /**
-   * Switch between NXTS in table of available NXTs
-   */
-  public void valueChanged(ListSelectionEvent e) {
-	  if (e.getValueIsAdjusting()) {
-		  int row = nxtTable.getSelectedRow();
-		  if (row < 0) return;
-		  //System.out.println("Row = " + row);
-		  //System.out.println(nxtCommands[row]);
-		  if (nxtCommands[row] != null && nxtCommands[row].isOpen()) {
-			  nxtCommand = nxtCommands[row];
-			  //System.out.println("Fetching files");
-			  updateConnectButton(true);
-			  showFiles();
-		  } else {
-			  updateConnectButton(false);
-			  clearFiles();
-		  }
-	  }	 
-  }
-  
-  /**
-   * Search for available NXTs and populate table with results.
-   */
-  private void search() {
-	closeAll();
-	clearFiles();
-	updateConnectButton(false);
-	nxtTable.setModel(new NXTConnectionModel(null,0));
-    int connected = conn.connectTo(nameText.getText(), null, 
-                    getProtocols(), NXTComm.LCP, true);
+		// Search Button: search for NXTs
+		searchButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent ae) {
+				search();
+			}
+		});
 
-    if (connected < 0) {
-      showMessage("No NXTS found");
-      return;
-    }
+		// Connect Button: connect to selected NXT
+		connectButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent ae) {
+				connect();
+			}
+		});
 
-    nxts = conn.getNXTInfos();
-    nm = new NXTConnectionModel(nxts, nxts.length);
-    nxtTable.setModel(nm);	           	
-    nxtTable.setRowSelectionInterval(0, 0);
-    nxtTable.getSelectionModel().addListSelectionListener(control);
-    nxtCommands = new NXTCommand[nxts.length];
-  }
-  
-  /**
-   * Close all connections
-   */
-  private void closeAll() {
-	  if (nxtCommands == null) return;
-	  for(int i=0;i<nxtCommands.length;i++) {
-		  NXTCommand nc = nxtCommands[i];
-		  if (nc != null) 
-			  try {
-				  nc.close();
-			  } catch (IOException ioe) {}
-	  }
-  }
-  
-  private void updateConnectionStatus(int row, boolean connected) {
-	  nm.setConnected(row, connected);
-	  nxtTable.repaint();
-	  updateConnectButton(connected);
-	  if (!connected) nxtCommands[row] = null;
-  }
-  
-  /**
-   * Toggle Connect button detween Connect and Disconnect
-   * 
-   * @param connected
-   */
-  private void updateConnectButton(boolean connected) {
-	  connectButton.setText((connected ? "Disconnect" : "Connect"));
-  }
-  
-  private int getProtocols() {
-	  int protocols = 0;
-	  if (usbButton.isSelected()) protocols = NXTCommFactory.USB;
-	  if (bluetoothButton.isSelected()) protocols = NXTCommFactory.BLUETOOTH;
-	  if (bothButton.isSelected()) protocols = NXTCommFactory.USB | NXTCommFactory.BLUETOOTH;
-	  return protocols;
-  }
-  
-  // Lay out NXT Selection panel
-  private void createNXTSelectionPanel() {
-    JPanel nxtPanel = new JPanel();  
-    nxtTablePane = new JScrollPane(nxtTable);
-    nxtTablePane.setPreferredSize(nxtTableSize);
-    nxtPanel.add(new JScrollPane(nxtTablePane), BorderLayout.WEST);   
-    frame.getContentPane().add(nxtPanel, BorderLayout.NORTH);
-    nxtTable.setPreferredScrollableViewportSize(nxtButtonsPanelSize);   
-    JLabel nameLabel = new JLabel("Name: ");
-    JPanel namePanel = new JPanel();
-    namePanel.add(nameLabel);
-    namePanel.add(nameText);
-    JPanel nxtButtonPanel = new JPanel(); 
-    nxtButtonPanel.add(namePanel);
-    nxtButtonPanel.add(searchButton);
-    nxtButtonPanel.add(connectButton);
-	nxtButtonPanel.add(usbButton);
-	nxtButtonPanel.add(bluetoothButton);
-	nxtButtonPanel.add(bothButton);
-	ButtonGroup protocolButtonGroup = new ButtonGroup();
-	protocolButtonGroup.add(usbButton);
-	protocolButtonGroup.add(bluetoothButton);
-	protocolButtonGroup.add(bothButton);
-    nxtButtonPanel.setPreferredSize(new Dimension(200,100));   
-    nxtPanel.add(nxtButtonPanel, BorderLayout.EAST);
-  }
-  
-  // Lay out Console Panel
-  private void createConsolePanel() {
-    JLabel consoleTitleLabel = new JLabel("Output from RConsole");
-    consolePanel.add(consoleTitleLabel, BorderLayout.NORTH);
-    consolePanel.add(new JScrollPane(theConsoleLog), BorderLayout.CENTER);
-    consolePanel.add(consoleConnectButton, BorderLayout.SOUTH);
-  }
-  
-  // Lay out Data Console Panel
-  private void createDataPanel() {
-    JLabel dataTitleLabel = new JLabel("Data Log");
-    dataPanel.add(dataTitleLabel, BorderLayout.NORTH);
-    dataPanel.add(new JScrollPane(theDataLog), BorderLayout.CENTER);
-    JPanel commandPanel = new JPanel();
-    commandPanel.add(new JLabel("Columns:"));
-    commandPanel.add(dataColumns);
-    commandPanel.add(dataConnectButton);
-    dataPanel.add(commandPanel, BorderLayout.SOUTH);
-  }
-  
-  // Lay out Monitor Panel
-  private void createMonitorPanel() {
-    monitorPanel.add(batteryGauge, BorderLayout.NORTH);
-    monitorPanel.add(monitorUpdateButton,BorderLayout.SOUTH);  
-  }
-  
-  // Lay out Control Panel
-  private void createControlPanel() {
-    JPanel motorPanel = new JPanel();
-    motorPanel.setLayout(new GridLayout(3,1));   
-    JPanel aPanel = new JPanel();   
-    aSlide.setMajorTickSpacing(100);
-    aSlide.setMinorTickSpacing(10);
-    aSlide.setPaintLabels(true);
-    aSlide.setPaintTicks(true);   
-    JLabel aLabel = new JLabel("Motor.A:  ");
-    aPanel.add(aLabel);
-    aPanel.add(aSlide);  
-    JPanel bPanel = new JPanel();    
-    bSlide.setMajorTickSpacing(100);
-    bSlide.setMinorTickSpacing(10);
-    bSlide.setPaintLabels(true);
-    bSlide.setPaintTicks(true);    
-    JLabel bLabel = new JLabel("Motor.B:  ");
-    bPanel.add(bLabel);
-    bPanel.add(bSlide);    
-    JPanel cPanel = new JPanel();   
-    cSlide.setMajorTickSpacing(100);
-    cSlide.setMinorTickSpacing(10);
-    cSlide.setPaintLabels(true);
-    cSlide.setPaintTicks(true);   
-    JLabel cLabel = new JLabel("Motor.C:  ");
-    cPanel.add(cLabel);
-    cPanel.add(cSlide);    
-    motorPanel.add(aPanel);
-    motorPanel.add(bPanel);
-    motorPanel.add(cPanel);   
-    controlPanel.add(motorPanel);
-    controlPanel.add(controlUpdateButton);
-  }
-  
-  // Create the tabs
-  private void createTabs() {
-    JTabbedPane tabbedPane = new JTabbedPane();
-    tabbedPane.addTab("Files", filesPanel);
-    tabbedPane.addTab("Console", consolePanel);
-    tabbedPane.addTab("Data Log", dataPanel);
-    tabbedPane.addTab("Monitor", monitorPanel);
-    tabbedPane.addTab("Control", controlPanel);
-    tabbedPane.addTab("Miscellaneous", otherPanel);
-    frame.getContentPane().add(tabbedPane, BorderLayout.SOUTH);
-  }
-  
-  // Set up the files panel
-  private void createFilesPanel() {
-    filesPanel.add(tablePane, BorderLayout.CENTER);
-    JPanel buttonPanel = new JPanel();
+		// Data log Connect Button: connect to the Data Logger
+		dataDownloadButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent ae) {
+				dataDownload();
+			}
+		});
 
-  
-    buttonPanel.add(deleteButton);
-    buttonPanel.add(uploadButton);
-    buttonPanel.add(downloadButton);
-    buttonPanel.add(runButton); 
-    buttonPanel.setPreferredSize(filesButtonsPanelSize);
-    filesPanel.add(buttonPanel, BorderLayout.SOUTH);
-  }
-  
-  // Populate the Other Panel
-  private void createMiscellaneousPanel() {
-    JPanel infoPanel = new JPanel();
-    DeviceInfo di;
-    FirmwareInfo fi;
-    infoPanel.setLayout(new GridLayout(3,2));
-    infoPanel.setPreferredSize(otherPanelSize);  
-    try {
-    	di = nxtCommand.getDeviceInfo();
-    	JLabel freeFlashLabel = new JLabel("Free flash:  ");
-    	JLabel freeFlash = new JLabel(""+di.freeFlash);
-    	infoPanel.add(freeFlashLabel);
-    	infoPanel.add(freeFlash);
-    	fi = nxtCommand.getFirmwareVersion();
-    	JLabel firmwareVersionLabel = new JLabel("Firmware version: ");
-    	JLabel firmwareVersion = new JLabel("" + fi.firmwareVersion);
-    	infoPanel.add(firmwareVersionLabel);
-    	infoPanel.add(firmwareVersion);
-    	JLabel protocolVersionLabel = new JLabel("Protocol version:  ");
-    	JLabel protocolVersion = new JLabel("" + fi.protocolVersion);
-    	infoPanel.add(protocolVersionLabel);
-    	infoPanel.add(protocolVersion);
-    	otherPanel.add(infoPanel);
-        otherPanel.add(nameButton);
-    } catch (IOException ioe) {
-    	showMessage("IO Exception getting device information");
-    }
-  }
-  
-  // Set up the files table
-  private void createFilesTable() {
-    fm = new ExtendedFileModel(nxtCommand);     
-    table = new JTable(fm);
-    table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);    
-    TableColumn col = table.getColumnModel().getColumn(0);
-    col.setPreferredWidth(300);
-    tablePane = new JScrollPane(table);
-    tablePane.setPreferredSize(filesAreaSize);
-  }
+		// Monitor Update Button: get values being monitored
+		monitorUpdateButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent ae) {
+				getSensorValues();
+				updateSensors();
+			}
+		});
+		
+		lcpButton.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				if (appProtocol == getAppProtocol()) return;
+				if (lcpButton.isSelected()) {
+					createLCPTabs();
+					appProtocol = LCP;
+				}				
+			}		
+		});
+		
+		rconsoleButton.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				if (appProtocol == getAppProtocol()) return;
+				if (rconsoleButton.isSelected()) {
+					createConsoleTabs();
+					appProtocol = RCONSOLE;
+				}				
+			}		
+		});
+		
+		datalogButton.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				if (appProtocol == getAppProtocol()) return;
+				if (datalogButton.isSelected()) {
+					createDataLogTabs();
+					appProtocol = DATALOG;
+				}				
+			}		
+		});
+
+		// Create the panels
+		createNXTSelectionPanel();
+		createConsolePanel();
+		createDataPanel();
+		createMonitorPanel();
+		createControlPanel();
+		createMiscellaneousPanel();
+
+		// set the size of the files panel
+		filesPanel.setPreferredSize(filesPanelSize);
+		
+		// Set up the frame
+		frame.setPreferredSize(frameSize);
+		
+		createLCPTabs();
+		
+		frame.add(tabbedPane);
+		frame.pack();
+		frame.setVisible(true);
+	}
+
+	/**
+	 * Get files from the NXT and display them in the files panel
+	 */
+	private void showFiles() {
+		// Layout and populate files table
+		createFilesTable();
+
+		// Remove current content of files panel and recreate it
+		filesPanel.removeAll();
+		createFilesPanel();
+		
+		// Recreate miscellaneous panel
+		otherPanel.removeAll();
+		createMiscellaneousPanel();
+		
+		// Process buttons
+
+		// Delete Button: delete a file from the NXT
+		deleteButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent ae) {
+				deleteFiles();
+			}
+		});
+
+		// Upload Button: upload a file to the NXT
+		uploadButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent ae) {
+				upload();
+			}
+		});
+
+		// Download Button: download a file from from the NXT
+		downloadButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent ae) {
+				download();
+			}
+		});
+
+		// Run Button: run a program on the NXT
+		runButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent ae) {
+				runFile();
+			}
+		});
+
+		// Set Name Button: set a new name for the NXT
+		nameButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent ae) {
+				rename(newName.getText());
+			}
+		});
+		
+		// Sound button: Play Sound file
+		soundButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				playSoundFile();
+			}
+		});
+		
+		// Format button; Delete user flash memory
+		formatButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				format();
+			}
+		});
+
+		// Pack the frame
+		//frame.pack();
+	}
+
+	/**
+	 * Lay out NXT Selection panel
+	 */
+	private void createNXTSelectionPanel() {
+		JPanel nxtPanel = new JPanel();
+		nxtTablePane = new JScrollPane(nxtTable);
+		nxtTablePane.setPreferredSize(nxtTableSize);
+		nxtPanel.add(new JScrollPane(nxtTablePane), BorderLayout.WEST);
+		frame.getContentPane().add(nxtPanel, BorderLayout.NORTH);
+		nxtTable.setPreferredScrollableViewportSize(nxtButtonsPanelSize);
+		JLabel nameLabel = new JLabel("Name: ");
+		JPanel namePanel = new JPanel();
+		namePanel.add(nameLabel);
+		namePanel.add(nameText);
+		JPanel nxtButtonPanel = new JPanel();
+		nxtButtonPanel.add(namePanel);
+		JPanel buttonPanel = new JPanel();
+		buttonPanel.add(searchButton);
+		buttonPanel.add(connectButton);
+		nxtButtonPanel.add(buttonPanel);
+		nxtButtonPanel.add(usbButton);
+		nxtButtonPanel.add(bluetoothButton);
+		nxtButtonPanel.add(bothButton);
+		ButtonGroup protocolButtonGroup = new ButtonGroup();
+		protocolButtonGroup.add(usbButton);
+		protocolButtonGroup.add(bluetoothButton);
+		protocolButtonGroup.add(bothButton);
+		nxtButtonPanel.add(lcpButton);
+		nxtButtonPanel.add(rconsoleButton);
+		nxtButtonPanel.add(datalogButton);
+		ButtonGroup appProtocolButtonGroup = new ButtonGroup();
+		appProtocolButtonGroup.add(lcpButton);
+		appProtocolButtonGroup.add(rconsoleButton);
+		appProtocolButtonGroup.add(datalogButton);
+		nxtButtonPanel.setPreferredSize(nxtButtonsPanelSize);
+		nxtPanel.add(nxtButtonPanel, BorderLayout.EAST);
+	}
+
+	/**
+	 *  Lay out Console Panel
+	 */
+	private void createConsolePanel() {
+		JLabel consoleTitleLabel = new JLabel("Output from RConsole");
+		consolePanel.add(consoleTitleLabel);
+		consolePanel.add(new JScrollPane(theConsoleLog));
+	}
+
+	/**
+	 *  Lay out Data Console Panel
+	 */
+	private void createDataPanel() {
+		JLabel dataTitleLabel = new JLabel("Data Log");
+		dataPanel.add(dataTitleLabel, BorderLayout.NORTH);
+		dataPanel.add(new JScrollPane(theDataLog), BorderLayout.CENTER);
+		JPanel commandPanel = new JPanel();
+		commandPanel.add(new JLabel("Columns:"));
+		commandPanel.add(dataColumns);
+		commandPanel.add(dataDownloadButton);
+		dataPanel.add(commandPanel, BorderLayout.SOUTH);
+	}
+
+	/**
+	 *  Lay out Monitor Panel
+	 */
+	private void createMonitorPanel() {
+		JPanel leftPanel = new JPanel();
+		leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
+		JPanel batteryPanel = new JPanel();
+		batteryPanel.setBorder(etchedBorder);
+		batteryPanel.add(batteryGauge);
+		leftPanel.add(batteryPanel);
+		JPanel setSensorPanel = new JPanel();
+		setSensorPanel.setBorder(etchedBorder);
+		setSensorPanel.setLayout(new BoxLayout(setSensorPanel, BoxLayout.Y_AXIS));
+		JLabel setSensorLabel = new JLabel("Set Sensor type & mode");
+		JPanel labelPanel = new JPanel();
+		labelPanel.add(setSensorLabel);
+		setSensorPanel.add(labelPanel);
+		JPanel portPanel = new JPanel();
+		JLabel portLabel = new JLabel("Port:");
+		portPanel.add(portLabel);
+		portPanel.add(sensorList2);
+		setSensorPanel.add(portPanel);
+		JPanel typePanel = new JPanel();
+		JLabel typeLabel = new JLabel("Type:");
+		typePanel.add(typeLabel);
+		typePanel.add(sensorTypeList);
+		setSensorPanel.add(typePanel);
+		JPanel modePanel = new JPanel();
+		JLabel modeLabel = new JLabel("Mode:");
+		modePanel.add(modeLabel);
+		modePanel.add(sensorModeList);
+		setSensorPanel.add(modePanel);
+		JButton setSensorButton = new JButton("Set Sensor");
+		JPanel buttonPanel = new JPanel();
+		buttonPanel.add(setSensorButton);
+		setSensorPanel.add(buttonPanel);
+		leftPanel.add(setSensorPanel);
+		
+		setSensorButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				setSensor();
+			}
+		});
+		
+		monitorPanel.add(leftPanel);
+		for (int i = 0; i < 4; i++) {
+			monitorPanel.add(sensorPanels[i]);
+		}
+		monitorPanel.add(monitorUpdateButton);
+	}
+
+	/**
+	 *  Create the tabs for LCP
+	 */
+	private void createLCPTabs() {
+		tabbedPane.removeAll();
+		tabbedPane.addTab("Files", filesPanel);
+		tabbedPane.addTab("Monitor", monitorPanel);
+		tabbedPane.addTab("Control", controlPanel);
+		tabbedPane.addTab("Miscellaneous", otherPanel);
+	}
+	
+	/**
+	 *  Create the tabs for LCP
+	 */
+	private void createConsoleTabs() {
+		tabbedPane.removeAll();
+		tabbedPane.addTab("Console", consolePanel);
+	}
+	
+	/**
+	 *  Create the tabs for LCP
+	 */
+	private void createDataLogTabs() {
+		tabbedPane.removeAll();
+		tabbedPane.addTab("Data Log", dataPanel);
+	}
+	
+	/**
+	 *  Set up the files panel
+	 */
+	private void createFilesPanel() {
+		filesPanel.add(tablePane, BorderLayout.CENTER);
+		JPanel buttonPanel = new JPanel();
+		buttonPanel.add(deleteButton);
+		buttonPanel.add(uploadButton);
+		buttonPanel.add(downloadButton);
+		buttonPanel.add(runButton);
+		buttonPanel.add(soundButton);
+		buttonPanel.add(formatButton);
+		buttonPanel.setPreferredSize(filesButtonsPanelSize);
+		filesPanel.add(buttonPanel, BorderLayout.SOUTH);
+	}
+
+	/**
+	 *  Populate the Other Panel
+	 */
+	private void createMiscellaneousPanel() {
+		createInfoPanel();
+		createTonePanel();
+		createI2cPanel();
+		createNamePanel();
+	}
+	
+	/**
+	 * Create rename NXT panel
+	 */
+	private void createNamePanel() {
+		JPanel namePanel = new JPanel();
+		namePanel.setPreferredSize(namePanelSize);
+		namePanel.setLayout(new BoxLayout(namePanel, BoxLayout.Y_AXIS));
+		namePanel.setBorder(etchedBorder);
+		JPanel titlePanel = new JPanel();
+		JLabel title = new JLabel("Change Friendly Name");
+		JPanel newNamePanel = new JPanel();
+		JLabel nameLabel = new JLabel("New name:");
+		titlePanel.add(title);
+		namePanel.add(titlePanel);
+		newNamePanel.add(nameLabel);
+		newNamePanel.add(newName);
+		namePanel.add(newNamePanel);
+		JPanel buttonPanel = new JPanel();
+		buttonPanel.add(nameButton);
+		namePanel.add(buttonPanel);
+		otherPanel.add(namePanel);		
+	}
+	
+	/**
+	 * Create Info Panel
+	 */
+	private void createInfoPanel() {
+		JPanel infoPanel = new JPanel();
+		DeviceInfo di = null;
+		FirmwareInfo fi = null;
+		infoPanel.setLayout(new GridLayout(4, 2));
+		JLabel freeFlashLabel = new JLabel("Free flash:  ");
+		String protocolVersionString = "Unknown";
+		String firmwareVersionString = "Unknown";
+		String freeFlashString = "Unknown";
+
+		if (nxtCommand != null) {
+			try {
+				di = nxtCommand.getDeviceInfo();
+				fi = nxtCommand.getFirmwareVersion();
+				protocolVersionString = fi.protocolVersion;
+				firmwareVersionString = fi.firmwareVersion;
+				freeFlashString = "" + di.freeFlash;
+			} catch (IOException ioe) {
+				showMessage("IO Exception getting device information");
+			}
+		}
+		
+		JLabel freeFlash = new JLabel(freeFlashString);
+		infoPanel.add(freeFlashLabel);
+		infoPanel.add(freeFlash);
+		JLabel firmwareVersionLabel = new JLabel("Firmware version:");
+		JLabel firmwareVersion = new JLabel(firmwareVersionString);
+		infoPanel.add(firmwareVersionLabel);
+		infoPanel.add(firmwareVersion);
+		JLabel protocolVersionLabel = new JLabel("Protocol version:");
+		JLabel protocolVersion = new JLabel(protocolVersionString);
+		infoPanel.add(protocolVersionLabel);
+		infoPanel.add(protocolVersion);
+		infoPanel.setPreferredSize(innerInfoPanelSize);
+		JPanel outerInfoPanel = new JPanel();
+		outerInfoPanel.setPreferredSize(infoPanelSize);
+		outerInfoPanel.setBorder(etchedBorder);
+		JPanel headingPanel = new JPanel();
+		JLabel headingLabel = new JLabel("Brick Information");
+		headingPanel.add(headingLabel);
+		outerInfoPanel.add(headingPanel);
+		outerInfoPanel.add(infoPanel);
+		otherPanel.add(outerInfoPanel);
+	}
+	
+	/**
+	 * Create play tone panel
+	 */
+	private void createTonePanel() {
+		JPanel tonePanel = new JPanel();
+		tonePanel.setLayout(new BoxLayout(tonePanel, BoxLayout.Y_AXIS));
+		JPanel toneHeading = new JPanel();
+		JLabel toneLabel = new JLabel("Play tone");
+		toneHeading.add(toneLabel);
+		tonePanel.add(toneHeading);
+		JPanel freqPanel = new JPanel();
+		JLabel freqLabel = new JLabel("Frequency:");
+		freq.setColumns(5);
+		freqLabel.setLabelFor(freq);
+		JLabel durationLabel = new JLabel("Duration:");
+		duration.setColumns(5);
+		durationLabel.setLabelFor(duration);
+		JButton play = new JButton("Play tone");
+		freqPanel.add(freqLabel);
+		freqPanel.add(freq);
+		freqPanel.add(durationLabel);
+		freqPanel.add(duration);
+		tonePanel.add(freqPanel);
+		JPanel buttonPanel = new JPanel();
+		buttonPanel.add(play);
+		tonePanel.add(buttonPanel);
+		tonePanel.setPreferredSize(tonePanelSize);
+		tonePanel.setBorder(etchedBorder);
+		otherPanel.add(tonePanel);
+		
+		play.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				playTone();
+			}
+		});
+	}
+	
+	/**
+	 * Create panel for I2C 
+	 */
+	private void createI2cPanel() {
+		JPanel i2cPanel = new JPanel();
+		i2cPanel.setLayout(new BoxLayout(i2cPanel, BoxLayout.Y_AXIS));
+		JPanel labelPanel = new JPanel();
+		JLabel i2cTester = new JLabel("I2C Device Tester");
+		labelPanel.add(i2cTester);
+		i2cPanel.add(labelPanel);
+		JPanel topPanel = new JPanel();
+		JPanel sensorSelectPanel = new JPanel();
+		JLabel sensorLabel = new JLabel("Port:");
+		sensorSelectPanel.add(sensorLabel);
+		sensorSelectPanel.add(sensorList);
+		JLabel addressLabel = new JLabel("Address:");
+		JFormattedTextField address = new JFormattedTextField(new Integer(2));
+		address.setColumns(2);
+		sensorSelectPanel.add(addressLabel);
+		sensorSelectPanel.add(address);
+		topPanel.add(sensorSelectPanel);
+		JPanel rxlPanel = new JPanel();
+		JLabel rxlLabel = new JLabel("RxData length:");
+		rxlLabel.setLabelFor(rxDataLength);
+		rxlPanel.add(rxlLabel);
+		rxlPanel.add(rxDataLength);
+		topPanel.add(rxlPanel);
+		i2cPanel.add(topPanel);
+		txData.setColumns(32);
+		JPanel txPanel = new JPanel();
+		JLabel txLabel = new JLabel("Send (hex):");
+		txLabel.setLabelFor(txData);
+		txPanel.add(txLabel);
+		txPanel.add(txData);
+		i2cPanel.add(txPanel);
+		rxDataLength.setColumns(2);
+		JPanel rxPanel = new JPanel();
+		JLabel rxLabel = new JLabel("Received (hex):");
+		rxLabel.setLabelFor(rxData);
+		rxPanel.add(rxLabel);
+		rxPanel.add(rxData);
+		i2cPanel.add(rxPanel);
+		JButton txDataSend = new JButton("Send");
+		JButton i2cStatus = new JButton("Status");
+		JButton rxDataReceive = new JButton("Receive");
+		JPanel buttonsPanel = new JPanel();
+		buttonsPanel.add(txDataSend);
+		buttonsPanel.add(i2cStatus);
+		buttonsPanel.add(rxDataReceive);
+		i2cPanel.add(buttonsPanel);
+		i2cPanel.setBorder(BorderFactory.createEtchedBorder());
+		i2cPanel.setPreferredSize(i2cPanelSize);
+		otherPanel.add(i2cPanel);
+		
+		txDataSend.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				i2cSend();
+			}
+		});
+		
+		rxDataReceive.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				i2cReceive();
+			}
+		});
+		
+		i2cStatus.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				i2cStatus();
+			}
+		});
+	}
+
+	/**
+	 *  Set up the files table
+	 */
+	private void createFilesTable() {
+		fm = new ExtendedFileModel(nxtCommand);
+		table = new JTable(fm);
+		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		table.getColumnModel().getColumn(0).setPreferredWidth(fileNameColumnWidth);
+		tablePane = new JScrollPane(table);
+		tablePane.setPreferredSize(filesAreaSize);
+	}
+
+	/**
+	 * Create a panel for motor control
+	 */
+	private JPanel createMotorPanel(int index) {
+		JPanel panel = new JPanel();
+		panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
+		final JSlider slider = new JSlider(0, 100);
+		sliders[index] = slider;
+		slider.setMajorTickSpacing(50);
+		slider.setMinorTickSpacing(10);
+		slider.setPaintLabels(true);
+		slider.setPaintTicks(true);
+		JLabel label = new JLabel("   " + motorNames[index]);
+		label.setPreferredSize(labelSize);
+		panel.add(label);
+		final JLabel value = new JLabel("    " + slider.getValue());
+		value.setPreferredSize(labelSize);
+		panel.add(value);
+		
+		slider.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent c) {
+				value.setText(String.format("%6d", slider.getValue()));
+			}
+		});
+		
+		slider.setPreferredSize(sliderSize);
+		panel.add(slider);
+		JLabel tacho = new JLabel("");
+		tacho.setPreferredSize(tachoSize);
+		tachos[index] = tacho;
+		panel.add(tacho);
+		JCheckBox selected = new JCheckBox();
+		selectors[index] = selected;
+		selected.setPreferredSize(labelSize);
+		panel.add(selected);
+		JCheckBox reverse = new JCheckBox();
+		reverse.setPreferredSize(labelSize);
+		reversors[index] = reverse;
+		panel.add(reverse);
+		JTextField limit = new JTextField(6);
+		limit.setMaximumSize(new Dimension(60, 20));
+		limits[index] = limit;
+		panel.add(limit);
+		JButton resetButton = new JButton("Reset");
+		resetButtons[index] = resetButton;
+		panel.add(resetButton);
+		
+		resetButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				resetTacho((JButton) e.getSource());
+			}
+		});
+		
+		panel.setBorder(BorderFactory.createEtchedBorder());
+		return panel;
+	}
+
+	/**
+	 * Create the header line for the motors
+	 */
+	private JPanel createMotorsHeader() {
+		JPanel labelPanel = new JPanel();
+		JLabel motorLabel = new JLabel("Motor");
+		motorLabel.setPreferredSize(labelSize);
+		JLabel speedLabel = new JLabel("Speed");
+		speedLabel.setPreferredSize(labelSize);
+		JLabel sliderLabel = new JLabel("          Set speed");
+		sliderLabel.setPreferredSize(sliderSize);
+		JLabel tachoLabel = new JLabel("Tachometer");
+		tachoLabel.setPreferredSize(tachoSize);
+		JLabel selectedLabel = new JLabel("Selected");
+		selectedLabel.setPreferredSize(labelSize);
+		JLabel reverseLabel = new JLabel("Reverse");
+		reverseLabel.setPreferredSize(labelSize);
+		JLabel limitLabel = new JLabel("Limit");
+		limitLabel.setPreferredSize(labelSize);
+		JLabel resetLabel = new JLabel("Reset");
+		resetLabel.setPreferredSize(labelSize);
+		labelPanel.add(motorLabel);
+		labelPanel.add(speedLabel);
+		labelPanel.add(sliderLabel);
+		labelPanel.add(tachoLabel);
+		labelPanel.add(selectedLabel);
+		labelPanel.add(reverseLabel);
+		labelPanel.add(limitLabel);
+		labelPanel.add(resetLabel);
+		return labelPanel;
+	}
+
+	/**
+	 * Create the control panel
+	 */
+	private void createControlPanel() {
+		JPanel motorsPanel = new JPanel();
+		motorsPanel.setLayout(new BoxLayout(motorsPanel, BoxLayout.Y_AXIS));
+		motorsPanel.add(createMotorsHeader());
+		for (int i = 0; i < 3; i++) {
+			motorsPanel.add(createMotorPanel(i));
+		}
+		JPanel buttonsPanel = new JPanel();
+		controlPanel.add(motorsPanel);
+		buttonsPanel.add(forwardButton);
+		buttonsPanel.add(backwardButton);
+		buttonsPanel.add(leftButton);
+		buttonsPanel.add(rightButton);
+		controlPanel.add(buttonsPanel);
+
+		forwardButton.addMouseListener(new MouseAdapter() {
+			public void mousePressed(MouseEvent e) {
+				if (fewerThanTwoMotors()) return;
+				int[] speed = getSpeeds();
+				move(speed[0], speed[1], speed[2]);
+			}
+
+			public void mouseReleased(MouseEvent e) {
+				stopMotors();
+			}
+		});
+
+		backwardButton.addMouseListener(new MouseAdapter() {
+			public void mousePressed(MouseEvent e) {
+				if (fewerThanTwoMotors()) return;
+				int[] speed = getSpeeds();
+				move(-speed[0], -speed[1], -speed[2]);
+			}
+
+			public void mouseReleased(MouseEvent e) {
+				stopMotors();
+			}
+		});
+
+		leftButton.addMouseListener(new MouseAdapter() {
+			public void mousePressed(MouseEvent e) {
+				if (fewerThanTwoMotors()) return;
+				int[] speed = getSpeeds();
+				int[] multipliers = leftMultipliers();
+				move(speed[0] * multipliers[0], speed[1] * multipliers[1], speed[2] * multipliers[2]);
+			}
+
+			public void mouseReleased(MouseEvent e) {
+				stopMotors();
+			}
+		});
+
+		rightButton.addMouseListener(new MouseAdapter() {
+			public void mousePressed(MouseEvent e) {
+				if (fewerThanTwoMotors()) return;
+				int[] speed = getSpeeds();
+				int[] multipliers = rightMultipliers();
+				move(speed[0] * multipliers[0], speed[1] * multipliers[1], speed[2] * multipliers[2]);
+			}
+
+			public void mouseReleased(MouseEvent e) {
+				stopMotors();
+			}
+		});
+	}
+	
+	/**
+	 * Return the number of motors selected
+	 */
+	private int numMotorsSelected() {
+		int numSelected = 0;
+		
+		for(int i=0;i<3;i++) {
+			if (selectors[i].isSelected()) numSelected ++;
+		}
+		
+		return numSelected;
+	}
+	
+	/**
+	 * Return true iff at least two message selected and shoe message if not
+	 */
+	private boolean fewerThanTwoMotors() {
+		if (numMotorsSelected() < 2) {
+			showMessage("Two Motors must be selected");
+			return false;	
+		}
+		return true;
+	}
+	
+	/**
+	 * Calculate speed multipliers for turning left
+	 */
+	private int[] leftMultipliers() {
+		int[] multipliers = new int[3];
+		boolean firstFound = false, secondFound = false;
+		
+		for(int i=0;i<3;i++) {
+			if (selectors[i].isSelected() && !firstFound) {
+				firstFound = true;
+				multipliers[i] = -1;
+			} else if (selectors[i].isSelected() && !secondFound) {
+				secondFound = true;
+				multipliers[i] = 1;
+			} else {
+				multipliers[i] = 0;
+			}			
+		}
+		return multipliers;
+	}
+	
+	
+	/**
+	 * Calculate the speed multipliers for turning right
+	 */
+	private int[] rightMultipliers() {
+		int[] multipliers = new int[3];
+		boolean firstFound = false, secondFound = false;
+		
+		for(int i=0;i<3;i++) {
+			if (selectors[i].isSelected() && !firstFound) {
+				firstFound = true;
+				multipliers[i] = 1;
+			} else if (selectors[i].isSelected() && !secondFound) {
+				secondFound = true;
+				multipliers[i] = -1;
+			} else {
+				multipliers[i] = 0;
+			}			
+		}
+		return multipliers;
+	}
+
+	
+	/**
+	 * Download a file from the NXT
+	 */
+	private void getFile(File file, String fileName, int size) {
+		FileOutputStream out = null;
+		int received = 0;
+
+		try {
+			out = new FileOutputStream(file);
+		} catch (FileNotFoundException e) {}
+
+		try {
+			FileInfo fi = nxtCommand.openRead(fileName);
+			do {
+				byte[] data = nxtCommand.readFile((byte) 0,
+						(size - received < 51 ? size - received : 51));
+				received += data.length;
+
+				out.write(data);
+			} while (received < size);
+
+			nxtCommand.closeFile(fi.fileHandle);
+			out.close();
+		} catch (IOException ioe) {
+			showMessage("IOException downloading file");
+		}
+	}
+
+	/**
+	 * Show a pop-up message
+	 */
+	private void showMessage(String msg) {
+		JOptionPane.showMessageDialog(frame, msg);
+	}
+	
+	/**
+	 * Update the sensor dials
+	 */
+	private void updateSensors() {
+		if (nxtCommand == null) return;
+		for (int i = 0; i < 4; i++) {
+			int max = 1024;
+			sensorPanels[i].setRawVal(sensorValues[i].rawADValue);
+			if (sensorValues[i].sensorMode == (byte) PCTFULLSCALEMODE) max = 100;
+			else if (sensorValues[i].sensorMode == (byte) BOOLEANMODE) max = 1;
+
+			sensorPanels[i].setScaledMaxVal(max);
+			sensorPanels[i].setScaledVal(sensorValues[i].scaledValue);
+			sensorPanels[i].setType(sensorTypes[sensorValues[i].sensorType]);
+			sensorPanels[i].repaint();
+		}
+		batteryGauge.setVal(mv);
+	}
+
+	/**
+	 * Clear the files tab.
+	 */
+	private void clearFiles() {
+		filesPanel.removeAll();
+		filesPanel.repaint();
+	}
+
+	/**
+	 * Switch between NXTS in table of available NXTs
+	 */
+	public void valueChanged(ListSelectionEvent e) {
+		if (e.getValueIsAdjusting()) {
+			int row = nxtTable.getSelectedRow();
+			if (row < 0) return;		
+			currentRow = row;
+			
+			if (nxts[row].connectionState != NXTConnectionState.DISCONNECTED && 
+					nxts[row].connectionState != NXTConnectionState.UNKNOWN) {
+				nxtComm = nxtComms[row];
+				updateConnectButton(true);
+				if (nxts[row].connectionState == NXTConnectionState.LCP_CONNECTED) {
+					nxtCommand = nxtCommands[row];
+					showFiles();
+				}
+			} else {
+				updateConnectButton(false);
+				clearFiles();
+			}
+		}
+	}
+
+	/**
+	 * Search for available NXTs and populate table with results.
+	 */
+	private void search() {
+		closeAll();
+		clearFiles();
+		updateConnectButton(false);
+		nxtTable.setModel(new NXTConnectionModel(null, 0));
+		nxts = conn.search(nameText.getText(), null, getProtocols());
+
+		if (nxts.length == 0) {
+			showMessage("No NXTS found");
+			return;
+		}
+		
+		currentRow = 0;
+		nm = new NXTConnectionModel(nxts, nxts.length);
+		nxtTable.setModel(nm);
+		nxtTable.setRowSelectionInterval(0, 0);
+		nxtTable.getSelectionModel().addListSelectionListener(control);
+		nxtCommands = new NXTCommand[nxts.length];
+		nxtComms = new NXTComm[nxts.length];
+	}
+
+	/**
+	 * Close all connections
+	 */
+	private void closeAll() {
+		if (nxtCommands == null) return;
+		for (int i = 0; i < nxtCommands.length; i++) {
+			NXTCommand nc = nxtCommands[i];
+			if (nc != null)
+				try {
+					nc.close();
+				} catch (IOException ioe) {}
+		}
+	}
+
+	/**
+	 * Update connection status in the connections table
+	 */
+	private void updateConnectionStatus(int row, boolean connected) {
+		nm.setConnected(row, connected);
+		nxtTable.repaint();
+		updateConnectButton(connected);
+		if (!connected) nxtCommands[row] = null;
+	}
+
+	/**
+	 * Toggle Connect button between Connect and Disconnect
+	 */
+	private void updateConnectButton(boolean connected) {
+		connectButton.setText((connected ? "Disconnect" : "Connect"));
+	}
+
+	/**
+	 * Get the selected protocols 
+	 */
+	private int getProtocols() {
+		int protocols = 0;
+		if (usbButton.isSelected())	protocols = NXTCommFactory.USB;
+		if (bluetoothButton.isSelected()) protocols = NXTCommFactory.BLUETOOTH;
+		if (bothButton.isSelected()) protocols = NXTCommFactory.USB | NXTCommFactory.BLUETOOTH;
+		return protocols;
+	}
+	
+	/**
+	 * Get the Application protocol
+	 */
+	private int getAppProtocol() {
+		int appProtocol = 0;
+		if (lcpButton.isSelected())	appProtocol = LCP;
+		if (rconsoleButton.isSelected()) appProtocol = RCONSOLE;
+		if (datalogButton.isSelected()) appProtocol = DATALOG;
+		return appProtocol;
+	}
+
+	/**
+	 * Stop the motors on the NXT and update the tachometer values
+	 */
+	private void stopMotors() {
+		try {
+			if (nxtCommand == null)	return;
+			nxtCommand.setOutputState(0, (byte) 0, 0, 0, 0, 0, 0);
+			nxtCommand.setOutputState(1, (byte) 0, 0, 0, 0, 0, 0);
+			nxtCommand.setOutputState(2, (byte) 0, 0, 0, 0, 0, 0);
+
+			tachos[0].setText("      " + nxtCommand.getTachoCount(0));
+			tachos[1].setText("      " + nxtCommand.getTachoCount(1));
+			tachos[2].setText("      " + nxtCommand.getTachoCount(2));
+		} catch (IOException ioe) {
+			showMessage("IOException while stopping motors");
+		}
+	}
+
+	/**
+	 * Get an array of the tacho limit text boxes
+	 */
+	private int[] getLimits() {
+		int[] lim = new int[3];
+
+		for (int i = 0; i < 3; i++) {
+			try {
+				lim[i] = Integer.parseInt(limits[i].getText());
+			} catch (NumberFormatException nfe) {
+				lim[i] = 0;
+			}
+		}
+		return lim;
+	}
+	
+	/**
+	 * Get an array of the speed slider values
+	 */
+	private int[] getSpeeds() {
+		int[] speed = new int[3];
+
+		for (int i = 0; i < 3; i++) {
+			speed[i] = sliders[i].getValue();
+			if (reversors[i].isSelected()) speed[i] = -speed[i];
+		}
+		return speed;
+	}
+
+	/**
+	 * Retrieve the sensor and battery values from the NXT
+	 */
+	private void getSensorValues() {
+		try {
+			for (int i = 0; i < 4; i++) {
+				if (nxtCommand == null)	return;
+				sensorValues[i] = nxtCommand.getInputValues(i);
+			}
+			mv = nxtCommand.getBatteryLevel();
+		} catch (IOException ioe) {
+			System.err.println(ioe.getMessage());
+		}
+	}
+
+	/**
+	 * Convert a byte array to a string of hex characters
+	 */
+	private String toHex(byte[] b) {
+		StringBuffer output = new StringBuffer();
+		for (int i = 0; i < b.length; i++) {
+			output.append(Integer.toHexString((int) b[i]));
+		}
+		return output.toString();
+	}
+
+	/**
+	 * Convert a string of hex characters to a byte array
+	 */
+	private byte[] fromHex(String s) {
+		byte[] reply = new byte[s.length() / 2];
+		for (int i = 0; i < reply.length; i++) {
+			char c1 = s.charAt(i * 2);
+			char c2 = s.charAt(i * 2 + 1);
+			reply[i] = (byte) (getHexDigit(c1) << 4 | getHexDigit(c2));
+		}
+		return reply;
+	}
+
+	/**
+	 * Convert a character to a hex digit
+	 */
+	private int getHexDigit(char c) {
+		if (c >= '0' && c <= '9') return c - '0';
+		if (c >= 'a' && c <= 'f') return c - 'a' + 10;
+		if (c >= 'A' && c <= 'F') return c - 'A' + 10;
+		return 0;
+	}
+
+	/**
+	 * Add one byte array to another
+	 */
+	private byte[] appendBytes(byte[] array1, byte[] array2) {
+		byte[] array = new byte[array1.length + array2.length];
+		System.arraycopy(array1, 0, array, 0, array1.length);
+		System.arraycopy(array2, 0, array, array1.length, array2.length);
+		return array;
+	}
+
+	/**
+	 * Connect to the NXT
+	 */
+	private void connect() {
+		int row = nxtTable.getSelectedRow();
+		int currentAppProtocol = getAppProtocol();
+		
+		if (row >= 0) {
+			if (nxts[row].connectionState == NXTConnectionState.LCP_CONNECTED) {// Connected, so disconnect
+				try {
+					nxtCommand = nxtCommands[row];
+					nxtCommand.close();
+					nxts[row].connectionState = NXTConnectionState.DISCONNECTED;
+					System.out.println("NXTInfo status " + nxts[row].connectionState);
+				} catch (IOException ioe) {
+					showMessage("IOException while disconnecting");
+				}
+				updateConnectionStatus(row, false);
+				clearFiles();
+				return;
+			}
+			
+			if (nxts[row].connectionState == NXTConnectionState.RCONSOLE_CONNECTED) {// Connected, so disconnect
+				try {
+					nxtComm.close();
+					nxts[row].connectionState = NXTConnectionState.DISCONNECTED;
+					System.out.println("NXTInfo status " + nxts[row].connectionState);
+				} catch (IOException ioe) {
+					showMessage("IOException while disconnecting");
+				}
+				updateConnectionStatus(row, false);
+				return;
+			}
+			
+			if (nxts[row].connectionState == NXTConnectionState.DATALOG_CONNECTED) {// Connected, so disconnect
+				try {
+					nxtComm.close();
+					nxts[row].connectionState = NXTConnectionState.DISCONNECTED;
+					System.out.println("NXTInfo status " + nxts[row].connectionState);
+				} catch (IOException ioe) {
+					showMessage("IOException while disconnecting");
+				}
+				updateConnectionStatus(row, false);
+				return;
+			}
+			
+			if (currentAppProtocol == RCONSOLE) {
+				consoleConnect();
+				return;
+			} else if (currentAppProtocol == DATALOG) {
+				dataConnect();
+				return;
+			}
+
+			// Connect
+			boolean open = false;
+			try {
+				clearFiles();
+				nxtCommand = new NXTCommand();
+				nxtCommands[row] = nxtCommand;
+				// currentRow = row;
+				NXTComm nxtComm = NXTCommFactory.createNXTComm(nxts[row].protocol);
+				nxtComms[row] = nxtComm;
+				open = nxtComm.open(nxts[row], NXTComm.LCP);
+				nxtCommand.setNXTComm(nxtComm);
+				System.out.println("NXTInfo status " + nxts[row].connectionState);
+			} catch (NXTCommException e) {
+				open = false;
+			}
+			
+			if (!open) {
+				showMessage("Failed to connect");
+			} else {
+				updateConnectionStatus(row, true);
+				showFiles();
+			}
+		} else showMessage("You must do a search and select the NXT to connect to");
+	}
+
+	/**
+	 * Connect to RConsole
+	 */
+	private void consoleConnect() {		
+		int row = nxtTable.getSelectedRow();
+		if (row >= 0) {
+			boolean open = false;
+			theConsoleLog.setText("");
+			try {
+				nxtComm = NXTCommFactory.createNXTComm(nxts[row].protocol);
+				open = nxtComm.open(nxts[row]);
+				nxts[row].connectionState = NXTConnectionState.RCONSOLE_CONNECTED;
+				updateConnectionStatus(row,true);
+			} catch (NXTCommException e) {
+				showMessage("Exception in open:" + e.getMessage());
+				open = false;
+			}
+
+			if (!open) {
+				showMessage("Failed to connect");
+				return;
+			}
+
+			os = new DataOutputStream(nxtComm.getOutputStream());
+			is = new DataInputStream(nxtComm.getInputStream());
+
+			try { // handshake
+				byte[] hello = new byte[] { 'C', 'O', 'N' };
+				os.write(hello);
+				os.flush();
+			} catch (IOException e) {
+				showMessage("Handshake failed");
+			}
+			
+			readerThread = new ReaderThread(row);
+			readerThread.start();
+		}
+	}
+	
+	/**
+	 * Connect to the data logger
+	 */
+	private void dataConnect() {
+		int row = nxtTable.getSelectedRow();
+		if (row >= 0) {
+			boolean open = false;
+			theDataLog.setText("");
+
+			try {
+				nxtComm = NXTCommFactory.createNXTComm(nxts[row].protocol);
+				open = nxtComm.open(nxts[row]);
+				nxts[row].connectionState = NXTConnectionState.DATALOG_CONNECTED;
+				updateConnectionStatus(row, true);
+			} catch (NXTCommException e) {
+				showMessage("Exception in open:" + e.getMessage());
+				open = false;
+			}
+
+			if (!open) {
+				showMessage("Failed to connect");
+				return;
+			}
+
+			os = new DataOutputStream(nxtComm.getOutputStream());
+			is = new DataInputStream(nxtComm.getInputStream());		
+		}	
+	}
+
+	/**
+	 * Download data
+	 */
+	private void dataDownload() {
+		int recordCount = 0;
+		float x = 0;
+		int b = 15;
+		
+		try {
+			rowLength = Integer.parseInt(dataColumns.getText());
+		} catch (NumberFormatException ex) {
+			System.out.println(dataColumns.getText() + " is not a number, default reset to 8");
+		}
+
+		try { // handshake - ready to read data
+			os.write(b);
+			os.flush();
+		} catch (IOException e) {
+			showMessage(e + " handshake failed ");
+		}
+		
+		try {
+			int length = is.readInt();
+			System.out.println(" reading length " + length);
+			for (int i = 0; i < length; i++) {
+				if (0 == recordCount % rowLength) theDataLog.append("\n");
+				x = is.readFloat();
+				theDataLog.append(FORMAT_FLOAT.format(x) + "\t ");
+				recordCount++;
+			}
+		} catch (IOException e) {
+			showMessage("read error " + e);
+		}
+		
+		showMessage("Read all data");
+	}
+	
+	/**
+	 * Delete selected files
+	 */
+	private void deleteFiles() {
+		frame.setCursor(hourglassCursor);
+		try {
+			for (int i = 0; i < fm.getRowCount(); i++) {
+				Boolean b = (Boolean) fm.getValueAt(i, 4);
+				boolean deleteIt = b.booleanValue();
+				String fileName = (String) fm.getValueAt(i, 0);
+				
+				if (deleteIt) {
+					fm.delete(fileName, i);
+					i--;
+					table.invalidate();
+					tablePane.revalidate();
+				}
+			}
+		} catch (IOException ioe) {
+			showMessage("IOException deleting files");
+		}
+		frame.setCursor(normalCursor);
+	}
+	
+	/**
+	 * Choose a file and update it
+	 */
+	private void upload() {
+		JFileChooser fc = new JFileChooser();
+		int returnVal = fc.showOpenDialog(frame);
+		
+		if (returnVal == JFileChooser.APPROVE_OPTION) {
+			frame.setCursor(hourglassCursor);
+			try {
+				File file = fc.getSelectedFile();
+				
+				if (file.getName().length() > 20) {
+					showMessage("File name is more than 20 characters");
+				} else {
+					nxtCommand.uploadFile(file);
+					String msg = fm.fetchFiles();
+					if (msg != null) showMessage(msg);
+					table.invalidate();
+					tablePane.revalidate();
+				}
+			} catch (IOException ioe) {
+				showMessage("IOException uploading file");
+			}
+			frame.setCursor(normalCursor);
+		}
+	}
+	
+	/**
+	 * Download the selected file
+	 */
+	private void download() {
+		int i = table.getSelectedRow();
+		if (i < 0) return;
+		
+		String fileName = fm.getFile(i).fileName;
+		int size = fm.getFile(i).fileSize;
+		JFileChooser fc = new JFileChooser();
+		fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		fc.setSelectedFile(new File(fileName));
+		
+		int returnVal = fc.showSaveDialog(frame);
+		if (returnVal == 0) {
+			File file = fc.getSelectedFile();
+			frame.setCursor(hourglassCursor);
+			getFile(file, fileName, size);
+			frame.setCursor(normalCursor);
+		}
+	}
+	
+	/**
+	 * Run the selected file.
+	 */
+	private void runFile() {
+		int row = table.getSelectedRow();
+		if (row < 0) return;
+		String fileName = fm.getFile(row).fileName;
+		
+		try {
+			nxtCommand.startProgram(fileName);
+			nxtCommand.close();
+			updateConnectionStatus(nxtTable.getSelectedRow(), false);
+			clearFiles();
+		} catch (IOException ioe) {
+			showMessage("IOException running program");
+		}
+	}
+	
+	/**
+	 * Change the friendly name of the NXT
+	 */
+	private void rename(String name) {
+
+		if (name != null && name.length() <= 16 && name.length() > 0) {
+			frame.setCursor(hourglassCursor);
+			try {
+				nxtCommand.setFriendlyName(name);
+				frame.setTitle(title + " : " + name);
+				newName.setText("");
+			} catch (IOException ioe) {
+				showMessage("IOException setting friendly name");
+			}
+			frame.setCursor(normalCursor);
+		} else showMessage("Please supply a name from 1 to 16 chareacters");
+	}
+	
+	/**
+	 * Move the motors
+	 */
+	private void move(int speed0, int speed1, int speed2 ) {
+		int[] lim = getLimits();
+		
+		try {
+			if (nxtCommand == null) return;
+			if (selectors[0].isSelected())
+				nxtCommand.setOutputState(0, (byte) speed0, 0, 0, 0, 0, lim[0]);
+			if (selectors[1].isSelected())
+				nxtCommand.setOutputState(1, (byte) speed1, 0, 0, 0, 0, lim[1]);
+			if (selectors[2].isSelected())
+				nxtCommand.setOutputState(2, (byte) speed2, 0, 0, 0, 0, lim[2]);
+		} catch (IOException ioe) {
+			showMessage("IOException updating control");
+		}
+	}
+	
+	/**
+	 * Set the sensor type and mode
+	 */
+	private void setSensor() {
+		try {
+			if (nxtCommand == null)	return;
+			nxtCommand.setInputMode(
+					sensorList.getSelectedIndex(),
+					sensorTypeValues[sensorTypeList.getSelectedIndex()],
+					sensorModeValues[sensorModeList.getSelectedIndex()]);
+		} catch (IOException ioe) {
+			showMessage("IOException setting sensor type");
+		}
+	}
+	
+	/**
+	 * Play a tone
+	 */
+	private void playTone() {
+		try {
+			if (nxtCommand == null) return;
+			nxtCommand.playTone((Integer) freq.getValue(), (Integer) duration.getValue());
+		} catch (IOException ioe) {
+			showMessage("IO Exception playing tone");
+		} catch (NumberFormatException nfe) {
+			showMessage("Frequency and Duration must be integers");
+		}
+	}
+	
+	/**
+	 * Reset the tachometer for a motor
+	 */
+	private void resetTacho(JButton b) {
+		int motor = -1;
+		
+		for (int i = 0; i < 3; i++) {
+			if (b == resetButtons[i]) motor = i;
+		}
+		
+		if (nxtCommand == null) return;
+		try {
+			nxtCommand.resetMotorPosition(motor, false);
+			tachos[motor].setText("      " + nxtCommand.getTachoCount(motor));
+		} catch (IOException ioe) {
+			showMessage("IO Exception resetting motor");
+		}
+	}
+	
+	/**
+	 * Play a sound file
+	 */
+	private void playSoundFile() {
+		int row = table.getSelectedRow();
+		if (row < 0) return;
+		
+		String fileName = fm.getFile(row).fileName;
+		try {
+			nxtCommand.playSoundFile(fileName, false);
+		} catch (IOException ioe) {
+			showMessage("IO Exception playing sound file");
+		}
+	}
+	
+	/**
+	 * Send I2C request
+	 */
+	private void i2cSend() {
+		byte[] address = new byte[1];
+		address[0] = 2; // default I2C address
+		
+		if (nxtCommand == null)	return;
+		try {
+			nxtCommand.LSWrite(
+					(byte) sensorList.getSelectedIndex(),
+					appendBytes(address, fromHex(txData.getText())),
+					((Integer) rxDataLength.getValue()).byteValue());
+		} catch (IOException ioe) {
+			showMessage("IO Exception sending txData");
+		}
+	}
+	
+	/** 
+	 * Send an i2c status request
+	 */
+	private void i2cStatus() {
+		if (nxtCommand == null)	return;
+		try {
+			byte[] reply = nxtCommand.LSGetStatus((byte) sensorList.getSelectedIndex());
+			if (reply != null) {
+				System.out.println("LSStatus reply length = " + reply.length);
+				String hex = toHex(reply);
+				rxData.setText(hex);
+			} else
+				rxData.setText("null");
+		} catch (IOException ioe) {
+			showMessage("IO Exception getting status");
+		}
+	}
+	
+	/**
+	 * Read i2c reply
+	 */
+	private void i2cReceive() {
+		if (nxtCommand == null)	return;
+		try {
+			byte[] reply = nxtCommand.LSRead((byte) sensorList.getSelectedIndex());
+			if (reply != null) {
+				System.out.println("LSRead reply length = "	+ reply.length);
+				String hex = toHex(reply);
+				rxData.setText(hex);
+			} else
+				rxData.setText("null");
+		} catch (IOException ioe) {
+			showMessage("IO Exception reading rxData");
+		}
+	}
+	
+	/**
+	 * Format the file system
+	 */
+	private void format() {
+		if (nxtCommand == null) return;
+		try {
+			nxtCommand.deleteUserFlash();
+			fm.fetchFiles();
+			table.invalidate();
+			tablePane.revalidate();
+		} catch (IOException ioe) {
+			showMessage("IO Exception formatting file system");
+		}
+	}
+
+	/**
+	 * Thread to display RConsole output
+	 * 
+	 */
+	private class ReaderThread extends Thread {
+		private int row;
+		
+		public ReaderThread(int row) {
+			this.row = row;
+		}
+		
+		public void run() {
+			while (nxts[row].connectionState == NXTConnectionState.RCONSOLE_CONNECTED) {
+				try {
+					int input;
+					while ((input = is.read()) >= 0) {
+						theConsoleLog.append("" + (char) input);
+					}
+					is.close();
+				} catch (IOException e) {
+					nxts[row].connectionState = NXTConnectionState.UNKNOWN;
+				}
+				Thread.yield();
+			}
+			try {
+				nxtComm.close();
+				nxts[row].connectionState = NXTConnectionState.DISCONNECTED;
+				updateConnectionStatus(row, false);
+			} catch (IOException ioe) {}
+		}
+	}
 }
-
