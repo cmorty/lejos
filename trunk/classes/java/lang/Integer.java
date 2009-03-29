@@ -297,11 +297,6 @@ public final class Integer extends Number implements Comparable<Integer>
 		return toUnsignedString(v, 32, 1, 1);
 	}
 	
-	public static String toOctalString(int v)
-	{
-		return toUnsignedString(v, 11, 7, 3);
-	}
-	
 	/**
 	 * Return the hex representation of an int as a String
 	 * @param v the int
@@ -310,6 +305,11 @@ public final class Integer extends Number implements Comparable<Integer>
 	public static String toHexString(int v)
 	{
 		return toUnsignedString(v, 8, 15, 4);
+	}
+	
+	public static String toOctalString(int v)
+	{
+		return toUnsignedString(v, 11, 7, 3);
 	}
 	
 	private static String toUnsignedString(int v, int maxlen, int mask, int shift)
@@ -362,6 +362,21 @@ public final class Integer extends Number implements Comparable<Integer>
 		
 		WrapperUtils.getChars(buf, len, v, radix);		
 		return new String(buf);
+	}
+	
+	public static Integer valueOf(int v)
+	{
+		return new Integer(v);
+	}
+	
+	public static Integer valueOf(String s)
+	{
+		return Integer.valueOf(s, 10);
+	}
+	
+	public static Integer valueOf(String s, int radix)
+	{
+		return Integer.valueOf(Integer.parseInt(s, radix));
 	}
 	
 	/**
