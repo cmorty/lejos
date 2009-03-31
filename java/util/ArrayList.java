@@ -7,12 +7,15 @@ package java.util;
  * @author Sven Köhler
  * @param <E> type of the elements
  */
-public class ArrayList<E> extends AbstractList<E>
+public class ArrayList<E> extends AbstractList<E> implements RandomAccess
 {
 	private static final int INITIAL_CAPACITY = 7;
 	private static final int CAPACITY_INCREMENT_NUM = 3;	//numerator of the increment factor
 	private static final int CAPACITY_INCREMENT_DEN = 2;	//denominator of the increment factor
 	private static final int CAPACITY_INCREMENT_MIN = 3;	//minimal increment
+	
+	//MISSING implements Clonable
+	//MISSING implements Serializable
 	
 	private static int newCapacity(int old)
 	{
