@@ -10,7 +10,7 @@ public class Form extends Screen implements CommandListener {
 	private static final Command EDIT_COMMAND = new Command(1, Command.SCREEN, 0);
 	private ItemStateListener itemStateListener;
 	
-	private ArrayList items = new ArrayList();
+	private ArrayList<Object> items = new ArrayList<Object>();
 	private int curItemIdx = 0;
 	private boolean selectedItem;
 	private int height;

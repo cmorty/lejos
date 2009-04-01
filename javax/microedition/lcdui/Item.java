@@ -16,7 +16,7 @@ public abstract class Item {
 	protected boolean interactive = false;
 	
 	protected ItemCommandListener cmdListener;
-	protected ArrayList commands = new ArrayList();
+	protected ArrayList<Command> commands = new ArrayList<Command>();
 
 	private boolean paintRequest;
 
