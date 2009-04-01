@@ -6,8 +6,15 @@ package lejos.navigation;
  * @author Charles Manning, Juan Antonio Brenha Moral
  *
  */
-// TODO: Charles Manning recommends using the Degrees, Latitude, Longitude classes for 
-// GPS navigation around a local origin point. Uses meters.
+
+/* TODO: Charles Manning recommends using the Degrees, Latitude, Longitude classes for
+ * GPS navigation around a local origin point. Uses meters (easily changed to cms).
+ * Calculation for distance from A to B is:
+ * northingDiff = A.northing - B.northing;
+ * eastingDif = A.easting - B.easting;
+ * distance = sqrt (northingDiff * northingDiff + eastingDiff * eastingDiff);
+ */
+
 class Degrees{
 
 	//Data from GPS device
