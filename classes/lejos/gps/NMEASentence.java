@@ -119,6 +119,7 @@ abstract public class NMEASentence {
 	 * @param hex_char
 	 * @return
 	 */
+	// TODO: I think we can use Integer.parseInt() and use optional 16 base conversion.
 	private static byte hexCharToByte(char hex_char) {
 	  if( hex_char > 57 )
 		  return((byte)(hex_char - 55));
@@ -142,21 +143,15 @@ abstract public class NMEASentence {
 	 * Latitude values has the range: -90 <-> 90
 	 * Longitude values has the range: -180 <-> 180
 	 * 
-	 * @param DD_MM the day and month
-	 * @param CoordinateType the coordinate type
+	 * @param dd_mm the day and month
 	 * @return the decimal degrees
 	 */
-	protected double degreesMinToDegrees(String DD_MM) {
-		char charSeparator = '.';
+	protected double degreesMinToDegrees(String dd_mm) {
+		int dotPosition = dd_mm.indexOf('.');
 		
-		//1. Count characters until character '.'
-		int dotPosition = DD_MM.indexOf(charSeparator);
-		String DDMM = DD_MM.substring(0, dotPosition);
-		
-		double degrees = Double.parseDouble(DDMM.substring(0, DDMM.length() - 2));
-		double minutes = Double.parseDouble(DD_MM.substring(DDMM.length() - 2));
+		double degrees = Double.parseDouble(dd_mm.substring(0, dotPosition - 2));
+		double minutes = Double.parseDouble(dd_mm.substring(dotPosition - 2));
 		
 		return (degrees + (minutes / 60.0));
-		// OLD (degrees + (minutes * (1.0 / 60.0)) + (seconds * (1.0 / 3600.0)));
 	}
 }

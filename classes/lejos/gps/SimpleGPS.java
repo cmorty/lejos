@@ -1,6 +1,5 @@
 package lejos.gps;
 
-
 import java.io.*;
 import java.util.*;
 
