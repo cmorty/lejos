@@ -40,9 +40,9 @@ public class Coordinates{
 	 * @param altitude
 	 */
 	public Coordinates(double latitude, double longitude,double altitude) {
-		this.latitude = latitude;
-		this.longitude = longitude;
-		this.altitude = altitude;
+		setLatitude(latitude);
+		setLongitude(longitude);
+		setAltitude(altitude);
 	}
 
 	public Coordinates(double latitude, double longitude) {
@@ -117,6 +117,7 @@ public class Coordinates{
 			throw new NullPointerException();
 		}else{
 			// TODO: Is there some way to make it not recalculate if it already calculated for these coordinates? Keep in mind coordinates can change.
+			// Perhaps it keeps a reference to last to coordinate. If values are the same, then doesn't recalculate.
 			calculateDistanceAndAzimuth(getLatitude(), getLongitude(), to.getLatitude(), to.getLongitude());
 			return calculatedAzimuth;
 		}
@@ -191,7 +192,7 @@ public class Coordinates{
             return;
         }
         
-        // TODO: Use our version of PI.
+        // TODO: Use our version of Math.PI throughout, including 2pi.
         if(d4 + d6 == 0.0D && Math.abs(d5 - d7) == 3.1415926535897931D)
             d4 += 1.0000000000000001E-05D;
         double d11 = 1.0D - d8;
@@ -251,7 +252,9 @@ public class Coordinates{
             calculatedAzimuth = 0.0F;
     }
 
+	// TODO: A mod method? Why not use %
     private static double mod(double d, double d1){
         return d - d1 * Math.floor(d / d1);
     }
+    
 }

@@ -177,7 +177,7 @@ public class GGASentence extends NMEASentence{
 			}
 			//quality = Float.parseFloat(st.nextToken());//Fix quality
 			satellitesTracked = Float.parseFloat((String)st.nextToken());//Number of satellites being tracked
-
+			
 			h = st.nextToken();
 			if(h.length() == 0){
 				hdop = 0;
@@ -197,10 +197,10 @@ public class GGASentence extends NMEASentence{
 
 		}catch(NoSuchElementException e){
 			//Empty
-			System.err.println("NoSuchElementException thrown: " + e.getMessage());
+			System.err.println("GGASentence.parse() NoSuchElementException thrown: " + e.getMessage());
 		}catch(NumberFormatException e){
 			//Empty
-			System.err.println("NumberFormatException thrown: " + e.getMessage());
+			System.err.println("GGASentence.parse() NumberFormatException thrown: " + e.getMessage());
 		}
 
 	}//End parse

@@ -3,6 +3,9 @@ package lejos.navigation;
 //TODO: Charles Manning recommends using the Degrees, Latitude, Longitude classes for 
 //GPS navigation around a local origin point. Uses meters.
 
+// NOTE: The methods in this class are pointless. Just converts to decimal degrees,
+// which is already done in the superclass.
+
 /**
  * This class models a GPS Latitude
  * 

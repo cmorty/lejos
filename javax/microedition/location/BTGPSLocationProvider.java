@@ -31,9 +31,9 @@ class BTGPSLocationProvider extends LocationProvider implements DiscoveryListene
 	 * the programmer to be very careful. 
 	 */
 	boolean doneInq = false;
-		
+	
+	// I think this indicates the BT device is a GPS unit:
 	private static final int GPS_MAJOR = 0x1F00;
-	private static final int LOCATOR_SERVICE = 0x1F0000;
 	
 	protected BTGPSLocationProvider() {
 		
@@ -54,7 +54,7 @@ class BTGPSLocationProvider extends LocationProvider implements DiscoveryListene
 		// TODO NEEDED? REDUCE? NEED TO CLOSE SOMETHING?
 		//try {Thread.sleep(200);} catch (Exception e) {} 
 		
-		// TODO: WHat is the procedure if it fails to connect? Return? Throw BT exception?
+		// TODO: What is the procedure if it fails to connect? Return? Throw BT exception?
 		if(btDevice == null) System.err.println("Nothing found. It should exit here.");
 		
 		String address = btDevice.getBluetoothAddress();
@@ -80,17 +80,33 @@ class BTGPSLocationProvider extends LocationProvider implements DiscoveryListene
 	
 	public Location getLocation(int timeout) throws LocationException,
 			InterruptedException {
-		// TODO The timeout might play to the fact that it is still acquiring satellites!
-		// I was wondering about that before. Maybe it makes sense to have timeout in SimpleGPS?
-		// TODO: Solution! Keep asking for altitude until is positive? (longitude can be negative)
-		// Or perhaps just until speed positive? (set those after)
-		// TODO: -1 in timeout is supposed to represent the default timeout (GPSListener?)
-		//TODO: Is the purpose of the timeout that it gets a new updated location that
-		// is not the previously returned or cached one? 
+		/* TODO The timeout might play to the fact that it is still acquiring satellites?
+		 * I was wondering about that before. Maybe it makes sense to have timeout in SimpleGPS?
+		 * TODO: Solution! Keep asking for altitude until is positive? (longitude can be negative)
+		 * Or perhaps just until speed positive? (set those after)
+		 * TODO: -1 in timeout is supposed to represent the default timeout (GPSListener?)
+		 * TODO: I don't know if this is supposed to wait for the GPS to provide a new
+		 * coordinate data or if it is okay to pass the latest cached GPS coordinates.
+		 * Is the purpose of the timeout that it gets a new updated location that
+		 * is not the previously returned or cached one? 
+		*/
+		
+		if(timeout == 0)
+			throw new IllegalArgumentException("timeout cannot equal 0");
+		
+		// Timeout results in LocationException:
+		long startTime = System.currentTimeMillis();
+		
+		while(gps.getLatitude() == 0 & gps.getLongitude() == 0) {
+			if(timeout != -1 & System.currentTimeMillis() - startTime > (timeout * 1000))
+				throw new LocationException("GPS timed out");
+			Thread.sleep(100); /* NOTE: This might very occasionally cause an error because
+			* Thread.yield() seems to cause sentence parsing to start too soon. */ 
+		}
 		
 		QualifiedCoordinates qc = new QualifiedCoordinates(gps.getLatitude(), gps.getLongitude(), gps.getAltitude());
 		Location loc = new Location(qc, gps.getSpeed(), gps.getCourse(), gps.getTimeStamp(),
-				0,null); // TODO: Location method and extraInfo
+				0,null); // TODO: Implement location method and extraInfo (0 and null for now)
 		
 		return loc;
 	}
@@ -218,6 +234,7 @@ class BTGPSLocationProvider extends LocationProvider implements DiscoveryListene
 	
 	/* DiscoveryListener methods: */
 	public void deviceDiscovered(RemoteDevice btDevice, DeviceClass cod) {
+		// TODO: It should not output this to err. Delete when done troubleshooting:
 		System.err.println(btDevice.getFriendlyName(false) + " discovered.");
 		/*
 		System.err.println("Major = " + cod.getMajorDeviceClass());
@@ -227,8 +244,7 @@ class BTGPSLocationProvider extends LocationProvider implements DiscoveryListene
 		System.err.println("Authenticated? " + btDevice.isAuthenticated());
 		*/
 		
-		// TODO: It should use bitwise to determine major
-		if(cod.getMajorDeviceClass() == GPS_MAJOR) {
+		if((cod.getMajorDeviceClass() & GPS_MAJOR) == GPS_MAJOR) {
 			if(btDevice.isAuthenticated()) { // Check if paired.
 				this.btDevice = btDevice;
 				da.cancelInquiry(this);

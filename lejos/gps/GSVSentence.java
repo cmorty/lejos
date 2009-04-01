@@ -45,6 +45,8 @@ public class GSVSentence extends NMEASentence{
 	 */
 	public GSVSentence(){
 		// TODO: Does GPS really only connect to four? Why not more?
+		// It would be better to use ArrayList or some other growable collection, using
+		// the satellite ID as the key.
 		// Check if GSV sentences cycle through diff't sat ids. If so this
 		// will affect how data is allocated to satellites in array.
 		ns = new NMEASatellite[MAXIMUM_SATELLITES];
