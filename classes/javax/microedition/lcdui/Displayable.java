@@ -14,7 +14,7 @@ public class Displayable {
 
 	private boolean paintRequest;
 
-	protected ArrayList commands = new ArrayList();
+	protected ArrayList<Command> commands = new ArrayList<Command>();
 	protected CommandListener cmdListener;
 
 	protected Ticker ticker;
@@ -61,7 +61,7 @@ public class Displayable {
 	
 	protected void callCommandListener() {
 		for (int i = 0; (i < commands.size()) && (cmdListener != null); i++) {
-			cmdListener.commandAction((Command) commands.get(i), this);
+			cmdListener.commandAction(commands.get(i), this);
 		}
 	}
 	

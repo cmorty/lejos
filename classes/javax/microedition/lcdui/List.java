@@ -11,7 +11,7 @@ public class List extends Screen implements Choice {
 	private final Command SELECT_COMMAND = new Command(0, Command.SCREEN, 0);
 
 	protected int listType;
-	protected ArrayList listItems;
+	protected ArrayList<ListItem> listItems;
 //	private int fitPolicy;
 	
 	/** Scrolling administration */
@@ -27,7 +27,7 @@ public class List extends Screen implements Choice {
 		}
 		this.title = title;
 		this.listType = listType;
-		listItems = new ArrayList();
+		listItems = new ArrayList<ListItem>();
 	}
 	
 	public List(String title, int listType, String[] stringElements, Image[] imageElements) {
@@ -38,7 +38,7 @@ public class List extends Screen implements Choice {
 		this.title = title;
 		this.listType = listType;
 
-		listItems = new ArrayList(stringElements.length);
+		listItems = new ArrayList<ListItem>(stringElements.length);
 		for (int i = 0; i < stringElements.length; i++) {
 			listItems.add(new ListItem(stringElements[i], imageElements[i]));
 			scrollLast++;
@@ -86,7 +86,7 @@ public class List extends Screen implements Choice {
 	public int getSelectedFlags(boolean[] selectedArray_return) {
 		selectedArray_return = new boolean[listItems.size()];
 		for (int i = 0; i < selectedArray_return.length; i++) {
-			selectedArray_return[i] = ((ListItem) listItems.get(i)).selected;
+			selectedArray_return[i] = listItems.get(i).selected;
 		}
 		
 		return selectedArray_return.length;
@@ -94,7 +94,7 @@ public class List extends Screen implements Choice {
 
 	public int getSelectedIndex() {
 		for (int i = 0; i < listItems.size(); i++) {
-			if (((ListItem) listItems.get(i)).selected) {
+			if (listItems.get(i).selected) {
 				return i;
 			}
 		}
@@ -102,7 +102,7 @@ public class List extends Screen implements Choice {
 		return -1;
 	}
 	public String getString(int elementNum) {
-		return ((ListItem) listItems.get(elementNum)).str;
+		return listItems.get(elementNum).str;
 	} 
 	
 	public void insert(int elementNum, String stringPart, Image imagePart) {
@@ -110,7 +110,7 @@ public class List extends Screen implements Choice {
 	}
 	
 	public boolean isSelected(int elementNum) {
-		return ((ListItem) listItems.get(elementNum)).selected;
+		return listItems.get(elementNum).selected;
 	}
 
 	public void set(int elementNum, String stringPart, Image imagePart) {
@@ -123,18 +123,18 @@ public class List extends Screen implements Choice {
 
     public void setSelectedFlags(boolean[] selectedArray) {
 		for (int i = 0; i < listItems.size(); i++) {
-			((ListItem) listItems.get(i)).selected = selectedArray[i];
+			listItems.get(i).selected = selectedArray[i];
 		}
     } 
 
     public void setSelectedIndex(int elementNum, boolean selected) {
     	if ((listType == Choice.MULTIPLE) || !selected) {
 			// Just set/clear selection
-			((ListItem) listItems.get(elementNum)).selected = selected;    		
+			listItems.get(elementNum).selected = selected;    		
     	} else {
 			// Set single selection for these types
 			for (int i = 0; i < listItems.size(); i++) {
-				ListItem li = ((ListItem) listItems.get(i));
+				ListItem li = listItems.get(i);
 				li.selected = (i == elementNum);
 			}
 		} 
@@ -163,7 +163,7 @@ public class List extends Screen implements Choice {
 		} else if (keyCode == KEY_BACK) {
 			callCommandListener();
 		} else if (keyCode == KEY_ENTER) {
-			ListItem li = ((ListItem) listItems.get(scrollCurr));
+			ListItem li = listItems.get(scrollCurr);
 			if (listType == Choice.IMPLICIT) 
 				setSelectedIndex(scrollCurr, false); 
 			setSelectedIndex(scrollCurr, !li.selected);
@@ -173,7 +173,7 @@ public class List extends Screen implements Choice {
 //				for (int i = 0; i < listItems.size(); i++) {
 //					if ((scrollCurr == i)) {
 //						// Toggle selection (discard current state when IMPLICIT)
-//						ListItem li = ((ListItem) listItems.get(scrollCurr));
+//						ListItem li = listItems.get(scrollCurr);
 //						setSelectedIndex(scrollCurr, (listType == Choice.IMPLICIT)
 //								? true : !li.selected);						
 //					} else {
@@ -183,7 +183,7 @@ public class List extends Screen implements Choice {
 //				}
 //			} else {
 //				// Toggle selection
-//				ListItem li = ((ListItem) listItems.get(scrollCurr));
+//				ListItem li = listItems.get(scrollCurr);
 //				setSelectedIndex(scrollCurr, !li.selected);
 //			}
 			
@@ -225,7 +225,7 @@ public class List extends Screen implements Choice {
 
     	// Display list items with current highlighted
 		for (int i = scrollFirst; (i < listItems.size()) && (i <= scrollLast); i++) {
-			ListItem li = ((ListItem) listItems.get(i));
+			ListItem li = listItems.get(i);
 			g.drawString(li.str, 2*ch, lineIdx*line, (i == scrollCurr));
 			
 			// Draw selection state

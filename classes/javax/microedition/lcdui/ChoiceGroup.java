@@ -8,7 +8,7 @@ import java.util.ArrayList;
  */
 public class ChoiceGroup extends Item implements Choice {	
 	protected int choiceType;
-	protected ArrayList choiceItems;
+	protected ArrayList<ChoiceItem> choiceItems;
 //	private int fitPolicy;
 	
 	/** Scrolling administration */
@@ -25,7 +25,7 @@ public class ChoiceGroup extends Item implements Choice {
 
 		this.label = label;
 		this.choiceType = choiceType;
-		choiceItems = new ArrayList();
+		choiceItems = new ArrayList<ChoiceItem>();
 		interactive = true;
 		
 		if (label != null) {
@@ -55,7 +55,7 @@ public class ChoiceGroup extends Item implements Choice {
 			minHeight = Display.CHAR_HEIGHT;
 		}
 
-		choiceItems = new ArrayList(stringElements.length);
+		choiceItems = new ArrayList<ChoiceItem>(stringElements.length);
 		for (int i = 0; i < stringElements.length; i++) {
 			choiceItems.add(new ChoiceItem(
 					((stringElements != null) && (stringElements.length < i))
@@ -117,13 +117,13 @@ public class ChoiceGroup extends Item implements Choice {
 //    } 
 	
 	public Image getImage(int elementNum) {
-		return ((ChoiceItem) choiceItems.get(elementNum)).img;
+		return choiceItems.get(elementNum).img;
 	}
 
 	public int getSelectedFlags(boolean[] selectedArray_return) {
 		selectedArray_return = new boolean[choiceItems.size()];
 		for (int i = 0; i < selectedArray_return.length; i++) {
-			selectedArray_return[i] = ((ChoiceItem) choiceItems.get(i)).selected;
+			selectedArray_return[i] = choiceItems.get(i).selected;
 		}
 		
 		return selectedArray_return.length;
@@ -131,7 +131,7 @@ public class ChoiceGroup extends Item implements Choice {
 
 	public int getSelectedIndex() {
 		for (int i = 0; i < choiceItems.size(); i++) {
-			if (((ChoiceItem) choiceItems.get(i)).selected) {
+			if (choiceItems.get(i).selected) {
 				return i;
 			}
 		}
@@ -140,7 +140,7 @@ public class ChoiceGroup extends Item implements Choice {
 	}
 
 	public String getString(int elementNum) {
-		return ((ChoiceItem) choiceItems.get(elementNum)).str;
+		return choiceItems.get(elementNum).str;
 	} 
 	
 	public void insert(int elementNum, String stringPart, Image imagePart) {
@@ -148,7 +148,7 @@ public class ChoiceGroup extends Item implements Choice {
 	}
 	
 	public boolean isSelected(int elementNum) {
-		return ((ChoiceItem) choiceItems.get(elementNum)).selected;
+		return choiceItems.get(elementNum).selected;
 	}
 
 	public void set(int elementNum, String stringPart, Image imagePart) {
@@ -161,18 +161,18 @@ public class ChoiceGroup extends Item implements Choice {
     
     public void setSelectedFlags(boolean[] selectedArray) {
 		for (int i = 0; i < choiceItems.size(); i++) {
-			((ChoiceItem) choiceItems.get(i)).selected = selectedArray[i];
+			choiceItems.get(i).selected = selectedArray[i];
 		}
     } 
 
     public void setSelectedIndex(int elementNum, boolean selected) {
     	if ((choiceType == Choice.MULTIPLE) || !selected) {
 			// Just set/clear selection
-			((ChoiceItem) choiceItems.get(elementNum)).selected = selected;    		
+			choiceItems.get(elementNum).selected = selected;    		
     	} else {
 			// Set single selection for these types
 			for (int i = 0; i < choiceItems.size(); i++) {
-				ChoiceItem li = ((ChoiceItem) choiceItems.get(i));
+				ChoiceItem li = choiceItems.get(i);
 				li.selected = (i == elementNum);
 			}
 		} 
@@ -201,7 +201,7 @@ public class ChoiceGroup extends Item implements Choice {
 		} else if (keyCode == Screen.KEY_BACK) {
 			// BACK key has no function
 		} else if (keyCode == Screen.KEY_ENTER) {
-			ChoiceItem li = ((ChoiceItem) choiceItems.get(scrollCurr));
+			ChoiceItem li = choiceItems.get(scrollCurr);
 			setSelectedIndex(scrollCurr, !li.selected);
 
 			notifyStateChanged();
@@ -248,7 +248,7 @@ public class ChoiceGroup extends Item implements Choice {
     	// Display list items with current highlighted
     	int xOffset = (choiceType == Choice.POPUP) ? x : (x + 2 * Display.CHAR_WIDTH);
 		for (int i = scrollFirst; (i < choiceItems.size()) && (i <= scrollLast); i++) {
-			ChoiceItem li = ((ChoiceItem) choiceItems.get(i));
+			ChoiceItem li = choiceItems.get(i);
 			g.drawString(li.str, xOffset, y, 
 					(selected && (i == scrollCurr)));
 			
