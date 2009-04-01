@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="lib" path="/classes/lib/classes.jar" sourcepath="/classes">
-		<attributes>
-			<attribute name="javadoc_location" value="file:/C:/Users/Lawrie/workspace/classes/doc/"/>
-		</attributes>
-	</classpathentry>
+	<classpathentry combineaccessrules="false" kind="src" path="/classes"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
