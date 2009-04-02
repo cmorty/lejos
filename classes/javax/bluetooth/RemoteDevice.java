@@ -72,7 +72,7 @@ public class RemoteDevice {
 	
 	/**
 	 * Indicates if the remote device has been properly paired (authenticated).
-	 * @return
+	 * @return true iff the device has been paired
 	 */
 	public boolean isAuthenticated() {
 		// When a RemoteDevice is retrieved, the name is blank unless it has been previously
