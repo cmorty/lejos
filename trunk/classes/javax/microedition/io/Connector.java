@@ -128,7 +128,7 @@ public class Connector {
      * Create and open a connection input stream. 
      *
      * @param name The URL for the connection stream.
-     * @return
+     * @return the data input stream
      * @throws IOException
      */
     public static DataInputStream openDataInputStream(String name) throws IOException {
@@ -140,7 +140,7 @@ public class Connector {
      * Create and open a connection output stream.
      * 
      * @param name The URL for the connection.
-     * @return
+     * @return the data output stream
      * @throws IOException
      */
     public static DataOutputStream openDataOutputStream(String name) throws IOException {
@@ -151,7 +151,7 @@ public class Connector {
     /**
      * Create and open a connection input stream.
      * @param name The URL for the connection.
-     * @return
+     * @return the input stream
      * @throws IOException
      */
     public static InputStream openInputStream(String name) throws IOException {
@@ -162,7 +162,7 @@ public class Connector {
     /**
      * Create and open a connection output stream.
      * @param name The URL for the connection.
-     * @return
+     * @return the output stream
      * @throws IOException
      */
 
