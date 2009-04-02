@@ -54,16 +54,16 @@ JNIEXPORT jobjectArray JNICALL Java_lejos_pc_comm_NXTCommBluez_search
     int i, j;
     char addr[19] = { 0 };
     char name[60] = { 0 };
-    unsigned char cod[3] = {0,0,0};   
+    //unsigned char cod[3] = {0,0,0};
   	char msg[80];
   	char return_str[80] = {0};
   	int num_nxts = 0;
   	char* name_str;
-  	
+
   	if (jname != NULL) name_str = (char*) (*env)->GetStringUTFChars(env, jname, NULL);
-  	
+
   	jclass sclass = (*env)->FindClass(env,"java/lang/String");
-  	
+
     dev_id = hci_get_route(NULL);
     sock = hci_open_dev( dev_id );
     if (dev_id < 0 || sock < 0) {
@@ -76,33 +76,33 @@ JNIEXPORT jobjectArray JNICALL Java_lejos_pc_comm_NXTCommBluez_search
     max_rsp = 255;
     flags = IREQ_CACHE_FLUSH;
     ii = (inquiry_info*)malloc(max_rsp * sizeof(inquiry_info));
-    
+
     num_rsp = hci_inquiry(dev_id, len, max_rsp, NULL, &ii, flags);
     if( num_rsp < 0 ) {
     	sprintf(msg, "Inquiry failed: %s (%d)", strerror(errno), errno);
 		throwNewBlueZException(env, msg);
 		return NULL;
     }
-    
+
     for (i = 0; i < num_rsp; i++) {
     	memset(name, 0, sizeof(name));
-        if (hci_read_remote_name(sock, &(ii+i)->bdaddr, sizeof(name), 
+        if (hci_read_remote_name(sock, &(ii+i)->bdaddr, sizeof(name),
             name, 0) < 0) strcpy(name, "[unknown]");
     	if (jname != NULL && strcmp(name,name_str) != 0) continue;
         if ((ii+i)->dev_class[1] == 8 && (ii+i)->dev_class[0] == 4)
         	num_nxts++;
     }
-    
+
     if (num_nxts == 0) return NULL;
-    
+
     jobjectArray arr = (*env)->NewObjectArray(env, num_nxts, sclass, NULL);
 
     j=0;
-    
+
     for (i = 0; i < num_rsp; i++) {
         ba2str(&(ii+i)->bdaddr, addr);
         memset(name, 0, sizeof(name));
-        if (hci_read_remote_name(sock, &(ii+i)->bdaddr, sizeof(name), 
+        if (hci_read_remote_name(sock, &(ii+i)->bdaddr, sizeof(name),
             name, 0) < 0) strcpy(name, "[unknown]");
         if (jname != NULL && strcmp(name,name_str) != 0) continue;
         //printf("%s  %s %x %x\n", addr, name, (ii+i)->dev_class[1], (ii+i)->dev_class[0]);
@@ -111,15 +111,15 @@ JNIEXPORT jobjectArray JNICALL Java_lejos_pc_comm_NXTCommBluez_search
         strcat(return_str,addr);
         if ((ii+i)->dev_class[1] == 8 && (ii+i)->dev_class[0] == 4) {
         	str = (*env)->NewStringUTF (env, return_str);
-        	(*env)->SetObjectArrayElement(env, arr, j++, str); 
+        	(*env)->SetObjectArrayElement(env, arr, j++, str);
         }
     }
 
     if (jname != NULL) (*env)->ReleaseStringUTFChars(env, jname, name_str);
     free( ii );
     close( sock );
-    
-	return arr;	
+
+	return arr;
 }
 
 //---------------------------------------------------------------------------//
@@ -233,7 +233,7 @@ JNIEXPORT jbyteArray JNICALL Java_lejos_pc_comm_NXTCommBluez_rcSocketRecv
   	char msg[80];
 
 	bytes_recved = recv(sk, response, sizeof(response), 0);
-	
+
 	if (bytes_recved < 0) {
 		sprintf(msg, "Read failed: %s (%d)", strerror(errno), errno);
 		throwIOException(env, msg);
