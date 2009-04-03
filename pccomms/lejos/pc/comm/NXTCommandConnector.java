@@ -3,6 +3,12 @@ package lejos.pc.comm;
 import java.io.IOException;
 import lejos.nxt.remote.*;
 
+/**
+ * Used to create a connection to a NXT for use by NXTCommand.
+ * 
+ * @author Lawrie Griffiths
+ *
+ */
 public class NXTCommandConnector extends NXTCommLoggable {
 	private static NXTConnector conn = new NXTConnector();
 	
