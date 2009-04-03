@@ -591,7 +591,7 @@ public class NXTCommand implements NXTProtocol {
 	 * Data lengths are limited to 16 bytes per command. The response will
 	 * also contain 16 bytes, with invalid data padded with zeros.
 	 * @param port
-	 * @return
+	 * @return the response
 	 */
 	public byte [] LSRead(byte port) throws IOException {
 		byte [] request = {DIRECT_COMMAND_REPLY, LS_READ, port};
@@ -618,7 +618,7 @@ public class NXTCommand implements NXTProtocol {
 	 * @param txData Transmitted data.
 	 * @param rxDataLength Receive data length.
 	 * @param port 0-3
-	 * @return
+	 * @return the status (0 = success)
 	 */
 	public byte LSWrite(byte port, byte [] txData, byte rxDataLength) throws IOException {
 		byte [] request = {DIRECT_COMMAND_NOREPLY, LS_WRITE, port, (byte)txData.length, rxDataLength};
@@ -646,7 +646,7 @@ public class NXTCommand implements NXTProtocol {
 	 * UNTESTED
 	 * @param message String to send. A null termination is automatically appended.
 	 * @param inbox Inbox Number 0 - 9
-	 * @return
+	 * @return the status (0 = success)
 	 */
 	public byte messageWrite(byte [] message, byte inbox) throws IOException {
 		byte [] request = {DIRECT_COMMAND_NOREPLY, MESSAGE_WRITE, inbox, (byte)(message.length)};
@@ -685,7 +685,7 @@ public class NXTCommand implements NXTProtocol {
 	
 	/**
 	 * Stops sound file playing.
-	 * @return
+	 * @return the status (0 = success)
 	 */
 	public byte stopSoundPlayback() throws IOException {
 		byte [] request = {DIRECT_COMMAND_NOREPLY, STOP_SOUND_PLAYBACK};
@@ -696,6 +696,7 @@ public class NXTCommand implements NXTProtocol {
 	 * Resets either RotationCount or BlockTacho
 	 * @param port Output port (0-2)
 	 * @param relative TRUE: BlockTacho, FALSE: RotationCount
+	 * @return the status (0 = success)
 	 */
 	public byte resetMotorPosition(int port, boolean relative) throws IOException {
 		// !! Needs to check port to verify they are correct ranges.
@@ -715,6 +716,7 @@ public class NXTCommand implements NXTProtocol {
 	 * @param turnRatio - Need two motors? (-100 to 100)
 	 * @param runState - see NXTProtocol for enumerations
 	 * @param tachoLimit - Number of degrees(?) to rotate before stopping.
+	 * @return the status (0 = success)
 	 */
 	public byte setOutputState(int port, byte power, int mode, int regulationMode, int turnRatio, int runState, int tachoLimit) throws IOException {
 		// !! Needs to check port, power to verify they are correct ranges.
@@ -764,7 +766,7 @@ public class NXTCommand implements NXTProtocol {
 	/**
 	 * Deletes user flash memory.
 	 * Not implemented by leJOS NXJ.
-	 * @return
+	 * @return the status (0 = success)
 	 */
 	public byte deleteUserFlash() throws IOException {
 		byte [] request = {SYSTEM_COMMAND_REPLY, DELETE_USER_FLASH};
