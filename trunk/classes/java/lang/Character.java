@@ -28,6 +28,15 @@ public final class Character implements Comparable<Character>
 	}
 	
 	/**
+	 * Identifies if a character is a numerical digit. 
+	 * @param ch
+	 * @return
+	 */
+	public static boolean isDigit(char ch) {
+		return (ch >= 48 & ch<=57);
+	}
+		
+	/**
 	 * This method accepts a character such as '7' or 'C' and converts
 	 * it to a number value. So '7' returns 7 and 'C' returns 12,
 	 * which is the hexidecimal value of C. You must specify a radix
