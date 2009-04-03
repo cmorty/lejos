@@ -154,7 +154,6 @@ public class PFLink extends I2CSensor {
     /** 
      * Should be called once to set up the NRLink for usage in the program 
      * 
-     * 
      * @param _Range Either NR_RANGE_SHORT or NR_RANGE_LONG, which uses more power 
      */ 
     public void initialize(byte _Range) { 
@@ -168,7 +167,7 @@ public class PFLink extends I2CSensor {
      * Executes a command 
      * 
      * @param command 
-     * @return 
+     * @return the status (zero = success)
      */ 
     public int runCommand(int command) { 
         byte[] buf = new byte[2]; 

@@ -141,7 +141,6 @@ public class RemoteMotor implements NXTProtocol {
 	 * is called in Pilot.
 	 * @deprecated
 	 * @return rotation count.
-	 * @see Pilot
 	 */
 	public int getRotationCount() {
 		// !! Consider making this protected to keep off limits from users.
@@ -282,7 +281,7 @@ public class RemoteMotor implements NXTProtocol {
 	/**
 	 * Calls resetTachoCount(). 
 	 * @deprecated
-	 * @return
+	 * @return the tacho count
 	 */
 	public int resetRotationCounter() {
 		return resetTachoCount();
@@ -329,7 +328,7 @@ public class RemoteMotor implements NXTProtocol {
 	
 	/**
 	 * Stops the motor without using brakes. 
-	 * @return
+	 * @return Error value. 0 means success.
 	 */
 	public int flt() {
 		this.runState = MOTOR_RUN_STATE_IDLE;
