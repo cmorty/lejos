@@ -911,7 +911,7 @@ public class RS485 extends NXTCommDevice {
      * @param buf
      * @param offset
      * @param len
-     * @return
+     * @return the number of bytes read
      */
     public static native int hsRead(byte [] buf, int offset, int len);
 
@@ -920,7 +920,7 @@ public class RS485 extends NXTCommDevice {
      * @param buf
      * @param offset
      * @param len
-     * @return
+     * @return the number of bytes written
      */
     public static native int hsWrite(byte[] buf, int offset, int len);
     

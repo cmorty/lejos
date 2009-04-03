@@ -181,7 +181,6 @@ public class RemoteNXT {
 	
 	/**
 	 * Stops the currently running Lego executable on the NXT.
-	 * @param fileName
 	 * @return the status (0 = success)
 	 */
 	public byte stopProgram() {
