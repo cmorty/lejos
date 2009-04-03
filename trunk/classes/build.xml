@@ -103,8 +103,8 @@
     	<mkdir dir="${tmp}" />
     	<zip destfile="${source.zip}"
     		basedir="${basedir}"
-    		includes="${source.zip.include}"
-    		excludes="${source.zip.exclude}"
+    		includes="${dist.include}"
+    		excludes="${dist.exclude}"
     	/>
 	</target>
 	
