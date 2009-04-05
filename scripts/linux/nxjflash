@@ -6,10 +6,4 @@ source "$(dirname -- "$0")"/_nxjconfig
 #
 # Andy Shaw
 
-java \
-	-DCOMMAND_NAME="$0" \
-	-Dnxj.home="$NXJ_HOME" \
-	-Djava.library.path="$NXJ_HOME/bin" \
-	-classpath "$TOOL_CLASSPATH" \
-	lejos.pc.tools.NXJFlash \
-	"$@"
+run_tool lejos.pc.tools.NXJFlash "$@"

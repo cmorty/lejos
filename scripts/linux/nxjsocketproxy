@@ -6,10 +6,4 @@ source "$(dirname -- "$0")"/_nxjconfig
 #
 # Lawrie Griffiths
 
-java \
-	-DCOMMAND_NAME="$0" \
-	-Dnxj.home="$NXJ_HOME" \
-	-Djava.library.path="$NXJ_HOME/bin" \
-	-classpath "$TOOL_CLASSPATH" \
-	lejos.pc.tools.SocketProxy
-	"$@"
+run_tool lejos.pc.tools.SocketProxy	"$@"

@@ -5,10 +5,4 @@ source "$(dirname -- "$0")"/_nxjconfig
 # nxjflashg: run GUI flash utility
 #
 
-java \
-	-DCOMMAND_NAME="$0" \
-	-Dnxj.home="$NXJ_HOME" \
-	-Djava.library.path="$NXJ_HOME/bin" \
-	-classpath "$TOOL_CLASSPATH" \
-	lejos.pc.tools.NXJFlashG \
-	"$@"
+run_tool lejos.pc.tools.NXJFlashG "$@"

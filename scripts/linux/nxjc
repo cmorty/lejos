@@ -6,6 +6,4 @@ source "$(dirname -- "$0")"/_nxjconfig
 #
 # July 7, 2007  created Lawrie Griffiths
 
-javac \
-	-bootclasspath "$LEJOS_BOOTPATH"\
-	"$@"
+run_javac -bootclasspath "$LEJOS_BOOTPATH" "$@"
