@@ -12,7 +12,7 @@ public final class String
   
   //Cache the calculated hash
   private int hash = 0;
-
+  
   /**
    * Create a String from a character array.
    * @param c the character array
@@ -371,12 +371,12 @@ public final class String
   
 	public static String valueOf(boolean b)
 	{
-		return b ? "true" : "false";
+		return Boolean.toString(b);
 	}
 	
 	public static String valueOf(char c )
 	{
-		return "" + c;
+		return Character.toString(c);
 	}
 	
 	public static String valueOf(char[] c)
