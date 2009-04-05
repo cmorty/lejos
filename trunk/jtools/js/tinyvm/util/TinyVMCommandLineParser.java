@@ -3,7 +3,6 @@ package js.tinyvm.util;
 import java.io.File;
 import java.io.PrintWriter;
 
-import js.tinyvm.TinyVM;
 import js.tinyvm.TinyVMException;
 
 import org.apache.commons.cli.CommandLine;
@@ -18,10 +17,18 @@ import org.apache.commons.cli.ParseException;
  */
 public class TinyVMCommandLineParser 
 {
-	private Options options = new Options();
+	protected final Options options = new Options();
+	protected CommandLine result;
 	
-	public TinyVMCommandLineParser()
+	private final boolean reqoutput; 
+	private boolean bigendian;
+	private String bp;
+	private String cp;
+	
+	public TinyVMCommandLineParser(boolean reqoutput)
 	{
+		this.reqoutput = reqoutput;
+		
 		options.addOption("h", "help", false, "show this help");
 		options.addOption("a", "all", false, "do not filter classes");
 		options.addOption("g", "debug", false, "include debug monitor");
@@ -53,21 +60,103 @@ public class TinyVMCommandLineParser
 		//options.addOption(deviceOption);
 	}
 	
+	protected static String getLastOptVal(CommandLine cmdline, String key)
+	{
+		String[] vals = cmdline.getOptionValues(key);
+		if (vals == null || vals.length <= 0)
+			return null;
+		
+		return vals[vals.length - 1];
+	}
+	
+	private static String mangleClassPath(String cp) throws ParseException
+	{
+		StringBuilder sb = new StringBuilder();
+		
+		int start = 0;
+		int len = cp.length();
+		
+		while (start < len)
+		{
+			int end = cp.indexOf(File.pathSeparatorChar, start);
+			if (end < 0)
+				end = len;
+			
+			String file = cp.substring(start, end);
+			File f = new File(file);
+			
+			if (!f.exists())
+				throw new ParseException("File does not exist: "+file);
+			
+			if (start > 0)
+				sb.append(File.pathSeparatorChar);
+			
+			//sb.append(f.getAbsolutePath());
+			//sb.append(f.getCanonicalPath());
+			sb.append(file);
+			
+			start = end+1;
+		}
+		
+		return sb.toString();
+	}
+	
+	public boolean isHelp()
+	{
+		return this.result.hasOption("h");
+	}
+
+	public boolean isAll()
+	{
+		return this.result.hasOption("a");
+	}
+
+	public boolean isDebug()
+	{
+		return this.result.hasOption("g");
+	}
+
+	public boolean isVerbose()
+	{
+		return this.result.hasOption("v");
+	}
+	
+	public String getOutput()
+	{
+		return getLastOptVal(this.result, "o");
+	}
+
+	public String getBP()
+	{
+		return this.bp;
+	}
+
+	public String getCP()
+	{
+		return this.cp;
+	}
+	
+	public boolean isBigEndian()
+	{
+		return this.bigendian;
+	}
+	
+	public String[] getRestArgs()
+	{
+		return this.result.getArgs();
+	}
+
 	/**
 	 * Parse commandline.
 	 * 
 	 * @param args command line
 	 * @throws TinyVMException
 	 */
-	public CommandLine parse (String[] args) throws ParseException
+	public void parse (String[] args) throws ParseException
 	{
 		assert args != null: "Precondition: args != null";
 
-		CommandLine result;
 		result = new GnuParser().parse(options, args);
-
-		if (result.hasOption("h"))
-			return null;
 
 		if (!result.hasOption("bp"))
 			throw new ParseException("No bootclasspath defined");
@@ -75,28 +164,52 @@ public class TinyVMCommandLineParser
 		if (!result.hasOption("cp"))
 			throw new ParseException("No classpath defined");
 		
-		if (!result.hasOption("o"))
+		if (reqoutput && !result.hasOption("o"))
 			throw new ParseException("No output file defined");
 		
 		if (!result.hasOption("wo"))
 			throw new ParseException("No write order specified");
 		
-		String writeOrder = result.getOptionValue("wo").toLowerCase();
-		if (!"be".equals(writeOrder) && !"le".equals(writeOrder))
-			throw new ParseException("Invalid write order: " + writeOrder);
-
-		if (result.getArgs().length == 0)
+		String[] args2 = result.getArgs(); 
+		if (args2.length == 0)
 			throw new ParseException("No classes specified");
-
-		assert result != null: "Postconditon: result != null";
-		return result;
+		
+		String writeOrder = getLastOptVal(result, "wo").toLowerCase();
+		this.bigendian = "be".equals(writeOrder); 
+		if (!this.bigendian && !"le".equals(writeOrder))			
+			throw new ParseException("Invalid write order: " + writeOrder);
+		
+		this.bp = mangleClassPath(getLastOptVal(result, "bp"));
+		this.cp = mangleClassPath(getLastOptVal(result, "cp"));
+	}
+	
+	public boolean parseOrHelp(Class<?> mainclass, String[] args)
+	{
+		try
+		{
+			this.parse(args);
+		}
+		catch (ParseException e)
+		{
+			System.out.println(e.getMessage());
+			this.printHelp(mainclass);
+			return false;
+		}
+		
+		if (this.isHelp())
+		{
+			this.printHelp(mainclass);
+			return false;
+		}
+		
+		return true;
 	}
 
-	public void printHelp()
+	public void printHelp(Class<?> mainclass)
 	{
         String commandName = System.getProperty("COMMAND_NAME");
         if (commandName == null)
-        	commandName = "java "+TinyVM.class.getName();
+        	commandName = "java "+mainclass.getName();
         
         String linesep = System.getProperty("line.separator", "\n\r");
         String header = linesep+"options:";

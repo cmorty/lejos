@@ -1,10 +1,13 @@
 package lejos.pc.tools;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 import js.common.CLIToolProgressMonitor;
 import js.common.ToolProgressMonitor;
 import js.tinyvm.TinyVM;
+import js.tinyvm.TinyVMException;
 import lejos.pc.comm.*;
-import org.apache.commons.cli.CommandLine;
 
 /**
  * 
@@ -54,15 +57,17 @@ public class NXJLinkAndUpload extends NXTCommLoggable {
 	 */
 	public void run(String[] args) throws js.tinyvm.TinyVMException, NXJUploadException {
 		// process arguments
-		CommandLine commandLine = fParser.parse(args);
-		String binName = commandLine.getOptionValue("o");
-		boolean run = commandLine.hasOption("r");
-		boolean blueTooth = commandLine.hasOption("b");
-		boolean usb = commandLine.hasOption("u");
-		String name = commandLine.getOptionValue("n");
-		String address = commandLine.getOptionValue("d");
-		String tinyVMArgs[];
-		String firstArg = commandLine.getArgs()[0];
+		if (!fParser.parseOrHelp(NXJLinkAndUpload.class, args))
+			return;
+
+		String binName = fParser.getOutput();
+		boolean run = fParser.isRun();
+		boolean blueTooth = fParser.isBluetooth();
+		boolean usb = fParser.isUSB();
+		String name = fParser.getName();
+		String address = fParser.getAddress();
+		String[] args1 = fParser.getRestArgs();
+		String firstArg = args1[0];
 		int argCount = 0;
 
 		// Count the arguments for the linker
@@ -75,24 +80,31 @@ public class NXJLinkAndUpload extends NXTCommLoggable {
 		// System.out.println("Arg count is " + argCount);
 
 		// Build the linker arguments
-		int index = 0;
-		tinyVMArgs = new String[argCount + 2];
-
-		if (binName == null) binName = firstArg + ".nxj";
-
-		for (int i = 0; i < args.length; i++) {
-			if (isArglessUploadOption(args[i])) continue; // skip
-			if (isArgUploadOption(args[i])) {i++; continue;} //skip 2
-			tinyVMArgs[index++] = args[i];
-		}
+		if (binName == null)
+			binName = firstArg + ".nxj";
 		
-		tinyVMArgs[argCount] = "-o";
-		tinyVMArgs[argCount + 1] = binName;
+		String classpath = TinyVM.joinCP(fParser.getBP(), fParser.getCP());
 
 		// link
 		log("Linking...");
-		fTinyVM.start(tinyVMArgs);
-
+		try
+		{
+			FileOutputStream file = new FileOutputStream(binName);
+			try
+			{
+				//TODO switch to streams or temp file if no filename was given
+				fTinyVM.link(classpath, args1, fParser.isAll(), file, fParser.isBigEndian(), fParser.isDebug());
+			}
+			finally
+			{
+				file.close();
+			}
+		}
+		catch (IOException e)
+		{
+			throw new TinyVMException(e.getMessage(), e);
+		}
+		
 		// upload
 		log("Uploading...");
 		int protocols = 0;
