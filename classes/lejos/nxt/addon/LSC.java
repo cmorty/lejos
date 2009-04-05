@@ -19,8 +19,8 @@ import java.util.ArrayList;
 public class LSC extends I2CSensor {
 
 	//Servo Management
-	private ArrayList arrServo;//ServoController manage until 10 RC Servos
-	private ArrayList arrDCMotor;//ServoController manage until 10 DC Motors
+	private ArrayList<LServo> arrServo;//ServoController manage until 10 RC Servos
+	private ArrayList<LDCMotor> arrDCMotor;//ServoController manage until 10 DC Motors
 	private final int MAXIMUM_SERVOS_DCMOTORS = 10;//LSC Suports until 10 RC Servos
 	
 	//Exception handling
@@ -44,8 +44,8 @@ public class LSC extends I2CSensor {
 		this.portConnected = port;
 		this.SPI_PORT = SPI_PORT;
 		
-		arrServo = new ArrayList();
-		arrDCMotor = new ArrayList();
+		arrServo = new ArrayList<LServo>();
+		arrDCMotor = new ArrayList<LDCMotor>();
 		
 		this.setAddress((int) NXTe.NXTE_ADDRESS);
 	}
@@ -94,7 +94,7 @@ public class LSC extends I2CSensor {
 	 * 
 	 */
 	public LServo getServo(int index){
-		return (LServo) this.arrServo.get(index);
+		return this.arrServo.get(index);
 	}	 
 
 	/**
@@ -139,7 +139,7 @@ public class LSC extends I2CSensor {
 	 * 
 	 */
 	public LDCMotor getDCMotor(int index){
-		return (LDCMotor) this.arrDCMotor.get(index);
+		return this.arrDCMotor.get(index);
 	}
 	
 	//I2C Methods
