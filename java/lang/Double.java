@@ -140,6 +140,18 @@ public final class Double
 		return (short)this.value;
 	}
 	
+	/**
+	 * Convert a float to a String
+	 * @param f the float to be converted
+	 * @return the String representation of the float
+	 */
+	public static String toString(double d)
+	{
+		StringBuilder sb = new StringBuilder();
+		sb.append(d);
+		return sb.toString();
+	}
+	
 	public static Double valueOf(double d)
 	{
 		return new Double(d);
