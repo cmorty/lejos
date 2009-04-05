@@ -1,7 +1,7 @@
 @echo off
 if "%NXJ_HOME%" == ""  goto homeless
 
-javac -bootclasspath "%NXJ_HOME%\lib\classes.jar;%CLASSPATH%" %*
+javac -bootclasspath "%NXJ_HOME%\lib\classes.jar" %*
 goto end
 
 :homeless
