@@ -110,7 +110,7 @@ public class MSC extends I2CSensor {
 	 * 
 	 */
 	public MServo getServo(int location){
-		return (MServo) arrServo[location-1];
+		return arrServo[location-1];
 	}
 
 	

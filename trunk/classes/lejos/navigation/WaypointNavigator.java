@@ -46,7 +46,7 @@ public class WaypointNavigator extends SimpleNavigator {
     }
   }
 
-  private final ArrayList segments = new ArrayList();
+  private final ArrayList<Segment> segments = new ArrayList<Segment>();
 
   /**
    * Create a WaypointNavigator. Just add points to the queue to determine path.
@@ -87,7 +87,7 @@ public class WaypointNavigator extends SimpleNavigator {
    */
   public void execute() {
     while (segments.size() > 0) {
-      Segment segment = (Segment) segments.get(0);
+      Segment segment = segments.get(0);
       _pilot.setTurnSpeed(segment.getTurnSpeed());
       rotate(angleTo(segment.getX(), segment.getY()));
       _pilot.setMoveSpeed(segment.getMoveSpeed());
