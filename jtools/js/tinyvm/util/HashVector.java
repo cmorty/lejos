@@ -9,16 +9,6 @@ public class HashVector<T>
    private HashMap<T, Object> iHashMap;
    private ArrayList<T> iArrayList;
 
-   private static class IntWrap
-   {
-      int iV;
-
-      IntWrap (int aV)
-      {
-         iV = aV;
-      }
-   }
-
    public HashVector ()
    {
       super();
@@ -26,13 +16,16 @@ public class HashVector<T>
       iArrayList = new ArrayList<T>();
    }
 
+   /**
+    * @deprecated method is to be removed since it messes up indices
+    */
    public void insertElementAt (T aElement, int aIndex)
    {
       synchronized (iArrayList)
       {
          if (iHashMap.containsKey(aElement))
             return;
-         iHashMap.put(aElement, new IntWrap(aIndex));
+         iHashMap.put(aElement, Integer.valueOf(aIndex));
          iArrayList.add(aIndex, aElement);
          
          //FIXME the rest of the values in the hashmap is not updated even though the indexes changed!
@@ -45,11 +38,14 @@ public class HashVector<T>
       {
          if (iHashMap.containsKey(aElement))
             return;
-         iHashMap.put(aElement, new IntWrap(iArrayList.size()));
+         iHashMap.put(aElement, Integer.valueOf(iArrayList.size()));
          iArrayList.add(aElement);
       }
    }
 
+   /**
+    * @deprecated method is to be removed since it doesn't seem to fit into the concept since there is no get method
+    */
    public void put (T aKey, Object aElement)
    {
       synchronized (iArrayList)
@@ -71,8 +67,8 @@ public class HashVector<T>
       synchronized (iArrayList)
       {
          Object pElm = iHashMap.get(aKey);
-         if (pElm instanceof IntWrap)
-            return ((IntWrap) pElm).iV;
+         if (pElm instanceof Integer)
+            return ((Integer) pElm).intValue();
          if (pElm == null)
             return -1;
          return iArrayList.indexOf(aKey);
