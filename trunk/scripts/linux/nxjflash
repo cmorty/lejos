@@ -1,23 +1,15 @@
 #!/bin/bash
+source "$(dirname -- "$0")"/_nxjconfig
 
 #
 # nxjflash: Run Java command line flash utility
 #
 # Andy Shaw
 
-if [ -z "$NXJ_HOME" ]; then 
-  NXJ_HOME="$(dirname $(dirname $0))"
-fi
-
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$NXJ_HOME/bin
-export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:$NXJ_HOME/bin
-
-if [ $OSTYPE == "cygwin" ]; then
-  SEP=";"
-else
-  SEP=":"
-fi
-
-THIRDPARTY_LIBS="$NXJ_HOME/3rdparty/lib"
-
-java -Djava.library.path="$NXJ_HOME/bin" -Dnxj.home="$NXJ_HOME" -classpath "$THIRDPARTY_LIBS/bcel-5.1.jar$SEP$THIRDPARTY_LIBS/commons-cli-1.0.jar$SEP$NXJ_HOME/lib/pctools.jar$SEP$NXJ_HOME/lib/pccomm.jar$SEP$NXJ_HOME/lib/jtools.jar" lejos.pc.tools.NXJFlash "$@"
+java \
+	-DCOMMAND_NAME="$0" \
+	-Dnxj.home="$NXJ_HOME" \
+	-Djava.library.path="$NXJ_HOME/bin" \
+	-classpath "$TOOL_CLASSPATH" \
+	lejos.pc.tools.NXJFlash \
+	"$@"
