@@ -7,6 +7,8 @@ import lejos.nxt.remote.*;
 /**
  * Abstraction for the local NXT device.
  * 
+ * This version of the NXT class supports remote execution.
+ * 
  * @author Lawrie Griffiths and Brian Bagnall
  *
  */

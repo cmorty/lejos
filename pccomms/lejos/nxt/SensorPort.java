@@ -7,8 +7,10 @@ import java.io.*;
 /**
  * Port class. Contains 4 Port instances.<br>
  * Usage: Port.S4.readValue();
+ * 
+ * This version of the SensorPort class supports remote execution.
+ * 
  * @author <a href="mailto:bbagnall@mts.net">Brian Bagnall</a>
- * @version 0.3  29-October-2006 
  *
  */
 public class SensorPort implements NXTProtocol, LegacySensorPort, I2CPort  {	

@@ -7,6 +7,8 @@ import java.io.*;
 /**
  * Motor class. Contains three instances of Motor.
  * Usage: Motor.A.forward(5000);
+ * 
+ * This version of the Motor class supports remote execution.
  *  
  * @author <a href="mailto:bbagnall@mts.net">Brian Bagnall</a>
  *

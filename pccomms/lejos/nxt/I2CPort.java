@@ -3,6 +3,9 @@ package lejos.nxt;
 /**
  * Abstraction for a port that supports I2C sensors.
  * 
+ * This is a simplified version of the interface used by for remote execution 
+ * of I2C.
+ * 
  * @author Lawrie Griffiths
  *
  */
