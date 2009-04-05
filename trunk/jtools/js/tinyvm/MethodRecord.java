@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 
 import js.tinyvm.io.IByteWriter;
@@ -32,7 +33,7 @@ public class MethodRecord implements WritableData
    int iFlags; // DONE
    boolean isCalled;
    int iCodeStart;
-   ArrayList<MethodRecord> iIsHiddenBy = new ArrayList<MethodRecord>();
+   HashSet<MethodRecord> iIsHiddenBy = new HashSet<MethodRecord>();
    int markCount = -1;
 
    public MethodRecord (Method aEntry, Signature aSignature,
@@ -254,8 +255,10 @@ public class MethodRecord implements WritableData
    {
       if (!(aOther instanceof MethodRecord))
          return false;
-      return ((MethodRecord) aOther).iMethod.equals(iMethod) &&
-              ((MethodRecord) aOther).iClassRecord.equals(iClassRecord);
+      
+      MethodRecord mr = (MethodRecord)aOther;
+      return mr.iMethod.equals(iMethod) &&
+              mr.iClassRecord.equals(iClassRecord);
    }
 
    public int hashCode ()

@@ -4,6 +4,7 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.ArrayList;
 
@@ -52,7 +53,7 @@ public class ClassRecord implements WritableData
    int iArrayElementType;
    int iFlags;
    boolean iUseAllMethods = false;
-   final ArrayList<ClassRecord> iImplementedBy = new ArrayList<ClassRecord>();
+   final HashSet<ClassRecord> iImplementedBy = new HashSet<ClassRecord>();
    private boolean isUsed = false;
    private boolean isInstanceUsed = false;
 
