@@ -124,7 +124,7 @@ public class RemoteNXT {
 	// instead. It's simpler for users to return fileNames.
 	public String [] getFileNames(String searchCriteria) {
 		try {
-			ArrayList names = new ArrayList();
+			ArrayList<String> names = new ArrayList<String>();
 			FileInfo f = nxtCommand.findFirst(searchCriteria);
 			if(f == null)
 				return null;
@@ -137,7 +137,7 @@ public class RemoteNXT {
 			
 			String [] returnArray = new String [names.size()];
 			for(int i=0;i<names.size();i++) {
-				returnArray[i] = (String) names.get(i);
+				returnArray[i] = names.get(i);
 			}
 			return returnArray;
 		} catch (IOException ioe) {

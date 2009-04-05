@@ -17,7 +17,7 @@ import java.util.ArrayList;
  */
 public class NXTe  extends I2CSensor{
 	//LSC
-	private ArrayList arrLSC;
+	private ArrayList<LSC> arrLSC;
 	private final int MAXIMUM_LSC = 4;
 	
 	//Exception handling
@@ -43,7 +43,7 @@ public class NXTe  extends I2CSensor{
 		
 		portConnected = port;
 		
-		arrLSC = new ArrayList();
+		arrLSC = new ArrayList<LSC>();
 		
 		this.setAddress((int) NXTE_ADDRESS);
 		int I2C_Response;
@@ -73,6 +73,6 @@ public class NXTe  extends I2CSensor{
 	 * @return the LSC object
 	 */
 	public LSC getLSC(int index){
-		return (LSC) arrLSC.get(index);
+		return arrLSC.get(index);
 	}
 }
