@@ -15,4 +15,4 @@ else
   SEP=":"
 fi
 
-javac -bootclasspath "$NXJ_HOME/lib/classes.jar$SEP$CLASSPATH" "$@"
+javac -bootclasspath "$NXJ_HOME/lib/classes.jar" "$@"

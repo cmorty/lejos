@@ -1,8 +1,9 @@
 package js.tinyvm.util;
 
+import java.io.File;
 import java.io.PrintWriter;
-import java.io.StringWriter;
 
+import js.tinyvm.TinyVM;
 import js.tinyvm.TinyVMException;
 
 import org.apache.commons.cli.CommandLine;
@@ -17,97 +18,96 @@ import org.apache.commons.cli.ParseException;
  */
 public class TinyVMCommandLineParser 
 {
-   /**
-    * Parse commandline.
-    * 
-    * @param args command line
-    * @throws TinyVMException
-    */
-   public CommandLine parse (String[] args) throws TinyVMException
-   {
-      assert args != null: "Precondition: args != null";
+	private Options options = new Options();
+	
+	public TinyVMCommandLineParser()
+	{
+		options.addOption("h", "help", false, "show this help");
+		options.addOption("a", "all", false, "do not filter classes");
+		options.addOption("g", "debug", false, "include debug monitor");
+		options.addOption("v", "verbose", false,
+				"print class and signature information");
+		
+		Option bclasspathOption = new Option("bp", "bootclasspath", true,
+				"where to find leJOS classes");
+		bclasspathOption.setArgName("classpath");
+		options.addOption(bclasspathOption);
+		
+		Option classpathOption = new Option("cp", "classpath", true,
+				"where to find user's classes");
+		classpathOption.setArgName("classpath");
+		options.addOption(classpathOption);
+		
+		Option outputOption = new Option("o", "output", true,
+				"dump binary to file");
+		outputOption.setArgName("path to file");
+		options.addOption(outputOption);
+		
+		Option writeOrderOption = new Option("wo", "writeorder", true,
+				"endianness (BE or LE)");
+		writeOrderOption.setArgName("write order");
+		options.addOption(writeOrderOption);
 
-      Options options = new Options();
-      options.addOption("v", "verbose", false,
-         "print class and signature information");
-      options.addOption("h", "help", false, "help");
-      Option classpathOption = new Option("cp", "classpath", true, "classpath");
-      classpathOption.setArgName("classpath");
-      options.addOption(classpathOption);
-      Option outputOption = new Option("o", "output", true,
-         "dump binary to file");
-      outputOption.setArgName("binary");
-      options.addOption(outputOption);
-      options.addOption("a", "all", false, "do not filter classes");
-      Option writeOrderOption = new Option("wo", "writeorder", true,
-         "write order (BE or LE)");
-      writeOrderOption.setArgName("write order");
-      options.addOption(writeOrderOption);
+		//Option deviceOption = new Option("tty", "device", true,"device used (USB, COM1, etc)");
+		//deviceOption.setArgName("device");
+		//options.addOption(deviceOption);
+	}
+	
+	/**
+	 * Parse commandline.
+	 * 
+	 * @param args command line
+	 * @throws TinyVMException
+	 */
+	public CommandLine parse (String[] args) throws ParseException
+	{
+		assert args != null: "Precondition: args != null";
 
-      //Option deviceOption = new Option("tty", "device", true,"device used (USB, COM1, etc)");
-      //deviceOption.setArgName("device");
-      //options.addOption(deviceOption);
-      options.addOption("g", "debug", false, "Include debug monitor");
-      
-      CommandLine result;
-      try
-      {
-         try
-         {
-            result = new GnuParser().parse(options, args);
-         }
-         catch (ParseException e)
-         {
-            throw new TinyVMException(e.getMessage(), e);
-         }
+		CommandLine result;
+		result = new GnuParser().parse(options, args);
 
-         if (result.hasOption("h"))
-         {
-            throw new TinyVMException("Help:");
-         }
+		if (result.hasOption("h"))
+			return null;
 
-         if (!result.hasOption("cp"))
-         {
-            throw new TinyVMException("No classpath defined");
-         }
-         
-         if (!result.hasOption("o"))
-         {
-            throw new TinyVMException("No output file defined");
-         }
-         
-         if (!result.hasOption("wo"))
-         {
-            throw new TinyVMException("No write order specified");
-         }
-         String writeOrder = result.getOptionValue("wo").toLowerCase();
-         if (!"be".equals(writeOrder) && !"le".equals(writeOrder))
-         {
-            throw new TinyVMException("Wrong write order: " + writeOrder);
-         }
+		if (!result.hasOption("bp"))
+			throw new ParseException("No bootclasspath defined");
+		
+		if (!result.hasOption("cp"))
+			throw new ParseException("No classpath defined");
+		
+		if (!result.hasOption("o"))
+			throw new ParseException("No output file defined");
+		
+		if (!result.hasOption("wo"))
+			throw new ParseException("No write order specified");
+		
+		String writeOrder = result.getOptionValue("wo").toLowerCase();
+		if (!"be".equals(writeOrder) && !"le".equals(writeOrder))
+			throw new ParseException("Invalid write order: " + writeOrder);
 
-         if (result.getArgs().length == 0)
-         {
-            throw new TinyVMException("No classes specified");
-         }
-      }
-      catch (TinyVMException e)
-      {
-         StringWriter writer = new StringWriter();
-         PrintWriter printWriter = new PrintWriter(writer);
-         printWriter.println(e.getMessage());
-         
-         String commandName = System.getProperty("COMMAND_NAME", "java js.tinyvm.TinyVM");
+		if (result.getArgs().length == 0)
+			throw new ParseException("No classes specified");
 
-         String usage = commandName + " [options] class1[,class2,...]";
-         // TODO check format parameters
-         new HelpFormatter().printHelp(printWriter, 80, usage.toString(), null,
-            options, 0, 2, null);
+		assert result != null: "Postconditon: result != null";
+		return result;
+	}
 
-         throw new TinyVMException(writer.toString());
-      }
+	public void printHelp()
+	{
+        String commandName = System.getProperty("COMMAND_NAME");
+        if (commandName == null)
+        	commandName = "java "+TinyVM.class.getName();
+        
+        String linesep = System.getProperty("line.separator", "\n\r");
+        String header = linesep+"options:";
+        String footer = "";
 
-      assert result != null: "Postconditon: result != null";
-      return result;
-   }
+        String usage = commandName + " [options] class1 [class2 ...]";
+        PrintWriter out = new PrintWriter(System.out, false);
+        out.println();
+        new HelpFormatter().printHelp(out, 80, usage, header,
+           options, 0, 2, footer);
+        out.println();
+        out.flush();
+	}
 }
