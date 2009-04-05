@@ -1,9 +1,7 @@
 package js.tinyvm;
 
-import java.util.Hashtable;
-import java.util.Vector;
-
-import javax.swing.ProgressMonitor;
+import java.util.HashMap;
+import java.util.ArrayList;
 
 import js.common.ToolProgressMonitor;
 import js.tinyvm.io.IByteWriter;
@@ -34,8 +32,8 @@ public class Binary
       "entry class indices", true, false);
 
    // Other state:
-   final Hashtable iSpecialSignatures = new Hashtable();
-   final Hashtable iClasses = new Hashtable();
+   final HashMap iSpecialSignatures = new HashMap();
+   final HashMap iClasses = new HashMap();
    final HashVector iSignatures = new HashVector();
    int usedClassCount = 0;
    int markGeneration = 0;
@@ -256,7 +254,7 @@ public class Binary
       assert entryClassNames != null: "Precondition: entryClassNames != null";
       assert classPath != null: "Precondition: classPath != null";
 
-      Vector pInterfaceMethods = new Vector();
+      ArrayList pInterfaceMethods = new ArrayList();
 
       // Add special all classes first
       String[] specialClasses = SpecialClassConstants.CLASSES;
@@ -307,7 +305,7 @@ public class Binary
          ClassRecord classRecord = (ClassRecord) iClassTable.get(pIndex);
          for (int i = 0; i < pInterfaceMethods.size(); i++)
          {
-            classRecord.addUsedMethod((String) pInterfaceMethods.elementAt(i));
+            classRecord.addUsedMethod((String) pInterfaceMethods.get(i));
          }
 
          classRecord.iIndex = pIndex;

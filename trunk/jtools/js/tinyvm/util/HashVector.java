@@ -1,13 +1,13 @@
 package js.tinyvm.util;
 
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Vector;
+import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 public class HashVector
 {
-   private Hashtable iHashtable;
-   private Vector iVector;
+   private HashMap iHashMap;
+   private ArrayList iArrayList;
 
    private class IntWrap
    {
@@ -22,74 +22,74 @@ public class HashVector
    public HashVector ()
    {
       super();
-      iHashtable = new Hashtable();
-      iVector = new Vector();
+      iHashMap = new HashMap();
+      iArrayList = new ArrayList();
    }
 
    public void insertElementAt (Object aElement, int aIndex)
    {
-      synchronized (iVector)
+      synchronized (iArrayList)
       {
-         if (iHashtable.containsKey(aElement))
+         if (iHashMap.containsKey(aElement))
             return;
-         iHashtable.put(aElement, new IntWrap(aIndex));
-         iVector.insertElementAt(aElement, aIndex);
+         iHashMap.put(aElement, new IntWrap(aIndex));
+         iArrayList.add(aIndex, aElement);
       }
    }
 
    public void addElement (Object aElement)
    {
-      synchronized (iVector)
+      synchronized (iArrayList)
       {
-         if (iHashtable.containsKey(aElement))
+         if (iHashMap.containsKey(aElement))
             return;
-         iHashtable.put(aElement, new IntWrap(iVector.size()));
-         iVector.addElement(aElement);
+         iHashMap.put(aElement, new IntWrap(iArrayList.size()));
+         iArrayList.add(aElement);
       }
    }
 
    public void put (Object aKey, Object aElement)
    {
-      synchronized (iVector)
+      synchronized (iArrayList)
       {
-         if (iHashtable.containsKey(aKey))
+         if (iHashMap.containsKey(aKey))
             return;
-         iHashtable.put(aKey, aElement);
-         iVector.addElement(aKey);
+         iHashMap.put(aKey, aElement);
+         iArrayList.add(aKey);
       }
    }
 
    public boolean containsKey (Object aKey)
    {
-      return iHashtable.containsKey(aKey);
+      return iHashMap.containsKey(aKey);
    }
 
    public int indexOf (Object aKey)
    {
-      synchronized (iVector)
+      synchronized (iArrayList)
       {
-         Object pElm = iHashtable.get(aKey);
+         Object pElm = iHashMap.get(aKey);
          if (pElm instanceof IntWrap)
             return ((IntWrap) pElm).iV;
          if (pElm == null)
             return -1;
-         return iVector.indexOf(aKey);
+         return iArrayList.indexOf(aKey);
       }
    }
 
-   public Enumeration elements ()
+   public Iterator elements ()
    {
-      return iVector.elements();
+      return iArrayList.iterator();
    }
 
    public int size ()
    {
-      return iVector.size();
+      return iArrayList.size();
    }
 
    public Object elementAt (int aIndex)
    {
-      return iVector.elementAt(aIndex);
+      return iArrayList.add(aIndex);
    }
 }
 
