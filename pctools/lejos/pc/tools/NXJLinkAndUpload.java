@@ -1,12 +1,8 @@
 package lejos.pc.tools;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-
 import js.common.CLIToolProgressMonitor;
 import js.common.ToolProgressMonitor;
 import js.tinyvm.TinyVM;
-import js.tinyvm.TinyVMException;
 import lejos.pc.comm.*;
 
 /**
@@ -20,8 +16,6 @@ public class NXJLinkAndUpload extends NXTCommLoggable {
 	private NXJCommandLineParser fParser;
 	private Upload fUpload;
 	private TinyVM fTinyVM;
-	private static final String[] argUploadOptions = {"-n", "--name", "-d", "--address"};
-	private static final String[] arglessUploadOptions = {"-b", "--bluetooth", "-u", "--usb", "-r", "--run"};
 
 	public NXJLinkAndUpload() {
 		super();
@@ -129,20 +123,5 @@ public class NXJLinkAndUpload extends NXTCommLoggable {
 	 */
 	public void removeMonitor(ToolProgressMonitor monitor) {
 		fTinyVM.removeProgressMonitor(monitor);
-	}
-
-	private boolean isArgUploadOption(String s) {
-		return isOption(argUploadOptions,s);
-	}
-	
-	private boolean isArglessUploadOption(String s) {
-		return isOption(arglessUploadOptions,s);
-	}
-	
-	private boolean isOption(String[] opts, String s) {
-		for(int i=0;i<opts.length;i++) {
-			if (s.equals(opts[i])) return true;
-		}
-		return false;
 	}
 }
