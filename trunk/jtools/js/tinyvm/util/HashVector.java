@@ -89,7 +89,7 @@ public class HashVector
 
    public Object elementAt (int aIndex)
    {
-      return iArrayList.add(aIndex);
+      return iArrayList.get(aIndex);
    }
 }
 
