@@ -1,9 +1,7 @@
 package js.tinyvm;
 
 import java.io.IOException;
-import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 
