@@ -1,18 +1,11 @@
 #!/bin/bash
+source "$(dirname -- "$0")"/_nxjconfig
 
 #
 # nxjc: Java tool for compiling java programs for leJOS NXJ
 #
 # July 7, 2007  created Lawrie Griffiths
 
-if [ -z "$NXJ_HOME" ]; then
-  NXJ_HOME="$(dirname $(dirname $0))"
-fi
-
-if [ $OSTYPE == "cygwin" ]; then
-  SEP=";"
-else
-  SEP=":"
-fi
-
-javac -bootclasspath "$NXJ_HOME/lib/classes.jar" "$@"
+javac \
+	-bootclasspath "$LEJOS_BOOTPATH"\
+	"$@"
