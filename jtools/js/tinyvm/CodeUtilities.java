@@ -58,8 +58,7 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
             + "does not refer to a suitable constant. ");
       }
 
-      ConstantRecord pRecord = new ConstantRecord(iCF.getConstantPool(),
-         (Constant) pEntry);
+      ConstantRecord pRecord = new ConstantRecord(iCF.getConstantPool(), pEntry);
       int pIdx = iBinary.getConstantIndex(pRecord);
 
       if (pIdx == -1)
@@ -451,7 +450,7 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
                   int newOpCode;
                   if (fldIdx > TinyVMConstants.MAX_STATICS) exitOnBadOpCode(pOpCode);
 
-                  if( ((int)aCode[i-2] & 0xFF) == OP_PUTSTATIC)
+                  if( (aCode[i-2] & 0xFF) == OP_PUTSTATIC)
                      newOpCode = OP_PUTSTATIC_1 + (fldIdx - 256) / 256 * 2;
                   else
                      newOpCode = OP_GETSTATIC_1 + (fldIdx - 256) / 256 * 2;
@@ -619,7 +618,7 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
             case OP_LDC:
                {
                   int constIdx = processConstantIndex(aCode[i] & 0xFF);
-                  ConstantRecord pRec = (ConstantRecord)iBinary.getConstantRecord(constIdx);
+                  ConstantRecord pRec = iBinary.getConstantRecord(constIdx);
                   pRec.markUsed();
                   i++;
                }
@@ -628,7 +627,7 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
             case OP_LDC2_W:
                {
                   int constIdx = processConstantIndex((aCode[i] & 0xFF) << 8 | (aCode[i + 1] & 0xFF));
-                  ConstantRecord pRec = (ConstantRecord)iBinary.getConstantRecord(constIdx);
+                  ConstantRecord pRec = iBinary.getConstantRecord(constIdx);
                   pRec.markUsed();
                   i += 2;
                }

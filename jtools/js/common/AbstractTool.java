@@ -20,7 +20,6 @@ public class AbstractTool
    public AbstractTool ()
    {
 	   _monitors = new ArrayList<ToolProgressMonitor>();
-     
    }
 
    //

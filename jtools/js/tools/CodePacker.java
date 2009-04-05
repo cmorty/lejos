@@ -11,7 +11,7 @@ import java.util.TreeSet;
 /**
  * A comparable ArrayList.
  */
-class Packing implements Comparable
+class Packing implements Comparable<Packing>
 {
    Size array[];
    int thisSize;
@@ -26,7 +26,7 @@ class Packing implements Comparable
    // Add an element if there is room.
    boolean add (int i)
    {
-      Size size = (Size) CodePacker.list.get(i);
+      Size size = CodePacker.list.get(i);
       if (size.size + thisSize <= CodePacker.maxSize)
       {
          array[i] = size;
@@ -88,9 +88,9 @@ class Packing implements Comparable
       }
    }
 
-   public int compareTo (Object other)
+   public int compareTo (Packing other)
    {
-      return thisSize - ((Packing) other).thisSize;
+      return thisSize - other.thisSize;
    }
 }
 
@@ -108,7 +108,7 @@ class Size
 
 public class CodePacker
 {
-   static ArrayList list;
+   static ArrayList<Size> list;
    static int maxSize;
 
    /**
@@ -119,7 +119,7 @@ public class CodePacker
       for (int i = 0; i < list.size() - 1; i++)
       {
          int selIndex = (int) (Math.random() * (list.size() - i) + i);
-         Object selected = list.get(selIndex);
+         Size selected = list.get(selIndex);
          list.set(selIndex, list.get(i));
          list.set(i, selected);
       }
@@ -158,7 +158,7 @@ public class CodePacker
       }
 
       // Generate an initial random set of packings of size indices.length
-      TreeSet populations = new TreeSet();
+      TreeSet<Packing> populations = new TreeSet<Packing>();
       for (int i = 0; i < indices.length; i++)
       {
          Packing packing = select(indices);
@@ -176,8 +176,7 @@ public class CodePacker
       for (int i = 0; i < indices.length * 2; i++)
       {
          // Select two elements at random to breed
-         Packing array[] = (Packing[]) populations
-            .toArray(new Packing[populations.size()]);
+         Packing array[] = populations.toArray(new Packing[populations.size()]);
          Packing offspring = array[i % array.length].breed(array[(int) (Math
             .random() * array.length)]);
          if (offspring.thisSize == maxSize)
@@ -188,7 +187,7 @@ public class CodePacker
             populations.remove(populations.first());
       }
 
-      return (Packing) populations.last();
+      return populations.last();
    }
 
    public static void main (String[] args) throws Exception
@@ -200,7 +199,7 @@ public class CodePacker
       StringBuffer prologue = new StringBuffer();
       StringBuffer epilogue = new StringBuffer();
       StringBuffer current = prologue;
-      list = new ArrayList();
+      list = new ArrayList<Size>();
 
       // Locate 'extra1'
       BufferedReader br = new BufferedReader(new FileReader(ldsFile));

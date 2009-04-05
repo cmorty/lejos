@@ -8,9 +8,9 @@ import java.util.ArrayList;
 
 public class ListReader
 {
-   public static ArrayList loadStrings (File aFile)
+   public static ArrayList<String> loadStrings (File aFile)
    {
-      ArrayList pVec = new ArrayList();
+      ArrayList<String> pVec = new ArrayList<String>();
       if (!aFile.exists())
          return pVec;
       try

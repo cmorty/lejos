@@ -21,7 +21,7 @@ public class MethodRecord implements WritableData
 {
    Method iMethod;
    ClassRecord iClassRecord;
-   RecordTable iExceptionTable = null;
+   RecordTable<ExceptionRecord> iExceptionTable = null;
    CodeSequence iCodeSequence = null;
 
    int iSignatureId; // DONE
@@ -32,12 +32,12 @@ public class MethodRecord implements WritableData
    int iFlags; // DONE
    boolean isCalled;
    int iCodeStart;
-   ArrayList iIsHiddenBy = new ArrayList();
+   ArrayList<MethodRecord> iIsHiddenBy = new ArrayList<MethodRecord>();
    int markCount = -1;
 
    public MethodRecord (Method aEntry, Signature aSignature,
-      ClassRecord aClassRec, Binary aBinary, RecordTable aExceptionTables,
-      HashVector aSignatures) throws TinyVMException
+      ClassRecord aClassRec, Binary aBinary, RecordTable<RecordTable<ExceptionRecord>> aExceptionTables,
+      HashVector<Signature> aSignatures) throws TinyVMException
    {
       iClassRecord = aClassRec;
       iMethod = aEntry;
@@ -85,7 +85,7 @@ public class MethodRecord implements WritableData
 
       if (pCodeAttrib != null)
       {
-         iExceptionTable = new RecordTable("exceptions", true, false);
+         iExceptionTable = new RecordTable<ExceptionRecord>("exceptions", true, false);
          CodeException[] pExcepTable = pCodeAttrib.getExceptionTable();
          iNumExceptionHandlers = pExcepTable.length;
          if (iNumExceptionHandlers > TinyVMConstants.MAX_EXCEPTION_HANDLERS)
@@ -122,7 +122,7 @@ public class MethodRecord implements WritableData
          iFlags |= TinyVMConstants.M_STATIC;
    }
 
-   public void copyCode (RecordTable aCodeSequences, JavaClass aClassFile,
+   public void copyCode (RecordTable<CodeSequence> aCodeSequences, JavaClass aClassFile,
       Binary aBinary)
    {
       Code pCodeAttrib = iMethod.getCode();
@@ -134,7 +134,7 @@ public class MethodRecord implements WritableData
       }
    }
 
-   public void postProcessCode (RecordTable aCodeSequences,
+   public void postProcessCode (RecordTable<CodeSequence> aCodeSequences,
       JavaClass aClassFile, Binary aBinary) throws TinyVMException
    {
       Code pCodeAttrib = iMethod.getCode();
@@ -273,9 +273,9 @@ public class MethodRecord implements WritableData
       if (isCalled && markCount == aBinary.getGeneration()) return;
       isCalled = true;
       markCount = aBinary.getGeneration();
-      for (Iterator iter = iIsHiddenBy.iterator(); iter.hasNext();)
+      for (Iterator<MethodRecord> iter = iIsHiddenBy.iterator(); iter.hasNext();)
       {
-         MethodRecord pMeth = (MethodRecord) iter.next();
+         MethodRecord pMeth = iter.next();
          // _logger.log(Level.INFO, "Marking sub method " + pMeth.iMethod.getName());
          pMeth.iClassRecord.markMethod(pMeth, false);
       }
@@ -310,7 +310,7 @@ public class MethodRecord implements WritableData
        }
    }
    
-   public RecordTable getExceptions()
+   public RecordTable<ExceptionRecord> getExceptions()
    {
        return iExceptionTable;
    }
