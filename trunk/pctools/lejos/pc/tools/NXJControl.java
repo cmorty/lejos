@@ -787,7 +787,7 @@ public class NXJControl implements ListSelectionListener, NXTProtocol {
 
 		forwardButton.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent e) {
-				if (fewerThanTwoMotors()) return;
+				if (noMotorsSelected()) return;
 				int[] speed = getSpeeds();
 				move(speed[0], speed[1], speed[2]);
 			}
@@ -799,7 +799,7 @@ public class NXJControl implements ListSelectionListener, NXTProtocol {
 
 		backwardButton.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent e) {
-				if (fewerThanTwoMotors()) return;
+				if (noMotorsSelected()) return;
 				int[] speed = getSpeeds();
 				move(-speed[0], -speed[1], -speed[2]);
 			}
@@ -850,11 +850,22 @@ public class NXJControl implements ListSelectionListener, NXTProtocol {
 	}
 	
 	/**
-	 * Return true iff at least two message selected and shoe message if not
+	 * Return true iff at least two motors selected and show message if not
 	 */
 	private boolean fewerThanTwoMotors() {
-		if (numMotorsSelected() < 2) {
-			showMessage("Two Motors must be selected");
+		if (numMotorsSelected() != 2) {
+			showMessage("Exactly two motors must be selected");
+			return false;	
+		}
+		return true;
+	}
+	
+	/**
+	 * Return true iff at least one motor selected and show message if not
+	 */
+	private boolean noMotorsSelected() {
+		if (numMotorsSelected() < 1) {
+			showMessage("At least one motor must be selected");
 			return false;	
 		}
 		return true;
