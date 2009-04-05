@@ -81,6 +81,11 @@ public class TinyVM extends TinyVMTool {
 		// files
 		String[] classes = fParser.getRestArgs();
 
+		start(joinCP(bootclasspath, classpath), classes, all, output, bigEndian, debug, verbose);
+	}
+
+	public void start(String classpath, String[] classes, boolean all, String output, boolean bigEndian,
+			boolean debug, boolean verbose) throws TinyVMException {
 		// verbosity
 		for(ToolProgressMonitor monitor : _monitors) {
 			monitor.setVerbose(verbose);
@@ -91,7 +96,7 @@ public class TinyVM extends TinyVMTool {
 		try {
 			stream = output == null ? (OutputStream) System.out
 					: (OutputStream) new FileOutputStream(output);
-			link(joinCP(bootclasspath, classpath), classes, all, stream, bigEndian, debug);
+			link(classpath, classes, all, stream, bigEndian, debug);
 		} catch (FileNotFoundException e) {
 			throw new TinyVMException(e.getMessage(), e);
 		} finally {
@@ -104,5 +109,4 @@ public class TinyVM extends TinyVMTool {
 			}
 		}
 	}
-
 }
