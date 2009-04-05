@@ -68,14 +68,6 @@ public class NXJLinkAndUpload extends NXTCommLoggable {
 		String address = fParser.getAddress();
 		String[] args1 = fParser.getRestArgs();
 		String firstArg = args1[0];
-		int argCount = 0;
-
-		// Count the arguments for the linker
-		for (int i = 0; i < args.length; i++) {
-			if (isArglessUploadOption(args[i])) continue; // skip
-			if (isArgUploadOption(args[i])) {i++; continue;} // skip 2
-			argCount++;
-		}
 
 		// System.out.println("Arg count is " + argCount);
 
@@ -87,23 +79,9 @@ public class NXJLinkAndUpload extends NXTCommLoggable {
 
 		// link
 		log("Linking...");
-		try
-		{
-			FileOutputStream file = new FileOutputStream(binName);
-			try
-			{
-				//TODO switch to streams or temp file if no filename was given
-				fTinyVM.link(classpath, args1, fParser.isAll(), file, fParser.isBigEndian(), fParser.isDebug());
-			}
-			finally
-			{
-				file.close();
-			}
-		}
-		catch (IOException e)
-		{
-			throw new TinyVMException(e.getMessage(), e);
-		}
+		//TODO switch to streams or temp file if no filename was given
+		fTinyVM.start(classpath, args1, fParser.isAll(), binName, fParser.isBigEndian(),
+				fParser.isDebug(), fParser.isVerbose());
 		
 		// upload
 		log("Uploading...");
