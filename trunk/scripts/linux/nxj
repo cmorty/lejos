@@ -7,12 +7,7 @@ source "$(dirname -- "$0")"/_nxjconfig
 #
 # June 7, 2007  created Lawrie Griffiths
 
-java \
-	-DCOMMAND_NAME="$0" \
-	-Dnxj.home="$NXJ_HOME" \
-	-Djava.library.path="$NXJ_HOME/bin" \
-	-classpath "$TOOL_CLASSPATH" \
-	lejos.pc.tools.NXJLinkAndUpload \
+run_tool lejos.pc.tools.NXJLinkAndUpload \
 	--bootclasspath "$LEJOS_BOOTPATH" \
 	--classpath "." \
 	--writeorder LE \

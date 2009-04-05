@@ -6,10 +6,7 @@ source "$(dirname -- "$0")"/_nxjconfig
 #
 # 12/12/02  created Lawrie Griffiths
 
-java \
-	-DCOMMAND_NAME="$0" \
-	-classpath "$LINK_CLASSPATH" \
-	js.tinyvm.TinyVM \
+run_link js.tinyvm.TinyVM \
 	--bootclasspath "$LEJOS_BOOTPATH" \
 	--classpath "." \
 	--writeorder LE \
