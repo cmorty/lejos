@@ -368,5 +368,45 @@ public final class String
 	  for(int i=0;i<characters.length;i++) b[i] = (byte) characters[i];
 	  return b;
   }
+  
+	public static String valueOf(boolean b)
+	{
+		return b ? "true" : "false";
+	}
+	
+	public static String valueOf(char c )
+	{
+		return "" + c;
+	}
+	
+	public static String valueOf(char[] c)
+	{
+		return new String(c);
+	}
+	
+	public static String valueOf(char[] c, int start, int length)
+	{
+		return new String(c, start, length);
+	}
+	
+	public static String valueOf(double d)
+	{
+		return Double.toString(d);
+	}
+	
+	public static String valueOf(float f)
+	{
+		return Float.toString(f);
+	}
+	
+	public static String valueOf(int i)
+	{
+		return Integer.toString(i);
+	}
+	
+	public static String valueOf(long d)
+	{
+		return Long.toString(d);
+	}
 }
 
