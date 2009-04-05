@@ -79,8 +79,9 @@ public class MethodRecord implements WritableData
       }
       if (iMethod.isNative() && !aBinary.isSpecialSignature(aSignature))
       {
-         _logger.log(Level.WARNING, "Native method signature " + aSignature
-            + " unrecognized. You are probably using JDK APIs "
+         throw new TinyVMException("Method " + aClassRec.getName() + "."
+         	+ iMethod.getName() + " is an unknown native method."
+         	+ " You are probably using JDK APIs"
             + " or libraries that cannot be run under leJOS.");
       }
 
