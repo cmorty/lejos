@@ -4,12 +4,13 @@ import java.io.IOException;
 import lejos.nxt.remote.*;
 
 /**
- * Used to create a connection to a NXT for use by NXTCommand.
+ * Used by remote execution leJOS API classes to create a connection to a 
+ * NXTCommand (LCP) connection to the NXT.
  * 
  * @author Lawrie Griffiths
  *
  */
-public class NXTCommandConnector extends NXTCommLoggable {
+public class NXTCommandConnector {
 	private static NXTConnector conn = new NXTConnector();
 	
 	/**
@@ -19,16 +20,17 @@ public class NXTCommandConnector extends NXTCommLoggable {
 	 */
 	public static NXTComm open() throws IOException {
 		boolean connected = conn.connectTo(NXTComm.LCP);
-
-		if  (connected) {
-			return conn.getNXTComm();
-		} else {
-			return null;
-		}
+		
+		return (connected ? conn.getNXTComm() : null);
 	}
 	
 	/**
-	 * Get the singleton NXTCommand object. Use of this is optional.
+	 * Ensure that the singleton NXTCommand object has been opened
+	 * and return it.
+	 * 
+	 * Used by leJOS API remote execution classes. 
+	 * A message is sent to System.err and the program is exited if the
+	 * open fails.
 	 * 
 	 * @return the singleton NXTCommand instance
 	 */
@@ -45,37 +47,5 @@ public class NXTCommandConnector extends NXTCommLoggable {
 			}
 		}
 		return singleton;
-	}
-	/**
-	 * Open a connection to the NXT 
-	 * 
-	 * @param nxt the NXTInfo object returned by search or constructed 
-	 * @return nxtComm object or null
-	 * @throws NXTCommException if a comms driver could not be loaded
-	 */
-	public NXTComm open(NXTInfo nxt) throws NXTCommException {
-	    boolean connected = conn.connectTo(nxt,NXTComm.LCP);
-	    if (connected) return conn.getNXTComm();
-	    else return null;
-	}
-	
-	/**
-	 * register log listener
-	 * 
-	 * @param listener
-	 */
-	public void addLogListener(NXTCommLogListener listener) {
-		fLogListeners.add(listener);
-		conn.addLogListener(listener);
-	}
-	
-	/**
-	 * unregister log listener
-	 * 
-	 * @param listener
-	 */
-	public void removeLogListener(NXTCommLogListener listener) {
-		fLogListeners.remove(listener);
-		conn.removeLogListener(listener);
 	}
 }

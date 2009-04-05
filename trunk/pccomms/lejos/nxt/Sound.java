@@ -7,6 +7,9 @@ import lejos.nxt.remote.*;
 /**
  * Sound class.
  * Usage: SoundSensor.playTone(500, 1000);
+ * 
+ * This version of the Sound class supports remote execution.
+ * 
  * @author <a href="mailto:bbagnall@mts.net">Brian Bagnall</a>
  */
 public class Sound {	

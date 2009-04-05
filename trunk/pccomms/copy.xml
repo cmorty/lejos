@@ -49,6 +49,8 @@
   				<include name="lejos/nxt/remote/NXTCommRequest.java"/>
   				<include name="lejos/nxt/remote/NXTProtocol.java"/>
   				<include name="lejos/nxt/remote/OutputState.java"/>
+  				<include name="lejos/nxt/remote/RemoteBattery.java"/>
+  				<include name="lejos/nxt/remote/RemoteMotorPort.java"/>
   			</fileset>
   		</copy>
   		<mkdir dir="lejos/nxt/addon"/>

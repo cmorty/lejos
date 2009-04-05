@@ -6,12 +6,10 @@ import lejos.pc.comm.*;
 
 /**
  * A sensor wrapper to allow easy access to I2C sensors, like the ultrasonic sensor.
- * Currently uses the default I2C address of 0x02, but some sensors can
- * be connected to same port lines and use different addresses using the
- * Auto Detecting Parallel Architecture (ADPA). Currently unsure if there are
- * commercial port expanders yet to use this function, or whether the 
- * Lego UltrasonicSensor sensor is ADPA compatible.
- * @author BB
+ * 
+ * This version of this class supports remote execution of I2C.
+ * 
+ * @author Brian Bagnall and Lawrie Griffiths
  */
 public class I2CSensor implements SensorConstants {
 	private static final NXTCommand nxtCommand = NXTCommandConnector.getSingletonOpen();
