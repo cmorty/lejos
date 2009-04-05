@@ -10,9 +10,6 @@ import js.common.CLIToolProgressMonitor;
 import js.common.ToolProgressMonitor;
 import js.tinyvm.util.TinyVMCommandLineParser;
 
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.ParseException;
-
 /**
  * Tiny VM.
  */
@@ -43,10 +40,10 @@ public class TinyVM extends TinyVMTool {
 	// public TinyVM (ToolProgressMonitor monitor)
 	public TinyVM() {
 		// super(monitor);
-		fParser = new TinyVMCommandLineParser();
+		fParser = new TinyVMCommandLineParser(true);
 	}
 	
-	private String joinCP(String cp1, String cp2)
+	public static String joinCP(String cp1, String cp2)
 	{
 		if (cp1.length() > 0)
 		{
@@ -58,47 +55,6 @@ public class TinyVM extends TinyVMTool {
 		return cp2;
 	}
 
-	private String mangleClassPath(String cp) throws ParseException
-	{
-		StringBuilder sb = new StringBuilder();
-		
-		int start = 0;
-		int len = cp.length();
-		
-		while (start < len)
-		{
-			int end = cp.indexOf(File.pathSeparatorChar, start);
-			if (end < 0)
-				end = len;
-			
-			String file = cp.substring(start, end);
-			File f = new File(file);
-			
-			if (!f.exists())
-				throw new ParseException("File does not exist: "+file);
-			
-			if (start > 0)
-				sb.append(File.pathSeparatorChar);
-			
-			//sb.append(f.getAbsolutePath());
-			//sb.append(f.getCanonicalPath());
-			sb.append(file);
-			
-			start = end+1;
-		}
-		
-		return sb.toString();
-	}
-	
-	private String getLastOptVal(CommandLine cmdline, String key)
-	{
-		String[] vals = cmdline.getOptionValues(key);
-		if (vals == null || vals.length <= 0)
-			return null;
-		
-		return vals[vals.length - 1];
-	}
-	
 	/**
 	 * Execute tiny vm.
 	 * 
@@ -109,43 +65,21 @@ public class TinyVM extends TinyVMTool {
 	public void start(String[] args) throws TinyVMException {
 		assert args != null : "Precondition: args != null";
 
-		String classpath;
-		String bootclasspath;
-		
-		CommandLine commandLine;
-		try
-		{
-			commandLine= fParser.parse(args);
-			
-			bootclasspath = getLastOptVal(commandLine, "bp");
-			classpath = getLastOptVal(commandLine, "cp");
-			
-			//TODO someday: parse Classpath and keep list of File objects instead of working with Strings
-			bootclasspath = mangleClassPath(bootclasspath);
-			classpath = mangleClassPath(classpath);			
-		}
-		catch (ParseException e)
-		{
-			System.out.println(e.getMessage());
-			fParser.printHelp();
+		if (!fParser.parseOrHelp(TinyVM.class, args))
 			return;
-		}
-		
-		if (commandLine == null)
-		{
-			fParser.printHelp();
-			return;
-		}
 
+		String classpath = fParser.getCP();
+		String bootclasspath = fParser.getBP();
+		boolean bigEndian = fParser.isBigEndian();
+		
 		// options
-		boolean verbose = commandLine.hasOption("v");
-		String output = getLastOptVal(commandLine, "o");
-		boolean all = commandLine.hasOption("a");
-        boolean debug = commandLine.hasOption("g");
-		boolean bigEndian = "be".equalsIgnoreCase(getLastOptVal(commandLine, "wo"));
+		boolean verbose = fParser.isVerbose();
+		String output = fParser.getOutput();
+		boolean all = fParser.isAll();
+        boolean debug = fParser.isDebug();
 		
 		// files
-		String[] classes = commandLine.getArgs();
+		String[] classes = fParser.getRestArgs();
 
 		// verbosity
 		for(ToolProgressMonitor monitor : _monitors) {
