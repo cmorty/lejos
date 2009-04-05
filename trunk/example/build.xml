@@ -32,8 +32,10 @@
         description="link the binary " >
     <!-- Link the binary and create a signature file -->
     <java classname="js.tinyvm.TinyVM">
+      <arg value="--bootclasspath"/>
+      <arg path="${nxj.classes.jar}" />
       <arg value="--classpath"/>
-      <arg path="${build}:${nxj.classes.jar}" /> 
+      <arg path="${build}" />
       <arg value="--writeorder" />
       <arg value="LE" />
       <arg value="${class}"/>
