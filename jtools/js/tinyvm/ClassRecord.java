@@ -3,9 +3,9 @@ package js.tinyvm;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Vector;
+import java.util.ArrayList;
 
 import js.tinyvm.io.IByteWriter;
 import js.tinyvm.io.IOUtilities;
@@ -44,15 +44,15 @@ public class ClassRecord implements WritableData
    RecordTable iMethodTable = new RecordTable("methods", false, false);
    final RecordTable iInstanceFields = new RecordTable("instance fields", true,
       false);
-   final Hashtable iStaticValues = new Hashtable();
-   final Hashtable iStaticFields = new Hashtable();
-   Hashtable iMethods = new Hashtable();
-   final Vector iUsedMethods = new Vector();
+   final HashMap iStaticValues = new HashMap();
+   final HashMap iStaticFields = new HashMap();
+   HashMap iMethods = new HashMap();
+   final ArrayList iUsedMethods = new ArrayList();
    int iParentClassIndex;
    int iArrayElementType;
    int iFlags;
    boolean iUseAllMethods = false;
-   final Vector iImplementedBy = new Vector();
+   final ArrayList iImplementedBy = new ArrayList();
    private boolean isUsed = false;
    private boolean isInstanceUsed = false;
 
@@ -244,8 +244,8 @@ public class ClassRecord implements WritableData
       }
    }
 
-   public void storeReferredClasses (Hashtable aClasses,
-      RecordTable aClassRecords, ClassPath aClassPath, Vector aInterfaceMethods)
+   public void storeReferredClasses (HashMap aClasses,
+      RecordTable aClassRecords, ClassPath aClassPath, ArrayList aInterfaceMethods)
       throws TinyVMException
    {
       // _logger.log(Level.INFO, "Processing CONSTANT_Class entries in " +
@@ -299,7 +299,7 @@ public class ClassRecord implements WritableData
             ConstantNameAndType cnat = (ConstantNameAndType) iCF
                .getConstantPool().getConstant(
                   ((ConstantInterfaceMethodref) pEntry).getNameAndTypeIndex());
-            aInterfaceMethods.addElement(cnat.getName(iCF.getConstantPool())
+            aInterfaceMethods.add(cnat.getName(iCF.getConstantPool())
                + ":" + cnat.getSignature(iCF.getConstantPool()));
          }
          else if (pEntry instanceof ConstantNameAndType)
@@ -310,7 +310,7 @@ public class ClassRecord implements WritableData
                if (!((ConstantNameAndType) pEntry).getName(
                   iCF.getConstantPool()).substring(0, 1).equals("<"))
                {
-                  aInterfaceMethods.addElement(((ConstantNameAndType) pEntry)
+                  aInterfaceMethods.add(((ConstantNameAndType) pEntry)
                      .getName(iCF.getConstantPool())
                      + ":"
                      + ((ConstantNameAndType) pEntry).getSignature(iCF
@@ -323,7 +323,7 @@ public class ClassRecord implements WritableData
 
    public void addUsedMethod (String aRef)
    {
-      iUsedMethods.addElement(aRef);
+      iUsedMethods.add(aRef);
    }
 
    public static String cpEntryId (Constant aEntry)
@@ -514,7 +514,7 @@ public class ClassRecord implements WritableData
    {
       // _logger.log(Level.INFO, "Processing methods in " + iName);
       RecordTable iOptMethodTable = new RecordTable("methods", false, false);
-      Hashtable iOptMethods = new Hashtable();
+      HashMap iOptMethods = new HashMap();
 
       for (Iterator iter = iMethodTable.iterator(); iter.hasNext();)
       {

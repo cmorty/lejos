@@ -11,7 +11,6 @@ import org.apache.bcel.classfile.ConstantLong;
 import org.apache.bcel.classfile.ConstantNameAndType;
 import org.apache.bcel.classfile.ConstantString;
 import org.apache.bcel.classfile.JavaClass;
-import org.apache.bcel.classfile.Utility;
 
 public class CodeUtilities implements OpCodeConstants, OpCodeInfo
 {

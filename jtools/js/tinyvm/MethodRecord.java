@@ -3,7 +3,7 @@ package js.tinyvm;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.Vector;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 import js.tinyvm.io.IByteWriter;
@@ -32,7 +32,7 @@ public class MethodRecord implements WritableData
    int iFlags; // DONE
    boolean isCalled;
    int iCodeStart;
-   Vector iIsHiddenBy = new Vector();
+   ArrayList iIsHiddenBy = new ArrayList();
    int markCount = -1;
 
    public MethodRecord (Method aEntry, Signature aSignature,

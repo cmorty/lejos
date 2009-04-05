@@ -1,8 +1,5 @@
 package js.common;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 /**
  * Simple implementation of ToolProgressMonitor with output to System.out.
  */
