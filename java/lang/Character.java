@@ -29,8 +29,9 @@ public final class Character implements Comparable<Character>
 	
 	/**
 	 * Identifies if a character is a numerical digit. 
-	 * @param ch
-	 * @return
+	 * 
+	 * @param ch the character
+	 * @return true iff the character is a numerical digit
 	 */
 	public static boolean isDigit(char ch) {
 		return (ch >= 48 & ch<=57);
