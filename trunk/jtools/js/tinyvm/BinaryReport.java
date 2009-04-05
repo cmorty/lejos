@@ -37,7 +37,7 @@ public class BinaryReport
       // all classes
       for (int pIndex = 0; pIndex < _binary.iClassTable.size(); pIndex++)
       {
-         ClassRecord pRec = (ClassRecord) _binary.iClassTable.get(pIndex);
+         ClassRecord pRec = _binary.iClassTable.get(pIndex);
          out.println("Class " + pIndex + ": " + pRec.iName);
       }
 
@@ -45,7 +45,7 @@ public class BinaryReport
       int pSize = _binary.iSignatures.size();
       for (int i = 0; i < pSize; i++)
       {
-         Signature pSig = (Signature) _binary.iSignatures.elementAt(i);
+         Signature pSig = _binary.iSignatures.elementAt(i);
          out.println("Signature " + i + ": " + pSig.getImage());
       }
 

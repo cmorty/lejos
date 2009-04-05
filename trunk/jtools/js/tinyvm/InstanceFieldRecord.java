@@ -31,7 +31,7 @@ public class InstanceFieldRecord implements WritableData
    {
       try
       {
-         aOut.writeU1((int) iType.type());
+         aOut.writeU1(iType.type());
       }
       catch (IOException e)
       {

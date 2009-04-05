@@ -41,18 +41,18 @@ public class ClassRecord implements WritableData
    int iClassSize = -1;
    JavaClass iCF;
    Binary iBinary;
-   RecordTable iMethodTable = new RecordTable("methods", false, false);
-   final RecordTable iInstanceFields = new RecordTable("instance fields", true,
+   RecordTable<MethodRecord> iMethodTable = new RecordTable<MethodRecord>("methods", false, false);
+   final RecordTable<InstanceFieldRecord> iInstanceFields = new RecordTable<InstanceFieldRecord>("instance fields", true,
       false);
-   final HashMap iStaticValues = new HashMap();
-   final HashMap iStaticFields = new HashMap();
-   HashMap iMethods = new HashMap();
-   final ArrayList iUsedMethods = new ArrayList();
+   final HashMap<String, StaticValue> iStaticValues = new HashMap<String, StaticValue>();
+   final HashMap<String, StaticFieldRecord> iStaticFields = new HashMap<String, StaticFieldRecord>();
+   HashMap<Signature, MethodRecord> iMethods = new HashMap<Signature, MethodRecord>();
+   final ArrayList<String> iUsedMethods = new ArrayList<String>();
    int iParentClassIndex;
    int iArrayElementType;
    int iFlags;
    boolean iUseAllMethods = false;
-   final ArrayList iImplementedBy = new ArrayList();
+   final ArrayList<ClassRecord> iImplementedBy = new ArrayList<ClassRecord>();
    private boolean isUsed = false;
    private boolean isInstanceUsed = false;
 
@@ -142,7 +142,7 @@ public class ClassRecord implements WritableData
     */
    public boolean hasMethod (Signature aSignature, boolean aStatic)
    {
-      MethodRecord pRec = (MethodRecord) iMethods.get(aSignature);
+      MethodRecord pRec = iMethods.get(aSignature);
       if (pRec == null)
          return false;
       return ((pRec.getFlags() & TinyVMConstants.M_STATIC) == 0) ^ aStatic;
@@ -188,9 +188,9 @@ public class ClassRecord implements WritableData
    public int computeClassSize () throws TinyVMException
    {
       int pSize = hasParent()? getParent().getClassSize() : 0;
-      for (Iterator iter = iInstanceFields.iterator(); iter.hasNext();)
+      for (Iterator<InstanceFieldRecord> iter = iInstanceFields.iterator(); iter.hasNext();)
       {
-         InstanceFieldRecord pRec = (InstanceFieldRecord) iter.next();
+         InstanceFieldRecord pRec = iter.next();
          pSize += pRec.getFieldSize();
       }
       return pSize;
@@ -200,9 +200,9 @@ public class ClassRecord implements WritableData
    {
       if (hasParent() && getParent().hasReference())
           return true;
-      for (Iterator iter = iInstanceFields.iterator(); iter.hasNext();)
+      for (Iterator<InstanceFieldRecord> iter = iInstanceFields.iterator(); iter.hasNext();)
       {
-         InstanceFieldRecord pRec = (InstanceFieldRecord) iter.next();
+         InstanceFieldRecord pRec = iter.next();
          if (pRec.iType.type() == TinyVMType.T_REFERENCE_TYPE) return true;
       }
       return false;
@@ -244,8 +244,8 @@ public class ClassRecord implements WritableData
       }
    }
 
-   public void storeReferredClasses (HashMap aClasses,
-      RecordTable aClassRecords, ClassPath aClassPath, ArrayList aInterfaceMethods)
+   public void storeReferredClasses (HashMap<String, ClassRecord> aClasses,
+      RecordTable<ClassRecord> aClassRecords, ClassPath aClassPath, ArrayList<String> aInterfaceMethods)
       throws TinyVMException
    {
       // _logger.log(Level.INFO, "Processing CONSTANT_Class entries in " +
@@ -275,7 +275,7 @@ public class ClassRecord implements WritableData
          {
             String className = ((ConstantMethodref) pEntry).getClass(pPool)
                .replace('.', '/');
-            ClassRecord pClassRec = (ClassRecord) aClasses.get(className);
+            ClassRecord pClassRec = aClasses.get(className);
             if (pClassRec == null)
             {
                if (className.startsWith("["))
@@ -335,7 +335,7 @@ public class ClassRecord implements WritableData
 
    MethodRecord getMethodRecord (Signature aSig)
    {
-      return (MethodRecord) iMethods.get(aSig);
+      return iMethods.get(aSig);
    }
 
    MethodRecord getVirtualMethodRecord (Signature aSig)
@@ -383,9 +383,9 @@ public class ClassRecord implements WritableData
        * offset of the field within the current class.
        */
       int pOffset = hasParent()? getParent().getClassSize() : 0;
-      for (Iterator iter = iInstanceFields.iterator(); iter.hasNext();)
+      for (Iterator<InstanceFieldRecord> iter = iInstanceFields.iterator(); iter.hasNext();)
       {
-         InstanceFieldRecord pRec = (InstanceFieldRecord) iter.next();
+         InstanceFieldRecord pRec = iter.next();
          if (pRec.getName().equals(aName))
             return pOffset;
          pOffset += pRec.getFieldSize();
@@ -410,7 +410,7 @@ public class ClassRecord implements WritableData
     */
    public int getStaticFieldOffset (String aName) throws TinyVMException
    {
-      StaticValue pValue = (StaticValue) iStaticValues.get(aName);
+      StaticValue pValue = iStaticValues.get(aName);
       if (pValue == null)
          return -1;
       return pValue.getOffset() - iBinary.iStaticState.getOffset();
@@ -418,7 +418,7 @@ public class ClassRecord implements WritableData
 
    public int getStaticFieldIndex (String aName)
    {
-      StaticFieldRecord pRecord = (StaticFieldRecord) iStaticFields.get(aName);
+      StaticFieldRecord pRecord = iStaticFields.get(aName);
       if (pRecord == null)
          return -1;
       // TBD: This indexOf call is slow
@@ -432,7 +432,7 @@ public class ClassRecord implements WritableData
        * parent classes.
        */
       // First look to see if it is local
-      StaticFieldRecord pRec = (StaticFieldRecord) iStaticFields.get(aName); 
+      StaticFieldRecord pRec = iStaticFields.get(aName); 
       if (pRec != null) return pRec;
       // now search any interfaces
       String []interfaces = iCF.getInterfaceNames();
@@ -450,8 +450,8 @@ public class ClassRecord implements WritableData
       return null;
    }
 
-   public void storeConstants (RecordTable aConstantTable,
-      RecordTable aConstantValues) throws TinyVMException
+   public void storeConstants (RecordTable<ConstantRecord> aConstantTable,
+      RecordTable<ConstantValue> aConstantValues) throws TinyVMException
    {
       // _logger.log(Level.INFO, "Processing other constants in " + iName);
 
@@ -476,8 +476,8 @@ public class ClassRecord implements WritableData
       }
    }
 
-   public void storeMethods (RecordTable aMethodTables,
-      RecordTable aExceptionTables, HashVector aSignatures, boolean aAll)
+   public void storeMethods (RecordTable<RecordTable<MethodRecord>> aMethodTables,
+      RecordTable<RecordTable<ExceptionRecord>> aExceptionTables, HashVector<Signature> aSignatures, boolean aAll)
       throws TinyVMException
    {
       // _logger.log(Level.INFO, "Processing methods in " + iName);
@@ -508,21 +508,21 @@ public class ClassRecord implements WritableData
    }
    
    
-   public void storeOptimizedMethods (RecordTable aMethodTables,
-           RecordTable aExceptionTables, HashVector aSignatures)
+   public void storeOptimizedMethods (RecordTable<RecordTable<MethodRecord>> aMethodTables,
+           RecordTable<RecordTable<ExceptionRecord>> aExceptionTables, HashVector<Signature> aSignatures)
       throws TinyVMException
    {
       // _logger.log(Level.INFO, "Processing methods in " + iName);
-      RecordTable iOptMethodTable = new RecordTable("methods", false, false);
-      HashMap iOptMethods = new HashMap();
+      RecordTable<MethodRecord> iOptMethodTable = new RecordTable<MethodRecord>("methods", false, false);
+      HashMap<Signature, MethodRecord> iOptMethods = new HashMap<Signature, MethodRecord>();
 
-      for (Iterator iter = iMethodTable.iterator(); iter.hasNext();)
+      for (Iterator<MethodRecord> iter = iMethodTable.iterator(); iter.hasNext();)
       {
-         MethodRecord pRec = (MethodRecord) iter.next();
+         MethodRecord pRec = iter.next();
          if (pRec.isCalled())
          {
             iOptMethodTable.add(pRec);
-            iOptMethods.put(((Signature)aSignatures.elementAt(pRec.iSignatureId)), pRec);
+            iOptMethods.put(aSignatures.elementAt(pRec.iSignatureId), pRec);
             if (pRec.getExceptions() != null) aExceptionTables.add(pRec.getExceptions());
          }
       }
@@ -531,8 +531,8 @@ public class ClassRecord implements WritableData
       aMethodTables.add(iMethodTable);
    }
 
-   public void storeOptimizedFields (RecordTable aInstanceFieldTables,
-      RecordTable aStaticFields, RecordTable aStaticState)
+   public void storeOptimizedFields (RecordTable<RecordTable<InstanceFieldRecord>> aInstanceFieldTables,
+      RecordTable<StaticFieldRecord> aStaticFields, RecordTable<StaticValue> aStaticState)
       throws TinyVMException
    {
       Field[] fields = iCF.getFields();
@@ -542,10 +542,10 @@ public class ClassRecord implements WritableData
          if (pField.isStatic())
          {
             String pName = pField.getName().toString();
-            StaticFieldRecord pRec = (StaticFieldRecord) iStaticFields.get(pName);
+            StaticFieldRecord pRec = iStaticFields.get(pName);
             if (pRec.used())
             {
-                StaticValue pValue = (StaticValue) iStaticValues.get(pName);
+                StaticValue pValue = iStaticValues.get(pName);
                 aStaticState.add(pValue);
                 aStaticFields.add(pRec);
             }
@@ -553,8 +553,8 @@ public class ClassRecord implements WritableData
       }
    }
 
-   public void storeFields (RecordTable aInstanceFieldTables,
-      RecordTable aStaticFields, RecordTable aStaticState)
+   public void storeFields (RecordTable<RecordTable<InstanceFieldRecord>> aInstanceFieldTables,
+      RecordTable<StaticFieldRecord> aStaticFields, RecordTable<StaticValue> aStaticState)
       throws TinyVMException
    {
       Field[] fields = iCF.getFields();
@@ -580,12 +580,12 @@ public class ClassRecord implements WritableData
       aInstanceFieldTables.add(iInstanceFields);
    }
 
-   public void storeCode (RecordTable aCodeSequences, boolean aPostProcess)
+   public void storeCode (RecordTable<CodeSequence> aCodeSequences, boolean aPostProcess)
       throws TinyVMException
    {
-      for (Iterator iter = iMethodTable.iterator(); iter.hasNext();)
+      for (Iterator<MethodRecord> iter = iMethodTable.iterator(); iter.hasNext();)
       {
-        MethodRecord pRec = (MethodRecord) iter.next();
+        MethodRecord pRec = iter.next();
         if (aPostProcess)
             pRec.postProcessCode(aCodeSequences, iCF, iBinary);
          else
@@ -595,9 +595,9 @@ public class ClassRecord implements WritableData
    
    public void markMethods ()   throws TinyVMException
    {
-      for (Iterator iter = iMethodTable.iterator(); iter.hasNext();)
+      for (Iterator<MethodRecord> iter = iMethodTable.iterator(); iter.hasNext();)
       {
-         MethodRecord pRec = (MethodRecord) iter.next();
+         MethodRecord pRec = iter.next();
          pRec.markCalled(iCF, iBinary);
       }
    }
@@ -611,12 +611,12 @@ public class ClassRecord implements WritableData
        {
            // Must be an interface. We need to mark all possible methods that
            // could be called via this interface
-           for (Iterator iter = iImplementedBy.iterator(); iter.hasNext();)
+           for (Iterator<ClassRecord> iter = iImplementedBy.iterator(); iter.hasNext();)
            {
-              ClassRecord pClass = (ClassRecord) iter.next();
+              ClassRecord pClass = iter.next();
               // _logger.log(Level.INFO, "Mark interface class " + pClass.getName());
               // Does this class (or a super class), have this method?
-              MethodRecord pActualMethod = pClass.getVirtualMethodRecord((Signature)iBinary.iSignatures.elementAt(pRec.getSignatureId()));
+              MethodRecord pActualMethod = pClass.getVirtualMethodRecord(iBinary.iSignatures.elementAt(pRec.getSignatureId()));
               // If so then we need to mark it...
               if (pActualMethod != null)
                   pClass.markMethod(pActualMethod, false);
@@ -713,13 +713,13 @@ public class ClassRecord implements WritableData
       // If this class is a sub class and it contains methods that over-ride
       // methods, then we need to add the over-ridding method to the list of
       // methods to be marked that is associated with the over-ridden method!
-      for (Iterator iter = iMethodTable.iterator(); iter.hasNext();)
+      for (Iterator<MethodRecord> iter = iMethodTable.iterator(); iter.hasNext();)
       {
-         MethodRecord pRec = (MethodRecord) iter.next();
+         MethodRecord pRec = iter.next();
          if (hasParent () && (pRec.getFlags() & (TinyVMConstants.M_STATIC | TinyVMConstants.M_STATIC)) == 0
-             && !((Signature)iBinary.iSignatures.elementAt(pRec.iSignatureId)).getImage().substring(0, 1).equals("<"))
+             && !(iBinary.iSignatures.elementAt(pRec.iSignatureId)).getImage().substring(0, 1).equals("<"))
          {
-             MethodRecord pOverridden = getParent().getVirtualMethodRecord((Signature)iBinary.iSignatures.elementAt(pRec.getSignatureId()));
+             MethodRecord pOverridden = getParent().getVirtualMethodRecord(iBinary.iSignatures.elementAt(pRec.getSignatureId()));
              if (pOverridden != null)
              {
                 pOverridden.setHiddenBy(pRec);

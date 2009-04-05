@@ -4,12 +4,12 @@ import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class HashVector
+public class HashVector<T>
 {
-   private HashMap iHashMap;
-   private ArrayList iArrayList;
+   private HashMap<T, Object> iHashMap;
+   private ArrayList<T> iArrayList;
 
-   private class IntWrap
+   private static class IntWrap
    {
       int iV;
 
@@ -22,11 +22,11 @@ public class HashVector
    public HashVector ()
    {
       super();
-      iHashMap = new HashMap();
-      iArrayList = new ArrayList();
+      iHashMap = new HashMap<T, Object>();
+      iArrayList = new ArrayList<T>();
    }
 
-   public void insertElementAt (Object aElement, int aIndex)
+   public void insertElementAt (T aElement, int aIndex)
    {
       synchronized (iArrayList)
       {
@@ -34,10 +34,12 @@ public class HashVector
             return;
          iHashMap.put(aElement, new IntWrap(aIndex));
          iArrayList.add(aIndex, aElement);
+         
+         //FIXME the rest of the values in the hashmap is not updated even though the indexes changed!
       }
    }
 
-   public void addElement (Object aElement)
+   public void addElement (T aElement)
    {
       synchronized (iArrayList)
       {
@@ -48,7 +50,7 @@ public class HashVector
       }
    }
 
-   public void put (Object aKey, Object aElement)
+   public void put (T aKey, Object aElement)
    {
       synchronized (iArrayList)
       {
@@ -77,7 +79,7 @@ public class HashVector
       }
    }
 
-   public Iterator elements ()
+   public Iterator<T> elements ()
    {
       return iArrayList.iterator();
    }
@@ -87,7 +89,7 @@ public class HashVector
       return iArrayList.size();
    }
 
-   public Object elementAt (int aIndex)
+   public T elementAt (int aIndex)
    {
       return iArrayList.get(aIndex);
    }

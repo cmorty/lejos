@@ -47,7 +47,7 @@ public class GenerateConstants
             '6').replace('>', '7');
    }
 
-   public static void generateClassConstants (ArrayList aVec, File aHeaderFile,
+   public static void generateClassConstants (ArrayList<String> aVec, File aHeaderFile,
       File aJavaFile) throws Exception
    {
       PrintWriter pHeaderOut = new PrintWriter(new FileWriter(aHeaderFile));
@@ -72,7 +72,7 @@ public class GenerateConstants
          int pSize = aVec.size();
          for (int i = 0; i < pSize; i++)
          {
-            String pClassName = (String) aVec.get(i);
+            String pClassName = aVec.get(i);
 
             pJavaOut.print("    \"" + pClassName + "\"");
             if (i < pSize - 1)
@@ -94,7 +94,7 @@ public class GenerateConstants
       }
    }
 
-   public static void generateSignatureConstants (ArrayList aVec,
+   public static void generateSignatureConstants (ArrayList<String> aVec,
       File aHeaderFile, File aJavaFile) throws Exception
    {
       PrintWriter pHeaderOut = new PrintWriter(new FileWriter(aHeaderFile));
@@ -119,7 +119,7 @@ public class GenerateConstants
          int pSize = aVec.size();
          for (int i = 0; i < pSize; i++)
          {
-            String pSignature = (String) aVec.get(i);
+            String pSignature = aVec.get(i);
 
             pJavaOut.print("    \"" + pSignature + "\"");
             if (i < pSize - 1)
@@ -163,8 +163,8 @@ public class GenerateConstants
       File pJavaClass = new File(pToolsJsTinyVM, CLASSES + ".java");
       File pJavaSig = new File(pToolsJsTinyVM, SIGNATURES + ".java");
 
-      ArrayList pClassVec = ListReader.loadStrings(pClasses);
-      ArrayList pSignatureVec = ListReader.loadStrings(pSignatures);
+      ArrayList<String> pClassVec = ListReader.loadStrings(pClasses);
+      ArrayList<String> pSignatureVec = ListReader.loadStrings(pSignatures);
 
       // Add a fake entry for the main class
       // (Not done since 1.0.0alpha5)
