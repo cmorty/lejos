@@ -141,8 +141,8 @@ public final class Double
 	}
 	
 	/**
-	 * Convert a float to a String
-	 * @param f the float to be converted
+	 * Convert a double to a String
+	 * @param d the double to be converted
 	 * @return the String representation of the float
 	 */
 	public static String toString(double d)
