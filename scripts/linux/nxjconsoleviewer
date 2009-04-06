@@ -1,5 +1,6 @@
 #!/bin/bash
-source "$(dirname -- "$0")"/_nxjconfig
+NXJ_BIN="$(dirname -- "$(readlink -f -- "$0")")"
+source $NXJ_BIN/_nxjconfig
 
 #
 # nxjconsoleviewer: GUI Viewer for RConsole output
