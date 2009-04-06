@@ -136,9 +136,10 @@ public class NXJControl implements ListSelectionListener, NXTProtocol {
 	private NXTInfo[] nxts;
 	private InputValues[] sensorValues = new InputValues[4];
 	private int mv;
-	private int rowLength = 8; // default
 	private int appProtocol = LCP;
 	private int currentRow = -1;
+	private int rowLength = 8; // default
+	private int recordCount;
 
 	// Formatter
 	private static final NumberFormat FORMAT_FLOAT = NumberFormat.getNumberInstance();
@@ -187,6 +188,14 @@ public class NXJControl implements ListSelectionListener, NXTProtocol {
 		// Data log Connect Button: connect to the Data Logger
 		dataDownloadButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
+				recordCount = 0;
+				
+				try {
+					rowLength = Integer.parseInt(dataColumns.getText());
+				} catch (NumberFormatException ex) {
+					System.out.println(dataColumns.getText() + " is not a number, default reset to 8");
+				}
+				
 				dataDownload();
 			}
 		});
@@ -787,7 +796,7 @@ public class NXJControl implements ListSelectionListener, NXTProtocol {
 
 		forwardButton.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent e) {
-				if (noMotorsSelected()) return;
+				if (!aMotorSelected()) return;
 				int[] speed = getSpeeds();
 				move(speed[0], speed[1], speed[2]);
 			}
@@ -799,7 +808,7 @@ public class NXJControl implements ListSelectionListener, NXTProtocol {
 
 		backwardButton.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent e) {
-				if (noMotorsSelected()) return;
+				if (!aMotorSelected()) return;
 				int[] speed = getSpeeds();
 				move(-speed[0], -speed[1], -speed[2]);
 			}
@@ -811,7 +820,7 @@ public class NXJControl implements ListSelectionListener, NXTProtocol {
 
 		leftButton.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent e) {
-				if (fewerThanTwoMotors()) return;
+				if (!twoMotorsSelected()) return;
 				int[] speed = getSpeeds();
 				int[] multipliers = leftMultipliers();
 				move(speed[0] * multipliers[0], speed[1] * multipliers[1], speed[2] * multipliers[2]);
@@ -824,7 +833,7 @@ public class NXJControl implements ListSelectionListener, NXTProtocol {
 
 		rightButton.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent e) {
-				if (fewerThanTwoMotors()) return;
+				if (!twoMotorsSelected()) return;
 				int[] speed = getSpeeds();
 				int[] multipliers = rightMultipliers();
 				move(speed[0] * multipliers[0], speed[1] * multipliers[1], speed[2] * multipliers[2]);
@@ -850,9 +859,9 @@ public class NXJControl implements ListSelectionListener, NXTProtocol {
 	}
 	
 	/**
-	 * Return true iff at least two motors selected and show message if not
+	 * Return true iff exactly two motors selected and show message if not
 	 */
-	private boolean fewerThanTwoMotors() {
+	private boolean twoMotorsSelected() {
 		if (numMotorsSelected() != 2) {
 			showMessage("Exactly two motors must be selected");
 			return false;	
@@ -863,7 +872,7 @@ public class NXJControl implements ListSelectionListener, NXTProtocol {
 	/**
 	 * Return true iff at least one motor selected and show message if not
 	 */
-	private boolean noMotorsSelected() {
+	private boolean aMotorSelected() {
 		if (numMotorsSelected() < 1) {
 			showMessage("At least one motor must be selected");
 			return false;	
@@ -1335,15 +1344,8 @@ public class NXJControl implements ListSelectionListener, NXTProtocol {
 	 * Download data
 	 */
 	private void dataDownload() {
-		int recordCount = 0;
 		float x = 0;
 		int b = 15;
-		
-		try {
-			rowLength = Integer.parseInt(dataColumns.getText());
-		} catch (NumberFormatException ex) {
-			System.out.println(dataColumns.getText() + " is not a number, default reset to 8");
-		}
 
 		try { // handshake - ready to read data
 			os.write(b);
@@ -1356,16 +1358,23 @@ public class NXJControl implements ListSelectionListener, NXTProtocol {
 			int length = is.readInt();
 			System.out.println(" reading length " + length);
 			for (int i = 0; i < length; i++) {
-				if (0 == recordCount % rowLength) theDataLog.append("\n");
 				x = is.readFloat();
-				theDataLog.append(FORMAT_FLOAT.format(x) + "\t ");
-				recordCount++;
+				append(x);
 			}
 		} catch (IOException e) {
 			showMessage("read error " + e);
 		}
 		
 		showMessage("Read all data");
+	}
+	
+	/**
+	 * Append data item to the data log
+	 */
+	private void append(float x) {
+		if (0 == recordCount % rowLength) theDataLog.append("\n");
+		theDataLog.append(FORMAT_FLOAT.format(x) + "\t ");
+		recordCount++;
 	}
 	
 	/**
