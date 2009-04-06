@@ -1,9 +1,7 @@
 #!/bin/bash
 
 if [ -z "$NXJ_HOME" ]; then 
-  NXJ_HOME="$0"
-  NXJ_HOME="$(dirname -- "$NXJ_HOME")"
-  NXJ_HOME="$(dirname -- "$NXJ_HOME")"
+  NXJ_HOME="$(dirname -- "$NXJ_BIN")"
 fi
 
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$NXJ_HOME/bin
@@ -41,7 +39,7 @@ run_javac()
 run_command()
 {
 	run_java \
-		-DCOMMAND_NAME="$0" \
+		-DCOMMAND_NAME="$(basename -- "$0")" \
 		-Dnxj.home="$NXJ_HOME" \
 		-Djava.library.path="$NXJ_HOME/bin" \
 		"$@"
