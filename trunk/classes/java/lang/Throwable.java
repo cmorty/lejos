@@ -6,20 +6,25 @@ package java.lang;
 public class Throwable
 {
 	private String _message;
-  public Throwable() {
-  }
+	
+	public Throwable() 
+	{
+		//nothing
+	}
 
-  public Throwable(String message) {
-	  _message = message;
-  }
+	public Throwable(String message)
+	{
+		_message = message;
+	}
 
-  public String getMessage()
-  {
-    return _message;
-  }
+	public String getMessage()
+	{
+		return _message;
+	}
 
-  public java.lang.String toString()
-  {
-    return this.getMessage();
-  }
+	@Override
+	public String toString()
+	{
+		return this.getMessage();
+	}
 }
