@@ -93,9 +93,11 @@ public final class Double
 	}
 	
 	/**
-	 * Converts a String value into a float 
-	 * @param s String representation of float. Must only contain numbers and an optional decimal, and optional - sign at front.
-	 * @return float number
+	 * Converts a String value into a double. Must only contain
+	 * numbers and an optional decimal, and optional - sign at front.
+	 * 
+	 * @param s String representation of the floating point number
+	 * @return double precision floating point number
 	 */
 	public static double parseDouble(String s) throws NumberFormatException {
 		boolean negative = (s.charAt(0) == '-'); // Check if negative symbol.
@@ -147,9 +149,7 @@ public final class Double
 	 */
 	public static String toString(double d)
 	{
-		StringBuilder sb = new StringBuilder();
-		sb.append(d);
-		return sb.toString();
+		return String.valueOf(d);
 	}
 	
 	public static Double valueOf(double d)

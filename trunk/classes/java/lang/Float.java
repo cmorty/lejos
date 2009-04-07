@@ -221,9 +221,7 @@ public final class Float
 	 */
 	public static String toString(float f)
 	{
-		StringBuilder sb = new StringBuilder();
-		sb.append(f);
-		return sb.toString();
+		return String.valueOf(f);
 	}
 	
 	public static Float valueOf(float f)

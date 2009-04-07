@@ -8,10 +8,15 @@ public final class String
   // NOTE: The state of this class is mapped to
   // native code (see vmsrc/classes.h).
 
-  char[] characters; // package protected, so StringUtils can access it
+  private char[] characters;
   
   //Cache the calculated hash
   private int hash = 0;
+  
+  private String(int len)
+  {
+	  characters = new char[len];
+  }
   
   /**
    * Create a String from a character array.
@@ -371,12 +376,14 @@ public final class String
   
 	public static String valueOf(boolean b)
 	{
-		return Boolean.toString(b);
+		return b ? "true" : "false";
 	}
 	
 	public static String valueOf(char c )
 	{
-		return Character.toString(c);
+		String r = new String(1);
+		r.characters[0] = c;
+		return r;
 	}
 	
 	public static String valueOf(char[] c)
@@ -391,22 +398,48 @@ public final class String
 	
 	public static String valueOf(double d)
 	{
-		return Double.toString(d);
+		StringBuilder sb = new StringBuilder();
+		sb.append(d);
+		return sb.toString();
 	}
 	
 	public static String valueOf(float f)
 	{
-		return Float.toString(f);
+		StringBuilder sb = new StringBuilder();
+		sb.append(f);
+		return sb.toString();
 	}
 	
 	public static String valueOf(int i)
 	{
-		return Integer.toString(i);
+		return String.valueOf(i, 10);
 	}
 	
-	public static String valueOf(long d)
+	public static String valueOf(long i)
 	{
-		return Long.toString(d);
+		return String.valueOf(i, 10);
+	}
+	
+	/**
+	 * For use by {@link Integer}
+	 */
+	static String valueOf(int i, int radix)
+	{
+		int len = WrapperUtils.exactStringLength(i, radix);
+		String r = new String(len);
+		WrapperUtils.getChars(r.characters, len, i, radix);
+		return r;
+	}
+	
+	/**
+	 * For use by {@link Long}
+	 */
+	static String valueOf(long i, int radix)
+	{
+		int len = WrapperUtils.exactStringLength(i, radix);
+		String r = new String(len);
+		WrapperUtils.getChars(r.characters, len, i, radix);
+		return r;
 	}
 }
 

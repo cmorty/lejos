@@ -314,18 +314,14 @@ public class Long extends Number implements Comparable<Long>
 	
 	public static String toString(long v)
 	{
-		return Long.toString(v, 10);
+		return String.valueOf(v, 10);
 	}
 	
 	public static String toString(long v, int radix)
 	{
 		radix = WrapperUtils.invalidRadixTo10(radix);
 		
-		int len = WrapperUtils.exactStringLength(v, radix);		
-		char[] buf = new char[len];
-		
-		WrapperUtils.getChars(buf, len, v, radix);		
-		return new String(buf);
+		return String.valueOf(v, radix);
 	}
 	
 	public static Long valueOf(long v)

@@ -74,7 +74,7 @@ public class StringBuilder
   {
     return this.appendInternal(new String (new char[] { aChar }, 0, 1));
   }
-
+  
   public StringBuilder append (int i)
   {
 	// Modified to expand the buffer...
@@ -123,7 +123,8 @@ public class StringBuilder
 	  int len = WrapperUtils.exactStringLength(aLong, 10);
 	  char[] buf = new char[len];
 	  
-	  WrapperUtils.getChars(buf, len, aLong, 10);
+	  WrapperUtils.getChars(buf, len, aLong, 10);	  
+	  //TODO use WrapperUtils to write directly to buffer
 	  this.append(new String(buf));
 	  
 	  return this;
