@@ -1,7 +1,7 @@
 package java.lang;
 
-public class ArrayIndexOutOfBoundsException extends IndexOutOfBoundsException{
-
+public class ArrayIndexOutOfBoundsException extends IndexOutOfBoundsException
+{
     /**
      * Constructs an <code>ArrayIndexOutOfBoundsException</code> with no
      * detail message.
