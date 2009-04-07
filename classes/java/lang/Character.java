@@ -107,7 +107,7 @@ public final class Character implements Comparable<Character>
 	
 	public static String toString(char c)
 	{
-		return new String(new char[] { c });
+		return String.valueOf(c);
 	}
 	
 	public static Character valueOf(char c)

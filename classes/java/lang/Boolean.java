@@ -74,7 +74,7 @@ public final class Boolean implements Comparable<Boolean>
 	
 	public static String toString(boolean b)
 	{
-		return b ? "true" : "false";
+		return String.valueOf(b);
 	}
 	
 	public static Boolean valueOf(boolean b)
