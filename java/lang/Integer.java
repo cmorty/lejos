@@ -350,18 +350,14 @@ public final class Integer extends Number implements Comparable<Integer>
 	 */
 	public static String toString(int v)
 	{
-		return Integer.toString(v, 10);
+		return String.valueOf(v, 10);
 	}
 	
 	public static String toString(int v, int radix)
 	{
 		radix = WrapperUtils.invalidRadixTo10(radix);
 		
-		int len = WrapperUtils.exactStringLength(v, radix);		
-		char[] buf = new char[len];
-		
-		WrapperUtils.getChars(buf, len, v, radix);		
-		return new String(buf);
+		return String.valueOf(v, radix);
 	}
 	
 	public static Integer valueOf(int v)
