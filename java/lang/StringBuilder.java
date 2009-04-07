@@ -157,7 +157,7 @@ public class StringBuilder
    */
   private StringBuilder appendInternal(String s) {
     // Reminder: compact code more important than speed
-    char[] sc = s.toCharArray();
+    char[] sc = s.characters;
     int cl = characters.length;
     int sl = sc.length;
     char [] nc = characters;
@@ -179,7 +179,7 @@ public class StringBuilder
 
   public synchronized int indexOf(String str, int fromIndex) {
       return String.indexOf(characters, 0, curPos,
-                            str.toCharArray(), 0, str.length(), fromIndex);
+                            str.characters, 0, str.characters.length, fromIndex);
   }
 
   public int lastIndexOf(String str) {
@@ -189,7 +189,7 @@ public class StringBuilder
 
   public synchronized int lastIndexOf(String str, int fromIndex) {
       return String.lastIndexOf(characters, 0, curPos,
-                            str.toCharArray(), 0, str.length(), fromIndex);
+                            str.characters, 0, str.characters.length, fromIndex);
   }
   
   public String toString()
