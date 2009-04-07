@@ -18,6 +18,7 @@ public abstract class Enum<E extends Enum<E>> implements Comparable<E>
 		this.ordinal = ordinal;
 	}
 	
+	@Override
 	protected final Object clone() throws CloneNotSupportedException
 	{
 		throw new CloneNotSupportedException();
@@ -35,16 +36,19 @@ public abstract class Enum<E extends Enum<E>> implements Comparable<E>
 		return (this.ordinal > o.ordinal) ? 1 : -1;
 	}
 	
+	@Override
 	public final boolean equals(Object o)
 	{
 		return this==o;
 	}
 	
+	@Override
 	protected final void finalize()
 	{
 		//nothing
 	}
 	
+	@Override
 	public final int hashCode()
 	{
 		return super.hashCode();
@@ -60,6 +64,7 @@ public abstract class Enum<E extends Enum<E>> implements Comparable<E>
 		return this.ordinal;
 	}
 	
+	@Override
 	public String toString()
 	{
 		return this.name;
@@ -68,6 +73,8 @@ public abstract class Enum<E extends Enum<E>> implements Comparable<E>
 	/**
 	 * @deprecated not implemented in leJOS 
 	 */
+	@Deprecated
+	@SuppressWarnings("unused")
 	public static<T extends Enum<T>> T valueOf(Class<T> enumclas, String name)
 	{
 		throw new UnsupportedOperationException();	

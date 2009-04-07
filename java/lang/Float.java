@@ -7,7 +7,7 @@ package java.lang;
  * @author Lawrie Griffiths
  * @author Sven Köhler
  */
-public final class Float
+public final class Float extends Number
 {
 	public static final float POSITIVE_INFINITY = 1.0f / 0.0f;
 	public static final float NEGATIVE_INFINITY = -1.0f / 0.0f;
@@ -42,16 +42,19 @@ public final class Float
 		this.value = Float.parseFloat(s);
 	}
 	
+	@Override
 	public byte byteValue()
 	{
 		return (byte)this.value;
 	}
 	
+	@Override
 	public double doubleValue()
 	{
 		return this.value;
 	}
 	
+	@Override
 	public boolean equals(Object o)
 	{
 		//instanceof returns false for o==null
@@ -108,19 +111,21 @@ public final class Float
         int j = i & 0x7fffffff;
         // and check for being in the NaN range
         if (j >= 0x7f800001 && j <= 0x7fffffff)
-            return 0x7fc00000;
-        else
-            return i;
+            j = 0x7fc00000;
+
+        return j;
     }
 	/**
 	 * Returns the float value of this Float  object.
 	 * @return the float value represented by this object
 	 */
+	@Override
 	public float floatValue()
 	{
 	   return value;
 	}
   
+	@Override
 	public int hashCode()
 	{
 		return floatToIntBits(this.value);
@@ -164,6 +169,7 @@ public final class Float
 	 */
 	public static native float intBitsToFloat(int value);
 	
+	@Override
 	public int intValue()
 	{
 		return (int)this.value;
@@ -189,6 +195,7 @@ public final class Float
 		return val != val;
 	}
 	
+	@Override
 	public long longValue()
 	{
 		return (long)this.value;
@@ -204,11 +211,13 @@ public final class Float
 		return (float)Double.parseDouble(s);
 	}
 	
+	@Override
 	public short shortValue()
 	{
 		return (short)this.value;
 	}
 	
+	@Override
 	public String toString()
 	{
 		return Float.toString(this.value);

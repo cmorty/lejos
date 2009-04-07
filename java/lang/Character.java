@@ -75,6 +75,7 @@ public final class Character implements Comparable<Character>
 		return ch;
 	}	
 
+	@Override
 	public boolean equals(Object o)
 	{
 		//instanceof returns false for o==null
@@ -89,17 +90,22 @@ public final class Character implements Comparable<Character>
 		if (digit < 0 || digit >= radix)
 			return '\u0000';
 		
+		char r;
 		if (digit < 10)
-			return (char)(digit + '0');
+			r = (char)(digit + '0');
 		else
-			return (char)(digit + ('a' - 10));
+			r = (char)(digit + ('a' - 10));
+		
+		return r;
 	}
 	
+	@Override
 	public int hashCode()
 	{
 		return this.value;
 	}
 
+	@Override
 	public String toString()
 	{
 		return Character.toString(this.value);

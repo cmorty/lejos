@@ -4,7 +4,7 @@ package java.lang;
  * Wrapper class for long integers.
  * @author Sven Köhler
  */
-public class Long extends Number implements Comparable<Long>
+public final class Long extends Number implements Comparable<Long>
 {
 	public static final long MAX_VALUE = 0x7FFFFFFFFFFFFFFFL;
 	public static final long MIN_VALUE = 0x8000000000000000L;	
@@ -50,6 +50,7 @@ public class Long extends Number implements Comparable<Long>
 		return i & 0xFF;
 	}
 	
+	@Override
 	public byte byteValue()
 	{
 		return (byte)this.value;
@@ -63,11 +64,13 @@ public class Long extends Number implements Comparable<Long>
 		return (this.value > ob.value) ? 1 : -1;
 	}
 	
+	@Override
 	public double doubleValue()
 	{
 		return this.value;
 	}
 	
+	@Override
 	public boolean equals(Object o)
 	{
 		//instanceof returns false for o==null
@@ -75,11 +78,13 @@ public class Long extends Number implements Comparable<Long>
 			&& (this.value == ((Long)o).value);
 	}
 	
+	@Override
 	public float floatValue()
 	{
 		return this.value;
 	}
 	
+	@Override
 	public int hashCode()
 	{
 		return ((int)this.value) ^ ((int)(this.value >>> 32)); 
@@ -98,11 +103,13 @@ public class Long extends Number implements Comparable<Long>
 		return v - (v >>> 1);
 	}
 	
+	@Override
 	public int intValue()
 	{
 		return (int)this.value;
 	}
 	
+	@Override
 	public long longValue()
 	{
 		return this.value;
@@ -264,6 +271,7 @@ public class Long extends Number implements Comparable<Long>
 		return (v >>> bits) | (v << -bits);
 	}
 	
+	@Override
 	public short shortValue()
 	{
 		return (short)this.value;
@@ -307,6 +315,7 @@ public class Long extends Number implements Comparable<Long>
 		return new String(buf, p, maxlen-p);
 	}
 	
+	@Override
 	public String toString()
 	{
 		return Long.toString(this.value);
