@@ -71,6 +71,7 @@ public final class Integer extends Number implements Comparable<Integer>
 		return v & 0xFF;
 	}
 	
+	@Override
 	public byte byteValue()
 	{
 		return (byte)this.value;
@@ -84,11 +85,13 @@ public final class Integer extends Number implements Comparable<Integer>
 		return (this.value > ob.value) ? 1 : -1;
 	}
 	
+	@Override
 	public double doubleValue()
 	{
 		return this.value;
 	}
 	
+	@Override
 	public boolean equals(Object o)
 	{
 		//instanceof returns false for o==null
@@ -96,11 +99,13 @@ public final class Integer extends Number implements Comparable<Integer>
 			&& (this.value == ((Integer)o).value);
 	}
 	
+	@Override
 	public float floatValue()
 	{
 		return this.value;
 	}
 	
+	@Override
 	public int hashCode()
 	{
 		return this.value;
@@ -122,11 +127,13 @@ public final class Integer extends Number implements Comparable<Integer>
 	 * returns the value of this Integer as int
 	 * @return the int value represented by this object.
 	 */
+	@Override
 	public int intValue()
 	{
 	   return this.value;
 	}
 
+	@Override
 	public long longValue()
 	{
 		return this.value;
@@ -278,6 +285,7 @@ public final class Integer extends Number implements Comparable<Integer>
 		return (v >>> bits) | (v << -bits);
 	}
 	
+	@Override
 	public short shortValue()
 	{
 		return (short)this.value;
@@ -334,6 +342,7 @@ public final class Integer extends Number implements Comparable<Integer>
 	 * @return  a string representation of the value of this object in
 	 *		  base&nbsp;10.
 	 */
+	@Override
 	public String toString()
 	{
 		return Integer.toString(this.value);
@@ -378,16 +387,19 @@ public final class Integer extends Number implements Comparable<Integer>
 	/**
 	 * @deprecated use constant in {@link Character}
 	 */
+	@Deprecated
 	public static final int MIN_RADIX = Character.MIN_RADIX;
 	
 	/**
 	 * @deprecated use constant in {@link Character}
 	 */
+	@Deprecated
 	public static final int MAX_RADIX = Character.MAX_RADIX;
 	
 	/**
 	 * @deprecated use {@link Character#digit(char, int)} instead.
 	 */
+	@Deprecated
 	public static int digit(char ch, int radix)
 	{
 		return Character.digit((int)ch, radix);
@@ -396,6 +408,7 @@ public final class Integer extends Number implements Comparable<Integer>
 	/**
 	 * @deprecated use {@link Character#digit(int, int)} instead.
 	 */
+	@Deprecated
 	public static int digit(int ch, int radix)
 	{
 		return Character.digit(ch, radix);

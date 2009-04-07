@@ -18,6 +18,7 @@ public class Object
 	/**
 	 * @deprecated not implemented in leJOS 
 	 */
+	@Deprecated
 	protected void finalize()
 	{
 		//nothing

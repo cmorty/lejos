@@ -25,6 +25,7 @@ public final class Short extends Number
 		this.value = Short.parseShort(s);
 	}
 
+	@Override
 	public byte byteValue()
 	{
 		return (byte)this.value;
@@ -39,11 +40,13 @@ public final class Short extends Number
 		return (this.value > ob.value) ? 1 : -1;
 	}
 
+	@Override
 	public double doubleValue()
 	{
 		return this.value;
 	}
 	
+	@Override
 	public boolean equals(Object o)
 	{
 		//instanceof returns false for o==null
@@ -51,21 +54,25 @@ public final class Short extends Number
 			&& (this.value == ((Short)o).value);
 	}
 
+	@Override
 	public float floatValue()
 	{
 		return this.value;
 	}
 	
+	@Override
 	public int hashCode()
 	{
 		return this.value;
 	}
 
+	@Override
 	public int intValue()
 	{
 		return this.value;
 	}
 
+	@Override
 	public long longValue()
 	{
 		return this.value;
@@ -91,11 +98,13 @@ public final class Short extends Number
 		return (short)((i >>> 8) | (i << 8));
 	}
 
+	@Override
 	public short shortValue()
 	{
 		return this.value;
 	}
 	
+	@Override
 	public String toString()
 	{
 		return Short.toString(this.value);

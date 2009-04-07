@@ -39,6 +39,7 @@ public final class Boolean implements Comparable<Boolean>
 		return this.value ? 1 : -1;
 	}
 	
+	@Override
 	public boolean equals(Object o)
 	{
 		//instanceof returns false for o==null
@@ -46,6 +47,7 @@ public final class Boolean implements Comparable<Boolean>
 			&& (this.value == ((Boolean)o).value);
 	}
 	
+	@Override
 	public int hashCode()
 	{
 		return this.value ? 1231 : 1237;
@@ -67,6 +69,7 @@ public final class Boolean implements Comparable<Boolean>
 			&& (c3 == 'e' || c3 == 'E');
 	}
 	
+	@Override
 	public String toString()
 	{
 		return Boolean.toString(this.value);
