@@ -8,7 +8,7 @@ public final class String
   // NOTE: The state of this class is mapped to
   // native code (see vmsrc/classes.h).
 
-  private char[] characters;
+  char[] characters;
   
   //Cache the calculated hash
   private int hash = 0;
@@ -134,7 +134,7 @@ public final class String
    */  
   public synchronized int indexOf(String str, int fromIndex) {
       return String.indexOf(characters, 0, characters.length,
-                            str.toCharArray(), 0, str.length(), fromIndex);
+                            str.characters, 0, str.characters.length, fromIndex);
   }
   
   /**
@@ -154,7 +154,7 @@ public final class String
    */
   public int lastIndexOf(String str, int fromIndex) {
       return lastIndexOf(characters, 0, characters.length,
-                         str.characters, 0, str.length(), fromIndex);
+                         str.characters, 0, str.characters.length, fromIndex);
   }
   
   /**
