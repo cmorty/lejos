@@ -6,7 +6,7 @@ package java.lang;
  * @author bb
  * @author Sven Köhler
  */
-public final class Double
+public final class Double extends Number
 {
 	public static final double POSITIVE_INFINITY = 1.0d / 0.0d;
 	public static final double NEGATIVE_INFINITY = -1.0d / 0.0d;
@@ -34,16 +34,19 @@ public final class Double
 		this.value = Double.parseDouble(val);
 	}
 	
+	@Override
 	public byte byteValue()
 	{
 		return (byte)this.value;
 	}
 	
+	@Override
 	public double doubleValue()
 	{
 		return this.value;
 	}
 	
+	@Override
 	public boolean equals(Object o)
 	{
 		//instanceof returns false for o==null
@@ -51,17 +54,20 @@ public final class Double
 			&& (doubleToLongBits(this.value) == doubleToLongBits(((Double)o).value));
 	}
 	
+	@Override
 	public float floatValue()
 	{
 		return (float)this.value;
 	}
 	
+	@Override
 	public int hashCode()
 	{
 		long l = doubleToLongBits(this.value);
 		return ((int)l) ^ ((int)(l >>> 32));
 	}
 	
+	@Override
 	public int intValue()
 	{
 		return (int)this.value;
@@ -87,6 +93,7 @@ public final class Double
 		return val != val;
 	}
 	
+	@Override
 	public long longValue()
 	{
 		return (long)this.value;
@@ -137,6 +144,7 @@ public final class Double
 		return negative ? -result : result;
 	}
 	
+	@Override
 	public short shortValue()
 	{
 		return (short)this.value;
@@ -204,9 +212,9 @@ public final class Double
         long m = l & 0x7fffffffffffffffL;
         // and check for being in the NaN range
         if (m >= 0x7ff0000000000001L && m <= 0x7fffffffffffffffL)
-            return 0x7ff8000000000000L;
-        else
-            return l;
+            m = 0x7ff8000000000000L;
+        
+        return m;
     }
 
 	/**

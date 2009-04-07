@@ -8,6 +8,7 @@ public class Class<T>
 	/**
 	 * @exception ClassNotFoundException Thrown always in TinyVM.
 	 */
+	@SuppressWarnings("unused")
 	public static Class<?> forName (String aName)
 		throws ClassNotFoundException
 	{

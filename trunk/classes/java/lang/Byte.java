@@ -25,6 +25,7 @@ public final class Byte extends Number
 		this.value = Byte.parseByte(s);
 	}
 
+	@Override
 	public byte byteValue()
 	{
 		return this.value;
@@ -39,11 +40,13 @@ public final class Byte extends Number
 		return (this.value > ob.value) ? 1 : -1;
 	}
 
+	@Override
 	public double doubleValue()
 	{
 		return this.value;
 	}
 	
+	@Override
 	public boolean equals(Object o)
 	{
 		//instanceof returns false for o==null
@@ -51,21 +54,25 @@ public final class Byte extends Number
 			&& (this.value == ((Byte)o).value);
 	}
 
+	@Override
 	public float floatValue()
 	{
 		return this.value;
 	}
 	
+	@Override
 	public int hashCode()
 	{
 		return this.value;
 	}
 
+	@Override
 	public int intValue()
 	{
 		return this.value;
 	}
 
+	@Override
 	public long longValue()
 	{
 		return this.value;
@@ -85,11 +92,13 @@ public final class Byte extends Number
 		return (byte)tmp;
 	}
 
+	@Override
 	public short shortValue()
 	{
 		return this.value;
 	}
 	
+	@Override
 	public String toString()
 	{
 		return Byte.toString(this.value);
