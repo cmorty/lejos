@@ -8,7 +8,7 @@
 	<property file="build.properties" />
 	
 	<!-- Special folder that shouldn't exist. It's used obtain empty (boot)classpath. -->
-	<property name="nirvana.dir" value="${basedir}/nirvana" />
+	<property name="nirvana.dir" value="${build.dir}/nirvana" />
 	
  	<!-- compiles the classes -->
   	<target name="classes" description="compile classes">
@@ -46,7 +46,7 @@
     			<pathelement location="${nirvana.dir}" />
     		</bootclasspath>
     		<compilerarg value="-extdirs"/>
-    		<compilerarg value="${nirvana.dir}" />
+    		<compilerarg path="${nirvana.dir}" />
     		
     		<!-- enable warnings -->
     		<compilerarg value="-Xlint:${source.warn}" />
@@ -90,7 +90,7 @@
     			<pathelement location="${nirvana.dir}" />
     		</classpath>
     		<arg value="-extdirs"/>
-    		<arg value="${nirvana.dir}" />
+    		<arg path="${nirvana.dir}" />
 			
 	    	<arg value="-quiet"/>
 			
