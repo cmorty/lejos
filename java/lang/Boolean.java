@@ -72,7 +72,7 @@ public final class Boolean implements Comparable<Boolean>
 	@Override
 	public String toString()
 	{
-		return Boolean.toString(this.value);
+    	return String.valueOf(this.value);
 	}
 	
 	public static String toString(boolean b)

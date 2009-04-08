@@ -101,12 +101,12 @@ public final class Byte extends Number
 	@Override
 	public String toString()
 	{
-		return Byte.toString(this.value);
+    	return String.valueOf(this.value, 10);
 	}
 	
 	public static String toString(byte b)
 	{
-		return Integer.toString(b);
+    	return String.valueOf(b, 10);
 	}
 	
 	public static Byte valueOf(byte b)
