@@ -205,7 +205,7 @@ public final class Integer extends Number implements Comparable<Integer>
 	 */
 	public static int parseInt(String s, int radix)
 	{
-		WrapperUtils.throwNumberFormat(s, radix);
+		StringUtils.throwNumberFormat(s, radix);
 		
 		int len = s.length();
 				
@@ -234,7 +234,7 @@ public final class Integer extends Number implements Comparable<Integer>
 		int r = 0;
 		while (p < len)
 		{
-			int digit = WrapperUtils.parseDigit(s.charAt(p++), radix);
+			int digit = StringUtils.parseDigit(s.charAt(p++), radix);
 			
 			if (r < multlimit)
 				throw new NumberFormatException("number is too big");			
@@ -364,7 +364,7 @@ public final class Integer extends Number implements Comparable<Integer>
 	
 	public static String toString(int v, int radix)
 	{
-		radix = WrapperUtils.invalidRadixTo10(radix);
+		radix = StringUtils.invalidRadixTo10(radix);
 		
 		return String.valueOf(v, radix);
 	}
