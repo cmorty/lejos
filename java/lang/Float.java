@@ -1,8 +1,7 @@
 package java.lang;
 
 /**
- * Minimal Float implementation that supports 
- * floatToIntBits and intBitsToFloat
+ * Minimal Float implementation.
  *
  * @author Lawrie Griffiths
  * @author Sven Köhler

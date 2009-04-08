@@ -1,7 +1,7 @@
 package java.lang;
 
 /**
- * Minimal Double implementation to support parseDouble(), isNaN(), and NaN.
+ * Minimal Double implementation.
  * 
  * @author bb
  * @author Sven Köhler
@@ -19,8 +19,6 @@ public final class Double extends Number
 	//MISSING public static int compare(double, double)
 	//MISSING public int compareTo(Object)
 	//MISSING public static String toHexString(double)
-	//MISSING public String toString()
-	//MISSING public static String toString(double)
 	
 	private double value;
 	
@@ -150,6 +148,12 @@ public final class Double extends Number
 		return (short)this.value;
 	}
 	
+    @Override
+    public String toString()
+    {
+    	return Double.toString(this.value);
+    }
+    
 	/**
 	 * Convert a double to a String
 	 * @param d the double to be converted
@@ -243,6 +247,4 @@ public final class Double extends Number
 	 *		  pattern.
 	 */
     public static native double longBitsToDouble(long l);
-
-
 }
