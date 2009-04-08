@@ -4,7 +4,7 @@ package java.lang;
  * Just some utility methods for the wrapper classes as well as StringBuffer and StringBuilder.
  * @author Sven Köhler
  */
-class WrapperUtils
+class StringUtils
 {
 	static int parseDigit(char c, int radix)
 	{
@@ -79,7 +79,7 @@ class WrapperUtils
 	/**
 	 * For {@link #approxStringLengthInt(int)} and {@link #approxStringLengthLong(int)}. 
 	 */
-	static int floorLog2(int v)
+	private static int floorLog2(int v)
 	{
 		//min radix is 2
 		if (v < 4)

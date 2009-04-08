@@ -103,11 +103,11 @@ public final class StringBuffer
 
   public synchronized StringBuffer append (int i)
   {
-	  int intLen = WrapperUtils.exactStringLength(i, 10);
+	  int intLen = StringUtils.exactStringLength(i, 10);
 	  int newLen = curLen + intLen;
 	  ensureCapacity(newLen);
 
-	  WrapperUtils.getChars(characters, newLen, i, 10);	  
+	  StringUtils.getChars(characters, newLen, i, 10);	  
 	  curLen = newLen;
 	  
 	  return this;
@@ -115,11 +115,11 @@ public final class StringBuffer
 
   public synchronized StringBuffer append (long aLong)
   {
-	  int intLen = WrapperUtils.exactStringLength(aLong, 10);
+	  int intLen = StringUtils.exactStringLength(aLong, 10);
 	  int newLen = curLen + intLen;
 	  ensureCapacity(newLen);
 
-	  WrapperUtils.getChars(characters, newLen, aLong, 10);	  	  
+	  StringUtils.getChars(characters, newLen, aLong, 10);	  	  
 	  curLen = newLen;
 	  
 	  return this;

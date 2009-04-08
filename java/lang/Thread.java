@@ -102,6 +102,7 @@ public class Thread implements Runnable
   public static native void sleep (long aMilliseconds) throws InterruptedException;
   public static native Thread currentThread();
   public final native int getPriority();
+  
   /**
    * Set the priority of this thread. Higher number have higher priority.
    * The scheduler will always run the highest priority thread in preference

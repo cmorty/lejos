@@ -189,7 +189,7 @@ public final class Long extends Number implements Comparable<Long>
 	
 	public static long parseLong(String s, int radix)
 	{
-		WrapperUtils.throwNumberFormat(s, radix);
+		StringUtils.throwNumberFormat(s, radix);
 		
 		int len = s.length();
 				
@@ -218,7 +218,7 @@ public final class Long extends Number implements Comparable<Long>
 		long r = 0;
 		while (p < len)
 		{
-			int digit = WrapperUtils.parseDigit(s.charAt(p++), radix);
+			int digit = StringUtils.parseDigit(s.charAt(p++), radix);
 			
 			if (r < multlimit)
 				throw new NumberFormatException("number is too big");			
@@ -318,7 +318,7 @@ public final class Long extends Number implements Comparable<Long>
 	@Override
 	public String toString()
 	{
-		return Long.toString(this.value);
+		return String.valueOf(this.value, 10);
 	}
 	
 	public static String toString(long v)
@@ -328,7 +328,7 @@ public final class Long extends Number implements Comparable<Long>
 	
 	public static String toString(long v, int radix)
 	{
-		radix = WrapperUtils.invalidRadixTo10(radix);
+		radix = StringUtils.invalidRadixTo10(radix);
 		
 		return String.valueOf(v, radix);
 	}
