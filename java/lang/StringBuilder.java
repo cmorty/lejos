@@ -157,7 +157,7 @@ public class StringBuilder
       return indexOf(str, 0);
   }
 
-  public synchronized int indexOf(String str, int fromIndex) {
+  public int indexOf(String str, int fromIndex) {
       return String.indexOf(characters, 0, curLen,
                             str.characters, 0, str.characters.length, fromIndex);
   }
@@ -167,7 +167,7 @@ public class StringBuilder
       return lastIndexOf(str, curLen);
   }
 
-  public synchronized int lastIndexOf(String str, int fromIndex) {
+  public int lastIndexOf(String str, int fromIndex) {
       return String.lastIndexOf(characters, 0, curLen,
                             str.characters, 0, str.characters.length, fromIndex);
   }
@@ -202,11 +202,11 @@ public class StringBuilder
     return r;
   }
   
-  public synchronized String substring(int start) {
+  public String substring(int start) {
       return substring(start, curLen);
   }
 
-  public synchronized String substring(int start, int end) {
+  public String substring(int start, int end) {
       // THIS SHOULD REALLY THROW StringIndexOutOfBoundsException
 	  int len = end - start;
 	  return new String(characters, start, len);
