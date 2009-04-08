@@ -47,7 +47,8 @@
     		</bootclasspath>
     		<compilerarg value="-extdirs"/>
     		<compilerarg value="${nirvana.dir}" />
-    		<!-- enable all warnings -->
+    		
+    		<!-- enable warnings -->
     		<compilerarg value="-Xlint:${source.warn}" />
   		</javac>
   		
