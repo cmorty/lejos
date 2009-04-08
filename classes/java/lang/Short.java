@@ -107,12 +107,12 @@ public final class Short extends Number
 	@Override
 	public String toString()
 	{
-		return Short.toString(this.value);
+    	return String.valueOf(this.value, 10);
 	}
 	
 	public static String toString(short b)
 	{
-		return Integer.toString(b);
+    	return String.valueOf(b, 10);
 	}
 	
 	public static Short valueOf(short b)

@@ -219,7 +219,7 @@ public final class Float extends Number
 	@Override
 	public String toString()
 	{
-		return Float.toString(this.value);
+    	return String.valueOf(this.value);
 	}
 	
 	/**

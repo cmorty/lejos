@@ -151,7 +151,7 @@ public final class Double extends Number
     @Override
     public String toString()
     {
-    	return Double.toString(this.value);
+    	return String.valueOf(this.value);
     }
     
 	/**
