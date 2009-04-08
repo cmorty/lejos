@@ -8,7 +8,7 @@
 	<property file="build.properties" />
 	
 	<!-- Special folder that shouldn't exist. It's used obtain empty (boot)classpath. -->
-	<property name="nirvana.dir" value="${basedir}/nothing/resides/in/nirvana" />
+	<property name="nirvana.dir" value="${basedir}/nirvana" />
 	
  	<!-- compiles the classes -->
   	<target name="classes" description="compile classes">
@@ -20,6 +20,7 @@
 		<delete dir="${classes.dir}" />
 		
     	<mkdir dir="${classes.dir}" />
+  		<mkdir dir="${nirvana.dir}" />
     	<javac
     		srcdir="${source.dir}"
     		includes="${source.include}"
@@ -41,13 +42,16 @@
       			javac keeps adding "." or even worse "" to the path. So i'm adding the
       			nirvana path to the classpath. 
       		--> 
-    		<compilerarg value="-classpath" />
+    		<bootclasspath>
+    			<pathelement location="${nirvana.dir}" />
+    		</bootclasspath>
+    		<compilerarg value="-extdirs"/>
     		<compilerarg value="${nirvana.dir}" />
-    		<compilerarg value="-bootclasspath" />
-    		<compilerarg value="${nirvana.dir}" />
-    		<compilerarg value="-Djava.ext.dirs=${nirvana.dir}" />
-    		<compilerarg value="-Djava.endorsed.dirs=${nirvana.dir}" />
+    		<!-- enable all warnings -->
+    		<compilerarg value="-Xlint:all" />
   		</javac>
+  		
+  		<delete dir="${nirvana.dir}" />
   	</target>
 	
  	<!-- creates the classes jar -->
@@ -63,7 +67,9 @@
 	<!-- generate javadocs -->
 	<target name="docs" description="generate javadocs">
 		<delete dir="${docs.dir}" />
+		
     	<mkdir dir="${docs.dir}" />
+  		<mkdir dir="${nirvana.dir}" />
 		<javadoc
 			sourcepath="${source.dir}"
     		encoding="${source.encoding}"
@@ -75,7 +81,18 @@
 			windowtitle="leJOS NXJ API documentation"
 			verbose="false"
 		>
+			<!-- see above for why this is needed -->
+    		<bootclasspath>
+    			<pathelement location="${nirvana.dir}" />
+    		</bootclasspath>
+    		<classpath>
+    			<pathelement location="${nirvana.dir}" />
+    		</classpath>
+    		<arg value="-extdirs"/>
+    		<arg value="${nirvana.dir}" />
+			
 	    	<arg value="-quiet"/>
+			
 			<fileset
 				dir="${source.dir}"
 	    		includes="${source.include}"
@@ -85,6 +102,8 @@
 				<filename name="**/*.java"/>
 			</fileset>
 		</javadoc>
+		
+  		<delete dir="${nirvana.dir}" />
 	</target>
 	
 	<!-- zip the javadocs -->
@@ -113,7 +132,7 @@
 	<!-- delete everything generated -->
 	<target name="clean" description="clean up all generated files">
 		<delete dir="${build.dir}" />
-				
+		
 		<delete dir="${docs.dir}" />
 		<delete file="${docs.zip}" />
 		
@@ -121,5 +140,7 @@
 		<delete file="${classes.jar}" />
 		
 		<delete file="${source.zip}" />
+		
+  		<delete dir="${nirvana.dir}" />
 	</target>
 </project>

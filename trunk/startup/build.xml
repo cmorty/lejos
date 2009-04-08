@@ -1,54 +1,129 @@
-<project name="StartUpText" default="link" basedir=".">
-    <description>
-    	StartUpText build file
-    </description>
+<project name="StartUpText" default="all" basedir=".">
+	<description>
+		StartUpText build file
+	</description>
 
-  <!-- set global properties for this build -->
-  <property name="lejos_home" location="../" />
-  <property name="src" location="."/>
-  <property name="build.dir" location="build"/>
-  <property name="program" value="StartUpText"/>
-  <property name="binary" value="${build.dir}/${program}.bin" />
+	<property file="build.properties" />
+	<property file="${lejos.classes}/build.properties" prefix="vars.classes"/>
+	
 
-  <!-- deletes class files -->
-  <target name="clean" description="clean up all generated files">
-    <delete>
-      <fileset dir="."> 
-        <include name="*.class"/>
-      </fileset>
-     </delete>
-  </target>
+	<target name="all" depends="link, docs.zip, source.zip" />
+
+	<!-- deletes class files -->
+	<target name="clean" description="clean up all generated files">
+		<delete dir="${build.dir}"/> 
+	</target>
 	
-  <target name="compile" depends="clean"
-        description="compile the source " >
-    <!-- Compile the java code from ${src}  -->
-  	<mkdir dir="${build.dir}"/>
-    <javac srcdir="${src}" destdir="${build.dir}">
-      <bootclasspath>
-        <pathelement location="${lejos_home}/classes/lib/classes.jar"/>
-       </bootclasspath>
-    </javac>
-  </target>
+	<target name="compile" description="compile the source " >
+		<!-- Compile the java code from ${src}	-->
+		<delete dir="${classes.dir}"/>
+		<mkdir dir="${classes.dir}"/>
+		<javac
+    		srcdir="${source.dir}"
+    		includes="${source.include}"
+    		excludes="${source.exclude}"
+    		encoding="${source.encoding}"
+    		source="${source.version}"
+    		target="${target.version}"
+  			destdir="${classes.dir}"
+    		debug="true"
+    		includeAntRuntime="false"
+  			includeJavaRuntime="false"
+    		verbose="false"			
+		>
+			<bootclasspath>
+				<pathelement location="${lejos.classes}/${vars.classes.classes.jar}"/>
+			</bootclasspath>
+			<!--
+				Without this, there are some JDK jars in the classpath.
+				Set verbose=true to check that the classpath is really clean.
+			-->
+    		<compilerarg value="-extdirs" />
+    		<compilerarg value="" />
+		</javac>
+	</target>
 	
-  <target name="link" depends="compile"
-        description="link the binary " >
-    <!-- Link the binary and create a signature file -->
-    <java classname="js.tinyvm.TinyVM">
-      <arg value="--bootclasspath"/>
-      <arg path="${lejos_home}/classes/lib/classes.jar" /> 
-      <arg value="--classpath"/>
-      <arg path="${build.dir}" /> 
-      <arg value="--writeorder" />
-      <arg value="LE" />
-      <arg value="${program}"/>
-      <arg value="-o"/>
-      <arg value="${binary}"/>
-      <arg value="-v"/>
-      <classpath>
-        <pathelement location="${lejos_home}/jtools/lib/jtools.jar"/>
-  		<pathelement location="${lejos_home}/jtools/3rdparty/lib/commons-cli-1.0.jar"/>
-  		<pathelement location="${lejos_home}/jtools/3rdparty/lib/bcel-5.1.jar"/>
-      </classpath>
-    </java>
-  </target>
+	<target name="link" depends="compile" description="link the binary " >
+		<!-- Link the binary and create a signature file -->
+		<java classname="js.tinyvm.TinyVM">
+			<arg value="--bootclasspath"/>
+			<arg path="${lejos.classes}/${vars.classes.classes.jar}" /> 
+			<arg value="--classpath"/>
+			<arg path="${build.dir}" /> 
+			<arg value="--writeorder" />
+			<arg value="LE" />
+			<arg value="${main.class}"/>
+			<arg value="-o"/>
+			<arg value="${main.bin}"/>
+			<arg value="-v"/>
+			<classpath>
+				<pathelement location="${lejos.jtools}/lib/jtools.jar"/>
+				<pathelement location="${lejos.jtools}/3rdparty/lib/bcel-5.1.jar"/>
+				<pathelement location="${lejos.jtools}/3rdparty/lib/commons-cli-1.0.jar"/>
+			</classpath>
+		</java>
+	</target>
+	
+	<!-- generate javadocs -->
+	<target name="docs" description="generate javadocs">
+		<delete dir="${docs.dir}" />
+    	<mkdir dir="${docs.dir}" />
+		<javadoc
+			sourcepath="${source.dir}"
+    		encoding="${source.encoding}"
+			source="${source.version}"
+			destdir="${docs.dir}"
+			locale="en_US"
+			author="true"
+			access="protected"
+			verbose="false"
+		>
+			<bootclasspath>
+				<pathelement location="${lejos.classes}/${vars.classes.classes.jar}"/>
+			</bootclasspath>
+			<classpath>
+				<pathelement location="${lejos.classes}/${vars.classes.classes.jar}"/>
+			</classpath>
+			
+			<!--
+				Without this, there are some JDK jars in the classpath.
+				Set verbose=true to check that the classpath is really clean.
+			-->
+    		<arg value="-extdirs" />
+    		<arg value="" />
+			
+	    	<arg value="-quiet"/>
+			
+			<fileset
+				dir="${source.dir}"
+	    		includes="${source.include}"
+	    		excludes="${source.exclude}"
+			>
+				<!-- javadoc only wants *.java files -->
+				<filename name="**/*.java"/>
+			</fileset>
+		</javadoc>
+	</target>
+	
+	<!-- zip the javadocs -->
+	<target name="docs.zip" description="generate zip of javadocs" depends="docs">
+		<dirname property="tmp" file="${docs.zip}" />
+    	<mkdir dir="${tmp}" />
+    	<zip
+    		basedir="${docs.dir}"
+			destfile="${docs.zip}"
+    	/>
+	</target>
+	
+	<!-- zip the project -->
+	<target name="source.zip" description="generate zip of sources">
+		<dirname property="tmp" file="${source.zip}" />
+    	<mkdir dir="${tmp}" />
+    	<zip destfile="${source.zip}"
+    		basedir="${basedir}"
+    		includes="${dist.include}"
+    		excludes="${dist.exclude}"
+    	/>
+	</target>
+	
 </project>
