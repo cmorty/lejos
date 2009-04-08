@@ -173,6 +173,7 @@ public final class StringBuffer
                             str.characters, 0, str.characters.length, fromIndex);
   }
   
+  @Override
   public synchronized String toString()
   {
     return new String (characters, 0, curLen);
