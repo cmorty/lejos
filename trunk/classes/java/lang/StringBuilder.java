@@ -40,12 +40,6 @@ public class StringBuilder
 		}
 	}
 
-  /**
-   * The value of <i>ln(10)</i> used for converting from base
-   * <i>e</i> to base 10.
-   **/
-  private static final float ln10 = 2.30258509f;
-
   public StringBuilder () {
   	this(INITIAL_CAPACITY);
   }
@@ -97,7 +91,13 @@ public class StringBuilder
   
   public StringBuilder append (char aChar)
   {
-    return this.appendInternal(String.valueOf(aChar));
+	  int newLen = curLen +1;
+	  ensureCapacity(newLen);
+	  
+	  characters[curLen] = aChar;
+	  curLen = newLen;
+	  
+	  return this;
   }
 
   public StringBuilder append (int i)
@@ -106,7 +106,7 @@ public class StringBuilder
 	  int newLen = curLen + intLen;
 	  ensureCapacity(newLen);
 
-	  WrapperUtils.getChars(buf, newLen, i, 10);	  
+	  WrapperUtils.getChars(characters, newLen, i, 10);	  
 	  curLen = newLen;
 	  
 	  return this;
@@ -118,7 +118,7 @@ public class StringBuilder
 	  int newLen = curLen + intLen;
 	  ensureCapacity(newLen);
 
-	  WrapperUtils.getChars(buf, newLen, aLong, 10);	  	  
+	  WrapperUtils.getChars(characters, newLen, aLong, 10);	  	  
 	  curLen = newLen;
 	  
 	  return this;
@@ -126,23 +126,13 @@ public class StringBuilder
 
   public StringBuilder append (float aFloat)
   {
-    try {
-        append (aFloat, 8);
-    } catch (ArrayIndexOutOfBoundsException e) {
-        curLen = Math.min(characters.length, curLen);
-    }
-    
+    append (aFloat, 8);
     return this;
   }
 
   public StringBuilder append (double aDouble)
   {
-    try {
-        append ((float)aDouble, 8);
-    } catch (ArrayIndexOutOfBoundsException e) {
-        curLen = Math.min(characters.length, curLen);
-    }
-    
+    append ((float)aDouble, 8);
     return this;
   }
   
@@ -207,7 +197,9 @@ public class StringBuilder
   */
   public char [] getChars()
   {
-    return characters;
+    char[] r = new char[curLen];
+    System.arraycopy(characters, 0, r, 0, curLen);
+    return r;
   }
   
   public synchronized String substring(int start) {
@@ -239,7 +231,7 @@ public class StringBuilder
 			} // if
 
 			// calc. the power (base 10) for the given number:
-			int pow = ( int )Math.floor( Math.log( number ) / ln10 );
+			int pow = ( int )Math.floor( Math.log( number ) / Math.ln10 );
 
 			// use exponential formatting if number too big or too small
 			if ( pow < -3 || pow > 6 ) {
@@ -248,7 +240,7 @@ public class StringBuilder
 			} // if
 
 			// Recalc. the pow if exponent removed and d has changed
-			pow = ( int )Math.floor( Math.log( number ) / ln10 );
+			pow = ( int )Math.floor( Math.log( number ) / Math.ln10 );
 
 			// Decide how many insignificant zeros there will be in the
 			// lead of the number.
@@ -299,7 +291,7 @@ public class StringBuilder
 		}
 		
 		// Do we have enough room?
-		int newLen = curLen + charPos;		
+		int newLen = curLen + charPos;
 		this.ensureCapacity(curLen + charPos);
 		
 		System.arraycopy(buf, 0, characters, curLen, charPos);
@@ -309,9 +301,9 @@ public class StringBuilder
 		if ( exponent != 0 ) {
 			append( exponent );
 		} // if
-		
-		return this;
 	  }
+
+      return this;
     }
 }
 
