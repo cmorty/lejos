@@ -205,7 +205,7 @@ public final class Math {
 	                n = n * zetasup;
 	                double newln = ln + n / (2 * j + 1);
 	                double term = ln/newln;
-	                if (term >= LOWER_BOUND && term <= UPPER_BOUND)
+	                if (ln == newln || (term >= LOWER_BOUND && term <= UPPER_BOUND))
 	                        return m * ln2 - 2 * ln;
 	                ln = newln;
 	        }
