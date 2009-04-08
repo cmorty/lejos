@@ -51,17 +51,18 @@ public final class Math {
 			return a;
 		
 		long b = (long)a;
+		double bd = b;
 		
 		//if negative, just strip decimal places
 		if (b < 0)
-			return b;
+			return bd;
 		
 		//if numbers are equal, there were no decimal places
-		if (b == a)
-			return b;
+		if (bd == a)
+			return bd;
 			
 		//round up since a must have had some decimal places
-		return b+1;
+		return bd+1;
 	}
 	
 	/**
@@ -75,17 +76,18 @@ public final class Math {
 			return a;
 		
 		long b = (long)a;
+		double bd = b;
 		
 		//if negative, just strip decimal places
 		if (b > 0)
-			return b;
+			return bd;
 		
 		//if numbers are equal, there were no decimal places
-		if (b == a)
-			return b;
+		if (bd == a)
+			return bd;
 		
 		//round down since a must have had some decimal places
-		return b-1;
+		return bd-1;
 	}
 	
 	/**
