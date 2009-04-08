@@ -1,10 +1,24 @@
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.Vector;
-import javax.microedition.lcdui.*;
-import lejos.nxt.comm.*;
-import lejos.nxt.*;
 
-import javax.bluetooth.*;
+import javax.bluetooth.RemoteDevice;
+import javax.microedition.lcdui.Graphics;
+
+import lejos.nxt.Battery;
+import lejos.nxt.Button;
+import lejos.nxt.LCD;
+import lejos.nxt.Settings;
+import lejos.nxt.Sound;
+import lejos.nxt.SystemSettings;
+import lejos.nxt.TextMenu;
+import lejos.nxt.comm.BTConnection;
+import lejos.nxt.comm.Bluetooth;
+import lejos.nxt.comm.LCP;
+import lejos.nxt.comm.LCPResponder;
+import lejos.nxt.comm.NXTCommConnector;
+import lejos.nxt.comm.NXTCommDevice;
+import lejos.nxt.comm.USB;
 
 
 public class StartUpText
@@ -45,7 +59,7 @@ public class StartUpText
       g.refresh();    
    }
 	
-	private static boolean setBluetoothPower(boolean powerOn, boolean needReset)
+	private static boolean setBluetoothPower(boolean powerOn)
 	{
 		// Set the state of the Bluetooth power to be powerOn. Also record the
 		// current state of this in the BT status bytes.                                                      
@@ -80,14 +94,18 @@ public class StartUpText
 	
 	private static String getExtension(String fileName) {
 	 	int dot = fileName.lastIndexOf(".");
-		if (dot < 0) return "";
-		else return fileName.substring(dot+1, fileName.length());                                                                                                                                                                                                                                                                                                                         
+		if (dot < 0)
+			return "";
+		
+		return fileName.substring(dot+1, fileName.length());                                                                                                                                                                                                                                                                                                                         
 	}
 	
 	private static String getBaseName(String fileName) {
 		int dot = fileName.lastIndexOf(".");
-		if (dot < 0) return fileName;
-		else return fileName.substring(0, dot);
+		if (dot < 0)
+			return fileName;
+		
+		return fileName.substring(0, dot);
 	}
 	
 	private static void runDefaultProgram()
@@ -168,21 +186,22 @@ public class StartUpText
         // Ensure the USB address property is set correctly. We use the
         // Bluetooth address as our serial number.
         String addr = Bluetooth.getLocalAddress();
-        if (!addr.equals(USB.getAddress()))
+        if (!addr.equals(NXTCommDevice.getAddress()))
         {
-            Settings.setProperty(USB.SERIAL_NO, addr);
-            USB.setAddress(addr);
+            Settings.setProperty(NXTCommDevice.SERIAL_NO, addr);
+            NXTCommDevice.setAddress(addr);
         }
         String name = Bluetooth.getFriendlyName();
-        if (!name.equals(USB.getName()))
+        if (!name.equals(NXTCommDevice.getName()))
         {
-            Settings.setProperty(USB.NAME, name);
-            USB.setName(name);
+            Settings.setProperty(NXTCommDevice.NAME, name);
+            NXTCommDevice.setName(name);
         }
     }
 	
 	public static void main(String[] args) throws Exception {
        Thread tuneThread = new Thread() {
+    	   			@Override
                     public void run() {
                         playTune();
                     }
@@ -253,7 +272,7 @@ public class StartUpText
 		boolean quit = false;
 		int visibility = 0;
         setAddress();
-		btPowerOn = setBluetoothPower(Bluetooth.getStatus() == 0, false);		
+		btPowerOn = setBluetoothPower(Bluetooth.getStatus() == 0);		
 		ind.setDaemon(true);	
 		ind.start();
 		usb.setDaemon(true);
@@ -396,7 +415,7 @@ public class StartUpText
 				{
 					LCD.clear();
 					LCD.drawString("   Power on...", 0, 0);
-				    btPowerOn = setBluetoothPower(true, true);
+				    btPowerOn = setBluetoothPower(true);
 					menu = blueMenu;
 				}
 				else
@@ -511,7 +530,7 @@ public class StartUpText
 					LCD.clear();
 					LCD.drawString("   Power off...", 0, 0);
 					LCD.refresh();
-					btPowerOn = setBluetoothPower(false, true);
+					btPowerOn = setBluetoothPower(false);
 					menu = blueOffMenu;
 		        }else if (selection == 3) // Visibility
 		        {
@@ -602,9 +621,9 @@ public class StartUpText
                     Sound.pause(Sound.getTime()+250);
                     // Save in settings
                     if (Volumes[0][0] != Volumes[0][3])
-                        Settings.setProperty(Sound.VOL_SETTING, Integer.toString(Volumes[0][0]*10));
+                        Settings.setProperty(Sound.VOL_SETTING, String.valueOf(Volumes[0][0]*10));
                     if (Volumes[1][0] != Volumes[1][3])
-                        Settings.setProperty(Button.VOL_SETTING, Integer.toString(Volumes[1][0]*10));
+                        Settings.setProperty(Button.VOL_SETTING, String.valueOf(Volumes[1][0]*10));
                     // Make a note of new volumes so we know if it changes        
                     for(int i = 0; i < Volumes.length; i++)
                         Volumes[i][3] = Volumes[i][0];
@@ -626,6 +645,7 @@ class Indicators extends Thread
 		io = true;
 	}
 	
+	@Override
 	public void run() 
 	{
 		String [] ioProgress = {".   ", " .  ", "  . "};
@@ -697,7 +717,8 @@ class Responder extends LCPResponder
      * @param len
      * @return
      */
-    protected int preCommand(byte[] inMsg, int len)
+    @Override
+	protected int preCommand(byte[] inMsg, int len)
     {
         if (len > 0)
         {
@@ -715,7 +736,8 @@ class Responder extends LCPResponder
      * @param replyMsg
      * @param replyLen
      */
-    protected void postCommand(byte[] inMsg, int inLen, byte[] replyMsg, int replyLen)
+    @Override
+	protected void postCommand(byte[] inMsg, int inLen, byte[] replyMsg, int replyLen)
     {
         if (inMsg[1] == LCP.CLOSE|| inMsg[1] == LCP.DELETE) {
             if (inMsg[1] == LCP.DELETE) {
