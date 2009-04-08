@@ -58,31 +58,27 @@ public final class StringBuffer
 
   public synchronized StringBuffer delete(int start, int end)
   {
-        if (start >= 0 && start < end && start < curLen)
-        {
-                if (end >= curLen)
-                        end = curLen;
-                else
-                        System.arraycopy(characters, end, characters, start, curLen-end);
-                        
-                curLen -= end-start;
-        }
-        
-        return this;
+	  if (start < 0 || start > curLen)
+		  throw new StringIndexOutOfBoundsException(start);
+	  if (end < start)
+		  throw new StringIndexOutOfBoundsException();
+	  if (end > curLen)
+		  end = curLen;
+	  
+      System.arraycopy(characters, end, characters, start, curLen - end);
+      curLen -= end - start;
+      
+      return this;
   }
 
   public StringBuffer append (String s)
   {
-	  if (s == null)
-		  s = "null";
-	  
 	  return this.appendInternal(s);
   }
 
   public StringBuffer append (Object aObject)
   {
-	  String s = (aObject == null) ? "null" : aObject.toString();
-	  return this.appendInternal(s);
+	  return this.appendInternal(String.valueOf(aObject));
   }
 
   public StringBuffer append (boolean aBoolean)
@@ -133,14 +129,17 @@ public final class StringBuffer
 
   public StringBuffer append (double aDouble)
   {
-    append ((float)aDouble, 8);
+    append (aDouble, 17);
     return this;
   }
   
   /**
    * Appends a string with no null checking
    */
-  private synchronized StringBuffer appendInternal(String s) {
+  private StringBuffer appendInternal(String s) {
+	  if (s == null)
+		  s = "null";
+	  
     // Reminder: compact code more important than speed
     char[] sc = s.characters;
     int sl = sc.length;
@@ -181,11 +180,17 @@ public final class StringBuffer
 
   public synchronized char charAt(int i)
   {
+	  if (i < 0 || i >= curLen)
+		  throw new StringIndexOutOfBoundsException(i);
+	  
         return characters[i];
   }
   
   public synchronized void setCharAt(int i, char ch)
   {
+	  if (i < 0 || i >= curLen)
+		  throw new StringIndexOutOfBoundsException(i);
+	  
         characters[i] = ch;
   }
   
@@ -208,8 +213,14 @@ public final class StringBuffer
       return substring(start, curLen);
   }
 
-  public synchronized String substring(int start, int end) {
-      // THIS SHOULD REALLY THROW StringIndexOutOfBoundsException
+  public String substring(int start, int end) {
+	  if (start < 0 || start > curLen)
+		  throw new StringIndexOutOfBoundsException(start);
+	  if (end > curLen)
+		  throw new StringIndexOutOfBoundsException(end);
+	  if (end < start)
+		  throw new StringIndexOutOfBoundsException(end - start);
+	  
 	  int len = end - start;
 	  return new String(characters, start, len);
   }
@@ -219,7 +230,7 @@ public final class StringBuffer
      *
      * @author Martin E. Nielsen
      **/
-    private StringBuffer append( float number, int significantDigits ) {
+    private StringBuffer append( double number, int significantDigits ) {
 	  synchronized(buf) {
 		int charPos = 0;
 		int exponent = 0;
