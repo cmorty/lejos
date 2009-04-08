@@ -7,6 +7,7 @@ package java.lang;
  * number.
  *<P>
  * @author <a href="mailto:martin@egholm-nielsen.dk">Martin E. Nielsen</a>
+ * @author Sven Köhler
  */
 public class StringBuilder
 {
