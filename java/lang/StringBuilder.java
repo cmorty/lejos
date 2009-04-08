@@ -173,6 +173,7 @@ public class StringBuilder
                             str.characters, 0, str.characters.length, fromIndex);
   }
   
+  @Override
   public String toString()
   {
     return new String (characters, 0, curLen);
