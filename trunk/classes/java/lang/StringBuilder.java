@@ -16,7 +16,7 @@ public class StringBuilder
 	private static final int CAPACITY_INCREMENT_DEN = 2;	//denominator of the increment factor
 	private static final int CAPACITY_INCREMENT_MIN = 5;	//minimal increment
 	
-	private static final char[] buf = new char[16];
+	private static final char[] buf = new char[32];
 	
 	private char[] characters;
 	private int curLen = 0;
@@ -235,14 +235,19 @@ public class StringBuilder
 		int charPos = 0;
 		int exponent = 0;
 		
+		//we need to detect -0.0 to be compatible with JDK
+		boolean negative = (Double.doubleToRawLongBits(number) & 0x8000000000000000L) != 0;
+		if (negative)
+		{
+			buf[ charPos++ ] = '-';
+			number = -number;
+		}			
+		
 		if ( number == 0 ) {
 			buf[ charPos++ ] = '0';
+			buf[ charPos++ ] = '.';
+			buf[ charPos++ ] = '0';
 		} else {
-			if ( number < 0 ) {
-				buf[ charPos++ ] = '-';
-				number = -number;
-			} // if
-
 			// calc. the power (base 10) for the given number:
 			int pow = ( int )Math.floor( Math.log( number ) / Math.ln10 );
 
