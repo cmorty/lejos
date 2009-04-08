@@ -55,9 +55,9 @@
 			<arg path="${classes.dir}" /> 
 			<arg value="--writeorder" />
 			<arg value="LE" />
-			<arg value="${main.class}"/>
+			<arg value="${startup.class}"/>
 			<arg value="-o"/>
-			<arg value="${main.bin}"/>
+			<arg path="${startup.bin}"/>
 			<arg value="-v"/>
 			<classpath>
 				<pathelement location="${lejos.jtools}/lib/jtools.jar"/>
