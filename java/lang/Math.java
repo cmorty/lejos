@@ -27,7 +27,10 @@ public final class Math {
 	//  return d != d;
 	//}
 	
-	private Math() {} // To make sure this class is not instantiated
+	private Math()
+	{
+		// private constructor to make sure this class is not instantiated
+	}
 	
    // Private because it only works when -1 < x < 1 but it is used by atan2
    private static double ArcTan(double x)  // Using a Chebyshev-Pade approximation
@@ -41,27 +44,79 @@ public final class Math {
 	* Returns the smallest (closest to negative infinity) double value that is not
 	* less than the argument and is equal to a mathematical integer.
  	*/
-	public static double ceil(double a) {
-		//TODO fix for large values bigger then Integer.MAX_VALUE
-		//TODO actually use long instead of int
-		return ((a<0)?(int)a:(int)(a+1));	
+	public static double ceil(double a)
+	{
+		//no rounding required
+		if (a < Long.MIN_VALUE || a > Long.MAX_VALUE)
+			return a;
+		
+		long b = (long)a;
+		
+		//if negative, just strip decimal places
+		if (b < 0)
+			return b;
+		
+		//if numbers are equal, there were no decimal places
+		if (b == a)
+			return b;
+			
+		//round up since a must have had some decimal places
+		return b+1;
 	}
 	
 	/**
 	* Returns the largest (closest to positive infinity) double value that is not
 	* greater than the argument and is equal to a mathematical integer.
 	*/
-	public static double floor(double a) {
-		//TODO fix for large values bigger then Integer.MAX_VALUE
-		//TODO actually use long instead of int
-		return ((a<0)?(int)(a-1):(int)a);	
+	public static double floor(double a)
+	{
+		//no rounding required
+		if (a < Long.MIN_VALUE || a > Long.MAX_VALUE)
+			return a;
+		
+		long b = (long)a;
+		
+		//if negative, just strip decimal places
+		if (b > 0)
+			return b;
+		
+		//if numbers are equal, there were no decimal places
+		if (b == a)
+			return b;
+		
+		//round down since a must have had some decimal places
+		return b-1;
 	}
 	
 	/**
-	* Returns the closest int to the argument.
+	 * Returns the closest int to the argument.
+	 */	
+	public static int round(float a)
+	{	
+		return (int)Math.floor(a + 0.5f);
+	}
+	
+	/**
+	 * Returns the closest int to the argument.
+	 */	
+	public static long round(double a)
+	{	
+		return (long)Math.floor(a+0.5f);
+	}
+	
+	/**
+	* Returns the closest mathematical integer to the argument.
 	*/	
-	public static int round(float a) {	
-		return (int)floor(a + 0.5f);
+	public static double rint(double a)
+	{	
+		//no rounding required
+		if (a < Long.MIN_VALUE || a > Long.MAX_VALUE)
+			return a;
+		
+		if (a < 0)
+			return (long)(a - 0.5);
+		
+		return (long)(a+ 0.5);
 	}
 	
 	/**
