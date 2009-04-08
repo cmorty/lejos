@@ -48,7 +48,7 @@
     		<compilerarg value="-extdirs"/>
     		<compilerarg value="${nirvana.dir}" />
     		<!-- enable all warnings -->
-    		<compilerarg value="-Xlint:all" />
+    		<compilerarg value="-Xlint:${source.warn}" />
   		</javac>
   		
   		<delete dir="${nirvana.dir}" />
