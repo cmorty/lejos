@@ -10,10 +10,10 @@ package java.lang;
  */
 public class StringBuilder
 {
-  char[] characters;
-  int curPos = 0;
-  static char [] buf = new char[16];
-  static String minInt = "-2147483648";
+	private static final String minInt = "-2147483648";
+	private static final char[] buf = new char[16];
+	private char[] characters;
+	private int curLen = 0;
 
   /**
    * The value of <i>log(10)</i> used for converting from base
@@ -28,7 +28,7 @@ public class StringBuilder
   public StringBuilder (String aString)
   {
     characters = aString.toCharArray();
-    curPos = aString.length();
+    curLen = aString.length();
   }
 
   public StringBuilder (int length)
@@ -38,14 +38,14 @@ public class StringBuilder
 
   public StringBuilder delete(int start, int end)
   {
-        if (start >= 0 && start < end && start < curPos)
+        if (start >= 0 && start < end && start < curLen)
         {
-                if (end >= curPos)
-                        end = curPos;
+                if (end >= curLen)
+                        end = curLen;
                 else
-                        System.arraycopy(characters, end, characters, start, curPos-end);
+                        System.arraycopy(characters, end, characters, start, curLen-end);
                         
-                curPos -= end-start;
+                curLen -= end-start;
         }
         
         return this;
@@ -107,13 +107,13 @@ public class StringBuilder
 
 	  // Will it fit in the existing space?
 	  int len = buf.length - charPos;
-	  if (len + curPos > characters.length) {
-		char [] nc = new char[curPos + len];
-		System.arraycopy (characters, 0, nc, 0, curPos);	
+	  if (len + curLen > characters.length) {
+		char [] nc = new char[curLen + len];
+		System.arraycopy (characters, 0, nc, 0, curLen);	
 		characters = nc;
 	  }
-	  System.arraycopy(buf, charPos, characters, curPos, len);
-	  curPos += len;
+	  System.arraycopy(buf, charPos, characters, curLen, len);
+	  curLen += len;
 	  return this;
 	}
   }
@@ -135,7 +135,7 @@ public class StringBuilder
     try {
         append (aFloat, 8);
     } catch (ArrayIndexOutOfBoundsException e) {
-        curPos = Math.min(characters.length, curPos);
+        curLen = Math.min(characters.length, curLen);
     }
     
     return this;
@@ -146,7 +146,7 @@ public class StringBuilder
     try {
         append ((float)aDouble, 8);
     } catch (ArrayIndexOutOfBoundsException e) {
-        curPos = Math.min(characters.length, curPos);
+        curLen = Math.min(characters.length, curLen);
     }
     
     return this;
@@ -161,14 +161,14 @@ public class StringBuilder
     int cl = characters.length;
     int sl = sc.length;
     char [] nc = characters;
-    if (sl + curPos > cl)
+    if (sl + curLen > cl)
     {
-        nc = new char[sl + curPos];
-        System.arraycopy (characters, 0, nc, 0, curPos);
+        nc = new char[sl + curLen];
+        System.arraycopy (characters, 0, nc, 0, curLen);
     }
-    System.arraycopy (sc, 0, nc, curPos, sl);
+    System.arraycopy (sc, 0, nc, curLen, sl);
     characters = nc;
-    curPos += sl;
+    curLen += sl;
     
     return this;
   }
@@ -178,23 +178,23 @@ public class StringBuilder
   }
 
   public synchronized int indexOf(String str, int fromIndex) {
-      return String.indexOf(characters, 0, curPos,
+      return String.indexOf(characters, 0, curLen,
                             str.characters, 0, str.characters.length, fromIndex);
   }
 
   public int lastIndexOf(String str) {
       // Note, synchronization achieved via other invocations
-      return lastIndexOf(str, curPos);
+      return lastIndexOf(str, curLen);
   }
 
   public synchronized int lastIndexOf(String str, int fromIndex) {
-      return String.lastIndexOf(characters, 0, curPos,
+      return String.lastIndexOf(characters, 0, curLen,
                             str.characters, 0, str.characters.length, fromIndex);
   }
   
   public String toString()
   {
-    return new String (characters, 0, curPos);
+    return new String (characters, 0, curLen);
   }
 
   public char charAt(int i)
@@ -209,7 +209,7 @@ public class StringBuilder
   
   public int length()
   {
-        return curPos;
+        return curLen;
   }
 
   /**
@@ -221,7 +221,7 @@ public class StringBuilder
   }
   
   public synchronized String substring(int start) {
-      return substring(start, curPos);
+      return substring(start, curLen);
   }
 
   public synchronized String substring(int start, int end) {
@@ -309,13 +309,13 @@ public class StringBuilder
 		}
 		
 		// Do we have enough room?
-		if (charPos + curPos > characters.length) {
-			  char [] nc = new char[curPos + charPos];
-			  System.arraycopy (characters, 0, nc, 0, curPos);	
+		if (charPos + curLen > characters.length) {
+			  char [] nc = new char[curLen + charPos];
+			  System.arraycopy (characters, 0, nc, 0, curLen);	
 			  characters = nc;
 		}
-		System.arraycopy(buf, 0, characters, curPos, charPos);
-		curPos += charPos;
+		System.arraycopy(buf, 0, characters, curLen, charPos);
+		curLen += charPos;
 		// Restore the exponential format
 		if ( exponent != 0 ) {
 			append( exponent );
