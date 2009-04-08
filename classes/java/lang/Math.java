@@ -8,12 +8,12 @@ package java.lang;
 public final class Math {
 		
 	// Math constants
-	public static final double E  = 2.718281828459045;
-	public static final double PI = 3.1415926535897931D;
+	public static final double E  = 2.71828182845904523536;
+	public static final double PI = 3.14159265358979323846;
 	
-   static final double PI2 = 1.570796326794897D;
-	static final double ln10      = 2.30258509299405;
-	static final double ln2       = 0.69314718055995;
+	static final double PI2  = PI / 2;
+	static final double ln10 = 2.30258509299405;
+	static final double ln2  = 0.693147180559945;
 	
         // Used by log() and exp() methods
 	// TODO: The lower bound is probably important for accuracy. Expand when double working.
