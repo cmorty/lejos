@@ -40,12 +40,6 @@ public final class StringBuffer
 		}
 	}
 
-  /**
-   * The value of <i>ln(10)</i> used for converting from base
-   * <i>e</i> to base 10.
-   **/
-  private static final float ln10 = 2.30258509f;
-
   public StringBuffer () {
   	this(INITIAL_CAPACITY);
   }
@@ -61,7 +55,7 @@ public final class StringBuffer
     characters = new char[length];
   }
 
-  public StringBuffer delete(int start, int end)
+  public synchronized StringBuffer delete(int start, int end)
   {
         if (start >= 0 && start < end && start < curLen)
         {
@@ -95,30 +89,36 @@ public final class StringBuffer
     return this.appendInternal(String.valueOf(aBoolean));
   }
   
-  public StringBuffer append (char aChar)
+  public synchronized StringBuffer append (char aChar)
   {
-    return this.appendInternal(String.valueOf(aChar));
-  }
-
-  public StringBuffer append (int i)
-  {
-	  int intLen = WrapperUtils.exactStringLength(i, 10);
-	  int newLen = curLen + intLen;
+	  int newLen = curLen +1;
 	  ensureCapacity(newLen);
-
-	  WrapperUtils.getChars(buf, newLen, i, 10);	  
+	  
+	  characters[curLen] = aChar;
 	  curLen = newLen;
 	  
 	  return this;
   }
 
-  public StringBuffer append (long aLong)
+  public synchronized StringBuffer append (int i)
+  {
+	  int intLen = WrapperUtils.exactStringLength(i, 10);
+	  int newLen = curLen + intLen;
+	  ensureCapacity(newLen);
+
+	  WrapperUtils.getChars(characters, newLen, i, 10);	  
+	  curLen = newLen;
+	  
+	  return this;
+  }
+
+  public synchronized StringBuffer append (long aLong)
   {
 	  int intLen = WrapperUtils.exactStringLength(aLong, 10);
 	  int newLen = curLen + intLen;
 	  ensureCapacity(newLen);
 
-	  WrapperUtils.getChars(buf, newLen, aLong, 10);	  	  
+	  WrapperUtils.getChars(characters, newLen, aLong, 10);	  	  
 	  curLen = newLen;
 	  
 	  return this;
@@ -126,30 +126,20 @@ public final class StringBuffer
 
   public StringBuffer append (float aFloat)
   {
-    try {
-        append (aFloat, 8);
-    } catch (ArrayIndexOutOfBoundsException e) {
-        curLen = Math.min(characters.length, curLen);
-    }
-    
+    append (aFloat, 8);
     return this;
   }
 
   public StringBuffer append (double aDouble)
   {
-    try {
-        append ((float)aDouble, 8);
-    } catch (ArrayIndexOutOfBoundsException e) {
-        curLen = Math.min(characters.length, curLen);
-    }
-    
+    append ((float)aDouble, 8);
     return this;
   }
   
   /**
    * Appends a string with no null checking
    */
-  private StringBuffer appendInternal(String s) {
+  private synchronized StringBuffer appendInternal(String s) {
     // Reminder: compact code more important than speed
     char[] sc = s.characters;
     int sl = sc.length;
@@ -172,7 +162,7 @@ public final class StringBuffer
                             str.characters, 0, str.characters.length, fromIndex);
   }
 
-  public int lastIndexOf(String str) {
+  public synchronized int lastIndexOf(String str) {
       // Note, synchronization achieved via other invocations
       return lastIndexOf(str, curLen);
   }
@@ -182,22 +172,22 @@ public final class StringBuffer
                             str.characters, 0, str.characters.length, fromIndex);
   }
   
-  public String toString()
+  public synchronized String toString()
   {
     return new String (characters, 0, curLen);
   }
 
-  public char charAt(int i)
+  public synchronized char charAt(int i)
   {
         return characters[i];
   }
   
-  public void setCharAt(int i, char ch)
+  public synchronized void setCharAt(int i, char ch)
   {
         characters[i] = ch;
   }
   
-  public int length()
+  public synchronized int length()
   {
         return curLen;
   }
@@ -205,9 +195,11 @@ public final class StringBuffer
   /**
   * Retrieves the contents of the StringBuffer in the form of an array of characters.
   */
-  public char [] getChars()
+  public synchronized char[] getChars()
   {
-    return characters;
+    char[] r = new char[curLen];
+    System.arraycopy(characters, 0, r, 0, curLen);
+    return r;
   }
   
   public synchronized String substring(int start) {
@@ -239,7 +231,7 @@ public final class StringBuffer
 			} // if
 
 			// calc. the power (base 10) for the given number:
-			int pow = ( int )Math.floor( Math.log( number ) / ln10 );
+			int pow = ( int )Math.floor( Math.log( number ) / Math.ln10 );
 
 			// use exponential formatting if number too big or too small
 			if ( pow < -3 || pow > 6 ) {
@@ -248,7 +240,7 @@ public final class StringBuffer
 			} // if
 
 			// Recalc. the pow if exponent removed and d has changed
-			pow = ( int )Math.floor( Math.log( number ) / ln10 );
+			pow = ( int )Math.floor( Math.log( number ) / Math.ln10 );
 
 			// Decide how many insignificant zeros there will be in the
 			// lead of the number.
@@ -298,8 +290,9 @@ public final class StringBuffer
 			} // if
 		}
 		
+	synchronized (this)	{
 		// Do we have enough room?
-		int newLen = curLen + charPos;		
+		int newLen = curLen + charPos;
 		this.ensureCapacity(curLen + charPos);
 		
 		System.arraycopy(buf, 0, characters, curLen, charPos);
@@ -309,9 +302,10 @@ public final class StringBuffer
 		if ( exponent != 0 ) {
 			append( exponent );
 		} // if
-		
-		return this;
 	  }
+	}
+
+      return this;
     }
 }
 
