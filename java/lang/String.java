@@ -72,6 +72,9 @@ public final class String
    **/
   public char charAt(int index) 
   {
+	  if (index > characters.length)
+		  throw new StringIndexOutOfBoundsException(index);
+	  
     return characters[index];
   }
 
@@ -295,9 +298,12 @@ public final class String
    * @return the substring
    */
   public synchronized String substring(int start, int end) {  
-	  if (start < 0 || end > characters.length || start > end) {
-		  throw new StringIndexOutOfBoundsException();
-	  }
+	  if (start < 0 ||  start > characters.length)
+		  throw new StringIndexOutOfBoundsException(start);
+	  if (end > characters.length)
+		  throw new StringIndexOutOfBoundsException(end);
+	  if (end < start)
+		  throw new StringIndexOutOfBoundsException(end - start);
 		  
 	  return new String(characters, start, end - start);
   }
