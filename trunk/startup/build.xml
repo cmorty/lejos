@@ -49,7 +49,7 @@
 			<arg value="--bootclasspath"/>
 			<arg path="${lejos.classes}/${vars.classes.classes.jar}" /> 
 			<arg value="--classpath"/>
-			<arg path="${build.dir}" /> 
+			<arg path="${classes.dir}" /> 
 			<arg value="--writeorder" />
 			<arg value="LE" />
 			<arg value="${main.class}"/>
