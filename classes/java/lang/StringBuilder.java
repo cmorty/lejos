@@ -58,31 +58,27 @@ public class StringBuilder
 
   public StringBuilder delete(int start, int end)
   {
-        if (start >= 0 && start < end && start < curLen)
-        {
-                if (end >= curLen)
-                        end = curLen;
-                else
-                        System.arraycopy(characters, end, characters, start, curLen-end);
-                        
-                curLen -= end-start;
-        }
-        
-        return this;
+	  if (start < 0 || start > curLen)
+		  throw new StringIndexOutOfBoundsException(start);
+	  if (end < start)
+		  throw new StringIndexOutOfBoundsException();
+	  if (end > curLen)
+		  end = curLen;
+	  
+      System.arraycopy(characters, end, characters, start, curLen - end);
+      curLen -= end - start;
+      
+      return this;
   }
 
   public StringBuilder append (String s)
   {
-	  if (s == null)
-		  s = "null";
-	  
 	  return this.appendInternal(s);
   }
 
   public StringBuilder append (Object aObject)
   {
-	  String s = (aObject == null) ? "null" : aObject.toString();
-	  return this.appendInternal(s);
+	  return this.appendInternal(String.valueOf(aObject));
   }
 
   public StringBuilder append (boolean aBoolean)
@@ -133,7 +129,7 @@ public class StringBuilder
 
   public StringBuilder append (double aDouble)
   {
-    append ((float)aDouble, 8);
+    append (aDouble, 17);
     return this;
   }
   
@@ -141,6 +137,9 @@ public class StringBuilder
    * Appends a string with no null checking
    */
   private StringBuilder appendInternal(String s) {
+	  if (s == null)
+		  s = "null";
+	  
     // Reminder: compact code more important than speed
     char[] sc = s.characters;
     int sl = sc.length;
@@ -181,11 +180,17 @@ public class StringBuilder
 
   public char charAt(int i)
   {
+	  if (i < 0 || i >= curLen)
+		  throw new StringIndexOutOfBoundsException(i);
+	  
         return characters[i];
   }
   
   public void setCharAt(int i, char ch)
   {
+	  if (i < 0 || i >= curLen)
+		  throw new StringIndexOutOfBoundsException(i);
+	  
         characters[i] = ch;
   }
   
@@ -197,7 +202,7 @@ public class StringBuilder
   /**
   * Retrieves the contents of the StringBuilder in the form of an array of characters.
   */
-  public char [] getChars()
+  public char[] getChars()
   {
     char[] r = new char[curLen];
     System.arraycopy(characters, 0, r, 0, curLen);
@@ -209,7 +214,13 @@ public class StringBuilder
   }
 
   public String substring(int start, int end) {
-      // THIS SHOULD REALLY THROW StringIndexOutOfBoundsException
+	  if (start < 0 || start > curLen)
+		  throw new StringIndexOutOfBoundsException(start);
+	  if (end > curLen)
+		  throw new StringIndexOutOfBoundsException(end);
+	  if (end < start)
+		  throw new StringIndexOutOfBoundsException(end - start);
+	  
 	  int len = end - start;
 	  return new String(characters, start, len);
   }
@@ -219,7 +230,7 @@ public class StringBuilder
      *
      * @author Martin E. Nielsen
      **/
-    private StringBuilder append( float number, int significantDigits ) {
+    private StringBuilder append( double number, int significantDigits ) {
 	  synchronized(buf) {
 		int charPos = 0;
 		int exponent = 0;

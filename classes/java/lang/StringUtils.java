@@ -40,6 +40,8 @@ class StringUtils
 
 	/**
 	 * Low-level convert of int to char[].
+	 * 
+	 * @param p position of the character after the last digit
 	 */
 	static int getChars(char[] buf, int p, int v, int radix)
 	{
@@ -59,6 +61,8 @@ class StringUtils
 
 	/**
 	 * Low-level convert of long to char[].
+	 * 
+	 * @param p position of the character after the last digit
 	 */
 	static int getChars(char[] buf, int p, long v, int radix)
 	{
@@ -74,6 +78,21 @@ class StringUtils
 			buf[--p] = '-';
 		
 		return p;
+	}
+	
+	static void reverseChars(char[] buf, int start, int end, int len)
+	{
+		len = Math.min(len, (end - start) >> 1);
+		int end2 = start + len;
+		int base = start + end - 1;
+	
+		for (int i = start; i < end2; i++)
+		{
+			int j = base - i;
+			char tmp = buf[i];
+			buf[i] = buf[j];
+			buf[j] = tmp;
+		}
 	}
 
 	/**
