@@ -425,9 +425,9 @@ public final class String
 	 */
 	static String valueOf(int i, int radix)
 	{
-		int len = WrapperUtils.exactStringLength(i, radix);
+		int len = StringUtils.exactStringLength(i, radix);
 		String r = new String(len);
-		WrapperUtils.getChars(r.characters, len, i, radix);
+		StringUtils.getChars(r.characters, len, i, radix);
 		return r;
 	}
 	
@@ -436,9 +436,9 @@ public final class String
 	 */
 	static String valueOf(long i, int radix)
 	{
-		int len = WrapperUtils.exactStringLength(i, radix);
+		int len = StringUtils.exactStringLength(i, radix);
 		String r = new String(len);
-		WrapperUtils.getChars(r.characters, len, i, radix);
+		StringUtils.getChars(r.characters, len, i, radix);
 		return r;
 	}
 }
