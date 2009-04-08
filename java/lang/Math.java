@@ -121,6 +121,32 @@ public final class Math {
 		return (long)(a+ 0.5);
 	}
 	
+	public static float signum(float f)
+	{
+		if (f == 0)
+			return f; //preserve -0.0 and 0.0
+		
+		if (f > 0)
+			return 1;
+		if (f < 0)
+			return -1;
+		
+    	return Float.NaN; 
+	}
+	
+	public static double signum(double d)
+	{
+		if (d == 0)
+			return d; //preserve -0.0 and 0.0
+		
+		if (d > 0)
+			return 1;
+		if (d < 0)
+			return -1;
+		
+    	return Double.NaN; 
+	}
+	
 	/**
 	* Returns the lesser of two integer values.
 	*/
