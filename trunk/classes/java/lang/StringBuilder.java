@@ -10,19 +10,44 @@ package java.lang;
  */
 public class StringBuilder
 {
-	private static final String minInt = "-2147483648";
+	private static final int INITIAL_CAPACITY = 10;
+	private static final int CAPACITY_INCREMENT_NUM = 3;	//numerator of the increment factor
+	private static final int CAPACITY_INCREMENT_DEN = 2;	//denominator of the increment factor
+	private static final int CAPACITY_INCREMENT_MIN = 5;	//minimal increment
+	
 	private static final char[] buf = new char[16];
+	
 	private char[] characters;
 	private int curLen = 0;
+	
+	private static int newCapacity(int old)
+	{
+		//must work for old == 0
+		return Math.max(old + CAPACITY_INCREMENT_MIN, old * CAPACITY_INCREMENT_NUM / CAPACITY_INCREMENT_DEN); 
+	}
+	
+	public void ensureCapacity(int minCapacity)
+	{
+		if (characters.length < minCapacity)
+		{
+			int newCapacity = newCapacity(characters.length);
+			while (newCapacity < minCapacity)
+				newCapacity = newCapacity(newCapacity);
+			
+			char[] newData = new char[newCapacity];
+			System.arraycopy(characters, 0, newData, 0, curLen);
+			characters = newData;
+		}
+	}
 
   /**
-   * The value of <i>log(10)</i> used for converting from base
+   * The value of <i>ln(10)</i> used for converting from base
    * <i>e</i> to base 10.
    **/
-  private static final float log10 = 2.30258509f;
+  private static final float ln10 = 2.30258509f;
 
   public StringBuilder () {
-  	characters = new char[20];
+  	this(INITIAL_CAPACITY);
   }
   
   public StringBuilder (String aString)
@@ -67,65 +92,34 @@ public class StringBuilder
 
   public StringBuilder append (boolean aBoolean)
   {
-    return this.appendInternal(aBoolean ? "true" : "false");
+    return this.appendInternal(String.valueOf(aBoolean));
   }
   
   public StringBuilder append (char aChar)
   {
-    return this.appendInternal(new String (new char[] { aChar }, 0, 1));
+    return this.appendInternal(String.valueOf(aChar));
   }
-  
+
   public StringBuilder append (int i)
   {
-	// Modified to expand the buffer...
-	// Conversion code lifted from Integer, could have just called
-	// append(Integer.toString(aInt))
-	// but that would have allocated a new string for every call. Not sure
-	// how good the garbage collector is at the moment, so probably best
-	// to preserve the existing memory allocation behavior.
-	int q, r, charPos = buf.length; 
-	char sign = 0 ; 
+	  int intLen = WrapperUtils.exactStringLength(i, 10);
+	  int newLen = curLen + intLen;
+	  ensureCapacity(newLen);
 
-	if (i == Integer.MIN_VALUE) return append(minInt);
-
-	if (i < 0) { 
-	   sign = '-' ; 
-	   i = -i ; 
-	}
-	synchronized (buf) {
-	  for (;;) { 
-	    q = i/10; ; 
-	    r = i-(q*10) ;
-	    buf [--charPos] = (char) ((int) '0' + r) ; 
-	    i = q ; 
-	    if (i == 0) break ; 
-	  }
-
-	  if (sign != 0) {
-	    buf [--charPos] = sign ; 
-	  }
-
-	  // Will it fit in the existing space?
-	  int len = buf.length - charPos;
-	  if (len + curLen > characters.length) {
-		char [] nc = new char[curLen + len];
-		System.arraycopy (characters, 0, nc, 0, curLen);	
-		characters = nc;
-	  }
-	  System.arraycopy(buf, charPos, characters, curLen, len);
-	  curLen += len;
+	  WrapperUtils.getChars(buf, newLen, i, 10);	  
+	  curLen = newLen;
+	  
 	  return this;
-	}
   }
 
   public StringBuilder append (long aLong)
   {
-	  int len = WrapperUtils.exactStringLength(aLong, 10);
-	  char[] buf = new char[len];
-	  
-	  WrapperUtils.getChars(buf, len, aLong, 10);	  
-	  //TODO use WrapperUtils to write directly to buffer
-	  this.append(new String(buf));
+	  int intLen = WrapperUtils.exactStringLength(aLong, 10);
+	  int newLen = curLen + intLen;
+	  ensureCapacity(newLen);
+
+	  WrapperUtils.getChars(buf, newLen, aLong, 10);	  	  
+	  curLen = newLen;
 	  
 	  return this;
   }
@@ -158,17 +152,13 @@ public class StringBuilder
   private StringBuilder appendInternal(String s) {
     // Reminder: compact code more important than speed
     char[] sc = s.characters;
-    int cl = characters.length;
     int sl = sc.length;
-    char [] nc = characters;
-    if (sl + curLen > cl)
-    {
-        nc = new char[sl + curLen];
-        System.arraycopy (characters, 0, nc, 0, curLen);
-    }
-    System.arraycopy (sc, 0, nc, curLen, sl);
-    characters = nc;
-    curLen += sl;
+    
+    int newlen = curLen + sl;
+    this.ensureCapacity(newlen);
+    
+    System.arraycopy (sc, 0, characters, curLen, sl);    
+    curLen = newlen;
     
     return this;
   }
@@ -249,7 +239,7 @@ public class StringBuilder
 			} // if
 
 			// calc. the power (base 10) for the given number:
-			int pow = ( int )Math.floor( Math.log( number ) / log10 );
+			int pow = ( int )Math.floor( Math.log( number ) / ln10 );
 
 			// use exponential formatting if number too big or too small
 			if ( pow < -3 || pow > 6 ) {
@@ -258,7 +248,7 @@ public class StringBuilder
 			} // if
 
 			// Recalc. the pow if exponent removed and d has changed
-			pow = ( int )Math.floor( Math.log( number ) / log10 );
+			pow = ( int )Math.floor( Math.log( number ) / ln10 );
 
 			// Decide how many insignificant zeros there will be in the
 			// lead of the number.
@@ -309,13 +299,12 @@ public class StringBuilder
 		}
 		
 		// Do we have enough room?
-		if (charPos + curLen > characters.length) {
-			  char [] nc = new char[curLen + charPos];
-			  System.arraycopy (characters, 0, nc, 0, curLen);	
-			  characters = nc;
-		}
+		int newLen = curLen + charPos;		
+		this.ensureCapacity(curLen + charPos);
+		
 		System.arraycopy(buf, 0, characters, curLen, charPos);
-		curLen += charPos;
+		curLen = newLen;
+		
 		// Restore the exponential format
 		if ( exponent != 0 ) {
 			append( exponent );
