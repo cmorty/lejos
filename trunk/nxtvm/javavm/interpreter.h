@@ -15,6 +15,12 @@ extern byte    gRequestCode;
 extern unsigned int gNextProgram;
 extern unsigned int gNextProgramSize;
 extern unsigned int gProgramExecutions;
+extern unsigned int gVMOptions;
+
+// Allow external control of VM
+#define VM_DEFAULT 0
+#define VM_TYPECHECKS 1
+#define type_checks_enabled() (gVMOptions & VM_TYPECHECKS)
 
 #define getPc() (curPc + curPcOffset)
 

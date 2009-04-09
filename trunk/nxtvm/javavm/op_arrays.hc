@@ -2,11 +2,29 @@
  * This is included inside a switch statement.
  */
 
+OPCODE(OP_ANEWARRAY)
+  // Stack size: unchanged
+  // Arguments: 1
+  // get the signature of the array contents (note we need to inc the number
+  // of dims to get the array sig.
+  tempInt = (pc[0] << 8) | pc[1];
+  SAVE_REGS();
+  tempStackWord = obj2ref(new_single_array (sig_get_base_type(tempInt), sig_new_array(sig_get_dim(tempInt)+1, sig_get_base_type(tempInt), sig_get_class(tempInt)), get_top_word()));
+  LOAD_REGS();
+  // Do not modify the stack if an exception has been thrown
+  if (tempStackWord != JNULL)
+  {
+    pc += 2;
+    set_top_ref(tempStackWord);
+  }
+  // Exceptions are taken care of
+  DISPATCH_CHECKED;
+
 OPCODE(OP_NEWARRAY)
   // Stack size: unchanged
   // Arguments: 1
   SAVE_REGS();
-  tempStackWord = obj2ref(new_primitive_array (*pc, get_top_word()));
+  tempStackWord = obj2ref(new_single_array (*pc, sig_new_array(1, *pc, 0), get_top_word()));
   LOAD_REGS();
   // Do not modify the stack if an exception has been thrown
   if (tempStackWord != JNULL)
@@ -21,17 +39,17 @@ OPCODE(OP_MULTIANEWARRAY)
   // Stack size: -N + 1
   // Arguments: 3
   {
-    byte *tempBytePtr;
+    int sig = (pc[0] << 8) | pc[1];
     tempInt = pc[2] - 1;
     SAVE_REGS();
-    tempBytePtr = (byte *) new_multi_array (pc[0], pc[1], pc[2], get_stack_ptr() - tempInt);
+    tempStackWord = obj2ref(new_multi_array (sig_get_base_type(sig), sig_get_class(sig), sig_get_dim(sig), pc[2], get_stack_ptr() - tempInt));
     LOAD_REGS();
     // Must not modify either the stack or the pc if an exception has been thrown
-    if (tempBytePtr != JNULL)
+    if (tempStackWord != JNULL)
     {
       pop_words (tempInt);
       pc += 3;
-      set_top_ref (ptr2ref (tempBytePtr));
+      set_top_ref (tempStackWord);
     }
   }
   DISPATCH_CHECKED;
@@ -113,6 +131,11 @@ OPCODE(OP_AASTORE)
   if( tempInt < 0)
     goto LABEL_ARRAY_EXCEPTION;
   tempWordPtr = (STACKWORD *)pop_ref();
+  if (type_checks_enabled() && tempStackWord != JNULL && !is_assignable(get_object_sig(ref2obj(tempStackWord)), get_constituent_sig((Object *)tempWordPtr)))
+  {
+    thrownException = arrayStoreException;
+    goto LABEL_THROW_EXCEPTION;
+  }
   update_array((Object *) tempWordPtr);
   ref_array_ptr(arrayStart)[tempInt] = tempStackWord;
   DISPATCH;
@@ -187,9 +210,6 @@ OPCODE(OP_ARRAYLENGTH)
   }
   DISPATCH;
 
-
-// Notes:
-// * OP_ANEWARRAY is changed to OP_NEWARRAY of data type 0, plus a NOP.
 
 /*end*/
 

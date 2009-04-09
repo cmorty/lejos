@@ -85,6 +85,8 @@ public class DebugMonitor
         };
         // Make sure we keep running when we start the program
         Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
+        // Enable stricter run time type checking
+        System.enableRunTimeTypeChecks(true);
         prog.start();
         while (true)
         {

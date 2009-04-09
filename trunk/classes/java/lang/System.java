@@ -9,6 +9,9 @@ import lejos.nxt.LCDOutputStream;
  */
 public final class System
 {
+  // Flags used to control the Virtual Machine.
+  public static final int VM_TYPECHECKS = 1;
+
   private System() {}
   
   /**
@@ -97,7 +100,36 @@ public final class System
  public static native int getFirmwareMinorVersion();
  
  public static native int getFirmwareRevision();
- 
+
+ /**
+  * Control the run time operation of the leJOS Virtual Machine.
+  * @param options Bit flags.
+  */
+ public static native void setVMOptions(int options);
+
+ /**
+  * Return the currently operating Virtual Machine options.
+  * @return
+  */
+ public static native int getVMOptions();
+
+ /**
+  * Enable/Disable strict run time type checking for some operations within
+  * the Virtual Machine.
+  * @param on
+  */
+ public static void enableRunTimeTypeChecks(boolean on)
+ {
+   int cur = getVMOptions();
+   if (on)
+       cur |= VM_TYPECHECKS;
+   else
+       cur &= ~VM_TYPECHECKS;
+   setVMOptions(cur);
+ }
+
+
+
 }
 
 

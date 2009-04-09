@@ -111,4 +111,6 @@
 #define btDisable_4_5V 104
 #define doubleToRawLongBits_4D_5J 105
 #define longBitsToDouble_4J_5D 106
+#define setVMOptions_4I_5V 107
+#define getVMOptions_4_5I 108
 #endif // _SPECIALSIGNATURES_H

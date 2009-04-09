@@ -97,7 +97,8 @@ typedef struct S_Object
 typedef struct S_BigArray
 {
   Object hdr;
-  int length;
+  TWOBYTES length;
+  TWOBYTES sig;
 } BigArray;
 
 /**

@@ -21,6 +21,7 @@ public interface SpecialClassConstants {
     "java/lang/InterruptedException",
     "java/lang/IllegalStateException",
     "java/lang/IllegalMonitorStateException",
-    "java/lang/ThreadDeath"
+    "java/lang/ThreadDeath",
+    "java/lang/ArrayStoreException"
   };
 }

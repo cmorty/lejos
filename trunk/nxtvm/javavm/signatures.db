@@ -180,3 +180,6 @@ btDisable()V
 doubleToRawLongBits(D)J
 longBitsToDouble(J)D
 
+#Runtime
+setVMOptions(I)V
+getVMOptions()I

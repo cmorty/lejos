@@ -53,17 +53,16 @@ void install_binary( void* ptr)
   staticFieldsBase = __get_static_fields_base();
   entryClassesBase = __get_entry_classes_base();
   classBase = __get_class_base();
+  gVMOptions = VM_DEFAULT;
 }
 
 byte get_class_index (Object *obj)
 {
-  byte f;
-
-  f = obj->flags.all;
-  if (f & IS_ARRAY_MASK)
+  if (is_array(obj))
     return JAVA_LANG_OBJECT;
-  return (f & CLASS_MASK);
+  return obj->flags.objects.class;
 }
+
 
 /**
  * @return Method record or null.
@@ -252,6 +251,10 @@ boolean dispatch_special (MethodRecord *methodRecord, byte *retAddr)
       case EXEC_RUN:
         // We are running new code, curPc will be set. Nothing to do.
         break;
+      case EXEC_EXCEPTION:
+        // An exception has been thrown. The PC will be set correctly and
+        // the stack may have been adjusted...
+        break;
     }
     // Stack frame not pushed
     return false;
@@ -377,6 +380,9 @@ boolean dispatch_special (MethodRecord *methodRecord, byte *retAddr)
 }
 
 /**
+ * Perform a return from a method call. Clean up the stack, setup
+ * the return of any results, release any monitor and finally set the
+ * PC for the return address.
  */
 void do_return (int numWords)
 {
@@ -435,36 +441,6 @@ void do_return (int numWords)
 }
 
 /**
- * @return 1 or 0.
- */
-STACKWORD instance_of (Object *obj, TWOBYTES classIndex)
-{
-  byte rtType;
-
-  if (obj == null)
-    return 0;
-  // Check for special case of arrays
-  if (classIndex & CC_ARRAY)
-  {
-    // and deal with the array note that we could do a lot more here. We
-    // have the class of the element and the number of dimensions...
-    if (!is_array(obj)) return 0;
-    return 1;
-  }
-  rtType = get_class_index(obj);
-  // TBD: support for interfaces
-  if (is_interface (get_class_record(classIndex)))
-    return 1;
- LABEL_INSTANCE:
-  if (rtType == classIndex)
-    return 1;
-  if (rtType == JAVA_LANG_OBJECT)
-    return 0;
-  rtType = get_class_record(rtType)->parentClass;
-  goto LABEL_INSTANCE;
-}
-
-/**
  * Exceute a "program" on the current thread.
  * @return An indication of how the VM should proceed.
  */
@@ -500,6 +476,132 @@ int execute_program(int prog)
   update_registers(current_stackframe());
   return EXEC_RETRY;
 }
+
+/**
+ * Type checking functions.
+ * The following functions provide mechanisms for obtaining and checking
+ * the types of objects and arrays. These tests make use of a type
+ * signatures which is a two byte word containing the following fields
+ * 15: unused
+ * 12-14: Dimension of an array
+ * 8-11: basic type 0: object for other types see memory.c
+ * 0-7: class index
+ * The signatue is only stored in full for BigArrays, for other objects
+ * it is created on demand. Note that for small arrays we do not have full
+ * type information available, so care must be taken when checking the
+ * type of these.
+ */
+
+/**
+ * Return the type signature of the object.
+ */
+TWOBYTES get_object_sig(Object *obj)
+{
+  if (!obj) return 0;
+  if (is_array(obj))
+  {
+    // We have a full sig only for big arrays
+    if (is_big_array(obj))
+      return ((BigArray *)obj)->sig;
+    else
+      return sig_new_array(0, obj->flags.arrays.type, 0);
+  }
+  return obj->flags.objects.class;
+}
+
+
+/**
+ * Return the type signature for the contents of an array
+ */
+TWOBYTES get_constituent_sig(Object *obj)
+{
+  TWOBYTES sig;  
+  // If not an array just treat as a basic object
+  if (!obj || !is_array(obj)) return 0;
+  sig = get_object_sig(obj);
+  // If we don't have a full signature simply return what we have
+  if (sig_get_dim(sig) == 0)
+    return sig;
+  else
+    return sig_new_array(sig_get_dim(sig)-1, sig_get_base_type(sig), sig_get_class(sig));
+}
+
+
+/**
+ * Check to see if obj is a sub type of the type described by
+ * sig. 
+ */
+static boolean sub_type_of(TWOBYTES obj, TWOBYTES sig)
+{
+  if ( sig == JAVA_LANG_OBJECT) return true;
+  while (obj != sig)
+  {
+    obj = get_class_record(obj)->parentClass;
+    if (obj == JAVA_LANG_OBJECT) return false;
+  }
+  return true;
+}
+  
+
+/**
+ * Check to see if obj is an instance of the type described by sig.
+ * @return true or false
+ */
+boolean instance_of (Object *obj, TWOBYTES sig)
+{
+  TWOBYTES rtType;
+
+  if (obj == null)
+    return false;
+  
+  // Check for common cases
+  if (sig == JAVA_LANG_OBJECT) return true;
+  rtType = get_object_sig(obj);
+  if (rtType == sig) return true;
+  // Check for special case of arrays
+  if (sig_is_array(sig))
+  {
+    // For arrays we may not have much type information available.
+    // In the minimum case we have full information about the signature
+    // but we may not have full info for the object. We will only have the
+    // base type of the last dimension.
+
+    if (!is_array(obj)) return false;
+    // Do we have a full signature for the array.
+    if (!sig_is_array(rtType))
+    {
+      // We only have basic type information, and then only for a 1d array
+      if (sig_get_dim(sig) == 1 && sig_get_base_type(sig) != sig_get_base_type(rtType)) return false;
+      // for all other cases we assume a match...
+      return true;
+    }
+    // We have a full sig so can test it fully...
+    if (sig_get_dim(sig) != sig_get_dim(rtType)) return false;
+    if (sig_get_base_type(sig) != sig_get_base_type(rtType)) return false;
+    // TBD: support for interfaces
+    if (is_interface (get_class_record(sig_get_class(sig))))
+      return true;
+    return sub_type_of(sig_get_class(rtType), sig_get_class(sig));
+  }
+  // TBD: support for interfaces
+  if (is_interface (get_class_record(sig)))
+    return true;
+  return sub_type_of(rtType, sig);
+}
+
+/**
+ * Check to see if it is allowed to assign the an object of type srcSig
+ * to an object of type dstSig.
+ */
+boolean is_assignable(TWOBYTES srcSig, TWOBYTES dstSig)
+{
+  // Check common cases
+  if (srcSig == dstSig || dstSig == JAVA_LANG_OBJECT) return true;
+  // TBD Add support for interfaces
+  if (is_interface(get_class_record(sig_get_class(dstSig)))) return true;
+  return sub_type_of(sig_get_class(srcSig), sig_get_class(dstSig));
+}
+
 
 
 

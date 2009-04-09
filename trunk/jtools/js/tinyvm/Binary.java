@@ -397,9 +397,11 @@ public class Binary
             ClassRecord classRecord = iClassTable.get(pIndex);
             if (classRecord.used())
             {
-               classRecord.addInterfaces(classRecord);
                if (classRecord.instanceUsed())
+               {
+                  classRecord.addInterfaces(classRecord);
                   classRecord.findHiddenMethods();
+               }
             }
          } 
          // Now recursively mark any classes that can be called directly by
