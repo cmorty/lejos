@@ -87,15 +87,15 @@ public class VTGSentence extends NMEASentence{
 		st = new StringTokenizer(nmeaSentence,",");
 		try{
 			st.nextToken();//skip header $GPVTG
-			trueCourse = Float.parseFloat((String)st.nextToken());//True course made good over ground, degrees
+			trueCourse = Float.parseFloat(st.nextToken());//True course made good over ground, degrees
 			st.nextToken();//Letter
-			String sTemp = (String)st.nextToken();
+			String sTemp = st.nextToken();
 			if(sTemp.length() > 0) // This is blank with Holux-1200	
 				magneticCourse = Float.parseFloat(sTemp);//Magnetic course made good over ground
 			st.nextToken();//Letter
 			st.nextToken();//Ground speed, N=Knots
 			st.nextToken();//Letter
-			speed = Float.parseFloat((String)st.nextToken());//Ground speed, K=Kilometers per hour
+			speed = Float.parseFloat(st.nextToken());//Ground speed, K=Kilometers per hour
 			//st.nextToken();//Letter
 		}catch(NoSuchElementException e){
 			//Empty

@@ -56,7 +56,7 @@ public abstract class Item {
 	public void notifyStateChanged() {
 		// Notify ItemStateListener
 		for (int i = 0; (i < commands.size()) && (cmdListener != null); i++) {
-			cmdListener.commandAction((Command) commands.get(i), this);
+			cmdListener.commandAction(commands.get(i), this);
 		}
 	}
 
