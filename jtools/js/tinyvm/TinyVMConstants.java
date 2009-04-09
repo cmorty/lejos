@@ -39,5 +39,4 @@ public class TinyVMConstants
    public static final int M_SYNCHRONIZED = 0x02;
    public static final int M_STATIC = 0x04;
    
-   public static final int CC_ARRAY = 0x8000;
 }

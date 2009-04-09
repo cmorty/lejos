@@ -130,10 +130,7 @@ int init_thread (Thread *thread)
   #endif
 
   if (thread->state != NEW)
-  {
-    throw_exception(illegalStateException);
-    return EXEC_CONTINUE;
-  }
+    return throw_exception(illegalStateException);
   // Protected the argument (that may have come from native code), from the GC
   //protectedRef[0] = (Object *)thread;
   protect_obj(thread);
@@ -576,16 +573,13 @@ void system_notify(Object *obj, const boolean all)
  * Current thread owns object's monitor (we hope) and wishes to relinquish
  * it temporarily (by calling Object.wait()).
  */
-void monitor_wait(Object *obj, const FOURBYTES time)
+int monitor_wait(Object *obj, const FOURBYTES time)
 {
 #if DEBUG_MONITOR
   printf("monitor_wait of %d, thread %d(%d)\n",(int)obj, (int)currentThread, currentThread->threadId);
 #endif
   if (currentThread->threadId != get_thread_id (obj))
-  {
-    throw_exception(illegalMonitorStateException);
-    return;
-  }
+    return throw_exception(illegalMonitorStateException);
   
   // Great. We own the monitor which means we can give it up, but
   // indicate that we are listening for notify's.
@@ -613,24 +607,23 @@ void monitor_wait(Object *obj, const FOURBYTES time)
   
   // Gotta yield
   schedule_request( REQUEST_SWITCH_THREAD);
+  return EXEC_CONTINUE;
 }
 
 /*
  * Current thread owns object's monitor (we hope) and wishes to wake up
  * any other threads waiting on it. (by calling Object.notify()).
  */
-void monitor_notify(Object *obj, const boolean all)
+int monitor_notify(Object *obj, const boolean all)
 {
 #if DEBUG_MONITOR
   printf("monitor_notify of %d, thread %d(%d)\n",(int)obj, (int)currentThread, currentThread->threadId);
 #endif
   if (currentThread->threadId != get_thread_id (obj))
-  {
-    throw_exception(illegalMonitorStateException);
-    return;
-  }
+    return throw_exception(illegalMonitorStateException);
   
   monitor_notify_unchecked(obj, all);
+  return EXEC_CONTINUE;
 }
 
 /*

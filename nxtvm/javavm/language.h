@@ -116,9 +116,6 @@ typedef struct S_ConstantRecord
 
 typedef TWOBYTES STATICFIELD;
 
-// Flags used for INSTANCE and CAST checks
-#define CC_ARRAY 0x8000
-
 extern void *installedBinary;
 
 extern ConstantRecord* constantTableBase;
@@ -137,12 +134,15 @@ extern byte *classStatusBase;
 extern byte get_class_index (Object *obj);
 extern void dispatch_virtual (Object *obj, int signature, byte *rAddr);
 extern MethodRecord *find_method (ClassRecord *classRec, int signature);
-extern STACKWORD instance_of (Object *obj, TWOBYTES classIndex);
+extern boolean instance_of (Object *obj, TWOBYTES classIndex);
 extern void do_return (int numWords);
 extern int dispatch_static_initializer (ClassRecord *aRec, byte *rAddr);
 extern boolean dispatch_special (MethodRecord *methodRecord, byte *retAddr);
 void dispatch_special_checked (byte classIndex, byte methodIndex, byte *retAddr, byte *btAddr);
 int execute_program(int prog);
+extern boolean is_assignable(TWOBYTES srcSig, TWOBYTES dstSig);
+extern TWOBYTES get_constituent_sig(Object *obj);
+extern TWOBYTES get_object_sig(Object *obj);
 //extern void handle_field (byte hiByte, byte loByte, boolean doPut, boolean aStatic, byte *btAddr);
 
 void install_binary( void* ptr);
@@ -214,6 +214,14 @@ void install_binary( void* ptr);
 #define get_entry_classes_base()    (entryClassesBase)
 #define get_entry_class(N_)         (*(get_entry_classes_base() + (N_)))
 
+#define sig_is_array(S) (sig_get_dim(S) != 0)
+#define sig_get_class(S) ((S) & 0xff)
+#define sig_get_base_type(S) (((S) >> 8) & 0xf)
+#define sig_get_dim(S) (((S) >> 12) & 0x7) 
+#define sig_new(C) (C)
+#define sig_new_array(D, B, C) (((D)<<12) | ((B) << 8) | (C))
+#define sig_is_primitive(S) (sig_get_base_type(S) != 0 && !sig_is_array(S))
+
 static inline void initialize_binary()
 {
   MasterRecord *mrec;
@@ -238,6 +246,7 @@ static inline void initialize_binary()
 #define EXEC_RETRY   -1 /* a retry of the current instrucion is required */
 #define EXEC_CONTINUE 0 /* No action required simply return/continue */
 #define EXEC_RUN      1 /* Execute from the new value now in curPc */
+#define EXEC_EXCEPTION 2 /* An exception has been thrown PC will be correct */
 
 #endif // _LANGUAGE_H
 

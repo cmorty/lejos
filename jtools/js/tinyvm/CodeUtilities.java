@@ -83,14 +83,14 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
       if (pClassName.startsWith("["))
       {
          // Handle the special case of array types.
-         int[] pTypeDim = getTypeAndDimensions(pClassName);
-         return (pTypeDim[0] & 0xff) | ((pTypeDim[1] & 0xff) << 8) | TinyVMConstants.CC_ARRAY;
+         int pTypeDim = getTypeAndDimensions(pClassName);
+         return pTypeDim;
       }
       int pIdx = iBinary.getClassIndex(pClassName);
       if (pIdx == -1)
       {
          throw new TinyVMException("Bug CU-3: Didn't find class " + pEntry
-            + " from class " + iCF.getClassName());
+            + " from class " + iCF.getClassName() + " name " + pClassName);
       }
       return pIdx;
    }
@@ -106,29 +106,41 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
       }
       ConstantClass pClassEntry = (ConstantClass) pEntry;
       // TODO fix this?
-      int[] pTypeDim = getTypeAndDimensions(pClassEntry.getBytes(iCF
+      int pTypeDim = getTypeAndDimensions(pClassEntry.getBytes(iCF
          .getConstantPool()));
 
-      assert pTypeDim[0] <= 0xFF: "Check: correct type";
-      assert pTypeDim[1] > 0 && pTypeDim[1] <= 0xFF: "Check: correct dimension";
-      if (pTypeDim[1] > TinyVMConstants.MAX_DIMS)
+
+      return pTypeDim;
+   }
+
+   public int getTypeAndDimensions (String aMultiArrayDesc) throws TinyVMException
+   {
+      int i = 0;
+      while (aMultiArrayDesc.charAt(i) == '[')
+         i++;
+      if (i > TinyVMConstants.MAX_DIMS)
       {
          throw new TinyVMException("In " + iFullName
             + ": Multi-dimensional arrays are limited to " + TinyVMConstants.MAX_DIMS );
       }
 
-      return pTypeDim[0] << 8 | pTypeDim[1];
-   }
-
-   public static int[] getTypeAndDimensions (String aMultiArrayDesc)
-   {
-      int i = 0;
-      while (aMultiArrayDesc.charAt(i) == '[')
-         i++;
-      return new int[]
+      int typ = TinyVMType.tinyVMTypeFromSignature(aMultiArrayDesc.substring(i)).type();
+      int cls = 0;
+      if (typ == TinyVMType.T_OBJECT_TYPE || typ == TinyVMType.T_REFERENCE_TYPE)
       {
-         TinyVMType.tinyVMTypeFromSignature(aMultiArrayDesc.substring(i)).type(), i
-      };
+          // We have an object type so lookup the class index...
+          String name = aMultiArrayDesc.substring(i+1, aMultiArrayDesc.length()-1);
+          cls = iBinary.getClassIndex(name);
+          if (cls == -1)
+          {
+             throw new TinyVMException("Bug CU-3: Didn't find class " + name
+                + " from class " + aMultiArrayDesc);
+          }
+          typ = TinyVMType.T_REFERENCE_TYPE;
+      }
+      // Now construct the array index signature
+     int sig = (i << 12) | (typ << 8) | cls;
+     return sig;
    }
 
    /**
@@ -205,9 +217,26 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
       }
       ConstantClass pClassEntry = (ConstantClass) pEntry;
       String pClassName = pClassEntry.getBytes(iCF.getConstantPool());
-      // No need to mark arrays
+      // Deal with arrays of objects
       if (pClassName.startsWith("["))
-        return;
+      {
+          int i = 0;
+          while (pClassName.charAt(i) == '[')
+             i++;
+          if (i > TinyVMConstants.MAX_DIMS)
+          {
+             throw new TinyVMException("In " + iFullName
+                + ": Multi-dimensional arrays are limited to " + TinyVMConstants.MAX_DIMS );
+          }
+
+          int typ = TinyVMType.tinyVMTypeFromSignature(pClassName.substring(i)).type();
+          // if it is an object we need to mark it
+          if (typ == TinyVMType.T_OBJECT_TYPE || typ == TinyVMType.T_REFERENCE_TYPE)
+              pClassName = pClassName.substring(i+1, pClassName.length()-1);
+          else
+              // No need to mark other array types
+              return;
+      }
       ClassRecord pClassRecord = iBinary.getClassRecord(pClassName);
       if (pClassRecord == null)
       {
@@ -409,19 +438,19 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
                pOutCode[i++] = (byte) (pIdx1 & 0xFF);
                break;
             case OP_ANEWARRAY:
-               // Opcode is changed: ANEWARRAY -> NEWARRAY
-               pOutCode[i - 1] = (byte) OP_NEWARRAY;
-               pOutCode[i++] = (byte) TinyVMType.T_REFERENCE_TYPE;
-               pOutCode[i++] = (byte) OP_NOP;
+               int pIdx5 = processClassIndex((aCode[i] & 0xFF) << 8
+                  | (aCode[i + 1] & 0xFF));
+               // Write the two byte signature
+               pOutCode[i++] = (byte) (pIdx5 >> 8);
+               pOutCode[i++] = (byte) (pIdx5 & 0xFF);
                break;
             case OP_MULTIANEWARRAY:
                int pIdx2 = processMultiArray((aCode[i] & 0xFF) << 8
                   | (aCode[i + 1] & 0xFF));
-               // Write element type
+               // Write the two byte signature
                pOutCode[i++] = (byte) (pIdx2 >> 8);
-               // Write total number of dimensions
                pOutCode[i++] = (byte) (pIdx2 & 0xFF);
-               // Skip requested dimensions for allocation
+               // Include the number of actual dimensions required
                pOutCode[i] = aCode[i];
                i++;
                break;
@@ -632,7 +661,8 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
                   i += 2;
                }
                break;
-               
+
+            case OP_ANEWARRAY:
             case OP_NEW:
             case OP_CHECKCAST:
             case OP_INSTANCEOF:

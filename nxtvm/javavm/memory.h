@@ -13,10 +13,11 @@ extern void deallocate(TWOBYTES *objectRef, TWOBYTES sz);
 extern void free_array (Object *objectRef);
 extern Object *new_object_checked (const byte classIndex, byte *btAddr);
 extern Object *new_object_for_class (const byte classIndex);
-extern Object *new_primitive_array (const byte primitiveType, STACKWORD length);
+extern Object *new_primitive_array (const byte typ, STACKWORD length);
+extern Object *new_single_array (const byte baseType, const int sig, STACKWORD length);
 extern Object *reallocate_array(Object *obj, STACKWORD newlen);
-extern Object *new_multi_array (byte elemType, byte totalDimensions, byte reqDimensions, STACKWORD *numElemPtr);
-extern void arraycopy(Object *src, int srcOff, Object *dst, int dstOff, int len);
+extern Object *new_multi_array (byte elemType, byte cls, byte totalDimensions, byte reqDimensions, STACKWORD *numElemPtr);
+extern int arraycopy(Object *src, int srcOff, Object *dst, int dstOff, int len);
 extern byte *system_allocate(int sz);
 extern void system_free(byte *mem);
 extern void store_word_swp (byte *ptr, int aSize, STACKWORD aWord);
@@ -104,7 +105,6 @@ extern VarStat gc_total_vs;
 extern VarStat mem_alloctm_vs;
 extern VarStat mem_freeblk_vs;
 extern VarStat mem_usedblk_vs;
-
 
 #endif // _MEMORY_H
 

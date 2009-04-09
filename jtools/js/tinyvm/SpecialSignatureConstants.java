@@ -111,6 +111,8 @@ public interface SpecialSignatureConstants {
     "btEnable()V",
     "btDisable()V",
     "doubleToRawLongBits(D)J",
-    "longBitsToDouble(J)D"
+    "longBitsToDouble(J)D",
+    "setVMOptions(I)V",
+    "getVMOptions()I"
   };
 }

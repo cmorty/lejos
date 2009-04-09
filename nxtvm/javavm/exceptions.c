@@ -32,6 +32,7 @@ Object *interruptedException;
 Object *illegalStateException;
 Object *illegalMonitorStateException;
 Object *error;
+Object *arrayStoreException;
 
 // Temporary globals:
 
@@ -60,13 +61,18 @@ void init_exceptions()
   illegalStateException = new_object_for_class (JAVA_LANG_ILLEGALSTATEEXCEPTION);
 
   illegalMonitorStateException = new_object_for_class (JAVA_LANG_ILLEGALMONITORSTATEEXCEPTION);
+  arrayStoreException = new_object_for_class(JAVA_LANG_ARRAYSTOREEXCEPTION);
   error = new_object_for_class (JAVA_LANG_ERROR);
 }
 
 /**
- * @return false iff all threads are dead.
+ * Create an exception.
+ * Find the handler for this exception if one exists and set things up to
+ * handle it. If no handler exists, call the debug interface and if that does
+ * not deal with the exception call the default exception handler.
+ * @return the exection action state.
  */
-void throw_exception (Object *exception)
+int throw_exception (Object *exception)
 {
   Thread *auxThread;
   int exceptionFrame = currentThread->stackFrameArraySize;
@@ -136,7 +142,7 @@ void throw_exception (Object *exception)
 #if DEBUG_EXCEPTIONS
   printf("Found exception handler\n");
 #endif
-        return;
+        return EXEC_EXCEPTION;
       }
     }
     gExceptionRecord++;
@@ -163,7 +169,7 @@ void throw_exception (Object *exception)
   			         gExcepMethodRec, tempMethodRecord,
 			         gExceptionPc);
     }
-    return;
+    return EXEC_CONTINUE;
   }
   // After the return the address will point to the next, instruction, we need
   // to back it off to point to the actual caller...Not that this does not 

@@ -16,11 +16,11 @@ extern Object *illegalArgumentException;
 extern Object *interruptedException;
 extern Object *illegalStateException;
 extern Object *illegalMonitorStateException;
+extern Object *arrayStoreException;
 extern Object *error;
 
 extern void init_exceptions();
-extern void throw_exception (Object *throwable);
-extern void throw_exception_checked (Object *throwable);
+extern int throw_exception (Object *throwable);
 
 #endif
 

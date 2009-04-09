@@ -30,6 +30,7 @@ static boolean memoryInitialized = false;
 // Size of stack frame in 2-byte words
 #define NORM_SF_SIZE ((sizeof(StackFrame) + 1) / 2)
 
+// Basic types and sizes
 const byte typeSize[] = { 
   4, // 0 == T_REFERENCE
   SF_SIZE, // 1 == T_STACKFRAME
@@ -239,7 +240,7 @@ Object *new_object_for_class (const byte classIndex)
   ((is_std_array(obj) ? NORM_OBJ_SIZE : BA_OBJ_SIZE) + comp_array_size(get_array_length(obj), get_element_type(obj)))
 
 
-static void set_array (Object *obj, const byte elemType, const TWOBYTES length, const int baLength)
+static void set_array (Object *obj, const byte elemType, const TWOBYTES length, const int baLength, const int sig)
 {
   #ifdef VERIFY
   assert (elemType <= (ELEM_TYPE_MASK >> ELEM_TYPE_SHIFT), MEMORY0); 
@@ -249,11 +250,21 @@ static void set_array (Object *obj, const byte elemType, const TWOBYTES length, 
   obj->flags.all |= (IS_ARRAY_MASK | ((TWOBYTES) elemType << ELEM_TYPE_SHIFT) | length);
   // If this is a big array set the real length
   if (baLength)
+  {
     ((BigArray *)obj)->length = baLength;
+    ((BigArray *)obj)->sig = sig;
+  }
+    
   #ifdef VERIFY
   assert (is_array(obj), MEMORY3);
   #endif
 }
+
+Object *new_primitive_array(const byte typ, STACKWORD length)
+{
+  return new_single_array(typ, sig_new_array(1, typ, 0), length);
+}
+
 
 /**
  * Allocates an array. 
@@ -264,19 +275,20 @@ static void set_array (Object *obj, const byte elemType, const TWOBYTES length, 
  * is placed immediately at the end of the normal header. This length
  * field contains the real array size.
  */
-Object *new_primitive_array (const byte primitiveType, STACKWORD length)
+Object *new_single_array (const byte baseType, const int sig, STACKWORD length)
 {
   Object *ref;
   unsigned int allocSize;
   unsigned int hdrSize;
   unsigned int baLength;
 
-  allocSize = comp_array_size (length, primitiveType);
+  allocSize = comp_array_size (length, baseType);
 #if DEBUG_MEMORY
-  printf("New array of type %d, length %ld\n", primitiveType, length);
+  printf("New array of type %d, length %ld\n", baseType, length);
 #endif
-  // If this is a large array use a bigger header
-  if (length >= BIGARRAYLEN)
+  // If this is a large array use a bigger header, we also need big arrays
+  // if we want type checking, to allow storage for type info.
+  if (length >= BIGARRAYLEN || (type_checks_enabled() && baseType == T_REFERENCE))
   {
     hdrSize = BA_OBJ_SIZE;
     baLength = length;
@@ -293,7 +305,7 @@ Object *new_primitive_array (const byte primitiveType, STACKWORD length)
 #endif
   if (ref == null)
     return JNULL;
-  set_array (ref, primitiveType, length, baLength);
+  set_array (ref, baseType, length, baLength, sig);
   initialize_state (array_start(ref), allocSize);
   return ref;
 }
@@ -302,11 +314,12 @@ Object *new_primitive_array (const byte primitiveType, STACKWORD length)
 
 /**
  * @@param elemType Type of primitive element of multi-dimensional array.
+ * @@param cls The class index of the element type (zero for primative types).
  * @@param totalDimensions Same as number of brackets in array class descriptor.
  * @@param reqDimensions Number of requested dimensions for allocation.
  * @@param numElemPtr Pointer to first dimension. Next dimension at numElemPtr+1.
  */
-Object *new_multi_array (byte elemType, byte totalDimensions, 
+Object *new_multi_array (byte baseType, byte cls, byte totalDimensions, 
                          byte reqDimensions, STACKWORD *numElemPtr)
 {
   Object *ref;
@@ -318,7 +331,6 @@ Object *new_multi_array (byte elemType, byte totalDimensions,
   assert (totalDimensions >= 1, MEMORY6);
   assert (reqDimensions <= totalDimensions, MEMORY8);
   #endif
-
   if (reqDimensions == 0)
     return JNULL;
 
@@ -329,12 +341,14 @@ Object *new_multi_array (byte elemType, byte totalDimensions,
   }
 
   if (totalDimensions == 1)
-    return new_primitive_array ((elemType == T_OBJECT ? T_REFERENCE : elemType), *numElemPtr);
+    return new_single_array ((baseType == T_OBJECT ? T_REFERENCE : baseType), sig_new_array(1, baseType, cls), *numElemPtr);
 
 
-  ref = new_primitive_array (T_REFERENCE, *numElemPtr);
+  ref = new_single_array (T_REFERENCE, sig_new_array(totalDimensions, baseType, cls), *numElemPtr);
   if (ref == JNULL)
     return JNULL;
+  // If this is a partial array we are done...
+  if (reqDimensions == 1) return ref;
   // Make sure we protect each level from the gc. Once we have returned
   // the ref it will be protected by the level above.
   protect_obj(ref);
@@ -342,7 +356,7 @@ Object *new_multi_array (byte elemType, byte totalDimensions,
   ne = *numElemPtr;
   while (ne--)
   {
-    ref2 = new_multi_array (elemType, totalDimensions - 1, reqDimensions - 1, numElemPtr + 1);
+    ref2 = new_multi_array (baseType, cls, totalDimensions - 1, reqDimensions - 1, numElemPtr + 1);
     if (ref2 == JNULL)
     {
       unprotect_obj(ref);
@@ -360,29 +374,49 @@ Object *new_multi_array (byte elemType, byte totalDimensions,
  * Copy the (partial) contents of one array to another
  * Placed here tp allow access to element size information.
  */
-void arraycopy(Object *src, int srcOff, Object *dst, int dstOff, int len)
+int arraycopy(Object *src, int srcOff, Object *dst, int dstOff, int len)
 {
   int elemSize;
+  TWOBYTES srcSig, dstSig;
+  boolean primitive;
   // validate things
   if (src == null || dst == null)
-  {
-    throw_exception(nullPointerException);
-    return;
-  }
-  if (!is_array(src) || !is_array(dst) || (get_element_type(src) != get_element_type(dst)))
-  {
-    throw_exception(illegalArgumentException);
-    return;
-  }
+    return throw_exception(nullPointerException);
+  if (!is_array(src) || !is_array(dst))
+    return throw_exception(arrayStoreException);
+  // Check type compatibility...
+  srcSig = get_constituent_sig(src);
+  dstSig = get_constituent_sig(dst);
+  primitive = sig_is_primitive(srcSig) || sig_is_primitive(dstSig);
+  if (primitive && srcSig != dstSig)
+    return throw_exception(arrayStoreException);
   if (srcOff < 0 || (srcOff + len > get_array_length(src)) ||
       dstOff < 0 || (dstOff + len > get_array_length(dst)))
+    return throw_exception(arrayIndexOutOfBoundsException);
+ 
+  // write barrier
+  update_array(dst);
+  if (primitive || !type_checks_enabled() || is_assignable(srcSig, dstSig))
   {
-    throw_exception(arrayIndexOutOfBoundsException);
-    return;
+    // copy things the fast way
+    elemSize = typeSize[get_element_type(src)];
+    memmove(get_array_element_ptr(dst, elemSize, dstOff), get_array_element_ptr(src, elemSize, srcOff), len*elemSize);
   }
-  // and finally do the copy!
-  elemSize = typeSize[get_element_type(src)];
-  memcpy(get_array_element_ptr(dst, elemSize, dstOff), get_array_element_ptr(src, elemSize, srcOff), len*elemSize);
+  else
+  {
+    // We have to check every element...
+    int i;
+    REFERENCE *srcPtr = ref_array(src) + srcOff;
+    REFERENCE *dstPtr = ref_array(dst) + dstOff;
+    for(i = 0; i < len; i++)
+    {
+      if (*srcPtr == JNULL || is_assignable(get_object_sig((Object *)*srcPtr), dstSig))
+        *dstPtr++ = *srcPtr++;
+      else
+        return throw_exception(arrayStoreException);
+    }
+  }
+  return EXEC_CONTINUE;
 }
 
 
@@ -427,7 +461,7 @@ byte *system_allocate(int sz)
   ref = java_allocate (allocSize + BA_OBJ_SIZE);
   if (ref == null)
     return JNULL;
-  set_array (ref, T_INT, BIGARRAYLEN, sz);
+  set_array (ref, T_INT, BIGARRAYLEN, sz, 0);
   // Lock the memory to prevent it being collected
   protect_obj(ref);
   // and return a pointer to the actual memory
@@ -1180,6 +1214,7 @@ static void mark_exception_objects( void)
   mark_object( interruptedException);
   mark_object( illegalStateException);
   mark_object( illegalMonitorStateException);
+  mark_object( arrayStoreException);
   mark_object( error);
 }
 
@@ -1564,6 +1599,7 @@ static Object *java_allocate (TWOBYTES size)
 {
   Object *ref;
   long t0 = varstat_gettime();
+//printf("%d\n", size*2);
   // Align memory to boundary appropriate for system  
   size = (size + (MEMORY_ALIGNMENT-1)) & ~(MEMORY_ALIGNMENT-1);
   ref = (Object *)try_allocate(size);
@@ -2041,6 +2077,7 @@ static void mark_exception_objects(void)
   mark_object(interruptedException, 0);
   mark_object(illegalStateException, 0);
   mark_object(illegalMonitorStateException, 0);
+  mark_object(arrayStoreException, 0);
   mark_object(error, 0);
 }
 

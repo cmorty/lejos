@@ -30,6 +30,7 @@ byte    gRequestCode;
 unsigned int gNextProgram;
 unsigned int gNextProgramSize;
 unsigned int gProgramExecutions = 0;
+unsigned int gVMOptions = 0;
 
 int curPcOffset = -1;
 byte *curPc;
@@ -634,7 +635,6 @@ static DISPATCH_LABEL forceCheck[] =
     OPCODE(OP_BREAKPOINT)
     OPCODE(OP_JSR_W)
     OPCODE(OP_GOTO_W)
-    OPCODE(OP_ANEWARRAY);
     OPCODE(OP_XXXUNUSEDXXX)
     OPCODE(OP_INVOKEINTERFACE)
 #if !LONG_ARITHMETIC

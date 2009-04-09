@@ -68,46 +68,42 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
 {
   switch (signature) {
   case wait_4_5V:
-    monitor_wait((Object *) word2ptr(paramBase[0]), 0);
-    return EXEC_CONTINUE;
+    return monitor_wait((Object *) word2ptr(paramBase[0]), 0);
   case wait_4J_5V:
-    monitor_wait((Object *) word2ptr(paramBase[0]), paramBase[2]);
-    return EXEC_CONTINUE;
+    return monitor_wait((Object *) word2ptr(paramBase[0]), paramBase[2]);
   case notify_4_5V:
-    monitor_notify((Object *) word2ptr(paramBase[0]), false);
-    return EXEC_CONTINUE;
+    return monitor_notify((Object *) word2ptr(paramBase[0]), false);
   case notifyAll_4_5V:
-    monitor_notify((Object *) word2ptr(paramBase[0]), true);
-    return EXEC_CONTINUE;
+    return monitor_notify((Object *) word2ptr(paramBase[0]), true);
   case start_4_5V:
     // Create thread, allow for instruction restart
     return init_thread((Thread *) word2ptr(paramBase[0]));
   case yield_4_5V:
     schedule_request(REQUEST_SWITCH_THREAD);
-    return EXEC_CONTINUE;
+    break;
   case sleep_4J_5V:
     sleep_thread(paramBase[1]);
     schedule_request(REQUEST_SWITCH_THREAD);
-    return EXEC_CONTINUE;
+    break;
   case getPriority_4_5I:
     push_word(get_thread_priority((Thread *) word2ptr(paramBase[0])));
-    return EXEC_CONTINUE;
+    break;
   case setPriority_4I_5V:
     {
       STACKWORD p = (STACKWORD) paramBase[1];
 
       if (p > MAX_PRIORITY || p < MIN_PRIORITY)
-	throw_exception(illegalArgumentException);
+	return throw_exception(illegalArgumentException);
       else
 	set_thread_priority((Thread *) word2ptr(paramBase[0]), p);
     }
-    return EXEC_CONTINUE;
+    break;
   case currentThread_4_5Ljava_3lang_3Thread_2:
     push_ref(ptr2ref(currentThread));
-    return EXEC_CONTINUE;
+    break;
   case interrupt_4_5V:
     interrupt_thread((Thread *) word2ptr(paramBase[0]));
-    return EXEC_CONTINUE;
+    break;
   case interrupted_4_5Z:
     {
       JBYTE i = currentThread->interruptState != INTERRUPT_CLEARED;
@@ -115,64 +111,64 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
       currentThread->interruptState = INTERRUPT_CLEARED;
       push_word(i);
     }
-    return EXEC_CONTINUE;
+    break;
   case isInterrupted_4_5Z:
     push_word(((Thread *) word2ptr(paramBase[0]))->interruptState
 	      != INTERRUPT_CLEARED);
-    return EXEC_CONTINUE;
+    break;
   case setDaemon_4Z_5V:
     ((Thread *) word2ptr(paramBase[0]))->daemon = (JBYTE) paramBase[1];
-    return EXEC_CONTINUE;
+    break;
   case isDaemon_4_5Z:
     push_word(((Thread *) word2ptr(paramBase[0]))->daemon);
-    return EXEC_CONTINUE;
+    break;
   case join_4_5V:
     join_thread((Thread *) word2ptr(paramBase[0]), 0);
-    return EXEC_CONTINUE;
+    break;
   case join_4J_5V:
     join_thread((Thread *) word2obj(paramBase[0]), paramBase[2]);
-    return EXEC_CONTINUE;
+    break;
   case exit_4I_5V:
     schedule_request(REQUEST_EXIT);
-    return EXEC_CONTINUE;
+    break;
   case currentTimeMillis_4_5J:
     push_word(0);
     push_word(get_sys_time());
-    return EXEC_CONTINUE;
+    break;
   case setPoller_4_5V:
     set_poller(word2ptr(paramBase[0]));
-    return EXEC_CONTINUE;
+    break;
   case readSensorValue_4I_5I:
     push_word(sensor_adc(paramBase[0]));
-    return EXEC_CONTINUE;
+    break;
   case setADTypeById_4II_5V:
     set_sensor(paramBase[0], paramBase[1]);
-    return EXEC_CONTINUE;
+    break;
   case setPowerTypeById_4II_5V:
     nxt_avr_set_input_power(paramBase[0], paramBase[1]);
-    return EXEC_CONTINUE;
+    break;
   case freeMemory_4_5J:
     push_word(0);
     push_word(getHeapFree());
-    return EXEC_CONTINUE;
+    break;
   case totalMemory_4_5J:
     push_word(0);
     push_word(getHeapSize());
-    return EXEC_CONTINUE;
+    break;
   case test_4Ljava_3lang_3String_2Z_5V:
     if (!paramBase[1]) {
-      throw_exception(error);
+      return throw_exception(error);
     }
-    return EXEC_CONTINUE;
+    break;
   case testEQ_4Ljava_3lang_3String_2II_5V:
     if (paramBase[1] != paramBase[2]) {
-      throw_exception(error);
+      return throw_exception(error);
     }
-    return EXEC_CONTINUE;
+    break;
   case floatToRawIntBits_4F_5I:	// Fall through
   case intBitsToFloat_4I_5F:
     push_word(paramBase[0]);
-    return EXEC_CONTINUE;
+    break;
   case doubleToRawLongBits_4D_5J:	// Fall through
   case longBitsToDouble_4J_5D:
     {
@@ -181,7 +177,7 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
       push_word(w1);
       push_word(w2);
     }
-    return EXEC_CONTINUE;
+    break;
   case drawString_4Ljava_3lang_3String_2II_5V:
     {
       byte *p = word2ptr(paramBase[0]);
@@ -200,21 +196,21 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
 	display_string(buff);
       }
     }
-    return EXEC_CONTINUE;
+    break;
   case drawInt_4III_5V:
     display_goto_xy(paramBase[1], paramBase[2]);
     display_int(paramBase[0], 0);
-    return EXEC_CONTINUE;
+    break;
   case drawInt_4IIII_5V:
      display_goto_xy(paramBase[2], paramBase[3]);
      display_int(paramBase[0], paramBase[1]);
-    return EXEC_CONTINUE;   
+    break;   
   case refresh_4_5V:
     display_update();
-    return EXEC_CONTINUE;
+    break;
   case clear_4_5V:
     display_clear(0);
-    return EXEC_CONTINUE;
+    break;
   case setDisplay_4_1I_5V:
     {
       Object *p = word2ptr(paramBase[0]);
@@ -227,49 +223,49 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
       for (i = 0; i < 200; i++)
 	display_buffer[i] = intArray[i];
     }
-    return EXEC_CONTINUE;
+    break;
   case getDisplay_4_5_1B:
     push_word(display_get_array());
-    return EXEC_CONTINUE;
+    break;
   case setAutoRefresh_4I_5V:
     display_set_auto_update(paramBase[0]);
-    return EXEC_CONTINUE;
+    break;
   case bitBlt_4_1BIIII_1BIIIIIII_5V:
     {
       Object *src = word2ptr(paramBase[0]);
       Object *dst = word2ptr(paramBase[5]);
       display_bitblt((byte *)jbyte_array(src), paramBase[1], paramBase[2], paramBase[3], paramBase[4], (byte *)jbyte_array(dst), paramBase[6], paramBase[7], paramBase[8], paramBase[9], paramBase[10], paramBase[11], paramBase[12]);
-      return EXEC_CONTINUE;
+      break;
     }
   case getSystemFont_4_5_1B:
     push_word(display_get_font());
-    return EXEC_CONTINUE;
+    break;
   case getVoltageMilliVolt_4_5I:
     push_word(battery_voltage());
-    return EXEC_CONTINUE;
+    break;
   case getButtons_4_5I:
     push_word(buttons_get());
-    return EXEC_CONTINUE;
+    break;
   case getTachoCountById_4I_5I:
     push_word(nxt_motor_get_count(paramBase[0]));
-    return EXEC_CONTINUE;
+    break;
   case controlMotorById_4III_5V:
     nxt_motor_set_speed(paramBase[0], paramBase[1], paramBase[2]); 
-    return EXEC_CONTINUE;
+    break;
   case resetTachoCountById_4I_5V:
     nxt_motor_set_count(paramBase[0], 0);
-    return EXEC_CONTINUE;
+    break;
   case i2cEnableById_4II_5V:
     if (i2c_enable(paramBase[0], paramBase[1]) == 0)
       return EXEC_RETRY;
     else
-      return EXEC_CONTINUE;
+      break;
   case i2cDisableById_4I_5V:
     i2c_disable(paramBase[0]);
-    return EXEC_CONTINUE;
+    break;
   case i2cBusyById_4I_5I:
     push_word(i2c_busy(paramBase[0]));
-    return EXEC_CONTINUE;
+    break;
   case i2cStartById_4IIII_1BII_5I:
     {
     	Object *p = word2ptr(paramBase[4]);
@@ -282,7 +278,7 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
     	                    paramBase[5],
     	                    paramBase[6]));                      
     }
-    return EXEC_CONTINUE; 
+    break; 
   case i2cCompleteById_4I_1BI_5I:
     {
     	Object *p = word2ptr(paramBase[1]);
@@ -291,82 +287,82 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
     	                       byteArray,
     	                       paramBase[2]));
     }
-    return EXEC_CONTINUE; 
+    break; 
   case playFreq_4III_5V:
     sound_freq(paramBase[0],paramBase[1], paramBase[2]);
-    return EXEC_CONTINUE;
+    break;
   case btGetBC4CmdMode_4_5I:
     push_word(bt_get_mode());
-    return EXEC_CONTINUE;
+    break;
   case btSetArmCmdMode_4I_5V:
     if (paramBase[0] == 0) bt_set_arm7_cmd();
     else bt_clear_arm7_cmd(); 
-    return EXEC_CONTINUE;
+    break;
   case btSetResetLow_4_5V:
     bt_set_reset_low();
-    return EXEC_CONTINUE;
+    break;
   case btSetResetHigh_4_5V:
     bt_set_reset_high();
-    return EXEC_CONTINUE;
+    break;
   case btWrite_4_1BII_5I:
     {
       Object *p = word2ptr(paramBase[0]);
       byte *byteArray = (byte *) jbyte_array(p);
       push_word(bt_write(byteArray, paramBase[1], paramBase[2]));                      
     }
-    return EXEC_CONTINUE;
+    break;
   case btRead_4_1BII_5I:
     {
       Object *p = word2ptr(paramBase[0]);
       byte *byteArray = (byte *) jbyte_array(p);
       push_word(bt_read(byteArray, paramBase[1], paramBase[2]));                      
     }
-    return EXEC_CONTINUE;
+    break;
   case btPending_4_5I:
     {
       push_word(bt_pending());
     }
-    return EXEC_CONTINUE;
+    break;
   case btEnable_4_5V:
     if (bt_enable() == 0)
       return EXEC_RETRY;
     else
-      return EXEC_CONTINUE;
+      break;
   case btDisable_4_5V:
     bt_disable();
-    return EXEC_CONTINUE;
+    break;
   case usbRead_4_1BII_5I:
      {
       Object *p = word2ptr(paramBase[0]);
       byte *byteArray = (byte *) jbyte_array(p);
       push_word(udp_read(byteArray,paramBase[1], paramBase[2]));
     } 
-    return EXEC_CONTINUE;
+    break;
   case usbWrite_4_1BII_5I:
      {
       Object *p = word2ptr(paramBase[0]);
       byte *byteArray = (byte *) jbyte_array(p);
       push_word(udp_write(byteArray,paramBase[1], paramBase[2]));                      
     }
-    return EXEC_CONTINUE; 
+    break; 
   case usbStatus_4_5I:
     {
       push_word(udp_status());
     }
-    return EXEC_CONTINUE;
+    break;
   case usbEnable_4I_5V:
     {
       udp_enable(paramBase[0]);
     }
-    return EXEC_CONTINUE;
+    break;
   case usbDisable_4_5V:
     {
       udp_disable();
     }
-    return EXEC_CONTINUE;
+    break;
   case usbReset_4_5V:
     udp_reset();
-    return EXEC_CONTINUE; 
+    break; 
   case usbSetSerialNo_4Ljava_3lang_3String_2_5V: 
     {
       byte *p = word2ptr(paramBase[0]);
@@ -376,7 +372,7 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
       len = get_array_length(charArray);
       udp_set_serialno((U8 *)jchar_array(charArray), len);
     }
-    return EXEC_CONTINUE;
+    break;
   case usbSetName_4Ljava_3lang_3String_2_5V:
     {
       byte *p = word2ptr(paramBase[0]);
@@ -386,118 +382,119 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
       len = get_array_length(charArray);
       udp_set_name((U8 *)jchar_array(charArray), len);
     }
-    return EXEC_CONTINUE;
+    break;
   case flashWritePage_4_1BI_5I:
     {
       Object *p = word2ptr(paramBase[0]);
       unsigned long *intArray = (unsigned long *) jint_array(p);
       push_word(flash_write_page(intArray,paramBase[1]));                      
     }
-    return EXEC_CONTINUE;
+    break;
   case flashReadPage_4_1BI_5I:
     {
       Object *p = word2ptr(paramBase[0]);
       unsigned long *intArray = (unsigned long *) jint_array(p);
       push_word(flash_read_page(intArray,paramBase[1]));                      
     }
-    return EXEC_CONTINUE;
+    break;
   case flashExec_4II_5I:
     gNextProgram = (unsigned int) &FLASH_BASE[(paramBase[0]*FLASH_PAGE_SIZE)];
     gNextProgramSize = paramBase[1];
     schedule_request(REQUEST_EXIT);
     // Not sure if we need this or not, but best to be safe
     push_word(0);
-    return EXEC_CONTINUE;
+    break;
   case playSample_4IIIII_5V:
     sound_play_sample(((unsigned char *) &FLASH_BASE[(paramBase[0]*FLASH_PAGE_SIZE)]) + paramBase[1],paramBase[2],paramBase[3],paramBase[4]);
-    return EXEC_CONTINUE;
+    break;
   case getTime_4_5I:
     push_word(sound_get_time());
-    return EXEC_CONTINUE;
+    break;
   case getDataAddress_4Ljava_3lang_3Object_2_5I:
     push_word (ptr2word ((byte *) fields_start(word2ptr(paramBase[0]))));
-    return EXEC_CONTINUE;
+    break;
   case gc_4_5V:
     // Restartable garbage collection
     return garbage_collect();
   case diagn_4II_5I:
     push_word (sys_diagn(paramBase[0], paramBase[1]));
-    return EXEC_CONTINUE;
+    break;
   case shutDown_4_5V:
+    display_clear(1);
     while (1) nxt_avr_power_down(); // does not return 
   case boot_4_5V:
+    display_clear(1);
     while (1) nxt_avr_firmware_update_mode(); // does not return 
   case arraycopy_4Ljava_3lang_3Object_2ILjava_3lang_3Object_2II_5V:
     {
       Object *p1 = word2ptr(paramBase[0]);
       Object *p2 = word2ptr(paramBase[2]);
-      arraycopy(p1, paramBase[1], p2, paramBase[3], paramBase[4]);
+      return arraycopy(p1, paramBase[1], p2, paramBase[3], paramBase[4]);
     }
-    return EXEC_CONTINUE;
   case executeProgram_4I_5V:
     // Exceute program, allow for instruction re-start
     return execute_program(paramBase[0]);
   case setDebug_4_5V:
     set_debug(word2ptr(paramBase[0]));
-    return EXEC_CONTINUE;
+    break;
   case peekWord_4I_5I:
     push_word(*((unsigned long *)(paramBase[0])));
-    return EXEC_CONTINUE;
+    break;
   case eventOptions_4II_5I:
     {
       byte old = debugEventOptions[paramBase[0]];
       debugEventOptions[paramBase[0]] = (byte)paramBase[1];
       push_word(old);
     }
-    return EXEC_CONTINUE;
+    break;
   case suspendThread_4Ljava_3lang_3Object_2_5V:
     suspend_thread(ref2ptr(paramBase[0]));
-    return EXEC_CONTINUE;
+    break;
   case resumeThread_4Ljava_3lang_3Object_2_5V:
     resume_thread(ref2ptr(paramBase[0]));
-    return EXEC_CONTINUE;
+    break;
   case getProgramExecutionsCount_4_5I:
     push_word(gProgramExecutions);
-    return EXEC_CONTINUE;
+    break;
   case getFirmwareRevision_4_5I:
     push_word((STACKWORD) getRevision());
-    return EXEC_CONTINUE;
+    break;
   case getFirmwareMajorVersion_4_5I:
     push_word((STACKWORD) MAJOR_VERSION);
-    return EXEC_CONTINUE;
+    break;
   case getFirmwareMinorVersion_4_5I:
     push_word((STACKWORD) MINOR_VERSION); 
-    return EXEC_CONTINUE;
+    break;
   case hsEnable_4_5V:
     {
       if (hs_enable() == 0)
         return EXEC_RETRY;
     }
-    return EXEC_CONTINUE;
+    break;
   case hsDisable_4_5V:
     {
       hs_disable();
     }
-    return EXEC_CONTINUE;
+    break;
   case hsWrite_4_1BII_5I:
     {
       Object *p = word2ptr(paramBase[0]);
       byte *byteArray = (byte *) jbyte_array(p);
       push_word(hs_write(byteArray, paramBase[1], paramBase[2]));                      
     }
-    return EXEC_CONTINUE;
+    break;
   case hsRead_4_1BII_5I:
     {
       Object *p = word2ptr(paramBase[0]);
       byte *byteArray = (byte *) jbyte_array(p);
       push_word(hs_read(byteArray, paramBase[1], paramBase[2]));                      
     }
-    return EXEC_CONTINUE;
+    break;
   case hsPending_4_5I:
     {
       push_word(hs_pending());
     }
-    return EXEC_CONTINUE;
+    break;
   case hsSend_4BB_1BII_1C_5I:
     {
       Object *p = word2ptr(paramBase[2]);
@@ -506,7 +503,7 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
       U16 *crc = (U16 *)jchar_array(p);
       push_word(hs_send((U8) paramBase[0], (U8)paramBase[1], data, paramBase[3], paramBase[4], crc));
     }
-    return EXEC_CONTINUE;
+    break;
   case hsRecv_4_1BI_1CI_5I:
     {
       Object *p = word2ptr(paramBase[0]);
@@ -515,14 +512,20 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
       U16 *crc = (U16 *)jchar_array(p);
       push_word(hs_recv(data, paramBase[1], crc, paramBase[3]));
     }
-    return EXEC_CONTINUE;
+    break;
     
   case getUserPages_4_5I:
     push_word(FLASH_MAX_PAGES - flash_start_page);
-    return EXEC_CONTINUE;
+    break;
+  case setVMOptions_4I_5V:
+    gVMOptions = paramBase[0];
+    break;
+  case getVMOptions_4_5I:
+    push_word(gVMOptions);
+    break;
 
   default:
-    throw_exception(noSuchMethodError);
+    return throw_exception(noSuchMethodError);
   }
   return EXEC_CONTINUE;
 }

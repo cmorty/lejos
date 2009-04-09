@@ -332,7 +332,7 @@ OPCODE(OP_INSTANCEOF)
   // Stack: unchanged
   // Arguments: 2
   // Ignore hi byte
-  set_top_word (instance_of (word2obj (get_top_ref()),  pc[1]));
+  set_top_word (instance_of (word2obj (get_top_ref()),  pc[1]|(pc[0] << 8)));
   pc += 2;
   DISPATCH;;
 
