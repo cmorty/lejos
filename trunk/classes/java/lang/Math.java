@@ -20,8 +20,8 @@ public final class Math {
 	private static final double LOWER_BOUND = 0.9999999f;
 	private static final double UPPER_BOUND = 1.0D;
 	
-	//private static final float ROUND_FLOAT_MAX = Integer.MAX_VALUE >> 1; // divide by 2 for some kind of safety margin
-	//private static final float ROUND_FLOAT_MIN = -ROUND_FLOAT_MAX;
+	private static final float ROUND_FLOAT_MAX = Integer.MAX_VALUE >> 1; // divide by 2 for some kind of safety margin
+	private static final float ROUND_FLOAT_MIN = -ROUND_FLOAT_MAX;
 	private static final double ROUND_DOUBLE_MAX = Long.MAX_VALUE >> 1; // divide by 2 for some kind of safety margin
 	private static final double ROUND_DOUBLE_MIN = -ROUND_DOUBLE_MAX;
 
@@ -59,7 +59,7 @@ public final class Math {
 		double bd = b;
 		
 		//if negative, just strip decimal places
-		if (b < 0)
+		if (b <= 0)
 			return bd;
 		
 		//if numbers are equal, there were no decimal places
@@ -84,7 +84,7 @@ public final class Math {
 		double bd = b;
 		
 		//if positive, just strip decimal places
-		if (b > 0)
+		if (b >= 0)
 			return bd;
 		
 		//if numbers are equal, there were no decimal places
@@ -100,6 +100,10 @@ public final class Math {
 	 */	
 	public static int round(float a)
 	{	
+		//no rounding required
+		if (a < ROUND_FLOAT_MIN || a > ROUND_FLOAT_MAX)
+			return (int)a;
+		
 		return (int)Math.floor(a + 0.5);
 	}
 	
@@ -123,7 +127,7 @@ public final class Math {
 		if (a < 0)
 			return (long)(a - 0.5);
 		
-		return (long)(a+ 0.5);
+		return (long)(a + 0.5);
 	}
 	
 	public static float signum(float f)
