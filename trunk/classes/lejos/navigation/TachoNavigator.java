@@ -4,7 +4,10 @@ import lejos.nxt.*;
 
 /**
  * This class exists only for backward compatibility with release 0.7 <br>
- * See the javadoc for SimpleNavigator if you don't know how this class works
+ * See the javadoc for SimpleNavigator if you don't know how this class works.
+ *  
+ * @deprecated in 0.8, use SimpleNavigator
+ * 
  * @author Roger Glassey
  */
 public class TachoNavigator extends SimpleNavigator
