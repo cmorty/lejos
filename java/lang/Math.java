@@ -19,6 +19,11 @@ public final class Math {
 	// TODO: The lower bound is probably important for accuracy. Expand when double working.
 	private static final double LOWER_BOUND = 0.9999999f;
 	private static final double UPPER_BOUND = 1.0D;
+	
+	//private static final float ROUND_FLOAT_MAX = Integer.MAX_VALUE >> 1; // divide by 2 for some kind of safety margin
+	//private static final float ROUND_FLOAT_MIN = -ROUND_FLOAT_MAX;
+	private static final double ROUND_DOUBLE_MAX = Long.MAX_VALUE >> 1; // divide by 2 for some kind of safety margin
+	private static final double ROUND_DOUBLE_MIN = -ROUND_DOUBLE_MAX;
 
 	// Used to generate random numbers.
 	private static java.util.Random RAND = new java.util.Random(System.currentTimeMillis());
@@ -47,7 +52,7 @@ public final class Math {
 	public static double ceil(double a)
 	{
 		//no rounding required
-		if (a < Long.MIN_VALUE || a > Long.MAX_VALUE)
+		if (a < ROUND_DOUBLE_MIN || a > ROUND_DOUBLE_MAX)
 			return a;
 		
 		long b = (long)a;
@@ -72,7 +77,7 @@ public final class Math {
 	public static double floor(double a)
 	{
 		//no rounding required
-		if (a < Long.MIN_VALUE || a > Long.MAX_VALUE)
+		if (a < ROUND_DOUBLE_MIN || a > ROUND_DOUBLE_MAX)
 			return a;
 		
 		long b = (long)a;
@@ -103,7 +108,7 @@ public final class Math {
 	 */	
 	public static long round(double a)
 	{	
-		return (long)Math.floor(a+0.5f);
+		return (long)Math.floor(a + 0.5f);
 	}
 	
 	/**
@@ -112,7 +117,7 @@ public final class Math {
 	public static double rint(double a)
 	{	
 		//no rounding required
-		if (a < Long.MIN_VALUE || a > Long.MAX_VALUE)
+		if (a < ROUND_DOUBLE_MIN || a > ROUND_DOUBLE_MAX)
 			return a;
 		
 		if (a < 0)
