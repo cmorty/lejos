@@ -100,7 +100,7 @@ public final class Math {
 	 */	
 	public static int round(float a)
 	{	
-		return (int)Math.floor(a + 0.5f);
+		return (int)Math.floor(a + 0.5);
 	}
 	
 	/**
@@ -108,7 +108,7 @@ public final class Math {
 	 */	
 	public static long round(double a)
 	{	
-		return (long)Math.floor(a + 0.5f);
+		return (long)Math.floor(a + 0.5);
 	}
 	
 	/**
