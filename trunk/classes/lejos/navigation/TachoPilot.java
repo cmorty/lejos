@@ -1,5 +1,7 @@
 package lejos.navigation;
 
+import lejos.navigation.*;
+
 import lejos.nxt.Battery;
 import lejos.nxt.Motor;
 
@@ -16,7 +18,7 @@ import lejos.nxt.Motor;
  * Uses the smoothAcceleration property of Motors to improve motor synchronization when starting a movement. Example:
  * <p>
  * <code><pre>
- * Pilot pilot = new TachoPilot(2.1f, 4.4f, Motor.A, Motor.C, true);  // parameters in inches
+ * TachoPilot pilot = new TachoPilot(2.1f, 4.4f, Motor.A, Motor.C, true);  // parameters in inches
  * pilot.setRobotSpeed(10);                                           // inches per second
  * pilot.travel(12);                                                  // inches
  * pilot.rotate(-90);                                                 // degree clockwise
@@ -68,6 +70,7 @@ public class TachoPilot implements Pilot {
 
   /**
    * Speed of robot for moving in wheel diameter units per seconds.
+   * set by setSpeed(), setMoveSpeed();
    */
   protected float       _robotMoveSpeed;
 
@@ -77,7 +80,7 @@ public class TachoPilot implements Pilot {
   protected float       _robotTurnSpeed;
 
   /**
-   * Motor speed degrees per second. Used by all methods that cause movement.
+   * Motor speed degrees per second. Used by forward(),backward() and steer()
    */
   protected int         _motorSpeed;
 
@@ -87,12 +90,12 @@ public class TachoPilot implements Pilot {
   private byte          _parity;
 
   /**
-   * If true, motor speed regulation is turned on.
+   * If true, motor speed regulation is turned on. Default = true
    */
   private boolean       _regulating = true;
 
   /**
-   * Distance between wheels. Used in steer().
+   * Distance between wheels. Used in steer() and rotate()
    */
   protected final float _trackWidth;
 
@@ -107,7 +110,7 @@ public class TachoPilot implements Pilot {
   protected final float _rightWheelDiameter;
 
   /**
-   * Allocates a Pilot object, and sets the physical parameters of the NXT robot.<br>
+   * Allocates a TachoPilot object, and sets the physical parameters of the NXT robot.<br>
    * Assumes Motor.forward() causes the robot to move forward.
    * 
    * @param wheelDiameter Diameter of the tire, in any convenient units (diameter in mm is usually printed on the tire).
@@ -120,7 +123,7 @@ public class TachoPilot implements Pilot {
   }
 
   /**
-   * Allocates a Pilot object, and sets the physical parameters of the NXT robot.<br>
+   * Allocates a TachoPilot object, and sets the physical parameters of the NXT robot.<br>
    * 
    * @param wheelDiameter Diameter of the tire, in any convenient units (diameter in mm is usually printed on the tire).
    * @param trackWidth Distance between center of right tire and center of left tire, in same units as wheelDiameter.
@@ -134,7 +137,7 @@ public class TachoPilot implements Pilot {
   }
 
   /**
-   * Allocates a Pilot object, and sets the physical parameters of the NXT robot.<br>
+   * Allocates a TachoPilot object, and sets the physical parameters of the NXT robot.<br>
    * 
    * @param leftWheelDiameter Diameter of the left wheel, in any convenient units (diameter in mm is usually printed on
    *          the tire).
@@ -154,7 +157,6 @@ public class TachoPilot implements Pilot {
     _leftWheelDiameter = leftWheelDiameter;
     _leftTurnRatio = trackWidth / leftWheelDiameter;
     _leftDegPerDistance = 360 / ((float) Math.PI * leftWheelDiameter);
-    // right
     _right = rightMotor;
     _rightWheelDiameter = rightWheelDiameter;
     _rightTurnRatio = trackWidth / rightWheelDiameter;
@@ -218,7 +220,7 @@ public class TachoPilot implements Pilot {
   }
 
   /**
-   * Sets speed of both motors and sets regulate speed to true. Only use if your wheels have teh same size.
+   * Sets speed of both motors, as well as moveSpeed and turnSpeed.  Only use if your wheels have the same size.
    * 
    * @param speed The wanted speed in degrees per second.
    */
@@ -239,10 +241,12 @@ public class TachoPilot implements Pilot {
   }
 
   /**
+   * also sets _motorSpeed
    * @see lejos.navigation.Pilot#setMoveSpeed(float)
    */
   public void setMoveSpeed(float speed) {
     _robotMoveSpeed = speed;
+    _motorSpeed =Math.round( 0.5f*speed*(_leftDegPerDistance+_rightDegPerDistance));
     setSpeed(Math.round(speed * _leftDegPerDistance), Math.round(speed * _rightDegPerDistance));
   }
 
@@ -290,7 +294,8 @@ public class TachoPilot implements Pilot {
    * Moves the NXT robot forward until stop() is called.
    */
   public void forward() {
-    setSpeed(_motorSpeed);
+    setSpeed(Math.round(_robotMoveSpeed * _leftDegPerDistance),
+            Math.round(_robotMoveSpeed * _rightDegPerDistance));
     if (_parity == 1) {
       fwd();
     }
@@ -303,7 +308,9 @@ public class TachoPilot implements Pilot {
    * Moves the NXT robot backward until stop() is called.
    */
   public void backward() {
-    setSpeed(_motorSpeed);
+    setSpeed(Math.round(_robotMoveSpeed * _leftDegPerDistance),
+            Math.round(_robotMoveSpeed * _rightDegPerDistance));
+
     if (_parity == 1) {
       bak();
     }
@@ -338,7 +345,7 @@ public class TachoPilot implements Pilot {
     _left.rotate(-rotateAngleLeft, true);
     _right.rotate(rotateAngleRight, immediateReturn);
     if (!immediateReturn) {
-      while (_left.isRotating())
+      while (_left.isRotating()||_right.isRotating())
         Thread.yield();
     }
   }
@@ -406,7 +413,7 @@ public class TachoPilot implements Pilot {
     _left.rotate((int) (_parity * distance * _leftDegPerDistance), true);
     _right.rotate((int) (_parity * distance * _rightDegPerDistance), immediateReturn);
     if (!immediateReturn) {
-      while (_left.isRotating())
+      while (_left.isRotating()||_right.isRotating())
         Thread.yield();
     }
   }
@@ -527,7 +534,7 @@ public class TachoPilot implements Pilot {
     if (immediateReturn) {
       return;
     }
-    while (inside.isRotating())
+    while (inside.isRotating()||outside.isRotating())
       Thread.yield();
     inside.setSpeed(outside.getSpeed());
   }
@@ -627,4 +634,5 @@ public class TachoPilot implements Pilot {
     float ratio = (2 * radiusToUse - _trackWidth) / (2 * radiusToUse + _trackWidth);
     return Math.round(direction * 100 * (1 - ratio));
   }
+
 }
