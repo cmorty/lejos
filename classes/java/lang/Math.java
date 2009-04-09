@@ -67,7 +67,7 @@ public final class Math {
 			return bd;
 			
 		//round up since a must have had some decimal places
-		return bd+1;
+		return bd + 1;
 	}
 	
 	/**
@@ -83,7 +83,7 @@ public final class Math {
 		long b = (long)a;
 		double bd = b;
 		
-		//if negative, just strip decimal places
+		//if positive, just strip decimal places
 		if (b > 0)
 			return bd;
 		
@@ -92,7 +92,7 @@ public final class Math {
 			return bd;
 		
 		//round down since a must have had some decimal places
-		return bd-1;
+		return bd - 1;
 	}
 	
 	/**
