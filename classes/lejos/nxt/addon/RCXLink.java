@@ -157,7 +157,7 @@ public class RCXLink extends I2CSensor implements Opcode {
 	}
 	
 	public void sendF7(int msg) {
-		buf[0] = (byte) OPCODE_SET_MESSAGE;
+		buf[0] = OPCODE_SET_MESSAGE;
 		buf[1] = (byte) (msg & 0xFF);
 		defineAndRun(buf,2);
 	}
@@ -200,13 +200,13 @@ public class RCXLink extends I2CSensor implements Opcode {
 	}
 	
 	public void forward(int id) {
-		buf[0] = (byte) OPCODE_SET_MOTOR_DIRECTION;
+		buf[0] = OPCODE_SET_MOTOR_DIRECTION;
 		buf[1] = (byte) ((1 << id) | 0x80);
 		defineAndRun(buf,2);
 	}
 	
 	public void backward(int id) {
-		buf[0] = (byte) OPCODE_SET_MOTOR_DIRECTION;
+		buf[0] = OPCODE_SET_MOTOR_DIRECTION;
 		buf[1] = (byte) (1 << id);
 		defineAndRun(buf,2);
 	}

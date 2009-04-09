@@ -21,8 +21,8 @@ public class LMotor extends I2CSensor{
 	private SensorPort portConnected;//What
 	protected byte SPI_PORT;//What SPI Port is connected LSC
 
-	public static final int arrMotorUnload[] = {(int)0x01,(int)0x02,(int)0x04,(int)0x08,(int)0x20,(int)0x40,(int)0x80,(int)0x100,(int)0x200};
-	public static final int arrMotorLoad[] = {(int)0x3FE,(int)0x3FD,(int)0x3FB,(int)0x3F7,(int)0x3EF,(int)0x3DF,(int)0x3BF,(int)0x37F,(int)0x2FF,(int)0x1FF};
+	public static final int arrMotorUnload[] = {0x01,0x02,0x04,0x08,0x20,0x40,0x80,0x100,0x200};
+	public static final int arrMotorLoad[] = {0x3FE,0x3FD,0x3FB,0x3F7,0x3EF,0x3DF,0x3BF,0x37F,0x2FF,0x1FF};
 	
 	/**
 	 * Constructor
@@ -108,8 +108,8 @@ public class LMotor extends I2CSensor{
 		h_byte = (byte)0xF0;
 		l_byte = (byte)(((motor)<<4) + delay);
 	     
-		I2C_Response = this.sendData((int)this.SPI_PORT, (byte)h_byte);
-		I2C_Response = this.sendData((int)this.SPI_PORT, (byte)l_byte);
+		I2C_Response = this.sendData((int)this.SPI_PORT, h_byte);
+		I2C_Response = this.sendData((int)this.SPI_PORT, l_byte);
 	}
 	
 	public void unload(){
@@ -118,8 +118,8 @@ public class LMotor extends I2CSensor{
 		byte h_byte;
 		byte l_byte;		
 		
-		int channel = (int)0x00;
-		channel = (int) arrMotorUnload[LSC_position];
+		int channel = 0x00;
+		channel = arrMotorUnload[LSC_position];
 		
 		h_byte = (byte)0xe0; //0xe0 | (0x00 >>(byte)8); //?? 
 		l_byte = (byte)channel;
@@ -140,8 +140,8 @@ public class LMotor extends I2CSensor{
 		byte h_byte;
 		byte l_byte;		
 		
-		int channel = (int)0x00;
-		channel = (int) arrMotorLoad[LSC_position];
+		int channel = 0x00;
+		channel = arrMotorLoad[LSC_position];
 		
 		h_byte = (byte)0xe0; //0xe0 | (0x00 >>(byte)8); //?? 
 		l_byte = (byte)channel;

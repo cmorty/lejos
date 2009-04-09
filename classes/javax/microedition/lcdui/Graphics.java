@@ -242,7 +242,7 @@ public class Graphics
 
          // Calculate angle for partly circles / ellipses
          // NOTE: Below, (float) should not be needed. Not sure why Math.round() only accepts float.
-         int tp = (int) Math.round((float) Math.toDegrees(Math.atan2(yc, xc)));
+         int tp = (int) Math.round(Math.toDegrees(Math.atan2(yc, xc)));
          if (fill)
          {
             /* TODO: Optimize more by drawing horizontal lines */
