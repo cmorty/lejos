@@ -278,7 +278,6 @@ nxt_main(int bin, int size)
   // reset all motors, sensors and devices
 
   init_sensors();
-  //display_clear(1);
   display_set_auto_update(1);
   //       printf("Installing Binary\n");
 
@@ -287,13 +286,13 @@ nxt_main(int bin, int size)
   //      printf("Running\n");
 
   run(jsize);
+  display_clear(1);
   nxt_motor_reset_all();
   bt_reset();
   bt_disable();
   udp_disable();
   hs_disable();
   i2c_disable_all();
-  display_clear(1);
   return 0;
 }
 
@@ -482,7 +481,8 @@ main(void)
   systick_wait_ms(1000); // wait for LCD to stabilize
   display_init();
   show_splash(); 
-  
+char *p = 0xff000000;
+int i = *p;  
   gNextProgram = 0;
   do 
   {
