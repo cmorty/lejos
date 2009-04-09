@@ -73,9 +73,8 @@ public interface Pilot {
    * 
    * @param speed The speed of the drive motor(s) in degree per second.
    * 
-   * @deprecated Try not to use this, as this is dependent on the knowledge of the robots physical construction, which
-   *             this interface should hide! For example, in the case of the TachoPilot this only with wheels of equal
-   *             size.
+   * @deprecated in 0.8, use setTurnSpeed() and setMoveSpeed(). The method was deprecated, as this it requires knowledge
+   *             of the robots physical construction, which this interface should hide! 
    */
   public void setSpeed(int speed);
 
