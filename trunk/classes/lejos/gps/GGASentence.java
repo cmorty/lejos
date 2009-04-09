@@ -164,7 +164,7 @@ public class GGASentence extends NMEASentence{
 			st.nextToken(); // skip $GPGGA header
 			// TODO: I attempted Integer.parseInt and it threw a NumberFormatException because
 			// UTC looks like 175958.000. Is it wrong to discard decimals? Always seem to be 000.
-			dateTimeOfFix = Float.parseFloat((String)st.nextToken());//UTC Time
+			dateTimeOfFix = Float.parseFloat(st.nextToken());//UTC Time
 			latitude = degreesMinToDegrees(st.nextToken());
 			latitudeDirection = st.nextToken().charAt(0);//N
 			longitude = degreesMinToDegrees(st.nextToken());
@@ -176,7 +176,7 @@ public class GGASentence extends NMEASentence{
 				quality = Float.parseFloat(q);//Fix quality
 			}
 			//quality = Float.parseFloat(st.nextToken());//Fix quality
-			satellitesTracked = Float.parseFloat((String)st.nextToken());//Number of satellites being tracked
+			satellitesTracked = Float.parseFloat(st.nextToken());//Number of satellites being tracked
 			
 			h = st.nextToken();
 			if(h.length() == 0){
@@ -185,7 +185,7 @@ public class GGASentence extends NMEASentence{
 				hdop = Float.parseFloat(h);//Horizontal dilution of position
 			}
 			//hdop = Float.parseFloat(st.nextToken());//Horizontal dilution of position
-			altitude = Float.parseFloat((String)st.nextToken());
+			altitude = Float.parseFloat(st.nextToken());
 
 			//Improve quality data
 			if (longitudeDirection != 'E') {

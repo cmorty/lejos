@@ -200,7 +200,7 @@ public class LSC extends I2CSensor {
 		byte h_byte;
 		byte l_byte;
 		
-		int channel = (int)0x00;
+		int channel = 0x00;
 		h_byte = (byte)0xe0; //0xe0 | (0x00 >>(byte)8); //?? 
 		l_byte = (byte)channel;
 	     

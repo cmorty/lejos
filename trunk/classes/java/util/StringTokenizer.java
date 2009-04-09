@@ -22,7 +22,7 @@ public class StringTokenizer implements Enumeration{
 	 * @param s String to be StringTokenizer
 	 */
 	public StringTokenizer(String s){
-		String character = (String)s.substring(s.length()-1);
+		String character = s.substring(s.length()-1);
 		if(character != delimiter){
 			s += delimiter;
 		}
@@ -40,7 +40,7 @@ public class StringTokenizer implements Enumeration{
 	 * @param _delimiter
 	 */
 	public StringTokenizer(String s, String _delimiter) {
-		String character = (String)s.substring(s.length()-1);
+		String character = s.substring(s.length()-1);
 		if(character != _delimiter){
 			s += _delimiter;
 		}

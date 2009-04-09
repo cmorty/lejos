@@ -123,7 +123,7 @@ public class RMCSentence extends NMEASentence{
 		try{
 			st.nextToken(); // skip header $GPRMC
 			// TODO: Maybe leave this as a float for greater accuracy?
-			dateTimeOfFix = (int)Float.parseFloat((String)st.nextToken());
+			dateTimeOfFix = (int)Float.parseFloat(st.nextToken());
 			warning = st.nextToken();
 			//latitude = Float.parseFloat(st.nextToken());
 			latitude = degreesMinToDegrees(st.nextToken());

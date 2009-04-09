@@ -57,7 +57,7 @@ public class RemoteMotor implements NXTProtocol {
 	public int forward() {
 		this.runState = MOTOR_RUN_STATE_RUNNING;
 		try {
-			return nxtCommand.setOutputState(id, (byte)power, this.mode + MOTORON, regulationMode, turnRatio, runState, 0);
+			return nxtCommand.setOutputState(id, power, this.mode + MOTORON, regulationMode, turnRatio, runState, 0);
 		} catch (IOException ioe) {
 			System.out.println(ioe.getMessage());
 			return -1;

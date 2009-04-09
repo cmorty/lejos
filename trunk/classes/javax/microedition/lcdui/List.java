@@ -80,7 +80,7 @@ public class List extends Screen implements Choice {
 //    } 
 
 	public Image getImage(int elementNum) {
-		return ((ListItem) listItems.get(elementNum)).img;
+		return (listItems.get(elementNum)).img;
 	}
 
 	public int getSelectedFlags(boolean[] selectedArray_return) {

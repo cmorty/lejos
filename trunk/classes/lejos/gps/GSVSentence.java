@@ -98,14 +98,14 @@ public class GSVSentence extends NMEASentence{
 		try{
 			st.nextToken(); // Skip header $GPGSV
 			st.nextToken();//Message number
-			satellitesTracked = Integer.parseInt((String)st.nextToken());//Number of satellites being tracked
+			satellitesTracked = Integer.parseInt(st.nextToken());//Number of satellites being tracked
 
 			for(int i=0;i<MAXIMUM_SATELLITES;i++) {
-				int PRN = Integer.parseInt((String)st.nextToken());
+				int PRN = Integer.parseInt(st.nextToken());
 				// TODO: Elevation and azimuth have no decimals?
-				int elevation = Integer.parseInt((String)st.nextToken());
-				int azimuth = Integer.parseInt((String)st.nextToken());
-				int SNR = Integer.parseInt((String)st.nextToken());
+				int elevation = Integer.parseInt(st.nextToken());
+				int azimuth = Integer.parseInt(st.nextToken());
+				int SNR = Integer.parseInt(st.nextToken());
 				
 				ns[i].setPRN(PRN);
 				ns[i].setElevation(elevation);

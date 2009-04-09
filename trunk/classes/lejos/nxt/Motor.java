@@ -119,7 +119,7 @@ public class Motor extends BasicMotor// implements TimerListener
       _voltage = Battery.getVoltage();       
    }
 
-   public int getStopAngle() { return (int)_stopAngle;}
+   public int getStopAngle() { return _stopAngle;}
 
    /**
     * Causes motor to rotate forward.
@@ -331,7 +331,7 @@ public class Motor extends BasicMotor// implements TimerListener
          time0 = (int)System.currentTimeMillis();
          angle0 = getTachoCount();
          basePower = calcPower(_speed);
-         setPower((int)basePower);
+         setPower(basePower);
          basePower *=10;  // scale for better integer arithmetic
          e0 = 0;
       }
@@ -456,7 +456,7 @@ public class Motor extends BasicMotor// implements TimerListener
             try { Thread.sleep(1);} catch(InterruptedException ie) {};
          }
          _rotating = false;
-         setPower((int)calcPower(_speed));
+         setPower(calcPower(_speed));
       }
 
       /**
@@ -521,7 +521,7 @@ public class Motor extends BasicMotor// implements TimerListener
       else _rampUp = false;
       _speed = speed;
       if(speed<0)_speed = - speed;
-      setPower((int)regulator.calcPower(_speed));
+      setPower(regulator.calcPower(_speed));
       regulator.reset();
    }
 
