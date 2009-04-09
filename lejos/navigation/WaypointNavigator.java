@@ -88,9 +88,9 @@ public class WaypointNavigator extends SimpleNavigator {
   public void execute() {
     while (segments.size() > 0) {
       Segment segment = segments.get(0);
-      _pilot.setTurnSpeed(segment.getTurnSpeed());
+      setTurnSpeed(segment.getTurnSpeed());
       rotate(angleTo(segment.getX(), segment.getY()));
-      _pilot.setMoveSpeed(segment.getMoveSpeed());
+      setMoveSpeed(segment.getMoveSpeed());
       travel(distanceTo(segment.getX(), segment.getY()));
       segments.remove(0);
     }
