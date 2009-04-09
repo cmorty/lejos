@@ -211,10 +211,10 @@ public class TinyVMCommandLineParser
         if (commandName == null)
         	commandName = "java "+mainclass.getName();
         
-        String linesep = System.getProperty("line.separator", "\n\r");
-        String header = linesep+"options:";
+        //String linesep = System.getProperty("line.separator", "\n\r");
+        String header = "options:";
         String footer = "";
-
+        
         String usage = commandName + " [options] class1 [class2 ...]";
         PrintWriter out = new PrintWriter(System.out, false);
         out.println();
