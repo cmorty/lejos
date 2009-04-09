@@ -18,7 +18,7 @@
                     <label>Source Packages</label>
                     <type>java</type>
                     <location>.</location>
-                    <includes>lejos/**,java/**,javax/**</includes>
+                    <includes>java/**,javax/**,lejos/**</includes>
                 </source-folder>
             </folders>
             <ide-actions>
@@ -35,13 +35,16 @@
                 <action name="javadoc">
                     <target>docs</target>
                 </action>
+                <action name="run">
+                    <target>classes.jar</target>
+                </action>
             </ide-actions>
             <view>
                 <items>
                     <source-folder style="packages">
                         <label>Source Packages</label>
                         <location>.</location>
-                        <includes>lejos/**,java/**,javax/**</includes>
+                        <includes>java/**,javax/**,lejos/**</includes>
                     </source-folder>
                     <source-file>
                         <location>build.xml</location>
@@ -52,6 +55,7 @@
                     <ide-action name="rebuild"/>
                     <ide-action name="clean"/>
                     <ide-action name="javadoc"/>
+                    <ide-action name="run"/>
                 </context-menu>
             </view>
             <subprojects/>
