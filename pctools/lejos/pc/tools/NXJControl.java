@@ -16,7 +16,7 @@ import java.text.NumberFormat;
  * 
  * @author Lawrie Griffiths
  */
-public class NXJControl implements ListSelectionListener, NXTProtocol {
+public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewerUI {
 	// Constants
 	public static final int MAX_FILES = 30;
 	
@@ -137,9 +137,10 @@ public class NXJControl implements ListSelectionListener, NXTProtocol {
 	private InputValues[] sensorValues = new InputValues[4];
 	private int mv;
 	private int appProtocol = LCP;
-	private int currentRow = -1;
 	private int rowLength = 8; // default
 	private int recordCount;
+	private DataViewComms dvc;
+	private DataViewComms[] dvcs;
 
 	// Formatter
 	private static final NumberFormat FORMAT_FLOAT = NumberFormat.getNumberInstance();
@@ -196,7 +197,7 @@ public class NXJControl implements ListSelectionListener, NXTProtocol {
 					System.out.println(dataColumns.getText() + " is not a number, default reset to 8");
 				}
 				
-				dataDownload();
+				dvc.startDownload();
 			}
 		});
 
@@ -955,7 +956,7 @@ public class NXJControl implements ListSelectionListener, NXTProtocol {
 	/**
 	 * Show a pop-up message
 	 */
-	private void showMessage(String msg) {
+	public void showMessage(String msg) {
 		JOptionPane.showMessageDialog(frame, msg);
 	}
 	
@@ -993,7 +994,6 @@ public class NXJControl implements ListSelectionListener, NXTProtocol {
 		if (e.getValueIsAdjusting()) {
 			int row = nxtTable.getSelectedRow();
 			if (row < 0) return;		
-			currentRow = row;
 			
 			if (nxts[row].connectionState != NXTConnectionState.DISCONNECTED && 
 					nxts[row].connectionState != NXTConnectionState.UNKNOWN) {
@@ -1025,13 +1025,13 @@ public class NXJControl implements ListSelectionListener, NXTProtocol {
 			return;
 		}
 		
-		currentRow = 0;
 		nm = new NXTConnectionModel(nxts, nxts.length);
 		nxtTable.setModel(nm);
 		nxtTable.setRowSelectionInterval(0, 0);
 		nxtTable.getSelectionModel().addListSelectionListener(control);
 		nxtCommands = new NXTCommand[nxts.length];
 		nxtComms = new NXTComm[nxts.length];
+		dvcs = new DataViewComms[nxts.length];
 	}
 
 	/**
@@ -1046,6 +1046,7 @@ public class NXJControl implements ListSelectionListener, NXTProtocol {
 					nc.close();
 				} catch (IOException ioe) {}
 		}
+		nxtCommand = null;
 	}
 
 	/**
@@ -1212,6 +1213,7 @@ public class NXJControl implements ListSelectionListener, NXTProtocol {
 				}
 				updateConnectionStatus(row, false);
 				clearFiles();
+				nxtCommand = null;
 				return;
 			}
 			
@@ -1227,15 +1229,12 @@ public class NXJControl implements ListSelectionListener, NXTProtocol {
 				return;
 			}
 			
-			if (nxts[row].connectionState == NXTConnectionState.DATALOG_CONNECTED) {// Connected, so disconnect
-				try {
-					nxtComm.close();
-					nxts[row].connectionState = NXTConnectionState.DISCONNECTED;
-					System.out.println("NXTInfo status " + nxts[row].connectionState);
-				} catch (IOException ioe) {
-					showMessage("IOException while disconnecting");
-				}
+			if (nxts[row].connectionState == NXTConnectionState.DATALOG_CONNECTED) {// Connected, so disconnect			
+				dvc.close();
+				nxts[row].connectionState = NXTConnectionState.DISCONNECTED;
 				updateConnectionStatus(row, false);
+				dvc.setConnected(false);
+				dvc = null;
 				return;
 			}
 			
@@ -1319,59 +1318,24 @@ public class NXJControl implements ListSelectionListener, NXTProtocol {
 		if (row >= 0) {
 			boolean open = false;
 			theDataLog.setText("");
+			
+			dvcs[row] = new DataViewComms(this);
+			dvc = dvcs[row];
+		    open = dvc.connectTo(nxts[row].name, nxts[row].deviceAddress, nxts[row].protocol);
+            if (!open) {
+            	showMessage("Failed to connect to data logger");
+            	return;
+            }
 
-			try {
-				nxtComm = NXTCommFactory.createNXTComm(nxts[row].protocol);
-				open = nxtComm.open(nxts[row]);
-				nxts[row].connectionState = NXTConnectionState.DATALOG_CONNECTED;
-				updateConnectionStatus(row, true);
-			} catch (NXTCommException e) {
-				showMessage("Exception in open:" + e.getMessage());
-				open = false;
-			}
-
-			if (!open) {
-				showMessage("Failed to connect");
-				return;
-			}
-
-			os = new DataOutputStream(nxtComm.getOutputStream());
-			is = new DataInputStream(nxtComm.getInputStream());		
+			nxts[row].connectionState = NXTConnectionState.DATALOG_CONNECTED;
+			updateConnectionStatus(row, true);
 		}	
-	}
-
-	/**
-	 * Download data
-	 */
-	private void dataDownload() {
-		float x = 0;
-		int b = 15;
-
-		try { // handshake - ready to read data
-			os.write(b);
-			os.flush();
-		} catch (IOException e) {
-			showMessage(e + " handshake failed ");
-		}
-		
-		try {
-			int length = is.readInt();
-			System.out.println(" reading length " + length);
-			for (int i = 0; i < length; i++) {
-				x = is.readFloat();
-				append(x);
-			}
-		} catch (IOException e) {
-			showMessage("read error " + e);
-		}
-		
-		showMessage("Read all data");
 	}
 	
 	/**
 	 * Append data item to the data log
 	 */
-	private void append(float x) {
+	public void append(float x) {
 		if (0 == recordCount % rowLength) theDataLog.append("\n");
 		theDataLog.append(FORMAT_FLOAT.format(x) + "\t ");
 		recordCount++;
@@ -1637,6 +1601,10 @@ public class NXJControl implements ListSelectionListener, NXTProtocol {
 			showMessage("IO Exception formatting file system");
 		}
 	}
+	
+	public void logMessage(String msg) {
+		System.out.println(msg);
+	}
 
 	/**
 	 * Thread to display RConsole output
@@ -1668,5 +1636,11 @@ public class NXJControl implements ListSelectionListener, NXTProtocol {
 				updateConnectionStatus(row, false);
 			} catch (IOException ioe) {}
 		}
+	}
+
+	public void connectedTo(String name, String address) {
+	}
+
+	public void setStatus(String msg) {
 	}
 }
