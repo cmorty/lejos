@@ -178,7 +178,13 @@ public class DataInputStream extends InputStream
 		while(true)
 		{
 			int c = this.read();
-			if (c < 0 || c == '\n')
+			
+			if (c < 0) { // EOF
+				if (strb.length() == 0) return null;
+				break;
+			}
+			
+			if (c == '\n')
 				break;
 			
 			strb.append((char)c);
