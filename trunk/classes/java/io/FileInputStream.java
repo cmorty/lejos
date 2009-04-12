@@ -17,6 +17,7 @@ public class FileInputStream extends InputStream {
 	File file;
 	
 	public FileInputStream(File f) throws FileNotFoundException  {
+        if (!f.exists()) throw new FileNotFoundException();
         file = f;
 		buff = new byte[Flash.BYTES_PER_PAGE];
 		page_pointer = file.page_location;
