@@ -18,19 +18,38 @@ public class ConsoleViewComms
     private ConsoleViewerUI viewer;
     private Reader reader;
     private boolean connected = false;
+    private boolean daemon;
 
-    public ConsoleViewComms(ConsoleViewerUI viewer)
+    public ConsoleViewComms(ConsoleViewerUI viewer, boolean daemon)
     {
+    	this.daemon = daemon;
         this.viewer = viewer;
         reader = new Reader();
+        reader.setDaemon(daemon);
         reader.start();
     }
     
+    /**
+     * Connect to RConsole on the NXT uusing either USB or Bluetooth
+     * 
+     * @param name the name of the NXT or null
+     * @param address the address of the NXT or null
+     * @param useUSB use USB if true, else use Bluetooth
+     * @return true iff the connection was successful
+     */
     public boolean connectTo(String name, String address, boolean useUSB)
     {
     	return connectTo(name, address, (useUSB ? NXTCommFactory.USB : NXTCommFactory.BLUETOOTH));
     }
 
+    /**
+     * Connect to RConsole on the NXT using the specified protocols
+     * 
+     * @param name the name of the NXT or null
+     * @param address the address of the NXT or null
+     * @param protocol USB or Bluetooth or both
+     * @return true iff the connection was successful
+     */
     public boolean connectTo(String name, String address, int protocol)
     {
         con = new NXTConnector();
@@ -71,12 +90,19 @@ public class ConsoleViewComms
         return connected;
     }
     
+    /**
+     * Close the connection
+     */
     public void close() {
     	try {
     		if (con != null) con.close();
     	} catch (IOException e) {}
+    	connected = false;
     }
 
+    /**
+     * Thread to read the RConsole data and send it to the viewer append method
+     */
     private class Reader extends Thread
     {
         public void run()
@@ -92,10 +118,12 @@ public class ConsoleViewComms
                         {
                             viewer.append("" + (char) input);
                         }
-                        is.close();
+                        close();
+                        if (!daemon) return;
                     } catch (IOException e)
                     {
-                        connected = false;
+                        close();
+                        if (!daemon) return;
                     }
                 }               
                 Thread.yield();
