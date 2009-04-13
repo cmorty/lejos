@@ -5,6 +5,7 @@ import lejos.nxt.remote.*;
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.event.*;
+import javax.swing.table.TableColumn;
 import javax.swing.border.*;
 import java.awt.event.*;
 import java.io.*;
@@ -29,7 +30,7 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
 	private static final Dimension filesPanelSize = new Dimension(500, 400);
 	private static final Dimension nxtButtonsPanelSize = new Dimension(220, 130);
 	private static final Dimension filesButtonsPanelSize = new Dimension(700,100);
-	private static final Dimension nxtTableSize = new Dimension(450, 100);	
+	private static final Dimension nxtTableSize = new Dimension(500, 100);	
 	private static final Dimension labelSize = new Dimension(60, 20);
 	private static final Dimension sliderSize = new Dimension(150, 50);
 	private static final Dimension tachoSize = new Dimension(100, 20);
@@ -1030,6 +1031,8 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
 		
 		nm = new NXTConnectionModel(nxts, nxts.length);
 		nxtTable.setModel(nm);
+	    TableColumn col = nxtTable.getColumnModel().getColumn(3);
+	    col.setPreferredWidth(150);
 		nxtTable.setRowSelectionInterval(0, 0);
 		nxtTable.getSelectionModel().addListSelectionListener(control);
 		nxtCommands = new NXTCommand[nxts.length];
@@ -1056,11 +1059,11 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
 	/**
 	 * Update connection status in the connections table
 	 */
-	private void updateConnectionStatus(int row, boolean connected) {
-		nm.setConnected(row, connected);
+	private void updateConnectionStatus(int row, NXTConnectionState state) {
+		nm.setConnected(row, state);
 		nxtTable.repaint();
-		updateConnectButton(connected);
-		if (!connected) nxtCommands[row] = null;
+		updateConnectButton(state != NXTConnectionState.DISCONNECTED);
+		if (state != NXTConnectionState.LCP_CONNECTED) nxtCommands[row] = null;
 	}
 
 	/**
@@ -1214,7 +1217,7 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
 				} catch (IOException ioe) {
 					showMessage("IOException while disconnecting");
 				}
-				updateConnectionStatus(row, false);
+				updateConnectionStatus(row, nxts[row].connectionState);
 				clearFiles();
 				nxtCommand = null;
 				return;
@@ -1223,7 +1226,7 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
 			if (nxts[row].connectionState == NXTConnectionState.RCONSOLE_CONNECTED) {// Connected, so disconnect
 				cvc.close();
 				nxts[row].connectionState = NXTConnectionState.DISCONNECTED;
-				updateConnectionStatus(row, false);
+				updateConnectionStatus(row, nxts[row].connectionState);
 				cvc = null;
 				return;
 			}
@@ -1231,7 +1234,7 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
 			if (nxts[row].connectionState == NXTConnectionState.DATALOG_CONNECTED) {// Connected, so disconnect			
 				dvc.close();
 				nxts[row].connectionState = NXTConnectionState.DISCONNECTED;
-				updateConnectionStatus(row, false);
+				updateConnectionStatus(row, nxts[row].connectionState);
 				dvc.setConnected(false);
 				dvc = null;
 				return;
@@ -1264,7 +1267,7 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
 			if (!open) {
 				showMessage("Failed to connect");
 			} else {
-				updateConnectionStatus(row, true);
+				updateConnectionStatus(row, nxts[row].connectionState);
 				showFiles();
 			}
 		} else showMessage("You must do a search and select the NXT to connect to");
@@ -1286,7 +1289,7 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
 	            return;
 	           }
 			nxts[row].connectionState = NXTConnectionState.RCONSOLE_CONNECTED;
-			updateConnectionStatus(row,true);
+			updateConnectionStatus(row,nxts[row].connectionState);
 		}
 	}
 	
@@ -1308,7 +1311,7 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
             }
 
 			nxts[row].connectionState = NXTConnectionState.DATALOG_CONNECTED;
-			updateConnectionStatus(row, true);
+			updateConnectionStatus(row, nxts[row].connectionState);
 		}	
 	}
 	
@@ -1406,7 +1409,7 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
 		try {
 			nxtCommand.startProgram(fileName);
 			nxtCommand.close();
-			updateConnectionStatus(nxtTable.getSelectedRow(), false);
+			updateConnectionStatus(nxtTable.getSelectedRow(), nxts[row].connectionState);
 			clearFiles();
 		} catch (IOException ioe) {
 			showMessage("IOException running program");
@@ -1557,7 +1560,6 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
 		try {
 			byte[] reply = nxtCommand.LSRead((byte) sensorList.getSelectedIndex());
 			if (reply != null) {
-				System.out.println("LSRead reply length = "	+ reply.length);
 				String hex = toHex(reply);
 				rxData.setText(hex);
 			} else

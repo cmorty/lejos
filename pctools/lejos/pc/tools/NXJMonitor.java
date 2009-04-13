@@ -163,8 +163,8 @@ public class NXJMonitor extends JFrame implements ActionListener {
 		
 		sensorsPanel.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
 		
-		sensorsPanel.setBackground(Color.YELLOW);
-		motorsPanel.setBackground(Color.CYAN);
+		sensorsPanel.setBackground(Color.DARK_GRAY);
+		motorsPanel.setBackground(Color.DARK_GRAY);
 
 		for(int i=0;i<4;i++) {
 			sensorsPanel.add(sensorPanels[i]);
