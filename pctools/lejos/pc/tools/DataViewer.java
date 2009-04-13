@@ -5,6 +5,8 @@ import java.awt.event.*;
 import java.text.NumberFormat;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 /**
  * Downloads  data from the DataLogger running on a NXT <br>
@@ -16,11 +18,11 @@ import javax.swing.*;
  * You can run another download session, but you have to connect again. 
  * The data can be copied and pasted into a spread sheet for analysis & graphing <br>
  * status field shows messages 
+ * 
  * @author Roger Glassey revised  06.15.2008
  *
- * 
  */
-public class DataViewer extends JFrame implements ActionListener, DataViewerUI
+public class DataViewer extends JFrame implements ActionListener, ChangeListener, DataViewerUI
 {
 	private static final long serialVersionUID = 4275975098699509511L;
 	private JButton startButton = new JButton("Download");
@@ -34,6 +36,9 @@ public class DataViewer extends JFrame implements ActionListener, DataViewerUI
     private int _recordCount;  //used by append()
     private int _rowLength; // used by append();
     private DataViewComms comm;
+    private boolean usbSelected = true;
+    private String usingUSB = "Using USB";
+    private String usingBluetooth = "Using Bluetooth";
     /**
      * Screen area to hold the downloaded data
      */
@@ -61,6 +66,8 @@ public class DataViewer extends JFrame implements ActionListener, DataViewerUI
         ButtonGroup choiceGroup = new ButtonGroup();
         choiceGroup.add(usbButton);
         usbButton.setSelected(true);
+        usbButton.addChangeListener(this);
+        btButton.addChangeListener(this);
         choiceGroup.add(btButton);
         connectPanel.add(usbButton);
         connectPanel.add(btButton);
@@ -187,4 +194,21 @@ public class DataViewer extends JFrame implements ActionListener, DataViewerUI
     {
     	System.out.println(msg);
     }
+    
+    /**
+     * Called when USB/Bluetooth radio buttons are selected or changed
+     */
+	public void stateChanged(ChangeEvent e) {
+		if (usbSelected && usbButton.isSelected()) return;
+		if (usbButton.isSelected())
+		{
+			setStatus(usingUSB);
+			usbSelected = true;
+		}
+		else 
+		{
+			setStatus(usingBluetooth);
+			usbSelected = false;
+		}
+	}
 }
