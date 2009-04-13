@@ -42,12 +42,12 @@ public class NXTConnectionModel extends AbstractTableModel {
       nxtData[i][0]  = nxts[i].name;
       nxtData[i][1] = (nxts[i].protocol == NXTCommFactory.USB ? "USB" : "Bluetooth");
       nxtData[i][2] = (nxts[i].deviceAddress == null ? "" : nxts[i].deviceAddress);
-      nxtData[i][3] = "Not connected";
+      nxtData[i][3] = NXTConnectionState.DISCONNECTED;
     }
   }
   
-  public void setConnected(int row, boolean connected) {
-	  nxtData[row][3] = (connected ? "Connected" : "Not connected");
+  public void setConnected(int row, NXTConnectionState state) {
+	  nxtData[row][3] = state;
   }
  
 
