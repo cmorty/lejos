@@ -44,7 +44,7 @@ public class ConsoleViewer extends JFrame implements ConsoleViewerUI, ActionList
         statusField.setPreferredSize(new Dimension(200,20));
         setSize(500, 600);
         buildGui();
-        comm = new ConsoleViewComms(this);
+        comm = new ConsoleViewComms(this, true);
     }
 
     public void buildGui()

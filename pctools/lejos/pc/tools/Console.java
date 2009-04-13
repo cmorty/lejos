@@ -1,7 +1,6 @@
 package lejos.pc.tools;
 
 import lejos.pc.comm.*;
-import java.io.*;
 
 /**
  * Console output monitor class.
@@ -10,29 +9,27 @@ import java.io.*;
  * PC via the USB (or Bluetooth) connection.
  *
  */ 
-public class Console {
+public class Console implements ConsoleViewerUI {
 	public static void main(String[] args) throws Exception {
-		NXTConnector conn = new NXTConnector();
-		conn.addLogListener(new ToolsLogger());
-		boolean connected = conn.connectTo();
-		if (!connected) {
-			System.err.println("No NXT Found");
-			return;
-		}
-		NXTComm nxtComm = conn.getNXTComm();
-        System.out.println("Connected...");
-        
-        // Send handshake to NXT
-        byte [] hello = new byte [] {'C', 'O', 'N'};
-        nxtComm.write(hello);
-        
-        // Process output from the NXT
-        InputStream is = nxtComm.getInputStream();
-        int input;
-		while ((input = is.read()) >= 0) 
-           System.out.print((char)input);
-		try {
-            nxtComm.close();
-		} catch (IOException ioe) {System.out.println("Exception in close");}
+		(new Console()).run();
+	}
+	
+	private void run() {
+		ConsoleViewComms comm = new ConsoleViewComms(this, false);
+		comm.connectTo(null, null, NXTCommFactory.ALL_PROTOCOLS);
+	}
+
+	public void append(String value) {
+		System.out.print(value);
+	}
+
+	public void connectedTo(String name, String address) {
+	}
+
+	public void logMessage(String msg) {
+		System.out.println(msg);		
+	}
+
+	public void setStatus(String msg) {
 	}
 }
