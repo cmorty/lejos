@@ -1,0 +1,20 @@
+<project name="copyscripts" default="copy" basedir=".">
+  	<target name="copy"  description="Copy Windows Scripts">
+  		<copy todir=".">
+  			<fileset dir="../../scripts/windows">
+  				<include name="nxj.bat"/>
+  				<include name="nxjbrowse.bat"/>
+  				<include name="nxjc.bat"/>
+  				<include name="nxjconsole.bat"/>
+  				<include name="nxjconsoleviewer.bat"/>
+  				<include name="nxjdataviewer.bat"/>
+  				<include name="nxjflash.bat"/>
+  				<include name="nxjflashg.bat"/>
+  				<include name="nxjlink.bat"/>
+  				<include name="nxjmonitor.bat"/>
+  				<include name="nxjsocketproxy.bat"/>
+  				<include name="nxjupload.bat"/>
+  			</fileset>
+  		</copy>
+  	</target>
+</project>
