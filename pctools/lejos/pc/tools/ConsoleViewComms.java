@@ -1,12 +1,15 @@
 package lejos.pc.tools;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
+import lejos.pc.comm.*;
 
-import lejos.pc.comm.NXTCommFactory;
-import lejos.pc.comm.NXTConnector;
-
+/**
+ * Contains the logic for connecting to RConsole on the NXT and downloading data.
+ * Can be used by different user interfaces.
+ * 
+ * @author Roger Glassey and Lawrie Griffiths
+ *
+ */
 public class ConsoleViewComms
 {
     private InputStream is = null;
@@ -14,7 +17,7 @@ public class ConsoleViewComms
     private NXTConnector con;
     private ConsoleViewerUI viewer;
     private Reader reader;
-    private boolean _connected = false;
+    private boolean connected = false;
 
     public ConsoleViewComms(ConsoleViewerUI viewer)
     {
@@ -22,44 +25,56 @@ public class ConsoleViewComms
         reader = new Reader();
         reader.start();
     }
-
+    
     public boolean connectTo(String name, String address, boolean useUSB)
+    {
+    	return connectTo(name, address, (useUSB ? NXTCommFactory.USB : NXTCommFactory.BLUETOOTH));
+    }
+
+    public boolean connectTo(String name, String address, int protocol)
     {
         con = new NXTConnector();
         con.addLogListener(new ToolsLogger());
-        if (!con.connectTo(name, address, (useUSB ? NXTCommFactory.USB : NXTCommFactory.BLUETOOTH)))
+        if (!con.connectTo(name, address, protocol))
         {
             return false;
         } else
         {
-            _connected = true;
+            connected = true;
         }
         is = con.getInputStream();
-        _connected = _connected && is != null;
+        connected = connected && is != null;
         os = con.getOutputStream();
-        _connected = _connected && os != null;
-        try  // handshake
+        connected = connected && os != null;
+
+        if (connected)
         {
-            byte[] hello = new byte[]
+            try  // handshake
             {
-                'C', 'O', 'N'
-            };
-            os.write(hello);
-            os.flush();
-        } catch (IOException e)
-        {
-            System.out.println(e + " handshake failed to write ");
-            _connected = false;
-            return false;
-        }
-        if (_connected)
-        {
+                byte[] hello = new byte[]
+                {
+                    'C', 'O', 'N'
+                };
+                os.write(hello);
+                os.flush();
+            } catch (IOException e)
+            {
+                viewer.logMessage("Handshake failed to write: " + e.getMessage());
+                connected = false;
+                return false;
+            }
             name = con.getNXTInfo().name;
             address = con.getNXTInfo().deviceAddress;
             viewer.connectedTo(name, address);
-            System.out.println(" connection " + name + " " + address);
+            viewer.logMessage("Connected to " + name + " " + address);
         }
-        return _connected;
+        return connected;
+    }
+    
+    public void close() {
+    	try {
+    		if (con != null) con.close();
+    	} catch (IOException e) {}
     }
 
     private class Reader extends Thread
@@ -68,7 +83,7 @@ public class ConsoleViewComms
         {
             while (true)
             {              
-                if (_connected)
+                if (connected)
                 {
                     try
                     {
@@ -80,7 +95,7 @@ public class ConsoleViewComms
                         is.close();
                     } catch (IOException e)
                     {
-                        _connected = false;
+                        connected = false;
                     }
                 }               
                 Thread.yield();
