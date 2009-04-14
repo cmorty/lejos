@@ -14,35 +14,30 @@ public final class StringBuffer
 	private static final int INITIAL_CAPACITY = 10;
 	private static final int CAPACITY_INCREMENT_NUM = 3;	//numerator of the increment factor
 	private static final int CAPACITY_INCREMENT_DEN = 2;	//denominator of the increment factor
-	private static final int CAPACITY_INCREMENT_MIN = 5;	//minimal increment
 	
 	private static final char[] buf = new char[32];
 	
 	private char[] characters;
 	private int curLen = 0;
 	
-	private static int newCapacity(int old)
-	{
-		//must work for old == 0
-		return Math.max(old + CAPACITY_INCREMENT_MIN, old * CAPACITY_INCREMENT_NUM / CAPACITY_INCREMENT_DEN); 
-	}
-	
 	public void ensureCapacity(int minCapacity)
 	{
-		if (characters.length < minCapacity)
+		int cl = characters.length;
+		if (cl < minCapacity)
 		{
-			int newCapacity = newCapacity(characters.length);
-			while (newCapacity < minCapacity)
-				newCapacity = newCapacity(newCapacity);
+			cl = cl * CAPACITY_INCREMENT_NUM / CAPACITY_INCREMENT_DEN;
+			while (cl < minCapacity)
+				cl = cl * CAPACITY_INCREMENT_NUM / CAPACITY_INCREMENT_DEN;
 			
-			char[] newData = new char[newCapacity];
+			char[] newData = new char[cl];
 			System.arraycopy(characters, 0, newData, 0, curLen);
 			characters = newData;
 		}
 	}
 
-  public StringBuffer () {
-  	this(INITIAL_CAPACITY);
+  public StringBuffer ()
+  {
+    characters = new char[INITIAL_CAPACITY];
   }
   
   public StringBuffer (String aString)
@@ -53,6 +48,9 @@ public final class StringBuffer
 
   public StringBuffer (int length)
   {
+    if (length < INITIAL_CAPACITY)
+    	length = INITIAL_CAPACITY;
+    
     characters = new char[length];
   }
 
