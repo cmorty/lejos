@@ -1,7 +1,5 @@
 package lejos.navigation;
 
-import lejos.navigation.*;
-
 import lejos.nxt.Battery;
 import lejos.nxt.Motor;
 
@@ -18,7 +16,7 @@ import lejos.nxt.Motor;
  * Uses the smoothAcceleration property of Motors to improve motor synchronization when starting a movement. Example:
  * <p>
  * <code><pre>
- * TachoPilot pilot = new TachoPilot(2.1f, 4.4f, Motor.A, Motor.C, true);  // parameters in inches
+ * Pilot pilot = new TachoPilot(2.1f, 4.4f, Motor.A, Motor.C, true);  // parameters in inches
  * pilot.setRobotSpeed(10);                                           // inches per second
  * pilot.travel(12);                                                  // inches
  * pilot.rotate(-90);                                                 // degree clockwise
@@ -34,6 +32,9 @@ import lejos.nxt.Motor;
  * pilot.stop();
  * </pre></code>
  * </p>
+ * 
+ * Note: if you are sure you do not want to use any other part of navigation you can as well use
+ * "TachoPilot pilot = new TachoPilot(...)" instead of "Pilot pilot = new TachoPilot(...)"
  **/
 public class TachoPilot implements Pilot {
   /**
@@ -69,8 +70,7 @@ public class TachoPilot implements Pilot {
   protected final float _rightTurnRatio;
 
   /**
-   * Speed of robot for moving in wheel diameter units per seconds.
-   * set by setSpeed(), setMoveSpeed();
+   * Speed of robot for moving in wheel diameter units per seconds. Set by setSpeed(), setMoveSpeed()
    */
   protected float       _robotMoveSpeed;
 
@@ -80,7 +80,7 @@ public class TachoPilot implements Pilot {
   protected float       _robotTurnSpeed;
 
   /**
-   * Motor speed degrees per second. Used by forward(),backward() and steer()
+   * Motor speed degrees per second. Used by forward(),backward() and steer().
    */
   protected int         _motorSpeed;
 
@@ -90,12 +90,12 @@ public class TachoPilot implements Pilot {
   private byte          _parity;
 
   /**
-   * If true, motor speed regulation is turned on. Default = true
+   * If true, motor speed regulation is turned on. Default = true.
    */
   private boolean       _regulating = true;
 
   /**
-   * Distance between wheels. Used in steer() and rotate()
+   * Distance between wheels. Used in steer() and rotate().
    */
   protected final float _trackWidth;
 
@@ -157,6 +157,7 @@ public class TachoPilot implements Pilot {
     _leftWheelDiameter = leftWheelDiameter;
     _leftTurnRatio = trackWidth / leftWheelDiameter;
     _leftDegPerDistance = 360 / ((float) Math.PI * leftWheelDiameter);
+    // right
     _right = rightMotor;
     _rightWheelDiameter = rightWheelDiameter;
     _rightTurnRatio = trackWidth / rightWheelDiameter;
@@ -220,7 +221,7 @@ public class TachoPilot implements Pilot {
   }
 
   /**
-   * Sets speed of both motors, as well as moveSpeed and turnSpeed.  Only use if your wheels have the same size.
+   * Sets speed of both motors, as well as moveSpeed and turnSpeed. Only use if your wheels have the same size.
    * 
    * @param speed The wanted speed in degrees per second.
    */
@@ -242,11 +243,12 @@ public class TachoPilot implements Pilot {
 
   /**
    * also sets _motorSpeed
+   * 
    * @see lejos.navigation.Pilot#setMoveSpeed(float)
    */
   public void setMoveSpeed(float speed) {
     _robotMoveSpeed = speed;
-    _motorSpeed =Math.round( 0.5f*speed*(_leftDegPerDistance+_rightDegPerDistance));
+    _motorSpeed = Math.round(0.5f * speed * (_leftDegPerDistance + _rightDegPerDistance));
     setSpeed(Math.round(speed * _leftDegPerDistance), Math.round(speed * _rightDegPerDistance));
   }
 
@@ -294,8 +296,7 @@ public class TachoPilot implements Pilot {
    * Moves the NXT robot forward until stop() is called.
    */
   public void forward() {
-    setSpeed(Math.round(_robotMoveSpeed * _leftDegPerDistance),
-            Math.round(_robotMoveSpeed * _rightDegPerDistance));
+    setSpeed(Math.round(_robotMoveSpeed * _leftDegPerDistance), Math.round(_robotMoveSpeed * _rightDegPerDistance));
     if (_parity == 1) {
       fwd();
     }
@@ -308,8 +309,7 @@ public class TachoPilot implements Pilot {
    * Moves the NXT robot backward until stop() is called.
    */
   public void backward() {
-    setSpeed(Math.round(_robotMoveSpeed * _leftDegPerDistance),
-            Math.round(_robotMoveSpeed * _rightDegPerDistance));
+    setSpeed(Math.round(_robotMoveSpeed * _leftDegPerDistance), Math.round(_robotMoveSpeed * _rightDegPerDistance));
 
     if (_parity == 1) {
       bak();
@@ -345,7 +345,7 @@ public class TachoPilot implements Pilot {
     _left.rotate(-rotateAngleLeft, true);
     _right.rotate(rotateAngleRight, immediateReturn);
     if (!immediateReturn) {
-      while (_left.isRotating()||_right.isRotating())
+      while (_left.isRotating() || _right.isRotating())
         Thread.yield();
     }
   }
@@ -413,7 +413,7 @@ public class TachoPilot implements Pilot {
     _left.rotate((int) (_parity * distance * _leftDegPerDistance), true);
     _right.rotate((int) (_parity * distance * _rightDegPerDistance), immediateReturn);
     if (!immediateReturn) {
-      while (_left.isRotating()||_right.isRotating())
+      while (_left.isRotating() || _right.isRotating())
         Thread.yield();
     }
   }
@@ -534,7 +534,7 @@ public class TachoPilot implements Pilot {
     if (immediateReturn) {
       return;
     }
-    while (inside.isRotating()||outside.isRotating())
+    while (inside.isRotating() || outside.isRotating())
       Thread.yield();
     inside.setSpeed(outside.getSpeed());
   }
@@ -634,5 +634,4 @@ public class TachoPilot implements Pilot {
     float ratio = (2 * radiusToUse - _trackWidth) / (2 * radiusToUse + _trackWidth);
     return Math.round(direction * 100 * (1 - ratio));
   }
-
 }
