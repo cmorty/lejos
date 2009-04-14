@@ -102,7 +102,7 @@ public class MServo extends I2CSensor{
 		this.pulse = pulse;
 		int internalPulse = Math.round(pulse/10);
 		this.setAddress(MSC.NXTSERVO_ADDRESS);
-		sendData((int)(SERVO1_POSITION + servoPosition - 1), (byte)internalPulse);
+		sendData(SERVO1_POSITION + servoPosition - 1, (byte)internalPulse);
 	}
 	
 	/**
@@ -146,6 +146,6 @@ public class MServo extends I2CSensor{
 	 */
 	public void setSpeed(int speed){
 		this.setAddress(MSC.NXTSERVO_ADDRESS);
-		sendData((int) (SERVO1_SPEED + servoPosition - 1), (byte)speed);
+		sendData((SERVO1_SPEED + servoPosition - 1), (byte)speed);
 	}
 }

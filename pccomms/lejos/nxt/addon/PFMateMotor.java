@@ -9,7 +9,7 @@ package lejos.nxt.addon;
  * @author Michael Smith <mdsmitty@gmail.com>
  **/
 public class PFMateMotor{
-	private PFMate recever;
+	private PFMate receiver;
 	private int operReg, speedReg;
 	private byte [] buffer = new byte[1];
 	private final static byte FLT = 0, FORWARD = 1, BACKWARD = 2, STOP = 3;
@@ -20,7 +20,7 @@ public class PFMateMotor{
 	 * @param speedReg Speed Register
 	 */
 	PFMateMotor(PFMate recever, int operReg, int speedReg){
-		this.recever = recever;
+		this.receiver = recever;
 		this.operReg = operReg;
 		this.speedReg = speedReg;
 	}
@@ -30,7 +30,7 @@ public class PFMateMotor{
 	 * Floats the motor
 	 */
 	public void flt(){
-		recever.sendData(operReg, FLT);
+		receiver.sendData(operReg, FLT);
 	}
 	
 	/**
@@ -38,7 +38,8 @@ public class PFMateMotor{
 	 *
 	 */
 	public void forward(){
-		recever.sendData(operReg, FORWARD);
+		receiver.sendData(operReg, FORWARD);
+		receiver.sendData(0x41, (byte)0x47);
 	}
 	
 	/**
@@ -46,7 +47,8 @@ public class PFMateMotor{
 	 *
 	 */
 	public void backward(){
-		recever.sendData(operReg, BACKWARD);
+		receiver.sendData(operReg, BACKWARD);
+		receiver.sendData(0x41, (byte)0x47);
 	}
 	
 	/**
@@ -54,7 +56,8 @@ public class PFMateMotor{
 	 *
 	 */
 	public void stop(){
-		recever.sendData(operReg, STOP);
+		receiver.sendData(operReg, STOP);
+		receiver.sendData(0x41, (byte)0x47);
 	}
 
 	/**
@@ -64,7 +67,8 @@ public class PFMateMotor{
 	public void setSpeed(int speed){
 		if(speed < 1) speed = 1;
 		if (speed > 7) speed = 7;
-		recever.sendData(speedReg, (byte) speed);
+		receiver.sendData(speedReg, (byte) speed);
+		receiver.sendData(0x41, (byte)0x47);
 	}
 	
 	/**
@@ -72,7 +76,7 @@ public class PFMateMotor{
 	 * @return 1 - 7
 	 */
 	public int getSpeed(){
-		recever.getData(speedReg, buffer, 1);
+		receiver.getData(speedReg, buffer, 1);
 		return buffer[0];
 	}
 	
@@ -81,7 +85,7 @@ public class PFMateMotor{
 	 * @return boolean
 	 */
 	public boolean isFlt(){
-		recever.getData(operReg, buffer, 1);
+		receiver.getData(operReg, buffer, 1);
 		if(buffer[0]== FLT) return true;
 		return false;
 	}
@@ -91,7 +95,7 @@ public class PFMateMotor{
 	 * @return boolean
 	 */
 	public boolean isForward(){
-		recever.getData(operReg, buffer, 1);
+		receiver.getData(operReg, buffer, 1);
 		if(buffer[0]== FORWARD) return true;
 		return false;
 	}
@@ -101,7 +105,7 @@ public class PFMateMotor{
 	 * @return boolean
 	 */
 	public boolean isBackward(){
-		recever.getData(operReg, buffer, 1);
+		receiver.getData(operReg, buffer, 1);
 		if(buffer[0]== BACKWARD) return true;
 		return false;
 	}
@@ -111,7 +115,7 @@ public class PFMateMotor{
 	 * @return boolean
 	 */
 	public boolean isStop(){
-		recever.getData(operReg, buffer, 1);
+		receiver.getData(operReg, buffer, 1);
 		if(buffer[0]== STOP) return true;
 		return false;
 	}
