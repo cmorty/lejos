@@ -14,4 +14,13 @@ public class Class<T>
 	{
 		throw new ClassNotFoundException();
 	}
+	
+	/**
+	 * Always return false.
+	 * @return false
+	 */
+	public boolean desiredAssertionStatus()
+	{
+		return false;
+	}
 }
