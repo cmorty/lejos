@@ -9,20 +9,13 @@ package java.util;
  */
 public class ArrayList<E> extends AbstractList<E> implements RandomAccess
 {
-	private static final int INITIAL_CAPACITY = 7;
+	private static final int INITIAL_CAPACITY = 10;
 	private static final int CAPACITY_INCREMENT_NUM = 3;	//numerator of the increment factor
 	private static final int CAPACITY_INCREMENT_DEN = 2;	//denominator of the increment factor
-	private static final int CAPACITY_INCREMENT_MIN = 3;	//minimal increment
 	
 	//MISSING implements Clonable
 	//MISSING implements Serializable
 	
-	private static int newCapacity(int old)
-	{
-		//must work for old == 0
-		return Math.max(old + CAPACITY_INCREMENT_MIN, old * CAPACITY_INCREMENT_NUM / CAPACITY_INCREMENT_DEN); 
-	}
-
 	private class MyIterator implements ListIterator<E>
 	{
 		private int modcount;
@@ -123,7 +116,8 @@ public class ArrayList<E> extends AbstractList<E> implements RandomAccess
 	 */
 	public ArrayList()
 	{
-		this(INITIAL_CAPACITY);
+		elementCount = 0;
+		elementData = new Object[INITIAL_CAPACITY];
 	}
 	
 	public ArrayList(Collection<? extends E> c)
@@ -141,6 +135,8 @@ public class ArrayList<E> extends AbstractList<E> implements RandomAccess
 	{
 		if (initialCapacity < 0)
 			throw new IllegalArgumentException();
+		if (initialCapacity < INITIAL_CAPACITY)
+			initialCapacity = INITIAL_CAPACITY;
 		
 		elementCount = 0;
 		elementData = new Object[initialCapacity];
@@ -278,13 +274,14 @@ public class ArrayList<E> extends AbstractList<E> implements RandomAccess
 	{
 		modCount++;
 		
-		if (elementData.length < minCapacity)
+		int el = elementData.length;
+		if (el < minCapacity)
 		{
-			int newCapacity = newCapacity(elementData.length);
-			while (newCapacity < minCapacity)
-				newCapacity = newCapacity(newCapacity);
+			el = el * CAPACITY_INCREMENT_NUM / CAPACITY_INCREMENT_DEN;
+			while (el < minCapacity)
+				el = el * CAPACITY_INCREMENT_NUM / CAPACITY_INCREMENT_DEN;
 			
-			Object[] newData = new Object[newCapacity];
+			Object[] newData = new Object[el];
 			System.arraycopy(elementData, 0, newData, 0, elementCount);
 			elementData = newData;
 		}
