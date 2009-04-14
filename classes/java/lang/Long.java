@@ -122,7 +122,7 @@ public final class Long extends Number implements Comparable<Long>
 		return v & -v;
 	}
 	
-	public static int numberOfLedingZeros(long v)
+	public static int numberOfLeadingZeros(long v)
 	{
 		//initialize with one, because we assume that the sign bit is zero.
 		//if not, we subtract it again at the end of the method.

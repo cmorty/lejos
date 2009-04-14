@@ -216,9 +216,9 @@ public final class Double extends Number
         long m = l & 0x7fffffffffffffffL;
         // and check for being in the NaN range
         if (m >= 0x7ff0000000000001L && m <= 0x7fffffffffffffffL)
-            m = 0x7ff8000000000000L;
+            l = 0x7ff8000000000000L;
         
-        return m;
+        return l;
     }
 
 	/**

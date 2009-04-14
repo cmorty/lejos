@@ -110,9 +110,9 @@ public final class Float extends Number
         int j = i & 0x7fffffff;
         // and check for being in the NaN range
         if (j >= 0x7f800001 && j <= 0x7fffffff)
-            j = 0x7fc00000;
+            i = 0x7fc00000;
 
-        return j;
+        return i;
     }
 	/**
 	 * Returns the float value of this Float  object.
