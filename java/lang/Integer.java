@@ -146,7 +146,7 @@ public final class Integer extends Number implements Comparable<Integer>
 		return v & -v;
 	}
 	
-	public static int numberOfLedingZeros(int v)
+	public static int numberOfLeadingZeros(int v)
 	{
 		if (v == 0)
 			return 32;
