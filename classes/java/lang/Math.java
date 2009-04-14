@@ -22,6 +22,8 @@ public final class Math
 	private static final double LOWER_BOUND = 0.9999999f;
 	private static final double UPPER_BOUND = 1.0D;
 
+	private static final double EXP_REL_BOUND = 0x1.0p-52;
+	
 	// dividing by 2 for some kind of safety margin
 	private static final float ROUND_FLOAT_MAX = Integer.MAX_VALUE >> 1;
 	private static final float ROUND_FLOAT_MIN = -ROUND_FLOAT_MAX;
@@ -254,28 +256,21 @@ public final class Math
 		 * better for +ve numbers so force argument to be +ve.
 		 */
 
-		boolean neg = a < 0 ? true : false;
-		if (a < 0)
+		boolean neg = a < 0;
+		if (neg)
 			a = -a;
-		int fac = 1;
+		
 		double term = a;
-		double sum = 0;
-		double oldsum = 0;
-		double end;
+		double sum = 1;
 
-		do
+		for (int fac = 2; true; fac++)
 		{
-			oldsum = sum;
+			if (term < sum * EXP_REL_BOUND)
+				break;
+			
 			sum += term;
-
-			fac++;
-
 			term *= a / fac;
-			end = sum / oldsum;
 		}
-		while (end < LOWER_BOUND || end > UPPER_BOUND);
-
-		sum += 1.0;
 
 		return neg ? 1.0 / sum : sum;
 	}
