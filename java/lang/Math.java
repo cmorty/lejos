@@ -420,9 +420,9 @@ public final class Math
 	private static double sqrtApproxLinear(double x)
 	{
 		//don't call this function for zero, infinity or NaN
-		assert (x > 0);
-		assert !Double.isNaN(x);
-		assert !Double.isInfinite(x);
+		//assert (x > 0);
+		//assert !Double.isNaN(x);
+		//assert !Double.isInfinite(x);
 		
 		/**
 		 * The following is done here:
@@ -480,7 +480,7 @@ public final class Math
 			man = (man * SQRT_APPROX_EVEN_MULT) >> SQRT_APPROX_EVEN_SHIFT;
 		
 		//if this fails, sub 1 from SQRT_APPROX_ODD_ADD
-		assert man < (1L << 52);
+		//assert man < (1L << 52);
 		
 		//return calculated number
 		return Double.longBitsToDouble(((long)newexp << 52) | man);
