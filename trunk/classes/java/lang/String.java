@@ -8,7 +8,7 @@ public final class String
   // NOTE: The state of this class is mapped to
   // native code (see vmsrc/classes.h).
 
-  char[] characters;
+  final char[] characters;
   
   //Cache the calculated hash
   private int hash = 0;
