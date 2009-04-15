@@ -5,10 +5,9 @@ import lejos.nxt.socket.*;
 import java.io.*;
 
 /**
-* Simple test program. Echoes something similar back to
-* the socket server
-* @author Ranulf Green
-*
+* Simple test program. Echoes data back to the socket server
+* 
+* @author Ranulf Green and Lawrie Griffiths
 */
 public class SocketTest {
 
@@ -20,38 +19,58 @@ public class SocketTest {
 	private String waiting = "waiting";
 
 	public  SocketTest() throws Exception{
-		connect();
+		try {
+			connect();
+		} catch (IOException e) {
+			System.out.println("Failed to connect to server");
+			System.exit(1);
+		}
 		while(true){
 			ins = sock.getDataInputStream();
 			outs = sock.getDataOutputStream();
 			try {
-				String s = ins.readLine();
+				String s = readLine();
 				System.out.println(s);
 				if (s.equals("bye")) break;
-				s = "not " + s + '\n';
+				s = "Received " + s + '\n';
 				outs.writeChars(s);
 				outs.flush();
-			}catch(IOException e){
+			} catch(EOFException e){
+				System.out.println("End of file");
+				break;
+			} catch(IOException e){
 				System.out.println("IO Exception");
+				break;
 			}
 		}
 		ins.close();
 		outs.close();
-		sock.close();
-		
+		sock.close();	
 	}
 
-	public void connect()throws IOException{
+	public void connect() throws IOException {
 		LCD.drawString(waiting,0,0);
 		btc = Bluetooth.waitForConnection();
 		LCD.clear();
 		sock = new NXTSocket("localhost", 8081, btc);
+
 		LCD.drawString(connected,0,0);
 	}
 
 	public static void main(String [] args)  throws Exception
 	{
 		new SocketTest();
+	}
+	
+	private String readLine() throws IOException{
+		StringBuffer sb = new StringBuffer();
+		
+		while(true) {
+			char c = ins.readChar();
+			if (c == '\n') break;
+			sb.append(c);
+		}
+		return sb.toString();
 	}
 }
 
