@@ -6,7 +6,7 @@ import javax.swing.*;
 import javax.swing.event.*;
 
 /**
- * Downloads  data from the RConsole running on a MXT <br>
+ * Downloads  data from the RConsole running on a NXT <br>
  * Uses USB by default, or Bluetooth  if selected from buttons.
  * If using Bluetooth, you can get a quicker connection entering the name or address 
  * of you NXT.<br>
@@ -116,6 +116,9 @@ public class ConsoleViewer extends JFrame implements ConsoleViewerUI, ActionList
         }
     }
 
+    /**
+     * Append data to the log display
+     */
     public void append(String data)
     {
         theLog.append(data);
@@ -145,6 +148,9 @@ public class ConsoleViewer extends JFrame implements ConsoleViewerUI, ActionList
         statusField.setText(s);
     }
 
+    /**
+     * Update the status field when USB or Bluetooth radio buttons selected
+     */
 	public void stateChanged(ChangeEvent e) {
 		if (usbSelected && usbButton.isSelected()) return;
 		if (usbButton.isSelected())
@@ -159,6 +165,9 @@ public class ConsoleViewer extends JFrame implements ConsoleViewerUI, ActionList
 		}
 	}
 
+	/**
+	 * Log a progress message
+	 */
 	public void logMessage(String msg) {
 		System.out.println(msg);
 	}

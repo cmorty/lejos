@@ -34,7 +34,10 @@ public class Console implements ConsoleViewerUI {
 		if (usb) protocols |= NXTCommFactory.USB;
 		if (protocols == 0) protocols = NXTCommFactory.ALL_PROTOCOLS;
 		boolean connected = comm.connectTo(name, address, protocols);
-		if (!connected) System.exit(1);
+		if (!connected) {
+			logMessage("Failed to connect to NXT");
+			System.exit(1);
+		}
 	}
 
 	public void append(String value) {
