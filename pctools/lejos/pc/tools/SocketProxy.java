@@ -2,6 +2,16 @@ package lejos.pc.tools;
 
 import java.io.*;
 import java.net.*;
+
+import js.tinyvm.TinyVMException;
+
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.GnuParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+
 import lejos.pc.comm.*;
 
 /**
@@ -15,7 +25,6 @@ import lejos.pc.comm.*;
 * Currently only supports TCP connections
 *
 * @author Ranulf Green and Lawrie Griffiths
-* @version 1.1
 */
 public class SocketProxy {
 	private String host;
@@ -26,17 +35,26 @@ public class SocketProxy {
 	private Socket sock;
 
 	/**
-	 * Constructor
+	 * Run the Socket Proxy.
 	 * An instance of SocketProxy will allow for transparent forwarding
 	 * of messages between server and NXT using a socket connection
-	 * @param NXTName The name of the NXT to connect to
-	 * @param NXTaddress The physical address of the NXT
 	 */
-	public SocketProxy() {
+	public void run(String[] args) throws TinyVMException {
 		try {
+			int protocols = 0;
+			ProxyCommandLineParser fParser = new ProxyCommandLineParser();
+			CommandLine commandLine = fParser.parse(args);
+			boolean blueTooth = commandLine.hasOption("b");
+			boolean usb = commandLine.hasOption("u");
+			String name = commandLine.getOptionValue("n");
+			String address = commandLine.getOptionValue("d");
 			NXTConnector conn = new NXTConnector();
 			conn.addLogListener(new ToolsLogger());
-			if (!conn.connectTo(null, null, NXTCommFactory.BLUETOOTH)) {
+			if (blueTooth) protocols |= NXTCommFactory.BLUETOOTH;
+			if (usb) protocols |= NXTCommFactory.USB;
+			if (protocols == 0) protocols = NXTCommFactory.ALL_PROTOCOLS;
+			boolean connected = conn.connectTo(name, address, protocols);
+			if (!connected) {
 				System.err.println("Failed to connect to NXT");
 				System.exit(1);
 			}
@@ -67,7 +85,6 @@ public class SocketProxy {
 		while (true) {
 			// Wait for command from NXT
 			byte command = inFromNXT.readByte();
-			//System.out.println("Command = " + command);
 			if(command == 1){
 				waitForConnection();
 			}
@@ -123,8 +140,8 @@ public class SocketProxy {
 		host = new String(hostChars);
 
 		System.out.println("Host: " + host + " port: " + port);
+		
 		// Create a socket connection with the specified host using the specified port
-
 		sock = new Socket(host, port);
 		outToNXT.writeBoolean(true);
 		outToNXT.flush();
@@ -171,7 +188,6 @@ public class SocketProxy {
 				while(true){
 					int in = din.read();
 					if(in<0){ 
-						//System.out.println("In Thread: Socket closed: " + in);
 						sock.close();
 						return;
 					}
@@ -217,18 +233,14 @@ public class SocketProxy {
 			try {
 				while(true) {
 					int in = din.read();
-					//System.out.println("Reply: " + in);
 					if (in < 0) {
-						//System.out.println("Out Thread: Socket closed: " + in);
 						sock.close();
 						return;
 					}
 					// Process ESCAPE sequence
 					if ((byte) in == ESCAPE) {
-						//System.out.println("Escape Sequence");
 						in = din.read();
 						if ((byte) in == ESCAPE_CLOSE) {
-							//System.out.println("Out Thread: Socket closed:" + in);
 							sock.close();
 							return;							
 						} else in = ESCAPE;
@@ -241,11 +253,77 @@ public class SocketProxy {
 	}
 
 	public static void main(String[] args) {
-		if(args.length!=0) {
-			System.out.println("USAGE: java lejos.pc.tools.SocketProxy");
-			System.exit(1);
+		try {
+			(new SocketProxy()).run(args);
+		} catch (Throwable t) {
+			System.err.println("An error has occurred: " + t.getMessage());
 		}
-		new SocketProxy();
+	}
+	
+	/**
+	 * CommandLineParser
+	 */
+	class ProxyCommandLineParser 
+	{
+	   /**
+	    * Parse commandline.
+	    * 
+	    * @param args command line
+	    * @throws TinyVMException
+	    */
+	   public CommandLine parse (String[] args) throws TinyVMException
+	   {
+	      assert args != null: "Precondition: args != null";
+
+	      Options options = new Options();
+	      options.addOption("h", "help", false, "help");
+	      options.addOption("b", "bluetooth", false, "use bluetooth");
+	      options.addOption("u", "usb", false, "use usb");
+	      
+	      Option nameOption = new Option("n", "name", true,"look for named NXT");
+	      nameOption.setArgName("name");
+	      options.addOption(nameOption);
+	      
+	      Option addressOption = new Option("d", "address", true,
+	    		 "look for NXT with given address");
+	      addressOption.setArgName("address");
+	      options.addOption(addressOption);
+	      
+	      CommandLine result;
+	      try
+	      {
+	         try
+	         {
+	            result = new GnuParser().parse(options, args);
+	         }
+	         catch (ParseException e)
+	         {
+	            throw new TinyVMException(e.getMessage(), e);
+	         }
+
+	         if (result.hasOption("h"))
+	         {
+	            throw new TinyVMException("Help:");
+	         }
+	      }
+	      catch (TinyVMException e)
+	      {
+	         StringWriter writer = new StringWriter();
+	         PrintWriter printWriter = new PrintWriter(writer);
+	         printWriter.println(e.getMessage());
+	         
+	         String commandName = System.getProperty("COMMAND_NAME", "lejos.pc.tools.SocketProxy");
+
+	         String usage = commandName + " [options]";
+	         new HelpFormatter().printHelp(printWriter, 80, usage.toString(), null,
+	            options, 0, 2, null);
+
+	         throw new TinyVMException(writer.toString());
+	      }
+
+	      assert result != null: "Postconditon: result != null";
+	      return result;
+	   }
 	}
 }
 
