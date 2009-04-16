@@ -16,7 +16,8 @@ public class PrintStream extends OutputStream {
     	this.os = os;  	
     }
     
-    public void write (int c) {
+    @Override
+	public void write (int c) {
     	try {
     		os.write(c);
     	} catch (IOException ioe) {};
@@ -31,17 +32,20 @@ public class PrintStream extends OutputStream {
     	for(int i=0;i<s.length();i++) {
     		write(s.charAt(i));
     	}
+        //TODO optional flush
     }
     
     /**
      * Flush any pending output in the stream
      */
-    public void flush()
+    @Override
+	public void flush()
     {
     	try {
     		os.flush();
     	} catch (IOException ioe) {}      
     }
+    
     /**
      * Writes a string followed by a newline character
      * to the underlying output stream.
@@ -51,6 +55,92 @@ public class PrintStream extends OutputStream {
     public void println(String s) {
         print(s);
         write('\n');
+        //TODO make flush optional
         flush();
+    }
+    
+    
+    /*** print() Delegates ***/
+    
+    public void print(boolean v)
+    {
+    	print(String.valueOf(v));
+    }
+    
+    public void print(char v)
+    {
+    	print(String.valueOf(v));
+    }
+    
+    public void print(char[] v)
+    {
+    	print(String.valueOf(v));
+    }
+    
+    public void print(double v)
+    {
+    	print(String.valueOf(v));
+    }
+    
+    public void print(float v)
+    {
+    	print(String.valueOf(v));
+    }
+    
+    public void print(int v)
+    {
+    	print(String.valueOf(v));
+    }
+    
+    public void print(long v)
+    {
+    	print(String.valueOf(v));
+    }
+    
+    public void print(Object v)
+    {
+    	print(String.valueOf(v));
+    }
+    
+    /*** println() Delegates ***/
+    
+    public void println(boolean v)
+    {
+    	println(String.valueOf(v));
+    }
+    
+    public void println(char v)
+    {
+    	println(String.valueOf(v));
+    }
+    
+    public void println(char[] v)
+    {
+    	println(String.valueOf(v));
+    }
+    
+    public void println(double v)
+    {
+    	println(String.valueOf(v));
+    }
+    
+    public void println(float v)
+    {
+    	println(String.valueOf(v));
+    }
+    
+    public void println(int v)
+    {
+    	println(String.valueOf(v));
+    }
+    
+    public void println(long v)
+    {
+    	println(String.valueOf(v));
+    }
+    
+    public void println(Object v)
+    {
+    	println(String.valueOf(v));
     }
 }
