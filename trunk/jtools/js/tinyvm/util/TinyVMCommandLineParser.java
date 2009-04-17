@@ -62,9 +62,14 @@ public class TinyVMCommandLineParser
 	
 	protected static String getLastOptVal(CommandLine cmdline, String key)
 	{
+		return getLastOptVal(cmdline, key, null);
+	}
+	
+	protected static String getLastOptVal(CommandLine cmdline, String key, String def)
+	{
 		String[] vals = cmdline.getOptionValues(key);
 		if (vals == null || vals.length <= 0)
-			return null;
+			return def;
 		
 		return vals[vals.length - 1];
 	}
@@ -159,13 +164,17 @@ public class TinyVMCommandLineParser
 		result = new GnuParser().parse(options, args);
 
 		if (!result.hasOption("bp"))
-			throw new ParseException("No bootclasspath defined");
+		{
+			//throw new ParseException("No bootclasspath defined");
+			System.err.println("No bootclasspath specified. Update your build scripts.");
+			System.err.println("The bootclasspath parameter will be required in future releases.");
+		}
 		
 		if (!result.hasOption("cp"))
-			throw new ParseException("No classpath defined");
+			throw new ParseException("No classpath specified");
 		
 		if (reqoutput && !result.hasOption("o"))
-			throw new ParseException("No output file defined");
+			throw new ParseException("No output file specified");
 		
 		if (!result.hasOption("wo"))
 			throw new ParseException("No write order specified");
@@ -179,7 +188,7 @@ public class TinyVMCommandLineParser
 		if (!this.bigendian && !"le".equals(writeOrder))			
 			throw new ParseException("Invalid write order: " + writeOrder);
 		
-		this.bp = mangleClassPath(getLastOptVal(result, "bp"));
+		this.bp = mangleClassPath(getLastOptVal(result, "bp", ""));
 		this.cp = mangleClassPath(getLastOptVal(result, "cp"));
 	}
 	
