@@ -170,7 +170,11 @@ public class GenerateConstants
       // (Not done since 1.0.0alpha5)
       // pClassVec.insertElementAt ("entry/class", 0);
 
+      System.out.println("Generating file "+pJavaClass);
+      System.out.println("and file "+pClassIndexH);
       generateClassConstants(pClassVec, pClassIndexH, pJavaClass);
+      System.out.println("Generating files "+pJavaSig);
+      System.out.println("and file "+pSignaturesH);
       generateSignatureConstants(pSignatureVec, pSignaturesH, pJavaSig);
    }
 }
