@@ -37,6 +37,7 @@ import lejos.nxt.Motor;
  * "TachoPilot pilot = new TachoPilot(...)" instead of "Pilot pilot = new TachoPilot(...)"
  **/
 public class TachoPilot implements Pilot {
+
   /**
    * Left motor.
    */
@@ -144,7 +145,11 @@ public class TachoPilot implements Pilot {
    * @param rightWheelDiameter Diameter of the right wheel. You can actually fit intentionally wheels with different
    *          size to your robot. If you fitted wheels with the same size, but your robot is not going straight, try
    *          swapping the wheels and see if it deviates into the other direction. That would indicate a small
-   *          difference in wheel size. Adjust wheel size accordingly.
+   *          difference in wheel size. Adjust wheel size accordingly. The minimum change in wheel size which will
+   *          actually have an effect is given by minChange = A*wheelDiameter*wheelDiameter/(1-(A*wheelDiameter) where A
+   *          = PI/(moveSpeed*360). Thus for a moveSpeed of 25 cm/second and a wheelDiameter of 5,5 cm the minChange is
+   *          about 0,01058 cm... The reason for this is, that different while sizes will result in different motor
+   *          speed. And that is given as an integer in degree per second.
    * @param trackWidth Distance between center of right tire and center of left tire, in same units as wheelDiameter.
    * @param leftMotor The left Motor (e.g., Motor.C).
    * @param rightMotor The right Motor (e.g., Motor.A).
