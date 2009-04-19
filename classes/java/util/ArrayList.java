@@ -148,6 +148,7 @@ public class ArrayList<E> extends AbstractList<E> implements RandomAccess
 	 * @param elements The initial elements in the array list.
 	 * @deprecated not in JDK
 	 */
+	@Deprecated
 	public ArrayList(E[] elements)
 	{
 		this((elements.length * 13) / 10);
@@ -190,6 +191,7 @@ public class ArrayList<E> extends AbstractList<E> implements RandomAccess
 	 * @param elements The array of elements to add.
 	 * @deprecated not in JDK
 	 */
+	@Deprecated
 	public void addAll(E[] elements)
 	{
 		int len = elements.length;
@@ -209,6 +211,7 @@ public class ArrayList<E> extends AbstractList<E> implements RandomAccess
 	 * @param elements The array of elements to add.
 	 * @deprecated not in JDK
 	 */
+	@Deprecated
 	public void addAll(int index, E[] elements)
 	{
 		if (index < 0 || index > elementCount)
