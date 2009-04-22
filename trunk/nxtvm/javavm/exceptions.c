@@ -87,7 +87,7 @@ int throw_exception (Object *exception)
   if (currentThread == null)
   {
     // No threads have started probably
-    return;
+    return EXEC_CONTINUE;
   }
   else if (exception == interruptedException)
   {
