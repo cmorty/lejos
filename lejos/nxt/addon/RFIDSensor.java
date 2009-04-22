@@ -260,5 +260,17 @@ public class RFIDSensor extends I2CSensor
         return (valid ? ret : null);
     }
 
+    public long readTransponderAsLong(boolean continuous)
+    {
+        byte [] id = readTransponder(continuous);
+        if (id == null) return 0;
+        long ret = 0;
+        for(int i = id.length - 1; i >= 0; i--)
+        {
+            ret <<= 8;
+            ret |= ((long)id[i] & 0xff);
+        }
+        return ret;
+    }
 }
 
