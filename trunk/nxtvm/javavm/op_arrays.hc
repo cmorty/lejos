@@ -9,7 +9,7 @@ OPCODE(OP_ANEWARRAY)
   // of dims to get the array sig.
   tempInt = (pc[0] << 8) | pc[1];
   SAVE_REGS();
-  tempStackWord = obj2ref(new_single_array (sig_get_base_type(tempInt), sig_new_array(sig_get_dim(tempInt)+1, sig_get_base_type(tempInt), sig_get_class(tempInt)), get_top_word()));
+  tempStackWord = obj2ref(new_single_array (T_REFERENCE, sig_new_array(sig_get_dim(tempInt)+1, sig_get_base_type(tempInt), sig_get_class(tempInt)), get_top_word()));
   LOAD_REGS();
   // Do not modify the stack if an exception has been thrown
   if (tempStackWord != JNULL)
