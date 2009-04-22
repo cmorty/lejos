@@ -5,9 +5,26 @@ package java.lang;
  */
 public class Object
 {
+    /**
+     * Creates a shallow copy of the supplied Object
+     * @param old Object to clone
+     * @return A shallow copy of the Object
+     */
+    private static final native Object cloneObject(Object old);
+
+    /**
+     * Create a copy of this object, using a shallow copy.
+     * @return The new copy of the Object
+     * @throws java.lang.CloneNotSupportedException
+     */
 	protected Object clone() throws CloneNotSupportedException
 	{
-		throw new CloneNotSupportedException("LeJOS doesn't support cloning");
+        // NOTE: at the moment instanceof <interface> will always return true.
+        if (this instanceof Cloneable)
+            return cloneObject(this);
+        else
+            throw new CloneNotSupportedException();
+
 	}
 	
 	public boolean equals (Object aOther)
