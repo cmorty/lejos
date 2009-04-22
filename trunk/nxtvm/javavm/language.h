@@ -45,7 +45,7 @@ typedef struct S_MasterRecord
 typedef struct S_ClassRecord
 {
   /**
-   * Space occupied by instance in 2-byte words.
+   * Space occupied by instance in bytes.
    */
   TWOBYTES classSize;
   /**
