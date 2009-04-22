@@ -245,6 +245,21 @@ public class ClassRecord implements WritableData
       }
    }
 
+   public static String getArrayClassName(String aName)
+   {
+      int i = 0;
+      while (aName.charAt(i) == '[')
+         i++;
+      int typ = TinyVMType.tinyVMTypeFromSignature(aName.substring(i)).type();
+      // if it is an object we return the name, otherwise we return null
+      if (typ == TinyVMType.T_OBJECT_TYPE || typ == TinyVMType.T_REFERENCE_TYPE)
+         return aName.substring(i+1, aName.length()-1);
+      else
+          return null;
+
+   }
+
+
    public void storeReferredClasses (HashMap<String, ClassRecord> aClasses,
       RecordTable<ClassRecord> aClassRecords, ClassPath aClassPath, ArrayList<String> aInterfaceMethods)
       throws TinyVMException
@@ -261,8 +276,9 @@ public class ClassRecord implements WritableData
             String pClassName = ((ConstantClass) pEntry).getBytes(pPool);
             if (pClassName.startsWith("["))
             {
-               // _logger.log(Level.INFO, "Skipping array: " + pClassName);
-               continue;
+               pClassName = getArrayClassName(pClassName);
+               if (pClassName == null)
+                  continue;
             }
             if (aClasses.get(pClassName) == null)
             {
@@ -279,21 +295,28 @@ public class ClassRecord implements WritableData
             ClassRecord pClassRec = aClasses.get(className);
             if (pClassRec == null)
             {
-               if (className.startsWith("["))
+              if (className.startsWith("["))
                {
-                  // _logger.log(Level.INFO, "Skipping array: " + pClassName);
-                  continue;
+                  className = getArrayClassName(className);
+                  if (className == null)
+                     continue;
+                  pClassRec = aClasses.get(className);
                }
-               pClassRec = ClassRecord.getClassRecord(className, aClassPath,
-                  iBinary);
-               aClasses.put(className, pClassRec);
-               aClassRecords.add(pClassRec);
+               if (pClassRec == null)
+               {
+                  pClassRec = ClassRecord.getClassRecord(className, aClassPath,
+                      iBinary);
+                  aClasses.put(className, pClassRec);
+                  aClassRecords.add(pClassRec);
+               }
             }
+
             ConstantNameAndType cnat = (ConstantNameAndType) iCF
                .getConstantPool().getConstant(
                   ((ConstantMethodref) pEntry).getNameAndTypeIndex());
             pClassRec.addUsedMethod(cnat.getName(iCF.getConstantPool()) + ":"
                + cnat.getSignature(iCF.getConstantPool()));
+
          }
          else if (pEntry instanceof ConstantInterfaceMethodref)
          {
@@ -339,9 +362,24 @@ public class ClassRecord implements WritableData
       return iMethods.get(aSig);
    }
 
-   MethodRecord getVirtualMethodRecord (Signature aSig)
+   MethodRecord getActualVirtualMethodRecord (Signature aSig)
    {
       MethodRecord pRec = getMethodRecord(aSig);
+      if (pRec != null)
+         return pRec;
+      if (!hasParent())
+      {
+         return null;
+      }
+      return getParent().getActualVirtualMethodRecord(aSig);
+   }
+
+   MethodRecord getVirtualMethodRecord (Signature aSig)
+   {
+       /* Search for all methods that may be implemented by this class (including
+        * interfaces and parent classes.
+        */
+      MethodRecord pRec = getInterfaceMethodRecord(aSig);
       if (pRec != null)
          return pRec;
       if (!hasParent())
@@ -433,6 +471,7 @@ public class ClassRecord implements WritableData
        * parent classes.
        */
       // First look to see if it is local
+
       StaticFieldRecord pRec = iStaticFields.get(aName); 
       if (pRec != null) return pRec;
       // now search any interfaces
@@ -617,10 +656,10 @@ public class ClassRecord implements WritableData
               ClassRecord pClass = iter.next();
               // _logger.log(Level.INFO, "Mark interface class " + pClass.getName());
               // Does this class (or a super class), have this method?
-              MethodRecord pActualMethod = pClass.getVirtualMethodRecord(iBinary.iSignatures.elementAt(pRec.getSignatureId()));
+              MethodRecord pActualMethod = pClass.getActualVirtualMethodRecord(iBinary.iSignatures.elementAt(pRec.getSignatureId()));
               // If so then we need to mark it...
               if (pActualMethod != null)
-                  pClass.markMethod(pActualMethod, false);
+                 pActualMethod.iClassRecord.markMethod(pActualMethod, false);
            }
           
        }
@@ -696,8 +735,10 @@ public class ClassRecord implements WritableData
            // interfaces do not show up as super-classes instead they show up
            // as interfaces, implemented by this interface. So we add this
            // class to those inetrafces as well.
-           pInterfaceRecord.addInterfaces(pUserClass);
+           pInterfaceRecord.addInterfaces(pUserClass);               
        }
+       if (hasParent())
+           getParent().addInterfaces(pUserClass);
    }
    
    public void addInterfaceUser(ClassRecord pRec)

@@ -32,6 +32,7 @@ extern int getHeapFree();
 extern int getRegionAddress();
 extern int sys_diagn( int code, int param);
 extern int garbage_collect();
+extern Object *clone(Object *old);
 
 #if GARBAGE_COLLECTOR == MEM_CONCURRENT
 #define GC_IDLE 0

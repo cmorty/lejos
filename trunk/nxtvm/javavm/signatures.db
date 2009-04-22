@@ -183,3 +183,6 @@ longBitsToDouble(J)D
 #Runtime
 setVMOptions(I)V
 getVMOptions()I
+
+#Object
+cloneObject(Ljava/lang/Object;)Ljava/lang/Object;

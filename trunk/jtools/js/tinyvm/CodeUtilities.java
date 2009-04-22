@@ -25,6 +25,34 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
       iBinary = aBinary;
    }
 
+   /**
+    * Return the ClassRecord for a class signature. Handle the special case of
+    * arrays of objects.
+    * @param className the signature to lookup.
+    * @return the associated class record, or null if it is a primitive array.
+    * @throws js.tinyvm.TinyVMException
+    */
+   ClassRecord getClassRecord(String className) throws TinyVMException
+   {
+      ClassRecord ret;
+      // Deal with arrays of objects
+      if (className.startsWith("["))
+      {
+          ret = iBinary.getArrayClassRecord(className);
+      }
+      else
+      {
+          ret = iBinary.getClassRecord(className);
+          if (ret == null)
+          {
+             throw new TinyVMException("Bug CU-3: Didn't find class " + className
+                + " from class " + iCF.getClassName());
+          }
+      }
+      return ret;
+   }
+
+
    public void exitOnBadOpCode (int aOpCode) throws TinyVMException
    {
       throw new TinyVMException("Unsupported " + OPCODE_NAME[aOpCode] + " in "
@@ -160,11 +188,12 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
       ConstantFieldref pFieldEntry = (ConstantFieldref) pEntry;
       String className = pFieldEntry.getClass(iCF.getConstantPool()).replace(
          '.', '/');
-      ClassRecord pClassRecord = iBinary.getClassRecord(className);
+      ClassRecord pClassRecord = getClassRecord(className);
       if (pClassRecord == null)
       {
-         throw new TinyVMException("Bug CU-3: Didn't find class " + className
-            + " from class " + iCF.getClassName());
+         throw new TinyVMException("Attempt to use a field from a primitive array " +
+                 className + " from class " + iCF.getClassName() + " method " + iFullName);
+
       }
       ConstantNameAndType cnat = (ConstantNameAndType) iCF.getConstantPool()
          .getConstant(pFieldEntry.getNameAndTypeIndex());
@@ -199,7 +228,8 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
          return (fieldType.type() << TinyVMConstants.F_SIZE_SHIFT) | pOffset;
       }
    }
- 
+
+
    /**
     * Mark the class as being used.
     * @param aPoolIndex
@@ -213,37 +243,13 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
       {
          throw new TinyVMException("Classfile error: Instruction requiring "
             + "CONSTANT_Class entry got "
-            + (pEntry == null? "null" : pEntry.getClass().getName()));
+            + (pEntry == null? "null" : pEntry.getClass().getName()) + " method " + iFullName);
       }
       ConstantClass pClassEntry = (ConstantClass) pEntry;
       String pClassName = pClassEntry.getBytes(iCF.getConstantPool());
-      // Deal with arrays of objects
-      if (pClassName.startsWith("["))
-      {
-          int i = 0;
-          while (pClassName.charAt(i) == '[')
-             i++;
-          if (i > TinyVMConstants.MAX_DIMS)
-          {
-             throw new TinyVMException("In " + iFullName
-                + ": Multi-dimensional arrays are limited to " + TinyVMConstants.MAX_DIMS );
-          }
-
-          int typ = TinyVMType.tinyVMTypeFromSignature(pClassName.substring(i)).type();
-          // if it is an object we need to mark it
-          if (typ == TinyVMType.T_OBJECT_TYPE || typ == TinyVMType.T_REFERENCE_TYPE)
-              pClassName = pClassName.substring(i+1, pClassName.length()-1);
-          else
-              // No need to mark other array types
-              return;
-      }
-      ClassRecord pClassRecord = iBinary.getClassRecord(pClassName);
-      if (pClassRecord == null)
-      {
-         throw new TinyVMException("Bug CU-3: Didn't find class " + pClassName
-            + " from class " + iCF.getClassName());
-      }
-      iBinary.markClassUsed(pClassRecord, true);
+      ClassRecord pClassRecord = getClassRecord(pClassName);
+      if (pClassRecord != null)
+         iBinary.markClassUsed(pClassRecord, true);
    }
 
    /**
@@ -263,12 +269,8 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
       ConstantFieldref pFieldEntry = (ConstantFieldref) pEntry;
       String className = pFieldEntry.getClass(iCF.getConstantPool()).replace(
          '.', '/');
-      ClassRecord pClassRecord = iBinary.getClassRecord(className);
-      if (pClassRecord == null)
-      {
-         throw new TinyVMException("Bug CU-3: Didn't find class " + className
-            + " from class " + iCF.getClassName());
-      }
+      ClassRecord pClassRecord = getClassRecord(className);
+      if (pClassRecord == null) return;
       ConstantNameAndType cnat = (ConstantNameAndType) iCF.getConstantPool()
          .getConstant(pFieldEntry.getNameAndTypeIndex());
       String pName = cnat.getName(iCF.getConstantPool());
@@ -276,7 +278,7 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
       StaticFieldRecord pFieldRecord = pClassRecord.getStaticFieldRecord(pName);
       if (pFieldRecord == null)
       {
-          throw new TinyVMException("Failed to locate static field " + pName +
+          throw new TinyVMException("Failed to mark/locate static field " + pName +
                  " refrenced via class " + className + " from class " + iCF.getClassName());
       }
       iBinary.markClassUsed(pFieldRecord.getClassRecord(), false);
@@ -301,16 +303,22 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
       ConstantCP pMethodEntry = (ConstantCP) pEntry;
       String className = pMethodEntry.getClass(iCF.getConstantPool()).replace(
          '.', '/');
-      ClassRecord pClassRecord = iBinary.getClassRecord(className);
-      if (pClassRecord == null)
-      {
-         throw new TinyVMException("Bug CU-4: Didn't find class " + className
-            + " from class " + iCF.getClassName());
-      }
       ConstantNameAndType pNT = (ConstantNameAndType) iCF.getConstantPool()
          .getConstant(pMethodEntry.getNameAndTypeIndex());
       Signature pSig = new Signature(pNT.getName(iCF.getConstantPool()), pNT
          .getSignature(iCF.getConstantPool()));
+      if (className.startsWith("["))
+      {
+          // For arrays we use the methods contained in Object
+          className = "java/lang/Object";
+      }
+      ClassRecord pClassRecord = getClassRecord(className);
+      if (pClassRecord == null)
+      {
+         throw new TinyVMException("Bug CU-7: Didn't find class " + className
+            + " from class " + iCF.getClassName() + " method " + iFullName);
+      }
+
       MethodRecord pMethod;
       if (aInterface)
         pMethod = pClassRecord.getInterfaceMethodRecord(pSig);
@@ -319,7 +327,7 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
       if (pMethod == null)
       {
          throw new TinyVMException("Method " + pSig + " not found  in "
-            + className);
+            + className +" interface " + aInterface);
       }
       ClassRecord pTopClass = pMethod.getClassRecord();
       if (aSpecial)
@@ -360,16 +368,21 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
       ConstantCP pMethodEntry = (ConstantCP) pEntry;
       String className = pMethodEntry.getClass(iCF.getConstantPool()).replace(
          '.', '/');
-      ClassRecord pClassRecord = iBinary.getClassRecord(className);
-      if (pClassRecord == null)
-      {
-         throw new TinyVMException("Bug CU-4: Didn't find class " + className
-            + " from class " + iCF.getClassName());
-      }
       ConstantNameAndType pNT = (ConstantNameAndType) iCF.getConstantPool()
          .getConstant(pMethodEntry.getNameAndTypeIndex());
       Signature pSig = new Signature(pNT.getName(iCF.getConstantPool()), pNT
          .getSignature(iCF.getConstantPool()));
+      if (className.startsWith("["))
+      {
+          // For arrays we use the methods contained in Object
+             className = "java/lang/Object";
+      }
+      ClassRecord pClassRecord = getClassRecord(className);
+      if (pClassRecord == null)
+      {
+         throw new TinyVMException("Bug CU-7: Didn't find class " + className
+            + " from class " + iCF.getClassName());
+      }
       MethodRecord pMethod;
       if (aInterface)
         pMethod = pClassRecord.getInterfaceMethodRecord(pSig);
