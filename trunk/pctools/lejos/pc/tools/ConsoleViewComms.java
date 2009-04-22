@@ -57,36 +57,29 @@ public class ConsoleViewComms
         if (!con.connectTo(name, address, protocol))
         {
             return false;
-        } else
-        {
-            connected = true;
         }
         is = con.getInputStream();
-        connected = connected && is != null;
         os = con.getOutputStream();
-        connected = connected && os != null;
-
-        if (connected)
+        if (is == null || os == null) return false;
+        try  // handshake
         {
-            try  // handshake
+            byte[] hello = new byte[]
             {
-                byte[] hello = new byte[]
-                {
-                    'C', 'O', 'N'
-                };
-                os.write(hello);
-                os.flush();
-            } catch (IOException e)
-            {
-                viewer.logMessage("Handshake failed to write: " + e.getMessage());
-                connected = false;
-                return false;
-            }
-            name = con.getNXTInfo().name;
-            address = con.getNXTInfo().deviceAddress;
-            viewer.connectedTo(name, address);
-            viewer.logMessage("Connected to " + name + " " + address);
+                'C', 'O', 'N'
+            };
+            os.write(hello);
+            os.flush();
+        } catch (IOException e)
+        {
+            viewer.logMessage("Handshake failed to write: " + e.getMessage());
+            connected = false;
+            return false;
         }
+        name = con.getNXTInfo().name;
+        address = con.getNXTInfo().deviceAddress;
+        viewer.connectedTo(name, address);
+        viewer.logMessage("Connected to " + name + " " + address);
+        connected = true;
         return connected;
     }
     
