@@ -113,6 +113,7 @@ public interface SpecialSignatureConstants {
     "doubleToRawLongBits(D)J",
     "longBitsToDouble(J)D",
     "setVMOptions(I)V",
-    "getVMOptions()I"
+    "getVMOptions()I",
+    "cloneObject(Ljava/lang/Object;)Ljava/lang/Object;"
   };
 }

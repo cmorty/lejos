@@ -147,6 +147,7 @@ typedef struct S_String
 #define is_std_array(ARR_)       ((ARR_)->flags.arrays.length != BIGARRAYLEN)
 #define get_array_length(ARR_)   (is_std_array(ARR_) ? (ARR_)->flags.arrays.length : ((BigArray *)(ARR_))->length)
 #define get_element_type(ARR_)   ((ARR_)->flags.arrays.type)
+#define get_array_sig(ARR_) (is_big_array(ARR_) ? ((BigArray *)ARR_)->sig : sig_new_array(1, get_element_type(ARR_), 0))
 #define get_na_class_index(OBJ_) ((OBJ_)->flags.objects.class)
 #define get_free_length(OBJ_)    ((OBJ_)->flags.freeBlock.size)
 

@@ -115,6 +115,20 @@ public class Binary
    }
 
    /**
+    * Get the class record for an object array.
+    * 
+    * @param arrayClassName
+    * @return class record or null if not found or the array is a primitive array.
+    */
+   public ClassRecord getArrayClassRecord (String arrayClassName)
+   {
+       assert arrayClassName.startsWith("[") : "Array class name does not begin with [";
+       String className = ClassRecord.getArrayClassName(arrayClassName);
+       if (className == null) return null;
+       return iClasses.get(className);
+   }
+
+   /**
     * Get index of class in binary by its signature.
     * 
     * @param className class name with '/'

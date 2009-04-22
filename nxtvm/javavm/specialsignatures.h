@@ -113,4 +113,5 @@
 #define longBitsToDouble_4J_5D 106
 #define setVMOptions_4I_5V 107
 #define getVMOptions_4_5I 108
+#define cloneObject_4Ljava_3lang_3Object_2_5Ljava_3lang_3Object_2 109
 #endif // _SPECIALSIGNATURES_H

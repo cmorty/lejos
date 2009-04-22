@@ -447,6 +447,30 @@ Object *reallocate_array(Object *obj, STACKWORD newlen)
 #endif
 
 /**
+ * Create a copy of an existing Object (including arrays). Copy is shallow...
+ */
+Object *clone(Object *old)
+{
+  Object *new;
+  if (is_array(old))
+  {
+    new = new_single_array(get_element_type(old), get_array_sig(old), get_array_length(old));
+    if (!new) return NULL;
+    // Copy old array to new
+    memcpy(array_start(new), array_start(old), get_array_length(old) * typeSize[get_element_type(old)]);
+  }
+  else
+  {
+    byte classIndex = get_na_class_index(old);
+    ClassRecord* classRecord = get_class_record(classIndex);
+    new = new_object_for_class(classIndex);
+    if (!new) return NULL;
+    memcpy((byte *) new + sizeof(Object), (byte *)old + sizeof(Object), classRecord->classSize - sizeof(Object)); 
+  }
+  return new;
+}
+
+/**
  * System level alocator. Allocate memory of sz bytes.
  */
 byte *system_allocate(int sz)
@@ -1868,7 +1892,6 @@ static void process_object(Object *obj, int callLimit)
           byte fieldType = get_field_type(classRecord, i);
           byte fieldSize = typeSize[fieldType];
           statePtr -= fieldSize;
-  
           if(fieldType == T_REFERENCE)
           {
             //if(! (classIndex == JAVA_LANG_THREAD && i == 0))

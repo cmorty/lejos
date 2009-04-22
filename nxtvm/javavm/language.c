@@ -119,6 +119,7 @@ void dispatch_virtual (Object *ref, int signature, byte *retAddr)
     throw_exception (nullPointerException);
     return;
   }
+  // When calling methods on arrays, we use the methods for the Object class...
   classIndex = get_class_index(ref);
  LABEL_METHODLOOKUP:
   classRecord = get_class_record (classIndex);

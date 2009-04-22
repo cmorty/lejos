@@ -523,7 +523,13 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
   case getVMOptions_4_5I:
     push_word(gVMOptions);
     break;
-
+  case cloneObject_4Ljava_3lang_3Object_2_5Ljava_3lang_3Object_2:
+    {
+      Object *newObj = clone((Object *)ref2obj(paramBase[0]));
+      if (newObj == NULL) return EXEC_RETRY;
+      push_word(obj2ref(newObj));
+    }
+    break;
   default:
     return throw_exception(noSuchMethodError);
   }
