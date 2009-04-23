@@ -146,6 +146,7 @@ abstract public class NMEASentence {
 	 * @param dd_mm the day and month
 	 * @return the decimal degrees
 	 */
+	// TODO: Might as well make static and public
 	protected double degreesMinToDegrees(String dd_mm) {
 		int dotPosition = dd_mm.indexOf('.');
 		

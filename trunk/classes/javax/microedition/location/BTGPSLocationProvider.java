@@ -41,7 +41,6 @@ class BTGPSLocationProvider extends LocationProvider implements DiscoveryListene
 		// TODO: The problem here is that it searches every time. Slow. Need to try Properties?
 		// TODO: BIG ONE: Should only connect to GPS that isPaired() (from menu). Will
 		// allow some degree of control over which GPS is connects to in classroom.
-		
 		try {
 			da = LocalDevice.getLocalDevice().getDiscoveryAgent();
 			da.startInquiry(DiscoveryAgent.GIAC, this);
@@ -59,13 +58,19 @@ class BTGPSLocationProvider extends LocationProvider implements DiscoveryListene
 		
 		String address = btDevice.getBluetoothAddress();
 		String btaddy = "btspp://" + address;
+		
 		try {
 			StreamConnectionNotifier scn = (StreamConnectionNotifier)Connector.open(btaddy);
 			// TODO: What is procedure if it fails to connect?
 			if(scn == null)	System.err.println("BTGPSLocationProvider.scn is null!");
-			
 			StreamConnection c = scn.acceptAndOpen();
+			
+			// TODO: This problem below occurred one time for my Holux GPS. The solution was to
+			// remove the device from the Bluetooth menu, then find and pair again.
+			// Need to throw exception with message.
+			if(c == null)System.err.println("StreamConnectionNotifier.acceptAndOpen() failed.");
 			InputStream in = c.openInputStream();
+			
 			if(in != null) {
 				gps = new SimpleGPS(in);
 				// c.close(); // TODO: Clean up when done. HOW TO HANDLE IN LOCATION?
@@ -73,7 +78,6 @@ class BTGPSLocationProvider extends LocationProvider implements DiscoveryListene
 		} catch(IOException e) {
 			System.err.println("IOException in BTLocationProvider");	
 		}
-		
 		// Add itself to SimpleGPS as listener
 		SimpleGPS.addListener(this);
 	}
@@ -101,7 +105,9 @@ class BTGPSLocationProvider extends LocationProvider implements DiscoveryListene
 			if(timeout != -1 & System.currentTimeMillis() - startTime > (timeout * 1000))
 				throw new LocationException("GPS timed out");
 			Thread.sleep(100); /* NOTE: This might very occasionally cause an error because
-			* Thread.yield() seems to cause sentence parsing to start too soon. */ 
+			* Thread.yield() seems to cause sentence parsing to start too soon. 
+			* (try changing sleep() to yield() to see what happens)
+			* Perhaps something needs to be synchronized? */ 
 		}
 		
 		QualifiedCoordinates qc = new QualifiedCoordinates(gps.getLatitude(), gps.getLongitude(), gps.getAltitude());
@@ -158,6 +164,8 @@ class BTGPSLocationProvider extends LocationProvider implements DiscoveryListene
 				public void run() {
 					while(listenerRunning) {
 						try {
+							// TODO: Probably only notify if location changed? Need to compare to old.
+							// TODO: Make helper method since this is used below too. 
 							l.locationUpdated(lp, lp.getLocation(to));
 							Thread.sleep(delay);
 						} catch (LocationException e) {
@@ -179,6 +187,7 @@ class BTGPSLocationProvider extends LocationProvider implements DiscoveryListene
 					// Check if GGASentence. Means that new location info is ready
 					if(sen.getHeader().equals(GGASentence.HEADER)) {
 						try {
+							// TODO: Probably only notify if location changed? Need to compare to old.
 							l.locationUpdated(lp, lp.getLocation(to));
 						} catch (LocationException e) {
 							// TODO Auto-generated catch block
