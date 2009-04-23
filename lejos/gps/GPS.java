@@ -161,6 +161,7 @@ public class GPS extends SimpleGPS {
 	 * 
 	 * @return GPS status
 	 */
+	// TODO: This seems like an arbitrary method. Not very useful.
 	public boolean getGPSStatus(){
 		boolean status = false;
 		if(

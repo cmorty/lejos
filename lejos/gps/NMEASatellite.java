@@ -11,6 +11,9 @@ package lejos.gps;
  * 6    = Azimuth, degrees from true north, 000 to 359
  * 7    = SNR, 00-99 dB (null when not tracking)
  * 
+ * You can find out more about a satellite by looking up the PRN number here:
+ * http://en.wikipedia.org/wiki/List_of_GPS_satellite_launches 
+ * 
  * @author Juan Antonio Brenha Moral
  *
  */

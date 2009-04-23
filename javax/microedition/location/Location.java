@@ -144,40 +144,11 @@ public class Location {
 	}
 
 	/**
-	 * Returns extra information about the location. This method is intended to provide
-	 * location method specific extra information that applications that are aware of the
-	 * used location method and information format are able to use. A MIME type is used to
-	 * identify the type of the extra information when requesting it. If the
-	 * implementation supports this type, it returns the extra information as a String
-	 * encoded according to format identified by the MIME type. If the implementation does
-	 * not support this type, the method returns null.
-	 * <p>
-	 * This specification does not require implementations to support any extra
-	 * information type.
-	 * <p>
-	 * The following MIME types are defined here together with their definitions in order
-	 * to ensure interoperability of implementations wishing to use these types. The
-	 * definition of these types here is not an indication that these formats are
-	 * preferred over any other format not defined here.
-	 * <p>
-	 * When the MIME type is "application/X-jsr179-location-nmea", the returned string
-	 * shall be a valid sequence of NMEA sentences formatted according to the syntax
-	 * specified in the NMEA 0183 v3.1 specification. These sentences shall represent the
-	 * set of NMEA sentences that are related to this location at the time this location
-	 * was created.
-	 * <p>
-	 * When the MIME type is "application/X-jsr179-location-lif", the returned string
-	 * shall contain an XML formatted document containing the "pd" element defined in the
-	 * LIF Mobile Location Protocol TS 101 v3.0.0 as the root element of the document.
-	 * <p>
-	 * When the MIME type is "text/plain", the returned string shall contain textual extra
-	 * information that can be displayed to the end user.
-	 *
+	 * This method is not implemented by leJOS and returns null every time. 
+	 * 
 	 * @param mimetype
-	 *            the MIME type of the requested extra information
-	 * @return string encoded according to the format identified by the MIME type defined
-	 *         in the parameter. null if the information for the requested MIME type is
-	 *         not available or not supported by this implementation.
+	 *            This variable is ignored by leJOS NXJ. You can submit null.
+	 * @return Nothing.
 	 */
 	public String getExtraInfo(String mimetype) {
 		return extraInfo;
