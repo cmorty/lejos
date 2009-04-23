@@ -1,5 +1,8 @@
 package javax.microedition.location;
 
+import java.util.Enumeration;
+import java.util.Vector;
+
 /**
  * This class has been designed to manage coordinates 
  * using JSR-179 Location API
@@ -123,22 +126,316 @@ public class Coordinates{
 		}
 	}
 	
-	//TODO
+/***********************************
+UNTESTED as of April 7, 2009 - BB
+ ********************************* /
+	
 	/**
-	 * This method is part of JSR-179. Currently not implemented.
+	 * Converts a double representation of a coordinate with decimal degrees into a string
+	 * representation. There are string syntaxes supported are the same as for the
+	 * #convert(String) method. The implementation shall provide as many significant
+	 * digits for the decimal fractions as are allowed by the string syntax definition.
+	 *
+	 * @param coordinate
+	 *            a double representation of a coordinate
+	 * @param outputType
+	 *            identifier of the type of the string representation wanted for output
+	 *            The constant {@link #DD_MM_SS} identifies the syntax 1 and the constant
+	 *            {@link #DD_MM} identifies the syntax 2.
+	 * @throws IllegalArgumentException
+	 *             if the outputType is not one of the two constant values defined in this
+	 *             class or if the coordinate value is not within the range [-180.0,
+	 *             180.0) or is Double.NaN
+	 * @return a string representation of the coordinate in a representation indicated by
+	 *         the parameter
+	 * @see #convert(String)
 	 */
-	static public String convert(double coordinate, int outputType){
-		return null;
+	public static String convert(double coordinate, int outputType)
+			throws IllegalArgumentException {
+		if ((coordinate < -180.0) || (coordinate > 180.0))
+			throw new IllegalArgumentException();
+
+		// treat negative values correctly
+		int degrees;
+		if (coordinate >= 0.0) {
+			degrees = (int) Math.floor(coordinate);
+		} else {
+			degrees = (int) Math.ceil(coordinate);
+		}
+
+		// The decimal string
+		String DD = Integer.toString(degrees);
+
+		// The minute string
+		double decimalFracDegrees = Math.abs((coordinate - degrees) * 100.0);
+		int minutes = (int) (Math.floor(decimalFracDegrees * 0.6));
+		String MM = Integer.toString(minutes);
+
+		if (outputType == DD_MM_SS) {
+			// The seconds string
+			double decimalFracMin = (decimalFracDegrees * 0.6 - minutes) * 100.0;
+			// Math.round(x) does not exist in CLDC/MIDP but it is equivalent to
+			// Math.floor(x + 0.5d)
+			int ss = (int) Math.floor(decimalFracMin * 0.6 + 0.5d);
+			String SS = Integer.toString(ss);
+			if (SS.length() == 1)
+				SS = "0" + SS;
+			// The decimal fraction part of seconds, up to 3 significant digits
+			int decimalFracSec = (int) Math
+					.floor((decimalFracMin * 0.6 - ss) * 1000.0 + 0.5d);
+			String SS_d = dropTrailingZeros(decimalFracSec);
+			String out = DD + ":" + MM;
+			// output only significant figures
+			if (SS_d != null) {
+				out = out + ":" + SS + "." + SS_d;
+			} else if (!SS.equals("00")) {
+				out = out + ":" + SS;
+			}
+			return out;
+		} else if (outputType == DD_MM) {
+			// The decimal fraction part of minutes, up to 5 significant digits
+			double decimalFracMin = (decimalFracDegrees * 0.6 - minutes) * 100000.0;
+			int ss = (int) Math.floor(decimalFracMin + 0.5d);
+			String MM_d = dropTrailingZeros(ss);
+			String out = DD + ":" + MM;
+			// output only significant figures
+			if (MM_d != null) {
+				out = out + "." + MM_d;
+			}
+			return out;
+		} else
+			throw new IllegalArgumentException();
 	}
 
-	//TODO
 	/**
-	 * This method is part of JSR-179. Currently not implemented.
+	 * Takes an integer and removes trailing zeros.
+	 *
+	 * @param number
+	 *            must be positive
+	 * @return the number as a String, with trailing zeros removed. Returns null if the
+	 *         number was zero or negative.
 	 */
-	static public float convert(String coordinate){
-		return 0;
+	private static String dropTrailingZeros(int number) {
+		if (number <= 0)
+			return null;
+		while ((number % 10) == 0) {
+			number = number / 10;
+		}
+		return Integer.toString(number);
 	}
 
+	/**
+	 * Converts a String representation of a coordinate into the double representation as
+	 * used in this API. There are two string syntaxes supported:
+	 * <p>
+	 * 1. Degrees, minutes, seconds and decimal fractions of seconds. This is expressed as
+	 * a string complying with the following BNF definition where the degrees are within
+	 * the range [-179, 179] and the minutes and seconds are within the range [0, 59], or
+	 * the degrees is -180 and the minutes, seconds and decimal fractions are 0:
+	 * <p>
+	 * coordinate = degrees &quot;:&quot; minutes &quot;:&quot; seconds &quot;.&quot;
+	 * decimalfrac | degrees &quot;:&quot; minutes &quot;:&quot; seconds | degrees
+	 * &quot;:&quot; minutes<br />
+	 * degrees = degreedigits | &quot;-&quot; degreedigits<br />
+	 * degreedigits = digit | nonzerodigit digit | &quot;1&quot; digit digit<br />
+	 * minutes = minsecfirstdigit digit<br />
+	 * seconds = minsecfirstdigit digit<br />
+	 * decimalfrac = 1*3digit <br />
+	 * digit = &quot;0&quot; | &quot;1&quot; | &quot;2&quot; | &quot;3&quot; |
+	 * &quot;4&quot; | &quot;5&quot; | &quot;6&quot; | &quot;7&quot; | &quot;8&quot; |
+	 * &quot;9&quot;<br />
+	 * nonzerodigit = &quot;1&quot; | &quot;2&quot; | &quot;3&quot; | &quot;4&quot; |
+	 * &quot;5&quot; | &quot;6&quot; | &quot;7&quot; | &quot;8&quot; | &quot;9&quot;<br />
+	 * minsecfirstdigit = &quot;0&quot; | &quot;1&quot; | &quot;2&quot; | &quot;3&quot; |
+	 * &quot;4&quot; | &quot;5&quot;<br />
+	 * <p>
+	 * 2. Degrees, minutes and decimal fractions of minutes. This is expressed as a string
+	 * complying with the following BNF definition where the degrees are within the range
+	 * [-179, 179] and the minutes are within the range [0, 59], or the degrees is -180
+	 * and the minutes and decimal fractions are 0:
+	 * <p>
+	 * coordinate = degrees &quot;:&quot; minutes &quot;.&quot; decimalfrac | degrees
+	 * &quot;:&quot; minutes<br/> degrees = degreedigits | &quot;-&quot; degreedigits<br/>
+	 * degreedigits = digit | nonzerodigit digit | &quot;1&quot; digit digit<br/> minutes =
+	 * minsecfirstdigit digit<br/> decimalfrac = 1*5digit<br/> digit = &quot;0&quot; |
+	 * &quot;1&quot; | &quot;2&quot; | &quot;3&quot; | &quot;4&quot; | &quot;5&quot; |
+	 * &quot;6&quot; | &quot;7&quot; | &quot;8&quot; | &quot;9&quot;<br/> nonzerodigit =
+	 * &quot;1&quot; | &quot;2&quot; | &quot;3&quot; | &quot;4&quot; | &quot;5&quot; |
+	 * &quot;6&quot; | &quot;7&quot; | &quot;8&quot; | &quot;9&quot;<br/>
+	 * minsecfirstdigit = &quot;0&quot; | &quot;1&quot; | &quot;2&quot; | &quot;3&quot; |
+	 * &quot;4&quot; | &quot;5&quot;
+	 * <p>
+	 * For example, for the double value of the coordinate 61.51d, the corresponding
+	 * syntax 1 string is "61:30:36" and the corresponding syntax 2 string is "61:30.6".
+	 *
+	 * @param coordinate
+	 *            a String in either of the two representation specified above
+	 * @return a double value with decimal degrees that matches the string representation
+	 *         given as the parameter
+	 * @throws IllegalArgumentException
+	 *             if the coordinate input parameter does not comply with the defined
+	 *             syntax for the specified types
+	 * @throws NullPointerException
+	 *             if the coordinate string is null convert
+	 */
+	// TODO: This method similar to NMEASentence.degreesMintoDegrees(). Use that? 
+	public static double convert(String coordinate)
+			throws IllegalArgumentException, NullPointerException {
+		/*
+		 * A much more academic way to do this would be to generate some tree-based parser
+		 * code using the BNF definition, but that seems a little too heavyweight for such
+		 * short strings.
+		 */
+		if (coordinate == null)
+			throw new NullPointerException();
+
+		/*
+		 * We don't have Java 5 regex or split support in Java 1.3, making this task a bit
+		 * of a pain to code.
+		 */
+
+		/*
+		 * First we check that all the characters are valid, whilst also counting the
+		 * number of colons and decimal points (we check that colons do not follow
+		 * decimals). This allows us to know what type the string is.
+		 */
+		int length = coordinate.length();
+		int colons = 0;
+		int decimals = 0;
+		for (int i = 0; i < length; i++) {
+			char element = coordinate.charAt(i);
+			if (!convertIsValidChar(element))
+				throw new IllegalArgumentException();
+			if (element == ':') {
+				if (decimals > 0)
+					throw new IllegalArgumentException();
+				colons++;
+			} else if (element == '.') {
+				decimals++;
+				if (decimals > 1)
+					throw new IllegalArgumentException();
+			}
+		}
+
+		/*
+		 * Then we break the string into its components and parse the individual pieces
+		 * (whilst also doing bounds checking). Code looks ugly because there is a lot of
+		 * Exception throwing for bad syntax.
+		 */
+		String[] parts = convertSplit(coordinate);
+
+		try {
+			double out = 0.0;
+			// the first 2 parts are the same, regardless of type
+			int degrees = Integer.valueOf(parts[0]).intValue();
+			if ((degrees < -180) || (degrees > 179))
+				throw new IllegalArgumentException();
+			boolean negative = false;
+			if (degrees < 0) {
+				negative = true;
+				degrees = Math.abs(degrees);
+			}
+
+			out += degrees;
+
+			int minutes = Integer.valueOf(parts[1]).intValue();
+			if ((minutes < 0) || (minutes > 59))
+				throw new IllegalArgumentException();
+			out += minutes * 0.1 / 6;
+
+			if (colons == 2) {
+				// type 1
+				int seconds = Integer.valueOf(parts[2]).intValue();
+				if ((seconds < 0) || (seconds > 59))
+					throw new IllegalArgumentException();
+				// degrees:minutes:seconds
+				out += seconds * 0.01 / 36;
+				if (decimals == 1) {
+					// degrees:minutes:seconds.decimalfrac
+					double decimalfrac = Double.valueOf("0." + parts[3])
+							.doubleValue();
+					// note that spec says this should be 1*3digit, but we don't
+					// restrict the digit count
+					if ((decimalfrac < 0) || (decimalfrac >= 1))
+						throw new IllegalArgumentException();
+					out += decimalfrac * 0.01 / 36;
+				}
+			} else if ((colons == 1) && (decimals == 1)) {
+				// type 2
+				// degrees:minutes.decimalfrac
+				double decimalfrac = Double.valueOf("0." + parts[2])
+						.doubleValue();
+				// note that spec says this should be 1*5digit, but we don't
+				// restrict the digit count
+				if ((decimalfrac < 0) || (decimalfrac >= 1))
+					throw new IllegalArgumentException();
+				out += decimalfrac * 0.1 / 6;
+			} else
+				throw new IllegalArgumentException();
+
+			if (negative) {
+				out = -out;
+			}
+
+			// do a final check on bounds
+			if ((out < -180.0) || (out >= 180.0))
+				throw new IllegalArgumentException();
+			return out;
+		} catch (NumberFormatException e) {
+			throw new IllegalArgumentException();
+		}
+	}
+
+	/**
+	 * Helper method for {@link #convert(String)}
+	 *
+	 * @param element
+	 * @return
+	 */
+	private static boolean convertIsValidChar(char element) {
+		if ((element == '-') || (element == ':') || (element == '.')
+				|| Character.isDigit(element))
+			return true;
+		return false;
+	}
+
+	/**
+	 * Helper method for {@link #convert(String)}
+	 *
+	 * @param in
+	 * @return
+	 */
+	private static String[] convertSplit(String in)
+			throws IllegalArgumentException {
+		Vector parts = new Vector(4);
+
+		int start = 0;
+		int length = in.length();
+		for (int i = 0; i <= length; i++) {
+			if ((i == length) || (in.charAt(i) == ':') || (in.charAt(i) == '.')) {
+				// syntax checking
+				if (start - i == 0)
+					throw new IllegalArgumentException();
+				String part = in.substring(start, i);
+				parts.addElement(part);
+				start = i + 1;
+			}
+		}
+
+		// syntax checking
+		if ((parts.size() < 2) || (parts.size() > 4))
+			throw new IllegalArgumentException();
+		// return an array
+		String[] partsArray = new String[parts.size()];
+		Enumeration en = parts.elements();
+		for (int i = 0; en.hasMoreElements(); i++) {
+			partsArray[i] = (String) en.nextElement();
+		}
+		return partsArray;
+	}
+
+/***********************************/	
+	
 	/**
 	 *
      * Calculates the geodetic distance between the two points according 
