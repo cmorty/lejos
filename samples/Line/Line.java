@@ -24,9 +24,11 @@ public class Line {
 		// direction you want to be "forward" for your vehicle.
 		// The wheel and axle dimension parameters should be
 		// set for your robot, but are not critical.
-		final Pilot pilot = new TachoPilot(5.6f,16.0f,Motor.A, Motor.C, true);
+		final Pilot pilot = new TachoPilot(5.6f,16.0f,Motor.A, Motor.C, false);
 		final LightSensor light = new LightSensor(SensorPort.S1);
-		
+        /**
+         * this behavior wants to take contrtol when the light sensor sees the line
+         */
 		Behavior DriveForward = new Behavior()
 		{
 			public boolean takeControl() {return light.readValue() <= 40;}
@@ -34,9 +36,9 @@ public class Line {
 			public void suppress() {
 				pilot.stop();
 			}
-			
 			public void action() {
 				pilot.forward();
+                while(light.readValue() <= 40) Thread.yield(); //action complete when not on line
 			}					
 		};
 		
@@ -62,10 +64,9 @@ public class Line {
 			}
 		};
 
-		//Wait for ENTER button to be pressed
-		Button.ENTER.waitForPressAndRelease();
-
-		Behavior[] bArray = {OffLine, DriveForward};		
+		Behavior[] bArray = {OffLine, DriveForward};
+        LCD.drawString("Line ", 0, 1);
+        Button.waitForPress();
 	    (new Arbitrator(bArray)).start();
 	}
 }
