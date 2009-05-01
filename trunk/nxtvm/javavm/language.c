@@ -261,7 +261,11 @@ boolean dispatch_special (MethodRecord *methodRecord, byte *retAddr)
     return false;
   }
   newStackFrameIndex = currentThread->stackFrameArraySize;
-  
+  if (newStackFrameIndex >=  255)
+  {
+      throw_exception (stackOverflowError);
+      return false;
+  }
   if (newStackFrameIndex >= get_array_length((Object *) word2ptr (currentThread->stackFrameArray)))
   {
 #if !FIXED_STACK_SIZE
