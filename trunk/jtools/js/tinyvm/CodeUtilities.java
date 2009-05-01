@@ -76,6 +76,14 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
    {
       Constant pEntry = iCF.getConstantPool().getConstant(aPoolIndex); // TODO catch all (runtime) exceptions
 
+      if (pEntry instanceof ConstantClass)
+      {
+          // We do not support class constants (yet), but they are sometimes used in code
+          // that is not called (enums and valueOf) so rather then abort the link we let them
+          // through with a warning.
+          System.err.println("Warning using class constant in class " + iCF.getClassName() + " method " + iFullName);
+          return 0;
+      }
       if (!(pEntry instanceof ConstantInteger)
          && !(pEntry instanceof ConstantFloat)
          && !(pEntry instanceof ConstantString)
@@ -83,7 +91,7 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
          && !(pEntry instanceof ConstantLong))
       {
          throw new TinyVMException("Classfile error: LDC-type instruction "
-            + "does not refer to a suitable constant. ");
+            + "does not refer to a suitable constant. Class " + iCF.getClassName() + " method " + iFullName);
       }
 
       ConstantRecord pRecord = new ConstantRecord(iCF.getConstantPool(), pEntry);
