@@ -1,4 +1,4 @@
-JAVA_HOME ?= JAVA_HOME_not_net
+JAVA_HOME ?= JAVA_HOME_not_set
 JNI_INCLUDE ?= $(JAVA_HOME)/include
 JNI_INCLUDE_LINUX ?= $(JNI_INCLUDE)/linux
 
