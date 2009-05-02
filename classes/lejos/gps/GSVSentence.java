@@ -90,7 +90,7 @@ public class GSVSentence extends NMEASentence{
 	/**
 	 * Method used to parse a GSV Sentence
 	 */
-	public void parse(){
+	protected void parse(){
 		//StringTokenizer st = new StringTokenizer(nmeaSentence,",");
 		st = new StringTokenizer(nmeaSentence,",");
 		

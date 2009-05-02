@@ -83,7 +83,7 @@ public class VTGSentence extends NMEASentence{
 	 * 
 	 * $GPVTG,054.7,T,034.4,M,005.5,N,010.2,K,A*53
 	 */
-	public void parse (){
+	protected void parse (){
 		st = new StringTokenizer(nmeaSentence,",");
 		try{
 			st.nextToken();//skip header $GPVTG
