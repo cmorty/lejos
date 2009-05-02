@@ -55,7 +55,7 @@ abstract public class NMEASentence {
 	 *  been received since the last call. 
 	 *  It sets nmeaSentence to null to act as flag for when method called again.
 	 */
-	protected void checkRefresh() {
+	protected synchronized void checkRefresh() {
 		if(nmeaSentence != null) {
 			parse();
 			nmeaSentence = null; // Once data is parsed, discard string (used as flag)
