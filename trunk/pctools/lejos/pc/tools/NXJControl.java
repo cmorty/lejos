@@ -1409,6 +1409,7 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
 		try {
 			nxtCommand.startProgram(fileName);
 			nxtCommand.close();
+			nxtCommand = null;
 			updateConnectionStatus(nxtTable.getSelectedRow(), nxts[row].connectionState);
 			clearFiles();
 		} catch (IOException ioe) {
