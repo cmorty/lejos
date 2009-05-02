@@ -58,7 +58,7 @@ out.close()
 # Now create the java version
 data_str = ', '.join(java_data)
 # C
-out = file('../pccomms/lejos/pc/comm/FlaswWrite.java', 'w')
+out = file('../pccomms/lejos/pc/comm/FlashWrite.java', 'w')
 out.write('package lejos.pc.comm;\n');
 out.write('/**\n  * Machine-generated file. Do not modify.\n**/\n\n')
 out.write('interface FlashWrite {\n  static final byte[] CODE = {')
