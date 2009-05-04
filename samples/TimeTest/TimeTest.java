@@ -1,7 +1,7 @@
 import lejos.nxt.*;
 import lejos.nxt.comm.*;
-import lejos.nxt.socket.*;
 import java.io.*;
+import java.net.*;
 
 /**
 * Gets the time from a time server
@@ -14,7 +14,7 @@ public class TimeTest {
 	private DataInputStream ins;
 	private DataOutputStream outs;
 	private BTConnection btc = null;
-	private NXTSocket sock = null;
+	private Socket sock = null;
 	private String connected = "Connected";
 	private String waiting = "Waiting...";
 
@@ -48,7 +48,7 @@ public class TimeTest {
 		LCD.drawString(waiting, 0, 0);
 		btc = Bluetooth.waitForConnection();
 		LCD.clear();
-		sock = new NXTSocket(host, port, btc);
+		sock = new Socket(host, port, btc);
 		LCD.drawString(connected, 0, 0);
 	}
 

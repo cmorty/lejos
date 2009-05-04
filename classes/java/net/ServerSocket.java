@@ -1,4 +1,4 @@
-package lejos.nxt.socket;
+package java.net;
 
 import java.io.*;
 import lejos.nxt.comm.*;
@@ -9,7 +9,7 @@ import lejos.nxt.comm.*;
  * ServerSocket interface applications on the NXT.
  *
  */
-public class NXTServerSocket {
+public class ServerSocket {
 
 	private int port;
 	private NXTConnection nxtc;
@@ -21,7 +21,7 @@ public class NXTServerSocket {
 	 * @param nxtc The connection to open
 	 * @throws IOException 
 	 */
-	public NXTServerSocket(int port, NXTConnection nxtc) throws IOException {
+	public ServerSocket(int port, NXTConnection nxtc) throws IOException {
 		this.port = port;
 		this.nxtc = nxtc;
 		negotiateConnection();
@@ -49,11 +49,11 @@ public class NXTServerSocket {
 	
 	/**
 	 * Waits until there is a socket connection available. When this becomes true
-	 * a new NXTSocket is returned
-	 * @return NXTSocket the socket
+	 * a new Socket is returned
+	 * @return Socket the socket
 	 * @throws IOException 
 	 */
-	public NXTSocket accept() throws IOException {
+	public Socket accept() throws IOException {
 		DataOutputStream dos = openDataOutputStream();
 		DataInputStream dis = openDataInputStream(); 
 		
@@ -63,6 +63,6 @@ public class NXTServerSocket {
 		dis.readBoolean();
 		dos.close();
 		dis.close();
-		return new NXTSocket(nxtc);		
+		return new Socket(nxtc);		
 	}
 }

@@ -1,10 +1,10 @@
-package lejos.nxt.socket;
+package java.net;
 
 import java.io.*;
 import lejos.nxt.comm.*;
 
 /**
-* NXTSocket. Allows a NXT to establish a connection with a remote Socket
+* Socket. Allows a NXT to establish a connection with a remote Socket
 * server via a proxy server.
 * 
 * Version 1.1 uses NXTConnection and does not need to distinguish between USB and Bluetooth.
@@ -12,7 +12,7 @@ import lejos.nxt.comm.*;
 * @author Ranulf Green & Lawrie Griffiths
 * @version 1.1
 */
-public class NXTSocket{
+public class Socket{
 	private DataOutputStream outToProxy;
 	private DataInputStream inFromProxy;
 	private NXTConnection nxtc;
@@ -31,7 +31,7 @@ public class NXTSocket{
 	 * @throws IOException If the host does not respond or the proxy is
 	 * 	not running
 	 */
-	public NXTSocket(String host, int port, NXTConnection nxtc) throws IOException {
+	public Socket(String host, int port, NXTConnection nxtc) throws IOException {
 		this.host = host;
 		this.port = port;
 		this.nxtc = nxtc;
@@ -46,7 +46,7 @@ public class NXTSocket{
 	 * Constructor. Use if the socket is intended not to connect to a host
 	 * @param nxtc the connection the socket is made over
 	 */
-	public NXTSocket(NXTConnection nxtc) {
+	public Socket(NXTConnection nxtc) {
 		this.nxtc = nxtc;
 	}
 	
