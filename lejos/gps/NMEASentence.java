@@ -21,10 +21,11 @@ abstract public class NMEASentence {
 	/* GETTERS & SETTERS */
 	
 	/**
-	 * Retrieve the header constant for this sentence.
-	 * TODO: Maybe getSentenceType()?
-	 * TODO: Should it return the $ too, or maybe have a list of constants?
+	 *  Retrieve the header constant for this sentence.
+	 *  @return The NMEA header string ($GPGGA, $GPVTG, etc...)   
 	 */
+	// TODO: Maybe getSentenceType()?
+	// TODO: Should it return the $ too, or maybe have a list of constants?
 	abstract public String getHeader();
 	
 	/**
