@@ -1,4 +1,4 @@
-package lejos.nxt.socket;
+package java.net;
 
 import java.io.*;
 import lejos.nxt.comm.*;
@@ -8,7 +8,7 @@ import lejos.nxt.comm.*;
  * so that it can indicate when a socket has been closed.
  *
  */
-public class NXTSocketOutputStream extends OutputStream {
+class NXTSocketOutputStream extends OutputStream {
 	private byte[] buffer;
 	private int numBytes = 0;
 	private NXTConnection conn = null;
