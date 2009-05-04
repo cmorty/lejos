@@ -5,7 +5,8 @@
     </description>
 	
 	<loadfile property="template.linux" srcFile="templates/linux.sh"/>
-	<loadfile property="template.windows" srcFile="templates/windows.cmd"/>
+	<loadfile property="template.windows" srcFile="templates/windows-normal.bat"/>
+	<loadfile property="template.windows.compat" srcFile="templates/windows-compat.bat"/>
 	
 	<property name="build.dir" value="build" />
 	<property name="dir.linux" value="${build.dir}/linux"/>
@@ -40,8 +41,19 @@
 		<attribute name="file"/>
 		<sequential>
 			<mkdir dir="${dir.windows}"/>
-
 			<echo file="${dir.windows}/@{file}.cmd">${template.windows}
+
+@{command}
+</echo>
+			<fixcrlf file="${dir.windows}/@{file}.cmd" encoding="latin1" eol="dos"/>
+		</sequential>
+	</macrodef>
+	<macrodef name="win-compat">
+		<text name="command" trim="true"/>
+		<attribute name="file"/>
+		<sequential>
+			<mkdir dir="${dir.windows}"/>
+			<echo file="${dir.windows}/@{file}.cmd">${template.windows.compat}
 
 @{command}
 </echo>
@@ -109,6 +121,16 @@
 		<win-run file="nxjpccomm">
 			java -Dnxj.home="%NXJ_HOME%" -Djava.library.path="%NXJ_BIN%" -Xbootclasspath/a:"%NXJ_CP_TOOL%" %*
 		</win-run>
+		
+		<win-compat file="lejosdl">
+			"%NXJ_HOME%\nxj" -r %*
+		</win-compat>
+		<win-compat file="lejosfirmdl">
+			"%NXJ_HOME%\nxjflash" -r %*
+		</win-compat>
+		<win-compat file="lejosjc">
+			"%NXJ_HOME%\nxjc" %*
+		</win-compat>
 	</target>
 	
 	<target name="clean">

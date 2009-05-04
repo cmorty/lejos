@@ -1,6 +1,6 @@
 @echo off
 
-if "%NXJ_HOME%" == "" set NXJ_HOME=%0\..\..
+if "%NXJ_HOME%" == "" set NXJ_HOME="%0\..\.."
 
 set NXJ_BIN="%NXJ_HOME%\bin"
 set NXJ_LIBS="%NXJ_HOME%\lib"
