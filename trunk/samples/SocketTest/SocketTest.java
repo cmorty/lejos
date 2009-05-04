@@ -1,8 +1,8 @@
 
 import lejos.nxt.*;
 import lejos.nxt.comm.*;
-import lejos.nxt.socket.*;
 import java.io.*;
+import java.net.*;
 
 /**
 * Simple test program. Echoes data back to the socket server
@@ -14,7 +14,7 @@ public class SocketTest {
 	private DataInputStream ins;
 	private DataOutputStream outs;
 	private BTConnection btc = null;
-	private NXTSocket sock = null;
+	private Socket sock = null;
 	private String connected = "connected";
 	private String waiting = "waiting";
 
@@ -52,7 +52,7 @@ public class SocketTest {
 		LCD.drawString(waiting,0,0);
 		btc = Bluetooth.waitForConnection();
 		LCD.clear();
-		sock = new NXTSocket("localhost", 8081, btc);
+		sock = new Socket("localhost", 8081, btc);
 
 		LCD.drawString(connected,0,0);
 	}
