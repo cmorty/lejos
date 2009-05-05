@@ -15,7 +15,7 @@
 		<attribute name="file"/>
 		<sequential>
 			<mkdir dir="${linux.dir}"/>
-
+			<echo message="creating ${linux.dir}/@{file}"/>
 			<echo file="${linux.dir}/@{file}">${template.linux}
 	
 @{command}
@@ -39,6 +39,7 @@
 		<attribute name="file"/>
 		<sequential>
 			<mkdir dir="${windows.dir}"/>
+			<echo message="creating ${windows.dir}/@{file}.bat"/>
 			<echo file="${windows.dir}/@{file}.bat">${template.windows}
 
 @{command}
@@ -51,6 +52,7 @@
 		<attribute name="file"/>
 		<sequential>
 			<mkdir dir="${windows.dir}"/>
+			<echo message="creating ${windows.dir}/@{file}.bat"/>
 			<echo file="${windows.dir}/@{file}.bat">${template.windows.compat}
 
 @{command}
