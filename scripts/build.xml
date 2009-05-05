@@ -123,13 +123,13 @@
 		</win-run>
 		
 		<win-compat file="lejosdl">
-			"%NXJ_HOME%\nxj" -r %*
+			"%0\..\nxj" -r %*
 		</win-compat>
 		<win-compat file="lejosfirmdl">
-			"%NXJ_HOME%\nxjflash" -r %*
+			"%0\..\nxjflash" %*
 		</win-compat>
 		<win-compat file="lejosjc">
-			"%NXJ_HOME%\nxjc" %*
+			"%0\..\nxjc" %*
 		</win-compat>
 	</target>
 	
