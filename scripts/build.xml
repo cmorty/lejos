@@ -41,11 +41,11 @@
 		<attribute name="file"/>
 		<sequential>
 			<mkdir dir="${dir.windows}"/>
-			<echo file="${dir.windows}/@{file}.cmd">${template.windows}
+			<echo file="${dir.windows}/@{file}.bat">${template.windows}
 
 @{command}
 </echo>
-			<fixcrlf file="${dir.windows}/@{file}.cmd" encoding="latin1" eol="dos"/>
+			<fixcrlf file="${dir.windows}/@{file}.bat" encoding="latin1" eol="dos"/>
 		</sequential>
 	</macrodef>
 	<macrodef name="win-compat">
@@ -53,11 +53,11 @@
 		<attribute name="file"/>
 		<sequential>
 			<mkdir dir="${dir.windows}"/>
-			<echo file="${dir.windows}/@{file}.cmd">${template.windows.compat}
+			<echo file="${dir.windows}/@{file}.bat">${template.windows.compat}
 
 @{command}
 </echo>
-			<fixcrlf file="${dir.windows}/@{file}.cmd" encoding="latin1" eol="dos"/>
+			<fixcrlf file="${dir.windows}/@{file}.bat" encoding="latin1" eol="dos"/>
 		</sequential>
 	</macrodef>
 	<macrodef name="win-tool">
@@ -123,13 +123,13 @@
 		</win-run>
 		
 		<win-compat file="lejosdl">
-			"%0\..\nxj" -r %*
+			"%0\..\nxj.bat" -r %*
 		</win-compat>
 		<win-compat file="lejosfirmdl">
-			"%0\..\nxjflash" %*
+			"%0\..\nxjflash.bat" %*
 		</win-compat>
 		<win-compat file="lejosjc">
-			"%0\..\nxjc" %*
+			"%0\..\nxjc.bat" %*
 		</win-compat>
 	</target>
 	
