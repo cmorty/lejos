@@ -1,9 +1,0 @@
-#!/bin/bash
-NXJ_BIN="$(dirname -- "$(readlink -f -- "$0")")"
-source $NXJ_BIN/_nxjconfig
-
-#
-# nxjconsoleviewer: GUI Viewer for RConsole output
-#
-
-run_tool lejos.pc.tools.ConsoleViewer "$@"
