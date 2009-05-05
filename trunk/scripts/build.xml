@@ -4,25 +4,23 @@
 		Generates scripts
     </description>
 	
+	<property file="build.properties" />
 	<loadfile property="template.linux" srcFile="templates/linux.sh"/>
 	<loadfile property="template.windows" srcFile="templates/windows-normal.bat"/>
 	<loadfile property="template.windows.compat" srcFile="templates/windows-compat.bat"/>
 	
-	<property name="build.dir" value="build" />
-	<property name="dir.linux" value="${build.dir}/linux"/>
-	<property name="dir.windows" value="${build.dir}/windows"/>
 	
 	<macrodef name="linux-run">
 		<text name="command" trim="true"/>
 		<attribute name="file"/>
 		<sequential>
-			<mkdir dir="${dir.linux}"/>
+			<mkdir dir="${linux.dir}"/>
 
-			<echo file="${dir.linux}/@{file}">${template.linux}
+			<echo file="${linux.dir}/@{file}">${template.linux}
 	
 @{command}
 </echo>
-			<fixcrlf file="${dir.linux}/@{file}" encoding="latin1" eol="unix"/>
+			<fixcrlf file="${linux.dir}/@{file}" encoding="latin1" eol="unix"/>
 		</sequential>
 	</macrodef>
 	<macrodef name="linux-tool">
@@ -40,24 +38,24 @@
 		<text name="command" trim="true"/>
 		<attribute name="file"/>
 		<sequential>
-			<mkdir dir="${dir.windows}"/>
-			<echo file="${dir.windows}/@{file}.bat">${template.windows}
+			<mkdir dir="${windows.dir}"/>
+			<echo file="${windows.dir}/@{file}.bat">${template.windows}
 
 @{command}
 </echo>
-			<fixcrlf file="${dir.windows}/@{file}.bat" encoding="latin1" eol="dos"/>
+			<fixcrlf file="${windows.dir}/@{file}.bat" encoding="latin1" eol="dos"/>
 		</sequential>
 	</macrodef>
 	<macrodef name="win-compat">
 		<text name="command" trim="true"/>
 		<attribute name="file"/>
 		<sequential>
-			<mkdir dir="${dir.windows}"/>
-			<echo file="${dir.windows}/@{file}.bat">${template.windows.compat}
+			<mkdir dir="${windows.dir}"/>
+			<echo file="${windows.dir}/@{file}.bat">${template.windows.compat}
 
 @{command}
 </echo>
-			<fixcrlf file="${dir.windows}/@{file}.bat" encoding="latin1" eol="dos"/>
+			<fixcrlf file="${windows.dir}/@{file}.bat" encoding="latin1" eol="dos"/>
 		</sequential>
 	</macrodef>
 	<macrodef name="win-tool">
