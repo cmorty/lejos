@@ -1,9 +1,0 @@
-#!/bin/bash
-NXJ_BIN="$(dirname -- "$(readlink -f -- "$0")")"
-source $NXJ_BIN/_nxjconfig
-
-#
-# nxjflashg: run GUI flash utility
-#
-
-run_tool lejos.pc.tools.NXJFlashG "$@"
