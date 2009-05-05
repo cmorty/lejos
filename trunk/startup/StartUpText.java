@@ -1,5 +1,6 @@
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Vector;
 
 import javax.bluetooth.RemoteDevice;
@@ -208,6 +209,12 @@ public class StartUpText
                 };
         tuneThread.start();
 		//1 RConsole.open();
+        
+        ArrayList<?> test = new ArrayList<Object>();
+        for(Object o : test)
+        {
+        	
+        }
 				
 		Indicators ind = new Indicators();
         Responder usb = new Responder(USB.getConnector());
