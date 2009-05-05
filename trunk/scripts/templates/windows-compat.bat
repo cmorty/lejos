@@ -1,5 +1,6 @@
 @echo off
 setlocal
 
-if "%LEJOS_HOME%" == "" set LEJOS_HOME=%0\..\..
-if "%NXJ_HOME%" == "" set NXJ_HOME=%LEJOS_HOME%
+if "%LEJOS_HOME%" == "" goto home_unset
+	if "%NXJ_HOME%" == "" set "NXJ_HOME=%LEJOS_HOME%"
+:home_unset
