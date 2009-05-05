@@ -29,4 +29,4 @@ set "NXJ_CP_LINK=%NXJ_JAR_BCEL%;%NXJ_JAR_COMMONS_CLI%;%NXJ_JAR_JTOOLS%"
 set "NXJ_CP_TOOL=%NXJ_CP_BLUECOVE%;%NXJ_CP_LINK%;%NXJ_JAR_PCCOMM%;%NXJ_JAR_PCTOOLS%"
 
 
-javac -bootclasspath "%NXJ_CP_BOOT%" %*
+java -Dnxj.home="%NXJ_HOME%" -Djava.library.path="%NXJ_BIN%" -Xbootclasspath/a:"%NXJ_CP_TOOL%" %*
