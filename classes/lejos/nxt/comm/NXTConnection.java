@@ -315,7 +315,7 @@ ioloop: while (offset < len)
 	/**
 	 * Set operating mode. Controls the packet/stream mode of this channel.
 	 * For packet mode it defines the header size to be used.
-	 * @param mode	I/O mode to be used for this connection
+	 * @param mode	I/O mode to be used for this connection. NXTConnection.RAW, .LCP, or .PACKET
 	 */
 	public void setIOMode(int mode)
 	{

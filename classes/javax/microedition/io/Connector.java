@@ -2,7 +2,7 @@ package javax.microedition.io;
 
 import java.io.*;
 
-import lejos.nxt.comm.Bluetooth;
+import lejos.nxt.comm.*;
 
 /**
  * This is a factory class to create different data connections, such as Bluetooth or USB.
@@ -56,7 +56,7 @@ public class Connector {
         		private StreamConnection sc = null;
         		
 				public StreamConnection acceptAndOpen() throws IOException {
-					return Bluetooth.connect(target, 0);
+					return Bluetooth.connect(target, NXTConnection.RAW);
 				}
 
 				public void close() throws IOException {
