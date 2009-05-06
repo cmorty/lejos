@@ -838,7 +838,7 @@ public class Bluetooth extends NXTCommDevice
 	/**
 	 * Wait for a remote device to connect.
 	 * @param timeout time in ms to wait for connection, 0 == wait for ever
-     * @param mode the I/O mode to be used for this connection
+     * @param mode the I/O mode to be used for this connection. <code>NXTConnection.RAW, .LCP, or .PACKET</code>
 	 * @param pin the pin to use, null use current default
 	 * @return a BTConnection
 	 */
@@ -929,7 +929,7 @@ public class Bluetooth extends NXTCommDevice
 	/**
 	 * Uses the current default PIN
      * @param timeout time in ms to wait for connection, 0 == wait for ever
-     * @param mode the I/O mode to be used for this connection
+     * @param mode the I/O mode to be used for this connection. <code>NXTConnection.RAW, .LCP, or .PACKET</code>
      * @return the Bluetooth connection
 	 */
 	public static BTConnection waitForConnection(int timeout, int mode)
@@ -951,7 +951,7 @@ public class Bluetooth extends NXTCommDevice
     /**
      * Connect to the specified device, either by name or address
      * @param target String name or address
-     * @param mode I/O mode for this connection
+     * @param mode I/O mode for this connection. <code>NXTConnection.RAW, .LCP, or .PACKET</code>
      * @param pin The pin to use for this connection
      * @return BTConnection object or null
      */
@@ -975,7 +975,7 @@ public class Bluetooth extends NXTCommDevice
     /**
      * Connect to the specified device, either by name or address
      * @param target String name or address
-     * @param mode I/O mode for this connection
+     * @param mode I/O mode for this connection. <code>NXTConnection.RAW, .LCP, or .PACKET</code>
      * @return BTConnection object or null
      */
     public static BTConnection connect(String target, int mode)
