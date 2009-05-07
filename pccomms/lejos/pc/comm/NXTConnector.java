@@ -61,7 +61,7 @@ public class NXTConnector extends NXTCommLoggable
 	public NXTInfo[] search(String nxt, String addr, int protocols)
 	{
 		String name = (nxt == null || nxt.length() == 0 ? nxt: "Unknown");
-		String searchParam = (nxt == null || nxt.length() == 0 ? null : nxt);
+		String searchParam = (nxt == null || nxt.length() == 0 || nxt.equals("*") ? null : nxt);
 		String searchFor = (nxt == null || nxt.length() == 0 ? "any NXT" : nxt);
        	Properties props = null;
        	
@@ -118,14 +118,14 @@ public class NXTConnector extends NXTCommLoggable
 			
 			// Get known NXT names and addresses from the properties file
 			try {	       	
-				props = NXTCommFactory.getNXJProperties();
+				props = NXTCommFactory.getNXJCache();
 								
 				// Create an array of NXTInfos from the properties
-				if (props.size() > 0) {	
+				if (props.size() > 0 && !nxt.equals("*")) {	
 					Hashtable<String,String> nxtNames = new Hashtable<String,String>();
 					Enumeration<?> enProps = props.propertyNames();
 					
-					log("Searching properties file for known Bluetooth devices");
+					log("Searching cache file for known Bluetooth devices");
 					
 					// Populate hashTable from NXT_<name> entries, filtering by name, if supplied
 				    for (; enProps.hasMoreElements(); ) {
@@ -137,13 +137,13 @@ public class NXTConnector extends NXTCommLoggable
 				        	String nxtAddr = (String)props.get(propName);
 					        
 				        	if (searchParam == null || nxtName.equals(nxt)) {
-				        		log("Found " + nxtName + " " + nxtAddr + " in properties file");
+				        		log("Found " + nxtName + " " + nxtAddr + " in cache file");
 				        		nxtNames.put(nxtName, nxtAddr);
 				        	}				        	
 				        }				    
 				    }
 				    
-				    log("Found " + nxtNames.size() + " matching NXTs in properties file");
+				    log("Found " + nxtNames.size() + " matching NXTs in cache file");
 				    
 				    // If any found, create the NXTInfo array from the hashtable
 				    if (nxtNames.size() > 0) {					    
@@ -157,10 +157,10 @@ public class NXTConnector extends NXTCommLoggable
 					    }				    	
 				    }
 				} else {
-					log("No NXTs found in properties file");
+					log("No NXTs found in cache file");
 				}
 			} catch (NXTCommException ex) {
-				log("Failed to load properties file");
+				log("Failed to load cache file");
 			}
 		
 			// If none found, do a Bluetooth inquiry
@@ -181,11 +181,11 @@ public class NXTConnector extends NXTCommLoggable
 					props.put("NXT_" + nxtInfos[i].name, nxtInfos[i].deviceAddress);
 				}
 				
-				log("Saving properties");
+				log("Saving cached names");
 				try {
-					NXTCommFactory.saveNXJProperties(props,"Results from Bluetooth inquiry");
+					NXTCommFactory.saveNXJCache(props,"Results from Bluetooth inquiry");
 				} catch (IOException ex) {
-					log("Failed to write properties: " + ex.getMessage());
+					log("Failed to write cache file: " + ex.getMessage());
 				}
 			}
 		}
