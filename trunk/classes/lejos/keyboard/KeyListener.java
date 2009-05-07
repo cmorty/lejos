@@ -13,7 +13,7 @@ public interface KeyListener {
   /**
    * This method is called when a key is typed.  A key is considered typed
    * when it and all modifiers have been pressed and released, mapping to
-   * a single virtual key.
+   * a single virtual key. If a key is held down, this event will repeat.
    *
    * @param event the <code>KeyEvent</code> indicating that a key was typed
    */
