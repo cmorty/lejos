@@ -1421,7 +1421,7 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
 	 * Change the friendly name of the NXT
 	 */
 	private void rename(String name) {
-
+		if (nxtCommand == null) return;
 		if (name != null && name.length() <= 16 && name.length() > 0) {
 			frame.setCursor(hourglassCursor);
 			try {
