@@ -30,37 +30,19 @@ public class NXTCommBluecove implements NXTComm, DiscoveryListener {
 
 		if ((protocol & NXTCommFactory.BLUETOOTH) == 0)
 			return new NXTInfo[0];
-		
-		// Check first for cached and known devices
-		
-		try {
-			RemoteDevice[] rd = LocalDevice.getLocalDevice().getDiscoveryAgent().retrieveDevices(DiscoveryAgent.CACHED);
-			
-			System.out.println("rd = " + rd);
-			if (rd != null) {
-				System.out.println("Found " + rd.length + " cached devices");
-				for(int i=0;i<rd.length;i++) {
-					devices.addElement(rd[i]);
-				}
-			}
-		} catch (BluetoothStateException e) {
-			System.out.println("Exception in retrieveDevices");
-		}
 
-		if (devices.size() == 0) {
-			synchronized (this) {
+		synchronized (this) {
+			try {
+				LocalDevice.getLocalDevice().getDiscoveryAgent().startInquiry(
+						DiscoveryAgent.GIAC, this);
 				try {
-					LocalDevice.getLocalDevice().getDiscoveryAgent().startInquiry(
-							DiscoveryAgent.GIAC, this);
-					try {
-						wait();
-					} catch (InterruptedException e) {
-						System.err.println(e.getMessage());
-					}
-				} catch(Throwable t) {
-					//System.err.println(e.getMessage());
-					throw new NXTCommException("Bluetooth stack not detected",t); 
+					wait();
+				} catch (InterruptedException e) {
+					System.err.println(e.getMessage());
 				}
+			} catch(Throwable t) {
+				//System.err.println(e.getMessage());
+				throw new NXTCommException("Bluetooth stack not detected",t); 
 			}
 		}
 

@@ -18,6 +18,31 @@ import java.awt.*;
 public class NXTCam extends I2CSensor {
 	byte[] buf = new byte[4];
 	
+	/**
+	 * Used by sortBy() to choose sorting criteria based on size (ordered largest to smallest).
+	 */
+	public static final char SIZE = 'A';
+	
+	/**
+	 * Used by sortBy() to choose sorting criteria based on color id (ordered 0 to 7).
+	 */
+	public static final char COLOR = 'U';
+	
+	/**
+	 * Used by sortBy() to choose no sorting of detected objects.
+	 */
+	public static final char NO_SORTING = 'X';
+	
+	/**
+	 * Used by setTrackingMode() to choose object tracking.
+	 */
+	public static final char OBJECT_TRACKING = 'B';
+	
+	/**
+	 * Used by setTrackingMode() to choose line tracking.
+	 */
+	public static final char LINE_TRACKING = 'L';
+	
 	public NXTCam(I2CPort port)
 	{
 		super(port);
@@ -33,6 +58,32 @@ public class NXTCam extends I2CSensor {
 		int ret = getData(0x42, buf, 1);
 		if(ret != 0) return -1;
 		return (0xFF & buf[0]);
+	}
+	
+	/**
+	 * Camera sorts objects it detects according to criteria, either color, size,
+	 * or no sorting at all.
+	 * @param sortType Use the class constants SIZE, COLOR, or NO_SORTING.
+	 */
+	public void sortBy(char sortType) {
+		sendCommand(sortType);
+	}
+	
+	/**
+	 * 
+	 * @param enable true to enable, false to disable
+	 */
+	public void enableTracking(boolean enable) {
+		if(enable) sendCommand('E');
+		else sendCommand('D');
+	}
+	
+	/**
+	 * Choose either object or line tracking mode.
+	 * @param mode Use either OBJECT_TRACKING or LINE_TRACKING
+	 */
+	public void setTrackingMode(char mode) {
+		sendCommand(mode);
 	}
 	
 	/**
