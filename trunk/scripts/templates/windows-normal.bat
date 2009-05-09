@@ -10,11 +10,11 @@ if "%NXJ_HOME%" == "" goto :home_unset
 	goto :EOF
 :home_nt
 	set "NXJ_TEMP=%cd%"
-	cd "%0\.."
+	cd /d "%0\.."
 	set "NXJ_BIN=%cd%"
-	cd "%0\..\.."
+	cd ".."
 	set "NXJ_HOME=%cd%"
-	cd "%NXJ_TEMP%"
+	cd /d "%NXJ_TEMP%"
 :home_endif
 
 set NXJ_LIBS=%NXJ_HOME%\lib
