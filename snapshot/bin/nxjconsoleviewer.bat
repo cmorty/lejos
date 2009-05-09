@@ -5,8 +5,11 @@ if "%NXJ_HOME%" == "" goto home_unset
 	set "NXJ_BIN=%NXJ_HOME%\bin"
 	goto home_endif
 :home_unset
-	set "NXJ_BIN=%0\.."
-	set "NXJ_HOME=%0\..\.."
+	pushd "%0\.."
+	set "NXJ_BIN=%cd%"
+	cd ..
+	set "NXJ_HOME=%cd%"
+	popd
 :home_endif
 
 set "NXJ_LIBS=%NXJ_HOME%\lib"
