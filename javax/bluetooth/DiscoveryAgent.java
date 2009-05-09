@@ -188,8 +188,10 @@ public class DiscoveryAgent {
 			Thread t = new Thread() {
 				public void run() {
 					// !! 5 x 1.28 = 6.4 second timeout long enough? Seems good.
+					final int MY_TIME_OUT = 7;
 					// !! Only finds 10 devices max at present. Good enough?
-					Bluetooth.inquireNotify(10, 5, listy);
+					final int MAX_DEVICES = 10;
+					Bluetooth.inquireNotify(MAX_DEVICES, MY_TIME_OUT, listy);
 				}
 			};
 			// Daemon thread?

@@ -32,7 +32,7 @@ class BTGPSLocationProvider extends LocationProvider implements DiscoveryListene
 	 */
 	boolean doneInq = false;
 	
-	// I think this indicates the BT device is a GPS unit:
+	// I think this indicates the BT device is a GPS unit: TODO: Wrong. Keyboard has same signature.
 	private static final int GPS_MAJOR = 0x1F00;
 	
 	protected BTGPSLocationProvider() {

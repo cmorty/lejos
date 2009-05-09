@@ -1,8 +1,12 @@
 package lejos.keyboard;
 
+/**
+ * Contains data for a KeyEvent. Passed to KeyListener objects.
+ * @author BB
+ *
+ */
 public class KeyEvent {
 	
-	// TODO: Change as many to byte/short as possible
 	public static final int SHIFT_MASK = 1;
 	public static final int CTRL_MASK = 2;
 	public static final int META_MASK = 4;
@@ -257,7 +261,7 @@ public class KeyEvent {
 		return this.source;
 	}
 	
-	// TODO: Change as many to byte/short as possible:
+	
 	 /**
      * The first number in the range of ids used for key events.
      */
@@ -448,7 +452,11 @@ public class KeyEvent {
     public static final int VK_DECIMAL        = 0x6E;
     public static final int VK_DIVIDE         = 0x6F;
     public static final int VK_DELETE         = 0x7F; /* ASCII DEL */
-    public static final int VK_NUM_LOCK       = 0x90;
+    /**
+     * JDK defines as 0x90.
+     * Redefined as 0x04 for leJOS to save memory.
+     */
+    public static final int VK_NUM_LOCK       = 0x04;
     public static final int VK_SCROLL_LOCK    = 0x91;
 
     /** Constant for the F1 function key. */
@@ -561,12 +569,24 @@ public class KeyEvent {
     public static final int VK_F24            = 0xF00B;
 
     public static final int VK_PRINTSCREEN    = 0x9A;
-    public static final int VK_INSERT         = 0x9B;
+    /**
+     * JDK = 0x9B. leJOS = 0x02 (saves memory)
+     */
+    public static final int VK_INSERT         = 0x02;
     public static final int VK_HELP           = 0x9C;
-    public static final int VK_META           = 0x9D;
+    /**
+     * JDK = 0x9D. leJOS = 11 (saves memory)
+     */
+    public static final int VK_META           = 11;
 
-    public static final int VK_BACK_QUOTE     = 0xC0;
-    public static final int VK_QUOTE          = 0xDE;
+    /**
+     * JDK = 0xC0. leJOS = 14 (saves memory)
+     */
+    public static final int VK_BACK_QUOTE     = 14;
+    /**
+     * JDK = 0xDE. leJOS = 15 (saves memory)
+     */
+    public static final int VK_QUOTE          = 15;
 
     /**
      * Constant for the numeric keypad <b>up</b> arrow key.
@@ -701,10 +721,11 @@ public class KeyEvent {
     public static final int VK_NUMBER_SIGN              = 0x0208;
 
     /**
-     * Constant for the "+" key.
+     * Constant for the "+" key. JDK defines as 0x0209.
+     * Redefined as 0x05 for leJOS to use byte, save memory.
      * @since 1.2
      */
-    public static final int VK_PLUS                     = 0x0209;
+    public static final int VK_PLUS                     = 0x05;
 
     /**
      * Constant for the ")" key.
@@ -721,10 +742,11 @@ public class KeyEvent {
     /**
      * Constant for the Microsoft Windows "Windows" key.
      * It is used for both the left and right version of the key.
+     * JDK = 0x020C. leJOS = 13 (saves memory)
      * @see #getKeyLocation()
      * @since 1.5
      */
-    public static final int VK_WINDOWS                  = 0x020C;
+    public static final int VK_WINDOWS                  = 13;
 
     /**
      * Constant for the Microsoft Windows Context Menu key.
@@ -887,10 +909,11 @@ public class KeyEvent {
     public static final int VK_COMPOSE                  = 0xFF20;
 
     /**
-     * Constant for the AltGraph function key.
+     * Constant for the AltGraph function key. JDK defines as 0xFF7E.
+     * Redefined as 0x06 for leJOS to save memory.
      * @since 1.2
      */
-    public static final int VK_ALT_GRAPH                = 0xFF7E;
+    public static final int VK_ALT_GRAPH                = 0x06;
 
     /**
      * Constant for the Begin key.
