@@ -2,10 +2,17 @@ package lejos.keyboard;
 
 import java.io.*;
 
-import lejos.nxt.Button;
+import javax.bluetooth.*;
+import javax.microedition.io.*;
 
 /*
  * Developer Notes:
+ * Programming keyboard input is not very simple or straightforward.
+ * This class basically converts the keyboard scan code into a VK constant (virtual keyboard)
+ * located in KeyEvent. The method that does this is getJavaConstant().
+ * Then this class then looks at the modifier keys (like shift) and converts the VK
+ * constant into the proper ASCII character. 
+ * 
  * Freedom Universal is an AT keyboard, not XT. It uses Scan Code Set 2:
  * http://www.computer-engineering.org/ps2keyboard/
  * You will not find characters such as ? or lower case because those are Virtual Keys (VK).
@@ -23,21 +30,31 @@ import lejos.nxt.Button;
  * <li>iTech Virtual Keyboard (SPP only)<br>
  * http://www.virtual-laser-keyboard.com/
  * </p>
+ * <p>The SPP keyboards transmit keystrokes as one byte, not two like normal HID keyboards.
+ * For this reason, this class won't work properly with a regular HID keyboard as written.
+ * With modifications it could be made to work with both SPP and HID keyboards since
+ * the key tables are mostly the same.</p>
  * <p>Note: This class is currently only tested with Freedom Universal</p>
- * 
+ * @author BB
  */
-
-// Typematic Key Repeat:
-// Typematic delay - 0.25 seconds to 1.00 second (500ms default)
-// Typematic rate - 2.0 cps (characters per second) to 30.0 cps (10.9 default)
-// "Set Typematic Rate/Delay" (0xF3) command
-// Typematic data is not buffered within the keyboard.  In the case 
-// where more than one key is held down, only the last key pressed 
-// becomes typematic.  Typematic repeat then stops when that key is 
-// released, even though other keys may be held down.
-
 public class Keyboard extends Thread {
 
+	// Typematic Key Repeat:
+	/** 
+	 * Typematic delay - 0.25 seconds to 1.00 second (500ms default)
+	 */
+	private int typematicDelay = 500;
+	
+	/** 
+	 * Typematic rate - 2.0 cps (characters per second) to 30.0 cps (10.9 default)
+	 */
+	private double typematicRate = 10.9;
+	private int ratePause =  (int)(1000.0/typematicRate);
+	
+	private char lastKeyPress = NOT_ASCII_CHAR;
+	
+	private char oldChar = NOT_ASCII_CHAR;
+	
 	/**
 	 * Represents a key press that is not an ASCII character (e.g. Caps lock, Shift, etc...)
 	 */
@@ -63,33 +80,61 @@ public class Keyboard extends Thread {
 	private InputStream in = null;
 	private OutputStream out = null;
 	
-	int modifiers; // keeps track of modifier keys held down (shift, alt, etc)
+	private int modifiers; // keeps track of modifier keys held down (shift, alt, etc)
 	
-	// Use Vector? Resizable array?
 	private KeyListener keyListener = null;
-		
+	
+	private Keyboard kb = this; // Used by typematicThread
+	
+	/**
+	 * Thread to handle typematic key repeating.
+	 * Typematic data is not buffered within the keyboard.  In the case
+	 * where more than one key is held down, only the last key pressed
+	 * becomes typematic. Typematic repeat then stops when that key is
+	 * released, even though other keys may be held down.
+	 * "Set Typematic Rate/Delay" (0xF3) command
+	 */
+	private Thread typematicThread = new Thread() {
+		public void run() {
+			while(true) {
+				// Watch for key press that is char. (yield) If so, continue until released
+				// or new key pressed (doesn't matter which key, all interrupt typematic).
+				while(lastKeyPress == NOT_ASCII_CHAR) {Thread.yield();}
+				oldChar = lastKeyPress;
+				try {Thread.sleep(typematicDelay);} catch(Exception e) {}
+				
+				while((lastKeyPress != NOT_ASCII_CHAR)&(oldChar == lastKeyPress)) {
+					KeyEvent ke = new KeyEvent(kb, KeyEvent.KEY_TYPED, System.currentTimeMillis(), modifiers, 0, lastKeyPress, 0);
+					notifyListeners(ke);
+					try {Thread.sleep(ratePause);} catch(Exception e) {}
+				}
+			}
+		}
+	};
+	
 	/**
 	 * Table converts the scan code into a Java VK constant (see KeyEvent constants).
 	 * Index is the scancode, value is the Java constant  
 	 * 64 unique keys on Freedom Universal, many of these keys are not present but mapped for future compatibility
+	 * The Fn key is not standard, so it is mapped to VK_META.
+	 * TODO: Maybe Fn should not register at all as keypress? Instead, it outputs Esc, Pg_up, etc...
+	 * as though they are key presses? Overrides actual key?
 	 */
-	/* DEVNOTES: Unable to figure out constants for the keys "L GUI E0, 1F", "R GUI E0, 27", "APPS E0, 2F" See:
+	/* DEVNOTES:
 	 * http://www.computer-engineering.org/ps2keyboard/scancodes2.html
-	 * VK_BACK_QUOTE blew the size to 222 (short). Perhaps I can get away with if-then in method in getJavaConstant()? (Doubles memory usage by ~128 bytes otherwise.)
-	 * TODO: Change the constants in KeyEvent to something smaller. I think they are arbitrary. Some are short and even int.
 	 * 
 	 * F7 has a scancode of 0x83 which pushed this array much larger, KeyEvent.VK_ALT_GRAPH is an int. 
-	 * TODO: Use if-then later in method for large vals and high index values (lot of zeros near end) like F7, SCROLL, PAGE UP, KP *.
+	 * TODO: Use if-then later for high index values? (lot of zeros near end) like F7, SCROLL, PAGE UP, KP *.
 	 * Didn't know how to handle multiple scan codes for print screen, pause. Also, keypad values interfere with multiple scancodes for page up, etc...
-	 *  
+	 *  note: VK_ALT is at 0x10 and 0x11 because Universal uses 0x10 for some reason. 
 	 */
-	 private static short [] scanCodes = {
-		0,KeyEvent.VK_F9,0,KeyEvent.VK_F5,KeyEvent.VK_F3,KeyEvent.VK_F1,KeyEvent.VK_F2, KeyEvent.VK_WINDOWS, // 0x00 - 0x07
+	 private static byte [] scanCodes = {
+		0,KeyEvent.VK_F9,KeyEvent.VK_META,KeyEvent.VK_F5,KeyEvent.VK_F3,KeyEvent.VK_F1,KeyEvent.VK_F2, KeyEvent.VK_WINDOWS, // 0x00 - 0x07
 		0,KeyEvent.VK_F10,KeyEvent.VK_F8,KeyEvent.VK_F6,KeyEvent.VK_F4,KeyEvent.VK_TAB,KeyEvent.VK_BACK_QUOTE,0, // 0x08 - 0F
-		KeyEvent.VK_ALT,KeyEvent.VK_ALT,KeyEvent.VK_SHIFT,KeyEvent.VK_ALT, KeyEvent.VK_CONTROL,KeyEvent.VK_Q,KeyEvent.VK_1,0, // 0x10 - 0x17
+		KeyEvent.VK_ALT,KeyEvent.VK_ALT,KeyEvent.VK_SHIFT,KeyEvent.VK_ALT_GRAPH, KeyEvent.VK_CONTROL,KeyEvent.VK_Q,KeyEvent.VK_1,0, // 0x10 - 0x17
 		0,0,KeyEvent.VK_Z,KeyEvent.VK_S,KeyEvent.VK_A,KeyEvent.VK_W,KeyEvent.VK_2, 0, // 0x18 - 0x1F
 		0,KeyEvent.VK_C,KeyEvent.VK_X,KeyEvent.VK_D,KeyEvent.VK_E,KeyEvent.VK_4,KeyEvent.VK_3,0, // 0x20 - 0x27
-		0,KeyEvent.VK_SPACE,KeyEvent.VK_V,KeyEvent.VK_F,KeyEvent.VK_T,KeyEvent.VK_R,KeyEvent.VK_5,KeyEvent.VK_RIGHT, // 0x28 - 0x2F
+		KeyEvent.VK_UP,KeyEvent.VK_SPACE,KeyEvent.VK_V,KeyEvent.VK_F,KeyEvent.VK_T,KeyEvent.VK_R,KeyEvent.VK_5,KeyEvent.VK_RIGHT, // 0x28 - 0x2F
 		0,KeyEvent.VK_N,KeyEvent.VK_B,KeyEvent.VK_H,KeyEvent.VK_G,KeyEvent.VK_Y,KeyEvent.VK_6,0, // 0x30 - 0x37
 		0,0,KeyEvent.VK_M,KeyEvent.VK_J,KeyEvent.VK_U,KeyEvent.VK_7,KeyEvent.VK_8,0, // 0x38 - 0x3F
 		KeyEvent.VK_UP, KeyEvent.VK_COMMA,KeyEvent.VK_K,KeyEvent.VK_I,KeyEvent.VK_O,KeyEvent.VK_0,KeyEvent.VK_9,0, // 0x40 - 0x47
@@ -102,16 +147,145 @@ public class Keyboard extends Thread {
 		KeyEvent.VK_F11, KeyEvent.VK_PLUS, KeyEvent.VK_PAGE_DOWN, KeyEvent.VK_SUBTRACT, KeyEvent.VK_MULTIPLY // 0x78 - 0x7C
 	}; 
 	
+	private DiscoveryAgent da;
+	private RemoteDevice btDevice = null;
+	private boolean doneInq = false;
+	// I think this indicates the BT device is a SPP device
+	private static final int SPP_DEVICE = 0x1F00;
+	 
+	
+	/**
+	 * Creates a new Keyboard instance using streams from the keyboard. Doesn't matter what the source is (Bluetooth, I2C, etc...)
+	 * @param in
+	 * @param out
+	 */
 	public Keyboard(InputStream in, OutputStream out) {
+		setup(in, out);
+	}
+
+	/**
+	 * Helper method used by both constructors.
+	 * @param in
+	 * @param out
+	 */
+	private void setup(InputStream in, OutputStream out) {
 		this.in = in;
 		this.out = out;
 		this.setDaemon(true);
 		this.start();
 		
-		// TODO: Perhaps test if keyboard is Freedom (mine has a Bug) and then switch DELETE and BACKSPACE values in array above.
+		// TODO: Perhaps check if keyboard is a Freedom Universal (buggy) first before switching these?
+		// Freedom Universal has a bug that switches DELETE and BACKSPACE values.
+		// Switching back in scanCodes array (above):
+		scanCodes[0x71] = KeyEvent.VK_BACK_SPACE;
+		scanCodes[0x66] = KeyEvent.VK_DELETE;
+		
+		// Start typematic thread here:
+		typematicThread.setDaemon(true);
+		typematicThread.start();
 	}
 	
-	// TODO: methods setTypematicDelay, setTypematicRate() - 0 for no repeating?
+	/**
+	 * Makes Bluetooth connection to SPP keyboard. The keyboard must have been paired already at 
+	 * the main menu. Will connect to the first paired SPP keyboard device that is turned on.
+	 * NOTE: It can't distinguish between a GPS or Keyboard so make sure only the keyboard is on.
+	 * @throws BluetoothStateException If it doesn't find an SPP device to connect to.
+	 */
+	// TODO: This constructor should throw exceptions, not catch them below!
+	public Keyboard() throws BluetoothStateException {
+		/* Developer Notes:
+		 * The code in here is copied from BTLocationProvider. If that gets updated, should do same here and vice versa.
+		 */
+		
+		/** Inner class DiscoveryListener:
+		 * 
+		 */
+		DiscoveryListener dl = new DiscoveryListener() {
+
+			/* DiscoveryListener methods: */
+			public void deviceDiscovered(RemoteDevice btdev, DeviceClass cod) {
+				// TODO: It should not output this to err. Delete when done troubleshooting:
+				System.err.println(btdev.getFriendlyName(false) + " discovered.");
+				
+				if((cod.getMajorDeviceClass() & SPP_DEVICE) == SPP_DEVICE) {
+					if(btdev.isAuthenticated()) { // Check if paired.
+						btDevice = btdev;
+						da.cancelInquiry(this);
+					}
+				}	
+			}
+
+			public void inquiryCompleted(int discType) {
+				doneInq = true;
+			}
+		};
+		
+		da = LocalDevice.getLocalDevice().getDiscoveryAgent();
+		da.startInquiry(DiscoveryAgent.GIAC, dl);
+		
+		while(!doneInq) {Thread.yield();}
+		
+		// TODO: What is the procedure if it fails to connect? Return? Throw BT exception?
+		if(btDevice == null) throw new BluetoothStateException("Nothing found.");
+		
+		String address = btDevice.getBluetoothAddress();
+		String btaddy = "btspp://" + address;
+		
+		try {
+			StreamConnectionNotifier scn = (StreamConnectionNotifier)Connector.open(btaddy);
+			
+			if(scn == null)	throw new BluetoothStateException("Failed to connect.");
+			StreamConnection c = scn.acceptAndOpen();
+			
+			// This problem below occurred one time for my Holux GPS. The solution was to
+			// remove the device from the Bluetooth menu, then find and pair again.
+			// Need to throw exception with message.
+			if(c == null) throw new BluetoothStateException("Failed. Try pairing your device again.");
+			InputStream in = c.openInputStream();
+			OutputStream out = c.openOutputStream();
+			setup(in, out);
+			
+			// c.close(); // TODO: Clean up when done. HOW TO HANDLE IN LOCATION?
+			
+		} catch(IOException e) {
+			throw new BluetoothStateException("Failed to retrieve data streams.");	
+		}
+	}
+	
+	/**
+	 * Typematic delay is the time after a key is held down that characters start repeating.
+	 *
+	 * @param delay- 250 ms to 1000 ms (500ms default)
+	 */
+	 
+	public void setTypematicDelay(int delay) {
+		this.typematicDelay = delay;
+	}
+	
+	/**
+	 * Typematic delay is the time after a key is held down that characters start repeating.
+	 * @return delay in milliseconds
+	 */
+	public int getTypematicDelay() {
+		return this.typematicDelay;
+	}
+	
+	/**
+	 * Typematic rate is the rate characters repeat when a key is held down.
+	 * @param rate - 2.0 cps (characters per second) to 30.0 cps (10.9 default)
+	 */
+	public void setTypematicRate(int rate) {
+		this.typematicRate = rate;
+		this.ratePause =  (int)(1000.0/typematicRate);
+	}
+	
+	/**
+	 * Typematic rate is the rate characters repeat when a key is held down.
+	 * @return Rate in characters per second (cps)
+	 */
+	public double getTypematicRate() {
+		return this.typematicRate;
+	}
 	
 	/**
 	 * Starts a KeyListener listening for events from the keyboard. Only one KeyListener is allowed.
@@ -127,10 +301,13 @@ public class Keyboard extends Thread {
 		this.keyListener = null;
 	}
 	
+	/**
+	 * Notify listener if present.
+	 * @param e The key event to send out
+	 */
 	private void notifyListeners(KeyEvent e) {
 		if(keyListener == null) return;
 		
-		// TODO: Notify other listeners in collection if present.
 		if(e.getID() == KeyEvent.KEY_PRESSED)
 			keyListener.keyPressed(e);
 		else if(e.getID() == KeyEvent.KEY_RELEASED)
@@ -141,19 +318,18 @@ public class Keyboard extends Thread {
 	
 	public void run() {
 		
-		int previousEcho = (int)System.currentTimeMillis();
+		long previousEcho = System.currentTimeMillis();
 		// TODO: Perhaps While connected is better. Then if disconnects, it reconnects and starts thread again?
 		while(true) {
 			
-			// Keep-alive code: TODO Use long instead.
-			int now = (int)System.currentTimeMillis();
+			// Keep-alive code: 
+			long now = System.currentTimeMillis();
 			if(now - previousEcho >= KEEP_ALIVE_DELAY) {
 				try {
-					//Debug.out("Echo Sent\n");
 					out.write(ECHO);
 					out.flush();
 				} catch(IOException e) {
-					// TODO: Thread handles keep alive. Should it also reconnect if disconnected? Try powering off and on.
+					// TODO: Thread could also reconnect if disconnected. Try powering off and on.
 					System.err.println("COMMAND EXCEPTION");
 				}
 				previousEcho = now;
@@ -162,14 +338,19 @@ public class Keyboard extends Thread {
 			// Notifier code:
 			try {
 				if(in.available() > 0) { // Check if byte available.
-					// TODO Not sure if this byte is two bytes with F0 value when key released, or one negative byte.
 					int bval = in.read();
+					// System.err.println("scancode: " + bval);
 					
-					// TODO: Fire appropriate events for PRESSED, RELEASED, TYPED.
 					KeyEvent e = getKeyEvent(bval, System.currentTimeMillis());
+					if(e.getID() == KeyEvent.KEY_PRESSED) {
+						oldChar = NOT_ASCII_CHAR; // Prevents repetition if key pressed again.
+						lastKeyPress = e.getKeyChar();
+					} else if(e.getID() == KeyEvent.KEY_RELEASED) {
+						lastKeyPress = NOT_ASCII_CHAR;
+					}
 					notifyListeners(e);
 					
-					// Generate KEY_TYPED:
+					// Generate KEY_TYPED event:
 					if((e.getID() == KeyEvent.KEY_PRESSED) & (e.getKeyChar() != NOT_ASCII_CHAR)) { 
 						KeyEvent ke = new KeyEvent(this, KeyEvent.KEY_TYPED, e.getWhen(), modifiers, 0, e.getKeyChar(), 0);
 						notifyListeners(ke);
@@ -187,32 +368,54 @@ public class Keyboard extends Thread {
 	private KeyEvent getKeyEvent(int scanCode, long timeStamp) {
 		
 		short id = KeyEvent.KEY_PRESSED;
-		byte normCode = (byte)scanCode;
+		byte normalizedScanCode = (byte)scanCode;
 		
-		// TODO: Delete? Might not be necessary to do this here. Plus, can subtract from scanCode since KEY_RELEASED already set.
 		if((byte)scanCode < 0) { // if 8th bit on (i.e. key release)
-			normCode = (byte)(scanCode - 128); // remove 8th bit TODO Is this correct?
+			normalizedScanCode = (byte)(scanCode - 128); // remove 8th bit
 			id = KeyEvent.KEY_RELEASED;
 		}
 		
-		int code = getJavaConstant((byte)normCode);
-		
-		// Handle Caps Lock pressed:
-		if((code == KeyEvent.VK_CAPS_LOCK) & (id == KeyEvent.KEY_PRESSED)) capsLock = !capsLock;
+		int code = getJavaConstant((byte)normalizedScanCode);
 		
 		// Recalculate modifier
 		recalculateModifier(code, id);
 		
-		// TODO: Calculate location.
-		int location = KeyEvent.KEY_LOCATION_STANDARD;
+		// Handle Caps Lock pressed: Possibly beep here?
+		if((code == KeyEvent.VK_CAPS_LOCK) & (id == KeyEvent.KEY_PRESSED)) capsLock = !capsLock;
 		
-		// TODO: Both KEY_TYPED and KEY_PRESSED repeatedly fire the notify when key held down. Thread must do this somewhere.
-		// NOTE: KEY_TYPED is a virtual key (e.g. '?') whereas KEY_PRESSED and RELEASED are merely physical key (e.g. '/') 
-		// (For KEY_TYPED events, the keyCode is always VK_UNDEFINED. AND the location is always unknown)
-		// No key typed events are generated for keys that don't generate Unicode characters (e.g. action keys, modifier keys, etc.). 
+		
+		// Calculate location.
+		int location = getLocation(normalizedScanCode);
+		
+		// Get ASCII character
 		char curChar = getAsciiChar(code);
 		
 		return  new KeyEvent(this, id, timeStamp, modifiers, code, curChar, location);
+	}
+	
+	private int getLocation(int scanCode) {
+		int location = KeyEvent.KEY_LOCATION_STANDARD;
+		
+		switch(scanCode) {
+		case 0x12: // L shift
+		case 0x14: // L ctrl
+		case 0x1F: // L gui (2 codes in real keyboard)
+		case 0x11: // L alt (0x11 on Standard keyboard)
+		case 0x10: // L alt (0x10 on Universal)
+			location = KeyEvent.KEY_LOCATION_LEFT;
+			break;
+		case 0x59: // R shift
+		case 0x13: // R alt gr (UK keyboards, incl. Freedom Universal) 
+		//case 0x14: // R ctrl (2 codes on real keyboard)
+		//case 0x27: // R gui (2 codes on real keyboard)
+		//case 0x11: // R alt (2 codes on real keyboard)
+			location = KeyEvent.KEY_LOCATION_RIGHT;
+			break;
+		}
+		
+		// TODO: Didn't implement KeyPad location. Not on Universal.
+		
+		return location;
 	}
 	
 	public boolean isCapsLock() {
@@ -318,7 +521,24 @@ public class Keyboard extends Thread {
 		return NOT_ASCII_CHAR;
 	}
 	
-	public static int getJavaConstant(byte scanCode) {
+	private int getJavaConstant(byte scanCode) {
+		
+		// Code to check if Fn held down, and if Esc, Pg Up, Pg Down, Home, End pressed.
+		if((modifiers & KeyEvent.META_MASK) == KeyEvent.META_MASK) {
+			switch(scanCodes[scanCode]) {
+			case KeyEvent.VK_BACK_QUOTE:
+				return KeyEvent.VK_ESCAPE;
+			case KeyEvent.VK_UP:
+				return KeyEvent.VK_PAGE_UP;
+			case KeyEvent.VK_DOWN:
+				return KeyEvent.VK_PAGE_DOWN;
+			case KeyEvent.VK_LEFT:
+				return KeyEvent.VK_HOME;
+			case KeyEvent.VK_RIGHT:
+				return KeyEvent.VK_END;
+			}
+		}
+			
 		return scanCodes[scanCode];
 	}
 	
