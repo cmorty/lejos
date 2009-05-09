@@ -1,8 +1,8 @@
 @echo off
-setlocal
+if "%OS%" == "Windows_NT" setlocal
 
-if "%LEJOS_HOME%" == "" goto home_unset
-	if "%NXJ_HOME%" == "" set "NXJ_HOME=%LEJOS_HOME%"
+if "%LEJOS_HOME%" == "" goto :home_unset
+	if "%NXJ_HOME%" == "" set NXJ_HOME=%LEJOS_HOME%
 :home_unset
 
 
