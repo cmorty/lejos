@@ -1,0 +1,12 @@
+Notes:
+- pushd/popd
+	available in Win2k and up
+- set "name=val"
+	works on WinNT only
+	creates variable "name with value val" on Win9x/ME
+- %cd% variable
+	exists on WinNT and up
+	and stores current workdir
+- %OS% variable
+	exists on WinNT and up
+	and has value "Windows_NT"
