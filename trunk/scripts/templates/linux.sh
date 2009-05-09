@@ -1,13 +1,14 @@
 #!/bin/bash
 
 NXJ_COMMAND="$(basename -- "$0")"
-if [ -z "$NXJ_HOME" ]; then
-  NXJ_HOME="$(readlink -f -- "$0")"
-  NXJ_HOME="$(dirname -- "$NXJ_HOME")"
-  NXJ_HOME="$(dirname -- "$NXJ_HOME")"
+if [ -n "$NXJ_HOME" ]; then
+	NXJ_BIN="$NXJ_HOME/bin"
+else
+	NXJ_BIN="$(readlink -f -- "$0")"
+	NXJ_BIN="$(dirname -- "$NXJ_BIN")"
+	NXJ_HOME="$(dirname -- "$NXJ_BIN")"
 fi
 
-NXJ_BIN="$NXJ_HOME/bin"
 NXJ_LIBS="$NXJ_HOME/lib"
 NXJ_LIBS_3rd="$NXJ_HOME/3rdparty/lib"
 
