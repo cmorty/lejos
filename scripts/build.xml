@@ -43,7 +43,6 @@
 			<echo file="${windows.dir}/@{file}.bat">${template.windows}
 
 @{command}
-:EOF
 </echo>
 			<fixcrlf file="${windows.dir}/@{file}.bat" encoding="latin1" eol="dos"/>
 		</sequential>
