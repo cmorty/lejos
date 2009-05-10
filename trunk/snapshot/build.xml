@@ -3,7 +3,7 @@
   Buildfile for release of leJOS NXJ
   ==================================================
 -->
-<project name="leJOS NXJ release" default="all" basedir=".">
+<project name="leJOS snapshot" default="all" basedir=".">
 	
 	<!-- Setting up the global properties for the build -->
   	<property file="build.properties"/>
