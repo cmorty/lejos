@@ -12,11 +12,10 @@ if "%NXJ_HOME%" == "" goto :home_unset
 	set NXJ_HOME=%0\..\..
 	goto :home_endif
 :home_nt
-	pushd "%0\.."
-	for /F "delims=" %%i in ('cd') do set "NXJ_BIN=%%i"
-	cd ".."
-	for /F "delims=" %%i in ('cd') do set "NXJ_HOME=%%i"
-	popd
+	set "NXJ_BIN=%~dp0"
+	REM strip trailing backslash
+	set "NXJ_BIN=%NXJ_BIN:~0,-1%"
+	set "NXJ_HOME=%NXJ_BIN%\.."
 :home_endif
 
 set NXJ_LIBS=%NXJ_HOME%\lib
