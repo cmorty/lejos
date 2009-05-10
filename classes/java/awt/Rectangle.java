@@ -46,7 +46,7 @@ public class Rectangle {
 	 * @return the x coordinate
 	 */
 	public double getX() {
-		return (double) x;
+		return x;
 	}
 	
 	/**
@@ -54,7 +54,7 @@ public class Rectangle {
 	 * @return the y coordinate
 	 */
 	public double getY() {
-		return (double) y;
+		return y;
 	}
 	
 	/**
@@ -62,7 +62,7 @@ public class Rectangle {
 	 * @return the width
 	 */
 	public double getWidth() {
-		return (double) width;
+		return width;
 	}
 	
 	/**
@@ -70,7 +70,7 @@ public class Rectangle {
 	 * @return the height
 	 */
 	public double getHeight() {
-		return (double) height;
+		return height;
 	}
 	
 	/**
@@ -93,14 +93,14 @@ public class Rectangle {
 	
 	/**
 	 * Test if a point given by (x,y) coordinates are with the rectangle
-	 * @param x the x coordinate
-	 * @param y the y coordinate
+	 * @param pointX the x coordinate
+	 * @param pointY the y coordinate
 	 * @return true iff the point is within the rectangle
 	 */
-	public boolean contains(int x, int y) {
+	public boolean contains(int pointX, int pointY) {
 		if (isEmpty()) return false;
-		if (x < this.x || x > this.x + width) return false;
-		if (y < this.y || y > this.y + height) return false;
+		if (pointX < this.x || pointX > this.x + width) return false;
+		if (pointY < this.y || pointY > this.y + height) return false;
 		return true;
 	}
 	
