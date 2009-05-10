@@ -6,18 +6,15 @@ if "%NXJ_HOME%" == "" goto :home_unset
 	goto :home_endif
 :home_unset
 	if "%OS%" == "Windows_NT" goto :home_unset_nt
-	REM echo Windows 9x/ME detected. You have to set the NXJ_HOME variable.
-	REM goto :EOF
 	set NXJ_BIN=%0\..
 	set NXJ_HOME=%0\..\..
 	goto :home_endif
-:home_unset_nt
-	call :home_nt_normalize NXJ_BIN "%~dp0\."
-	call :home_nt_normalize NXJ_HOME "%~dp0\.."
-	goto :home_endif
-:home_nt_normalize
+:home_normalize_nt
 	set "%1=%~f2"
 	goto :eof
+:home_unset_nt
+	call :home_normalize_nt NXJ_BIN "%~dp0\."
+	call :home_normalize_nt NXJ_HOME "%~dp0\.."
 :home_endif
 
 set NXJ_LIBS=%NXJ_HOME%\lib
@@ -41,4 +38,3 @@ set NXJ_CP_TOOL=%NXJ_CP_BLUECOVE%;%NXJ_CP_LINK%;%NXJ_JAR_PCCOMM%;%NXJ_JAR_PCTOOL
 
 
 java -Dnxj.home="%NXJ_HOME%" -DCOMMAND_NAME="nxjmonitor" -Djava.library.path="%NXJ_BIN%" -classpath "%NXJ_CP_TOOL%" lejos.pc.tools.NXJMonitor  %*
-:EOF
