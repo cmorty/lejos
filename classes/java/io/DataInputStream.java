@@ -192,15 +192,17 @@ public class DataInputStream extends InputStream
 			}
 			
 			if (c == '\n')
+			{
+				int p = strb.length() - 1;
+				if (p >= 0 && strb.charAt(p) == '\r')
+					return strb.substring(0, p);
+				
 				break;
+			}
 			
 			strb.append((char)c);
 		}
-		
-		int len = strb.length();
-		if (len > 0 && strb.charAt(len - 1) == '\r')
-			return strb.substring(0, len - 1);
-		
+				
 		return strb.toString();
 	}
 	
