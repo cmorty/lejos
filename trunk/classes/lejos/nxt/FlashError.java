@@ -1,7 +1,5 @@
 package lejos.nxt;
 
-import java.lang.*;
-
 public class FlashError extends Error
 {
 	public FlashError() {
