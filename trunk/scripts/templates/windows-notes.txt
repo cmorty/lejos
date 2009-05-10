@@ -13,3 +13,7 @@ Notes:
 	and has value "Windows_NT"
 - %~dp0 variable
 	exists on WinNT and up
+- goto :eof
+	works on WinNT and up
+	1) return statement for "call :label"
+	2) jumps to end of file	(can be used on Win9x/ME if eof label is declared)
