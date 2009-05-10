@@ -3,6 +3,7 @@
  *
  * Adapted from the original Sun Microsystems code for leJOS.
  * @author Brian Bagnall
+ * @author Sven Köhler
  */
 package java.io;
 
