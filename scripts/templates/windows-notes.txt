@@ -6,8 +6,8 @@ Notes:
 	works on WinNT and up
 	creates variable "name with value val" on Win9x/ME
 - %cd% variable
-	exists on WinNT and up and stores current workdir
-	test result: does NOT exist on WinNT SP6 (Sven)
+	exists on Win2k and up
+	alternative for WinNT 4: for /F "delims=" %%i in ('cd') do set "var=%%i"
 - %OS% variable
 	exists on WinNT and up
 	and has value "Windows_NT"

@@ -6,16 +6,16 @@ if "%NXJ_HOME%" == "" goto :home_unset
 	goto :home_endif
 :home_unset
 	if "%OS%" == "Windows_NT" goto :home_nt
-	REM echo You have to set the NXJ_HOME Variable on Windows 9x/ME.
+	REM echo Windows 9x/ME detected. You have to set the NXJ_HOME variable.
 	REM goto :EOF
 	set NXJ_BIN=%0\..
 	set NXJ_HOME=%0\..\..
 	goto :home_endif
 :home_nt
 	pushd "%0\.."
-	set "NXJ_BIN=%cd%"
+	for /F "delims=" %%i in ('cd') do set "NXJ_BIN=%%i"
 	cd ".."
-	set "NXJ_HOME=%cd%"
+	for /F "delims=" %%i in ('cd') do set "NXJ_HOME=%%i"
 	popd
 :home_endif
 
