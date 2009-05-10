@@ -1,9 +1,9 @@
-
 package java.io;
 
 
 /**
  * Reads java data types transmitted as bytes over an InputStream.
+ * @author Sven Köhler
  */
 public class DataInputStream extends InputStream
 {
@@ -167,20 +167,27 @@ public class DataInputStream extends InputStream
 	}
 	
 	/**
-	 * @deprecated use BufferedReader.readLine instead
+	 * Deprecated. This method assumes ISO-8859-1 encoding and does only recognize \n and \r\n line-endings. 
+	 * 
+	 * @deprecated broken in various ways, use BufferedReader.readLine instead
 	 */
+	@Deprecated
 	public final String readLine() throws IOException
 	{
-		StringBuffer strb = new StringBuffer();
+		StringBuilder strb = new StringBuilder();
 		
-		//MISSING readLine() does not recognize \r and \r\n as line endings
+		//MISSING readLine() does not recognize \r line endings
 		
 		while(true)
 		{
 			int c = this.read();
 			
-			if (c < 0) { // EOF
-				if (strb.length() == 0) return null;
+			// catch EOF
+			if (c < 0)
+			{ 
+				if (strb.length() == 0)
+					return null;
+				
 				break;
 			}
 			
@@ -189,6 +196,11 @@ public class DataInputStream extends InputStream
 			
 			strb.append((char)c);
 		}
+		
+		int len = strb.length();
+		if (len > 0 && strb.charAt(len - 1) == '\r')
+			return strb.substring(0, len - 1);
+		
 		return strb.toString();
 	}
 	
