@@ -8,23 +8,26 @@ import java.io.Writer;
  * Abstract Single Byte Character Set OutputStream Writer.
  * @author Sven Köhler
  */
-public abstract class AbstractSBCSOutputStreamWriter extends Writer
+public abstract class AbstractOutputStreamWriter extends Writer
 {
 	private static final int BUFFER_SIZE = 32;
-	private static final byte ERROR_CHAR = (byte)'?';
+	//there has to be room for 4 UTF8 bytes
+	private static final int BUFFER_MAX = BUFFER_SIZE - 4;
 
+	protected static final byte ERROR_CHAR = (byte)'?';
+	
 	private final OutputStream os;
 	private final byte[] buffer;
 	//cache for storing a high surrogate
 	private char high;
 	
-	public AbstractSBCSOutputStreamWriter(OutputStream os)
+	public AbstractOutputStreamWriter(OutputStream os)
 	{
 		this.buffer = new byte[BUFFER_SIZE]; 
 		this.os = os;
 	}
 	
-	protected abstract byte getByte(int c);
+	protected abstract int getBytes(byte[] buf, int len, int cp);
 	
 	
 	private int writeChar(int len, char c) throws IOException
@@ -50,19 +53,18 @@ public abstract class AbstractSBCSOutputStreamWriter extends Writer
 			this.high = 0;
 		}
 		
-		return this.bufferAdd(len, getByte(cp));
+		return this.bufferAdd(len, cp);
 	}
 	
-	private int bufferAdd(int len, byte c) throws IOException
+	private int bufferAdd(int len, int cp) throws IOException
 	{
-		if (len >= BUFFER_SIZE)
+		if (len >= BUFFER_MAX)
 		{
 			this.bufferFlush(len);
 			len = 0;
 		}
 		
-		this.buffer[len] = c;
-		return len + 1;
+		return this.getBytes(this.buffer, len, cp);
 	}
 	
 	private void bufferFlush(int len) throws IOException
@@ -88,17 +90,9 @@ public abstract class AbstractSBCSOutputStreamWriter extends Writer
 	public Writer append(CharSequence str, int start, int end) throws IOException
 	{
 		int bl = 0;
-		int len = end - start;
-		while (len > 0)
-		{
-			int buflen = (len < BUFFER_SIZE) ? len : BUFFER_SIZE;
-			
-			for (int i=0; i<buflen; i++)
-				bl = this.writeChar(bl, str.charAt(start + i));
-			
-			start += buflen;
-			len -= buflen;
-		}
+		for (int i=start; i<end; i++)
+			bl = this.writeChar(bl, str.charAt(i));
+		
 		this.bufferFlush(bl);
 		return this;
 	}
@@ -107,18 +101,10 @@ public abstract class AbstractSBCSOutputStreamWriter extends Writer
 	public void write(String str, int off, int len) throws IOException
 	{
 		int bl = 0;
-		while (len > 0)
-		{
-			int buflen = (len < BUFFER_SIZE) ? len : BUFFER_SIZE;
+		int end = off + len;
+		for (int i=off; i<end; i++)
+			bl = this.writeChar(bl, str.charAt(i));
 			
-			for (int i=0; i<buflen; i++)
-				bl = this.writeChar(bl, str.charAt(off + i));
-			
-			this.os.write(buffer, 0, buflen);
-			
-			off += buflen;
-			len -= buflen;
-		}
 		this.bufferFlush(bl);
 	}
 
@@ -126,18 +112,10 @@ public abstract class AbstractSBCSOutputStreamWriter extends Writer
 	public void write(char[] c, int off, int len) throws IOException
 	{
 		int bl = 0;
-		while (len > 0)
-		{
-			int buflen = (len < BUFFER_SIZE) ? len : BUFFER_SIZE;
-			
-			for (int i=0; i<buflen; i++)
-				bl = this.writeChar(bl, c[off + i]);
-			
-			this.os.write(buffer, 0, buflen);
-			
-			off += buflen;
-			len -= buflen;
-		}
+		int end = off + len;
+		for (int i=off; i<end; i++)
+			bl = this.writeChar(bl, c[i]);
+		
 		this.bufferFlush(bl);
 	}
 

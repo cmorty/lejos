@@ -5,7 +5,7 @@ import java.io.OutputStream;
 /**
  * @author Sven Köhler
  */
-public class ASCIIOutputStreamWriter extends AbstractSBCSOutputStreamWriter
+public class ASCIIOutputStreamWriter extends AbstractOutputStreamWriter
 {
 	public ASCIIOutputStreamWriter(OutputStream os)
 	{
@@ -13,11 +13,9 @@ public class ASCIIOutputStreamWriter extends AbstractSBCSOutputStreamWriter
 	}
 	
 	@Override
-	protected byte getByte(int c)
+	protected int getBytes(byte[] buf, int len, int cp)
 	{
-		if (c < 0 || c > 0x7F)
-			c = '?';
-		
-		return (byte)c;
+		buf[len] = (cp < 0 || cp > 0x7F) ? ERROR_CHAR : (byte)cp;
+		return len+1;
 	}	
 }
