@@ -413,7 +413,7 @@ public class Keyboard extends Thread {
 			break;
 		}
 		
-		// TODO: Didn't implement KeyPad location. Not on Universal.
+		// TODO: Didn't implement KeyPad location. Not present on Freedom Universal keyboard.
 		
 		return location;
 	}

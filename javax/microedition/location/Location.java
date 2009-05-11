@@ -133,6 +133,20 @@ public class Location {
 	}*/
 
 	/**
+	 *     Returns the AddressInfo associated with this Location object. 
+	 *     If no address is available, null is returned.
+	 *     In leJOS this currently always returns null.
+	 *     @return an AddressInfo associated with this Location object
+	 */
+	public AddressInfo getAddressInfo() {
+		/* TODO: I don't think this can be implemented in leJOS NXJ
+		 * unless it had access to address information from a database.
+		 * 
+		 */
+		return null;
+	}
+	
+	/**
 	 * Returns the terminal's course made good in degrees relative to true north. The
 	 * value is always in the range [0.0,360.0) degrees.
 	 *
