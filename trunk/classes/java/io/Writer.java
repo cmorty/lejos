@@ -39,13 +39,12 @@ public abstract class Writer
 		{
 			int buflen = (len < STRING_BUF_SIZE) ? len : STRING_BUF_SIZE;
 			
-			end = start + buflen;
-			for (int i=start; i<end; i++)
-				buffer[i] = str.charAt(i);
+			for (int i=0; i<buflen; i++)
+				buffer[i] = str.charAt(start + i);
 			
 			this.write(buffer, 0, buflen);
 			
-			start = end;
+			start += buflen;
 			len -= buflen;
 		}
 		return this;
