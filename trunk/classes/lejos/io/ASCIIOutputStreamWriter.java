@@ -2,7 +2,10 @@ package lejos.io;
 
 import java.io.OutputStream;
 
-public class ASCIIOutputStreamWriter extends SingleByteOutputStreamWriter
+/**
+ * @author Sven Köhler
+ */
+public class ASCIIOutputStreamWriter extends AbstractSBCSOutputStreamWriter
 {
 	public ASCIIOutputStreamWriter(OutputStream os)
 	{
