@@ -27,14 +27,14 @@ public class UTF8OutputStreamWriter extends AbstractOutputStreamWriter
 		else if (cp <= 0xFFFF)
 		{
 			buf[len++] = (byte)((cp >> 12) | 0xE0);
-			buf[len++] = (byte)((cp >> 6) | 0x80);
+			buf[len++] = (byte)((cp >> 6) & 0x3F | 0x80);
 			buf[len++] = (byte)(cp & 0x3F | 0x80);
 		}
 		else
 		{
 			buf[len++] = (byte)((cp >> 18) | 0xF0);
-			buf[len++] = (byte)((cp >> 12) | 0x80);
-			buf[len++] = (byte)((cp >> 6) | 0x80);
+			buf[len++] = (byte)((cp >> 12) & 0x3F | 0x80);
+			buf[len++] = (byte)((cp >> 6) & 0x3F | 0x80);
 			buf[len++] = (byte)(cp & 0x3F | 0x80);
 		}
 		return len;
