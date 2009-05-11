@@ -11,9 +11,12 @@ import java.io.Writer;
 public abstract class AbstractSBCSOutputStreamWriter extends Writer
 {
 	private static final int BUFFER_SIZE = 32;
-	
+	private static final byte ERROR_CHAR = (byte)'?';
+
 	private final OutputStream os;
 	private final byte[] buffer;
+	//cache for storing a high surrogate
+	private char high;
 	
 	public AbstractSBCSOutputStreamWriter(OutputStream os)
 	{
@@ -23,75 +26,130 @@ public abstract class AbstractSBCSOutputStreamWriter extends Writer
 	
 	protected abstract byte getByte(int c);
 	
+	
+	private int writeChar(int len, char c) throws IOException
+	{
+		if (Character.isHighSurrogate(c))		
+		{
+			if (this.high > 0)
+				len = this.bufferAdd(len, ERROR_CHAR);
+			
+			this.high = c;
+			return len;
+		}
+		
+		int cp;
+		if (!Character.isLowSurrogate(c))
+			cp = c;
+		else
+		{
+			if (this.high == 0)
+				return this.bufferAdd(len, ERROR_CHAR);
+			
+			cp = Character.toCodePoint(high, c);
+			this.high = 0;
+		}
+		
+		return this.bufferAdd(len, getByte(cp));
+	}
+	
+	private int bufferAdd(int len, byte c) throws IOException
+	{
+		if (len >= BUFFER_SIZE)
+		{
+			this.bufferFlush(len);
+			len = 0;
+		}
+		
+		this.buffer[len] = c;
+		return len + 1;
+	}
+	
+	private void bufferFlush(int len) throws IOException
+	{
+		this.os.write(this.buffer, 0, len);
+	}
+	
+	
 	@Override
 	public Writer append(char c) throws IOException
 	{
-		this.os.write(getByte(c));
+		this.bufferFlush(this.writeChar(0, c));
 		return this;
 	}
 
 	@Override
 	public void write(int c) throws IOException
 	{
-		this.os.write(getByte(c));
+		this.bufferFlush(this.writeChar(0, (char)c));
 	}
 
 	@Override
 	public Writer append(CharSequence str, int start, int end) throws IOException
 	{
+		int bl = 0;
 		int len = end - start;
 		while (len > 0)
 		{
 			int buflen = (len < BUFFER_SIZE) ? len : BUFFER_SIZE;
 			
 			for (int i=0; i<buflen; i++)
-				buffer[i] = getByte(str.charAt(start + i));
-			
-			this.os.write(buffer, 0, buflen);
+				bl = this.writeChar(bl, str.charAt(start + i));
 			
 			start += buflen;
 			len -= buflen;
 		}
+		this.bufferFlush(bl);
 		return this;
 	}
 
 	@Override
 	public void write(String str, int off, int len) throws IOException
 	{
+		int bl = 0;
 		while (len > 0)
 		{
 			int buflen = (len < BUFFER_SIZE) ? len : BUFFER_SIZE;
 			
 			for (int i=0; i<buflen; i++)
-				buffer[i] = getByte(str.charAt(off + i));
+				bl = this.writeChar(bl, str.charAt(off + i));
 			
 			this.os.write(buffer, 0, buflen);
 			
 			off += buflen;
 			len -= buflen;
 		}
+		this.bufferFlush(bl);
 	}
 
 	@Override
 	public void write(char[] c, int off, int len) throws IOException
 	{
+		int bl = 0;
 		while (len > 0)
 		{
 			int buflen = (len < BUFFER_SIZE) ? len : BUFFER_SIZE;
 			
 			for (int i=0; i<buflen; i++)
-				buffer[i] = getByte(c[off + i]);
+				bl = this.writeChar(bl, c[off + i]);
 			
 			this.os.write(buffer, 0, buflen);
 			
 			off += buflen;
 			len -= buflen;
 		}
+		this.bufferFlush(bl);
 	}
 
 	@Override
 	public void close() throws IOException
 	{
+		if (this.high > 0)
+		{
+			this.high = 0;
+			this.os.write(ERROR_CHAR);
+		}
+		
 		this.os.close();
 	}
 
