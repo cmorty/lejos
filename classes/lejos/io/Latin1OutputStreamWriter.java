@@ -2,7 +2,10 @@ package lejos.io;
 
 import java.io.OutputStream;
 
-public class Latin1OutputStreamWriter extends SingleByteOutputStreamWriter
+/**
+ * @author Sven Köhler
+ */
+public class Latin1OutputStreamWriter extends AbstractSBCSOutputStreamWriter
 {
 	public Latin1OutputStreamWriter(OutputStream os)
 	{
