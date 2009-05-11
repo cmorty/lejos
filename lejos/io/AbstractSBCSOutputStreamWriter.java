@@ -4,14 +4,18 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
 
-public abstract class SingleByteOutputStreamWriter extends Writer
+/**
+ * Abstract Single Byte Character Set OutputStream Writer.
+ * @author Sven Köhler
+ */
+public abstract class AbstractSBCSOutputStreamWriter extends Writer
 {
 	private static final int BUFFER_SIZE = 32;
 	
 	private final OutputStream os;
 	private final byte[] buffer;
 	
-	public SingleByteOutputStreamWriter(OutputStream os)
+	public AbstractSBCSOutputStreamWriter(OutputStream os)
 	{
 		this.buffer = new byte[BUFFER_SIZE]; 
 		this.os = os;
