@@ -19,9 +19,35 @@ public abstract class Writer
 		//nothing
 	}
 	
-	Writer append(char c) throws IOException
+	public Writer append(char c) throws IOException
 	{
 		this.write(c);
+		return this;
+	}
+	
+	public Writer append(CharSequence str) throws IOException
+	{
+		return this.append(str, 0, str.length());
+	}
+	
+	public Writer append(CharSequence str, int start, int end) throws IOException
+	{
+		char[] buffer = new char[STRING_BUF_SIZE];
+		
+		int len = end - start;
+		while (len > 0)
+		{
+			int buflen = (len < STRING_BUF_SIZE) ? len : STRING_BUF_SIZE;
+			
+			end = start + buflen;
+			for (int i=start; i<end; i++)
+				buffer[i] = str.charAt(i);
+			
+			this.write(buffer, 0, buflen);
+			
+			start = end;
+			len -= buflen;
+		}
 		return this;
 	}
 	
