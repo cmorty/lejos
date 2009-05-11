@@ -20,7 +20,10 @@ public interface KeyListener {
   void keyTyped(KeyEvent event);
 
   /**
-   * This method is called when a key is pressed.
+   * This method is called when a key is pressed. A key is the unshifted/unmodified key
+   * such as '/' (there can be no '?' key press). In standard Java it will repeat
+   * if the key is held down, but in leJOS it is only called once when a key if pressed
+   * as this seemed to be more useful.
    *
    * @param event the <code>KeyEvent</code> indicating the key press
    */
