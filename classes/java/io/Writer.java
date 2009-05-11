@@ -21,7 +21,7 @@ public abstract class Writer
 	
 	public Writer append(char c) throws IOException
 	{
-		this.write(c);
+		this.write(new char[] { c }, 0, 1);		
 		return this;
 	}
 	
