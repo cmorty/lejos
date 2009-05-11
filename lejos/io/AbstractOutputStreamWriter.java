@@ -81,12 +81,6 @@ public abstract class AbstractOutputStreamWriter extends Writer
 	}
 
 	@Override
-	public void write(int c) throws IOException
-	{
-		this.bufferFlush(this.writeChar(0, (char)c));
-	}
-
-	@Override
 	public Writer append(CharSequence str, int start, int end) throws IOException
 	{
 		int bl = 0;
@@ -95,6 +89,12 @@ public abstract class AbstractOutputStreamWriter extends Writer
 		
 		this.bufferFlush(bl);
 		return this;
+	}
+
+	@Override
+	public void write(int c) throws IOException
+	{
+		this.bufferFlush(this.writeChar(0, (char)c));
 	}
 
 	@Override
