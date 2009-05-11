@@ -78,6 +78,19 @@ public final class String
     return characters[index];
   }
 
+
+	public void getChars(int start, int end, char[] buffer, int off)
+	{
+		if (start < 0 ||  start > characters.length)
+			throw new StringIndexOutOfBoundsException(start);
+		if (end > characters.length)
+			throw new StringIndexOutOfBoundsException(end);
+		if (end < start)
+			throw new StringIndexOutOfBoundsException(end - start);
+		  
+		System.arraycopy(this.characters, start, buffer, off, end - start);
+	}
+	
   /**
    * Find the index of a character.
    * @param ch The character to find.
