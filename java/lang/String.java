@@ -3,7 +3,7 @@ package java.lang;
 /**
  * An immutable string of characters.
  */
-public final class String
+public final class String implements CharSequence
 {
   // NOTE: The state of this class is mapped to
   // native code (see vmsrc/classes.h).
@@ -321,6 +321,11 @@ public final class String
 	  return new String(characters, start, end - start);
   }
   
+	public CharSequence subSequence(int start, int end)
+	{
+		return this.substring(start, end);
+	}
+	
   /**
    * Converts an Object to a String
    * @return the String that represents the object
