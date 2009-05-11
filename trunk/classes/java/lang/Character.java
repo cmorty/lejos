@@ -4,6 +4,13 @@ public final class Character implements Comparable<Character>
 {
     public static final int MIN_RADIX = 2;
     public static final int MAX_RADIX = 36;
+    
+    public static final char MIN_LOW_SURROGATE = '\uDC00';
+    public static final char MAX_LOW_SURROGATE = '\uDFFF';
+    public static final char MIN_HIGH_SURROGATE = '\uD800';
+    public static final char MAX_HIGH_SURROGATE = '\uDBFF';
+    
+    public static final int MIN_SUPPLEMENTARY_CODE_POINT = 0x10000;
 	
 	//MISSING everything
     
@@ -35,6 +42,28 @@ public final class Character implements Comparable<Character>
 	 */
 	public static boolean isDigit(char ch) {
 		return (ch >= 48 & ch<=57);
+	}
+	
+	public static boolean isLowSurrogate(char ch)
+	{
+		return ch >= MIN_LOW_SURROGATE && ch <= MAX_LOW_SURROGATE;
+	}
+		
+	public static boolean isHighSurrogate(char ch)
+	{
+		return ch >= MIN_HIGH_SURROGATE && ch <= MAX_HIGH_SURROGATE;
+	}
+	
+	public static boolean isSurrogatePair(char high, char low)
+	{
+		return isHighSurrogate(high) && isLowSurrogate(low);
+	}
+	
+	public static int toCodePoint(char high, char low)
+	{
+		//no validating required, says JDK javadocs
+		//TODO does the compiler really inline and merge the constants?
+		return high << 10 + low - (MIN_HIGH_SURROGATE << 10) - MIN_LOW_SURROGATE + MIN_SUPPLEMENTARY_CODE_POINT;
 	}
 		
 	/**
