@@ -63,7 +63,7 @@ public class RemoteDevice {
 	}
 	
 	/*
-	 * DELETE THIS:
+	 * TODO: DELETE THIS. Not part of official API.
 	 */
 	public void setFriendlyName(String fName) {
 		this.friendlyName = fName;
@@ -94,7 +94,7 @@ public class RemoteDevice {
 	
 	
 	/*
-	 * REMOVE EVENTUALLY
+	 * TODO: REMOVE EVENTUALLY
 	 * DEV NOTES: This is not a standard JSR 82 method.
 	 */
 	public void setDeviceClass(byte[] devclass) {
@@ -114,7 +114,7 @@ public class RemoteDevice {
 	}
 	
 	/*
-	 * REMOVE EVENTUALLY
+	 * TODO: REMOVE EVENTUALLY
 	 * DEV NOTES: This is not a standard JSR 82 method.
 	 */
 	public byte[] getDeviceClass() {
