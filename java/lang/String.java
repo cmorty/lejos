@@ -43,9 +43,17 @@ public final class String implements CharSequence
    * @param b the byte array
    */
   public String (byte[] b) {
-	  int l = b.length;
-	  characters = new char[l];
-	  for(int i = 0;i<l;i++) characters[i] = (char) b[i];
+	  this(b, 0, b.length);
+  }
+
+  /**
+   * Create a String from a byte array
+   * @param b the byte array
+   */
+  public String (byte[] b, int off, int len) {
+	  characters = new char[len];
+	  for (int i = 0; i < len; i++)
+		  characters[i] = (char)b[off + i];
   }
 
   /**
@@ -54,7 +62,16 @@ public final class String implements CharSequence
    * @param charset ignored - assumed to be US ASCII
    */
   public String (byte[] b, String charset) {
-	  this(b);
+	  this(b, 0, b.length, charset);
+  }
+ 
+  /**
+   * Create a String from a byte array
+   * @param b the byte array
+   * @param charset ignored - assumed to be US ASCII
+   */
+  public String (byte[] b, int off, int len, String charset) {
+	  this(b, off, len);
   }
  
   /**

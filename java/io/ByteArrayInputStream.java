@@ -24,13 +24,13 @@ public class ByteArrayInputStream extends InputStream
 	}
 
 	@Override
-	public int available() throws IOException
+	public int available()
 	{
 		return this.count - this.pos;
 	}
 
 	@Override
-	public void close() throws IOException
+	public void close()
 	{
 		//nothing
 	}
@@ -48,7 +48,7 @@ public class ByteArrayInputStream extends InputStream
 	}
 
 	@Override
-	public int read() throws IOException
+	public int read()
 	{
 		if (this.pos < this.count)
 			return this.buf[this.pos++] & 0xFF;
@@ -57,7 +57,7 @@ public class ByteArrayInputStream extends InputStream
 	}
 
 	@Override
-	public int read(byte[] b, int off, int len) throws IOException
+	public int read(byte[] b, int off, int len)
 	{
 		if (len < 0)
 			throw new IndexOutOfBoundsException("len must be positive");
@@ -77,13 +77,13 @@ public class ByteArrayInputStream extends InputStream
 	}
 
 	@Override
-	public synchronized void reset() throws IOException
+	public synchronized void reset()
 	{
 		this.pos = this.mark;
 	}
 
 	@Override
-	public long skip(long n) throws IOException
+	public long skip(long n)
 	{
 		if (n < 0)
 			return 0;
