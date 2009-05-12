@@ -4,39 +4,39 @@ public final class Character implements Comparable<Character>
 {
 	public static final int SIZE = 16;
 	
-    public static final int MIN_RADIX = 2;
-    public static final int MAX_RADIX = 36;
-    
-    public static final char MIN_VALUE = '\u0000';
-    public static final char MAX_VALUE = '\uFFFF';
-    
-    public static final char MIN_HIGH_SURROGATE = '\uD800';
-    public static final char MAX_HIGH_SURROGATE = '\uDBFF';
-    public static final char MIN_LOW_SURROGATE = '\uDC00';
-    public static final char MAX_LOW_SURROGATE = '\uDFFF';
-    
-    public static final char MIN_SURROGATE = MIN_HIGH_SURROGATE;
-    public static final char MAX_SURROGATE = MAX_LOW_SURROGATE;
-    
-    public static final int MIN_CODE_POINT = 0;
-    public static final int MIN_SUPPLEMENTARY_CODE_POINT = 0x10000;
-    public static final int MAX_CODE_POINT = 0x10FFFF;
-    
+	public static final int MIN_RADIX = 2;
+	public static final int MAX_RADIX = 36;
+	
+	public static final char MIN_VALUE = '\u0000';
+	public static final char MAX_VALUE = '\uFFFF';
+	
+	public static final char MIN_HIGH_SURROGATE = '\uD800';
+	public static final char MAX_HIGH_SURROGATE = '\uDBFF';
+	public static final char MIN_LOW_SURROGATE = '\uDC00';
+	public static final char MAX_LOW_SURROGATE = '\uDFFF';
+	
+	public static final char MIN_SURROGATE = MIN_HIGH_SURROGATE;
+	public static final char MAX_SURROGATE = MAX_LOW_SURROGATE;
+	
+	public static final int MIN_CODE_POINT = 0;
+	public static final int MIN_SUPPLEMENTARY_CODE_POINT = 0x10000;
+	public static final int MAX_CODE_POINT = 0x10FFFF;
+	
 	
 	//MISSING everything
-    
-    private final char value;
-    
-    public Character(char c)
-    {
-    	this.value = c;
-    }
-    
-    public char charValue()
-    {
-    	return this.charValue();
-    }
-    
+	
+	private final char value;
+	
+	public Character(char c)
+	{
+		this.value = c;
+	}
+	
+	public char charValue()
+	{
+		return this.charValue();
+	}
+	
 	public int compareTo(Character ob)
 	{
 		if (this.value == ob.value)
