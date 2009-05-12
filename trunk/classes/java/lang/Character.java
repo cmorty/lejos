@@ -2,15 +2,26 @@ package java.lang;
 
 public final class Character implements Comparable<Character>
 {
+	public static final int SIZE = 16;
+	
     public static final int MIN_RADIX = 2;
     public static final int MAX_RADIX = 36;
     
-    public static final char MIN_LOW_SURROGATE = '\uDC00';
-    public static final char MAX_LOW_SURROGATE = '\uDFFF';
+    public static final char MIN_VALUE = '\u0000';
+    public static final char MAX_VALUE = '\uFFFF';
+    
     public static final char MIN_HIGH_SURROGATE = '\uD800';
     public static final char MAX_HIGH_SURROGATE = '\uDBFF';
+    public static final char MIN_LOW_SURROGATE = '\uDC00';
+    public static final char MAX_LOW_SURROGATE = '\uDFFF';
     
+    public static final char MIN_SURROGATE = MIN_HIGH_SURROGATE;
+    public static final char MAX_SURROGATE = MAX_LOW_SURROGATE;
+    
+    public static final int MIN_CODE_POINT = 0;
     public static final int MIN_SUPPLEMENTARY_CODE_POINT = 0x10000;
+    public static final int MAX_CODE_POINT = 0x10FFFF;
+    
 	
 	//MISSING everything
     
@@ -41,22 +52,67 @@ public final class Character implements Comparable<Character>
 	 * @return true iff the character is a numerical digit
 	 */
 	public static boolean isDigit(char ch) {
-		return (ch >= 48 & ch<=57);
+		return (ch >= '0' & ch <= '9');
 	}
 	
-	public static boolean isLowSurrogate(char ch)
+	public static boolean isLowSurrogate(char low)
 	{
-		return ch >= MIN_LOW_SURROGATE && ch <= MAX_LOW_SURROGATE;
+		return low >= MIN_LOW_SURROGATE && low <= MAX_LOW_SURROGATE;
 	}
 		
-	public static boolean isHighSurrogate(char ch)
+	public static boolean isHighSurrogate(char high)
 	{
-		return ch >= MIN_HIGH_SURROGATE && ch <= MAX_HIGH_SURROGATE;
+		return high >= MIN_HIGH_SURROGATE && high <= MAX_HIGH_SURROGATE;
 	}
 	
 	public static boolean isSurrogatePair(char high, char low)
 	{
-		return isHighSurrogate(high) && isLowSurrogate(low);
+		return high >= MIN_HIGH_SURROGATE && high <= MAX_HIGH_SURROGATE && low >= MIN_LOW_SURROGATE && low <= MAX_LOW_SURROGATE;
+	}
+	
+	public static boolean isValidCodePoint(int codepoint)
+	{
+		return codepoint >= MIN_CODE_POINT && codepoint <= MAX_CODE_POINT;
+	}
+	
+	public static boolean isSupplementaryCodePoint(int codepoint)
+	{
+		return codepoint >= MIN_SUPPLEMENTARY_CODE_POINT && codepoint <= MAX_CODE_POINT;
+	}
+	
+	public static int charCount(int codepoint)
+	{
+		return codepoint < MIN_SUPPLEMENTARY_CODE_POINT ? 1 : 2;
+	}
+	
+	public static char[] toChars(int codepoint)
+	{
+		if (codepoint < MIN_CODE_POINT || codepoint > MAX_CODE_POINT)
+			throw new IllegalArgumentException("invalid codepoint");
+		
+		if (codepoint < MIN_SUPPLEMENTARY_CODE_POINT)
+			return new char[] { (char)codepoint };
+		
+		codepoint -= MIN_SUPPLEMENTARY_CODE_POINT;
+		
+		return new char[] { (char)((codepoint >> 10) + MIN_HIGH_SURROGATE),  (char)(codepoint & 0x3F | MIN_LOW_SURROGATE) };
+	}
+	
+	public static int toChars(int codepoint, char[] dst, int off)
+	{
+		if (codepoint < MIN_CODE_POINT || codepoint > MAX_CODE_POINT)
+			throw new IllegalArgumentException("invalid codepoint");
+		
+		if (codepoint < MIN_SUPPLEMENTARY_CODE_POINT)
+		{
+			dst[off] = (char)codepoint;
+			return 1;
+		}
+		
+		codepoint -= MIN_SUPPLEMENTARY_CODE_POINT;
+		dst[off] = (char)((codepoint >> 10) + MIN_HIGH_SURROGATE);
+		dst[off + 1] = (char)(codepoint & 0x3F | MIN_LOW_SURROGATE);
+		return 2;
 	}
 	
 	public static int toCodePoint(char high, char low)
@@ -148,5 +204,10 @@ public final class Character implements Comparable<Character>
 	public static Character valueOf(char c)
 	{
 		return new Character(c);
+	}
+	
+	public static char reverseBytes(char c)
+	{
+		return (char)((c << 8) | (c >> 8));
 	}
 }
