@@ -375,7 +375,7 @@ public class Keyboard extends Thread {
 			id = KeyEvent.KEY_RELEASED;
 		}
 		
-		int code = getJavaConstant((byte)normalizedScanCode);
+		int code = getJavaConstant(normalizedScanCode);
 		
 		// Recalculate modifier
 		recalculateModifier(code, id);

@@ -1,8 +1,10 @@
 package javax.bluetooth;
 
 /**
- * The DeviceClass class represents the class of device (CoD) record as defined by the Bluetooth specification. This record is defined in the Bluetooth Assigned Numbers document and contains information on the type of the device and the type of services available on the device.
- * The Bluetooth Assigned Numbers document ( http://www.bluetooth.org/assigned-numbers/baseband.htm) defines the service class, major device class, and minor device class. The table below provides some examples of possible return values and their meaning:
+ * The DeviceClass class represents the class of device (CoD) record as defined by the Bluetooth specification. This record is defined 
+ * in the Bluetooth Assigned Numbers document and contains information on the type of the device and the type of services available on the device.
+ * The Bluetooth Assigned Numbers document ( http://www.bluetooth.org/assigned-numbers/baseband.htm) defines the service class, major 
+ * device class, and minor device class. The table below provides some examples of possible return values and their meaning:
  * <table border="1">
  * <tr>
  * <td>Method</td><td>Return Value</td><td>Class of Device</td>
@@ -58,6 +60,8 @@ public class DeviceClass {
 		return service;
 	}
 
+	// TODO: Implement DeviceClass.equals()? Not sure if other APIs define this.
+	
 	/**
 	 * Retrieves the major device class. A device may have only a single major device class.
 	 * @return the major device class

@@ -35,7 +35,7 @@ class BTGPSLocationProvider extends LocationProvider implements DiscoveryListene
 	// I think this indicates the BT device is a GPS unit: TODO: Wrong. Keyboard has same signature.
 	private static final int GPS_MAJOR = 0x1F00;
 	
-	protected BTGPSLocationProvider() {
+	protected BTGPSLocationProvider() throws LocationException {
 		
 		// TODO: Move this to searchConnect method?
 		// TODO: The problem here is that it searches every time. Slow. Need to try Properties?
@@ -45,30 +45,26 @@ class BTGPSLocationProvider extends LocationProvider implements DiscoveryListene
 			da = LocalDevice.getLocalDevice().getDiscoveryAgent();
 			da.startInquiry(DiscoveryAgent.GIAC, this);
 		} catch (BluetoothStateException e) {
-			System.err.println("BT State Exception! " + e.getMessage());
+			throw new LocationException(e.getMessage());
 		}
 		
 		while(!doneInq) {Thread.yield();}
 		
-		// TODO NEEDED? REDUCE? NEED TO CLOSE SOMETHING?
-		//try {Thread.sleep(200);} catch (Exception e) {} 
-		
-		// TODO: What is the procedure if it fails to connect? Return? Throw BT exception?
-		if(btDevice == null) System.err.println("Nothing found. It should exit here.");
+		if(btDevice == null) throw new LocationException("No device found");
 		
 		String address = btDevice.getBluetoothAddress();
 		String btaddy = "btspp://" + address;
 		
 		try {
 			StreamConnectionNotifier scn = (StreamConnectionNotifier)Connector.open(btaddy);
-			// TODO: What is procedure if it fails to connect?
-			if(scn == null)	System.err.println("BTGPSLocationProvider.scn is null!");
+			
+			if(scn == null)	throw new LocationException("Bad BT address");
 			StreamConnection c = scn.acceptAndOpen();
 			
-			// TODO: This problem below occurred one time for my Holux GPS. The solution was to
-			// remove the device from the Bluetooth menu, then find and pair again.
-			// Need to throw exception with message.
-			if(c == null)System.err.println("StreamConnectionNotifier.acceptAndOpen() failed.");
+			/* This problem below occurred one time for my Holux GPS. The solution was to
+			 * remove the device from the Bluetooth menu, then find and pair again.
+			 */
+			if(c == null)throw new LocationException("Failed. Try pairing at menu again");
 			InputStream in = c.openInputStream();
 			
 			if(in != null) {
@@ -76,7 +72,7 @@ class BTGPSLocationProvider extends LocationProvider implements DiscoveryListene
 				// c.close(); // TODO: Clean up when done. HOW TO HANDLE IN LOCATION?
 			}
 		} catch(IOException e) {
-			System.err.println("IOException in BTLocationProvider");	
+			throw new LocationException(e.getMessage());	
 		}
 		// Add itself to SimpleGPS as listener
 		SimpleGPS.addListener(this);
@@ -128,24 +124,19 @@ class BTGPSLocationProvider extends LocationProvider implements DiscoveryListene
 
 	}
 
-	/**
-	 * TODO: Copy the docs from regular API source code (formatting too)
-	 */
 	public void setLocationListener(LocationListener listener, int interval,
 			int timeout, int maxAge) {
 		
 		// * Stop all previous listener threads *
 		listenerRunning = false;
 		if(listyThread != null) {
-			System.err.println("About to end old thread. Alive? " + listyThread.isAlive());
 			while(listyThread.isAlive()) {Thread.yield();} // End old thread
-			System.err.println("Ended. Alive? " + listyThread.isAlive());
 			listyThread = null; // Discard the listener thread instance 
 		}
 		
 		// * Remove any listeners from GPSListener *
 		if (listener == null) {
-			// TODO: Remove current listener from SimpleGPS
+			// Remove current listener from SimpleGPS
 			SimpleGPS.removeListener(gpsl);
 			gpsl = null;
 			return; // No listener provided, so return now so it dosn't make a new one

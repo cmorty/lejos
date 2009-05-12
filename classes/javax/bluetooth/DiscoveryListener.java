@@ -53,6 +53,18 @@ public interface DiscoveryListener {
          */
         public static final int INQUIRY_ERROR = 0x07;
 
+        /*
+         * TODO: ServiceRecord interface.
+         * 
+         * TODO:
+         * Called when service(s) are found during a service search.
+         * void	servicesDiscovered(int transID, ServiceRecord[] servRecord)
+         * 
+         * TODO:
+         * Called when a service search is completed or was terminated because of an error.
+         * void serviceSearchCompleted(int transID, int respCode)
+         */
+        
         /**
          * Called when a device is found during an inquiry. An inquiry searches for
          * devices that are discoverable. NOTE: If a device is found that has not yet
