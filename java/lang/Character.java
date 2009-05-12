@@ -45,6 +45,88 @@ public final class Character implements Comparable<Character>
 		return (this.value > ob.value) ? 1 : -1;
 	}
 	
+	public int codePointAt(char[] c, int index)
+	{
+		return this.codePointAt(c, index, c.length);
+	}
+	
+	public int codePointAt(char[] c, int index, int limit)
+	{
+		char c1 = c[index];
+		if (Character.isHighSurrogate(c1))
+		{
+			int index2 = index + 1;			
+			if (index2 < limit)
+			{
+				char c2 = c[index2];
+				if (Character.isLowSurrogate(c2))
+				{
+					return Character.toCodePoint(c1, c2);
+				}
+			}
+		}
+		return c1;
+	}
+	
+	public int codePointAt(CharSequence c, int index)
+	{
+		char c1 = c.charAt(index);
+		if (Character.isHighSurrogate(c1))
+		{
+			int index2 = index + 1;			
+			if (index2 < c.length())
+			{
+				char c2 = c.charAt(index2);
+				if (Character.isLowSurrogate(c2))
+				{
+					return Character.toCodePoint(c1, c2);
+				}
+			}
+		}
+		return c1;
+	}
+	
+	public int codePointBefore(char[] c, int index)
+	{
+		return codePointBefore(c, index, 0);
+	}
+	
+	public int codePointBefore(char[] c, int index, int start)
+	{
+		char c2 = c[index - 1];
+		if (Character.isLowSurrogate(c2))
+		{
+			int index2 = index - 2;			
+			if (index2 >= start)
+			{
+				char c1 = c[index2];
+				if (Character.isHighSurrogate(c1))
+				{
+					return Character.toCodePoint(c1, c2);
+				}
+			}
+		}
+		return c2;
+	}
+	
+	public int codePointBefore(CharSequence c, int index)
+	{
+		char c2 = c.charAt(index - 1);
+		if (Character.isLowSurrogate(c2))
+		{
+			int index2 = index - 2;			
+			if (index2 >= 0)
+			{
+				char c1 = c.charAt(index2);
+				if (Character.isHighSurrogate(c1))
+				{
+					return Character.toCodePoint(c1, c2);
+				}
+			}
+		}
+		return c2;
+	}
+	
 	/**
 	 * Identifies if a character is a numerical digit. 
 	 * 
