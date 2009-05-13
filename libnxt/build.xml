@@ -1,16 +1,15 @@
 <!-- ant file to make libnxt, runc, nxjflash and jlibnxt -->
 
 <project name="libnxt" default="make" basedir=".">
-	<property name="endian" value="_NXT_LITTLE_ENDIAN"/>
 	<!-- cpptasks task & type def
 	<taskdef resource="cpptasks.tasks">
 	  <classpath>
-	    <pathelement location="../jtools/3rdparty/lib/cpptasks.jar"/>
+	    <pathelement location="../release/lejos_nxj/3rdparty/lib/cpptasks.jar"/>
 	  </classpath>
 	</taskdef>
 	<typedef resource="cpptasks.types">
 	  <classpath>
-	    <pathelement location="../jtools/3rdparty/lib/cpptasks.jar"/>
+	    <pathelement location="../release/lejos_nxj/3rdparty/lib/cpptasks.jar"/>
 	  </classpath>
 	</typedef>
 	-->
@@ -25,65 +24,7 @@
 	</target>
 	
 	<!-- make libnxt and its utilities --> 
-	<target name="make" depends="clean,libnxt,nxjflash,jlibnxt" description="makes libnxt and its tools">
-	</target>
-
-	<!-- make libnxt --> 
-	<target name="libnxt" description="makes libnxt">
-  		<cc subsystem="console" 
-  				outfile="nxt"
-  				objdir="." 
-  				outtype="static" 
-  				debug="false"
-  			    exceptions="false"
-  			    rtti="true"
-  			    optimize="speed"
-  				name="gcc">
-  			    <compilerarg value="-Wall"/>
-  			    <compilerarg value="-std=gnu99"/>
-  			    <compilerarg value="-g"/>
-  			    <compilerarg value="-ggdb"/>
-  			    <compilerarg value="-fPIC"/>
-  			    <compilerarg value="-D${endian}"/>
-  				<fileset dir=".">
-  					<include name="error.c"/>
-  					<include name="firmware.c"/>
-  					<include name="flash_routine.c"/>  					
-  					<include name="error.c"/>
-  	  				<include name="flash.c"/> 
-  	  				<include name="lowlevel.c"/>
-  	  				<include name="samba.c"/>
-  				</fileset>
-				<includepath>
-					<pathelement location="."/>
-				</includepath>
-  		</cc>
-	</target>
-	
-	<!-- make nxjflash --> 
-	<target name="nxjflash" description="makes nxjflash utility">
-  		<cc subsystem="console" 
-  				outfile="nxjflash"
-  				objdir="." 
-  				outtype="executable" 
-  				debug="false"
-  			    exceptions="false"
-  			    rtti="true"
-  			    optimize="speed"
-  				name="gcc">
-  			    <compilerarg value="-Wall"/>
-  			    <compilerarg value="-std=gnu99"/>
-  			    <compilerarg value="-g"/>
-  			    <compilerarg value="-ggdb"/>
-  			    <compilerarg value="-D_NXT_LITTLE_ENDIAN"/>
-  				<fileset dir=".">
-  					<include name="main_nxjflash.c"/>
-  				</fileset>
-  				<libset dir="." libs="nxt,usb"/>				
-				<includepath>
-					<pathelement location="."/>
-				</includepath>
-  		</cc>
+	<target name="make" depends="clean,jlibnxt" description="makes libnxt and its tools">
 	</target>
 	
 	<!-- make jlibnxt --> 
@@ -95,17 +36,14 @@
   				debug="false"
   			    exceptions="false"
   			    rtti="true"
-  			    optimize="speed"
   				name="gcc">
   			    <compilerarg value="-Wall"/>
   			    <compilerarg value="-std=gnu99"/>
-  			    <compilerarg value="-g"/>
-  			    <compilerarg value="-ggdb"/>
-  			    <compilerarg value="-D${endian}"/>
+  			    <compilerarg value="-fPIC"/>
   				<fileset dir=".">
   					<include name="main_jlibnxt.c"/>
   				</fileset>
-				<libset dir="." libs="nxt,usb"/>
+				<libset dir="." libs="usb"/>
 				<includepath>
 					<pathelement location="."/>
 				</includepath>
