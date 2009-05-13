@@ -1,4 +1,3 @@
-//import java.util.*;
 package java.util;
 
 /**
@@ -10,8 +9,8 @@ public class StringTokenizer implements Enumeration{
 	/**
 	 * Delimiter string.
 	 */
-	private String delimiter = ",";
-	private int total;
+	private String _delimiter;
+//	private int total;
 	private int currentPosition;
 	private int nextPosition;
 	private String s;
@@ -22,34 +21,26 @@ public class StringTokenizer implements Enumeration{
 	 * @param s String to be StringTokenizer
 	 */
 	public StringTokenizer(String s){
-		String character = s.substring(s.length()-1);
-		if(character != delimiter){
-			s += delimiter;
-		}
-
-		this.s = s;
-		this.total = s.length();
-		this.currentPosition = 0;
-		this.nextPosition = s.indexOf(delimiter, currentPosition);
+		this(s, ",");
 	}
 
 	/**
 	 * The constructor
 	 * 
 	 * @param s
-	 * @param _delimiter
+	 * @param delimiter
 	 */
-	public StringTokenizer(String s, String _delimiter) {
+	public StringTokenizer(String s, String delimiter) {
 		String character = s.substring(s.length()-1);
-		if(character != _delimiter){
-			s += _delimiter;
+		if(character != delimiter){
+			s += delimiter;
 		}
 		
-		this.delimiter = _delimiter;
+		this._delimiter = delimiter;
 		this.s = s;
-		this.total = s.length();
+//		this.total = s.length();
 		this.currentPosition = 0;
-		this.nextPosition = s.indexOf(delimiter, currentPosition);
+		this.nextPosition = s.indexOf(_delimiter, currentPosition);
 	}
 
 	/**
@@ -81,7 +72,7 @@ public class StringTokenizer implements Enumeration{
 		String next = s.substring(currentPosition, nextPosition);
 
 		currentPosition = nextPosition + 1;
-		nextPosition = s.indexOf(delimiter, currentPosition);
+		nextPosition = s.indexOf(_delimiter, currentPosition);
 
 		return next;
 	}
@@ -94,7 +85,7 @@ public class StringTokenizer implements Enumeration{
 		try{
 			ne = nextToken();
 		}catch(NoSuchElementException e){
-			
+
 		}
 		return ne;
 	}
