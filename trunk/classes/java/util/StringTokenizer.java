@@ -16,7 +16,7 @@ public class StringTokenizer implements Enumeration{
 	private String s;
 
 	/**
-	 * The constructor
+	 * Assigns the delimeter as ',' by default.
 	 * 
 	 * @param s String to be StringTokenizer
 	 */
@@ -43,6 +43,22 @@ public class StringTokenizer implements Enumeration{
 		this.nextPosition = s.indexOf(_delimiter, currentPosition);
 	}
 
+	/**
+	 *     Calculates the number of times that this tokenizer's nextToken method can be called before it generates an exception. The current position is not advanced.
+	 * @return the number of tokens remaining in the string using the current delimiter set.
+	 */
+	public int countTokens() {
+		int count = 0;
+		int fromIndex = currentPosition;
+		
+		while(s.indexOf(_delimiter, fromIndex) != -1) {
+			count++;
+			fromIndex = s.indexOf(_delimiter, fromIndex) + 1;
+		}
+		
+		return count;
+	}
+	
 	/**
 	 * Method used to know if exists new tokens
 	 * 
