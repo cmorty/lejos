@@ -34,10 +34,11 @@ import javax.microedition.io.*;
  * For this reason, this class won't work properly with a regular HID keyboard as written.
  * With modifications it could be made to work with both SPP and HID keyboards since
  * the key tables are mostly the same.</p>
- * <p>Note: This class is currently only tested with Freedom Universal</p>
+ * <p>Note: This class is currently only tested with Freedom Universal. If you have problems with the iTech Virtual Keyboard, write to bbagnall@mts.net
+ * and I will try my best to adapt this class.</p>
  * @author BB
  */
-public class Keyboard extends Thread {
+public class Keyboard extends Thread { // TODO: Use internal Thread so it isn't exposed (especially run()).
 
 	// Typematic Key Repeat:
 	/** 
@@ -255,7 +256,7 @@ public class Keyboard extends Thread {
 	/**
 	 * Typematic delay is the time after a key is held down that characters start repeating.
 	 *
-	 * @param delay- 250 ms to 1000 ms (500ms default)
+	 * @param delay 250 ms to 1000 ms (500ms default)
 	 */
 	 
 	public void setTypematicDelay(int delay) {
@@ -272,7 +273,7 @@ public class Keyboard extends Thread {
 	
 	/**
 	 * Typematic rate is the rate characters repeat when a key is held down.
-	 * @param rate - 2.0 cps (characters per second) to 30.0 cps (10.9 default)
+	 * @param rate 2.0 cps (characters per second) to 30.0 cps (10.9 default)
 	 */
 	public void setTypematicRate(int rate) {
 		this.typematicRate = rate;
@@ -297,8 +298,13 @@ public class Keyboard extends Thread {
 		this.keyListener = kl;
 	}
 	
-	public void removeKeylistener(KeyListener l) {
-		this.keyListener = null;
+	/**
+	 * Removes the specified KeyListener from the Keyboard so it will no longer notify the listener of new events.
+	 * @param kl
+	 */
+	public void removeKeylistener(KeyListener kl) {
+		if(this.keyListener == kl)
+			this.keyListener = null;
 	}
 	
 	/**
@@ -418,6 +424,10 @@ public class Keyboard extends Thread {
 		return location;
 	}
 	
+	/**
+	 * Indicates whether or not caps lock is enabled for the keyboard. The only way to change caps lock is to presss the <code>Caps Lock</code> key.
+	 * @return true if caps lock is on, false if it is off.
+	 */
 	public boolean isCapsLock() {
 		return capsLock;
 	}
