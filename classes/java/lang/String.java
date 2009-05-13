@@ -390,6 +390,29 @@ public final class String implements CharSequence
     return false;
   }
   
+  public boolean EqualsIgnoreCase(String s) {
+	  return this.toLowerCase().equals(s.toLowerCase());
+  }
+  
+  public String toLowerCase() {
+	  
+	  char [] c1 = new char[characters.length];
+	  for(int i=0;i<c1.length;i++) {
+		  c1[i] = characters[i];
+		  if(characters[i] >= 'A'&characters[i] <= 'Z') c1[i] += 32;
+	  }
+	  return new String(c1);
+  }
+  
+  public String toUpperCase() {
+	  char [] c1 = new char[characters.length];
+	  for(int i=0;i<c1.length;i++) {
+		  c1[i] = characters[i];
+		  if(characters[i] >= 'a'&characters[i] <= 'z') c1[i] -= 32;
+	  }
+	  return new String(c1);
+  }
+  
   /**
    * Special version of hash that returns the same value the same String values
    */
