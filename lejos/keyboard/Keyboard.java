@@ -205,8 +205,7 @@ public class Keyboard extends Thread { // TODO: Use internal Thread so it isn't 
 
 			/* DiscoveryListener methods: */
 			public void deviceDiscovered(RemoteDevice btdev, DeviceClass cod) {
-				// TODO: It should not output this to err. Delete when done troubleshooting:
-				System.err.println(btdev.getFriendlyName(false) + " discovered.");
+				//System.err.println(btdev.getFriendlyName(false) + " discovered.");
 				
 				if((cod.getMajorDeviceClass() & SPP_DEVICE) == SPP_DEVICE) {
 					if(btdev.isAuthenticated()) { // Check if paired.

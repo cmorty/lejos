@@ -234,8 +234,7 @@ class BTGPSLocationProvider extends LocationProvider implements DiscoveryListene
 	
 	/* DiscoveryListener methods: */
 	public void deviceDiscovered(RemoteDevice btDevice, DeviceClass cod) {
-		// TODO: It should not output this to err. Delete when done troubleshooting:
-		System.err.println(btDevice.getFriendlyName(false) + " discovered.");
+		//System.err.println(btDevice.getFriendlyName(false) + " discovered.");
 		/*
 		System.err.println("Major = " + cod.getMajorDeviceClass());
 		System.err.println("Minor = " + cod.getMinorDeviceClass());
