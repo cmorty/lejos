@@ -12,7 +12,7 @@ all: flash.bin flash.asm
 clean:
 	rm -f crt0.o flash.o flash flash.bin flash.asm
 
-flash: flash.o crt0.o
+flash: crt0.o flash.o
 	$(TOOL_PREFIX)ld -O3 --gc-sections -o '$@' $^
 
 %.o: %.s
