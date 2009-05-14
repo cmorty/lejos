@@ -25,4 +25,4 @@ flash: crt0.o flash.o
 	$(TOOL_PREFIX)objcopy -O binary '$<' '$@'
 
 %.asm: %.bin
-	$(TOOL_PREFIX)objdump --disassemble-all -b binary -m arm7tdmi '$<' >'$@'	
+	$(TOOL_PREFIX)objdump --endian=little --disassemble-all -b binary -m arm7tdmi '$<' >'$@'	
