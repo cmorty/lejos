@@ -16,16 +16,16 @@ flash: crt0.o flash.o
 	$(TOOL_PREFIX)ld -O --gc-sections -o '$@' $^
 
 %.o: %.s
-	$(TOOL_PREFIX)as --warn -mcpu=arm7tdmi -mfloat-abi=soft -mthumb-interwork -mapcs-32 -EL -o '$@' '$<'
+	$(TOOL_PREFIX)as --warn -mcpu=arm7tdmi -mfloat-abi=soft -mthumb-interwork -mlittle-endian -mapcs-32 -o '$@' '$<'
 	
 %.o: %.c
-	$(TOOL_PREFIX)gcc -std=c99 -W -Wall -O3 -mcpu=arm7tdmi -mfloat-abi=soft -mthumb-interwork -mapcs -mlittle-endian -c -o '$@' '$<'
+	$(TOOL_PREFIX)gcc -std=c99 -W -Wall -O3 -mcpu=arm7tdmi -mfloat-abi=soft -mthumb-interwork -mlittle-endian -mapcs -c -o '$@' '$<'
 
 %.bin: %
 	$(TOOL_PREFIX)objcopy -O binary '$<' '$@'
 
 %.bin.asm: %.bin
-	$(TOOL_PREFIX)objdump -D -b binary -EL -m arm7tdmi '$<' >'$@'	
+	$(TOOL_PREFIX)objdump -D -b binary -m arm7tdmi --endian=little '$<' >'$@'	
 
 %.asm: %
 	$(TOOL_PREFIX)objdump -d -s -m arm7tdmi '$<' >'$@'	
