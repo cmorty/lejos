@@ -251,17 +251,19 @@ public class File {
 	 *  @return An array of File objects representing files in the file system.
 	 *  The array will be empty if the directory is empty.
 	 *  
-	 * NOTE: In the Java SDK this method should return an array
-	 * of size equaling the number of files. However, because leJOS has no garbage
-	 * collector it returns the same array that is always 30 in length. The unused
-	 * file spots are null. Use File.totalFiles to determine number of files. 
 	 */
 	public static File [] listFiles() {
 		if(files == null) {
 			 files = new File[MAX_FILES];
 			 File.readTable(files); // Update file data
 		}
-		return files;
+		
+		File [] retFiles = new File[totalFiles]; 
+		for(int i=0;i<retFiles.length;i++) {
+			retFiles[i] = files[i];
+		}
+		
+		return retFiles;
 	}
 	
 	/**
@@ -326,7 +328,7 @@ public class File {
 			short pageLocation = (short)((0xFF & readNextByte()) | ((0xFF & readNextByte())<<8));
 			int fileLength = (0xFF & readNextByte()) | ((0xFF & readNextByte()) <<8) | ((0xFF & readNextByte())<<16) | ((0xFF & readNextByte())<<24);
 			byte fileAttributes = readNextByte();
-			// The following code attempts to reuse String's. If leJOS gets
+			// TODO: The following code attempts to reuse String's. If leJOS gets
 			// a garbage collector we can create new strings and reduce this
 			// code. It assumes that if files[i] is NOT null then the filename
 			// is correct. Relies on delete() to adjust file names correctly.

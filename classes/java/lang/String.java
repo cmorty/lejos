@@ -390,7 +390,7 @@ public final class String implements CharSequence
     return false;
   }
   
-  public boolean EqualsIgnoreCase(String s) {
+  public boolean equalsIgnoreCase(String s) {
 	  return this.toLowerCase().equals(s.toLowerCase());
   }
   
