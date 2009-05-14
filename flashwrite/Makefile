@@ -7,13 +7,13 @@ TOOL_PREFIX=arm-elf-
 
 .PHONY: all clean
 
-all: flash.bin flash.asm
+all: flash.bin flash.asm flash.bin.asm
 	
 clean:
 	rm -f crt0.o flash.o flash flash.bin flash.asm
 
 flash: crt0.o flash.o
-	$(TOOL_PREFIX)ld -O3 --gc-sections -o '$@' $^
+	$(TOOL_PREFIX)ld -O --gc-sections -o '$@' $^
 
 %.o: %.s
 	$(TOOL_PREFIX)as --warn -mcpu=arm7tdmi -mfloat-abi=soft -mthumb-interwork -mapcs-32 -EL -o '$@' '$<'
@@ -24,5 +24,9 @@ flash: crt0.o flash.o
 %.bin: %
 	$(TOOL_PREFIX)objcopy -O binary '$<' '$@'
 
-%.asm: %.bin
-	$(TOOL_PREFIX)objdump --endian=little --disassemble-all -b binary -m arm7tdmi '$<' >'$@'	
+%.bin.asm: %.bin
+	$(TOOL_PREFIX)objdump -D -b binary -EL -m arm7tdmi '$<' >'$@'	
+
+%.asm: %
+	$(TOOL_PREFIX)objdump -d -s -m arm7tdmi '$<' >'$@'	
+	
