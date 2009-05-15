@@ -13,6 +13,11 @@ public class NXTSamba {
     public static final int PAGE_SIZE = 256;
     public static final int FLASH_BASE = 0x00100000;
     
+    //have to match those defined in the flashwrite helper
+    private static final int ADDR_HELPER = 0x202000;
+    private static final int ADDR_PAGEDATA = 0x202100;
+    private static final int ADDR_PAGENUM = 0x202300;
+    
 	private NXTCommUSB nxtComm = null;
     private String version;
     
@@ -212,11 +217,11 @@ public class NXTSamba {
         byte [] buf = new byte[PAGE_SIZE];
         System.arraycopy(data, offset, buf, 0, (offset + PAGE_SIZE < data.length ? PAGE_SIZE : data.length - offset));
         // Write the address to write to
-        writeWord(0x202300, page);
+        writeWord(ADDR_PAGENUM, page);
         // And the data into ram
-        writeBytes(0x202100, buf);
+        writeBytes(ADDR_PAGEDATA, buf);
         // And now use the flash writer to write the data into flash.
-        jump(0x202000);
+        jump(ADDR_HELPER);
     }
 
     /**
@@ -331,7 +336,7 @@ public class NXTSamba {
                     System.out.println("Connected to SAM-BA " + version);
                 }
                 // Now upload the flash writer helper routine
-                writeBytes(0x202000, FlashWrite.CODE);
+                writeBytes(ADDR_HELPER, FlashWrite.CODE);
                 // And set the the clock into PLL/2 mode ready for writing
                 writeWord(0xfffffc30, 0x7);
                 return true;
