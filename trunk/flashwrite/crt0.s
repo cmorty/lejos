@@ -19,7 +19,7 @@
  * USA
  */
 
-.text
+.section .init
 .align 4
 .globl _start
 
