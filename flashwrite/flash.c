@@ -19,7 +19,9 @@
  * USA
  */
 
-#define VINTPTR(addr) ((volatile unsigned int *)(addr))
+typedef volatile unsigned int vint_t;
+
+#define VINTPTR(addr) ((vint_t *)(addr))
 #define VINT(addr) (*(VINTPTR(addr)))
 
 #define USER_PAGE VINTPTR(0x00202100)
@@ -31,18 +33,16 @@
 #define OFFSET_PAGE_NUM ((USER_PAGE_NUM & 0x000003FF) << 8)
 #define FLASH_CMD_WRITE (0x5A000001 + OFFSET_PAGE_NUM)
 
-int nxt_main(void)
+void nxt_main(void)
 {
-  unsigned long i;
+	while (!(FLASH_STATUS_REG & 0x1));
 
-  while (!(FLASH_STATUS_REG & 0x1));
+	//copies a chunk of 256bytes
+	vint_t *base = FLASH_BASE + USER_PAGE_NUM * 64;
+	for (int i = 0; i < 64; i++)
+		base[i] = USER_PAGE[i];
 
-  for (i = 0; i < 64; i++)
-    FLASH_BASE[(USER_PAGE_NUM*64)+i] = USER_PAGE[i];
+	FLASH_CMD_REG = FLASH_CMD_WRITE;
 
-  FLASH_CMD_REG = FLASH_CMD_WRITE;
-
-  while (!(FLASH_STATUS_REG & 0x1));
-
-  return 0;
+	while (!(FLASH_STATUS_REG & 0x1));
 }
