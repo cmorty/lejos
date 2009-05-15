@@ -7,7 +7,7 @@ TOOL_PREFIX=arm-elf-
 
 .PHONY: all clean
 
-all: flash.asm flash.bin.asm
+all: flash flash.asm flash.bin flash.bin.asm
 	
 clean:
 	rm -f crt0.o flash.o flash flash.asm flash.bin flash.bin.asm
