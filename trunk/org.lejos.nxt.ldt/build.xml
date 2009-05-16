@@ -17,6 +17,7 @@
 		<ant dir="${lejos.root}/classes" />
 		<ant dir="${lejos.root}/jtools" />
 		<ant dir="${lejos.root}/pccomms" />
+		<ant dir="${lejos.root}/pctools" />
 	</target>
 
 	<!-- copies the jar files -->
