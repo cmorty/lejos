@@ -303,7 +303,7 @@ public class NXJFlashUpdate
      * @param fs File system image.
      * @param verify Should we verify the updates?
      */
-    void updateDevice(NXTSamba nxt, byte[] memoryImage, byte[] fs, boolean verify) throws IOException
+    public void updateDevice(NXTSamba nxt, byte[] memoryImage, byte[] fs, boolean verify) throws IOException
     {
         if (memoryImage != null)
         {
