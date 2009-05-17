@@ -7,7 +7,6 @@
 	<classpathentry kind="src" path="AccelDemo"/>
 	<classpathentry kind="src" path="SocketServer"/>
 	<classpathentry kind="src" path="BTSend"/>
-	<classpathentry kind="lib" path="/pccomms/3rdparty/lib/bluecove.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/pccomms"/>
 	<classpathentry kind="output" path="bin"/>
