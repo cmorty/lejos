@@ -34,7 +34,7 @@ public class StartUpText
    static final int maxSleepTime = 10;
    static final String revision = "$Revision$";
    static final int MAJOR_VERSION=0;
-   static final int MINOR_VERSION=7;
+   static final int MINOR_VERSION=8;
  
    public static void playTune()
    {
