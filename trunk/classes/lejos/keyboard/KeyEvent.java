@@ -255,7 +255,7 @@ public class KeyEvent {
 	/**
 	 * Returns the source of the key event. In JDK 4.0 and up this is supposed to be a Component object. MIDP and leJOS has no Component, so leJOS 
 	 * maps KeyEvents directly to the keyboard.
-	 * @return
+	 * @return the source of the key event
 	 */
 	public Keyboard getSource() {
 		return this.source;
