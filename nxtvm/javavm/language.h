@@ -195,6 +195,7 @@ void install_binary( void* ptr);
 #endif
 
 #define is_synchronized(MREC_)      (((MREC_)->mflags & M_SYNCHRONIZED) != 0)
+#define is_static(MREC_)      (((MREC_)->mflags & M_STATIC) != 0)
 #define is_native(MREC_)            (((MREC_)->mflags & M_NATIVE) != 0)
 #define get_code_ptr(MREC_)         (get_binary_base() + (MREC_)->codeOffset)
 
