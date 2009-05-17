@@ -12,10 +12,10 @@ fi
 NXJ_LIBS="$NXJ_HOME/lib"
 NXJ_LIBS_3rd="$NXJ_HOME/3rdparty/lib"
 
-NXJ_JAR_BCEL="$NXJ_LIBS_3rd/bcel-5.1.jar"
+NXJ_JAR_BCEL="$NXJ_LIBS_3rd/bcel.jar"
 NXJ_JAR_BLUECOVE="$NXJ_LIBS_3rd/bluecove.jar"
 NXJ_JAR_BLUECOVE_GPL="$NXJ_LIBS_3rd/bluecove-gpl.jar"
-NXJ_JAR_COMMONS_CLI="$NXJ_LIBS_3rd/commons-cli-1.0.jar"
+NXJ_JAR_COMMONS_CLI="$NXJ_LIBS_3rd/commons-cli.jar"
 
 NXJ_JAR_CLASSES="$NXJ_LIBS/classes.jar"
 NXJ_JAR_JTOOLS="$NXJ_LIBS/jtools.jar"
