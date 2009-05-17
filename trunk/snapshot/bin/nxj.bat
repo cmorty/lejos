@@ -20,10 +20,10 @@ if "%NXJ_HOME%" == "" goto :home_unset
 set NXJ_LIBS=%NXJ_HOME%\lib
 set NXJ_LIBS_3rd=%NXJ_HOME%\3rdparty\lib
 
-set NXJ_JAR_BCEL=%NXJ_LIBS_3rd%\bcel-5.1.jar
+set NXJ_JAR_BCEL=%NXJ_LIBS_3rd%\bcel.jar
 set NXJ_JAR_BLUECOVE=%NXJ_LIBS_3rd%\bluecove.jar
 set NXJ_JAR_BLUECOVE_GPL=%NXJ_LIBS_3rd%\bluecove-gpl.jar
-set NXJ_JAR_COMMONS_CLI=%NXJ_LIBS_3rd%\commons-cli-1.0.jar
+set NXJ_JAR_COMMONS_CLI=%NXJ_LIBS_3rd%\commons-cli.jar
 
 set NXJ_JAR_CLASSES=%NXJ_LIBS%\classes.jar
 set NXJ_JAR_JTOOLS=%NXJ_LIBS%\jtools.jar
