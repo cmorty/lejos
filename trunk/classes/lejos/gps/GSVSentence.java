@@ -1,12 +1,11 @@
 package lejos.gps;
 
-
 import java.util.*;
 
 /**
  * This class has been designed to manage a GSV Sentence
  * 
- * GPS Satellites in view
+ * GPS Satellites in View
  * 
  * eg. $GPGSV,3,1,11,03,03,111,00,04,15,270,00,06,01,010,00,13,06,292,00*74
  *     $GPGSV,3,2,11,14,25,170,00,16,57,208,39,18,67,296,40,19,40,246,00*74
@@ -26,33 +25,24 @@ import java.util.*;
  * 12-15= Information about third SV, same as field 4-7
  * 16-19= Information about fourth SV, same as field 4-7
  * 
- * @author Juan Antonio Brenha Moral (major recoding by BB)
+ * @author recoded by BB
  */
 public class GSVSentence extends NMEASentence{
 	
 	// TODO: Is this correct to limit maximumSatellites to 4? Perhaps it changes as 
-	// satellitesTracked changes. Maybe this should just use satellitesTracked?
+	// satellitesInView changes. Maybe this should just use satellitesInView?
 	//GGA
-	private int satellitesTracked = 0;
-	public static final int MAXIMUM_SATELLITES = 4;//0,1,2,3
-	NMEASatellite [] ns;
+	private int satellitesInView = 0;
+	//public static final int MAXIMUM_SATELLITES = 4;//0,1,2,3
+	private Satellite [] ns;
+	
+	// Globals used for parsing multiple sentences in parse() method.
+	private int currentSentence;
+	private int currentSatellite;
+	private int totalSentences;
 	
 	//Header
 	public static final String HEADER = "$GPGSV";
-
-	/*
-	 * Constructor
-	 */
-	public GSVSentence(){
-		// TODO: Does GPS really only connect to four? Why not more?
-		// It would be better to use ArrayList or some other growable collection, using
-		// the satellite ID as the key.
-		// Check if GSV sentences cycle through diff't sat ids. If so this
-		// will affect how data is allocated to satellites in array.
-		ns = new NMEASatellite[MAXIMUM_SATELLITES];
-		for(int i=0;i<MAXIMUM_SATELLITES;i++)
-			ns[i] = new NMEASatellite();
-	}
 	
 	/*
 	 * GETTERS & SETTERS
@@ -66,51 +56,62 @@ public class GSVSentence extends NMEASentence{
 	}
 		
 	/**
-	 * Returns the number of satellites being tracked to
-	 * determine the coordinates.
+	 * Returns the number of satellites currently in view.
 	 * 
 	 * @return Number of satellites e.g. 8
 	 */
-	public int getSatellitesTracked() {
+	public int getSatellitesInView() {
 		checkRefresh();
-		return satellitesTracked;
+		return satellitesInView;
 	}
 
 	/**
-	 * Return a NMEA Satellite object
+	 * Return a NMEA Satellite object. Must be synchronized so that all 3-4 GSV sentences are read before it tries to give out data. 
 	 * 
 	 * @param index the index of the satellite
 	 * @return theNMEASatellite object for the selected satellite
 	 */
-	public NMEASatellite getSatellite(int index){
-		checkRefresh();
+	public Satellite getSatellite(int index){
+		// TODO: Should getSatellite() method be synchronized?
+		// TODO: Make sure all 4 of 4 sentences are read. Do quick check here. Otherwise array is temporarily filled with 0s, causes output to flicker.
+		//while(currentSentence != totalSentences) {
+			checkRefresh();
+		//	Thread.yield();
+		//}
 		return ns[index];
 	}
 	
 	/**
 	 * Method used to parse a GSV Sentence
 	 */
-	protected void parse(){
+	protected void parse(String sentence){
 		//StringTokenizer st = new StringTokenizer(nmeaSentence,",");
-		st = new StringTokenizer(nmeaSentence,",");
+		st = new StringTokenizer(sentence,",");
 		
 		// TODO: I don't see any reason for using try-catch block here.
 		try{
 			st.nextToken(); // Skip header $GPGSV
-			st.nextToken();//Message number
-			satellitesTracked = Integer.parseInt(st.nextToken());//Number of satellites being tracked
+			totalSentences = Integer.parseInt(st.nextToken());// Total messages
+			currentSentence = Integer.parseInt(st.nextToken());//Message number
+			satellitesInView = Integer.parseInt(st.nextToken());//Number of satellites being tracked
 
-			for(int i=0;i<MAXIMUM_SATELLITES;i++) {
+			if(currentSentence == 1) {
+				ns = new Satellite[satellitesInView];
+				for(int i=0;i<ns.length;i++)
+					ns[i] = new Satellite();
+				currentSatellite = 0;
+			}
+			
+			for(;currentSatellite<(currentSentence * 4);currentSatellite++) {
 				int PRN = Integer.parseInt(st.nextToken());
-				// TODO: Elevation and azimuth have no decimals?
 				int elevation = Integer.parseInt(st.nextToken());
 				int azimuth = Integer.parseInt(st.nextToken());
 				int SNR = Integer.parseInt(st.nextToken());
 				
-				ns[i].setPRN(PRN);
-				ns[i].setElevation(elevation);
-				ns[i].setAzimuth(azimuth);
-				ns[i].setSNR(SNR);
+				ns[currentSatellite].setPRN(PRN);
+				ns[currentSatellite].setElevation(elevation);
+				ns[currentSatellite].setAzimuth(azimuth);
+				ns[currentSatellite].setSignalNoiseRatio(SNR);
 			}
 		}catch(NoSuchElementException e){
 			//Empty
