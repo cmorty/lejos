@@ -139,8 +139,9 @@ public class CommandLine implements KeyListener {
 	public void keyReleased(KeyEvent e) {}
 	
 	public void keyTyped(KeyEvent e) {
-		if(e.getKeyChar() == 10) return;
-		buf.append(e.getKeyChar()); // TODO What about backspace key?
+		if(e.getKeyChar() == KeyEvent.VK_ENTER) return;
+		if(e.getKeyChar() == KeyEvent.VK_BACK_SPACE) buf.delete(buf.length()-1, buf.length());
+		buf.append(e.getKeyChar());
 		System.out.print(e.getKeyChar());
 	}
 }

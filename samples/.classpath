@@ -5,7 +5,7 @@
 	<classpathentry excluding="build.xml" kind="src" path="NXTConnectTest"/>
 	<classpathentry excluding="build.xml" kind="src" path="BlueStats"/>
 	<classpathentry excluding="build.xml" kind="src" path="BTConnectTest"/>
-	<classpathentry excluding="build.xml" kind="src" path="BTGPS"/>
+	<classpathentry excluding="build.xml" kind="src" path="GPS"/>
 	<classpathentry excluding="build.xml" kind="src" path="BTReceive"/>
 	<classpathentry excluding="build.xml" kind="src" path="BumperCar"/>
 	<classpathentry excluding="build.xml" kind="src" path="ColorDetector"/>
@@ -53,7 +53,7 @@
 	<classpathentry excluding="build.xml" kind="src" path="USBReceive"/>
 	<classpathentry excluding="build.xml" kind="src" path="View"/>
 	<classpathentry kind="src" path="PFLinkTest"/>
-	<classpathentry kind="src" path="KeyboardDemo"/>
+	<classpathentry kind="src" path="Keyboard"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/classes"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>
