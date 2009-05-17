@@ -71,7 +71,8 @@ public class LeJOSNXJUtil {
 		MessageConsole console = LeJOSNXJPlugin.getDefault()
 				.getLeJOSNXJConsole();
 		console.newMessageStream().println(message);
-		// System.out.println("leJOS NXJ> " + message);
+		// log to error log
+		LeJOSNXJPlugin.getDefault().logEvent(message);
 	}
 
 	public static void message(Throwable throwable) {

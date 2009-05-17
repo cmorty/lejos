@@ -92,7 +92,6 @@ public class LeJOSNXJPlugin extends AbstractUIPlugin implements NXTCommLogListen
 	 * @param message
 	 */
 	public void logEvent(String message) {
-		// TODO log messages to console instead of error log
 		Status status = new Status(IStatus.INFO, PLUGIN_ID, IStatus.OK,
 				message, null);
 		getDefault().getLog().log(status);
