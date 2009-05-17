@@ -39,7 +39,7 @@
 	</typedef>
 	
 	<!-- release leJOS NXJ --> 
-	<target name="release" depends ="clean,create.folders,lejos.sources,libs,scripts,samples,pcsamples,platform.doc,pc.doc"
+	<target name="release" depends ="clean,create.folders,lejos.sources,libs,scripts,example,samples,pcsamples,platform.doc,pc.doc"
 		description="releases leJOS NXJ">
 		<!-- clean distribution -->
 		<delete>
@@ -238,12 +238,25 @@
 	<target name="samples" depends="create.folders" description="copies the samples">
 		<copy todir="${release.projects}/samples">
       		<fileset dir="${lejos.root}/samples">
-			 	<exclude name="BTTest/**"/>
       			<exclude name="**/*.nxj"/>
       			<exclude name="**/.svn"/>
       			<exclude name=".settings/**"/>
-      			<exclude name=".externalToolBuilders/**"/>
       			<exclude name="build/**"/>
+      			<exclude name="bin/**"/>
+      			<exclude name="nbproject/private/**"/>
+      		</fileset>
+    	</copy>
+	</target>
+	
+	<!-- copies the example project -->
+	<target name="example" depends="create.folders" description="copies the example project">
+		<copy todir="${release.projects}/org.lejos.example">
+      		<fileset dir="${lejos.root}/org.lejos.example">
+      			<exclude name="**/*.nxj"/>
+      			<exclude name="**/.svn"/>
+      			<exclude name=".settings/**"/>
+      			<exclude name="build/**"/>
+      			<exclude name="bin/**"/>
       			<exclude name="nbproject/private/**"/>
       		</fileset>
     	</copy>
