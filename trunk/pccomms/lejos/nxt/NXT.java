@@ -46,7 +46,7 @@ public class NXT {
 	}
 	
 	/**
-	 * 
+	 * Get the number of bytes of free flash memory
 	 * @return Free memory remaining in FLASH
 	 */
 	public static int getFlashMemory() {
@@ -61,7 +61,7 @@ public class NXT {
 	
 	/**
 	 * Deletes all user programs and data in FLASH memory
-	 * @return
+	 * @return the status
 	 */
 	public static byte deleteFlashMemory() {
 		try {

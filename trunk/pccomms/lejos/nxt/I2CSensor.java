@@ -72,7 +72,7 @@ public class I2CSensor implements SensorConstants {
 	 * signed bytes (probably more practical to return short/int?)
 	 * @param register e.g. FACTORY_SCALE_DIVISOR, BYTE0, etc....
 	 * @param length Length of data to read (minimum 1, maximum 16) 
-	 * @return
+	 * @return the status
 	 */
 	public int getData(int register, byte [] buf, int length) {
 		byte [] txData = {address, (byte) register};
@@ -106,7 +106,7 @@ public class I2CSensor implements SensorConstants {
 	/**
 	 * Helper method to return a single register byte.
 	 * @param register
-	 * @return
+	 * @return the byte of data
 	 */
 	public int getData(byte register) {
 		byte [] buf1 = new byte[1];
@@ -129,9 +129,10 @@ public class I2CSensor implements SensorConstants {
 	}
 	
 	/**
-	 * Sets a single byte in the I2C sensor. 
-	 * @param register A data register in the I2C sensor. e.g. ACTUAL_ZERO
-	 * @param value The data value.
+	 * Send data top the sensor
+	 * @param register A data register in the I2C sensor.
+	 * @param data The byte to send.
+	 * @param length the number of bytes
 	 */
 	public int sendData(int register, byte [] data, int length) {
 		byte [] txData = {address, (byte) register};
@@ -178,7 +179,7 @@ public class I2CSensor implements SensorConstants {
 	/**
 	 * Helper method for retrieving string constants using I2C protocol.
 	 * @param constantEnumeration e.g. I2CProtocol.VERSION
-	 * @return
+	 * @return the string
 	 */
 	private String fetchString(byte constantEnumeration, int rxLength) {
 		byte [] stringBytes = new byte[rxLength];

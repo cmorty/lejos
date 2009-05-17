@@ -129,7 +129,7 @@ public class SensorPort implements NXTProtocol, LegacySensorPort, I2CPort  {
 	 * Returns scaled value, depending on mode of sensor. 
 	 * e.g. BOOLEANMODE returns 0 or 1.
 	 * e.g. PCTFULLSCALE returns 0 to 100.
-	 * @return
+	 * @return the value
 	 * @see SensorPort#setTypeAndMode(int, int)
 	 */
 	public int readValue() {
