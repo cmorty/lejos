@@ -109,7 +109,7 @@ public final class System
 
  /**
   * Return the currently operating Virtual Machine options.
-  * @return
+  * @return the options
   */
  public static native int getVMOptions();
 
