@@ -17,6 +17,7 @@
 #include "stack.h"
 #include "platform_hooks.h"
 #include "rconsole.h"
+
 #if 0
 #define get_stack_object(MREC_)  ((Object *) get_ref_at ((MREC_)->numParameters - 1))
 #endif
@@ -173,8 +174,9 @@ void dispatch_special_checked (byte classIndex, byte methodIndex,
   methodRecord = get_method_record (classRecord, methodIndex);
   if(dispatch_special (methodRecord, retAddr))
   {
-    if (is_synchronized(methodRecord))
+    if (is_synchronized(methodRecord) && !is_static(methodRecord))
     {
+
       Object *ref = (Object *)curLocalsBase[0];
       current_stackframe()->monitor = ref;
       enter_monitor (currentThread, ref);
