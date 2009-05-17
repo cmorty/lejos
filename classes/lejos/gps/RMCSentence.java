@@ -31,13 +31,13 @@ public class RMCSentence extends NMEASentence{
 	private int dateTimeOfFix = -1;
 	private String warning = "";
 	private double latitude = 0;
-	private String latitudeDirection = "";
+	private String latitudeDirection = ""; // TODO Make char
 	private double longitude = 0;
-	private String longitudeDirection = "";
+	private String longitudeDirection = ""; // TODO Make char
 	private float groundSpeed;//In knots
 	private String courseMadeGood = null;
 	private int dateOfFix = -1;
-	private String magneticVariation = "";
+	private String magneticVariation = null;
 	//private String magneticVariationLetter = "";
 
 	private float speed;//In Kilometers per hour
@@ -111,14 +111,19 @@ public class RMCSentence extends NMEASentence{
 		return compassDegrees;
 	}
 	
+	public String getMagneticVariation() {
+		// TODO: Parse data. Should return float, -ve for West, +ve for East. See parse()
+		return magneticVariation;
+	}
+	
 	/**
-	 * Parase a RMC Sentence
+	 * Parse RMC Sentence
 	 * 
 	 * $GPRMC,081836,A,3751.65,S,14507.36,E,000.0,360.0,130998,011.3,E*62
 	 */
-	protected void parse (){
+	protected void parse (String sentence){
 		//StringTokenizer st = new StringTokenizer(nmeaSentence,",");
-		st = new StringTokenizer(nmeaSentence,",");
+		st = new StringTokenizer(sentence,",");
 
 		try{
 			st.nextToken(); // skip header $GPRMC

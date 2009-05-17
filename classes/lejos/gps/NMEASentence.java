@@ -3,6 +3,8 @@ package lejos.gps;
 
 import java.util.*;
 
+import lejos.nxt.Button;
+
 /**
  * Class designed to manage all NMEA Sentence.
  * 
@@ -15,7 +17,7 @@ abstract public class NMEASentence {
 	
 	static byte checksum;
 	protected String nmeaSentence = null;
-	protected StringTokenizer st;
+	protected StringTokenizer st; // TODO This isn't a great location for this. Only used in parse() of subclasses. 
 	private long timeStamp = -1;
 	
 	/* GETTERS & SETTERS */
@@ -58,7 +60,12 @@ abstract public class NMEASentence {
 	 */
 	protected synchronized void checkRefresh() {
 		if(nmeaSentence != null) {
-			parse();
+			// First need to cut off verification code at end of sentence:
+			int end = nmeaSentence.indexOf('*');
+			if(end < 0) end = nmeaSentence.length();
+			String nmeaSub = nmeaSentence.substring(0, end);
+			
+			parse(nmeaSub);
 			nmeaSentence = null; // Once data is parsed, discard string (used as flag)
 		}
 	}
@@ -66,7 +73,7 @@ abstract public class NMEASentence {
 	/**
 	 * Abstract method to parse out all relevant data from the nmeaSentence.
 	 */
-	abstract protected void parse();
+	abstract protected void parse(String sentence);
 	
 	/* CHECKSUM METHODS */
 	
