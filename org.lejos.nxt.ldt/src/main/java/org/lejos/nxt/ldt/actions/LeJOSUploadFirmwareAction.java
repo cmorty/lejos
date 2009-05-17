@@ -116,7 +116,7 @@ public class LeJOSUploadFirmwareAction implements
 				fs = updater.createFilesystemImage();
 			NXTSamba nxt = openDevice();
 			// TODO allow user to choose if firmware should be verified
-			boolean verify = true;
+			boolean verify = false;
 			if (nxt != null)
 				updater.updateDevice(nxt, memoryImage, fs, verify);
 		} catch (Exception e) {

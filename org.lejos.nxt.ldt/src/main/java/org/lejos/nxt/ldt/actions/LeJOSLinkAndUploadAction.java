@@ -4,6 +4,9 @@ import java.io.File;
 
 import js.common.CLIToolProgressMonitor;
 import js.tinyvm.TinyVM;
+import lejos.nxt.remote.NXTCommand;
+import lejos.pc.comm.NXTCommFactory;
+import lejos.pc.comm.NXTConnector;
 import lejos.pc.tools.NXJUploadException;
 
 import org.eclipse.core.runtime.CoreException;
@@ -24,6 +27,7 @@ import org.eclipse.ui.progress.IProgressService;
 import org.lejos.nxt.ldt.LeJOSNXJPlugin;
 import org.lejos.nxt.ldt.preferences.PreferenceConstants;
 import org.lejos.nxt.ldt.util.LeJOSNXJException;
+import org.lejos.nxt.ldt.util.LeJOSNXJLogListener;
 import org.lejos.nxt.ldt.util.LeJOSNXJUtil;
 
 /**
@@ -36,19 +40,20 @@ import org.lejos.nxt.ldt.util.LeJOSNXJUtil;
 public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 
 	private ISelection _selection;
-	// private LeJOSNXJLogListener _logListener;
-	// TODO remove when no longer needed
-	// private NXJCommandLineParser _parser;
-	private TinyVM _tinyVM;
+	private LeJOSNXJLogListener logListener;
+	private TinyVM tinyVM;
+	private NXTConnector connector;
 
 	/**
 	 * The constructor.
 	 */
 	public LeJOSLinkAndUploadAction() {
-		// _logListener = new LeJOSNXJLogListener();
+		logListener = new LeJOSNXJLogListener();
 		// _parser = new NXJCommandLineParser();
-		_tinyVM = new TinyVM();
-		_tinyVM.addProgressMonitor(new CLIToolProgressMonitor());
+		tinyVM = new TinyVM();
+		tinyVM.addProgressMonitor(new CLIToolProgressMonitor());
+		connector = new NXTConnector();
+		connector.addLogListener(logListener);
 	}
 
 	/**
@@ -71,12 +76,19 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 										IProgressMonitor.UNKNOWN);
 						pm.subTask("Linking");
 						String binName = linkProgram();
-						pm.subTask("Uploading");
-						uploadProgram(binName);
+						pm.subTask("Connecting");
+						boolean connectionSuccessFull = connect();
+						if (connectionSuccessFull) {
+							pm.subTask("Uploading");
+							uploadProgram(binName);
+							// log
+							LeJOSNXJUtil
+									.message("Program has been successfully uploaded to the NXT brick");
+						} else {
+							LeJOSNXJUtil
+							.message("Program could not be uploaded to the NXT brick");
+						}
 						pm.done();
-						// log
-						LeJOSNXJUtil
-								.message("Program has been successfully uploaded to the NXT brick");
 					} catch (Throwable t) {
 						// log
 						LeJOSNXJUtil.message(t);
@@ -92,8 +104,9 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.
-	 *      action.IAction, org.eclipse.ui.IWorkbenchPart)
+	 * @see
+	 * org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.
+	 * action.IAction, org.eclipse.ui.IWorkbenchPart)
 	 */
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 	}
@@ -101,8 +114,9 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action
-	 *      .IAction, org.eclipse.jface.viewers.ISelection)
+	 * @see
+	 * org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action
+	 * .IAction, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
 		_selection = selection;
@@ -161,8 +175,8 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 			// }
 			// LeJOSNXJUtil.message("linking using " + argsString);
 			// run linker
-			_tinyVM = new TinyVM();
-			_tinyVM.start(tinyVMArgs);
+			tinyVM = new TinyVM();
+			tinyVM.start(tinyVMArgs);
 			return binary;
 		} catch (Throwable t) {
 			throw new LeJOSNXJException(t);
@@ -176,7 +190,14 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 	 * @throws NXJUploadException
 	 */
 	private void uploadProgram(String binName) throws NXJUploadException {
-		// TODO uploadProgram
+		// uploadProgram
+		try {
+			File f = new File(binName);
+			String result = NXTCommand.getSingleton().uploadFile(f);
+		} catch (Throwable t) {
+			throw new NXJUploadException("Exception during upload", t);
+		}
+
 		// // NXT brick connected?
 		// NXTInfo connectedBrick = LeJOSNXJPlugin.getDefault()
 		// .getConnectionManager().getConnectedNXT();
@@ -335,33 +356,43 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 	 * @throws JavaModelException
 	 */
 	private String createClassPath(IJavaProject project)
-	throws JavaModelException {
-	  String classPath = LeJOSNXJUtil.getAbsoluteProjectTargetDir(project)
-	  .getAbsolutePath();
-	  // path separator
-	  String pathSeparator = System.getProperty("path.separator");
-	  // project's classpath
-	  IClasspathEntry[] entries = project.getResolvedClasspath(true);
-	  // build string
-	  for (IClasspathEntry classpathEntry : entries) {
-	    switch(classpathEntry.getEntryKind()) {
-	      case IClasspathEntry.CPE_SOURCE: // source => ignore
-	        break;
-	      case IClasspathEntry.CPE_LIBRARY: // directory with classes or jar => append
-	        classPath += pathSeparator + classpathEntry.getPath().toOSString();
-	        break;
-	      case IClasspathEntry.CPE_PROJECT: // another project => append all its classpath
-	        // TODO: how to add these classpath ???
-	        break;
-	      case IClasspathEntry.CPE_VARIABLE: // a project or library indirectly via a classpath variable in the first segment of the path
-	        // Do we need this? Probably yes...
-	        break;
-	      case IClasspathEntry.CPE_CONTAINER: // set of entries referenced indirectly via a classpath container
-	        // Do we need this? Probably yes...
-	        break;		      
-	    }
-	  }
-	  return classPath;
+			throws JavaModelException {
+		String classPath = LeJOSNXJUtil.getAbsoluteProjectTargetDir(project)
+				.getAbsolutePath();
+		// path separator
+		String pathSeparator = System.getProperty("path.separator");
+		// project's classpath
+		IClasspathEntry[] entries = project.getResolvedClasspath(true);
+		// build string
+		for (IClasspathEntry classpathEntry : entries) {
+			classPath += pathSeparator
+			+ classpathEntry.getPath().toOSString();
+//			switch (classpathEntry.getEntryKind()) {
+//			case IClasspathEntry.CPE_SOURCE: // source => ignore
+//				break;
+//			case IClasspathEntry.CPE_LIBRARY: // directory with classes or jar
+//				// => append
+//				classPath += pathSeparator
+//						+ classpathEntry.getPath().toOSString();
+//				break;
+//			case IClasspathEntry.CPE_PROJECT: // another project => append all
+//				// its classpath
+//				// TODO: how to add these classpath ???
+//				break;
+//			case IClasspathEntry.CPE_VARIABLE: // a project or library
+//				// indirectly via a classpath
+//				// variable in the first segment
+//				// of the path
+//				// Do we need this? Probably yes...
+//				break;
+//			case IClasspathEntry.CPE_CONTAINER: // set of entries referenced
+//				// indirectly via a classpath
+//				// container
+//				// Do we need this? Probably yes...
+//				break;
+//			}
+		}
+		return classPath;
 	}
 
 	/**
@@ -475,4 +506,54 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 	// throw new NXJUploadException("Exception during upload", t);
 	// }
 	// }
+	private boolean connect() throws LeJOSNXJException {
+		boolean isConnectToAddress = false;
+		boolean isConnectToName = false;
+		String nxtAddress = null;
+		String nxtName = null;
+		// protocols
+		int protocols = NXTCommFactory.USB;
+		String connectionType = LeJOSNXJPlugin.getDefault()
+				.getPluginPreferences().getString(
+						PreferenceConstants.P_CONNECTION_TYPE);
+		if ((connectionType != null)
+				&& (connectionType
+						.equals(PreferenceConstants.P_PROTOCOL_BLUETOOTH))) {
+			protocols |= NXTCommFactory.BLUETOOTH;
+		}
+		// connect to address?
+		isConnectToAddress = LeJOSNXJPlugin.getDefault().getPluginPreferences()
+				.getBoolean(PreferenceConstants.P_CONNECT_TO_BRICK_ADDRESS);
+		if (isConnectToAddress) {
+			nxtAddress = LeJOSNXJPlugin.getDefault().getPluginPreferences()
+					.getString(PreferenceConstants.P_CONNECTION_BRICK_ADDRESS)
+					.trim();
+			if (nxtAddress.length() == 0) {
+				throw new LeJOSNXJException(
+						"connect to address specified in the preferences, but no address given");
+			}
+		} else {
+			// connect to named brick? (only when no address is specified)
+			isConnectToName = LeJOSNXJPlugin.getDefault()
+					.getPluginPreferences().getBoolean(
+							PreferenceConstants.P_CONNECT_TO_NAMED_BRICK);
+			if (isConnectToName) {
+				// retrieve name
+				nxtName = LeJOSNXJPlugin.getDefault().getPluginPreferences()
+						.getString(PreferenceConstants.P_CONNECTION_BRICK_NAME)
+						.trim();
+				if (nxtName.length() == 0) {
+					throw new LeJOSNXJException(
+							"connect to name specified in the preferences, but no name given");
+				}
+			}
+		}
+		// connect
+		try {
+			return connector.connectTo(nxtName, nxtAddress, protocols);
+		} catch (Exception e) {
+			throw new LeJOSNXJException("Exception during connecting to brick",
+					e);
+		}
+	}
 }
