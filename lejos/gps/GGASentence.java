@@ -141,9 +141,9 @@ public class GGASentence extends NMEASentence{
 	/**
 	 * Get GPS Quality Data
 	 * 
-	 * @return the quality
+	 * @return the fix quality
 	 */
-	public int getQuality(){
+	public int getFixQuality(){
 		checkRefresh();
 		// TODO: Why is he using Math.round?
 		return Math.round(quality);
@@ -152,9 +152,9 @@ public class GGASentence extends NMEASentence{
 	/**
 	 * Method used to parse a GGA Sentence
 	 */
-	protected void parse(){
+	protected void parse(String sentence){
 		//StringTokenizer st = new StringTokenizer(nmeaSentence,",");
-		st = new StringTokenizer(nmeaSentence,",");
+		st = new StringTokenizer(sentence,",");
 		// TODO: What's with all these Strings defined as ""?
 		String q = "";
 		String h = "";

@@ -3,6 +3,8 @@ package lejos.gps;
 import java.io.*;
 import java.util.*;
 
+import lejos.nxt.Button;
+
 /**
  * This class manages data received from a GPS Device.
  * SimpleGPS Class manages the following NMEA Sentences
@@ -121,12 +123,21 @@ public class SimpleGPS extends Thread {
 	}
 
 	/**
-	 * Get GPS Quality Data
+	 * Fix quality: 
+	 * <li>0 = invalid
+	 * <li>1 = GPS fix (SPS)
+	 * <li>2 = DGPS fix
+	 * <li>3 = PPS fix
+	 * <li>4 = Real Time Kinematic
+	 * <li>5 = Float RTK
+	 * <li>6 = estimated (dead reckoning) (2.3 feature)
+	 * <li>7 = Manual input mode
+	 * <li>8 = Simulation mode
 	 * 
-	 * @return the quality
+	 * @return the fix quality
 	 */
-	public int getQuality(){
-		return ggaSentence.getQuality();
+	public int getFixMode(){
+		return ggaSentence.getFixQuality();
 	}
 	
 	/**
@@ -175,6 +186,8 @@ public class SimpleGPS extends Thread {
 		while(!shutdown) {
 			
 			s = getNextString();
+			
+			// TODO: This shouldn't be necessary. getNextString() runs through the Checksum:
 			// Check if sentence is valid:
 			if(s.indexOf('*') < 0) { 
 				continue;

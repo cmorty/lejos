@@ -1,6 +1,7 @@
 package lejos.gps;
 
 import java.util.*;
+
 /**
  * This class has been designed to manage a GSA Sentence
  * 
@@ -29,21 +30,21 @@ public class GSASentence extends NMEASentence{
 	//GSA
 	private String mode = "";
 	private int modeValue = 0;
-	private final int maximumSV = 12;
-	private int[] SV;
-	private float PDOP = 0;
-	private float HDOP = 0;
-	private float VDOP = 0;
-
+	private static final int MAXIMUM_SATS = 12;
+	private int[] prn;
+	// Initialize with -1, means value not available:
+	private float pdop = -1;
+	private float hdop = -1;
+	private float vdop = -1;
+	
 	//Header
 	public static final String HEADER = "$GPGSA";
 	
 	/*
 	 * Constructor
 	 */
-
 	public GSASentence(){
-		SV = new int[maximumSV];
+		prn = new int[MAXIMUM_SATS];
 	}
 
 	/*
@@ -66,6 +67,7 @@ public class GSASentence extends NMEASentence{
 	 * A=Automatic, 3D/2D
 	 * 
 	 */
+	// TODO: Should return a char
 	public String getMode(){
 		checkRefresh();
 		return mode;
@@ -86,70 +88,67 @@ public class GSASentence extends NMEASentence{
 	}
 
 	/**
-	 * Return an Array with Satellite IDs
+	 * Return an Array with Satellite prn (Pseudo Randon Noise) code.
 	 * 
 	 * @return the array of satellite IDs
 	 */
-	public int[] getSV(){
+	public int[] getPRN(){
 		checkRefresh(); 
-		return SV;
+		return prn;
 	}
-
+	
 	/**
-	 * Return PDOP
+	 * Return pdop
 	 * 
-	 * @return the PDOP
+	 * @return the pdop
 	 */
 	public float getPDOP(){
 		checkRefresh();
-		return PDOP;
+		return pdop;
 	}
 
 	/**
-	 * Return HDOP
+	 * Return hdop
 	 * 
-	 * @return the HDOP
+	 * @return the hdop
 	 */
 	public float getHDOP(){
 		checkRefresh();
-		return HDOP;
+		return hdop;
 	}
 
 	/**
-	 * Return VDOP
+	 * Return vdop
 	 * 
-	 * @return the VDOP
+	 * @return the vdop
 	 */
 	public float getVDOP(){
 		checkRefresh();
-		return VDOP;
+		return vdop;
 	}
-
+	
 	/**
 	 * Method used to parse a GGA Sentence
 	 */
-	protected void parse(){
-		//StringTokenizer st = new StringTokenizer(nmeaSentence,",");
-		st = new StringTokenizer(nmeaSentence,",");
-		String sv = "";
-
+	protected void parse(String sentence){
+		st = new StringTokenizer(sentence,",");
+		
 		try{
 			st.nextToken(); // Skip header $GPGSA
 			mode = st.nextToken();
 			modeValue = Integer.parseInt(st.nextToken());
-
-			for(int i=0;i<=11;i++){
-				sv = st.nextToken();
+			for(int i=0;i<MAXIMUM_SATS;i++){
+				String sv = st.nextToken();
 				if(sv.length() > 0){
-					SV[i] = Integer.parseInt(sv);
+					prn[i] = Integer.parseInt(sv);
 				}else{
-					SV[i] = 0;
+					prn[i] = -1;
 				}
 			}
 
-			PDOP = Float.parseFloat(st.nextToken());
-			HDOP = Float.parseFloat(st.nextToken());
-			VDOP = Float.parseFloat(st.nextToken());
+			pdop = Float.parseFloat(st.nextToken());
+			hdop = Float.parseFloat(st.nextToken());
+			vdop = Float.parseFloat(st.nextToken());
 
 		}catch(NoSuchElementException e){
 			//Empty
