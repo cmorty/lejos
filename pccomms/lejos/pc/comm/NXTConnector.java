@@ -204,7 +204,6 @@ public class NXTConnector extends NXTCommLoggable
      * @param nxt the name of the NXT to connect to or null for any
      * @param addr the address of the NXT to connect to or null 
      * @param protocols the protocols to use
-     * @param choose true if the user wishes to choose which NXT to connect to
      * @return 0 if opened successfully, -1 if failed, 1 if there is a list to choose from
      */
 	public boolean connectTo(String nxt, String addr, int protocols, int mode)
@@ -257,7 +256,7 @@ public class NXTConnector extends NXTCommLoggable
 	 * Connect to a NXT using a NXTInfo
 	 * @param nxtInfo
 	 * @param mode
-	 * @return
+	 * @return true iff the connection succeeded
 	 */
 	public boolean connectTo(NXTInfo nxtInfo, int mode) {
 		this.nxtInfo = nxtInfo;
@@ -295,7 +294,7 @@ public class NXTConnector extends NXTCommLoggable
 	/**
 	 * Connect to a device by URL
 	 * @param deviceURL
-	 * @return
+	 * @return true iff the connection succeeded
 	 */
 	public boolean connectTo(String deviceURL) {
 		String protocolString = "";

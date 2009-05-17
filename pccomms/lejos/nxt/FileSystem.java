@@ -161,7 +161,7 @@ public class FileSystem {
 	
 	/**
 	 * Retrieves the file name of the Lego executable currently running on the NXT.
-	 * @return
+	 * @return the status
 	 */
 	public static String getCurrentProgramName() {
 		try {
@@ -175,7 +175,7 @@ public class FileSystem {
 	/**
 	 * Starts a Lego executable file on the NXT.
 	 * @param fileName
-	 * @return
+	 * @return the status
 	 */
 	public static byte startProgram(String fileName) {
 		try {
@@ -188,8 +188,7 @@ public class FileSystem {
 	
 	/**
 	 * Stops the currently running Lego executable on the NXT.
-	 * @param fileName
-	 * @return
+	 * @return the status
 	 */
 	public static byte stopProgram() {
 		try {

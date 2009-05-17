@@ -138,7 +138,6 @@ public class Motor implements NXTProtocol {
 	 * is called in Pilot.
 	 * @deprecated
 	 * @return rotation count.
-	 * @see Pilot
 	 */
 	public int getRotationCount() {
 		// !! Consider making this protected to keep off limits from users.
@@ -222,7 +221,7 @@ public class Motor implements NXTProtocol {
 	 * This method returns after the rotation is completed.
 	 * NOTE: This method currently doesn't work well with the LEGO firmware.
 	 * @param count Number of counts to rotate motor.
-	 * @return Error value. 0 means succcess. See icommand.nxtcomm.ErrorMessages for details.
+	 * @return Error value. 0 means success. See icommand.nxtcomm.ErrorMessages for details.
 	 */
 	public int rotate(long count) {
 		return rotate(count, false);
@@ -245,6 +244,7 @@ public class Motor implements NXTProtocol {
 	 * Rotates to a desired tacho count. Does not return until rotation done.
 	 * Note: The tachocount can not be reset to zero.
 	 * @param target
+	 * @return the status
 	 */
 	public int rotateTo(long target) {
 		return rotateTo(target, false);
@@ -255,6 +255,8 @@ public class Motor implements NXTProtocol {
 	 * Rotates to a desired tacho count. Returns before the rotation is done
 	 * if you include true as the argument.
 	 * @param target
+	 * @param returnNow if true return immediately else wait for rotate to complete
+	 * @return the status
 	 */
 	public int rotateTo(long target, boolean returnNow) {
 		// !! Probably inaccuracy can creep into this if
@@ -265,7 +267,7 @@ public class Motor implements NXTProtocol {
 	
 	/**
 	 * Resets the rotation counter to zero.
-	 * @return Error value. 0 means succcess. See icommand.nxtcomm.ErrorMessages for details.
+	 * @return Error value. 0 means success. See icommand.nxtcomm.ErrorMessages for details.
 	 */
 	public int resetTachoCount() {
 		try {
@@ -279,7 +281,7 @@ public class Motor implements NXTProtocol {
 	/**
 	 * Calls resetTachoCount(). 
 	 * @deprecated
-	 * @return
+	 * @return the status
 	 */
 	public int resetRotationCounter() {
 		return resetTachoCount();
@@ -326,7 +328,7 @@ public class Motor implements NXTProtocol {
 	
 	/**
 	 * Stops the motor without using brakes. UNTESTED
-	 * @return
+	 * @return the status
 	 */
 	public int flt() {
 		this.runState = MOTOR_RUN_STATE_IDLE;
