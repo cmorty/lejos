@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry excluding="build.xml" kind="src" path="BlueStats"/>
+	<classpathentry kind="src" path="CommandLine"/>
 	<classpathentry excluding="build.xml" kind="src" path="BTConnectTest"/>
 	<classpathentry excluding="build.xml" kind="src" path="BTReceive"/>
 	<classpathentry excluding="build.xml" kind="src" path="BumperCar"/>
@@ -14,7 +15,6 @@
 	<classpathentry excluding="build.xml" kind="src" path="GraphicsSample"/>
 	<classpathentry excluding="build.xml" kind="src" path="HelloWorld"/>
 	<classpathentry excluding="build.xml" kind="src" path="I2CDevices"/>
-	<classpathentry kind="src" path="Keyboard"/>
 	<classpathentry excluding="build.xml" kind="src" path="LatteboxTest"/>
 	<classpathentry excluding="build.xml" kind="src" path="LCDUI"/>
 	<classpathentry excluding="build.xml" kind="src" path="Line"/>
