@@ -1,5 +1,6 @@
 
 import lejos.math.*;
+import lejos.nxt.Button;
 import lejos.util.*;
 
 /**
@@ -25,5 +26,6 @@ public class MatrixTest{
 		dm.echo((int)b.getRowDimension());
 		
 		dm.echo("Test finished");
+		Thread.sleep(5000);
 	}
 }
