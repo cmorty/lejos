@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry exported="true" kind="lib" path="lib/bcel.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/bluecove-gpl.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/bluecove.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-cli.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jtools.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/pccomm.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/pctools.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry excluding="org/lejos/nxt/ldt/views/browser/|org/lejos/nxt/ldt/actions/LeJOSNXTBrowserAction.java" kind="src" path="src/main/java"/>
