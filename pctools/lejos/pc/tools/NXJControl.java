@@ -1259,7 +1259,7 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
 				nxtComms[row] = nxtComm;
 				open = nxtComm.open(nxts[row], NXTComm.LCP);
 				nxtCommand.setNXTComm(nxtComm);
-				System.out.println("NXTInfo status " + nxts[row].connectionState);
+				//System.out.println("NXTInfo status " + nxts[row].connectionState);
 			} catch (NXTCommException e) {
 				open = false;
 			}
