@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry excluding="build.xml" kind="src" path="BlueStats"/>
-	<classpathentry kind="src" path="CommandLine"/>
 	<classpathentry excluding="build.xml" kind="src" path="BTConnectTest"/>
+	<classpathentry excluding="build.xml" kind="src" path="BTGPS"/>
 	<classpathentry excluding="build.xml" kind="src" path="BTReceive"/>
 	<classpathentry excluding="build.xml" kind="src" path="BumperCar"/>
 	<classpathentry excluding="build.xml" kind="src" path="ColorDetector"/>
+	<classpathentry kind="src" path="CommandLine"/>
 	<classpathentry excluding="build.xml" kind="src" path="CompassTest"/>
 	<classpathentry excluding="build.xml" kind="src" path="DistanceTest"/>
 	<classpathentry excluding="build.xml" kind="src" path="DLTest"/>
 	<classpathentry excluding="build.xml" kind="src" path="ExceptionTest"/>
 	<classpathentry excluding="build.xml" kind="src" path="FileTest"/>
-	<classpathentry excluding="build.xml" kind="src" path="GPS"/>
 	<classpathentry excluding="build.xml" kind="src" path="GraphicsSample"/>
 	<classpathentry excluding="build.xml" kind="src" path="HelloWorld"/>
 	<classpathentry excluding="build.xml" kind="src" path="I2CDevices"/>
@@ -30,6 +30,7 @@
 	<classpathentry excluding="build.xml" kind="src" path="NXTServoTest"/>
 	<classpathentry excluding="build.xml" kind="src" path="PerformanceTest"/>
 	<classpathentry kind="src" path="PFLinkTest"/>
+	<classpathentry kind="src" path="PFMateTest"/>
 	<classpathentry excluding="build.xml" kind="src" path="PFTest"/>
 	<classpathentry excluding="build.xml" kind="src" path="PilotTester"/>
 	<classpathentry excluding="build.xml" kind="src" path="RCNavigator"/>

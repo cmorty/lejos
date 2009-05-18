@@ -1,6 +1,6 @@
-<project name="NXTLCPRespond" default="uploadandrun">
+<project name="PFMateTest" default="uploadandrun">
     <description>
-    	NXTLCPRespond build file
+    	PFMateTest build file
     </description>
 
 	<target name="clean" description="clean up all generated files" >

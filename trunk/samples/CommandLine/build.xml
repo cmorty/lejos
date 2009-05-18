@@ -1,6 +1,6 @@
-<project name="KeyboardDemo" default="uploadandrun">
+<project name="CommandLine" default="uploadandrun">
     <description>
-    	KeyboardDemo build file
+    	CommandLine build file
     </description>
 
 	<target name="clean" description="clean up all generated files" >
