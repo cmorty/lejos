@@ -121,7 +121,7 @@ public class NXTConnector extends NXTCommLoggable
 				props = NXTCommFactory.getNXJCache();
 								
 				// Create an array of NXTInfos from the properties
-				if (props.size() > 0 && !nxt.equals("*")) {	
+				if (props.size() > 0 && nxt != null && !nxt.equals("*")) {	
 					Hashtable<String,String> nxtNames = new Hashtable<String,String>();
 					Enumeration<?> enProps = props.propertyNames();
 					
