@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="build.xml" kind="src" path="NXTLCPRespond"/>
-	<classpathentry excluding="build.xml" kind="src" path="NXTReceive"/>
-	<classpathentry excluding="build.xml" kind="src" path="NXTConnectTest"/>
 	<classpathentry excluding="build.xml" kind="src" path="BlueStats"/>
 	<classpathentry excluding="build.xml" kind="src" path="BTConnectTest"/>
-	<classpathentry excluding="build.xml" kind="src" path="GPS"/>
 	<classpathentry excluding="build.xml" kind="src" path="BTReceive"/>
 	<classpathentry excluding="build.xml" kind="src" path="BumperCar"/>
 	<classpathentry excluding="build.xml" kind="src" path="ColorDetector"/>
@@ -14,9 +10,11 @@
 	<classpathentry excluding="build.xml" kind="src" path="DLTest"/>
 	<classpathentry excluding="build.xml" kind="src" path="ExceptionTest"/>
 	<classpathentry excluding="build.xml" kind="src" path="FileTest"/>
+	<classpathentry excluding="build.xml" kind="src" path="GPS"/>
 	<classpathentry excluding="build.xml" kind="src" path="GraphicsSample"/>
 	<classpathentry excluding="build.xml" kind="src" path="HelloWorld"/>
 	<classpathentry excluding="build.xml" kind="src" path="I2CDevices"/>
+	<classpathentry kind="src" path="Keyboard"/>
 	<classpathentry excluding="build.xml" kind="src" path="LatteboxTest"/>
 	<classpathentry excluding="build.xml" kind="src" path="LCDUI"/>
 	<classpathentry excluding="build.xml" kind="src" path="Line"/>
@@ -26,8 +24,12 @@
 	<classpathentry excluding="build.xml" kind="src" path="MemoryTest"/>
 	<classpathentry excluding="build.xml" kind="src" path="MonitorTest"/>
 	<classpathentry excluding="build.xml" kind="src" path="NXTCamTest"/>
+	<classpathentry excluding="build.xml" kind="src" path="NXTConnectTest"/>
+	<classpathentry excluding="build.xml" kind="src" path="NXTLCPRespond"/>
+	<classpathentry excluding="build.xml" kind="src" path="NXTReceive"/>
 	<classpathentry excluding="build.xml" kind="src" path="NXTServoTest"/>
 	<classpathentry excluding="build.xml" kind="src" path="PerformanceTest"/>
+	<classpathentry kind="src" path="PFLinkTest"/>
 	<classpathentry excluding="build.xml" kind="src" path="PFTest"/>
 	<classpathentry excluding="build.xml" kind="src" path="PilotTester"/>
 	<classpathentry excluding="build.xml" kind="src" path="RCNavigator"/>
@@ -52,8 +54,6 @@
 	<classpathentry excluding="build.xml" kind="src" path="Tune"/>
 	<classpathentry excluding="build.xml" kind="src" path="USBReceive"/>
 	<classpathentry excluding="build.xml" kind="src" path="View"/>
-	<classpathentry kind="src" path="PFLinkTest"/>
-	<classpathentry kind="src" path="Keyboard"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/classes"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>
