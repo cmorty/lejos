@@ -258,12 +258,13 @@ public class File {
 			 File.readTable(files); // Update file data
 		}
 		
-		File [] retFiles = new File[totalFiles]; 
+		/*File [] retFiles = new File[totalFiles]; 
 		for(int i=0;i<retFiles.length;i++) {
 			retFiles[i] = files[i];
 		}
 		
-		return retFiles;
+		return retFiles;*/
+		return files;
 	}
 	
 	/**
