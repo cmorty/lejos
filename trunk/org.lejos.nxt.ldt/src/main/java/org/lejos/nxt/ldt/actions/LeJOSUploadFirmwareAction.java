@@ -19,6 +19,8 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IProgressService;
+import org.lejos.nxt.ldt.LeJOSNXJPlugin;
+import org.lejos.nxt.ldt.preferences.PreferenceConstants;
 import org.lejos.nxt.ldt.util.LeJOSNXJException;
 import org.lejos.nxt.ldt.util.LeJOSNXJUtil;
 
@@ -108,7 +110,13 @@ public class LeJOSUploadFirmwareAction implements
 
 	private void flashFirmware() throws LeJOSNXJException {
 		try {
-			byte[] memoryImage = updater.createFirmwareImage(null, null);
+			String nxjHome = LeJOSNXJPlugin.getDefault()
+			.getPluginPreferences().getString(
+					PreferenceConstants.P_NXJ_HOME);
+			if((nxjHome==null)||(nxjHome.length()==0)) {
+				throw new LeJOSNXJException("NXJ_HOME is not set. Please specify it in the plug-in's preferences");
+			}
+			byte[] memoryImage = updater.createFirmwareImage(null, null,nxjHome);
 			// TODO allow user to choose if all files should be erased
 			boolean format = true;
 			byte[] fs = null;
