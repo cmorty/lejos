@@ -44,8 +44,8 @@ public class leJOSNXJPreferencePage extends FieldEditorPreferencePage implements
 				getFieldEditorParent()));
 		// run after download?
 		addField(new BooleanFieldEditor(
-				PreferenceConstants.P_RUN_AFTER_DOWNLOAD,
-				"&Run program after download", getFieldEditorParent()));
+				PreferenceConstants.P_RUN_AFTER_UPLOAD,
+				"&Run program after upload", getFieldEditorParent()));
 		// verbose?
 		addField(new BooleanFieldEditor(PreferenceConstants.P_IS_VERBOSE,
 				"&Verbose", getFieldEditorParent()));

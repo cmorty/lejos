@@ -21,7 +21,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		IPreferenceStore store = LeJOSNXJPlugin.getDefault()
 				.getPreferenceStore();
 		store.setDefault(PreferenceConstants.P_IS_VERBOSE, false);
-		store.setDefault(PreferenceConstants.P_RUN_AFTER_DOWNLOAD, false);
+		store.setDefault(PreferenceConstants.P_RUN_AFTER_UPLOAD, false);
 		store.setDefault(PreferenceConstants.P_CONNECTION_TYPE, "u");
 	}
 

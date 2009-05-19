@@ -17,6 +17,6 @@ public class PreferenceConstants {
 	public static final String P_CONNECTION_BRICK_ADDRESS = "ConnectionAddress";
 	public static final String P_CONNECT_TO_NAMED_BRICK = "ConnectToName";
 	public static final String P_CONNECTION_BRICK_NAME = "ConnectionName";
-	public static final String P_RUN_AFTER_DOWNLOAD = "runAfterDownload";
+	public static final String P_RUN_AFTER_UPLOAD = "runAfterDownload";
 
 }

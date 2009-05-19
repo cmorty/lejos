@@ -1,6 +1,7 @@
 package org.lejos.nxt.ldt.actions;
 
 import java.io.File;
+import java.io.IOException;
 
 import js.common.CLIToolProgressMonitor;
 import js.tinyvm.TinyVM;
@@ -76,22 +77,43 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 										"Linking and uploading program to the brick...",
 										IProgressMonitor.UNKNOWN);
 						pm.subTask("Linking");
-						String binName = linkProgram();
-						 pm.subTask("Connecting");
+						String absoluteBinPathName = linkProgram();
+						pm.subTask("Connecting");
 						NXTComm nxtComm = connect();
-						if (nxtComm!=null) {
+						if (nxtComm != null) {
 							pm.subTask("Uploading");
-							uploadProgram(binName,nxtComm);
+							uploadProgram(absoluteBinPathName, nxtComm);
+							String binName = getBinaryNameFromAbsolutePathName(absoluteBinPathName);
 							// log
 							LeJOSNXJUtil
-									.message("Program has been successfully uploaded to the NXT brick");
+									.message(binName
+											+ " has been successfully uploaded to the NXT brick");
+							// run program after upload?
+							boolean runAfterUpload = LeJOSNXJPlugin
+									.getDefault()
+									.getPluginPreferences()
+									.getBoolean(
+											PreferenceConstants.P_RUN_AFTER_UPLOAD);
+							if (runAfterUpload) {
+								pm.subTask("Running " + binName);
+								try {
+									LeJOSNXJUtil.message("Running " + binName
+											+ " on NXT brick");
+									runProgram(binName, nxtComm);
+								} catch (IOException e) {
+									LeJOSNXJUtil.message(e);
+								}
+							}
 						} else {
 							LeJOSNXJUtil
 									.message("Program could not be uploaded to the NXT brick");
 						}
+						// we are done
 						pm.done();
 					} catch (Throwable t) {
 						// log
+						LeJOSNXJUtil
+								.message("Something went wrong when trying to upload the program to the brick");
 						LeJOSNXJUtil.message(t);
 					}
 				} // end run
@@ -122,6 +144,12 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 	public void selectionChanged(IAction action, ISelection selection) {
 		_selection = selection;
 		enableDueToSelection(action);
+	}
+
+	private void runProgram(String binName, NXTComm nxtComm) throws IOException {
+		NXTCommand nxtCommand = NXTCommand.getSingleton();
+		nxtCommand.setNXTComm(nxtComm);
+		nxtCommand.startProgram(binName);
 	}
 
 	/**
@@ -187,22 +215,22 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 	}
 
 	/**
-	 * TODO honor property "run after upload" TODO check result of upload
+	 * uploads a program to the brick
 	 * 
 	 * @param binName
 	 * @param nxtComm
 	 * @throws NXJUploadException
 	 */
-	private void uploadProgram(String binName, NXTComm nxtComm) throws NXJUploadException {
+	private void uploadProgram(String binName, NXTComm nxtComm)
+			throws NXJUploadException {
 		// uploadProgram
 		try {
 			NXTCommand nxtCommand = NXTCommand.getSingleton();
 			nxtCommand.setNXTComm(nxtComm);
 			nxtCommand.uploadFile(new File(binName));
 		} catch (Throwable t) {
-			throw new NXJUploadException("Exception during upload", t);
+			throw new NXJUploadException(t);
 		}
-
 	}
 
 	private void enableDueToSelection(IAction action) {
@@ -285,7 +313,7 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 	}
 
 	/**
-	 * connects to a NXT as configured in the preferences 
+	 * connects to a NXT as configured in the preferences
 	 */
 	private NXTComm connect() throws LeJOSNXJException {
 		NXTComm nxtComm = null;
@@ -339,5 +367,19 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 					e);
 		}
 		return nxtComm;
+	}
+
+	private String getBinaryNameFromAbsolutePathName(String absolutePathName) {
+		String binaryName = null;
+		if (absolutePathName != null) {
+			String pathSep = "\\";
+			int index = absolutePathName.lastIndexOf(pathSep);
+			if (index >= 0) {
+				binaryName = absolutePathName.substring(index + 1);
+			} else {
+				binaryName = absolutePathName;
+			}
+		}
+		return binaryName;
 	}
 }

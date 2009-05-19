@@ -120,6 +120,7 @@ public class LeJOSNXJUtil {
 		} else {
 			binaryName = Long.toHexString(new Date().getTime());
 		}
+		
 		binaryName += ".nxj";
 		return binaryName;
 	}
