@@ -1,21 +1,29 @@
 @echo off
-if "%OS%" == "Windows_NT" setlocal
+if "%OS%" == "Windows_NT" goto :winnt
 
-if "%NXJ_HOME%" == "" goto :home_unset
-	set NXJ_BIN=%NXJ_HOME%\bin
-	goto :home_endif
-:home_unset
-	if "%OS%" == "Windows_NT" goto :home_unset_nt
-	set NXJ_BIN=%0\..
-	set NXJ_HOME=%0\..\..
-	goto :home_endif
-:home_normalize_nt
+:win9x
+	if not "%NXJ_HOME%" == "" goto vars_set_nxj
+
+	echo Windows 9x/ME detected. Aborting because the
+	echo the NXJ_HOME variable is not set.
+	goto :eof
+
+:winnt
+	setlocal
+	if not "%NXJ_HOME%" == "" goto vars_set_nxj
+
+	call :winnt_normalize NXJ_BIN "%~dp0\."
+	call :winnt_normalize NXJ_HOME "%~dp0\.."
+	goto :vars_ready
+
+:winnt_normalize
 	set "%1=%~f2"
 	goto :eof
-:home_unset_nt
-	call :home_normalize_nt NXJ_BIN "%~dp0\."
-	call :home_normalize_nt NXJ_HOME "%~dp0\.."
-:home_endif
+
+:vars_set_nxj
+	set NXJ_BIN=%NXJ_HOME%\bin
+
+:vars_ready
 
 set NXJ_LIBS=%NXJ_HOME%\lib
 set NXJ_LIBS_3rd=%NXJ_HOME%\3rdparty\lib
@@ -38,3 +46,4 @@ set NXJ_CP_TOOL=%NXJ_CP_BLUECOVE%;%NXJ_CP_LINK%;%NXJ_JAR_PCCOMM%;%NXJ_JAR_PCTOOL
 
 
 java -Dnxj.home="%NXJ_HOME%" -Djava.library.path="%NXJ_BIN%" -Xbootclasspath/a:"%NXJ_CP_TOOL%" %*
+:eof

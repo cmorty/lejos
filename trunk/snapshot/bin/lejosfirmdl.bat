@@ -1,9 +1,30 @@
 @echo off
-if "%OS%" == "Windows_NT" setlocal
+if "%OS%" == "Windows_NT" goto :winnt
 
-if "%LEJOS_HOME%" == "" goto :home_unset
-	if "%NXJ_HOME%" == "" set NXJ_HOME=%LEJOS_HOME%
-:home_unset
+:win9x
+	if not "%NXJ_HOME%" == "" goto vars_set_nxj
+	if not "%LEJOS_HOME%" == "" goto vars_set_lejos 
+
+	echo Windows 9x/ME detected. Aborting because neither
+	echo the LEJOS_HOME nor the NXJ_HOME variable is set.
+	goto :eof
+
+:winnt
+	setlocal
+	if not "%NXJ_HOME%" == "" goto vars_set_nxj
+	if not "%LEJOS_HOME%" == "" goto vars_set_lejos 
+
+	set NXJ_BIN=%~dp0
+	goto :vars_ready
+
+:vars_set_lejos
+	set NXJ_HOME=%LEJOS_HOME%
+
+:vars_set_nxj
+	set NXJ_BIN=%NXJ_HOME%\bin
+
+:vars_ready
 
 
-"%0\..\nxjflash.bat" %*
+"%NXJ_BIN%\nxjflash.bat" %*
+:eof
