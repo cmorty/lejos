@@ -79,6 +79,16 @@ public class RemoteDevice {
 		// added to the BC4 chip cache. This method exploits this quirk to do calculation.
 		return !this.friendlyName.equals("");
 	}
+	
+	/**
+	 * Always returns false because NXT BC4 chip doesn't encrypt.
+	 * @return false means it is not encrypted
+	 */
+	// TODO: No encrypt possibility with BC4 chip on NXT?
+	public boolean isEncrypted() {
+		return false;
+	}
+	
 	/**
 	 * 
 	 * @param alwaysAsk true causes the method to contact the remote device for the name. false and it will use the known name. 
