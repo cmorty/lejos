@@ -221,12 +221,6 @@ public class NXTConnector extends NXTCommLoggable
 		// Search for matching NXTs
 		search(nxt, addr, protocols);
 		
-		// If nothing found, fail
-		if (nxtInfos.length == 0) {
-			log("Failed to find any NXTs");
-			return false;
-		}
-		
 		// Try each available NXT in turn
 		for(int i=0;i<nxtInfos.length;i++) {
 			try {
