@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import lejos.nxt.comm.*;
 
 /**
- * 
  * Provides an API similar to the leJOS API for accessing
  * motors, sensors etc. on a remote NXT accessed over
  * Bluetooth using LCP.

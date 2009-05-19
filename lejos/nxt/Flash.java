@@ -1,10 +1,11 @@
 package lejos.nxt;
+
 import java.io.IOException;
 
 /**
  * Read and write access to flash memory in pages.
  * 
- * @author Lawrie Griffiths
+ * @author Lawrie Griffiths.
  *
  */
 public class Flash {
