@@ -72,7 +72,6 @@
     	<mkdir dir="${docs.dir}" />
   		<mkdir dir="${nirvana.dir}" />
 		<javadoc
-			sourcepath="${source.dir}"
     		encoding="${source.encoding}"
 			source="${source.version}"
 			destdir="${docs.dir}"
@@ -95,6 +94,11 @@
 			
 	    	<arg value="-quiet"/>
 			
+			<packageset
+				dir="${source.dir}"
+	    		includes="${source.include}"
+	    		excludes="${source.exclude}"
+			/>
 		</javadoc>
 		
   		<delete dir="${nirvana.dir}" />
