@@ -1,6 +1,5 @@
 package lejos.nxt;
 
-
 /**
  * Abstraction for an NXT button.
  * Example:<p>

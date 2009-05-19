@@ -2,7 +2,6 @@ package lejos.nxt;
 
 import java.io.*;
 
-
 /**
  * NXT sound routines.
  *

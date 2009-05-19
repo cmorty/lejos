@@ -1,4 +1,5 @@
 package lejos.nxt.comm;
+
 import java.util.*;
 
 import javax.bluetooth.DeviceClass;
@@ -6,8 +7,6 @@ import javax.bluetooth.DiscoveryListener;
 import javax.bluetooth.RemoteDevice;
 
 import lejos.nxt.SystemSettings;
-
-
 
 /**
  * Provides Bluetooth communications.

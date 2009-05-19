@@ -3,12 +3,12 @@ package lejos.nxt.addon;
 import lejos.nxt.*;
 
 /**
- * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
- * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
- * 
  * MServo, is a abstraction to model any RC Servo (continuous and non continuous)  plugged to
  * 
  * @author Juan Antonio Brenha Moral
+ * 
+ * <br/><br/>WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
  */
 public class MServo extends I2CSensor{
 	//private SensorPort portConnected;//Where is plugged in NXT Brick
