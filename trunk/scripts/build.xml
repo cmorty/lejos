@@ -43,6 +43,7 @@
 			<echo file="${windows.dir}/@{file}.bat">${template.windows}
 
 @{command}
+:eof
 </echo>
 			<fixcrlf file="${windows.dir}/@{file}.bat" encoding="latin1" eol="dos"/>
 		</sequential>
@@ -56,6 +57,7 @@
 			<echo file="${windows.dir}/@{file}.bat">${template.windows.compat}
 
 @{command}
+:eof
 </echo>
 			<fixcrlf file="${windows.dir}/@{file}.bat" encoding="latin1" eol="dos"/>
 		</sequential>
@@ -129,13 +131,13 @@
 		</win-run>
 		
 		<win-compat file="lejosdl">
-			"%0\..\nxj.bat" -r %*
+			"%NXJ_BIN%\nxj.bat" -r %*
 		</win-compat>
 		<win-compat file="lejosfirmdl">
-			"%0\..\nxjflash.bat" %*
+			"%NXJ_BIN%\nxjflash.bat" %*
 		</win-compat>
 		<win-compat file="lejosjc">
-			"%0\..\nxjc.bat" %*
+			"%NXJ_BIN%\nxjc.bat" %*
 		</win-compat>
 	</target>
 	
