@@ -4,10 +4,11 @@ import lejos.nxt.*;
 import lejos.nxt.addon.*;
 
 /**
- * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * Emulates RCX LLC class using the RCXLink class.
+ * 
+ * <br/><br/>WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
  * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
  *
- * Emulates RCX LLC class using the RCXLink class.
  **/
 public class LLC {
   private static RCXLink link;

@@ -1,11 +1,11 @@
 package lejos.nxt;
 
 /**
- * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
- * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
- * 
  * Abstraction for a NXT light sensor.
  * The light sensor can be calibrated to low and high values. 
+ * 
+ * <br/><br/>WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
  */
 public class LightSensor implements SensorConstants
 {
