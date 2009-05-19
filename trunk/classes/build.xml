@@ -95,14 +95,6 @@
 			
 	    	<arg value="-quiet"/>
 			
-			<fileset
-				dir="${source.dir}"
-	    		includes="${source.include}"
-	    		excludes="${source.exclude}"
-			>
-				<!-- javadoc only wants *.java files -->
-				<filename name="**/*.java"/>
-			</fileset>
 		</javadoc>
 		
   		<delete dir="${nirvana.dir}" />
