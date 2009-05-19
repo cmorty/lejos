@@ -6,14 +6,13 @@ import lejos.nxt.I2CSensor;
 import java.awt.*;
 
 /**
- * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
- * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
- * 
  * Mindsensors NXTCam.
  * www.mindsensors.com
  * 
  * Author Lawrie Griffiths
  * 
+ * <br/><br/>WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
  */
 public class NXTCam extends I2CSensor {
 	byte[] buf = new byte[4];

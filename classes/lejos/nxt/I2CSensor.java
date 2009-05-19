@@ -5,7 +5,7 @@ package lejos.nxt;
  * 
  * Extend this class to implement new I2C sensors.
  * 
- * @author Lawrie Griffiths (lawrie.griffiths@ntlworld.com)
+ * @author Lawrie Griffiths (lawrie.griffiths@ntlworld.com).
  *
  */
 public class I2CSensor implements SensorConstants {

@@ -6,14 +6,14 @@ import lejos.nxt.I2CSensor;
 import java.util.ArrayList;
 
 /**
- * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
- * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
- * 
  * This class has been defined to manage the device
  * LSC, Lattebox Servo Controller which
  * manage until 10 RC Servos / DC Motors
  * 
  * @author Juan Antonio Brenha Moral
+ * 
+ * <br/><br/>WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
  */
 
 public class LSC extends I2CSensor {

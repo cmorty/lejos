@@ -5,13 +5,12 @@ import lejos.nxt.I2CSensor;
 import lejos.rcxcomm.Opcode;
 
 /**
- * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
- * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
- * 
  * Supports Mindsensors NRLink RCX IR adapter.
  * 
  * @author Lawrie Griffiths <lawrie.griffiths@ntlworld.com>
  *
+ * <br/><br/>WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
  */
 public class RCXLink extends I2CSensor implements Opcode {
 	
