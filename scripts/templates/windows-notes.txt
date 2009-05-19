@@ -13,6 +13,9 @@ Notes:
 	and has value "Windows_NT"
 - %~dp0 variable
 	exists on WinNT and up
+	contains a valid path to the current batch file
+- %0 variable
+	does NOT contain a valid path to the current batch file
 - goto :eof
 	works on WinNT and up
 	1) return statement for "call :label"
