@@ -81,12 +81,12 @@ public class GSVSentence extends NMEASentence{
 		// TODO: Make sure all 4 of 4 sentences are read. Do quick check here. Otherwise array is temporarily filled with 0s, causes output to flicker.
 		// TODO: Perhaps GPS notifier should only call on FIRST of GSV sentences received. Ignore others in sequence.
 		// SOLUTION: Overwrite checkRefresh(). It makes sure all four are read. 
-		int i = 0;
-		while(currentSentence != totalSentences) {
+		//int i = 0;
+		//while(currentSentence != totalSentences) {
 			checkRefresh();
-			Thread.yield();
-			System.out.println(i++ + " " + currentSentence + " " + totalSentences + " " + currentSatellite);
-		}
+		//	Thread.yield();
+		//	System.out.println(i++ + " " + currentSentence + " " + totalSentences + " " + currentSatellite);
+		//}
 		
 		return ns[index];
 	}
