@@ -175,9 +175,11 @@ public final class Character implements Comparable<Character>
 		if (codepoint < MIN_SUPPLEMENTARY_CODE_POINT)
 			return new char[] { (char)codepoint };
 		
-		codepoint -= MIN_SUPPLEMENTARY_CODE_POINT;
-		
-		return new char[] { (char)((codepoint >> 10) + MIN_HIGH_SURROGATE),  (char)(codepoint & 0x3F | MIN_LOW_SURROGATE) };
+		codepoint -= MIN_SUPPLEMENTARY_CODE_POINT;		
+		return new char[] {
+				(char)((codepoint >> 10) | MIN_HIGH_SURROGATE),
+				(char)(codepoint & 0x3FF | MIN_LOW_SURROGATE),
+			};
 	}
 	
 	public static int toChars(int codepoint, char[] dst, int off)
@@ -192,8 +194,8 @@ public final class Character implements Comparable<Character>
 		}
 		
 		codepoint -= MIN_SUPPLEMENTARY_CODE_POINT;
-		dst[off] = (char)((codepoint >> 10) + MIN_HIGH_SURROGATE);
-		dst[off + 1] = (char)(codepoint & 0x3F | MIN_LOW_SURROGATE);
+		dst[off] = (char)((codepoint >> 10) | MIN_HIGH_SURROGATE);
+		dst[off + 1] = (char)(codepoint & 0x3FF | MIN_LOW_SURROGATE);
 		return 2;
 	}
 	
