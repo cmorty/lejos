@@ -7,6 +7,7 @@
 
 	<!-- creates the pctools jar -->
 	<target name="build" description="generate pctools jar">
+		<delete dir="build"/>
 		<mkdir dir="build"/>
 		<!-- generate tools -->
 		<javac srcdir="." destdir="build" fork="yes" optimize="on" debug="on" source="1.5" target="1.5">
