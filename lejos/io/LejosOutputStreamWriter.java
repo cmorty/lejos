@@ -1,41 +1,48 @@
 package lejos.io;
 
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
+
+import lejos.charset.CharsetEncoder;
 
 /**
  * Abstract Single Byte Character Set OutputStream Writer.
  * @author Sven Köhler
  */
-public abstract class AbstractOutputStreamWriter extends Writer
+public class LejosOutputStreamWriter extends Writer
 {
-	private static final int BUFFER_SIZE = 32;
-	//there has to be room for 4 UTF8 bytes
-	private static final int BUFFER_MAX = BUFFER_SIZE - 4;
-
-	protected static final byte ERROR_CHAR = (byte)'?';
+	private final static int MIN_BUFFERSIZE = 16;
 	
+	private final CharsetEncoder coder;
 	private final OutputStream os;
 	private final byte[] buffer;
+	private final int limit;
 	//cache for storing a high surrogate
 	private char high;
 	
-	public AbstractOutputStreamWriter(OutputStream os)
+	public LejosOutputStreamWriter(OutputStream os, CharsetEncoder coder, int buffersize)
 	{
-		this.buffer = new byte[BUFFER_SIZE]; 
 		this.os = os;
+		this.coder = coder;
+		
+		if (buffersize < MIN_BUFFERSIZE)
+			buffersize = MIN_BUFFERSIZE;
+				
+		if (coder.getMaxCharLength() > buffersize)
+			throw new IllegalArgumentException("buffer to small for given charset");
+		
+		this.buffer = new byte[buffersize];
+		this.limit = buffersize - coder.getMaxCharLength();
 	}
-	
-	protected abstract int getBytes(byte[] buf, int len, int cp);
-	
 	
 	private int writeChar(int len, char c) throws IOException
 	{
 		if (Character.isHighSurrogate(c))		
 		{
 			if (this.high > 0)
-				len = this.bufferAdd(len, ERROR_CHAR);
+				len = this.coder.encode(-1, buffer, len);
 			
 			this.high = c;
 			return len;
@@ -47,24 +54,19 @@ public abstract class AbstractOutputStreamWriter extends Writer
 		else
 		{
 			if (this.high == 0)
-				return this.bufferAdd(len, ERROR_CHAR);
+				len = this.coder.encode(-1, buffer, len);
 			
 			cp = Character.toCodePoint(high, c);
 			this.high = 0;
 		}
 		
-		return this.bufferAdd(len, cp);
-	}
-	
-	private int bufferAdd(int len, int cp) throws IOException
-	{
-		if (len >= BUFFER_MAX)
+		if (len >= limit)
 		{
 			this.bufferFlush(len);
 			len = 0;
 		}
 		
-		return this.getBytes(this.buffer, len, cp);
+		return this.coder.encode(cp, this.buffer, len);
 	}
 	
 	private void bufferFlush(int len) throws IOException
@@ -125,7 +127,7 @@ public abstract class AbstractOutputStreamWriter extends Writer
 		if (this.high > 0)
 		{
 			this.high = 0;
-			this.os.write(ERROR_CHAR);
+			this.bufferFlush(this.coder.encode(-1, buffer, 0));
 		}
 		
 		this.os.close();
