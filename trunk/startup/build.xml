@@ -72,7 +72,6 @@
 		<delete dir="${docs.dir}" />
     	<mkdir dir="${docs.dir}" />
 		<javadoc
-			sourcepath="${source.dir}"
     		encoding="${source.encoding}"
 			source="${source.version}"
 			destdir="${docs.dir}"
