@@ -76,6 +76,7 @@
     		encoding="${source.encoding}"
 			source="${source.version}"
 			destdir="${docs.dir}"
+			charset="utf-8"
 			locale="en_US"
 			author="true"
 			access="protected"
