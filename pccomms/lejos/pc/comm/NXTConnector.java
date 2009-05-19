@@ -18,6 +18,7 @@ public class NXTConnector extends NXTCommLoggable
 	private NXTInfo nxtInfo;
 	private NXTInfo[] nxtInfos;
 	private NXTComm nxtCommUSB = null, nxtCommBluetooth = null, nxtComm = null;
+	private boolean debugOn = false;
     
 	/**
 	 * Connect to any NXT over any protocol in PACKET mode
@@ -69,8 +70,8 @@ public class NXTConnector extends NXTCommLoggable
 		nxtComm = null;
 		nxtInfos = new NXTInfo[0];
 
-		log("Protocols = " + protocols);
-		log("Search Param = " + searchParam);
+		debug("Protocols = " + protocols);
+		debug("Search Param = " + searchParam);
 		
 		// Try USB first
 		if ((protocols & NXTCommFactory.USB) != 0) {
@@ -85,11 +86,11 @@ public class NXTConnector extends NXTCommLoggable
 				nxtInfos = new NXTInfo[1];
 				nxtInfos[0] = nxtInfo;
 			} else {
-				log("Searching for " + searchFor + " using USB");
+				debug("Searching for " + searchFor + " using USB");
 				try {
 					nxtInfos = nxtComm.search(searchParam, NXTCommFactory.USB);
 					if (nxtInfos.length == 0) 
-						log((searchParam == null ? "No NXT found: " : (searchParam + " not found: ")) +  "Is the NXT switched on and the USB cable connected?");
+						debug((searchParam == null ? "No NXT found using USB: " : (searchParam + " not found using USB: ")) +  "Is the NXT switched on and the USB cable connected?");
 				} catch (NXTCommException ex) {
 					log("Search Failed: " + ex.getMessage());
 				}
@@ -125,7 +126,7 @@ public class NXTConnector extends NXTCommLoggable
 					Hashtable<String,String> nxtNames = new Hashtable<String,String>();
 					Enumeration<?> enProps = props.propertyNames();
 					
-					log("Searching cache file for known Bluetooth devices");
+					debug("Searching cache file for known Bluetooth devices");
 					
 					// Populate hashTable from NXT_<name> entries, filtering by name, if supplied
 				    for (; enProps.hasMoreElements(); ) {
@@ -137,13 +138,13 @@ public class NXTConnector extends NXTCommLoggable
 				        	String nxtAddr = (String)props.get(propName);
 					        
 				        	if (searchParam == null || nxtName.equals(nxt)) {
-				        		log("Found " + nxtName + " " + nxtAddr + " in cache file");
+				        		debug("Found " + nxtName + " " + nxtAddr + " in cache file");
 				        		nxtNames.put(nxtName, nxtAddr);
 				        	}				        	
 				        }				    
 				    }
 				    
-				    log("Found " + nxtNames.size() + " matching NXTs in cache file");
+				    debug("Found " + nxtNames.size() + " matching NXTs in cache file");
 				    
 				    // If any found, create the NXTInfo array from the hashtable
 				    if (nxtNames.size() > 0) {					    
@@ -157,7 +158,7 @@ public class NXTConnector extends NXTCommLoggable
 					    }				    	
 				    }
 				} else {
-					log("No NXTs found in cache file");
+					debug("No NXTs found in cache file");
 				}
 			} catch (NXTCommException ex) {
 				log("Failed to load cache file");
@@ -172,7 +173,7 @@ public class NXTConnector extends NXTCommLoggable
 					log("Search Failed: " + ex.getMessage());
 				}
 				
-				log("Inquiry found " + nxtInfos.length + " NXTs");
+				debug("Inquiry found " + nxtInfos.length + " NXTs");
 				
 				// Save the results in the properties file
 				for(int i=0;i<nxtInfos.length;i++) {
@@ -181,7 +182,7 @@ public class NXTConnector extends NXTCommLoggable
 					props.put("NXT_" + nxtInfos[i].name, nxtInfos[i].deviceAddress);
 				}
 				
-				log("Saving cached names");
+				debug("Saving cached names");
 				try {
 					NXTCommFactory.saveNXJCache(props,"Results from Bluetooth inquiry");
 				} catch (IOException ex) {
@@ -229,7 +230,7 @@ public class NXTConnector extends NXTCommLoggable
 		// Try each available NXT in turn
 		for(int i=0;i<nxtInfos.length;i++) {
 			try {
-				log("Connecting to " + nxtInfos[i].name + " " + nxtInfos[i].deviceAddress + " in mode " + mode);
+				debug("Connecting to " + nxtInfos[i].name + " " + nxtInfos[i].deviceAddress + " in mode " + mode);
 				opened = nxtComm.open(nxtInfos[i], mode);
 				if (opened) {
 					nxtInfo = nxtInfos[i];
@@ -374,5 +375,18 @@ public class NXTConnector extends NXTCommLoggable
 	 */
 	public void close() throws IOException {
 		if (nxtComm != null) nxtComm.close();
+	}
+	
+	private void debug(String msg) {
+		if (debugOn) log(msg);
+	}
+	
+	/**
+	 * Set debugging on or off
+	 * 
+	 * @param debug true for on, false for off
+	 */
+	public void setDebug(boolean debug) {
+		debugOn = debug;
 	}
 }
