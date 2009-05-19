@@ -4,15 +4,15 @@ import lejos.nxt.SensorConstants;
 import lejos.nxt.LegacySensorPort;
 
 /**
- * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
- * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
- * 
  * Provide access to the Lego RCX Rotation Sensor.
  *
  * The sensor records the direction and degree of rotation. A full rotation
  * will result in a count of +/-16. Thus each count is 22.5 degrees.
  *
  * @author andy
+ * 
+ * <br/><br/>WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
  */
 public class RCXRotationSensor extends Thread implements SensorConstants
 {

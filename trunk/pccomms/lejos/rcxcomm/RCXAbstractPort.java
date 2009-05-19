@@ -5,9 +5,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 /** 
- * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
- * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
- *
  * RCXAbstractPort provides an interface similar to java.net.Socket
  * Adapted from original code created by the LEGO3 Team at DTU-IAU
  * RCXAbstractPort implements input and output stream handling and input
@@ -15,8 +12,12 @@ import java.io.OutputStream;
  * This version is abstract because it has no packet handler defined.
  * Specific versions of RCXAbstractPort override the constructor and
  * set up the packet handler to use a specific protocol stack. 
+ * 
  * @author Brian Bagnall
  * @author Lawrie Griffiths
+ * 
+ * <br/><br/>WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
  */
 public abstract class RCXAbstractPort {
 
