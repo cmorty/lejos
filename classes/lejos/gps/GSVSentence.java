@@ -27,10 +27,13 @@ import java.util.*;
  * 
  * @author recoded by BB
  */
+/*
+ * DEVELOPER NOTES:
+ * This sentence is a little harder to parse because it uses data from multiple sentences
+ * and there might be any number from 1 to 4 of them, perhaps more.
+ */
 public class GSVSentence extends NMEASentence{
 	
-	// TODO: Is this correct to limit maximumSatellites to 4? Perhaps it changes as 
-	// satellitesInView changes. Maybe this should just use satellitesInView?
 	//GGA
 	private int satellitesInView = 0;
 	//public static final int MAXIMUM_SATELLITES = 4;//0,1,2,3
@@ -61,24 +64,48 @@ public class GSVSentence extends NMEASentence{
 	 * @return Number of satellites e.g. 8
 	 */
 	public int getSatellitesInView() {
+		// TODO: Currently this only works in GPSInfo example because it retrieves getSatellite() as soon as a GSV sentence is received.
+		// If you try to get this at any other time it won't work.
 		checkRefresh();
 		return satellitesInView;
 	}
 
 	/**
-	 * Return a NMEA Satellite object. Must be synchronized so that all 3-4 GSV sentences are read before it tries to give out data. 
+	 * Return a NMEA Satellite object.  
 	 * 
 	 * @param index the index of the satellite
 	 * @return theNMEASatellite object for the selected satellite
 	 */
 	public Satellite getSatellite(int index){
-		// TODO: Should getSatellite() method be synchronized?
+		// Must be synchronized so that all 3-4 GSV sentences are read before it tries to give out data.
 		// TODO: Make sure all 4 of 4 sentences are read. Do quick check here. Otherwise array is temporarily filled with 0s, causes output to flicker.
-		//while(currentSentence != totalSentences) {
+		// TODO: Perhaps GPS notifier should only call on FIRST of GSV sentences received. Ignore others in sequence.
+		// SOLUTION: Overwrite checkRefresh(). It makes sure all four are read. 
+		int i = 0;
+		while(currentSentence != totalSentences) {
 			checkRefresh();
-		//	Thread.yield();
-		//}
+			Thread.yield();
+			System.out.println(i++ + " " + currentSentence + " " + totalSentences + " " + currentSatellite);
+		}
+		
 		return ns[index];
+	}
+	
+	/**
+	 *  This method is called by all the getter methods. It checks if a new sentence has 
+	 *  been received since the last call. 
+	 *  It sets nmeaSentence to null to act as flag for when method called again.
+	 */
+	protected synchronized void checkRefresh() {//Change overwrite code
+		if(nmeaSentence != null) {
+			// First need to cut off verification code at end of sentence:
+			int end = nmeaSentence.indexOf('*');
+			if(end < 0) end = nmeaSentence.length();
+			String nmeaSub = nmeaSentence.substring(0, end);
+			
+			parse(nmeaSub);
+			nmeaSentence = null; // Once data is parsed, discard string (used as flag)
+		}
 	}
 	
 	/**

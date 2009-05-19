@@ -92,7 +92,7 @@ public class Coordinates{
 	}
 
 	/**
-	 * Get Altitude
+	 * Altitude above mean sea level.
 	 * 
 	 * @return the altitude
 	 */

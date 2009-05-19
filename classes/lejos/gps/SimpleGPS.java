@@ -32,9 +32,10 @@ public class SimpleGPS extends Thread {
 		
 	public int errors = 0; // TODO: DELETE ME. Testing purposes only.
 	
-	//Classes which manages GGA, VTG Sentences
+	//Classes which manages GGA, VTG, GSA Sentences
 	protected GGASentence ggaSentence;
 	protected VTGSentence vtgSentence;
+	private GSASentence gsaSentence;
 	
 	//Data
 	private StringTokenizer tokenizer;
@@ -56,7 +57,8 @@ public class SimpleGPS extends Thread {
 		
 		ggaSentence = new GGASentence();
 		vtgSentence = new VTGSentence();
-		
+		gsaSentence = new GSASentence();
+				
 		// Juan: Don't comment out the next line. 
 		// This should be a daemon thread so VM exits when user program terminates.
 		this.setDaemon(true); // Must be set before thread starts
@@ -165,7 +167,82 @@ public class SimpleGPS extends Thread {
 	public float getCourse() {
 		return vtgSentence.getTrueCourse();
 	}
-			
+	
+	/**
+	 * Selection type of 2D or 3D fix 
+	 * <li> 'M' = manual
+	 * <li> 'A' = automatic 
+	 * @return selection type - either 'A' or 'M'
+	 */
+	public String getSelectionType(){
+		return gsaSentence.getMode();
+	}
+
+	/**
+	 *  3D fix - values include:
+	 *  <li>1 = no fix
+	 *  <li>2 = 2D fix
+	 *  <li>3 = 3D fix
+	 * 
+	 * @return fix type (1 to 3)
+	 */
+	public int getFixType(){
+		return gsaSentence.getModeValue();
+	}
+	
+	/**
+	 * Get an Array of Pseudo-Random Noise codes (PRN). You can look up a list of GPS satellites by 
+	 * this number at: http://en.wikipedia.org/wiki/List_of_GPS_satellite_launches
+	 * Note: This number might be similar or identical to SVN. 
+	 * 
+	 * @return array of PRNs
+	 */
+	public int[] getPRN(){
+		return gsaSentence.getPRN();
+	}
+	
+	/**
+	 * Get the 3D Position Dilution of Precision (PDOP). When visible GPS satellites are close
+	 * together in the sky, the geometry is said to be weak and the DOP value is high; when far
+	 * apart, the geometry is strong and the DOP value is low. Thus a low DOP value represents
+	 * a better GPS positional accuracy due to the wider angular separation between the 
+	 * satellites used to calculate a GPS unit's position. Other factors that can increase 
+	 * the effective DOP are obstructions such as nearby mountains or buildings.
+	 * 
+	 * @return The PDOP (PDOP * 6 meters = the error to expect in meters) -1 means PDOP is unavailable from the GPS.
+	 */
+	public float getPDOP(){
+		return gsaSentence.getPDOP();
+	}
+
+	/**
+	 * Get the Horizontal Dilution of Precision (HDOP). When visible GPS satellites are close
+	 * together in the sky, the geometry is said to be weak and the DOP value is high; when far
+	 * apart, the geometry is strong and the DOP value is low. Thus a low DOP value represents
+	 * a better GPS positional accuracy due to the wider angular separation between the 
+	 * satellites used to calculate a GPS unit's position. Other factors that can increase 
+	 * the effective DOP are obstructions such as nearby mountains or buildings.
+	 * 
+	 * @return the HDOP (HDOP * 6 meters = the error to expect in meters) -1 means HDOP is unavailable from the GPS.
+	 */
+	public float getHDOP(){
+		return gsaSentence.getHDOP();
+	}
+
+	/**
+	 * Get the Vertical Dilution of Precision (VDOP). When visible GPS satellites are close
+	 * together in the sky, the geometry is said to be weak and the DOP value is high; when far
+	 * apart, the geometry is strong and the DOP value is low. Thus a low DOP value represents
+	 * a better GPS positional accuracy due to the wider angular separation between the 
+	 * satellites used to calculate a GPS unit's position. Other factors that can increase 
+	 * the effective DOP are obstructions such as nearby mountains or buildings.
+	 * 
+	 * @return the VDOP (VDOP * 6 meters = the error to expect in meters) -1 means VDOP is unavailable from the GPS.
+	 */
+	public float getVDOP(){
+		return gsaSentence.getVDOP();
+	}
+
 	/**
 	 * Method used to close connection. There is no real need to call this method.
 	 * Included in case programmer wants absolutely clean exit. 
@@ -232,6 +309,9 @@ public class SimpleGPS extends Thread {
 		}else if (token.equals(VTGSentence.HEADER)){
 			this.vtgSentence.setSentence(s);
 			notifyListeners(this.vtgSentence);
+		}else if (token.equals(GSASentence.HEADER)){
+			gsaSentence.setSentence(s);
+			notifyListeners(this.gsaSentence);
 		}
 	}
 	
