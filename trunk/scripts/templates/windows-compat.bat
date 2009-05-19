@@ -18,8 +18,7 @@ if "%OS%" == "Windows_NT" goto :winnt
 	goto :vars_ready
 
 :vars_set_lejos
-	set NXJ_BIN=%LEJOS_HOME%\bin
-	goto :vars_ready
+	set NXJ_HOME=%LEJOS_HOME%
 
 :vars_set_nxj
 	set NXJ_BIN=%NXJ_HOME%\bin
