@@ -18,7 +18,7 @@ import java.util.*;
  *
  */
 /*
- * DEVELOPER NOTES: More NMEA sentence types that can be added:
+ * DEVELOPER NOTES: More NMEA sentence types that can be added if there is demand for them:
  * http://www.gpsinformation.org/dale/nmea.htm
  */
 public class GPS extends SimpleGPS {
@@ -26,8 +26,7 @@ public class GPS extends SimpleGPS {
 	//Classes which manages GGA, RMC, VTG, GSV, GSA Sentences
 	private RMCSentence rmcSentence;
 	private GSVSentence gsvSentence;
-	private GSASentence gsaSentence;
-
+	
 	//Date Object with use GGA & RMC Sentence
 	private Date date;
 	
@@ -40,7 +39,6 @@ public class GPS extends SimpleGPS {
 		super(in);
 		rmcSentence = new RMCSentence();
 		gsvSentence = new GSVSentence();
-		gsaSentence = new GSASentence();
 		
 		date = new Date();
 	}
@@ -72,7 +70,8 @@ public class GPS extends SimpleGPS {
 
 	/**
 	 * 
-	 * Get NMEA Satellite
+	 * Get NMEA Satellite. The satellite list is retrieved from the almanac data. Satellites are
+	 * ordered by their elevation: highest elevation (index 0) -> lowest elevation.
 	 * 
 	 * @param index the satellite index
 	 * @return the NMEASaltellite object for the selected satellite
@@ -80,6 +79,7 @@ public class GPS extends SimpleGPS {
 	public Satellite getSatellite(int index){
 		Satellite s = gsvSentence.getSatellite(index); 
 		// Compare getPRN() with this satellite, fill in setTracked():
+		// TODO: This fails because most satellites are set to 0 when this is called. Not synced yet.
 		boolean tracked = false;
 		int [] prns = getPRN();
 		for(int i=0;i<prns.length;i++) {
@@ -109,8 +109,8 @@ public class GPS extends SimpleGPS {
 	}
 	
 	/**
-	 * The satellites in view is a list of satellites the GPS could theoretically connect to. These satellites
-	 * are retrieved from the almanac data. The getSatellitesInView() method will always return an equal or greater
+	 * The satellites in view is a list of satellites the GPS could theoretically connect to (i.e. satellites that 
+	 * are not over the earth's horizon). The getSatellitesInView() method will always return an equal or greater
 	 * number than getSatellitesTracked().
 	 * 
 	 * @return Number of satellites e.g. 8
@@ -119,81 +119,7 @@ public class GPS extends SimpleGPS {
 		return gsvSentence.getSatellitesInView();
 	}
 	
-	/**
-	 * Selection type of 2D or 3D fix 
-	 * <li> 'M' = manual
-	 * <li> 'A' = automatic 
-	 * @return selection type - either 'A' or 'M'
-	 */
-	public String getSelectionType(){
-		return gsaSentence.getMode();
-	}
-
-	/**
-	 *  3D fix - values include:
-	 *  <li>1 = no fix
-	 *  <li>2 = 2D fix
-	 *  <li>3 = 3D fix
-	 * 
-	 * @return fix type (1 to 3)
-	 */
-	public int getFixType(){
-		return gsaSentence.getModeValue();
-	}
-	
-	/**
-	 * Get an Array of Pseudo-Random Noise codes (PRN). You can look up a list of GPS satellites by 
-	 * this number at: http://en.wikipedia.org/wiki/List_of_GPS_satellite_launches
-	 * Note: This number might be similar or identical to SVN. 
-	 * 
-	 * @return array of PRNs
-	 */
-	public int[] getPRN(){
-		return gsaSentence.getPRN();
-	}
-	
-	/**
-	 * Get the 3D Position Dilution of Precision (PDOP). When visible GPS satellites are close
-	 * together in the sky, the geometry is said to be weak and the DOP value is high; when far
-	 * apart, the geometry is strong and the DOP value is low. Thus a low DOP value represents
-	 * a better GPS positional accuracy due to the wider angular separation between the 
-	 * satellites used to calculate a GPS unit's position. Other factors that can increase 
-	 * the effective DOP are obstructions such as nearby mountains or buildings.
-	 * 
-	 * @return The PDOP (PDOP * 6 meters = the error to expect in meters) -1 means PDOP is unavailable from the GPS.
-	 */
-	public float getPDOP(){
-		return gsaSentence.getPDOP();
-	}
-
-	/**
-	 * Get the Horizontal Dilution of Precision (HDOP). When visible GPS satellites are close
-	 * together in the sky, the geometry is said to be weak and the DOP value is high; when far
-	 * apart, the geometry is strong and the DOP value is low. Thus a low DOP value represents
-	 * a better GPS positional accuracy due to the wider angular separation between the 
-	 * satellites used to calculate a GPS unit's position. Other factors that can increase 
-	 * the effective DOP are obstructions such as nearby mountains or buildings.
-	 * 
-	 * @return the HDOP (HDOP * 6 meters = the error to expect in meters) -1 means HDOP is unavailable from the GPS.
-	 */
-	public float getHDOP(){
-		return gsaSentence.getHDOP();
-	}
-
-	/**
-	 * Get the Vertical Dilution of Precision (VDOP). When visible GPS satellites are close
-	 * together in the sky, the geometry is said to be weak and the DOP value is high; when far
-	 * apart, the geometry is strong and the DOP value is low. Thus a low DOP value represents
-	 * a better GPS positional accuracy due to the wider angular separation between the 
-	 * satellites used to calculate a GPS unit's position. Other factors that can increase 
-	 * the effective DOP are obstructions such as nearby mountains or buildings.
-	 * 
-	 * @return the VDOP (VDOP * 6 meters = the error to expect in meters) -1 means VDOP is unavailable from the GPS.
-	 */
-	public float getVDOP(){
-		return gsaSentence.getVDOP();
-	}
-	
+		
 	/**
 	 * Internal helper method to aid in the subclass architecture. Overwrites the superclass
 	 * method and calls it internally.
@@ -208,9 +134,6 @@ public class GPS extends SimpleGPS {
 		}else if (token.equals(GSVSentence.HEADER)){
 			gsvSentence.setSentence(s);
 			notifyListeners(this.gsvSentence);
-		}else if (token.equals(GSASentence.HEADER)){
-			gsaSentence.setSentence(s);
-			notifyListeners(this.gsaSentence);
 		} else
 			super.sentenceChooser(token, s);  // Check superclass sentences.
 	}

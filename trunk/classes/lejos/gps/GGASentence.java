@@ -38,7 +38,8 @@ import java.util.*;
 public class GGASentence extends NMEASentence{
 	
 	//GGA
-	// TODO: Convert all/most of Juan's floats to int
+	// TODO: Convert all/most of Juan's floats to int.
+	// TODO: Initialize values with -1 or perhaps NaN
 	private float dateTimeOfFix = -1;
 	private double latitude = 0;
 	private char latitudeDirection; // TODO: Delete me? Maybe used briefly in calc.
@@ -184,9 +185,12 @@ public class GGASentence extends NMEASentence{
 			}else{
 				hdop = Float.parseFloat(h);//Horizontal dilution of position
 			}
-			//hdop = Float.parseFloat(st.nextToken());//Horizontal dilution of position
+			
 			altitude = Float.parseFloat(st.nextToken());
 
+			// Geoidal separation is 0 with Holux-1200. If decide to use in future check for 0 length before parse.
+			//this.geoidalSeparation = Float.parseFloat(st.nextToken()); 
+			
 			//Improve quality data
 			if (longitudeDirection != 'E') {
 				longitude = -longitude;

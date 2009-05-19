@@ -69,7 +69,8 @@ public class VTGSentence extends NMEASentence{
 	}
 	
 	/**
-	 * Get magnetic course, in degrees.
+	 * Get magnetic course, in degrees. Holux-1200 GPS doesn't have a built in magnetic compass so
+	 * this value is blank.
 	 * 
 	 * @return the magnetic course in degrees 0.0 to 360.0
 	 */
@@ -93,7 +94,7 @@ public class VTGSentence extends NMEASentence{
 			if(sTemp.length() > 0) // This is blank with Holux-1200	
 				magneticCourse = Float.parseFloat(sTemp);//Magnetic course made good over ground
 			st.nextToken();//Letter
-			st.nextToken();//Ground speed, N=Knots
+			st.nextToken();//Ground speed, N=Knots TODO: Could offer this value too.
 			st.nextToken();//Letter
 			speed = Float.parseFloat(st.nextToken());//Ground speed, K=Kilometers per hour
 			//st.nextToken();//Letter

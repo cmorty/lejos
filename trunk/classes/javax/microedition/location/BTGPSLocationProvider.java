@@ -97,6 +97,7 @@ class BTGPSLocationProvider extends LocationProvider implements DiscoveryListene
 		// Timeout results in LocationException:
 		long startTime = System.currentTimeMillis();
 		
+		// TODO: Perhaps initialize and test for NaN instead. 
 		while(gps.getLatitude() == 0 & gps.getLongitude() == 0) {
 			if(timeout != -1 & System.currentTimeMillis() - startTime > (timeout * 1000))
 				throw new LocationException("GPS timed out");
@@ -106,7 +107,7 @@ class BTGPSLocationProvider extends LocationProvider implements DiscoveryListene
 			* Perhaps something needs to be synchronized? */ 
 		}
 		
-		QualifiedCoordinates qc = new QualifiedCoordinates(gps.getLatitude(), gps.getLongitude(), gps.getAltitude());
+		QualifiedCoordinates qc = new QualifiedCoordinates(gps.getLatitude(), gps.getLongitude(), gps.getAltitude(), (gps.getHDOP() * 6), (gps.getVDOP() * 6));
 		Location loc = new Location(qc, gps.getSpeed(), gps.getCourse(), gps.getTimeStamp(),
 				0,null); // TODO: Implement location method and extraInfo (0 and null for now)
 		
