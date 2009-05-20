@@ -395,7 +395,7 @@ int arraycopy(Object *src, int srcOff, Object *dst, int dstOff, int len)
     return throw_exception(arrayIndexOutOfBoundsException);
  
   // write barrier
-  update_array(dst);
+  if (get_element_type(dst) == T_REFERENCE) update_array(dst);
   if (primitive || !type_checks_enabled() || is_assignable(srcSig, dstSig))
   {
     // copy things the fast way
