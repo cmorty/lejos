@@ -1,0 +1,74 @@
+.global _start
+.align 2
+.text 1
+
+#define ROM_BASE        0x00100000
+#define EFC_BASE        0xFFFFFF00
+#define EFC_REG_STATUS  0x68
+#define EFC_REG_COMMAND 0x64
+#define CMD_WRITE_BASE  0x5A000001
+
+/**
+ * Program Layout:
+ *	-0x0004	address of page data
+ *
+ * Page Data Layout:
+ *	+0x0000	uint32	page number
+ *	+0x0004	data (256 bytes)
+ */
+
+/**
+ * Register Layout:
+ *	r7	backup of lr
+ *	r6	base address of flash registers
+ *	r5	base address of flash memory
+ *	r4	page data address
+ *	r3	page offset
+ *	r2	scratch
+ *	r1	scratch
+ *	r0	scratch
+ */
+
+_start:
+	// preserve old link register, even though we don't have to (yet)
+	mov r7, lr
+	ldr r6, =EFC_BASE
+	ldr r5, =ROM_BASE
+	ldr r4, page_data_adr
+
+wait_loop1:
+	ldr r0, [r6, #EFC_REG_STATUS]
+	tst r0, #1
+	beq wait_loop1
+
+copy_page:
+	ldr r3,	[r4], #4
+	lsl r3, r3, #22  // r3 := (r3 & 0x3FF) << 8
+	lsr r3, r3, #14
+	add r1, r3, r5
+	add r2, r1, #256 // copy only 256 bytes
+copy_loop:
+	ldr r0, [r4], #4
+	str r0, [r1], #4
+	cmp r1, r2
+	blo copy_loop
+
+flash_command:
+	ldr r0, =CMD_WRITE_BASE
+	add r0, r0, r3
+	str r0, [r6, #EFC_REG_COMMAND]
+
+wait_loop2:
+	ldr r0, [r6, #EFC_REG_STATUS]
+	tst r0, #1
+	beq wait_loop2
+
+return:
+	bx r7
+
+literals:
+	// the compiler will put some values at the end of this section
+
+.text 2
+page_data_adr:	.long	page_data
+page_data:
