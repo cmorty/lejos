@@ -17,6 +17,7 @@
   				<include name="lejos/localization/Point.java"/>
   				<include name="lejos/localization/Pose.java"/>
   				<include name="lejos/localization/RangeReadings.java"/>
+  				<include name="lejos/localization/package.html"/>
   			</fileset>
   		</copy>
   		<mkdir dir="lejos/nxt"/>
@@ -34,6 +35,7 @@
   				<include name="lejos/nxt/TachoMotorPort.java"/>
   				<include name="lejos/nxt/Tachometer.java"/>
   				<include name="lejos/nxt/UltrasonicSensor.java"/>
+  				<include name="lejos/nxt/package.html"/>
   			</fileset>
   		</copy>
   		<mkdir dir="lejos/nxt/remote"/>
@@ -51,6 +53,7 @@
   				<include name="lejos/nxt/remote/OutputState.java"/>
   				<include name="lejos/nxt/remote/RemoteBattery.java"/>
   				<include name="lejos/nxt/remote/RemoteMotorPort.java"/>
+  				<include name="lejos/nxt/remote/package.html"/>
   			</fileset>
   		</copy>
   		<mkdir dir="lejos/nxt/addon"/>
@@ -58,12 +61,14 @@
   			<fileset dir="../classes">
   				<include name="lejos/nxt/addon/*.java"/>
   				<exclude name="lejos/nxt/addon/RFIDSensor.java"/>
+  				<include name="lejos/nxt/addon/package.html"/>
   			</fileset>
   		</copy>
   		<mkdir dir="lejos/rcxcomm"/>
   		<copy todir=".">
   			<fileset dir="../classes">
   				<include name="lejos/rcxcomm/*.java"/>
+  				<include name="lejos/rcxcomm/package.html"/>
   			</fileset>
   		</copy>
   	</target>
