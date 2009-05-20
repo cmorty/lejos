@@ -21,7 +21,7 @@
 
 /**
  * Register Layout:
- *	lr/r14	address of SAM-BA - must NOT be overwritten, so never ever using bl and friends
+ *	lr/r14	address of SAM-BA - must NOT be overwritten, so never ever use bl and friends
  *	r6	base address of flash registers
  *	r5	base address of flash memory
  *	r4	page data address
@@ -72,4 +72,4 @@ return:
 	bx lr
 
 literals:
-	// the compiler will put some values at the end of this section
+	// the compiler might store some values here
