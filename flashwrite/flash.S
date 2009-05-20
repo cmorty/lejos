@@ -1,6 +1,6 @@
 .global _start
 .align 2
-.text 1
+.text
 
 #define ROM_BASE        0x00100000
 #define EFC_BASE        0xFFFFFF00
@@ -10,7 +10,9 @@
 
 /**
  * Program Layout:
- *	-0x0004	address of page data
+ *	+0x0000 start of program
+ *	+0x0004	address of page data
+ *	+0x0008 ...
  *
  * Page Data Layout:
  *	+0x0000	uint32	page number
@@ -19,7 +21,7 @@
 
 /**
  * Register Layout:
- *	r7	backup of lr
+ *	lr/r14	address of SAM-BA - must NOT be overwritten, so never ever using bl and friends
  *	r6	base address of flash registers
  *	r5	base address of flash memory
  *	r4	page data address
@@ -30,8 +32,11 @@
  */
 
 _start:
-	// preserve old link register, even though we don't have to (yet)
-	mov r7, lr
+	b real_start
+
+page_data_adr:	.long	0x11223344
+
+real_start:
 	ldr r6, =EFC_BASE
 	ldr r5, =ROM_BASE
 	ldr r4, page_data_adr
@@ -64,11 +69,7 @@ wait_loop2:
 	beq wait_loop2
 
 return:
-	bx r7
+	bx lr
 
 literals:
 	// the compiler will put some values at the end of this section
-
-.text 2
-page_data_adr:	.long	page_data
-page_data:
