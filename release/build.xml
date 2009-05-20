@@ -69,9 +69,50 @@
 	  	<delete dir="${release.src}"/>
 	  	<delete dir="${release.projects}"/>
   	</target>
+	
+	<!-- build classes -->
+	<target name="subproject.classes.build">
+		<echo message="*** entering classes project"/>
+		<ant inheritAll="false"	dir="${lejos.root}/classes" antfile="build.xml">
+		</ant>
+		<echo message="*** leaving classes project"/>
+	</target>
+	
+	<!-- build pccomms -->
+	<target name="subproject.pccomms.build">
+		<echo message="*** entering pccomms project"/>
+		<ant inheritAll="false"	dir="${lejos.root}/pccomms" antfile="build.xml">
+		</ant>
+		<echo message="*** leaving pccomms project"/>
+	</target>
+	
+	<!-- build pctools -->
+	<target name="subproject.pctools.build">
+		<echo message="*** entering pctools project"/>
+		<ant inheritAll="false"	dir="${lejos.root}/pctools" antfile="build.xml">
+		</ant>
+		<echo message="*** leaving pctools project"/>
+	</target>
+	
+	<!-- build jtools -->
+	<target name="subproject.jtools.build">
+		<echo message="*** entering jtools project"/>
+		<ant inheritAll="false"	dir="${lejos.root}/jtools" antfile="build.xml">
+		</ant>
+		<echo message="*** leaving jtools project"/>
+	</target>
+	
+	<!-- build startup -->
+	<target name="subproject.startup.build">
+		<echo message="*** entering startup project"/>
+		<ant inheritAll="false"	dir="${lejos.root}/startup" antfile="build.xml">
+		</ant>
+		<echo message="*** leaving startup project"/>
+	</target>
   	
 	<!-- copies the lejos sources -->
-	<target name="lejos.sources" description="copies the lejos sources">
+	<target name="lejos.sources" description="copies the lejos sources" 
+		depends="subproject.classes.build,subproject.pccomms.build,subproject.pctools.build,subproject.jtools.build,subproject.startup.build">
 		<copy todir="${release.projects}">
 			<fileset dir="${javasrc}">
         		<include name="classes/**"/>
@@ -181,9 +222,17 @@
  		<mkdir dir="${release.projects}/nxtvm/platform"/>
  		<mkdir dir="${release.projects}/nxtvm/platform/nxt"/>
   	</target>
+	
+	<!-- build scripts -->
+	<target name="subproject.scripts.build">
+		<echo message="*** entering scripts project"/>
+		<ant inheritAll="false"	dir="${lejos.root}/scripts" antfile="build.xml">
+		</ant>
+		<echo message="*** leaving scripts project"/>
+	</target>
 
 	<!-- copies the run scripts and other binaries -->
-	<target name="scripts" depends="create.folders" description="copies the run scripts (nxjc etc.)">
+	<target name="scripts" depends="create.folders,subproject.scripts.build" description="copies the run scripts (nxjc etc.)">
 		<copy todir="${release.bin}">
       		<fileset dir="${lejos.root}/scripts/build/linux">
         		<include name="*"/>

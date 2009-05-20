@@ -1,3 +1,13 @@
+Lawrie's comments (20/05/09)
+----------------------------
+
+- The leJOS NXJ 0.8 release of leJOS NXJ uses bcel 5.2, and bluecove 2.1.0. 
+
+- In this version the version numbers have been dropped from the names of 
+  the jar files and the source zip or .gz files.
+
+- See the LEGAL file for license information.
+
 Lawrie's comments (01/05/07)
 ----------------------------
 
