@@ -46,7 +46,10 @@ public class Object
 	 */
 	public final Class<?> getClass()
 	{
-		throw new UnsupportedOperationException();
+        // The compiler seems to gnerate calls to this method that do not use the
+        // return value. So for now to avoid breaking code we simply return null.
+		//throw new UnsupportedOperationException();
+        return null;
 	}
 
 	public int hashCode()
