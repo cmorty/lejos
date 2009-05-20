@@ -182,7 +182,10 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
     {
       byte *p = word2ptr(paramBase[0]);
       int len, i;
-      Object *charArray = (Object *) word2ptr(get_word_4_ns(fields_start(p)));
+      Object *charArray;
+      if (!p) return throw_exception(nullPointerException);
+      charArray = (Object *) word2ptr(get_word_4_ns(fields_start(p)));
+      if (!charArray) return throw_exception(nullPointerException);
 
       len = get_array_length(charArray);
       {
