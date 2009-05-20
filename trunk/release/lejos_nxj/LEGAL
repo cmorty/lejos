@@ -6,9 +6,13 @@ Kekoa Proudfoot's librcx code, which was issued under that license.
 The libnxt project created by David Anderson is issued under the GPL v2
 license - see the COPYING file in the libnxt directory.
 
-Two jar files in 3rdparty/lib (bcel-5.1.jar and commons-cli-1.0.jar)
-are issued under the Apache Software License v1.1. The jar files include
-the license.
+The Apache Jakarta Project Byte Code Enginnering Library, bcel5.2.jar 
+(renamed as bcel.jar) is issued under the Apache Software License v2. 
+The jar file includes the license.
+
+The Apache Commons CLI library, commons-cli-1.0.jar (renamed as commons-cli.jar)
+is issued under the Apache Software License v1.1 license. 
+The jar file includes the license.
 
 Another jar file, 3rdparty/lib/cpptasks.jar, is issued under the 
 Apache Software License v2. The jar file includes the license.
