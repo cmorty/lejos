@@ -96,11 +96,13 @@ public class NXTCommFactory {
 		Properties props = new Properties();
 		setPropsFile();
 
-		try {
-			props.load(new FileInputStream(propFile));
-		} catch (FileNotFoundException e) {
-		} catch (IOException e) {
-			throw new NXTCommException("Cannot read nxj.properties file");
+		if (propFile != null) {
+			try {
+				props.load(new FileInputStream(propFile));
+			} catch (FileNotFoundException e) {
+			} catch (IOException e) {
+				throw new NXTCommException("Cannot read nxj.properties file");
+			}
 		}
 		return props;
 	}
