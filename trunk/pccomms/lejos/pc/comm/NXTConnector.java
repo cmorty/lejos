@@ -85,7 +85,7 @@ public class NXTConnector extends NXTCommLoggable
 				nxtInfo = new NXTInfo(NXTCommFactory.USB, name, addr);
 				nxtInfos = new NXTInfo[1];
 				nxtInfos[0] = nxtInfo;
-			} else {
+			} else if (nxtComm != null){
 				debug("Searching for " + searchFor + " using USB");
 				try {
 					nxtInfos = nxtComm.search(searchParam, NXTCommFactory.USB);
@@ -106,6 +106,7 @@ public class NXTConnector extends NXTCommLoggable
 				nxtComm = nxtCommBluetooth = NXTCommFactory.createNXTComm(NXTCommFactory.BLUETOOTH);
 			} catch (NXTCommException e) {
 				log("Failed to load Bluetooth comms driver: " + e.getMessage());
+				return nxtInfos;
 			}
 			
 			// If address specified, connect by address
