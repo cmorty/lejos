@@ -73,6 +73,7 @@ Lawrie Griffiths has added:
 - Added command line processors to the tools which did not have them 
 - Common code for different user interfaces for data viewer and console viewer
 - Added new org.lejos.example project
+- Changed jar file and source zip and tarball files to omit version numbers consistently
 - Various minor additions to java.lang and java.io classes
 
 Roger Glassey has added:
