@@ -240,6 +240,9 @@
       		<fileset dir="${lejos.root}/scripts/build/windows">
         		<include name="*.bat"/>
       		</fileset>
+			<fileset dir="${lejos.root}/release/install_scripts">
+        		<include name="*.bat"/>
+      		</fileset>						
     	</copy>
 		
 		<copy todir="${release.bin}">
