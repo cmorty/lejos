@@ -12,6 +12,7 @@ Andy Shaw has added:
 - Improved way that number of reserved flash pages are handled to make this easier to change in future
 - Improvements to I2C including standard and Lego modes and improved buffer handling
 - Improved handling of communication with the AVR
+- Fixed the problems with writing to flash memory that affected specific NXT bricks
 - Improved firmware buffer handling and memory usage
 - Fixed exception wrongly caught bug
 - Improvements to sensor port handling and sensor and button polling
