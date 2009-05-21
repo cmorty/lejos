@@ -72,7 +72,7 @@ public class LeJOSNXJUtil {
 				.getLeJOSNXJConsole();
 		console.newMessageStream().println(message);
 		// log to error log
-		LeJOSNXJPlugin.getDefault().logEvent(message);
+		//LeJOSNXJPlugin.getDefault().logEvent(message);
 	}
 
 	public static void message(Throwable throwable) {

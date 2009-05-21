@@ -347,9 +347,9 @@ public class NXTBricksPanel {
 				detach.setEnabled(false);
 			} else {
 				connect.setEnabled(!selectedNxtInfo.connectionState
-						.equals(NXTConnectionState.CONNECTED));
+						.equals(NXTConnectionState.PACKET_STREAM_CONNECTED));
 				detach.setEnabled(selectedNxtInfo.connectionState
-						.equals(NXTConnectionState.CONNECTED));
+						.equals(NXTConnectionState.PACKET_STREAM_CONNECTED));
 			}
 		}
 	}

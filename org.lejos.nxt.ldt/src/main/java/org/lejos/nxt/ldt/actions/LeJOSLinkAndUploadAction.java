@@ -9,7 +9,6 @@ import lejos.nxt.remote.NXTCommand;
 import lejos.pc.comm.NXTComm;
 import lejos.pc.comm.NXTCommFactory;
 import lejos.pc.comm.NXTConnector;
-import lejos.pc.tools.NXJUploadException;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -205,7 +204,7 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 			}
 			// run linker
 			tinyVM = new TinyVM();
-			tinyVM.addProgressMonitor(new CLIToolProgressMonitor());
+			tinyVM.addProgressMonitor(new LeJOSNXJLogListener());
 			tinyVM.start(tinyVMArgs);
 			return binary;
 		} catch (Throwable t) {

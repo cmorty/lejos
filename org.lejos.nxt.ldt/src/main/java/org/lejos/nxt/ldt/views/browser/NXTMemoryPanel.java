@@ -1,10 +1,9 @@
 package org.lejos.nxt.ldt.views.browser;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
-import lejos.pc.comm.FileInfo;
-import lejos.pc.comm.NXTCommand;
+import lejos.nxt.remote.FileInfo;
+import lejos.nxt.remote.NXTCommand;
 
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnWeightData;
@@ -36,11 +35,10 @@ public class NXTMemoryPanel {
 	public NXTMemoryPanel(Composite parent) {
 		init(parent);
 
-		// TODO deactivate
-		Collection<FileInfo> testFileInfos = new ArrayList<FileInfo>();
-		testFileInfos.add(new FileInfo("test1.java"));
-		testFileInfos.add(new FileInfo("test2.java"));
-		update(testFileInfos);
+//		Collection<FileInfo> testFileInfos = new ArrayList<FileInfo>();
+//		testFileInfos.add(new FileInfo("test1.java"));
+//		testFileInfos.add(new FileInfo("test2.java"));
+//		update(testFileInfos);
 	}
 
 	public Control getControl() {

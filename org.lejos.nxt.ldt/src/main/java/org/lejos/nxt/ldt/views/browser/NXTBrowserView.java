@@ -3,9 +3,9 @@ package org.lejos.nxt.ldt.views.browser;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import lejos.pc.comm.FileInfo;
+import lejos.nxt.remote.FileInfo;
+import lejos.nxt.remote.NXTCommand;
 import lejos.pc.comm.NXTCommFactory;
-import lejos.pc.comm.NXTCommand;
 import lejos.pc.comm.NXTConnectionState;
 import lejos.pc.comm.NXTInfo;
 
@@ -130,7 +130,7 @@ public class NXTBrowserView extends ViewPart {
 		public void brickConnected(NXTInfo info) {
 			brickPanel.reset();
 			if (info != null) {
-				info.connectionState = NXTConnectionState.CONNECTED;
+				info.connectionState = NXTConnectionState.PACKET_STREAM_CONNECTED;
 				updateBrickPanel(info);
 				updateMemoryPanel(info);
 			}
