@@ -253,9 +253,6 @@ Known limitations with all versions of leJOS are: </a>
   <li>The instanceof operation will always be true for interfaces. In
 bytecode, CHECKCAST succeeds on all interface classes (which is a bit
 unsafe)</li>
-  <li>The instanceof and checkcast operations are rejected by the
-linker when they are performed on array classes (e.g. b instanceof
-byte[])</li>
   <li>There are no objects of type java.lang.Class, which means that
 the ".class" construct won't work. Class.forName() throws
 ClassNotFoundException at all times. As a consequence, reflection is
