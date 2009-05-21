@@ -132,12 +132,10 @@ public class LeJOSUploadFirmwareAction implements
 		}
 	}
 
-	@Override
 	public void message(String message) {
 		LeJOSNXJUtil.message(message);
 	}
 
-	@Override
 	public void progress(String msg, int percent) {
 		if(progressMonitor!=null) {
 			progressMonitor.subTask(msg);

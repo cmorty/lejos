@@ -81,8 +81,10 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 						pm.subTask("Connecting");
 						NXTComm nxtComm = connect();
 						if (nxtComm != null) {
+							NXTCommand nxtCommand = NXTCommand.getSingleton();
+							nxtCommand.setNXTComm(nxtComm);
 							pm.subTask("Uploading");
-							uploadProgram(absoluteBinPathName, nxtComm);
+							nxtCommand.uploadFile(new File(absoluteBinPathName));
 							String binName = getBinaryNameFromAbsolutePathName(absoluteBinPathName);
 							// log
 							LeJOSNXJUtil
@@ -99,11 +101,13 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 								try {
 									LeJOSNXJUtil.message("Running " + binName
 											+ " on NXT brick");
-									runProgram(binName, nxtComm);
+									nxtCommand.setVerify(false);
+									nxtCommand.startProgram(binName);
 								} catch (IOException e) {
 									LeJOSNXJUtil.message(e);
 								}
 							}
+							nxtCommand.close();
 						} else {
 							LeJOSNXJUtil
 									.message("Program could not be uploaded to the NXT brick");
@@ -115,7 +119,7 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 						LeJOSNXJUtil
 								.message("Something went wrong when trying to upload the program to the brick");
 						LeJOSNXJUtil.message(t);
-					}
+					} 
 				} // end run
 			});
 		} catch (Throwable t) {
@@ -144,12 +148,6 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 	public void selectionChanged(IAction action, ISelection selection) {
 		_selection = selection;
 		enableDueToSelection(action);
-	}
-
-	private void runProgram(String binName, NXTComm nxtComm) throws IOException {
-		NXTCommand nxtCommand = NXTCommand.getSingleton();
-		nxtCommand.setNXTComm(nxtComm);
-		nxtCommand.startProgram(binName);
 	}
 
 	/**
@@ -207,29 +205,11 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 			}
 			// run linker
 			tinyVM = new TinyVM();
+			tinyVM.addProgressMonitor(new CLIToolProgressMonitor());
 			tinyVM.start(tinyVMArgs);
 			return binary;
 		} catch (Throwable t) {
 			throw new LeJOSNXJException(t);
-		}
-	}
-
-	/**
-	 * uploads a program to the brick
-	 * 
-	 * @param binName
-	 * @param nxtComm
-	 * @throws NXJUploadException
-	 */
-	private void uploadProgram(String binName, NXTComm nxtComm)
-			throws NXJUploadException {
-		// uploadProgram
-		try {
-			NXTCommand nxtCommand = NXTCommand.getSingleton();
-			nxtCommand.setNXTComm(nxtComm);
-			nxtCommand.uploadFile(new File(binName));
-		} catch (Throwable t) {
-			throw new NXJUploadException(t);
 		}
 	}
 
