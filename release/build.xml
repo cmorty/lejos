@@ -386,6 +386,7 @@
 			 	<exclude name="lejos_nxj/bin/nxjflashg"/>
 			 	<exclude name="lejos_nxj/bin/nxjflash"/>
 			 	<exclude name="lejos_nxj/bin/nxjpccomm"/>
+			 	<exclude name="lejos_nxj/bin/nxjcontrol"/>
 			 	<exclude name="lejos_nxj/bin/*.so"/>
 			 	<include name="lejos_nxj/3rdparty/**"/>
 			 	<exclude name="lejos_nxj/3rdparty/lib/bluecove-gpl.jar"/>
