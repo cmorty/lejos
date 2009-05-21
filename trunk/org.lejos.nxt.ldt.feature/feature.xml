@@ -24,7 +24,7 @@
 
    <plugin
          id="org.lejos.nxt.ldt"
-         download-size="1016"
+         download-size="1487"
          install-size="1016"
          version="0.0.0"
          unpack="false"/>
