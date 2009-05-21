@@ -12,6 +12,7 @@
 	<classpathentry excluding="build.xml" kind="src" path="DLTest"/>
 	<classpathentry excluding="build.xml" kind="src" path="ExceptionTest"/>
 	<classpathentry excluding="build.xml" kind="src" path="FileTest"/>
+	<classpathentry kind="src" path="GPSInfo"/>
 	<classpathentry excluding="build.xml" kind="src" path="GraphicsSample"/>
 	<classpathentry excluding="build.xml" kind="src" path="HelloWorld"/>
 	<classpathentry excluding="build.xml" kind="src" path="I2CDevices"/>
@@ -55,7 +56,6 @@
 	<classpathentry excluding="build.xml" kind="src" path="Tune"/>
 	<classpathentry excluding="build.xml" kind="src" path="USBReceive"/>
 	<classpathentry excluding="build.xml" kind="src" path="View"/>
-	<classpathentry kind="src" path="GPSInfo"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/classes"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>
