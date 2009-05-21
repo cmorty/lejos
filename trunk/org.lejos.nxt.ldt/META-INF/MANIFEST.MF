@@ -12,7 +12,6 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.jdt.core,
  org.eclipse.ui.console,
  org.junit
-Eclipse-LazyStart: true
 Bundle-ClassPath: lejosnxj.jar,
  .,
  lib/bcel.jar,
@@ -22,3 +21,5 @@ Bundle-ClassPath: lejosnxj.jar,
  lib/jtools.jar,
  lib/pccomm.jar,
  lib/pctools.jar
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-ActivationPolicy: lazy

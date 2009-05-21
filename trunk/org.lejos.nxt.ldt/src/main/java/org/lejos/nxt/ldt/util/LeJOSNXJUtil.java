@@ -27,7 +27,7 @@ public class LeJOSNXJUtil {
 	public static IJavaProject getJavaProjectFromSelection(ISelection selection) {
 		IJavaProject project = null;
 		if (selection instanceof IStructuredSelection) {
-			for (Iterator it = ((IStructuredSelection) selection).iterator(); it
+			for (Iterator<IStructuredSelection> it = ((IStructuredSelection) selection).iterator(); it
 					.hasNext();) {
 				Object element = it.next();
 				if (element instanceof IJavaProject) {
@@ -43,7 +43,7 @@ public class LeJOSNXJUtil {
 	public static IJavaElement getFirstJavaElementFromSelection(
 			ISelection selection) {
 		if (selection instanceof IStructuredSelection) {
-			for (Iterator it = ((IStructuredSelection) selection).iterator(); it
+			for (Iterator<IStructuredSelection> it = ((IStructuredSelection) selection).iterator(); it
 					.hasNext();) {
 				Object element = it.next();
 				if (element instanceof IJavaElement) {
