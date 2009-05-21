@@ -14,7 +14,7 @@
         <fail unless="run.class">Must set property 'run.class'</fail>
         <java classname="${run.class}" failonerror="true" fork="true">
             <classpath>
-                <pathelement path="build/classes;../pccomms/lib/pccomm.jar;../pctools/lib/pctools.jar"/>
+                <pathelement path="build/classes;../pccomms/lib/pccomm.jar;../pccomms/3rdparty/lib/bluecove-gpl.jar;../pccomms/3rdparty/lib/bluecove.jar;../jtools/3rdparty/lib/commons-cli.jar;../jtools/lib/jtools.jar"/>
             </classpath>
         </java>
     </target>
@@ -24,7 +24,7 @@
         <fail unless="run.class">Must set property 'run.class'</fail>
         <java classname="${run.class}" failonerror="true" fork="true">
             <classpath>
-                <pathelement path="build/classes;../pccomms/lib/pccomm.jar;../pctools/lib/pctools.jar"/>
+                <pathelement path="build/classes;../pccomms/lib/pccomm.jar;../pccomms/3rdparty/lib/bluecove-gpl.jar;../pccomms/3rdparty/lib/bluecove.jar;../jtools/3rdparty/lib/commons-cli.jar;../jtools/lib/jtools.jar"/>
             </classpath>
         </java>
     </target>
@@ -34,7 +34,7 @@
         <fail unless="run.class">Must set property 'run.class'</fail>
         <java classname="${run.class}" failonerror="true" fork="true">
             <classpath>
-                <pathelement path="build/classes;../pccomms/lib/pccomm.jar;../pctools/lib/pctools.jar"/>
+                <pathelement path="build/classes;../pccomms/lib/pccomm.jar;../pccomms/3rdparty/lib/bluecove-gpl.jar;../pccomms/3rdparty/lib/bluecove.jar;../jtools/3rdparty/lib/commons-cli.jar;../jtools/lib/jtools.jar"/>
             </classpath>
         </java>
     </target>
@@ -44,7 +44,7 @@
         <fail unless="run.class">Must set property 'run.class'</fail>
         <java classname="${run.class}" failonerror="true" fork="true">
             <classpath>
-                <pathelement path="build/classes;../pccomms/lib/pccomm.jar;../pctools/lib/pctools.jar"/>
+                <pathelement path="build/classes;../pccomms/lib/pccomm.jar;../pccomms/3rdparty/lib/bluecove-gpl.jar;../pccomms/3rdparty/lib/bluecove.jar;../jtools/3rdparty/lib/commons-cli.jar;../jtools/lib/jtools.jar"/>
             </classpath>
         </java>
     </target>
@@ -54,7 +54,7 @@
         <fail unless="run.class">Must set property 'run.class'</fail>
         <java classname="${run.class}" failonerror="true" fork="true">
             <classpath>
-                <pathelement path="build/classes;../pccomms/lib/pccomm.jar;../pctools/lib/pctools.jar"/>
+                <pathelement path="build/classes;../pccomms/lib/pccomm.jar;../pccomms/3rdparty/lib/bluecove-gpl.jar;../pccomms/3rdparty/lib/bluecove.jar;../jtools/3rdparty/lib/commons-cli.jar;../jtools/lib/jtools.jar"/>
             </classpath>
         </java>
     </target>
@@ -64,7 +64,7 @@
         <fail unless="run.class">Must set property 'run.class'</fail>
         <java classname="${run.class}" failonerror="true" fork="true">
             <classpath>
-                <pathelement path="build/classes;../pccomms/lib/pccomm.jar;../pctools/lib/pctools.jar"/>
+                <pathelement path="build/classes;../pccomms/lib/pccomm.jar;../pccomms/3rdparty/lib/bluecove-gpl.jar;../pccomms/3rdparty/lib/bluecove.jar;../jtools/3rdparty/lib/commons-cli.jar;../jtools/lib/jtools.jar"/>
             </classpath>
         </java>
     </target>
@@ -74,7 +74,7 @@
         <fail unless="run.class">Must set property 'run.class'</fail>
         <java classname="${run.class}" failonerror="true" fork="true">
             <classpath>
-                <pathelement path="build/classes;../pccomms/lib/pccomm.jar;../pctools/lib/pctools.jar"/>
+                <pathelement path="build/classes;../pccomms/lib/pccomm.jar;../pccomms/3rdparty/lib/bluecove-gpl.jar;../pccomms/3rdparty/lib/bluecove.jar;../jtools/3rdparty/lib/commons-cli.jar;../jtools/lib/jtools.jar"/>
             </classpath>
         </java>
     </target>
