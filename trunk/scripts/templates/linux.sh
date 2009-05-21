@@ -28,7 +28,7 @@ else
 	SEP=":"
 fi
 
-if [ "$(uname -a)" == "Linux" ]; then
+if [ "$(uname -s)" == "Linux" ]; then
 	NXJ_CP_BLUECOVE="$NXJ_JAR_BLUECOVE$SEP$NXJ_JAR_BLUECOVE_GPL"
 else
 	NXJ_CP_BLUECOVE="$NXJ_JAR_BLUECOVE"
