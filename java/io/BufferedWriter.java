@@ -86,6 +86,7 @@ public class BufferedWriter extends Writer
 	
 	public void newLine() throws IOException
 	{
+		//TODO use constant for this
 		this.write('\r');
 		this.write('\n');
 	}
