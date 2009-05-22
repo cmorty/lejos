@@ -2,6 +2,8 @@ package java.io;
 
 public class StringWriter extends Writer
 {
+	//MISSING StringBuffer getBuffer()
+	
 	private final StringBuilder sb;
 	
 	public StringWriter()
@@ -24,6 +26,12 @@ public class StringWriter extends Writer
 	public void flush() throws IOException
 	{
 		//nothing
+	}
+	
+	@Override
+	public String toString()
+	{
+		return this.sb.toString();
 	}
 
 	@Override
