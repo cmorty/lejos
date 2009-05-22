@@ -4,14 +4,9 @@ import lejos.charset.Latin1Encoder;
 import lejos.io.LejosOutputStreamWriter;
 
 /**
- * This is a minimal implementation of BufferedWriter.
- * Normally BufferedWriter extends the abstract class Writer. 
- * The main reason for NXJ including this is to allow the new-line
- * character in text.
  * NOTE: Text writing is not synchronized either like standard Java.
  * 
- * @author BB
- *
+ * @author Sven Köhler
  */
 public class BufferedWriter extends Writer
 {
@@ -23,7 +18,7 @@ public class BufferedWriter extends Writer
 	private int limit;
 	
 	/**
-	 * @deprecated use OutputStreamWriter instead.
+	 * @deprecated use {@link OutputStreamWriter} instead.
 	 */
 	@Deprecated
 	public BufferedWriter(OutputStream os)
