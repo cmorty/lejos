@@ -147,7 +147,7 @@ public class DataOutputStream extends FilterOutputStream implements DataOutput
 		incCount(2);
 	}
 
-	public void writeUTF(String s) throws IOException
+	public final void writeUTF(String s) throws IOException
 	{
 		throw new UnsupportedOperationException("not yet implemented");
 	}
