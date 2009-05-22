@@ -53,8 +53,14 @@ public class BufferedWriter extends Writer
 	@Override
 	public void close() throws IOException
 	{
-		this.flushAny();
-		this.parent.close();
+		try
+		{
+			this.flushAny();
+		}
+		finally
+		{
+			this.parent.close();
+		}
 	}
 	
 	private void flushAny() throws IOException
