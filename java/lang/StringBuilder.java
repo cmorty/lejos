@@ -95,6 +95,41 @@ public class StringBuilder
 	  return this;
   }
 
+	public StringBuilder append(char[] c)
+	{
+		return this.append(c, 0, c.length);
+	}
+	
+	public StringBuilder append(char[] c, int off, int len)
+	{
+		int newLen = curLen + len;
+		ensureCapacity(newLen);
+	  
+		for (int i=0; i<len; i++)
+			characters[curLen + i] = c[off + i];		
+		curLen = newLen;	  
+		
+		return this;
+	}
+
+	public StringBuilder append(CharSequence cs)
+	{
+		return this.append(cs, 0, cs.length());
+	}
+	
+	public StringBuilder append(CharSequence cs, int start, int end)
+	{
+		int len = end - start;
+		int newLen = curLen + len;
+		ensureCapacity(newLen);
+	  
+		for (int i=0; i<len; i++)
+			characters[curLen + i] = cs.charAt(start + i);		
+		curLen = newLen;	  
+		
+		return this;
+	}
+
   public StringBuilder append (int i)
   {
 	  int intLen = StringUtils.exactStringLength(i, 10);
@@ -308,7 +343,7 @@ public class StringBuilder
 		
 		// Do we have enough room?
 		int newLen = curLen + charPos;
-		this.ensureCapacity(curLen + charPos);
+		this.ensureCapacity(newLen);
 		
 		System.arraycopy(buf, 0, characters, curLen, charPos);
 		curLen = newLen;
