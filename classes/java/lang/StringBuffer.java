@@ -95,6 +95,41 @@ public final class StringBuffer
 	  return this;
   }
 
+	public StringBuffer append(char[] c)
+	{
+		return this.append(c, 0, c.length);
+	}
+	
+	public synchronized StringBuffer append(char[] c, int off, int len)
+	{
+		int newLen = curLen + len;
+		ensureCapacity(newLen);
+	  
+		for (int i=0; i<len; i++)
+			characters[curLen + i] = c[off + i];		
+		curLen = newLen;	  
+		
+		return this;
+	}
+
+	public StringBuffer append(CharSequence cs)
+	{
+		return this.append(cs, 0, cs.length());
+	}
+	
+	public synchronized StringBuffer append(CharSequence cs, int start, int end)
+	{
+		int len = end - start;
+		int newLen = curLen + len;
+		ensureCapacity(newLen);
+	  
+		for (int i=0; i<len; i++)
+			characters[curLen + i] = cs.charAt(start + i);		
+		curLen = newLen;	  
+		
+		return this;
+	}
+
   public synchronized StringBuffer append (int i)
   {
 	  int intLen = StringUtils.exactStringLength(i, 10);
@@ -309,7 +344,7 @@ public final class StringBuffer
 	synchronized (this)	{
 		// Do we have enough room?
 		int newLen = curLen + charPos;
-		this.ensureCapacity(curLen + charPos);
+		this.ensureCapacity(newLen);
 		
 		System.arraycopy(buf, 0, characters, curLen, charPos);
 		curLen = newLen;
