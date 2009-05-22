@@ -3,10 +3,10 @@ package lejos.charset;
 public class UTF8Decoder implements CharsetDecoder
 {
 	private static final int MIN_NON_ASCII = 0x80;
-	private static final int MIN_SEQ2_BYTE = 0xC0;
-	private static final int MIN_SEQ3_BYTE = 0xE0;
-	private static final int MIN_SEQ4_BYTE = 0xF0;
-	private static final int MIN_SEQ5_BYTE = 0xF8;
+	private static final int MIN_UTF8_SEQ2 = 0xC0;
+	private static final int MIN_UTF8_SEQ3 = 0xE0;
+	private static final int MIN_UTF8_SEQ4 = 0xF0;
+	private static final int MIN_UTF8_SEQ5 = 0xF8;
 	
 	public int decode(byte[] source, int offset, int limit)
 	{
@@ -15,13 +15,13 @@ public class UTF8Decoder implements CharsetDecoder
 		int first = source[offset] & 0xFF;
 		if (first < MIN_NON_ASCII)
 			return first;
-		if (first < MIN_SEQ2_BYTE || first >= MIN_SEQ5_BYTE)
+		if (first < MIN_UTF8_SEQ2 || first >= MIN_UTF8_SEQ5)
 			return '?';
 
 		int len;
-		if (first < MIN_SEQ3_BYTE)
+		if (first < MIN_UTF8_SEQ3)
 			len = 2;
-		else if (first < MIN_SEQ4_BYTE)
+		else if (first < MIN_UTF8_SEQ4)
 			len = 3;
 		else
 			len = 4;
@@ -47,31 +47,29 @@ public class UTF8Decoder implements CharsetDecoder
 			return 1;
 		
 		int first = source[offset] & 0xFF;		
-		if (first < MIN_SEQ2_BYTE || first >= MIN_SEQ5_BYTE)
+		if (first < MIN_UTF8_SEQ2 || first >= MIN_UTF8_SEQ5)
 			return 1;
 		
 		int len;
-		if (first < MIN_SEQ3_BYTE)
+		if (first < MIN_UTF8_SEQ3)
 			len = 2;
-		else if (first < MIN_SEQ4_BYTE)
+		else if (first < MIN_UTF8_SEQ4)
 			len = 3;
 		else
 			len = 4;
 		
 		int maxlen = limit - offset;
-		if (len > maxlen)
-			len = maxlen;
 		
 		switch (len)
 		{
 			case 4:
-				if ((source[offset + 3] & 0xC0) != 0x80)
+				if (maxlen >= 4 && (source[offset + 3] & 0xC0) != 0x80)
 					len = 3;
 			case 3:
-				if ((source[offset + 2] & 0xC0) != 0x80)
+				if (maxlen >= 3 && (source[offset + 2] & 0xC0) != 0x80)
 					len = 2;
 			case 2:
-				if ((source[offset + 1] & 0xC0) != 0x80)
+				if (maxlen >= 2 && (source[offset + 1] & 0xC0) != 0x80)
 					len = 1;
 		}
 		
