@@ -5,7 +5,6 @@
 package java.io;
 
 /**
- * 
  * @author Sven Köhler
  */
 public interface DataOutput {

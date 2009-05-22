@@ -3,56 +3,16 @@ package java.io;
 
 /**
  * Reads java data types transmitted as bytes over an InputStream.
+ * 
  * @author Sven Köhler
  */
-public class DataInputStream extends InputStream
+public class DataInputStream extends FilterInputStream implements DataInput
 {
-	//MISSING implements DataInput
-	//MISSING extends FilterInputStream
-	//MISSING public static final String readUTF()
-	//MISSING public final String readUTF()
-	
-	//TODO should be inherited by FilterInputStream
-	protected InputStream  in;
-	
 	public DataInputStream(InputStream in)
 	{
-		this.in = in; 
+		super(in); 
 	}
 	
-	/**
-	 * Reads the next byte of data from this input stream. The value 
-	 * byte is returned as an <code>int</code> in the range 
-	 * <code>0</code> to <code>255</code>. If no byte is available 
-	 * because the end of the stream has been reached, the value 
-	 * <code>-1</code> is returned. This method blocks until input data 
-	 * is available, the end of the stream is detected, or an exception 
-	 * is thrown. 
-	 * <p>
-	 * This method
-	 * simply performs <code>in.read()</code> and returns the result.
-	 *
-	 * @return	the next byte of data, or <code>-1</code> if the end of the
-	 *				stream is reached.
-	 * @exception  IOException  if an I/O error occurs.
-	 * @see		java.io.FilterInputStream#in
-	 */
-	public int read() throws IOException
-	{
-		//TODO should be inherited by FilterInputStream
-		return in.read();
-	}
-	
-	public final int read(byte b[]) throws IOException
-	{
-		return in.read(b, 0, b.length);
-	}
-
-	public final int read(byte b[], int off, int len) throws IOException
-	{
-		return in.read(b, off, len);
-	}
-
 	private int readByte0() throws IOException
 	{
 		int ch = in.read();
@@ -99,6 +59,7 @@ public class DataInputStream extends InputStream
 	public final void readFully(byte b[], int off, int len) throws IOException
 	{
 		if (len < 0)
+			//TODO is this correct?
 			throw new IOException();
 
 		while (len > 0)
@@ -154,16 +115,19 @@ public class DataInputStream extends InputStream
 		return x;
 	}
 	
+	public final String readUTF() throws IOException
+	{
+		return readUTF(this);
+	}
+	
+	public static final String readUTF(DataInput in) throws IOException
+	{
+		throw new UnsupportedOperationException("not yet implemented");
+	}
+	
 	public final int skipBytes(int n) throws IOException
 	{
-		int total = 0;
-		int cur = 0;
-	
-		while ((total<n) && ((cur = (int) in.skip(n-total)) > 0))
-		{
-			total += cur;
-		}
-		return total;
+		return (int)this.in.skip(n);
 	}
 	
 	/**
@@ -204,11 +168,5 @@ public class DataInputStream extends InputStream
 		}
 				
 		return strb.toString();
-	}
-	
-	public void close() throws IOException
-	{
-		//TODO should be inherited by FilterInputStream
-		in.close();
 	}
 }
