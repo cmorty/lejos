@@ -93,8 +93,7 @@ public class BufferedOutputStream extends FilterOutputStream
 			if (plen > len)
 				plen = len;
 			
-			for (int i=0; i<plen; i++)
-				this.buffer[this.limit + i] = c[off + i];
+			System.arraycopy(c, off, this.buffer, this.limit, plen);
 		
 			len -= plen;
 			off += plen;
