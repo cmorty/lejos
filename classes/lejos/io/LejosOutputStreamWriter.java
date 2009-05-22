@@ -54,7 +54,7 @@ public class LejosOutputStreamWriter extends Writer
 		else
 		{
 			if (this.high == 0)
-				len = this.coder.encode(-1, buffer, len);
+				return this.coder.encode(-1, buffer, len);
 			
 			cp = Character.toCodePoint(high, c);
 			this.high = 0;
