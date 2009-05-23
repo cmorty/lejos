@@ -40,6 +40,7 @@ _start:
 	ldr r4, page_data_adr
 
 wait_loop1:
+	// wait as long as lowest bit is NOT set
 	ldr r0, [r6, #EFC_REG_STATUS]
 	tst r0, #1
 	beq wait_loop1
@@ -62,6 +63,7 @@ flash_command:
 	str r0, [r6, #EFC_REG_COMMAND]
 
 wait_loop2:
+	// wait as long as lowest bit is NOT set
 	ldr r0, [r6, #EFC_REG_STATUS]
 	tst r0, #1
 	beq wait_loop2
