@@ -47,10 +47,13 @@ extern STACKWORD display_get_font(void);
 
 // Extract the highest revision number from the output of svnversion
 int getRevision() {
+  /*
   char* rev = SVN_REV;
   char *str = strchr(rev,':'); // Skip start revision if present
   if (str == NULL) str = rev;else str++;
   return atoi(str);
+  */
+  return SVN_REV;
 }
 	
 /**
