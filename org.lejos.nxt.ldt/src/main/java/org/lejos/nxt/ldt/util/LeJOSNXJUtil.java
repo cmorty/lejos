@@ -78,10 +78,10 @@ public class LeJOSNXJUtil {
 	public static void message(Throwable throwable) {
 		// log to error log
 		LeJOSNXJPlugin.getDefault().logEvent(throwable);
-		// log to leJOS NXJ console
-		MessageConsole console = LeJOSNXJPlugin.getDefault()
-				.getLeJOSNXJConsole();
-		console.newMessageStream().println("Error: " + throwable.getMessage());
+//		// log to leJOS NXJ console
+//		MessageConsole console = LeJOSNXJPlugin.getDefault()
+//				.getLeJOSNXJConsole();
+//		console.newMessageStream().println("Error: " + throwable.getMessage());
 	}
 
 	public static String getFullQualifiedClassName(IJavaElement javaElement) {
