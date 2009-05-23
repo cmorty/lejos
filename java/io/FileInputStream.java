@@ -83,4 +83,19 @@ public class FileInputStream extends InputStream
 		}
 		return off - offorig;
     }
+
+	@Override
+	public long skip(long n) throws IOException
+	{
+		if (n <= 0)
+			return 0;
+		
+		int avail = this.file_limit - this.offset;
+		if (avail > n)
+			avail = (int)n;
+		
+		this.offset += avail;
+		
+		return n - avail;
+	}
 }
