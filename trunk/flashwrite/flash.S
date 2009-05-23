@@ -11,8 +11,8 @@
 /**
  * Program Layout:
  *	+0x0000 start of program
- *	+0x0004	address of page data
- *	+0x0008 ...
+ *	...
+ *	-0x0004	address of page data
  *
  * Page Data Layout:
  *	+0x0000	uint32	page number
@@ -21,7 +21,9 @@
 
 /**
  * Register Layout:
+ *	pc/r15	program counter
  *	lr/r14	address of SAM-BA - must NOT be overwritten, so never ever use bl and friends
+ *	sp/r13	stack pointer (not used)
  *	r6	base address of flash registers
  *	r5	base address of flash memory
  *	r4	page data address
@@ -31,12 +33,8 @@
  *	r0	scratch
  */
 
+
 _start:
-	b real_start
-
-page_data_adr:	.long	0x11223344
-
-real_start:
 	ldr r6, =EFC_BASE
 	ldr r5, =ROM_BASE
 	ldr r4, page_data_adr
@@ -73,3 +71,7 @@ return:
 
 literals:
 	// the compiler might store some values here
+	.ltorg
+
+page_data_adr:
+	.long	0x44332211
