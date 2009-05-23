@@ -10,11 +10,15 @@ import lejos.pc.comm.NXTComm;
 import lejos.pc.comm.NXTCommFactory;
 import lejos.pc.comm.NXTConnector;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -44,24 +48,19 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 	private LeJOSNXJLogListener logListener;
 	private TinyVM tinyVM;
 	private NXTConnector connector;
+	private String pathSeparator = System.getProperty("path.separator");
 
 	/**
 	 * The constructor.
 	 */
 	public LeJOSLinkAndUploadAction() {
 		logListener = new LeJOSNXJLogListener();
-		// _parser = new NXJCommandLineParser();
 		tinyVM = new TinyVM();
 		tinyVM.addProgressMonitor(new CLIToolProgressMonitor());
 		connector = new NXTConnector();
 		connector.addLogListener(logListener);
 	}
 
-	/**
-	 * TODO present error in progress dialog
-	 * 
-	 * @see IWorkbenchWindowActionDelegate#run
-	 */
 	public void run(IAction action) {
 		// open progress monitor
 		IWorkbench wb = PlatformUI.getWorkbench();
@@ -76,15 +75,29 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 								.beginTask(
 										"Linking and uploading program to the brick...",
 										IProgressMonitor.UNKNOWN);
+						// clean old binary at need
+						pm.subTask("Cleaning");
+						String absoluteBinPathName = getAbsolutePathOfBinary();
+						File binary = new File(absoluteBinPathName);
+						if(binary.exists()) {
+							binary.delete();
+						}
+						// link
 						pm.subTask("Linking");
-						String absoluteBinPathName = linkProgram();
+						linkProgram(absoluteBinPathName);
+						// check if linking was successfull
+						if(!binary.exists()) {
+							throw new LeJOSNXJException("linking of program failed");
+						}
+						// connect to brick
 						pm.subTask("Connecting");
 						NXTComm nxtComm = connect();
-						if (nxtComm != null) {
+						if(nxtComm != null) {
 							nxtCommand.setNXTComm(nxtComm);
 							pm.subTask("Uploading");
-							nxtCommand.uploadFile(new File(absoluteBinPathName));
-							String binName = getBinaryNameFromAbsolutePathName(absoluteBinPathName);
+							nxtCommand
+									.uploadFile(binary);
+							String binName = binary.getName();
 							// log
 							LeJOSNXJUtil
 									.message(binName
@@ -119,8 +132,10 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 						LeJOSNXJUtil.message(t);
 					} finally {
 						try {
-						nxtCommand.close();	
-						} catch(IOException ioExc) {
+							if(nxtCommand.isOpen()) {
+								nxtCommand.close();
+							}
+						} catch (IOException ioExc) {
 							LeJOSNXJUtil.message(ioExc);
 						}
 					}
@@ -159,7 +174,7 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 	 * 
 	 * @throws LeJOSNXJException
 	 */
-	private String linkProgram() throws LeJOSNXJException {
+	private void linkProgram(String absolutePathOfBinary) throws LeJOSNXJException {
 		try {
 			int noOfMandatoryArguments = 7;
 			int noOfOptionalArgumentsUsed = 0;
@@ -184,12 +199,8 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 					.getJavaProjectFromSelection(_selection);
 			if (project == null)
 				throw new LeJOSNXJException("no leJOS project selected");
-			// binary
-			String binaryName = LeJOSNXJUtil.getBinaryName(javaElement);
-			File targetDir = LeJOSNXJUtil.getAbsoluteProjectTargetDir(project);
-			String binary = new File(targetDir, binaryName).getAbsolutePath();
 			tinyVMArgs[argsCounter++] = "-o";
-			tinyVMArgs[argsCounter++] = binary;
+			tinyVMArgs[argsCounter++] = absolutePathOfBinary;
 			// classpath
 			tinyVMArgs[argsCounter++] = "--classpath";
 			tinyVMArgs[argsCounter++] = createClassPath(project);
@@ -211,12 +222,26 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 			tinyVM = new TinyVM();
 			tinyVM.addProgressMonitor(new LeJOSNXJLogListener());
 			tinyVM.start(tinyVMArgs);
-			return binary;
 		} catch (Throwable t) {
 			throw new LeJOSNXJException(t);
 		}
 	}
 
+	private String getAbsolutePathOfBinary() throws LeJOSNXJException,JavaModelException {
+		// class name
+		IJavaElement javaElement = LeJOSNXJUtil
+				.getFirstJavaElementFromSelection(_selection);
+		// get selected project
+		IJavaProject project = LeJOSNXJUtil
+				.getJavaProjectFromSelection(_selection);
+		if (project == null)
+			throw new LeJOSNXJException("no leJOS project selected");
+		// binary
+		String binaryName = LeJOSNXJUtil.getBinaryName(javaElement);
+		File targetDir = LeJOSNXJUtil.getAbsoluteProjectTargetDir(project);
+		return new File(targetDir, binaryName).getAbsolutePath();
+	}
+	
 	private void enableDueToSelection(IAction action) {
 		boolean isEnabled = false;
 		// check if selected element is a java file or a leJOS NXJ project
@@ -254,8 +279,6 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 			throws JavaModelException {
 		String classPath = LeJOSNXJUtil.getAbsoluteProjectTargetDir(project)
 				.getAbsolutePath();
-		// path separator
-		String pathSeparator = System.getProperty("path.separator");
 		// project's classpath
 		IClasspathEntry[] entries = project.getResolvedClasspath(true);
 		// build string
@@ -263,34 +286,15 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 			switch (classpathEntry.getEntryKind()) {
 			case IClasspathEntry.CPE_SOURCE: // source => ignore
 				break;
+			case IClasspathEntry.CPE_PROJECT: // another project =>
+				// append classpath of other project
+				String classPathOfReferencedProject = getClassPathOfReferencedProject(classpathEntry);
+				if(classPathOfReferencedProject!=null) {
+					classPath += pathSeparator + classPathOfReferencedProject;
+				}
+				break;
 			default:
-				classPath += pathSeparator
-						+ classpathEntry.getPath().toOSString();
-				// case IClasspathEntry.CPE_LIBRARY: // directory with classes
-				// or
-				// jar
-				// // => append
-				// classPath += pathSeparator
-				// + classpathEntry.getPath().toOSString();
-				// break;
-				// case IClasspathEntry.CPE_PROJECT: // another project =>
-				// append
-				// all
-				// // its classpath
-				// // TODO: how to add these classpath ???
-				// break;
-				// case IClasspathEntry.CPE_VARIABLE: // a project or library
-				// // indirectly via a classpath
-				// // variable in the first segment
-				// // of the path
-				// // Do we need this? Probably yes...
-				// break;
-				// case IClasspathEntry.CPE_CONTAINER: // set of entries
-				// referenced
-				// // indirectly via a classpath
-				// // container
-				// // Do we need this? Probably yes...
-				// break;
+				classPath += pathSeparator + classpathEntry.getPath().toOSString();
 			}
 		}
 		return classPath;
@@ -343,27 +347,22 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 			}
 		}
 		// connect
-		try {
-			connector.connectTo(nxtName, nxtAddress, protocols);
+		//try {
+			if(!connector.connectTo(nxtName, nxtAddress, protocols)) {
+				throw new LeJOSNXJException("Something went wrong while connecting to brick");
+			}
 			nxtComm = connector.getNXTComm();
-		} catch (Exception e) {
-			throw new LeJOSNXJException("Exception during connecting to brick",
-					e);
-		}
 		return nxtComm;
 	}
 
-	private String getBinaryNameFromAbsolutePathName(String absolutePathName) {
-		String binaryName = null;
-		if (absolutePathName != null) {
-			String pathSep = System.getProperty("file.separator");
-			int index = absolutePathName.lastIndexOf(pathSep);
-			if (index >= 0) {
-				binaryName = absolutePathName.substring(index + 1);
-			} else {
-				binaryName = absolutePathName;
-			}
+	private String getClassPathOfReferencedProject(IClasspathEntry CPE_PROJECT_classpathEntry) throws JavaModelException {
+		String classPath = null;
+		if(CPE_PROJECT_classpathEntry.getEntryKind()==IClasspathEntry.CPE_PROJECT) {
+			IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
+			IProject referencedProject = workspaceRoot.getProject(CPE_PROJECT_classpathEntry.getPath().toString());
+	        IJavaProject referencedJavaProject = JavaCore.create(referencedProject);
+	        classPath = createClassPath(referencedJavaProject);
 		}
-		return binaryName;
+		return classPath;
 	}
 }
