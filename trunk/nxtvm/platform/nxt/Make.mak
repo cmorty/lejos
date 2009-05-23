@@ -22,7 +22,7 @@ C_OPTIMISATION_FLAGS = -Os
 #C_OPTIMISATION_FLAGS = -Os -Xassembler -aslh
 #C_OPTIMISATION_FLAGS = -O0
 
-SVNDEF := -DSVN_REV=$(shell svnversion -n ../.. | grep -o "[0-9]*")
+SVNDEF := -DSVN_REV=$(shell svnversion -n ../.. | grep -o "[^:]*$$" | grep -o "[0-9]*")
 
 CFLAGS = -c -ffreestanding -fsigned-char \
 	-mcpu=arm7tdmi -mfloat-abi=soft \
