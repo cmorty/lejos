@@ -10,16 +10,10 @@ TOOL_PREFIX=arm-elf-
 all: flash flash.asm flash.bin flash.bin.asm
 	
 clean:
-	rm -f crt0.o flash.o flash flash.asm flash.bin flash.bin.asm
+	rm -f flash flash.asm flash.bin flash.bin.asm
 
-flash: crt0.o flash.o
-	$(TOOL_PREFIX)ld --gc-sections -o '$@' $^
-
-%.o: %.s
-	$(TOOL_PREFIX)as --warn -mcpu=arm7tdmi -mfloat-abi=soft -mthumb-interwork -mlittle-endian -mapcs-32 -o '$@' '$<'
-	
-%.o: %.c
-	$(TOOL_PREFIX)gcc -std=c99 -W -Wall -Os -mcpu=arm7tdmi -mfloat-abi=soft -mthumb-interwork -mlittle-endian -mapcs -c -o '$@' '$<'
+%: %.S
+	$(TOOL_PREFIX)gcc -nostdlib -Wall -mcpu=arm7tdmi -mfloat-abi=soft -mlittle-endian -o '$@' '$<'
 
 %.bin: %
 	$(TOOL_PREFIX)objcopy -O binary '$<' '$@'
@@ -29,4 +23,3 @@ flash: crt0.o flash.o
 
 %.asm: %
 	$(TOOL_PREFIX)objdump -d -s -m arm7tdmi '$<' >'$@'	
-	
