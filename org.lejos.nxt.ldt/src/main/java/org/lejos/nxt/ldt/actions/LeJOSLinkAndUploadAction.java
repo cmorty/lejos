@@ -69,6 +69,7 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 		try {
 			ps.busyCursorWhile(new IRunnableWithProgress() {
 				public void run(IProgressMonitor pm) {
+					NXTCommand nxtCommand = NXTCommand.getSingleton();
 					try {
 						// upload program
 						pm
@@ -80,7 +81,6 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 						pm.subTask("Connecting");
 						NXTComm nxtComm = connect();
 						if (nxtComm != null) {
-							NXTCommand nxtCommand = NXTCommand.getSingleton();
 							nxtCommand.setNXTComm(nxtComm);
 							pm.subTask("Uploading");
 							nxtCommand.uploadFile(new File(absoluteBinPathName));
@@ -106,7 +106,6 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 									LeJOSNXJUtil.message(e);
 								}
 							}
-							nxtCommand.close();
 						} else {
 							LeJOSNXJUtil
 									.message("Program could not be uploaded to the NXT brick");
@@ -118,7 +117,13 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 						LeJOSNXJUtil
 								.message("Something went wrong when trying to upload the program to the brick");
 						LeJOSNXJUtil.message(t);
-					} 
+					} finally {
+						try {
+						nxtCommand.close();	
+						} catch(IOException ioExc) {
+							LeJOSNXJUtil.message(ioExc);
+						}
+					}
 				} // end run
 			});
 		} catch (Throwable t) {
@@ -351,7 +356,7 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 	private String getBinaryNameFromAbsolutePathName(String absolutePathName) {
 		String binaryName = null;
 		if (absolutePathName != null) {
-			String pathSep = "\\";
+			String pathSep = System.getProperty("file.separator");
 			int index = absolutePathName.lastIndexOf(pathSep);
 			if (index >= 0) {
 				binaryName = absolutePathName.substring(index + 1);
