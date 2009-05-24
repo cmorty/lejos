@@ -24,9 +24,8 @@ C_OPTIMISATION_FLAGS = -Os
 
 SVNDEF := -DSVN_REV=$(shell svnversion -n ../.. | grep -o "[^:]*$$" | grep -o "[0-9]*")
 
-CFLAGS = -c -ffreestanding -fsigned-char \
-	-mcpu=arm7tdmi -mfloat-abi=soft \
-	-mthumb -mthumb-interwork \
+CFLAGS = $(BASE_ABI_FLAGS) -mthumb \
+	-ffreestanding -fsigned-char \
 	$(C_OPTIMISATION_FLAGS) -g \
 	-Wall -Winline -Werror-implicit-function-declaration \
 	-I. -I$(VM_DIR) \
@@ -35,7 +34,7 @@ CFLAGS = -c -ffreestanding -fsigned-char \
 
 LDFLAGS = -Map $@.map -cref --gc-sections
 
-ASFLAGS = -mthumb-interwork -mfloat-abi=soft
+ASFLAGS = $(BASE_ABI_FLAGS)
 
 def_target: all
 
@@ -73,15 +72,15 @@ $(ROM_LDSCRIPT): $(LDSCRIPT_SOURCE)
 
 $(SAMBA_TARGET)_elf: $(C_OBJECTS) $(S_OBJECTS) $(SAMBA_LDSCRIPT)
 	@echo "Linking $@"
-	$(LD) -o $@ $(C_OBJECTS) $(S_OBJECTS) -T $(SAMBA_LDSCRIPT) $(LIBC) $(GCC_LIB) $(LDFLAGS)
+	$(LD) -o $@ $(C_OBJECTS) $(S_OBJECTS) -T $(SAMBA_LDSCRIPT) $(LIBC) $(LIBGCC) $(LDFLAGS)
 
 $(RAM_TARGET): $(C_OBJECTS) $(S_OBJECTS) $(RAM_LDSCRIPT)
 	@echo "Linking $@"
-	$(LD) -o $@ $(C_OBJECTS) $(S_OBJECTS) -T $(RAM_LDSCRIPT) $(LIBC) $(GCC_LIB) $(LDFLAGS)
+	$(LD) -o $@ $(C_OBJECTS) $(S_OBJECTS) -T $(RAM_LDSCRIPT) $(LIBC) $(LIBGCC) $(LDFLAGS)
 
 $(ROM_TARGET): $(C_OBJECTS) $(S_OBJECTS) $(ROM_LDSCRIPT)
 	@echo "Linking $@"
-	$(LD) -o $@ $(C_OBJECTS) $(S_OBJECTS) -T $(ROM_LDSCRIPT) $(LIBC) $(GCC_LIB) $(LDFLAGS)
+	$(LD) -o $@ $(C_OBJECTS) $(S_OBJECTS) -T $(ROM_LDSCRIPT) $(LIBC) $(LIBGCC) $(LDFLAGS)
 
 $(ROMBIN_TARGET): $(ROM_TARGET)
 	@echo "Generating binary file $@"
@@ -93,15 +92,15 @@ $(SAMBA_TARGET): $(SAMBA_TARGET)_elf
 
 %.o: %.s
 	@echo "Assembling $< to $@"
-	$(AS)  $(ASFLAGS) -o $@ $< 
+	$(AS) $(ASFLAGS) -o $@ $< 
 
 %.o: %.c
 	@echo "Compiling $< to $@"
-	$(CC) $(CFLAGS) -o $@ $< 
+	$(CC) $(CFLAGS) -c -o $@ $< 
 
 ../../javavm/interpreter.o: ../../javavm/interpreter.c
 	@echo "Compiling $< to $@"
-	$(CC) $(CFLAGS) -O3 -o $@ $< 
+	$(CC) $(CFLAGS) -O3 -c -o $@ $< 
 
 %.asm: %.c
 	@echo "Compiling $< to $@"
@@ -113,7 +112,7 @@ $(SAMBA_TARGET): $(SAMBA_TARGET)_elf
 
 %.oram: %.c
 	@echo "Compiling $< to $@"
-	$(CC) $(CFLAGS) -o $@ $< 
+	$(CC) $(CFLAGS) -c -o $@ $< 
 
 
 .PHONY: clean
