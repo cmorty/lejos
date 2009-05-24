@@ -1,0 +1,894 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html dir="ltr" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+  	<title>Communications</title>
+
+	<!-- METADATA -->
+	<meta name="title" content="Communications" />
+	<meta name="DC.Title" content="Communications" />
+	<meta http-equiv="title" content="Communications" />
+		
+	<meta name="description" content="Communications" />
+	<meta http-equiv="description" content="Communications" />
+	<meta http-equiv="DC.Description" content="Communications" />
+
+	<meta name="keywords" content="Java, leJOS, leJOS project, NXJ, NXJ Tutorial" />
+	<meta http-equiv="keywords" content="Java, leJOS, leJOS project, NXJ, NXJ Tutorial" />
+
+	<meta name='VW96.objecttype' content='Document' />
+	<meta http-equiv='content-language' content='en'>
+	<meta name='DC.Language' SCHEME='RFC1766' CONTENT='English' />
+	<meta name='distribution' content='global' />
+	<meta name='resource-type' content='document' />
+
+	<!-- SEARCH ENGINE -->
+	<meta name='robots' content='all' />
+
+	<!-- AUTHOR METADATA -->
+	<meta name="AUTHOR" content="Roger Glassey">
+		  	
+	<!-- CSS -->
+  	<link rel="stylesheet" href="../r_css/lejos-tutorial.css" type="text/css">
+	<!-- ICON -->
+  	<link rel="shortcut icon" href="../favicon.ico" type="image/x-icon">
+
+
+</head>
+<body>
+	<a id="top" name="top"></a>
+	<!-- N1: HEADER -->
+	<table class="n1t1" cellpadding="0" cellspacing="0">
+    <tr>
+      	<td>
+      		<img src="../r_media/images/tutorial_header1.jpg">
+      	</td>
+      	<td align="right">
+      		<img src="../r_media/images/tutorial_header2.jpg">
+      	</td>
+    </tr>
+	</table>
+	<!-- N2: CONTENTS -> NAVIGATION SYSTEMS AND CONTENTS -->
+	<table class="n2t1" cellpadding="0" cellspacing="0">
+    <tr>
+      	<td class="n2t1r1c1">
+      		<!-- LEFT NAVIGATION SYSTEM -->
+			<div class="nolinkLESSON">Communications</div>
+			<div class="linkAHEAD"><a href="#1">Receiver</a></div>
+			<div class="linkAHEAD"><a href="#2">Streams</a></div>
+			<div class="linkAHEAD"><a href="#3">NXT Initiator</a></div>
+			<div class="linkAHEAD"><a href="#4">PC Initiator</a></div>
+			<div class="linkAHEAD2"><a href="#5">Bluetooth initiator</a></div>
+			<div class="linkAHEAD2"><a href="#6">Using the NXTInfo object</a></div>
+			<div class="linkAHEAD"><a href="#7">Advanced Communications</a></div>
+			<div class="linkAHEAD2"><a href="#8">Controlling a remote NXT</a></div>
+			<div class="linkAHEAD2"><a href="#9">External Bluetooth devices</a></div>
+			<div class="linkAHEAD2"><a href="#10">Communicating with the RCX</a></div>
+      	</td>
+      	<td>
+      		<!-- BREADCRUMBS -->
+      		<div id="BreadCrumbs"> 
+      			<a href="../index.htm" target="_top">Home Page</a> &gt; <a href="#">Communications</a> 
+      		</div>
+      		<div class="NavBit"> 
+      			<a target="_top" href="../ErrorHandlingAndDebugging/ErrorHandling_and_debugging.htm">&laquo;&nbsp;Previous</a>
+      			&nbsp;&#8226;&nbsp;
+      			<a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;
+      			<a href="../PC_GUI/PCGUITools.htm">Next&nbsp;&raquo;</a> 
+      		</div>
+      		  							
+			<!-- CONTENT AREA -->
+      		
+			<!-- CONTENT TITLE -->
+      		<div id="PageTitle">Communications</div>
+
+      		<p>leJOS NXJ supports communications using Bluetooth and
+			USB. The NXJ communications classes are designed so that most of your
+			code is independent of whether you are using Bluetooth or USB &#8211; you can
+			write applications that work with both (see the example below).
+			And you can use Java streams, which are a very flexible and easy to	use. </p>
+			
+      		<p>USB has the advantage of speed, but the cable
+			can be used only to connect a NXT to a PC. Bluetooth is slower, but
+			much flexible. It supports a multitude of methods of communicating NXT
+			to NXT, PC to NXT, Mobile phone to NXT, NXT to remote Bluetooth device,
+			etc. </p>
+			
+      		<p>The first step in communicating is to establish a connection. 
+      		A connection has an initiator and a receiver.
+			The receiver waits for a connection from the initiator. 
+			The initiator connects to a specific device that must be waiting for a connection. 
+			When the connection has been established, both ends of the connection can use it to
+			open input and output streams and read and write data. 
+			In this tutorial we do not deal with the case where the NXT is an
+			initiator and the PC is a receiver, although this is possible for Bluetooth connections.
+			In most cases of PC to NXT or mobile phone to NXT communications, 
+			it is more convenient for the NXT to be the receiver and the PC the initiator.</p> 
+			
+			<p>The initiator program may run on a PC (always for USB), another NXT, 
+			a mobile phone or another device that supports the Bluetooth Serial Port Profile (SPP).
+			Some external devices, such as GPS Bluetooth devices only act as a receiver, so when
+			communicating with these devices, the NXT must act as the initiator. Note that such external
+			devices must implement SPP - this is the only profile that the NXT supports.</p>
+		
+			<a name="1"></a>
+			<h4>Receiver</h4>
+      
+      		<p>A receiver program on the NXT waits for a connection by calling the waitForConnection()
+      		 method in the Bluetooth or USB class. These are:-</p>
+      
+      		<ul class="BlueArrows">
+        		<li>
+          			<p>BTConnection waitForConnection();</p>
+        		</li>
+        		<li>
+          			<p>USBConnection waitForConnection();</p>
+        		</li>
+      		</ul>
+      		
+     		<p>Even though the Bluetooth class returns a BTconnection object, and the USB class
+			returns a USBConnection object, both of classes implement the
+			NXTConnectiion interface. So an object of either class can be assigned
+			to an reference variable that implements that interface. </p>
+			
+      		<p>Bluetooth Example:</p>
+      		<div class="CodeBox">
+      		<pre><code>
+  NXTConnection connection = Bluetooth.waitForConnection();
+      		</code></pre>
+      		</div>
+
+      		<p>You need to ensure that Bluetooth power and
+			visibility are on before calling this method. The leJOS NXJ start-up
+			menu can be used to do this.</p>
+			
+      		<p>USB Example:</p>
+      		<div class="CodeBox">
+      		<pre><code>
+  NXTConnection connection = USB.waitForConnection();
+      		</code></pre>
+      		</div>
+
+      		<p>You need to ensure that the USB cable is connected before calling this method.</p>
+      
+      		<p>Here is an example program that selects between USB and Bluetooth at run time:</p>
+      	
+      	    <div class="CodeBox">
+      		<pre><code>
+import lejos.nxt.*;
+
+import lejos.nxt.comm.*;
+
+import java.io.*;
+
+/**
+* sample of selecting channel at run time
+*/
+
+public class CommTest 
+{
+  public static void main( String[] args) { 
+    LCD.drawString("right BT",0, 0);
+    NXTConnection connection = null;
+
+    if(Button.waitForPress() == 4){
+      LCD.drawString("waiting for BT", 0,1 );
+      connection = Bluetooth.waitForConnection();
+    } else {
+      LCD.drawString("waiting for USB", 0,1 );
+      connection = USB.waitForConnection();
+    }
+
+    DataOutputStream dataOut = connection.openDataOutputStream();
+    try {dataOut.writeInt(1234);} 
+      catch (IOException e ) {System.out.println(" write error "+e);} 
+    }
+  }   
+}
+      		</code></pre>
+      		</div>
+      		
+       		<p><a href="#top">Back to top</a></p>
+       		
+       		<a name="2"></a>
+			<h4>Streams</h4>
+
+      		<p>Once a connection has been established, streams can then be opened by calling any of the following
+			methods in the NXTConnection interface:</p>
+      
+      		<ul class="BlueArrows">
+        		<li>
+          			<p>InputStream openInputStream() throws IOException;</p>
+        		</li>
+        		<li>
+          			<p>OutputStream openOutputStream() throws IOException;</p>
+        		</li>
+        		<li>
+          			<p>DataInputStream openDataInputStream() throws IOException; (the example above did this) </p>
+        		</li>
+        		<li>
+          			<p>DataOutputStream openDataOutputStream() throws IOException;</p>
+        		</li>
+      		</ul>
+      		
+      		<p>Data items can then be read from the DataInputStream by:</p>
+      
+      		<ul class="BlueArrows">
+        		<li>
+          			<p>int read(byte b[]) throws IOException </p>
+        		</li>
+        		<li>
+          			<p>int read(byte b[], int off, int len)throws IOException</p>
+        		</li>
+       			<li>
+          			<p>boolean readBoolean() throws IOException</p>
+        		</li>
+        		<li>
+          			<p>byte readByte() throws IOException</p>
+        		</li>
+        		<li>
+          			<p>short readShort() throws IOException</p>
+        		</li>
+        		<li>
+          			<p>readInt() throws IOException</p>
+        		</li>
+        		<li>
+          			<p>char readChar() throws IOException</p>
+        		</li>
+        		<li>
+          			<p>float readFloat() throws IOException</p>
+        		</li>
+        		<li>
+          			<p>String readLine() throws IOException</p>
+        		</li>
+      		</ul>
+      		
+      		<p><b>Be aware: </b>The stream read
+			methods are blocking &#8211; that is, they do not return until data is read.
+			If your program has other tasks that need attending to while waiting
+			for data, calls to the read methods should be made in a separate
+			thread. </p>
+ 
+      		<p>Data can be written to the DataOutputStream by:</p>
+      		
+      		<ul class="BlueArrows">
+        		<li>
+          			<p>void write(byte b[], int off, int len) throws IOException</p>
+        		</li>
+        		<li>
+          			<p>void writeBoolean(boolean v) throws IOException</p>
+        		</li>
+        		<li>
+          			<p>void writeByte(int v) throws IOException</p>
+        		</li>
+        		<li>
+          			<p>void writeShort(int v) throws IOException</p>
+        		</li>
+        		<li>
+          			<p>void writeChar(int v) throws IOException</p>
+        		</li>
+        		<li>
+          			<p>void writeInt(int v) throws IOException</p>
+        		</li>
+        		<li>
+          			<p>void writeFloat(float v) throws IOException;</p>
+        		</li>
+        		<li>
+          			<p>void writeChars (String value) throws IOException</p>
+        		</li>
+      		</ul>
+      		
+      		<p>Example of reading and writing integers using data streams (<code>dis</code> and 
+      		<code>dos</code> are a DataInputStream and DataOutputStream that has been opened):</p>
+      		
+      		      		<div class="CodeBox">
+      		<pre><code>
+for(int i=0;i &lt;100;i++) {
+  int n = dis.readInt();
+  LCD.drawInt(n,7,0,1);
+  dos.writeInt(-n); 
+  dos.flush();
+}
+     		</code></pre>
+      		</div>
+      		
+       		<p><b>Be aware: </b>you must flush the output stream to be sure the data is actually transmitted.
+			Furthermore, it is possible for transmission to fail without throwing an exception. </p>
+		
+      		<p>The DataInputStream, DataOutputstream and NXTConnection can then be closed using the close() method.</p>
+
+      		<p>The full example using BlueTooth is:</p>
+      		
+      		<div class="CodeBox">
+      		<pre><code>
+public class BTReceive {
+  public static void main(String [] args) throws Exception {
+    String connected = "Connected";
+    String waiting = "Waiting...";
+    String closing = "Closing...";
+
+    while (true) {
+      LCD.drawString(waiting,0,0);
+      NXTConnection connection = Bluetooth.waitForConnection(); 
+      LCD.clear();
+      LCD.drawString(connected,0,0);
+
+      DataInputStream dis = connection.openDataInputStream();
+      DataOutputStream dos = connection.openDataOutputStream();
+
+      for(int i=0;i&lt;100;i++) {
+        int n = dis.readInt();
+        LCD.drawInt(n,7,0,1);
+        dos.writeInt(-n);
+        dos.flush();
+      }
+      dis.close();
+      dos.close();
+
+      LCD.clear();
+      LCD.drawString(closing,0,0);
+
+      btc.close();
+      LCD.clear();
+    }
+  }
+}
+      		</code></pre>
+      		</div>
+      		
+      		<p>To modify this example to work with USB, you only have to change Bluetooth.waitForConnection() to USB.waitForconnection()</p>
+
+      		<p><a href="#top">Back to top</a></p>
+
+			<a name="3"></a>
+			<h4>NXT Initiator</h4>
+
+      		<p>To initiate a Bluetooth connection from one NXT to another NXT, you first need to add the receiver NXT to
+			the initiator NXT&#8217;s Bluetooth devices.</p>
+			
+      		<p>To do this, you go to the Bluetooth menu in the leJOS NXJ start-up menu and select &#8220;Search&#8221;.
+			Providing the Bluetooth power is on and visibility is on for the
+			receiving NXT, it will be found and you can select &#8220;Add&#8221; to add it to
+			the initiator&#8217;s Bluetooth devices.</p>
+			
+      		<p>To check it is in the Devices list, you can select &#8220;Devices&#8221; from the Bluetooth menu of the initiator NXT.</p>
+      		
+      		<p>You can then create a BTRemoteDevice class on the initiator NXT:</p>
+      		<p>Example:</p>
+      		<div class="CodeBox">
+      		<pre><code>
+  BTRemoteDevice btrd = Bluetooth.getKnownDevice(name);
+      		</code></pre>
+      		</div>
+
+      		<p>You can connect to the remote device by its address, which you can get by:</p>
+      		<ul class="BlueArrows">
+        		<li>
+          			<p>public byte[] getDeviceAddr()</p>
+        		</li>
+      		</ul>
+
+      		<p>You can then connect to the remote device by calling one of the connect() methods in the Bluetooth class:</p>
+      		
+      		<ul class="BlueArrows">
+        		<li>
+          			<p>BTConnection connect(BTRemoteDevice remoteDevice)</p>
+        		</li>
+      		</ul>
+      		
+      		<ul class="BlueArrows">
+        		<li>
+          			<p>BTConnection connect(byte[] device_addr)</p>
+        		</li>
+        		<li>
+          			<p>BTConnection connect(byte[] device_addr, byte[] pin)</p>
+        		</li>
+      		</ul>
+      		
+      		<p>Example:</p>
+      		<div class="CodeBox">
+      		<pre><code>
+BTRemoteDevice btrd = Bluetooth.getKnownDevice(name);
+
+if (btrd == null) {
+  LCD.clear();
+  LCD.drawString("No such device", 0, 0);
+  Button.waitForPress();
+  System.exit(1);
+}
+
+BTConnection btc = Bluetooth.connect(btrd);
+
+if (btc == null) {
+  LCD.clear();
+  LCD.drawString("Connect fail", 0, 0);
+  Button.waitForPress();
+  System.exit(1);
+}
+      		</code></pre>
+      		</div>
+      		
+      		<p>Having got a BTconnection object you can open the data input and output streams and read data as in the
+			receiver example above.</p>
+			
+      		<p>The complete BTConnectTest example, which works as the initiator program for the BTReceive receiver program, is:</p>
+      		
+      		<div class="CodeBox">
+      		<pre><code>
+public class BTConnectTest {
+  public static void main(String[] args) throws Exception {
+    String name = "NXT";
+    LCD.drawString("Connecting...", 0, 0);
+    BTRemoteDevice btrd = Bluetooth.getKnownDevice(name);
+
+    if (btrd == null) {
+      LCD.clear();
+      LCD.drawString("No such device", 0, 0);
+      Button.waitForPress();
+      System.exit(1);
+    }
+
+    BTConnection btc = Bluetooth.connect(btrd);
+
+    if (btc == null) {
+      LCD.clear();
+      LCD.drawString("Connect fail", 0, 0);
+      Button.waitForPress();
+      System.exit(1);
+    }
+  
+    LCD.clear();
+    LCD.drawString("Connected", 0, 0);
+
+    DataInputStream dis = btc.openDataInputStream();
+    DataOutputStream dos = btc.openDataOutputStream();
+
+    for(int i=0;i&lt;100;i++) {
+      try { 
+        LCD.drawInt(i*30000, 8, 0, 2);
+        dos.writeInt(i*30000);
+        dos.flush(); 
+      } catch (IOException ioe) {
+        LCD.drawString("Write Exception", 0, 0);
+      }
+    
+      try {
+        LCD.drawInt(dis.readInt(),8, 0,3);
+      } catch (IOException ioe) {
+        LCD.drawString("Read Exception ", 0, 0);
+      }
+    }
+  
+    try {
+      LCD.drawString("Closing... ", 0, 0);
+      dis.close();
+      dos.close();
+      btc.close();
+    } catch (IOException ioe) {
+      LCD.drawString("Close Exception", 0, 0);
+    }
+  
+    LCD.drawString("Finished",3, 4);
+    Button.waitForPress();
+  }
+}
+      		</code></pre>
+      		</div>
+      		
+       		<p><a href="#top">Back to top</a></p>
+
+       		<a name="4"></a>
+			<h4>PC Initiator</h4>
+
+      		<p>A PC program can initiate a connection to a NXT and open a Java data stream.</p>
+      		
+      		<p>The API on the PC is different to the NXT API. See pcapidocs.</p>
+      		
+      		<p>To connect to the NXT, you need a NXTComm object that can be obtained using the NXTCommFactory class:</p>
+      		
+      		<ul class="BlueArrows">
+        		<li>
+          			<p>static NXTComm createNXTComm(int protocol)</p>
+        		</li>
+      		</ul>
+      		
+        	<a name="5"></a>
+			<h5>Bluetooth Initiator</h5>     		
+
+      		<p>A NXTComm object to connect via Bluetooth can be obtained by:</p>
+      		
+      		<div class="CodeBox">
+      		<pre><code>
+NXTComm nxtComm = NXTCommFactory.createNXTComm(NXTCommFactory.BLUETOOTH);
+      		</code></pre>
+      		</div>
+      		
+      		<p>The reason for using a factory method is that there are several implementations of comms drivers for
+			Bluetooth and USB on the PC and the one that is used depends on what
+			operating system you are using and the contents of he nxj.properties
+			file.</p>
+			
+      		<p>You can connect to the NXT by address or by do a Bluetooth inquiry:</p>
+      		
+      		<p>To connect by address, you create a NXTInfo object using the constructor:</p>
+      		
+      		<ul class="BlueArrows">
+        		<li>
+          			<p>public NXTInfo(String name, String address)</p>
+        		</li>
+      		</ul>
+      		
+      		<p>Example:</p>
+      		<div class="CodeBox">
+      		<pre><code>
+NXTInfo nxtInfo = new NXTInfo("NXT", "00:16:53:00:78:48");
+      		</code></pre>
+      		</div>
+      		      		
+      		<p>To find the available NXTs doing a Bluetooth inquiry, you do:</p>
+      		
+      		<div class="CodeBox">
+      		<pre><code>
+NXTInfo[] nxtInfo = nxtComm.search("NXT",NXTCommFactory.BLUETOOTH)
+      		</code></pre>
+      		</div>
+
+      		<p><a href="#top">Back to top</a></p>
+      		
+      		<a name="6"></a>
+			<h5>USB Initiator</h5>
+
+      		<p>The initiator sequence using USB is almost the same as for Bluetooth; You just have to use USB instead
+				of Bluetooth.in your code. While USB cannot use a device address , but you can use the NXT name. </p>
+      		
+      		<div class="CodeBox">
+      		<pre><code>
+NXTComm nxtComm = NXTCommFactory.createNXTComm(NXTCommFactory.USB);
+      		</code></pre>
+      		</div>
+      						
+       		<p>To find the available NXT , you do:</p>
+       		
+       		<div class="CodeBox">
+      		<pre><code>
+nxtComm.search("MYNXT", NXTCommFactory.BLUETOOTH);
+      		</code></pre>
+      		</div>      		
+
+      		<p>If there is only one NXT connected, you can use a null name parameter in the search() method. </p>
+
+      		<p><a href="#top">Back to top</a></p>
+      		
+      		<a name="7"></a>
+			<h5>Using the NXTInfo object</h5>      		
+
+      		<p>Once you have a NXTInfo object,you can call the open() method of the NXTComm object to connect to the NXT:</p>
+      		
+      		<ul class="BlueArrows">
+        		<li>
+          			<p>public boolean open(NXTInfo nxt) throws NXTCommException;</p>
+        		</li>
+      		</ul>
+      		
+      		<p>Once the NXT is open, you can obtain an InputStream and an OutputSttream, by calling the
+			getInputStream() anf getOutputStream() methods of the NXTComm object:</p>
+			
+      		<ul class="BlueArrows">
+        		<li>
+          			<p>public OutputStream getOutputStream();</p>
+        		</li>
+        		<li>
+          			<p>public InputStream getInputStream();</p>
+        		</li>
+      		</ul>
+      		
+      		<p>From these you can construct a DataInputStream and a DataOutputStream and send data to the receiving NXT.</p>
+
+      		<p>The complete BTSend sample is in the samples folder.</p>
+
+      		<p><a href="#top">Back to top</a></p>
+      		
+      		<a name="8"></a>
+			<h4>Advanced Communications</h4>
+			
+			<p>In this section you will learn how to:</p>
+			
+			<ul class="BlueArrows">
+				<li>Control one NXT with another NXT over Bluetooth</li>
+				<li>Control an external Bluetooth device like a GPS receiver</li>
+				<li>Communicate between a NXT and an RCX</li>
+			</ul>
+				
+      		<a name="9"></a>
+			<h5>Controlling a remote NXT</h5>
+
+      		<p>The RemoteNXT class allows one NXT running leJOS NXJ to control another, remote NXT, running NXJ or the
+			standard LEGO firmware. It uses the LEGO Communications Protocol (LCP) over Bluetooth to control the remote NXT.</p>
+			
+      		<p>Currently, the class is limited and I2C and RCX sensors are not supported, and the motors must be used
+			in a simple way as the regulation thread is not used.</p>
+			
+      		<p>To access a remote NXT, you use the constructor:</p>
+      		
+          	<ul class="BlueArrows">
+        		<li>
+          			<p>public RemoteNXT(String name) throws IOException</p>
+        		</li>
+      		</ul>
+      		
+      		<p>Example: </p>
+      		
+      		<div class="CodeBox">
+      		<pre><code>
+try {
+  LCD.drawString("Connecting...",0,0);
+  nxt = new RemoteNXT("NXT");
+
+  LCD.clear();
+  LCD.drawString("Connected",0,0);
+} catch (IOException ioe) {
+  LCD.clear();
+  LCD.drawString("Conn Failed",0,0);
+  Button.waitForPress();
+  System.exit(1);
+}
+      		</code></pre>
+      		</div>
+      
+      		<p>The name of the remote NXT must have already been added to the known devices of the initiating NXT by
+			do a Bluetooth search followed by &#8220;Add&#8221; fron the leJOS NXJ Bluetooth menu.</p>
+			
+      		<p>The constructor opens the connection and creates instances of the remote motor and sensor ports.</p>
+      		
+      		<p>It is then possible to get access to information about the remote NXT by using the methods:</p>
+      		
+      		<ul class="BlueArrows">
+        		<li>
+          			<p>public String getBrickName()</p>
+        		</li>
+        		<li>
+          			<p>public String getBluetoothAddress()</p>
+        		</li>
+        		<li>
+          			<p>public int getFlashMemory()</p>
+        		</li>
+        		<li>
+          			<p>public String getFirmwareVersion()</p>
+        		</li>
+        		<li>
+          			<p>public String getProtocolVersion()</p>
+        		</li>
+      		</ul>
+      		
+      		<p>Example:</p>
+      		
+      		<div class="CodeBox">
+      		<pre><code>
+LCD.drawString(nxt.getBrickName(), 0, 6);
+LCD.drawString(nxt.getFirmwareVersion(), 0, 7);
+LCD.drawString(nxt.getProtocolVersion(), 4, 7);
+LCD.drawInt(nxt.getFlashMemory(), 6, 8, 7);
+      		</code></pre>
+      		</div>  
+      		    		
+      		<p>There are also methods that act on the remote NXT:</p>
+      
+      		<ul class="BlueArrows">
+        		<li>
+          			<p>public byte deleteFlashMemory()</p>
+        		</li>
+      		</ul>
+      		
+      		<p>A remote Battery object is created that can be used to get the voltage of the remote battery using the normal Battery methods.</p>
+      
+      		<p>Example:</p>
+ 
+      		<div class="CodeBox">
+      		<pre><code>
+LCD.drawString( "Battery: " + nxt.Battery.getVoltageMilliVolt() 0,4);
+      		</code></pre>
+      		</div> 
+      		      		
+      		<p>Objects are also created for the sensor ports of the remote NXT. These are accessed as S1, S2, S3 and S4.</p>
+      		
+      		<p>Local sensor objects can then be created using these ports and use exactly as if they were connected to a local sensor port.</p>
+      		
+      		<p>Example:</p>
+
+      		<div class="CodeBox">
+      		<pre><code>
+LightSensor light = new LightSensor(nxt.S1);
+LCD.drawString("Light: " + light.readValue(),0,5);
+      		</code></pre>
+      		</div>
+      		
+       		<p>Motor objects are created for the remote motors. They are named A, B and C.</p>
+       		
+      		<p>These can be used in the normal way, e.g: </p>
+      		
+      		<div class="CodeBox">
+      		<pre><code>
+nxt.A.setSpeed(360);
+nxt.A.forward();
+nxt.A.stop();
+nxt.A.backward();
+      		</code></pre>
+      		</div>
+
+      		<p><a href="#top">Back to top</a></p>
+
+      		<a name="10"></a>
+			<h5>External Bluetooth devices</h5>      		
+
+      		<p>The NXT can connect to external Bluetooth devices that implement the Serial Port Profile (SPP).</p>
+      		
+      		<p>Such devices can be searched for on the Bluetooth menu and added to the known devices.</p>
+      		
+			<p>An example of such a device is an external Bluetooth GPS receiver. These can be used to obtain to obtain
+			   the geographic location of a robot</p>
+			   
+      		<p>leJOS supports external Bluetooth GPS receivers that support the NMEA protocol via the GPS and NMEASentence
+				classes. NMEASentence is a utility class used by GPS, and is not directly accessed.</p>
+				
+      		<p>One such device that has been tested with leJOS NXJ is the Holux M-1200.</p>
+      		
+      		<p>Most such devices have a PIN that is required to connect to them, but it may have a default value such as &#8220;0000&#8221;.</p>
+      
+      		<p>To connect to a GPS device, you do:</p>
+      		
+      		<div class="CodeBox">
+      		<pre><code>
+final byte[] pin = {(byte) '0', (byte) '0', (byte) '0', (byte) '0'};
+BTRemoteDevice btGPS = Bluetooth.getKnownDevice(name); 
+
+if (btrd == null) {
+  LCD.drawString("No such device", 0, 0);
+  Button.waitForPress();
+  System.exit(1);
+}
+
+btGPS = Bluetooth.connect(btrd.getDeviceAddr(), pin);
+
+if(btGPS == null)
+  LCD.drawString("No Connection", 0, 1);
+  Button.waitForPress();
+  System.exit(1)
+}
+
+LCD.drawString("Connected!", 0, 1);
+
+GPS gps = null;
+InputStream in;
+
+try {
+  in = btGPS.openInputStream();
+  gps = new GPS(in);
+  LCD.drawString("GPS Online", 0, 6);
+} catch(Exception e) {
+  LCD.drawString("GPS Connect Fail", 0, 6);
+  Button.waitForPress();
+  System.exit(1);
+}
+      		</code></pre>
+      		</div>  
+      		    		
+       		<p>As you see from this example, the GPS constructor takes the input stream from the Bluetooth connection as a parameter:</p>
+       		
+      		<ul class="BlueArrows">
+        		<li>
+          			<p>public GPS(InputStream in)</p>
+        		</li>
+      		</ul>
+      		
+      		<p>The GPS class starts thread and uses the NMEASentence class to process
+				messages (known as sentences) from the Bluetooth device. Messages such as
+				the $GPGGA sentence that gives the current latitude, longitude and
+				altitude, are processed.</p>
+				
+      		<p>To read the current values of latitude, longitude and altitude, you use the methods:</p>
+      		
+      		<ul class="BlueArrows">
+        		<li>
+          			<p>public float getLatitude()</p>
+        		</li>
+        		<li>
+          			<p>public float getLongitude()</p>
+        		</li>
+        		<li>
+          			<p>public float getAltitude()</p>
+        		</li>
+      		</ul>
+      		
+      		<p>You can also get the time stamp corresponding to these values by:</p>
+      		
+      		<ul class="BlueArrows">
+        		<li>
+          			<p>public int getTime()</p>
+        		</li>
+      		</ul>
+
+      		<p><a href="#top">Back to top</a></p>
+      		
+      		<a name="11"></a>
+			<h5>Communicating with the RCX</h5>      		
+
+      		<p>IR communication with the RCX can be done using the Mindsensors NRLink RCX IR adapter. The software abstraction
+			of this device is the RCXLink class. The constructor is:</p>
+			
+      		<ul class="BlueArrows">
+        		<li>
+          			<p>public RCXLink(I2CPort port)</p>
+        		</li>
+      		</ul>
+      		
+     		<p>For example: </p>
+      		<div class="CodeBox">
+      		<pre><code>
+RCXLink link = new RCXLink(SensorPort.S1);
+
+      		</code></pre>
+      		</div>     		
+
+      		<p>The NRLink-Nx supports a set of macros in ROM and EEPROM that can be used to send messages to the RCX using the LEGO
+			RCX IR protocol. The EEPROM macos can be overwritten allowing the user
+			to define their own macros.</p>
+			
+      		<p>Macros can be run by:</p>
+      		
+      		<ul class="BlueArrows">
+        		<li>
+          			<p>public void runMacro(int addr)</p>
+        		</li>
+      		</ul>
+      		
+      		<p>There are convenience methods for running the ROM macros:</p>
+      		
+      		<ul class="BlueArrows">
+        		<li>
+          			<p>public void beep()</p>
+        		</li>
+        		<li>
+          			<p>public void runProgram(int programNumber)</p>
+        		</li>
+        		<li>
+          			<p>public void forwardStep(int id)</p>
+        		</li>
+        		<li>
+          			<p>public void backwardStep(int id)</p>
+        		</li>
+        		<li>
+          			<p>public void setRCXRangeShort()</p>
+        		</li>
+        		<li>
+          			<p>public void setRCXRangeLong()</p>
+        		</li>
+        		<li>
+          			<p>public void powerOff()</p>
+        		</li>
+        		<li>
+          			<p>public void stopAllPrograms()</p>
+        		</li>
+      		</ul>
+      		
+      		<p>A new macro in the EEPROM address range can be defined by:</p>
+      		
+      		<ul class="BlueArrows">
+        		<li>
+          			<p>public void defineMacro(int addr, byte[] macro)</p>
+        		</li>
+      		</ul>
+      		
+      		<p>There is a convenience method to define and run a macro:</p>
+
+      		<p><a href="#top">Back to top</a></p>
+
+      		<div class="NavBit"> 
+      			<a target="_top" href="../ErrorHandlingAndDebugging/ErrorHandling_and_debugging.htm">
+      			&laquo;&nbsp;Previous</a>&nbsp;&#8226;&nbsp;
+      			<a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;
+      			<a href="../PC_GUI/PCGUITools.htm">Next&nbsp;&raquo;</a> 
+      		</div>
+      	</td>
+    </tr>
+</table>
+</body>
+</html>
