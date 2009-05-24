@@ -1,0 +1,183 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html dir="ltr" xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<TITLE>leJOS Utilities</TITLE>
+	
+	<!-- METADATA -->
+	<meta name="title" content="leJOS Utilities" />
+	<meta name="DC.Title" content="leJOS Utilities" />
+	<meta http-equiv="title" content="leJOS Utilities" />
+		
+	<meta name="description" content="leJOS Utilities" />
+	<meta http-equiv="description" content="leJOS Utilities" />
+	<meta http-equiv="DC.Description" content="leJOS Utilities" />
+
+	<meta name="keywords" content="Java, leJOS, leJOS project, NXJ, NXJ Tutorial" />
+	<meta http-equiv="keywords" content="Java, leJOS, leJOS project, NXJ, NXJ Tutorial" />
+
+	<meta name='VW96.objecttype' content='Document' />
+	<meta http-equiv='content-language' content='en'>
+	<meta name='DC.Language' SCHEME='RFC1766' CONTENT='English' />
+	<meta name='distribution' content='global' />
+	<meta name='resource-type' content='document' />
+
+	<!-- SEARCH ENGINE -->
+	<meta name='robots' content='all' />
+
+	<!-- AUTHOR METADATA -->
+	<META NAME="AUTHOR" CONTENT="Roger Glassey">	
+		
+	<!-- CSS -->
+	<link rel="stylesheet" href="../r_css/lejos-tutorial.css" type="text/css" />
+
+	<!-- ICON -->
+	<link rel="shortcut icon" href="../favicon.ico" type="image/x-icon" />
+</head>
+<body>
+	<a id="top" name="top"></a>
+	<!-- N1: HEADER -->
+	<table cellpadding="0" cellspacing="0" class="n1t1">
+		<tr>
+			<td><img src="../r_media/images/tutorial_header1.jpg" /></td>
+			<td align="right"><img src="../r_media/images/tutorial_header2.jpg" /></td>
+		</tr>
+	</table>
+	<!-- N2: CONTENTS -> NAVIGATION SYSTEMS AND CONTENTS -->
+	<table cellpadding="0" cellspacing="0" class="n2t1">
+		<tr>
+			<td class="n2t1r1c1">
+				<!-- LEFT NAVIGATION SYSTEM -->
+				<div class="nolinkLESSON">leJOS Utilities</div>
+				<div class="linkAHEAD"><a href="#1">ButtonCounter</a></div>
+				<div class="linkAHEAD"><a href="#2">Datalogger</a></div>
+				<div class="linkAHEAD"><a href="#3">Stopwatch</a></div>
+				<div class="linkAHEAD"><a href="#4">Timer</a></div>
+				<div class="linkAHEAD2"><a href="#5">Timer Listener</a></div>
+				<div class="linkAHEAD"><a href="#6"> Java Utilities</a></div>
+
+			</td>
+			<td>
+        		<div id="BreadCrumbs">
+            		<a href="../index.htm" target="_top">Home Page</a>
+        			&gt;
+            		<a href="#">leJOS Utilities</a>
+       			</div>
+        		<div class="NavBit">
+                	<a target="_top" href="../PC_GUI/PCGUITools.htm">«&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../AdvancedTopics/Advanced_Hardware.htm">Next&nbsp;»</a>
+        		</div>
+        		
+        		<!-- CONTENT AREA -->
+					
+				<!-- CONTENT TITLE -->
+			    <div id="PageTitle">leJOS Utilities</div>
+				
+				<a name="1">
+				</a><h4>ButtonCounter</h4>
+
+				<p>This class allows simple data entry
+				by pressing the NXT buttons.  It counts the number of presses of
+				the <b>Left</b> and <b>Right</b> buttons, Pressing  <b>Left </b>(or
+				<b>Right</b>) simultaneously with <b>Enter</b>  decrements the
+				count.</p>
+				<p>To start counting, call  one of these methods:</p>
+				<ul class="BlueArrows">
+					<li><p>void count(String  message)</p></a>
+					<li><p>void count(String message, int left, int right)</p></a>
+				</ul>
+				<p>These methods exit when the user presses <b>ESC</b>.  Then the values can be retrieved by 
+				</p>
+				<ul class="BlueArrows">
+					<li><p>int getLeftCount()</p>
+					<li><p>int getRightCount()</p>
+				</ul>
+				<p>The complete API for Button Counter
+				is <a href="http://lejos.sourceforge.net/nxt/nxj/api/lejos/util/ButtonCounter.html">here</a>
+				
+				<a name="2">
+				</a><h4>DataLogger</h4>
+				
+				<p>This class stores float values in
+				an array and transmits them to the <a href="../PC_GUI/PCGUITools.htm">DataViewer</a>
+				application running on a PC.  It will use BlueTooth or USB as
+				selected by the user at run time.  The default size of the array
+				is 512, but this can be set to any value, limited by available
+				memory, by a <a href="http://lejos.sourceforge.net/nxt/nxj/api/lejos/util/Datalogger.html#Datalogger(int)">constructor</a>.</p>
+				<p>Methods:</p>
+				<ul class="BlueArrows">
+					<li><p>void writeLog(float value)</p><p>Writes a <i>value </i> to the array</p>
+					<li><p>void reset()</a>
+					<p/><p>Clear the array.  The next value is written at the beginning.</p>
+					<li><p>void transmit()</a>
+					<p/><p>Transmits the data to the PC. </p>
+				</ul>
+				<p>The complete API of Data:logger is <a href="http://lejos.sourceforge.net/nxt/nxj/api/lejos/util/Datalogger.html">here</a>. 
+				</p>
+				
+				<a name="3">
+				</a><h4>Stopwatch</h4>
+				
+				<p>This class represents an elapsed	time stopwatch. You can construct as many instances as you need.</p>
+				<p>There are only two methods</p>
+				<ul class="BlueArrows">
+					<li><p>void reset()</p><p>resets the watch to zero</p>
+					<li><p>int elapsed()</p><p>returns the elapsed time (since the last reset() in milliseconds.</p>
+				</ul>
+				<p>The API of Stopwatch is <a href="http://lejos.sourceforge.net/nxt/nxj/api/lejos/util/Stopwatch.html">here</a>.</p>
+				
+				<a name="4">
+				</a><h4>Timer</h4>
+				
+				<p>This class is used with a Timer 	Listener, to which it sends <i>timedOut()</i> message periodically. 
+				   It uses a private thread.</p>
+				<p>Methods:</p>
+				<ul class="BlueArrows">
+					<li><p>void start()</a>
+						</p><p>call this first.</p>
+					<li><p>void	setDelay(int delay)</p><p>set the interval between calls to the listener.</p>
+					<li><p>void stop()</a></p>
+				</ul>
+
+				<p>The Timer API is <a href="http://lejos.sourceforge.net/nxt/nxj/api/lejos/util/Timer.html">here</a>.</p>
+				
+				<a name="5"></a>
+				<h5>Timer Listener</h5>
+				
+				<p>To use the Timer, you need a class that implements this interface.  This interface  has only one	method.</p>
+				<ul  class="BlueArrows">
+					<li><p>void timedOut()</p><p>which is called every time the Timer fires.</p>
+				</ul>
+
+				<p><a href="#top">Back	to top</a></p>
+
+				<a name="6"></a>
+				<h4>Java Utilities</h4>
+
+				<p>leJOS NXJ supports several of the Java data structures.  They are:</p>
+				<ul class="BlueArrows">
+					<li><a href="http://lejos.sourceforge.net/nxt/nxj/api/java/util/ArrayList.html">ArrayList</a>
+					<li><a href="http://lejos.sourceforge.net/nxt/nxj/api/java/util/BitSet.html">BitSet</a>
+					<li><a href="http://lejos.sourceforge.net/nxt/nxj/api/java/util/Hashtable.html">Hashtable</a>
+					<li><a href="http://lejos.sourceforge.net/nxt/nxj/api/java/util/Queue.html">Queue</a>
+					<li><a href="http://lejos.sourceforge.net/nxt/nxj/api/java/util/Stack.html">Stack</a>
+					<li><a href="http://lejos.sourceforge.net/nxt/nxj/api/java/util/Vector.html">Vector</a>
+					<li><a href="http://lejos.sourceforge.net/nxt/nxj/api/java/util/Enumeration.html">Enumeration</a>
+					<li><a href="http://lejos.sourceforge.net/nxt/nxj/api/index.html?java/util/Enumeration.html">Iterator</a>
+				</ul>
+				
+				<p>It also supports two other Java utilities:</p>
+				<ul  class="BlueArrows">
+					<li><a href="http://lejos.sourceforge.net/nxt/nxj/api/java/util/Random.html">Random</a>
+					<li><a href="http://lejos.sourceforge.net/nxt/nxj/api/java/util/Properties.html">Properties</a>
+				</ul>
+
+				<p><A HREF="#top">Back to top</a></p>
+				<p/>
+
+        		<div class="NavBit">
+                	<a target="_top" href="../PC_GUI/PCGUITools.htm">«&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../AdvancedTopics/Advanced_Hardware.htm">Next&nbsp;»</a>
+        		</div>
+			<td>
+		</tr>
+	</table>
+</body>
+</html>

@@ -1,0 +1,201 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="en">
+<head>
+	<title>Error Handling and Debugging</title>
+	
+	<!-- METADATA -->
+	<meta name="title" content="Error Handling and Debugging" />
+	<meta name="DC.Title" content="Error Handling and Debugging" />
+	<meta http-equiv="title" content="Error Handling and Debugging" />
+	
+	<meta name="description" content="Error Handling and Debugging" />
+	<meta http-equiv="description" content="Error Handling and Debugging" />
+	<meta http-equiv="DC.Description" content="Error Handling and Debugging" />
+
+	<meta name="keywords" content="Java, leJOS, leJOS project, NXJ, NXJ Tutorial" />
+	<meta http-equiv="keywords" content="Java, leJOS, leJOS project, NXJ, NXJ Tutorial" />
+
+	<meta name='VW96.objecttype' content='Document' />
+	<meta http-equiv='content-language' content='en'>
+	<meta name='DC.Language' SCHEME='RFC1766' CONTENT='English' />
+	<meta name='distribution' content='global' />
+	<meta name='resource-type' content='document' />
+
+	<!-- SEARCH ENGINE -->
+	<meta name='robots' content='all' />
+
+	<!-- AUTHOR METADATA -->	
+	<meta name="AUTHOR" content="Roger Glassey" />
+	<meta name="AUTHOR" content="Lawrie Griffiths" />
+	<!-- CSS -->
+	<link rel="stylesheet" href="../r_css/lejos-tutorial.css" type="text/css" />
+	<!-- ICON -->
+	<link rel="shortcut icon" href="../favicon.ico" type="image/x-icon" /><title>Error handling and debugging</title>
+</head>
+<body>
+	<a id="top" name="top"></a>
+	<!-- N1: HEADER -->
+	<table class="n1t1" cellpadding="0" cellspacing="0">
+	<tr>
+		<td>
+			<img src="../r_media/images/tutorial_header1.jpg" />
+		</td>
+		<td align="right">
+			<img src="../r_media/images/tutorial_header2.jpg" />
+		</td>
+	</tr>
+	</table>
+	<!-- N2: CONTENTS -> NAVIGATION SYSTEMS AND CONTENTS -->
+	<table class="n2t1" cellpadding="0" cellspacing="0">
+	<tr>
+		<td class="n2t1r1c1">
+			<div class="nolinkLESSON">Error Handling and Debugging</div>
+			<div class="linkAHEAD"><a href="#1">Exceptions</a></div>
+			<div class="linkAHEAD"><a href="#2">Data Aborts</a></div>
+			<div class="linkAHEAD"><a href="#3">Remote Debugging</a></div>
+		</td>
+		<td>
+			<!-- BREADCRUMBS -->
+			<div id="BreadCrumbs">
+				<a href="../index.htm" target="_top">Home Page</a>&gt;
+				<a href="#">Error Handling and Debugging</a>
+			</div>
+			
+			<!-- NAVIGATION TOOL -->
+			<div class="NavBit">
+				<a target="_top" href="../ListenersAndEvents/Listeners_Events.htm">«&nbsp;Previous</a>
+				&nbsp;&#8226;&nbsp;
+				<a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../Communications/Communications.htm">Next&nbsp;»</a>
+			</div>
+
+			<!-- CONTENT AREA -->
+					
+			<!-- CONTENT TITLE -->
+			<div id="PageTitle">Error Handling and Debugging</div>
+			<p>leJOS NXJ provides several features for error handling and debugging, including:</p>
+			<ul class="BlueArrows">
+				<li>Exceptions</li>
+				<li>Data Aborts</li>
+				<li>Debugging</li>
+			</ul>
+			<p>The Remote Monitoring and Tracing facility, which is described in its own section below, can also be used for debugging.</p>
+
+			<a name="1"></a>
+			<h4>Exceptions</h4>
+			<p>Most of the standard Java language exception classes are supported by leJOS, and user can create their own exception classes.</p>
+			<p>Example:</p>
+			<p>The following simplified version of the ExceptionTest example demonstrates what happens for an exception that is not caught &#8211; in this case an
+			ArrayIndexOutOfBounds exception.</p>
+			
+			<div class="CodeBox">
+			<pre><code>
+import lejos.nxt.*;
+
+public class ExceptionTest {
+  public static void main(String[] args) {
+    SensorPort p = SensorPort.PORTS[5];
+  }
+}
+			</code></pre>
+			</div>
+
+
+			<a name="2"></a>
+			<h4>Data Aborts</h4>
+			<p>If the leJOS firmware crashes you will normally a Data Abort. The screen shows the PC value
+			where the failure occurred, and other details of the failure.</p>
+			<p>The screen is something like:</p>
+			<div class="LCDBox">
+			<p>DATA ABORT</p>
+			<p>PC 00140BAC</p>
+			<p>AASR 1831BF01</p>
+			<p>ASR 00020601</p>
+			<p>OPCODE ???</p>
+			<p>DEBUG1 00020010</p>
+			<p>DEBUG2 00000000</p>
+			</div>
+
+			<p>The most common reason for data aborts is executing a file that is not a leJOS NXJ binary, or executing an incomplete leJOS NXJ file.</p>
+			<p>If you get a data abort in any other case, you should report the error to the leJOS development team by posting the details on the leJOS NXJ forums.</p>
+
+			<!-- WEB TOOL TO GO TO TOP OF THE DOCUMENT -->
+			<p/>
+			<a href="#top">Back to top</a>
+					
+			<a name="3"></a>
+			<h4>Remote Debugging</h4>
+			<p>You can use your PC as a remote console to display tracing statements generated your NXJ
+			program. The lejos.nxt.comm.RConsole class has methods to it. Since
+			there are no instances of this class, all methods are static. </p>
+			<p>To start debugging, you use one of these methods:</p>
+			<ul class="BlueArrows">
+				<li><p>void open()</p><p>opens a USB connection with no timeout</p></li>
+				<li><p>void openUSB(int timeout)</p></li>
+				<li><p class="western">void openBluetooth(int timeout)</p></li>
+			</ul>
+			<p>The NXT displays <code>USB Console..</code> or <code>BT Console</code>.</p>
+			<p>and waits for the PC based monitor to connect.</p>
+			<p>Then execute the <i><b>nxjconsole</b></i> program on your PC. When the connection is
+			established, the NXT displays <code>Got Connection</code> and,
+			after some seconds, both the NXT and the PC
+			display <code>Console open.</code> </p>
+			<p>If you use the variant of open with a timeout, it waits the specified number of
+			seconds and if the debug monitor has not connected, proceeds without
+			debugging. If the timeout is zero, it waits indefinitely. </p>
+			<p>You can also use the <a href="../PC_GUI/PCGUITools.htm#_Toc202513556">ConsoleViewer</a>
+			application to display the output.</p>
+			<p>Debug statements can be output using one of the methods:</p>
+			<ul class="BlueArrows">
+				<li>
+					<p>void println(String s)</p>
+				</li>
+				<li>
+					<p>void print(String s);</p>
+				</li>
+			</ul>
+			<p>If no successful open statement has been executed, the debug output is discarded. If
+			there was a successful output, the string appears on standard out in
+			the window or terminal that <i><b>nxjconsole </b></i>was run from, on the PC.</p>
+			<p>When debugging is completed, you should call:</p>
+			<ul class="BlueArrows">
+				<li>
+					<p>void close()</p>
+				</li>
+			</ul>
+			<p>This closes the USB or Bluetooth connection. </p>
+			<p>Example:</p>
+			
+			<div class="CodeBox">
+			<pre><code>
+import lejos.nxt.*;
+import lejos.nxt.comm.*;
+
+/** * example using RConsole*/
+public class TestRConsole {  
+  public static void main(String[] args) {
+    RConsole.open();
+    RConsole.println("Start for loop ");
+    for (int i = 0; i < 5; i++) {
+      RConsole.print(" " + i);
+      LCD.drawInt(i, 2, 2 * i, 4);
+    }
+    RConsole.println("\n done ");
+    RConsole.close();
+    Button.waitForPress();
+  }
+}
+			</code></pre>
+			</div>
+
+			<!-- WEB TOOL TO GO TO TOP OF THE DOCUMENT -->
+			<p/>
+			<a href="#Top">Back to top</a>
+			<p/>
+
+			<div class="NavBit"> <a target="_top" href="../ListenersAndEvents/Listeners_Events.htm">«&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../Communications/Communications.htm">Next&nbsp;»</a>
+			</div>
+		</td>
+	</tr>
+	</table>
+</body>
+</html>

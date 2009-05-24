@@ -1,0 +1,563 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html dir="ltr" xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title>Hardware: I/O and Sensors</title>
+	<!-- METADATA -->
+
+	<meta name="title" content="Hardware: I/O and Sensors" />
+	<meta name="DC.Title" content="Hardware: I/O and Sensors" />
+	<meta http-equiv="title" content="Hardware: I/O and Sensors" />
+
+	<meta name="description" content="Hardware: I/O and Sensors" />
+	<meta http-equiv="description" content="Hardware: I/O and Sensors" />
+	<meta http-equiv="DC.Description" content="Hardware: I/O and Sensors" />
+
+	<meta name="keywords" content="Java, leJOS, leJOS project, NXJ, NXJ Tutorial" />
+	<meta http-equiv="keywords" content="Java, leJOS, leJOS project, NXJ, NXJ Tutorial" />
+
+	<meta name='VW96.objecttype' content='Document' />
+	<meta http-equiv='content-language' content='en'>
+	<meta name='DC.Language' SCHEME='RFC1766' CONTENT='English' />
+	<meta name='distribution' content='global' />
+	<meta name='resource-type' content='document' />
+
+	<!-- SEARCH ENGINE -->
+	<meta name='robots' content='all' />
+
+	<!-- AUTHOR METADATA -->
+	
+	<META NAME="AUTHOR" CONTENT="Roger Glassey">
+	<META NAME="AUTHOR" CONTENT="Lawrie Griffiths">
+
+	<!-- CSS -->
+	<link rel="stylesheet" href="../r_css/lejos-tutorial.css" type="text/css" />
+
+	<!-- ICON -->
+	<link rel="shortcut icon" href="../favicon.ico" type="image/x-icon" />
+</head>
+<body>
+	<a id="top" name="top"></a>
+	<!-- N1: HEADER -->
+	<table cellpadding="0" cellspacing="0" class="n1t1">
+	<tr>
+		<td><img src="../r_media/images/tutorial_header1.jpg" /></td>
+		<td align="right"><img src="../r_media/images/tutorial_header2.jpg" /></td>
+	</tr>
+	</table>
+	<!-- N2: CONTENTS -> NAVIGATION SYSTEMS AND CONTENTS -->
+	<table cellpadding="0" cellspacing="0" class="n2t1">
+	<tr>
+		<td class="n2t1r1c1">
+			<!-- LEFT NAVIGATION SYSTEM -->
+			<div class="nolinkLESSON">Hardware: I/O and Sensors</div>
+			<div class="linkAHEAD"><a href="#1">LCD</a></div>
+			<div class="linkAHEAD2"><a href="#2">Text methods</a></div>
+			<div class="linkAHEAD2"><a href="#3">Graphics methods</a></div>
+			<div class="linkAHEAD"><a href="#4">Buttons</a></div>
+			<div class="linkAHEAD"><a href="#5">Sound</a></div>
+			<div class="linkAHEAD"><a href="#6">Battery</a></div>
+			<div class="linkAHEAD"><a href="#7">Sensors</a></div>
+			<div class="linkAHEAD2"><a href="#8">Touch</a></div>
+			<div class="linkAHEAD2"><a href="#9">Light</a></div>
+			<div class="linkAHEAD2"><a href="#10">Sound</a></div>
+			<div class="linkAHEAD2"><a href="#11">Ultrasonic</a></div>
+		</td>
+		<td>
+			<!-- BREADCRUMBS -->
+			<div id="BreadCrumbs">
+				<a href="../index.htm" target="_top">Home Page</a>&gt;
+				<a href="#">Hardware: I/O and Sensors</a>
+			</div>
+			
+			<!-- NAVIGATION TOOL -->
+			<div class="NavBit">
+				<a target="_top" href="../WheeledVehicles/WheeledVehicles.htm">«&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../ListenersAndEvents/Listeners_Events.htm">Next&nbsp;»</a>
+			</div>
+					
+			<!-- CONTENT AREA -->
+					
+			<!-- CONTENT TITLE -->
+			<div id="PageTitle">Hardware: I/O and Sensors</div>
+			
+			<p>This section covers the classes for user input and output, and also the standard NXT
+			sensors. The NXT hardware has buttons for input, a Liquid
+			Crystal Display  (LCD) and a small speaker for output. leJOS NXJ
+			provides software abstractions for all these bits of hardware.</p>
+							
+			<a name="1"></a>
+			<h4>LCD</h4>
+			<p>The LCD class has no instances (there being only one LCD on the NXT),  so all the methods are static. 
+			It can be used in text mode and graphics mode.</p>
+			
+			<a name="2"></a>
+			<h5>LCD Text methods</h5>
+			
+			<p>As a text display, the NXT LCD screen is 16 characters wide and eight characters deep. It is addressed using (x, y) co-ordinates as follows:</p>
+			<img src="image001.gif">
+			<p>x ranges from 0 to 15, and y from 0 to 7.</p>
+			<p>The methods to write to the LCD in text mode are :-</p>
+			<ul class="BlueArrows">
+				<li><p>void drawString(String str, int x, int y)</p><p>This draws a string of text to the LCD screen starting at text co-ordinate (x, y).</p>
+				<li><p>void drawInt(int i, int x, int y)</p>
+					<p>This draws an integer starting at text co-ordinate (x,y).The integer is left aligned and takes up as many characters as are necessary.</p>
+				<li><p>void drawInt(int i, int places, int x, int y)</p>
+					<p>This variant of drawInt right-aligns the integer and always uses the number of characters indicated by places.
+					   This means that it always writes to a fixed number of character places and, if used in a loop, the previous value will always be fully overwritten.</p>
+				<li><p>void clear()<p/><p>Clears the display.</p>
+			</ul>
+			
+			<p>Example:</p>
+			
+		    <div class="CodeBox">
+			<pre><code>
+import lejos.nxt.*;
+import java.io.*;
+
+public class LCDTest {
+  public static void main(String[] args) throws Exception {
+    LCD.drawString("Free RAM:", 0, 0);
+    LCD.drawInt((int) System.getRuntime().freeMemory(), 6, 9, 0);
+    Thread.sleep(2000);
+  }
+}			</code></pre>
+			</div>
+			
+			<p>Note that you can also write to the LCD display with System.out.println(String str). This scrolls the display up one line
+			and writes to the bottom line of the screen.</p>
+			
+			<p>Note, also, that by default, the LCD display is refreshed automatically. If you want to control when the LCD is refreshed,
+			   you can call LCD.setAutoRefresh(0) to turn off auto-refreshing and call LCD.refresh() when you want to refresh the display.</p>
+			
+			<!-- WEB TOOL TO GO TO TOP OF THE DOCUMENT -->
+			<p>
+			<a href="#top">Back to top</a>
+			
+			<a name="3"></a>
+			<h5>LCD Graphics methods</h5>
+			
+			<p>As a graphics display, the NXT LCD screen is 100 pixels wide and 64 pixels deep. 
+			It is addressed using (x, y) pixel co-ordinates in the same way as for text co-ordinates:</p>
+			<img src="image001.gif">
+			<p>x ranges from 0 to 99, and y from 0 to 63.</p>
+			
+			<p>To display graphics on the LCD screen, you can use the Graphics class from the package javax.microedition.lcdui.
+			See the <a HREF="http://lejos.sourceforge.net/p_technologies/nxt/nxj/api/javax/microedition/lcdui/Graphics.html">Graphics class API</a>.
+			With this class, you can draw lines, rectangles, arcs, and position strings with pixel accuracy. </p>
+			
+			<p>Example:</p>
+			
+			<div class="CodeBox">
+			<pre><code>
+import javax.microedition.lcdui.Graphics;
+
+public class GraphicsSample {
+	
+  public static void main(String [] options) throws Exception {
+    Graphics g = new Graphics();
+    g.drawLine(5,5,60,60);
+    g.drawRect(62, 10, 25, 35);
+    Thread.sleep(2000);
+  }
+}			
+			</code></pre>
+			</div>
+			
+			<p>There is a set of methods in the LCD class to write to the screen using pixel co-ordinates. 
+			   These are mainly there to support the Graphics class, but can be called directly: </p>
+			<ul class="BlueArrows">
+				<li><p>void drawString(String str,int x, int y, boolean invert)</p>
+					<p>This variant of drawString uses pixel co-ordinates and supports inverting the text drawing white characters on a black background. </p>
+				<li><p>void drawChar(char c,	int x, int y, boolean invert)</p>
+					<p>This draws a character at text co-ordinate (x, y) with optional inversion of the character. </p>
+				<li><p>void setPixel(int rgbColor, int x, int y)</p><p>Set or unset the pixel at (x,y). rgbColor=1 sets the pixel and zero unsets it.
+			</ul>	
+		
+			<!-- WEB TOOL TO GO TO TOP OF THE DOCUMENT -->
+			<p>
+			<a href="#top">Back to top</a>
+			
+			<a name="4"></a>
+			<h4>Buttons</h4>
+			
+			<p>The Button class has four instances, accessed by static fields:</p>
+			<ul class="BlueArrows">
+				<li>Button.ENTER</li>
+				<li>Button.ESCAPE</li>
+				<li>Button.LEFT</li>
+				<li>Button.RIGHT</li>
+			</ul>
+			<p>To test if a	button is pressed, you use:</p>
+			<ul class="BlueArrows">
+				<li><p>boolean isPressed()</p>
+			</ul>
+			<p>Example:</p>
+			<div class="CodeBox">
+			<pre><code>
+import lejos.nxt.*;
+
+public class ButtonPresses {
+  public static void main(String[] args) throws Exception {
+    while (true) {
+      LCD.clear();
+      if (Button.ENTER.isPressed()) LCD.drawString("ENTER", 0, 0);
+      if (Button.ESCAPE.isPressed()) LCD.drawString("ESCAPE", 0, 0);
+      if (Button.LEFT.isPressed()) LCD.drawString("LEFT", 0, 0);
+      if (Button.RIGHT.isPressed()) LCD.drawString("RIGHT", 0, 0);
+    }
+  }
+}
+			</code></pre>
+			</div>
+			
+			<p>To wait for a specific button to be pressed and released, you use:</p>
+			<ul class="BlueArrows">
+				<li><p>void waitForPressAndRelease() throws InterruptedException</p>
+			</ul>
+			
+			<p>Example:</p>
+			<div class="CodeBox">
+			<pre><code>
+import lejos.nxt.*;
+
+public class ButtonTest
+{
+	public static void main (String[] args)
+	throws Exception
+	{
+		Button.ENTER.waitForPressAndRelease();		
+		LCD.drawString("Finished", 3, 4);
+		Thread.sleep(2000);
+	}
+}
+			</code></pre></div>
+
+			<p>To wait for any button to be pressed, you use:</p>
+			<ul class="BlueArrows">
+				<li><p>static int waitForPress()</p><p>The returns the id code of the button that is pressed.</p></li>
+			</ul>
+			<p><b>button&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			ENTER&nbsp;&nbsp;&nbsp;&nbsp; LEFT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			RIGHT&nbsp;&nbsp;&nbsp;&nbsp; ESCAPE</b></p>
+			<p><b>Code&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			4&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 8</b></p>
+			<p>To specify a listener to listen for button events for this button, you: use</p>
+			<ul class="BlueArrows">
+				<li><p>void	addButtonListener (ButtonListener aListener)</p><p>See &ldquo;Listeners and Events&rdquo; for how button listeners work.</p>
+			</ul>
+			<p>To read the current state of all the buttons, you use:</p>
+			<ul class="BlueArrows">
+				<li><p>static int readButtons()</p><p>The return value is the sum of the codes of the buttons that are pressed. </p>
+			</ul>
+			
+			<!-- WEB TOOL TO GO TO TOP OF THE DOCUMENT -->
+			<p>
+			<a href="#top">Back to top</a>
+
+
+			<a name="5"></a>
+			<h4>Sound</h4>
+
+			<p>This class controls the single speaker so it has no instances and all the methods are static.</p>
+			<p>To play a single tone, use</p>
+			<ul class="BlueArrows">
+				<li><p>void playTone(int aFrequency, int aDuration)</p>
+			</ul>
+			
+			<p>Example:</p>
+			<div class="CodeBox">
+			<pre><code>
+import lejos.nxt.*;
+
+public class PlayTones {
+
+     private static final short [] note = {2349,115, 0,5, 1760,165, 0,35};
+
+     public static void main(String [] args) throws Exception {
+        for(int i=0;i &lt;note.length; i+=2) {
+           short w = note[i+1];
+           int n = note[i];
+           if (n != 0) Sound.playTone(n, w*10);
+           Thread.sleep(w*10);
+        }
+     }
+  }
+			</code></pre>
+			</div>
+			<p>There are two ways to play system sounds. One is:</p>
+			<ul class="BlueArrows">
+				<li><p>void	systemSound (boolean aQueued, int aCode)</p>
+				<p>The aQueued parameter is ignored on the NXT, it is here to be backwards compatible with the RXC.</p>
+			</ul>
+			<p>The values of code are:</p>
+			<p>code = 0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Short beep<br/>
+			code = 1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Double beep<br/>
+		    code = 2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Descending arpeggio<br/>
+			code = 3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Ascending arpeggio<br/>
+			code = 4&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Long, low buzz</p>
+
+			<p>Individual methods to play a particular system sound, if you don&rsquo;t	remember the code, are</p>
+			<ul class="BlueArrows">
+				<li><p>void	beep()</p>
+				<li><p>void twoBeeps()</p>
+				<li><p>void beepSequence()</p>
+				<li><p>void beepSequenceUp()</p>
+				<li><p>void buzz();int playSample(File aWAVfile)</p>
+				<li><p>int playSample(File aWAVfile, int volume) 
+				</p>
+			</ul>
+
+			<p>There is also a method to produce a rest when playing a tune; time in milliseconds</p>
+			<ul class="BlueArrows">
+				<li><p>void	pause(int time)</p><p>You can use this method anytime you want your
+				program wait, and don&rsquo;t want to bother with the try/catch block required by Thread.sleep().</p></li>
+			</ul>
+
+			<p>leJOS NXJ has methods that can also play 8-bit WAV files:</p>
+			<ul class="BlueArrows">
+				<li><p>int playSample(File aWAVfile)</p>
+				<li><p>int playSample(File aWAVfile, int volume)</p>
+			</ul>
+			<p>The return value of milliseconds the sample will play for or &lt; 0 if there	is an error.</p>
+
+			<p>To play a musical note, use:</p>
+			<ul class="BlueArrows">
+				<li><p>void playNote(int[] inst,int freq, int len)</p>
+				<p>The <i>inst</i> array contains the attack,
+				decay, sustain and release  parameters for the note. The
+				static constants for some predefined instruments are: FLUTE,
+				PIANO  and XYLOPHONE. You can also experiment with defining you own. </p>
+			</ul>
+
+			<!-- WEB TOOL TO GO TO TOP OF THE DOCUMENT -->
+			<p>
+			<a href="#top">Back to top</a>
+			
+			<a name="6"></a>
+			<h4>Battery</h4>
+			
+			<p>There are two static methods to get the battery voltage:</p>
+			<ul class="BlueArrows">
+				<li><p>int getVoltageMilliVolt()</p>
+				<li><p>float getVoltage()</p>
+			</ul>
+			
+			<p>Example:</p>
+			<div class="CodeBox">
+			<pre><code>
+import lejos.nxt.*;
+
+public class BatteryTest {
+  public static void main(String[] args) throws Exception {
+    LCD.drawString("Battery: " + Battery.getVoltage(), 0, 0);
+    Thread.sleep(2000);
+  }
+}
+			</code></pre>
+			</div>			
+			
+			<!-- WEB TOOL TO GO TO TOP OF THE DOCUMENT -->
+			<p>
+			<a href="#top">Back to top</a>
+			
+			<a name="7"></a>
+			<h4>Sensors</h4>
+			
+			<p>The NXT comes with four sensors; the touch sensor, the sound sensor, the light
+			sensor and the ultrasonic sensor. leJOS NXJ provides software
+			abstractions of all these sensor types, as well as many provided
+			by third parties.</p>
+			<p>A physical sensor must be connected to a port, and the sensor object must
+			know which port this is. To provide this information, you
+			create an instance of the sensor, and pass this information in its
+			constructor. The possibilities are: SensorPort.S1, S2, S3 or
+			S4.</p>
+			
+			<a name="8"></a>
+			<h5>Touch Sensor</h5>
+			
+			<p>To use a touch sensor, you create an instance of it, using the constructor:</p>
+			<ul class="BlueArrows">
+				<li><p>TouchSensor(SensorPort port)</p>
+			</ul>
+			<p>To test if the touch sensor is pressed, you use the isPressed() method:</p>
+			<ul class="BlueArrows">
+				<li><p>boolean isPressed()</p>
+			</ul>
+			
+			<p>Example:</p>
+			<div class="CodeBox">
+			<pre><code>
+import lejos.nxt.*;
+
+public class TouchTest {
+  public static void main(String[] args) throws Exception {
+    TouchSensor touch = new TouchSensor(SensorPort.S1);
+
+    while (!touch.isPressed() ;
+    LCD.drawString("Finished", 3, 4);
+  }
+}
+
+			</code></pre>
+			</div>			
+			
+			<!-- WEB TOOL TO GO TO TOP OF THE DOCUMENT -->
+			<p>
+			<a href="#top">Back to top</a>
+			
+			<a name="9"></a>
+			<h5>Light Sensor</h5>
+
+			<p>To use a light sensor, you create an instance of it using the constructor:</p>
+			<ul class="BlueArrows">
+				<li><p>public LightSensor(SensorPort port)</p>
+			</ul>
+
+			<p>Example:</p>
+			<div class="CodeBox">
+			<pre><code>
+import lejos.nxt.*;
+
+public class LightTest {
+  public static void main(String[] args) throws Exception {
+    LightSensor light = new LightSensor(SensorPort.S1);
+
+    while (true) {
+      LCD.drawInt(light.readValue(), 4, 0, 0);
+      LCD.drawInt(light.readNormalizedValue(), 4, 0, 1);
+      LCD.drawInt(SensorPort.S1.readRawValue(), 4, 0, 2);
+      LCD.drawInt(SensorPort.S1.readValue(), 4, 0, 3);
+    }
+  }
+}			
+			</code></pre>
+			</div>			
+			
+			<!-- WEB TOOL TO GO TO TOP OF THE DOCUMENT -->
+			<p>
+			<a href="#top">Back to top</a>
+			
+			<a name="10"></a>
+			<h5>Sound Sensor</h5>
+
+			<p>The sound sensor supports two modes: DB and DBA. These modes
+			give different frequency response, so that it may be
+			possible to get an idea of the frequency of a sound by switching
+			between modes.</p>
+			
+			<p>There are two constructors:</p>
+			<ul class="BlueArrows">
+				<li><p>SoundSensor(SensorPort port)</p><p>creates a sound sensor using DB mode.</p>
+				<li><p>SoundSensor(SensorPort port, dba)</p><p>creates a sound sensor using DBA mode if the second parameter is <i><b>true</b></i>.</p>
+			</ul>
+			<p>You can switch modes with:</p>
+			<ul class="BlueArrows">
+				<li><p>void setDBA(boolean dba)</p>
+			</ul>
+
+			<p>Example using DB mode only:</p>
+			<p>The above example gives a graphical display of the way the sound reading varies over a two-second period.</p>
+			
+			<div class="CodeBox">
+			<pre><code>
+import lejos.nxt.*;
+
+public class SoundScope {
+  public static void main(String[] args) throws Exception {
+    SoundSensor sound = new SoundSensor(SensorPort.S1);
+
+    while (!Button.ESCAPE.isPressed()) {
+      LCD.clear();
+      for (int i = 0; i < 100; i++) {
+        LCD.setPixel(1, i, 60 - (sound.readValue() / 2));
+        Thread.sleep(20);
+      }
+    }
+  }
+}
+			</code></pre>
+			</div>			
+			
+			<!-- WEB TOOL TO GO TO TOP OF THE DOCUMENT -->
+			<p>
+			<a href="#top">Back to top</a>
+			
+			<a name="11"></a>
+			<h5>Ultrasonic Sensor</h5>
+
+			<p>To create an instance, use the constructor:</p>
+			<ul class="BlueArrows">
+				<li><p>	UltrasonicSensor( Port aSensorPort)</p>
+			</ul>
+			<p>The sensor operates in two modes, continuous (defalt) and ping. When in
+			continuous mode the sensor sends out pings as often as it can and
+			the most recently obtained result is available via a call to</p>
+			<ul class="BlueArrows">
+				<li><p>int getDistance()</p><p>The return value is in centimeters. If
+					no echo was detected, the returned value is 255. The
+					maximum range of the sensor is about 170 cm.</p>
+			</ul>
+			
+								
+			<p>Example:</p>
+			<div class="CodeBox">
+			<pre><code>
+import lejos.nxt.*;
+
+public class SonicTest {
+  public static void main(String[] args) throws Exception {
+    UltrasonicSensor sonic = new UltrasonicSensor(SensorPort.S1);
+
+    while (!Button.ESCAPE.isPressed()) {
+      LCD.clear();
+      LCD.drawString(sonic.getVersion(), 0, 0);
+      LCD.drawString(sonic.getProductID(), 0, 1);
+      LCD.drawString(sonic.getSensorType(), 0, 2);
+      LCD.drawInt(sonic.getDistance(), 0, 3);
+    }
+  }
+}			
+			</code></pre>
+			</div>
+			<p>When in ping	mode, a ping is sent only when a call is made to</p>
+			<ul class="BlueArrows">
+				<li><p>void ping()</p><p>This sets the sensor in ping mode and sends a
+							single ping and up to 8 echoes are captured. These may be
+							read by making a call to</p>
+				<li><p>int readDistances(int [] distances)</p><p>
+						    You provide an integer
+							array of length that contains the data after the method returns.
+							A delay of approximately 20ms is required between the call to
+							ping and getDistances. This delay is not included in the method.
+							Calls to getDistances before this period may result in an error
+							or no data being returned. The normal getDistance call may also
+							be used with ping, returning information for the first echo.
+							<br/>Calling ping() will disable the default
+							continuous mode. Toto switch back to continuous mode, call</p>
+				<li><p>int continuous()</p>
+			</ul>	
+				
+			<h5>Program: multiple echoes</h5>
+					
+			<p>Write a program that displays the distances from multiple echoes in a
+				column. The program should make four calls to ping(), and display
+				the four columns of results, then wait for a button press.
+				Exit if the ESCAPE button was pressed. </p>
+
+			<a href="USPingTest.htm" target="_blank">Solution</a>
+
+			<!-- WEB TOOL TO GO TO TOP OF THE DOCUMENT -->
+			<p>
+			<a href="#top">Back to top</a>
+			<p/>
+
+        	<div class="NavBit">
+                <a target="_top" href="../Preliminaries/Intro.htm">«&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../ListenersAndEvents/Listeners_Events.htm">Next&nbsp;»</a>
+        	</div>
+		<td>
+		</tr>
+	</table>
+</body>
+</html>
