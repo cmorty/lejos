@@ -1,12 +1,15 @@
 
-  COMP_PATH   := /opt/arm-elf-tools
 
-  TARGET_PREFIX :=arm-elf
-  CC       := $(shell export PATH="$(COMP_PATH)/bin:$$PATH"; which "$(TARGET_PREFIX)-gcc")
-  AS       := $(shell export PATH="$(COMP_PATH)/bin:$$PATH"; which "$(TARGET_PREFIX)-as")
-  AR       := $(shell export PATH="$(COMP_PATH)/bin:$$PATH"; which "$(TARGET_PREFIX)-ar")
-  LD       := $(shell export PATH="$(COMP_PATH)/bin:$$PATH"; which "$(TARGET_PREFIX)-ld")
-  OBJCOPY  := $(shell export PATH="$(COMP_PATH)/bin:$$PATH"; which "$(TARGET_PREFIX)-objcopy")
+  COMP_PATH     := /opt/arm-elf-tools
+  TARGET_PREFIX := arm-elf
+
+  pathsearch = $(if $(wildcard $(2)/$(1)),$(2)/$(1),$(1))
+
+  CC       := $(call pathsearch,$(TARGET_PREFIX)-gcc,$(COMP_PATH)/bin)
+  AS       := $(call pathsearch,$(TARGET_PREFIX)-as,$(COMP_PATH)/bin)
+  AR       := $(call pathsearch,$(TARGET_PREFIX)-ar,$(COMP_PATH)/bin)
+  LD       := $(call pathsearch,$(TARGET_PREFIX)-ld,$(COMP_PATH)/bin)
+  OBJCOPY  := $(call pathsearch,$(TARGET_PREFIX)-objcopy,$(COMP_PATH)/bin)
 
   LIBFLAGS := -mthumb-interwork
   GCC_LIB  := $(shell "$(CC)" $(LIBFLAGS) -print-libgcc-file-name)
