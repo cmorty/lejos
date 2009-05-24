@@ -38,6 +38,9 @@ _start:
 	ldr r6, =EFC_BASE
 	ldr r5, =ROM_BASE
 	ldr r4, page_data_adr
+	
+	// how to get the address of some label:
+	// adr r4, page_data
 
 wait_loop1:
 	// wait as long as lowest bit is NOT set
