@@ -1,9 +1,10 @@
-#all:
-#	gcc -Wall -O0 -mcpu=arm7tdmi-s -mapcs -mthumb-interwork -o flash.o flash.c -nostartfiles -nodefaultlibs -nostdlib -Wl,-e,main
-#	objcopy -Obinary -j.text flash.o flash.bin
-#	objdump --disassemble-all -bbinary -marm7tdmi flash.bin > flash.asm
-#
-TOOL_PREFIX=arm-elf-
+TARGET_PREFIX := arm-elf
+COMP_PATH     := /opt/arm-elf-tools
+
+pathsearch = $(if $(wildcard $(1)/$(2)),$(1)/$(2),$(2))
+CC        := $(call pathsearch,$(COMP_PATH)/bin,$(TARGET_PREFIX)-gcc)
+OBJCOPY   := $(call pathsearch,$(COMP_PATH)/bin,$(TARGET_PREFIX)-objcopy)
+OBJDUMP   := $(call pathsearch,$(COMP_PATH)/bin,$(TARGET_PREFIX)-objdump)
 
 .PHONY: all clean
 
@@ -13,13 +14,13 @@ clean:
 	rm -f flash flash.asm flash.bin flash.bin.asm
 
 %: %.S
-	$(TOOL_PREFIX)gcc -nostdlib -Wall -mcpu=arm7tdmi -mfloat-abi=soft -mlittle-endian -o '$@' '$<'
+	$(CC) -nostdlib -Wall -mcpu=arm7tdmi -mfloat-abi=soft -mlittle-endian -o '$@' '$<'
 
 %.bin: %
-	$(TOOL_PREFIX)objcopy -O binary '$<' '$@'
+	$(OBJCOPY) -O binary '$<' '$@'
 
 %.bin.asm: %.bin
-	$(TOOL_PREFIX)objdump -D -b binary -m arm7tdmi --endian=little '$<' >'$@'	
+	$(OBJDUMP) -D -b binary -m arm7tdmi --endian=little '$<' >'$@'	
 
 %.asm: %
-	$(TOOL_PREFIX)objdump -d -s -m arm7tdmi '$<' >'$@'	
+	$(OBJDUMP) -d -s -m arm7tdmi '$<' >'$@'	
