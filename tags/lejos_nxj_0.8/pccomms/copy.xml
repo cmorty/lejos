@@ -1,0 +1,75 @@
+<!--
+  =============================================================
+  Buildfile for copying common classes from the classes project
+  =============================================================
+-->
+<project name="copy" default="copy" basedir=".">
+  	<target name="copy"  description="Copy source of common classes">
+  		<mkdir dir="lejos/localization"/>
+  		<copy todir=".">
+  			<fileset dir="../classes">
+  				<include name="lejos/localization/Line.java"/>
+  				<include name="lejos/localization/LineMap.java"/>
+  				<include name="lejos/localization/Map.java"/>
+  				<include name="lejos/localization/Move.java"/>
+  				<include name="lejos/localization/Particle.java"/>
+  				<include name="lejos/localization/ParticleSet.java"/>
+  				<include name="lejos/localization/Point.java"/>
+  				<include name="lejos/localization/Pose.java"/>
+  				<include name="lejos/localization/RangeReadings.java"/>
+  				<include name="lejos/localization/package.html"/>
+  			</fileset>
+  		</copy>
+  		<mkdir dir="lejos/nxt"/>
+  		<copy todir=".">
+  			<fileset dir="../classes">
+  				<include name="lejos/nxt/ADSensorPort.java"/>
+  				<include name="lejos/nxt/BasicMotor.java"/>
+  				<include name="lejos/nxt/BasicMotorPort.java"/>
+  				<include name="lejos/nxt/BasicSensorPort.java"/>
+  				<include name="lejos/nxt/LegacySensorPort.java"/>
+  				<include name="lejos/nxt/LightSensor.java"/>
+  				<include name="lejos/nxt/SensorConstants.java"/>
+  				<include name="lejos/nxt/SoundSensor.java"/>
+  				<include name="lejos/nxt/TouchSensor.java"/>
+  				<include name="lejos/nxt/TachoMotorPort.java"/>
+  				<include name="lejos/nxt/Tachometer.java"/>
+  				<include name="lejos/nxt/UltrasonicSensor.java"/>
+  				<include name="lejos/nxt/package.html"/>
+  			</fileset>
+  		</copy>
+  		<mkdir dir="lejos/nxt/remote"/>
+  		<copy todir=".">
+  			<fileset dir="../classes">
+  				<include name="lejos/nxt/remote/AsciizCodec.java"/>
+  				<include name="lejos/nxt/remote/DeviceInfo.java"/>
+  				<include name="lejos/nxt/remote/ErrorMessages.java"/>
+  				<include name="lejos/nxt/remote/FileInfo.java"/>
+  				<include name="lejos/nxt/remote/FirmwareInfo.java"/>
+  				<include name="lejos/nxt/remote/InputValues.java"/>
+  				<include name="lejos/nxt/remote/NXTCommand.java"/>
+  				<include name="lejos/nxt/remote/NXTCommRequest.java"/>
+  				<include name="lejos/nxt/remote/NXTProtocol.java"/>
+  				<include name="lejos/nxt/remote/OutputState.java"/>
+  				<include name="lejos/nxt/remote/RemoteBattery.java"/>
+  				<include name="lejos/nxt/remote/RemoteMotorPort.java"/>
+  				<include name="lejos/nxt/remote/package.html"/>
+  			</fileset>
+  		</copy>
+  		<mkdir dir="lejos/nxt/addon"/>
+  		<copy todir=".">
+  			<fileset dir="../classes">
+  				<include name="lejos/nxt/addon/*.java"/>
+  				<exclude name="lejos/nxt/addon/RFIDSensor.java"/>
+  				<include name="lejos/nxt/addon/package.html"/>
+  			</fileset>
+  		</copy>
+  		<mkdir dir="lejos/rcxcomm"/>
+  		<copy todir=".">
+  			<fileset dir="../classes">
+  				<include name="lejos/rcxcomm/*.java"/>
+  				<include name="lejos/rcxcomm/package.html"/>
+  			</fileset>
+  		</copy>
+  	</target>
+</project>
