@@ -33,7 +33,7 @@ CFLAGS = -c -ffreestanding -fsigned-char \
 	-ffunction-sections -fdata-sections \
     $(SVNDEF) -DMAJOR_VERSION=$(MAJOR_VERSION) -DMINOR_VERSION=$(MINOR_VERSION)
 
-LDFLAGS = -Map $@.map -L$(LIBPREFIX) -lm -cref --gc-sections
+LDFLAGS = -Map $@.map -cref --gc-sections
 
 ASFLAGS = -mthumb-interwork -mfloat-abi=soft
 
