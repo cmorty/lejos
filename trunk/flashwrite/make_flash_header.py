@@ -10,10 +10,16 @@
 
 from sys import argv
 
-if len(argv) == 2:
+if len(argv) >= 2:
     fname = argv[1]
 else:
     fname = 'flash.bin'
+    
+if len(argv) >= 3:
+    ofname = argv[2]
+else:
+    ofname = '../pccomms/lejos/pc/comm/FlashWrite.java'
+
 
 fwbin = file(fname)
 
@@ -43,9 +49,9 @@ len_data = "0x%X" % len(data)
 
 # Now create the java version
 data_str = ', '.join(java_data)
-out = file('../pccomms/lejos/pc/comm/FlashWrite.java', 'w')
+out = file(ofname, 'w')
 out.write('package lejos.pc.comm;\n');
-out.write('/**\n  * Machine-generated file. Do not modify.\n**/\n\n')
+out.write('/**\n * Machine-generated file. Do not modify.\n */\n')
 out.write('interface FlashWrite {\n  static final byte[] CODE = {')
 out.write(data_str)
 out.write('\n  };\n}\n')
