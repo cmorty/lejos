@@ -1,26 +1,30 @@
+BASE_ABI_FLAGS := -mcpu=arm7tdmi -mlittle-endian -mfloat-abi=soft -mthumb-interwork
+LIB_ABI_FLAGS := $(BASE_ABI_FLAGS)
+
+# add -mthumb to LIB_ABI_FLAGS to use thumb libraries
+
 TARGET_PREFIX := arm-elf
-COMP_PATH     := /opt/arm-elf-tools
+COMP_PATH     := /opt/$(TARGET_PREFIX)-tools
 
-pathsearch = $(if $(wildcard $(1)/$(2)),$(abspath $(1)/$(2)),$(2))
-CC        := $(call pathsearch,$(COMP_PATH)/bin,$(TARGET_PREFIX)-gcc)
-AS        := $(call pathsearch,$(COMP_PATH)/bin,$(TARGET_PREFIX)-as)
-AR        := $(call pathsearch,$(COMP_PATH)/bin,$(TARGET_PREFIX)-ar)
-LD        := $(call pathsearch,$(COMP_PATH)/bin,$(TARGET_PREFIX)-ld)
-OBJCOPY   := $(call pathsearch,$(COMP_PATH)/bin,$(TARGET_PREFIX)-objcopy)
-OBJDUMP   := $(call pathsearch,$(COMP_PATH)/bin,$(TARGET_PREFIX)-objdump)
+prefer_path   = $(if $(wildcard $(1)/$(2)),$(abspath $(1)/$(2)),$(2))
+get_prog_path = $(abspath $(shell "$(CC)" -print-prog-name=$(1)))
+get_lib_path  = $(abspath $(shell "$(CC)" $(LIB_ABI_FLAGS) -print-file-name=$(1)))
 
-LIBFLAGS := -mthumb-interwork
-GCC_LIB  := $(realpath $(shell "$(CC)" $(LIBFLAGS) -print-libgcc-file-name))
-LIBC     := $(realpath $(shell "$(CC)" $(LIBFLAGS) -print-file-name=libc.a))
+CC        := $(call prefer_path,$(COMP_PATH)/bin,$(TARGET_PREFIX)-gcc)
+AS        := $(call get_prog_path,as)
+LD        := $(call get_prog_path,ld)
+OBJCOPY   := $(call get_prog_path,objcopy)
+OBJDUMP   := $(call get_prog_path,objdump)
+
+LIBGCC    := $(call get_lib_path,libgcc.a)
+LIBC      := $(call get_lib_path,libc.a)
 
 .PHONY: EnvironmentMessage
 EnvironmentMessage:
 	@echo " CC      $(CC)"
 	@echo " AS      $(AS)"
-	@echo " AR      $(AR)"
 	@echo " LD      $(LD)"
 	@echo " OBJCOPY $(OBJCOPY)"
 	@echo " OBJDUMP $(OBJDUMP)"
-	@echo " LIBGCC  $(GCC_LIB)"
+	@echo " LIBGCC  $(LIBGCC)"
 	@echo " LIBC    $(LIBC)"
-
