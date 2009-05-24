@@ -12,8 +12,8 @@
   OBJCOPY  := $(call pathsearch,$(TARGET_PREFIX)-objcopy,$(COMP_PATH)/bin)
 
   LIBFLAGS := -mthumb-interwork
-  GCC_LIB  := $(shell "$(CC)" $(LIBFLAGS) -print-libgcc-file-name)
-  LIBC     := $(shell "$(CC)" $(LIBFLAGS) -print-file-name=libc.a)
+  GCC_LIB  := $(realpath $(shell "$(CC)" $(LIBFLAGS) -print-libgcc-file-name))
+  LIBC     := $(realpath $(shell "$(CC)" $(LIBFLAGS) -print-file-name=libc.a))
 
 PHONY: EnvironmentMessage
 EnvironmentMessage:
