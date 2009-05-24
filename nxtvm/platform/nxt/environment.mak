@@ -1,17 +1,16 @@
 
-  GCC_VERSION :=4.0.2
-  COMP_PATH   := /opt/arm-elf-tools/
-  LIBPREFIX   := $(COMP_PATH)/arm-elf/lib
-  GCC_LIB     := $(COMP_PATH)/lib/gcc/arm-elf/$(GCC_VERSION)/interwork/libgcc.a
-  LIBC        := $(COMP_PATH)/arm-elf/lib/interwork/libc.a
+  COMP_PATH   := /opt/arm-elf-tools
 
   TARGET_PREFIX :=arm-elf
-  INC_PATH := $(COMP_PATH)/$(TARGET_PREFIX)/include
-  CC       := $(COMP_PATH)/bin/$(TARGET_PREFIX)-gcc
-  AS       := $(COMP_PATH)/bin/$(TARGET_PREFIX)-as
-  AR       := $(COMP_PATH)/bin/$(TARGET_PREFIX)-ar
-  LD       := $(COMP_PATH)/bin/$(TARGET_PREFIX)-ld
-  OBJCOPY  := $(COMP_PATH)/bin/$(TARGET_PREFIX)-objcopy
+  CC       := $(shell export PATH="$(COMP_PATH)/bin:$$PATH"; which "$(TARGET_PREFIX)-gcc")
+  AS       := $(shell export PATH="$(COMP_PATH)/bin:$$PATH"; which "$(TARGET_PREFIX)-as")
+  AR       := $(shell export PATH="$(COMP_PATH)/bin:$$PATH"; which "$(TARGET_PREFIX)-ar")
+  LD       := $(shell export PATH="$(COMP_PATH)/bin:$$PATH"; which "$(TARGET_PREFIX)-ld")
+  OBJCOPY  := $(shell export PATH="$(COMP_PATH)/bin:$$PATH"; which "$(TARGET_PREFIX)-objcopy")
+
+  LIBFLAGS := -mthumb-interwork
+  GCC_LIB  := $(shell "$(CC)" $(LIBFLAGS) -print-libgcc-file-name)
+  LIBC     := $(shell "$(CC)" $(LIBFLAGS) -print-file-name=libc.a)
 
 PHONY: EnvironmentMessage
 EnvironmentMessage:
@@ -20,4 +19,6 @@ EnvironmentMessage:
 	@echo " AR      $(AR)"
 	@echo " LD      $(LD)"
 	@echo " OBJCOPY $(OBJCOPY)"
+	@echo " LIBGCC  $(GCC_LIB)"
+	@echo " LIBC    $(LIBC)"
 
