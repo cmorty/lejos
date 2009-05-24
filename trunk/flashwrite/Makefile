@@ -1,7 +1,7 @@
 TARGET_PREFIX := arm-elf
 COMP_PATH     := /opt/arm-elf-tools
 
-pathsearch = $(if $(wildcard $(1)/$(2)),$(1)/$(2),$(2))
+pathsearch = $(if $(wildcard $(1)/$(2)),$(abspath $(1)/$(2)),$(2))
 CC        := $(call pathsearch,$(COMP_PATH)/bin,$(TARGET_PREFIX)-gcc)
 OBJCOPY   := $(call pathsearch,$(COMP_PATH)/bin,$(TARGET_PREFIX)-objcopy)
 OBJDUMP   := $(call pathsearch,$(COMP_PATH)/bin,$(TARGET_PREFIX)-objdump)
