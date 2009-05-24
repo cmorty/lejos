@@ -12,19 +12,22 @@ OBJDUMP   := $(call get_prog_path,objdump)
 
 .PHONY: all clean
 
-all: flash.elf flash.elf.asm flash.bin flash.bin.asm
+all: flash.elf flash.elf.asm flash.bin flash.bin.asm FlashWrite.java
 	
 clean:
-	rm -f flash.elf flash.elf.asm flash.bin flash.bin.asm
+	rm -f flash.elf flash.elf.asm flash.bin flash.bin.asm FlashWrite.java 
 
+FlashWrite.java: flash.bin
+	python make_flash_header.py '$<' '$@'
+	
 %.elf: %.S
 	$(CC) $(BASE_ABI_FLAGS) -Wall -nostdlib -o '$@' '$<'
 
 %.bin: %.elf
 	$(OBJCOPY) -O binary '$<' '$@'
-
+	
 %.elf.asm: %.elf
 	$(OBJDUMP) -d -s -m arm7tdmi '$<' >'$@'	
 
 %.bin.asm: %.bin
-	$(OBJDUMP) -D -b binary -m arm7tdmi --endian=little '$<' >'$@'	
+	$(OBJDUMP) -D -b binary -m arm7tdmi --endian=little '$<' >'$@'
