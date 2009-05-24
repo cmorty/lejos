@@ -19,8 +19,8 @@ clean:
 %.bin: %.elf
 	$(OBJCOPY) -O binary '$<' '$@'
 
-%.bin.asm: %.bin
-	$(OBJDUMP) -D -b binary -m arm7tdmi --endian=little '$<' >'$@'	
-
 %.elf.asm: %.elf
 	$(OBJDUMP) -d -s -m arm7tdmi '$<' >'$@'	
+
+%.bin.asm: %.bin
+	$(OBJDUMP) -D -b binary -m arm7tdmi --endian=little '$<' >'$@'	
