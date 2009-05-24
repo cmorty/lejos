@@ -1,10 +1,14 @@
-TARGET_PREFIX := arm-elf
-COMP_PATH     := /opt/arm-elf-tools
+BASE_ABI_FLAGS := -mcpu=arm7tdmi -mlittle-endian -mfloat-abi=soft -mthumb-interwork
 
-pathsearch = $(if $(wildcard $(1)/$(2)),$(abspath $(1)/$(2)),$(2))
-CC        := $(call pathsearch,$(COMP_PATH)/bin,$(TARGET_PREFIX)-gcc)
-OBJCOPY   := $(call pathsearch,$(COMP_PATH)/bin,$(TARGET_PREFIX)-objcopy)
-OBJDUMP   := $(call pathsearch,$(COMP_PATH)/bin,$(TARGET_PREFIX)-objdump)
+TARGET_PREFIX := arm-elf
+COMP_PATH     := /opt/$(TARGET_PREFIX)-tools
+
+prefer_path   = $(if $(wildcard $(1)/$(2)),$(abspath $(1)/$(2)),$(2))
+get_prog_path = $(abspath $(shell "$(CC)" -print-prog-name=$(1)))
+
+CC        := $(call prefer_path,$(COMP_PATH)/bin,$(TARGET_PREFIX)-gcc)
+OBJCOPY   := $(call get_prog_path,objcopy)
+OBJDUMP   := $(call get_prog_path,objdump)
 
 .PHONY: all clean
 
@@ -14,7 +18,7 @@ clean:
 	rm -f flash.elf flash.elf.asm flash.bin flash.bin.asm
 
 %.elf: %.S
-	$(CC) -nostdlib -Wall -mcpu=arm7tdmi -mfloat-abi=soft -mlittle-endian -o '$@' '$<'
+	$(CC) $(BASE_ABI_FLAGS) -Wall -nostdlib -o '$@' '$<'
 
 %.bin: %.elf
 	$(OBJCOPY) -O binary '$<' '$@'
