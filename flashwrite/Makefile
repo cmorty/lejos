@@ -8,19 +8,19 @@ OBJDUMP   := $(call pathsearch,$(COMP_PATH)/bin,$(TARGET_PREFIX)-objdump)
 
 .PHONY: all clean
 
-all: flash flash.asm flash.bin flash.bin.asm
+all: flash.elf flash.elf.asm flash.bin flash.bin.asm
 	
 clean:
-	rm -f flash flash.asm flash.bin flash.bin.asm
+	rm -f flash.elf flash.elf.asm flash.bin flash.bin.asm
 
-%: %.S
+%.elf: %.S
 	$(CC) -nostdlib -Wall -mcpu=arm7tdmi -mfloat-abi=soft -mlittle-endian -o '$@' '$<'
 
-%.bin: %
+%.bin: %.elf
 	$(OBJCOPY) -O binary '$<' '$@'
 
 %.bin.asm: %.bin
 	$(OBJDUMP) -D -b binary -m arm7tdmi --endian=little '$<' >'$@'	
 
-%.asm: %
+%.elf.asm: %.elf
 	$(OBJDUMP) -d -s -m arm7tdmi '$<' >'$@'	
