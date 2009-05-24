@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir=".." name="pctools-IDE">
+    <target name="run-selected-file-in-pctools">
+        <fail unless="run.class">Must set property 'run.class'</fail>
+        <java classname="${run.class}" failonerror="true" fork="true">
+            <classpath>
+                <pathelement path="lib/pctools.jar;../pccomms/lib/pccomm.jar;../pccomms/3rdparty/lib/bluecove-gpl.jar;../pccomms/3rdparty/lib/bluecove.jar;../jtools/3rdparty/lib/commons-cli.jar;../jtools/lib/jtools.jar"/>
+            </classpath>
+        </java>
+    </target>
+</project>
