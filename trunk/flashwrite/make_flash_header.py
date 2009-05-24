@@ -21,8 +21,6 @@ else:
     ofname = '../pccomms/lejos/pc/comm/FlashWrite.java'
 
 
-fwbin = file(fname)
-
 # Build the char representation in memory
 
 def char_by_char(f):
@@ -32,20 +30,13 @@ def char_by_char(f):
             raise StopIteration
         yield d
 
-data = []
+fwbin = file(fname)
+
 java_data = []
 for c in char_by_char(fwbin):
-    data.append("0x%s" % c.encode('hex'))
     java_data.append("(byte)0x%s" % c.encode('hex'))
-
-for i in range(0, len(data), 12):
-    data[i] = "\n" + data[i]
-
-for i in range(0, len(data), 8):
+for i in range(0, len(java_data), 6):
     java_data[i] = "\n" + java_data[i]
-
-data_str = ', '.join(data)
-len_data = "0x%X" % len(data)
 
 # Now create the java version
 data_str = ', '.join(java_data)
