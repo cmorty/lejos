@@ -7,6 +7,7 @@
 #define EFC_REG_STATUS  0x68
 #define EFC_REG_COMMAND 0x64
 #define CMD_WRITE_BASE  0x5A000001
+#define PAGEDATA_MAGIC  0x44332211
 
 /**
  * Program Layout:
@@ -38,7 +39,7 @@ _start:
 	ldr r6, =EFC_BASE
 	ldr r5, =ROM_BASE
 	ldr r4, page_data_adr
-	
+
 	// how to get the address of some label:
 	// adr r4, page_data
 
@@ -79,4 +80,4 @@ literals:
 	.ltorg
 
 page_data_adr:
-	.long	0x44332211
+	.long	PAGEDATA_MAGIC

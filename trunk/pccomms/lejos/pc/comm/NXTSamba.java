@@ -13,10 +13,18 @@ public class NXTSamba {
     public static final int PAGE_SIZE = 256;
     public static final int FLASH_BASE = 0x00100000;
     
-    //have to match those defined in the flashwrite helper
-    private static final int ADDR_HELPER = 0x202000;
-    private static final int ADDR_PAGEDATA = 0x202100;
-    private static final int ADDR_PAGENUM = 0x202300;
+    // has to match those defined in the flashwrite helper
+    private static final int PAGEDATA_MAGIC = 0x44332211;
+    private static final int PAGEDATA_OFF = -4;
+    
+    private static final int ADDR_HELPER;
+    private static final int ADDR_PAGEDATA;
+    
+    static
+    {
+    	ADDR_HELPER = 0x202000;
+    	ADDR_PAGEDATA = ADDR_HELPER + FlashWrite.CODE.length;
+    }
     
 	private NXTCommUSB nxtComm = null;
     private String version;
@@ -213,11 +221,13 @@ public class NXTSamba {
      */
     public void writePage(int page, byte[] data, int offset) throws IOException
     {
-        //System.out.println("Write page " + page);
-        byte [] buf = new byte[PAGE_SIZE];
-        System.arraycopy(data, offset, buf, 0, (offset + PAGE_SIZE < data.length ? PAGE_SIZE : data.length - offset));
-        // Write the address to write to
-        writeWord(ADDR_PAGENUM, page);
+    	int copylen = data.length - offset;
+    	if (copylen > PAGE_SIZE)
+    		copylen = PAGE_SIZE;
+        // Generate data chunk (32 bit int pagenum + 256 byte data)
+        byte [] buf = new byte[4 + PAGE_SIZE];
+        System.arraycopy(data, offset, buf, 4, copylen);
+        encodeInt(buf, 0, page);
         // And the data into ram
         writeBytes(ADDR_PAGEDATA, buf);
         // And now use the flash writer to write the data into flash.
@@ -336,7 +346,7 @@ public class NXTSamba {
                     System.out.println("Connected to SAM-BA " + version);
                 }
                 // Now upload the flash writer helper routine
-                writeBytes(ADDR_HELPER, FlashWrite.CODE);
+                writeBytes(ADDR_HELPER, getModifiedHelper());
                 // And set the the clock into PLL/2 mode ready for writing
                 writeWord(0xfffffc30, 0x7);
                 return true;
@@ -350,7 +360,45 @@ public class NXTSamba {
         }
         return false;
 	}
+	
+	private static byte[] getModifiedHelper()
+	{
+		final byte[] code = FlashWrite.CODE;
+		final int len = code.length;
+		
+		byte[] r = new byte[len];
+		System.arraycopy(code, 0, r, 0, len);
+		
+		encodeMagicInt(code, len - PAGEDATA_OFF, PAGEDATA_MAGIC, ADDR_PAGEDATA);
+		
+		return r;
+	}
+	
+	private static void assertMagicInt(byte[] code, int off, int magic)
+	{
+		for (int i = 0; i < 3; i++)
+		{
+			if ((code[off + i] & 0xFF) != (magic & 0xFF))
+				throw new RuntimeException("magic number not found");
+			magic >>>= 8;
+		}
+	}
     
+	private static void encodeInt(byte[] code, int off, int value)
+	{
+		for (int i = 0; i < 3; i++)
+		{
+			code[off + i] = (byte)value;
+			value >>>= 8;
+		}
+	}
+	
+	private static void encodeMagicInt(byte[] code, int off, int magic, int value)
+	{
+		assertMagicInt(code, off, magic);
+		encodeInt(code, off, value);
+	}
+	
     /**
      * Close the device.
      */
