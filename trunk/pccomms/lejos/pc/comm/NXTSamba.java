@@ -382,7 +382,7 @@ public class NXTSamba {
 		byte[] r = new byte[len];
 		System.arraycopy(code, 0, r, 0, len);
 		
-		encodeMagicInt(code, len - PAGEDATA_OFF, PAGEDATA_MAGIC, ADDR_PAGEDATA);
+		encodeMagicInt(code, len + PAGEDATA_OFF, PAGEDATA_MAGIC, ADDR_PAGEDATA);
 		
 		return r;
 	}
@@ -429,6 +429,4 @@ public class NXTSamba {
     {
         return version;
     }
-
-	
 }
