@@ -221,12 +221,26 @@ public class NXTSamba {
      */
     public void writePage(int page, byte[] data, int offset) throws IOException
     {
-    	int copylen = data.length - offset;
-    	if (copylen > PAGE_SIZE)
-    		copylen = PAGE_SIZE;
+    	this.writePage(page, data, offset, data.length - offset);
+    }
+    
+    /**
+     * Write a single page to flash memory. We write the page to ram and then
+     * use the FlashWriter code to transfer this data to flash. The FlashWriter
+     * code must have already been downloaded.
+     * @param page
+     * @param data
+     * @param offset
+     * @param len
+     * @throws java.io.IOException
+     */
+    public void writePage(int page, byte[] data, int offset, int len) throws IOException
+    {
+    	if (len > PAGE_SIZE)
+    		len = PAGE_SIZE;
         // Generate data chunk (32 bit int pagenum + 256 byte data)
         byte [] buf = new byte[4 + PAGE_SIZE];
-        System.arraycopy(data, offset, buf, 4, copylen);
+        System.arraycopy(data, offset, buf, 4, len);
         encodeInt(buf, 0, page);
         // And the data into ram
         writeBytes(ADDR_PAGEDATA, buf);
@@ -244,13 +258,12 @@ public class NXTSamba {
      */
     public void writePages(int first, byte[] data, int start, int len) throws IOException
     {
-        int offset = start;
-        int page = first;
-        while (offset < start + len)
+        while (len > 0)
         {
-            writePage(page, data, offset);
-            page++;
-            offset += PAGE_SIZE;
+            writePage(first, data, start, len);
+            start += PAGE_SIZE;
+            len -= PAGE_SIZE;
+            first++;
         }
     }
 
