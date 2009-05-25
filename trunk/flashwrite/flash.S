@@ -8,6 +8,7 @@
 #define EFC_REG_COMMAND 0x64
 #define CMD_WRITE_BASE  0x5A000001
 #define PAGEDATA_MAGIC  0x44332211
+#define PAGE_SIZE       256;
 
 /**
  * Program Layout:
@@ -54,7 +55,7 @@ copy_page:
 	lsl r3, r3, #22  // r3 := (r3 & 0x3FF) << 8
 	lsr r3, r3, #14
 	add r1, r3, r5
-	add r2, r1, #256 // copy only 256 bytes
+	add r2, r1, #PAGE_SIZE
 copy_loop:
 	ldr r0, [r4], #4
 	str r0, [r1], #4
