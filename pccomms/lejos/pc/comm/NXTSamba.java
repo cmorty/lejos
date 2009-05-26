@@ -85,6 +85,21 @@ public class NXTSamba {
         return ret;
     }
     
+    private int readAnswerWord(int len) throws IOException
+    {
+        byte [] ret = read();
+        if (ret.length < len)
+            throw new IOException("Bad return length");
+        
+        int r = 0;
+        for (int i=len; i>0;)
+        {
+        	r <<= 8;
+        	r |= ret[--i] & 0xFF;
+        }
+        return r;
+    }
+    
     /**
      * Helper function perform a write with timeout.
      * @param data Data to be written to the device.
@@ -131,22 +146,10 @@ public class NXTSamba {
         writeString(command);
     }
     
-    private int sendReadCommand(char cmd, int addr, int len) throws IOException
+    private void sendReadCommand(char cmd, int addr, int len) throws IOException
     {
         String command = cmd + hexFormat(addr, 8) + "," + len + "#";
         writeString(command);
-        
-        byte [] ret = read();
-        if (ret.length < len)
-            throw new IOException("Bad return length");
-        
-        int r = 0;
-        for (int i=len; i>0;)
-        {
-        	r <<= 8;
-        	r |= ret[--i] & 0xFF;
-        }
-        return r;
     }
     
     /**
@@ -210,7 +213,8 @@ public class NXTSamba {
      */
     public int readOctet(int addr) throws IOException
     {
-    	return sendReadCommand(CMD_READ_OCTET, addr, 1);
+    	sendReadCommand(CMD_READ_OCTET, addr, 1);
+    	return readAnswerWord(1);
     }
 
     /**
@@ -221,7 +225,8 @@ public class NXTSamba {
      */
     public int readHalfword(int addr) throws IOException
     {
-    	return sendReadCommand(CMD_READ_HWORD, addr, 2);
+    	sendReadCommand(CMD_READ_HWORD, addr, 2);
+    	return readAnswerWord(2);
     }
 
     /**
@@ -232,7 +237,8 @@ public class NXTSamba {
      */
     public int readWord(int addr) throws IOException
     {
-    	return sendReadCommand(CMD_READ_WORD, addr, 4);
+    	sendReadCommand(CMD_READ_WORD, addr, 4);
+    	return readAnswerWord(4);
     }
 
     /**
