@@ -9,7 +9,18 @@ import java.io.IOException;
  *
  */
 public class NXTSamba {
-
+	
+	private static final char CMD_INIT = 'N';
+	private static final char CMD_GOTO = 'G';
+	private static final char CMD_READ_OCTET = 'o';
+	private static final char CMD_READ_HWORD = 'h';  
+	private static final char CMD_READ_WORD = 'w';
+	private static final char CMD_READ_STREAM = 'R';
+	private static final char CMD_WRITE_OCTET = 'O';
+	private static final char CMD_WRITE_HWORD = 'H';  
+	private static final char CMD_WRITE_WORD = 'W';  
+	private static final char CMD_WRITE_STREAM = 'S';
+	
     public static final int PAGE_SIZE = 256;
     public static final int FLASH_BASE = 0x00100000;
     
@@ -90,32 +101,79 @@ public class NXTSamba {
      */
     private void sendString(String str) throws IOException
     {
-        write(str.getBytes("US-ASCII"));
+    	write(str.getBytes("US-ASCII"));
     }
     
-    /**
-     * Format and send a SAM-BA command.
-     * @param cmd Command character
-     * @param addr Address
-     * @param word Addional parameter
-     * @throws java.io.IOException
-     */
-    private void sendCommand(char cmd, int addr, int word) throws IOException
+    private void sendInitCommand() throws IOException
     {
-        String command = String.format("%c%08X,%08X#", cmd, addr, word);
+    	String command = CMD_INIT + "#";
+        sendString(command);
+    }
+    
+    private void sendGotoCommand(int addr) throws IOException
+    {
+    	String command = CMD_GOTO + hexFormat(addr, 8) + "#";
+        sendString(command);
+    }
+    
+    private void sendStreamCommand(char cmd, int addr, int len) throws IOException
+    {
+    	String command = cmd + hexFormat(addr, 8) + "," + hexFormat(len, 8) + "#";
+        sendString(command);
+    }
+    
+    private void sendWriteCommand(char cmd, int addr, int len, int value) throws IOException
+    {
+    	String command = cmd + hexFormat(addr, 8) + "," + hexFormat(value, 2 * len) + "#";
+        sendString(command);
+    }
+    
+    private void sendReadCommand(char cmd, int addr, int len) throws IOException
+    {
+        String command = cmd + hexFormat(addr, 8) + "," + len + "#";
         sendString(command);
     }
     
     /**
-     * Format and send a SAM-BA command.
-     * @param cmd Command character
-     * @param addr Address
+     * Generated <b>exactly</b> as many hex digits as specified.
+     */
+    private static String hexFormat(int value, int len)
+    {
+    	char[] buf = new char[len];
+    	for (int i=0; i<len; i++)
+    	{
+    		int shift = 4 * (len - i - 1);    		
+    		int c = (value >>> shift) & 0x0F;
+    		if (c < 10)
+    			c += '0';
+    		else
+    			c += 'A' - 10;
+    		
+    		buf[i] = (char)c;
+    	}
+    	return String.valueOf(buf);
+    }
+    
+    /**
+     * Write a 8 bit octet to the specified address.
+     * @param addr
+     * @param val
      * @throws java.io.IOException
      */
-    private void sendCommand(char cmd, int addr) throws IOException
+    public void writeOctet(int addr, int val) throws IOException
     {
-        String command = String.format("%c%08X#", cmd, addr);
-        sendString(command);
+        sendWriteCommand(CMD_WRITE_OCTET, addr, 1, val);
+    }
+
+    /**
+     * Write a 16 bit halfword to the specified address.
+     * @param addr
+     * @param val
+     * @throws java.io.IOException
+     */
+    public void writeHalfword(int addr, int val) throws IOException
+    {
+        sendWriteCommand(CMD_WRITE_HWORD, addr, 2, val);
     }
 
     /**
@@ -126,7 +184,7 @@ public class NXTSamba {
      */
     public void writeWord(int addr, int val) throws IOException
     {
-        sendCommand('W', addr, val);
+        sendWriteCommand(CMD_WRITE_WORD, addr, 4, val);
     }
 
     /**
@@ -137,7 +195,7 @@ public class NXTSamba {
      */
     public int readWord(int addr) throws IOException
     {
-        sendCommand('w', addr, 4);
+    	sendReadCommand(CMD_READ_WORD, addr, 4);
         byte [] ret = read();
         if (ret.length < 4)
             throw new IOException("Bad return length");
@@ -153,7 +211,7 @@ public class NXTSamba {
      */
     public void writeBytes(int addr, byte[] data) throws IOException
     {
-        sendCommand('S', addr, data.length);
+    	sendStreamCommand(CMD_WRITE_STREAM, addr, data.length);
         write(data);
     }
 
@@ -164,7 +222,7 @@ public class NXTSamba {
      */
     public void jump(int addr) throws IOException
     {
-        sendCommand('G', addr);
+        sendGotoCommand(addr);
     }
     
     /**
