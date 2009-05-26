@@ -7,14 +7,13 @@
 #define EFC_REG_STATUS  0x68
 #define EFC_REG_COMMAND 0x64
 #define CMD_WRITE_BASE  0x5A000001
-#define PAGEDATA_MAGIC  0x44332211
-#define PAGE_SIZE       256;
+#define PAGE_SIZE       256
 
 /**
- * Program Layout:
- *	+0x0000 start of program
- *	...
- *	-0x0004	address of page data
+ * Memory Layout:
+ *  stack
+ *	helper code
+ *	page data
  *
  * Page Data Layout:
  *	+0x0000	uint32	page number
@@ -36,13 +35,16 @@
  */
 
 
+//push {r0, r1, r2, r3, r4, r5, r6 }
+//pop {r0, r1, r2, r3, r4, r5, r6 }
+
 _start:
+	// place stack before program and save registers
+	adr sp, _start
+	// load some useful addresses
 	ldr r6, =EFC_BASE
 	ldr r5, =ROM_BASE
-	ldr r4, page_data_adr
-
-	// how to get the address of some label:
-	// adr r4, page_data
+	adr r4, eof
 
 wait_loop1:
 	// wait as long as lowest bit is NOT set
@@ -74,11 +76,11 @@ wait_loop2:
 	beq wait_loop2
 
 return:
+	// return
 	bx lr
 
 literals:
 	// the compiler might store some values here
 	.ltorg
 
-page_data_adr:
-	.long	PAGEDATA_MAGIC
+eof:
