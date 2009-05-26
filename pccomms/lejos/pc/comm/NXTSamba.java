@@ -22,7 +22,7 @@ public class NXTSamba {
     
     static
     {
-    	ADDR_HELPER = 0x202000;
+    	ADDR_HELPER = 0x208000;
     	ADDR_PAGEDATA = ADDR_HELPER + FlashWrite.CODE.length;
     }
     
@@ -389,7 +389,7 @@ public class NXTSamba {
 	
 	private static void assertMagicInt(byte[] code, int off, int magic)
 	{
-		for (int i = 0; i < 3; i++)
+		for (int i = 0; i < 4; i++)
 		{
 			if ((code[off + i] & 0xFF) != (magic & 0xFF))
 				throw new RuntimeException("magic number not found");
@@ -399,7 +399,7 @@ public class NXTSamba {
     
 	private static void encodeInt(byte[] code, int off, int value)
 	{
-		for (int i = 0; i < 3; i++)
+		for (int i = 0; i < 4; i++)
 		{
 			code[off + i] = (byte)value;
 			value >>>= 8;
