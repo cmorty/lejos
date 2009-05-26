@@ -13,10 +13,6 @@ public class NXTSamba {
     public static final int PAGE_SIZE = 256;
     public static final int FLASH_BASE = 0x00100000;
     
-    // has to match those defined in the flashwrite helper
-    private static final int PAGEDATA_MAGIC = 0x44332211;
-    private static final int PAGEDATA_OFF = -4;
-    
     private static final int ADDR_HELPER;
     private static final int ADDR_PAGEDATA;
     
@@ -382,7 +378,7 @@ public class NXTSamba {
 		byte[] r = new byte[len];
 		System.arraycopy(code, 0, r, 0, len);
 		
-		encodeMagicInt(code, len + PAGEDATA_OFF, PAGEDATA_MAGIC, ADDR_PAGEDATA);
+		//encodeMagicInt(code, len + PAGEDATA_OFF, PAGEDATA_MAGIC, ADDR_PAGEDATA);
 		
 		return r;
 	}
