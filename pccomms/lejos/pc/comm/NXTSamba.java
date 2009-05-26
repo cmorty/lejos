@@ -10,8 +10,14 @@ import java.io.IOException;
  */
 public class NXTSamba {
 	
+    public static final int PAGE_SIZE = 256;
+    public static final int FLASH_BASE = 0x00100000;
+    
+	private static final String CHARSET = "iso-8859-1";
+	
 	private static final char CMD_INIT = 'N';
 	private static final char CMD_GOTO = 'G';
+	private static final char CMD_VERBOSE = 'V';
 	private static final char CMD_READ_OCTET = 'o';
 	private static final char CMD_READ_HWORD = 'h';  
 	private static final char CMD_READ_WORD = 'w';
@@ -21,9 +27,6 @@ public class NXTSamba {
 	private static final char CMD_WRITE_WORD = 'W';  
 	private static final char CMD_WRITE_STREAM = 'S';
 	
-    public static final int PAGE_SIZE = 256;
-    public static final int FLASH_BASE = 0x00100000;
-    
     private static final int ADDR_HELPER;
     private static final int ADDR_PAGEDATA;
     
@@ -99,39 +102,39 @@ public class NXTSamba {
      * @param str String to be sent.
      * @throws java.io.IOException
      */
-    private void sendString(String str) throws IOException
+    private void writeString(String str) throws IOException
     {
-    	write(str.getBytes("US-ASCII"));
+    	write(str.getBytes(CHARSET));
     }
     
-    private void sendInitCommand() throws IOException
+    private void sendInitCommand(int cmd) throws IOException
     {
-    	String command = CMD_INIT + "#";
-        sendString(command);
+    	String command = cmd + "#";
+        writeString(command);
     }
     
     private void sendGotoCommand(int addr) throws IOException
     {
     	String command = CMD_GOTO + hexFormat(addr, 8) + "#";
-        sendString(command);
+        writeString(command);
     }
     
     private void sendStreamCommand(char cmd, int addr, int len) throws IOException
     {
     	String command = cmd + hexFormat(addr, 8) + "," + hexFormat(len, 8) + "#";
-        sendString(command);
+        writeString(command);
     }
     
     private void sendWriteCommand(char cmd, int addr, int len, int value) throws IOException
     {
     	String command = cmd + hexFormat(addr, 8) + "," + hexFormat(value, 2 * len) + "#";
-        sendString(command);
+        writeString(command);
     }
     
     private void sendReadCommand(char cmd, int addr, int len) throws IOException
     {
         String command = cmd + hexFormat(addr, 8) + "," + len + "#";
-        sendString(command);
+        writeString(command);
     }
     
     /**
@@ -381,7 +384,7 @@ public class NXTSamba {
                 // so we switch it into quiet mode. We also check to ensure
                 // that it responds to commands.
                 // Ask for the version number.
-                sendString("V#");
+            	sendInitCommand(CMD_VERBOSE);
                 byte []ret = read();
                 // If we are in verbose mode we will get back "\n", "\r"
                 if (ret.length == 2 && ret[0] == (byte)'\n' && ret[1] == (byte)'\r')
@@ -394,7 +397,7 @@ public class NXTSamba {
                     read(); // time
                     read(); // newline
                     read(); // Prompt.
-                    sendString("N#");
+                	sendInitCommand(CMD_INIT);
                 }
                 else
                 {
@@ -405,7 +408,7 @@ public class NXTSamba {
                     
                 }
                 // Save the version string
-                version = new String(ret);
+                version = new String(ret, CHARSET);
                 // Check that we are all in sync
                 ret = read();
                 if (ret.length == 2 && ret[0] == (byte)'\n' && ret[1] == (byte)'\r')
