@@ -131,10 +131,22 @@ public class NXTSamba {
         writeString(command);
     }
     
-    private void sendReadCommand(char cmd, int addr, int len) throws IOException
+    private int sendReadCommand(char cmd, int addr, int len) throws IOException
     {
         String command = cmd + hexFormat(addr, 8) + "," + len + "#";
         writeString(command);
+        
+        byte [] ret = read();
+        if (ret.length < len)
+            throw new IOException("Bad return length");
+        
+        int r = 0;
+        for (int i=len; i>0;)
+        {
+        	r <<= 8;
+        	r |= ret[--i] & 0xFF;
+        }
+        return r;
     }
     
     /**
@@ -191,19 +203,36 @@ public class NXTSamba {
     }
 
     /**
-     * Read a 32 bit value from the specified address.
+     * Read a 8 bit octet from the specified address.
+     * @param addr
+     * @return value read from addr
+     * @throws java.io.IOException
+     */
+    public int readOctet(int addr) throws IOException
+    {
+    	return sendReadCommand(CMD_READ_OCTET, addr, 1);
+    }
+
+    /**
+     * Read a 16 bit halfword from the specified address.
+     * @param addr
+     * @return value read from addr
+     * @throws java.io.IOException
+     */
+    public int readHalfword(int addr) throws IOException
+    {
+    	return sendReadCommand(CMD_READ_HWORD, addr, 2);
+    }
+
+    /**
+     * Read a 32 bit word from the specified address.
      * @param addr
      * @return value read from addr
      * @throws java.io.IOException
      */
     public int readWord(int addr) throws IOException
     {
-    	sendReadCommand(CMD_READ_WORD, addr, 4);
-        byte [] ret = read();
-        if (ret.length < 4)
-            throw new IOException("Bad return length");
-        return ((int)ret[0] & 0xff) | (((int)ret[1] & 0xff) << 8) |
-                (((int)ret[2] & 0xff) << 16) | (((int)ret[3] & 0xff) << 24);
+    	return sendReadCommand(CMD_READ_WORD, addr, 4);
     }
 
     /**
