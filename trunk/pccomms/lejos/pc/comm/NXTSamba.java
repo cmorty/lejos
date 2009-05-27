@@ -119,10 +119,11 @@ public class NXTSamba {
      */
     private void writeString(String str) throws IOException
     {
+		// System.out.println(str);
     	write(str.getBytes(CHARSET));
     }
     
-    private void sendInitCommand(int cmd) throws IOException
+    private void sendInitCommand(char cmd) throws IOException
     {
     	String command = cmd + "#";
         writeString(command);
