@@ -102,11 +102,18 @@ public class NXTSamba {
     
     private void readAnswerStream(byte[] data, int off, int len) throws IOException
     {
-        byte [] ret = read();
-        if (ret.length < len)
-            throw new IOException("Bad return length");
-        
-        System.arraycopy(ret, 0, data, off, len);
+    	while (len > 0)
+    	{
+	        byte [] ret = read();
+	        int rlen = ret.length;
+	        if (rlen > len)
+	        	rlen = len;
+	        
+	        System.arraycopy(ret, 0, data, off, rlen);
+	        
+	        off += rlen;
+	        len -= rlen;
+    	}    	
     }
     
     /**
@@ -392,15 +399,16 @@ public class NXTSamba {
     {
         //System.out.println("Write page " + page);
         int addr = FLASH_BASE + page*PAGE_SIZE;
-        for(int i = 0; i < PAGE_SIZE/4; i++)
-        {
-            int w = readWord(addr);
-            data[offset++] = (byte) w;
-            data[offset++] = (byte) (w >> 8);
-            data[offset++] = (byte) (w >> 16);
-            data[offset++] = (byte) (w >> 24);
-            addr += 4;
-        }
+//        for(int i = 0; i < PAGE_SIZE/4; i++)
+//        {
+//            int w = readWord(addr);
+//            data[offset++] = (byte) w;
+//            data[offset++] = (byte) (w >> 8);
+//            data[offset++] = (byte) (w >> 16);
+//            data[offset++] = (byte) (w >> 24);
+//            addr += 4;
+//        }
+        readBytes(addr, data, offset, PAGE_SIZE);
     }
 
     /**
