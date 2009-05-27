@@ -15,9 +15,10 @@ public class NXTSamba {
     
 	private static final String CHARSET = "iso-8859-1";
 	
-	private static final char CMD_INIT = 'N';
 	private static final char CMD_GOTO = 'G';
-	private static final char CMD_VERBOSE = 'V';
+	private static final char CMD_TEXT = 'T';	//SAM-BA sends ">" prompt
+	private static final char CMD_NON_TEXT = 'N';	//SAM-BA sends no prompt or newline
+	private static final char CMD_VERSION = 'V';
 	private static final char CMD_READ_OCTET = 'o';
 	private static final char CMD_READ_HWORD = 'h';  
 	private static final char CMD_READ_WORD = 'w';
@@ -82,6 +83,7 @@ public class NXTSamba {
         byte [] ret = nxtComm.read(false);
         if (ret == null || ret.length == 0)
             throw new IOException("Read timeout");
+        // System.out.println("Debug: "+new String(ret, CHARSET));
         return ret;
     }
     
@@ -135,7 +137,7 @@ public class NXTSamba {
      */
     private void writeString(String str) throws IOException
     {
-		// System.out.println(str);
+		// System.out.println("Debug: "+str);
     	write(str.getBytes(CHARSET));
     }
     
@@ -430,6 +432,12 @@ public class NXTSamba {
             offset += PAGE_SIZE;
         }
     }
+    
+    private static boolean isLineFeed(byte[] ret)
+    {
+    	int len = ret.length;
+    	return len >= 1 && (ret[len-1] == (byte)'\n' || ret[len-1] == (byte)'\r');
+    }
 
     /**
      * Open the specified USB device and check that it is in SAM-BA mode. We
@@ -445,41 +453,35 @@ public class NXTSamba {
         {
             try
             {
-                // We need to work out if the device is in verbose mode. If
-                // so we switch it into quiet mode. We also check to ensure
-                // that it responds to commands.
-                // Ask for the version number.
-            	sendInitCommand(CMD_VERBOSE);
-                byte []ret = read();
-                // If we are in verbose mode we will get back "\n", "\r"
-                if (ret.length == 2 && ret[0] == (byte)'\n' && ret[1] == (byte)'\r')
-                {
-                    // In verbose mode. Read and ignore the version info plus
-                    // Prompt then switch into quiet mode.
-                    ret = read(); // Version 1.
-                    read(); // Date.
-                    read(); // space
-                    read(); // time
-                    read(); // newline
-                    read(); // Prompt.
-                	sendInitCommand(CMD_INIT);
-                }
-                else
-                {
-                    // Not in verbose mode
-                    read(); // Date.
-                    read(); // space
-                    read(); // time
-                    
-                }
+                // We first set the device to interactive/text mode verbose mode
+                // (which is the default) and for the prompt. This is safe no matter
+                // whether the device originally is in interactive or quiet mode.
+                // Then we switch back to quiet mode and ask for the version string.
+            	
+            	// Switch into quiet mode, NXT may answer with line-feed if in verbose mode
+            	sendInitCommand(CMD_TEXT);            	
+            	while (isLineFeed(read())) { /* wait for prompt */ }
+            	
+            	// Switch into quiet mode, NXT may answer with line-feed if in verbose mode
+            	sendInitCommand(CMD_NON_TEXT);
+            	read(); //discard linefeed
+            	
+            	// Ask for version number, terminated by line-feed
+            	sendInitCommand(CMD_VERSION);
+            	
+            	// Read version, but discard possible first line feeds
+                byte [] ret = read();
+                while (isLineFeed(ret))
+                	ret = read();
+
                 // Save the version string
                 version = new String(ret, CHARSET);
+                
+                // Skip other information like date and time
+                while (!isLineFeed(read())) { /* wait for linefeed */ }
+                
                 // Check that we are all in sync
-                ret = read();
-                if (ret.length == 2 && ret[0] == (byte)'\n' && ret[1] == (byte)'\r')
-                {
-                    System.out.println("Connected to SAM-BA " + version);
-                }
+                System.out.println("Connected to SAM-BA " + version);
                 // Now upload the flash writer helper routine
                 writeBytes(ADDR_HELPER, getModifiedHelper());
                 // And set the the clock into PLL/2 mode ready for writing
