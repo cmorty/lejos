@@ -461,7 +461,7 @@ public class NXTSamba {
             try
             {
                 // We first set the device to interactive/text mode verbose mode
-                // (which is the default) and for the prompt. This is safe no matter
+                // (which is the default) and wait for the prompt. This is safe no matter
                 // whether the device originally is in interactive or quiet mode.
                 // Then we switch back to quiet mode and ask for the version string.
             	// This matches the behavior of the original SAM-BA software
