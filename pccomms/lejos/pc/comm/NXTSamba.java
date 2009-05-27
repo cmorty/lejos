@@ -100,6 +100,15 @@ public class NXTSamba {
         return r;
     }
     
+    private void readAnswerStream(byte[] data, int off, int len) throws IOException
+    {
+        byte [] ret = read();
+        if (ret.length < len)
+            throw new IOException("Bad return length");
+        
+        System.arraycopy(ret, 0, data, off, len);
+    }
+    
     /**
      * Helper function perform a write with timeout.
      * @param data Data to be written to the device.
@@ -240,6 +249,18 @@ public class NXTSamba {
     {
     	sendReadCommand(CMD_READ_WORD, addr, 4);
     	return readAnswerWord(4);
+    }
+
+    /**
+     * Read a 32 bit word from the specified address.
+     * @param addr
+     * @return value read from addr
+     * @throws java.io.IOException
+     */
+    public void readBytes(int addr, byte[] data, int off, int len) throws IOException
+    {
+    	sendStreamCommand(CMD_READ_STREAM, addr, len);
+    	readAnswerStream(data, off, len);
     }
 
     /**
