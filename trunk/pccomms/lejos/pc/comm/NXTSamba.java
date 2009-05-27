@@ -115,7 +115,7 @@ public class NXTSamba {
     	}    	
     }
     
-    private static boolean endWithLinefeed(byte[] ret)
+    private static boolean endsWithLinefeed(byte[] ret)
     {
     	int len = ret.length;
     	return len >= 1 && (ret[len-1] == (byte)'\n' || ret[len-1] == (byte)'\r');
@@ -135,7 +135,7 @@ public class NXTSamba {
     	{
     		byte[] ret = read();
     		sb.append(new String(ret, CHARSET));
-    		if (endWithLinefeed(ret))
+    		if (endsWithLinefeed(ret))
     			return sb.toString();
     	}
     }
