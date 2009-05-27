@@ -118,7 +118,7 @@ public class NXTSamba {
     private static boolean endsWithLinefeed(byte[] ret)
     {
     	int len = ret.length;
-    	return len >= 1 && (ret[len-1] == (byte)'\n' || ret[len-1] == (byte)'\r');
+    	return len >= 2 && (ret[len-2] == (byte)'\n' || ret[len-1] == (byte)'\r');
     }
     
     private static boolean endsWithPrompt(byte[] ret)
