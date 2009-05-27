@@ -457,6 +457,7 @@ public class NXTSamba {
                 // (which is the default) and for the prompt. This is safe no matter
                 // whether the device originally is in interactive or quiet mode.
                 // Then we switch back to quiet mode and ask for the version string.
+            	// This matches the behavior of the original SAM-BA software
             	
             	// Switch into quiet mode, NXT may answer with line-feed if in verbose mode
             	sendInitCommand(CMD_TEXT);            	
