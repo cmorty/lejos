@@ -10,7 +10,7 @@ import java.io.IOException;
  */
 public class NXTSamba {
 	
-    public static final int PAGE_SIZE = 256;
+	public static final int PAGE_SIZE = 256;
     public static final int FLASH_BASE = 0x00100000;
     
 	private static final String CHARSET = "iso-8859-1";
@@ -27,6 +27,7 @@ public class NXTSamba {
 	private static final char CMD_WRITE_HWORD = 'H';  
 	private static final char CMD_WRITE_WORD = 'W';  
 	private static final char CMD_WRITE_STREAM = 'S';
+    private static final byte PROMPT_CHAR = '>';
 	
     private static final int ADDR_HELPER;
     private static final int ADDR_PAGEDATA;
@@ -41,10 +42,6 @@ public class NXTSamba {
     private String version;
     
     
-	public NXTSamba() {
-	}
-
-
     /**
      * Locate all NXT devices that are running in SAM-BA mode.
      * @return An array of devices in SAM-BA mode
@@ -90,8 +87,8 @@ public class NXTSamba {
     private int readAnswerWord(int len) throws IOException
     {
         byte [] ret = read();
-        if (ret.length < len)
-            throw new IOException("Bad return length");
+        if (ret.length != len)
+            throw new IOException("bad packet length");
         
         int r = 0;
         for (int i=len; i>0;)
@@ -109,7 +106,7 @@ public class NXTSamba {
 	        byte [] ret = read();
 	        int rlen = ret.length;
 	        if (rlen > len)
-	        	rlen = len;
+	            throw new IOException("bad packet length");
 	        
 	        System.arraycopy(ret, 0, data, off, rlen);
 	        
@@ -118,6 +115,31 @@ public class NXTSamba {
     	}    	
     }
     
+    private static boolean endWithLinefeed(byte[] ret)
+    {
+    	int len = ret.length;
+    	return len >= 1 && (ret[len-1] == (byte)'\n' || ret[len-1] == (byte)'\r');
+    }
+    
+    private static boolean endsWithPrompt(byte[] ret)
+    {
+    	int len = ret.length;
+    	return len >= 1 && ret[len - 1] == PROMPT_CHAR;
+    }
+    
+    private String readLine() throws IOException
+    {
+    	StringBuilder sb = new StringBuilder();
+    	
+    	while (true)
+    	{
+    		byte[] ret = read();
+    		sb.append(new String(ret, CHARSET));
+    		if (endWithLinefeed(ret))
+    			return sb.toString();
+    	}
+    }
+
     /**
      * Helper function perform a write with timeout.
      * @param data Data to be written to the device.
@@ -400,16 +422,7 @@ public class NXTSamba {
     public void readPage(int page, byte[] data, int offset) throws IOException
     {
         //System.out.println("Write page " + page);
-        int addr = FLASH_BASE + page*PAGE_SIZE;
-//        for(int i = 0; i < PAGE_SIZE/4; i++)
-//        {
-//            int w = readWord(addr);
-//            data[offset++] = (byte) w;
-//            data[offset++] = (byte) (w >> 8);
-//            data[offset++] = (byte) (w >> 16);
-//            data[offset++] = (byte) (w >> 24);
-//            addr += 4;
-//        }
+        int addr = FLASH_BASE + page * PAGE_SIZE;
         readBytes(addr, data, offset, PAGE_SIZE);
     }
 
@@ -433,12 +446,6 @@ public class NXTSamba {
         }
     }
     
-    private static boolean isLineFeed(byte[] ret)
-    {
-    	int len = ret.length;
-    	return len >= 1 && (ret[len-1] == (byte)'\n' || ret[len-1] == (byte)'\r');
-    }
-
     /**
      * Open the specified USB device and check that it is in SAM-BA mode. We
      * switch the device into "quiet" mode and also download the FlashWrite
@@ -461,25 +468,18 @@ public class NXTSamba {
             	
             	// Switch into quiet mode, NXT may answer with line-feed if in verbose mode
             	sendInitCommand(CMD_TEXT);            	
-            	while (isLineFeed(read())) { /* wait for prompt */ }
+            	while (!endsWithPrompt(read())) { /* wait for prompt */ }
             	
             	// Switch into quiet mode, NXT may answer with line-feed if in verbose mode
             	sendInitCommand(CMD_NON_TEXT);
-            	read(); //discard linefeed
+            	readLine();	//discard response
             	
             	// Ask for version number, terminated by line-feed
             	sendInitCommand(CMD_VERSION);
-            	
-            	// Read version, but discard possible first line feeds
-                byte [] ret = read();
-                while (isLineFeed(ret))
-                	ret = read();
-
-                // Save the version string
-                version = new String(ret, CHARSET);
-                
-                // Skip other information like date and time
-                while (!isLineFeed(read())) { /* wait for linefeed */ }
+            	// Example version string: "v1.4 Nov 10 2004 14:49:33"
+            	version = readLine().trim();            	
+            	// strip everything after the first whitespace 
+            	version = version.replaceAll("\\s.*", "");
                 
                 // Check that we are all in sync
                 System.out.println("Connected to SAM-BA " + version);
@@ -512,16 +512,6 @@ public class NXTSamba {
 		return r;
 	}
 	
-	private static void assertMagicInt(byte[] code, int off, int magic)
-	{
-		for (int i = 0; i < 4; i++)
-		{
-			if ((code[off + i] & 0xFF) != (magic & 0xFF))
-				throw new RuntimeException("magic number not found");
-			magic >>>= 8;
-		}
-	}
-    
 	private static void encodeInt(byte[] code, int off, int value)
 	{
 		for (int i = 0; i < 4; i++)
@@ -529,12 +519,6 @@ public class NXTSamba {
 			code[off + i] = (byte)value;
 			value >>>= 8;
 		}
-	}
-	
-	private static void encodeMagicInt(byte[] code, int off, int magic, int value)
-	{
-		assertMagicInt(code, off, magic);
-		encodeInt(code, off, value);
 	}
 	
     /**
