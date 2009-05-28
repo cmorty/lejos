@@ -10,9 +10,6 @@ import java.io.IOException;
  */
 public class NXTSamba {
 	
-	public static final int PAGE_SIZE = 256;
-    public static final int FLASH_BASE = 0x00100000;
-    
 	private static final String CHARSET = "iso-8859-1";
 	
 	private static final char CMD_GOTO = 'G';
@@ -28,19 +25,43 @@ public class NXTSamba {
 	private static final char CMD_WRITE_WORD = 'W';  
 	private static final char CMD_WRITE_STREAM = 'S';
     private static final byte PROMPT_CHAR = '>';
-	
-    private static final int ADDR_HELPER;
-    private static final int ADDR_PAGEDATA;
+
+    /**
+     * The NXT has 64KB RAM starting at 0x200000.
+     */
+    private static final int RAM_BASE  = 0x00200000;
+    private static final int RAM_MAX  = 0x00210000;
     
+    /**
+     * The NXT has 256KB Flash starting at 0x100000, divided into 256byte pages.
+     */
+    public static final int FLASH_BASE = 0x00100000;
+    public static final int FLASH_MAX  = 0x00140000;
+	public static final int PAGE_SIZE  = 256;
+	
+    
+    /**
+     * According to the SAM7S datasheet, section 21.6 Hardware and Software Constraints,
+     * the area 0x202000-0x210000 is unused RAM. 
+     */
+    private static final int SAMBA_RAM_BASE = RAM_BASE + 0x2000;
+    private static final int SAMBA_RAM_MAX = RAM_MAX;
+    
+    private static final int HELPER_STACKSIZE = 0x1000;
+    private static final int HELPER_CODEADR = SAMBA_RAM_BASE + HELPER_STACKSIZE;
+    private static final int HELPER_DATAADR = HELPER_CODEADR + FlashWrite.CODE.length;
+    private static final int HELPER_PACKET = PAGE_SIZE + 4;
+
     static
     {
-    	ADDR_HELPER = 0x208000;
-    	ADDR_PAGEDATA = ADDR_HELPER + FlashWrite.CODE.length;
+    	assert SAMBA_RAM_BASE >= RAM_BASE;
+    	assert SAMBA_RAM_MAX <= RAM_MAX;
+    	assert HELPER_CODEADR - HELPER_STACKSIZE >= SAMBA_RAM_BASE;
+    	assert HELPER_DATAADR + HELPER_PACKET <= SAMBA_RAM_MAX;
     }
     
 	private NXTCommUSB nxtComm = null;
     private String version;
-    
     
     /**
      * Locate all NXT devices that are running in SAM-BA mode.
@@ -384,13 +405,13 @@ public class NXTSamba {
     	if (len > PAGE_SIZE)
     		len = PAGE_SIZE;
         // Generate data chunk (32 bit int pagenum + 256 byte data)
-        byte [] buf = new byte[4 + PAGE_SIZE];
+        byte [] buf = new byte[HELPER_PACKET];
         System.arraycopy(data, offset, buf, 4, len);
         encodeInt(buf, 0, page);
         // And the data into ram
-        writeBytes(ADDR_PAGEDATA, buf);
+        writeBytes(HELPER_DATAADR, buf);
         // And now use the flash writer to write the data into flash.
-        jump(ADDR_HELPER);
+        jump(HELPER_CODEADR);
     }
 
     /**
@@ -484,7 +505,7 @@ public class NXTSamba {
                 // Check that we are all in sync
                 System.out.println("Connected to SAM-BA " + version);
                 // Now upload the flash writer helper routine
-                writeBytes(ADDR_HELPER, getModifiedHelper());
+                writeBytes(HELPER_CODEADR, getModifiedHelper());
                 // And set the the clock into PLL/2 mode ready for writing
                 writeWord(0xfffffc30, 0x7);
                 return true;
