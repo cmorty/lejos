@@ -22,6 +22,8 @@ public class NXJFlashUpdate {
 	private static final int REBOOT_ADDRESS = 0x00100000;
 	private static final String VM = "lejos_nxt_rom.bin";
 	private static final String MENU = "StartUpText.bin";
+	
+	private static final int VERIFY_CHUNK_SIZE = 2048;
 
 	private NXJFlashUI ui;
 
@@ -203,43 +205,45 @@ public class NXJFlashUpdate {
 	 * 
 	 * @param nxt
 	 *            device to verify
-	 * @param address
+	 * @param first
 	 *            starting address
 	 * @param memoryImage
 	 *            memory address to compare with
 	 * @return number of mismatched bytes found
 	 * @throws java.io.IOException
 	 */
-	public int verifyPages(NXTSamba nxt, int address, byte[] memoryImage)
-			throws IOException {
-		byte[] actual = new byte[NXTSamba.PAGE_SIZE];
-		int pages = memoryImage.length / actual.length;
-		nxt.readPages(address, actual, 0, actual.length);
+	public int verifyPages(NXTSamba nxt, int first, byte[] memoryImage) throws IOException {
 		int failCnt = 0;
 		int offset = 0;
-		for (int page = 0; page < pages; page++) {
-			ui.progress("Verifying", (page * 100) / pages);
-			nxt.readPage(address + page, actual, 0);
-			for (int i = 0; i < actual.length; i++) {
-				if (actual[i] != memoryImage[offset]) {
-					ui
-							.message(String
-									.format(
-											"Verify failed at address 0x%08X expected 0x%02X found 0x%02X\n",
-											(address * NXTSamba.PAGE_SIZE + offset),
-											(memoryImage[offset] & 0xff),
-											(actual[i] & 0xff)));
+		int len = memoryImage.length;
+		int baseadr = NXTSamba.FLASH_BASE + first * NXTSamba.PAGE_SIZE;
+		byte[] data = new byte[VERIFY_CHUNK_SIZE];
+		while (len > 0) {
+			ui.progress("Verifying", (offset * 100) / memoryImage.length);
+			
+			int clen = VERIFY_CHUNK_SIZE;
+			if (clen > len)
+				clen = len;
+			
+			nxt.readBytes(baseadr + offset, data, 0, clen);
+			
+			for (int i = 0; i < clen; i++) {
+				if (data[i] != memoryImage[offset + i]) {
+					ui.message(String.format(
+						"Verify failed at address 0x%08X: expected 0x%02X, found 0x%02X\n",
+						offset + i,	memoryImage[offset + i] & 0xff,	data[i] & 0xff));
 					failCnt++;
 				}
-				offset++;
 			}
+			
+			offset += clen;
+			len -= clen;
 		}
 		ui.progress("", 0);
 		if (failCnt == 0)
 			ui.message("Verified " + memoryImage.length + " bytes ok.");
 		else
-			ui.message("Failed to verify " + failCnt + " of "
-					+ memoryImage.length + " bytes.");
+			ui.message("Failed to verify " + failCnt + " of " + memoryImage.length + " bytes.");
 		return failCnt;
 	}
 
