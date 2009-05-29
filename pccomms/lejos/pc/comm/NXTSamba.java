@@ -390,6 +390,11 @@ public class NXTSamba {
         sendGotoCommand(addr);
     }
     
+	public void reboot() throws IOException
+	{
+		sendGotoCommand(FLASH_BASE);
+	}
+	
     /**
      * Wait for the flash controller to be ready to accept commands.
      * @throws java.io.IOException
@@ -464,7 +469,7 @@ public class NXTSamba {
         // And the data into ram
         writeBytes(HELPER_DATAADR, buf);
         // And now use the flash writer to write the data into flash.
-        jump(HELPER_CODEADR);
+        sendGotoCommand(HELPER_CODEADR);
     }
 
     /**
@@ -612,4 +617,5 @@ public class NXTSamba {
     {
         return version;
     }
+
 }

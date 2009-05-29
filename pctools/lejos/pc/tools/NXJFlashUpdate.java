@@ -19,7 +19,6 @@ public class NXJFlashUpdate {
 	private static final int MENU_ADDRESS_LOC = 0x40;
 	private static final int MENU_LENGTH_LOC = MENU_ADDRESS_LOC + 4;
 	private static final int FLASH_START_PAGE_LOC = MENU_LENGTH_LOC + 4;
-	private static final int REBOOT_ADDRESS = 0x00100000;
 	private static final String VM = "lejos_nxt_rom.bin";
 	private static final String MENU = "StartUpText.bin";
 	
@@ -323,7 +322,7 @@ public class NXJFlashUpdate {
 
 	public void rebootDevice(NXTSamba nxt) throws IOException {
 		ui.message("Restarting the device.");
-		nxt.jump(REBOOT_ADDRESS);
+		nxt.reboot();
 		nxt.close();
 	}
 
