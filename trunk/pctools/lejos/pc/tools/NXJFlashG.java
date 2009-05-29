@@ -3,6 +3,7 @@ package lejos.pc.tools;
 import lejos.pc.comm.*;
 import java.io.*;
 import javax.swing.*;
+
 import java.awt.*;
 
 /***
@@ -43,7 +44,7 @@ public class NXJFlashG extends javax.swing.JFrame {
 		add(msgPanel, BorderLayout.SOUTH);
 
 		progressTxt = new javax.swing.JTextArea();
-		progressLabel = new javax.swing.JLabel("Progress Log", JLabel.CENTER);
+		progressLabel = new javax.swing.JLabel("Progress Log", SwingConstants.CENTER);
 		progressTxt.setColumns(30);
 		progressTxt.setRows(70);
 
@@ -56,7 +57,7 @@ public class NXJFlashG extends javax.swing.JFrame {
 		JPanel progBarPanel = new JPanel(new BorderLayout());
 		progBarPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
 		progBarPanel.setMinimumSize(new Dimension(300, 50));
-		progBarLabel = new javax.swing.JLabel(" ", JLabel.CENTER);
+		progBarLabel = new javax.swing.JLabel(" ", SwingConstants.CENTER);
 		progBar = new javax.swing.JProgressBar(0, 100);
 		progBar.setStringPainted(true);
 		progBarPanel.add(progBar, BorderLayout.NORTH);
@@ -105,6 +106,7 @@ public class NXJFlashG extends javax.swing.JFrame {
 			progBar.setValue(percent);
 		}
 
+		@Override
 		public void run() {
 			boolean more = true;
 			while (more) {
@@ -123,14 +125,14 @@ public class NXJFlashG extends javax.swing.JFrame {
 					byte[] fs = null;
 					if (format)
 						fs = updater.createFilesystemImage();
-					boolean verify = 0 == JOptionPane.showConfirmDialog(
+					boolean verify = format && 0 == JOptionPane.showConfirmDialog(
 							msgPanel,
-							"Do you want to verify ? (takes several minutes)",
-							"Verify firmware after flash",
+							"Do you want to verify the file system? (takes several minutes)",
+							"Verify file system after flash",
 							JOptionPane.YES_NO_OPTION);
 					NXTSamba nxt = openDevice();
 					if (nxt != null)
-						updater.updateDevice(nxt, memoryImage, fs, verify);
+						updater.updateDevice(nxt, memoryImage, fs, true, verify, true);
 				} catch (Exception e) {
 					JOptionPane.showMessageDialog(msgPanel,
 							"Bad news: An error has occurred " + e,

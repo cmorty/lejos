@@ -332,17 +332,24 @@ public class NXJFlashUpdate {
 	 */
 	public void updateDevice(NXTSamba nxt, byte[] memoryImage, byte[] fs,
 			boolean verify) throws IOException {
+		updateDevice(nxt, memoryImage, fs, verify, verify, true);
+	}
+
+	public void updateDevice(NXTSamba nxt, byte[] memoryImage, byte[] fs,
+			boolean verifyFirm, boolean verifyFS, boolean reboot) throws IOException {
 		if (memoryImage != null) {
 			writeFirmware(nxt, memoryImage);
-			if (verify)
+			if (verifyFirm)
 				verifyFirmware(nxt, memoryImage);
 		}
 		if (fs != null) {
 			writeFilesystem(nxt, fs);
-			if (verify)
+			if (verifyFS)
 				verifyFilesystem(nxt, fs);
 		}
-		rebootDevice(nxt);
+		if (reboot) {
+			rebootDevice(nxt);
+		}
 	}
 
 }
