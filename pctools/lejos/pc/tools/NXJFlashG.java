@@ -69,13 +69,13 @@ public class NXJFlashG extends javax.swing.JFrame {
 		goB.addActionListener(new java.awt.event.ActionListener() {
 
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				goBActionPerformed(evt);
+				goBActionPerformed();
 			}
 		});
 
 	}
 
-	private void goBActionPerformed(java.awt.event.ActionEvent evt) {
+	private void goBActionPerformed() {
 		flasher.start();
 	}
 
@@ -125,14 +125,9 @@ public class NXJFlashG extends javax.swing.JFrame {
 					byte[] fs = null;
 					if (format)
 						fs = updater.createFilesystemImage();
-					boolean verify = format && 0 == JOptionPane.showConfirmDialog(
-							msgPanel,
-							"Do you want to verify the file system? (takes several minutes)",
-							"Verify file system after flash",
-							JOptionPane.YES_NO_OPTION);
 					NXTSamba nxt = openDevice();
 					if (nxt != null)
-						updater.updateDevice(nxt, memoryImage, fs, true, verify, true);
+						updater.updateDevice(nxt, memoryImage, fs, true, true, true);
 				} catch (Exception e) {
 					JOptionPane.showMessageDialog(msgPanel,
 							"Bad news: An error has occurred " + e,
