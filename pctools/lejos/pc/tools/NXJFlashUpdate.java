@@ -23,8 +23,6 @@ public class NXJFlashUpdate {
 	private static final String VM = "lejos_nxt_rom.bin";
 	private static final String MENU = "StartUpText.bin";
 	
-	private static final int VERIFY_CHUNK_SIZE = 2048;
-
 	private NXJFlashUI ui;
 
 	public NXJFlashUpdate(NXJFlashUI ui) {
@@ -214,30 +212,36 @@ public class NXJFlashUpdate {
 	 */
 	public int verifyPages(NXTSamba nxt, int first, byte[] memoryImage) throws IOException {
 		int failCnt = 0;
-		int offset = 0;
 		int len = memoryImage.length;
-		int baseadr = NXTSamba.FLASH_BASE + first * NXTSamba.PAGE_SIZE;
-		byte[] data = new byte[VERIFY_CHUNK_SIZE];
-		while (len > 0) {
-			ui.progress("Verifying", (offset * 100) / memoryImage.length);
-			
-			int clen = VERIFY_CHUNK_SIZE;
-			if (clen > len)
-				clen = len;
-			
-			nxt.readBytes(baseadr + offset, data, 0, clen);
-			
-			for (int i = 0; i < clen; i++) {
-				if (data[i] != memoryImage[offset + i]) {
+		int addr = NXTSamba.FLASH_BASE + first * NXTSamba.PAGE_SIZE;
+		InputStream is = nxt.createInputStream(addr, len);
+		try
+		{
+			int p = -1;
+			for (int i = 0; i < len; i++)
+			{
+				int np = (i * 100) / memoryImage.length;
+				if (np > p)
+				{
+					p = np;
+					ui.progress("Verifying", np);
+				}
+				
+				int b = is.read();
+				if (b < 0)
+					throw new IOException("EOF came too soon");
+				
+				if ((byte)b != memoryImage[i]) {
 					ui.message(String.format(
 						"Verify failed at address 0x%08X: expected 0x%02X, found 0x%02X\n",
-						offset + i,	memoryImage[offset + i] & 0xff,	data[i] & 0xff));
+						i,	memoryImage[i] & 0xff,	b));
 					failCnt++;
 				}
 			}
-			
-			offset += clen;
-			len -= clen;
+		}
+		finally
+		{
+			is.close();
 		}
 		ui.progress("", 0);
 		if (failCnt == 0)
@@ -247,13 +251,18 @@ public class NXJFlashUpdate {
 		return failCnt;
 	}
 
-	public void writePages(NXTSamba nxt, int address, byte[] memoryImage)
+	public void writePages(NXTSamba nxt, int first, byte[] memoryImage)
 			throws IOException {
 		int pages = memoryImage.length / NXTSamba.PAGE_SIZE;
+		int p = -1;
 		for (int page = 0; page < pages; page++) {
-			ui.progress("Writing", (page * 100 / pages));
-			nxt.writePage(address + page, memoryImage, page
-					* NXTSamba.PAGE_SIZE);
+			int np = (page * 100 / pages);
+			if (np > p)
+			{
+				p = np;
+				ui.progress("Writing", np);
+			}
+			nxt.writePage(first + page, memoryImage, page	* NXTSamba.PAGE_SIZE);
 		}
 		ui.progress("", 0);
 	}
