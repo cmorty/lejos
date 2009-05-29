@@ -1,6 +1,7 @@
 package lejos.pc.comm;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Implements a sub-set of the Atmel SAM-BA download protocol. Only those
@@ -10,6 +11,52 @@ import java.io.IOException;
  */
 public class NXTSamba {
 	
+	private class MemoryInputStream extends InputStream
+	{
+		private int len;
+		private byte[] buf;
+		private int off;
+
+		public MemoryInputStream(int len)
+		{
+			this.len = len;
+		}
+		
+		private boolean fillBuffer() throws IOException
+		{
+			if (buf == null || off >= buf.length)
+			{
+				if (len <= 0)
+					return false;
+				
+				this.buf = NXTSamba.this.read();
+				this.off = 0;
+				if (this.buf.length > this.len)
+					throw new IOException("protocol error");
+				
+				this.len -= this.buf.length;
+			}
+			return true;
+		}
+
+		@Override
+		public int read() throws IOException
+		{
+			if (!this.fillBuffer())
+				return -1;
+			
+			return this.buf[this.off++] & 0xFF;
+		}
+		
+		@Override
+		public void close() throws IOException
+		{
+			//consume all the bytes
+			while (this.fillBuffer())
+				this.buf = null;
+		}
+	}
+
 	private static final String CHARSET = "iso-8859-1";
 	
 	private static final char CMD_GOTO = 'G';
@@ -301,6 +348,12 @@ public class NXTSamba {
     {
     	sendReadCommand(CMD_READ_WORD, addr, 4);
     	return readAnswerWord(4);
+    }
+    
+    public InputStream createInputStream(int addr, int len) throws IOException
+    {
+    	sendStreamCommand(CMD_READ_STREAM, addr, len);
+    	return new MemoryInputStream(len);
     }
 
     /**
