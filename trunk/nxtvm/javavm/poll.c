@@ -49,7 +49,7 @@ void poll_inputs()
     // anyway.
       
     // Check the sensor canonical values.
-    for (i = 1<<SENSOR_POS; i<(1<<BUTTON_POS); i <<= 1, pOldValue++, port)
+    for (i = 1<<SENSOR_POS; i<(1<<BUTTON_POS); i <<= 1, pOldValue++, port++)
     {
       short val = (short)read_sensor(port);
       if (*pOldValue != val) {
