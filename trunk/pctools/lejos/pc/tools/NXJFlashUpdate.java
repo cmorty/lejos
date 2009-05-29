@@ -220,7 +220,7 @@ public class NXJFlashUpdate {
 			int p = -1;
 			for (int i = 0; i < len; i++)
 			{
-				int np = i * 100 / (len - 1);
+				int np = i * 100 / len;
 				if (np > p)
 				{
 					p = np;
@@ -256,7 +256,7 @@ public class NXJFlashUpdate {
 		int pages = memoryImage.length / NXTSamba.PAGE_SIZE;
 		int p = -1;
 		for (int page = 0; page < pages; page++) {
-			int np = page * 100 / (pages - 1);
+			int np = page * 100 / pages;
 			if (np > p)
 			{
 				p = np;
