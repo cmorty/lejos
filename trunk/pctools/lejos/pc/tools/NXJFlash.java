@@ -38,7 +38,7 @@ class CommandLineParser {
 		Options options = new Options();
 		options.addOption("h", "help", false, "help");
 		options.addOption("f", "format", false, "format file system");
-		options.addOption("v", "verify", false, "verify file system (default: verify firmware)");
+		options.addOption("v", "verify", false, "backward compatibility switch (verify is now default)");
 		options.addOption("q", "quiet", false,
 				"quiet mode - do not report progress");
 
@@ -177,7 +177,7 @@ public class NXJFlash implements NXJFlashUI {
 			fs = updater.createFilesystemImage();
 		NXTSamba nxt = openDevice();
 		if (nxt != null) {
-			updater.updateDevice(nxt, memoryImage, fs, true, commandLine.hasOption("v"), true);
+			updater.updateDevice(nxt, memoryImage, fs, true, true, true);
 		}
 	}
 
