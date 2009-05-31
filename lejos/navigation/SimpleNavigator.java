@@ -1,9 +1,10 @@
-
 package lejos.navigation;
+
+ 
 import lejos.nxt.*;
 
 /**
- * The SimpleNavigator class can keep track of the robot position and the direction angle it faces; It uses a _pilot object to control NXT robot movements.<br>
+ * The Navigator2W class can keep track of the robot position and the direction angle it faces; It uses a _pilot object to control NXT robot movements.<br>
  * The position and direction angle values are updated automatically when the movement command returns after the movement is complete and and after stop() command is issued.
  * However, some commands optionally return immediately, to permit sensor monitoring in the main thread.  It is then the programmers responsibility to 
  * call updatePosition() when the robot motion is completed.  All angles are in degrees, distances in the units used to specify robot dimensions.
@@ -12,21 +13,20 @@ import lejos.nxt.*;
  */
 public class SimpleNavigator implements Navigator
 {
-  // orientation and coordinate data
+  // orientation and co-ordinate data
 
   private float _heading = 0;
   private float _x = 0;
   private float _y = 0;
   private float _distance0 = 0;
-  private float _angle0 = 0;
-  private Pilot _pilot; // why make this public? we have a getter! and it should be an internal variable...
+  public float _angle0 = 0;
+  public Pilot _pilot;
 
   /**
    * Allocates a SimpleNavigator with the Pilot that you supply
    * The x and y coordinate values and the direction angle are all initialized to 0, so if the first move is forward() the robot will run along
     * the x axis. <BR>
-    * 
-   * @param pilot The pilot to use.
+   * @param pilot
    */
   public SimpleNavigator(Pilot pilot)
   {
@@ -64,9 +64,6 @@ public class SimpleNavigator implements Navigator
       _pilot = new TachoPilot(wheelDiameter,trackWidth,leftMotor, rightMotor);
    }
 
-  /**
-   * @return the current pilot in use.
-   */
   public Pilot getPilot()
   {
     return _pilot;
@@ -115,9 +112,7 @@ public class SimpleNavigator implements Navigator
   }
 
   /**
-   * Set the speed of the motors, in degrees/second.
-   * 
-   * @param speed The motor speed in degrees/seconds. 
+   *sets the motor speed of the  motors, in degrees/second.
    */
   public void setSpeed(int speed)
   {
@@ -125,29 +120,22 @@ public class SimpleNavigator implements Navigator
   }
 
    /**
-   * Set the movement speed of the robot, wheel diameter units/seconds.
-   * 
-   * @param speed The movement speed in units/seconds. 
+   * set the movement speed of the robot, wheel diameter units/sec
    */
   public void setMoveSpeed(float speed)
   {
     _pilot.setMoveSpeed(speed);
   }
-  
   /**
-   * Set the rotation speed of the robot in degree/seconds when robot is turning in place.
-   * 
-   * @param speed The turning speed in units/seconds. 
+   * sets the rotation speed of the robot in deg/secm when robot is turning in place
    */
   public void setTurnSpeed(float speed)
   {
     _pilot.setTurnSpeed(speed);
   }
-  
   /**
    * Moves the NXT robot forward until stop() is called.
-   * 
-   * @see Navigator#stop()
+   * @see Navigator#stop().
    */
   public void forward()
   {
@@ -174,7 +162,7 @@ public class SimpleNavigator implements Navigator
   }
 
   /**
-   * @return true if the robot is moving under power
+   *returns true iff the robot is moving under power
    */
   public boolean isMoving()
   {
@@ -184,7 +172,7 @@ public class SimpleNavigator implements Navigator
   /**
    * Moves the NXT robot a specific distance. A positive value moves it forwards and
    * a negative value moves it backwards.
-   * The robot position is updated automatically when the method returns.
+   * The robot position is updated atomatically when the method returns.
    * @param distance The positive or negative distance to move the robot, same units as _wheelDiameter
    */
   public void travel(float distance)
@@ -339,7 +327,7 @@ public class SimpleNavigator implements Navigator
   {
     float dx = x - _x;
     float dy = y - _y;
-    return (float) Math.toDegrees(Math.atan2(dy, dx)) - _heading;
+    return (float) Math.toDegrees(Math.atan2(dy, dx));
   }
 
   /**
@@ -354,7 +342,7 @@ public class SimpleNavigator implements Navigator
     double dx = 0;
     double dy = 0;
     double headingRad = (Math.toRadians(_heading));
-    if (Math.abs(turnAngle) > .01)
+    if (Math.abs(turnAngle) > .1)
     {
       double turnRad = Math.toRadians(turnAngle);
       double radius = distance / turnRad;
@@ -398,11 +386,10 @@ public class SimpleNavigator implements Navigator
 
   /**
    * Moves the NXT robot in a circular arc through a specific angle; <br>
-   * The center of the turning circle is on the right side of the robot if parameter radius is negative.
+   * The center of the turning circle is on the right side of the robot iff parameter radius is negative.
    * Robot will stop when total rotation equals angle. If angle is negative, robot will travel backwards.
    * @param radius  of the turning circle
-   * @param angle The angle to turn.
-   * @param immediateReturn if true, the method returns immediately, in which case the programmer <br>
+   * @param immediateReturn iff true, the method returns immediately, in which case the programmer <br>
    * is responsible for calling updatePosition() before the robot moves again.
    */
   public void turn(float radius, int angle, boolean immediateReturn)
