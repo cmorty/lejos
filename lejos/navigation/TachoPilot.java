@@ -148,7 +148,7 @@ public class TachoPilot implements Pilot {
    *          difference in wheel size. Adjust wheel size accordingly. The minimum change in wheel size which will
    *          actually have an effect is given by minChange = A*wheelDiameter*wheelDiameter/(1-(A*wheelDiameter) where A
    *          = PI/(moveSpeed*360). Thus for a moveSpeed of 25 cm/second and a wheelDiameter of 5,5 cm the minChange is
-   *          about 0,01058 cm... The reason for this is, that different while sizes will result in different motor
+   *          about 0,01058 cm. The reason for this is, that different while sizes will result in different motor
    *          speed. And that is given as an integer in degree per second.
    * @param trackWidth Distance between center of right tire and center of left tire, in same units as wheelDiameter.
    * @param leftMotor The left Motor (e.g., Motor.C).
