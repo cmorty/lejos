@@ -1,10 +1,9 @@
-package lejos.navigation;
 
- 
+package lejos.navigation;
 import lejos.nxt.*;
 
 /**
- * The Navigator2W class can keep track of the robot position and the direction angle it faces; It uses a _pilot object to control NXT robot movements.<br>
+ * The SimpleNavigator class can keep track of the robot position and the direction angle it faces; It uses a _pilot object to control NXT robot movements.<br>
  * The position and direction angle values are updated automatically when the movement command returns after the movement is complete and and after stop() command is issued.
  * However, some commands optionally return immediately, to permit sensor monitoring in the main thread.  It is then the programmers responsibility to 
  * call updatePosition() when the robot motion is completed.  All angles are in degrees, distances in the units used to specify robot dimensions.
@@ -13,20 +12,20 @@ import lejos.nxt.*;
  */
 public class SimpleNavigator implements Navigator
 {
-  // orientation and co-ordinate data
-
+  // orientation and coordinate data
   private float _heading = 0;
   private float _x = 0;
   private float _y = 0;
   private float _distance0 = 0;
-  public float _angle0 = 0;
-  public Pilot _pilot;
+  private float _angle0 = 0;
+  private final Pilot _pilot;
 
   /**
    * Allocates a SimpleNavigator with the Pilot that you supply
    * The x and y coordinate values and the direction angle are all initialized to 0, so if the first move is forward() the robot will run along
     * the x axis. <BR>
-   * @param pilot
+    * 
+   * @param pilot The pilot to use.
    */
   public SimpleNavigator(Pilot pilot)
   {
@@ -42,7 +41,7 @@ public class SimpleNavigator implements Navigator
     * of the right tire, in units of your choice
     * @param rightMotor The motor used to drive the right wheel e.g. Motor.C.
     * @param leftMotor The motor used to drive the left wheel e.g. Motor.A.
-    * @param reverse  If motor.forward() dives the robot backwars, set this parameter true.
+    * @param reverse  If motor.forward() dives the robot backwards, set this parameter true.
     */
  public SimpleNavigator(float wheelDiameter, float trackWidth, Motor leftMotor, Motor rightMotor, boolean reverse)
    {
@@ -64,6 +63,9 @@ public class SimpleNavigator implements Navigator
       _pilot = new TachoPilot(wheelDiameter,trackWidth,leftMotor, rightMotor);
    }
 
+  /**
+   * @return the current pilot in use.
+   */
   public Pilot getPilot()
   {
     return _pilot;
@@ -112,7 +114,9 @@ public class SimpleNavigator implements Navigator
   }
 
   /**
-   *sets the motor speed of the  motors, in degrees/second.
+   * Set the speed of the motors, in degrees/second.
+   * 
+   * @param speed The motor speed in degrees/seconds. 
    */
   public void setSpeed(int speed)
   {
@@ -120,22 +124,29 @@ public class SimpleNavigator implements Navigator
   }
 
    /**
-   * set the movement speed of the robot, wheel diameter units/sec
+   * Set the movement speed of the robot, wheel diameter units/seconds.
+   * 
+   * @param speed The movement speed in units/seconds. 
    */
   public void setMoveSpeed(float speed)
   {
     _pilot.setMoveSpeed(speed);
   }
+  
   /**
-   * sets the rotation speed of the robot in deg/secm when robot is turning in place
+   * Set the rotation speed of the robot in degree/seconds when robot is turning in place.
+   * 
+   * @param speed The turning speed in units/seconds. 
    */
   public void setTurnSpeed(float speed)
   {
     _pilot.setTurnSpeed(speed);
   }
+  
   /**
    * Moves the NXT robot forward until stop() is called.
-   * @see Navigator#stop().
+   * 
+   * @see Navigator#stop()
    */
   public void forward()
   {
@@ -162,7 +173,7 @@ public class SimpleNavigator implements Navigator
   }
 
   /**
-   *returns true iff the robot is moving under power
+   * @return true if the robot is moving under power
    */
   public boolean isMoving()
   {
@@ -172,7 +183,7 @@ public class SimpleNavigator implements Navigator
   /**
    * Moves the NXT robot a specific distance. A positive value moves it forwards and
    * a negative value moves it backwards.
-   * The robot position is updated atomatically when the method returns.
+   * The robot position is updated automatically when the method returns.
    * @param distance The positive or negative distance to move the robot, same units as _wheelDiameter
    */
   public void travel(float distance)
@@ -183,10 +194,10 @@ public class SimpleNavigator implements Navigator
   /**
    * Moves the NXT robot a specific distance. A positive value moves it forwards and
    * a negative value moves it backwards.
-   *  If immediateReturnis true, method returns immidiately and your code MUST call updatePostion()
+   *  If immediateReturnis true, method returns immediately and your code MUST call updatePostion()
    * when the robot has stopped.  Otherwise, the robot position is lost.
    * @param distance The positive or negative distance to move the robot, same units as _wheelDiameter
-   * @param immediateReturn iff true, the method returns immediately, in which case the programmer <br>
+   * @param immediateReturn if true, the method returns immediately, in which case the programmer <br>
    *  is responsible for calling updatePosition() before the robot moves again.
    */
   public void travel(float distance, boolean immediateReturn)
@@ -230,11 +241,11 @@ public class SimpleNavigator implements Navigator
 
   /**
    * Rotates the NXT robot a specific number of degrees in a direction (+ or -).
-   *  If immediateReturn is true, method returns immidiately and your code MUST call updatePostion()
+   *  If immediateReturn is true, method returns immediately and your code MUST call updatePostion()
    * when the robot has stopped.  Otherwise, the robot position is lost.  If false,
    * the robot position is updated automatically.
    * @param angle Angle to rotate in degrees. A positive value rotates left, a negative value right.
-   * @param immediateReturn iff true, the method returns immediately, in which case the programmer <br>
+   * @param immediateReturn if true, the method returns immediately, in which case the programmer <br>
    *  is responsible for calling updatePosition() before the robot moves again.
    */
   public void rotate(float angle, boolean immediateReturn)
@@ -261,10 +272,10 @@ public class SimpleNavigator implements Navigator
   /**
    * Rotates the NXT robot to point in a specific direction. It will take the shortest
    * path necessary to point to the desired angle.
-   * If immediateReturnis true, method returns immidiately and your code MUST call updatePostion()
+   * If immediateReturnis true, method returns immediately and your code MUST call updatePostion()
    * when the robot has stopped.  Otherwise, the robot position is lost.
    * @param angle The angle to rotate to, in degrees.
-   * @param immediateReturn iff true,  method returns immediately and the programmer is responsible for calling
+   * @param immediateReturn if true,  method returns immediately and the programmer is responsible for calling
    * updatePosition() before the robot moves again.
    */
   public void rotateTo(float angle, boolean immediateReturn)
@@ -286,16 +297,18 @@ public class SimpleNavigator implements Navigator
 
   /**
    * Rotates the NXT robot towards the target point (x,y)  and moves the required distance.
-   * If immediateReturnis true, method returns immidiately and your code MUST call updatePostion()
+   * If immediateReturnis true, method returns immediately and your code MUST call updatePostion()
    * when the robot has stopped.  Otherwise, the robot position is lost.
    * @param x The x coordinate to move to.
    * @param y The y coordinate to move to.
-   * @param immediateReturn iff true,  method returns immediately and the programmer is responsible for calling
+   * @param immediateReturn if true,  method returns immediately and the programmer is responsible for calling
    * updatePosition() before the robot moves again.
    */
   public void goTo(float x, float y, boolean immediateReturn)
   {
-    rotateTo(angleTo(x, y));
+    // rotateTo() needs the angle without taking into account the current heading! But angleTo() will take the current 
+    // heading into account. Thus we need to use angle().
+    rotateTo(angle(x, y));
     travel(distanceTo(x, y), immediateReturn);
     if (!immediateReturn)
     {
@@ -313,21 +326,36 @@ public class SimpleNavigator implements Navigator
   {
     float dx = x - _x;
     float dy = y - _y;
-    //use hypotenuse formula
+    // use hypotenuse formula
     return (float) Math.sqrt(dx * dx + dy * dy);
   }
 
   /**
-   * returns the direction angle (degrees) to point with coordinates (x,y)
+   * Calculate the angle in degree from the current position to the point given by the coordinates (x,y) without taking
+   * the current heading into account.
+   * 
    * @param x coordinate of the point
    * @param y coordinate of the point
-   * @return the direction angle to the point (x,y) from the NXT.  Rotate to this angle to head toward it.
+   * @return the angle to the point (x,y) from the current position of the NXT without taking the current heading into account.
    */
-  public float angleTo(float x, float y)
+  public float angle(float x, float y)
   {
     float dx = x - _x;
     float dy = y - _y;
     return (float) Math.toDegrees(Math.atan2(dy, dx));
+  }
+
+  /**
+   * Calculate the angle in degree from the current position to the point given by the coordinates (x,y) taking
+   * the current heading into account. Thus this the angle to turn by in order to face towards the given point.
+   * 
+   * @param x coordinate of the point
+   * @param y coordinate of the point
+   * @return the angle to turn in order to face toward the given point.
+   */
+  public float angleTo(float x, float y)
+  {
+    return angle(x,y) - _heading;
   }
 
   /**
@@ -373,8 +401,8 @@ public class SimpleNavigator implements Navigator
   }
 
   /**
-   * Moves the NXT robot in a circular arc through the specificd angle;  <br>
-   * The center of the turning circle is on the right side of the robot iff parameter radius is negative.
+   * Moves the NXT robot in a circular arc through the specified angle;  <br>
+   * The center of the turning circle is on the right side of the robot if parameter radius is negative.
    * Robot will stop when total rotation equals angle. If angle is negative, robot will move travel backwards.
    * @param radius radius of the turning circle
    * @param angle The sign of the angle determines the direction of robot motion
@@ -386,10 +414,11 @@ public class SimpleNavigator implements Navigator
 
   /**
    * Moves the NXT robot in a circular arc through a specific angle; <br>
-   * The center of the turning circle is on the right side of the robot iff parameter radius is negative.
+   * The center of the turning circle is on the right side of the robot if parameter radius is negative.
    * Robot will stop when total rotation equals angle. If angle is negative, robot will travel backwards.
    * @param radius  of the turning circle
-   * @param immediateReturn iff true, the method returns immediately, in which case the programmer <br>
+   * @param angle The angle to turn.
+   * @param immediateReturn if true, the method returns immediately, in which case the programmer <br>
    * is responsible for calling updatePosition() before the robot moves again.
    */
   public void turn(float radius, int angle, boolean immediateReturn)
