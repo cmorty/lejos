@@ -2000,7 +2000,7 @@ InstallDir
 <%InstallDir%>
 
 20C58F69-C30F-497D-A4BA-E1B395EC15A7,FileSize
-4021747
+4016366
 
 20C58F69-C30F-497D-A4BA-E1B395EC15A7,Name
 {Program Files}
@@ -2467,7 +2467,7 @@ AD765739-B160-40DD-B1D3-2E618C29A519,Destination
 <%ProjectsDir%>
 
 AD765739-B160-40DD-B1D3-2E618C29A519,FileSize
-16232578
+16244700
 
 AD765739-B160-40DD-B1D3-2E618C29A519,Name
 Projects
@@ -3127,7 +3127,7 @@ Windows,Active
 Yes
 
 Windows,Executable
-{<%AppName%> <%Version%>-Setup<%Ext%>}
+leJOS_NXJ_<%Version%>-Setup<%Ext%>
 
 Windows,IncludeTWAPI
 No
