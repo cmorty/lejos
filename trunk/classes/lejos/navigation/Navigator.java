@@ -1,171 +1,166 @@
 package lejos.navigation;
 
+
+
 /**
 * The Navigator interface contains methods for performing basic navigational
-* movements. Normally the Navigator class is instantiated as an object and
-* methods are called on that object.
+* movements.  <br>
+* <b>A note about coordinates:</b>  Angles that relate to positions in the plane are in degrees relative to the
+ * direction of the X axis.  The direction of the Y axis is 90 degrees.
 *
-* Note: This class will only work for robots using two motors to steer differentially
-* that can rotate within its footprint (i.e. turn on one spot).
-* Modified by Roger Glassey 29 Jan 2007
-* @author <a href="mailto:bbagnall@escape.ca">Brian Bagnall</a>
-* @version 0.2  - Jan-2007
+* @version 0.8  - June-2009
 */
 public interface Navigator
 {
   
   /**
-  * Returns the current x coordinate of the NXT.
-  * Note: At present it will only give an updated reading when the NXT is stopped.
-  * @return float Present x coordinate.
+  * Returns the X coordinate of the NXT as calculated by the most recent  call to fixPosition()
+  * @return float X coordinate.
   */
   public float getX();
   
-  /**
-  * Returns the current y coordinate of the NXT.
-  * Note: At present it will only give an updated reading when the NXT is stopped.
-  * @return float Present y coordinate.
+
+ /**
+  * Returns the Y coordinate of the NXT as calculated by the most recent  call to fixPosition()
+  * @return float  Y coordinate.
   */
   public float getY();
   
   /**
-  * Returns the current angle the NXT robot is facing.
-  * Note: At present it will only give an updated reading when the NXT is stopped.
+  * Returns the direction the NXT is facing, as calculated by the most recent  call to fixPosition()
   * @return float directionAngle in degrees.
   */
   public float getAngle();
   
   /**
-   *returns true iff the robot is moving under power
+   *Returns true if the robot is moving under power
    */
   public boolean isMoving();
   
 
   /**
-   * set the movement speed of the robot, wheel diameter units/sec
+   * Sets the movement speed of the robot, wheel diameter units/sec
    */
   public void setMoveSpeed(float speed);
   /**
-   * sets the rotation speed of the robot in deg/secm when robot is turning in place
+   * Sets the rotation speed of the robot in deg/sec when robot is turning in place
    */
   public void setTurnSpeed(float speed);
 
-  /**
-   * Moves the NXT robot forward until stop() is called.
-   *
-   * @see Navigator#stop().
-   */	
+   /**
+   * Starts the NXT robot moving forward.
+   */
   public void forward();
 
-  /**
-   * Moves the NXT robot backward until stop() is called.
-   *
-   * @see Navigator#stop().
-  */
+   /**
+   * Starts the NXT robot moving backward.
+   */
   public void backward();
 
   /**
    * Halts the NXT robot and calculates new x, y coordinates.
-   *
-   * @see Navigator#forward().
    */
   public void stop();
  
   /**
-   *sets robot location (x,y) and direction angle
+   * Sets robot location (x,y) and direction angle
    * @param x  the x coordinate of the robot
    * @param y the y coordinate of the robot
    * @param directionAngle  the angle the robot is heading, measured from the x axis
    */	
   public void setPosition(float x, float y, float directionAngle); 
 
-/**
-*Rotates the NXT to the left (increasing angle) until stop() is called;
-*/
-  public void rotateLeft();
-  
-/**
-*Rotates the NXT to the right (decreasing angle) until stop() is called;
-*/
-  public void rotateRight();
-  
-  
   /**
-   * Rotates the NXT robot a specific number of degrees in a direction (+ or -).This
-   * method will return once the rotation is complete.
-   *
-   * @param angle Angle to rotate in degrees. A positive value rotates left, a negative value right.
-   */
-  public void rotate(float angle);
-  
-  /**
-   * Rotates the NXT robot a specific number of degrees in a direction (+ or -).
-   * If immediateReturn is true, method returns immediately and your code MUST call updatePostion()
-   * when the robot has stopped.  Otherwise, the robot position is lost. 
-   * @param angle Angle to rotate in degrees. A positive value rotates left, a negative value right.
-   * @param immediateReturn iff true, the method returns immediately, in which case the programmer <br>
-   *  is responsible for calling updatePosition() before the robot moves again. 
-   */
-  public void rotate(float angle, boolean immediateReturn);
-
-
-  /**
-   * Rotates the NXT robot to point in a specific direction. It will take the shortest
-   * path necessary to point to the desired angle. 
-   * @param angle The angle to rotate to, in degrees.
-   */
-  public void rotateTo(float angle); 
-  
-  /**
-   * Rotates the NXT robot to point in a specific direction. It will take the shortest
-   * path necessary to point to the desired angle. 
-   * If immediateReturnis true, method returns immidiately and your code MUST call updatePostion()
-   * when the robot has stopped.  Otherwise, the robot position is lost. 
-   * @param angle The angle to rotate to, in degrees.
-   * @param immediateReturn iff true,  method returns immediately and the programmer is responsible for calling 
-   * updatePosition() before the robot moves again. 
-   */
-  public void rotateTo(float angle,boolean immediateReturn) ;
-   	
-  
-    /**
-   * Moves the NXT robot a specific distance. A positive value moves it forward and
-   * a negative value moves it backward. Method returns when movement is done.
-   * @param distance The positive or negative distance to move the robot.
+   * Moves the NXT robot a specific distance. A positive value moves it forwards and
+   * a negative value moves it backwards.
+   * The robot position is updated atomatically when the method returns.
+   * @param distance The positive or negative distance to move the robot, same units as _wheelDiameter
    */
   public void travel(float distance);
   
   /**
    * Moves the NXT robot a specific distance. A positive value moves it forwards and
    * a negative value moves it backwards. 
-   *  If immediateReturnis true, method returns immidiately and your code MUST call updatePostion()
+   *  If immediateReturnis true, method returns immediately and your code MUST call updatePostion()
    * when the robot has stopped.  Otherwise, the robot position is lost. 
    * @param distance The positive or negative distance to move the robot, same units as _wheelDiameter
-   * @param immediateReturn iff true, the method returns immediately, in which case the programmer <br>
-   *  is responsible for calling updatePosition() before the robot moves again. 
+   * @param immediateReturn if true, the method returns immediately, in which case 
+   *  your code must call updatePosition() before the robot moves again.
    */
   public void travel(float distance, boolean immediateReturn) ;
 
+
+  /**
+  *Starts  the NXT rotating to the left (increasing angle);
+  */
+  public void rotateLeft();
+
+  /**
+   *Starts the NXT rotating to the right (decreasing angle);
+   */
+
+  public void rotateRight();
+
+
+   /**
+   * Rotates the NXT robot a specific number of degrees in a direction (+ or -).
+   * Robot position is updated when the method exits.
+   * @param angle Angle to rotate in degrees. A positive value rotates left, a negative value right.
+   */
+  public void rotate(float angle);
+
+  /**
+   * Rotates the NXT robot through specific number of degrees in a direction (+ or -).
+   * If immediateReturn is true, method returns immediately and your code MUST call updatePostion()
+   * when the robot has stopped.  Otherwise, the robot position is lost.
+   * @param angle Angle to rotate in degrees. A positive value rotates left, a negative value right.
+   * @param immediateReturn if true, the method returns immediately, 
+   * in which case your code must call  call updatePosition() before the robot moves again.
+   */
+  public void rotate(float angle, boolean immediateReturn);
+
+
+  /**
+   * Rotates the NXT robot to point in a specific direction. It will use the smallest
+   * rotation  necessary to point to the desired angle.
+   * @param angle The angle to rotate to, in degrees.
+   */
+  public void rotateTo(float angle);
+
+  /**
+   * Rotates the NXT robot to point in a specific direction. It will take the shortest
+   * path necessary to point to the desired angle.
+   * If immediateReturnis true, method returns immidiately and your code MUST call updatePostion()
+   * when the robot has stopped.  Otherwise, the robot position is lost.
+   * @param angle The angle to rotate to, in degrees.
+   * @param immediateReturn if true,  method returns immediately and your code must call
+   * updatePosition() before the robot moves again.
+   */
+  public void rotateTo(float angle,boolean immediateReturn) ;
+
+
   /**
    * Rotates the NXT robot towards the target point and moves the required distance.
-   *
+   * Method returns when the point is reached, and the robot position is updated;
    * @param x The x coordinate to move to.
    * @param y The y coordinate to move to.
    */
   public void goTo(float x, float y);
 
   /**
-   * Rotates the NXT robot towards the target point and moves the required distance.
-   *
+   * Rotates the NXT robot towards the target point (x,y)  and moves the required distance.
+   * If immediateReturnis true, method returns immidiately and your code MUST call updatePostion()
+   * when the robot has stopped.  Otherwise, the robot position is lost.
    * @param x The x coordinate to move to.
    * @param y The y coordinate to move to.
-   * @param immediateReturn Indicates whether method should return immediately.
+   * @param immediateReturn if true,  method returns immediately and your code must call
+   * updatePosition() before the robot moves again.
    */
    public void goTo(float x, float y, boolean immediateReturn);
 
   
   /**
-   * returns the distance from robot to the point with coordinates (x,y) .
+   * Returns the distance from robot to the point with coordinates (x,y) .
    * @param x coordinate of the point
    * @param y coordinate of the point
    * @return the distance from the robot current location to the point
@@ -173,7 +168,7 @@ public interface Navigator
   public float distanceTo( float x, float y);
 	
   /**
-   * returns the direction angle (degrees) to the point with coordinates (x,y)
+   * Returns the direction angle (degrees) to the point with coordinates (x,y)
    * @param x coordinate of the point
    * @param y coordinate of the point
    * @return the direction angle to the point (x,y) from the NXT.  Rotate to this angle to head toward it. 
