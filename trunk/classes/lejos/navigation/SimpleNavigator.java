@@ -1,5 +1,5 @@
 package lejos.navigation;
-
+    
 
 import lejos.navigation.*;
 import lejos.nxt.*;
