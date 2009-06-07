@@ -89,7 +89,8 @@ public class WaypointNavigator extends SimpleNavigator {
     while (segments.size() > 0) {
       Segment segment = segments.get(0);
       setTurnSpeed(segment.getTurnSpeed());
-      rotate(angleTo(segment.getX(), segment.getY()));
+      // TODO: Roger did change angleTo() to not subtract heading. This did probably break the code below. I need to check. 
+      rotate(angleTo(segment.getX(), segment.getY())); // - getAngle() ???
       setMoveSpeed(segment.getMoveSpeed());
       travel(distanceTo(segment.getX(), segment.getY()));
       segments.remove(0);
