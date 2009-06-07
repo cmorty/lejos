@@ -50,8 +50,13 @@ public class SimpleNavigator implements Navigator {
      * @param rightMotor The motor used to drive the right wheel e.g. Motor.C.
      * @param leftMotor The motor used to drive the left wheel e.g. Motor.A.
      * @param reverse  If motor.forward() dives the robot backwars, set this parameter true.
+   * 
+   * @deprecated The correct way is to create the Pilot in advance and to use that in construction of the
+   *             SimpleNavigator. Otherwise the SimpleNavigator needs to know detail it should not care about!
      */
     public SimpleNavigator(float wheelDiameter, float trackWidth, Motor leftMotor, Motor rightMotor, boolean reverse) {
+      // In the signature Motor was not changed to TachoMotor. This method only saves one to write "new TachoPilot" at the
+      // cost of maintaining this method and comments, thus it should not be used!
         pilot = new TachoPilot(wheelDiameter, trackWidth, leftMotor, rightMotor, reverse);
     }
 
@@ -64,8 +69,13 @@ public class SimpleNavigator implements Navigator {
      * of the right tire, sane units as wheel diameter
      * @param rightMotor The motor used to drive the right wheel e.g. Motor.C.
      * @param leftMotor The motor used to drive the left wheel e.g. Motor.A
+   * 
+   * @deprecated The correct way is to create the Pilot in advance and to use that in construction of the
+   *             SimpleNavigator. Otherwise the SimpleNavigator needs to know detail it should not care about!
      */
     public SimpleNavigator(float wheelDiameter, float trackWidth, Motor leftMotor, Motor rightMotor) {
+      // In the signature Motor was not changed to TachoMotor. This method only saves one to write "new TachoPilot" at the
+      // cost of maintaining this method and comments, thus it should not be used!
         pilot = new TachoPilot(wheelDiameter, trackWidth, leftMotor, rightMotor);
     }
 
