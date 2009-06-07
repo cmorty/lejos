@@ -34,7 +34,7 @@ package lejos.nxt;
  * </pre></code>
  * @author Roger Glassey revised 9 Feb 2008 - added lock() method. 
  */
-public class Motor extends BasicMotor// implements TimerListener
+public class Motor extends BasicMotor implements TachoMotor // implements TimerListener
 {   
 
    public TachoMotorPort _port;//** private
@@ -122,27 +122,29 @@ public class Motor extends BasicMotor// implements TimerListener
    public int getStopAngle() { return _stopAngle;}
 
    /**
-    * Causes motor to rotate forward.
+    * @see lejos.nxt.BasicMotor#forward()
     */
+   @Override
    public void forward()
    { 
-      if(_mode == FORWARD)_rampUp = false;
-      else _rampUp = _useRamp;
-      if(_mode == BACKWARD)stop();
-      _direction = 1;
-      updateState( FORWARD);
+     if(_mode == FORWARD)_rampUp = false;
+     else _rampUp = _useRamp;
+     if(_mode == BACKWARD)stop();
+     _direction = 1;
+     updateState( FORWARD);
    }  
 
    /**
-    * Causes motor to rotate backwards.
+    * @see lejos.nxt.BasicMotor#backward()
     */
+   @Override
    public void backward()
    {
-      if(_mode == BACKWARD )_rampUp = false;
-      else _rampUp = _useRamp;
-      if(_mode == FORWARD)stop();
-      updateState( BACKWARD);
-      _direction = -1;
+     if(_mode == BACKWARD )_rampUp = false;
+     else _rampUp = _useRamp;
+     if(_mode == FORWARD)stop();
+     updateState( BACKWARD);
+     _direction = -1;
    }
 
    /**
@@ -247,11 +249,13 @@ public class Motor extends BasicMotor// implements TimerListener
     * 
     * @param  angle through which the motor will rotate
     * @param immediateReturn iff true, method returns immediately, thus allowing monitoring of sensors in the calling thread. 
+    * 
+    *  @see TachoMotor#rotate(int, boolean)
     */
    public void rotate(int angle, boolean immediateReturn)
    {
-      int t = getTachoCount();
-      rotateTo(t+angle,immediateReturn);
+     int t = getTachoCount();
+     rotateTo(t+angle,immediateReturn);
    }
 
    /**
@@ -271,7 +275,7 @@ public class Motor extends BasicMotor// implements TimerListener
     * If any motor method is called before the limit is reached, the rotation is canceled. 
     * When the angle is reached, the method isRotating() returns false;<br>
     * @param  limitAngle to which the motor will rotate, and then stop. 
-    * @param immediateReturn iff true, method returns immediately, thus allowing monitoring of sensors in the calling thread. 
+    * @param immediateReturn iff true, method returns immediately, thus allowing monitoring of sensors in the calling thread.
     */
    public void rotateTo(int limitAngle,boolean immediateReturn)
    {
@@ -602,22 +606,20 @@ public class Motor extends BasicMotor// implements TimerListener
       _voltage = Battery.getVoltage(); 
    }
 
-   /** 
-    *returns actualSpeed degrees per second,  calculated every 100 ms; negative value means motor is rotating backward
+   /**
+    * @see lejos.nxt.TachoMotor#getActualSpeed()
     */
    public int getActualSpeed()
    {
-      return _actualSpeed;
+     return _actualSpeed;
    }
 
    /**
-    * Returns the tachometer count.
-    * 
-    * @return tachometer count in degrees
+    * @see lejos.nxt.TachoMotor#getTachoCount()
     */
    public int getTachoCount()
    {
-      return _port.getTachoCount();
+     return _port.getTachoCount();
    }
 
    /**
