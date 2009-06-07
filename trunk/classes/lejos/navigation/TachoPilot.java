@@ -1,7 +1,7 @@
 package lejos.navigation;
 
 import lejos.nxt.Battery;
-import lejos.nxt.Motor;
+import lejos.nxt.TachoMotor;
 
 /**
  * The TachoPilot class is a software abstraction of the Pilot mechanism of a NXT robot. It contains methods to control
@@ -41,74 +41,74 @@ public class TachoPilot implements Pilot {
   /**
    * Left motor.
    */
-  protected final Motor _left;
+  protected final TachoMotor _left;
 
   /**
    * Right motor.
    */
-  protected final Motor _right;
+  protected final TachoMotor _right;
 
   /**
    * Left motor degrees per unit of travel.
    */
-  protected final float _leftDegPerDistance;
+  protected final float      _leftDegPerDistance;
 
   /**
    * Right motor degrees per unit of travel.
    */
-  protected final float _rightDegPerDistance;
+  protected final float      _rightDegPerDistance;
 
   /**
    * Left motor revolutions for 360 degree rotation of robot (motors running in opposite directions). Calculated from
    * wheel diameter and track width. Used by rotate() and steer() methods.
    **/
-  protected final float _leftTurnRatio;
+  protected final float      _leftTurnRatio;
 
   /**
    * Right motor revolutions for 360 degree rotation of robot (motors running in opposite directions). Calculated from
    * wheel diameter and track width. Used by rotate() and steer() methods.
    **/
-  protected final float _rightTurnRatio;
+  protected final float      _rightTurnRatio;
 
   /**
    * Speed of robot for moving in wheel diameter units per seconds. Set by setSpeed(), setMoveSpeed()
    */
-  protected float       _robotMoveSpeed;
+  protected float            _robotMoveSpeed;
 
   /**
    * Speed of robot for turning in degree per seconds.
    */
-  protected float       _robotTurnSpeed;
+  protected float            _robotTurnSpeed;
 
   /**
    * Motor speed degrees per second. Used by forward(),backward() and steer().
    */
-  protected int         _motorSpeed;
+  protected int              _motorSpeed;
 
   /**
    * Motor rotation forward makes robot move forward if parity == 1.
    */
-  private byte          _parity;
+  private byte               _parity;
 
   /**
    * If true, motor speed regulation is turned on. Default = true.
    */
-  private boolean       _regulating = true;
+  private boolean            _regulating = true;
 
   /**
    * Distance between wheels. Used in steer() and rotate().
    */
-  protected final float _trackWidth;
+  protected final float      _trackWidth;
 
   /**
    * Diameter of left wheel.
    */
-  protected final float _leftWheelDiameter;
+  protected final float      _leftWheelDiameter;
 
   /**
    * Diameter of right wheel.
    */
-  protected final float _rightWheelDiameter;
+  protected final float      _rightWheelDiameter;
 
   /**
    * Allocates a TachoPilot object, and sets the physical parameters of the NXT robot.<br>
@@ -119,7 +119,8 @@ public class TachoPilot implements Pilot {
    * @param leftMotor The left Motor (e.g., Motor.C).
    * @param rightMotor The right Motor (e.g., Motor.A).
    */
-  public TachoPilot(final float wheelDiameter, final float trackWidth, final Motor leftMotor, final Motor rightMotor) {
+  public TachoPilot(final float wheelDiameter, final float trackWidth, final TachoMotor leftMotor,
+      final TachoMotor rightMotor) {
     this(wheelDiameter, trackWidth, leftMotor, rightMotor, false);
   }
 
@@ -132,8 +133,8 @@ public class TachoPilot implements Pilot {
    * @param rightMotor The right Motor (e.g., Motor.A).
    * @param reverse If true, the NXT robot moves forward when the motors are running backward.
    */
-  public TachoPilot(final float wheelDiameter, final float trackWidth, final Motor leftMotor, final Motor rightMotor,
-      final boolean reverse) {
+  public TachoPilot(final float wheelDiameter, final float trackWidth, final TachoMotor leftMotor,
+      final TachoMotor rightMotor, final boolean reverse) {
     this(wheelDiameter, wheelDiameter, trackWidth, leftMotor, rightMotor, reverse);
   }
 
@@ -148,15 +149,15 @@ public class TachoPilot implements Pilot {
    *          difference in wheel size. Adjust wheel size accordingly. The minimum change in wheel size which will
    *          actually have an effect is given by minChange = A*wheelDiameter*wheelDiameter/(1-(A*wheelDiameter) where A
    *          = PI/(moveSpeed*360). Thus for a moveSpeed of 25 cm/second and a wheelDiameter of 5,5 cm the minChange is
-   *          about 0,01058 cm. The reason for this is, that different while sizes will result in different motor
-   *          speed. And that is given as an integer in degree per second.
+   *          about 0,01058 cm. The reason for this is, that different while sizes will result in different motor speed.
+   *          And that is given as an integer in degree per second.
    * @param trackWidth Distance between center of right tire and center of left tire, in same units as wheelDiameter.
    * @param leftMotor The left Motor (e.g., Motor.C).
    * @param rightMotor The right Motor (e.g., Motor.A).
    * @param reverse If true, the NXT robot moves forward when the motors are running backward.
    */
   public TachoPilot(final float leftWheelDiameter, final float rightWheelDiameter, final float trackWidth,
-      final Motor leftMotor, final Motor rightMotor, final boolean reverse) {
+      final TachoMotor leftMotor, final TachoMotor rightMotor, final boolean reverse) {
     // left
     _left = leftMotor;
     _leftWheelDiameter = leftWheelDiameter;
@@ -176,14 +177,14 @@ public class TachoPilot implements Pilot {
   /**
    * @return left motor.
    */
-  public Motor getLeft() {
+  public TachoMotor getLeft() {
     return _left;
   }
 
   /**
    * @return right motor.
    */
-  public Motor getRight() {
+  public TachoMotor getRight() {
     return _right;
   }
 
@@ -350,7 +351,8 @@ public class TachoPilot implements Pilot {
     _left.rotate(-rotateAngleLeft, true);
     _right.rotate(rotateAngleRight, immediateReturn);
     if (!immediateReturn) {
-      while (_left.isRotating() || _right.isRotating())
+      while (_left.isMoving() || _right.isMoving())
+        // changed isRotating() to isMoving() as this covers what we need and alows us to keep the interface small
         Thread.yield();
     }
   }
@@ -418,7 +420,8 @@ public class TachoPilot implements Pilot {
     _left.rotate((int) (_parity * distance * _leftDegPerDistance), true);
     _right.rotate((int) (_parity * distance * _rightDegPerDistance), immediateReturn);
     if (!immediateReturn) {
-      while (_left.isRotating() || _right.isRotating())
+      while (_left.isMoving() || _right.isMoving())
+        // changed isRotating() to isMoving() as this covers what we need and alows us to keep the interface small
         Thread.yield();
     }
   }
@@ -487,8 +490,8 @@ public class TachoPilot implements Pilot {
    */
   public void steer(final int turnRate, final int angle, final boolean immediateReturn) {
     // TODO: make this work with wheels of different size
-    Motor inside;
-    Motor outside;
+    TachoMotor inside;
+    TachoMotor outside;
     int rate = turnRate;
     if (rate < -200) {
       rate = -200;
@@ -539,7 +542,9 @@ public class TachoPilot implements Pilot {
     if (immediateReturn) {
       return;
     }
-    while (inside.isRotating() || outside.isRotating())
+    while (inside.isMoving() || outside.isMoving())
+      // changed isRotating() to isMoving() as this covers what we need and alows us to keep the interface small
+
       Thread.yield();
     inside.setSpeed(outside.getSpeed());
   }
