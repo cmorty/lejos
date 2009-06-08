@@ -8,3 +8,4 @@
 		d < Long.MIN_VALUE  =>  (int)d == Long.MIN_VALUE (including d == -infinity)
 		d == NaN  =>  (int)d == 0
 
+- JUnit test: StringBuffers/Builders with initial sizes <= 2 used to loop infinitely 
