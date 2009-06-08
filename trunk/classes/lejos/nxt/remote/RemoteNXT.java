@@ -24,13 +24,20 @@ public class RemoteNXT {
 		if (!open) throw new IOException("Failed to connect to " + name);
 		nxtCommand.setNXTComm(nxtComm);
 		A =  new RemoteMotor(nxtCommand, 0);
+		RemoteMotor.A = A;
 		B = new RemoteMotor(nxtCommand, 1);
+		RemoteMotor.B = B;
 		C = new RemoteMotor(nxtCommand, 1);
+		RemoteMotor.C = C;
 		Battery = new RemoteBattery(nxtCommand);
 		S1 = new RemoteSensorPort(nxtCommand, 0);
+		RemoteSensorPort.S1 = S1;
 		S2 = new RemoteSensorPort(nxtCommand, 1);
+		RemoteSensorPort.S2 = S2;
 		S3 = new RemoteSensorPort(nxtCommand, 2);
+		RemoteSensorPort.S3 = S3;
 		S4 = new RemoteSensorPort(nxtCommand, 3);
+		RemoteSensorPort.S4 = S4;
 	}
 	
 	/**
