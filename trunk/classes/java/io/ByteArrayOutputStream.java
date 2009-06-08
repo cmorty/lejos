@@ -14,9 +14,9 @@ public class ByteArrayOutputStream extends OutputStream
 		int cl = buf.length;
 		if (cl < minCapacity)
 		{
-			cl = cl * CAPACITY_INCREMENT_NUM / CAPACITY_INCREMENT_DEN;
+			cl = cl * CAPACITY_INCREMENT_NUM / CAPACITY_INCREMENT_DEN + 1;
 			while (cl < minCapacity)
-				cl = cl * CAPACITY_INCREMENT_NUM / CAPACITY_INCREMENT_DEN;
+				cl = cl * CAPACITY_INCREMENT_NUM / CAPACITY_INCREMENT_DEN + 1;
 			
 			byte[] newData = new byte[cl];
 			System.arraycopy(buf, 0, newData, 0, count);
@@ -31,8 +31,8 @@ public class ByteArrayOutputStream extends OutputStream
 	
 	public ByteArrayOutputStream(int size)
 	{
-		if (size < INITIAL_CAPACITY)
-			size = INITIAL_CAPACITY;
+		if (size < 0)
+			throw new IllegalArgumentException("size is negative");
 		
 		this.buf = new byte[size];
 	}
