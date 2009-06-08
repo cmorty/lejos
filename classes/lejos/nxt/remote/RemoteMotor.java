@@ -1,6 +1,7 @@
 package lejos.nxt.remote;
 
 import java.io.*;
+import lejos.nxt.TachoMotor;
 
 /**
  * Motor class. Contains three instances of Motor.
@@ -9,7 +10,10 @@ import java.io.*;
  * @author <a href="mailto:bbagnall@mts.net">Brian Bagnall</a>
  *
  */
-public class RemoteMotor implements NXTProtocol {
+public class RemoteMotor implements TachoMotor, NXTProtocol {
+	
+	public static RemoteMotor A, B, C; 
+	
 	private int id;
 	private byte power;
 	private int mode;
@@ -54,13 +58,13 @@ public class RemoteMotor implements NXTProtocol {
 	 * @return Error value. 0 means succcess. See icommand.nxtcomm.ErrorMessages for details.
 	 */
 	
-	public int forward() {
+	public void forward() {
 		this.runState = MOTOR_RUN_STATE_RUNNING;
 		try {
-			return nxtCommand.setOutputState(id, power, this.mode + MOTORON, regulationMode, turnRatio, runState, 0);
+			nxtCommand.setOutputState(id, power, this.mode + MOTORON, regulationMode, turnRatio, runState, 0);
 		} catch (IOException ioe) {
 			System.out.println(ioe.getMessage());
-			return -1;
+			//return -1;
 		}
 	}
 	
@@ -68,13 +72,13 @@ public class RemoteMotor implements NXTProtocol {
 	* Causes motor to rotate backward.
     * @return Error value. 0 means succcess. See icommand.nxtcomm.ErrorMessages for details.
 	*/
-	public int backward() {
+	public void backward() {
 		this.runState = MOTOR_RUN_STATE_RUNNING;
 		try {
-			return nxtCommand.setOutputState(id, (byte)-power, this.mode + MOTORON, regulationMode, turnRatio, runState, 0);
+			nxtCommand.setOutputState(id, (byte)-power, this.mode + MOTORON, regulationMode, turnRatio, runState, 0);
 		} catch (IOException ioe) {
 			System.out.println(ioe.getMessage());
-			return -1;
+			//return -1;
 		}
 	}
 	
@@ -174,7 +178,7 @@ public class RemoteMotor implements NXTProtocol {
 	 * @param returnNow When true, method returns before the rotation is complete.
 	 * @return Error value. 0 means success. See lejos.pc.comm.ErrorMessages for details.
 	 */
-	public int rotate(long count, boolean returnNow) {
+	public void rotate(int count, boolean returnNow) {
 		this.runState = MOTOR_RUN_STATE_RUNNING;
 		// ** Really this can accept a ULONG value for count. Too lazy to properly convert right now:
 		byte status =  0;
@@ -188,12 +192,12 @@ public class RemoteMotor implements NXTProtocol {
 		} catch (IOException ioe) {
 			System.out.println(ioe.getMessage());
 		}
-		if(returnNow)
-			return status;
-		else {
+		if(returnNow) {
+			//return status;
+		} else {
 			// Check if mode is moving until done
 			while(isMoving()) {Thread.yield();}
-			return status;
+			//return status;
 		}
 	}
 	
@@ -226,8 +230,8 @@ public class RemoteMotor implements NXTProtocol {
 	 * @param count Number of counts to rotate motor.
 	 * @return Error value. 0 means succcess. See icommand.nxtcomm.ErrorMessages for details.
 	 */
-	public int rotate(long count) {
-		return rotate(count, false);
+	public void rotate(int count) {
+		rotate(count, false);
 	}
 	
 	/**
@@ -248,8 +252,8 @@ public class RemoteMotor implements NXTProtocol {
 	 * Note: The tachocount can not be reset to zero.
 	 * @param target
 	 */
-	public int rotateTo(long target) {
-		return rotateTo(target, false);
+	public void rotateTo(int target) {
+		rotateTo(target, false);
 		
 	}
 	
@@ -258,33 +262,24 @@ public class RemoteMotor implements NXTProtocol {
 	 * if you include true as the argument.
 	 * @param target
 	 */
-	public int rotateTo(long target, boolean returnNow) {
+	public void rotateTo(int target, boolean returnNow) {
 		// !! Probably inaccuracy can creep into this if
 		// rotateTo is called while motor moving.
 		int tachometer = this.getTachoCount();
-		return rotate(target - tachometer, returnNow);
+		rotate(target - tachometer, returnNow);
 	}
 	
 	/**
 	 * Resets the rotation counter to zero.
 	 * @return Error value. 0 means succcess. See icommand.nxtcomm.ErrorMessages for details.
 	 */
-	public int resetTachoCount() {
+	public void resetTachoCount() {
 		try {
-			return nxtCommand.resetMotorPosition(this.id, false);
+			nxtCommand.resetMotorPosition(this.id, false);
 		} catch (IOException ioe) {
 			System.out.println(ioe.getMessage());
-			return -1;
+			//return -1;
 		}
-	}
-	
-	/**
-	 * Calls resetTachoCount(). 
-	 * @deprecated
-	 * @return the tacho count
-	 */
-	public int resetRotationCounter() {
-		return resetTachoCount();
 	}
 	
 	/**
@@ -303,11 +298,12 @@ public class RemoteMotor implements NXTProtocol {
 		// @param relative TRUE: position relative to last movement, FALSE: absolute position
 		 
 		try {
-			return nxtCommand.resetMotorPosition(this.id, true);
+			nxtCommand.resetMotorPosition(this.id, true);
 		} catch (IOException ioe) {
 			System.out.println(ioe.getMessage());
 			return -1;
 		}
+		return 0;
 	}
 	
 	/**
@@ -315,14 +311,14 @@ public class RemoteMotor implements NXTProtocol {
 	 * @return Error value. 0 means success. See lejos.pc.comm.ErrorMessages for details.
 	 */
 	// !! Setting power to 0 seems to make it lock motor.
-	public int stop() {
+	public void stop() {
 		this.runState = MOTOR_RUN_STATE_RUNNING;
 		//this.regulationMode = REGULATION_MODE_MOTOR_SPEED;
 		try {
-			return nxtCommand.setOutputState(id, (byte)0, BRAKE + MOTORON + REGULATED, regulationMode, turnRatio, runState, 0);
+			nxtCommand.setOutputState(id, (byte)0, BRAKE + MOTORON + REGULATED, regulationMode, turnRatio, runState, 0);
 		} catch (IOException ioe) {
 			System.out.println(ioe.getMessage());
-			return -1;
+			//return -1;
 		}
 	}
 	
@@ -340,5 +336,20 @@ public class RemoteMotor implements NXTProtocol {
 			System.out.println(ioe.getMessage());
 			return -1;
 		}
+	}
+
+	public int getActualSpeed() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public void regulateSpeed(boolean activate) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void smoothAcceleration(boolean activate) {
+		// TODO Auto-generated method stub
+		
 	}
 }

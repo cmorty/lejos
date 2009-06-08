@@ -7,6 +7,8 @@ import java.io.*;
  * Emulates a Sensor Port using LCP
  */
 public class RemoteSensorPort implements NXTProtocol, ADSensorPort, I2CPort {
+	public static RemoteSensorPort S1, S2, S3, S4;
+	
 	private int id;
 	private int type, mode;
 	private NXTCommand nxtCommand;
