@@ -25,9 +25,9 @@ public final class StringBuffer
 		int cl = characters.length;
 		if (cl < minCapacity)
 		{
-			cl = cl * CAPACITY_INCREMENT_NUM / CAPACITY_INCREMENT_DEN;
+			cl = cl * CAPACITY_INCREMENT_NUM / CAPACITY_INCREMENT_DEN + 1;
 			while (cl < minCapacity)
-				cl = cl * CAPACITY_INCREMENT_NUM / CAPACITY_INCREMENT_DEN;
+				cl = cl * CAPACITY_INCREMENT_NUM / CAPACITY_INCREMENT_DEN + 1;
 			
 			char[] newData = new char[cl];
 			System.arraycopy(characters, 0, newData, 0, curLen);
@@ -48,8 +48,8 @@ public final class StringBuffer
 
   public StringBuffer (int length)
   {
-    if (length < INITIAL_CAPACITY)
-    	length = INITIAL_CAPACITY;
+    if (length < 0)
+    	throw new NegativeArraySizeException("length is negative");
     
     characters = new char[length];
   }

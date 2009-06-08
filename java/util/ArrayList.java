@@ -134,9 +134,7 @@ public class ArrayList<E> extends AbstractList<E> implements RandomAccess
 	public ArrayList(int initialCapacity)
 	{
 		if (initialCapacity < 0)
-			throw new IllegalArgumentException();
-		if (initialCapacity < INITIAL_CAPACITY)
-			initialCapacity = INITIAL_CAPACITY;
+			throw new IllegalArgumentException("capacity is negative");
 		
 		elementCount = 0;
 		elementData = new Object[initialCapacity];
@@ -280,9 +278,9 @@ public class ArrayList<E> extends AbstractList<E> implements RandomAccess
 		int el = elementData.length;
 		if (el < minCapacity)
 		{
-			el = el * CAPACITY_INCREMENT_NUM / CAPACITY_INCREMENT_DEN;
+			el = el * CAPACITY_INCREMENT_NUM / CAPACITY_INCREMENT_DEN + 1;
 			while (el < minCapacity)
-				el = el * CAPACITY_INCREMENT_NUM / CAPACITY_INCREMENT_DEN;
+				el = el * CAPACITY_INCREMENT_NUM / CAPACITY_INCREMENT_DEN + 1;
 			
 			Object[] newData = new Object[el];
 			System.arraycopy(elementData, 0, newData, 0, elementCount);
