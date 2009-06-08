@@ -122,6 +122,8 @@ public class Coordinates{
 			// TODO: Is there some way to make it not recalculate if it already calculated for these coordinates? Keep in mind coordinates can change.
 			// Perhaps it keeps a reference to last to coordinate. If values are the same, then doesn't recalculate.
 			calculateDistanceAndAzimuth(getLatitude(), getLongitude(), to.getLatitude(), to.getLongitude());
+			while (calculatedAzimuth < 0) calculatedAzimuth += 360;
+			while(calculatedAzimuth > 360) calculatedAzimuth -= 360;
 			return calculatedAzimuth;
 		}
 	}
