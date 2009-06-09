@@ -51,14 +51,7 @@ public interface TachoMotor {
    * @return motor speed in degrees per second
    */
   int getSpeed();
-
-  /**
-   * Returns the actual speed. This value is calculated every 100 ms on the NXT.
-   * 
-   * @return speed in degrees per second, negative value means motor is rotating backward
-   */
-  int getActualSpeed();
-
+  
   /**
    * Reset the tachometer count.
    */
@@ -71,18 +64,4 @@ public interface TachoMotor {
    */
   int getTachoCount();
 
-  /**
-   * Turns speed regulation on/off. Cumulative speed error is within about 1 degree after initial acceleration on the
-   * NXT.
-   * 
-   * @param activate is true for speed regulation.
-   */
-  void regulateSpeed(boolean activate);
-
-  /**
-   * Enables smoother acceleration. Motor speed increases gently, and does not overshoot when regulate Speed is used.
-   * 
-   * @param activate is true for smooth acceleration.
-   */
-  void smoothAcceleration(boolean activate);
 }

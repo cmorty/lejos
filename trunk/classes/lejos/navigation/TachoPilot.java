@@ -201,23 +201,7 @@ public class TachoPilot implements Pilot {
   public int getRightCount() {
     return _parity * _right.getTachoCount();
   }
-
-  /**
-   * @return actual speed of left motor in degrees per second. A negative value if motor is rotating backwards. Updated
-   *         every 100 ms.
-   **/
-  public int getLeftActualSpeed() {
-    return _left.getActualSpeed();
-  }
-
-  /**
-   * @return actual speed of right motor in degrees per second. A negative value if motor is rotating backwards. Updated
-   *         every 100 ms.
-   **/
-  public int getRightActualSpeed() {
-    return _right.getActualSpeed();
-  }
-
+  
   /**
    * @return ratio of motor revolutions per 360 degree rotation of the robot. If your robot has wheels with different
    *         size, it is the average.
@@ -239,10 +223,10 @@ public class TachoPilot implements Pilot {
   }
 
   private void setSpeed(final int leftSpeed, final int rightSpeed) {
-    _left.regulateSpeed(_regulating);
-    _left.smoothAcceleration(!isMoving());
-    _right.regulateSpeed(_regulating);
-    _right.smoothAcceleration(!isMoving());
+    //_left.regulateSpeed(_regulating);
+    //_left.smoothAcceleration(!isMoving());
+    //_right.regulateSpeed(_regulating);
+    //_right.smoothAcceleration(!isMoving());
     _left.setSpeed(leftSpeed);
     _right.setSpeed(rightSpeed);
   }
@@ -549,12 +533,11 @@ public class TachoPilot implements Pilot {
     inside.setSpeed(outside.getSpeed());
   }
 
-  /**
+  /*
    * @return true if either motor actual speed is zero.
-   */
-  public boolean stalled() {
+   public boolean stalled() {
     return (0 == _left.getActualSpeed()) || (0 == _right.getActualSpeed());
-  }
+  }*/
 
   /**
    * Motors backward. This is called by forward() and backward().
@@ -564,18 +547,18 @@ public class TachoPilot implements Pilot {
     _right.backward();
   }
 
-  /**
+  /*
    * Sets motor speed regulation (default is true).<br>
    * Allows steer() method to be called by (for example) a line tracker or compass navigator so direction control is
    * from sensor inputs.
    * 
    * @param yes Set motor speed regulation on = true or off = false.
-   */
+   
   public void regulateSpeed(final boolean yes) {
     _regulating = yes;
     _left.regulateSpeed(yes);
     _right.regulateSpeed(yes);
-  }
+  }*/
 
   /**
    * Motors forward. This is called by forward() and backward().

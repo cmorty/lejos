@@ -12,6 +12,9 @@ import java.io.*;
  * A light sensor should be plugged into port 1 of the remote NXT. If using
  * RS485 communications the two NXTs should be linked using a standard Lego
  * connector between port 4 on both devices.
+ * NOTE: Be sure to change the name of the target brick below from "NXT" to 
+ * the proper name. Also, as stated above, if using RS-485 make sure NXTLCPRespond 
+ * is running on the target brick (port 4 to port 4) before running this program. 
  */
 public class RemoteNXTTest {
 	public static void main(String[] args) throws Exception {

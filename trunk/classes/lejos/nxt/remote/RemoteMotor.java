@@ -12,8 +12,6 @@ import lejos.nxt.TachoMotor;
  */
 public class RemoteMotor implements TachoMotor, NXTProtocol {
 	
-	public static RemoteMotor A, B, C; 
-	
 	private int id;
 	private byte power;
 	private int mode;
@@ -336,20 +334,5 @@ public class RemoteMotor implements TachoMotor, NXTProtocol {
 			System.out.println(ioe.getMessage());
 			return -1;
 		}
-	}
-
-	public int getActualSpeed() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	public void regulateSpeed(boolean activate) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void smoothAcceleration(boolean activate) {
-		// TODO Auto-generated method stub
-		
-	}
+	}	
 }
