@@ -131,7 +131,7 @@ public class CompassPilot extends TachoPilot {
 	{
 		int spd =_motorSpeed;
 		setSpeed(100);
-		regulateSpeed(true);
+		//regulateSpeed(true); BB
 		compass.startCalibration();
 		super.rotate(360,false);
         compass.stopCalibration();             
@@ -163,10 +163,9 @@ public class CompassPilot extends TachoPilot {
 	 * @param distance The positive or negative distance to move the robot, same units as _wheelDiameter
 	 * @param immediateReturn iff true, the method returns immediately. 
 	 */
-	public void travel(float distance, boolean immediateReturn)
-	{
-//      setHeading(getCompassHeading());
-		regulateSpeed(false);
+	public void travel(float distance, boolean immediateReturn) {
+		//setHeading(getCompassHeading());
+		//regulateSpeed(false); BB
 		reset();
 		_distance = distance;
 		if(_distance > 0)
@@ -202,7 +201,7 @@ public class CompassPilot extends TachoPilot {
 	{
 		_heading = Math.round(angle);
 		_traveling = false;
-		regulateSpeed(true); // accurate use of tacho count to regulate speed;
+		//regulateSpeed(true); BB // accurate use of tacho count to regulate speed;
 		_rotating = true;
 		if(immediateReturn)return;
 		while(_rotating) Thread.yield();

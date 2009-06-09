@@ -5,6 +5,7 @@ import lejos.nxt.*;
 import lejos.keyboard.*;
 
 /**
+ * This is a sample if you have a Bluetooth SPP Keyboard (see Keyboard class).
  * A simple command line app that lets you execute files or enter
  * some common DOS commands like dir, mem, etc... 
  * This is some sample code to demonstrate the Keyboard class. It
@@ -19,7 +20,9 @@ import lejos.keyboard.*;
  * TODO: File.exec() - need one that passes arguments into main(String [] args)
  * TODO: It would be nice if the File.exec() command kept track of the chain of 
  * programs that were executed, rather than going back to the menu every time. 
- * That way after an exec is run it returns to CommandLine.  
+ * That way after an exec is run it returns to CommandLine. 
+ * TODO: Would be very cool to somehow get streams working with console commands, similar
+ * to how Unix and DOS does it. 
  */
 
 public class CommandLine implements KeyListener {
