@@ -7,6 +7,11 @@ import javax.microedition.io.*;
 
 /*
  * Developer Notes:
+ * TODO: The preferred paradigm is to allow multiple text fields, multiple apps in MIDP
+ * and the one with focus is the one that gets the key events. see javax.microedition.lcdui.ItemStateListener?
+ * 
+ * TODO: Would be slick if it would connect to leJOS as soon as it is turned on, like Windows XP.
+ * 
  * Programming keyboard input is not very simple or straightforward.
  * This class basically converts the keyboard scan code into a VK constant (virtual keyboard)
  * located in KeyEvent. The method that does this is getJavaConstant().

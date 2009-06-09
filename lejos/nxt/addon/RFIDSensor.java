@@ -154,7 +154,7 @@ public class RFIDSensor extends I2CSensor
     }
 
     /**
-     * Obtain the serial number of the RFID Sensor
+     * Obtain the serial number of the RFID Sensor.
      * NOTES: To obtain the serial number the device must be in boot loader
      * mode. This function will switch into this mode and then return to
      * normal mode on completion.
@@ -197,7 +197,7 @@ public class RFIDSensor extends I2CSensor
     }
 
     /**
-     * Start a single read from the device.
+     * Start continually reading from the device.
      * Does not wake up the device or include any delays.
      * @return < 0 i2c error code >= 0 no error
      */
@@ -223,7 +223,7 @@ public class RFIDSensor extends I2CSensor
      * mode then after the first call, the tag can be presented at any time
      * and a subsequent read will return the results.
      * @param continuous Should we use continuous mode
-     * @return null if error or no data available, otherwise an array of id bytes
+     * @return null if error or no data available, otherwise an array of five id bytes
      */
     public byte [] readTransponder(boolean continuous)
     {
