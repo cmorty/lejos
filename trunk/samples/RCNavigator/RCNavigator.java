@@ -8,10 +8,11 @@ import lejos.nxt.comm.BTConnection;
 import lejos.nxt.comm.Bluetooth;
 import lejos.navigation.*;
 
-
+ 
 
 /**
  *Example of a navigating robot  operating under remote control
+ * uses Command  enum  to decode incoming messages
  * @author Roger Glassey
  */
 public class RCNavigator
@@ -32,7 +33,7 @@ public class RCNavigator
       new RCNavigator(nav).go();
     }
 /**
- * decode incoming messages and issue commands to the tachoNavigator
+ * decode incoming messages and issue commands to the SimpleNavigator
  */
    private void readData()
     {
@@ -42,29 +43,25 @@ public class RCNavigator
          code = dataIn.readInt();
          LCD.clear();
          LCD.drawInt(code,0,1);
-         LCD.refresh();
          Sound.playTone(800 + 100 * code, 200);
-         if (code == 0)
+         if (code == Command.GOTO.ordinal())// convert enum to int for comparison
          {
             float x = dataIn.readFloat();
             float y = dataIn.readFloat();
-            LCD.drawInt((int)x,4,6,1);
-            LCD.drawInt((int)y,4,10,1);
             navigator.goTo(x, y);
-            report();
-         } else if (code == 1)
+         } else if (code == Command.TRAVEL.ordinal())
          {
             float distance = dataIn.readFloat();
-            LCD.drawInt((int)distance,4,6,1);
+            LCD.drawString("D "+Math.round(distance),0 ,2);
             navigator.travel(distance);
-            report();
-         } else if (code == 2)
+         } else if (code == Command.ROTATE.ordinal())
          {
             float angle = dataIn.readFloat();
-                    LCD.drawInt((int)angle,4,6,1);
+            LCD.drawString("A "+ Math.round(angle),0,2);
             navigator.rotate(angle);
-            report();
          }
+         report();
+         Sound.pause(100);
       } catch (IOException e)
       {
       }
@@ -80,6 +77,9 @@ public class RCNavigator
          dataOut.writeFloat(navigator.getY());
          dataOut.writeFloat(navigator.getAngle());
          dataOut.flush();
+         LCD.drawInt(Math.round(navigator.getX()), 4,0,1);
+         LCD.drawInt(Math.round(navigator.getY()), 4,5,1);
+         LCD.drawInt(Math.round(navigator.getAngle()), 4,10,1);
       } catch (IOException e)
       {
       }
@@ -111,4 +111,9 @@ public class RCNavigator
    BTConnection connection;
    DataInputStream dataIn;
    DataOutputStream dataOut;
+
+   enum Command  // copied from GridNavControl project
+{
+  GOTO,TRAVEL,ROTATE;
+}
 }
