@@ -11,7 +11,7 @@ import lejos.nxt.LCD;
 import lejos.nxt.Settings;
 import lejos.nxt.Sound;
 import lejos.nxt.SystemSettings;
-import lejos.nxt.TextMenu;
+import lejos.util.TextMenu;
 import lejos.nxt.comm.BTConnection;
 import lejos.nxt.comm.Bluetooth;
 import lejos.nxt.comm.LCP;

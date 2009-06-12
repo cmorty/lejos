@@ -1,4 +1,6 @@
 import lejos.nxt.*;
+import lejos.util.TextMenu;
+
 import java.io.*;
 
 /**

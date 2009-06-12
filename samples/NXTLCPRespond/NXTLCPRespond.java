@@ -1,6 +1,7 @@
 
 import lejos.nxt.*;
 import lejos.nxt.comm.*;
+import lejos.util.TextMenu;
 
 /**
  * Create an LCP responder to handle LCP requests. Allow the

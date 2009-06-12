@@ -1,4 +1,4 @@
-package lejos.gps;
+package lejos.nxt.addon.gps;
 
 
 import java.util.EventListener;

@@ -4,8 +4,8 @@ import java.util.Date;
 import javax.bluetooth.*;
 import javax.microedition.io.*;
 import javax.microedition.location.*;
-import lejos.gps.*;
 import lejos.nxt.*;
+import lejos.nxt.addon.gps.*;
 
 public class GPSInfo implements GPSListener {
 

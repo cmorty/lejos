@@ -1,4 +1,4 @@
-package lejos.gps;
+package lejos.nxt.addon.gps;
 
 import java.util.*;
 
@@ -40,9 +40,11 @@ public class GSVSentence extends NMEASentence{
 	private Satellite [] ns;
 	
 	// Globals used for parsing multiple sentences in parse() method.
+	// TODO: Might be able to delete these three:
 	private int currentSentence;
 	private int currentSatellite;
 	private int totalSentences;
+	private String [] sentences;
 	
 	//Header
 	public static final String HEADER = "$GPGSV";
@@ -79,71 +81,58 @@ public class GSVSentence extends NMEASentence{
 	public Satellite getSatellite(int index){
 		// Must be synchronized so that all 3-4 GSV sentences are read before it tries to give out data.
 		// TODO: Make sure all 4 of 4 sentences are read. Do quick check here. Otherwise array is temporarily filled with 0s, causes output to flicker.
-		// TODO: Perhaps GPS notifier should only call on FIRST of GSV sentences received. Ignore others in sequence.
-		// SOLUTION: Overwrite checkRefresh(). It makes sure all four are read. 
-		//int i = 0;
-		//while(currentSentence != totalSentences) {
-			checkRefresh();
-		//	Thread.yield();
-		//	System.out.println(i++ + " " + currentSentence + " " + totalSentences + " " + currentSatellite);
-		//}
+		// TODO: GPS notifier should only call on LAST of GSV sentences received. Ignore others in sequence until data is present.
+		checkRefresh();
 		
 		return ns[index];
 	}
 	
-	/**
-	 *  This method is called by all the getter methods. It checks if a new sentence has 
-	 *  been received since the last call. 
-	 *  It sets nmeaSentence to null to act as flag for when method called again.
-	 */
-	protected synchronized void checkRefresh() {//Change overwrite code
-		if(nmeaSentence != null) {
-			// First need to cut off verification code at end of sentence:
-			int end = nmeaSentence.indexOf('*');
-			if(end < 0) end = nmeaSentence.length();
-			String nmeaSub = nmeaSentence.substring(0, end);
-			
-			parse(nmeaSub);
-			nmeaSentence = null; // Once data is parsed, discard string (used as flag)
-		}
+	protected void setSentence(String sentence, int sentenceNumber, int total) {
+		if(sentenceNumber == 1) sentences = new String[total];
+		sentences[sentenceNumber - 1] = sentence;
 	}
 	
 	/**
-	 * Method used to parse a GSV Sentence
+	 * Method used to parse a GSV Sentence. Note this ignores 'sentence' and
+	 * instead uses an internal array containing a full set of GSV sentences.
 	 */
 	protected void parse(String sentence){
 		//StringTokenizer st = new StringTokenizer(nmeaSentence,",");
-		st = new StringTokenizer(sentence,",");
 		
 		// TODO: I don't see any reason for using try-catch block here.
 		try{
-			st.nextToken(); // Skip header $GPGSV
-			totalSentences = Integer.parseInt(st.nextToken());// Total messages
-			currentSentence = Integer.parseInt(st.nextToken());//Message number
-			satellitesInView = Integer.parseInt(st.nextToken());//Number of satellites being tracked
+			// Loop through all sentences parsing data:
+			for(int i=0;i<sentences.length;i++) {
+				st = new StringTokenizer(sentences[i],",");
+				st.nextToken(); // Skip header $GPGSV
+				totalSentences = Integer.parseInt(st.nextToken());// Total messages
+				currentSentence = Integer.parseInt(st.nextToken());//Message number
+				satellitesInView = Integer.parseInt(st.nextToken());//Number of satellites being tracked
+	
+				if(currentSentence == 1) {
+					ns = new Satellite[satellitesInView];
+					for(int j=0;j<ns.length;j++)
+						ns[j] = new Satellite();
+					currentSatellite = 0;
+				}
 
-			if(currentSentence == 1) {
-				ns = new Satellite[satellitesInView];
-				for(int i=0;i<ns.length;i++)
-					ns[i] = new Satellite();
-				currentSatellite = 0;
-			}
-			
-			for(;currentSatellite<(currentSentence * 4);currentSatellite++) {
-				int PRN = Integer.parseInt(st.nextToken());
-				int elevation = Integer.parseInt(st.nextToken());
-				int azimuth = Integer.parseInt(st.nextToken());
-				int SNR = Integer.parseInt(st.nextToken());
-				
-				ns[currentSatellite].setPRN(PRN);
-				ns[currentSatellite].setElevation(elevation);
-				ns[currentSatellite].setAzimuth(azimuth);
-				ns[currentSatellite].setSignalNoiseRatio(SNR);
+				for(;currentSatellite<(currentSentence * 4);currentSatellite++) {
+				//for(;st.hasMoreTokens();currentSatellite++) {
+					int PRN = Integer.parseInt(st.nextToken());
+					int elevation = Integer.parseInt(st.nextToken());
+					int azimuth = Integer.parseInt(st.nextToken());
+					int SNR = Integer.parseInt(st.nextToken());
+					
+					ns[currentSatellite].setPRN(PRN);
+					ns[currentSatellite].setElevation(elevation);
+					ns[currentSatellite].setAzimuth(azimuth);
+					ns[currentSatellite].setSignalNoiseRatio(SNR);
+				}
 			}
 		}catch(NoSuchElementException e){
-			//Empty
+			System.err.println("GSVSentence Exception");
 		}catch(NumberFormatException e){
-			//Empty
+			System.err.println("GSVSentence NFException");
 		}
 
 	}//End parse
