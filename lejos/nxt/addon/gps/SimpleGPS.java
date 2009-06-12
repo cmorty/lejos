@@ -1,4 +1,4 @@
-package lejos.gps;
+package lejos.nxt.addon.gps;
 
 import java.io.*;
 import java.util.*;
@@ -10,8 +10,12 @@ import lejos.nxt.Button;
  * SimpleGPS Class manages the following NMEA Sentences
  * which supply location, heading, and speed data:
  * 
- * GPGGA (location data)
- * GPVTG (heading and speed data)
+ * <li>GPGGA (location data)
+ * <li>GPVTG (heading and speed data)
+ * <li>GPGSA (accuracy information)
+ * 
+ * <p>This class is primarily for use by the javax.microedition.location package. The preferred
+ * class to use for obtaining GPS data is the GPS class.</p>
  * 
  * @author BB
  */
@@ -299,17 +303,17 @@ public class SimpleGPS extends Thread {
 
 	/**
 	 * Internal helper method to aid in the subclass architecture. Overwritten by subclass.
-	 * @param token
+	 * @param header
 	 * @param s
 	 */
-	protected void sentenceChooser(String token, String s) {
-		if (token.equals(GGASentence.HEADER)){
+	protected void sentenceChooser(String header, String s) {
+		if (header.equals(GGASentence.HEADER)){
 			this.ggaSentence.setSentence(s);
 			notifyListeners(this.ggaSentence);
-		}else if (token.equals(VTGSentence.HEADER)){
+		}else if (header.equals(VTGSentence.HEADER)){
 			this.vtgSentence.setSentence(s);
 			notifyListeners(this.vtgSentence);
-		}else if (token.equals(GSASentence.HEADER)){
+		}else if (header.equals(GSASentence.HEADER)){
 			gsaSentence.setSentence(s);
 			notifyListeners(this.gsaSentence);
 		}

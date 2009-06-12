@@ -1,4 +1,4 @@
-package lejos.math;
+package lejos.util;
 
 public class Matrix implements Cloneable, java.io.Serializable {
 
