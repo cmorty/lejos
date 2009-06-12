@@ -1,10 +1,13 @@
 
 
 
+
+
 /**
  * GUI application for remote control of a NXT running RCNavigator<br>
  * Distance in meters <br>
  * uses  RCNavComms  class for bluetooth communications
+ * used   Command enum in this project
  * @author  Roger
  */
 public class RCNavigationControl extends javax.swing.JFrame
@@ -46,7 +49,7 @@ public class RCNavigationControl extends javax.swing.JFrame
     commandPanel = new javax.swing.JPanel();
     rotateButton = new javax.swing.JButton();
     jLabel5 = new javax.swing.JLabel();
-    angleText = new javax.swing.JTextField();
+    angleField = new javax.swing.JTextField();
     travelButton = new javax.swing.JButton();
     jLabel4 = new javax.swing.JLabel();
     distanceField = new javax.swing.JTextField();
@@ -170,7 +173,7 @@ public class RCNavigationControl extends javax.swing.JFrame
               .addComponent(distanceField, javax.swing.GroupLayout.DEFAULT_SIZE, 79, Short.MAX_VALUE)))
           .addGroup(commandPanelLayout.createSequentialGroup()
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-            .addComponent(angleText, javax.swing.GroupLayout.DEFAULT_SIZE, 78, Short.MAX_VALUE)))
+            .addComponent(angleField, javax.swing.GroupLayout.DEFAULT_SIZE, 78, Short.MAX_VALUE)))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
         .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
         .addGap(12, 12, 12)
@@ -198,7 +201,7 @@ public class RCNavigationControl extends javax.swing.JFrame
           .addGroup(commandPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
             .addComponent(rotateButton)
             .addComponent(jLabel5))
-          .addComponent(angleText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+          .addComponent(angleField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         .addContainerGap())
     );
 
@@ -286,21 +289,27 @@ private void connectButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIR
 }//GEN-LAST:event_connectButtonMouseClicked
 
 private void goButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_goButtonMouseClicked
+   statusField.setText("GoTo " +XField.getText()+" "+YField.getText());
    float x = Float.parseFloat(XField.getText());
    float y = Float.parseFloat(YField.getText());
-   communicator.sendGoTo( x, y);
+   System.out.println("Sent "+Command.GOTO+" x "+x+" y "+y);
+   communicator.send(Command.GOTO,x,y);
    statusField.setText("waiting for data");
 }//GEN-LAST:event_goButtonMouseClicked
 
 private void travelButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_travelButtonMouseClicked
-   float distance = Float.parseFloat(distanceField.getText());
-   communicator.sendTravel(distance);
+  statusField.setText("Travel "+distanceField.getText());
+  float distance = Float.parseFloat(distanceField.getText());
+  System.out.println("Sent "+Command.TRAVEL+" "+distance);
+   communicator.send(Command.TRAVEL,distance);
      statusField.setText("waiting for data");
 }//GEN-LAST:event_travelButtonMouseClicked
 
 private void rotateButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_rotateButtonMouseClicked
-   float angle = Float.parseFloat(angleText.getText());
-   communicator.sendRotate( angle);
+  statusField.setText("Rotate "+angleField.getText());
+  float angle = Float.parseFloat(angleField.getText());
+  System.out.println("Sent "+Command.ROTATE+" "+angle);
+   communicator.send(Command.ROTATE,angle);
      statusField.setText("waiting for data");
 
 }//GEN-LAST:event_rotateButtonMouseClicked
@@ -319,7 +328,7 @@ public void showtRobotPosition(float x, float y, float heading)
   private javax.swing.JTextField XField;
   private javax.swing.JTextField YField;
   private javax.swing.JTextField addressText;
-  private javax.swing.JTextField angleText;
+  private javax.swing.JTextField angleField;
   private javax.swing.JPanel commandPanel;
   private javax.swing.JButton connectButton;
   private javax.swing.JTextField distanceField;

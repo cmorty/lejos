@@ -3,170 +3,148 @@
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import lejos.pc.comm.*;
 
 /**
  * Provides  Bluetooth communications services to RCNavitationControl:<br>
  * 1. connect to NXT
- * 2. send commands
+ * 2. send commands  using the Command emum
  * 3. receives robot position
  * @author Roger
  */
 public class RCNavComms
 {
 
+  /**
+   * constructor establishes  call back path of the RCNavigationControl
+   * @param control
+   */
+  public RCNavComms(RCNavigationControl control)
+  {
+    this.control = control;
+    System.out.println(" RCNavComms start");
+  }
 
-    /**
-     * constructor establishes  call back path of the RCNavigationControl
-     * @param control
-     */
-    public RCNavComms(RCNavigationControl control)
+  /**
+   * connects to NXT using Bluetooth
+   * @param name of NXT
+   * @param address  bluetooth address
+   */
+  public boolean connect(String name, String address)
+  {
+    System.out.println(" connecting to " + name + " " + address);
+    connector = new NXTConnector();
+    boolean connected = connector.connectTo(name, address, NXTCommFactory.BLUETOOTH);
+    System.out.println(" connect result " + connected);
+    if (!connected)
     {
-        this.control = control;
-        System.out.println(" RCNavComms start");
+      return connected;
     }
-
-    /**
-     * connects to NXT using Bluetooth
-     * @param name of NXT
-     * @param address  bluetooth address
-     */
-    public  boolean connect(String name, String address)
+    dataIn = connector.getDataIn();
+    dataOut = connector.getDataOut();
+    if (dataIn == null)
     {
+      connected = false;
+      return connected;
+    }
+    if (!reader.isRunning)
+    {
+      reader.start();
+    }
+    return connected;
+  }
 
-        System.out.println(" connecting to " + name + " " + address);
-        connector = new NXTConnector();
-        boolean connected =  connector.connectTo(name, address, NXTCommFactory.BLUETOOTH);
-        System.out.println(" connect result "+connected);
-      if(!connected) return connected;
-        dataIn = connector.getDataIn();
-        dataOut = connector.getDataOut();
-        if (dataIn == null)
+  /**
+   * inner class to monitor for an incoming message after a command has been sent <br>
+   * calls showRobotPosition() on the controller
+   */
+  class Reader extends Thread
+  {
+
+    public boolean reading = false;
+    int count = 0;
+    boolean isRunning = false;
+    public void run()
+    {
+      isRunning = true;
+      while (isRunning)
+      {
+        if (reading)  //reads one message at a time
         {
-            connected = false;
-            return connected;
+          System.out.println("reading ");
+          float x = 0;
+          float y = 0;
+          float h = 0;
+          boolean ok = false;
+          try
+          {
+            x = dataIn.readFloat();
+            y = dataIn.readFloat();
+            h = dataIn.readFloat();
+            ok = true;
+            System.out.println("data  " + x + " " + y + " " + h);
+          } catch (IOException e)
+          {
+            System.out.println("connection lost");
+            count++;
+            isRunning = count < 20;// give up
+            ok = false;
+          }
+          if (ok)
+          {
+            control.showtRobotPosition(x, y, h);
+            reading = false;
+          }
+          try
+          {
+            Thread.sleep(50);
+          } catch (InterruptedException ex)
+          {
+            Logger.getLogger(RCNavComms.class.getName()).log(Level.SEVERE, null, ex);
+          }
         }
-        if (!reader.isRunning)
-        {
-            reader.start();
-        }
-        return connected;
-    }
-
-    /**
-     * inner class to monitor for an incoming message after a command has been sent <br>
-     * calls showRobotPosition() on the controller
-     */
-    class Reader extends Thread
+      }// if reading
+      Thread.yield();
+    }//while is running
+  }
+/**
+ * sends a command ewith a variable number of float parameters.
+ *  see http://java.sun.com/docs/books/tutorial/java/javaOO/arguments.html
+ * the section on Arbitrary Number of Arguments
+ * @param c a Command enum
+ * @param data  an array of floats built from the collection list parameters.
+ */
+  public void send(Command c, float... data)
+  {
+    while(reader.reading)
     {
-        public boolean reading = false;
-        int count = 0;
-        boolean isRunning = false;
-
-        public void run()
-        {
-            isRunning = true;
-            while (isRunning)
-            {
-                if (reading )  //reads one message at a time
-                {
-                  System.out.println("reading ");
-                    float x = 0;
-                    float y = 0;
-                    float h = 0;
-                    boolean ok = false;
-                    try
-                    {
-                        x = dataIn.readFloat();
-                        y = dataIn.readFloat();
-                        h = dataIn.readFloat();
-                        ok = true;
-                        System.out.println("data  "+x+" "+y+" "+h);
-                    } catch (IOException e)
-                    {
-                        System.out.println("connection lost");
-                        count++;
-                        isRunning = count < 20;// give up
-                        ok = false;
-                    }
-                    if (ok)
-                    {
-                        control.showtRobotPosition(x, y, h);
-                        reading = false;
-                    }
-                    Thread.yield();
-                }// if reading
-            }//while is running
-        }
+      Thread.yield();
     }
-
-    /**
-     * sends goTo(x,y)  to the NXT
-     * @param x
-     * @param y
-     */
-    public void sendGoTo(float x, float y)
+    try
     {
-        float[] data =
-        {
-            100 * x, 100 * y
-        };  // converts to cm
-        send(0, data);// code 0 -> goTo
-    }
-
-    /**
-     * send travel(distance) command to NXT
-     * @param dist
-     */
-    public void sendTravel(float dist)
+      dataOut.writeInt(c.ordinal());  // convert the enum to an integer
+      for (float d : data)  // iterate over the   data   array
+      {
+        dataOut.writeFloat(d);
+      }
+      dataOut.flush();
+    } catch (IOException e)
     {
-        float[] data =
-        {
-            100 * dist
-        };
-        send(1, data);//code 1 -> travel
+      System.out.println(" send throws exception  " + e);
     }
-
-    /**
-     * send rotateTo(andle) command to NXT
-     * @param angle
-     */
-    public void sendRotate(float angle)
-    {
-        float[] data =
-        {
-            angle
-        };
-        send(2, data);  // code 2 ->rotate
-    }
-
-    public void send(int code, float[] data)
-    {
-        try
-        {
-            dataOut.writeInt(code);
-            for (int i = 0; i < data.length; i++)
-            {
-                dataOut.writeFloat(data[i]);
-            }
-            dataOut.flush();
-        } catch (IOException e)
-        {
-            System.out.println("send problem " + e);
-        }
-        reader.reading = true;  //reader: listen for response
-    }
-    /**
-     * used by reader
-     */
-    private DataInputStream dataIn;
-    /**
-     * used by send()
-     */
-    private DataOutputStream dataOut;
-
-    private Reader reader = new Reader();
-    private NXTConnector connector;
-    private RCNavigationControl control;
-
+    reader.reading = true;  //reader: listen for response
+  }
+  /**
+   * used by reader
+   */
+  private DataInputStream dataIn;
+  /**
+   * used by send()
+   */
+  private DataOutputStream dataOut;
+  private Reader reader = new Reader();
+  private NXTConnector connector;
+  private RCNavigationControl control;
 }
