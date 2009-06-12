@@ -116,9 +116,9 @@ public class Arbitrator
       while (more)
       {
         //FIND HIGHEST PRIORITY BEHAVIOR THAT WANTS CONTROL
-        _highestPriority = NONE;
         synchronized (this)
         {
+           _highestPriority = NONE;
           for (int i = maxPriority; i >= 0; i--)
           {
             if (_behavior[i].takeControl())
