@@ -1,4 +1,4 @@
-package lejos.keyboard;
+package lejos.nxt.addon.keyboard;
 
 import java.io.*;
 

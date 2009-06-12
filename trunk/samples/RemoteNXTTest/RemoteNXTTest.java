@@ -1,6 +1,8 @@
 import lejos.nxt.*;
 import lejos.nxt.comm.*;
 import lejos.nxt.remote.*;
+import lejos.util.TextMenu;
+
 import java.io.*;
 /**
  * This program demonstrates the use of the RemoteNXT class to allow one NXT

@@ -2,7 +2,7 @@ import java.io.*;
 import java.util.StringTokenizer;
 import javax.bluetooth.BluetoothStateException;
 import lejos.nxt.*;
-import lejos.keyboard.*;
+import lejos.nxt.addon.keyboard.*;
 
 /**
  * This is a sample if you have a Bluetooth SPP Keyboard (see Keyboard class).

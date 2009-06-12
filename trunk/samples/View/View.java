@@ -1,5 +1,6 @@
 import lejos.nxt.*;
 import lejos.nxt.addon.*;
+import lejos.util.TextMenu;
 
 public class View {
 	

@@ -1,4 +1,4 @@
-package lejos.nxt;
+package lejos.util;
 import lejos.nxt.Button;
 import lejos.nxt.LCD;
 
