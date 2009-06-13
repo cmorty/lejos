@@ -138,7 +138,7 @@ public interface Pilot {
    * @param turnRate If positive, the left wheel is on the inside of the turn. If negative, the left wheel is on the
    *          outside.
    */
-  public void steer(int turnRate);
+  public void turn(int turnRate);
 
   /**
    * Moves the NXT robot in a circular path at a specific turn rate. The center of the turning circle is on the right
@@ -158,7 +158,7 @@ public interface Pilot {
    *          outside.
    * @param angle The angle through which the robot will rotate. If negative, robot traces the turning circle backwards.
    */
-  public void steer(int turnRate, int angle);
+  public void turn(int turnRate, int angle);
 
   /**
    * Moves the NXT robot in a circular path at a specific turn rate. The center of the turning circle is on the right
@@ -180,7 +180,7 @@ public interface Pilot {
    * @param immediateReturn If immediateReturn is true then the method returns immediately and your code MUST call
    *          updatePostion() when the robot has stopped. Otherwise, the robot position is lost.
    */
-  public void steer(int turnRate, int angle, boolean immediateReturn);
+  public void turn(int turnRate, int angle, boolean immediateReturn);
 
   /**
    * Moves the NXT robot in a circular path with a specified radius.<br>
