@@ -282,7 +282,7 @@ public class CompassPilot extends TachoPilot {
 					{
 			            float gain = -3;    
 			            int error = (int)(gain* getHeadingError());
-			            turn(_direction * error, 360*_direction,true);
+			            steer(_direction * error, 360*_direction,true);
 			        }
 				}
 				if(_rotating && ! pilotIsMoving())
