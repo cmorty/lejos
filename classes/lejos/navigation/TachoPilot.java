@@ -427,8 +427,8 @@ public class TachoPilot implements Pilot {
    * @param turnRate If positive, the left wheel is on the inside of the turn. If negative, the left wheel is on the
    *          outside.
    */
-  public void steer(final int turnRate) {
-    steer(turnRate, Integer.MAX_VALUE, true);
+  public void turn(final int turnRate) {
+    turn(turnRate, Integer.MAX_VALUE, true);
   }
 
   /**
@@ -449,8 +449,8 @@ public class TachoPilot implements Pilot {
    *          outside.
    * @param angle The angle through which the robot will rotate. If negative, robot traces the turning circle backwards.
    */
-  public void steer(final int turnRate, int angle) {
-    steer(turnRate, angle, false);
+  public void turn(final int turnRate, int angle) {
+    turn(turnRate, angle, false);
   }
 
   /**
@@ -472,7 +472,7 @@ public class TachoPilot implements Pilot {
    * @param angle The angle through which the robot will rotate. If negative, robot traces the turning circle backwards.
    * @param immediateReturn If true this method returns immediately.
    */
-  public void steer(final int turnRate, final int angle, final boolean immediateReturn) {
+  public void turn(final int turnRate, final int angle, final boolean immediateReturn) {
     // TODO: make this work with wheels of different size
     TachoMotor inside;
     TachoMotor outside;
@@ -577,7 +577,7 @@ public class TachoPilot implements Pilot {
    *          wheel is on the outside.
    */
   public void turn(final float radius) {
-    steer(turnRate(radius));
+    turn(turnRate(radius));
   }
 
   /**
@@ -590,7 +590,7 @@ public class TachoPilot implements Pilot {
    * @param angle The sign of the angle determines the direction of robot motion
    */
   public void turn(final float radius, final int angle) {
-    steer(turnRate(radius), angle);
+    turn(turnRate(radius), angle);
   }
 
   /**
@@ -603,7 +603,7 @@ public class TachoPilot implements Pilot {
    * @param immediateReturn If true this method returns immediately.
    */
   public void turn(final float radius, final int angle, final boolean immediateReturn) {
-    steer(turnRate(radius), angle, immediateReturn);
+    turn(turnRate(radius), angle, immediateReturn);
   }
 
   /**
