@@ -122,97 +122,205 @@ public interface Pilot {
   public float getTravelDistance();
 
   /**
-   * Moves the NXT robot in a circular path at a specific turn rate. The center of the turning circle is on the right
-   * side of the robot if parameter turnRate is negative. Values for turnRate are between -200 and +200. The turnRate
-   * determines the ratio of inner wheel speed to outer wheel speed (as a percent). <br>
-   * <I>Formula:</I> ratio = 100 - abs(turnRate). When the ratio is negative, the outer and inner wheels rotate in
-   * opposite directions. <br>
+   * This method is similar to the {@link #driveArc(float)} method except it uses a ratio of motor
+   * speeds to follow a curved path and therefore has the ability to drive straight. This makes
+   * it ideal for line following applications.
+   * <p>
+   * The <code>turnRate</code> specifies the sharpness of the turn, between -200 and +200.<br>
+   * The <code>turnRate</code> determines the ratio of inner wheel speed to outer wheel speed <b>as a percent</b>.<br>
+   * <I>Formula:</I> <code>ratio = 100 - abs(turnRate)</code>.<br>
+   * When the ratio is negative, the outer and inner wheels rotate in
+   * opposite directions.
+   * <p>
+   * If <code>turnRate</code> is positive, the center of the turning circle is on the left side of the robot.<br>
+   * If <code>turnRate</code> is negative, the center of the turning circle is on the right side of the robot.<br>
+   * If <code>turnRate</code> is zero, ...
+   * <p>
    * Examples:
    * <UL>
-   * <LI>steer(25) -> inner wheel turns at 75% of the speed of the outer wheel
-   * <LI>steer(100) -> inner wheel stops
-   * <LI>steer(200) -> means that the inner wheel turns at the same speed as the outer wheel - a zero radius turn.
+   * <LI><code>steer(-200)</code> -> ...
+   * <LI><code>steer(-100)</code> -> ...
+   * <LI><code>steer(-25)</code> -> ...
+   * <LI><code>steer(0)</code> -> ...
+   * <LI><code>steer(25)</code> -> the inner wheel turns at 75% of the speed of the outer wheel
+   * <LI><code>steer(100)</code> -> the inner wheel stops and the outer wheel is at 100 percent
+   * <LI><code>steer(200)</code> -> the inner wheel turns at the same speed as the outer wheel - a zero radius turn.
    * </UL>
-   * Note: Even if you have specified a drift correction in the constructor it will not be applied in this method.
+   * <p>
+   * Note: If you have specified a drift correction in the constructor it will not be applied in this method.
    * 
-   * @param turnRate If positive, the left wheel is on the inside of the turn. If negative, the left wheel is on the
-   *          outside.
+   * @param turnRate If positive, the left side of the robot is on the inside of the turn. If negative, 
+   * the left side is on the outside.
    */
-  public void turn(int turnRate);
+  public void steer(int turnRate);
 
   /**
-   * Moves the NXT robot in a circular path at a specific turn rate. The center of the turning circle is on the right
-   * side of the robot if parameter turnRate is negative. Values for turnRate are between -200 and +200. The turnRate
-   * determines the ratio of inner wheel speed to outer wheel speed (as a percent).<br>
-   * <I>Formula:</I> ratio = 100 - abs(turnRate). When the ratio is negative, the outer and inner wheels rotate in
-   * opposite directions.<br>
+   * This method is similar to the {@link #driveArc(float, int)} method except it uses a ratio of motor
+   * speeds to follow a curved path and therefore has the ability to drive straight. This makes
+   * it ideal for line following applications. This method does not return until the robot has
+   * completed moving <code>angle</code> degrees along the arc.
+   * <p>
+   * The <code>turnRate</code> specifies the sharpness of the turn, between -200 and +200.<br>
+   * The <code>turnRate</code> determines the ratio of inner wheel speed to outer wheel speed <b>as a percent</b>.<br>
+   * <I>Formula:</I> <code>ratio = 100 - abs(turnRate)</code>.<br>
+   * When the ratio is negative, the outer and inner wheels rotate in
+   * opposite directions.
+   * <p>
+   * If <code>turnRate</code> is positive, the center of the turning circle is on the left side of the robot.<br>
+   * If <code>turnRate</code> is negative, the center of the turning circle is on the right side of the robot.<br>
+   * If <code>turnRate</code> is zero, ...
+   * <p>
    * Examples:
    * <UL>
-   * <LI>steer(25) -> inner wheel turns at 75% of the speed of the outer wheel
-   * <LI>steer(100) -> inner wheel stops
-   * <LI>steer(200) -> means that the inner wheel turns at the same speed as the outer wheel - a zero radius turn.
+   * <LI><code>steer(-200)</code> -> ...
+   * <LI><code>steer(-100)</code> -> ...
+   * <LI><code>steer(-25)</code> -> ...
+   * <LI><code>steer(0)</code> -> ...
+   * <LI><code>steer(25)</code> -> the inner wheel turns at 75% of the speed of the outer wheel
+   * <LI><code>steer(100)</code> -> the inner wheel stops and the outer wheel is at 100 percent
+   * <LI><code>steer(200)</code> -> the inner wheel turns at the same speed as the outer wheel - a zero radius turn.
    * </UL>
-   * Note: Even if you have specified a drift correction in the constructor it will not be applied in this method.
+   * <p>
+   * The robot will stop when the degrees it has moved along the arc equals <code>angle</code>.<br> 
+   * If <code>angle</code> is positive, the robot will move travel forwards.<br>
+   * If <code>angle</code> is negative, the robot will move travel backwards.
+   * If <code>angle</code> is zero, the robot will not move and the method returns immediately.
+   * <p>
+   * Note: If you have specified a drift correction in the constructor it will not be applied in this method.
    * 
-   * @param turnRate If positive, the left wheel is on the inside of the turn. If negative, the left wheel is on the
-   *          outside.
+   * @param turnRate If positive, the left side of the robot is on the inside of the turn. If negative, 
+   * the left side is on the outside.
    * @param angle The angle through which the robot will rotate. If negative, robot traces the turning circle backwards.
    */
-  public void turn(int turnRate, int angle);
+  public void steer(int turnRate, int angle);
 
   /**
-   * Moves the NXT robot in a circular path at a specific turn rate. The center of the turning circle is on the right
-   * side of the robot if parameter turnRate is negative. Values for turnRate are between -200 and +200. The turnRate
-   * determines the ratio of inner wheel speed to outer wheel speed (as a percent).<br>
-   * <I>Formula:</I> ratio = 100 - abs(turnRate). When the ratio is negative, the outer and inner wheels rotate in
-   * opposite directions.<br>
+   * This method is similar to the {@link #driveArc(float, int)} method except it uses a ratio of motor
+   * speeds to follow a curved path and therefore has the ability to drive straight. This makes
+   * it ideal for line following applications. This method has the ability to return immediately
+   * by using the <code>immediateReturn</code> parameter. <b>Warning: Your code <i>must</i> call
+   * updatePostion() when the robot has stopped, otherwise, the robot position is lost.</b>
+   * <p>
+   * The <code>turnRate</code> specifies the sharpness of the turn, between -200 and +200.<br>
+   * The <code>turnRate</code> determines the ratio of inner wheel speed to outer wheel speed <b>as a percent</b>.<br>
+   * <I>Formula:</I> <code>ratio = 100 - abs(turnRate)</code>.<br>
+   * When the ratio is negative, the outer and inner wheels rotate in
+   * opposite directions.
+   * <p>
+   * If <code>turnRate</code> is positive, the center of the turning circle is on the left side of the robot.<br>
+   * If <code>turnRate</code> is negative, the center of the turning circle is on the right side of the robot.<br>
+   * If <code>turnRate</code> is zero, ...
+   * <p>
    * Examples:
    * <UL>
-   * <LI>steer(25) -> inner wheel turns at 75% of the speed of the outer wheel
-   * <LI>steer(100) -> inner wheel stops
-   * <LI>steer(200) -> means that the inner wheel turns at the same speed as the outer wheel - a zero radius turn.
+   * <LI><code>steer(-200)</code> -> ...
+   * <LI><code>steer(-100)</code> -> ...
+   * <LI><code>steer(-25)</code> -> ...
+   * <LI><code>steer(0)</code> -> ...
+   * <LI><code>steer(25)</code> -> the inner wheel turns at 75% of the speed of the outer wheel
+   * <LI><code>steer(100)</code> -> the inner wheel stops and the outer wheel is at 100 percent
+   * <LI><code>steer(200)</code> -> the inner wheel turns at the same speed as the outer wheel - a zero radius turn.
    * </UL>
-   * Note: Even if you have specified a drift correction in the constructor it will not be applied in this method.
+   * <p>
+   * The robot will stop when the degrees it has moved along the arc equals <code>angle</code>.<br> 
+   * If <code>angle</code> is positive, the robot will move travel forwards.<br>
+   * If <code>angle</code> is negative, the robot will move travel backwards.
+   * If <code>angle</code> is zero, the robot will not move and the method returns immediately.
+   * <p>
+   * Note: If you have specified a drift correction in the constructor it will not be applied in this method.
    * 
-   * @param turnRate If positive, the left wheel is on the inside of the turn. If negative, the left wheel is on the
-   *          outside.
+   * @param turnRate If positive, the left side of the robot is on the inside of the turn. If negative, 
+   * the left side is on the outside.
    * @param angle The angle through which the robot will rotate. If negative, robot traces the turning circle backwards.
    * @param immediateReturn If immediateReturn is true then the method returns immediately and your code MUST call
    *          updatePostion() when the robot has stopped. Otherwise, the robot position is lost.
    */
-  public void turn(int turnRate, int angle, boolean immediateReturn);
+  public void steer(int turnRate, int angle, boolean immediateReturn);
 
   /**
-   * Moves the NXT robot in a circular path with a specified radius.<br>
-   * The center of the turning circle is on the right side of the robot if parameter radius is negative.<br>
+   * Moves the NXT robot along an arc with a specified radius. This method returns immediately
+   * after the motion has begun.
+   * <p>
+   * If <code>radius</code> is positive, the robot arcs left, and the center of the turning circle is on the left side of the robot.<br>
+   * If <code>radius</code> is negative, the robot arcs right, and the center of the turning circle is on the right side of the robot.<br>
+   * If <code>radius</code> is zero, ...
+   * <p>
+   * The <code>driveArc(float)</code> method <b>can not drive a straight line</b>, which makes
+   * it impractical for line following. A better solution for line following is  
+   * {@link #steer(int)}, which uses proportional steering and can drive straight lines and arcs.
+   * <p>
    * Postcondition: Motor speeds are unpredictable.
+   * <p>
+   * Note: If you have specified a drift correction in the constructor it will not be applied in this method.
    * 
-   * @param radius of the circular path. If positive, the left wheel is on the inside of the turn. If negative, the left
-   *          wheel is on the outside.
+   * @param radius of the arc path. If positive, the left side of the robot is on the inside of the turn. If negative, the left
+   *          side of the robot is on the outside of the turn.
+   * @see #steer(int)
    */
-  public void turn(float radius);
+  public void driveArc(float radius);
 
   /**
-   * Moves the NXT robot in a circular path with a specified radius.<br>
-   * The center of the turning circle is on the right side of the robot if parameter radius is negative.<br>
-   * Robot will stop when total rotation equals angle. If angle is negative, robot will move travel backwards.
+   * Moves the NXT robot along an arc with a specified radius and a predescribed angle,
+   * after which the robot stops moving. This method does not return until the robot has
+   * completed moving <code>angle</code> degrees along the arc.
+   * <p>
+   * If <code>radius</code> is positive, the robot arcs left, and the center of the turning circle is on the left side of the robot.<br>
+   * If <code>radius</code> is negative, the robot arcs right, and the center of the turning circle is on the right side of the robot.<br>
+   * If <code>radius</code> is zero, ...
+   * <p>
+   * The <code>driveArc(float)</code> method <b>can not drive a straight line</b>, which makes
+   * it impractical for line following. A better solution for line following is  
+   * {@link #steer(int)}, which uses proportional steering and can drive straight lines and arcs.
+   * <p>
+   * Robot will stop when the degrees it has moved along the arc equals <code>angle</code>.<br> 
+   * If <code>angle</code> is positive, the robot will move travel forwards.<br>
+   * If <code>angle</code> is negative, the robot will move travel backwards.
+   * If <code>angle</code> is zero, the robot will not move and the method returns immediately.
+   * <p>
+   * Postcondition: Motor speeds are unpredictable.
+   * <p>
+   * Note: If you have specified a drift correction in the constructor it will not be applied in this method.
    * 
-   * @param radius The radius of the turning circle.
-   * @param angle The sign of the angle determines the direction of robot motion.
-   */
-  public void turn(float radius, int angle);
+   * @param radius of the arc path. If positive, the left side of the robot is on the inside of the turn. If negative, the left
+   *          side of the robot is on the outside of the turn.
+   * @param angle The sign of the angle determines the direction of robot motion. Positive drives the robot forward, negative drives it backward.
+   * @see #steer(int, int)
+   * 
+   */ 
+  public void driveArc(float radius, int angle);
 
   /**
-   * Moves the NXT robot in a circular path with a specified radius.<br>
-   * The center of the turning circle is on the right side of the robot if parameter radius is negative.<br>
-   * Robot will stop when total rotation equals angle. If angle is negative, robot will move travel backwards.
+   * Moves the NXT robot along an arc with a specified radius and a predescribed angle,
+   * after which the robot stops moving. This method has the ability to return immediately
+   * by using the <code>immediateReturn</code> parameter. <b>Warning: Your code <i>must</i> call
+   * updatePostion() when the robot has stopped, otherwise, the robot position is lost.</b>
+   * <p>
+   * If <code>radius</code> is positive, the robot arcs left, and the center of the turning circle is on the left side of the robot.<br>
+   * If <code>radius</code> is negative, the robot arcs right, and the center of the turning circle is on the right side of the robot.<br>
+   * If <code>radius</code> is zero, ...
+   * <p>
+   * The <code>driveArc(float, int, boolean)</code> method <b>can not drive a straight line</b>, which makes
+   * it impractical for line following. A better solution for line following is  
+   * {@link #steer(int, int, boolean)}, which uses proportional steering and can drive straight lines and arcs.
+   * <p>
+   * The robot will stop when the degrees it has moved along the arc equals <code>angle</code>.<br> 
+   * If <code>angle</code> is positive, the robot will move travel forwards.<br>
+   * If <code>angle</code> is negative, the robot will move travel backwards.
+   * If <code>angle</code> is zero, the robot will not move and the method returns immediately.
+   * <p>
+   * Postcondition: Motor speeds are unpredictable.
+   * <p>
+   * Note: If you have specified a drift correction in the constructor it will not be applied in this method.
    * 
-   * @param radius The radius of the turning circle.
-   * @param angle The sign of the angle determines the direction of robot motion.
+   * @param radius of the arc path. If positive, the left side of the robot is on the inside of the turn. If negative, the left
+   *          side of the robot is on the outside of the turn.
+   * @param angle The sign of the angle determines the direction of robot motion. Positive drives the robot forward, negative drives it backward.
    * @param immediateReturn If immediateReturn is true then the method returns immediately and your code MUST call
    *          updatePostion() when the robot has stopped. Otherwise, the robot position is lost.
+   * @see #steer(int, int, boolean)
+   * 
    */
-  public void turn(float radius, int angle, boolean immediateReturn);
+  public void driveArc(float radius, int angle, boolean immediateReturn);
 
   /**
    * Reset traveled distance and rotated angle.

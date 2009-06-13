@@ -1,5 +1,3 @@
-
-import lejos.math.*;
 import lejos.nxt.Button;
 import lejos.util.*;
 

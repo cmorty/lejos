@@ -410,69 +410,15 @@ public class TachoPilot implements Pilot {
     }
   }
 
-  /**
-   * Moves the NXT robot in a circular path at a specific turn rate. The center of the turning circle is on the right
-   * side of the robot if parameter turnRate is negative. Values for turnRate are between -200 and +200. The turnRate
-   * determines the ratio of inner wheel speed to outer wheel speed (as a percent).<br>
-   * <I>Formula:</I> ratio = 100 - abs(turnRate). When the ratio is negative, the outer and inner wheels rotate in
-   * opposite directions.<br>
-   * Examples:
-   * <UL>
-   * <LI>steer(25) -> inner wheel turns at 75% of the speed of the outer wheel
-   * <LI>steer(100) -> inner wheel stops
-   * <LI>steer(200) -> means that the inner wheel turns at the same speed as the outer wheel - a zero radius turn.
-   * </UL>
-   * Note: Not supported for a robot with wheels of different size.
-   * 
-   * @param turnRate If positive, the left wheel is on the inside of the turn. If negative, the left wheel is on the
-   *          outside.
-   */
-  public void turn(final int turnRate) {
-    turn(turnRate, Integer.MAX_VALUE, true);
+  public void steer(final int turnRate) {
+    steer(turnRate, Integer.MAX_VALUE, true);
   }
 
-  /**
-   * Moves the NXT robot in a circular path at a specific turn rate. The center of the turning circle is on the right
-   * side of the robot if parameter turnRate is negative. Values for turnRate are between -200 and +200. The turnRate
-   * determines the ratio of inner wheel speed to outer wheel speed (as a percent).<br>
-   * <I>Formula:</I> ratio = 100 - abs(turnRate). When the ratio is negative, the outer and inner wheels rotate in
-   * opposite directions.<br>
-   * Examples:
-   * <UL>
-   * <LI>steer(25) -> inner wheel turns at 75% of the speed of the outer wheel
-   * <LI>steer(100) -> inner wheel stops
-   * <LI>steer(200) -> means that the inner wheel turns at the same speed as the outer wheel - a zero radius turn.
-   * </UL>
-   * Note: Not supported for a robot with wheels of different size.
-   * 
-   * @param turnRate If positive, the left wheel is on the inside of the turn. If negative, the left wheel is on the
-   *          outside.
-   * @param angle The angle through which the robot will rotate. If negative, robot traces the turning circle backwards.
-   */
-  public void turn(final int turnRate, int angle) {
-    turn(turnRate, angle, false);
+  public void steer(final int turnRate, int angle) {
+    steer(turnRate, angle, false);
   }
 
-  /**
-   * Moves the NXT robot in a circular path at a specific turn rate. The center of the turning circle is on the right
-   * side of the robot if parameter turnRate is negative. Values for turnRate are between -200 and +200. The turnRate
-   * determines the ratio of inner wheel speed to outer wheel speed (as a percent).<br>
-   * <I>Formula:</I> ratio = 100 - abs(turnRate). When the ratio is negative, the outer and inner wheels rotate in
-   * opposite directions.<br>
-   * Examples:
-   * <UL>
-   * <LI>steer(25) -> inner wheel turns at 75% of the speed of the outer wheel
-   * <LI>steer(100) -> inner wheel stops
-   * <LI>steer(200) -> means that the inner wheel turns at the same speed as the outer wheel - a zero radius turn.
-   * </UL>
-   * Note: Not supported for a robot with wheels of different size.
-   * 
-   * @param turnRate If positive, the left wheel is on the inside of the turn. If negative, the left wheel is on the
-   *          outside.
-   * @param angle The angle through which the robot will rotate. If negative, robot traces the turning circle backwards.
-   * @param immediateReturn If true this method returns immediately.
-   */
-  public void turn(final int turnRate, final int angle, final boolean immediateReturn) {
+  public void steer(final int turnRate, final int angle, final boolean immediateReturn) {
     // TODO: make this work with wheels of different size
     TachoMotor inside;
     TachoMotor outside;
@@ -568,42 +514,16 @@ public class TachoPilot implements Pilot {
     _right.forward();
   }
 
-  /**
-   * Moves the NXT robot in a circular path with a specified radius. <br>
-   * The center of the turning circle is on the right side of the robot iff parameter radius is negative; <br>
-   * Postcondition: Motor speeds are unpredictable. Note: Not supported for a robot with wheels of different size.
-   * 
-   * @param radius of the circular path. If positive, the left wheel is on the inside of the turn. If negative, the left
-   *          wheel is on the outside.
-   */
-  public void turn(final float radius) {
-    turn(turnRate(radius));
+  public void driveArc(final float radius) {
+    steer(turnRate(radius));
   }
 
-  /**
-   * Moves the NXT robot in a circular arc through the specificd angle; <br>
-   * The center of the turning circle is on the right side of the robot iff parameter radius is negative. Robot will
-   * stop when total rotation equals angle. If angle is negative, robot will move travel backwards. Note: Not supported
-   * for a robot with wheels of different size.
-   * 
-   * @param radius radius of the turning circle
-   * @param angle The sign of the angle determines the direction of robot motion
-   */
-  public void turn(final float radius, final int angle) {
-    turn(turnRate(radius), angle);
+  public void driveArc(final float radius, final int angle) {
+    steer(turnRate(radius), angle);
   }
 
-  /**
-   * Move in a circular arc with specified radius; the center of the turning circle <br>
-   * is on the right side of the robot if the radius is negative. Note: Not supported for a robot with wheels of
-   * different size.
-   * 
-   * @param radius radius of the turning circle
-   * @param angle The sign of the angle determines the direction of robot motion
-   * @param immediateReturn If true this method returns immediately.
-   */
-  public void turn(final float radius, final int angle, final boolean immediateReturn) {
-    turn(turnRate(radius), angle, immediateReturn);
+  public void driveArc(final float radius, final int angle, final boolean immediateReturn) {
+    steer(turnRate(radius), angle, immediateReturn);
   }
 
   /**
