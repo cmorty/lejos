@@ -202,7 +202,7 @@ public class SimpleNavigator implements Navigator {
      */
     public void rotateLeft() {
         reset();
-        pilot.steer(200);
+        pilot.turn(200);
     }
 
     /**
@@ -210,7 +210,7 @@ public class SimpleNavigator implements Navigator {
      */
     public void rotateRight() {
         reset();
-        pilot.steer(-200);
+        pilot.turn(-200);
     }
 
     /**
