@@ -1,8 +1,8 @@
 package lejos.navigation;
     
-
-import lejos.navigation.*;
 import lejos.nxt.*;
+import lejos.navigation.*;
+
 
 /**
  * The SimpleNavigator class can keep track of the robot position and the direction angle it faces;
@@ -54,7 +54,7 @@ public class SimpleNavigator implements Navigator {
    * @deprecated The correct way is to create the Pilot in advance and to use that in construction of the
    *             SimpleNavigator. Otherwise the SimpleNavigator needs to know detail it should not care about!
      */
-    public SimpleNavigator(float wheelDiameter, float trackWidth, Motor leftMotor, Motor rightMotor, boolean reverse) {
+    public SimpleNavigator(float wheelDiameter, float trackWidth, TachoMotor leftMotor, TachoMotor rightMotor, boolean reverse) {
       // In the signature Motor was not changed to TachoMotor. This method only saves one to write "new TachoPilot" at the
       // cost of maintaining this method and comments, thus it should not be used!
         pilot = new TachoPilot(wheelDiameter, trackWidth, leftMotor, rightMotor, reverse);
@@ -73,7 +73,7 @@ public class SimpleNavigator implements Navigator {
    * @deprecated The correct way is to create the Pilot in advance and to use that in construction of the
    *             SimpleNavigator. Otherwise the SimpleNavigator needs to know detail it should not care about!
      */
-    public SimpleNavigator(float wheelDiameter, float trackWidth, Motor leftMotor, Motor rightMotor) {
+    public SimpleNavigator(float wheelDiameter, float trackWidth, TachoMotor leftMotor, TachoMotor rightMotor) {
       // In the signature Motor was not changed to TachoMotor. This method only saves one to write "new TachoPilot" at the
       // cost of maintaining this method and comments, thus it should not be used!
         pilot = new TachoPilot(wheelDiameter, trackWidth, leftMotor, rightMotor);
