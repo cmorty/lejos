@@ -339,7 +339,8 @@ public final class Math
 	 */
 	public static double abs(double a)
 	{
-		return ((a < 0) ? -a : a);
+		// according to http://www.concentric.net/~Ttwang/tech/javafloat.htm
+		return ((a <= 0.0) ? 0.0 - a : a);
 	}
 
 	/**
@@ -349,7 +350,8 @@ public final class Math
 	 */
 	public static float abs(float a)
 	{
-		return ((a < 0) ? -a : a);
+		// according to http://www.concentric.net/~Ttwang/tech/javafloat.htm
+		return ((a <= 0.0f) ? 0.0f - a : a);
 	}
 
 	/**

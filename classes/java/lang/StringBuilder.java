@@ -264,6 +264,14 @@ public class StringBuilder
      * @author Martin E. Nielsen
      **/
     private StringBuilder append( double number, int significantDigits ) {
+    	
+    	if (Double.isNaN(number))
+    		return this.appendInternal("NaN");
+    	if (number == Double.POSITIVE_INFINITY)
+    		return this.appendInternal("Infinity");
+    	if (number == Double.NEGATIVE_INFINITY)
+    		return this.appendInternal("-Infinity");
+    	
 	  synchronized(buf) {
 		int charPos = 0;
 		int exponent = 0;
