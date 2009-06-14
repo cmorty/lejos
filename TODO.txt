@@ -8,4 +8,7 @@
 		d < Long.MIN_VALUE  =>  (int)d == Long.MIN_VALUE (including d == -infinity)
 		d == NaN  =>  (int)d == 0
 
-- JUnit test: StringBuffers/Builders with initial sizes <= 2 used to loop infinitely 
+- JUnit test: StringBuffers/Builders with initial sizes <= 2 used to loop infinitely
+- JUnit test: Math.abs(-0.0) == Math.abs(+0.0) == +0.0
+- JUnit test: Float.toString() must handle NaN and +/-Infinity correctly
+ 
