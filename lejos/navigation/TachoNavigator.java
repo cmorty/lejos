@@ -35,7 +35,7 @@ public class TachoNavigator extends SimpleNavigator
    * @param leftMotor The motor used to drive the left wheel e.g. Motor.A.
    * @param reverse  If motor.forward() drives the robot backwards, set this parameter true.
    */
-  public TachoNavigator(float wheelDiameter, float trackWidth, Motor leftMotor, Motor rightMotor, boolean reverse)
+  public TachoNavigator(float wheelDiameter, float trackWidth, TachoMotor leftMotor, TachoMotor rightMotor, boolean reverse)
   {
     super(wheelDiameter,trackWidth,leftMotor, rightMotor,reverse);
   }
@@ -51,7 +51,7 @@ public class TachoNavigator extends SimpleNavigator
    * @param rightMotor The motor used to drive the right wheel e.g. Motor.C.
    * @param leftMotor The motor used to drive the left wheel e.g. Motor.A.
    */
-  public TachoNavigator(float wheelDiameter, float trackWidth, Motor leftMotor, Motor rightMotor)
+  public TachoNavigator(float wheelDiameter, float trackWidth, TachoMotor leftMotor, TachoMotor rightMotor)
   {
     super(wheelDiameter,trackWidth,leftMotor, rightMotor);
   }
