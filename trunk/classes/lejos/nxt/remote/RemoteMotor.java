@@ -51,11 +51,6 @@ public class RemoteMotor implements TachoMotor, NXTProtocol {
 		return port;
 	}
 
-	/**
-	 * Causes motor to rotate forward indefinitely.
-	 * @return Error value. 0 means succcess. See icommand.nxtcomm.ErrorMessages for details.
-	 */
-	
 	public void forward() {
 		this.runState = MOTOR_RUN_STATE_RUNNING;
 		try {
@@ -66,10 +61,6 @@ public class RemoteMotor implements TachoMotor, NXTProtocol {
 		}
 	}
 	
-	/**
-	* Causes motor to rotate backward.
-    * @return Error value. 0 means succcess. See icommand.nxtcomm.ErrorMessages for details.
-	*/
 	public void backward() {
 		this.runState = MOTOR_RUN_STATE_RUNNING;
 		try {
@@ -80,12 +71,6 @@ public class RemoteMotor implements TachoMotor, NXTProtocol {
 		}
 	}
 	
-	/**
-	 * Sets motor speed , in degrees per second; Up to 900 is possible with 8 volts.
-	 * NOTE: If using LEGO firmware this will convert the number into power.
-	 * 900 = 100% power, 450 = 50% power.
-	 * @param speed value in degrees/sec  
-	 */
 	public void setSpeed(int speed) {
 		
 		if(speed > 900|speed < 0)
@@ -102,10 +87,6 @@ public class RemoteMotor implements TachoMotor, NXTProtocol {
 		this.power = (byte)power;
 	}
 	
-	/**
-	 * Get the current speed that the motor is set to (not the actual speed)
-	 * @return the speed in degrees per second
-	 */
 	public int getSpeed() {
 		return (this.power * 900) / 100;
 	}
@@ -118,15 +99,6 @@ public class RemoteMotor implements TachoMotor, NXTProtocol {
 		return power;
 	}
 	
-	/**
-	 * Returns the rotation count for the motor. 
-	 * NOTE: If you are using leJOS NXJ firmware this will
-	 * return the same value as getRotationCount() 
-	 * because the leJOS NXJ firmware only uses one Tachometer
-	 * variable.
-	 * 
-	 * @return Tachometer count.
-	 */
 	public int getTachoCount() {
 		try {
 			OutputState state = nxtCommand.getOutputState(id);
@@ -168,14 +140,6 @@ public class RemoteMotor implements TachoMotor, NXTProtocol {
 		}	
 	}
 	
-	/**
-	 * Causes the motor to rotate a certain count. The motor will
-	 * also backtrack to the desired count when done.
-	 * NOTE: This method returns almost immediately if returnNow = true.
-	 * @param count Number of counts to rotate motor.
-	 * @param returnNow When true, method returns before the rotation is complete.
-	 * @return Error value. 0 means success. See lejos.pc.comm.ErrorMessages for details.
-	 */
 	public void rotate(int count, boolean returnNow) {
 		this.runState = MOTOR_RUN_STATE_RUNNING;
 		// ** Really this can accept a ULONG value for count. Too lazy to properly convert right now:
@@ -221,13 +185,6 @@ public class RemoteMotor implements TachoMotor, NXTProtocol {
 	  	return  _rotating;
 	  }
 	
-	/**
-	 * Causes the motor to rotate  a certain count.
-	 * This method returns after the rotation is completed.
-	 * NOTE: This method currently doesn't work well with the LEGO firmware.
-	 * @param count Number of counts to rotate motor.
-	 * @return Error value. 0 means succcess. See icommand.nxtcomm.ErrorMessages for details.
-	 */
 	public void rotate(int count) {
 		rotate(count, false);
 	}
@@ -267,10 +224,6 @@ public class RemoteMotor implements TachoMotor, NXTProtocol {
 		rotate(target - tachometer, returnNow);
 	}
 	
-	/**
-	 * Resets the rotation counter to zero.
-	 * @return Error value. 0 means succcess. See icommand.nxtcomm.ErrorMessages for details.
-	 */
 	public void resetTachoCount() {
 		try {
 			nxtCommand.resetMotorPosition(this.id, false);
@@ -304,15 +257,11 @@ public class RemoteMotor implements TachoMotor, NXTProtocol {
 		return 0;
 	}
 	
-	/**
-	 * Stops the motor using brakes.
-	 * @return Error value. 0 means success. See lejos.pc.comm.ErrorMessages for details.
-	 */
-	// !! Setting power to 0 seems to make it lock motor.
 	public void stop() {
 		this.runState = MOTOR_RUN_STATE_RUNNING;
 		//this.regulationMode = REGULATION_MODE_MOTOR_SPEED;
 		try {
+			// NOTE: Setting power to 0 seems to make it lock motor, not float it.
 			nxtCommand.setOutputState(id, (byte)0, BRAKE + MOTORON + REGULATED, regulationMode, turnRatio, runState, 0);
 		} catch (IOException ioe) {
 			System.out.println(ioe.getMessage());
@@ -336,31 +285,16 @@ public class RemoteMotor implements TachoMotor, NXTProtocol {
 		}
 	}
 	
-	/** 
-	 * Turns speed regulation on/off; <br>
-	 * Currently a dummy for remote motors.
-	 * @param  yes is true for speed regulation on
-	 */
-	public void regulateSpeed(boolean yes) 
-	{
+	public void regulateSpeed(boolean yes) {
+		// TODO Currently a dummy for remote motors.
 	}
 	
-	/**
-	 * Enables smoother acceleration.  Motor speed increases gently,  and does not <>
-	 * overshoot when regulate Speed is used. 
-	 * Currently a dummy for remote motors.
-	 * 
-	 */
-	public void smoothAcceleration(boolean yes) 
-	{
+	public void smoothAcceleration(boolean yes) {
+		// TODO Currently a dummy for remote motors.
 	}
 	
-	/**
-	* @see lejos.nxt.TachoMotor#getActualSpeed()
-	* Currently dummy for remote motors - returns the speed that has been set.
-	*/
-	public int getActualSpeed()
-	{
+	public int getActualSpeed()	{
+		// TODO Currently dummy for remote motors - returns the speed that has been set.
 	     return getSpeed();
 	}
 	
