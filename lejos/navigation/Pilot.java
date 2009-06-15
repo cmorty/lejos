@@ -285,7 +285,7 @@ public interface Pilot {
    *          side of the robot is on the outside of the turn.
    * @param angle The sign of the angle determines the direction of robot motion. Positive drives the robot forward, negative drives it backward.
    * @see #steer(int, int)
-   * 
+   * @see #travelArc(float, float)
    */ 
   public void arc(float radius, int angle);
 
@@ -318,7 +318,7 @@ public interface Pilot {
    * @param immediateReturn If immediateReturn is true then the method returns immediately and your code MUST call
    *          updatePostion() when the robot has stopped. Otherwise, the robot position is lost.
    * @see #steer(int, int, boolean)
-   * 
+   * @see #travelArc(float, float, boolean)
    */
   public void arc(float radius, int angle, boolean immediateReturn);
 
