@@ -18,14 +18,28 @@ public interface TachoMotor {
   void backward();
 
   /**
-   * Causes motor to rotate by a specified angle. The resulting tachometer count should be within +- 2 degrees on the
-   * NXT. If any motor method is called before the limit is reached, the rotation is canceled.
+   * causes motor to rotate through angle; <br>
+   * iff immediateReturn is true, method returns immediately and the motor stops by itself <br>
+   * If any motor method is called before the limit is reached, the rotation is canceled. 
+   * When the angle is reached, the method isRotating() returns false;<br>
    * 
-   * @param angle by which the motor will rotate.
-   * @param immediateReturn if true return immediately, else wait for rotation to finish.
+   * @param  angle through which the motor will rotate
+   * @param immediateReturn iff true, method returns immediately, thus allowing monitoring of sensors in the calling thread. 
+   * 
+   *  @see TachoMotor#rotate(int, boolean)
    */
   void rotate(int angle, boolean immediateReturn);
 
+  /**
+   * Causes motor to rotate by a specified angle. The resulting tachometer count should be within +- 2 degrees on the NXT.
+   * This method does not return until the rotation is completed.
+   * 
+   * @param angle by which the motor will rotate.
+   * 
+   */
+  void rotate(int angle);
+
+  
   /**
    * Causes motor to rotate to limitAngle;  <br>
    * Then getTachoCount should be within +- 2 degrees of the limit angle when the method returns

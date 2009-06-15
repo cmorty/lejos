@@ -224,26 +224,11 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
    }
 
 
-   /**
-    * causes motor to rotate through angle. <br>
-    * @param  angle through which the motor will rotate
-    */
    public void rotate(int angle)
    {
       rotateTo(getTachoCount()+angle);
    }
 
-   /**
-    * causes motor to rotate through angle; <br>
-    * iff immediateReturn is true, method returns immediately and the motor stops by itself <br>
-    * If any motor method is called before the limit is reached, the rotation is canceled. 
-    * When the angle is reached, the method isRotating() returns false;<br>
-    * 
-    * @param  angle through which the motor will rotate
-    * @param immediateReturn iff true, method returns immediately, thus allowing monitoring of sensors in the calling thread. 
-    * 
-    *  @see TachoMotor#rotate(int, boolean)
-    */
    public void rotate(int angle, boolean immediateReturn)
    {
      int t = getTachoCount();
