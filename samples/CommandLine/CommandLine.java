@@ -6,11 +6,10 @@ import lejos.addon.keyboard.*;
 import lejos.nxt.*;
 
 /**
- * This is a sample if you have a Bluetooth SPP Keyboard (see Keyboard class).
- * A simple command line app that lets you execute files or enter
+ * This is some sample code to demonstrate the Keyboard class if you have a Bluetooth 
+ * SPP Keyboard {@link lejos.addon.keyboard#Keyboard}. A simple command line app that lets you execute files or enter
  * some common DOS commands like dir, mem, etc... 
- * This is some sample code to demonstrate the Keyboard class. It
- * allows you to connect and display typing on the NXT LCD.
+ * It allows you to connect and display typing on the NXT LCD.
  * Only works with SPP Bluetooth keyboards. Will not work with
  * HID BT keyboards. See <code>Keyboard</code> Javadocs for more information.
  * @author BB
