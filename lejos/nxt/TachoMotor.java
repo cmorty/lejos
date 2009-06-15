@@ -27,10 +27,34 @@ public interface TachoMotor {
   void rotate(int angle, boolean immediateReturn);
 
   /**
+   * Causes motor to rotate to limitAngle;  <br>
+   * Then getTachoCount should be within +- 2 degrees of the limit angle when the method returns
+   * @param  limitAngle to which the motor will rotate, and then stop (in degrees). Includes any positive or negative int, even values > 360.
+   */
+  public void rotateTo(int limitAngle);
+  
+  /**
+   * causes motor to rotate to limitAngle; <br>
+   * if immediateReturn is true, method returns immediately and the motor stops by itself <br> 
+   * and getTachoCount should be within +- 2 degrees if the limit angle
+   * If any motor method is called before the limit is reached, the rotation is canceled. 
+   * When the angle is reached, the method isRotating() returns false;<br>
+   * @param  limitAngle to which the motor will rotate, and then stop (in degrees). Includes any positive or negative int, even values > 360. 
+   * @param immediateReturn iff true, method returns immediately, thus allowing monitoring of sensors in the calling thread.
+   */
+  public void rotateTo(int limitAngle,boolean immediateReturn);  
+  
+  /**
    * Causes motor to stop immediately. It will resist any further motion. Cancels any rotate() orders in progress.
    */
   void stop();
 
+  /**
+   * Motor loses all power, causing the rotor to float freely to a stop.
+   * This is not the same as stopping, which locks the rotor. 
+   */   
+  public void flt();
+  
   /**
    * Return if the motor is moving.
    * 
