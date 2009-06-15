@@ -1,4 +1,4 @@
-package lejos.nxt.addon.keyboard;
+package lejos.addon.keyboard;
 // package lejos.devices; // UNCOMMENT
 
 /**
