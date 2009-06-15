@@ -184,9 +184,9 @@ public class RemoteMotor implements TachoMotor, NXTProtocol {
 		//if(power > 0)
 		try {
 			if(count > 0)
-				nxtCommand.setOutputState(id, power, this.mode + MOTORON, regulationMode, turnRatio, runState, (int)count); // Note using tachoLimit with Lego FW
+				nxtCommand.setOutputState(id, power, this.mode + MOTORON, regulationMode, turnRatio, runState, count); // Note using tachoLimit with Lego FW
 			else
-				nxtCommand.setOutputState(id, (byte)-power, this.mode + MOTORON, regulationMode, turnRatio, runState, (int)Math.abs(count)); // Note using tachoLimit with Lego FW			
+				nxtCommand.setOutputState(id, (byte)-power, this.mode + MOTORON, regulationMode, turnRatio, runState, Math.abs(count)); // Note using tachoLimit with Lego FW			
 		} catch (IOException ioe) {
 			System.out.println(ioe.getMessage());
 		}
@@ -334,5 +334,35 @@ public class RemoteMotor implements TachoMotor, NXTProtocol {
 			System.out.println(ioe.getMessage());
 			return -1;
 		}
-	}	
+	}
+	
+	/** 
+	 * Turns speed regulation on/off; <br>
+	 * Currently a dummy for remote motors.
+	 * @param  yes is true for speed regulation on
+	 */
+	public void regulateSpeed(boolean yes) 
+	{
+	}
+	
+	/**
+	 * Enables smoother acceleration.  Motor speed increases gently,  and does not <>
+	 * overshoot when regulate Speed is used. 
+	 * Currently a dummy for remote motors.
+	 * 
+	 */
+	public void smoothAcceleration(boolean yes) 
+	{
+	}
+	
+	/**
+	* @see lejos.nxt.TachoMotor#getActualSpeed()
+	* Currently dummy for remote motors - returns the speed that has been set.
+	*/
+	public int getActualSpeed()
+	{
+	     return getSpeed();
+	}
+	
+	
 }
