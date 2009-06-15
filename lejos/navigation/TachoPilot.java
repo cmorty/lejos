@@ -223,10 +223,10 @@ public class TachoPilot implements Pilot {
   }
 
   private void setSpeed(final int leftSpeed, final int rightSpeed) {
-    //_left.regulateSpeed(_regulating);
-    //_left.smoothAcceleration(!isMoving());
-    //_right.regulateSpeed(_regulating);
-    //_right.smoothAcceleration(!isMoving());
+    _left.regulateSpeed(_regulating);
+    _left.smoothAcceleration(!isMoving());
+    _right.regulateSpeed(_regulating);
+    _right.smoothAcceleration(!isMoving());
     _left.setSpeed(leftSpeed);
     _right.setSpeed(rightSpeed);
   }
@@ -481,9 +481,10 @@ public class TachoPilot implements Pilot {
 
   /*
    * @return true if either motor actual speed is zero.
-   public boolean stalled() {
+   */
+  public boolean stalled() {
     return (0 == _left.getActualSpeed()) || (0 == _right.getActualSpeed());
-  }*/
+  }
 
   /**
    * Motors backward. This is called by forward() and backward().
@@ -499,12 +500,12 @@ public class TachoPilot implements Pilot {
    * from sensor inputs.
    * 
    * @param yes Set motor speed regulation on = true or off = false.
-   
+   */
   public void regulateSpeed(final boolean yes) {
     _regulating = yes;
     _left.regulateSpeed(yes);
     _right.regulateSpeed(yes);
-  }*/
+  }
 
   /**
    * Motors forward. This is called by forward() and backward().
