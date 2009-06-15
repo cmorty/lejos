@@ -1,4 +1,4 @@
-package lejos.nxt.addon.keyboard;
+package lejos.addon.keyboard;
 
 /**
  * Contains data for a KeyEvent. Passed to KeyListener objects.

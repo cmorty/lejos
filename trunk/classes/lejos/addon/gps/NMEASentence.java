@@ -1,4 +1,4 @@
-package lejos.nxt.addon.gps;
+package lejos.addon.gps;
 
 
 import java.util.*;

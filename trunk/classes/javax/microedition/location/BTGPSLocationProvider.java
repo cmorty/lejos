@@ -5,7 +5,7 @@ import javax.bluetooth.*;
 import javax.microedition.io.*;
 
 
-import lejos.nxt.addon.gps.*;
+import lejos.addon.gps.*;
 
 /**
  * This class is not visible to users and should not be instantiated directly. Instead it

@@ -1,5 +1,5 @@
+import lejos.addon.gps.*;
 import lejos.nxt.*;
-import lejos.nxt.addon.gps.*;
 import lejos.nxt.comm.*;
 import lejos.util.Stopwatch;
 import lejos.util.TextMenu;
