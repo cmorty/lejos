@@ -203,6 +203,22 @@ public class TachoPilot implements Pilot {
   }
   
   /**
+   * @return actual speed of left motor in degrees per second. A negative value if motor is rotating backwards. Updated
+   *         every 100 ms.
+   **/
+  public int getLeftActualSpeed() {
+    return _left.getActualSpeed();
+  }
+
+  /**
+   * @return actual speed of right motor in degrees per second. A negative value if motor is rotating backwards. Updated
+   *         every 100 ms.
+   **/
+  public int getRightActualSpeed() {
+    return _right.getActualSpeed();
+  }
+  
+  /**
    * @return ratio of motor revolutions per 360 degree rotation of the robot. If your robot has wheels with different
    *         size, it is the average.
    */
