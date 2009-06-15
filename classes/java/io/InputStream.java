@@ -25,7 +25,6 @@ package java.io;
  * @see	 java.io.FilterInputStream
  * @see	 java.io.InputStream#read()
  * @see	 java.io.OutputStream
- * @see	 java.io.PushbackInputStream
  * @since   JDK1.0
  */
 public abstract class InputStream

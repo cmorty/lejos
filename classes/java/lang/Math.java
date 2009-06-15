@@ -490,10 +490,9 @@ public final class Math
 	
 	/**
 	 * Square root.
-	 * @author Sven Köhler
 	 */
-	public static double sqrt(double x)
-	{
+	public static double sqrt(double x) {
+		// Method written by Sven Köhler
 		if (x == 0)
 			return 0;
 		if (x < 0 || Double.isNaN(x))

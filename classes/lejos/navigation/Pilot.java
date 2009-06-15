@@ -122,7 +122,7 @@ public interface Pilot {
   public float getTravelDistance();
 
   /**
-   * This method is similar to the {@link #driveArc(float)} method except it uses a ratio of motor
+   * This method is similar to the {@link #arc(float)} method except it uses a ratio of motor
    * speeds to follow a curved path and therefore has the ability to drive straight. This makes
    * it ideal for line following applications.
    * <p>
@@ -155,7 +155,7 @@ public interface Pilot {
   public void steer(int turnRate);
 
   /**
-   * This method is similar to the {@link #driveArc(float, int)} method except it uses a ratio of motor
+   * This method is similar to the {@link #arc(float, int)} method except it uses a ratio of motor
    * speeds to follow a curved path and therefore has the ability to drive straight. This makes
    * it ideal for line following applications. This method does not return until the robot has
    * completed moving <code>angle</code> degrees along the arc.
@@ -195,7 +195,7 @@ public interface Pilot {
   public void steer(int turnRate, int angle);
 
   /**
-   * This method is similar to the {@link #driveArc(float, int)} method except it uses a ratio of motor
+   * This method is similar to the {@link #arc(float, int)} method except it uses a ratio of motor
    * speeds to follow a curved path and therefore has the ability to drive straight. This makes
    * it ideal for line following applications. This method has the ability to return immediately
    * by using the <code>immediateReturn</code> parameter. <b>Warning: Your code <i>must</i> call
@@ -245,7 +245,7 @@ public interface Pilot {
    * If <code>radius</code> is negative, the robot arcs right, and the center of the turning circle is on the right side of the robot.<br>
    * If <code>radius</code> is zero, ...
    * <p>
-   * The <code>driveArc(float)</code> method <b>can not drive a straight line</b>, which makes
+   * The <code>arc(float)</code> method <b>can not drive a straight line</b>, which makes
    * it impractical for line following. A better solution for line following is  
    * {@link #steer(int)}, which uses proportional steering and can drive straight lines and arcs.
    * <p>
@@ -257,7 +257,7 @@ public interface Pilot {
    *          side of the robot is on the outside of the turn.
    * @see #steer(int)
    */
-  public void driveArc(float radius);
+  public void arc(float radius);
 
   /**
    * Moves the NXT robot along an arc with a specified radius and a predescribed angle,
@@ -268,7 +268,7 @@ public interface Pilot {
    * If <code>radius</code> is negative, the robot arcs right, and the center of the turning circle is on the right side of the robot.<br>
    * If <code>radius</code> is zero, ...
    * <p>
-   * The <code>driveArc(float)</code> method <b>can not drive a straight line</b>, which makes
+   * The <code>arc(float)</code> method <b>can not drive a straight line</b>, which makes
    * it impractical for line following. A better solution for line following is  
    * {@link #steer(int)}, which uses proportional steering and can drive straight lines and arcs.
    * <p>
@@ -287,7 +287,7 @@ public interface Pilot {
    * @see #steer(int, int)
    * 
    */ 
-  public void driveArc(float radius, int angle);
+  public void arc(float radius, int angle);
 
   /**
    * Moves the NXT robot along an arc with a specified radius and a predescribed angle,
@@ -299,7 +299,7 @@ public interface Pilot {
    * If <code>radius</code> is negative, the robot arcs right, and the center of the turning circle is on the right side of the robot.<br>
    * If <code>radius</code> is zero, ...
    * <p>
-   * The <code>driveArc(float, int, boolean)</code> method <b>can not drive a straight line</b>, which makes
+   * The <code>arc(float, int, boolean)</code> method <b>can not drive a straight line</b>, which makes
    * it impractical for line following. A better solution for line following is  
    * {@link #steer(int, int, boolean)}, which uses proportional steering and can drive straight lines and arcs.
    * <p>
@@ -320,8 +320,77 @@ public interface Pilot {
    * @see #steer(int, int, boolean)
    * 
    */
-  public void driveArc(float radius, int angle, boolean immediateReturn);
+  public void arc(float radius, int angle, boolean immediateReturn);
 
+  /**
+   * Moves the NXT robot a specified distance along an arc,
+   * after which the robot stops moving. This method does not return until the robot has
+   * completed moving <code>distance</code> along the arc. The units (inches, cm) for <code>distance</code> 
+   * should be the same as the units used for <code>radius</code>.
+   * <p>
+   * If <code>radius</code> is positive, the robot arcs left, and the center of the turning circle is on the left side of the robot.<br>
+   * If <code>radius</code> is negative, the robot arcs right, and the center of the turning circle is on the right side of the robot.<br>
+   * If <code>radius</code> is zero, ...
+   * <p>
+   * The <code>travelArc(float, float)</code> method <b>can not drive a straight line</b>, which makes
+   * it impractical for line following. A better solution for line following is  
+   * {@link #steer(int)}, which uses proportional steering and can drive straight lines and arcs.
+   * <p>
+   * The robot will stop when it has moved along the arc <code>distance</code> units.<br> 
+   * If <code>distance</code> is positive, the robot will move travel forwards.<br>
+   * If <code>distance</code> is negative, the robot will move travel backwards.
+   * If <code>distance</code> is zero, the robot will not move and the method returns immediately.
+   * <p>
+   * Postcondition: Motor speeds are unpredictable.
+   * <p>
+   * Note: If you have specified a drift correction in the constructor it will not be applied in this method.
+   * 
+   * @param radius of the arc path. If positive, the left side of the robot is on the inside of the turn. If negative, the left
+   *          side of the robot is on the outside of the turn.
+   * @param distance to travel, in same units as <code>radius</code>. The sign of the distance determines the direction of robot motion. Positive drives the robot forward, negative drives it backward.
+   * @see #steer(int, int)
+   * @see #arc(float, int)
+   * 
+   */ 
+  public void travelArc(float radius, float distance);
+  
+  /**
+   * Moves the NXT robot a specified distance along an arc,
+   * after which the robot stops moving. This method has the ability to return immediately
+   * by using the <code>immediateReturn</code> parameter.  
+   * The units (inches, cm) for <code>distance</code> should be the same as the units used for <code>radius</code>.
+   * <b>Warning: Your code <i>must</i> call updatePostion() when the robot has stopped, 
+   * otherwise, the robot position is lost.</b>
+   * 
+   * <p>
+   * If <code>radius</code> is positive, the robot arcs left, and the center of the turning circle is on the left side of the robot.<br>
+   * If <code>radius</code> is negative, the robot arcs right, and the center of the turning circle is on the right side of the robot.<br>
+   * If <code>radius</code> is zero, ...
+   * <p>
+   * The <code>travelArc(float, float, boolean)</code> method <b>can not drive a straight line</b>, which makes
+   * it impractical for line following. A better solution for line following is  
+   * {@link #steer(int, int, boolean)}, which uses proportional steering and can drive straight lines and arcs.
+   * <p>
+   * The robot will stop when it has moved along the arc <code>distance</code> units.<br> 
+   * If <code>distance</code> is positive, the robot will move travel forwards.<br>
+   * If <code>distance</code> is negative, the robot will move travel backwards.
+   * If <code>distance</code> is zero, the robot will not move and the method returns immediately.
+   * <p>
+   * Postcondition: Motor speeds are unpredictable.
+   * <p>
+   * Note: If you have specified a drift correction in the constructor it will not be applied in this method.
+   * 
+   * @param radius of the arc path. If positive, the left side of the robot is on the inside of the turn. If negative, the left
+   *          side of the robot is on the outside of the turn.
+   * @param distance to travel, in same units as <code>radius</code>. The sign of the distance determines the direction of robot motion. Positive drives the robot forward, negative drives it backward.
+   @param immediateReturn If immediateReturn is true then the method returns immediately and your code MUST call
+   *        updatePostion() when the robot has stopped. Otherwise, the robot position is lost. 
+   * @see #steer(int, int, boolean)
+   * @see #arc(float, int, boolean)
+   * 
+   */ 
+  public void travelArc(float radius, float distance, boolean immediateReturn);
+  
   /**
    * Reset traveled distance and rotated angle.
    */
