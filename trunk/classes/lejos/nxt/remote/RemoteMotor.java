@@ -202,26 +202,16 @@ public class RemoteMotor implements TachoMotor, NXTProtocol {
 		this.regulationMode = mode;
 	}
 	
-	/**
-	 * Rotates to a desired tacho count. Does not return until rotation done.
-	 * Note: The tachocount can not be reset to zero.
-	 * @param target
-	 */
-	public void rotateTo(int target) {
-		rotateTo(target, false);
+	public void rotateTo(int limitAngle) {
+		rotateTo(limitAngle, false);
 		
 	}
 	
-	/**
-	 * Rotates to a desired tacho count. Returns before the rotation is done
-	 * if you include true as the argument.
-	 * @param target
-	 */
-	public void rotateTo(int target, boolean returnNow) {
+	public void rotateTo(int limitAngle, boolean returnNow) {
 		// !! Probably inaccuracy can creep into this if
 		// rotateTo is called while motor moving.
 		int tachometer = this.getTachoCount();
-		rotate(target - tachometer, returnNow);
+		rotate(limitAngle - tachometer, returnNow);
 	}
 	
 	public void resetTachoCount() {
@@ -269,19 +259,14 @@ public class RemoteMotor implements TachoMotor, NXTProtocol {
 		}
 	}
 	
-	/**
-	 * Stops the motor without using brakes. 
-	 * @return Error value. 0 means success.
-	 */
-	public int flt() {
+	public void flt() {
 		this.runState = MOTOR_RUN_STATE_IDLE;
 		//this.regulationMode = REGULATION_MODE_MOTOR_SPEED;
 		this.mode = MOTOR_RUN_STATE_IDLE;
 		try {
-			return nxtCommand.setOutputState(id, (byte)0, 0x00, regulationMode, turnRatio, runState, 0);
+			nxtCommand.setOutputState(id, (byte)0, 0x00, regulationMode, turnRatio, runState, 0);
 		} catch (IOException ioe) {
 			System.out.println(ioe.getMessage());
-			return -1;
 		}
 	}
 	

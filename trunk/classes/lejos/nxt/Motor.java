@@ -158,14 +158,7 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
          if (_mode == BACKWARD)forward();
    }
 
-   /**
-    * Causes motor to float. The motor will lose all power,
-    * but this is not the same as stopping. Use this
-    * method if you don't want your robot to trip in
-    * abrupt turns.
-    */   
-   public void flt()
-   {
+   public void flt() {
       updateState( FLOAT);
    }
 
@@ -176,8 +169,7 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
     * any further motion.
     * Cancels any rotate() orders in progress
     */
-   public void stop()
-   {
+   public void stop() {
       updateState( STOP);
    }
    /**
@@ -258,25 +250,11 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
      rotateTo(t+angle,immediateReturn);
    }
 
-   /**
-    * causes motor to rotate to limitAngle;  <br>
-    * Then getTachoCount should be within +- 2 degrees of the limit angle when the method returns
-    * @param  limitAngle to which the motor will rotate
-    */
    public void rotateTo(int limitAngle)
    {
       rotateTo(limitAngle,false);
    }
-
-   /**
-    * causes motor to rotate to limitAngle; <br>
-    * if immediateReturn is true, method returns immediately and the motor stops by itself <br> 
-    * and getTachoCount should be within +- 2 degrees if the limit angle
-    * If any motor method is called before the limit is reached, the rotation is canceled. 
-    * When the angle is reached, the method isRotating() returns false;<br>
-    * @param  limitAngle to which the motor will rotate, and then stop. 
-    * @param immediateReturn iff true, method returns immediately, thus allowing monitoring of sensors in the calling thread.
-    */
+   
    public void rotateTo(int limitAngle,boolean immediateReturn)
    {
       synchronized(regulator)
