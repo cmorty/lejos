@@ -353,7 +353,7 @@ public class SimpleNavigator implements Navigator {
      */
     public void turn(float radius) {
         reset();
-        pilot.driveArc(radius);
+        pilot.arc(radius);
     }
 
     /**
@@ -380,7 +380,7 @@ public class SimpleNavigator implements Navigator {
      */
     public void turn(float radius, int angle, boolean immediateReturn) {
         reset();
-        pilot.driveArc(radius, angle, immediateReturn);
+        pilot.arc(radius, angle, immediateReturn);
         if (!immediateReturn) {
             updatePosition();
         }

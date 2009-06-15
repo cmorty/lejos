@@ -108,8 +108,8 @@ public class CompassPilot extends TachoPilot {
 	 */
 	public int getHeading() { return _heading;}
 /**
- * returns current compass heading
- * @return
+ * Method returns the current compass heading
+ * @return Compass heading in degrees.
  */
     public int getCompassHeading()
     {
@@ -207,8 +207,8 @@ public class CompassPilot extends TachoPilot {
 		while(_rotating) Thread.yield();
 	}
 	/**
-	 * robot rotates to the specified compass heading;
-	 * @param heading   Desired compass heading
+	 * Robot rotates to the specified compass heading.
+	 * @param angle  Desired compass heading
 	 */	
 	public void rotateTo(float angle)
 	{

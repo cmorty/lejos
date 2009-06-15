@@ -531,15 +531,15 @@ public class TachoPilot implements Pilot {
     _right.forward();
   }
 
-  public void driveArc(final float radius) {
+  public void arc(final float radius) {
     steer(turnRate(radius));
   }
 
-  public void driveArc(final float radius, final int angle) {
+  public void arc(final float radius, final int angle) {
     steer(turnRate(radius), angle);
   }
 
-  public void driveArc(final float radius, final int angle, final boolean immediateReturn) {
+  public void arc(final float radius, final int angle, final boolean immediateReturn) {
     steer(turnRate(radius), angle, immediateReturn);
   }
 
@@ -564,4 +564,13 @@ public class TachoPilot implements Pilot {
     float ratio = (2 * radiusToUse - _trackWidth) / (2 * radiusToUse + _trackWidth);
     return Math.round(direction * 100 * (1 - ratio));
   }
+
+	public void travelArc(float radius, float distance) {
+		travelArc(radius, distance, false);
+	}
+
+	public void travelArc(float radius, float distance, boolean immediateReturn) {
+		double angle =  (distance * 180)/(Math.PI * radius);
+		arc(radius, (int)angle, immediateReturn); // TODO If Pilot.arc() method changes to float for angle, get rid of (int) 
+	}
 }
