@@ -1,5 +1,5 @@
 import lejos.nxt.*;
-import lejos.rcxcomm.LLC;
+import lejos.nxt.rcxcomm.LLC;
 
 
 /**

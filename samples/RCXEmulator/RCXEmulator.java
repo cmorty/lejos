@@ -1,6 +1,6 @@
 import lejos.nxt.*;
 import lejos.nxt.addon.*;
-import lejos.rcxcomm.*;
+import lejos.nxt.rcxcomm.*;
 
 /*
  * Responds to RCX Remote control
