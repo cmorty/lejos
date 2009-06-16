@@ -1,4 +1,4 @@
-package lejos.rcxcomm;
+package lejos.nxt.rcxcomm;
 
 /**
  * A Packet handler that guarantees reliable delivery using checksums,
