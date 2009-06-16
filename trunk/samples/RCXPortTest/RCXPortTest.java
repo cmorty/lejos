@@ -1,5 +1,5 @@
 
-import lejos.rcxcomm.*;
+import lejos.nxt.rcxcomm.*;
 import java.io.*;
 import lejos.nxt.*;
 
