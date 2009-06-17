@@ -2,7 +2,7 @@ package lejos.nxt.addon;
 
 import lejos.nxt.I2CPort;
 import lejos.nxt.I2CSensor;
-import lejos.rcxcomm.Opcode;
+import lejos.nxt.rcxcomm.Opcode;
 
 /**
  * Supports Mindsensors NRLink RCX IR adapter.

@@ -5,19 +5,19 @@
 -->
 <project name="copy" default="copy" basedir=".">
   	<target name="copy"  description="Copy source of common classes">
-  		<mkdir dir="lejos/localization"/>
+  		<mkdir dir="lejos/robotics/localization"/>
   		<copy todir=".">
   			<fileset dir="../classes">
-  				<include name="lejos/localization/Line.java"/>
-  				<include name="lejos/localization/LineMap.java"/>
-  				<include name="lejos/localization/Map.java"/>
-  				<include name="lejos/localization/Move.java"/>
-  				<include name="lejos/localization/Particle.java"/>
-  				<include name="lejos/localization/ParticleSet.java"/>
-  				<include name="lejos/localization/Point.java"/>
-  				<include name="lejos/localization/Pose.java"/>
-  				<include name="lejos/localization/RangeReadings.java"/>
-  				<include name="lejos/localization/package.html"/>
+  				<include name="lejos/robotics/localization/Line.java"/>
+  				<include name="lejos/robotics/localization/LineMap.java"/>
+  				<include name="lejos/robotics/localization/Map.java"/>
+  				<include name="lejos/robotics/localization/Move.java"/>
+  				<include name="lejos/robotics/localization/Particle.java"/>
+  				<include name="lejos/robotics/localization/ParticleSet.java"/>
+  				<include name="lejos/robotics/localization/Point.java"/>
+  				<include name="lejos/robotics/localization/Pose.java"/>
+  				<include name="lejos/robotics/localization/RangeReadings.java"/>
+  				<include name="lejos/robotics/localization/package.html"/>
   			</fileset>
   		</copy>
   		<mkdir dir="lejos/nxt"/>
@@ -52,6 +52,7 @@
   				<include name="lejos/nxt/remote/NXTProtocol.java"/>
   				<include name="lejos/nxt/remote/OutputState.java"/>
   				<include name="lejos/nxt/remote/RemoteBattery.java"/>
+  				<include name="lejos/nxt/remote/RemoteMotor.java"/>
   				<include name="lejos/nxt/remote/RemoteMotorPort.java"/>
   				<include name="lejos/nxt/remote/package.html"/>
   			</fileset>
@@ -64,11 +65,25 @@
   				<include name="lejos/nxt/addon/package.html"/>
   			</fileset>
   		</copy>
-  		<mkdir dir="lejos/rcxcomm"/>
+  		<mkdir dir="lejos/nxt/rcxcomm"/>
   		<copy todir=".">
   			<fileset dir="../classes">
-  				<include name="lejos/rcxcomm/*.java"/>
-  				<include name="lejos/rcxcomm/package.html"/>
+  				<include name="lejos/nxt/rcxcomm/*.java"/>
+  				<include name="lejos/nxt/rcxcomm/package.html"/>
+  			</fileset>
+  		</copy>
+  		<mkdir dir="lejos/robotics/"/>
+  		<copy todir=".">
+  			<fileset dir="../classes">
+  				<include name="lejos/robotics/*.java"/>
+  				<include name="lejos/robotics/package.html"/>
+  			</fileset>
+  		</copy>
+  		<mkdir dir="lejos/robotics/navigation"/>
+  		<copy todir=".">
+  			<fileset dir="../classes">
+  				<include name="lejos/robotics/navigation/*.java"/>
+  				<include name="lejos/robotics/navigation/package.html"/>
   			</fileset>
   		</copy>
   	</target>
