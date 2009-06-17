@@ -1,4 +1,4 @@
-package lejos.localization;
+package lejos.robotics.localization;
 
 /**
  * Represents a line and supports calculating the point of intersection of two

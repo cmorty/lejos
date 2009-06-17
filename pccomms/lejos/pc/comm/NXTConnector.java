@@ -280,7 +280,13 @@ public class NXTConnector extends NXTCommLoggable
 		}
 		
 		try {
-			return nxtComm.open(nxtInfo, mode);			
+			boolean opened =  nxtComm.open(nxtInfo, mode);
+			if (!opened) {
+				log("Failed to connect to the specified NXT");
+				return false;
+			}
+			setStreams();
+			return true;
 		} catch (NXTCommException e) {
 			log("Exception connecting to NXT: " + e.getMessage());
 			return false;

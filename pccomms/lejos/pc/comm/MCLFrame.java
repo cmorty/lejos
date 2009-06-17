@@ -1,10 +1,11 @@
 package lejos.pc.comm;
+
 import javax.swing.*;
 import java.awt.event.*;
 import java.awt.geom.*;
 import java.awt.*;
 import java.io.*;
-import lejos.localization.*;
+import lejos.robotics.localization.*;
 
 /**
  * A panel that can be opened in a frame to control a robot

@@ -1,4 +1,4 @@
-package lejos.rcxcomm;
+package lejos.nxt.rcxcomm;
 
 /**
  * Opcode constants.

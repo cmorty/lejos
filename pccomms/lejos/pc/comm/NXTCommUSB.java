@@ -351,7 +351,7 @@ public abstract class NXTCommUSB implements NXTComm {
 		this.nxtInfo.nxtPtr = devOpen(nxtInfo);
         if (this.nxtInfo.nxtPtr == 0) return false;
         // now the connection is open
-		nxtInfo.connectionState = NXTConnectionState.LCP_CONNECTED;
+		nxtInfo.connectionState = (mode == LCP ? NXTConnectionState.LCP_CONNECTED : NXTConnectionState.PACKET_STREAM_CONNECTED);
         if (mode == RAW || mode == LCP) return true;
         // Now try and switch to packet mode for normal read/writes
 		byte[] request = { NXTProtocol.SYSTEM_COMMAND_REPLY, NXTProtocol.NXJ_PACKET_MODE };

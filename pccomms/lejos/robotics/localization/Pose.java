@@ -1,4 +1,4 @@
-package lejos.localization;
+package lejos.robotics.localization;
 
 /**
  * Represents a pose of the robot. 
