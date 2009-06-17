@@ -1,8 +1,7 @@
-package lejos.navigation;
+package lejos.robotics.navigation;
     
 import lejos.nxt.*;
-import lejos.navigation.*;
-
+import lejos.robotics.TachoMotor;
 
 /**
  * The SimpleNavigator class can keep track of the robot position and the direction angle it faces;

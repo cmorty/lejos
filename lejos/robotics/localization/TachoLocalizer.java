@@ -1,6 +1,6 @@
-package lejos.localization;
+package lejos.robotics.localization;
 
-import lejos.navigation.*;
+import lejos.robotics.navigation.*;
 import lejos.nxt.Motor;
 
 /**

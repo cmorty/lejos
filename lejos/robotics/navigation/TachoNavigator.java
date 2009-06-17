@@ -1,6 +1,7 @@
-package lejos.navigation;
+package lejos.robotics.navigation;
 
 import lejos.nxt.*;
+import lejos.robotics.TachoMotor;
 
 /**
  * This class exists only for backward compatibility with release 0.7 <br>
