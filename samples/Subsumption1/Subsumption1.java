@@ -1,6 +1,5 @@
 
 import lejos.nxt.*;
-import lejos.subsumption.*;
 
 /**
  * Entry point for the program. Creates an instance of Subsumption

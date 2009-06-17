@@ -1,5 +1,5 @@
 
-import lejos.subsumption.*;
+import lejos.robotics.subsumption.*;
 import lejos.nxt.*;
 
 /**

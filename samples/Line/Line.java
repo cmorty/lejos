@@ -1,6 +1,6 @@
 import lejos.nxt.*;
-import lejos.subsumption.*;
-import lejos.navigation.*;
+import lejos.robotics.subsumption.*;
+import lejos.robotics.navigation.*;
 
 /**
  * Demonstration of use of the Behavior and Pilot classes to
