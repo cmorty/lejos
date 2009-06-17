@@ -1,7 +1,7 @@
-package lejos.navigation;
+package lejos.robotics.navigation;
 
 import lejos.nxt.Battery;
-import lejos.nxt.TachoMotor;
+import lejos.robotics.TachoMotor;
 
 /**
  * The TachoPilot class is a software abstraction of the Pilot mechanism of a NXT robot. It contains methods to control

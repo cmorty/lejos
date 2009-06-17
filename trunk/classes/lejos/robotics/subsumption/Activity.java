@@ -1,4 +1,4 @@
-package lejos.subsumption;
+package lejos.robotics.subsumption;
 
 
 /**

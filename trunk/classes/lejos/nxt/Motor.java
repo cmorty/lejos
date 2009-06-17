@@ -1,5 +1,7 @@
 package lejos.nxt;
 
+import lejos.robotics.TachoMotor;
+
 /**
  * Abstraction for a NXT motor. Three instances of <code>Motor</code>
  * are available: <code>Motor.A</code>, <code>Motor.B</code>

@@ -1,4 +1,4 @@
-package lejos.localization;
+package lejos.robotics.localization;
 
 /**
  * Represents a point using float coordinates 

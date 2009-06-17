@@ -1,6 +1,6 @@
-package lejos.localization;
+package lejos.robotics.localization;
 
-import lejos.navigation.*;
+import lejos.robotics.navigation.*;
 
 /**
  * Extension to Navigator for robot that supports localization

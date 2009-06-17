@@ -1,4 +1,4 @@
-package lejos.localization;
+package lejos.robotics.localization;
 
 import java.util.Random;
 
