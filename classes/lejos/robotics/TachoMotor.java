@@ -1,4 +1,4 @@
-package lejos.nxt;
+package lejos.robotics;
 
 /**
  * Interface for encoded motors without limited range of movement (e.g. NXT motor).

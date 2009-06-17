@@ -1,8 +1,8 @@
-package lejos.navigation;
+package lejos.robotics.navigation;
 
 import lejos.nxt.*;
 import lejos.nxt.addon.*;
-
+import lejos.robotics.TachoMotor;
 
 /**
  * A Pilot that keeps track of direction using a CompassSensor.

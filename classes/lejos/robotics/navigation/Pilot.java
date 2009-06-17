@@ -1,4 +1,4 @@
-package lejos.navigation;
+package lejos.robotics.navigation;
 
 /**
  * The Pilot interface forms a common set of functions an implementation must offer in order to be used by higher level

@@ -1,7 +1,7 @@
 package lejos.nxt.remote;
 
 import java.io.*;
-import lejos.nxt.TachoMotor;
+import lejos.robotics.TachoMotor;
 
 /**
  * Motor class. Contains three instances of Motor.

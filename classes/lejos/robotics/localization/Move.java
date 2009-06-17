@@ -1,4 +1,4 @@
-package lejos.localization;
+package lejos.robotics.localization;
 
 /**
  * Represents a robot move consisting of a drive forward and a turn
