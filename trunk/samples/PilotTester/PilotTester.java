@@ -1,5 +1,5 @@
 import lejos.nxt.*;
-import lejos.navigation.*;
+import lejos.robotics.navigation.*;
 
 /**
  * Test of the Pilot class.

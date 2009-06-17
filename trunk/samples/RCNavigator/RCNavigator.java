@@ -6,7 +6,7 @@ import java.io.IOException;
 import lejos.nxt.*;
 import lejos.nxt.comm.BTConnection;
 import lejos.nxt.comm.Bluetooth;
-import lejos.navigation.*;
+import lejos.robotics.navigation.*;
 
  
 
