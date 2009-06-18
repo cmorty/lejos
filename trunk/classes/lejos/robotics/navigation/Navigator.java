@@ -1,5 +1,7 @@
 package lejos.robotics.navigation;
 
+
+
 /**
 * The Navigator interface contains methods for performing basic navigational
 * movements.  <br>
@@ -87,11 +89,17 @@ public interface Navigator
 
   /**
   *Starts  the NXT rotating to the left (increasing angle);
+   * Your code must ensure that <code> updatePosition()</code> is called before any
+   * other robot movement begins. The best way to do this is to call
+   * <code> stop()</code> to end this rotation.
   */
   public void rotateLeft();
 
   /**
-   *Starts the NXT rotating to the right (decreasing angle);
+   * Starts the NXT rotating to the right (decreasing angle);
+   * Your code must ensure that <code> updatePosition()</code> is called before any
+   * other robot movement begins. The best way to do this is to call
+   * <code> stop()</code> to end this rotation.
    */
   public void rotateRight();
 
