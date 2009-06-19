@@ -29,7 +29,7 @@ public class Console implements ConsoleViewerUI {
 		boolean usb = commandLine.hasOption("u");
 		String name = commandLine.getOptionValue("n");
 		String address = commandLine.getOptionValue("d");
-		ConsoleViewComms comm = new ConsoleViewComms(this, false);
+		ConsoleViewComms comm = new ConsoleViewComms(this, false, false);
 		if (blueTooth) protocols |= NXTCommFactory.BLUETOOTH;
 		if (usb) protocols |= NXTCommFactory.USB;
 		if (protocols == 0) protocols = NXTCommFactory.ALL_PROTOCOLS;
@@ -43,6 +43,10 @@ public class Console implements ConsoleViewerUI {
 	public void append(String value) {
 		System.out.print(value);
 	}
+    
+    public void updateLCD(byte[] buffer)
+    {
+    }
 
 	public void connectedTo(String name, String address) {
 	}
