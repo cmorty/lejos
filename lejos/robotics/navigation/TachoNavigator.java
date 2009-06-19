@@ -1,6 +1,5 @@
 package lejos.robotics.navigation;
 
-import lejos.nxt.*;
 import lejos.robotics.TachoMotor;
 
 /**
