@@ -6,12 +6,18 @@ import java.io.*;
  * This class provides a simple way of sending output for viewing on a 
  * PC. The output is transmitted via the nxt USB connection or via Bluetooth.
  * If open is not called or if the connection to the PC is timed out, then
- * the output is dicarded.
+ * the output is discarded.
  */
-public class RConsole {
+public class RConsole extends Thread{
 	static PrintStream ps;
     static NXTConnection conn;
-	
+    static RConsole lcdThread;
+
+    private RConsole()
+    {
+
+    }
+
 	private static void init(NXTConnection c)
 	{
         if (c == null)
@@ -24,7 +30,7 @@ public class RConsole {
             LCD.drawString("Got connection  ", 0, 0);
             byte [] hello = new byte[32];
             int len = conn.read(hello, hello.length);
-            if (len != 3 || hello[0] != 'C' || hello[1] != 'O' || hello[2] != 'N')
+            if (len != 3 || hello[0] != 'C' || hello[1] != 'O' || (hello[2] != 'N' && hello[2] != 'O'))
             {
                 LCD.drawString("Console no h/s    ", 0, 0);
                 conn.close();
@@ -35,6 +41,12 @@ public class RConsole {
             ps = new PrintStream(conn.openOutputStream());
 			LCD.refresh();
 			println("Console open");
+            if (hello[2] == 'O')
+            {
+                lcdThread = new RConsole();
+                lcdThread.setDaemon(true);
+                lcdThread.start();
+            }
 		}
 		catch (Exception e)
 		{
@@ -81,16 +93,21 @@ public class RConsole {
 	public static void close()
 	{
 		if (conn == null) return;
-		try {
-            println("Console closed");
-            conn.close();
-			LCD.drawString("Console closed  ", 0, 0);
-			LCD.refresh();			
-			Thread.sleep(2000);
-		}
-		catch (Exception e)
-		{
-		}
+        synchronized(ps)
+        {
+            try {
+                println("Console closed");
+                conn.close();
+                LCD.drawString("Console closed  ", 0, 0);
+                LCD.refresh();
+                Thread.sleep(2000);
+                ps = null;
+                conn = null;
+            }
+            catch (Exception e)
+            {
+            }
+        }
 	}
 	
 	public static boolean isOpen() {
@@ -100,6 +117,26 @@ public class RConsole {
     public static OutputStream openOutputStream()
     {
         return (conn != null ? conn.openOutputStream() : null);
+    }
+
+    public void run()
+    {
+        OutputStream os = openOutputStream();
+        while(ps != null)
+        {
+            synchronized(ps)
+            {
+                try {
+                    os.write((byte)0xff);
+                    os.write(LCD.getDisplay());
+                    os.flush();
+                } catch (Exception e)
+                {
+                    break;
+                }
+            }
+            try{Thread.sleep(20);}catch(Exception e){}
+        }
     }
 }
 
