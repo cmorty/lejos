@@ -1,5 +1,5 @@
 BASE_ABI_FLAGS := -mcpu=arm7tdmi -mlittle-endian -mfloat-abi=soft -mthumb-interwork
-LIB_ABI_FLAGS := $(BASE_ABI_FLAGS)
+LIB_ABI_FLAGS := $(BASE_ABI_FLAGS) -mthumb
 
 # add -mthumb to LIB_ABI_FLAGS to use thumb libraries
 
@@ -18,6 +18,7 @@ OBJDUMP   := $(call get_prog_path,objdump)
 
 LIBGCC    := $(call get_lib_path,libgcc.a)
 LIBC      := $(call get_lib_path,libc.a)
+LIBM      := $(call get_lib_path,libm.a)
 
 .PHONY: EnvironmentMessage
 EnvironmentMessage:
