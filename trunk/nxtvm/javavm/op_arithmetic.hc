@@ -70,6 +70,11 @@ OPCODE(OP_FNEG)
   just_set_top_word (jfloat2word(-word2jfloat(get_top_word())));
   DISPATCH;
 
+OPCODE(OP_FREM)
+  tempStackWord = pop_word();
+  just_set_top_word(jfloat2word((float)__ieee754_fmod(word2jfloat(get_top_word()), word2jfloat(tempStackWord))));
+  DISPATCH;
+
 OPCODE(OP_DNEG)
   {
     //JDOUBLE d1;
@@ -119,6 +124,12 @@ OPCODE(OP_DDIV)
     DISPATCH;
   }
 
+OPCODE(OP_DREM)
+  pop_jdouble(&d1);
+  pop_jdouble(&d2);
+  d2.dnum = __ieee754_fmod(d2.dnum, d1.dnum);
+  push_jdouble(&d2);
+  DISPATCH;
 #endif // FP_ARITHMETIC
 
 #if LONG_ARITHMETIC
