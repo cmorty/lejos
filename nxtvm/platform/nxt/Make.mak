@@ -80,7 +80,7 @@ $(RAM_TARGET): $(C_OBJECTS) $(S_OBJECTS) $(RAM_LDSCRIPT)
 
 $(ROM_TARGET): $(C_OBJECTS) $(S_OBJECTS) $(ROM_LDSCRIPT)
 	@echo "Linking $@"
-	$(LD) -o $@ $(C_OBJECTS) $(S_OBJECTS) -T $(ROM_LDSCRIPT) $(LIBC) $(LIBGCC) $(LDFLAGS)
+	$(LD) -o $@ $(C_OBJECTS) $(S_OBJECTS) -T $(ROM_LDSCRIPT) $(LIBM) $(LIBC) $(LIBGCC) $(LDFLAGS)
 
 $(ROMBIN_TARGET): $(ROM_TARGET)
 	@echo "Generating binary file $@"

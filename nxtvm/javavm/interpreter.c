@@ -16,6 +16,8 @@
 #include "stack.h"
 #include "poll.h"
 #include "rconsole.h"
+//#include <math.h>
+extern double __ieee754_fmod(double, double);
 
 #define F_OFFSET_MASK  0x0F
 
@@ -652,8 +654,6 @@ static DISPATCH_LABEL forceCheck[] =
     OPCODE(OP_LSUB)
     OPCODE(OP_LADD)
 #endif
-    OPCODE(OP_DREM)
-    OPCODE(OP_FREM)
     UNUSED_OPCODE(222)
     UNUSED_OPCODE(223)
     UNUSED_OPCODE(224)
