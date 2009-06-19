@@ -19,11 +19,13 @@ public class ConsoleViewComms
     private Reader reader;
     private boolean connected = false;
     private boolean daemon;
+    private boolean lcd;
 
-    public ConsoleViewComms(ConsoleViewerUI viewer, boolean daemon)
+    public ConsoleViewComms(ConsoleViewerUI viewer, boolean daemon, boolean lcd)
     {
     	this.daemon = daemon;
         this.viewer = viewer;
+        this.lcd = lcd;
         reader = new Reader();
         reader.setDaemon(daemon);
         reader.start();
@@ -65,7 +67,7 @@ public class ConsoleViewComms
         {
             byte[] hello = new byte[]
             {
-                'C', 'O', 'N'
+                'C', 'O', (byte)(lcd ? 'O' : 'N')
             };
             os.write(hello);
             os.flush();
@@ -98,6 +100,21 @@ public class ConsoleViewComms
      */
     private class Reader extends Thread
     {
+        byte [] lcdBuffer = new byte[100*64/8];
+        private int readBuffer() throws IOException
+        {
+            int cnt = 0;
+
+            while (cnt < lcdBuffer.length)
+            {
+                int len = is.read(lcdBuffer, cnt, lcdBuffer.length - cnt);
+//System.out.println("cnt " + cnt + " len " + len);
+                if (len < 0) return -1;
+                cnt += len;
+            }
+            return cnt;
+        }
+
         public void run()
         {
             while (true)
@@ -109,7 +126,14 @@ public class ConsoleViewComms
                         int input;
                         while ((input = is.read()) >= 0)
                         {
-                            viewer.append("" + (char) input);
+                            if (input == 0xff)
+                            {
+                                //System.out.println("Got 255 marker");
+                                if (readBuffer()< 0) break;
+                                viewer.updateLCD(lcdBuffer);
+                            }
+                            else
+                                viewer.append("" + (char) input);
                         }
                         close();
                         if (!daemon) return;
