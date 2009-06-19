@@ -1,8 +1,5 @@
 package lejos.robotics.navigation;
 
-
-    
-import lejos.nxt.*;
 import lejos.robotics.TachoMotor;
 
 /**
@@ -21,7 +18,7 @@ import lejos.robotics.TachoMotor;
  * Angles related to positions in the plane are relative to the X axis ;  direction of the Y axis is 90 degrees.
  * The x and y coordinate values and the direction angle are all initialized to 0, so if the first move is forward() the robot will run along
  * the x axis.<br>
-
+ *
  */
 public class SimpleNavigator implements Navigator {
     // orientation and co-ordinate data
@@ -164,6 +161,7 @@ public class SimpleNavigator implements Navigator {
         }
 
     }
+    
     public void rotateLeft() {
         reset();
         pilot.steer(200);

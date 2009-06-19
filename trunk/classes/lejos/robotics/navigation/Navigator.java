@@ -71,7 +71,7 @@ public interface Navigator
   /**
    * Moves the NXT robot a specific distance. A positive value moves it forwards and
    * a negative value moves it backwards.
-   * The robot position is updated atomatically when the method returns.
+   * The robot position is updated automatically when the method returns.
    * @param distance The positive or negative distance to move the robot, same units as _wheelDiameter
    */
   public void travel(float distance);
@@ -148,7 +148,7 @@ public interface Navigator
 
   /**
    * Rotates the NXT robot towards the target point (x,y)  and moves the required distance.
-   * If immediateReturnis true, method returns immidiately and your code MUST call updatePostion()
+   * If immediateReturnis true, method returns immediately and your code MUST call updatePostion()
    * when the robot has stopped.  Otherwise, the robot position is lost.
    * @param x The x coordinate to move to.
    * @param y The y coordinate to move to.
@@ -175,7 +175,7 @@ public interface Navigator
 	
   /**
    * Updates robot location (x,y) and direction angle. Called by stop, and movement commands that terminate when complete.
-   * Must be called after a command that returns immediatly, but after robot movement stops, and before another movement method is called.
+   * Must be called after a command that returns immediately, but after robot movement stops, and before another movement method is called.
    */ 
   public void updatePosition();
 }
