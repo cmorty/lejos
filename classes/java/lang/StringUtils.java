@@ -161,4 +161,90 @@ class StringUtils
 		
 		return c;
 	}
+
+    /**
+     * Helper method for converting floats and doubles.
+     *
+     * @author Martin E. Nielsen
+     * @author Sven Köhler
+     **/
+	static int getFloatChars(char[] buf, int charPos, double number, int significantDigits) {
+		int exponent = 0;
+		
+		//we need to detect -0.0 to be compatible with JDK
+		boolean negative = (Double.doubleToRawLongBits(number) & 0x8000000000000000L) != 0;
+		if (negative)
+		{
+			buf[ charPos++ ] = '-';
+			number = -number;
+		}			
+		
+		if ( number == 0 ) {
+			buf[ charPos++ ] = '0';
+			buf[ charPos++ ] = '.';
+			buf[ charPos++ ] = '0';
+		} else {
+			// calc. the power (base 10) for the given number:
+			int pow = ( int )Math.floor( Math.log( number ) / Math.ln10 );
+	
+			// use exponential formatting if number too big or too small
+			if ( pow < -3 || pow > 6 ) {
+				exponent = pow;
+				number /= Math.exp( Math.ln10 * exponent );
+			} // if
+	
+			// Recalc. the pow if exponent removed and d has changed
+			pow = ( int )Math.floor( Math.log( number ) / Math.ln10 );
+	
+			// Decide how many insignificant zeros there will be in the
+			// lead of the number.
+			int insignificantDigits = -Math.min( 0, pow );
+	
+			// Force it to start with at least "0." if necessarry
+			pow = Math.max( 0, pow );
+				double divisor = Math.pow(10, pow);
+	
+			// Loop over the significant digits (17 for double, 8 for float)
+			for ( int i = 0, end = significantDigits+insignificantDigits, div; i < end; i++  ) {
+	
+				// Add the '.' when passing from 10^0 to 10^-1
+				if ( pow == -1 ) {
+					buf[ charPos++ ] = '.';
+				} // if
+	
+				// Find the divisor
+				div = ( int ) ( number / divisor );
+				// This might happen with 1e6: pow = 5 ( instead of 6 )
+				if ( div == 10 ) {
+					buf[ charPos++ ] = '1';
+					buf[ charPos++ ] = '0';
+				} // if
+				else {
+					buf[ charPos ] = (char)(div + '0');
+					charPos++;
+				} // else
+	
+				number -= div * divisor;
+				divisor /= 10.0;
+				pow--;
+	
+				// Break the loop if we have passed the '.'
+				if ( number == 0 && divisor < 0.1 ) break;
+			} // for
+	
+			// Remove trailing zeros
+			while ( buf[ charPos-1 ] == '0' )
+				charPos--;
+	
+			// Avoid "4." instead of "4.0"
+			if ( buf[ charPos-1 ] == '.' )
+				charPos++;
+			if ( exponent != 0 ) {
+				buf[ charPos++ ] = 'E';				
+				charPos += exactStringLength(exponent, 10);
+				getChars(buf, charPos, exponent, 10);
+			} // if
+		}
+		return charPos;
+	}
 }
