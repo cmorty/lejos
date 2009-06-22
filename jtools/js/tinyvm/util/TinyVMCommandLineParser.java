@@ -5,6 +5,8 @@ import java.io.PrintWriter;
 
 import js.tinyvm.TinyVMException;
 
+import js.tinyvm.RunTimeOptions;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.HelpFormatter;
@@ -162,6 +164,16 @@ public class TinyVMCommandLineParser
 	{
 		return this.result.getArgs();
 	}
+
+    public int getRunTimeOptions()
+    {
+        int opt = 0;
+        if (isEnableAssert())
+            opt |= RunTimeOptions.EnableAssert.getValue();
+        if (isEnableChecks())
+            opt |= RunTimeOptions.EnableTypeChecks.getValue();
+        return opt;
+    }
 
 	/**
 	 * Parse commandline.
