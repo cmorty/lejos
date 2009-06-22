@@ -50,12 +50,14 @@ public class ClassRecord implements WritableData
    HashMap<Signature, MethodRecord> iMethods = new HashMap<Signature, MethodRecord>();
    final ArrayList<String> iUsedMethods = new ArrayList<String>();
    int iParentClassIndex;
-   int iArrayElementType;
+   ClassRecord iArrayElementClass;
+   int iNumDims;
+   TinyVMType iType;
    int iFlags;
    boolean iUseAllMethods = false;
    final HashSet<ClassRecord> iImplementedBy = new HashSet<ClassRecord>();
-   private boolean isUsed = false;
-   private boolean isInstanceUsed = false;
+   boolean isUsed = false;
+   boolean isInstanceUsed = false;
 
    public void useAllMethods ()
    {
@@ -69,7 +71,8 @@ public class ClassRecord implements WritableData
 
    public int getLength ()
    {
-      return IOUtilities.adjustedSize(2 + // class size
+      return IOUtilities.adjustedSize(2 + // Object header
+         2 + // class size
          2 + // method table offset
          2 + // instance field table offset
          1 + // number of fields
@@ -83,12 +86,22 @@ public class ClassRecord implements WritableData
    {
       try
       {
+         int classIndex = iBinary.getClassIndex("java/lang/Class");
+         aOut.writeU2(TinyVMConstants.OBJ_HEADER | classIndex);
          int pAllocSize = getAllocationSize();
          assert pAllocSize != 0: "Check: alloc ok";
          aOut.writeU2(pAllocSize);
-         int pMethodTableOffset = iMethodTable.getOffset();
-         aOut.writeU2(pMethodTableOffset);
-         aOut.writeU2(iInstanceFields.getOffset());
+         if (isArray())
+         {
+            aOut.writeU2(iNumDims);
+            aOut.writeU2(iBinary.getClassIndex(iArrayElementClass));
+         }
+         else
+         {
+            int pMethodTableOffset = iMethodTable.getOffset();
+            aOut.writeU2(pMethodTableOffset);
+            aOut.writeU2(iInstanceFields.getOffset());
+         }
          int pNumFields = iInstanceFields.size();
          if (pNumFields > TinyVMConstants.MAX_FIELDS)
          {
@@ -116,13 +129,17 @@ public class ClassRecord implements WritableData
 
    public boolean isArray ()
    {
-      // TBD:
-      return false;
+      return iNumDims != 0;
    }
 
    public boolean isInterface ()
    {
       return iCF.isInterface();
+   }
+
+   public boolean isPrimitive()
+   {
+       return this.iType != TinyVMType.T_REFERENCE;
    }
 
    public boolean hasStaticInitializer ()
@@ -158,6 +175,8 @@ public class ClassRecord implements WritableData
          iFlags |= TinyVMConstants.C_INTERFACE;
       if (hasStaticInitializer())
          iFlags |= TinyVMConstants.C_HASCLINIT;
+      if (isPrimitive())
+          iFlags |= TinyVMConstants.C_PRIMITIVE;
    }
 
    /**
@@ -182,7 +201,7 @@ public class ClassRecord implements WritableData
    }
 
    /**
-    * @return The size of the class in 2-byte words, including any VM space.
+    * @return The size of the class in bytes, including any VM space.
     *         This is the exact size required for memory allocation.
     * @throws TinyVMException
     */
@@ -247,18 +266,50 @@ public class ClassRecord implements WritableData
 
    public static String getArrayClassName(String aName)
    {
+      //System.out.println("process array name " + aName);
       int i = 0;
       while (aName.charAt(i) == '[')
          i++;
-      int typ = TinyVMType.tinyVMTypeFromSignature(aName.substring(i)).type();
+      TinyVMType typ = TinyVMType.tinyVMTypeFromSignature(aName.substring(i));
       // if it is an object we return the name, otherwise we return null
-      if (typ == TinyVMType.T_OBJECT_TYPE || typ == TinyVMType.T_REFERENCE_TYPE)
+      if (typ == TinyVMType.T_OBJECT || typ == TinyVMType.T_REFERENCE)
          return aName.substring(i+1, aName.length()-1);
       else
-          return null;
+         return typ.cname();
 
    }
 
+   static ClassRecord storeArrayClass(String className, HashMap<String, ClassRecord> aClasses,
+      RecordTable<ClassRecord> aClassRecords, ClassPath classPath, Binary iBinary) throws TinyVMException
+   {
+       // find the number of dims
+       int dims = 0;
+       while(className.charAt(dims) == '[')
+          dims++;
+       String elementClassName = getArrayClassName(className);
+       ClassRecord crec = aClasses.get(elementClassName);
+       if (crec == null)
+       {
+           crec = ClassRecord.getClassRecord(elementClassName,
+              classPath, iBinary);
+           aClasses.put(elementClassName, crec);
+           aClassRecords.add(crec);
+       }
+       for(int i = dims-1; i >= 0; i--)
+       {
+           String name = className.substring(i);
+           ClassRecord pRec = aClasses.get(name);
+           if (pRec == null)
+           {
+               pRec = PrimitiveClassRecord.getArrayClassRecord(name,
+                  iBinary, dims-i, crec);
+               aClasses.put(name, pRec);
+               aClassRecords.add(pRec);
+           }
+           crec = pRec;
+       }
+       return crec;
+   }
 
    public void storeReferredClasses (HashMap<String, ClassRecord> aClasses,
       RecordTable<ClassRecord> aClassRecords, ClassPath aClassPath, ArrayList<String> aInterfaceMethods)
@@ -274,18 +325,17 @@ public class ClassRecord implements WritableData
          if (pEntry instanceof ConstantClass)
          {
             String pClassName = ((ConstantClass) pEntry).getBytes(pPool);
-            if (pClassName.startsWith("["))
-            {
-               pClassName = getArrayClassName(pClassName);
-               if (pClassName == null)
-                  continue;
-            }
             if (aClasses.get(pClassName) == null)
             {
-               ClassRecord pRec = ClassRecord.getClassRecord(pClassName,
-                  aClassPath, iBinary);
-               aClasses.put(pClassName, pRec);
-               aClassRecords.add(pRec);
+               if (pClassName.startsWith("["))
+                  storeArrayClass(pClassName, aClasses, aClassRecords, aClassPath, iBinary);
+               else if (aClasses.get(pClassName) == null)
+               {
+                  ClassRecord pRec = ClassRecord.getClassRecord(pClassName,
+                     aClassPath, iBinary);
+                  aClasses.put(pClassName, pRec);
+                  aClassRecords.add(pRec);
+               }
             }
          }
          else if (pEntry instanceof ConstantMethodref)
@@ -295,14 +345,9 @@ public class ClassRecord implements WritableData
             ClassRecord pClassRec = aClasses.get(className);
             if (pClassRec == null)
             {
-              if (className.startsWith("["))
-               {
-                  className = getArrayClassName(className);
-                  if (className == null)
-                     continue;
-                  pClassRec = aClasses.get(className);
-               }
-               if (pClassRec == null)
+               if (className.startsWith("["))
+                  pClassRec = storeArrayClass(className, aClasses, aClassRecords, aClassPath, iBinary);
+               else
                {
                   pClassRec = ClassRecord.getClassRecord(className, aClassPath,
                       iBinary);
@@ -328,8 +373,12 @@ public class ClassRecord implements WritableData
          }
          else if (pEntry instanceof ConstantNameAndType)
          {
-             if (((ConstantNameAndType) pEntry).getSignature(
-               iCF.getConstantPool()).substring(0, 1).equals("("))
+             //System.out.println("N&T: " + ((ConstantNameAndType) pEntry).getName(iCF.getConstantPool()) + " sig " + ((ConstantNameAndType) pEntry).getSignature(
+               //iCF.getConstantPool()));
+            String sig = ((ConstantNameAndType) pEntry).getSignature(iCF.getConstantPool());
+            if (sig.charAt(0) == '[')
+               storeArrayClass(sig, aClasses, aClassRecords, aClassPath, iBinary);
+            else if (sig.substring(0, 1).equals("("))
             {
                if (!((ConstantNameAndType) pEntry).getName(
                   iCF.getConstantPool()).substring(0, 1).equals("<"))
@@ -337,8 +386,7 @@ public class ClassRecord implements WritableData
                   aInterfaceMethods.add(((ConstantNameAndType) pEntry)
                      .getName(iCF.getConstantPool())
                      + ":"
-                     + ((ConstantNameAndType) pEntry).getSignature(iCF
-                        .getConstantPool()));
+                     + sig);
                }
             }
          }
@@ -504,9 +552,10 @@ public class ClassRecord implements WritableData
             || pEntry instanceof ConstantDouble
             || pEntry instanceof ConstantFloat
             || pEntry instanceof ConstantInteger
-            || pEntry instanceof ConstantLong)
+            || pEntry instanceof ConstantLong
+            || pEntry instanceof ConstantClass)
          {
-            ConstantRecord pRec = new ConstantRecord(pPool, pEntry);
+            ConstantRecord pRec = new ConstantRecord(pPool, pEntry, iBinary);
             if (aConstantTable.indexOf(pRec) == -1)
             {
                aConstantTable.add(pRec);
@@ -559,7 +608,7 @@ public class ClassRecord implements WritableData
       for (Iterator<MethodRecord> iter = iMethodTable.iterator(); iter.hasNext();)
       {
          MethodRecord pRec = iter.next();
-         if (pRec.isCalled())
+         if (iBinary.useAll() || pRec.isCalled())
          {
             iOptMethodTable.add(pRec);
             iOptMethods.put(aSignatures.elementAt(pRec.iSignatureId), pRec);
@@ -583,7 +632,7 @@ public class ClassRecord implements WritableData
          {
             String pName = pField.getName().toString();
             StaticFieldRecord pRec = iStaticFields.get(pName);
-            if (pRec.used())
+            if (iBinary.useAll() || pRec.used())
             {
                 StaticValue pValue = iStaticValues.get(pName);
                 aStaticState.add(pValue);
@@ -591,6 +640,7 @@ public class ClassRecord implements WritableData
             }
          }
       }
+      aInstanceFieldTables.add(iInstanceFields);
    }
 
    public void storeFields (RecordTable<RecordTable<InstanceFieldRecord>> aInstanceFieldTables,
@@ -700,7 +750,9 @@ public class ClassRecord implements WritableData
          // TODO refactor exceptions
          throw new TinyVMException(e.getMessage(), e);
       }
-
+      pCR.iType = TinyVMType.T_REFERENCE;
+      pCR.iNumDims = 0;
+      pCR.iArrayElementClass = null;
       return pCR;
    }
 
@@ -775,16 +827,31 @@ public class ClassRecord implements WritableData
 
    public void markUsed()
    {
-       if (!isUsed && hasParent())
-          getParent().markUsed();
+       if (!isUsed)
+       {
+           if(hasParent())
+              getParent().markUsed();
+           if (isArray())
+           {
+              iArrayElementClass.markUsed();
+
+           }
+       }
        isUsed = true;
    }
 
 
    public void markInstanceUsed()
    {
-       if (!isInstanceUsed && hasParent())
-          getParent().markInstanceUsed();
+       if (!isInstanceUsed)
+       {
+           if(hasParent())
+              getParent().markInstanceUsed();
+           if (isArray())
+           {
+              iArrayElementClass.markInstanceUsed();
+           }
+       }
        isInstanceUsed = true;
        markUsed();
    }
@@ -797,6 +864,31 @@ public class ClassRecord implements WritableData
    public boolean instanceUsed()
    {
        return isInstanceUsed;
+   }
+
+   public int getArrayDimension()
+   {
+       return iNumDims;
+   }
+
+   public ClassRecord getArrayElementClass()
+   {
+       return iArrayElementClass;
+   }
+
+   public String signature()
+   {
+       String sig = "";
+       if (isArray())
+       {
+           sig = "[" + iArrayElementClass.signature();
+       }
+       else if(isPrimitive())
+           sig = iType.signature();
+       else
+           sig = iType.signature() + this.iName + ";";
+       return sig;
+
    }
    // private static final Logger _logger = Logger.getLogger("TinyVM");
 }

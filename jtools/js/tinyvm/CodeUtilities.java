@@ -26,8 +26,7 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
    }
 
    /**
-    * Return the ClassRecord for a class signature. Handle the special case of
-    * arrays of objects.
+    * Return the ClassRecord for a class signature.
     * @param className the signature to lookup.
     * @return the associated class record, or null if it is a primitive array.
     * @throws js.tinyvm.TinyVMException
@@ -35,21 +34,26 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
    ClassRecord getClassRecord(String className) throws TinyVMException
    {
       ClassRecord ret;
-      // Deal with arrays of objects
-      if (className.startsWith("["))
+      ret = iBinary.getClassRecord(className);
+      if (ret == null)
       {
-          ret = iBinary.getArrayClassRecord(className);
-      }
-      else
-      {
-          ret = iBinary.getClassRecord(className);
-          if (ret == null)
-          {
-             throw new TinyVMException("Bug CU-3: Didn't find class " + className
-                + " from class " + iCF.getClassName());
-          }
+         throw new TinyVMException("Bug CU-3: Didn't find class " + className
+            + " from class " + iCF.getClassName() + " method " + this.iFullName);
       }
       return ret;
+   }
+
+   ClassRecord getClassRecord(int aPoolIndex) throws TinyVMException
+   {
+      Constant pEntry = iCF.getConstantPool().getConstant(aPoolIndex); // TODO catch all (runtime) exceptions
+      if (!(pEntry instanceof ConstantClass))
+      {
+         throw new TinyVMException("Classfile error: Instruction requiring "
+            + "CONSTANT_Class entry got "
+            + (pEntry == null? "null" : pEntry.getClass().getName()));
+      }
+      ConstantClass pClassEntry = (ConstantClass) pEntry;
+      return getClassRecord(pClassEntry.getBytes(iCF.getConstantPool()));
    }
 
 
@@ -74,27 +78,19 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
 
    public int processConstantIndex (int aPoolIndex) throws TinyVMException
    {
-      Constant pEntry = iCF.getConstantPool().getConstant(aPoolIndex); // TODO catch all (runtime) exceptions
-
-      if (pEntry instanceof ConstantClass)
-      {
-          // We do not support class constants (yet), but they are sometimes used in code
-          // that is not called (enums and valueOf) so rather then abort the link we let them
-          // through with a warning.
-          System.err.println("Warning using class constant in class " + iCF.getClassName() + " method " + iFullName);
-          return 0;
-      }
+      Constant pEntry = iCF.getConstantPool().getConstant(aPoolIndex);
       if (!(pEntry instanceof ConstantInteger)
          && !(pEntry instanceof ConstantFloat)
          && !(pEntry instanceof ConstantString)
          && !(pEntry instanceof ConstantDouble)
-         && !(pEntry instanceof ConstantLong))
+         && !(pEntry instanceof ConstantLong)
+         && !(pEntry instanceof ConstantClass))
       {
          throw new TinyVMException("Classfile error: LDC-type instruction "
             + "does not refer to a suitable constant. Class " + iCF.getClassName() + " method " + iFullName);
       }
 
-      ConstantRecord pRecord = new ConstantRecord(iCF.getConstantPool(), pEntry);
+      ConstantRecord pRecord = new ConstantRecord(iCF.getConstantPool(), pEntry, iBinary);
       int pIdx = iBinary.getConstantIndex(pRecord);
 
       if (pIdx == -1)
@@ -107,77 +103,50 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
 
    public int processClassIndex (int aPoolIndex) throws TinyVMException
    {
-      Constant pEntry = iCF.getConstantPool().getConstant(aPoolIndex); // TODO catch all (runtime) exceptions
-      if (!(pEntry instanceof ConstantClass))
-      {
-         throw new TinyVMException("Classfile error: Instruction requiring "
-            + "CONSTANT_Class entry got "
-            + (pEntry == null? "null" : pEntry.getClass().getName()));
-      }
-      ConstantClass pClassEntry = (ConstantClass) pEntry;
-      String pClassName = pClassEntry.getBytes(iCF.getConstantPool());
-      if (pClassName.startsWith("["))
-      {
-         // Handle the special case of array types.
-         int pTypeDim = getTypeAndDimensions(pClassName);
-         return pTypeDim;
-      }
-      int pIdx = iBinary.getClassIndex(pClassName);
+      ClassRecord pClassRecord = getClassRecord(aPoolIndex);
+
+      int pIdx = iBinary.getClassIndex(pClassRecord);
       if (pIdx == -1)
       {
-         throw new TinyVMException("Bug CU-3: Didn't find class " + pEntry
-            + " from class " + iCF.getClassName() + " name " + pClassName);
+         throw new TinyVMException("Bug CU-3: Didn't find class " + pClassRecord.iName
+            + " from class " + iCF.getClassName() + " method " + this.iFullName);
       }
       return pIdx;
    }
 
+   public int processArray(int aPoolIndex) throws TinyVMException
+   {
+      ClassRecord pClassRecord = getClassRecord(aPoolIndex);
+      ClassRecord pArray = iBinary.getClassRecordForArray(pClassRecord);
+      if (pArray == null)
+      {
+         throw new TinyVMException("Classfile error: Failed to locate array class for " +
+                 pClassRecord.iName + " in class " + iCF.getClassName() + " method " + this.iFullName);
+      }
+      int pIdx = iBinary.getClassIndex(pArray);
+      if (pIdx == -1)
+      {
+         throw new TinyVMException("Bug CU-3: Didn't find class " + pClassRecord.iName
+            + " from class " + iCF.getClassName() + " method " + this.iFullName);
+      }
+      return pIdx;
+   }
+
+
    public int processMultiArray (int aPoolIndex) throws TinyVMException
    {
-      Constant pEntry = iCF.getConstantPool().getConstant(aPoolIndex); // TODO catch all (runtime) exceptions
-      if (!(pEntry instanceof ConstantClass))
+      ClassRecord pClassRecord = getClassRecord(aPoolIndex);
+
+      int pIdx = iBinary.getClassIndex(pClassRecord);
+      if (pIdx == -1)
       {
-         throw new TinyVMException("Classfile error: Instruction requiring "
-            + "CONSTANT_Class entry got "
-            + (pEntry == null? "null" : pEntry.getClass().getName()));
+         throw new TinyVMException("Bug CU-3: Didn't find class " + pClassRecord.iName
+            + " from class " + iCF.getClassName() + " method " + this.iFullName);
       }
-      ConstantClass pClassEntry = (ConstantClass) pEntry;
-      // TODO fix this?
-      int pTypeDim = getTypeAndDimensions(pClassEntry.getBytes(iCF
-         .getConstantPool()));
-
-
-      return pTypeDim;
+      return pIdx;
    }
 
-   public int getTypeAndDimensions (String aMultiArrayDesc) throws TinyVMException
-   {
-      int i = 0;
-      while (aMultiArrayDesc.charAt(i) == '[')
-         i++;
-      if (i > TinyVMConstants.MAX_DIMS)
-      {
-         throw new TinyVMException("In " + iFullName
-            + ": Multi-dimensional arrays are limited to " + TinyVMConstants.MAX_DIMS );
-      }
 
-      int typ = TinyVMType.tinyVMTypeFromSignature(aMultiArrayDesc.substring(i)).type();
-      int cls = 0;
-      if (typ == TinyVMType.T_OBJECT_TYPE || typ == TinyVMType.T_REFERENCE_TYPE)
-      {
-          // We have an object type so lookup the class index...
-          String name = aMultiArrayDesc.substring(i+1, aMultiArrayDesc.length()-1);
-          cls = iBinary.getClassIndex(name);
-          if (cls == -1)
-          {
-             throw new TinyVMException("Bug CU-3: Didn't find class " + name
-                + " from class " + aMultiArrayDesc);
-          }
-          typ = TinyVMType.T_REFERENCE_TYPE;
-      }
-      // Now construct the array index signature
-     int sig = (i << 12) | (typ << 8) | cls;
-     return sig;
-   }
 
    /**
     * @return The word that should be written as parameter of putstatic,
@@ -246,20 +215,33 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
     */
    public void markClass (int aPoolIndex) throws TinyVMException
    {
-      Constant pEntry = iCF.getConstantPool().getConstant(aPoolIndex); // TODO catch all (runtime) exceptions
-      if (!(pEntry instanceof ConstantClass))
-      {
-         throw new TinyVMException("Classfile error: Instruction requiring "
-            + "CONSTANT_Class entry got "
-            + (pEntry == null? "null" : pEntry.getClass().getName()) + " method " + iFullName);
-      }
-      ConstantClass pClassEntry = (ConstantClass) pEntry;
-      String pClassName = pClassEntry.getBytes(iCF.getConstantPool());
-      ClassRecord pClassRecord = getClassRecord(pClassName);
-      if (pClassRecord != null)
-         iBinary.markClassUsed(pClassRecord, true);
+      ClassRecord pClassRecord = getClassRecord(aPoolIndex);
+      iBinary.markClassUsed(pClassRecord, true);
    }
 
+   public void markArray(int aPoolIndex) throws TinyVMException
+   {
+       ClassRecord pClassRecord = getClassRecord(aPoolIndex);
+       ClassRecord pArray = iBinary.getClassRecordForArray(pClassRecord);
+       if (pArray == null)
+       {
+         throw new TinyVMException("Classfile error: Failed to locate array class for " +
+                 pClassRecord.iName + " in class " + iCF.getClassName() + " method " + this.iFullName);
+       }
+       iBinary.markClassUsed(pArray, true);
+   }
+
+   public void markPrimitiveArray(byte type) throws TinyVMException
+   {
+       ClassRecord pClassRecord = getClassRecord(TinyVMType.tinyVMType(type).cname());
+       ClassRecord pArray = iBinary.getClassRecordForArray(pClassRecord);
+       if (pArray == null)
+       {
+         throw new TinyVMException("Classfile error: Failed to locate array class for " +
+                 pClassRecord.iName + " in class " + iCF.getClassName() + " method " + this.iFullName);
+       }
+       iBinary.markClassUsed(pArray, true);
+   }
    /**
     * Mark the static field as being used.
     * @param aFieldIndex
@@ -293,6 +275,12 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
       pFieldRecord.markUsed();
    }
 
+   void markConstant(int aPoolIndex) throws TinyVMException
+   {
+      int constIdx = processConstantIndex(aPoolIndex);
+      ConstantRecord pRec = iBinary.getConstantRecord(constIdx);
+      pRec.markUsed();
+   }
    /**
     * @return The word that should be written as parameter of an invocation
     *         opcode.
@@ -459,7 +447,7 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
                pOutCode[i++] = (byte) (pIdx1 & 0xFF);
                break;
             case OP_ANEWARRAY:
-               int pIdx5 = processClassIndex((aCode[i] & 0xFF) << 8
+               int pIdx5 = processArray((aCode[i] & 0xFF) << 8
                   | (aCode[i + 1] & 0xFF));
                // Write the two byte signature
                pOutCode[i++] = (byte) (pIdx5 >> 8);
@@ -630,7 +618,7 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
 
             case OP_GOTO_W:
             case OP_JSR_W:
-            case OP_FREM:
+            //case OP_FREM:
             case OP_DREM:
                exitOnBadOpCode(pOpCode);
                break;
@@ -667,23 +655,30 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
          {
             case OP_LDC:
                {
-                  int constIdx = processConstantIndex(aCode[i] & 0xFF);
-                  ConstantRecord pRec = iBinary.getConstantRecord(constIdx);
-                  pRec.markUsed();
+                  markConstant(aCode[i] & 0xFF);
                   i++;
                }
                break;
             case OP_LDC_W:
             case OP_LDC2_W:
                {
-                  int constIdx = processConstantIndex((aCode[i] & 0xFF) << 8 | (aCode[i + 1] & 0xFF));
-                  ConstantRecord pRec = iBinary.getConstantRecord(constIdx);
-                  pRec.markUsed();
+                  markConstant((aCode[i] & 0xFF) << 8 | (aCode[i + 1] & 0xFF));
                   i += 2;
                }
                break;
 
             case OP_ANEWARRAY:
+                markArray((aCode[i] & 0xFF) << 8 | (aCode[i + 1] & 0xFF));
+                i += 2;
+                break;
+            case OP_NEWARRAY:
+                markPrimitiveArray(aCode[i]);
+                i += 1;
+                break;
+            case OP_MULTIANEWARRAY:
+                markClass((aCode[i] & 0xFF) << 8 | (aCode[i + 1] & 0xFF));
+                i += 3;
+                break;
             case OP_NEW:
             case OP_CHECKCAST:
             case OP_INSTANCEOF:
@@ -759,8 +754,8 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
                 // Fall Through
             case OP_GOTO_W:
             case OP_JSR_W:
-            case OP_FREM:
-            case OP_DREM:
+            //case OP_FREM:
+            //case OP_DREM:
                exitOnBadOpCode(pOpCode);
                break;             
             default:

@@ -12,12 +12,15 @@ import org.apache.bcel.classfile.ConstantInteger;
 import org.apache.bcel.classfile.ConstantLong;
 import org.apache.bcel.classfile.ConstantPool;
 import org.apache.bcel.classfile.ConstantString;
+import org.apache.bcel.classfile.ConstantClass;
+
 
 /**
  * This class represents a constant value of a basic type.
  */
 public class ConstantValue extends WritableDataWithOffset
 {
+   Binary iBinary;
    /**
     * The dereferenced value.
     */
@@ -28,11 +31,12 @@ public class ConstantValue extends WritableDataWithOffset
     * 
     * @param pool constant pool
     * @param constant constant
+    * @param aBinary
     */
-   public ConstantValue (ConstantPool pool, Constant constant)
+   public ConstantValue (ConstantPool pool, Constant constant, Binary aBinary)
    {
+      iBinary = aBinary;
       _value = value(pool, constant);
-
       assert _value != null: "Postconditon: result != null";
    }
 
@@ -55,8 +59,7 @@ public class ConstantValue extends WritableDataWithOffset
    {
       if (_value instanceof Double)
       {
-         // TODO map long to double correct?
-         return TinyVMType.T_LONG;
+         return TinyVMType.T_DOUBLE;
       }
       else if (_value instanceof Float)
       {
@@ -73,6 +76,10 @@ public class ConstantValue extends WritableDataWithOffset
       else if (_value instanceof String)
       {
          return TinyVMType.T_OBJECT;
+      }
+      else if (_value instanceof ClassRecord)
+      {
+         return TinyVMType.T_CLASS;
       }
       else
       {
@@ -105,6 +112,10 @@ public class ConstantValue extends WritableDataWithOffset
       else if (_value instanceof String)
       {
          return ((String) _value).getBytes().length;
+      }
+      else if (_value instanceof ClassRecord)
+      {
+         return 1;
       }
       else
       {
@@ -139,8 +150,8 @@ public class ConstantValue extends WritableDataWithOffset
             writer.writeInt(0);
             writer.writeInt(Float.floatToIntBits(floatValue));*/
             long longValue = Double.doubleToLongBits(doubleValue);
-            writer.writeInt((int)(longValue >> 32));
             writer.writeInt((int)(longValue & 0xffffffff));
+            writer.writeInt((int)(longValue >> 32));
          }
          else if (_value instanceof Float)
          {
@@ -163,13 +174,18 @@ public class ConstantValue extends WritableDataWithOffset
             }
             writer.writeInt(0);
             writer.writeInt(intValue);*/
-            writer.writeInt((int)(longValue >> 32));
             writer.writeInt((int)(longValue & 0xffffffff));
+            writer.writeInt((int)(longValue >> 32));
          }
          else if (_value instanceof String)
          {
             byte[] bytes = ((String) _value).getBytes();
             writer.write(bytes);
+         }
+         else if (_value instanceof ClassRecord)
+         {
+            int pIdx = iBinary.getClassIndex(((ClassRecord) _value));
+            writer.writeU1(pIdx);
          }
          else
          {
@@ -219,6 +235,10 @@ public class ConstantValue extends WritableDataWithOffset
       {
          result = new String(((ConstantString) constant).getBytes(pool));
       }
+      else if (constant instanceof ConstantClass)
+      {
+         result = iBinary.getClassRecord(((ConstantClass)constant).getBytes(pool));
+      }
       else
       {
          assert false: "Check: known type";
@@ -228,6 +248,13 @@ public class ConstantValue extends WritableDataWithOffset
       return result;
    }
 
+   public void markUsed()
+   {
+       if (_value instanceof ClassRecord)
+       {
+           ((ClassRecord)_value).markUsed();
+       }
+   }
    private static final Logger _logger = Logger.getLogger("TinyVM");
 }
 

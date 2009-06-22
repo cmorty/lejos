@@ -46,6 +46,26 @@ byte *classStatusBase;
 
 // Methods:
 
+// Class access functions
+
+/**
+ * Get class index.
+ * Return index of the class for the given object.
+ */
+byte get_class_index (Object *obj)
+{
+  // We may not have full class info for an array
+  if (is_array(obj))
+  {
+    if (is_big_array(obj))
+      return ((BigArray *)obj)->class;
+    else
+      return ALJAVA_LANG_OBJECT + obj->flags.arrays.type;
+  }
+  return obj->flags.objects.class;
+}
+
+
 void install_binary( void* ptr)
 {
   installedBinary = ptr;
@@ -54,16 +74,8 @@ void install_binary( void* ptr)
   staticFieldsBase = __get_static_fields_base();
   entryClassesBase = __get_entry_classes_base();
   classBase = __get_class_base();
-  gVMOptions = VM_DEFAULT;
+  gVMOptions = get_master_record()->runtimeOptions;
 }
-
-byte get_class_index (Object *obj)
-{
-  if (is_array(obj))
-    return JAVA_LANG_OBJECT;
-  return obj->flags.objects.class;
-}
-
 
 /**
  * @return Method record or null.
@@ -484,64 +496,15 @@ int execute_program(int prog)
   return EXEC_RETRY;
 }
 
-/**
- * Type checking functions.
- * The following functions provide mechanisms for obtaining and checking
- * the types of objects and arrays. These tests make use of a type
- * signatures which is a two byte word containing the following fields
- * 15: unused
- * 12-14: Dimension of an array
- * 8-11: basic type 0: object for other types see memory.c
- * 0-7: class index
- * The signatue is only stored in full for BigArrays, for other objects
- * it is created on demand. Note that for small arrays we do not have full
- * type information available, so care must be taken when checking the
- * type of these.
- */
-
-/**
- * Return the type signature of the object.
- */
-TWOBYTES get_object_sig(Object *obj)
-{
-  if (!obj) return 0;
-  if (is_array(obj))
-  {
-    // We have a full sig only for big arrays
-    if (is_big_array(obj))
-      return ((BigArray *)obj)->sig;
-    else
-      return sig_new_array(0, obj->flags.arrays.type, 0);
-  }
-  return obj->flags.objects.class;
-}
-
-
-/**
- * Return the type signature for the contents of an array
- */
-TWOBYTES get_constituent_sig(Object *obj)
-{
-  TWOBYTES sig;  
-  // If not an array just treat as a basic object
-  if (!obj || !is_array(obj)) return 0;
-  sig = get_object_sig(obj);
-  // If we don't have a full signature simply return what we have
-  if (sig_get_dim(sig) == 0)
-    return sig;
-  else
-    return sig_new_array(sig_get_dim(sig)-1, sig_get_base_type(sig), sig_get_class(sig));
-}
-
 
 /**
  * Check to see if obj is a sub type of the type described by
- * sig. 
+ * cls. 
  */
-static boolean sub_type_of(TWOBYTES obj, TWOBYTES sig)
+static boolean sub_type_of(byte obj, const byte cls)
 {
-  if ( sig == JAVA_LANG_OBJECT) return true;
-  while (obj != sig)
+  if (cls == JAVA_LANG_OBJECT) return true;
+  while (obj != cls)
   {
     obj = get_class_record(obj)->parentClass;
     if (obj == JAVA_LANG_OBJECT) return false;
@@ -554,19 +517,23 @@ static boolean sub_type_of(TWOBYTES obj, TWOBYTES sig)
  * Check to see if obj is an instance of the type described by sig.
  * @return true or false
  */
-boolean instance_of (Object *obj, TWOBYTES sig)
+boolean instance_of (Object *obj, const byte cls)
 {
-  TWOBYTES rtType;
+  byte rtCls;
+  ClassRecord *classRec;
+  ClassRecord *rtClassRec;
 
   if (obj == null)
     return false;
   
   // Check for common cases
-  if (sig == JAVA_LANG_OBJECT) return true;
-  rtType = get_object_sig(obj);
-  if (rtType == sig) return true;
+  if (cls == JAVA_LANG_OBJECT) return true;
+  rtCls = get_class_index(obj);
+  if (rtCls == cls) return true;
+  classRec = get_class_record(cls);
+  rtClassRec = get_class_record(rtCls);
   // Check for special case of arrays
-  if (sig_is_array(sig))
+  if (is_array_class(classRec))
   {
     // For arrays we may not have much type information available.
     // In the minimum case we have full information about the signature
@@ -574,39 +541,38 @@ boolean instance_of (Object *obj, TWOBYTES sig)
     // base type of the last dimension.
 
     if (!is_array(obj)) return false;
-    // Do we have a full signature for the array.
-    if (!sig_is_array(rtType))
+    // Do we have a full signature for the array. If we do then we can not
+    // have a match bacause we do not have the same classes
+    if (is_big_array(obj)) return false;
+    // We only have basic type information
+    if (get_dim(classRec) == 1)
     {
-      // We only have basic type information, and then only for a 1d array
-      if (sig_get_dim(sig) == 1 && sig_get_base_type(sig) != sig_get_base_type(rtType)) return false;
-      // for all other cases we assume a match...
-      return true;
+      // For 1d arrays we can test the basic type, if it is not equal then we know we do not have a match
+      if (get_base_type(get_element_class(classRec)) != get_base_type(get_element_class(rtClassRec))) return false;
     }
-    // We have a full sig so can test it fully...
-    if (sig_get_dim(sig) != sig_get_dim(rtType)) return false;
-    if (sig_get_base_type(sig) != sig_get_base_type(rtType)) return false;
-    // TBD: support for interfaces
-    if (is_interface (get_class_record(sig_get_class(sig))))
-      return true;
-    return sub_type_of(sig_get_class(rtType), sig_get_class(sig));
+    else
+      // for multi arrays the base type must be an object
+      if (get_base_type(get_element_class(rtClassRec)) != JAVA_LANG_OBJECT) return false;
+    // for all other cases we assume a match...
+    return true;
   }
   // TBD: support for interfaces
-  if (is_interface (get_class_record(sig)))
+  if (is_interface (classRec))
     return true;
-  return sub_type_of(rtType, sig);
+  return sub_type_of(rtCls, cls);
 }
 
 /**
- * Check to see if it is allowed to assign the an object of type srcSig
- * to an object of type dstSig.
+ * Check to see if it is allowed to assign the an object of type srcCls
+ * to an object of type dstCls.
  */
-boolean is_assignable(TWOBYTES srcSig, TWOBYTES dstSig)
+boolean is_assignable(const byte srcCls, const byte dstCls)
 {
   // Check common cases
-  if (srcSig == dstSig || dstSig == JAVA_LANG_OBJECT) return true;
+  if (srcCls == dstCls || dstCls == JAVA_LANG_OBJECT) return true;
   // TBD Add support for interfaces
-  if (is_interface(get_class_record(sig_get_class(dstSig)))) return true;
-  return sub_type_of(sig_get_class(srcSig), sig_get_class(dstSig));
+  if (is_interface(get_class_record(dstCls))) return true;
+  return sub_type_of(srcCls, dstCls);
 }
 
 

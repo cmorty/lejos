@@ -17,6 +17,7 @@ extern Object *interruptedException;
 extern Object *illegalStateException;
 extern Object *illegalMonitorStateException;
 extern Object *arrayStoreException;
+extern Object *negativeArraySizeException;
 extern Object *error;
 
 extern void init_exceptions();

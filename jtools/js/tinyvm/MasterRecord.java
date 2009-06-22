@@ -14,6 +14,7 @@ public class MasterRecord implements WritableData
     * The binary.
     */
    Binary _binary;
+   int runTimeOptions = 0;
 
    /**
     * Constructor.
@@ -27,6 +28,23 @@ public class MasterRecord implements WritableData
       _binary = binary;
    }
 
+   public void setRunTimeOptions(int opt)
+   {
+       runTimeOptions = opt;
+   }
+
+   public String getRunTimeOptions()
+   {
+       String opts = "";
+       for(RunTimeOptions opt : RunTimeOptions.values())
+       {
+           if ((opt.getValue() & runTimeOptions) != 0)
+               opts = opts + opt + " ";
+       }
+       if (opts.equals(""))
+           opts = "<NONE>";
+       return opts;
+   }
    //
    // Writable interface
    //
@@ -40,6 +58,7 @@ public class MasterRecord implements WritableData
 
       int pMagicNumber = TinyVMConstants.MAGIC_MASK;
       int pConstantTableOffset = _binary.iConstantTable.getOffset();
+      int pNumConstantRecords = _binary.iConstantTable.size();
       int pStaticFieldsOffset = _binary.iStaticFields.getOffset();
       int pStaticStateOffset = _binary.iStaticState.getOffset();
       int pStaticStateLength = _binary.iStaticState.getLength();
@@ -54,6 +73,7 @@ public class MasterRecord implements WritableData
       {
          writer.writeU2(pMagicNumber);
          writer.writeU2(pConstantTableOffset);
+         writer.writeU2(pNumConstantRecords);
          writer.writeU2(pStaticFieldsOffset);
          writer.writeU2(pStaticStateOffset);
          writer.writeU2(pStaticStateLength);
@@ -61,7 +81,8 @@ public class MasterRecord implements WritableData
          writer.writeU2(pEntryClassesOffset);
          writer.writeU1(pNumEntryClasses);
          writer.writeU1(pLastClass);
-         IOUtilities.writePadding(writer, 2);
+         writer.writeU2(runTimeOptions);
+         IOUtilities.writePadding(writer, 4);
       }
       catch (IOException e)
       {
@@ -74,7 +95,7 @@ public class MasterRecord implements WritableData
     */
    public int getLength ()
    {
-      return IOUtilities.adjustedSize(16, 2);
+      return IOUtilities.adjustedSize(20, 4);
    }
 }
 

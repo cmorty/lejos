@@ -1,5 +1,5 @@
 package java.lang;
-
+import lejos.nxt.VM;
 /**
  * All classes extend this one, implicitly.
  */
@@ -49,7 +49,7 @@ public class Object
         // The compiler seems to gnerate calls to this method that do not use the
         // return value. So for now to avoid breaking code we simply return null.
 		//throw new UnsupportedOperationException();
-        return null;
+        return VM.getVM().getClass(this);
 	}
 
 	public int hashCode()

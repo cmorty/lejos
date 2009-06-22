@@ -34,7 +34,7 @@ static boolean memoryInitialized = false;
 const byte typeSize[] = { 
   4, // 0 == T_REFERENCE
   SF_SIZE, // 1 == T_STACKFRAME
-  0, // 2
+  0, // 2 == T_CLASS
   0, // 3
   1, // 4 == T_BOOLEAN
   2, // 5 == T_CHAR
@@ -68,7 +68,11 @@ VarStat gc_overflow_vs;
 VarStat gc_mark_vs;
 VarStat gc_roots_vs;
 #endif
-static Object *java_allocate (TWOBYTES size);
+
+// Location of major memory based structures. Used to allow Java access to
+// VM memory.
+byte *memory_base[MEM_MEM+1];
+static Object *java_allocate (JINT size);
 
 
 /**
@@ -196,7 +200,7 @@ Object *new_object_checked (const byte classIndex, byte *btAddr)
 Object *new_object_for_class (const byte classIndex)
 {
   Object *ref;
-  TWOBYTES instanceSize;
+  JINT instanceSize;
 
 #if DEBUG_MEMORY
   printf("New object for class %d\n", classIndex);
@@ -240,19 +244,19 @@ Object *new_object_for_class (const byte classIndex)
   ((is_std_array(obj) ? NORM_OBJ_SIZE : BA_OBJ_SIZE) + comp_array_size(get_array_length(obj), get_element_type(obj)))
 
 
-static void set_array (Object *obj, const byte elemType, const TWOBYTES length, const int baLength, const int sig)
+static void set_array (Object *obj, const byte baseType, const TWOBYTES length, const int baLength, const byte cls)
 {
   #ifdef VERIFY
-  assert (elemType <= (ELEM_TYPE_MASK >> ELEM_TYPE_SHIFT), MEMORY0); 
+  assert (baseType <= (ELEM_TYPE_MASK >> ELEM_TYPE_SHIFT), MEMORY0); 
   assert (length <= (ARRAY_LENGTH_MASK >> ARRAY_LENGTH_SHIFT), MEMORY1);
   #endif
   // Set object specific flags
-  obj->flags.all |= (IS_ARRAY_MASK | ((TWOBYTES) elemType << ELEM_TYPE_SHIFT) | length);
+  obj->flags.all |= (IS_ARRAY_MASK | ((TWOBYTES) baseType << ELEM_TYPE_SHIFT) | length);
   // If this is a big array set the real length
   if (baLength)
   {
     ((BigArray *)obj)->length = baLength;
-    ((BigArray *)obj)->sig = sig;
+    ((BigArray *)obj)->class = cls;
   }
     
   #ifdef VERIFY
@@ -260,10 +264,6 @@ static void set_array (Object *obj, const byte elemType, const TWOBYTES length, 
   #endif
 }
 
-Object *new_primitive_array(const byte typ, STACKWORD length)
-{
-  return new_single_array(typ, sig_new_array(1, typ, 0), length);
-}
 
 
 /**
@@ -275,13 +275,18 @@ Object *new_primitive_array(const byte typ, STACKWORD length)
  * is placed immediately at the end of the normal header. This length
  * field contains the real array size.
  */
-Object *new_single_array (const byte baseType, const int sig, STACKWORD length)
+static Object *new_array (const byte cls, const byte baseType, JINT length)
 {
   Object *ref;
-  unsigned int allocSize;
-  unsigned int hdrSize;
-  unsigned int baLength;
+  JINT allocSize;
+  FOURBYTES hdrSize;
+  FOURBYTES baLength;
 
+  if (length < 0)
+  {
+    throw_exception(negativeArraySizeException);
+    return JNULL;
+  }
   allocSize = comp_array_size (length, baseType);
 #if DEBUG_MEMORY
   printf("New array of type %d, length %ld\n", baseType, length);
@@ -305,27 +310,50 @@ Object *new_single_array (const byte baseType, const int sig, STACKWORD length)
 #endif
   if (ref == null)
     return JNULL;
-  set_array (ref, baseType, length, baLength, sig);
+  set_array (ref, baseType, length, baLength, cls);
   initialize_state (array_start(ref), allocSize);
   return ref;
+}
+
+/**
+ * Create an array contain elements of the specified primitive type.
+ * NOTE: This function may be used to create objects that are not
+ * Java compatible (like the stack frame array). It may also be called before
+ * the program context is available, so care must be taken with accesing
+ * class information etc.
+ */
+Object *new_primitive_array(const byte typ, JINT length)
+{
+  return new_array(ALJAVA_LANG_OBJECT + typ, typ, length);
+}
+
+
+/**
+ * Create a single dimension array. The class of the array is given by cls.
+ * NOTE: cls is the array class NOT the class of the elements.
+ */
+Object *new_single_array (const byte cls, JINT length)
+{
+  byte baseType = get_base_type(get_element_class(get_class_record(cls)));
+  return new_array(cls, baseType, length);
 }
 
 
 
 /**
- * @@param elemType Type of primitive element of multi-dimensional array.
- * @@param cls The class index of the element type (zero for primative types).
- * @@param totalDimensions Same as number of brackets in array class descriptor.
+ * @@param cls The class index of the array
  * @@param reqDimensions Number of requested dimensions for allocation.
  * @@param numElemPtr Pointer to first dimension. Next dimension at numElemPtr+1.
  */
-Object *new_multi_array (byte baseType, byte cls, byte totalDimensions, 
+Object *new_multi_array (const byte cls,
                          byte reqDimensions, STACKWORD *numElemPtr)
 {
   Object *ref;
   Object *ref2;
-
-  TWOBYTES ne;
+  ClassRecord *classRec = get_class_record(cls);
+  byte totalDimensions = get_dim(classRec);
+  JINT ne;
+  int elemCls;
 
   #ifdef VERIFY
   assert (totalDimensions >= 1, MEMORY6);
@@ -341,10 +369,10 @@ Object *new_multi_array (byte baseType, byte cls, byte totalDimensions,
   }
 
   if (totalDimensions == 1)
-    return new_single_array ((baseType == T_OBJECT ? T_REFERENCE : baseType), sig_new_array(1, baseType, cls), *numElemPtr);
+    return new_single_array (cls, (JINT)*numElemPtr);
 
 
-  ref = new_single_array (T_REFERENCE, sig_new_array(totalDimensions, baseType, cls), *numElemPtr);
+  ref = new_array (cls, T_REFERENCE, (JINT)*numElemPtr);
   if (ref == JNULL)
     return JNULL;
   // If this is a partial array we are done...
@@ -353,10 +381,11 @@ Object *new_multi_array (byte baseType, byte cls, byte totalDimensions,
   // the ref it will be protected by the level above.
   protect_obj(ref);
   
-  ne = *numElemPtr;
+  ne = (JINT)*numElemPtr;
+  elemCls = get_element_class(classRec);
   while (ne--)
   {
-    ref2 = new_multi_array (baseType, cls, totalDimensions - 1, reqDimensions - 1, numElemPtr + 1);
+    ref2 = new_multi_array (elemCls, reqDimensions - 1, numElemPtr + 1);
     if (ref2 == JNULL)
     {
       unprotect_obj(ref);
@@ -377,7 +406,7 @@ Object *new_multi_array (byte baseType, byte cls, byte totalDimensions,
 int arraycopy(Object *src, int srcOff, Object *dst, int dstOff, int len)
 {
   int elemSize;
-  TWOBYTES srcSig, dstSig;
+  byte srcCls, dstCls;
   boolean primitive;
   // validate things
   if (src == null || dst == null)
@@ -385,10 +414,10 @@ int arraycopy(Object *src, int srcOff, Object *dst, int dstOff, int len)
   if (!is_array(src) || !is_array(dst))
     return throw_exception(arrayStoreException);
   // Check type compatibility...
-  srcSig = get_constituent_sig(src);
-  dstSig = get_constituent_sig(dst);
-  primitive = sig_is_primitive(srcSig) || sig_is_primitive(dstSig);
-  if (primitive && srcSig != dstSig)
+  srcCls = get_element_class(get_class_record(get_class_index(src)));
+  dstCls = get_element_class(get_class_record(get_class_index(dst)));
+  primitive = is_primitive(srcCls) || is_primitive(dstCls);
+  if (primitive && srcCls != dstCls)
     return throw_exception(arrayStoreException);
   if (srcOff < 0 || (srcOff + len > get_array_length(src)) ||
       dstOff < 0 || (dstOff + len > get_array_length(dst)))
@@ -396,7 +425,7 @@ int arraycopy(Object *src, int srcOff, Object *dst, int dstOff, int len)
  
   // write barrier
   if (get_element_type(dst) == T_REFERENCE) update_array(dst);
-  if (primitive || !type_checks_enabled() || is_assignable(srcSig, dstSig))
+  if (primitive || !type_checks_enabled() || is_assignable(srcCls, dstCls))
   {
     // copy things the fast way
     elemSize = typeSize[get_element_type(src)];
@@ -410,7 +439,7 @@ int arraycopy(Object *src, int srcOff, Object *dst, int dstOff, int len)
     REFERENCE *dstPtr = ref_array(dst) + dstOff;
     for(i = 0; i < len; i++)
     {
-      if (*srcPtr == JNULL || is_assignable(get_object_sig((Object *)*srcPtr), dstSig))
+      if (*srcPtr == JNULL || is_assignable(get_class_index((Object *)*srcPtr), dstCls))
         *dstPtr++ = *srcPtr++;
       else
         return throw_exception(arrayStoreException);
@@ -429,7 +458,7 @@ void free_array (Object *objectRef)
 }
 
 #if !FIXED_STACK_SIZE
-Object *reallocate_array(Object *obj, STACKWORD newlen)
+Object *reallocate_array(Object *obj, JINT newlen)
 {
   byte elemType = get_element_type(obj);
   Object *newArray = new_primitive_array(elemType, newlen);
@@ -454,7 +483,7 @@ Object *clone(Object *old)
   Object *new;
   if (is_array(old))
   {
-    new = new_single_array(get_element_type(old), get_array_sig(old), get_array_length(old));
+    new = new_single_array(get_class_index(old), get_array_length(old));
     if (!new) return NULL;
     // Copy old array to new
     memcpy(array_start(new), array_start(old), get_array_length(old) * typeSize[get_element_type(old)]);
@@ -476,7 +505,7 @@ Object *clone(Object *old)
 byte *system_allocate(int sz)
 {
   Object *ref;
-  unsigned int allocSize;
+  JINT allocSize;
 
   // We actually use an integer array for the storage, so round up
   sz = (sz + sizeof(JINT) - 1)/sizeof(JINT);
@@ -624,6 +653,29 @@ int getHeapFree() {
 int getRegionAddress()
 {
   return (int)heap_start;
+}
+
+FOURBYTES mem_peek(int base, int offset, int len)
+{
+  switch(len)
+  {
+  case 1:
+    return *((byte *)(memory_base[base] + offset));
+  case 2:
+    return *((TWOBYTES *)(memory_base[base] + offset));
+  case 4:
+    return *((FOURBYTES *)(memory_base[base] + offset));
+  default:
+    return 0;
+  }
+}
+
+void mem_copy(Object *obj, int objoffset, int base, int offset, int len)
+{
+  if (is_array(obj))
+    memcpy(array_start(obj) + objoffset, memory_base[base]+offset, len);
+  else
+    memcpy(fields_start(obj) + objoffset, memory_base[base]+offset, len);
 }
 
 #if GARBAGE_COLLECTOR == MEM_MARKSWEEP
@@ -855,7 +907,7 @@ static TWOBYTES *try_allocate( unsigned int size)
   return JNULL;
 }
 
-static Object *java_allocate (TWOBYTES size)
+static Object *java_allocate (JINT size)
 {
   long t0, t1;
   TWOBYTES *ptr;
@@ -897,7 +949,7 @@ static Object *java_allocate (TWOBYTES size)
 /**
  * @param size Must be exactly same size used in allocation.
  */
-void deallocate (TWOBYTES *p, TWOBYTES size)
+void deallocate (TWOBYTES *p, FOURBYTES size)
 {
 }
 
@@ -1606,6 +1658,10 @@ void memory_add_region (byte *start, byte *end)
   /* memory accounting */
   memory_size += contents_size;
   memory_free += contents_size;
+  // Setup to allow access from java
+  memory_base[MEM_ABSOLUTE] = 0;
+  memory_base[MEM_HEAP] = (void *)heap_start;
+  memory_base[MEM_MEM] = (void *)memory_base;
 }
 
 
@@ -1619,7 +1675,7 @@ void memory_add_region (byte *start, byte *end)
  * caller being the byte code interpreter. It performs the retry operation
  * by causing a re-start of the current instruction.
  */
-static Object *java_allocate (TWOBYTES size)
+static Object *java_allocate (JINT size)
 {
   Object *ref;
   long t0 = varstat_gettime();
@@ -1673,7 +1729,7 @@ static Object *java_allocate (TWOBYTES size)
 /**
  * @@param size Must be exactly same size used in allocation.
  */
-void deallocate (TWOBYTES *p, TWOBYTES size)
+void deallocate (TWOBYTES *p, FOURBYTES size)
 {
   // Nothing to do. We let the GC work things out
 }
@@ -2414,7 +2470,7 @@ void memory_add_region (byte *start, byte *end)
  * This is the primary memory allocator for the Java side of the system
  * it will allocate collectable memory from the heap.
  */
-static Object *java_allocate (TWOBYTES size)
+static Object *java_allocate (JINT size)
 {
   Object *ref;
   long t0 = varstat_gettime();
@@ -2435,7 +2491,7 @@ static Object *java_allocate (TWOBYTES size)
 /**
  * @@param size Must be exactly same size used in allocation.
  */
-void deallocate (TWOBYTES *p, TWOBYTES size)
+void deallocate (TWOBYTES *p, FOURBYTES size)
 {
   //Align memory to boundary appropriate for system
   size = (size + (MEMORY_ALIGNMENT-1)) & ~(MEMORY_ALIGNMENT-1);

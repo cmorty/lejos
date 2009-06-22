@@ -10,6 +10,8 @@ import org.apache.bcel.classfile.ConstantPool;
 
 public class ConstantRecord implements WritableData
 {
+   Binary iBinary;
+
    /**
     * Constant.
     */
@@ -27,10 +29,12 @@ public class ConstantRecord implements WritableData
     * 
     * @param pool constant pool
     * @param constant constant
+    * @param aBinary 
     */
-   public ConstantRecord (ConstantPool pool, Constant constant)
+   public ConstantRecord (ConstantPool pool, Constant constant, Binary aBinary)
    {
-      _constantValue = new ConstantValue(pool, constant);
+      iBinary = aBinary;
+      _constantValue = new ConstantValue(pool, constant, iBinary);
    }
 
    /**
@@ -96,6 +100,7 @@ public class ConstantRecord implements WritableData
    public void markUsed()
    {
        isUsed = true;
+       _constantValue.markUsed();
    }
    
    public boolean used()

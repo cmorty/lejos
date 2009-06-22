@@ -30,6 +30,7 @@ public class TinyVM extends TinyVMTool {
 			tinyVM.start(args);
 		} catch (TinyVMException e) {
 			System.err.println(e.getMessage());
+            e.printStackTrace();
 			System.exit(1);
 		}
 	}
@@ -55,6 +56,15 @@ public class TinyVM extends TinyVMTool {
 		return cp2;
 	}
 
+    public int getRunTimeOptions()
+    {
+        int options = 0;
+        if (fParser.isEnableAssert())
+            options |= RunTimeOptions.EnableAssert.getValue();
+        if (fParser.isEnableChecks())
+            options |= RunTimeOptions.EnableTypeChecks.getValue();
+        return options;
+    }
 	/**
 	 * Execute tiny vm.
 	 * 
@@ -77,15 +87,15 @@ public class TinyVM extends TinyVMTool {
 		String output = fParser.getOutput();
 		boolean all = fParser.isAll();
         boolean debug = fParser.isDebug();
-		
+        int options = getRunTimeOptions();
 		// files
 		String[] classes = fParser.getRestArgs();
 
-		start(joinCP(bootclasspath, classpath), classes, all, output, bigEndian, debug, verbose);
+		start(joinCP(bootclasspath, classpath), classes, all, output, bigEndian, debug, options, verbose);
 	}
 
 	public void start(String classpath, String[] classes, boolean all, String output, boolean bigEndian,
-			boolean debug, boolean verbose) throws TinyVMException {
+			boolean debug, int options, boolean verbose) throws TinyVMException {
 		// verbosity
 		for(ToolProgressMonitor monitor : _monitors) {
 			monitor.setVerbose(verbose);
@@ -96,7 +106,7 @@ public class TinyVM extends TinyVMTool {
 		try {
 			stream = output == null ? (OutputStream) System.out
 					: (OutputStream) new FileOutputStream(output);
-			link(classpath, classes, all, stream, bigEndian, debug);
+			link(classpath, classes, all, stream, bigEndian, options, debug);
 		} catch (FileNotFoundException e) {
 			throw new TinyVMException(e.getMessage(), e);
 		} finally {

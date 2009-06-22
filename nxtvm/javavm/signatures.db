@@ -186,3 +186,8 @@ getVMOptions()I
 
 #Object
 cloneObject(Ljava/lang/Object;)Ljava/lang/Object;
+
+#memory access
+memPeek(III)I
+memCopy(Ljava/lang/Object;IIII)V
+getObjectAddress(Ljava/lang/Object;)I

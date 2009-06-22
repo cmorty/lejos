@@ -105,6 +105,9 @@ void init_threads()
   {
     *pQ++ = null;
   }
+  memory_base[MEM_THREADS] = (byte *)threads;
+  memory_base[MEM_IMAGE] = (byte *)installedBinary;
+  memory_base[MEM_STATICS] = (byte *)classStaticStateBase;
 }
 
 /**

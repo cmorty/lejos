@@ -15,6 +15,7 @@ public class TinyVMType
    
    public static final byte T_REFERENCE_TYPE = 0;
    public static final byte T_STACKFRAME_TYPE = 1;
+   public static final byte T_CLASS_TYPE = 2;
    public static final byte T_BOOLEAN_TYPE = Constants.T_BOOLEAN;
    public static final byte T_CHAR_TYPE = Constants.T_CHAR;
    public static final byte T_FLOAT_TYPE = Constants.T_FLOAT;
@@ -30,17 +31,18 @@ public class TinyVMType
    // All values
    //
    
-   public static final TinyVMType T_REFERENCE = new TinyVMType(T_REFERENCE_TYPE, 4);
-   public static final TinyVMType T_BOOLEAN = new TinyVMType(T_BOOLEAN_TYPE, 1);
-   public static final TinyVMType T_CHAR = new TinyVMType(T_CHAR_TYPE, 2);
-   public static final TinyVMType T_FLOAT = new TinyVMType(T_FLOAT_TYPE, 4);
-   public static final TinyVMType T_DOUBLE = new TinyVMType(T_DOUBLE_TYPE, 8);
-   public static final TinyVMType T_BYTE = new TinyVMType(T_BYTE_TYPE, 1);
-   public static final TinyVMType T_SHORT = new TinyVMType(T_SHORT_TYPE, 2);
-   public static final TinyVMType T_INT = new TinyVMType(T_INT_TYPE, 4);
-   public static final TinyVMType T_LONG = new TinyVMType(T_LONG_TYPE, 8);
+   public static final TinyVMType T_REFERENCE = new TinyVMType(T_REFERENCE_TYPE, 4, "java.lang.Object", "L");
+   public static final TinyVMType T_BOOLEAN = new TinyVMType(T_BOOLEAN_TYPE, 1, "boolean", "Z");
+   public static final TinyVMType T_CHAR = new TinyVMType(T_CHAR_TYPE, 2, "char", "C");
+   public static final TinyVMType T_FLOAT = new TinyVMType(T_FLOAT_TYPE, 4, "float", "D");
+   public static final TinyVMType T_DOUBLE = new TinyVMType(T_DOUBLE_TYPE, 8, "double", "F");
+   public static final TinyVMType T_BYTE = new TinyVMType(T_BYTE_TYPE, 1, "byte", "Z");
+   public static final TinyVMType T_SHORT = new TinyVMType(T_SHORT_TYPE, 2, "short", "S");
+   public static final TinyVMType T_INT = new TinyVMType(T_INT_TYPE, 4, "int", "I");
+   public static final TinyVMType T_LONG = new TinyVMType(T_LONG_TYPE, 8, "long", "J");
    public static final TinyVMType T_ARRAY = T_REFERENCE;
    public static final TinyVMType T_OBJECT = T_REFERENCE;
+   public static final TinyVMType T_CLASS = new TinyVMType(T_CLASS_TYPE, 1, "java.lang.Class", "L");
 
    //
    // attributes
@@ -55,14 +57,20 @@ public class TinyVMType
     * Size in bytes of type.
     */
    private final int _size;
+
+   private final String _class;
+
+   private final String _sig;
    
    /**
     * Constructor.
     */
-   private TinyVMType (byte type, int size)
+   private TinyVMType (byte type, int size, String cname, String sig)
    {
       _type = type;
       _size = size;
+      _class = cname;
+      _sig = sig;
    }
 
    //
@@ -85,6 +93,15 @@ public class TinyVMType
       return _size;
    }
 
+   public String cname()
+   {
+       return _class;
+   }
+
+   public String signature()
+   {
+       return _sig;
+   }
    /**
     * Is the given byte a valid tiny vm type?
     * 
