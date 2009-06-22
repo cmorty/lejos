@@ -56,15 +56,6 @@ public class TinyVM extends TinyVMTool {
 		return cp2;
 	}
 
-    public int getRunTimeOptions()
-    {
-        int options = 0;
-        if (fParser.isEnableAssert())
-            options |= RunTimeOptions.EnableAssert.getValue();
-        if (fParser.isEnableChecks())
-            options |= RunTimeOptions.EnableTypeChecks.getValue();
-        return options;
-    }
 	/**
 	 * Execute tiny vm.
 	 * 
@@ -87,7 +78,7 @@ public class TinyVM extends TinyVMTool {
 		String output = fParser.getOutput();
 		boolean all = fParser.isAll();
         boolean debug = fParser.isDebug();
-        int options = getRunTimeOptions();
+        int options = fParser.getRunTimeOptions();
 		// files
 		String[] classes = fParser.getRestArgs();
 

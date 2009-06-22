@@ -14,7 +14,7 @@ public enum RunTimeOptions {
         this.value = value;
     }
 
-    int getValue()
+    public int getValue()
     {
         return value;
     }
