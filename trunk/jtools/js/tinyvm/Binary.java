@@ -24,7 +24,7 @@ public class Binary
    RecordTable<ConstantRecord> iConstantTable = new RecordTable<ConstantRecord>("constants", false, false);
    RecordTable<RecordTable<MethodRecord>> iMethodTables = new RecordTable<RecordTable<MethodRecord>>("methods", true, false);
    RecordTable<RecordTable<ExceptionRecord>> iExceptionTables = new RecordTable<RecordTable<ExceptionRecord>>("exceptions", false, false);
-   final RecordTable<RecordTable<InstanceFieldRecord>> iInstanceFieldTables = new RecordTable<RecordTable<InstanceFieldRecord>>("instance fields",
+   RecordTable<RecordTable<InstanceFieldRecord>> iInstanceFieldTables = new RecordTable<RecordTable<InstanceFieldRecord>>("instance fields",
       true, false);
    final RecordTable<CodeSequence> iCodeSequences = new RecordTable<CodeSequence>("code", true, false);
    RecordTable<ConstantValue> iConstantValues = new RecordTable<ConstantValue>("constant values", true,
@@ -38,12 +38,16 @@ public class Binary
    final HashVector<Signature> iSignatures = new HashVector<Signature>();
    int usedClassCount = 0;
    int markGeneration = 0;
+   boolean useAll = false;
 
    /**
     * Constructor.
+    * @param useAll true if all classes/methods etc. should be included
     */
-   public Binary ()
-   {}
+   public Binary (boolean useAll)
+   {
+      this.useAll = useAll;
+   }
 
    /**
     * Dump.
@@ -115,17 +119,33 @@ public class Binary
    }
 
    /**
-    * Get the class record for an object array.
+    * Return the class the represents an array of the given type and dimension.
     * 
-    * @param arrayClassName
+    * 
+    * @param elementClass
+    * @param dims
     * @return class record or null if not found or the array is a primitive array.
     */
-   public ClassRecord getArrayClassRecord (String arrayClassName)
+   public ClassRecord getClassRecordForArray (ClassRecord elementClass) throws TinyVMException
    {
-       assert arrayClassName.startsWith("[") : "Array class name does not begin with [";
-       String className = ClassRecord.getArrayClassName(arrayClassName);
-       if (className == null) return null;
-       return iClasses.get(className);
+      int dims = 1;
+      if (elementClass.isArray())
+      {
+          dims += elementClass.getArrayDimension();
+      }
+      int pSize = iClassTable.size();
+      for (int pIndex = 0; pIndex < pSize; pIndex++)
+      {
+          ClassRecord pRec = iClassTable.get(pIndex);
+          if (pRec.getArrayDimension() == dims && pRec.getArrayElementClass() == elementClass)
+              return pRec;
+      }
+      // Not found so we will create one...
+      String sig = "";
+      for(int i = 0; i < dims; i++)
+          sig += "[";
+      sig += elementClass.signature();
+      return ClassRecord.storeArrayClass(sig, iClasses, iClassTable, null, this);
    }
 
    /**
@@ -221,6 +241,15 @@ public class Binary
       return iConstantTable.indexOf(constantRecord);
    }
 
+   /**
+    * Return true if unused methods/classes etc. should still be included in
+    * the output file.
+    * @return
+    */
+   public boolean useAll()
+   {
+       return useAll;
+   }
    //
    // processing
    //
@@ -231,27 +260,26 @@ public class Binary
     * @param entryClassNames names of entry class with '/'
     * @param classPath class path
     * @param all do not filter classes?
+    * @return
+    * @throws TinyVMException
     */
    public static Binary createFromClosureOf (String[] entryClassNames,
       ClassPath classPath, boolean all) throws TinyVMException
    {
-      Binary result = new Binary();
+      Binary result = new Binary(all);
       // From special classes and entry class, store closure
       result.processClasses(entryClassNames, classPath);
       // Store special signatures
       result.processSpecialSignatures();
       result.processConstants();
-      result.processMethods(all);
+      result.processMethods();
       result.processFields();
-      if (!all)
-      {
-         // Remove unused methods/classes/fields/constants.
-         result.markUsed(entryClassNames);
-         result.processOptimizedClasses();
-         result.processOptimizedConstants();
-         result.processOptimizedMethods();
-         result.processOptimizedFields();
-      }
+      // Remove unused methods/classes/fields/constants.
+      result.markUsed(entryClassNames);
+      result.processOptimizedClasses();
+      result.processOptimizedConstants();
+      result.processOptimizedMethods();
+      result.processOptimizedFields();
       // Copy code as is (first pass)
       result.processCode(false);
       result.storeComponents();
@@ -278,10 +306,12 @@ public class Binary
       for (int i = 0; i < specialClasses.length; i++)
       {
          String className = specialClasses[i];
-         ClassRecord classRecord = ClassRecord.getClassRecord(className,
-            classPath, this);
-         addClassRecord(className, classRecord);
-         // classRecord.useAllMethods();
+         if (className.charAt(0) == '[')
+            ClassRecord.storeArrayClass(className, iClasses, iClassTable, classPath, this);
+         else if (className.indexOf('/') != -1)
+            addClassRecord(className, ClassRecord.getClassRecord(className, classPath, this));
+         else
+            addClassRecord(className, PrimitiveClassRecord.getClassRecord(className, this, (byte)i));
       }
 
       // Now add entry classes
@@ -336,7 +366,7 @@ public class Binary
       for (int pIndex = 0; pIndex < pSize; pIndex++)
       {
          ClassRecord classRecord = iClassTable.get(pIndex);
-         if (classRecord.used()) iNewClassTable.add(classRecord);
+         if (useAll() || classRecord.used()) iNewClassTable.add(classRecord);
       }
       iClassTable = iNewClassTable;
       pSize = iClassTable.size();
@@ -484,7 +514,7 @@ public class Binary
       for (int pIndex = 0; pIndex < pSize; pIndex++)
       {
          ConstantRecord pRec = iConstantTable.get(pIndex);
-         if (pRec.used())
+         if (useAll() || pRec.used())
          {
             iOptConstantTable.add(pRec);
             iOptConstantValues.add(pRec.constantValue());
@@ -500,14 +530,14 @@ public class Binary
     * 
     * @throws TinyVMException
     */
-   public void processMethods (boolean iAll) throws TinyVMException
+   public void processMethods () throws TinyVMException
    {
       int pSize = iClassTable.size();
       for (int pIndex = 0; pIndex < pSize; pIndex++)
       {
          ClassRecord classRecord = iClassTable.get(pIndex);
          classRecord.storeMethods(iMethodTables, iExceptionTables, iSignatures,
-            iAll);
+            useAll());
       }
    }
    
@@ -549,6 +579,7 @@ public class Binary
 
       iStaticState = new RecordTable<StaticValue>("static state", true, true);
       iStaticFields = new RecordTable<StaticFieldRecord>("static fields", true, false);
+      iInstanceFieldTables = new RecordTable<RecordTable<InstanceFieldRecord>>("instance fields", true, false);
 
       for (int pIndex = 0; pIndex < pSize; pIndex++)
       {
@@ -592,6 +623,11 @@ public class Binary
    public void initOffsets () throws TinyVMException
    {
       iEntireBinary.initOffset(0);
+   }
+
+   public void setRunTimeOptions(int opt)
+   {
+       iMasterRecord.setRunTimeOptions(opt);
    }
 
    public int getTotalNumMethods ()
@@ -677,6 +713,7 @@ public class Binary
      monitor.log("Exception records: " + getTotalNumExceptionRecords() + " (" + iExceptionTables.getLength() + " bytes).");
      monitor.log("Code             : " + iCodeSequences.size() + " (" + iCodeSequences.getLength() + " bytes).");
      monitor.log("Total            : " + iEntireBinary.getLength() + " bytes.");
+     monitor.log("Run time options : " + iMasterRecord.getRunTimeOptions());
    }
    
 }

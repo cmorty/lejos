@@ -21,6 +21,7 @@ typedef struct S_MasterRecord
 {
   TWOBYTES magicNumber;
   TWOBYTES constantTableOffset;
+  TWOBYTES numConstants;
   
   /**
    * Offset to STATICFIELD[].
@@ -40,10 +41,16 @@ typedef struct S_MasterRecord
   TWOBYTES entryClassesOffset;
   byte numEntryClasses;
   byte lastClass;
+
+  TWOBYTES runtimeOptions;
 } MasterRecord;
 
 typedef struct S_ClassRecord
 {
+  /**
+   * Object header, to allow access as a Java object.
+   */
+  TWOBYTES objectHdr;
   /**
    * Space occupied by instance in bytes.
    */
@@ -134,16 +141,14 @@ extern byte *classStatusBase;
 extern byte get_class_index (Object *obj);
 extern void dispatch_virtual (Object *obj, int signature, byte *rAddr);
 extern MethodRecord *find_method (ClassRecord *classRec, int signature);
-extern boolean instance_of (Object *obj, TWOBYTES classIndex);
+extern boolean instance_of (Object *obj, const byte cls);
 extern void do_return (int numWords);
 extern int dispatch_static_initializer (ClassRecord *aRec, byte *rAddr);
 extern boolean dispatch_special (MethodRecord *methodRecord, byte *retAddr);
 void dispatch_special_checked (byte classIndex, byte methodIndex, byte *retAddr, byte *btAddr);
 int execute_program(int prog);
-extern boolean is_assignable(TWOBYTES srcSig, TWOBYTES dstSig);
-extern TWOBYTES get_constituent_sig(Object *obj);
-extern TWOBYTES get_object_sig(Object *obj);
-//extern void handle_field (byte hiByte, byte loByte, boolean doPut, boolean aStatic, byte *btAddr);
+extern boolean is_assignable(const byte srcSig, const byte dstSig);
+extern byte get_base_type(ClassRecord *classRec);
 
 void install_binary( void* ptr);
 //#define install_binary(PTR_)        (installedBinary=(PTR_))
@@ -186,6 +191,10 @@ void install_binary( void* ptr);
 #define is_interface(CREC_)         (((CREC_)->cflags & C_INTERFACE) != 0)
 #define has_norefs(CREC_)           (((CREC_)->cflags & C_NOREFS) != 0)
 
+#define get_dim(CREC_)              ((CREC_)->methodTableOffset)
+#define get_element_class(CREC_)    ((CREC_)->instanceTableOffset)
+#define is_primitive(CLASSIDX_)     ((CLASSIDX_) >= BYTE && (CLASSIDX_) <= LONG )
+#define get_base_type(CLASSIDX_)    (is_primitive(CLASSIDX_) ? (CLASSIDX_) : JAVA_LANG_OBJECT)
 #if EXECUTE_FROM_FLASH
 #define set_initialized(CREC_)      (get_class_status(CREC_) |= C_INITIALIZED)
 #define set_uninitialized(CREC_)    (get_class_status(CREC_) &= ~C_INITIALIZED)
@@ -214,14 +223,6 @@ void install_binary( void* ptr);
 #define __get_entry_classes_base()  (get_binary_base() + get_master_record()->entryClassesOffset)
 #define get_entry_classes_base()    (entryClassesBase)
 #define get_entry_class(N_)         (*(get_entry_classes_base() + (N_)))
-
-#define sig_is_array(S) (sig_get_dim(S) != 0)
-#define sig_get_class(S) ((S) & 0xff)
-#define sig_get_base_type(S) (((S) >> 8) & 0xf)
-#define sig_get_dim(S) (((S) >> 12) & 0x7) 
-#define sig_new(C) (C)
-#define sig_new_array(D, B, C) (((D)<<12) | ((B) << 8) | (C))
-#define sig_is_primitive(S) (sig_get_base_type(S) != 0 && !sig_is_array(S))
 
 static inline void initialize_binary()
 {

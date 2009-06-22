@@ -33,16 +33,18 @@ public class TinyVMTool extends AbstractTool
     * @param all
     * @param stream output stream to write binary to
     * @param bigEndian write big endian output?
+    * @param options
+    * @param debug true to add debug monitor
     * @throws TinyVMException
     */
    public void link (String classpath, String[] classes, boolean all,
-      OutputStream stream, boolean bigEndian, boolean debug) throws TinyVMException
+      OutputStream stream, boolean bigEndian, int options, boolean debug) throws TinyVMException
    {
       assert classpath != null: "Precondition: classpath != null";
       assert classes != null: "Precondition: classes != null";
       assert stream != null: "Precondition: stream != null";
 
-      Binary binary = link(classpath, classes, all, debug);
+      Binary binary = link(classpath, classes, all, options, debug);
       for(ToolProgressMonitor monitor : _monitors) {
     	  binary.log(monitor);
       }
@@ -58,10 +60,12 @@ public class TinyVMTool extends AbstractTool
     * @param classpath class path
     * @param entryClassNames entry class names to link
     * @param all do not filter classes?
+    * @param options
+    * @param debug
     * @return binary
     * @throws TinyVMException
     */
-   public Binary link (String classpath, String[] entryClassNames, boolean all, boolean debug)
+   public Binary link (String classpath, String[] entryClassNames, boolean all, int options, boolean debug)
       throws TinyVMException
    {
       assert classpath != null: "Precondition: classpath != null";
@@ -96,7 +100,7 @@ public class TinyVMTool extends AbstractTool
                + " doesn't have a static void main(String[]) method");
          }
       }
-
+      result.setRunTimeOptions(options);
       assert result != null: "Postconditon: result != null";
       return result;
    }

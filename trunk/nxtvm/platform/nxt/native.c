@@ -417,7 +417,13 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
     push_word(sound_get_time());
     break;
   case getDataAddress_4Ljava_3lang_3Object_2_5I:
-    push_word (ptr2word ((byte *) fields_start(word2ptr(paramBase[0]))));
+    if (is_array(word2obj(paramBase[0])))
+      push_word (ptr2word ((byte *) array_start(word2ptr(paramBase[0]))));
+    else
+      push_word (ptr2word ((byte *) fields_start(word2ptr(paramBase[0]))));
+    break;
+  case getObjectAddress_4Ljava_3lang_3Object_2_5I:
+    push_word(paramBase[0]);
     break;
   case gc_4_5V:
     // Restartable garbage collection
@@ -535,6 +541,12 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
       if (newObj == NULL) return EXEC_RETRY;
       push_word(obj2ref(newObj));
     }
+    break;
+  case memPeek_4III_5I:
+    push_word(mem_peek(paramBase[0], paramBase[1], paramBase[2]));
+    break;
+  case memCopy_4Ljava_3lang_3Object_2IIII_5V:
+    mem_copy(word2ptr(paramBase[0]), paramBase[1], paramBase[2], paramBase[3], paramBase[4]);
     break;
   default:
     return throw_exception(noSuchMethodError);

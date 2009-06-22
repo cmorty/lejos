@@ -34,6 +34,8 @@ public class TinyVMCommandLineParser
 		options.addOption("g", "debug", false, "include debug monitor");
 		options.addOption("v", "verbose", false,
 				"print class and signature information");
+        options.addOption("ea", "enableassert", false, "enable assertions");
+        options.addOption("ec", "enablechecks", false, "enable run time checks");
 		
 		Option bclasspathOption = new Option("bp", "bootclasspath", true,
 				"where to find leJOS classes");
@@ -125,7 +127,17 @@ public class TinyVMCommandLineParser
 	{
 		return this.result.hasOption("v");
 	}
-	
+
+    public boolean isEnableAssert()
+    {
+        return this.result.hasOption("ea");
+    }
+
+    public boolean isEnableChecks()
+    {
+        return this.result.hasOption("ec");
+    }
+
 	public String getOutput()
 	{
 		return getLastOptVal(this.result, "o");

@@ -33,6 +33,7 @@ Object *illegalStateException;
 Object *illegalMonitorStateException;
 Object *error;
 Object *arrayStoreException;
+Object *negativeArraySizeException;
 
 // Temporary globals:
 
@@ -62,6 +63,7 @@ void init_exceptions()
 
   illegalMonitorStateException = new_object_for_class (JAVA_LANG_ILLEGALMONITORSTATEEXCEPTION);
   arrayStoreException = new_object_for_class(JAVA_LANG_ARRAYSTOREEXCEPTION);
+  negativeArraySizeException = new_object_for_class(JAVA_LANG_NEGATIVEARRAYSIZEEXCEPTION);
   error = new_object_for_class (JAVA_LANG_ERROR);
 }
 

@@ -36,7 +36,7 @@ public class GenerateConstants
 
    public static String hclassName (String aClassName)
    {
-      return aClassName.replace('/', '_').toUpperCase();
+      return aClassName.replace('/', '_').replace('[', 'A').replace(';', ' ').toUpperCase();
    }
 
    public static String hsignatureName (String aSig)

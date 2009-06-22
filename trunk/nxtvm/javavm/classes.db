@@ -2,6 +2,10 @@
 
 # The VM will index these special classes based on their
 # order here. Rebuild from the top if this file changes.
+# Note that the index of Object/boolean/char etc. must match the
+# index of the basic types used in memory.c and tinyVM. Also
+# the index of the array classes relative to the array Object must
+# also match
 
 # Since 1.0.0alpha5, indices start at zero.
 
@@ -10,9 +14,27 @@
 java/lang/Object
 java/lang/Thread
 java/lang/String
+java/lang/Class
+boolean
+char
+float
+double
+byte
+short
+int
+long
+[Ljava/lang/Object;
 java/lang/Throwable
 java/lang/Error
 java/lang/OutOfMemoryError
+[Z
+[C
+[F
+[D
+[B
+[S
+[I
+[J
 java/lang/NoSuchMethodError
 java/lang/StackOverflowError
 java/lang/NullPointerException
@@ -25,6 +47,7 @@ java/lang/IllegalStateException
 java/lang/IllegalMonitorStateException
 java/lang/ThreadDeath
 java/lang/ArrayStoreException
+java/lang/NegativeArraySizeException
 
 
 

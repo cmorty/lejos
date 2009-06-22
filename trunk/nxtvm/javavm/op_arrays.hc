@@ -5,11 +5,9 @@
 OPCODE(OP_ANEWARRAY)
   // Stack size: unchanged
   // Arguments: 1
-  // get the signature of the array contents (note we need to inc the number
-  // of dims to get the array sig.
   tempInt = (pc[0] << 8) | pc[1];
   SAVE_REGS();
-  tempStackWord = obj2ref(new_single_array (T_REFERENCE, sig_new_array(sig_get_dim(tempInt)+1, sig_get_base_type(tempInt), sig_get_class(tempInt)), get_top_word()));
+  tempStackWord = obj2ref(new_single_array (tempInt, (JINT)get_top_word()));
   LOAD_REGS();
   // Do not modify the stack if an exception has been thrown
   if (tempStackWord != JNULL)
@@ -24,7 +22,7 @@ OPCODE(OP_NEWARRAY)
   // Stack size: unchanged
   // Arguments: 1
   SAVE_REGS();
-  tempStackWord = obj2ref(new_single_array (*pc, sig_new_array(1, *pc, 0), get_top_word()));
+  tempStackWord = obj2ref(new_primitive_array (*pc, (JINT)get_top_word()));
   LOAD_REGS();
   // Do not modify the stack if an exception has been thrown
   if (tempStackWord != JNULL)
@@ -39,10 +37,10 @@ OPCODE(OP_MULTIANEWARRAY)
   // Stack size: -N + 1
   // Arguments: 3
   {
-    int sig = (pc[0] << 8) | pc[1];
+    int cls = (pc[0] << 8) | pc[1];
     tempInt = pc[2] - 1;
     SAVE_REGS();
-    tempStackWord = obj2ref(new_multi_array (sig_get_base_type(sig), sig_get_class(sig), sig_get_dim(sig), pc[2], get_stack_ptr() - tempInt));
+    tempStackWord = obj2ref(new_multi_array (cls, pc[2], get_stack_ptr() - tempInt));
     LOAD_REGS();
     // Must not modify either the stack or the pc if an exception has been thrown
     if (tempStackWord != JNULL)
@@ -131,7 +129,7 @@ OPCODE(OP_AASTORE)
   if( tempInt < 0)
     goto LABEL_ARRAY_EXCEPTION;
   tempWordPtr = (STACKWORD *)pop_ref();
-  if (type_checks_enabled() && tempStackWord != JNULL && !is_assignable(get_object_sig(ref2obj(tempStackWord)), get_constituent_sig((Object *)tempWordPtr)))
+  if (type_checks_enabled() && tempStackWord != JNULL && !is_assignable(get_class_index(ref2obj(tempStackWord)), get_element_class(get_class_record(get_class_index((Object *)tempWordPtr)))))
   {
     thrownException = arrayStoreException;
     goto LABEL_THROW_EXCEPTION;

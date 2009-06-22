@@ -50,6 +50,9 @@ LDC_CONT:
         DISPATCH_CHECKED;
       push_ref (ptr2word (tempWordPtr));
       break;
+    case T_CLASS:
+      push_word(ptr2ref(get_class_record(get_word_swp(get_constant_ptr(tempConstRec), 1))));
+      break;
     case T_INT:
     case T_FLOAT:
       push_word(get_word_4_swp(get_constant_ptr(tempConstRec)));
@@ -74,8 +77,8 @@ OPCODE(OP_LDC2_W)
     #endif // VERIFY
 
     tempBytePtr = get_constant_ptr (tempConstRec);
-    push_word(get_word_4_swp (tempBytePtr));
     push_word(get_word_4_swp (tempBytePtr + 4));
+    push_word(get_word_4_swp (tempBytePtr));
     pc += 2;
   }
   DISPATCH;

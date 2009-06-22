@@ -9,6 +9,7 @@
 
 #define T_REFERENCE 0
 #define T_STACKFRAME 1
+#define T_CLASS 2
 #define T_BOOLEAN 4
 #define T_CHAR 5
 #define T_FLOAT 6
