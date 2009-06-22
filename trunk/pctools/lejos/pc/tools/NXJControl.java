@@ -1281,7 +1281,7 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
 		if (row >= 0) {
 			boolean open = false;
 			theConsoleLog.setText("");
-			cvcs[row] = new ConsoleViewComms(this, true);
+			cvcs[row] = new ConsoleViewComms(this, true, false);
 			cvc = cvcs[row];
 			open = cvc.connectTo(nxts[row].name, nxts[row].deviceAddress, nxts[row].protocol);
 	        if (!open) {
@@ -1597,4 +1597,10 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
 	public void append(String value) {
 		theConsoleLog.append(value);
 	}
+
+    public void updateLCD(byte[] buffer)
+    {
+
+    }
+
 }
