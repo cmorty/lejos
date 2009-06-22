@@ -1,10 +1,20 @@
 package java.lang;
+import lejos.nxt.VM;
 
 /**
- * Not functional. It's here to satisfy javac and jikes.
+ * Not fully functional. 
  */
 public class Class<T>
 {
+    // Note the following fields are mapped on to read only flash entries
+    // held within the VM. They should not be changed. New fields should not
+    // be added to this class unless changes are also made to the VM.
+    public short arrayDim;
+    public short elementClass;
+    public byte numFields;
+    public byte numMethods;
+    public byte parentClass;
+    public byte flags;
 	/**
 	 * @exception ClassNotFoundException Thrown always in TinyVM.
 	 */
@@ -21,6 +31,6 @@ public class Class<T>
 	 */
 	public boolean desiredAssertionStatus()
 	{
-		return false;
+		return (VM.getVMOptions() & VM.VM_ASSERT) != 0;
 	}
 }
