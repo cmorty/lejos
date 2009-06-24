@@ -26,6 +26,7 @@ public class Hashtable
   
   public synchronized void put (Object aKey, Object aValue)
   {
+	  //FIXME has to return Object
 	int pIndex = getTableIndex (aKey);    
     Object pElement = iTable[pIndex];
     KeyValuePair pKeyValuePair = null;
