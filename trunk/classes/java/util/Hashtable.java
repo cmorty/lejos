@@ -24,16 +24,19 @@ public class Hashtable
     return pKeyValuePair.iValue;
   }
   
-  public synchronized void put (Object aKey, Object aValue)
+  public synchronized Object put (Object aKey, Object aValue)
   {
-	  //FIXME has to return Object
+	Object r;
 	int pIndex = getTableIndex (aKey);    
     Object pElement = iTable[pIndex];
     KeyValuePair pKeyValuePair = null;
     if (pElement != null)
-      pKeyValuePair = getKeyValuePair (pElement, aKey);
-    if (pKeyValuePair == null)
+      pKeyValuePair = getKeyValuePair (pElement, aKey);    
+    if (pKeyValuePair != null)
+    	r = pKeyValuePair.iValue;
+    else
     {
+    	r = null;
     	pKeyValuePair = new KeyValuePair();
     	pKeyValuePair.iKey = aKey;
     	pKeyValuePair.iValue = aValue;
@@ -58,6 +61,7 @@ public class Hashtable
       // pElement must be a Vector
       ((Vector) pElement).addElement (pKeyValuePair);	    
     }
+    return r;
   }
 
   /**
