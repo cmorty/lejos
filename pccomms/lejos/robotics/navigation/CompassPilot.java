@@ -1,15 +1,13 @@
 package lejos.robotics.navigation;
 
-import lejos.nxt.*;
-import lejos.nxt.addon.*;
-import lejos.robotics.TachoMotor;
+import lejos.robotics.*;
 
 /**
  * A Pilot that keeps track of direction using a CompassSensor.
  */
 public class CompassPilot extends TachoPilot {
 
-	protected CompassSensor compass;
+	protected DirectionFinder compass;
 	private  Regulator regulator = new Regulator(); // inner regulator for thread
 	private int _heading; // Heading to point robot	
 	private boolean _traveling = false; // state variable used by regulator
@@ -30,35 +28,6 @@ public class CompassPilot extends TachoPilot {
 	public boolean isTraveling(){ return _traveling;}
 	
 	/**
-	 *  Allocates a CompasPilot object, and sets the physical parameters of the NXT robot. <br>
-	 *  Assumes  Motor.forward() causes the robot to move forward);
-	 *  @param compassPort the sensor port connected to the CompassSensor e.g. SensorPort.S1
-	 *  @param wheelDiameter  Diameter of the tire, in any convenient units.  (The diameter in mm is usually printed on the tire). 
-	 *  @param trackWidth Distance between center of right tire and center of left tire, in same units as wheelDiameter
-	 *  @param leftMotor
-	 * @param rightMotor
-	 */
-	public CompassPilot(SensorPort compassPort, float wheelDiameter,float trackWidth,TachoMotor leftMotor, TachoMotor rightMotor) {
-		this(compassPort, wheelDiameter, trackWidth, leftMotor, rightMotor, false);
-	}
-		
-/**
- * Allocates a CompasPilot object, and sets the physical parameters of the NXT robot. <br>
- *  Assumes  Motor.forward() causes the robot to move forward);
- * Parameters 
- * @param compassPort :  the compass sensor is connected to this port;
- * @param wheelDiameter Diameter of the tire, in any convenient units.  (The diameter in mm is usually printed on the tire). 
- * @param trackWidth Distance between center of right tire and center of left tire, in same units as wheelDiameter
- * @param leftMotor
- * @param rightMotor
- * @param reverse  if true of motor.forward() drives the robot backwards
- */
-	public CompassPilot(SensorPort compassPort, float wheelDiameter,float trackWidth,TachoMotor leftMotor, TachoMotor rightMotor, boolean reverse) 
-	{	
-		this(new CompassSensor(compassPort), wheelDiameter, trackWidth, leftMotor, rightMotor, reverse);		
-	}
-	
-	/**
 	 * Allocates a CompasPilot object, and sets the physical parameters of the NXT robot. <br>
 	 *  Assumes  Motor.forward() causes the robot to move forward);
 	 * Parameters 
@@ -68,7 +37,7 @@ public class CompassPilot extends TachoPilot {
 	 * @param leftMotor
 	 * @param rightMotor
 	 */
-	public CompassPilot(CompassSensor compass,  float wheelDiameter,float trackWidth,TachoMotor leftMotor, TachoMotor rightMotor) {
+	public CompassPilot(DirectionFinder compass,  float wheelDiameter,float trackWidth,TachoMotor leftMotor, TachoMotor rightMotor) {
 		this(compass, wheelDiameter, trackWidth, leftMotor, rightMotor, false);
 	}
 	
@@ -83,7 +52,7 @@ public class CompassPilot extends TachoPilot {
 	 * @param rightMotor
 	 * @param reverse if true of motor.forward() drives the robot backwards
 	 */
-	public CompassPilot(CompassSensor compass,  float wheelDiameter,float trackWidth,TachoMotor leftMotor, TachoMotor rightMotor, boolean reverse) {
+	public CompassPilot(DirectionFinder compass,  float wheelDiameter,float trackWidth,TachoMotor leftMotor, TachoMotor rightMotor, boolean reverse) {
 		super(wheelDiameter, trackWidth, leftMotor, rightMotor, reverse);
 		this.compass = compass;
 		_heading = getCompassHeading(); // Current compass direction = heading target
@@ -92,10 +61,10 @@ public class CompassPilot extends TachoPilot {
 	}
     
     /**
-     * return the compass 
+     * Return the compass 
      * @return the compass
      */	
-    public CompassSensor getCompass(){ return compass;}
+    public DirectionFinder getCompass(){ return compass;}
 	/**
 	 * Returns the compass angle in degrees, Cartesian (increasing counter clockwise) i.e. the actual robot heading
 	 */
@@ -261,6 +230,7 @@ public class CompassPilot extends TachoPilot {
 		if(angle < -5)angle += 3;  // attempt to correct overshoot
 		super.rotate(angle,false);
 	} 
+	
 /**
  * inner class to regulate rotation and travel to get direction control from compass instead of motor tacho.
  * @author Roger Glassey
@@ -300,7 +270,5 @@ public class CompassPilot extends TachoPilot {
 			}	
 		}		
 	}
-
-
 }
 

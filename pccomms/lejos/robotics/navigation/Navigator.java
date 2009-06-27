@@ -12,14 +12,12 @@ package lejos.robotics.navigation;
 */
 public interface Navigator
 {
-  
   /**
   * Returns the X coordinate of the NXT as calculated by the most recent  call to fixPosition()
   * @return float X coordinate.
   */
   public float getX();
   
-
  /**
   * Returns the Y coordinate of the NXT as calculated by the most recent  call to fixPosition()
   * @return float  Y coordinate.
@@ -37,11 +35,11 @@ public interface Navigator
    */
   public boolean isMoving();
   
-
   /**
    * Sets the movement speed of the robot, wheel diameter units/sec
    */
   public void setMoveSpeed(float speed);
+  
   /**
    * Sets the rotation speed of the robot in deg/sec when robot is turning in place
    */
@@ -73,7 +71,7 @@ public interface Navigator
   /**
    * Moves the NXT robot a specific distance. A positive value moves it forwards and
    * a negative value moves it backwards.
-   * The robot position is updated atomatically when the method returns.
+   * The robot position is updated automatically when the method returns.
    * @param distance The positive or negative distance to move the robot, same units as _wheelDiameter
    */
   public void travel(float distance);
@@ -89,18 +87,21 @@ public interface Navigator
    */
   public void travel(float distance, boolean immediateReturn) ;
 
-
   /**
   *Starts  the NXT rotating to the left (increasing angle);
+   * Your code must ensure that <code> updatePosition()</code> is called before any
+   * other robot movement begins. The best way to do this is to call
+   * <code> stop()</code> to end this rotation.
   */
   public void rotateLeft();
 
   /**
-   *Starts the NXT rotating to the right (decreasing angle);
+   * Starts the NXT rotating to the right (decreasing angle);
+   * Your code must ensure that <code> updatePosition()</code> is called before any
+   * other robot movement begins. The best way to do this is to call
+   * <code> stop()</code> to end this rotation.
    */
-
   public void rotateRight();
-
 
    /**
    * Rotates the NXT robot a specific number of degrees in a direction (+ or -).
@@ -119,7 +120,6 @@ public interface Navigator
    */
   public void rotate(float angle, boolean immediateReturn);
 
-
   /**
    * Rotates the NXT robot to point in a specific direction. It will use the smallest
    * rotation  necessary to point to the desired angle.
@@ -130,14 +130,13 @@ public interface Navigator
   /**
    * Rotates the NXT robot to point in a specific direction. It will take the shortest
    * path necessary to point to the desired angle.
-   * If immediateReturnis true, method returns immidiately and your code MUST call updatePostion()
+   * If immediateReturnis true, method returns immediately and your code MUST call updatePostion()
    * when the robot has stopped.  Otherwise, the robot position is lost.
    * @param angle The angle to rotate to, in degrees.
    * @param immediateReturn if true,  method returns immediately and your code must call
    * updatePosition() before the robot moves again.
    */
   public void rotateTo(float angle,boolean immediateReturn) ;
-
 
   /**
    * Rotates the NXT robot towards the target point and moves the required distance.
@@ -149,7 +148,7 @@ public interface Navigator
 
   /**
    * Rotates the NXT robot towards the target point (x,y)  and moves the required distance.
-   * If immediateReturnis true, method returns immidiately and your code MUST call updatePostion()
+   * If immediateReturnis true, method returns immediately and your code MUST call updatePostion()
    * when the robot has stopped.  Otherwise, the robot position is lost.
    * @param x The x coordinate to move to.
    * @param y The y coordinate to move to.
@@ -158,7 +157,6 @@ public interface Navigator
    */
    public void goTo(float x, float y, boolean immediateReturn);
 
-  
   /**
    * Returns the distance from robot to the point with coordinates (x,y) .
    * @param x coordinate of the point
@@ -177,10 +175,9 @@ public interface Navigator
 	
   /**
    * Updates robot location (x,y) and direction angle. Called by stop, and movement commands that terminate when complete.
-   * Must be called after a command that returns immediatly, but after robot movement stops, and before another movement method is called.
+   * Must be called after a command that returns immediately, but after robot movement stops, and before another movement method is called.
    */ 
   public void updatePosition();
- 
 }
 
 
