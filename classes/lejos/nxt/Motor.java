@@ -572,7 +572,7 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
    }
 
    /**
-    * @see lejos.nxt.TachoMotor#getActualSpeed()
+    * @see lejos.robotics.TachoMotor#getActualSpeed()
     */
    public int getActualSpeed()
    {
@@ -580,7 +580,7 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
    }
 
    /**
-    * @see lejos.nxt.TachoMotor#getTachoCount()
+    * @see lejos.robotics.TachoMotor#getTachoCount()
     */
    public int getTachoCount()
    {
