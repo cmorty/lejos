@@ -325,7 +325,7 @@ public class NXTConnector extends NXTCommLoggable
 			addr = null;
 		}
 		
-		return connectTo(name, addr, protocols);
+		return connectTo(name, addr, protocols, mode);
 	}
 	
 	/**
