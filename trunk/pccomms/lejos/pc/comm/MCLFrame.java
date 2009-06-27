@@ -6,6 +6,7 @@ import java.awt.geom.*;
 import java.awt.*;
 import java.io.*;
 import lejos.robotics.localization.*;
+import lejos.geom.*;
 
 /**
  * A panel that can be opened in a frame to control a robot
