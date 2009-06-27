@@ -1,4 +1,6 @@
-package lejos.robotics.localization;
+package lejos.geom;
+
+import java.awt.geom.*;
 
 /**
  * Represents a line and supports calculating the point of intersection of two
@@ -10,14 +12,10 @@ package lejos.robotics.localization;
  * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
  * 
  */
-public class Line {
-  public float x1, y1, x2, y2;
+public class Line extends Line2D.Float {
 
   public Line(float x1, float y1, float x2, float y2) {
-    this.x1 = x1;
-    this.y1 = y1;
-    this.x2 = x2;
-    this.y2 = y2;
+    super(x1,y1,x2,y2);
   }
 
   /**

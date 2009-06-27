@@ -1,6 +1,7 @@
 package lejos.robotics.localization;
 
 import java.awt.Rectangle;
+import lejos.geom.*;
 
 /**
  * The Map interface supports determining the range to a feature on the map
