@@ -1,5 +1,7 @@
 package lejos.robotics.localization;
 
+import lejos.geom.*;
+
 /**
  * Represents a pose of the robot. 
  * The pose is its x,y position and its heading angle.

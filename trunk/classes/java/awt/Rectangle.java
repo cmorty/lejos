@@ -1,12 +1,14 @@
 package java.awt;
 
+import java.awt.geom.*;
+
 /**
  * Minimal Rectangle implementation.
  * 
  * @author Lawrie Griffiths
  *
  */
-public class Rectangle {
+public class Rectangle extends Rectangle2D implements Shape {
 	public int height, width, x, y;
 	
 	/**
@@ -126,5 +128,44 @@ public class Rectangle {
 		if (r.y + r.height < y) return false;
 		if (r.y > y + height) return false;
 		return true;
+	}
+	
+	public Rectangle getBounds() {
+		return new Rectangle(x, y, width, height);
+	}
+	
+	public Rectangle2D getBounds2D() {
+		return new Rectangle(x, y, width, height);
+	}
+
+	@Override
+	public void setFrame(double x, double y, double w, double h) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public boolean contains(double x, double y) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean contains(Point2D p) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean contains(Rectangle2D r) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean intersects(double x, double y, double w, double h) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean intersects(Rectangle2D r) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

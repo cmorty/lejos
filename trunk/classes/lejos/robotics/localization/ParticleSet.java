@@ -1,6 +1,7 @@
 package lejos.robotics.localization;
 
 import java.awt.Rectangle;
+import lejos.geom.*;
 import java.io.*;
 
 /**
