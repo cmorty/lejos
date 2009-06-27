@@ -321,6 +321,7 @@ public class SimpleNavigator implements Navigator {
             updatePosition();
         }
     }
+    
      /**
      * Moves the NXT robot in a circular arc through a specific distance; <br>
      * The center of the turning circle is on the left side of the robot if parameter radius is positive
@@ -330,19 +331,18 @@ public class SimpleNavigator implements Navigator {
    
      * @param radius  of the turning circle; the sign determines if the center if the turn is left or right of the robot.
      * @param distance The sign of the distance determines the direction of robot motion
-     * @param immediateReturn if true, the method returns immediately and your code must call
      * updatePosition() before the robot moves again.
      */
-
     public void travelArc(float radius, float distance){
       travelArc(radius,distance,false);
     }
-        /**
+    
+    /**
      * Moves the NXT robot in a circular arc through a specific distance; <br>
      * The center of the turning circle is on the left side of the robot if parameter radius is positive
      * and on the right if negative.
      * Robot will stop when distance traveled equals distance. If distance is negative, robot will travel backwards.
-     * <br>See also {@link #arc(float radius, float distance, boolean immedisteReturn)}
+     * <br>See also {@link #arc(float radius, int angle, boolean immediateReturn)}
      * @param radius  of the turning circle; the sign determines if the center if the turn is left or right of the robot.
      * @param distance The sign of the distance determines the direction of robot motion
      * @param immediateReturn if true, the method returns immediately and your code must call

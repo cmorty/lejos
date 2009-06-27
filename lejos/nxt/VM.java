@@ -64,7 +64,7 @@ public class VM
      * Obtain access to the single instance of the VM class. This can then be
      * used to gain access to the more detailed information about the VM and
      * it's internal structures.
-     * @return
+     * @return the VM object
      */
     public static VM getVM()
     {
@@ -505,7 +505,7 @@ public class VM
 
         /**
          * Return access to the exception records for this method.
-         * @return
+         * @return the VMExceptions object
          */
         public VMExceptions getVMExceptions()
         {
@@ -534,7 +534,7 @@ public class VM
         /**
          * Return access to a specific method.
          * @param item
-         * @return
+         * @return the VMMethod object
          */
         public VMMethod get(int item)
         {
@@ -579,7 +579,7 @@ public class VM
 
         /**
          * Return access to the methods for this class
-         * @return
+         * @return the VMMethods object
          */
         public VMMethods getMethods()
         {
@@ -618,7 +618,7 @@ public class VM
         /**
          * return a specific class object
          * @param item
-         * @return
+         * @return the VMClass object
          */
         public VMClass get(int item)
         {
@@ -744,7 +744,7 @@ public class VM
      * part of the leJOS loader. It is not possible to extend this class or
      * modify the contents.
      * @param obj
-     * @return
+     * @return the Class object
      */
     public Class getClass(Object obj)
     {
@@ -755,7 +755,7 @@ public class VM
      * Return a VMClass object for the provided object.
      * Note: The object returned is actually a copy of the in flash object.
      * @param obj
-     * @return
+     * @return the VMClass object
      */
     public VMClass getVMClass(Object obj)
     {
@@ -766,7 +766,7 @@ public class VM
      * Return a VMClass object for the provided class object.
      * Note: The object returned is actually a copy of the in flash object.
      * @param cls
-     * @return
+     * @return the VMClass object
      */
     public VMClass getVMClass(Class cls)
     {
@@ -777,7 +777,7 @@ public class VM
      * Return a VMClass object for the provided class number.
      * Note: The object returned is actually a copy of the in flash object.
      * @param clsNo
-     * @return
+     * @return the VMClass object
      */
     public VMClass getVMClass(int clsNo)
     {
@@ -798,7 +798,7 @@ public class VM
     /**
      * Return true if the specified object is an array
      * @param obj
-     * @return
+     * @return true iff the specified object is an array
      */
     public boolean isArray(Object obj)
     {
@@ -965,7 +965,7 @@ public class VM
 
     /**
      * Returns access to all of the current internal thread objects
-     * @return
+     * @return the VMThreads object
      */
     public VMThreads getVMThreads()
     {
