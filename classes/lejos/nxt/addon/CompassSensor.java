@@ -2,6 +2,7 @@ package lejos.nxt.addon;
 
 import lejos.nxt.I2CPort;
 import lejos.nxt.I2CSensor;
+import lejos.robotics.*;
 
 /**
  * Abstraction for a HiTechnic or Mindsensors compass.
@@ -9,7 +10,7 @@ import lejos.nxt.I2CSensor;
  * <br/><br/>WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
  * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
  */
-public class CompassSensor extends I2CSensor {
+public class CompassSensor extends I2CSensor implements DirectionFinder {
 	byte[] buf = new byte[2];
 	private static final String MINDSENSORS_ID = "mndsnsrs";
 	private boolean isMindsensors; // For comparing HiTechnic vs. Mindsensors
