@@ -296,9 +296,10 @@ public class NXTConnector extends NXTCommLoggable
 	/**
 	 * Connect to a device by URL
 	 * @param deviceURL
+	 * @param mode the mode (NXTComm.LCP or NXTComm.PACKET)
 	 * @return true iff the connection succeeded
 	 */
-	public boolean connectTo(String deviceURL) {
+	public boolean connectTo(String deviceURL, int mode) {
 		String protocolString = "";
 		int colonIndex = deviceURL.indexOf(':');
 		if (colonIndex >= 0) {
@@ -325,6 +326,15 @@ public class NXTConnector extends NXTCommLoggable
 		}
 		
 		return connectTo(name, addr, protocols);
+	}
+	
+	/**
+	 * Connect to a device by URL in packet mode
+	 * @param deviceURL
+	 * @return true iff the connection succeeded
+	 */
+	public boolean connectTo(String deviceURL) {
+		return connectTo(deviceURL, NXTComm.PACKET);
 	}
 	
 	private void setStreams() {
