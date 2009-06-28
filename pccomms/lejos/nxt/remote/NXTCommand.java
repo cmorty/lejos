@@ -206,7 +206,7 @@ public class NXTCommand implements NXTProtocol {
 	 *            [filename].[extension], *.[extension], [filename].*, *.*
 	 * @return fileInfo object giving details of the file
 	 */
-	public FileInfo findFirst(String wildCard) throws IOException {
+	public FileInfo findFirstNXJ(String wildCard) throws IOException {
 
 		byte[] request = { SYSTEM_COMMAND_REPLY, NXJ_FIND_FIRST };
 		request = appendString(request, wildCard);
@@ -230,6 +230,35 @@ public class NXTCommand implements NXTProtocol {
 		}
 		return fileInfo;
 	}
+	
+	/**
+	 * @param wildCard
+	 *            [filename].[extension], *.[extension], [filename].*, *.*
+	 * @return fileInfo object giving details of the file
+	 */
+	public FileInfo findFirst(String wildCard) throws IOException {
+
+		byte[] request = { SYSTEM_COMMAND_REPLY, FIND_FIRST };
+		request = appendString(request, wildCard);
+
+		byte[] reply = nxtComm.sendRequest(request, 28);
+		FileInfo fileInfo = null;
+		if (reply[2] == 0 && reply.length == 28) {
+			StringBuffer name = new StringBuffer(new String(reply))
+					.delete(0, 4);
+			int lastPos = name.indexOf("\0");
+			if (lastPos < 0 || lastPos > 20) lastPos = 20;
+			name.delete(lastPos, name.length());
+			fileInfo = new FileInfo(name.toString());
+			fileInfo.status = 0;
+			fileInfo.fileHandle = reply[3];
+			fileInfo.fileSize = (0xFF & reply[24]) | ((0xFF & reply[25]) << 8)
+					| ((0xFF & reply[26]) << 16) | ((0xFF & reply[27]) << 24);
+			fileInfo.startPage = -1;
+
+		}
+		return fileInfo;
+	}
 
 	/**
 	 * @param handle
@@ -237,7 +266,7 @@ public class NXTCommand implements NXTProtocol {
 	 *            First command.
 	 * @return fileInfo object giving details of the file
 	 */
-	public FileInfo findNext(byte handle) throws IOException {
+	public FileInfo findNextNXJ(byte handle) throws IOException {
 
 		byte[] request = { SYSTEM_COMMAND_REPLY, NXJ_FIND_NEXT, handle };
 
@@ -256,6 +285,34 @@ public class NXTCommand implements NXTProtocol {
 					| ((0xFF & reply[26]) << 16) | ((0xFF & reply[27]) << 24);
 			fileInfo.startPage = (0xFF & reply[28]) | ((0xFF & reply[29]) << 8)
 					| ((0xFF & reply[30]) << 16) | ((0xFF & reply[31]) << 24);
+		}
+		return fileInfo;
+	}
+	
+	/**
+	 * @param handle
+	 *            Handle number from the previous found file or fromthe Find
+	 *            First command.
+	 * @return fileInfo object giving details of the file
+	 */
+	public FileInfo findNext(byte handle) throws IOException {
+
+		byte[] request = { SYSTEM_COMMAND_REPLY, FIND_NEXT, handle };
+
+		byte[] reply = nxtComm.sendRequest(request, 28);
+		FileInfo fileInfo = null;
+		if (reply[2] == 0 && reply.length == 28) {
+			StringBuffer name = new StringBuffer(new String(reply))
+					.delete(0, 4);
+			int lastPos = name.indexOf("\0");
+			if (lastPos < 0 || lastPos > 20) lastPos = 20;
+			name.delete(lastPos, name.length());
+			fileInfo = new FileInfo(name.toString());
+			fileInfo.status = 0;
+			fileInfo.fileHandle = reply[3];
+			fileInfo.fileSize = (0xFF & reply[24]) | ((0xFF & reply[25]) << 8)
+					| ((0xFF & reply[26]) << 16) | ((0xFF & reply[27]) << 24);
+			fileInfo.startPage = -1;
 		}
 		return fileInfo;
 	}
