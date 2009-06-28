@@ -130,13 +130,13 @@ public class ExtendedFileModel extends AbstractTableModel {
   public String fetchFiles() {
 	numFiles = 0;
     try {
-      files[0] = nxtCommand.findFirst("*.*");
+      files[0] = nxtCommand.findFirstNXJ("*.*");
 	
 	  if (files[0] != null) {
 	    numFiles = 1;
 	
 	    for(int i=1;i<MAX_FILES;i++) {
-	      files[i] = nxtCommand.findNext(files[i-1].fileHandle);
+	      files[i] = nxtCommand.findNextNXJ(files[i-1].fileHandle);
 	      if (files[i] == null) break;
 	      else {
 	        numFiles++;
