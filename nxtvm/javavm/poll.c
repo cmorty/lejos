@@ -3,6 +3,7 @@
 #include "poll.h"
 #include "threads.h"
 #include "platform_hooks.h"
+#include "sensors.h"
 
 #define SENSOR_POS		0
 #define BUTTON_POS		4
@@ -22,7 +23,7 @@ void set_poller(Poll *_poller)
   poller = _poller;
   old_button_state = 0;
   for (i=0; i<N_SENSORS; i++)
-    old_sensor_values[i] = read_sensor(i);
+    old_sensor_values[i] = sp_read(i, SP_ANA);
 }
 
 
@@ -51,7 +52,7 @@ void poll_inputs()
     // Check the sensor canonical values.
     for (i = 1<<SENSOR_POS; i<(1<<BUTTON_POS); i <<= 1, pOldValue++, port++)
     {
-      short val = (short)read_sensor(port);
+      short val = (short)sp_read(port, SP_ANA);
       if (*pOldValue != val) {
         changed |= i;
         *pOldValue = val;

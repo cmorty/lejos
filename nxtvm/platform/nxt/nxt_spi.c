@@ -102,7 +102,6 @@ void
 nxt_spi_init(void)
 {
   int i_state = interrupts_get_and_disable();
-#define OSC 48054805
 #define SPI_BITRATE 2000000
 
   *AT91C_PMC_PCER  =  (1L << AT91C_ID_SPI);       /* Enable MCK clock     */
@@ -139,7 +138,7 @@ nxt_spi_init(void)
   *AT91C_SPI_CR = AT91C_SPI_SWRST;/*Softreset*/
   *AT91C_SPI_CR = AT91C_SPI_SPIEN;/*Enablespi*/
   *AT91C_SPI_MR = AT91C_SPI_MSTR|AT91C_SPI_MODFDIS | (0xB<<16);
-  AT91C_SPI_CSR[2] = ((OSC/SPI_BITRATE)<<8) | AT91C_SPI_CPOL;
+  AT91C_SPI_CSR[2] = ((CLOCK_FREQUENCY/SPI_BITRATE)<<8) | AT91C_SPI_CPOL;
 
   /* Set mode to unknown */
   mode = 0xff;

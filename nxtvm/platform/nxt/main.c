@@ -277,7 +277,7 @@ nxt_main(int bin, int size)
   
   // reset all motors, sensors and devices
 
-  init_sensors();
+  sp_init();
   display_set_auto_update(1);
   //       printf("Installing Binary\n");
 
@@ -468,7 +468,7 @@ main(void)
    * interrupts are off, but the AIC has not been initialised.
    */
   aic_initialise();
-  init_sensors();
+  sp_init();
   interrupts_enable();
   systick_init();
   sound_init();
