@@ -89,6 +89,7 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
 
   /**
    * Reads the raw value of the sensor.
+   * @return the raw sensor value
    */
   public final int readRawValue()
   {
@@ -98,6 +99,7 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
   /**
    * Reads the boolean value of the sensor.
    * Do not use - currently returns the raw value.
+   * @return the boolean state of the sensor
    */
   public final boolean readBooleanValue()
   {
@@ -114,6 +116,7 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
 
   /**
    * Return the ID of the port. One of 0, 1, 2 or 3.
+   * @return The Id of this sensor
    */
   public final int getId()
   {
@@ -128,6 +131,7 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
    * NOTE 2: Synchronizing inside listener methods could result
    * in a deadlock.
    * </b>
+   * @param aListener Listener for call backs
    * @see lejos.nxt.SensorPortListener
    */
   public synchronized void addSensorPortListener (SensorPortListener aListener)
@@ -161,6 +165,7 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
   
   /**
    * Returns mode compatible with Lego firmware. 
+   * @return the current mode
    */
   public int getMode()
   {
@@ -169,6 +174,7 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
   
   /**
    * Returns type compatible with Lego firmware. 
+   * @return The type of the sensor
    */
   public int getType()
   {
@@ -177,6 +183,8 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
   
   /**
    * Sets type and mode compatible with Lego firmware. 
+   * @param type the sensor type
+   * @param mode the sensor mode
    */
   public void setTypeAndMode(int type, int mode)
   {
@@ -186,6 +194,7 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
   
   /**
    * Sets type compatible with Lego firmware. 
+   * @param type the sensor type
    */
   public void setType(int type)
   {
@@ -205,6 +214,7 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
   
   /**
    * Sets mode compatible with Lego firmware. 
+   * @param mode the mode to set.
    */
   public void setMode(int mode)
   {
@@ -213,6 +223,7 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
   
   /**
    * Returns value compatible with Lego firmware. 
+   * @return the computed value
    */
   public int readValue()
   {
@@ -243,8 +254,10 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
   /**
    * Low-level method to set the input power setting for a sensor.
    * Values are: 0 - no power, 1 RCX active power, 2 power always on.
-   **/
-  private void setPowerType(int type)
+   *
+   * @param type Power type to use
+   */
+  public void setPowerType(int type)
   {
 	  setPowerTypeById(iPortId,type);
   }
@@ -373,7 +386,7 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
    * @param pin The pin id
    * @param mode The new mode
    */
-  public static native void setSensorPinMode(int port, int pin, int mode);
+  static native void setSensorPinMode(int port, int pin, int mode);
 
   /**
    * Set the output state of a sensor pin
@@ -381,7 +394,7 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
    * @param pin The pin id
    * @param val The new output value (0/1)
    */
-  public static native void setSensorPin(int port, int pin, int val);
+  static native void setSensorPin(int port, int pin, int val);
 
   /**
    * Read the current state of a sensor port pin
@@ -389,7 +402,7 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
    * @param pin The pin id.
    * @return The current pin state (0/1)
    */
-  public static native int getSensorPin(int port, int pin);
+  static native int getSensorPin(int port, int pin);
 
   /**
    * Read the current ADC value from a sensor port pin
@@ -397,7 +410,7 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
    * @param pin The id of the pin to read (SP_DIGI1/SP_ANA)
    * @return The return from the ADC
    */
-  public static native int readSensorPin(int port, int pin);
+  static native int readSensorPin(int port, int pin);
 
 
   /**
