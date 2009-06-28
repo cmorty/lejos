@@ -12,10 +12,56 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
   private int iPreviousValue;
   private int type, mode;
   
+  public static final int POWER_STD = 0;
+  public static final int POWER_RCX9V = 1;
+  public static final int POWER_9V = 2;
+  
    
-  private static final byte[]  powerType = {0,0,1,1,1,0,0,0,0,0,0,2};
-  private static final byte[]  adType = {-1,-1,-1,-1,-1,1,0,1,2,-1,-1,-1};
+  private static final byte[]  powerType = {
+      POWER_STD,   // NO_SENSOR
+      POWER_STD,   // SWITCH
+      POWER_RCX9V, // TEMPERATURE
+      POWER_RCX9V, // REFLECTION
+      POWER_RCX9V, // ANGLE
+      POWER_STD,   // LIGHT_ACTIVE
+      POWER_STD,   // LIGHT_INACTIVE
+      POWER_STD,   // SOUND_DB
+      POWER_STD,   // SOUND_DBA
+      POWER_STD,   // CUSTOM
+      POWER_STD,   // LOWSPEED,
+      POWER_9V     // LOWSPEED_9V
+  };
 
+  // Sensor port I/O pin ids
+  public static final int SP_DIGI0 = 0;
+  public static final int SP_DIGI1 = 1;
+  public static final int SP_ANA = 2;
+
+  // Sensor port pin modes
+  public static final int SP_MODE_OFF = 0;
+  public static final int SP_MODE_INPUT = 1;
+  public static final int SP_MODE_OUTPUT = 2;
+  public static final int SP_MODE_ADC = 3;
+
+  // Digital I/O pins used to control the sensor operation
+  public static final int DIGI_UNUSED = -1;
+  public static final int DIGI_OFF = 0;
+  public static final int DIGI_0_ON = (1 << SP_DIGI0);
+  public static final int DIGI_1_ON = (1 << SP_DIGI1);
+  private static final byte[]  controlPins = {
+      DIGI_UNUSED, // NO_SENSOR
+      DIGI_UNUSED, // SWITCH
+      DIGI_UNUSED, // TEMPERATURE
+      DIGI_UNUSED, // REFLECTION
+      DIGI_UNUSED, // ANGLE
+      DIGI_0_ON,   // LIGHT_ACTIVE
+      DIGI_OFF,    // LIGHT_INACTIVE
+      DIGI_0_ON,   // SOUND_DB
+      DIGI_1_ON,   // SOUND_DBA
+      DIGI_UNUSED, // CUSTOM
+      DIGI_UNUSED, // LOWSPEED,
+      DIGI_UNUSED  // LOWSPEED_9V
+  };
   /**
    * Port labeled 1 on NXT.
    */
@@ -59,7 +105,7 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
     return (rawValue < 600);
   }
 
-  private SensorPort (int aId)
+  protected SensorPort (int aId)
   {
     iPortId = aId;
     type = TYPE_NO_SENSOR;
@@ -146,10 +192,14 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
 	if (type < powerType.length)
 	{
 	    this.type = type;
-	    int adt = adType[type];
+	    int control = controlPins[type];
 	    
 	    setPowerType(powerType[type]);
-	    if (adt >= 0) setADType(adt);
+	    if (control != DIGI_UNUSED)
+        {
+            setSensorPin(SP_DIGI0, ((control & DIGI_0_ON) != 0 ? 1 : 0));
+            setSensorPin(SP_DIGI1, ((control & DIGI_1_ON) != 0 ? 1 : 0));
+        }
 	}
   }
   
@@ -189,16 +239,6 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
    */
   static native int readSensorValue (int aPortId);
   
-  /**
-   * Low-level method to set the type of an A/D sensor.
-   * A value of 1 will set pin 5, 2 will set pin 6, 3 will set both.
-   * For example, a value of 1 sets floodlighting on a LightSensor,
-   * a value of 1 sets DB mode and a value of 2 sets DBA mode, on a SoundSensor. 
-   */
-  private void setADType(int type)
-  {
-	  setADTypeById(iPortId,type);
-  }
   
   /**
    * Low-level method to set the input power setting for a sensor.
@@ -209,13 +249,6 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
 	  setPowerTypeById(iPortId,type);
   }
   
-  /**
-   * Low-level method to set the type of an A/D sensor.
-   * A value of 1 will set pin 5, 2 will set pin 6, 3 will set both.
-   * For example, a value of 1 sets floodlighting on a LightSensor,
-   * a value of 1 sets DB mode and a value of 2 sets DBA mode, on a SoundSensor. 
-   */
-  static native void setADTypeById(int aPortId, int aADType);
   
   /**
    * Low-level method to set the input power setting for a sensor.
@@ -332,6 +365,81 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
   {
       return i2cCompleteById(iPortId, buffer, numBytes);
   }
+  
+
+  /**
+   * Low level method to set the operating mode for a sensor pin.
+   * @param port The port number to use
+   * @param pin The pin id
+   * @param mode The new mode
+   */
+  public static native void setSensorPinMode(int port, int pin, int mode);
+
+  /**
+   * Set the output state of a sensor pin
+   * @param port The port to use
+   * @param pin The pin id
+   * @param val The new output value (0/1)
+   */
+  public static native void setSensorPin(int port, int pin, int val);
+
+  /**
+   * Read the current state of a sensor port pin
+   * @param port The port to read
+   * @param pin The pin id.
+   * @return The current pin state (0/1)
+   */
+  public static native int getSensorPin(int port, int pin);
+
+  /**
+   * Read the current ADC value from a sensor port pin
+   * @param port The port to use.
+   * @param pin The id of the pin to read (SP_DIGI1/SP_ANA)
+   * @return The return from the ADC
+   */
+  public static native int readSensorPin(int port, int pin);
+
+
+  /**
+   * Low level method to set the operating mode for a sensor pin.
+   * @param pin The pin id
+   * @param mode The new mode
+   */
+  public void setSensorPinMode(int pin, int mode)
+  {
+      setSensorPinMode(iPortId, pin, mode);
+  }
+
+  /**
+   * Set the output state of a sensor pin
+   * @param pin The pin id
+   * @param val The new output value (0/1)
+   */
+  public void setSensorPin(int pin, int val)
+  {
+      setSensorPin(iPortId, pin, val);
+  }
+
+  /**
+   * Read the current state of a sensor port pin
+   * @param pin The pin id.
+   * @return The current pin state (0/1)
+   */
+  public int getSensorPin(int pin)
+  {
+      return getSensorPin(iPortId, pin);
+  }
+
+  /**
+   * Read the current ADC value from a sensor port pin
+   * @param pin The id of the pin to read (SP_DIGI1/SP_ANA)
+   * @return The return from the ADC
+   */
+  public int readSensorPin(int pin)
+  {
+      return readSensorPin(iPortId, pin);
+  }
+
 }
 
 

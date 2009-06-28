@@ -455,7 +455,7 @@ i2c_disable(int port)
     system_free((byte *)p);
     i2c_ports[port] = NULL;
     build_active_list();
-    reset_sensor(port);
+    sp_reset(port);
   }
 }
 
@@ -482,8 +482,8 @@ int i2c_enable(int port, int mode)
       if (!p) return 0;
       i2c_ports[port] = p;
     }
-    p->scl_pin = sensor_pins[port].digi0;
-    p->sda_pin = sensor_pins[port].digi1;
+    p->scl_pin = sensor_pins[port].pins[SP_DIGI0];
+    p->sda_pin = sensor_pins[port].pins[SP_DIGI1];
     pinmask = p->scl_pin | p->sda_pin;
     p->state = I2C_IDLE;
     if (mode & I2C_LEGO_MODE)

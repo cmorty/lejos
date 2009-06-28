@@ -18,6 +18,7 @@
 #include "interpreter.h"
 #include "exceptions.h"
 #include "platform_config.h"
+#include "at91sam7s256.h"
 #include "sensors.h"
 #include "poll.h"
 #include "display.h"
@@ -33,7 +34,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "at91sam7s256.h"
 
 
 #undef push_word()
@@ -142,13 +142,14 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
     set_poller(word2ptr(paramBase[0]));
     break;
   case readSensorValue_4I_5I:
-    push_word(sensor_adc(paramBase[0]));
+    push_word(sp_read(paramBase[0], SP_ANA));
     break;
   case setADTypeById_4II_5V:
-    set_sensor(paramBase[0], paramBase[1]);
+    sp_set(paramBase[0], SP_DIGI0, paramBase[1] & 1);
+    sp_set(paramBase[0], SP_DIGI1, paramBase[1] & 2);
     break;
   case setPowerTypeById_4II_5V:
-    nxt_avr_set_input_power(paramBase[0], paramBase[1]);
+    sp_set_power(paramBase[0], paramBase[1]);
     break;
   case freeMemory_4_5J:
     push_word(0);
@@ -548,6 +549,19 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
   case memCopy_4Ljava_3lang_3Object_2IIII_5V:
     mem_copy(word2ptr(paramBase[0]), paramBase[1], paramBase[2], paramBase[3], paramBase[4]);
     break;
+  case setSensorPin_4III_5V:
+    sp_set(paramBase[0], paramBase[1], paramBase[2]);
+    break;
+  case getSensorPin_4II_5I:
+    push_word(sp_get(paramBase[0], paramBase[1]));
+    break;
+  case setSensorPinMode_4III_5V:
+    sp_set_mode(paramBase[0], paramBase[1], paramBase[2]);
+    break;
+  case readSensorPin_4II_5I:
+    push_word(sp_read(paramBase[0], paramBase[1]));
+    break;
+
   default:
     return throw_exception(noSuchMethodError);
   }
