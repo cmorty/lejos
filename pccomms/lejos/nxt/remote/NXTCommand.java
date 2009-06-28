@@ -202,6 +202,9 @@ public class NXTCommand implements NXTProtocol {
 	}
 
 	/**
+	 * Find the first file on the NXT. This is a NXJ-specific version that returns the
+	 * start page number as well as the other FileInfo data
+	 * 
 	 * @param wildCard
 	 *            [filename].[extension], *.[extension], [filename].*, *.*
 	 * @return fileInfo object giving details of the file
@@ -232,6 +235,8 @@ public class NXTCommand implements NXTProtocol {
 	}
 	
 	/**
+	 * Find the first file on the NXT.
+	 * 
 	 * @param wildCard
 	 *            [filename].[extension], *.[extension], [filename].*, *.*
 	 * @return fileInfo object giving details of the file
@@ -261,8 +266,11 @@ public class NXTCommand implements NXTProtocol {
 	}
 
 	/**
+	 * Find the next file on the NXT. This is a NXJ-specific version that returns the
+	 * start page number as well as the other FileInfo data
+	 * 
 	 * @param handle
-	 *            Handle number from the previous found file or fromthe Find
+	 *            Handle number from the previous found file or from the Find
 	 *            First command.
 	 * @return fileInfo object giving details of the file
 	 */
@@ -290,8 +298,10 @@ public class NXTCommand implements NXTProtocol {
 	}
 	
 	/**
+	 * Find the next file on the NXT
+	 * 
 	 * @param handle
-	 *            Handle number from the previous found file or fromthe Find
+	 *            Handle number from the previous found file or from the Find
 	 *            First command.
 	 * @return fileInfo object giving details of the file
 	 */
