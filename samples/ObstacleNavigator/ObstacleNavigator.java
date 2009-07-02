@@ -13,9 +13,9 @@ import java.util.Random;
  */
 public class ObstacleNavigator
 {
-  public ObstacleNavigator( Pilot p, SensorPort leftTouch, SensorPort rightTouch)
+  public ObstacleNavigator(Navigator navigator, SensorPort leftTouch, SensorPort rightTouch)
   {
-    nav = new SimpleNavigator(p);
+    this.navigator = navigator;
     leftBump = new TouchSensor(leftTouch);
     rightBump = new TouchSensor(rightTouch);
   }
@@ -28,14 +28,14 @@ public class ObstacleNavigator
 
 public void goTo(float x, float y)
 {
-  nav.setMoveSpeed(30);
-  nav.setTurnSpeed(180);
+  navigator.setMoveSpeed(20);
+  navigator.setTurnSpeed(180);
   float destX = x;
   float destY = y;
 
-  while (nav.distanceTo(destX,destY) > 5)
+  while (navigator.distanceTo(destX,destY) > 5)
   {
-    nav.goTo(destX, destY,true);
+    navigator.goTo(destX, destY,true);
     int hit = move();
     if (hit != 0)
     {
@@ -50,10 +50,10 @@ public void goTo(float x, float y)
   public int  avoid(int side)
   {
     if(side == 0)return 0;
-    nav.travel(-5 - rand.nextInt(5));
+    navigator.travel(-5 - rand.nextInt(5));
     int angle = 60+rand.nextInt(60);
-    nav.rotate(-side * angle);
-    nav.travel(10 + rand.nextInt(60), true);
+    navigator.rotate(-side * angle);
+    navigator.travel(10 + rand.nextInt(60), true);
     return  move ();  // watch for hit while moving forward
   }
   /**
@@ -63,16 +63,16 @@ public void goTo(float x, float y)
   public int move()
   {
     int hit = 0;
-    while( nav.isMoving()& hit == 0 )
+    while( navigator.isMoving()& hit == 0 )
     {
       if(leftBump.isPressed())hit = 1;
       if(rightBump.isPressed())hit =-1;
       Thread.yield();
     }
-    nav.stop();
+    navigator.stop();
     return hit;
   }
-  SimpleNavigator nav ;
+  Navigator navigator ;
   Random rand = new Random();
   TouchSensor leftBump;
   TouchSensor rightBump;
