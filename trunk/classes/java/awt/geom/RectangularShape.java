@@ -42,5 +42,22 @@ public abstract class RectangularShape implements Shape {
     public abstract boolean isEmpty();
     
     public abstract void setFrame(double x, double y, double w, double h);
-  
+    
+    public void setFrame(Rectangle2D r) {
+    	setFrame(r.getX(),r.getY(),r.getWidth(),r.getHeight());
+    }
+    
+    public boolean contains(Point2D p) {
+    	return contains(p.getX(), p.getY()); 	
+    }
+    
+    public boolean intersects(Rectangle2D r) {
+        return intersects(r.getX(), r.getY(), r.getWidth(), r.getHeight());
+    }
+    
+    public boolean contains(Rectangle2D r) {
+        return contains(r.getX(), r.getY(), r.getWidth(), r.getHeight());
+    }
+    
+    
 }
