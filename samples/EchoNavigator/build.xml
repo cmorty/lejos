@@ -1,4 +1,4 @@
-<project name="ObstacleNavigator" default="uploadandrun">
+<project name="EchoNavigator" default="uploadandrun">
     <description>
     	FileTest build file
     </description>
