@@ -91,12 +91,18 @@ public abstract class Point2D {
 	public abstract double getY();
 	
 	/**
+	 * Set the location of this Point2D using double co-ordinates
 	 * 
-	 * @param x
-	 * @param y
+	 * @param x the x co-ordinate
+	 * @param y the y co-ordinate
 	 */
 	public abstract void setLocation(double x, double y);
 	
+	/**
+	 * Set the location of this Point2D to the same as a specified Point2D
+	 * 
+	 * @param p the specified Point2D
+	 */
     public void setLocation(Point2D p) {
         setLocation(p.getX(), p.getY());
     }
@@ -127,5 +133,13 @@ public abstract class Point2D {
     
     public double distance(Point2D pt) {
     	return Math.sqrt(distanceSq(pt));
+    }
+    
+    public boolean equals(Object obj) {
+	    if (obj instanceof Point2D) {
+	        Point2D p2d = (Point2D) obj;
+	        return (getX() == p2d.getX()) && (getY() == p2d.getY());
+	    }
+	    return super.equals(obj);
     }
 }
