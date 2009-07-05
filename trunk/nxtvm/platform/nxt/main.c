@@ -164,16 +164,21 @@ run(int jsize)
     MasterRecord *mrec = get_master_record();
     int staticSize = mrec->staticStateLength;
     int statusSize = (mrec->lastClass + 1) * sizeof( classStatusBase[0]);
+    int syncSize = (mrec->lastClass + 1) * sizeof(objSync);
 
     staticSize = (staticSize + 3) & ~(3);
     statusSize = (statusSize + 3) & ~(3);
-
+    syncSize = (syncSize + 3) & ~(3);
+  
     ram_end -= staticSize;
     classStaticStateBase = ram_end;
 
     ram_end -= statusSize;
     classStatusBase = ram_end;
 
+    ram_end -= syncSize;
+    staticSyncBase = (objSync *)ram_end;
+    memset( (byte *)staticSyncBase, 0, syncSize);
     memset( classStatusBase, 0, statusSize);
   }
 #endif

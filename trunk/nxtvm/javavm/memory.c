@@ -44,7 +44,7 @@ const byte typeSize[] = {
   2, // 9 == T_SHORT
   4, // 10 == T_INT
   8, // 11 == T_LONG
-  0, // 12
+  0, // 12 == T_VOID
   0, // 13
   4, // 14 Used for multidimensional arrays
 };
@@ -677,6 +677,12 @@ void mem_copy(Object *obj, int objoffset, int base, int offset, int len)
   else
     memcpy(fields_start(obj) + objoffset, memory_base[base]+offset, len);
 }
+
+REFERENCE mem_get_reference(int base, int offset)
+{
+  return (REFERENCE)(memory_base[base] + offset);
+}
+
 
 #if GARBAGE_COLLECTOR == MEM_MARKSWEEP
 /**
@@ -1471,7 +1477,7 @@ Object gcLock = {{
     .objects.mark = GC_BLACK,
     .objects.isArray = 0,
     .objects.isAllocated = 1
-}, 0, 0};
+}, {0, 0}};
 // Mark queue
 #define MAX_CALL_DEPTH 8
 #define MARK_Q_SIZE 64
@@ -1653,8 +1659,8 @@ void memory_add_region (byte *start, byte *end)
   memRequired = 0;
   gcPhase = GC_IDLE;
   // Reset the allocator lock
-  gcLock.monitorCount = 0;
-  gcLock.threadId = 0;
+  gcLock.sync.monitorCount = 0;
+  gcLock.sync.threadId = 0;
   /* memory accounting */
   memory_size += contents_size;
   memory_free += contents_size;
@@ -2091,7 +2097,7 @@ static void sweep()
       if(is_gc_marked(obj))
         clr_gc_marked(obj);
       else
-        if(get_monitor_count(obj) == 0)
+        if(get_monitor_count(&obj->sync) == 0)
         {
           // Set object free
           mf += size;

@@ -11,11 +11,13 @@
 
 // Class flags:
 
-#define C_INITIALIZED 0x01
-#define C_ARRAY       0x02
-#define C_HASCLINIT   0x04
-#define C_INTERFACE   0x08
-#define C_NOREFS      0x10
+#define C_INITIALIZED  0x01
+#define C_ARRAY        0x02
+#define C_HASCLINIT    0x04
+#define C_INTERFACE    0x08
+#define C_NOREFS       0x10
+#define C_PRIMITIVE    0x20
+#define C_INITIALIZING 0x40
 
 typedef struct S_MasterRecord
 {
@@ -50,7 +52,7 @@ typedef struct S_ClassRecord
   /**
    * Object header, to allow access as a Java object.
    */
-  TWOBYTES objectHdr;
+  objFlags objectHdr;
   /**
    * Space occupied by instance in bytes.
    */
@@ -130,6 +132,7 @@ extern byte* staticFieldsBase;
 extern byte* staticStateBase;
 extern byte* entryClassesBase;
 extern ClassRecord* classBase;
+extern objSync *staticSyncBase;
 
 #if EXECUTE_FROM_FLASH
 // base of static area of all classes
@@ -179,11 +182,6 @@ void install_binary( void* ptr);
 
 #if EXECUTE_FROM_FLASH
 #define get_class_status(CREC_)     (classStatusBase[ CREC_ - get_class_base()])
-#define is_initialized(CREC_)       ((get_class_status(CREC_) & C_INITIALIZED) != 0)
-#define is_initialized_idx(CIDX_)   ((classStatusBase[(CIDX_)] & C_INITIALIZED) != 0)
-#else
-#define is_initialized(CREC_)       (((CREC_)->cflags & C_INITIALIZED) != 0)
-#define is_initialized_idx(CIDX_)   ((get_class_record(CIDX_)->cflags & C_INITIALIZED) != 0)
 #endif
 
 #define is_array_class(CREC_)       (((CREC_)->cflags & C_ARRAY) != 0)
@@ -196,12 +194,16 @@ void install_binary( void* ptr);
 #define is_primitive(CLASSIDX_)     ((CLASSIDX_) >= BYTE && (CLASSIDX_) <= LONG )
 #define get_base_type(CLASSIDX_)    (is_primitive(CLASSIDX_) ? (CLASSIDX_) : JAVA_LANG_OBJECT)
 #if EXECUTE_FROM_FLASH
-#define set_initialized(CREC_)      (get_class_status(CREC_) |= C_INITIALIZED)
-#define set_uninitialized(CREC_)    (get_class_status(CREC_) &= ~C_INITIALIZED)
+#define set_init_state(CREC_, state)(get_class_status(CREC_) |= (state))
+#define get_init_state_idx(IDX_)    (classStatusBase[IDX_])
+#define get_init_state(CREC_)       (get_class_status(CREC_))
 #else
-#define set_initialized(CREC_)      ((CREC_)->cflags |= C_INITIALIZED)
-#define set_uninitialized(CREC_)    ((CREC_)->cflags &= ~C_INITIALIZED)
+#define set_init_state(CREC_, state)((CREC_)->cflags |= (state))
+#define get_init_state_idx(IDX_)    (get_class_record(IDX_)->cflags)
+#define get_init_state(CREC_)       ((CREC_)->cflags)
 #endif
+#define is_initialized_idx(IDX_)    (get_init_state_idx(IDX_) & C_INITIALIZED)
+#define is_initialized(CREC_)       (get_init_state(CREC_) & C_INITIALIZED)
 
 #define is_synchronized(MREC_)      (((MREC_)->mflags & M_SYNCHRONIZED) != 0)
 #define is_static(MREC_)      (((MREC_)->mflags & M_STATIC) != 0)
@@ -227,7 +229,6 @@ void install_binary( void* ptr);
 static inline void initialize_binary()
 {
   MasterRecord *mrec;
-  byte i;
   
   mrec = get_master_record();
 
@@ -238,10 +239,6 @@ static inline void initialize_binary()
   /* printf("Length is %d\n",(int) mrec->staticStateLength);*/
   zero_mem ((TWOBYTES *) (get_static_state_base()), (mrec->staticStateLength+1)/2);
 //  printf("Zeroed memory\n");
-  for (i = 0; i <= mrec->lastClass; i++)
-  {
-    set_uninitialized (get_class_record (i)); 	  
-  }
 }
 
 // return codes used to indicate the state of byte code execution

@@ -45,7 +45,7 @@ extern void gc_update_object(Object *obj);
 extern void gc_run_collector(void);
 extern Object gcLock;
 
-#define is_gc_retry() (gcLock.threadId == currentThread->threadId)
+#define is_gc_retry() (gcLock.sync.threadId == currentThread->threadId)
 #define update_array(obj) {if(gcPhase == GC_MARK && ((*(TWOBYTES *)(obj)) & GC_MASK) != GC_MASK) gc_update_array((obj));}
 #define update_object(obj) {if(gcPhase == GC_MARK && ((*(TWOBYTES *)(obj)) & GC_MASK) != GC_MASK) gc_update_object((obj));}
 #define run_collector() (gcPhase != GC_IDLE ? gc_run_collector(), 1 : 0)
@@ -86,8 +86,8 @@ extern Object gcLock;
 
 #define get_array_element_ptr(ARR_,ESIZE_,IDX_) (array_start((ARR_)) + (IDX_) * (ESIZE_))
 
-#define protect_obj(OBJ) ((Object *)OBJ)->monitorCount++
-#define unprotect_obj(OBJ) ((Object *)OBJ)->monitorCount--
+#define protect_obj(OBJ) ((Object *)OBJ)->sync.monitorCount++
+#define unprotect_obj(OBJ) ((Object *)OBJ)->sync.monitorCount--
 
 extern TWOBYTES failed_alloc_size;
 
@@ -118,6 +118,7 @@ extern byte *memory_base[];
 
 extern FOURBYTES mem_peek(int base, int offset, int len);
 extern void mem_copy(Object *obj, int objoffset, int base, int offset, int len);
+extern REFERENCE mem_get_reference(int base, int offset);
 
 #endif // _MEMORY_H
 
