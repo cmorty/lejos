@@ -23,7 +23,7 @@ void set_debug(Debug *_debug)
   debug->threads = threads;
   int i;
   for(i = 0; i < sizeof(debugEventOptions); i++)
-    debugEventOptions[0] = DBG_EVENT_DISABLE;
+    debugEventOptions[i] = DBG_EVENT_DISABLE;
 }
 
 boolean debug_event(int event, Object *exception, const Thread *thread, const MethodRecord *method, byte *pc, int frame)
@@ -40,7 +40,7 @@ boolean debug_event(int event, Object *exception, const Thread *thread, const Me
       break;
   }
   // Check that we have a debugger attached and that it is ready to go...
-  if (!debug || get_monitor_count((&(debug->_super))) != 0 ||
+  if (!debug || get_monitor_count((&(debug->_super.sync))) != 0 ||
       debugThread->state != CONDVAR_WAITING || (Debug *)debugThread->waitingOn != debug)
     return false;
   // Setup the state

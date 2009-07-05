@@ -102,19 +102,20 @@ int throw_exception (Object *exception)
   #endif // VERIFY
   // abort the current instruction so things are in a consistant state
   curPc = getPc();
+  // record current state
   gExceptionPc = curPc;
-  gExcepMethodRec = null;
+  tempStackFrame = current_stackframe();
+  update_stack_frame(tempStackFrame);
+  gExcepMethodRec = tempStackFrame->methodRecord;;
+  auxThread = currentThread;
 
   #if 0
   trace (-1, get_class_index(exception), 3);
   #endif
 
  LABEL_PROPAGATE:
-  tempStackFrame = current_stackframe();
   tempMethodRecord = tempStackFrame->methodRecord;
 
-  if (gExcepMethodRec == null)
-    gExcepMethodRec = tempMethodRecord;
   gExceptionRecord = (ExceptionRecord *) (get_binary_base() + tempMethodRecord->exceptionTable);
   tempCurrentOffset = ptr2word(curPc) - ptr2word(get_binary_base() + tempMethodRecord->codeOffset);
 
@@ -150,7 +151,6 @@ int throw_exception (Object *exception)
     gExceptionRecord++;
   }
   // No good handlers in current stack frame - go up.
-  auxThread = currentThread;
   do_return (0);
   // Note: return takes care of synchronized methods.
   if (auxThread->state == DEAD)
@@ -163,7 +163,11 @@ int throw_exception (Object *exception)
 #if DEBUG_EXCEPTIONS
   printf("Handle uncaught exception\n");
 #endif
-
+      // Restore the stack and pc of the exception thread. This prevents
+      // corruption of lower frames if we save the current state. The
+      // thread is now dead so this should be safe.
+      curPc = gExceptionPc;
+      currentThread->stackFrameArraySize = exceptionFrame;
       if (!debug_uncaught_exception (exception, auxThread,
   			         gExcepMethodRec, tempMethodRecord,
 			         gExceptionPc, exceptionFrame))
@@ -174,11 +178,12 @@ int throw_exception (Object *exception)
     return EXEC_CONTINUE;
   }
   // After the return the address will point to the next, instruction, we need
-  // to back it off to point to the actual caller...Not that this does not 
+  // to back it off to point to the actual caller...Note that this does not 
   // need to point at the start of the instruction since the only use made of
   // PC here is to locate the exception handler, so we can get away with it
   // pointing into the middle...
   curPc--;
+  tempStackFrame = current_stackframe();
   goto LABEL_PROPAGATE; 
 }
 

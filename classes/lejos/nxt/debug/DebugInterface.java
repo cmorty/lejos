@@ -1,8 +1,5 @@
 package lejos.nxt.debug;
 
-import java.util.*;
-import lejos.nxt.*;
-
 /**
  * This class provides the primary interface to the debug capabilities of leJOS.
  * It has two main functions:
@@ -17,7 +14,7 @@ import lejos.nxt.*;
  */
 public class DebugInterface
 {
-    private static DebugInterface monitor = new DebugInterface(true);
+    private static final DebugInterface monitor = new DebugInterface(true);
     public static final int DBG_EXCEPTION = 1;
     public static final int DBG_USER_INTERRUPT = 2;
     public static final int DBG_EVENT_DISABLE = 0;
@@ -26,14 +23,14 @@ public class DebugInterface
     // This is reflected in the kernel structure  
     public int typ;                // type of debug event
     public Exception exception;
-    public DebugThread thread;
+    public Thread thread;
     public int pc;
     public int frame;
     public int method;
     public int methodBase;
     public int classBase;
     public int fieldBase;
-    public DebugThread[] threads;
+    public Thread[] threads;
 
     private native static int getDataAddress (Object obj);
     
@@ -78,33 +75,6 @@ public class DebugInterface
      */
     private native final void setDebug();
 
-    /**
-     * Allow access to VM data structures
-     * @param addr the address in the VM memory of a word
-     * @return the value of the word at addr
-     */
-    protected native static final int peekWord(int addr);
-    
-    /**
-     * Allow access to VM data structures
-     * @param obj the object to peek into
-     * @param offset the address in the VM memory of a word
-     * @return the value of the word at addr
-     */
-    protected static final int peekWord(Object obj, int offset)
-    {
-        return peekWord(getAddress(obj) + offset);
-    }
-    
-    /**
-     * Return the actual VM address of an object.
-     * @param obj
-     * @return the address of the object
-     */
-    protected static final int getAddress(Object obj)
-    {
-        return getDataAddress(obj);
-    }
 
     /**
      * Allow events to be enabled/disabled/ignored. Disabled events will
@@ -116,12 +86,6 @@ public class DebugInterface
      */
     public native static final int eventOptions(int event, int option);
     
-    /**
-     * leJOS allows several "programs" to be linked into a single nxj file
-     * the system by default will start excution of program 0. This function
-     * allows other programs to be called.
-     * @param progNo program number to call
-     */
-    static public native void executeProgram(int progNo);
+
 
 }
