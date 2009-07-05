@@ -1,9 +1,6 @@
 package lejos.nxt.debug;
 
-import java.util.*;
 import lejos.nxt.*;
-import lejos.nxt.comm.*;
-import java.io.PrintStream;
 
 /**
  * Simple debug monitor that can be run alongside and nxj program. This class
@@ -23,17 +20,21 @@ public class DebugMonitor
      */
     static void displayException(DebugInterface info)
     {
-        DebugStackFrame fi = new DebugStackFrame(info);
-        DebugObject oi = new DebugObject(info);
+        VM vm = VM.getVM();
+        int base = vm.getImage().getImageBase();
         System.err.println("Java Exception");
-        System.err.println("Class: " + oi.getClassIndex(info.exception));
-        System.err.println("Method: " + info.method + "(" + info.pc + ")");
+        System.err.println("Class: " + vm.getVMClass(info.exception).getClassNo());
         String msg = info.exception.getMessage();
         if (msg != null && msg.length() > 0)
             System.err.println("Msg: " + msg);
-        int sp = info.frame - 1;
-        for (int i = 3; i < 8 && sp-- > 0; i++)
-            System.err.println("Called from: " + fi.getMethodIndex(info.thread, sp));
+        System.err.println(" at: " + info.method + "(" + info.pc + ")");
+        int cnt = 0;
+        VM.VMStackFrames stack = vm.getVMThread(info.thread).getStackFrames(info.frame-1);
+        for(VM.VMStackFrame sf : stack)
+        {
+            System.err.println(" at: " + sf.getVMMethod().getMethodNumber() + "(" + (sf.pc-base) + ")");
+            if (cnt++ > 5) break;
+        }
     }
     static String[] states = {"N", "D", "I", "R", "E", "W", "S"};
 
@@ -46,25 +47,23 @@ public class DebugMonitor
      */
     static void displayThreads(DebugInterface info)
     {
-        DebugStackFrame fi = new DebugStackFrame(info);
-        DebugThread[] threads = info.threads;
-        for (int i = 0; i < threads.length; i++)
-            if (threads[i] != null)
+        VM vm = VM.getVM();
+        VM.VMThreads threads = vm.getVMThreads();
+        for(VM.VMThread thread : threads)
+        {
+
+            String out = "";
+            out += thread.threadId;
+            out += (thread.getJavaThread() == info.thread ? "*" : states[thread.state & 0x7f]);
+            int cnt = 0;
+            VM.VMStackFrames stack = thread.getStackFrames();
+            for(VM.VMStackFrame frame : stack)
             {
-                DebugThread start = threads[i];
-                DebugThread th = threads[i];
-                do
-                {
-                    String out = "";
-                    out += th.threadId;
-                    out += (th == info.thread ? "*" : states[th.state & 0x7f]);
-                    int sp = th.stackFrameArraySize;
-                    for (int j = 0; j < 3 && sp-- > 0; j++)
-                        out += " " + fi.getMethodIndex(th, sp);
-                    System.err.println(out);
-                    th = th.nextThread;
-                } while (th != start);
+                out += " " + frame.getVMMethod().getMethodNumber();
+                if (++cnt >= 3) break;
             }
+            System.err.println(out);
+        }
     }
 
     public static void main(String[] args) throws Exception
@@ -80,13 +79,13 @@ public class DebugMonitor
 
             public void run()
             {
-                 DebugInterface.executeProgram(1);
+                 VM.executeProgram(1);
             }
         };
         // Make sure we keep running when we start the program
         Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
         // Enable stricter run time type checking
-        System.enableRunTimeTypeChecks(true);
+        VM.setVMOptions(VM.getVMOptions() | VM.VM_TYPECHECKS);
         prog.start();
         while (true)
         {
@@ -124,7 +123,7 @@ public class DebugMonitor
             LCD.clear();
             // Clear the event
             monitor.clear();
-            DebugThreads.resumeThread(null);
+            VM.resumeThread(null);
         }
     }
 }
