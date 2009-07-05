@@ -85,10 +85,11 @@ inline void set_monitor_count (Object *obj, byte count)
 }
 */
 
-#define get_thread_id(obj) ((obj)->threadId)
-#define set_thread_id(obj,_threadId) ((obj)->threadId = (_threadId))
-#define inc_monitor_count(obj) ((obj)->monitorCount++)
-#define set_monitor_count(obj,count) ((obj)->monitorCount = (count))
+#define get_thread_id(sync) ((sync)->threadId)
+#define set_thread_id(sync,_threadId) ((sync)->threadId = (_threadId))
+#define inc_monitor_count(sync) ((sync)->monitorCount++)
+#define set_monitor_count(obj,count) ((sync)->monitorCount = (count))
+
 /**
  * Initialise the thread pool. Note we use a Java object so that we can make
  * the pool available to Java.
@@ -105,7 +106,7 @@ void init_threads()
   {
     *pQ++ = null;
   }
-  memory_base[MEM_THREADS] = (byte *)threads;
+  memory_base[MEM_THREADS] = (byte *)threadQ;
   memory_base[MEM_IMAGE] = (byte *)installedBinary;
   memory_base[MEM_STATICS] = (byte *)classStaticStateBase;
 }
@@ -285,27 +286,23 @@ boolean switch_thread()
           // drop through
         case MON_WAITING:
           {
-            Object *pObj = word2obj(candidate->waitingOn);
-            byte threadId = get_thread_id(pObj);
+            objSync *sync = candidate->sync;
+            byte threadId = get_thread_id(sync);
 
-            // We are waiting to enter a synchronized block
-            #ifdef VERIFY
-            assert (pObj != JNULL, THREADS6);
-            #endif
-             
             if (threadId == NO_OWNER)
             {
               // NOW enter the monitor (guaranteed to succeed)
-              enter_monitor(candidate, pObj);
+              enter_monitor(candidate, word2obj(candidate->waitingOn));
               
               // Set the monitor depth to whatever was saved.
-              set_monitor_count(pObj, candidate->monitorCount);
+              set_monitor_count(sync, candidate->monitorCount);
               
               // Let the thread run.
               candidate->state = RUNNING;
   
               #ifdef SAFE
               candidate->waitingOn = JNULL;
+              candidate->sync = JNULL;
               #endif
             }
 #if PI_AVOIDANCE
@@ -340,7 +337,7 @@ find_next:
             		      // if owner is waiting too, iterate down.
             		      if (pOwner->state == MON_WAITING)
             		      {
-            			    threadId = get_thread_id(word2obj(pOwner->waitingOn));
+            			    threadId = get_thread_id(pOwner->sync);
             			    if (threadId != NO_OWNER)
             				  goto find_next;
             		      }
@@ -511,7 +508,7 @@ printf ("currentThread=%d, ndr=%d\n", (int) currentThread, (int)nonDaemonRunnabl
  * Current thread will wait on the specified object, waiting for a 
  * system_notify. Note the thread does not need to own the object,
  * to wait on it. However it will wait to own the monitor for the
- * objevt once the wait is complete.
+ * object once the wait is complete.
  */
 void system_wait(Object *obj)
 {
@@ -526,6 +523,7 @@ void system_wait(Object *obj)
   
   // Save the object who's monitor we will want back
   currentThread->waitingOn = ptr2ref (obj);
+  currentThread->sync = get_sync(obj);
   
   // no time out
   currentThread->sleepUntil = 0;
@@ -578,10 +576,11 @@ void system_notify(Object *obj, const boolean all)
  */
 int monitor_wait(Object *obj, const FOURBYTES time)
 {
+  objSync *sync = get_sync(obj);
 #if DEBUG_MONITOR
   printf("monitor_wait of %d, thread %d(%d)\n",(int)obj, (int)currentThread, currentThread->threadId);
 #endif
-  if (currentThread->threadId != get_thread_id (obj))
+  if (currentThread->threadId != get_thread_id (sync))
     return throw_exception(illegalMonitorStateException);
   
   // Great. We own the monitor which means we can give it up, but
@@ -589,11 +588,11 @@ int monitor_wait(Object *obj, const FOURBYTES time)
   currentThread->state = CONDVAR_WAITING;
   
   // Save monitor depth
-  currentThread->monitorCount = get_monitor_count(obj);
+  currentThread->monitorCount = get_monitor_count(sync);
   
   // Save the object who's monitor we will want back
   currentThread->waitingOn = ptr2ref (obj);
-  
+  currentThread->sync = sync;
   // Might be an alarm set too.
   if (time > 0)
     currentThread->sleepUntil = get_sys_time() + time; 	
@@ -605,8 +604,8 @@ int monitor_wait(Object *obj, const FOURBYTES time)
 #endif
 
   // Indicate that the object's monitor is now free.
-  set_thread_id (obj, NO_OWNER);
-  set_monitor_count(obj, 0);
+  set_thread_id (sync, NO_OWNER);
+  set_monitor_count(sync, 0);
   
   // Gotta yield
   schedule_request( REQUEST_SWITCH_THREAD);
@@ -619,10 +618,11 @@ int monitor_wait(Object *obj, const FOURBYTES time)
  */
 int monitor_notify(Object *obj, const boolean all)
 {
+  objSync *sync = get_sync(obj);
 #if DEBUG_MONITOR
   printf("monitor_notify of %d, thread %d(%d)\n",(int)obj, (int)currentThread, currentThread->threadId);
 #endif
-  if (currentThread->threadId != get_thread_id (obj))
+  if (currentThread->threadId != get_thread_id (sync))
     return throw_exception(illegalMonitorStateException);
   
   monitor_notify_unchecked(obj, all);
@@ -674,6 +674,7 @@ void monitor_notify_unchecked(Object *obj, const boolean all)
  */
 void enter_monitor (Thread *pThread, Object* obj)
 {
+  objSync *sync;
 #if DEBUG_MONITOR
   printf("enter_monitor of %d\n",(int)obj);
 #endif
@@ -683,20 +684,21 @@ void enter_monitor (Thread *pThread, Object* obj)
     throw_exception (nullPointerException);
     return;
   }
-
-  if (get_monitor_count (obj) != NO_OWNER && pThread->threadId != get_thread_id (obj))
+  sync = get_sync(obj);
+  if (get_monitor_count (sync) != NO_OWNER && pThread->threadId != get_thread_id (sync))
   {
     // There is an owner, but its not us.
     // Make thread wait until the monitor is relinquished.
     pThread->state = MON_WAITING;
     pThread->waitingOn = ptr2ref (obj);
+    pThread->sync = sync;
     pThread->monitorCount = 1;
     // Gotta yield
     schedule_request (REQUEST_SWITCH_THREAD);    
     return;
   }
-  set_thread_id (obj, pThread->threadId);
-  inc_monitor_count (obj);
+  set_thread_id (sync, pThread->threadId);
+  inc_monitor_count (sync);
 }
 
 /**
@@ -706,6 +708,7 @@ void enter_monitor (Thread *pThread, Object* obj)
 void exit_monitor (Thread *pThread, Object* obj)
 {
   byte newMonitorCount;
+  objSync *sync;
 
 #if DEBUG_MONITOR
   printf("exit_monitor of %d\n",(int)obj);
@@ -716,16 +719,16 @@ void exit_monitor (Thread *pThread, Object* obj)
     // Exiting due to a NPE on monitor_enter [FIX THIS]
     return;
   }
-
+  sync = get_sync(obj);
   #ifdef VERIFY
-  assert (get_thread_id(obj) == pThread->threadId, THREADS7);
-  assert (get_monitor_count(obj) > 0, THREADS8);
+  assert (get_thread_id(sync) == pThread->threadId, THREADS7);
+  assert (get_monitor_count(sync) > 0, THREADS8);
   #endif
 
-  newMonitorCount = get_monitor_count(obj)-1;
+  newMonitorCount = get_monitor_count(sync)-1;
   if (newMonitorCount == 0)
-    set_thread_id (obj, NO_OWNER);
-  set_monitor_count (obj, newMonitorCount);
+    set_thread_id (sync, NO_OWNER);
+  set_monitor_count (sync, newMonitorCount);
 }
 
 /**

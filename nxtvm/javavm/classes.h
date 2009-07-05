@@ -31,17 +31,12 @@
 
 #define is_array(OBJ_)           ((OBJ_)->flags.objects.isArray)
 #define is_allocated(OBJ_)       ((OBJ_)->flags.freeBlock.isAllocated)
-#define get_monitor_count(OBJ_)  ((OBJ_)->monitorCount)
+#define get_monitor_count(SYNC_)  ((SYNC_)->monitorCount)
 #define is_gc(OBJ_)              ((OBJ_)->flags.objects.mark)
 
 // Double-check these data structures with the 
 // Java declaration of each corresponding class.
 
-/**
- * Object class native structure
- */
-typedef struct S_Object
-{
   /**
    * Object/block flags.
    * Free block:
@@ -60,38 +55,47 @@ typedef struct S_Object
    *  -- bit 14   : One (is an array).
    *  -- bit 15   : One (allocated).
    */
-   union _flags
-   {
-     TWOBYTES all;
-     struct _freeBlock
-     {
-       TWOBYTES size:15;
-       TWOBYTES isAllocated:1;
-     }  __attribute__((packed)) freeBlock;
-     struct _objects
-     {
-       byte     class;
-       byte     padding:4;
-       byte     mark:2;
-       byte     isArray:1;
-       byte     isAllocated:1;
-     }  __attribute__((packed)) objects;
-     struct _arrays
-     {
-       TWOBYTES length:8;
-       TWOBYTES type:4;
-       TWOBYTES mark:2;
-       TWOBYTES isArray:1;
-       TWOBYTES isAllocated:1;
-     } __attribute__((packed)) arrays;
-   } __attribute__((packed)) flags;
-
-  /**
-   * Synchronization state.
-   */
+typedef union _flags
+{
+  TWOBYTES all;
+  struct _freeBlock
+  {
+    TWOBYTES size:15;
+    TWOBYTES isAllocated:1;
+  }  __attribute__((packed)) freeBlock;
+  struct _objects
+  {
+    byte     class;
+    byte     padding:4;
+    byte     mark:2;
+    byte     isArray:1;
+    byte     isAllocated:1;
+  }  __attribute__((packed)) objects;
+  struct _arrays
+  {
+    TWOBYTES length:8;
+    TWOBYTES type:4;
+    TWOBYTES mark:2;
+    TWOBYTES isArray:1;
+    TWOBYTES isAllocated:1;
+  } __attribute__((packed)) arrays;
+} __attribute__((packed)) objFlags;
+/**
+ * Synchronization state.
+ */
+typedef struct
+{
   byte monitorCount;
   byte threadId;
+} __attribute__((packed)) objSync;
 
+/**
+ * Object class native structure
+ */
+typedef struct S_Object
+{
+  objFlags flags;
+  objSync sync;
 } __attribute__((packed)) Object;
 
 typedef struct S_BigArray
@@ -110,6 +114,7 @@ typedef struct S_Thread
 
   REFERENCE nextThread;      // Intrinsic circular list of threads
   REFERENCE waitingOn;       // Object who's monitor we want
+  objSync *sync;             // Pointer to the sync data for the object
   JINT sleepUntil;           // Time to wake up
   REFERENCE stackFrameArray; // Array of stack frames
   REFERENCE stackArray;      // The stack itself

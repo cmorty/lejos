@@ -30,6 +30,7 @@ ConstantRecord* constantTableBase;
 byte* staticFieldsBase;
 byte* entryClassesBase;
 ClassRecord* classBase;
+objSync *staticSyncBase;
 
 #if EXECUTE_FROM_FLASH
 byte *classStaticStateBase;
@@ -92,29 +93,64 @@ MethodRecord *find_method (ClassRecord *classRecord, int methodSignature)
 }
 
 /**
- * Exceute the static initializer if required.
+ * Exceute the static initializer if required. Note that the ret address used
+ * here is set such that the current instruction will be re-started when the
+ * initialization completes.
  * @return An indication of how the VM should proceed
  */
 int dispatch_static_initializer (ClassRecord *aRec, byte *retAddr)
 {
+  int state = get_init_state(aRec);
+  ClassRecord *init = aRec;
+  ClassRecord *super = get_class_record(init->parentClass);
   // Are we needed?
-  if (is_initialized (aRec))
-    return EXEC_CONTINUE;
-  // Do we have one?
-  if (!has_clinit (aRec))
+  if (state & C_INITIALIZED) return EXEC_CONTINUE;
+  // We need to initialize all of the super classes first. So we find the
+  // highest one that has not been initialized and deal with that. This code
+  // will then be called again and we will init the next highest and so on
+  // until all of the classes in the chain are done.
+  for(;;)
   {
-    set_initialized (aRec);
-    return EXEC_CONTINUE;
+    // find first super class that has not been initialized
+    while (init != super && (get_init_state(super) & C_INITIALIZED) == 0)
+    {
+      init = super;
+      super = get_class_record(init->parentClass);
+    }
+    // Do we have an initilizer if so we have found our class
+    if (has_clinit (init)) break;
+    // no initializer so mark as now initialized
+    set_init_state (init, C_INITIALIZED);
+    // If we are at the start of the list we are done
+    if (init == aRec) return EXEC_CONTINUE;
+    // Otherwise go do it all again
+    init = aRec;
+  }
+  state = get_init_state(init);
+  // are we already initializing ?
+  if (state & C_INITIALIZING)
+  {
+    // Is it this thread that is doing the init?
+    if (get_sync(init)->threadId == currentThread->threadId)
+      return EXEC_CONTINUE;
+    // No so we must retry the current instruction
+    curPc = retAddr;
+    sleep_thread(1);
+    schedule_request(REQUEST_SWITCH_THREAD);
+    return EXEC_RETRY;
   }
   #if DEBUG_METHODS
   printf ("dispatch_static_initializer: has clinit: %d, %d\n",
           (int) aRec, (int) retAddr);
   #endif
   // Can we run it?
-  if (!dispatch_special (find_method (aRec, _6clinit_7_4_5V), retAddr))
+  if (!dispatch_special (find_method (init, _6clinit_7_4_5V), retAddr))
     return EXEC_RETRY;
   // Mark for next time
-  set_initialized (aRec);
+  set_init_state(init, C_INITIALIZING);
+  // and claim the monitor
+  current_stackframe()->monitor = (Object *)init;
+  enter_monitor (currentThread, (Object *)init);
   return EXEC_RUN;
 }
 
@@ -186,12 +222,22 @@ void dispatch_special_checked (byte classIndex, byte methodIndex,
   methodRecord = get_method_record (classRecord, methodIndex);
   if(dispatch_special (methodRecord, retAddr))
   {
-    if (is_synchronized(methodRecord) && !is_static(methodRecord))
+    if (is_synchronized(methodRecord))
     {
+      if (!is_static(methodRecord))
+      {
 
-      Object *ref = (Object *)curLocalsBase[0];
-      current_stackframe()->monitor = ref;
-      enter_monitor (currentThread, ref);
+        Object *ref = (Object *)curLocalsBase[0];
+        current_stackframe()->monitor = ref;
+        enter_monitor (currentThread, ref);
+      }
+      else
+      {
+
+        Object *ref = (Object *)classRecord;
+        current_stackframe()->monitor = ref;
+        enter_monitor (currentThread, ref);
+      }
     }
   }
 }
@@ -424,7 +470,12 @@ void do_return (int numWords)
   assert (stackFrame != null, LANGUAGE3);
   #endif
   if (stackFrame->monitor != null)
+  {
+    // if this was a class init then mark the class as now complete
+    if (stackFrame->methodRecord->signatureId ==  _6clinit_7_4_5V)
+      set_init_state((ClassRecord *)(stackFrame->monitor), C_INITIALIZED);
     exit_monitor (currentThread, stackFrame->monitor);
+  }
 
   #if DEBUG_THREADS || DEBUG_METHODS
   printf ("do_return: stack frame array size: %d\n", currentThread->stackFrameArraySize);

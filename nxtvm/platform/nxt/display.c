@@ -42,8 +42,8 @@ static const struct
     .arrays.isArray = 1,
     .arrays.isAllocated = 1
    },
-   0,
-   0
+   {0,
+   0}
   },
   N_CHARS*FONT_WIDTH
  },
@@ -562,8 +562,8 @@ display_init(void)
   display_array.arrayHdr.hdr.flags.arrays.length = BIGARRAYLEN;
   display_array.arrayHdr.hdr.flags.arrays.isAllocated = 1;
   display_array.arrayHdr.hdr.flags.arrays.type = T_INT;
-  display_array.arrayHdr.hdr.monitorCount = 0;
-  display_array.arrayHdr.hdr.threadId = 0;
+  display_array.arrayHdr.hdr.sync.monitorCount = 0;
+  display_array.arrayHdr.hdr.sync.threadId = 0;
   display_array.arrayHdr.length = DISPLAY_DEPTH*DISPLAY_WIDTH;
 /*
   // We use the same trick for the font characters

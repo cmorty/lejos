@@ -79,6 +79,7 @@ extern void resume_thread(Thread *thread);
 #define set_program_number(N_)   {gProgramNumber = (N_);}
 #define inc_program_number()     {if (++gProgramNumber >= get_num_entry_classes()) gProgramNumber = 0;}
 #define get_program_number()     gProgramNumber 
+#define get_sync(obj) (get_class_index((Object *)(obj)) == JAVA_LANG_CLASS ? staticSyncBase + ((ClassRecord *)(obj) - get_class_base()) : &(((Object *)(obj))->sync))
 
 /**
  * Sets thread state to SLEEPING.

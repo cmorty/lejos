@@ -42,7 +42,7 @@ void poll_inputs()
 
     // If we're not polling or someone already has the monitor
     // return.
-    if (!poller || get_monitor_count((&(poller->_super))) != 0)
+    if (!poller || get_monitor_count((&(poller->_super.sync))) != 0)
       return;
 
     // We do not have a thread that we can use to grab
