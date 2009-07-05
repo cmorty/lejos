@@ -24,6 +24,7 @@ public class TinyVMType
    public static final byte T_SHORT_TYPE = Constants.T_SHORT;
    public static final byte T_INT_TYPE = Constants.T_INT;
    public static final byte T_LONG_TYPE = Constants.T_LONG;
+   public static final byte T_VOID_TYPE = Constants.T_VOID;
    public static final byte T_ARRAY_TYPE = T_REFERENCE_TYPE;
    public static final byte T_OBJECT_TYPE = T_REFERENCE_TYPE;
 
@@ -40,6 +41,7 @@ public class TinyVMType
    public static final TinyVMType T_SHORT = new TinyVMType(T_SHORT_TYPE, 2, "short", "S");
    public static final TinyVMType T_INT = new TinyVMType(T_INT_TYPE, 4, "int", "I");
    public static final TinyVMType T_LONG = new TinyVMType(T_LONG_TYPE, 8, "long", "J");
+   public static final TinyVMType T_VOID = new TinyVMType(T_VOID_TYPE, 0, "void", "V");
    public static final TinyVMType T_ARRAY = T_REFERENCE;
    public static final TinyVMType T_OBJECT = T_REFERENCE;
    public static final TinyVMType T_CLASS = new TinyVMType(T_CLASS_TYPE, 1, "java.lang.Class", "L");
@@ -196,6 +198,10 @@ public class TinyVMType
          {
             return T_LONG;
          }
+         case Constants.T_VOID:
+         {
+             return T_VOID;
+         }
          case Constants.T_ARRAY:
          {
             return T_ARRAY;
@@ -206,6 +212,7 @@ public class TinyVMType
          }
          default:
          {
+            System.out.println("Unknown type " + type);
             assert false: "Check: Known type";
             return null;
          }

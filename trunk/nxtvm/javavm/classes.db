@@ -13,8 +13,8 @@
 
 java/lang/Object
 java/lang/Thread
-java/lang/String
 java/lang/Class
+java/lang/String
 boolean
 char
 float
@@ -23,6 +23,7 @@ byte
 short
 int
 long
+void
 [Ljava/lang/Object;
 java/lang/Throwable
 java/lang/Error
