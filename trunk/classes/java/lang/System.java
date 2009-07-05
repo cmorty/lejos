@@ -128,7 +128,7 @@ public final class System
    setVMOptions(cur);
  }
 
-
+ public static native long nanoTime();
 
 }
 

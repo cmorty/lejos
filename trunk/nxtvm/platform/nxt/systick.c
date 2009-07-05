@@ -67,6 +67,25 @@ systick_get_ms(void)
   return systick_ms;
 }
 
+U64
+systick_get_ns(void)
+{
+  U32 ms;
+  U32 piir;
+  U32 ns;
+
+  do {
+    ms = systick_ms;
+    piir = *AT91C_PITC_PIIR;
+  } while (systick_ms != ms);
+  // add in any missed ms
+  ms += (piir  >> 20);
+  // get us
+  ns = ((piir & AT91C_PITC_CPIV)*1000)/(CLOCK_FREQUENCY/16/1000000);
+  return (U64)ms*1000000 + ns;
+}
+
+
 void
 systick_wait_ms(U32 ms)
 {
