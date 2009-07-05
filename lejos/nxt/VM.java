@@ -1,5 +1,6 @@
 package lejos.nxt;
 import java.util.Iterator;
+import lejos.nxt.comm.RConsole;
 
 /**
  * This class provides access to many of the internal structures of the leJOS
@@ -30,7 +31,7 @@ public class VM
     private static final int OBJ_BIGARRAY_LEN = 4;
     private static final int OBJ_BIGARRAY_CLASS = 6;
     private static final int OBJ_ARRAY = 0x40;
-    private static final int SIMPLE_ARRAY_CLASS_BASE = 12;
+    private static final int SIMPLE_ARRAY_CLASS_BASE = 13;
 
     // Basic variable types used within the VM
     public static final int VM_OBJECT = 0;
@@ -44,9 +45,10 @@ public class VM
     public static final int VM_SHORT = 9;
     public static final int VM_INT = 10;
     public static final int VM_LONG = 11;
+    public static final int VM_VOID = 12;
 
     // The base address of the in memory program header
-    private int IMAGE_BASE;
+    private static final int IMAGE_BASE = memPeekInt(MEM, IMAGE*4);
     private int METHOD_BASE;
     private static final int METHOD_OFFSET = 4;
     private static VM theVM;
@@ -54,10 +56,9 @@ public class VM
     // Singleton don't allow new from other classes
     private VM()
     {
-        IMAGE_BASE = memPeekInt(MEM, IMAGE*4);
+        //IMAGE_BASE = memPeekInt(MEM, IMAGE*4);
         image = new VMImage(IMAGE_BASE);
         METHOD_BASE = memPeekShort(ABSOLUTE, IMAGE_BASE+IMAGE_HDR_LEN+METHOD_OFFSET) + IMAGE_BASE;
-        System.out.println("method base " + METHOD_BASE);
     }
 
     /**
@@ -72,34 +73,6 @@ public class VM
             theVM = new VM();
         return theVM;
     }
-
-    /**
-     * Class used to create a Java reference to an in memory data structure.
-     * This class can be used to turn an in memory structure (like a VMClass or
-     * VMThread), into an actual Java object. The in memory structure must have
-     * the required format (and memory alignment), along with an Object header.
-     * To do this it takes an address as an integer and uses the direct memory
-     * access routines to write that integer into a reference variable of the
-     * correct type. Take great care when using this!
-     * @param <T>
-     */
-    private class RefFactory<T>
-    {
-        private T obj;
-        private int addr;
-
-        public T makeRef(int addr)
-        {
-            this.addr = addr;
-            memCopy(this, 0, ABSOLUTE, getDataAddress(this) + 4, 4);
-            return obj;
-        }
-    }
-
-    // The following are used to create Class and Thread objects that reference
-    // the in memory structures.
-    private RefFactory<Class> classFactory = new RefFactory<Class>();
-    private RefFactory<Thread> threadFactory = new RefFactory<Thread>();
 
 
     // Low level memory access functions
@@ -136,6 +109,8 @@ public class VM
      * @return the required address
      */
     private native static int getObjectAddress(Object obj);
+
+    private native static Object memGetReference(int base, int offset);
 
     /**
      * Return a single byte from the specified memory location.
@@ -213,10 +188,6 @@ public class VM
     // The following allow access to in memory values
     private byte []rawBytes = new byte[8];
     private byte []swappedBytes = new byte[8];
-    // Number of bytes for a basic type
-    private static int[] lengths = {4, 0, 0, 0, 1, 2, 4, 8, 1, 2, 4, 8};
-    // Offset to the corresponding field in the VMValue Object
-    private static int[] offsets = {4, 0, 0, 0, 37, 32, 12, 16, 36, 34, 8, 24};
 
     /**
      * Class that represents a value within the VM. The type field indicates the
@@ -236,6 +207,11 @@ public class VM
         public short shortVal; // 34
         public byte byteVal; // 36
         public boolean booleanVal; // 37
+
+        // Number of bytes for a basic type
+        private static final int[] lengths = {4, 0, 0, 0, 1, 2, 4, 8, 1, 2, 4, 8};
+        // Offset to the corresponding field in the VMValue Object
+        private static final int[] offsets = {4, 0, 0, 0, 37, 32, 12, 16, 36, 34, 8, 24};
 
         VMValue(int typ, byte[] bytes)
         {
@@ -304,6 +280,15 @@ public class VM
             return new VMStaticFields(staticFieldsOffset+IMAGE_BASE, numStaticFields);
         }
 
+        /**
+         * Get the base address for the current image, useful when converting
+         * real address to relative ones.
+         * @return
+         */
+        public int getImageBase()
+        {
+            return IMAGE_BASE;
+        }
     }
 
     // Cached version of the image header.
@@ -383,7 +368,7 @@ public class VM
             int rec = memPeekShort(ABSOLUTE, addr);
             int typ = (rec >> 12) & 0xf;
             int offset = rec & 0xfff;
-            memCopy(swappedBytes, 0, STATICS, offset, lengths[typ]);
+            memCopy(swappedBytes, 0, STATICS, offset, VMValue.lengths[typ]);
             return new VMValue(typ, swappedBytes);
         }
 
@@ -424,7 +409,7 @@ public class VM
                     chars[i] = (char)memPeekByte(ABSOLUTE, offset+i);
                 return new VMValue(typ, new String(chars));
             }
-            len = lengths[typ];
+            len = VMValue.lengths[typ];
             memCopy(rawBytes, 0, ABSOLUTE, offset, len);
             for(int i = 0; i < len; i++)
                 swappedBytes[i] = rawBytes[(len-1) - i];
@@ -601,7 +586,8 @@ public class VM
          */
         public Class getJavaClass()
         {
-            return classFactory.makeRef(getClassAddress(clsNo));
+            //return classFactory.makeRef(getClassAddress(clsNo));
+            return (Class) memGetReference(ABSOLUTE, getClassAddress(clsNo));
         }
     }
 
@@ -653,10 +639,10 @@ public class VM
             int typ = memPeekByte(ABSOLUTE, itemData++);
             while (item-- > 0)
             {
-                offset += lengths[typ];
+                offset += VMValue.lengths[typ];
                 typ = memPeekByte(ABSOLUTE, itemData++);
             }
-            memCopy(swappedBytes, 0, ABSOLUTE, offset, lengths[typ]);
+            memCopy(swappedBytes, 0, ABSOLUTE, offset, VMValue.lengths[typ]);
             return new VMValue(typ, swappedBytes);
         }
     }
@@ -684,8 +670,8 @@ public class VM
         public VMValue get(int item)
         {
             if (item >= cnt) return null;
-            int offset = arrayBase + item*lengths[typ];
-            memCopy(swappedBytes, 0, ABSOLUTE, offset, lengths[typ]);
+            int offset = arrayBase + item*VMValue.lengths[typ];
+            memCopy(swappedBytes, 0, ABSOLUTE, offset, VMValue.lengths[typ]);
             return new VMValue(typ, swappedBytes);
         }
 
@@ -703,7 +689,7 @@ public class VM
      * @param clsNo
      * @return the address of the object
      */
-    private int getClassAddress(int clsNo)
+    private static int getClassAddress(int clsNo)
     {
         return IMAGE_BASE + IMAGE_HDR_LEN + clsNo*((CLASS_LEN+CLASS_OBJ_HDR +1) & ~1);
     }
@@ -748,7 +734,8 @@ public class VM
      */
     public Class getClass(Object obj)
     {
-        return classFactory.makeRef(getClassAddress(getClassNo(obj)));
+        //return classFactory.makeRef(getClassAddress(getClassNo(obj)));
+        return (Class) memGetReference(ABSOLUTE, getClassAddress(getClassNo(obj)));
     }
 
     /**
@@ -760,6 +747,11 @@ public class VM
     public VMClass getVMClass(Object obj)
     {
         return new VMClass(getClassAddress(getClassNo(obj)));
+    }
+
+    public static Class getPrimitiveClass(int clsNo)
+    {
+        return (Class) memGetReference(ABSOLUTE, getClassAddress(clsNo));
     }
 
     /**
@@ -851,7 +843,6 @@ public class VM
         VMStackFrames(Object stackFrame, int size)
         {
             super(size);
-     System.out.println("new stack frame size " + size);
             base = getDataAddress(stackFrame);
             this.size = size;
         }
@@ -864,7 +855,7 @@ public class VM
     }
 
     // Provide access to the internal Thread data.
-    private static final int THREAD_LEN = 27;
+    private static final int THREAD_LEN = 31;
     /**
      * Internal version of a thread structure
      */
@@ -872,6 +863,7 @@ public class VM
     {
         public Thread nextThread;
         public Object waitingOn;
+        public int sync;
         public int sleepUntil;
         public Object stackFrameArray;
         public Object stackArray;
@@ -888,6 +880,7 @@ public class VM
         VMThread(int addr)
         {
             super(addr, THREAD_LEN);
+            thread = (Thread)memGetReference(ABSOLUTE, addr - OBJ_HDR_SZ);
         }
 
         /**
@@ -902,6 +895,12 @@ public class VM
         public VMStackFrames getStackFrames()
         {
             return new VMStackFrames(stackFrameArray, stackFrameArraySize);
+        }
+
+        public VMStackFrames getStackFrames(int frameCnt)
+        {
+             return new VMStackFrames(stackFrameArray, frameCnt);
+
         }
     }
 
@@ -925,7 +924,7 @@ public class VM
                     first = 0;
                     while (nextPriority >= 0 && first == 0)
                     {
-                        first = memPeekInt(THREADS, OBJ_HDR_SZ + nextPriority*4);
+                        first = memPeekInt(THREADS, nextPriority*4);
                         nextPriority--;
                     }
                     nextThread = first;
@@ -940,7 +939,6 @@ public class VM
             public VMThread next()
             {
                 VMThread ret = new VMThread(nextThread+OBJ_HDR_SZ);
-                ret.thread = threadFactory.makeRef(nextThread);
                 findNext();
                 return ret;
             }
@@ -972,6 +970,11 @@ public class VM
         return new VMThreads();
     }
 
+    public VMThread getVMThread(Thread thread)
+    {
+        return new VMThread(getDataAddress(thread));
+    }
+
     /**
      * Suspend a thread. This places the specified thread into a suspended
      * state. If thread is null all threads except for the current thread will
@@ -995,9 +998,9 @@ public class VM
      */
     public native static void executeProgram(int progNo);
 
-      // Flags used to control the Virtual Machine.
-      public static final int VM_TYPECHECKS = 1;
-      public static final int VM_ASSERT = 2;
+    // Flags used to control the Virtual Machine.
+    public static final int VM_TYPECHECKS = 1;
+    public static final int VM_ASSERT = 2;
 
      /**
       * Control the run time operation of the leJOS Virtual Machine.
