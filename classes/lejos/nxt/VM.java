@@ -283,7 +283,7 @@ public class VM
         /**
          * Get the base address for the current image, useful when converting
          * real address to relative ones.
-         * @return
+         * @return the base address for the current image.
          */
         public int getImageBase()
         {
@@ -681,7 +681,7 @@ public class VM
         }
     }
 
-    // NOTE: Some of the following methods shouldr really be in VMClasses, but
+    // NOTE: Some of the following methods should really be in VMClasses, but
     // it just makes things a little cleaner to access them if they are here!
 
     /**
@@ -749,6 +749,11 @@ public class VM
         return new VMClass(getClassAddress(getClassNo(obj)));
     }
 
+    /**
+     * Return the class for the specified primitive type.
+     * @param clsNo
+     * @return Class object for this type.
+     */
     public static Class getPrimitiveClass(int clsNo)
     {
         return (Class) memGetReference(ABSOLUTE, getClassAddress(clsNo));
