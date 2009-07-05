@@ -21,6 +21,8 @@ static U8* buf_ptr;
 static int in_buf_idx = 0;
 
 #define BAUD_RATE 460800
+// Update rate (per second) for the ADC
+#define ADC_UPDATE_RATE 4000 
 
 	
 void bt_init(void)
@@ -56,14 +58,14 @@ void bt_init(void)
   *AT91C_PIOA_CODR  = BT_ARM7_CMD_PIN;
   *AT91C_PIOA_OER   = BT_ARM7_CMD_PIN; 
 
-  // Configure timer 01 as trigger for ADC, sample every 0.5ms
+  // Configure timer 01 as trigger for ADC
   *AT91C_PMC_PCER = (1 << AT91C_ID_TC1); 
   *AT91C_TC1_CCR = AT91C_TC_CLKDIS;
   *AT91C_TC1_IDR = ~0;
   trash = *AT91C_TC1_SR;
   *AT91C_TC1_CMR = AT91C_TC_WAVE | AT91C_TC_WAVESEL_UP_AUTO | AT91C_TC_ACPA_SET | AT91C_TC_ACPC_CLEAR | AT91C_TC_ASWTRG_SET; /* MCLK/2, wave mode 10 */
-  *AT91C_TC1_RC = (CLOCK_FREQUENCY/2)/(2000);
-  *AT91C_TC1_RA = (CLOCK_FREQUENCY/2)/(4000);
+  *AT91C_TC1_RC = (CLOCK_FREQUENCY/2)/(ADC_UPDATE_RATE);
+  *AT91C_TC1_RA = ((CLOCK_FREQUENCY/2)/(ADC_UPDATE_RATE))/2;
   *AT91C_TC1_CCR = AT91C_TC_CLKEN;
   *AT91C_TC1_CCR = AT91C_TC_SWTRG;
 
