@@ -9,6 +9,11 @@ import java.util.Iterator;
  * structures are used by the VM to create the in memory program. They are
  * similar to the class file format used by a standard JVM, but with much of the
  * detail stripped away.
+ *
+ * NOTE: Many of the structures in this file are a direct mapping to internal
+ * data within the VM. Changes to the VM structures must also be reflected here.
+ * Take care when editing this code to ensure that changes do not modify this
+ * mapping.
  * @author andy
  */
 public class VM
@@ -363,7 +368,7 @@ public class VM
          * @return VMBoject for this item
          */
         @Override
-		public VMValue get(int item)
+        public VMValue get(int item)
         {
             if (item >= cnt) return null;
             int addr = baseAddr + item*FIELD_LEN;
@@ -397,7 +402,7 @@ public class VM
          * @return VMValue object for the constant.
          */
         @Override
-		public VMValue get(int item)
+        public VMValue get(int item)
         {
             if (item >= cnt) return null;
             int addr = baseAddr + item*CONSTANT_LEN;
@@ -460,7 +465,7 @@ public class VM
         }
 
         @Override
-		public VMException get(int item)
+        public VMException get(int item)
         {
             return new VMException(baseAddr + item*((EXCEPTION_LEN+1)&~1));
         }
@@ -526,7 +531,7 @@ public class VM
          * @return the VMMethod object
          */
         @Override
-		public VMMethod get(int item)
+        public VMMethod get(int item)
         {
             return new VMMethod(baseAddr + item*((METHOD_LEN+1)&~1));
         }
@@ -612,7 +617,7 @@ public class VM
          * @return the VMClass object
          */
         @Override
-		public VMClass get(int item)
+        public VMClass get(int item)
         {
             if (item >= cnt) return null;
             return new VMClass(getClassAddress(item));
@@ -622,7 +627,6 @@ public class VM
 
     public class VMFields extends VMItems<VMValue>
     {
-        //private Object obj;
         private int fieldBase;
         private int fieldTable;
 
@@ -631,14 +635,13 @@ public class VM
             super(0);
             VMClass cls = getVMClass(obj);
             if (isArray(obj)) return;
-            //this.obj = obj;
             fieldBase = getDataAddress(obj);
             cnt = cls.numFields;
             fieldTable = cls.elementClass + IMAGE_BASE;
         }
 
         @Override
-		public VMValue get(int item)
+        public VMValue get(int item)
         {
             if (item >= cnt) return null;
             int offset = fieldBase;
@@ -657,7 +660,6 @@ public class VM
 
     public class VMElements extends VMItems<VMValue>
     {
-        //private Object obj;
         private int arrayBase;
         private int typ;
 
@@ -670,12 +672,11 @@ public class VM
             typ = (hdr & OBJ_ARRAY_TYPE);
             cnt = memPeekByte(ABSOLUTE, addr+OBJ_ARRAY_LEN);
             if (cnt == OBJ_ARRAY_LEN_ISBIGARRAY) cnt = memPeekShort(ABSOLUTE, addr + OBJ_BIGARRAY_LEN);
-            //this.obj = obj;
             arrayBase = getDataAddress(obj);
         }
 
         @Override
-		public VMValue get(int item)
+        public VMValue get(int item)
         {
             if (item >= cnt) return null;
             int offset = arrayBase + item*VMValue.lengths[typ];
@@ -861,7 +862,7 @@ public class VM
         }
 
         @Override
-		public VMStackFrame get(int item)
+        public VMStackFrame get(int item)
         {
             int offset = base + (size - item - 1) * STACKFRAME_LEN;
             return new VMStackFrame(offset);
