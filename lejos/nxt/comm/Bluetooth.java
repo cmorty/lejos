@@ -83,6 +83,7 @@ public class Bluetooth extends NXTCommDevice
     static final int BUFSZ = 256;
 
 	private static final byte CHANCNT = 4;
+    private static final byte RS_OFF = -2;
 	private static final byte RS_INIT = -1;
 	private static final byte RS_IDLE = 0;
 	private static final byte RS_CMD = 1;
@@ -119,7 +120,7 @@ public class Bluetooth extends NXTCommDevice
 	static byte [] cmdBuf = new byte[128];
 	static byte [] replyBuf = new byte[256];
 	static int cmdTimeout;
-	static int reqState = RS_INIT;
+	static int reqState = RS_OFF;
 	static int savedState;
 	static boolean listening = false;
 	static int connected;
@@ -261,8 +262,6 @@ public class Bluetooth extends NXTCommDevice
 			curChan = CN_NONE;
 			resetCnt = 0;
             btEnable();
-			// Make sure power is on(may cause a reset!)
-			btSetResetHigh();
 			for(int i = 0; i < CHANCNT; i++)
 				Chans[i] = new BTConnection(i);
 			connected = 0;
@@ -270,10 +269,9 @@ public class Bluetooth extends NXTCommDevice
 			cancelTimeout();
             // Load the pin etc.
             loadSettings();
+            reset();
 			setDaemon(true);
             start();
-            //powerOn = true;
-            //Bluetooth.reset();
 			// Setup initial state
 			powerOn = false;
 			setPower(true);
@@ -669,13 +667,15 @@ public class Bluetooth extends NXTCommDevice
 		}
 	}
 
-	// Create the Bluetooth device thread.
-	private static BTThread btThread = new BTThread();
+	private static BTThread btThread = null;
 	
 	static private int waitState(int target)
 	{
 		// RConsole.print("Wait state " + target + "\n");
 		synchronized (Bluetooth.sync) {
+            // Initialize if we need to
+            if (reqState == RS_OFF)
+                btThread = new BTThread();
 			// Wait for the system to enter the specified state (or timeout)
 			while (reqState != target && reqState != RS_ERROR)
 				try{Bluetooth.sync.wait();}catch(Exception e){}
@@ -1078,15 +1078,19 @@ public class Bluetooth extends NXTCommDevice
 		{
             // If we have one return the cached address, saves switching into
             // command mode, or powering up the device...
-			if (cachedName != null) return cachedName;
 			cmdStart();
-			cmdInit(MSG_GET_FRIENDLY_NAME, 1, 0, 0);
-			if (cmdWait(RS_REPLY, RS_CMD, MSG_GET_FRIENDLY_NAME_RESULT, TO_SHORT) < 0)	
-				result = null;
-			else
-				System.arraycopy(replyBuf, 2, result, 0, NAME_LEN);
+			if (cachedName == null)
+            {
+                cmdInit(MSG_GET_FRIENDLY_NAME, 1, 0, 0);
+                if (cmdWait(RS_REPLY, RS_CMD, MSG_GET_FRIENDLY_NAME_RESULT, TO_SHORT) < 0)	
+                    result = null;
+                else
+                {
+                    System.arraycopy(replyBuf, 2, result, 0, NAME_LEN);
+                    cachedName = nameToString(result);
+                }
+            }
 			cmdComplete();
-            if (result != null) cachedName = nameToString(result);
 			return cachedName;
 		}
 	}
@@ -1124,15 +1128,19 @@ public class Bluetooth extends NXTCommDevice
 		{
             // If we have one return the cached address... Saves switching
             // into command mode.
-            if (cachedAddress != null) return cachedAddress;
 			cmdStart();
-			cmdInit(MSG_GET_LOCAL_ADDR, 1, 0, 0);
-			if (cmdWait(RS_REPLY, RS_CMD, MSG_GET_LOCAL_ADDR_RESULT, TO_SHORT) < 0)	
-				result = null;
-			else
-				System.arraycopy(replyBuf, 2, result, 0, ADDRESS_LEN);
+            if (cachedAddress == null) 
+            {
+      			cmdInit(MSG_GET_LOCAL_ADDR, 1, 0, 0);
+        		if (cmdWait(RS_REPLY, RS_CMD, MSG_GET_LOCAL_ADDR_RESULT, TO_SHORT) < 0)	
+            		result = null;
+                else
+                {
+                    System.arraycopy(replyBuf, 2, result, 0, ADDRESS_LEN);
+                    cachedAddress = addressToString(result);
+                }
+            }
 			cmdComplete();
-			if (result != null) cachedAddress = addressToString(result);
             return cachedAddress;
 		}
 	}	
