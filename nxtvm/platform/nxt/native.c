@@ -31,8 +31,7 @@
 #include "udp.h"
 #include "flashprog.h"
 #include "debug.h"
-#include <stdio.h>
-#include <stdlib.h>
+#include "systick.h"
 #include <string.h>
 
 
@@ -136,7 +135,7 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
     break;
   case currentTimeMillis_4_5J:
     push_word(0);
-    push_word(get_sys_time());
+    push_word(systick_get_ms());
     break;
   case setPoller_4_5V:
     set_poller(word2ptr(paramBase[0]));
@@ -549,6 +548,9 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
   case memCopy_4Ljava_3lang_3Object_2IIII_5V:
     mem_copy(word2ptr(paramBase[0]), paramBase[1], paramBase[2], paramBase[3], paramBase[4]);
     break;
+  case memGetReference_4II_5Ljava_3lang_3Object_2:
+    push_word(mem_get_reference(paramBase[0], paramBase[1]));
+    break;
   case setSensorPin_4III_5V:
     sp_set(paramBase[0], paramBase[1], paramBase[2]);
     break;
@@ -561,7 +563,13 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
   case readSensorPin_4II_5I:
     push_word(sp_read(paramBase[0], paramBase[1]));
     break;
-
+  case nanoTime_4_5J:
+    {
+      U64 ns = systick_get_ns();
+      push_word(ns >> 32);
+      push_word(ns);
+    }
+    break;
   default:
     return throw_exception(noSuchMethodError);
   }

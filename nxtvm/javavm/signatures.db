@@ -191,9 +191,13 @@ cloneObject(Ljava/lang/Object;)Ljava/lang/Object;
 memPeek(III)I
 memCopy(Ljava/lang/Object;IIII)V
 getObjectAddress(Ljava/lang/Object;)I
+memGetReference(II)Ljava/lang/Object;
 
 #Sensor port access
 setSensorPin(III)V
 getSensorPin(II)I
 setSensorPinMode(III)V
 readSensorPin(II)I
+
+#System
+nanoTime()J
