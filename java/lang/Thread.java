@@ -30,6 +30,7 @@ public class Thread implements Runnable
 
   private Thread _TVM_nextThread;
   private Object _TVM_waitingOn;
+  private int _TVM_sync;
   private int _TVM_sleepUntil;
   private Object _TVM_stackFrameArray;
   private Object _TVM_stackArray;
@@ -102,7 +103,24 @@ public class Thread implements Runnable
   public static native void sleep (long aMilliseconds) throws InterruptedException;
   public static native Thread currentThread();
   public final native int getPriority();
-  
+
+  /**
+   * Returns the string name of this thread.
+   * @return The name of this thread.
+   */
+  public String getName()
+  {
+      return name;
+  }
+
+  /**
+   * Sets the string name associated with this thread.
+   * @param name The new name of the thread.
+   */
+  public void setName(String name)
+  {
+      this.name = name;
+  }
   /**
    * Set the priority of this thread. Higher number have higher priority.
    * The scheduler will always run the highest priority thread in preference
