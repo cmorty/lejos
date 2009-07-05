@@ -1,6 +1,6 @@
 package lejos.nxt;
+
 import java.util.Iterator;
-import lejos.nxt.comm.RConsole;
 
 /**
  * This class provides access to many of the internal structures of the leJOS
@@ -175,6 +175,7 @@ public class VM
 
         VMClone()
         {
+        	//nothing
         }
 
         VMClone(int addr, int len)
@@ -258,7 +259,7 @@ public class VM
          */
         public VMClasses getVMClasses()
         {
-            return new VMClasses((int)lastClass + 1);
+            return new VMClasses(lastClass + 1);
         }
 
         /**
@@ -361,7 +362,8 @@ public class VM
          * @param item
          * @return VMBoject for this item
          */
-        public VMValue get(int item)
+        @Override
+		public VMValue get(int item)
         {
             if (item >= cnt) return null;
             int addr = baseAddr + item*FIELD_LEN;
@@ -394,7 +396,8 @@ public class VM
          * @param item
          * @return VMValue object for the constant.
          */
-        public VMValue get(int item)
+        @Override
+		public VMValue get(int item)
         {
             if (item >= cnt) return null;
             int addr = baseAddr + item*CONSTANT_LEN;
@@ -456,7 +459,8 @@ public class VM
             this.baseAddr = baseAddr;
         }
 
-        public VMException get(int item)
+        @Override
+		public VMException get(int item)
         {
             return new VMException(baseAddr + item*((EXCEPTION_LEN+1)&~1));
         }
@@ -521,7 +525,8 @@ public class VM
          * @param item
          * @return the VMMethod object
          */
-        public VMMethod get(int item)
+        @Override
+		public VMMethod get(int item)
         {
             return new VMMethod(baseAddr + item*((METHOD_LEN+1)&~1));
         }
@@ -584,10 +589,10 @@ public class VM
          * Return a Java Class object for this class.
          * @return Java Class object
          */
-        public Class getJavaClass()
+        public Class<?> getJavaClass()
         {
             //return classFactory.makeRef(getClassAddress(clsNo));
-            return (Class) memGetReference(ABSOLUTE, getClassAddress(clsNo));
+            return (Class<?>) memGetReference(ABSOLUTE, getClassAddress(clsNo));
         }
     }
 
@@ -606,7 +611,8 @@ public class VM
          * @param item
          * @return the VMClass object
          */
-        public VMClass get(int item)
+        @Override
+		public VMClass get(int item)
         {
             if (item >= cnt) return null;
             return new VMClass(getClassAddress(item));
@@ -616,7 +622,7 @@ public class VM
 
     public class VMFields extends VMItems<VMValue>
     {
-        private Object obj;
+        //private Object obj;
         private int fieldBase;
         private int fieldTable;
 
@@ -625,13 +631,14 @@ public class VM
             super(0);
             VMClass cls = getVMClass(obj);
             if (isArray(obj)) return;
-            this.obj = obj;
+            //this.obj = obj;
             fieldBase = getDataAddress(obj);
             cnt = cls.numFields;
             fieldTable = cls.elementClass + IMAGE_BASE;
         }
 
-        public VMValue get(int item)
+        @Override
+		public VMValue get(int item)
         {
             if (item >= cnt) return null;
             int offset = fieldBase;
@@ -650,7 +657,7 @@ public class VM
 
     public class VMElements extends VMItems<VMValue>
     {
-        private Object obj;
+        //private Object obj;
         private int arrayBase;
         private int typ;
 
@@ -663,11 +670,12 @@ public class VM
             typ = (hdr & OBJ_ARRAY_TYPE);
             cnt = memPeekByte(ABSOLUTE, addr+OBJ_ARRAY_LEN);
             if (cnt == OBJ_ARRAY_LEN_ISBIGARRAY) cnt = memPeekShort(ABSOLUTE, addr + OBJ_BIGARRAY_LEN);
-            this.obj = obj;
+            //this.obj = obj;
             arrayBase = getDataAddress(obj);
         }
 
-        public VMValue get(int item)
+        @Override
+		public VMValue get(int item)
         {
             if (item >= cnt) return null;
             int offset = arrayBase + item*VMValue.lengths[typ];
@@ -732,10 +740,10 @@ public class VM
      * @param obj
      * @return the Class object
      */
-    public Class getClass(Object obj)
+    public Class<?> getClass(Object obj)
     {
         //return classFactory.makeRef(getClassAddress(getClassNo(obj)));
-        return (Class) memGetReference(ABSOLUTE, getClassAddress(getClassNo(obj)));
+        return (Class<?>) memGetReference(ABSOLUTE, getClassAddress(getClassNo(obj)));
     }
 
     /**
@@ -754,9 +762,9 @@ public class VM
      * @param clsNo
      * @return Class object for this type.
      */
-    public static Class getPrimitiveClass(int clsNo)
+    public static Class<?> getPrimitiveClass(int clsNo)
     {
-        return (Class) memGetReference(ABSOLUTE, getClassAddress(clsNo));
+        return (Class<?>) memGetReference(ABSOLUTE, getClassAddress(clsNo));
     }
 
     /**
@@ -765,7 +773,7 @@ public class VM
      * @param cls
      * @return the VMClass object
      */
-    public VMClass getVMClass(Class cls)
+    public VMClass getVMClass(Class<?> cls)
     {
         return new VMClass(getObjectAddress(cls));
     }
@@ -852,7 +860,8 @@ public class VM
             this.size = size;
         }
 
-        public VMStackFrame get(int item)
+        @Override
+		public VMStackFrame get(int item)
         {
             int offset = base + (size - item - 1) * STACKFRAME_LEN;
             return new VMStackFrame(offset);
