@@ -33,4 +33,12 @@ public class Class<T>
 	{
 		return (VM.getVMOptions() & VM.VM_ASSERT) != 0;
 	}
+	
+	@SuppressWarnings("unchecked")
+	public Class<? super T> getSuperclass()
+	{
+		//FIXME return null if this is a primitive type, void, an interface or Object.class   
+		
+		return (Class<? super T>)VM.getPrimitiveClass(this.parentClass);
+	}
 }
