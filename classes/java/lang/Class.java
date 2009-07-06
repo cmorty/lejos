@@ -9,12 +9,14 @@ public class Class<T>
     // Note the following fields are mapped on to read only flash entries
     // held within the VM. They should not be changed. New fields should not
     // be added to this class unless changes are also made to the VM.
-    public short arrayDim;
-    public short elementClass;
-    public byte numFields;
-    public byte numMethods;
-    public byte parentClass;
-    public byte flags;
+    private short arrayDim;
+    private short elementClass;
+    private byte numFields;
+    private byte numMethods;
+    private byte parentClass;
+    private byte flags;
+    
+    
 	/**
 	 * @exception ClassNotFoundException Thrown always in TinyVM.
 	 */
@@ -32,6 +34,16 @@ public class Class<T>
 	public boolean desiredAssertionStatus()
 	{
 		return (VM.getVMOptions() & VM.VM_ASSERT) != 0;
+	}
+	
+	public boolean isInterface()
+	{
+		return 0 != (flags & VM.VMClass.C_INTERFACE);
+	}
+	
+	public boolean isPrimitive()
+	{
+		return 0 != (flags & VM.VMClass.C_PRIMITIVE);
 	}
 	
 	@SuppressWarnings("unchecked")
