@@ -12,6 +12,7 @@
                 <root id="src.BTReceive.dir"/>
                 <root id="src.build.dir"/>
                 <root id="src.BumperCar.dir"/>
+                <root id="src.ColorSensorTest.dir"/>
                 <root id="src.ColorDetector.dir"/>
                 <root id="src.CommandLine.dir"/>
                 <root id="src.CompassTest.dir"/>
