@@ -39,6 +39,6 @@ public class Class<T>
 	{
 		//FIXME return null if this is a primitive type, void, an interface or Object.class   
 		
-		return (Class<? super T>)VM.getPrimitiveClass(this.parentClass);
+		return (Class<? super T>)VM.getPrimitiveClass(this.parentClass & 0xFF);
 	}
 }
