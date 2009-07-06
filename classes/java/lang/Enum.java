@@ -26,9 +26,8 @@ public abstract class Enum<E extends Enum<E>> implements Comparable<E>
 	
 	public final int compareTo(E o)
 	{
-		//TODO enable this check that moment that we have working java.lang.Class
-		//if (this.getDeclaringClass() != o.getDeclaringClass())
-		//	throw new ClassCastException();
+		if (this.getDeclaringClass() != o.getDeclaringClass())
+			throw new ClassCastException();
 		
 		if (this.ordinal == o.ordinal)
 			return 0;
@@ -46,6 +45,14 @@ public abstract class Enum<E extends Enum<E>> implements Comparable<E>
 	protected final void finalize()
 	{
 		//nothing
+	}
+	
+	@SuppressWarnings("unchecked")
+	public final Class<E> getDeclaringClass()
+	{
+		Class<?> c1 = this.getClass();
+		Class<?> c2 = c1.getSuperclass();
+		return (Class<E>)((c2 == Enum.class) ? c1 : c2);
 	}
 	
 	@Override
