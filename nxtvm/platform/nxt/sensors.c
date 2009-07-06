@@ -49,10 +49,10 @@ sp_reset(int port)
   // If this is port with RS485 on it, reset those pins as well
   if (port == RS485_PORT)
   {
-    *AT91C_PIOA_PER |= AT91C_PIO_PA5 | AT91C_PIO_PA6 | AT91C_PIO_PA7;
-    *AT91C_PIOA_PPUDR |= AT91C_PIO_PA5 | AT91C_PIO_PA6 | AT91C_PIO_PA7;
-    *AT91C_PIOA_OER |= AT91C_PIO_PA5 | AT91C_PIO_PA6 | AT91C_PIO_PA7;
-    *AT91C_PIOA_CODR |= AT91C_PIO_PA5 | AT91C_PIO_PA6 | AT91C_PIO_PA7;
+    *AT91C_PIOA_PER = AT91C_PIO_PA5 | AT91C_PIO_PA6 | AT91C_PIO_PA7;
+    *AT91C_PIOA_PPUDR = AT91C_PIO_PA5 | AT91C_PIO_PA6 | AT91C_PIO_PA7;
+    *AT91C_PIOA_OER = AT91C_PIO_PA5 | AT91C_PIO_PA6 | AT91C_PIO_PA7;
+    *AT91C_PIOA_CODR = AT91C_PIO_PA5 | AT91C_PIO_PA6 | AT91C_PIO_PA7;
   }
   // reset the power being supplied to the port
   sp_set_power(port, 0);
@@ -76,16 +76,6 @@ sp_read(int port, int pin)
   else
   {
     return *sensor_pins[port].ADCData;
-    if ((*AT91C_ADC_SR) & AT91C_ADC_EOC1) 
-      return *sensor_pins[port].ADCData;
-    else
-    {
-        int dummy = *sensor_pins[port].ADCData;
-        *AT91C_ADC_CR = AT91C_ADC_START;
-        while (!((*AT91C_ADC_SR) & AT91C_ADC_EOC1)) ; 
-
-        return *sensor_pins[port].ADCData;
-    }
   }
 }
 
@@ -109,7 +99,7 @@ void sp_set_mode(int port, int pin, int mode)
     break;
   case SP_MODE_ADC:
     *AT91C_PIOA_ODR = at_pin;
-    *AT91C_PIOA_PDR = at_pin;
+    *AT91C_PIOA_PER = at_pin;
     break;
   }
   if (pin == SP_DIGI1)
