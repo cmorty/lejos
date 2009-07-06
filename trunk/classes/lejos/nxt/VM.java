@@ -562,6 +562,7 @@ public class VM
         public static final byte C_HASCLINIT = 4;
         public static final byte C_INTERFACE = 8;
         public static final byte C_NOREFS = 0x10;
+        public static final byte C_PRIMITIVE = 0x20;
 
         // The following are not part of the internal structure
         private int clsNo;
@@ -763,7 +764,7 @@ public class VM
      * @param clsNo
      * @return Class object for this type.
      */
-    public static Class<?> getPrimitiveClass(int clsNo)
+    public static Class<?> getClass(int clsNo)
     {
         return (Class<?>) memGetReference(ABSOLUTE, getClassAddress(clsNo));
     }
