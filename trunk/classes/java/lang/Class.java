@@ -49,7 +49,8 @@ public class Class<T>
 	@SuppressWarnings("unchecked")
 	public Class<? super T> getSuperclass()
 	{
-		//FIXME return null if this is a primitive type, void, an interface or Object.class   
+		if (0 != (flags & (VM.VMClass.C_INTERFACE | VM.VMClass.C_PRIMITIVE)) || this == Object.class)
+			return null;
 		
 		return (Class<? super T>)VM.getClass(this.parentClass & 0xFF);
 	}
