@@ -1,6 +1,8 @@
 package lejos.robotics.navigation;
 
-import lejos.robotics.TachoMotor;
+import lejos.geom.Point;
+import lejos.robotics.*;
+
 
 /**
  * The SimpleNavigator class can keep track of the robot position and the direction angle it faces;
@@ -22,10 +24,7 @@ import lejos.robotics.TachoMotor;
  */
 public class SimpleNavigator implements Navigator {
     // orientation and co-ordinate data
-
-    private float _heading = 0;
-    private float _x = 0;
-    private float _y = 0;
+    private Pose pose = new Pose();
     private float _distance0 = 0;
     private float _angle0 = 0;
     private Pilot pilot;
@@ -85,21 +84,27 @@ public class SimpleNavigator implements Navigator {
         return pilot;
     }
 
-    public float getX() {
-        return _x;
+    public float getX() {return pose.getX();
+      
     }
-    public float getY() {
-        return _y;
-    }
-
-    public float getAngle() {
-        return _heading;
+    public float getY() { return pose.getY();
+        
     }
 
-    public void setPosition(float x, float y, float directionAngle) {
-        _x = x;
-        _y = y;
-        _heading = directionAngle;
+    public float getAngle() { return pose.getHeading();
+       
+    }
+
+    public Pose getPose()
+    {
+      return pose;
+    }
+
+    public void setPosition(float x, float y, float heading)
+    {
+      pose.setLocation(new Point(x,y));
+
+        pose.setHeading(heading);
     }
 
     public void setMoveSpeed(float speed) {
@@ -111,15 +116,12 @@ public class SimpleNavigator implements Navigator {
         pilot.setTurnSpeed(speed);
     }
 
-
     public void forward() {
-        reset();
         pilot.forward();
     }
 
 
     public void backward() {
-        reset();
         pilot.backward();
     }
 
@@ -154,22 +156,18 @@ public class SimpleNavigator implements Navigator {
      *  is responsible for calling updatePosition() before the robot moves again.
      */
     public void travel(float distance, boolean immediateReturn) {
-        reset();
         pilot.travel(distance, immediateReturn);
         if (!immediateReturn) {
             updatePosition();
         }
-
     }
     
     public void rotateLeft() {
-        reset();
         pilot.steer(200);
     }
 
 
     public void rotateRight() {
-        reset();
         pilot.steer(-200);
     }
 
@@ -191,7 +189,6 @@ public class SimpleNavigator implements Navigator {
      * in which case your code must call  updatePosition() before the robot moves again.
      */
     public void rotate(float angle, boolean immediateReturn) {
-        reset();
         int turnAngle = Math.round(angle);
         pilot.rotate(turnAngle, immediateReturn);
         if (!immediateReturn) {
@@ -203,7 +200,6 @@ public class SimpleNavigator implements Navigator {
      * Rotates the NXT robot to point in a specific direction, using the smallest
      * rotation necessary
      * The robot position is updated when this method exits;
-     * It will make the smallest rotation necessary.
      * @param angle The angle to rotate to, in degrees.
      */
     public void rotateTo(float angle) {
@@ -220,7 +216,9 @@ public class SimpleNavigator implements Navigator {
      * updatePosition() before the robot moves again.
      */
     public void rotateTo(float angle, boolean immediateReturn) {
-        float turnAngle = normalize(angle - _heading);
+        float turnAngle = angle;
+        while(turnAngle < 180) turnAngle += 360;
+        while(turnAngle > 180) angle -= 360;
         rotate(turnAngle, immediateReturn);
     }
 
@@ -240,27 +238,21 @@ public class SimpleNavigator implements Navigator {
 
 
     public float distanceTo(float x, float y) {
-        float dx = x - _x;
-        float dy = y - _y;
-        //use hypotenuse formula
-        return (float) Math.sqrt(dx * dx + dy * dy);
+      return pose.distanceTo(new Point(x,y));
     }
 
 
     public float angleTo(float x, float y) {
-        float dx = x - _x;
-        float dy = y - _y;
-        return (float) Math.toDegrees(Math.atan2(dy, dx));
+       return pose.angleTo(new Point(x,y));
     }
 
    
     public void updatePosition() {
         float distance = pilot.getTravelDistance() - _distance0;
-
         float turnAngle = pilot.getAngle() - _angle0;
         double dx = 0;
         double dy = 0;
-        double headingRad = (Math.toRadians(_heading));
+        double headingRad = (Math.toRadians(pose.getHeading()));
         if (Math.abs(turnAngle) > .5) {
             double turnRad = Math.toRadians(turnAngle);
             double radius = distance / turnRad;
@@ -270,9 +262,8 @@ public class SimpleNavigator implements Navigator {
             dx = distance * (float) Math.cos(headingRad);
             dy = distance * (float) Math.sin(headingRad);
         }
-        _heading = normalize(_heading + turnAngle); // keep angle between -180 and 180
-        _x += dx;
-        _y += dy;
+        pose.translate((float)dx,(float)dy);
+        pose.rotate(turnAngle);
         _angle0 = pilot.getAngle();
         _distance0 = pilot.getTravelDistance();
     }
@@ -285,7 +276,6 @@ public class SimpleNavigator implements Navigator {
      * If negative, the left wheel is on the outside.
      */
     public void arc(float radius) {
-        reset();
         pilot.arc(radius);
     }
 
@@ -315,7 +305,6 @@ public class SimpleNavigator implements Navigator {
      * updatePosition() before the robot moves again.
      */
     public void arc(float radius, int angle, boolean immediateReturn) {
-        reset();
         pilot.arc(radius, angle, immediateReturn);
         if (!immediateReturn) {
             updatePosition();
@@ -350,30 +339,12 @@ public class SimpleNavigator implements Navigator {
      */
     public void travelArc(float radius, float distance, boolean immediateReturn)
     {
-            reset();
         pilot.travelArc(radius, distance, immediateReturn);
         if (!immediateReturn) {
             updatePosition();
         }
     }
-    /**
-     * returns equivalent angle between -180 and +180
-     */
-    private float normalize(float angle) {
-        float a = angle;
-        while (a > 180) {
-            a -= 360;
-        }
-        while (a < -180) {
-            a += 360;
-        }
-        return a;
-    }
+ 
 
-    private void reset() {
-        _distance0 = 0;
-        _angle0 = 0;
-        pilot.reset();
-    }
 }
 
