@@ -204,6 +204,8 @@
             	<include name="**/*.h"/>
           		<include name="build.sh"/>
           		<include name="build.bat"/>
+          		<include name="build_OSX.sh"/>
+          		<include name="build_OSX_README.txt"/>
           	</fileset>
 		</copy>
 		
@@ -254,6 +256,12 @@
       		</fileset>
     	</copy>
 		
+		<copy todir="${release.bin}">
+      		<fileset dir="${src}/jfantom">
+        		<include name="libjfantom.jnilib"/>
+      		</fileset>
+    	</copy>
+			
 		<!-- adjust permissions -->
   		<chmod perm="755">
   			<fileset dir="${release.bin}">
@@ -372,6 +380,7 @@
 			 	<exclude name="lejos_nxj/src/jbluez/**"/>
 			    <include name="lejos_nxj/bin/*"/>
 			 	<exclude name="lejos_nxj/bin/*.xml"/>
+			 	<exclude name="lejos_nxj/bin/*.jnilib"/>
 			 	<exclude name="lejos_nxj/bin/nxj"/>
 			 	<exclude name="lejos_nxj/bin/nxjlink"/>
 			 	<exclude name="lejos_nxj/bin/nxjc"/>
