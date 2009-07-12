@@ -12,6 +12,7 @@ public class CompassPilot extends TachoPilot {
 	private int _heading; // Heading to point robot	
 	private boolean _traveling = false; // state variable used by regulator
 	private boolean _rotating = false; // state variable used by regulator
+    private boolean _regulating = false;
 	private float _distance; // set by travel()  used by regulator to stop
 	private byte _direction;// direction of travel = sign of _distance
     public int _angle0; // compass heading at last call to reset();
@@ -133,8 +134,6 @@ public class CompassPilot extends TachoPilot {
 	 * @param immediateReturn iff true, the method returns immediately. 
 	 */
 	public void travel(float distance, boolean immediateReturn) {
-		//setHeading(getCompassHeading());
-		//regulateSpeed(false); BB
 		reset();
 		_distance = distance;
 		if(_distance > 0)
@@ -147,6 +146,8 @@ public class CompassPilot extends TachoPilot {
 		   backward();
 		}
 		_traveling = true;
+        _rotating = false;
+        _regulating = true;
 		if(immediateReturn)return;
 		while(_traveling)Thread.yield(); // regulator will call stop when distance is reached
 	}
@@ -163,17 +164,15 @@ public class CompassPilot extends TachoPilot {
 	}
 /**
  * robot rotates to the specified compass heading;
+ *
  * @param angle   Desired compass heading
- * @param immediateReturn  if TRUE, method returns immediately; robot stops facing in specified direction
+ * @param immediateReturn  if TRUE, method returns immediately;
+ * Unfortunately, if you issue the stop(() command, the motion will run to
+     * completion.robot stops facing in specified direction
  */		
 	public void rotateTo(float angle, boolean immediateReturn)
 	{
-		_heading = Math.round(angle);
-		_traveling = false;
-		//regulateSpeed(true); BB // accurate use of tacho count to regulate speed;
-		_rotating = true;
-		if(immediateReturn)return;
-		while(_rotating) Thread.yield();
+	     rotate(angle - _heading, immediateReturn);
 	}
 	/**
 	 * Robot rotates to the specified compass heading.
@@ -186,12 +185,28 @@ public class CompassPilot extends TachoPilot {
 	
 	/** 
 	 * robot rotates to the specified compass heading;
-	 * @param  immediateReturn  - if true, method returns immediately. <br>
+	 * @param  immediateReturn  - if true, method returns immediately.
+     * Unfortunately, if you issue the stop(() command, the motion will run to
+     * completion. <br>
 	 * Robot stops when specified angle is reached
 	 */
 	public void rotate(float angle, boolean immediateReturn)
 	{
-      rotateTo(angle+_heading,immediateReturn);
+      reset();
+    performRotation(angle);
+    _traveling = false;
+    _rotating = true;
+    _regulating = true;
+    _heading += angle;
+    if (immediateReturn)
+    {
+      return;
+    }
+    while (_rotating)
+    {
+      Thread.yield();
+    }
+    stop();
 	}
 	
 	/**
@@ -218,11 +233,26 @@ public class CompassPilot extends TachoPilot {
 		return super.isMoving()  || _rotating || _traveling;		
 	}
  // methods required to give regulator access to Pilot superclass
-	private void stopNow(){stop();} 
-	
+	private void stopNow(){stop();}
+/**
+ * Stops the robot soon after the method is executed. (It takes time for the motors
+ * to slow to a halt)
+ */
+	public void stop()
+    {
+      super.stop();
+      _regulating = false;
+      _traveling = false;
+      _rotating = false;
+      while(isMoving())
+      {
+        super.stop();
+        Thread.yield();
+      }
+    }
 	private boolean pilotIsMoving() { return super.isMoving();}
 	
-	private void performRotation(int angle) // usd by regulator to call pilot rotate(angle, true)
+	private void performRotation(float angle) // usd by regulator to call pilot rotate(angle, true)
 	{ 
 		if(angle > 180) angle = angle -  360;
 		if(angle < -180) angle = angle +360;
@@ -241,12 +271,12 @@ public class CompassPilot extends TachoPilot {
 		{
 			while(true) 
 			{
-				if(pilotIsMoving()&& _traveling)
+              while(!_regulating)Thread.yield();
+				if( _traveling)
 				{
 				   if(_direction*(getTravelDistance() - _distance) >=0)
 					{
 						stopNow();
-						_traveling = false;
 					}
 					else
 					{
@@ -255,15 +285,13 @@ public class CompassPilot extends TachoPilot {
 			            steer(_direction * error, 360*_direction,true);
 			        }
 				}
-				if(_rotating && ! pilotIsMoving())
+				if(_rotating )
 				{
 					int error = getHeadingError();
 					if(Math.abs(error) > 3) performRotation(-error);
 					else 
 					{
-						_rotating = false;
 						stopNow();
-                        while(isMoving())Thread.yield();
 					}
 				}
 				Thread.yield();
