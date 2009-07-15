@@ -1,4 +1,6 @@
 package lejos.robotics;
+ 
+
 
 import lejos.geom.Point;
 
@@ -35,6 +37,8 @@ public Pose(float x, float y, float heading)
 public void rotate(float angle)
 {
   _heading += angle;
+  while(_heading < 180)_heading += 360;
+  while(_heading > 180)_heading -= 360;
 }
 /**
  * rotate to the specified new heading
@@ -61,7 +65,7 @@ public void move(float distance)
  */
 public void translate( float dx, float dy)
 {
-    _location.setLocation(_location.getX()+dx,_location.getY()+dy);
+    _location.setLocation((float)_location.getX()+dx,(float)_location.getY()+dy);
 }
 /**
  * calculates the absolute angle to destination from the current location of the pose
@@ -108,8 +112,14 @@ public float getY() {return (float)_location.getY();}
  * @return
  */
 public Point getLocation() { return _location;}
-
-
+public void setLocation(Point p)
+{
+  _location = p;
+}
+public void setHeading(float heading )
+{
+  _heading = heading;
+}
 private Point _location;
 private float _heading;
 
