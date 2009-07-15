@@ -109,7 +109,7 @@ public interface SensorPlatform {
 	 * Gets the speed the platform rotates, in degrees per second.  The default speed is XX degrees/second.
 	 * @return
 	 */
-	public float getSpeed();
+	public int getSpeed();
 	
 	/**
 	 * Starts rotating counterclockwise (left). 
@@ -123,8 +123,12 @@ public interface SensorPlatform {
 	 */
 	public void rotateRight();
 	
+	public void rotateUp();
+
+	public void rotateDown();
+	
 	/**
-	 * Stops a rotation in motion from rotateLeft() or rotateRight()
+	 * Stops a rotation in motion from one of the rotate methods, like rotateLeft() or rotateUp().
 	 */
 	public void stop();
 	
