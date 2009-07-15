@@ -1,4 +1,6 @@
-package lejos.robotics.navigation;
+package lejos.robotics;
+
+import lejos.robotics.navigation.Pose;
 
 // TODO: For object completeness, this probably needs to be split into three interfaces: ElevationPlatform, RotationPlatform,
 // and FullRotationPlatform which implements both interfaces. Some uses might only want the rotating left-right thing. 
@@ -8,7 +10,8 @@ package lejos.robotics.navigation;
  * 
  * @author BB
  */
-public interface SensorPlatform {
+
+public interface RotationPlatform {
 	
 	/**
 	 * Rotates the sensor to the desired angle. The direction is relative to the robot. The method will not return until the
@@ -49,41 +52,6 @@ public interface SensorPlatform {
 	 */
 	public void setMinimumDirection(int minAngle);
 	
-	/**
-	 * Raises or lowers the sensor elevation.
-	 * @param angle getMaximumElevation() to getMinimumElevation() +90 to -90, or if platform is incapable of this movement
-	 */
-	public void setElevation(int angle);
-
-	/**
-	 * Returns the current sensor elevation angle.
-	 * @return
-	 */
-	public int getElevation();
-	
-	/**
-	 * Maximum angle the elevation can be raised. Should be no larger than 90 degrees.
-	 * @return
-	 */
-	public int getMaximumElevation();
-	
-	/**
-	 * Minimum angle the elevation can be lowered to. Should be no less than -90 degrees.
-	 * @return
-	 */
-	public int getMinimumElevation();
-	
-	/**
-	 * Sets the maximum angle the elevation can be raised. 
-	 * @param maxAngle Should be no greater than +90 degrees.
-	 */
-	public void setMaximumElevation(int maxAngle);
-	
-	/**
-	 * Sets the minimum angle the elevation can be raised. 
-	 * @param minAngle Should be no less than -90 degrees.
-	 */
-	public void setMinimumElevation(int minAngle);
 	
 	/**
 	 *  Includes the direction of the pilot in the calculation of the real angle of the sensor 
@@ -103,34 +71,30 @@ public interface SensorPlatform {
 	 * Sets the speed the platform should rotate, in degrees per second. The default speed is XX degrees/second.
 	 * @param speed
 	 */
-	public void setSpeed(int speed);
+	public void setRotationSpeed(int speed);
 	
 	/**
 	 * Gets the speed the platform rotates, in degrees per second.  The default speed is XX degrees/second.
 	 * @return
 	 */
-	public int getSpeed();
+	public int getRotationSpeed();
 	
 	/**
 	 * Starts rotating counterclockwise (left). 
 	 * Automatically stops when the angle matches or exceeds getMaximumDirection().
 	 */
-	public void rotateLeft();
+	public void scanLeft();
 	
 	/**
 	 * Starts rotating to the clockwise (right). 
 	 * Automatically stops when the angle matches or is less than getMinimumDirection().
 	 */
-	public void rotateRight();
-	
-	public void rotateUp();
-
-	public void rotateDown();
+	public void scanRight();
 	
 	/**
 	 * Stops a rotation in motion from one of the rotate methods, like rotateLeft() or rotateUp().
 	 */
-	public void stop();
+	public void stopRotation();
 	
 	/**
 	 * This method calibrates the direction and elevation to the zero angle position, which is pointing in the
