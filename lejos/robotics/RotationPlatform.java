@@ -1,7 +1,5 @@
 package lejos.robotics;
 
-import lejos.robotics.navigation.Pose;
-
 // TODO: For object completeness, this probably needs to be split into three interfaces: ElevationPlatform, RotationPlatform,
 // and FullRotationPlatform which implements both interfaces. Some uses might only want the rotating left-right thing. 
 
