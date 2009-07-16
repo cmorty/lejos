@@ -1,7 +1,5 @@
 package lejos.robotics;
 
-import lejos.robotics.navigation.Pose;
-
 public class SimplePlatform implements RotationPlatform {
 
 	// Motor for rotating sensor:
