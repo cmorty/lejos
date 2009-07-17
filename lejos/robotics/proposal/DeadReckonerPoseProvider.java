@@ -3,7 +3,7 @@ package lejos.robotics.proposal;
 import lejos.robotics.Encoder;
 import lejos.robotics.Pose;
 
-public class OdometryPoseProvider implements PoseProvider {
+public class DeadReckonerPoseProvider implements PoseProvider {
 
 	/**
 	 * TODO: I think it would just accept a Pilot and then listen to movements on Pilot. Vectors would be known.
@@ -11,7 +11,7 @@ public class OdometryPoseProvider implements PoseProvider {
 	 * @param left
 	 * @param right
 	 */
-	public OdometryPoseProvider(Encoder left, Encoder right) {
+	public DeadReckonerPoseProvider(Pilot pilot) {
 		
 	}
 	

@@ -2,7 +2,7 @@ package lejos.robotics.proposal;
 
 import lejos.robotics.Pose;
 
-public class SimplePathPlanner implements PathPlanner {
+public class SimplePathPlanner implements PathFinder {
 
 	public SimplePathPlanner(Pilot pilot, PoseProvider poseProvider) {
 		
