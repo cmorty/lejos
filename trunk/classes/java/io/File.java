@@ -44,7 +44,7 @@ import lejos.nxt.Flash;
  * Currently has limited functionality and only supports
  * one file open at a time.
  * 
- * @author Brian Bagnall
+ * @author bb
  */
 public class File {
 	
@@ -91,6 +91,10 @@ public class File {
 	 *  If we want to allow more files to be stored in system, increase
 	 *  this number.
 	 */
+	// TODO: To make this expand automatically when necessary, we could start 
+	// with the last page in memory and work backwards. File table would be at
+	// the end of flash memory instead of start. 
+	
 	private static byte FILE_TABLE_PAGES = 2;
 	
 	/**
@@ -350,7 +354,7 @@ public class File {
 	
 	/**
 	 * Helper method to read next byte from file table. It
-	 * automtatically flips to next page when it gets to end
+	 * automatically flips to next page when it gets to end
 	 * of last page. 
 	 * @return Next byte of data from table.
 	 */

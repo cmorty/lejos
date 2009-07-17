@@ -79,7 +79,7 @@ public class LightSensor implements SensorConstants
 		_zero = port.readRawValue();
 	}
 /** 
- *call this method whtn the light sensor is reading the high value - used by reaeValue
+ *call this method when the light sensor is reading the high value - used by reaeValue
  */	
 	public void calibrateHigh()
 	{

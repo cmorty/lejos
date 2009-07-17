@@ -47,7 +47,7 @@ public class ColorSensor extends I2CSensor {
     }
 
     /**
-     * Essentially the same as above but with a resolution of 6 bits.
+     * Essentially the same as getColorNumber() but with a resolution of 6 bits.
      * Red is bit 5-4, green is bit 3-2 and blue is bit 1-0.
      *
      * @return Color index number
