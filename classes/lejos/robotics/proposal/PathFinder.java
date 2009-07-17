@@ -8,7 +8,7 @@ import lejos.robotics.Pose;
  * @author NXJ Team
  *
  */
-public interface PathPlanner {
+public interface PathFinder {
 
 	/**
 	 * 

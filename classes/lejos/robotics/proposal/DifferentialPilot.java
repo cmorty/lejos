@@ -82,12 +82,12 @@ public class DifferentialPilot implements Pilot {
 		
 	}
 
-	public MoveEvent arc(float radius, int angle) {
+	public Movement arc(float radius, int angle) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public MoveEvent arc(float radius, int angle, boolean immediateReturn) {
+	public Movement arc(float radius, int angle, boolean immediateReturn) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -132,17 +132,17 @@ public class DifferentialPilot implements Pilot {
 		return false;
 	}
 
-	public MoveEvent move(MoveEvent vector) {
+	public Movement move(Movement vector) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public MoveEvent setHeading(float angle) {
+	public Movement changeHeading(float angle) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public MoveEvent setHeading(float angle, boolean immediateReturn) {
+	public Movement changeHeading(float angle, boolean immediateReturn) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -162,37 +162,37 @@ public class DifferentialPilot implements Pilot {
 		
 	}
 
-	public MoveEvent steer(int turnRate, int angle) {
+	public Movement steer(int turnRate, int angle) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public MoveEvent steer(int turnRate, int angle, boolean immediateReturn) {
+	public Movement steer(int turnRate, int angle, boolean immediateReturn) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public MoveEvent stop() {
+	public Movement stop() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public MoveEvent travel(float distance) {
+	public Movement travel(float distance) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public MoveEvent travel(float distance, boolean immediateReturn) {
+	public Movement travel(float distance, boolean immediateReturn) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public MoveEvent travelArc(float radius, float distance) {
+	public Movement travelArc(float radius, float distance) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public MoveEvent travelArc(float radius, float distance,
+	public Movement travelArc(float radius, float distance,
 			boolean immediateReturn) {
 		// TODO Auto-generated method stub
 		return null;

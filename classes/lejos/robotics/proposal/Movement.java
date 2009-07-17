@@ -6,11 +6,11 @@ package lejos.robotics.proposal;
  * 
  * Enumeration?
  * 
- * Alternate names: Movement, MoveEvent, VectorEvent, PilotEvent
+ * Alternate names: Movement, Movement, VectorEvent, PilotEvent
  * @author NXJ Team
  *
  */
-public class MoveEvent {
+public class Movement {
 	
 	public static int HEADING = 1;
 	public static int TRAVEL = 2;

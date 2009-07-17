@@ -1,6 +1,25 @@
 package lejos.robotics.proposal;
 
 /**
+ * Lawrie criticisms:
+ * Q1. I think you have far too many methods in the Pilot interface, which will stop it being usable for a wide variety of 
+ * mobile robots. We will lose one of the major reasons for doing this restructure if we keep all this stuff like steer and 
+ * arc in the Pilot interface. I would put forward, stop, isMoving and probably nothing else in the basic Pilot interface 
+ * and introduce either a hierarchy of interfaces or separate optional interfaces.
+ * 
+ * Obviously a pilot with just this is not useful for 2D navigation, but some pilots can do rotate and some cannot, 
+ * and can do steer (or arc) instead. Most can probably do backward, so we might consider that in the basic interface 
+ * rather than making it on option.
+ * 
+ * A1. If we had one method, move(Movement) does that help? Do we lose the ability to differentiate what Pilots can
+ * perform which movements.
+ * 
+ * Q2. Renaming rotate as setHeading for pilots is confusing and makes no sense. Pilots do not know the heading. 
+ * Similarly having an interface called getHeading is wrong. The current method that gets the angle turned since 
+ * the last reset is different, and mainly exists to support updatePostion in SimpleNavigator.
+
+ * 
+ * 
  * The Pilot is theoretically there to perform vector movements, such as 
 forward(), travel(100) and setHeading(90). The vehicle type should really be 
 largely inconsequential to this interface (of course *implementations* like 
@@ -35,7 +54,7 @@ public interface Pilot {
 	   *
 	   * @return The movement it just achieved?
 	   */
-	   public MoveEvent stop();
+	   public Movement stop();
 
 	  /**
 	   * true if the robot is moving 
@@ -91,7 +110,7 @@ public interface Pilot {
 	   * @param vector
 	   * @return
 	   */
-	  public MoveEvent move(MoveEvent vector);
+	  public Movement move(Movement vector);
 	  
 	  /**
 	   * Moves the NXT robot a specific distance. A positive value moves it forward and a negative value moves it backward.
@@ -99,14 +118,14 @@ public interface Pilot {
 	   * 
 	   * @param distance The positive or negative distance to move the robot.
 	   */
-	  public MoveEvent travel(float distance);
+	  public Movement travel(float distance);
 
 	  /**
 	   * Moves the NXT robot a specific distance. A positive value moves it forward and a negative value moves it backward.
 	   * @param distance The positive or negative distance to move the robot, in wheel diameter units.
 	   * @param immediateReturn If immediateReturn is true then the method returns immediately.
 	   */
-	  public MoveEvent travel(float distance, boolean immediateReturn);
+	  public Movement travel(float distance, boolean immediateReturn);
 
 	  /**
 	   * Rotates the NXT robot the specified number of degrees; direction determined by the sign of the parameter.
@@ -114,7 +133,7 @@ public interface Pilot {
 	   * 
 	   * @param angle The angle to rotate in degrees. A positive value rotates left, a negative value right (clockwise).
 	   */
-	  public MoveEvent setHeading(float angle);
+	  public Movement changeHeading(float angle);
 
 	  /**
 	   * Rotates the NXT robot the specifed number of degress; direction determined by the sign of the parameter.
@@ -123,7 +142,7 @@ public interface Pilot {
 	   * @param angle The angle to rotate in degrees. A positive value rotates left, a negative value right (clockwise).
 	   * @param immediateReturn If immediateReturn is true then the method returns immediately
 	   */
-	  public MoveEvent setHeading(float angle, boolean immediateReturn);
+	  public Movement changeHeading(float angle, boolean immediateReturn);
 
 	  public float getHeading();
 
@@ -178,7 +197,7 @@ public interface Pilot {
 	   * the left side is on the outside.
 	   * @param angle The angle through which the robot will rotate. If negative, robot traces the turning circle backwards.
 	   */
-	  public MoveEvent steer(int turnRate, int angle);
+	  public Movement steer(int turnRate, int angle);
 
 	  /**
 	   * Moves the robot along a curved path for a specified angle of rotation. This method is similar to the
@@ -204,7 +223,7 @@ public interface Pilot {
 	   * @param immediateReturn If immediateReturn is true then the method returns immediately and your code MUST call
 	   *          updatePostion() when the robot has stopped. Otherwise, the robot position is lost.
 	   */
-	  public MoveEvent steer(int turnRate, int angle, boolean immediateReturn);
+	  public Movement steer(int turnRate, int angle, boolean immediateReturn);
 
 	  /**
 	   * Starts the  NXT robot moving along an arc with a specified radius.
@@ -255,7 +274,7 @@ public interface Pilot {
 	   * @see #steer(int, int)
 	   * @see #travelArc(float, float)
 	   */
-	  public MoveEvent arc(float radius, int angle);
+	  public Movement arc(float radius, int angle);
 
 	  /**
 	   * Moves the NXT robot along an arc with a specified radius and  angle,
@@ -287,7 +306,7 @@ public interface Pilot {
 	   * @see #steer(int, int, boolean)
 	   * @see #travelArc(float, float, boolean)
 	   */
-	  public MoveEvent arc(float radius, int angle, boolean immediateReturn);
+	  public Movement arc(float radius, int angle, boolean immediateReturn);
 
 	  /**
 	   * Moves the NXT robot a specified distance along an arc mof specified radius,
@@ -319,7 +338,7 @@ public interface Pilot {
 	   * @see #arc(float, int)
 	   * 
 	   */
-	  public MoveEvent travelArc(float radius, float distance);
+	  public Movement travelArc(float radius, float distance);
 
 	  /**
 	   * Moves the NXT robot a specified distance along an arc of specified radius,
@@ -356,6 +375,6 @@ public interface Pilot {
 	   * @see #arc(float, int, boolean)
 	   * 
 	   */
-	  public MoveEvent travelArc(float radius, float distance, boolean immediateReturn);
+	  public Movement travelArc(float radius, float distance, boolean immediateReturn);
 	
 }
