@@ -2,7 +2,8 @@ package lejos.robotics;
 
 /**
  * Abstraction for an encoder..
- * 
+ * TODO: Lawrie has a similar interface in lejos.nxt called Tachometer, exactly the same 
+ * but lacking getActualSpeed(). TachoMotorPort uses it. Perhaps these should be amalgamated.
  * @author BB
  *
  */
