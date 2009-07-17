@@ -43,6 +43,8 @@ public class Orientation {
 	 *             orientation
 	 */
 	public static Orientation getOrientation() throws LocationException {
+		/* TODO: According to the JSR, this is supposed to be implemented even if it 
+		 * only yields azimuth. */ 
 		throw new LocationException();
 	}
 
