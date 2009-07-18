@@ -6,7 +6,9 @@ package java.lang;
  */
 public final class Void
 {
-	//MISSING public static final Class TYPE
+    // References to the following field are automatically replaced with a load
+    // of the correct value by the linker, so no need to initialize.
+	public static final Class<?> TYPE = null;
 	
 	private Void()
 	{

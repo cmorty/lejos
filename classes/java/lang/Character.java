@@ -21,6 +21,9 @@ public final class Character implements Comparable<Character>
 	public static final int MIN_CODE_POINT = 0;
 	public static final int MIN_SUPPLEMENTARY_CODE_POINT = 0x10000;
 	public static final int MAX_CODE_POINT = 0x10FFFF;
+    // References to the following field are automatically replaced with a load
+    // of the correct value by the linker, so no need to initialize.
+	public static final Class<?> TYPE = null;
 	
 	
 	//MISSING everything

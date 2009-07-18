@@ -40,6 +40,12 @@ public class ConstantValue extends WritableDataWithOffset
       assert _value != null: "Postconditon: result != null";
    }
 
+   public ConstantValue(ClassRecord crec, Binary aBinary)
+   {
+      iBinary = aBinary;
+      _value = crec;
+   }
+
    // use Object.equals() for equality
    // use Object.hashCode() for hash code
 
@@ -213,7 +219,7 @@ public class ConstantValue extends WritableDataWithOffset
    {
       assert pool != null: "Precondition: pool != null";
       assert constant != null: "Precondition: constant != null";
-
+      
       Object result = null;
       if (constant instanceof ConstantDouble)
       {

@@ -62,8 +62,6 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
       throw new TinyVMException("Unsupported " + OPCODE_NAME[aOpCode] + " in "
          + iFullName + ".\n"
          + "The following features/conditions are currently unsupported:\n"
-         + "- Arithmetic or logical operations on variables of type long.\n"
-         + "- Remainder operations on floats or doubles.\n"
          + "- Too many locals ( > 255).\n"
          + "- Too many constants ( > 1024).\n"
          + "- Too many static fields ( > 1024).\n"
@@ -75,7 +73,33 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
       return aCF.getClassName() + ":" + aMethodName;
    }
 
+   /**
+    * Return the index of a given constant record
+    * @param pRecord
+    * @return the index of the record
+    * @throws js.tinyvm.TinyVMException
+    */
+   int getConstantIndex(ConstantRecord pRecord) throws TinyVMException
+   {
+      int pIdx = iBinary.getConstantIndex(pRecord);
 
+      if (pIdx == -1)
+      {
+         throw new TinyVMException("Bug CU-2: Didn't find constant " + pRecord.toString()
+            + " of class " + iCF.getClassName());
+      }
+      return pIdx;
+   }
+
+
+   /**
+    * Process a constant index.
+    * Given a reference to the constant pool, return the corresponding index
+    * into the leJOS constant table.
+    * @param aPoolIndex the constant pool index
+    * @return The constant table index
+    * @throws js.tinyvm.TinyVMException
+    */
    public int processConstantIndex (int aPoolIndex) throws TinyVMException
    {
       Constant pEntry = iCF.getConstantPool().getConstant(aPoolIndex);
@@ -91,16 +115,17 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
       }
 
       ConstantRecord pRecord = new ConstantRecord(iCF.getConstantPool(), pEntry, iBinary);
-      int pIdx = iBinary.getConstantIndex(pRecord);
-
-      if (pIdx == -1)
-      {
-         throw new TinyVMException("Bug CU-2: Didn't find constant " + pEntry
-            + " of class " + iCF.getClassName());
-      }
-      return pIdx;
+      return getConstantIndex(pRecord);
    }
 
+   /**
+    * Process a class index.
+    * Given a constant pool index for a class object, return the corresponding
+    * index into the leJOS class table.
+    * @param aPoolIndex the constant pool index
+    * @return the class table index
+    * @throws js.tinyvm.TinyVMException
+    */
    public int processClassIndex (int aPoolIndex) throws TinyVMException
    {
       ClassRecord pClassRecord = getClassRecord(aPoolIndex);
@@ -114,6 +139,14 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
       return pIdx;
    }
 
+   /**
+    * Process and array index.
+    * Given an index into the constant pool for an array class, return the
+    * corresponding index into the leJOS class table.
+    * @param aPoolIndex the constant index for the array
+    * @return the class table index.
+    * @throws js.tinyvm.TinyVMException
+    */
    public int processArray(int aPoolIndex) throws TinyVMException
    {
       ClassRecord pClassRecord = getClassRecord(aPoolIndex);
@@ -219,6 +252,11 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
       iBinary.markClassUsed(pClassRecord, true);
    }
 
+   /**
+    * Mark an array as being used.
+    * @param aPoolIndex The constant pool index for the array.
+    * @throws js.tinyvm.TinyVMException
+    */
    public void markArray(int aPoolIndex) throws TinyVMException
    {
        ClassRecord pClassRecord = getClassRecord(aPoolIndex);
@@ -231,6 +269,11 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
        iBinary.markClassUsed(pArray, true);
    }
 
+   /**
+    * Mark a primitive array as being used.
+    * @param type The primitive type of the array.
+    * @throws js.tinyvm.TinyVMException
+    */
    public void markPrimitiveArray(byte type) throws TinyVMException
    {
        ClassRecord pClassRecord = getClassRecord(TinyVMType.tinyVMType(type).cname());
@@ -275,6 +318,86 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
       pFieldRecord.markUsed();
    }
 
+   /**
+    * Obtain the class that contains a specified static field.
+    * @param aFieldIndex The index in the constant pool of the static field
+    * @return The class record of the defining class
+    * @throws js.tinyvm.TinyVMException
+    */
+   ClassRecord getStaticFieldClass (int aFieldIndex) throws TinyVMException
+   {
+      Constant pEntry = iCF.getConstantPool().getConstant(aFieldIndex); // TODO catch all (runtime) exceptions
+      if (!(pEntry instanceof ConstantFieldref))
+      {
+         throw new TinyVMException("Classfile error: Instruction requiring "
+            + "CONSTANT_Fieldref entry got "
+            + (pEntry == null? "null" : pEntry.getClass().getName()));
+      }
+      ConstantFieldref pFieldEntry = (ConstantFieldref) pEntry;
+      String className = pFieldEntry.getClass(iCF.getConstantPool()).replace(
+         '.', '/');
+      ClassRecord pClassRecord = getClassRecord(className);
+      if (pClassRecord == null)
+      {
+          throw new TinyVMException("Classfile error: Failed to find class "
+            + className);
+
+      }
+      return pClassRecord;
+   }
+
+
+   /**
+    * Return the name of a static field
+    * @param aFieldIndex The constant pool index for the field.
+    * @throws js.tinyvm.TinyVMException
+    */
+   String getStaticFieldName (int aFieldIndex) throws TinyVMException
+   {
+      Constant pEntry = iCF.getConstantPool().getConstant(aFieldIndex); // TODO catch all (runtime) exceptions
+      if (!(pEntry instanceof ConstantFieldref))
+      {
+         throw new TinyVMException("Classfile error: Instruction requiring "
+            + "CONSTANT_Fieldref entry got "
+            + (pEntry == null? "null" : pEntry.getClass().getName()));
+      }
+      ConstantFieldref pFieldEntry = (ConstantFieldref) pEntry;
+      String className = pFieldEntry.getClass(iCF.getConstantPool()).replace(
+         '.', '/');
+      ClassRecord pClassRecord = getClassRecord(className);
+      if (pClassRecord == null)
+      {
+          throw new TinyVMException("Classfile error: Failed to find class "
+            + className);
+
+      }
+      ConstantNameAndType cnat = (ConstantNameAndType) iCF.getConstantPool()
+         .getConstant(pFieldEntry.getNameAndTypeIndex());
+      String pName = cnat.getName(iCF.getConstantPool());
+      return pName;
+
+   }
+
+   /**
+    * Check the field reference to see if it is for the special TYPE entry in a
+    * primitive class.
+    * @param aFieldIndex The constant pool index for the field
+    * @throws js.tinyvm.TinyVMException
+    */
+   boolean isWrapperTYPEField (int aFieldIndex) throws TinyVMException
+   {
+      ClassRecord pClass = getStaticFieldClass(aFieldIndex);
+      if (!pClass.isWrapper()) return false;
+      String pName = getStaticFieldName(aFieldIndex);
+      if (pName.equals("TYPE")) return true;
+      return false;
+   }
+
+   /**
+    * Mark a constant as being used.
+    * @param aPoolIndex The constant pool index.
+    * @throws js.tinyvm.TinyVMException
+    */
    void markConstant(int aPoolIndex) throws TinyVMException
    {
       int constIdx = processConstantIndex(aPoolIndex);
@@ -477,8 +600,24 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
                pOutCode[i++] = (byte) (pIdx4 >> 8);
                pOutCode[i++] = (byte) (pIdx4 & 0xFF);
                break;
-            case OP_PUTSTATIC:
             case OP_GETSTATIC:
+               {
+                  int idx = (aCode[i] & 0xFF) << 8 | (aCode[i + 1] & 0xFF);
+                  if (isWrapperTYPEField(idx))
+                  {
+                     // If this is one of the rather odd static fields in the
+                     // wrapper classes, then replace reads of it with a load
+                     // of the appropriate class constant.
+                     idx = getConstantIndex(getStaticFieldClass(idx).getPrimitiveClass().getClassConstant());
+                     pOutCode[i-1] = OP_LDC_W;
+                     pOutCode[i++] = (byte) (idx >> 8);
+                     pOutCode[i++] = (byte) (idx & 0xFF);
+                     break;
+                  }
+              }
+              // Fall through
+
+            case OP_PUTSTATIC:
                int pWord1 = processField((aCode[i] & 0xFF) << 8
                   | (aCode[i + 1] & 0xFF), true);
                pOutCode[i++] = (byte) (pWord1 >> 16);
@@ -618,8 +757,6 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
 
             case OP_GOTO_W:
             case OP_JSR_W:
-            //case OP_FREM:
-            case OP_DREM:
                exitOnBadOpCode(pOpCode);
                break;
             case OP_BREAKPOINT:
@@ -642,6 +779,7 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
       }
       return pOutCode;
    }
+
    public void processCalls (byte[] aCode, JavaClass aClassFile, Binary aBinary) throws TinyVMException
    {
       int i = 0;
@@ -685,9 +823,19 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
                markClass((aCode[i] & 0xFF) << 8 | (aCode[i + 1] & 0xFF));
                i += 2;
                break;
-
-            case OP_PUTSTATIC:
             case OP_GETSTATIC:
+               {
+                  int idx = (aCode[i] & 0xFF) << 8 | (aCode[i + 1] & 0xFF);
+                  if (isWrapperTYPEField(idx))
+                  {
+                     getStaticFieldClass(idx).getPrimitiveClass().getClassConstant().markUsed();
+                  }
+                  else
+                     markStaticField((aCode[i] & 0xFF) << 8 | (aCode[i + 1] & 0xFF));
+                  i += 2;
+                  break;
+              }
+           case OP_PUTSTATIC:
                markStaticField((aCode[i] & 0xFF) << 8 | (aCode[i + 1] & 0xFF));
                i += 2;
                break;

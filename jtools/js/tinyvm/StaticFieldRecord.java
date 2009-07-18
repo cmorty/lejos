@@ -34,7 +34,6 @@ public class StaticFieldRecord implements WritableData
       TinyVMType type = TinyVMType.tinyVMType(iField.getType());
       int pOffset = iClassRecord.getStaticFieldOffset(iField.getName());
       assert pOffset >= 0 && pOffset <= 0x0FFF: "Check offset in range";
-
       try
       {
          aOut.writeU2((type.type() << 12) | pOffset);
