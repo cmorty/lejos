@@ -8,9 +8,10 @@ public final class Boolean implements Comparable<Boolean>
 {
 	public static final Boolean FALSE = new Boolean(false);
 	public static final Boolean TRUE = new Boolean(true);
-	
+    // References to the following field are automatically replaced with a load
+    // of the correct value by the linker, so no need to initialize.
+	public static final Class<?> TYPE = null;
 	//MISSING implements Serializable
-	//MISSING public static final Class TYPE
 	//MISSING public static getBoolean(String name);
 	
 	private final boolean value;

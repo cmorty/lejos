@@ -9,8 +9,10 @@ public final class Byte extends Number
 	public static final byte MAX_VALUE = 127;
 	public static final byte MIN_VALUE = -128;
 	public static final int SIZE = 8;
+    // References to the following field are automatically replaced with a load
+    // of the correct value by the linker, so no need to initialize.
+	public static final Class<?> TYPE = null;
 	
-	//MISSING public static final Class TYPE
 	//MISSING public static Byte decode(String)
 	
 	private final byte value;

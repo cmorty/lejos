@@ -13,9 +13,11 @@ public final class Float extends Number
 	public static final float NaN = 0.0f / 0.0f;
 	
 	public static final int SIZE = 32;
+    // References to the following field are automatically replaced with a load
+    // of the correct value by the linker, so no need to initialize.
+	public static final Class<?> TYPE = null;
 
 	//MISSING implements Comparable
-	//MISSING public static Class TYPE
 	//MISSING public static int compare(float, float)
 	//MISSING public int compareTo(Object)
 	//MISSING public static String toHexString(float)
