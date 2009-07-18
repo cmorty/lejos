@@ -9,8 +9,10 @@ public final class Long extends Number implements Comparable<Long>
 	public static final long MAX_VALUE = 0x7FFFFFFFFFFFFFFFL;
 	public static final long MIN_VALUE = 0x8000000000000000L;	
 	public static final int SIZE = 64;
+    // References to the following field are automatically replaced with a load
+    // of the correct value by the linker, so no need to initialize.
+	public static final Class<?> TYPE = null;
 	
-	//MISSING public static final Class TYPE
 	//MISSING public static Long decode(String nm)
 	//MISSING public static Long getLong(String)
 	//MISSING public static Long getLong(String, long)

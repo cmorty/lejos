@@ -13,9 +13,11 @@ public final class Double extends Number
 	public static final double NaN = 0.0d / 0.0d;
 	
 	public static final int SIZE = 64;
+    // References to the following field are automatically replaced with a load
+    // of the correct value by the linker, so no need to initialize.
+	public static final Class<?> TYPE = null;
 	
 	//MISSING implements Comparable
-	//MISSING public static Class TYPE
 	//MISSING public static int compare(double, double)
 	//MISSING public int compareTo(Object)
 	//MISSING public static String toHexString(double)

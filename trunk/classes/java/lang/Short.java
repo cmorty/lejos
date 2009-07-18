@@ -9,8 +9,10 @@ public final class Short extends Number
 	public static final short MAX_VALUE = 32767;
 	public static final short MIN_VALUE = -32768;
 	public static final int SIZE = 16;
+    // References to the following field are automatically replaced with a load
+    // of the correct value by the linker, so no need to initialize.
+	public static final Class<?> TYPE = null;
 	
-	//MISSING public static final Class TYPE
 	//MISSING public static Short decode(String)
 	
 	private final short value;

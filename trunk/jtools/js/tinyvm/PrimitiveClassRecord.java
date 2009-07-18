@@ -15,21 +15,22 @@ import js.tinyvm.util.HashVector;
  */
 public class PrimitiveClassRecord extends ClassRecord
 {
+   ConstantRecord classConstant;
 
-    @Override
+   @Override
    public String getName ()
    {
       return iName;
    }
 
 
-    @Override
+   @Override
    public boolean isInterface ()
    {
       return false;
    }
 
-    @Override
+   @Override
    public boolean hasStaticInitializer ()
    {
       return false;
@@ -79,9 +80,6 @@ public class PrimitiveClassRecord extends ClassRecord
        return null;
    }
    
-
-
-
    
    public StaticFieldRecord getStaticFieldRecord(String aName)
    {
@@ -91,7 +89,17 @@ public class PrimitiveClassRecord extends ClassRecord
    public void storeConstants (RecordTable<ConstantRecord> aConstantTable,
       RecordTable<ConstantValue> aConstantValues) throws TinyVMException
    {
-
+      // Make sure the primitive classes are available as constants.
+      ConstantRecord pRec = new ConstantRecord(this, iBinary);
+      int idx = aConstantTable.indexOf(pRec);
+      if (idx == -1)
+      {
+         aConstantTable.add(pRec);
+         aConstantValues.add(pRec.constantValue());
+         classConstant = pRec;
+      }
+      else
+          classConstant = aConstantTable.get(idx);
    }
 
    public void storeMethods (RecordTable<RecordTable<MethodRecord>> aMethodTables,
@@ -183,6 +191,10 @@ public class PrimitiveClassRecord extends ClassRecord
 
         getParent().addInterfaces(pUserClass);
    }
-   
+
+   public ConstantRecord getClassConstant()
+   {
+       return classConstant;
+   }
 }
 

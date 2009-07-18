@@ -37,6 +37,11 @@ public class ConstantRecord implements WritableData
       _constantValue = new ConstantValue(pool, constant, iBinary);
    }
 
+   public ConstantRecord (ClassRecord crec, Binary aBinary)
+   {
+       iBinary = aBinary;
+       _constantValue = new ConstantValue(crec, aBinary);
+   }
    /**
     * Get dereferenced value.
     */

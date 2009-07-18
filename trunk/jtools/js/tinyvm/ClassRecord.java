@@ -58,6 +58,26 @@ public class ClassRecord implements WritableData
    final HashSet<ClassRecord> iImplementedBy = new HashSet<ClassRecord>();
    boolean isUsed = false;
    boolean isInstanceUsed = false;
+   static final String[] wrappers = {"java/lang/Integer",
+                                     "java/lang/Boolean",
+                                     "java/lang/Character",
+                                     "java/lang/Float",
+                                     "java/lang/Byte",
+                                     "java/lang/Short",
+                                     "java/lang/Double",
+                                     "java/lang/Long",
+                                     "java/lang/Void"
+                                    };
+   static final String[] primitive = {"int",
+                                      "boolean",
+                                      "char",
+                                      "float",
+                                      "byte",
+                                      "short",
+                                      "double",
+                                      "long",
+                                      "void"
+                                     };
 
    public void useAllMethods ()
    {
@@ -890,6 +910,37 @@ public class ClassRecord implements WritableData
        return sig;
 
    }
-   // private static final Logger _logger = Logger.getLogger("TinyVM");
+
+   /**
+    * Helper method return the wrapper index, if this is a wrapper class
+    * @return The wrapper index or -1 if this class is not a wrapper class
+    */
+   private int getWrapperIndex()
+   {
+       for(int i = 0; i < wrappers.length; i++)
+           if (iName.equals(wrappers[i])) return i;
+       return -1;
+   }
+
+   /**
+    * Determine if this class is a wrapper
+    * @return true if the class is a wrapper, otherwise false
+    */
+   public boolean isWrapper()
+   {
+       return getWrapperIndex() >= 0;
+   }
+
+   /**
+    * Return the wrapped class if this class is a wrapper
+    * @return the primitive class or null if this class is not a wrapper
+    */
+   public PrimitiveClassRecord getPrimitiveClass()
+   {
+       int idx = getWrapperIndex();
+       if (idx < 0) return null;
+       return (PrimitiveClassRecord) iBinary.getClassRecord(primitive[idx]);
+   }
+
 }
 
