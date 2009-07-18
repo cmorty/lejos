@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="NXJTemplate" default="default" basedir=".">
+  <description>Builds, tests, and runs the project NXJTemplate3.</description>
+
+
+  <property environment = "env"/>
+  <property file="nbproject/project.properties"/>
+  <property name="src" location="src"/>
+  <property name="build" location="build"/>
+  <property name="class" value="NXJMain"/>
+
+  <target name="clean" description="clean up all generated files">
+    <mkdir dir="${build.dir}" />
+    <delete>
+      <fileset dir="${build.dir}">
+        <include name="**/*.class"/>
+        <include name="**/*.nxj"/>
+      </fileset>
+    </delete>
+  </target>
+
+  <target name="compile" depends="clean"
+        description="compile the source " >
+    <!-- Compile the java code from ${src} to ${build}  -->
+    <javac srcdir="${src}" destdir="${build}">
+      <bootclasspath>
+        <pathelement location="${nxj.classes.home}/lib/classes.jar"/>
+<!--        <pathelement location="${nxj.classes.home}/lib/toolbox.jar"/> -->
+      </bootclasspath>
+    </javac>
+  </target>
+
+  <target name="compile-single" depends="clean"
+        description="compile the source " >
+    <echo> run class = ${run.class} </echo>
+    <!-- Compile the java code from ${src} to ${build}  -->
+    <javac srcdir="${src}" destdir="${build}" >
+      <bootclasspath>
+        <pathelement location="${nxj.classes.home}/lib/classes.jar"/>
+        <pathelement location="${nxj.classes.home}/lib/toolbox.jar"/>
+      </bootclasspath>
+      <include name="${run.class}"/>
+    </javac>
+  </target>
+
+  <target name="link" depends="compile"
+        description="link the binary " >
+    <echo> link class = ${class}</echo>
+     <property name="binary" value="${build}/${class}.nxj" />
+    <!-- Link the binary and create a signature file -->
+    <java classname="js.tinyvm.TinyVM">
+      <arg value="--bootclasspath"/>
+      <arg path="${nxj.classes.jar}" />
+      <arg value="--classpath"/>
+      <arg path="${build};${nxj.classes.home}/lib/toolbox.jar" />
+      <arg value="--writeorder" />
+      <arg value="LE" />
+      <arg value="${class}"/>
+      <arg value="-o"/>
+      <arg value="${binary}"/>
+      <arg value="-v"/>
+      <classpath>
+        <pathelement location="${nxj.jtools.jar}"/>
+        <pathelement location="${nxj.commons.jar}"/>
+        <pathelement location="${nxj.bcel.jar}"/>
+      </classpath>
+    </java>
+    <echo> success linked = ${class}</echo>
+  </target>
+
+  <target name="upload" depends="link"
+        description="upload the binary" >
+    <java classname="lejos.pc.tools.NXJUpload" fork="true">
+      <jvmarg value="-Djava.library.path=${nxj.library.path}"/>
+      <jvmarg value="-Dnxj.home=${nxj.home}"/>
+      <arg value="${binary}"/>
+      <classpath>
+        <pathelement location="${nxj.jtools.jar}"/>
+        <pathelement location="${nxj.pctools.jar}"/>
+        <pathelement location="${nxj.pccomm.jar}"/>
+        <pathelement location="${nxj.commons.jar}"/>
+        <pathelement location="${nxj.bcel.jar}"/>
+        <pathelement location="${nxj.bluecove.jar}"/>
+        <pathelement location="${nxj.bluecove-gpl.jar}"/>
+      </classpath>
+    </java>
+  </target>
+
+  <target name="run-single">
+    <echo> run class = ${run.class} </echo>
+    <antcall target="uploadandrun">
+      <param name="class" value="${run.class}"/>
+      <param name="binary" value="${build}/${run.class}.nxj" />
+    </antcall>
+  </target>
+
+  <target name="run">
+    <echo> run class = ${main.class}</echo>  
+    <antcall target="uploadandrun">
+      <param name="class" value="${main.class}"/>
+    </antcall>
+  </target>
+
+  <target name="uploadandrun" depends="link"
+        description="upload and run the binary" >
+    <java classname="lejos.pc.tools.NXJUpload" fork="true">
+      <jvmarg value="-Djava.library.path=${nxj.library.path}"/>
+      <jvmarg value="-Dnxj.home=${nxj.home}"/>
+      <arg value="${binary}"/>
+      <arg value="-r"/>
+      <classpath>
+        <pathelement location="${nxj.jtools.jar}"/>
+        <pathelement location="${nxj.pctools.jar}"/>
+        <pathelement location="${nxj.pccomm.jar}"/>
+        <pathelement location="${nxj.commons.jar}"/>
+        <pathelement location="${nxj.bcel.jar}"/>
+        <pathelement location="${nxj.bluecove.jar}"/>
+        <pathelement location="${nxj.bluecove-gpl.jar}"/>
+      </classpath>
+    </java>
+  </target>
+
+  <target  name="-javadoc-build" depends="clean" >
+    <mkdir dir="${dist.javadoc.dir}"/>
+    <javadoc additionalparam="${javadoc.additionalparam}" author="${javadoc.author}" charset="UTF-8" destdir="${dist.javadoc.dir}" docencoding="UTF-8"  failonerror="true" noindex="${javadoc.noindex}" nonavbar="${javadoc.nonavbar}" notree="${javadoc.notree}" private="${javadoc.private}" source="${javac.source}" splitindex="${javadoc.splitindex}" use="${javadoc.use}" useexternalfile="true" version="${javadoc.version}" windowtitle="${javadoc.windowtitle}">
+      <classpath>
+        <path path="${javac.classpath}"/>
+      </classpath>
+      <fileset dir="${src.dir}" excludes="${excludes}" includes="${includes}">
+        <filename name="**/*.java"/>
+      </fileset>
+    </javadoc>
+  </target>
+  <target name="-javadoc-browse" depends="clean,-javadoc-build" if="netbeans.home"  unless="no.javadoc.preview">
+    <nbbrowse file="${dist.javadoc.dir}/index.html"/>
+  </target>
+  <target name="javadoc" depends="clean,-javadoc-build,-javadoc-browse" description="Build Javadoc." />
+
+
+<!--  used only for modifying the NXJplugin -->
+    <target name="zipme" description="Zip the application to the sample project">
+    <property name="build.classes.dir" location="/build"/>
+     <property name="plugin" location="../../NetBeans_projects/NXJPlugin/src/nxjplugin/"/>
+<echo> address=${plugin} </echo >
+   <zip basedir="." destfile="${plugin}/NXJSampleProject.zip">
+<!--       <zip basedir="." destfile="${build}/NXJProjectProject.zip"> -->
+        <exclude name="**/build/"/>
+        <exclude name="**/dist/"/>
+        <exclude name="**/nbproject/private/"/>
+        </zip>
+</target>
+
+
+
+</project>
