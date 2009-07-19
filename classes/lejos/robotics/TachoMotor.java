@@ -2,6 +2,7 @@ package lejos.robotics;
 
 /**
  * Interface for encoded motors without limited range of movement (e.g. NXT motor).
+ * TODO: Alternate names: EncodedMotor,EncoderMotor. 
  * 
  * @author dsturze
  */

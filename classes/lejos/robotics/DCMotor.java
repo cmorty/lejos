@@ -2,6 +2,7 @@ package lejos.robotics;
 
 /**
  * Interface for a regular DC motor with no encoder.
+ * TODO: Reconcile this with lejos.nxt.BasicMotor. Maybe BasicMotor implements this? 
  * @author BB
  *
  */

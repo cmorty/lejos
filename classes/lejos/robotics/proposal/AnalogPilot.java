@@ -2,7 +2,19 @@ package lejos.robotics.proposal;
 
 import lejos.robotics.TachoMotor;
 
-public class AnalogPilot implements Pilot {
+/**
+ * The AnalogPilot (provisional name) is a car with analog steering. It implements the changeHeading() method
+ * by making a call to its own arc() methods. This will change the x, y coordinates, but that is fine because anything
+ * that needs to listen to the Pilot movements will be informed and updated.
+ * 
+ * The implications of this interface are that:
+ * 1) AnalogPilot can be used in all PathFinders that uses Pilot, although the results will probably be okay but
+ * not spectacular since the PathFinder isn't designed around the movement abilities of a steering car.
+ * 2) A more advanced PathFinder could be made that accepts only AnalogPilot. This could be more tailored to
+ * steering vehicles.
+ *
+ */
+public class AnalogPilot implements ArcPilot {
 	
 	/**
 	 * 
@@ -38,7 +50,7 @@ public class AnalogPilot implements Pilot {
 		return null;
 	}
 
-	public void backward() {
+	public void reverse() {
 		// TODO Auto-generated method stub
 		
 	}
