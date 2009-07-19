@@ -92,7 +92,7 @@ public class DifferentialPilot implements Pilot {
 		return null;
 	}
 
-	public void backward() {
+	public void reverse() {
 		// TODO Auto-generated method stub
 		
 	}
