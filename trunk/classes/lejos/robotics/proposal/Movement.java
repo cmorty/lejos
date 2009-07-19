@@ -5,6 +5,8 @@ package lejos.robotics.proposal;
  * heading change, travel distance, arc angle, and arc diameter
  * 
  * Enumeration?
+ * Lawrie agrees an Enumeration architecture might work:
+ * "I think it should use an enumeration of movement types."
  * 
  * Alternate names: Movement, Movement, VectorEvent, PilotEvent
  * @author NXJ Team
