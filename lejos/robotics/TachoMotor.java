@@ -9,6 +9,8 @@ package lejos.robotics;
 public interface TachoMotor extends Encoder, DCMotor {
 
   
+	// TODO: Add addMotorListener(TachoMotorListener listener);
+	
   /**
    * causes motor to rotate through angle; <br>
    * iff immediateReturn is true, method returns immediately and the motor stops by itself <br>

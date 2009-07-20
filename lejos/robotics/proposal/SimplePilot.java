@@ -13,7 +13,7 @@ package lejos.robotics.proposal;
  * these interfaces later without having to deprecate methods. 
  * 
  * However: Some robots probably can't go backward. So maybe we should have Pilot or SimplePilot that can change heading, and
- * go forward only, and then a ReverablePilot that can also go backward?
+ * go forward only, and then a ReversablePilot that can also go backward?
  * 
  * Or maybe break down each of these movements into an interface, and then build different interfaces using these?
  * That seems to break our objects up a little too much in my opinion. Changing heading is a minimum, forward is a minimum,
