@@ -2,13 +2,6 @@ package lejos.robotics.proposal;
 
 /**
  * 
- * 
- * Q2. Renaming rotate as setHeading for pilots is confusing and makes no sense. Pilots do not know the heading. 
- * Similarly having an interface called getHeading is wrong. The current method that gets the angle turned since 
- * the last reset is different, and mainly exists to support updatePostion in SimpleNavigator.
-
- * 
- * 
  * The Pilot is theoretically there to perform vector movements, such as 
 forward(), travel(100) and setHeading(90). The vehicle type should really be 
 largely inconsequential to this interface (of course *implementations* like 
@@ -26,7 +19,7 @@ public interface Pilot extends SimplePilot {
 	 * Adds a PilotListener that will be notified of all Pilot movement events.
 	 * @param p
 	 */
-	public void addPilotListener(PilotListener p);
+	public void addPilotListener(PilotListener listener);
 	
 	  
 	  /**
@@ -35,50 +28,16 @@ public interface Pilot extends SimplePilot {
 	  public void reverse();
 
 	  /**
-	   * Sets the movement speed of the robot.
-	   * 
-	   * @param speed The speed in wheel diameter units per second.
-	   */
-	  public void setMoveSpeed(float speed);
-
-	  /**
-	   * @return the movement speed of the robot in wheel diameter units per second.
-	   */
-	  public float getMoveSpeed();
-
-	  /**
-	   * @return the maximal movement speed of the robot in wheel diameter units per second which can be maintained
-	   *         accurately. Will change with time, as it is normally dependent on the battery voltage.
-	   */
-	  public float getMoveMaxSpeed();
-
-	  /**
-	   * Sets the turning speed of the robot.
-	   * 
-	   * @param speed The speed in degree per second.
-	   */
-	  public void setTurnSpeed(float speed);
-
-	  /**
-	   * @return the turning speed of the robot in degree per second.
-	   */
-	  public float getTurnSpeed();
-
-	  /**
-	   * @return the maximal turning speed of the robot in degree per second which can be maintained accurately. Will change
-	   *         with time, as it is normally dependent on the battery voltage.
-	   */
-	  public float getTurnMaxSpeed();
-
-	  /**
 	   * There is no guarantee that after you call these methods it is actually capable of completing the full movement.
 	   *  Many things might prevent the movement from being completed, and the API should be informed about what 
-	   *  *actual* movement occured, to the best of the Pilot's ability. For example, if the Pilot is a walker, 
+	   *  *actual* movement occurred, to the best of the Pilot's ability. For example, if the Pilot is a walker, 
 	   *  perhaps it can only move forward in increments of 5 cm. So if you tell it to move 17 cm, perhaps it only moves 
 	   *  15 cm and then returns. Or maybe it can only rotate in increments of 15. It should report the actual movement 
 	   *  it completed.
-	   *  Note: If you call setHeading() on a Pilot that is omnidirectional (and hence doesn't need to physically 
-	   *  rotate) returns the same movement angle you specified.
+	   *  
+	   *  Furthermore, I'm not sure if the integrity of the API is compromised with this method, since a robot that isn't
+	   *  capable of moving backward might be asked to do so with this method. Will need to consider this more.
+	   *  
 	   * @param vector
 	   * @return
 	   */
@@ -102,6 +61,9 @@ public interface Pilot extends SimplePilot {
 	  /**
 	   * Rotates the NXT robot the specified number of degrees; direction determined by the sign of the parameter.
 	   * Method returns when rotation is done.
+	   * 
+	   * Note: If you call changeHeading() on a Pilot that is omni-directional (and hence doesn't need to physically 
+	   *  rotate) it internally sets the value and returns the same movement angle you specified.
 	   * 
 	   * @param angle The angle to rotate in degrees. A positive value rotates left, a negative value right (clockwise).
 	   */

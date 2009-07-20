@@ -6,7 +6,21 @@ package lejos.robotics.proposal;
  *
  */
 public interface ArcPilot extends Pilot {
-	 /**
+	
+	/**
+	 * The minimum steering radius this vehicle is capable of when traveling in an arc.
+	 * Theoretically this should be identical for both forward and reverse travel. In practice?
+	 * @return
+	 */
+	public int getMinRadius();
+	
+	/**
+	 * 
+	 * @param radius A value between 0 (differential steering) and infinity (not able to do sharp turns) 
+	 */
+	public void setMinRadius(int radius);
+	
+	/**
 	   * Starts the robot moving along a curved path. This method is similar to the
 	   * {@link #arc(float radius)} method except it uses a ratio of motor
 	   * speeds to determine the curvature of the path and therefore has the ability to drive straight. This makes

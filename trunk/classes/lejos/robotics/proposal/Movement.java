@@ -1,40 +1,58 @@
 package lejos.robotics.proposal;
 
 /**
- * I am unsure how to get one class to encapsulate varying movement data types like:
- * heading change, travel distance, arc angle, and arc diameter
+ * This enumeration represents movement data. 
  * 
- * Enumeration?
- * Lawrie agrees an Enumeration architecture might work:
- * "I think it should use an enumeration of movement types."
+ * I am unsure how to get one class to encapsulate varying movement data types like:
+ * heading change, travel distance, arc angle/distance, and arc radius
  * 
  * Alternate names: Movement, Movement, VectorEvent, PilotEvent
- * @author NXJ Team
+ * @author BB
  *
  */
-public class Movement {
+public enum Movement {
 	
-	public static int HEADING = 1;
-	public static int TRAVEL = 2;
-	public static int ARC_TRAVEL = 4;
+	HEADING, TRAVEL, ARC_TRAVEL;
 	
-	public int getMovementType() {
-		return 0;
-	}
+	private float distance;
+	private int heading_change;
+	private int radius;
+	private float arc_distance;
 	
 	public int getHeadingChange() {
-		return 0;
+		return heading_change;
+	}
+	
+	public void setHeadingChange(int angle) {
+		this.heading_change = angle;
 	}
 	
 	public float getTravelDistance() {
-		return 0.0f;
+		return distance;
 	}
 	
-	public float getArcAngle() {
-		return 0.0f;
+	public void setDistance(float distance) {
+		this.distance = distance;
 	}
 	
 	public float getArcRadius() {
-		return 0.0f;
+		return radius;
+	}
+	
+	public void setArcRadius(int radius) {
+		this.radius = radius;
+	}
+	
+	/**
+	 * 
+	 * Alternate: Use angle (degrees) instead of distance (e.g. cm)
+	 * @return
+	 */
+	public float getArcDistance() {
+		return arc_distance;
+	}
+	
+	public void setArcDistance(float distance) {
+		this.arc_distance = distance;
 	}
 }

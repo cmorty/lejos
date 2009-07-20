@@ -60,11 +60,6 @@ public class AnalogPilot implements ArcPilot {
 		
 	}
 
-	public float getHeading() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
 	public float getMoveMaxSpeed() {
 		// TODO Auto-generated method stub
 		return 0;
@@ -154,6 +149,16 @@ public class AnalogPilot implements ArcPilot {
 			boolean immediateReturn) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	public int getMinRadius() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public void setMinRadius(int radius) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
