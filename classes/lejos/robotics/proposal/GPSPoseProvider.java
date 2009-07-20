@@ -1,7 +1,7 @@
 package lejos.robotics.proposal;
 
-import lejos.robotics.Pose;
 import javax.microedition.location.*;
+import lejos.robotics.Pose;
 
 public class GPSPoseProvider implements PoseProvider {
 

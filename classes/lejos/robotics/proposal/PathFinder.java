@@ -11,6 +11,10 @@ import lejos.robotics.Pose;
 public interface PathFinder {
 
 	/**
+	 * Travels to the coordinates in the destination Pose, including the new heading in Pose?
+	 * If it can't reach the destination, it tries to get as close as possible before giving up
+	 * and reporting the actual coordinates (Pose) achieved.
+	 * TODO: Maybe int x, int y coordinates would be better?
 	 * 
 	 * @param destination
 	 * @return The new pose it achieved.
@@ -33,6 +37,8 @@ public interface PathFinder {
 	public PoseProvider getPoseProvider();
 	
 	/**
+	 * Sets a new PoseProvider for the PathFinder robot to use.
+	 * 
 	 * Example: If the robot moves from one environment (indoors) to another environment (outdoors) it might
 	 * want to change to another method of localization if a change in environment is detected.
 	 * @param poseProvider

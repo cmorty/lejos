@@ -2,6 +2,13 @@ package lejos.robotics.proposal;
 
 import lejos.robotics.Pose;
 
+/**
+ * This class directs a pilot from the current known coordinates to a destination set of coordinates.
+ * The SimplePathPlanner is not capable of avoiding objects or planning a route. It can only drive in a straight
+ * line that is not obstructed.  
+ * 
+ *
+ */
 public class SimplePathPlanner implements PathFinder {
 
 	public SimplePathPlanner(Pilot pilot, PoseProvider poseProvider) {

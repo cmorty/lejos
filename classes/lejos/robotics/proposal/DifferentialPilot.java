@@ -2,7 +2,7 @@ package lejos.robotics.proposal;
 
 import lejos.robotics.TachoMotor;
 
-public class DifferentialPilot implements Pilot {
+public class DifferentialPilot implements ArcPilot {
 	
 	public DifferentialPilot(final float wheelDiameter, final float trackWidth,
 			final TachoMotor leftMotor, final TachoMotor rightMotor) {
@@ -102,11 +102,6 @@ public class DifferentialPilot implements Pilot {
 		
 	}
 
-	public float getHeading() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
 	public float getMoveMaxSpeed() {
 		// TODO Auto-generated method stub
 		return 0;
@@ -196,6 +191,16 @@ public class DifferentialPilot implements Pilot {
 			boolean immediateReturn) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	public int getMinRadius() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public void setMinRadius(int radius) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

@@ -3,7 +3,7 @@ package lejos.robotics.proposal;
 import lejos.robotics.Pose;
 
 /**
- * (Cut and paste discussion list info here)
+ * Provides the coordinate and heading info.
  * @author NXJ Team
  *
  */
