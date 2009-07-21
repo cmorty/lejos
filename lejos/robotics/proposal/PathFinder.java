@@ -3,8 +3,8 @@ package lejos.robotics.proposal;
 import lejos.robotics.Pose;
 
 /**
- * (Cut and paste discussion list info here)
- * PathPlanners very likely accept a Pilot and PoseProvider in the constructor.
+ * PathFinders very likely accept a Pilot and PoseProvider in the constructor.
+ * 
  * @author NXJ Team
  *
  */
