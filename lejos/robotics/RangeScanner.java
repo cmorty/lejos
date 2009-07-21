@@ -2,7 +2,10 @@ package lejos.robotics;
 
 /**
  * TODO: This should probably be an interface in case a simultaneous laser range finder can return the same values.
- * Might also want to do an abstract Scanner class which has RotationPlatform rotation logic so code isn't duplicated. 
+ * Might also want to do an abstract Scanner class which has RotationPlatform rotation logic so code isn't duplicated.
+ * 
+ *  TODO: What about a RangeScanner that can move up and down too?
+ *  
  * @author BB
  *
  */
