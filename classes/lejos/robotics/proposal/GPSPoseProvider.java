@@ -3,6 +3,11 @@ package lejos.robotics.proposal;
 import javax.microedition.location.*;
 import lejos.robotics.Pose;
 
+/**
+ * 
+ * The GPS PoseProvider class will probably work off data from the javax location package.
+ *
+ */
 public class GPSPoseProvider implements PoseProvider {
 
 	public GPSPoseProvider(LocationProvider gps) {
