@@ -34,7 +34,7 @@ public interface DCMotor {
 	   * 
 	   * @return true if the motor is currently in motion
 	   */
-	  // TODO: Possibly part of Tachometer interface? Depends if encoder used to determine this.
+	  // TODO: Possibly part of Encoder interface? Depends if encoder used to determine this.
 	  boolean isMoving();
 
 }

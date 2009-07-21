@@ -1,30 +1,26 @@
 package lejos.robotics;
 
 /**
- * Abstraction for an encoder..
- * TODO: Lawrie has a similar interface in lejos.nxt called Tachometer, exactly the same 
- * but lacking getActualSpeed(). TachoMotorPort uses it. Perhaps these should be amalgamated.
- * @author BB
+ * Abstraction for the tachometer built into NXT motors.
+ * 
+ * @author Lawrie Griffiths
  *
+ * <br/><br/>WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
  */
 public interface Encoder {
 	
-	/**
+	  /**
 	   * Returns the tachometer count.
 	   * 
 	   * @return tachometer count in degrees
 	   */
-	  int getTachoCount();
+	  public int getTachoCount();
 
-	  /**
-	   * Returns the actual speed. This value is calculated every 100 ms on the NXT.
-	   * 
-	   * @return speed in degrees per second, negative value means motor is rotating backward
-	   */
-	  int getActualSpeed();
-
+	  
 	  /**
 	   * Reset the tachometer count.
 	   */
-	  void resetTachoCount();
+	  public void resetTachoCount();
+
 }

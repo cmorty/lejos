@@ -5,6 +5,24 @@ import lejos.robotics.Pose;
 /**
  * PathFinders very likely accept a Pilot and PoseProvider in the constructor.
  * 
+ * With stacking logic, Lawrie mentioned: "This logic needs to be invoked from all methods that subgoals 
+ * of a higher level path finder might use, not just the goTo method. If the higher level called a pilot 
+ * directly, this obstacle avoidance logic would need to be duplicated at the higher level."
+ * 
+ * Lawrie: "...when I investigated stacking path finders, it seemed that for some path finding algorithms, 
+ * the navigation strategy needed to be implemented by at least some duplicated pilot methods and not just 
+ * goTo in order for higher level path finders to use it effectively. See more on this below."
+ * 
+ * So it seems like he's saying BLOCKING needs to take place. In other words, the PathFinder subclass overrides the 
+ * methods in the superclass.  
+ * 
+ * Lawrie: "I was more thinking that even though the overall goal of the path finder 
+ * is to go to (x,y), it splits this up into a set of subgoals and those subgoals can be to follow 
+ * a wall for a while, follow a line for a while, steer round a map feature etc. While it is doing 
+ * that, it still wants to implement the lower level navigation strategies of stacked path finders 
+ * like dynamic obstacle avoidance and avoiding  falling off cliffs."
+ * 
+ * 
  * @author NXJ Team
  *
  */

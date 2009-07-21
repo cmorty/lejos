@@ -572,9 +572,9 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
    }
 
    /**
-    * @see lejos.robotics.TachoMotor#getActualSpeed()
+    * @see lejos.robotics.TachoMotor#getRotationSpeed()
     */
-   public int getActualSpeed()
+   public int getRotationSpeed()
    {
      return _actualSpeed;
    }

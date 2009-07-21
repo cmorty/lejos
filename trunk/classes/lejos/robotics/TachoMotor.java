@@ -6,7 +6,7 @@ package lejos.robotics;
  * 
  * @author dsturze
  */
-public interface TachoMotor extends Encoder, DCMotor {
+public interface TachoMotor extends Tachometer, DCMotor {
 
   
 	// TODO: Add addMotorListener(TachoMotorListener listener);
