@@ -251,7 +251,7 @@ public class TachoPilot implements Pilot {
 	 *         value if motor is rotating backwards. Updated every 100 ms.
 	 **/
 	public int getLeftActualSpeed() {
-		return _left.getActualSpeed();
+		return _left.getRotationSpeed();
 	}
 
 	/**
@@ -259,7 +259,7 @@ public class TachoPilot implements Pilot {
 	 *         value if motor is rotating backwards. Updated every 100 ms.
 	 **/
 	public int getRightActualSpeed() {
-		return _right.getActualSpeed();
+		return _right.getRotationSpeed();
 	}
 
 	/**
@@ -572,7 +572,7 @@ public class TachoPilot implements Pilot {
 	 * @return true if either motor actual speed is zero.
 	 */
 	public boolean stalled() {
-		return (0 == _left.getActualSpeed()) || (0 == _right.getActualSpeed());
+		return (0 == _left.getRotationSpeed()) || (0 == _right.getRotationSpeed());
 	}
 
 	/**

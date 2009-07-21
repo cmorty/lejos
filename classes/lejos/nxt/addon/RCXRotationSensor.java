@@ -2,6 +2,7 @@ package lejos.nxt.addon;
 
 import lejos.nxt.SensorConstants;
 import lejos.nxt.LegacySensorPort;
+import lejos.robotics.Tachometer;
 
 /**
  * Provide access to the Lego RCX Rotation Sensor.
@@ -14,7 +15,7 @@ import lejos.nxt.LegacySensorPort;
  * <br/><br/>WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
  * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
  */
-public class RCXRotationSensor extends Thread implements SensorConstants
+public class RCXRotationSensor extends Thread implements Tachometer, SensorConstants
 {
     public static final int ONE_ROTATION = 16;
     protected static final int UPDATE_TIME = 2;
@@ -104,19 +105,13 @@ public class RCXRotationSensor extends Thread implements SensorConstants
         }
     }
 
-    /** Returns the current count.
-     *
-     * @return the current count
-     */
-    public int getCount()
+    // TODO: Test this. Is it really returning values in degrees as required by Tachometer interface?
+    public int getTachoCount()
     {
         return count;
     }
 
-    /**
-     * Resets the current count to zero.
-     */
-    public void resetCount()
+    public void resetTachoCount()
     {
         synchronized(reader)
         {
@@ -124,4 +119,8 @@ public class RCXRotationSensor extends Thread implements SensorConstants
         }
     }
 
+	public int getRotationSpeed() {
+		// TODO: Return change in degrees over change in time 
+		return 0;
+	}
 }
