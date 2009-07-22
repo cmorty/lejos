@@ -34,17 +34,17 @@ public class NXTCommFactory {
 	 * @throws NXTCommException
 	 */
 	public static NXTComm createNXTComm(int protocol) throws NXTCommException {
-		boolean windows = false;
+		boolean fantom = false;
 		Properties props = getNXJProperties();
 
-		if (os.length() >= 7 && os.substring(0, 7).equals("Windows")) {
-			windows = true;
+		if ((os.length() >= 7 && os.substring(0, 7).equals("Windows"))||(os.toLowerCase().startsWith("mac os x"))) {
+			fantom = true;
 		}
 
 		// Look for USB comms driver first
 		if ((protocol & NXTCommFactory.USB) != 0) {
 			String nxtCommName = props.getProperty("NXTCommUSB",
-					(windows ? "lejos.pc.comm.NXTCommFantom"
+					(fantom ? "lejos.pc.comm.NXTCommFantom"
 							: "lejos.pc.comm.NXTCommLibnxt"));
 			try {
 				Class<?> c = Class.forName(nxtCommName);

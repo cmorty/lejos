@@ -67,9 +67,7 @@
       <a id="5" name="5"></a>
       <h5>(Optional) Bluetooth Stack</h5> 
       <p> If you want to communicate with the NXT over Bluetooth, you will need a Bluetooth dongle or built-in support on your Mac, 
-      and a Bluetooth software stack. LEJOS is distributed with a 3rd party stack -- bluecove.</p>
-	  <p>BlueCove can be can configured by adding the following line to your nxj.properties file (detailed in the <a href="#8">Configuring USB</a> section)
-	  <pre><code>NXTCommBluetooth=lejos.pc.comm.NXTCommBluecove</code></pre>
+      and a Bluetooth software stack. LEJOS is distributed with a 3rd party stack that is configured by default -- bluecove.</p>
       <p> <a href="#top">Back to top</a> </p>
       <a id="6" name="6"></a>
       <h4>Setting up the Environment</h4>
@@ -162,16 +160,8 @@
      <p> <a href="#top">Back to top</a> </p>     
       <a id="8" name="8"></a>
       <h4>Configuring USB</h4>
-      <p>Create a nxj.properties file in $NXJ_HOME/bin containing only<code>NXTCommUSB=lejos.pc.comm.NXTCommFantom</code></p> 
-       <code>$ echo "NXTCommUSB=lejos.pc.comm.NXTCommFantom" &gt; nxj.properties</code> 
-       <p> It is very important that there is no trailing space after <code>NXTCommUSB=lejos.pc.comm.NXTCommFantom</code></p>
-       <p>An example <code>nxj.properties</code> file for both Bluetooth and USB is:</p>
-       <div class="CodeBox">
-      <pre><code>
-      NXTCommUSB=lejos.pc.comm.NXTCommFantom
-      NXTCommBluetooth=lejos.pc.comm.NXTCommBluecove
-      </code></pre></div>
-       
+      <p>The fantom driver is now distributed with leJOS and configured as the default.  There is no need any longer to do so in <code>$NXJ_HOME/bin/nxj.properties</code></p>
+      <p>This means no additional driver download is necessary. The <a href="#2">Standard Lego Software</a> is the only prerequisite.</p>
      <p> <a href="#top">Back to top</a> </p>   
        <a id="9" name="9"></a>
       <h4>(Optional) Testing with nxjbrowse</h4>
