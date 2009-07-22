@@ -17,12 +17,17 @@ import lejos.robotics.Tachometer;
  */
 public class RCXRotationSensor extends Thread implements Tachometer, SensorConstants
 {
+	/**
+	 * The incremental count for one whole rotation (360 degrees).
+	 */
     public static final int ONE_ROTATION = 16;
     protected static final int UPDATE_TIME = 2;
     protected LegacySensorPort port;
     protected int count;
     protected final Reader reader;
-
+    private int speed = 0;
+    private long previous_time = System.currentTimeMillis();
+    
     /**
      * Create an RCX rotation sensor object attached to the specified port.
      * @param port port, e.g. Port.S1
@@ -95,20 +100,41 @@ public class RCXRotationSensor extends Thread implements Tachometer, SensorConst
                         synchronized(this)
                         {
                             count += inc[prev][cur2];
+                            
+                         // Estimate speed by calculating time elapsed for every increment
+                            int time_elapsed = (int)(System.currentTimeMillis() - previous_time);
+                            speed = (360 * 1000) / (time_elapsed * ONE_ROTATION);
+                            previous_time = System.currentTimeMillis();
                         }
                         prev = cur2;
+                        
                     }
                 }
                 cur1 = cur2;
+                
                 try {Thread.sleep(UPDATE_TIME);}catch(Exception e){}
             }
         }
     }
 
-    // TODO: Test this. Is it really returning values in degrees as required by Tachometer interface?
+    /**
+	   * Returns the tachometer count.
+	   * NOTE: Because the RCX rotation sensor only counts 16 increments for a full rotation, the degree values
+	   * are only accurate to +- 22.5 degrees.
+	   * @return tachometer count in degrees, in increments of 22.5 degrees (rounded off)
+	   */
     public int getTachoCount()
     {
-        return count;
+        return (360 * count) / ONE_ROTATION;
+    }
+    
+    /**
+     * Returns the raw values from the rotation sensor instead of degrees.
+     * A full rotation of 360 degrees results in count increasing by 16. 
+     * @return
+     */
+    public int getRawTachoCount() {
+    	return count;
     }
 
     public void resetTachoCount()
@@ -120,7 +146,6 @@ public class RCXRotationSensor extends Thread implements Tachometer, SensorConst
     }
 
 	public int getRotationSpeed() {
-		// TODO: Return change in degrees over change in time 
-		return 0;
+		return speed;
 	}
 }
