@@ -22,6 +22,11 @@ public class StaticValue extends WritableDataWithOffset
       return iType.size();
    }
 
+   public int getAlignment()
+   {
+       return iType.size();
+   }
+
    public void dump (IByteWriter writer) throws TinyVMException
    {
       try

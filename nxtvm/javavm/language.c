@@ -31,9 +31,9 @@ byte* staticFieldsBase;
 byte* entryClassesBase;
 ClassRecord* classBase;
 objSync *staticSyncBase;
-
-#if EXECUTE_FROM_FLASH
+byte* constantValuesBase;
 byte *classStaticStateBase;
+#if EXECUTE_FROM_FLASH
 byte *classStatusBase;
 #endif
 
@@ -75,6 +75,7 @@ void install_binary( void* ptr)
   staticFieldsBase = __get_static_fields_base();
   entryClassesBase = __get_entry_classes_base();
   classBase = __get_class_base();
+  constantValuesBase = __get_constant_values_base();
   gVMOptions = get_master_record()->runtimeOptions;
 }
 

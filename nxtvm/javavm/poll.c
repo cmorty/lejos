@@ -80,7 +80,7 @@ void poll_inputs()
       // responded to earlier changes yet so we can't
       // just overwrite them.
       short jword = 0;
-      store_word_ns((byte*)(&jword), 2, changed);
+      store_word_ns((byte*)(&jword), T_SHORT, changed);
       poller->changed |= jword;
       
 #if DEBUG_POLL

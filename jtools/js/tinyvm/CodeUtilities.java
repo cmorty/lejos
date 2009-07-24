@@ -180,13 +180,7 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
    }
 
 
-
-   /**
-    * @return The word that should be written as parameter of putstatic,
-    *         getstatic, getfield, or putfield.
-    * @throws TinyVMException
-    */
-   int processField (int aFieldIndex, boolean aStatic) throws TinyVMException
+   StaticFieldRecord getStaticFieldRecord(int aFieldIndex)  throws TinyVMException
    {
       Constant pEntry = iCF.getConstantPool().getConstant(aFieldIndex); // TODO catch all (runtime) exceptions
       if (!(pEntry instanceof ConstantFieldref))
@@ -208,42 +202,19 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
       ConstantNameAndType cnat = (ConstantNameAndType) iCF.getConstantPool()
          .getConstant(pFieldEntry.getNameAndTypeIndex());
       String pName = cnat.getName(iCF.getConstantPool());
-      if (aStatic)
+      // First find the actual defining class
+      StaticFieldRecord pFieldRecord = pClassRecord.getStaticFieldRecord(pName);
+      if (pFieldRecord == null)
       {
-         // First find the actual defining class
-         StaticFieldRecord pFieldRecord = pClassRecord.getStaticFieldRecord(pName);
-         if (pFieldRecord == null)
-         {
-             throw new TinyVMException("Failed to locate static field " + pName +
-                     " refrenced via class " + className + " from class " + iCF.getClassName());            
-         }
-         int pClassIndex = iBinary.getClassIndex(pFieldRecord.getClassRecord());
-         assert pClassIndex >= 0 && pClassIndex <= 0xFF: "Check: class index in range";
-         int pFieldIndex = pFieldRecord.getClassRecord().getStaticFieldIndex(pName);
-         assert pFieldIndex >= 0 && pFieldIndex <= 0x03FF: "Check: field index in range";
-
-         return (pClassIndex << 16) | pFieldIndex;
+          throw new TinyVMException("Failed to locate static field " + pName +
+                  " refrenced via class " + className + " from class " + iCF.getClassName());
       }
-      else
-      {
-         int pOffset = pClassRecord.getInstanceFieldOffset(pName);
-         if (pOffset == -1)
-         {
-            throw new TinyVMException("Error: Didn't find field " + className
-               + ":" + pName + " from class " + iCF.getClassName());
-         }
-         assert pOffset <= TinyVMConstants.MAX_FIELD_OFFSET: "Check: field offset in range";
-         TinyVMType fieldType = TinyVMType.tinyVMTypeFromSignature(cnat
-            .getSignature(iCF.getConstantPool()));
-         return (fieldType.type() << TinyVMConstants.F_SIZE_SHIFT) | pOffset;
-      }
+      return pFieldRecord;
    }
-
 
    /**
     * Mark the class as being used.
     * @param aPoolIndex
-    * @return
     * @throws js.tinyvm.TinyVMException
     */
    public void markClass (int aPoolIndex) throws TinyVMException
@@ -469,7 +440,8 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
          return (pNumParams << TinyVMConstants.M_ARGS_SHIFT) | pSignature;
       }
    }
-  /**
+
+   /**
     * @return The word that should be written as parameter of an invocation
     *         opcode.
     * @throws TinyVMException
@@ -510,6 +482,133 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
       //if (pMethod == null)
           // _logger.log(Level.INFO, "Failed to find " + pSig + " class " + className);
       return pMethod;
+   }
+   
+   /**
+    * Process a constant load operation.
+    * Given a reference to the constant pool, return the corresponding 
+    * instruction and index required to load it.
+    * @param aPoolIndex the constant pool index
+    * @return The constant load instruction.
+    * @throws js.tinyvm.TinyVMException
+    */
+   public int genConstantLoad (int aPoolIndex) throws TinyVMException
+   {
+      int idx = processConstantIndex(aPoolIndex);
+      if (idx > TinyVMConstants.MAX_CONSTANTS) exitOnBadOpCode(OP_LDC);
+
+      ConstantRecord pRecord = iBinary.getConstantRecord(idx);
+      // Decide if we can use the optimized version of constant load to access
+      // this value.
+      int instruction;
+      if (pRecord.constantValue().getAlignment() == 4 && idx < 256)
+      {
+         instruction = OP_LDC;
+         iBinary.constOpLoads++;
+      }
+      else
+      {
+          // need to use normal form.
+          instruction = OP_LDC_1 + idx/256;
+          idx = idx % 256;
+          iBinary.constNormLoads++;
+          if (pRecord.constantValue().getType() == TinyVMType.T_OBJECT)
+             iBinary.constString++;
+      }
+      return (instruction << 8) | idx;
+   }
+
+   /**
+    * Generate and instruction to access a static field.
+    * @param aPoolIndex The field to access
+    * @param optInst The optimixed version of the instruction
+    * @param normInst The normal version of the instruction.
+    * @return
+    * @throws TinyVMException
+    */
+   public int genStaticAccess(int aPoolIndex, int optInst, int normInst) throws TinyVMException
+   {
+      StaticFieldRecord fieldRec = getStaticFieldRecord(aPoolIndex);
+      ClassRecord classRec = fieldRec.getClassRecord();
+      int classIndex = iBinary.getClassIndex(classRec);
+      assert classIndex >= 0 && classIndex <= 0xFF: "Check: class index in range";
+      String name = fieldRec.getName();
+      int fieldIndex = classRec.getStaticFieldIndex(name);
+      StaticValue valueRec = classRec.getStaticValue(name);
+      int offset = classRec.getStaticFieldOffset(name);
+      int instruction;
+      // Can we generate optimized version of the instruction?      
+      if (valueRec.getAlignment() == 4 && offset/4 < 256)
+      {
+          instruction = optInst;
+          offset = offset/4;
+          iBinary.staticOpLoads++;
+      }
+      else
+      {
+          // Need to use the normal form, check the index is ok
+          if (fieldIndex > TinyVMConstants.MAX_STATICS) exitOnBadOpCode(optInst);
+          offset = fieldIndex % 256;
+          instruction = normInst + (fieldIndex/256);
+          iBinary.staticNormLoads++;
+      }
+      return (instruction << 16) | (classIndex << 8) | offset;
+   }
+
+   /**
+    * Generate an instruction to access an instance field.
+    * We use an optimized version of the opcode if the field is aligned correctly.
+    * @param aFieldIndex The field we need to access.
+    * @param optInst The optimized version of the instruction.
+    * @param normInst The normal version of the instruction.
+    * @return The field access instruction
+    * @throws TinyVMException
+    */
+   int genFieldAccess (int aFieldIndex, int optInst, int normInst) throws TinyVMException
+   {
+      Constant pEntry = iCF.getConstantPool().getConstant(aFieldIndex); // TODO catch all (runtime) exceptions
+      if (!(pEntry instanceof ConstantFieldref))
+      {
+         throw new TinyVMException("Classfile error: Instruction requiring "
+            + "CONSTANT_Fieldref entry got "
+            + (pEntry == null? "null" : pEntry.getClass().getName()));
+      }
+      ConstantFieldref pFieldEntry = (ConstantFieldref) pEntry;
+      String className = pFieldEntry.getClass(iCF.getConstantPool()).replace(
+         '.', '/');
+      ClassRecord pClassRecord = getClassRecord(className);
+      if (pClassRecord == null)
+      {
+         throw new TinyVMException("Attempt to use a field from a primitive array " +
+                 className + " from class " + iCF.getClassName() + " method " + iFullName);
+
+      }
+      ConstantNameAndType cnat = (ConstantNameAndType) iCF.getConstantPool()
+         .getConstant(pFieldEntry.getNameAndTypeIndex());
+      String pName = cnat.getName(iCF.getConstantPool());
+      int pOffset = pClassRecord.getInstanceFieldOffset(pName);
+      if (pOffset == -1)
+      {
+         throw new TinyVMException("Error: Didn't find field " + className
+            + ":" + pName + " from class " + iCF.getClassName());
+      }
+      assert pOffset <= TinyVMConstants.MAX_FIELD_OFFSET: "Check: field offset in range";
+      TinyVMType fieldType = TinyVMType.tinyVMTypeFromSignature(cnat
+         .getSignature(iCF.getConstantPool()));
+      // Decide which form of the instruction to use.
+      int instruction;
+      if ((fieldType.type() == TinyVMType.T_INT_TYPE || fieldType.type() == TinyVMType.T_FLOAT_TYPE ||
+              fieldType.type() == TinyVMType.T_REFERENCE_TYPE) && (pOffset & 0x3) == 0)
+      {
+         instruction = optInst;
+         iBinary.fieldOpOp++;
+      }
+      else
+      {
+         instruction = normInst;
+         iBinary.fieldNormOp++;
+      }
+      return (instruction << 16) | (fieldType.type() << TinyVMConstants.F_SIZE_SHIFT) | pOffset;
    }
 
    static int getAndCopyFourBytesInt( byte[] aCode, int ix, byte[] pOutCode, int ox)
@@ -552,17 +651,22 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
          switch (pOpCode)
          {
             case OP_LDC:
-               int constIdx = processConstantIndex(aCode[i] & 0xFF);
-               if( constIdx >= 256)
                {
-                  pOutCode[i-1] = (byte) (OP_LDC_1 + (constIdx - 256)/256);
-                  if (constIdx > TinyVMConstants.MAX_CONSTANTS) exitOnBadOpCode(pOpCode);
-
-                  //System.out.println("Large constant index value " + constIdx);
+                  int inst = genConstantLoad(aCode[i] & 0xFF);
+                  pOutCode[i-1] = (byte) (inst >> 8);
+                  pOutCode[i++] = (byte) (inst & 0xFF);           
                }
-               pOutCode[i++] = (byte) constIdx;
                break;
             case OP_LDC_W:
+               {
+                  // Convert long version into short version plus noop
+                  int inst = genConstantLoad((aCode[i] & 0xFF) << 8 | (aCode[i + 1] & 0xFF));
+                  pOutCode[i-1] = (byte) (inst >> 8);
+                  pOutCode[i++] = (byte) (inst & 0xFF);
+                  pOutCode[i++] = (byte) OP_NOP;
+                  iBinary.constWideLoads++;
+               }
+               break;
             case OP_LDC2_W:
                int pIdx1 = processConstantIndex((aCode[i] & 0xFF) << 8
                   | (aCode[i + 1] & 0xFF));
@@ -609,72 +713,40 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
                      // wrapper classes, then replace reads of it with a load
                      // of the appropriate class constant.
                      idx = getConstantIndex(getStaticFieldClass(idx).getPrimitiveClass().getClassConstant());
-                     pOutCode[i-1] = OP_LDC_W;
-                     pOutCode[i++] = (byte) (idx >> 8);
+                     pOutCode[i-1] = (byte)OP_LDC_1;
                      pOutCode[i++] = (byte) (idx & 0xFF);
+                     pOutCode[i++] = (byte) OP_NOP;
                      break;
                   }
-              }
-              // Fall through
-
-            case OP_PUTSTATIC:
-               int pWord1 = processField((aCode[i] & 0xFF) << 8
-                  | (aCode[i + 1] & 0xFF), true);
-               pOutCode[i++] = (byte) (pWord1 >> 16);
-               int fldIdx = pWord1 & 0x03FF;
-               if( fldIdx >= 256)
-               {
-                  int newOpCode;
-                  if (fldIdx > TinyVMConstants.MAX_STATICS) exitOnBadOpCode(pOpCode);
-
-                  if( (aCode[i-2] & 0xFF) == OP_PUTSTATIC)
-                     newOpCode = OP_PUTSTATIC_1 + (fldIdx - 256) / 256 * 2;
-                  else
-                     newOpCode = OP_GETSTATIC_1 + (fldIdx - 256) / 256 * 2;
-
-                  pOutCode[i-2] = (byte) (newOpCode & 0xFF);
-
-                  // System.out.println( "large index of static field " + newOpCode + " - " + fldIdx);
+                  // fall through
+                  int inst = genStaticAccess((aCode[i] & 0xFF) << 8 | (aCode[i + 1] & 0xFF), OP_GETSTATIC, OP_GETSTATIC_1);
+                  pOutCode[i-1] = (byte)(inst >> 16);
+                  pOutCode[i++] = (byte)(inst >> 8);
+                  pOutCode[i++] = (byte)inst;
                }
-               pOutCode[i++] = (byte) (pWord1 & 0xFF);
                break;
-            case OP_PUTFIELD:
+            case OP_PUTSTATIC:
+               {
+                  int inst = genStaticAccess((aCode[i] & 0xFF) << 8 | (aCode[i + 1] & 0xFF), OP_PUTSTATIC, OP_PUTSTATIC_1);
+                  pOutCode[i-1] = (byte)(inst >> 16);
+                  pOutCode[i++] = (byte)(inst >> 8);
+                  pOutCode[i++] = (byte)inst;
+               }
+               break;
             case OP_GETFIELD:
                {
-                  int pWord2 = processField((aCode[i] & 0xFF) << 8 | (aCode[i + 1] & 0xFF), false);
-                  int opcode = aCode[i-1] & 0xFF;
-                  byte b0 = (byte) (pWord2 >> 8);
-                  byte b1 = (byte) (pWord2 & 0xFF);
-
-                  if( false)
-                  {
-                     int fieldType = (b0 >>> 4) & 0x0F;
-                     if( fieldType == TinyVMType.T_BOOLEAN_TYPE || fieldType == TinyVMType.T_BYTE_TYPE)
-                        opcode = opcode == OP_GETFIELD ? OP_GETFIELD_S1 : OP_PUTFIELD_S1;
-                     else
-                     if( fieldType == TinyVMType.T_SHORT_TYPE)
-                        opcode = opcode == OP_GETFIELD ? OP_GETFIELD_S2 : OP_PUTFIELD_S2;
-                     else
-                     if( fieldType == TinyVMType.T_CHAR_TYPE)
-                        opcode = opcode == OP_GETFIELD ? OP_GETFIELD_U2 : OP_PUTFIELD_U2;
-                     else
-                     if( fieldType == TinyVMType.T_INT_TYPE || fieldType == TinyVMType.T_FLOAT_TYPE)
-                        opcode = opcode == OP_GETFIELD ? OP_GETFIELD_W4 : OP_PUTFIELD_W4;
-                     else
-                     if( fieldType == TinyVMType.T_REFERENCE_TYPE)
-                        opcode = opcode == OP_GETFIELD ? OP_GETFIELD_A4 : OP_PUTFIELD_A4;
-
-                     if( opcode != OP_GETFIELD && opcode != OP_PUTFIELD)
-                     {
-                        b0 = b1;
-                        b1 = 0;
-                        // System.out.println( "quick field opcode: " + opcode + " - " + b0);
-                     }
-                  }
-
-                  pOutCode[i-1] = (byte) opcode;
-                  pOutCode[i++] = b0;
-                  pOutCode[i++] = b1;
+                  int inst = genFieldAccess((aCode[i] & 0xFF) << 8 | (aCode[i + 1] & 0xFF), OP_GETFIELD, OP_GETFIELD_1);
+                  pOutCode[i-1] = (byte) (inst >> 16);
+                  pOutCode[i++] = (byte)(inst >> 8);
+                  pOutCode[i++] = (byte) inst;
+               }
+               break;
+            case OP_PUTFIELD:
+               {
+                  int inst = genFieldAccess((aCode[i] & 0xFF) << 8 | (aCode[i + 1] & 0xFF), OP_PUTFIELD, OP_PUTFIELD_1);
+                  pOutCode[i-1] = (byte) (inst >> 16);
+                  pOutCode[i++] = (byte)(inst >> 8);
+                  pOutCode[i++] = (byte) inst;
                }
                break;
             case OP_INVOKEINTERFACE:

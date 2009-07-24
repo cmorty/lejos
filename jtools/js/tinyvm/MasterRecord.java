@@ -59,8 +59,8 @@ public class MasterRecord implements WritableData
       int pMagicNumber = TinyVMConstants.MAGIC_MASK;
       int pConstantTableOffset = _binary.iConstantTable.getOffset();
       int pNumConstantRecords = _binary.iConstantTable.size();
+      int pConstantValuesOffset = _binary.iConstantValues.getOffset();
       int pStaticFieldsOffset = _binary.iStaticFields.getOffset();
-      int pStaticStateOffset = _binary.iStaticState.getOffset();
       int pStaticStateLength = _binary.iStaticState.getLength();
       int pNumStaticFields = _binary.iStaticFields.size();
       int pEntryClassesOffset = _binary.iEntryClassIndices.getOffset();
@@ -73,9 +73,9 @@ public class MasterRecord implements WritableData
       {
          writer.writeU2(pMagicNumber);
          writer.writeU2(pConstantTableOffset);
+         writer.writeU2(pConstantValuesOffset);
          writer.writeU2(pNumConstantRecords);
          writer.writeU2(pStaticFieldsOffset);
-         writer.writeU2(pStaticStateOffset);
          writer.writeU2(pStaticStateLength);
          writer.writeU2(pNumStaticFields);
          writer.writeU2(pEntryClassesOffset);

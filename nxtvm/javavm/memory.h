@@ -20,11 +20,9 @@ extern Object *new_multi_array (const byte cls, byte reqDimensions, STACKWORD *n
 extern int arraycopy(Object *src, int srcOff, Object *dst, int dstOff, int len);
 extern byte *system_allocate(int sz);
 extern void system_free(byte *mem);
-extern void store_word_swp (byte *ptr, int aSize, STACKWORD aWord);
-extern STACKWORD get_word_swp(byte *ptr, int aSize);
 extern STACKWORD get_word_4_swp(byte *ptr);
-extern void store_word_ns (byte *ptr, int aSize, STACKWORD aWord);
-extern STACKWORD get_word_ns(byte *ptr, int aSize);
+extern void store_word_ns (byte *ptr, int typ, STACKWORD aWord);
+extern STACKWORD get_word_ns(byte *ptr, int typ);
 extern STACKWORD get_word_4_ns(byte *ptr);
 extern void zero_mem (TWOBYTES *ptr, TWOBYTES numWords);
 extern int getHeapSize();
@@ -116,7 +114,7 @@ extern VarStat mem_usedblk_vs;
 
 extern byte *memory_base[];
 
-extern FOURBYTES mem_peek(int base, int offset, int len);
+extern FOURBYTES mem_peek(int base, int offset, int typ);
 extern void mem_copy(Object *obj, int objoffset, int base, int offset, int len);
 extern REFERENCE mem_get_reference(int base, int offset);
 

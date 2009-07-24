@@ -177,6 +177,9 @@ public class ClassRecord implements WritableData
 
    /**
     * (Call only after record has been processed).
+    * @param aSignature
+    * @param aStatic
+    * @return
     */
    public boolean hasMethod (Signature aSignature, boolean aStatic)
    {
@@ -512,6 +515,7 @@ public class ClassRecord implements WritableData
    }
 
    /**
+    * @param aName
     * @return Offset relative to the start of the static state block.
     * @throws TinyVMException
     */
@@ -521,6 +525,16 @@ public class ClassRecord implements WritableData
       if (pValue == null)
          return -1;
       return pValue.getOffset() - iBinary.iStaticState.getOffset();
+   }
+
+   /**
+    * @param aName the name of the static field.
+    * @return The StaticValue for the given name
+    * @throws TinyVMException
+    */
+   public StaticValue getStaticValue (String aName) throws TinyVMException
+   {
+      return iStaticValues.get(aName);
    }
 
    public int getStaticFieldIndex (String aName)
@@ -640,8 +654,8 @@ public class ClassRecord implements WritableData
       aMethodTables.add(iMethodTable);
    }
 
-   public void storeOptimizedFields (RecordTable<RecordTable<InstanceFieldRecord>> aInstanceFieldTables,
-      RecordTable<StaticFieldRecord> aStaticFields, RecordTable<StaticValue> aStaticState)
+   public void storeOptimizedStaticFields (RecordTable<StaticFieldRecord> aStaticFields,
+           RecordTable<StaticValue> aStaticState, int align)
       throws TinyVMException
    {
       Field[] fields = iCF.getFields();
@@ -652,14 +666,20 @@ public class ClassRecord implements WritableData
          {
             String pName = pField.getName().toString();
             StaticFieldRecord pRec = iStaticFields.get(pName);
-            if (iBinary.useAll() || pRec.used())
+            StaticValue pValue = iStaticValues.get(pName);
+            if (pValue.getAlignment() == align && (iBinary.useAll() || pRec.used()))
             {
-                StaticValue pValue = iStaticValues.get(pName);
                 aStaticState.add(pValue);
                 aStaticFields.add(pRec);
             }
          }
       }
+   }
+
+   public void storeOptimizedFields (RecordTable<RecordTable<InstanceFieldRecord>> aInstanceFieldTables)
+      throws TinyVMException
+   {
+
       aInstanceFieldTables.add(iInstanceFields);
    }
 
@@ -776,16 +796,19 @@ public class ClassRecord implements WritableData
       return pCR;
    }
 
+    @Override
    public String toString ()
    {
       return iName;
    }
 
+    @Override
    public int hashCode ()
    {
       return iName.hashCode();
    }
 
+    @Override
    public boolean equals (Object aObj)
    {
       if (!(aObj instanceof ClassRecord))

@@ -23,16 +23,16 @@ typedef struct S_MasterRecord
 {
   TWOBYTES magicNumber;
   TWOBYTES constantTableOffset;
+  TWOBYTES constantValuesOffset;
   TWOBYTES numConstants;
   
   /**
    * Offset to STATICFIELD[].
    */
   TWOBYTES staticFieldsOffset;
-  TWOBYTES staticStateOffset;
   
   /**
-   * Size of all static state in 2-byte words.
+   * Size of all static state in bytes.
    */
   TWOBYTES staticStateLength;
   TWOBYTES numStaticFields;
@@ -129,17 +129,17 @@ extern void *installedBinary;
 
 extern ConstantRecord* constantTableBase;
 extern byte* staticFieldsBase;
-extern byte* staticStateBase;
 extern byte* entryClassesBase;
 extern ClassRecord* classBase;
 extern objSync *staticSyncBase;
-
-#if EXECUTE_FROM_FLASH
 // base of static area of all classes
 extern byte *classStaticStateBase;
+#if EXECUTE_FROM_FLASH
 // base of class status table
 extern byte *classStatusBase;
 #endif
+//base of constant values
+extern byte *constantValuesBase;
 
 extern byte get_class_index (Object *obj);
 extern void dispatch_virtual (Object *obj, int signature, byte *rAddr);
@@ -177,6 +177,8 @@ void install_binary( void* ptr);
 #define get_constant_record(IDX_)   (get_constant_base() + (IDX_))
 
 #define get_constant_ptr(CR_)       (get_binary_base() + (CR_)->offset)
+#define __get_constant_values_base() (get_binary_base() + get_master_record()->constantValuesOffset)
+#define get_constant_values_base()  (constantValuesBase)
 
 #define class_size(CLASSIDX_)       (get_class_record(CLASSIDX_)->classSize)
 
@@ -213,11 +215,7 @@ void install_binary( void* ptr);
 #define __get_static_fields_base()  (get_binary_base() + get_master_record()->staticFieldsOffset)
 #define get_static_fields_base()    (staticFieldsBase)
 
-#if EXECUTE_FROM_FLASH
 #define get_static_state_base()     (classStaticStateBase)
-#else
-#define get_static_state_base()     (get_binary_base() + get_master_record()->staticStateOffset)
-#endif
 
 #define get_static_field_offset(R_) ((R_) & 0x0FFF)
 

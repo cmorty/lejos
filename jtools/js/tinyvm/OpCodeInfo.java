@@ -64,24 +64,17 @@ public interface OpCodeInfo
    // codes from 203 to 228 are reserved for QUICK opcodes, what we are
    // doing here is equivalent so let's use them
    int OP_GETSTATIC_1 = 203;
-   int OP_PUTSTATIC_1 = 204;
-   int OP_GETSTATIC_2 = 205;
-   int OP_PUTSTATIC_2 = 206;
-   int OP_GETSTATIC_3 = 207;
-   int OP_PUTSTATIC_3 = 208;
-
-   int OP_GETFIELD_S1 = 209;
-   int OP_PUTFIELD_S1 = 210;
-   int OP_GETFIELD_S2 = 211;
-   int OP_PUTFIELD_S2 = 212;
-   int OP_GETFIELD_U2 = 213;
-   int OP_PUTFIELD_U2 = 214;
-   int OP_GETFIELD_W4 = 215;
-   int OP_PUTFIELD_W4 = 216;
-   int OP_GETFIELD_A4 = 217;
-   int OP_PUTFIELD_A4 = 218;
-   
-   int OP_LDC_1 = 219;
-   int OP_LDC_2 = 220;
-   int OP_LDC_3 = 221;
+   int OP_GETSTATIC_2 = 204;
+   int OP_GETSTATIC_3 = 205;
+   int OP_GETSTATIC_4 = 206;
+   int OP_PUTSTATIC_1 = 207;
+   int OP_PUTSTATIC_2 = 208;
+   int OP_PUTSTATIC_3 = 209;
+   int OP_PUTSTATIC_4 = 210; 
+   int OP_LDC_1 = 211;
+   int OP_LDC_2 = 212;
+   int OP_LDC_3 = 213;
+   int OP_LDC_4 = 214;
+   int OP_GETFIELD_1 = 215;
+   int OP_PUTFIELD_1 = 216;
 }
