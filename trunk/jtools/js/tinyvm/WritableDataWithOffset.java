@@ -34,7 +34,7 @@ public abstract class WritableDataWithOffset implements WritableData
    {
       assert _offset != -1: "Precondition: _offset != -1";
 
-      if (_offset <= 0 || _offset > 0xFFFF)
+      if (_offset < 0 || _offset > 0xFFFF)
       {
          throw new TinyVMException("Offset out of range (" + _offset + ")");
       }

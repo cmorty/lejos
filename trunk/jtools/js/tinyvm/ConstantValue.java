@@ -131,6 +131,20 @@ public class ConstantValue extends WritableDataWithOffset
    }
 
    /**
+    * Returns the ideal data alignment for this data type.
+    * @return the alignment in bytes.
+    */
+   public int getAlignment()
+   {
+       // alignment is the same as length, except for strings which are byte
+       // aligned.
+       if (_value instanceof String)
+           return 1;
+       else
+           return getLength();
+   }
+
+   /**
     * Dump.
     * 
     * @param writer byte writer
@@ -141,47 +155,28 @@ public class ConstantValue extends WritableDataWithOffset
 
       try
       {
-         // Constant values must be dumped in Big Endian order.
+         // Constant values are dumped in system byte order.
          if (_value instanceof Double)
          {
             double doubleValue = ((Double) _value).doubleValue();
-            /*
-            float floatValue = (float) doubleValue;
-            if (doubleValue != 0.0
-               && Math.abs((doubleValue - floatValue) / doubleValue) > 0.1)
-            {
-               _logger.log(Level.WARNING, "Double " + doubleValue
-                  + " truncated to " + floatValue + "f.");
-            }
-            writer.writeInt(0);
-            writer.writeInt(Float.floatToIntBits(floatValue));*/
             long longValue = Double.doubleToLongBits(doubleValue);
-            writer.writeInt((int)(longValue & 0xffffffff));
-            writer.writeInt((int)(longValue >> 32));
+            writer.writeU4((int)(longValue >> 32));
+            writer.writeU4((int)(longValue & 0xffffffff));
          }
          else if (_value instanceof Float)
          {
             writer
-               .writeInt(Float.floatToIntBits(((Float) _value).floatValue()));
+               .writeU4(Float.floatToIntBits(((Float) _value).floatValue()));
          }
          else if (_value instanceof Integer)
          {
-            writer.writeInt(((Integer) _value).intValue());
+            writer.writeU4(((Integer) _value).intValue());
          }
          else if (_value instanceof Long)
          {
             long longValue = ((Long) _value).longValue();
-            /*
-            int intValue = (int) longValue;
-            if (intValue != longValue)
-            {
-               _logger.log(Level.WARNING, "Long " + longValue
-                  + "L truncated to " + intValue + ".");
-            }
-            writer.writeInt(0);
-            writer.writeInt(intValue);*/
-            writer.writeInt((int)(longValue & 0xffffffff));
-            writer.writeInt((int)(longValue >> 32));
+            writer.writeU4((int)(longValue >> 32));
+            writer.writeU4((int)(longValue & 0xffffffff));
          }
          else if (_value instanceof String)
          {

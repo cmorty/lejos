@@ -19,24 +19,21 @@ OPCODE(OP_SIPUSH)
   pc += 2;
   DISPATCH;
 
-OPCODE(OP_LDC_W)
-  tempConstRec = get_constant_record (((TWOBYTES) pc[0] << 8) | pc[1]);
-  tempInt = 2;
-  goto LDC_CONT;
-
-OPCODE(OP_LDC_1)
-OPCODE(OP_LDC_2)
-OPCODE(OP_LDC_3)
-  tempConstRec = get_constant_record ((*(pc-1) - OP_LDC_1 + 1)*256 + *pc);
-  tempInt = 1;
-  goto LDC_CONT;
-
 OPCODE(OP_LDC)
   // Stack size: +1
   // Arguments: 1
-  tempConstRec = get_constant_record (*pc);
-  tempInt = 1;
-LDC_CONT:
+  // Optimized version for ints/floats only.
+  push_word(*(((STACKWORD *)get_constant_values_base()) + pc[0]));
+  pc++;
+  DISPATCH;
+
+OPCODE(OP_LDC_1)
+OPCODE(OP_LDC_2)
+MULTI_OPCODE(OP_LDC_3)
+MULTI_OPCODE(OP_LDC_4)
+  tempConstRec = get_constant_record ((*(pc-1) - OP_LDC_1)*256 + *pc);
+  // Stack size: +1
+  // Arguments: 1
   switch (tempConstRec->constantType)
   {
     case T_REFERENCE:
@@ -51,34 +48,28 @@ LDC_CONT:
       push_ref (ptr2word (tempWordPtr));
       break;
     case T_CLASS:
-      push_word(ptr2ref(get_class_record(get_word_swp(get_constant_ptr(tempConstRec), 1))));
+      push_word(ptr2ref(get_class_record(*get_constant_ptr(tempConstRec))));
       break;
     case T_INT:
     case T_FLOAT:
-      push_word(get_word_4_swp(get_constant_ptr(tempConstRec)));
+      push_word(*(STACKWORD *)get_constant_ptr(tempConstRec));
       break;
     #ifdef VERIFY
     default:
       assert (false, INTERPRETER0);
     #endif
   }
-  pc += tempInt;
+  pc++;
   DISPATCH;
 
 OPCODE(OP_LDC2_W)
   // Stack size: +2
   // Arguments: 2
   {
-    byte *tempBytePtr;
     tempConstRec = get_constant_record (((TWOBYTES) pc[0] << 8) | pc[1]);
-
-    #ifdef VERIFY
-    assert (tempConstRec->constantSize == 8, INTERPRETER6);
-    #endif // VERIFY
-
-    tempBytePtr = get_constant_ptr (tempConstRec);
-    push_word(get_word_4_swp (tempBytePtr + 4));
-    push_word(get_word_4_swp (tempBytePtr));
+    tempWordPtr = (STACKWORD *)get_constant_ptr (tempConstRec);
+    push_word(*tempWordPtr++);
+    push_word(*tempWordPtr);
     pc += 2;
   }
   DISPATCH;

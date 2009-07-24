@@ -535,69 +535,37 @@ void system_free(byte *mem)
 }
 
 /**
- * Problem here is bigendian v. littleendian. Java has its
- * words stored bigendian, intel is littleendian.
  * Note the issue is not just endian. We also need to deal with the fact that
  * java items may not be aligned correctly.
  * Now slightly optmized;
  */
-
-STACKWORD get_word_swp(byte *ptr, int aSize)
-{
-  switch(aSize)
-  {
-  case 1:
-    return (STACKWORD)(JINT)(JBYTE)ptr[0];
-  case 2:
-    return (STACKWORD)(JINT)(JSHORT)(((TWOBYTES)ptr[0]) << 8) | (ptr[1]);
-  case 4:
-    return (((STACKWORD)ptr[0]) << 24) | (((STACKWORD)ptr[1]) << 16) |
-           (((STACKWORD)ptr[2]) << 8) | ((STACKWORD)ptr[3]);
-  }
-  return 0;
-}
-
-
 STACKWORD get_word_4_swp(byte *ptr)
 {
     return (((STACKWORD)ptr[0]) << 24) | (((STACKWORD)ptr[1]) << 16) |
            (((STACKWORD)ptr[2]) << 8) | ((STACKWORD)ptr[3]);
 }
 
-void store_word_swp(byte *ptr, int aSize, STACKWORD aWord)
-{
-  switch(aSize)
-  {
-  case 1:
-    ptr[0] = (byte)aWord;
-    return;
-  case 2:
-    ptr[0] = (byte)(aWord >> 8);
-    ptr[1] = (byte)(aWord); 
-    return;
-  case 4:
-    ptr[0] = (byte)(aWord >> 24);
-    ptr[1] = (byte)(aWord >> 16); 
-    ptr[2] = (byte)(aWord >> 8);
-    ptr[3] = (byte)(aWord); 
-    return;
-  }
-}
-
 /**
- * Following are non-swapping versions of the above.
+ * Following allow access to non aligned data fields
  */
-STACKWORD get_word_ns(byte *ptr, int aSize)
+STACKWORD get_word_ns(byte *ptr, int typ)
 {
-  switch(aSize)
+  switch(typ)
   {
-  case 1:
-    return (STACKWORD)(JINT)(JBYTE)ptr[0];
-  case 2:
-    return (STACKWORD)(JINT)(JSHORT)(((TWOBYTES)ptr[1]) << 8) | (ptr[0]);
-  case 4:
+  case T_INT:
+  case T_FLOAT:
+  case T_REFERENCE:
+  case T_DOUBLE:
+  case T_LONG:
     return (((STACKWORD)ptr[3]) << 24) | (((STACKWORD)ptr[2]) << 16) |
            (((STACKWORD)ptr[1]) << 8) | ((STACKWORD)ptr[0]);
+  case T_SHORT:
+    return (STACKWORD)(JINT)(JSHORT)(((TWOBYTES)ptr[1]) << 8) | (ptr[0]);
+  case T_CHAR:
+    return (STACKWORD)(JCHAR)(((TWOBYTES)ptr[1]) << 8) | (ptr[0]);
+  case T_BOOLEAN:
+  case T_BYTE:
+    return (STACKWORD)(JINT)(JBYTE)ptr[0];
   }
   return 0;
 }
@@ -608,22 +576,28 @@ STACKWORD get_word_4_ns(byte *ptr)
            (((STACKWORD)ptr[1]) << 8) | ((STACKWORD)ptr[0]);
 }
 
-void store_word_ns(byte *ptr, int aSize, STACKWORD aWord)
+void store_word_ns(byte *ptr, int typ, STACKWORD aWord)
 {
-  switch(aSize)
+  switch(typ)
   {
-  case 1:
-    ptr[0] = (byte)aWord;
-    return;
-  case 2:
-    ptr[0] = (byte)(aWord); 
+  case T_INT:
+  case T_FLOAT:
+  case T_REFERENCE:
+  case T_DOUBLE:
+  case T_LONG:
+    ptr[0] = (byte)(aWord);
     ptr[1] = (byte)(aWord >> 8);
-    return;
-  case 4:
-    ptr[0] = (byte)(aWord); 
-    ptr[1] = (byte)(aWord >> 8);
-    ptr[2] = (byte)(aWord >> 16); 
+    ptr[2] = (byte)(aWord >> 16);
     ptr[3] = (byte)(aWord >> 24);
+    return;
+  case T_SHORT:
+  case T_CHAR:
+    ptr[0] = (byte)(aWord);
+    ptr[1] = (byte)(aWord >> 8);
+    return;
+  case T_BOOLEAN:
+  case T_BYTE:
+    ptr[0] = (byte)aWord;
     return;
   }
 }
@@ -655,27 +629,25 @@ int getRegionAddress()
   return (int)heap_start;
 }
 
-FOURBYTES mem_peek(int base, int offset, int len)
+FOURBYTES mem_peek(int base, int offset, int typ)
 {
-  switch(len)
-  {
-  case 1:
-    return *((byte *)(memory_base[base] + offset));
-  case 2:
-    return *((TWOBYTES *)(memory_base[base] + offset));
-  case 4:
-    return *((FOURBYTES *)(memory_base[base] + offset));
-  default:
-    return 0;
-  }
+  return get_word_ns((byte *)(memory_base[base] + offset), typ);
 }
 
 void mem_copy(Object *obj, int objoffset, int base, int offset, int len)
 {
+  if (obj == null)
+    throw_exception(nullPointerException);
   if (is_array(obj))
+  {
+    if (get_element_type(obj) == T_REFERENCE) update_array(obj);
     memcpy(array_start(obj) + objoffset, memory_base[base]+offset, len);
+  }
   else
+  {
+    update_object(obj);
     memcpy(fields_start(obj) + objoffset, memory_base[base]+offset, len);
+  }
 }
 
 REFERENCE mem_get_reference(int base, int offset)
@@ -2379,37 +2351,39 @@ void gc_update_object(Object *obj)
   //if (gcPhase != GC_MARK) return;
   //if (get_gc_mark(obj) == GC_BLACK) return;
   classRecord = get_class_record(classIndex);
-  statePtr = (byte*) obj;
-  /* Scan the object in reverse so we start at the end of the object */
-  statePtr += classRecord->classSize;
-  /* now we can scan the member fields */
-  while (classIndex != JAVA_LANG_OBJECT)
+  if (!has_norefs(classRecord))
   {
-    if(classRecord->numInstanceFields)
+    statePtr = (byte*) obj;
+    /* Scan the object in reverse so we start at the end of the object */
+    statePtr += classRecord->classSize;
+    /* now we can scan the member fields */
+    while (classIndex != JAVA_LANG_OBJECT)
     {
-      int i;
-      for(i = classRecord->numInstanceFields-1; i >= 0; i--)
+      if(classRecord->numInstanceFields)
       {
-        byte fieldType = get_field_type(classRecord, i);
-        byte fieldSize = typeSize[fieldType];
-        statePtr -= fieldSize;
-
-        if(fieldType == T_REFERENCE)
+        int i;
+        for(i = classRecord->numInstanceFields-1; i >= 0; i--)
         {
-          /* omit nextThread field of Thread class */
-  
-          if(! (classIndex == JAVA_LANG_THREAD && i == 0))
+          byte fieldType = get_field_type(classRecord, i);
+          byte fieldSize = typeSize[fieldType];
+          statePtr -= fieldSize;
+
+          if(fieldType == T_REFERENCE)
           {
-            Object* robj = (Object*) get_word_4_ns(statePtr);
-            if(robj != NULL)
-              mark_object(robj, 0);
+            /* omit nextThread field of Thread class */
+  
+            if(! (classIndex == JAVA_LANG_THREAD && i == 0))
+            {
+              Object* robj = (Object*) get_word_4_ns(statePtr);
+              if(robj != NULL)
+                mark_object(robj, 0);
+            }
           }
         }
-
       }
+      classIndex = classRecord->parentClass;
+      classRecord = get_class_record(classIndex);
     }
-    classIndex = classRecord->parentClass;
-    classRecord = get_class_record(classIndex);
   }
   set_gc_marked(obj, GC_BLACK);
 }

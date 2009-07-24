@@ -14,23 +14,24 @@ import js.tinyvm.util.HashVector;
 public class Binary
 {
    // State that is written to the binary:
-   final RecordTable<WritableData> iEntireBinary = new RecordTable<WritableData>("binary", true, false);
+   final RecordTable<WritableData> iEntireBinary = new RecordTable<WritableData>("binary", true, true);
+   final RecordTable<WritableData> iStaticStorage = new RecordTable<WritableData>("binary", true, true);
 
    // Contents of binary:
    final MasterRecord iMasterRecord = new MasterRecord(this);
-   RecordTable<ClassRecord> iClassTable = new RecordTable<ClassRecord>("class table", false, false);
+   RecordTable<ClassRecord> iClassTable = new RecordTable<ClassRecord>("class table", false, true);
    RecordTable<StaticValue> iStaticState = new RecordTable<StaticValue>("static state", true, true);
-   RecordTable<StaticFieldRecord> iStaticFields = new RecordTable<StaticFieldRecord>("static fields", true, false);
-   RecordTable<ConstantRecord> iConstantTable = new RecordTable<ConstantRecord>("constants", false, false);
-   RecordTable<RecordTable<MethodRecord>> iMethodTables = new RecordTable<RecordTable<MethodRecord>>("methods", true, false);
-   RecordTable<RecordTable<ExceptionRecord>> iExceptionTables = new RecordTable<RecordTable<ExceptionRecord>>("exceptions", false, false);
+   RecordTable<StaticFieldRecord> iStaticFields = new RecordTable<StaticFieldRecord>("static fields", true, true);
+   RecordTable<ConstantRecord> iConstantTable = new RecordTable<ConstantRecord>("constants", false, true);
+   RecordTable<RecordTable<MethodRecord>> iMethodTables = new RecordTable<RecordTable<MethodRecord>>("methods", true, true);
+   RecordTable<RecordTable<ExceptionRecord>> iExceptionTables = new RecordTable<RecordTable<ExceptionRecord>>("exceptions", false, true);
    RecordTable<RecordTable<InstanceFieldRecord>> iInstanceFieldTables = new RecordTable<RecordTable<InstanceFieldRecord>>("instance fields",
-      true, false);
-   final RecordTable<CodeSequence> iCodeSequences = new RecordTable<CodeSequence>("code", true, false);
+      true, true);
+   final RecordTable<CodeSequence> iCodeSequences = new RecordTable<CodeSequence>("code", true, true);
    RecordTable<ConstantValue> iConstantValues = new RecordTable<ConstantValue>("constant values", true,
-      false);
+      true);
    final RecordTable<EntryClassIndex> iEntryClassIndices = new RecordTable<EntryClassIndex>(
-      "entry class indices", true, false);
+      "entry class indices", true, true);
 
    // Other state:
    final HashSet<Signature> iSpecialSignatures = new HashSet<Signature>();
@@ -39,6 +40,19 @@ public class Binary
    int usedClassCount = 0;
    int markGeneration = 0;
    boolean useAll = false;
+   // Optimal order for storing constants/statics etc. Note we store 4 byte
+   // items first to maximize the chance of using optimized load/store operations
+   // on them.
+   final int[] alignments = {4, 8, 2, 1};
+
+   int constOpLoads = 0;
+   int constNormLoads = 0;
+   int constWideLoads = 0;
+   int constString = 0;
+   int staticOpLoads = 0;
+   int staticNormLoads = 0;
+   int fieldOpOp = 0;
+   int fieldNormOp = 0;
 
    /**
     * Constructor.
@@ -123,8 +137,8 @@ public class Binary
     * 
     * 
     * @param elementClass
-    * @param dims
     * @return class record or null if not found or the array is a primitive array.
+    * @throws TinyVMException
     */
    public ClassRecord getClassRecordForArray (ClassRecord elementClass) throws TinyVMException
    {
@@ -182,6 +196,7 @@ public class Binary
     * Mark the given class as actually used.
     * 
     * @param classRecord the class to be marked
+    * @param instance
     */
    public void markClassUsed(ClassRecord classRecord, boolean instance)
    {
@@ -361,7 +376,7 @@ public class Binary
    
    public void processOptimizedClasses () throws TinyVMException
    {
-      RecordTable<ClassRecord> iNewClassTable = new RecordTable<ClassRecord>("class table", false, false);
+      RecordTable<ClassRecord> iNewClassTable = new RecordTable<ClassRecord>("class table", false, true);
       int pSize = iClassTable.size();
       for (int pIndex = 0; pIndex < pSize; pIndex++)
       {
@@ -504,20 +519,31 @@ public class Binary
          pRec.storeConstants(iConstantTable, iConstantValues);
       }
    }
-   
+
+   /**
+    * Store constant values in an optimal fashion.
+    * We only include constants that are actually used. We also arrange to store
+    * constant values correctly aligned so that they can be accessed directly
+    * by the VM. We order the constants to allow fast access to the commanly used
+    * int/float types.
+    * @throws TinyVMException
+    */
    public void processOptimizedConstants () throws TinyVMException
    {
       int pSize = iConstantTable.size();
-      RecordTable<ConstantRecord> iOptConstantTable = new RecordTable<ConstantRecord>("constants", false, false);
-      RecordTable<ConstantValue> iOptConstantValues = new RecordTable<ConstantValue>("constant values", true, false);
-      
-      for (int pIndex = 0; pIndex < pSize; pIndex++)
+      RecordTable<ConstantRecord> iOptConstantTable = new RecordTable<ConstantRecord>("constants", false, true);
+      RecordTable<ConstantValue> iOptConstantValues = new RecordTable<ConstantValue>("constant values", true, true);
+
+      for(int align : alignments)
       {
-         ConstantRecord pRec = iConstantTable.get(pIndex);
-         if (useAll() || pRec.used())
+         for (int pIndex = 0; pIndex < pSize; pIndex++)
          {
-            iOptConstantTable.add(pRec);
-            iOptConstantValues.add(pRec.constantValue());
+            ConstantRecord pRec = iConstantTable.get(pIndex);
+            if (pRec.constantValue().getAlignment() == align && (useAll() || pRec.used()))
+            {
+               iOptConstantTable.add(pRec);
+               iOptConstantValues.add(pRec.constantValue());
+            }
          }
       }
       iConstantTable = iOptConstantTable;
@@ -551,8 +577,8 @@ public class Binary
       int pSize = iClassTable.size();
       // We need an optimized version of the method and exception tables
       // so create new ones and repopulate.
-      iMethodTables = new RecordTable<RecordTable<MethodRecord>>("methods", true, false);
-      iExceptionTables = new RecordTable<RecordTable<ExceptionRecord>>("exceptions", false, false);
+      iMethodTables = new RecordTable<RecordTable<MethodRecord>>("methods", true, true);
+      iExceptionTables = new RecordTable<RecordTable<ExceptionRecord>>("exceptions", false, true);
 
       for (int pIndex = 0; pIndex < pSize; pIndex++)
       {
@@ -578,13 +604,20 @@ public class Binary
       // so create new ones and repopulate.
 
       iStaticState = new RecordTable<StaticValue>("static state", true, true);
-      iStaticFields = new RecordTable<StaticFieldRecord>("static fields", true, false);
-      iInstanceFieldTables = new RecordTable<RecordTable<InstanceFieldRecord>>("instance fields", true, false);
-
+      iStaticFields = new RecordTable<StaticFieldRecord>("static fields", true, true);
+      iInstanceFieldTables = new RecordTable<RecordTable<InstanceFieldRecord>>("instance fields", true, true);
+      for(int align : alignments)
+      {
+          for (int pIndex = 0; pIndex < pSize; pIndex++)
+          {
+             ClassRecord pRec = iClassTable.get(pIndex);
+             pRec.storeOptimizedStaticFields(iStaticFields, iStaticState, align);
+          }
+      }
       for (int pIndex = 0; pIndex < pSize; pIndex++)
       {
          ClassRecord pRec = iClassTable.get(pIndex);
-         pRec.storeOptimizedFields(iInstanceFieldTables, iStaticFields, iStaticState);
+         pRec.storeOptimizedFields(iInstanceFieldTables);
       }
    }
 
@@ -604,16 +637,16 @@ public class Binary
 
    public void storeComponents ()
    {
-      // Master record and class table are always the first two:
+      // Master record and class table are always the first two, all
+      // tables are aligned on 4 byte boundaries.
       iEntireBinary.add(iMasterRecord);
       iEntireBinary.add(iClassTable);
-      // 5 aligned components:
-      iEntireBinary.add(iStaticState);
+      // We do not need to store the static fields, just calculate layout
+      iStaticStorage.add(iStaticState);
       iEntireBinary.add(iStaticFields);
       iEntireBinary.add(iConstantTable);
       iEntireBinary.add(iMethodTables);
       iEntireBinary.add(iExceptionTables);
-      // 4 unaligned components:
       iEntireBinary.add(iInstanceFieldTables);
       iEntireBinary.add(iCodeSequences);
       iEntireBinary.add(iConstantValues);
@@ -623,6 +656,7 @@ public class Binary
    public void initOffsets () throws TinyVMException
    {
       iEntireBinary.initOffset(0);
+      iStaticStorage.initOffset(0);
    }
 
    public void setRunTimeOptions(int opt)
@@ -674,14 +708,6 @@ public class Binary
        ClassRecord pRec = iClassTable.get(pIndex);
        monitor.log("Class " + pIndex + ": " + pRec.getName());
      }
-     /*
-     int pSize = iSignatures.size();
-     for (int i = 0; i < pSize; i++)
-     {
-       Signature pSig = (Signature) iSignatures.elementAt (i);
-       monitor.log("Signature " + i + ": " + pSig.getImage());
-     }
-	 */
      int pSize = iMethodTables.size();
 	 int methodNo = 0;
      for (int i = 0; i < pSize; i++)
@@ -709,11 +735,13 @@ public class Binary
      monitor.log("Constant records : " + iConstantTable.size() + " (" + iConstantTable.getLength() + " bytes).");
      monitor.log("Constant values  : " + iConstantValues.size() + " (" + iConstantValues.getLength() + " bytes).");
      monitor.log("Method records   : " + getTotalNumMethods() + " (" + iMethodTables.getLength() + " bytes).");
-     //monitor.log("Exception records: " + iExceptionTables.size() + " (" + iExceptionTables.getLength() + " bytes).");
      monitor.log("Exception records: " + getTotalNumExceptionRecords() + " (" + iExceptionTables.getLength() + " bytes).");
      monitor.log("Code             : " + iCodeSequences.size() + " (" + iCodeSequences.getLength() + " bytes).");
      monitor.log("Total            : " + iEntireBinary.getLength() + " bytes.");
      monitor.log("Run time options : " + iMasterRecord.getRunTimeOptions());
+     monitor.log("Constant loads   : " + this.constNormLoads + "N " + this.constOpLoads + "O " + this.constWideLoads + "W " + this.constString + "S");
+     monitor.log("Static load/store: " + this.staticNormLoads + "N " + this.staticOpLoads + "O");
+     monitor.log("Field  load/store: " + this.fieldNormOp + "N " + this.fieldOpOp + "O");
    }
    
 }

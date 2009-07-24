@@ -161,7 +161,7 @@ public class RecordTable<T extends WritableData> extends WritableDataWithOffset
          }
          if (_align)
          {
-            IOUtilities.writePadding(writer, 2);
+            IOUtilities.writePadding(writer, 4);
          }
       }
       catch (IOException e)
@@ -187,7 +187,7 @@ public class RecordTable<T extends WritableData> extends WritableDataWithOffset
 
          if (_align)
          {
-            _length = IOUtilities.adjustedSize(_length, 2);
+            _length = IOUtilities.adjustedSize(_length, 4);
          }
       }
 

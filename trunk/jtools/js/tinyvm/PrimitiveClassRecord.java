@@ -39,21 +39,25 @@ public class PrimitiveClassRecord extends ClassRecord
    /**
     * (Call only after record has been processed).
     */
+    @Override
    public boolean hasMethod (Signature aSignature, boolean aStatic)
    {
       return false;
    }
    
+    @Override
    public boolean hasReference() throws TinyVMException
    {
       return false;
    }   
 
+    @Override
    public boolean hasParent ()
    {
       return true;
    }
    
+    @Override
    public ClassRecord getParent ()
    {
       ClassRecord result = iBinary.getClassRecord("java.lang.Object".replace('.', '/'));
@@ -70,22 +74,26 @@ public class PrimitiveClassRecord extends ClassRecord
 
    }
 
+    @Override
    public void addUsedMethod (String aRef)
    {
    }
 
    
+    @Override
    MethodRecord getInterfaceMethodRecord (Signature aSig)
    {
        return null;
    }
    
    
+    @Override
    public StaticFieldRecord getStaticFieldRecord(String aName)
    {
       return getParent().getStaticFieldRecord(aName);
    }
 
+    @Override
    public void storeConstants (RecordTable<ConstantRecord> aConstantTable,
       RecordTable<ConstantValue> aConstantValues) throws TinyVMException
    {
@@ -102,6 +110,7 @@ public class PrimitiveClassRecord extends ClassRecord
           classConstant = aConstantTable.get(idx);
    }
 
+    @Override
    public void storeMethods (RecordTable<RecordTable<MethodRecord>> aMethodTables,
       RecordTable<RecordTable<ExceptionRecord>> aExceptionTables, HashVector<Signature> aSignatures, boolean aAll)
       throws TinyVMException
@@ -111,6 +120,7 @@ public class PrimitiveClassRecord extends ClassRecord
    }
    
    
+    @Override
    public void storeOptimizedMethods (RecordTable<RecordTable<MethodRecord>> aMethodTables,
            RecordTable<RecordTable<ExceptionRecord>> aExceptionTables, HashVector<Signature> aSignatures)
       throws TinyVMException
@@ -119,14 +129,20 @@ public class PrimitiveClassRecord extends ClassRecord
 
    }
 
-   public void storeOptimizedFields (RecordTable<RecordTable<InstanceFieldRecord>> aInstanceFieldTables,
-      RecordTable<StaticFieldRecord> aStaticFields, RecordTable<StaticValue> aStaticState)
+    @Override
+   public void storeOptimizedStaticFields (RecordTable<StaticFieldRecord> aStaticFields, RecordTable<StaticValue> aStaticState, int align)
+      throws TinyVMException
+   {
+   }
+
+    @Override
+   public void storeOptimizedFields (RecordTable<RecordTable<InstanceFieldRecord>> aInstanceFieldTables)
       throws TinyVMException
    {
       aInstanceFieldTables.add(iInstanceFields);
-
    }
 
+    @Override
    public void storeFields (RecordTable<RecordTable<InstanceFieldRecord>> aInstanceFieldTables,
       RecordTable<StaticFieldRecord> aStaticFields, RecordTable<StaticValue> aStaticState)
       throws TinyVMException
@@ -134,17 +150,20 @@ public class PrimitiveClassRecord extends ClassRecord
       aInstanceFieldTables.add(iInstanceFields);
    }
 
+    @Override
    public void storeCode (RecordTable<CodeSequence> aCodeSequences, boolean aPostProcess)
       throws TinyVMException
    {
 
    }
    
+    @Override
    public void markMethods ()   throws TinyVMException
    {
 
    }
    
+    @Override
    public void markMethod(MethodRecord pRec, boolean directCall) throws TinyVMException
    {
 
@@ -186,6 +205,7 @@ public class PrimitiveClassRecord extends ClassRecord
    }
 
 
+    @Override
    public void addInterfaces(ClassRecord pUserClass)
    {
 

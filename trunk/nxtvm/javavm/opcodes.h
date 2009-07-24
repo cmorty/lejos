@@ -210,25 +210,19 @@
 #define OP_BREAKPOINT	202
 ///////////////////////////////////
 #define OP_GETSTATIC_1  203
-#define OP_PUTSTATIC_1  204
-#define OP_GETSTATIC_2  205
-#define OP_PUTSTATIC_2  206
-#define OP_GETSTATIC_3  207
-#define OP_PUTSTATIC_3  208
-// some new experimental "quick" opcodes
-#define OP_GETFIELD_S1	209
-#define OP_PUTFIELD_S1  210
-#define OP_GETFIELD_S2	211
-#define OP_PUTFIELD_S2  212
-#define OP_GETFIELD_U2	213
-#define OP_PUTFIELD_U2  214
-#define OP_GETFIELD_W4	215
-#define OP_PUTFIELD_W4  216
-#define OP_GETFIELD_A4	217
-#define OP_PUTFIELD_A4  218
+#define OP_GETSTATIC_2  204
+#define OP_GETSTATIC_3  205
+#define OP_GETSTATIC_4  206
+#define OP_PUTSTATIC_1  207
+#define OP_PUTSTATIC_2  208
+#define OP_PUTSTATIC_3  209
+#define OP_PUTSTATIC_4  210
 // extended value get constant opcodes
-#define OP_LDC_1 219
-#define OP_LDC_2 220
-#define OP_LDC_3 221
+#define OP_LDC_1 211
+#define OP_LDC_2 212
+#define OP_LDC_3 213
+#define OP_LDC_4 214
+#define OP_GETFIELD_1 215
+#define OP_PUTFIELD_1 216
 
 #endif // _OPCODES_H

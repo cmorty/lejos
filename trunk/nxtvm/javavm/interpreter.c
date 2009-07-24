@@ -16,6 +16,7 @@
 #include "stack.h"
 #include "poll.h"
 #include "rconsole.h"
+#include <string.h>
 //#include <math.h>
 extern double __ieee754_fmod(double, double);
 
@@ -163,7 +164,7 @@ Object *create_string (ConstantRecord *constantRecord,
     return JNULL;
   }
   
-  store_word_ns( (byte *) &(((String *) ref)->characters), 4, obj2word(arr));
+  store_word_ns( (byte *) &(((String *) ref)->characters), T_INT, obj2word(arr));
   dst = jchar_array(arr);
   src = get_constant_ptr(constantRecord);
   src_end = src + constantRecord->constantSize;
@@ -252,6 +253,7 @@ static int array_helper( byte *pc, STACKWORD* stackTop)
 // Fast byte code dispatch. Uses the GCC labels as values extension.
 #define OPCODE(op) L_##op: 
 #define UNUSED_OPCODE(op) 
+#define MULTI_OPCODE(op)
 #define DISPATCH goto *(&&CHECK_EVENT + dispatchTable[*pc++])
 #define DISPATCH_CHECKED {instruction_hook(); DISPATCH;}
 #define START_DISPATCH DISPATCH;
@@ -264,6 +266,7 @@ DISPATCH_LABEL *checkEvent;
 // Standard dispatch code uses a switch statement
 #define OPCODE(op) case op:
 #define UNUSED_OPCODE(op) case op: 
+#define MULTI_OPCODE(op) case op:
 #define DISPATCH_CHECKED goto CHECK_EVENT
 #define DISPATCH goto DISPATCH_NEXT
 #define START_DISPATCH DISPATCH_NEXT: switch(*pc++) {
@@ -293,6 +296,11 @@ void engine()
 // One entry per opcode, in opcode order. The subtraction makes
 // the value a relative offset allowing a smaller table and
 // allowing the table to be stored in ROM
+//
+// For some odd reason with some versions of gcc having an none multiple of 4
+// unique label entries in this table, results in approximately 1.5K more
+// code! To avoid this we tune the unique entry count by doubling up the
+// entries for opcodes that have multiple labels for the same code.
 static DISPATCH_LABEL dispatch[] = 
 {
   &&L_OP_NOP - &&CHECK_EVENT,
@@ -314,7 +322,7 @@ static DISPATCH_LABEL dispatch[] =
   &&L_OP_BIPUSH - &&CHECK_EVENT,
   &&L_OP_SIPUSH - &&CHECK_EVENT,
   &&L_OP_LDC - &&CHECK_EVENT,
-  &&L_OP_LDC_W - &&CHECK_EVENT,
+  &&L_OP_XXXUNUSEDXXX - &&CHECK_EVENT, //OP_LDC_W
   &&L_OP_LDC2_W - &&CHECK_EVENT,
   &&L_OP_ILOAD - &&CHECK_EVENT,
   &&L_OP_LLOAD - &&CHECK_EVENT,
@@ -480,7 +488,7 @@ static DISPATCH_LABEL dispatch[] =
   &&L_OP_INVOKEVIRTUAL - &&CHECK_EVENT,
   &&L_OP_INVOKESPECIAL - &&CHECK_EVENT,
   &&L_OP_INVOKESTATIC - &&CHECK_EVENT,
-  &&L_OP_INVOKEINTERFACE - &&CHECK_EVENT,
+  &&L_OP_XXXUNUSEDXXX - &&CHECK_EVENT, //OP_INVOKEINTERFACE
   &&L_OP_XXXUNUSEDXXX - &&CHECK_EVENT,
   &&L_OP_NEW - &&CHECK_EVENT,
   &&L_OP_NEWARRAY - &&CHECK_EVENT,
@@ -495,42 +503,26 @@ static DISPATCH_LABEL dispatch[] =
   &&L_OP_MULTIANEWARRAY - &&CHECK_EVENT,
   &&L_OP_IFNULL - &&CHECK_EVENT,
   &&L_OP_IFNONNULL - &&CHECK_EVENT,
-  &&L_OP_GOTO_W - &&CHECK_EVENT,
-  &&L_OP_JSR_W - &&CHECK_EVENT,
-  &&L_OP_BREAKPOINT - &&CHECK_EVENT,
+  &&L_OP_XXXUNUSEDXXX - &&CHECK_EVENT, //OP_GOTO_W
+  &&L_OP_XXXUNUSEDXXX - &&CHECK_EVENT, //OP_JSR_W
+  &&L_OP_XXXUNUSEDXXX - &&CHECK_EVENT, //OP_BREAKPOINT
+  &&L_OP_GETSTATIC_1 - &&CHECK_EVENT, // Note use of duplicate entries
+  &&L_OP_GETSTATIC_1 - &&CHECK_EVENT, // see the comment above for details
+  &&L_OP_GETSTATIC_1 - &&CHECK_EVENT,
   &&L_OP_GETSTATIC_1 - &&CHECK_EVENT,
   &&L_OP_PUTSTATIC_1 - &&CHECK_EVENT,
-  &&L_OP_GETSTATIC_2 - &&CHECK_EVENT,
-  &&L_OP_PUTSTATIC_2 - &&CHECK_EVENT,
-  &&L_OP_GETSTATIC_3 - &&CHECK_EVENT,
-  &&L_OP_PUTSTATIC_3 - &&CHECK_EVENT,
-  #if 0
-  // Following opcodes are not currently used
-  &&L_OP_GETFIELD_S1 - &&CHECK_EVENT,
-  &&L_OP_PUTFIELD_S1 - &&CHECK_EVENT,
-  &&L_OP_GETFIELD_S2 - &&CHECK_EVENT,
-  &&L_OP_PUTFIELD_S2 - &&CHECK_EVENT,
-  &&L_OP_GETFIELD_U2 - &&CHECK_EVENT,
-  &&L_OP_PUTFIELD_U2 - &&CHECK_EVENT,
-  &&L_OP_GETFIELD_W4 - &&CHECK_EVENT,
-  &&L_OP_PUTFIELD_W4 - &&CHECK_EVENT,
-  &&L_OP_GETFIELD_A4 - &&CHECK_EVENT,
-  &&L_OP_PUTFIELD_A4 - &&CHECK_EVENT,
-  #else
-  &&L_OP_XXXUNUSEDXXX - &&CHECK_EVENT,
-  &&L_OP_XXXUNUSEDXXX - &&CHECK_EVENT,
-  &&L_OP_XXXUNUSEDXXX - &&CHECK_EVENT,
-  &&L_OP_XXXUNUSEDXXX - &&CHECK_EVENT,
-  &&L_OP_XXXUNUSEDXXX - &&CHECK_EVENT,
-  &&L_OP_XXXUNUSEDXXX - &&CHECK_EVENT,
-  &&L_OP_XXXUNUSEDXXX - &&CHECK_EVENT,
-  &&L_OP_XXXUNUSEDXXX - &&CHECK_EVENT,
-  &&L_OP_XXXUNUSEDXXX - &&CHECK_EVENT,
-  &&L_OP_XXXUNUSEDXXX - &&CHECK_EVENT,
-  #endif
+  &&L_OP_PUTSTATIC_1 - &&CHECK_EVENT,
+  &&L_OP_PUTSTATIC_1 - &&CHECK_EVENT,
+  &&L_OP_PUTSTATIC_1 - &&CHECK_EVENT,
   &&L_OP_LDC_1 - &&CHECK_EVENT,
   &&L_OP_LDC_2 - &&CHECK_EVENT,
-  &&L_OP_LDC_3 - &&CHECK_EVENT};
+  &&L_OP_LDC_2 - &&CHECK_EVENT,
+  &&L_OP_LDC_2 - &&CHECK_EVENT, // Duplicate entries. See above
+  &&L_OP_GETFIELD_1 - &&CHECK_EVENT,
+  &&L_OP_PUTFIELD_1 - &&CHECK_EVENT,
+  
+
+};
 
 // The following table is used to force the interpreter to jump to the
 // check event code rather than the next instruction. Basically causes a 
@@ -634,11 +626,12 @@ static DISPATCH_LABEL forceCheck[] =
     #include "op_arithmetic.hc"
     #include "op_methods.hc"
 
-    OPCODE(OP_BREAKPOINT)
-    OPCODE(OP_JSR_W)
-    OPCODE(OP_GOTO_W)
     OPCODE(OP_XXXUNUSEDXXX)
-    OPCODE(OP_INVOKEINTERFACE)
+    UNUSED_OPCODE(OP_BREAKPOINT)
+    UNUSED_OPCODE(OP_JSR_W)
+    UNUSED_OPCODE(OP_GOTO_W)
+    UNUSED_OPCODE(OP_INVOKEINTERFACE)
+    UNUSED_OPCODE(OP_LDC_W)
 #if !LONG_ARITHMETIC
     OPCODE(OP_LCMP)
     OPCODE(OP_LXOR)
@@ -654,6 +647,11 @@ static DISPATCH_LABEL forceCheck[] =
     OPCODE(OP_LSUB)
     OPCODE(OP_LADD)
 #endif
+    UNUSED_OPCODE(217)
+    UNUSED_OPCODE(218)
+    UNUSED_OPCODE(219)
+    UNUSED_OPCODE(220)
+    UNUSED_OPCODE(221)
     UNUSED_OPCODE(222)
     UNUSED_OPCODE(223)
     UNUSED_OPCODE(224)

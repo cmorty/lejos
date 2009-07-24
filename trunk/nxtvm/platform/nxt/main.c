@@ -159,12 +159,12 @@ run(int jsize)
 
   //printf("Initializing Binary\n");
 
-#if EXECUTE_FROM_FLASH
+  // Init the static storage and class sync objects in ram
   {
     MasterRecord *mrec = get_master_record();
     int staticSize = mrec->staticStateLength;
-    int statusSize = (mrec->lastClass + 1) * sizeof( classStatusBase[0]);
     int syncSize = (mrec->lastClass + 1) * sizeof(objSync);
+    int statusSize = (mrec->lastClass + 1) * sizeof( classStatusBase[0]);
 
     staticSize = (staticSize + 3) & ~(3);
     statusSize = (statusSize + 3) & ~(3);
@@ -173,15 +173,17 @@ run(int jsize)
     ram_end -= staticSize;
     classStaticStateBase = ram_end;
 
-    ram_end -= statusSize;
-    classStatusBase = ram_end;
-
     ram_end -= syncSize;
     staticSyncBase = (objSync *)ram_end;
     memset( (byte *)staticSyncBase, 0, syncSize);
-    memset( classStatusBase, 0, statusSize);
-  }
+
+#if EXECUTE_FROM_FLASH
+    // When we execute from flash we need extra storage for the class state.
+    ram_end -= statusSize;
+    classStatusBase = ram_end;
+    memset( (byte *)classStatusBase, 0, statusSize);
 #endif
+  }
 
   // Initialize binary image state
   initialize_binary();
@@ -486,8 +488,6 @@ main(void)
   systick_wait_ms(1000); // wait for LCD to stabilize
   display_init();
   show_splash(); 
-char *p = 0xff000000;
-int i = *p;  
   gNextProgram = 0;
   do 
   {
