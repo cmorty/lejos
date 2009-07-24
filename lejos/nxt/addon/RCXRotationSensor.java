@@ -101,6 +101,10 @@ public class RCXRotationSensor extends Thread implements Tachometer, SensorConst
                         {
                             count += inc[prev][cur2];
                             
+                            // TODO: This should probably indicate sign for speed if Motor does too. Also, Javadocs
+                            // for interface should also specify whether sign applies for speed.
+                            // TODO: This will never report 0 speed! Need some algorithm to realize when it is at 0 speed,
+                            // especially when it goes from fast to dead stop.
                          // Estimate speed by calculating time elapsed for every increment
                             int time_elapsed = (int)(System.currentTimeMillis() - previous_time);
                             speed = (360 * 1000) / (time_elapsed * ONE_ROTATION);

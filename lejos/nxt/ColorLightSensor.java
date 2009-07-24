@@ -1,15 +1,38 @@
 package lejos.nxt;
+
+import lejos.robotics.LightLampDetector;
+import lejos.robotics.ColorDetector;
+
+/*
+ * DEV NOTES: (Andy) I have probably not implemented this in the correct way, it will 
+probably not work as a remote sensor. I'm not sure how we will handle this 
+device (unless we implement the I/O map stuff), because it can return 
+multiple values (for raw and none raw RGB), which I don't think we can 
+handle with the current remote code. I suspect that the correct (in the Lego 
+sensor model) would be to have the low level code (the stuff that reads 
+calibration data and the raw values), in the SensorPort class and the rest 
+in a higher level class. But I didn't want to do that until I at least had 
+it all working. I'm also not really that sure what you have planned for the 
+remote sensor stuff. Perhaps you could take a look. In the Lego world it is 
+4 new sensor types and all of the low level code is in the firmware.
+
+Also I think I have made the correct changes to the Netbeans files for the 
+samples, (but not for Eclipse), could you take a look when you get chance...
+
+
+ */
+
 /**
  * Lego Color Sensor driver.
  * This driver provides access to the Lego Color sensor. It allows the reading
  * raw and processed color values. The sensor has a tri-color led and this can
  * be set to output red/green/blue or off. It also has a full mode in which
- * four samples are red (off/red/green/blue) very quickly. These samples can
- * then be combined using the claibration data provided by the device to
+ * four samples are read (off/red/green/blue) very quickly. These samples can
+ * then be combined using the calibration data provided by the device to
  * determine the "Lego" color currently being viewed.
  * @author andy
  */
-public class ColorSensor implements SensorConstants
+public class ColorLightSensor implements LightLampDetector, ColorDetector, SensorConstants
 {
     /**
      * Sensor types supported by this driver. The type is used to control the
@@ -70,7 +93,7 @@ public class ColorSensor implements SensorConstants
      * @param port Port to use for the sensor.
      * @param type Initial operating mode.
      */
-    public ColorSensor(SensorPort port, int type)
+    public ColorLightSensor(SensorPort port, int type)
     {
         this.port = port;
         //port.setTypeAndMode(type, 0);
@@ -406,6 +429,7 @@ public class ColorSensor implements SensorConstants
     /**
      * Return a single raw value from the device.
      * When in single color mode this returns the raw sensor reading.
+     * Values range from 0 to 1023 but usually don't get over 600.
      * @return the raw value or < 0 if there is an error.
      */
     public int readRawValue()
@@ -416,11 +440,15 @@ public class ColorSensor implements SensorConstants
     }
 
     /**
-     * Read raw values
      * When in full color mode this returns all four raw color values from the
-     * device.
+     * device by doing four very quick reads and flashing all colors.
+     * The raw values theoretically range from 0 to 1023 but in practice they usually 
+     * do not go higher than 600. You can access the index of each color 
+     * using RGB_RED, RGB_GREEN, RGB_BLUE and RGB_BLANK. e.g. to retrieve the Blue value:
+     * <code>vals[ColorLightSensor.RGB_BLUE]</code>
+     *  
      * @param vals array of four color values.
-     * @return true if ok false if error
+     * @return true if ok. false if the type is not TYPE_COLORFULL, or an I2C read error occurs
      */
     public boolean readRawValues(int [] vals)
     {
@@ -431,8 +459,8 @@ public class ColorSensor implements SensorConstants
     }
 
     /**
-     * Take the most recent set of raw values (in full color mode) and process
-     * them using the calibration data.
+     * This method accepts a set of raw values (in full color mode) and processes
+     * them using the calibration data to return standard RGB values between 0 and 255
      * @param vals array to return the newly calibrated data.
      */
     protected void calibrate(int []vals)
@@ -467,9 +495,12 @@ public class ColorSensor implements SensorConstants
      * Return a set of calibrated data.
      * If in single color mode the returned data is a simple percentage. If in
      * full color mode the data is a set of calibrated red/blue/green/blank
-     * readings.
+     * readings that range from 0 to 255. You can access the index of each color 
+     * using RGB_RED, RGB_GREEN, RGB_BLUE and RGB_BLANK. e.g. to retrieve the Blue value:
+     * <code>vals[ColorLightSensor.RGB_BLUE]</code>
+     * 
      * @param vals 4 element array for the results
-     * @return true if ok false if there is an error.
+      * @return true if ok. false if the type is not TYPE_COLORFULL, or an I2C read error occurs
      */
     public boolean readValues(int [] vals)
     {
@@ -540,8 +571,9 @@ public class ColorSensor implements SensorConstants
     }
 
     /**
-     * Read the current color and return an enum value.
-     * @return The color under the sensor.
+     * Read the current color and return an enum value. This is usually only accurate at a distance
+     * of about 1 cm.It is not very good at detecting yellow.
+     * @return The color enumeration under the sensor.
      */
     public Color readColor()
     {
@@ -549,5 +581,67 @@ public class ColorSensor implements SensorConstants
         if (col <= 0) return Color.NONE;
         return colorMap[col];
     }
+
+	public int getLightLevel() {
+		// TODO: Problem! If lamp is on for illumination, this shuts it down. 
+		// So either turn on red lamp, then switch back, or turn off lamp (if passive mode) then switch back.
+		int temp_type =  this.type;
+		setType(ColorLightSensor.TYPE_COLORNONE);
+		int val = readValue();
+		this.setType(temp_type);
+		return val;
+	}
+
+	// TODO: Remove this from here and interface
+	public int getRawLightLevel() {
+		// TODO: Problem! If lamp is on for illumination, this shuts it down. 
+		// So either turn on red lamp, then switch back, or turn off lamp (if passive mode) then switch back.
+		int temp_type =  this.type;
+		setType(ColorLightSensor.TYPE_COLORNONE);
+		int val = readRawValue();
+		this.setType(temp_type);
+		return val;
+	}
+
+	public void setFloodlight(boolean floodlight) {
+		setType(floodlight ? TYPE_COLORRED : TYPE_COLORNONE);
+	}
+
+	public int getBlue() {
+		int temp_type =  this.type;
+		setType(ColorLightSensor.TYPE_COLORBLUE);
+		int val = readValue();
+		this.setType(temp_type);
+		return val;
+	}
+
+	public int getGreen() {
+		int temp_type =  this.type;
+		setType(ColorLightSensor.TYPE_COLORGREEN);
+		int val = readValue();
+		this.setType(temp_type);
+		return val;
+		
+	}
+
+	public int[] getRGB() {
+		int temp_type =  this.type;
+		setType(ColorLightSensor.TYPE_COLORFULL);
+		int [] all_vals = new int[4];
+		readValues(all_vals);
+		int [] rgb_vals = new int[3];
+		System.arraycopy(all_vals, 0, rgb_vals, 0, 3);
+		this.setType(temp_type);
+		return rgb_vals;
+		
+	}
+
+	public int getRed() {
+		int temp_type =  this.type;
+		setType(ColorLightSensor.TYPE_COLORRED);
+		int val = readValue();
+		this.setType(temp_type);
+		return val;
+	}
 }
 
