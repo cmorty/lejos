@@ -1,5 +1,7 @@
 package lejos.nxt;
 
+import lejos.robotics.LightLampDetector;
+
 /**
  * Abstraction for a NXT light sensor.
  * The light sensor can be calibrated to low and high values. 
@@ -7,7 +9,7 @@ package lejos.nxt;
  * <br/><br/>WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
  * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
  */
-public class LightSensor implements SensorConstants
+public class LightSensor implements LightLampDetector, SensorConstants
 {
 	ADSensorPort port;
 	private int _zero = 1023;
@@ -40,14 +42,10 @@ public class LightSensor implements SensorConstants
     		   MODE_PCTFULLSCALE); 
 	}
 	
-	/**
-	 * Set floodlighting on or off.
-	 * @param floodlight true to set floodit mode, false for ambient light.
-	 */
 	public void setFloodlight(boolean floodlight)
 	{
-		port.setType((floodlight ? TYPE_LIGHT_ACTIVE
-		                         : TYPE_LIGHT_INACTIVE));
+		port.setType(floodlight ? TYPE_LIGHT_ACTIVE
+		                         : TYPE_LIGHT_INACTIVE);
 	}
 
 	/**
@@ -55,19 +53,48 @@ public class LightSensor implements SensorConstants
 	 * Use calibrateLow() to set the zero level, and calibrateHigh to set the 100 level.
 	 * @return Value as a percentage of difference between the low and high calibration values. 
 	 */
-	public int readValue()
+	public int getLightLevel()
 	{ 
 		if(_hundred == _zero) return 0;
 		return 100*(port.readRawValue() - _zero)/(_hundred - _zero); 
 	}
 	
 	/**
+	 * Use {@link #getLightLevel()} instead
+	 * @deprecated 
+	 * @return
+	 */
+	public int readValue() {
+		return getLightLevel();
+	}
+	
+	/**
+	 * Use {@link #getRawLightLevel()} instead
+	 * @deprecated 
+	 * @return
+	 */
+	public int readRawValue() {
+		return getRawLightLevel();
+	}
+	
+	/* TODO: Options:
+	 * getLightLevel()
+	 * readLightLevel()
+	 * getIntensity()
+	 * readIntensity()
+	 * getBrightness()
+	 * readBrightness()
+	 * getLight()
+	 */
+	
+	/**
 	 * Read the current sensor normalized value. Allows more accuracy
 	 * than readValue(). For LEGO sensor, values typically range from 
 	 * 145 (dark) to 890 (sunlight). 
-	 * @return Value as raw normalized (0 to 1023)
+	 * @return Value as raw (0 to 1023)
 	 */
-	public int readNormalizedValue() {
+	public int getRawLightLevel() {
+		// TODO: Probably want to remove this from interface since raw values could be anything.
 		return 1023 - port.readRawValue();
 	}
 
@@ -103,4 +130,5 @@ public class LightSensor implements SensorConstants
     * return the normalized value corresponding to  readValue() = 100;
     */
    public int  getHigh() {return 1023 - _hundred;}
+
 }

@@ -1,8 +1,8 @@
 import lejos.nxt.*;
-import lejos.nxt.addon.*;
+import lejos.nxt.addon.ColorSensor;
 
 /**
- * For testing the HiTechnic color sensor (see lejos.nxt.ColorSensor).
+ * For testing the HiTechnic color sensor (see lejos.nxt.addon.ColorSensor).
  * @author BB
  */
 public class ColorDetector {

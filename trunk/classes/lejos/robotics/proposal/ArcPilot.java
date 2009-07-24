@@ -24,7 +24,7 @@ public interface ArcPilot extends Pilot {
 	   * Starts the robot moving along a curved path. This method is similar to the
 	   * {@link #arc(float radius)} method except it uses a ratio of motor
 	   * speeds to determine the curvature of the path and therefore has the ability to drive straight. This makes
-	   * it usrful for line following applications.
+	   * it useful for line following applications.
 	   * <p>
 	   * The <code>turnRate</code> specifies the sharpness of the turn, between -200 and +200.<br>
 	   * The <code>turnRate</code> is used to calculate the  ratio of inner wheel speed to outer wheel speed <b>as a percent</b>.<br>
