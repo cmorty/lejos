@@ -3,7 +3,6 @@ package lejos.robotics.navigation;
 
 
 import lejos.robotics.Pose;
-import lejos.robotics.navigation.*;
 
 
 import lejos.geom.Point;
@@ -33,7 +32,7 @@ import lejos.robotics.*;
  * the x axis.<br>
  *
  */
-public class SimpleNavigator  {
+public class SimpleNavigator implements Navigator {
 
 
     /**
@@ -91,7 +90,6 @@ public class SimpleNavigator  {
     updatePose();
     _current = !isMoving();
     return _pose.getX();
-
   }
 /**
  * gets the current value of the Y coordinate
@@ -117,13 +115,41 @@ public class SimpleNavigator  {
    * gets the current robot pose
    * @return current pose
    */
-
+public float getAngle()
+{
+  return getHeading();
+}
+ public void forward()
+ {
+   updatePose();
+   _current = false;
+   pilot.forward();
+ }
+ public void backward()
+ {
+    updatePose();
+   _current = false;
+   pilot.backward();
+ }
+ public void rotateLeft()
+ {
+   steer(200);
+ }
+ public void rotateRight()
+ {
+   steer(-200);
+ }
   public Pose getPose()
   {
     updatePose();
         _current = !isMoving();
     return _pose;
   }
+  public void updatePosition()
+  {
+    updatePose();
+  }
+
 /**
  * sets the robot pose to the new coordinates and heading
  * @param x coordinate
@@ -142,6 +168,10 @@ public class SimpleNavigator  {
   public void setPose(Pose pose)
   {
     _pose = pose;
+  }
+  public void setPosition(float x, float y, float heading)
+  {
+    setPose(x,y,heading);
   }
 /**
  * sets the robots movement speed  - distance units/second
