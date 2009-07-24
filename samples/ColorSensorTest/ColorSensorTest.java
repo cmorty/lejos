@@ -23,10 +23,10 @@ public class ColorSensorTest
         if (portNo < 0) return;
         for(;;)
         {
-            ColorSensor cs = new ColorSensor(SensorPort.PORTS[portNo], ColorSensor.TYPE_COLORNONE);
+            ColorLightSensor cs = new ColorLightSensor(SensorPort.PORTS[portNo], ColorSensor.TYPE_COLORNONE);
             int mode = modeMenu.select();
             if (mode < 0) return;
-            cs.setType(ColorSensor.TYPE_COLORFULL + mode);
+            cs.setType(ColorLightSensor.TYPE_COLORFULL + mode);
             LCD.clear();
             while (!Button.ESCAPE.isPressed())
             {
@@ -36,7 +36,7 @@ public class ColorSensorTest
                 {
                     cs.readValues(vals);
                     cs.readRawValues(rawVals);
-                    ColorSensor.Color color = cs.readColor();
+                    ColorLightSensor.Color color = cs.readColor();
                     int colorVal = cs.readValue();
                     for(int i = 0; i < vals.length; i++)
                     {
