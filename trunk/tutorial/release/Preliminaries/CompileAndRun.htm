@@ -3,7 +3,7 @@
 <head><!-- CSS -->		
 	<link rel="stylesheet" href="../r_css/lejos-tutorial.css" type="text/css" /><!-- ICON -->
 	<link rel="shortcut icon" href="../favicon.ico" type="image/x-icon" />		
-	<title>Compiling and Running NXJ programs</title>
+	<title>Compiling and Running Programs</title>
 	<meta name="AUTHOR" content="Roger Glassey" />
 	<meta name="AUTHOR" content="Lawrie Griffiths" />
 </head>
@@ -20,12 +20,15 @@
 	<table class="n2t1" cellpadding="0" cellspacing="0">
 		<tr>
 			<td class="n2t1r1c1">
-				<div class="nolinkLESSON">Compiling and Running NXJ programs</a></div>
+				<div class="nolinkLESSON">Compiling and Running Programs </div>
 				<div class="linkAHEAD"><a href="#1">Using the leJOS NXJ command line tools</a></div>
 				<div class="linkAHEAD2"><a href="#2">nxjc &#8211; compile  a program</a></div>
 				<div class="linkAHEAD2"><a href="#3">nxjlink &#8211; link a program</a></div>
 				<div class="linkAHEAD2"><a href="#4">nxjupload &#8211; upload a program</a></div>
-				<div class="linkAHEAD2"><a href="#5">nxj &#8211; link, upload and run a  program</a></div>
+				<div class="linkAHEAD2"><a href="#5">nxj &#8211; link, upload and run a program</a></div>
+				<div class="linkAHEAD"><a href="#6">Using PC API command line tools</a></div>
+				<div class="linkAHEAD2"><a href="#7">nxjpcc &#8211; compile a PC API program </a></div>
+				<div class="linkAHEAD2"><a href="#8">nxjpc &#8211; run a PC API program  </a></div>
 			</td>
 			<td>
 				<!-- DO NOT MANINPULATE -->
@@ -36,10 +39,22 @@
         		<div class="NavBit">
                 	<a target="_top" href="../Preliminaries/GettingStarted.htm">«&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../MenuSystem/MenuSystem.htm">Next&nbsp;»</a>
         		</div>
-				<div id="PageTitle">Compiling and Running NXJ programs</Div>
+				<div id="PageTitle">Compiling and Running Programs</Div>
 				<p>This section describes how to compile and run leJOS NXJ programs from a command window.</p>
 				
-				<p>However, programming for leJOS NXJ is best
+				<p>Keep in mind, there are two APIs which are compiled and run differently depending where they will run.  For programs that will run:</p> 
+				<ul class="BlueArrows">
+					<li>On the NXT brick, use <a href="1">leJOS NXJ command line tools</a></li>
+					<li>On your PC (and connect via bluetooth or USB) <a href="#6">PC API command line tools</a></li>
+				</ul>
+				<p>These command line tools will set up the CLASSPATH for you so the appropriate resources will be found.  If you are not using these scripts but compiling or running in other ways, the CLASSPATH needs to be set. 
+				<ul class="BlueArrows">
+					<li>On the NXT brick, <code>classes.jar</code> needs to be on the CLASSPATH</li>
+					<li>On your PC (and connect via bluetooth or USB), <code>pccomm.jar</code> and <code>bluecove.jar</code> need to be there and <code>classes.jar</code> must be removed (Linux users also need to include <code>bluecove-gpl</code>).</li>
+				</ul> 
+				
+				
+				<p>While command line tools are very useful, programming for leJOS NXJ is best
 				done using an Integrated Development Environment. IDEs have
 				syntax-directed editors that immediately show you any syntax
 				errors in your program, rather than waiting until you compile the
@@ -64,7 +79,7 @@
 					<li><a href="UsingEclipse.htm">Eclipse</a></li>
 					<li><a href="UsingNetbeans.htm">Netbeans</a></li>
 				</ul>	
-				<a name="#1"></a>
+				<a name="1"></a>
 				<h4>Using the leJOS NXJ command line tools</h4>
 				<p>The tools for compiling, linking and uploading leJOS NXJ programs are:</p>
 				<ul class="BlueArrows">
@@ -75,13 +90,13 @@
 				</ul>
 				<p>Note that you normally only need to use the <code>nxjc</code> and <code>nxj</code> commands,
 				   as <code>nxj</code> does the equivalent of <code>nxjlink</code> followed by <code>nxjupload</code>.</p>
-				<p>You need to open a command window to run these commands. </p>
+				<p>You need to open a command window to run these commands.</p>
 				
 				<!-- WEB TOOL TO GO TO TOP OF THE DOCUMENT -->
 				<a href="#top">Back to top</a>
 				<p/>
 				
-				<a name="#2"></a>
+				<a name="2"></a>
 				<h5>nxjc &#8211; compile a program</h5>
 				<p>Compiles one or more java files.</p>
 				<p>Usage: nxjc &lt;java-files&gt;</p>
@@ -99,7 +114,7 @@
 				<a href="#top">Back to top</a>
 				<p/>
 		
-				<a name="#3"></a>
+				<a name="3"></a>
 				<h5>nxjlink &#8211; link a program</h5>
 				<p>Calls the leJOS NXJ linker.</p>
 				<p>Usage:  nxjlink [-v|--verbose] [-g|--debug] [-a|--all] main-class &#8211;o &lt;binary&gt;</p>
@@ -124,7 +139,7 @@
 				<a href="#top">Back to top</a>
 				<p/>
 				
-				<a name="#4"></a>
+				<a name="4"></a>
 				<h5>nxjupload &#8211; upload a program</h5>
 				<p>Usage: nxjupload [-b|--bluetooth] [-u|--usb] [-d|--address address] [-n|--name name]  [-r|--run]	&lt;binary&gt;</p>
 				<p>Example:</p>
@@ -146,7 +161,7 @@
 				<a href="#top">Back to top</a>
 				<p/>
 				
-				<a name="#5"></a>
+				<a name="5"></a>
 				<h5>nxj &#8211; link, upload and run a program</h5>
 				<p>Usage: nxj [options] main-class</p>
 				<p >Example:	</p>
@@ -159,7 +174,42 @@
 				<!-- WEB TOOL TO GO TO TOP OF THE DOCUMENT -->
 				<a href="#top">Back to top</a>
 				<p/>
-
+                 
+                <a name="6"></a>
+				<h4>Using PC API command line tools</h4>
+				<p>The tools for compiling and running leJOS PC API programs are:</p>
+				<ul class="BlueArrows">
+					<li>nxjpcc</li>
+					<li>nxjpc</li>
+				</ul>
+			 
+				
+				<!-- WEB TOOL TO GO TO TOP OF THE DOCUMENT -->
+				<a href="#top">Back to top</a>
+				<p/>
+				
+				<a name="7"></a>
+				<h5>nxjpcc &#8211; compile  a program for your pc</h5>
+				<p>Compiles one or more java files.</p>
+				<p>Example: </p>
+				<code>nxjpcc -sourcepath /lejos_nxj_09/projects/pcsamples/SensorTest SensorTest.java</code>
+			 
+						
+				<!-- WEB TOOL TO GO TO TOP OF THE DOCUMENT -->
+				<a href="#top">Back to top</a>
+				<p/>
+		
+				<a name="8"></a>
+				<h5>nxjpc &#8211; run a program on your pc</h5>
+				<p>Calls java to run your program.</p>
+				<p>Example:</p>
+				<code>nxjpc SensorTest</code>
+				
+				
+				<!-- WEB TOOL TO GO TO TOP OF THE DOCUMENT -->
+				<a href="#top">Back to top</a>
+				<p/> 
+                 
 				<!-- END CONTENT AREA -->
 
 				<!-- NAVIGATION TOOL -->				
