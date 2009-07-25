@@ -97,7 +97,10 @@
 		<linux-run file="nxjc">
 			javac -bootclasspath "$NXJ_CP_BOOT" "$@"
 		</linux-run>
-		<linux-run file="nxjpccomm">
+		<linux-run file="nxjpcc">
+		    javac -classpath "$NXJ_CP_TOOL" "$@"
+		</linux-run>
+		<linux-run file="nxjpc">
 			java -Dnxj.home="$NXJ_HOME" -Djava.library.path="$NXJ_BIN" -Xbootclasspath/a:"$NXJ_CP_TOOL" "$@"
 		</linux-run>
 	</target>
