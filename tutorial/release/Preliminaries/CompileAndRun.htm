@@ -47,7 +47,7 @@
 					<li>On the NXT brick, use <a href="1">leJOS NXJ command line tools</a></li>
 					<li>On your PC (and connect via bluetooth or USB) <a href="#6">PC API command line tools</a></li>
 				</ul>
-				<p>These command line tools will set up the CLASSPATH for you so the appropriate resources will be found.  If you are not using these scripts but compiling or running in other ways, the CLASSPATH needs to be set. 
+				<p>These command line tools will set up the CLASSPATH and the java library path for you so the appropriate resources will be found.  If you are not using these scripts but compiling or running in other ways, the CLASSPATH needs to be set. 
 				<ul class="BlueArrows">
 					<li>On the NXT brick, <code>classes.jar</code> needs to be on the BOOTCLASSPATH</li>
 					<li>On your PC (and connect via bluetooth or USB), <code>pccomm.jar</code> and <code>bluecove.jar</code> (Linux users also need to include <code>bluecove-gpl</code>) need to be there and <code>classes.jar</code> must be removed from the BOOTCLASSPATH.</li>
@@ -183,16 +183,17 @@
 					<li>nxjpc</li>
 				</ul>
 			 
-				<p>Reminder: If you are compiling or running a PC API program without using these tools, you need <code>pccomm.jar</code> and <code>bluecove.jar</code> (Linux users also need <code>bluecove-gpl</code>) in your CLASSPATH and <code>classes.jar</code> must be removed.
+				<p>Reminder: If you are compiling or running a PC API program without using these tools, you need <code>pccomm.jar</code> and <code>bluecove.jar</code> (Linux users also need <code>bluecove-gpl</code>) in your CLASSPATH and <code>classes.jar</code> must be removed. Also, the <code>java library path</code> needs to be set.
+				</p>
 				<!-- WEB TOOL TO GO TO TOP OF THE DOCUMENT -->
 				<a href="#top">Back to top</a>
 				<p/>
 				
 				<a name="7"></a>
-				<h5>nxjpcc &#8211; compile  a program for your pc</h5>
-				<p>Compiles one or more java files.</p>
+				<h5>nxjpcc &#8211; compile a PC API program for your pc</h5>
+				<p>Compiles one or more PC API java files.</p>
 				<p>Example: </p>
-				<code>nxjpcc -sourcepath /lejos_nxj_09/projects/pcsamples/SensorTest SensorTest.java</code>
+				<p><code>nxjpcc -sourcepath /lejos_nxj_09/projects/pcsamples/SensorTest SensorTest.java</code></p>
 			 
 						
 				<!-- WEB TOOL TO GO TO TOP OF THE DOCUMENT -->
@@ -200,10 +201,10 @@
 				<p/>
 		
 				<a name="8"></a>
-				<h5>nxjpc &#8211; run a program on your pc</h5>
-				<p>Calls java to run your program.</p>
+				<h5>nxjpc &#8211; run a PC API program on your pc</h5>
+				<p>Calls java to run your PC API program.</p>
 				<p>Example:</p>
-				<code>nxjpc SensorTest</code>
+				<p><code>nxjpc SensorTest</code></p>
 				
 				
 				<!-- WEB TOOL TO GO TO TOP OF THE DOCUMENT -->
