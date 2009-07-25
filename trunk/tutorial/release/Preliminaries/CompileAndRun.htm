@@ -49,8 +49,8 @@
 				</ul>
 				<p>These command line tools will set up the CLASSPATH for you so the appropriate resources will be found.  If you are not using these scripts but compiling or running in other ways, the CLASSPATH needs to be set. 
 				<ul class="BlueArrows">
-					<li>On the NXT brick, <code>classes.jar</code> needs to be on the CLASSPATH</li>
-					<li>On your PC (and connect via bluetooth or USB), <code>pccomm.jar</code> and <code>bluecove.jar</code> need to be there and <code>classes.jar</code> must be removed (Linux users also need to include <code>bluecove-gpl</code>).</li>
+					<li>On the NXT brick, <code>classes.jar</code> needs to be on the BOOTCLASSPATH</li>
+					<li>On your PC (and connect via bluetooth or USB), <code>pccomm.jar</code> and <code>bluecove.jar</code> (Linux users also need to include <code>bluecove-gpl</code>) need to be there and <code>classes.jar</code> must be removed from the BOOTCLASSPATH.</li>
 				</ul> 
 				
 				
@@ -183,7 +183,7 @@
 					<li>nxjpc</li>
 				</ul>
 			 
-				
+				<p>Reminder: If you are compiling or running a PC API program without using these tools, you need <code>pccomm.jar</code> and <code>bluecove.jar</code> (Linux users also need <code>bluecove-gpl</code>) in your CLASSPATH and <code>classes.jar</code> must be removed.
 				<!-- WEB TOOL TO GO TO TOP OF THE DOCUMENT -->
 				<a href="#top">Back to top</a>
 				<p/>
