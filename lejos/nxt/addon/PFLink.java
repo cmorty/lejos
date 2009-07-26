@@ -3,13 +3,16 @@ package lejos.nxt.addon;
 import lejos.nxt.I2CSensor; 
 import lejos.nxt.I2CPort; 
 
+/*
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ */
+
 /** 
  * Class for controlling PF Motors with MindSensors NRLink-Nx 
  * 
  * @author Alexander Vegh <alex@vegh.ch> 
  * 
- * <br/><br/>WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
- * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
  */ 
 public class PFLink extends I2CSensor { 
 
