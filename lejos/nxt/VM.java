@@ -699,20 +699,17 @@ public final class VM
                 int fieldBase = getObjectAddress(obj);
                 int offset = fieldBase + cls.size;
                 int item = cnt-1;
-System.out.println("field cnt " + cnt + " main class " + cls.getClassNo() + " fields " + cls.numFields + " offset " + offset);
                 for(;;)
                 {
                     int fieldTable = cls.elementClass + IMAGE_BASE;
                     for(int i = ((int)cls.numFields & 0xff) - 1; i >= 0; i--)
                     {
                         fieldTypes[item] = (byte)memPeekByte(ABSOLUTE, fieldTable + i);
-     System.out.println("item " + item + " type " + fieldTypes[item] + " offset " + offset);
                         offset -= VMValue.lengths[fieldTypes[item]];
                         fieldOffsets[item--] = offset;
                     }
                     if (cls.parentClass == 0) break;
                     cls = getVMClass(cls.parentClass);
-System.out.println("field cnt " + cnt + " p class " + cls.getClassNo() + " fields " + cls.numFields + " offset " + offset);
                 }
             }
             this.obj = obj;
@@ -815,7 +812,38 @@ System.out.println("field cnt " + cnt + " p class " + cls.getClassNo() + " field
         return cls;
     }
 
+    private static int getClassNumber(Class<?>cls)
+    {
+        int base = getClassAddress(0);
+        int size = getClassAddress(1) - base;
+        return (getObjectAddress(cls) - base)/size;
+    }
 
+    /**
+     * Check to see if it is allowed to assign an object of class src to an
+     * object of class dst.
+     * @param src The src class number
+     * @param dst The destination class number
+     * @return true if the assignment is allowed.
+     */
+    private static native boolean isAssignable(int src, int dst);
+
+    /**
+     * Check to see if it is allowed to assign an object of class src to an
+     * oobject of class dst.
+     * @param src The src class.
+     * @param dst The destination class.
+     * @return true if the assignment is allowed.
+     * @exception NullPointerException if either class is null.
+     */
+    public static boolean isAssignable(Class<?> src, Class<?> dst)
+    {
+        if (src == null || dst == null) throw new NullPointerException();
+        int srcNo = getClassNumber(src);
+        int dstNo = getClassNumber(dst);
+        System.out.println("Src " + srcNo + " dst " + dstNo);
+        return isAssignable(srcNo, dstNo);
+    }
 
     /**
      * Return the Class object for the provided object.
