@@ -23,7 +23,7 @@ public final class MathBench
 		if (x == Double.POSITIVE_INFINITY)
 			return Double.POSITIVE_INFINITY;
 
-		// modifie values to avoid subnormal values
+		// modify values to avoid workaround subnormal values
 		double factor;
 		if (x >= MIN_NORMAL)
 			factor = 0.5;
