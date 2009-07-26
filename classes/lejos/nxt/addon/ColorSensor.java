@@ -4,14 +4,17 @@ import lejos.nxt.I2CSensor;
 import lejos.nxt.I2CPort;
 import lejos.robotics.ColorDetector;
 
+/*
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ */
+
 /**
  * HiTechnic color sensor.<br>
  * www.hitechnic.com
  *
  *@author BB extended by A.T.Brask
  * 
- * <br/><br/>WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
- * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
  */
 public class ColorSensor extends I2CSensor implements ColorDetector {
     byte[] buf = new byte[2];
