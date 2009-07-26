@@ -7,9 +7,10 @@ import lejos.nxt.comm.RConsole;
 /**
  * @author Bruce Boyes, based on code from Imsys (www.imsys.se)
  * 
- * @version 1.1a
+ * @version 1.2
  * 
  *          <ul>
+ *          <li>1.2 2009 Jul 27 skoehler: changes all over the place
  *          <li>1.1a 2003 Feb 19 bboyes adding byte math
  *          <li>1.0f 2003 Feb 18 bboyes making float and double more realistic,
  *          with actual float and double operands
@@ -39,12 +40,11 @@ public class GeneralBench
 		return;
 	}
 
-	private final static String VERSION = "1.1a bboyes";
-	private final static Runtime rt = Runtime.getRuntime();
-	private final static boolean VERBOSE = false;
-	private static int countAll = 0;
+	private static final String VERSION = "1.2";
+	private static final Runtime rt = Runtime.getRuntime();
+	private static final boolean VERBOSE = false;
 	
-	private static int[] PADVEC = { 8, 30, 6, 10 };
+	private static final int[] PADVEC = { 8, 30, 6, 10 };
 
 	/**
 	 * Print out the time it took to complete a task Also calculate the rate per
@@ -145,6 +145,7 @@ public class GeneralBench
 		int iterate = 200000;
 		int tests = iterate / 10;
 
+		int countAll = 0;
 		long startAll = System.currentTimeMillis();
 
 		countAll += b.arrayPerformanceByte(iterate / chunkSize, chunkSize);
