@@ -24,13 +24,13 @@ public final class MathBench
 			return Double.POSITIVE_INFINITY;
 
 		// modifie values to avoid subnormal values
-		double fact;
+		double factor;
 		if (x >= MIN_NORMAL)
-			fact = 0.5;
+			factor = 0.5;
 		else
 		{
+			factor = 0x1p-51;
 			x = x * 0x1p100;
-			fact = 0x1p-51;
 		}
 		
 		// magic constant invsqrt
@@ -43,7 +43,7 @@ public final class MathBench
 		isqrt = isqrt * (1.5 - xhalf * isqrt * isqrt);
 		
 		//return 0.5 * (x * isqrt + 1 / isqrt);
-		return fact * (x * isqrt + 1 / isqrt);
+		return factor * (x * isqrt + 1 / isqrt);
 	}
 
 	private static int benchSqrt(int count, String comment, double x)
