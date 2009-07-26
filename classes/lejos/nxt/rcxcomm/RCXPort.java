@@ -3,6 +3,11 @@ package lejos.nxt.rcxcomm;
 import lejos.nxt.*;
 import java.io.IOException;
 
+/*
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ */
+
 /** 
  * RCXPort provides an interface similar to java.net.Socket
  * Adapted from original code created by the LEGO3 Team at DTU-IAU
@@ -16,8 +21,6 @@ import java.io.IOException;
  * @author Brian Bagnall
  * @author Lawrie Griffiths
  * 
- * <br/><br/>WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
- * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
  */
 public class RCXPort extends RCXAbstractPort {
   public RCXPort(SensorPort port) throws IOException {
