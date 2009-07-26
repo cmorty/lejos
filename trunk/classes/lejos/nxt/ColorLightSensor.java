@@ -87,6 +87,7 @@ public class ColorLightSensor implements LightLampDetector, ColorDetector, Senso
 
     protected int []rawValues = new int[RGB_BLANK+1];
     protected int [] values = new int[RGB_BLANK+1];
+    protected int id;
 
     /**
      * Create a new Color Sensor instance and bind it to a port.
@@ -96,6 +97,7 @@ public class ColorLightSensor implements LightLampDetector, ColorDetector, Senso
     public ColorLightSensor(SensorPort port, int type)
     {
         this.port = port;
+        id = port.getId();
         //port.setTypeAndMode(type, 0);
         port.setTypeAndMode(TYPE_NO_SENSOR, 0);
         initialized = false;
@@ -392,11 +394,11 @@ public class ColorLightSensor implements LightLampDetector, ColorDetector, Senso
      */
     protected int readFullColorValue(int newClock)
     {
-        delayUS(500);
-        int val = readData();
-        delayUS(500);
-        int val2 = readData();
-        val = (val + readData())/2;
+        //delayUS(40);
+        int val = SensorPort.readSensorPin(id, DATA);//readData();
+        //delayUS(40);
+        int val2 = SensorPort.readSensorPin(id, DATA);//readData();
+        //val = (val + readData())/2;
         setClock(newClock);
         return (val + val2)/2;
     }
@@ -487,7 +489,7 @@ public class ColorLightSensor implements LightLampDetector, ColorDetector, Senso
             blankVal -= MINBLANKVAL;
         else
             blankVal = 0;
-        blankVal = (blankVal*100)/SENSORMAX;
+        blankVal = (blankVal*100)/(((SENSORMAX - MINBLANKVAL)*100)/ADMAX);
         vals[RGB_BLANK] = (blankVal*calData[calTab][RGB_BLANK]) >>> 16;
     }
 
