@@ -23,25 +23,27 @@ public final class MathBench
 		if (x == Double.POSITIVE_INFINITY)
 			return Double.POSITIVE_INFINITY;
 
+		// modifie values to avoid subnormal values
+		double fact;
+		if (x >= MIN_NORMAL)
+			fact = 0.5;
+		else
+		{
+			x = x * 0x1p100;
+			fact = 0x1p-51;
+		}
+		
 		// magic constant invsqrt
 		// according to http://www.lomont.org/Math/Papers/2003/InvSqrt.pdf
 		// also look at http://en.wikipedia.org/wiki/Fast_inverse_square_root
-		// modified to work with subnormal values
-		double isqrt;
-		if (x < MIN_NORMAL)
-			isqrt = Double.longBitsToDouble(0x5fe6ec85e7de30daL - (Double.doubleToRawLongBits(x * 0x1p100) >> 1)) * 0x1p50;
-		else
-			isqrt = Double.longBitsToDouble(0x5fe6ec85e7de30daL - (Double.doubleToRawLongBits(x) >> 1));
-
+		double isqrt = Double.longBitsToDouble(0x5fe6ec85e7de30daL - (Double.doubleToRawLongBits(x) >> 1));
 		double xhalf = 0.5 * x;
-		
-		//three steps of newton iteration for the inverse sqrt
 		isqrt = isqrt * (1.5 - xhalf * isqrt * isqrt);
 		isqrt = isqrt * (1.5 - xhalf * isqrt * isqrt);
 		isqrt = isqrt * (1.5 - xhalf * isqrt * isqrt);
 		
-		//one step of newton iteration for the sqrt
-		return xhalf * isqrt + 0.5 / isqrt;
+		//return 0.5 * (x * isqrt + 1 / isqrt);
+		return fact * (x * isqrt + 1 / isqrt);
 	}
 
 	private static int benchSqrt(int count, String comment, double x)
