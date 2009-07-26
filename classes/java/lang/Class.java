@@ -1,4 +1,6 @@
 package java.lang;
+import java.lang.annotation.Annotation;
+
 import lejos.nxt.VM;
 
 /**
@@ -36,6 +38,73 @@ public class Class<T>
 		return (VM.getVMOptions() & VM.VM_ASSERT) != 0;
 	}
 	
+	@SuppressWarnings("unchecked")
+	public T cast(Object o)
+	{
+		if (!this.isInstance(o))
+			throw new ClassCastException();
+			
+		return (T)o;
+	}
+	
+	public Class<?> getComponentType()
+	{
+		if (!this.isArray())
+			return null;
+		
+		return VM.getClass(this.elementClass & 0xFF);
+	}
+	
+	public Class<?>[] getDeclaringClass()
+	{
+		//FIXME Andy
+		throw new UnsupportedOperationException();
+	}
+	
+	public Class<?>[] getInterfaces()
+	{
+		//FIXME Andy
+		throw new UnsupportedOperationException();
+	}
+		
+	@SuppressWarnings("unchecked")
+	public Class<? super T> getSuperclass()
+	{
+		if (0 != (flags & (VM.VMClass.C_INTERFACE | VM.VMClass.C_PRIMITIVE)) || this == Object.class)
+			return null;
+		
+		return (Class<? super T>)VM.getClass(this.parentClass & 0xFF);
+	}
+
+	public boolean isAnnotation()
+	{
+		return this.isInterface() && Annotation.class.isAssignableFrom(this);
+	}	
+	
+	public boolean isArray()
+	{
+		return 0 != (flags & VM.VMClass.C_ARRAY);
+	}	
+	
+	public boolean isAssignableFrom(Class<?> c)
+	{
+		//FIXME Andy
+		throw new UnsupportedOperationException();
+	}	
+	
+	public boolean isEnum()
+	{
+		return this.getSuperclass() == Enum.class;
+	}	
+	
+	public boolean isInstance(Object obj)
+	{
+		if (obj == null)
+			return false;
+		
+		return this.isAssignableFrom(obj.getClass());
+	}
+	
 	public boolean isInterface()
 	{
 		return 0 != (flags & VM.VMClass.C_INTERFACE);
@@ -46,12 +115,17 @@ public class Class<T>
 		return 0 != (flags & VM.VMClass.C_PRIMITIVE);
 	}
 	
-	@SuppressWarnings("unchecked")
-	public Class<? super T> getSuperclass()
+	public String toString()
 	{
-		if (0 != (flags & (VM.VMClass.C_INTERFACE | VM.VMClass.C_PRIMITIVE)) || this == Object.class)
-			return null;
+		StringBuilder sb = new StringBuilder();
+		if (this.isInterface())
+			sb.append("interface ");
+		else
+			sb.append("class ");
 		
-		return (Class<? super T>)VM.getClass(this.parentClass & 0xFF);
+		//TODO Andy: replace 0 by classnumber
+		sb.append(0);
+		
+		return sb.toString();
 	}
 }
