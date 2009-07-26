@@ -129,7 +129,10 @@
 		<win-run file="nxjc">
 			javac -bootclasspath "%NXJ_CP_BOOT%" %*
 		</win-run>
-		<win-run file="nxjpccomm">
+		<win-run file="nxjpcc">
+			javac -Xbootclasspath/a:"%NXJ_CP_TOOL%" %*
+		</win-run>
+		<win-run file="nxjpc">
 			java -Dnxj.home="%NXJ_HOME%" -Djava.library.path="%NXJ_BIN%" -Xbootclasspath/a:"%NXJ_CP_TOOL%" %*
 		</win-run>
 		
