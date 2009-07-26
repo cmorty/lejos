@@ -1,4 +1,4 @@
-package org.jejos.nxt.benchmark;
+package org.lejos.nxt.benchmark;
 
 
 public final class MathBench
