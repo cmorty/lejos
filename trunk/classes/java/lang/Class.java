@@ -91,7 +91,7 @@ public class Class<T>
 	public boolean isAssignableFrom(Class<?> cls)
 	{
 		//FIXME Andy
-		throw new UnsupportedOperationException();
+		return VM.isAssignable(cls, this);
 	}	
 	
 	public boolean isEnum()

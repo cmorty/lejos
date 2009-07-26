@@ -572,8 +572,6 @@ static boolean sub_type_of(byte obj, const byte cls)
 boolean instance_of (Object *obj, const byte cls)
 {
   byte rtCls;
-  ClassRecord *classRec;
-  ClassRecord *rtClassRec;
 
   if (obj == null)
     return false;
@@ -582,36 +580,7 @@ boolean instance_of (Object *obj, const byte cls)
   if (cls == JAVA_LANG_OBJECT) return true;
   rtCls = get_class_index(obj);
   if (rtCls == cls) return true;
-  classRec = get_class_record(cls);
-  rtClassRec = get_class_record(rtCls);
-  // Check for special case of arrays
-  if (is_array_class(classRec))
-  {
-    // For arrays we may not have much type information available.
-    // In the minimum case we have full information about the signature
-    // but we may not have full info for the object. We will only have the
-    // base type of the last dimension.
-
-    if (!is_array(obj)) return false;
-    // Do we have a full signature for the array. If we do then we can not
-    // have a match bacause we do not have the same classes
-    if (is_big_array(obj)) return false;
-    // We only have basic type information
-    if (get_dim(classRec) == 1)
-    {
-      // For 1d arrays we can test the basic type, if it is not equal then we know we do not have a match
-      if (get_base_type(get_element_class(classRec)) != get_base_type(get_element_class(rtClassRec))) return false;
-    }
-    else
-      // for multi arrays the base type must be an object
-      if (get_base_type(get_element_class(rtClassRec)) != JAVA_LANG_OBJECT) return false;
-    // for all other cases we assume a match...
-    return true;
-  }
-  // TBD: support for interfaces
-  if (is_interface (classRec))
-    return true;
-  return sub_type_of(rtCls, cls);
+  return is_assignable(rtCls, cls);
 }
 
 /**
@@ -620,11 +589,30 @@ boolean instance_of (Object *obj, const byte cls)
  */
 boolean is_assignable(const byte srcCls, const byte dstCls)
 {
+  ClassRecord *srcRec;
+  ClassRecord *dstRec;
   // Check common cases
   if (srcCls == dstCls || dstCls == JAVA_LANG_OBJECT) return true;
+  dstRec = get_class_record(dstCls);
   // TBD Add support for interfaces
-  if (is_interface(get_class_record(dstCls))) return true;
-  return sub_type_of(srcCls, dstCls);
+  if (is_interface(dstRec)) return true;
+  if (sub_type_of(srcCls, dstCls)) return true;
+  if (type_checks_enabled()) return false;
+  // Special case... we may only have limited information available for array
+  // objects so if checks are not available we let some other cases through
+  if (!is_array_class(dstRec)) return false;
+  srcRec = get_class_record(srcCls);
+  if (!is_array_class(srcRec)) return false;
+  if (get_dim(dstRec) == 1)
+  {
+    // For 1d arrays we can test the basic type, if it is not equal then we know we do not have a match
+    if (get_base_type(get_element_class(dstRec)) != get_base_type(get_element_class(srcRec))) return false;
+  }
+  else
+    // for multi arrays the base type must be an object
+    if (get_base_type(get_element_class(srcRec)) != JAVA_LANG_OBJECT) return false;
+  // for all other cases we assume a match...
+  return true;
 }
 
 

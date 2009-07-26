@@ -201,3 +201,6 @@ readSensorPin(II)I
 
 #System
 nanoTime()J
+
+#VM
+isAssignable(II)Z

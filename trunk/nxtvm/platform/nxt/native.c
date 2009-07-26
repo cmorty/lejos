@@ -535,6 +535,9 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
   case getVMOptions_4_5I:
     push_word(gVMOptions);
     break;
+  case isAssignable_4II_5Z:
+    push_word(is_assignable(paramBase[0], paramBase[1]));
+    break;
   case cloneObject_4Ljava_3lang_3Object_2_5Ljava_3lang_3Object_2:
     {
       Object *newObj = clone((Object *)ref2obj(paramBase[0]));
