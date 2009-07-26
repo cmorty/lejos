@@ -75,7 +75,7 @@ public class GeneralBench
 		RConsole.open();
 		// USB.usbEnable(2);
 		System.setOut(new PrintStream(RConsole.openOutputStream()));
-		System.out.println("Benchmark " + VERSION);
+		System.out.println("GeneralBench " + VERSION);
 
 		BenchUtils.cleanUp("At start");
 		int chunkSize = 0x4000; // Must be power of 2
