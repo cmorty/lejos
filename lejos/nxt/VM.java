@@ -10,13 +10,22 @@ import java.util.Iterator;
  * similar to the class file format used by a standard JVM, but with much of the
  * detail stripped away.
  *
+ * The structures fall into two genral types. Those that are contained within
+ * Java objects (and so can be made directly available to a user program) and
+ * those that are simply raw data. To allow access to the second type of data
+ * we create Java objects with a copy of the data in them. In some cases we
+ * also do this even for tables/etc. that are available as objects as wrapping
+ * the class in this way may make it easier to manipulate.
+ * 
  * NOTE: Many of the structures in this file are a direct mapping to internal
  * data within the VM. Changes to the VM structures must also be reflected here.
  * Take care when editing this code to ensure that changes do not modify this
- * mapping.
+ * mapping. Also many of the tables use byte fields that really should be
+ * treated as unsigned values. We have to take great care when converting these
+ * to integers.
  * @author andy
  */
-public class VM
+public final class VM
 {
     //The peek methods use the follow base address when accessing VM memory.
     private static final int ABSOLUTE = 0;
@@ -86,14 +95,14 @@ public class VM
      * Return up to 4 bytes from a specified memory location.
      * @param base Base section of memory.
      * @param offset Offset (in bytes) of the location
-     * @param len Number of bytes to return (1-4)
+     * @param typ The primitive data type to access
      * @return Memory location contents.
      */
-    private static native int memPeek(int base, int offset, int len);
+    private static native int memPeek(int base, int offset, int typ);
 
     /**
      * Copy the specified number of bytes from memory into the given object.
-     * @param obj Object to copy to
+     * @param value Object to copy to
      * @param objoffset Offset (in bytes) within the object
      * @param base Base section to copy from
      * @param offset Offset within the section
@@ -103,18 +112,24 @@ public class VM
 
     /**
      * Return the address of the given objects first data field.
-     * @param obj
+     * @param value
      * @return the required address
      */
     private native static int getDataAddress (Object obj);
 
     /**
      * Return the address of the given object.
-     * @param obj
+     * @param value
      * @return the required address
      */
     private native static int getObjectAddress(Object obj);
 
+    /**
+     * Return a Java object reference the points to the location provided.
+     * @param base Memory section that offset refers to.
+     * @param offset The offset from the base in bytes.
+     * @return
+     */
     private native static Object memGetReference(int base, int offset);
 
     /**
@@ -125,7 +140,7 @@ public class VM
      */
     private static int memPeekByte(int base, int offset)
     {
-        return memPeek(base, offset, 1) & 0xff;
+        return memPeek(base, offset, VM_BYTE) & 0xff;
     }
 
     /**
@@ -136,7 +151,7 @@ public class VM
      */
     private static int memPeekShort(int base, int offset)
     {
-        return memPeek(base, offset, 2) & 0xffff;
+        return memPeek(base, offset, VM_SHORT) & 0xffff;
     }
 
     /**
@@ -147,7 +162,7 @@ public class VM
      */
     private static int memPeekInt(int base, int offset)
     {
-        return memPeek(base, offset, 4);
+        return memPeek(base, offset, VM_INT);
     }
 
     // The flash structure for class data has a special header added to it to
@@ -163,27 +178,22 @@ public class VM
      * desired. The new object will contain a snapshot of the in memory data.
      * This snapshot can be updated (if required by calling the update() method.
      */
-    static class VMClone
+    public static class VMClone
     {
 
         // Offset of the first cloned data field within the Java object. This
         // is after any red tape fields like the length and address. We also need
         // to allow for the extra "this" value.
         private static final int CLONE_OFFSET = 8;
-        int length;
-        int address;
+        private final int length;
+        final int address;
 
         public void update()
         {
             memCopy(this, CLONE_OFFSET, ABSOLUTE, address, length);
         }
 
-        VMClone()
-        {
-        	//nothing
-        }
-
-        VMClone(int addr, int len)
+        private VMClone(int addr, int len)
         {
             address = addr;
             length = len;
@@ -191,60 +201,91 @@ public class VM
         }
     }
 
-    // The following allow access to in memory values
-    private byte []rawBytes = new byte[8];
-    private byte []swappedBytes = new byte[8];
 
     /**
      * Class that represents a value within the VM. The type field indicates the
-     * basic type of the value and the other fields provide access to the actual
+     * basic type of the value. The value object is used to return the actual
+     * contents. For primitive types we return a boxed type, for objects we
+     * simply return the object.
      * value.
      */
     public static class VMValue
     {
-        // The comments are the offsets from the start of the data
-        public int type;
-        public Object objectVal; //4
-        public int intVal; // 8
-        public float floatVal; // 12
-        public double doubleVal; // 16
-        public long longVal; // 24
-        public char charVal; // 32
-        public short shortVal; // 34
-        public byte byteVal; // 36
-        public boolean booleanVal; // 37
+        public final int type;
+        public final Object value;
 
         // Number of bytes for a basic type
-        private static final int[] lengths = {4, 0, 0, 0, 1, 2, 4, 8, 1, 2, 4, 8};
-        // Offset to the corresponding field in the VMValue Object
-        private static final int[] offsets = {4, 0, 0, 0, 37, 32, 12, 16, 36, 34, 8, 24};
+        private static final int[] lengths = {4, 0, 1, 0, 1, 2, 4, 8, 1, 2, 4, 8};
 
-        VMValue(int typ, byte[] bytes)
+
+        /**
+         * Create the value object based upon an address.
+         * @param typ The basic type of the value
+         * @param addr The absolute address of the value
+         */
+        private VMValue(int typ, int addr)
         {
             type = typ;
-            memCopy(this, offsets[typ], ABSOLUTE, getDataAddress(bytes), lengths[typ]);
+            switch(typ)
+            {
+                case VM_OBJECT:
+                    value = memGetReference(ABSOLUTE, memPeekInt(ABSOLUTE, addr));
+                    break;
+                case VM_INT:
+                    value = new Integer(memPeekInt(ABSOLUTE, addr));
+                    break;
+                case VM_BYTE:
+                    value = new Byte((byte)memPeekByte(ABSOLUTE, addr));
+                    break;
+                case VM_CHAR:
+                    value = new Character((char)memPeekShort(ABSOLUTE, addr));
+                    break;
+                case VM_SHORT:
+                    value = new Short((short)memPeekShort(ABSOLUTE, addr));
+                    break;
+                case VM_LONG:
+                    value = new Long(((long) memPeekInt(ABSOLUTE, addr) << 32) | (long)memPeekInt(ABSOLUTE, addr+4));
+                    break;
+                case VM_FLOAT:
+                    value = new Float(Float.intBitsToFloat(memPeekInt(ABSOLUTE, addr)));
+                    break;
+                case VM_DOUBLE:
+                    value = new Double(Double.longBitsToDouble(((long)memPeekInt(ABSOLUTE, addr) << 32) | (long)memPeekInt(ABSOLUTE, addr+4)));
+                    break;
+                case VM_BOOLEAN:
+                    value = new Boolean(memPeekByte(ABSOLUTE, addr) != 0);
+                    break;
+                case VM_CLASS:
+                    value = VM.getVM().getVMClass(memPeekByte(ABSOLUTE, addr));
+                    break;
+                default:
+                    throw new NoSuchFieldError();
+            }
         }
 
-        VMValue(int typ, Object obj)
+        /**
+         * Create a value object based upon a Java object.
+         * @param obj The actual object value.
+         */
+        private VMValue(Object obj)
         {
-            type = typ;
-            objectVal = obj;
+            type = VM_OBJECT;
+            this.value = obj;
         }
-
     }
-
+    
     // Provide access to the image header structure
     private static final int IMAGE_HDR_LEN = 20;
     /**
      * The image header for the currently active program.
      */
-    public class VMImage extends VMClone
+    public final class VMImage extends VMClone
     {
         public short magicNumber;
         public short constantTableOffset;
+        public short constantValuesOffset;
         public short numConstants;
         public short staticFieldsOffset;
-        public short staticStateOffset;
         public short staticStateLength;
         public short numStaticFields;
         public short entryClassesOffset;
@@ -252,7 +293,7 @@ public class VM
         public byte lastClass;
         public short runtimeOptions;
 
-        VMImage(int addr)
+        private VMImage(int addr)
         {
             super(addr, IMAGE_HDR_LEN);
         }
@@ -298,7 +339,7 @@ public class VM
     }
 
     // Cached version of the image header.
-    private VMImage image;
+    private final VMImage image;
 
     /**
      * Return the image header for the currently running program
@@ -315,7 +356,7 @@ public class VM
      * structures and returns a Java accessible clone of the structure.
      * @param <E>
      */
-    abstract class VMItems<E> implements Iterable<E>
+    public static abstract class VMItems<E> implements Iterable<E>
     {
         int cnt;
         private class VMItemsIterator implements Iterator<E>
@@ -345,7 +386,7 @@ public class VM
 
         abstract public E get(int entry);
 
-        VMItems(int cnt)
+        private VMItems(int cnt)
         {
             this.cnt = cnt;
         }
@@ -357,32 +398,33 @@ public class VM
     /**
      * This class can be used to gain access to all of the static fields.
      */
-    public class VMStaticFields extends VMItems<VMValue>
+    public static final class VMStaticFields extends VMItems<VMValue>
     {
-        int baseAddr;
+        private final int baseAddr;
+        private final int dataAddr;
 
 
         /**
          * Return a VMValue object for the specified static field number
          * @param item
-         * @return VMBoject for this item
+         * @return VMValue for this item
          */
         @Override
         public VMValue get(int item)
         {
-            if (item >= cnt) return null;
+            if (item >= cnt) throw new NoSuchFieldError();
             int addr = baseAddr + item*FIELD_LEN;
             int rec = memPeekShort(ABSOLUTE, addr);
             int typ = (rec >> 12) & 0xf;
             int offset = rec & 0xfff;
-            memCopy(swappedBytes, 0, STATICS, offset, VMValue.lengths[typ]);
-            return new VMValue(typ, swappedBytes);
+            return new VMValue(typ, dataAddr+offset);
         }
 
-        VMStaticFields(int base, int cnt)
+        private VMStaticFields(int base, int cnt)
         {
             super(cnt);
             baseAddr = base;
+            dataAddr = memPeekInt(MEM, STATICS*4);
         }
 
     }
@@ -392,9 +434,9 @@ public class VM
     /**
      * This class allows access to all of the constant values.
      */
-    public class VMConstants extends VMItems<VMValue>
+    public final class VMConstants extends VMItems<VMValue>
     {
-        int baseAddr;
+        private final int baseAddr;
 
         /**
          * Return a VMValue object for the specified constant table entry.
@@ -404,7 +446,7 @@ public class VM
         @Override
         public VMValue get(int item)
         {
-            if (item >= cnt) return null;
+            if (item >= cnt) throw new NoSuchFieldError();
             int addr = baseAddr + item*CONSTANT_LEN;
             int offset = memPeekShort(ABSOLUTE, addr) + IMAGE_BASE;
             int typ = memPeekByte(ABSOLUTE, addr+2);
@@ -415,16 +457,13 @@ public class VM
                 char chars[] = new char[len];
                 for(int i = 0; i < len; i++)
                     chars[i] = (char)memPeekByte(ABSOLUTE, offset+i);
-                return new VMValue(typ, new String(chars));
+                return new VMValue(new String(chars));
             }
             len = VMValue.lengths[typ];
-            memCopy(rawBytes, 0, ABSOLUTE, offset, len);
-            for(int i = 0; i < len; i++)
-                swappedBytes[i] = rawBytes[(len-1) - i];
-            return new VMValue(typ, swappedBytes);
+            return new VMValue(typ, offset);
         }
 
-        VMConstants(int base, int cnt)
+        private VMConstants(int base, int cnt)
         {
             super(cnt);
             baseAddr = base;
@@ -437,28 +476,27 @@ public class VM
     /**
      * An exception record
      */
-    public class VMException extends VMClone
+    public static final class VMException extends VMClone
     {
         public short start;
         public short end;
         public short handler;
         public byte classIndex;
 
-        VMException(int addr)
+        private VMException(int addr)
         {
             super(addr, EXCEPTION_LEN);
         }
-
     }
 
     /**
      * Class to provide access to a series of exception records
      */
-    public class VMExceptions extends VMItems<VMException>
+    public static final class VMExceptions extends VMItems<VMException>
     {
-        int baseAddr;
+        private final int baseAddr;
 
-        VMExceptions(int baseAddr, int cnt)
+        private VMExceptions(int baseAddr, int cnt)
         {
             super(cnt);
             this.baseAddr = baseAddr;
@@ -476,7 +514,7 @@ public class VM
     /**
      * Provide access to information about a method
      */
-    public class VMMethod extends VMClone
+    public final class VMMethod extends VMClone
     {
         public short signature;
         public short exceptionTable;
@@ -492,7 +530,7 @@ public class VM
         public static final byte M_SYNCHRONIZED = 2;
         public static final byte M_STATIC = 4;
 
-        VMMethod(int addr)
+        private VMMethod(int addr)
         {
             super(addr, METHOD_LEN);
         }
@@ -515,11 +553,11 @@ public class VM
     /**
      * Provide access to a series of method records
      */
-    public class VMMethods extends VMItems<VMMethod>
+    public final class VMMethods extends VMItems<VMMethod>
     {
-        int baseAddr;
+        private final int baseAddr;
 
-        VMMethods(int baseAddr, int cnt)
+        private VMMethods(int baseAddr, int cnt)
         {
             super(cnt);
             this.baseAddr = baseAddr;
@@ -547,7 +585,7 @@ public class VM
     /**
      * Provide access to the internal class data
      */
-    public class VMClass extends VMClone
+    public final class VMClass extends VMClone
     {
         public short size;
         public short arrayDim;
@@ -567,7 +605,7 @@ public class VM
         // The following are not part of the internal structure
         private int clsNo;
 
-        VMClass(int addr)
+        private VMClass(int addr)
         {
             super(addr+CLASS_OBJ_HDR, CLASS_LEN);
             clsNo = (addr - IMAGE_BASE - IMAGE_HDR_LEN)/((CLASS_LEN+CLASS_OBJ_HDR +1) & ~1);
@@ -579,7 +617,7 @@ public class VM
          */
         public VMMethods getMethods()
         {
-            return new VMMethods(arrayDim + IMAGE_BASE, numMethods);
+            return new VMMethods(arrayDim + IMAGE_BASE, ((int)numMethods & 0xff));
         }
 
         /**
@@ -605,9 +643,9 @@ public class VM
     /**
      * Provide access to a series of class records
      */
-    public class VMClasses extends VMItems<VMClass>
+    public final class VMClasses extends VMItems<VMClass>
     {
-        VMClasses(int cnt)
+        private VMClasses(int cnt)
         {
             super(cnt);
         }
@@ -620,69 +658,113 @@ public class VM
         @Override
         public VMClass get(int item)
         {
-            if (item >= cnt) return null;
+            if (item >= cnt) throw new NoClassDefFoundError();
             return new VMClass(getClassAddress(item));
         }
 
     }
 
-    public class VMFields extends VMItems<VMValue>
+    public final class VMFields extends VMItems<VMValue>
     {
-        private int fieldBase;
-        private int fieldTable;
+        private final int fieldOffsets[];
+        private final byte fieldTypes[];
+        // Keep a reference to make sure the object does not get gc'ed
+        private final Object obj;
 
-        VMFields(Object obj)
+        private VMFields(Object obj)
         {
             super(0);
             VMClass cls = getVMClass(obj);
-            if (isArray(obj)) return;
-            fieldBase = getDataAddress(obj);
-            cnt = cls.numFields;
-            fieldTable = cls.elementClass + IMAGE_BASE;
+            if (isArray(obj))
+            {
+                fieldOffsets = new int[0];
+                fieldTypes = new byte[0];
+            }
+            else
+            {
+                // first work out how many fields there are (including those
+                // from super classes.
+                cnt = ((int)cls.numFields & 0xff);
+                while (cls.parentClass != 0)
+                {
+                    cls = getVMClass(cls.parentClass);
+                    cnt += ((int)cls.numFields & 0xff);
+                }
+                // Now create a type and offset map. Note that we only have type
+                // data so we have to start at the object end and work back
+                // from there.
+                fieldOffsets = new int[cnt];
+                fieldTypes = new byte[cnt];
+                cls = getVMClass(obj);
+                int fieldBase = getObjectAddress(obj);
+                int offset = fieldBase + cls.size;
+                int item = cnt-1;
+System.out.println("field cnt " + cnt + " main class " + cls.getClassNo() + " fields " + cls.numFields + " offset " + offset);
+                for(;;)
+                {
+                    int fieldTable = cls.elementClass + IMAGE_BASE;
+                    for(int i = ((int)cls.numFields & 0xff) - 1; i >= 0; i--)
+                    {
+                        fieldTypes[item] = (byte)memPeekByte(ABSOLUTE, fieldTable + i);
+     System.out.println("item " + item + " type " + fieldTypes[item] + " offset " + offset);
+                        offset -= VMValue.lengths[fieldTypes[item]];
+                        fieldOffsets[item--] = offset;
+                    }
+                    if (cls.parentClass == 0) break;
+                    cls = getVMClass(cls.parentClass);
+System.out.println("field cnt " + cnt + " p class " + cls.getClassNo() + " fields " + cls.numFields + " offset " + offset);
+                }
+            }
+            this.obj = obj;
         }
 
+        /**
+         * Return a specified field
+         * @param item The required field number
+         * @return A value object to access the field.
+         */
         @Override
         public VMValue get(int item)
         {
-            if (item >= cnt) return null;
-            int offset = fieldBase;
-            int itemData = fieldTable;
-            int typ = memPeekByte(ABSOLUTE, itemData++);
-            while (item-- > 0)
-            {
-                offset += VMValue.lengths[typ];
-                typ = memPeekByte(ABSOLUTE, itemData++);
-            }
-            memCopy(swappedBytes, 0, ABSOLUTE, offset, VMValue.lengths[typ]);
-            return new VMValue(typ, swappedBytes);
+            if (item >= cnt) throw new NoSuchFieldError();
+            return new VMValue(fieldTypes[item], fieldOffsets[item]);
         }
     }
 
 
-    public class VMElements extends VMItems<VMValue>
+    public static final class VMElements extends VMItems<VMValue>
     {
-        private int arrayBase;
-        private int typ;
+        private final int arrayBase;
+        private final int typ;
+        private final Object obj;
 
         VMElements(Object obj)
         {
             super(0);
+            if (obj == null) throw new NullPointerException();
             int addr = getObjectAddress(obj);
             int hdr = memPeekByte(ABSOLUTE, addr+OBJ_FLAGS);
-            if ((hdr & OBJ_ARRAY) == 0) return;
-            typ = (hdr & OBJ_ARRAY_TYPE);
-            cnt = memPeekByte(ABSOLUTE, addr+OBJ_ARRAY_LEN);
-            if (cnt == OBJ_ARRAY_LEN_ISBIGARRAY) cnt = memPeekShort(ABSOLUTE, addr + OBJ_BIGARRAY_LEN);
-            arrayBase = getDataAddress(obj);
+            if ((hdr & OBJ_ARRAY) == 0)
+            {
+                typ = -1;
+                arrayBase = 0;
+            }
+            else
+            {
+                typ = (hdr & OBJ_ARRAY_TYPE);
+                cnt = memPeekByte(ABSOLUTE, addr+OBJ_ARRAY_LEN);
+                if (cnt == OBJ_ARRAY_LEN_ISBIGARRAY) cnt = memPeekShort(ABSOLUTE, addr + OBJ_BIGARRAY_LEN);
+                arrayBase = getDataAddress(obj);
+            }
+            this.obj = obj;
         }
 
         @Override
         public VMValue get(int item)
         {
-            if (item >= cnt) return null;
+            if (item >= cnt) throw new ArrayIndexOutOfBoundsException();
             int offset = arrayBase + item*VMValue.lengths[typ];
-            memCopy(swappedBytes, 0, ABSOLUTE, offset, VMValue.lengths[typ]);
-            return new VMValue(typ, swappedBytes);
+            return new VMValue(typ, offset);
         }
 
         public int length()
@@ -701,17 +783,18 @@ public class VM
      */
     private static int getClassAddress(int clsNo)
     {
-        return IMAGE_BASE + IMAGE_HDR_LEN + clsNo*((CLASS_LEN+CLASS_OBJ_HDR +1) & ~1);
+        return IMAGE_BASE + IMAGE_HDR_LEN + (clsNo & 0xff)*((CLASS_LEN+CLASS_OBJ_HDR +1) & ~1);
     }
 
     /**
      * Return the class number of the class for the specified object
-     * @param obj Object to obtain the class number for.
+     * @param value Object to obtain the class number for.
      * @return The requested class number
      */
     private int getClassNo(Object obj)
     {
-        // First we het the address of the object
+        if (obj == null) throw new NullPointerException();
+        // First we get the address of the object
         int addr = getObjectAddress(obj);
         // Now we read the flag bytes in the object header
         int hdr = memPeekByte(ABSOLUTE, addr+OBJ_FLAGS);
@@ -739,19 +822,19 @@ public class VM
      * Note: The actual object returned actually resides in flash rom and is
      * part of the leJOS loader. It is not possible to extend this class or
      * modify the contents.
-     * @param obj
+     * @param obj the object for which the class is required
      * @return the Class object
      */
     public Class<?> getClass(Object obj)
     {
-        //return classFactory.makeRef(getClassAddress(getClassNo(obj)));
+        //return classFactory.makeRef(getClassAddress(getClassNo(value)));
         return (Class<?>) memGetReference(ABSOLUTE, getClassAddress(getClassNo(obj)));
     }
 
     /**
      * Return a VMClass object for the provided object.
      * Note: The object returned is actually a copy of the in flash object.
-     * @param obj
+     * @param obj the object for which the class is required
      * @return the VMClass object
      */
     public VMClass getVMClass(Object obj)
@@ -775,7 +858,7 @@ public class VM
      * @param cls
      * @return the VMClass object
      */
-    public VMClass getVMClass(Class<?> cls)
+    public final VMClass getVMClass(Class<?> cls)
     {
         return new VMClass(getObjectAddress(cls));
     }
@@ -786,9 +869,9 @@ public class VM
      * @param clsNo
      * @return the VMClass object
      */
-    public VMClass getVMClass(int clsNo)
+    public final VMClass getVMClass(int clsNo)
     {
-        if (clsNo > image.lastClass) return null;
+        if (clsNo > image.lastClass) throw new NoClassDefFoundError();
         return new VMClass(getClassAddress(clsNo));
     }
 
@@ -797,17 +880,17 @@ public class VM
      * @param methodNo
      * @return Method object
      */
-    public VMMethod getMethod(int methodNo)
+    public final VMMethod getMethod(int methodNo)
     {
         return new VMMethod(METHOD_BASE + methodNo*((METHOD_LEN + 1) & ~1));
     }
 
     /**
      * Return true if the specified object is an array
-     * @param obj
+     * @param obj object to test
      * @return true iff the specified object is an array
      */
-    public boolean isArray(Object obj)
+    public final boolean isArray(Object obj)
     {
         if (obj == null) return false;
         return (memPeekByte(ABSOLUTE, getObjectAddress(obj)+OBJ_FLAGS) & OBJ_ARRAY) != 0;
@@ -815,24 +898,22 @@ public class VM
 
     /**
      * Provide access to the fields of an object
-     * @param obj
+     * @param obj the object to obtain the fields for
      * @return fields object
      */
-    public VMFields getFields(Object obj)
+    public final VMFields getFields(Object obj)
     {
-        if (obj == null) return null;
         return new VMFields(obj);
     }
 
-    public VMElements getElements(Object obj)
+    public final VMElements getElements(Object obj)
     {
-        if (obj == null) return null;
         return new VMElements(obj);
     }
 
 
     private static final int STACKFRAME_LEN = 20;
-    public class VMStackFrame extends VMClone
+    public final class VMStackFrame extends VMClone
     {
         public int methodRecord;
         public Object monitor;
@@ -840,7 +921,7 @@ public class VM
         public int pc;
         public int stackTop;
 
-        VMStackFrame(int addr)
+        private VMStackFrame(int addr)
         {
             super(addr, STACKFRAME_LEN);
         }
@@ -851,11 +932,12 @@ public class VM
         }
     }
 
-    public class VMStackFrames extends VMItems<VMStackFrame>
+    public final class VMStackFrames extends VMItems<VMStackFrame>
     {
-        int base;
-        int size;
-        VMStackFrames(Object stackFrame, int size)
+        private final int base;
+        private final int size;
+
+        private VMStackFrames(Object stackFrame, int size)
         {
             super(size);
             base = getDataAddress(stackFrame);
@@ -875,7 +957,7 @@ public class VM
     /**
      * Internal version of a thread structure
      */
-    public class VMThread extends VMClone
+    public final class VMThread extends VMClone
     {
         public Thread nextThread;
         public Object waitingOn;
@@ -891,9 +973,9 @@ public class VM
         public byte interrupted;
         public byte daemon;
         // The following is not part of the VM internal structure
-        private Thread thread;
+        private final Thread thread;
 
-        VMThread(int addr)
+        private VMThread(int addr)
         {
             super(addr, THREAD_LEN);
             thread = (Thread)memGetReference(ABSOLUTE, addr - OBJ_HDR_SZ);
@@ -923,13 +1005,13 @@ public class VM
     /**
      * Provide access to a series of internal thread records
      */
-    public class VMThreads implements Iterable<VMThread>
+    public final class VMThreads implements Iterable<VMThread>
     {
         private class VMThreadIterator implements Iterator<VMThread>
         {
-            int nextPriority = Thread.MAX_PRIORITY-1;
-            int first = 0;
-            int nextThread = 0;
+            private int nextPriority = Thread.MAX_PRIORITY-1;
+            private int first = 0;
+            private int nextThread = 0;
 
             private void findNext()
             {
@@ -961,7 +1043,7 @@ public class VM
 
             public void remove()
             {
-                throw new UnsupportedOperationException("Not supported yet.");
+                throw new UnsupportedOperationException("Not supported.");
             }
 
             VMThreadIterator()
@@ -974,6 +1056,11 @@ public class VM
         {
             return new VMThreadIterator();
         }
+
+        private VMThreads()
+        {
+            // Nothing
+        }
     }
 
 
@@ -981,12 +1068,12 @@ public class VM
      * Returns access to all of the current internal thread objects
      * @return the VMThreads object
      */
-    public VMThreads getVMThreads()
+    public final VMThreads getVMThreads()
     {
         return new VMThreads();
     }
 
-    public VMThread getVMThread(Thread thread)
+    public final VMThread getVMThread(Thread thread)
     {
         return new VMThread(getDataAddress(thread));
     }
@@ -1012,7 +1099,7 @@ public class VM
      * allows other programs to be called.
      * @param progNo program number to call
      */
-    public native static void executeProgram(int progNo);
+    public native static final void executeProgram(int progNo);
 
     // Flags used to control the Virtual Machine.
     public static final int VM_TYPECHECKS = 1;
@@ -1022,12 +1109,12 @@ public class VM
       * Control the run time operation of the leJOS Virtual Machine.
       * @param options Bit flags.
       */
-     public static native void setVMOptions(int options);
+     public static final native void setVMOptions(int options);
 
      /**
       * Return the currently operating Virtual Machine options.
       * @return the options
       */
-     public static native int getVMOptions();
+     public static final native int getVMOptions();
 
 }
