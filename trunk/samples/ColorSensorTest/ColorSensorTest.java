@@ -23,7 +23,7 @@ public class ColorSensorTest
         if (portNo < 0) return;
         for(;;)
         {
-            ColorLightSensor cs = new ColorLightSensor(SensorPort.PORTS[portNo], ColorSensor.TYPE_COLORNONE);
+            ColorLightSensor cs = new ColorLightSensor(SensorPort.PORTS[portNo], ColorLightSensor.TYPE_COLORNONE);
             int mode = modeMenu.select();
             if (mode < 0) return;
             cs.setType(ColorLightSensor.TYPE_COLORFULL + mode);
@@ -31,7 +31,7 @@ public class ColorSensorTest
             while (!Button.ESCAPE.isPressed())
             {
                 LCD.drawString("Mode: " + modes[mode], 0, 0);
-                LCD.drawString("Color   Raw  Cal", 0, 2);
+                LCD.drawString("Color   Raw  Cal", 0, 1);
                 if (mode == 0)
                 {
                     cs.readValues(vals);
@@ -40,9 +40,9 @@ public class ColorSensorTest
                     int colorVal = cs.readValue();
                     for(int i = 0; i < vals.length; i++)
                     {
-                        LCD.drawString(modes[i+1], 0, i + 3);
-                        LCD.drawInt(rawVals[i], 5, 6, i + 3);
-                        LCD.drawInt(vals[i], 5, 11, i + 3);
+                        LCD.drawString(modes[i+1], 0, i + 2);
+                        LCD.drawInt(rawVals[i], 5, 6, i + 2);
+                        LCD.drawInt(vals[i], 5, 11, i + 2);
                     }
                     LCD.drawString("Color:          ", 0, 6);
                     LCD.drawString(color.name(), 7, 6);
