@@ -117,8 +117,8 @@ public class Class<T>
 		else
 			sb.append("class ");
 		
-		//TODO Andy: replace 0 by classnumber
-		sb.append(0);
+		//TODO classnumber instead of hash?
+		sb.append(System.identityHashCode(this));
 		
 		return sb.toString();
 	}
