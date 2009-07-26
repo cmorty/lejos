@@ -86,13 +86,13 @@ public class GeneralBench
 		int countAll = 0;
 		long startAll = System.currentTimeMillis();
 
-		countAll += benchArrayMCopyByte(iterate / chunkSize, chunkSize);
+		countAll += benchArrayMCopyByte(iterate / chunkSize / 2, chunkSize);
 		BenchUtils.cleanUp(null);
 
 		countAll += benchArraySCopyByte(iterate * 100 / chunkSize, chunkSize);
 		BenchUtils.cleanUp(null);
 
-		countAll += benchArrayMCopyInt(iterate / chunkSize, chunkSize / 4);
+		countAll += benchArrayMCopyInt(iterate / chunkSize * 2, chunkSize / 4);
 		BenchUtils.cleanUp(null);
 
 		countAll += benchArraySCopyInt(iterate * 100 / chunkSize, chunkSize / 4);
