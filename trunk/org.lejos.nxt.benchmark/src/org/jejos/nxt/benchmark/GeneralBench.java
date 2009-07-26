@@ -77,8 +77,6 @@ public class GeneralBench
 		System.setOut(new PrintStream(RConsole.openOutputStream()));
 		System.out.println("Benchmark " + VERSION);
 
-		GeneralBench b = new GeneralBench();
-
 		BenchUtils.cleanUp("At start");
 		int chunkSize = 0x4000; // Must be power of 2
 
@@ -88,53 +86,56 @@ public class GeneralBench
 		int countAll = 0;
 		long startAll = System.currentTimeMillis();
 
-		countAll += b.benchArrayMCopyByte(iterate / chunkSize, chunkSize);
-		BenchUtils.cleanUp("");
+		countAll += benchArrayMCopyByte(iterate / chunkSize, chunkSize);
+		BenchUtils.cleanUp(null);
 
-		countAll += b.benchArraySCopyByte(iterate * 100 / chunkSize, chunkSize);
-		BenchUtils.cleanUp("");
+		countAll += benchArraySCopyByte(iterate * 100 / chunkSize, chunkSize);
+		BenchUtils.cleanUp(null);
 
-		countAll += b.benchArrayMCopyInt(iterate / chunkSize, chunkSize / 4);
-		BenchUtils.cleanUp("");
+		countAll += benchArrayMCopyInt(iterate / chunkSize, chunkSize / 4);
+		BenchUtils.cleanUp(null);
 
-		countAll += b.benchArraySCopyInt(iterate * 100 / chunkSize, chunkSize / 4);
-		BenchUtils.cleanUp("");
+		countAll += benchArraySCopyInt(iterate * 100 / chunkSize, chunkSize / 4);
+		BenchUtils.cleanUp(null);
 
-		countAll += b.benchArithByte(iterate);
-		BenchUtils.cleanUp("");
+		countAll += benchArithByte(iterate);
+		BenchUtils.cleanUp(null);
 
-		countAll += b.benchArithInt(iterate);
-		BenchUtils.cleanUp("");
+		countAll += benchArithShort(iterate);
+		BenchUtils.cleanUp(null);
 
-		countAll += b.benchArithLong(iterate);
-		BenchUtils.cleanUp("");
+		countAll += benchArithInt(iterate);
+		BenchUtils.cleanUp(null);
 
-		countAll += b.benchArithFloat(iterate);
-		BenchUtils.cleanUp("");
+		countAll += benchArithLong(iterate);
+		BenchUtils.cleanUp(null);
 
-		countAll += b.benchArithDouble(iterate);
-		BenchUtils.cleanUp("");
+		countAll += benchArithFloat(iterate);
+		BenchUtils.cleanUp(null);
 
-		countAll += b.benchMethod(iterate);
-		BenchUtils.cleanUp("");
+		countAll += benchArithDouble(iterate);
+		BenchUtils.cleanUp(null);
 
-		countAll += b.benchMethodStatic(iterate);
-		BenchUtils.cleanUp("");
+		countAll += benchMethod(iterate);
+		BenchUtils.cleanUp(null);
 
-		countAll += b.benchMethodStaticNative(iterate);
-		BenchUtils.cleanUp("");
+		countAll += benchMethodStatic(iterate);
+		BenchUtils.cleanUp(null);
 
-		countAll += b.benchStringConcat(tests / 10);
-		BenchUtils.cleanUp("");
+		countAll += benchMethodStaticNative(iterate);
+		BenchUtils.cleanUp(null);
 
-		countAll += b.benchStringCompare(tests / 20);
-		BenchUtils.cleanUp("");
+		countAll += benchStringConcat(tests / 10);
+		BenchUtils.cleanUp(null);
 
-		countAll += b.benchNewOp(tests);
-		BenchUtils.cleanUp("");
+		countAll += benchStringCompare(tests / 20);
+		BenchUtils.cleanUp(null);
+
+		countAll += benchNewOp(tests);
+		BenchUtils.cleanUp(null);
 
 		long endAll = System.currentTimeMillis();
-		b.report(countAll, "Total Loop Executions", countAll, "loops", endAll - startAll);
+		report(countAll, "Total Loop Executions", countAll, "loops", endAll - startAll);
 		System.out.println("Note: each Loop Execution includes multiple Java operations");
 		System.out.flush();
 		RConsole.close();
@@ -145,7 +146,7 @@ public class GeneralBench
 	 * @param count
 	 * @param chunkSize
 	 */
-	public int benchArrayMCopyByte(int count, int chunkSize)
+	private static int benchArrayMCopyByte(int count, int chunkSize)
 	{
 		byte b1[] = new byte[chunkSize];
 		byte b2[] = new byte[chunkSize];
@@ -169,7 +170,7 @@ public class GeneralBench
 	 * @param count
 	 * @param chunkSize
 	 */
-	public int benchArrayMCopyInt(int count, int chunkSize)
+	private static int benchArrayMCopyInt(int count, int chunkSize)
 	{
 		int i1[] = new int[chunkSize];
 		int i2[] = new int[chunkSize];
@@ -195,7 +196,7 @@ public class GeneralBench
 	 * @param count
 	 * @param chunkSize
 	 */
-	public int benchArraySCopyByte(int count, int chunkSize)
+	private static int benchArraySCopyByte(int count, int chunkSize)
 	{
 		byte b1[] = new byte[chunkSize];
 		byte b2[] = new byte[chunkSize];
@@ -211,7 +212,7 @@ public class GeneralBench
 		return count;
 	}
 
-	public int benchArraySCopyInt(int count, int chunkSize)
+	private static int benchArraySCopyInt(int count, int chunkSize)
 	{
 		int i1[] = new int[chunkSize];
 		int i2[] = new int[chunkSize];
@@ -227,7 +228,7 @@ public class GeneralBench
 		return count;
 	}
 
-	public int benchStringConcat(int count) 
+	private static int benchStringConcat(int count) 
 	{
 		String s1 = "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz";
 		String s2 = "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz";
@@ -245,7 +246,7 @@ public class GeneralBench
 		return count;
 	}
 
-	public int benchStringCompare(int count) 
+	private static int benchStringCompare(int count) 
 	{
 		String s1 = "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz";
 		String s2 = "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz";
@@ -263,7 +264,7 @@ public class GeneralBench
 		return count;
 	}
 
-	public int benchNewOp(int count)
+	private static int benchNewOp(int count)
 	{
 		long nullTime = BenchUtils.getIterationTime(count);
 		long start = 0, end = 0;
@@ -285,21 +286,22 @@ public class GeneralBench
 		return count;
 	}
 
-	public int benchMethod(int count)
+	private static int benchMethod(int count)
 	{
 		long nullTime = BenchUtils.getIterationTime(count);
+		GeneralBench b = new GeneralBench();
 
 		// Function calls
 		long start = System.currentTimeMillis();
 		for (int i = 0; i < count; i++)
-			dummy1();
+			b.dummy1();
 		long end = System.currentTimeMillis();
 
 		report(count, "method calls", count, "ops", end - start - nullTime);
 		return count;
 	}
 
-	public int benchMethodStatic(int count)
+	private static int benchMethodStatic(int count)
 	{
 		long nullTime = BenchUtils.getIterationTime(count);
 
@@ -313,7 +315,7 @@ public class GeneralBench
 		return count;
 	}
 
-	public int benchMethodStaticNative(int count)
+	private static int benchMethodStaticNative(int count)
 	{
 		long nullTime = BenchUtils.getIterationTime(count);
 
@@ -327,79 +329,92 @@ public class GeneralBench
 		return count;
 	}
 
-	public int benchArithDouble(int count)
+	private static int benchArithDouble(int count)
 	{
+		double a, b, c;
+		
 		long nullTime = BenchUtils.getIterationTime(count);
 		long start, end;
 
-		double d = 3.14e12;
-		double e = 111.1313131313e10;
-		double f;
-
 		// Double Add
+		a = 0x7777777777777777p0;
+		b = 0x1111111111111111p0;
 		start = System.currentTimeMillis();
 		for (int i = 0; i < count; i++)
-			f = d + e;
+			c = a + b;
 		end = System.currentTimeMillis();
 		report(count, "double add", count, "ops", end - start - nullTime);
 
 		// Double sub
+		a = 0x8888888888888888p0;
+		b = 0x1111111111111111p0;
 		start = System.currentTimeMillis();
 		for (int i = 0; i < count; i++)
-			f = d - e;
+			c = a - b;
 		end = System.currentTimeMillis();
 		report(count, "double sub", count, "ops", end - start - nullTime);
 
 		// Double Mul
+		a = 0x0F0F0F0F0F0F0F0Fp0;
+		b = 0x1111111111111111p0;
 		start = System.currentTimeMillis();
 		for (int i = 0; i < count; i++)
-			f = d * e;
+			c = a * b;
 		end = System.currentTimeMillis();
 		report(count, "double mul", count, "ops", end - start - nullTime);
 
 		// Double Div
+		a = 0xFEFEFEFEFEFEFEFEp0;
+		b = 0x0E0E0E0E0E0E0E0Ep0;
 		start = System.currentTimeMillis();
 		for (int i = 0; i < count; i++)
-			f = d / e;
+			c = a / b;
 		end = System.currentTimeMillis();
 		report(count, "double div", count, "ops", end - start - nullTime);
 		
 		return count * 4;
 	}
 
-	public int benchArithFloat(int count)
+	private static int benchArithFloat(int count)
 	{
+		float a, b, c;
+		
 		long nullTime = BenchUtils.getIterationTime(count);
-
-		float f = 3.14e12f;
-		float g = 111.1313131313f;
-		float h;
+		long start, end;
 
 		// Float Add
-		long start = System.currentTimeMillis();
+		a = 0x77777777p0f;
+		b = 0x11111111p0f;
+		start = System.currentTimeMillis();
 		for (int i = 0; i < count; i++)
-			h = f + g;
-		long end = System.currentTimeMillis();
+			c = a + b;
+		end = System.currentTimeMillis();
 		report(count, "float add", count, "ops", end - start - nullTime);
 
 		// Float sub
+		a = 0x88888888p0f;
+		b = 0x11111111p0f;
 		start = System.currentTimeMillis();
 		for (int i = 0; i < count; i++)
-			h = f - g;
+			c = a - b;
 		end = System.currentTimeMillis();
 		report(count, "float sub", count, "ops", end - start - nullTime);
 
 		// Float Mul
+		a = 0x0F0F0F0Fp0f;
+		b = 0x11111111p0f;
 		start = System.currentTimeMillis();
 		for (int i = 0; i < count; i++)
-			h = f * g;
+			c = a * b;
 		end = System.currentTimeMillis();
 		report(count, "float mul", count, "ops", end - start - nullTime);
 
 		// Float Div
+		a = 0xFEFEFEFEp0f;
+		b = 0x0E0E0E0Ep0f;
 		start = System.currentTimeMillis();
 		for (int i = 0; i < count; i++)
-			h = f / g;
+			c = a / b;
 		end = System.currentTimeMillis();
 		report(count, "float div", count, "ops", end - start - nullTime);
 		
@@ -413,46 +428,46 @@ public class GeneralBench
 	 * @param count
 	 *            the number of iterations of each operation
 	 */
-	public int benchArithInt(int count)
+	private static int benchArithInt(int count)
 	{
-		final int J = 0x11223344;
-		int k;
+		int a, b, c;
 
 		long nullTime = BenchUtils.getIterationTime(count);
 		long start, end;
 
 		// Integer Add
+		a = 0x77777777;
+		b = 0x11111111;
 		start = System.currentTimeMillis();
 		for (int i = 0; i < count; i++)
-			// j = j + j;
-			k = J + i;
+			c = a + b;
 		end = System.currentTimeMillis();
 		report(count, "int add", count, "ops", end - start - nullTime);
 
 		// Integer sub
+		a = 0x88888888;
+		b = 0x11111111;
 		start = System.currentTimeMillis();
 		for (int i = 0; i < count; i++)
-			// j = j - i;
-			k = J - i;
+			c = a - b;
 		end = System.currentTimeMillis();
 		report(count, "int sub", count, "ops", end - start - nullTime);
 
 		// Integer Mul
+		a = 0x0F0F0F0F;
+		b = 0x11111111;
 		start = System.currentTimeMillis();
 		for (int i = 0; i < count; i++)
-			// This will quickly reach MAX_VALUE? j = j * j;
-			// actually it clips at '1' after 28 iterations
-			k = J * i;
+			c = a * b;
 		end = System.currentTimeMillis();
 		report(count, "int mul", count, "ops", end - start - nullTime);
 
 		// Integer Div
+		a = 0xFEFEFEFE;
+		b = 0x0E0E0E0E;
 		start = System.currentTimeMillis();
 		for (int i = 0; i < count; i++)
-			// Imsys original code: j = j / j;
-			// With seed of 3, this is 3/3, then 1/1 forever
-			// Now divide the index by three
-			k = i / J;		
+			c = a / b;
 		end = System.currentTimeMillis();
 		report(count, "int div", count, "ops", end - start - nullTime);
 		
@@ -466,46 +481,49 @@ public class GeneralBench
 	 * @param count
 	 *            the number of iterations of each operation
 	 */
-	public int benchArithLong(int count)
+	private static int benchArithLong(int count)
 	{
-		final long J = 0x11223344;
-		long k;
+		long a, b, c;
 
 		long nullTime = BenchUtils.getIterationTime(count);
 		long start, end;
 
 		// Integer Add
+		a = 0x7777777777777777L;
+		b = 0x1111111111111111L;
 		start = System.currentTimeMillis();
 		for (int i = 0; i < count; i++)
 			// j = j + j;
-			k = J + i;
+			c = a + b;
 		end = System.currentTimeMillis();
 		report(count, "long add", count, "ops", end - start - nullTime);
 
 		// Integer sub
+		a = 0x8888888888888888L;
+		b = 0x1111111111111111L;
 		start = System.currentTimeMillis();
 		for (int i = 0; i < count; i++)
 			// j = j - i;
-			k = J - i;
+			c = a - b;
 		end = System.currentTimeMillis();
 		report(count, "long sub", count, "ops", end - start - nullTime);
 
 		// Integer Mul
+		a = 0x0F0F0F0F0F0F0F0FL;
+		b = 0x1111111111111111L;
 		start = System.currentTimeMillis();
 		for (int i = 0; i < count; i++)
-			// This will quickly reach MAX_VALUE? j = j * j;
-			// actually it clips at '1' after 28 iterations
-			k = J * i;
+			c = a * b;
 		end = System.currentTimeMillis();
 		report(count, "long mul", count, "ops", end - start - nullTime);
 
 		// Integer Div
+		a = 0xFEFEFEFEFEFEFEFEL;
+		b = 0x0E0E0E0E0E0E0E0EL;
 		start = System.currentTimeMillis();
 		for (int i = 0; i < count; i++)
 			// Imsys original code: j = j / j;
-			// With seed of 3, this is 3/3, then 1/1 forever
-			// Now divide the index by three
-			k = i / J;
+			c = a / b;
 		end = System.currentTimeMillis();
 		report(count, "long div", count, "ops", end - start - nullTime);
 		
@@ -518,16 +536,68 @@ public class GeneralBench
 	 * @param count
 	 *            the number of iterations of each operation
 	 */
-	public int benchArithByte(int count)
+	private static int benchArithShort(int count)
 	{
-		byte a = (byte) 0x77;
-		byte b = (byte) 0x11;
-		byte c;
+		short a, b, c;
 
 		long nullTime = BenchUtils.getIterationTime(count);
 		long start, end;
 
 		// Add
+		a = (short)0x7777;
+		b = (short)0x1111;
+		start = System.currentTimeMillis();
+		for (int i = 0; i < count; i++)
+			c = (short) (a + b);
+		end = System.currentTimeMillis();
+		report(count, "short add", count, "ops", end - start - nullTime);
+
+		// sub
+		a = (short) 0x8888;
+		b = (short) 0x1111;
+		start = System.currentTimeMillis();
+		for (int i = 0; i < count; i++)
+			c = (short) (a - b);
+		end = System.currentTimeMillis();
+		report(count, "short sub", count, "ops", end - start - nullTime);
+
+		// Mul
+		a = (short) 0x0F0F;
+		b = (short) 0x1111;
+		start = System.currentTimeMillis();
+		for (int i = 0; i < count; i++)
+			c = (short) (a * b);
+		end = System.currentTimeMillis();
+		report(count, "short mul", count, "ops", end - start - nullTime);
+
+		// Div
+		a = (short) 0xFEFE;
+		b = (short) 0x0E0E;
+		start = System.currentTimeMillis();
+		for (int i = 0; i < count; i++)
+			c = (short) (a / b);
+		end = System.currentTimeMillis();
+		report(count, "short div", count, "ops", end - start - nullTime);
+		
+		return count * 4;
+	}
+
+	/**
+	 * byte primitive performance: add, sub, mul, div.
+	 * 
+	 * @param count
+	 *            the number of iterations of each operation
+	 */
+	private static int benchArithByte(int count)
+	{
+		byte a, b, c;
+
+		long nullTime = BenchUtils.getIterationTime(count);
+		long start, end;
+
+		// Add
+		a = (byte)0x77;
+		b = (byte)0x11;
 		start = System.currentTimeMillis();
 		for (int i = 0; i < count; i++)
 			c = (byte) (a + b);
@@ -535,7 +605,8 @@ public class GeneralBench
 		report(count, "byte add", count, "ops", end - start - nullTime);
 
 		// sub
-		a = (byte) 0xff;
+		a = (byte) 0x88;
+		b = (byte) 0x11;
 		start = System.currentTimeMillis();
 		for (int i = 0; i < count; i++)
 			c = (byte) (a - b);
@@ -543,7 +614,7 @@ public class GeneralBench
 		report(count, "byte sub", count, "ops", end - start - nullTime);
 
 		// Mul
-		a = (byte) 0x0f;
+		a = (byte) 0x0F;
 		b = (byte) 0x11;
 		start = System.currentTimeMillis();
 		for (int i = 0; i < count; i++)
@@ -552,8 +623,8 @@ public class GeneralBench
 		report(count, "byte mul", count, "ops", end - start - nullTime);
 
 		// Div
-		a = (byte) 0xfe;
-		b = (byte) 0x0e;
+		a = (byte) 0xFE;
+		b = (byte) 0x0E;
 		start = System.currentTimeMillis();
 		for (int i = 0; i < count; i++)
 			c = (byte) (a / b);
