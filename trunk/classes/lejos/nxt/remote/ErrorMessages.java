@@ -1,4 +1,10 @@
 package lejos.nxt.remote;
+
+/*
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ */
+
 /**
  * Error messages that can be returned after a call to the NXT brick.
  * e.g. The return value comes from method calls like Motor.backward(), 
@@ -7,8 +13,6 @@ package lejos.nxt.remote;
  * 
  * @author <a href="mailto:bbagnall@mts.net">Brian Bagnall</a> 
  *
- * <br/><br/>WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
- * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
  */	
 public interface ErrorMessages {
 	
