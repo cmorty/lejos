@@ -104,6 +104,9 @@ public class GeneralBench
 		countAll += benchArithShort(iterate);
 		BenchUtils.cleanUp(null);
 
+		countAll += benchArithChar(iterate);
+		BenchUtils.cleanUp(null);
+
 		countAll += benchArithInt(iterate);
 		BenchUtils.cleanUp(null);
 
@@ -552,7 +555,59 @@ public class GeneralBench
 	}
 
 	/**
-	 * byte primitive performance: add, sub, mul, div.
+	 * char primitive performance: add, sub, mul, div.
+	 * 
+	 * @param count
+	 *            the number of iterations of each operation
+	 */
+	private static int benchArithChar(int count)
+	{
+		char a, b, c;
+
+		long nullTime = BenchUtils.getIterationTime(count);
+		long start, end;
+
+		// Add
+		a = (char)0x7777;
+		b = (char)0x1111;
+		start = System.currentTimeMillis();
+		for (int i = 0; i < count; i++)
+			c = (char) (a + b);
+		end = System.currentTimeMillis();
+		report(count, "char add", count, "ops", end - start - nullTime);
+
+		// sub
+		a = (char) 0x8888;
+		b = (char) 0x1111;
+		start = System.currentTimeMillis();
+		for (int i = 0; i < count; i++)
+			c = (char) (a - b);
+		end = System.currentTimeMillis();
+		report(count, "char sub", count, "ops", end - start - nullTime);
+
+		// Mul
+		a = (char) 0x0F0F;
+		b = (char) 0x1111;
+		start = System.currentTimeMillis();
+		for (int i = 0; i < count; i++)
+			c = (char) (a * b);
+		end = System.currentTimeMillis();
+		report(count, "char mul", count, "ops", end - start - nullTime);
+
+		// Div
+		a = (char) 0xFEFE;
+		b = (char) 0x0E0E;
+		start = System.currentTimeMillis();
+		for (int i = 0; i < count; i++)
+			c = (char) (a / b);
+		end = System.currentTimeMillis();
+		report(count, "char div", count, "ops", end - start - nullTime);
+		
+		return count * 4;
+	}
+
+	/**
+	 * short primitive performance: add, sub, mul, div.
 	 * 
 	 * @param count
 	 *            the number of iterations of each operation
