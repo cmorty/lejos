@@ -78,7 +78,7 @@ public class Class<T>
 
 	public boolean isAnnotation()
 	{
-		return this.isInterface() && Annotation.class.isAssignableFrom(this);
+		return this.isInterface() && Annotation.class != this && Annotation.class.isAssignableFrom(this);
 	}	
 	
 	public boolean isArray()
