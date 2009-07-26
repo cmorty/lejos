@@ -34,7 +34,13 @@ public class GeneralBench
 		// nothing
 	}
 
-	private void dummy()
+	private void dummy1()
+	{
+		// dummy method
+		return;
+	}
+
+	private static void dummy2()
 	{
 		// dummy method
 		return;
@@ -176,6 +182,12 @@ public class GeneralBench
 		b.cleanUpAndShowMemory("");
 
 		countAll += b.callPerformance(iterate);
+		b.cleanUpAndShowMemory("");
+
+		countAll += b.callPerformanceStatic(iterate);
+		b.cleanUpAndShowMemory("");
+
+		countAll += b.callPerformanceStaticNative(iterate);
 		b.cleanUpAndShowMemory("");
 
 		countAll += b.stringConcat(tests / 10);
@@ -346,10 +358,38 @@ public class GeneralBench
 		// Function calls
 		long start = System.currentTimeMillis();
 		for (int i = 0; i < count; i++)
-			dummy();
+			dummy1();
 		long end = System.currentTimeMillis();
 
 		report(count, end - start - nullTime, "method calls", count, "ops");
+		return count;
+	}
+
+	public int callPerformanceStatic(int count)
+	{
+		long nullTime = getIterationTime(count);
+
+		// Function calls
+		long start = System.currentTimeMillis();
+		for (int i = 0; i < count; i++)
+			dummy2();
+		long end = System.currentTimeMillis();
+
+		report(count, end - start - nullTime, "static method calls", count, "ops");
+		return count;
+	}
+
+	public int callPerformanceStaticNative(int count)
+	{
+		long nullTime = getIterationTime(count);
+
+		// Function calls
+		long start = System.currentTimeMillis();
+		for (int i = 0; i < count; i++)
+			System.getFirmwareRevision();
+		long end = System.currentTimeMillis();
+
+		report(count, end - start - nullTime, "native static method calls", count, "ops");
 		return count;
 	}
 
