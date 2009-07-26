@@ -55,12 +55,6 @@ public class Class<T>
 		return VM.getClass(this.elementClass & 0xFF);
 	}
 	
-	public Class<?>[] getDeclaringClass()
-	{
-		//FIXME Andy
-		throw new UnsupportedOperationException();
-	}
-	
 	public Class<?>[] getInterfaces()
 	{
 		//FIXME Andy
