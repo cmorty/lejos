@@ -3,6 +3,11 @@ package lejos.nxt.remote;
 import java.io.*;
 import lejos.robotics.TachoMotor;
 
+/*
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ */
+
 /**
  * Motor class. Contains three instances of Motor.
  * Usage: Motor.A.forward(500);
