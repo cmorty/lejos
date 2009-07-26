@@ -27,14 +27,13 @@ public class Class<T>
     	return (Class<? extends U>)this;
     }
     
-	/**
-	 * @exception ClassNotFoundException Thrown always in TinyVM.
-	 */
-	@SuppressWarnings("unused")
-	public static Class<?> forName (String aName)
-		throws ClassNotFoundException
+	@SuppressWarnings("unchecked")
+	public T cast(Object o)
 	{
-		throw new ClassNotFoundException();
+		if (!this.isInstance(o))
+			throw new ClassCastException();
+			
+		return (T)o;
 	}
 	
 	/**
@@ -46,13 +45,14 @@ public class Class<T>
 		return (VM.getVMOptions() & VM.VM_ASSERT) != 0;
 	}
 	
-	@SuppressWarnings("unchecked")
-	public T cast(Object o)
+	/**
+	 * @exception ClassNotFoundException Thrown always in TinyVM.
+	 */
+	@SuppressWarnings("unused")
+	public static Class<?> forName (String aName)
+		throws ClassNotFoundException
 	{
-		if (!this.isInstance(o))
-			throw new ClassCastException();
-			
-		return (T)o;
+		throw new ClassNotFoundException();
 	}
 	
 	public Class<?> getComponentType()
@@ -88,7 +88,7 @@ public class Class<T>
 		return 0 != (flags & VM.VMClass.C_ARRAY);
 	}	
 	
-	public boolean isAssignableFrom(Class<?> c)
+	public boolean isAssignableFrom(Class<?> cls)
 	{
 		//FIXME Andy
 		throw new UnsupportedOperationException();
@@ -117,6 +117,7 @@ public class Class<T>
 		return 0 != (flags & VM.VMClass.C_PRIMITIVE);
 	}
 	
+	@Override
 	public String toString()
 	{
 		StringBuilder sb = new StringBuilder();
