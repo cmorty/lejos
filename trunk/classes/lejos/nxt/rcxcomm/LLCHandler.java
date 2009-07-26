@@ -1,14 +1,17 @@
 package lejos.nxt.rcxcomm;
 
 import lejos.nxt.*;
+
+/*
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ */
+
 /**
  * Packet handler than implement the LLC packet protocol.
  * Deals with packets and acks. 
  * Supports independent streams of data in both directions.
  * 
- * <br/><br/>WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
- * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
- *
  **/
 public class LLCHandler extends PacketHandler {
 
