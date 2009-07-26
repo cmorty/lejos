@@ -12,6 +12,13 @@ public final class Double extends Number
 	public static final double NEGATIVE_INFINITY = -1.0d / 0.0d;
 	public static final double NaN = 0.0d / 0.0d;
 	
+	public static final int MAX_EXPONENT = 1023;
+	public static final double MAX_VALUE = 0x1.fffffffffffffp+1023;
+	
+	public static final int MIN_EXPONENT = -1022;
+	public static final double MIN_NORMAL = 0x1.0p-1022;
+	public static final double MIN_VALUE = 0x1.0p-1074;
+	
 	public static final int SIZE = 64;
     // References to the following field are automatically replaced with a load
     // of the correct value by the linker, so no need to initialize.
