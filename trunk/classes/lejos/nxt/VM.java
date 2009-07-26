@@ -172,6 +172,16 @@ public final class VM
     // need to allow for this header when moving around.
     private static final int CLASS_OBJ_HDR = 2;
 
+    // The tables and the class objects are aligned on 4 byte boundaries. Other
+    // items are aligned on 2 or 1 byte boundaries.
+    private static final int TABLE_ALIGNMENT = 4;
+    private static final int CLASS_ALIGNMENT = 4;
+    private static final int METHOD_ALIGNMENT = 2;
+    private static final int EXCEPTION_ALIGNMENT = 2;
+    private static final int FIELD_ALIGNMENT = 1;
+    private static final int STATIC_FIELD_ALIGNMENT = 2;
+    private static final int CONSTANT_ALIGNMENT = 2;
+
     /**
      * This class is used to create a Java class from in memory data. This data
      * may not have a Java object header or may be of a different class to that
@@ -413,7 +423,7 @@ public final class VM
         public VMValue get(int item)
         {
             if (item >= cnt) throw new NoSuchFieldError();
-            int addr = baseAddr + item*FIELD_LEN;
+            int addr = baseAddr + item*((FIELD_LEN + STATIC_FIELD_ALIGNMENT - 1) & ~(STATIC_FIELD_ALIGNMENT -1));
             int rec = memPeekShort(ABSOLUTE, addr);
             int typ = (rec >> 12) & 0xf;
             int offset = rec & 0xfff;
@@ -447,7 +457,7 @@ public final class VM
         public VMValue get(int item)
         {
             if (item >= cnt) throw new NoSuchFieldError();
-            int addr = baseAddr + item*CONSTANT_LEN;
+            int addr = baseAddr + item*((CONSTANT_LEN + CONSTANT_ALIGNMENT - 1) & ~(CONSTANT_ALIGNMENT -1));
             int offset = memPeekShort(ABSOLUTE, addr) + IMAGE_BASE;
             int typ = memPeekByte(ABSOLUTE, addr+2);
             int len = memPeekByte(ABSOLUTE, addr+3);
@@ -505,7 +515,7 @@ public final class VM
         @Override
         public VMException get(int item)
         {
-            return new VMException(baseAddr + item*((EXCEPTION_LEN+1)&~1));
+            return new VMException(baseAddr + item*((EXCEPTION_LEN + EXCEPTION_ALIGNMENT - 1)&~(EXCEPTION_ALIGNMENT - 1)));
         }
     }
 
@@ -546,7 +556,7 @@ public final class VM
 
         public int getMethodNumber()
         {
-            return (address - METHOD_BASE)/((METHOD_LEN + 1)&~1);
+            return (address - METHOD_BASE)/((METHOD_LEN + METHOD_ALIGNMENT - 1) & ~(METHOD_ALIGNMENT - 1));
         }
     }
 
@@ -571,7 +581,7 @@ public final class VM
         @Override
         public VMMethod get(int item)
         {
-            return new VMMethod(baseAddr + item*((METHOD_LEN+1)&~1));
+            return new VMMethod(baseAddr + item*((METHOD_LEN + METHOD_ALIGNMENT - 1) & ~(METHOD_ALIGNMENT - 1)));
         }
 
     }
@@ -608,7 +618,7 @@ public final class VM
         private VMClass(int addr)
         {
             super(addr+CLASS_OBJ_HDR, CLASS_LEN);
-            clsNo = (addr - IMAGE_BASE - IMAGE_HDR_LEN)/((CLASS_LEN+CLASS_OBJ_HDR +1) & ~1);
+            clsNo = (addr - IMAGE_BASE - IMAGE_HDR_LEN)/((CLASS_LEN+CLASS_OBJ_HDR + CLASS_ALIGNMENT - 1) & ~(CLASS_ALIGNMENT - 1));
         }
 
         /**
@@ -780,7 +790,7 @@ public final class VM
      */
     private static int getClassAddress(int clsNo)
     {
-        return IMAGE_BASE + IMAGE_HDR_LEN + (clsNo & 0xff)*((CLASS_LEN+CLASS_OBJ_HDR +1) & ~1);
+        return IMAGE_BASE + IMAGE_HDR_LEN + (clsNo & 0xff)*((CLASS_LEN+CLASS_OBJ_HDR + CLASS_ALIGNMENT - 1) & ~(CLASS_ALIGNMENT - 1));
     }
 
     /**
@@ -812,11 +822,9 @@ public final class VM
         return cls;
     }
 
-    private static int getClassNumber(Class<?>cls)
+    private static int getClassNumber(int addr)
     {
-        int base = getClassAddress(0);
-        int size = getClassAddress(1) - base;
-        return (getObjectAddress(cls) - base)/size;
+        return (addr - IMAGE_BASE - IMAGE_HDR_LEN)/((CLASS_LEN+CLASS_OBJ_HDR + + CLASS_ALIGNMENT-1) & ~(CLASS_ALIGNMENT-1));
     }
 
     /**
@@ -839,9 +847,8 @@ public final class VM
     public static boolean isAssignable(Class<?> src, Class<?> dst)
     {
         if (src == null || dst == null) throw new NullPointerException();
-        int srcNo = getClassNumber(src);
-        int dstNo = getClassNumber(dst);
-        System.out.println("Src " + srcNo + " dst " + dstNo);
+        int srcNo = getClassNumber(getObjectAddress(src));
+        int dstNo = getClassNumber(getObjectAddress(dst));
         return isAssignable(srcNo, dstNo);
     }
 
