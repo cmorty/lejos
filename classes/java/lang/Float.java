@@ -12,6 +12,13 @@ public final class Float extends Number
 	public static final float NEGATIVE_INFINITY = -1.0f / 0.0f;
 	public static final float NaN = 0.0f / 0.0f;
 	
+	public static final int MAX_EXPONENT = 127;
+	public static final float MAX_VALUE = 0x1.fffffep+127f;
+	
+	public static final int MIN_EXPONENT = -126;
+	public static final float MIN_NORMAL = 0x1.0p-126f;
+	public static final float MIN_VALUE = 0x1.0p-149f;
+	
 	public static final int SIZE = 32;
     // References to the following field are automatically replaced with a load
     // of the correct value by the linker, so no need to initialize.
