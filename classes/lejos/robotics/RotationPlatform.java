@@ -1,5 +1,10 @@
 package lejos.robotics;
 
+/*
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ */
+
 // TODO: For object completeness, this probably needs to be split into three interfaces: ElevationPlatform, RotationPlatform,
 // and FullRotationPlatform which implements both interfaces. Some uses might only want the rotating left-right thing. 
 
