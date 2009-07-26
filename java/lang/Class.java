@@ -18,6 +18,14 @@ public class Class<T>
     private byte parentClass;
     private byte flags;
     
+    @SuppressWarnings("unchecked")
+	public <U> Class<? extends U> asSubclass(Class<U> cls)
+    {
+    	if (!cls.isAssignableFrom(this))
+    		throw new ClassCastException();
+    	
+    	return (Class<? extends U>)this;
+    }
     
 	/**
 	 * @exception ClassNotFoundException Thrown always in TinyVM.
