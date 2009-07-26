@@ -128,7 +128,10 @@ public class GeneralBench
 		countAll += benchStringConcat(tests / 10);
 		BenchUtils.cleanUp(null);
 
-		countAll += benchStringCompare(tests / 20);
+		countAll += benchStringCompareEasy(tests);
+		BenchUtils.cleanUp(null);
+
+		countAll += benchStringCompareHard(tests / 20);
 		BenchUtils.cleanUp(null);
 
 		countAll += benchNewOp(tests);
@@ -246,7 +249,25 @@ public class GeneralBench
 		return count;
 	}
 
-	private static int benchStringCompare(int count) 
+	private static int benchStringCompareEasy(int count) 
+	{
+		String s1 = "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz";
+		String s2 = "Abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz";
+		boolean b;
+
+		long nullTime = BenchUtils.getIterationTime(count);
+		long start, end;
+
+		start = System.currentTimeMillis();
+		for (int i = 0; i < count; i++)
+			b = s1.equals(s2);
+		end = System.currentTimeMillis();
+
+		report(count, "string compares (easy)", count, "ops", end - start - nullTime);
+		return count;
+	}
+
+	private static int benchStringCompareHard(int count) 
 	{
 		String s1 = "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz";
 		String s2 = "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz";
@@ -260,7 +281,7 @@ public class GeneralBench
 			b = s1.equals(s2);
 		end = System.currentTimeMillis();
 
-		report(count, "string compares", count, "ops", end - start - nullTime);
+		report(count, "string compares (hard)", count, "ops", end - start - nullTime);
 		return count;
 	}
 
