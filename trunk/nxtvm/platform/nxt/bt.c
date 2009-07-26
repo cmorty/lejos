@@ -22,7 +22,8 @@ static int in_buf_idx = 0;
 
 #define BAUD_RATE 460800
 // Update rate (per second) for the ADC
-#define ADC_UPDATE_RATE 4000 
+//#define ADC_UPDATE_RATE 4000 
+#define ADC_UPDATE_RATE 50000 
 
 	
 void bt_init(void)
@@ -73,9 +74,12 @@ void bt_init(void)
   *AT91C_PMC_PCER = (1 << AT91C_ID_ADC); 
   *AT91C_ADC_MR  = 0;
   *AT91C_ADC_MR |= AT91C_ADC_TRGEN_EN | AT91C_ADC_TRGSEL_TIOA1;
-  *AT91C_ADC_MR |= 0x00003F00;
-  *AT91C_ADC_MR |= 0x00020000;
-  *AT91C_ADC_MR |= 0x09000000;
+  //*AT91C_ADC_MR |= 0x00003F00; // 375KHz
+  *AT91C_ADC_MR |= 0x00000500; // 4MHz
+  // *AT91C_ADC_MR |= 0x00020000; // 64uS
+  *AT91C_ADC_MR |= 0x001f0000; // 64uS
+  // *AT91C_ADC_MR |= 0x09000000; // 24uS
+  *AT91C_ADC_MR |= 0x03000000; // 750nS
   *AT91C_ADC_CHER  = AT91C_ADC_CH6 | AT91C_ADC_CH4; 
   in_buf[0] = NULL;
 }
