@@ -1,12 +1,17 @@
 package lejos.nxt;
 
+import lejos.robotics.RangeFinder;
+
+/*
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ */
+
 /**
  * Abstraction for a NXT Ultrasonic Sensor.
  *
- * <br/><br/>WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
- * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
  */
-public class UltrasonicSensor extends I2CSensor
+public class UltrasonicSensor extends I2CSensor implements RangeFinder
 {
 	/* Device control locations */
 	private static final byte MODE = 0x41;
@@ -118,6 +123,13 @@ public class UltrasonicSensor extends I2CSensor
 		if (mode == MODE_CONTINUOUS)
 			dataAvailableTime = now() + DELAY_AVAILABLE;
 		return currentDistance;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public float getRange() {
+		return (float) getDistance();
 	}
 	
 	/**

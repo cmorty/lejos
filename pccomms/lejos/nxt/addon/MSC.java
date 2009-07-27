@@ -2,6 +2,11 @@ package lejos.nxt.addon;
 
 import lejos.nxt.*;
 
+/*
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ */
+
 /**
  * This class has been designed to manage the device
  * MSC8, Mindsensors NXT Servo which manages up to 8 RC Servos.
@@ -16,8 +21,6 @@ import lejos.nxt.*;
  * 
  * @author Juan Antonio Brenha Moral
  * 
- * <br/><br/>WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
- * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
  */
 public class MSC extends I2CSensor {
 	public static final byte NXTSERVO_ADDRESS = (byte)0x58;

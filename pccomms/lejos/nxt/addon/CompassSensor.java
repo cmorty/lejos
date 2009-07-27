@@ -3,12 +3,14 @@ package lejos.nxt.addon;
 import lejos.nxt.I2CPort;
 import lejos.nxt.I2CSensor;
 import lejos.robotics.*;
+/*
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ */
 
 /**
  * Abstraction for a HiTechnic or Mindsensors compass.
  * 
- * <br/><br/>WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
- * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
  */
 public class CompassSensor extends I2CSensor implements DirectionFinder {
 	byte[] buf = new byte[2];
@@ -22,11 +24,8 @@ public class CompassSensor extends I2CSensor implements DirectionFinder {
 	private final static byte END_CALIBRATION = 0x44;
 	
 	// HiTechnic constants:
-	private final static byte MODE_CONTROL = 0x41;
 	private final static byte MEASUREMENT_MODE = 0x00;
-	private final static byte CALIBRATE_MODE = 0x43;
-	
-	
+
 	public CompassSensor(I2CPort port)
 	{
 		super(port);		

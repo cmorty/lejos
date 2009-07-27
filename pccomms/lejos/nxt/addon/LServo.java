@@ -1,8 +1,11 @@
 package lejos.nxt.addon;
 
-import lejos.nxt.I2CPort;
 import lejos.nxt.SensorPort;
-import lejos.nxt.I2CSensor;
+
+/*
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ */
 
 /**
  * LServo, Lattebox Servo, is a abstraction to model any RC Servo (continous and non continous)  plugged to
@@ -10,11 +13,8 @@ import lejos.nxt.I2CSensor;
  * 
  * @author Juan Antonio Brenha Moral
  * 
- * <br/><br/>WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
- * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
  */
 public class LServo extends LMotor{
-	private int angle;
 	private int min_angle = 0;
 	private int max_angle = 2000;
 	private int init_angle = 1000;

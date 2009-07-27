@@ -1,6 +1,12 @@
 package lejos.nxt.addon;
 
 import lejos.nxt.*;
+
+/*
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ */
+
 /**
  * Supports HiTechnics EOPD (Electro Optical Proximity Detector) sensor.<br>
  * This sensor is used to detect objects and small changes in distance to a target.
@@ -8,8 +14,6 @@ import lejos.nxt.*;
  * 
  * @author Michael Smith <mdsmitty@gmail.com>
  * 
- * <br/><br/>WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
- * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
  */
 public class EOPD implements SensorConstants{
 	ADSensorPort port;

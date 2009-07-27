@@ -1,22 +1,21 @@
 package lejos.robotics;
 
+/*
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ */
+
 /**
  * Interface for encoded motors without limited range of movement (e.g. NXT motor).
+ * TODO: Alternate names: EncodedMotor,EncoderMotor. 
  * 
  * @author dsturze
  */
-public interface TachoMotor {
+public interface TachoMotor extends Tachometer, DCMotor {
 
-  /**
-   * Causes motor to rotate forward until stop is called.
-   */
-  void forward();
-
-  /**
-   * Causes motor to rotate backwards until stop is called.
-   */
-  void backward();
-
+  
+	// TODO: Add addMotorListener(TachoMotorListener listener);
+	
   /**
    * causes motor to rotate through angle; <br>
    * iff immediateReturn is true, method returns immediately and the motor stops by itself <br>
@@ -59,24 +58,6 @@ public interface TachoMotor {
   public void rotateTo(int limitAngle,boolean immediateReturn);  
   
   /**
-   * Causes motor to stop immediately. It will resist any further motion. Cancels any rotate() orders in progress.
-   */
-  void stop();
-
-  /**
-   * Motor loses all power, causing the rotor to float freely to a stop.
-   * This is not the same as stopping, which locks the rotor. 
-   */   
-  public void flt();
-  
-  /**
-   * Return if the motor is moving.
-   * 
-   * @return true if the motor is currently in motion
-   */
-  boolean isMoving();
-
-  /**
    * Set motor speed. As a rule of thumb 100 degrees per second are possible for each volt on an NXT motor.
    * 
    * @param speed in degrees per second.
@@ -89,26 +70,7 @@ public interface TachoMotor {
    * @return motor speed in degrees per second
    */
   int getSpeed();
-
-  /**
-   * Returns the actual speed. This value is calculated every 100 ms on the NXT.
-   * 
-   * @return speed in degrees per second, negative value means motor is rotating backward
-   */
-  int getActualSpeed();
-
-  /**
-   * Reset the tachometer count.
-   */
-  void resetTachoCount();
-
-  /**
-   * Returns the tachometer count.
-   * 
-   * @return tachometer count in degrees
-   */
-  int getTachoCount();
-
+ 
   /**
    * Turns speed regulation on/off. Cumulative speed error is within about 1 degree after initial acceleration on the
    * NXT.

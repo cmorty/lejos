@@ -2,6 +2,12 @@ package lejos.nxt.addon;
 
 import lejos.nxt.SensorConstants;
 import lejos.nxt.LegacySensorPort;
+import lejos.robotics.Tachometer;
+
+/*
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ */
 
 /**
  * Provide access to the Lego RCX Rotation Sensor.
@@ -9,19 +15,22 @@ import lejos.nxt.LegacySensorPort;
  * The sensor records the direction and degree of rotation. A full rotation
  * will result in a count of +/-16. Thus each count is 22.5 degrees.
  *
- * @author andy
+ * @author Andy Shaw
  * 
- * <br/><br/>WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
- * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
  */
-public class RCXRotationSensor extends Thread implements SensorConstants
+public class RCXRotationSensor extends Thread implements Tachometer, SensorConstants
 {
+	/**
+	 * The incremental count for one whole rotation (360 degrees).
+	 */
     public static final int ONE_ROTATION = 16;
     protected static final int UPDATE_TIME = 2;
     protected LegacySensorPort port;
     protected int count;
     protected final Reader reader;
-
+    private int speed = 0;
+    private long previous_time = System.currentTimeMillis();
+    
     /**
      * Create an RCX rotation sensor object attached to the specified port.
      * @param port port, e.g. Port.S1
@@ -94,29 +103,48 @@ public class RCXRotationSensor extends Thread implements SensorConstants
                         synchronized(this)
                         {
                             count += inc[prev][cur2];
+                            
+                            // TODO: This should probably indicate sign for speed if Motor does too. Also, Javadocs
+                            // for interface should also specify whether sign applies for speed.
+                            // TODO: This will never report 0 speed! Need some algorithm to realize when it is at 0 speed,
+                            // especially when it goes from fast to dead stop.
+                         // Estimate speed by calculating time elapsed for every increment
+                            int time_elapsed = (int)(System.currentTimeMillis() - previous_time);
+                            speed = (360 * 1000) / (time_elapsed * ONE_ROTATION);
+                            previous_time = System.currentTimeMillis();
                         }
                         prev = cur2;
+                        
                     }
                 }
                 cur1 = cur2;
+                
                 try {Thread.sleep(UPDATE_TIME);}catch(Exception e){}
             }
         }
     }
 
-    /** Returns the current count.
-     *
-     * @return the current count
-     */
-    public int getCount()
+    /**
+	   * Returns the tachometer count.
+	   * NOTE: Because the RCX rotation sensor only counts 16 increments for a full rotation, the degree values
+	   * are only accurate to +- 22.5 degrees.
+	   * @return tachometer count in degrees, in increments of 22.5 degrees (rounded off)
+	   */
+    public int getTachoCount()
     {
-        return count;
+        return (360 * count) / ONE_ROTATION;
+    }
+    
+    /**
+     * Returns the raw values from the rotation sensor instead of degrees.
+     * A full rotation of 360 degrees results in count increasing by 16. 
+     * @return
+     */
+    public int getRawTachoCount() {
+    	return count;
     }
 
-    /**
-     * Resets the current count to zero.
-     */
-    public void resetCount()
+    public void resetTachoCount()
     {
         synchronized(reader)
         {
@@ -124,4 +152,7 @@ public class RCXRotationSensor extends Thread implements SensorConstants
         }
     }
 
+	public int getRotationSpeed() {
+		return speed;
+	}
 }
