@@ -72,7 +72,7 @@ public class BetaMath
 		
 		double zeta = (x - 1.0) / (x + 1.0);
 		double zetasup = zeta * zeta;		
-		double ln = zeta;
+		double ln = 1;
 		
 		//knows ranges:
 		//	1 <= $x < 2
@@ -90,19 +90,19 @@ public class BetaMath
 //		else
 //			limit = 33; // 15 rounds
 //		
-//		double n = zeta;
+//		double n = 1;
 //		for (int j = 3; j < limit; j += 2)
 //			ln += (n *= zetasup) / j;
 		
-		double n = zeta * zetasup;
-		double limit = zeta * 0x1p-50;
+		double n = zetasup;
+		double limit = zetasup * 0x1p-50;
 		for (int j = 3; n > limit; j += 2)
 		{
 			ln += n / j;
 			n *= zetasup;
 		}
 		
-		return m * ln2 + 2 * ln;
+		return m * ln2 + 2 * ln * zeta;
 	}
 
 }
