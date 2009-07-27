@@ -72,15 +72,27 @@ public class BetaMath
 		bits = (bits & 0x000FFFFFFFFFFFFFL) + 0x3FF0000000000000L;
 		x = Double.longBitsToDouble(bits);
 		
-		double zeta = (1.0 - x) / (1.0 + x);
-		double n = zeta;
+		double zeta = (x - 1.0) / (x + 1.0);
+		double zetasup = zeta * zeta;		
 		double ln = zeta;
-		double zetasup = zeta * zeta;
-
-		for (int j = 3; j < 21; j+=2)
-			ln += (n *= zetasup) / j;
+		double n = zeta * zetasup;
 		
-		return m * ln2 - 2 * ln;
+		double limit = zeta * 0x1p-50;
+		
+		//knows ranges:
+		//	1 <= $x < 2
+		//  0 <= $zeta < 1/3
+		//  0 <= $zetasup < 1/9
+		//ergo:
+		//  $n will converge quickly towards $limit
+		
+		for (int j = 3; n > limit; j+=2)
+		{
+			ln += n / j;
+			n *= zetasup;
+		}
+		
+		return m * ln2 + 2 * ln;
 	}
 
 }
