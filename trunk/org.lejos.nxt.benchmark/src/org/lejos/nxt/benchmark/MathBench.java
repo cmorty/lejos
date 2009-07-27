@@ -2,6 +2,8 @@ package org.lejos.nxt.benchmark;
 
 import java.io.PrintStream;
 
+import org.lejos.nxt.benchmark.workbench.BetaMath;
+
 import lejos.nxt.comm.RConsole;
 
 
@@ -9,42 +11,6 @@ public final class MathBench
 {
 	private static final int[] PADVEC = { 8, 30, 6, 10 };
 	private static final String VERSION = "1.2";
-
-	private static final double MIN_NORMAL = 0x1.0p-1022;
-	
-	/**
-	 * Square root.
-	 */
-	public static double sqrt(double x)
-	{
-		// also catches NaN
-		if (!(x > 0))
-			return (x == 0) ? 0 : Double.NaN;
-		if (x == Double.POSITIVE_INFINITY)
-			return Double.POSITIVE_INFINITY;
-
-		// modify values to avoid workaround subnormal values
-		double factor;
-		if (x >= MIN_NORMAL)
-			factor = 0.5;
-		else
-		{
-			factor = 0x1p-51;
-			x = x * 0x1p100;
-		}
-		
-		// magic constant invsqrt
-		// according to http://www.lomont.org/Math/Papers/2003/InvSqrt.pdf
-		// also look at http://en.wikipedia.org/wiki/Fast_inverse_square_root
-		double isqrt = Double.longBitsToDouble(0x5fe6ec85e7de30daL - (Double.doubleToRawLongBits(x) >> 1));
-		double xhalf = 0.5 * x;
-		isqrt = isqrt * (1.5 - xhalf * isqrt * isqrt);
-		isqrt = isqrt * (1.5 - xhalf * isqrt * isqrt);
-		isqrt = isqrt * (1.5 - xhalf * isqrt * isqrt);
-		
-		//return 0.5 * (x * isqrt + 1 / isqrt);
-		return factor * (x * isqrt + 1 / isqrt);
-	}
 
 	private static int benchSqrt(int count, String comment, double x)
 	{
@@ -67,10 +33,38 @@ public final class MathBench
 		// Function calls
 		long start = System.currentTimeMillis();
 		for (int i = 0; i < count; i++)
-			sqrt(x);
+			BetaMath.sqrt(x);
 		long end = System.currentTimeMillis();
 	
 		report(count, "sqrt (new, "+comment+")", count, "ops", end - start - nullTime);
+		return count;
+	}
+	
+	private static int benchLog(int count, String comment, double x)
+	{
+		long nullTime = BenchUtils.getIterationTime(count);
+	
+		// Function calls
+		long start = System.currentTimeMillis();
+		for (int i = 0; i < count; i++)
+			Math.log(x);
+		long end = System.currentTimeMillis();
+	
+		report(count, "log ("+comment+")", count, "ops", end - start - nullTime);
+		return count;
+	}
+	
+	private static int benchLogNew(int count, String comment, double x)
+	{
+		long nullTime = BenchUtils.getIterationTime(count);
+	
+		// Function calls
+		long start = System.currentTimeMillis();
+		for (int i = 0; i < count; i++)
+			BetaMath.log(x);
+		long end = System.currentTimeMillis();
+	
+		report(count, "log (new, "+comment+")", count, "ops", end - start - nullTime);
 		return count;
 	}
 	
@@ -82,7 +76,7 @@ public final class MathBench
 	
 		BenchUtils.cleanUp("At start");
 	
-		int iterate = 2000;
+		int iterate = 4000;
 	
 		int countAll = 0;
 		long startAll = System.currentTimeMillis();
@@ -95,6 +89,24 @@ public final class MathBench
 		countAll += benchSqrtNew(iterate, "subnormal", Math.PI * 0x1p-1060);
 		BenchUtils.cleanUp(null);	
 		countAll += benchSqrtNew(iterate, "normal", Math.PI);
+		BenchUtils.cleanUp(null);
+	
+//		countAll += benchLog(iterate / 100, "subnormal", Math.PI * 0x1p-1060);
+//		BenchUtils.cleanUp(null);	
+		countAll += benchLog(iterate / 100, "small", Math.PI * 0x1p-1000);
+		BenchUtils.cleanUp(null);
+		countAll += benchLog(iterate / 2, "medium", Math.PI);
+		BenchUtils.cleanUp(null);
+		countAll += benchLog(iterate / 100, "large", Math.PI * 0x1p+1000);
+		BenchUtils.cleanUp(null);
+		
+//		countAll += benchLogNew(iterate / 100, "subnormal", Math.PI * 0x1p-1060);
+//		BenchUtils.cleanUp(null);	
+		countAll += benchLogNew(iterate / 100, "small", Math.PI * 0x1p-1000);
+		BenchUtils.cleanUp(null);
+		countAll += benchLogNew(iterate / 2, "medium", Math.PI);
+		BenchUtils.cleanUp(null);
+		countAll += benchLogNew(iterate / 100, "large", Math.PI * 0x1p+1000);
 		BenchUtils.cleanUp(null);
 	
 		long endAll = System.currentTimeMillis();
