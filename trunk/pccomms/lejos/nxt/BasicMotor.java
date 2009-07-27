@@ -1,15 +1,20 @@
 package lejos.nxt;
 
+import lejos.robotics.DCMotor;
+
+/*
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ */
+
 /** 
  * An abstraction for a motor without a tachometer,
  * such as an RCX motor.
  * 
  * @author Lawrie Griffiths.
  *
- * <br/><br/>WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
- * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
  */
-public abstract class BasicMotor 
+public abstract class BasicMotor implements DCMotor
 {
 	final int FORWARD = 1;
 	final int BACKWARD = 2;

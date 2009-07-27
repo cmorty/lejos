@@ -2,17 +2,19 @@ package lejos.nxt.addon;
 
 import lejos.nxt.*;
 
+/*
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ */
+
 /**
  * MServo, is a abstraction to model any RC Servo (continuous and non continuous)  plugged to
  * 
  * @author Juan Antonio Brenha Moral
  * 
- * <br/><br/>WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
- * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
  */
 public class MServo extends I2CSensor{
 	//private SensorPort portConnected;//Where is plugged in NXT Brick
-	private String name = "";//String to describe any Motor connected to LSC
 	private int servoPosition = 0; //Position where Servo has been plugged
 	private final byte SERVO1_POSITION = 0x5A; //The place where RC Servo has been plugged
 	private final byte SERVO1_SPEED = 0x52;
@@ -53,7 +55,6 @@ public class MServo extends I2CSensor{
 	 */
 	public MServo(SensorPort port, int location, String servoName){
 		super(port);
-		this.name = servoName;
 		this.servoPosition = location;
 	}
 	
@@ -137,7 +138,6 @@ public class MServo extends I2CSensor{
 		return angle;
 	}
 
-	
 	/**
 	 * Method to set the Speed in a RC Servo. 
 	 * 

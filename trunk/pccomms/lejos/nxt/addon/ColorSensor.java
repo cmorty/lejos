@@ -2,17 +2,21 @@ package lejos.nxt.addon;
 
 import lejos.nxt.I2CSensor;
 import lejos.nxt.I2CPort;
+import lejos.robotics.ColorDetector;
+
+/*
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ */
 
 /**
  * HiTechnic color sensor.<br>
  * www.hitechnic.com
  *
- * Extended by A.T.Brask
+ *@author BB extended by A.T.Brask
  * 
- * <br/><br/>WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
- * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
  */
-public class ColorSensor extends I2CSensor {
+public class ColorSensor extends I2CSensor implements ColorDetector {
     byte[] buf = new byte[2];
 
     public ColorSensor(I2CPort port)
@@ -47,7 +51,7 @@ public class ColorSensor extends I2CSensor {
     }
 
     /**
-     * Essentially the same as above but with a resolution of 6 bits.
+     * Essentially the same as getColorNumber() but with a resolution of 6 bits.
      * Red is bit 5-4, green is bit 3-2 and blue is bit 1-0.
      *
      * @return Color index number
@@ -207,4 +211,12 @@ public class ColorSensor extends I2CSensor {
     {
         return sendData(0x41, (byte)0x42);
     }
+
+	public int[] getRGB() {
+		int [] vals = new int[3];
+		vals[0] = getRed();
+		vals[1] = getGreen();
+		vals[2] = getBlue();
+		return vals;
+	}
 }

@@ -3,6 +3,11 @@ package lejos.nxt.remote;
 import java.io.*;
 import lejos.robotics.TachoMotor;
 
+/*
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ */
+
 /**
  * Motor class. Contains three instances of Motor.
  * Usage: Motor.A.forward(500);
@@ -122,13 +127,13 @@ public class RemoteMotor implements TachoMotor, NXTProtocol {
 	}
 	
 	/**
-	 * Block Tachometer Count is the count used to synchronize motors
+	 * Block Encoder Count is the count used to synchronize motors
 	 * with one another. 
 	 * NOTE: If you are using leJOS NXJ firmware this will
 	 * always return 0 because this variable is not used in 
 	 * in leJOS NXJ firmware. Use getRotationCount() instead.
 	 * @deprecated
-	 * @return Block Tachometer count.
+	 * @return Block Encoder count.
 	 */
 	public int getBlockTacho() {
 		try {
@@ -278,7 +283,7 @@ public class RemoteMotor implements TachoMotor, NXTProtocol {
 		// TODO Currently a dummy for remote motors.
 	}
 	
-	public int getActualSpeed()	{
+	public int getRotationSpeed()	{
 		// TODO Currently dummy for remote motors - returns the speed that has been set.
 	     return getSpeed();
 	}

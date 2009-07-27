@@ -3,13 +3,16 @@ package lejos.nxt.rcxcomm;
 import lejos.nxt.*;
 import lejos.nxt.addon.*;
 
+/*
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ */
+
 /**
  * Emulation of the RCX Serial class with Mindsensors NRLINK adapter.
  * 
  * @author Lawrie Griffiths
  * 
- * <br/><br/>WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
- * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
  */
 public class Serial {
 	private static RCXLink link;

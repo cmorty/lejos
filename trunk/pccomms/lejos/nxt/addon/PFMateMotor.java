@@ -1,18 +1,24 @@
 package lejos.nxt.addon;
 
+import lejos.robotics.DCMotor;
+
+/*
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ */
+
 /**
  * Motor class for PFMate class
  * 
  * @author Michael Smith <mdsmitty@gmail.com>
  * 
- * <br/><br/>WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
- * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
  **/
-public class PFMateMotor{
+public class PFMateMotor implements DCMotor {
 	private PFMate receiver;
 	private int operReg, speedReg;
 	private byte [] buffer = new byte[1];
 	private final static byte FLT = 0, FORWARD = 1, BACKWARD = 2, STOP = 3;
+	private boolean moving = false;
 
 	/**
 	 * @param recever PFMate object reference
@@ -31,6 +37,7 @@ public class PFMateMotor{
 	 */
 	public void flt(){
 		receiver.sendData(operReg, FLT);
+		moving = false;
 	}
 	
 	/**
@@ -40,6 +47,7 @@ public class PFMateMotor{
 	public void forward(){
 		receiver.sendData(operReg, FORWARD);
 		receiver.sendData(0x41, (byte)0x47);
+		moving = true;
 	}
 	
 	/**
@@ -49,6 +57,7 @@ public class PFMateMotor{
 	public void backward(){
 		receiver.sendData(operReg, BACKWARD);
 		receiver.sendData(0x41, (byte)0x47);
+		moving = true;
 	}
 	
 	/**
@@ -58,6 +67,7 @@ public class PFMateMotor{
 	public void stop(){
 		receiver.sendData(operReg, STOP);
 		receiver.sendData(0x41, (byte)0x47);
+		moving = false;
 	}
 
 	/**
@@ -118,5 +128,9 @@ public class PFMateMotor{
 		receiver.getData(operReg, buffer, 1);
 		if(buffer[0]== STOP) return true;
 		return false;
+	}
+	
+	public boolean isMoving() {
+		return moving;
 	}
 }
