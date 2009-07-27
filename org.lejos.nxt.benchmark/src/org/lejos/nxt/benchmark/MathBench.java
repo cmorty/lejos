@@ -100,13 +100,13 @@ public final class MathBench
 		countAll += benchLog(iterate / 100, "large", Math.PI * 0x1p+1000);
 		BenchUtils.cleanUp(null);
 		
-//		countAll += benchLogNew(iterate / 100, "subnormal", Math.PI * 0x1p-1060);
-//		BenchUtils.cleanUp(null);	
-		countAll += benchLogNew(iterate / 100, "small", Math.PI * 0x1p-1000);
+		countAll += benchLogNew(iterate / 2, "subnormal", Math.PI * 0x1p-1060);
+		BenchUtils.cleanUp(null);	
+		countAll += benchLogNew(iterate / 2, "small", Math.PI * 0x1p-1000);
 		BenchUtils.cleanUp(null);
 		countAll += benchLogNew(iterate / 2, "medium", Math.PI);
 		BenchUtils.cleanUp(null);
-		countAll += benchLogNew(iterate / 100, "large", Math.PI * 0x1p+1000);
+		countAll += benchLogNew(iterate / 2, "large", Math.PI * 0x1p+1000);
 		BenchUtils.cleanUp(null);
 	
 		long endAll = System.currentTimeMillis();
