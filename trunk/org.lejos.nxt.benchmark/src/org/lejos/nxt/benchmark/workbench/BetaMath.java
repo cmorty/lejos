@@ -73,7 +73,6 @@ public class BetaMath
 		double zeta = (x - 1.0) / (x + 1.0);
 		double zetasup = zeta * zeta;		
 		double ln = zeta;
-		double n = zeta;
 		
 		//knows ranges:
 		//	1 <= $x < 2
@@ -82,17 +81,26 @@ public class BetaMath
 		//ergo:
 		//  $n will converge quickly towards $limit
 		
-		//adjust limit to convergence rate
-		int limit;
-		if (zeta < 0.032)
-			limit = 13; // 5 rounds
-		else if (zeta < 0.18)
-			limit = 23; // 10 rounds
-		else
-			limit = 33; // 15 rounds
+//		//adjust limit to convergence rate
+//		int limit;
+//		if (zeta < 0.032)
+//			limit = 13; // 5 rounds
+//		else if (zeta < 0.18)
+//			limit = 23; // 10 rounds
+//		else
+//			limit = 33; // 15 rounds
+//		
+//		double n = zeta;
+//		for (int j = 3; j < limit; j += 2)
+//			ln += (n *= zetasup) / j;
 		
-		for (int j = 3; j < limit; j += 2)
-			ln += (n *= zetasup) / j;
+		double n = zeta * zetasup;
+		double limit = zeta * 0x1p-50;
+		for (int j = 3; n > limit; j += 2)
+		{
+			ln += n / j;
+			n *= zetasup;
+		}
 		
 		return m * ln2 + 2 * ln;
 	}
