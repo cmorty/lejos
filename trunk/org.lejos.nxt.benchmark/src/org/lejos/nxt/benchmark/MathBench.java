@@ -106,6 +106,10 @@ public final class MathBench
 		BenchUtils.cleanUp(null);
 		countAll += benchLogNew(iterate / 2, "1.0", 1.0);
 		BenchUtils.cleanUp(null);
+		countAll += benchLogNew(iterate / 2, "1.0001", 1.01);
+		BenchUtils.cleanUp(null);
+		countAll += benchLogNew(iterate / 2, "1.001", 1.01);
+		BenchUtils.cleanUp(null);
 		countAll += benchLogNew(iterate / 2, "1.01", 1.01);
 		BenchUtils.cleanUp(null);
 		countAll += benchLogNew(iterate / 2, "1.3", 1.1);
