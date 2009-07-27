@@ -77,15 +77,10 @@ public class BetaMath
 		double ln = zeta;
 		double zetasup = zeta * zeta;
 
-		for (int j = 1; true; j++)
-		{
-			n = n * zetasup;
-			double newln = ln + n / (2 * j + 1);
-			double term = ln / newln;
-			if (ln == newln || (term >= LOWER_BOUND && term <= UPPER_BOUND))
-				return m * ln2 - 2 * ln;
-			ln = newln;
-		}
+		for (int j = 3; j < 21; j+=2)
+			ln += (n *= zetasup) / j;
+		
+		return m * ln2 - 2 * ln;
 	}
 
 }
