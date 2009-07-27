@@ -6,8 +6,6 @@ public class BetaMath
 	private static final double MIN_NORMAL = 0x1.0p-1022;
 	
 	private static final double ln2 = 0.693147180559945309417232;
-	private static final double LOWER_BOUND = 0.9999999f;
-	private static final double UPPER_BOUND = 1.0D;
 	
 	/**
 	 * Square root.
@@ -75,9 +73,7 @@ public class BetaMath
 		double zeta = (x - 1.0) / (x + 1.0);
 		double zetasup = zeta * zeta;		
 		double ln = zeta;
-		double n = zeta * zetasup;
-		
-		double limit = zeta * 0x1p-50;
+		double n = zeta;
 		
 		//knows ranges:
 		//	1 <= $x < 2
@@ -86,11 +82,17 @@ public class BetaMath
 		//ergo:
 		//  $n will converge quickly towards $limit
 		
-		for (int j = 3; n > limit; j+=2)
-		{
-			ln += n / j;
-			n *= zetasup;
-		}
+		//adjust limit to convergence rate
+		int limit;
+		if (zeta < 0.032)
+			limit = 13; // 5 rounds
+		else if (zeta < 0.18)
+			limit = 23; // 10 rounds
+		else
+			limit = 33; // 15 rounds
+		
+		for (int j = 3; j < limit; j += 2)
+			ln += (n *= zetasup) / j;
 		
 		return m * ln2 + 2 * ln;
 	}
