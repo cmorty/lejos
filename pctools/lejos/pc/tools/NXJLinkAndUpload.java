@@ -67,7 +67,14 @@ public class NXJLinkAndUpload extends NXTCommLoggable {
 
 		// Build the linker arguments
 		if (binName == null)
-			binName = firstArg + ".nxj";
+		{
+			//extract classname, throw away packagename
+			int i = firstArg.lastIndexOf('.') + 1;
+			if (i < 0)
+				i = 0;
+			
+			binName = firstArg.substring(i) + ".nxj";
+		}
 		
 		String classpath = TinyVM.joinCP(fParser.getBP(), fParser.getCP());
 
