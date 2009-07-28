@@ -40,6 +40,13 @@ public class BetaMath
 		//return 0.5 * (x * isqrt + 1.0 / isqrt);
 		return factor * (x * isqrt + 1.0 / isqrt);
 	}
+	
+	private static final double[] LOGTABLE = {
+			1.0/3, 1.0/5, 1.0/7, 1.0/9,
+			1.0/11, 1.0/13, 1.0/15, 1.0/17, 1.0/19, 
+			1.0/21, 1.0/23, 1.0/25, 1.0/27, 1.0/29, 
+			1.0/31, 1.0/33, 1.0/35, 1.0/37, 1.0/39, 
+	};
 
 	/**
 	 * Natural log function. Returns log(a) to base E Replaced with an algorithm
@@ -74,6 +81,10 @@ public class BetaMath
 		double zetasup = zeta * zeta;		
 		double ln = 1;
 		
+//		System.out.println("=====");
+//		System.out.println("   x: "+x);
+//		System.out.println("   zeta: "+zeta);
+		
 		//knows ranges:
 		//	1 <= $x < 2
 		//  0 <= $zeta < 1/3
@@ -81,28 +92,15 @@ public class BetaMath
 		//ergo:
 		//  $n will converge quickly towards $limit
 		
-//		//adjust limit to convergence rate
-//		int limit;
-//		if (zeta < 0.032)
-//			limit = 13; // 5 rounds
-//		else if (zeta < 0.18)
-//			limit = 23; // 10 rounds
-//		else
-//			limit = 33; // 15 rounds
-//		
-//		double n = 1;
-//		for (int j = 3; j < limit; j += 2)
-//			ln += (n *= zetasup) / j;
-		
 		double n = zetasup;
-		double limit = zetasup * 0x1p-50;
-		for (int j = 3; n > limit; j += 2)
+		for (int j = 0; n > 0x1p-50; j++)
 		{
-			ln += n / j;
+//			System.out.println("   round: "+(j+1)+"   "+n+" "+0x1p-50);
+			ln += n * LOGTABLE[j];
 			n *= zetasup;
 		}
 		
-		return m * ln2 + 2 * ln * zeta;
+		return m * ln2 + 2 * zeta * ln;
 	}
 
 }
