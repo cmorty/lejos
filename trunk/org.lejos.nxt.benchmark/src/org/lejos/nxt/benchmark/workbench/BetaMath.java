@@ -2,9 +2,6 @@ package org.lejos.nxt.benchmark.workbench;
 
 public class BetaMath
 {
-
-	private static final double MIN_NORMAL = 0x1.0p-1022;
-	
 	private static final double ln2 = 0.693147180559945309417232;
 	
 	/**
@@ -20,7 +17,7 @@ public class BetaMath
 	
 		// modify values to avoid workaround subnormal values
 		double factor;
-		if (x >= MIN_NORMAL)
+		if (x >= Double.MIN_NORMAL)
 			factor = 0.5;
 		else
 		{
@@ -63,7 +60,7 @@ public class BetaMath
 			return Double.POSITIVE_INFINITY;
 	
 		int m;
-		if (x >= MIN_NORMAL)
+		if (x >= Double.MIN_NORMAL)
 			m = -1023;
 		else
 		{
@@ -81,10 +78,6 @@ public class BetaMath
 		double zetasup = zeta * zeta;		
 		double ln = 1;
 		
-//		System.out.println("=====");
-//		System.out.println("   x: "+x);
-//		System.out.println("   zeta: "+zeta);
-		
 		//knows ranges:
 		//	1 <= $x < 2
 		//  0 <= $zeta < 1/3
@@ -93,9 +86,8 @@ public class BetaMath
 		//  $n will converge quickly towards $limit
 		
 		double n = zetasup;
-		for (int j = 0; n > 0x1p-50; j++)
+		for (int j = 0; n > 0x1p-50;j ++)
 		{
-//			System.out.println("   round: "+(j+1)+"   "+n+" "+0x1p-50);
 			ln += n * LOGTABLE[j];
 			n *= zetasup;
 		}
