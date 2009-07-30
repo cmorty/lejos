@@ -95,4 +95,68 @@ public class BetaMath
 		return m * ln2 + 2 * zeta * ln;
 	}
 
+	private static final int D_TO_STR_MAXEXP = 256; 
+	private static final int D_TO_STR_MAXIDX = 17;
+	private static final int D_TO_STR_HALF = 9; 
+	private static final double[] D_TO_STR_POWERS = {
+		1E+256, 1E+128, 1E+64, 1E+32, 1E+16, 1E+8, 1E+4, 1E+2, 1E+1,
+		1E-1, 1E-2, 1E-4, 1E-8, 1E-16, 1E-32, 1E-64, 1E-128, 1E-256,
+	};
+	
+	public static String dToStr(double x)
+	{
+		int exp = -1;
+		for (int i = 0; i < D_TO_STR_HALF; i++)
+		{
+			if (x >= D_TO_STR_POWERS[i])
+			{
+				exp += D_TO_STR_MAXEXP >> i;
+				x *= D_TO_STR_POWERS[D_TO_STR_MAXIDX - i];
+			}
+		}
+		for (int i = 0; i < D_TO_STR_HALF; i++)
+		{
+			if (x <= D_TO_STR_POWERS[D_TO_STR_MAXIDX - i])
+			{
+				exp -= D_TO_STR_MAXEXP >> i;
+				x *= D_TO_STR_POWERS[i];
+			}
+		}
+		
+		// algorithm shows true value of subnormal doubles
+		// unfortunatly, the mantisse of subnormal values gets very short
+		// TODO automatically adjust digit count for subnormal values  
+		
+		long tmp = 10000000000000000L;		
+		long digits = (long)(x * 1E16 + 0.5);
+		
+		while (digits >= tmp)
+		{
+			exp++;
+			digits /= 10;
+		}
+		
+		StringBuilder sb = new StringBuilder();
+
+		int d = (int)(digits / (tmp /= 10));
+		sb.append((char)('0' + d));
+		digits -= tmp * d;
+		
+		sb.append('.');		
+		do
+		{
+			d = (int)(digits / (tmp /= 10));
+			sb.append((char)('0' + d));
+			digits -= tmp * d;
+		}
+		while (digits > 0);
+		
+		if (exp != 0)
+		{
+			sb.append('E');
+			sb.append(exp);
+		}
+
+		return sb.toString();
+	}
 }
