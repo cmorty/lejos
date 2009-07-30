@@ -40,6 +40,20 @@ public final class MathBench
 		return count;
 	}
 	
+	private static int benchSqrtFloat(int count, String comment, float x)
+	{
+		long nullTime = BenchUtils.getIterationTime(count);
+	
+		// Function calls
+		long start = System.currentTimeMillis();
+		for (int i = 0; i < count; i++)
+			BetaMath.sqrt(x);
+		long end = System.currentTimeMillis();
+	
+		report(count, "sqrt (float, "+comment+")", count, "ops", end - start - nullTime);
+		return count;
+	}
+	
 	private static int benchLog(int count, String comment, double x)
 	{
 		long nullTime = BenchUtils.getIterationTime(count);
@@ -68,6 +82,34 @@ public final class MathBench
 		return count;
 	}
 	
+	private static int benchDoubleToStr(int count, String comment, double x)
+	{
+		long nullTime = BenchUtils.getIterationTime(count);
+		
+		// Function calls
+		long start = System.currentTimeMillis();
+		for (int i = 0; i < count; i++)
+			String.valueOf(x);
+		long end = System.currentTimeMillis();
+	
+		report(count, "D2STR ("+comment+")", count, "ops", end - start - nullTime);
+		return count;
+	}
+
+	private static int benchDoubleToStrNew(int count, String comment, double x)
+	{
+		long nullTime = BenchUtils.getIterationTime(count);
+		
+		// Function calls
+		long start = System.currentTimeMillis();
+		for (int i = 0; i < count; i++)
+			BetaMath.dToStr(x);
+		long end = System.currentTimeMillis();
+	
+		report(count, "D2STR (new, "+comment+")", count, "ops", end - start - nullTime);
+		return count;
+	}
+
 	public static void main(String args[])
 	{
 		RConsole.open();
@@ -89,6 +131,11 @@ public final class MathBench
 		countAll += benchSqrtNew(iterate, "subnormal", Math.PI * 0x1p-1060);
 		BenchUtils.cleanUp(null);	
 		countAll += benchSqrtNew(iterate, "normal", Math.PI);
+		BenchUtils.cleanUp(null);
+	
+		countAll += benchSqrtFloat(iterate*2, "subnormal", (float)(Math.PI * 0x1p-130));
+		BenchUtils.cleanUp(null);	
+		countAll += benchSqrtFloat(iterate*2, "normal", (float)Math.PI);
 		BenchUtils.cleanUp(null);
 	
 //		countAll += benchLog(iterate / 100, "subnormal", Math.PI * 0x1p-1060);
@@ -115,6 +162,28 @@ public final class MathBench
 		countAll += benchLogNew(iterate / 2, "1.3", 1.1);
 		BenchUtils.cleanUp(null);
 		countAll += benchLogNew(iterate / 2, "1.9", 1.9);
+		BenchUtils.cleanUp(null);
+		
+		countAll += benchDoubleToStr(iterate / 200, "1E+300", 1E+300);
+		BenchUtils.cleanUp(null);
+		countAll += benchDoubleToStr(iterate / 100, "1E+100", 1E+100);
+		BenchUtils.cleanUp(null);
+		countAll += benchDoubleToStr(iterate / 5, "1E0", 1E0);
+		BenchUtils.cleanUp(null);
+		countAll += benchDoubleToStr(iterate / 100, "1E-100", 1E-100);
+		BenchUtils.cleanUp(null);
+		countAll += benchDoubleToStr(iterate / 200, "1E-300", 1E-300);
+		BenchUtils.cleanUp(null);
+	
+		countAll += benchDoubleToStrNew(iterate / 2, "1E+300", 1E+300);
+		BenchUtils.cleanUp(null);
+		countAll += benchDoubleToStrNew(iterate / 2, "1E+100", 1E+100);
+		BenchUtils.cleanUp(null);
+		countAll += benchDoubleToStrNew(iterate / 2, "1E0", 1E0);
+		BenchUtils.cleanUp(null);
+		countAll += benchDoubleToStrNew(iterate / 2, "1E-100", 1E-100);
+		BenchUtils.cleanUp(null);
+		countAll += benchDoubleToStrNew(iterate / 2, "1E-300", 1E-300);
 		BenchUtils.cleanUp(null);
 	
 		long endAll = System.currentTimeMillis();

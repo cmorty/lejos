@@ -34,8 +34,40 @@ public class BetaMath
 		isqrt = isqrt * (1.5 - xhalf * isqrt * isqrt);
 		isqrt = isqrt * (1.5 - xhalf * isqrt * isqrt);
 		
-		//return 0.5 * (x * isqrt + 1.0 / isqrt);
 		return factor * (x * isqrt + 1.0 / isqrt);
+	}
+	
+	/**
+	 * Square root.
+	 */
+	public static float sqrt(float x)
+	{
+		// also catches NaN
+		if (!(x > 0))
+			return (x == 0) ? 0 : Float.NaN;
+		if (x == Float.POSITIVE_INFINITY)
+			return Float.POSITIVE_INFINITY;
+	
+		// modify values to avoid workaround subnormal values
+		float factor;
+		if (x >= Float.MIN_NORMAL)
+			factor = 0.5f;
+		else
+		{
+			x *= 0x1p32f;
+			factor = 0x1p-17f;
+		}
+		
+		// magic constant invsqrt
+		// according to http://www.lomont.org/Math/Papers/2003/InvSqrt.pdf
+		// also look at http://en.wikipedia.org/wiki/Fast_inverse_square_root
+		float isqrt = Float.intBitsToFloat(0x5f375a86 - (Float.floatToRawIntBits(x) >> 1));
+		float xhalf = 0.5f * x;
+		isqrt = isqrt * (1.5f - xhalf * isqrt * isqrt);
+		isqrt = isqrt * (1.5f - xhalf * isqrt * isqrt);
+		//isqrt = isqrt * (1.5 - xhalf * isqrt * isqrt);
+		
+		return factor * (x * isqrt + 1.0f / isqrt);
 	}
 	
 	private static final double[] LOGTABLE = {
@@ -95,50 +127,44 @@ public class BetaMath
 		return m * ln2 + 2 * zeta * ln;
 	}
 
-	private static final int D_TO_STR_MAXEXP = 256; 
-	private static final int D_TO_STR_MAXIDX = 17;
-	private static final int D_TO_STR_HALF = 9; 
-	private static final double[] D_TO_STR_POWERS = {
-		1E+256, 1E+128, 1E+64, 1E+32, 1E+16, 1E+8, 1E+4, 1E+2, 1E+1,
-		1E-1, 1E-2, 1E-4, 1E-8, 1E-16, 1E-32, 1E-64, 1E-128, 1E-256,
-	};
-	
 	public static String dToStr(double x)
-	{
-		int exp = -1;
-		for (int i = 0; i < D_TO_STR_HALF; i++)
+	{		
+		int exp = 0;
+		if (x >= 10)
 		{
-			if (x >= D_TO_STR_POWERS[i])
-			{
-				exp += D_TO_STR_MAXEXP >> i;
-				x *= D_TO_STR_POWERS[D_TO_STR_MAXIDX - i];
-			}
+			if (x >= 1E256) { exp+=256; x*=1E-256; }
+			if (x >= 1E128) { exp+=128; x*=1E-128; }
+			if (x >= 1E64)  { exp+=64;  x*=1E-64; }
+			if (x >= 1E32)  { exp+=32;  x*=1E-32; }
+			if (x >= 1E16)  { exp+=16;  x*=1E-16; }
+			if (x >= 1E8)   { exp+=8;   x*=1E-8; }
+			if (x >= 1E4)   { exp+=4;   x*=1E-4; }
+			if (x >= 1E2)   { exp+=2;   x*=1E-2; }
+			if (x >= 1E1)   { exp+=1;   x*=1E-1; }
 		}
-		for (int i = 0; i < D_TO_STR_HALF; i++)
+		if (x < 1)
 		{
-			if (x <= D_TO_STR_POWERS[D_TO_STR_MAXIDX - i])
-			{
-				exp -= D_TO_STR_MAXEXP >> i;
-				x *= D_TO_STR_POWERS[i];
-			}
+			if (x < 1E-255) { exp-=256; x*=1E256; }
+			if (x < 1E-127) { exp-=128; x*=1E128; }
+			if (x < 1E-63)  { exp-=64;  x*=1E64; }
+			if (x < 1E-31)  { exp-=32;  x*=1E32; }
+			if (x < 1E-15)  { exp-=16;  x*=1E16; }
+			if (x < 1E-7)   { exp-=8;   x*=1E8; }
+			if (x < 1E-3)   { exp-=4;   x*=1E4; }
+			if (x < 1E-1)   { exp-=2;   x*=1E2; }
+			if (x < 1E-0)   { exp-=1;   x*=1E1; }
 		}
 		
 		// algorithm shows true value of subnormal doubles
 		// unfortunatly, the mantisse of subnormal values gets very short
 		// TODO automatically adjust digit count for subnormal values  
 		
-		long tmp = 10000000000000000L;		
-		long digits = (long)(x * 1E16 + 0.5);
-		
-		while (digits >= tmp)
-		{
-			exp++;
-			digits /= 10;
-		}
+		long tmp = 1000000000000000L;		
+		long digits = (long)(x * 1E15 + 0.5);
 		
 		StringBuilder sb = new StringBuilder();
 
-		int d = (int)(digits / (tmp /= 10));
+		int d = (int)(digits / tmp);
 		sb.append((char)('0' + d));
 		digits -= tmp * d;
 		
@@ -158,5 +184,5 @@ public class BetaMath
 		}
 
 		return sb.toString();
-	}
+	}	
 }
