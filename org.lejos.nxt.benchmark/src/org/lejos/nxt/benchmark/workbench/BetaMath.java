@@ -129,6 +129,21 @@ public class BetaMath
 
 	public static String dToStr(double x)
 	{		
+		StringBuilder sb = new StringBuilder();
+		
+		//we need to detect -0.0 to be compatible with JDK
+		if ((Double.doubleToRawLongBits(x) & 0x8000000000000000L) != 0)
+		{
+			sb.append("-");
+			x = -x;
+		}
+		if (x == 0)
+		{
+			sb.append("0.0");
+			return sb.toString();
+		}
+		
+
 		int exp = 0;
 		if (x >= 10)
 		{
@@ -162,8 +177,6 @@ public class BetaMath
 		long tmp = 1000000000000000L;		
 		long digits = (long)(x * 1E15 + 0.5);
 		
-		StringBuilder sb = new StringBuilder();
-
 		int d = (int)(digits / tmp);
 		sb.append((char)('0' + d));
 		digits -= tmp * d;
