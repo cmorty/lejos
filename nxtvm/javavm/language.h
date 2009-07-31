@@ -58,17 +58,36 @@ typedef struct S_ClassRecord
    */
   TWOBYTES classSize;
   /**
-   * Offset of method table (in bytes) starting from
-   * the beginning of the entire binary.
+   * The following 4 fields are used differently depending upon the type
+   * of class. They could be defined here as a union, but this structure
+   * is also mad available to Java and it is not possible to represent
+   * unions easily in Java. For this reason we use simple field names in
+   * both the C and Java code. The following table describes the field
+   * usage.
+   *
+   * Normal Class
+   * CIAData1: Method table offset from the start of the binary.
+   * CIAData2: Field table offset from the start of the binary.
+   * CIACnt1:  Number of method records
+   * CIACnt2:  Number of field records
+   *
+   * Instance Class
+   * CIAData1: Instance member map offset from the start of the binary.
+   * CIAData2: Class base, the class number of the first bit in the table
+   * CIACnt1:  Number of valid bits in the table.
+   * CIACnt2:  Unused
+   *
+   * Array Class
+   * CIAData1: The dimension of the array
+   * CIAData2: The class of the array element.
+   * CIACnt1:  Unused
+   * CIACnt2:  Unused 
    */
-  TWOBYTES methodTableOffset;
-  /**
-   * Offset to table of bytes containing types of fields.
-   * Useful for initializing objects.
-   */
-  TWOBYTES instanceTableOffset;
-  byte numInstanceFields;
-  byte numMethods;
+  TWOBYTES CIAData1;
+  TWOBYTES CIAData2;
+  byte CIACnt1;
+  byte CIACnt2;
+
   byte parentClass;
   byte cflags;
 } __attribute__((packed)) ClassRecord;
@@ -163,9 +182,9 @@ void install_binary( void* ptr);
 #define get_class_base()            ((ClassRecord *) (classBase))
 
 #define get_class_record(CLASSIDX_) (get_class_base() + (CLASSIDX_))
-#define get_method_table(CREC_)     ((MethodRecord *) (get_binary_base() + (CREC_)->methodTableOffset))
+#define get_method_table(CREC_)     ((MethodRecord *) (get_binary_base() + (CREC_)->CIAData1))
 
-#define get_field_table(CREC_)      ((byte *) (get_binary_base() + (CREC_)->instanceTableOffset))
+#define get_field_table(CREC_)      ((byte *) (get_binary_base() + (CREC_)->CIAData2))
 
 #define get_field_type(CR_,I_)      (*(get_field_table(CR_) + (I_)))
 
@@ -191,8 +210,13 @@ void install_binary( void* ptr);
 #define is_interface(CREC_)         (((CREC_)->cflags & C_INTERFACE) != 0)
 #define has_norefs(CREC_)           (((CREC_)->cflags & C_NOREFS) != 0)
 
-#define get_dim(CREC_)              ((CREC_)->methodTableOffset)
-#define get_element_class(CREC_)    ((CREC_)->instanceTableOffset)
+#define get_dim(CREC_)              ((CREC_)->CIAData1)
+#define get_element_class(CREC_)    ((CREC_)->CIAData2)
+#define get_method_cnt(CREC_)        ((CREC_)->CIACnt1)
+#define get_field_cnt(CREC_)        ((CREC_)->CIACnt2)
+#define get_interface_map(CREC_)    ((byte*)(get_binary_base() + (CREC_)->CIAData1))
+#define get_interface_map_base(CREC_) ((CREC_)->CIAData2)
+#define get_interface_map_len(CREC_) ((CREC_)->CIACnt1)
 #define is_primitive(CLASSIDX_)     ((CLASSIDX_) >= BYTE && (CLASSIDX_) <= LONG )
 #define get_base_type(CLASSIDX_)    (is_primitive(CLASSIDX_) ? (CLASSIDX_) : JAVA_LANG_OBJECT)
 #if EXECUTE_FROM_FLASH

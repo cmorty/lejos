@@ -63,6 +63,11 @@ public final class VM
 
     // The base address of the in memory program header
     private static final int IMAGE_BASE = memPeekInt(MEM, IMAGE*4);
+    // Provide access to the image header structure
+    private static final int IMAGE_HDR_LEN = 20;
+    private static final int LAST_CLASS_OFFSET = 17;
+
+    private static final int LAST_CLASS = memPeekByte(IMAGE, LAST_CLASS_OFFSET);
     private int METHOD_BASE;
     private static final int METHOD_OFFSET = 4;
     private static VM theVM;
@@ -72,7 +77,7 @@ public final class VM
     {
         //IMAGE_BASE = memPeekInt(MEM, IMAGE*4);
         image = new VMImage(IMAGE_BASE);
-        METHOD_BASE = memPeekShort(ABSOLUTE, IMAGE_BASE+IMAGE_HDR_LEN+METHOD_OFFSET) + IMAGE_BASE;
+        METHOD_BASE = memPeekShort(IMAGE, IMAGE_HDR_LEN+METHOD_OFFSET) + IMAGE_BASE;
     }
 
     /**
@@ -284,8 +289,6 @@ public final class VM
         }
     }
     
-    // Provide access to the image header structure
-    private static final int IMAGE_HDR_LEN = 20;
     /**
      * The image header for the currently active program.
      */
@@ -598,10 +601,10 @@ public final class VM
     public final class VMClass extends VMClone
     {
         public short size;
-        public short arrayDim;
-        public short elementClass;
-        public byte numFields;
-        public byte numMethods;
+        public short CIAData1;
+        public short CIAData2;
+        public byte CIACnt1;
+        public byte CIACnt2;
         public byte parentClass;
         public byte flags;
 
@@ -627,7 +630,11 @@ public final class VM
          */
         public VMMethods getMethods()
         {
-            return new VMMethods(arrayDim + IMAGE_BASE, ((int)numMethods & 0xff));
+            // Interfaces and arrays to not have method tables.
+            if ((flags & (C_ARRAY|C_INTERFACE)) != 0)
+                return new VMMethods(0, 0);
+            else
+                return new VMMethods(CIAData1 + IMAGE_BASE, ((int)CIACnt1 & 0xff));
         }
 
         /**
@@ -694,11 +701,11 @@ public final class VM
             {
                 // first work out how many fields there are (including those
                 // from super classes.
-                cnt = ((int)cls.numFields & 0xff);
+                cnt = ((int)cls.CIACnt2 & 0xff);
                 while (cls.parentClass != 0)
                 {
                     cls = getVMClass(cls.parentClass);
-                    cnt += ((int)cls.numFields & 0xff);
+                    cnt += ((int)cls.CIACnt2 & 0xff);
                 }
                 // Now create a type and offset map. Note that we only have type
                 // data so we have to start at the object end and work back
@@ -711,8 +718,8 @@ public final class VM
                 int item = cnt-1;
                 for(;;)
                 {
-                    int fieldTable = cls.elementClass + IMAGE_BASE;
-                    for(int i = ((int)cls.numFields & 0xff) - 1; i >= 0; i--)
+                    int fieldTable = cls.CIAData2 + IMAGE_BASE;
+                    for(int i = ((int)cls.CIACnt2 & 0xff) - 1; i >= 0; i--)
                     {
                         fieldTypes[item] = (byte)memPeekByte(ABSOLUTE, fieldTable + i);
                         offset -= VMValue.lengths[fieldTypes[item]];
@@ -822,8 +829,9 @@ public final class VM
         return cls;
     }
 
-    private static int getClassNumber(int addr)
+    public static int getClassNumber(Class<?> cls)
     {
+        int addr = getObjectAddress(cls);
         return (addr - IMAGE_BASE - IMAGE_HDR_LEN)/((CLASS_LEN+CLASS_OBJ_HDR + + CLASS_ALIGNMENT-1) & ~(CLASS_ALIGNMENT-1));
     }
 
@@ -847,8 +855,8 @@ public final class VM
     public static boolean isAssignable(Class<?> src, Class<?> dst)
     {
         if (src == null || dst == null) throw new NullPointerException();
-        int srcNo = getClassNumber(getObjectAddress(src));
-        int dstNo = getClassNumber(getObjectAddress(dst));
+        int srcNo = getClassNumber(src);
+        int dstNo = getClassNumber(dst);
         return isAssignable(srcNo, dstNo);
     }
 
@@ -884,6 +892,7 @@ public final class VM
      */
     public static Class<?> getClass(int clsNo)
     {
+        if (clsNo > LAST_CLASS) return null;
         return (Class<?>) memGetReference(ABSOLUTE, getClassAddress(clsNo));
     }
 
@@ -906,7 +915,7 @@ public final class VM
      */
     public final VMClass getVMClass(int clsNo)
     {
-        if (clsNo > image.lastClass) throw new NoClassDefFoundError();
+        if (clsNo > LAST_CLASS) return null;
         return new VMClass(getClassAddress(clsNo));
     }
 

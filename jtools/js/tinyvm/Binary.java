@@ -32,6 +32,7 @@ public class Binary
       true);
    final RecordTable<EntryClassIndex> iEntryClassIndices = new RecordTable<EntryClassIndex>(
       "entry class indices", true, true);
+   final RecordTable<InterfaceMap> iInterfaceMaps = new RecordTable<InterfaceMap>("interface", true, true);
 
    // Other state:
    final HashSet<Signature> iSpecialSignatures = new HashSet<Signature>();
@@ -53,6 +54,11 @@ public class Binary
    int staticNormLoads = 0;
    int fieldOpOp = 0;
    int fieldNormOp = 0;
+
+   int interfaceClasses = 0;
+   int usedInterfaceClasses = 0;
+   int implementedInterfaces = 0;
+   int usedImplementedInterfaces = 0;
 
    /**
     * Constructor.
@@ -373,22 +379,50 @@ public class Binary
          classRecord.initParent();
       }
    }
-   
+
+   /**
+    * Optimize the number and order of classes.
+    * We make a pass of all of the classes and select only those that are
+    * actually used. We also optimize the order of the classes in an attempt
+    * to minimize the size of the interface maps.
+    * @throws TinyVMException
+    */
    public void processOptimizedClasses () throws TinyVMException
    {
       RecordTable<ClassRecord> iNewClassTable = new RecordTable<ClassRecord>("class table", false, true);
       int pSize = iClassTable.size();
-      for (int pIndex = 0; pIndex < pSize; pIndex++)
+      // First copy over the special classes
+      for (int pIndex = 0; pIndex < SpecialClassConstants.CLASSES.length; pIndex++)
       {
          ClassRecord classRecord = iClassTable.get(pIndex);
-         if (useAll() || classRecord.used()) iNewClassTable.add(classRecord);
+         iNewClassTable.add(classRecord);
+      }
+      // Now we add in any classes that have interfaces. This keeps them all
+      // together and keeps the interface map small. Note duplicates are
+      // not allowed so we can add the same entry multiple times.
+      for (int pIndex = SpecialClassConstants.CLASSES.length; pIndex < pSize; pIndex++)
+      {
+         ClassRecord classRecord = iClassTable.get(pIndex);
+         if (classRecord.isInterface() && (useAll() || classRecord.used()))
+            classRecord.storeOptimizedImplementingClasses(iNewClassTable);
+      }
+      // now add in the rest of the used classes
+      for (int pIndex = SpecialClassConstants.CLASSES.length; pIndex < pSize; pIndex++)
+      {
+         ClassRecord classRecord = iClassTable.get(pIndex);
+         if (useAll() || classRecord.used())
+            iNewClassTable.add(classRecord);
       }
       iClassTable = iNewClassTable;
       pSize = iClassTable.size();
+      // Now we selected all of the classes we can fix up any linkages (which
+      // may use the class index) and create the interface maps.
       for (int pIndex = 0; pIndex < pSize; pIndex++)
       {
          ClassRecord classRecord = iClassTable.get(pIndex);
          classRecord.initParent();
+         if (classRecord.isInterface())
+            classRecord.storeInterfaceMap(iInterfaceMaps);
       }
 
    }
@@ -430,14 +464,14 @@ public class Binary
       // Add the run method that is called directly from the vm
       Signature staticInit = new Signature("<clinit>()V");
       Signature runMethod = new Signature("run()V");
-
+      Signature mainMethod = new Signature("main", "([Ljava/lang/String;)V");
       // Now add entry classes      
       for (int i = 0; i < entryClassNames.length; i++)
       {
          ClassRecord classRecord = getClassRecord(entryClassNames[i]);
          classRecord.markUsed();
          classRecord.markInstanceUsed();
-         classRecord.markMethods();
+         //classRecord.markMethods();
       }
 
       // We now add in the static initializers of all marked classes. 
@@ -488,11 +522,14 @@ public class Binary
          for (int i = 0; i < entryClassNames.length; i++)
          {
             ClassRecord classRecord = getClassRecord(entryClassNames[i]);
-            classRecord.markMethods();
+            if (classRecord.hasMethod(mainMethod, true))
+            {
+                MethodRecord pRec = classRecord.getMethodRecord(mainMethod);
+                classRecord.markMethod(pRec, true);
+            }
          }
 
       } while (classCount != usedClassCount);
-
    }
 
    public void processSpecialSignatures ()
@@ -596,7 +633,26 @@ public class Binary
          pRec.storeFields(iInstanceFieldTables, iStaticFields, iStaticState);
       }
    }
-   
+
+   public void printInterfaces () throws TinyVMException
+   {
+      int pSize = iClassTable.size();
+      for (int pIndex = 0; pIndex < pSize; pIndex++)
+      {
+         ClassRecord pRec = iClassTable.get(pIndex);
+         if (pRec.isInterface() && pRec.used())
+         {
+             System.out.println("Interface: " + pRec.iName + " is implemented by:");
+             for(ClassRecord cr : pRec.iImplementedBy)
+             {
+                System.out.println("Active class: " + cr.iName + " id " + this.getClassIndex(cr));
+             }
+         }
+      }
+
+      
+   }
+
    public void processOptimizedFields () throws TinyVMException
    {
       int pSize = iClassTable.size();
@@ -648,9 +704,10 @@ public class Binary
       iEntireBinary.add(iMethodTables);
       iEntireBinary.add(iExceptionTables);
       iEntireBinary.add(iInstanceFieldTables);
-      iEntireBinary.add(iCodeSequences);
       iEntireBinary.add(iConstantValues);
+      iEntireBinary.add(iInterfaceMaps);
       iEntireBinary.add(iEntryClassIndices);
+      iEntireBinary.add(iCodeSequences);
    }
 
    public void initOffsets () throws TinyVMException
@@ -736,12 +793,14 @@ public class Binary
      monitor.log("Constant values  : " + iConstantValues.size() + " (" + iConstantValues.getLength() + " bytes).");
      monitor.log("Method records   : " + getTotalNumMethods() + " (" + iMethodTables.getLength() + " bytes).");
      monitor.log("Exception records: " + getTotalNumExceptionRecords() + " (" + iExceptionTables.getLength() + " bytes).");
+     monitor.log("Interface maps   : " + iInterfaceMaps.size() + " (" + iInterfaceMaps.getLength() + " bytes).");
      monitor.log("Code             : " + iCodeSequences.size() + " (" + iCodeSequences.getLength() + " bytes).");
      monitor.log("Total            : " + iEntireBinary.getLength() + " bytes.");
      monitor.log("Run time options : " + iMasterRecord.getRunTimeOptions());
      monitor.log("Constant loads   : " + this.constNormLoads + "N " + this.constOpLoads + "O " + this.constWideLoads + "W " + this.constString + "S");
      monitor.log("Static load/store: " + this.staticNormLoads + "N " + this.staticOpLoads + "O");
      monitor.log("Field  load/store: " + this.fieldNormOp + "N " + this.fieldOpOp + "O");
+     //printInterfaces();
    }
    
 }
