@@ -13,7 +13,7 @@ heavily vector oriented in the Javadoc language and method names.
 
  * @author NXJ Team
  */
-public interface Pilot extends SimplePilot {
+public interface Pilot extends UnidirectionalPilot {
 
 	/**
 	 * Adds a PilotListener that will be notified of all Pilot movement events.
