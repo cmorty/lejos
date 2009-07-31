@@ -1,58 +1,71 @@
 package lejos.robotics.proposal;
 
 /**
- * This enumeration represents movement data. 
+ * Models a movement performed by a pilot
  * 
- * I am unsure how to get one class to encapsulate varying movement data types like:
- * heading change, travel distance, arc angle/distance, and arc radius
- * 
- * Alternate names: Movement, Movement, VectorEvent, PilotEvent
- * @author BB
+ * @author Lawrie
  *
  */
-public enum Movement {
+public class Movement {
+	/**
+	 * The type of  movement made in sufficient detail to allow errors
+	 * in the movement to be modelled.
+	 */
+	public enum MovementType {ODOMETRY_TRAVEL, ODOMETRY_ROTATE, ODOMETRY_ARC};
+	protected float distanceTraveled, angleTurned;
+	protected MovementType movementType;
+	protected float arcRadius;
 	
-	HEADING, TRAVEL, ARC_TRAVEL;
-	
-	private float distance;
-	private int heading_change;
-	private int radius;
-	private float arc_distance;
-	
-	public int getHeadingChange() {
-		return heading_change;
+	/**
+	 * Create a movement object to record a movement made by a pilot
+	 * 
+	 * @param type the movement type
+	 * @param distance the distance traveled in pilot units
+	 * @param angle the angle turned in degrees
+	 */
+	public Movement(MovementType type, float distance, float angle) {
+		this.movementType = type;
+		this.distanceTraveled = distance;
+		this.angleTurned = angle;
+		if (type == MovementType.ODOMETRY_ARC) {
+			double turnRad = Math.toRadians(angle);
+			arcRadius = (float) ((double) distance / turnRad);
+		}
 	}
-	
-	public void setHeadingChange(int angle) {
-		this.heading_change = angle;
-	}
-	
-	public float getTravelDistance() {
-		return distance;
-	}
-	
-	public void setDistance(float distance) {
-		this.distance = distance;
-	}
-	
-	public float getArcRadius() {
-		return radius;
-	}
-	
-	public void setArcRadius(int radius) {
-		this.radius = radius;
+
+	/**
+	 * Get the distance traveled. This can be in a straight line or an arc path.
+	 * 
+	 * @return the distance traveled
+	 */
+	public float getDistanceTraveled() {
+		return distanceTraveled;
 	}
 	
 	/**
+	 * Get the angle turned by a rotate or an arc operation.
 	 * 
-	 * Alternate: Use angle (degrees) instead of distance (e.g. cm)
-	 * @return
+	 * @return the angle turned
 	 */
-	public float getArcDistance() {
-		return arc_distance;
+	public float getAngleTurned() {
+		return angleTurned;
 	}
 	
-	public void setArcDistance(float distance) {
-		this.arc_distance = distance;
+	/**
+	 * Get the type of the movement performed
+	 * 
+	 * @return the movement type
+	 */
+	public MovementType getMovementType() {
+		return movementType;
+	}
+	
+	/**
+	 * Get the radius of the arc
+	 * 
+	 * @return the radius of the arc
+	 */
+	public float getArcRadius() {
+		return arcRadius;
 	}
 }
