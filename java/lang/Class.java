@@ -11,10 +11,13 @@ public class Class<T>
     // Note the following fields are mapped on to read only flash entries
     // held within the VM. They should not be changed. New fields should not
     // be added to this class unless changes are also made to the VM.
-    private short arrayDim;
-    private short elementClass;
-    private byte numFields;
-    private byte numMethods;
+    // The CIA fields are really a C union (with different contents for
+    // (C)lasses (I)nterfaces and (A)rrays), but it is not obvious how to
+    // implement a union in Java so instead we use shared fields.
+    private short CIAData1;
+    private short CIAData2;
+    private byte CIACnt1;
+    private byte CIACnt2;
     private byte parentClass;
     private byte flags;
     
@@ -60,14 +63,39 @@ public class Class<T>
 		if (!this.isArray())
 			return null;
 		
-		return VM.getClass(this.elementClass & 0xFF);
+		return VM.getClass(this.CIAData2 & 0xFF);
 	}
 	
 	public Class<?>[] getInterfaces()
 	{
-		//FIXME Andy
-		throw new UnsupportedOperationException();
-	}
+        // Note this is not a correct implementation. We will return all
+        // of the interfaces that are implemented by this class and any super
+        // classes, we will also return any super interfaces that are also
+        // implemented. We could possible fix up some of this, but I'm not
+        // sure it is worth the effort. Andy
+        int interfaceCnt = 0;
+        int i = 0;
+        // First work out the max number of interfaces
+        for(;;)
+        {
+            Class<?> cls = VM.getClass(i++);
+            if (cls == null) break;
+            if (cls.isInterface() && VM.isAssignable(this, cls)) 
+                interfaceCnt++;
+        }
+        Class<?>[] interfaces = new Class<?>[interfaceCnt];
+        // now get them
+        i = 0;
+        interfaceCnt = 0;
+        for(;;)
+        {
+            Class<?> cls = VM.getClass(i++);
+            if (cls == null) break;
+            if (cls.isInterface() && VM.isAssignable(this, cls))
+                interfaces[interfaceCnt++] = cls;
+        }
+        return interfaces;
+    }
 		
 	@SuppressWarnings("unchecked")
 	public Class<? super T> getSuperclass()
@@ -127,7 +155,7 @@ public class Class<T>
 			sb.append("class ");
 		
 		//TODO classnumber instead of hash?
-		sb.append(System.identityHashCode(this));
+		sb.append(VM.getClassNumber(this));
 		
 		return sb.toString();
 	}
