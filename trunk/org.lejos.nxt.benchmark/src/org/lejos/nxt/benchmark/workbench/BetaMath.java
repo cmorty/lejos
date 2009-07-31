@@ -7,13 +7,13 @@ public class BetaMath
 	/**
 	 * Square root.
 	 */
-	public static double sqrt(double x)
+	public static double sqrtD(double x)
 	{
 		// also catches NaN
 		if (!(x > 0))
 			return (x == 0) ? 0 : Double.NaN;
 		if (x == Double.POSITIVE_INFINITY)
-			return Double.POSITIVE_INFINITY;
+			return x;
 	
 		// modify values to avoid workaround subnormal values
 		double factor;
@@ -40,13 +40,13 @@ public class BetaMath
 	/**
 	 * Square root.
 	 */
-	public static float sqrt(float x)
+	public static float sqrtF(float x)
 	{
 		// also catches NaN
 		if (!(x > 0))
 			return (x == 0) ? 0 : Float.NaN;
 		if (x == Float.POSITIVE_INFINITY)
-			return Float.POSITIVE_INFINITY;
+			return x;
 	
 		// modify values to avoid workaround subnormal values
 		float factor;
@@ -70,13 +70,6 @@ public class BetaMath
 		return factor * (x * isqrt + 1.0f / isqrt);
 	}
 	
-	private static final double[] LOGTABLE = {
-			1.0/3, 1.0/5, 1.0/7, 1.0/9,
-			1.0/11, 1.0/13, 1.0/15, 1.0/17, 1.0/19, 
-			1.0/21, 1.0/23, 1.0/25, 1.0/27, 1.0/29, 
-			1.0/31, 1.0/33, 1.0/35, 1.0/37, 1.0/39, 
-	};
-
 	/**
 	 * Natural log function. Returns log(a) to base E Replaced with an algorithm
 	 * that does not use exponents and so works with large arguments.
@@ -91,6 +84,13 @@ public class BetaMath
 		if (x == Double.POSITIVE_INFINITY)
 			return Double.POSITIVE_INFINITY;
 	
+		final double[] LOGTABLE = {
+			1.0/3, 1.0/5, 1.0/7, 1.0/9,
+			1.0/11, 1.0/13, 1.0/15, 1.0/17, 1.0/19, 
+			1.0/21, 1.0/23, 1.0/25, 1.0/27, 1.0/29, 
+			1.0/31, 1.0/33, 1.0/35, 1.0/37, 1.0/39, 
+		};
+
 		int m;
 		if (x >= Double.MIN_NORMAL)
 			m = -1023;
@@ -197,5 +197,73 @@ public class BetaMath
 		}
 
 		return sb.toString();
-	}	
+	}
+	
+	public static String dToStr2(double x)
+	{
+		final int D_TO_STR_MAXEXP = 256; 
+		final int D_TO_STR_MAXIDX1 = 17;
+		final int D_TO_STR_MAXIDX2 = 26;
+		final int D_TO_STR_HALF = 9; 
+		final double[] D_TO_STR_POWERS = {
+			1E+256, 1E+128, 1E+64, 1E+32, 1E+16, 1E+8, 1E+4, 1E+2, 1E+1,
+			1E-1, 1E-2, 1E-4, 1E-8, 1E-16, 1E-32, 1E-64, 1E-128, 1E-256,
+			1E-255, 1E-127, 1E-63, 1E-31, 1E-15, 1E-7, 1E-3, 1E-1, 1E-0,
+		};
+		
+		int exp = 0;
+		for (int i = 0; i < D_TO_STR_HALF; i++)
+		{
+			if (x >= D_TO_STR_POWERS[i])
+			{
+				exp += D_TO_STR_MAXEXP >> i;
+				x *= D_TO_STR_POWERS[D_TO_STR_MAXIDX1 - i];
+			}
+		}
+		for (int i = 0; i < D_TO_STR_HALF; i++)
+		{
+			if (x < D_TO_STR_POWERS[D_TO_STR_MAXIDX2 - i])
+			{
+				exp -= D_TO_STR_MAXEXP >> i;
+				x *= D_TO_STR_POWERS[i];
+			}
+		}
+		
+		// algorithm shows true value of subnormal doubles
+		// unfortunatly, the mantisse of subnormal values gets very short
+		// TODO automatically adjust digit count for subnormal values  
+		
+		long tmp = 1000000000000000L;		
+		long digits = (long)(x * 1E15 + 0.5);
+		
+		while (digits >= tmp)
+		{
+			exp++;
+			digits /= 10;
+		}
+		
+		StringBuilder sb = new StringBuilder();
+
+		int d = (int)(digits / (tmp /= 10));
+		sb.append((char)('0' + d));
+		digits -= tmp * d;
+		
+		sb.append('.');		
+		do
+		{
+			d = (int)(digits / (tmp /= 10));
+			sb.append((char)('0' + d));
+			digits -= tmp * d;
+		}
+		while (digits > 0);
+		
+		if (exp != 0)
+		{
+			sb.append('E');
+			sb.append(exp);
+		}
+
+		return sb.toString();
+	}
+
 }
