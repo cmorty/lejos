@@ -3,6 +3,7 @@ package org.lejos.nxt.benchmark;
 import java.io.PrintStream;
 
 import org.lejos.nxt.benchmark.workbench.BetaMath;
+import org.lejos.nxt.benchmark.workbench.HistoricMath;
 
 import lejos.nxt.comm.RConsole;
 
@@ -12,7 +13,21 @@ public final class MathBench
 	private static final int[] PADVEC = { 8, 30, 6, 10 };
 	private static final String VERSION = "1.2";
 
-	private static int benchSqrt(int count, String comment, double x)
+	private static int benchSqrtHistoric(int count, String comment, double x)
+	{
+		long nullTime = BenchUtils.getIterationTime(count);
+	
+		// Function calls
+		long start = System.currentTimeMillis();
+		for (int i = 0; i < count; i++)
+			HistoricMath.sqrt(x);
+		long end = System.currentTimeMillis();
+	
+		report(count, "sqrt (historic, "+comment+")", count, "ops", end - start - nullTime);
+		return count;
+	}
+	
+	private static int benchSqrtCurrent(int count, String comment, double x)
 	{
 		long nullTime = BenchUtils.getIterationTime(count);
 	
@@ -22,35 +37,35 @@ public final class MathBench
 			Math.sqrt(x);
 		long end = System.currentTimeMillis();
 	
-		report(count, "sqrt ("+comment+")", count, "ops", end - start - nullTime);
+		report(count, "sqrt (current, "+comment+")", count, "ops", end - start - nullTime);
 		return count;
 	}
 	
-	private static int benchSqrtNew(int count, String comment, double x)
+	private static int benchSqrtNewD(int count, String comment, double x)
 	{
 		long nullTime = BenchUtils.getIterationTime(count);
 	
 		// Function calls
 		long start = System.currentTimeMillis();
 		for (int i = 0; i < count; i++)
-			BetaMath.sqrt(x);
+			BetaMath.sqrtD(x);
 		long end = System.currentTimeMillis();
 	
 		report(count, "sqrt (new, "+comment+")", count, "ops", end - start - nullTime);
 		return count;
 	}
 	
-	private static int benchSqrtFloat(int count, String comment, float x)
+	private static int benchSqrtNewF(int count, String comment, float x)
 	{
 		long nullTime = BenchUtils.getIterationTime(count);
 	
 		// Function calls
 		long start = System.currentTimeMillis();
 		for (int i = 0; i < count; i++)
-			BetaMath.sqrt(x);
+			BetaMath.sqrtF(x);
 		long end = System.currentTimeMillis();
 	
-		report(count, "sqrt (float, "+comment+")", count, "ops", end - start - nullTime);
+		report(count, "sqrt (new, "+comment+")", count, "ops", end - start - nullTime);
 		return count;
 	}
 	
@@ -110,7 +125,7 @@ public final class MathBench
 		return count;
 	}
 
-	public static void main(String args[])
+	public static void main(String[] args)
 	{
 		RConsole.open();
 		System.setOut(new PrintStream(RConsole.openOutputStream()));
@@ -123,23 +138,27 @@ public final class MathBench
 		int countAll = 0;
 		long startAll = System.currentTimeMillis();
 	
-		countAll += benchSqrt(iterate, "subnormal", Math.PI * 0x1p-1060);
+		countAll += benchSqrtHistoric(iterate / 5, "subnormal", Math.PI * 0x1p-1060);
 		BenchUtils.cleanUp(null);
-		countAll += benchSqrt(iterate, "normal", Math.PI);
+		countAll += benchSqrtHistoric(iterate / 5, "normal", Math.PI);
 		BenchUtils.cleanUp(null);
 	
-		countAll += benchSqrtNew(iterate, "subnormal", Math.PI * 0x1p-1060);
+		countAll += benchSqrtCurrent(iterate, "subnormal", Math.PI * 0x1p-1060);
+		BenchUtils.cleanUp(null);
+		countAll += benchSqrtCurrent(iterate, "normal", Math.PI);
+		BenchUtils.cleanUp(null);
+	
+		countAll += benchSqrtNewD(iterate, "subnormal", Math.PI * 0x1p-1060);
 		BenchUtils.cleanUp(null);	
-		countAll += benchSqrtNew(iterate, "normal", Math.PI);
+		countAll += benchSqrtNewD(iterate, "normal", Math.PI);
 		BenchUtils.cleanUp(null);
 	
-		countAll += benchSqrtFloat(iterate*2, "subnormal", (float)(Math.PI * 0x1p-130));
+		countAll += benchSqrtNewF(iterate, "subnormal", (float)(Math.PI * 0x1p-140));
 		BenchUtils.cleanUp(null);	
-		countAll += benchSqrtFloat(iterate*2, "normal", (float)Math.PI);
+		countAll += benchSqrtNewF(iterate, "normal", (float)Math.PI);
 		BenchUtils.cleanUp(null);
-	
-//		countAll += benchLog(iterate / 100, "subnormal", Math.PI * 0x1p-1060);
-//		BenchUtils.cleanUp(null);	
+
+		//infinite loop for subnormal values
 		countAll += benchLog(iterate / 100, "small", Math.PI * 0x1p-1000);
 		BenchUtils.cleanUp(null);
 		countAll += benchLog(iterate / 2, "medium", Math.PI);
@@ -163,7 +182,7 @@ public final class MathBench
 		BenchUtils.cleanUp(null);
 		countAll += benchLogNew(iterate / 2, "1.9", 1.9);
 		BenchUtils.cleanUp(null);
-		
+	
 		countAll += benchDoubleToStr(iterate / 200, "1E+300", 1E+300);
 		BenchUtils.cleanUp(null);
 		countAll += benchDoubleToStr(iterate / 100, "1E+100", 1E+100);
@@ -192,7 +211,7 @@ public final class MathBench
 		System.out.flush();
 		RConsole.close();
 	}
-
+	
 	/**
 	 * Print out the time it took to complete a task Also calculate the rate per
 	 * second = (count * 1000) / time <br>
