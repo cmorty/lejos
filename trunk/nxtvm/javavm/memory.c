@@ -1044,10 +1044,10 @@ static void mark_reference_fields( Object* obj)
   /* now we can scan the member fields */
   while (classIndex != JAVA_LANG_OBJECT)
   {
-    if( classRecord->numInstanceFields)
+    if(get_field_cnt(classRecord))
     {
       int i;
-      for( i = classRecord->numInstanceFields-1; i >= 0; i--)
+      for( i = get_field_cnt(classRecord)-1; i >= 0; i--)
       {
         byte fieldType = get_field_type( classRecord, i);
         byte fieldSize = typeSize[ fieldType];
@@ -1918,10 +1918,10 @@ static void process_object(Object *obj, int callLimit)
     /* now we can scan the member fields */
     while (classIndex != JAVA_LANG_OBJECT)
     {
-      if(classRecord->numInstanceFields)
+      if(get_field_cnt(classRecord))
       {
         int i;
-        for(i = classRecord->numInstanceFields-1; i >= 0; i--)
+        for(i = get_field_cnt(classRecord)-1; i >= 0; i--)
         {
           byte fieldType = get_field_type(classRecord, i);
           byte fieldSize = typeSize[fieldType];
@@ -2359,10 +2359,10 @@ void gc_update_object(Object *obj)
     /* now we can scan the member fields */
     while (classIndex != JAVA_LANG_OBJECT)
     {
-      if(classRecord->numInstanceFields)
+      if(get_field_cnt(classRecord))
       {
         int i;
-        for(i = classRecord->numInstanceFields-1; i >= 0; i--)
+        for(i = get_field_cnt(classRecord)-1; i >= 0; i--)
         {
           byte fieldType = get_field_type(classRecord, i);
           byte fieldSize = typeSize[fieldType];

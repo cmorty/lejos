@@ -49,15 +49,16 @@ public class ClassRecord implements WritableData
    final HashMap<String, StaticFieldRecord> iStaticFields = new HashMap<String, StaticFieldRecord>();
    HashMap<Signature, MethodRecord> iMethods = new HashMap<Signature, MethodRecord>();
    final ArrayList<String> iUsedMethods = new ArrayList<String>();
+   InterfaceMap iInterfaceMap;
    int iParentClassIndex;
    ClassRecord iArrayElementClass;
    int iNumDims;
    TinyVMType iType;
    int iFlags;
    boolean iUseAllMethods = false;
-   final HashSet<ClassRecord> iImplementedBy = new HashSet<ClassRecord>();
-   boolean isUsed = false;
    boolean isInstanceUsed = false;
+   HashSet<ClassRecord> iImplementedBy = new HashSet<ClassRecord>();
+   boolean isUsed = false;
    static final String[] wrappers = {"java/lang/Integer",
                                      "java/lang/Boolean",
                                      "java/lang/Character",
@@ -115,27 +116,37 @@ public class ClassRecord implements WritableData
          {
             aOut.writeU2(iNumDims);
             aOut.writeU2(iBinary.getClassIndex(iArrayElementClass));
+            aOut.writeU1(0);
+            aOut.writeU1(0);
+         }
+         else if (isInterface())
+         {
+            aOut.writeU2(iInterfaceMap.getOffset());
+            aOut.writeU2(iInterfaceMap.getFirst());
+            aOut.writeU1(iInterfaceMap.getSize());
+            aOut.writeU1(0);
          }
          else
          {
+            // Normal class record
             int pMethodTableOffset = iMethodTable.getOffset();
             aOut.writeU2(pMethodTableOffset);
             aOut.writeU2(iInstanceFields.getOffset());
+            int pNumMethods = iMethodTable.size();
+            if (pNumMethods > TinyVMConstants.MAX_METHODS)
+            {
+               throw new TinyVMException("Class " + iName + ": No more than "
+                  + TinyVMConstants.MAX_METHODS + " methods expected");
+            }
+            aOut.writeU1(pNumMethods);
+            int pNumFields = iInstanceFields.size();
+            if (pNumFields > TinyVMConstants.MAX_FIELDS)
+            {
+               throw new TinyVMException("Class " + iName + ": No more than "
+                  + TinyVMConstants.MAX_FIELDS + " fields expected");
+            }
+            aOut.writeU1(pNumFields);
          }
-         int pNumFields = iInstanceFields.size();
-         if (pNumFields > TinyVMConstants.MAX_FIELDS)
-         {
-            throw new TinyVMException("Class " + iName + ": No more than "
-               + TinyVMConstants.MAX_FIELDS + " fields expected");
-         }
-         aOut.writeU1(pNumFields);
-         int pNumMethods = iMethodTable.size();
-         if (pNumMethods > TinyVMConstants.MAX_METHODS)
-         {
-            throw new TinyVMException("Class " + iName + ": No more than "
-               + TinyVMConstants.MAX_METHODS + " methods expected");
-         }
-         aOut.writeU1(pNumMethods);
          aOut.writeU1(iParentClassIndex);
          //aOut.writeU1 (iArrayElementType);
          aOut.writeU1(iFlags | (hasReference() ? 0 : TinyVMConstants.C_NOREFS));
@@ -635,6 +646,7 @@ public class ClassRecord implements WritableData
            RecordTable<RecordTable<ExceptionRecord>> aExceptionTables, HashVector<Signature> aSignatures)
       throws TinyVMException
    {
+      if (isInterface()) return;
       // _logger.log(Level.INFO, "Processing methods in " + iName);
       RecordTable<MethodRecord> iOptMethodTable = new RecordTable<MethodRecord>("methods", false, false);
       HashMap<Signature, MethodRecord> iOptMethods = new HashMap<Signature, MethodRecord>();
@@ -835,7 +847,8 @@ public class ClassRecord implements WritableData
        if (hasParent())
            getParent().addInterfaces(pUserClass);
    }
-   
+
+
    public void addInterfaceUser(ClassRecord pRec)
    {
        // Add the supplied class to the list of classes known to implement this
@@ -951,7 +964,7 @@ public class ClassRecord implements WritableData
     */
    public boolean isWrapper()
    {
-       return getWrapperIndex() >= 0;
+      return getWrapperIndex() >= 0;
    }
 
    /**
@@ -960,10 +973,42 @@ public class ClassRecord implements WritableData
     */
    public PrimitiveClassRecord getPrimitiveClass()
    {
-       int idx = getWrapperIndex();
-       if (idx < 0) return null;
-       return (PrimitiveClassRecord) iBinary.getClassRecord(primitive[idx]);
+      int idx = getWrapperIndex();
+      if (idx < 0) return null;
+      return (PrimitiveClassRecord) iBinary.getClassRecord(primitive[idx]);
    }
 
+   /**
+    * Add the classes which implement this interface into the the set of
+    * class records.
+    * @param aClassRecords Set of records
+    */
+   public void storeOptimizedImplementingClasses(RecordTable<ClassRecord> aClassRecords)
+   {
+      HashSet<ClassRecord> iNewImplementedBy = new HashSet<ClassRecord>();
+
+      for(ClassRecord cr : iImplementedBy)
+         if (cr.used() || iBinary.useAll())
+         {
+            iNewImplementedBy.add(cr);
+            aClassRecords.add(cr);
+         }
+      iImplementedBy = iNewImplementedBy;
+   }
+
+   /**
+    * Create and store the inetrface map for this interface class.
+    * The interface map provides a mechanism for quickly testing if a particular
+    * class implements this interface (or a super interface).
+    * @param maps the set of ineterface maps.
+    * @throws TinyVMException
+    */
+   public void storeInterfaceMap(RecordTable<InterfaceMap> maps) throws TinyVMException
+   {
+      if (!isInterface())
+         throw new TinyVMException("Attempt to store an interface map for a non interface class " + this.iName);
+      iInterfaceMap = new InterfaceMap(iBinary, this);
+      maps.add(iInterfaceMap);
+   }
 }
 

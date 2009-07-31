@@ -85,7 +85,7 @@ void install_binary( void* ptr)
 MethodRecord *find_method (ClassRecord *classRecord, int methodSignature)
 {
   MethodRecord* mr0 = get_method_table( classRecord);
-  MethodRecord* mr = mr0 + classRecord->numMethods;
+  MethodRecord* mr = mr0 + get_method_cnt(classRecord);
   while( -- mr >= mr0)
     if( mr->signatureId == methodSignature)
       return mr;
@@ -594,8 +594,16 @@ boolean is_assignable(const byte srcCls, const byte dstCls)
   // Check common cases
   if (srcCls == dstCls || dstCls == JAVA_LANG_OBJECT) return true;
   dstRec = get_class_record(dstCls);
-  // TBD Add support for interfaces
-  if (is_interface(dstRec)) return true;
+  if (is_interface(dstRec))
+  {
+    // we are testing against an interface. So we use the associated interface
+    // map to test if the src implements it...
+    int base = get_interface_map_base(dstRec);
+    if (srcCls < base) return false;
+    if (srcCls - base >= get_interface_map_len(dstRec)) return false;
+    base = srcCls - base;
+    return ((get_interface_map(dstRec)[base/8]) & (1 << (base%8))) != 0;
+  }
   if (sub_type_of(srcCls, dstCls)) return true;
   if (type_checks_enabled()) return false;
   // Special case... we may only have limited information available for array
