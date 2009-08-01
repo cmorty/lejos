@@ -2,7 +2,7 @@ package lejos.robotics.proposal;
 
 import lejos.robotics.TachoMotor;
 
-public class DifferentialPilot implements ArcPilot {
+public class DifferentialPilot implements ArcRotatePilot {
 	
 	public DifferentialPilot(final float wheelDiameter, final float trackWidth,
 			final TachoMotor leftMotor, final TachoMotor rightMotor) {
@@ -92,11 +92,6 @@ public class DifferentialPilot implements ArcPilot {
 		return null;
 	}
 
-	public void reverse() {
-		// TODO Auto-generated method stub
-		
-	}
-
 	public void forward() {
 		// TODO Auto-generated method stub
 		
@@ -127,21 +122,6 @@ public class DifferentialPilot implements ArcPilot {
 		return false;
 	}
 
-	public Movement move(Movement vector) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public Movement changeHeading(float angle) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public Movement changeHeading(float angle, boolean immediateReturn) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	public void setMoveSpeed(float speed) {
 		// TODO Auto-generated method stub
 		
@@ -150,21 +130,6 @@ public class DifferentialPilot implements ArcPilot {
 	public void setTurnSpeed(float speed) {
 		// TODO Auto-generated method stub
 		
-	}
-
-	public void steer(int turnRate) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public Movement steer(int turnRate, int angle) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public Movement steer(int turnRate, int angle, boolean immediateReturn) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	public Movement stop() {
@@ -193,14 +158,29 @@ public class DifferentialPilot implements ArcPilot {
 		return null;
 	}
 
-	public int getMinRadius() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	public void setMinRadius(int radius) {
+	public void setMinRadius(float radius) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	public void backward() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void rotate(float angle) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void rotate(float angle, boolean immediateReturn) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public float getMinRadius() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 }
