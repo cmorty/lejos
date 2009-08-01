@@ -1,5 +1,6 @@
 package lejos.robotics.proposal;
 
+import lejos.geom.Point;
 import lejos.robotics.Pose;
 
 /**
@@ -9,9 +10,9 @@ import lejos.robotics.Pose;
  * 
  *
  */
-public class SimplePathPlanner implements PathFinder {
+public class SimplePathFinder implements PathFinder {
 
-	public SimplePathPlanner(Pilot pilot, PoseProvider poseProvider) {
+	public SimplePathFinder(Pilot pilot, PoseProvider poseProvider) {
 		
 	}
 	
@@ -25,19 +26,13 @@ public class SimplePathPlanner implements PathFinder {
 		return null;
 	}
 
-	public Pose goTo(Pose destination) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public Pose goTo(Pose destination, boolean closestPoint) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	public void setPoseProvider(PoseProvider replacement) {
 		// TODO Auto-generated method stub
 
 	}
 
+	public Pose goTo(Point destination) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
