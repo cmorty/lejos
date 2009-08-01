@@ -46,7 +46,7 @@ public interface PathFinder {
 	 * not change after the program starts, unless it was physically a transformer robot. 
 	 * @return
 	 */
-	public Pilot getPilot();
+	public ArcPilot getPilot();
 		
 	/**
 	 * Get a reference to the PoseProvider being used as a localizer.
