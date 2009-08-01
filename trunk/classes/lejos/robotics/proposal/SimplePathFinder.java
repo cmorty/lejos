@@ -11,28 +11,35 @@ import lejos.robotics.Pose;
  *
  */
 public class SimplePathFinder implements PathFinder {
-
-	public SimplePathFinder(Pilot pilot, PoseProvider poseProvider) {
-		
+	private ArcPilot pilot;
+	private PoseProvider poseProvider;
+	
+	public SimplePathFinder(ArcPilot pilot, PoseProvider poseProvider) {
+		this.pilot = pilot;
+		this.poseProvider = poseProvider;
 	}
 	
-	public Pilot getPilot() {
-		// TODO Auto-generated method stub
-		return null;
+	public ArcPilot getPilot() {
+		return pilot;
 	}
 
 	public PoseProvider getPoseProvider() {
-		// TODO Auto-generated method stub
-		return null;
+		return poseProvider;
 	}
 
 	public void setPoseProvider(PoseProvider replacement) {
-		// TODO Auto-generated method stub
-
+		poseProvider = replacement;
 	}
 
 	public Pose goTo(Point destination) {
-		// TODO Auto-generated method stub
-		return null;
+		Pose pose = poseProvider.getPose();
+		if (pilot instanceof RotatePilot) { // optimize for RotatePilot
+			((RotatePilot) pilot).rotate(pose.angleTo(destination));
+			pilot.travel(pose.distanceTo(destination));			
+		} else {
+			//TODO: Calculate arc of minimum radius needed to point to the
+			// destination and the do an arc and a travel.
+		}
+		return poseProvider.getPose();
 	}
 }
