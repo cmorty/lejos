@@ -1,6 +1,7 @@
 package lejos.robotics.proposal;
 
 import lejos.robotics.Pose;
+import lejos.geom.Point;
 
 /**
  * PathFinders very likely accept a Pilot and PoseProvider in the constructor.
@@ -29,18 +30,17 @@ import lejos.robotics.Pose;
 public interface PathFinder {
 
 	/**
-	 * Travels to the coordinates in the destination Pose, including the new heading in Pose?
+	 * Travels to the coordinates in the destination Point.
 	 * If it can't reach the destination, it tries to get as close as possible before giving up
 	 * and reporting the actual coordinates (Pose) achieved.
-	 * TODO: Maybe int x, int y coordinates would be better?
+	 * 
+	 * Lawrie: I changed it to a point as the final heading is not normally important
 	 * 
 	 * @param destination
 	 * @return The new pose it achieved.
 	 */
-	public Pose goTo(Pose destination);
-		
-	public Pose goTo(Pose destination, boolean closestPoint);
-	
+	public Pose goTo(Point destination);
+
 	/**
 	 * Note: There is no corresponding setPilot() method because the type of robot vehicle could
 	 * not change after the program starts, unless it was physically a transformer robot. 
