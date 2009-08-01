@@ -14,9 +14,10 @@ import lejos.robotics.TachoMotor;
  * steering vehicles.
  *
  */
-public class AnalogPilot implements ArcPilot {
+public class SteeringPilot implements ArcPilot {
 	
 	/**
+	 * Create a steeering pilot
 	 * 
 	 * @param wheelDiameter
 	 * @param trackWidth
@@ -25,7 +26,7 @@ public class AnalogPilot implements ArcPilot {
 	 * @param steerRatio
 	 * @param reverse
 	 */
-	 public AnalogPilot(float wheelDiameter, float trackWidth,
+	 public SteeringPilot(float wheelDiameter, float trackWidth,
 			TachoMotor driveMotor, TachoMotor steeringMotor, float steerRatio,
 			final boolean reverse) {
 	}
@@ -48,11 +49,6 @@ public class AnalogPilot implements ArcPilot {
 	public Movement arc(float radius, int angle, boolean immediateReturn) {
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-	public void reverse() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	public void forward() {
@@ -85,21 +81,6 @@ public class AnalogPilot implements ArcPilot {
 		return false;
 	}
 
-	public Movement move(Movement vector) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public Movement changeHeading(float angle) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public Movement changeHeading(float angle, boolean immediateReturn) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	public void setMoveSpeed(float speed) {
 		// TODO Auto-generated method stub
 		
@@ -108,21 +89,6 @@ public class AnalogPilot implements ArcPilot {
 	public void setTurnSpeed(float speed) {
 		// TODO Auto-generated method stub
 		
-	}
-
-	public void steer(int turnRate) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public Movement steer(int turnRate, int angle) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public Movement steer(int turnRate, int angle, boolean immediateReturn) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	public Movement stop() {
@@ -151,14 +117,18 @@ public class AnalogPilot implements ArcPilot {
 		return null;
 	}
 
-	public int getMinRadius() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	public void setMinRadius(int radius) {
+	public void setMinRadius(float radius) {
 		// TODO Auto-generated method stub
 		
 	}
 
+	public void backward() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public float getMinRadius() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 }
