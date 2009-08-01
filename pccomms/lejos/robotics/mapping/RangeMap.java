@@ -1,10 +1,16 @@
-package lejos.robotics.localization;
+package lejos.robotics.mapping;
 
 import java.awt.Rectangle;
 import lejos.geom.*;
+import lejos.robotics.Pose;
+
+/*
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ */
 
 /**
- * The Map interface supports determining the range to a feature on the map
+ * The RangeMap interface supports determining the range to a feature on the map
  * (such as a wall), from an object with a specific pose.
  * 
  * It also supports the a method to determine if a point is within the mapped
@@ -12,12 +18,10 @@ import lejos.geom.*;
  * 
  * @author Lawrie Griffiths
  * 
- * <br/><br/>WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
- * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
  */
-public interface Map {
+public interface RangeMap {
 	/**
-	 * The the range to the nearest wall (or other feature)_
+	 * The the range to the nearest wall (or other feature)
 	 * @param pose the pose of the robot
 	 * @return the range
 	 */

@@ -1,19 +1,24 @@
-package lejos.robotics.localization;
+package lejos.robotics.mapping;
 
 import java.awt.Rectangle;
 import lejos.geom.*;
+
 import java.io.*;
+import lejos.robotics.*;
+import lejos.robotics.mapping.RangeMap;
+
+/*
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ */
 
 /**
  * A map of a room or other closed environment, represented by line segments
  * 
  * @author Lawrie Griffiths
  * 
- * <br/><br/>WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
- * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
- * 
  */
-public class LineMap implements Map {
+public class LineMap implements RangeMap {
   private Line[] lines;
   private Rectangle boundingRect;
 
@@ -24,13 +29,15 @@ public class LineMap implements Map {
    * @return the range or -1 if not in range
    */
   public float range(Pose pose) {
-    Line l = pose.getRangeLine();
+    Line l = new  Line(pose.getX(), pose.getY(), pose.getX() + 254f
+    	        * (float) Math.cos(Math.toRadians(pose.getHeading())), pose.getY() + 254f
+    	        * (float) Math.sin(Math.toRadians(pose.getHeading())));
     Line rl = null;
 
     for (int i = 0; i < lines.length; i++) {
       Point p = lines[i].intersectsAt(l);
       if (p == null) continue; // Does not intersect
-      Line tl = new Line(pose.x, pose.y, p.x, p.y);
+      Line tl = new Line(pose.getX(), pose.getY(), p.x, p.y);
 
       // If the range line intersects more than one map line
       // then take the shortest distance.
