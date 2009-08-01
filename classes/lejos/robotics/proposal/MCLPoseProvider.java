@@ -1,39 +1,45 @@
 package lejos.robotics.proposal;
 
-import lejos.robotics.*;
+import lejos.robotics.Pose;
+import lejos.robotics.localization.Move;
+import lejos.robotics.localization.ParticleSet;
+import lejos.robotics.mapping.RangeMap;
+import lejos.robotics.RangeReadings;
+import lejos.robotics.RangeScanner;
+import lejos.robotics.proposal.Movement;
+import lejos.robotics.proposal.PilotListener;
+import lejos.robotics.proposal.PoseProvider;
 
-public class MCLPoseProvider implements PoseProvider {
-
-	/**
-	 * Range scan enumeration. Could make actual Java enumeration here 
-	 */
-	public int EVERY_MOVEMENT = 0;
-	public int EVERY_READING = 1;
-	// TODO Add a few options for how often to take range scan
+public class MCLPoseProvider implements PoseProvider, PilotListener {
+	private ParticleSet particles;
+	private RangeScanner scanner;
+	private RangeMap map;
 	
-	/**
-	 *
-	 * 
-	 * @param pilot
-	 * @param rp
-	 */
-	public MCLPoseProvider(Pilot pilot, RangeScanner scanner) {
-		
+	public MCLPoseProvider(RotatePilot pilot, RangeScanner scanner, RangeMap map, int numParticles) {
+		particles = new ParticleSet(map, numParticles);
+		this.scanner = scanner;
+		this.map = map;
+		pilot.addPilotListener(this);
 	}
 	
-	/**
-	 * A proposed method to allow user to determine how often they want this class
-	 * to perform a scan. Could use constants at top of class.
-	 * 
-	 * @param scanType
-	 */
-	public void setScanFrequency(int scanType) {
-		
+	public ParticleSet getParticles() {
+		return particles;
 	}
-	
+
+	public void movementStarted(Movement event, Object p) {		
+	}
+
+	public void movementStopped(Movement event, Object p) {
+		Move mv = new Move(event.getAngleTurned(), event.getDistanceTraveled());
+		particles.applyMove(mv);
+	}
+
 	public Pose getPose() {
-		// TODO Auto-generated method stub
-		return null;
+		RangeReadings rr = scanner.getRangeValues();
+		if (!rr.incomplete()) {
+			particles.calculateWeights(rr, map);
+			particles.resample(); // Cannot indicate robot is lost
+		}
+		return particles.getEstimatedPose();
 	}
-
 }
