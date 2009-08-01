@@ -1,7 +1,5 @@
 package lejos.robotics.proposal;
 
-import lejos.robotics.navigation.Pilot;
-
 public interface PilotListener {
 	
 	/**
@@ -12,7 +10,7 @@ public interface PilotListener {
 	 * @param event
 	 * @param p
 	 */
-	public void movementStarted(Movement event, Pilot p);
+	public void movementStarted(Movement event, Object p);
 	
-	public void movementStopped(Movement event, Pilot p);
+	public void movementStopped(Movement event, Object p);
 }
