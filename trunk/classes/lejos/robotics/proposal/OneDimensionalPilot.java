@@ -1,6 +1,6 @@
 package lejos.robotics.proposal;
 
-public interface OneDimensionalPilot {
+public interface OneDimensionalPilot extends PilotListenerGenerator {
   /**
    *Starts the  NXT robot moving forward.
    */
@@ -39,9 +39,4 @@ public interface OneDimensionalPilot {
    */
   public Movement travel(float distance, boolean immediateReturn);
   
-  /**
-   * Adds a PilotListener that will be notified of all Pilot movement events.
-   * @param p
-   */
-  public void addPilotListener(PilotListener listener);
 }
