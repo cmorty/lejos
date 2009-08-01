@@ -1,5 +1,8 @@
 package lejos.robotics.localization;
 
+import lejos.robotics.Pose;
+import lejos.robotics.mapping.RangeMap;
+import lejos.robotics.RangeReadings;
 import lejos.robotics.navigation.*;
 import lejos.nxt.Motor;
 
@@ -19,17 +22,17 @@ import lejos.nxt.Motor;
  * @author Lawrie Griffiths
  *
  */
-public abstract class TachoLocalizer extends SimpleNavigator implements Localizer {	
+public abstract class TachoLocalizer extends SimpleNavigator {	
   protected RangeReadings readings;
   protected float projection;
-  protected Map map;
+  protected RangeMap map;
   protected int numParticles;
   protected ParticleSet particles;
   protected float angle, distance;
   protected Move mv = new Move(angle, distance);
   protected int numReadings;
 
-  public TachoLocalizer(Map map, int numParticles, int numReadings,
+  public TachoLocalizer(RangeMap map, int numParticles, int numReadings,
 		    float wheelDiameter, float trackWidth,
 			Motor leftMotor, Motor rightMotor, float projection, boolean reverse) {
     super(wheelDiameter, trackWidth, leftMotor, rightMotor, reverse);
@@ -101,7 +104,7 @@ public abstract class TachoLocalizer extends SimpleNavigator implements Localize
    * 
    * @return the map
    */
-  public Map getMap() {
+  public RangeMap getMap() {
     return map;
   }
 
