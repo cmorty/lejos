@@ -22,7 +22,7 @@ public class DeadReckonerPoseProvider implements PilotListener, PoseProvider {
 	 * 
 	 * @param pilot
 	 */
-	public DeadReckonerPoseProvider(Pilot pilot) {
+	public DeadReckonerPoseProvider(PilotListenerGenerator pilot) {
 		pilot.addPilotListener(this);
 	}
 		
@@ -30,14 +30,12 @@ public class DeadReckonerPoseProvider implements PilotListener, PoseProvider {
 		return new Pose(x,y,heading);
 	}
 
-	public void movementStarted(Movement event,
-			lejos.robotics.navigation.Pilot p) {
+	public void movementStarted(Movement event, Object p) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	public void movementStopped(Movement event,
-			lejos.robotics.navigation.Pilot p) {
+	public void movementStopped(Movement event, Object p) {
 		float angle = event.getAngleTurned();
 		float distance = event.getDistanceTraveled();
         double dx = 0, dy = 0;
