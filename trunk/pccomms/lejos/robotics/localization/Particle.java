@@ -1,6 +1,9 @@
 package lejos.robotics.localization;
 
 import java.util.Random;
+import lejos.robotics.*;
+import lejos.robotics.mapping.RangeMap;
+import lejos.geom.*;
 
 /**
  * Represents a particle for the particle filtering algorithm. The state of the
@@ -65,7 +68,7 @@ public class Particle {
    * 
    * @param rr Robot readings
    */
-  public void calculateWeight(RangeReadings rr, Map map) {
+  public void calculateWeight(RangeReadings rr, RangeMap map) {
     weight = 1;
     takeReadings(map);
 
@@ -86,19 +89,19 @@ public class Particle {
    * 
    * @param map the map of the environment
    */
-  public void takeReadings(Map map) {
-    float startAngle = pose.angle;
+  public void takeReadings(RangeMap map) {
+    float startAngle = pose.getHeading();
     ParticleSet.readings[ParticleSet.forwardReading] = map.range(pose);
     for(int i=ParticleSet.forwardReading-1;i>=0;i--) {
-      pose.angle -= ParticleSet.rangeReadingAngle;
+      pose.setHeading(pose.getHeading() - ParticleSet.rangeReadingAngle);
       ParticleSet.readings[i] = map.range(pose);
     }
-    pose.angle = startAngle;
+    pose.setHeading(startAngle);
     for(int i=ParticleSet.forwardReading+1;i<ParticleSet.numReadings;i++) {
-      pose.angle += ParticleSet.rangeReadingAngle;
+      pose.setHeading(pose.getHeading() + ParticleSet.rangeReadingAngle);
       ParticleSet.readings[i] = map.range(pose);
     }
-    pose.angle = startAngle;
+    pose.setHeading(startAngle);
   }
   
   /**
@@ -117,13 +120,13 @@ public class Particle {
    * @param move the robot's move
    */
   public void applyMove(Move move) {
-    float ym = (move.distance * ((float) Math.sin(Math.toRadians(pose.angle))));
-    float xm = (move.distance * ((float) Math.cos(Math.toRadians(pose.angle))));
+    float ym = (move.distance * ((float) Math.sin(Math.toRadians(pose.getHeading()))));
+    float xm = (move.distance * ((float) Math.cos(Math.toRadians(pose.getHeading()))));
 
-    pose.x += xm + (ParticleSet.distanceNoiseFactor * xm * rand.nextGaussian());
-    pose.y += ym + (ParticleSet.distanceNoiseFactor * ym * rand.nextGaussian());
-    pose.angle += move.angle
-        + (ParticleSet.angleNoiseFactor * move.angle * rand.nextGaussian());
-    pose.angle = (float) ((int) (pose.angle + 0.5f) % 360);
+    pose.setLocation(new Point((float) (pose.getX() + xm + (ParticleSet.distanceNoiseFactor * xm * rand.nextGaussian())),
+                     (float) (pose.getY() + ym + (ParticleSet.distanceNoiseFactor * ym * rand.nextGaussian()))));
+    pose.setHeading((float) (pose.getHeading() + move.angle
+        + (ParticleSet.angleNoiseFactor * move.angle * rand.nextGaussian())));
+    pose.setHeading((float) ((int) (pose.getHeading() + 0.5f) % 360));
   }
 }

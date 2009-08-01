@@ -5,8 +5,12 @@ import java.awt.event.*;
 import java.awt.geom.*;
 import java.awt.*;
 import java.io.*;
+
+import lejos.robotics.Pose;
+import lejos.robotics.RangeReadings;
 import lejos.robotics.localization.*;
 import lejos.geom.*;
+import lejos.robotics.mapping.*;
 
 /**
  * A panel that can be opened in a frame to control a robot
@@ -69,7 +73,7 @@ public class MCLFrame extends RemoteFrame{
       Particle part = particles.getParticle(i);
       if (part != null) {
         if (i == closest) g2d.setColor(Color.green);
-        paintPose(g2d, new Pose(part.getPose().x, part.getPose().y, part.getPose().angle));
+        paintPose(g2d, new Pose(part.getPose().getX(), part.getPose().getY(), part.getPose().getHeading()));
         g2d.setColor(Color.red);
       }
     }	  
@@ -95,7 +99,7 @@ public class MCLFrame extends RemoteFrame{
    * @param g2d the Graphics2D object
    */
   private void paintPose(Graphics2D g2d, Pose pose) {
-    Ellipse2D c = new Ellipse2D.Float(X_OFFSET + pose.x * PIXELS_PER_CM - 1, Y_OFFSET + pose.y * PIXELS_PER_CM - 1, 2, 2);
+    Ellipse2D c = new Ellipse2D.Float(X_OFFSET + pose.getX() * PIXELS_PER_CM - 1, Y_OFFSET + pose.getY() * PIXELS_PER_CM - 1, 2, 2);
     Line rl = getArrowLine(pose);
     Line2D l2d = new Line2D.Float(rl.x1, rl.y1, rl.x2, rl.y2);
     g2d.draw(l2d);
@@ -130,10 +134,10 @@ public class MCLFrame extends RemoteFrame{
    * @return the arrow line
    */
   private Line getArrowLine(Pose pose) {
-    return new Line(X_OFFSET + pose.x * PIXELS_PER_CM,
-    		        Y_OFFSET + pose.y * PIXELS_PER_CM, 
-    		        X_OFFSET + pose.x * PIXELS_PER_CM + ARROW_LENGTH * (float) Math.cos(Math.toRadians(pose.angle)), 
-    		        Y_OFFSET + pose.y * PIXELS_PER_CM + ARROW_LENGTH * (float) Math.sin(Math.toRadians(pose.angle)));
+    return new Line(X_OFFSET + pose.getX() * PIXELS_PER_CM,
+    		        Y_OFFSET + pose.getY() * PIXELS_PER_CM, 
+    		        X_OFFSET + pose.getX() * PIXELS_PER_CM + ARROW_LENGTH * (float) Math.cos(Math.toRadians(pose.getHeading())), 
+    		        Y_OFFSET + pose.getY() * PIXELS_PER_CM + ARROW_LENGTH * (float) Math.sin(Math.toRadians(pose.getHeading())));
   }
 
   /**
@@ -175,6 +179,7 @@ public class MCLFrame extends RemoteFrame{
 	      sendCommand(READINGS);
 	      // Get range readings
 	      readings.loadReadings(dis);
+	      readings.printReadings();
 	      System.out.println("Max weight = " + dis.readFloat());
 	      getParticles();
 	      repaint();

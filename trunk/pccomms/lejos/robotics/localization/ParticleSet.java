@@ -3,6 +3,8 @@ package lejos.robotics.localization;
 import java.awt.Rectangle;
 import lejos.geom.*;
 import java.io.*;
+import lejos.robotics.*;
+import lejos.robotics.mapping.RangeMap;
 
 /**
  * Represents a particle set for the particle filtering algorithm.
@@ -38,7 +40,7 @@ public class ParticleSet {
   // Instance variables
   private int numParticles;
   private Particle[] particles;
-  private Map map;
+  private RangeMap map;
   private float estimatedX, estimatedY, estimatedAngle;
   private float minX, maxX, minY, maxY;
   private float maxWeight;
@@ -48,7 +50,7 @@ public class ParticleSet {
    * 
    * @param map the map of the enclosed environment
    */
-  public ParticleSet(Map map, int numParticles) {
+  public ParticleSet(RangeMap map, int numParticles) {
 	readings = new float[numReadings];
     this.map = map;
     this.numParticles = numParticles;
@@ -146,9 +148,9 @@ public class ParticleSet {
       for (int i = 0; i < numParticles && count < numParticles; i++) {
         if (oldParticles[i].getWeight() >= rand) {
           Pose p = oldParticles[i].getPose();
-          float x = p.x;
-          float y = p.y;
-          float angle = p.angle;
+          float x = p.getX();
+          float y = p.getY();
+          float angle = p.getHeading();
 
           estimatedX += x;
           estimatedY += y;
@@ -176,7 +178,7 @@ public class ParticleSet {
    * 
    * @param rr the robot range readings
    */
-  public void calculateWeights(RangeReadings rr, Map map) {
+  public void calculateWeights(RangeReadings rr, RangeMap map) {
     maxWeight = 0f;
     for (int i = 0; i < numParticles; i++) {
       particles[i].calculateWeight(rr, map);
@@ -347,8 +349,8 @@ public class ParticleSet {
     for (int i = 0; i < numParticles; i++) {
       Pose pose = particles[i].getPose();
       float distance = (float) Math.sqrt((double) (
-          (pose.x - x) * (pose.x - x)) + 
-          ((pose.y - y) * (pose.y - y)));
+          (pose.getX() - x) * (pose.getX() - x)) + 
+          ((pose.getY() - y) * (pose.getY() - y)));
       if (distance < minDistance) {
         minDistance = distance;
         index = i;
@@ -369,9 +371,9 @@ public class ParticleSet {
           Particle part = getParticle(i);
           Pose pose = part.getPose();
           float weight = part.getWeight();
-          dos.writeFloat(pose.x);
-          dos.writeFloat(pose.y);
-          dos.writeFloat(pose.angle);
+          dos.writeFloat(pose.getX());
+          dos.writeFloat(pose.getY());
+          dos.writeFloat(pose.getHeading());
           dos.writeFloat(weight);
           dos.flush();
       }
@@ -407,9 +409,9 @@ public class ParticleSet {
       float minY = getMinY();
       float maxY = getMaxY();
 
-      dos.writeFloat(pose.x);
-      dos.writeFloat(pose.y);
-      dos.writeFloat(pose.angle);
+      dos.writeFloat(pose.getX());
+      dos.writeFloat(pose.getY());
+      dos.writeFloat(pose.getHeading());
       dos.writeFloat(minX);
       dos.writeFloat(maxX);
       dos.writeFloat(minY);

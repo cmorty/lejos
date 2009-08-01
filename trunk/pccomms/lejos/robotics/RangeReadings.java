@@ -1,22 +1,25 @@
-package lejos.robotics.localization;
+package lejos.robotics;
 import java.io.*;
+
+/*
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ */
 
 /**
  * Represents a set of range readings.
  * 
  * @author Lawrie Griffiths
- * 
- * <br/><br/>WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
- * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
  */
-public class RangeReadings {
-  public static final float INVALID_READING = -1f;
-  
-  private int numReadings = 3;
-  private float[] ranges = new float[numReadings];
+public class RangeReadings { 
+  private int numReadings;
+  private float[] ranges;
+  private float[] angles;
   
   public RangeReadings(int numReadings) {
     this.numReadings = numReadings;
+    ranges = new float[numReadings];
+    angles = new float[numReadings];
   }
 
   /**
@@ -25,8 +28,9 @@ public class RangeReadings {
    * @param i the reading index
    * @param range the range value
    */
-  public void setRange(int i, float range) {
+  public void setRange(int i, float angle, float range) {
     ranges[i] = range;
+    angles[i] = angle;
   }
 
   /**
@@ -38,6 +42,29 @@ public class RangeReadings {
   public float getRange(int i) {
     return ranges[i];
   }
+  
+  /**
+   * Get a range reading for a specific angle
+   * 
+   * @param i the reading index
+   * @return the range value
+   */
+  public float getRange(float angle) {
+    for(int i=0;i<numReadings;i++) {
+    	if (angle == angles[i]) return ranges[i];
+    }
+    return -1f;
+  }
+  
+  /**
+   * Get the angle of a specific reading
+   * 
+   * @param index the index of the reading
+   * @return the angle in degrees
+   */
+  public float getAngle(int index) {
+	  return  angles[index];
+  }
 
   /**
    * Return true if the readings are incomplete
@@ -46,7 +73,7 @@ public class RangeReadings {
    */
   public boolean incomplete() {
     for (int i = 0; i < numReadings; i++) {
-      if (ranges[i] == INVALID_READING) return true;
+      if (ranges[i] < 0) return true;
     }
     return false;
   }
@@ -58,6 +85,8 @@ public class RangeReadings {
    */
   public void setNumReadings(short num) {
     numReadings = num;
+    ranges = new float[numReadings];
+    angles = new float[numReadings]; 
   }
   
   /**
@@ -86,8 +115,18 @@ public class RangeReadings {
   public void loadReadings(DataInputStream dis) throws IOException {
     for (int i = 0; i < getNumReadings(); i++) {
       ranges[i] = dis.readFloat();
+    }        
+  }
+  
+  /**
+   * Print the range readings on standard out
+   * @param dis the stream
+   * @throws IOException
+   */
+  public void printReadings() {
+    for (int i = 0; i < getNumReadings(); i++) {
       System.out.println("Range " + i + " = " + 
-    		  (ranges[i] < 0 ? "Invalid" : ranges[i] + "cm"));
+    		  (ranges[i] < 0 ? "Invalid" : ranges[i]));
     }        
   }
 }
