@@ -1,39 +1,21 @@
 package lejos.robotics;
 
-/**
- * TODO: This should probably be an interface in case a simultaneous laser range finder can return the same values.
- * Might also want to do an abstract Scanner class which has RotationPlatform rotation logic so code isn't duplicated.
- * 
- *  TODO: What about a RangeScanner that can move up and down too?
- *  
- * @author BB
- *
+/*
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
  */
-public class RangeScanner {
 
+/**
+ * Abstraction for a single range scanning sensor, rotating platform with a range finder,
+ * or a complete robot, that obtains a set of range readings at a set of angles to#
+ * the robot's heading.
+ */
+public interface RangeScanner {
 	/**
-	 * TODO: Defaults to 3 scans separated by 45 degree angle? 
-	 * @param range
-	 * @param platform
-	 */
-	public RangeScanner(RangeFinder range, RotationPlatform platform) {
-		this(range, platform, 3, 45);
-	}
-	
-	/**
+	 * Take a set of range readings. The RangeReadings object defines the
+	 * number of readings and their angles to the robot's heading.
 	 * 
-	 * @param rangeFinder
-	 * @param platform 
-	 * @param samples The number of range samples to retrieve when getRangeValues() is called
-	 * @param angleSeparation The angle between samples. Will center on 0 degrees (forward)
-	 */
-	public RangeScanner(RangeFinder rangeFinder, RotationPlatform rotator, int samples, int angleSeparation) {
-		
-	}
-	
-	public int [] getRangeValues() {
-		// TODO: Implement the control logic of RotationPlatform for this
-		return new int[0];
-	}
-	
+	 * @return the range readings
+	 */ 
+	public RangeReadings getRangeValues();
 }
