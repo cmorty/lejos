@@ -5,7 +5,7 @@ public class BetaMath
 	private static final double ln2 = 0.693147180559945309417232;
 	
 	/**
-	 * Square root.
+	 * Computes square-root of x.
 	 */
 	public static double sqrtD(double x)
 	{
@@ -25,20 +25,23 @@ public class BetaMath
 			factor = 0x1p-33;
 		}
 		
-		// magic constant invsqrt
+		// magic constant function for good approximation of 1/sqrt(x)
 		// according to http://www.lomont.org/Math/Papers/2003/InvSqrt.pdf
 		// also look at http://en.wikipedia.org/wiki/Fast_inverse_square_root
 		double isqrt = Double.longBitsToDouble(0x5fe6ec85e7de30daL - (Double.doubleToRawLongBits(x) >> 1));
+		
+		// 3 newton steps for 1/sqrt(x)
 		double xhalf = 0.5 * x;
 		isqrt = isqrt * (1.5 - xhalf * isqrt * isqrt);
 		isqrt = isqrt * (1.5 - xhalf * isqrt * isqrt);
 		isqrt = isqrt * (1.5 - xhalf * isqrt * isqrt);
 		
+		// 1 newton step for sqrt(x)
 		return factor * (x * isqrt + 1.0 / isqrt);
 	}
 	
 	/**
-	 * Square root.
+	 * Computes square-root of x.
 	 */
 	public static float sqrtF(float x)
 	{
@@ -58,39 +61,43 @@ public class BetaMath
 			factor = 0x1p-17f;
 		}
 		
-		// magic constant invsqrt
+		// magic constant function for good approximation of 1/sqrt(x)
 		// according to http://www.lomont.org/Math/Papers/2003/InvSqrt.pdf
 		// also look at http://en.wikipedia.org/wiki/Fast_inverse_square_root
 		float isqrt = Float.intBitsToFloat(0x5f375a86 - (Float.floatToRawIntBits(x) >> 1));
+
+		// 2 newton steps for 1/sqrt(x)
 		float xhalf = 0.5f * x;
 		isqrt = isqrt * (1.5f - xhalf * isqrt * isqrt);
 		isqrt = isqrt * (1.5f - xhalf * isqrt * isqrt);
-		//isqrt = isqrt * (1.5 - xhalf * isqrt * isqrt);
 		
+		// 1 newton step for sqrt(x)
 		return factor * (x * isqrt + 1.0f / isqrt);
 	}
 	
 	/**
-	 * Natural log function. Returns log(a) to base E Replaced with an algorithm
-	 * that does not use exponents and so works with large arguments.
+	 * Natural log function. Returns log(a) to base E.
 	 * 
 	 * @see <a
-	 *      href="http://www.geocities.com/zabrodskyvlada/aat/a_contents.html">here</a>
+	 *      href="">here</a>
 	 */
 	public static double log(double x)
 	{
-		if (x <= 0)
-			return Double.NaN;
+		// also catches NaN
+		if (!(x > 0))
+			return (x == 0) ? Double.NEGATIVE_INFINITY : Double.NaN;
 		if (x == Double.POSITIVE_INFINITY)
 			return Double.POSITIVE_INFINITY;
 	
+		// Algorithm has been derived from http://www.geocities.com/zabrodskyvlada/aat/a_contents.html 
+
 		final double[] LOGTABLE = {
 			1.0/3, 1.0/5, 1.0/7, 1.0/9,
 			1.0/11, 1.0/13, 1.0/15, 1.0/17, 1.0/19, 
 			1.0/21, 1.0/23, 1.0/25, 1.0/27, 1.0/29, 
 			1.0/31, 1.0/33, 1.0/35, 1.0/37, 1.0/39, 
 		};
-
+		
 		int m;
 		if (x >= Double.MIN_NORMAL)
 			m = -1023;
@@ -110,7 +117,7 @@ public class BetaMath
 		double zetasup = zeta * zeta;		
 		double ln = 1;
 		
-		//knows ranges:
+		//known ranges:
 		//	1 <= $x < 2
 		//  0 <= $zeta < 1/3
 		//  0 <= $zetasup < 1/9
@@ -129,6 +136,9 @@ public class BetaMath
 
 	public static String dToStr(double x)
 	{		
+		if (x != x)
+			return "NaN";
+		
 		StringBuilder sb = new StringBuilder();
 		
 		//we need to detect -0.0 to be compatible with JDK
@@ -137,13 +147,18 @@ public class BetaMath
 			sb.append("-");
 			x = -x;
 		}
+		
 		if (x == 0)
 		{
 			sb.append("0.0");
 			return sb.toString();
 		}
+		if (x == Double.POSITIVE_INFINITY)
+		{
+			sb.append("Infinity");
+			return sb.toString();
+		}
 		
-
 		int exp = 0;
 		if (x >= 10)
 		{
@@ -202,30 +217,56 @@ public class BetaMath
 	public static String dToStr2(double x)
 	{
 		final int D_TO_STR_MAXEXP = 256; 
-		final int D_TO_STR_MAXIDX1 = 17;
-		final int D_TO_STR_MAXIDX2 = 26;
-		final int D_TO_STR_HALF = 9; 
+		final int D_TO_STR_IDXPART1 = 0;
+		final int D_TO_STR_IDXPART2 = 9;
+		final int D_TO_STR_IDXPART3 = 18;
+		final int D_TO_STR_PARTLEN  = 9;
 		final double[] D_TO_STR_POWERS = {
 			1E+256, 1E+128, 1E+64, 1E+32, 1E+16, 1E+8, 1E+4, 1E+2, 1E+1,
-			1E-1, 1E-2, 1E-4, 1E-8, 1E-16, 1E-32, 1E-64, 1E-128, 1E-256,
+			1E-256, 1E-128, 1E-64, 1E-32, 1E-16, 1E-8, 1E-4, 1E-2, 1E-1,
 			1E-255, 1E-127, 1E-63, 1E-31, 1E-15, 1E-7, 1E-3, 1E-1, 1E-0,
 		};
 		
-		int exp = 0;
-		for (int i = 0; i < D_TO_STR_HALF; i++)
+		if (x != x)
+			return "NaN";
+		
+		StringBuilder sb = new StringBuilder();
+		
+		//we need to detect -0.0 to be compatible with JDK
+		if ((Double.doubleToRawLongBits(x) & 0x8000000000000000L) != 0)
 		{
-			if (x >= D_TO_STR_POWERS[i])
+			sb.append("-");
+			x = -x;
+		}
+		
+		if (x == 0)
+		{
+			sb.append("0.0");
+			return sb.toString();
+		}
+		if (x == Double.POSITIVE_INFINITY)
+		{
+			sb.append("Infinity");
+			return sb.toString();
+		}
+		
+		int exp = 0;
+		double[] powers = D_TO_STR_POWERS;
+
+		for (int i = 0; i < D_TO_STR_PARTLEN; i++)
+		{
+			if (x >= powers[D_TO_STR_IDXPART1 + i])
 			{
 				exp += D_TO_STR_MAXEXP >> i;
-				x *= D_TO_STR_POWERS[D_TO_STR_MAXIDX1 - i];
+				x *= powers[D_TO_STR_IDXPART2 + i];
 			}
 		}
-		for (int i = 0; i < D_TO_STR_HALF; i++)
+		for (int i = 0; i < D_TO_STR_PARTLEN; i++)
 		{
-			if (x < D_TO_STR_POWERS[D_TO_STR_MAXIDX2 - i])
+			if (x < powers[D_TO_STR_IDXPART3 - i])
 			{
 				exp -= D_TO_STR_MAXEXP >> i;
-				x *= D_TO_STR_POWERS[i];
+				x *= powers[D_TO_STR_IDXPART1 + i];
 			}
 		}
 		
@@ -233,7 +274,7 @@ public class BetaMath
 		// unfortunatly, the mantisse of subnormal values gets very short
 		// TODO automatically adjust digit count for subnormal values  
 		
-		long tmp = 1000000000000000L;		
+		long tmp = 1000000000000000L;
 		long digits = (long)(x * 1E15 + 0.5);
 		
 		while (digits >= tmp)
@@ -242,8 +283,6 @@ public class BetaMath
 			digits /= 10;
 		}
 		
-		StringBuilder sb = new StringBuilder();
-
 		int d = (int)(digits / (tmp /= 10));
 		sb.append((char)('0' + d));
 		digits -= tmp * d;
