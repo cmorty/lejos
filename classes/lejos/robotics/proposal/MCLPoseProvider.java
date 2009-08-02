@@ -1,8 +1,8 @@
 package lejos.robotics.proposal;
 
 import lejos.robotics.Pose;
+import lejos.robotics.localization.MCLParticleSet;
 import lejos.robotics.localization.Move;
-import lejos.robotics.localization.ParticleSet;
 import lejos.robotics.mapping.RangeMap;
 import lejos.robotics.RangeReadings;
 import lejos.robotics.RangeScanner;
@@ -11,18 +11,19 @@ import lejos.robotics.proposal.PilotListener;
 import lejos.robotics.proposal.PoseProvider;
 
 public class MCLPoseProvider implements PoseProvider, PilotListener {
-	private ParticleSet particles;
+	private MCLParticleSet particles;
 	private RangeScanner scanner;
 	private RangeMap map;
 	
-	public MCLPoseProvider(RotatePilot pilot, RangeScanner scanner, RangeMap map, int numParticles) {
-		particles = new ParticleSet(map, numParticles);
+	public MCLPoseProvider(RotatePilot pilot, RangeScanner scanner, 
+		                   RangeMap map, int numParticles, int border) {
+		particles = new MCLParticleSet(map, numParticles, border);
 		this.scanner = scanner;
 		this.map = map;
 		pilot.addPilotListener(this);
 	}
 	
-	public ParticleSet getParticles() {
+	public MCLParticleSet getParticles() {
 		return particles;
 	}
 
@@ -30,8 +31,7 @@ public class MCLPoseProvider implements PoseProvider, PilotListener {
 	}
 
 	public void movementStopped(Movement event, Object p) {
-		Move mv = new Move(event.getAngleTurned(), event.getDistanceTraveled());
-		particles.applyMove(mv);
+		particles.applyMove(event);
 	}
 
 	public Pose getPose() {
