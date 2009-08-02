@@ -30,7 +30,6 @@ public class MCLFrame extends RemoteFrame{
   public static final float Y_OFFSET = 56f;
   private static final float ARROW_LENGTH = 10f;
 
-  
   // Commands sent to the NXT
   private static final byte GET_PARTICLES = 0;
   private static final byte READINGS = 1;
@@ -217,7 +216,8 @@ public class MCLFrame extends RemoteFrame{
       dos.flush();
       int closest = dis.readInt();
       for(int i=0;i<3;i++) {
-        System.out.println("Reading " + i + " = " + dis.readFloat() + "cm");
+    	float reading = dis.readFloat();
+        System.out.println("Reading " + i + " = " + (reading < 0 ? "Invalid" : reading));
       }
       System.out.println("Weight = " + dis.readFloat());
       return closest;

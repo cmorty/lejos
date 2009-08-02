@@ -80,26 +80,16 @@ public abstract class RemoteFrame extends JPanel implements ActionListener, Mous
    * Connect to the NXT
    */
   protected void connect() {
-    try {
-      NXTComm nxtComm = NXTCommFactory.createNXTComm(NXTCommFactory.BLUETOOTH);
+    NXTConnector conn = new NXTConnector();
 
-      NXTInfo[] nxtInfo = nxtComm.search(nxtName, NXTCommFactory.BLUETOOTH);
-
-      if (nxtInfo.length == 0) {
-        error("NO NXT found");
-      }
-
-      if (!nxtComm.open(nxtInfo[0])) {
-        error("Failed to open NXT");
-      }
-
-      dis = new DataInputStream(nxtComm.getInputStream());
-      dos = new DataOutputStream(nxtComm.getOutputStream());
-      System.out.println("Connected");
-
-    } catch (NXTCommException e) {
-      error("NXTComm Exception: " + e.getMessage());
+    if (!conn.connectTo(nxtName, null, NXTCommFactory.BLUETOOTH)) {
+      error("NO NXT found");
     }
+  
+    System.out.println("Connected to " + nxtName);
+  
+    dis = conn.getDataIn();
+    dos = conn.getDataOut();
   }
   
   /**
