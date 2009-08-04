@@ -8,10 +8,11 @@
   		<mkdir dir="lejos/robotics/localization"/>
   		<copy todir=".">
   			<fileset dir="../classes">
-  				<include name="lejos/robotics/localization/LineMap.java"/>
   				<include name="lejos/robotics/localization/Move.java"/>
   				<include name="lejos/robotics/localization/Particle.java"/>
   				<include name="lejos/robotics/localization/ParticleSet.java"/>
+  				<include name="lejos/robotics/localization/MCLParticle.java"/>
+  				<include name="lejos/robotics/localization/MCLParticleSet.java"/>
   				<include name="lejos/robotics/localization/package.html"/>
   			</fileset>
   		</copy>
@@ -93,6 +94,14 @@
   			<fileset dir="../classes">
   				<include name="lejos/robotics/mapping/*.java"/>
   				<include name="lejos/robotics/mapping/package.html"/>
+  			</fileset>
+  		</copy>
+  		<mkdir dir="lejos/robotics/proposal"/>
+  		<copy todir=".">
+  			<fileset dir="../classes">
+  				<include name="lejos/robotics/proposal/*.java"/>
+  				<exclude name="lejos/robotics/proposal/GPSPoseProvider.java"/>
+  				<include name="lejos/robotics/proposal/package.html"/>
   			</fileset>
   		</copy>
   	</target>
