@@ -14,7 +14,7 @@ public class Movement {
 	public enum MovementType {ODOMETRY_TRAVEL, ODOMETRY_ROTATE, ODOMETRY_ARC};
 	protected float distanceTraveled, angleTurned;
 	protected MovementType movementType;
-	protected float arcRadius;
+	protected float arcRadius = Float.POSITIVE_INFINITY;
 	
 	/**
 	 * Create a movement object to record a movement made by a pilot
@@ -27,7 +27,7 @@ public class Movement {
 		this.movementType = type;
 		this.distanceTraveled = distance;
 		this.angleTurned = angle;
-		if (type == MovementType.ODOMETRY_ARC) {
+		if (Math.abs(angle) > 0.5) {
 			double turnRad = Math.toRadians(angle);
 			arcRadius = (float) ((double) distance / turnRad);
 		}
