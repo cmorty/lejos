@@ -43,7 +43,7 @@ public class MCLFrame extends RemoteFrame{
   // Array of lines for the map
   private Line[] lines;
   private LineMap map; // the map
-  private ParticleSet particles; // the particle set
+  private MCLParticleSet particles; // the particle set
   private RangeReadings readings = new RangeReadings(ParticleSet.numReadings);   
   private int closest = -1;
   private int numParticles;
@@ -69,7 +69,7 @@ public class MCLFrame extends RemoteFrame{
   private void paintParticles(Graphics2D g2d) {
     g2d.setColor(Color.red);
     for (int i = 0; i < numParticles; i++) {
-      Particle part = particles.getParticle(i);
+      MCLParticle part = particles.getParticle(i);
       if (part != null) {
         if (i == closest) g2d.setColor(Color.green);
         paintPose(g2d, new Pose(part.getPose().getX(), part.getPose().getY(), part.getPose().getHeading()));
@@ -150,7 +150,7 @@ public class MCLFrame extends RemoteFrame{
     // Create a map of the environment
     map = new LineMap(lines, bound);
     this.numParticles = numParticles;
-    particles = new ParticleSet(map,numParticles);
+    particles = new MCLParticleSet(map,numParticles, 10);
 
     // Create some buttons
     readingsButton = createButton("Readings");
