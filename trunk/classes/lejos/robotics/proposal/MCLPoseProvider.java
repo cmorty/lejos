@@ -13,6 +13,7 @@ public class MCLPoseProvider implements PoseProvider, PilotListener {
 	private MCLParticleSet particles;
 	private RangeScanner scanner;
 	private RangeMap map;
+	private boolean readingsRequired = true;
 	
 	public MCLPoseProvider(RotatePilot pilot, RangeScanner scanner, 
 		                   RangeMap map, int numParticles, int border) {
@@ -30,14 +31,18 @@ public class MCLPoseProvider implements PoseProvider, PilotListener {
 	}
 
 	public void movementStopped(Movement event, Object p) {
+		readingsRequired = true;
 		particles.applyMove(event);
 	}
 
 	public Pose getPose() {
-		RangeReadings rr = scanner.getRangeValues();
-		if (!rr.incomplete()) {
-			particles.calculateWeights(rr, map);
-			particles.resample(); // Cannot indicate robot is lost
+		if (readingsRequired) {
+			RangeReadings rr = scanner.getRangeValues();
+			readingsRequired = false;
+			if (!rr.incomplete()) {
+				particles.calculateWeights(rr, map);
+				particles.resample(); // Cannot indicate robot is lost
+			}
 		}
 		return particles.getEstimatedPose();
 	}
