@@ -7,24 +7,22 @@ import lejos.robotics.*;
 import lejos.robotics.mapping.RangeMap;
 import lejos.robotics.proposal.Movement;
 
+/*
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ */
+
 /**
  * Represents a particle set for the particle filtering algorithm.
  * 
  * @author Lawrie Griffiths
  * 
- * <br/><br/>WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
- * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
  */
 public class MCLParticleSet {
-  // Constants
-  
+  // Constants 
   private static final float BIG_FLOAT = 10000f;
   
   // Static variables
-  // These global parameters apply to all particle sets and all particles
-  // They are not set per particle or per particle set as this would
-  // increase the size of a particle object which needs to be as small
-  // as possible on the NXT
   public static int maxIterations = 1000;
   
   // Instance variables
@@ -36,6 +34,7 @@ public class MCLParticleSet {
   private RangeMap map;
   private float estimatedX, estimatedY, estimatedAngle;
   private float minX, maxX, minY, maxY;
+  private boolean validEstimate;
   private float maxWeight;
   private int border = 10;	// The minimum distance from the edge of the map
   							// to generate a particle.
@@ -68,7 +67,7 @@ public class MCLParticleSet {
 
     // Generate x, y values in bounding rectangle
     for (;;) { // infinite loop that we break out of when we have
-      // generated a particle within the mapped area
+               // generated a particle within the mapped area
       x = innerRect.x + (((float) Math.random()) * innerRect.width);
       y = innerRect.y + (((float) Math.random()) * innerRect.height);
 
@@ -118,19 +117,18 @@ public class MCLParticleSet {
     // set of particles.
     int count = 0;
     int iterations = 0;
-    resetEstimate();
 
     while (count < numParticles) {
       iterations++;
       if (iterations >= maxIterations) {
         System.out.println("Lost: count = " + count);
-        if (count > 0) { // Set the rest to the first one
+        if (count > 0) { // Duplicate the ones we have so far
           for (int i = count; i < numParticles; i++) {
-            particles[i] = new MCLParticle(particles[0].getPose());
-            particles[i].setWeight(0);
+            particles[i] = new MCLParticle(particles[i % count].getPose());
+            particles[i].setWeight(particles[i % count].getWeight());
           }
           return false;
-        } else { // Completely lost
+        } else { // Completely lost - generate a new set of particles
           for (int i = 0; i < numParticles; i++) {
             particles[i] = generateParticle();
           }
@@ -146,25 +144,43 @@ public class MCLParticleSet {
           float y = p.getY();
           float angle = p.getHeading();
 
-          estimatedX += x;
-          estimatedY += y;
-          estimatedAngle += angle;
-
-          if (x < minX) minX = x;
-          if (x > maxX) maxX = x;
-          if (y < minY) minY = y;
-          if (y > maxY) maxY = y;
-
           // Create a new instance of the particle and set its weight
           particles[count] = new MCLParticle(new Pose(x, y, angle));
           particles[count++].setWeight(oldParticles[i].getWeight());
         }
       }
     }
-    estimatedX /= numParticles;
-    estimatedY /= numParticles;
-    estimatedAngle /= numParticles;
+    estimatePose();
     return false;
+  }
+  
+  /**
+   * Estimate pose from weighted average of the particles
+   */
+  private void estimatePose() {
+    resetEstimate();
+    float totalWeights = 0;
+    
+    for (int i = 0; i < numParticles; i++) {
+	  Pose p = particles[i].getPose();
+	  float x = p.getX();
+      float y = p.getY();
+      float weight = particles[i].getWeight();
+	  
+      estimatedX += (x * weight);
+      estimatedY += (y * weight);
+      estimatedAngle += (p.getHeading() * weight);
+      totalWeights += weight;
+
+      if (x < minX) minX = x;
+      if (x > maxX) maxX = x;
+      if (y < minY) minY = y;
+      if (y > maxY) maxY = y;
+    }  
+    estimatedX /= totalWeights;
+    estimatedY /= totalWeights;
+    estimatedAngle /= totalWeights;
+    validEstimate = true;
   }
 
   /**
@@ -193,11 +209,11 @@ public class MCLParticleSet {
    * @param move the move to apply
    */
   public void applyMove(Movement move) {
-    resetEstimate();
 	maxWeight = 0f;
     for (int i = 0; i < numParticles; i++) {
       particles[i].applyMove(move, distanceNoiseFactor, angleNoiseFactor);
     }
+    estimatePose();
   }
 
   /**
@@ -257,6 +273,20 @@ public class MCLParticleSet {
     minY = bound.y + bound.height;
     maxX = bound.x;
     maxY = bound.y;
+    validEstimate = false;
+  }
+  
+  /**
+   * Return the minimum rectangle enclosing all the particles
+   * 
+   * @return the rectangle
+   */
+  public Rectangle getErrorRect() {
+	  if (!validEstimate) return map.getBoundingRect();
+	  else {
+		  return new Rectangle((int) minX, (int) minY, 
+				               (int) (maxX-minX), (int) (maxY-minY));
+	  }
   }
   
   /**
@@ -269,9 +299,9 @@ public class MCLParticleSet {
   }
   
   /**
-   * Set border
+   * Set border where no particles should be generated
    * 
-   * @param border the border where no particles should be generated
+   * @param border the border 
    */
   public void setBorder(int border) {
     this.border = border;
