@@ -33,7 +33,10 @@ public class SimplePathFinder implements PathFinder {
 	public Pose goTo(Point destination) {
 		Pose pose = poseProvider.getPose();
 		if (pilot instanceof RotatePilot) { // optimize for RotatePilot
-			((RotatePilot) pilot).rotate(pose.angleTo(destination) - pose.getHeading());
+		    float turnAngle = pose.angleTo(destination) - pose.getHeading();
+		    while (turnAngle < -180)turnAngle += 360;
+		    while (turnAngle > 180) turnAngle -= 360;
+			((RotatePilot) pilot).rotate(turnAngle);
 			pilot.travel(pose.distanceTo(destination));			
 		} else {
 			//TODO: Calculate arc of minimum radius needed to point to the
