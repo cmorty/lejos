@@ -1,5 +1,6 @@
 package lejos.robotics.proposal;
 
+import lejos.geom.Point;
 import lejos.robotics.Pose;
 
 /**
@@ -68,5 +69,14 @@ public class DeadReckonerPoseProvider implements PilotListener, PoseProvider {
             a += 360;
         }
         return a;
+    }
+    
+    public void setPosition(Point p) {
+    	x = p.x;
+    	y = p.y;
+    }
+    
+    void setHeading(float heading) {
+    	this.heading = heading;
     }
 }
