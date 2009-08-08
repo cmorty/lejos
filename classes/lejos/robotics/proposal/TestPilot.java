@@ -693,7 +693,7 @@ public class TestPilot implements ArcRotatePilot {
 	public void endMovement() {
 		float d = getTravelDistance() - _distance0;
 		float a = getAngle() - _angle0;
-		lastMovement = new Movement(MovementType.ODOMETRY_TRAVEL, d, a);		
+		lastMovement = new Movement(MovementType.TRAVEL, d, a);		
 		if (d != 0 || a != 0) callListeners();
 
 		prepareMovement();

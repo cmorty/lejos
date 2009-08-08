@@ -11,7 +11,7 @@ public class Movement {
 	 * The type of  movement made in sufficient detail to allow errors
 	 * in the movement to be modelled.
 	 */
-	public enum MovementType {ODOMETRY_TRAVEL, ODOMETRY_ROTATE, ODOMETRY_ARC};
+	public enum MovementType {TRAVEL, ROTATE, ARC};
 	protected float distanceTraveled, angleTurned;
 	protected MovementType movementType;
 	protected float arcRadius = Float.POSITIVE_INFINITY;
