@@ -86,7 +86,7 @@ bitBlt([BIIII[BIIIIIII)V
 getSystemFont()[B
 
 #lejos.nxt.Battery
-getVoltageMilliVolt()I
+getBatteryStatus()I
 
 #lejos.nxt.Button
 getButtons()I
