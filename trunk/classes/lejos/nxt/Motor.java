@@ -1,6 +1,7 @@
 package lejos.nxt;
 
 import lejos.robotics.TachoMotor;
+import lejos.util.Delay;
 
 /**
  * Abstraction for a NXT motor. Three instances of <code>Motor</code>
@@ -207,8 +208,7 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
             if(_regulate)
             {
                // give it some time to stop, it may depend on power used however, for now 20 ms is working
-               try{Thread.sleep( 20);}
-               catch(InterruptedException e){}
+               Delay.msDelay(20);
             }
             return;
          }
@@ -368,7 +368,7 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
                   setPower(power);
                }// end speed regulation 
             }// end synchronized block
-         try {sleep(4);} catch(InterruptedException ie ) {}
+         Delay.msDelay(4);
          }	// end keep going loop
       }// end run
       /**
@@ -385,7 +385,7 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
          int t1 = 0; // time since change in tacho count
          int error = 0; 
          int pwr = _brakePower;// local power 
-         while ( k < 40)// exit within +-1  for 40 ms 
+         while ( k < 40)// exit within +-1  for 40 ms
          {
             error = _limitAngle - getTachoCount();
             if (error == e0)  // no change in tacho count
@@ -422,7 +422,7 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
                _port.controlMotor (0, STOP);
                k++;
             } 
-            try { Thread.sleep(1);} catch(InterruptedException ie) {};
+            Delay.msDelay(1);
          }
          _rotating = false;
          setPower(calcPower(_speed));
@@ -439,8 +439,7 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
          while(turning)
          {
             _port.controlMotor(0,STOP);
-            try{Thread.sleep(10);}
-            catch(InterruptedException w){}
+            Delay.msDelay(10);
             a = getTachoCount();
             turning = a != a0; ;
             a0 = a;        

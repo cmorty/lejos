@@ -7,6 +7,7 @@ import javax.bluetooth.DiscoveryListener;
 import javax.bluetooth.RemoteDevice;
 
 import lejos.nxt.SystemSettings;
+import lejos.util.Delay;
 
 /**
  * Provides Bluetooth communications.
@@ -618,7 +619,7 @@ public class Bluetooth extends NXTCommDevice
                 return;
             }
 			// Need to have a minimum period of no output to the BC4
-			try{Thread.sleep(TO_SWITCH_WAIT);}catch(Exception e){}
+			Delay.msDelay(TO_SWITCH_WAIT);
 			btSetArmCmdMode(MO_CMD);
 			// If there is any input data left we could be in trouble. Try and
 			// flush everything.

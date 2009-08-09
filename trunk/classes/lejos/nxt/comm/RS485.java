@@ -1,5 +1,6 @@
 package lejos.nxt.comm;
 import lejos.nxt.*;
+import lejos.util.Delay;
 
 /**
  * Low-level RS485/BitBus Network implementation
@@ -157,11 +158,11 @@ public class RS485 extends NXTCommDevice {
                         // Reset the network
                         for(int i = 0; i < REPLY_RETRY; i++)
                         {
-                            try{Thread.sleep(FRAME_TIMEOUT);} catch(Exception e){}
+                            Delay.msDelay(FRAME_TIMEOUT);
                             sendControl(BB_BROADCAST, BB_DISC, (byte)0);
                         }
                         // Give things time to settle
-                        try{Thread.sleep(FRAME_TIMEOUT*REPLY_RETRY*REQUEST_RETRY);} catch(Exception e){}
+                        Delay.msDelay(FRAME_TIMEOUT*REPLY_RETRY*REQUEST_RETRY);
                     }
                     // drop any old frames
                     while(recvFrame() > 0)
@@ -713,7 +714,7 @@ public class RS485 extends NXTCommDevice {
                 switch(devMode)
                 {
                     case DS_DISABLED:
-                        try{Thread.sleep(1);} catch(Exception e){}
+                        Delay.msDelay(1);
                         break;
                     case DS_MASTER:
                         // We need to poll each of the connected devices
@@ -944,7 +945,7 @@ public class RS485 extends NXTCommDevice {
 
         /**
          * Wait for an incomming connection, or for the request to timeout.
-         * @param timeout Time in ms to wait for the connection to be made
+         * @param timeout Time in msDelay to wait for the connection to be made
          * @param mode I/O mode to be used for the accpeted connection.
          * @return A NXTConnection object for the new connection or null if error.
          */

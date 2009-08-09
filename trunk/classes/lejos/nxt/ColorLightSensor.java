@@ -2,6 +2,7 @@ package lejos.nxt;
 
 import lejos.robotics.LightLampDetector;
 import lejos.robotics.ColorDetector;
+import lejos.util.Delay;
 
 /*
  * DEV NOTES: (Andy) I have probably not implemented this in the correct way, it will 
@@ -109,31 +110,6 @@ public class ColorLightSensor implements LightLampDetector, ColorDetector, Senso
         checkSensorPresent();
     }
 
-    /**
-     * Wait for the specified number of milliseconds
-     * @param ms number of ms to delay
-     */
-    protected void delayMS(int ms)
-    {
-        try {
-            Thread.sleep(ms);
-        } catch (Exception e){}
-
-    }
-
-
-    /**
-     * wait for the specified number of microseconds
-     * @param us number of us to delay for
-     */
-    protected void delayUS(int us)
-    {
-        long end = System.nanoTime() + us*1000;
-        while (System.nanoTime() < end)
-        {
-
-        }
-    }
 
     /**
      * initialize the raw and processed RGB values
@@ -209,16 +185,16 @@ public class ColorLightSensor implements LightLampDetector, ColorDetector, Senso
         setData(1);
         port.setSensorPinMode(CLOCK, SensorPort.SP_MODE_OUTPUT);
         port.setSensorPinMode(DATA, SensorPort.SP_MODE_OUTPUT);
-        delayMS(1);
+        Delay.msDelay(1);
         // Take clock down
         setClock(0);
-        delayMS(1);
+        Delay.msDelay(1);
         // Raise it
         setClock(1);
-        delayMS(1);
+        Delay.msDelay(1);
         // Take clock down for 100ms
         setClock(0);
-        delayMS(100);
+        Delay.msDelay(100);
     }
 
     /**
@@ -235,11 +211,11 @@ public class ColorLightSensor implements LightLampDetector, ColorDetector, Senso
             setClock(1);
             // Set the data
             setData(mode & 1);
-            delayUS(30);
+            Delay.usDelay(30);
             // Drop the clock
             setClock(0);
             mode >>= 1;
-            delayUS(30);
+            Delay.usDelay(30);
         }
     }
 
@@ -255,12 +231,12 @@ public class ColorLightSensor implements LightLampDetector, ColorDetector, Senso
         for(int i = 0; i < 8; i++)
         {
             setClock(1);
-            delayUS(4);
+            Delay.usDelay(4);
             val >>= 1;
             if (getData())
                 val |= 0x80;
             setClock(0);
-            delayUS(4);
+            Delay.usDelay(4);
         }
         return val;
     }
@@ -333,7 +309,7 @@ public class ColorLightSensor implements LightLampDetector, ColorDetector, Senso
         int crc = (short)(readByte() << 8);
         crc += (short)readByte();
         port.setSensorPinMode(SensorPort.SP_DIGI1, SensorPort.SP_MODE_ADC);
-        delayMS(1);
+        Delay.msDelay(1);
         return crc == crcVal;
     }
 
@@ -377,7 +353,7 @@ public class ColorLightSensor implements LightLampDetector, ColorDetector, Senso
     protected boolean checkSensor()
     {
         port.setSensorPinMode(CLOCK, SensorPort.SP_MODE_INPUT);
-        delayMS(2);
+        Delay.msDelay(2);
         if (port.getSensorPin(CLOCK) != 0)
             initialized = false;
         return initialized;
