@@ -3,6 +3,7 @@ package lejos.nxt.addon;
 import lejos.nxt.SensorConstants;
 import lejos.nxt.LegacySensorPort;
 import lejos.robotics.Tachometer;
+import lejos.util.Delay;
 
 /*
  * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
@@ -119,7 +120,7 @@ public class RCXRotationSensor extends Thread implements Tachometer, SensorConst
                 }
                 cur1 = cur2;
                 
-                try {Thread.sleep(UPDATE_TIME);}catch(Exception e){}
+                Delay.msDelay(UPDATE_TIME);
             }
         }
     }

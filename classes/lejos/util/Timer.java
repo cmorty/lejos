@@ -36,14 +36,7 @@ public class Timer
 		   }
 		   if (r)
 		   {
-		       try 
-		       {
-		         Thread.sleep (d);
-		       } 
-		       catch (InterruptedException e) 
-		       {
-			 // ignore      
-		       }
+               Delay.msDelay(d);
 		       myListener.timedOut();
 		   } else {
 		       yield();

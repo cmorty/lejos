@@ -1,6 +1,7 @@
 package lejos.nxt.addon;
       
-import lejos.nxt.BasicMotorPort; 
+import lejos.nxt.BasicMotorPort;
+import lejos.util.Delay;
 
 /*
  * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
@@ -53,9 +54,7 @@ public class RCXRemoteMotorPort implements BasicMotorPort {
 	}
 	
 	private void sleep() {
-		try {
-			Thread.sleep(50);
-		} catch (InterruptedException e) {}
+        Delay.msDelay(50);
 	}
 	
 	public void setPWMMode(int mode) {

@@ -3,6 +3,7 @@ package lejos.nxt.comm;
 import java.io.*;
 import lejos.nxt.*;
 import java.util.*;
+import lejos.util.Delay;
 
 /**
  * 
@@ -319,7 +320,7 @@ public class LCP {
 			byte txLen = cmd[3];
 			byte rxLen = cmd[4];
 			SensorPort.i2cEnableById(port, I2CPort.LEGO_MODE);
-			try {Thread.sleep(100);} catch(InterruptedException ie) {}
+			Delay.msDelay(100);
 			for(int i=0;i<txLen-2;i++) {
 				i2cBuffer[i] = cmd[7+i];
 			}
@@ -327,7 +328,7 @@ public class LCP {
 			while (SensorPort.i2cBusyById(port) != 0) {
 				Thread.yield();
 			}
-			try {Thread.sleep(100);} catch(InterruptedException ie) {}
+			Delay.msDelay(100);
 		}
 		
 		// LSREAD

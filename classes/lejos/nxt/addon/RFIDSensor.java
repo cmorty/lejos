@@ -1,6 +1,7 @@
 package lejos.nxt.addon;
 import lejos.nxt.I2CPort;
 import lejos.nxt.I2CSensor;
+import lejos.util.Delay;
 /**
  * Support for the Codatex RFID Sensor.
  * See www.codatex,com for details.
@@ -88,36 +89,20 @@ public class RFIDSensor extends I2CSensor
     {
         int d = target - now();
         if (d > 0)
-            delay(d);
-    }
-
-    /**
-     * Helper function. delay n ms.
-     *
-     */
-    private void delay(int n)
-    {
-        try
-        {
-            Thread.sleep(n);
-        }
-        catch(Exception e)
-        {
-
-        }
+            Delay.msDelay(d);
     }
 
 
     /**
      * The sensor will go into a power save mode after a short time. This means
      * that we will need to wake it up before issuing commands. Includes
-     * the required delay.
+     * the required Delay.msDelay.
      */
     public void wakeUp()
     {
         // Simply send a dummy command to the device
         sendData(0, (byte)0);
-        delay(DELAY_WAKEUP);
+        Delay.msDelay(DELAY_WAKEUP);
     }
 
     /**
@@ -165,7 +150,7 @@ public class RFIDSensor extends I2CSensor
         wakeUp();
         // must be in boot loader mode
         startBootLoader();
-        delay(DELAY_FIRMWARE);
+        Delay.msDelay(DELAY_FIRMWARE);
         byte [] ret = new byte[LEN_SERIALNO];
         if (getData(REG_SERIALNO, ret, ret.length) < 0)
             ret = null;
@@ -236,13 +221,13 @@ public class RFIDSensor extends I2CSensor
             if (getStatus() <= 0)
             {
                 startContinuousRead();
-                delay(DELAY_ACQUIRE);
+                Delay.msDelay(DELAY_ACQUIRE);
             }
         }
         else
         {
             startSingleRead();
-            delay(DELAY_ACQUIRE);
+            Delay.msDelay(DELAY_ACQUIRE);
         }
         // make a note of when it is safe to do another read.
         nextRead = now() + DELAY_READ;

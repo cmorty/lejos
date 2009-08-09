@@ -3,6 +3,7 @@ package lejos.nxt.comm;
 import lejos.nxt.*;
 import java.io.*;
 import javax.microedition.io.*;
+import lejos.util.Delay;
 
 
 /**
@@ -468,7 +469,7 @@ ioloop: while (offset < len)
 		{
             flushBuffer(false);
 			read(null, inBuf.length, false);
-			try{Thread.sleep(1);} catch (Exception e) {}
+			Delay.msDelay(1);
 		}
         //RConsole.println("Closing 2 cnt is " + outCnt);
         //LCD.drawInt(3, 8, 0, 6);
@@ -477,7 +478,7 @@ ioloop: while (offset < len)
 		{
             flushBuffer(false);
 			read(null, inBuf.length, false);
-			try{Thread.sleep(1);} catch (Exception e) {}
+			Delay.msDelay(1);
 		}
         synchronized(this)
         {

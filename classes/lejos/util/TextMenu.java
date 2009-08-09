@@ -173,7 +173,7 @@ public class TextMenu
 				Thread.yield();
 			}
 			if (_quit) return -2; // quit by another thread
-			try {Thread.sleep(20);} catch (InterruptedException ie) {} // wait to stabilize
+            Delay.msDelay(20);
 			button=Button.readButtons();
 			
 			if(button == 1) return _selectedIndex;
