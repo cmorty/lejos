@@ -61,7 +61,7 @@ public interface ArcPilot extends OneDimensionalPilot {
 	 * @param angle The sign of the angle determines the direction of robot motion. Positive drives the robot forward, negative drives it backward.
 	 * @see #travelArc(float, float)
 	 */
-	 public Movement arc(float radius, int angle);
+	 public Movement arc(float radius, float angle);
 
 	/**
 	 * Moves the NXT robot along an arc with a specified radius and  angle,
@@ -88,7 +88,7 @@ public interface ArcPilot extends OneDimensionalPilot {
 	 *          updatePostion() when the robot has stopped. Otherwise, the robot position is lost.
 	 * @see #travelArc(float, float, boolean)
 	 */
-	public Movement arc(float radius, int angle, boolean immediateReturn);
+	public Movement arc(float radius, float angle, boolean immediateReturn);
 
 	/**
 	 * Moves the NXT robot a specified distance along an arc mof specified radius,
@@ -112,7 +112,7 @@ public interface ArcPilot extends OneDimensionalPilot {
 	 * @param radius of the arc path. If positive, the left side of the robot is on the inside of the turn. If negative, the left
 	 *          side of the robot is on the outside of the turn.
 	 * @param distance to travel, in same units as <code>radius</code>. The sign of the distance determines the direction of robot motion. Positive drives the robot forward, negative drives it backward.
-	 * @see #arc(float, int)
+	 * @see #arc(float, floatt)
 	 * 
 	 */
 	 public Movement travelArc(float radius, float distance);
@@ -144,7 +144,7 @@ public interface ArcPilot extends OneDimensionalPilot {
 	 * @param distance to travel, in same units as <code>radius</code>. The sign of the distance determines the direction of robot motion. Positive drives the robot forward, negative drives it backward.
 	 * @param immediateReturn If immediateReturn is true then the method returns immediately and your code MUST call
 	 *        updatePostion() when the robot has stopped. Otherwise, the robot position is lost. 
-	 * @see #arc(float, int, boolean)
+	 * @see #arc(float, float, boolean)
 	 * 
 	 */
 	public Movement travelArc(float radius, float distance, boolean immediateReturn);
