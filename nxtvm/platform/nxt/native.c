@@ -32,6 +32,7 @@
 #include "flashprog.h"
 #include "debug.h"
 #include "systick.h"
+#include "main.h"
 #include <string.h>
 
 
@@ -246,7 +247,7 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
   case getSystemFont_4_5_1B:
     push_word(display_get_font());
     break;
-  case getVoltageMilliVolt_4_5I:
+  case getBatteryStatus_4_5I:
     push_word(battery_voltage());
     break;
   case getButtons_4_5I:
@@ -404,11 +405,7 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
     }
     break;
   case flashExec_4II_5I:
-    gNextProgram = (unsigned int) &FLASH_BASE[(paramBase[0]*FLASH_PAGE_SIZE)];
-    gNextProgramSize = paramBase[1];
-    schedule_request(REQUEST_EXIT);
-    // Not sure if we need this or not, but best to be safe
-    push_word(0);
+    push_word(run_program((byte *)(&FLASH_BASE[(paramBase[0]*FLASH_PAGE_SIZE)]), paramBase[1]));
     break;
   case playSample_4IIIII_5V:
     sound_play_sample(((unsigned char *) &FLASH_BASE[(paramBase[0]*FLASH_PAGE_SIZE)]) + paramBase[1],paramBase[2],paramBase[3],paramBase[4]);

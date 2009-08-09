@@ -144,7 +144,7 @@ typedef struct S_ConstantRecord
 
 typedef TWOBYTES STATICFIELD;
 
-extern void *installedBinary;
+extern byte *installedBinary;
 
 extern ConstantRecord* constantTableBase;
 extern byte* staticFieldsBase;
@@ -172,7 +172,8 @@ int execute_program(int prog);
 extern boolean is_assignable(const byte srcSig, const byte dstSig);
 extern byte get_base_type(ClassRecord *classRec);
 
-void install_binary( void* ptr);
+void install_binary(byte *ptr);
+extern boolean is_valid_executable(byte * start, int len);
 //#define install_binary(PTR_)        (installedBinary=(PTR_))
 
 #define get_master_record()         ((MasterRecord *) installedBinary)

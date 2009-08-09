@@ -17,6 +17,7 @@
 #include "stack.h"
 #include "platform_hooks.h"
 #include "rconsole.h"
+#include "magic.h"
 
 #if 0
 #define get_stack_object(MREC_)  ((Object *) get_ref_at ((MREC_)->numParameters - 1))
@@ -24,7 +25,7 @@
 
 // Reliable globals:
 
-void* installedBinary;
+byte* installedBinary;
 
 ConstantRecord* constantTableBase;
 byte* staticFieldsBase;
@@ -66,8 +67,18 @@ byte get_class_index (Object *obj)
   return obj->flags.objects.class;
 }
 
+/**
+ * Check the image at the given location to see if it is valid
+ */
+boolean is_valid_executable(byte *start, int len)
+{
+  MasterRecord *mr = (MasterRecord *)start;
+  if (mr->magicNumber != MAGIC) return false;
+  return true;
+}
 
-void install_binary( void* ptr)
+
+void install_binary(byte* ptr)
 {
   installedBinary = ptr;
 
@@ -513,39 +524,26 @@ void do_return (int numWords)
 
 /**
  * Exceute a "program" on the current thread.
+ * NOTE: This call, resets both stacks and so the called method
+ * will never return. The thread will exit.
  * @return An indication of how the VM should proceed.
  */
 int execute_program(int prog)
 {
-  /* We run an internal program. Note that we need to take great care to
-   * ensure that this function can be re-started (for the garbage collector).
-   * so we must not modify the stack until we are ready to go.
-   */
-  // Save the current state in case we need to back out!
-  int curStackFrameSize = currentThread->stackFrameArraySize;
-  STACKWORD *sp = curStackTop;
-  update_stack_frame(current_stackframe());
   // Now find the class
-  MethodRecord *mRec;
-  ClassRecord *classRecord;
-  classRecord = get_class_record (get_entry_class (prog));
-  if (classRecord == null) return EXEC_CONTINUE;
-  // reserve space for the argument to main, but do not modify the stack
-  // contents yet, in case we need to restart the instruction. 
-  curStackTop++;
+  ClassRecord *classRecord = get_class_record (get_entry_class (prog));
+  MethodRecord *mRec = find_method (classRecord, main_4_1Ljava_3lang_3String_2_5V);
+  // smash the stacks back to the initial state
+  currentThread->stackFrameArraySize = 0;
+  init_sp_pv();
+  update_stack_frame(current_stackframe());
+  // Push the param
+  set_top_ref_cur(JNULL);
   // Push stack frame for main method:
-  mRec = find_method (classRecord, main_4_1Ljava_3lang_3String_2_5V);
-  if (dispatch_special (mRec, curPc) && (dispatch_static_initializer (classRecord, curPc) != EXEC_RETRY))
-  {
-    // Everything is ready to go. So now update the stack
-    *sp = JNULL;
-    return EXEC_RUN;
-  }
-  // We need to wait and re-try the instruction, set things back the way they
-  // were...
-  currentThread->stackFrameArraySize = curStackFrameSize;
-  update_registers(current_stackframe());
-  return EXEC_RETRY;
+  dispatch_special (mRec, null);
+  // and for static initializer
+  dispatch_static_initializer (classRecord, curPc);
+  return EXEC_RUN;
 }
 
 

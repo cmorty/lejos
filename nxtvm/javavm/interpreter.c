@@ -30,9 +30,6 @@ extern char *OPCODE_NAME[];
 
 volatile boolean gMakeRequest;
 byte    gRequestCode;
-unsigned int gNextProgram;
-unsigned int gNextProgramSize;
-unsigned int gProgramExecutions = 0;
 unsigned int gVMOptions = 0;
 
 int curPcOffset = -1;

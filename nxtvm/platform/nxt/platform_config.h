@@ -10,7 +10,7 @@ typedef signed long JINT;
 typedef unsigned short TWOBYTES;
 typedef unsigned long FOURBYTES;
 
-#  include "systime.h"
+#  include "systick.h"
 
 // Converting words to pointers
 
@@ -19,7 +19,7 @@ typedef unsigned long FOURBYTES;
 
 // Macro to get 4-byte system time, used in sleep.
 
-#  define get_sys_time() get_sys_time_impl()
+#  define get_sys_time() systick_get_ms()
 
 // Byte order:
 
