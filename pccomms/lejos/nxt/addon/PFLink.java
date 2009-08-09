@@ -1,7 +1,8 @@
 package lejos.nxt.addon; 
 
 import lejos.nxt.I2CSensor; 
-import lejos.nxt.I2CPort; 
+import lejos.nxt.I2CPort;
+import lejos.util.Delay;
 
 /*
  * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
@@ -192,11 +193,8 @@ public class PFLink extends I2CSensor {
      * @param _Macro    The macro 
      */ 
     public void installMacro(int _Address, byte[] _Macro) { 
-        sendData((byte) _Address, (byte) _Macro.length); 
-        try { 
-            Thread.sleep(10); 
-        } catch (InterruptedException e) { 
-        } 
+        sendData((byte) _Address, (byte) _Macro.length);
+        Delay.msDelay(10);
         sendData((byte) _Address + 1, _Macro, _Macro.length); 
 
     } 

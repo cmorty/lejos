@@ -3,6 +3,7 @@ package lejos.nxt.addon;
 import lejos.nxt.I2CPort;
 import lejos.nxt.I2CSensor;
 import lejos.nxt.rcxcomm.Opcode;
+import lejos.util.Delay;
 
 /*
  * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
@@ -235,9 +236,7 @@ public class RCXLink extends I2CSensor implements Opcode {
 	}
 	
 	private void sleep() {
-		try {
-			Thread.sleep(DELAY);
-		} catch (InterruptedException e) {}
+        Delay.msDelay(DELAY);
 	}
 	
 	public void defineAndRun(byte[] macro, int len) {

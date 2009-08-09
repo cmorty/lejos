@@ -104,5 +104,13 @@
   				<include name="lejos/robotics/proposal/package.html"/>
   			</fileset>
   		</copy>
+  		<mkdir dir="lejos/util/"/>
+  		<copy todir=".">
+  			<fileset dir="../classes">
+  				<include name="lejos/util/Delay.java"/>
+  				<include name="lejos/robotics/package.html"/>
+  			</fileset>
+  		</copy>
+
   	</target>
 </project>
