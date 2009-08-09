@@ -515,20 +515,20 @@ public class TestPilot implements ArcRotatePilot {
 		return lastMovement;
 	}
 
-	public void steer(final int turnRate) {
+	public void steer(final float turnRate) {
 		steer(turnRate, Integer.MAX_VALUE, true);
 	}
 
-	public void steer(final int turnRate, int angle) {
+	public void steer(final float turnRate, float angle) {
 		steer(turnRate, angle, false);
 	}
 
-	public void steer(final int turnRate, final int angle,
+	public void steer(final float turnRate, final float angle,
 			final boolean immediateReturn) {
 		// TODO: make this work with wheels of different size
 		TachoMotor inside;
 		TachoMotor outside;
-		int rate = turnRate;
+		float rate = turnRate;
 		if (rate < -200) {
 			rate = -200;
 		}
@@ -624,12 +624,12 @@ public class TestPilot implements ArcRotatePilot {
 		steer(turnRate(radius));
 	}
 
-	public Movement arc(final float radius, final int angle) {
+	public Movement arc(final float radius, final float angle) {
 		steer(turnRate(radius), angle);
 		return lastMovement;
 	}
 
-	public Movement arc(final float radius, final int angle,
+	public Movement arc(final float radius, final float angle,
 			final boolean immediateReturn) {
 		steer(turnRate(radius), angle, immediateReturn);
 		return lastMovement;
