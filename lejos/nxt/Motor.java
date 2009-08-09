@@ -547,13 +547,6 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
       return _limitAngle;
    }
 
-   /**
-    *returns true when motor rotation task is not yet complete a specified angle
-    */ 
-   public boolean isRotating()
-   {
-      return _rotating;
-   }
 
    public boolean isRegulating()
    {
