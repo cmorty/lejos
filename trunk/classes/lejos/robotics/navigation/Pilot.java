@@ -149,7 +149,7 @@ public interface Pilot
    * @param turnRate If positive, the left side of the robot is on the inside of the turn. If negative, 
    * the left side is on the outside.
    */
-  public void steer(int turnRate);
+  public void steer(float turnRate);
 
   /**
    * Moves the robot along a curved path through a specified turn angle. This method is similar to the
@@ -171,7 +171,7 @@ public interface Pilot
    * the left side is on the outside.
    * @param angle The angle through which the robot will rotate. If negative, robot traces the turning circle backwards.
    */
-  public void steer(int turnRate, int angle);
+  public void steer(float turnRate, float angle);
 
   /**
    * Moves the robot along a curved path for a specified angle of rotation. This method is similar to the
@@ -197,7 +197,7 @@ public interface Pilot
    * @param immediateReturn If immediateReturn is true then the method returns immediately and your code MUST call
    *          updatePostion() when the robot has stopped. Otherwise, the robot position is lost.
    */
-  public void steer(int turnRate, int angle, boolean immediateReturn);
+  public void steer(float turnRate, float angle, boolean immediateReturn);
 
   /**
    * Starts the  NXT robot moving along an arc with a specified radius.
@@ -248,7 +248,7 @@ public interface Pilot
    * @see #steer(int, int)
    * @see #travelArc(float, float)
    */
-  public void arc(float radius, int angle);
+  public void arc(float radius, float angle);
 
   /**
    * Moves the NXT robot along an arc with a specified radius and  angle,
@@ -280,7 +280,7 @@ public interface Pilot
    * @see #steer(int, int, boolean)
    * @see #travelArc(float, float, boolean)
    */
-  public void arc(float radius, int angle, boolean immediateReturn);
+  public void arc(float radius, float angle, boolean immediateReturn);
 
   /**
    * Moves the NXT robot a specified distance along an arc mof specified radius,
