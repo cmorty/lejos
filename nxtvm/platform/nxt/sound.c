@@ -40,7 +40,6 @@ extern void sound_isr_entry(void);
 
 enum {
   SOUND_MODE_NONE,
-  SOUND_MODE_SILENCE,
   SOUND_MODE_TONE,
   SOUND_MODE_PCM
 };
@@ -109,26 +108,6 @@ const byte sine[] =  {0xc0, 0xc8, 0xd0, 0xd8, 0xe0, 0xea, 0xf4, 0xff, 0xff, 0xf0
 //const byte sine[] =  {0x98, 0xb0, 0xc7, 0xda, 0xea, 0xf6, 0xfd, 0xff, 0xff, 0xfd, 0xf6, 0xea, 0xda, 0xc7, 0xb0, 0x98};
 // Time required to generate the tone and volume lookup table...
 #define TONE_OVERHEAD 1
-
-/* To minimise the number of cracks and pops when playing a series of tones
- * and/or samples we output a shprt period of "silence" at the end of each
- * sample. A small click is generated when turning off the sound system so
- * by filling small gaps with explicit silence we can avoid this additonal
- * noise.
- */
-
-const U32 silence[16] = {
-0xaaaaaaaa, 0xaaaaaaaa,
-0xaaaaaaaa, 0xaaaaaaaa,
-0xaaaaaaaa, 0xaaaaaaaa,
-0xaaaaaaaa, 0xaaaaaaaa,
-0xaaaaaaaa, 0xaaaaaaaa,
-0xaaaaaaaa, 0xaaaaaaaa,
-0xaaaaaaaa, 0xaaaaaaaa,
-0xaaaaaaaa, 0xaaaaaaaa
-};
-#define SILENCE_CLK (OSC/(16*32*2) + 250/2)/250
-#define SILENCE_CNT 50
 
 // We use a volume law that approximates a log function. The values in the
 // table below have been hand tuned to try and provide a smooth change in
@@ -380,7 +359,7 @@ void sound_play_sample(U8 *data, U32 length, U32 freq, int vol)
 int sound_get_time()
 {
   // Return the amount of time still to play for the current tone/sample
-  if (sound_mode > SOUND_MODE_SILENCE)
+  if (sound_mode > SOUND_MODE_NONE)
   {
     int ms = (sample.count*1000*sample.len*32)/(OSC/(2*sample.clock_div));
     // remove the extra time we added
@@ -421,22 +400,12 @@ void sound_isr_C()
       sample.count--;
       // If this is the last sample wait for it to complete, otherwise wait
       // to switch buffers
-      sound_interrupt_enable(sample.count <= 0 ? (sound_mode == SOUND_MODE_SILENCE ? AT91C_SSC_TXEMPTY : AT91C_SSC_TXBUFE) : AT91C_SSC_ENDTX);
+      sound_interrupt_enable(AT91C_SSC_ENDTX);
     }
-    else if (sound_mode == SOUND_MODE_SILENCE)
+    else
     {
       sound_mode = SOUND_MODE_NONE;
       sound_disable();
       sound_interrupt_disable();
-    }
-    else
-    {
-      // Add a short section of silence after the sample/tone
-      sound_mode = SOUND_MODE_SILENCE;
-      sample.clock_div = SILENCE_CLK;
-      sample.ptr = (U8 *)silence;
-      sample.count = SILENCE_CNT;
-      sample.len = 16;
-      sound_isr_C();
     }
 }
