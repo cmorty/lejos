@@ -500,20 +500,20 @@ public class TachoPilot implements Pilot {
 		}
 	}
 
-	public void steer(final int turnRate) {
-		steer(turnRate, Integer.MAX_VALUE, true);
+	public void steer(final float turnRate) {
+		steer(turnRate, Float.POSITIVE_INFINITY, true);
 	}
 
-	public void steer(final int turnRate, int angle) {
+	public void steer(final float turnRate,float angle) {
 		steer(turnRate, angle, false);
 	}
 
-	public void steer(final int turnRate, final int angle,
+	public void steer(final float turnRate, final float  angle,
 			final boolean immediateReturn) {
 		// TODO: make this work with wheels of different size
 		TachoMotor inside;
 		TachoMotor outside;
-		int rate = turnRate;
+		float rate = turnRate;
 		if (rate < -200) {
 			rate = -200;
 		}
@@ -608,11 +608,11 @@ public class TachoPilot implements Pilot {
 		steer(turnRate(radius));
 	}
 
-	public void arc(final float radius, final int angle) {
+	public void arc(final float radius, final float angle) {
 		steer(turnRate(radius), angle);
 	}
 
-	public void arc(final float radius, final int angle,
+	public void arc(final float radius, final float angle,
 			final boolean immediateReturn) {
 		steer(turnRate(radius), angle, immediateReturn);
 	}
@@ -625,7 +625,7 @@ public class TachoPilot implements Pilot {
 	 * @param radius
 	 * @return steer()
 	 */
-	private int turnRate(final float radius) {
+	private float turnRate(final float radius) {
 		int direction;
 		float radiusToUse;
 		if (radius < 0) {
@@ -637,7 +637,7 @@ public class TachoPilot implements Pilot {
 		}
 		float ratio = (2 * radiusToUse - _trackWidth)
 				/ (2 * radiusToUse + _trackWidth);
-		return Math.round(direction * 100 * (1 - ratio));
+		return (direction * 100 * (1 - ratio));
 	}
 
 	public void travelArc(float radius, float distance) {
