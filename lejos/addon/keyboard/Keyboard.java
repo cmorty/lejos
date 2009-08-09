@@ -4,6 +4,7 @@ import java.io.*;
 
 import javax.bluetooth.*;
 import javax.microedition.io.*;
+import lejos.util.Delay;
 
 /*
  * Developer Notes:
@@ -107,12 +108,12 @@ public class Keyboard extends Thread { // TODO: Use internal Thread so it isn't 
 				// or new key pressed (doesn't matter which key, all interrupt typematic).
 				while(lastKeyPress == NOT_ASCII_CHAR) {Thread.yield();}
 				oldChar = lastKeyPress;
-				try {Thread.sleep(typematicDelay);} catch(Exception e) {}
+				Delay.msDelay(typematicDelay);
 				
 				while((lastKeyPress != NOT_ASCII_CHAR)&(oldChar == lastKeyPress)) {
 					KeyEvent ke = new KeyEvent(kb, KeyEvent.KEY_TYPED, System.currentTimeMillis(), modifiers, 0, lastKeyPress, 0);
 					notifyListeners(ke);
-					try {Thread.sleep(ratePause);} catch(Exception e) {}
+					Delay.msDelay(ratePause);
 				}
 			}
 		}

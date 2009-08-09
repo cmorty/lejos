@@ -1,6 +1,7 @@
 package lejos.nxt.comm;
 import lejos.nxt.*;
 import java.io.*;
+import lejos.util.Delay;
 
 /**
  * This class provides a simple way of sending output for viewing on a 
@@ -100,7 +101,7 @@ public class RConsole extends Thread{
                 conn.close();
                 LCD.drawString("Console closed  ", 0, 0);
                 LCD.refresh();
-                Thread.sleep(2000);
+                Delay.msDelay(2000);
                 ps = null;
                 conn = null;
             }
@@ -135,7 +136,7 @@ public class RConsole extends Thread{
                     break;
                 }
             }
-            try{Thread.sleep(20);}catch(Exception e){}
+            Delay.msDelay(20);
         }
     }
 }

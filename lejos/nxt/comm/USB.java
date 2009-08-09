@@ -1,4 +1,5 @@
 package lejos.nxt.comm;
+import lejos.util.Delay;
 /**
  * Low-level USB access.
  * 
@@ -120,7 +121,7 @@ public class USB extends NXTCommDevice {
                     return conn;
                 }
             }
-            try{Thread.sleep(1);}catch(InterruptedException e){break;}
+            Delay.msDelay(1);
         }
         usbDisable();
         return null;
@@ -149,7 +150,7 @@ public class USB extends NXTCommDevice {
             // Wait for the interface to be down
             if ((status & USB_STATE_MASK) != USB_STATE_CONNECTED || (status & USB_CONFIG_MASK) == 0)
                 break;
-            try{Thread.sleep(1);}catch(Exception e){}          
+            Delay.msDelay(1);
         }
         usbDisable();
     }

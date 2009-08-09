@@ -4,6 +4,7 @@ import lejos.nxt.Button;
 import lejos.nxt.ButtonListener;
 import lejos.util.Timer;
 import lejos.util.TimerListener;
+import lejos.util.Delay;
 
 /**
  * 
@@ -139,9 +140,7 @@ public class Display {
 			}
 			
 			// Debounce button press
-			try {
-				Thread.sleep(20);
-			} catch (InterruptedException e) {}
+            Delay.msDelay(20);
 			
 			// Handle debounced button press
 			btnPressed = Button.readButtons();

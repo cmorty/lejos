@@ -1,6 +1,7 @@
 package lejos.nxt;
 
 import java.io.*;
+import lejos.util.Delay;
 
 /**
  * NXT sound routines.
@@ -123,13 +124,7 @@ public class Sound
 
     public static void pause(int t)
     {
-        try
-        {
-            Thread.sleep(t);
-        }
-        catch (InterruptedException e)
-        {
-        }
+        Delay.msDelay(t);
     }
 
     /**

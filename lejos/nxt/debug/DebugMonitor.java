@@ -80,6 +80,7 @@ public class DebugMonitor
             public void run()
             {
                  VM.executeProgram(1);
+                 // This point will never be reached
             }
         };
         // Make sure we keep running when we start the program
