@@ -24,7 +24,7 @@ instruction_hook(void)
 static inline void
 tick_hook(void)
 {
-  register int st = get_sys_time_impl();
+  register int st = get_sys_time();
 
   if (st >= last_ad_time + 3) {
     last_ad_time = st;

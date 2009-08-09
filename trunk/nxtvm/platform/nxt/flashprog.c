@@ -4,6 +4,7 @@
 #include "systick.h"
 #include "nxt_avr.h"
 #include "display.h"
+#include "sound.h"
 #include "at91sam7s256.h"
 
 // Timeouts in ms
@@ -71,6 +72,10 @@ flash_write_page(U32 *page, int page_num)
    * the avr every 1ms and this uses interrupt driven I/O so we try to make
    * sure this is complete.
    */
+  // Allow any playing sound to complete
+  i = sound_get_time();
+  if (i > 0)
+    systick_wait_ms(i + 2);
   // Turn off timer tick call backs
   systick_suspend();
    	

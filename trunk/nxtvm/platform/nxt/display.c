@@ -186,7 +186,7 @@ void
 display_update(void)
 {
   if(display_auto_update)
-    display_update_time = get_sys_time_impl() + 250;
+    display_update_time = get_sys_time() + 250;
   nxt_lcd_update();
 }
 

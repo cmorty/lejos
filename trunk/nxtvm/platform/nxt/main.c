@@ -49,6 +49,10 @@ extern U32 __extra_ram_end__;
 extern const U32 menu_address;
 extern const U32 menu_length;
 
+unsigned int gNextProgramSize;
+byte *gNextProgram;
+unsigned int gProgramExecutions=0;
+
 byte *region;
 Thread *bootThread;
 
@@ -147,6 +151,19 @@ assert_hook(boolean aCond, int aCode)
   while(1); // Hang
 }
 
+/**
+ * Request that a new program be started.
+ */
+int
+run_program(byte *start, unsigned int len)
+{
+  if (!is_valid_executable(start, len)) return -1;
+  gNextProgram = start;
+  gNextProgramSize = len;
+  schedule_request(REQUEST_EXIT);
+  return 0;
+}
+
 
 void
 run(int jsize)
@@ -242,42 +259,42 @@ run(int jsize)
  ***************************************************************************/
 //int main (int argc, char *argv[])
 int
-nxt_main(int bin, int size)
+nxt_main(byte *bin, int size)
 {
   int jsize = 0;
-  const char *binary; 
+  const byte *binary; 
   unsigned *temp;
 
 #if EXECUTE_FROM_FLASH
-  if (bin > 0) {
+  if (bin != NULL) {
     size = (size + 3) & ~3;
-  	binary = (char *) bin;
-  	jsize = size - 4;
+    binary = bin;
+    jsize = size - 4;
   } else {
     // Execute flash menu
 
-    bin = (unsigned *) menu_address;
+    bin = (byte *) menu_address;
     size = menu_length;
     size = (size + 3) & ~3;
-    binary = (char *) bin;
+    binary = bin;
     jsize = size - 4;
   }
 #else
-  if (bin > 0) {
+  if (bin != NULL) {
     size = (size + 3) & ~3;
-  	temp = ((unsigned *) (&__free_ram_end__)) - (size >> 2);
-  	memcpy(temp,bin,size);
-  	binary = (char *) temp;
-  	jsize = size - 4;
+    temp = ((unsigned *) (&__free_ram_end__)) - (size >> 2);
+    memcpy(temp,bin,size);
+    binary = (byte *) temp;
+    jsize = size - 4;
   } else {
     // Execute flash menu
 
-    bin = (unsigned *) menu_address;
+    bin = (byte *) menu_address;
     size = menu_length;
     size = (size + 3) & ~3;
     temp = ((unsigned *) (&__free_ram_end__)) - (size >> 2);   
     memcpy(temp,bin,size);
-    binary = ((char *) temp);
+    binary = ((byte *) temp);
     jsize = size - 4;
   }
 #endif
@@ -488,11 +505,11 @@ main(void)
   systick_wait_ms(1000); // wait for LCD to stabilize
   display_init();
   show_splash(); 
-  gNextProgram = 0;
+  gNextProgram = NULL;
   do 
   {
-  	int next = gNextProgram;
-  	gNextProgram = 0;
+  	byte *next = gNextProgram;
+  	gNextProgram = NULL;
   	gProgramExecutions++;
   	nxt_main(next, gNextProgramSize);
   }

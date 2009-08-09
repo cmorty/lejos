@@ -398,6 +398,7 @@ done_pi:
             candidate->state = RUNNING;
             if (candidate == bootThread)
             {
+/*
               MethodRecord *mRec;
               ClassRecord *classRecord;
               classRecord = get_class_record (get_entry_class (gProgramNumber));
@@ -408,6 +409,8 @@ done_pi:
               dispatch_special (mRec, null);
               // Push another if necessary for the static initializer:
               dispatch_static_initializer (classRecord, curPc);
+*/
+              execute_program(gProgramNumber);
             }
             else
             {
