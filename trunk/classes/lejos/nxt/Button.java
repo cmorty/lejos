@@ -1,4 +1,5 @@
 package lejos.nxt;
+import lejos.util.Delay;
 
 /**
  * Abstraction for an NXT button.
@@ -16,9 +17,9 @@ public class Button implements ListenerCaller
   public static final int ID_ESCAPE = 0x8;
   
   private int iCode;
-  private ButtonListener[] iListeners = new ButtonListener[4];
+  private ButtonListener[] iListeners;
   private int iNumListeners;
-  
+
   private static int [] clickFreq = new int[16];
   private static int clickVol;
   private static int clickLen;
@@ -80,38 +81,51 @@ public class Button implements ListenerCaller
     return (readButtons() & iCode) != 0;
   }
 
-  static Poll poller = new Poll();
-
   /**
    * Wait until the button is released.
    */
-  public final void waitForPressAndRelease() throws InterruptedException
+  public final void waitForPressAndRelease()
   {
-    do {
-        poller.poll(iCode << Poll.BUTTON_MASK_SHIFT, 0);
-    } while (isPressed());
+    while(!isPressed())
+        Delay.msDelay(50);
+    while(isPressed())
+        Thread.yield();
   }
- 
+
+  /**
+   * wait for some button to be pressed (and released). 
+   * @param timeout The number of milliseconds to wait.
+   * @return the ID of that button, the same as readButtons(); 0 if timeout
+   */ 
+  public static int waitForPress(int timeout)
+  {
+     long end = (timeout == 0 ? 0x7fffffffffffffffL : System.currentTimeMillis() + timeout);
+     int button = 0;
+     // Wait for the button to be up
+     while(0 < readButtons())
+     {
+         Delay.msDelay(50);
+         if (System.currentTimeMillis() > end) return 0;
+     }
+     // Wait for it to be pressed
+     while(0 == (button = readButtons()))
+     {
+        Delay.msDelay(50);
+        if (System.currentTimeMillis() > end) return 0;
+     }
+     // and wait for it to be released
+     while(0 < readButtons())
+         Thread.yield();
+     return button;             
+  }
+
   /**
    * wait for some button to be pressed (and released). 
    * @return the ID of that button, the same as readButtons(); 
    */ 
   public static int waitForPress()
   {
-     int button = 0;
-     while(0<readButtons())
-     {
-        try  {Thread.sleep(50);}
-        catch(InterruptedException ie) {};
-     }
-     while(0 == button)
-     {
-        button = readButtons();
-        try  {Thread.sleep(50);}
-        catch(InterruptedException ie){};
-     }
-     while(readButtons()>0);
-     return button;             
+      return waitForPress(0);
   }
   
   /**
