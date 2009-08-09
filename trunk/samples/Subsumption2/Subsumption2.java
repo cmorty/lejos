@@ -139,10 +139,7 @@ public class Subsumption2 {
 		s2.runIt();	
 		s3.runIt();
 
-		try {
-			Button.ENTER.waitForPressAndRelease();
-		} catch (InterruptedException ie) {
-		}
+		Button.ENTER.waitForPressAndRelease();
 	}
 }
 
