@@ -1,6 +1,7 @@
 package lejos.nxt;
 
 import lejos.robotics.RangeFinder;
+import lejos.util.Delay;
 
 /*
  * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
@@ -53,13 +54,7 @@ public class UltrasonicSensor extends I2CSensor implements RangeFinder
 	private void wait(int when)
 	{
 		int delay = when - now();
-		if (delay > 0)
-			try
-			{
-				Thread.sleep(delay);
-			}
-			catch (Exception e)
-			{}
+        Delay.msDelay(delay);
 	}
 	
 	/*

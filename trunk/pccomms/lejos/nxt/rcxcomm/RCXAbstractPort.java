@@ -3,6 +3,7 @@ package lejos.nxt.rcxcomm;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import lejos.util.Delay;
 
 /*
  * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
@@ -99,9 +100,7 @@ public abstract class RCXAbstractPort {
               int r = packetHandler.receivePacket(inPacket);
               for(int i=0;i<r;i++) rcxin.add(inPacket[i]);
             }
-            try {
-               Thread.sleep(10);
-            } catch (InterruptedException iE) { }
+            Delay.msDelay(10);
          }
       }
    }
@@ -149,9 +148,7 @@ public abstract class RCXAbstractPort {
             if (timeOut != 0 && ((int)System.currentTimeMillis()-time1 > timeOut)) {
                   throw ioe;
             }
-            try {
-               Thread.sleep(10);
-            } catch (InterruptedException iE) { }
+            Delay.msDelay(10);
          }
 
          synchronized (buffer) {

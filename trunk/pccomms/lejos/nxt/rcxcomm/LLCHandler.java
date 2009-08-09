@@ -1,6 +1,7 @@
 package lejos.nxt.rcxcomm;
 
 import lejos.nxt.*;
+import lejos.util.Delay;
 
 /*
  * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
@@ -34,7 +35,7 @@ public class LLCHandler extends PacketHandler {
   public boolean sendPacket(byte [] packet, int len) {
     synchronized (this) {
       boolean res = LLC.sendBytes(packet, len);
-      try {Thread.sleep(100);} catch (InterruptedException e) {}
+      Delay.msDelay(100);
       return res;
     }
   }  

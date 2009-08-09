@@ -2,6 +2,7 @@ package lejos.nxt.rcxcomm;
 
 import lejos.nxt.*;
 import lejos.nxt.addon.*;
+import lejos.util.Delay;
 
 /*
  * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
@@ -72,7 +73,7 @@ public class Serial {
 				readByte(buf1);
 				//LCD.drawInt(buf1[0] & 0xFF, 4, 8, 7);
 				//LCD.refresh();
-				try {Thread.sleep(50);} catch (InterruptedException e) {}
+				Delay.msDelay(50);
 				available--;
 				if (headerByte(buf1[0])) {
 					skipping = false;
@@ -234,9 +235,7 @@ public class Serial {
 	}
 
 	private static void sleep() {
-		try {
-			 Thread.sleep(100);
-		 } catch (InterruptedException e) {}
+        Delay.msDelay(100);
 	}
 	
 	private static boolean headerByte(byte b) {
