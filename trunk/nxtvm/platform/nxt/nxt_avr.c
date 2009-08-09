@@ -323,7 +323,8 @@ battery_voltage(void)
   voltageVal &= 0x3ff;		// Toss unwanted bits.
   voltageVal *= 14180;
   voltageVal >>= 10;
-  return voltageVal;
+  // or in the rechragable battery bit
+  return voltageVal | (0x8000 & io_from_avr->extra);
 }
 
 /**
