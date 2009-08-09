@@ -41,12 +41,12 @@ public class SteeringPilot implements ArcPilot {
 		
 	}
 
-	public Movement arc(float radius, int angle) {
+	public Movement arc(float radius, float angle) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public Movement arc(float radius, int angle, boolean immediateReturn) {
+	public Movement arc(float radius, float angle, boolean immediateReturn) {
 		// TODO Auto-generated method stub
 		return null;
 	}
