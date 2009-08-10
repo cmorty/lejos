@@ -4,6 +4,8 @@ import lejos.robotics.Pose;
 import lejos.robotics.mapping.RangeMap;
 import lejos.robotics.RangeReadings;
 import lejos.robotics.navigation.*;
+import lejos.robotics.proposal.Movement;
+import lejos.robotics.proposal.Movement.MovementType;
 import lejos.nxt.Motor;
 
 /**
@@ -27,9 +29,9 @@ public abstract class TachoLocalizer extends SimpleNavigator {
   protected float projection;
   protected RangeMap map;
   protected int numParticles;
-  protected ParticleSet particles;
+  protected MCLParticleSet particles;
   protected float angle, distance;
-  protected Move mv = new Move(angle, distance);
+  protected Movement mv;
   protected int numReadings;
 
   public TachoLocalizer(RangeMap map, int numParticles, int numReadings,
@@ -39,7 +41,7 @@ public abstract class TachoLocalizer extends SimpleNavigator {
     this.projection = projection;
     this.numParticles = numParticles;
     this.map = map;
-    particles = new ParticleSet(map, numParticles);
+    particles = new MCLParticleSet(map, numParticles, 0);
     this.numReadings = numReadings;
     readings = new RangeReadings(numReadings);
   }
@@ -64,8 +66,7 @@ public abstract class TachoLocalizer extends SimpleNavigator {
   public void updatePosition() {
     super.updatePosition();
     if (angle != 0f || distance != 0f) {
-    	mv.angle = angle;
-    	mv.distance = distance;
+    	mv = new Movement(MovementType.TRAVEL, angle, distance);
         particles.applyMove(mv);
     }
     angle = 0f;
@@ -95,7 +96,7 @@ public abstract class TachoLocalizer extends SimpleNavigator {
    * 
    * @return the particle set
    */
-  public ParticleSet getParticles() {
+  public MCLParticleSet getParticles() {
     return particles;
   }
 
