@@ -5,7 +5,7 @@ package lejos.robotics.proposal;
  * @author NXJ Team
  *
  */
-public interface ArcPilot extends OneDimensionalPilot {
+public interface ArcPilot extends BasicPilot {
 	
 	/**
 	 * The minimum steering radius this vehicle is capable of when traveling in an arc.

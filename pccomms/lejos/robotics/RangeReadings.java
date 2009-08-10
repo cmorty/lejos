@@ -1,5 +1,6 @@
 package lejos.robotics;
 import java.io.*;
+import java.util.ArrayList;
 
 /*
  * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
@@ -11,26 +12,13 @@ import java.io.*;
  * 
  * @author Lawrie Griffiths
  */
-public class RangeReadings { 
-  private int numReadings;
-  private float[] ranges;
-  private float[] angles;
+public class RangeReadings extends ArrayList<RangeReading>  { 
+	private int numReadings;
   
   public RangeReadings(int numReadings) {
+    super(numReadings);
     this.numReadings = numReadings;
-    ranges = new float[numReadings];
-    angles = new float[numReadings];
-  }
-
-  /**
-   * Set a range reading
-   * 
-   * @param i the reading index
-   * @param range the range value
-   */
-  public void setRange(int i, float angle, float range) {
-    ranges[i] = range;
-    angles[i] = angle;
+    for(int i=0;i<numReadings;i++) add(new RangeReading(0,-1));
   }
 
   /**
@@ -40,7 +28,7 @@ public class RangeReadings {
    * @return the range value
    */
   public float getRange(int i) {
-    return ranges[i];
+    return get(i).getRange();
   }
   
   /**
@@ -50,8 +38,8 @@ public class RangeReadings {
    * @return the range value
    */
   public float getRange(float angle) {
-    for(int i=0;i<numReadings;i++) {
-    	if (angle == angles[i]) return ranges[i];
+    for(RangeReading r: this) {
+    	if (r.getAngle() == angle) return r.getRange();
     }
     return -1f;
   }
@@ -63,7 +51,7 @@ public class RangeReadings {
    * @return the angle in degrees
    */
   public float getAngle(int index) {
-	  return  angles[index];
+	  return  get(index).getAngle();
   }
 
   /**
@@ -72,21 +60,10 @@ public class RangeReadings {
    * @return true iff one of the readings is not valid
    */
   public boolean incomplete() {
-    for (int i = 0; i < numReadings; i++) {
-      if (ranges[i] < 0) return true;
+    for (RangeReading r: this) {
+      if (r.invalidReading()) return true;
     }
     return false;
-  }
-  
-  /**
-   * Set the number of readings
-   * 
-   * @param num the number of readings
-   */
-  public void setNumReadings(short num) {
-    numReadings = num;
-    ranges = new float[numReadings];
-    angles = new float[numReadings]; 
   }
   
   /**
@@ -97,13 +74,26 @@ public class RangeReadings {
   }
   
   /**
+   * Set the range reading
+   * 
+   * @param index the index of the reading in the set
+   * @param angle the angle of the reading relative to the robot heading
+   * @param range the range reading
+   */
+  public void setRange(int index, float angle, float range) {
+	  set(index, new RangeReading(angle, range));
+  }
+  
+  /**
    * Dump the readings to a DataOutputStream
    * @param dos the stream
    * @throws IOException
    */
   public void dumpReadings(DataOutputStream dos) throws IOException {
-    for (int i = 0; i < getNumReadings(); i++)
-      dos.writeFloat(getRange(i));
+    for (RangeReading r: this) {
+      dos.writeFloat(r.getAngle());
+      dos.writeFloat(r.getRange());
+    }
     dos.flush();
   }
   
@@ -114,7 +104,7 @@ public class RangeReadings {
    */
   public void loadReadings(DataInputStream dis) throws IOException {
     for (int i = 0; i < getNumReadings(); i++) {
-      ranges[i] = dis.readFloat();
+      setRange(i, dis.readFloat(),dis.readFloat());
     }        
   }
   
@@ -124,9 +114,11 @@ public class RangeReadings {
    * @throws IOException
    */
   public void printReadings() {
-    for (int i = 0; i < getNumReadings(); i++) {
-      System.out.println("Range " + i + " = " + 
-    		  (ranges[i] < 0 ? "Invalid" : ranges[i]));
+	int index = 0;
+    for (RangeReading r: this) {
+      System.out.println("Range " + index + " = " + 
+    		  (r.invalidReading() ? "Invalid" : r.getRange()));
+      index++;
     }        
   }
 }

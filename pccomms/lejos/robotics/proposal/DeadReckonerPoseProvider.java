@@ -14,7 +14,7 @@ import lejos.robotics.Pose;
  * Alternate names:  DeadReckonerPoseProvider, DeadReckoner, OrienteeringPoseProvider, OdometryPoseProvider 
  * 
  */
-public class DeadReckonerPoseProvider implements PilotListener, PoseProvider {
+public class DeadReckonerPoseProvider implements MoveListener, PoseProvider {
 	private float x = 0, y = 0, heading = 0;
 	
 	/**
@@ -23,20 +23,20 @@ public class DeadReckonerPoseProvider implements PilotListener, PoseProvider {
 	 * 
 	 * @param pilot
 	 */
-	public DeadReckonerPoseProvider(PilotListenerGenerator pilot) {
-		pilot.addPilotListener(this);
+	public DeadReckonerPoseProvider(MovementProvider pilot) {
+		pilot.addMoveListener(this);
 	}
 		
 	public Pose getPose() {
 		return new Pose(x,y,heading);
 	}
 
-	public void movementStarted(Movement event, Object p) {
+	public void movementStarted(Movement event, MovementProvider p) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	public void movementStopped(Movement event, Object p) {
+	public void movementStopped(Movement event, MovementProvider p) {
 		float angle = event.getAngleTurned();
 		float distance = event.getDistanceTraveled();
         double dx = 0, dy = 0;
