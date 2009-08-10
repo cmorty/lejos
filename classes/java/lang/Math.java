@@ -502,8 +502,7 @@ public final class Math
 	{
 		if ((a < -1) || (a > 1))
 		{
-			return Float.NaN; // TODO: We don't have Double.NaN yet, so using
-			// Float for now.
+			return Double.NaN;
 		}
 		return PI / 2 - atan(a / sqrt(1 - a * a));
 	}
