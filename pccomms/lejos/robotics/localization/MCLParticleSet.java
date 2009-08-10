@@ -299,6 +299,15 @@ public class MCLParticleSet {
   }
   
   /**
+   * Get the border where particles should not be generated
+   * 
+   * @return the border
+   */
+  public float getBorder() {
+	  return border;
+  }
+  
+  /**
    * Set border where no particles should be generated
    * 
    * @param border the border 
