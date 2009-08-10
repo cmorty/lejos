@@ -7,42 +7,6 @@ public class BetaMath
 	/**
 	 * Computes square-root of x.
 	 */
-	public static double sqrtD(double x)
-	{
-		// also catches NaN
-		if (!(x > 0))
-			return (x == 0) ? 0 : Double.NaN;
-		if (x == Double.POSITIVE_INFINITY)
-			return x;
-	
-		// modify values to avoid workaround subnormal values
-		double factor;
-		if (x >= Double.MIN_NORMAL)
-			factor = 0.5;
-		else
-		{
-			x *= 0x1p64;
-			factor = 0x1p-33;
-		}
-		
-		// magic constant function for good approximation of 1/sqrt(x)
-		// according to http://www.lomont.org/Math/Papers/2003/InvSqrt.pdf
-		// also look at http://en.wikipedia.org/wiki/Fast_inverse_square_root
-		double isqrt = Double.longBitsToDouble(0x5fe6ec85e7de30daL - (Double.doubleToRawLongBits(x) >> 1));
-		
-		// 3 newton steps for 1/sqrt(x)
-		double xhalf = 0.5 * x;
-		isqrt = isqrt * (1.5 - xhalf * isqrt * isqrt);
-		isqrt = isqrt * (1.5 - xhalf * isqrt * isqrt);
-		isqrt = isqrt * (1.5 - xhalf * isqrt * isqrt);
-		
-		// 1 newton step for sqrt(x)
-		return factor * (x * isqrt + 1.0 / isqrt);
-	}
-	
-	/**
-	 * Computes square-root of x.
-	 */
 	public static float sqrtF(float x)
 	{
 		// also catches NaN
