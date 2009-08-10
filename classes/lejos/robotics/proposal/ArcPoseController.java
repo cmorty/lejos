@@ -44,4 +44,8 @@ public class ArcPoseController implements PoseController {
 		}
 		return poseProvider.getPose();
 	}
+
+	public Pose goTo(int x, int y) {
+		return goTo(new Point(x, y));
+	}
 }
