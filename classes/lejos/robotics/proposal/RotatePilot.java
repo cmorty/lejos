@@ -1,6 +1,6 @@
 package lejos.robotics.proposal;
 
-public interface RotatePilot extends OneDimensionalPilot {
+public interface RotatePilot extends BasicPilot {
   /**
    * Rotates the NXT robot the specified number of degrees; direction determined by the sign of the parameter.
    * Method returns when rotation is done.
@@ -17,4 +17,12 @@ public interface RotatePilot extends OneDimensionalPilot {
    * @param immediateReturn If immediateReturn is true then the method returns immediately
    */
   public void rotate(float angle, boolean immediateReturn);
+  
+  public float getAngleIncrement();
+  
+  public void setTurnSpeed(float speed);
+  
+  public float getTurnSpeed();
+  
+  public float getTurnMaxSpeed();
 }
