@@ -44,7 +44,7 @@ public class MCLFrame extends RemoteFrame{
   private Line[] lines;
   private LineMap map; // the map
   private MCLParticleSet particles; // the particle set
-  private RangeReadings readings = new RangeReadings(ParticleSet.numReadings);   
+  private RangeReadings readings;   
   private int closest = -1;
   private int numParticles;
   
@@ -143,7 +143,7 @@ public class MCLFrame extends RemoteFrame{
    * Create the GUI elements the map and the particle set, connect to the
    * NXT and then process button events.
    */
-  public MCLFrame(String nxt, Line[] lines, Rectangle bound, int numParticles) throws IOException {
+  public MCLFrame(String nxt, Line[] lines, Rectangle bound, int numParticles, int numReadings) throws IOException {
 	// Connect to the NXT
 	super(nxt);
 	this.lines = lines;
@@ -166,6 +166,8 @@ public class MCLFrame extends RemoteFrame{
 
     // Retrieve the particles
     getParticles();
+    
+    readings = new RangeReadings(numReadings);
   }
 
   /**
