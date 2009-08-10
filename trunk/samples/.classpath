@@ -48,7 +48,6 @@
 	<classpathentry excluding="build.xml" kind="src" path="SonicTest"/>
 	<classpathentry excluding="build.xml" kind="src" path="SoundSample"/>
 	<classpathentry excluding="build.xml" kind="src" path="SpeedTest"/>
-	<classpathentry excluding="build.xml" kind="src" path="STTest"/>
 	<classpathentry excluding="build.xml" kind="src" path="Subsumption1"/>
 	<classpathentry excluding="build.xml" kind="src" path="Subsumption2"/>
 	<classpathentry excluding="build.xml" kind="src" path="TiltTest"/>
