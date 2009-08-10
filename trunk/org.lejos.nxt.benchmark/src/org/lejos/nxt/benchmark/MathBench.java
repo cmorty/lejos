@@ -13,17 +13,31 @@ public final class MathBench
 	private static final int[] PADVEC = { 8, 30, 6, 10 };
 	private static final String VERSION = "1.2";
 
-	private static int benchSqrtHistoric(int count, String comment, double x)
+	private static int benchSqrtHistoric1(int count, String comment, double x)
 	{
 		long nullTime = BenchUtils.getIterationTime(count);
 	
 		// Function calls
 		long start = System.currentTimeMillis();
 		for (int i = 0; i < count; i++)
-			HistoricMath.sqrt(x);
+			HistoricMath.sqrtSimple(x);
 		long end = System.currentTimeMillis();
 	
-		report(count, "sqrt (historic, "+comment+")", count, "ops", end - start - nullTime);
+		report(count, "sqrt (historic, simple, "+comment+")", count, "ops", end - start - nullTime);
+		return count;
+	}
+	
+	private static int benchSqrtHistoric2(int count, String comment, double x)
+	{
+		long nullTime = BenchUtils.getIterationTime(count);
+	
+		// Function calls
+		long start = System.currentTimeMillis();
+		for (int i = 0; i < count; i++)
+			HistoricMath.sqrtLinear(x);
+		long end = System.currentTimeMillis();
+	
+		report(count, "sqrt (historic, linear, "+comment+")", count, "ops", end - start - nullTime);
 		return count;
 	}
 	
@@ -41,20 +55,6 @@ public final class MathBench
 		return count;
 	}
 	
-	private static int benchSqrtNewD(int count, String comment, double x)
-	{
-		long nullTime = BenchUtils.getIterationTime(count);
-	
-		// Function calls
-		long start = System.currentTimeMillis();
-		for (int i = 0; i < count; i++)
-			BetaMath.sqrtD(x);
-		long end = System.currentTimeMillis();
-	
-		report(count, "sqrt (new, "+comment+")", count, "ops", end - start - nullTime);
-		return count;
-	}
-	
 	private static int benchSqrtNewF(int count, String comment, float x)
 	{
 		long nullTime = BenchUtils.getIterationTime(count);
@@ -65,7 +65,7 @@ public final class MathBench
 			BetaMath.sqrtF(x);
 		long end = System.currentTimeMillis();
 	
-		report(count, "sqrt (new, "+comment+")", count, "ops", end - start - nullTime);
+		report(count, "sqrt (new, float, "+comment+")", count, "ops", end - start - nullTime);
 		return count;
 	}
 	
@@ -138,19 +138,19 @@ public final class MathBench
 		int countAll = 0;
 		long startAll = System.currentTimeMillis();
 	
-		countAll += benchSqrtHistoric(iterate / 5, "subnormal", Math.PI * 0x1p-1060);
+		countAll += benchSqrtHistoric1(iterate / 5, "subnormal", Math.PI * 0x1p-1060);
 		BenchUtils.cleanUp(null);
-		countAll += benchSqrtHistoric(iterate / 5, "normal", Math.PI);
+		countAll += benchSqrtHistoric1(iterate / 5, "normal", Math.PI);
+		BenchUtils.cleanUp(null);
+	
+		countAll += benchSqrtHistoric2(iterate / 2, "subnormal", Math.PI * 0x1p-1060);
+		BenchUtils.cleanUp(null);
+		countAll += benchSqrtHistoric2(iterate / 2, "normal", Math.PI);
 		BenchUtils.cleanUp(null);
 	
 		countAll += benchSqrtCurrent(iterate, "subnormal", Math.PI * 0x1p-1060);
 		BenchUtils.cleanUp(null);
 		countAll += benchSqrtCurrent(iterate, "normal", Math.PI);
-		BenchUtils.cleanUp(null);
-	
-		countAll += benchSqrtNewD(iterate, "subnormal", Math.PI * 0x1p-1060);
-		BenchUtils.cleanUp(null);	
-		countAll += benchSqrtNewD(iterate, "normal", Math.PI);
 		BenchUtils.cleanUp(null);
 	
 		countAll += benchSqrtNewF(iterate, "subnormal", (float)(Math.PI * 0x1p-140));
