@@ -1,12 +1,10 @@
 package lejos.robotics.proposal;
 
 import java.util.ArrayList;
-
 import lejos.nxt.Battery;
 import lejos.robotics.TachoMotor;
 import lejos.robotics.proposal.ArcRotatePilot;
 import lejos.robotics.proposal.Movement;
-import lejos.robotics.proposal.PilotListener;
 import lejos.robotics.proposal.Movement.MovementType;
 
 /**
@@ -671,14 +669,14 @@ public class TestPilot implements ArcRotatePilot {
 		return lastMovement;
 	}
 	
-	private ArrayList<PilotListener> listeners = new ArrayList<PilotListener>();
+	private ArrayList<MoveListener> listeners = new ArrayList<MoveListener>();
 	
-	public void addPilotListener(PilotListener listener) {
+	public void addMoveListener(MoveListener listener) {
 		listeners.add(listener);
 	}
 	
 	private void callListeners() {
-		for(PilotListener listener: listeners) {
+		for(MoveListener listener: listeners) {
 			listener.movementStopped(lastMovement, this);
 		}
 	}
@@ -704,7 +702,20 @@ public class TestPilot implements ArcRotatePilot {
 	}
 
 	public void setMinRadius(float radius) {
+		// TODO Auto-generated method stub		
+	}
+	
+	public Movement getMovement() {
+		return null;
+	}
+
+	public float getMovementIncrement() {
 		// TODO Auto-generated method stub
-		
+		return 0;
+	}
+
+	public float getAngleIncrement() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }

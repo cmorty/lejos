@@ -1,23 +1,26 @@
 package lejos.robotics.proposal;
 
 /**
- * a Pose that wants to be updated automatically by a MovementProvider should
- * implement this interface
- * @author Roger Glassey
+ * Any class that wants to be updated automatically by a MovementProvider should
+ * implement this interface/
+ * 
+ * @author nxj team
  */
-
-
 public interface MoveListener {
 	
 	/**
-	 * TODO: Lawrie doesn't want Pilot passed in this method. It's pretty typical in Java for the
-	 * object that produced the event to be passed, so I don't see a problem. Just ignore it
-	 * if you don't want to use it.
+	 * Called when a Movement Provider starts a move
 	 *  
-	 * @param event
-	 * @param p
+	 * @param event the movement
+	 * @param mp the movement provider
 	 */
-	public void movementStarted(Movement event, MovementProvider p);
+	public void movementStarted(Movement event, MovementProvider mp);
 	
-	public void movementStopped(Movement event, MovementProvider p);
+	/**
+	 * Called by the movementr provider when a move stops
+	 * 
+	 * @param event the movement
+	 * @param mp movement provider
+	 */
+	public void movementStopped(Movement event, MovementProvider mp);
 }

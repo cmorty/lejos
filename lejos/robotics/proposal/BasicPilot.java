@@ -1,6 +1,6 @@
 package lejos.robotics.proposal;
 
-public interface OneDimensionalPilot extends PilotListenerGenerator {
+public interface BasicPilot extends MovementProvider {
   /**
    *Starts the  NXT robot moving forward.
    */
@@ -38,5 +38,13 @@ public interface OneDimensionalPilot extends PilotListenerGenerator {
    * @param immediateReturn If immediateReturn is true then the method returns immediately.
    */
   public Movement travel(float distance, boolean immediateReturn);
+  
+  public float getMovementIncrement();
+  
+  public void setMoveSpeed(float speed);
+  
+  public float getMoveSpeed();
+  
+  public float getMoveMaxSpeed();
   
 }
