@@ -34,10 +34,12 @@ public class MCLParticleSet {
   private RangeMap map;
   private float estimatedX, estimatedY, estimatedAngle;
   private float minX, maxX, minY, maxY;
-  private boolean validEstimate;
   private float maxWeight;
   private int border = 10;	// The minimum distance from the edge of the map
   							// to generate a particle.
+  private Rectangle boundingRect;
+  private boolean debug = false;
+  
   /**
    * Create a set of particles randomly distributed with the given map.
    * 
@@ -47,6 +49,7 @@ public class MCLParticleSet {
     this.map = map;
     this.numParticles = numParticles;
     this.border = border;
+    boundingRect = map.getBoundingRect();
     particles = new MCLParticle[numParticles];
     for (int i = 0; i < numParticles; i++) {
       particles[i] = generateParticle();
@@ -61,9 +64,8 @@ public class MCLParticleSet {
    */
   private MCLParticle generateParticle() {
     float x, y, angle;
-    Rectangle bound = map.getBoundingRect();
-    Rectangle innerRect = new Rectangle(bound.x + border, bound.y + border,
-        bound.width - border * 2, bound.height - border * 2);
+    Rectangle innerRect = new Rectangle(boundingRect.x + border, boundingRect.y + border,
+        boundingRect.width - border * 2, boundingRect.height - border * 2);
 
     // Generate x, y values in bounding rectangle
     for (;;) { // infinite loop that we break out of when we have
@@ -121,7 +123,7 @@ public class MCLParticleSet {
     while (count < numParticles) {
       iterations++;
       if (iterations >= maxIterations) {
-        System.out.println("Lost: count = " + count);
+        if (debug) System.out.println("Lost: count = " + count);
         if (count > 0) { // Duplicate the ones we have so far
           for (int i = count; i < numParticles; i++) {
             particles[i] = new MCLParticle(particles[i % count].getPose());
@@ -161,6 +163,11 @@ public class MCLParticleSet {
     resetEstimate();
     float totalWeights = 0;
     
+    minX = boundingRect.x + boundingRect.width;
+    minY = boundingRect.y + boundingRect.height;
+    maxX = boundingRect.x;
+    maxY = boundingRect.y;
+    
     for (int i = 0; i < numParticles; i++) {
 	  Pose p = particles[i].getPose();
 	  float x = p.getX();
@@ -180,7 +187,6 @@ public class MCLParticleSet {
     estimatedX /= totalWeights;
     estimatedY /= totalWeights;
     estimatedAngle /= totalWeights;
-    validEstimate = true;
   }
 
   /**
@@ -268,12 +274,10 @@ public class MCLParticleSet {
     estimatedX = 0;
     estimatedY = 0;
     estimatedAngle = 0;
-    Rectangle bound = map.getBoundingRect();
-    minX = bound.x + bound.width;
-    minY = bound.y + bound.height;
-    maxX = bound.x;
-    maxY = bound.y;
-    validEstimate = false;
+    minX = boundingRect.x;
+    minY = boundingRect.y;
+    maxX = boundingRect.x + boundingRect.width;
+    maxY = boundingRect.y + boundingRect.height;
   }
   
   /**
@@ -282,11 +286,8 @@ public class MCLParticleSet {
    * @return the rectangle
    */
   public Rectangle getErrorRect() {
-	  if (!validEstimate) return map.getBoundingRect();
-	  else {
-		  return new Rectangle((int) minX, (int) minY, 
-				               (int) (maxX-minX), (int) (maxY-minY));
-	  }
+	  return new Rectangle((int) minX, (int) minY, 
+			               (int) (maxX-minX), (int) (maxY-minY));
   }
   
   /**
@@ -434,7 +435,7 @@ public class MCLParticleSet {
   
   /**
    * Load serialized estimated pose from a data input stream
-   * @param dis the data imput stream
+   * @param dis the data input stream
    * @throws IOException
    */
   public void loadEstimation(DataInputStream dis) throws IOException {
