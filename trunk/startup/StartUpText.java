@@ -75,10 +75,10 @@ public class StartUpText
         // Battery state information
         private static final int STD_MIN = 6100;
         private static final int STD_OK = 6500;
-        private static final int STD_MAX = 7500;
+        private static final int STD_MAX = 8000;
         private static final int RECHARGE_MIN = 7100;
         private static final int RECHARGE_OK = 7200;
-        private static final int RECHARGE_MAX = 7500;
+        private static final int RECHARGE_MAX = 8200;
         // Animations used for I/O state.
         private final String[][] ioDisplay = new String[][]
         {
