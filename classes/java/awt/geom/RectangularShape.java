@@ -57,7 +57,5 @@ public abstract class RectangularShape implements Shape {
     
     public boolean contains(Rectangle2D r) {
         return contains(r.getX(), r.getY(), r.getWidth(), r.getHeight());
-    }
-    
-    
+    } 
 }

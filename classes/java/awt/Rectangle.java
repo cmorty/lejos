@@ -140,32 +140,13 @@ public class Rectangle extends Rectangle2D implements Shape {
 
 	@Override
 	public void setFrame(double x, double y, double w, double h) {
-		// TODO Auto-generated method stub
+		setRect(x,y,w,h);
 		
 	}
 
-	public boolean contains(double x, double y) {
+	@Override
+	public void setRect(double x, double y, double w, double h) {
 		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public boolean contains(Point2D p) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public boolean contains(Rectangle2D r) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public boolean intersects(double x, double y, double w, double h) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public boolean intersects(Rectangle2D r) {
-		// TODO Auto-generated method stub
-		return false;
+		
 	}
 }

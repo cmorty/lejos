@@ -31,29 +31,7 @@ public abstract class Rectangle2D extends RectangularShape {
 
 		@Override
 		public boolean isEmpty() {
-			// TODO Auto-generated method stub
-			return false;
-		}
-
-		@Override
-		public void setFrame(double x, double y, double w, double h) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		public boolean contains(double x, double y) {
-			// TODO Auto-generated method stub
-			return false;
-		}
-
-		public boolean contains(Point2D p) {
-			// TODO Auto-generated method stub
-			return false;
-		}
-
-		public boolean contains(Rectangle2D r) {
-			// TODO Auto-generated method stub
-			return false;
+            return (width <= 0.0f) || (height <= 0.0f);
 		}
 
 		public Rectangle getBounds() {
@@ -65,17 +43,27 @@ public abstract class Rectangle2D extends RectangularShape {
 			// TODO Auto-generated method stub
 			return null;
 		}
-
-		public boolean intersects(double x, double y, double w, double h) {
-			// TODO Auto-generated method stub
-			return false;
-		}
-
-		public boolean intersects(Rectangle2D r) {
-			// TODO Auto-generated method stub
-			return false;
-		}
-		
+	
+	    public void setRect(float x, float y, float w, float h) {
+	        this.x = x;
+	        this.y = y;
+	        this.width = w;
+	        this.height = h;
+	    }
+	    
+        public void setRect(Rectangle2D r) {
+            this.x = (float) r.getX();
+            this.y = (float) r.getY();
+            this.width = (float) r.getWidth();
+            this.height = (float) r.getHeight();
+        }
+        
+        public void setRect(double x, double y, double w, double h) {
+            this.x = (float) x;
+            this.y = (float) y;
+            this.width = (float) w;
+            this.height = (float) h;
+        }	
 	}
 	
 	public static class Double extends Rectangle2D {
@@ -106,29 +94,12 @@ public abstract class Rectangle2D extends RectangularShape {
 
 		@Override
 		public boolean isEmpty() {
-			// TODO Auto-generated method stub
-			return false;
+            return (width <= 0.0f) || (height <= 0.0f);
 		}
 
 		@Override
 		public void setFrame(double x, double y, double w, double h) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		public boolean contains(double x, double y) {
-			// TODO Auto-generated method stub
-			return false;
-		}
-
-		public boolean contains(Point2D p) {
-			// TODO Auto-generated method stub
-			return false;
-		}
-
-		public boolean contains(Rectangle2D r) {
-			// TODO Auto-generated method stub
-			return false;
+			setRect(x,y,w,h);			
 		}
 
 		public Rectangle getBounds() {
@@ -140,20 +111,56 @@ public abstract class Rectangle2D extends RectangularShape {
 			// TODO Auto-generated method stub
 			return null;
 		}
-
-		public boolean intersects(double x, double y, double w, double h) {
-			// TODO Auto-generated method stub
-			return false;
-		}
-
-		public boolean intersects(Rectangle2D r) {
-			// TODO Auto-generated method stub
-			return false;
-		}
+			
+	    public void setRect(double x, double y, double w, double h) {
+	        this.x = x;
+	        this.y = y;
+	        this.width = w;
+	        this.height = h;
+	    }
+	    
+        public void setRect(Rectangle2D r) {
+            this.x = r.getX();
+            this.y = r.getY();
+            this.width = r.getWidth();
+            this.height = r.getHeight();
+        }
 	}
 	
 	public boolean contains(double x, double y, double w, double h) {
 		if (isEmpty()) return false;
 		return contains(x, y) && contains(x + w, y + h);
 	}
+	
+    public abstract void setRect(double x, double y, double w, double h);
+	
+    public void setRect(Rectangle2D r) {
+        setRect(r.getX(), r.getY(), r.getWidth(), r.getHeight());
+    }
+	
+	@Override
+    public void setFrame(double x, double y, double w, double h) {
+        setRect(x, y, w, h);
+    }
+	
+    public boolean contains(double x, double y) {
+        double x0 = getX();
+        double y0 = getY();
+        return (x >= x0 &&
+                y >= y0 &&
+                x < x0 + getWidth() &&
+                y < y0 + getHeight());
+    }
+    
+    public boolean intersects(double x, double y, double w, double h) {
+        if (isEmpty() || w <= 0 || h <= 0) {
+            return false;
+        }
+        double x0 = getX();
+        double y0 = getY();
+        return (x + w > x0 &&
+                y + h > y0 &&
+                x < x0 + getWidth() &&
+                y < y0 + getHeight());
+    }    
 }
