@@ -72,7 +72,7 @@ public class DifferentialPilot implements ArcRotatePilot {
 			final boolean reverse) {
 	}
 
-	public void addPilotListener(PilotListener p) {
+	public void addMoveListener(MoveListener p) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -179,6 +179,21 @@ public class DifferentialPilot implements ArcRotatePilot {
 	}
 
 	public float getMinRadius() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public Movement getMovement() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public float getMovementIncrement() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public float getAngleIncrement() {
 		// TODO Auto-generated method stub
 		return 0;
 	}

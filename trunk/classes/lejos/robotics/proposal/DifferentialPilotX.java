@@ -1,14 +1,8 @@
 package lejos.robotics.proposal;
 
-
-
-
 import java.util.ArrayList;
 import lejos.nxt.Battery;
 import lejos.robotics.TachoMotor;
-import lejos.robotics.navigation.*;
-
-
 
 
 /**
@@ -47,7 +41,7 @@ import lejos.robotics.navigation.*;
  * </p>
  * 
  **/
-public class DifferentialPilotX implements MovementProvider
+public class DifferentialPilotX implements ArcRotatePilot, MovementProvider
 {
 
   /**
@@ -151,7 +145,7 @@ public class DifferentialPilotX implements MovementProvider
     monitor.start();
   }
 
-  public void addPilotListener(MoveListener aListener)
+  public void addMoveListener(MoveListener aListener)
   {
     listeners.add(aListener);
   }
@@ -428,13 +422,21 @@ public class DifferentialPilotX implements MovementProvider
     
     if (!immediateReturn)
     {
-      while (isMoving()) Thread.yield();
+      while (isMoving() && continueMoving()) Thread.yield();
       stop();
     }
   }
 
 
   /**
+   * Method that can be overridden by subclasses to add logic to stop the pilot
+   * @return
+   */
+  protected boolean continueMoving() {
+	return true;
+}
+
+/**
    * Stops the NXT robot.
    */
   public Movement  stop()
@@ -487,7 +489,7 @@ public class DifferentialPilotX implements MovementProvider
             immediateReturn);  _alert = immediateReturn;
     if (!immediateReturn)
     {
-      while (isMoving())Thread.yield();
+      while (isMoving() && continueMoving())Thread.yield();
       stop();
     }
     return null;
@@ -558,7 +560,7 @@ public class DifferentialPilotX implements MovementProvider
     outside.rotate(_parity * (int) rotAngle, immediateReturn);
     if (!immediateReturn)
     {
-      while (isMoving()) Thread.yield();
+      while (isMoving() && continueMoving()) Thread.yield();
       stop();
     }
     return null;
@@ -752,4 +754,12 @@ public class DifferentialPilotX implements MovementProvider
    * Diameter of right wheel.
    */
   protected final float _rightWheelDiameter;
+  
+  public float getMovementIncrement() {
+	return 0;
+  }
+
+  public float getAngleIncrement() {
+	return 0;
+  }
 }

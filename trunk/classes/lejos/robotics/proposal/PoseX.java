@@ -7,6 +7,7 @@ package lejos.robotics.proposal;
  */
 
 import lejos.geom.Point;
+import lejos.robotics.Pose;
 
 
 
@@ -19,7 +20,7 @@ import lejos.geom.Point;
  * It can report the current pose at any time, even while a move is in progress.
  * @author Roger Glassey
  */
-public class PoseX implements MoveListener
+public class PoseX extends Pose implements MoveListener
 {
   /**
    * allocate a new PoseX at the origin, heading  = 0:the direction  the positive X axis
@@ -88,7 +89,7 @@ public  void  movementStarted(Movement move, MovementProvider p)
  * new heading is between -180 and 180
  * @param angle
  */
- protected void rotate(float angle)
+ public void rotate(float angle)
 {
   _heading += angle;
   while(_heading < 180)_heading += 360;
@@ -107,7 +108,7 @@ public  void  movementStarted(Movement move, MovementProvider p)
  * direction of the current heading
  * @param distance to move
  */
- protected void move(float distance)
+ public void move(float distance)
 {
   float x = distance * (float)Math.cos(Math.toRadians(_heading));
   float y = distance * (float)Math.sin(Math.toRadians(_heading));
@@ -144,7 +145,7 @@ protected void arc(float distance, float turnAngle)
  * @param dx  change in x coordinate
  * @param dy  change in y coordinate
  */
- protected void translate( float dx, float dy)
+ public void translate( float dx, float dy)
 {
     _location.setLocation((float)_location.getX()+dx,(float)_location.getY()+dy);
 }
