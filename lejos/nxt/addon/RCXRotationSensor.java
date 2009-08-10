@@ -153,7 +153,12 @@ public class RCXRotationSensor extends Thread implements Tachometer, SensorConst
         }
     }
 
+    // TODO: Change to getTachoSpeed
 	public int getRotationSpeed() {
+		// TODO: Ok, if it has been longer than last delay between pulses, then it should start to 
+		// calculate speed based on the time between pulses here in this method. In other words, the 
+		// speed value starts working its way towards zero. Might not actually get to 0, but could 
+		// choose some arbitrary value to round to zero.
 		return speed;
 	}
 }

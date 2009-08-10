@@ -9,11 +9,11 @@ import lejos.robotics.Pose;
  * line that is not obstructed.  
  * 
  */
-public class SimplePathFinder implements PathFinder {
+public class ArcPoseController implements PoseController {
 	private ArcPilot pilot;
 	private PoseProvider poseProvider;
 	
-	public SimplePathFinder(ArcPilot pilot, PoseProvider poseProvider) {
+	public ArcPoseController(ArcPilot pilot, PoseProvider poseProvider) {
 		this.pilot = pilot;
 		this.poseProvider = poseProvider;
 	}
