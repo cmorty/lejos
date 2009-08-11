@@ -9,7 +9,7 @@ import lejos.robotics.Pose;
 /**
  * Very simple path finder that assumes there is a direct route to the target
  * 
- * @author Lawrie
+ * @author Lawrie Griffiths
  *
  */
 public class SimplePathFinder extends ArrayList<WayPoint> implements PathFinder {
@@ -25,5 +25,4 @@ public class SimplePathFinder extends ArrayList<WayPoint> implements PathFinder 
 		add(new WayPoint(destination));
 		return this;
 	}
-
 }
