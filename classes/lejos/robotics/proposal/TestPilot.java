@@ -394,8 +394,9 @@ public class TestPilot implements ArcRotatePilot {
 	 *            The wanted angle of rotation in degrees. Positive angle rotate
 	 *            left (clockwise), negative right.
 	 */
-	public void rotate(final float angle) {
+	public Movement rotate(final float angle) {
 		rotate(angle, false);
+        return getMovement();
 	}
 
 	/**
@@ -409,7 +410,7 @@ public class TestPilot implements ArcRotatePilot {
 	 * @param immediateReturn
 	 *            If true this method returns immediately.
 	 */
-	public void rotate(final float angle, final boolean immediateReturn) {
+	public Movement rotate(final float angle, final boolean immediateReturn) {
 		setSpeed(Math.round(_robotTurnSpeed * _leftTurnRatio), Math
 				.round(_robotTurnSpeed * _rightTurnRatio));
 		int rotateAngleLeft = _parity * (int) (angle * _leftTurnRatio);
@@ -423,6 +424,7 @@ public class TestPilot implements ArcRotatePilot {
 				Thread.yield();
 		}
 		endMovement();
+        return getMovement();
 	}
 
 	/**

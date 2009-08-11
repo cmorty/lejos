@@ -7,7 +7,7 @@ public interface RotatePilot extends BasicPilot {
    * 
    * @param angle The angle to rotate in degrees. A positive value rotates left, a negative value right (clockwise).
    */
-  public void rotate(float angle);
+  public Movement rotate(float angle);
 
   /**
    * Rotates the NXT robot the specified number of degrees; direction determined by the sign of the parameter.
@@ -16,7 +16,7 @@ public interface RotatePilot extends BasicPilot {
    * @param angle The angle to rotate in degrees. A positive value rotates left, a negative value right (clockwise).
    * @param immediateReturn If immediateReturn is true then the method returns immediately
    */
-  public void rotate(float angle, boolean immediateReturn);
+  public Movement rotate(float angle, boolean immediateReturn);
   
   public float getAngleIncrement();
   
