@@ -422,7 +422,7 @@ public class DifferentialPilot implements ArcRotatePilot
     
     if (!immediateReturn)
     {
-      while (isMoving() && continueMoving()) Thread.yield();
+      while (isMoving()) Thread.yield();
       stop();
     }
     return getMovement();
@@ -489,10 +489,10 @@ public class DifferentialPilot implements ArcRotatePilot
     setSpeed(Math.round(_robotMoveSpeed * _leftDegPerDistance), Math.round(_robotMoveSpeed * _rightDegPerDistance));
     _left.rotate((int) (_parity * distance * _leftDegPerDistance), true);
     _right.rotate((int) (_parity * distance * _rightDegPerDistance),
-            immediateReturn);  _alert = immediateReturn;
+            true);  _alert = immediateReturn;
     if (!immediateReturn)
     {
-      while (isMoving() && continueMoving())Thread.yield();
+      while (isMoving() && continueMoving()) Thread.yield();
       stop();
     }
     return getMovement();
@@ -560,7 +560,7 @@ public class DifferentialPilot implements ArcRotatePilot
     }  // end no turn limit
     float rotAngle = angle * _trackWidth * 2 / (_leftWheelDiameter * (1 - steerRatio));
     inside.rotate(_parity * (int) (rotAngle * steerRatio), true);
-    outside.rotate(_parity * (int) rotAngle, immediateReturn);
+    outside.rotate(_parity * (int) rotAngle, true);
     if (!immediateReturn)
     {
       while (isMoving() && continueMoving()) Thread.yield();
