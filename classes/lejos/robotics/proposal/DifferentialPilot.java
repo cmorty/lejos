@@ -1,13 +1,8 @@
 package lejos.robotics.proposal;
 
-
 import java.util.ArrayList;
 import lejos.nxt.Battery;
 import lejos.robotics.TachoMotor;
-import lejos.robotics.navigation.*;
-
-
-
 
 /**
  * The DifferentialPilot class is a software abstraction of the Pilot mechanism of a
