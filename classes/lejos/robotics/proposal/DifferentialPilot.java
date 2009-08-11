@@ -141,6 +141,7 @@ public class DifferentialPilot implements MovementProvider
     _trackWidth = trackWidth;
     _parity = (byte) (reverse ? -1 : 1);
     setSpeed(360);
+    monitor.setDaemon(true);
     monitor.start();
   }
 
@@ -434,7 +435,7 @@ public class DifferentialPilot implements MovementProvider
    * 
    * @return true iff no hazard is detected
    */
-  private boolean continueMoving() {
+  protected boolean continueMoving() {
 	return true;
 }
 
