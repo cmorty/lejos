@@ -13,8 +13,8 @@ import lejos.robotics.Pose;
  */
 public interface PathFinder {
 
-	Collection <Point> findRoute(Pose start, Point destination) throws DestinationUnreachableException;
+	Collection <WayPoint> findRoute(Pose start, Point destination) throws DestinationUnreachableException;
 	
-	Collection <Point> findRoute(Pose start, Pose destination) throws DestinationUnreachableException;
+	Collection <WayPoint> findRoute(Pose start, Pose destination) throws DestinationUnreachableException;
 	
 }
