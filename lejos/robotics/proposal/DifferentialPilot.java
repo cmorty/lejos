@@ -421,7 +421,7 @@ public class DifferentialPilot implements MovementProvider
     
     if (!immediateReturn)
     {
-      while (isMoving()) Thread.yield();
+      while (isMoving() && continueMoving()) Thread.yield();
       stop();
     }
     return getMovement();
@@ -429,6 +429,16 @@ public class DifferentialPilot implements MovementProvider
 
 
   /**
+   * This method can be overridden by subclasses to stop the robot if a hazard 
+   * is detected
+   * 
+   * @return true iff no hazard is detected
+   */
+  private boolean continueMoving() {
+	return true;
+}
+
+/**
    * Stops the NXT robot.
    */
   public Movement  stop()
@@ -481,7 +491,7 @@ public class DifferentialPilot implements MovementProvider
             immediateReturn);  _alert = immediateReturn;
     if (!immediateReturn)
     {
-      while (isMoving())Thread.yield();
+      while (isMoving() && continueMoving())Thread.yield();
       stop();
     }
     return getMovement();
@@ -552,7 +562,7 @@ public class DifferentialPilot implements MovementProvider
     outside.rotate(_parity * (int) rotAngle, immediateReturn);
     if (!immediateReturn)
     {
-      while (isMoving()) Thread.yield();
+      while (isMoving() && continueMoving()) Thread.yield();
       stop();
     }
     return getMovement();
