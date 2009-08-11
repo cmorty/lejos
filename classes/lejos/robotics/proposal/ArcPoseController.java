@@ -5,7 +5,7 @@ import lejos.robotics.Pose;
 
 /**
  * This class directs a pilot from the current known coordinates to a destination set of coordinates.
- * The SimplePathPlanner is not capable of avoiding objects or planning a route. It can only drive in a straight
+ * The ArcPoseController is not capable of avoiding objects or planning a route. It can only drive in a straight
  * line that is not obstructed.  
  * 
  */
@@ -45,7 +45,7 @@ public class ArcPoseController implements PoseController {
 		return poseProvider.getPose();
 	}
 
-	public Pose goTo(int x, int y) {
+	public Pose goTo(float x, float y) {
 		return goTo(new Point(x, y));
 	}
 }
