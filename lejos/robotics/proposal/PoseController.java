@@ -30,11 +30,11 @@ public interface PoseController {
 	 * If it can't reach the destination, it tries to get as close as possible before giving up
 	 * and reporting the actual coordinates (Pose) achieved.
 	 * 
-	 * @param x 
-	 * @param y
+	 * @param x the x coordinate of the target point
+	 * @param y the y co-ordinate of the target point
 	 * @return The new pose it achieved.
 	 */
-	public Pose goTo(int x, int y);
+	public Pose goTo(float x, float y);
 		
 	// TODO: Add method to travel to waypoints in order?
 	//public Pose goTo(Collection <Point> destination);
