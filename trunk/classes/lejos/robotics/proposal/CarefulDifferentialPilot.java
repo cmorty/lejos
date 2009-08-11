@@ -20,5 +20,4 @@ public class CarefulDifferentialPilot extends DifferentialPilot {
 	protected boolean continueMoving() {
 		return (rangeFinder.getRange() > tolerance);
 	}
-
 }
