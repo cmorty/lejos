@@ -40,7 +40,7 @@ import lejos.robotics.TachoMotor;
  * </p>
  * 
  **/
-public class DifferentialPilot implements MovementProvider
+public class DifferentialPilot implements ArcRotatePilot
 {
 
   /**
@@ -391,9 +391,9 @@ public class DifferentialPilot implements MovementProvider
    *            The wanted angle of rotation in degrees. Positive angle rotate
    *            left (clockwise), negative right.
    */
-  public void rotate(final float angle)
+  public Movement rotate(final float angle)
   {
-    rotate(angle, false);
+    return rotate(angle, false);
   }
 
   /**
@@ -757,4 +757,13 @@ public class DifferentialPilot implements MovementProvider
    * Diameter of right wheel.
    */
   protected final float _rightWheelDiameter;
+public float getMovementIncrement() {
+	// TODO Auto-generated method stub
+	return 0;
+}
+
+public float getAngleIncrement() {
+	// TODO Auto-generated method stub
+	return 0;
+}
 }
