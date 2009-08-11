@@ -23,20 +23,18 @@ public class DeadReckonerPoseProvider implements MoveListener, PoseProvider {
 	 * 
 	 * @param pilot
 	 */
-	public DeadReckonerPoseProvider(MovementProvider pilot) {
-		pilot.addMoveListener(this);
+	public DeadReckonerPoseProvider(MovementProvider mp) {
+		mp.addMoveListener(this);
 	}
 		
 	public Pose getPose() {
 		return new Pose(x,y,heading);
 	}
 
-	public void movementStarted(Movement event, MovementProvider p) {
-		// TODO Auto-generated method stub
-		
+	public void movementStarted(Movement event, MovementProvider mp) {		
 	}
 
-	public void movementStopped(Movement event, MovementProvider p) {
+	public void movementStopped(Movement event, MovementProvider mp) {
 		float angle = event.getAngleTurned();
 		float distance = event.getDistanceTraveled();
         double dx = 0, dy = 0;
