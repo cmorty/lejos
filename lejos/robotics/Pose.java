@@ -8,7 +8,6 @@ package lejos.robotics;
  */
 
 import lejos.geom.Point;
-import lejos.nxt.LCD;
 /**
  * Represents the location and heading(direction angle) of a robot.<br>
  * This class includes  methods for updating the Pose to track common robot movements
