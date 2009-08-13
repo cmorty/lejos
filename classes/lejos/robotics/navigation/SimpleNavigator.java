@@ -1,6 +1,6 @@
 package lejos.robotics.navigation;
 
-
+    
 
 import lejos.robotics.Pose;
 
@@ -344,7 +344,7 @@ public float getAngle()
       dy = distance * (float) Math.sin(headingRad);
     }
     _pose.translate((float) dx, (float) dy);
-    _pose.rotate(turnAngle);
+    _pose.rotateUpdate(turnAngle);
     _angle0 = pilot.getAngle();
     _distance0 = pilot.getTravelDistance();
   }
