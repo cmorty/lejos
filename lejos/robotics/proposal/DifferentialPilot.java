@@ -626,7 +626,7 @@ public class DifferentialPilot implements ArcRotatePilot
   {
     for (MoveListener p : listeners)
     {
-      p.movementStarted(new Movement(_moveType, 0, 0), this);
+      p.movementStarted(new Movement(_moveType, 0, 0, true ), this);
     }
   }
 
@@ -634,19 +634,24 @@ public class DifferentialPilot implements ArcRotatePilot
   {
     for (MoveListener p : listeners)
     {
-      Movement move = new Movement(_moveType, getTravelDistance(), getAngle());
+      Movement move = new Movement(_moveType, getTravelDistance(), getAngle(), false);
       p.movementStopped(move, this);
     }
   }
- public void setMinRadius(float radius){}
- public float  getMinRadius(){return 0;}
+  
+ public void setMinRadius(float radius){
+   _minRadius = radius;
+ }
+ 
+ public float getMinRadius(){return _minRadius;}
+ 
   public Movement getMovement()
   {
-    return new Movement(_moveType, getTravelDistance(), getAngle());
+    return new Movement(_moveType, getTravelDistance(), getAngle(), isMoving());
   }
 
   /**
-   * The only purpose of this inner class is to detect when an immeciate return
+   * The only purpose of this inner class is to detect when an immediate return
    * method exits  because the distance or angle has been reached.
    */
   private class Monitor extends Thread
@@ -683,7 +688,7 @@ public class DifferentialPilot implements ArcRotatePilot
     }
   }
   /**
-   * should be ture if an immediate return moement is in progress.
+   * should be true if an immediate return movement is in progress.
    * used by monitor
    */
   protected boolean _alert = false;
@@ -757,6 +762,9 @@ public class DifferentialPilot implements ArcRotatePilot
    * Diameter of right wheel.
    */
   protected final float _rightWheelDiameter;
+  
+  protected float _minRadius = 0;
+  
 public float getMovementIncrement() {
 	// TODO Auto-generated method stub
 	return 0;

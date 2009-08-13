@@ -16,7 +16,7 @@ import lejos.geom.Point;
  * Experimental Pose
  * Represents the location and heading(direction angle) of a robot.<br>
  * This class includes  methods for updating the UpdateablePose to track common robot movements.
- * It will updates itself for every move of a Pilot if it registeres as a MoveListener.
+ * It will updates itself for every move of a Pilot if it registers as a MoveListener.
  * The Pilot must implement the MovementProvider interface.
  * It can report the current pose at any time, even while a move is in progress.
  * @author Roger Glassey
@@ -78,7 +78,7 @@ public  void  movementStarted(Movement move, MovementProvider p)
       {
         arc(distance - _distance0, angle -_angle0) ;
       }
-      _current = !pilot.isMoving();
+      _current = move.isMoving();
       _angle0 = angle;
       _distance0 = distance;
     }

@@ -9,8 +9,6 @@ package lejos.robotics.proposal;
 public interface MovementProvider {
   public Movement getMovement();
   
-  public boolean isMoving(); // required for the Pose to do a partial move update
-  
   /**
    * Adds a MoveListener that will be notified of all movement events.
    * @param p
