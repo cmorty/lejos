@@ -14,22 +14,22 @@ public class MCLPoseProvider implements PoseProvider, MoveListener {
 	private RangeMap map;
 	private boolean readingsRequired = true;
 	
-	public MCLPoseProvider(RotatePilot pilot, RangeScanner scanner, 
+	public MCLPoseProvider(MovementProvider mp, RangeScanner scanner, 
 		                   RangeMap map, int numParticles, int border) {
 		particles = new MCLParticleSet(map, numParticles, border);
 		this.scanner = scanner;
 		this.map = map;
-		pilot.addMoveListener(this);
+		mp.addMoveListener(this);
 	}
 	
 	public MCLParticleSet getParticles() {
 		return particles;
 	}
 
-	public void movementStarted(Movement event, MovementProvider p) {		
+	public void movementStarted(Movement event, MovementProvider mp) {		
 	}
 
-	public void movementStopped(Movement event, MovementProvider p) {
+	public void movementStopped(Movement event, MovementProvider mp) {
 		readingsRequired = true;
 		particles.applyMove(event);
 	}

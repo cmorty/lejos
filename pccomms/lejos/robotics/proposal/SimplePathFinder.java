@@ -1,47 +1,28 @@
 package lejos.robotics.proposal;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import lejos.geom.Point;
 import lejos.robotics.Pose;
 
 /**
- * This class directs a pilot from the current known coordinates to a destination set of coordinates.
- * The SimplePathPlanner is not capable of avoiding objects or planning a route. It can only drive in a straight
- * line that is not obstructed.  
+ * Very simple path finder that assumes there is a direct route to the target
  * 
+ * @author Lawrie Griffiths
+ *
  */
-public class SimplePathFinder implements PathFinder {
-	private ArcPilot pilot;
-	private PoseProvider poseProvider;
-	
-	public SimplePathFinder(ArcPilot pilot, PoseProvider poseProvider) {
-		this.pilot = pilot;
-		this.poseProvider = poseProvider;
-	}
-	
-	public ArcPilot getPilot() {
-		return pilot;
+public class SimplePathFinder extends ArrayList<WayPoint> implements PathFinder {
+
+	public Collection<WayPoint> findRoute(Pose start, Point destination)
+			throws DestinationUnreachableException {
+		add(new WayPoint(destination));
+		return this;
 	}
 
-	public PoseProvider getPoseProvider() {
-		return poseProvider;
-	}
-
-	public void setPoseProvider(PoseProvider replacement) {
-		poseProvider = replacement;
-	}
-
-	public Pose goTo(Point destination) {
-		Pose pose = poseProvider.getPose();
-		if (pilot instanceof RotatePilot) { // optimize for RotatePilot
-		    float turnAngle = pose.angleTo(destination) - pose.getHeading();
-		    while (turnAngle < -180)turnAngle += 360;
-		    while (turnAngle > 180) turnAngle -= 360;
-			((RotatePilot) pilot).rotate(turnAngle);
-			pilot.travel(pose.distanceTo(destination));			
-		} else {
-			//TODO: Calculate arc of minimum radius needed to point to the
-			// destination and the do an arc and a travel.
-		}
-		return poseProvider.getPose();
+	public Collection<WayPoint> findRoute(Pose start, Pose destination)
+			throws DestinationUnreachableException {
+		add(new WayPoint(destination));
+		return this;
 	}
 }

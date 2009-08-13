@@ -90,6 +90,15 @@ public class MCLParticleSet {
   public int numParticles() {
     return numParticles;
   }
+  
+  /**
+   * Set system out debugging on or off
+   * 
+   * @param debug true to set debug, false to set it off
+   */
+  public void setDebug(boolean debug) {
+	  this.debug = debug;
+  }
 
   /**
    * Get a specific particle

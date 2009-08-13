@@ -76,7 +76,7 @@ public class LightSensor implements LightLampDetector, SensorConstants
 	 * @deprecated 
 	 * @return
 	 */
-	public int readRawValue() {
+	public int readNormalizedValue() {
 		return getRawLightLevel();
 	}
 	

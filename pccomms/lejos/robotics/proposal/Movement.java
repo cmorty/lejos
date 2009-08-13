@@ -3,7 +3,7 @@ package lejos.robotics.proposal;
 /**
  * Models a movement performed by a pilot
  * 
- * @author Lawrie
+ * @author Lawrie Griffiths
  *
  */
 public class Movement {
@@ -15,6 +15,8 @@ public class Movement {
 	protected float distanceTraveled, angleTurned;
 	protected MovementType movementType;
 	protected float arcRadius = Float.POSITIVE_INFINITY;
+	protected boolean isMoving;
+	protected long timeStamp;
 	
 	/**
 	 * Create a movement object to record a movement made by a pilot
@@ -22,15 +24,18 @@ public class Movement {
 	 * @param type the movement type
 	 * @param distance the distance traveled in pilot units
 	 * @param angle the angle turned in degrees
+	 * @param isMoving true iff the movement was created while the robot was moving
 	 */
-	public Movement(MovementType type, float distance, float angle) {
+	public Movement(MovementType type, float distance, float angle, boolean isMoving) {
 		this.movementType = type;
 		this.distanceTraveled = distance;
 		this.angleTurned = angle;
+		this.isMoving = isMoving;
 		if (Math.abs(angle) > 0.5) {
 			double turnRad = Math.toRadians(angle);
 			arcRadius = (float) ((double) distance / turnRad);
 		}
+		this.timeStamp = System.currentTimeMillis();
 	}
 
 	/**
@@ -67,5 +72,13 @@ public class Movement {
 	 */
 	public float getArcRadius() {
 		return arcRadius;
+	}
+	/**
+	 * Test if move was in progress
+	 * 
+	 * @return true iff the robot was moving when this Movement object was created
+	 */
+	public boolean isMoving() {
+		return isMoving;
 	}
 }

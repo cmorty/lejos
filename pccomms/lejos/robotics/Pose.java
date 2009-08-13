@@ -1,12 +1,13 @@
 package lejos.robotics;
- 
+
+
+  
 /*
  * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
  * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
  */
 
 import lejos.geom.Point;
-
 /**
  * Represents the location and heading(direction angle) of a robot.<br>
  * This class includes  methods for updating the Pose to track common robot movements
@@ -37,25 +38,18 @@ public Pose(float x, float y, float heading)
  * rotate the heading through the specified angle
  * @param angle
  */
-public void rotate(float angle)
+public void rotateUpdate(float angle)
 {
   _heading += angle;
   while(_heading < 180)_heading += 360;
   while(_heading > 180)_heading -= 360;
 }
-/**
- * rotate to the specified new heading
- * @param new heading
- */
-public void rotateTo(float newHeading)
-{
-  rotate(newHeading - _heading);
-}
+
 /**
  * move the specified distance in the direction of current heading.
  * @param distance to move
  */
-public void move(float distance)
+public void moveUpdate(float distance)
 {
   float x = distance * (float)Math.cos(Math.toRadians(_heading));
   float y = distance * (float)Math.sin(Math.toRadians(_heading));
@@ -69,6 +63,31 @@ public void move(float distance)
 public void translate( float dx, float dy)
 {
     _location.setLocation((float)_location.getX()+dx,(float)_location.getY()+dy);
+}
+/**
+ * sets the pose locatin and heading to the currect values resulting from travel
+ * in a circular arc.  The radius is calculated from the distance and turn angle
+ * @param distance
+ * @param turnAngle
+ */
+public void arcUpdate(float distance, float turnAngle)
+{
+  float dx = 0;
+    float  dy = 0;
+    double heading = (Math.toRadians(_heading));
+    if (Math.abs(turnAngle) > .5)
+    {
+      float turn = (float)Math.toRadians(turnAngle);
+     float radius = distance / turn;
+      dy = radius * (float) (Math.cos(heading) - Math.cos(heading + turn));
+      dx = radius * (float)(Math.sin(heading + turn) - Math.sin(heading));
+    } else if (Math.abs(distance) > .01)
+    {
+      dx = distance * (float) Math.cos(heading);
+      dy = distance * (float) Math.sin(heading);
+    }
+    translate((float) dx, (float) dy);
+    rotateUpdate(turnAngle);
 }
 /**
  * calculates the absolute angle to destination from the current location of the pose
@@ -123,8 +142,8 @@ public void setHeading(float heading )
 {
   _heading = heading;
 }
-private Point _location;
-private float _heading;
+protected  Point _location;
+protected  float _heading;
 
 }
 
