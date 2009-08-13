@@ -12,6 +12,7 @@ import lejos.nxt.*;
  * Abstraction for an RCX light sensor.
  * 
  */
+// TODO: Implement LightDetector and Lamp interfaces.
 public class RCXLightSensor implements SensorConstants {
 	LegacySensorPort port;
 	

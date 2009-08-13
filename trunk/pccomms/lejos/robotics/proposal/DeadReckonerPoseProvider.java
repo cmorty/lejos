@@ -16,45 +16,65 @@ import lejos.robotics.Pose;
  */
 public class DeadReckonerPoseProvider implements MoveListener, PoseProvider {
 	private float x = 0, y = 0, heading = 0;
+	private float angle0, distance0;
+	MovementProvider mp;
+	boolean current = true;
 	
 	/**
 	 * Internally, the constructor  listens to movements from the Pilot. This allows it to keep
 	 * track of all vector movements made.
 	 * 
-	 * @param pilot
+	 * @param mp the movement provider
 	 */
-	public DeadReckonerPoseProvider(MovementProvider pilot) {
-		pilot.addMoveListener(this);
+	public DeadReckonerPoseProvider(MovementProvider mp) {
+		mp.addMoveListener(this);
 	}
 		
 	public Pose getPose() {
+		if (!current) updatePose(mp.getMovement());
 		return new Pose(x,y,heading);
 	}
 
-	public void movementStarted(Movement event, MovementProvider p) {
-		// TODO Auto-generated method stub
-		
+	public void movementStarted(Movement event, MovementProvider mp) {
+	    angle0 = 0;
+	    distance0 = 0;
+	    current = false;
+	    this.mp = mp;;
 	}
 
-	public void movementStopped(Movement event, MovementProvider p) {
-		float angle = event.getAngleTurned();
-		float distance = event.getDistanceTraveled();
+	public void movementStopped(Movement event, MovementProvider mp) {
+		updatePose(event);
+	}
+	
+	/*
+	 * Update the pose with the movement that has occurred since the 
+	 * movementStarted even
+	 */
+	private void updatePose(Movement event) {
+		float angle = event.getAngleTurned() - angle0;
+		float distance = event.getDistanceTraveled() - distance0;
         double dx = 0, dy = 0;
         double headingRad = (Math.toRadians(heading));
+        //MovementType type = event.getMovementType();
         
         if (Math.abs(angle) > .5) { // rotate or arc
             double turnRad = Math.toRadians(angle);
             double radius = event.getArcRadius(); // zero for rotate
-            dy = radius * (Math.cos(headingRad) - Math.cos(headingRad + turnRad));
-            dx = radius * (Math.sin(headingRad + turnRad) - Math.sin(headingRad));
+            if (radius != 0) {
+            	dy = radius * (Math.cos(headingRad) - Math.cos(headingRad + turnRad));
+            	dx = radius * (Math.sin(headingRad + turnRad) - Math.sin(headingRad));
+            }
         } else if (Math.abs(distance) > .01) { // travel
-            dx = distance * (float) Math.cos(headingRad);
-            dy = distance * (float) Math.sin(headingRad);
+            dx = (distance) * (float) Math.cos(headingRad);
+            dy = (distance) * (float) Math.sin(headingRad);
         }
         
         heading = normalize(heading + angle); // keep angle between -180 and 180
         x += dx;
-        y += dy;		
+        y += dy;
+        angle0 = event.getAngleTurned();
+        distance0 = event.getDistanceTraveled();
+        current = !event.isMoving();		
 	}
 
     /*
@@ -74,9 +94,11 @@ public class DeadReckonerPoseProvider implements MoveListener, PoseProvider {
     public void setPosition(Point p) {
     	x = p.x;
     	y = p.y;
+    	current = true;
     }
     
     void setHeading(float heading) {
     	this.heading = heading;
+    	current = true;
     }
 }
