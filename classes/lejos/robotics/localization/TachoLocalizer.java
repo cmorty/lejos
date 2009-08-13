@@ -33,6 +33,7 @@ public abstract class TachoLocalizer extends SimpleNavigator {
   protected float angle, distance;
   protected Movement mv;
   protected int numReadings;
+  protected boolean isMoving;
 
   public TachoLocalizer(RangeMap map, int numParticles, int numReadings,
 		    float wheelDiameter, float trackWidth,
@@ -66,7 +67,7 @@ public abstract class TachoLocalizer extends SimpleNavigator {
   public void updatePosition() {
     super.updatePosition();
     if (angle != 0f || distance != 0f) {
-    	mv = new Movement(MovementType.TRAVEL, angle, distance);
+    	mv = new Movement(MovementType.TRAVEL, angle, distance,isMoving);
         particles.applyMove(mv);
     }
     angle = 0f;
