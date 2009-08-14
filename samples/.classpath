@@ -34,7 +34,6 @@
 	<classpathentry excluding="build.xml" kind="src" path="NXTReceive"/>
 	<classpathentry excluding="build.xml" kind="src" path="NXTServoTest"/>
 	<classpathentry kind="src" path="ObstacleNavigator"/>
-	<classpathentry kind="src" path="ObstacleNavigate"/>
 	<classpathentry excluding="build.xml" kind="src" path="PerformanceTest"/>
 	<classpathentry kind="src" path="PFLinkTest"/>
 	<classpathentry kind="src" path="PFMateTest"/>
