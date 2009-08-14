@@ -9,6 +9,7 @@ package lejos.robotics.proposal;
  */
 
 import lejos.geom.Point;
+import lejos.robotics.Pose;
 
 
 
@@ -68,15 +69,15 @@ public  void  movementStarted(Movement move, MovementProvider p)
       Movement.MovementType type = move.getMovementType();
        if(type == Movement.MovementType.ROTATE)
       {
-        rotate(angle -_angle0);
+        rotateUpdate(angle -_angle0);
       }
       else if(type == Movement.MovementType.TRAVEL)
       {
-        move(distance - _distance0);
+        moveUpdate(distance - _distance0);
       }
       else if(type == Movement.MovementType.ARC)
       {
-        arc(distance - _distance0, angle -_angle0) ;
+        arcUpdate(distance - _distance0, angle -_angle0) ;
       }
       _current = move.isMoving();
       _angle0 = angle;
