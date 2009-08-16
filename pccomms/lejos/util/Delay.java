@@ -10,7 +10,7 @@ public class Delay {
      * Wait for the specified number of milliseconds.
      * Delays the current thread for the specified period of time. Can not
      * be interrupted (but it does preserve the interrupted state).
-     * @param period time to wait in msDelay
+     * @param period time to wait in ms
      */
     public static void msDelay(long period)
     {
@@ -34,7 +34,7 @@ public class Delay {
      * Wait for the specified number of microseconds.
      * Delays the current thread for the specified period of time. Can not
      * be interrupted.
-     * @param period time to wait in usDelay
+     * @param period time to wait in us
      */
     @SuppressWarnings("empty-statement")
     public static void usDelay(long period)
@@ -51,7 +51,7 @@ public class Delay {
      * Wait for the specified number of nanoseconds.
      * Delays the current thread for the specified period of time. Can not
      * be interrupted.
-     * @param period time to wait in nsDelay
+     * @param period time to wait in ns
      */
     @SuppressWarnings("empty-statement")
     public static void nsDelay(long period)
