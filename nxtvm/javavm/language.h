@@ -160,7 +160,6 @@ extern byte *classStatusBase;
 //base of constant values
 extern byte *constantValuesBase;
 
-extern byte get_class_index (Object *obj);
 extern void dispatch_virtual (Object *obj, int signature, byte *rAddr);
 extern MethodRecord *find_method (ClassRecord *classRec, int signature);
 extern boolean instance_of (Object *obj, const byte cls);
@@ -218,8 +217,7 @@ extern boolean is_valid_executable(byte * start, int len);
 #define get_interface_map(CREC_)    ((byte*)(get_binary_base() + (CREC_)->CIAData1))
 #define get_interface_map_base(CREC_) ((CREC_)->CIAData2)
 #define get_interface_map_len(CREC_) ((CREC_)->CIACnt1)
-#define is_primitive(CLASSIDX_)     ((CLASSIDX_) >= BYTE && (CLASSIDX_) <= LONG )
-#define get_base_type(CLASSIDX_)    (is_primitive(CLASSIDX_) ? (CLASSIDX_) : JAVA_LANG_OBJECT)
+#define is_primitive(CLASSIDX_)     ((CLASSIDX_) >= BOOLEAN && (CLASSIDX_) <= LONG )
 #if EXECUTE_FROM_FLASH
 #define set_init_state(CREC_, state)(get_class_status(CREC_) |= (state))
 #define get_init_state_idx(IDX_)    (classStatusBase[IDX_])

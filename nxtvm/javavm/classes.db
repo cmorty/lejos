@@ -36,6 +36,7 @@ java/lang/NullPointerException
 [S
 [I
 [J
+[V
 java/lang/ClassCastException
 java/lang/ArithmeticException
 java/lang/ArrayIndexOutOfBoundsException

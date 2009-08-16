@@ -48,7 +48,7 @@ public class PrimitiveClassRecord extends ClassRecord
     @Override
    public boolean hasReference() throws TinyVMException
    {
-      return false;
+      return isArray() && !this.iArrayElementClass.isPrimitive();
    }   
 
     @Override
@@ -202,6 +202,25 @@ public class PrimitiveClassRecord extends ClassRecord
       pCR.iNumDims = dims;
       pCR.iArrayElementClass = elem;
       return pCR;
+   }
+
+   /**
+    * @return Number of bytes required for object allocation.
+    * For arrays we return the size of a single element.
+    * @throws TinyVMException
+    */
+    @Override
+   public int getAllocationSize () throws TinyVMException
+   {
+      if (this.isArray())
+      {
+          if (this.iArrayElementClass.isPrimitive())
+              return this.iArrayElementClass.getAllocationSize();
+          else
+              return TinyVMType.T_OBJECT.size();
+      }
+      else
+          return this.iType.size();
    }
 
 

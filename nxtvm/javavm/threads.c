@@ -40,16 +40,6 @@ byte gThreadCounter;
  */
 byte gProgramNumber;
 
-StackFrame *current_stackframe()
-{
-  byte arraySize;
-
-  arraySize = currentThread->stackFrameArraySize;
-  if (arraySize == 0)
-    return null;
-  return stackframe_array() + (arraySize - 1);
-}
-
 void update_stack_frame (StackFrame *stackFrame)
 {
   stackFrame->stackTop = curStackTop;
@@ -139,7 +129,7 @@ int init_thread (Thread *thread)
   //protectedRef[0] = (Object *)thread;
   protect_obj(thread);
   // Allocate space for stack frames.
-  thread->stackFrameArray = ptr2ref (new_primitive_array (T_STACKFRAME, INITIAL_STACK_FRAMES));
+  thread->stackFrameArray = ptr2ref (new_primitive_array (T_BYTE, INITIAL_STACK_FRAMES*sizeof(StackFrame)));
   if (thread->stackFrameArray == JNULL)
   {
     //protectedRef[0] = JNULL;
@@ -232,9 +222,7 @@ boolean switch_thread()
       printf ("switchThread: current stack frame: %d\n", (int) stackFrame);
 #endif
   
-      if (stackFrame != null) {
-        update_stack_frame (stackFrame);
-      }
+      update_stack_frame (stackFrame);
     }
   }
 

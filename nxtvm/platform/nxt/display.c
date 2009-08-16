@@ -2,6 +2,7 @@
 #include "nxt_lcd.h"
 #include "systick.h"
 #include "constants.h"
+#include "specialclasses.h"
 #include "classes.h"
 #include <string.h>
 
@@ -36,11 +37,9 @@ static const struct
   U8 font[N_CHARS][FONT_WIDTH];
 } __attribute__((packed)) font_array =
 {{{{
-    .arrays.length=BIGARRAYLEN,
-    .arrays.type = T_BYTE,
-    .arrays.mark = 3,
-    .arrays.isArray = 1,
-    .arrays.isAllocated = 1
+    .length=LEN_BIGARRAY,
+    .mark = 3,
+    .class = T_BYTE+ALJAVA_LANG_OBJECT
    },
    {0,
    0}
@@ -555,13 +554,11 @@ display_init(void)
 {
   // Initialise the array parameters so that the display can
   // be memory mapped into the Java address space
-  display_array.arrayHdr.hdr.flags.arrays.isArray = 1;
   // NOTE This object must always be marked, otherwise very, very bad
   // things will happen!
-  display_array.arrayHdr.hdr.flags.arrays.mark = 3;
-  display_array.arrayHdr.hdr.flags.arrays.length = BIGARRAYLEN;
-  display_array.arrayHdr.hdr.flags.arrays.isAllocated = 1;
-  display_array.arrayHdr.hdr.flags.arrays.type = T_INT;
+  display_array.arrayHdr.hdr.flags.mark = 3;
+  display_array.arrayHdr.hdr.flags.length = LEN_BIGARRAY;
+  display_array.arrayHdr.hdr.flags.class = T_BYTE + ALJAVA_LANG_OBJECT;
   display_array.arrayHdr.hdr.sync.monitorCount = 0;
   display_array.arrayHdr.hdr.sync.threadId = 0;
   display_array.arrayHdr.length = DISPLAY_DEPTH*DISPLAY_WIDTH;

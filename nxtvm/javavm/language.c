@@ -48,25 +48,6 @@ byte *classStatusBase;
 
 // Methods:
 
-// Class access functions
-
-/**
- * Get class index.
- * Return index of the class for the given object.
- */
-byte get_class_index (Object *obj)
-{
-  // We may not have full class info for an array
-  if (is_array(obj))
-  {
-    if (is_big_array(obj))
-      return ((BigArray *)obj)->class;
-    else
-      return ALJAVA_LANG_OBJECT + obj->flags.arrays.type;
-  }
-  return obj->flags.objects.class;
-}
-
 /**
  * Check the image at the given location to see if it is valid
  */
@@ -224,7 +205,6 @@ void dispatch_special_checked (byte classIndex, byte methodIndex,
   printf ("dispatch_special_checked: %d, %d, %d, %d\n",
           classIndex, methodIndex, (int) retAddr, (int) btAddr);
   #endif
-
   // If we need to run the initializer then the real method will get called
   // later, when we re-run the current instruction.
   classRecord = get_class_record (classIndex);
@@ -277,8 +257,10 @@ boolean dispatch_special (MethodRecord *methodRecord, byte *retAddr)
   int debug_ctr;
   #endif
 
+  Object *stackFrameArray;
   StackFrame *stackFrame;
-  byte newStackFrameIndex;
+  StackFrame *stackBase;
+  int newStackFrameIndex;
   STACKWORD *newStackTop;
 
   #if DEBUG_BYTECODE
@@ -332,65 +314,53 @@ boolean dispatch_special (MethodRecord *methodRecord, byte *retAddr)
     // Stack frame not pushed
     return false;
   }
-  newStackFrameIndex = currentThread->stackFrameArraySize;
+  // Now start to build the new stack frames. We start by placing the
+  // the new stack pointer below any params. The params will become locals
+  // in the new frame.
+  newStackTop = get_stack_ptr_cur() - methodRecord->numParameters;
+
+  newStackFrameIndex = (int)(byte)currentThread->stackFrameArraySize;
   if (newStackFrameIndex >=  255)
   {
       throw_exception (stackOverflowError);
       return false;
   }
-  if (newStackFrameIndex >= get_array_length((Object *) word2ptr (currentThread->stackFrameArray)))
-  {
-#if !FIXED_STACK_SIZE
-    // int len = get_array_length((Object *) word2ptr (currentThread->stackFrameArray));
-    int newlen = get_array_length((Object *) word2ptr (currentThread->stackFrameArray)) * 3 / 2;
-    JINT newStackFrameArray = JNULL;
-    // Stack frames are indexed by a byte value so limit the size. 
-    if (newStackFrameIndex < 255)
-    {
-      if (newlen > 255)
-        newlen = 255;
-      // increase the stack frame size
-      newStackFrameArray = ptr2ref(reallocate_array(word2ptr(currentThread->stackFrameArray), newlen));
-    }
-    // If can't allocate new stack, give in!
-    if (newStackFrameArray == JNULL)
-    {
-#endif
-      //throw_exception (stackOverflowError);
-      return false;
-#if !FIXED_STACK_SIZE
-    }
-    // Assign new array
-    currentThread->stackFrameArray = newStackFrameArray;
-#endif
-  }
-  
-  // Now start to build the new stack frames. We start by placing the
-  // the new stack pointer below any params. The params will become locals
-  // in the new frame.
-  newStackTop = get_stack_ptr_cur() - methodRecord->numParameters;
-  if (newStackFrameIndex == 0)
-  {
-    // Assign NEW stack frame
-    stackFrame = stackframe_array();
-  }
-  else
-  {
-    #if DEBUG_METHODS
-    for (debug_ctr = 0; debug_ctr < methodRecord->numParameters; debug_ctr++)
-      printf ("-- param[%d]    = %ld\n", debug_ctr, (long) get_stack_ptr()[debug_ctr+1]);  
-    #endif
-
-    // Setup OLD stackframe ready for return
-    stackFrame = stackframe_array() + (newStackFrameIndex - 1);
-    stackFrame->stackTop = newStackTop;
-    stackFrame->pc = retAddr;
-    // Push NEW stack frame
-    stackFrame++;
-  }
+  #if DEBUG_METHODS
+  for (debug_ctr = 0; debug_ctr < methodRecord->numParameters; debug_ctr++)
+    printf ("-- param[%d]    = %ld\n", debug_ctr, (long) get_stack_ptr()[debug_ctr+1]);  
+  #endif
+  stackFrameArray = ref2obj(currentThread->stackFrameArray);
+  stackBase = (StackFrame *)array_start(stackFrameArray);
+  // Setup OLD stackframe ready for return
+  stackFrame = stackBase + (newStackFrameIndex);
+  stackFrame->stackTop = newStackTop;
+  stackFrame->pc = retAddr;
+  // Push NEW stack frame
   // Increment size of stack frame array but do not commit to it until we have
   // completely built both new stacks.
   newStackFrameIndex++;
+  stackFrame++;
+  if (((byte *)stackFrame - (byte *)stackBase) >= get_array_length(stackFrameArray))
+  {
+#if FIXED_STACK_SIZE
+    throw_exception (stackOverflowError);
+    return false;
+#else
+    int newlen = (stackFrame - stackBase)*3/2;
+    // Stack frames are indexed by a byte value so limit the size. 
+    if (newlen > 256)
+      newlen = 256;
+    // increase the stack frame size
+    stackFrameArray = reallocate_array(stackFrameArray, newlen*(sizeof(StackFrame)));
+    // If can't allocate new stack, give in!
+    if (stackFrameArray == JNULL)
+      return false;
+    // Assign new array
+    currentThread->stackFrameArray = ptr2ref(stackFrameArray);
+    stackFrame = (StackFrame *)array_start(stackFrameArray) + newStackFrameIndex;
+#endif
+  }
+  
   // Initialize rest of new stack frame
   stackFrame->methodRecord = methodRecord;
   stackFrame->monitor = null;
@@ -398,13 +368,14 @@ boolean dispatch_special (MethodRecord *methodRecord, byte *retAddr)
   // Allocate space for locals etc.
   newStackTop = init_sp(stackFrame, methodRecord);
   
-  //printf ("m %d stack = %d\n", (int) methodRecord->signatureId, (int) (localsBase - stack_array())); 
-  
   // Check for stack overflow
   // (stackTop + methodRecord->maxOperands) >= (stack_array() + STACK_SIZE);
   if (is_stack_overflow (newStackTop, methodRecord))
   {
-#if !FIXED_STACK_SIZE
+#if FIXED_STACK_SIZE
+    throw_exception (stackOverflowError);
+    return false;
+#else
     StackFrame *stackBase;
     byte *oldStart = array_start((Object *)(currentThread->stackArray));
     int offset;
@@ -416,24 +387,18 @@ boolean dispatch_special (MethodRecord *methodRecord, byte *retAddr)
     // Need to compute new array size (as distinct from number of bytes in array).
     int newlen = (((int)(newStackTop + methodRecord->maxOperands) - (int)(stack_array()) + 3) / 4) * 3 / 2;
     REFERENCE newStackArray = ptr2ref(reallocate_array(word2ptr(currentThread->stackArray), newlen));
-
     // If can't allocate new stack, give in!
     if (newStackArray == JNULL)
-    {
-#endif
-      //throw_exception (stackOverflowError);
       return false;
-#if !FIXED_STACK_SIZE
-    }
     // Adjust pointers.
     offset = array_start((Object *)newStackArray) - oldStart;
-    stackBase = stackframe_array();
+    stackBase = (StackFrame *)array_start(stackFrameArray);
     newStackTop = word2ptr(ptr2word(newStackTop) + offset);
     curLocalsBase = word2ptr(ptr2word(curLocalsBase) + offset);
 #if DEBUG_MEMORY
     printf("thread=%d, stackTop(%d), localsBase(%d)=%d\n", currentThread->threadId, (int)stackTop, (int)localsBase, (int)(*localsBase));
 #endif
-    for (i=((byte)(newStackFrameIndex))-1;
+    for (i=newStackFrameIndex;
          i >= 0;
          i--)
     {
@@ -510,7 +475,6 @@ void do_return (int numWords)
   stackFrame--;
   // Assign registers
   update_registers (stackFrame);
-
   #if DEBUG_METHODS
   printf ("do_return: stack reset to:\n");
   printf ("-- stack ptr = %d\n", (int) get_stack_ptr());
@@ -587,7 +551,6 @@ boolean instance_of (Object *obj, const byte cls)
  */
 boolean is_assignable(const byte srcCls, const byte dstCls)
 {
-  ClassRecord *srcRec;
   ClassRecord *dstRec;
   // Check common cases
   if (srcCls == dstCls || dstCls == JAVA_LANG_OBJECT) return true;
@@ -602,23 +565,7 @@ boolean is_assignable(const byte srcCls, const byte dstCls)
     base = srcCls - base;
     return ((get_interface_map(dstRec)[base/8]) & (1 << (base%8))) != 0;
   }
-  if (sub_type_of(srcCls, dstCls)) return true;
-  if (type_checks_enabled()) return false;
-  // Special case... we may only have limited information available for array
-  // objects so if checks are not available we let some other cases through
-  if (!is_array_class(dstRec)) return false;
-  srcRec = get_class_record(srcCls);
-  if (!is_array_class(srcRec)) return false;
-  if (get_dim(dstRec) == 1)
-  {
-    // For 1d arrays we can test the basic type, if it is not equal then we know we do not have a match
-    if (get_base_type(get_element_class(dstRec)) != get_base_type(get_element_class(srcRec))) return false;
-  }
-  else
-    // for multi arrays the base type must be an object
-    if (get_base_type(get_element_class(srcRec)) != JAVA_LANG_OBJECT) return false;
-  // for all other cases we assume a match...
-  return true;
+  return sub_type_of(srcCls, dstCls);
 }
 
 

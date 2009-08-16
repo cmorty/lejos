@@ -84,8 +84,8 @@ extern Object gcLock;
 
 #define get_array_element_ptr(ARR_,ESIZE_,IDX_) (array_start((ARR_)) + (IDX_) * (ESIZE_))
 
-#define protect_obj(OBJ) ((Object *)OBJ)->sync.monitorCount++
-#define unprotect_obj(OBJ) ((Object *)OBJ)->sync.monitorCount--
+#define protect_obj(OBJ) (((Object *)OBJ)->sync.monitorCount++)
+#define unprotect_obj(OBJ) (((Object *)OBJ)->sync.monitorCount--)
 
 extern TWOBYTES failed_alloc_size;
 

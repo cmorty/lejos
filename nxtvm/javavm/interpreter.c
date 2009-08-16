@@ -157,7 +157,7 @@ Object *create_string (ConstantRecord *constantRecord,
   {
     deallocate (obj2ptr(ref), class_size (JAVA_LANG_STRING));    
     // If this is the 2nd attempt at creating this object give up!
-    if (retry) throw_exception(outOfMemoryError);
+    if (retry && gcPhase == GC_IDLE) throw_exception(outOfMemoryError);
     return JNULL;
   }
   

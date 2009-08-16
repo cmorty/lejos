@@ -38,18 +38,14 @@ public final class VM
     // Offsets and masks to allow access to a standard Object header
     private static final int OBJ_HDR_SZ = 4;
     private static final int OBJ_FLAGS = 1;
-    private static final int OBJ_ARRAY_LEN = 0;
-    private static final int OBJ_ARRAY_LEN_ISBIGARRAY = 0xff;
+    private static final int OBJ_LEN_MASK = 0x3f;
+    private static final int OBJ_LEN_OBJECT = 0x3f;
+    private static final int OBJ_LEN_BIGARRAY = 0x3e;
     private static final int OBJ_CLASS = 0;
-    private static final int OBJ_ARRAY_TYPE = 0xf;
     private static final int OBJ_BIGARRAY_LEN = 4;
-    private static final int OBJ_BIGARRAY_CLASS = 6;
-    private static final int OBJ_ARRAY = 0x40;
-    private static final int SIMPLE_ARRAY_CLASS_BASE = 13;
 
     // Basic variable types used within the VM
     public static final int VM_OBJECT = 0;
-    public static final int VM_STACKFRAME = 1;
     public static final int VM_CLASS = 2;
     public static final int VM_BOOLEAN = 4;
     public static final int VM_CHAR = 5;
@@ -60,6 +56,7 @@ public final class VM
     public static final int VM_INT = 10;
     public static final int VM_LONG = 11;
     public static final int VM_VOID = 12;
+    public static final int VM_OBJECTARRAY = 13;
 
     // The base address of the in memory program header
     private static final int IMAGE_BASE = memPeekInt(MEM, IMAGE*4);
@@ -757,18 +754,26 @@ public final class VM
             super(0);
             if (obj == null) throw new NullPointerException();
             int addr = getObjectAddress(obj);
-            int hdr = memPeekByte(ABSOLUTE, addr+OBJ_FLAGS);
-            if ((hdr & OBJ_ARRAY) == 0)
+            int len = memPeekByte(ABSOLUTE, addr+OBJ_FLAGS) & OBJ_LEN_MASK;
+            if (len == OBJ_LEN_OBJECT)
             {
                 typ = -1;
                 arrayBase = 0;
             }
             else
             {
-                typ = (hdr & OBJ_ARRAY_TYPE);
-                cnt = memPeekByte(ABSOLUTE, addr+OBJ_ARRAY_LEN);
-                if (cnt == OBJ_ARRAY_LEN_ISBIGARRAY) cnt = memPeekShort(ABSOLUTE, addr + OBJ_BIGARRAY_LEN);
+                int cls = memPeekByte(ABSOLUTE, addr+OBJ_CLASS);
+                if (cnt >= OBJ_LEN_BIGARRAY)
+                    cnt = memPeekByte(ABSOLUTE, addr+OBJ_BIGARRAY_LEN);
+                else
+                    cnt = len;
                 arrayBase = getDataAddress(obj);
+                // Convert class into basic type, anything other than a primitive
+                // is an object.
+                if (cls >= (VM_OBJECTARRAY+VM_BOOLEAN) && cls <= (VM_OBJECTARRAY + VM_LONG))
+                    typ = cls - VM_OBJECTARRAY;
+                else
+                    typ = VM_OBJECT;
             }
             this.obj = obj;
         }
@@ -810,22 +815,7 @@ public final class VM
         if (obj == null) throw new NullPointerException();
         // First we get the address of the object
         int addr = getObjectAddress(obj);
-        // Now we read the flag bytes in the object header
-        int hdr = memPeekByte(ABSOLUTE, addr+OBJ_FLAGS);
-        int cls;
-        // If the object is an array we must deal with it in a special way
-        if ((hdr & OBJ_ARRAY) != 0)
-        {
-            // Only BIGARRAYS have full class data. For other arrays we use
-            // the basic type information to return an array class.
-            if (memPeekByte(ABSOLUTE, addr+OBJ_ARRAY_LEN) == OBJ_ARRAY_LEN_ISBIGARRAY)
-                cls = memPeekByte(ABSOLUTE, addr+OBJ_BIGARRAY_CLASS);
-            else
-                cls = (hdr & OBJ_ARRAY_TYPE) + SIMPLE_ARRAY_CLASS_BASE;
-        }
-        else
-            // All other objects have a class, so read it
-            cls = memPeekByte(ABSOLUTE, addr+OBJ_CLASS);
+        int cls = memPeekByte(ABSOLUTE, addr+OBJ_CLASS);
         return cls;
     }
 
@@ -937,7 +927,7 @@ public final class VM
     public final boolean isArray(Object obj)
     {
         if (obj == null) return false;
-        return (memPeekByte(ABSOLUTE, getObjectAddress(obj)+OBJ_FLAGS) & OBJ_ARRAY) != 0;
+        return (memPeekByte(ABSOLUTE, getObjectAddress(obj)+OBJ_FLAGS) & OBJ_LEN_MASK) != OBJ_LEN_OBJECT;
     }
 
     /**
@@ -991,7 +981,7 @@ public final class VM
         @Override
         public VMStackFrame get(int item)
         {
-            int offset = base + (size - item - 1) * STACKFRAME_LEN;
+            int offset = base + (size - item) * STACKFRAME_LEN;
             return new VMStackFrame(offset);
         }
     }
