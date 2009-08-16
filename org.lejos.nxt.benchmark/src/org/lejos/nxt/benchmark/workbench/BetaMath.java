@@ -324,7 +324,7 @@ public class BetaMath
 		
 		// at this point, the following should always hold:
 		//   floor(log(10, x)) - 1 < exp <= floor(log(10, x))
-		x = pow10d(x, 14 - exp);
+		x = pow10d_bf(x, 14 - exp);
 		
 		long tmp = 1000000000000000L;
 		long digits = (long)(x + 0.5);
@@ -339,41 +339,18 @@ public class BetaMath
 		// unfortunatly, the mantisse of subnormal values gets very short
 		// TODO automatically adjust digit count for subnormal values
 		
-		int tmp1 = 10000000;
-		int tmp2 = 1000000;
-		int d1 = (int)(digits / tmp1);
-		int d2 = (int)(digits - tmp1 * (long)d1);
-
-		int d = d1 / tmp1;
+		int d = (int)(digits / (tmp /= 10));
 		sb.append((char)('0' + d));
-		d1 -= tmp1 * d;
+		digits -= tmp * d;
 		
 		sb.append('.');		
 		do
 		{
-			d = d1 / (tmp1 /= 10);
+			d = (int)(digits / (tmp /= 10));
 			sb.append((char)('0' + d));
-			d1 -= tmp1 * d;
+			digits -= tmp * d;
 		}
-		while (d1 > 0);
-		
-		if (d2 > 0)
-		{
-			while (tmp1 > 1)
-			{
-				sb.append('0');
-				tmp1 /= 10;
-			}
-			
-			do
-			{
-				d = d2 / tmp2;
-				sb.append((char)('0' + d));
-				d2 -= tmp2 * d;
-				tmp2 /= 10;
-			}
-			while (d2 > 0);
-		}
+		while (digits > 0);
 		
 		if (exp != 0)
 		{
@@ -384,17 +361,28 @@ public class BetaMath
 		return sb.toString();
 	}
 
-	private static final double[] POW10D_1 = {1E+1, 1E+2, 1E+4, 1E+8, 1E+16, 1E+32, 1E+64, 1E+128, 1E+256, };
-	private static final double[] POW10D_2 = {1E-1, 1E-2, 1E-4, 1E-8, 1E-16, 1E-32, 1E-64, 1E-128, 1E-256, };
-	
-	private static double pow10d(double r, int e)
+	private static class Pow10FConstants
 	{
+		public static final float[] POW10F_1 = {1E+1f, 1E+2f, 1E+4f, 1E+8f, 1E+16f, 1E+32f, };
+		public static final float[] POW10F_2 = {1E-1f, 1E-2f, 1E-4f, 1E-8f, 1E-16f, 1E-32f, };	
+	}
+	
+	private static class Pow10DConstants
+	{
+		public static final double[] POW10D_1 = {1E+1, 1E+2, 1E+4, 1E+8, 1E+16, 1E+32, 1E+64, 1E+128, 1E+256, };
+		public static final double[] POW10D_2 = {1E-1, 1E-2, 1E-4, 1E-8, 1E-16, 1E-32, 1E-64, 1E-128, 1E-256, };		
+	}
+	
+	private static double pow10d_bf(double r, int e)
+	{
+		// bf stand for "Big exponent First"
+		
 		double[] b;
 		if (e >= 0)
-			b = POW10D_1;
+			b = Pow10DConstants.POW10D_1;
 		else
 		{
-			b = POW10D_2;
+			b = Pow10DConstants.POW10D_2;
 			e = -e;
 		}
 		
@@ -407,6 +395,32 @@ public class BetaMath
 		if ((e & 0x004) != 0) r *= b[2];
 		if ((e & 0x002) != 0) r *= b[1];
 		if ((e & 0x001) != 0) r *= b[0];
+		
+		return r;
+	}
+	
+	private static double pow10d_sf(double r, int e)
+	{
+		// sf stand for "Small exponent First"
+		
+		double[] b;
+		if (e >= 0)
+			b = Pow10DConstants.POW10D_1;
+		else
+		{
+			b = Pow10DConstants.POW10D_2;
+			e = -e;
+		}
+		
+		if ((e & 0x001) != 0) r *= b[0];
+		if ((e & 0x002) != 0) r *= b[1];
+		if ((e & 0x004) != 0) r *= b[2];
+		if ((e & 0x008) != 0) r *= b[3];
+		if ((e & 0x010) != 0) r *= b[4];
+		if ((e & 0x020) != 0) r *= b[5];
+		if ((e & 0x040) != 0) r *= b[6];
+		if ((e & 0x080) != 0) r *= b[7];
+		if ((e & 0x100) != 0) r *= b[8];
 		
 		return r;
 	}
@@ -451,7 +465,7 @@ public class BetaMath
 		
 		// at this point, the following should always hold:
 		//   floor(log(10, x)) - 1 < exp <= floor(log(10, x))
-		x = pow10f(x, 6 - exp);
+		x = pow10f_bf(x, 6 - exp);
 		
 		int tmp = 10000000;
 		int digits = (int)(x + 0.5f);
@@ -488,17 +502,16 @@ public class BetaMath
 		return sb.toString();
 	}
 
-	private static final float[] POW10F_1 = {1E+1f, 1E+2f, 1E+4f, 1E+8f, 1E+16f, 1E+32f, };
-	private static final float[] POW10F_2 = {1E-1f, 1E-2f, 1E-4f, 1E-8f, 1E-16f, 1E-32f, };
-	
-	private static float pow10f(float r, int e)
+	private static float pow10f_bf(float r, int e)
 	{
+		// bf stand for "Big exponent First"
+		
 		float[] b;
 		if (e >= 0)
-			b = POW10F_1;
+			b = Pow10FConstants.POW10F_1;
 		else
 		{
-			b = POW10F_2;
+			b = Pow10FConstants.POW10F_2;
 			e = -e;
 		}
 		
@@ -512,4 +525,171 @@ public class BetaMath
 		return r;
 	}
 	
+	private static final int STR_TO_D_MAXEXP = 350; 
+	
+	public static double stringToDouble(String s)
+	{
+		long r = 0;
+		int exp = 0;
+		
+		int l = s.length();
+		
+		if (l <= 0)
+			throw new NumberFormatException();
+		
+		int p;
+		boolean neg;
+		switch (s.charAt(0))
+		{
+			case '-':
+				p = 1;
+				neg = true;
+				break;
+			case '+':
+				p = 1;
+				neg = false;
+				break;
+			default:
+				p = 0;
+				neg = false;				
+		}
+		
+		boolean digits = false;
+		
+		while (p < l)
+		{
+			char c = s.charAt(p);
+			if (r >= Long.MAX_VALUE / 10)
+				break;
+			
+			if (c < '0' || c > '9')
+			{
+				if (c == '.' || c == 'e' || c == 'E')
+					break;
+				
+				throw new NumberFormatException();
+			}
+			
+			digits = true;
+			
+			r = r * 10 + (c - '0');			
+			p++;
+		}
+		
+		while (p < l)
+		{
+			char c = s.charAt(p);
+			if (c < '0' || c > '9')
+			{
+				if (c == '.' || c == 'e' || c == 'E')
+					break;
+				
+				throw new NumberFormatException();
+			}
+			
+			p++;
+			exp++;
+		}
+
+		if (p < l && s.charAt(p) == '.')
+		{
+			p++;
+			
+			while (p < l)
+			{
+				char c = s.charAt(p);
+				if (r >= Long.MAX_VALUE / 10)
+					break;
+				
+				if (c < '0' || c > '9')
+				{
+					if (c == 'e' || c == 'E')
+						break;
+					
+					throw new NumberFormatException();
+				}
+				
+				digits = true;
+				
+				r = r * 10 + (c - '0');			
+				exp--;
+				p++;
+			}
+			
+			while (p < l)
+			{
+				char c = s.charAt(p);
+				if (c < '0' || c > '9')
+				{
+					if (c == 'e' || c == 'E')
+						break;
+					
+					throw new NumberFormatException();
+				}
+				
+				p++;
+			}
+		}
+		
+		if (!digits)
+			throw new NumberFormatException();
+		
+		if (p < l)
+		{
+			//at this point, s.charAt(p) has to be 'e' or 'E'
+			p++;
+			
+			boolean digitsexp = false;
+			
+			boolean negexp;
+			if (p < l)
+			{
+				switch (s.charAt(p))
+				{
+					case '-':
+						negexp = true;
+						exp = -exp;
+						p++;
+						break;
+					case '+':
+						p++;
+					default:
+						negexp = false;
+				}
+			}
+			else
+				negexp = false;
+			
+			int exp2 = 0;
+			while (p < l)
+			{
+				char c = s.charAt(p);
+				if (c < '0' || c > '9')
+					throw new NumberFormatException();
+				
+				digitsexp = true;
+				
+				if (exp2 + exp < STR_TO_D_MAXEXP)
+					exp2 = exp2 * 10 + (c - '0');
+				
+				p++;
+			}
+			
+			if (!digitsexp)
+				throw new NumberFormatException();
+			
+			exp2 += exp;
+			exp = negexp ? -exp2 : exp2;
+		}
+		
+		double r2;
+		if (exp < -STR_TO_D_MAXEXP)
+			r2 = 0.0;
+		else if (exp > STR_TO_D_MAXEXP)
+			r2 = Double.POSITIVE_INFINITY;
+		else
+			r2 = pow10d_sf(r, exp);
+		
+		return neg ? -r2 : r2;
+	}
 }

@@ -213,15 +213,15 @@ public final class MathBench
 		BenchUtils.cleanUp(null);	
 		countAll += benchLogNew(iterate / 2, "normal", Math.PI);
 		BenchUtils.cleanUp(null);
-		countAll += benchLogNew(iterate / 2, "1.0", 1.0);
+		countAll += benchLogNew(iterate * 2, "1.0", 1.0);
 		BenchUtils.cleanUp(null);
-		countAll += benchLogNew(iterate / 2, "1.0001", 1.01);
+		countAll += benchLogNew(iterate, "1.0001", 1.01);
 		BenchUtils.cleanUp(null);
-		countAll += benchLogNew(iterate / 2, "1.001", 1.01);
+		countAll += benchLogNew(iterate, "1.001", 1.01);
 		BenchUtils.cleanUp(null);
-		countAll += benchLogNew(iterate / 2, "1.01", 1.01);
+		countAll += benchLogNew(iterate, "1.01", 1.01);
 		BenchUtils.cleanUp(null);
-		countAll += benchLogNew(iterate / 2, "1.3", 1.1);
+		countAll += benchLogNew(iterate, "1.3", 1.1);
 		BenchUtils.cleanUp(null);
 		countAll += benchLogNew(iterate / 2, "1.9", 1.9);
 		BenchUtils.cleanUp(null);
@@ -280,7 +280,7 @@ public final class MathBench
 		BenchUtils.cleanUp(null);
 		countAll += benchFloatToStrNew3(iterate / 4, "PI*1E-30", Math.PI*1E-30);
 		BenchUtils.cleanUp(null);
-	
+		
 		long endAll = System.currentTimeMillis();
 		report(countAll, "Total Loop Executions", countAll, "loops", endAll - startAll);
 		System.out.println("Note: each Loop Execution includes multiple Java operations");
