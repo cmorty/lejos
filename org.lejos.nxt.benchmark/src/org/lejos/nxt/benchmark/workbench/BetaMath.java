@@ -292,8 +292,8 @@ public class BetaMath
 		StringBuilder sb = new StringBuilder(22);
 		
 		//we need to detect -0.0 to be compatible with JDK
-		int bits = (int)(Double.doubleToRawLongBits(x) >> 52); 
-		if ((bits & 0x8000L) != 0)
+		long bits = Double.doubleToRawLongBits(x); 
+		if ((bits & 0x8000000000000000L) != 0)
 		{
 			sb.append("-");
 			x = -x;
@@ -312,19 +312,19 @@ public class BetaMath
 		
 		int exp;		
 		if (x >= Double.MIN_NORMAL)
-			exp = 63;
+			exp = 62;
 		else
 		{
 			exp = 0;
-			bits = (int)(Double.doubleToRawLongBits(x * 0x1p63) >> 52);
+			bits = Double.doubleToRawLongBits(x * 0x1p62);
 		}
 		
-		exp += bits & 0x7FF;
+		exp += (int)(bits >> 52) & 0x7FF;
 		exp = ((exp * 631305) >> 21) - 327;
 		
 		// at this point, the following should always hold:
 		//   floor(log(10, x)) - 1 < exp <= floor(log(10, x))
-		x = pow10(x, 14 - exp);
+		x = pow10d(x, 14 - exp);
 		
 		long tmp = 1000000000000000L;
 		long digits = (long)(x + 0.5);
@@ -332,7 +332,7 @@ public class BetaMath
 		if (digits >= tmp)
 		{
 			exp++;
-			digits = (long)(x * 1E-1 + 0.5);
+			digits = (long)(x * 0.1 + 0.5);
 		}
 		
 		// algorithm shows true value of subnormal doubles
@@ -384,23 +384,124 @@ public class BetaMath
 		return sb.toString();
 	}
 
-	private static final double[] POW10_1 = {1E+1, 1E+2, 1E+4, 1E+8, 1E+16, 1E+32, 1E+64, 1E+128, 1E+256, };
-	private static final double[] POW10_2 = {1E-1, 1E-2, 1E-4, 1E-8, 1E-16, 1E-32, 1E-64, 1E-128, 1E-256, };
+	private static final double[] POW10D_1 = {1E+1, 1E+2, 1E+4, 1E+8, 1E+16, 1E+32, 1E+64, 1E+128, 1E+256, };
+	private static final double[] POW10D_2 = {1E-1, 1E-2, 1E-4, 1E-8, 1E-16, 1E-32, 1E-64, 1E-128, 1E-256, };
 	
-	private static double pow10(double r, int e)
+	private static double pow10d(double r, int e)
 	{
 		double[] b;
 		if (e >= 0)
-			b = POW10_1;
+			b = POW10D_1;
 		else
 		{
-			b = POW10_2;
+			b = POW10D_2;
 			e = -e;
 		}
 		
 		if ((e & 0x100) != 0) r *= b[8];
 		if ((e & 0x080) != 0) r *= b[7];
 		if ((e & 0x040) != 0) r *= b[6];
+		if ((e & 0x020) != 0) r *= b[5];
+		if ((e & 0x010) != 0) r *= b[4];
+		if ((e & 0x008) != 0) r *= b[3];
+		if ((e & 0x004) != 0) r *= b[2];
+		if ((e & 0x002) != 0) r *= b[1];
+		if ((e & 0x001) != 0) r *= b[0];
+		
+		return r;
+	}
+	
+	public static String floatToString3(float x)
+	{
+		if (x != x)
+			return "NaN";
+		
+		StringBuilder sb = new StringBuilder(22);
+		
+		//we need to detect -0.0 to be compatible with JDK
+		int bits = Float.floatToRawIntBits(x); 
+		if ((bits & 0x80000000) != 0)
+		{
+			sb.append("-");
+			x = -x;
+		}
+		
+		if (x == 0)
+		{
+			sb.append("0.0");
+			return sb.toString();
+		}
+		if (x == Float.POSITIVE_INFINITY)
+		{
+			sb.append("Infinity");
+			return sb.toString();
+		}
+		
+		int exp;		
+		if (x >= Float.MIN_NORMAL)
+			exp = 31;
+		else
+		{
+			exp = 0;
+			bits = Float.floatToRawIntBits(x * 0x1p31f);
+		}
+		
+		exp += (bits >> 23) & 0xFF;
+		exp = ((exp * 5050455) >> 24) - 48;
+		
+		// at this point, the following should always hold:
+		//   floor(log(10, x)) - 1 < exp <= floor(log(10, x))
+		x = pow10f(x, 6 - exp);
+		
+		int tmp = 10000000;
+		int digits = (int)(x + 0.5f);
+		
+		if (digits >= tmp)
+		{
+			exp++;
+			digits = (int)(x * 0.1f + 0.5f);
+		}
+		
+		// algorithm shows true value of subnormal doubles
+		// unfortunatly, the mantisse of subnormal values gets very short
+		// TODO automatically adjust digit count for subnormal values
+		
+		int d = digits / (tmp /= 10);
+		sb.append((char)('0' + d));
+		digits -= tmp * d;
+		
+		sb.append('.');		
+		do
+		{
+			d = digits / (tmp /= 10);
+			sb.append((char)('0' + d));
+			digits -= tmp * d;
+		}
+		while (digits > 0);
+		
+		if (exp != 0)
+		{
+			sb.append('E');
+			sb.append(exp);
+		}
+
+		return sb.toString();
+	}
+
+	private static final float[] POW10F_1 = {1E+1f, 1E+2f, 1E+4f, 1E+8f, 1E+16f, 1E+32f, };
+	private static final float[] POW10F_2 = {1E-1f, 1E-2f, 1E-4f, 1E-8f, 1E-16f, 1E-32f, };
+	
+	private static float pow10f(float r, int e)
+	{
+		float[] b;
+		if (e >= 0)
+			b = POW10F_1;
+		else
+		{
+			b = POW10F_2;
+			e = -e;
+		}
+		
 		if ((e & 0x020) != 0) r *= b[5];
 		if ((e & 0x010) != 0) r *= b[4];
 		if ((e & 0x008) != 0) r *= b[3];
