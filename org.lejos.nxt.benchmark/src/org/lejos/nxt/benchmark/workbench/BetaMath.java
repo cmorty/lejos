@@ -559,9 +559,6 @@ public class BetaMath
 		while (p < l)
 		{
 			char c = s.charAt(p);
-			if (r >= Long.MAX_VALUE / 10)
-				break;
-			
 			if (c < '0' || c > '9')
 			{
 				if (c == '.' || c == 'e' || c == 'E')
@@ -572,25 +569,14 @@ public class BetaMath
 			
 			digits = true;
 			
-			r = r * 10 + (c - '0');			
+			if (r <= (Long.MAX_VALUE - 9) / 10)
+				r = r * 10 + (c - '0');
+			else
+				exp++;
+			
 			p++;
 		}
 		
-		while (p < l)
-		{
-			char c = s.charAt(p);
-			if (c < '0' || c > '9')
-			{
-				if (c == '.' || c == 'e' || c == 'E')
-					break;
-				
-				throw new NumberFormatException();
-			}
-			
-			p++;
-			exp++;
-		}
-
 		if (p < l && s.charAt(p) == '.')
 		{
 			p++;
@@ -598,9 +584,6 @@ public class BetaMath
 			while (p < l)
 			{
 				char c = s.charAt(p);
-				if (r >= Long.MAX_VALUE / 10)
-					break;
-				
 				if (c < '0' || c > '9')
 				{
 					if (c == 'e' || c == 'E')
@@ -611,24 +594,13 @@ public class BetaMath
 				
 				digits = true;
 				
-				r = r * 10 + (c - '0');			
-				exp--;
-				p++;
-			}
-			
-			while (p < l)
-			{
-				char c = s.charAt(p);
-				if (c < '0' || c > '9')
+				if (r <= (Long.MAX_VALUE - 9) / 10)
 				{
-					if (c == 'e' || c == 'E')
-						break;
-					
-					throw new NumberFormatException();
-				}
-				
+					r = r * 10 + (c - '0');				
+					exp--;
+				}				
 				p++;
-			}
+			}			
 		}
 		
 		if (!digits)
