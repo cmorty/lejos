@@ -10,7 +10,7 @@ import lejos.nxt.comm.RConsole;
 
 public final class MathBench
 {
-	private static final int[] PADVEC = { 8, 30, 6, 10 };
+	private static final int[] PADVEC = { 8, 40, 6, 6 };
 	private static final String VERSION = "1.2";
 
 	private static int benchSqrtHistoric1(int count, String comment, double x)
@@ -118,10 +118,38 @@ public final class MathBench
 		// Function calls
 		long start = System.currentTimeMillis();
 		for (int i = 0; i < count; i++)
-			BetaMath.dToStr(x);
+			BetaMath.doubleToString(x);
 		long end = System.currentTimeMillis();
 	
 		report(count, "D2STR (new, "+comment+")", count, "ops", end - start - nullTime);
+		return count;
+	}
+
+	private static int benchDoubleToStrNew2(int count, String comment, double x)
+	{
+		long nullTime = BenchUtils.getIterationTime(count);
+		
+		// Function calls
+		long start = System.currentTimeMillis();
+		for (int i = 0; i < count; i++)
+			BetaMath.doubleToString2(x);
+		long end = System.currentTimeMillis();
+	
+		report(count, "D2STR (new2, "+comment+")", count, "ops", end - start - nullTime);
+		return count;
+	}
+
+	private static int benchDoubleToStrNew3(int count, String comment, double x)
+	{
+		long nullTime = BenchUtils.getIterationTime(count);
+		
+		// Function calls
+		long start = System.currentTimeMillis();
+		for (int i = 0; i < count; i++)
+			BetaMath.doubleToString3(x);
+		long end = System.currentTimeMillis();
+	
+		report(count, "D2STR (new3, "+comment+")", count, "ops", end - start - nullTime);
 		return count;
 	}
 
@@ -140,12 +168,12 @@ public final class MathBench
 	
 		countAll += benchSqrtHistoric1(iterate / 5, "subnormal", Math.PI * 0x1p-1060);
 		BenchUtils.cleanUp(null);
-		countAll += benchSqrtHistoric1(iterate / 5, "normal", Math.PI);
+		countAll += benchSqrtHistoric1(iterate, "normal", Math.PI);
 		BenchUtils.cleanUp(null);
 	
-		countAll += benchSqrtHistoric2(iterate / 2, "subnormal", Math.PI * 0x1p-1060);
+		countAll += benchSqrtHistoric2(iterate, "subnormal", Math.PI * 0x1p-1060);
 		BenchUtils.cleanUp(null);
-		countAll += benchSqrtHistoric2(iterate / 2, "normal", Math.PI);
+		countAll += benchSqrtHistoric2(iterate, "normal", Math.PI);
 		BenchUtils.cleanUp(null);
 	
 		countAll += benchSqrtCurrent(iterate, "subnormal", Math.PI * 0x1p-1060);
@@ -153,9 +181,9 @@ public final class MathBench
 		countAll += benchSqrtCurrent(iterate, "normal", Math.PI);
 		BenchUtils.cleanUp(null);
 	
-		countAll += benchSqrtNewF(iterate, "subnormal", (float)(Math.PI * 0x1p-140));
+		countAll += benchSqrtNewF(iterate * 2, "subnormal", (float)(Math.PI * 0x1p-140));
 		BenchUtils.cleanUp(null);	
-		countAll += benchSqrtNewF(iterate, "normal", (float)Math.PI);
+		countAll += benchSqrtNewF(iterate * 2, "normal", (float)Math.PI);
 		BenchUtils.cleanUp(null);
 
 		//infinite loop for subnormal values
@@ -183,26 +211,48 @@ public final class MathBench
 		countAll += benchLogNew(iterate / 2, "1.9", 1.9);
 		BenchUtils.cleanUp(null);
 	
-		countAll += benchDoubleToStr(iterate / 200, "1E+300", 1E+300);
+		countAll += benchDoubleToStr(iterate / 200, "PI*1E+300", Math.PI*1E+300);
 		BenchUtils.cleanUp(null);
-		countAll += benchDoubleToStr(iterate / 100, "1E+100", 1E+100);
+		countAll += benchDoubleToStr(iterate / 100, "PI*1E+100", Math.PI*1E+100);
 		BenchUtils.cleanUp(null);
-		countAll += benchDoubleToStr(iterate / 5, "1E0", 1E0);
+		countAll += benchDoubleToStr(iterate / 10, "PI*1E0", Math.PI*1E0);
 		BenchUtils.cleanUp(null);
-		countAll += benchDoubleToStr(iterate / 100, "1E-100", 1E-100);
+		countAll += benchDoubleToStr(iterate / 100, "PI*1E-100", Math.PI*1E-100);
 		BenchUtils.cleanUp(null);
-		countAll += benchDoubleToStr(iterate / 200, "1E-300", 1E-300);
+		countAll += benchDoubleToStr(iterate / 200, "PI*1E-300", Math.PI*1E-300);
 		BenchUtils.cleanUp(null);
 	
-		countAll += benchDoubleToStrNew(iterate / 2, "1E+300", 1E+300);
+		countAll += benchDoubleToStrNew(iterate / 8, "PI*1E+300", Math.PI*1E+300);
 		BenchUtils.cleanUp(null);
-		countAll += benchDoubleToStrNew(iterate / 2, "1E+100", 1E+100);
+		countAll += benchDoubleToStrNew(iterate / 8, "PI*1E+100", Math.PI*1E+100);
 		BenchUtils.cleanUp(null);
-		countAll += benchDoubleToStrNew(iterate / 2, "1E0", 1E0);
+		countAll += benchDoubleToStrNew(iterate / 8, "PI*1E0", Math.PI*1E0);
 		BenchUtils.cleanUp(null);
-		countAll += benchDoubleToStrNew(iterate / 2, "1E-100", 1E-100);
+		countAll += benchDoubleToStrNew(iterate / 8, "PI*1E-100", Math.PI*1E-100);
 		BenchUtils.cleanUp(null);
-		countAll += benchDoubleToStrNew(iterate / 2, "1E-300", 1E-300);
+		countAll += benchDoubleToStrNew(iterate / 8, "PI*1E-300", Math.PI*1E-300);
+		BenchUtils.cleanUp(null);
+	
+		countAll += benchDoubleToStrNew2(iterate / 8, "PI*1E+300", Math.PI*1E+300);
+		BenchUtils.cleanUp(null);
+		countAll += benchDoubleToStrNew2(iterate / 8, "PI*1E+100", Math.PI*1E+100);
+		BenchUtils.cleanUp(null);
+		countAll += benchDoubleToStrNew2(iterate / 8, "PI*1E0", Math.PI*1E0);
+		BenchUtils.cleanUp(null);
+		countAll += benchDoubleToStrNew2(iterate / 8, "PI*1E-100", Math.PI*1E-100);
+		BenchUtils.cleanUp(null);
+		countAll += benchDoubleToStrNew2(iterate / 8, "PI*1E-300", Math.PI*1E-300);
+		BenchUtils.cleanUp(null);
+	
+		countAll += benchDoubleToStrNew3(iterate / 8, "PI*1E+300", Math.PI*1E+300);
+		BenchUtils.cleanUp(null);
+		countAll += benchDoubleToStrNew3(iterate / 8, "PI*1E+100", Math.PI*1E+100);
+		BenchUtils.cleanUp(null);
+		countAll += benchDoubleToStrNew3(iterate / 8, "PI*1E0", Math.PI*1E0);
+		BenchUtils.cleanUp(null);
+		countAll += benchDoubleToStrNew3(iterate / 8, "PI*1E-100", Math.PI*1E-100);
+		BenchUtils.cleanUp(null);
+		countAll += benchDoubleToStrNew3(iterate / 8, "PI*1E-300", Math.PI*1E-300);
 		BenchUtils.cleanUp(null);
 	
 		long endAll = System.currentTimeMillis();

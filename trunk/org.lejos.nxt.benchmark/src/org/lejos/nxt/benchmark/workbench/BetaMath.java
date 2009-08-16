@@ -39,6 +39,16 @@ public class BetaMath
 		return factor * (x * isqrt + 1.0f / isqrt);
 	}
 	
+	private static class LogStuff
+	{
+		public static final double[] LOGTABLE = {
+				1.0/3, 1.0/5, 1.0/7, 1.0/9,
+				1.0/11, 1.0/13, 1.0/15, 1.0/17, 1.0/19, 
+				1.0/21, 1.0/23, 1.0/25, 1.0/27, 1.0/29, 
+				1.0/31, 1.0/33, 1.0/35, 1.0/37, 1.0/39, 
+			};			
+	}
+	
 	/**
 	 * Natural log function. Returns log(a) to base E.
 	 * 
@@ -55,13 +65,6 @@ public class BetaMath
 	
 		// Algorithm has been derived from http://www.geocities.com/zabrodskyvlada/aat/a_contents.html 
 
-		final double[] LOGTABLE = {
-			1.0/3, 1.0/5, 1.0/7, 1.0/9,
-			1.0/11, 1.0/13, 1.0/15, 1.0/17, 1.0/19, 
-			1.0/21, 1.0/23, 1.0/25, 1.0/27, 1.0/29, 
-			1.0/31, 1.0/33, 1.0/35, 1.0/37, 1.0/39, 
-		};
-		
 		int m;
 		if (x >= Double.MIN_NORMAL)
 			m = -1023;
@@ -88,17 +91,19 @@ public class BetaMath
 		//ergo:
 		//  $n will converge quickly towards $limit
 		
+		double[] lt = LogStuff.LOGTABLE;
+		
 		double n = zetasup;
 		for (int j = 0; n > 0x1p-50;j ++)
 		{
-			ln += n * LOGTABLE[j];
+			ln += n * lt[j];
 			n *= zetasup;
 		}
 		
 		return m * ln2 + 2 * zeta * ln;
 	}
-
-	public static String dToStr(double x)
+	
+	public static String doubleToString(double x)
 	{		
 		if (x != x)
 			return "NaN";
@@ -150,7 +155,7 @@ public class BetaMath
 		}
 		
 		// algorithm shows true value of subnormal doubles
-		// unfortunatly, the mantisse of subnormal values gets very short
+		// unfortunatly, the mantissa of subnormal values gets very short
 		// TODO automatically adjust digit count for subnormal values  
 		
 		long tmp = 1000000000000000L;		
@@ -178,19 +183,23 @@ public class BetaMath
 		return sb.toString();
 	}
 	
-	public static String dToStr2(double x)
+	private static final int D_TO_STR_MAXEXP = 256; 
+	private static final int D_TO_STR_IDXPART1 = 0;
+	private static final int D_TO_STR_IDXPART2 = 9;
+	private static final int D_TO_STR_IDXPART3 = 18;
+	private static final int D_TO_STR_PARTLEN  = 9;
+	
+	private static class DoubleToStringStuff
 	{
-		final int D_TO_STR_MAXEXP = 256; 
-		final int D_TO_STR_IDXPART1 = 0;
-		final int D_TO_STR_IDXPART2 = 9;
-		final int D_TO_STR_IDXPART3 = 18;
-		final int D_TO_STR_PARTLEN  = 9;
-		final double[] D_TO_STR_POWERS = {
-			1E+256, 1E+128, 1E+64, 1E+32, 1E+16, 1E+8, 1E+4, 1E+2, 1E+1,
-			1E-256, 1E-128, 1E-64, 1E-32, 1E-16, 1E-8, 1E-4, 1E-2, 1E-1,
-			1E-255, 1E-127, 1E-63, 1E-31, 1E-15, 1E-7, 1E-3, 1E-1, 1E-0,
-		};
-		
+		public static final double[] D_TO_STR_POWERS = {
+				1E+256, 1E+128, 1E+64, 1E+32, 1E+16, 1E+8, 1E+4, 1E+2, 1E+1,
+				1E-256, 1E-128, 1E-64, 1E-32, 1E-16, 1E-8, 1E-4, 1E-2, 1E-1,
+				1E-255, 1E-127, 1E-63, 1E-31, 1E-15, 1E-7, 1E-3, 1E-1, 1E-0,
+			};
+	}
+	
+	public static String doubleToString2(double x)
+	{
 		if (x != x)
 			return "NaN";
 		
@@ -215,22 +224,28 @@ public class BetaMath
 		}
 		
 		int exp = 0;
-		double[] powers = D_TO_STR_POWERS;
+		double[] powers = DoubleToStringStuff.D_TO_STR_POWERS;
 
-		for (int i = 0; i < D_TO_STR_PARTLEN; i++)
+		if (x >= 10)
 		{
-			if (x >= powers[D_TO_STR_IDXPART1 + i])
+			for (int i = 0; i < D_TO_STR_PARTLEN; i++)
 			{
-				exp += D_TO_STR_MAXEXP >> i;
-				x *= powers[D_TO_STR_IDXPART2 + i];
+				if (x >= powers[D_TO_STR_IDXPART1 + i])
+				{
+					exp += D_TO_STR_MAXEXP >> i;
+					x *= powers[D_TO_STR_IDXPART2 + i];
+				}
 			}
 		}
-		for (int i = 0; i < D_TO_STR_PARTLEN; i++)
+		else if (x < 1)
 		{
-			if (x < powers[D_TO_STR_IDXPART3 - i])
+			for (int i = 0; i < D_TO_STR_PARTLEN; i++)
 			{
-				exp -= D_TO_STR_MAXEXP >> i;
-				x *= powers[D_TO_STR_IDXPART1 + i];
+				if (x < powers[D_TO_STR_IDXPART3 + i])
+				{
+					exp -= D_TO_STR_MAXEXP >> i;
+					x *= powers[D_TO_STR_IDXPART1 + i];
+				}
 			}
 		}
 		
@@ -269,4 +284,131 @@ public class BetaMath
 		return sb.toString();
 	}
 
+	public static String doubleToString3(double x)
+	{
+		if (x != x)
+			return "NaN";
+		
+		StringBuilder sb = new StringBuilder(22);
+		
+		//we need to detect -0.0 to be compatible with JDK
+		int bits = (int)(Double.doubleToRawLongBits(x) >> 52); 
+		if ((bits & 0x8000L) != 0)
+		{
+			sb.append("-");
+			x = -x;
+		}
+		
+		if (x == 0)
+		{
+			sb.append("0.0");
+			return sb.toString();
+		}
+		if (x == Double.POSITIVE_INFINITY)
+		{
+			sb.append("Infinity");
+			return sb.toString();
+		}
+		
+		int exp;		
+		if (x >= Double.MIN_NORMAL)
+			exp = 63;
+		else
+		{
+			exp = 0;
+			bits = (int)(Double.doubleToRawLongBits(x * 0x1p63) >> 52);
+		}
+		
+		exp += bits & 0x7FF;
+		exp = ((exp * 631305) >> 21) - 327;
+		
+		// at this point, the following should always hold:
+		//   floor(log(10, x)) - 1 < exp <= floor(log(10, x))
+		x = pow10(x, 14 - exp);
+		
+		long tmp = 1000000000000000L;
+		long digits = (long)(x + 0.5);
+		
+		if (digits >= tmp)
+		{
+			exp++;
+			digits = (long)(x * 1E-1 + 0.5);
+		}
+		
+		// algorithm shows true value of subnormal doubles
+		// unfortunatly, the mantisse of subnormal values gets very short
+		// TODO automatically adjust digit count for subnormal values
+		
+		int tmp1 = 10000000;
+		int tmp2 = 1000000;
+		int d1 = (int)(digits / tmp1);
+		int d2 = (int)(digits - tmp1 * (long)d1);
+
+		int d = d1 / tmp1;
+		sb.append((char)('0' + d));
+		d1 -= tmp1 * d;
+		
+		sb.append('.');		
+		do
+		{
+			d = d1 / (tmp1 /= 10);
+			sb.append((char)('0' + d));
+			d1 -= tmp1 * d;
+		}
+		while (d1 > 0);
+		
+		if (d2 > 0)
+		{
+			while (tmp1 > 1)
+			{
+				sb.append('0');
+				tmp1 /= 10;
+			}
+			
+			do
+			{
+				d = d2 / tmp2;
+				sb.append((char)('0' + d));
+				d2 -= tmp2 * d;
+				tmp2 /= 10;
+			}
+			while (d2 > 0);
+		}
+		
+		if (exp != 0)
+		{
+			sb.append('E');
+			sb.append(exp);
+		}
+
+		return sb.toString();
+	}
+
+	private static final double[] POW10_1 = {1E+1, 1E+2, 1E+4, 1E+8, 1E+16, 1E+32, 1E+64, 1E+128, 1E+256, };
+	private static final double[] POW10_2 = {1E-1, 1E-2, 1E-4, 1E-8, 1E-16, 1E-32, 1E-64, 1E-128, 1E-256, };
+	
+	private static double pow10(double r, int e)
+	{
+		double[] b;
+		if (e >= 0)
+			b = POW10_1;
+		else
+		{
+			b = POW10_2;
+			e = -e;
+		}
+		
+		if ((e & 0x100) != 0) r *= b[8];
+		if ((e & 0x080) != 0) r *= b[7];
+		if ((e & 0x040) != 0) r *= b[6];
+		if ((e & 0x020) != 0) r *= b[5];
+		if ((e & 0x010) != 0) r *= b[4];
+		if ((e & 0x008) != 0) r *= b[3];
+		if ((e & 0x004) != 0) r *= b[2];
+		if ((e & 0x002) != 0) r *= b[1];
+		if ((e & 0x001) != 0) r *= b[0];
+		
+		return r;
+	}
+	
 }
