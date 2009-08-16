@@ -21,7 +21,7 @@ public class KalmanFilter {
     this.i = Matrix.identity(n, n);
   }
   
-  public void update(Matrix control, Matrix measurement) throws Exception {
+  public void update(Matrix control, Matrix measurement) {
     // Control update step 1: calculate the predicted mean
 	Matrix muBar = a.times(mu).plus(b.times(control));
     
