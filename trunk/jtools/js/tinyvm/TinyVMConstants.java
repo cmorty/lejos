@@ -41,6 +41,5 @@ public class TinyVMConstants
    public static final int M_STATIC = 0x04;
 
    public static final int OBJ_HEADER = 0xff00;
-//   public static final int OBJ_HEADER = 0xb00;
    
 }
