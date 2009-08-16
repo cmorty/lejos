@@ -41,7 +41,7 @@ public class TinyVMType
    public static final TinyVMType T_SHORT = new TinyVMType(T_SHORT_TYPE, 2, "short", "S");
    public static final TinyVMType T_INT = new TinyVMType(T_INT_TYPE, 4, "int", "I");
    public static final TinyVMType T_LONG = new TinyVMType(T_LONG_TYPE, 8, "long", "J");
-   public static final TinyVMType T_VOID = new TinyVMType(T_VOID_TYPE, 0, "void", "V");
+   public static final TinyVMType T_VOID = new TinyVMType(T_VOID_TYPE, 2, "void", "V");
    public static final TinyVMType T_ARRAY = T_REFERENCE;
    public static final TinyVMType T_OBJECT = T_REFERENCE;
    public static final TinyVMType T_CLASS = new TinyVMType(T_CLASS_TYPE, 1, "java.lang.Class", "L");

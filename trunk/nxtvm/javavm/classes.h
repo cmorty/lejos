@@ -11,74 +11,36 @@
 #define CLASS_MASK      0x00FF
 #define CLASS_SHIFT     0
 
-#define GC_MASK         0x3000
-#define GC_SHIFT        13
+#define GC_MASK         0xc000
+#define GC_SHIFT        14
 
-#define IS_ARRAY_MASK   0x4000
-#define IS_ARRAY_SHIFT  14
+#define ARRAY_LENGTH_MASK  0x3F00
+#define ARRAY_LENGTH_SHIFT 8
 
-#define IS_ALLOCATED_MASK  0x8000
-#define IS_ALLOCATED_SHIFT 15
+#define LEN_OBJECT      0x3f
+#define LEN_BIGARRAY    0x3e
 
-#define ARRAY_LENGTH_MASK  0x00FF
-#define ARRAY_LENGTH_SHIFT 0
-
-#define ELEM_TYPE_MASK  0x0F00
-#define ELEM_TYPE_SHIFT 8
-
-#define FREE_BLOCK_SIZE_MASK 0x7FFF
-#define FREE_BLOCK_SIZE_SHIFT 0
-
-#define is_array(OBJ_)           ((OBJ_)->flags.objects.isArray)
-#define is_allocated(OBJ_)       ((OBJ_)->flags.freeBlock.isAllocated)
+#define is_array(OBJ_)           ((OBJ_)->flags.length != LEN_OBJECT)
 #define get_monitor_count(SYNC_)  ((SYNC_)->monitorCount)
-#define is_gc(OBJ_)              ((OBJ_)->flags.objects.mark)
+#define is_gc(OBJ_)              ((OBJ_)->flags.mark)
 
 // Double-check these data structures with the 
 // Java declaration of each corresponding class.
-
-  /**
-   * Object/block flags.
-   * Free block:
-   *  -- bits 0-14: Size of free block in words.
-   *  -- bit 15   : Zero (not allocated).
-   * Objects:
-   *  -- bits 0-7 : Class index.
-   *  -- bits 8-12: Unused.
-   *  -- bit 13   : Garbage collection mark.
-   *  -- bit 14   : Zero (not an array).
-   *  -- bit 15   : One (allocated).
-   * Arrays:
-   *  -- bits 0-7 : Array length (0-511).
-   *  -- bits 9-12: Element type.
-   *  -- bit 13   : Garbage collection mark.
-   *  -- bit 14   : One (is an array).
-   *  -- bit 15   : One (allocated).
-   */
-typedef union _flags
+/**
+ * Object header used for all objects types.
+ * The mark field is used by the garbage collector.
+ * Normal objects have a length field set to LEN_OBJECT
+ * Arrays with more then 61 elements have the length field set to LEN_BIGARRAY
+ * Arrays with less than 61 elements have the actual length set in length.
+ * Free memory has a class of T_FREE and either a 0 length or LEN_BIGARRAY
+ * Big arrays have the actual length stored in the length field of the
+ * BigArray header.
+ */
+typedef struct _flags
 {
-  TWOBYTES all;
-  struct _freeBlock
-  {
-    TWOBYTES size:15;
-    TWOBYTES isAllocated:1;
-  }  __attribute__((packed)) freeBlock;
-  struct _objects
-  {
-    byte     class;
-    byte     padding:4;
-    byte     mark:2;
-    byte     isArray:1;
-    byte     isAllocated:1;
-  }  __attribute__((packed)) objects;
-  struct _arrays
-  {
-    TWOBYTES length:8;
-    TWOBYTES type:4;
-    TWOBYTES mark:2;
-    TWOBYTES isArray:1;
-    TWOBYTES isAllocated:1;
-  } __attribute__((packed)) arrays;
+  byte     class;
+  byte     length:6;
+  byte     mark:2;
 } __attribute__((packed)) objFlags;
 /**
  * Synchronization state.
@@ -102,7 +64,7 @@ typedef struct S_BigArray
 {
   Object hdr;
   TWOBYTES length;
-  TWOBYTES class;
+  TWOBYTES padding;
 } BigArray;
 
 /**
@@ -147,13 +109,10 @@ typedef struct S_String
   REFERENCE characters;
 } String;
 
-#define BIGARRAYLEN 0xff
-#define is_big_array(ARR_)       ((ARR_)->flags.arrays.length == BIGARRAYLEN)
-#define is_std_array(ARR_)       ((ARR_)->flags.arrays.length != BIGARRAYLEN)
-#define get_array_length(ARR_)   (is_std_array(ARR_) ? (ARR_)->flags.arrays.length : ((BigArray *)(ARR_))->length)
-#define get_element_type(ARR_)   ((ARR_)->flags.arrays.type)
-#define get_na_class_index(OBJ_) ((OBJ_)->flags.objects.class)
-#define get_free_length(OBJ_)    ((OBJ_)->flags.freeBlock.size)
+#define is_big_array(ARR_)       ((ARR_)->flags.length == LEN_BIGARRAY)
+#define is_std_array(ARR_)       ((ARR_)->flags.length < LEN_BIGARRAY)
+#define get_array_length(ARR_)   (is_std_array(ARR_) ? (ARR_)->flags.length : ((BigArray *)(ARR_))->length)
+#define get_class_index(OBJ_) ((OBJ_)->flags.class)
 
 #endif // _CLASSES_H
 

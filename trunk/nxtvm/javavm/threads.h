@@ -55,7 +55,6 @@ typedef struct S_StackFrame
 
 extern void init_threads();
 extern int init_thread (Thread *thread);
-extern StackFrame *current_stackframe();
 extern void enter_monitor (Thread *pThread, Object* obj);
 extern void exit_monitor (Thread *pThread, Object* obj);
 extern boolean switch_thread();
@@ -74,6 +73,7 @@ extern void resume_thread(Thread *thread);
 #define stack_array_ptr()        (word2ptr(currentThread->stackArray))
 #define is_reference_array_ptr() (word2ptr(currentThread->isReferenceArray))
 #define stackframe_array()       ((StackFrame *) array_start(stackframe_array_ptr()))
+#define current_stackframe()     (stackframe_array() + (byte)(currentThread->stackFrameArraySize))
 #define stack_array()            ((STACKWORD *) (array_start(stack_array_ptr())))
 #define is_reference_array()     ((JBYTE *) (array_start(is_reference_array_ptr()))
 #define set_program_number(N_)   {gProgramNumber = (N_);}
