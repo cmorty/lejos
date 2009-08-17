@@ -33,7 +33,7 @@ public class KalmanTest {
   private static final float TYRE_DIAMETER = 5.6f;
   private static final float AXLE_TRACK = 16.0f;
   
-  public static void main(String[] args) throws Exception {
+  public static void main(String[] args) throws InterruptedException {
     UltrasonicSensor sonic = new UltrasonicSensor(SensorPort.S1);
     Random rand = new Random();
     Matrix a = new Matrix(new double[][]{{1}}); // Position is only changed by control
@@ -63,14 +63,15 @@ public class KalmanTest {
     for(int i=0;i<100;i++) {
       // Generate a random velocity -20 to +20cm/sec
       double velocity = (rand.nextInt(41) - 20);
-      control.set(0, 0, velocity);
-      System.out.println("Velocity: " + (int) velocity);
       
       // Adjust velocity so we keep in range
       double position = filter.getMean().get(0, 0);
       if (velocity < 0 && position < 20) velocity = -velocity;
       if (velocity > 0 && position > 220) velocity = -velocity;
       
+      control.set(0, 0, velocity);
+      System.out.println("Velocity: " + (int) velocity);
+
       // Move the robot
       pilot.setMoveSpeed((float) Math.abs(velocity));
       if (velocity > 0) pilot.backward();
