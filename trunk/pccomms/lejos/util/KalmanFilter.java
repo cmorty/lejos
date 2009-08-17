@@ -2,7 +2,7 @@ package lejos.util;
 
 public class KalmanFilter {
   private Matrix a, b, c, i, q, r, at, ct;
-  private Matrix mu, sigma;
+  private Matrix mu, sigma, muBar, sigmaBar, gain;
   
   public KalmanFilter(Matrix a, Matrix b, Matrix c, Matrix q, Matrix r) {
     this.a = a;
@@ -23,19 +23,19 @@ public class KalmanFilter {
   
   public void update(Matrix control, Matrix measurement) {
     // Control update step 1: calculate the predicted mean
-	Matrix muBar = a.times(mu).plus(b.times(control));
+	muBar = a.times(mu).plus(b.times(control));
     
     // Control update step 2: calculate the predicted covariance
-    Matrix sigmaBar = a.times(sigma).times(at).plus(r);
+    sigmaBar = a.times(sigma).times(at).plus(r);
    
     // Calculate the Kalman Gain   
-    Matrix gain = sigmaBar.times(ct).times(c.times(sigmaBar).times(ct).plus(q).inverse());
+    gain = sigmaBar.times(ct).times(c.times(sigmaBar).times(ct).plus(q).inverse());
     
     // Measurement update: calculate the new mean
-    mu = muBar.plus(gain.times(measurement.minus(ct.times(muBar))));
+    mu = muBar.plus(gain.times(measurement.minus(c.times(muBar))));
     
     // Calculate the new covariance
-    sigma = i.minus(gain.times(ct)).times(sigmaBar);
+    sigma = i.minus(gain.times(c)).times(sigmaBar);
   }
   
   public Matrix getMean() {
@@ -44,5 +44,17 @@ public class KalmanFilter {
   
   public Matrix getCovariance() {
     return sigma;
+  }
+  
+  public Matrix getPredictedMean() {
+	  return muBar;
+  }
+  
+  public Matrix getPredictedCovariance() {
+	  return sigmaBar;
+  }
+  
+  public Matrix getGain() {
+	  return gain;
   }
 }
