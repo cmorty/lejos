@@ -137,16 +137,54 @@ public class Rectangle extends Rectangle2D implements Shape {
 	public Rectangle2D getBounds2D() {
 		return new Rectangle(x, y, width, height);
 	}
-
-	@Override
-	public void setFrame(double x, double y, double w, double h) {
-		setRect(x,y,w,h);
-		
-	}
+	
+    public void setBounds(int x, int y, int width, int height) {
+        reshape(x, y, width, height);
+    }
+    
+    public void setBounds(Rectangle r) {
+        setBounds(r.x, r.y, r.width, r.height);
+    }
 
 	@Override
 	public void setRect(double x, double y, double w, double h) {
-		// TODO Auto-generated method stub
-		
+        int newx, newy, neww, newh;
+
+        if (x > 2.0 * Integer.MAX_VALUE) {
+            // Cannot be sensibly represented with integers
+            newx = Integer.MAX_VALUE;
+            neww = -1;
+        } else {
+            newx = doubleToInt(x, false);
+            if (width >= 0) width += x-newx;
+            neww = doubleToInt(width, width >= 0);
+        }
+
+        if (y > 2.0 * Integer.MAX_VALUE) {
+        	// Cannot be sensibly represented with integers
+            newy = Integer.MAX_VALUE;
+            newh = -1;
+        } else {
+            newy = doubleToInt(y, false);
+            if (height >= 0) height += y-newy;
+            newh = doubleToInt(height, height >= 0);
+        }
+
+        reshape(newx, newy, neww, newh);		
 	}
+	
+    @Deprecated
+    public void reshape(int x, int y, int width, int height) {
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+    }
+    
+    private static int doubleToInt(double x, boolean high) {
+        if (x <= Integer.MIN_VALUE) return Integer.MIN_VALUE;  
+        if (x >= Integer.MAX_VALUE) return Integer.MAX_VALUE;
+
+        return (int) (high ? Math.ceil(x) : Math.floor(x));
+    }
 }
