@@ -18,8 +18,8 @@ import javax.swing.*;
  * it listens on if 8081 is used on your PC. If you do this you will need to change
  * SocketTest as well.
  * 
- * Then run the Socket Proxy (nxjsocketproxy command) passing the name and
- * address of the NXT you want to connect to. This will cause Socket Proxy to
+ * Then run the Socket Proxy (nxjsocketproxy command) optionally specifying the name and
+ * or address of the NXT you want to connect to. This will cause Socket Proxy to
  * connect to SocketTest on the NXT and SocketTest to connect to this socket server. 
  * 
  * You can then type words in the GUI and see the responses come back from the NXT (
