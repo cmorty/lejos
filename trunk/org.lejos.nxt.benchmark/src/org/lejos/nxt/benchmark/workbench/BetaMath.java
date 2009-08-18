@@ -104,187 +104,6 @@ public class BetaMath
 	}
 	
 	public static String doubleToString(double x)
-	{		
-		if (x != x)
-			return "NaN";
-		
-		StringBuilder sb = new StringBuilder();
-		
-		//we need to detect -0.0 to be compatible with JDK
-		if ((Double.doubleToRawLongBits(x) & 0x8000000000000000L) != 0)
-		{
-			sb.append("-");
-			x = -x;
-		}
-		
-		if (x == 0)
-		{
-			sb.append("0.0");
-			return sb.toString();
-		}
-		if (x == Double.POSITIVE_INFINITY)
-		{
-			sb.append("Infinity");
-			return sb.toString();
-		}
-		
-		int exp = 0;
-		if (x >= 10)
-		{
-			if (x >= 1E256) { exp+=256; x*=1E-256; }
-			if (x >= 1E128) { exp+=128; x*=1E-128; }
-			if (x >= 1E64)  { exp+=64;  x*=1E-64; }
-			if (x >= 1E32)  { exp+=32;  x*=1E-32; }
-			if (x >= 1E16)  { exp+=16;  x*=1E-16; }
-			if (x >= 1E8)   { exp+=8;   x*=1E-8; }
-			if (x >= 1E4)   { exp+=4;   x*=1E-4; }
-			if (x >= 1E2)   { exp+=2;   x*=1E-2; }
-			if (x >= 1E1)   { exp+=1;   x*=1E-1; }
-		}
-		if (x < 1)
-		{
-			if (x < 1E-255) { exp-=256; x*=1E256; }
-			if (x < 1E-127) { exp-=128; x*=1E128; }
-			if (x < 1E-63)  { exp-=64;  x*=1E64; }
-			if (x < 1E-31)  { exp-=32;  x*=1E32; }
-			if (x < 1E-15)  { exp-=16;  x*=1E16; }
-			if (x < 1E-7)   { exp-=8;   x*=1E8; }
-			if (x < 1E-3)   { exp-=4;   x*=1E4; }
-			if (x < 1E-1)   { exp-=2;   x*=1E2; }
-			if (x < 1E-0)   { exp-=1;   x*=1E1; }
-		}
-		
-		// algorithm shows true value of subnormal doubles
-		// unfortunatly, the mantissa of subnormal values gets very short
-		// TODO automatically adjust digit count for subnormal values  
-		
-		long tmp = 1000000000000000L;		
-		long digits = (long)(x * 1E15 + 0.5);
-		
-		int d = (int)(digits / tmp);
-		sb.append((char)('0' + d));
-		digits -= tmp * d;
-		
-		sb.append('.');		
-		do
-		{
-			d = (int)(digits / (tmp /= 10));
-			sb.append((char)('0' + d));
-			digits -= tmp * d;
-		}
-		while (digits > 0);
-		
-		if (exp != 0)
-		{
-			sb.append('E');
-			sb.append(exp);
-		}
-
-		return sb.toString();
-	}
-	
-	private static final int D_TO_STR_MAXEXP = 256; 
-	private static final int D_TO_STR_IDXPART1 = 0;
-	private static final int D_TO_STR_IDXPART2 = 9;
-	private static final int D_TO_STR_IDXPART3 = 18;
-	private static final int D_TO_STR_PARTLEN  = 9;
-	
-	private static class DoubleToStringStuff
-	{
-		public static final double[] D_TO_STR_POWERS = {
-				1E+256, 1E+128, 1E+64, 1E+32, 1E+16, 1E+8, 1E+4, 1E+2, 1E+1,
-				1E-256, 1E-128, 1E-64, 1E-32, 1E-16, 1E-8, 1E-4, 1E-2, 1E-1,
-				1E-255, 1E-127, 1E-63, 1E-31, 1E-15, 1E-7, 1E-3, 1E-1, 1E-0,
-			};
-	}
-	
-	public static String doubleToString2(double x)
-	{
-		if (x != x)
-			return "NaN";
-		
-		StringBuilder sb = new StringBuilder();
-		
-		//we need to detect -0.0 to be compatible with JDK
-		if ((Double.doubleToRawLongBits(x) & 0x8000000000000000L) != 0)
-		{
-			sb.append("-");
-			x = -x;
-		}
-		
-		if (x == 0)
-		{
-			sb.append("0.0");
-			return sb.toString();
-		}
-		if (x == Double.POSITIVE_INFINITY)
-		{
-			sb.append("Infinity");
-			return sb.toString();
-		}
-		
-		int exp = 0;
-		double[] powers = DoubleToStringStuff.D_TO_STR_POWERS;
-
-		if (x >= 10)
-		{
-			for (int i = 0; i < D_TO_STR_PARTLEN; i++)
-			{
-				if (x >= powers[D_TO_STR_IDXPART1 + i])
-				{
-					exp += D_TO_STR_MAXEXP >> i;
-					x *= powers[D_TO_STR_IDXPART2 + i];
-				}
-			}
-		}
-		else if (x < 1)
-		{
-			for (int i = 0; i < D_TO_STR_PARTLEN; i++)
-			{
-				if (x < powers[D_TO_STR_IDXPART3 + i])
-				{
-					exp -= D_TO_STR_MAXEXP >> i;
-					x *= powers[D_TO_STR_IDXPART1 + i];
-				}
-			}
-		}
-		
-		// algorithm shows true value of subnormal doubles
-		// unfortunatly, the mantisse of subnormal values gets very short
-		// TODO automatically adjust digit count for subnormal values  
-		
-		long tmp = 1000000000000000L;
-		long digits = (long)(x * 1E15 + 0.5);
-		
-		while (digits >= tmp)
-		{
-			exp++;
-			digits /= 10;
-		}
-		
-		int d = (int)(digits / (tmp /= 10));
-		sb.append((char)('0' + d));
-		digits -= tmp * d;
-		
-		sb.append('.');		
-		do
-		{
-			d = (int)(digits / (tmp /= 10));
-			sb.append((char)('0' + d));
-			digits -= tmp * d;
-		}
-		while (digits > 0);
-		
-		if (exp != 0)
-		{
-			sb.append('E');
-			sb.append(exp);
-		}
-
-		return sb.toString();
-	}
-
-	public static String doubleToString3(double x)
 	{
 		if (x != x)
 			return "NaN";
@@ -425,7 +244,7 @@ public class BetaMath
 		return r;
 	}
 	
-	public static String floatToString3(float x)
+	public static String floatToString(float x)
 	{
 		if (x != x)
 			return "NaN";
@@ -521,6 +340,29 @@ public class BetaMath
 		if ((e & 0x004) != 0) r *= b[2];
 		if ((e & 0x002) != 0) r *= b[1];
 		if ((e & 0x001) != 0) r *= b[0];
+		
+		return r;
+	}
+	
+	private static float pow10f_sf(float r, int e)
+	{
+		// sf stand for "Small exponent First"
+		
+		float[] b;
+		if (e >= 0)
+			b = Pow10FConstants.POW10F_1;
+		else
+		{
+			b = Pow10FConstants.POW10F_2;
+			e = -e;
+		}
+		
+		if ((e & 0x001) != 0) r *= b[0];
+		if ((e & 0x002) != 0) r *= b[1];
+		if ((e & 0x004) != 0) r *= b[2];
+		if ((e & 0x008) != 0) r *= b[3];
+		if ((e & 0x010) != 0) r *= b[4];
+		if ((e & 0x020) != 0) r *= b[5];
 		
 		return r;
 	}
