@@ -1,25 +1,21 @@
-
-
-
-
-
 /**
  * GUI application for remote control of a NXT running RCNavigator<br>
  * Distance in meters <br>
  * uses  RCNavComms  class for bluetooth communications
  * used   Command enum in this project
- * @author  Roger
+ * @author  Roger Glassey
  */
 public class RCNavigationControl extends javax.swing.JFrame
 {
+	private static final long serialVersionUID = 1L;
 
-   /** Creates new form RCNavigationControl */
+/** Creates new form RCNavigationControl */
    public RCNavigationControl()
     {
       initComponents();
     }
    /**
-    * calls construor for this class
+    * calls constructor for this class
     */
     public static void main(String args[])
     {
@@ -283,35 +279,56 @@ private void connectButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIR
    if (!communicator.connect(name,address))
    {
      statusField.setText("Connection Failed");
+     connected = false;
    }
-   else statusField.setText("Connected to " + name );
-
+   else {
+	   statusField.setText("Connected to " + name );
+	   connected = true;
+   }
 }//GEN-LAST:event_connectButtonMouseClicked
 
 private void goButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_goButtonMouseClicked
+   if (!connected) return;
    statusField.setText("GoTo " +XField.getText()+" "+YField.getText());
-   float x = Float.parseFloat(XField.getText());
-   float y = Float.parseFloat(YField.getText());
-   System.out.println("Sent "+Command.GOTO+" x "+x+" y "+y);
-   communicator.send(Command.GOTO,x,y);
-   statusField.setText("waiting for data");
+   float x; 
+   float y;
+   try {
+	   x = Float.parseFloat(XField.getText());
+	   y = Float.parseFloat(YField.getText());
+	   System.out.println("Sent "+Command.GOTO+" x "+x+" y "+y);
+	   communicator.send(Command.GOTO,x,y);
+	   statusField.setText("waiting for data");
+   } catch (NumberFormatException e) {
+	   statusField.setText("Invalid x, y values");
+   }
 }//GEN-LAST:event_goButtonMouseClicked
 
 private void travelButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_travelButtonMouseClicked
+  if (!connected) return;
   statusField.setText("Travel "+distanceField.getText());
-  float distance = Float.parseFloat(distanceField.getText());
-  System.out.println("Sent "+Command.TRAVEL+" "+distance);
-   communicator.send(Command.TRAVEL,distance);
-     statusField.setText("waiting for data");
+  float distance;
+  try {
+	  distance = Float.parseFloat(distanceField.getText());
+	  System.out.println("Sent "+Command.TRAVEL+" "+distance);
+	  communicator.send(Command.TRAVEL,distance);
+	  statusField.setText("waiting for data");
+  } catch (NumberFormatException e) {
+	   statusField.setText("Invalid distance value");
+  }
 }//GEN-LAST:event_travelButtonMouseClicked
 
 private void rotateButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_rotateButtonMouseClicked
+  if (!connected) return;
   statusField.setText("Rotate "+angleField.getText());
-  float angle = Float.parseFloat(angleField.getText());
-  System.out.println("Sent "+Command.ROTATE+" "+angle);
-   communicator.send(Command.ROTATE,angle);
-     statusField.setText("waiting for data");
-
+  float angle;
+  try {
+	  angle = Float.parseFloat(angleField.getText());
+	  System.out.println("Sent "+Command.ROTATE+" "+angle);
+	  communicator.send(Command.ROTATE,angle);
+	  statusField.setText("waiting for data");
+  } catch (NumberFormatException e) {
+	   statusField.setText("Invalid angle value");	  
+  }
 }//GEN-LAST:event_rotateButtonMouseClicked
 
 public void showtRobotPosition(float x, float y, float heading)
@@ -322,8 +339,6 @@ public void showtRobotPosition(float x, float y, float heading)
     statusField.setText("waiting for command");
 }
 
-   
-   
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JTextField XField;
   private javax.swing.JTextField YField;
@@ -353,6 +368,7 @@ public void showtRobotPosition(float x, float y, float heading)
   private javax.swing.JTextField statusField;
   private javax.swing.JButton travelButton;
   // End of variables declaration//GEN-END:variables
+  private boolean connected = false;
 
    private RCNavComms communicator = new RCNavComms(this);
 }

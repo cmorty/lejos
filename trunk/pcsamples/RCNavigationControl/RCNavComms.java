@@ -110,7 +110,7 @@ public class RCNavComms
     }//while is running
   }
 /**
- * sends a command ewith a variable number of float parameters.
+ * sends a command with a variable number of float parameters.
  *  see http://java.sun.com/docs/books/tutorial/java/javaOO/arguments.html
  * the section on Arbitrary Number of Arguments
  * @param c a Command enum
