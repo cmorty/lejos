@@ -1,6 +1,6 @@
 <project name="ObstacleNavigator" default="uploadandrun">
     <description>
-    	FileTest build file
+    	ObstacleNavigator build file
     </description>
 
 	<target name="clean" description="clean up all generated files" >

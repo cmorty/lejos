@@ -1,6 +1,6 @@
 <project name="BumpNavigator" default="uploadandrun">
     <description>
-    	BTReceive build file
+    	BumpNavigator build file
     </description>
 
 	<target name="clean" description="clean up all generated files" >
