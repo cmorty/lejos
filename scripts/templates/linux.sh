@@ -1,12 +1,28 @@
 #!/bin/bash
 
+# for OSX
+function my_readlinkdir() {
+	local FILE="$1"
+	if [ -L "$FILE" ]; then
+		local LINK="$(readlink -- "$FILE")"
+		cd -- "$(dirname -- "$FILE")"
+		cd -- "$(dirname -- "$LINK")"
+	else
+		cd -- "$(dirname -- "$FILE")"
+	fi
+	pwd
+}
+function my_pdirname() {
+	cd -- "$1/.."
+	pwd
+}
+
 NXJ_COMMAND="$(basename -- "$0")"
 if [ -n "$NXJ_HOME" ]; then
 	NXJ_BIN="$NXJ_HOME/bin"
 else
-	NXJ_BIN="$(readlink -f -- "$0")"
-	NXJ_BIN="$(dirname -- "$NXJ_BIN")"
-	NXJ_HOME="$(dirname -- "$NXJ_BIN")"
+	NXJ_BIN="$(my_readlinkdir "$0")"
+	NXJ_HOME="$(my_pdirname "$NXJ_BIN")"
 fi
 
 NXJ_LIBS="$NXJ_HOME/lib"
@@ -22,7 +38,7 @@ NXJ_JAR_JTOOLS="$NXJ_LIBS/jtools.jar"
 NXJ_JAR_PCCOMM="$NXJ_LIBS/pccomm.jar"
 NXJ_JAR_PCTOOLS="$NXJ_LIBS/pctools.jar"
 
-if [ "$(uname -o)" == "Cygwin" ]; then
+if [[ "$(uname -s)" =~ ^CYGWIN ]]; then
 	SEP=";"
 else
 	SEP=":"
