@@ -1,7 +1,5 @@
 package java.awt.geom;
 
-import java.awt.Rectangle;
-
 public abstract class Rectangle2D extends RectangularShape {
 	public static class Float extends Rectangle2D {
 		public float x, y, width, height;
@@ -34,14 +32,8 @@ public abstract class Rectangle2D extends RectangularShape {
             return (width <= 0.0f) || (height <= 0.0f);
 		}
 
-		public Rectangle getBounds() {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
 		public Rectangle2D getBounds2D() {
-			// TODO Auto-generated method stub
-			return null;
+			return new Float(x, y, width, height);
 		}
 	
 	    public void setRect(float x, float y, float w, float h) {
@@ -102,14 +94,8 @@ public abstract class Rectangle2D extends RectangularShape {
 			setRect(x,y,w,h);			
 		}
 
-		public Rectangle getBounds() {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
 		public Rectangle2D getBounds2D() {
-			// TODO Auto-generated method stub
-			return null;
+			return new Double(x, y, width, height);
 		}
 			
 	    public void setRect(double x, double y, double w, double h) {
@@ -153,9 +139,7 @@ public abstract class Rectangle2D extends RectangularShape {
     }
     
     public boolean intersects(double x, double y, double w, double h) {
-        if (isEmpty() || w <= 0 || h <= 0) {
-            return false;
-        }
+        if (isEmpty() || w <= 0 || h <= 0) return false;
         double x0 = getX();
         double y0 = getY();
         return (x + w > x0 &&

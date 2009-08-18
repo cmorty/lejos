@@ -1,5 +1,6 @@
 package java.awt.geom;
 
+import java.awt.Rectangle;
 import java.awt.Shape;
 
 public abstract class RectangularShape implements Shape {
@@ -57,5 +58,18 @@ public abstract class RectangularShape implements Shape {
     
     public boolean contains(Rectangle2D r) {
         return contains(r.getX(), r.getY(), r.getWidth(), r.getHeight());
-    } 
+    }
+    
+    public Rectangle getBounds() {
+        double width = getWidth();
+        double height = getHeight();
+        if (width < 0 || height < 0) return new Rectangle();
+        double x = getX();
+        double y = getY();
+        double x1 = Math.floor(x);
+        double y1 = Math.floor(y);
+        double x2 = Math.ceil(x + width);
+        double y2 = Math.ceil(y + height);
+        return new Rectangle((int) x1, (int) y1,(int) (x2 - x1), (int) (y2 - y1));
+    }
 }
