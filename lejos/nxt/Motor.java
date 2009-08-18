@@ -205,11 +205,6 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
          if(_mode == STOP || _mode == FLOAT)
          {
             _port.controlMotor(0, _mode);
-            if(_regulate)
-            {
-               // give it some time to stop, it may depend on power used however, for now 20 ms is working
-               Delay.msDelay(20);
-            }
             return;
          }
          _port.controlMotor(_power, _mode);
