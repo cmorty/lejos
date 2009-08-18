@@ -152,17 +152,33 @@ public class StringBuilder
 	  return this;
   }
 
-  public StringBuilder append (float aFloat)
-  {
-    append (aFloat, 8);
-    return this;
-  }
+	public StringBuilder append (float aFloat)
+	{
+		if (Float.isNaN(aFloat))
+			return this.appendInternal(StringUtils.STR_NAN);
+		if (aFloat == Float.POSITIVE_INFINITY)
+			return this.appendInternal(StringUtils.STR_INFINITY_POS);
+		if (aFloat == Float.NEGATIVE_INFINITY)
+			return this.appendInternal(StringUtils.STR_INFINITY_NEG);
 
-  public StringBuilder append (double aDouble)
-  {
-    append (aDouble, 17);
-    return this;
-  }
+		ensureCapacity(curLen + StringUtils.MAX_FLOAT_CHARS);
+		curLen = StringUtils.getFloatChars(aFloat, characters, curLen);
+    	return this;
+	}
+
+	public StringBuilder append (double aDouble)
+	{
+		if (Double.isNaN(aDouble))
+			return this.appendInternal(StringUtils.STR_NAN);
+		if (aDouble == Double.POSITIVE_INFINITY)
+			return this.appendInternal(StringUtils.STR_INFINITY_POS);
+		if (aDouble == Double.NEGATIVE_INFINITY)
+			return this.appendInternal(StringUtils.STR_INFINITY_NEG);
+
+		ensureCapacity(curLen + StringUtils.MAX_DOUBLE_CHARS);
+		curLen = StringUtils.getDoubleChars(aDouble, characters, curLen);
+    	return this;
+	}
   
   /**
    * Appends a string with no null checking
@@ -254,28 +270,7 @@ public class StringBuilder
 	  
 	  int len = end - start;
 	  return new String(characters, start, len);
-  }
-  
-    /**
-     * Helper method for converting floats and doubles.
-     *
-     * @author Martin E. Nielsen
-     **/
-    private StringBuilder append( double number, int significantDigits ) {
-    	
-    	if (Double.isNaN(number))
-    		return this.appendInternal("NaN");
-    	if (number == Double.POSITIVE_INFINITY)
-    		return this.appendInternal("Infinity");
-    	if (number == Double.NEGATIVE_INFINITY)
-    		return this.appendInternal("-Infinity");
-
-		ensureCapacity(curLen + 32);
-		int charPos = StringUtils.getFloatChars(characters, curLen, number, significantDigits);
-		curLen = charPos;
-
-    	return this;
-    }
+  }  
 }
 
 
