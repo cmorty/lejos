@@ -105,28 +105,40 @@ public class BetaMath
 	
 	public static String doubleToString(double x)
 	{
+		char[] sb = new char[25];
+		int p = doubleToString(x, sb, 0);
+		return new String(sb, 0, p);
+	}
+	
+	private static int doubleToString(double x, char[] sb, int p)
+	{
 		if (x != x)
-			return "NaN";
-		
-		StringBuilder sb = new StringBuilder(22);
+		{
+			sb[p] = 'N';
+			sb[p+1] = 'a';
+			sb[p+2] = 'N';
+			return p+3;
+		}
 		
 		//we need to detect -0.0 to be compatible with JDK
 		long bits = Double.doubleToRawLongBits(x); 
 		if ((bits & 0x8000000000000000L) != 0)
 		{
-			sb.append("-");
+			sb[p++] = '-';
 			x = -x;
 		}
 		
 		if (x == 0)
 		{
-			sb.append("0.0");
-			return sb.toString();
+			sb[p] = '0';
+			sb[p+1] = '.';
+			sb[p+2] = '0';
+			return p+3;
 		}
 		if (x == Double.POSITIVE_INFINITY)
 		{
-			sb.append("Infinity");
-			return sb.toString();
+			"Infinity".getChars(0, 8, sb, p);
+			return p + 8;
 		}
 		
 		int exp;		
@@ -159,25 +171,34 @@ public class BetaMath
 		// TODO automatically adjust digit count for subnormal values
 		
 		int d = (int)(digits / (tmp /= 10));
-		sb.append((char)('0' + d));
+		sb[p++] = (char)('0' + d);
 		digits -= tmp * d;
 		
-		sb.append('.');		
+		sb[p++] = '.';		
 		do
 		{
 			d = (int)(digits / (tmp /= 10));
-			sb.append((char)('0' + d));
+			sb[p++] = (char)('0' + d);
 			digits -= tmp * d;
 		}
 		while (digits > 0);
 		
 		if (exp != 0)
 		{
-			sb.append('E');
-			sb.append(exp);
+			sb[p++] = 'E';
+			if (exp < 0)
+			{
+				sb[p++] = '-';
+				exp = -exp;
+			}			
+			if (exp >= 100)
+				sb[p++] = (char)(exp / 100 + '0');
+			if (exp >= 10)
+				sb[p++] = (char)(exp / 10 % 10 + '0');
+			sb[p++] = (char)(exp % 10 + '0');
 		}
 
-		return sb.toString();
+		return p;
 	}
 
 	private static class Pow10FConstants
@@ -246,28 +267,40 @@ public class BetaMath
 	
 	public static String floatToString(float x)
 	{
+		char[] sb = new char[15];
+		int p = floatToString(x, sb, 0);
+		return new String(sb, 0, p);
+	}
+	
+	private static int floatToString(float x, char[] sb, int p)
+	{
 		if (x != x)
-			return "NaN";
-		
-		StringBuilder sb = new StringBuilder(22);
+		{
+			sb[p] = 'N';
+			sb[p+1] = 'a';
+			sb[p+2] = 'N';
+			return p+3;
+		}
 		
 		//we need to detect -0.0 to be compatible with JDK
 		int bits = Float.floatToRawIntBits(x); 
 		if ((bits & 0x80000000) != 0)
 		{
-			sb.append("-");
+			sb[p++] = '-';
 			x = -x;
 		}
 		
 		if (x == 0)
 		{
-			sb.append("0.0");
-			return sb.toString();
+			sb[p] = '0';
+			sb[p+1] = '.';
+			sb[p+2] = '0';
+			return p+3;
 		}
 		if (x == Float.POSITIVE_INFINITY)
 		{
-			sb.append("Infinity");
-			return sb.toString();
+			"Infinity".getChars(0, 8, sb, p);
+			return p + 8;
 		}
 		
 		int exp;		
@@ -300,25 +333,32 @@ public class BetaMath
 		// TODO automatically adjust digit count for subnormal values
 		
 		int d = digits / (tmp /= 10);
-		sb.append((char)('0' + d));
+		sb[p++] = (char)('0' + d);
 		digits -= tmp * d;
 		
-		sb.append('.');		
+		sb[p++] = '.';		
 		do
 		{
 			d = digits / (tmp /= 10);
-			sb.append((char)('0' + d));
+			sb[p++] = (char)('0' + d);
 			digits -= tmp * d;
 		}
 		while (digits > 0);
 		
 		if (exp != 0)
 		{
-			sb.append('E');
-			sb.append(exp);
+			sb[p++] = 'E';
+			if (exp < 0)
+			{
+				sb[p++] = '-';
+				exp = -exp;
+			}			
+			if (exp >= 10)
+				sb[p++] = (char)(exp / 10 + '0');
+			sb[p++] = (char)(exp % 10 + '0');
 		}
 
-		return sb.toString();
+		return p;
 	}
 
 	private static float pow10f_bf(float r, int e)
