@@ -121,39 +121,11 @@ public final class MathBench
 			BetaMath.doubleToString(x);
 		long end = System.currentTimeMillis();
 	
-		report(count, "D2STR (new, "+comment+")", count, "ops", end - start - nullTime);
-		return count;
-	}
-
-	private static int benchDoubleToStrNew2(int count, String comment, double x)
-	{
-		long nullTime = BenchUtils.getIterationTime(count);
-		
-		// Function calls
-		long start = System.currentTimeMillis();
-		for (int i = 0; i < count; i++)
-			BetaMath.doubleToString2(x);
-		long end = System.currentTimeMillis();
-	
-		report(count, "D2STR (new2, "+comment+")", count, "ops", end - start - nullTime);
-		return count;
-	}
-
-	private static int benchDoubleToStrNew3(int count, String comment, double x)
-	{
-		long nullTime = BenchUtils.getIterationTime(count);
-		
-		// Function calls
-		long start = System.currentTimeMillis();
-		for (int i = 0; i < count; i++)
-			BetaMath.doubleToString3(x);
-		long end = System.currentTimeMillis();
-	
 		report(count, "D2STR (new3, "+comment+")", count, "ops", end - start - nullTime);
 		return count;
 	}
 
-	private static int benchFloatToStrNew3(int count, String comment, double y)
+	private static int benchFloatToStrNew(int count, String comment, double y)
 	{
 		float x = (float)y;
 		long nullTime = BenchUtils.getIterationTime(count);
@@ -161,7 +133,7 @@ public final class MathBench
 		// Function calls
 		long start = System.currentTimeMillis();
 		for (int i = 0; i < count; i++)
-			BetaMath.floatToString3(x);
+			BetaMath.floatToString(x);
 		long end = System.currentTimeMillis();
 	
 		report(count, "F2STR (new3, "+comment+")", count, "ops", end - start - nullTime);
@@ -248,37 +220,15 @@ public final class MathBench
 		countAll += benchDoubleToStrNew(iterate / 8, "PI*1E-300", Math.PI*1E-300);
 		BenchUtils.cleanUp(null);
 	
-		countAll += benchDoubleToStrNew2(iterate / 8, "PI*1E+300", Math.PI*1E+300);
+		countAll += benchFloatToStrNew(iterate / 4, "PI*1E+30", Math.PI*1E+30);
 		BenchUtils.cleanUp(null);
-		countAll += benchDoubleToStrNew2(iterate / 8, "PI*1E+100", Math.PI*1E+100);
+		countAll += benchFloatToStrNew(iterate / 4, "PI*1E+10", Math.PI*1E+10);
 		BenchUtils.cleanUp(null);
-		countAll += benchDoubleToStrNew2(iterate / 8, "PI*1E0", Math.PI*1E0);
+		countAll += benchFloatToStrNew(iterate / 4, "PI*1E0", Math.PI*1E0);
 		BenchUtils.cleanUp(null);
-		countAll += benchDoubleToStrNew2(iterate / 8, "PI*1E-100", Math.PI*1E-100);
+		countAll += benchFloatToStrNew(iterate / 4, "PI*1E-10", Math.PI*1E-10);
 		BenchUtils.cleanUp(null);
-		countAll += benchDoubleToStrNew2(iterate / 8, "PI*1E-300", Math.PI*1E-300);
-		BenchUtils.cleanUp(null);
-	
-		countAll += benchDoubleToStrNew3(iterate / 8, "PI*1E+300", Math.PI*1E+300);
-		BenchUtils.cleanUp(null);
-		countAll += benchDoubleToStrNew3(iterate / 8, "PI*1E+100", Math.PI*1E+100);
-		BenchUtils.cleanUp(null);
-		countAll += benchDoubleToStrNew3(iterate / 8, "PI*1E0", Math.PI*1E0);
-		BenchUtils.cleanUp(null);
-		countAll += benchDoubleToStrNew3(iterate / 8, "PI*1E-100", Math.PI*1E-100);
-		BenchUtils.cleanUp(null);
-		countAll += benchDoubleToStrNew3(iterate / 8, "PI*1E-300", Math.PI*1E-300);
-		BenchUtils.cleanUp(null);
-	
-		countAll += benchFloatToStrNew3(iterate / 4, "PI*1E+30", Math.PI*1E+30);
-		BenchUtils.cleanUp(null);
-		countAll += benchFloatToStrNew3(iterate / 4, "PI*1E+10", Math.PI*1E+10);
-		BenchUtils.cleanUp(null);
-		countAll += benchFloatToStrNew3(iterate / 4, "PI*1E0", Math.PI*1E0);
-		BenchUtils.cleanUp(null);
-		countAll += benchFloatToStrNew3(iterate / 4, "PI*1E-10", Math.PI*1E-10);
-		BenchUtils.cleanUp(null);
-		countAll += benchFloatToStrNew3(iterate / 4, "PI*1E-30", Math.PI*1E-30);
+		countAll += benchFloatToStrNew(iterate / 4, "PI*1E-30", Math.PI*1E-30);
 		BenchUtils.cleanUp(null);
 		
 		long endAll = System.currentTimeMillis();
