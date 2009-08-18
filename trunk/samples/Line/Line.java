@@ -26,6 +26,7 @@ public class Line {
 		// set for your robot, but are not critical.
 		final Pilot pilot = new TachoPilot(5.6f,16.0f,Motor.A, Motor.C, false);
 		final LightSensor light = new LightSensor(SensorPort.S1);
+        pilot.setTurnSpeed(180);
         /**
          * this behavior wants to take contrtol when the light sensor sees the line
          */
