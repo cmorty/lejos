@@ -37,5 +37,6 @@ public class TachoCount {
 		Sound.playTone(1000, 1000);
 		System.out.println("Tachometer A: " + Motor.A.getTachoCount());
 		System.out.println("Tachometer C: " + Motor.C.getTachoCount());
+		conn.close();
 	}	
 }
