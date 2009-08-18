@@ -367,7 +367,10 @@ public class BetaMath
 		return r;
 	}
 	
-	private static final int STR_TO_D_MAXEXP = 350; 
+	/**
+	 * Roughly equals abs(minimal exponent of subnormal double in base 10) + digits of long 
+	 */
+	private static final int STR_TO_DOUBLE_MAXEXP = 350; 
 	
 	public static double stringToDouble(String s)
 	{
@@ -483,7 +486,7 @@ public class BetaMath
 				
 				digitsexp = true;
 				
-				if (exp2 + exp < STR_TO_D_MAXEXP)
+				if (exp2 + exp < STR_TO_DOUBLE_MAXEXP)
 					exp2 = exp2 * 10 + (c - '0');
 				
 				p++;
@@ -497,12 +500,155 @@ public class BetaMath
 		}
 		
 		double r2;
-		if (exp < -STR_TO_D_MAXEXP)
+		if (exp < -STR_TO_DOUBLE_MAXEXP)
 			r2 = 0.0;
-		else if (exp > STR_TO_D_MAXEXP)
+		else if (exp > STR_TO_DOUBLE_MAXEXP)
 			r2 = Double.POSITIVE_INFINITY;
 		else
 			r2 = pow10d_sf(r, exp);
+		
+		return neg ? -r2 : r2;
+	}
+	
+	/**
+	 * Roughly equals abs(minimal exponent of subnormal float in base 10) + digits of int 
+	 */
+	private static final int STR_TO_FLOAT_MAXEXP = 60; 
+	
+	public static float stringToFloat(String s)
+	{
+		int r = 0;
+		int exp = 0;
+		
+		int l = s.length();
+		
+		if (l <= 0)
+			throw new NumberFormatException();
+		
+		int p;
+		boolean neg;
+		switch (s.charAt(0))
+		{
+			case '-':
+				p = 1;
+				neg = true;
+				break;
+			case '+':
+				p = 1;
+				neg = false;
+				break;
+			default:
+				p = 0;
+				neg = false;				
+		}
+		
+		boolean digits = false;
+		
+		while (p < l)
+		{
+			char c = s.charAt(p);
+			if (c < '0' || c > '9')
+			{
+				if (c == '.' || c == 'e' || c == 'E')
+					break;
+				
+				throw new NumberFormatException();
+			}
+			
+			digits = true;
+			
+			if (r <= (Integer.MAX_VALUE - 9) / 10)
+				r = r * 10 + (c - '0');
+			else
+				exp++;
+			
+			p++;
+		}
+		
+		if (p < l && s.charAt(p) == '.')
+		{
+			p++;
+			
+			while (p < l)
+			{
+				char c = s.charAt(p);
+				if (c < '0' || c > '9')
+				{
+					if (c == 'e' || c == 'E')
+						break;
+					
+					throw new NumberFormatException();
+				}
+				
+				digits = true;
+				
+				if (r <= (Integer.MAX_VALUE - 9) / 10)
+				{
+					r = r * 10 + (c - '0');				
+					exp--;
+				}				
+				p++;
+			}			
+		}
+		
+		if (!digits)
+			throw new NumberFormatException();
+		
+		if (p < l)
+		{
+			//at this point, s.charAt(p) has to be 'e' or 'E'
+			p++;
+			
+			boolean digitsexp = false;
+			
+			boolean negexp;
+			if (p < l)
+			{
+				switch (s.charAt(p))
+				{
+					case '-':
+						negexp = true;
+						exp = -exp;
+						p++;
+						break;
+					case '+':
+						p++;
+					default:
+						negexp = false;
+				}
+			}
+			else
+				negexp = false;
+			
+			int exp2 = 0;
+			while (p < l)
+			{
+				char c = s.charAt(p);
+				if (c < '0' || c > '9')
+					throw new NumberFormatException();
+				
+				digitsexp = true;
+				
+				if (exp2 + exp < STR_TO_FLOAT_MAXEXP)
+					exp2 = exp2 * 10 + (c - '0');
+				
+				p++;
+			}
+			
+			if (!digitsexp)
+				throw new NumberFormatException();
+			
+			exp2 += exp;
+			exp = negexp ? -exp2 : exp2;
+		}
+		
+		float r2;
+		if (exp < -STR_TO_FLOAT_MAXEXP)
+			r2 = 0.0f;
+		else if (exp > STR_TO_FLOAT_MAXEXP)
+			r2 = Float.POSITIVE_INFINITY;
+		else
+			r2 = pow10f_sf(r, exp);
 		
 		return neg ? -r2 : r2;
 	}
