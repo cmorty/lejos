@@ -1,6 +1,6 @@
 <project name="WaypointNav" default="uploadandrun">
     <description>
-    	View build file
+    	WaypointNav build file
     </description>
 
 	<target name="clean" description="clean up all generated files" >

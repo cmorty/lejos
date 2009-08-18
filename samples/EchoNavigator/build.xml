@@ -1,6 +1,6 @@
 <project name="EchoNavigator" default="uploadandrun">
     <description>
-    	FileTest build file
+    	EchoNavigator build file
     </description>
 
 	<target name="clean" description="clean up all generated files" >
