@@ -6,6 +6,10 @@ package java.lang;
  */
 class StringUtils
 {
+	static final String STR_NAN = "NaN";
+	static final String STR_INFINITY_POS = "Infinity";
+	static final String STR_INFINITY_NEG = "-Infinity";
+	
 	static int parseDigit(char c, int radix)
 	{
 		int r = Character.digit((int)c, radix);		
@@ -161,6 +165,20 @@ class StringUtils
 		
 		return c;
 	}
+	
+	static final int MAX_FLOAT_CHARS = 32;
+	
+	static int getFloatChars(float number, char[] buf, int charPos)
+	{
+		return getDoubleChars(number, buf, charPos, 8);
+	}
+
+	static final int MAX_DOUBLE_CHARS = 32;
+	
+	static int getDoubleChars(double number, char[] buf, int charPos)
+	{
+		return getDoubleChars(number, buf, charPos, 17);
+	}
 
     /**
      * Helper method for converting floats and doubles.
@@ -168,7 +186,7 @@ class StringUtils
      * @author Martin E. Nielsen
      * @author Sven Köhler
      **/
-	static int getFloatChars(char[] buf, int charPos, double number, int significantDigits) {
+	private static int getDoubleChars(double number, char[] buf, int charPos, int significantDigits) {
 		int exponent = 0;
 		
 		//we need to detect -0.0 to be compatible with JDK
