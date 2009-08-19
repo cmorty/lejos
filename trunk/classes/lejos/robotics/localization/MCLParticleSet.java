@@ -5,7 +5,7 @@ import lejos.geom.*;
 import java.io.*;
 import lejos.robotics.*;
 import lejos.robotics.mapping.RangeMap;
-import lejos.robotics.proposal.Movement;
+import lejos.robotics.Movement;
 
 /*
  * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.

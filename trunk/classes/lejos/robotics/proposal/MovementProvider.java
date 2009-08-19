@@ -1,5 +1,7 @@
 package lejos.robotics.proposal;
 
+import lejos.robotics.Movement;
+
 /**
  * Should be implemented by a Pilot that provides a partial movement to a pose
  * when requested.

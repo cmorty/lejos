@@ -4,8 +4,8 @@ import lejos.robotics.Pose;
 import lejos.robotics.mapping.RangeMap;
 import lejos.robotics.RangeReadings;
 import lejos.robotics.navigation.*;
-import lejos.robotics.proposal.Movement;
-import lejos.robotics.proposal.Movement.MovementType;
+import lejos.robotics.Movement;
+import lejos.robotics.Movement.MovementType;
 import lejos.nxt.Motor;
 
 /**

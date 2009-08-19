@@ -5,7 +5,7 @@ import lejos.robotics.localization.MCLParticleSet;
 import lejos.robotics.mapping.RangeMap;
 import lejos.robotics.RangeReadings;
 import lejos.robotics.RangeScanner;
-import lejos.robotics.proposal.Movement;
+import lejos.robotics.Movement;
 import lejos.robotics.proposal.PoseProvider;
 
 public class MCLPoseProvider implements PoseProvider, MoveListener {

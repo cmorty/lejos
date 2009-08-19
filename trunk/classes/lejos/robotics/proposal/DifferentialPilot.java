@@ -2,6 +2,7 @@ package lejos.robotics.proposal;
 
 import java.util.ArrayList;
 import lejos.nxt.Battery;
+import lejos.robotics.Movement;
 import lejos.robotics.TachoMotor;
 
 /**
