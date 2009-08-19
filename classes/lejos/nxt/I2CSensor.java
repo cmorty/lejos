@@ -9,6 +9,18 @@ package lejos.nxt;
  *
  */
 public class I2CSensor implements SensorConstants {
+	/**
+	 * Returns the version number of the sensor. e.g. "V1.0" Reply length = 8.
+	 */
+	protected static byte VERSION = 0x00;
+	/**
+	 * Returns the product ID of the sensor.  e.g. "LEGO" Reply length = 8.
+	 */
+	protected static byte PRODUCT_ID = 0x08;
+	/**
+	 * Returns the sensor type. e.g. "Sonar" Reply length = 8.
+	 */
+	protected static byte SENSOR_TYPE = 0x10;
 	I2CPort port;
 	int address = 1;
 	String version = null;
@@ -16,7 +28,6 @@ public class I2CSensor implements SensorConstants {
 	String sensorType = null;
 	byte [] byteBuff = new byte[8];
 	byte [] buf1 = new byte[1];
-	String BLANK = "        ";
 
 	public I2CSensor(I2CPort port, int mode)
 	{
@@ -88,7 +99,7 @@ public class I2CSensor implements SensorConstants {
 	 * @return 8-byte string
 	 */
 	public String getVersion() {
-		return fetchString(0x00);
+		return fetchString(VERSION, 8);
 	}
 	
 	/**
@@ -97,7 +108,7 @@ public class I2CSensor implements SensorConstants {
 	 * @return 8-byte string
 	 */
 	public String getProductID() {
-		return fetchString(0x08);
+		return fetchString(PRODUCT_ID, 8);
 	}
 	
 	/**
@@ -106,22 +117,21 @@ public class I2CSensor implements SensorConstants {
 	 * @return 8-byte string
 	 */
 	public String getSensorType() {
-		return fetchString(0x10);
+		return fetchString(SENSOR_TYPE, 8);
 	}
 
     /**
      * Internal helper function, read a string from the device
      * @param register
+     * @param len The length of the space padded reply.
      * @return the requested string
      */
-	protected String fetchString(int register) {
+	protected String fetchString(int register, int len) {
 		int ret = getData(register, byteBuff, 8);
-		if(ret != 0)
-			return BLANK;
-		char [] charBuff = new char[8];
-		for(int i=0;i<8;i++)
+		char [] charBuff = new char[len];
+		for(int i=0;i<len;i++)
 			charBuff[i] = (byteBuff[i] == 0 ? ' ' : (char)byteBuff[i]);
-		return new String(charBuff, 0, 8);	
+		return new String(charBuff, 0, len);
 	}
 	
 	/**
