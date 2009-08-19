@@ -8,11 +8,8 @@
   		<mkdir dir="lejos/robotics/localization"/>
   		<copy todir=".">
   			<fileset dir="../classes">
-  				<include name="lejos/robotics/localization/Move.java"/>
-  				<include name="lejos/robotics/localization/Particle.java"/>
-  				<include name="lejos/robotics/localization/ParticleSet.java"/>
-  				<include name="lejos/robotics/localization/MCLParticle.java"/>
-  				<include name="lejos/robotics/localization/MCLParticleSet.java"/>
+  				<include name="lejos/robotics/localization/*.java"/>
+  				<exclude name="lejos/robotics/localization/TachoLocalizer.java"/>
   				<include name="lejos/robotics/localization/package.html"/>
   			</fileset>
   		</copy>
