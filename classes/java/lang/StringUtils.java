@@ -48,7 +48,7 @@ class StringUtils
 	 * 
 	 * @param p position of the character after the last digit
 	 */
-	static int getChars(char[] buf, int p, int v, int radix)
+	static int getIntChars(char[] buf, int p, int v, int radix)
 	{
 		int v2 = (v <= 0) ? v : -v;
 		
@@ -69,7 +69,7 @@ class StringUtils
 	 * 
 	 * @param p position of the character after the last digit
 	 */
-	static int getChars(char[] buf, int p, long v, int radix)
+	static int getLongChars(char[] buf, int p, long v, int radix)
 	{
 		long v2 = (v <= 0) ? v : -v;
 		
@@ -120,7 +120,7 @@ class StringUtils
 	}
 
 	/**
-	 * Estimate size of buffer for {@link #getChars(char[], int, int, int)}.
+	 * Estimate size of buffer for {@link #getIntChars(char[], int, int, int)}.
 	 */
 	static int approxStringLengthInt(int radix)
 	{
@@ -129,7 +129,7 @@ class StringUtils
 	}
 
 	/**
-	 * Estimate size of buffer for {@link #getChars(char[], int, long, int)}.
+	 * Estimate size of buffer for {@link #getLongChars(char[], int, long, int)}.
 	 */
 	static int approxStringLengthLong(int radix)
 	{
@@ -138,7 +138,7 @@ class StringUtils
 	}
 
 	/**
-	 * Exact size of buffer for {@link #getChars(char[], int, int, int)}.
+	 * Exact size of buffer for {@link #getIntChars(char[], int, int, int)}.
 	 */
 	static int exactStringLength(int v, int radix)
 	{
@@ -153,7 +153,7 @@ class StringUtils
 	}
 
 	/**
-	 * Exact size of buffer for {@link #getChars(char[], int, long, int)}.
+	 * Exact size of buffer for {@link #getLongChars(char[], int, long, int)}.
 	 */
 	static int exactStringLength(long v, int radix)
 	{
@@ -274,7 +274,7 @@ class StringUtils
 			if ( exponent != 0 ) {
 				buf[ charPos++ ] = 'E';				
 				charPos += exactStringLength(exponent, 10);
-				getChars(buf, charPos, exponent, 10);
+				getIntChars(buf, charPos, exponent, 10);
 			} // if
 		}
 		return charPos;

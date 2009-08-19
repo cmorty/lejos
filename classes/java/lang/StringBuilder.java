@@ -134,7 +134,7 @@ public class StringBuilder
 	  int newLen = curLen + intLen;
 	  ensureCapacity(newLen);
 
-	  StringUtils.getChars(characters, newLen, i, 10);	  
+	  StringUtils.getIntChars(characters, newLen, i, 10);	  
 	  curLen = newLen;
 	  
 	  return this;
@@ -146,7 +146,7 @@ public class StringBuilder
 	  int newLen = curLen + intLen;
 	  ensureCapacity(newLen);
 
-	  StringUtils.getChars(characters, newLen, aLong, 10);	  	  
+	  StringUtils.getLongChars(characters, newLen, aLong, 10);	  	  
 	  curLen = newLen;
 	  
 	  return this;
