@@ -5,6 +5,7 @@ import lejos.robotics.MoveListener;
 import lejos.robotics.Movement;
 import lejos.robotics.MovementProvider;
 import lejos.robotics.Pose;
+import lejos.robotics.localization.PoseProvider;
 
 /**
  * A PoseProvider that keeps track of coordinates using dead reckoning, by monitoring Pilot movements.

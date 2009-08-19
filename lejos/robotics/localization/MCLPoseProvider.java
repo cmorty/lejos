@@ -1,4 +1,4 @@
-package lejos.robotics.proposal;
+package lejos.robotics.localization;
 
 import lejos.robotics.Pose;
 import lejos.robotics.localization.MCLParticleSet;
@@ -8,7 +8,6 @@ import lejos.robotics.MovementProvider;
 import lejos.robotics.RangeReadings;
 import lejos.robotics.RangeScanner;
 import lejos.robotics.Movement;
-import lejos.robotics.proposal.PoseProvider;
 
 public class MCLPoseProvider implements PoseProvider, MoveListener {
 	private MCLParticleSet particles;

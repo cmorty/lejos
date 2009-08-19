@@ -2,6 +2,7 @@ package lejos.robotics.proposal;
 
 import javax.microedition.location.*;
 import lejos.robotics.Pose;
+import lejos.robotics.localization.PoseProvider;
 
 /**
  * 
