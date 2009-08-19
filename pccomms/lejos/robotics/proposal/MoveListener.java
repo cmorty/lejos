@@ -1,5 +1,7 @@
 package lejos.robotics.proposal;
 
+import lejos.robotics.Movement;
+
 /**
  * Any class that wants to be updated automatically by a MovementProvider should
  * implement this interface/

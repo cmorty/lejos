@@ -1,5 +1,7 @@
 package lejos.robotics.proposal;
 
+import lejos.robotics.Movement;
+
 public interface BasicPilot extends MovementProvider {
   /**
    *Starts the  NXT robot moving forward.
