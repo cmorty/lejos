@@ -1,6 +1,7 @@
 package lejos.robotics.proposal;
 
 import lejos.robotics.Movement;
+import lejos.robotics.MovementProvider;
 
 public interface BasicPilot extends MovementProvider {
   /**
