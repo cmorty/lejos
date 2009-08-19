@@ -52,7 +52,7 @@ public class RFIDSensor extends I2CSensor
     private static final int DELAY_READ = 200;
 
     private byte buf1[] = new byte[1];
-    private int nextRead = now();
+    private long nextRead = now();
 
     /**
      * Create a class to provide access to the device. Perform device
@@ -77,17 +77,17 @@ public class RFIDSensor extends I2CSensor
      * command delays.
      * @return
      */
-    private int now()
+    private long now()
     {
-        return (int) System.currentTimeMillis();
+        return System.currentTimeMillis();
     }
 
     /**
      * Helper function wait until a specific time has arrived
      */
-    private void waitUntil(int target)
+    private void waitUntil(long target)
     {
-        int d = target - now();
+        long d = target - now();
         if (d > 0)
             Delay.msDelay(d);
     }
@@ -105,16 +105,18 @@ public class RFIDSensor extends I2CSensor
         Delay.msDelay(DELAY_WAKEUP);
     }
 
+
     /**
      * We over-ride the default implementation to ensure that the device is
      * awake before we talk to it.
      * @param register The register to read the string from.
+     * @param len
      * @return The requested string.
      */
-    protected String fetchString(int register)
+    protected String fetchString(byte register, int len)
     {
         wakeUp();
-        return super.fetchString(register);
+        return super.fetchString(register, len);
     }
 
     /**
