@@ -6,10 +6,11 @@ package java.lang;
  */
 class StringUtils
 {
-	static final String STR_NAN = "NaN";
-	static final String STR_INFINITY_POS = "Infinity";
-	static final String STR_INFINITY_NEG = "-Infinity";
-	
+	private static final int STR_NAN_LEN = 3;
+	private static final String STR_NAN = "NaN";
+	private static final int STR_INFINITY_LEN = 8;
+	private static final String STR_INFINITY = "Infinity";
+		
 	static int parseDigit(char c, int radix)
 	{
 		int r = Character.digit((int)c, radix);		
@@ -186,8 +187,13 @@ class StringUtils
      * @author Martin E. Nielsen
      * @author Sven Köhler
      **/
-	private static int getDoubleChars(double number, char[] buf, int charPos, int significantDigits) {
-		int exponent = 0;
+	private static int getDoubleChars(double number, char[] buf, int charPos, int significantDigits)
+	{
+		if (number != number)
+		{
+			STR_NAN.getChars(0, STR_NAN_LEN, buf, charPos);
+			return charPos + STR_NAN_LEN;
+		}
 		
 		//we need to detect -0.0 to be compatible with JDK
 		boolean negative = (Double.doubleToRawLongBits(number) & 0x8000000000000000L) != 0;
@@ -195,13 +201,21 @@ class StringUtils
 		{
 			buf[ charPos++ ] = '-';
 			number = -number;
-		}			
+		}
+		
+		if ( number == Double.POSITIVE_INFINITY)
+		{
+			STR_INFINITY.getChars(0, STR_INFINITY_LEN, buf, charPos);
+			return charPos + STR_INFINITY_LEN;
+		}
 		
 		if ( number == 0 ) {
 			buf[ charPos++ ] = '0';
 			buf[ charPos++ ] = '.';
 			buf[ charPos++ ] = '0';
 		} else {
+			int exponent = 0;
+			
 			// calc. the power (base 10) for the given number:
 			int pow = ( int )Math.floor( Math.log( number ) / Math.ln10 );
 	
