@@ -3,6 +3,8 @@ package lejos.robotics.proposal;
 import lejos.robotics.Pose;
 import lejos.robotics.localization.MCLParticleSet;
 import lejos.robotics.mapping.RangeMap;
+import lejos.robotics.MoveListener;
+import lejos.robotics.MovementProvider;
 import lejos.robotics.RangeReadings;
 import lejos.robotics.RangeScanner;
 import lejos.robotics.Movement;
