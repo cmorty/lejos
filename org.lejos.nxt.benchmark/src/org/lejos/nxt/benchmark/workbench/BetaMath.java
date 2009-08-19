@@ -170,10 +170,12 @@ public class BetaMath
 		// unfortunatly, the mantisse of subnormal values gets very short
 		// TODO automatically adjust digit count for subnormal values
 		
-		int leading = exp;
-		if (leading > 6)
-			leading = 0;		
-		exp -= leading;
+		int leading = 0;
+		if (exp > 0 && exp < 7)
+		{
+			leading = exp;
+			exp = 0;
+		}
 
 		for (int i=0; i<=leading; i++)
 		{
@@ -340,10 +342,12 @@ public class BetaMath
 		// unfortunatly, the mantisse of subnormal values gets very short
 		// TODO automatically adjust digit count for subnormal values
 		
-		int leading = exp;
-		if (leading > 6)
-			leading = 0;		
-		exp -= leading;
+		int leading = 0;
+		if (exp > 0 && exp < 6)
+		{
+			leading = exp;
+			exp = 0;
+		}
 
 		for (int i=0; i<=leading; i++)
 		{
