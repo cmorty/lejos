@@ -49,6 +49,7 @@ java/lang/ArrayStoreException
 java/lang/NegativeArraySizeException
 java/lang/Class
 java/lang/String
+java/lang/Cloneable
 java/lang/Thread
 
 
