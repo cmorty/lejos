@@ -61,7 +61,6 @@
   		<copy todir=".">
   			<fileset dir="../classes">
   				<include name="lejos/nxt/addon/*.java"/>
-  				<exclude name="lejos/nxt/addon/RFIDSensor.java"/>
   				<include name="lejos/nxt/addon/package.html"/>
   			</fileset>
   		</copy>
