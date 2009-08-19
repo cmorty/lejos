@@ -13,7 +13,7 @@ import java.util.Random;
  */
 public class ObstacleNavigator
 {
-  public ObstacleNavigator(Navigator navigator, SensorPort leftTouch, SensorPort rightTouch)
+  public ObstacleNavigator(SimpleNavigator navigator, SensorPort leftTouch, SensorPort rightTouch)
   {
     this.navigator = navigator;
     leftBump = new TouchSensor(leftTouch);
@@ -72,7 +72,7 @@ public void goTo(float x, float y)
     navigator.stop();
     return hit;
   }
-  Navigator navigator ;
+  SimpleNavigator navigator ;
   Random rand = new Random();
   TouchSensor leftBump;
   TouchSensor rightBump;
