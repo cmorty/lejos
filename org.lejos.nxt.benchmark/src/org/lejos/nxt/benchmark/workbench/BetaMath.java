@@ -11,7 +11,7 @@ public class BetaMath
 	{
 		// also catches NaN
 		if (!(x > 0))
-			return (x == 0) ? 0 : Float.NaN;
+			return (x == 0) ? x : Float.NaN;
 		if (x == Float.POSITIVE_INFINITY)
 			return x;
 	

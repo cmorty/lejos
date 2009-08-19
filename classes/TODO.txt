@@ -10,5 +10,6 @@
 
 - JUnit test: StringBuffers/Builders with initial sizes <= 2 used to loop infinitely
 - JUnit test: Math.abs(-0.0) == Math.abs(+0.0) == +0.0
-- JUnit test: Float.toString() must handle NaN and +/-Infinity correctly
- 
+- JUnit test: Float.toString() must handle NaN, +/-Infinity and +/-0.0 correctly
+- JUnit test: sqrt must return -0.0 for x=-0.0
+- JUnit test: Double.parseDouble must handle "NaN" and "Inifinity" strings (with +/-)
