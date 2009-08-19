@@ -1,5 +1,4 @@
 package lejos.nxt.comm;
-import lejos.nxt.*;
 import lejos.util.Delay;
 
 /**
@@ -123,10 +122,10 @@ public class RS485 extends NXTCommDevice {
          */
         private void setAddress()
         {
-            RConsole.println("Load address " + getAddress());
-            netAddress = stringToAddress(getAddress());
-            RConsole.println("name " + getName());
-            netName = stringToName(getName());
+            //RConsole.println("Load address " + NXTCommDevice.getAddress());
+            netAddress = stringToAddress(NXTCommDevice.getAddress());
+            //RConsole.println("name " + NXTCommDevice.getName());
+            netName = stringToName(NXTCommDevice.getName());
         }
         
         
@@ -139,9 +138,9 @@ public class RS485 extends NXTCommDevice {
         {
             synchronized(connections)
             {
-                RConsole.println("setMode " + newMode);
+                //RConsole.println("setMode " + newMode);
                 if (devMode == newMode) return;
-                RConsole.println("change mode from " + devMode);
+                //RConsole.println("change mode from " + devMode);
                 // stop things while we sort stuff out
                 devMode = DS_DISABLED;
 
@@ -169,7 +168,7 @@ public class RS485 extends NXTCommDevice {
                         Thread.yield();
                 }
                 devMode = newMode;
-                RConsole.println("Mode set to " + devMode);
+                //RConsole.println("Mode set to " + devMode);
             }
         }
 
@@ -269,7 +268,7 @@ public class RS485 extends NXTCommDevice {
             synchronized(connections)
             {
                 if (connections[i] == null) return;
-                RConsole.println("freeConnection " + i + " state " + connections[i].state);
+                //RConsole.println("freeConnection " + i + " state " + connections[i].state);
                 // Unbind things
                 connections[i].connNo = -1;
                 connections[i] = null;
@@ -406,31 +405,31 @@ public class RS485 extends NXTCommDevice {
          */
         int assignAddress(byte addr, byte[] remAddress, byte[] remName)
         {
-            RConsole.println("Assign address " + devName + " " + devAddress);
+            //RConsole.println("Assign address " + devName + " " + devAddress);
             byte [] data = new byte[1+2*ADDRESS_LEN+2*NAME_LEN];
             int offset = 1;
             //First byte is the address to be assigned
             data[0] = addr;
             // Now copy in the address bytes
-            RConsole.println("1");
+            //RConsole.println("1");
             if (remAddress != null && remAddress.length == ADDRESS_LEN)
                 System.arraycopy(remAddress, 0, data, offset, ADDRESS_LEN);
             offset += ADDRESS_LEN;
             // and the name
-            RConsole.println("2");
+            //RConsole.println("2");
             if (remName != null && remName.length <= NAME_LEN)
                 System.arraycopy(remName, 0, data, offset, remName.length);
             offset += NAME_LEN;
-            RConsole.println("3");
+            //RConsole.println("3");
 
             // Copy in our netAddress and netName
             System.arraycopy(netAddress, 0, data, offset, ADDRESS_LEN);
             offset += ADDRESS_LEN;
-            RConsole.println("4");
+            //RConsole.println("4");
 
             System.arraycopy(netName, 0, data, offset, NAME_LEN);
             // Now broadcast it
-            RConsole.println("5");
+            //RConsole.println("5");
 
 
             return sendData(BB_BROADCAST, (byte)0, (byte)0, data, 0, data.length);
@@ -565,7 +564,7 @@ public class RS485 extends NXTCommDevice {
                         case RS485Connection.CS_CONNECTING1:
                             if (control == BB_UA)
                             {
-                                RConsole.println("Got conn ack");
+                                //RConsole.println("Got conn ack");
                                 con.state = RS485Connection.CS_CONNECTING2;
                             }
                             break;
@@ -573,7 +572,7 @@ public class RS485 extends NXTCommDevice {
                             // Has the slave accepted the new connection?
                             if (control == BB_UA)
                             {
-                                RConsole.println("Got conn ack");
+                                //RConsole.println("Got conn ack");
                                 con.state = RS485Connection.CS_CONNECTING3;
                                 con.notifyAll();
                             }
@@ -731,10 +730,10 @@ public class RS485 extends NXTCommDevice {
                                     // Have we been waiting too long?
                                     if (cnt >= REPLY_RETRY)
                                     {
-                                        RConsole.println("Timeout");
+                                        //RConsole.println("Timeout");
                                         if (++con.retryCnt > REQUEST_RETRY)
                                         {
-                                            RConsole.println("Request timeout chan " + i);
+                                            //RConsole.println("Request timeout chan " + i);
                                             con.disconnected();
                                         }
                                     }
@@ -750,7 +749,7 @@ public class RS485 extends NXTCommDevice {
                             processRequest();
                         else if (slaveCnt > 0 && ++retryCnt > RECV_RETRY)
                         {
-                            RConsole.println("Retry count exceeded");
+                            //RConsole.println("Retry count exceeded");
                             disconnectAll();
                         }
 
@@ -780,7 +779,7 @@ public class RS485 extends NXTCommDevice {
         synchronized(con)
         {
             int chan = con.connNo;
-            RConsole.println("Got connection " + chan);
+            //RConsole.println("Got connection " + chan);
             // Make sure we have not been disconnected.
             if (con.state == RS485Connection.CS_DISCONNECTED) return null;
             if (isAddress(target))
@@ -788,7 +787,7 @@ public class RS485 extends NXTCommDevice {
             else
                 con.bind((byte) chan, null, target);
             // Now try to do the connect
-            RConsole.println("Try to connect");
+            //RConsole.println("Try to connect");
             // Do Address assignmant and try to connect
             con.state = RS485Connection.CS_CONNECTING1;
             try{con.wait();}catch(Exception e){}
@@ -797,7 +796,7 @@ public class RS485 extends NXTCommDevice {
                 // We found a slave with the correct Name/Address
                 con.state = RS485Connection.CS_CONNECTED;
                 con.setIOMode(mode);
-                RConsole.println("Connected");
+                //RConsole.println("Connected");
                 return con;
             }
             // failed to connect
@@ -805,7 +804,7 @@ public class RS485 extends NXTCommDevice {
             controller.freeConnection(con);
 
         }
-        RConsole.println("Connection failed");
+        //RConsole.println("Connection failed");
         return null;
     }
 
@@ -832,7 +831,7 @@ public class RS485 extends NXTCommDevice {
         if (timeout == 0) timeout = 0x7ffffff;
         con = controller.newConnection(DS_SLAVE);
         if (con == null) return null;
-        RConsole.println("Wait for connect on chan " + con.connNo);
+        //RConsole.println("Wait for connect on chan " + con.connNo);
         // Keep trying allowing for resets
         for(;;)
         {
@@ -847,11 +846,11 @@ public class RS485 extends NXTCommDevice {
                     timeout -= 1000;
                 } while (timeout > 0 && con.state >= RS485Connection.CS_CONNECTING1 &&
                         con.state < RS485Connection.CS_CONNECTING3);
-                RConsole.println("After wait state " + con.state);
+                //RConsole.println("After wait state " + con.state);
                 if (con.state == RS485Connection.CS_CONNECTING3)
                 {
                     // Now connected
-                    RConsole.println("Now connected...");
+                    //RConsole.println("Now connected...");
                     con.state = RS485Connection.CS_CONNECTED;
                     con.setIOMode(mode);
                     return con;
@@ -859,7 +858,7 @@ public class RS485 extends NXTCommDevice {
                 else if (con.state > RS485Connection.CS_DISCONNECTED)
                 {
                     // Failed to connect free things up
-                    RConsole.println("Connection failed");
+                    //RConsole.println("Connection failed");
                     con.disconnect();
                     controller.freeConnection(con);
                     return null;
