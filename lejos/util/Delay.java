@@ -24,7 +24,7 @@ public class Delay {
             {
                 interrupted = true;
             }
-            period = end - (int)System.currentTimeMillis();
+            period = end - System.currentTimeMillis();
         } while (period > 0);
         if (interrupted)
             Thread.currentThread().interrupt();
