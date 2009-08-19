@@ -1,4 +1,4 @@
-package lejos.robotics.proposal;
+package lejos.robotics;
 
 import lejos.robotics.Movement;
 
