@@ -39,7 +39,7 @@ public class BetaMath
 		return factor * (x * isqrt + 1.0f / isqrt);
 	}
 	
-	private static class LogStuff
+	private static class LogConstants
 	{
 		public static final double[] LOGTABLE = {
 				1.0/3, 1.0/5, 1.0/7, 1.0/9,
@@ -50,10 +50,7 @@ public class BetaMath
 	}
 	
 	/**
-	 * Natural log function. Returns log(a) to base E.
-	 * 
-	 * @see <a
-	 *      href="">here</a>
+	 * Natural log function. Returns log(x) to base E.
 	 */
 	public static double log(double x)
 	{
@@ -63,7 +60,8 @@ public class BetaMath
 		if (x == Double.POSITIVE_INFINITY)
 			return Double.POSITIVE_INFINITY;
 	
-		// Algorithm has been derived from http://www.geocities.com/zabrodskyvlada/aat/a_contents.html 
+		// Algorithm has been derived from the one given at
+		// http://www.geocities.com/zabrodskyvlada/aat/a_contents.html 
 
 		int m;
 		if (x >= Double.MIN_NORMAL)
@@ -91,7 +89,7 @@ public class BetaMath
 		//ergo:
 		//  $n will converge quickly towards $limit
 		
-		double[] lt = LogStuff.LOGTABLE;
+		double[] lt = LogConstants.LOGTABLE;
 		
 		double n = zetasup;
 		for (int j = 0; n > 0x1p-50;j ++)
