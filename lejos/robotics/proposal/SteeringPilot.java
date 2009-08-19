@@ -1,5 +1,6 @@
 package lejos.robotics.proposal;
 
+import lejos.robotics.MoveListener;
 import lejos.robotics.Movement;
 import lejos.robotics.TachoMotor;
 
