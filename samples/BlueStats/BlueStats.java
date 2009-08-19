@@ -18,9 +18,9 @@ public class BlueStats {
 		String addrString = "Adr";
 		String connsString = "Conns";
 
-		while(!Button.ESCAPE.isPressed()) {
+        while(!Button.ESCAPE.isPressed()) {
 			byte[] version = Bluetooth.getVersion();
-			String fn = Bluetooth.getFriendlyName();;
+			String fn = Bluetooth.getFriendlyName();
 			byte [] connections = Bluetooth.getConnectionStatus();
 			String addr = Bluetooth.getLocalAddress();
 			
@@ -54,7 +54,7 @@ public class BlueStats {
 			// Operating mode
 			LCD.drawString(opString, 0, 7);
 			LCD.drawInt(Bluetooth.getOperatingMode(), 8, 7);
-			
+			try {Thread.sleep(100);} catch (InterruptedException ie){}
 			LCD.refresh();			
 		} 	
     }
