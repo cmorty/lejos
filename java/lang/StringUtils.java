@@ -101,43 +101,6 @@ class StringUtils
 	}
 
 	/**
-	 * For {@link #approxStringLengthInt(int)} and {@link #approxStringLengthLong(int)}. 
-	 */
-	private static int floorLog2(int v)
-	{
-		//min radix is 2
-		if (v < 4)
-			return 1;
-		if (v < 8)
-			return 2;
-		if (v < 16)
-			return 3;
-		if (v < 32)
-			return 4;
-		
-		//max radix is 36
-		return 5;
-	}
-
-	/**
-	 * Estimate size of buffer for {@link #getIntChars(char[], int, int, int)}.
-	 */
-	static int approxStringLengthInt(int radix)
-	{
-		//the following is >= ceil(64 / log(2, radix)) +1 which is the maximum number of digits + sign
-		return 31 / floorLog2(radix) + 2;
-	}
-
-	/**
-	 * Estimate size of buffer for {@link #getLongChars(char[], int, long, int)}.
-	 */
-	static int approxStringLengthLong(int radix)
-	{
-		//the following is >= ceil(64 / log(2, radix)) +1 which is the maximum number of digits + sign
-		return 63 / floorLog2(radix) + 2;
-	}
-
-	/**
 	 * Exact size of buffer for {@link #getIntChars(char[], int, int, int)}.
 	 */
 	static int exactStringLength(int v, int radix)
