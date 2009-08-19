@@ -491,7 +491,7 @@ public final class String implements CharSequence
 	{
 		int len = StringUtils.exactStringLength(i, radix);
 		String r = new String(len);
-		StringUtils.getChars(r.characters, len, i, radix);
+		StringUtils.getIntChars(r.characters, len, i, radix);
 		return r;
 	}
 	
@@ -502,7 +502,7 @@ public final class String implements CharSequence
 	{
 		int len = StringUtils.exactStringLength(i, radix);
 		String r = new String(len);
-		StringUtils.getChars(r.characters, len, i, radix);
+		StringUtils.getLongChars(r.characters, len, i, radix);
 		return r;
 	}
 }
