@@ -32,7 +32,7 @@ import lejos.robotics.*;
  * the x axis.<br>
  *
  */
-public class SimpleNavigator implements Navigator {
+public class SimpleNavigator {
 
 
     /**
