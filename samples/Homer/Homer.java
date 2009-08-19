@@ -16,7 +16,7 @@ import lejos.robotics.mapping.RangeMap;
 import lejos.robotics.proposal.ArcPoseController;
 import lejos.robotics.proposal.DestinationUnreachableException;
 import lejos.robotics.proposal.DifferentialPilot;
-import lejos.robotics.proposal.MCLPoseProvider;
+import lejos.robotics.localization.MCLPoseProvider;
 import lejos.robotics.proposal.MapPathFinder;
 import lejos.robotics.proposal.PathFinder;
 import lejos.robotics.proposal.PoseController;
