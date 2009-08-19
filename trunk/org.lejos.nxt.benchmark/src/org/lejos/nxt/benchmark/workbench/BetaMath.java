@@ -407,6 +407,16 @@ public class BetaMath
 		return r;
 	}
 	
+	private static boolean checkString(String s, int p, String c)
+	{
+		int l = c.length();
+		for (int i=0; i<l; i++)
+			if (s.charAt(i) != c.charAt(i))
+				return false;
+		
+		return true;
+	}
+	
 	/**
 	 * Roughly equals abs(minimal exponent of subnormal double in base 10) + digits of long 
 	 */
@@ -437,6 +447,18 @@ public class BetaMath
 			default:
 				p = 0;
 				neg = false;				
+		}
+		
+		switch (l-p)
+		{
+			case 3:
+				if (checkString(s, p, "NaN"))
+					return Double.NaN;
+				break;
+			case 8:
+				if (checkString(s, p, "Infinity"))
+					return neg ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY;
+				break;
 		}
 		
 		boolean digits = false;
@@ -580,6 +602,18 @@ public class BetaMath
 			default:
 				p = 0;
 				neg = false;				
+		}
+		
+		switch (l-p)
+		{
+			case 3:
+				if (checkString(s, p, "NaN"))
+					return Float.NaN;
+				break;
+			case 8:
+				if (checkString(s, p, "Infinity"))
+					return neg ? Float.NEGATIVE_INFINITY : Float.POSITIVE_INFINITY;
+				break;
 		}
 		
 		boolean digits = false;
