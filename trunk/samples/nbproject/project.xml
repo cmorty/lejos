@@ -55,6 +55,7 @@
                 <root id="src.RCXRemoteMotor.dir"/>
                 <root id="src.RCXTempTest.dir"/>
                 <root id="src.RemoteNXTTest.dir"/>
+                <root id="src.RFIDTest.dir"/>
                 <root id="src.SignalTest.dir"/>
                 <root id="src.SocketTest.dir"/>
                 <root id="src.SonicTest.dir"/>
