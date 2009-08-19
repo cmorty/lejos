@@ -1,5 +1,7 @@
 package lejos.robotics.proposal;
 
+import lejos.robotics.Movement;
+
 /**
  * An enhanced Pilot that is capable of traveling in arcs.
  * @author NXJ Team
