@@ -154,13 +154,6 @@ public class StringBuilder
 
 	public StringBuilder append (float aFloat)
 	{
-		if (Float.isNaN(aFloat))
-			return this.appendInternal(StringUtils.STR_NAN);
-		if (aFloat == Float.POSITIVE_INFINITY)
-			return this.appendInternal(StringUtils.STR_INFINITY_POS);
-		if (aFloat == Float.NEGATIVE_INFINITY)
-			return this.appendInternal(StringUtils.STR_INFINITY_NEG);
-
 		ensureCapacity(curLen + StringUtils.MAX_FLOAT_CHARS);
 		curLen = StringUtils.getFloatChars(aFloat, characters, curLen);
     	return this;
@@ -168,13 +161,6 @@ public class StringBuilder
 
 	public StringBuilder append (double aDouble)
 	{
-		if (Double.isNaN(aDouble))
-			return this.appendInternal(StringUtils.STR_NAN);
-		if (aDouble == Double.POSITIVE_INFINITY)
-			return this.appendInternal(StringUtils.STR_INFINITY_POS);
-		if (aDouble == Double.NEGATIVE_INFINITY)
-			return this.appendInternal(StringUtils.STR_INFINITY_NEG);
-
 		ensureCapacity(curLen + StringUtils.MAX_DOUBLE_CHARS);
 		curLen = StringUtils.getDoubleChars(aDouble, characters, curLen);
     	return this;
