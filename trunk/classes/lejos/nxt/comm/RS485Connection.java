@@ -243,7 +243,7 @@ public class RS485Connection extends NXTConnection
     {
         // Connections in a connect state handle the underlying connection
         // explicitly and so we do not free them
-        RConsole.println("free connection state " + state + " CS_CONNECTING " + CS_CONNECTING1);
+        //RConsole.println("free connection state " + state + " CS_CONNECTING " + CS_CONNECTING1);
         if (state < CS_CONNECTING1)
             controller.freeConnection(this);
     }
