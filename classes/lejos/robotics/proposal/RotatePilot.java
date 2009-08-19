@@ -1,5 +1,7 @@
 package lejos.robotics.proposal;
 
+import lejos.robotics.Movement;
+
 public interface RotatePilot extends BasicPilot {
   /**
    * Rotates the NXT robot the specified number of degrees; direction determined by the sign of the parameter.

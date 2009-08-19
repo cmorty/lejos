@@ -9,6 +9,7 @@ package lejos.robotics.proposal;
  */
 
 import lejos.geom.Point;
+import lejos.robotics.Movement;
 import lejos.robotics.Pose;
 
 
