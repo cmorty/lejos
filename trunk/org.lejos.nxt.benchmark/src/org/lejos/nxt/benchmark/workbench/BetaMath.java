@@ -170,14 +170,22 @@ public class BetaMath
 		// unfortunatly, the mantisse of subnormal values gets very short
 		// TODO automatically adjust digit count for subnormal values
 		
-		int d = (int)(digits / (tmp /= 10));
-		sb[p++] = (char)('0' + d);
-		digits -= tmp * d;
+		int leading = exp;
+		if (leading > 6)
+			leading = 0;		
+		exp -= leading;
+
+		for (int i=0; i<=leading; i++)
+		{
+			int d = (int)(digits / (tmp /= 10));
+			sb[p++] = (char)('0' + d);
+			digits -= tmp * d;
+		}
 		
 		sb[p++] = '.';		
 		do
 		{
-			d = (int)(digits / (tmp /= 10));
+			int d = (int)(digits / (tmp /= 10));
 			sb[p++] = (char)('0' + d);
 			digits -= tmp * d;
 		}
@@ -332,14 +340,22 @@ public class BetaMath
 		// unfortunatly, the mantisse of subnormal values gets very short
 		// TODO automatically adjust digit count for subnormal values
 		
-		int d = digits / (tmp /= 10);
-		sb[p++] = (char)('0' + d);
-		digits -= tmp * d;
+		int leading = exp;
+		if (leading > 6)
+			leading = 0;		
+		exp -= leading;
+
+		for (int i=0; i<=leading; i++)
+		{
+			int d = digits / (tmp /= 10);
+			sb[p++] = (char)('0' + d);
+			digits -= tmp * d;
+		}
 		
-		sb[p++] = '.';		
+		sb[p++] = '.';
 		do
 		{
-			d = digits / (tmp /= 10);
+			int d = digits / (tmp /= 10);
 			sb[p++] = (char)('0' + d);
 			digits -= tmp * d;
 		}
@@ -411,7 +427,7 @@ public class BetaMath
 	{
 		int l = c.length();
 		for (int i=0; i<l; i++)
-			if (s.charAt(i) != c.charAt(i))
+			if (s.charAt(p+i) != c.charAt(i))
 				return false;
 		
 		return true;
