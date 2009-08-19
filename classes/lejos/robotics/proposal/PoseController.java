@@ -1,6 +1,7 @@
 package lejos.robotics.proposal;
 
 import lejos.robotics.Pose;
+import lejos.robotics.localization.PoseProvider;
 import lejos.geom.Point;
 
 /**
