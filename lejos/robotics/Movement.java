@@ -1,4 +1,4 @@
-package lejos.robotics.proposal;
+package lejos.robotics;
 
 /**
  * Models a movement performed by a pilot
