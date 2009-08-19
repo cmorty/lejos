@@ -14,7 +14,7 @@ import lejos.pc.comm.*;
 public class I2CSensor implements SensorConstants {
 	private static final NXTCommand nxtCommand = NXTCommandConnector.getSingletonOpen();
 		
-	protected static byte address = 0x02; // the default I2C address for a port. You can change address of compass sensor (see docs) and then communicate with multiple sensors on same physical port.
+	protected byte address = 0x02; // the default I2C address for a port. You can change address of compass sensor (see docs) and then communicate with multiple sensors on same physical port.
 	protected static byte STOP = 0x00; // Commands don't seem to use this?
 	protected static String BLANK = "       ";
 	
@@ -108,7 +108,7 @@ public class I2CSensor implements SensorConstants {
 	 * @param register
 	 * @return the byte of data
 	 */
-	public int getData(byte register) {
+	public int getData(int register) {
 		byte [] buf1 = new byte[1];
 		return getData(register, buf1 ,1);
 	}
@@ -121,7 +121,8 @@ public class I2CSensor implements SensorConstants {
 	public int sendData(int register, byte value) {
 		byte [] txData = {address, (byte) register, value};
 		try {
-			return nxtCommand.LSWrite(this.port, txData, (byte)0);
+			int ret = nxtCommand.LSWrite(this.port, txData, (byte)0);
+            return ret;
 		} catch (IOException ioe) {
 			System.out.println(ioe.getMessage());
 			return -1;
@@ -179,12 +180,13 @@ public class I2CSensor implements SensorConstants {
 	/**
 	 * Helper method for retrieving string constants using I2C protocol.
 	 * @param constantEnumeration e.g. I2CProtocol.VERSION
-	 * @return the string
+     * @param rxLength
+     * @return the string
 	 */
-	private String fetchString(byte constantEnumeration, int rxLength) {
+	 protected String fetchString(int constantEnumeration, int rxLength) {
 		byte [] stringBytes = new byte[rxLength];
 		getData(constantEnumeration, stringBytes, rxLength);
-		
+
 		// Get rid of everything after 0.
 		int zeroPos = 0;
 		for(zeroPos = 0;zeroPos < rxLength;zeroPos++) {
@@ -193,7 +195,8 @@ public class I2CSensor implements SensorConstants {
 		String s = new String(stringBytes).substring(0,zeroPos);
 		return s;
 	}
-	
+
+
 	/**
 	 * Set the address of the port 
 	 * Note that addresses are from 0x01 to 0x7F not
