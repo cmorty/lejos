@@ -560,6 +560,8 @@ boolean is_assignable(const byte srcCls, const byte dstCls)
     // we are testing against an interface. So we use the associated interface
     // map to test if the src implements it...
     int base = get_interface_map_base(dstRec);
+    // Special case all arrays implement cloneable
+    if (dstCls == JAVA_LANG_CLONEABLE && is_array_class(get_class_record(srcCls))) return true;
     if (srcCls < base) return false;
     if (srcCls - base >= get_interface_map_len(dstRec)) return false;
     base = srcCls - base;
