@@ -416,7 +416,7 @@ public final class Math
 		
 		// also catches NaN
 		if (!(x > 0))
-			return (x == 0) ? 0 : Double.NaN;
+			return (x == 0) ? x : Double.NaN;
 		if (x == Double.POSITIVE_INFINITY)
 			return x;
 	
