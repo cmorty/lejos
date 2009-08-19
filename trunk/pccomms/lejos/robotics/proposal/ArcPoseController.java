@@ -2,6 +2,7 @@ package lejos.robotics.proposal;
 
 import lejos.geom.Point;
 import lejos.robotics.Pose;
+import lejos.robotics.localization.PoseProvider;
 
 /**
  * This class directs a pilot from the current known coordinates to a destination set of coordinates.
