@@ -3,6 +3,11 @@ package org.lejos.nxt.benchmark.workbench;
 public class BetaMath
 {
 	private static final double ln2 = 0.693147180559945309417232;
+
+	private static final int STR_NAN_LEN = 3;
+	private static final String STR_NAN = "NaN";
+	private static final int STR_INFINITY_LEN = 8;
+	private static final String STR_INFINITY = "Infinity";
 	
 	/**
 	 * Computes square-root of x.
@@ -112,10 +117,8 @@ public class BetaMath
 	{
 		if (x != x)
 		{
-			sb[p] = 'N';
-			sb[p+1] = 'a';
-			sb[p+2] = 'N';
-			return p+3;
+			STR_NAN.getChars(0, STR_NAN_LEN, sb, p);
+			return p + STR_NAN_LEN;
 		}
 		
 		//we need to detect -0.0 to be compatible with JDK
@@ -135,8 +138,8 @@ public class BetaMath
 		}
 		if (x == Double.POSITIVE_INFINITY)
 		{
-			"Infinity".getChars(0, 8, sb, p);
-			return p + 8;
+			STR_INFINITY.getChars(0, STR_INFINITY_LEN, sb, p);
+			return p + STR_INFINITY_LEN;
 		}
 		
 		int exp;		
@@ -284,10 +287,8 @@ public class BetaMath
 	{
 		if (x != x)
 		{
-			sb[p] = 'N';
-			sb[p+1] = 'a';
-			sb[p+2] = 'N';
-			return p+3;
+			STR_NAN.getChars(0, STR_NAN_LEN, sb, p);
+			return p + STR_NAN_LEN;
 		}
 		
 		//we need to detect -0.0 to be compatible with JDK
@@ -307,8 +308,8 @@ public class BetaMath
 		}
 		if (x == Float.POSITIVE_INFINITY)
 		{
-			"Infinity".getChars(0, 8, sb, p);
-			return p + 8;
+			STR_INFINITY.getChars(0, STR_INFINITY_LEN, sb, p);
+			return p + STR_INFINITY_LEN;
 		}
 		
 		int exp;		
@@ -469,12 +470,12 @@ public class BetaMath
 		
 		switch (l-p)
 		{
-			case 3:
-				if (checkString(s, p, "NaN"))
+			case STR_NAN_LEN:
+				if (checkString(s, p, STR_NAN))
 					return Double.NaN;
 				break;
-			case 8:
-				if (checkString(s, p, "Infinity"))
+			case STR_INFINITY_LEN:
+				if (checkString(s, p, STR_INFINITY))
 					return neg ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY;
 				break;
 		}
@@ -624,12 +625,12 @@ public class BetaMath
 		
 		switch (l-p)
 		{
-			case 3:
-				if (checkString(s, p, "NaN"))
+			case STR_NAN_LEN:
+				if (checkString(s, p, STR_NAN))
 					return Float.NaN;
 				break;
-			case 8:
-				if (checkString(s, p, "Infinity"))
+			case STR_INFINITY_LEN:
+				if (checkString(s, p, STR_INFINITY))
 					return neg ? Float.NEGATIVE_INFINITY : Float.POSITIVE_INFINITY;
 				break;
 		}
