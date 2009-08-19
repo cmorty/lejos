@@ -10,20 +10,23 @@
                 <root id="src.BTConnectTest.dir"/>
                 <root id="src.BTGPS.dir"/>
                 <root id="src.BTReceive.dir"/>
-                <root id="src.build.dir"/>
                 <root id="src.BumperCar.dir"/>
+                <root id="src.BumpNavigator.dir"/>
                 <root id="src.ColorSensorTest.dir"/>
                 <root id="src.ColorDetector.dir"/>
                 <root id="src.CommandLine.dir"/>
                 <root id="src.CompassTest.dir"/>
                 <root id="src.DistanceTest.dir"/>
                 <root id="src.DLTest.dir"/>
+                <root id="src.EchoNavigator.dir"/>
                 <root id="src.ExceptionTest.dir"/>
                 <root id="src.FileTest.dir"/>
                 <root id="src.GPSInfo.dir"/>
                 <root id="src.GraphicsSample.dir"/>
                 <root id="src.HelloWorld.dir"/>
+                <root id="src.Homer.dir"/>
                 <root id="src.I2CDevices.dir"/>
+                <root id="src.KalmanTest.dir"/>
                 <root id="src.LatteboxTest.dir"/>
                 <root id="src.LCDUI.dir"/>
                 <root id="src.Line.dir"/>
@@ -37,6 +40,7 @@
                 <root id="src.NXTLCPRespond.dir"/>
                 <root id="src.NXTReceive.dir"/>
                 <root id="src.NXTServoTest.dir"/>
+                <root id="src.ObstacleNavigator.dir"/>
                 <root id="src.PerformanceTest.dir"/>
                 <root id="src.PFLinkTest.dir"/>
                 <root id="src.PFMateTest.dir"/>
@@ -56,7 +60,6 @@
                 <root id="src.SonicTest.dir"/>
                 <root id="src.SoundSample.dir"/>
                 <root id="src.SpeedTest.dir"/>
-                <root id="src.STTest.dir"/>
                 <root id="src.Subsumption1.dir"/>
                 <root id="src.Subsumption2.dir"/>
                 <root id="src.TiltTest.dir"/>
@@ -64,6 +67,7 @@
                 <root id="src.Tune.dir"/>
                 <root id="src.USBReceive.dir"/>
                 <root id="src.View.dir"/>
+                <root id="src.WaypointNav.dir"/>
             </source-roots>
             <test-roots/>
         </data>
