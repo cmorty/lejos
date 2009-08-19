@@ -34,26 +34,26 @@ public class UltrasonicSensor extends I2CSensor implements RangeFinder
 	private byte[] buf = new byte[1];
 	private byte[] inBuf = new byte[8];
 	private String units = null;
-	private int nextCmdTime;
-	private int dataAvailableTime;
+	private long nextCmdTime;
+	private long dataAvailableTime;
 	private int currentDistance;
 	private byte mode;
 	
 	/*
 	 * Return the current time in milliseconds
 	 */
-	private int now()
+	private long now()
 	{
-		return (int)System.currentTimeMillis();
+		return System.currentTimeMillis();
 	}
 	
 	/*
 	 * Wait until the specified time
 	 *
 	 */
-	private void wait(int when)
+	private void waitUntil(long when)
 	{
-		int delay = when - now();
+		long delay = when - now();
         Delay.msDelay(delay);
 	}
 	
@@ -65,7 +65,7 @@ public class UltrasonicSensor extends I2CSensor implements RangeFinder
 	 */
 	public int getData(int register, byte [] buf, int len)
 	{
-		wait(nextCmdTime);
+		waitUntil(nextCmdTime);
 		int ret = super.getData(register, buf, len);
 		nextCmdTime = now() + DELAY_CMD;
 		return ret;
@@ -78,7 +78,7 @@ public class UltrasonicSensor extends I2CSensor implements RangeFinder
 	 */
 	public int sendData(int register, byte [] buf, int len)
 	{
-		wait(nextCmdTime);
+		waitUntil(nextCmdTime);
 		int ret = super.sendData(register, buf, len);
 		nextCmdTime = now() + DELAY_CMD;
 		return ret;
@@ -111,7 +111,7 @@ public class UltrasonicSensor extends I2CSensor implements RangeFinder
 		// will do anyway.)
 		if (mode == MODE_CONTINUOUS && now() < dataAvailableTime)
 			return currentDistance;
-		wait(dataAvailableTime);
+		waitUntil(dataAvailableTime);
 		int ret = getData(DISTANCE, buf, 1);
 		currentDistance = (ret == 0 ? (buf[0] & 0xff) : 255);
 		// Make a note of when new data should be available.
@@ -138,7 +138,7 @@ public class UltrasonicSensor extends I2CSensor implements RangeFinder
 	public int getDistances(int dist[])
 	{
 		if (dist.length < inBuf.length || mode != MODE_SINGLE) return -1;
-		wait(dataAvailableTime);
+		waitUntil(dataAvailableTime);
 		int ret = getData(DISTANCE, inBuf, inBuf.length);
 		for(int i = 0; i < inBuf.length; i++)
 			dist[i] = (int)inBuf[i] & 0xff;
@@ -301,7 +301,7 @@ public class UltrasonicSensor extends I2CSensor implements RangeFinder
 	{
 		int ret = getData(UNITS, inBuf, 7);
 		if(ret != 0)
-			return BLANK;
+			return "       ";
 		char [] charBuff = new char[7];
 		for(int i=0;i<7;i++)
 			charBuff[i] = (char)inBuf[i];
