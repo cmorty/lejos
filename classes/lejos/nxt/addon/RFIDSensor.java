@@ -61,7 +61,7 @@ public class RFIDSensor extends I2CSensor
      */
     public RFIDSensor(I2CPort port)
     {
-        super(port, I2CPort.STANDARD_MODE);
+        super(port);
         // We need 9V to make the sensor work
         port.setType(I2CPort.TYPE_LOWSPEED_9V);
         // Default address is not standard
