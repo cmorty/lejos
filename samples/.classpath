@@ -49,6 +49,7 @@
 	<classpathentry excluding="build.xml" kind="src" path="RCXRemoteMotor"/>
 	<classpathentry excluding="build.xml" kind="src" path="RCXTempTest"/>
 	<classpathentry excluding="build.xml" kind="src" path="RemoteNXTTest"/>
+	<classpathentry kind="src" path="RFIDTest"/>
 	<classpathentry excluding="build.xml" kind="src" path="SignalTest"/>
 	<classpathentry excluding="build.xml" kind="src" path="SocketTest"/>
 	<classpathentry excluding="build.xml" kind="src" path="SonicTest"/>
