@@ -2,7 +2,7 @@ package org.lejos.nxt.benchmark.workbench;
 
 public class BetaMath
 {
-	private static final double ln2 = 0.693147180559945309417232;
+	private static final double LN2 = 0.693147180559945309417232;
 
 	private static final int STR_NAN_LEN = 3;
 	private static final String STR_NAN = "NaN";
@@ -103,7 +103,7 @@ public class BetaMath
 			n *= zetasup;
 		}
 		
-		return m * ln2 + 2 * zeta * ln;
+		return m * LN2 + 2 * zeta * ln;
 	}
 	
 	public static String doubleToString(double x)
