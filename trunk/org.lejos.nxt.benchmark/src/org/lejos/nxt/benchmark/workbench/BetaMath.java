@@ -3,6 +3,10 @@ package org.lejos.nxt.benchmark.workbench;
 public class BetaMath
 {
 	private static final double LN2 = 0.693147180559945309417232;
+	private static final double PI = 3.14159265358979323846;
+
+	private static final double PIhalf = PI * 0.5;
+	private static final double PItwice = PI * 2;
 
 	private static final int STR_NAN_LEN = 3;
 	private static final String STR_NAN = "NaN";
@@ -744,5 +748,75 @@ public class BetaMath
 			r2 = pow10f_sf(r, exp);
 		
 		return neg ? -r2 : r2;
+	}
+	
+	/**
+	 * Sine function using a Chebyshev-Pade approximation. author Paulo Costa
+	 */
+	public static double sin(double x) // Using a Chebyshev-Pade approximation
+	{		
+		int neg = 0;
+		
+		//reduce to interval [-2PI, +2PI]
+		x = x % PItwice;
+		
+		//reduce to interval [0, 2PI]
+		if (x < 0)
+		{
+			neg++;
+			x = -x;
+		}
+		
+		//reduce to interval [0, PI]
+		if (x > PI)
+		{
+			neg++;
+			x -= PI;
+		}
+		
+		//reduce to interval [0, PI/2]
+		if (x > PIhalf)
+			x = PI - x;	
+		
+		double x2 = x * x;
+		double y = (0.9238318854 - 0.9595498071e-1 * x2) * x
+				/ (0.9238400690 + (0.5797298195e-1 + 0.2031791179e-2 * x2) * x2);
+		
+		return ((neg & 1) == 0) ? y : -y;
+	}
+
+	/**
+	 * Cosine function using a Chebyshev-Pade approximation. author Paulo Costa
+	 */
+	public static double cos(double x)
+	{
+		int neg = 0;
+		
+		//reduce to interval [-2PI, +2PI]
+		x = x % PItwice;
+		
+		//reduce to interval [0, 2PI]
+		if (x < 0)
+			x = -x;
+		
+		//reduce to interval [0, PI]
+		if (x > PI)
+		{
+			neg++;
+			x -= PI;
+		}
+		
+		//reduce to interval [0, PI/2]
+		if (x > PIhalf)
+		{
+			neg++;
+			x = PI - x;
+		}
+		
+		double x2 = x * x;
+		double y = (0.9457092528 + (-0.4305320537 + 0.1914993010e-1 * x2) * x2)
+				/ (0.9457093212 + (0.4232119630e-1 + 0.9106317690e-3 * x2) * x2);
+		
+		return ((neg & 1) == 0) ? y : -y;
 	}
 }

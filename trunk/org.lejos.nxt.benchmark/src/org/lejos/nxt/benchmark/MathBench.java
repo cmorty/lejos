@@ -79,7 +79,7 @@ public final class MathBench
 			Math.log(x);
 		long end = System.currentTimeMillis();
 	
-		report(count, "log ("+comment+")", count, "ops", end - start - nullTime);
+		report(count, "log (current, "+comment+")", count, "ops", end - start - nullTime);
 		return count;
 	}
 	
@@ -107,7 +107,7 @@ public final class MathBench
 			String.valueOf(x);
 		long end = System.currentTimeMillis();
 	
-		report(count, "D2STR ("+comment+")", count, "ops", end - start - nullTime);
+		report(count, "D2STR (current, "+comment+")", count, "ops", end - start - nullTime);
 		return count;
 	}
 
@@ -121,7 +121,7 @@ public final class MathBench
 			BetaMath.doubleToString(x);
 		long end = System.currentTimeMillis();
 	
-		report(count, "D2STR (new3, "+comment+")", count, "ops", end - start - nullTime);
+		report(count, "D2STR (new, "+comment+")", count, "ops", end - start - nullTime);
 		return count;
 	}
 
@@ -136,7 +136,63 @@ public final class MathBench
 			BetaMath.floatToString(x);
 		long end = System.currentTimeMillis();
 	
-		report(count, "F2STR (new3, "+comment+")", count, "ops", end - start - nullTime);
+		report(count, "F2STR (new, "+comment+")", count, "ops", end - start - nullTime);
+		return count;
+	}
+
+	private static int benchSin(int count, String comment, double x)
+	{
+		long nullTime = BenchUtils.getIterationTime(count);
+		
+		// Function calls
+		long start = System.currentTimeMillis();
+		for (int i = 0; i < count; i++)
+			Math.sin(x);
+		long end = System.currentTimeMillis();
+	
+		report(count, "sin (current, "+comment+")", count, "ops", end - start - nullTime);
+		return count;
+	}
+
+	private static int benchSinNew(int count, String comment, double x)
+	{
+		long nullTime = BenchUtils.getIterationTime(count);
+		
+		// Function calls
+		long start = System.currentTimeMillis();
+		for (int i = 0; i < count; i++)
+			BetaMath.sin(x);
+		long end = System.currentTimeMillis();
+	
+		report(count, "sin (new, "+comment+")", count, "ops", end - start - nullTime);
+		return count;
+	}
+
+	private static int benchCos(int count, String comment, double x)
+	{
+		long nullTime = BenchUtils.getIterationTime(count);
+		
+		// Function calls
+		long start = System.currentTimeMillis();
+		for (int i = 0; i < count; i++)
+			Math.cos(x);
+		long end = System.currentTimeMillis();
+	
+		report(count, "cos (current, "+comment+")", count, "ops", end - start - nullTime);
+		return count;
+	}
+
+	private static int benchCosNew(int count, String comment, double x)
+	{
+		long nullTime = BenchUtils.getIterationTime(count);
+		
+		// Function calls
+		long start = System.currentTimeMillis();
+		for (int i = 0; i < count; i++)
+			BetaMath.cos(x);
+		long end = System.currentTimeMillis();
+	
+		report(count, "cos (new, "+comment+")", count, "ops", end - start - nullTime);
 		return count;
 	}
 
@@ -172,6 +228,66 @@ public final class MathBench
 		BenchUtils.cleanUp(null);	
 		countAll += benchSqrtNewF(iterate * 2, "normal", (float)Math.PI);
 		BenchUtils.cleanUp(null);
+
+		countAll += benchSin(iterate * 2, "1", 1);
+		BenchUtils.cleanUp(null);	
+		countAll += benchSin(iterate * 2, "2", 2);
+		BenchUtils.cleanUp(null);	
+		countAll += benchSin(iterate * 2, "3", 3);
+		BenchUtils.cleanUp(null);	
+		countAll += benchSin(iterate * 2, "4", 4);
+		BenchUtils.cleanUp(null);	
+		countAll += benchSin(iterate * 2, "5", 5);
+		BenchUtils.cleanUp(null);	
+		countAll += benchSin(iterate * 2, "6", 6);
+		BenchUtils.cleanUp(null);	
+		countAll += benchSin(iterate * 2, "7", 7);
+		BenchUtils.cleanUp(null);	
+
+		countAll += benchSinNew(iterate * 2, "1", 1);
+		BenchUtils.cleanUp(null);	
+		countAll += benchSinNew(iterate * 2, "2", 2);
+		BenchUtils.cleanUp(null);	
+		countAll += benchSinNew(iterate * 2, "3", 3);
+		BenchUtils.cleanUp(null);	
+		countAll += benchSinNew(iterate * 2, "4", 4);
+		BenchUtils.cleanUp(null);	
+		countAll += benchSinNew(iterate * 2, "5", 5);
+		BenchUtils.cleanUp(null);	
+		countAll += benchSinNew(iterate * 2, "6", 6);
+		BenchUtils.cleanUp(null);	
+		countAll += benchSinNew(iterate * 2, "7", 7);
+		BenchUtils.cleanUp(null);	
+
+		countAll += benchCos(iterate * 2, "1", 1);
+		BenchUtils.cleanUp(null);	
+		countAll += benchCos(iterate * 2, "2", 2);
+		BenchUtils.cleanUp(null);	
+		countAll += benchCos(iterate * 2, "3", 3);
+		BenchUtils.cleanUp(null);	
+		countAll += benchCos(iterate * 2, "4", 4);
+		BenchUtils.cleanUp(null);	
+		countAll += benchCos(iterate * 2, "5", 5);
+		BenchUtils.cleanUp(null);	
+		countAll += benchCos(iterate * 2, "6", 6);
+		BenchUtils.cleanUp(null);	
+		countAll += benchCos(iterate * 2, "7", 7);
+		BenchUtils.cleanUp(null);	
+
+		countAll += benchCosNew(iterate * 2, "1", 1);
+		BenchUtils.cleanUp(null);	
+		countAll += benchCosNew(iterate * 2, "2", 2);
+		BenchUtils.cleanUp(null);	
+		countAll += benchCosNew(iterate * 2, "3", 3);
+		BenchUtils.cleanUp(null);	
+		countAll += benchCosNew(iterate * 2, "4", 4);
+		BenchUtils.cleanUp(null);	
+		countAll += benchCosNew(iterate * 2, "5", 5);
+		BenchUtils.cleanUp(null);	
+		countAll += benchCosNew(iterate * 2, "6", 6);
+		BenchUtils.cleanUp(null);	
+		countAll += benchCosNew(iterate * 2, "7", 7);
+		BenchUtils.cleanUp(null);	
 
 		//infinite loop for subnormal values
 		countAll += benchLog(iterate / 100, "small", Math.PI * 0x1p-1000);
