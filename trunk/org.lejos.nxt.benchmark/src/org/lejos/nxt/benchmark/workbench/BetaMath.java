@@ -53,8 +53,8 @@ public class BetaMath
 	{
 		public static final double[] LOGTABLE = {
 				1.0/3, 1.0/5, 1.0/7, 1.0/9,
-				1.0/11, 1.0/13, 1.0/15, 1.0/17, 1.0/19, 
-				1.0/21, 1.0/23, 1.0/25, 1.0/27, 1.0/29, 
+				1.0/11, 1.0/13, 1.0/15, 1.0/17, 1.0/19,
+				1.0/21, 1.0/23, 1.0/25, 1.0/27, 1.0/29,
 				1.0/31, 1.0/33, 1.0/35, 1.0/37, 1.0/39, 
 			};			
 	}
@@ -89,26 +89,31 @@ public class BetaMath
 		x = Double.longBitsToDouble(bits);
 		
 		double zeta = (x - 1.0) / (x + 1.0);
-		double zetasup = zeta * zeta;		
-		double ln = 1;
+		double zeta2 = zeta * zeta;		
 		
 		//known ranges:
 		//	1 <= $x < 2
 		//  0 <= $zeta < 1/3
-		//  0 <= $zetasup < 1/9
+		//  0 <= $zeta2 < 1/9
 		//ergo:
-		//  $n will converge quickly towards $limit
+		//  $zetapow will converge quickly towards 0
 		
-		double[] lt = LogConstants.LOGTABLE;
-		
-		double n = zetasup;
-		for (int j = 0; n > 0x1p-50;j ++)
+		double[] lt = LogConstants.LOGTABLE;		
+		double zetapow = zeta2;
+		double r = 1;
+		int i = 0;
+	
+		while(true)
 		{
-			ln += n * lt[j];
-			n *= zetasup;
+			double tmp = zetapow * lt[i++];
+			if (tmp < 0x1p-52)
+				break;
+			
+			r += tmp;
+			zetapow *= zeta2;
 		}
 		
-		return m * LN2 + 2 * zeta * ln;
+		return m * LN2 + 2 * zeta * r;
 	}
 	
 	public static String doubleToString(double x)
@@ -766,9 +771,11 @@ public class BetaMath
 	 */
 	public static double sin_taylor(double x)
 	{
+		double[] st = SIN_TABLE;
+		
 		double r = 1;
 		double x2 = x * x;
-		double pow = x2 * SIN_TABLE[0];
+		double pow = x2 * st[0];
 		int i = 0;
 		
 		while (true)
@@ -777,13 +784,13 @@ public class BetaMath
 				break;
 
 			r -= pow;			
-			pow = pow * x2 * SIN_TABLE[++i];
+			pow = pow * x2 * st[++i];
 			
 			if (pow < 0x1p-52)
 				break;
 
 			r += pow;			
-			pow = pow * x2 * SIN_TABLE[++i];
+			pow = pow * x2 * st[++i];
 		}		
 		
 		return x * r;
@@ -794,9 +801,11 @@ public class BetaMath
 	 */
 	public static double cos_taylor(double x)
 	{
+		double[] ct = COS_TABLE;
+		
 		double r = 1;
 		double x2 = x * x;
-		double pow = x2 * COS_TABLE[0];
+		double pow = x2 * ct[0];
 		int i = 0;
 		
 		while (true)
@@ -805,13 +814,13 @@ public class BetaMath
 				break;
 
 			r -= pow;
-			pow = pow * x2 * COS_TABLE[++i];
+			pow = pow * x2 * ct[++i];
 			
 			if (pow < 0x1p-52)
 				break;
 
 			r += pow;			
-			pow = pow * x2 * COS_TABLE[++i];
+			pow = pow * x2 * ct[++i];
 		}
 		
 		return r;
