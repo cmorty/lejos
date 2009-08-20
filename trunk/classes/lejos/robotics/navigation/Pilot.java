@@ -153,12 +153,12 @@ public interface Pilot
 
   /**
    * Moves the robot along a curved path through a specified turn angle. This method is similar to the
-   * {@link #arc(float radius , int angle)} method except it uses a ratio of motor
+   * {@link #arc(float radius , float angle)} method except it uses a ratio of motor
    * speeds to determine the curvature of the  path and therefore has the ability to drive straight. This makes
    * it useful for line following applications. This method does not return until the robot has
    * completed moving <code>angle</code> degrees along the arc.<br>
    * The <code>turnRate</code> specifies the sharpness of the turn, between -200 and +200.<br>
-   * For details about how this paramet works.See {@link #steer(int turnRate) }
+   * For details about how this paramet works.See {@link #steer(float turnRate) }
    * <p>
    * The robot will stop when the degrees it has moved along the arc equals <code>angle</code>.<br> 
    * If <code>angle</code> is positive, the robot will move travel forwards.<br>
@@ -175,14 +175,14 @@ public interface Pilot
 
   /**
    * Moves the robot along a curved path for a specified angle of rotation. This method is similar to the
-   * {@link #arc(float radius, int angle, boolean immediateReturn)} method except it uses a ratio of motor
+   * {@link #arc(float radius, float angle, boolean immediateReturn)} method except it uses a ratio of motor
    * speeds to speeds to determine the curvature of the path and therefore has the ability to drive straight. 
    * This makes it useful for line following applications. This method has the ability to return immediately
    * by using the <code>immediateReturn</code> parameter set to <b>true</b>.
    *
    * <p>
    * The <code>turnRate</code> specifies the sharpness of the turn, between -200 and +200.<br>
-   * For details about how this paramet works, see {@link #steer(int turnRate) }
+   * For details about how this paramet works, see {@link #steer(float turnRate) }
    * <p>
    * The robot will stop when the degrees it has moved along the arc equals <code>angle</code>.<br> 
    * If <code>angle</code> is positive, the robot will move travel forwards.<br>
@@ -208,7 +208,7 @@ public interface Pilot
    * <p>
    * The <code>arc(float)</code> method <b>can not drive a straight line</b>, which makes
    * it impractical for line following. A better solution for line following is  
-   * {@link #steer(int)}, which uses proportional steering and can drive straight lines and arcs.
+   * {@link #steer(float)}, which uses proportional steering and can drive straight lines and arcs.
    * <p>
    * Postcondition: Motor speeds are unpredictable.
    * <p>
@@ -216,7 +216,7 @@ public interface Pilot
    * 
    * @param radius of the arc path. If positive, the left side of the robot is on the inside of the turn. If negative, the left
    *          side of the robot is on the outside of the turn.
-   * @see #steer(int)
+   * @see #steer(float)
    */
   public void arc(float radius);
 
@@ -231,7 +231,7 @@ public interface Pilot
    * <p>
    * The <code>arc(float)</code> method <b>can not drive a straight line</b>, which makes
    * it impractical for line following. A better solution for line following is  
-   * {@link #steer(int)}, which uses proportional steering and can drive straight lines and arcs.
+   * {@link #steer(float)}, which uses proportional steering and can drive straight lines and arcs.
    * <p>
    * Robot will stop when the degrees it has moved along the arc equals <code>angle</code>.<br> 
    * If <code>angle</code> is positive, the robot will move travel forwards.<br>
@@ -245,7 +245,7 @@ public interface Pilot
    * @param radius of the arc path. If positive, the left side of the robot is on the inside of the turn. If negative, the left
    *          side of the robot is on the outside of the turn.
    * @param angle The sign of the angle determines the direction of robot motion. Positive drives the robot forward, negative drives it backward.
-   * @see #steer(int, int)
+   * @see #steer(float, float)
    * @see #travelArc(float, float)
    */
   public void arc(float radius, float angle);
@@ -259,9 +259,9 @@ public interface Pilot
    * If <code>radius</code> is negative, the robot arcs right, and the center of the turning circle is on the right side of the robot.<br>
    * If <code>radius</code> is zero, is zero, the robot rotates in place.
    * <p>
-   * The <code>arc(float, int, boolean)</code> method <b>can not drive a straight line</b>, which makes
+   * The <code>arc(float, float, boolean)</code> method <b>can not drive a straight line</b>, which makes
    * it impractical for line following. A better solution for line following is  
-   * {@link #steer(int, int, boolean)}, which uses proportional steering and can drive straight lines and arcs.
+   * {@link #steer(float, float, boolean)}, which uses proportional steering and can drive straight lines and arcs.
    * <p>
    * The robot will stop when the degrees it has moved along the arc equals <code>angle</code>.<br> 
    * If <code>angle</code> is positive, the robot will move travel forwards.<br>
@@ -277,7 +277,7 @@ public interface Pilot
    * @param angle The sign of the angle determines the direction of robot motion. Positive drives the robot forward, negative drives it backward.
    * @param immediateReturn If immediateReturn is true then the method returns immediately and your code MUST call
    *          updatePostion() when the robot has stopped. Otherwise, the robot position is lost.
-   * @see #steer(int, int, boolean)
+   * @see #steer(float, float, boolean)
    * @see #travelArc(float, float, boolean)
    */
   public void arc(float radius, float angle, boolean immediateReturn);
@@ -294,7 +294,7 @@ public interface Pilot
    * <p>
    * The <code>travelArc(float, float)</code> method <b>can not drive a straight line</b>, which makes
    * it impractical for line following. A better solution for line following is  
-   * {@link #steer(int)}, which uses proportional steering and can drive straight lines and arcs.
+   * {@link #steer(float)}, which uses proportional steering and can drive straight lines and arcs.
    * <p>
    * The robot will stop when it has moved along the arc <code>distance</code> units.<br> 
    * If <code>distance</code> is positive, the robot will move travel forwards.<br>
@@ -308,8 +308,8 @@ public interface Pilot
    * @param radius of the arc path. If positive, the left side of the robot is on the inside of the turn. If negative, the left
    *          side of the robot is on the outside of the turn.
    * @param distance to travel, in same units as <code>radius</code>. The sign of the distance determines the direction of robot motion. Positive drives the robot forward, negative drives it backward.
-   * @see #steer(int, int)
-   * @see #arc(float, int)
+   * @see #steer(float, float)
+   * @see #arc(float, float)
    * 
    */
   public void travelArc(float radius, float distance);
@@ -329,7 +329,7 @@ public interface Pilot
    * <p>
    * The <code>travelArc(float, float, boolean)</code> method <b>can not drive a straight line</b>, which makes
    * it impractical for line following. A better solution for line following is  
-   * {@link #steer(int, int, boolean)}, which uses proportional steering and can drive straight lines and arcs.
+   * {@link #steer(float, float, boolean)}, which uses proportional steering and can drive straight lines and arcs.
    * <p>
    * The robot will stop when it has moved along the arc <code>distance</code> units.<br> 
    * If <code>distance</code> is positive, the robot will move travel forwards.<br>
@@ -345,8 +345,8 @@ public interface Pilot
    * @param distance to travel, in same units as <code>radius</code>. The sign of the distance determines the direction of robot motion. Positive drives the robot forward, negative drives it backward.
   @param immediateReturn If immediateReturn is true then the method returns immediately and your code MUST call
    *        updatePostion() when the robot has stopped. Otherwise, the robot position is lost. 
-   * @see #steer(int, int, boolean)
-   * @see #arc(float, int, boolean)
+   * @see #steer(float, float, boolean)
+   * @see #arc(float, float, boolean)
    * 
    */
   public void travelArc(float radius, float distance, boolean immediateReturn);

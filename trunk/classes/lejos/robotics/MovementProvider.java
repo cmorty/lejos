@@ -13,7 +13,7 @@ public interface MovementProvider {
   
   /**
    * Adds a MoveListener that will be notified of all movement events.
-   * @param p
+   * @param listener the move listener
    */
   public void addMoveListener(MoveListener listener);
 }

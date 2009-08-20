@@ -182,8 +182,9 @@ public class Rectangle extends Rectangle2D implements Shape {
         reshape(x, y, width, height);
     }
     /**
-     * Set the bounds of this
-     * @param rectangle to the given rectangle
+     * Set the bounds of this rectangle to the given rectangle
+     * 
+     * @param r the new rectangle
      */
     public void setBounds(Rectangle r) {
         setBounds(r.x, r.y, r.width, r.height);
