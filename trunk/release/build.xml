@@ -394,7 +394,8 @@
 			 	<exclude name="lejos_nxj/bin/nxjsocketproxy"/>
 			 	<exclude name="lejos_nxj/bin/nxjflashg"/>
 			 	<exclude name="lejos_nxj/bin/nxjflash"/>
-			 	<exclude name="lejos_nxj/bin/nxjpccomm"/>
+			 	<exclude name="lejos_nxj/bin/nxjpc"/>
+			 	<exclude name="lejos_nxj/bin/nxjpcc"/>
 			 	<exclude name="lejos_nxj/bin/nxjcontrol"/>
 			 	<exclude name="lejos_nxj/bin/*.so"/>
 			 	<include name="lejos_nxj/3rdparty/**"/>
