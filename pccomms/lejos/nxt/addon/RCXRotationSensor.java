@@ -139,12 +139,15 @@ public class RCXRotationSensor extends Thread implements Tachometer, SensorConst
     /**
      * Returns the raw values from the rotation sensor instead of degrees.
      * A full rotation of 360 degrees results in count increasing by 16. 
-     * @return
+     * @return the raw tachometer reading
      */
     public int getRawTachoCount() {
     	return count;
     }
 
+    /**
+     * Reset the tacho count to zero.
+     */
     public void resetTachoCount()
     {
         synchronized(reader)

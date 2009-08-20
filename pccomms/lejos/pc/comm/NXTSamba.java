@@ -359,7 +359,9 @@ public class NXTSamba {
     /**
      * Read a 32 bit word from the specified address.
      * @param addr
-     * @return value read from addr
+     * @param data the return data
+     * @param off the offset
+     * @param len the length
      * @throws java.io.IOException
      */
     public void readBytes(int addr, byte[] data, int off, int len) throws IOException

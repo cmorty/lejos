@@ -43,13 +43,13 @@ public interface PoseController {
 	/**
 	 * Note: There is no corresponding setPilot() method because the type of robot vehicle could
 	 * not change after the program starts, unless it was physically a transformer robot. 
-	 * @return
+	 * @return the pilot
 	 */
 	public ArcPilot getPilot();
 		
 	/**
 	 * Get a reference to the PoseProvider being used as a localizer.
-	 * @return
+	 * @return the pose provider
 	 */
 	public PoseProvider getPoseProvider();
 	
@@ -58,7 +58,8 @@ public interface PoseController {
 	 * 
 	 * Example: If the robot moves from one environment (indoors) to another environment (outdoors) it might
 	 * want to change to another method of localization if a change in environment is detected.
-	 * @param poseProvider
+	 * 
+	 * @param replacement the new PoseProvider
 	 */
 	public void setPoseProvider(PoseProvider replacement);
 	
