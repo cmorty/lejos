@@ -65,7 +65,7 @@ public class LightSensor implements LightLampDetector, SensorConstants
 	/**
 	 * Use {@link #getLightLevel()} instead
 	 * @deprecated 
-	 * @return
+	 * @return the light level
 	 */
 	public int readValue() {
 		return getLightLevel();
@@ -74,7 +74,7 @@ public class LightSensor implements LightLampDetector, SensorConstants
 	/**
 	 * Use {@link #getRawLightLevel()} instead
 	 * @deprecated 
-	 * @return
+	 * @return the raw light level
 	 */
 	public int readNormalizedValue() {
 		return getRawLightLevel();

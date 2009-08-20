@@ -34,7 +34,7 @@ public class RangeReadings extends ArrayList<RangeReading>  {
   /**
    * Get a range reading for a specific angle
    * 
-   * @param i the reading index
+   * @param angle the reading angle
    * @return the range value
    */
   public float getRange(float angle) {
@@ -110,8 +110,6 @@ public class RangeReadings extends ArrayList<RangeReading>  {
   
   /**
    * Print the range readings on standard out
-   * @param dis the stream
-   * @throws IOException
    */
   public void printReadings() {
 	int index = 0;
