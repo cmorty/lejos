@@ -1,9 +1,27 @@
 package java.awt.geom;
 
+/**
+ * An abstract class for a Rectangle.
+ * Subclasses use float, double or integer coordinates.
+ * 
+ * @author Lawrie
+ *
+ */
 public abstract class Rectangle2D extends RectangularShape {
+	/**
+	 * A Rectangle2D with float coordinates.
+	 */
 	public static class Float extends Rectangle2D {
 		public float x, y, width, height;
 		
+		/**
+		 * Create a rectangle with float coordinates
+		 * 
+		 * @param x the x coordinate of the top left corner
+		 * @param y the y coordinate of the top left corner
+		 * @param width the width of the rectangle
+		 * @param height the height of the rectangle
+		 */
 		public Float(float x, float y, float width, float height) {
 			this.x = x;
 			this.y = y;
@@ -11,18 +29,22 @@ public abstract class Rectangle2D extends RectangularShape {
 			this.height = height;
 		}
 		
+		@Override
 		public double getX() {
 			return (double) x;
 		}
 
+		@Override
 		public double getY() {
 			return (double) x;
 		}
 		
+		@Override
 		public double getWidth() {
+			
 			return (double) width;
 		}
-		
+		@Override
 		public double getHeight() {
 			return (double) height;
 		}
@@ -32,10 +54,22 @@ public abstract class Rectangle2D extends RectangularShape {
             return (width <= 0.0f) || (height <= 0.0f);
 		}
 
+		/**
+		 * Get the bounds as a Rectangle2D with float coordinates
+		 * @return the bounding rectangle
+		 */
 		public Rectangle2D getBounds2D() {
 			return new Float(x, y, width, height);
 		}
 	
+		/**
+		 * Set the rectangle using float coordinates
+		 * 
+		 * @param x the x coordinate of the top left corner
+		 * @param y the y coordinate of the top left corner
+		 * @param w the width
+		 * @param h the height
+		 */
 	    public void setRect(float x, float y, float w, float h) {
 	        this.x = x;
 	        this.y = y;
@@ -58,6 +92,9 @@ public abstract class Rectangle2D extends RectangularShape {
         }	
 	}
 	
+	/**
+	 * A Rectangle2D with double coordinates
+	 */
 	public static class Double extends Rectangle2D {
 		public double x, y, width, height;
 		
