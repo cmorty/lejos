@@ -13,6 +13,8 @@ public final class Math
 	public static final double PI = 3.14159265358979323846;
 
 	static final double PIhalf = PI * 0.5;
+	static final double PItwice = PI * 2.0;
+	
 	static final double LN10 = 2.30258509299405;
 	static final double LN2 = 0.693147180559945;
 
@@ -370,41 +372,75 @@ public final class Math
 	}
 
 	/**
-	 * Sine function using a Chebyshev-Pade approximation. author Paulo Costa
+	 * Sine function using a Chebyshev-Pade approximation. Author Paulo Costa.
 	 */
-	public static double sin(double x) // Using a Chebyshev-Pade approximation
+	public static double sin(double x)
 	{
-		int n = (int) (x / PIhalf) + 1; // reduce to the 4th and 1st quadrants
-		if (n < 1)
-			n = n - 1;
-		if ((n & 2) == 0)
-			x = x - (n & 0xFFFFFFFE) * PIhalf; // if it from the 2nd or the 3rd
-		// quadrants
-		else
-			x = -(x - (n & 0xFFFFFFFE) * PIhalf);
-
+		int neg = 0;
+		
+		//reduce to interval [-2PI, +2PI]
+		x = x % PItwice;
+		
+		//reduce to interval [0, 2PI]
+		if (x < 0)
+		{
+			neg++;
+			x = -x;
+		}
+		
+		//reduce to interval [0, PI]
+		if (x > PI)
+		{
+			neg++;
+			x -= PI;
+		}
+		
+		//reduce to interval [0, PI/2]
+		if (x > PIhalf)
+			x = PI - x;	
+		
+		// Using a Chebyshev-Pade approximation
 		double x2 = x * x;
-		return (0.9238318854f - 0.9595498071e-1f * x2) * x
-				/ (0.9238400690f + (0.5797298195e-1f + 0.2031791179e-2f * x2) * x2);
+		double y = x * (0.9238318854 - 0.9595498071e-1 * x2)
+				/ (0.9238400690 + (0.5797298195e-1 + 0.2031791179e-2 * x2) * x2);
+		
+		return ((neg & 1) == 0) ? y : -y;
 	}
 
 	/**
-	 * Cosine function using a Chebyshev-Pade approximation. author Paulo Costa
+	 * Cosine function using a Chebyshev-Pade approximation. Author Paulo Costa.
 	 */
 	public static double cos(double x)
 	{
-		int n = (int) (x / PIhalf) + 1;
-		if (n < 1)
-			n = n - 1;
-		x = x - (n & 0xFFFFFFFE) * PIhalf; // reduce to the 4th and 1st quadrants
-
+		int neg = 0;
+		
+		//reduce to interval [-2PI, +2PI]
+		x = x % PItwice;
+		
+		//reduce to interval [0, 2PI]
+		if (x < 0)
+			x = -x;
+		
+		//reduce to interval [0, PI]
+		if (x > PI)
+		{
+			neg++;
+			x -= PI;
+		}
+		
+		//reduce to interval [0, PI/2]
+		if (x > PIhalf)
+		{
+			neg++;
+			x = PI - x;
+		}
+		
+		// Using a Chebyshev-Pade approximation
 		double x2 = x * x;
-
-		float si = 1f;
-		if ((n & 2) != 0)
-			si = -1f; // if it from the 2nd or the 3rd quadrants
-		return si * (0.9457092528f + (-0.4305320537f + 0.1914993010e-1f * x2) * x2)
-				/ (0.9457093212f + (0.4232119630e-1f + 0.9106317690e-3f * x2) * x2);
+		double y = (0.9457092528 + (-0.4305320537 + 0.1914993010e-1 * x2) * x2)
+				/ (0.9457093212 + (0.4232119630e-1 + 0.9106317690e-3 * x2) * x2);
+		
+		return ((neg & 1) == 0) ? y : -y;
 	}
 
 	/**
