@@ -116,6 +116,45 @@ public class BetaMath
 		return m * LN2 + 2 * zeta * r;
 	}
 	
+	/**
+	 * Exponential function.
+	 * Returns E^x (where E is the base of natural logarithms).
+	 */
+	public static double exp(double x)
+	{
+		// also catches NaN
+		if (!(x > -750))
+			return (x < 0) ? 0 : Double.NaN;
+		if (x > 710)
+			return Double.POSITIVE_INFINITY;
+
+		double k = (int)(x / LN2);
+		if (x < 0)
+			k--;
+		x -= k * LN2;
+		
+		//known ranges:
+		//	0 <= $x < LN2
+		//ergo:
+		//  $xpow will converge quickly towards 0
+
+		double sum = 1;
+		double term = x;
+		int fac = 2;
+
+		while (true)
+		{
+			if (term < 0x1p-52)
+				break;
+			
+			sum += term;
+			term = term * x / fac++;
+		}
+		
+		double f = Double.longBitsToDouble((long)(k+1023) << 52);
+		return f * sum;
+	}
+
 	public static String doubleToString(double x)
 	{
 		char[] sb = new char[25];
