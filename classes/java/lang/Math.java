@@ -278,45 +278,60 @@ public final class Math
 	}
 
 	/**
-	 * Natural log function. Returns log(a) to base E Replaced with an algorithm
-	 * that does not use exponents and so works with large arguments.
-	 * 
-	 * @see <a
-	 *      href="http://www.geocities.com/zabrodskyvlada/aat/a_contents.html">here</a>
+	 * Natural log function. Returns log(x) to base E.
 	 */
 	public static double log(double x)
 	{
-		if (x == 0)
-			return Double.NaN;
+		// also catches NaN
+		if (!(x > 0))
+			return (x == 0) ? Double.NEGATIVE_INFINITY : Double.NaN;
+		if (x == Double.POSITIVE_INFINITY)
+			return Double.POSITIVE_INFINITY;
+	
+		// Algorithm has been derived from the one given at
+		// http://www.geocities.com/zabrodskyvlada/aat/a_contents.html 
 
-		if (x < 1.0)
-			return -log(1.0 / x);
-
-		double m = 0.0;
-		double p = 1.0;
-		while (p <= x)
+		int m;
+		if (x >= Double.MIN_NORMAL)
+			m = -1023;
+		else
 		{
-			m++;
-			p = p * 2;
+			m = -1023-64;
+			x *= 0x1p64;
 		}
-
-		m = m - 1;
-		double z = x / (p / 2);
-
-		double zeta = (1.0 - z) / (1.0 + z);
-		double n = zeta;
-		double ln = zeta;
-		double zetasup = zeta * zeta;
-
-		for (int j = 1; true; j++)
+	
+		//extract mantissa and reset exponent
+		long bits = Double.doubleToRawLongBits(x);
+		m += (int)(bits >>> 52);
+		bits = (bits & 0x000FFFFFFFFFFFFFL) + 0x3FF0000000000000L;
+		x = Double.longBitsToDouble(bits);
+		
+		double zeta = (x - 1.0) / (x + 1.0);
+		double zeta2 = zeta * zeta;		
+		
+		//known ranges:
+		//	1 <= $x < 2
+		//  0 <= $zeta < 1/3
+		//  0 <= $zeta2 < 1/9
+		//ergo:
+		//  $zetapow will converge quickly towards 0
+		
+		double zetapow = zeta2;
+		double r = 1;
+		int i = 3;
+	
+		while(true)
 		{
-			n = n * zetasup;
-			double newln = ln + n / (2 * j + 1);
-			double term = ln / newln;
-			if (ln == newln || (term >= LOWER_BOUND && term <= UPPER_BOUND))
-				return m * LN2 - 2 * ln;
-			ln = newln;
+			double tmp = zetapow / i;
+			if (tmp < 0x1p-52)
+				break;
+			
+			i += 2;
+			r += tmp;
+			zetapow *= zeta2;
 		}
+		
+		return m * LN2 + 2 * zeta * r;
 	}
 
 	/**
