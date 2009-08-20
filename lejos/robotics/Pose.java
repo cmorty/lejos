@@ -25,9 +25,10 @@ public Pose()
 }
 /**
  * Allocate a new pose at location (x,y) with specified heading in degrees.
- * @param x
- * @param y
- * @param heading
+ * 
+ * @param x the X coordinate
+ * @param y the Y coordinate
+ * @param heading the heading
  */
 public Pose(float x, float y, float heading)
 {
@@ -35,7 +36,8 @@ public Pose(float x, float y, float heading)
   _heading = heading;
 }
 /**
- * rotate the heading through the specified angle
+ * Rotate the heading through the specified angle
+ * 
  * @param angle
  */
 public void rotateUpdate(float angle)
@@ -46,7 +48,8 @@ public void rotateUpdate(float angle)
 }
 
 /**
- * move the specified distance in the direction of current heading.
+ * Move the specified distance in the direction of current heading.
+ * 
  * @param distance to move
  */
 public void moveUpdate(float distance)
@@ -57,6 +60,7 @@ public void moveUpdate(float distance)
 }
 /**
  * Change the x and y coordinates of the pose by adding dx and dy.
+ * 
  * @param dx  change in x coordinate
  * @param dy  change in y coordinate
  */
@@ -65,10 +69,11 @@ public void translate( float dx, float dy)
     _location.setLocation((float)_location.getX()+dx,(float)_location.getY()+dy);
 }
 /**
- * sets the pose locatin and heading to the currect values resulting from travel
+ * Sets the pose locatin and heading to the currect values resulting from travel
  * in a circular arc.  The radius is calculated from the distance and turn angle
- * @param distance
- * @param turnAngle
+ * 
+ * @param distance the dtistance traveled
+ * @param turnAngle the angle turned
  */
 public void arcUpdate(float distance, float turnAngle)
 {
@@ -90,7 +95,9 @@ public void arcUpdate(float distance, float turnAngle)
     rotateUpdate(turnAngle);
 }
 /**
- * calculates the absolute angle to destination from the current location of the pose
+ * 
+ * Calculates the absolute angle to destination from the current location of the pose
+ * 
  * @param destination
  * @return angle in degrees
  */
@@ -100,9 +107,10 @@ public float angleTo(Point destination)
   return (float)Math.toDegrees(Math.atan2(d.getY(),d.getX()));
 }
 /**
- * return the distance to the destination
+ * Get the distance to the destination
+ * 
  * @param destination
- * @return sistance
+ * @return  the distance
  */
 public float distanceTo(Point destination)
 {
@@ -116,24 +124,34 @@ private Point delta(Point d)
 }
 /**
  * returns the heading (direction angle) of the Pose
- * @return
+ * 
+ * @return the heading
  */
 public float getHeading() { return _heading ; }
 /**
- * return X coordinate
- * @return
+ * Get the X coordinate
+ * 
+ * @return the X coordinate
  */
 public float getX(){ return (float) _location.getX();}
 /**
- * return Y coordinate
- * @return
+ * Get the Y coordinate
+ * 
+ * @return the Y coordinate
  */
 public float getY() {return (float)_location.getY();}
 /**
- * return the location as a Point
- * @return
+ * Get the location as a Point
+ * 
+ * @return the location as a point
  */
 public Point getLocation() { return _location;}
+
+/**
+ * Set the location of the pose
+ * 
+ * @param p the new location
+ */
 public void setLocation(Point p)
 {
   _location = p;
@@ -142,6 +160,7 @@ public void setHeading(float heading )
 {
   _heading = heading;
 }
+
 protected  Point _location;
 protected  float _heading;
 

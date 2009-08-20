@@ -114,7 +114,7 @@ public interface ArcPilot extends BasicPilot {
 	 * @param radius of the arc path. If positive, the left side of the robot is on the inside of the turn. If negative, the left
 	 *          side of the robot is on the outside of the turn.
 	 * @param distance to travel, in same units as <code>radius</code>. The sign of the distance determines the direction of robot motion. Positive drives the robot forward, negative drives it backward.
-	 * @see #arc(float, floatt)
+	 * @see #arc(float, float)
 	 * 
 	 */
 	 public Movement travelArc(float radius, float distance);

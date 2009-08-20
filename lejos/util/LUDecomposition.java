@@ -41,10 +41,9 @@ package lejos.util;
 	* ------------------------ */
 	
 	/** LU Decomposition
+	 * 
 	@param  A   Rectangular matrix
-	@return     Structure to access L, U and piv.
-	*/
-	
+	*/	
 	public LUDecomposition (Matrix A) {
 	
 	// Use a "left-looking", dot-product, Crout/Doolittle algorithm.
