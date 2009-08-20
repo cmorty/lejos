@@ -1,12 +1,16 @@
 package java.awt.geom;
 
 /**
- * Minimal Point2D implementation
+ * An abstract class for a point.
+ * Subclasses implement float, double and integer coordinates.
  * 
  * @author Lawrie Griffiths
  *
  */
 public abstract class Point2D {
+	/**
+	 * A point with float coordinates.
+	 */
 	public static class Float extends Point2D {
 		public float x, y;
 		
@@ -44,6 +48,9 @@ public abstract class Point2D {
         }
 	}
 	
+	/**
+	 * A point with double coordinates.
+	 */
 	public static class Double extends Point2D {
 		public double x,y;
 		
