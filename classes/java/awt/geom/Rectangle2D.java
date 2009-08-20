@@ -12,7 +12,25 @@ public abstract class Rectangle2D extends RectangularShape {
 	 * A Rectangle2D with float coordinates.
 	 */
 	public static class Float extends Rectangle2D {
-		public float x, y, width, height;
+		/**
+		 * The x coordinate of the top left corner
+		 */
+		public float x;
+		
+		/**
+		 * The y coordinate of the top right corner
+		 */
+		public float y;
+		
+		/**
+		 * The width of the rectangle
+		 */
+		public float width;
+		
+		/**
+		 * The height of the rectangle;
+		 */
+		public float height;
 		
 		/**
 		 * Create a rectangle with float coordinates
@@ -77,6 +95,7 @@ public abstract class Rectangle2D extends RectangularShape {
 	        this.height = h;
 	    }
 	    
+	    @Override
         public void setRect(Rectangle2D r) {
             this.x = (float) r.getX();
             this.y = (float) r.getY();
@@ -84,6 +103,7 @@ public abstract class Rectangle2D extends RectangularShape {
             this.height = (float) r.getHeight();
         }
         
+	    @Override
         public void setRect(double x, double y, double w, double h) {
             this.x = (float) x;
             this.y = (float) y;
@@ -96,7 +116,25 @@ public abstract class Rectangle2D extends RectangularShape {
 	 * A Rectangle2D with double coordinates
 	 */
 	public static class Double extends Rectangle2D {
-		public double x, y, width, height;
+		/**
+		 * The x coordinate of the top left corner
+		 */
+		public double x;
+		
+		/**
+		 * The y coordinate of the top right corner
+		 */
+		public double y;
+		
+		/**
+		 * The width of the rectangle
+		 */
+		public double width;
+		
+		/**
+		 * The height of the rectangle;
+		 */
+		public double height;
 		
 		public Double(double x, double y, double width, double height) {
 			this.x = x;
@@ -105,18 +143,22 @@ public abstract class Rectangle2D extends RectangularShape {
 			this.height = height;
 		}
 		
+		@Override
 		public double getX() {
 			return x;
 		}
 
+		@Override
 		public double getY() {
 			return x;
 		}
 		
+		@Override
 		public double getWidth() {
 			return width;
 		}
 		
+		@Override
 		public double getHeight() {
 			return height;
 		}
@@ -134,7 +176,8 @@ public abstract class Rectangle2D extends RectangularShape {
 		public Rectangle2D getBounds2D() {
 			return new Double(x, y, width, height);
 		}
-			
+		
+		@Override
 	    public void setRect(double x, double y, double w, double h) {
 	        this.x = x;
 	        this.y = y;
@@ -142,6 +185,7 @@ public abstract class Rectangle2D extends RectangularShape {
 	        this.height = h;
 	    }
 	    
+		@Override
         public void setRect(Rectangle2D r) {
             this.x = r.getX();
             this.y = r.getY();

@@ -3,7 +3,7 @@ package java.awt;
 import java.awt.geom.*;
 
 /**
- * Minimal Rectangle implementation.
+ * A rectangle with integer coordinates.
  * 
  * @author Lawrie Griffiths
  *
