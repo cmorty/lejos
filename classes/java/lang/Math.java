@@ -12,9 +12,9 @@ public final class Math
 	public static final double E = 2.71828182845904523536;
 	public static final double PI = 3.14159265358979323846;
 
-	static final double PI2 = PI / 2;
-	static final double ln10 = 2.30258509299405;
-	static final double ln2 = 0.693147180559945;
+	static final double PIhalf = PI / 2;
+	static final double LN10 = 2.30258509299405;
+	static final double LN2 = 0.693147180559945;
 
 	// Used by log() and exp() methods
 	// TODO: The lower bound is probably important for accuracy. Expand when
@@ -312,7 +312,7 @@ public final class Math
 			double newln = ln + n / (2 * j + 1);
 			double term = ln / newln;
 			if (ln == newln || (term >= LOWER_BOUND && term <= UPPER_BOUND))
-				return m * ln2 - 2 * ln;
+				return m * LN2 - 2 * ln;
 			ln = newln;
 		}
 	}
@@ -374,14 +374,14 @@ public final class Math
 	 */
 	public static double sin(double x) // Using a Chebyshev-Pade approximation
 	{
-		int n = (int) (x / PI2) + 1; // reduce to the 4th and 1st quadrants
+		int n = (int) (x / PIhalf) + 1; // reduce to the 4th and 1st quadrants
 		if (n < 1)
 			n = n - 1;
 		if ((n & 2) == 0)
-			x = x - (n & 0xFFFFFFFE) * PI2; // if it from the 2nd or the 3rd
+			x = x - (n & 0xFFFFFFFE) * PIhalf; // if it from the 2nd or the 3rd
 		// quadrants
 		else
-			x = -(x - (n & 0xFFFFFFFE) * PI2);
+			x = -(x - (n & 0xFFFFFFFE) * PIhalf);
 
 		double x2 = x * x;
 		return (0.9238318854f - 0.9595498071e-1f * x2) * x
@@ -393,10 +393,10 @@ public final class Math
 	 */
 	public static double cos(double x)
 	{
-		int n = (int) (x / PI2) + 1;
+		int n = (int) (x / PIhalf) + 1;
 		if (n < 1)
 			n = n - 1;
-		x = x - (n & 0xFFFFFFFE) * PI2; // reduce to the 4th and 1st quadrants
+		x = x - (n & 0xFFFFFFFE) * PIhalf; // reduce to the 4th and 1st quadrants
 
 		double x2 = x * x;
 
