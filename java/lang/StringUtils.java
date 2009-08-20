@@ -180,16 +180,16 @@ class StringUtils
 			int exponent = 0;
 			
 			// calc. the power (base 10) for the given number:
-			int pow = ( int )Math.floor( Math.log( number ) / Math.ln10 );
+			int pow = ( int )Math.floor( Math.log( number ) / Math.LN10 );
 	
 			// use exponential formatting if number too big or too small
 			if ( pow < -3 || pow > 6 ) {
 				exponent = pow;
-				number /= Math.exp( Math.ln10 * exponent );
+				number /= Math.exp( Math.LN10 * exponent );
 			} // if
 	
 			// Recalc. the pow if exponent removed and d has changed
-			pow = ( int )Math.floor( Math.log( number ) / Math.ln10 );
+			pow = ( int )Math.floor( Math.log( number ) / Math.LN10 );
 	
 			// Decide how many insignificant zeros there will be in the
 			// lead of the number.
