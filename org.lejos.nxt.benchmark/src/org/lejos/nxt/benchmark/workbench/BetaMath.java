@@ -102,7 +102,7 @@ public class BetaMath
 		double zetapow = zeta2;
 		double r = 1;
 		int i = 0;
-	
+
 		while(true)
 		{
 			double tmp = zetapow * lt[i++];
@@ -151,8 +151,22 @@ public class BetaMath
 			term = term * x / fac++;
 		}
 		
-		double f = Double.longBitsToDouble((long)(k+1023) << 52);
-		return f * sum;
+		double f1;
+		if (k > 900)
+		{
+			k -= 900;
+			f1 = 0x1p900; 
+		}
+		else if (k < -900)
+		{
+			k += 900;
+			f1 = 0x1p-900; 
+		}
+		else
+			f1 = 1.0;
+		
+		double f2 = Double.longBitsToDouble((long)(k+1023) << 52);
+		return sum * f2 * f1;
 	}
 
 	public static String doubleToString(double x)
