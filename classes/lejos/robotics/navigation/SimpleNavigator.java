@@ -303,7 +303,7 @@ public float getAngle()
  * Returns the distance from robot current location to the point with coordinates x,y
  * @param x coordinate of destination
  * @param y coordinate of destination
- * @return
+ * @return the distance
  */
   public float distanceTo(float x, float y)
   {
@@ -315,7 +315,7 @@ public float getAngle()
  * Returns the  angle from robot current location to the point with coordinates x,y
  * @param x coordinate of destination
  * @param y coordinate of destination
- * @return
+ * @return angle
  */
   public float angleTo(float x, float y)
   {

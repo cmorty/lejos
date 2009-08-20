@@ -49,8 +49,6 @@ public class PrintStream extends OutputStream {
     /**
      * Writes a newline character
      * to the underlying output stream.
-     * 
-     * @param s the string to print
      */
     public void println() {
         write('\n');
