@@ -2,6 +2,10 @@ package org.lejos.nxt.benchmark.workbench;
 
 public class HistoricMath
 {
+	private static final double LN2 = 0.693147180559945;
+	private static final double LOG_LOWER_BOUND = 0.9999999f;
+	private static final double LOG_UPPER_BOUND = 1.0D;
+	
 	/**
 	 * Square root
 	 * @author Paulo Costa
@@ -145,4 +149,45 @@ public class HistoricMath
 		return root;
 	}
 
+	/**
+	 * Natural log function. Returns log(a) to base E Replaced with an algorithm
+	 * that does not use exponents and so works with large arguments.
+	 * 
+	 * @see <a
+	 *      href="http://www.geocities.com/zabrodskyvlada/aat/a_contents.html">here</a>
+	 */
+	public static double logZeta(double x)
+	{
+		if (x == 0)
+			return Double.NaN;
+
+		if (x < 1.0)
+			return -logZeta(1.0 / x);
+
+		double m = 0.0;
+		double p = 1.0;
+		while (p <= x)
+		{
+			m++;
+			p = p * 2;
+		}
+
+		m = m - 1;
+		double z = x / (p / 2);
+
+		double zeta = (1.0 - z) / (1.0 + z);
+		double n = zeta;
+		double ln = zeta;
+		double zetasup = zeta * zeta;
+
+		for (int j = 1; true; j++)
+		{
+			n = n * zetasup;
+			double newln = ln + n / (2 * j + 1);
+			double term = ln / newln;
+			if (ln == newln || (term >= LOG_LOWER_BOUND && term <= LOG_UPPER_BOUND))
+				return m * LN2 - 2 * ln;
+			ln = newln;
+		}
+	}
 }

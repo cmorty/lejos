@@ -69,6 +69,20 @@ public final class MathBench
 		return count;
 	}
 	
+	private static int benchLogHistoric1(int count, String comment, double x)
+	{
+		long nullTime = BenchUtils.getIterationTime(count);
+	
+		// Function calls
+		long start = System.currentTimeMillis();
+		for (int i = 0; i < count; i++)
+			HistoricMath.logZeta(x);
+		long end = System.currentTimeMillis();
+	
+		report(count, "log (historic, "+comment+")", count, "ops", end - start - nullTime);
+		return count;
+	}
+	
 	private static int benchLog(int count, String comment, double x)
 	{
 		long nullTime = BenchUtils.getIterationTime(count);
@@ -290,13 +304,30 @@ public final class MathBench
 		BenchUtils.cleanUp(null);	
 
 		//infinite loop for subnormal values
-		countAll += benchLog(iterate / 100, "small", Math.PI * 0x1p-1000);
+		countAll += benchLogHistoric1(iterate / 100, "small", Math.PI * 0x1p-1000);
 		BenchUtils.cleanUp(null);
-		countAll += benchLog(iterate / 2, "medium", Math.PI);
+		countAll += benchLogHistoric1(iterate / 2, "medium", Math.PI);
 		BenchUtils.cleanUp(null);
-		countAll += benchLog(iterate / 100, "large", Math.PI * 0x1p+1000);
+		countAll += benchLogHistoric1(iterate / 100, "large", Math.PI * 0x1p+1000);
 		BenchUtils.cleanUp(null);
 		
+		countAll += benchLog(iterate / 2, "subnormal", Math.PI * 0x1p-1060);
+		BenchUtils.cleanUp(null);	
+		countAll += benchLog(iterate / 2, "normal", Math.PI);
+		BenchUtils.cleanUp(null);
+		countAll += benchLog(iterate * 2, "1.0", 1.0);
+		BenchUtils.cleanUp(null);
+		countAll += benchLog(iterate, "1.0001", 1.01);
+		BenchUtils.cleanUp(null);
+		countAll += benchLog(iterate, "1.001", 1.01);
+		BenchUtils.cleanUp(null);
+		countAll += benchLog(iterate, "1.01", 1.01);
+		BenchUtils.cleanUp(null);
+		countAll += benchLog(iterate, "1.3", 1.1);
+		BenchUtils.cleanUp(null);
+		countAll += benchLog(iterate / 2, "1.9", 1.9);
+		BenchUtils.cleanUp(null);
+	
 		countAll += benchLogNew(iterate / 2, "subnormal", Math.PI * 0x1p-1060);
 		BenchUtils.cleanUp(null);	
 		countAll += benchLogNew(iterate / 2, "normal", Math.PI);
