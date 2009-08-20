@@ -217,10 +217,10 @@ public class Rectangle extends Rectangle2D implements Shape {
         reshape(newx, newy, neww, newh);		
 	}
 	
-    @Deprecated
     /**
      * Use setBounds.
      */
+    @Deprecated
     public void reshape(int x, int y, int width, int height) {
         this.x = x;
         this.y = y;
@@ -269,19 +269,21 @@ public class Rectangle extends Rectangle2D implements Shape {
     	resize(width, height);
     }
     
-    @Deprecated
+
     /**
      * Use setSize
      */
+    @Deprecated
     public void resize(int width, int height) {
         this.width = width;
         this.height = height;
     }
     
-    @Override
+
     /**
-     * Returns a String representing this rectangle..
+     * Returns a String representing this rectangle.
      */
+    @Override
     public String toString() {
         return "Rectangle[x=" + x + ",y=" + y + ",width=" + width + ",height=" + height + "]";
     }
