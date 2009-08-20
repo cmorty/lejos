@@ -118,8 +118,21 @@ public abstract class Rectangle2D extends RectangularShape {
 		return contains(x, y) && contains(x + w, y + h);
 	}
 	
+	/**
+	 * Set this rectangle to a rectangle defined by double coordinates
+	 * 
+	 * @param x the x coordinate of the top left corner
+	 * @param y the y coordinate of the top right corner
+	 * @param w the width of the rectangle
+	 * @param h the height of the rectangle
+	 */
     public abstract void setRect(double x, double y, double w, double h);
 	
+    /**
+     * Set this Rectangle2D to be the same as a given Rectangle2D
+     * 
+     * @param r the Rectangle2D
+     */
     public void setRect(Rectangle2D r) {
         setRect(r.getX(), r.getY(), r.getWidth(), r.getHeight());
     }
@@ -129,6 +142,9 @@ public abstract class Rectangle2D extends RectangularShape {
         setRect(x, y, w, h);
     }
 	
+	/**
+	 * Test if this Rectangle2D contains a rectangle defined by double coordinates
+	 */
     public boolean contains(double x, double y) {
         double x0 = getX();
         double y0 = getY();
@@ -138,6 +154,9 @@ public abstract class Rectangle2D extends RectangularShape {
                 y < y0 + getHeight());
     }
     
+    /**
+     * Test if this Rectangle2D intersects a rectangle deined by double coordinates
+     */
     public boolean intersects(double x, double y, double w, double h) {
         if (isEmpty() || w <= 0 || h <= 0) return false;
         double x0 = getX();
