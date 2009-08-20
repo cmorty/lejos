@@ -5,7 +5,8 @@ public class HistoricMath
 	private static final double LN2 = 0.693147180559945;
 	private static final double LOG_LOWER_BOUND = 0.9999999f;
 	private static final double LOG_UPPER_BOUND = 1.0D;
-	
+	private static final double EXP_REL_BOUND = 0x1.0p-52;
+		
 	/**
 	 * Square root
 	 * @author Paulo Costa
@@ -189,5 +190,37 @@ public class HistoricMath
 				return m * LN2 - 2 * ln;
 			ln = newln;
 		}
+	}
+	
+	/**
+	 * Exponential function. Returns E^x (where E is the base of natural
+	 * logarithms). author David Edwards
+	 * 
+	 */
+	public static double expSimple(double a)
+	{
+		/**
+		 * DEVELOPER NOTES: Martin E. Nielsen - modified code to handle large
+		 * arguments. = sum a^n/n!, i.e. 1 + x + x^2/2! + x^3/3! Seems to work
+		 * better for +ve numbers so force argument to be +ve.
+		 */
+
+		boolean neg = a < 0;
+		if (neg)
+			a = -a;
+		
+		double term = a;
+		double sum = 1;
+
+		for (int fac = 2; true; fac++)
+		{
+			if (term < sum * EXP_REL_BOUND)
+				break;
+			
+			sum += term;
+			term *= a / fac;
+		}
+
+		return neg ? 1.0 / sum : sum;
 	}
 }

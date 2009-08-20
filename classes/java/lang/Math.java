@@ -18,14 +18,6 @@ public final class Math
 	static final double LN10 = 2.30258509299405;
 	static final double LN2 = 0.693147180559945;
 
-	// Used by log() and exp() methods
-	// TODO: The lower bound is probably important for accuracy. Expand when
-	// double working.
-	private static final double LOWER_BOUND = 0.9999999f;
-	private static final double UPPER_BOUND = 1.0D;
-
-	private static final double EXP_REL_BOUND = 0x1.0p-52;
-	
 	// dividing by 2 for some kind of safety margin
 	private static final float ROUND_FLOAT_MAX = Integer.MAX_VALUE >> 1;
 	private static final float ROUND_FLOAT_MIN = -ROUND_FLOAT_MAX;
@@ -246,35 +238,56 @@ public final class Math
 	}
 
 	/**
-	 * Exponential function. Returns E^x (where E is the base of natural
-	 * logarithms). author David Edwards
-	 * 
+	 * Exponential function.
+	 * Returns E^x (where E is the base of natural logarithms).
 	 */
-	public static double exp(double a)
+	public static double exp(double x)
 	{
-		/**
-		 * DEVELOPER NOTES: Martin E. Nielsen - modified code to handle large
-		 * arguments. = sum a^n/n!, i.e. 1 + x + x^2/2! + x^3/3! Seems to work
-		 * better for +ve numbers so force argument to be +ve.
-		 */
+		// also catches NaN
+		if (!(x > -750))
+			return (x < 0) ? 0 : Double.NaN;
+		if (x > 710)
+			return Double.POSITIVE_INFINITY;
 
-		boolean neg = a < 0;
-		if (neg)
-			a = -a;
+		double k = (int)(x / LN2);
+		if (x < 0)
+			k--;
+		x -= k * LN2;
 		
-		double term = a;
-		double sum = 1;
+		//known ranges:
+		//	0 <= $x < LN2
+		//ergo:
+		//  $xpow will converge quickly towards 0
 
-		for (int fac = 2; true; fac++)
+		double sum = 1;
+		double term = x;
+		int fac = 2;
+
+		while (true)
 		{
-			if (term < sum * EXP_REL_BOUND)
+			if (term < 0x1p-52)
 				break;
 			
 			sum += term;
-			term *= a / fac;
+			term = term * x / fac++;
 		}
-
-		return neg ? 1.0 / sum : sum;
+		
+		double f1;
+		if (k > 900)
+		{
+			k -= 900;
+			f1 = 0x1p900; 
+		}
+		else if (k < -900)
+		{
+			k += 900;
+			f1 = 0x1p-900; 
+		}
+		else
+			f1 = 1.0;
+		
+		double f2 = Double.longBitsToDouble((long)(k+1023) << 52);
+		return sum * f2 * f1;
 	}
 
 	/**
