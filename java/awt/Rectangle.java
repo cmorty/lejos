@@ -9,7 +9,22 @@ import java.awt.geom.*;
  *
  */
 public class Rectangle extends Rectangle2D implements Shape {
-	public int height, width, x, y;
+	/**
+	 * The height of the rectangle
+	 */
+	public int height;
+	/**
+	 * The width of the rectangle
+	 */
+	public int width;
+	/**
+	 * The x coordinate of the top left of the rectangle
+	 */
+	public int x;
+	/**
+	 * The y coordinate of the top right of the rectangle
+	 */
+	public int y;
 	
 	/**
 	 * Creates a rectangle with top left corner at (x,y) and with specified
@@ -42,6 +57,14 @@ public class Rectangle extends Rectangle2D implements Shape {
 	public Rectangle() {
 		this(0,0);
 	}
+	
+	/**
+	 * Create an empty rectangle at the given point
+	 * @param p trhe point
+	 */
+    public Rectangle(Point p) {
+        this(p.x, p.y, 0, 0);
+    }
 	
 	/**
 	 * Get the x coordinate as a double
@@ -94,16 +117,25 @@ public class Rectangle extends Rectangle2D implements Shape {
 	}
 	
 	/**
-	 * Test if a point given by (x,y) coordinates are with the rectangle
-	 * @param pointX the x coordinate
-	 * @param pointY the y coordinate
+	 * Test if a point given by (x,y) coordinates is within the rectangle
+	 * @param x the x coordinate
+	 * @param y the y coordinate
 	 * @return true iff the point is within the rectangle
 	 */
-	public boolean contains(int pointX, int pointY) {
+	public boolean contains(int x, int y) {
 		if (isEmpty()) return false;
-		if (pointX < this.x || pointX > this.x + width) return false;
-		if (pointY < this.y || pointY > this.y + height) return false;
+		if (x < this.x || x > this.x + width) return false;
+		if (y < this.y || y > this.y + height) return false;
 		return true;
+	}
+	
+	/**
+	 * Test if a point is within the rectangle
+	 * @param p the point
+	 * @return true iff the point is within the rectangle
+	 */
+	public boolean contains(Point p) {
+		return contains(p.x, p.y);
 	}
 	
 	/**
@@ -138,10 +170,21 @@ public class Rectangle extends Rectangle2D implements Shape {
 		return new Rectangle(x, y, width, height);
 	}
 	
+	/**
+	 * Set the bounds of this rectangle
+	 * 
+	 * @param x the new x coordinate
+	 * @param y the new y coordinate
+	 * @param width the new width
+	 * @param height the new height
+	 */
     public void setBounds(int x, int y, int width, int height) {
         reshape(x, y, width, height);
     }
-    
+    /**
+     * Set the bounds of this
+     * @param rectangle to the given rectangle
+     */
     public void setBounds(Rectangle r) {
         setBounds(r.x, r.y, r.width, r.height);
     }
@@ -174,6 +217,9 @@ public class Rectangle extends Rectangle2D implements Shape {
 	}
 	
     @Deprecated
+    /**
+     * Use setBounds.
+     */
     public void reshape(int x, int y, int width, int height) {
         this.x = x;
         this.y = y;
@@ -186,5 +232,56 @@ public class Rectangle extends Rectangle2D implements Shape {
         if (x >= Integer.MAX_VALUE) return Integer.MAX_VALUE;
 
         return (int) (high ? Math.ceil(x) : Math.floor(x));
+    }
+    
+    /**
+     * Test if the Rectangle is equal to a given object
+     * 
+     * @param obj the object
+     */
+    public boolean equals(Object obj) {
+        if (obj instanceof Rectangle) {
+            Rectangle r = (Rectangle)obj;
+            return ((x == r.x) && (y == r.y) &&
+                    (width == r.width) && (height == r.height));
+        } else {
+        	return super.equals(obj);
+        }
+    }
+    
+    /**
+     * Get the location of the rectangle
+     * 
+     * @return the (x,y) coordinate of the top left corner
+     */
+    public Point getLocation() {
+    	return new Point(x, y);
+    }
+    
+    /**
+     * Set the size of the rectangle
+     * 
+     * @param width the new width
+     * @param height the new height
+     */
+    public void setSize(int width, int height) {
+    	resize(width, height);
+    }
+    
+    @Deprecated
+    /**
+     * Use setSize
+     */
+    public void resize(int width, int height) {
+        this.width = width;
+        this.height = height;
+    }
+    
+    @Override
+    /**
+     * Returns a String representing this rectangle..
+     */
+    public String toString() {
+        return "Rectangle[x=" + x + ",y=" + y + ",width=" + width + ",height=" + height + "]";
     }
 }
