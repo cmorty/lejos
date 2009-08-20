@@ -18,7 +18,7 @@ public interface Shape {
 	public Rectangle getBounds();
 	
 	/**
-	 * Get the bounding Rectange2D for the shape
+	 * Get the bounding Rectangle2D for the shape
 	 * 
 	 * @return the bounding Rectangle2D
 	 */
@@ -35,6 +35,7 @@ public interface Shape {
 	
 	/**
 	 * Test if the shape contains the Point2D
+	 * 
 	 * @param p the Point2D
 	 * @return true iff the shape contains the point
 	 */
@@ -42,6 +43,7 @@ public interface Shape {
 	
 	/**
 	 * Test if the shape intersects the rectangle with top left at (x,y), width w and height h.
+	 * 
 	 * @param x the x-coordinate of the top left point of the rectangle
 	 * @param y the y-coordinate of the top left point of the rectangle
 	 * @param w the width of the rectangle
@@ -52,6 +54,7 @@ public interface Shape {
 	
 	/**
 	 * Test if the shape intersects the Rectangle2D r
+	 * 
 	 * @param r the Recangle2D
 	 * @return true iff the shape intersects the Rectangle2D
 	 */
@@ -59,6 +62,7 @@ public interface Shape {
 	
 	/**
 	 * Test if the shape contains the rectangle with top left at (x,y), width w and height h.
+	 * 
 	 * @param x the x-coordinate of the top left point of the rectangle
 	 * @param y the y-coordinate of the top left point of the rectangle
 	 * @param w the width of the rectangle
@@ -69,6 +73,7 @@ public interface Shape {
 	
 	/**
 	 * Test if the shape contains the Rectangle2D
+	 * 
 	 * @param r the Rectangle2D
 	 * @return true iff the shape contains the Rectangle2D
 	 */
