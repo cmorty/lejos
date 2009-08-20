@@ -7,6 +7,7 @@ public class BetaMath
 
 	private static final double PIhalf = PI * 0.5;
 	private static final double PItwice = PI * 2;
+	private static final double PIhalfhalf = PI * 0.25;
 
 	private static final int STR_NAN_LEN = 3;
 	private static final String STR_NAN = "NaN";
@@ -779,7 +780,7 @@ public class BetaMath
 			x = PI - x;	
 		
 		double x2 = x * x;
-		double y = (0.9238318854 - 0.9595498071e-1 * x2) * x
+		double y = x * (0.9238318854 - 0.9595498071e-1 * x2)
 				/ (0.9238400690 + (0.5797298195e-1 + 0.2031791179e-2 * x2) * x2);
 		
 		return ((neg & 1) == 0) ? y : -y;
@@ -819,4 +820,103 @@ public class BetaMath
 		
 		return ((neg & 1) == 0) ? y : -y;
 	}
+	
+	private static final double[] SIN_TABLE = {
+		1.0/6, 1.0/20, 1.0/42, 1.0/72, 1.0/110,
+		1.0/156, 1.0/210, 1.0/272, 1.0/342, 1.0/420
+	};
+	
+	private static final double[] COS_TABLE = {
+		1.0/2, 1.0/12, 1.0/30, 1.0/56, 1.0/90,
+		1.0/132, 1.0/182, 1.0/240, 1.0/306, 1.0/380
+	};
+	
+	/**
+	 * Only for the interval [0, 1].
+	 */
+	public static double sin_taylor(double x)
+	{
+		double r = 1;
+		double x2 = x * x;
+		double pow = x2 * SIN_TABLE[0];
+		int i = 0;
+		
+		while (true)
+		{
+			if (pow < 0x1p-52)
+				break;
+
+			r -= pow;			
+			pow = pow * x2 * SIN_TABLE[++i];
+			
+			if (pow < 0x1p-52)
+				break;
+
+			r += pow;			
+			pow = pow * x2 * SIN_TABLE[++i];
+		}		
+		
+		return x * r;
+	}
+	
+	/**
+	 * Only for the interval [0, 1].
+	 */
+	public static double cos_taylor(double x)
+	{
+		double r = 1;
+		double x2 = x * x;
+		double pow = x2 * COS_TABLE[0];
+		int i = 0;
+		
+		while (true)
+		{
+			if (pow < 0x1p-52)
+				break;
+
+			r -= pow;
+			pow = pow * x2 * COS_TABLE[++i];
+			
+			if (pow < 0x1p-52)
+				break;
+
+			r += pow;			
+			pow = pow * x2 * COS_TABLE[++i];
+		}
+		
+		return r;
+	}
+
+	/**
+	 * Sine function using a Chebyshev-Pade approximation. author Paulo Costa
+	 */
+	public static double sin2(double x) // Using a Chebyshev-Pade approximation
+	{		
+		int neg = 0;
+		
+		//reduce to interval [-2PI, +2PI]
+		x = x % PItwice;
+		
+		//reduce to interval [0, 2PI]
+		if (x < 0)
+		{
+			neg++;
+			x = -x;
+		}
+		
+		//reduce to interval [0, PI]
+		if (x > PI)
+		{
+			neg++;
+			x -= PI;
+		}
+		
+		//reduce to interval [0, PI/2]
+		if (x > PIhalf)
+			x = PI - x;	
+		
+		double y = (x < PIhalfhalf) ? sin_taylor(x) : cos_taylor(PIhalf - x);		
+		return ((neg & 1) == 0) ? y : -y;
+	}
+
 }
