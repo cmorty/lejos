@@ -1,3 +1,99 @@
+leJOS NXJ 0.85 beta
+-------------------
+
+Andy Shaw has added:
+
+- Improvements to the speed of the Java VM including changes to the alignment of data.
+- A new object format for .nxj files.
+- Access to VM structures from Java using the VM class.
+- Synchonization and locking of class data.
+- Support for instance of on all data including interfaces and arrays.
+- Support for Cloneable interface on objects and arrays
+- Support for detection of rechargeable batteries and improved battery indicator.
+- Improved i2c support including remote i2c from the PC.
+- Increased ADC sensing frequency
+- Support for nanosecond timers and improved timer support with the Delay class.
+- Support for % operation on floats and doubles
+- Improvements to SensorPort class and firmware support for sensors
+- Added support for isAssignableFrom
+- RFID sensor sample
+- Optional display of LCD screen in ConsoleViewer#
+- Refactoring of startup menu vode
+- Several bug fixes
+
+Andy Shaw and Sven Koehler have added:
+
+- Support for the Class class.
+
+Andy Shaw and Brian Bagnall have added:
+
+- Support for the new LEGO color sensor in the NXT 2.0 set
+- A new ColorSensorTest sample
+
+Sven Koehler has added:
+
+- Much improved versions of the java.Math classes with bug fixes, 
+  accuracy improvements and in some cases, dramatic speed improvements. 
+- Improvement to the firmware make files and other minor firmware improvements
+- A new benchmark project for testing Math performance.
+- New flashwrite project
+- Improvements to SAM-BA support in pccomms and improvements to flash utilities
+
+Brian Bagnall, Roger Glassey and Lawrie Griffiths have added:
+
+- Improved package structure with all NXT-specific classes in lejos.nxt subpackages
+  and all robotics support in lejos.robotics.
+- New proposal for navigation which is platform independent, supports more
+  type of vehicles, has better localization support, and supports new concepts
+  of pose controllers and path finders. Includes support for probabilistic robots.
+  Supports platforms for mounting sensors on. Has interfaces for better hardware
+  abstraction. This proposal is still work in progress.
+- Removal of deprecated navigation classes and classes superseded by the new proposal
+
+Shawn Brown has added:
+
+- Better support and documentation for MAC OS X including make the fantom USB driver the default.
+- Raname of nxjpccomm scripty to nxjpc and addition of nxjpcc script
+
+Lawrie Griffiths has added:
+
+- Reworking of the Monte Carlo Localization classes to make them easier to use.
+- A new Homer MCL sample.
+- Support for java.awt and java.awt.geom Rectangle, Line and Point classes#
+- lejos.geom package that extends java.awt.geom
+- Removal of activity based subsumption classes.
+- MotorPort for PF motors via HoiTechnic IRLink
+- Improvements top Matrix code asnd addition of LUDecomposition
+- General purpose KalmanFilter class using matrix algebra and a KalmanTest sample
+- Moved mapping support from lejos.localization to lejos.robotics.mapping
+- Corrections to common class warning so that it does not appear in the API docs.
+- Improvements to the release build files.
+- Updated TachoCount pcsample that demonstrates improved control and diagnostics for remote access using LCP.
+- Various bug fixes.
+
+Lawrie Griffiths and Brian Bagnall have added:
+
+- Improvments to RemoteMotor support
+
+Brian Bagnall has added:
+
+- Support for rotation and elevation platforms.
+- Rationalization of steer and arc methods in pilots.
+- Improvements to GPS support and a GPSInfo sample
+- Deletion of redundant samples.
+
+Roger Glassey has added:
+
+- A Netbeans plugin
+- Improvements to TachoPilot abd SimpleNavigator
+- New obstacle avoidance samples
+- A Pose class
+- Various bug fixes
+
+Dirk Sturzebecher has added:
+- TachoMotor interface
+- SimpleNavigator bug fix
+
 leJOS NXJ 0.8 beta
 ------------------
 
