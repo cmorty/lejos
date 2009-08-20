@@ -252,6 +252,11 @@
         		<include name="jfantom.dll"/>
       			<include name="jlibnxt.dll"/>
       			<include name="lejos_nxt_rom.bin"/>
+      		</fileset>
+    	</copy>
+		
+		<copy todir="${release.bin}">
+      		<fileset dir="${lejos.root}/startup/build">
       			<include name="StartUpText.bin"/>
       		</fileset>
     	</copy>
@@ -327,7 +332,6 @@
 	<target name="pcsamples" depends="create.folders" description="copies the samples">
 		<copy todir="${release.projects}/pcsamples">
       		<fileset dir="${lejos.root}/pcsamples">
-			 	<exclude name="BtTestPC/**"/>
       			<exclude name="**/.svn"/>
       			<exclude name=".settings/**"/>
       			<exclude name=".externalToolBuilders/**"/>
