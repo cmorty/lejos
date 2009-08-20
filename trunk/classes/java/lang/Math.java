@@ -12,7 +12,7 @@ public final class Math
 	public static final double E = 2.71828182845904523536;
 	public static final double PI = 3.14159265358979323846;
 
-	static final double PIhalf = PI / 2;
+	static final double PIhalf = PI * 0.5;
 	static final double LN10 = 2.30258509299405;
 	static final double LN2 = 0.693147180559945;
 
