@@ -69,6 +69,34 @@ public final class MathBench
 		return count;
 	}
 	
+	private static int benchExpHistoric1(int count, String comment, double x)
+	{
+		long nullTime = BenchUtils.getIterationTime(count);
+	
+		// Function calls
+		long start = System.currentTimeMillis();
+		for (int i = 0; i < count; i++)
+			HistoricMath.expSimple(x);
+		long end = System.currentTimeMillis();
+	
+		report(count, "exp (historic, "+comment+")", count, "ops", end - start - nullTime);
+		return count;
+	}
+	
+	private static int benchExp(int count, String comment, double x)
+	{
+		long nullTime = BenchUtils.getIterationTime(count);
+	
+		// Function calls
+		long start = System.currentTimeMillis();
+		for (int i = 0; i < count; i++)
+			Math.exp(x);
+		long end = System.currentTimeMillis();
+	
+		report(count, "exp (current, "+comment+")", count, "ops", end - start - nullTime);
+		return count;
+	}
+	
 	private static int benchLogHistoric1(int count, String comment, double x)
 	{
 		long nullTime = BenchUtils.getIterationTime(count);
@@ -258,19 +286,19 @@ public final class MathBench
 		countAll += benchSin(iterate * 2, "7", 7);
 		BenchUtils.cleanUp(null);	
 
-		countAll += benchSinNew(iterate * 2, "1", 1);
+		countAll += benchSinNew(iterate, "1", 1);
 		BenchUtils.cleanUp(null);	
-		countAll += benchSinNew(iterate * 2, "2", 2);
+		countAll += benchSinNew(iterate, "2", 2);
 		BenchUtils.cleanUp(null);	
-		countAll += benchSinNew(iterate * 2, "3", 3);
+		countAll += benchSinNew(iterate, "3", 3);
 		BenchUtils.cleanUp(null);	
-		countAll += benchSinNew(iterate * 2, "4", 4);
+		countAll += benchSinNew(iterate, "4", 4);
 		BenchUtils.cleanUp(null);	
-		countAll += benchSinNew(iterate * 2, "5", 5);
+		countAll += benchSinNew(iterate, "5", 5);
 		BenchUtils.cleanUp(null);	
-		countAll += benchSinNew(iterate * 2, "6", 6);
+		countAll += benchSinNew(iterate, "6", 6);
 		BenchUtils.cleanUp(null);	
-		countAll += benchSinNew(iterate * 2, "7", 7);
+		countAll += benchSinNew(iterate, "7", 7);
 		BenchUtils.cleanUp(null);	
 
 		countAll += benchCos(iterate * 2, "1", 1);
@@ -288,21 +316,48 @@ public final class MathBench
 		countAll += benchCos(iterate * 2, "7", 7);
 		BenchUtils.cleanUp(null);	
 
-		countAll += benchCosNew(iterate * 2, "1", 1);
+		countAll += benchCosNew(iterate, "1", 1);
 		BenchUtils.cleanUp(null);	
-		countAll += benchCosNew(iterate * 2, "2", 2);
+		countAll += benchCosNew(iterate, "2", 2);
 		BenchUtils.cleanUp(null);	
-		countAll += benchCosNew(iterate * 2, "3", 3);
+		countAll += benchCosNew(iterate, "3", 3);
 		BenchUtils.cleanUp(null);	
-		countAll += benchCosNew(iterate * 2, "4", 4);
+		countAll += benchCosNew(iterate, "4", 4);
 		BenchUtils.cleanUp(null);	
-		countAll += benchCosNew(iterate * 2, "5", 5);
+		countAll += benchCosNew(iterate, "5", 5);
 		BenchUtils.cleanUp(null);	
-		countAll += benchCosNew(iterate * 2, "6", 6);
+		countAll += benchCosNew(iterate, "6", 6);
 		BenchUtils.cleanUp(null);	
-		countAll += benchCosNew(iterate * 2, "7", 7);
+		countAll += benchCosNew(iterate, "7", 7);
 		BenchUtils.cleanUp(null);	
 
+		//infinite loop for subnormal values
+		countAll += benchExpHistoric1(iterate / 200, "-700", -700);
+		BenchUtils.cleanUp(null);
+		countAll += benchExpHistoric1(iterate / 10, "-10", -10);
+		BenchUtils.cleanUp(null);
+		countAll += benchExpHistoric1(iterate, "0", 0);
+		BenchUtils.cleanUp(null);
+		countAll += benchExpHistoric1(iterate / 10, "+10", +10);
+		BenchUtils.cleanUp(null);
+		countAll += benchExpHistoric1(iterate / 200, "+700", +700);
+		BenchUtils.cleanUp(null);
+		
+		countAll += benchExp(iterate / 2, "-700", -700);
+		BenchUtils.cleanUp(null);	
+		countAll += benchExp(iterate / 2, "-0.5", -0.5);
+		BenchUtils.cleanUp(null);
+		countAll += benchExp(iterate * 2, "-0.1", -0.1);
+		BenchUtils.cleanUp(null);
+		countAll += benchExp(iterate * 2, "0.0", 0.0);
+		BenchUtils.cleanUp(null);
+		countAll += benchExp(iterate * 2, "+0.1", +0.1);
+		BenchUtils.cleanUp(null);
+		countAll += benchExp(iterate * 2, "+0.5", +0.5);
+		BenchUtils.cleanUp(null);
+		countAll += benchExp(iterate * 2, "+700", +700);
+		BenchUtils.cleanUp(null);
+	
 		//infinite loop for subnormal values
 		countAll += benchLogHistoric1(iterate / 100, "small", Math.PI * 0x1p-1000);
 		BenchUtils.cleanUp(null);
