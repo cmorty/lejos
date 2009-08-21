@@ -2,11 +2,18 @@ package org.lejos.nxt.benchmark.workbench;
 
 public class BetaMath
 {
-	private static final double LN2 = 0.693147180559945309417232;
-	private static final double PI = 3.14159265358979323846;
+	// Math constants
+	private static final double E = 2.71828182845904523536028747135;
+	private static final double PI = 3.14159265358979323846264338328;
+	private static final double LN2 = 0.693147180559945309417232121458;
+	
+	private static final double SQRT2 = 1.41421356237309504880168872421;
+	private static final double SQRTSQRT2 = 1.18920711500272106671749997056;
+	private static final double LN_SQRTSQRT2 = 0.360673760222240851839981170250;
+	private static final double INV_LN_SQRTSQRT2 = 5.77078016355585362943969872400;
 
 	private static final double PIhalf = PI * 0.5;
-	private static final double PItwice = PI * 2;
+	private static final double PItwice = PI * 2.0;
 	private static final double PIhalfhalf = PI * 0.25;
 
 	private static final int STR_NAN_LEN = 3;
@@ -114,6 +121,64 @@ public class BetaMath
 		}
 		
 		return m * LN2 + 2 * zeta * r;
+	}
+	
+	/**
+	 * Exponential function.
+	 * Returns E^x (where E is the base of natural logarithms).
+	 */
+	public static double exp(double x)
+	{
+		// also catches NaN
+		if (!(x > -750))
+			return (x < 0) ? 0 : Double.NaN;
+		if (x > 710)
+			return Double.POSITIVE_INFINITY;
+
+		int k = (int)(x * INV_LN_SQRTSQRT2);
+		if (x < 0)
+			k--;
+		x -= k * LN_SQRTSQRT2;
+		
+		//known ranges:
+		//	0 <= $x <= LN_SQRTSQRT2
+		//ergo:
+		//  $xpow will converge quickly towards 0
+
+		double sum = 1;
+		double xpow = x;
+		int fac = 2;
+
+		while (true)
+		{
+			if (xpow < 0x1p-52)
+				break;
+			
+			sum += xpow;
+			xpow = xpow * x / fac++;
+		}
+		
+		double f1;
+		if (k > 4000)
+		{
+			k -= 4000;
+			f1 = 0x1p+1000; 
+		}
+		else if (k < -4000)
+		{
+			k += 4000;
+			f1 = 0x1p-1000; 
+		}
+		else
+			f1 = 1.0;
+		
+		double f2 = Double.longBitsToDouble((long)((k >> 2) + 1023) << 52);
+		if ((k & 2) != 0)
+			f2 *= SQRT2;
+		if ((k & 1) != 0)
+			f2 *= SQRTSQRT2;
+		
+		return sum * f2 * f1;
 	}
 	
 	public static String doubleToString(double x)
