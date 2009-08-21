@@ -18,6 +18,9 @@ public final class Math
 	private static final double PIhalf = PI * 0.5;
 	private static final double PItwice = PI * 2.0;
 	
+	private static final double DEG_TO_RAD = 0.0174532925199432957692369076849;
+	private static final double RAD_TO_DEG = 57.2957795130823208767981548141;
+	
 	// dividing by 2 for some kind of safety margin
 	private static final float ROUND_FLOAT_MAX = Integer.MAX_VALUE >> 1;
 	private static final float ROUND_FLOAT_MIN = -ROUND_FLOAT_MAX;
@@ -584,7 +587,7 @@ public final class Math
 	 */
 	public static double toDegrees(double angrad)
 	{
-		return angrad * (180.0 / PI);
+		return angrad * RAD_TO_DEG;
 	}
 
 	/**
@@ -592,6 +595,6 @@ public final class Math
 	 */
 	public static double toRadians(double angdeg)
 	{
-		return angdeg * (PI / 180.0);
+		return angdeg * DEG_TO_RAD;
 	}
 }
