@@ -249,7 +249,7 @@ public final class Math
 		if (x > 710)
 			return Double.POSITIVE_INFINITY;
 
-		double k = (int)(x / LN2);
+		int k = (int)(x / LN2);
 		if (x < 0)
 			k--;
 		x -= k * LN2;
