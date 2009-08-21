@@ -260,28 +260,28 @@ public final class Math
 		//  $xpow will converge quickly towards 0
 
 		double sum = 1;
-		double term = x;
+		double xpow = x;
 		int fac = 2;
 
 		while (true)
 		{
-			if (term < 0x1p-52)
+			if (xpow < 0x1p-52)
 				break;
 			
-			sum += term;
-			term = term * x / fac++;
+			sum += xpow;
+			xpow = xpow * x / fac++;
 		}
 		
 		double f1;
-		if (k > 900)
+		if (k > 1000)
 		{
-			k -= 900;
-			f1 = 0x1p900; 
+			k -= 1000;
+			f1 = 0x1p+1000; 
 		}
-		else if (k < -900)
+		else if (k < -1000)
 		{
-			k += 900;
-			f1 = 0x1p-900; 
+			k += 1000;
+			f1 = 0x1p-1000; 
 		}
 		else
 			f1 = 1.0;
