@@ -969,6 +969,18 @@ public class BetaMath
 		
 		return r;
 	}
+	
+	private static final double SIN_A2 = 0.967866695922098183389138876172;
+	private static final double SIN_A3 = -0.135908892269150990008530277147;
+	private static final double SIN_A4 = 0.00417375937556560266471103059512;
+	private static final double SIN_A5 = -0.0000343897139435579031078997741221;
+
+	private static final double SIN_B1 = 0.967866695922099679420692569107;
+	private static final double SIN_B2 = 0.0254022237178363253996328845210;
+	private static final double SIN_B3 = 0.000341907529354899772220973830092;
+	private static final double SIN_B4 = 0.00000294671904539375123810742399296;
+	private static final double SIN_B5 = 1.48336192403385646205105712069E-8;
+
 
 	/**
 	 * Sine function.
@@ -998,7 +1010,10 @@ public class BetaMath
 		if (x > PIhalf)
 			x = PI - x;	
 		
-		double y = (x < PIhalfhalf) ? sin_taylor(x) : cos_taylor(PIhalf - x);		
+		double x2 = x * x;
+		double y = (SIN_A2 + (SIN_A3 + (SIN_A4 + SIN_A5*x2)*x2)*x2)*x /
+			(SIN_B1 + (SIN_B2 + (SIN_B3 + (SIN_B4 + SIN_B5*x2)*x2)*x2)*x2);
+		
 		return ((neg & 1) == 0) ? y : -y;
 	}
 
