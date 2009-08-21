@@ -60,7 +60,7 @@ the NXT motors have enabled much improved control over speed, steering and navig
   <li>You need a Java Development Kit (JDK), version 1.5 or later.</li>
   <li>Your PATH must contain the JDK's bin directory.</li>
   <li>Make sure you have set JAVA_HOME properly to the root directory of the JDK (necessary if you use <em>ant</em>).</li>
-  <li>On systems other than Microsoft Windows, you will need to build the distribution, so your PATH must
+  <li>On systems other than Microsoft Windows and MAC OS X, you will need to build the distribution, so your PATH must
 contain the ant binary (ant 1.7 or above).</li>
   <li>On Microsoft Windows and MAC OS X you will need the LEGO Mindstorms NXT software installed, as its USB drivers are used.</li>
 </ul>
@@ -242,7 +242,7 @@ N - the thread is new (not yet started)<br/>
 I - the thread has been started but not yet run<br/>
 E - the thread is waiting for a synchronized section<br/>
 W - the thread is waiiting on a monitor object<br/>
-* this is the running thread (not the debug thread)<br/>
+* - this is the running thread (not the debug thread)<br/>
 <p>After a user interrupt or exception, ENTER+ESCAPE shuts down the brick, ESCAPE terminates the user
 program and restarts the menu. Any other key continues the user program.</p>
  
@@ -251,26 +251,13 @@ Due to size constraints, some Java language
 features have been omitted. Others just haven't been implemented yet.
 Known limitations with all versions of leJOS are: </a>
 <ul>
-  <li>The instanceof operation will always be true for interfaces. In
-bytecode, CHECKCAST succeeds on all interface classes (which is a bit
-unsafe)</li>
-  <li>There are no objects of type java.lang.Class, which means that
-the ".class" construct won't work. Class.forName() throws
+  <li>The implementation of java.lang.Class is limited, Class.forName() throws
 ClassNotFoundException at all times. As a consequence, reflection is
 not supported by leJOS</li>
-  <li>Most JDK APIs are unavailable</li>
-  </a>
-</ul>
-<h1><a name="bugs">Known Bugs</a></h1>
-<p>The following bugs apply to all versions of leJOS:</p>
-<ul>
- <li>MONITOREXIT ignores null objects (it assumes
-MONITORENTER has handled them). Furthermore, it doesn't check monitor
-validity. Until this bug is fixed (actually, at all times) all monitors
-should be constants</li>
-  <li>Initializers (static or otherwise) are not implicitly
-synchronized. This could lead to access of statics before they are
-initialized, when multiple threads use a class</li>
+  <li>Many JDK APIs are unavailable</li>
+  <li>Weak references and finalizers are not supported.</li>
+  <li>Constant strings are not interned</li>
+
   </a>
 </ul>
 <h1><a name="nxjbugs">Known Bugs and Limitations in leJOS NXJ</a></h1>
