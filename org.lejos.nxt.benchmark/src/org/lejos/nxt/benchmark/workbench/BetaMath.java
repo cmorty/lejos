@@ -3,13 +3,12 @@ package org.lejos.nxt.benchmark.workbench;
 public class BetaMath
 {
 	// Math constants
-	private static final double E = 2.71828182845904523536028747135;
 	private static final double PI = 3.14159265358979323846264338328;
 	private static final double LN2 = 0.693147180559945309417232121458;
 	
 	private static final double SQRT2 = 1.41421356237309504880168872421;
 	private static final double SQRTSQRT2 = 1.18920711500272106671749997056;
-	private static final double LN_SQRTSQRT2 = 0.360673760222240851839981170250;
+	private static final double LN_SQRTSQRT2 = 0.173286795139986327354308030364;
 	private static final double INV_LN_SQRTSQRT2 = 5.77078016355585362943969872400;
 
 	private static final double PIhalf = PI * 0.5;
