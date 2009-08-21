@@ -4,14 +4,20 @@ import java.awt.Rectangle;
 import java.awt.Shape;
 
 /**
- * Minimal implementation of Line2D.
+ * An abstract class representing a line in two dimensional space
  * 
  * @author Lawrie Griffiths
  *
  */
 public abstract class Line2D implements Shape {
+	/**
+	 * A line in 2D space using float coordinates
+	 */
 	public static class Float extends Line2D {
-		public float x1, y1, x2, y2;
+		public float x1;
+		public float y1;
+		public float x2;
+		public float y2;
 		
 		public Float() {};
 		
@@ -99,8 +105,14 @@ public abstract class Line2D implements Shape {
         }
 	}
 	
+	/**
+	 * A line in 2D space using float coordinates
+	 */
 	public static class Double extends Line2D {
-		public double x1, y1, x2, y2;
+		public double x1;
+		public double y1;
+		public double x2;
+		public double y2;
 		
 		public Double() {};
 		
