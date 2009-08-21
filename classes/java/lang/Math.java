@@ -429,7 +429,7 @@ public final class Math
 		
 		// Using a Chebyshev-Pade approximation
 		double x2 = x * x;
-		double y = x * (0.9238318854 - 0.9595498071e-1 * x2)
+		double y = (0.9238318854 - 0.9595498071e-1 * x2) * x
 				/ (0.9238400690 + (0.5797298195e-1 + 0.2031791179e-2 * x2) * x2);
 		
 		return ((neg & 1) == 0) ? y : -y;
