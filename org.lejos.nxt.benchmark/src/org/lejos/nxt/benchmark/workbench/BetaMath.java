@@ -9,6 +9,8 @@ public class BetaMath
 	private static final double SQRT2 = 1.41421356237309504880168872421;
 	private static final double SQRTSQRT2 = 1.18920711500272106671749997056;
 	private static final double LN_SQRTSQRT2 = 0.173286795139986327354308030364;
+	
+	private static final double INV_LN2 = 1.44269504088896340735992468100;
 	private static final double INV_LN_SQRTSQRT2 = 5.77078016355585362943969872400;
 
 	private static final double PIhalf = PI * 0.5;
@@ -178,6 +180,84 @@ public class BetaMath
 			f2 *= SQRTSQRT2;
 		
 		return sum * f2 * f1;
+	}
+	
+	private static class ExpTable
+	{
+		public final static double[] EXPTABLE =
+			{
+				1.,
+				1.06449445891785942956339059464,
+				1.13314845306682631682900722781,
+			    1.20623024942098071065558601045,
+			    1.28402541668774148407342056806,
+			    1.36683794117379636283875677272,
+			    1.45499141461820133605379369199,
+			    1.54883029863413309799855198460,
+			    1.64872127070012814684865078781,
+			    1.75505465696029855724404703660,
+			    1.86824595743222240650183562019,
+			    1.98873746958229183111747734965
+			};
+	}
+	
+	private final static double EXPSTEP = 0.0625;
+	private final static double INV_EXPSTEP = 16;
+	
+	
+	/**
+	 * Exponential function.
+	 * Returns E^x (where E is the base of natural logarithms).
+	 */
+	public static double exp2(double x)
+	{
+		// also catches NaN
+		if (!(x > -750))
+			return (x < 0) ? 0 : Double.NaN;
+		if (x > 710)
+			return Double.POSITIVE_INFINITY;
+
+		int k = (int)(x * INV_LN2);
+		if (x < 0)
+			k--;
+		x -= k * LN2;
+		
+		int k2 = (int)(x * INV_EXPSTEP);
+		x -= k2 * EXPSTEP;
+		
+		//known ranges:
+		//	0 <= $x <= LN_SQRTSQRT2
+		//ergo:
+		//  $xpow will converge quickly towards 0
+
+		double sum = 1;
+		double xpow = x;
+		int fac = 2;
+
+		while (true)
+		{
+			if (xpow < 0x1p-52)
+				break;
+			
+			sum += xpow;
+			xpow = xpow * x / fac++;
+		}
+		
+		double f1 = ExpTable.EXPTABLE[k2];
+		double f2 = Double.longBitsToDouble((long)(k + 1023) << 52);		
+		
+		if (k > 1000)
+		{
+			k -= 1000;
+			f1 *= 0x1p+1000; 
+		}
+		else if (k < -1000)
+		{
+			k += 1000;
+			f1 *= 0x1p-1000; 
+		}
+		
+		return sum * f1 * f2;
 	}
 	
 	public static String doubleToString(double x)
