@@ -97,6 +97,34 @@ public final class MathBench
 		return count;
 	}
 	
+	private static int benchExpNew(int count, String comment, double x)
+	{
+		long nullTime = BenchUtils.getIterationTime(count);
+	
+		// Function calls
+		long start = System.currentTimeMillis();
+		for (int i = 0; i < count; i++)
+			BetaMath.exp(x);
+		long end = System.currentTimeMillis();
+	
+		report(count, "exp (new, "+comment+")", count, "ops", end - start - nullTime);
+		return count;
+	}
+	
+	private static int benchExpNew2(int count, String comment, double x)
+	{
+		long nullTime = BenchUtils.getIterationTime(count);
+	
+		// Function calls
+		long start = System.currentTimeMillis();
+		for (int i = 0; i < count; i++)
+			BetaMath.exp2(x);
+		long end = System.currentTimeMillis();
+	
+		report(count, "exp (new2, "+comment+")", count, "ops", end - start - nullTime);
+		return count;
+	}
+	
 	private static int benchLogHistoric1(int count, String comment, double x)
 	{
 		long nullTime = BenchUtils.getIterationTime(count);
@@ -343,19 +371,55 @@ public final class MathBench
 		countAll += benchExpHistoric1(iterate / 200, "+700", +700);
 		BenchUtils.cleanUp(null);
 		
-		countAll += benchExp(iterate / 2, "-700", -700);
+		countAll += benchExp(iterate, "-700", -700);
 		BenchUtils.cleanUp(null);	
-		countAll += benchExp(iterate / 2, "-0.5", -0.5);
+		countAll += benchExp(iterate, "-0.5", -0.5);
 		BenchUtils.cleanUp(null);
-		countAll += benchExp(iterate * 2, "-0.1", -0.1);
+		countAll += benchExp(iterate, "-0.1", -0.1);
 		BenchUtils.cleanUp(null);
-		countAll += benchExp(iterate * 2, "0.0", 0.0);
+		countAll += benchExp(iterate, "0.0", 0.0);
 		BenchUtils.cleanUp(null);
-		countAll += benchExp(iterate * 2, "+0.1", +0.1);
+		countAll += benchExp(iterate, "+0.1", +0.1);
 		BenchUtils.cleanUp(null);
-		countAll += benchExp(iterate * 2, "+0.5", +0.5);
+		countAll += benchExp(iterate, "+0.5", +0.5);
 		BenchUtils.cleanUp(null);
-		countAll += benchExp(iterate * 2, "+700", +700);
+		countAll += benchExp(iterate, "+0.69", +0.69);
+		BenchUtils.cleanUp(null);
+		countAll += benchExp(iterate, "+700", +700);
+		BenchUtils.cleanUp(null);
+	
+		countAll += benchExpNew(iterate, "-700", -700);
+		BenchUtils.cleanUp(null);	
+		countAll += benchExpNew(iterate, "-0.5", -0.5);
+		BenchUtils.cleanUp(null);
+		countAll += benchExpNew(iterate, "-0.1", -0.1);
+		BenchUtils.cleanUp(null);
+		countAll += benchExpNew(iterate, "0.0", 0.0);
+		BenchUtils.cleanUp(null);
+		countAll += benchExpNew(iterate, "+0.1", +0.1);
+		BenchUtils.cleanUp(null);
+		countAll += benchExpNew(iterate, "+0.17", +0.17);
+		BenchUtils.cleanUp(null);
+		countAll += benchExpNew(iterate, "+0.5", +0.5);
+		BenchUtils.cleanUp(null);
+		countAll += benchExpNew(iterate, "+700", +700);
+		BenchUtils.cleanUp(null);
+	
+		countAll += benchExpNew2(iterate, "-700", -700);
+		BenchUtils.cleanUp(null);	
+		countAll += benchExpNew2(iterate, "-0.5", -0.5);
+		BenchUtils.cleanUp(null);
+		countAll += benchExpNew2(iterate, "-0.1", -0.1);
+		BenchUtils.cleanUp(null);
+		countAll += benchExpNew2(iterate, "0.0", 0.0);
+		BenchUtils.cleanUp(null);
+		countAll += benchExpNew2(iterate, "+0.062", +0.17);
+		BenchUtils.cleanUp(null);
+		countAll += benchExpNew2(iterate, "+0.1", +0.1);
+		BenchUtils.cleanUp(null);
+		countAll += benchExpNew2(iterate, "+0.5", +0.5);
+		BenchUtils.cleanUp(null);
+		countAll += benchExpNew2(iterate, "+700", +700);
 		BenchUtils.cleanUp(null);
 	
 		//infinite loop for subnormal values
