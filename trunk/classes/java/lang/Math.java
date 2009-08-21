@@ -9,15 +9,15 @@ public final class Math
 {
 
 	// Math constants
-	public static final double E = 2.71828182845904523536;
-	public static final double PI = 3.14159265358979323846;
+	public static final double E = 2.71828182845904523536028747135;
+	public static final double PI = 3.14159265358979323846264338328;
 
-	static final double PIhalf = PI * 0.5;
-	static final double PItwice = PI * 2.0;
+	static final double LN2 = 0.693147180559945309417232121458;
+	static final double LN10 = 2.30258509299404568401799145468;
+
+	private static final double PIhalf = PI * 0.5;
+	private static final double PItwice = PI * 2.0;
 	
-	static final double LN10 = 2.30258509299405;
-	static final double LN2 = 0.693147180559945;
-
 	// dividing by 2 for some kind of safety margin
 	private static final float ROUND_FLOAT_MAX = Integer.MAX_VALUE >> 1;
 	private static final float ROUND_FLOAT_MIN = -ROUND_FLOAT_MAX;
