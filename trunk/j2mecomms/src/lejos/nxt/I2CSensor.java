@@ -47,12 +47,12 @@ public class I2CSensor implements SensorConstants {
 	public I2CSensor(I2CPort s, byte sensorType) {
 		port = (byte)s.getId();
 		s.setTypeAndMode(sensorType, NXTProtocol.RAWMODE);
-		try {
+		/*try {
 			nxtCommand.LSGetStatus(this.port); // Dick says to flush out data with Poll?
 			nxtCommand.LSRead(this.port); // Dick says to flush out data with Poll?
 		} catch (IOException ioe) {
 			System.out.println(ioe.getMessage());
-		}
+		}*/
 	}
 	
 	public I2CSensor(I2CPort s) {
