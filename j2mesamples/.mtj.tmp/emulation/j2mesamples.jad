@@ -1,6 +1,6 @@
 MIDlet-1: NXTRemote,leJOS.png,org.lejos.j2mesamples.NXTRemote
 MIDlet-2: BTConnectTest,leJOS.png,org.lejos.j2mesamples.BTConnectTest
-MIDlet-Jar-Size: 85005
+MIDlet-Jar-Size: 84195
 MIDlet-Jar-URL: j2mesamples.jar
 MIDlet-Name: j2mesamples Midlet Suite
 MIDlet-Vendor: Midlet Suite Vendor
