@@ -910,76 +910,15 @@ public class BetaMath
 		1.0/132, 1.0/182, 1.0/240, 1.0/306, 1.0/380
 	};
 	
-	/**
-	 * Only for the interval [0, 1].
-	 */
-	public static double sin_taylor(double x)
-	{
-		double[] st = SIN_TABLE;
-		
-		double r = 1;
-		double x2 = x * x;
-		double pow = x2 * st[0];
-		int i = 0;
-		
-		while (true)
-		{
-			if (pow < 0x1p-52)
-				break;
-
-			r -= pow;			
-			pow = pow * x2 * st[++i];
-			
-			if (pow < 0x1p-52)
-				break;
-
-			r += pow;			
-			pow = pow * x2 * st[++i];
-		}		
-		
-		return x * r;
-	}
-	
-	/**
-	 * Only for the interval [0, 1].
-	 */
-	public static double cos_taylor(double x)
-	{
-		double[] ct = COS_TABLE;
-		
-		double r = 1;
-		double x2 = x * x;
-		double pow = x2 * ct[0];
-		int i = 0;
-		
-		while (true)
-		{
-			if (pow < 0x1p-52)
-				break;
-
-			r -= pow;
-			pow = pow * x2 * ct[++i];
-			
-			if (pow < 0x1p-52)
-				break;
-
-			r += pow;			
-			pow = pow * x2 * ct[++i];
-		}
-		
-		return r;
-	}
-	
-	private static final double SIN_A2 = 0.967866695922098183389138876172;
-	private static final double SIN_A3 = -0.135908892269150990008530277147;
-	private static final double SIN_A4 = 0.00417375937556560266471103059512;
-	private static final double SIN_A5 = -0.0000343897139435579031078997741221;
-
-	private static final double SIN_B1 = 0.967866695922099679420692569107;
-	private static final double SIN_B2 = 0.0254022237178363253996328845210;
-	private static final double SIN_B3 = 0.000341907529354899772220973830092;
-	private static final double SIN_B4 = 0.00000294671904539375123810742399296;
-	private static final double SIN_B5 = 1.48336192403385646205105712069E-8;
+	private static final double SIN_A2 = +9.67866695922098183389138876172E-1;
+	private static final double SIN_A3 = -1.35908892269150990008530277147E-1;
+	private static final double SIN_A4 = +4.17375937556560266471103059512E-3;
+	private static final double SIN_A5 = -3.43897139435579031078997741221E-5;
+	private static final double SIN_B1 = +9.67866695922099679420692569107E-1;
+	private static final double SIN_B2 = +2.54022237178363253996328845210E-2;
+	private static final double SIN_B3 = +3.41907529354899772220973830092E-4;
+	private static final double SIN_B4 = +2.94671904539375123810742399296E-6;
+	private static final double SIN_B5 = +1.48336192403385646205105712069E-8;
 
 
 	/**
@@ -1016,6 +955,18 @@ public class BetaMath
 		
 		return ((neg & 1) == 0) ? y : -y;
 	}
+	
+	private static final double COS_A1 = +9.72732321294239136502207483090E-1;
+	private static final double COS_A2 = -4.64716938682737942725980820852E-1;
+	private static final double COS_A3 = +2.99472979677489973482806948262E-2;
+	private static final double COS_A4 = -5.67993013869945564463934244009E-4;
+	private static final double COS_A5 = +3.28606373638995160030255243845E-6;
+
+	private static final double COS_B1 = +9.72732321294239140205689412301E-1;
+	private static final double COS_B2 = +2.16492219643813828919890199979E-2;
+	private static final double COS_B3 = +2.41395562682381526345494254226E-4;
+	private static final double COS_B4 = +1.67096518623119948073404531331E-6;
+	private static final double COS_B5 = +6.45615951608575250447347094117E-9;
 
 	/**
 	 * Cosine function.
@@ -1045,7 +996,10 @@ public class BetaMath
 			x = PI - x;
 		}
 		
-		double y = (x < PIhalfhalf) ? cos_taylor(x) : sin_taylor(PIhalf - x);		
+		double x2 = x * x;
+		double y = (COS_A1 + (COS_A2 + (COS_A3 + (COS_A4 + COS_A5*x2)*x2)*x2)*x2) /
+			(COS_B1 + (COS_B2 + (COS_B3 + (COS_B4 + COS_B5*x2)*x2)*x2)*x2);
+		
 		return ((neg & 1) == 0) ? y : -y;
 	}
 }
