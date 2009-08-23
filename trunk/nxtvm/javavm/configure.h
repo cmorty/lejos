@@ -81,11 +81,6 @@
 #define EXECUTE_FROM_FLASH               1
 
 /**
- * If not 0, use diagnostic statistical instrumentation
- */
-#define USE_VARSTAT                      0
-
-/**
  * If not 0 include the Remote Console output functions
  */
 #define REMOTE_CONSOLE                   0

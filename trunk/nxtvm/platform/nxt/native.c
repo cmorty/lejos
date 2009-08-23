@@ -144,10 +144,6 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
   case readSensorValue_4I_5I:
     push_word(sp_read(paramBase[0], SP_ANA));
     break;
-  case setADTypeById_4II_5V:
-    sp_set(paramBase[0], SP_DIGI0, paramBase[1] & 1);
-    sp_set(paramBase[0], SP_DIGI1, paramBase[1] & 2);
-    break;
   case setPowerTypeById_4II_5V:
     sp_set_power(paramBase[0], paramBase[1]);
     break;
@@ -158,16 +154,6 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
   case totalMemory_4_5J:
     push_word(0);
     push_word(getHeapSize());
-    break;
-  case test_4Ljava_3lang_3String_2Z_5V:
-    if (!paramBase[1]) {
-      return throw_exception(error);
-    }
-    break;
-  case testEQ_4Ljava_3lang_3String_2II_5V:
-    if (paramBase[1] != paramBase[2]) {
-      return throw_exception(error);
-    }
     break;
   case floatToRawIntBits_4F_5I:	// Fall through
   case intBitsToFloat_4I_5F:
@@ -425,9 +411,6 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
   case gc_4_5V:
     // Restartable garbage collection
     return garbage_collect();
-  case diagn_4II_5I:
-    push_word (sys_diagn(paramBase[0], paramBase[1]));
-    break;
   case shutDown_4_5V:
     display_clear(1);
     while (1) nxt_avr_power_down(); // does not return 
@@ -445,9 +428,6 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
     return execute_program(paramBase[0]);
   case setDebug_4_5V:
     set_debug(word2ptr(paramBase[0]));
-    break;
-  case peekWord_4I_5I:
-    push_word(*((unsigned long *)(paramBase[0])));
     break;
   case eventOptions_4II_5I:
     {

@@ -110,12 +110,6 @@ handle_uncaught_exception(Object * exception,
     display_goto_xy(0, 3);
     display_string("Size: ");
     display_int(failed_alloc_size << 1, 0);
-#if USE_VARSTAT
-    display_goto_xy(0, 4);
-    disp_varstat( &mem_freeblk_vs);
-    display_goto_xy(0, 6);
-    disp_varstat( &mem_usedblk_vs);
-#endif
   }
   display_update();
   wait_for_power_down_signal();
