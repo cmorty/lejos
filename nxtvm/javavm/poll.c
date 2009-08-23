@@ -34,7 +34,6 @@ void poll_inputs()
   short i;
   short port = 0;
   short *pOldValue = old_sensor_values;
-  char packet_available;
 
   throttle_count--;
   if( throttle_count == 0){
@@ -65,13 +64,6 @@ void poll_inputs()
     changed |= button_state ^ old_button_state;
     old_button_state = button_state;
 
-    /*
-    // Check serial status
-    check_for_data ( &packet_available, null);
-    if (packet_available) {
-        changed |= 1 << SERIAL_RECEIVED_POS;
-    }
-    */
     // Only wake threads up if things have changed since
     // we last looked.    
     if (changed)

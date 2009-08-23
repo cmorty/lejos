@@ -52,18 +52,6 @@ static unsigned int memory_free;    /* total number of free words in heap */
 
 TWOBYTES failed_alloc_size;
 
-#if USE_VARSTAT
-VarStat gc_run_vs;
-VarStat gc_sweep_vs;
-VarStat gc_total_vs;
-VarStat mem_alloctm_vs;
-VarStat mem_freeblk_vs;
-VarStat mem_usedblk_vs;
-VarStat gc_overflow_vs;
-VarStat gc_mark_vs;
-VarStat gc_roots_vs;
-#endif
-
 // Location of major memory based structures. Used to allow Java access to
 // VM memory.
 byte *memory_base[MEM_MEM+1];
@@ -81,69 +69,6 @@ static Object *java_allocate (JINT size);
 #define get_size(OBJ_) (is_array(OBJ_) ? array_size(OBJ_) : obj_size(OBJ_))
 #define array_element_size(OBJ_) (get_class_record(get_class_index(OBJ_))->classSize)
 #define get_free_size(OBJ_) ((is_std_array(OBJ_) ? NORM_OBJ_SIZE : BA_OBJ_SIZE) + get_array_length(OBJ_))
-
-#if USE_VARSTAT
-
-void varstat_init(VarStat* vs)
-{
-  vs->last = 0;
-  vs->min = 0x7FFFFFFF;
-  vs->max = 0;
-  vs->sum = 0;
-  vs->count = 0;
-}
-
-void varstat_adjust(VarStat* vs, int v)
-{
-  vs->last = v;
-  if(vs->max < v)
-    vs->max = v;
-  if(vs->min > v)
-    vs->min = v;
-  vs->sum += v;
-  vs->count ++;
-}
-
-int varstat_get(VarStat* vs, int id)
-{
-  int val = 0;
-
-  switch(id)
-  {
-  case 0:  val = vs->last;  break;
-  case 1:  val = vs->min;   break;
-  case 2:  val = vs->max;   break;
-  case 3:  val = vs->sum;   break;
-  case 4:  val = vs->count; break;
-  }
-
-  return val;
-}
-
-void varstat_reset()
-{
-  varstat_init(&gc_run_vs);
-  varstat_init(&gc_sweep_vs);
-  varstat_init(&gc_total_vs);
-  varstat_init(&mem_alloctm_vs);
-  varstat_init(&mem_freeblk_vs);
-  varstat_init(&mem_usedblk_vs);
-  varstat_init(&gc_overflow_vs);
-  varstat_init(&gc_mark_vs);
-  varstat_init(&gc_roots_vs);
-}
-
-#define varstat_gettime()       get_sys_time()
-
-#else
-
-#define varstat_init(vs)
-#define varstat_adjust(vs, v)
-#define varstat_get(vs, id)    0
-#define varstat_gettime()       0
-#define varstat_reset()
-
-#endif
 
 /**
  * Zeroes out memory.
@@ -596,7 +521,6 @@ void memory_init ()
   memory_size = 0;
   memory_free = 0;
 
-  varstat_reset();
 }
 
 
@@ -737,7 +661,6 @@ static int memRequired;        /* Target amount of memory needed */
  */
 static void mark_object(Object *obj, int callLimit);
 static TWOBYTES *try_allocate(unsigned int size);
-static void collect_mem_stat(void);
 
 /**
  * "Mark" flag manipulation functions.
@@ -929,7 +852,6 @@ void memory_add_region (byte *start, byte *end)
 static Object *java_allocate (JINT size)
 {
   Object *ref;
-  long t0 = varstat_gettime();
   // Align memory to boundary appropriate for system  
   size = (size + (MEMORY_ALIGNMENT-1)) & ~(MEMORY_ALIGNMENT-1);
   ref = (Object *)try_allocate(size);
@@ -951,14 +873,12 @@ static Object *java_allocate (JINT size)
       assert (outOfMemoryError != null, MEMORY5);
       #endif
       throw_exception (outOfMemoryError);
-      varstat_adjust(&mem_alloctm_vs, varstat_gettime() - t0);
       return JNULL;
     }
   }
   if (ref != JNULL)
   {
     // We have allocated the required memory, return it.
-    varstat_adjust(&mem_alloctm_vs, varstat_gettime() - t0);
     return ref;
   }
 
@@ -972,7 +892,6 @@ static Object *java_allocate (JINT size)
   // Say how much memory we need...
   system_wait(&gcLock);
   memRequired += 2*size;
-  varstat_adjust(&mem_alloctm_vs, varstat_gettime() - t0);
   return JNULL;
 }
 
@@ -1429,7 +1348,6 @@ void mark_overflow()
  */
 void gc_run_collector(void)
 {
-  int t0 = varstat_gettime();
   switch (gcPhase)
   {
     case GC_IDLE:
@@ -1438,11 +1356,7 @@ void gc_run_collector(void)
       overflowScan = heap_end;
       mark_exception_objects();
       mark_static_objects();
-        {
-          int t1 = varstat_gettime();
       mark_local_objects();
-          varstat_adjust(&gc_roots_vs, varstat_gettime() - t1);
-        }
       newlyFreed = 0;
       sweep_base = heap_start;
       sweep_free = NULL;
@@ -1453,17 +1367,11 @@ void gc_run_collector(void)
       // have completed an overflow scan of the heap.
       while ((overflowScan != heap_end) || (markQTl != markQHd))
       {
-        {
-          int t1 = varstat_gettime();
-          process_queue();
-          varstat_adjust(&gc_mark_vs, varstat_gettime() - t1);
-        }
+        process_queue();
         if (GC_TIMEOUT()) goto exit;
         if (overflowScan != heap_end)
         {
-          int t1 = varstat_gettime();
           mark_overflow();
-          varstat_adjust(&gc_overflow_vs, varstat_gettime() - t1);
         }
         if (GC_TIMEOUT()) goto exit;
       }
@@ -1473,11 +1381,7 @@ void gc_run_collector(void)
       gcPhase = GC_SWEEP;
       // Fall through
     case GC_SWEEP:
-      {
-      int t2 = varstat_gettime();
       sweep();
-      varstat_adjust(&gc_sweep_vs, varstat_gettime() - t2);
-      }
       if (memRequired > 0 && newlyFreed > memRequired)
       {
         // We may have enough free space to meet current requests, so wake up
@@ -1497,7 +1401,7 @@ void gc_run_collector(void)
       system_notify(&gcLock, true);
   }
 exit:
-  varstat_adjust(&gc_run_vs, varstat_gettime() - t0);
+  return;
 }
 
 /**
@@ -1505,7 +1409,6 @@ exit:
  */
 int garbage_collect()
 {
-  int t0 = varstat_gettime();
   if (is_gc_retry())
   {
     // The current thread already owns the memory lock so this must
@@ -1520,48 +1423,9 @@ int garbage_collect()
   //enter_monitor(currentThread, &gcLock);
   //monitor_wait(&gcLock, 0);
   system_wait(&gcLock);
-  varstat_adjust(&gc_total_vs, varstat_gettime() - t0);
   return EXEC_RETRY;
 }
 
-#ifdef XXXX
-static void collect_mem_stat(void)
-{
-  varstat_init(&mem_freeblk_vs);
-  varstat_init(&mem_usedblk_vs);
-
-  TWOBYTES* ptr = heap_start;
-  TWOBYTES* regionTop = heap_end;
-  while(ptr < regionTop)
-  {
-    unsigned int blockHeader = *ptr;
-    unsigned int size;
-
-    if(blockHeader & IS_ALLOCATED_MASK)
-    {
-      Object* obj = (Object*) ptr;
-
-      /* jump over allocated block */
-      size = (blockHeader & IS_ARRAY_MASK) ? get_array_size(obj)
-                                           : get_object_size(obj);
-        
-      // Round up according to alignment
-      size = (size + (MEMORY_ALIGNMENT-1)) & ~(MEMORY_ALIGNMENT-1);
-
-      varstat_adjust(&mem_usedblk_vs, size << 1);
-    }
-    else
-    {
-      /* continue searching */
-      size = blockHeader;
-
-      varstat_adjust(&mem_freeblk_vs, size << 1);
-    }
-
-    ptr += size;
-  }
-}
-#endif
 /**
  * The following two functions form the garbage collector "write barrier"
  * they operate to preserve the "snapshot at the begining" data model used
@@ -1634,41 +1498,3 @@ void gc_update_array(Object *obj)
   }
   set_gc_marked(obj, GC_BLACK);
 }
-
-
-
-int sys_diagn(int code, int param)
-{
-#if GARBAGE_COLLECTOR && USE_VARSTAT
-  switch(code)
-  {
-  case 0:
-    varstat_reset();
-    break;
-  case 1:
-    return varstat_get(&gc_run_vs, param);
-  case 2:
-    return varstat_get(&gc_sweep_vs, param);
-  case 3:
-    collect_mem_stat();
-    break;
-  case 4:
-    return varstat_get(&mem_freeblk_vs, param);
-  case 5:
-    return varstat_get(&mem_usedblk_vs, param);
-  case 6:
-    return varstat_get(&gc_total_vs, param);
-  case 7:
-    return varstat_get(&mem_alloctm_vs, param);
-  case 8:
-    return varstat_get(&gc_overflow_vs, param);
-  case 9:
-    return varstat_get(&gc_mark_vs, param);
-  case 10:
-    return varstat_get(&gc_roots_vs, param);
-  }
-#endif
-
-  return 0;
-}
-

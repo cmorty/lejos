@@ -44,7 +44,6 @@ join(J)V
 # java.lang.System
 currentTimeMillis()J
 exit(I)V
-diagn(II)I
 arraycopy(Ljava/lang/Object;ILjava/lang/Object;II)V
 gc()V
 shutDown()V
@@ -58,16 +57,11 @@ getMessage()Ljava/lang/String;
 
 # lejos.nxt.SensorPort
 readSensorValue(I)I
-setADTypeById(II)V
 setPowerTypeById(II)V
 
 # lejos.nxt.Poller
 setPoller()V
 setThrottle(I)V
-
-# josx.util.Assertion
-test(Ljava/lang/String;Z)V
-testEQ(Ljava/lang/String;II)V
 
 # java.lang.Float
 floatToRawIntBits(F)I
@@ -112,7 +106,6 @@ btSend([BI)V
 btReceive([B)V
 btGetBC4CmdMode()I
 btSetArmCmdMode(I)V
-btStartADConverter()V
 btSetResetLow()V
 btSetResetHigh()V
 btWrite([BII)I
@@ -132,7 +125,6 @@ flashExec(II)I
 #lejos.nxt.DebugInterface
 executeProgram(I)V
 setDebug()V
-peekWord(I)I
 eventOptions(II)I
 suspendThread(Ljava/lang/Object;)V
 resumeThread(Ljava/lang/Object;)V
