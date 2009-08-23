@@ -12,6 +12,7 @@ import lejos.nxt.LCD;
 import lejos.nxt.Settings;
 import lejos.nxt.Sound;
 import lejos.nxt.SystemSettings;
+import lejos.nxt.SensorPort;
 import lejos.util.TextMenu;
 import lejos.nxt.comm.BTConnection;
 import lejos.nxt.comm.Bluetooth;
@@ -602,6 +603,10 @@ public class StartUpText
             }
         };
         tuneThread.start();
+        // Make sure color sensor can be used remotely, this will also reset
+        // the sensors
+        for(SensorPort sp : SensorPort.PORTS)
+            sp.enableColorSensor();
         // Run default program if required
         if (NXT.getProgramExecutionsCount() == 1 &&
                 !Button.LEFT.isPressed() &&

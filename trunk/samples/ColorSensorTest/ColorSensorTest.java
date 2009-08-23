@@ -36,7 +36,7 @@ public class ColorSensorTest
                 {
                     cs.readValues(vals);
                     cs.readRawValues(rawVals);
-                    ColorLightSensor.Color color = cs.readColor();
+                    Colors.Color color = cs.readColor();
                     int colorVal = cs.readValue();
                     for(int i = 0; i < vals.length; i++)
                     {
