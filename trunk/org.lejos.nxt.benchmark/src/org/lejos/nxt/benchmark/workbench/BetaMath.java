@@ -13,6 +13,7 @@ public class BetaMath
 	
 	private static final double INV_LN2 = 1.44269504088896340735992468100;
 	private static final double INV_SQRT2 = 0.707106781186547524400844362105;
+	private static final double INV_SQRTSQRT2 = 0.840896415253714543031125476233;
 	private static final double INV_LN_SQRTSQRT2 = 5.77078016355585362943969872400;
 
 	private static final double PIhalf = PI * 0.5;
@@ -165,23 +166,32 @@ public class BetaMath
 	
 		//extract mantissa and reset exponent
 		long bits = Double.doubleToRawLongBits(x);
-		m += (int)(bits >>> 52);
+		m = (m + (int)(bits >>> 52)) << 2;
 		bits = (bits & 0x000FFFFFFFFFFFFFL) | 0x3FF0000000000000L;
-		x = Double.longBitsToDouble(bits) * INV_SQRT2;
+		x = Double.longBitsToDouble(bits);
+		
+		if (x > SQRT2)
+		{
+			m+=2;
+			x *= INV_SQRT2;
+		}
+		if (x > SQRTSQRT2)
+		{
+			m++;
+			x *= INV_SQRTSQRT2;
+		}
 		
 		double zeta = (x - 1.0) / (x + 1.0);
 		double zeta2 = zeta * zeta;		
 		
 		//known ranges:
-		//	1 <= $x < 2
-		//  0 <= $zeta < 1/3
-		//  0 <= $zeta2 < 1/9
-		//ergo:
-		//  $zetapow will converge quickly towards 0
+		//	1 <= $x < 1.18
+		//  0 <= $zeta < 0.0864
+		//  0 <= $zeta2 < 0.00747
 
 		double r = LOG_COEFF_00+(LOG_COEFF_01+(LOG_COEFF_02+(LOG_COEFF_03+(LOG_COEFF_04+(LOG_COEFF_05+(LOG_COEFF_06+(LOG_COEFF_07+(LOG_COEFF_08+(LOG_COEFF_09+(LOG_COEFF_10+(LOG_COEFF_11+(LOG_COEFF_12)*zeta2)*zeta2)*zeta2)*zeta2)*zeta2)*zeta2)*zeta2)*zeta2)*zeta2)*zeta2)*zeta2)*zeta2;
 		
-		return ((m << 1) + 1) * LN_SQRT2 + zeta * r;
+		return m * LN_SQRTSQRT2 + zeta * r;
 	}
 	
 	/**
