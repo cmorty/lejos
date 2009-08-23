@@ -1,5 +1,7 @@
 package java.lang;
 
+import java.util.Random;
+
 /**
  * Mathematical functions.
  * 
@@ -29,7 +31,7 @@ public final class Math
 	private static final double ROUND_DOUBLE_MIN = -ROUND_DOUBLE_MAX;
 
 	// Used to generate random numbers.
-	private static java.util.Random RAND = new java.util.Random(System.currentTimeMillis());
+	private static Random RAND = new Random(System.currentTimeMillis());
 
 	// public static boolean isNaN (double d) {
 	// return d != d;
@@ -228,16 +230,15 @@ public final class Math
 	 * Random number generator. Returns a double greater than 0.0 and less than
 	 * 1.0
 	 */
-	public static double random()
+	public static synchronized double random()
 	{
-		final int MAX_INT = 2147483647;
-		int n = MAX_INT;
+		int n = Integer.MAX_VALUE;
 
 		// Just to ensure it does not return 1.0
-		while (n == MAX_INT)
+		while (n == Integer.MAX_VALUE)
 			n = abs(RAND.nextInt());
 
-		return n * (1.0 / MAX_INT);
+		return n * (1.0 / Integer.MAX_VALUE);
 	}
 
 	/**
