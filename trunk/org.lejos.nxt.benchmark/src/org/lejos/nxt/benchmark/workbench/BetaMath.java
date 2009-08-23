@@ -189,7 +189,7 @@ public class BetaMath
 		//  0 <= $zeta < 0.0864
 		//  0 <= $zeta2 < 0.00747
 
-		double r = LOG_COEFF_00+(LOG_COEFF_01+(LOG_COEFF_02+(LOG_COEFF_03+(LOG_COEFF_04+(LOG_COEFF_05+(LOG_COEFF_06+(LOG_COEFF_07+(LOG_COEFF_08+(LOG_COEFF_09+(LOG_COEFF_10+(LOG_COEFF_11+(LOG_COEFF_12)*zeta2)*zeta2)*zeta2)*zeta2)*zeta2)*zeta2)*zeta2)*zeta2)*zeta2)*zeta2)*zeta2)*zeta2;
+		double r = LOG_COEFF_00+(LOG_COEFF_01+(LOG_COEFF_02+(LOG_COEFF_03+(LOG_COEFF_04+(LOG_COEFF_05+(LOG_COEFF_06+(LOG_COEFF_07+(LOG_COEFF_08+(LOG_COEFF_09)*zeta2)*zeta2)*zeta2)*zeta2)*zeta2)*zeta2)*zeta2)*zeta2)*zeta2;
 		
 		return m * LN_SQRTSQRT2 + zeta * r;
 	}
