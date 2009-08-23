@@ -9,7 +9,7 @@
   <li><a href="#preliminiaries">Preliminiaries</a></li>
   <li><a href="#installation_and_set_up">Installation and Set Up</a></li>
   <li><a href="#using-lejos">Using leJOS NXJ</a></li>
-  <li><a href="#compiling">Compiling and running your first code</a></li>
+  <li><a href="#compiling">Compiling and running your first Java code on the NXT</a></li>
   <li><a href="#tools">leJOS NXJ Tools</a></li>
   <li><a href="#debugmonitor">Using the debug monitor</a></li>
   <li><a href="#limitations">Known limitations in leJOS</a></li>
@@ -54,6 +54,9 @@ and support for I2C sensors, including those from third parties. The built-in ta
 the NXT motors have enabled much improved control over speed, steering and navigation.
 </p>
 <p>Bluetooth and USB communications are a great improvement over the infra-red link used by the RCX.</p>
+
+<p> Note that there is a <a href="http://lejos.sourceforge.net/nxt/nxj/tutorial/index.htm">tutorial</a> on how to install and use leJOS NXJ which contains
+more detailed information than is included in this document. Refer to that if you need help with installing or running leJOS or want to learn about specific features.</p>
 
 <h1><a name="preliminiaries">Preliminaries</a></h1>
 <ul>
@@ -139,7 +142,7 @@ reset button with a paper clip for 4 seconds or more. The NXT brick will start t
 
 <p>If your NXT freezes at any time, remove and re-insert a battery.</p>
 
-<h1><a name="compiling">Compiling and running your first code</a></h1>
+<h1><a name="compiling">Compiling and running your first Java code</a> on the NXT</h1>
 
 To compile, link and download the Tune sample:
 
@@ -202,7 +205,7 @@ At this release, all systems use NXTCommBluecove as the Bluetooth comms driver. 
 <p>The properties file, lejos_nxt/bin/nxj.properties, can be modified to select different comms drivers.</p>
 
 <p>leJOS NXJ programs that run on the PC and use the PC API, should be compiled by <em>nxjpc</em> rather than <em>nxjc</em>. They can be
-be run using <em>nxjpcc</em>.</p>
+be run using <em>nxjpcc</em>. There are examples of these in these in the <em>pcsamples</em> project.</p>
 
 <p><em>nxjbrowse</em> lists the files on the NXT and includes their size, and start and end pages. 
 It can be used to delete, upload and download programs and other files. 
