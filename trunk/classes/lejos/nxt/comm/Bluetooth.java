@@ -176,12 +176,6 @@ public class Bluetooth extends NXTCommDevice
 	public static native int btGetBC4CmdMode();
 	
 	/**
-	 * Low-level method to start ADC converter
-	 *
-	 */
-	public static native void btStartADConverter();
-
-	/**
 	 * Low-level method to take the BC4 reset line low
 	 */
 	public static native void btSetResetLow();
