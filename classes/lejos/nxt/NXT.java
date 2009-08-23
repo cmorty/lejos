@@ -23,12 +23,7 @@ public class NXT {
 	 * Boot into firmware update mode.
 	 */
 	public static native void boot();
-	
-	 /**
-	  * Diagnostic tool (for firmware developers only)
-	  */
-	 public static native int diagn(int code, int param);
-	 
+		 
 	 /**
 	  * Get the number of times a Java program (including the menu)
 	  * has executed since the brick was switched on
