@@ -8,9 +8,11 @@ public class BetaMath
 	
 	private static final double SQRT2 = 1.41421356237309504880168872421;
 	private static final double SQRTSQRT2 = 1.18920711500272106671749997056;
+	private static final double LN_SQRT2 = 0.346573590279972654708616060729;
 	private static final double LN_SQRTSQRT2 = 0.173286795139986327354308030364;
 	
 	private static final double INV_LN2 = 1.44269504088896340735992468100;
+	private static final double INV_SQRT2 = 0.707106781186547524400844362105;
 	private static final double INV_LN_SQRTSQRT2 = 5.77078016355585362943969872400;
 
 	private static final double PIhalf = PI * 0.5;
@@ -122,6 +124,64 @@ public class BetaMath
 		}
 		
 		return m * LN2 + 2 * zeta * r;
+	}
+	
+	private static double LOG_COEFF_00 = 2.0;
+	private static double LOG_COEFF_01 = 0.666666666666666666666666666667;
+	private static double LOG_COEFF_02 = 0.4;
+	private static double LOG_COEFF_03 = 0.285714285714285714285714285714;
+	private static double LOG_COEFF_04 = 0.222222222222222222222222222222;
+	private static double LOG_COEFF_05 = 0.181818181818181818181818181818;
+	private static double LOG_COEFF_06 = 0.153846153846153846153846153846;
+	private static double LOG_COEFF_07 = 0.133333333333333333333333333333;
+	private static double LOG_COEFF_08 = 0.117647058823529411764705882353;
+	private static double LOG_COEFF_09 = 0.105263157894736842105263157895;
+	private static double LOG_COEFF_10 = 0.0952380952380952380952380952381;
+	private static double LOG_COEFF_11 = 0.0869565217391304347826086956522;
+	private static double LOG_COEFF_12 = 0.08;
+	
+	/**
+	 * Natural log function. Returns log(x) to base E.
+	 */
+	public static double log2(double x)
+	{
+		// also catches NaN
+		if (!(x > 0))
+			return (x == 0) ? Double.NEGATIVE_INFINITY : Double.NaN;
+		if (x == Double.POSITIVE_INFINITY)
+			return Double.POSITIVE_INFINITY;
+	
+		// Algorithm has been derived from the one given at
+		// http://www.geocities.com/zabrodskyvlada/aat/a_contents.html 
+
+		int m;
+		if (x >= Double.MIN_NORMAL)
+			m = -1023;
+		else
+		{
+			m = -1023-64;
+			x *= 0x1p64;
+		}
+	
+		//extract mantissa and reset exponent
+		long bits = Double.doubleToRawLongBits(x);
+		m += (int)(bits >>> 52);
+		bits = (bits & 0x000FFFFFFFFFFFFFL) | 0x3FF0000000000000L;
+		x = Double.longBitsToDouble(bits) * INV_SQRT2;
+		
+		double zeta = (x - 1.0) / (x + 1.0);
+		double zeta2 = zeta * zeta;		
+		
+		//known ranges:
+		//	1 <= $x < 2
+		//  0 <= $zeta < 1/3
+		//  0 <= $zeta2 < 1/9
+		//ergo:
+		//  $zetapow will converge quickly towards 0
+
+		double r = LOG_COEFF_00+(LOG_COEFF_01+(LOG_COEFF_02+(LOG_COEFF_03+(LOG_COEFF_04+(LOG_COEFF_05+(LOG_COEFF_06+(LOG_COEFF_07+(LOG_COEFF_08+(LOG_COEFF_09+(LOG_COEFF_10+(LOG_COEFF_11+(LOG_COEFF_12)*zeta2)*zeta2)*zeta2)*zeta2)*zeta2)*zeta2)*zeta2)*zeta2)*zeta2)*zeta2)*zeta2)*zeta2;
+		
+		return ((m << 1) + 1) * LN_SQRT2 + zeta * r;
 	}
 	
 	/**
@@ -261,6 +321,7 @@ public class BetaMath
 		return sum * f2;
 	}
 	
+	// Coefficients of Remez[11,0] approximation of exp(x) for x=0..ln(2)
 	private static final double EXP_COEFF_00 = 0.999999999999999996945413312322;
 	private static final double EXP_COEFF_01 = 1.00000000000000133475235568738;
 	private static final double EXP_COEFF_02 = 0.499999999999904260125463328703;
@@ -949,17 +1010,44 @@ public class BetaMath
 		return neg ? -r2 : r2;
 	}
 	
-	private static final double SIN_A2 = +9.67866695922098183389138876172E-1;
-	private static final double SIN_A3 = -1.35908892269150990008530277147E-1;
-	private static final double SIN_A4 = +4.17375937556560266471103059512E-3;
-	private static final double SIN_A5 = -3.43897139435579031078997741221E-5;
-	private static final double SIN_B1 = +9.67866695922099679420692569107E-1;
-	private static final double SIN_B2 = +2.54022237178363253996328845210E-2;
-	private static final double SIN_B3 = +3.41907529354899772220973830092E-4;
-	private static final double SIN_B4 = +2.94671904539375123810742399296E-6;
-	private static final double SIN_B5 = +1.48336192403385646205105712069E-8;
+	// Coefficients of taylor series of sin(x)
+	private static final double SIN_COEFF_01 = +1.0000000000000000000000000000000000000000;
+	private static final double SIN_COEFF_03 = -0.1666666666666666666666666666666666666667;
+	private static final double SIN_COEFF_05 = +0.8333333333333333333333333333333333333333e-2;
+	private static final double SIN_COEFF_07 = -0.1984126984126984126984126984126984126984e-3;
+	private static final double SIN_COEFF_09 = +0.2755731922398589065255731922398589065256e-5;
+	private static final double SIN_COEFF_11 = -0.2505210838544171877505210838544171877505e-7;
+	private static final double SIN_COEFF_13 = +0.1605904383682161459939237717015494793273e-9;
+	private static final double SIN_COEFF_15 = -0.7647163731819816475901131985788070444155e-12;
+	private static final double SIN_COEFF_17 = +0.2811457254345520763198945583010320016233e-14;
+	private static final double SIN_COEFF_19 = -0.8220635246624329716955981236872280749221e-17;
+	private static final double SIN_COEFF_21 = +0.1957294106339126123084757437350543035529e-19;
+	
+	// Coefficients of taylor series of cos(x)
+	private static final double COS_COEFF_00 = +1.0000000000000000000000000000000000000000;
+	private static final double COS_COEFF_02 = -0.5000000000000000000000000000000000000000;
+	private static final double COS_COEFF_04 = +0.4166666666666666666666666666666666666667e-1;
+	private static final double COS_COEFF_06 = -0.1388888888888888888888888888888888888889e-2;
+	private static final double COS_COEFF_08 = +0.2480158730158730158730158730158730158730e-4;
+	private static final double COS_COEFF_10 = -0.2755731922398589065255731922398589065256e-6;
+	private static final double COS_COEFF_12 = +0.2087675698786809897921009032120143231254e-8;
+	private static final double COS_COEFF_14 = -0.1147074559772972471385169797868210566623e-10;
+	private static final double COS_COEFF_16 = +0.4779477332387385297438207491117544027597e-13;
+	private static final double COS_COEFF_18 = -0.1561920696858622646221636435005733342352e-15;
+	private static final double COS_COEFF_20 = +0.4110317623312164858477990618436140374610e-18;
 
-
+	private static double sin_taylor(double x)
+	{
+		double x2 = x * x;
+		return (SIN_COEFF_01+(SIN_COEFF_03+(SIN_COEFF_05+(SIN_COEFF_07+(SIN_COEFF_09+(SIN_COEFF_11+(SIN_COEFF_13+(SIN_COEFF_15)*x2)*x2)*x2)*x2)*x2)*x2)*x2)*x;
+	}
+	
+	private static double cos_taylor(double x)
+	{
+		double x2 = x * x;
+		return (COS_COEFF_00+(COS_COEFF_02+(COS_COEFF_04+(COS_COEFF_06+(COS_COEFF_08+(COS_COEFF_10+(COS_COEFF_12+(COS_COEFF_14)*x2)*x2)*x2)*x2)*x2)*x2)*x2);
+	}
+	
 	/**
 	 * Sine function.
 	 */
@@ -988,25 +1076,15 @@ public class BetaMath
 		if (x > PIhalf)
 			x = PI - x;	
 		
-		double x2 = x * x;
-		double y = (SIN_A2 + (SIN_A3 + (SIN_A4 + SIN_A5*x2)*x2)*x2)*x /
-			(SIN_B1 + (SIN_B2 + (SIN_B3 + (SIN_B4 + SIN_B5*x2)*x2)*x2)*x2);
+		double y;		
+		if (x < PIhalfhalf)
+			y = sin_taylor(x);
+		else
+			y = cos_taylor(PIhalf - x);
 		
 		return ((neg & 1) == 0) ? y : -y;
 	}
 	
-	private static final double COS_A1 = +9.72732321294239136502207483090E-1;
-	private static final double COS_A2 = -4.64716938682737942725980820852E-1;
-	private static final double COS_A3 = +2.99472979677489973482806948262E-2;
-	private static final double COS_A4 = -5.67993013869945564463934244009E-4;
-	private static final double COS_A5 = +3.28606373638995160030255243845E-6;
-
-	private static final double COS_B1 = +9.72732321294239140205689412301E-1;
-	private static final double COS_B2 = +2.16492219643813828919890199979E-2;
-	private static final double COS_B3 = +2.41395562682381526345494254226E-4;
-	private static final double COS_B4 = +1.67096518623119948073404531331E-6;
-	private static final double COS_B5 = +6.45615951608575250447347094117E-9;
-
 	/**
 	 * Cosine function.
 	 */
@@ -1035,100 +1113,30 @@ public class BetaMath
 			x = PI - x;
 		}
 		
-		double x2 = x * x;
-		double y = (COS_A1 + (COS_A2 + (COS_A3 + (COS_A4 + COS_A5*x2)*x2)*x2)*x2) /
-			(COS_B1 + (COS_B2 + (COS_B3 + (COS_B4 + COS_B5*x2)*x2)*x2)*x2);
-		
-		return ((neg & 1) == 0) ? y : -y;
-	}
-
-	private static final double TAYLOR_SIN_01 = +1.0000000000000000000000000000000000000000;
-	private static final double TAYLOR_SIN_03 = -0.1666666666666666666666666666666666666667;
-	private static final double TAYLOR_SIN_05 = +0.8333333333333333333333333333333333333333e-2;
-	private static final double TAYLOR_SIN_07 = -0.1984126984126984126984126984126984126984e-3;
-	private static final double TAYLOR_SIN_09 = +0.2755731922398589065255731922398589065256e-5;
-	private static final double TAYLOR_SIN_11 = -0.2505210838544171877505210838544171877505e-7;
-	private static final double TAYLOR_SIN_13 = +0.1605904383682161459939237717015494793273e-9;
-	private static final double TAYLOR_SIN_15 = -0.7647163731819816475901131985788070444155e-12;
-	private static final double TAYLOR_SIN_17 = +0.2811457254345520763198945583010320016233e-14;
-	private static final double TAYLOR_SIN_19 = -0.8220635246624329716955981236872280749221e-17;
-	private static final double TAYLOR_SIN_21 = +0.1957294106339126123084757437350543035529e-19;
-	
-	private static final double TAYLOR_COS_00 = +1.0000000000000000000000000000000000000000;
-	private static final double TAYLOR_COS_02 = -0.5000000000000000000000000000000000000000;
-	private static final double TAYLOR_COS_04 = +0.4166666666666666666666666666666666666667e-1;
-	private static final double TAYLOR_COS_06 = -0.1388888888888888888888888888888888888889e-2;
-	private static final double TAYLOR_COS_08 = +0.2480158730158730158730158730158730158730e-4;
-	private static final double TAYLOR_COS_10 = -0.2755731922398589065255731922398589065256e-6;
-	private static final double TAYLOR_COS_12 = +0.2087675698786809897921009032120143231254e-8;
-	private static final double TAYLOR_COS_14 = -0.1147074559772972471385169797868210566623e-10;
-	private static final double TAYLOR_COS_16 = +0.4779477332387385297438207491117544027597e-13;
-	private static final double TAYLOR_COS_18 = -0.1561920696858622646221636435005733342352e-15;
-	private static final double TAYLOR_COS_20 = +0.4110317623312164858477990618436140374610e-18;
-
-	/**
-	 * Sine function.
-	 */
-	public static double sin_taylor(double x)
-	{		
-		int neg = 0;
-		
-		//reduce to interval [-2PI, +2PI]
-		x = x % PItwice;
-		
-		//reduce to interval [0, 2PI]
-		if (x < 0)
-		{
-			neg++;
-			x = -x;
-		}
-		
-		//reduce to interval [0, PI]
-		if (x > PI)
-		{
-			neg++;
-			x -= PI;
-		}
-		
-		//reduce to interval [0, PI/2]
-		if (x > PIhalf)
-			x = PI - x;	
-		
 		double y;		
 		if (x < PIhalfhalf)
-		{
-			double x2 = x * x;
-			y = (TAYLOR_SIN_01+(TAYLOR_SIN_03+(TAYLOR_SIN_05+(TAYLOR_SIN_07+(TAYLOR_SIN_09+(TAYLOR_SIN_11+(TAYLOR_SIN_13+(TAYLOR_SIN_15)*x2)*x2)*x2)*x2)*x2)*x2)*x2)*x;
-		}
+			y = cos_taylor(x);
 		else
-		{
-			x = PIhalf - x;
-			double x2 = x * x;
-			y = (TAYLOR_COS_00+(TAYLOR_COS_02+(TAYLOR_COS_04+(TAYLOR_COS_06+(TAYLOR_COS_08+(TAYLOR_COS_10+(TAYLOR_COS_12+(TAYLOR_COS_14)*x2)*x2)*x2)*x2)*x2)*x2)*x2);
-		}
+			y = sin_taylor(PIhalf - x);
 		
 		return ((neg & 1) == 0) ? y : -y;
 	}
-	
+
 	/**
 	 * Cosine function.
 	 */
-	public static double cos_taylor(double x)
+	public static double tan(double x)
 	{
 		int neg = 0;
 		
-		//reduce to interval [-2PI, +2PI]
-		x = x % PItwice;
-		
-		//reduce to interval [0, 2PI]
-		if (x < 0)
-			x = -x;
+		//reduce to interval [-PI, +PI]
+		x = x % PI;
 		
 		//reduce to interval [0, PI]
-		if (x > PI)
+		if (x < 0)
 		{
 			neg++;
-			x -= PI;
+			x = -x;
 		}
 		
 		//reduce to interval [0, PI/2]
@@ -1138,17 +1146,13 @@ public class BetaMath
 			x = PI - x;
 		}
 		
-		double y;		
+		double y;
 		if (x < PIhalfhalf)
-		{
-			double x2 = x * x;
-			y = (TAYLOR_COS_00+(TAYLOR_COS_02+(TAYLOR_COS_04+(TAYLOR_COS_06+(TAYLOR_COS_08+(TAYLOR_COS_10+(TAYLOR_COS_12+(TAYLOR_COS_14)*x2)*x2)*x2)*x2)*x2)*x2)*x2);
-		}
+			y = sin_taylor(x) / cos_taylor(x);
 		else
 		{
-			x = PIhalf - x;
-			double x2 = x * x;
-			y = (TAYLOR_SIN_01+(TAYLOR_SIN_03+(TAYLOR_SIN_05+(TAYLOR_SIN_07+(TAYLOR_SIN_09+(TAYLOR_SIN_11+(TAYLOR_SIN_13+(TAYLOR_SIN_15)*x2)*x2)*x2)*x2)*x2)*x2)*x2)*x;
+			double tmp = PIhalf - x;
+			y = cos_taylor(tmp) / sin_taylor(tmp);
 		}
 		
 		return ((neg & 1) == 0) ? y : -y;

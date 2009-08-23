@@ -259,7 +259,7 @@ public final class MathBench
 		// Function calls
 		long start = System.currentTimeMillis();
 		for (int i = 0; i < count; i++)
-			BetaMath.sin_taylor(x);
+			BetaMath.sin(x);
 		long end = System.currentTimeMillis();
 	
 		report(count, "sin (new2, "+comment+")", count, "ops", end - start - nullTime);
