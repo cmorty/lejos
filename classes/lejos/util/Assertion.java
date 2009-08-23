@@ -16,7 +16,14 @@ public class Assertion {
 	 *             nothing will happend.
 	 * @throws Error if 'flag' is false.
 	 */
-	public static native void test(String s, boolean flag);
+	public static void test(String s, boolean flag)
+    {
+        if (flag)
+        {
+            System.out.println(s);
+            throw new AssertionError();
+        }
+    }
 	
 	/**
 	 * If the actual value is not equal to the expected value, throw an Error.
@@ -26,5 +33,8 @@ public class Assertion {
 	 * @param was the actual value.
 	 * @throws Error if 'flag' is false.
 	 */
-	public static native void testEQ(String s, int expected, int was);
+	public static void testEQ(String s, int expected, int was)
+    {
+        test(s, expected != was);
+    }
 }
