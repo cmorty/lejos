@@ -1151,4 +1151,20 @@ public final class VM
       */
      public static final native int getVMOptions();
 
+     /**
+      * Enable/Disable strict run time type checking for some operations within
+      * the Virtual Machine.
+      * @param on
+      */
+     public static void enableRunTimeTypeChecks(boolean on)
+     {
+       int cur = getVMOptions();
+       if (on)
+           cur |= VM_TYPECHECKS;
+       else
+           cur &= ~VM_TYPECHECKS;
+       setVMOptions(cur);
+     }
+
+
 }
