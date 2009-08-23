@@ -9,7 +9,7 @@ import java.awt.Shape;
  * @author Lawrie Griffiths
  *
  */
-public abstract class Line2D implements Shape {
+public abstract class Line2D implements Shape, Cloneable {
 	/**
 	 * A line in 2D space using float coordinates
 	 */
@@ -342,5 +342,13 @@ public abstract class Line2D implements Shape {
 	public Rectangle getBounds() {
 		return getBounds2D().getBounds();
 	}
-
+	
+    public Object clone() {
+        try {
+            return super.clone();
+        } catch (CloneNotSupportedException e) {
+            // this shouldn't happen, since we are Cloneable
+            throw new RuntimeException();
+        }
+    }
 }
