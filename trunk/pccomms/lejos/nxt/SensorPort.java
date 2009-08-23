@@ -156,4 +156,34 @@ public class SensorPort implements NXTProtocol, LegacySensorPort, I2CPort  {
 	public void passivate() {
 		setType(NO_SENSOR);
 	}
+
+    /**
+     * Return a variable number of sensor values.
+     * NOTE: Currently there is no way to return multiple results from a
+     * remote sensor, so we return an error.
+     * @param values An array in which to return the sensor values.
+     * @return The number of values returned.
+     */
+    public int readValues(int[] values)
+    {
+        return -1;
+    }
+
+    /**
+     * Return a variable number of raw sensor values
+     * NOTE: Currently there is no way to return multiple results from a
+     * remote sensor, so we return an error.
+     * @param values An array in which to return the sensor values.
+     * @return The number of values returned.
+     */
+    public int readRawValues(int[] values)
+    {
+        return -1;
+    }
+
+    public void enableColorSensor()
+    {
+
+    }
+
 }
