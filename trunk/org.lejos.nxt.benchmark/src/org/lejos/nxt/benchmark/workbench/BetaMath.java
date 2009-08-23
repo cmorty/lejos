@@ -217,10 +217,10 @@ public class BetaMath
 		if (x > 710)
 			return Double.POSITIVE_INFINITY;
 
-		int k = (int)(x * INV_LN2);
+		int k1 = (int)(x * INV_LN2);
 		if (x < 0)
-			k--;
-		x -= k * LN2;
+			k1--;
+		x -= k1 * LN2;
 		
 		int k2 = (int)(x * INV_EXPSTEP);
 		x -= k2 * EXPSTEP;
@@ -243,9 +243,56 @@ public class BetaMath
 			xpow = xpow * x / fac++;
 		}
 		
-		double f1 = ExpTable.EXPTABLE[k2];
-		double f2 = Double.longBitsToDouble((long)(k + 1023) << 52);		
+		sum *= ExpTable.EXPTABLE[k2];
 		
+		if (k1 > 1000)
+		{
+			k1 -= 1000;
+			sum *= 0x1p+1000; 
+		}
+		else if (k1 < -1000)
+		{
+			k1 += 1000;
+			sum *= 0x1p-1000; 
+		}
+		
+		double f2 = Double.longBitsToDouble((long)(k1 + 1023) << 52);
+		
+		return sum * f2;
+	}
+	
+	private static final double EXP_COEFF_00 = 0.999999999999999996945413312322;
+	private static final double EXP_COEFF_01 = 1.00000000000000133475235568738;
+	private static final double EXP_COEFF_02 = 0.499999999999904260125463328703;
+	private static final double EXP_COEFF_03 = 0.166666666669337812408704211755;
+	private static final double EXP_COEFF_04 = 0.416666666283889843730385141088e-1;
+	private static final double EXP_COEFF_05 = 0.833333365529436919373436515228e-2;
+	private static final double EXP_COEFF_06 = 0.138888718050843901239114642134e-2;
+	private static final double EXP_COEFF_07 = 0.198418635994059844531320564776e-3;
+	private static final double EXP_COEFF_08 = 0.247878999398272729584741635853e-4;
+	private static final double EXP_COEFF_09 = 0.277640957428419777962278449310e-5;
+	private static final double EXP_COEFF_10 = 0.256024855062292883779591833098e-6;
+	private static final double EXP_COEFF_11 = 0.353472834562099171303604425909e-7;
+	
+	/**
+	 * Exponential function.
+	 * Returns E^x (where E is the base of natural logarithms).
+	 */
+	public static double exp3(double x)
+	{
+		// also catches NaN
+		if (!(x > -750))
+			return (x < 0) ? 0 : Double.NaN;
+		if (x > 710)
+			return Double.POSITIVE_INFINITY;
+
+		int k = (int)(x * INV_LN2);
+		if (x < 0)
+			k--;
+		x -= k * LN2;
+		
+		double f1 = EXP_COEFF_00+(EXP_COEFF_01+(EXP_COEFF_02+(EXP_COEFF_03+(EXP_COEFF_04+(EXP_COEFF_05+(EXP_COEFF_06+(EXP_COEFF_07+(EXP_COEFF_08+(EXP_COEFF_09+(EXP_COEFF_10+(EXP_COEFF_11)*x)*x)*x)*x)*x)*x)*x)*x)*x)*x)*x;
+
 		if (k > 1000)
 		{
 			k -= 1000;
@@ -257,7 +304,9 @@ public class BetaMath
 			f1 *= 0x1p-1000; 
 		}
 		
-		return sum * f1 * f2;
+		double f2 = Double.longBitsToDouble((long)(k + 1023) << 52);		
+		
+		return f1 * f2;
 	}
 	
 	public static String doubleToString(double x)
@@ -900,16 +949,6 @@ public class BetaMath
 		return neg ? -r2 : r2;
 	}
 	
-	private static final double[] SIN_TABLE = {
-		1.0/6, 1.0/20, 1.0/42, 1.0/72, 1.0/110,
-		1.0/156, 1.0/210, 1.0/272, 1.0/342, 1.0/420
-	};
-	
-	private static final double[] COS_TABLE = {
-		1.0/2, 1.0/12, 1.0/30, 1.0/56, 1.0/90,
-		1.0/132, 1.0/182, 1.0/240, 1.0/306, 1.0/380
-	};
-	
 	private static final double SIN_A2 = +9.67866695922098183389138876172E-1;
 	private static final double SIN_A3 = -1.35908892269150990008530277147E-1;
 	private static final double SIN_A4 = +4.17375937556560266471103059512E-3;
@@ -1002,4 +1041,117 @@ public class BetaMath
 		
 		return ((neg & 1) == 0) ? y : -y;
 	}
+
+	private static final double TAYLOR_SIN_01 = +1.0000000000000000000000000000000000000000;
+	private static final double TAYLOR_SIN_03 = -0.1666666666666666666666666666666666666667;
+	private static final double TAYLOR_SIN_05 = +0.8333333333333333333333333333333333333333e-2;
+	private static final double TAYLOR_SIN_07 = -0.1984126984126984126984126984126984126984e-3;
+	private static final double TAYLOR_SIN_09 = +0.2755731922398589065255731922398589065256e-5;
+	private static final double TAYLOR_SIN_11 = -0.2505210838544171877505210838544171877505e-7;
+	private static final double TAYLOR_SIN_13 = +0.1605904383682161459939237717015494793273e-9;
+	private static final double TAYLOR_SIN_15 = -0.7647163731819816475901131985788070444155e-12;
+	private static final double TAYLOR_SIN_17 = +0.2811457254345520763198945583010320016233e-14;
+	private static final double TAYLOR_SIN_19 = -0.8220635246624329716955981236872280749221e-17;
+	private static final double TAYLOR_SIN_21 = +0.1957294106339126123084757437350543035529e-19;
+	
+	private static final double TAYLOR_COS_00 = +1.0000000000000000000000000000000000000000;
+	private static final double TAYLOR_COS_02 = -0.5000000000000000000000000000000000000000;
+	private static final double TAYLOR_COS_04 = +0.4166666666666666666666666666666666666667e-1;
+	private static final double TAYLOR_COS_06 = -0.1388888888888888888888888888888888888889e-2;
+	private static final double TAYLOR_COS_08 = +0.2480158730158730158730158730158730158730e-4;
+	private static final double TAYLOR_COS_10 = -0.2755731922398589065255731922398589065256e-6;
+	private static final double TAYLOR_COS_12 = +0.2087675698786809897921009032120143231254e-8;
+	private static final double TAYLOR_COS_14 = -0.1147074559772972471385169797868210566623e-10;
+	private static final double TAYLOR_COS_16 = +0.4779477332387385297438207491117544027597e-13;
+	private static final double TAYLOR_COS_18 = -0.1561920696858622646221636435005733342352e-15;
+	private static final double TAYLOR_COS_20 = +0.4110317623312164858477990618436140374610e-18;
+
+	/**
+	 * Sine function.
+	 */
+	public static double sin_taylor(double x)
+	{		
+		int neg = 0;
+		
+		//reduce to interval [-2PI, +2PI]
+		x = x % PItwice;
+		
+		//reduce to interval [0, 2PI]
+		if (x < 0)
+		{
+			neg++;
+			x = -x;
+		}
+		
+		//reduce to interval [0, PI]
+		if (x > PI)
+		{
+			neg++;
+			x -= PI;
+		}
+		
+		//reduce to interval [0, PI/2]
+		if (x > PIhalf)
+			x = PI - x;	
+		
+		double y;		
+		if (x < PIhalfhalf)
+		{
+			double x2 = x * x;
+			y = (TAYLOR_SIN_01+(TAYLOR_SIN_03+(TAYLOR_SIN_05+(TAYLOR_SIN_07+(TAYLOR_SIN_09+(TAYLOR_SIN_11+(TAYLOR_SIN_13+(TAYLOR_SIN_15)*x2)*x2)*x2)*x2)*x2)*x2)*x2)*x;
+		}
+		else
+		{
+			x = PIhalf - x;
+			double x2 = x * x;
+			y = (TAYLOR_COS_00+(TAYLOR_COS_02+(TAYLOR_COS_04+(TAYLOR_COS_06+(TAYLOR_COS_08+(TAYLOR_COS_10+(TAYLOR_COS_12+(TAYLOR_COS_14)*x2)*x2)*x2)*x2)*x2)*x2)*x2);
+		}
+		
+		return ((neg & 1) == 0) ? y : -y;
+	}
+	
+	/**
+	 * Cosine function.
+	 */
+	public static double cos_taylor(double x)
+	{
+		int neg = 0;
+		
+		//reduce to interval [-2PI, +2PI]
+		x = x % PItwice;
+		
+		//reduce to interval [0, 2PI]
+		if (x < 0)
+			x = -x;
+		
+		//reduce to interval [0, PI]
+		if (x > PI)
+		{
+			neg++;
+			x -= PI;
+		}
+		
+		//reduce to interval [0, PI/2]
+		if (x > PIhalf)
+		{
+			neg++;
+			x = PI - x;
+		}
+		
+		double y;		
+		if (x < PIhalfhalf)
+		{
+			double x2 = x * x;
+			y = (TAYLOR_COS_00+(TAYLOR_COS_02+(TAYLOR_COS_04+(TAYLOR_COS_06+(TAYLOR_COS_08+(TAYLOR_COS_10+(TAYLOR_COS_12+(TAYLOR_COS_14)*x2)*x2)*x2)*x2)*x2)*x2)*x2);
+		}
+		else
+		{
+			x = PIhalf - x;
+			double x2 = x * x;
+			y = (TAYLOR_SIN_01+(TAYLOR_SIN_03+(TAYLOR_SIN_05+(TAYLOR_SIN_07+(TAYLOR_SIN_09+(TAYLOR_SIN_11+(TAYLOR_SIN_13+(TAYLOR_SIN_15)*x2)*x2)*x2)*x2)*x2)*x2)*x2)*x;
+		}
+		
+		return ((neg & 1) == 0) ? y : -y;
+	}
+
 }
