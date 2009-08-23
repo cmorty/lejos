@@ -9,9 +9,6 @@ import lejos.nxt.LCDOutputStream;
  */
 public final class System
 {
-  // Flags used to control the Virtual Machine.
-  public static final int VM_TYPECHECKS = 1;
-
   private System() {}
   
   /**
@@ -50,21 +47,7 @@ public final class System
    */
  public static native void gc();
  
- /**
-  * Shutdown the brick
-  */
- public static native void shutDown();
- 
- /**
-  * Boot into firmware update mode.
-  */
- public static native void boot();
- 
- /**
-  * Diagnostic tool (for firmware developers only)
-  */
- public static native int diagn( int code, int param);
- 
+  
  public static PrintStream out = new PrintStream(new LCDOutputStream());
  
  /**
@@ -87,46 +70,6 @@ public final class System
 	 System.err = err;
  }
  
- /**
-  * Get the number of times a Java program (including the menu)
-  * has executed since the brick was swiched on
-  * 
-  * @return the count
-  */
- public static native int getProgramExecutionsCount();
- 
- public static native int getFirmwareMajorVersion();
- 
- public static native int getFirmwareMinorVersion();
- 
- public static native int getFirmwareRevision();
-
- /**
-  * Control the run time operation of the leJOS Virtual Machine.
-  * @param options Bit flags.
-  */
- public static native void setVMOptions(int options);
-
- /**
-  * Return the currently operating Virtual Machine options.
-  * @return the options
-  */
- public static native int getVMOptions();
-
- /**
-  * Enable/Disable strict run time type checking for some operations within
-  * the Virtual Machine.
-  * @param on
-  */
- public static void enableRunTimeTypeChecks(boolean on)
- {
-   int cur = getVMOptions();
-   if (on)
-       cur |= VM_TYPECHECKS;
-   else
-       cur &= ~VM_TYPECHECKS;
-   setVMOptions(cur);
- }
 
  public static native long nanoTime();
 
