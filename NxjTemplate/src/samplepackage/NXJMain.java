@@ -1,3 +1,5 @@
+package samplepackage;
+
 import lejos.nxt.*;
 // The  library for this project must include  classes.jar from  NXJ_HOME
 
@@ -6,7 +8,7 @@ import lejos.nxt.*;
  * It should be the main class of this project, and probably should be renamed
  * @author owner
  */
-// use this  class to build and run your robot
+
 public class NXJMain {
 
     /**
