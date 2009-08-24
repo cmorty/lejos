@@ -2,20 +2,21 @@ package org.lejos.nxt.benchmark.workbench;
 
 public class BetaMath
 {
-	// Math constants
+	// Pi
 	private static final double PI = 3.14159265358979323846264338328;
-	private static final double LN2 = 0.693147180559945309417232121458;
 	
+	// ln(2)
+	private static final double LN2 = 0.693147180559945309417232121458;	
+	// sqrt(2)
 	private static final double SQRT2 = 1.41421356237309504880168872421;
-	private static final double SQRTSQRT2 = 1.18920711500272106671749997056;
-	private static final double LN_SQRT2 = 0.346573590279972654708616060729;
-	private static final double LN_SQRTSQRT2 = 0.173286795139986327354308030364;
-	
+	// ln(sqrt(2)) = ln(2)/2
+	private static final double LN_SQRT2 = 0.346573590279972654708616060729;	
+	// 1/ln(2)
 	private static final double INV_LN2 = 1.44269504088896340735992468100;
+	// 1/sqrt(2)
 	private static final double INV_SQRT2 = 0.707106781186547524400844362105;
-	private static final double INV_SQRTSQRT2 = 0.840896415253714543031125476233;
-	private static final double INV_LN_SQRTSQRT2 = 5.77078016355585362943969872400;
 
+	
 	private static final double PIhalf = PI * 0.5;
 	private static final double PItwice = PI * 2.0;
 	private static final double PIhalfhalf = PI * 0.25;
@@ -922,9 +923,9 @@ public class BetaMath
 		
 		return ((neg & 1) == 0) ? y : -y;
 	}
-
+	
 	/**
-	 * Cosine function.
+	 * Tangent function.
 	 */
 	public static double tan(double x)
 	{
@@ -956,6 +957,50 @@ public class BetaMath
 			y = cos_taylor(tmp) / sin_taylor(tmp);
 		}
 		
+		return ((neg & 1) == 0) ? y : -y;
+	}
+
+	private static final double TAN_COEFF_A01 = +34459425;
+	private static final double TAN_COEFF_A03 = -4729725;
+	private static final double TAN_COEFF_A05 = +135135;
+	private static final double TAN_COEFF_A07 = -990;
+	private static final double TAN_COEFF_A09 = +1;
+	private static final double TAN_COEFF_B00 = +34459425;
+	private static final double TAN_COEFF_B02 = -16216200;
+	private static final double TAN_COEFF_B04 = +945945;
+	private static final double TAN_COEFF_B06 = -13860;
+	private static final double TAN_COEFF_B08 = +45;
+
+	public static double tan2(double x)
+	{
+		int neg = 0;
+		
+		//reduce to interval [-PI, +PI]
+		x = x % PI;
+		
+		//reduce to interval [0, PI]
+		if (x < 0)
+		{
+			neg++;
+			x = -x;
+		}
+		
+		//reduce to interval [0, PI/2]
+		if (x > PIhalf)
+		{
+			neg++;
+			x = PI - x;
+		}
+		
+		boolean inv = x > PIhalfhalf;
+		if (inv)
+			x = PIhalf - x;
+		
+		double x2 = x * x;
+		double a = (TAN_COEFF_A01+(TAN_COEFF_A03+(TAN_COEFF_A05+(TAN_COEFF_A07+(TAN_COEFF_A09)*x2)*x2)*x2)*x2)*x;
+		double b = TAN_COEFF_B00+(TAN_COEFF_B02+(TAN_COEFF_B04+(TAN_COEFF_B06+(TAN_COEFF_B08)*x2)*x2)*x2)*x2;
+		
+		double y = inv ? b/a : a/b;		
 		return ((neg & 1) == 0) ? y : -y;
 	}
 
