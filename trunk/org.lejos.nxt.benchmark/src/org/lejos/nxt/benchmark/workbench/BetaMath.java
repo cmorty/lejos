@@ -180,9 +180,9 @@ public class BetaMath
 		double zeta2 = zeta * zeta;		
 		
 		//known ranges:
-		//	1 <= $x < 1.18
-		//  0 <= $zeta < 0.0864
-		//  0 <= $zeta2 < 0.00747
+		//	1 <= $x < 1.41
+		//  0 <= $zeta < 0.172
+		//  0 <= $zeta2 < 0.0194
 
 		double r = LOG_COEFF_00+(LOG_COEFF_01+(LOG_COEFF_02+(LOG_COEFF_03+(LOG_COEFF_04+(LOG_COEFF_05+(LOG_COEFF_06+(LOG_COEFF_07+(LOG_COEFF_08+(LOG_COEFF_09)*zeta2)*zeta2)*zeta2)*zeta2)*zeta2)*zeta2)*zeta2)*zeta2)*zeta2;
 		
