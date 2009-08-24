@@ -60,73 +60,6 @@ public class BetaMath
 		return factor * (x * isqrt + 1.0f / isqrt);
 	}
 	
-	private static class LogConstants
-	{
-		public static final double[] LOGTABLE = {
-				1.0/3, 1.0/5, 1.0/7, 1.0/9,
-				1.0/11, 1.0/13, 1.0/15, 1.0/17, 1.0/19,
-				1.0/21, 1.0/23, 1.0/25, 1.0/27, 1.0/29,
-				1.0/31, 1.0/33, 1.0/35, 1.0/37, 1.0/39, 
-			};			
-	}
-	
-	/**
-	 * Natural log function. Returns log(x) to base E.
-	 */
-	public static double log(double x)
-	{
-		// also catches NaN
-		if (!(x > 0))
-			return (x == 0) ? Double.NEGATIVE_INFINITY : Double.NaN;
-		if (x == Double.POSITIVE_INFINITY)
-			return Double.POSITIVE_INFINITY;
-	
-		// Algorithm has been derived from the one given at
-		// http://www.geocities.com/zabrodskyvlada/aat/a_contents.html 
-
-		int m;
-		if (x >= Double.MIN_NORMAL)
-			m = -1023;
-		else
-		{
-			m = -1023-64;
-			x *= 0x1p64;
-		}
-	
-		//extract mantissa and reset exponent
-		long bits = Double.doubleToRawLongBits(x);
-		m += (int)(bits >>> 52);
-		bits = (bits & 0x000FFFFFFFFFFFFFL) + 0x3FF0000000000000L;
-		x = Double.longBitsToDouble(bits);
-		
-		double zeta = (x - 1.0) / (x + 1.0);
-		double zeta2 = zeta * zeta;		
-		
-		//known ranges:
-		//	1 <= $x < 2
-		//  0 <= $zeta < 1/3
-		//  0 <= $zeta2 < 1/9
-		//ergo:
-		//  $zetapow will converge quickly towards 0
-		
-		double[] lt = LogConstants.LOGTABLE;		
-		double zetapow = zeta2;
-		double r = 1;
-		int i = 0;
-
-		while(true)
-		{
-			double tmp = zetapow * lt[i++];
-			if (tmp < 0x1p-52)
-				break;
-			
-			r += tmp;
-			zetapow *= zeta2;
-		}
-		
-		return m * LN2 + 2 * zeta * r;
-	}
-	
 	private static double LOG_COEFF_00 = 2.0;
 	private static double LOG_COEFF_01 = 0.666666666666666666666666666667;
 	private static double LOG_COEFF_02 = 0.4;
@@ -144,7 +77,7 @@ public class BetaMath
 	/**
 	 * Natural log function. Returns log(x) to base E.
 	 */
-	public static double log2(double x)
+	public static double log(double x)
 	{
 		// also catches NaN
 		if (!(x > 0))
@@ -189,143 +122,6 @@ public class BetaMath
 		return m * LN_SQRT2 + zeta * r;
 	}
 	
-	/**
-	 * Exponential function.
-	 * Returns E^x (where E is the base of natural logarithms).
-	 */
-	public static double exp(double x)
-	{
-		// also catches NaN
-		if (!(x > -750))
-			return (x < 0) ? 0 : Double.NaN;
-		if (x > 710)
-			return Double.POSITIVE_INFINITY;
-
-		int k = (int)(x * INV_LN_SQRTSQRT2);
-		if (x < 0)
-			k--;
-		x -= k * LN_SQRTSQRT2;
-		
-		//known ranges:
-		//	0 <= $x <= LN_SQRTSQRT2
-		//ergo:
-		//  $xpow will converge quickly towards 0
-
-		double sum = 1;
-		double xpow = x;
-		int fac = 2;
-
-		while (true)
-		{
-			if (xpow < 0x1p-52)
-				break;
-			
-			sum += xpow;
-			xpow = xpow * x / fac++;
-		}
-		
-		double f1;
-		if (k > 4000)
-		{
-			k -= 4000;
-			f1 = 0x1p+1000; 
-		}
-		else if (k < -4000)
-		{
-			k += 4000;
-			f1 = 0x1p-1000; 
-		}
-		else
-			f1 = 1.0;
-		
-		double f2 = Double.longBitsToDouble((long)((k >> 2) + 1023) << 52);
-		if ((k & 2) != 0)
-			f2 *= SQRT2;
-		if ((k & 1) != 0)
-			f2 *= SQRTSQRT2;
-		
-		return sum * f2 * f1;
-	}
-	
-	private static class ExpTable
-	{
-		public final static double[] EXPTABLE =
-			{
-				1.,
-				1.06449445891785942956339059464,
-				1.13314845306682631682900722781,
-			    1.20623024942098071065558601045,
-			    1.28402541668774148407342056806,
-			    1.36683794117379636283875677272,
-			    1.45499141461820133605379369199,
-			    1.54883029863413309799855198460,
-			    1.64872127070012814684865078781,
-			    1.75505465696029855724404703660,
-			    1.86824595743222240650183562019,
-			    1.98873746958229183111747734965
-			};
-	}
-	
-	private final static double EXPSTEP = 0.0625;
-	private final static double INV_EXPSTEP = 16;
-	
-	
-	/**
-	 * Exponential function.
-	 * Returns E^x (where E is the base of natural logarithms).
-	 */
-	public static double exp2(double x)
-	{
-		// also catches NaN
-		if (!(x > -750))
-			return (x < 0) ? 0 : Double.NaN;
-		if (x > 710)
-			return Double.POSITIVE_INFINITY;
-
-		int k1 = (int)(x * INV_LN2);
-		if (x < 0)
-			k1--;
-		x -= k1 * LN2;
-		
-		int k2 = (int)(x * INV_EXPSTEP);
-		x -= k2 * EXPSTEP;
-		
-		//known ranges:
-		//	0 <= $x <= LN_SQRTSQRT2
-		//ergo:
-		//  $xpow will converge quickly towards 0
-
-		double sum = 1;
-		double xpow = x;
-		int fac = 2;
-
-		while (true)
-		{
-			if (xpow < 0x1p-52)
-				break;
-			
-			sum += xpow;
-			xpow = xpow * x / fac++;
-		}
-		
-		sum *= ExpTable.EXPTABLE[k2];
-		
-		if (k1 > 1000)
-		{
-			k1 -= 1000;
-			sum *= 0x1p+1000; 
-		}
-		else if (k1 < -1000)
-		{
-			k1 += 1000;
-			sum *= 0x1p-1000; 
-		}
-		
-		double f2 = Double.longBitsToDouble((long)(k1 + 1023) << 52);
-		
-		return sum * f2;
-	}
-	
 	// Coefficients of Remez[11,0] approximation of exp(x) for x=0..ln(2)
 	private static final double EXP_COEFF_00 = 0.999999999999999996945413312322;
 	private static final double EXP_COEFF_01 = 1.00000000000000133475235568738;
@@ -344,7 +140,7 @@ public class BetaMath
 	 * Exponential function.
 	 * Returns E^x (where E is the base of natural logarithms).
 	 */
-	public static double exp3(double x)
+	public static double exp(double x)
 	{
 		// also catches NaN
 		if (!(x > -750))
