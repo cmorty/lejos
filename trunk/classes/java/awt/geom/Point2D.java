@@ -7,7 +7,7 @@ package java.awt.geom;
  * @author Lawrie Griffiths
  *
  */
-public abstract class Point2D {
+public abstract class Point2D implements Cloneable {
 	/**
 	 * A point with float coordinates.
 	 */
@@ -240,5 +240,14 @@ public abstract class Point2D {
 	        return (getX() == p2d.getX()) && (getY() == p2d.getY());
 	    }
 	    return super.equals(obj);
+    }
+    
+    public Object clone() {
+        try {
+            return super.clone();
+        } catch (CloneNotSupportedException e) {
+            // this shouldn't happen, since we are Cloneable
+            throw new RuntimeException();
+        }
     }
 }
