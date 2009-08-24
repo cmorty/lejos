@@ -1,3 +1,5 @@
+package samplepackage;
+
 
 import lejos.nxt.*;
 
