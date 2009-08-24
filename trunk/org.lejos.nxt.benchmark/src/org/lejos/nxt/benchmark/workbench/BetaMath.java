@@ -166,19 +166,14 @@ public class BetaMath
 	
 		//extract mantissa and reset exponent
 		long bits = Double.doubleToRawLongBits(x);
-		m = (m + (int)(bits >>> 52)) << 2;
+		m = (m + (int)(bits >>> 52)) << 1;
 		bits = (bits & 0x000FFFFFFFFFFFFFL) | 0x3FF0000000000000L;
 		x = Double.longBitsToDouble(bits);
 		
 		if (x > SQRT2)
 		{
-			m+=2;
-			x *= INV_SQRT2;
-		}
-		if (x > SQRTSQRT2)
-		{
 			m++;
-			x *= INV_SQRTSQRT2;
+			x *= INV_SQRT2;
 		}
 		
 		double zeta = (x - 1.0) / (x + 1.0);
@@ -191,7 +186,7 @@ public class BetaMath
 
 		double r = LOG_COEFF_00+(LOG_COEFF_01+(LOG_COEFF_02+(LOG_COEFF_03+(LOG_COEFF_04+(LOG_COEFF_05+(LOG_COEFF_06+(LOG_COEFF_07+(LOG_COEFF_08+(LOG_COEFF_09)*zeta2)*zeta2)*zeta2)*zeta2)*zeta2)*zeta2)*zeta2)*zeta2)*zeta2;
 		
-		return m * LN_SQRTSQRT2 + zeta * r;
+		return m * LN_SQRT2 + zeta * r;
 	}
 	
 	/**
@@ -1049,13 +1044,13 @@ public class BetaMath
 	private static double sin_taylor(double x)
 	{
 		double x2 = x * x;
-		return (SIN_COEFF_01+(SIN_COEFF_03+(SIN_COEFF_05+(SIN_COEFF_07+(SIN_COEFF_09+(SIN_COEFF_11+(SIN_COEFF_13+(SIN_COEFF_15)*x2)*x2)*x2)*x2)*x2)*x2)*x2)*x;
+		return (SIN_COEFF_01+(SIN_COEFF_03+(SIN_COEFF_05+(SIN_COEFF_07+(SIN_COEFF_09+(SIN_COEFF_11+(SIN_COEFF_13+(SIN_COEFF_15+(SIN_COEFF_17)*x2)*x2)*x2)*x2)*x2)*x2)*x2)*x2)*x;
 	}
 	
 	private static double cos_taylor(double x)
 	{
 		double x2 = x * x;
-		return (COS_COEFF_00+(COS_COEFF_02+(COS_COEFF_04+(COS_COEFF_06+(COS_COEFF_08+(COS_COEFF_10+(COS_COEFF_12+(COS_COEFF_14)*x2)*x2)*x2)*x2)*x2)*x2)*x2);
+		return (COS_COEFF_00+(COS_COEFF_02+(COS_COEFF_04+(COS_COEFF_06+(COS_COEFF_08+(COS_COEFF_10+(COS_COEFF_12+(COS_COEFF_14+(COS_COEFF_16)*x2)*x2)*x2)*x2)*x2)*x2)*x2)*x2);
 	}
 	
 	/**
