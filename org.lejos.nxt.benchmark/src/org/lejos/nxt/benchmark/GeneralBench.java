@@ -2,6 +2,7 @@ package org.lejos.nxt.benchmark;
 
 import java.io.PrintStream;
 
+import lejos.nxt.NXT;
 import lejos.nxt.comm.RConsole;
 
 /**
@@ -346,7 +347,7 @@ public class GeneralBench
 		// Function calls
 		long start = System.currentTimeMillis();
 		for (int i = 0; i < count; i++)
-			System.getFirmwareRevision();
+			NXT.getFirmwareRevision();
 		long end = System.currentTimeMillis();
 
 		report(count, "native static method calls", count, "ops", end - start - nullTime);
