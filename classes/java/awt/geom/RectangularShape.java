@@ -9,7 +9,7 @@ import java.awt.Shape;
  * @author Lawrie Griffiths
  *
  */
-public abstract class RectangularShape implements Shape {
+public abstract class RectangularShape implements Shape, Cloneable {
 	
 	/**
 	 * Get the x coordinate as a double
@@ -172,5 +172,14 @@ public abstract class RectangularShape implements Shape {
         double x2 = Math.ceil(x + width);
         double y2 = Math.ceil(y + height);
         return new Rectangle((int) x1, (int) y1,(int) (x2 - x1), (int) (y2 - y1));
+    }
+    
+    public Object clone() {
+        try {
+            return super.clone();
+        } catch (CloneNotSupportedException e) {
+            // this shouldn't happen, since we are Cloneable
+            throw new RuntimeException();
+        }
     }
 }

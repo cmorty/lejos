@@ -280,6 +280,15 @@ public abstract class Line2D implements Shape, Cloneable {
      */
     public abstract void setLine(double x1, double y1, double x2, double y2);
     
+    
+    public void setLine(Point2D p1, Point2D p2) {
+    	setLine(p1.getX(), p1.getY(), p2.getX(), p2.getY());
+    }
+    
+    public void setLine(Line2D line) {
+    	setLine(line.getX1(), line.getY1(), line.getX2(), line.getY2());
+    }
+    
     public boolean contains(double x, double y) {
         return false;
     }
@@ -298,6 +307,11 @@ public abstract class Line2D implements Shape, Cloneable {
 	
     public boolean intersects(double x, double y, double w, double h) {
         return intersects(new Rectangle2D.Double(x, y, w, h));
+    }
+    
+    public boolean intersectsLine(double x1, double y1, double x2, double y2) {
+        return linesIntersect(x1, y1, x2, y2,
+                              getX1(), getY1(), getX2(), getY2());
     }
     
     /**
@@ -330,14 +344,11 @@ public abstract class Line2D implements Shape, Cloneable {
             double x3, double y3,
             double x4, double y4)
     {
-    	// TODO
-		return false;
+        return ((relativeCCW(x1, y1, x2, y2, x3, y3) *
+                relativeCCW(x1, y1, x2, y2, x4, y4) <= 0)
+               && (relativeCCW(x3, y3, x4, y4, x1, y1) *
+                   relativeCCW(x3, y3, x4, y4, x2, y2) <= 0));
     }
-    
-	public boolean intersects(Rectangle2D r) {
-        //TODO
-		return false;
-	}
 
 	public Rectangle getBounds() {
 		return getBounds2D().getBounds();
@@ -350,5 +361,40 @@ public abstract class Line2D implements Shape, Cloneable {
             // this shouldn't happen, since we are Cloneable
             throw new RuntimeException();
         }
+    }
+    
+    public static int relativeCCW(
+    		double x1, double y1,
+            double x2, double y2,
+            double px, double py)
+	{
+		double tx = x2 - x1;
+		double ty = y2 - y1;
+		double tpx  = px - x1;
+		double tpy = py - y1;
+		double ccw = tpx * ty - tpy * tx;
+		if (ccw == 0.0) {
+			ccw = tpx * tx + tpy * ty;
+			if (ccw > 0.0) {
+				tpx -= tx;
+				tpy -= ty;
+				ccw = tpx * tx + tpy * ty;
+				if (ccw < 0.0) ccw = 0.0;
+			}
+		}
+	return (ccw < 0.0) ? -1 : ((ccw > 0.0) ? 1 : 0);
+	}
+    
+    public int relativeCCW(Point2D p) {
+        return relativeCCW(getX1(), getY1(), getX2(), getY2(),
+                           p.getX(), p.getY());
+    }
+    
+    public int relativeCCW(double px, double py) {
+        return relativeCCW(getX1(), getY1(), getX2(), getY2(), px, py);
+    }
+
+    public boolean intersects(Rectangle2D r) {
+        return r.intersectsLine(getX1(), getY1(), getX2(), getY2());
     }
 }
