@@ -3,6 +3,7 @@ package org.lejos.nxt.benchmark.workbench;
 public class HistoricMath
 {
 	private static final double LN2 = 0.693147180559945;
+	
 	private static final double LOG_LOWER_BOUND = 0.9999999f;
 	private static final double LOG_UPPER_BOUND = 1.0D;
 	private static final double EXP_REL_BOUND = 0x1.0p-52;
@@ -157,13 +158,13 @@ public class HistoricMath
 	 * @see <a
 	 *      href="http://www.geocities.com/zabrodskyvlada/aat/a_contents.html">here</a>
 	 */
-	public static double logZeta(double x)
+	public static double logSimple(double x)
 	{
 		if (x == 0)
 			return Double.NaN;
 
 		if (x < 1.0)
-			return -logZeta(1.0 / x);
+			return -logSimple(1.0 / x);
 
 		double m = 0.0;
 		double p = 1.0;
