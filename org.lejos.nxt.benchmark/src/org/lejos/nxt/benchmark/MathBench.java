@@ -118,7 +118,7 @@ public final class MathBench
 		// Function calls
 		long start = System.currentTimeMillis();
 		for (int i = 0; i < count; i++)
-			HistoricMath.logZeta(x);
+			HistoricMath.logSimple(x);
 		long end = System.currentTimeMillis();
 	
 		report(count, "log (historic, "+comment+")", count, "ops", end - start - nullTime);
