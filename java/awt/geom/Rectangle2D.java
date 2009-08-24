@@ -11,6 +11,35 @@ public abstract class Rectangle2D extends RectangularShape {
 	/**
 	 * A Rectangle2D with float coordinates.
 	 */
+	
+    /**
+     * The bitmask that indicates that a point lies to the left of
+     * this <code>Rectangle2D</code>.
+     * @since 1.2
+     */
+    public static final int OUT_LEFT = 1;
+
+    /**
+     * The bitmask that indicates that a point lies above
+     * this <code>Rectangle2D</code>.
+     * @since 1.2
+     */
+    public static final int OUT_TOP = 2;
+
+    /**
+     * The bitmask that indicates that a point lies to the right of
+     * this <code>Rectangle2D</code>.
+     * @since 1.2
+     */
+    public static final int OUT_RIGHT = 4;
+
+    /**
+     * The bitmask that indicates that a point lies below
+     * this <code>Rectangle2D</code>.
+     * @since 1.2
+     */
+    public static final int OUT_BOTTOM = 8;
+
 	public static class Float extends Rectangle2D {
 		/**
 		 * The x coordinate of the top left corner
@@ -31,6 +60,14 @@ public abstract class Rectangle2D extends RectangularShape {
 		 * The height of the rectangle;
 		 */
 		public float height;
+		
+		
+		/**
+		 * Create an empty rectangle at (0,0)
+		 */
+		public Float() {
+			x = y = width = height = 0;
+		}
 		
 		/**
 		 * Create a rectangle with float coordinates
@@ -54,7 +91,7 @@ public abstract class Rectangle2D extends RectangularShape {
 
 		@Override
 		public double getY() {
-			return (double) x;
+			return (double) y;
 		}
 		
 		@Override
@@ -109,7 +146,26 @@ public abstract class Rectangle2D extends RectangularShape {
             this.y = (float) y;
             this.width = (float) w;
             this.height = (float) h;
-        }	
+        }
+	    
+	    public int outcode(double x, double y) {
+	        int out = 0;
+	        if (this.width <= 0) {
+	            out |= OUT_LEFT | OUT_RIGHT;
+	        } else if (x < this.x) {
+	            out |= OUT_LEFT;
+	        } else if (x > this.x + (double) this.width) {
+	            out |= OUT_RIGHT;
+	        }
+	        if (this.height <= 0) {
+	            out |= OUT_TOP | OUT_BOTTOM;
+	        } else if (y < this.y) {
+	            out |= OUT_TOP;
+	        } else if (y > this.y + (double) this.height) {
+	            out |= OUT_BOTTOM;
+	        }
+	        return out;
+	    }
 	}
 	
 	/**
@@ -136,6 +192,13 @@ public abstract class Rectangle2D extends RectangularShape {
 		 */
 		public double height;
 		
+		/**
+		 * Create an empty rectangle at (0,0)
+		 */
+		public Double() {
+			x = y = width = height = 0;
+		}
+		
 		public Double(double x, double y, double width, double height) {
 			this.x = x;
 			this.y = y;
@@ -150,7 +213,7 @@ public abstract class Rectangle2D extends RectangularShape {
 
 		@Override
 		public double getY() {
-			return x;
+			return y;
 		}
 		
 		@Override
@@ -192,11 +255,34 @@ public abstract class Rectangle2D extends RectangularShape {
             this.width = r.getWidth();
             this.height = r.getHeight();
         }
+		
+	    public int outcode(double x, double y) {
+	        int out = 0;
+	        if (this.width <= 0) {
+	            out |= OUT_LEFT | OUT_RIGHT;
+	        } else if (x < this.x) {
+	            out |= OUT_LEFT;
+	        } else if (x > this.x + this.width) {
+	            out |= OUT_RIGHT;
+	        }
+	        if (this.height <= 0) {
+	            out |= OUT_TOP | OUT_BOTTOM;
+	        } else if (y < this.y) {
+	            out |= OUT_TOP;
+	        } else if (y > this.y + this.height) {
+	            out |= OUT_BOTTOM;
+	        }
+	        return out;
+	    }
 	}
 	
 	public boolean contains(double x, double y, double w, double h) {
-		if (isEmpty()) return false;
-		return contains(x, y) && contains(x + w, y + h);
+        if (isEmpty() || w <= 0 || h <= 0) return false;       
+        double x0 = getX();
+        double y0 = getY();
+        return (x >= x0 && y >= y0 &&
+                (x + w) <= x0 + getWidth() &&
+                (y + h) <= y0 + getHeight());
 	}
 	
 	/**
@@ -229,22 +315,64 @@ public abstract class Rectangle2D extends RectangularShape {
     public boolean contains(double x, double y) {
         double x0 = getX();
         double y0 = getY();
-        return (x >= x0 &&
-                y >= y0 &&
-                x < x0 + getWidth() &&
-                y < y0 + getHeight());
+        return (x >= x0 && y >= y0 &&
+                x < x0 + getWidth() && y < y0 + getHeight());
     }
     
     /**
-     * Test if this Rectangle2D intersects a rectangle deined by double coordinates
+     * Test if this Rectangle2D intersects a rectangle defined by double coordinates
      */
     public boolean intersects(double x, double y, double w, double h) {
         if (isEmpty() || w <= 0 || h <= 0) return false;
         double x0 = getX();
         double y0 = getY();
-        return (x + w > x0 &&
-                y + h > y0 &&
-                x < x0 + getWidth() &&
-                y < y0 + getHeight());
-    }    
+        return (x + w > x0 && y + h > y0 &&
+                x < x0 + getWidth() && y < y0 + getHeight());
+    }  
+    
+    public boolean intersectsLine(double x1, double y1, double x2, double y2) {
+        int out1, out2 = outcode(x2, y2);
+        if (out2 == 0) return true;
+        
+        while ((out1 = outcode(x1, y1)) != 0) {
+            if ((out1 & out2) != 0) return false;
+            
+            if ((out1 & (OUT_LEFT | OUT_RIGHT)) != 0) {
+                double x = getX();
+                if ((out1 & OUT_RIGHT) != 0) {
+                    x += getWidth();
+                }
+                y1 = y1 + (x - x1) * (y2 - y1) / (x2 - x1);
+                x1 = x;
+            } else {
+                double y = getY();
+                if ((out1 & OUT_BOTTOM) != 0) {
+                    y += getHeight();
+                }
+                x1 = x1 + (y - y1) * (x2 - x1) / (y2 - y1);
+                y1 = y;
+            }
+        }
+        return true;
+    }
+    
+    public int outcode(Point2D p) {
+        return outcode(p.getX(), p.getY());
+    }
+    
+    public abstract int outcode(double x, double y);
+    
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof Rectangle2D) {
+            Rectangle2D r2d = (Rectangle2D) obj;
+            return ((getX() == r2d.getX()) &&
+                    (getY() == r2d.getY()) &&
+                    (getWidth() == r2d.getWidth()) &&
+                    (getHeight() == r2d.getHeight()));
+        }
+        return false;
+    }
 }

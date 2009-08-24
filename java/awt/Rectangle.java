@@ -287,4 +287,10 @@ public class Rectangle extends Rectangle2D implements Shape {
     public String toString() {
         return "Rectangle[x=" + x + ",y=" + y + ",width=" + width + ",height=" + height + "]";
     }
+
+	@Override
+	public int outcode(double x, double y) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 }
