@@ -50,91 +50,54 @@ public final class Math
 		return (0.7162721433f + 0.2996857769f * x2) * x
 				/ (0.7163164576f + (0.5377299313f + 0.3951620469e-1f * x2) * x2);
 	}
+	
+	/*========================= abs functions =========================*/ 
 
 	/**
-	 * Returns the smallest (closest to negative infinity) double value that is
-	 * not less than the argument and is equal to a mathematical integer.
+	 * Returns the absolute value of a double value. If the argument is not
+	 * negative, the argument is returned. If the argument is negative, the
+	 * negation of the argument is returned.
 	 */
-	public static double ceil(double a)
+	public static double abs(double a)
 	{
-		// no rounding required
-		if (a < ROUND_DOUBLE_MIN || a > ROUND_DOUBLE_MAX)
-			return a;
-
-		long b = (long) a;
-		double bd = b;
-
-		// if negative, just strip decimal places
-		if (b <= 0)
-			return bd;
-
-		// if numbers are equal, there were no decimal places
-		if (bd == a)
-			return bd;
-
-		// round up since a must have had some decimal places
-		return bd + 1;
+		// according to http://www.concentric.net/~Ttwang/tech/javafloat.htm
+		return ((a <= 0.0) ? 0.0 - a : a);
 	}
 
 	/**
-	 * Returns the largest (closest to positive infinity) double value that is
-	 * not greater than the argument and is equal to a mathematical integer.
+	 * Returns the absolute value of a float value. If the argument is not
+	 * negative, the argument is returned. If the argument is negative, the
+	 * negation of the argument is returned.
 	 */
-	public static double floor(double a)
+	public static float abs(float a)
 	{
-		// no rounding required
-		if (a < ROUND_DOUBLE_MIN || a > ROUND_DOUBLE_MAX)
-			return a;
-
-		long b = (long) a;
-		double bd = b;
-
-		// if positive, just strip decimal places
-		if (b >= 0)
-			return bd;
-
-		// if numbers are equal, there were no decimal places
-		if (bd == a)
-			return bd;
-
-		// round down since a must have had some decimal places
-		return bd - 1;
+		// according to http://www.concentric.net/~Ttwang/tech/javafloat.htm
+		return ((a <= 0.0f) ? 0.0f - a : a);
 	}
 
 	/**
-	 * Returns the closest int to the argument.
+	 * Returns the absolute value of a long value. If the argument is not
+	 * negative, the argument is returned. If the argument is negative, the
+	 * negation of the argument is returned.
 	 */
-	public static int round(float a)
+	public static long abs(long a)
 	{
-		// no rounding required
-		if (a < ROUND_FLOAT_MIN || a > ROUND_FLOAT_MAX)
-			return (int) a;
-
-		return (int) Math.floor(a + 0.5);
+		// TODO document that Long.MIN_VALUE == -Long.MIN_VALUE
+		return ((a < 0) ? -a : a);
 	}
 
 	/**
-	 * Returns the closest int to the argument.
+	 * Returns the absolute value of an integer value. If the argument is not
+	 * negative, the argument is returned. If the argument is negative, the
+	 * negation of the argument is returned.
 	 */
-	public static long round(double a)
+	public static int abs(int a)
 	{
-		return (long) Math.floor(a + 0.5);
+		// TODO document that Integer.MIN_VALUE == -Integer.MIN_VALUE
+		return ((a < 0) ? -a : a);
 	}
 
-	/**
-	 * Returns the closest mathematical integer to the argument.
-	 */
-	public static double rint(double a)
-	{
-		// no rounding required
-		if (a < ROUND_DOUBLE_MIN || a > ROUND_DOUBLE_MAX)
-			return a;
-
-		if (a < 0)
-			return (long) (a - 0.5);
-
-		return (long) (a + 0.5);
-	}
+	/*========================= signum functions =========================*/ 
 
 	public static float signum(float f)
 	{
@@ -161,6 +124,8 @@ public final class Math
 
 		return Double.NaN;
 	}
+
+	/*========================= min/max functions =========================*/ 
 
 	/**
 	 * Returns the lesser of two integer values.
@@ -226,6 +191,95 @@ public final class Math
 		return ((a > b) ? a : b);
 	}
 
+	/*========================= rounding functions =========================*/ 
+
+	/**
+	 * Returns the largest (closest to positive infinity) double value that is
+	 * not greater than the argument and is equal to a mathematical integer.
+	 */
+	public static double floor(double a)
+	{
+		// no rounding required
+		if (a < ROUND_DOUBLE_MIN || a > ROUND_DOUBLE_MAX)
+			return a;
+
+		long b = (long) a;
+		double bd = b;
+
+		// if positive, just strip decimal places
+		if (b >= 0)
+			return bd;
+
+		// if numbers are equal, there were no decimal places
+		if (bd == a)
+			return bd;
+
+		// round down since a must have had some decimal places
+		return bd - 1;
+	}
+
+	/**
+	 * Returns the smallest (closest to negative infinity) double value that is
+	 * not less than the argument and is equal to a mathematical integer.
+	 */
+	public static double ceil(double a)
+	{
+		// no rounding required
+		if (a < ROUND_DOUBLE_MIN || a > ROUND_DOUBLE_MAX)
+			return a;
+
+		long b = (long) a;
+		double bd = b;
+
+		// if negative, just strip decimal places
+		if (b <= 0)
+			return bd;
+
+		// if numbers are equal, there were no decimal places
+		if (bd == a)
+			return bd;
+
+		// round up since a must have had some decimal places
+		return bd + 1;
+	}
+
+	/**
+	 * Returns the closest int to the argument.
+	 */
+	public static int round(float a)
+	{
+		// no rounding required
+		if (a < ROUND_FLOAT_MIN || a > ROUND_FLOAT_MAX)
+			return (int) a;
+
+		return (int) Math.floor(a + 0.5);
+	}
+
+	/**
+	 * Returns the closest int to the argument.
+	 */
+	public static long round(double a)
+	{
+		return (long) Math.floor(a + 0.5);
+	}
+
+	/**
+	 * Returns the closest mathematical integer to the argument.
+	 */
+	public static double rint(double a)
+	{
+		// no rounding required
+		if (a < ROUND_DOUBLE_MIN || a > ROUND_DOUBLE_MAX)
+			return a;
+
+		if (a < 0)
+			return (long) (a - 0.5);
+
+		return (long) (a + 0.5);
+	}
+
+	/*========================= random functions =========================*/ 
+
 	/**
 	 * Random number generator. Returns a double greater than 0.0 and less than
 	 * 1.0
@@ -240,6 +294,48 @@ public final class Math
 
 		return n * (1.0 / Integer.MAX_VALUE);
 	}
+
+	/*========================= arithmetic functions =========================*/ 
+
+	/**
+	 * Computes square-root of x.
+	 */
+	public static double sqrt(double x)
+	{
+		// @author Sven Köhler
+		
+		// also catches NaN
+		if (!(x > 0))
+			return (x == 0) ? x : Double.NaN;
+		if (x == Double.POSITIVE_INFINITY)
+			return x;
+	
+		// modify values to avoid workaround subnormal values
+		double factor;
+		if (x >= Double.MIN_NORMAL)
+			factor = 0.5;
+		else
+		{
+			x *= 0x1p64;
+			factor = 0x1p-33;
+		}
+		
+		// magic constant function for good approximation of 1/sqrt(x)
+		// according to http://www.lomont.org/Math/Papers/2003/InvSqrt.pdf
+		// also look at http://en.wikipedia.org/wiki/Fast_inverse_square_root
+		double isqrt = Double.longBitsToDouble(0x5fe6ec85e7de30daL - (Double.doubleToRawLongBits(x) >> 1));
+		
+		// 3 newton steps for 1/sqrt(x)
+		double xhalf = 0.5 * x;
+		isqrt = isqrt * (1.5 - xhalf * isqrt * isqrt);
+		isqrt = isqrt * (1.5 - xhalf * isqrt * isqrt);
+		isqrt = isqrt * (1.5 - xhalf * isqrt * isqrt);
+		
+		// 1 newton step for sqrt(x)
+		return factor * (x * isqrt + 1.0 / isqrt);
+	}
+	
+	/*========================= exp/log/pow functions =========================*/ 
 
 	/**
 	 * Exponential function.
@@ -359,48 +455,22 @@ public final class Math
 		return exp(b * log(a));
 	}
 
+	/*========================= trigonometric functions =========================*/ 
+
 	/**
-	 * Returns the absolute value of a double value. If the argument is not
-	 * negative, the argument is returned. If the argument is negative, the
-	 * negation of the argument is returned.
+	 * Converts radians to degrees.
 	 */
-	public static double abs(double a)
+	public static double toDegrees(double angrad)
 	{
-		// according to http://www.concentric.net/~Ttwang/tech/javafloat.htm
-		return ((a <= 0.0) ? 0.0 - a : a);
+		return angrad * RAD_TO_DEG;
 	}
 
 	/**
-	 * Returns the absolute value of a float value. If the argument is not
-	 * negative, the argument is returned. If the argument is negative, the
-	 * negation of the argument is returned.
+	 * Converts degrees to radians.
 	 */
-	public static float abs(float a)
+	public static double toRadians(double angdeg)
 	{
-		// according to http://www.concentric.net/~Ttwang/tech/javafloat.htm
-		return ((a <= 0.0f) ? 0.0f - a : a);
-	}
-
-	/**
-	 * Returns the absolute value of a long value. If the argument is not
-	 * negative, the argument is returned. If the argument is negative, the
-	 * negation of the argument is returned.
-	 */
-	public static long abs(long a)
-	{
-		// TODO document that Long.MIN_VALUE == -Long.MIN_VALUE
-		return ((a < 0) ? -a : a);
-	}
-
-	/**
-	 * Returns the absolute value of an integer value. If the argument is not
-	 * negative, the argument is returned. If the argument is negative, the
-	 * negation of the argument is returned.
-	 */
-	public static int abs(int a)
-	{
-		// TODO document that Integer.MIN_VALUE == -Integer.MIN_VALUE
-		return ((a < 0) ? -a : a);
+		return angdeg * DEG_TO_RAD;
 	}
 
 	/**
@@ -476,50 +546,14 @@ public final class Math
 	}
 
 	/**
-	 * Computes square-root of x.
-	 */
-	public static double sqrt(double x)
-	{
-		// @author Sven Köhler
-		
-		// also catches NaN
-		if (!(x > 0))
-			return (x == 0) ? x : Double.NaN;
-		if (x == Double.POSITIVE_INFINITY)
-			return x;
-	
-		// modify values to avoid workaround subnormal values
-		double factor;
-		if (x >= Double.MIN_NORMAL)
-			factor = 0.5;
-		else
-		{
-			x *= 0x1p64;
-			factor = 0x1p-33;
-		}
-		
-		// magic constant function for good approximation of 1/sqrt(x)
-		// according to http://www.lomont.org/Math/Papers/2003/InvSqrt.pdf
-		// also look at http://en.wikipedia.org/wiki/Fast_inverse_square_root
-		double isqrt = Double.longBitsToDouble(0x5fe6ec85e7de30daL - (Double.doubleToRawLongBits(x) >> 1));
-		
-		// 3 newton steps for 1/sqrt(x)
-		double xhalf = 0.5 * x;
-		isqrt = isqrt * (1.5 - xhalf * isqrt * isqrt);
-		isqrt = isqrt * (1.5 - xhalf * isqrt * isqrt);
-		isqrt = isqrt * (1.5 - xhalf * isqrt * isqrt);
-		
-		// 1 newton step for sqrt(x)
-		return factor * (x * isqrt + 1.0 / isqrt);
-	}
-	
-	/**
 	 * Tangent function.
 	 */
 	public static double tan(double a)
 	{
 		return sin(a) / cos(a);
 	}
+
+	/*==================== inverse trigonometric functions ====================*/ 
 
 	/**
 	 * Arc tangent function.
@@ -581,21 +615,5 @@ public final class Math
 	public static double asin(double a)
 	{
 		return atan(a / sqrt(1 - a * a));
-	}
-
-	/**
-	 * Converts radians to degrees.
-	 */
-	public static double toDegrees(double angrad)
-	{
-		return angrad * RAD_TO_DEG;
-	}
-
-	/**
-	 * Converts degrees to radians.
-	 */
-	public static double toRadians(double angdeg)
-	{
-		return angdeg * DEG_TO_RAD;
 	}
 }
