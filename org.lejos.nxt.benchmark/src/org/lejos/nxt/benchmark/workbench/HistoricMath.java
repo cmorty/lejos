@@ -2,6 +2,10 @@ package org.lejos.nxt.benchmark.workbench;
 
 public class HistoricMath
 {
+	private static final double PI = 3.14159265358979323846264338328;
+	private static final double PIhalf = PI * 0.5;
+	private static final double PItwice = PI * 2.0;
+	
 	private static final double LN2 = 0.693147180559945;
 	
 	private static final double LOG_LOWER_BOUND = 0.9999999f;
@@ -224,4 +228,195 @@ public class HistoricMath
 
 		return neg ? 1.0 / sum : sum;
 	}
+
+	/**
+	 * Sine function using a Chebyshev-Pade approximation. Author Paulo Costa.
+	 */
+	public static double sinChebyPade(double x)
+	{
+		int neg = 0;
+		
+		//reduce to interval [-2PI, +2PI]
+		x = x % PItwice;
+		
+		//reduce to interval [0, 2PI]
+		if (x < 0)
+		{
+			neg++;
+			x = -x;
+		}
+		
+		//reduce to interval [0, PI]
+		if (x > PI)
+		{
+			neg++;
+			x -= PI;
+		}
+		
+		//reduce to interval [0, PI/2]
+		if (x > PIhalf)
+			x = PI - x;	
+		
+		// Using a Chebyshev-Pade approximation
+		double x2 = x * x;
+		double y = (0.9238318854 - 0.9595498071e-1 * x2) * x
+				/ (0.9238400690 + (0.5797298195e-1 + 0.2031791179e-2 * x2) * x2);
+		
+		return ((neg & 1) == 0) ? y : -y;
+	}
+
+	/**
+	 * Cosine function using a Chebyshev-Pade approximation. Author Paulo Costa.
+	 */
+	public static double cosChebyPade(double x)
+	{
+		int neg = 0;
+		
+		//reduce to interval [-2PI, +2PI]
+		x = x % PItwice;
+		
+		//reduce to interval [0, 2PI]
+		if (x < 0)
+			x = -x;
+		
+		//reduce to interval [0, PI]
+		if (x > PI)
+		{
+			neg++;
+			x -= PI;
+		}
+		
+		//reduce to interval [0, PI/2]
+		if (x > PIhalf)
+		{
+			neg++;
+			x = PI - x;
+		}
+		
+		// Using a Chebyshev-Pade approximation
+		double x2 = x * x;
+		double y = (0.9457092528 + (-0.4305320537 + 0.1914993010e-1 * x2) * x2)
+				/ (0.9457093212 + (0.4232119630e-1 + 0.9106317690e-3 * x2) * x2);
+		
+		return ((neg & 1) == 0) ? y : -y;
+	}
+
+	/**
+	 * Tangent function.
+	 */
+	public static double tanSimple(double a)
+	{
+		return sinChebyPade(a) / cosChebyPade(a);
+	}
+
+	/**
+	 * Exponential function.
+	 * Returns E^x (where E is the base of natural logarithms).
+	 */
+	public static double expTaylor(double x)
+	{
+		// also catches NaN
+		if (!(x > -750))
+			return (x < 0) ? 0 : Double.NaN;
+		if (x > 710)
+			return Double.POSITIVE_INFINITY;
+
+		int k = (int)(x / LN2);
+		if (x < 0)
+			k--;
+		x -= k * LN2;
+		
+		//known ranges:
+		//	0 <= $x < LN2
+		//ergo:
+		//  $xpow will converge quickly towards 0
+
+		double sum = 1;
+		double xpow = x;
+		int fac = 2;
+
+		while (true)
+		{
+			if (xpow < 0x1p-52)
+				break;
+			
+			sum += xpow;
+			xpow = xpow * x / fac++;
+		}
+		
+		double f1;
+		if (k > 1000)
+		{
+			k -= 1000;
+			f1 = 0x1p+1000; 
+		}
+		else if (k < -1000)
+		{
+			k += 1000;
+			f1 = 0x1p-1000; 
+		}
+		else
+			f1 = 1.0;
+		
+		double f2 = Double.longBitsToDouble((long)(k+1023) << 52);
+		return sum * f2 * f1;
+	}
+
+	/**
+	 * Natural log function. Returns log(x) to base E.
+	 */
+	public static double logZeta(double x)
+	{
+		// also catches NaN
+		if (!(x > 0))
+			return (x == 0) ? Double.NEGATIVE_INFINITY : Double.NaN;
+		if (x == Double.POSITIVE_INFINITY)
+			return Double.POSITIVE_INFINITY;
+	
+		// Algorithm has been derived from the one given at
+		// http://www.geocities.com/zabrodskyvlada/aat/a_contents.html 
+
+		int m;
+		if (x >= Double.MIN_NORMAL)
+			m = -1023;
+		else
+		{
+			m = -1023-64;
+			x *= 0x1p64;
+		}
+	
+		//extract mantissa and reset exponent
+		long bits = Double.doubleToRawLongBits(x);
+		m += (int)(bits >>> 52);
+		bits = (bits & 0x000FFFFFFFFFFFFFL) + 0x3FF0000000000000L;
+		x = Double.longBitsToDouble(bits);
+		
+		double zeta = (x - 1.0) / (x + 1.0);
+		double zeta2 = zeta * zeta;		
+		
+		//known ranges:
+		//	1 <= $x < 2
+		//  0 <= $zeta < 1/3
+		//  0 <= $zeta2 < 1/9
+		//ergo:
+		//  $zetapow will converge quickly towards 0
+		
+		double zetapow = zeta2;
+		double r = 1;
+		int i = 3;
+	
+		while(true)
+		{
+			double tmp = zetapow / i;
+			if (tmp < 0x1p-52)
+				break;
+			
+			i += 2;
+			r += tmp;
+			zetapow *= zeta2;
+		}
+		
+		return m * LN2 + 2 * zeta * r;
+	}
+
 }
