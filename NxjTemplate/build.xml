@@ -142,7 +142,7 @@
 <!--  used only for modifying the NXJplugin -->
     <target name="zipme" description="Zip the application to the sample project">
     <property name="build.classes.dir" location="/build"/>
-     <property name="plugin" location="../../NetBeans_projects/NXJPlugin/src/nxjplugin/"/>
+     <property name="plugin" location="../NXJPlugin/src/nxjplugin/"/>
 <echo> address=${plugin} </echo >
    <zip basedir="." destfile="${plugin}/NXJSampleProject.zip">
 <!--       <zip basedir="." destfile="${build}/NXJProjectProject.zip"> -->
