@@ -924,42 +924,6 @@ public class BetaMath
 		return ((neg & 1) == 0) ? y : -y;
 	}
 	
-	/**
-	 * Tangent function.
-	 */
-	public static double tan(double x)
-	{
-		int neg = 0;
-		
-		//reduce to interval [-PI, +PI]
-		x = x % PI;
-		
-		//reduce to interval [0, PI]
-		if (x < 0)
-		{
-			neg++;
-			x = -x;
-		}
-		
-		//reduce to interval [0, PI/2]
-		if (x > PIhalf)
-		{
-			neg++;
-			x = PI - x;
-		}
-		
-		double y;
-		if (x < PIhalfhalf)
-			y = sin_taylor(x) / cos_taylor(x);
-		else
-		{
-			double tmp = PIhalf - x;
-			y = cos_taylor(tmp) / sin_taylor(tmp);
-		}
-		
-		return ((neg & 1) == 0) ? y : -y;
-	}
-
 	private static final double COEFF_TAN_A01 = +34459425;
 	private static final double COEFF_TAN_A03 = -4729725;
 	private static final double COEFF_TAN_A05 = +135135;
@@ -971,7 +935,7 @@ public class BetaMath
 	private static final double COEFF_TAN_B06 = -13860;
 	private static final double COEFF_TAN_B08 = +45;
 
-	public static double tan2(double x)
+	public static double tan(double x)
 	{
 		int neg = 0;
 		

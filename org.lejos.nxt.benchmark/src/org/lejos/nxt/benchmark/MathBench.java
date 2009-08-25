@@ -252,6 +252,34 @@ public final class MathBench
 		return count;
 	}
 
+	private static int benchTan(int count, String comment, double x)
+	{
+		long nullTime = BenchUtils.getIterationTime(count);
+		
+		// Function calls
+		long start = System.currentTimeMillis();
+		for (int i = 0; i < count; i++)
+			Math.tan(x);
+		long end = System.currentTimeMillis();
+	
+		report(count, "tan (current, "+comment+")", count, "ops", end - start - nullTime);
+		return count;
+	}
+
+	private static int benchTanNew(int count, String comment, double x)
+	{
+		long nullTime = BenchUtils.getIterationTime(count);
+		
+		// Function calls
+		long start = System.currentTimeMillis();
+		for (int i = 0; i < count; i++)
+			BetaMath.tan(x);
+		long end = System.currentTimeMillis();
+	
+		report(count, "tan (new, "+comment+")", count, "ops", end - start - nullTime);
+		return count;
+	}
+
 	public static void main(String[] args)
 	{
 		RConsole.open();
@@ -343,6 +371,36 @@ public final class MathBench
 		countAll += benchCosNew(iterate, "6", 6);
 		BenchUtils.cleanUp(null);	
 		countAll += benchCosNew(iterate, "7", 7);
+		BenchUtils.cleanUp(null);	
+
+		countAll += benchTan(iterate, "1", 1);
+		BenchUtils.cleanUp(null);	
+		countAll += benchTan(iterate, "2", 2);
+		BenchUtils.cleanUp(null);	
+		countAll += benchTan(iterate, "3", 3);
+		BenchUtils.cleanUp(null);	
+		countAll += benchTan(iterate, "4", 4);
+		BenchUtils.cleanUp(null);	
+		countAll += benchTan(iterate, "5", 5);
+		BenchUtils.cleanUp(null);	
+		countAll += benchTan(iterate, "6", 6);
+		BenchUtils.cleanUp(null);	
+		countAll += benchTan(iterate, "7", 7);
+		BenchUtils.cleanUp(null);	
+
+		countAll += benchTanNew(iterate, "1", 1);
+		BenchUtils.cleanUp(null);	
+		countAll += benchTanNew(iterate, "2", 2);
+		BenchUtils.cleanUp(null);	
+		countAll += benchTanNew(iterate, "3", 3);
+		BenchUtils.cleanUp(null);	
+		countAll += benchTanNew(iterate, "4", 4);
+		BenchUtils.cleanUp(null);	
+		countAll += benchTanNew(iterate, "5", 5);
+		BenchUtils.cleanUp(null);	
+		countAll += benchTanNew(iterate, "6", 6);
+		BenchUtils.cleanUp(null);	
+		countAll += benchTanNew(iterate, "7", 7);
 		BenchUtils.cleanUp(null);	
 
 		//infinite loop for subnormal values
