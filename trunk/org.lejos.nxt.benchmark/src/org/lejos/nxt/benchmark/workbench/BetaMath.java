@@ -61,19 +61,20 @@ public class BetaMath
 		return factor * (x * isqrt + 1.0f / isqrt);
 	}
 	
-	private static double COEFF_LOG_00 = 2.0;
-	private static double COEFF_LOG_01 = 0.666666666666666666666666666667;
-	private static double COEFF_LOG_02 = 0.4;
-	private static double COEFF_LOG_03 = 0.285714285714285714285714285714;
-	private static double COEFF_LOG_04 = 0.222222222222222222222222222222;
-	private static double COEFF_LOG_05 = 0.181818181818181818181818181818;
-	private static double COEFF_LOG_06 = 0.153846153846153846153846153846;
-	private static double COEFF_LOG_07 = 0.133333333333333333333333333333;
-	private static double COEFF_LOG_08 = 0.117647058823529411764705882353;
-	private static double COEFF_LOG_09 = 0.105263157894736842105263157895;
-	private static double COEFF_LOG_10 = 0.0952380952380952380952380952381;
-	private static double COEFF_LOG_11 = 0.0869565217391304347826086956522;
-	private static double COEFF_LOG_12 = 0.08;
+	// Coefficients of the zeta-series of ln(x)
+	private static double COEFF_LOG_01 = 2.0;
+	private static double COEFF_LOG_03 = 0.666666666666666666666666666667;
+	private static double COEFF_LOG_05 = 0.4;
+	private static double COEFF_LOG_07 = 0.285714285714285714285714285714;
+	private static double COEFF_LOG_09 = 0.222222222222222222222222222222;
+	private static double COEFF_LOG_11 = 0.181818181818181818181818181818;
+	private static double COEFF_LOG_13 = 0.153846153846153846153846153846;
+	private static double COEFF_LOG_15 = 0.133333333333333333333333333333;
+	private static double COEFF_LOG_17 = 0.117647058823529411764705882353;
+	private static double COEFF_LOG_19 = 0.105263157894736842105263157895;
+	private static double COEFF_LOG_21 = 0.0952380952380952380952380952381;
+	private static double COEFF_LOG_23 = 0.0869565217391304347826086956522;
+	private static double COEFF_LOG_25 = 0.08;
 	
 	/**
 	 * Natural log function. Returns log(x) to base E.
@@ -118,9 +119,8 @@ public class BetaMath
 		//  0 <= $zeta < 0.172
 		//  0 <= $zeta2 < 0.0194
 
-		double r = COEFF_LOG_00+(COEFF_LOG_01+(COEFF_LOG_02+(COEFF_LOG_03+(COEFF_LOG_04+(COEFF_LOG_05+(COEFF_LOG_06+(COEFF_LOG_07+(COEFF_LOG_08+(COEFF_LOG_09)*zeta2)*zeta2)*zeta2)*zeta2)*zeta2)*zeta2)*zeta2)*zeta2)*zeta2;
-		
-		return m * LN_SQRT2 + zeta * r;
+		double r = (COEFF_LOG_01+(COEFF_LOG_03+(COEFF_LOG_05+(COEFF_LOG_07+(COEFF_LOG_09+(COEFF_LOG_11+(COEFF_LOG_13+(COEFF_LOG_15+(COEFF_LOG_17+(COEFF_LOG_19)*zeta2)*zeta2)*zeta2)*zeta2)*zeta2)*zeta2)*zeta2)*zeta2)*zeta2)*zeta;		
+		return m * LN_SQRT2 + r;
 	}
 	
 	// Coefficients of Remez[11,0] approximation of exp(x) for x=0..ln(2)
@@ -924,6 +924,7 @@ public class BetaMath
 		return ((neg & 1) == 0) ? y : -y;
 	}
 	
+	// Coefficients of pade-approximation of tan(x)
 	private static final double COEFF_TAN_A01 = +34459425;
 	private static final double COEFF_TAN_A03 = -4729725;
 	private static final double COEFF_TAN_A05 = +135135;
