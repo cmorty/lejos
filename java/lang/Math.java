@@ -16,8 +16,15 @@ public final class Math
 
 	static final double LN2 = 0.693147180559945309417232121458;
 	static final double LN10 = 2.30258509299404568401799145468;
+	
+	private static final double SQRT2 = 1.41421356237309504880168872421;
+	private static final double LN_SQRT2 = 0.346573590279972654708616060729;	
+	
+	private static final double INV_LN2 = 1.44269504088896340735992468100;
+	private static final double INV_SQRT2 = 0.707106781186547524400844362105;
 
 	private static final double PIhalf = PI * 0.5;
+	private static final double PIhalfhalf = PI * 0.25;
 	private static final double PItwice = PI * 2.0;
 	
 	private static final double DEG_TO_RAD = 0.0174532925199432957692369076849;
@@ -337,6 +344,32 @@ public final class Math
 	
 	/*========================= exp/log/pow functions =========================*/ 
 
+	// Coefficients of Remez[11,0] approximation of exp(x) for x=0..ln(2)
+	private static final double COEFF_EXP_00 = 0.999999999999999996945413312322;
+	private static final double COEFF_EXP_01 = 1.00000000000000133475235568738;
+	private static final double COEFF_EXP_02 = 0.499999999999904260125463328703;
+	private static final double COEFF_EXP_03 = 0.166666666669337812408704211755;
+	private static final double COEFF_EXP_04 = 0.416666666283889843730385141088e-1;
+	private static final double COEFF_EXP_05 = 0.833333365529436919373436515228e-2;
+	private static final double COEFF_EXP_06 = 0.138888718050843901239114642134e-2;
+	private static final double COEFF_EXP_07 = 0.198418635994059844531320564776e-3;
+	private static final double COEFF_EXP_08 = 0.247878999398272729584741635853e-4;
+	private static final double COEFF_EXP_09 = 0.277640957428419777962278449310e-5;
+	private static final double COEFF_EXP_10 = 0.256024855062292883779591833098e-6;
+	private static final double COEFF_EXP_11 = 0.353472834562099171303604425909e-7;
+	
+	// Coefficients of the zeta-series of ln(x)
+	private static double COEFF_LOG_01 = 2.0;
+	private static double COEFF_LOG_03 = 0.666666666666666666666666666667;
+	private static double COEFF_LOG_05 = 0.4;
+	private static double COEFF_LOG_07 = 0.285714285714285714285714285714;
+	private static double COEFF_LOG_09 = 0.222222222222222222222222222222;
+	private static double COEFF_LOG_11 = 0.181818181818181818181818181818;
+	private static double COEFF_LOG_13 = 0.153846153846153846153846153846;
+	private static double COEFF_LOG_15 = 0.133333333333333333333333333333;
+	private static double COEFF_LOG_17 = 0.117647058823529411764705882353;
+	private static double COEFF_LOG_19 = 0.105263157894736842105263157895;
+	
 	/**
 	 * Exponential function.
 	 * Returns E^x (where E is the base of natural logarithms).
@@ -349,47 +382,29 @@ public final class Math
 		if (x > 710)
 			return Double.POSITIVE_INFINITY;
 
-		int k = (int)(x / LN2);
+		int k = (int)(x * INV_LN2);
 		if (x < 0)
 			k--;
 		x -= k * LN2;
 		
-		//known ranges:
-		//	0 <= $x < LN2
-		//ergo:
-		//  $xpow will converge quickly towards 0
+		double f1 = COEFF_EXP_00+(COEFF_EXP_01+(COEFF_EXP_02+(COEFF_EXP_03+(COEFF_EXP_04+(COEFF_EXP_05+(COEFF_EXP_06+(COEFF_EXP_07+(COEFF_EXP_08+(COEFF_EXP_09+(COEFF_EXP_10+(COEFF_EXP_11)*x)*x)*x)*x)*x)*x)*x)*x)*x)*x)*x;
 
-		double sum = 1;
-		double xpow = x;
-		int fac = 2;
-
-		while (true)
-		{
-			if (xpow < 0x1p-52)
-				break;
-			
-			sum += xpow;
-			xpow = xpow * x / fac++;
-		}
-		
-		double f1;
 		if (k > 1000)
 		{
 			k -= 1000;
-			f1 = 0x1p+1000; 
+			f1 *= 0x1p+1000; 
 		}
 		else if (k < -1000)
 		{
 			k += 1000;
-			f1 = 0x1p-1000; 
+			f1 *= 0x1p-1000; 
 		}
-		else
-			f1 = 1.0;
 		
-		double f2 = Double.longBitsToDouble((long)(k+1023) << 52);
-		return sum * f2 * f1;
+		double f2 = Double.longBitsToDouble((long)(k + 1023) << 52);		
+		
+		return f1 * f2;
 	}
-
+	
 	/**
 	 * Natural log function. Returns log(x) to base E.
 	 */
@@ -415,38 +430,28 @@ public final class Math
 	
 		//extract mantissa and reset exponent
 		long bits = Double.doubleToRawLongBits(x);
-		m += (int)(bits >>> 52);
-		bits = (bits & 0x000FFFFFFFFFFFFFL) + 0x3FF0000000000000L;
+		m = (m + (int)(bits >>> 52)) << 1;
+		bits = (bits & 0x000FFFFFFFFFFFFFL) | 0x3FF0000000000000L;
 		x = Double.longBitsToDouble(bits);
+		
+		if (x > SQRT2)
+		{
+			m++;
+			x *= INV_SQRT2;
+		}
 		
 		double zeta = (x - 1.0) / (x + 1.0);
 		double zeta2 = zeta * zeta;		
 		
 		//known ranges:
-		//	1 <= $x < 2
-		//  0 <= $zeta < 1/3
-		//  0 <= $zeta2 < 1/9
-		//ergo:
-		//  $zetapow will converge quickly towards 0
-		
-		double zetapow = zeta2;
-		double r = 1;
-		int i = 3;
-	
-		while(true)
-		{
-			double tmp = zetapow / i;
-			if (tmp < 0x1p-52)
-				break;
-			
-			i += 2;
-			r += tmp;
-			zetapow *= zeta2;
-		}
-		
-		return m * LN2 + 2 * zeta * r;
-	}
+		//	1 <= $x < 1.41
+		//  0 <= $zeta < 0.172
+		//  0 <= $zeta2 < 0.0194
 
+		double r = (COEFF_LOG_01+(COEFF_LOG_03+(COEFF_LOG_05+(COEFF_LOG_07+(COEFF_LOG_09+(COEFF_LOG_11+(COEFF_LOG_13+(COEFF_LOG_15+(COEFF_LOG_17+(COEFF_LOG_19)*zeta2)*zeta2)*zeta2)*zeta2)*zeta2)*zeta2)*zeta2)*zeta2)*zeta2)*zeta;		
+		return m * LN_SQRT2 + r;
+	}
+	
 	/**
 	 * Power function. This is a slow but accurate method. author David Edwards
 	 */
@@ -473,11 +478,57 @@ public final class Math
 		return angdeg * DEG_TO_RAD;
 	}
 
+	// Coefficients of taylor series of sin(x)
+	private static final double COEFF_SIN_01 = +1.0000000000000000000000000000000000000000;
+	private static final double COEFF_SIN_03 = -0.1666666666666666666666666666666666666667;
+	private static final double COEFF_SIN_05 = +0.8333333333333333333333333333333333333333e-2;
+	private static final double COEFF_SIN_07 = -0.1984126984126984126984126984126984126984e-3;
+	private static final double COEFF_SIN_09 = +0.2755731922398589065255731922398589065256e-5;
+	private static final double COEFF_SIN_11 = -0.2505210838544171877505210838544171877505e-7;
+	private static final double COEFF_SIN_13 = +0.1605904383682161459939237717015494793273e-9;
+	private static final double COEFF_SIN_15 = -0.7647163731819816475901131985788070444155e-12;
+	private static final double COEFF_SIN_17 = +0.2811457254345520763198945583010320016233e-14;
+	
+	// Coefficients of taylor series of cos(x)
+	private static final double COEFF_COS_00 = +1.0000000000000000000000000000000000000000;
+	private static final double COEFF_COS_02 = -0.5000000000000000000000000000000000000000;
+	private static final double COEFF_COS_04 = +0.4166666666666666666666666666666666666667e-1;
+	private static final double COEFF_COS_06 = -0.1388888888888888888888888888888888888889e-2;
+	private static final double COEFF_COS_08 = +0.2480158730158730158730158730158730158730e-4;
+	private static final double COEFF_COS_10 = -0.2755731922398589065255731922398589065256e-6;
+	private static final double COEFF_COS_12 = +0.2087675698786809897921009032120143231254e-8;
+	private static final double COEFF_COS_14 = -0.1147074559772972471385169797868210566623e-10;
+	private static final double COEFF_COS_16 = +0.4779477332387385297438207491117544027597e-13;
+
+	// Coefficients of pade-approximation of tan(x)
+	private static final double COEFF_TAN_A01 = +34459425;
+	private static final double COEFF_TAN_A03 = -4729725;
+	private static final double COEFF_TAN_A05 = +135135;
+	private static final double COEFF_TAN_A07 = -990;
+	private static final double COEFF_TAN_A09 = +1;
+	private static final double COEFF_TAN_B00 = +34459425;
+	private static final double COEFF_TAN_B02 = -16216200;
+	private static final double COEFF_TAN_B04 = +945945;
+	private static final double COEFF_TAN_B06 = -13860;
+	private static final double COEFF_TAN_B08 = +45;
+
+	private static double sin_taylor(double x)
+	{
+		double x2 = x * x;
+		return (COEFF_SIN_01+(COEFF_SIN_03+(COEFF_SIN_05+(COEFF_SIN_07+(COEFF_SIN_09+(COEFF_SIN_11+(COEFF_SIN_13+(COEFF_SIN_15+(COEFF_SIN_17)*x2)*x2)*x2)*x2)*x2)*x2)*x2)*x2)*x;
+	}
+	
+	private static double cos_taylor(double x)
+	{
+		double x2 = x * x;
+		return (COEFF_COS_00+(COEFF_COS_02+(COEFF_COS_04+(COEFF_COS_06+(COEFF_COS_08+(COEFF_COS_10+(COEFF_COS_12+(COEFF_COS_14+(COEFF_COS_16)*x2)*x2)*x2)*x2)*x2)*x2)*x2)*x2);
+	}
+	
 	/**
-	 * Sine function using a Chebyshev-Pade approximation. Author Paulo Costa.
+	 * Sine function.
 	 */
 	public static double sin(double x)
-	{
+	{		
 		int neg = 0;
 		
 		//reduce to interval [-2PI, +2PI]
@@ -501,16 +552,17 @@ public final class Math
 		if (x > PIhalf)
 			x = PI - x;	
 		
-		// Using a Chebyshev-Pade approximation
-		double x2 = x * x;
-		double y = (0.9238318854 - 0.9595498071e-1 * x2) * x
-				/ (0.9238400690 + (0.5797298195e-1 + 0.2031791179e-2 * x2) * x2);
+		double y;		
+		if (x < PIhalfhalf)
+			y = sin_taylor(x);
+		else
+			y = cos_taylor(PIhalf - x);
 		
 		return ((neg & 1) == 0) ? y : -y;
 	}
-
+	
 	/**
-	 * Cosine function using a Chebyshev-Pade approximation. Author Paulo Costa.
+	 * Cosine function.
 	 */
 	public static double cos(double x)
 	{
@@ -537,20 +589,46 @@ public final class Math
 			x = PI - x;
 		}
 		
-		// Using a Chebyshev-Pade approximation
-		double x2 = x * x;
-		double y = (0.9457092528 + (-0.4305320537 + 0.1914993010e-1 * x2) * x2)
-				/ (0.9457093212 + (0.4232119630e-1 + 0.9106317690e-3 * x2) * x2);
+		double y;		
+		if (x < PIhalfhalf)
+			y = cos_taylor(x);
+		else
+			y = sin_taylor(PIhalf - x);
 		
 		return ((neg & 1) == 0) ? y : -y;
 	}
-
-	/**
-	 * Tangent function.
-	 */
-	public static double tan(double a)
+	
+	public static double tan(double x)
 	{
-		return sin(a) / cos(a);
+		int neg = 0;
+		
+		//reduce to interval [-PI, +PI]
+		x = x % PI;
+		
+		//reduce to interval [0, PI]
+		if (x < 0)
+		{
+			neg++;
+			x = -x;
+		}
+		
+		//reduce to interval [0, PI/2]
+		if (x > PIhalf)
+		{
+			neg++;
+			x = PI - x;
+		}
+		
+		boolean inv = x > PIhalfhalf;
+		if (inv)
+			x = PIhalf - x;
+		
+		double x2 = x * x;
+		double a = (COEFF_TAN_A01+(COEFF_TAN_A03+(COEFF_TAN_A05+(COEFF_TAN_A07+(COEFF_TAN_A09)*x2)*x2)*x2)*x2)*x;
+		double b = COEFF_TAN_B00+(COEFF_TAN_B02+(COEFF_TAN_B04+(COEFF_TAN_B06+(COEFF_TAN_B08)*x2)*x2)*x2)*x2;
+		
+		double y = inv ? b/a : a/b;		
+		return ((neg & 1) == 0) ? y : -y;
 	}
 
 	/*==================== inverse trigonometric functions ====================*/ 
