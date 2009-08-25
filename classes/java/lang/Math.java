@@ -49,15 +49,6 @@ public final class Math
 		// private constructor to make sure this class is not instantiated
 	}
 
-	// Private because it only works when -1 < x < 1 but it is used by atan2
-	private static double ArcTan(double x)
-	{
-		// Using a Chebyshev-Pade approximation
-		double x2 = x * x;
-		return (0.7162721433f + 0.2996857769f * x2) * x
-				/ (0.7163164576f + (0.5377299313f + 0.3951620469e-1f * x2) * x2);
-	}
-	
 	/*========================= abs functions =========================*/ 
 
 	/**
@@ -633,6 +624,15 @@ public final class Math
 
 	/*==================== inverse trigonometric functions ====================*/ 
 
+	// Private because it only works when -1 < x < 1 but it is used by atan2
+	private static double arctan_cheby(double x)
+	{
+		// Using a Chebyshev-Pade approximation
+		double x2 = x * x;
+		return (0.7162721433f + 0.2996857769f * x2) * x
+				/ (0.7163164576f + (0.5377299313f + 0.3951620469e-1f * x2) * x2);
+	}
+	
 	/**
 	 * Arc tangent function.
 	 */
@@ -659,19 +659,19 @@ public final class Math
 			if (x < 0)
 			{
 				if (y >= 0)
-					return ArcTan(y / x) + PI;
+					return arctan_cheby(y / x) + PI;
 				else
-					return ArcTan(y / x) - PI;
+					return arctan_cheby(y / x) - PI;
 			}
 			else
-				return ArcTan(y / x);
+				return arctan_cheby(y / x);
 		}
 		else
 		{
 			if (y < 0)
-				return ArcTan(-x / y) - PI / 2;
+				return arctan_cheby(-x / y) - PI / 2;
 			else
-				return ArcTan(-x / y) + PI / 2;
+				return arctan_cheby(-x / y) + PI / 2;
 		}
 	}
 
