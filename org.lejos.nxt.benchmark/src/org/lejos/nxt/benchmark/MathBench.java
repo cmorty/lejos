@@ -93,7 +93,7 @@ public final class MathBench
 			HistoricMath.expTaylor(x);
 		long end = System.currentTimeMillis();
 	
-		report(count, "exp (historic1, "+comment+")", count, "ops", end - start - nullTime);
+		report(count, "exp (historic2, "+comment+")", count, "ops", end - start - nullTime);
 		return count;
 	}
 	
