@@ -462,16 +462,16 @@ public final class String implements CharSequence
 	
 	public static String valueOf(double d)
 	{
-		StringBuilder sb = new StringBuilder();
-		sb.append(d);
-		return sb.toString();
+		char[] sb = new char[StringUtils.MAX_DOUBLE_CHARS];
+		int p = StringUtils.getDoubleChars(d, sb, 0);
+		return new String(sb, 0, p);
 	}
 	
 	public static String valueOf(float f)
 	{
-		StringBuilder sb = new StringBuilder();
-		sb.append(f);
-		return sb.toString();
+		char[] sb = new char[StringUtils.MAX_FLOAT_CHARS];
+		int p = StringUtils.getFloatChars(f, sb, 0);
+		return new String(sb, 0, p);
 	}
 	
 	public static String valueOf(int i)
