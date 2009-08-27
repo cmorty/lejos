@@ -216,7 +216,7 @@ public final class Float extends Number
 	 */
 	public static float parseFloat(String s) throws NumberFormatException
 	{
-		return (float)Double.parseDouble(s);
+		return StringUtils.stringToFloat(s);
 	}
 	
 	@Override

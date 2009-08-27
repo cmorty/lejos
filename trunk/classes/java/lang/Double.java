@@ -114,41 +114,7 @@ public final class Double extends Number
 	 * @return double precision floating point number
 	 */
 	public static double parseDouble(String s) throws NumberFormatException {
-		boolean negative = (s.charAt(0) == '-'); // Check if negative symbol.
-		double result = 0.0D; // Starting value
-		int index = s.indexOf('.');
-		
-		if(index > -1) {
-		// Means the decimal place exists, add values to right of it
-			int divisor = 1;
-			for(int i=index+1;i<s.length();i++) {
-				divisor *= 10;
-				int curVal = (s.charAt(i)-48); // Convert char to int
-				if(curVal > 9|curVal < 0)
-					throw new NumberFormatException();
-				result += ((double)curVal/divisor);
-			}
-		}
-		else {
-			index = s.length(); // If number string had no decimal
-		}
-			
-		
-		// Now add number characters to left of decimal
-		int multiplier = 1;
-		// TODO: Note: Sven removed a test here for no decimal place. Unsure if needed.
-		// Check old version of SVN to see old line.
-		int finish = negative ? 1 : 0; // Determine finishing position
-		
-		for(int i=index-1;i>= finish;i--) {
-			int curVal = (s.charAt(i) - 48); // Convert char to int
-			if(curVal > 9|curVal < 0)
-				throw new NumberFormatException();
-			result += (curVal * multiplier);
-			multiplier *= 10;
-		}	
-		
-		return negative ? -result : result;
+		return StringUtils.stringToDouble(s);
 	}
 	
 	@Override
