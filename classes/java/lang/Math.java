@@ -469,27 +469,24 @@ public final class Math
 		return angdeg * DEG_TO_RAD;
 	}
 
-	// Coefficients of taylor series of sin(x)
-	private static final double COEFF_SIN_01 = +1.0000000000000000000000000000000000000000;
-	private static final double COEFF_SIN_03 = -0.1666666666666666666666666666666666666667;
-	private static final double COEFF_SIN_05 = +0.8333333333333333333333333333333333333333e-2;
-	private static final double COEFF_SIN_07 = -0.1984126984126984126984126984126984126984e-3;
-	private static final double COEFF_SIN_09 = +0.2755731922398589065255731922398589065256e-5;
-	private static final double COEFF_SIN_11 = -0.2505210838544171877505210838544171877505e-7;
-	private static final double COEFF_SIN_13 = +0.1605904383682161459939237717015494793273e-9;
-	private static final double COEFF_SIN_15 = -0.7647163731819816475901131985788070444155e-12;
-	private static final double COEFF_SIN_17 = +0.2811457254345520763198945583010320016233e-14;
+	// Coefficients of Chebychev-Pade approximation of sin(x)
+	private static final double COEFF_SIN_01 = +0.9999999999999999764211612009725588855111;
+	private static final double COEFF_SIN_03 = -0.1666666666666652393535348747726998605241;
+	private static final double COEFF_SIN_05 = +0.8333333333308337379310370484936396053884e-2;
+	private static final double COEFF_SIN_07 = -0.1984126982196706774095496759095037380412e-3;
+	private static final double COEFF_SIN_09 = +0.2755731157077441238598803505081829543534e-5;
+	private static final double COEFF_SIN_11 = -0.2505048281275841971620868327213456590143e-7;
+	private static final double COEFF_SIN_13 = +0.1588305691336997706018324915122156575682e-9;
 	
-	// Coefficients of taylor series of cos(x)
-	private static final double COEFF_COS_00 = +1.0000000000000000000000000000000000000000;
-	private static final double COEFF_COS_02 = -0.5000000000000000000000000000000000000000;
-	private static final double COEFF_COS_04 = +0.4166666666666666666666666666666666666667e-1;
-	private static final double COEFF_COS_06 = -0.1388888888888888888888888888888888888889e-2;
-	private static final double COEFF_COS_08 = +0.2480158730158730158730158730158730158730e-4;
-	private static final double COEFF_COS_10 = -0.2755731922398589065255731922398589065256e-6;
-	private static final double COEFF_COS_12 = +0.2087675698786809897921009032120143231254e-8;
-	private static final double COEFF_COS_14 = -0.1147074559772972471385169797868210566623e-10;
-	private static final double COEFF_COS_16 = +0.4779477332387385297438207491117544027597e-13;
+	// Coefficients of Chebychev-Pade approximation of cos(x)
+	private static final double COEFF_COS_00 = +0.9999999999999999999696857335603386685305;
+	private static final double COEFF_COS_02 = -0.4999999999999999937087712052995206607828;
+	private static final double COEFF_COS_04 = +0.4166666666666645245167779123297511727281e-1;
+	private static final double COEFF_COS_06 = -0.1388888888886110072336550416638513155394e-2;
+	private static final double COEFF_COS_08 = +0.2480158728388399090193789866235476908122e-4;
+	private static final double COEFF_COS_10 = -0.2755731309846481722283180474149312600794e-6;
+	private static final double COEFF_COS_12 = +0.2087558246021268894742907499544843726236e-8;
+	private static final double COEFF_COS_14 = -0.1135338332274935375664837177431026057261e-10;
 
 	// Coefficients of pade-approximation of tan(x)
 	private static final double COEFF_TAN_A01 = +34459425;
@@ -503,16 +500,18 @@ public final class Math
 	private static final double COEFF_TAN_B06 = -13860;
 	private static final double COEFF_TAN_B08 = +45;
 
-	private static double sin_taylor(double x)
+	private static double sin_chebypade(double x)
 	{
+		// only for values -Pi/4 <= x <= Pi/4
 		double x2 = x * x;
-		return (COEFF_SIN_01+(COEFF_SIN_03+(COEFF_SIN_05+(COEFF_SIN_07+(COEFF_SIN_09+(COEFF_SIN_11+(COEFF_SIN_13+(COEFF_SIN_15+(COEFF_SIN_17)*x2)*x2)*x2)*x2)*x2)*x2)*x2)*x2)*x;
+		return (COEFF_SIN_01+(COEFF_SIN_03+(COEFF_SIN_05+(COEFF_SIN_07+(COEFF_SIN_09+(COEFF_SIN_11+(COEFF_SIN_13)*x2)*x2)*x2)*x2)*x2)*x2)*x;
 	}
 	
-	private static double cos_taylor(double x)
+	private static double cos_chebypade(double x)
 	{
+		// only for values -Pi/4 <= x <= Pi/4
 		double x2 = x * x;
-		return (COEFF_COS_00+(COEFF_COS_02+(COEFF_COS_04+(COEFF_COS_06+(COEFF_COS_08+(COEFF_COS_10+(COEFF_COS_12+(COEFF_COS_14+(COEFF_COS_16)*x2)*x2)*x2)*x2)*x2)*x2)*x2)*x2);
+		return (COEFF_COS_00+(COEFF_COS_02+(COEFF_COS_04+(COEFF_COS_06+(COEFF_COS_08+(COEFF_COS_10+(COEFF_COS_12+(COEFF_COS_14)*x2)*x2)*x2)*x2)*x2)*x2)*x2);
 	}
 	
 	/**
@@ -545,9 +544,9 @@ public final class Math
 		
 		double y;		
 		if (x < PIhalfhalf)
-			y = sin_taylor(x);
+			y = sin_chebypade(x);
 		else
-			y = cos_taylor(PIhalf - x);
+			y = cos_chebypade(PIhalf - x);
 		
 		return ((neg & 1) == 0) ? y : -y;
 	}
@@ -582,9 +581,9 @@ public final class Math
 		
 		double y;		
 		if (x < PIhalfhalf)
-			y = cos_taylor(x);
+			y = cos_chebypade(x);
 		else
-			y = sin_taylor(PIhalf - x);
+			y = sin_chebypade(PIhalf - x);
 		
 		return ((neg & 1) == 0) ? y : -y;
 	}
