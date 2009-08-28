@@ -488,17 +488,17 @@ public final class Math
 	private static final double COEFF_COS_12 = +0.2087558246021268894742907499544843726236e-8;
 	private static final double COEFF_COS_14 = -0.1135338332274935375664837177431026057261e-10;
 
-	// Coefficients of pade-approximation of tan(x)
-	private static final double COEFF_TAN_A01 = +34459425;
-	private static final double COEFF_TAN_A03 = -4729725;
-	private static final double COEFF_TAN_A05 = +135135;
-	private static final double COEFF_TAN_A07 = -990;
-	private static final double COEFF_TAN_A09 = +1;
-	private static final double COEFF_TAN_B00 = +34459425;
-	private static final double COEFF_TAN_B02 = -16216200;
-	private static final double COEFF_TAN_B04 = +945945;
-	private static final double COEFF_TAN_B06 = -13860;
-	private static final double COEFF_TAN_B08 = +45;
+	// Coefficients of Chebychev-Pade approximation of tan(x)
+	private static final double COEFF_TAN_A01 = +1.163208406359175145039529270641357908653;
+	private static final double COEFF_TAN_A03 = -0.1551562294271971874673845256091948727104;
+	private static final double COEFF_TAN_A05 = +0.3984273522258578489458762347483930831238e-2;
+	private static final double COEFF_TAN_A07 = -0.2078385281638820833414798468958567962456e-4;
+	private static final double COEFF_TAN_B00 = +1.163208406359175145145702168450150748988;
+	private static final double COEFF_TAN_B02 = -0.5428923648802555771443974019753420196884;
+	private static final double COEFF_TAN_B04 = +0.2985394096778725847225000070352932045180e-1;
+	private static final double COEFF_TAN_B06 = -0.3627755504463478978823711298374056529721e-3;
+	private static final double COEFF_TAN_B08 = +0.5798383713759288762215813642061562265476e-6;
+
 
 	private static double sin_chebypade(double x)
 	{
@@ -614,7 +614,7 @@ public final class Math
 			x = PIhalf - x;
 		
 		double x2 = x * x;
-		double a = (COEFF_TAN_A01+(COEFF_TAN_A03+(COEFF_TAN_A05+(COEFF_TAN_A07+(COEFF_TAN_A09)*x2)*x2)*x2)*x2)*x;
+		double a = (COEFF_TAN_A01+(COEFF_TAN_A03+(COEFF_TAN_A05+(COEFF_TAN_A07)*x2)*x2)*x2)*x;
 		double b = COEFF_TAN_B00+(COEFF_TAN_B02+(COEFF_TAN_B04+(COEFF_TAN_B06+(COEFF_TAN_B08)*x2)*x2)*x2)*x2;
 		
 		double y = inv ? b/a : a/b;		
