@@ -241,14 +241,15 @@ public class NXJSampleWizardIterator implements WizardDescriptor./*Progress*/Ins
         for (int i = 0; i < nl.getLength(); i++)
         {
           Element el = (Element) nl.item(i);
-          if (el.getParentNode() != null && "data".equals(el.getParentNode().getNodeName()))
+          if (el.getParentNode() != null && (
+                  "data".equals(el.getParentNode().getNodeName()) ||
+                  "general-data".equals(el.getParentNode().getNodeName())))
           {
             NodeList nl2 = el.getChildNodes();
             if (nl2.getLength() > 0)
             {
               nl2.item(0).setNodeValue(name);
             }
-            break;
           }
         }
       }
