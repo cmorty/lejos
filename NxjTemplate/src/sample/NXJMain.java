@@ -17,9 +17,9 @@ public class NXJMain {
     public static void main(String[] args)
     {
       // replace with your code
-      System.out.println("Press a button" );
-      System.out.println(" to start");
+      System.out.println("Press to Start" );
       Button.waitForPress();
+    
     }
 
 }
