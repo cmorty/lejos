@@ -64,6 +64,9 @@ public abstract class Point2D implements Cloneable {
 			this.y = y;			
 		}
 
+		/**
+		 * Represent the Point2SD.Float as a String
+		 */
 		@Override
         public String toString() {
             return "Point2D.Float["+x+", "+y+"]";
@@ -115,6 +118,9 @@ public abstract class Point2D implements Cloneable {
 			this.y = y;			
 		}
 		
+		/**
+		 * Represent the Point2D.Double as a String
+		 */
 		@Override
         public String toString() {
             return "Point2D.Double["+x+", "+y+"]";

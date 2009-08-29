@@ -4,14 +4,10 @@ package java.awt.geom;
  * An abstract class for a Rectangle.
  * Subclasses use float, double or integer coordinates.
  * 
- * @author Lawrie
+ * @author Lawrie Griffiths
  *
  */
 public abstract class Rectangle2D extends RectangularShape {
-	/**
-	 * A Rectangle2D with float coordinates.
-	 */
-	
     /**
      * The bitmask that indicates that a point lies to the left of
      * this <code>Rectangle2D</code>.
@@ -40,6 +36,9 @@ public abstract class Rectangle2D extends RectangularShape {
      */
     public static final int OUT_BOTTOM = 8;
 
+	/**
+	 * A Rectangle2D with float coordinates.
+	 */
 	public static class Float extends Rectangle2D {
 		/**
 		 * The x coordinate of the top left corner
@@ -276,6 +275,12 @@ public abstract class Rectangle2D extends RectangularShape {
 	    }
 	}
 	
+	/**
+	 * This is an abstract class which cannot be instantiated: use Rectangle2D.Float, Rectangle2D.Double, or Rectangle.
+	 */
+	protected Rectangle2D() {
+	}
+	
 	public boolean contains(double x, double y, double w, double h) {
         if (isEmpty() || w <= 0 || h <= 0) return false;       
         double x0 = getX();
@@ -330,6 +335,15 @@ public abstract class Rectangle2D extends RectangularShape {
                 x < x0 + getWidth() && y < y0 + getHeight());
     }  
     
+    /**
+     * Test if this rectangle intersects a given line
+     * 
+     * @param x1 the x coordinate of the start of the given line
+     * @param y1 the y coordinate of the start of the given line
+     * @param x2 the x coordinate of the end of the given line
+     * @param y2 the y coordinate of the end of the given line
+     * @return true iff the rectangle intersects the line
+     */
     public boolean intersectsLine(double x1, double y1, double x2, double y2) {
         int out1, out2 = outcode(x2, y2);
         if (out2 == 0) return true;
@@ -356,12 +370,31 @@ public abstract class Rectangle2D extends RectangularShape {
         return true;
     }
     
+    /**
+     * Returns a mask value that specifies where a given point lies with respect
+     * to this rectangle.
+     * 
+     * @param p the given point
+     * @return the mask value
+     */
     public int outcode(Point2D p) {
         return outcode(p.getX(), p.getY());
     }
     
+    /**
+     * Returns a mask value that specifies where a point lies with respect
+     * to this rectangle.
+     * 
+     * @param x the x coordinate of the given point
+     * @param y the y coordinate of the given point
+     * @return the mask value
+     */
     public abstract int outcode(double x, double y);
     
+    /**
+     * Test if the rectangle is equal to a given object
+     */
+    @Override
     public boolean equals(Object obj) {
         if (obj == this) {
             return true;
