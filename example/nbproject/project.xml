@@ -11,14 +11,14 @@
             <properties/>
             <folders>
                 <source-folder>
-                    <label>src</label>
-                    <type>java</type>
-                    <location>src</location>
+                    <label>org.lejos.example</label>
+                    <location>.</location>
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
-                    <label>HelloWorld</label>
-                    <location>.</location>
+                    <label>src</label>
+                    <type>java</type>
+                    <location>src</location>
                     <encoding>UTF-8</encoding>
                 </source-folder>
             </folders>
@@ -80,6 +80,7 @@
                     <ide-action name="run"/>
                 </context-menu>
             </view>
+            <subprojects/>
         </general-data>
         <java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/1">
             <compilation-unit>
@@ -88,5 +89,16 @@
                 <source-level>1.5</source-level>
             </compilation-unit>
         </java-data>
+        <preferences xmlns="http://www.netbeans.org/ns/auxiliary-configuration-preferences/1">
+            <module name="org-netbeans-modules-editor-indent">
+                <node name="CodeStyle">
+                    <property name="usedProfile" value="default"/>
+                    <node name="project">
+                        <property name="tab-size" value="8"/>
+                        <property name="text-limit-width" value="80"/>
+                    </node>
+                </node>
+            </module>
+        </preferences>
     </configuration>
 </project>
