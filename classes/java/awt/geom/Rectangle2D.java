@@ -10,29 +10,22 @@ package java.awt.geom;
 public abstract class Rectangle2D extends RectangularShape {
     /**
      * The bitmask that indicates that a point lies to the left of
-     * this <code>Rectangle2D</code>.
-     * @since 1.2
+     * this rectangle.
      */
     public static final int OUT_LEFT = 1;
 
     /**
-     * The bitmask that indicates that a point lies above
-     * this <code>Rectangle2D</code>.
-     * @since 1.2
+     * The bitmask that indicates that a point lies above this rectangle.
      */
     public static final int OUT_TOP = 2;
 
     /**
-     * The bitmask that indicates that a point lies to the right of
-     * this <code>Rectangle2D</code>.
-     * @since 1.2
+     * The bitmask that indicates that a point lies to the right of this rectangle.
      */
     public static final int OUT_RIGHT = 4;
 
     /**
-     * The bitmask that indicates that a point lies below
-     * this <code>Rectangle2D</code>.
-     * @since 1.2
+     * The bitmask that indicates that a point lies below this rectangle.
      */
     public static final int OUT_BOTTOM = 8;
 
@@ -105,7 +98,7 @@ public abstract class Rectangle2D extends RectangularShape {
 
 		@Override
 		public boolean isEmpty() {
-            return (width <= 0.0f) || (height <= 0.0f);
+            return (width <= 0) || (height <= 0);
 		}
 
 		/**
@@ -227,12 +220,12 @@ public abstract class Rectangle2D extends RectangularShape {
 
 		@Override
 		public boolean isEmpty() {
-            return (width <= 0.0f) || (height <= 0.0f);
+            return (width <= 0) || (height <= 0);
 		}
 
 		@Override
 		public void setFrame(double x, double y, double w, double h) {
-			setRect(x,y,w,h);			
+			setRect(x, y, w, h);			
 		}
 
 		public Rectangle2D getBounds2D() {

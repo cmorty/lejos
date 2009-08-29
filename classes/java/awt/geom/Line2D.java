@@ -368,9 +368,9 @@ public abstract class Line2D implements Shape, Cloneable {
             double x4, double y4)
     {
         return ((relativeCCW(x1, y1, x2, y2, x3, y3) *
-                relativeCCW(x1, y1, x2, y2, x4, y4) <= 0)
-               && (relativeCCW(x3, y3, x4, y4, x1, y1) *
-                   relativeCCW(x3, y3, x4, y4, x2, y2) <= 0));
+                 relativeCCW(x1, y1, x2, y2, x4, y4) <= 0) &&
+                (relativeCCW(x3, y3, x4, y4, x1, y1) *
+                 relativeCCW(x3, y3, x4, y4, x2, y2) <= 0));
     }
 
 	public Rectangle getBounds() {
@@ -410,16 +410,16 @@ public abstract class Line2D implements Shape, Cloneable {
 		double tpx  = px - x1;
 		double tpy = py - y1;
 		double ccw = tpx * ty - tpy * tx;
-		if (ccw == 0.0) {
+		if (ccw == 0) {
 			ccw = tpx * tx + tpy * ty;
-			if (ccw > 0.0) {
+			if (ccw > 0) {
 				tpx -= tx;
 				tpy -= ty;
 				ccw = tpx * tx + tpy * ty;
-				if (ccw < 0.0) ccw = 0.0;
+				if (ccw < 0) ccw = 0;
 			}
 		}
-	return (ccw < 0.0) ? -1 : ((ccw > 0.0) ? 1 : 0);
+		return (ccw < 0) ? -1 : ((ccw > 0) ? 1 : 0);
 	}
     
     /**
