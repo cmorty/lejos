@@ -161,15 +161,9 @@ public class Rectangle extends Rectangle2D implements Shape {
 	 * @return true iff this rectangle intersects the given rectangle
 	 */
 	public boolean intersects(Rectangle r) {
-        int tw = this.width;
-        int th = this.height;
-        int rw = r.width;
-        int rh = r.height;
+        int tw = width, th = height, rw = r.width, rh = r.height;
         if (rw <= 0 || rh <= 0 || tw <= 0 || th <= 0) return false;
-        int tx = this.x;
-        int ty = this.y;
-        int rx = r.x;
-        int ry = r.y;
+        int tx = x, ty = y, rx = r.x, ry = r.y;
         rw += rx;
         rh += ry;
         tw += tx;
@@ -219,7 +213,6 @@ public class Rectangle extends Rectangle2D implements Shape {
             if (width >= 0) width += x-newx;
             neww = doubleToInt(width, width >= 0);
         }
-
         if (y > 2.0 * Integer.MAX_VALUE) {
         	// Cannot be sensibly represented with integers
             newy = Integer.MAX_VALUE;
@@ -229,7 +222,6 @@ public class Rectangle extends Rectangle2D implements Shape {
             if (height >= 0) height += y-newy;
             newh = doubleToInt(height, height >= 0);
         }
-
         reshape(newx, newy, neww, newh);		
 	}
 	
@@ -295,7 +287,6 @@ public class Rectangle extends Rectangle2D implements Shape {
         this.height = height;
     }
     
-
     /**
      * Returns a String representing this rectangle.
      */
@@ -327,11 +318,10 @@ public class Rectangle extends Rectangle2D implements Shape {
     public boolean inside(int x, int y) {
         int w = this.width;
         int h = this.height;
-        if ((w | h) < 0) return false;
+        if (w < 0 || h < 0) return false;
         if (x < this.x || y < this.y) return false;
         w += this.x;
         h += this.y;
         return ((w < this.x || w > x) && (h < this.y || h > y));
-    }
-    
+    }    
 }
