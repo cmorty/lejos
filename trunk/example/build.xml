@@ -1,4 +1,4 @@
-<project name="HelloWorld" default="uploadandrun">
+<project name="Example" default="uploadandrun">
     <description>
     	org.lejos.example.HelloWorld build file
     </description>
@@ -8,8 +8,8 @@
   <property file="build.properties"/>
   <property name="src" location="src"/>
   <property name="build" location="build"/>
-  <property name="program" value="HelloWorld"/>
-  <property name="class" value="org.lejos.example.${program}"/>
+  <property name="program" value="Example"/>
+  <property name="main.class" value="org.lejos.example.HelloWorld"/>
   <property name="binary" value="${build}/${program}.nxj" />
 	
   <!-- deletes generated files -->
@@ -38,7 +38,7 @@
       <arg path="${build}" />
       <arg value="--writeorder" />
       <arg value="LE" />
-      <arg value="${class}"/>
+      <arg value="${main.class}"/>
       <arg value="-o"/>
       <arg value="${binary}"/>
       <arg value="-v"/>
@@ -86,4 +86,16 @@
       </classpath>
     </java>
   </target>
+
+  <!--  used only for modifying the Netbeans NXJPlugin -->
+    <target name="zipme" description="Zip the application to the sample project">
+        <property name="build.classes.dir" location="/build"/>
+        <property name="plugin" location="../NXJPlugin/src/nxjplugin/"/>
+        <echo> address=${plugin} </echo >
+        <zip basedir="." destfile="${plugin}/NXJSampleProject.zip">
+            <exclude name="**/build/"/>
+            <exclude name="**/dist/"/>
+            <exclude name="**/nbproject/private/"/>
+        </zip>
+    </target>
 </project>
