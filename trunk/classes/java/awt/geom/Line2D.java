@@ -225,6 +225,12 @@ public abstract class Line2D implements Shape, Cloneable {
             return new Rectangle2D.Double(x, y, w, h);
 		}
 	}
+	
+	/**
+	 * This is an abstract class that cannot be instantiated: use Line2D.Float or Line2D.Double.
+	 */
+    protected Line2D() {
+    }
 
 	/**
 	 * Get the x coordinate of the start of the line
@@ -276,15 +282,23 @@ public abstract class Line2D implements Shape, Cloneable {
      * @param y1 the y coordinate of the start point
      * @param x2 the x coordinate of the end point
      * @param y2 the y coordinate of the end point
-     * @since 1.2
      */
     public abstract void setLine(double x1, double y1, double x2, double y2);
     
-    
+    /**
+     * Sets the end points of the line from a given start and end point
+     * @param p1 the start point
+     * @param p2 the end point
+     */
     public void setLine(Point2D p1, Point2D p2) {
     	setLine(p1.getX(), p1.getY(), p2.getX(), p2.getY());
     }
     
+    /**
+     * Set the end points of a line to the same as a given line
+     * 
+     * @param line the given line
+     */
     public void setLine(Line2D line) {
     	setLine(line.getX1(), line.getY1(), line.getX2(), line.getY2());
     }
@@ -309,6 +323,15 @@ public abstract class Line2D implements Shape, Cloneable {
         return intersects(new Rectangle2D.Double(x, y, w, h));
     }
     
+    /**
+     * Test if this line intersects a given line
+     * 
+     * @param x1 the x coordinate of the start of the given line
+     * @param y1 the y coordinate of the start of the given line
+     * @param x2 the x coordinate of the end of the given line
+     * @param y2 the y coordinate of the end of the given line
+     * @return true iff the lines intersect
+     */
     public boolean intersectsLine(double x1, double y1, double x2, double y2) {
         return linesIntersect(x1, y1, x2, y2,
                               getX1(), getY1(), getX2(), getY2());
@@ -363,6 +386,20 @@ public abstract class Line2D implements Shape, Cloneable {
         }
     }
     
+    /**
+     * Returns an indicator of where the specified point
+     * lies with respect to the line
+     * 
+     * @param x1 the x coordinate of the start of the line
+     * @param y1 the y coordinate of the start of the line
+     * @param x2 the x coordinate of the end of the line
+     * @param y2 the y coordinate of the end of the line
+     * @param px the x coordinate of the specified point
+     * @param py the y coordinate of the specified point
+     * @return 0 iff the point is on the line else 1 or -1 depending
+     * on whether the point in to the left or ahead of the line, or to the right or behind
+     * the line segment
+     */
     public static int relativeCCW(
     		double x1, double y1,
             double x2, double y2,
@@ -385,11 +422,30 @@ public abstract class Line2D implements Shape, Cloneable {
 	return (ccw < 0.0) ? -1 : ((ccw > 0.0) ? 1 : 0);
 	}
     
+    /**
+     * Returns an indicator of where the specified point
+     * lies with respect to the line
+     * 
+     * @param p the specified point
+     * @return 0 iff the point is on the line else 1 or -1 depending
+     * on whether the point in to the left or ahead of the line, or to the right or behind
+     * the line segment
+     */
     public int relativeCCW(Point2D p) {
         return relativeCCW(getX1(), getY1(), getX2(), getY2(),
                            p.getX(), p.getY());
     }
     
+    /**
+     * Returns an indicator of where the specified point
+     * lies with respect to the line.
+     *  
+     * @param px the x coordinate of the specified point
+     * @param py the y coordinate of the specified point
+     * @return 0 iff the point is on the line else 1 or -1 depending
+     * on whether the point in to the left or ahead of the line, or to the right or behind
+     * the line segment
+     */
     public int relativeCCW(double px, double py) {
         return relativeCCW(getX1(), getY1(), getX2(), getY2(), px, py);
     }

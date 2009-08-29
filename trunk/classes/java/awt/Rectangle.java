@@ -109,6 +109,16 @@ public class Rectangle extends Rectangle2D implements Shape {
 	}
 	
 	/**
+	 * Set the location of this point to the location of a given point
+	 * 
+	 * @param p the given point
+	 */
+	public void setLocation(Point p) {
+		x = p.x;
+		y = p.y;
+	}
+	
+	/**
 	 * Test if the rectangle is empty
 	 * @return true iff the rectangle is empty
 	 */
@@ -123,10 +133,7 @@ public class Rectangle extends Rectangle2D implements Shape {
 	 * @return true iff the point is within the rectangle
 	 */
 	public boolean contains(int x, int y) {
-		if (isEmpty()) return false;
-		if (x < this.x || x > this.x + width) return false;
-		if (y < this.y || y > this.y + height) return false;
-		return true;
+		return inside(x,y);
 	}
 	
 	/**
@@ -154,12 +161,21 @@ public class Rectangle extends Rectangle2D implements Shape {
 	 * @return true iff this rectangle intersects the given rectangle
 	 */
 	public boolean intersects(Rectangle r) {
-		if (isEmpty() || r.isEmpty()) return false;
-		if (r.x + r.width < x) return false;
-		if (r.x > x + width) return false;
-		if (r.y + r.height < y) return false;
-		if (r.y > y + height) return false;
-		return true;
+        int tw = this.width;
+        int th = this.height;
+        int rw = r.width;
+        int rh = r.height;
+        if (rw <= 0 || rh <= 0 || tw <= 0 || th <= 0) return false;
+        int tx = this.x;
+        int ty = this.y;
+        int rx = r.x;
+        int ry = r.y;
+        rw += rx;
+        rh += ry;
+        tw += tx;
+        th += ty;
+        return ((rw < rx || rw > tx) && (rh < ry || rh > ty) &&
+                (tw < tx || tw > rx) && (th < ty || th > ry));
 	}
 	
 	public Rectangle getBounds() {
@@ -191,7 +207,7 @@ public class Rectangle extends Rectangle2D implements Shape {
     }
 
 	@Override
-	public void setRect(double x, double y, double w, double h) {
+	public void setRect(double x, double y, double width, double height) {
         int newx, newy, neww, newh;
 
         if (x > 2.0 * Integer.MAX_VALUE) {
@@ -287,10 +303,35 @@ public class Rectangle extends Rectangle2D implements Shape {
     public String toString() {
         return "Rectangle[x=" + x + ",y=" + y + ",width=" + width + ",height=" + height + "]";
     }
-
-	@Override
+    
 	public int outcode(double x, double y) {
-		// TODO Auto-generated method stub
-		return 0;
+        int out = 0;
+        if (this.width <= 0) {
+            out |= OUT_LEFT | OUT_RIGHT;
+        } else if (x < this.x) {
+            out |= OUT_LEFT;
+        } else if (x > this.x + (double) this.width) {
+            out |= OUT_RIGHT;
+        }
+        if (this.height <= 0) {
+            out |= OUT_TOP | OUT_BOTTOM;
+        } else if (y < this.y) {
+            out |= OUT_TOP;
+        } else if (y > this.y + (double) this.height) {
+            out |= OUT_BOTTOM;
+        }
+        return out;
 	}
+	
+    @Deprecated
+    public boolean inside(int x, int y) {
+        int w = this.width;
+        int h = this.height;
+        if ((w | h) < 0) return false;
+        if (x < this.x || y < this.y) return false;
+        w += this.x;
+        h += this.y;
+        return ((w < this.x || w > x) && (h < this.y || h > y));
+    }
+    
 }
