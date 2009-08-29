@@ -158,7 +158,9 @@ public class NXJTestHarness extends TestHarness
 	  harness.runtest("Rectangle isEmpty", new gnu.testlet.java.awt.Rectangle.isEmpty());
 	  harness.runtest("Rectangle outcode", new gnu.testlet.java.awt.Rectangle.outcode());
 	  harness.runtest("Rectangle setBounds", new gnu.testlet.java.awt.Rectangle.setBounds());
+	  harness.runtest("Rectangle setLocation", new gnu.testlet.java.awt.Rectangle.setLocation());
 	  harness.runtest("Rectangle setRect", new gnu.testlet.java.awt.Rectangle.setRect());
+	  harness.runtest("Rectangle setSize", new gnu.testlet.java.awt.Rectangle.setSize());
 	  
 	  // Print summary
 	  
