@@ -146,6 +146,15 @@
       			<exclude name="startup/build/**"/>
 				<exclude name="startup/bin/**"/>
       			<exclude name="startup/nbproject/private/**"/>
+				<include name="NXJPlugin/**"/>
+      			<exclude name="NXJPlugin/**/.svn"/>
+      			<exclude name="NXJPlugin/.settings/**"/>
+      			<exclude name="NXJPlugin/build/classes/**"/>
+				<exclude name="NXJPlugin/build/cluster/**"/>
+				<exclude name="NXJPlugin/build/depcache/**"/>
+				<exclude name="NXJPlugin/build/public-package-jars/**"/>
+				<exclude name="NXJPlugin/bin/**"/>
+      			<exclude name="NXJPlugin/nbproject/private/**"/>
       		</fileset>
 		</copy>
 
