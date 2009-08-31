@@ -121,6 +121,7 @@
       			<exclude name="classes/build/**"/>
 				<exclude name="classes/bin/**"/>
       			<exclude name="classes/nbproject/private/**"/>
+				<exclude name="classes/TODO.txt"/>
         		<include name="jtools/**"/>
       			<exclude name="jtools/**/.svn"/>
       			<exclude name="jtools/.settings/**"/>
@@ -218,6 +219,14 @@
           	</fileset>
 		</copy>
 		
+		<copy todir="${release.src}/flashwrite">
+          	<fileset dir="${src}/flashwrite">
+            	<include name="**/*.S"/>
+            	<include name="**/*.py"/>
+          		<include name="**/Makefile"/>
+          	</fileset>
+		</copy>
+			
 	</target>
 
 	<!-- makes a timestamp and creates some required folders -->
