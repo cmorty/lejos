@@ -99,6 +99,9 @@ public final class Math
 
 	/*========================= signum functions =========================*/ 
 
+	/**
+	 * Returns -1, 1 or 0 depending on the sign of f.
+	 */
 	public static float signum(float f)
 	{
 		if (f == 0)
@@ -112,6 +115,9 @@ public final class Math
 		return Float.NaN;
 	}
 
+	/**
+	 * Returns -1, 1 or 0 depending on the sign of f.
+	 */
 	public static double signum(double d)
 	{
 		if (d == 0)
@@ -256,7 +262,7 @@ public final class Math
 	}
 
 	/**
-	 * Returns the closest int to the argument.
+	 * Returns the closest long to the argument.
 	 */
 	public static long round(double a)
 	{
@@ -281,8 +287,7 @@ public final class Math
 	/*========================= random functions =========================*/ 
 
 	/**
-	 * Random number generator. Returns a double greater than 0.0 and less than
-	 * 1.0
+	 * Random number generator. Returns a double greater than zero and less than one.
 	 */
 	public static synchronized double random()
 	{
@@ -446,7 +451,7 @@ public final class Math
 	}
 	
 	/**
-	 * Power function. This is a slow but accurate method. author David Edwards
+	 * Power function. This is a slow but accurate method.
 	 */
 	public static double pow(double a, double b)
 	{
@@ -595,6 +600,9 @@ public final class Math
 		return ((neg & 1) == 0) ? y : -y;
 	}
 	
+	/**
+	 * Tangent function.
+	 */
 	public static double tan(double x)
 	{
 		int neg = 0;
@@ -658,6 +666,9 @@ public final class Math
 			/ (COEFF_ARCTAN_B00+(COEFF_ARCTAN_B02+(COEFF_ARCTAN_B04+(COEFF_ARCTAN_B06+(COEFF_ARCTAN_B08+(COEFF_ARCTAN_B10+(COEFF_ARCTAN_B12+(COEFF_ARCTAN_B14)*x2)*x2)*x2)*x2)*x2)*x2)*x2);
 	}
 	
+	/**
+	 * The inverse tangent function.
+	 */
 	public static double atan(double x)
 	{
 		boolean neg = x < 0;
@@ -675,6 +686,10 @@ public final class Math
 		return neg ? -y : y;
 	}
 	
+	/**
+	 * The inverse tangent function. This function converts the coordinates x and y to an angle in the range -Pi to Pi.
+	 * The angle is relative to the positive x axis, counter clockwise.
+	 */
 	public static double atan2(double y, double x)
 	{
 		boolean neg_y = y < 0;
@@ -710,7 +725,7 @@ public final class Math
 	}
 
 	/**
-	 * Arc sine function.
+	 * Inverse sine function.
 	 */
 	public static double asin(double a)
 	{
@@ -734,7 +749,7 @@ public final class Math
 	}
 
 	/**
-	 * Arc cosine function.
+	 * Inverse cosine function.
 	 */
 	public static double acos(double a)
 	{
