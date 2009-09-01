@@ -74,8 +74,8 @@ public class LightSensor implements LampLightDetector, SensorConstants
 	}
 	
 	/**
+	 * Get the light reading
 	 * 
-	 * @deprecated Use {@link #getLightValue()} instead 
 	 * @return the light level
 	 */
 	public int readValue() {
@@ -84,7 +84,8 @@ public class LightSensor implements LampLightDetector, SensorConstants
 	
 	/**
 	 * 
-	 * @deprecated Use {@link #getNormalizedLightValue()} instead 
+	 * Get the normalized light reading
+	 * 
 	 * @return the raw light level
 	 */
 	public int readNormalizedValue() {
@@ -102,6 +103,8 @@ public class LightSensor implements LampLightDetector, SensorConstants
 	 */
 	
 	/**
+	 * Get the normalized light reading
+	 * 
 	 * @return normalized raw value (0 to 1023) LEGO NXT light sensor values typically range from 
 	 * 145 (dark) to 890 (sunlight).
 	 */

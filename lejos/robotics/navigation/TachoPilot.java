@@ -3,6 +3,11 @@ package lejos.robotics.navigation;
 import lejos.nxt.Battery;
 import lejos.robotics.TachoMotor;
 
+/*
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ */
+
 /**
  * The TachoPilot class is a software abstraction of the Pilot mechanism of a
  * NXT robot. It contains methods to control robot movements: travel forward or

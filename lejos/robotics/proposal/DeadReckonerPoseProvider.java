@@ -7,6 +7,11 @@ import lejos.robotics.MovementProvider;
 import lejos.robotics.Pose;
 import lejos.robotics.localization.PoseProvider;
 
+/*
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ */
+
 /**
  * A PoseProvider that keeps track of coordinates using dead reckoning, by monitoring Pilot movements.
  * 
