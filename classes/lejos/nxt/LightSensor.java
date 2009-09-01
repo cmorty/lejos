@@ -1,5 +1,6 @@
 package lejos.nxt;
 
+import lejos.robotics.Colors;
 import lejos.robotics.LightLampDetector;
 
 /*
@@ -17,6 +18,7 @@ public class LightSensor implements LightLampDetector, SensorConstants
 	ADSensorPort port;
 	private int _zero = 1023;
 	private int _hundred = 0;
+	private boolean floodlight = false;
 	
 	/**
 	 * Create a light sensor object attached to the specified port.
@@ -39,6 +41,7 @@ public class LightSensor implements LightLampDetector, SensorConstants
 	public LightSensor(ADSensorPort port, boolean floodlight)
 	{
 	   this.port = port;
+	   this.floodlight = floodlight;
        port.setTypeAndMode(
     		   (floodlight ? TYPE_LIGHT_ACTIVE
     				       : TYPE_LIGHT_INACTIVE),
@@ -46,9 +49,22 @@ public class LightSensor implements LightLampDetector, SensorConstants
 	}
 	
 	public void setFloodlight(boolean floodlight)
-	{
+	{	
 		port.setType(floodlight ? TYPE_LIGHT_ACTIVE
 		                         : TYPE_LIGHT_INACTIVE);
+		this.floodlight = floodlight;
+	}
+	
+	public boolean setFloodlight(Colors.Color color) {
+		if(color == Colors.Color.RED) {
+			port.setType(TYPE_LIGHT_ACTIVE);
+			this.floodlight = true;
+			return true;
+		} else if (color == Colors.Color.NONE) {
+			port.setType(TYPE_LIGHT_INACTIVE);
+			this.floodlight = false;
+			return true;
+		} else return false;
 	}
 
 	/**
@@ -109,7 +125,7 @@ public class LightSensor implements LightLampDetector, SensorConstants
 		_zero = port.readRawValue();
 	}
 /** 
- *call this method when the light sensor is reading the high value - used by reaeValue
+ *call this method when the light sensor is reading the high value - used by readValue
  */	
 	public void calibrateHigh()
 	{
@@ -134,4 +150,14 @@ public class LightSensor implements LightLampDetector, SensorConstants
     */
    public int  getHigh() {return 1023 - _hundred;}
 
+	public Colors.Color getFloodlight() {
+		if(this.floodlight == true)
+			return Colors.Color.RED;
+		else
+			return Colors.Color.NONE;
+	}
+
+	public boolean isFloodlightOn() {
+		return this.floodlight;
+	}
 }

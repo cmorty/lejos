@@ -20,7 +20,21 @@ public interface LightDetector {
 	
 	/**
 	 * Returns the raw value of the brightness of the white light detected.
-	 * @return A raw value, usually between 0 and 1023 but can be anything depending on hardware.
+	 * @return A raw value, usually between 0 and getMaxLightLevel(). Usually 
+	 * 1023 but can be anything depending on hardware.
 	 */
 	public int getRawLightLevel();
+	
+	/**
+	 * The highest raw light value this sensor can return.
+	 * @return
+	 */
+	public int getHigh();
+
+	/**
+	 * The lowest raw light value this sensor can return. Indicates pitch black.
+	 * @return
+	 */
+
+	public int getLow();
 }
