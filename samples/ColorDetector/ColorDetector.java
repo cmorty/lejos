@@ -24,11 +24,11 @@ public class ColorDetector {
 			LCD.drawString(color, 0, 3);
 			LCD.drawInt((int)cmps.getColorNumber(),7,3);
 			LCD.drawString(r, 0, 5);
-			LCD.drawInt((int)cmps.getRed(),1,5);
+			LCD.drawInt((int)cmps.getRedComponent(),1,5);
 			LCD.drawString(g, 5, 5);
-			LCD.drawInt((int)cmps.getGreen(),6,5);
+			LCD.drawInt((int)cmps.getGreenComponent(),6,5);
 			LCD.drawString(b, 10, 5);
-			LCD.drawInt((int)cmps.getBlue(),11,5);
+			LCD.drawInt((int)cmps.getBlueComponent(),11,5);
 			LCD.refresh();
 			Thread.sleep(INTERVAL);
 		}
