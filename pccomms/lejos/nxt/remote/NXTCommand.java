@@ -434,11 +434,12 @@ public class NXTCommand implements NXTProtocol {
 	 * Upload a file to the NXT
 	 * 
 	 * @param file the file to upload
+	 * @param nxtFileName the name of the file on the NXT
 	 * @return a message saying how long it took to upload the file
 	 * 
 	 * @throws IOException
 	 */
-	public String uploadFile(File file) throws IOException {
+	public String uploadFile(File file, String nxtFileName) throws IOException {
 	    byte[] data = new byte[MAX_BUFFER_SIZE];
 	    int len;
 	    byte handle;
@@ -452,7 +453,7 @@ public class NXTCommand implements NXTProtocol {
 	    	throw new IOException("File not found");
 	    }
 
-	    handle = openWrite(file.getName(), (int) file.length());
+	    handle = openWrite(nxtFileName, (int) file.length());
 
 	    try {
 	      while ((len = in.read(data)) > 0) {
