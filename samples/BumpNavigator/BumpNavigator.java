@@ -4,12 +4,13 @@ import java.util.Random;
 
  
 /**
- * BumpNavigator ia a simple obstacle avoiding robot with a single destination.
+ * BumpNavigator is a simple obstacle avoiding robot with a single destination.
  * Requires  two touch sensors.
  * Since it relies on dead reckoning to keep track of its
  * location, the accuracy of navigation degrades with each obstacle.  Does not
- * mep the obstacles, but uses a randomized avoiding strategy..
- * @author Roger
+ * map the obstacles, but uses a randomized avoiding strategy..
+ * 
+ * @author Roger Glasssey
  */
 public class BumpNavigator
 {
