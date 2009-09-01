@@ -1,7 +1,9 @@
 package lejos.nxt;
 
+import lejos.robotics.Colors;
 import lejos.robotics.LightLampDetector;
 import lejos.robotics.ColorDetector;
+import lejos.robotics.Colors.Color;
 
 
 /**
@@ -19,13 +21,18 @@ public class ColorLightSensor implements LightLampDetector, ColorDetector, Senso
     protected Colors.Color[] colorMap = Colors.Color.values();
     protected SensorPort port;
     protected int type;
-
+    private int _zero = 1023;
+	private int _hundred = 0;
+	
+    
+    private Colors.Color lampColor = Colors.Color.NONE;
 
     /**
      * Create a new Color Sensor instance and bind it to a port.
      * @param port Port to use for the sensor.
      * @param type Initial operating mode.
      */
+    // TODO: We need a default constructor that doesn't need type, which is just the lamp color it uses to scan. Set default type.
     public ColorLightSensor(SensorPort port, int type)
     {
         this.port = port;
@@ -33,18 +40,18 @@ public class ColorLightSensor implements LightLampDetector, ColorDetector, Senso
         port.setTypeAndMode(type, SensorPort.MODE_RAW);
     }
 
-
-
     /**
      * Change the type of the sensor
      * @param type new sensor type.
      */
+    // TODO: Type changes the lamp color, so maybe should use Colors.Color enum?
+    // TODO: I'm well aware that user can use ColorLightSensor to change lamp, and lampColor
+    // won't be updated and it will give wrong value for getFloodlight(). Don't care until we work out the API.
     public void setType(int type)
     {
         port.setType(type);
         this.type = type;
     }
-
 
     /**
      * Return a single raw value from the device.
@@ -72,7 +79,6 @@ public class ColorLightSensor implements LightLampDetector, ColorDetector, Senso
     {
         return port.readRawValues(vals);
     }
-
 
     /**
      * Return a set of calibrated data.
@@ -136,28 +142,35 @@ public class ColorLightSensor implements LightLampDetector, ColorDetector, Senso
 	}
 
 	public void setFloodlight(boolean floodlight) {
+		this.lampColor = (floodlight ? Colors.Color.RED : Colors.Color.NONE);
 		setType(floodlight ? TYPE_COLORRED : TYPE_COLORNONE);
 	}
 
-	public int getBlue() {
+	public int getBlueComponent() {
 		int temp_type =  this.type;
 		setType(ColorLightSensor.TYPE_COLORBLUE);
-		int val = readValue();
+		int val = readRawValue();
+		// TODO: Normalize?
+		// Scale to max 255:
+		val = (int)((val/1023f) * 255);
 		this.setType(temp_type);
 		return val;
 	}
 
-	public int getGreen() {
+	public int getGreenComponent() {
+		// TODO: Since lampColor state is included now, can we use that instead for all these temp_type?
 		int temp_type =  this.type;
 		setType(ColorLightSensor.TYPE_COLORGREEN);
-		int val = readValue();
+		int val = readRawValue();
+		// TODO: Normalize?
+		// Scale to max 255:
+		val = (int)((val/1023f) * 255);
 		this.setType(temp_type);
 		return val;
-		
 	}
 
-	public int[] getRGB() {
-		int temp_type =  this.type;
+	public int[] getColor() {
+		int temp_type =  this.type; 
 		setType(ColorLightSensor.TYPE_COLORFULL);
 		int [] all_vals = new int[4];
 		readValues(all_vals);
@@ -168,12 +181,78 @@ public class ColorLightSensor implements LightLampDetector, ColorDetector, Senso
 		
 	}
 
-	public int getRed() {
+	// TODO: Three getXXComponent() methods share code. Could reuse code. 
+	public int getRedComponent() {
 		int temp_type =  this.type;
 		setType(ColorLightSensor.TYPE_COLORRED);
-		int val = readValue();
+		int val = readRawValue();
+		// TODO: Normalize?
+		// Scale to max 255:
+		val = (int)((val/1023f) * 255);
 		this.setType(temp_type);
 		return val;
 	}
-}
 
+	public Color getFloodlight() {
+		return lampColor;
+	}
+
+	public boolean isFloodlightOn() {
+		return (lampColor != Colors.Color.NONE);
+	}
+
+	public boolean setFloodlight(Colors.Color color) {
+		if(color == Colors.Color.RED) {
+			this.lampColor = color;
+			setType(ColorLightSensor.TYPE_COLORRED);
+			return true;
+		} else if(color == Colors.Color.BLUE) {
+			this.lampColor = color;
+			setType(ColorLightSensor.TYPE_COLORBLUE);
+			return true;
+		} else if(color == Colors.Color.GREEN) {
+			this.lampColor = color;
+			setType(ColorLightSensor.TYPE_COLORGREEN);
+			return true;
+		} else if(color == Colors.Color.NONE) {
+			this.lampColor = color;
+			setType(ColorLightSensor.TYPE_COLORNONE);
+			return true;
+		} else 
+			return false;
+	}
+
+	/**
+	 * call this method when the light sensor is reading the low value - used by readValue
+	 **/
+		public void calibrateLow()
+		{
+			_zero = port.readRawValue();
+		}
+	/** 
+	 *call this method when the light sensor is reading the high value - used by readValue
+	 */	
+		public void calibrateHigh()
+		{
+			_hundred = port.readRawValue();
+		}
+		/** 
+		 * set the normalized value corresponding to readValue() = 0
+		 * @param low the low value
+		 */
+		public void setLow(int low) { _zero = 1023 - low;}
+		  /** 
+	     * set the normalized value corresponding to  readValue() = 100;
+	     * @param high the high value
+	     */
+	    public void setHigh(int high) { _hundred = 1023 - high;}
+	    /**
+	    * return  the normalized value corresponding to readValue() = 0
+	    */
+	   public int getLow() { return 1023 - _zero;}
+	    /** 
+	    * return the normalized value corresponding to  readValue() = 100;
+	    */
+	   public int  getHigh() {return 1023 - _hundred;}
+
+}
