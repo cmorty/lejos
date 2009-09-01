@@ -70,7 +70,7 @@ public class ColorSensor extends I2CSensor implements ColorDetector {
      * Returns the red saturation of the color. 
      * @return red value (0 to 255).
      */
-    public int getRed()
+    public int getRedComponent()
     {
         int ret = getData(0x43, buf, 1);
         if(ret != 0) return -1;
@@ -81,7 +81,7 @@ public class ColorSensor extends I2CSensor implements ColorDetector {
      * Returns the green saturation of the color. 
      * @return green value (0 to 255).
      */
-    public int getGreen()
+    public int getGreenComponent()
     {
         int ret = getData(0x44, buf, 1);
         if(ret != 0) return -1;
@@ -92,7 +92,7 @@ public class ColorSensor extends I2CSensor implements ColorDetector {
      * Returns the blue saturation of the color. 
      * @return blue value (0 to 255).
      */
-    public int getBlue()
+    public int getBlueComponent()
     {
         int ret = getData(0x45, buf, 1);
         if(ret != 0) return -1;
@@ -212,11 +212,11 @@ public class ColorSensor extends I2CSensor implements ColorDetector {
         return sendData(0x41, (byte)0x42);
     }
 
-	public int[] getRGB() {
+	public int[] getColor() {
 		int [] vals = new int[3];
-		vals[0] = getRed();
-		vals[1] = getGreen();
-		vals[2] = getBlue();
+		vals[0] = getRedComponent();
+		vals[1] = getGreenComponent();
+		vals[2] = getBlueComponent();
 		return vals;
 	}
 }

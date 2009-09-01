@@ -1,5 +1,5 @@
 
-package lejos.nxt;
+package lejos.robotics;
 
 /**
  * Values for standard Lego colors.
