@@ -27,6 +27,8 @@ public final class Math
 	private static final double PIhalfhalf = PI * 0.25;
 	private static final double PItwice = PI * 2.0;
 	
+	private static final double SQRT2half = SQRT2 * 0.5;
+	
 	private static final double DEG_TO_RAD = 0.0174532925199432957692369076849;
 	private static final double RAD_TO_DEG = 57.2957795130823208767981548141;
 	
@@ -499,17 +501,22 @@ public final class Math
 	private static final double COEFF_TAN_B06 = -0.3627755504463478978823711298374056529721e-3;
 	private static final double COEFF_TAN_B08 = +0.5798383713759288762215813642061562265476e-6;
 
-
+	/**
+	 * Should only be called for values 0 <= x <= Pi/4.
+	 */
 	private static double sin_chebypade(double x)
 	{
-		// only for values -Pi/4 <= x <= Pi/4
+		// works for values -Pi/4 <= x <= Pi/4
 		double x2 = x * x;
 		return (COEFF_SIN_01+(COEFF_SIN_03+(COEFF_SIN_05+(COEFF_SIN_07+(COEFF_SIN_09+(COEFF_SIN_11+(COEFF_SIN_13)*x2)*x2)*x2)*x2)*x2)*x2)*x;
 	}
 	
+	/**
+	 * Should only be called for values 0 <= x <= Pi/4.
+	 */
 	private static double cos_chebypade(double x)
 	{
-		// only for values -Pi/4 <= x <= Pi/4
+		// worls for values -Pi/4 <= x <= Pi/4
 		double x2 = x * x;
 		return (COEFF_COS_00+(COEFF_COS_02+(COEFF_COS_04+(COEFF_COS_06+(COEFF_COS_08+(COEFF_COS_10+(COEFF_COS_12+(COEFF_COS_14)*x2)*x2)*x2)*x2)*x2)*x2)*x2);
 	}
@@ -623,67 +630,83 @@ public final class Math
 
 	/*==================== inverse trigonometric functions ====================*/ 
 
-	// Private because it only works when -1 < x < 1 but it is used by atan2
-	private static double arctan_cheby(double x)
+	// Coefficients of Chebychev-Pade approximation of arctan(x)
+	private static final double COEFF_ARCTAN_A01 = 0.2148098238644807400980437313900874209791;
+	private static final double COEFF_ARCTAN_A03 = 0.5822336291803317384927877022348417466425;
+	private static final double COEFF_ARCTAN_A05 = 0.5896935461740917629331074424217383345014;
+	private static final double COEFF_ARCTAN_A07 = 0.2762961405471209283480112104060944192893;
+	private static final double COEFF_ARCTAN_A09 = 0.5998846249230414236694406199010243461828e-1;
+	private static final double COEFF_ARCTAN_A11 = 0.5241080670594091071923751216579670668131e-2;
+	private static final double COEFF_ARCTAN_A13 = 0.1203082209336721192361545554523165190249e-3;
+	private static final double COEFF_ARCTAN_B00 = 0.2148098238644807424616443165027883378015;
+	private static final double COEFF_ARCTAN_B02 = 0.6538369038018249190889077431869506291436;
+	private static final double COEFF_ARCTAN_B04 = 0.7646772160018242189018026280068075002980;
+	private static final double COEFF_ARCTAN_B06 = 0.4311082828151354005327854170265085211728;
+	private static final double COEFF_ARCTAN_B08 = 0.1202932940016257879182979096874373869694;
+	private static final double COEFF_ARCTAN_B10 = 0.1523641193862141984750802100415527660067e-1;
+	private static final double COEFF_ARCTAN_B12 = 0.6791021403500245109987506932563112475291e-3;
+	private static final double COEFF_ARCTAN_B14 = 0.4538215780227674758812916817748843935591e-5;
+
+	/**
+	 * Should only be called for values 0 <= x <= 1.
+	 */
+	private static double arctan_chebypade(double x)
 	{
-		// Using a Chebyshev-Pade approximation
+		// works for values -1 <= x <= 1
 		double x2 = x * x;
-		return (0.7162721433f + 0.2996857769f * x2) * x
-				/ (0.7163164576f + (0.5377299313f + 0.3951620469e-1f * x2) * x2);
+		return (COEFF_ARCTAN_A01+(COEFF_ARCTAN_A03+(COEFF_ARCTAN_A05+(COEFF_ARCTAN_A07+(COEFF_ARCTAN_A09+(COEFF_ARCTAN_A11+(COEFF_ARCTAN_A13)*x2)*x2)*x2)*x2)*x2)*x2)*x
+			/ (COEFF_ARCTAN_B00+(COEFF_ARCTAN_B02+(COEFF_ARCTAN_B04+(COEFF_ARCTAN_B06+(COEFF_ARCTAN_B08+(COEFF_ARCTAN_B10+(COEFF_ARCTAN_B12+(COEFF_ARCTAN_B14)*x2)*x2)*x2)*x2)*x2)*x2)*x2);
 	}
 	
-	/**
-	 * Arc tangent function.
-	 */
 	public static double atan(double x)
 	{
-		return atan2(x, 1);
+		boolean neg = x < 0;
+		if (neg)
+			x = -x;
+		
+		boolean inv = x > 1;
+		if (inv)
+			x = 1.0 / x;
+		
+		double y = arctan_chebypade(x);
+		if (inv)
+			y = PIhalf - y;
+		
+		return neg ? -y : y;
 	}
-
-	/**
-	 * Arc tangent function valid to the four quadrants y and x can have any
-	 * value without sigificant precision loss atan2(0,0) returns 0. author
-	 * Paulo Costa
-	 */
+	
 	public static double atan2(double y, double x)
 	{
-		float ax = (float) abs(x);
-		float ay = (float) abs(y);
-
-		if ((ax < 1e-7) && (ay < 1e-7))
-			return 0f;
-
-		if (ax > ay)
+		boolean neg_y = y < 0;
+		if (neg_y)
+			y = -y;
+		
+		boolean neg_x = x < 0;
+		if (neg_x)
+			x = -x;
+		
+		double r;
+		boolean inv;
+		if (x == y)
 		{
-			if (x < 0)
-			{
-				if (y >= 0)
-					return arctan_cheby(y / x) + PI;
-				else
-					return arctan_cheby(y / x) - PI;
-			}
-			else
-				return arctan_cheby(y / x);
+			inv = false;
+			r = (x==0) ? 0.0 : PIhalfhalf;
 		}
 		else
 		{
-			if (y < 0)
-				return arctan_cheby(-x / y) - PI / 2;
+			inv = y > x;
+			r = arctan_chebypade(inv ? x/y : y/x);
+		}
+		
+		if (inv)
+			if (neg_x)
+				r += PIhalf;
 			else
-				return arctan_cheby(-x / y) + PI / 2;
-		}
-	}
-
-	/**
-	 * Arc cosine function.
-	 */
-	public static double acos(double a)
-	{
-		if ((a < -1) || (a > 1))
-		{
-			return Double.NaN;
-		}
-		return PI / 2 - atan(a / sqrt(1 - a * a));
+				r = PIhalf - r;
+		else if (neg_x)
+			r = PI - r;
+		
+		return neg_y ? -r : r;
 	}
 
 	/**
@@ -691,6 +714,51 @@ public final class Math
 	 */
 	public static double asin(double a)
 	{
-		return atan(a / sqrt(1 - a * a));
+		boolean neg = a < 0;
+		if (neg)
+			a = -a;
+		
+		//also catches NaN
+		if (!(a <= 1.0))
+			return Double.NaN;
+		
+		double b = Math.sqrt(1.0 - a * a);
+				
+		boolean norm = a < SQRT2half;
+		double y = arctan_chebypade(norm ? a/b : b/a);
+				
+		if (!norm)
+			y = PIhalf - y;
+		
+		return neg ? -y : y;
+	}
+
+	/**
+	 * Arc cosine function.
+	 */
+	public static double acos(double a)
+	{
+		boolean neg = a < 0;
+		if (neg)
+			a = -a;
+		
+		//also catches NaN
+		if (!(a <= 1.0))
+			return Double.NaN;
+		
+		double b = Math.sqrt(1.0 - a * a);
+				
+		boolean norm = a < SQRT2half;
+		double y = arctan_chebypade(norm ? a/b : b/a);
+				
+		if (norm)
+			if (neg)
+				y += PIhalf;	
+			else
+				y = PIhalf - y;
+		else if (neg)
+			y = PI - y;
+		
+		return y;
 	}
 }

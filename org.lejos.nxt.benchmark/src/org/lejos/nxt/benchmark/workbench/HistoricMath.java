@@ -419,4 +419,56 @@ public class HistoricMath
 		return m * LN2 + 2 * zeta * r;
 	}
 
+	
+	// Private because it only works when -1 < x < 1 but it is used by atan2
+	private static double arctanChebyPade(double x)
+	{
+		// Using a Chebyshev-Pade approximation
+		double x2 = x * x;
+		return (0.7162721433f + 0.2996857769f * x2) * x
+				/ (0.7163164576f + (0.5377299313f + 0.3951620469e-1f * x2) * x2);
+	}
+	
+	/**
+	 * Arc tangent function.
+	 */
+	public static double atanChebyPade(double x)
+	{
+		return atan2ChebyPade(x, 1);
+	}
+
+	/**
+	 * Arc tangent function valid to the four quadrants y and x can have any
+	 * value without sigificant precision loss atan2(0,0) returns 0. author
+	 * Paulo Costa
+	 */
+	public static double atan2ChebyPade(double y, double x)
+	{
+		float ax = (float) Math.abs(x);
+		float ay = (float) Math.abs(y);
+
+		if ((ax < 1e-7) && (ay < 1e-7))
+			return 0f;
+
+		if (ax > ay)
+		{
+			if (x < 0)
+			{
+				if (y >= 0)
+					return arctanChebyPade(y / x) + PI;
+				else
+					return arctanChebyPade(y / x) - PI;
+			}
+			else
+				return arctanChebyPade(y / x);
+		}
+		else
+		{
+			if (y < 0)
+				return arctanChebyPade(-x / y) - PI / 2;
+			else
+				return arctanChebyPade(-x / y) + PI / 2;
+		}
+	}
+
 }
