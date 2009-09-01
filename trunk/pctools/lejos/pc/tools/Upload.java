@@ -30,8 +30,22 @@ public class Upload extends NXTCommLoggable {
 		if (!f.exists()) {
 			throw new NXJUploadException(fileName + ": No such file");
 		}
+		
+		String nxtFileName = f.getName();
+		
+		// Under some circumstances the filename might be a full package name
+		// Remove all but the last two components
+		
+		int lastDot = nxtFileName.lastIndexOf('.');
+		
+		if (lastDot >= 0) {
+			lastDot = nxtFileName.substring(0, lastDot).lastIndexOf('.');
+			
+			if (lastDot >= 0) 
+				nxtFileName = nxtFileName.substring(lastDot+1);
+		}
 
-		if (f.getName().length() > 20) {
+		if (nxtFileName.length() > 20) {
 			throw new NXJUploadException(fileName
 					+ ": Filename is more than 20 characters");
 		}
@@ -48,11 +62,11 @@ public class Upload extends NXTCommLoggable {
 		fNXTCommand.setNXTComm(fConnector.getNXTComm());
 
 		try {
-			log(fNXTCommand.uploadFile(f));
+			log(fNXTCommand.uploadFile(f, nxtFileName));
 			
 			if (run) {
 				fNXTCommand.setVerify(false);
-				fNXTCommand.startProgram(f.getName());
+				fNXTCommand.startProgram(nxtFileName);
 			}
 			
 			fNXTCommand.close();
