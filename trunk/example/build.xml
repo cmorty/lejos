@@ -1,4 +1,4 @@
-<project name="Example" default="uploadandrun">
+<project name="org.lejos.example" default="uploadandrun">
     <description>
     	org.lejos.example.HelloWorld build file
     </description>
@@ -8,9 +8,8 @@
   <property file="build.properties"/>
   <property name="src" location="src"/>
   <property name="build" location="build"/>
-  <property name="program" value="Example"/>
   <property name="main.class" value="org.lejos.example.HelloWorld"/>
-  <property name="binary" value="${build}/${program}.nxj" />
+  <property name="binary" value="${build}/${main.class}.nxj" />
 	
   <!-- deletes generated files -->
   <target name="clean" description="clean up all generated files">
