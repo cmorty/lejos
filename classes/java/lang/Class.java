@@ -118,7 +118,6 @@ public class Class<T>
 	
 	public boolean isAssignableFrom(Class<?> cls)
 	{
-		//FIXME Andy
 		return VM.isAssignable(cls, this);
 	}	
 	
@@ -154,7 +153,6 @@ public class Class<T>
 		else
 			sb.append("class ");
 		
-		//TODO classnumber instead of hash?
 		sb.append(VM.getClassNumber(this));
 		
 		return sb.toString();
