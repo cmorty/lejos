@@ -1,5 +1,6 @@
 import lejos.nxt.*;
 import lejos.nxt.comm.RConsole;
+import lejos.robotics.Colors;
 import lejos.util.TextMenu;
 
 
