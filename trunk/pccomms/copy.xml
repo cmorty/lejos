@@ -31,6 +31,7 @@
   				<include name="lejos/nxt/LightSensor.java"/>
   				<include name="lejos/nxt/Colors.java"/>
   				<include name="lejos/nxt/ColorLightSensor.java"/>
+  				<include name="lejos/nxt/Colors.java"/>
   				<include name="lejos/nxt/SensorConstants.java"/>
   				<include name="lejos/nxt/SoundSensor.java"/>
   				<include name="lejos/nxt/TouchSensor.java"/>

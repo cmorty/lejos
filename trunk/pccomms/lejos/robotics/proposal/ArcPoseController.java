@@ -4,6 +4,11 @@ import lejos.geom.Point;
 import lejos.robotics.Pose;
 import lejos.robotics.localization.PoseProvider;
 
+/*
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ */
+
 /**
  * This class directs a pilot from the current known coordinates to a destination set of coordinates.
  * The ArcPoseController is not capable of avoiding objects or planning a route. It can only drive in a straight
