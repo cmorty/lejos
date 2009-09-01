@@ -287,7 +287,7 @@ public final class Math
 	/*========================= random functions =========================*/ 
 
 	/**
-	 * Random number generator. Returns a double greater than zero and less than one.
+	 * Random number generator. Returns a double greater than or equal to zero and less than one.
 	 */
 	public static synchronized double random()
 	{
