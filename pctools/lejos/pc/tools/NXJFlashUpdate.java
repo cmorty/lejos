@@ -195,6 +195,11 @@ public class NXJFlashUpdate {
 		cmd.boot();
 		cmd.close();
 	}
+	
+	private static int getPageAddr(int page)
+	{
+		return NXTSamba.FLASH_BASE + page * NXTSamba.PAGE_SIZE; 
+	}
 
 	/**
 	 * Verify that the contents of the nxt flash memory match the supplied
@@ -212,8 +217,7 @@ public class NXJFlashUpdate {
 	public int verifyPages(NXTSamba nxt, int first, byte[] memoryImage) throws IOException {
 		int failCnt = 0;
 		int len = memoryImage.length;
-		int addr = NXTSamba.FLASH_BASE + first * NXTSamba.PAGE_SIZE;
-		InputStream is = nxt.createInputStream(addr, len);
+		InputStream is = nxt.createInputStream(getPageAddr(first), len);
 		try
 		{
 			int p = -1;
@@ -265,7 +269,7 @@ public class NXJFlashUpdate {
 		}
 		
 		//workaround the problem, that verification and rebooting fails directly after write
-		nxt.readWord(first);
+		nxt.readWord(getPageAddr(first));
 
 		ui.progress("", 0);
 	}
