@@ -1,13 +1,13 @@
 package lejos.robotics.navigation;
 
-    
-
 import lejos.robotics.Pose;
-
-
 import lejos.geom.Point;
 import lejos.robotics.*;
 
+/*
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ */
 
 /**
  * The SimpleNavigator class uses dead reckoning to  keep track of its robot pose (the location in the plane

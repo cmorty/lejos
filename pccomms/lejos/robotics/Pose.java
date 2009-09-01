@@ -1,13 +1,12 @@
 package lejos.robotics;
 
+import lejos.geom.Point;
 
-  
 /*
  * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
  * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
  */
 
-import lejos.geom.Point;
 /**
  * Represents the location and heading(direction angle) of a robot.<br>
  * This class includes  methods for updating the Pose to track common robot movements
