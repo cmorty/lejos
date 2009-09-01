@@ -2,6 +2,11 @@ package lejos.nxt;
 
 import lejos.robotics.*;
 
+/*
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ */
+
 /**
  * LEGO Color Sensor driver.
  * This driver provides access to the LEGO Color sensor. It allows the reading of

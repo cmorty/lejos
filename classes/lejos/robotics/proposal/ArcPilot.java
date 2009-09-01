@@ -2,6 +2,11 @@ package lejos.robotics.proposal;
 
 import lejos.robotics.Movement;
 
+/*
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ */
+
 /**
  * An enhanced Pilot that is capable of traveling in arcs.
  * @author NXJ Team

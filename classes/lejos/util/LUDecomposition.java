@@ -1,5 +1,10 @@
 package lejos.util;
 
+/*
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ */
+
 	/** LU Decomposition.
 	<P>
 	For an m-by-n matrix A with m >= n, the LU decomposition is an m-by-n
