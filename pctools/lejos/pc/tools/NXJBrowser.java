@@ -203,7 +203,7 @@ public class NXJBrowser {
         	  if (file.getName().length() > 20) {
         		  showMessage("File name is more than 20 characters");
         	  } else {   	
-		          nxtCommand.uploadFile(file);
+		          nxtCommand.uploadFile(file, file.getName());
 		          String s = fm.fetchFiles();
 		          if (s != null) throw new IOException();
 		          table.invalidate();

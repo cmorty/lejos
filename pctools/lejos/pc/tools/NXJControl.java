@@ -1363,7 +1363,7 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
 				if (file.getName().length() > 20) {
 					showMessage("File name is more than 20 characters");
 				} else {
-					nxtCommand.uploadFile(file);
+					nxtCommand.uploadFile(file, file.getName());
 					String msg = fm.fetchFiles();
 					if (msg != null) showMessage(msg);
 					table.invalidate();
