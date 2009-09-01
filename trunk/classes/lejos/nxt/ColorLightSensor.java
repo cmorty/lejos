@@ -1,29 +1,24 @@
 package lejos.nxt;
 
-import lejos.robotics.Colors;
-import lejos.robotics.LightLampDetector;
-import lejos.robotics.ColorDetector;
-import lejos.robotics.Colors.Color;
-
+import lejos.robotics.*;
 
 /**
- * Lego Color Sensor driver.
- * This driver provides access to the Lego Color sensor. It allows the reading
- * raw and processed color values. The sensor has a tri-color led and this can
+ * LEGO Color Sensor driver.
+ * This driver provides access to the LEGO Color sensor. It allows the reading of
+ * raw and processed color values. The sensor has a tri-color LED and this can
  * be set to output red/green/blue or off. It also has a full mode in which
  * four samples are read (off/red/green/blue) very quickly. These samples can
  * then be combined using the calibration data provided by the device to
- * determine the "Lego" color currently being viewed.
+ * determine the "LEGO" color currently being viewed.
  * @author andy
  */
-public class ColorLightSensor implements LightLampDetector, ColorDetector, SensorConstants
+public class ColorLightSensor implements LampLightDetector, ColorDetector, SensorConstants
 {
     protected Colors.Color[] colorMap = Colors.Color.values();
     protected SensorPort port;
     protected int type;
     private int _zero = 1023;
 	private int _hundred = 0;
-	
     
     private Colors.Color lampColor = Colors.Color.NONE;
 
@@ -32,7 +27,8 @@ public class ColorLightSensor implements LightLampDetector, ColorDetector, Senso
      * @param port Port to use for the sensor.
      * @param type Initial operating mode.
      */
-    // TODO: We need a default constructor that doesn't need type, which is just the lamp color it uses to scan. Set default type.
+    // TODO: We need a default constructor that doesn't need type, which is just the lamp color it uses to scan.
+    // NXT LightSensor and RCXLightSensor set default to red LED on. Perhaps this should too? Make it an interface requirement?
     public ColorLightSensor(SensorPort port, int type)
     {
         this.port = port;
@@ -45,7 +41,7 @@ public class ColorLightSensor implements LightLampDetector, ColorDetector, Senso
      * @param type new sensor type.
      */
     // TODO: Type changes the lamp color, so maybe should use Colors.Color enum?
-    // TODO: I'm well aware that user can use ColorLightSensor to change lamp, and lampColor
+    // TODO: I'm aware the user can use ColorLightSensor to change type (lamp), and lampColor
     // won't be updated and it will give wrong value for getFloodlight(). Don't care until we work out the API.
     public void setType(int type)
     {
@@ -120,7 +116,7 @@ public class ColorLightSensor implements LightLampDetector, ColorDetector, Senso
         return colorMap[col];
     }
 
-	public int getLightLevel() {
+	public int getLightValue() {
 		// TODO: Problem! If lamp is on for illumination, this shuts it down. 
 		// So either turn on red lamp, then switch back, or turn off lamp (if passive mode) then switch back.
 		int temp_type =  this.type;
@@ -130,10 +126,7 @@ public class ColorLightSensor implements LightLampDetector, ColorDetector, Senso
 		return val;
 	}
 
-	// TODO: Remove this from here and interface
-	public int getRawLightLevel() {
-		// TODO: Problem! If lamp is on for illumination, this shuts it down. 
-		// So either turn on red lamp, then switch back, or turn off lamp (if passive mode) then switch back.
+	public int getNormalizedLightValue() {
 		int temp_type =  this.type;
 		setType(ColorLightSensor.TYPE_COLORNONE);
 		int val = readRawValue();
@@ -152,7 +145,7 @@ public class ColorLightSensor implements LightLampDetector, ColorDetector, Senso
 		int val = readRawValue();
 		// TODO: Normalize?
 		// Scale to max 255:
-		val = (int)((val/1023f) * 255);
+		val = val * 255 / 1023;
 		this.setType(temp_type);
 		return val;
 	}
@@ -162,9 +155,9 @@ public class ColorLightSensor implements LightLampDetector, ColorDetector, Senso
 		int temp_type =  this.type;
 		setType(ColorLightSensor.TYPE_COLORGREEN);
 		int val = readRawValue();
-		// TODO: Normalize?
-		// Scale to max 255:
-		val = (int)((val/1023f) * 255);
+		// TODO: Normalize? Use _zero instead of 1023? (changes when calibrated)
+		// TODO: What about scaling to max 255 using _hundred? (changes when calibrated) 
+		val = val * 255 / 1023;
 		this.setType(temp_type);
 		return val;
 	}
@@ -181,19 +174,19 @@ public class ColorLightSensor implements LightLampDetector, ColorDetector, Senso
 		
 	}
 
-	// TODO: Three getXXComponent() methods share code. Could reuse code. 
+	// TODO: Three getXXComponent() methods share code. Could reuse code. Or Sven has suggestion of getColorComponent(RED).
 	public int getRedComponent() {
 		int temp_type =  this.type;
 		setType(ColorLightSensor.TYPE_COLORRED);
 		int val = readRawValue();
 		// TODO: Normalize?
 		// Scale to max 255:
-		val = (int)((val/1023f) * 255);
+		val = val * 255 / 1023;
 		this.setType(temp_type);
 		return val;
 	}
 
-	public Color getFloodlight() {
+	public Colors.Color getFloodlight() {
 		return lampColor;
 	}
 
@@ -222,6 +215,7 @@ public class ColorLightSensor implements LightLampDetector, ColorDetector, Senso
 			return false;
 	}
 
+	// TODO: Since this calibrate code (and other code) is the same for every sensor, perhaps we should consider abstract classes to inherit shared code from
 	/**
 	 * call this method when the light sensor is reading the low value - used by readValue
 	 **/

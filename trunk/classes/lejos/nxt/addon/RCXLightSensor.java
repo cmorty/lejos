@@ -2,7 +2,7 @@ package lejos.nxt.addon;
 
 import lejos.nxt.*;
 import lejos.robotics.Colors;
-import lejos.robotics.LightLampDetector;
+import lejos.robotics.LampLightDetector;
 import lejos.robotics.Colors.Color;
 
 /*
@@ -11,10 +11,14 @@ import lejos.robotics.Colors.Color;
  */
 
 /**
- * Abstraction for an RCX light sensor.
+ *  This class is used to obtain readings from a legacy RCX light sensor, using an adapter cable
+ *  to connect it to the NXT brick. The light sensor can be calibrated to low and high values.
+ *  Note: The RCX light sensor is not very sensitive when the floodlight is turned off: 
+ *  Dark is around 523, sunlight is around 634. When the floodlight is on, dark readings are around
+ *  155 and sunlight is around 713.
  * 
  */
-public class RCXLightSensor implements SensorConstants, LightLampDetector {
+public class RCXLightSensor implements SensorConstants, LampLightDetector {
 	LegacySensorPort port;
 	
 	private int _zero = 1023;
@@ -32,6 +36,8 @@ public class RCXLightSensor implements SensorConstants, LightLampDetector {
 		this.port = port;
 		port.setTypeAndMode(TYPE_REFLECTION,
                             MODE_PCTFULLSCALE);
+		setFloodlight(true); // Light sensitivity poor when off.
+		
 	}
 	
 	/**
@@ -39,7 +45,7 @@ public class RCXLightSensor implements SensorConstants, LightLampDetector {
 	  * if you want to get accurate values from an RCX
 	  * sensor. In the case of RCX light sensors, you should see
 	  * the LED go on when you call this method.
-	  * @deprecated
+	  * @deprecated Use {@link #setFloodlight(boolean)} with true instead 
 	  */
 	public void activate()
 	{
@@ -48,7 +54,7 @@ public class RCXLightSensor implements SensorConstants, LightLampDetector {
 	
 	/**
      * Passivates an RCX light sensor.
-     * @deprecated 
+     * @deprecated Use {@link #setFloodlight(boolean)} with false instead 
 	 */
 	public void passivate()
 	{
@@ -58,11 +64,11 @@ public class RCXLightSensor implements SensorConstants, LightLampDetector {
 	/**
 	 * Read the current sensor value.
 	 * @return Value as a percentage.
-	 * @deprecated
+	 * @deprecated Use {@link #getLightValue()} instead 
 	 */
 	public int readValue()
 	{
-		return getLightLevel();
+		return getLightValue();
 	}
 
 	public Colors.Color getFloodlight() {
@@ -94,11 +100,11 @@ public class RCXLightSensor implements SensorConstants, LightLampDetector {
 		} else return false;
 	}
 	
-	public int getLightLevel() {
+	public int getLightValue() {
 		return ((1023 - port.readRawValue()) * 100/ 1023); 
 	}
 
-	public int getRawLightLevel() {
+	public int getNormalizedLightValue() {
 		return 1023 - port.readRawValue();
 	}
 	
@@ -126,13 +132,9 @@ public class RCXLightSensor implements SensorConstants, LightLampDetector {
 	     * @param high the high value
 	     */
 	    public void setHigh(int high) { _hundred = 1023 - high;}
-	    /**
-	    * return  the normalized value corresponding to readValue() = 0
-	    */
-	   public int getLow() { return 1023 - _zero;}
-	    /** 
-	    * return the normalized value corresponding to  readValue() = 100;
-	    */
-	   public int  getHigh() {return 1023 - _hundred;}
+	   
+	    public int getLow() { return 1023 - _zero;}
+	    
+	    public int  getHigh() {return 1023 - _hundred;}
 
 }
