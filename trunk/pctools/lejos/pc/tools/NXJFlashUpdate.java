@@ -263,6 +263,10 @@ public class NXJFlashUpdate {
 			}
 			nxt.writePage(first + page, memoryImage, page	* NXTSamba.PAGE_SIZE);
 		}
+		
+		//workaround the problem, that verification and rebooting fails directly after write
+		nxt.readWord(first);
+
 		ui.progress("", 0);
 	}
 
