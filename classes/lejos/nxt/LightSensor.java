@@ -1,7 +1,7 @@
 package lejos.nxt;
 
 import lejos.robotics.Colors;
-import lejos.robotics.LightLampDetector;
+import lejos.robotics.LampLightDetector;
 
 /*
  * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
@@ -9,11 +9,11 @@ import lejos.robotics.LightLampDetector;
  */
 
 /**
- * Abstraction for a NXT light sensor.
+ * This class is used to obtain readings from a LEGO NXT light sensor.
  * The light sensor can be calibrated to low and high values. 
  * 
  */
-public class LightSensor implements LightLampDetector, SensorConstants
+public class LightSensor implements LampLightDetector, SensorConstants
 {
 	ADSensorPort port;
 	private int _zero = 1023;
@@ -67,33 +67,28 @@ public class LightSensor implements LightLampDetector, SensorConstants
 		} else return false;
 	}
 
-	/**
-	 * Read the current sensor value.
-	 * Use calibrateLow() to set the zero level, and calibrateHigh to set the 100 level.
-	 * @return Value as a percentage of difference between the low and high calibration values. 
-	 */
-	public int getLightLevel()
+	public int getLightValue()
 	{ 
 		if(_hundred == _zero) return 0;
 		return 100*(port.readRawValue() - _zero)/(_hundred - _zero); 
 	}
 	
 	/**
-	 * Use {@link #getLightLevel()} instead
-	 * @deprecated 
+	 * 
+	 * @deprecated Use {@link #getLightValue()} instead 
 	 * @return the light level
 	 */
 	public int readValue() {
-		return getLightLevel();
+		return getLightValue();
 	}
 	
 	/**
-	 * Use {@link #getRawLightLevel()} instead
-	 * @deprecated 
+	 * 
+	 * @deprecated Use {@link #getNormalizedLightValue()} instead 
 	 * @return the raw light level
 	 */
 	public int readNormalizedValue() {
-		return getRawLightLevel();
+		return getNormalizedLightValue();
 	}
 	
 	/* TODO: Options:
@@ -107,13 +102,10 @@ public class LightSensor implements LightLampDetector, SensorConstants
 	 */
 	
 	/**
-	 * Read the current sensor normalized value. Allows more accuracy
-	 * than readValue(). For LEGO sensor, values typically range from 
-	 * 145 (dark) to 890 (sunlight). 
-	 * @return Value as raw (0 to 1023)
+	 * @return normalized raw value (0 to 1023) LEGO NXT light sensor values typically range from 
+	 * 145 (dark) to 890 (sunlight).
 	 */
-	public int getRawLightLevel() {
-		// TODO: Probably want to remove this from interface since raw values could be anything.
+	public int getNormalizedLightValue() {
 		return 1023 - port.readRawValue();
 	}
 
@@ -132,21 +124,21 @@ public class LightSensor implements LightLampDetector, SensorConstants
 		_hundred = port.readRawValue();
 	}
 	/** 
-	 * set the normalized value corresponding to readValue() = 0
+	 * set the normalized value corresponding to readValue() = 0%
 	 * @param low the low value
 	 */
 	public void setLow(int low) { _zero = 1023 - low;}
 	  /** 
-     * set the normalized value corresponding to  readValue() = 100;
+     * set the normalized value corresponding to  readValue() = 100%
      * @param high the high value
      */
     public void setHigh(int high) { _hundred = 1023 - high;}
     /**
-    * return  the normalized value corresponding to readValue() = 0
+    * return  the normalized value corresponding to readValue() = 0%
     */
    public int getLow() { return 1023 - _zero;}
     /** 
-    * return the normalized value corresponding to  readValue() = 100;
+    * return the normalized value corresponding to  readValue() = 100%
     */
    public int  getHigh() {return 1023 - _hundred;}
 
