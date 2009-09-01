@@ -79,10 +79,10 @@ public final class Math
 	 * Returns the absolute value of a long value. If the argument is not
 	 * negative, the argument is returned. If the argument is negative, the
 	 * negation of the argument is returned.
+	 * Note that the return value of abs(Long.MIN_VALUE) is Long.MIN_VALUE. 
 	 */
 	public static long abs(long a)
 	{
-		// TODO document that Long.MIN_VALUE == -Long.MIN_VALUE
 		return ((a < 0) ? -a : a);
 	}
 
@@ -90,10 +90,10 @@ public final class Math
 	 * Returns the absolute value of an integer value. If the argument is not
 	 * negative, the argument is returned. If the argument is negative, the
 	 * negation of the argument is returned.
+	 * Note that the return value of abs(Integer.MIN_VALUE) is Integer.MIN_VALUE. 
 	 */
 	public static int abs(int a)
 	{
-		// TODO document that Integer.MIN_VALUE == -Integer.MIN_VALUE
 		return ((a < 0) ? -a : a);
 	}
 

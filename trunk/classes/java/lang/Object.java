@@ -1,5 +1,7 @@
 package java.lang;
+
 import lejos.nxt.VM;
+
 /**
  * All classes extend this one, implicitly.
  */
@@ -19,12 +21,10 @@ public class Object
      */
 	protected Object clone() throws CloneNotSupportedException
 	{
-        // NOTE: at the moment instanceof <interface> will always return true.
-        if (this instanceof Cloneable)
-            return cloneObject(this);
-        else
-            throw new CloneNotSupportedException();
+		if (this instanceof Cloneable)
+        	return cloneObject(this);
 
+		throw new CloneNotSupportedException();
 	}
 	
 	public boolean equals (Object aOther)
