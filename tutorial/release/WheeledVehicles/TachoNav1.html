@@ -1,0 +1,57 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>TachoNav1.java</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<style type="text/css">
+<!--
+body {color: #000000; background-color: #ffffff; font-family: Monospaced}
+table {color: #000000; background-color: #e9e8e2; font-family: Monospaced}
+.ST0 {color: #993300; font-family: Monospaced; font-weight: bold}
+.comment {color: #339900}
+-->
+</style>
+</head>
+<body>
+<pre>
+<span class="ST0">import</span> lejos.nxt.*;
+<span class="ST0">import</span> lejos.navigation.*;
+
+<span class="comment">/**</span>
+<span class="comment"> * </span><span class="comment">example</span> <span class="comment">of</span> <span class="comment">some</span> <span class="comment">TachoNavigator</span> <span class="comment">methods</span>
+ <span class="comment">*/</span>
+<span class="ST0">public</span> <span class="ST0">class</span> TachoNav1 
+{
+    <span class="ST0">static</span> TachoNavigator tachoNav;
+    <span class="ST0">public</span> <span class="ST0">static</span> <span class="ST0">void</span> main( String[] args)
+    {     
+        tachoNav = <span class="ST0">new</span> TachoNavigator(2.25f, 4.4f, Motor.A, Motor.C);
+        tachoNav.setSpeed(500);
+        tachoNav.setPosition(0, 0, 90);<span class="comment">// heading along y axis</span>
+        tachoNav.goTo(-10, 0);
+        <span class="ST0">int</span> row = 0;
+        print(row);
+        Button.waitForPress();
+        tachoNav.goTo(10,20, <span class="ST0">true</span>);
+        <span class="ST0">while</span> (tachoNav.isMoving())
+        {
+            Sound.pause(500);<span class="comment">// wait half a second</span>
+            tachoNav.updatePosition();
+            print(row++);
+            <span class="ST0">if</span> (row &gt; 7)row = 1;
+        }
+        tachoNav.stop();<span class="comment">// calls update position;</span>
+        print(row);
+        Button.waitForPress();
+    }
+    <span class="ST0">static</span> <span class="ST0">void</span> print(<span class="ST0">int</span> row)
+    {
+        LCD.drawInt((<span class="ST0">int</span>)tachoNav.getX(),4,0,row);
+        LCD.drawInt((<span class="ST0">int</span>)tachoNav.getY(), 4,6, row);
+        LCD.drawInt((<span class="ST0">int</span>)tachoNav.getAngle(),4,10,row);      
+    }
+ }
+
+
+</pre></body>
+</html>

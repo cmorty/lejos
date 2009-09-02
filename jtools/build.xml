@@ -1,0 +1,37 @@
+<!--
+  ==================================================
+  Buildfile for building jtools
+  ==================================================
+-->
+<project name="jtools" default="build" basedir=".">
+	
+	<target name="generate" description="generate java files">
+		<!-- generate constants first -->
+		<delete dir="build/classes_gen" />
+		<mkdir dir="build/classes_gen" />
+		<javac srcdir="." destdir="build/classes_gen" fork="yes" optimize="on" debug="on"  source="1.5" target="1.5"
+			includes="**/GenerateConstants.java,**/ListReader.java">
+		</javac>
+		<java classpath="build/classes_gen" classname="js.tinyvm.GenerateConstants">
+			<sysproperty key="tinyvm.home" path=".." />
+		</java>
+	</target>
+
+	<!-- creates the jtools jar -->
+	<target name="build" depends="generate" description="generate jtools jar">
+		<!-- generate tools -->
+		<delete dir="build/classes" />
+		<mkdir dir="build/classes" />
+		<javac srcdir="." destdir="build/classes" source="1.5" target="1.5" debug="on">
+			<classpath location="3rdparty/lib/commons-cli.jar" />
+			<classpath location="3rdparty/lib/bcel.jar" />
+		</javac>
+		<mkdir dir="lib"/>
+		<jar destfile="lib/jtools.jar" basedir="build/classes" update="false">
+		</jar>
+	</target>
+	
+	<target name="clean" description="cleans the build folder">
+		<delete dir="build"/>
+	</target>
+</project>

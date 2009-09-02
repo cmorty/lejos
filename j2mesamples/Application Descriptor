@@ -1,0 +1,8 @@
+MIDlet-Version: 1.0.0
+MIDlet-Vendor: Midlet Suite Vendor
+MIDlet-Jar-URL: j2mesamples.jar
+MicroEdition-Configuration: CLDC-1.1
+MIDlet-2: BTConnectTest,leJOS.png,org.lejos.j2mesamples.BTConnectTest
+MicroEdition-Profile: MIDP-2.0
+MIDlet-1: NXTRemote,leJOS.png,org.lejos.j2mesamples.NXTRemote
+MIDlet-Name: j2mesamples Midlet Suite

@@ -1,0 +1,113 @@
+<!-- ant file to make the emu runtime tools -->
+
+<project name="emu-runtime-tools" default="make" basedir=".">
+	<!-- cpptasks task & type def
+	<taskdef resource="cpptasks.tasks">
+	  <classpath>
+	    <pathelement location="../../../jtools/3rdparty/lib/cpptasks.jar"/>
+	  </classpath>
+	</taskdef>
+	<typedef resource="cpptasks.types">
+	  <classpath>
+	    <pathelement location="../../../jtools/3rdparty/lib/cpptasks.jar"/>
+	  </classpath>
+	</typedef>
+	-->
+	
+	<!-- cleans all compilation artifacts -->
+	<target name="clean" description="cleans all compilation artifacts">
+		<delete>
+			<fileset dir=".">
+				<include name="*.o"/>
+				<include name="platform_config.h"/>
+			</fileset>
+		</delete>
+	</target>
+	
+	<!-- make the emu runtime tools --> 
+	<target name="make" depends="clean,emu-dump,emu-lejosrun" description="makes the emu runtime tools">
+	</target>
+
+	<!-- make emu-dump --> 
+	<target name="emu-dump" depends="platform_config" description="makes emu-dump">
+  		<cc subsystem="console" 
+  				outfile="emu-dump"
+  				objdir="." 
+  				outtype="executable" 
+  				debug="false"
+  			    exceptions="false"
+  			    rtti="true"
+  			    optimize="speed"
+  				name="gcc">
+  				<fileset dir=".">
+  					<include name="dump.c"/>
+  					<include name="load.c"/>
+  				</fileset>
+				<includepath>
+					<pathelement location="."/>
+					<pathelement location="../../javavm"/>
+				</includepath>
+  		</cc>
+	</target>
+
+	<!-- make platform_config.h --> 
+	<target name="platform_config" description="makes platform_config.h">
+  	<cc subsystem="console" 
+  				outfile="dump_config"
+  				objdir="." 
+  				outtype="executable" 
+  				debug="false"
+  			    exceptions="false"
+  			    rtti="true"
+  			    optimize="speed"
+  				name="gcc">
+  				<fileset dir=".">
+  					<include name="dump_config.c"/>
+  				</fileset>
+				<includepath>
+					<pathelement location="."/>
+				</includepath>
+  		</cc>
+		<exec executable="${basedir}/dump_config" failonerror="true" dir=".">
+			<redirector outputproperty="platform_config.h">
+				<outputmapper type="merge" to="platform_config.h" />
+			</redirector>
+		</exec>
+	</target>
+
+	<!-- make emu-lejosrun --> 
+	<target name="emu-lejosrun" description="makes emu-lejosrun">
+  		<cc subsystem="console" 
+  				outfile="emu-lejosrun"
+  				objdir="." 
+  				outtype="executable" 
+  				debug="false"
+  			    exceptions="false"
+  			    rtti="true"
+  			    optimize="speed"
+  				name="gcc">
+				<fileset dir="../../javavm">
+					<include name="interpreter.c"/>
+					<include name="threads.c"/> 
+					<include name="exceptions.c"/>
+					<include name="memory.c"/>
+					<include name="language.c"/>
+					<include name="poll.c"/>
+				</fileset>
+  				<fileset dir=".">
+  					<include name="verbose.c"/>
+  					<include name="sensors.c"/>
+  					<include name="tvmemul.c"/> 
+  					<include name="traceemul.c"/>
+  					<include name="nativeemul.c"/>
+  					<include name="load.c"/>
+  					<include name="opcodeinfo.c"/>
+  				</fileset>
+				<includepath>
+					<pathelement location="."/>
+					<pathelement location="../../javavm"/>
+				</includepath>
+  		</cc>
+	</target>
+</project>
+

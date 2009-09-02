@@ -1,0 +1,24 @@
+ <!--
+  ==================================================
+  Buildfile for building PC samples
+  ==================================================
+-->
+<project name="PC Samples" default="build" basedir="."> 	
+  	<target name="build" description="compile PC samples">
+    	<mkdir dir="build/classes"/>
+    	<javac srcdir="." destdir="build/classes" fork="yes" optimize="on" debug="on" source="1.5" target="1.5">
+			<classpath location="../pccomms/lib/pccomm.jar"/>
+			<classpath location="../pccomms/3rdparty/bluecove.jar"/>
+    		<classpath location="../pctools/lib/pctools.jar"/>
+		</javac>
+  	</target>
+	
+	<!-- deletes class files -->
+	<target name="clean" description="clean up all generated files">
+		<delete>
+			<fileset dir="."> 
+				<include name="**/*.class"/>
+			</fileset>
+		</delete>
+	</target>
+</project>
