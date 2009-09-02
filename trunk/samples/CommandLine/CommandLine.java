@@ -106,8 +106,8 @@ public class CommandLine implements KeyListener {
 					System.out.println("Defrag error: " + ioe.getMessage());
 				}
 			} else if(command.equalsIgnoreCase(MEM)) {
-				System.out.println(System.getRuntime().freeMemory() + " free");
-				System.out.println(System.getRuntime().totalMemory() + " total");
+				System.out.println(Runtime.getRuntime().freeMemory() + " free");
+				System.out.println(Runtime.getRuntime().totalMemory() + " total");
 				System.out.println(File.freeMemory() + " disk");
 			} else if(command.equalsIgnoreCase(DEL)|command.equalsIgnoreCase(RM)) {
 				File f = new File(args[0]);
