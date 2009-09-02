@@ -22,6 +22,7 @@
 
 	<!-- copies the jar files -->
 	<target name="copyLibs" depends="buildLibs" description="copies the lejos NXJ jar files to the plugin's lib folder">
+		<mkdir dir="${plugin.libs}"/>
 		<copy todir="${plugin.libs}">
 			<fileset dir="${3rdparty.libs}">
 				<include name="bcel*.jar" />

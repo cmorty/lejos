@@ -96,7 +96,7 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 							nxtCommand.setNXTComm(nxtComm);
 							pm.subTask("Uploading");
 							nxtCommand
-									.uploadFile(binary);
+									.uploadFile(binary, binary.getName());
 							String binName = binary.getName();
 							// log
 							LeJOSNXJUtil
