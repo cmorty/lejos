@@ -1,0 +1,60 @@
+# This file contains a list of special classes.
+
+# The VM will index these special classes based on their
+# order here. Rebuild from the top if this file changes.
+# Note that the index of Object/boolean/char etc. must match the
+# index of the basic types used in memory.c and tinyVM. Also
+# the index of the array classes relative to the array Object must
+# also match
+
+# Since 1.0.0alpha5, indices start at zero.
+
+# One class per line.
+
+java/lang/Object
+java/lang/Throwable
+java/lang/Error
+java/lang/OutOfMemoryError
+boolean
+char
+float
+double
+byte
+short
+int
+long
+void
+[Ljava/lang/Object;
+java/lang/NoSuchMethodError
+java/lang/StackOverflowError
+java/lang/NullPointerException
+[Z
+[C
+[F
+[D
+[B
+[S
+[I
+[J
+[V
+java/lang/ClassCastException
+java/lang/ArithmeticException
+java/lang/ArrayIndexOutOfBoundsException
+java/lang/IllegalArgumentException
+java/lang/InterruptedException
+java/lang/IllegalStateException
+java/lang/IllegalMonitorStateException
+java/lang/ThreadDeath
+java/lang/ArrayStoreException
+java/lang/NegativeArraySizeException
+java/lang/Class
+java/lang/String
+java/lang/Cloneable
+java/lang/Thread
+
+
+
+
+
+
+

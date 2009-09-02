@@ -1,0 +1,59 @@
+<!-- ant file to make libnxt, runc, nxjflash and jlibnxt -->
+
+<project name="libnxt" default="make" basedir=".">
+	<!-- cpptasks task & type def
+	<taskdef resource="cpptasks.tasks">
+	  <classpath>
+	    <pathelement location="../release/lejos_nxj/3rdparty/lib/cpptasks.jar"/>
+	  </classpath>
+	</taskdef>
+	<typedef resource="cpptasks.types">
+	  <classpath>
+	    <pathelement location="../release/lejos_nxj/3rdparty/lib/cpptasks.jar"/>
+	  </classpath>
+	</typedef>
+	-->
+	
+	<!-- cleans all compilation artifacts -->
+	<target name="clean" description="cleans all compilation artifacts">
+		<delete>
+			<fileset dir=".">
+				<include name="*.o"/>
+			</fileset>
+		</delete>
+	</target>
+	
+	<!-- make libnxt and its utilities --> 
+	<target name="make" depends="clean,jlibnxt" description="makes libnxt and its tools">
+	</target>
+	
+	<!-- make jlibnxt --> 
+	<target name="jlibnxt" description="makes jlibnxt">
+  		<cc subsystem="console" 
+  				outfile="jlibnxt"
+  				objdir="." 
+  				outtype="shared" 
+  				debug="false"
+  			    exceptions="false"
+  			    rtti="true"
+  				name="gcc">
+  			    <compilerarg value="-Wall"/>
+  			    <compilerarg value="-std=gnu99"/>
+  			    <compilerarg value="-fPIC"/>
+  				<fileset dir=".">
+  					<include name="main_jlibnxt.c"/>
+  				</fileset>
+				<libset dir="." libs="usb"/>
+				<includepath>
+					<pathelement location="."/>
+				</includepath>
+  				<includepath if="jni.include.dir">
+					<pathelement location="${jni.include.dir}" />
+  				</includepath>
+  			    <includepath if="jni.sys.dir">
+					<pathelement location="${jni.sys.dir}"/>
+				</includepath>
+  		</cc>
+	</target>
+</project>
+

@@ -1,0 +1,19 @@
+<!--
+  ==================================================
+  Buildfile for building samples
+  ==================================================
+-->
+<project name="samples" default="build" basedir=".">
+	
+  	<target name="build"  description="generate pccomm jar">
+  		<delete dir="build"/>
+    	<mkdir dir="build"/>
+		<javac srcdir="." destdir="build" fork="yes" optimize="on" debug="on" source="1.5" target="1.5">
+			<bootclasspath location="../classes/lib/classes.jar"/>
+		</javac>
+  	</target>
+	
+    <target name="clean" description="cleans the build folder">
+		<delete dir="build"/>
+	</target>
+</project>
