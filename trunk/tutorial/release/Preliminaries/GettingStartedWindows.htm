@@ -36,7 +36,6 @@
       <div class="linkAHEAD2"><a href="#11">Flashing the firmware</a></div>
       <div class="linkAHEAD"><a href="#12">Testing your Installation</a></div>
       <div class="linkAHEAD2"><a href="#13">Compiling and running your first program</a></div>
-      <div class="linkAHEAD"><a href="#14">Writing your first leJOS NXJ program</a></div>
       </td>
       <td>
         <div id="BreadCrumbs">
@@ -44,10 +43,9 @@
             <a href="#">Getting Started on Microsoft Windows</a>
         </div>
       <div class="NavBit"> <a target="_top" href="../Preliminaries/Intro.htm">«&nbsp;Previous</a>&nbsp;&#8226;&nbsp;
-      <a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../Preliminaries/CompileAndRun.htm">Next&nbsp;»</a> </div>
+      <a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../Preliminaries/FirstProgram.htm">Next&nbsp;»</a> </div>
       <div id="PageTitle">Getting Started on Microsoft Windows</div>
-      <p>This version of the tutorial is for the 0.7 release of leJOS NXJ. If you are using the 0.6 release, 
-      there is no GUI installer, and you will need to install libusb-win32 on your PC.</p>
+      <p>This version of the tutorial is for the 0.85 release of leJOS NXJ. </p>
       <a id="1" name="1"></a>
       <h4>Prerequisites</h4>
       <a id="2" name="2"></a>
@@ -65,16 +63,16 @@
       the latest JDK from <a href="http://java.sun.com/" target="_blank">http://java.sun.com/</a>.
       Follow the instructions for installing it. leJOS NXJ works has been
       tested with JDK versions 1.5 and 1.6, but will not work with earlier
-      versions.</p>
+      versions. JDK 1.6 is recommended, and some PC sample programs will not wiork with JDK 1.5.</p>
       <p>You will need to add the JDK bin directory to your system or user PATH,
        so that commands such as <code>javac</code> and <code>java</code> can be called from a command prompt. If you do not know how to do this, 
        see the "Setting up environment variables" section below.</p>
-       <p> It is also a good idea to set the environment variable JAVA_HOME to the folder where you installed the JDK, as it is necessary
+       <p> It is also a good idea to set the environment variable JAVA_HOME to the folder where you installed the JDK. This is necessary
            if you use the <code>ant</code> build system.</p>
       <a id="4" name="4"></a>
       <h5>Bluetooth Stack</h5> 
       <p> If you want to communicate with the NXT over Bluetooth, you will need a Bluetooth dongle or built-in support on your PC, 
-      and a Bluetooth software stack. leJOS NXJ has been tested with the Microsoft and Widdcomm stacks, but should work with others. </p>
+      and a Bluetooth software stack. leJOS NXJ has been tested with the Microsoft and Widcomm stacks, but should work with others. </p>
       <p> You can use leJOS NXJ without Bluetooth.</p>
       <p> <a href="#top">Back to top</a> </p>
       <a id="5" name="5"></a>
@@ -85,7 +83,7 @@
       <p> <a href="#top">Back to top</a> </p>
       <a id="6" name="6"></a>
       <h4>Running the GUI installer</h4>
-      <p> Run <code>leJOS_NXJ_0.7-Setup.exe</code> and you will see the following screen:
+      <p> Run <code>leJOS_NXJ_0.8.5-Setup.exe</code> and you will see the following screen:
       </p>
       <img src="installquestion.jpg"/>
       <p> Select "Yes" and you will see:</p>
@@ -175,8 +173,8 @@
       <p> Skip this section  and go to &quot;Testing the Installation&quot; if you are using the GUI installer.</p>
       <a id="8" name="8"></a>
       <h5>Unzipping the release</h5>
-      <p> Unzip the release to a folder such as c:\lejosbeta7. The zip file includes a directory called lejos_nxt, so your
-          NXJ_HOME folder will be c:\lejosbeta7\lejos_nxt.</p>
+      <p> Unzip the release to a folder such as c:\lejosbeta85. The zip file includes a directory called lejos_nxt, so your
+          NXJ_HOME folder will be c:\lejosbeta85\lejos_nxt.</p>
       <a id="9" name="9"></a>
       <h5>Setting up environment variables</h5>
       <p>You need to set:</p>
@@ -190,17 +188,17 @@
           <tr>
             <td>NXJ_HOME</td>
             <td>The folder you installed leJOS NXJ into</td>
-            <td>C:\lejosbeta7\lejos_nxt</td>
+            <td>C:\lejosbeta85\lejos_nxt</td>
           </tr>
           <tr>
             <td>JAVA_HOME</td>
             <td>The folder  where you installed the JDK </td>
-            <td>C:\Program Files\Java\jdk1.6.0_06</td>
+            <td>C:\Program Files\Java\jdk1.6.0_16</td>
           </tr>
           <tr>
             <td>PATH</td>
             <td>Add the bin folders for the JDK and leJOS</td>
-            <td>C:\Program Files\Java\jdk1.6.0_06\bin;C:\lejosbeta7\lejos_nxt\bin;</td>
+            <td>C:\Program Files\Java\jdk1.6.0_16\bin;C:\lejosbeta85\lejos_nxt\bin;</td>
           </tr>
         </tbody>
       </table>
@@ -218,8 +216,8 @@
       <a id="11" name="11"></a>
       <h5>Flashing the Firmware</h5>
       <p>As leJOS NXJ is a firmware replacement, you will need to flash the firmware to your NXT. 
-      Note that this will overwrite any existing firmware. If you have a previous version of leJOS NXJ on your PC your existing files
-      will be preserved, but if you have the standard LEGO firmware or other third-party firmware on your NXT, existing files will be lost.
+      Note that this will overwrite any existing firmware. If you have the standard LEGO firmware or other third-party firmware on your NXT, existing files will be lost.</p>
+      <p> The 0.85 release increases the amount of flash memory used by the firmware and the startup menu, so the first time you flash this version of the firmware, existing leJOS NXJ files will be deleted.
       </p>
       <p>Make sure your NXT is attached to the PC by its USB cable, and switch it on by pressing the orange button.</p>
       <p>You can either use the command line <code>nxjflash</code> command or the <code>nxjflashg</code> GUI program.</p>
@@ -241,7 +239,7 @@
       <p> <a href="#top">Back to top</a> </p>
       <a id="12" name="12"></a>
       <h4>Testing your Installation</h4>
-      <p> You can check that you have successfully installed leJOS NXJ on your PC and your NXT by compiling and running your firast program.</p>
+      <p> You can check that you have successfully installed leJOS NXJ on your PC and your NXT by compiling and running your first program.</p>
       <a id="13" name="13"></a>
       <h5>Compiling and running your first program</h5>
       <p> Java programs need to be compiled to class files before they
@@ -251,73 +249,15 @@
       </p>
       <p> To run a sample program, such as the View.java sample, follow these steps: </p>
       <p> Start a command window, and change directory to the View sample folder: </p>
-      <pre><code> cd %NXJ_HOME%\samples\View </code></pre>
+      <pre><code> cd leJOSNXJProjects\samples\View </code></pre>
       <p> Compile the program with the nxjc command: </p>
       <pre><code> nxjc View.java </code></pre>
       <p> Then link, upload and run it with the nxj command: </p>
       <pre><code> nxj -r View </code></pre>
       <p> You should see the menu of the View sample on your NXT. </p>
       <p> <a href="#top">Back to top</a> </p>
-      <a id="11" name="11"></a>
-      <h4>Writing your first leJOS NXJ program</h4>
-      <p> Let us start with a simple &#8220;Hello World&#8221; program. We will
-      create a HelloWorld class in the default java package: </p>
-      <div class="CodeBox">
-      <pre><code>
-      public class HelloWorld
-      {
-      }
-      </code></pre>
-      </div>
-      <p> leJOS requires the standard main method for the program entry point: </p>
-      <div class="CodeBox">
-      <pre><code>
-      public class HelloWorld {
-        public static void main (String[] args) {
-        }
-      }
-      </code></pre>
-      </div>
-      <p> leJOS NXJ supports the standard java System.out.println method and scroll the output on the NXT LCD screen. </p>
-      <div class="CodeBox">
-      <pre><code>
-      public class HelloWorld {
-        public static void main (String[] args) {
-          System.out.println("Hello World");
-        }
-      }
-      </code></pre>
-      </div>
-      <p>If you run this program as it is, it will display Hello World&#8221;
-      and then immediately return to the menu, so you will not be able to see
-      what is displayed (unless you are very quick). </p>
-      <p>We either need the program to sleep for a while to allow the
-      text to be read, or to wait for a button to be pressed. Let us wait for
-      a button to be pressed. To do this we need to include the leJOS NXJ
-      Button class in the program. Button is in the lejos.nxt package. We can
-      either include lejos.nxt.Button or lejos.nxt.* to allow any of the
-      standard lejos.nxt classes to be used in the program. The Button class
-      has a method waitForPress() that waits for any button to be pressed.
-      You can find out what methods a class supports by looking at the API
-      documentation. the Click here. </p>
-      <p>The API documentation is on the leJOS web site here and
-      included in the leJOS download in lejos_nxt/docs/apidocs/index.html. </p>
-      <p>The complete HelloWorld program is: </p>
-      <div class="CodeBox">
-      <pre><code>
-      import lejos.nxt.*;
-      
-      public class HelloWorld {
-        public static void main (String[] args) {
-          System.out.println("Hello World");
-          Button.waitForPress();
-        }
-      }
-      </code></pre>
-      </div>
-      <p> <a href="#top">Back to top</a> </p>
       <div class="NavBit"> <a target="_top" href="../Preliminaries/Intro.htm">«&nbsp;Previous</a>&nbsp;&#8226;&nbsp;
-      <a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../Preliminaries/CompileAndRun.htm">Next&nbsp;»</a> </div>
+      <a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../Preliminaries/FirstProgram.htm">Next&nbsp;»</a> </div>
       <br />
       </td>
       <td> <br />

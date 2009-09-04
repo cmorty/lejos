@@ -222,13 +222,44 @@ Total time: 4 seconds
 				    <p>You can look through the other PC sample and try them out in a similar way. 
 				    Most of them are paired with NXT samples. Look at the comment at the start of the Java files.</p>
 					
+					<!-- WEB TOOL TO GO TO TOP OF THE DOCUMENT -->
+					<a href="#top">Back to top</a>
+					<p/>
 					<a name="5"></a>
+					<h4>Using the org.lejos.example project</h4>
+					
+					<p>The org.lejos.example is a good example of how to create an Eclipse project for leJOS that uses an ant build file.</p>
+					
+					<p>It is good practice to include the name of your organization in the project name to avoid name clashes with other
+					projects in the work space. However if you are the only user of a project, this is not necessary.</p>
+					
+					<p>The project has a src directory that holds all the source packages. The example project has a single package:
+					org.lejos.example. Again it is a good idea to follow the standard Java conventions for package names, but if you
+					are not sharing the project with anyone, it is not necessary.</p>
+					
+					<p>The org.lejos.example has a single class file: HelloWorld.</p>
+					
+					<p>The project is built by the ant build file: build.xml. build.xml uses a properties file build.properties which has properties that 
+					give the name and location of all the leJOS jar files.</p>
+					
+					<p>The build.xml has ant targets for linking and uploading the leJOS binary. The default target is uploadandrun, which compiles the source, 
+					links the binary, uploads the binary and runs it </p>.
+					
+					<p>Try right-clicking on build.xml and selecting "Ant Build". You should see the verbose output from the linker in the Eclipse
+					console windows and the binary will be uploaded to the NXT and run.<p/>
+					
+					<p>If you want to run a different ant target, right-click on build.xml and select "Ant Build ...".</p>
+					
+					<!-- WEB TOOL TO GO TO TOP OF THE DOCUMENT -->
+					<a href="#top">Back to top</a>
+					<p/>
+					<a name="6"></a>
 					<h4>Creating your own project</h4>
 					<p> To create a project, select File > New > Java Project. Give the project a name, e.g. "myproject" and press Finish to accept all the defaults.</p>
 					<p> You should now see "myproject" in the Package Explorer.</p>
 					<p> You will need to add classes.jar to your project. To do this right-click on "myproject", select "Properties" and then "Java Build Path".
 					Then select Libraries and then "Add external Jar". Browse for classes.jar in your NXJ installation and select it. As classes.jar replaces the standard Java run time library, you should remove 
-					it by sel;ecting &quot;JRE System Library&quot; and clicking &quot;Remove&quot;. You will  now see classes.jar  (and not JRE System Library) under "Referenced Libraries" in myproject.</p>
+					it by selecting &quot;JRE System Library&quot; and clicking &quot;Remove&quot;. You will  now see classes.jar  (and not JRE System Library) under "Referenced Libraries" in myproject.</p>
 					<p> You should use a package name for your project. We will call our project "org.me.myproject". </p>
 					<p>Select the "src" folder in myproject, right-click on it and select New > Package
 					   and type your package name.</p>
@@ -301,7 +332,7 @@ public class HelloWorld {
 					<a href="#top">Back to top</a>
 					<p/>
 					
-					<a name="6"></a>
+					<a name="8"></a>
 					<h4>Installing the Eclipse plugin</h4>
 					
 					<p>An easier way to set up a project for leJOS is to use the Eclipse plugin.</p>
@@ -373,7 +404,7 @@ public class HelloWorld {
 				    <p>The upload will use USB or Bluetooth depending on which option you set on the leJOS NXJ Preferences page. You can change this and other preferences whenever you want. 
 				    If you selected the "Run program after upload" option, the program will start running on your NXT when it has finished uploaing.</p>
 									
-					<a name="8"></a>
+					<a name="9"></a>
 					<h4>Setting up the leJOS GUI Tools</h4>
 					<p> leJOS NXJ comes with a set of GUI tools that can be using for flashing the firmware, exploring files on the NXT,
 					    monitoring and debugging programs on the NXT, downloading data logs, etc. 
