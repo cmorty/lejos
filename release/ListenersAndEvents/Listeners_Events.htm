@@ -78,7 +78,7 @@
         	</ul>
 
       		<p>User programs can create their own threads by subclassing Thread, and then
-			using the start method to start the thread. In leJOS NXJ 0.7, Threads can be created from any class that implements the Runnable interface. 
+			using the start method to start the thread. In leJOS NXJ 0.7 and later, threads can be created from any class that implements the Runnable interface. 
 			</p>
       		<p>Background threads that do not need to terminate in order for the user program to
 			terminate, should be marked as daemon threads by calling
@@ -86,10 +86,8 @@
       		<p>When using threads, care should be taken with concurrency issues. When data items
 			are accessed by multiple threads, synchronization is necessary to
 			ensure that data is not read when it is in an inconsistent state.</p>
-      		<p>leJOS supports the standard Java synchronization mechanisms: synchronized
-			methods and synchronized statements using a monitor object. There are
-			some restrictions in the way leJOS handles concurrency and
-			synchronization &#8211; see the leJOS NXJ README.html file.</p>
+      		<p>leJOS NXJ supports the standard Java synchronization mechanisms: synchronized
+			methods and synchronized statements using a monitor object. </p>
       		<p>As an example of a leJOS thread, consider the Indicators thread in the leJOS
 			StartUpText menu. This is used to keep the display of the battery level
 			up to date, by reading its value every second, and to indicate when the
