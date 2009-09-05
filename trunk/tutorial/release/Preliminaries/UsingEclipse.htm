@@ -52,10 +52,11 @@
 					<div class="linkAHEAD"><a href="#2">Importing the leJOS NXJ projects into Eclipse</a></div>
 					<div class="linkAHEAD"><a href="#3">Using the samples project</a></div>
 					<div class="linkAHEAD"><a href="#4">Using the pcsamples project</a></div>
-					<div class="linkAHEAD"><a href="#5">Creating your own project</a></div>
-					<div class="linkAHEAD"><a href="#6">Installing the Eclipse plugin</a></div>
-					<div class="linkAHEAD"><a href="#7">Using the Eclipse plugin</a></div>
-					<div class="linkAHEAD"><a href="#8">Setting up the leJOS GUI tools</a></div>
+					<div class="linkAHEAD"><a href="#5">Using the org.lejos.example project</a></div>
+					<div class="linkAHEAD"><a href="#6">Creating your own project</a></div>
+					<div class="linkAHEAD"><a href="#7">Installing the Eclipse plugin</a></div>
+					<div class="linkAHEAD"><a href="#8">Using the Eclipse plugin</a></div>
+					<div class="linkAHEAD"><a href="#9">Setting up the leJOS GUI tools</a></div>
 				</td>
 				<td>
 					<!-- BREADCRUMBS -->
@@ -76,12 +77,12 @@
 					<a name="1"></a>
 					<h4>Installing Eclipse</h4>
 					<p>
-					You can download Eclipse from <a href="http://www.eclipse.org/downloads/">Eclipse downloads</a>.
+					You can download Eclipse from <a href="http://www.eclipse.org/downloads/" target="_blank">Eclipse downloads</a>.
 					If you are only going to use Eclipse for leJOS NXJ programs, you will only need standard Java development capabilities - 
 					you will not need a version that supports the Java Enterprise Edition or other languages such as C++ or Eclipse plugin development.
 					A package such as "Eclipse IDE for Java Developers" is sufficient for leJOS NXJ. Make sure you download a package for your operating system. The examples in this
 					section are for Microsoft Windows, but the installation process is similar for other operating systems.
-					</p>
+					If you are using Linux, your distribution may have its own Eclipse package, which you may prefer to use.</p>
 					<p>Unzip the package you downloaded to a folder. If you extract all files to C:\ then your Eclipse folder will be C:\eclipse.</p>
 					<p> You can start Eclipse by running eclipse.exe from your Eclipse folder. You may want to put a shortcut to eclipse.exe on your desktop.</p>
 					<p> When you first start Eclipse, you are asked to select a workspace:</p>
@@ -90,6 +91,10 @@
 					
 					<p> When you click OK, the IDE will open and you will see a welcome screen. You can close the Welcome window and start developing leJOS programs.</p>
 					
+					<p>The tutorial takes you through running the samples and PC samples that come with leJOS and then looks at an example
+					project that uses an <b>ant</b> build file. It then shows you how to create your own project that uses an ant build file. If
+					you are not interested in this and only want to use the Eclipse plugin, skip to <a href="#7">Installing the Eclipse plugin</a>.</p>
+					
 					<!-- WEB TOOL TO GO TO TOP OF THE DOCUMENT -->
 					<a href="#top">Back to top</a>
 					<p/>
@@ -97,13 +102,13 @@
 					<a name="2"></a>
 					<h4>Importing the leJOS NXJ projects into Eclipse</h4>
 					
-					<p> You first need to import the leJOS projects into your Eclipse workspace. 
+					<p> You should first import the leJOS projects into your Eclipse workspace. 
 					The easiest way to do this is to select File > Import... and then choose General > Existing Projects into Workspace. 
 					Browse to the folder where you installed the leJOS projects (e.g. C:\Users\Me\leJOSNXJProjects or 
 					C:\Documents and Settings\Me\leJOSNXJSettings), and select them all to import.</p>
 					
 					<p>Note that if you import the leJOS NXJ projects this way, the source does not get moved to the workspace,
-					but stays in leJOSNXJProjects. It is probably a better idea to copy your projects from leJOSNXJProjects
+					but stays in leJOSNXJProjects. You may prefer to copy your projects from leJOSNXJProjects
 					into the Eclipse workspace and then import them by selecting the Eclipse workspace as the source folder. That way you
 					have always got a clean copy of the leJOS NXJ projects and the Eclipse versions will not be uninstalled when you install a new version of leJOS.</p>
 
@@ -182,8 +187,8 @@ BUILD SUCCESSFUL
 Total time: 4 seconds
 </font></pre>
 					<p> This verbose output from the leJOS linker tells you all the classes and methods that have been included in your program. It is very useful for debugging your programs.</p>  
-					<p> You should see the Bluetooth statistics on your NXT LCD screen. You can stop the BlueStats program by pressing ESC on the NXT.</p>
-					<p> You can browse through the samples and try them out. Some of the samples need to communicate with a program on the PC - see "Using the PC samples project" below. 
+					<p> You should see the Bluetooth statistics on your NXT LCD screen. You can stop the BlueStats program by pressing  the ESCAPE button on the NXT.</p>
+					<p> You can browse through the samples and try them out. Some of the samples need to communicate with a program on the PC - see <a href="#4">Using the PC samples project</a> below. 
 					Other samples need specific sensors attached to the NXT or a robot with specific characteristics - such as a steerable wheeled vehicle. 
 					See the comments at the start of each of the Java files to understand the requirements of the sample.</p>
 					<p>Note that the samples project uses default package names for simplicity. This is not good practice for Java programming so when
@@ -202,25 +207,21 @@ Total time: 4 seconds
 					
 					<p>BTSend works with the BTReceive sample. BTSend.java runs on the PC and BTReceive.java runs on the NXT.</p>
 					
-					<p> There are no build files for the PC samples as they are not necessary. Try running
-					BTSend.java by right-clicking on it and selecting, "Run as Java application". In the console output, you will see 
-					a message saying that BTSEnd needs two parameters; the name and Bluetooth address of the NXT</p>
+					<p> There are no build files for the PC samples as they are not necessary. You can run 
+					BTSend.java by right-clicking on it and selecting, "Run as Java application", but first we need BTReceive running on the NXT.</p>
 					
-					<p>The easiest way of getting these values is to upload BTReceive to the NXT, as we need to do that anyway. </p>
 					
-					<p>Go to the samples application, select the build.xml file for BTReceive, and run the
-					build file to upload BTReceive to the NXT. As part of the console output, you will see the name and
-					address of the NXT. Copy these to the clipboard.</p>
+					<p>Go to the samples application, select the build.xml file for BTReceive, and run it (Run as Ant Build) to upload BTReceive to the NXT. </p>
 					
-					<p> Now go to "Run Configurations" on the "Run" menu. Select the Java Application configuration 
-				    for BTSend. (This was created when you tried to run it before). Paste the NXT name and address as the arguments
-				    and click "Run".</p>
-				    
-				    <p> BTSend should now run and connect to BTReceive, send it 100 integers and display the values it gets back. 
+					<p>Now go back to the pcsamples project and run BTSend.java. BTSend should now run and connect to BTReceive, send it 100 integers and display the values it gets back. 
 				    BTReceive will then wait for another connection.</p>
 				    
-				    <p>You can look through the other PC sample and try them out in a similar way. 
-				    Most of them are paired with NXT samples. Look at the comment at the start of the Java files.</p>
+				    <p>You can use BTSend with the NXTReceive sample instead. NXTReceive is similar to BTReceive but it lets you choose which protocol and which mode you want to use to send data.</p>
+				    
+				    <p>You can look through the other PC samples and try them out in a similar way. 
+				    Some of them are paired with NXT samples. Look at the comment at the start of the Java files. Some of them run a subset of the leJOS NXJ API
+				    on the PC using remote execution. AccelDemo, SensorTest and TachoCount are examples of this.
+				    TachoCount shows you how to control which NXT brick you connect to if you have multiple NXT bricks available.</p>
 					
 					<!-- WEB TOOL TO GO TO TOP OF THE DOCUMENT -->
 					<a href="#top">Back to top</a>
@@ -229,6 +230,8 @@ Total time: 4 seconds
 					<h4>Using the org.lejos.example project</h4>
 					
 					<p>The org.lejos.example is a good example of how to create an Eclipse project for leJOS that uses an ant build file.</p>
+					
+					<img src="eclipseexample.jpg"/>
 					
 					<p>It is good practice to include the name of your organization in the project name to avoid name clashes with other
 					projects in the work space. However if you are the only user of a project, this is not necessary.</p>
@@ -243,7 +246,7 @@ Total time: 4 seconds
 					give the name and location of all the leJOS jar files.</p>
 					
 					<p>The build.xml has ant targets for linking and uploading the leJOS binary. The default target is uploadandrun, which compiles the source, 
-					links the binary, uploads the binary and runs it </p>.
+					links the binary, uploads the binary and runs it </p>
 					
 					<p>Try right-clicking on build.xml and selecting "Ant Build". You should see the verbose output from the linker in the Eclipse
 					console windows and the binary will be uploaded to the NXT and run.<p/>
@@ -255,14 +258,22 @@ Total time: 4 seconds
 					<p/>
 					<a name="6"></a>
 					<h4>Creating your own project</h4>
-					<p> To create a project, select File > New > Java Project. Give the project a name, e.g. "myproject" and press Finish to accept all the defaults.</p>
-					<p> You should now see "myproject" in the Package Explorer.</p>
-					<p> You will need to add classes.jar to your project. To do this right-click on "myproject", select "Properties" and then "Java Build Path".
+					
+				    <p>This section describes how to create a project that uses an ant build file. If you prefer to use the Eclipse plugin,
+				    skip to <a href="#7">Installing the Eclipse plugin</a> below.</p>
+				   				
+					<p> To create a project, select File > New > Java Project. Give the project a name, e.g. "org.me.myproject" and press Finish to accept all the defaults.</p>
+					<p> You should now see "org.me.myproject" in the Package Explorer.</p>
+					
+					<p> You will need to add classes.jar to your project. To do this right-click on "org.me.myproject", select "Properties" and then "Java Build Path".
 					Then select Libraries and then "Add external Jar". Browse for classes.jar in your NXJ installation and select it. As classes.jar replaces the standard Java run time library, you should remove 
-					it by selecting &quot;JRE System Library&quot; and clicking &quot;Remove&quot;. You will  now see classes.jar  (and not JRE System Library) under "Referenced Libraries" in myproject.</p>
-					<p> You should use a package name for your project. We will call our project "org.me.myproject". </p>
-					<p>Select the "src" folder in myproject, right-click on it and select New > Package
+					it by selecting &quot;JRE System Library&quot; and clicking &quot;Remove&quot;. You will  now see classes.jar  (and not JRE System Library) under "Referenced Libraries" in org.me.myproject.</p>
+					
+					<p> You should use a package name for your project. We will also call our package "org.me.mypackage". </p>
+					
+					<p>Select the "src" folder in org.me.myproject, right-click on it and select New > Package
 					   and type your package name.</p>
+					
 					<p> We now want to create main class.To do this, select the package you have just created, right-click on it and
 					select New > Class. Type in the class name - we will use "HelloWorld". Select the "public static void main(String[] args)" option.
 					
@@ -294,9 +305,6 @@ import lejos.nxt.*;
 
 public class HelloWorld {
 
-    /**
-     * @param args
-     */
     public static void main(String[] args) {
         System.out.println("Hello World");
         Button.waitForPress();
@@ -305,25 +313,20 @@ public class HelloWorld {
 				    </pre></code>
 				    </div>
 				    
-				    <p> You will now need to build your project. One way to do this is to use an ant build file in the same way that the samples do.
-				    To do this, select a build.xml file from one of the samples, right-click on it and select "Copy". Then go to the src directory, right-click on it and select "Paste".</p>
-				    <p>Double-click on build.xml to edit it and change the name and description attributes. Then change the line that reads:</p>
-				    <p>&lt;basename property="program" file="."/&gt;</p>			    
-				    <p>to</p> 
-				    <p>&lt;property name="program" value="HelloWorld"/&gt;</p>			    
-				    <p>and add a new property:</p>
+				    <p> You will now need to build your project. One way to do this is to use an ant build file in the same way that the org.lejos.example project does.
+				 
+				    To do this, select a build.xml file from orglejos.example, right-click on it and select "Copy". Then go to the src directory, right-click on it and select "Paste".
+				    Do the same for build.properties</p>
+				    <p>Double-click on build.xml to edit it and change the name and description attributes. Then change the main.class property to
+				    the full name of your class: org.me.mypackage.HelloWorld</p>			    
+				    
+				    <p>The new line should read:</p>
 				   
-                    <p>&lt;property name="class" value="org.me.myproject.HelloWorld"/&gt;</p>
-
-				    <p>Then, in the link target, change the line that reads:</p>
-				    <p>&lt;arg value="${program}"/&gt;</p>
-				    <p>to </p>
-				    <p>&lt;arg value="${class}"/&gt;</p>
-				    <p>Finally copy the "sample.properties" file from the sample project into the root directory of your project as this defines 
-				    the locations of the jar files used by the samples.</p>
-				    <p>You are then ready to upload and run your first leJOS NXJ project.
-				    This is done in the same way as for the samples: by right-clicking on the build.xml file and selecting "Ant Build". 
-				    Make sure your NXT is switched on.</p>
+                    <p>&lt;property name="main.class" value="org.me.mypackage.HelloWorld"/&gt;</p>
+				    <p>You are now ready to upload and run your first leJOS NXJ project.
+				    This is done in the same way as for the samples:  and org.lejos.example: by right-clicking on the build.xml file and selecting "Ant Build". 
+				    </p>
+				    <p>Make sure your NXT is switched on.</p>
 				    <p>You should the verbose linker output in the Console window, and your program should be uploaded to the NXT and run. 
 				    You should see "Hello World" on the NXT LCD screen. 
 				    Press any key on the NXT to stop the program.</p>
@@ -332,7 +335,7 @@ public class HelloWorld {
 					<a href="#top">Back to top</a>
 					<p/>
 					
-					<a name="8"></a>
+					<a name="7"></a>
 					<h4>Installing the Eclipse plugin</h4>
 					
 					<p>An easier way to set up a project for leJOS is to use the Eclipse plugin.</p>
@@ -376,10 +379,10 @@ public class HelloWorld {
 					
 					<p>The plugin is now set up and ready to use.</p>
 					
-					<a name="7"></a>
+					<a name="8"></a>
 					<h4>Using the Eclipse plugin</h4>
 					
-					<p>You can upload the leJOS NXJ firmware to your NXT from the plugin, by clicking on the 2leJOS NXJ" menu item and selecting "Upload Firmware" or by clicking on the button on the toolbar.</p>
+					<p>You can upload the leJOS NXJ firmware to your NXT from the plugin, by clicking on the "leJOS NXJ" menu item and selecting "Upload Firmware" or by clicking on the button on the toolbar.</p>
 					
 					<img src="eclipsefirmware.jpg"/>
 					
@@ -415,7 +418,8 @@ public class HelloWorld {
 					<img src="eclipseconfiguration.jpg"/>
 					<p> Type the name of your configuration, such as NXJ Flash and click on Browse File System and find the bin directory
 					of where you installed leJOS NXJ and select nxjflash.bat.</p>
-					If you have multiple installations of leJOS you can go to the Environment tab and set NXJ_HOME to the one you wish to use.</p>
+					
+					<p>If you have multiple installations of leJOS you can go to the Environment tab and set NXJ_HOME to the one you wish to use.</p>
 					 
 					<p>Other GUI tools you should set up include:</p>
 					<ul class="BlueArrows">
@@ -423,16 +427,15 @@ public class HelloWorld {
 						<li>nxjconsoleviewer - GUI viewer for RConsole debug output</li>
 						<li>nxjmonitor - Remote monitoring of programs running on the NXT</li>
 						<li>nxjdataviewer - GUI tool to download data logs from NXT</li>
-					</ul></p>
+					</ul>
 					
 					<p>You may also want to set up command line tools such as:</p>
 					<ul class="BlueArrows">
 						<li>nxjflash - command line firmware flash tool</li>
 						<li>nxjconsole - command line viewer for RConsole debugging output</li>
 						<li>nxjsocketproxy - proxy for communicating with PC and Internet program using sockets</li>
-					</ul></p>
-					
-					
+					</ul>
+										
 					<!-- WEB TOOL TO GO TO TOP OF THE DOCUMENT -->
 					
 					<a href="#top">Back to top</a>
