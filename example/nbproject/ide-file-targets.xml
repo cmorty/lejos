@@ -4,7 +4,6 @@
         <fail unless="run.class">Must set property 'run.class'</fail>
         <ant antfile="build.xml" target="uploadandrun">
             <property name="main.class" value="${run.class}"/>
-        	<property name="binary" value="${build}/${run.class}.nxj" />
         </ant>
     </target>
 
