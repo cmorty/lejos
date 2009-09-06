@@ -10,8 +10,19 @@ class StringUtils
 	private static final String STR_NAN = "NaN";
 	private static final int STR_INFINITY_LEN = 8;
 	private static final String STR_INFINITY = "Infinity";
-		
-	static final int MAX_FLOAT_CHARS = 15;	
+	
+	/**
+	 * 123456.7
+	 * 0.001234567
+	 * 1.234567E-12
+	 */
+	static final int MAX_FLOAT_CHARS = 15;
+	
+	/**
+	 * 1234567.89012345 
+	 * 0.00123456789012345 
+	 * 1.23456789012345E-123 
+	 */
 	static final int MAX_DOUBLE_CHARS = 25;
 	
 	static int parseDigit(char c, int radix)
@@ -303,9 +314,20 @@ class StringUtils
 		// TODO automatically adjust digit count for subnormal values
 		
 		int leading = 0;
-		if (exp > 0 && exp < 7)
+		int trailing = 0;
+		if (exp >= 0)
 		{
-			leading = exp;
+			if (exp < 7)
+			{
+				leading = exp;
+				exp = 0;
+			}
+		}
+		else if (exp > -4)
+		{
+			sb[p++] = '0';
+			leading = -1;
+			trailing = -exp;
 			exp = 0;
 		}
 
@@ -314,9 +336,11 @@ class StringUtils
 			int d = (int)(digits / (tmp /= 10));
 			sb[p++] = (char)('0' + d);
 			digits -= tmp * d;
-		}
+		}		
+		sb[p++] = '.';
+		for (int i=1; i<trailing; i++)
+			sb[p++] = '0';
 		
-		sb[p++] = '.';		
 		do
 		{
 			int d = (int)(digits / (tmp /= 10));
@@ -402,9 +426,20 @@ class StringUtils
 		// TODO automatically adjust digit count for subnormal values
 		
 		int leading = 0;
-		if (exp > 0 && exp < 6)
+		int trailing = 0;
+		if (exp >= 0)
 		{
-			leading = exp;
+			if (exp < 6)
+			{
+				leading = exp;
+				exp = 0;
+			}
+		}
+		else if (exp > -4)
+		{
+			sb[p++] = '0';
+			leading = -1;
+			trailing = -exp;
 			exp = 0;
 		}
 
@@ -413,9 +448,11 @@ class StringUtils
 			int d = digits / (tmp /= 10);
 			sb[p++] = (char)('0' + d);
 			digits -= tmp * d;
-		}
-		
+		}		
 		sb[p++] = '.';
+		for (int i=1; i<trailing; i++)
+			sb[p++] = '0';		
+		
 		do
 		{
 			int d = digits / (tmp /= 10);
