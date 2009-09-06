@@ -1,3 +1,4 @@
+package lejos.nxt.startup;
 
 import java.io.File;
 import java.io.IOException;
