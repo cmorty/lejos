@@ -1,0 +1,106 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="en">
+<head>
+  <title>Writing your first leJOS NXJ Program</title>
+  <!-- CSS -->
+  <link rel="stylesheet" href="../r_css/lejos-tutorial.css" type="text/css" /><!-- ICONO -->
+  <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon" />
+</head>
+<body>
+<a id="top" name="top"></a>
+<!-- N1: HEADER -->
+<table class="n1t1" cellpadding="0" cellspacing="0">
+  <tbody>
+    <tr>
+      <td><img src="../r_media/images/tutorial_header1.jpg" /></td>
+      <td align="right"><img src="../r_media/images/tutorial_header2.jpg" /></td>
+    </tr>
+  </tbody>
+</table>
+<!-- N2: CONTENTS -> NAVIGATION SYSTEMS AND CONTENTS -->
+<table class="n2t1" cellpadding="0" cellspacing="0">
+  <tbody>
+    <tr>
+      <td class="n2t1r1c1">
+      <div class="nolinkLESSON">Writing your first leJOS NXJ program</div>
+      <div class="linkAHEAD"><a href="#1">The HelloWorld program</a></div>
+      </td>
+      <td>
+        <div id="BreadCrumbs">
+            <a href="../index.htm" target="_top">Home Page</a>&gt;
+            <a href="#">Writing your first leJOS NXJ program</a>
+        </div>
+      <div class="NavBit"> <a target="_top" href="../Preliminaries/GettingStarted.htm">«&nbsp;Previous</a>&nbsp;&#8226;&nbsp;
+      <a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../Preliminaries/CompileAndRun.htm">Next&nbsp;»</a> </div>
+      <div id="PageTitle">Writing your first leJOS NXJ program</div>
+     <a id="1" name="1"></a>
+      <h4>The HelloWorld program</h4>
+      <p> Let us start with a simple &#8220;Hello World&#8221; program. We will
+      create a HelloWorld class in the default java package: </p>
+      <div class="CodeBox">
+      <pre><code>
+      public class HelloWorld
+      {
+      }
+      </code></pre>
+      </div>
+      <p> leJOS requires the standard main method for the program entry point: </p>
+      <div class="CodeBox">
+      <pre><code>
+      public class HelloWorld {
+        public static void main (String[] args) {
+        }
+      }
+      </code></pre>
+      </div>
+      <p> leJOS NXJ supports the standard java System.out.println method and scroll the output on the NXT LCD screen. </p>
+      <div class="CodeBox">
+      <pre><code>
+      public class HelloWorld {
+        public static void main (String[] args) {
+          System.out.println("Hello World");
+        }
+      }
+      </code></pre>
+      </div>
+      <p>If you run this program as it is, it will display Hello World&#8221;
+      and then immediately return to the menu, so you will not be able to see
+      what is displayed (unless you are very quick). </p>
+      <p>We either need the program to sleep for a while to allow the
+      text to be read, or to wait for a button to be pressed. Let us wait for
+      a button to be pressed. To do this we need to include the leJOS NXJ
+      Button class in the program. Button is in the lejos.nxt package. We can
+      either include lejos.nxt.Button or lejos.nxt.* to allow any of the
+      standard lejos.nxt classes to be used in the program. The Button class
+      has a method waitForPress() that waits for any button to be pressed.
+      You can find out what methods a class supports by looking at the <a href="http://lejos.sourceforge.net/nxt/nxj/api/index.html" target="_blank">API
+      documentation</a>. </p>
+      <p>The API documentation is on the leJOS web site here and
+      included in the leJOS download in the docs folder of the classes project. </p>
+      <p>The complete HelloWorld program is: </p>
+      <div class="CodeBox">
+      <pre><code>
+      import lejos.nxt.*;
+      
+      public class HelloWorld {
+        public static void main (String[] args) {
+          System.out.println("Hello World");
+          Button.waitForPress();
+        }
+      }
+      </code></pre>
+      </div>
+      
+      <p>Read the next section to learn how to compile and run this program</p>
+      <p> <a href="#top">Back to top</a> </p>
+      <div class="NavBit"> <a target="_top" href="../Preliminaries/GettingStarted.htm">«&nbsp;Previous</a>&nbsp;&#8226;&nbsp;
+      <a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../Preliminaries/CompileAndRun.htm">Next&nbsp;»</a> </div>
+      <br />
+      </td>
+      <td> <br />
+      </td>
+    </tr>
+  </tbody>
+</table>
+</body>
+</html>

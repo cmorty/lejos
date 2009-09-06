@@ -1,0 +1,512 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html dir="ltr" xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title>Controlling Wheeled Vehicles</title>
+		
+	<!-- METADATA -->
+	<meta name="title" content="Controlling Wheeled Vehicles" />
+	<meta name="DC.Title" content="Controlling Wheeled Vehicles" />
+	<meta http-equiv="title" content="Controlling Wheeled Vehicles" />
+		
+	<meta name="description" content="Controlling Wheeled Vehicles" />
+	<meta http-equiv="description" content="Controlling Wheeled Vehicles" />
+	<meta http-equiv="DC.Description" content="Controlling Wheeled Vehicles" />
+
+	<meta name="keywords" content="Java, leJOS, leJOS project, NXJ, NXJ Tutorial" />
+	<meta http-equiv="keywords" content="Java, leJOS, leJOS project, NXJ, NXJ Tutorial" />
+	<meta name='VW96.objecttype' content='Document' />
+	<meta http-equiv='content-language' content='en'>
+	<meta name='DC.Language' SCHEME='RFC1766' CONTENT='English' />
+	<meta name='distribution' content='global' />
+	<meta name='resource-type' content='document' />
+
+	<!-- SEARCH ENGINE -->
+	<meta name='robots' content='all' />
+	
+	<!-- AUTHOR METADATA -->
+	<meta name='Author' content='Roger Glassey' />
+	
+	<!-- CSS -->
+	<link rel="stylesheet" href="../r_css/lejos-tutorial.css" type="text/css" />
+
+	<!-- ICON -->
+	<link rel="shortcut icon" href="../favicon.ico" type="image/x-icon" />
+</head>
+<body>
+	<a id="top" name="top"></a>
+	<!-- N1: HEADER -->
+	<table cellpadding="0" cellspacing="0" class="n1t1">
+		<tr>
+			<td><img src="../r_media/images/tutorial_header1.jpg" /></td>
+			<td align="right"><img src="../r_media/images/tutorial_header2.jpg" /></td>
+		</tr>
+	</table>
+	<!-- N2: CONTENTS -> NAVIGATION SYSTEMS AND CONTENTS -->
+	<table cellpadding="0" cellspacing="0" class="n2t1">
+		<tr>
+			<td class="n2t1r1c1">
+				<!-- LEFT NAVIGATION SYSTEM -->
+				<div class="nolinkLESSON">Controlling Wheeled Vehicles</div>
+				<div class="linkAHEAD"><a href="#1">Pilot</a></div>
+				<div class="linkAHEAD2"><a href="#2">Constructors:</a></div>
+				<div class="linkAHEAD2"><a href="#3">Straight line movement</a></div>
+				<div class="linkAHEAD2"><a href="#4">Program SquareTracer</a></div>
+				<div class="linkAHEAD2"><a href="#5">Program SquareTracer2</a></div>
+				<div class="linkAHEAD2"><a href="#6">Movement along a curved path</a></div>
+				<div class="linkAHEAD2"><a href="#7">Program SteerTester</a></div>
+				<div class="linkAHEAD2"><a href="#8">Other methods for Pilot</a></div>
+				<div class="linkAHEAD"><a href="#9">Compass Pilot</a></div>
+				<div class="linkAHEAD2"><a href="#10">Constructors:</a></div>
+				<div class="linkAHEAD2"><a href="#11">Additional methods in CompassPilot: </a></div>
+				<div class="linkAHEAD2"><a href="#12">Program: Compass Pilot Test</a></div>
+				<div class="linkAHEAD"><a href="#13">Tacho Navigator</a></div>
+				<div class="linkAHEAD2"><a href="#14">Constructors:</a></div>
+				<div class="linkAHEAD2"><a href="#15">Basic navigational methods</a></div>
+				<div class="linkAHEAD2"><a href="#16">Controlling the robot movement in the plane</a></div>
+				<div class="linkAHEAD2"><a href="#17">Program: Tacho Navigator Test</a></div>
+				<div class="linkAHEAD"><a href="#18">Compass Navigator</a></div>
+				<div class="linkAHEAD2"><a href="#19">Constructors:</a></div>
+				<div class="linkAHEAD2"><a href="#20">Other	Methods</a></div>
+				<div class="linkAHEAD2"><a href="#21">Program: Compass Navigator Test</a></div>
+			</td>
+			<td>
+        	<div id="BreadCrumbs">
+            	<a href="../index.htm" target="_top">Home Page</a>
+        	&gt;
+            	<a href="#">Controlling Wheeled Vehicles</a>
+        	</div>
+        	<div class="NavBit">
+                <a target="_top" href="../MotorTutorial/ControllingMotors.htm">«&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../LCD_Sensors/LCD_Sensors.htm">Next&nbsp;»</a>
+        	</div>
+			<!-- CONTENT TITLE -->
+        	<div id="PageTitle">Controlling Wheeled Vehicles</div>
+
+			<p>A common type of robot is the two wheeled
+			vehicle with independently controlled motors. This design uses
+			differential steering and can turn in place. leJOS NXJ contains
+			several classes that control it. 
+			</p>
+
+			<a name="1"></a>
+			<h4>Pilot</h4>
+
+			<p>The Pilot class steers the vehicle by
+			controlling the speed and direction of rotation of its motors. The
+			pilot needs to know the wiring diagram of the robot, i.e. which
+			ports the motors are connected to and whether driving the motors
+			forward makes the robot move forward or backward (reverse). It
+			also needs to know the diameter of the wheels and the width of the
+			track, i.e. the distance between the centres of the tracks of the
+			two wheels. The Pilot uses the wheel diameter to calculate the
+			distance it has traveled. It uses the ratio to calculate how far
+			it has rotated. Obviously, both parameters must be in the same
+			units, but they can be anything you wish. With proper adjustment
+			of these parameters, errors in distance traveled and angle of
+			rotation can be held do 2% or perhaps less. This information is
+			passed to the pilot constructor. 
+			</p>
+			
+			<a name="2"></a>
+			<h5>Constructors:</h5>
+			
+			<p/>
+			<ul class="BlueArrows">
+				<li><p>Pilot(float wheelDiameter, float trackWidth,M otor leftMotor, Motor rightMotor)</p>
+				<li><p>Pilot(float wheelDiameter, float trackWidth, Motor leftMotor, Motor rightMotor, boolean
+				reverse)</p><p>Use this constructor if you need to set the <i>reverse </i>boolean to <i><b>true</b></i>.
+				</p>
+			</ul>
+
+			<a name="3"></a>
+			<h5>Straight line movement</h5>
+
+			<p>To control the robot	moving in a straight line, use:</p>
+			<ul class="BlueArrows">
+				<li><p>void setSpeed(int speed)</p><p>sets the speed of the motors in degrees/second</p>
+				<li><p>void forward()</p><p>starts the robot moving forward</p>
+				<li><p>void backward()</p>
+				<li><p>void stop()</p>
+			</ul>
+			
+			<p>To control the distance the robot moves, use:</p>
+			<ul class="BlueArrows">
+				<li><p>void travel(float distance)</p>
+				<li><p>void travel(float distance, boolean immediateReturn)</p><p><i>distance</i> is in the same units
+				as wheel diameter; a negative distance means travel backwards.
+				You can find out how far the robot has moved by calling</p>
+				<li><p>int getTravelDistance(); - returns the distance traveled since the last call to resetTachoCount();</p>
+			</ul>
+			
+			<p>Example:</p>
+			<div class="CodeBox">
+			<pre><code>
+import lejos.nxt.*;
+import lejos.navigation.Pilot;
+
+/**
+ * Robot that stops if it hits something before it completes its travel.
+ */
+public class TravelTest {
+  Pilot pilot;
+  TouchSensor bump = new TouchSensor(SensorPort.S1);
+
+  public void go() {
+    pilot.travel(20, true);
+    while (pilot.isMoving()) {
+      if (bump.isPressed()) pilot.stop();
+    }
+    System.out.println(" "+pilot.getTravelDistance());
+    Button.ewaitForPress();
+  }
+
+  public static void main(String[] args) {
+    TravelTest traveler = new TravelTest();
+    traveler.pilot = new Pilot(2.25f, 5.5f, Motor.A, Motor,C);
+    traveler.go();
+  }
+}
+			</code></pre>
+			</div>
+			
+			<p>You can cause the robot to rotate in place by a specified angle by using</p>
+			
+			<ul class="BlueArrows">
+				<li><p>void rotate(int 	degrees)</p><p>You must have accurate values for
+				wheelDiameter and trackWidth for this method to produce accurate results.</p>
+			</ul>
+
+			<a name="4"></a>
+			<h5>Program SquareTracer</h5>			
+			
+			<p>Write a program that	uses a Pilot to trace out a square, using the travel and rotate	methods.</p>
+			
+			<p><a href="SquareTracer.html" TARGET="_blank">Solution</a></p>
+			
+			<a name="5"></a>
+			<h5>Program SquareTracer2</h5>
+			
+			<p>Write a program that traces 2 squares with increasing angle at the corners, then retraces the
+			same path in the opposite direction.. Modify the traceSquare
+			method of program Pilot 1 so it can trace a square in either
+			direction, and use it in this program. This is stringent test of
+			the accuracy of the wheel diameter and track width constants you
+			use in you pilot. </p>
+			
+			<p><a href="SquareTracer2.html" TARGET="_blank">Solution</a></p>
+			
+			<a name="6"></a>
+			<h5>Movement along a curved path</h5>
+
+			<p>The pilot can turn the robot in place by driving one wheel forward and the other backward. The methods that do it are:</p>
+			
+			<ul class="BlueArrows">
+				<li><p>void rotate(int angle)</p>
+				<li><p>void rotate(int angle, boolean immediateReturn )</p>
+				<p>If <i><b>angle </b></i>is positive, the
+				robot turns to the left. The <i><b>immediateReturn</b></i>
+				parameter works as in the Motor methods &ndash;allowing the
+				calling thread to do other work while the rotation task in
+				progress. 
+				</p>
+			</ul>
+			
+			<p>The Pilot can also control the robot to move in a circular path using these methods:</p>
+			
+			<ul class="BlueArrows">
+				<li><p>void steer(int turnRate) &ndash; follows a circular path until another method is executed</p>
+				<li><p>void steer(int turnRate, int angle)</p>
+				<li><p>void steer(int turnRate, int angle, boolean immediateReturn)</p>
+			</ul>
+			
+			<p>The <i><b>turnRate</b></i> parameter determines the radius of the path. A positive value
+			means that center of the circle is to the left of the robot (so
+			the left motor drives the inside wheel). A negative value means
+			the left motor is the outside wheel. The absolute value is between
+			0 and 200, and this determines the ratio of inside to outside
+			motor speed. The outside motor runs at the set speed of the robot;
+			the inner motor is slowed down to make the robot turn. At turn
+			rate 0, the speed ratio is 1.0 and the robot travels in a straight
+			line. At turn rate 200, the speed ratio is -1 and the robot turns
+			in place. Turn rate 100 gives speed ratio 0, so the inside motor
+			stops. The formula is: speed ratio = 100 - abs(turnRate). 
+			</p>
+			
+			<p>The <i><b>angle</b></i> parameter determines the rotation angle at which the robot stops. If the
+			angle is negative, the robot follows the circular path defined by
+			the turn rate, but it moves backwards. 
+			</p>
+			
+			<ul class="BlueArrows">
+				<li><p>getAngle() - returns the angle of vehicle rotation since the last call of resetTachoCount()</p>
+			</ul>
+
+			<a name="7"></a>
+			<h5>Program SteerTester</h5>
+
+			<p>Write a program that uses the ButtonCounter to enter the turn rate and angle variables, and then
+			calls the steer() method. It does this in a loop so you can try
+			different values of these parameters to control the robot path. 
+			</p>
+			
+			<p><a href="SteerTest.html" target="_blank">Solution</a></p>
+
+			<a name="8"></a>
+			<h5>Other methods for Pilot</h5>
+			<p/>
+			<ul class="BlueArrows">
+				<li><p>void resetTachocount()</p><p>Resets both motors.
+				This method is NOT called by any other Pilot methods. You must
+				call this method if you want useful results from
+				getTravelDistance() or getAngle();</p>
+				<li><p>void regulateSpeed(Boolean yes)</p><p>You should
+				consider turning off speed regulation if you are using sensor
+				feedback and the steer() method to control the robot movement. 
+				</p>
+				<li><p>boolean isMoving()</p><p>Returns true if
+				either motor is moving. Useful if you have used the
+				immediateReturn parameter and need to know if the task is still
+				in progress. 
+				</p>
+				<li><p>boolean stalled()</p><p>returns true if
+				either motor actual speed is zero. Remember, the actual speed is
+				calculated every 100ms. So stalled() will return <i><b>true</b></i>
+				for the first 100ms after the robot begins its move. 
+				</p>
+			</ul>
+			
+			<p>If you really need to deal with individual motors, you can use:</p>
+			
+			<ul class="BlueArrows">
+				<li><p>Motor getLeft() 
+				</p>
+				<li><p>Motor getRight()</p>
+			</ul>
+			
+			<p/><a href="#top">Back to top</a></p>
+			
+			<a name="9"></a>
+			<h4>Compass Pilot</h4>			
+
+			<p>The CompassPilot is an extension of the Pilot class. It implements the same methods, but uses a
+			<a href="http://lejos.sourceforge.net/p_technologies/nxt/nxj/api/lejos/nxt/CompassSensor.html">Compass Sensor</a>
+			 to ensure that the pilot does not deviate from the correct angle of robot heading.</p>
+			
+			<p>It needs a HiTechnic or Mindsensors compass sensor plugged in to one of the sensor ports. Its
+			constructors are similar those of Pilot, but with the additional
+			information of the compass sensor port.</p>
+			
+			<a name="10"></a>
+			<h5>Constructors:</h5>
+			
+			<p/>
+			<ul class="BlueArrows">
+				<li><p>CompassPilot(SensorPort compassPort, float wheelDiameter,float trackWidth,Motor leftMotor, Motor rightMotor)</p>
+				<li><p>CompassPilot(SensorPort compassPort, float wheelDiameter,float trackWidth,Motor leftMotor, Motor rightMotor, boolean reverse)</p>
+			</ul>
+
+			<a name="11"></a>
+			<h5>Additional methods in CompassPilot:</h5>			
+
+			<p/>
+			<ul class="BlueArrows">
+				<li><p>void calibrate()</p><p>calibrate the compass sensor; rotates the robot slowly through 360 degreees.</p>
+				<li><p>setHeading(int angle)</p><p>set the desired robot heading, in degrees in Cartesian coordinates (a left turn
+				increases the heading)</p>
+				<li><p>int getHeading()</p><p>return the desired robot heading</p>
+				<li><p>int getAngle()</p><p>return the compass Cartesian angle. Also the actual robot heading assuming the
+				compass sensor points forward.</p>
+			</ul>
+			
+			<a name="12"></a>
+			<h5>Additional methods in CompassPilot:</h5>		
+
+			<p>Write a program that	does these steps:</p>
+			<ol>
+				<li><p>Calibrate the compass.</p>
+				<li><p>Rotate the robot to a heading or 90 degrees</p>
+				<li><p>Reset the Cartesian zero of the compass sensor to correspond the current heading.</p>
+				<li><p>Move the robot a fixed distance forward.</p>
+				<li><p>Rotate 90 degrees to the left.</p>
+				<li><p>Move the robot the same distance	backwards.</p>
+				<li><p>Display the compass reading and the distance traveled at the end of each move.</p>
+			</ol>
+			
+			<p>Suggestion: while the robot is moving, nudge it off course and watch it steer back to the correct heading.</p>
+
+			<p><a href="CompassPilotTst.html" target="_blank">Solution</a></p>
+			
+			<p/><a href="#top">Back	to top</a>
+			
+			<a name="13"></a>
+			<h4>Tacho Navigator</h4>	
+
+			<p><img src="objectdependencies.gif" align=right hspace=12 width=250 height=192 border=0>
+			There are three abstraction layers of classes that control two wheeled
+			vehicles. This architecture allows you to pick the layer that most
+			useful for your application and not be concerned with the lower
+			layers.</p>
+			
+			<p>The Tacho Navigator implements the Navigator interface which defines
+			methods for the basic navigational tasks. The navigator keeps
+			track of the robot&rsquo;s coordinates (x, and y) and its heading
+			angle (the direction it is facing ). It uses Cartesian
+			coordinates, with angles in degrees; 0 degrees is the direction of
+			the positive x axis, 90 degrees is the positive y axis. Since a
+			TachoNavigator needs a Pilot to control the vehicle, it implements
+			the common Pilot movement commands that you might want to use. 
+			</p>
+			
+			<a name="14"></a>
+			<h5>Constructors:</h5>
+
+			<p/>
+			<ul class="BlueArrows">
+				<li><p>TachoNavigator(Pilot	aPilot)</p><p>To use this constructor, you must construct a pilot
+				and use it as the parameter.</p>
+			</ul>
+			
+			<p>Alternatively, you can use a constructor that creates a pilot from the information you
+			supply. The parameter list is the same as in the Pilot
+			constructors.</p>
+			
+			<ul class="BlueArrows">
+				<li><p>TachoNavigator(float wheelDiameter,,float trackWidth, Motor leftMotor, Motor rightMotor)</p>
+				<li><p>TachoNavigator(float wheelDiameter,,float trackWidth, Motor leftMotor Motor rightMotor,boolean reverse)</p>
+			</ul>
+			
+			<a name="15"></a>
+			<h5>Basic navigational methods</h5>
+
+			<p>Methods to set and get the robot position and its components:</p>
+			
+			<ul class="BlueArrows">
+				<li>void setPosition(float x, float y, float directionAngle)</p>
+				<li><p>float getX()</p>
+				<li><p>float getY()</p>
+				<li><p>float getAngle()</p>
+			</ul>
+			
+			<p>Methods to get the angle and distance to a point with coordinates (x,y):</p>
+			<ul class="BlueArrows">
+				<li><p>float angleTo(float x, float	y)</p>
+				<li><p>float distanceTo(float x, float y)</p>
+			</ul>
+			
+			<p>Updating the robot position (x,y and angle)</p>
+			
+			<ul class="BlueArrows">
+				<li><p>void updatePosition()</p><p>Updates
+				robot location (x,y) and direction angle. Called by stop, and
+				movement commands that do not exit until the robot has stopped.
+				If you use a movement command that returns immediately, you MUST
+				call this method when the movement is complete. It may also be
+				called while movement is in progress so you can then call methods
+				to get the components of the robot position.</p>
+			</ul>
+			
+			<a name="16"></a>
+			<h5>Controlling the robot movement in the plane</h5>
+
+			<p>As with the Pilot class, the Navigator movement control methods have two versions.
+			One version returns only after the movement is complete and the
+			robot position has been updated. The other version has the option
+			of initiating the movement and returning immediately. When you use
+			this option, you must be sure the robot position is updated before
+			it moves again. </p>
+			
+			<p>The methods that automatically call updatePosition() before returning are:</p>
+			
+			<ul class="BlueArrows">
+				<li><p>void stop()</p>
+				<li><p>void travel(float distance)</p>
+				<li><p>void rotate(float angle)</p>
+				<li><p>void rotateTo(float angle)</p>
+				<li><p>goTo(float x, float y)</p>
+				<li><p>turn(float radius, float angle)</p><p>This
+				method drives the robot in the arc of a circle. {It calls
+				pilot.steer().} If the <i><b>radius</b></i> is negative, the
+				center of the turn is on the right side of the robot. If <i><b>angle</b></i>
+				is negative, the robot travels backwards. 
+				</p>
+			</ul>
+			
+			<p>The methods that require you to call updatePosition when the movement is complete include the
+			methods when called with <i><b>immediateReturn</b></i> set to <i><b>true</b></i></p>
+			
+			<ul class="BlueArrows">
+				<li><p>void travel(float distance, boolean immediateReturn)</p>
+				<li><p>void rotate(float angle, boolean	immediateReturn)</p>
+				<li><p>void rotateTo(float angle, boolean immediateReturn)</p>
+				<li><p>goTo(float x, float y , boolean immediateReturn)</p>
+				<li><p>turn(float radius, float angle, boolean immediateReturn) 
+				</p>
+			</ul>
+			
+			<ul class="BlueArrows">
+				<li><p>forward()</p>
+				<li><p>backward()</p>
+				<li><p>rotateLeft()</p>
+				<li><p>rotateRight()</p>
+			</ul>
+	
+			<a name="17"></a>
+			<h5>Program: Tacho Navigator Test</h5>
+
+			<p>Write a program that	performs the following steps:</p>
+			<ol>
+				<li><p>Set the speed to
+				500, and the initial heading to 90 degrees (pointing along the y axis)</p>
+				<li><p>Travel to the point (-10,0).</p>
+				<li><p>Travel to (10,20).</p><p>while moving, display the x and y coordinates every	half second, in a new row each time.</p>
+			</ol>
+			
+			<p><a href="TachoNav1.html">Solution.</a></p>
+			
+			<p><a href="#top">Back to top</a></p>
+			
+			<a name="18"></a>
+			<h4>Compass Navigator</h4>
+			
+			<p>The compass navigator is a sub class of TachoNavigator, and as such, implements all the TachoNavigator methods.</p>
+			
+			<a name="19"></a>
+			<h5>Constructors:</h5>
+
+			<p/>			
+			<ul class="BlueArrows">
+				<li><p>CompassNavigator(CompassPilot aPilot)</p>
+				<p>To use this constructor, you must construct a pilot and use it as the parameter.</p>
+			</ul>
+			
+			<p>Alternatively, you can use a constructor that creates a pilot from the information you
+			supply. The parameter list is the same as in the CompassPilot constructors.</p>
+			
+			<ul class="BlueArrows">
+				<li><p>CompassNavigator(SensorPort compassPort ,float wheelDiameter, float trackWidth, Motor leftMotor, Motor rightMotor)</p>
+				<li><p>CompassNavigator(SensorPort compassPort ,float wheelDiameter, float trackWidth, Motor leftMotor, Motor rightMotor, boolean reverse)</p>
+			</ul>
+			
+			<a name="20"></a>
+			<h5>Other Methods:</h5>
+
+			<p/>			
+			<ul class="BlueArrows">
+				<li><p>void calibrate()</p><p>This method merely calls the same method on the CompassPilot.</p>
+				<li><p>void updateHeading()</p><p>Reads the compass and updates the robot heading.</p>
+			</ul>
+			
+			<a name="21"></a>
+			<h5>Program: Compass Navigator Test</h5>
+			
+			<p>Write a program for the CompassNavigator that does the same steps as for the TachoNavigator.</p>
+
+			<a href="#top">Back	to top</a>
+			<p/>
+        	<div class="NavBit">
+                <a target="_top" href="../MotorTutorial/ControllingMotors.htm">«&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../LCD_Sensors/LCD_Sensors.htm">Next&nbsp;»</a>
+        	</div>
+			<td>
+		</tr>
+	</table>
+</body>
+</html>

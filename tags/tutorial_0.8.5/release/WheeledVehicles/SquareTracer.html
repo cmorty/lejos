@@ -1,0 +1,46 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>SquareTracer.java</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<style type="text/css">
+<!--
+body {color: #000000; background-color: #ffffff; font-family: Monospaced}
+table {color: #000000; background-color: #e9e8e2; font-family: Monospaced}
+.ST0 {color: #993300; font-family: Monospaced; font-weight: bold}
+.comment {color: #339900}
+.ST1 {color: #339900; font-family: Monospaced; font-weight: bold}
+-->
+</style>
+</head>
+<body>
+<pre>
+<span class="ST0">import</span> lejos.nxt.*;
+<span class="ST0">import</span> lejos.navigation.Pilot;
+
+<span class="comment">/**</span>
+<span class="comment"> * </span><span class="comment">Trace</span> <span class="comment">a</span> <span class="comment">square</span> 
+<span class="comment"> * </span><span class="ST1">@author</span> <span class="comment">Roger</span>
+ <span class="comment">*/</span>
+<span class="ST0">public</span> <span class="ST0">class</span> SquareTracer
+{
+    Pilot pilot ;
+    <span class="ST0">public</span> <span class="ST0">void</span>  drawSquare(<span class="ST0">float</span> length)
+    {
+        <span class="ST0">for</span>(<span class="ST0">int</span> i = 0; i&lt;4 ; i++)
+        {
+            pilot.travel(length);
+            pilot.rotate(90);                 
+        }
+    }
+    <span class="ST0">public</span> <span class="ST0">static</span> <span class="ST0">void</span> main(String[] args)
+    {
+        SquareTracer sq = <span class="ST0">new</span> SquareTracer();
+        sq.pilot = <span class="ST0">new</span> Pilot(2.25f, 5.5f, Motor.A, Motor.C);
+        sq.drawSquare(20);
+    }
+}
+
+
+</pre></body>
+</html>
