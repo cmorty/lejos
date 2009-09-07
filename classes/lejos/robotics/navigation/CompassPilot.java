@@ -76,10 +76,10 @@ public class CompassPilot extends TachoPilot {
 	 * Returns the compass angle in degrees, Cartesian (increasing counter clockwise) i.e. the actual robot heading
 	 */
 	public float getAngle() {
-      _cumAngle += compass.getDegreesCartesian()- _angle0;
-      while(_cumAngle>180)_cumAngle -=360;
-     while(_cumAngle <180)_cumAngle +=360;
-      _angle0 = compass.getDegreesCartesian();
+      float compassAngle = normalize(compass.getDegreesCartesian());
+      _cumAngle += compassAngle- _angle0;
+      _cumAngle = normalize(_cumAngle);
+      _angle0 = compassAngle;
 	   return _cumAngle;
 	}
 	
@@ -93,10 +93,7 @@ public class CompassPilot extends TachoPilot {
  */
     public float getCompassHeading()
     {
-      float heading = compass.getDegreesCartesian();
-      if(heading>360)heading -= 360;
-      if(heading<0)heading += 0;
-      return heading;
+      return normalize(compass.getDegreesCartesian());
     }
 
 	/**
@@ -129,11 +126,11 @@ public class CompassPilot extends TachoPilot {
 	 */
 	private float getHeadingError()
 	{
-	   float  err = getCompassHeading() - _heading;
+
+	   float   err = compass.getDegreesCartesian() - _heading;
 		// Handles the wrap-around problem:
-		while (err < -180) err = err + 360;
-		while (err > 180) err = err - 360;
-		return err;
+       return normalize(err);
+
 	}
 	
 	/**
@@ -245,13 +242,17 @@ public class CompassPilot extends TachoPilot {
 	
 	private void performRotation(float angle) // usd by regulator to call pilot rotate(angle, true)
 	{ 
-		if(angle > 180) angle = angle -  360;
-		if(angle < -180) angle = angle +360;
+		angle = normalize(angle);
 		if(angle>5) angle -= 3;
 		if(angle < -5)angle += 3;  // attempt to correct overshoot
 		super.rotate(angle,false);
 	} 
-	
+	private float normalize(float angle)
+    {
+      while(angle > 180)angle -= 360;
+      while(angle < -180) angle += 360;
+      return angle;
+    }
 /**
  * inner class to regulate rotation and travel to get direction control from compass instead of motor tacho.
  * @author Roger Glassey
