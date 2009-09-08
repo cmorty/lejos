@@ -685,6 +685,15 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
 		table.getColumnModel().getColumn(0).setPreferredWidth(fileNameColumnWidth);
 		tablePane = new JScrollPane(table);
 		tablePane.setPreferredSize(filesAreaSize);
+		
+        new FileDrop( System.out, tablePane, /*dragBorder,*/ new FileDrop.Listener()
+        {   public void filesDropped( java.io.File[] files )
+            {   for( int i = 0; i < files.length; i++ )
+                {   
+                	uploadFile(files[i]);
+                }
+            }
+        }); 
 	}
 
 	/**
@@ -1356,19 +1365,22 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
 		int returnVal = fc.showOpenDialog(frame);
 		
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
+			File file = fc.getSelectedFile();
+			uploadFile(file);
+		}
+	}
+	
+	private void uploadFile(File file) {
+		if (file.getName().length() > 20) {
+			showMessage("File name is more than 20 characters");
+		} else {
 			frame.setCursor(hourglassCursor);
 			try {
-				File file = fc.getSelectedFile();
-				
-				if (file.getName().length() > 20) {
-					showMessage("File name is more than 20 characters");
-				} else {
-					nxtCommand.uploadFile(file, file.getName());
-					String msg = fm.fetchFiles();
-					if (msg != null) showMessage(msg);
-					table.invalidate();
-					tablePane.revalidate();
-				}
+				nxtCommand.uploadFile(file, file.getName());
+				String msg = fm.fetchFiles();
+				if (msg != null) showMessage(msg);
+				table.invalidate();
+				tablePane.revalidate();
 			} catch (IOException ioe) {
 				showMessage("IOException uploading file");
 			}
