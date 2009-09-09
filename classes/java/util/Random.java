@@ -5,6 +5,8 @@ package java.util;
  */
 public class Random
 {
+	//TODO make this class JDK compliant
+	
   private int iPrevSeed, iSeed;
   private boolean haveNextNextGaussian;
   private double nextNextGaussian;
@@ -30,6 +32,17 @@ public class Random
     iSeed = pNewSeed;
     return pNewSeed;
   }
+  
+  	private int next(int bits)
+  	{
+  		// just some work in progress, should replace nextInt()
+  		int mask;
+  		if (bits < 32)
+  			mask = (1 << bits) - 1;
+  		else
+  			mask = -1;  		
+  		return nextInt() & mask;
+  	}
 
     /**
      * Returns a random integer in the range 0...n-1.
@@ -41,36 +54,35 @@ public class Random
 	int m = nextInt() % n;
 	return m >= 0 ? m : m + n;
     }
+    
+    public long nextLong()
+    {
+		int n1 = this.next(32);
+		int n2 = this.next(32);
+		return ((long)n1 << 32) + n2;
+    }
 
     /**
      * Returns a random boolean in the range 0-1.
      * @return A random boolean in the range 0-1.
      */
-    public boolean nextBoolean(){
-    	boolean nextBoolean;
-		int nextInt = this.nextInt(2);
-		if(nextInt == 1){
-			nextBoolean = true;
-		}else{
-			nextBoolean = false;			
-		}
-		return nextBoolean;    	
+    public boolean nextBoolean()
+    {
+		return this.next(1) != 0;    	
     }
 
     public float nextFloat()
     {
     	// we need 24 bits number to create 23 bit mantissa
-		int n1 = this.nextInt() & 0xFFFFFF;		//24 bits
-		return n1 * 0x1p-24f;
+		return this.next(24) * 0x1p-24f;
     }
     
     public double nextDouble()
     {
     	// we need 53 bits number to create 52 bit mantissa
-		int n1 = this.nextInt() & 0x3FFFFFF;	//26 bits
-		int n2 = this.nextInt() & 0x7FFFFFF;	//27 bits
-		
-		long r = n1 | ((long)n2 << 26);
+		int n1 = this.next(26);	//26 bits
+		int n2 = this.next(27);	//27 bits		
+		long r = ((long)n1 << 27) | n2;
 		return r * 0x1p-53;
     }
     
