@@ -94,7 +94,7 @@ public class OpticalDistanceSensor extends I2CSensor{
 	
 	/**
 	 * Turns the sensor module on.  <br>
-	 * Power is turned on by the constuctor method.
+	 * Power is turned on by the constructor method.
 	 *
 	 */
 	public void powerOn(){
@@ -111,7 +111,7 @@ public class OpticalDistanceSensor extends I2CSensor{
 	
 	/**
 	 * Enables (ADPA) Auto Detecting Parallel Architecture. <br>
-	 * Once you have enabled it you dont have to enable again.
+	 * Once you have enabled it you don't have to enable again.
 	 *
 	 */
 	public void setAPDAOn() {
@@ -160,7 +160,7 @@ public class OpticalDistanceSensor extends I2CSensor{
 	}
 	
 	/**
-	 * Used to determin the sensore module that is configured. 
+	 * Used to determine the sensor module that is configured. 
 	 * This can be helpful if the sensor is not working properly.
 	 * @return int
 	 */
@@ -170,7 +170,7 @@ public class OpticalDistanceSensor extends I2CSensor{
 	
 	/**
 	 * Gets the number of points that will be in the curve.
-	 *  This corisponds with the set/get Volt and Distance methods.<br>
+	 *  This corresponds with the set/get Volt and Distance methods.<br>
 	 * Used for recalibrating the sensor. 
 	 * @return int
 	 */
@@ -180,7 +180,7 @@ public class OpticalDistanceSensor extends I2CSensor{
 	
 	/**
 	 * Sets the number of points that will be in the configured curve. 
-	 * This corisponds with the set/get Vold and Distance points methods.<br>
+	 * This corresponds with the set/get Vold and Distance points methods.<br>
 	 * Used for recalibrating the sensor. 
 	 * @param value max 39
 	 */
@@ -262,7 +262,7 @@ public class OpticalDistanceSensor extends I2CSensor{
 	
 	/**
 	 * Gets millivolts value of the specific index for the LSB. 
-	 * These will corispond with the point methods index value.<br>
+	 * These will correspond with the point methods index value.<br>
 	 * Used for recalibrating the sensor.
 	 * @param index max 39
 	 * @return int
@@ -275,7 +275,7 @@ public class OpticalDistanceSensor extends I2CSensor{
 	
 	/**
 	 * Sets millivolts value of the specific index for the LSB. 
-	 * These will corispond with the point methods index value.<br>
+	 * These will correspond with the point methods index value.<br>
 	 * Used for recalibrating the sensor.
 	 * @param index max 39
 	 * @param value int
@@ -288,7 +288,7 @@ public class OpticalDistanceSensor extends I2CSensor{
 	
 	/**
 	 * Gets millivolts value of the specific index for the MSB.
-	 *  These will corispond with the point methods index value.<br>
+	 *  These will correspond with the point methods index value.<br>
 	 * Used for recalibrating the sensor.
 	 * @param index max 39
 	 * @return Returns int
@@ -301,7 +301,7 @@ public class OpticalDistanceSensor extends I2CSensor{
 	
 	/**
 	 * Sets millivolts value of the specific index for the MSB. 
-	 * These will corispond with the point methods index value.<br>
+	 * These will correspond with the point methods index value.<br>
 	 * Used for recalibrating the sensor.
 	 * @param index max 39
 	 * @param value int
@@ -381,10 +381,10 @@ public class OpticalDistanceSensor extends I2CSensor{
 	
 	/**
 	 * Writes an integer value to the register. <br>
-	 * This is called if two bytes are to be writen.<br>
+	 * This is called if two bytes are to be written.<br>
 	 * All other methods just call sendData() from i2cSensor.
 	 * @param register I2C register, e.g 0x41
-	 * @param value iteger value to be writen to the register
+	 * @param value integer value to be written to the register
 	 */
 	private void writeDISTNX(int register, int value){		
 		int buf0;
