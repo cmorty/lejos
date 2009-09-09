@@ -57,15 +57,21 @@ public class Random
 		return nextBoolean;    	
     }
 
+    public float nextFloat()
+    {
+    	// we need 24 bits number to create 23 bit mantissa
+		int n1 = this.nextInt() & 0xFFFFFF;		//24 bits
+		return n1 * 0x1p-24f;
+    }
+    
     public double nextDouble()
     {
-		int n = -1;
-		while (n < 0)
-		{
-			n = Math.abs(this.nextInt());
-		}
-
-		return n * 0x1p-31;
+    	// we need 53 bits number to create 52 bit mantissa
+		int n1 = this.nextInt() & 0x3FFFFFF;	//26 bits
+		int n2 = this.nextInt() & 0x7FFFFFF;	//27 bits
+		
+		long r = n1 | ((long)n2 << 26);
+		return r * 0x1p-53;
     }
     
     /**
