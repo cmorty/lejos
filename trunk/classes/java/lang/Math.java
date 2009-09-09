@@ -40,7 +40,7 @@ public final class Math
 	private static final double ROUND_DOUBLE_MIN = -ROUND_DOUBLE_MAX;
 
 	// Used to generate random numbers.
-	private static Random RAND = new Random(System.currentTimeMillis());
+	private static Random RAND;
 
 	// public static boolean isNaN (double d) {
 	// return d != d;
@@ -291,13 +291,10 @@ public final class Math
 	 */
 	public static synchronized double random()
 	{
-		int n = Integer.MAX_VALUE;
-
-		// Just to ensure it does not return 1.0
-		while (n == Integer.MAX_VALUE)
-			n = abs(RAND.nextInt());
-
-		return n * (1.0 / Integer.MAX_VALUE);
+		if (RAND == null)
+			RAND = new Random();
+		
+		return RAND.nextDouble();
 	}
 
 	/*========================= arithmetic functions =========================*/ 

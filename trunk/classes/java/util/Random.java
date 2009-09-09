@@ -57,8 +57,15 @@ public class Random
 		return nextBoolean;    	
     }
 
-    public double nextDouble(){
-    	return Math.random();
+    public double nextDouble()
+    {
+		int n = Integer.MAX_VALUE;
+
+		// Just to ensure it does not return 1.0
+		while (n == Integer.MAX_VALUE)
+			n = Math.abs(this.nextInt());
+
+		return n * (1.0 / Integer.MAX_VALUE);
     }
     
     /**
