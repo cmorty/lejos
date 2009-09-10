@@ -1,4 +1,4 @@
-package lejos.robotics;
+package lejos.nxt;
 
 /*
  * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.

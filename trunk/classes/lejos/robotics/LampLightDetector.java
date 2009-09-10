@@ -1,5 +1,7 @@
 package lejos.robotics;
 
+import lejos.nxt.Colors;
+
 // TODO: This is wrong to have a lejos.robotics class using a lejos.nxt class.
 
 /*

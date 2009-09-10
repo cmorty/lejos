@@ -17,9 +17,10 @@ import lejos.robotics.*;
  * determine the "LEGO" color currently being viewed.
  * @author andy
  */
-public class ColorLightSensor implements LampLightDetector, ColorDetector, SensorConstants
+public class ColorSensor implements LampLightDetector, ColorDetector, SensorConstants
 {
-    protected Colors.Color[] colorMap = Colors.Color.values();
+    //protected Colors.Color[] colorMap = Colors.Color.values();
+	protected int [] colorMap = {-1,Color.BLACK,Color.BLUE,Color.GREEN,Color.YELLOW,Color.RED,Color.WHITE};
     protected SensorPort port;
     protected int type;
     private int _zero = 1023;
@@ -34,7 +35,7 @@ public class ColorLightSensor implements LampLightDetector, ColorDetector, Senso
      */
     // TODO: We need a default constructor that doesn't need type, which is just the lamp color it uses to scan.
     // NXT LightSensor and RCXLightSensor set default to red LED on. Perhaps this should too? Make it an interface requirement?
-    public ColorLightSensor(SensorPort port, int type)
+    public ColorSensor(SensorPort port, int type)
     {
         this.port = port;
         port.enableColorSensor();
@@ -46,7 +47,7 @@ public class ColorLightSensor implements LampLightDetector, ColorDetector, Senso
      * @param type new sensor type.
      */
     // TODO: Type changes the lamp color, so maybe should use Colors.Color enum?
-    // TODO: I'm aware the user can use ColorLightSensor to change type (lamp), and lampColor
+    // TODO: I'm aware the user can use ColorSensor to change type (lamp), and lampColor
     // won't be updated and it will give wrong value for getFloodlight(). Don't care until we work out the API.
     public void setType(int type)
     {
@@ -71,7 +72,7 @@ public class ColorLightSensor implements LampLightDetector, ColorDetector, Senso
      * The raw values theoretically range from 0 to 1023 but in practice they usually 
      * do not go higher than 600. You can access the index of each color 
      * using RGB_RED, RGB_GREEN, RGB_BLUE and RGB_BLANK. e.g. to retrieve the Blue value:
-     * <code>vals[ColorLightSensor.RGB_BLUE]</code>
+     * <code>vals[ColorSensor.RGB_BLUE]</code>
      *  
      * @param vals array of four color values.
      * @return < 0 if there is an error number of values returned if ok.
@@ -87,7 +88,7 @@ public class ColorLightSensor implements LampLightDetector, ColorDetector, Senso
      * full color mode the data is a set of calibrated red/blue/green/blank
      * readings that range from 0 to 255. You can access the index of each color 
      * using RGB_RED, RGB_GREEN, RGB_BLUE and RGB_BLANK. e.g. to retrieve the Blue value:
-     * <code>vals[ColorLightSensor.RGB_BLUE]</code>
+     * <code>vals[ColorSensor.RGB_BLUE]</code>
      * 
      * @param vals 4 element array for the results
      * @return < 0 if error. Number of values if ok.
@@ -108,19 +109,7 @@ public class ColorLightSensor implements LampLightDetector, ColorDetector, Senso
     {
         return port.readValue();
     }
-
-    /**
-     * Read the current color and return an enum value. This is usually only accurate at a distance
-     * of about 1 cm.It is not very good at detecting yellow.
-     * @return The color enumeration under the sensor.
-     */
-    public Colors.Color readColor()
-    {
-        int col = readValue();
-        if (col <= 0) return Colors.Color.NONE;
-        return colorMap[col];
-    }
-
+    
 	public int getLightValue() {
 		// TODO: Problem! If lamp is on for illumination, this shuts it down. 
 		// So either turn on red lamp, then switch back, or turn off lamp (if passive mode) then switch back.
@@ -133,7 +122,7 @@ public class ColorLightSensor implements LampLightDetector, ColorDetector, Senso
 
 	public int getNormalizedLightValue() {
 		int temp_type =  this.type;
-		setType(ColorLightSensor.TYPE_COLORNONE);
+		setType(ColorSensor.TYPE_COLORNONE);
 		int val = readRawValue();
 		this.setType(temp_type);
 		return val;
@@ -144,53 +133,31 @@ public class ColorLightSensor implements LampLightDetector, ColorDetector, Senso
 		setType(floodlight ? TYPE_COLORRED : TYPE_COLORNONE);
 	}
 
-	public int getBlueComponent() {
-		int temp_type =  this.type;
-		setType(ColorLightSensor.TYPE_COLORBLUE);
-		int val = readRawValue();
-		// TODO: Normalize?
-		// Scale to max 255:
-		val = val * 255 / 1023;
-		this.setType(temp_type);
-		return val;
-	}
-
-	public int getGreenComponent() {
+	public int getRGBComponent(int color) {
+		// TODO: Very inefficient to take three readings when only need one.
+		// TODO: Check if color is 0-2. Return -1 if not, or illegal argument exception.
 		// TODO: Since lampColor state is included now, can we use that instead for all these temp_type?
 		int temp_type =  this.type;
-		setType(ColorLightSensor.TYPE_COLORGREEN);
-		int val = readRawValue();
-		// TODO: Normalize? Use _zero instead of 1023? (changes when calibrated)
-		// TODO: What about scaling to max 255 using _hundred? (changes when calibrated) 
-		val = val * 255 / 1023;
+		setType(ColorSensor.TYPE_COLORFULL);
+		int [] vals = new int[4];
+		readValues(vals);
 		this.setType(temp_type);
-		return val;
+		return vals[color];
 	}
 
-	public int[] getColor() {
+	public Color getColor() {
 		int temp_type =  this.type; 
-		setType(ColorLightSensor.TYPE_COLORFULL);
+		setType(ColorSensor.TYPE_COLORFULL);
 		int [] all_vals = new int[4];
 		readValues(all_vals);
-		int [] rgb_vals = new int[3];
-		System.arraycopy(all_vals, 0, rgb_vals, 0, 3);
+		//int [] rgb_vals = new int[3];
+		//System.arraycopy(all_vals, 0, rgb_vals, 0, 3);
 		this.setType(temp_type);
-		return rgb_vals;
+		//return rgb_vals;
+		return new Color(all_vals[Color.RED], all_vals[Color.GREEN], all_vals[Color.BLUE]);
 		
 	}
-
-	// TODO: Three getXXComponent() methods share code. Could reuse code. Or Sven has suggestion of getColorComponent(RED).
-	public int getRedComponent() {
-		int temp_type =  this.type;
-		setType(ColorLightSensor.TYPE_COLORRED);
-		int val = readRawValue();
-		// TODO: Normalize?
-		// Scale to max 255:
-		val = val * 255 / 1023;
-		this.setType(temp_type);
-		return val;
-	}
-
+	
 	public Colors.Color getFloodlight() {
 		return lampColor;
 	}
@@ -202,19 +169,19 @@ public class ColorLightSensor implements LampLightDetector, ColorDetector, Senso
 	public boolean setFloodlight(Colors.Color color) {
 		if(color == Colors.Color.RED) {
 			this.lampColor = color;
-			setType(ColorLightSensor.TYPE_COLORRED);
+			setType(ColorSensor.TYPE_COLORRED);
 			return true;
 		} else if(color == Colors.Color.BLUE) {
 			this.lampColor = color;
-			setType(ColorLightSensor.TYPE_COLORBLUE);
+			setType(ColorSensor.TYPE_COLORBLUE);
 			return true;
 		} else if(color == Colors.Color.GREEN) {
 			this.lampColor = color;
-			setType(ColorLightSensor.TYPE_COLORGREEN);
+			setType(ColorSensor.TYPE_COLORGREEN);
 			return true;
 		} else if(color == Colors.Color.NONE) {
 			this.lampColor = color;
-			setType(ColorLightSensor.TYPE_COLORNONE);
+			setType(ColorSensor.TYPE_COLORNONE);
 			return true;
 		} else 
 			return false;
@@ -254,4 +221,15 @@ public class ColorLightSensor implements LampLightDetector, ColorDetector, Senso
 	    */
 	   public int  getHigh() {return 1023 - _hundred;}
 
+	   /**
+	     * Read the current color and return an enumeration constant. This is usually only accurate at a distance
+	     * of about 1 cm. It is not very good at detecting yellow.
+	     * @return The color enumeration under the sensor.
+	     */
+	    public int getColorID()
+	    {
+	        int col = readValue();
+	        if (col <= 0) return Color.NONE;
+	        return colorMap[col];
+	    }
 }

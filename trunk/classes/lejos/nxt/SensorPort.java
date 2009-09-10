@@ -1,5 +1,4 @@
 package lejos.nxt;
-import lejos.robotics.Colors;
 import lejos.util.Delay;
 
 /**
@@ -576,7 +575,7 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
          * The raw values theoretically range from 0 to 1023 but in practice they usually
          * do not go higher than 600. You can access the index of each color
          * using RGB_RED, RGB_GREEN, RGB_BLUE and RGB_BLANK. e.g. to retrieve the Blue value:
-         * <code>vals[ColorLightSensor.RGB_BLUE]</code>
+         * <code>vals[ColorSensor.RGB_BLUE]</code>
          *
          * @param vals array of four color values.
          * @return < 0 if there is an error the number of values if ok
@@ -629,7 +628,7 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
          * full color mode the data is a set of calibrated red/blue/green/blank
          * readings that range from 0 to 255. You can access the index of each color
          * using RGB_RED, RGB_GREEN, RGB_BLUE and RGB_BLANK. e.g. to retrieve the Blue value:
-         * <code>vals[ColorLightSensor.RGB_BLUE]</code>
+         * <code>vals[ColorSensor.RGB_BLUE]</code>
          *
          * @param vals 4 element array for the results
          * @return < 0 of error, the number of values if ok
@@ -720,7 +719,7 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
      * The code for this sensor is relatively large, so it is not presnt by
      * default. Calling this function will enable this code.
      * NOTE: Calling this function will reset the port. If you are using higher
-     * level inetrfaces (like the ColorLightSensor class, then this call will
+     * level inetrfaces (like the ColorSensor class, then this call will
      * be made automatically.).
      */
     public void enableColorSensor()
