@@ -2,7 +2,7 @@ package lejos.nxt.addon;
 
 import lejos.nxt.I2CSensor;
 import lejos.nxt.I2CPort;
-import lejos.robotics.ColorDetector;
+import lejos.robotics.*;
 
 /*
  * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
@@ -16,10 +16,16 @@ import lejos.robotics.ColorDetector;
  *@author BB extended by A.T.Brask
  * 
  */
-public class ColorSensor extends I2CSensor implements ColorDetector {
+public class ColorSensorHT extends I2CSensor implements ColorDetector {
     byte[] buf = new byte[2];
 
-    public ColorSensor(I2CPort port)
+    // TODO: PINK, GRAY, LIGHT_GRAY, DARK_GRAY, CYAN missing from JSE. Include?
+    // TODO: PURPLE, VIOLET, LIME, CRIMSON, PASTEL are not part of JSE. Ignore?
+    int [] colorMap = {Color.BLACK, Color.VIOLET, Color.PURPLE, Color.BLUE, Color.GREEN, Color.LIME, Color.YELLOW,
+    		Color.ORANGE, Color.RED, Color.CRIMSON, Color.MAGENTA, Color.PASTEL, Color.PASTEL, Color.PASTEL,
+    		Color.PASTEL, Color.PASTEL, Color.PASTEL, Color.WHITE};
+    
+    public ColorSensorHT(I2CPort port)
     {
         super(port);
     }
@@ -43,11 +49,12 @@ public class ColorSensor extends I2CSensor implements ColorDetector {
      * <li> 11 to 16 = pastels 
      * <li> 17 = white
      */
-    public int getColorNumber()
+    public int getColorID()
     {
         int ret = getData(0x42, buf, 1);
         if(ret != 0) return -1;
-        return (0xFF & buf[0]);
+        int HT_val = (0xFF & buf[0]);
+        return colorMap[HT_val];
     }
 
     /**
@@ -66,105 +73,39 @@ public class ColorSensor extends I2CSensor implements ColorDetector {
 
     // 8 BIT RGB VALUES
 
-    /**
-     * Returns the red saturation of the color. 
-     * @return red value (0 to 255).
-     */
-    public int getRedComponent()
+    public int getRGBComponent(int color)
     {
-        int ret = getData(0x43, buf, 1);
-        if(ret != 0) return -1;
-        return (0xFF & buf[0]);
-    }
-
-    /**
-     * Returns the green saturation of the color. 
-     * @return green value (0 to 255).
-     */
-    public int getGreenComponent()
-    {
-        int ret = getData(0x44, buf, 1);
-        if(ret != 0) return -1;
-        return (0xFF & buf[0]);
-    }
-
-    /**
-     * Returns the blue saturation of the color. 
-     * @return blue value (0 to 255).
-     */
-    public int getBlueComponent()
-    {
-        int ret = getData(0x45, buf, 1);
+        // TODO: Check if color is 0-2
+    	int ret = getData(0x43 + color, buf, 1);
         if(ret != 0) return -1;
         return (0xFF & buf[0]);
     }
 
     // NORMALIZED 8 BIT RGB VALUES
-
+    
     /**
-     * Returns the normalized red saturation of the color. 
-     * @return red value (0 to 255).
+     * Returns the normalized color component. 
+     * @return component value (0 to 255).
      */
-    public int getNormalizedRed()
+    public int getRGBNormalized(int color)
     {
-        int ret = getData(0x4d, buf, 1);
+    	// TODO: Check if color is 0-2
+    	int ret = getData(0x4d + color, buf, 1);
         if(ret != 0) return -1;
         return (0xFF & buf[0]);
     }
 
-    /**
-     * Returns the normalized green saturation of the color. 
-     * @return green value (0 to 255).
-     */
-    public int getNormalizedGreen()
-    {
-        int ret = getData(0x4e, buf, 1);
-        if(ret != 0) return -1;
-        return (0xFF & buf[0]);
-    }
-
-    /**
-     * Returns the normalized blue saturation of the color. 
-     * @return blue value (0 to 255).
-     */
-    public int getNormalizedBlue()
-    {
-        int ret = getData(0x4f, buf, 1);
-        if(ret != 0) return -1;
-        return (0xFF & buf[0]);
-    }
 
     // RAW 10 BIT RGB VALUES
 
     /**
-     * Returns the raw red saturation of the color. 
-     * @return red value (0 to 1023).
+     * Returns the raw saturation of the color. 
+     * @return component value (0 to 1023).
      */
-    public int getRawRed()
+    public int getRGBRaw(int color)
     {
-        int ret = getData(0x46, buf, 2);
-        if(ret != 0) return -1;
-        return ((0xFF & buf[0]) << 8) | (0xFF & buf[1]);
-    }
-
-    /**
-     * Returns the raw green saturation of the color. 
-     * @return green value (0 to 1023).
-     */
-    public int getRawGreen()
-    {
-        int ret = getData(0x48, buf, 2);
-        if(ret != 0) return -1;
-        return ((0xFF & buf[0]) << 8) | (0xFF & buf[1]);
-    }
-
-    /**
-     * Returns the raw blue saturation of the color. 
-     * @return blue value (0 to 1023).
-     */
-    public int getRawBlue()
-    {
-        int ret = getData(0x4a, buf, 2);
+    	// TODO: Check if color is 0-2
+    	int ret = getData(0x46 + (2 * color), buf, 2);
         if(ret != 0) return -1;
         return ((0xFF & buf[0]) << 8) | (0xFF & buf[1]);
     }
@@ -212,11 +153,7 @@ public class ColorSensor extends I2CSensor implements ColorDetector {
         return sendData(0x41, (byte)0x42);
     }
 
-	public int[] getColor() {
-		int [] vals = new int[3];
-		vals[0] = getRedComponent();
-		vals[1] = getGreenComponent();
-		vals[2] = getBlueComponent();
-		return vals;
+	public Color getColor() {
+		return new Color(getRGBComponent(Color.RED), getRGBComponent(Color.GREEN), getRGBComponent(Color.BLUE));
 	}
 }

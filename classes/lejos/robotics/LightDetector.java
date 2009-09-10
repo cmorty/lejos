@@ -5,6 +5,15 @@ package lejos.robotics;
  * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
  */
 
+/*
+ * DEV NOTES: 
+ * Raw = hardware values
+ * Normalized = sign changed
+ * Scaled = converted to % or some other scale
+ * Calibrated = user calibrated values
+ * TODO: If Detector interface made, move these Javadoc notes to there
+ */
+
 /**
  * A platform independent implementation for sensors that can detect white light levels.
  * @author BB
@@ -28,7 +37,7 @@ public interface LightDetector {
 	 * Returns the normalized value of the brightness of the white light detected, such that
 	 * the lowest value is darkness and the highest value is intense bright light.
 	 * @return A raw value, between getLow() and getHigh(). Usually 
-	 * between 0 and 1023 but can be anything depending on hardware.
+	 * between 0 and 1023 but can be anything depending on hardware. low values = dark, high values = bright 
 	 */
 	public int getNormalizedLightValue();
 	

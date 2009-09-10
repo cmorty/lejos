@@ -1,6 +1,5 @@
 import lejos.nxt.*;
 import lejos.nxt.comm.RConsole;
-import lejos.robotics.Colors;
 import lejos.util.TextMenu;
 
 
@@ -24,10 +23,10 @@ public class ColorSensorTest
         if (portNo < 0) return;
         for(;;)
         {
-            ColorLightSensor cs = new ColorLightSensor(SensorPort.PORTS[portNo], ColorLightSensor.TYPE_COLORNONE);
+            ColorSensor cs = new ColorSensor(SensorPort.PORTS[portNo], ColorSensor.TYPE_COLORNONE);
             int mode = modeMenu.select();
             if (mode < 0) return;
-            cs.setType(ColorLightSensor.TYPE_COLORFULL + mode);
+            cs.setType(ColorSensor.TYPE_COLORFULL + mode);
             LCD.clear();
             while (!Button.ESCAPE.isPressed())
             {
@@ -37,7 +36,8 @@ public class ColorSensorTest
                 {
                     cs.readValues(vals);
                     cs.readRawValues(rawVals);
-                    Colors.Color color = cs.readColor();
+                    //Colors.Color color = cs.readColor();
+                    int color = cs.getColorID(); // Modified by BB to accommodate lack of enums
                     int colorVal = cs.readValue();
                     for(int i = 0; i < vals.length; i++)
                     {
@@ -46,7 +46,8 @@ public class ColorSensorTest
                         LCD.drawInt(vals[i], 5, 11, i + 2);
                     }
                     LCD.drawString("Color:          ", 0, 6);
-                    LCD.drawString(color.name(), 7, 6);
+                    //LCD.drawString(color.name(), 7, 6);
+                    LCD.drawInt(color, 7, 6); // Modified by BB to accommodate lack of enums
                     LCD.drawString("Value: ", 0, 7);
                     LCD.drawInt(colorVal, 5, 7, 7);
                 }

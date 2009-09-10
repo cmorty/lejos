@@ -1,8 +1,9 @@
 import lejos.nxt.*;
-import lejos.nxt.addon.ColorSensor;
+import lejos.nxt.addon.ColorSensorHT;
+import lejos.robotics.Color;
 
 /**
- * For testing the HiTechnic color sensor (see lejos.nxt.addon.ColorSensor).
+ * For testing the HiTechnic color sensor (see lejos.nxt.addon.ColorSensorHT).
  * @author BB
  */
 public class ColorDetector {
@@ -10,7 +11,7 @@ public class ColorDetector {
 	final static int INTERVAL = 200; // milliseconds
 	
 	public static void main(String [] args) throws Exception {
-		ColorSensor cmps = new ColorSensor(SensorPort.S1);
+		ColorSensorHT cmps = new ColorSensorHT(SensorPort.S1);
 		String color = "Color";
 		String r = "R";
 		String g = "G";
@@ -22,13 +23,13 @@ public class ColorDetector {
 			LCD.drawString(cmps.getSensorType(), 0, 1);
 			LCD.drawString(cmps.getVersion(), 9, 1);
 			LCD.drawString(color, 0, 3);
-			LCD.drawInt((int)cmps.getColorNumber(),7,3);
+			LCD.drawInt((int)cmps.getColorID(),7,3);
 			LCD.drawString(r, 0, 5);
-			LCD.drawInt((int)cmps.getRedComponent(),1,5);
+			LCD.drawInt((int)cmps.getRGBComponent(Color.RED),1,5);
 			LCD.drawString(g, 5, 5);
-			LCD.drawInt((int)cmps.getGreenComponent(),6,5);
+			LCD.drawInt((int)cmps.getRGBComponent(Color.GREEN),6,5);
 			LCD.drawString(b, 10, 5);
-			LCD.drawInt((int)cmps.getBlueComponent(),11,5);
+			LCD.drawInt((int)cmps.getRGBComponent(Color.BLUE),11,5);
 			LCD.refresh();
 			Thread.sleep(INTERVAL);
 		}
