@@ -1,7 +1,7 @@
 package javax.microedition.io;
 
 import java.io.*;
-
+import javax.microedition.sensor.I2CSensorConnection;
 import lejos.nxt.comm.*;
 
 /**
@@ -63,6 +63,8 @@ public class Connector {
 					if(sc != null) sc.close();
 				}
         	};
+    	} if (scheme.equals("sensor")) {
+    		c =  new I2CSensorConnection(name);
     	} else {
     		throw new ConnectionNotFoundException(scheme + " not a known protocol");
     	}
@@ -87,6 +89,7 @@ public class Connector {
     	int start = name.indexOf("://") + 3;
     	int end = name.indexOf(';', start);
     	if(end == -1) end = name.length();
+    	if (start < 0) start = 0;
     	return name.substring(start, end);
     }
         
