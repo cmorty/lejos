@@ -8,9 +8,12 @@ public class I2CDevices {
 				new I2CSensor(SensorPort.S3),
 		        new I2CSensor(SensorPort.S4)};
 		
+		LCD.setAutoRefresh(0);
 		while (!Button.ESCAPE.isPressed()) {
 			for(int i=0;i<sensors.length;i++) {
+				LCD.drawString("        ", 0, i);
 				LCD.drawString(getName(sensors[i]), 0, i);
+				LCD.refresh();
 			}
 		}
 	}
@@ -22,8 +25,8 @@ public class I2CDevices {
 		for (int i=1;i<0x7F;i++) {
 			sensor.setAddress(i);
 			name = sensor.getSensorType();
-			if (name.charAt(0)>= 'A') return name;
+			if (name.length() > 0 && name.charAt(0)>= 'A') return name;
 		}
-		return "none    ";
+		return "none";
 	}
 }
