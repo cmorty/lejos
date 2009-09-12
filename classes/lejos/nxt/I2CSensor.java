@@ -54,8 +54,7 @@ public class I2CSensor implements SensorConstants {
 		
 		if (ret != 0) return ret;
 
-		int tries = 1000; // Temporary fix for no sensor attached
-		while (port.i2cBusy() != 0 && tries-- > 0) {
+		while (port.i2cBusy() != 0) {
 			Thread.yield();
 		}
 		

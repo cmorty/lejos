@@ -24,7 +24,7 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
     public static final int SP_MODE_OUTPUT = 2;
     public static final int SP_MODE_ADC = 3;
     // Digital I/O pins used to control the sensor operation
-    public static final int DIGI_UNUSED = -1;
+    public static final int DIGI_I2C = -1;
     public static final int DIGI_OFF = 0;
     public static final int DIGI_0_ON = (1 << SP_DIGI0);
     public static final int DIGI_1_ON = (1 << SP_DIGI1);
@@ -51,19 +51,19 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
     };
     private static final byte[] controlPins =
     {
-        DIGI_UNUSED, // NO_SENSOR
-        DIGI_UNUSED, // SWITCH
-        DIGI_UNUSED, // TEMPERATURE
-        DIGI_UNUSED, // REFLECTION
-        DIGI_UNUSED, // ANGLE
+        DIGI_OFF, // NO_SENSOR
+        DIGI_OFF, // SWITCH
+        DIGI_OFF, // TEMPERATURE
+        DIGI_OFF, // REFLECTION
+        DIGI_OFF, // ANGLE
         DIGI_0_ON, // LIGHT_ACTIVE
         DIGI_OFF, // LIGHT_INACTIVE
         DIGI_0_ON, // SOUND_DB
         DIGI_1_ON, // SOUND_DBA
-        DIGI_UNUSED, // CUSTOM
-        DIGI_UNUSED, // LOWSPEED,
-        DIGI_UNUSED,  // LOWSPEED_9V
-        DIGI_UNUSED,  // Unused
+        DIGI_OFF, // CUSTOM
+        DIGI_I2C, // LOWSPEED,
+        DIGI_I2C,  // LOWSPEED_9V
+        DIGI_OFF,  // Unused
         DIGI_OFF, // COLOR_FULL
         DIGI_OFF, // COLOR_RED
         DIGI_OFF, // COLOR_GREEN
@@ -854,12 +854,13 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
             int control = controlPins[newType];
             setPowerType(powerType[newType]);
             // Set the state of the digital I/O pins
-            setSensorPinMode(SP_DIGI0, SP_MODE_OUTPUT);
-            setSensorPinMode(SP_DIGI1, SP_MODE_OUTPUT);
-            if (control == DIGI_UNUSED)
-                control = DIGI_OFF;
-            setSensorPin(SP_DIGI0, ((control & DIGI_0_ON) != 0 ? 1 : 0));
-            setSensorPin(SP_DIGI1, ((control & DIGI_1_ON) != 0 ? 1 : 0));
+            if (control != DIGI_I2C)
+            {
+                setSensorPinMode(SP_DIGI0, SP_MODE_OUTPUT);
+                setSensorPinMode(SP_DIGI1, SP_MODE_OUTPUT);
+                setSensorPin(SP_DIGI0, ((control & DIGI_0_ON) != 0 ? 1 : 0));
+                setSensorPin(SP_DIGI1, ((control & DIGI_1_ON) != 0 ? 1 : 0));
+            }
             // Switch to the new type
             this.type = newType;
             curReader = newReader;
