@@ -104,7 +104,7 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
 
     /**
      * The SensorReader class provides a way of performing type dependent way
-     * to obtain data froma sensor. This base class simply returns no data.
+     * to obtain data from a sensor. This base class simply returns no data.
      */
     protected class SensorReader
     {
@@ -362,16 +362,25 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
          */
         protected int readByte()
         {
+            /* NOTE: This code has been modified to remove the delays and to use
+             * a direct native method call. Even with these changes it is still
+             * slower then the timings that are given in the commented code.
+             * Basically leJOS is currently too slow to meet these timings.
+             * The original code is left commented out in the hope that at some
+             * point leJOS will be fast enough to need it!
+             */
             int val = 0;
             for (int i = 0; i < 8; i++)
             {
-                setClock(1);
-                Delay.usDelay(4);
+                setSensorPin(iPortId, CLOCK, 1);
+                //setClock(1);
+                //Delay.usDelay(4);
                 val >>= 1;
                 if (getData())
                     val |= 0x80;
-                setClock(0);
-                Delay.usDelay(4);
+                setSensorPin(iPortId, CLOCK, 0);
+                //setClock(0);
+                //Delay.usDelay(4);
             }
             return val;
         }
@@ -397,7 +406,7 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
 
         /**
          * Read the calibration data from the sensor.
-         * This consists of two tables. The first contians 3 rows of data with
+         * This consists of two tables. The first contains 3 rows of data with
          * each row having 4 columns. The data is sent one row at a time. Each
          * row contains a calibration constant for red/green/blue/blank readings.
          * The second table contains 2 threshold values that are used (based on the
@@ -440,10 +449,25 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
                 //RConsole.println("limit " + i + " value " + val);
                 calLimits[i] = val;
             }
-            int crc = (short) (readByte() << 8);
-            crc += (short) readByte();
+            int crc = (readByte() << 8);
+            crc += readByte();
+            crc &= 0xffff;
             setSensorPinMode(DATA, SensorPort.SP_MODE_ADC);
             Delay.msDelay(1);
+            /*
+            if (crc != crcVal)
+            {
+            LCD.clear();
+            for (int i = 0; i < 4; i++)
+                for(int j = 0; j < 3; j++)
+                    LCD.drawString(Integer.toHexString(calData[j][i]), j*5, i);
+            LCD.drawString(Integer.toHexString(calLimits[0]), 0, 5);
+            LCD.drawString(Integer.toHexString(calLimits[1]), 8, 5);
+
+            LCD.drawString(Integer.toHexString(crc), 0, 6);
+            LCD.drawString(Integer.toHexString(crcVal), 8, 6);
+            Delay.msDelay(10000);
+            }*/
             return crc == crcVal;
         }
 
@@ -719,7 +743,7 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
      * The code for this sensor is relatively large, so it is not presnt by
      * default. Calling this function will enable this code.
      * NOTE: Calling this function will reset the port. If you are using higher
-     * level inetrfaces (like the ColorSensor class, then this call will
+     * level interfaces (like the ColorSensor class, then this call will
      * be made automatically.).
      */
     public void enableColorSensor()
