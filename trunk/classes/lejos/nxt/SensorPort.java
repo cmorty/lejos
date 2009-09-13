@@ -7,27 +7,40 @@ import lejos.util.Delay;
  */
 public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
 {
-
-    /**
-     * Power types.
-     */
+    /** Power types. 5V standard. */
     public static final int POWER_STD = 0;
+    /** Power types. 9V pulsed as per RCX. */
     public static final int POWER_RCX9V = 1;
+    /** Power types. 9V  */
     public static final int POWER_9V = 2;
-    // Sensor port I/O pin ids
+    /** Sensor port digital I/O 0 (pin 5 on connector) */
     public static final int SP_DIGI0 = 0;
+    /** Sensor port digital I/O 1 (pin 6 on connector) */
     public static final int SP_DIGI1 = 1;
+    /** Sensor port analogue input (pin 1 on connector) */
     public static final int SP_ANA = 2;
-    // Sensor port pin modes
+    /** Sensor port pin mode. Pin is disabled */
     public static final int SP_MODE_OFF = 0;
+    /** Sensor port pin mode. Pin is digital input */
     public static final int SP_MODE_INPUT = 1;
+    /** Sensor port pin mode. Pin is digital output */
     public static final int SP_MODE_OUTPUT = 2;
+    /** Sensor port pin mode. Pin is analogue input */
     public static final int SP_MODE_ADC = 3;
+    /** Color sensor data RED value index. */
+    public static final int RGB_RED = 0;
+    /** Color sensor data GREEN value index. */
+    public static final int RGB_GREEN = 1;
+    /** Color sensor data BLUE value index. */
+    public static final int RGB_BLUE = 2;
+    /** Color sensor data BLANK/Background value index. */
+    public static final int RGB_BLANK = 3;
+
     // Digital I/O pins used to control the sensor operation
-    public static final int DIGI_I2C = -1;
-    public static final int DIGI_OFF = 0;
-    public static final int DIGI_0_ON = (1 << SP_DIGI0);
-    public static final int DIGI_1_ON = (1 << SP_DIGI1);
+    private static final int DIGI_I2C = -1;
+    private static final int DIGI_OFF = 0;
+    private static final int DIGI_0_ON = (1 << SP_DIGI0);
+    private static final int DIGI_1_ON = (1 << SP_DIGI1);
     private static final byte[] powerType =
     {
         POWER_STD, // NO_SENSOR
@@ -197,28 +210,21 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
          * Sensor types supported by this driver. The type is used to control the
          * operation of the tri color led.
          */
-        /**
-         * Indexes into the output arrays for specific color values.
-         */
-        public static final int RGB_RED = 0;
-        public static final int RGB_GREEN = 1;
-        public static final int RGB_BLUE = 2;
-        public static final int RGB_BLANK = 3;
-        protected Colors.Color[] colorMap = Colors.Color.values();
+        private Colors.Color[] colorMap = Colors.Color.values();
         // pin usage for clock and data lines.
-        protected static final int CLOCK = SensorPort.SP_DIGI0;
-        protected static final int DATA = SensorPort.SP_DIGI1;
-        protected boolean initialized = false;
-        protected int type = TYPE_NO_SENSOR;
+        private static final int CLOCK = SensorPort.SP_DIGI0;
+        private static final int DATA = SensorPort.SP_DIGI1;
+        private boolean initialized = false;
+        private int type = TYPE_NO_SENSOR;
         // data ranges and limits
-        protected static final int ADVOLTS = 3300;
-        protected static final int ADMAX = 1023;
-        protected static final int MINBLANKVAL = (214 / (ADVOLTS / ADMAX));
-        protected static final int SENSORMAX = ADMAX;
-        protected int[][] calData = new int[3][4];
-        protected int[] calLimits = new int[2];
-        protected int[] rawValues = new int[RGB_BLANK + 1];
-        protected int[] values = new int[RGB_BLANK + 1];
+        private static final int ADVOLTS = 3300;
+        private static final int ADMAX = 1023;
+        private static final int MINBLANKVAL = (214 / (ADVOLTS / ADMAX));
+        private static final int SENSORMAX = ADMAX;
+        private int[][] calData = new int[3][4];
+        private int[] calLimits = new int[2];
+        private int[] rawValues = new int[RGB_BLANK + 1];
+        private int[] values = new int[RGB_BLANK + 1];
 
         /**
          * Create a new Color Sensor instance and bind it to a port.
@@ -231,7 +237,7 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
         /**
          * initialize the raw and processed RGB values
          */
-        protected void initValues()
+        private void initValues()
         {
             for (int i = 0; i < values.length; i++)
             {
@@ -278,7 +284,7 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
          * Set the clock pin to the specified value
          * @param val the new value(0/1) for the pin.
          */
-        protected void setClock(int val)
+        private void setClock(int val)
         {
             setSensorPin(CLOCK, val);
         }
@@ -287,7 +293,7 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
          * Set the data pin to the specified value
          * @param val new value(0/1) for the pin.
          */
-        protected void setData(int val)
+        private void setData(int val)
         {
             setSensorPin(DATA, val);
         }
@@ -296,7 +302,7 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
          * get the current digital value from the data pin.
          * @return current pin value
          */
-        protected boolean getData()
+        private boolean getData()
         {
             return getSensorPin(DATA) != 0;
         }
@@ -305,7 +311,7 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
          * Read the current analogue value from the data pin
          * @return current value of the pin.
          */
-        protected int readData()
+        private int readData()
         {
             return readSensorPin(DATA);
         }
@@ -313,7 +319,7 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
         /**
          * perform a reset of the device.
          */
-        protected void resetSensor()
+        private void resetSensor()
         {
             // Set both ports to 1
             setClock(1);
@@ -338,7 +344,7 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
          * of 8 bits out to the device.
          * @param mode
          */
-        protected void sendMode(int mode)
+        private void sendMode(int mode)
         {
             for (int i = 0; i < 8; i++)
             {
@@ -360,7 +366,7 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
          * using the clock pin to request each of the 8 bits.
          * @return The read byte.
          */
-        protected int readByte()
+        private int readByte()
         {
             /* NOTE: This code has been modified to remove the delays and to use
              * a direct native method call. Even with these changes it is still
@@ -391,7 +397,7 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
          * @param val new value
          * @return new crc
          */
-        protected int calcCRC(int crc, int val)
+        private int calcCRC(int crc, int val)
         {
             for (int i = 0; i < 8; i++)
             {
@@ -415,7 +421,7 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
          * of the data.
          * @return true if ok false if error
          */
-        protected boolean readCalibration()
+        private boolean readCalibration()
         {
             setSensorPinMode(DATA, SensorPort.SP_MODE_INPUT);
             int crcVal = 0x5aa5;
@@ -476,7 +482,7 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
          * @param mode Operating mode.
          * @return true if ok false if error.
          */
-        protected boolean initSensor(int mode)
+        private boolean initSensor(int mode)
         {
             resetSensor();
             sendMode(mode);
@@ -489,7 +495,7 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
          * present. If it is it will pull this pin down.
          * @return true if sensor is connected false otherwise.
          */
-        protected boolean checkPresent()
+        private boolean checkPresent()
         {
             int ANAValue = readSensorPin(SensorPort.SP_ANA);
             return (ANAValue <= 50);
@@ -503,7 +509,7 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
          * detected but it has not been initialized then initialize it.
          * @return true if sensor is connected and working false otherwise.
          */
-        protected boolean checkInitialized()
+        private boolean checkInitialized()
         {
             // is there a sensor attached?
             int ANAValue = readSensorPin(SensorPort.SP_ANA);
@@ -520,7 +526,7 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
          * an error state. The sensor can do this by pulling the clock pin high
          * @return true if ok false if error.
          */
-        protected boolean checkSensor()
+        private boolean checkSensor()
         {
             setSensorPinMode(CLOCK, SensorPort.SP_MODE_INPUT);
             Delay.msDelay(2);
@@ -538,7 +544,7 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
          * @param newClock New value for the clock pin
          * @return the new reading
          */
-        protected int readFullColorValue(int newClock)
+        private int readFullColorValue(int newClock)
         {
             //delayUS(40);
             int val = readSensorPin(DATA);//readData();
@@ -553,7 +559,7 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
          * Read the device
          * @return true if ok false if error
          */
-        protected boolean readSensor()
+        private boolean readSensor()
         {
             if (!checkInitialized())
                 return false;
@@ -620,7 +626,7 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
          * them using the calibration data to return standard RGB values between 0 and 255
          * @param vals array to return the newly calibrated data.
          */
-        protected void calibrate(int[] vals)
+        private void calibrate(int[] vals)
         {
             // First select the calibration table to use...
             int calTab;
@@ -753,7 +759,7 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
         reset();
     }
 
-    protected SensorPort(int aId)
+    private SensorPort(int aId)
     {
         iPortId = aId;
         reset();
