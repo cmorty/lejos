@@ -18,7 +18,7 @@ public interface DirectionFinder {
 	 * the Cartesian compass reading. Also, the resetCartesianZero() method
 	 * can be used to designate any direction as zero, rather than relying
 	 * on North as being zero.
-	 * @return Cartesian direction.
+	 * @return Cartesian direction. Between 0 and 360, excluding 360. Values increase counter-clockwise.
 	 */
 	public float getDegreesCartesian();
 	

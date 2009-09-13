@@ -5,30 +5,30 @@ package lejos.robotics;
  * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
  */
 
+/**
+ * This interface defines the methods of a generic ColorDetector object.
+ * 
+ * @see {@link lejos.nxt.ColorSensor}, {@link lejos.nxt.addon.ColorSensorHT} 
+ */
 public interface ColorDetector {
 
 	/**
-	 * 
-	 * @return The calibrated/normalized red value (0-255)
+	 * Returns a single color component, specified by using an enumeration constant as a parameter. e.g. Color.RED.
+	 * @param color An integer obtained from Color, such as Color.RED, Color.GREEN or Color.BLUE
+	 * @return The calibrated/normalized RGB value (0-255)
 	 */
-	public int getRedComponent();
+	public int getRGBComponent(int color);
 	
 	/**
-	 * 
-	 * @return The calibrated/normalized green value (0-255)
+	 * Return the Red, Green and Blue values together in one object.
+	 * @return Color object containing the three RGB component values between 0-255.
 	 */
-	public int getGreenComponent();
+	public Color getColor();
 	
 	/**
-	 * 
-	 * @return The calibrated/normalized blue value (0-255)
+	 * Return an enumerated constant that indicates the color detected. e.g. Color.BLUE
+	 * @return An integer from the Color constants, such as Color.BLUE
 	 */
-	public int getBlueComponent();
-	
-	/**
-	 * Return the Red, Green and Blue values together in one array. All values are 0-255.
-	 * @return All three color values. The array index for Red is 0, Green is 1, Blue is 2.
-	 */
-	public int [] getColor();
+	public int getColorID();
 	
 }

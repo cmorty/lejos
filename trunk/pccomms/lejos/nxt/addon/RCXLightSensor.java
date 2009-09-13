@@ -1,9 +1,8 @@
 package lejos.nxt.addon;
 
 import lejos.nxt.*;
-import lejos.robotics.Colors;
+import lejos.nxt.Colors.Color;
 import lejos.robotics.LampLightDetector;
-import lejos.robotics.Colors.Color;
 
 /*
  * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.

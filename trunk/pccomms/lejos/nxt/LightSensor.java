@@ -1,6 +1,5 @@
 package lejos.nxt;
 
-import lejos.robotics.Colors;
 import lejos.robotics.LampLightDetector;
 
 /*
