@@ -544,7 +544,7 @@ public class TachoPilot implements Pilot {
 		outside.setSpeed(_motorSpeed);
 		float steerRatio = 1 - rate / 100.0f;
 		inside.setSpeed((int) (_motorSpeed * steerRatio));
-		if (angle == Integer.MAX_VALUE) // no limit angle for turn
+		if (angle == Float.POSITIVE_INFINITY) // no limit angle for turn
 		{
 			if (_parity == 1) {
 				outside.forward();
