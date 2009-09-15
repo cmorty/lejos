@@ -26,20 +26,19 @@ public class ColorSensor implements LampLightDetector, ColorDetector, SensorCons
     private int _zero = 1023;
 	private int _hundred = 0;
     
-    private Colors.Color lampColor = Colors.Color.NONE;
-
+    //private Colors.Color lampColor = Colors.Color.NONE;
+	private int lampColor = Color.NONE;
+	
     /**
      * Create a new Color Sensor instance and bind it to a port.
      * @param port Port to use for the sensor.
-     * @param type Initial operating mode.
      */
-    // TODO: We need a default constructor that doesn't need type, which is just the lamp color it uses to scan.
-    // NXT LightSensor and RCXLightSensor set default to red LED on. Perhaps this should too? Make it an interface requirement?
-    public ColorSensor(SensorPort port, int type)
+    // TODO: NXT LightSensor and RCXLightSensor set default to red LED on. Perhaps this should too? Make it an interface requirement?
+    public ColorSensor(SensorPort port)
     {
         this.port = port;
         port.enableColorSensor();
-        port.setTypeAndMode(type, SensorPort.MODE_RAW);
+        port.setTypeAndMode(ColorSensor.TYPE_COLORFULL, SensorPort.MODE_RAW);
     }
 
     /**
@@ -111,75 +110,70 @@ public class ColorSensor implements LampLightDetector, ColorDetector, SensorCons
     }
     
 	public int getLightValue() {
-		// TODO: Problem! If lamp is on for illumination, this shuts it down. 
-		// So either turn on red lamp, then switch back, or turn off lamp (if passive mode) then switch back.
-		int temp_type =  this.type;
-		setType(TYPE_COLORNONE);
-		int val = readValue();
-		this.setType(temp_type);
+		int val;
+		if(this.type == TYPE_COLORFULL) {
+			setType(TYPE_COLORNONE);
+			val = readValue();
+			this.setType(TYPE_COLORFULL);
+		} else
+			val = readValue();
 		return val;
 	}
 
 	public int getNormalizedLightValue() {
-		int temp_type =  this.type;
-		setType(ColorSensor.TYPE_COLORNONE);
-		int val = readRawValue();
-		this.setType(temp_type);
+		int val;
+		if(this.type == TYPE_COLORFULL) {
+			setType(TYPE_COLORNONE);
+			val = readRawValue();
+			this.setType(TYPE_COLORFULL);
+		} else
+			val = readRawValue();
 		return val;
 	}
 
 	public void setFloodlight(boolean floodlight) {
-		this.lampColor = (floodlight ? Colors.Color.RED : Colors.Color.NONE);
+		this.lampColor = (floodlight ? Color.RED : Color.NONE);
 		setType(floodlight ? TYPE_COLORRED : TYPE_COLORNONE);
 	}
 
-	public int getRGBComponent(int color) {
-		// TODO: Very inefficient to take three readings when only need one.
-		// TODO: Check if color is 0-2. Return -1 if not, or illegal argument exception.
-		// TODO: Since lampColor state is included now, can we use that instead for all these temp_type?
-		int temp_type =  this.type;
-		setType(ColorSensor.TYPE_COLORFULL);
-		int [] vals = new int[4];
-		readValues(vals);
-		this.setType(temp_type);
-		return vals[color];
-	}
-
+	 // TODO: Getting color ID causes another reading, not very efficient if just want RGB fast. Would be nice
+    // to piggyback on colorID code using values already retrieved.
 	public Color getColor() {
 		int temp_type =  this.type; 
 		setType(ColorSensor.TYPE_COLORFULL);
 		int [] all_vals = new int[4];
 		readValues(all_vals);
+		
 		//int [] rgb_vals = new int[3];
 		//System.arraycopy(all_vals, 0, rgb_vals, 0, 3);
 		this.setType(temp_type);
 		//return rgb_vals;
-		return new Color(all_vals[Color.RED], all_vals[Color.GREEN], all_vals[Color.BLUE]);
+		return new Color(all_vals[Color.RED], all_vals[Color.GREEN], all_vals[Color.BLUE], this.getColorID());
 		
 	}
 	
-	public Colors.Color getFloodlight() {
+	public int getFloodlight() {
 		return lampColor;
 	}
 
 	public boolean isFloodlightOn() {
-		return (lampColor != Colors.Color.NONE);
+		return (lampColor != Color.NONE);
 	}
 
-	public boolean setFloodlight(Colors.Color color) {
-		if(color == Colors.Color.RED) {
+	public boolean setFloodlight(int color) {
+		if(color == Color.RED) {
 			this.lampColor = color;
 			setType(ColorSensor.TYPE_COLORRED);
 			return true;
-		} else if(color == Colors.Color.BLUE) {
+		} else if(color == Color.BLUE) {
 			this.lampColor = color;
 			setType(ColorSensor.TYPE_COLORBLUE);
 			return true;
-		} else if(color == Colors.Color.GREEN) {
+		} else if(color == Color.GREEN) {
 			this.lampColor = color;
 			setType(ColorSensor.TYPE_COLORGREEN);
 			return true;
-		} else if(color == Colors.Color.NONE) {
+		} else if(color == Color.NONE) {
 			this.lampColor = color;
 			setType(ColorSensor.TYPE_COLORNONE);
 			return true;
@@ -228,8 +222,11 @@ public class ColorSensor implements LampLightDetector, ColorDetector, SensorCons
 	     */
 	    public int getColorID()
 	    {
+	    	int temp_type =  this.type; 
+			this.setType(TYPE_COLORFULL);
 	        int col = readValue();
 	        if (col <= 0) return Color.NONE;
+	        this.setType(temp_type);
 	        return colorMap[col];
 	    }
 }
