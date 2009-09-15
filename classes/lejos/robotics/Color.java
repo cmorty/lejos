@@ -2,31 +2,36 @@ package lejos.robotics;
 
 public class Color {
 
-	// TODO: PINK, GRAY, LIGHT_GRAY, DARK_GRAY, CYAN missing from JSE. Include?
-    // TODO: PURPLE, VIOLET, LIME, CRIMSON, PASTEL are not part of JSE. Ignore?
-    public static final int RED = 0;
+	public static final int RED = 0;
 	public static final int GREEN = 1;
 	public static final int BLUE = 2;
 	public static final int YELLOW = 3;
 	public static final int MAGENTA = 4;
-	public static final int CRIMSON = 5;
-	public static final int VIOLET = 6;
-	public static final int PURPLE = 7;
-	public static final int ORANGE = 8;
-	public static final int LIME = 9;
-	public static final int PASTEL = 10;
-    public static final int WHITE = 11;
-    public static final int BLACK = 12;
-    public static final int NONE = 99;
+	public static final int ORANGE = 5;
+	public static final int WHITE = 6;
+    public static final int BLACK = 7;
+    public static final int PINK = 8;
+    public static final int GRAY = 9;
+    public static final int LIGHT_GRAY = 10;
+    public static final int DARK_GRAY = 11;
+    public static final int CYAN = 12;
+    public static final int NONE = -1;
 	
 	private int red;
 	private int blue;
 	private int green;
 	
+	private int color;
+	
 	public Color(int red, int green, int blue) {
 		this.red = red;
 		this.green = green;
 		this.blue = blue;
+	}
+	
+	public Color(int red, int green, int blue, int color) {
+		this(red, green, blue);
+		this.color = color;
 	}
 	
 	// TODO: Perhaps getRGBComponent(int color) method? Store three colors in int[3] in that case.
@@ -39,7 +44,7 @@ public class Color {
 	 * @return the red component.
 	 */
 	public int getRed() {
-		return red;
+		return this.red;
 	}
 
 	/**
@@ -47,7 +52,7 @@ public class Color {
 	 * @return the green component.
 	 */
 	public int getGreen() {
-		return green;
+		return this.green;
 	}
 
 	/**
@@ -55,7 +60,11 @@ public class Color {
 	 * @return the blue component.
 	 */
 	public int getBlue() {
-		return blue;
+		return this.blue;
+	}
+	
+	public int getColor() {
+		return this.color;
 	}
 	
 	// TODO: Perhaps set methods?

@@ -19,11 +19,12 @@ import lejos.robotics.*;
 public class ColorSensorHT extends I2CSensor implements ColorDetector {
     byte[] buf = new byte[2];
 
-    // TODO: PINK, GRAY, LIGHT_GRAY, DARK_GRAY, CYAN missing from JSE. Include?
-    // TODO: PURPLE, VIOLET, LIME, CRIMSON, PASTEL are not part of JSE. Ignore?
-    int [] colorMap = {Color.BLACK, Color.VIOLET, Color.PURPLE, Color.BLUE, Color.GREEN, Color.LIME, Color.YELLOW,
-    		Color.ORANGE, Color.RED, Color.CRIMSON, Color.MAGENTA, Color.PASTEL, Color.PASTEL, Color.PASTEL,
-    		Color.PASTEL, Color.PASTEL, Color.PASTEL, Color.WHITE};
+    // TODO: Problem: The following table ignores pastels and other subtle colors HiTechnic can detect.
+    // Converting to limited JSE color set means this generic interface isn't as rich at describing color
+    // ID as it could be. 
+    int [] colorMap = {Color.BLACK, Color.MAGENTA, Color.MAGENTA, Color.BLUE, Color.GREEN, Color.YELLOW, Color.YELLOW,
+    		Color.ORANGE, Color.RED, Color.RED, Color.MAGENTA, Color.MAGENTA, Color.YELLOW, Color.PINK,
+    		Color.PINK, Color.PINK, Color.MAGENTA, Color.WHITE};
     
     public ColorSensorHT(I2CPort port)
     {
@@ -73,7 +74,12 @@ public class ColorSensorHT extends I2CSensor implements ColorDetector {
 
     // 8 BIT RGB VALUES
 
-    public int getRGBComponent(int color)
+    /**
+	 * Returns a single color component, specified by using an enumeration constant as a parameter. e.g. Color.RED.
+	 * @param color An integer obtained from Color, such as Color.RED, Color.GREEN or Color.BLUE
+	 * @return The calibrated/normalized RGB value (0-255)
+	 */
+	public int getRGBComponent(int color)
     {
         // TODO: Check if color is 0-2
     	int ret = getData(0x43 + color, buf, 1);
@@ -153,7 +159,9 @@ public class ColorSensorHT extends I2CSensor implements ColorDetector {
         return sendData(0x41, (byte)0x42);
     }
 
+    // TODO: Getting color ID causes another reading, not very efficient if just want RGB fast. Would be nice
+    // to piggyback on colorID code using values already retrieved.
 	public Color getColor() {
-		return new Color(getRGBComponent(Color.RED), getRGBComponent(Color.GREEN), getRGBComponent(Color.BLUE));
+		return new Color(getRGBComponent(Color.RED), getRGBComponent(Color.GREEN), getRGBComponent(Color.BLUE), this.getColorID());
 	}
 }

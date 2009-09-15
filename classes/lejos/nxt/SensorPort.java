@@ -210,7 +210,6 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
          * Sensor types supported by this driver. The type is used to control the
          * operation of the tri color led.
          */
-        private Colors.Color[] colorMap = Colors.Color.values();
         // pin usage for clock and data lines.
         private static final int CLOCK = SensorPort.SP_DIGI0;
         private static final int DATA = SensorPort.SP_DIGI1;
@@ -698,40 +697,40 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
                 // we have calibrated values, now use them to determine the color
                 if ((red < 55 && green < 55 && blue < 55) ||
                         (blank < 30 && red < 100 && green < 100 && blue < 100))
-                    return Colors.BLACK;
+                    return SensorPort.BLACK;
                 if (red > blue && red > green)
                 {
                     // red dominant color
                     if (((blue >> 1) + (blue >> 2) + blue < green) &&
                             (green << 1) + green > red)
-                        return Colors.YELLOW;
+                        return SensorPort.YELLOW;
                     if ((green << 1) < red)
-                        return Colors.RED;
+                        return SensorPort.RED;
                     if (blue < 70 || green < 70 || (blank < 100 && red < 100))
-                        return Colors.BLACK;
-                    return Colors.WHITE;
+                        return SensorPort.BLACK;
+                    return SensorPort.WHITE;
                 }
                 else if (green > blue)
                 {
                     // green dominant
                     if ((blue << 1) < red)
-                        return Colors.YELLOW;
+                        return SensorPort.YELLOW;
                     if ((red + (red >> 2) + (red >> 3) < green) ||
                             (blue + (blue >> 2) + (blue >> 3) < green))
-                        return Colors.GREEN;
+                        return SensorPort.GREEN;
                     if (red < 70 || blue < 70 || (blank < 100 && green < 100))
-                        return Colors.BLACK;
-                    return Colors.WHITE;
+                        return SensorPort.BLACK;
+                    return SensorPort.WHITE;
                 }
                 else
                 {
                     // Blue is dominant
                     if ((red + (red >> 3) + (red >> 4) < blue) ||
                             (green + green >> 3) + (green >> 4) < blue)
-                        return Colors.BLUE;
+                        return SensorPort.BLUE;
                     if (red < 70 || green < 70 || (blank < 100 && blue < 100))
-                        return Colors.BLACK;
-                    return Colors.WHITE;
+                        return SensorPort.BLACK;
+                    return SensorPort.WHITE;
                 }
             }
         }

@@ -23,7 +23,7 @@ public class ColorSensorTest
         if (portNo < 0) return;
         for(;;)
         {
-            ColorSensor cs = new ColorSensor(SensorPort.PORTS[portNo], ColorSensor.TYPE_COLORNONE);
+            ColorSensor cs = new ColorSensor(SensorPort.PORTS[portNo]);
             int mode = modeMenu.select();
             if (mode < 0) return;
             cs.setType(ColorSensor.TYPE_COLORFULL + mode);
