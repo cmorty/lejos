@@ -27,14 +27,6 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
     public static final int SP_MODE_OUTPUT = 2;
     /** Sensor port pin mode. Pin is analogue input */
     public static final int SP_MODE_ADC = 3;
-    /** Color sensor data RED value index. */
-    public static final int RGB_RED = 0;
-    /** Color sensor data GREEN value index. */
-    public static final int RGB_GREEN = 1;
-    /** Color sensor data BLUE value index. */
-    public static final int RGB_BLUE = 2;
-    /** Color sensor data BLANK/Background value index. */
-    public static final int RGB_BLANK = 3;
 
     // Digital I/O pins used to control the sensor operation
     private static final int DIGI_I2C = -1;
@@ -116,7 +108,7 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
     private int type, mode;
 
     /**
-     * The SensorReader class provides a way of performing type dependent way
+     * The SensorReader class provides a type dependent way
      * to obtain data from a sensor. This base class simply returns no data.
      */
     protected class SensorReader
@@ -222,8 +214,8 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
         private static final int SENSORMAX = ADMAX;
         private int[][] calData = new int[3][4];
         private int[] calLimits = new int[2];
-        private int[] rawValues = new int[RGB_BLANK + 1];
-        private int[] values = new int[RGB_BLANK + 1];
+        private int[] rawValues = new int[BLANK_INDEX + 1];
+        private int[] values = new int[BLANK_INDEX + 1];
 
         /**
          * Create a new Color Sensor instance and bind it to a port.
@@ -567,10 +559,10 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
                 if (!checkSensor())
                     return false;
                 setSensorPinMode(CLOCK, SensorPort.SP_MODE_OUTPUT);
-                rawValues[RGB_BLANK] = readFullColorValue(1);
-                rawValues[RGB_RED] = readFullColorValue(0);
-                rawValues[RGB_GREEN] = readFullColorValue(1);
-                rawValues[RGB_BLUE] = readFullColorValue(0);
+                rawValues[BLANK_INDEX] = readFullColorValue(1);
+                rawValues[RED_INDEX] = readFullColorValue(0);
+                rawValues[GREEN_INDEX] = readFullColorValue(1);
+                rawValues[BLUE_INDEX] = readFullColorValue(0);
                 return true;
             }
             else
@@ -629,7 +621,7 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
         {
             // First select the calibration table to use...
             int calTab;
-            int blankVal = rawValues[RGB_BLANK];
+            int blankVal = rawValues[BLANK_INDEX];
             if (blankVal < calLimits[1])
                 calTab = 2;
             else if (blankVal < calLimits[0])
@@ -637,7 +629,7 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
             else
                 calTab = 0;
             // Now adjust the raw values
-            for (int col = RGB_RED; col <= RGB_BLUE; col++)
+            for (int col = RED_INDEX; col <= BLUE_INDEX; col++)
                 if (rawValues[col] > blankVal)
                     vals[col] = ((rawValues[col] - blankVal) * calData[calTab][col]) >>> 16;
                 else
@@ -648,7 +640,7 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
             else
                 blankVal = 0;
             blankVal = (blankVal * 100) / (((SENSORMAX - MINBLANKVAL) * 100) / ADMAX);
-            vals[RGB_BLANK] = (blankVal * calData[calTab][RGB_BLANK]) >>> 16;
+            vals[BLANK_INDEX] = (blankVal * calData[calTab][BLANK_INDEX]) >>> 16;
         }
 
         /**
@@ -670,7 +662,7 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
             if (!readSensor())
                 return -1;
             calibrate(vals);
-            return RGB_BLANK+1;
+            return BLANK_INDEX+1;
         }
 
         /**
@@ -690,10 +682,10 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
             else
             {
                 calibrate(values);
-                int red = values[RGB_RED];
-                int blue = values[RGB_BLUE];
-                int green = values[RGB_GREEN];
-                int blank = values[RGB_BLANK];
+                int red = values[RED_INDEX];
+                int blue = values[BLUE_INDEX];
+                int green = values[GREEN_INDEX];
+                int blank = values[BLANK_INDEX];
                 // we have calibrated values, now use them to determine the color
                 if ((red < 55 && green < 55 && blue < 55) ||
                         (blank < 30 && red < 100 && green < 100 && blue < 100))
