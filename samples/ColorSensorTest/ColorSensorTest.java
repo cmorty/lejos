@@ -1,6 +1,7 @@
 import lejos.nxt.*;
 import lejos.nxt.comm.RConsole;
 import lejos.util.TextMenu;
+import lejos.robotics.Color;
 
 
 /**
@@ -9,15 +10,23 @@ import lejos.util.TextMenu;
  */
 public class ColorSensorTest
 {
+    static void displayColor(String name, int raw, int calibrated, int line)
+    {
+        LCD.drawString(name, 0, line);
+        LCD.drawInt(raw, 5, 6, line);
+        LCD.drawInt(calibrated, 5, 11, line);
+    }
 
 	public static void main(String [] args) throws Exception
     {
         String ports[] = {"Port 1", "Port 2", "Port 3", "Port 4"};
         TextMenu portMenu = new TextMenu(ports, 0, "Sensor port");
-        String modes[] = {"Full", "Red", "Green", "Blue", "None"};
+        String modes[] = {"Full", "Red", "Green", "Blue", "White", "None"};
+        int colors[] = {Color.WHITE, Color.RED, Color.GREEN, Color.BLUE, Color.WHITE, Color.NONE};
+        String colorNames[] = {"None", "Red", "Green", "Blue", "Yellow",
+                                "Megenta", "Orange", "White", "Black", "Pink",
+                                "Grey", "Light Grey", "Dark Grey", "Cyan"};
         TextMenu modeMenu = new TextMenu(modes, 0, "Color mode");
-        int rawVals[] = new int[4];
-        int vals[] = new int[4];
 
         int portNo = portMenu.select();
         if (portNo < 0) return;
@@ -26,7 +35,7 @@ public class ColorSensorTest
             ColorSensor cs = new ColorSensor(SensorPort.PORTS[portNo]);
             int mode = modeMenu.select();
             if (mode < 0) return;
-            cs.setType(ColorSensor.TYPE_COLORFULL + mode);
+            cs.setFloodlight(colors[mode]);
             LCD.clear();
             while (!Button.ESCAPE.isPressed())
             {
@@ -34,28 +43,22 @@ public class ColorSensorTest
                 LCD.drawString("Color   Raw  Cal", 0, 1);
                 if (mode == 0)
                 {
-                    cs.readValues(vals);
-                    cs.readRawValues(rawVals);
-                    //Colors.Color color = cs.readColor();
-                    int color = cs.getColorID(); // Modified by BB to accommodate lack of enums
-                    int colorVal = cs.readValue();
-                    for(int i = 0; i < vals.length; i++)
-                    {
-                        LCD.drawString(modes[i+1], 0, i + 2);
-                        LCD.drawInt(rawVals[i], 5, 6, i + 2);
-                        LCD.drawInt(vals[i], 5, 11, i + 2);
-                    }
+                    ColorSensor.Color vals = cs.getColor();
+                    ColorSensor.Color rawVals = cs.getRawColor();
+                    displayColor("Red", rawVals.getRed(), vals.getRed(), 2);
+                    displayColor("Green", rawVals.getGreen(), vals.getGreen(), 3);
+                    displayColor("Blue", rawVals.getBlue(), vals.getBlue(), 4);
+                    displayColor("None", rawVals.getBackground(), vals.getBackground(), 5);
                     LCD.drawString("Color:          ", 0, 6);
-                    //LCD.drawString(color.name(), 7, 6);
-                    LCD.drawInt(color, 7, 6); // Modified by BB to accommodate lack of enums
-                    LCD.drawString("Value: ", 0, 7);
-                    LCD.drawInt(colorVal, 5, 7, 7);
+                    LCD.drawString(colorNames[vals.getColor() + 1], 7, 6);
+                    LCD.drawString("Color val:          ", 0, 7);
+                    LCD.drawInt(vals.getColor(), 3, 11, 7);
                 }
                 else
                 {
                     LCD.drawString(modes[mode], 0, 3);
-                    int raw = cs.readRawValue();
-                    int val = cs.readValue();
+                    int raw = cs.getRawLightValue();
+                    int val = cs.getLightValue();
                     LCD.drawInt(raw, 5, 6, 3);
                     LCD.drawInt(val, 5, 11, 3);
                 }
