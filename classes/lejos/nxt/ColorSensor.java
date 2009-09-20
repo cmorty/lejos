@@ -31,7 +31,7 @@ public class ColorSensor implements LampLightDetector, ColorDetector, SensorCons
     private int lampColor = Color.NONE;
 
     /**
-     * Extended color class, that allows includes the background reading at
+     * Extended color class, that includes the background reading at
      * the time that the other readings were made.
      */
     static public class Color extends lejos.robotics.Color
