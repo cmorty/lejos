@@ -11,6 +11,6 @@ void nxt_lcd_power_up(void);
 void nxt_lcd_power_down(void);
 void nxt_lcd_update();
 void nxt_lcd_force_update();
-
-
+void nxt_lcd_set_pot(U32 val);
+void nxt_lcd_enable(U32 on);
 #endif
