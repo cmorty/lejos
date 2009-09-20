@@ -1,8 +1,7 @@
 package lejos.nxt.addon;
 
 import lejos.nxt.*;
-import lejos.nxt.Colors.Color;
-import lejos.robotics.LampLightDetector;
+import lejos.robotics.*;
 
 /*
  * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
@@ -70,11 +69,11 @@ public class RCXLightSensor implements SensorConstants, LampLightDetector {
 		return getLightValue();
 	}
 
-	public Colors.Color getFloodlight() {
+	public int getFloodlight() {
 		if(this.floodlight == true)
-			return Colors.Color.RED;
+			return Color.RED;
 		else
-			return Colors.Color.NONE;
+			return Color.NONE;
 	}
 
 	public boolean isFloodlightOn() {
@@ -89,11 +88,11 @@ public class RCXLightSensor implements SensorConstants, LampLightDetector {
 			port.passivate();
 	}
 
-	public boolean setFloodlight(Colors.Color color) {
-		if(color == Colors.Color.RED) {
+	public boolean setFloodlight(int color) {
+		if(color == Color.RED) {
 			setFloodlight(true);
 			return true;
-		} else if (color == Colors.Color.NONE) {
+		} else if (color == Color.NONE) {
 			setFloodlight(false);
 			return true;
 		} else return false;

@@ -1,7 +1,5 @@
 package lejos.robotics;
 
-import lejos.nxt.Colors;
-
 // TODO: This is wrong to have a lejos.robotics class using a lejos.nxt class.
 
 /*
@@ -35,7 +33,7 @@ public interface LampLightDetector extends LightDetector {
 	 * Returns the color of the floodlight, including Color.NONE.
 	 * @return An enumeration of the current color.
 	 */
-	public Colors.Color getFloodlight();
+	public int getFloodlight();
 	
 	/**
 	 * Used to turn on or off the floodlight by color. If the sensor has multiple light colors, you can control
@@ -44,6 +42,6 @@ public interface LampLightDetector extends LightDetector {
 	 * @return True if lamp changed, false if lamp color doesn't exist for this sensor. 
 	 */
 	 
-	public boolean setFloodlight(Colors.Color color);
+	public boolean setFloodlight(int color);
 	
 }
