@@ -25,6 +25,11 @@
 Thread* currentThread;
 
 /**
+ * Initial thread created at system boot time.
+ */
+Thread* bootThread;
+
+/**
  * Priority queue of threads. Entry points at the last thread in the queue.
  */
 REFERENCE threads;
@@ -81,13 +86,24 @@ inline void set_monitor_count (Object *obj, byte count)
 #define set_monitor_count(obj,count) ((sync)->monitorCount = (count))
 
 /**
- * Initialise the thread pool. Note we use a Java object so that we can make
- * the pool available to Java.
+ * Initialise the thread pool and create the bootThread.
+ * Note we use a Java object so that we can make
+ * the pool available to Java. But to do this we have to take great care
+ * because the gc makes use of the thread system! So we must ensure that
+ * currentThread is pointing to a valid structure before performing any
+ * allocations.
  **/
 void init_threads()
 {
   int i;
-  threads = ptr2ref(new_primitive_array(T_REFERENCE, 10));
+  // Allocate temporary thread structure for use during system startup
+  Thread initThread;
+  initThread.threadId = 255;
+  initThread.state = SUSPENDED;
+  currentThread = &initThread;
+
+  // Now create the basic threading system
+  threads = ptr2ref(new_single_array(ALJAVA_LANG_OBJECT, 10));
   threadQ = (Thread **)ref_array(threads);
   Thread **pQ = threadQ;
   gThreadCounter = 0;
@@ -99,6 +115,12 @@ void init_threads()
   memory_base[MEM_THREADS] = (byte *)threadQ;
   memory_base[MEM_IMAGE] = (byte *)installedBinary;
   memory_base[MEM_STATICS] = (byte *)classStaticStateBase;
+
+  // Create the system boot thread
+  bootThread = (Thread *)new_object_for_class(JAVA_LANG_THREAD);
+  init_thread(bootThread);
+  // Now we have a valid thread use it.
+  currentThread = bootThread;
 }
 
 /**
@@ -125,40 +147,19 @@ int init_thread (Thread *thread)
 
   if (thread->state != NEW)
     return throw_exception(illegalStateException);
-  // Protected the argument (that may have come from native code), from the GC
-  //protectedRef[0] = (Object *)thread;
-  protect_obj(thread);
   // Allocate space for stack frames.
-  thread->stackFrameArray = ptr2ref (new_primitive_array (T_BYTE, INITIAL_STACK_FRAMES*sizeof(StackFrame)));
-  if (thread->stackFrameArray == JNULL)
+  if (init_stacks(thread) < 0)
   {
-    //protectedRef[0] = JNULL;
-    unprotect_obj(thread);
     return EXEC_RETRY;
   }
-    
-  // Allocate actual stack storage (INITIAL_STACK_SIZE * 4 bytes)
-  thread->stackArray = ptr2ref (new_primitive_array (T_INT, INITIAL_STACK_SIZE));
-  //protectedRef[0] = JNULL;
-  unprotect_obj(thread);
-  if (thread->stackArray == JNULL)
-  {
-    free_array (ref2obj(thread->stackFrameArray));
-    thread->stackFrameArray = JNULL;
-    return EXEC_RETRY;    
-  }
-  
   gThreadCounter++;
   
   #ifdef VERIFY
   assert (is_array (word2obj (thread->stackFrameArray)), THREADS0);
   assert (is_array (word2obj (thread->stackArray)), THREADS1);
   #endif
-
-  thread->stackFrameArraySize = 0;
+  thread->stackFrameIndex = 0;
   thread->state = STARTED;
-  if (currentThread == null)
-    currentThread = thread;
     
   enqueue_thread(thread);
 
@@ -187,7 +188,6 @@ boolean switch_thread()
   boolean nonDaemonRunnable = false;
   StackFrame *stackFrame = null;
   short i;
-
   #if DEBUG_THREADS || DEBUG_BYTECODE
   printf ("------ switch_thread: currentThread at %d\n", (int) currentThread);
   #endif
@@ -202,10 +202,6 @@ boolean switch_thread()
       #endif
   
       #if REMOVE_DEAD_THREADS
-      // This order of deallocation is actually crucial to avoid leaks
-      free_array ((Object *) word2ptr (currentThread->stackArray));
-      free_array ((Object *) word2ptr (currentThread->stackFrameArray));
-
       #ifdef SAFE
       currentThread->stackFrameArray = JNULL;
       currentThread->stackArray = JNULL;
@@ -386,18 +382,6 @@ done_pi:
             candidate->state = RUNNING;
             if (candidate == bootThread)
             {
-/*
-              MethodRecord *mRec;
-              ClassRecord *classRecord;
-              classRecord = get_class_record (get_entry_class (gProgramNumber));
-              // Initialize top word with fake parameter for main():
-              set_top_ref_cur (JNULL);
-              // Push stack frame for main method:
-              mRec= find_method (classRecord, main_4_1Ljava_3lang_3String_2_5V);
-              dispatch_special (mRec, null);
-              // Push another if necessary for the static initializer:
-              dispatch_static_initializer (classRecord, curPc);
-*/
               execute_program(gProgramNumber);
             }
             else
@@ -477,7 +461,6 @@ printf ("currentThread=%d, ndr=%d\n", (int) currentThread, (int)nonDaemonRunnabl
       #endif
     
       update_registers (stackFrame);
-    
       #if DEBUG_THREADS
       printf ("done updating registers\n");
       #endif
@@ -522,7 +505,6 @@ void system_wait(Object *obj)
 #if DEBUG_MONITOR
   printf("system_wait of %d, thread %d(%d)\n",(int)obj, (int)currentThread, currentThread->threadId);
 #endif
-
   // Gotta yield
   schedule_request( REQUEST_SWITCH_THREAD);
 }
