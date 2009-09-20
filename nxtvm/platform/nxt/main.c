@@ -54,7 +54,14 @@ byte *gNextProgram;
 unsigned int gProgramExecutions=0;
 
 byte *region;
-Thread *bootThread;
+
+void
+shutdown()
+{
+  nxt_lcd_enable(false);
+  for(;;)
+    nxt_avr_power_down();
+}
 
 void
 wait_for_power_down_signal()
@@ -65,9 +72,7 @@ wait_for_power_down_signal()
     // Check for ENTER and ESCAPE pressed
     if (b == 9) {
       // Shut down power immediately
-      while (1) {
-	nxt_avr_power_down();
-      }
+      shutdown();
     }
   }
 }
@@ -107,9 +112,9 @@ handle_uncaught_exception(Object * exception,
   display_int(pc - get_binary_base(), 0);
   if( get_class_index(exception) == JAVA_LANG_OUTOFMEMORYERROR)
   {
-    display_goto_xy(0, 3);
+    display_goto_xy(0, 4);
     display_string("Size: ");
-    display_int(failed_alloc_size << 1, 0);
+    display_int(failed_alloc_size, 0);
   }
   display_update();
   wait_for_power_down_signal();
@@ -124,9 +129,7 @@ switch_thread_hook()
   if (b == 9) {
     if (debug_user_interrupt()) return;
     // Shut down power immediately
-    while (1) {
-      nxt_avr_power_down();
-    }
+    shutdown();
   }
 }
 
@@ -183,7 +186,7 @@ run(int jsize)
   
     ram_end -= staticSize;
     classStaticStateBase = ram_end;
-
+    memset( (byte *)classStaticStateBase, 0, staticSize);
     ram_end -= syncSize;
     staticSyncBase = (objSync *)ram_end;
     memset( (byte *)staticSyncBase, 0, syncSize);
@@ -229,17 +232,10 @@ run(int jsize)
 
   //printf("Initializing exceptions\n");
 
+  // Create the execution environment and boot thread
+  init_threads();
   // Initialize exceptions
   init_exceptions();
-
-  // Create the boot thread (bootThread is a special global)
-  bootThread = (Thread *) new_object_for_class(JAVA_LANG_THREAD);
-
-  init_threads();
-  if (init_thread(bootThread) != EXEC_CONTINUE) {
-    return;
-  }
-  //printf("Executing Interpreter\n");
 
   // Execute the bytecode interpreter
   set_program_number(0);
@@ -302,7 +298,6 @@ nxt_main(byte *bin, int size)
   install_binary(binary);
 
   //      printf("Running\n");
-
   run(jsize);
   display_clear(1);
   nxt_motor_reset_all();
@@ -509,8 +504,5 @@ main(void)
   }
   while (true);
 
-  while (1) {
-    nxt_avr_power_down();
-  }
-  
+  shutdown();
 }
