@@ -32,9 +32,14 @@
 #if REMOTE_CONSOLE
 #include <stdarg.h>
 #include "udp.h"
+//#define LCD
+#ifdef LCD
+#include "display.h"
+#include "systick.h"
+#endif
+
 U8 buf[64];
 int len = 0;
-
 int putchar(int c)
 {
   if (len < sizeof(buf)-1)
@@ -46,10 +51,24 @@ void flush()
 {
   if (len > 0)
   {
+#ifdef LCD
+    static int line = 0;
+    buf[len] = '\0';
+    display_goto_xy( 0, line);
+    display_string("                ");
+    display_goto_xy( 0, line);
+    display_string((char *)buf+1);
+    line = (line + 1) & 7;
+    display_goto_xy( 0, line);
+    display_string("                ");
+    display_update();
+    //systick_wait_ms(1000);
+#else
     buf[0] = len;
     udp_rconsole(buf, len + 1);
-    len = 0;
+#endif
   }
+  len = 0;
 }
   
 static void printchar(char **str, int c)
