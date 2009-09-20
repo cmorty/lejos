@@ -263,10 +263,8 @@ public class StartUpText
         {
             for (;;)
             {
-                updateTitle();
-                updateIO();
-                updateBattery();
                 Delay.msDelay(1000);
+                update();
                 tick++;
             }
         }
@@ -587,13 +585,39 @@ public class StartUpText
     }
 
     /**
+     * Make the LCD display fade into view.
+     */
+    private void fadeIn()
+    {
+        for(int i = 20; i < 0x60; i++)
+        {
+            Delay.msDelay(5);
+            LCD.setContrast(i);
+        }
+    }
+
+    /**
+     * Make the LCD display fade out of view.
+     */
+    private void fadeOut()
+    {
+        for(int i = 0x60; i >= 20; i--)
+        {
+            Delay.msDelay(5);
+            LCD.setContrast(i);
+        }
+    }
+    
+    /**
      * Startup the menu system.
      * Play the greeting tune.
      * Run the default program if auto-run is requested.
      * Initialize I/O etc.
      */
+    volatile int stState = 0;
     private void startup()
     {
+        LCD.setContrast(0);
         Thread tuneThread = new Thread()
         {
 
@@ -601,41 +625,70 @@ public class StartUpText
             public void run()
             {
                 playTune();
+                //fadeIn();
             }
         };
-        tuneThread.start();
+        Thread initThread = new Thread()
+        {
+
+            @Override
+            public void run()
+            {
+                File.listFiles();
+                // Defrag the file system
+                try
+                {
+                    File.defrag();
+                }
+                catch (IOException ioe)
+                {
+                    File.reset();
+                }
+                stState = 1;
+                setAddress();
+                timeout = SystemSettings.getIntSetting(sleepTimeProperty, defaultSleepTime);
+                btPowerOn = setBluetoothPower(Bluetooth.getStatus() == 0);
+                usb.start();
+                bt.start();
+                stState = 2;
+                // Wait for the screen to be dim
+                while (stState != 3)
+                    Thread.yield();
+                // Give time for the menu to be displayed
+                Delay.msDelay(250);
+                // and make it visible.
+                fadeIn();
+            }
+        };
         // Make sure color sensor can be used remotely, this will also reset
         // the sensors
         for(SensorPort sp : SensorPort.PORTS)
             sp.enableColorSensor();
         // Run default program if required
-        if (NXT.getProgramExecutionsCount() == 1 &&
-                !Button.LEFT.isPressed() &&
+        if (NXT.getProgramExecutionsCount() == 1)
+        {
+            // First time we have run
+            if (!Button.LEFT.isPressed() &&
                 Settings.getProperty(defaultProgramAutoRunProperty, "").equals("ON"))
-            runDefaultProgram();
-        setAddress();
-        timeout = SystemSettings.getIntSetting(sleepTimeProperty, defaultSleepTime);
-        btPowerOn = setBluetoothPower(Bluetooth.getStatus() == 0);
+            {
+                tuneThread.start();
+                runDefaultProgram();
+            }
+        }
+        initThread.start();
+        fadeIn();
+        // Wait for defrag to complete
+        while (stState != 1)
+            Thread.yield();
+        tuneThread.start();
+        // Wait for init to complete
+        while (stState != 2)
+            Thread.yield();
+        fadeOut();
         ind.start();
-        usb.start();
-        bt.start();
-        try
-        {
-            tuneThread.join();
-        }
-        catch (InterruptedException e)
-        {
-        }
-        File.listFiles();
-        // Defrag the file system
-        try
-        {
-            File.defrag();
-        }
-        catch (IOException ioe)
-        {
-            File.reset();
-        }
+        LCD.clear();
+        // Tell the background thread we are done and to fade in the menu.
+        stState = 3;
     }
 
     /**
@@ -1154,6 +1207,7 @@ public class StartUpText
         StartUpText sysMenu = new StartUpText();
         sysMenu.startup();
         sysMenu.mainMenu();
+        sysMenu.fadeOut();
         NXT.shutDown();
     }
 }
