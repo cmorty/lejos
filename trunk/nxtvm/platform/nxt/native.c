@@ -33,6 +33,7 @@
 #include "debug.h"
 #include "systick.h"
 #include "main.h"
+#include "nxt_lcd.h"
 #include <string.h>
 
 
@@ -233,6 +234,9 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
   case getSystemFont_4_5_1B:
     push_word(display_get_font());
     break;
+  case setContrast_4I_5V:
+    nxt_lcd_set_pot(paramBase[0]);
+    break;
   case getBatteryStatus_4_5I:
     push_word(battery_voltage());
     break;
@@ -412,8 +416,7 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
     // Restartable garbage collection
     return garbage_collect();
   case shutDown_4_5V:
-    display_clear(1);
-    while (1) nxt_avr_power_down(); // does not return 
+    shutdown(); // does not return
   case boot_4_5V:
     display_clear(1);
     while (1) nxt_avr_firmware_update_mode(); // does not return 

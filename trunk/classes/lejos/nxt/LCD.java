@@ -265,4 +265,10 @@ public class LCD {
 		LCD.bitBlt(0, SCREEN_HEIGHT - CELL_HEIGHT,
 				   SCREEN_WIDTH, CELL_HEIGHT, ROP_CLEAR);
 	}
+
+    /**
+     * Set the LCD contrast.
+     * @param contrast 0 blank 0x60 full on
+     */
+    public native static void setContrast(int contrast);
 }

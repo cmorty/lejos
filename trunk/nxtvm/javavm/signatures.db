@@ -196,3 +196,6 @@ nanoTime()J
 
 #VM
 isAssignable(II)Z
+
+#LCD
+setContrast(I)V
