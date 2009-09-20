@@ -77,12 +77,12 @@ void init_exceptions()
 int throw_exception (Object *exception)
 {
   Thread *auxThread;
-  int exceptionFrame = currentThread->stackFrameArraySize;
+  int exceptionFrame = currentThread->stackFrameIndex;
   
   #ifdef VERIFY
   assert (exception != null, EXCEPTIONS0);
   #endif // VERIFY
-
+printf("Throw exception %d\n", get_class_index(exception));
 #if DEBUG_EXCEPTIONS
   printf("Throw exception\n");
 #endif
@@ -167,7 +167,7 @@ int throw_exception (Object *exception)
       // corruption of lower frames if we save the current state. The
       // thread is now dead so this should be safe.
       curPc = gExceptionPc;
-      currentThread->stackFrameArraySize = exceptionFrame;
+      currentThread->stackFrameIndex = exceptionFrame;
       if (!debug_uncaught_exception (exception, auxThread,
   			         gExcepMethodRec, tempMethodRecord,
 			         gExceptionPc, exceptionFrame))

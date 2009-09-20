@@ -4,19 +4,20 @@
 
 #ifndef _MEMORY_H
 #define _MEMORY_H
+#include "language.h"
 
-extern const byte typeSize[];
 extern void memory_init ();
 extern void memory_add_region (byte *region, byte *end);
 
-extern void deallocate(TWOBYTES *objectRef, FOURBYTES sz);
-extern void free_array (Object *objectRef);
 extern Object *new_object_checked (const byte classIndex, byte *btAddr);
 extern Object *new_object_for_class (const byte classIndex);
 extern Object *new_primitive_array (const byte typ, JINT length);
 extern Object *new_single_array (const byte cls, JINT length);
-extern Object *reallocate_array(Object *obj, JINT newlen);
+extern int init_stacks(Thread *thread);
+extern int expand_call_stack(Thread *thread);
+extern int expand_value_stack(Thread *thread, int minSize);
 extern Object *new_multi_array (const byte cls, byte reqDimensions, STACKWORD *numElemPtr);
+extern Object *new_string(ConstantRecord *constantRecord, byte *btAddr);
 extern int arraycopy(Object *src, int srcOff, Object *dst, int dstOff, int len);
 extern byte *system_allocate(int sz);
 extern void system_free(byte *mem);
@@ -31,37 +32,28 @@ extern int getRegionAddress();
 extern int garbage_collect();
 extern Object *clone(Object *old);
 
-#if GARBAGE_COLLECTOR == MEM_CONCURRENT
 #define GC_IDLE 0
 #define GC_MARKROOTS 1
 #define GC_MARK 2
 #define GC_SWEEP 3
+#define GC_COMPACT 4
+#define GC_EXPAND 5
+#define GC_COMPLETE 6
 extern int gcPhase;
 extern void gc_update_array(Object *obj);
 extern void gc_update_object(Object *obj);
 extern void gc_run_collector(void);
 extern Object gcLock;
 
-#define is_gc_retry() (gcLock.sync.threadId == currentThread->threadId)
 #define update_array(obj) {if(gcPhase == GC_MARK && ((*(TWOBYTES *)(obj)) & GC_MASK) != GC_MASK) gc_update_array((obj));}
 #define update_object(obj) {if(gcPhase == GC_MARK && ((*(TWOBYTES *)(obj)) & GC_MASK) != GC_MASK) gc_update_object((obj));}
 #define run_collector() (gcPhase != GC_IDLE ? gc_run_collector(), 1 : 0)
-#else
-#define update_array(obj)
-#define update_object(obj)
-#define run_collector()
-#define is_gc_retry() 0
-#endif
 
 #define HEADER_SIZE (sizeof(Object))
-// Size of object header in 2-byte words
-#define NORM_OBJ_SIZE ((HEADER_SIZE + 1) / 2)
-// Size of BigArry header in 2 byte words
-#define BA_OBJ_SIZE ((sizeof(BigArray) + 1) / 2)
 
 #define fields_start(OBJ_)  ((byte *) (OBJ_) + HEADER_SIZE)
 // Generic access to array data given an array object
-#define array_start(OBJ_)   (is_std_array((Object *)(OBJ_)) ? (byte *) (OBJ_) + HEADER_SIZE : (byte *)(OBJ_) + sizeof(BigArray))
+#define array_start(OBJ_)   (is_std_array((Object *)(OBJ_)) ? (((byte *) (OBJ_)) + HEADER_SIZE) : (byte *)(((FOURBYTES *)(OBJ_)) + ((int)((BigArray *)(OBJ_))->offset)))
 // Typed access to the data
 #define jbyte_array(OBJ_)   ((JBYTE *) array_start(OBJ_))
 #define word_array(OBJ_)    ((STACKWORD *) array_start(OBJ_))
@@ -87,22 +79,6 @@ extern Object gcLock;
 #define unprotect_obj(OBJ) (((Object *)OBJ)->sync.monitorCount--)
 
 extern TWOBYTES failed_alloc_size;
-
-typedef struct
-{
-  int last;
-  int min;
-  int max;
-  int sum;
-  int count;
-} VarStat;
-
-extern VarStat gc_mark_vs;
-extern VarStat gc_sweep_vs;
-extern VarStat gc_total_vs;
-extern VarStat mem_alloctm_vs;
-extern VarStat mem_freeblk_vs;
-extern VarStat mem_usedblk_vs;
 
 #define MEM_ABSOLUTE 0
 #define MEM_THREADS 1

@@ -41,7 +41,7 @@ MULTI_OPCODE(OP_LDC_4)
       // T_REFERENCE is actually String
 
       SAVE_REGS();
-      tempWordPtr = (void *) create_string (tempConstRec, pc - 1);
+      tempWordPtr = (void *) new_string (tempConstRec, pc - 1);
       LOAD_REGS();
       if (tempWordPtr == JNULL)
         DISPATCH_CHECKED;

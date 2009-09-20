@@ -319,7 +319,7 @@ boolean dispatch_special (MethodRecord *methodRecord, byte *retAddr)
   // in the new frame.
   newStackTop = get_stack_ptr_cur() - methodRecord->numParameters;
 
-  newStackFrameIndex = (int)(byte)currentThread->stackFrameArraySize;
+  newStackFrameIndex = (int)(byte)currentThread->stackFrameIndex;
   if (newStackFrameIndex >=  255)
   {
       throw_exception (stackOverflowError);
@@ -346,18 +346,9 @@ boolean dispatch_special (MethodRecord *methodRecord, byte *retAddr)
     throw_exception (stackOverflowError);
     return false;
 #else
-    int newlen = (stackFrame - stackBase)*3/2;
-    // Stack frames are indexed by a byte value so limit the size. 
-    if (newlen > 256)
-      newlen = 256;
-    // increase the stack frame size
-    stackFrameArray = reallocate_array(stackFrameArray, newlen*(sizeof(StackFrame)));
-    // If can't allocate new stack, give in!
-    if (stackFrameArray == JNULL)
+    if (expand_call_stack(currentThread) < 0)
       return false;
-    // Assign new array
-    currentThread->stackFrameArray = ptr2ref(stackFrameArray);
-    stackFrame = (StackFrame *)array_start(stackFrameArray) + newStackFrameIndex;
+    stackFrame = (StackFrame *)array_start(currentThread->stackFrameArray) + newStackFrameIndex;
 #endif
   }
   
@@ -367,53 +358,27 @@ boolean dispatch_special (MethodRecord *methodRecord, byte *retAddr)
   stackFrame->localsBase = newStackTop + 1;
   // Allocate space for locals etc.
   newStackTop = init_sp(stackFrame, methodRecord);
+  stackFrame->stackTop = newStackTop;
+  currentThread->stackFrameIndex = newStackFrameIndex;
   
   // Check for stack overflow
-  // (stackTop + methodRecord->maxOperands) >= (stack_array() + STACK_SIZE);
   if (is_stack_overflow (newStackTop, methodRecord))
   {
 #if FIXED_STACK_SIZE
     throw_exception (stackOverflowError);
     return false;
 #else
-    StackFrame *stackBase;
-    byte *oldStart = array_start((Object *)(currentThread->stackArray));
-    int offset;
-    int i;
     
-    // Need at least this many bytes
-    // int len = (int)(stackTop + methodRecord->maxOperands) - (int)(stack_array()) - HEADER_SIZE;
-    
-    // Need to compute new array size (as distinct from number of bytes in array).
-    int newlen = (((int)(newStackTop + methodRecord->maxOperands) - (int)(stack_array()) + 3) / 4) * 3 / 2;
-    REFERENCE newStackArray = ptr2ref(reallocate_array(word2ptr(currentThread->stackArray), newlen));
-    // If can't allocate new stack, give in!
-    if (newStackArray == JNULL)
-      return false;
-    // Adjust pointers.
-    offset = array_start((Object *)newStackArray) - oldStart;
-    stackBase = (StackFrame *)array_start(stackFrameArray);
-    newStackTop = word2ptr(ptr2word(newStackTop) + offset);
-    curLocalsBase = word2ptr(ptr2word(curLocalsBase) + offset);
-#if DEBUG_MEMORY
-    printf("thread=%d, stackTop(%d), localsBase(%d)=%d\n", currentThread->threadId, (int)stackTop, (int)localsBase, (int)(*localsBase));
-#endif
-    for (i=newStackFrameIndex;
-         i >= 0;
-         i--)
+    if (expand_value_stack(currentThread, methodRecord->maxOperands+methodRecord->numLocals) < 0)
     {
-      stackBase[i].localsBase = word2ptr(ptr2word(stackBase[i].localsBase) + offset);
-      stackBase[i].stackTop = word2ptr(ptr2word(stackBase[i].stackTop) + offset);
-#if DEBUG_MEMORY
-      printf("stackBase[%d].localsBase(%d) = %d\n", i, (int)stackBase[i].localsBase, (int)(*stackBase[i].localsBase));
-#endif
+      currentThread->stackFrameIndex--;
+      return false;
     }
-    // Assign new array
-    currentThread->stackArray = newStackArray;
+    // NOTE at this point newStackTop is no longer valid!
+    newStackTop = stackFrame->stackTop;
 #endif
   }
   // All set. So now we can finally commit to the new stack frames
-  currentThread->stackFrameArraySize = newStackFrameIndex;
   update_constant_registers (stackFrame);
   curStackTop = newStackTop;
   // and jump to the start of the new code
@@ -455,10 +420,10 @@ void do_return (int numWords)
   }
 
   #if DEBUG_THREADS || DEBUG_METHODS
-  printf ("do_return: stack frame array size: %d\n", currentThread->stackFrameArraySize);
+  printf ("do_return: stack frame array size: %d\n", currentThread->stackFrameIndex);
   #endif
 
-  if (currentThread->stackFrameArraySize == 1)
+  if (currentThread->stackFrameIndex == 1)
   {
     #if DEBUG_METHODS
     printf ("do_return: thread is done: %d\n", (int) currentThread);
@@ -471,7 +436,7 @@ void do_return (int numWords)
   // Place source ptr below data to be copied up the stack
   fromStackPtr = get_stack_ptr_at_cur(numWords);
   // Pop stack frame
-  currentThread->stackFrameArraySize--;
+  currentThread->stackFrameIndex--;
   stackFrame--;
   // Assign registers
   update_registers (stackFrame);
@@ -498,7 +463,7 @@ int execute_program(int prog)
   ClassRecord *classRecord = get_class_record (get_entry_class (prog));
   MethodRecord *mRec = find_method (classRecord, main_4_1Ljava_3lang_3String_2_5V);
   // smash the stacks back to the initial state
-  currentThread->stackFrameArraySize = 0;
+  currentThread->stackFrameIndex = 0;
   init_sp_pv();
   update_stack_frame(current_stackframe());
   // Push the param

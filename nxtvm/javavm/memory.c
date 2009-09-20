@@ -1,3 +1,18 @@
+/**
+ * Memory operations.
+ * This file encapsulates many of the low level memory operations required
+ * by the VM. In particular it include the allocator and garbage collector
+ * allong with functions to allow access to non aligned storage.
+ *
+ * The allocator uses two heap areas one allocates fixed location objects
+ * which are refernced directly by other parts of the VM.
+ * The other heap contains objects that can be moved, these objects are
+ * accessed via a pointer stored in a fixed location object.
+ * Both heaps are collected using an incremental
+ * concurrent collector. Failed allocation requests will result in the
+ * current thread being suspended while the gc runs, after which the
+ * request can be retried. 
+ */
 #include "types.h"
 #include "trace.h"
 #include "constants.h"
@@ -22,11 +37,21 @@ static boolean memoryInitialized = false;
 #endif
 
 // Heap memory needs to be aligned to 4 bytes on ARM
-// Value is in 2-byte units and must be a power of 2
-#define MEMORY_ALIGNMENT 2
+#define WORD_SIZE 4
+#define WORD_SHIFT 2
+#define TO_WORDS(b) (((b) + (WORD_SIZE-1)) >> WORD_SHIFT)
+#define MEM_ROUND(w) (((w) + (WORD_SIZE-1)) & ~(WORD_SIZE-1))
+#define MEM_TRUNC(w) ((w) & ~(WORD_SIZE -1)) 
+
+// Sizes and gorwth when using a split heap.
+#define INITIAL_HEAP 2048
+#define MIN_HEAP 4096
+#define MIN_HEAP_ADJUST 256
+
+
 
 // Basic types and sizes
-const byte typeSize[] = { 
+static const byte typeSize[] = { 
   4, // 0 == T_REFERENCE
   0, // 1
   0, // 2 == T_CLASS
@@ -44,47 +69,201 @@ const byte typeSize[] = {
   4, // 14 Used for multidimensional arrays
 };
 
-static TWOBYTES *heap_end;      /* pointer to end of heap */
-static TWOBYTES *heap_start;    /* pointer to start of heap */
+// Header for free objects
+typedef struct
+{
+  objFlags flags;
+  TWOBYTES next;
+} __attribute__((packed)) FreeObject;
 
-static unsigned int memory_size;    /* total number of words in heap */
-static unsigned int memory_free;    /* total number of free words in heap */
+// Header for array heap objects
+typedef struct
+{
+  TWOBYTES object:16;
+  TWOBYTES thread:15;
+  TWOBYTES available:1;
+}  __attribute__((packed)) AHeapObj;
+
+// Object sizes in words
+#define AH_OBJ_SIZE TO_WORDS(sizeof(AHeapObj))
+#define NORM_OBJ_SIZE TO_WORDS(HEADER_SIZE)
+#define BA_OBJ_SIZE TO_WORDS(sizeof(BigArray))
+
+
+// GC states are defined in memory.h to make them available to macros
+int gcPhase = GC_IDLE;
+static FOURBYTES *heapEnd;      /* pointer to end of heap */
+static FOURBYTES *heapStart;    /* pointer to start of heap */
+static FOURBYTES memorySize;    /* total number of words in heap */
+
+// Object heap data
+static FOURBYTES oheapMemoryFree; /* number of free words in heap */
+static Object *oheapStart;      /* pointer to start of object heap */
+static Object *oheapEnd;        /* pointer to end of object heap */
+static byte *refMap;            /* pointer to map of allocated objects */
+// Heap object colors
+#define GC_WHITE 0
+#define GC_LIGHTGREY 1
+#define GC_DARKGREY 2
+#define GC_BLACK 3
+
+// Heap allocation and sweep pointers
+static TWOBYTES *allocPrev;    /* current position in the free list */
+static Object *sweepBase;      /* current position of sweeping */
+static FreeObject *sweepFree;  /* current position of sweeping free ptr */
+static Object *overflowScan;   /* current position of overflow scan */
+// Mark queue
+#define MAX_CALL_DEPTH 8
+#define MARK_Q_SIZE 64
+static TWOBYTES markQ[MARK_Q_SIZE];
+static int markQHd = 0;
+static int markQTl = 0;
+#define markQNext(cur) (((cur) + 1) % MARK_Q_SIZE)
+
+// Value used to mark end of the free list. Will always point beyond the
+// end of the heap, when used as an offset.
+#define FL_END 0xffff
+// Start of the freelist
+static TWOBYTES freeList = FL_END;
+static int oheapMemoryRequired;        /* Target amount of memory needed */
+static int oheapLargestFree;
+// Array heap data
+static FOURBYTES *aheapStart;   /* pointer to start of array heap */
+static FOURBYTES *aheapEnd;     /* pointer to end of object heap */
+static FOURBYTES *aheapAlloc;   /* array heap free block */
+static FOURBYTES aheapMemoryFree; /* number of free words in array heap */
+static FOURBYTES aheapMemoryRequired;
+
+// Macro used to indicate when to suspend this mark/sweep step
+#define GC_TIMEOUT() (gMakeRequest)
+//#define GC_TIMEOUT() (0)
 
 TWOBYTES failed_alloc_size;
+// Access control and retry tracking
+Object gcLock = {{
+    .length = LEN_OBJECT,
+    .class = JAVA_LANG_OBJECT,
+    .mark = GC_BLACK,
+}, {0, 0}};
+int retryState;
+Thread *exclusiveThread = null;
+#define GC_WAIT -1
+#define GC_NORMAL 0
+#define GC_RETRY 1
+#define GC_EXCLUSIVE 2
+#define GC_ERROR 3
+#define GC_ABORT 4
 
 // Location of major memory based structures. Used to allow Java access to
 // VM memory.
 byte *memory_base[MEM_MEM+1];
-static Object *java_allocate (JINT size);
-
 
 /**
- * @@param numWords Number of 2-byte  words in the data part of the object
+ * Forward declarations.
  */
-#define initialize_state(PTR_,NWORDS_) memset((PTR_), 0, (NWORDS_)*2)
+static void mark_object(Object *obj, int callLimit);
+static Object *try_allocate(unsigned int size);
+static Object *oheap_allocate (JINT size, byte class, byte length);
+static AHeapObj *aheapAllocate(JINT size, Object *obj);
+static void aheap_free(AHeapObj *ah);
+static void compact_aheap();
 
-#define array_data_size(CLS_, LEN_) ((get_class_record(CLS_)->classSize*LEN_ + 1)/2)
-#define array_size(OBJ_) ((is_std_array(OBJ_) ? NORM_OBJ_SIZE : BA_OBJ_SIZE) + array_data_size(get_class_index(OBJ_), get_array_length(OBJ_)))
-#define obj_size(OBJ_) ((get_class_record(get_class_index(OBJ_))->classSize+1)/2)
+#define array_data_size(CLS_, LEN_) TO_WORDS(get_class_record(CLS_)->classSize*(LEN_))
+#define array_size(OBJ_) (is_std_array(OBJ_) ? NORM_OBJ_SIZE + array_data_size(get_class_index(OBJ_), ((Object *)(OBJ_))->flags.length) : (is_big_array(OBJ_) ? BA_OBJ_SIZE + array_data_size(get_class_index(OBJ_), ((BigArray *)(OBJ_))->length) : BA_OBJ_SIZE ))
+#define obj_size(OBJ_) TO_WORDS(get_class_record(get_class_index(OBJ_))->classSize)
 #define get_size(OBJ_) (is_array(OBJ_) ? array_size(OBJ_) : obj_size(OBJ_))
 #define array_element_size(OBJ_) (get_class_record(get_class_index(OBJ_))->classSize)
-#define get_free_size(OBJ_) ((is_std_array(OBJ_) ? NORM_OBJ_SIZE : BA_OBJ_SIZE) + get_array_length(OBJ_))
+#define get_free_size(OBJ_) (is_std_array((Object *)(OBJ_)) ? NORM_OBJ_SIZE : BA_OBJ_SIZE + ((BigArray *)(OBJ_))->length/2)
 
 /**
- * Zeroes out memory.
- * @@param ptr The starting address.
- * @@param numWords Number of two-byte words to clear.
- * Now slightly optmized;
- */
-void zero_mem(TWOBYTES *ptr, TWOBYTES numWords)
-{
-  TWOBYTES* end = ptr + numWords;
+ * The following functions manage the allocation request and retry mechanism.
+ * Some requests require multiple objects to be allocated, so we implement
+ * the notion of a transaction that is bounded by calls to alloc_start and
+ * alloc_complete. If a request fails we schedule a garbage collection and
+ * arrange to retry the request. If a sunsequent retry fails, we try again
+ * but this time stop all other threads from making memory requests. If this
+ * retry fails we throw an out of memory exception.
+ */ 
 
-  while(ptr < end)
-    *ptr++ = 0;
+/**
+ * Start a memory transaction.
+ */
+static boolean alloc_start()
+{
+  // Does this thread own the lock? If it does then it is a retry
+  retryState = GC_NORMAL;
+  if (gcLock.sync.threadId == currentThread->threadId)
+  {
+    // we must release the monitor
+    exit_monitor(currentThread, &gcLock);
+    // If the gc is still running we may need to try again
+    if (gcPhase == GC_IDLE)
+      retryState = GC_RETRY;
+  }
+  // Are we in exclusive mode?
+  if (exclusiveThread)
+  {
+    if (exclusiveThread != currentThread)
+    {
+      // Not the exclusive thread, wait and retry
+      curPc = getPc();
+      sleep_thread(1);
+      return false;
+    }
+    if (retryState == GC_RETRY) retryState = GC_EXCLUSIVE;
+  }
+  return true;
 }
 
+/**
+ * Complete a memory transaction.
+ * The ret parameter is NULL if the transaction failed.
+ */
+static Object *alloc_complete(Object *ret)
+{
+  // If the request has worked, clean up and we are done
+  if (ret != JNULL)
+  {
+    exclusiveThread = null;
+    return ret;
+  }
 
+  // Failed to allocate the memory, move on to the next state.
+  switch(retryState + 1)
+  {
+  case GC_ERROR:
+    throw_exception(outOfMemoryError);
+  case GC_ABORT:
+    exclusiveThread = null;
+    break;
+  case GC_EXCLUSIVE:
+    exclusiveThread = currentThread;
+  case GC_RETRY:
+    // retry the current instruction
+    curPc = getPc();
+    system_wait(&gcLock);
+    if (gcPhase == GC_IDLE) gcPhase = GC_MARKROOTS;
+    break;
+  }
+  return JNULL;
+}
+
+/**
+ * Notify any threads that are waiting to retry allocations that they can so so
+ */
+static void alloc_notify()
+{
+  system_notify(&gcLock, true);
+}
+
+/**
+ * Abort a memory transaction and throw an excpetion
+ */
+static void alloc_abort(Object *exception)
+{
+  throw_exception(exception);
+  retryState = GC_ERROR;
+}
 
 /**
  * Checks if the class needs to be initialized.
@@ -123,59 +302,13 @@ Object *new_object_checked (const byte classIndex, byte *btAddr)
 Object *new_object_for_class (const byte classIndex)
 {
   Object *ref;
-  JINT instanceSize;
 #if DEBUG_MEMORY
   printf("New object for class %d\n", classIndex);
 #endif
-  instanceSize = (get_class_record(classIndex)->classSize+1)/2;
-  
-  ref = java_allocate (instanceSize);
-
-  if (ref == null)
-  {
-#if DEBUG_MEMORY
-  printf("New object for class returning null\n");
-#endif
-    return JNULL;
-  }
-
-  // Initialize default values
-
-  ref->flags.length = LEN_OBJECT;
-  ref->flags.class = classIndex;
-
-  initialize_state (fields_start(ref), instanceSize - NORM_OBJ_SIZE);
-  #if DEBUG_OBJECTS || DEBUG_MEMORY
-    printf ("new_object_for_class: returning %d\n", (int) ref);
-  #endif
-  return ref;
+  if (!alloc_start()) return JNULL;
+  ref = oheap_allocate(TO_WORDS(get_class_record(classIndex)->classSize), classIndex, LEN_OBJECT);
+  return alloc_complete(ref);
 }
-
-/**
- * Return the size in words of an array of the given type
- */
-
-static void set_array (Object *obj, const TWOBYTES length, const int baLength, const byte cls)
-{
-  #ifdef VERIFY
-  assert (baseType <= (ELEM_TYPE_MASK >> ELEM_TYPE_SHIFT), MEMORY0); 
-  assert (length <= (ARRAY_LENGTH_MASK >> ARRAY_LENGTH_SHIFT), MEMORY1);
-  #endif
-  // Set object specific flags
-  obj->flags.class = cls;
-  obj->flags.length = length;
-  // If this is a big array set the real length
-  if (baLength)
-  {
-    ((BigArray *)obj)->length = baLength;
-  }
-    
-  #ifdef VERIFY
-  assert (is_array(obj), MEMORY3);
-  #endif
-}
-
-
 
 /**
  * Allocates an array. 
@@ -189,13 +322,12 @@ static void set_array (Object *obj, const TWOBYTES length, const int baLength, c
 static Object *new_array (const byte cls, JINT length)
 {
   Object *ref;
+  AHeapObj *ah;
   JINT allocSize;
-  FOURBYTES hdrSize;
-  FOURBYTES baLength;
 
   if (length < 0)
   {
-    throw_exception(negativeArraySizeException);
+    alloc_abort(negativeArraySizeException);
     return JNULL;
   }
   allocSize = array_data_size (cls, length);
@@ -205,38 +337,43 @@ static Object *new_array (const byte cls, JINT length)
   // If this is a large array use a bigger header
   if (length >= LEN_BIGARRAY)
   {
-    hdrSize = BA_OBJ_SIZE;
-    baLength = length;
-    length = LEN_BIGARRAY;
+    if (aheapStart != aheapEnd)
+    {
+      ref = oheap_allocate(BA_OBJ_SIZE, cls, LEN_BIGARRAY);
+      if (ref == JNULL) return JNULL;
+      // We have the header, try and allocate the data from the moveable heap
+      ah = aheapAllocate(allocSize + AH_OBJ_SIZE, ref);
+      if (ah != JNULL)
+      {
+        ref->flags.length = LEN_AHARRAY;
+        ((BigArray *)ref)->length = length;
+        ((BigArray *)ref)->offset = (short)((FOURBYTES *)ah - (FOURBYTES *)ref + AH_OBJ_SIZE);
+        return ref;
+      }
+      // Have we already tried to make space?
+      if (retryState == GC_EXCLUSIVE)
+        // yes so try to use the object heap
+        ref = oheap_allocate(allocSize + BA_OBJ_SIZE, cls, LEN_BIGARRAY);
+      else
+      {
+        // Either we retry or retry in exclusive mode
+        aheapMemoryRequired += allocSize + AH_OBJ_SIZE;
+        return JNULL;
+      }
+    }
+    else
+      ref = oheap_allocate(allocSize + BA_OBJ_SIZE, cls, LEN_BIGARRAY);
+    if (ref == JNULL) return JNULL;
+    ((BigArray *)ref)->length = length;
+    ((BigArray *)ref)->offset = (short)BA_OBJ_SIZE;
+    return ref;
   }
   else
   {
-    baLength = 0;
-    hdrSize = NORM_OBJ_SIZE;
+    ref = oheap_allocate (NORM_OBJ_SIZE + allocSize, cls, length);
+    return ref;
   }
-  ref = java_allocate (allocSize + hdrSize);
-#if DEBUG_MEMORY
-  printf("Array ptr=%d\n", (int)ref);
-#endif
-  if (ref == null)
-    return JNULL;
-  set_array (ref, length, baLength, cls);
-  initialize_state (array_start(ref), allocSize);
-  return ref;
 }
-
-/**
- * Create an array contain elements of the specified primitive type.
- * NOTE: This function may be used to create objects that are not
- * Java compatible (like the stack frame array). It may also be called before
- * the program context is available, so care must be taken with accesing
- * class information etc.
- */
-Object *new_primitive_array(const byte typ, JINT length)
-{
-  return new_array(ALJAVA_LANG_OBJECT + typ, length);
-}
-
 
 /**
  * Create a single dimension array. The class of the array is given by cls.
@@ -244,25 +381,52 @@ Object *new_primitive_array(const byte typ, JINT length)
  */
 Object *new_single_array (const byte cls, JINT length)
 {
-  return new_array(cls, length);
+  if (!alloc_start()) return JNULL;
+  return alloc_complete(new_array(cls, length));
 }
-
-
 
 /**
  * @@param cls The class index of the array
  * @@param reqDimensions Number of requested dimensions for allocation.
  * @@param numElemPtr Pointer to first dimension. Next dimension at numElemPtr+1.
  */
-Object *new_multi_array (const byte cls,
+static Object *alloc_multi_array (const byte cls,
                          byte reqDimensions, STACKWORD *numElemPtr)
 {
   Object *ref;
   Object *ref2;
   ClassRecord *classRec = get_class_record(cls);
-  byte totalDimensions = get_dim(classRec);
   JINT ne;
   int elemCls;
+
+  if (reqDimensions == 0)
+    return JNULL;
+
+  ref = new_array (cls, (JINT)*numElemPtr);
+  if (ref == JNULL) return JNULL;
+  // If this is a partial array we are done...
+  if (reqDimensions > 1)
+  {
+    // Make sure we protect each level from the gc. Once we have returned
+    // the ref it will be protected by the level above.
+    ne = (JINT)*numElemPtr;
+    elemCls = get_element_class(classRec);
+    while (ne--)
+    {
+      ref2 = new_multi_array (elemCls, reqDimensions - 1, numElemPtr + 1);
+      if (ref2 == JNULL) return JNULL;
+      ref_array(ref)[ne] = ptr2word (ref2);
+    }
+  }
+  return ref;
+}
+
+
+Object *new_multi_array (const byte cls,
+                         byte reqDimensions, STACKWORD *numElemPtr)
+{
+  ClassRecord *classRec = get_class_record(cls);
+  byte totalDimensions = get_dim(classRec);
 
   #ifdef VERIFY
   assert (totalDimensions >= 1, MEMORY6);
@@ -281,30 +445,8 @@ Object *new_multi_array (const byte cls,
     return new_single_array (cls, (JINT)*numElemPtr);
 
 
-  ref = new_array (cls, (JINT)*numElemPtr);
-  if (ref == JNULL)
-    return JNULL;
-  // If this is a partial array we are done...
-  if (reqDimensions == 1) return ref;
-  // Make sure we protect each level from the gc. Once we have returned
-  // the ref it will be protected by the level above.
-  protect_obj(ref);
-  
-  ne = (JINT)*numElemPtr;
-  elemCls = get_element_class(classRec);
-  while (ne--)
-  {
-    ref2 = new_multi_array (elemCls, reqDimensions - 1, numElemPtr + 1);
-    if (ref2 == JNULL)
-    {
-      unprotect_obj(ref);
-      return JNULL;
-    }
-    ref_array(ref)[ne] = ptr2word (ref2);
-  }
-  unprotect_obj(ref);
-
-  return ref;
+  if (!alloc_start()) return JNULL;
+  return alloc_complete(alloc_multi_array(cls, reqDimensions, numElemPtr));
 }
 
 /**
@@ -358,31 +500,126 @@ int arraycopy(Object *src, int srcOff, Object *dst, int dstOff, int len)
 }
 
 
-void free_array (Object *objectRef)
+/**
+ * @return A String instance, or JNULL if an exception was thrown
+ *         or the static initializer of String had to be executed.
+ */
+Object *new_string (ConstantRecord *constantRecord, 
+                                     byte *btAddr)
 {
-  #ifdef VERIFY
-  assert (is_array(objectRef), MEMORY7);
-  #endif // VERIFY
-  deallocate ((TWOBYTES *) objectRef, get_size (objectRef));
+  Object *ref;
+  Object *arr;
+  JCHAR *dst;
+  byte *src;
+  byte *src_end;
+/*
+  if (!is_initialized_idx (JAVA_LANG_STRING) &&
+      dispatch_static_initializer (get_class_record(JAVA_LANG_STRING), btAddr) != EXEC_CONTINUE)
+    return JNULL;
+*/
+  if (!alloc_start()) return JNULL;
+  ref = oheap_allocate(TO_WORDS(get_class_record(JAVA_LANG_STRING)->classSize), JAVA_LANG_STRING, LEN_OBJECT);
+  if (ref != JNULL)
+  {
+    // Guard the partially created object against the GC
+    arr = new_array (AC, constantRecord->constantSize);
+    if (arr != JNULL)
+    {
+      store_word_ns( (byte *) &(((String *) ref)->characters), T_INT, obj2word(arr));
+      dst = jchar_array(arr);
+      src = get_constant_ptr(constantRecord);
+      src_end = src + constantRecord->constantSize;
+
+      while( src < src_end)
+        *dst++ = (JCHAR) (*src++);
+    }
+    else
+      ref = JNULL;
+  }
+  return alloc_complete(ref);
 }
 
-#if !FIXED_STACK_SIZE
-Object *reallocate_array(Object *obj, JINT newlen)
+/**
+ * Initialize the run time stacks for the given thread.
+ */
+int init_stacks(Thread *thread)
 {
-  byte cls = get_class_index(obj);
-  Object *newArray = new_array(cls, newlen);
-  if (newArray != JNULL)
+  // Allocate the call stack
+  Object *callStack = new_single_array(AB, INITIAL_STACK_FRAMES*sizeof(StackFrame));
+  // And the value stack
+  Object *valueStack = new_single_array(AI, INITIAL_STACK_SIZE);
+  if (!callStack || !valueStack) return -1;
+  thread->stackFrameArray = ptr2ref(callStack);
+  thread->stackArray = ptr2ref(valueStack);
+  if (is_ah_array(valueStack))
   {
-    // Copy old array to new
-    memcpy(array_start(newArray), array_start(obj), get_array_length(obj) * get_class_record(cls)->classSize);
-  
-    // Free old array
-    free_array(obj);
+    AHeapObj *ah = (AHeapObj *)(array_start(valueStack) - sizeof(AHeapObj));
+    ah->thread = (FOURBYTES *)thread - heapStart;
   }
-    
-  return newArray;
+  return 0;
 }
-#endif
+
+/**
+ * Called when a stack frame has been moved in memory. This updates pointers
+ * in the stacks to the new locations.
+ */
+static
+void update_stack_frames(Thread *thread, int offset)
+{
+  // The value stack has moved. We need to update the poointers in the
+  // stack frames.
+  StackFrame *sf = (StackFrame *)array_start(thread->stackFrameArray);
+  int cnt = thread->stackFrameIndex;
+  while(cnt-- >= 0)
+  {
+    sf->localsBase += offset;
+    sf->stackTop += offset;
+    sf++;
+  }
+  if (thread == currentThread)
+  {
+    curStackTop += offset;
+    curLocalsBase += offset;
+  }
+}
+
+/**
+ * Grow the call stack.
+ */
+int expand_call_stack(Thread *thread)
+{
+  Object *cur = ref2ptr(thread->stackFrameArray);
+  int curSize = get_array_length(cur);
+  int newSize = curSize + INITIAL_STACK_FRAMES*sizeof(StackFrame);
+  if (newSize > 256*sizeof(StackFrame)) newSize = 256*sizeof(StackFrame);
+  Object *newStack = new_single_array(AB, newSize);
+  if (newStack == JNULL) return -1;
+  memcpy(array_start(newStack), array_start(cur), curSize);
+  thread->stackFrameArray = ptr2ref(newStack);
+  return 0;
+}
+
+/**
+ * Grow the value stack
+ */
+int expand_value_stack(Thread *thread, int minSize)
+{
+  Object *cur = ref2ptr(thread->stackArray);
+  int curSize = get_array_length(cur);
+  int newSize = curSize + (minSize > INITIAL_STACK_SIZE ? minSize : INITIAL_STACK_SIZE);
+  Object *newStack = new_single_array(AI, newSize);
+  if (newStack == JNULL) return -1;
+  memcpy(array_start(newStack), array_start(cur), curSize*sizeof(STACKWORD));
+  update_stack_frames(thread, (STACKWORD *)array_start(newStack) - (STACKWORD *)array_start(cur));
+  // If the value stack is using a moveable array, we need to allow for updates
+  if (is_ah_array(newStack))
+  {
+    AHeapObj *ah = (AHeapObj *)(array_start(newStack) - sizeof(AHeapObj));
+    ah->thread = (FOURBYTES *)thread - heapStart;
+  }
+  thread->stackArray = ptr2ref(newStack);
+  return 0;
+}
 
 /**
  * Create a copy of an existing Object (including arrays). Copy is shallow...
@@ -414,16 +651,17 @@ Object *clone(Object *old)
 byte *system_allocate(int sz)
 {
   Object *ref;
-  JINT allocSize;
-
-  // We actually use an integer array for the storage, so round up
+  int allocSize;
+  // We actually use an integer array for the storage, so round up and convert
+  // to array length
+  if (!alloc_start()) return JNULL;
   sz = (sz + sizeof(JINT) - 1)/sizeof(JINT);
-  allocSize = array_data_size (T_INT+ALJAVA_LANG_OBJECT, sz);
-  // We always use big array format so the header is a known fixed size
-  ref = java_allocate (allocSize + BA_OBJ_SIZE);
-  if (ref == null)
+  allocSize = array_data_size(AI, sz);
+  ref = oheap_allocate(BA_OBJ_SIZE + allocSize, AI, LEN_BIGARRAY);
+  if (alloc_complete(ref) == JNULL)
     return JNULL;
-  set_array (ref, LEN_BIGARRAY, sz, T_INT+ALJAVA_LANG_OBJECT);
+  ((BigArray *)ref)->length = sz;
+  ((BigArray *)ref)->offset = (short)BA_OBJ_SIZE;
   // Lock the memory to prevent it being collected
   protect_obj(ref);
   // and return a pointer to the actual memory
@@ -437,10 +675,8 @@ void system_free(byte *mem)
 {
   Object *ref;
   if (!mem) return;
-  // Get a pointer to the object header
-  ref = (Object *)(mem - BA_OBJ_SIZE*2);
+  ref = (Object *) (mem - sizeof(BigArray));
   unprotect_obj(ref);
-  free_array(ref);
 }
 
 /**
@@ -512,36 +748,46 @@ void store_word_ns(byte *ptr, int typ, STACKWORD aWord)
 }
 
 
+/**
+ * Initialize the memory system.
+ */
 void memory_init ()
 {
   #ifdef VERIFY
   memoryInitialized = true;
   #endif
 
-  memory_size = 0;
-  memory_free = 0;
+  memorySize = 0;
+  oheapMemoryFree = 0;
 
 }
 
 
 int getHeapSize() {
-  return ((int)memory_size) << 1;
+  return ((int)memorySize) << WORD_SHIFT;
 }
 
 int getHeapFree() {
-  return ((int)memory_free) << 1;
+  return ((int)oheapMemoryFree + (int)aheapMemoryFree) << WORD_SHIFT;
 }
 
 int getRegionAddress()
 {
-  return (int)heap_start;
+  return (int)heapStart;
 }
 
+/**
+ * return the contants of a memory location
+ */
 FOURBYTES mem_peek(int base, int offset, int typ)
 {
   return get_word_ns((byte *)(memory_base[base] + offset), typ);
 }
 
+/**
+ * copy memory into the specified object, taking care to obey the write
+ * barrier.
+ */
 void mem_copy(Object *obj, int objoffset, int base, int offset, int len)
 {
   if (obj == null)
@@ -558,6 +804,9 @@ void mem_copy(Object *obj, int objoffset, int base, int offset, int len)
   }
 }
 
+/**
+ * Return a reference to an object.
+ */
 REFERENCE mem_get_reference(int base, int offset)
 {
   return (REFERENCE)(memory_base[base] + offset);
@@ -618,51 +867,6 @@ REFERENCE mem_get_reference(int base, int offset)
  */
 
 /**
- * Classic GC colours
- */
-#define GC_WHITE 0
-#define GC_LIGHTGREY 1
-#define GC_DARKGREY 2
-#define GC_BLACK 3
-
-// Heap allocation and sweep pointers
-static TWOBYTES *alloc_prev;    /* current position in the free list */
-static TWOBYTES *sweep_base;    /* current position of sweeping */
-static TWOBYTES *sweep_free;    /* current position of sweeping free ptr */
-static TWOBYTES *overflowScan;  /* current position of overflow scan */
-Object gcLock = {{
-    .length = LEN_OBJECT,
-    .class = JAVA_LANG_OBJECT,
-    .mark = GC_BLACK,
-}, {0, 0}};
-// Mark queue
-#define MAX_CALL_DEPTH 8
-#define MARK_Q_SIZE 64
-static TWOBYTES markQ[MARK_Q_SIZE];
-static int markQHd = 0;
-static int markQTl = 0;
-#define markQNext(cur) (((cur) + 1) % MARK_Q_SIZE)
-
-// GC states are defined in memory.h to make them available to macros
-int gcPhase = GC_IDLE;
-// Macro used to indicate when to suspend this mark/sweep step
-#define GC_TIMEOUT() (gMakeRequest)
-//#define GC_TIMEOUT() (0)
-
-// Value used to mark end of the free list. Will always point beyond the
-// end of the heap, when used as an offset.
-#define FL_END 0xffff
-// Start of the freelist
-static TWOBYTES freeList = FL_END;
-static int newlyFreed;         /* Amount of memory freed so far in this sweep */
-static int memRequired;        /* Target amount of memory needed */
-/**
- * Forward declarations.
- */
-static void mark_object(Object *obj, int callLimit);
-static TWOBYTES *try_allocate(unsigned int size);
-
-/**
  * "Mark" flag manipulation functions.
  */
 static inline void set_gc_marked(Object* obj, byte col)
@@ -689,19 +893,19 @@ static inline boolean is_gc_marked(Object* obj)
  * Reference bitmap manipulation functions.
  * The bitmap is allocated at the end of the region.
  */
-static void set_reference(TWOBYTES* ptr)
+static void set_reference(FreeObject* ptr)
 {
-  int refIndex = ((byte*) ptr - (byte*)heap_start) / (MEMORY_ALIGNMENT * 2);
+  int refIndex = ((byte*) ptr - (byte*)heapStart) / (WORD_SIZE);
 
-  ((byte*) heap_end)[ refIndex >> 3] |= 1 << (refIndex & 7);
+  (refMap)[ refIndex >> 3] |= 1 << (refIndex & 7);
 
 }
 
-static void clr_reference(TWOBYTES* ptr)
+static void clr_reference(Object* ptr)
 {
-  int refIndex = ((byte*) ptr - (byte*)heap_start) / (MEMORY_ALIGNMENT * 2);
+  int refIndex = ((byte*) ptr - (byte*)heapStart) / (WORD_SIZE);
 
-  ((byte*) heap_end)[ refIndex >> 3] &= ~ (1 << (refIndex & 7));
+  (refMap)[ refIndex >> 3] &= ~ (1 << (refIndex & 7));
 
 }
 
@@ -709,8 +913,8 @@ static void clr_reference(TWOBYTES* ptr)
 static boolean is_reference_old(TWOBYTES* ptr)
 {
   /* The reference must belong to a memory region. */
-  TWOBYTES* regBottom = heap_start;
-  TWOBYTES* regTop = heap_end;
+  TWOBYTES* regBottom = heapStart;
+  TWOBYTES* regTop = heapEnd;
 
   if(ptr >= regBottom && ptr < regTop)
   {
@@ -718,9 +922,9 @@ static boolean is_reference_old(TWOBYTES* ptr)
     if(((int)ptr & ((MEMORY_ALIGNMENT * 2) - 1)) == 0)
     {
       /* Now we can safely check the corresponding bit in the reference bitmap. */
-      int refIndex = ((byte*) ptr - (byte*)heap_start) / (MEMORY_ALIGNMENT * 2);
+      int refIndex = ((byte*) ptr - (byte*)heapStart) / (MEMORY_ALIGNMENT * 2);
 
-      return (((byte*) heap_end)[ refIndex >> 3] & (1 << (refIndex & 7))) != 0;
+      return (((byte*) heapEnd)[ refIndex >> 3] & (1 << (refIndex & 7))) != 0;
     }
     return false;
   }
@@ -734,13 +938,13 @@ static boolean is_reference_test(TWOBYTES* ptr)
   /* The reference must belong to a memory region. */
   if(((int)ptr & ((MEMORY_ALIGNMENT * 2) - 1)) == 0)
   {
-    unsigned int refIndex = ptr - heap_start;
+    unsigned int refIndex = ptr - heapStart;
 
-    if (refIndex  < (unsigned int)memory_size)
+    if (refIndex  < (unsigned int)memorySize)
     {
       refIndex /= 2;
-      //return (((byte*) heap_end)[ refIndex >> 3] & (1 << (refIndex & 7))) != 0;
-      if ((((byte*) heap_end)[ refIndex >> 3] & (1 << (refIndex & 7))) != 0)
+      //return (((byte*) heapEnd)[ refIndex >> 3] & (1 << (refIndex & 7))) != 0;
+      if ((((byte*) heapEnd)[ refIndex >> 3] & (1 << (refIndex & 7))) != 0)
       {
         if (!is_reference_old(ptr))
         {
@@ -760,31 +964,31 @@ static boolean is_reference_test(TWOBYTES* ptr)
 }
 #endif
 
-static inline boolean is_reference(TWOBYTES* ptr)
+static inline boolean is_reference(Object* ptr)
 {
   /* The reference must belong to a memory region. */
-  if(((int)ptr & ((MEMORY_ALIGNMENT * 2) - 1)) == 0)
+  if(((int)ptr & ((WORD_SIZE) - 1)) == 0)
   {
-    unsigned int refIndex = ptr - heap_start;
+    unsigned int refIndex = ptr - (Object *)heapStart;
 
-    if (refIndex  < (unsigned int)memory_size)
+    if (refIndex  < (unsigned int)memorySize)
     {
-      refIndex /= 2;
-      return (((byte *) heap_end)[ refIndex >> 3] & (1 << (refIndex & 7))) != 0;
+      return ((refMap)[ refIndex >> 3] & (1 << (refIndex & 7))) != 0;
     }
   }
   return false;
 }
 
-static inline void set_free_size(Object *ptr, TWOBYTES sz)
+static inline void set_free_size(FreeObject *ptr, TWOBYTES sz)
 {
-  if (sz == ((sizeof(Object)/2 + MEMORY_ALIGNMENT - 1) & ~(MEMORY_ALIGNMENT - 1)))
+  if (sz == NORM_OBJ_SIZE)
     // zero length void array
     *((TWOBYTES *)ptr) = T_FREE;
   else
   {
     *((TWOBYTES *)ptr) = T_FREE | (LEN_BIGARRAY << ARRAY_LENGTH_SHIFT);
-    ((BigArray *)ptr)->length = sz - sizeof(BigArray)/2;
+// NOTE currently a void array object size is 2 bytes, when we change this we can remove the *2
+    ((BigArray *)ptr)->length = (sz - BA_OBJ_SIZE)*2;
   }
 }
 
@@ -796,46 +1000,64 @@ void memory_add_region (byte *start, byte *end)
 {
   TWOBYTES contents_size;
   TWOBYTES bitmap_size;
+  AHeapObj *ah;
 
   /* align upwards */
-  heap_start = (TWOBYTES *) (((unsigned int)start+ MEMORY_ALIGNMENT*2 - 1) & ~(MEMORY_ALIGNMENT*2 - 1));
+  heapStart = (FOURBYTES *) MEM_ROUND((unsigned int)start);
 
   /* align downwards */
-  heap_end = (TWOBYTES *) ((unsigned int)end & ~(MEMORY_ALIGNMENT*2 - 1)); 
+  heapEnd = (FOURBYTES *) MEM_TRUNC((unsigned int)end); 
   /* To be able to quickly identify a reference like stack slot
      we use a dedicated referance bitmap. With alignment of 4 bytes
      the map is 32 times smaller then the heap. Let's allocate
      the map by lowering the heap end pointer by the map size.
      The map must be zeroed. */
-  contents_size = heap_end - heap_start;
+  contents_size = heapEnd - heapStart;
   /* Calculate the required bitmap size (in words). Note that we devide here
      by 33 rather then 32 to take into account the reduction in size of the
      heap due to the bitmap size!  */
-  bitmap_size = (contents_size / (((MEMORY_ALIGNMENT * 2) * 8) + 1) + 2) & ~1;
-  heap_end -= bitmap_size;
-  zero_mem(heap_end, bitmap_size);
+  bitmap_size = contents_size / (((WORD_SIZE) * 8) + 1) + 1;
+  heapEnd -= bitmap_size;
+  memset((byte *)heapEnd, 0, bitmap_size*WORD_SIZE);
+  refMap = (byte *)heapEnd;
+  memorySize = heapEnd - heapStart;
+
+  // Split the heap into object and array heaps
+  oheapEnd = (Object *)heapEnd;
+  if (1)
+    oheapStart = (Object *)heapStart;
+  else
+    oheapStart = (oheapEnd - INITIAL_HEAP);
+  aheapEnd = (FOURBYTES *)oheapStart;
+  aheapStart = heapStart;
+  // Now create the array heap */
+  aheapMemoryFree = aheapEnd - aheapStart;
+  aheapAlloc = aheapStart;
+  ah = (AHeapObj *)aheapStart;
+  ah->available = 1;
+  ah->object = aheapMemoryFree;
   /* create free block in the heap */
-  contents_size = heap_end - heap_start;
-  set_free_size((Object *)heap_start, contents_size);
+  oheapMemoryFree = oheapEnd - oheapStart;
+  set_free_size((FreeObject *)oheapStart, oheapMemoryFree);
   // Initialise the free list
-  *(heap_start+1) = FL_END;
-  freeList = 0;
-  alloc_prev = &freeList;
+  ((FreeObject *)oheapStart)->next = FL_END;
+  freeList = oheapStart - (Object *)heapStart;
+  allocPrev = &freeList;
   // Incremental mark/sweep state
-  sweep_base = heap_end;
-  sweep_free = NULL;
-  memRequired = 0;
+  sweepBase = oheapEnd;
+  sweepFree = NULL;
+  oheapMemoryRequired = 0;
   gcPhase = GC_IDLE;
+
   // Reset the allocator lock
   gcLock.sync.monitorCount = 0;
   gcLock.sync.threadId = 0;
-  /* memory accounting */
-  memory_size += contents_size;
-  memory_free += contents_size;
+
   // Setup to allow access from java
   memory_base[MEM_ABSOLUTE] = 0;
-  memory_base[MEM_HEAP] = (void *)heap_start;
+  memory_base[MEM_HEAP] = (void *)heapStart;
   memory_base[MEM_MEM] = (void *)memory_base;
+  exclusiveThread = null;
 }
 
 
@@ -849,116 +1071,81 @@ void memory_add_region (byte *start, byte *end)
  * caller being the byte code interpreter. It performs the retry operation
  * by causing a re-start of the current instruction.
  */
-static Object *java_allocate (JINT size)
+static Object *oheap_allocate(JINT size, byte class, byte length)
 {
   Object *ref;
-  // Align memory to boundary appropriate for system  
-  size = (size + (MEMORY_ALIGNMENT-1)) & ~(MEMORY_ALIGNMENT-1);
   ref = (Object *)try_allocate(size);
-  if (ref == JNULL && alloc_prev != &freeList)
+  if (ref == JNULL && allocPrev != &freeList)
   {
     // First attempt failed. Start at the beginning and try again.
-    alloc_prev = &freeList;
+    allocPrev = &freeList;
     ref = (Object *)try_allocate(size);
   }
-  if (is_gc_retry())
+  if (ref == JNULL)
+    oheapMemoryRequired += size;
+  else
   {
-    // The current thread already owns the memory lock so this must
-    // be retry attempt to allocate memory
-    exit_monitor(currentThread, &gcLock);
-    // If we failed to allocate and the gc has been completed then we give up!
-    if (ref == JNULL && gcPhase == GC_IDLE)
-    {
-      #ifdef VERIFY
-      assert (outOfMemoryError != null, MEMORY5);
-      #endif
-      throw_exception (outOfMemoryError);
-      return JNULL;
-    }
+    ref->flags.class = class;
+    ref->flags.length = length;
+    memset((byte *)(ref + 1), 0, size*WORD_SIZE - sizeof(Object)); 
   }
-  if (ref != JNULL)
-  {
-    // We have allocated the required memory, return it.
-    return ref;
-  }
-
-  // Allocation failed
-  // First attempt failure. We need to force a GC and then make this thread
-  // wait for it to complete.
-  if (gcPhase == GC_IDLE) gcPhase = GC_MARKROOTS;
-  // restart the current instruction when we are woken up
-  curPc = getPc();
-  //enter_monitor(currentThread, &gcLock);
-  // Say how much memory we need...
-  system_wait(&gcLock);
-  memRequired += 2*size;
-  return JNULL;
+  return ref;
 }
 
 /**
- * @@param size Must be exactly same size used in allocation.
+ * @@param size Size of block including header in 4-byte words.
  */
-void deallocate (TWOBYTES *p, FOURBYTES size)
+static Object *try_allocate(unsigned int size)
 {
-  // Nothing to do. We let the GC work things out
-}
-
-
-/**
- * @@param size Size of block including header in 2-byte words.
- */
-static TWOBYTES *try_allocate(unsigned int size)
-{
-  if(memory_free >= size)
+  if(oheapMemoryFree >= size)
   {
 
-    TWOBYTES *regionTop = heap_end;
-    TWOBYTES *prev = alloc_prev;
-    TWOBYTES *ptr = heap_start + *prev;
+    FreeObject *regionTop = (FreeObject *)oheapEnd;
+    TWOBYTES *prev = allocPrev;
+    FreeObject *ptr = (FreeObject *)heapStart + *prev;
 #if DEBUG_MEMORY
-    printf("Allocate %d - free %d\n", size, memory_free-size);
+    printf("Allocate %d - free %d\n", size, oheapMemoryFree-size);
 #endif
     while (ptr < regionTop)
     {
-      unsigned int freeSz = get_free_size((Object *)ptr);
+      unsigned int freeSz = get_free_size(ptr);
       if (size <= freeSz)
       {
-        if (ptr == sweep_free) sweep_free = null;
+        if (ptr == sweepFree) sweepFree = null;
         /* allocate from this block */
         if (size < freeSz)
         {
           /* cut into two blocks */
           /* first block gets remaining free space */
           freeSz -= size;
-          set_free_size((Object *)ptr, freeSz);
+          set_free_size(ptr, freeSz);
           ptr += freeSz ; /* second block gets allocated */
-          /* NOTE: allocating from the top downwards avoids most
-                   searching through already allocated blocks */
-          alloc_prev = prev;
+          allocPrev = prev;
         }
         else
         {
           // All used up unlink from free list
-          *prev = *(ptr + 1);
+          //*prev = ptr->next;
+          *prev = ptr->next;
           // start next search from the head of the list
-          alloc_prev = &freeList;
+          allocPrev = &freeList;
         }
         // Mark the object as allocated
-        memory_free -= size;
+        oheapMemoryFree -= size;
         set_reference(ptr);
         // We need to GC mark any object that has not yet been swept
         // we also clear the monitor part of the header all in one go.
-        if (ptr >= sweep_base)
-          *(FOURBYTES *)ptr = GC_MASK;
+        if ((Object *)ptr >= sweepBase)
+          *((FOURBYTES *)ptr) = GC_MASK;
         else
-          *(FOURBYTES *)ptr = 0;
-        return ptr;
+          *((FOURBYTES *)ptr) = 0;
+        return (Object *)ptr;
       }
       else
       {
         /* continue searching */
-        prev = ptr + 1;
-        ptr = heap_start + *prev;
+        prev = &(ptr->next);
+        ptr = (FreeObject *)heapStart + *prev;
       }
     }
   }
@@ -1019,8 +1206,6 @@ static void mark_local_objects()
 
     while(th != NULL)
     {
-      byte arraySize;
-
       mark_object((Object*) th, 0);
       mark_object((Object*) th->stackArray, 0);
       mark_object((Object*) th->stackFrameArray, 0);
@@ -1028,31 +1213,25 @@ static void mark_local_objects()
       if(th->waitingOn != 0)
         mark_object((Object*) th->waitingOn, 0);
 
-      arraySize = th->stackFrameArraySize;
-      if(arraySize != 0)
+      Object* sfObj = word2ptr(th->stackFrameArray);
+      StackFrame* stackFrame = ((StackFrame*) array_start(sfObj)) + th->stackFrameIndex;
+      Object* saObj = word2ptr(th->stackArray);
+      STACKWORD* stackBottom = (STACKWORD*) jint_array(saObj);
+      STACKWORD* stackTop = stackFrame->stackTop;
+      STACKWORD* sp;
+      for(sp = stackBottom; sp <= stackTop; sp ++)
       {
-        Object* sfObj = word2ptr(th->stackFrameArray);
-        StackFrame* stackFrame = ((StackFrame*) array_start(sfObj)) + (arraySize);
-        Object* saObj = word2ptr(th->stackArray);
-        STACKWORD* stackBottom = (STACKWORD*) jint_array(saObj);
-        STACKWORD* stackTop = stackFrame->stackTop;
-        STACKWORD* sp;
-    
-        for(sp = stackBottom; sp <= stackTop; sp ++)
+        Object* ptr = word2obj(*sp);
+
+        if(is_reference(ptr))
         {
-          TWOBYTES* ptr = word2ptr(*sp);
-
-          if(is_reference(ptr))
-          {
-            /* Now we know that ptr points to a valid allocated object.
-               It does not mean, that this slot contains a reference variable.
-               It may be an integer or float variable, which has exactly the
-               same value as a reference of one of the allocated objects.
-               But it is no harm. We can safely "mark" it, In such a case
-               we may just leave an unreachable object uncollected. */
-
-            mark_object((Object*) ptr, 0);
-          }
+          /* Now we know that ptr points to a valid allocated object.
+             It does not mean, that this slot contains a reference variable.
+             It may be an integer or float variable, which has exactly the
+             same value as a reference of one of the allocated objects.
+             But it is no harm. We can safely "mark" it, In such a case
+             we may just leave an unreachable object uncollected. */
+          mark_object(ptr, 0);
         }
       }
 
@@ -1190,13 +1369,13 @@ static void mark_object(Object *obj, int callLimit)
     {
       // No space, so we fall back on a complete scan 
       if (col != GC_WHITE) return;
-      if ((TWOBYTES *)obj < overflowScan)
-        overflowScan = (TWOBYTES *)obj;
+      if (obj < overflowScan)
+        overflowScan = obj;
       set_gc_marked(obj, GC_LIGHTGREY);
     }
     else
     {
-      markQ[markQHd] = ((TWOBYTES *)obj - heap_start);
+      markQ[markQHd] = obj - (Object *)heapStart;
       markQHd = next;
       set_gc_marked(obj, GC_DARKGREY);
     }
@@ -1210,7 +1389,7 @@ static void process_queue()
 {
   while (markQTl != markQHd)
   {
-    Object *obj = (Object *) (heap_start + markQ[markQTl]);
+    Object *obj = (Object *)heapStart + markQ[markQTl];
     process_object(obj, MAX_CALL_DEPTH);
     markQTl = markQNext(markQTl);
     if (GC_TIMEOUT()) break;
@@ -1229,44 +1408,50 @@ static void process_queue()
 static void sweep()
 {
   int mf = 0;
-  TWOBYTES* ptr = sweep_base;
-  TWOBYTES* fptr = sweep_free;
-  TWOBYTES* regionTop = heap_end;
+  Object* ptr = sweepBase;
+  FreeObject* fptr = sweepFree;
+  Object* regionTop = (Object *)oheapEnd;
+  TWOBYTES flist = freeList;
 
   while(ptr < regionTop && !GC_TIMEOUT())
   {
-    unsigned int size;
-    Object* obj = (Object*) ptr;
-    byte cls = get_class_index(obj);
-    size = get_size(obj); 
+    byte cls = get_class_index(ptr);
+    unsigned int size = get_size(ptr);
     // Round up according to alignment
-    size = (size + (MEMORY_ALIGNMENT-1)) & ~(MEMORY_ALIGNMENT-1);
-    if(is_gc_marked(obj))
+    if(is_gc_marked(ptr))
     {
-      clr_gc_marked(obj);
+      clr_gc_marked(ptr);
       fptr = null;
     }
     else
-      if (get_monitor_count(&obj->sync) == 0 || cls == T_FREE)
+      if (get_monitor_count(&ptr->sync) == 0 || cls == T_FREE)
       {
           // Set object free
           if (cls != T_FREE)
+          {
             clr_reference(ptr);
+            if (is_ah_array(ptr))
+            {
+              aheap_free((AHeapObj *)(array_start(ptr) - sizeof(AHeapObj)));
+            }
+          }
           mf += size;
           // Got a free block can we merge?
           if (fptr != null)
           {
             unsigned int fsize = get_size((Object *)fptr);
             fsize += size;
-            set_free_size((Object *)fptr, fsize);
+            set_free_size(fptr, fsize);
+            if (fsize > oheapLargestFree) oheapLargestFree = fsize;
           }
           else
           {
-            fptr = ptr;
+            fptr = (FreeObject *)ptr;
             // add to free list
-            *(ptr + 1) = freeList;
-            freeList = (ptr - heap_start);
-            set_free_size(obj, size);
+            fptr->next = flist;
+            flist = ((Object *)fptr - (Object *)heapStart);
+            set_free_size(fptr, size);
+            if (size > oheapLargestFree) oheapLargestFree = size;
           }
       }
       else
@@ -1275,11 +1460,11 @@ static void sweep()
     ptr += size;
   }
 
-  memory_free += mf;
-  newlyFreed += mf;
+  oheapMemoryFree += mf;
   // Remember current state for next scan
-  sweep_base = ptr;
-  sweep_free = fptr;
+  sweepBase = ptr;
+  sweepFree = fptr;
+  freeList = flist;
 }
 
 /**
@@ -1312,20 +1497,18 @@ static void mark_exception_objects(void)
 static
 void mark_overflow()
 {
-  TWOBYTES* ptr = overflowScan;
-  TWOBYTES* regionTop = heap_end;
+  Object* ptr = overflowScan;
+  Object* regionTop = oheapEnd;
   overflowScan = regionTop;
   
   while(ptr < regionTop && !GC_TIMEOUT())
   {
-    Object* obj = (Object*) ptr;
-    unsigned int size = get_size(obj);
+    unsigned int size = get_size(ptr);
     // Round up according to alignment
-    size = (size + (MEMORY_ALIGNMENT-1)) & ~(MEMORY_ALIGNMENT-1);
-    if (get_gc_mark(obj) == GC_LIGHTGREY)
+    if (get_gc_mark(ptr) == GC_LIGHTGREY)
     {
       //process_object(obj, MAX_CALL_DEPTH);
-      mark_object(obj, 0);
+      mark_object(ptr, 0);
       process_queue();
     }
     ptr += size;
@@ -1334,6 +1517,90 @@ void mark_overflow()
   if (ptr < overflowScan)
     overflowScan = ptr;
 }
+
+/**
+ * Serach the object heap looking for a free object after/equal to ptr
+ * return a pointer to the free list link item, to allow the list to be
+ * updated.
+ */
+static
+TWOBYTES *get_free_ptr(Object *ptr)
+{
+  Object* regionTop = oheapEnd;
+  TWOBYTES* fptr = &freeList;
+  while(ptr < regionTop)
+  {
+    if (get_class_index(ptr) == T_FREE)
+    {
+      fptr = &(((FreeObject *)ptr)->next);
+      break;
+    }
+    ptr += get_size(ptr);
+  }
+  return fptr;
+}
+
+/**
+ * Attempt to expand the space available to the object heap.
+ * We do this by "stealing" free space from the array heap
+ */
+int
+expand_object_heap(int required)
+{
+  if (required < MIN_HEAP_ADJUST) required = MIN_HEAP_ADJUST;
+  if (required > aheapMemoryFree) required = aheapMemoryFree;
+  if (required > 0)
+  {
+    TWOBYTES *fptr = get_free_ptr(oheapStart);
+    // allocate the space
+    aheapMemoryFree -= required;
+    aheapEnd -= required;
+    oheapStart -= required;
+    oheapMemoryFree += required;
+    *fptr = oheapStart - (Object *)heapStart;  
+    set_free_size((FreeObject *)oheapStart, required);
+    ((FreeObject *)oheapStart)->next = FL_END;
+  }
+  return required;
+}
+
+/**
+ * Attempt to expand the size of the array heap.
+ * We do this by "stealing" free space from the object heap. Note that we can
+ * only do this if the first block in the object heap is free. We arrange 
+ * things so that this block is always last in the free list.
+ */
+int
+expand_array_heap(int required)
+{
+  if (required < MIN_HEAP_ADJUST) required = MIN_HEAP_ADJUST;
+  // We can only expand into the object heap if the start is free
+  if (get_class_index(oheapStart) == T_FREE)
+  {
+    int sz = get_free_size(oheapStart);
+    TWOBYTES* fptr = get_free_ptr(oheapStart + sz);
+    if (required > sz) required = sz;
+    // allocate the space
+    aheapMemoryFree += required;
+    aheapEnd += required;
+    oheapStart += required;
+    if (required != sz)
+    {
+      // set the new header
+      set_free_size((FreeObject *)oheapStart, sz - required);
+      ((FreeObject *)oheapStart)->next = FL_END;
+      // update the free list
+      *fptr = oheapStart - (Object *)heapStart;
+    }
+    else
+      *fptr = FL_END;
+    oheapMemoryFree -= required;
+    return required;
+  }
+  else
+    return 0;
+}
+
 
 /**
  * Main garbage collecting function.
@@ -1353,52 +1620,73 @@ void gc_run_collector(void)
     case GC_IDLE:
       break;
     case GC_MARKROOTS:
-      overflowScan = heap_end;
+      overflowScan = oheapEnd;
       mark_exception_objects();
       mark_static_objects();
       mark_local_objects();
-      newlyFreed = 0;
-      sweep_base = heap_start;
-      sweep_free = NULL;
+      sweepBase = oheapStart;
+      sweepFree = NULL;
       gcPhase = GC_MARK;
       // Fall through
     case GC_MARK:
       // Trace all refs. Our job is done when the mark queue is empty and we
       // have completed an overflow scan of the heap.
-      while ((overflowScan != heap_end) || (markQTl != markQHd))
+      while ((overflowScan != oheapEnd) || (markQTl != markQHd))
       {
         process_queue();
         if (GC_TIMEOUT()) goto exit;
-        if (overflowScan != heap_end)
+        if (overflowScan != oheapEnd)
         {
           mark_overflow();
         }
         if (GC_TIMEOUT()) goto exit;
       }
-      memory_free = 0;
+      oheapMemoryFree = 0;
+      oheapLargestFree = 0;
       freeList = FL_END;
-      alloc_prev = &freeList;
+      allocPrev = &freeList;
       gcPhase = GC_SWEEP;
       // Fall through
     case GC_SWEEP:
       sweep();
-      if (memRequired > 0 && newlyFreed > memRequired)
+      if (oheapMemoryRequired > 0 && oheapLargestFree > oheapMemoryRequired)
       {
         // We may have enough free space to meet current requests, so wake up
         // any threads that are waiting for memory.
-        //monitor_notify_unchecked(&gcLock, true);
-        system_notify(&gcLock, true);
-        memRequired = 0;
-        newlyFreed = 0;
+        alloc_notify();
+        oheapMemoryRequired = 0;
       }
       if (GC_TIMEOUT()) goto exit;
-      alloc_prev = &freeList;
-      sweep_base = heap_end;
-      sweep_free = null;
-      memRequired = 0;
-      gcPhase = GC_IDLE;
+      allocPrev = &freeList;
+      sweepBase = oheapEnd;
+      sweepFree = null;
+      if (aheapStart == aheapEnd)
+      {
+        alloc_notify();
+        oheapMemoryRequired = 0;
+        aheapMemoryRequired = 0;
+        gcPhase = GC_IDLE;
+        break;
+      }
+      gcPhase = GC_COMPACT;
+    case GC_COMPACT:
+      if ((aheapMemoryRequired > 0) ||
+          (oheapMemoryRequired > oheapLargestFree) ||
+          (oheapMemoryFree < MIN_HEAP && (MIN_HEAP - oheapMemoryFree >= aheapMemoryFree)))
+        compact_aheap();
+      gcPhase = GC_EXPAND;
+    case GC_EXPAND:
+      if (oheapLargestFree < oheapMemoryRequired)
+        expand_object_heap(oheapMemoryRequired);
+      else if (oheapMemoryFree < MIN_HEAP)
+        expand_object_heap(MIN_HEAP - oheapMemoryFree);
+      else if (oheapMemoryFree - MIN_HEAP > MIN_HEAP_ADJUST)
+        expand_array_heap(oheapMemoryFree - MIN_HEAP);
+      oheapMemoryRequired = 0;
+      aheapMemoryRequired = 0;
       // Notify any waiting threads that there may now be more memory
-      system_notify(&gcLock, true);
+      alloc_notify();
+      gcPhase = GC_IDLE;
   }
 exit:
   return;
@@ -1409,20 +1697,18 @@ exit:
  */
 int garbage_collect()
 {
-  if (is_gc_retry())
+  if (!alloc_start()) return EXEC_RETRY;
+  if (retryState >= GC_RETRY)
   {
     // The current thread already owns the memory lock so this must
-    // be a retry attempt
-    exit_monitor(currentThread, &gcLock);
-    if (gcPhase == GC_IDLE) return EXEC_CONTINUE;
+    // be a retry attempt which means we are done!
+    alloc_complete((Object *)1);
+    return EXEC_CONTINUE;
   }
   // If not already collecting, start a collection
-  if (gcPhase == GC_IDLE) gcPhase = GC_MARKROOTS;
-  // restart the current instruction when we are woken up
-  curPc = getPc();
-  //enter_monitor(currentThread, &gcLock);
-  //monitor_wait(&gcLock, 0);
-  system_wait(&gcLock);
+  aheapMemoryRequired += 1;
+  retryState = GC_RETRY;
+  alloc_complete(JNULL);
   return EXEC_RETRY;
 }
 
@@ -1497,4 +1783,81 @@ void gc_update_array(Object *obj)
     }
   }
   set_gc_marked(obj, GC_BLACK);
+}
+
+/**
+ * The following functions implement the moveable array heap.
+ * The heap is a simple copy allocator, with a single free space.
+ */
+
+/**
+ * Allocate space from the free area.
+ */
+static AHeapObj *aheapAllocate(JINT sz, Object *obj)
+{
+  if (sz <= aheapMemoryFree)
+  {
+    AHeapObj *ah = (AHeapObj *)(aheapAlloc);
+    aheapMemoryFree -= sz;
+    ah->available = 0;
+    ah->object = obj - (Object *)heapStart;
+    ah->thread = 0;
+    aheapAlloc += sz;
+    memset((byte *)(ah + 1), 0, sz*WORD_SIZE - sizeof(AHeapObj)); 
+    return ah;
+  }
+  return JNULL;
+}
+
+/**
+ * Mark part of the heap as no longer in use.
+ */
+static void aheap_free(AHeapObj *ah)
+{
+  BigArray *obj = (BigArray *)((Object *)heapStart + ah->object);
+  if (obj->length == 0)
+  {
+    //printf("ahf %x zero\n", ah);
+  }
+  else
+  {
+    int sz = array_data_size(obj->hdr.flags.class, obj->length);
+    ah->available = 1;
+    ah->object = sz + AH_OBJ_SIZE;
+  }
+}
+
+/**
+ * Compact the heap by copying data down filling any free spaces.
+ */
+static void compact_aheap()
+{
+  // First walk the objects and create a list
+  FOURBYTES *ptr = aheapStart;
+  int offset = 0;
+  while (ptr < aheapAlloc)
+  {
+    AHeapObj *ah = (AHeapObj *)ptr;
+    if (ah->available)
+    {
+      offset += ah->object;
+      ptr += ah->object;
+    }
+    else
+    {
+      BigArray *obj = (BigArray *)((Object *)heapStart + ah->object);
+      int sz = array_data_size(obj->hdr.flags.class, obj->length) + AH_OBJ_SIZE;
+      if (offset > 0)
+      {
+        obj->offset -= (offset);
+        // If this block is a stack frame, update any pointers to it.
+        if (ah->thread)
+          update_stack_frames((Thread *)(heapStart + ah->thread), -offset);
+        memmove((byte *)((FOURBYTES *)ah - offset), (byte *)ah, sz*WORD_SIZE);
+      }
+      ptr += sz;
+    }
+  }
+  aheapMemoryFree += offset;
+  aheapAlloc -= offset;
 }

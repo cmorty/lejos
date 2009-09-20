@@ -168,22 +168,25 @@ OPCODE(OP_GETFIELD_1)
 OPCODE(OP_PUTFIELD_1)
   {
     unsigned int fieldType;
+    unsigned int offset;
 
+    offset = get_pgfield_offset(pc[0], pc[1]);
     fieldType = get_pgfield_type(pc[0]);
-    if(typeSize[fieldType] > 4)
-      tempStackWord = get_ref_at (2);
-    else
-      tempStackWord = get_ref_at (1);
-    if (tempStackWord == JNULL)
-      goto LABEL_NULLPTR_EXCEPTION;
-    tempWordPtr = (STACKWORD *)(((byte *) word2ptr (tempStackWord)) + get_pgfield_offset(pc[0], pc[1]));
     if (fieldType == T_LONG || fieldType == T_DOUBLE)
     {
+      tempStackWord = get_ref_at (2);
+      if (tempStackWord == JNULL)
+        goto LABEL_NULLPTR_EXCEPTION;
+      tempWordPtr = (STACKWORD *)(((byte *) word2ptr (tempStackWord)) + offset);
       store_word_ns((byte *)(tempWordPtr + 1), T_LONG, pop_word());
       store_word_ns((byte *)(tempWordPtr), T_LONG, pop_word());
     }
     else
     {
+      tempStackWord = get_ref_at (1);
+      if (tempStackWord == JNULL)
+        goto LABEL_NULLPTR_EXCEPTION;
+      tempWordPtr = (STACKWORD *)(((byte *) word2ptr (tempStackWord)) + offset);
       if (fieldType == T_REFERENCE)
         update_object((Object *) tempStackWord);
       store_word_ns((byte *)tempWordPtr, fieldType, pop_word());
