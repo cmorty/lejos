@@ -131,66 +131,26 @@ STACKWORD do_lcmp (LLONG l1, LLONG l2, STACKWORD def)
 #endif
 
 /**
- * @return A String instance, or JNULL if an exception was thrown
- *         or the static initializer of String had to be executed.
- */
-Object *create_string (ConstantRecord *constantRecord, 
-                                     byte *btAddr)
-{
-  Object *ref;
-  Object *arr;
-  JCHAR *dst;
-  byte *src;
-  byte *src_end;
-  boolean retry = is_gc_retry();
-
-  ref = new_object_checked (JAVA_LANG_STRING, btAddr);
-  if (ref == JNULL)
-    return JNULL;
-  // Guard the partially created object against the GC
-  //protectedRef[0] = ref;
-  protect_obj(ref);
-  arr = new_primitive_array (T_CHAR, constantRecord->constantSize);
-  //protectedRef[0] = JNULL;
-  unprotect_obj(ref);
-  if (arr == JNULL)
-  {
-    deallocate (obj2ptr(ref), class_size (JAVA_LANG_STRING));    
-    // If this is the 2nd attempt at creating this object give up!
-    if (retry && gcPhase == GC_IDLE) throw_exception(outOfMemoryError);
-    return JNULL;
-  }
-  
-  store_word_ns( (byte *) &(((String *) ref)->characters), T_INT, obj2word(arr));
-  dst = jchar_array(arr);
-  src = get_constant_ptr(constantRecord);
-  src_end = src + constantRecord->constantSize;
-
-  while( src < src_end)
-    *dst++ = (JCHAR) (*src++);
-  return ref;
-}
-
-/**
  * Pops the array index off the stack, checks
  * bounds and null reference. The array reference
  * is the top word on the stack after this operation.
  * Sets arrayStart to start of the array data area.
  * @return array index if successful, -1 if an exception has been scheduled.
  */
-static int array_helper( byte *pc, STACKWORD* stackTop)
+static STACKWORD *array_helper(unsigned int idx, Object *obj, int sz)
 {
-  unsigned int idx = word2jint(pop_word());
-  byte* ptr = word2ptr(get_top_ref());
+  if (obj == JNULL)
+  {
+    thrownException = nullPointerException;
+    return NULL;
+  }
 
-  if (ptr == JNULL)
-    return -1;
-
-  if ( /*idx < 0 ||*/ idx >= get_array_length ((Object *) ptr))
-    return -2;
-
-  arrayStart = array_start((Object*)ptr);
-  return idx;
+  if ( /*idx < 0 ||*/ idx >= get_array_length(obj))
+  {
+    thrownException = arrayIndexOutOfBoundsException;
+    return NULL;
+  }
+  return (STACKWORD *) (array_start(obj) + idx*sz);
 }
 
 #define SAVE_REGS() (curPc = pc, curStackTop = stackTop, curLocalsBase = localsBase)

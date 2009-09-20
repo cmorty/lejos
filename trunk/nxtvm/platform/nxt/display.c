@@ -44,7 +44,8 @@ static const struct
    {0,
    0}
   },
-  N_CHARS*FONT_WIDTH
+  N_CHARS*FONT_WIDTH,
+  2
  },
  {
 /* 0x00 */ {0x3E, 0x36, 0x2A, 0x36, 0x3E},
@@ -562,6 +563,7 @@ display_init(void)
   display_array.arrayHdr.hdr.sync.monitorCount = 0;
   display_array.arrayHdr.hdr.sync.threadId = 0;
   display_array.arrayHdr.length = DISPLAY_DEPTH*DISPLAY_WIDTH;
+  display_array.arrayHdr.offset = 2;
 /*
   // We use the same trick for the font characters
   font_array.arrayHdr.hdr.flags.arrays.isArray = 1;

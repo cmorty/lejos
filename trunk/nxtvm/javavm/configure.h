@@ -2,7 +2,7 @@
 #ifndef _CONFIGURE_H
 #define _CONFIGURE_H
 
-#define FIXED_STACK_SIZE				0
+#define FIXED_STACK_SIZE		0
 
 #if FIXED_STACK_SIZE
 
@@ -20,8 +20,8 @@
 
 #else
 
-#define INITIAL_STACK_FRAMES             4
-#define INITIAL_STACK_SIZE               10
+#define INITIAL_STACK_FRAMES             8
+#define INITIAL_STACK_SIZE               32
 
 #endif
 

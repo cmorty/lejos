@@ -10,7 +10,7 @@ import java.util.Iterator;
  * similar to the class file format used by a standard JVM, but with much of the
  * detail stripped away.
  *
- * The structures fall into two genral types. Those that are contained within
+ * The structures fall into two general types. Those that are contained within
  * Java objects (and so can be made directly available to a user program) and
  * those that are simply raw data. To allow access to the second type of data
  * we create Java objects with a copy of the data in them. In some cases we
@@ -745,7 +745,6 @@ public final class VM
 
     public static final class VMElements extends VMItems<VMValue>
     {
-        private final int arrayBase;
         private final int typ;
         private final Object obj;
 
@@ -758,7 +757,6 @@ public final class VM
             if (len == OBJ_LEN_OBJECT)
             {
                 typ = -1;
-                arrayBase = 0;
             }
             else
             {
@@ -767,7 +765,6 @@ public final class VM
                     cnt = memPeekByte(ABSOLUTE, addr+OBJ_BIGARRAY_LEN);
                 else
                     cnt = len;
-                arrayBase = getDataAddress(obj);
                 // Convert class into basic type, anything other than a primitive
                 // is an object.
                 if (cls >= (VM_OBJECTARRAY+VM_BOOLEAN) && cls <= (VM_OBJECTARRAY + VM_LONG))
@@ -782,7 +779,7 @@ public final class VM
         public VMValue get(int item)
         {
             if (item >= cnt) throw new ArrayIndexOutOfBoundsException();
-            int offset = arrayBase + item*VMValue.lengths[typ];
+            int offset = getDataAddress(obj) + item*VMValue.lengths[typ];
             return new VMValue(typ, offset);
         }
 
@@ -999,7 +996,7 @@ public final class VM
         public int sleepUntil;
         public Object stackFrameArray;
         public Object stackArray;
-        public byte stackFrameArraySize;
+        public byte stackFrameIndex;
         public byte monitorCount;
         public byte threadId;
         public byte state;
@@ -1026,7 +1023,7 @@ public final class VM
 
         public VMStackFrames getStackFrames()
         {
-            return new VMStackFrames(stackFrameArray, stackFrameArraySize);
+            return new VMStackFrames(stackFrameArray, stackFrameIndex);
         }
 
         public VMStackFrames getStackFrames(int frameCnt)

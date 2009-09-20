@@ -18,7 +18,8 @@
 #define ARRAY_LENGTH_SHIFT 8
 
 #define LEN_OBJECT      0x3f
-#define LEN_BIGARRAY    0x3e
+#define LEN_AHARRAY     0x3e
+#define LEN_BIGARRAY    0x3d
 
 #define is_array(OBJ_)           ((OBJ_)->flags.length != LEN_OBJECT)
 #define get_monitor_count(SYNC_)  ((SYNC_)->monitorCount)
@@ -30,8 +31,8 @@
  * Object header used for all objects types.
  * The mark field is used by the garbage collector.
  * Normal objects have a length field set to LEN_OBJECT
- * Arrays with more then 61 elements have the length field set to LEN_BIGARRAY
- * Arrays with less than 61 elements have the actual length set in length.
+ * Arrays with more then 60 elements have the length field set to LEN_BIGARRAY
+ * Arrays with less than 60 elements have the actual length set in length.
  * Free memory has a class of T_FREE and either a 0 length or LEN_BIGARRAY
  * Big arrays have the actual length stored in the length field of the
  * BigArray header.
@@ -64,7 +65,7 @@ typedef struct S_BigArray
 {
   Object hdr;
   TWOBYTES length;
-  TWOBYTES padding;
+  short offset;
 } BigArray;
 
 /**
@@ -80,13 +81,13 @@ typedef struct S_Thread
   JINT sleepUntil;           // Time to wake up
   REFERENCE stackFrameArray; // Array of stack frames
   REFERENCE stackArray;      // The stack itself
-  JBYTE stackFrameArraySize; // Number of stack frames in use.
-  JBYTE monitorCount;        // Saved monitor depth for context switches
-  JBYTE threadId;            // Unique thread ID
-  JBYTE state;               // RUNNING, DEAD, etc.
-  JBYTE priority;            // The priority
-  JBYTE interruptState;      // INTERRUPT_CLEARED, INTERRUPT_REQUESTED, ...
-  JBYTE daemon;              // true == daemon thread
+  byte stackFrameIndex;      // Index of the current stack frame.
+  byte monitorCount;         // Saved monitor depth for context switches
+  byte threadId;             // Unique thread ID
+  byte state;                // RUNNING, DEAD, etc.
+  byte priority;             // The priority
+  byte interruptState;       // INTERRUPT_CLEARED, INTERRUPT_REQUESTED, ...
+  byte daemon;               // true == daemon thread
 } Thread;
 
 /**
@@ -110,6 +111,7 @@ typedef struct S_String
 } String;
 
 #define is_big_array(ARR_)       ((ARR_)->flags.length == LEN_BIGARRAY)
+#define is_ah_array(ARR_)        ((ARR_)->flags.length == LEN_AHARRAY)
 #define is_std_array(ARR_)       ((ARR_)->flags.length < LEN_BIGARRAY)
 #define get_array_length(ARR_)   (is_std_array(ARR_) ? (ARR_)->flags.length : ((BigArray *)(ARR_))->length)
 #define get_class_index(OBJ_) ((OBJ_)->flags.class)

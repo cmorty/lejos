@@ -22,7 +22,7 @@ OPCODE(OP_NEWARRAY)
   // Stack size: unchanged
   // Arguments: 1
   SAVE_REGS();
-  tempStackWord = obj2ref(new_primitive_array (*pc, (JINT)get_top_word()));
+  tempStackWord = obj2ref(new_single_array(ALJAVA_LANG_OBJECT + *pc, (JINT)get_top_word()));
   LOAD_REGS();
   // Do not modify the stack if an exception has been thrown
   if (tempStackWord != JNULL)
@@ -65,112 +65,107 @@ LABEL_ARRAY_EXCEPTION:
 OPCODE(OP_AALOAD)
   // Stack size: -2 + 1
   // Arguments: 0
-  tempInt = array_helper( pc, stackTop);
+  tempWordPtr = array_helper(get_top_word(), (Object *)get_word_at(1), sizeof(REFERENCE));
   just_pop_word();
-  if( tempInt < 0)
-    goto LABEL_ARRAY_EXCEPTION;
-  // arrayStart set by call above
-  set_top_ref (word_array_ptr(arrayStart)[tempInt]);
+  if(tempWordPtr == NULL)
+    goto LABEL_THROW_EXCEPTION;
+  set_top_ref (*tempWordPtr);
   DISPATCH;
 
 OPCODE(OP_IALOAD)
 OPCODE(OP_FALOAD)
   // Stack size: -2 + 1
   // Arguments: 0
-  tempInt = array_helper( pc, stackTop);
+  tempWordPtr = array_helper(get_top_word(), (Object *)get_word_at(1), sizeof(STACKWORD));
   just_pop_word();
-  if( tempInt < 0)
-    goto LABEL_ARRAY_EXCEPTION;
-  set_top_word (word_array_ptr(arrayStart)[tempInt]);
+  if(tempWordPtr == NULL)
+    goto LABEL_THROW_EXCEPTION;
+  set_top_word (*tempWordPtr);
   DISPATCH;
 
 OPCODE(OP_CALOAD)
-  tempInt = array_helper( pc, stackTop);
+  tempWordPtr = array_helper(get_top_word(), (Object *)get_word_at(1), sizeof(JCHAR));
   just_pop_word();
-  if( tempInt < 0)
-    goto LABEL_ARRAY_EXCEPTION;
-  set_top_word (jchar_array_ptr(arrayStart)[tempInt]);
+  if(tempWordPtr == NULL)
+    goto LABEL_THROW_EXCEPTION;
+  set_top_word (*(JCHAR *)tempWordPtr);
   DISPATCH;
 
 OPCODE(OP_SALOAD)
-  tempInt = array_helper( pc, stackTop);
+  tempWordPtr = array_helper(get_top_word(), (Object *)get_word_at(1), sizeof(JSHORT));
   just_pop_word();
-  if( tempInt < 0)
-    goto LABEL_ARRAY_EXCEPTION;
-  set_top_word (jshort_array_ptr(arrayStart)[tempInt]);
+  if(tempWordPtr == NULL)
+    goto LABEL_THROW_EXCEPTION;
+  set_top_word (*(JSHORT *)tempWordPtr);
   DISPATCH;
 
 OPCODE(OP_BALOAD)
-  tempInt = array_helper( pc, stackTop);
+  tempWordPtr = array_helper(get_top_word(), (Object *)get_word_at(1), sizeof(JBYTE));
   just_pop_word();
-  if( tempInt < 0)
-    goto LABEL_ARRAY_EXCEPTION;
-  set_top_word (jbyte_array_ptr(arrayStart)[tempInt]);
+  if(tempWordPtr == NULL)
+    goto LABEL_THROW_EXCEPTION;
+  set_top_word (*(JBYTE *)tempWordPtr);
   DISPATCH;
 
 OPCODE(OP_LALOAD)
 OPCODE(OP_DALOAD)
   // Stack size: -2 + 2
   // Arguments: 0
-  tempInt = array_helper( pc, stackTop);
+  tempWordPtr = array_helper(get_top_word(), (Object *)get_word_at(1), sizeof(JLONG));
   just_pop_word();
-  if( tempInt < 0)
-    goto LABEL_ARRAY_EXCEPTION;
-  tempInt *= 2;
-  set_top_word (word_array_ptr(arrayStart)[tempInt++]);
-  push_word (word_array_ptr(arrayStart)[tempInt]);
+  if(tempWordPtr == NULL)
+    goto LABEL_THROW_EXCEPTION;
+  set_top_word (*tempWordPtr++);
+  push_word (*tempWordPtr);
   DISPATCH;
 
 OPCODE(OP_AASTORE)
   // Stack size: -3
   tempStackWord = pop_ref();
-  tempInt = array_helper( pc, stackTop);
-  just_pop_word();
-  if( tempInt < 0)
-    goto LABEL_ARRAY_EXCEPTION;
-  tempWordPtr = (STACKWORD *)pop_ref();
+  tempWordPtr = (STACKWORD *)get_ref_at(1);
   if (type_checks_enabled() && tempStackWord != JNULL && !is_assignable(get_class_index(ref2obj(tempStackWord)), get_element_class(get_class_record(get_class_index((Object *)tempWordPtr)))))
   {
     thrownException = arrayStoreException;
     goto LABEL_THROW_EXCEPTION;
   }
   update_array((Object *) tempWordPtr);
-  ref_array_ptr(arrayStart)[tempInt] = tempStackWord;
+  tempWordPtr = array_helper(get_top_word(), (Object *)tempWordPtr, sizeof(REFERENCE));
+  if(tempWordPtr == NULL)
+    goto LABEL_THROW_EXCEPTION;
+  *tempWordPtr = tempStackWord;
+  pop_words(2);
   DISPATCH;
 
 OPCODE(OP_IASTORE)
 OPCODE(OP_FASTORE)
   // Stack size: -3
   tempStackWord = pop_word();
-  tempInt = array_helper( pc, stackTop);
-  just_pop_word();
-  if( tempInt < 0)
-    goto LABEL_ARRAY_EXCEPTION;
-  just_pop_ref();
-  jint_array_ptr(arrayStart)[tempInt] = tempStackWord;
+  tempWordPtr = array_helper(get_top_word(), (Object *)get_word_at(1), sizeof(STACKWORD));
+  if(tempWordPtr == NULL)
+    goto LABEL_THROW_EXCEPTION;
+  *tempWordPtr = tempStackWord;
+  pop_words(2);
   DISPATCH;
 
 OPCODE(OP_CASTORE)
 OPCODE(OP_SASTORE)
   // Stack size: -3
   tempStackWord = pop_word();
-  tempInt = array_helper( pc, stackTop);
-  just_pop_word();
-  if( tempInt < 0)
-    goto LABEL_ARRAY_EXCEPTION;
-  just_pop_ref();
-  jshort_array_ptr(arrayStart)[tempInt] = tempStackWord;
+  tempWordPtr = array_helper(get_top_word(), (Object *)get_word_at(1), sizeof(JCHAR));
+  if(tempWordPtr == NULL)
+    goto LABEL_THROW_EXCEPTION;
+  *(JSHORT *)tempWordPtr = tempStackWord;
+  pop_words(2);
   DISPATCH;
 
 OPCODE(OP_BASTORE)
   // Stack size: -3
   tempStackWord = pop_word();
-  tempInt = array_helper( pc, stackTop);
-  just_pop_word();
-  if( tempInt < 0)
-    goto LABEL_ARRAY_EXCEPTION;
-  just_pop_ref();
-  jbyte_array_ptr(arrayStart)[tempInt] = tempStackWord;
+  tempWordPtr = array_helper(get_top_word(), (Object *)get_word_at(1), sizeof(JBYTE));
+  if(tempWordPtr == NULL)
+    goto LABEL_THROW_EXCEPTION;
+  *(JBYTE *)tempWordPtr = tempStackWord;
+  pop_words(2);
   DISPATCH;
 
 OPCODE(OP_DASTORE)
@@ -181,14 +176,12 @@ OPCODE(OP_LASTORE)
 
     tempStackWord2 = pop_word();
     tempStackWord = pop_word();
-    tempInt = array_helper( pc, stackTop);
-    just_pop_word();
-    if( tempInt < 0)
-      goto LABEL_ARRAY_EXCEPTION;
-    just_pop_ref();
-    tempInt *= 2;
-    jint_array_ptr(arrayStart)[tempInt++] = tempStackWord;
-    jint_array_ptr(arrayStart)[tempInt] = tempStackWord2;
+    tempWordPtr = array_helper(get_top_word(), (Object *)get_word_at(1), sizeof(JLONG));
+    if(tempWordPtr == NULL)
+      goto LABEL_THROW_EXCEPTION;
+    *tempWordPtr++ = tempStackWord;
+    *tempWordPtr = tempStackWord2;
+    pop_words(2);
   }
   DISPATCH;
 

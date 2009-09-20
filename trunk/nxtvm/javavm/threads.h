@@ -4,7 +4,7 @@
 #include "constants.h"
 #include "trace.h"
 #include "memory.h"
-
+#include "rconsole.h"
 #ifndef _THREADS_H
 #define _THREADS_H
 
@@ -31,7 +31,6 @@
 #define SF_SIZE (sizeof(StackFrame))
 
 extern Thread *currentThread;
-extern Thread *bootThread;
 extern byte gThreadCounter;
 extern REFERENCE threads;
 extern Thread **threadQ;
@@ -49,8 +48,8 @@ typedef struct S_StackFrame
   // The following field is constant for a given stack frame.
   STACKWORD *localsBase;
   // The following fields only need to be assigned to on switch_thread.
-  byte *pc;
   STACKWORD *stackTop;
+  byte *pc;
 } StackFrame;
 
 extern void init_threads();
@@ -73,7 +72,7 @@ extern void resume_thread(Thread *thread);
 #define stack_array_ptr()        (word2ptr(currentThread->stackArray))
 #define is_reference_array_ptr() (word2ptr(currentThread->isReferenceArray))
 #define stackframe_array()       ((StackFrame *) array_start(stackframe_array_ptr()))
-#define current_stackframe()     (stackframe_array() + (byte)(currentThread->stackFrameArraySize))
+#define current_stackframe()     (stackframe_array() + (byte)(currentThread->stackFrameIndex))
 #define stack_array()            ((STACKWORD *) (array_start(stack_array_ptr())))
 #define is_reference_array()     ((JBYTE *) (array_start(is_reference_array_ptr()))
 #define set_program_number(N_)   {gProgramNumber = (N_);}
