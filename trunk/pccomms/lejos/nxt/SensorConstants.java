@@ -11,6 +11,25 @@ package lejos.nxt;
  */
 public interface SensorConstants {
 
+	/**
+     * Colors used as the output value when in full mode. Values are
+     * compatible with LEGO firmware.
+     */
+    public static final int BLACK = 1;
+    public static final int BLUE = 2;
+    public static final int GREEN = 3;
+    public static final int YELLOW = 4;
+    public static final int RED = 5;
+    public static final int WHITE = 6;
+    /** Color sensor data RED value index. */
+    public static final int RED_INDEX = 0;
+    /** Color sensor data GREEN value index. */
+    public static final int GREEN_INDEX = 1;
+    /** Color sensor data BLUE value index. */
+    public static final int BLUE_INDEX = 2;
+    /** Color sensor data BLANK/Background value index. */
+    public static final int BLANK_INDEX = 3;
+	
 	public static final int TYPE_NO_SENSOR = 0;
 	public static final int TYPE_SWITCH = 1;
 	public static final int TYPE_TEMPERATURE = 2;

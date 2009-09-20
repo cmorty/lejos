@@ -1,5 +1,6 @@
 package lejos.nxt;
 
+import lejos.robotics.Color;
 import lejos.robotics.LampLightDetector;
 
 /*
@@ -54,12 +55,12 @@ public class LightSensor implements LampLightDetector, SensorConstants
 		this.floodlight = floodlight;
 	}
 	
-	public boolean setFloodlight(Colors.Color color) {
-		if(color == Colors.Color.RED) {
+	public boolean setFloodlight(int color) {
+		if(color == Color.RED) {
 			port.setType(TYPE_LIGHT_ACTIVE);
 			this.floodlight = true;
 			return true;
-		} else if (color == Colors.Color.NONE) {
+		} else if (color == Color.NONE) {
 			port.setType(TYPE_LIGHT_INACTIVE);
 			this.floodlight = false;
 			return true;
@@ -78,6 +79,7 @@ public class LightSensor implements LampLightDetector, SensorConstants
 	 * @return the light level
 	 */
 	public int readValue() {
+		// TODO: Deprecate some of these read methods.
 		return getLightValue();
 	}
 	
@@ -116,6 +118,7 @@ public class LightSensor implements LampLightDetector, SensorConstants
  **/
 	public void calibrateLow()
 	{
+		// TODO: Should these methods save calibrated data in static memory?
 		_zero = port.readRawValue();
 	}
 /** 
@@ -144,11 +147,11 @@ public class LightSensor implements LampLightDetector, SensorConstants
     */
    public int  getHigh() {return 1023 - _hundred;}
 
-	public Colors.Color getFloodlight() {
+	public int getFloodlight() {
 		if(this.floodlight == true)
-			return Colors.Color.RED;
+			return Color.RED;
 		else
-			return Colors.Color.NONE;
+			return Color.NONE;
 	}
 
 	public boolean isFloodlightOn() {

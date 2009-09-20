@@ -13,13 +13,6 @@ package lejos.robotics;
 public interface ColorDetector {
 
 	/**
-	 * Returns a single color component, specified by using an enumeration constant as a parameter. e.g. Color.RED.
-	 * @param color An integer obtained from Color, such as Color.RED, Color.GREEN or Color.BLUE
-	 * @return The calibrated/normalized RGB value (0-255)
-	 */
-	public int getRGBComponent(int color);
-	
-	/**
 	 * Return the Red, Green and Blue values together in one object.
 	 * @return Color object containing the three RGB component values between 0-255.
 	 */
