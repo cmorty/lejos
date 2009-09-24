@@ -5,9 +5,9 @@ package javax.microedition.sensor;
  * 
  * @author Lawrie Griffiths
  */
-public class UltrasonicSensorInfo extends I2CSensorInfo {
+public class UltrasonicSensorInfo extends NXTSensorInfo {
 	public UltrasonicSensorInfo() {
-		infos = new I2CChannelInfo[]{new UltrasonicChannelInfo()};
+		infos = new NXTChannelInfo[]{new UltrasonicChannelInfo()};
 	}
 
 	public String getQuantity() {

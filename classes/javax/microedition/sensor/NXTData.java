@@ -1,17 +1,16 @@
 package javax.microedition.sensor;
 
 /** 
- * Implementation of the Data interface for I2CSensors 
- * which contains default methods for implementations of channel data.
+ * Implementation of the Data interface for NXT Sensors. 
  * 
  * @author Lawrie Griffiths
  */
-public class I2CData implements Data {
+public class NXTData implements Data {
 	protected int[] values;
 	protected long timeStamp = System.currentTimeMillis();
 	protected ChannelInfo info;
 	
-	public I2CData(ChannelInfo info, int bufferSize) {
+	public NXTData(ChannelInfo info, int bufferSize) {
 		this.info = info;
 		values = new int[bufferSize];
 	}

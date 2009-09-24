@@ -5,7 +5,7 @@ package javax.microedition.sensor;
  * 
  * @author Lawrie Griffiths
  */
-public class ColorChannelInfo extends I2CChannelInfo {
+public class ColorChannelInfo extends NXTChannelInfo {
 	public MeasurementRange[] getMeasurementRanges() {
 		return new MeasurementRange[] {new MeasurementRange(0,17,1)};
 	}

@@ -1,12 +1,16 @@
 package javax.microedition.sensor;
 
 /**
- * Abstract implementation ChannelInfo with extra methods needed for leJOS NXJ I2C sensors
+ * Abstract implementation ChannelInfo with extra methods needed for NXT sensors
  * 
  * @author Lawrie Griffiths
  *
  */
-public abstract class I2CChannelInfo implements ChannelInfo {
+public abstract class NXTChannelInfo implements ChannelInfo {	
+	/**
+	 * Get the register that returns channel data for an I2C channel
+	 * @return
+	 */
 	public int getRegister() {
 		return 0x42;
 	}
@@ -31,6 +35,11 @@ public abstract class I2CChannelInfo implements ChannelInfo {
 		return Unit.getUnit("");
 	}
 	
+	/**
+	 * Get the value that represents zero.
+	 * 
+	 * @return the offset
+	 */
 	public int getOffset() {
 		return 0;
 	}

@@ -1,15 +1,15 @@
 package javax.microedition.sensor;
 
 /**
- * Implementation of the channel interface for leJOS NXJ I2C channels
+ * Implementation of the channel interface for NXT sensor channels
  * 
  * @author Lawrie Griffiths
  */
-public class I2CChannel implements Channel {
-	private I2CChannelInfo channelInfo;
-	private I2CSensorConnection sensor;
+public class NXTChannel implements Channel {	
+	private NXTChannelInfo channelInfo;
+	private NXTSensorConnection sensor;
 	
-	public I2CChannel(I2CSensorConnection sensor, I2CChannelInfo channelInfo) {
+	public NXTChannel(NXTSensorConnection sensor, NXTChannelInfo channelInfo) {
 		this.sensor = sensor;
 		this.channelInfo = channelInfo;
 	}
@@ -18,7 +18,7 @@ public class I2CChannel implements Channel {
 		SensorManager.addCondition(this, listener, condition);
 	}
 
-	public I2CChannelInfo getChannelInfo() {
+	public NXTChannelInfo getChannelInfo() {
 		return channelInfo;
 	}
 
@@ -43,7 +43,7 @@ public class I2CChannel implements Channel {
 		SensorManager.removeConditionListener(this, listener);
 	}
 	
-	public I2CSensorConnection getSensor() {
+	public NXTSensorConnection getSensor() {
 		return sensor;
 	}
 }

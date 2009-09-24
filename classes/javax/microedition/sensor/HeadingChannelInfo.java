@@ -5,7 +5,7 @@ package javax.microedition.sensor;
  * 
  * @author Lawrie Griffiths
  */
-public class HeadingChannelInfo extends I2CChannelInfo {
+public class HeadingChannelInfo extends NXTChannelInfo {
 	public int getDataLength() {
 		return 9; // in bits
 	}

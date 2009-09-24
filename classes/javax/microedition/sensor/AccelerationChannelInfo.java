@@ -6,7 +6,7 @@ package javax.microedition.sensor;
  * 
  * @author Lawrie Griffiths
  */
-public class AccelerationChannelInfo extends I2CChannelInfo {
+public class AccelerationChannelInfo extends NXTChannelInfo {
 	public static final String[] axes = {"x", "y", "z"};
 	private String axis;
 	private int axis_number;
@@ -29,7 +29,7 @@ public class AccelerationChannelInfo extends I2CChannelInfo {
 
 	public MeasurementRange[] getMeasurementRanges() {
 		// TODO: Check measurement range
-		return new MeasurementRange[]{new MeasurementRange(-32767,32768,1)};
+		return new MeasurementRange[]{new MeasurementRange(-3000,3000,1)};
 	}
 
 	public String getName() {

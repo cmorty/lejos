@@ -6,19 +6,19 @@ package javax.microedition.sensor;
  * 
  * @author Lawrie Griffiths
  */
-public class I2CActiveCondition {
-	private I2CChannel channel;
+public class NXTActiveCondition {
+	private NXTChannel channel;
 	private Condition condition;
 	private ConditionListener conditionListener;
 	
-	public I2CActiveCondition(I2CChannel channel, Condition condition, 
+	public NXTActiveCondition(NXTChannel channel, Condition condition, 
 			               ConditionListener conditionListener) {
 		this.channel = channel;
 		this.condition = condition;
 		this.conditionListener = conditionListener;
 	}
 	
-	public I2CChannel getChannel() {
+	public NXTChannel getChannel() {
 		return channel;
 	}
 	
