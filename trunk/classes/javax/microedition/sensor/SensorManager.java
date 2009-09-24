@@ -16,18 +16,24 @@ import lejos.util.Delay;
  */
 public class SensorManager {
 	// Registry of all known sensors
-	private static final I2CSensorInfo[] sensors = {
+	private static final NXTSensorInfo[] sensors = {
+		new BatterySensorInfo(),
+		new LightSensorInfo(),
+		new RCXLightSensorInfo(),
+		new SoundSensorInfo(),
+		new TouchSensorInfo(),
+		new RCXTemperatureSensorInfo(),
 		new UltrasonicSensorInfo(),
 		new MindsensorsAccelerationSensorInfo(),
 		new HiTechnicCompassSensorInfo(),
-		new HiTechnicColorSensorInfo()
+		new HiTechnicColorSensorInfo(),
 	};
 	// Hashtable of listeners and a quantity or SensorInfo object
 	private static Hashtable listeners = new Hashtable();
 	// List of currently attached sensors
-	private static ArrayList<I2CSensorInfo> availableSensors;
-	private static ArrayList<I2CActiveCondition> conditions = new ArrayList<I2CActiveCondition>();
-	private static ArrayList<I2CActiveData> dataListeners = new ArrayList<I2CActiveData>();
+	private static ArrayList<NXTSensorInfo> availableSensors;
+	private static ArrayList<NXTActiveCondition> conditions = new ArrayList<NXTActiveCondition>();
+	private static ArrayList<NXTActiveData> dataListeners = new ArrayList<NXTActiveData>();
 	static {
 		availableSensors = getSensors();
 		Thread listener = new Thread(new Listener());
@@ -59,7 +65,9 @@ public class SensorManager {
 	}
 	
 	/**
-	 * Find all available sensors that match a specific URL
+	 * Find all available sensors that match a specific URL.
+	 * Note that this only finds I2C sensors.
+	 * 
 	 * @param url the specified URL
 	 * @return an array of SensorInfo objects
 	 */
@@ -72,7 +80,8 @@ public class SensorManager {
 	}
 	
 	/**
-	 * Find all available sensors that match a specific context
+	 * Find all available sensors that match a specific quantity and/or context.
+	 * Note that this only finds I2C sensors.
 	 * 
 	 * @param quantity the required quantity or null for any
 	 * @param contextType the required context type or null for any
@@ -112,21 +121,21 @@ public class SensorManager {
 	}
 	
 	// Get the available sensors that match a specific URL
-	static synchronized I2CSensorInfo[] getSensors(SensorURL searchURL) {
+	static synchronized NXTSensorInfo[] getSensors(SensorURL searchURL) {
 		int count = 0;
 		//searchURL.printURL();
 		
 		// Count matching sensors
-		for(I2CSensorInfo avail: availableSensors) {
+		for(NXTSensorInfo avail: availableSensors) {
 			SensorURL targetURL = SensorURL.parseURL((avail.getUrl()));
 			//targetURL.printURL();
 			if (searchURL.matches(targetURL)) count++;
 		}
 		
 		// Put them in an array
-		I2CSensorInfo[] infoArray = new I2CSensorInfo[count];	
+		NXTSensorInfo[] infoArray = new NXTSensorInfo[count];	
 		int i=0;
-		for(I2CSensorInfo avail: availableSensors) {
+		for(NXTSensorInfo avail: availableSensors) {
 			SensorURL targetURL = SensorURL.parseURL((avail.getUrl()));
 			if (searchURL.matches(targetURL)) {
 				infoArray[i++] = avail;
@@ -137,19 +146,19 @@ public class SensorManager {
 	}
 	
 	// Get the available sensors that match the given quantity and context type
-	static synchronized I2CSensorInfo[] getSensors(String quantity, String contextType) {		
+	static synchronized NXTSensorInfo[] getSensors(String quantity, String contextType) {		
 		int count = 0;
 		
 		// Count matching sensors
-		for(I2CSensorInfo avail: availableSensors) {
+		for(NXTSensorInfo avail: availableSensors) {
 			if ((quantity == null || avail.getQuantity().equals(quantity) &&
 			    (contextType == null || avail.getContextType().equals(contextType)))) count++;
 		}
 		
 		// Put them in an array
-		I2CSensorInfo[] infoArray = new I2CSensorInfo[count];	
+		NXTSensorInfo[] infoArray = new NXTSensorInfo[count];	
 		int i=0;
-		for(I2CSensorInfo avail: availableSensors) {
+		for(NXTSensorInfo avail: availableSensors) {
 			if ((quantity == null || avail.getQuantity().equals(quantity) &&
 				    (contextType == null || avail.getContextType().equals(contextType)))) {
 				infoArray[i++] = avail;
@@ -161,22 +170,22 @@ public class SensorManager {
 	// Poll for the currently attached sensors, compare with
 	// previous set and generate available and unavailable events
 	private synchronized static void checkSensors() {
-		ArrayList<I2CSensorInfo> oldSensors = availableSensors;
+		ArrayList<NXTSensorInfo> oldSensors = availableSensors;
 		availableSensors = getSensors();
 		
 		// Check for missing sensors
-		for(I2CSensorInfo old: oldSensors) {
+		for(NXTSensorInfo old: oldSensors) {
 			boolean stillThere = false;
-			for(I2CSensorInfo current : availableSensors) {
+			for(NXTSensorInfo current : availableSensors) {
 				if (old.equals(current)) stillThere = true;
 			}
 			if (!stillThere) notify(old, false);
 		}
 		
 		// Check for new sensors
-		for(I2CSensorInfo current: availableSensors) {
+		for(NXTSensorInfo current: availableSensors) {
 			boolean wasThere = false;
-			for(I2CSensorInfo old : oldSensors) {
+			for(NXTSensorInfo old : oldSensors) {
 				if (old.equals(current)) wasThere = true;
 			}
 			if (!wasThere) notify(current, true);
@@ -184,8 +193,8 @@ public class SensorManager {
 	}
 
 	// Get the currently attached sensors and fill in SensorInfo structures with dynamic information
-	private static synchronized ArrayList<I2CSensorInfo> getSensors() {
-		ArrayList<I2CSensorInfo> current = new ArrayList<I2CSensorInfo>();
+	private static synchronized ArrayList<NXTSensorInfo> getSensors() {
+		ArrayList<NXTSensorInfo> current = new ArrayList<NXTSensorInfo>();
 		
 		for(int i=0;i<SensorPort.PORTS.length;i++) {
 			I2CSensor i2cSensor = new I2CSensor(SensorPort.PORTS[i]);		
@@ -198,11 +207,11 @@ public class SensorManager {
 			}
 			if (type.length()== 0) continue;
 			
-			I2CSensorInfo info = findSensorInfo(type);
+			NXTSensorInfo info = findSensorInfo(type);
 
 			// Fill in details from the attached sensor
 			if (info != null) {
-				info.setPort(i);
+				info.setPortNumber(i);
 				info.setType(type);
 				info.setVendor(i2cSensor.getProductID());
 				info.setVersion(i2cSensor.getVersion());
@@ -216,18 +225,33 @@ public class SensorManager {
 	/*
 	 * Get the sensor information for a sensor of  given type
 	 */
-	private synchronized static I2CSensorInfo findSensorInfo(String type) {
+	private synchronized static NXTSensorInfo findSensorInfo(String type) {
 		for(int i=0;i<sensors.length;i++) {
 			String[] models = sensors[i].getModelNames();
-			for(int j=0;j<models.length;j++) {
-				if (models[j].equals(type)) return sensors[i];
+			if (models != null) {
+				for(int j=0;j<models.length;j++) {
+					if (models[j].equals(type)) return sensors[i];
+				}
+			}
+		}
+		return null;
+	}
+	
+	/*
+	 * Get the sensor information for sensors that measure a specific quantity
+	 */
+	public synchronized static NXTSensorInfo[] findQuantity(String quantity) {
+		for(int i=0;i<sensors.length;i++) {
+			if (quantity.equals(sensors[i].getQuantity())) {
+				//TODO: Return multiple matches
+				return new NXTSensorInfo[]{sensors[i]};
 			}
 		}
 		return null;
 	}
 	
 	// Notify listeners of available or unavailable events
-	private synchronized static void notify(I2CSensorInfo sensor, boolean available) {
+	private synchronized static void notify(NXTSensorInfo sensor, boolean available) {
 		Enumeration quantityKeys = listeners.keys();
 		
 		while(quantityKeys.hasMoreElements()) {
@@ -258,21 +282,21 @@ public class SensorManager {
 	/*
 	 * Add a condition for a specific condition listener on a channel
 	 */
-	static synchronized void addCondition(I2CChannel channel, ConditionListener conditionListener, Condition condition) {
+	static synchronized void addCondition(NXTChannel channel, ConditionListener conditionListener, Condition condition) {
 		// Check if the condition already set
-		for(I2CActiveCondition cond: conditions) {
+		for(NXTActiveCondition cond: conditions) {
 			if (cond.getChannel()  == channel && cond.getCondition() == condition && 
 				cond.getConditionListener() == conditionListener) return;
 		}
-		conditions.add(new I2CActiveCondition(channel, condition, conditionListener));
+		conditions.add(new NXTActiveCondition(channel, condition, conditionListener));
 	}
 	
 	/*
 	 * Remove a condition (on all condition listeners) on a channel
 	 */
-	static synchronized void removeCondition(I2CChannel channel, Condition condition) {
-		 for (Iterator<I2CActiveCondition> it = conditions.iterator(); it.hasNext();) {
-			 I2CActiveCondition cond = it.next();
+	static synchronized void removeCondition(NXTChannel channel, Condition condition) {
+		 for (Iterator<NXTActiveCondition> it = conditions.iterator(); it.hasNext();) {
+			 NXTActiveCondition cond = it.next();
 				if (cond.getCondition() == condition && cond.getChannel() == channel) {
 					it.remove();
 				}
@@ -282,9 +306,9 @@ public class SensorManager {
 	/*
 	 * Remove a specific condition on a specific condition listener on a channel
 	 */
-	static synchronized void removeCondition(I2CChannel channel, ConditionListener listener, Condition condition) {
-		 for (Iterator<I2CActiveCondition> it = conditions.iterator(); it.hasNext();) {
-			 I2CActiveCondition cond = it.next();
+	static synchronized void removeCondition(NXTChannel channel, ConditionListener listener, Condition condition) {
+		 for (Iterator<NXTActiveCondition> it = conditions.iterator(); it.hasNext();) {
+			 NXTActiveCondition cond = it.next();
 				if (cond.getCondition() == condition && cond.getChannel() == channel && 
 					cond.getConditionListener() == listener) {
 					it.remove();
@@ -298,14 +322,14 @@ public class SensorManager {
 	 */
 	static synchronized Condition[] getConditions(Channel channel, ConditionListener listener) {
 		int count = 0;
-		for (I2CActiveCondition cond: conditions) {
+		for (NXTActiveCondition cond: conditions) {
 			if (cond.getChannel() == channel && cond.getConditionListener() == listener) {
 				count++;
 			}
 		}
 		Condition[] cc = new Condition[count];
 		int i=0;
-		for (I2CActiveCondition cond: conditions) {
+		for (NXTActiveCondition cond: conditions) {
 			if (cond.getChannel() == channel && cond.getConditionListener() == listener) {
 				cc[i++] = cond.getCondition();
 			}
@@ -317,8 +341,8 @@ public class SensorManager {
 	 * Remove all conditions on a channel
 	 */
 	static synchronized void removeAllConditions(Channel channel) {
-		 for (Iterator<I2CActiveCondition> it = conditions.iterator(); it.hasNext();) {
-			 I2CActiveCondition cond = it.next();
+		 for (Iterator<NXTActiveCondition> it = conditions.iterator(); it.hasNext();) {
+			 NXTActiveCondition cond = it.next();
 				if (cond.getChannel() == channel) {
 					it.remove();
 				}
@@ -329,8 +353,8 @@ public class SensorManager {
 	 * Remove a condition listener on a channel
 	 */
 	static synchronized void removeConditionListener(Channel channel, ConditionListener listener) {
-		 for (Iterator<I2CActiveCondition> it = conditions.iterator(); it.hasNext();) {
-			 I2CActiveCondition cond = it.next();
+		 for (Iterator<NXTActiveCondition> it = conditions.iterator(); it.hasNext();) {
+			 NXTActiveCondition cond = it.next();
 				if (cond.getChannel() == channel && cond.getConditionListener() == listener) {
 					it.remove();
 				}
@@ -340,18 +364,18 @@ public class SensorManager {
 	/*
 	 * Add a data listener for a sensor
 	 */
-	static void addDataListener(I2CSensorConnection sensor, int bufferSize, DataListener listener, int samplingInterval) {
+	static void addDataListener(NXTSensorConnection sensor, int bufferSize, DataListener listener, int samplingInterval) {
 		// Remove any existing data listener
 		removeDataListener(sensor);
-		dataListeners.add(new I2CActiveData(sensor, bufferSize, listener, samplingInterval));
+		dataListeners.add(new NXTActiveData(sensor, bufferSize, listener, samplingInterval));
 	}
 	
 	/*
 	 * Remove the data listeners for a given sensor
 	 */
 	static void removeDataListener(SensorConnection sensor) {
-		 for (Iterator<I2CActiveData> it = dataListeners.iterator(); it.hasNext();) {
-			 I2CActiveData active = it.next();
+		 for (Iterator<NXTActiveData> it = dataListeners.iterator(); it.hasNext();) {
+			 NXTActiveData active = it.next();
 				if (active.getSensor() == sensor) {
 					it.remove();
 				}
@@ -363,13 +387,13 @@ public class SensorManager {
 	 * delete the condition.
 	 */
 	private static synchronized void checkConditions() {
-		for (Iterator<I2CActiveCondition> it = conditions.iterator(); it.hasNext();) {
-			I2CActiveCondition cond = it.next();
-			I2CChannel channel = cond.getChannel();
-			I2CSensorConnection sensor = channel.getSensor();
+		for (Iterator<NXTActiveCondition> it = conditions.iterator(); it.hasNext();) {
+			NXTActiveCondition cond = it.next();
+			NXTChannel channel = cond.getChannel();
+			NXTSensorConnection sensor = channel.getSensor();
 			int reading = sensor.getChannelData(channel.getChannelInfo());
 			if(cond.getCondition().isMet((double) reading)) {
-				I2CData data = new I2CData(channel.getChannelInfo(),1);
+				NXTData data = new NXTData(channel.getChannelInfo(),1);
 				data.setIntData(0, reading);
 				cond.getConditionListener().conditionMet(sensor, data, cond.getCondition());
 				it.remove();
@@ -381,7 +405,7 @@ public class SensorManager {
 	 * Process all active data listeners
 	 */
 	private static synchronized void processData() {
-		for(I2CActiveData active: dataListeners) {
+		for(NXTActiveData active: dataListeners) {
 			active.process();
 		}
 	}

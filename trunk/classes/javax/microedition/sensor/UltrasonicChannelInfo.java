@@ -6,7 +6,7 @@ package javax.microedition.sensor;
  * 
  * @author Lawrie Griffiths
  */
-public class UltrasonicChannelInfo extends I2CChannelInfo {
+public class UltrasonicChannelInfo extends NXTChannelInfo {
 	public MeasurementRange[] getMeasurementRanges() {
 		return new MeasurementRange[] {new MeasurementRange(1,200,1)};
 	}

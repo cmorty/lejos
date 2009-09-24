@@ -5,9 +5,9 @@ package javax.microedition.sensor;
  * 
  * @author Lawrie Griffiths
  */
-public class HiTechnicCompassSensorInfo extends I2CSensorInfo {	
+public class HiTechnicCompassSensorInfo extends NXTSensorInfo {	
 	public HiTechnicCompassSensorInfo() {
-		infos = new I2CChannelInfo[]{new HeadingChannelInfo()};
+		infos = new NXTChannelInfo[]{new HeadingChannelInfo()};
 	}
 	
 	public String getQuantity() {

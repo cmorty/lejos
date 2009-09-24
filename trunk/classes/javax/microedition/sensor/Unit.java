@@ -14,10 +14,13 @@ public class Unit {
 	private static final Unit IMPERIAL_LENGTH = new Unit("in");
 	private static final Unit GRAVITY = new Unit("g");
 	private static final Unit NO_UNIT = new Unit("");
+	private static final Unit VOLTS = new Unit("V");
+	private static final Unit DECIBEL = new Unit("db");
+	private static final Unit CELSIUS = new Unit("Celsius");
 	
 	private static Unit[] units = {METRIC_LENGTH, ACCELERATION, 
 								   PLANE_ANGLE, IMPERIAL_LENGTH,
-								   GRAVITY, NO_UNIT};
+								   GRAVITY, DECIBEL, VOLTS, NO_UNIT};
 	
 	private String symbol;
 	

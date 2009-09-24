@@ -1,7 +1,8 @@
 package javax.microedition.io;
 
 import java.io.*;
-import javax.microedition.sensor.I2CSensorConnection;
+import javax.microedition.sensor.NXTSensorConnection;
+
 import lejos.nxt.comm.*;
 
 /**
@@ -64,7 +65,7 @@ public class Connector {
 				}
         	};
     	} if (scheme.equals("sensor")) {
-    		c =  new I2CSensorConnection(name);
+    		c =  new NXTSensorConnection(name);
     	} else {
     		throw new ConnectionNotFoundException(scheme + " not a known protocol");
     	}

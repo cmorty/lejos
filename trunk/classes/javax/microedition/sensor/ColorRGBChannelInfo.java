@@ -6,7 +6,7 @@ package javax.microedition.sensor;
  * 
  * @author Lawrie Griffiths
  */
-public class ColorRGBChannelInfo extends I2CChannelInfo {
+public class ColorRGBChannelInfo extends NXTChannelInfo {
 	public static final String[] rgb = {"r", "g", "b"};
 	private String color;
 	private int rgb_number;

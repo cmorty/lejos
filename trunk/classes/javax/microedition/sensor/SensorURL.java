@@ -25,7 +25,7 @@ public class SensorURL {
 	
 	public static SensorURL parseURL(String url) {
 		String model = null, location = null, context = null;
-		int portNumber = -1;
+		int portNumber = 0;
 		int colon = url.indexOf(':');
 		if (colon < 0) return null;
 		
@@ -48,7 +48,7 @@ public class SensorURL {
 			else if (parameterName.equals("location")) location = parameterValue;
 			else if (parameterName.equals("port")) {
 				try {
-					portNumber = Integer.parseInt(parameterValue);
+					portNumber = Integer.parseInt(parameterValue)-1;
 				} catch (NumberFormatException e) {
 					return null;
 				}

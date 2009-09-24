@@ -5,9 +5,9 @@ package javax.microedition.sensor;
  * 
  * @author Lawrie Griffiths
  */
-public class HiTechnicColorSensorInfo extends I2CSensorInfo {
+public class HiTechnicColorSensorInfo extends NXTSensorInfo {
 	public HiTechnicColorSensorInfo() {
-		infos = new I2CChannelInfo[]{new ColorChannelInfo(), 
+		infos = new NXTChannelInfo[]{new ColorChannelInfo(), 
 			                         new ColorIndexChannelInfo(),
 			                         new ColorRGBChannelInfo("r"),
 			                         new ColorRGBChannelInfo("g"),

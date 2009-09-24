@@ -6,16 +6,16 @@ package javax.microedition.sensor;
  * @author Lawrie
  *
  */
-public class I2CActiveData {
-	private I2CSensorConnection sensor;
+public class NXTActiveData {
+	private NXTSensorConnection sensor;
 	private int bufferSize;
 	private DataListener listener;
 	private int samplingInterval;
-	private I2CData[] data;
+	private NXTData[] data;
 	private int position = 0;
 	private long lastSampleMillis=0;
 	
-	public I2CActiveData(I2CSensorConnection sensor, int bufferSize, DataListener listener, int samplingInterval) {
+	public NXTActiveData(NXTSensorConnection sensor, int bufferSize, DataListener listener, int samplingInterval) {
 		this.sensor = sensor;
 		this.bufferSize =bufferSize;
 		this.listener = listener;
@@ -46,7 +46,7 @@ public class I2CActiveData {
 	public void process() {
 		if ((System.currentTimeMillis() - lastSampleMillis) >= samplingInterval) {
 			//Read all the channels
-			I2CChannelInfo[] channelInfos = (I2CChannelInfo[]) sensor.getSensorInfo().getChannelInfos();				
+			NXTChannelInfo[] channelInfos = (NXTChannelInfo[]) sensor.getSensorInfo().getChannelInfos();				
 			for(int i=0;i<channelInfos.length;i++) {
 				data[i].setIntData(position, sensor.getChannelData(channelInfos[i]));
 			}			
@@ -59,11 +59,11 @@ public class I2CActiveData {
 		}	
 	}
 	
-	private I2CData[] createData() {
-		I2CChannelInfo[] channelInfos = (I2CChannelInfo[]) sensor.getSensorInfo().getChannelInfos();
-		I2CData[] data = new I2CData[channelInfos.length];
+	private NXTData[] createData() {
+		NXTChannelInfo[] channelInfos = (NXTChannelInfo[]) sensor.getSensorInfo().getChannelInfos();
+		NXTData[] data = new NXTData[channelInfos.length];
 		for(int i=0;i<channelInfos.length;i++) {
-			data[i] = new I2CData(channelInfos[i], bufferSize);
+			data[i] = new NXTData(channelInfos[i], bufferSize);
 		}
 		return data;
 	}

@@ -6,10 +6,10 @@ package javax.microedition.sensor;
  * 
  * @author Lawrie Griffiths
  */
-public class MindsensorsAccelerationSensorInfo extends I2CSensorInfo {
+public class MindsensorsAccelerationSensorInfo extends NXTSensorInfo {
 
 	public MindsensorsAccelerationSensorInfo() {
-		infos = new I2CChannelInfo[]
+		infos = new NXTChannelInfo[]
 		                 {new AccelerationChannelInfo("x"),
 		            	  new AccelerationChannelInfo("y"),
 		            	  new AccelerationChannelInfo("z"),

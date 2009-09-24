@@ -5,7 +5,7 @@ package javax.microedition.sensor;
  * 
  * @author Lawrie Griffiths
  */
-public class ColorIndexChannelInfo extends I2CChannelInfo {
+public class ColorIndexChannelInfo extends NXTChannelInfo {
 	public int getRegister() {
 		return 0x4c;
 	}

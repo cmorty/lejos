@@ -6,7 +6,7 @@ package javax.microedition.sensor;
  * 
  * @author Lawrie Griffiths
  */
-public class TiltChannelInfo extends I2CChannelInfo {
+public class TiltChannelInfo extends NXTChannelInfo {
 	public static final String[] axes = {"x", "y", "z"};
 	private String axis;
 	private int axis_number;
