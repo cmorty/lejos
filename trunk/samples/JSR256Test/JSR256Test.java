@@ -7,7 +7,6 @@ import javax.microedition.sensor.ChannelInfo;
 import javax.microedition.sensor.Condition;
 import javax.microedition.sensor.ConditionListener;
 import javax.microedition.sensor.Data;
-import javax.microedition.sensor.I2CSensorConnection;
 import javax.microedition.sensor.LimitCondition;
 import javax.microedition.sensor.SensorConnection;
 import javax.microedition.sensor.SensorInfo;
