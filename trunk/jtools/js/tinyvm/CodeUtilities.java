@@ -383,42 +383,7 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
    int processMethod (int aMethodIndex, boolean aSpecial, boolean aInterface)
       throws TinyVMException
    {
-      Constant pEntry = iCF.getConstantPool().getConstant(aMethodIndex); // TODO catch all (runtime) exceptions
-      if (!(pEntry instanceof ConstantCP))
-      {
-         throw new TinyVMException("Classfile error: Instruction requiring "
-            + "CONSTANT_MethodRef or CONSTANT_InterfaceMethodRef " + "got "
-            + (pEntry == null? "null" : pEntry.getClass().getName()));
-      }
-      ConstantCP pMethodEntry = (ConstantCP) pEntry;
-      String className = pMethodEntry.getClass(iCF.getConstantPool()).replace(
-         '.', '/');
-      ConstantNameAndType pNT = (ConstantNameAndType) iCF.getConstantPool()
-         .getConstant(pMethodEntry.getNameAndTypeIndex());
-      Signature pSig = new Signature(pNT.getName(iCF.getConstantPool()), pNT
-         .getSignature(iCF.getConstantPool()));
-      if (className.startsWith("["))
-      {
-          // For arrays we use the methods contained in Object
-          className = "java/lang/Object";
-      }
-      ClassRecord pClassRecord = getClassRecord(className);
-      if (pClassRecord == null)
-      {
-         throw new TinyVMException("Bug CU-7: Didn't find class " + className
-            + " from class " + iCF.getClassName() + " method " + iFullName);
-      }
-
-      MethodRecord pMethod;
-      if (aInterface)
-        pMethod = pClassRecord.getInterfaceMethodRecord(pSig);
-      else
-        pMethod = pClassRecord.getVirtualMethodRecord(pSig);
-      if (pMethod == null)
-      {
-         throw new TinyVMException("Method " + pSig + " not found  in "
-            + className +" interface " + aInterface);
-      }
+      MethodRecord pMethod = findMethod (aMethodIndex, aSpecial, aInterface);
       ClassRecord pTopClass = pMethod.getClassRecord();
       if (aSpecial)
       {
@@ -477,6 +442,8 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
       MethodRecord pMethod;
       if (aInterface)
         pMethod = pClassRecord.getInterfaceMethodRecord(pSig);
+      else if (aSpecial)
+        pMethod = pClassRecord.getSpecialMethodRecord(pSig);
       else
         pMethod = pClassRecord.getVirtualMethodRecord(pSig);
       //if (pMethod == null)

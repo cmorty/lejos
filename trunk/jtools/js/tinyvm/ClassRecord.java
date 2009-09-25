@@ -100,7 +100,7 @@ public class ClassRecord implements WritableData
          1 + // number of methods
          1 + // parent class
          1, // flags
-         2);
+         4);
    }
 
    public void dump (IByteWriter aOut) throws TinyVMException
@@ -455,6 +455,23 @@ public class ClassRecord implements WritableData
       }
       return getParent().getActualVirtualMethodRecord(aSig);
    }
+
+
+   MethodRecord getSpecialMethodRecord (Signature aSig)
+   {
+       /* Search for all methods that are implemented directly by this class or
+        * by a parent class
+        */
+      MethodRecord pRec = getMethodRecord(aSig);
+      if (pRec != null)
+         return pRec;
+      if (!hasParent())
+      {
+         return null;
+      }
+      return getParent().getSpecialMethodRecord(aSig);
+   }
+
 
    MethodRecord getVirtualMethodRecord (Signature aSig)
    {
