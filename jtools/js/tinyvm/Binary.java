@@ -471,7 +471,6 @@ public class Binary
          ClassRecord classRecord = getClassRecord(entryClassNames[i]);
          classRecord.markUsed();
          classRecord.markInstanceUsed();
-         //classRecord.markMethods();
       }
 
       // We now add in the static initializers of all marked classes. 
@@ -516,6 +515,7 @@ public class Binary
                    MethodRecord pRec = classRecord.getMethodRecord(staticInit);
                    classRecord.markMethod(pRec, true);
                }
+               if (useAll) classRecord.markMethods();
             }
          }
          // Finally mark starting from all of the entry classes
