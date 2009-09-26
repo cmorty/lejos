@@ -1,7 +1,10 @@
 package lejos.nxt;
 
+
+
 import lejos.robotics.TachoMotor;
 import lejos.util.Delay;
+
 
 /**
  * Abstraction for a NXT motor. Three instances of <code>Motor</code>
@@ -94,6 +97,7 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
    
    private int _brakePower = 20;
    private int _lockPower = 30;
+   private boolean _newOperation = false;// used by regulator.stopAtLimit
    /**
     * Motor A.
     */
@@ -195,6 +199,7 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
     */
    void updateState( int mode)
    {
+     _newOperation = true;//cause exit from regulator.stopAtLimit
       synchronized(regulator)
       {
          _rotating = false; //regulator should stop testing for rotation limit  ASAP
@@ -239,6 +244,7 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
    
    public void rotateTo(int limitAngle,boolean immediateReturn)
    {
+     _newOperation = true;
       synchronized(regulator)
       {
          _lock = false;
@@ -249,6 +255,7 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
          _stopAngle -= _direction * os;//overshoot(limitAngle - getTachoCount());  
          _limitAngle = limitAngle;
          _rotating = true;
+         _newOperation = false;
       }
       if(immediateReturn)return;
       while(_rotating) Thread.yield();
@@ -379,8 +386,9 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
          int k = 0; // time within limit angle +=1
          int t1 = 0; // time since change in tacho count
          int error = 0; 
-         int pwr = _brakePower;// local power 
-         while ( k < 40)// exit within +-1  for 40 ms
+         int pwr = _brakePower;// local power
+         // exit within +-1  for 40 ms  or motor mathod is called
+         while ( k < 40 && !Motor.this._newOperation)
          {
             error = _limitAngle - getTachoCount();
             if (error == e0)  // no change in tacho count
