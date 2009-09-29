@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <description url="http://lejos.sourceforge.net/tools/eclipse/plug085.lejos.org">
-      Eclipse features for leJOS NXJ.
+   <description name="leJOS NXJ">
+      leJOS NXJ features for Eclipse
    </description>
-   <feature url="features/org.lejos.nxt.ldt.feature_0.8.5.200909022138.jar" id="org.lejos.nxt.ldt.feature" version="0.8.5.200909022138">
-      <category name="leJOS NXJ Eclipse"/>
+   <feature url="features/org.lejos.nxt.ldt.feature_0.8.5.200909272258.jar" id="org.lejos.nxt.ldt.feature" version="0.8.5.200909272258">
+      <category name="org.lejos.nxt"/>
    </feature>
-   <category-def name="leJOS NXJ Eclipse" label="leJOS NXJ Eclipse">
+   <category-def name="org.lejos.nxt" label="leJOS NXJ">
       <description>
-         Eclipse features for leJOS NXJ
+         leJOS NXJ features
       </description>
    </category-def>
 </site>
