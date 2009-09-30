@@ -1,0 +1,5 @@
+Notes:
+- readlink -f
+	doesn't work on OSX
+- uname -o
+	doesn't work on OSX
