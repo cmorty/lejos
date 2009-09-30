@@ -1,28 +1,35 @@
 #!/bin/bash
 
 # for OSX
-function my_readlinkdir() {
-	local FILE="$1"
-	if [ -L "$FILE" ]; then
-		local LINK="$(readlink -- "$FILE")"
-		cd -- "$(dirname -- "$FILE")"
-		cd -- "$(dirname -- "$LINK")"
+function my_resolve() {
+	if [[ "$2" =~ ^/ ]]; then
+		echo "$2"
+	elif [[ "$2" == "." ]]; then
+		echo "$1"
+	elif [[ "$1" == "." ]]; then
+		echo "$2"
 	else
-		cd -- "$(dirname -- "$FILE")"
+		echo "$1/$2"
 	fi
-	pwd
 }
-function my_pdirname() {
-	cd -- "$1/.."
-	pwd
+function my_readlink() {
+	if [ -L "$1" ]; then
+		local TMP1="$(dirname -- "$1")"
+		local TMP2="$(readlink -- "$1")"
+		my_resolve "$TMP1" "$TMP2"
+	else
+		echo "$1"
+	fi
 }
 
 NXJ_COMMAND="$(basename -- "$0")"
 if [ -n "$NXJ_HOME" ]; then
 	NXJ_BIN="$NXJ_HOME/bin"
 else
-	NXJ_BIN="$(my_readlinkdir "$0")"
-	NXJ_HOME="$(my_pdirname "$NXJ_BIN")"
+	NXJ_BIN="$(my_readlink "$0")"
+	NXJ_BIN="$(my_resolve "$(pwd)" "$NXJ_BIN")"
+	NXJ_BIN="$(dirname -- "$NXJ_BIN")"
+	NXJ_HOME="$(dirname -- "$NXJ_BIN")"
 fi
 
 NXJ_LIBS="$NXJ_HOME/lib"
