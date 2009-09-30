@@ -13,3 +13,9 @@
 - JUnit test: Float.toString() must handle NaN, +/-Infinity and +/-0.0 correctly
 - JUnit test: sqrt must return -0.0 for x=-0.0
 - JUnit test: Double.parseDouble must handle "NaN" and "Inifinity" strings (with +/-)
+
+- JUnit test: using static final objects from interfaces with static initializer
+(used to throw NoSuchMethod in 0.8.5)
+
+
+
