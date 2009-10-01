@@ -86,7 +86,7 @@ public class Thread implements Runnable
       init("", target);
   }
   
-  public Thread(String name, Runnable target)
+  public Thread(Runnable target, String name)
   {
       init(name, target);
   }
