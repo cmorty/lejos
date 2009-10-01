@@ -17,6 +17,7 @@
 	<classpathentry excluding="build.xml" kind="src" path="FileTest"/>
 	<classpathentry kind="src" path="GPSInfo"/>
 	<classpathentry excluding="build.xml" kind="src" path="GraphicsSample"/>
+	<classpathentry kind="src" path="GyroTest"/>
 	<classpathentry excluding="build.xml" kind="src" path="HelloWorld"/>
 	<classpathentry kind="src" path="Homer"/>
 	<classpathentry excluding="build.xml" kind="src" path="I2CDevices"/>
