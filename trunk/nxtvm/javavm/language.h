@@ -71,11 +71,13 @@ typedef struct S_ClassRecord
    * CIACnt1:  Number of method records
    * CIACnt2:  Number of field records
    *
-   * Instance Class
-   * CIAData1: Instance member map offset from the start of the binary.
-   * CIAData2: Class base, the class number of the first bit in the table
-   * CIACnt1:  Number of valid bits in the table.
-   * CIACnt2:  Unused
+   * Interface Class
+   * CIAData1: Method table offset from the start of the binary. if it is zero
+   *           there are no methods. Otherwise it points to a single entry for
+   *           the static initializer.
+   * CIAData2: Instance member map offset from the start of the binary.
+   * CIACnt1:  Class base, the class number of the first bit in the table
+   * CIACnt2:  Number of valid bits in the table.
    *
    * Array Class
    * CIAData1: The dimension of the array
@@ -214,9 +216,9 @@ extern boolean is_valid_executable(byte * start, int len);
 #define get_element_class(CREC_)    ((CREC_)->CIAData2)
 #define get_method_cnt(CREC_)        ((CREC_)->CIACnt1)
 #define get_field_cnt(CREC_)        ((CREC_)->CIACnt2)
-#define get_interface_map(CREC_)    ((byte*)(get_binary_base() + (CREC_)->CIAData1))
-#define get_interface_map_base(CREC_) ((CREC_)->CIAData2)
-#define get_interface_map_len(CREC_) ((CREC_)->CIACnt1)
+#define get_interface_map(CREC_)    ((byte*)(get_binary_base() + (CREC_)->CIAData2))
+#define get_interface_map_base(CREC_) ((CREC_)->CIACnt1)
+#define get_interface_map_len(CREC_) ((CREC_)->CIACnt2)
 #define is_primitive(CLASSIDX_)     ((CLASSIDX_) >= BOOLEAN && (CLASSIDX_) <= LONG )
 #if EXECUTE_FROM_FLASH
 #define set_init_state(CREC_, state)(get_class_status(CREC_) |= (state))
