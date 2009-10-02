@@ -96,6 +96,7 @@ int dispatch_static_initializer (ClassRecord *aRec, byte *retAddr)
   int state = get_init_state(aRec);
   ClassRecord *init = aRec;
   ClassRecord *super = get_class_record(init->parentClass);
+  MethodRecord *method;
   // Are we needed?
   if (state & C_INITIALIZED) return EXEC_CONTINUE;
   // We need to initialize all of the super classes first. So we find the
@@ -136,8 +137,16 @@ int dispatch_static_initializer (ClassRecord *aRec, byte *retAddr)
   printf ("dispatch_static_initializer: has clinit: %d, %d\n",
           (int) aRec, (int) retAddr);
   #endif
+  // Static initializer is always the first method
+  method = get_method_table(init);
+  if ((byte *)method == get_binary_base() || method->signatureId != _6clinit_7_4_5V)
+  {
+    throw_exception (noSuchMethodError);
+    return EXEC_EXCEPTION;
+  }
+    
   // Can we run it?
-  if (!dispatch_special (find_method (init, _6clinit_7_4_5V), retAddr))
+  if (!dispatch_special (method, retAddr))
     return EXEC_RETRY;
   // Mark for next time
   set_init_state(init, C_INITIALIZING);
@@ -262,8 +271,8 @@ boolean dispatch_special (MethodRecord *methodRecord, byte *retAddr)
   StackFrame *stackBase;
   int newStackFrameIndex;
   STACKWORD *newStackTop;
-
   #if DEBUG_BYTECODE
+  printf("call method %d ret %x\n", methodRecord - get_method_table(get_class_record(0)), retAddr); 
   printf ("\n------ dispatch special - %d ------------------\n\n",
           methodRecord->signatureId);
   #endif

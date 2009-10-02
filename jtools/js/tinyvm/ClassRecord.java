@@ -43,6 +43,7 @@ public class ClassRecord implements WritableData
    JavaClass iCF;
    Binary iBinary;
    RecordTable<MethodRecord> iMethodTable = new RecordTable<MethodRecord>("methods", false, false);
+   RecordTable<MethodRecord> iIntMethodTable = null;
    final RecordTable<InstanceFieldRecord> iInstanceFields = new RecordTable<InstanceFieldRecord>("instance fields", true,
       false);
    final HashMap<String, StaticValue> iStaticValues = new HashMap<String, StaticValue>();
@@ -121,10 +122,14 @@ public class ClassRecord implements WritableData
          }
          else if (isInterface())
          {
+            // Interfaces can have at most one method (the static initializer)
+            // so we do not need to store the length of the method table. This
+            // mean we can (just) fit the information we need to access the
+            // interface table.
+            aOut.writeU2(iIntMethodTable == null ? 0 : iIntMethodTable.getOffset());
             aOut.writeU2(iInterfaceMap.getOffset());
-            aOut.writeU2(iInterfaceMap.getFirst());
+            aOut.writeU1(iInterfaceMap.getFirst());
             aOut.writeU1(iInterfaceMap.getSize());
-            aOut.writeU1(0);
          }
          else
          {
@@ -150,7 +155,7 @@ public class ClassRecord implements WritableData
          aOut.writeU1(iParentClassIndex);
          //aOut.writeU1 (iArrayElementType);
          aOut.writeU1(iFlags | (hasReference() ? 0 : TinyVMConstants.C_NOREFS));
-         IOUtilities.writePadding(aOut, 2);
+         IOUtilities.writePadding(aOut, 4);
       }
       catch (IOException e)
       {
@@ -663,15 +668,25 @@ public class ClassRecord implements WritableData
            RecordTable<RecordTable<ExceptionRecord>> aExceptionTables, HashVector<Signature> aSignatures)
       throws TinyVMException
    {
-      if (isInterface()) return;
       // _logger.log(Level.INFO, "Processing methods in " + iName);
       RecordTable<MethodRecord> iOptMethodTable = new RecordTable<MethodRecord>("methods", false, false);
       HashMap<Signature, MethodRecord> iOptMethods = new HashMap<Signature, MethodRecord>();
-
+      MethodRecord staticInitRec = null;
+      // We always place the static initializer (if any) first to make it easy to find.
+      if (this.hasStaticInitializer())
+      {
+         staticInitRec = iMethods.get(new Signature("<clinit>()V"));
+         if (staticInitRec != null && (staticInitRec.isCalled || iBinary.useAll()))
+         {
+            iOptMethodTable.add(staticInitRec);
+            iOptMethods.put(aSignatures.elementAt(staticInitRec.iSignatureId), staticInitRec);
+            if (staticInitRec.getExceptions() != null) aExceptionTables.add(staticInitRec.getExceptions());
+         }
+      }
       for (Iterator<MethodRecord> iter = iMethodTable.iterator(); iter.hasNext();)
       {
          MethodRecord pRec = iter.next();
-         if (iBinary.useAll() || pRec.isCalled())
+         if (pRec != staticInitRec && (iBinary.useAll() || pRec.isCalled()))
          {
             iOptMethodTable.add(pRec);
             iOptMethods.put(aSignatures.elementAt(pRec.iSignatureId), pRec);
@@ -680,7 +695,20 @@ public class ClassRecord implements WritableData
       }
       iMethodTable = iOptMethodTable;
       iMethods = iOptMethods;
-      aMethodTables.add(iMethodTable);
+      if (this.isInterface())
+      {
+         // Special case for interfaces we only store the static constructor (if there is one).
+         // Note that we continue to use the full tables for lookups etc. so that we can
+         // obtain method signatures.
+         if (staticInitRec != null)
+         {
+            iIntMethodTable = new RecordTable<MethodRecord>("methods", false, false);
+            iIntMethodTable.add(staticInitRec);
+            aMethodTables.add(iIntMethodTable);
+         }
+      }
+      else
+         aMethodTables.add(iMethodTable);
    }
 
    public void storeOptimizedStaticFields (RecordTable<StaticFieldRecord> aStaticFields,
