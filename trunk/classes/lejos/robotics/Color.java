@@ -1,9 +1,6 @@
 package lejos.robotics;
 
-public class Color {
-
-	// TODO: Andy thinks we should have separate RGB_RED, RGB_BLUE, RGB_GREEN values that are always 0-2. Undecided.
-	
+public class Color {	
 	public static final int RED = 0;
 	public static final int GREEN = 1;
 	public static final int BLUE = 2;
