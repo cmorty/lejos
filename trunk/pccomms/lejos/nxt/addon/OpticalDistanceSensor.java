@@ -2,6 +2,7 @@ package lejos.nxt.addon;
 
 import lejos.nxt.I2CPort;
 import lejos.nxt.I2CSensor;
+import lejos.robotics.RangeFinder;
 
 /*
  * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
@@ -17,7 +18,7 @@ import lejos.nxt.I2CSensor;
  * 
  */
 
-public class OpticalDistanceSensor extends I2CSensor{
+public class OpticalDistanceSensor extends I2CSensor implements RangeFinder{
 	private byte[] buf = new byte[2];
 	//Registers
 	private final static int COMMAND = 0x41;
@@ -90,6 +91,15 @@ public class OpticalDistanceSensor extends I2CSensor{
 	 */
 	public int getDistance(){
 		return getDistLSB();
+	}
+	
+	/**
+	 * Returns the range to the object in centimeters.
+	 * 
+	 * @return the range as a float
+	 */
+	public float getRange(){
+		return getDistLSB() / 10;
 	}
 	
 	/**
