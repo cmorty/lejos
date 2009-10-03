@@ -26,6 +26,12 @@ public class GyroSensor implements SensorConstants {
                             MODE_RAW);
 	}
 	
+	public GyroSensor(ADSensorPort port, int offset)
+	{
+		this(port);
+		this.offset = offset;
+	}
+	
 	/**
 	 * Read the gyro value
 	 * 
