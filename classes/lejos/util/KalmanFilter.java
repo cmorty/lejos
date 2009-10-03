@@ -22,7 +22,7 @@ public class KalmanFilter {
   public void setState(Matrix mean, Matrix covariance) {
     this.mu = mean;
     this.sigma = covariance;
-    int n = mu.getColumnDimension();
+    int n = mu.getRowDimension();
     this.i = Matrix.identity(n, n);
   }
   
@@ -33,7 +33,7 @@ public class KalmanFilter {
     // Control update step 2: calculate the predicted covariance
     sigmaBar = a.times(sigma).times(at).plus(r);
    
-    // Calculate the Kalman Gain   
+    // Calculate the Kalman Gain 
     gain = sigmaBar.times(ct).times(c.times(sigmaBar).times(ct).plus(q).inverse());
     
     // Measurement update: calculate the new mean
