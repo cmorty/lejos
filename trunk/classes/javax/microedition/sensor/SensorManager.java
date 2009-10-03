@@ -27,6 +27,7 @@ public class SensorManager {
 		new MindsensorsAccelerationSensorInfo(),
 		new HiTechnicCompassSensorInfo(),
 		new HiTechnicColorSensorInfo(),
+		new HiTechnicGyroSensorInfo()
 	};
 	// Hashtable of listeners and a quantity or SensorInfo object
 	private static Hashtable listeners = new Hashtable();

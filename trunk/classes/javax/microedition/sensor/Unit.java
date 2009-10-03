@@ -17,10 +17,12 @@ public class Unit {
 	private static final Unit VOLTS = new Unit("V");
 	private static final Unit DECIBEL = new Unit("db");
 	private static final Unit CELSIUS = new Unit("Celsius");
+	private static final Unit DEGREES_PER_SEC = new Unit("degree/s");
 	
 	private static Unit[] units = {METRIC_LENGTH, ACCELERATION, 
 								   PLANE_ANGLE, IMPERIAL_LENGTH,
-								   GRAVITY, DECIBEL, VOLTS, NO_UNIT};
+								   GRAVITY, DECIBEL, CELSIUS, VOLTS, 
+								   DEGREES_PER_SEC, NO_UNIT};
 	
 	private String symbol;
 	
