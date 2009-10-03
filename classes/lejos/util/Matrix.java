@@ -32,7 +32,7 @@ public class Matrix implements Cloneable, java.io.Serializable {
 
    /** Construct an m-by-n matrix of zeros. 
    @param m    Number of rows.
-   @param n    Number of colums.
+   @param n    Number of columns.
    */
 
    public Matrix (int m, int n) {
@@ -43,7 +43,7 @@ public class Matrix implements Cloneable, java.io.Serializable {
 
    /** Construct an m-by-n constant matrix.
    @param m    Number of rows.
-   @param n    Number of colums.
+   @param n    Number of columns.
    @param s    Fill the matrix with this scalar value.
    */
 
@@ -777,7 +777,7 @@ public class Matrix implements Cloneable, java.io.Serializable {
    public void print(PrintStream out) {
     for(int i=0;i<m;i++) {
       for(int j=0;j<n;j++) {
-        System.out.print(A[i][j]);
+        System.out.print(A[i][j] + " ");
       }
       System.out.println("");
     }
