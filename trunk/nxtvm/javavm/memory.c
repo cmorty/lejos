@@ -413,7 +413,7 @@ static Object *alloc_multi_array (const byte cls,
     elemCls = get_element_class(classRec);
     while (ne--)
     {
-      ref2 = new_multi_array (elemCls, reqDimensions - 1, numElemPtr + 1);
+      ref2 = alloc_multi_array (elemCls, reqDimensions - 1, numElemPtr + 1);
       if (ref2 == JNULL) return JNULL;
       ref_array(ref)[ne] = ptr2word (ref2);
     }
