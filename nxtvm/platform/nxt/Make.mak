@@ -1,6 +1,6 @@
 .SUFFIXES:
 
-default: def_target
+default: all
 
 include environment.mak
 include targetdef.mak
@@ -8,21 +8,18 @@ include version.mak
 
 RAM_TARGET   := $(TARGET)_ram.elf
 ROM_TARGET   := $(TARGET)_rom.elf
-SAMBA_TARGET := $(TARGET)_samba_ram.bin
+SAMBA_TARGET := $(TARGET)_samba.elf
 ROMBIN_TARGET := $(TARGET)_rom.bin
 
 RAM_LDSCRIPT   := $(TARGET)_ram.ld
 ROM_LDSCRIPT   := $(TARGET)_rom.ld
 SAMBA_LDSCRIPT := $(TARGET)_samba.ld
 
-S_OBJECTS := $(S_SOURCES:.s=.o)
-C_OBJECTS := $(C_SOURCES:.c=.o) $(C_RAMSOURCES:.c=.oram)
-
 C_OPTIMISATION_FLAGS = -Os
 #C_OPTIMISATION_FLAGS = -Os -Xassembler -aslh
 #C_OPTIMISATION_FLAGS = -O0
 
-SVNDEF := -DSVN_REV=$(shell svnversion -n ../.. | grep -o "[^:]*$$" | grep -o "[0-9]*")
+SVN_REV := $(shell svnversion -n ../.. | grep -o "[^:]*$$" | grep -o "[0-9]*")
 
 CFLAGS = $(BASE_ABI_FLAGS) -mthumb \
 	-ffreestanding -fsigned-char \
@@ -30,101 +27,123 @@ CFLAGS = $(BASE_ABI_FLAGS) -mthumb \
 	-Wall -Winline -Werror-implicit-function-declaration \
 	-I. -I$(VM_DIR) \
 	-ffunction-sections -fdata-sections \
-    $(SVNDEF) -DMAJOR_VERSION=$(MAJOR_VERSION) -DMINOR_VERSION=$(MINOR_VERSION)
+	-DSVN_REV=$(SVN_REV) -DMAJOR_VERSION=$(MAJOR_VERSION) -DMINOR_VERSION=$(MINOR_VERSION)
 
-LDFLAGS = -Map $@.map -cref --gc-sections
+LDFLAGS = -cref --gc-sections
 
-ASFLAGS = $(BASE_ABI_FLAGS)
+ALL_ELF := $(RAM_TARGET) $(ROM_TARGET) $(SAMBA_TARGET)
+ALL_BIN := $(ALL_ELF:.elf=.bin)
+ALL_LDS := $(ALL_ELF:.elf=.ld)
+ALL_MAP := $(addsuffix .map,$(ALL_ELF))
+ALL_OBJECTS := $(C_OBJECTS) $(S_OBJECTS)
+ALL_ASM := $(addsuffix .asm,$(ALL_ELF)) $(addsuffix .asm,$(ALL_OBJECTS))
 
-def_target: all
+GEN_HEADER := $(VM_DIR)/specialclasses.h $(VM_DIR)/specialsignatures.h
 
+MACRO_LDS_GEN = sed -e 's/^$(1)//' -e '/^RAM_ONLY/d' -e'/^ROM_ONLY/d' -e'/^SAMBA_ONLY/d'
 
-ALL_TARGETS := $(ROM_TARGET) $(ROMBIN_TARGET) 
+.SECONDARY: $(ALL_ELF) $(ALL_LDS) $(ALL_MAP) $(ALL_OBJECTS)
 
+.PHONY: all
+all:  BuildMessage $(ROMBIN_TARGET)
 
-.PHONY:  all
-all:  BuildMessage $(ALL_TARGETS)
+.PHONY: everything
+everything: BuildMessage $(ALL_BIN) $(ALL_ASM)
 
-PHONY: TargetMessage
+.PHONY: TargetMessage
 TargetMessage:
 	@echo ""
 	@echo "Building: $(ALL_TARGETS)"
 	@echo ""
-	@echo "C sources: $(C_SOURCES) to $(C_OBJECTS)"
+	@echo "C objects: $(C_OBJECTS)"
 	@echo ""
-	@echo "Assembler sources: $(S_SOURCES) to $(S_OBJECTS)"
+	@echo "Assembler objects: $(S_OBJECTS)"
 	@echo ""
 	@echo "LD source: $(LDSCRIPT_SOURCE)"
 	@echo ""
 
-PHONY: BuildMessage
+.PHONY: BuildMessage
 BuildMessage: TargetMessage EnvironmentMessage
-
-
-$(SAMBA_LDSCRIPT): $(LDSCRIPT_SOURCE)
-	cat $< | sed -e 's/^SAMBA_ONLY//' -e '/^RAM_ONLY/d' -e'/^ROM_ONLY/d' >$@
-
-$(RAM_LDSCRIPT): $(LDSCRIPT_SOURCE)
-	cat $< | sed -e 's/^RAM_ONLY//' -e'/^ROM_ONLY/d' -e'/^SAMBA_ONLY/d' >$@
-
-$(ROM_LDSCRIPT): $(LDSCRIPT_SOURCE)
-	cat $< | sed -e 's/^ROM_ONLY//' -e'/^RAM_ONLY/d' -e'/^SAMBA_ONLY/d' >$@
-
-$(SAMBA_TARGET)_elf: $(C_OBJECTS) $(S_OBJECTS) $(SAMBA_LDSCRIPT)
-	@echo "Linking $@"
-	$(LD) -o $@ $(C_OBJECTS) $(S_OBJECTS) -T $(SAMBA_LDSCRIPT) $(LIBC) $(LIBGCC) $(LDFLAGS)
-
-$(RAM_TARGET): $(C_OBJECTS) $(S_OBJECTS) $(RAM_LDSCRIPT)
-	@echo "Linking $@"
-	$(LD) -o $@ $(C_OBJECTS) $(S_OBJECTS) -T $(RAM_LDSCRIPT) $(LIBC) $(LIBGCC) $(LDFLAGS)
-
-$(ROM_TARGET): $(C_OBJECTS) $(S_OBJECTS) $(ROM_LDSCRIPT)
-	@echo "Linking $@"
-	$(LD) -o $@ $(C_OBJECTS) $(S_OBJECTS) -T $(ROM_LDSCRIPT) $(LIBM) $(LIBC) $(LIBGCC) $(LDFLAGS)
-
-$(ROMBIN_TARGET): $(ROM_TARGET)
-	@echo "Generating binary file $@"
-	$(OBJCOPY) -O binary $< $@
-
-$(SAMBA_TARGET): $(SAMBA_TARGET)_elf
-	@echo "Generating binary file $@"
-	$(OBJCOPY) -O binary $< $@
-
-%.o: %.s
-	@echo "Assembling $< to $@"
-	$(AS) $(ASFLAGS) -o $@ $< 
-
-%.o: %.c
-	@echo "Compiling $< to $@"
-	$(CC) $(CFLAGS) -c -o $@ $< 
-
-../../javavm/interpreter.o: ../../javavm/interpreter.c
-	@echo "Compiling $< to $@"
-	$(CC) $(CFLAGS) -O3 -c -o $@ $< 
-
-%.asm: %.c
-	@echo "Compiling $< to $@"
-	$(CC) -S $(CFLAGS) -g0 -o $@ $< 
-
-../../javavm/interpreter.asm: ../../javavm/interpreter.c
-	@echo "Compiling $< to $@"
-	$(CC) -S $(CFLAGS) -g0 -O3 -o $@ $< 
-
-%.oram: %.c
-	@echo "Compiling $< to $@"
-	$(CC) $(CFLAGS) -c -o $@ $< 
-
 
 .PHONY: clean
 clean:  
 	@echo "Removing All Objects"
-	@rm -f $(S_OBJECTS) $(C_OBJECTS) *.o
+	@rm -f $(ALL_OBJECTS)
 	@echo "Removing generated ld scripts"
-	@rm  -f *.ld
+	@rm -f $(ALL_LDS)
 	@echo "Removing target"
-	@rm -f $(ALL_TARGETS)
+	@rm -f $(ALL_ELF) $(ALL_BIN)
 	@echo "Removing map files"
-	@ rm -f *map
+	@rm -f $(ALL_MAP)
+	@echo "Removing asm files"
+	@rm -f $(ALL_ASM)
+	@echo "Removing generated headers"
+	@rm -f $(GEN_HEADER)
 
--include $(C_SOURCES:.c=.d)
+
+$(RAM_LDSCRIPT): $(LDSCRIPT_SOURCE)
+	@echo "Generating $@ from template $<"
+	$(call MACRO_LDS_GEN,RAM_ONLY) $< >$@
+
+$(ROM_LDSCRIPT): $(LDSCRIPT_SOURCE)
+	@echo "Generating $@ from template $<"
+	$(call MACRO_LDS_GEN,ROM_ONLY) $< >$@
+
+$(SAMBA_LDSCRIPT): $(LDSCRIPT_SOURCE)
+	@echo "Generating $@ from template $<"
+	$(call MACRO_LDS_GEN,SAMBA_ONLY) $< >$@
+
+%.elf.map %.elf: %.ld $(C_OBJECTS) $(S_OBJECTS)
+	@echo "Linking $@ using linker script $<"
+	$(LD) $(LDFLAGS) -T $< -Map $@.map -o $@ $(C_OBJECTS) $(S_OBJECTS) $(LIBM) $(LIBC) $(LIBGCC)
+
+%.bin: %.elf
+	@echo "Generating binary file $@ from $<"
+	$(OBJCOPY) -O binary $< $@
+
+$(VM_DIR)/specialclasses.h: $(VM_DIR)/specialclasses.db
+	../../dbtoh.sh class $< $@ 
+
+$(VM_DIR)/specialsignatures.h: $(VM_DIR)/specialsignatures.db
+	../../dbtoh.sh signature $< $@ 
+
+
+# default rules for compiling sources
+
+%.o: %.s
+	@echo "Assembling $< to $@"
+	$(CC) $(CFLAGS) -c -o $@ $< 
+
+%.o: %.c $(GEN_HEADER)
+	@echo "Compiling $< to $@"
+	$(CC) $(CFLAGS) -c -o $@ $< 
+
+
+### special rules for compiling RAM sources
+
+%.oram: %.s
+	@echo "Assembling $< to $@"
+	$(CC) $(CFLAGS) -c -o $@ $< 
+
+%.oram: %.c $(GEN_HEADER)
+	@echo "Compiling $< to $@"
+	$(CC) $(CFLAGS) -c -o $@ $< 
+
+
+### special rules for compiling JVM sources
+
+$(VM_PREFIX)%.o: $(VM_DIR)/%.c $(GEN_HEADER)
+	@echo "Compiling $< to $@"
+	$(CC) $(CFLAGS) -c -o $@ $< 
+
+$(VM_PREFIX)interpreter.o: $(VM_DIR)/interpreter.c $(GEN_HEADER)
+	@echo "Compiling $< to $@"
+	$(CC) $(CFLAGS) -O3 -c -o $@ $< 
+
+
+### rules disassembling
+
+%.asm: %
+	@echo "Disassembling $< to $@"
+	$(OBJDUMP) -z -d $< >$@
 
