@@ -45,6 +45,7 @@ convert_signature()
 	local i=0
 	while read -r LINE; do
 		if [[ ! "$LINE" =~ ^[[:space:]]*# ]] && [[ "$LINE" =~ [^[:space:]] ]]; then
+			LINE="${LINE//_/_0}"
 			LINE="${LINE//[/_1}"
 			LINE="${LINE//;/_2}"
 			LINE="${LINE//\//_3}"
