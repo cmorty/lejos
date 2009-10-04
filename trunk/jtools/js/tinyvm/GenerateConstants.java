@@ -152,8 +152,8 @@ public class GenerateConstants
       if (!pHome.isDirectory())
          fatal("Error: " + iTinyVMHome + " is not a directory.");
       File pCommon = new File(pHome, "nxtvm/javavm");
-      File pClasses = new File(pCommon, "classes.db");
-      File pSignatures = new File(pCommon, "signatures.db");
+      File pClasses = new File(pCommon, "specialclasses.db");
+      File pSignatures = new File(pCommon, "specialsignatures.db");
       File pVmSrc = new File(pHome, "nxtvm/javavm");
       File pClassIndexH = new File(pVmSrc, "specialclasses.h");
       File pSignaturesH = new File(pVmSrc, "specialsignatures.h");
