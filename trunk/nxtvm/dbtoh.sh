@@ -62,14 +62,16 @@ convert_signature()
 }
 
 IN="$2"
-OUT="$IN.h"
+OUT="$3"
+OUTNAME="$(basename -- "$OUT")"
+
 
 case "$1" in
 	class)
-		convert_class "$OUT" <"$IN" >"$OUT"
+		convert_class "$OUTNAME" <"$IN" >"$OUT"
 		;;
 	signature)
-		convert_signature "$OUT" <"$IN" >"$OUT"
+		convert_signature "$OUTNAME" <"$IN" >"$OUT"
 		;;
 	*)
 		echo "unknown type"
