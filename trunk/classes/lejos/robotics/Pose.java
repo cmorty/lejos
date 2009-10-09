@@ -55,7 +55,7 @@ public void moveUpdate(float distance)
 {
   float x = distance * (float)Math.cos(Math.toRadians(_heading));
   float y = distance * (float)Math.sin(Math.toRadians(_heading));
-  translate(x,y);
+  _location.translate(x,y);
 }
 /**
  * Change the x and y coordinates of the pose by adding dx and dy.
@@ -65,7 +65,7 @@ public void moveUpdate(float distance)
  */
 public void translate( float dx, float dy)
 {
-    _location.setLocation((float)_location.getX()+dx,(float)_location.getY()+dy);
+    _location.translate(dx,dy);
 }
 /**
  * Sets the pose locatin and heading to the currect values resulting from travel
@@ -77,21 +77,21 @@ public void translate( float dx, float dy)
 public void arcUpdate(float distance, float turnAngle)
 {
   float dx = 0;
-    float  dy = 0;
-    double heading = (Math.toRadians(_heading));
-    if (Math.abs(turnAngle) > .5)
-    {
-      float turn = (float)Math.toRadians(turnAngle);
-     float radius = distance / turn;
-      dy = radius * (float) (Math.cos(heading) - Math.cos(heading + turn));
-      dx = radius * (float)(Math.sin(heading + turn) - Math.sin(heading));
-    } else if (Math.abs(distance) > .01)
-    {
-      dx = distance * (float) Math.cos(heading);
-      dy = distance * (float) Math.sin(heading);
-    }
-    translate((float) dx, (float) dy);
-    rotateUpdate(turnAngle);
+  float dy = 0;
+  double heading = (Math.toRadians(_heading));
+  if (Math.abs(turnAngle) > .5)
+  {
+    float turn = (float) Math.toRadians(turnAngle);
+    float radius = distance / turn;
+    dy = radius * (float) (Math.cos(heading) - Math.cos(heading + turn));
+    dx = radius * (float) (Math.sin(heading + turn) - Math.sin(heading));
+  } else if (Math.abs(distance) > .01)
+  {
+    dx = distance * (float) Math.cos(heading);
+    dy = distance * (float) Math.sin(heading);
+  }
+  _location.translate( dx, dy);
+  rotateUpdate(turnAngle);
 }
 /**
  * 
@@ -102,8 +102,7 @@ public void arcUpdate(float distance, float turnAngle)
  */
 public float angleTo(Point destination)
 {
-  Point d = delta(destination);
-  return (float)Math.toDegrees(Math.atan2(d.getY(),d.getX()));
+  return (float)_location.angleTo(destination);
 }
 /**
  * Get the distance to the destination
@@ -113,13 +112,8 @@ public float angleTo(Point destination)
  */
 public float distanceTo(Point destination)
 {
-   Point d = delta(destination);
-  return (float) Math.sqrt( d.getX()*d.getX() + d.getY()*d.getY());
-}
-private Point delta(Point d)
-{
-  return new Point((float)(d.getX() - _location.getX()),
-          (float) (d.getY() - _location.getY()));
+
+  return (float) _location.distance(destination);
 }
 /**
  * returns the heading (direction angle) of the Pose
