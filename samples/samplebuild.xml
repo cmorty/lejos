@@ -22,6 +22,7 @@
   <target name="compile" depends="clean"
         description="compile the source" >
     <!-- Compile the java code from ${src}  -->
+    <echo> src = ${src} </echo>
     <javac srcdir="${src}" destdir="${src}">
       <bootclasspath>
         <pathelement location="${nxj.classes.jar}"/>
