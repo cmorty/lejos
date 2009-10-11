@@ -4,9 +4,9 @@ import lejos.nxt.*;
 
 /**
  * Simple debug monitor that can be run alongside and nxj program. This class
- * catches unhandled excpetions and user interrupts (accept + escape key), it
+ * catches unhandled exceptions and user interrupts (accept + escape key), it
  * displays information about the event (stack trace etc.). The user is then
- * abble to either perform a soft reset (Escape), a hard reset (Escape + Accept),
+ * able to either perform a soft reset (Escape), a hard reset (Escape + Accept),
  * or continue running the program (any other key). All output is directed via
  * System.err.
  * @author andy
@@ -15,26 +15,30 @@ public class DebugMonitor
 {
 
     /**
-     * Display information about the uncaught excpetion on System.err
+     * Display information about the uncaught exception on System.err
      * @param info the current VM event
      */
     static void displayException(DebugInterface info)
     {
         VM vm = VM.getVM();
         int base = vm.getImage().getImageBase();
-        System.err.println("Java Exception");
-        System.err.println("Class: " + vm.getVMClass(info.exception).getClassNo());
+        System.err.println("Exception: " + vm.getVMClass(info.exception).getClassNo());
         String msg = info.exception.getMessage();
-        if (msg != null && msg.length() > 0)
-            System.err.println("Msg: " + msg);
-        System.err.println(" at: " + info.method + "(" + info.pc + ")");
         int cnt = 0;
-        VM.VMStackFrames stack = vm.getVMThread(info.thread).getStackFrames(info.frame-1);
+        if (msg != null && msg.length() > 0)
+        {
+            System.err.println(msg);
+            cnt++;
+        }
+        VM.VMThread thread = vm.getVMThread(info.thread);
+        VM.VMStackFrames stack = thread.getStackFrames();
         for(VM.VMStackFrame sf : stack)
         {
-            System.err.println(" at: " + sf.getVMMethod().getMethodNumber() + "(" + (sf.pc-base) + ")");
-            if (cnt++ > 5) break;
+            System.err.println(" at: " + sf.getVMMethod().getMethodNumber() + "(" + (sf.pc - base - sf.getVMMethod().codeOffset) + ")");
+            if (cnt++ > 6) break;
         }
+        // Mark thread as daemon to avoid system hang
+        info.thread.setDaemon(true);
     }
     static String[] states = {"N", "D", "I", "R", "E", "W", "S"};
 

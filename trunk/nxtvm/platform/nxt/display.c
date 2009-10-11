@@ -4,6 +4,7 @@
 #include "constants.h"
 #include "specialclasses.h"
 #include "classes.h"
+#include "memory.h"
 #include <string.h>
 
 typedef unsigned int uint;
@@ -260,6 +261,24 @@ display_string(const char *str)
       display_y++;
     }
     str++;
+  }
+}
+
+void
+display_jstring(String *s)
+{
+  int len = get_array_length((Object *)(s->characters));
+  char *str = (char *)jchar_array((Object *)(s->characters));
+  while (len-- > 0)
+  {
+    if (*str != '\n') {
+      display_char(*str);
+      display_x++;
+    } else {
+      display_x = 0;
+      display_y++;
+    }
+    str += 2;
   }
 }
 

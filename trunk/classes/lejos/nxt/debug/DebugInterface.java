@@ -24,13 +24,8 @@ public class DebugInterface
     public int typ;                // type of debug event
     public Exception exception;
     public Thread thread;
-    public int pc;
-    public int frame;
     public int method;
-    public int methodBase;
-    public int classBase;
-    public int fieldBase;
-    public Thread[] threads;
+    public int pc;
 
     private native static int getDataAddress (Object obj);
     

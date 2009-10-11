@@ -232,7 +232,7 @@ static Object *alloc_complete(Object *ret)
   switch(retryState + 1)
   {
   case GC_ERROR:
-    throw_exception(outOfMemoryError);
+    throw_new_exception(JAVA_LANG_OUTOFMEMORYERROR);
   case GC_ABORT:
     exclusiveThread = null;
     break;
@@ -259,9 +259,9 @@ static void alloc_notify()
 /**
  * Abort a memory transaction and throw an excpetion
  */
-static void alloc_abort(Object *exception)
+static void alloc_abort(int exception)
 {
-  throw_exception(exception);
+  throw_new_exception(exception);
   retryState = GC_ERROR;
 }
 
@@ -327,7 +327,7 @@ static Object *new_array (const byte cls, JINT length)
 
   if (length < 0)
   {
-    alloc_abort(negativeArraySizeException);
+    alloc_abort(JAVA_LANG_NEGATIVEARRAYSIZEEXCEPTION);
     return JNULL;
   }
   allocSize = array_data_size (cls, length);
@@ -437,7 +437,7 @@ Object *new_multi_array (const byte cls,
 
   if (totalDimensions >= MAX_VM_REFS)
   {
-    throw_exception (outOfMemoryError);
+    throw_new_exception (JAVA_LANG_OUTOFMEMORYERROR);
     return JNULL;
   }
 
@@ -461,18 +461,18 @@ int arraycopy(Object *src, int srcOff, Object *dst, int dstOff, int len)
   boolean primitive;
   // validate things
   if (src == null || dst == null)
-    return throw_exception(nullPointerException);
+    return throw_new_exception(JAVA_LANG_NULLPOINTEREXCEPTION);
   if (!is_array(src) || !is_array(dst))
-    return throw_exception(arrayStoreException);
+    return throw_new_exception(JAVA_LANG_ARRAYSTOREEXCEPTION);
   // Check type compatibility...
   srcCls = get_element_class(get_class_record(get_class_index(src)));
   dstCls = get_element_class(get_class_record(get_class_index(dst)));
   primitive = is_primitive(srcCls) || is_primitive(dstCls);
   if (primitive && srcCls != dstCls)
-    return throw_exception(arrayStoreException);
+    return throw_new_exception(JAVA_LANG_ARRAYSTOREEXCEPTION);
   if (srcOff < 0 || (srcOff + len > get_array_length(src)) ||
       dstOff < 0 || (dstOff + len > get_array_length(dst)))
-    return throw_exception(arrayIndexOutOfBoundsException);
+    return throw_new_exception(JAVA_LANG_ARRAYINDEXOUTOFBOUNDSEXCEPTION);
  
   // write barrier
   if (!primitive) update_array(dst);
@@ -493,7 +493,7 @@ int arraycopy(Object *src, int srcOff, Object *dst, int dstOff, int len)
       if (*srcPtr == JNULL || is_assignable(get_class_index((Object *)*srcPtr), dstCls))
         *dstPtr++ = *srcPtr++;
       else
-        return throw_exception(arrayStoreException);
+        return throw_new_exception(JAVA_LANG_ARRAYSTOREEXCEPTION);
     }
   }
   return EXEC_CONTINUE;
@@ -791,7 +791,7 @@ FOURBYTES mem_peek(int base, int offset, int typ)
 void mem_copy(Object *obj, int objoffset, int base, int offset, int len)
 {
   if (obj == null)
-    throw_exception(nullPointerException);
+    throw_new_exception(JAVA_LANG_NULLPOINTEREXCEPTION);
   if (is_array(obj))
   {
     if (!has_norefs(get_class_record(get_class_index(obj)))) update_array(obj);
@@ -1024,7 +1024,7 @@ void memory_add_region (byte *start, byte *end)
 
   // Split the heap into object and array heaps
   oheapEnd = (Object *)heapEnd;
-  if (1)
+  if (0)
     oheapStart = (Object *)heapStart;
   else
     oheapStart = (oheapEnd - INITIAL_HEAP);
@@ -1467,27 +1467,6 @@ static void sweep()
   freeList = flist;
 }
 
-/**
- * "Mark" preallocated instances of exception objects
- * to avoid garbage-collecting them.
- */
-static void mark_exception_objects(void)
-{
-  mark_object(outOfMemoryError, 0);
-  mark_object(noSuchMethodError, 0);
-  mark_object(stackOverflowError, 0);
-  mark_object(nullPointerException, 0);
-  mark_object(classCastException, 0);
-  mark_object(arithmeticException, 0);
-  mark_object(arrayIndexOutOfBoundsException, 0);
-  mark_object(illegalArgumentException, 0);
-  mark_object(interruptedException, 0);
-  mark_object(illegalStateException, 0);
-  mark_object(illegalMonitorStateException, 0);
-  mark_object(arrayStoreException, 0);
-  mark_object(error, 0);
-}
-
 
 /**
  * Scan the heap for objects that overflowed the mark queue. These will be
@@ -1621,7 +1600,6 @@ void gc_run_collector(void)
       break;
     case GC_MARKROOTS:
       overflowScan = oheapEnd;
-      mark_exception_objects();
       mark_static_objects();
       mark_local_objects();
       sweepBase = oheapStart;
@@ -1678,6 +1656,12 @@ void gc_run_collector(void)
     case GC_EXPAND:
       if (oheapLargestFree < oheapMemoryRequired)
         expand_object_heap(oheapMemoryRequired);
+      else if (aheapMemoryFree < aheapMemoryRequired)
+      {
+        expand_array_heap(aheapMemoryRequired);
+        if (aheapMemoryFree < aheapMemoryRequired)
+          expand_object_heap(aheapMemoryRequired);
+      }
       else if (oheapMemoryFree < MIN_HEAP)
         expand_object_heap(MIN_HEAP - oheapMemoryFree);
       else if (oheapMemoryFree - MIN_HEAP > MIN_HEAP_ADJUST)
@@ -1710,6 +1694,29 @@ int garbage_collect()
   retryState = GC_RETRY;
   alloc_complete(JNULL);
   return EXEC_RETRY;
+}
+
+/**
+ * Force a full garbage collect and wait for it to complete
+ */
+void wait_garbage_collect()
+{
+  // Wait for any active collect to complete
+  boolean saved = gMakeRequest;
+  while (gcPhase != GC_IDLE)
+  {
+    gMakeRequest = false;
+    gc_run_collector();
+  }
+  // now force a new one
+  gcPhase = GC_MARKROOTS;
+  aheapMemoryRequired += 1;
+  while (gcPhase != GC_IDLE)
+  {
+    gMakeRequest = false;
+    gc_run_collector();
+  }
+  gMakeRequest = saved;
 }
 
 /**
@@ -1751,7 +1758,7 @@ void gc_update_object(Object *obj)
           {
             /* omit nextThread field of Thread class */
   
-            if(! (classIndex == JAVA_LANG_THREAD && i == 0))
+            //if(! (classIndex == JAVA_LANG_THREAD && i == 0))
             {
               Object* robj = (Object*) get_word_4_ns(statePtr);
               if(robj != NULL)

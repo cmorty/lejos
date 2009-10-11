@@ -6,8 +6,10 @@ OPCODE(OP_ATHROW)
   tempStackWord = pop_ref();
   if (tempStackWord == JNULL)
     goto LABEL_NULLPTR_EXCEPTION;
-  thrownException = word2obj (tempStackWord);
-  goto LABEL_THROW_EXCEPTION;
+  SAVE_REGS();
+  throw_exception((Throwable *)word2obj(tempStackWord));
+  LOAD_REGS();
+  DISPATCH_CHECKED;
 
 OPCODE(OP_MONITORENTER)
   {
@@ -31,7 +33,7 @@ OPCODE(OP_MONITOREXIT)
 
 LABEL_THROW_EXCEPTION:
   SAVE_REGS();
-  throw_exception( thrownException);
+  throw_new_exception(thrownException);
   LOAD_REGS();
   DISPATCH_CHECKED;
 

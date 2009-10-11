@@ -28,7 +28,7 @@ OPCODE(OP_IREM)
   tempInt = word2jint(pop_word());
   if (tempInt == 0)
   {
-    thrownException = arithmeticException;
+    thrownException = JAVA_LANG_ARITHMETICEXCEPTION;
     goto LABEL_THROW_EXCEPTION;
   }
   just_set_top_word ((*(pc-1) == OP_IDIV) ? word2jint(get_top_word()) / tempInt :
@@ -179,7 +179,7 @@ OPCODE(OP_LDIV)
     pop_jlong(&l2);
     if (l1.lnum == 0)
     {
-      thrownException = arithmeticException;
+      thrownException = JAVA_LANG_ARITHMETICEXCEPTION;
       goto LABEL_THROW_EXCEPTION;
     }
     l2.lnum /= l1.lnum;
@@ -194,7 +194,7 @@ OPCODE(OP_LREM)
     pop_jlong(&l2);
     if (l1.lnum == 0)
     {
-      thrownException = arithmeticException;
+      thrownException = JAVA_LANG_ARITHMETICEXCEPTION;
       goto LABEL_THROW_EXCEPTION;
     }
     l2.lnum %= l1.lnum;

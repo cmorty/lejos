@@ -97,7 +97,7 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
       STACKWORD p = (STACKWORD) paramBase[1];
 
       if (p > MAX_PRIORITY || p < MIN_PRIORITY)
-	return throw_exception(illegalArgumentException);
+	return throw_new_exception(JAVA_LANG_ILLEGALARGUMENTEXCEPTION);
       else
 	set_thread_priority((Thread *) word2ptr(paramBase[0]), p);
     }
@@ -171,24 +171,13 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
     break;
   case drawString_4Ljava_3lang_3String_2II_5V:
     {
-      byte *p = word2ptr(paramBase[0]);
-      int len, i;
+      String *p = (String *)word2obj(paramBase[0]);
       Object *charArray;
-      if (!p) return throw_exception(nullPointerException);
+      if (!p) return throw_new_exception(JAVA_LANG_NULLPOINTEREXCEPTION);
       charArray = (Object *) word2ptr(get_word_4_ns(fields_start(p)));
-      if (!charArray) return throw_exception(nullPointerException);
-
-      len = get_array_length(charArray);
-      {
-	char buff[len + 1];
-	char *chars = (char *) jchar_array(charArray);
-
-	for (i = 0; i < len; i++)
-	  buff[i] = chars[i + i];
-	buff[len] = 0;
-	display_goto_xy(paramBase[1], paramBase[2]);
-	display_string(buff);
-      }
+      if (!charArray) return throw_new_exception(JAVA_LANG_NULLPOINTEREXCEPTION);
+      display_goto_xy(paramBase[1], paramBase[2]);
+      display_jstring(p);
     }
     break;
   case drawInt_4III_5V:
@@ -553,8 +542,11 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
       push_word(ns);
     }
     break;
+  case createStackTrace_4_5_1I:
+    push_word(obj2ref(create_stack_trace(ref2obj(paramBase[0]))));
+    break;
   default:
-    return throw_exception(noSuchMethodError);
+    return throw_new_exception(JAVA_LANG_NOSUCHMETHODERROR);
   }
   return EXEC_CONTINUE;
 }

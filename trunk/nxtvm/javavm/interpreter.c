@@ -39,6 +39,7 @@ STACKWORD *curLocalsBase;
 
 byte *old_pc;
 unsigned int debug_word1, debug_word2;
+int thrownException;
 
 // Temporary globals:
 
@@ -49,9 +50,6 @@ unsigned int debug_word1, debug_word2;
 // STACKWORD tempStackWord;
 // STACKWORD *tempWordPtr;
   
-static byte* arrayStart;
-static Object* thrownException;
-
 /**
  * Assumes pc points to 2-byte offset, and jumps.
  */
@@ -141,13 +139,13 @@ static STACKWORD *array_helper(unsigned int idx, Object *obj, int sz)
 {
   if (obj == JNULL)
   {
-    thrownException = nullPointerException;
+    thrownException = JAVA_LANG_NULLPOINTEREXCEPTION;
     return NULL;
   }
 
   if ( /*idx < 0 ||*/ idx >= get_array_length(obj))
   {
-    thrownException = arrayIndexOutOfBoundsException;
+    thrownException = JAVA_LANG_ARRAYINDEXOUTOFBOUNDSEXCEPTION;
     return NULL;
   }
   return (STACKWORD *) (array_start(obj) + idx*sz);
@@ -643,7 +641,7 @@ static DISPATCH_LABEL forceCheck[] =
     UNUSED_OPCODE(253)
     UNUSED_OPCODE(254)
     UNUSED_OPCODE(255)
-      throw_exception (noSuchMethodError);
+      throw_new_exception (JAVA_LANG_NOSUCHMETHODERROR);
       DISPATCH;
 
   END_DISPATCH

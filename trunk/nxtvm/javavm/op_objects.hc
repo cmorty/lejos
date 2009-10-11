@@ -211,7 +211,7 @@ OPCODE(OP_CHECKCAST)
   tempStackWord = get_top_ref();
   if (tempStackWord != JNULL && !instance_of (word2obj (tempStackWord), pc[1] | (pc[0] << 8)))
   {
-    thrownException = classCastException;
+    thrownException = JAVA_LANG_CLASSCASTEXCEPTION;
     goto LABEL_THROW_EXCEPTION;
   }
   pc += 2;
