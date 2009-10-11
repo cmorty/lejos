@@ -199,3 +199,6 @@ isAssignable(II)Z
 
 #LCD
 setContrast(I)V
+
+#Throwable
+createStackTrace()[I

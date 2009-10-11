@@ -141,7 +141,7 @@ int dispatch_static_initializer (ClassRecord *aRec, byte *retAddr)
   method = get_method_table(init);
   if ((byte *)method == get_binary_base() || method->signatureId != _6clinit_7_4_5V)
   {
-    throw_exception (noSuchMethodError);
+    throw_new_exception (JAVA_LANG_NOSUCHMETHODERROR);
     return EXEC_EXCEPTION;
   }
     
@@ -167,7 +167,7 @@ void dispatch_virtual (Object *ref, int signature, byte *retAddr)
 #endif
   if (ref == JNULL)
   {
-    throw_exception (nullPointerException);
+    throw_new_exception (JAVA_LANG_NULLPOINTEREXCEPTION);
     return;
   }
   // When calling methods on arrays, we use the methods for the Object class...
@@ -180,7 +180,7 @@ void dispatch_virtual (Object *ref, int signature, byte *retAddr)
     #if SAFE
     if (classIndex == JAVA_LANG_OBJECT)
     {
-      throw_exception (noSuchMethodError);
+      throw_new_exception (JAVA_LANG_NOSUCHMETHODERROR);
       return;
     }
     #endif
@@ -331,7 +331,7 @@ boolean dispatch_special (MethodRecord *methodRecord, byte *retAddr)
   newStackFrameIndex = (int)(byte)currentThread->stackFrameIndex;
   if (newStackFrameIndex >=  255)
   {
-      throw_exception (stackOverflowError);
+      throw_new_exception (JAVA_LANG_STACKOVERFLOWERROR);
       return false;
   }
   #if DEBUG_METHODS
@@ -352,7 +352,7 @@ boolean dispatch_special (MethodRecord *methodRecord, byte *retAddr)
   if (((byte *)stackFrame - (byte *)stackBase) >= get_array_length(stackFrameArray))
   {
 #if FIXED_STACK_SIZE
-    throw_exception (stackOverflowError);
+    throw_new_exception (JAVA_LANG_STACKOVERFLOWERROR);
     return false;
 #else
     if (expand_call_stack(currentThread) < 0)
@@ -374,7 +374,7 @@ boolean dispatch_special (MethodRecord *methodRecord, byte *retAddr)
   if (is_stack_overflow (newStackTop, methodRecord))
   {
 #if FIXED_STACK_SIZE
-    throw_exception (stackOverflowError);
+    throw_new_exception (JAVA_LANG_STACKOVERFLOWERROR);
     return false;
 #else
     
@@ -458,6 +458,52 @@ void do_return (int numWords)
   {
     push_word_cur (*(++fromStackPtr));
   }  
+}
+
+/**
+ * Create a compact form of the current call stack. One int per frame containing
+ * the method number and current offset. If the ignore parameter is non null
+ * then frames that have a matching this field will not be included in the
+ * trace. This allow the frames for the creation of an exception object to
+ * be ignored.
+ */
+Object *
+create_stack_trace(Object *ignore)
+{
+  int frameCnt = currentThread->stackFrameIndex;
+  Object *stackArray;
+  JINT *data;
+  int i;
+  StackFrame *stackFrame = current_stackframe();
+  MethodRecord *methodBase = get_method_table(get_class_record(0));
+  byte *pcBase = get_binary_base();
+  stackFrame->pc = getPc();
+
+  // Ignore frames if required.
+  if (ignore)
+  {
+    while ((STACKWORD)ignore == *(stackFrame->localsBase))
+    {
+      stackFrame--;
+      frameCnt--;
+    }
+  }
+  // Try and allocate the space for the trace.
+  stackArray = new_single_array(AI, frameCnt);
+  if (stackArray == JNULL)
+  {
+    wait_garbage_collect();
+    stackArray = new_single_array(AI, frameCnt);
+    if (stackArray == JNULL) return JNULL;
+  }
+  // Fill in the trace.
+  data = jint_array(stackArray);
+  for(i = 0; i < frameCnt; i++)
+  {
+    data[i] = ((stackFrame->methodRecord - methodBase) << 16) | (stackFrame->pc - pcBase - stackFrame->methodRecord->codeOffset);
+    stackFrame--;
+  }
+  return stackArray;   
 }
 
 /**

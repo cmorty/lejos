@@ -92,29 +92,45 @@ void disp_varstat( VarStat* vs)
 #endif
 
 void
-handle_uncaught_exception(Object * exception,
+handle_uncaught_exception(Throwable * exception,
 			  const Thread * thread,
-			  const MethodRecord * methodRecord,
-			  const MethodRecord * rootMethod, byte * pc)
+			  const int methodRecord,
+			  int pc)
 {
+  int line = 0;
+  int *frame;
+  int cnt;
+  int dummy;
   sound_freq(100,500, 80); // buzz
   display_clear(0);
-  display_goto_xy(0, 0);
-  display_string("Java Exception:");
-  display_goto_xy(0, 1);
-  display_string("Class: ");
-  display_int(get_class_index(exception), 0);
-  display_goto_xy(0, 2);
-  display_string("Method: ");
-  display_int(methodRecord - get_method_table(get_class_record(0)), 0);
-  display_goto_xy(0, 3);
-  display_string("PC: ");
-  display_int(pc - get_binary_base(), 0);
-  if( get_class_index(exception) == JAVA_LANG_OUTOFMEMORYERROR)
+  display_goto_xy(0, line++);
+  display_string("Exception: ");
+  display_int(get_class_index(&(exception->_super)), 0);
+  if (exception->msg && ((String *)(exception->msg))->characters)
   {
-    display_goto_xy(0, 4);
-    display_string("Size: ");
-    display_int(failed_alloc_size, 0);
+    display_goto_xy(0, line++);
+    display_jstring((String *)(exception->msg));
+  }
+  if (!exception->stackTrace)
+  {
+    dummy = methodRecord << 16 | pc;
+    frame = &dummy;
+    cnt = 1;
+  }
+  else
+  {
+    frame = (int *)jint_array((Object *)(exception->stackTrace));
+    cnt = get_array_length((Object *)(exception->stackTrace));
+  }
+  while (cnt-- > 0 && line < 7)
+  {
+    display_goto_xy(0, line++);
+    display_string(" at: ");
+    display_int(*frame >> 16, 0);
+    display_string("(");
+    display_int(*frame & 0xffff, 0);
+    display_string(")");
+    frame++;
   }
   display_update();
   wait_for_power_down_signal();

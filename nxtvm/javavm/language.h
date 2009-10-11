@@ -169,6 +169,7 @@ extern void do_return (int numWords);
 extern int dispatch_static_initializer (ClassRecord *aRec, byte *rAddr);
 extern boolean dispatch_special (MethodRecord *methodRecord, byte *retAddr);
 void dispatch_special_checked (byte classIndex, byte methodIndex, byte *retAddr, byte *btAddr);
+Object *create_stack_trace(Object *ignore);
 int execute_program(int prog);
 extern boolean is_assignable(const byte srcSig, const byte dstSig);
 extern byte get_base_type(ClassRecord *classRec);

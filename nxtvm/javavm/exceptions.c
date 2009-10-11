@@ -20,52 +20,34 @@
 
 #include "debug.h"
 
-Object *outOfMemoryError;
-Object *noSuchMethodError;
-Object *stackOverflowError;
-Object *nullPointerException;
-Object *classCastException;
-Object *arithmeticException;
-Object *arrayIndexOutOfBoundsException;
-Object *illegalArgumentException;
-Object *interruptedException;
-Object *illegalStateException;
-Object *illegalMonitorStateException;
-Object *error;
-Object *arrayStoreException;
-Object *negativeArraySizeException;
+Throwable *outOfMemoryError;
 
-// Temporary globals:
-
-static TWOBYTES tempCurrentOffset;
-static MethodRecord *tempMethodRecord = null;
-static StackFrame *tempStackFrame;
-static ExceptionRecord *gExceptionRecord;
-static byte gNumExceptionHandlers;
-static MethodRecord *gExcepMethodRec = null;
-static byte *gExceptionPc;
 
 
 void init_exceptions()
 {
-  outOfMemoryError = new_object_for_class (JAVA_LANG_OUTOFMEMORYERROR);
-  noSuchMethodError = new_object_for_class (JAVA_LANG_NOSUCHMETHODERROR);
-  stackOverflowError = new_object_for_class (JAVA_LANG_STACKOVERFLOWERROR);
-
-  nullPointerException = new_object_for_class (JAVA_LANG_NULLPOINTEREXCEPTION);
-  classCastException = new_object_for_class (JAVA_LANG_CLASSCASTEXCEPTION);
-  arithmeticException = new_object_for_class (JAVA_LANG_ARITHMETICEXCEPTION);
-  arrayIndexOutOfBoundsException = new_object_for_class (JAVA_LANG_ARRAYINDEXOUTOFBOUNDSEXCEPTION);
-
-  illegalArgumentException = new_object_for_class (JAVA_LANG_ILLEGALARGUMENTEXCEPTION);
-  interruptedException = new_object_for_class (JAVA_LANG_INTERRUPTEDEXCEPTION);
-  illegalStateException = new_object_for_class (JAVA_LANG_ILLEGALSTATEEXCEPTION);
-
-  illegalMonitorStateException = new_object_for_class (JAVA_LANG_ILLEGALMONITORSTATEEXCEPTION);
-  arrayStoreException = new_object_for_class(JAVA_LANG_ARRAYSTOREEXCEPTION);
-  negativeArraySizeException = new_object_for_class(JAVA_LANG_NEGATIVEARRAYSIZEEXCEPTION);
-  error = new_object_for_class (JAVA_LANG_ERROR);
+  outOfMemoryError = (Throwable *)new_object_for_class (JAVA_LANG_OUTOFMEMORYERROR);
+  protect_obj(outOfMemoryError);
 }
+
+int throw_new_exception(int class)
+{
+  Throwable *exception = (Throwable *)new_object_for_class(class);
+  if (exception == JNULL)
+  {
+    wait_garbage_collect();
+    exception = (Throwable *)new_object_for_class(class);
+    if (exception == JNULL)
+    {
+      outOfMemoryError->_super.flags.class = class;
+      return throw_exception(outOfMemoryError);
+    }
+  }
+  exception->stackTrace = obj2ref(create_stack_trace(null));
+  return throw_exception(exception);
+}
+
+    
 
 /**
  * Create an exception.
@@ -74,15 +56,22 @@ void init_exceptions()
  * not deal with the exception call the default exception handler.
  * @return the exection action state.
  */
-int throw_exception (Object *exception)
+int throw_exception (Throwable *exception)
 {
   Thread *auxThread;
   int exceptionFrame = currentThread->stackFrameIndex;
+  TWOBYTES tempCurrentOffset;
+  MethodRecord *tempMethodRecord = null;
+  StackFrame *tempStackFrame;
+  ExceptionRecord *exceptionRecord;
+  byte numExceptionHandlers;
+  MethodRecord *excepMethodRec = null;
+  byte *exceptionPc;
   
   #ifdef VERIFY
   assert (exception != null, EXCEPTIONS0);
   #endif // VERIFY
-printf("Throw exception %d\n", get_class_index(exception));
+printf("Throw exception %d\n", get_class_index(&(exception->_super)));
 #if DEBUG_EXCEPTIONS
   printf("Throw exception\n");
 #endif
@@ -91,7 +80,7 @@ printf("Throw exception %d\n", get_class_index(exception));
     // No threads have started probably
     return EXEC_CONTINUE;
   }
-  else if (exception == interruptedException)
+  else if (exception->_super.flags.class == JAVA_LANG_INTERRUPTEDEXCEPTION)
   {
     // Throwing an interrupted exception clears the flag
     currentThread->interruptState = INTERRUPT_CLEARED;
@@ -103,10 +92,10 @@ printf("Throw exception %d\n", get_class_index(exception));
   // abort the current instruction so things are in a consistant state
   curPc = getPc();
   // record current state
-  gExceptionPc = curPc;
+  exceptionPc = curPc;
   tempStackFrame = current_stackframe();
   update_stack_frame(tempStackFrame);
-  gExcepMethodRec = tempStackFrame->methodRecord;;
+  excepMethodRec = tempStackFrame->methodRecord;;
   auxThread = currentThread;
 
   #if 0
@@ -116,24 +105,20 @@ printf("Throw exception %d\n", get_class_index(exception));
  LABEL_PROPAGATE:
   tempMethodRecord = tempStackFrame->methodRecord;
 
-  gExceptionRecord = (ExceptionRecord *) (get_binary_base() + tempMethodRecord->exceptionTable);
+  exceptionRecord = (ExceptionRecord *) (get_binary_base() + tempMethodRecord->exceptionTable);
   tempCurrentOffset = ptr2word(curPc) - ptr2word(get_binary_base() + tempMethodRecord->codeOffset);
 
-  #if 0
-  trace (-1, tempCurrentOffset, 5);
-  #endif
-
-  gNumExceptionHandlers = tempMethodRecord->numExceptionHandlers;
+  numExceptionHandlers = tempMethodRecord->numExceptionHandlers;
 #if DEBUG_EXCEPTIONS
-  printf("Num exception handlers=%d\n",gNumExceptionHandlers);
+  printf("Num exception handlers=%d\n",numExceptionHandlers);
 #endif
-  while (gNumExceptionHandlers--)
+  while (numExceptionHandlers--)
   {
-    if (gExceptionRecord->start <= tempCurrentOffset /* off by one? < ? */
-        && tempCurrentOffset <= gExceptionRecord->end)
+    if (exceptionRecord->start <= tempCurrentOffset 
+        && tempCurrentOffset <= exceptionRecord->end)
     {
       // Check if exception class applies
-      if (instance_of (exception, gExceptionRecord->classIndex))
+      if (instance_of ((Object *)exception, exceptionRecord->classIndex))
       {
         // Clear operand stack
         curStackTop = init_sp (tempStackFrame, tempMethodRecord);
@@ -141,14 +126,14 @@ printf("Throw exception %d\n", get_class_index(exception));
         push_ref_cur (ptr2word (exception));
         // Jump to handler:
         curPc = get_binary_base() + tempMethodRecord->codeOffset + 
-                 gExceptionRecord->handler;
+                 exceptionRecord->handler;
 #if DEBUG_EXCEPTIONS
   printf("Found exception handler\n");
 #endif
         return EXEC_EXCEPTION;
       }
     }
-    gExceptionRecord++;
+    exceptionRecord++;
   }
   // No good handlers in current stack frame - go up.
   do_return (0);
@@ -158,22 +143,24 @@ printf("Throw exception %d\n", get_class_index(exception));
 #if DEBUG_EXCEPTIONS
   printf("Thread is dead\n");
 #endif
-    if (get_class_index(exception) != JAVA_LANG_THREADDEATH)
+    if (exception->_super.flags.class != JAVA_LANG_THREADDEATH)
     {
 #if DEBUG_EXCEPTIONS
   printf("Handle uncaught exception\n");
 #endif
+      int methodNo = excepMethodRec - get_method_table(get_class_record(0));
       // Restore the stack and pc of the exception thread. This prevents
       // corruption of lower frames if we save the current state. The
       // thread is now dead so this should be safe.
-      curPc = gExceptionPc;
+      curPc = exceptionPc;
       currentThread->stackFrameIndex = exceptionFrame;
+      tempCurrentOffset = ptr2word(curPc) - ptr2word(get_binary_base() + excepMethodRec->codeOffset);
       if (!debug_uncaught_exception (exception, auxThread,
-  			         gExcepMethodRec, tempMethodRecord,
-			         gExceptionPc, exceptionFrame))
+  			         methodNo,
+			         tempCurrentOffset))
         handle_uncaught_exception (exception, auxThread,
-  			         gExcepMethodRec, tempMethodRecord,
-			         gExceptionPc);
+  			         methodNo,
+			         tempCurrentOffset);
     }
     return EXEC_CONTINUE;
   }

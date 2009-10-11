@@ -172,7 +172,7 @@ OPCODE(OP_WIDE)
   }
   else
   {
-    thrownException = noSuchMethodError;
+    thrownException = JAVA_LANG_NOSUCHMETHODERROR;
     goto LABEL_THROW_EXCEPTION;
   }
   DISPATCH;

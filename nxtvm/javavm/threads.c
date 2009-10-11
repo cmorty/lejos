@@ -146,7 +146,7 @@ int init_thread (Thread *thread)
   #endif
 
   if (thread->state != NEW)
-    return throw_exception(illegalStateException);
+    return throw_new_exception(JAVA_LANG_ILLEGALSTATEEXCEPTION);
   // Allocate space for stack frames.
   if (init_stacks(thread) < 0)
   {
@@ -466,7 +466,7 @@ printf ("currentThread=%d, ndr=%d\n", (int) currentThread, (int)nonDaemonRunnabl
       #endif
     
       if (currentThread->interruptState == INTERRUPT_GRANTED)
-        throw_exception(interruptedException);
+        throw_new_exception(JAVA_LANG_INTERRUPTEDEXCEPTION);
     }
       
     return true;
@@ -554,7 +554,7 @@ int monitor_wait(Object *obj, const FOURBYTES time)
   printf("monitor_wait of %d, thread %d(%d)\n",(int)obj, (int)currentThread, currentThread->threadId);
 #endif
   if (currentThread->threadId != get_thread_id (sync))
-    return throw_exception(illegalMonitorStateException);
+    return throw_new_exception(JAVA_LANG_ILLEGALMONITORSTATEEXCEPTION);
   
   // Great. We own the monitor which means we can give it up, but
   // indicate that we are listening for notify's.
@@ -596,7 +596,7 @@ int monitor_notify(Object *obj, const boolean all)
   printf("monitor_notify of %d, thread %d(%d)\n",(int)obj, (int)currentThread, currentThread->threadId);
 #endif
   if (currentThread->threadId != get_thread_id (sync))
-    return throw_exception(illegalMonitorStateException);
+    return throw_new_exception(JAVA_LANG_ILLEGALMONITORSTATEEXCEPTION);
   
   monitor_notify_unchecked(obj, all);
   return EXEC_CONTINUE;
@@ -654,7 +654,7 @@ void enter_monitor (Thread *pThread, Object* obj)
 
   if (obj == JNULL)
   {
-    throw_exception (nullPointerException);
+    throw_new_exception (JAVA_LANG_NULLPOINTEREXCEPTION);
     return;
   }
   sync = get_sync(obj);

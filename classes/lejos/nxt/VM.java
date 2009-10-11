@@ -949,8 +949,8 @@ public final class VM
         public int methodRecord;
         public Object monitor;
         public int localsBase;
-        public int pc;
         public int stackTop;
+        public int pc;
 
         private VMStackFrame(int addr)
         {

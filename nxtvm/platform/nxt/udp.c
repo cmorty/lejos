@@ -20,7 +20,6 @@
 
 #include "aic.h"
 #include "systick.h"
-#include "display.h"
 #include <string.h>
 #include "rconsole.h"
 

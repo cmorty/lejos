@@ -44,11 +44,10 @@ extern void switch_thread_hook();
 /**
  * Called when thread is about to die due to an uncaught exception.
  */
-extern void handle_uncaught_exception(Object * exception,
+extern void handle_uncaught_exception(Throwable * exception,
 				      const Thread * thread,
-				      const MethodRecord * methodRecord,
-				      const MethodRecord * rootMethod,
-				      byte * pc);
+				      const int methodRecord,
+				      const int pc);
 
 /**
  * Dispatches a native method.

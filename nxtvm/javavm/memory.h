@@ -30,6 +30,7 @@ extern int getHeapSize();
 extern int getHeapFree();
 extern int getRegionAddress();
 extern int garbage_collect();
+extern void wait_garbage_collect();
 extern Object *clone(Object *old);
 
 #define GC_IDLE 0

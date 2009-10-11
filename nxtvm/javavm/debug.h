@@ -19,13 +19,8 @@ typedef struct S_Debug
   JINT typ;                  // type of debug event
   REFERENCE exception;
   REFERENCE thread;
-  JINT pc;
-  JINT frame;
   JINT method;
-  JINT methodBase;
-  JINT classBase;
-  JINT fieldBase;
-  REFERENCE threads;
+  JINT pc;
 } Debug;
 
 #define DBG_NONE 0
@@ -39,11 +34,10 @@ typedef struct S_Debug
 
 extern byte debugEventOptions[];
 extern void set_debug(Debug *_debug);
-extern boolean debug_uncaught_exception(Object * exception,
+extern boolean debug_uncaught_exception(Throwable * exception,
                           const Thread * thread,
-                          const MethodRecord * methodRecord,
-                          const MethodRecord * rootMethod, 
-                          byte * pc, int exceptionFrame);
+                          const int methodRecord,
+                          const int pc);
 extern boolean debug_user_interrupt();
 
 extern void init_debug();

@@ -110,6 +110,14 @@ typedef struct S_String
   REFERENCE characters;
 } String;
 
+typedef struct S_Throwable
+{
+  Object _super;
+
+  REFERENCE stackTrace;
+  REFERENCE msg;
+} Throwable;
+
 #define is_big_array(ARR_)       ((ARR_)->flags.length == LEN_BIGARRAY)
 #define is_ah_array(ARR_)        ((ARR_)->flags.length == LEN_AHARRAY)
 #define is_std_array(ARR_)       ((ARR_)->flags.length < LEN_BIGARRAY)

@@ -52,16 +52,6 @@ OPCODE(OP_MULTIANEWARRAY)
   }
   DISPATCH_CHECKED;
 
-LABEL_NULLPTR_EXCEPTION:
-  thrownException = nullPointerException;
-  goto LABEL_THROW_EXCEPTION;
-
-LABEL_ARRAY_EXCEPTION:
-  if ( tempInt == -1)
-    goto LABEL_NULLPTR_EXCEPTION;
-  thrownException = arrayIndexOutOfBoundsException;
-  goto LABEL_THROW_EXCEPTION;
- 
 OPCODE(OP_AALOAD)
   // Stack size: -2 + 1
   // Arguments: 0
@@ -125,7 +115,7 @@ OPCODE(OP_AASTORE)
   tempWordPtr = (STACKWORD *)get_ref_at(1);
   if (type_checks_enabled() && tempStackWord != JNULL && !is_assignable(get_class_index(ref2obj(tempStackWord)), get_element_class(get_class_record(get_class_index((Object *)tempWordPtr)))))
   {
-    thrownException = arrayStoreException;
+    thrownException = JAVA_LANG_ARRAYSTOREEXCEPTION;
     goto LABEL_THROW_EXCEPTION;
   }
   update_array((Object *) tempWordPtr);
@@ -200,6 +190,10 @@ OPCODE(OP_ARRAYLENGTH)
     set_top_word (get_array_length (word2obj (tempRef)));
   }
   DISPATCH;
+
+LABEL_NULLPTR_EXCEPTION:
+  thrownException = JAVA_LANG_NULLPOINTEREXCEPTION;
+  goto LABEL_THROW_EXCEPTION;
 
 
 /*end*/
