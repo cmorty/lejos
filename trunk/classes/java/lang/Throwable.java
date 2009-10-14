@@ -1,4 +1,5 @@
 package java.lang;
+
 import java.io.PrintStream;
 
 /**
@@ -8,6 +9,10 @@ public class Throwable
 {
     private int[] _stackTrace;
 	private String _message;
+	
+	//MISSING Throwable getCause()
+	//MISSING Throwable initCause(Throwable cause)
+	//MISSING void printStackTrace(PrintWriter pw)
 
     /**
      * Create a Throwable object. Call fillInStackTrace to create a trace of
@@ -29,6 +34,16 @@ public class Throwable
 	{
         fillInStackTrace();
 		_message = message;
+	}
+	
+	/**
+	 * Can be overridden, to return localized messages.
+	 * The default implementation returns the same as {@link #getMessage()}.
+	 * @return Localized message string or null if there is no message
+	 */
+	public String getLocalizedMessage()
+	{
+		return this.getMessage();
 	}
 
     /**
@@ -53,7 +68,7 @@ public class Throwable
         if (_message != null)
         {
             sb.append(": ");
-            sb.append(_message);
+            sb.append(this.getLocalizedMessage());
         }
         return sb.toString();
 	}
