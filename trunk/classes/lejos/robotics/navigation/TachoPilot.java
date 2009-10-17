@@ -538,6 +538,11 @@ public class TachoPilot implements Pilot {
 
     public void steer(float turnRate)
    {
+      if(turnRate == 0)
+      {
+        forward();
+        return;
+      }
     steerPrep(turnRate);
     _outside.forward();
     if (_parity * _steerRatio > 0)
@@ -556,6 +561,11 @@ public class TachoPilot implements Pilot {
 			final boolean immediateReturn) 
     {
       if(angle == 0)return;
+      if(turnRate == 0)
+      {
+        forward();
+        return;
+      }
       steerPrep(turnRate);
        int side = (int) Math.signum(turnRate);
 		int rotAngle = (int)(angle * _trackWidth * 2
