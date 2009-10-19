@@ -108,7 +108,7 @@ public class SimpleNavigator {
   public float getHeading()
   {
     updatePose();
-        _current = !isMoving();
+    _current = !isMoving();
     return _pose.getHeading();
   }
   /**
@@ -125,12 +125,12 @@ public float getAngle()
    _current = false;
    pilot.forward();
  }
- public void backward()
- {
+  public void backward()
+  {
     updatePose();
-   _current = false;
-   pilot.backward();
- }
+    _current = false;
+    pilot.backward();
+  }
  public void rotateLeft()
  {
    steer(200);
@@ -142,7 +142,7 @@ public float getAngle()
   public Pose getPose()
   {
     updatePose();
-        _current = !isMoving();
+    _current = !isMoving();
     return _pose;
   }
   public void updatePosition()
@@ -312,7 +312,7 @@ public float getAngle()
     return _pose.distanceTo(new Point(x, y));
   }
 /**
- * Returns the  angle from robot current location to the point with coordinates x,y
+ * Returns the  direction angle from robot current location to the point with coordinates x,y
  * @param x coordinate of destination
  * @param y coordinate of destination
  * @return angle
@@ -326,9 +326,14 @@ public float getAngle()
 
     public void updatePose()
   {
-      if(_current) return;
-    float distance = pilot.getTravelDistance() - _distance0;
-    float turnAngle = pilot.getAngle() - _angle0;
+    if (_current)
+    {
+      return;
+    }
+    float travelDistance = pilot.getTravelDistance();
+    float distance = travelDistance - _distance0;
+    float angl = pilot.getAngle();
+    float turnAngle = angl - _angle0;
     double dx = 0;
     double dy = 0;
     double headingRad = (Math.toRadians(_pose.getHeading()));
@@ -345,8 +350,8 @@ public float getAngle()
     }
     _pose.translate((float) dx, (float) dy);
     _pose.rotateUpdate(turnAngle);
-    _angle0 = pilot.getAngle();
-    _distance0 = pilot.getTravelDistance();
+    _angle0 = angl;
+    _distance0 = travelDistance;
   }
 
     /**
