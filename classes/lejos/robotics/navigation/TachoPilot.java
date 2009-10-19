@@ -648,4 +648,16 @@ public class TachoPilot implements Pilot {
 		float angle = (distance * 180) / ((float)Math.PI * radius);
 		arc(radius, angle, immediateReturn); 
 	}
+    
+   /**
+    * @depricated - motor speed regulation is on by default and all the movement
+    * control methods in this class work well with it on.  If you realy want
+    * to change motor speed regulation, use getLeft().regulateSpeed()
+    * @param yes
+    */
+    public void regulateSpeed(boolean yes)
+    {
+      _left.regulateSpeed(yes);
+      _right.regulateSpeed(yes);
+    }
 }
