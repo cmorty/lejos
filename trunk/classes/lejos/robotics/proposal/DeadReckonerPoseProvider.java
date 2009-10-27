@@ -23,7 +23,7 @@ import lejos.robotics.localization.PoseProvider;
  * Alternate names:  DeadReckonerPoseProvider, DeadReckoner, OrienteeringPoseProvider, OdometryPoseProvider 
  * 
  */
-public class DeadReckonerPoseProvider implements MoveListener, PoseProvider {
+public class DeadReckonerPoseProvider implements MoveListener {
 	private float x = 0, y = 0, heading = 0;
 	private float angle0, distance0;
 	MovementProvider mp;
@@ -44,14 +44,14 @@ public class DeadReckonerPoseProvider implements MoveListener, PoseProvider {
 		return new Pose(x,y,heading);
 	}
 
-	public void movementStarted(Movement event, MovementProvider mp) {
+	public void movementStarted(Movement event) {
 	    angle0 = 0;
 	    distance0 = 0;
 	    current = false;
 	    this.mp = mp;;
 	}
 
-	public void movementStopped(Movement event, MovementProvider mp) {
+	public void movementStopped(Movement event) {
 		updatePose(event);
 	}
 	
