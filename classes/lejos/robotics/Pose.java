@@ -1,5 +1,7 @@
 package lejos.robotics;
 
+
+
 import lejos.geom.Point;
 
 /*
@@ -9,7 +11,14 @@ import lejos.geom.Point;
 
 /**
  * Represents the location and heading(direction angle) of a robot.<br>
- * This class includes  methods for updating the Pose to track common robot movements
+ * This class includes  methods for updating the Pose to in response to basic robot
+ * movements.
+  * It also contains utility  methods for use in navigation, such as the
+ * direction and distance to a point from the location of the pose, and also the
+ * location of a point at a given distance and directin from the location of the pose.<br>
+ * All directions and angles are in degrees and use the standard convention
+ * in mathematics: direction 0 is parallel to the X axis, and direction +90 is
+ * parallel to the Y axis. <br>
  * @author Roger Glassey
  */
 public class Pose
@@ -94,9 +103,8 @@ public void arcUpdate(float distance, float turnAngle)
   rotateUpdate(turnAngle);
 }
 /**
- * 
- * Calculates the absolute angle to destination from the current location of the pose
- * 
+ * Returns the angle with respect to the X axis  to <code. destination </code> from the
+ * current location of this pose.
  * @param destination
  * @return angle in degrees
  */
@@ -105,16 +113,36 @@ public float angleTo(Point destination)
   return (float)_location.angleTo(destination);
 }
 /**
- * Get the distance to the destination
- * 
+ * Returns the angle to <code>destination</code> relative to the pose heading;
+ * @param destination  the target point
+ * @return the relative bearing of the destination
+ */
+public float relativeBearing(Point destination)
+{
+  return angleTo(destination) - _heading;
+}
+/**
+ * Return the distance to the destination
+
  * @param destination
  * @return  the distance
  */
 public float distanceTo(Point destination)
 {
-
   return (float) _location.distance(destination);
 }
+/**
+ * Returns the point at <code> distance </code> from the location of this pose,
+ * in the direction  <code>bearing</code> relative to the X axis.
+ * @param distance  the distance to the point
+ * @param bearing  the true bearing of the point
+ *  @return point
+ */
+public Point pointAt(float distance, float bearing)
+{ 
+  return _location.pointAt(distance, bearing);
+}
+
 /**
  * returns the heading (direction angle) of the Pose
  * 
@@ -149,6 +177,17 @@ public void setLocation(Point p)
 {
   _location = p;
 }
+
+/**
+ * Sets the location of this pose to a new point at x,y;
+ * @param x
+ * @param y
+ */
+public void setLocation(float x, float y)
+{
+  setLocation(new Point(x,y));
+}
+
 public void setHeading(float heading )
 {
   _heading = heading;

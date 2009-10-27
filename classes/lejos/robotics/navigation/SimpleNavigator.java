@@ -139,12 +139,19 @@ public float getAngle()
  {
    steer(-200);
  }
+ /**
+  * Returns a new updated Pose
+  * @return
+  */
   public Pose getPose()
   {
     updatePose();
     _current = !isMoving();
-    return _pose;
+    return new Pose(_pose.getX(),_pose.getY(),_pose.getHeading());
   }
+  /**
+   * @deprecated  - it just calls updatePose()
+   */
   public void updatePosition()
   {
     updatePose();
@@ -326,14 +333,14 @@ public float getAngle()
 
     public void updatePose()
   {
-    if (_current)
+    if (_current)// pose is up to date
     {
       return;
     }
     float travelDistance = pilot.getTravelDistance();
     float distance = travelDistance - _distance0;
-    float angl = pilot.getAngle();
-    float turnAngle = angl - _angle0;
+    float angle = pilot.getAngle();
+    float turnAngle = angle - _angle0;
     double dx = 0;
     double dy = 0;
     double headingRad = (Math.toRadians(_pose.getHeading()));
@@ -350,7 +357,7 @@ public float getAngle()
     }
     _pose.translate((float) dx, (float) dy);
     _pose.rotateUpdate(turnAngle);
-    _angle0 = angl;
+    _angle0 = angle;
     _distance0 = travelDistance;
   }
 

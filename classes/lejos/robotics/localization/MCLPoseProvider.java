@@ -9,7 +9,7 @@ import lejos.robotics.RangeReadings;
 import lejos.robotics.RangeScanner;
 import lejos.robotics.Movement;
 
-public class MCLPoseProvider implements PoseProvider, MoveListener {
+public class MCLPoseProvider implements PoseProvider,MoveListener{
 	private MCLParticleSet particles;
 	private RangeScanner scanner;
 	private RangeMap map;
@@ -27,10 +27,10 @@ public class MCLPoseProvider implements PoseProvider, MoveListener {
 		return particles;
 	}
 
-	public void movementStarted(Movement event, MovementProvider mp) {		
+	public void movementStarted(Movement event) {		
 	}
 
-	public void movementStopped(Movement event, MovementProvider mp) {
+	public void movementStopped(Movement event) {
 		readingsRequired = true;
 		particles.applyMove(event);
 	}

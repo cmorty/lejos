@@ -650,10 +650,11 @@ public class TachoPilot implements Pilot {
 	}
     
    /**
-    * @depricated - motor speed regulation is on by default and all the movement
+    * 
+    * @param  if false, turns speed regulation off - it is on by default
+   * @deprecated - motor speed regulation is on by default and all the movement
     * control methods in this class work well with it on.  If you realy want
     * to change motor speed regulation, use getLeft().regulateSpeed()
-    * @param yes
     */
     public void regulateSpeed(boolean yes)
     {
