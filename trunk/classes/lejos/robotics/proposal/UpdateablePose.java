@@ -1,10 +1,13 @@
 package lejos.robotics.proposal;
 
+import lejos.robotics.Pose;
+
+//package lejos.robotics;
 /*
  * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
  * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
  */
-
+  
 import lejos.geom.Point;
 import lejos.robotics.MoveListener;
 import lejos.robotics.Movement;
@@ -17,8 +20,8 @@ import lejos.robotics.Pose;
  * Experimental Pose
  * Represents the location and heading(direction angle) of a robot.<br>
  * This class includes  methods for updating the UpdateablePose to track common robot movements.
- * It will updates itself for every move of a Pilot if it registers as a MoveListener.
- * The Pilot must implement the MovementProvider interface.
+ * It will updates itself for every move of a Provider if it registers as a MoveListener.
+ * The Provider must implement the MovementProvider interface.
  * It can report the current pose at any time, even while a move is in progress.
  * @author Roger Glassey
  */
@@ -42,22 +45,21 @@ public UpdateablePose(float x, float y, float heading)
   super(x,y,heading);
 }
 
-public  void  movementStarted(Movement move, MovementProvider p)
+public  void  movementStarted(Movement move)
   {
     _current = false;
     _angle0 = 0;
     _distance0 = 0;
-    pilot =  p;
   }
 
-	public  void movementStopped(Movement move, MovementProvider p)
+	public  void movementStopped(Movement move)
     {
       update(move);
     }
 /**
  * Updates can occur while the robot is moving.
  * Update of pose required the change in angle and distance since last update.
- * Pilot returns angle and distance since the start of movement.
+ * provider returns angle and distance since the start of movement.
  * UpdateablePose uses angle0 and distance0 to calculate the change since last update.
  * */
     protected  synchronized void  update(Movement move)
@@ -89,8 +91,8 @@ public  void  movementStarted(Movement move, MovementProvider p)
  * @return
  */
 public float getHeading()
-{ 
-  if(!_current) update(pilot.getMovement());
+{
+  if(!_current) update(provider.getMovement());
    return _heading ;
 }
 /**
@@ -99,7 +101,7 @@ public float getHeading()
  */
 public  float getX()
 {
-  if(!_current) update(pilot.getMovement());
+  if(!_current) update(provider.getMovement());
   return (float) _location.getX();}
 /**
  * return Y coordinate
@@ -107,7 +109,7 @@ public  float getX()
  */
 public   float getY()
 {
-  if(!_current) update(pilot.getMovement());
+  if(!_current) update(provider.getMovement());
   return (float)_location.getY();
 }
 /**
@@ -115,8 +117,8 @@ public   float getY()
  * @return
  */
 public Point getLocation()
-{ 
-  if(!_current) update(pilot.getMovement());
+{
+  if(!_current) update(provider.getMovement());
   return _location;
 }
 
@@ -130,14 +132,14 @@ public void setHeading(float heading )
   _heading = heading;
   _current = true;
 }
-public void setPilot(MovementProvider aPilot)
+public void setprovider(MovementProvider aprovider)
 {
-  pilot =  aPilot;
+  provider =  aprovider;
 }
 public boolean isCurrent() { return _current;}
 
 protected  boolean _current = true; //pose is up to date
-protected  MovementProvider pilot;
+protected  MovementProvider provider;
 protected float _angle0;
 protected float _distance0;
 
