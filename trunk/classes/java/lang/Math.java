@@ -209,19 +209,14 @@ public final class Math
 		if (a < ROUND_DOUBLE_MIN || a > ROUND_DOUBLE_MAX)
 			return a;
 
-		long b = (long) a;
-		double bd = b;
-
-		// if positive, just strip decimal places
-		if (b >= 0)
-			return bd;
+		double b = (long) a;
 
 		// if numbers are equal, there were no decimal places
-		if (bd == a)
-			return bd;
+		if (b == a)
+			return a;
 
-		// round down since a must have had some decimal places
-		return bd - 1;
+		// round down or strip
+		return (a >= 0) ? b : b - 1;
 	}
 
 	/**
@@ -234,19 +229,14 @@ public final class Math
 		if (a < ROUND_DOUBLE_MIN || a > ROUND_DOUBLE_MAX)
 			return a;
 
-		long b = (long) a;
-		double bd = b;
-
-		// if negative, just strip decimal places
-		if (b <= 0)
-			return bd;
+		double b = (long) a;
 
 		// if numbers are equal, there were no decimal places
-		if (bd == a)
-			return bd;
+		if (b == a)
+			return a;
 
-		// round up since a must have had some decimal places
-		return bd + 1;
+		// if negative, just strip decimal places
+		return (a <= 0) ? b : b + 1;
 	}
 
 	/**
@@ -452,6 +442,8 @@ public final class Math
 	 */
 	public static double pow(double a, double b)
 	{
+		//FIXME handle special cases (see Sun's javadoc)
+		
 		return exp(b * log(a));
 	}
 
