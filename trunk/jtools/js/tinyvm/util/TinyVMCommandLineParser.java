@@ -6,6 +6,7 @@ import java.io.PrintWriter;
 import js.tinyvm.TinyVMException;
 
 import js.tinyvm.RunTimeOptions;
+import js.tinyvm.DebugOptions;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.GnuParser;
@@ -36,9 +37,16 @@ public class TinyVMCommandLineParser
 		options.addOption("g", "debug", false, "include debug monitor");
 		options.addOption("v", "verbose", false,
 				"print class and signature information");
-        options.addOption("ea", "enableassert", false, "enable assertions");
-        options.addOption("ec", "enablechecks", false, "enable run time checks");
-		
+      options.addOption("ea", "enableassert", false, "enable assertions");
+      options.addOption("ec", "enablechecks", false, "enable run time checks");
+		options.addOption("dm", "disablememcompact", false, "disable memory compaction");
+
+      Option debugOption = new Option("gr", "remotedebug", true,
+				"enable remote debug and specify the debug file");
+		debugOption.setArgName("debugfile");
+      debugOption.setOptionalArg(true);
+		options.addOption(debugOption);
+
 		Option bclasspathOption = new Option("bp", "bootclasspath", true,
 				"where to find leJOS classes");
 		bclasspathOption.setArgName("classpath");
@@ -125,20 +133,30 @@ public class TinyVMCommandLineParser
 		return this.result.hasOption("g");
 	}
 
+   public boolean isRemoteDebug()
+   {
+      return this.result.hasOption("gr");
+   }
+
 	public boolean isVerbose()
 	{
 		return this.result.hasOption("v");
 	}
 
-    public boolean isEnableAssert()
-    {
-        return this.result.hasOption("ea");
-    }
+   public boolean isEnableAssert()
+   {
+      return this.result.hasOption("ea");
+   }
 
-    public boolean isEnableChecks()
-    {
-        return this.result.hasOption("ec");
-    }
+   public boolean isEnableChecks()
+   {
+      return this.result.hasOption("ec");
+   }
+
+   public boolean isEnableCompact()
+   {
+      return !this.result.hasOption("dm");
+   }
 
 	public String getOutput()
 	{
@@ -154,7 +172,12 @@ public class TinyVMCommandLineParser
 	{
 		return this.cp;
 	}
-	
+
+   public String getDebugFile()
+   {
+      return getLastOptVal(this.result, "gr");
+   }
+
 	public boolean isBigEndian()
 	{
 		return this.bigendian;
@@ -172,6 +195,19 @@ public class TinyVMCommandLineParser
             opt |= RunTimeOptions.EnableAssert.getValue();
         if (isEnableChecks())
             opt |= RunTimeOptions.EnableTypeChecks.getValue();
+        if (isEnableCompact())
+           opt |= RunTimeOptions.EnableCompact.getValue();
+        return opt;
+    }
+    
+    
+    public int getDebugOptions()
+    {
+        int opt = 0;
+        if (isDebug())
+            opt |= DebugOptions.DebugMonitor.getValue();
+        if (isRemoteDebug())
+            opt |= DebugOptions.RemoteDebug.getValue();
         return opt;
     }
 

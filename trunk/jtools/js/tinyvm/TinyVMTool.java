@@ -2,7 +2,7 @@ package js.tinyvm;
 
 import java.io.BufferedOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
+import java.io.FileOutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -35,10 +35,11 @@ public class TinyVMTool extends AbstractTool
     * @param bigEndian write big endian output?
     * @param options
     * @param debug true to add debug monitor
+    * @param debugStream output stream for debug data
     * @throws TinyVMException
     */
    public void link (String classpath, String[] classes, boolean all,
-      OutputStream stream, boolean bigEndian, int options, boolean debug) throws TinyVMException
+      FileOutputStream stream, boolean bigEndian, int options, int debug, FileOutputStream debugStream) throws TinyVMException
    {
       assert classpath != null: "Precondition: classpath != null";
       assert classes != null: "Precondition: classes != null";
@@ -49,7 +50,7 @@ public class TinyVMTool extends AbstractTool
     	  binary.log(monitor);
       }
       //binary.log(getProgressMonitor());
-      dump(binary, stream, bigEndian);
+      dump(binary, stream, bigEndian, debugStream);
 
    
    }
@@ -65,7 +66,7 @@ public class TinyVMTool extends AbstractTool
     * @return binary
     * @throws TinyVMException
     */
-   public Binary link (String classpath, String[] entryClassNames, boolean all, int options, boolean debug)
+   public Binary link (String classpath, String[] entryClassNames, boolean all, int options, int debug)
       throws TinyVMException
    {
       assert classpath != null: "Precondition: classpath != null";
@@ -75,14 +76,17 @@ public class TinyVMTool extends AbstractTool
          throw new TinyVMException("Too many entry classes (max is 254!)");
       }
 
-      if (debug)
+      if (debug != 0)
       {
          // Insert the debug monitor class as the first entry class
          int names = entryClassNames.length;
          String [] newNames = new String[names+1];
          System.arraycopy(entryClassNames, 0, newNames, 1, names);
          entryClassNames = newNames;
-         entryClassNames[0] = "lejos.nxt.debug.DebugMonitor";
+         if ((debug & DebugOptions.RemoteDebug.getValue()) != 0)
+            entryClassNames[0] = "lejos.nxt.comm.RConsole$Monitor";
+         else
+            entryClassNames[0] = "lejos.nxt.debug.DebugMonitor";
       }
 
       ClassPath computedClasspath = new ClassPath(classpath);
@@ -111,9 +115,10 @@ public class TinyVMTool extends AbstractTool
     * @param binary binary
     * @param stream stream to write to
     * @param bigEndian use big endian encoding?
+    * @param debug stream to write debug data to.
     * @throws TinyVMException
     */
-   public void dump (Binary binary, OutputStream stream, boolean bigEndian)
+   public void dump (Binary binary, FileOutputStream stream, boolean bigEndian, FileOutputStream debug)
       throws TinyVMException
    {
       assert binary != null: "Precondition: binary != null";
@@ -121,12 +126,16 @@ public class TinyVMTool extends AbstractTool
 
       try
       {
-         OutputStream bufferedStream = new BufferedOutputStream(stream, 4096);
+         BufferedOutputStream bufferedStream = new BufferedOutputStream(stream, 4096);
          IByteWriter byteWriter = bigEndian
             ? (IByteWriter) new BEByteWriter(bufferedStream)
             : (IByteWriter) new LEByteWriter(bufferedStream);
          binary.dump(byteWriter);
          bufferedStream.close();
+         if (debug != null)
+         {
+            binary.dumpDebug(debug);
+         }
       }
       catch (IOException e)
       {
