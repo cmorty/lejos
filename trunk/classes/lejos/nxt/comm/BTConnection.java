@@ -7,7 +7,7 @@ import lejos.nxt.*;
 
 /**
  * Provides a Bluetooth connection
- * Supports both packetized, raw and stream based communincation.
+ * Supports both packetized, raw and stream based communication.
  * Blocking and non-blocking I/O.
  * Notes:
  * Because of the limited buffer space and the way that several connections
