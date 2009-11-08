@@ -461,23 +461,24 @@ void do_return (int numWords)
 }
 
 /**
- * Create a compact form of the current call stack. One int per frame containing
+ * Create a compact form of the specified  call stack.
+ * One int per frame containing
  * the method number and current offset. If the ignore parameter is non null
  * then frames that have a matching this field will not be included in the
  * trace. This allow the frames for the creation of an exception object to
  * be ignored.
  */
 Object *
-create_stack_trace(Object *ignore)
+create_stack_trace(Thread *thread, Object *ignore)
 {
-  int frameCnt = currentThread->stackFrameIndex;
+  int frameCnt = thread->stackFrameIndex;
   Object *stackArray;
   JINT *data;
   int i;
-  StackFrame *stackFrame = current_stackframe();
+  StackFrame *topFrame = ((StackFrame *)array_start(thread->stackFrameArray)) + frameCnt;
+  StackFrame *stackFrame = topFrame;
   MethodRecord *methodBase = get_method_table(get_class_record(0));
-  byte *pcBase = get_binary_base();
-  stackFrame->pc = getPc();
+  byte *pcBase = get_binary_base() + 2;
 
   // Ignore frames if required.
   if (ignore)
@@ -490,12 +491,11 @@ create_stack_trace(Object *ignore)
   }
   // Try and allocate the space for the trace.
   stackArray = new_single_array(AI, frameCnt);
-  if (stackArray == JNULL)
-  {
-    wait_garbage_collect();
-    stackArray = new_single_array(AI, frameCnt);
-    if (stackArray == JNULL) return JNULL;
-  }
+  if (stackArray == JNULL) return JNULL;
+  if (thread == currentThread)
+    topFrame->pc = getPc();
+  // adjust top most pc to allow for return address hack
+  topFrame->pc += 2;
   // Fill in the trace.
   data = jint_array(stackArray);
   for(i = 0; i < frameCnt; i++)
@@ -503,6 +503,8 @@ create_stack_trace(Object *ignore)
     data[i] = ((stackFrame->methodRecord - methodBase) << 16) | (stackFrame->pc - pcBase - stackFrame->methodRecord->codeOffset);
     stackFrame--;
   }
+  // restore correct pc
+  topFrame->pc -= 2;
   return stackArray;   
 }
 
