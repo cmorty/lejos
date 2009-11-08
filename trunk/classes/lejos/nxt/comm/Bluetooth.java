@@ -8,7 +8,6 @@ import javax.bluetooth.RemoteDevice;
 
 import lejos.nxt.SystemSettings;
 import lejos.util.Delay;
-import lejos.nxt.LCD;
 
 /**
  * Provides Bluetooth communications.
