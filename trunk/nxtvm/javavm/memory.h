@@ -14,6 +14,7 @@ extern Object *new_object_for_class (const byte classIndex);
 extern Object *new_primitive_array (const byte typ, JINT length);
 extern Object *new_single_array (const byte cls, JINT length);
 extern int init_stacks(Thread *thread);
+extern void free_stacks(Thread *thread);
 extern int expand_call_stack(Thread *thread);
 extern int expand_value_stack(Thread *thread, int minSize);
 extern Object *new_multi_array (const byte cls, byte reqDimensions, STACKWORD *numElemPtr);
