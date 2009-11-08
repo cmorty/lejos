@@ -1,6 +1,7 @@
 package java.lang;
 
 import java.io.PrintStream;
+import lejos.nxt.VM;
 
 /**
  * All exceptions and errors extend this class.
@@ -80,7 +81,7 @@ public class Throwable
      */
     public Throwable fillInStackTrace()
     {
-        _stackTrace = createStackTrace();
+        _stackTrace = VM.createStackTrace(Thread.currentThread(), this);
         return this;
     }
 
@@ -108,14 +109,4 @@ public class Throwable
     {
         printStackTrace(System.err);
     }
-
-
-    /**
-     * Native method to create the stack trace in a compact internal form. This
-     * is currently an array of integers with one int per stack frame. The high
-     * 16 bits contains the method number, the low 16 bits contains the PC
-     * within the method.
-     * @return An array of stack frame details.
-     */
-    private native int[] createStackTrace();
 }
