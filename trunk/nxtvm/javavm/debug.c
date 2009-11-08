@@ -50,6 +50,7 @@ boolean debug_event(int event, Throwable *exception, const Thread *thread, const
   // Make sure current thread is also suspended
   suspend_thread(currentThread);
   //  Allow the debug thread to run
+  debugThread->daemon = false;
   resume_thread(debugThread);
   monitor_notify_unchecked(&debug->_super, 1);
   return true;
@@ -74,4 +75,9 @@ boolean debug_user_interrupt()
     return true;
   }
   return false;
+}
+
+boolean debug_program_exit()
+{
+  return debug_event(DBG_PROGRAM_EXIT, null, null, 0, 0);
 }
