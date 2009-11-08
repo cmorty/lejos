@@ -138,7 +138,6 @@ static FOURBYTES aheapMemoryRequired;
 #define GC_TIMEOUT() (gMakeRequest)
 //#define GC_TIMEOUT() (0)
 
-TWOBYTES failed_alloc_size;
 // Access control and retry tracking
 Object gcLock = {{
     .length = LEN_OBJECT,
@@ -558,6 +557,31 @@ int init_stacks(Thread *thread)
   }
   return 0;
 }
+/**
+ * If the stack is stored in a moveable object we need to keep a link back to
+ * the thread so that we can update the frame values if the value stack moves.
+ */
+static
+void set_thread(Object *stack, Thread *thread)
+{
+  if (is_ah_array(stack))
+  {
+    AHeapObj *ah = (AHeapObj *)(array_start(stack) - sizeof(AHeapObj));
+    ah->thread = (!thread ? 0 : (FOURBYTES *)thread - heapStart);
+  }
+}
+
+/**
+ * Release the stacks asociated with a thread.
+ */
+void free_stacks(Thread *thread)
+{
+  // We need to break the association between the thread object and the
+  // value stack array storage to remove any dangling pointer.
+  Object *valueStack = ref2ptr(thread->stackArray);
+  set_thread(valueStack, null);
+}
+
 
 /**
  * Called when a stack frame has been moved in memory. This updates pointers
@@ -612,11 +636,9 @@ int expand_value_stack(Thread *thread, int minSize)
   memcpy(array_start(newStack), array_start(cur), curSize*sizeof(STACKWORD));
   update_stack_frames(thread, (STACKWORD *)array_start(newStack) - (STACKWORD *)array_start(cur));
   // If the value stack is using a moveable array, we need to allow for updates
-  if (is_ah_array(newStack))
-  {
-    AHeapObj *ah = (AHeapObj *)(array_start(newStack) - sizeof(AHeapObj));
-    ah->thread = (FOURBYTES *)thread - heapStart;
-  }
+  set_thread(newStack, thread);
+  // We need to remove the reference back to this thread from the old stack.
+  set_thread(cur, null);
   thread->stackArray = ptr2ref(newStack);
   return 0;
 }
@@ -1703,6 +1725,9 @@ void wait_garbage_collect()
 {
   // Wait for any active collect to complete
   boolean saved = gMakeRequest;
+  // release any locks
+  exclusiveThread = null;
+  alloc_start();
   while (gcPhase != GC_IDLE)
   {
     gMakeRequest = false;
@@ -1717,6 +1742,7 @@ void wait_garbage_collect()
     gc_run_collector();
   }
   gMakeRequest = saved;
+  alloc_complete((Object *)1);
 }
 
 /**
