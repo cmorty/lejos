@@ -8,6 +8,7 @@ import javax.bluetooth.RemoteDevice;
 
 import lejos.nxt.SystemSettings;
 import lejos.util.Delay;
+import lejos.nxt.LCD;
 
 /**
  * Provides Bluetooth communications.
@@ -375,7 +376,8 @@ public class Bluetooth extends NXTCommDevice
 					startTimeout(TO_SHORT);
 					while ((len = recvReply()) == 0 || (len > 0 && replyBuf[1] != MSG_OPERATING_MODE_RESULT))
 							Thread.yield();
-					//1 if (len < 0) RConsole.print("mode had timed out\n");
+
+                    //1 if (len < 0) RConsole.print("mode had timed out\n");
 					// if we got the response without a timeout we are done!
 					if (len > 0) break;
 				}
@@ -799,7 +801,10 @@ public class Bluetooth extends NXTCommDevice
 			if (cmdWait(RS_REPLY, RS_CMD, MSG_PORT_OPEN_RESULT, TO_SHORT) < 0)
 				result = null;
 			else
+            {
 				System.arraycopy(replyBuf, 2, result, 0, 3);
+                listening = true;
+            }
 			//1 RConsole.print("Port open handle " + (int)replyBuf[3] + " status " + (int)replyBuf[2] + "\n");
 			cmdComplete();
 			return result;
@@ -824,6 +829,7 @@ public class Bluetooth extends NXTCommDevice
 				result = null;
 			else
 				System.arraycopy(replyBuf, 2, result, 0, 2);
+            listening = false;
 			cmdComplete();
 			return result;
 		}
@@ -849,10 +855,10 @@ public class Bluetooth extends NXTCommDevice
 			if (port == null || port[0] != 1 || port[1] >=  Chans.length || port[1] < 0)
 			{
 				//1 RConsole.print("Failed to open port\n");
+                listening = false;
 				return null;
 			}
 			// Now in listening mode
-			listening = true;
 			byte []savedPin = null;
             if (pin != null)
             {
@@ -1680,6 +1686,24 @@ public class Bluetooth extends NXTCommDevice
 		}		
 	}
 
+    /**
+     * Cancel a long running command issued on another thread.
+     * NOTE: Currently only the WaitForConnection calls can be cancelled.
+     * @return true if the command was cancelled, false otherwise.
+     */
+    public static boolean cancelConnect()
+    {
+        synchronized (Bluetooth.sync)
+        {
+            cmdStart();
+            boolean ret = listening;
+            listening = false;
+            cmdComplete();
+            return ret;
+        }
+    }
+
+
     private static int checkDevice()
     {
 		synchronized (Bluetooth.sync)
@@ -1760,36 +1784,6 @@ public class Bluetooth extends NXTCommDevice
     		pin[i] = (byte)pinStr.charAt(i);
     }
 
-
-	/**
-	 * The following are provided for compatibility with the old Bluetooth
-	 * class. They should not be used, in new programs and should probably
-	 * be removed.
-	 */
-	
-	/**
-	 * Read a packet from the stream. Do not block and for small packets
-	 * (< 254 bytes), do not return a partial packet.
-	 * @param	buf		Buffer to read data into.
-	 * @param	len		Number of bytes to read.
-	 * @return			> 0 number of bytes read.
-	 *					other values see read.
-	 */
-	public static int readPacket(byte buf[], int len)
-	{
-		return Chans[3].readPacket(buf, len);
-	}
-	
-	/**
-	 * Send a data packet.
-	 * Must be in data mode.
-	 * @param buf the data to send
-	 * @param bufLen the number of bytes to send
-	 */
-	public static void sendPacket(byte [] buf, int bufLen)
-	{
-		Chans[3].sendPacket(buf, bufLen);
-	}
 	
 	/**
 	 * Set the BC4 mode, and wait for that mode to be confirmed by the chip.

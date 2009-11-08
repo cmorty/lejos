@@ -7,8 +7,8 @@ import lejos.util.Delay;
  * implemented on port 4 of the Lego NXT.
  *
  * It also supports a higher level network connection based on this hardware, in
- * the form of a BitBus netowk node implmentation. For full details see the
- * BitBus specifiaction at:
+ * the form of a BitBus network node implementation. For full details see the
+ * BitBus specification at:
  * http://www.bitbus.org/
  * Basically the network provides a simple master/slave implementation using
  * SDLC packet framing with CRC-16-CITT error checking. In this implementation
@@ -69,13 +69,8 @@ public class RS485 extends NXTCommDevice {
     static final int ST_ESCAPE = 1;
     static final int ST_DATA = 2;
 
-    static Controller controller;
-
-    static
-    {
-        controller = new Controller();
-    }
-
+    static final Controller controller = new Controller();
+    static volatile RS485Connection listeningCon = null;
 
     private RS485()
 	{
@@ -96,7 +91,7 @@ public class RS485 extends NXTCommDevice {
         private byte[] frame;
         private int frameLen;
         private final RS485Connection connections[] = new RS485Connection[MAX_CONNECTIONS];
-        private RS485Connection slaveConnections[] = new RS485Connection[MAX_CONNECTIONS];
+        private final RS485Connection slaveConnections[] = new RS485Connection[MAX_CONNECTIONS];
         private int devMode = DS_DISABLED;
         private byte[] netAddress = new byte[ADDRESS_LEN];
         private byte[] netName = new byte[NAME_LEN];
@@ -704,8 +699,9 @@ public class RS485 extends NXTCommDevice {
         
         /**
          * Low level communications thread processing. Used to actually
-         * send and receive data beteen devices.
+         * send and receive data between devices.
          */
+        @Override
         public void run()
         {
             while(true)
@@ -828,9 +824,16 @@ public class RS485 extends NXTCommDevice {
     {
         RS485Connection con;
 
-        if (timeout == 0) timeout = 0x7ffffff;
         con = controller.newConnection(DS_SLAVE);
-        if (con == null) return null;
+        synchronized(controller)
+        {
+            // We only allow a single listening connection
+            if (listeningCon != null) return null;
+            con = controller.newConnection(DS_SLAVE);
+            if (con == null) return null;
+            listeningCon = con;
+        }
+        if (timeout == 0) timeout = 0x7ffffff;
         //RConsole.println("Wait for connect on chan " + con.connNo);
         // Keep trying allowing for resets
         for(;;)
@@ -853,6 +856,7 @@ public class RS485 extends NXTCommDevice {
                     //RConsole.println("Now connected...");
                     con.state = RS485Connection.CS_CONNECTED;
                     con.setIOMode(mode);
+                    listeningCon = null;
                     return con;
                 }
                 else if (con.state > RS485Connection.CS_DISCONNECTED)
@@ -861,11 +865,31 @@ public class RS485 extends NXTCommDevice {
                     //RConsole.println("Connection failed");
                     con.disconnect();
                     controller.freeConnection(con);
+                    listeningCon = null;
                     return null;
                 }
                 // Must have been a network reset/timeout try again
             }
         }
+    }
+
+    /**
+     * Cancel a long running command issued on another thread.
+     * NOTE: Currently only the WaitForConnection calls can be cancelled.
+     * @return true if the command was cancelled, false otherwise.
+     */
+    public static boolean cancelConnect()
+    {
+        RS485Connection con = listeningCon;
+        if (con == null) return false;
+        synchronized(con)
+        {
+            // Check again now we have things locked.
+            if (listeningCon != con) return false;
+            con.disconnect();
+            con.notifyAll();
+        }
+        return true;
     }
 
     /**
