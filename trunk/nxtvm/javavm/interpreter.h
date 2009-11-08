@@ -17,7 +17,10 @@ extern unsigned int gVMOptions;
 // Allow external control of VM
 #define VM_DEFAULT 0
 #define VM_TYPECHECKS 1
+#define VM_ASSERTS 2
+#define VM_MEMCOMPACT 4
 #define type_checks_enabled() (gVMOptions & VM_TYPECHECKS)
+#define memory_compact_enabled() (gVMOptions & VM_MEMCOMPACT)
 
 #define getPc() (curPc + curPcOffset)
 

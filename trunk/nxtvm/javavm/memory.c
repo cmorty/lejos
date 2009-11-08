@@ -1046,10 +1046,10 @@ void memory_add_region (byte *start, byte *end)
 
   // Split the heap into object and array heaps
   oheapEnd = (Object *)heapEnd;
-  if (0)
-    oheapStart = (Object *)heapStart;
-  else
+  if (memory_compact_enabled())
     oheapStart = (oheapEnd - INITIAL_HEAP);
+  else
+    oheapStart = (Object *)heapStart;
   aheapEnd = (FOURBYTES *)oheapStart;
   aheapStart = heapStart;
   // Now create the array heap */
