@@ -1,4 +1,4 @@
-package lejos.robotics.proposal;
+ package lejos.robotics.proposal;
 
 import lejos.robotics.Pose;
 import lejos.robotics.localization.PoseProvider;

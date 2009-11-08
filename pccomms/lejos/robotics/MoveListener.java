@@ -21,7 +21,7 @@ public interface MoveListener {
 	 * @param event the movement
 	 * @param mp the movement provider
 	 */
-	public void movementStarted(Movement event, MovementProvider mp);
+	public void movementStarted(Movement event);
 	
 	/**
 	 * Called by the movementr provider when a move stops
@@ -29,5 +29,5 @@ public interface MoveListener {
 	 * @param event the movement
 	 * @param mp movement provider
 	 */
-	public void movementStopped(Movement event, MovementProvider mp);
+	public void movementStopped(Movement event);
 }

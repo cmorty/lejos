@@ -13,21 +13,13 @@ import lejos.robotics.*;
 public class CompassPilot extends TachoPilot {
 
 	protected DirectionFinder compass;
-	private  Regulator regulator = new Regulator(); // inner regulator for thread
-	private float _heading; // Heading to point robot
-	private boolean _traveling = false; // state variable used by regulator
-	private boolean _rotating = false; // state variable used by regulator
-    private boolean _regulating = false;
-	private float _distance; // set by travel()  used by regulator to stop
-	private byte _direction;// direction of travel = sign of _distance
-    public float _angle0; // compass heading at last call to reset();
-	private float  _cumAngle = 0;
+	protected  Regulator regulator = new Regulator(); // inner regulator for thread
+	protected float _heading; // Heading to point robot
+	protected boolean _traveling = false; // state variable used by regulator
+	protected float _distance; // set by travel()  used by regulator to stop
+	protected byte _direction;// direction of travel = sign of _distance
+	protected float  _heading0 = 0;// heading when rotate immediate is called
 	
-	/**
-	 * returns true if robot is rotating to a specific direction
-	 * @return true iff robot is rotating to a specific direction
-	 */
-	public boolean isRotating(){return _rotating;}
 	
 	/**
 	 *returns returns  true if the robot is travelling for a specific distance;
@@ -65,6 +57,7 @@ public class CompassPilot extends TachoPilot {
 		_heading = getCompassHeading(); // Current compass direction = heading target
 		regulator.setDaemon(true);
 		regulator.start();
+
 	}
     
     /**
@@ -73,14 +66,12 @@ public class CompassPilot extends TachoPilot {
      */	
     public DirectionFinder getCompass(){ return compass;}
 	/**
-	 * Returns the compass angle in degrees, Cartesian (increasing counter clockwise) i.e. the actual robot heading
+	 * Returns the change in robot heading since the last call of reset()
+     * normalized to be within -180 and _180 degrees
 	 */
-	public float getAngle() {
-      float compassAngle = normalize(compass.getDegreesCartesian());
-      _cumAngle += compassAngle- _angle0;
-      _cumAngle = normalize(_cumAngle);
-      _angle0 = compassAngle;
-	   return _cumAngle;
+	public float getAngle()
+    {
+      return normalize(getCompassHeading()-_heading0);
 	}
 	
 	/**
@@ -107,7 +98,7 @@ public class CompassPilot extends TachoPilot {
 	public synchronized void calibrate()
 	{
 		int spd =_motorSpeed;
-		setSpeed(100);
+		setTurnSpeed(50);
 		compass.startCalibration();
 		super.rotate(360,false);
         compass.stopCalibration();             
@@ -117,7 +108,6 @@ public class CompassPilot extends TachoPilot {
     {
       compass.resetCartesianZero();
       _heading =compass.getDegreesCartesian();
-      _angle0 = 0;
     }
 
 	/**
@@ -140,8 +130,7 @@ public class CompassPilot extends TachoPilot {
 	 * @param immediateReturn iff true, the method returns immediately. 
 	 */
 	public void travel(float distance, boolean immediateReturn) {
-//      reset();
-      _angle0 = (int) compass.getDegreesCartesian();
+     _heading = getCompassHeading();
 		_distance = distance + getTravelDistance();
 		if(_distance > 0)
 		   {
@@ -153,8 +142,6 @@ public class CompassPilot extends TachoPilot {
 		   backward();
 		}
 		_traveling = true;
-        _rotating = false;
-        _regulating = true;
 		if(immediateReturn)return;
 		while(_traveling)Thread.yield(); // regulator will call stop when distance is reached
 	}
@@ -173,28 +160,27 @@ public class CompassPilot extends TachoPilot {
 	/** 
 	 * robot rotates to the specified compass heading;
 	 * @param  immediateReturn  - if true, method returns immediately.
-     * Unfortunately, if you issue the stop(() command, the motion will run to
-     * completion. <br>
-	 * Robot stops when specified angle is reached
+	 * Robot stops when specified angle is reached or when stop() is called
 	 */
 	public void rotate(float angle, boolean immediateReturn)
-	{
-      _angle0 = (int)compass.getDegreesCartesian();
-    performRotation(angle);
-    _traveling = false;
-    _rotating = true;
-    _regulating = true;
-    _heading += angle;
+	 {
+    _heading = getCompassHeading();
+    super.rotate(angle, immediateReturn);
     if (immediateReturn)
     {
       return;
     }
-    while (_rotating)
+    _heading += angle;
+    _traveling = false;
+
+
+    float error = getHeadingError();
+    while (Math.abs(error) > 3)
     {
-      Thread.yield();
+      super.rotate(-error, false);
+      error = getHeadingError();
     }
-    stop();
-	}
+  }
 	
 	/**
 	 * Rotates the  NXT robot through a specific angle; Rotates left if angle is positive, right if negative,
@@ -209,19 +195,12 @@ public class CompassPilot extends TachoPilot {
 
     public void reset()
     {
+      _heading0 = getCompassHeading();
       super.reset();
-      _angle0 = getCompassHeading();
-      _cumAngle = 0;
     }
-/**
- *  returns TRUE if robot is moving 
- */	
-	public boolean isMoving()
-	{
-		return super.isMoving()  || _rotating || _traveling;		
-	}
+
  // methods required to give regulator access to Pilot superclass
-	private void stopNow(){stop();}
+	protected void stopNow(){stop();}
 /**
  * Stops the robot soon after the method is executed. (It takes time for the motors
  * to slow to a halt)
@@ -229,9 +208,7 @@ public class CompassPilot extends TachoPilot {
 	public void stop()
     {
       super.stop();
-      _regulating = false;
       _traveling = false;
-      _rotating = false;
       while(isMoving())
       {
         super.stop();
@@ -240,15 +217,8 @@ public class CompassPilot extends TachoPilot {
     }
 	private boolean pilotIsMoving() { return super.isMoving();}
 	
-	private void performRotation(float angle) // usd by regulator to call pilot rotate(angle, true)
+	protected float normalize(float angle)
 	{ 
-		angle = normalize(angle);
-		if(angle>5) angle -= 3;
-		if(angle < -5)angle += 3;  // attempt to correct overshoot
-		super.rotate(angle,false);
-	} 
-	private float normalize(float angle)
-    {
       while(angle > 180)angle -= 360;
       while(angle < -180) angle += 360;
       return angle;
@@ -258,37 +228,30 @@ public class CompassPilot extends TachoPilot {
  * @author Roger Glassey
  */	
 	 class Regulator extends Thread 
-	{
-		public void run() 
-		{
-			while(true) 
-			{
-              while(!_regulating)Thread.yield();
-				if( _traveling)
-				{
-				   if(_direction*(getTravelDistance() - _distance) >=0)
-					{
-						stopNow();
-					}
-					else
-					{
-			            float gain = -3;    
-			            int error = (int)(gain* getHeadingError());
-			            steer(_direction * error, 360*_direction,true);
-			        }
-				}
-				if(_rotating )
-				{
-					float error = getHeadingError();
-					if(Math.abs(error) > 3) performRotation(-error);
-					else 
-					{
-						stopNow();
-					}
-				}
-				Thread.yield();
-			}	
-		}		
-	}
+	 {
+
+    public void run()
+    {
+      while (true)
+      {
+        while (!_traveling)
+        {
+          Thread.yield();
+        }
+        {
+          if (_direction * (getTravelDistance() - _distance) >= 0)
+          {
+            stopNow();
+          } else
+          {
+            float gain = -3;
+            float error = getHeadingError();
+            steer(gain * error);
+          }
+        }
+        Thread.yield();
+      }
+    }
+  }
 }
 
