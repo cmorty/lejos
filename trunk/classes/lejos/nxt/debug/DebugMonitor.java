@@ -4,7 +4,7 @@ import lejos.nxt.*;
 
 /**
  * Simple debug monitor that can be run alongside and nxj program. This class
- * catches unhandled exceptions and user interrupts (accept + escape key), it
+ * catches un-handled exceptions and user interrupts (accept + escape key), it
  * displays information about the event (stack trace etc.). The user is then
  * able to either perform a soft reset (Escape), a hard reset (Escape + Accept),
  * or continue running the program (any other key). All output is directed via
@@ -13,15 +13,15 @@ import lejos.nxt.*;
  */
 public class DebugMonitor
 {
-
+    protected DebugInterface monitor;
     /**
      * Display information about the uncaught exception on System.err
      * @param info the current VM event
      */
-    static void displayException(DebugInterface info)
+    protected void displayException(DebugInterface info)
     {
         VM vm = VM.getVM();
-        int base = vm.getImage().getImageBase();
+        int [] trace = VM.getThrowableStackTrace(info.exception);
         System.err.println("Exception: " + vm.getVMClass(info.exception).getClassNo());
         String msg = info.exception.getMessage();
         int cnt = 0;
@@ -30,16 +30,24 @@ public class DebugMonitor
             System.err.println(msg);
             cnt++;
         }
-        VM.VMThread thread = vm.getVMThread(info.thread);
-        VM.VMStackFrames stack = thread.getStackFrames();
-        for(VM.VMStackFrame sf : stack)
+        if (trace != null)
         {
-            System.err.println(" at: " + sf.getVMMethod().getMethodNumber() + "(" + (sf.pc - base - sf.getVMMethod().codeOffset) + ")");
-            if (cnt++ > 6) break;
+            for(int sf : trace)
+            {
+                System.err.println(" at: " + (sf >> 16) + "(" + (sf & 0xffff) + ")");
+                if (cnt++ > 6) break;
+            }
+
         }
+        else
+            // No trace available probably we have run out of memory, so just
+            // display the basics
+            System.err.println(" at: " + info.method + "(" + info.pc + ")");
+
         // Mark thread as daemon to avoid system hang
         info.thread.setDaemon(true);
     }
+
     static String[] states = {"N", "D", "I", "R", "E", "W", "S"};
 
     /**
@@ -49,7 +57,7 @@ public class DebugMonitor
      * on the LCD display!
      * @param info
      */
-    static void displayThreads(DebugInterface info)
+    protected void displayThreads(DebugInterface info)
     {
         VM vm = VM.getVM();
         VM.VMThreads threads = vm.getVMThreads();
@@ -70,66 +78,71 @@ public class DebugMonitor
         }
     }
 
-    public static void main(String[] args) throws Exception
+    protected void exit()
+    {
+        System.exit(1);
+    }
+
+
+    protected void processEvent(int event)
+    {
+        LCD.clear();
+        switch (event)
+        {
+            case DebugInterface.DBG_EXCEPTION:
+                displayException(monitor);
+                break;
+            case DebugInterface.DBG_USER_INTERRUPT:
+                displayThreads(monitor);
+                break;
+            case DebugInterface.DBG_PROGRAM_EXIT:
+                System.err.println("Program exit");
+                exit();
+                break;
+        }
+        LCD.refresh();
+        Sound.playTone(73, 150);
+        Sound.pause(300);
+        Sound.playTone(62, 500);
+        // Wait for any buttons to be released
+        while (Button.readButtons() != 0)
+            Thread.yield();
+        // Enable user interrupts again
+        monitor.setEventOptions(DebugInterface.DBG_USER_INTERRUPT, DebugInterface.DBG_EVENT_ENABLE);
+        // and wait to see what the user wants to do
+        int pressed = Button.waitForPress();
+        // If escape do soft-reboot
+        if ((Button.ESCAPE.getId() & pressed) != 0)
+            exit();
+        // Otherwise try and continue gulp!
+        LCD.clear();
+        // Clear the event and continue
+        monitor.resumeProgram();
+    }
+
+
+    protected void monitorEvents()
     {
         // Setup the monitoring thread.
-        DebugInterface monitor = DebugInterface.get();
-        DebugInterface.eventOptions(DebugInterface.DBG_EXCEPTION, DebugInterface.DBG_EVENT_ENABLE);
-        DebugInterface.eventOptions(DebugInterface.DBG_USER_INTERRUPT, DebugInterface.DBG_EVENT_ENABLE);
-
+        monitor = DebugInterface.get();
+        monitor.setEventOptions(DebugInterface.DBG_EXCEPTION, DebugInterface.DBG_EVENT_ENABLE);
+        monitor.setEventOptions(DebugInterface.DBG_USER_INTERRUPT, DebugInterface.DBG_EVENT_ENABLE);
+        monitor.setEventOptions(DebugInterface.DBG_PROGRAM_EXIT, DebugInterface.DBG_EVENT_ENABLE);
         // Start the real program in a new thread.
-        Thread prog = new Thread()
-        {
-
-            public void run()
-            {
-                 VM.executeProgram(1);
-                 // This point will never be reached
-            }
-        };
-        // Make sure we keep running when we start the program
-        Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
-        // Enable stricter run time type checking
-        VM.setVMOptions(VM.getVMOptions() | VM.VM_TYPECHECKS);
-        prog.start();
+        monitor.startProgram(1);
         while (true)
         {
-            // Allow exit if the program finishes normally.
-            Thread.currentThread().setDaemon(true);
             // Wait for a debug event
             int event = monitor.waitEvent(0);
-            Thread.currentThread().setDaemon(false);
-            // Display the information
-            LCD.clear();
-            switch (event)
-            {
-                case DebugInterface.DBG_EXCEPTION:
-                    displayException(monitor);
-                    break;
-                case DebugInterface.DBG_USER_INTERRUPT:
-                    displayThreads(monitor);
-                    break;
-            }
-            LCD.refresh();
-            Sound.playTone(73, 150);
-            Sound.pause(300);
-            Sound.playTone(62, 500);
-            // Wait for any buttons to be released
-            while (Button.readButtons() != 0)
-                Thread.yield();
-            // Enable user interrupts again
-            DebugInterface.eventOptions(DebugInterface.DBG_USER_INTERRUPT, DebugInterface.DBG_EVENT_ENABLE);
-            // and wait to see what the user wants to do
-            int pressed = Button.waitForPress();
-            // If escape do soft-reboot
-            if ((Button.ESCAPE.getId() & pressed) != 0)
-                System.exit(1);
-            // Otherwise try and continue gulp!
-            LCD.clear();
-            // Clear the event
-            monitor.clear();
-            VM.resumeThread(null);
+            monitor.resumeSystemThreads();
+            processEvent(event);
         }
+    }
+
+    public static void main(String[] args) throws Exception
+    {
+        // Simply create and run the monitor.
+        new DebugMonitor().monitorEvents();
     }
 }
 
