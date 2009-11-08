@@ -8,6 +8,10 @@ import js.common.ToolProgressMonitor;
 import js.tinyvm.io.IByteWriter;
 import js.tinyvm.util.HashVector;
 
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
+import java.io.IOException;
+
 /**
  * Abstraction for dumped binary.
  */
@@ -38,6 +42,7 @@ public class Binary
    final HashSet<Signature> iSpecialSignatures = new HashSet<Signature>();
    final HashMap<String, ClassRecord> iClasses = new HashMap<String, ClassRecord>();
    final HashVector<Signature> iSignatures = new HashVector<Signature>();
+   final DebugData debugData = new DebugData();
    int usedClassCount = 0;
    int markGeneration = 0;
    boolean useAll = false;
@@ -71,13 +76,32 @@ public class Binary
 
    /**
     * Dump.
-    * 
+    *
     * @param writer
     * @throws TinyVMException
     */
    public void dump (IByteWriter writer) throws TinyVMException
    {
       iEntireBinary.dump(writer);
+   }
+   /**
+    * Dump debug data.
+    *
+    * @param fos FileOutputStream
+    * @throws TinyVMException
+    */
+   public void dumpDebug (FileOutputStream fos) throws TinyVMException
+   {
+      ObjectOutputStream out = null;
+      try {
+          out = new ObjectOutputStream(fos);
+          out.writeObject(debugData);
+          out.close();
+      }
+      catch (IOException ex)
+      {
+          ex.printStackTrace();
+      }
    }
 
    //
@@ -308,6 +332,7 @@ public class Binary
       // Post-process code after offsets are set (second pass)
       result.processCode(true);
 
+      result.debugData.create(result);
       assert result != null: "Postconditon: result != null";
       return result;
    }
@@ -766,23 +791,22 @@ public class Binary
        monitor.log("Class " + pIndex + ": " + pRec.getName());
      }
      int pSize = iMethodTables.size();
-	 int methodNo = 0;
+     int methodNo = 0;
      for (int i = 0; i < pSize; i++)
      {
-		RecordTable<MethodRecord> rt = iMethodTables.get(i);
+        RecordTable<MethodRecord> rt = iMethodTables.get(i);
         int cnt = rt.size();
-		for(int j = 0; j < cnt; j++)
-		{
-			MethodRecord mr = rt.get(j);
-            if ((mr.iFlags & TinyVMConstants.M_NATIVE) == 0)
-                monitor.log("Method " + methodNo + ": Class: " + mr.iClassRecord.getName() + " Signature: " + 
+        for(int j = 0; j < cnt; j++)
+        {
+           MethodRecord mr = rt.get(j);
+           if ((mr.iFlags & TinyVMConstants.M_NATIVE) == 0)
+              monitor.log("Method " + methodNo + ": Class: " + mr.iClassRecord.getName() + " Signature: " +
                              (iSignatures.elementAt(mr.iSignatureId)).getImage() + " PC " + mr.getCodeStart() + " Signature id " + mr.iSignatureId);
-            else
-                monitor.log("Method " + methodNo + ": Class: " + mr.iClassRecord.getName() + " Signature: " + 
+           else
+              monitor.log("Method " + methodNo + ": Class: " + mr.iClassRecord.getName() + " Signature: " + 
                              (iSignatures.elementAt(mr.iSignatureId)).getImage() + " Native id " + mr.iSignatureId);
-			methodNo++;
-			
-		}
+           methodNo++;
+        }
      }
      monitor.log("Master record    : " + iMasterRecord.getLength() + " bytes.");
      monitor.log("Class records    : " + iClassTable.size() + " (" + iClassTable.getLength() + " bytes).");
