@@ -23,27 +23,30 @@
 Throwable *outOfMemoryError;
 
 
-
 void init_exceptions()
 {
   outOfMemoryError = (Throwable *)new_object_for_class (JAVA_LANG_OUTOFMEMORYERROR);
   protect_obj(outOfMemoryError);
 }
 
+/**
+ * Create an exception object. Only used by VM code.
+ */
 int throw_new_exception(int class)
 {
-  Throwable *exception = (Throwable *)new_object_for_class(class);
-  if (exception == JNULL)
+  Throwable *exception;
+  Object *stackTrace;
+  // Maximize our chance of success by forcing a collection
+  wait_garbage_collect();
+  exception = (Throwable *)new_object_for_class(class);
+  stackTrace = create_stack_trace(currentThread, null);
+  if (exception == JNULL || stackTrace == JNULL)
   {
+    // We are all of memory, clean things up and abort.
     wait_garbage_collect();
-    exception = (Throwable *)new_object_for_class(class);
-    if (exception == JNULL)
-    {
-      outOfMemoryError->_super.flags.class = class;
-      return throw_exception(outOfMemoryError);
-    }
+    return throw_exception(outOfMemoryError);
   }
-  exception->stackTrace = obj2ref(create_stack_trace(null));
+  exception->stackTrace = obj2ref(stackTrace);
   return throw_exception(exception);
 }
 
@@ -71,7 +74,6 @@ int throw_exception (Throwable *exception)
   #ifdef VERIFY
   assert (exception != null, EXCEPTIONS0);
   #endif // VERIFY
-printf("Throw exception %d\n", get_class_index(&(exception->_super)));
 #if DEBUG_EXCEPTIONS
   printf("Throw exception\n");
 #endif
