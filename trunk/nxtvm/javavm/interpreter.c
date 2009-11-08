@@ -16,6 +16,7 @@
 #include "stack.h"
 #include "poll.h"
 #include "rconsole.h"
+#include "debug.h"
 #include <string.h>
 //#include <math.h>
 extern double __ieee754_fmod(double, double);
@@ -523,7 +524,8 @@ static DISPATCH_LABEL forceCheck[] =
 
     if( requestCode == REQUEST_EXIT)
     {
-      return;
+      if (!debug_program_exit())
+        return;
     }
     if( requestCode == REQUEST_SWITCH_THREAD
         || now >= switch_time){
