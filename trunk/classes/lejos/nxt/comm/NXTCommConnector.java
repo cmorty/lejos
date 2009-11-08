@@ -14,9 +14,9 @@ public abstract class  NXTCommConnector {
     public abstract NXTConnection connect(String target, int mode);
 
     /**
-     * Wait for an incomming connection, or for the request to timeout.
+     * Wait for an incoming connection, or for the request to timeout.
      * @param timeout Time in ms to wait for the connection to be made
-     * @param mode I/O mode to be used for the accpeted connection.
+     * @param mode I/O mode to be used for the accepted connection.
      * @return A NXTConnection object for the new connection or null if error.
      */
     public abstract NXTConnection waitForConnection(int timeout, int mode);
