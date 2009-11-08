@@ -13,7 +13,6 @@
 #include "memory.h"
 #include "exceptions.h"
 #include "stack.h"
-
 #define NO_OWNER 0x00
 
 #define get_stack_frame() ((StackFrame *) (currentThread->currentStackFrame))
@@ -200,8 +199,8 @@ boolean switch_thread()
       #if DEBUG_THREADS
       printf ("Tidying up DEAD thread %d: %d\n", (int) currentThread, (int)currentThread->threadId);
       #endif
-  
       #if REMOVE_DEAD_THREADS
+      free_stacks(currentThread);
       #ifdef SAFE
       currentThread->stackFrameArray = JNULL;
       currentThread->stackArray = JNULL;
@@ -471,7 +470,6 @@ printf ("currentThread=%d, ndr=%d\n", (int) currentThread, (int)nonDaemonRunnabl
       
     return true;
   }
-
   schedule_request(REQUEST_EXIT);
   currentThread = null;
   
