@@ -24,6 +24,8 @@ public class USB extends NXTCommDevice {
 	private static final byte GET_DEVICE_INFO = (byte)0x9B;
     private static final byte NXJ_PACKET_MODE = (byte)0xFF;
 
+    private static volatile boolean listening = false;
+
     static {
         loadSettings();
     }
@@ -97,31 +99,44 @@ public class USB extends NXTCommDevice {
     {
         // Allocate buffer here for use by other methods. Saves repeated
         // allocations.
-        byte [] buf = new byte [BUFSZ];
-        USBConnection conn = new USBConnection(NXTConnection.RAW);
-        usbSetName(devName);
-        usbSetSerialNo(devAddress);
-        usbEnable(((mode & RESET) != 0 ? 1 : 0));
-        mode &= ~RESET;
-        // Discard any left over input
-        flushInput(conn);
-        if (timeout == 0) timeout = 0x7fffffff;
-        while(timeout-- > 0)
-        {
-            int status = usbStatus();
-            // Check for the interface to be ready and to be in a non control
-            // configuration.
-            if ((status & USB_STATE_MASK) == USB_STATE_CONNECTED && (status & USB_CONFIG_MASK) != 0)
+        listening = true;
+        try {
+            byte [] buf = new byte [BUFSZ];
+            USBConnection conn = new USBConnection(NXTConnection.RAW);
+            usbSetName(devName);
+            usbSetSerialNo(devAddress);
+            usbEnable(((mode & RESET) != 0 ? 1 : 0));
+            mode &= ~RESET;
+            // Discard any left over input
+            flushInput(conn);
+            if (timeout == 0) timeout = 0x7fffffff;
+            while(listening && timeout-- > 0)
             {
-                if (mode == NXTConnection.RAW ||
-                    (mode == NXTConnection.LCP && ((status & (USB_READABLE|USB_WRITABLE)) == (USB_READABLE|USB_WRITABLE))) ||
-                    (mode == NXTConnection.PACKET && isConnected(conn, buf)))
+                int status = usbStatus();
+                // Check for the interface to be ready and to be in a non control
+                // configuration.
+                if ((status & USB_STATE_MASK) == USB_STATE_CONNECTED && (status & USB_CONFIG_MASK) != 0)
                 {
-                    conn.setIOMode(mode);
-                    return conn;
+                    if (mode == NXTConnection.RAW ||
+                        (mode == NXTConnection.LCP && ((status & (USB_READABLE|USB_WRITABLE)) == (USB_READABLE|USB_WRITABLE))) ||
+                        (mode == NXTConnection.PACKET && isConnected(conn, buf)))
+                    {
+                        conn.setIOMode(mode);
+                        return conn;
+                    }
+                }
+                try {
+                    Thread.sleep(1);
+                }
+                catch (InterruptedException e)
+                {
+                    break;
                 }
             }
-            Delay.msDelay(1);
+        }
+        finally
+        {
+            listening = false;
         }
         usbDisable();
         return null;
@@ -153,6 +168,19 @@ public class USB extends NXTCommDevice {
             Delay.msDelay(1);
         }
         usbDisable();
+    }
+
+    /**
+     * Cancel a long running command issued on another thread.
+     * NOTE: Currently only the WaitForConnection calls can be cancelled.
+     * @return true if the command was cancelled, false otherwise.
+     */
+    public static boolean cancelConnect()
+    {
+        // Note there is almost certainly a race condition here....
+        boolean ret = listening;
+        listening = false;
+        return ret;
     }
     
 	public static native void usbEnable(int reset);
