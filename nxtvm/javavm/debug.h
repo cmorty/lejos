@@ -26,7 +26,8 @@ typedef struct S_Debug
 #define DBG_NONE 0
 #define DBG_EXCEPTION 1
 #define DBG_USER_INTERRUPT 2
-#define DBG_MAX_EVENT DBG_USER_INTERRUPT
+#define DBG_PROGRAM_EXIT 3
+#define DBG_MAX_EVENT DBG_PROGRAM_EXIT
 
 #define DBG_EVENT_DISABLE 0
 #define DBG_EVENT_ENABLE 1
@@ -39,6 +40,7 @@ extern boolean debug_uncaught_exception(Throwable * exception,
                           const int methodRecord,
                           const int pc);
 extern boolean debug_user_interrupt();
+extern boolean debug_program_exit();
 
 extern void init_debug();
 #endif // _DEBUG_H
