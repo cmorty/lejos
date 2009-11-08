@@ -7,6 +7,9 @@ import javax.swing.*;
 import javax.swing.event.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import js.tinyvm.TinyVMException;
+import org.apache.commons.cli.*;
+import java.io.*;
 
 /**
  * Downloads  data from the RConsole running on a NXT <br>
@@ -103,18 +106,20 @@ public class ConsoleViewer extends JFrame implements ConsoleViewerUI, ActionList
 
     /**
      * Constructor builds GUI
+     * @param debugFile File containing debug information.
      */
-    public ConsoleViewer()
+    public ConsoleViewer(String debugFile)
     {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setTitle("View RConsole output from NXT");
 
-        setSize(650, 600);
+        setSize(680, 600);
 
         statusField.setPreferredSize(new Dimension(200,20));
 
         buildGui();
-        comm = new ConsoleViewComms(this, true, true);
+        ConsoleDebugDisplay debug = new ConsoleDebugDisplay(this, debugFile);
+        comm = new ConsoleViewComms(this, debug, true, true);
     }
 
     public void buildGui()
@@ -211,6 +216,10 @@ public class ConsoleViewer extends JFrame implements ConsoleViewerUI, ActionList
         lcd.update(buffer);
     }
 
+    public void exception(int classNo, int methodNo, int pc, int[] stackTrace)
+    {
+    }
+
     public void connectedTo(String name, String address)
     {
         nameField.setText(name);
@@ -223,8 +232,15 @@ public class ConsoleViewer extends JFrame implements ConsoleViewerUI, ActionList
      */
     public static void main(String[] args)
     {
-        ConsoleViewer frame = new ConsoleViewer();
-        frame.setVisible(true);
+		try {
+            ConsoleCommandLineParser fParser = new ConsoleCommandLineParser();
+            CommandLine commandLine = fParser.parse(args);
+            String debugFile = commandLine.getOptionValue("gr");
+            ConsoleViewer frame = new ConsoleViewer(debugFile);
+            frame.setVisible(true);
+		} catch (Throwable t) {
+			System.err.println("An error has occurred: " + t.getMessage());
+		}
     }
 
     /**
@@ -257,6 +273,66 @@ public class ConsoleViewer extends JFrame implements ConsoleViewerUI, ActionList
 	public void logMessage(String msg) {
 		System.out.println(msg);
 	}
+
+
+    /**
+     * CommandLineParser
+     */
+    static private class ConsoleCommandLineParser
+    {
+       /**
+        * Parse commandline.
+        *
+        * @param args command line
+        * @throws TinyVMException
+        */
+       public CommandLine parse (String[] args) throws TinyVMException
+       {
+          assert args != null: "Precondition: args != null";
+
+          Options options = new Options();
+          options.addOption("h", "help", false, "help");
+          Option debugOption = new Option("gr", "remotedebug", true,
+                 "use the specified debug file");
+          debugOption.setArgName("debugfile");
+          options.addOption(debugOption);
+
+          CommandLine result;
+          try
+          {
+             try
+             {
+                result = new GnuParser().parse(options, args);
+             }
+             catch (ParseException e)
+             {
+                throw new TinyVMException(e.getMessage(), e);
+             }
+
+             if (result.hasOption("h"))
+             {
+                throw new TinyVMException("Help:");
+             }
+          }
+          catch (TinyVMException e)
+          {
+             StringWriter writer = new StringWriter();
+             PrintWriter printWriter = new PrintWriter(writer);
+             printWriter.println(e.getMessage());
+
+             String commandName = System.getProperty("COMMAND_NAME", "lejos.pc.tools.Console");
+
+             String usage = commandName + " [options]";
+             new HelpFormatter().printHelp(printWriter, 80, usage.toString(), null,
+                options, 0, 2, null);
+
+             throw new TinyVMException(writer.toString());
+          }
+
+          assert result != null: "Postconditon: result != null";
+          return result;
+       }
+    }
 }
 
 
