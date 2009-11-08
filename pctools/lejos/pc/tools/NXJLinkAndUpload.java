@@ -81,8 +81,8 @@ public class NXJLinkAndUpload extends NXTCommLoggable {
 		// link
 		log("Linking...");
 		//TODO switch to streams or temp file if no filename was given
-		fTinyVM.start(classpath, args1, fParser.isAll(), binName, fParser.isBigEndian(),
-				fParser.isDebug(), fParser.getRunTimeOptions(), fParser.isVerbose());
+		fTinyVM.start(classpath, args1, fParser.isAll(), binName, fParser.getDebugFile(), fParser.isBigEndian(),
+				fParser.getDebugOptions(), fParser.getRunTimeOptions(), fParser.isVerbose());
 		
 		// upload
 		log("Uploading...");

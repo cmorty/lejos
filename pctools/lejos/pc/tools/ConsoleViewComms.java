@@ -7,24 +7,31 @@ import lejos.pc.comm.*;
  * Contains the logic for connecting to RConsole on the NXT and downloading data.
  * Can be used by different user interfaces.
  * 
- * @author Roger Glassey and Lawrie Griffiths
+ * @author Roger Glassey, Lawrie Griffiths and Andy Shaw
  *
  */
 public class ConsoleViewComms
 {
+    private static final int MODE_SWITCH = 0xff;
+    private static final int MODE_LCD = 0x0;
+    private static final int MODE_EVENT = 0x1;
+    private static final int OPT_LCD = 1;
+    private static final int OPT_EVENT = 2;
     private InputStream is = null;
     private OutputStream os = null;
     private NXTConnector con;
     private ConsoleViewerUI viewer;
+    private ConsoleDebug debug;
     private Reader reader;
     private boolean connected = false;
     private boolean daemon;
     private boolean lcd;
 
-    public ConsoleViewComms(ConsoleViewerUI viewer, boolean daemon, boolean lcd)
+    public ConsoleViewComms(ConsoleViewerUI viewer, ConsoleDebug debug, boolean daemon, boolean lcd)
     {
     	this.daemon = daemon;
         this.viewer = viewer;
+        this.debug = debug;
         this.lcd = lcd;
         reader = new Reader();
         reader.setDaemon(daemon);
@@ -67,7 +74,7 @@ public class ConsoleViewComms
         {
             byte[] hello = new byte[]
             {
-                'C', 'O', (byte)(lcd ? 'O' : 'N')
+                'R', 'C', (byte)((lcd ? OPT_LCD : 0) | (debug != null ? OPT_EVENT : 0))
             };
             os.write(hello);
             os.flush();
@@ -101,18 +108,45 @@ public class ConsoleViewComms
     private class Reader extends Thread
     {
         byte [] lcdBuffer = new byte[100*64/8];
-        private int readBuffer() throws IOException
+
+
+        private int processLCDData() throws IOException
         {
             int cnt = 0;
 
             while (cnt < lcdBuffer.length)
             {
                 int len = is.read(lcdBuffer, cnt, lcdBuffer.length - cnt);
-//System.out.println("cnt " + cnt + " len " + len);
                 if (len < 0) return -1;
                 cnt += len;
             }
+            viewer.updateLCD(lcdBuffer);
             return cnt;
+        }
+
+        private int processExceptionData() throws IOException
+        {
+            int classNo = is.read();
+            if (classNo < 0) return -1;
+            int msgCnt = is.read() | (is.read() << 8);
+            if (msgCnt < 0) return -1;
+            char [] msg = new char[msgCnt];
+            for(int i = 0; i < msgCnt; i++)
+            {
+                int ch = is.read();
+                if (ch < 0) return -1;
+                msg[i] = (char) ch;
+            }
+            int traceCnt = is.read();
+            if (traceCnt < 0) return -1;
+            int [] stackTrace = new int[traceCnt];
+            for(int i = 0; i < traceCnt; i++)
+            {
+                stackTrace[i] = is.read() | (is.read() << 8) | (is.read() << 16) | (is.read() << 24);
+                if (stackTrace[i] < 0) return -1;
+            }
+            debug.exception(classNo, new String(msg), stackTrace);
+            return 0;
         }
 
         public void run()
@@ -124,13 +158,21 @@ public class ConsoleViewComms
                     try
                     {
                         int input;
-                        while ((input = is.read()) >= 0)
+                        ioloop:while ((input = is.read()) >= 0)
                         {
-                            if (input == 0xff)
+                            if (input == MODE_SWITCH)
                             {
+                                // Extended data types, first byte tells us the type
+                                switch(is.read())
+                                {
+                                    case MODE_LCD:
+                                        if (processLCDData()< 0) break ioloop;
+                                        break;
+                                    case MODE_EVENT:
+                                        if (processExceptionData() < 0) break ioloop;
+                                        break;
+                                }
                                 //System.out.println("Got 255 marker");
-                                if (readBuffer()< 0) break;
-                                viewer.updateLCD(lcdBuffer);
                             }
                             else
                                 viewer.append("" + (char) input);
