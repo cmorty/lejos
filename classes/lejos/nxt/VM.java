@@ -1109,6 +1109,16 @@ public final class VM
         return new VMThread(getDataAddress(thread));
     }
 
+    private static final int STACKTRACE_OFFSET = OBJ_HDR_SZ;
+    /**
+     * Return the stack trace data associated with a throwable.
+     * @param t The throwable
+     * @return The array of stack trace data.
+     */
+    public static final int [] getThrowableStackTrace(Throwable t)
+    {
+        return (int[]) memGetReference(ABSOLUTE, memPeekInt(ABSOLUTE, getObjectAddress(t) + STACKTRACE_OFFSET));
+    }
     /**
      * Suspend a thread. This places the specified thread into a suspended
      * state. If thread is null all threads except for the current thread will
@@ -1163,5 +1173,14 @@ public final class VM
        setVMOptions(cur);
      }
 
-
+    /**
+     * Native method to create the stack trace in a compact internal form. This
+     * is currently an array of integers with one int per stack frame. The high
+     * 16 bits contains the method number, the low 16 bits contains the PC
+     * within the method.
+     * @param thread The thread to create the stack for.
+     * @param ignore Ignore stack frames that have a this which matches ignore.
+     * @return An array of stack frame details.
+     */
+    public static native int[] createStackTrace(Thread thread, Object ignore);
 }
