@@ -542,8 +542,12 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
       push_word(ns);
     }
     break;
-  case createStackTrace_4_5_1I:
-    push_word(obj2ref(create_stack_trace(ref2obj(paramBase[0]))));
+  case createStackTrace_4Ljava_3lang_3Thread_2Ljava_3lang_3Object_2_5_1I:
+    {
+      Object *trace = create_stack_trace((Thread *)ref2obj(paramBase[0]), ref2obj(paramBase[1]));
+      if (trace == NULL) return EXEC_RETRY;
+      push_word(obj2ref(trace));
+    }
     break;
   default:
     return throw_new_exception(JAVA_LANG_NOSUCHMETHODERROR);

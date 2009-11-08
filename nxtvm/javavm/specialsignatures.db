@@ -201,4 +201,4 @@ isAssignable(II)Z
 setContrast(I)V
 
 #Throwable
-createStackTrace()[I
+createStackTrace(Ljava/lang/Thread;Ljava/lang/Object;)[I
