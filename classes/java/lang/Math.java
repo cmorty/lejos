@@ -443,6 +443,25 @@ public final class Math
 	public static double pow(double a, double b)
 	{
 		//FIXME handle special cases (see Sun's javadoc)
+		if (b == 0.0)
+			return 1.0;
+		if (a <= 0.0)
+		{
+			if (a == 0.0)
+				return b > 0 ? a : 1/a;
+
+			int sign = 1;
+			if (b >= ROUND_DOUBLE_MIN && b <= ROUND_DOUBLE_MAX)
+			{
+				long b2 = (long)b;
+				if (b != b2)
+					return Double.NaN;
+				
+				sign = 1 - (((int)b2 & 1) << 1);
+			}
+
+			return sign * exp(b * log(-a));	
+		}
 		
 		return exp(b * log(a));
 	}
