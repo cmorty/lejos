@@ -216,7 +216,7 @@ public final class Math
 			return a;
 
 		// round down or strip
-		return (a >= 0) ? b : b - 1;
+		return (a > 0.0) ? b : b - 1.0;
 	}
 
 	/**
@@ -235,8 +235,12 @@ public final class Math
 		if (b == a)
 			return a;
 
-		// if negative, just strip decimal places
-		return (a <= 0) ? b : b + 1;
+		// otherwise, round up 
+		if (a > 0.0)
+			return b + 1.0;
+		
+		// or strip (with special handling of negative zero)
+		return b < 0.0 ? b : -0.0; 
 	}
 
 	/**
