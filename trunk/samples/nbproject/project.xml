@@ -11,6 +11,11 @@
             <properties/>
             <folders>
                 <source-folder>
+                    <label>samples</label>
+                    <location>.</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
                     <label>BTConnectTest</label>
                     <type>java</type>
                     <location>BTConnectTest</location>
@@ -147,6 +152,13 @@
                     <label>I2CDevices</label>
                     <type>java</type>
                     <location>I2CDevices</location>
+                    <excludes>**.class,**.nxj</excludes>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>JSR256Test</label>
+                    <type>java</type>
+                    <location>JSR256Test</location>
                     <excludes>**.class,**.nxj</excludes>
                     <encoding>UTF-8</encoding>
                 </source-folder>
@@ -361,6 +373,13 @@
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
+                    <label>Sniffer</label>
+                    <type>java</type>
+                    <location>Sniffer</location>
+                    <excludes>**.class,**.nxj</excludes>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
                     <label>SocketTest</label>
                     <type>java</type>
                     <location>SocketTest</location>
@@ -442,11 +461,6 @@
                     <type>java</type>
                     <location>WaypointNav</location>
                     <excludes>**.class,**.nxj</excludes>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
-                    <label>samples</label>
-                    <location>.</location>
                     <encoding>UTF-8</encoding>
                 </source-folder>
             </folders>
@@ -562,6 +576,11 @@
                     <source-folder style="packages">
                         <label>I2CDevices</label>
                         <location>I2CDevices</location>
+                        <excludes>**.class,**.nxj</excludes>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>JSR256Test</label>
+                        <location>JSR256Test</location>
                         <excludes>**.class,**.nxj</excludes>
                     </source-folder>
                     <source-folder style="packages">
@@ -715,6 +734,11 @@
                         <excludes>**.class,**.nxj</excludes>
                     </source-folder>
                     <source-folder style="packages">
+                        <label>Sniffer</label>
+                        <location>Sniffer</location>
+                        <excludes>**.class,**.nxj</excludes>
+                    </source-folder>
+                    <source-folder style="packages">
                         <label>SocketTest</label>
                         <location>SocketTest</location>
                         <excludes>**.class,**.nxj</excludes>
@@ -784,6 +808,7 @@
                     <ide-action name="clean"/>
                 </context-menu>
             </view>
+            <subprojects/>
         </general-data>
         <java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/1">
             <compilation-unit>
@@ -849,6 +874,8 @@
                 <package-root>USBReceive</package-root>
                 <package-root>View</package-root>
                 <package-root>WaypointNav</package-root>
+                <package-root>Sniffer</package-root>
+                <package-root>JSR256Test</package-root>
                 <classpath mode="compile">../classes/lib/classes.jar</classpath>
                 <source-level>1.5</source-level>
             </compilation-unit>
