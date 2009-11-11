@@ -283,7 +283,7 @@ public final class MathBench
 	public static void main(String[] args)
 	{
 		RConsole.open();
-		System.setOut(new PrintStream(RConsole.openOutputStream()));
+		System.setOut(RConsole.getPrintStream());
 		System.out.println("MathBench " + VERSION);
 	
 		BenchUtils.cleanUp("At start");

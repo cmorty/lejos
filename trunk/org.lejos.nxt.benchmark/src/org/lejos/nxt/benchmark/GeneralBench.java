@@ -75,7 +75,7 @@ public class GeneralBench
 	{
 		RConsole.open();
 		// USB.usbEnable(2);
-		System.setOut(new PrintStream(RConsole.openOutputStream()));
+		System.setOut(RConsole.getPrintStream());
 		System.out.println("GeneralBench " + VERSION);
 
 		BenchUtils.cleanUp("At start");
