@@ -15,7 +15,7 @@ public class Sniffer implements SensorListener, ConditionListener, DataListener 
 	
 	public void run() {		
 		RConsole.openBluetooth(0);	
-		System.setOut(new PrintStream(RConsole.openOutputStream()));
+		System.setOut(RConsole.getPrintStream());
 		
 		// Listen for a proximity sensor like the ultrasonic
 		SensorManager.addSensorListener(this, "proximity");

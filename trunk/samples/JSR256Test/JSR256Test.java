@@ -21,7 +21,7 @@ public class JSR256Test implements ConditionListener {
 	
 	public void run() throws InterruptedException {
 		RConsole.openBluetooth(0);	
-		System.setOut(new PrintStream(RConsole.openOutputStream()));
+		System.setOut(RConsole.getPrintStream());
 		SensorConnection sonic = null;
 		try {
 			sonic =(SensorConnection)Connector.open("sensor:proximity");
