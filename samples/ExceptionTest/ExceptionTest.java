@@ -1,4 +1,6 @@
 import lejos.nxt.*;
+import lejos.nxt.comm.*;
+import lejos.util.Delay;
 
 /**
  * Simple test of leJOS exceptions.
@@ -12,9 +14,23 @@ import lejos.nxt.*;
  * @author Lawrie Griffiths
  *
  */
-public class ExceptionTest {	
-	public static void main (String[] aArg)
-	{
+public class ExceptionTest {
+    static void m1()
+    {
+        // Force an exception
 		SensorPort p = SensorPort.PORTS[5];
+        //Error t = new Error("Testing testing 123");
+        //throw t;
+    }
+
+    static void m2()
+    {
+        m1();
+    }
+
+	public static void main (String[] aArg) throws Exception
+	{
+        System.out.println("Running");
+        m2();
 	}
 }
