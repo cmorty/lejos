@@ -22,4 +22,8 @@
 	<target name="uploadandrun" description="upload and run the binary" >
 		<ant antfile="../samplebuild.xml" target="uploadandrun"/>
 	</target>
+
+	<target name="console" description="console run" >
+		<ant antfile="../samplebuild.xml" target="console"/>
+	</target>
 </project>
