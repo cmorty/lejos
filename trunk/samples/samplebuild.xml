@@ -9,6 +9,7 @@
   <property name="src" location="."/>
   <basename property="program" file="."/>
   <property name="binary" value="${program}.nxj" />
+  <property name="debug" value ="${program}.nxd" />
 	
   <!-- deletes class files -->
   <target name="clean" description="clean up all generated files">
@@ -23,7 +24,7 @@
         description="compile the source" >
     <!-- Compile the java code from ${src}  -->
     <echo> src = ${src} </echo>
-    <javac srcdir="${src}" destdir="${src}">
+    <javac srcdir="${src}" destdir="${src}" debug="true">
       <bootclasspath>
         <pathelement location="${nxj.classes.jar}"/>
        </bootclasspath>
@@ -35,15 +36,39 @@
     <!-- Link the binary and create a signature file -->
     <java classname="js.tinyvm.TinyVM">
       <arg value="--bootclasspath"/>
-      <arg path="${nxj.classes.jar}" /> 
+      <arg path="${nxj.classes.jar}" />
       <arg value="--classpath"/>
-      <arg path="." /> 
+      <arg path="." />
       <arg value="--writeorder" />
       <arg value="LE" />
       <arg value="${program}"/>
       <arg value="-o"/>
       <arg value="${binary}"/>
       <arg value="-v"/>
+      <classpath>
+        <pathelement location="${nxj.jtools.jar}"/>
+  		<pathelement location="${nxj.commons.jar}"/>
+  		<pathelement location="${nxj.bcel.jar}"/>
+      </classpath>
+    </java>
+  </target>
+
+  <target name="debuglink" depends="compile"
+        description="link the binary" >
+    <!-- Link the binary and create a signature file -->
+    <java classname="js.tinyvm.TinyVM">
+      <arg value="--bootclasspath"/>
+      <arg path="${nxj.classes.jar}" />
+      <arg value="--classpath"/>
+      <arg path="." />
+      <arg value="--writeorder" />
+      <arg value="LE" />
+      <arg value="${program}"/>
+      <arg value="-o"/>
+      <arg value="${binary}"/>
+      <arg value="-v"/>
+      <arg value="-gr"/>
+      <arg value="${debug}"/>
       <classpath>
         <pathelement location="${nxj.jtools.jar}"/>
   		<pathelement location="${nxj.commons.jar}"/>
@@ -77,6 +102,45 @@
       <jvmarg value="-Dnxj.home=${nxj.home}"/>
       <arg value="${binary}"/>
       <arg value="-r"/>
+      <classpath>
+        <pathelement location="${nxj.jtools.jar}"/>
+        <pathelement location="${nxj.pctools.jar}"/>
+      	<pathelement location="${nxj.pccomm.jar}"/>
+  		<pathelement location="${nxj.commons.jar}"/>
+  		<pathelement location="${nxj.bcel.jar}"/>
+      	<pathelement location="${nxj.bluecove.jar}"/>
+      	<pathelement location="${nxj.bluecove-gpl.jar}"/>
+      </classpath>
+    </java>
+  </target>
+
+  <target name="debuguploadandrun" depends="debuglink"
+        description="upload and run the binary" >
+    <java classname="lejos.pc.tools.NXJUpload" fork="true">
+      <jvmarg value="-Djava.library.path=${nxj.library.path}"/>
+      <jvmarg value="-Dnxj.home=${nxj.home}"/>
+      <arg value="${binary}"/>
+      <arg value="-r"/>
+      <classpath>
+        <pathelement location="${nxj.jtools.jar}"/>
+        <pathelement location="${nxj.pctools.jar}"/>
+      	<pathelement location="${nxj.pccomm.jar}"/>
+  		<pathelement location="${nxj.commons.jar}"/>
+  		<pathelement location="${nxj.bcel.jar}"/>
+      	<pathelement location="${nxj.bluecove.jar}"/>
+      	<pathelement location="${nxj.bluecove-gpl.jar}"/>
+      </classpath>
+    </java>
+  </target>
+
+  <target name="console" depends="debuguploadandrun"
+        description="run a console" >
+    <sleep seconds="4"/>
+    <java classname="lejos.pc.tools.Console" fork="true">
+      <jvmarg value="-Djava.library.path=${nxj.library.path}"/>
+      <jvmarg value="-Dnxj.home=${nxj.home}"/>
+      <arg value="-gr"/>
+      <arg value="${debug}"/>
       <classpath>
         <pathelement location="${nxj.jtools.jar}"/>
         <pathelement location="${nxj.pctools.jar}"/>
