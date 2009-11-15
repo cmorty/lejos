@@ -488,6 +488,7 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
     */
    public void setSpeed (int speed)
    {
+      if(speed > 100*_voltage) speed = (int)(100*_voltage);// no faster than motor can sustain
       if(speed > _speed + 300 && isMoving()) _rampUp = _useRamp;
       else _rampUp = false;
       _speed = speed;
