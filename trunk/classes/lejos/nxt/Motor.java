@@ -2,7 +2,9 @@ package lejos.nxt;
 
 
 
+import lejos.robotics.MotorEvent;
 import lejos.robotics.TachoMotor;
+import lejos.robotics.TachoMotorListener;
 import lejos.util.Delay;
 
 
@@ -112,6 +114,12 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
     * Motor C.
     */
    public static final Motor C = new Motor (MotorPort.C);
+   
+   /**
+    * TODO: Currently only accepts one listener. We could expand this to multiple if needed.
+    */
+   private TachoMotorListener listener = null;
+   
    /**
     * Use this constructor to assign a variable of type motor connected to a particular port.
     * @param port  to which this motor is connected
@@ -126,6 +134,16 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
       _voltage = Battery.getVoltage();       
    }
 
+   // TODO: Technically addListener() should be added to TachoMotor interface. Not yet at that stage though.
+   /**
+    * Add a TachoMotorListener to this motor. Currently each motor can only have one listener. If you try to add
+    * more than one it will replace the previous listener.
+    * @param listener The TachoMotorListener object that will be notified of motor events.
+    */
+   public void addListener(TachoMotorListener listener) {
+	   this.listener = listener;
+   }
+   
    public int getStopAngle() { return _stopAngle;}
 
    /**
@@ -210,8 +228,10 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
          if(_mode == STOP || _mode == FLOAT)
          {
             _port.controlMotor(0, _mode);
+            if(listener != null) listener.rotationEnded(new MotorEvent(this, getTachoCount()));
             return;
          }
+         if(listener != null) listener.rotationStarted(new MotorEvent(this, getTachoCount()));
          _port.controlMotor(_power, _mode);
          if(_regulate)regulator.reset();
       }
@@ -244,7 +264,7 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
    
    public void rotateTo(int limitAngle,boolean immediateReturn)
    {
-     _newOperation = true;
+	  _newOperation = true;
       synchronized(regulator)
       {
          _lock = false;
@@ -429,6 +449,7 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
          }
          _rotating = false;
          setPower(calcPower(_speed));
+         if(listener != null) listener.rotationEnded(new MotorEvent(Motor.this, getTachoCount()));
       }
 
       /**
