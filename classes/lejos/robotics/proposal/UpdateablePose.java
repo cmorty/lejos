@@ -44,14 +44,14 @@ public UpdateablePose(float x, float y, float heading)
   super(x,y,heading);
 }
 
-public  void  movementStarted(Movement move)
+public  void  movementStarted(Movement move, MovementProvider mp)
   {
     _current = false;
     _angle0 = 0;
     _distance0 = 0;
   }
 
-  public void movementStopped(Movement move)
+  public void movementStopped(Movement move, MovementProvider mp)
   {
     update(move);
   }

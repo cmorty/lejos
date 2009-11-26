@@ -44,14 +44,14 @@ public class DeadReckonerPoseProvider implements MoveListener {
 		return new Pose(x,y,heading);
 	}
 
-	public void movementStarted(Movement event) {
+	public void movementStarted(Movement event, MovementProvider mp) {
 	    angle0 = 0;
 	    distance0 = 0;
 	    current = false;
 	    this.mp = mp;;
 	}
 
-	public void movementStopped(Movement event) {
+	public void movementStopped(Movement event, MovementProvider mp) {
 		updatePose(event);
 	}
 	
@@ -78,6 +78,7 @@ public class DeadReckonerPoseProvider implements MoveListener {
             dy = (distance) * (float) Math.sin(headingRad);
         }
         
+        // TODO: Why is heading between -180 and 180? I thought 0 to 360.
         heading = normalize(heading + angle); // keep angle between -180 and 180
         x += dx;
         y += dy;
