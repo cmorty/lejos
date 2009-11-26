@@ -106,11 +106,6 @@ public class SteeringPilot implements ArcPilot, TachoMotorListener {
 		}
 	}
 	
-	// TODO: Replace arc() with arcForward() and arcBackward() in ArcPilot interface. Will change Lawrie's code. Do later.
-	public void arc(float turnRadius) {
-		arcForward(turnRadius);
-	}
-
 	public Movement arcForward(float turnRadius) {
 		return arc(turnRadius, Float.POSITIVE_INFINITY, true);
 	}

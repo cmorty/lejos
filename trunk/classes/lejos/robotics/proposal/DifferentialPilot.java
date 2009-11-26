@@ -577,11 +577,18 @@ public class DifferentialPilot implements ArcRotatePilot
   }
 
 
-  public void arc(final float radius)
+  public Movement arcForward(final float radius)
   {
     steer(turnRate(radius));
+    return null; // TODO: Return Movement?
   }
 
+  public Movement arcBackward(final float radius)
+  {
+    // steer(turnRate(radius)); TODO
+	  return null; // TODO: Return Movement?
+  }
+  
   public Movement arc(final float radius, final float angle)
   {
     return steer(turnRate(radius), angle);
