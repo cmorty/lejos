@@ -19,6 +19,7 @@ public class ArcPoseController implements PoseController {
 	private ArcPilot pilot;
 	private PoseProvider poseProvider;
 	
+	// TODO: PoseController implementations should have an alternate default constructor that takes no PoseProvider. Creates default DeadReckoner by itself using the Pilot provided? 
 	public ArcPoseController(ArcPilot pilot, PoseProvider poseProvider) {
 		this.pilot = pilot;
 		this.poseProvider = poseProvider;

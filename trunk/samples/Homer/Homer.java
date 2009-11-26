@@ -110,7 +110,6 @@ public class Homer implements RangeScanner {
     Button.waitForPress();
   }
 
-  @Override
   public RangeReadings getRangeValues() {
     takeReadings();
     return readings;

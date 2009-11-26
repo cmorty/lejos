@@ -311,7 +311,7 @@ public class DifferentialPilot1 extends TachoPilot implements MovementProvider
   {
     for (MoveListener p : listeners)
     {
-      p.movementStarted(new Movement(_moveType, 0, 0, true ));
+      p.movementStarted(new Movement(_moveType, 0, 0, true ), this);
     }
   }
 
@@ -321,7 +321,7 @@ public class DifferentialPilot1 extends TachoPilot implements MovementProvider
     {
       _alert = false;
       Movement move = new Movement(_moveType, getTravelDistance(), getAngle(), false);
-      p.movementStopped(move);
+      p.movementStopped(move, this);
     }
   }
   

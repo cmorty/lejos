@@ -127,7 +127,6 @@ public class Sniffer implements SensorListener, ConditionListener, DataListener 
 	}
 
 
-	@Override
 	public void sensorAvailable(SensorInfo info) {
 		System.out.println("Thanks for the " + info.getQuantity() + " sensor");
 		
@@ -135,13 +134,11 @@ public class Sniffer implements SensorListener, ConditionListener, DataListener 
 		readSensor(info);		
 	}
 
-	@Override
 	public void sensorUnavailable(SensorInfo info) {
 		System.out.println("Goodbye " + info.getModel());
 		//SensorManager.removeSensorListener(this);
 	}
 
-	@Override
 	public void conditionMet(SensorConnection sensor, Data data,
 			Condition condition) {
 		System.out.println("Condition met: " + condition);
@@ -149,7 +146,6 @@ public class Sniffer implements SensorListener, ConditionListener, DataListener 
 		
 	}
 
-	@Override
 	public void dataReceived(SensorConnection sensor, Data[] data,
 			boolean isDataLost) {
 		System.out.println("We have data:");

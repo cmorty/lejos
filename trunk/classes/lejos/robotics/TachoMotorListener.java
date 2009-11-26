@@ -24,5 +24,5 @@ public interface TachoMotorListener {
 	 * the tachomoter reading will continue changing after notification.
 	 * @param event
 	 */
-	public void rotationEnded(MotorEvent event);
+	public void rotationStopped(MotorEvent event);
 }

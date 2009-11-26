@@ -62,7 +62,6 @@ public class JSR256Test implements ConditionListener {
 		new JSR256Test().run();
 	}
 
-	@Override
 	public void conditionMet(SensorConnection sensor, Data data, Condition condition) {
 		System.out.println("Condition met: " + data.getIntValues()[0] + condition);
 		pilot.stop();	

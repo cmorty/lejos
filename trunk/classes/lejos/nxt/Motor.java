@@ -228,7 +228,7 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
          if(_mode == STOP || _mode == FLOAT)
          {
             _port.controlMotor(0, _mode);
-            if(listener != null) listener.rotationEnded(new MotorEvent(this, getTachoCount()));
+            if(listener != null) listener.rotationStopped(new MotorEvent(this, getTachoCount()));
             return;
          }
          if(listener != null) listener.rotationStarted(new MotorEvent(this, getTachoCount()));
@@ -449,7 +449,7 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
          }
          _rotating = false;
          setPower(calcPower(_speed));
-         if(listener != null) listener.rotationEnded(new MotorEvent(Motor.this, getTachoCount()));
+         if(listener != null) listener.rotationStopped(new MotorEvent(Motor.this, getTachoCount()));
       }
 
       /**

@@ -2,6 +2,7 @@ package lejos.nxt.remote;
 
 import java.io.*;
 import lejos.robotics.TachoMotor;
+import lejos.robotics.TachoMotorListener;
 
 /*
  * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
@@ -286,6 +287,14 @@ public class RemoteMotor implements TachoMotor, NXTProtocol {
 	public int getRotationSpeed()	{
 		// TODO Currently dummy for remote motors - returns the speed that has been set.
 	     return getSpeed();
+	}
+
+	/**
+	 * Currently not implemented in RemoteMotor!
+	 */
+	public void addListener(TachoMotorListener listener) {
+		// TODO Currently has no actual event-listener architecture
+		
 	}
 	
 	
