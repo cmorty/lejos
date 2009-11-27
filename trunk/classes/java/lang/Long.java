@@ -30,7 +30,7 @@ public final class Long extends Number implements Comparable<Long>
 		this.value = Long.parseLong(s);
 	}
 	
-	public int bitCount(long v)
+	public static int bitCount(long v)
 	{
 		//See http://www-graphics.stanford.edu/~seander/bithacks.html#CountBitsSetParallel
 		

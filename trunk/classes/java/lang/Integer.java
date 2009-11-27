@@ -53,7 +53,7 @@ public final class Integer extends Number implements Comparable<Integer>
 		this.value = Integer.parseInt(s);
 	}
 	
-	public int bitCount(int v)
+	public static int bitCount(int v)
 	{
 		//See http://www-graphics.stanford.edu/~seander/bithacks.html#CountBitsSetParallel
 		
