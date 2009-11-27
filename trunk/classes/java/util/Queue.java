@@ -15,6 +15,8 @@ package java.util;
  * A FIFO Queue of objects. 
  */
 public class Queue extends Vector {
+	
+	//TODO in JDK, java.util.Queue is an interface
 
 	////////////////////////////////////////////
 	// constants
