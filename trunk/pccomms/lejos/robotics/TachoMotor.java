@@ -13,8 +13,11 @@ package lejos.robotics;
  */
 public interface TachoMotor extends Tachometer, DCMotor {
 
-  
-	// TODO: Add addMotorListener(TachoMotorListener listener);
+  /**
+   * Adds a listener object that will be notified when rotation has started or stopped 
+   * @param listener
+   */
+	public void addListener(TachoMotorListener listener);
 	
   /**
    * causes motor to rotate through angle; <br>

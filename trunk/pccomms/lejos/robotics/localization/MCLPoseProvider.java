@@ -27,10 +27,10 @@ public class MCLPoseProvider implements PoseProvider,MoveListener{
 		return particles;
 	}
 
-	public void movementStarted(Movement event) {		
+	public void movementStarted(Movement event, MovementProvider mp) {		
 	}
 
-	public void movementStopped(Movement event) {
+	public void movementStopped(Movement event, MovementProvider mp) {
 		readingsRequired = true;
 		particles.applyMove(event);
 	}

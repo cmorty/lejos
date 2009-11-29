@@ -577,11 +577,18 @@ public class DifferentialPilot implements ArcRotatePilot
   }
 
 
-  public void arc(final float radius)
+  public Movement arcForward(final float radius)
   {
     steer(turnRate(radius));
+    return null; // TODO: Return Movement?
   }
 
+  public Movement arcBackward(final float radius)
+  {
+    // steer(turnRate(radius)); TODO
+	  return null; // TODO: Return Movement?
+  }
+  
   public Movement arc(final float radius, final float angle)
   {
     return steer(turnRate(radius), angle);
@@ -633,7 +640,7 @@ public class DifferentialPilot implements ArcRotatePilot
   {
     for (MoveListener p : listeners)
     {
-      p.movementStarted(new Movement(_moveType, 0, 0, true ));
+      p.movementStarted(new Movement(_moveType, 0, 0, true), this);
     }
   }
 
@@ -642,7 +649,7 @@ public class DifferentialPilot implements ArcRotatePilot
     for (MoveListener p : listeners)
     {
       Movement move = new Movement(_moveType, getTravelDistance(), getAngle(), false);
-      p.movementStopped(move);
+      p.movementStopped(move, this);
     }
   }
   
