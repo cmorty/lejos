@@ -322,6 +322,7 @@ nxt_main(byte *bin, int size)
   udp_disable();
   hs_disable();
   i2c_disable_all();
+  sound_reset();
   return 0;
 }
 
