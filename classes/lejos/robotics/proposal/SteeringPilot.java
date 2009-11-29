@@ -119,8 +119,7 @@ public class SteeringPilot implements ArcPilot, TachoMotorListener {
 	}
 
 	public Movement arc(float turnRadius, float arcAngle, boolean immediateReturn) {
-		// Convert degrees to distance:
-		double distance = (arcAngle * 2 * Math.PI * turnRadius) / 360;
+		double distance = convertAngleToDistance(arcAngle, turnRadius);
 		return travelArc(turnRadius, (float)distance, immediateReturn);
 	}
 
@@ -162,8 +161,12 @@ public class SteeringPilot implements ArcPilot, TachoMotorListener {
 		return moveEvent;
 	}
 
-	private float convertDistanceToAngle(float distance, float turnRadius){
+	public static float convertDistanceToAngle(float distance, float turnRadius){
 		return (float)((distance * 360) / (2 * Math.PI * turnRadius));
+	}
+	
+	public static float convertAngleToDistance(float angle, float turnRadius){
+		return (float)((angle * 2 * Math.PI * turnRadius) / 360);
 	}
 	
 	public void backward() {
