@@ -389,6 +389,9 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
   case playSample_4IIIII_5V:
     sound_play_sample(((unsigned char *) &FLASH_BASE[(paramBase[0]*FLASH_PAGE_SIZE)]) + paramBase[1],paramBase[2],paramBase[3],paramBase[4]);
     break;
+  case playQueuedSample_4_1BIIII_5I:
+    push_word(sound_add_sample((U8 *)jbyte_array(word2obj(paramBase[0])) + paramBase[1],paramBase[2],paramBase[3],paramBase[4]));
+    break;
   case getTime_4_5I:
     push_word(sound_get_time());
     break;
