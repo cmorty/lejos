@@ -173,6 +173,7 @@ public class Sound
      */
     static native void playSample(int page, int offset, int len, int freq, int vol);
 
+    
     /**
      * Read an LSB format
      * @param d stream to read from
@@ -263,6 +264,7 @@ public class Sound
         return getTime();
     }
 
+
     /**
      * Play a wav file
      * @param file the 8-bit PWM (WAV) sample file
@@ -272,6 +274,39 @@ public class Sound
     public static int playSample(File file)
     {
         return playSample(file, VOL_MAX);
+    }
+
+    /**
+     * Internal method used to queue a series of PCM samples to play at the
+     * specified volume and sample rate.
+     * Returns the number of samples that have actually been queued.
+     * @param data Buffer containing the samples
+     * @param offset Offset of the first sample in the buffer
+     * @param len Number of samples to queue
+     * @param freq Sample rate
+     * @param vol playback volume
+     * @return Number of samples actually queued
+     */
+    static native int playQueuedSample(byte [] data, int offset, int len, int freq, int vol);
+
+    /**
+     * Queue a series of PCM samples to play at the
+     * specified volume and sample rate.
+     * Returns the number of samples that have actually been queued.
+     * @param data Buffer containing the samples
+     * @param offset Offset of the first sample in the buffer
+     * @param len Number of samples to queue
+     * @param freq Sample rate
+     * @param vol playback volume
+     * @return Number of samples actually queued
+     */
+    public static int playSample(byte [] data, int offset, int len, int freq, int vol)
+    {
+        if (vol >= 0)
+            vol = (vol*masterVolume)/100;
+        else
+            vol = -vol;
+        return playQueuedSample(data, offset, len, freq, vol);
     }
 
     static int waitUntil(int t)
