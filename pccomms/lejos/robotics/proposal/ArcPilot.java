@@ -30,7 +30,7 @@ public interface ArcPilot extends BasicPilot {
 	public void setMinRadius(float radius);
 
 	/**
-	  * Starts the  NXT robot moving along an arc with a specified radius.
+	  * Starts the  NXT robot moving forward along an arc with a specified radius.
 	  * <p>
 	  * If <code>radius</code> is positive, the robot arcs left, and the center of the turning circle is on the left side of the robot.<br>
 	  * If <code>radius</code> is negative, the robot arcs right, and the center of the turning circle is on the right side of the robot.<br>
@@ -43,8 +43,24 @@ public interface ArcPilot extends BasicPilot {
 	  * @param radius of the arc path. If positive, the left side of the robot is on the inside of the turn. If negative, the left
 	  *          side of the robot is on the outside of the turn.
 	  */
-	 public void arc(float radius);
+	 public Movement arcForward(float radius);
 
+	 /**
+	  * Starts the  NXT robot moving backward along an arc with a specified radius.
+	  * <p>
+	  * If <code>radius</code> is positive, the robot arcs left, and the center of the turning circle is on the left side of the robot.<br>
+	  * If <code>radius</code> is negative, the robot arcs right, and the center of the turning circle is on the right side of the robot.<br>
+	  * If <code>radius</code> is zero, the robot rotates in place.
+	  * <p>
+	  * Postcondition: Motor speeds are unpredictable.
+	  * <p>
+	  * Note: If you have specified a drift correction in the constructor it will not be applied in this method.
+	  * 
+	  * @param radius of the arc path. If positive, the left side of the robot is on the inside of the turn. If negative, the left
+	  *          side of the robot is on the outside of the turn.
+	  */
+	 public Movement arcBackward(float radius);
+	 
 	/**
 	 * Moves the NXT robot along an arc with a specified radius and  angle,
 	 * after which the robot stops moving. This method does not return until the robot has

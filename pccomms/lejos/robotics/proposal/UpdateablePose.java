@@ -2,12 +2,11 @@ package lejos.robotics.proposal;
 
 import lejos.robotics.Pose;
 
-//package lejos.robotics;
 /*
  * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
  * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
  */
-  
+
 import lejos.geom.Point;
 import lejos.robotics.MoveListener;
 import lejos.robotics.Movement;
@@ -45,17 +44,17 @@ public UpdateablePose(float x, float y, float heading)
   super(x,y,heading);
 }
 
-public  void  movementStarted(Movement move)
+public  void  movementStarted(Movement move, MovementProvider mp)
   {
     _current = false;
     _angle0 = 0;
     _distance0 = 0;
   }
 
-	public  void movementStopped(Movement move)
-    {
-      update(move);
-    }
+  public void movementStopped(Movement move, MovementProvider mp)
+  {
+    update(move);
+  }
 /**
  * Updates can occur while the robot is moving.
  * Update of pose required the change in angle and distance since last update.
@@ -81,7 +80,7 @@ public  void  movementStarted(Movement move)
       {
         arcUpdate(distance - _distance0, angle -_angle0) ;
       }
-      _current = move.isMoving();
+      _current = !move.isMoving();
       _angle0 = angle;
       _distance0 = distance;
     }
