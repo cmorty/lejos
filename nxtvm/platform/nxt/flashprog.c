@@ -73,9 +73,8 @@ flash_write_page(U32 *page, int page_num)
    * sure this is complete.
    */
   // Allow any playing sound to complete
-  i = sound_get_time();
-  if (i > 0)
-    systick_wait_ms(i + 2);
+  sound_wait();
+
   // Turn off timer tick call backs
   systick_suspend();
    	
