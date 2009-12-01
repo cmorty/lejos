@@ -54,7 +54,7 @@ public class Movement {
 	 */
 	public Movement(MovementType type, boolean isMoving, float angle, float turnRadius) {
 		this.movementType = type;
-		this.distanceTraveled = SteeringPilot.convertAngleToDistance(angle, turnRadius);
+		this.distanceTraveled = Movement.convertAngleToDistance(angle, turnRadius);
 		this.angleTurned = angle;
 		this.isMoving = isMoving;
 		arcRadius = turnRadius;
@@ -104,4 +104,25 @@ public class Movement {
 	public boolean isMoving() {
 		return isMoving;
 	}
+	
+	/**
+	 * Static utility method for converting distance (given turn radius) into angle.
+	 * @param distance
+	 * @param turnRadius
+	 * @return
+	 */
+	public static float convertDistanceToAngle(float distance, float turnRadius){
+		return (float)((distance * 360) / (2 * Math.PI * turnRadius));
+	}
+	
+	/**
+	 * Static utility method for converting angle (given turn radius) into distance.
+	 * @param angle
+	 * @param turnRadius
+	 * @return
+	 */
+	public static float convertAngleToDistance(float angle, float turnRadius){
+		return (float)((angle * 2 * Math.PI * turnRadius) / 360);
+	}
+	
 }
