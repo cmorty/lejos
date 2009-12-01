@@ -51,6 +51,14 @@ public class SteeringPilot implements ArcPilot, TachoMotorListener {
 	 * Creates an instance of the SteeringPilot. The drive wheel measurements are written on the side of the LEGO tire, such
 	 * as 56 x 26. In this case, the diameter is 56 mm or 5.6 centimeters.
 	 * 
+	 * The accuracy of this class is dependent on physical factors:
+	 * <li> the surface the vehicle is driving on (hard smooth surfaces are much better than carpet)
+	 * <li> the accuracy of the steering vehicle (backlash in the steering mechanism will cause turn-angle accuracy problems)
+	 * <li> the ability of the steering robot to drive straight (if you see your robot trying to drive straight and it is driving
+	 * a curve instead, accuracy will be thrown off significantly) 
+	 * <li> When using SteeringPilot with ArcPoseController, the starting position of the robot is also important. Is it truly
+	 * lined up with the x axis? Are your destination targets on the floor accurately measured? 
+	 * 
 	 * @param driveWheelDiameter The diameter of the wheel(s) used to propel the vehicle.
 	 * @param driveMotor The motor used to propel the vehicle, such as Motor.B
 	 * @param reverseDriveMotor Use true if rotating the drive motor forward causes the vehicle to drive backward. 
@@ -119,7 +127,7 @@ public class SteeringPilot implements ArcPilot, TachoMotorListener {
 	}
 
 	public Movement arc(float turnRadius, float arcAngle, boolean immediateReturn) {
-		double distance = convertAngleToDistance(arcAngle, turnRadius);
+		double distance = Movement.convertAngleToDistance(arcAngle, turnRadius);
 		return travelArc(turnRadius, (float)distance, immediateReturn);
 	}
 
@@ -140,7 +148,7 @@ public class SteeringPilot implements ArcPilot, TachoMotorListener {
 		float actualRadius = steer(turnRadius);
 		
 		// 3 Create new Movement object:
-		float angle = convertDistanceToAngle(distance, actualRadius);
+		float angle = Movement.convertDistanceToAngle(distance, actualRadius);
 		Movement.MovementType mt = Movement.MovementType.ARC;
 		if(turnRadius == Float.POSITIVE_INFINITY) mt = Movement.MovementType.TRAVEL;
 		moveEvent = new Movement(mt, distance, angle, true);
@@ -159,14 +167,6 @@ public class SteeringPilot implements ArcPilot, TachoMotorListener {
 		driveMotor.rotate(tachos, immediateReturn);
 		
 		return moveEvent;
-	}
-
-	public static float convertDistanceToAngle(float distance, float turnRadius){
-		return (float)((distance * 360) / (2 * Math.PI * turnRadius));
-	}
-	
-	public static float convertAngleToDistance(float angle, float turnRadius){
-		return (float)((angle * 2 * Math.PI * turnRadius) / 360);
 	}
 	
 	public void backward() {
@@ -253,7 +253,7 @@ public class SteeringPilot implements ArcPilot, TachoMotorListener {
 		float distance = (float)((tachoTotal/360f) * Math.PI * driveWheelDiameter);
 		if(reverseDriveMotor) distance = -distance;
 		
-		float angle = convertDistanceToAngle(distance, moveEvent.getArcRadius()); 
+		float angle = Movement.convertDistanceToAngle(distance, moveEvent.getArcRadius()); 
 		
 		moveEvent = new Movement(moveEvent.getMovementType(), distance ,angle, isMoving);
 		
