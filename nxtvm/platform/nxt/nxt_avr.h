@@ -28,4 +28,9 @@ void nxt_avr_set_input_power(U32 n, U32 power_type);
 
 void nxt_avr_set_key_click(U32 freq, U32 len, U32 vol);
 
+#define BUTTON_ENTER 0x1
+#define BUTTON_ESCAPE 0x8
+#define BUTTON_LEFT 0x2
+#define BUTTON_RIGHT 0x4
+
 #endif
