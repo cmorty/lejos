@@ -21,4 +21,10 @@ public abstract class  NXTCommConnector {
      */
     public abstract NXTConnection waitForConnection(int timeout, int mode);
 
+    /**
+     * Cancel a connection attempt.
+     * @return true if the connection attempt has been aborted.
+     */
+    public abstract boolean cancel();
+
 }
