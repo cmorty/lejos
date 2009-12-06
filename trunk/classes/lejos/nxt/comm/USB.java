@@ -221,6 +221,16 @@ public class USB extends NXTCommDevice {
         {
             return USB.waitForConnection(timeout, mode);
         }
+
+        /**
+         * Cancel a connection attempt.
+         * @return true if the connection attempt has been aborted.
+         */
+        public boolean cancel()
+        {
+            return USB.cancelConnect();
+        }
+
     }
     
     static NXTCommConnector connector = null;
