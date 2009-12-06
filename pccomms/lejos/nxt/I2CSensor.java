@@ -40,11 +40,12 @@ public class I2CSensor implements SensorConstants {
 	
 	/**
 	 * 
-	 * @param s A sensor. e.g. Port.S1
+     * @param s A sensor. e.g. Port.S1
+     * @param mode Set the operating i2c mode NOTE this value does not work for remote sensors.
 	 */
-	public I2CSensor(I2CPort s, byte sensorType) {
+	public I2CSensor(I2CPort s, int mode) {
 		port = (byte)s.getId();
-		s.setTypeAndMode(sensorType, NXTProtocol.RAWMODE);
+		s.setTypeAndMode(NXTProtocol.LOWSPEED, NXTProtocol.RAWMODE);
 		// Flushes out any existing data
 		try {
 			nxtCommand.LSGetStatus(this.port); 
@@ -53,7 +54,7 @@ public class I2CSensor implements SensorConstants {
 			System.out.println(ioe.getMessage());
 		}
 	}
-	
+
 	public I2CSensor(I2CPort s) {
 		this(s, NXTProtocol.LOWSPEED);
 	}
