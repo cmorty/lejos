@@ -188,16 +188,16 @@ nxt_avr_unpack(void)
       // button with other buttons
       newState = 0;
       if (buttonsVal > 1500) {
-        newState |= 1;
+        newState |= BUTTON_ENTER;
         buttonsVal -= 0x7ff;
       }
   
       if (buttonsVal > 720)
-        newState |= 0x08;
+        newState |= BUTTON_ESCAPE;
       else if (buttonsVal > 270)
-        newState |= 0x04;
+        newState |= BUTTON_RIGHT;
       else if (buttonsVal > 60)
-        newState |= 0x02;
+        newState |= BUTTON_LEFT;
       // Debounce things...
       if (newState != debounce_state)
       {
