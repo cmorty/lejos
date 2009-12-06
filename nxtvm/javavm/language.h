@@ -174,7 +174,7 @@ int execute_program(int prog);
 extern boolean is_assignable(const byte srcSig, const byte dstSig);
 extern byte get_base_type(ClassRecord *classRec);
 
-void install_binary(byte *ptr);
+void install_binary(const byte *ptr);
 extern boolean is_valid_executable(byte * start, int len);
 //#define install_binary(PTR_)        (installedBinary=(PTR_))
 
