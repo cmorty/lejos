@@ -942,13 +942,9 @@ public class StartUpText
             switch(getSelection(menu, 0))
             {
                 case 0:
-                    try {
-                        file.exec();
-                    }
-                    catch (FlashError fe)
-                    {
-                        msg("Invalid program");
-                    }
+                    usb.shutdown();
+                    bt.shutdown();
+                    file.exec();
                     break;
                 case 1:
                     Settings.setProperty(defaultProgramProperty, getBaseName(fileName));
