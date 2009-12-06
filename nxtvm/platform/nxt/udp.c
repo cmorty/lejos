@@ -100,7 +100,6 @@ static int newAddress;
 static U8 *outPtr;
 static U32 outCnt;
 static U8 delayedEnable = 0;
-static U32 intCnt = 0;
 #if REMOTE_CONSOLE
 static U8 rConsole = 0;
 #endif
@@ -207,20 +206,6 @@ static const U8 ld[] = {0x04,0x03,0x09,0x04}; // Language descriptor
       
 extern void udp_isr_entry(void);
 
-
-static char x4[5];
-static char* hexchars = "0123456789abcdef";
-  
-static char *
-hex4(int i)
-{
-  x4[0] = hexchars[(i >> 12) & 0xF];
-  x4[1] = hexchars[(i >> 8) & 0xF];
-  x4[2] = hexchars[(i >> 4) & 0xF];
-  x4[3] = hexchars[i & 0xF];
-  x4[4] = 0;
-  return x4;
-}
 
 static
 void
@@ -381,7 +366,7 @@ udp_enumerate()
   int req, len, ind, val; 
   short status;
     //display_goto_xy(8,3);
-    //display_string(hex4(*AT91C_UDP_CSR0));
+    //display_hex(*AT91C_UDP_CSR0, 4);
     //display_goto_xy(12,3);
     //display_string("    ");
   
@@ -451,13 +436,13 @@ udp_enumerate()
   if (1) {
 
     display_goto_xy(0,1);
-    display_string(hex4(req));
+    display_hex(req, 4);
     display_goto_xy(4,1);
-    display_string(hex4(val));
+    display_hex(val, 4);
     display_goto_xy(8,1);
-    display_string(hex4(ind));
+    display_hex(ind, 4);
     display_goto_xy(12,1);
-    display_string(hex4(len));
+    display_hex(len, 4);
     display_update();
   }*/
   // If we are disabled we respond to requests with a stall
@@ -684,10 +669,12 @@ udp_isr_C(void)
   /* Process interrupts. We mainly use these during the configuration and
    * enumeration stages.
    */
-/*display_goto_xy(0,3);
-display_string(hex4(*AT91C_UDP_ISR));
+/*
+static U32 intCnt = 0;
+display_goto_xy(0,3);
+display_hex(*AT91C_UDP_ISR, 4);
 display_goto_xy(4,3);
-display_string(hex4(intCnt++));*/
+display_hex(intCnt++, 4);*/
 
   if (*AT91C_UDP_ISR & END_OF_BUS_RESET) 
   { 
