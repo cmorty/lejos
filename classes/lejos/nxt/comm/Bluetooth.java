@@ -1822,6 +1822,16 @@ public class Bluetooth extends NXTCommDevice
         {
             return Bluetooth.waitForConnection(timeout, mode);
         }
+
+        /**
+         * Cancel a connection attempt.
+         * @return true if the connection attempt has been aborted.
+         */
+        public boolean cancel()
+        {
+            return Bluetooth.cancelConnect();
+        }
+
     }
     
     static NXTCommConnector connector = null;

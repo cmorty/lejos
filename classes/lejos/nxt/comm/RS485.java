@@ -967,15 +967,25 @@ public class RS485 extends NXTCommDevice {
         }
 
         /**
-         * Wait for an incomming connection, or for the request to timeout.
+         * Wait for an incoming connection, or for the request to timeout.
          * @param timeout Time in msDelay to wait for the connection to be made
-         * @param mode I/O mode to be used for the accpeted connection.
+         * @param mode I/O mode to be used for the accepted connection.
          * @return A NXTConnection object for the new connection or null if error.
          */
         public NXTConnection waitForConnection(int timeout, int mode)
         {
             return RS485.waitForConnection(timeout, mode);
         }
+
+        /**
+         * Cancel a connection attempt.
+         * @return true if the connection attempt has been aborted.
+         */
+        public boolean cancel()
+        {
+            return RS485.cancelConnect();
+        }
+
     }
     
     static NXTCommConnector connector = null;
