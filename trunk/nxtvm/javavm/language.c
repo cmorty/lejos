@@ -59,7 +59,7 @@ boolean is_valid_executable(byte *start, int len)
 }
 
 
-void install_binary(byte* ptr)
+void install_binary(const byte* ptr)
 {
   installedBinary = ptr;
 
