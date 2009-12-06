@@ -161,11 +161,13 @@ public float getX(){ return (float) _location.getX();}
  * @return the Y coordinate
  */
 public float getY() {return (float)_location.getY();}
+
 /**
  * Get the location as a Point
  * 
  * @return the location as a point
  */
+//TODO: Maybe call it getPoint()?
 public Point getLocation() { return _location;}
 
 /**

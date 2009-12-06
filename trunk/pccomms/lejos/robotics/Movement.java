@@ -1,5 +1,7 @@
 package lejos.robotics;
 
+import lejos.robotics.proposal.SteeringPilot;
+
 /*
  * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
  * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
@@ -40,6 +42,22 @@ public class Movement {
 			double turnRad = Math.toRadians(angle);
 			arcRadius = (float) ((double) distance / turnRad);
 		}
+		this.timeStamp = System.currentTimeMillis();
+	}
+	
+	/**
+	 * Alternate constructor that uses angle and turn radius instead. Useful for constructing arcs.
+	 * @param type
+	 * @param isMoving
+	 * @param angle
+	 * @param turnRadius
+	 */
+	public Movement(MovementType type, boolean isMoving, float angle, float turnRadius) {
+		this.movementType = type;
+		this.distanceTraveled = Movement.convertAngleToDistance(angle, turnRadius);
+		this.angleTurned = angle;
+		this.isMoving = isMoving;
+		arcRadius = turnRadius;
 		this.timeStamp = System.currentTimeMillis();
 	}
 
@@ -86,4 +104,25 @@ public class Movement {
 	public boolean isMoving() {
 		return isMoving;
 	}
+	
+	/**
+	 * Static utility method for converting distance (given turn radius) into angle.
+	 * @param distance
+	 * @param turnRadius
+	 * @return
+	 */
+	public static float convertDistanceToAngle(float distance, float turnRadius){
+		return (float)((distance * 360) / (2 * Math.PI * turnRadius));
+	}
+	
+	/**
+	 * Static utility method for converting angle (given turn radius) into distance.
+	 * @param angle
+	 * @param turnRadius
+	 * @return
+	 */
+	public static float convertAngleToDistance(float angle, float turnRadius){
+		return (float)((angle * 2 * Math.PI * turnRadius) / 360);
+	}
+	
 }
