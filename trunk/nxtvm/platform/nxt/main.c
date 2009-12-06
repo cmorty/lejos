@@ -63,16 +63,18 @@ shutdown()
     nxt_avr_power_down();
 }
 
+static
 void
-wait_for_power_down_signal()
+wait_for_exit()
 {
   for (;;) {
     int b = buttons_get();
 
-    // Check for ENTER and ESCAPE pressed
-    if (b == 9) {
-      // Shut down power immediately
-      shutdown();
+    // Check for ESCAPE pressed
+    if (b == (BUTTON_ESCAPE)) {
+      // Exit the program
+      schedule_request(REQUEST_EXIT);
+      break;
     }
   }
 }
@@ -101,6 +103,7 @@ handle_uncaught_exception(Throwable * exception,
   int *frame;
   int cnt;
   int dummy;
+  nxt_motor_reset_all();
   sound_freq(100,500, 80); // buzz
   display_clear(0);
   display_goto_xy(0, line++);
@@ -133,7 +136,7 @@ handle_uncaught_exception(Throwable * exception,
     frame++;
   }
   display_update();
-  wait_for_power_down_signal();
+  wait_for_exit();
 }
 
 void
@@ -142,13 +145,14 @@ switch_thread_hook()
   int b = buttons_get();
 
   // Check for ENTER and ESCAPE pressed
-  if (b == 9) {
+  if (b == (BUTTON_ENTER|BUTTON_ESCAPE)) {
     if (debug_user_interrupt()) return;
-    // Shut down power immediately
-    shutdown();
+    // exit the program
+    schedule_request(REQUEST_EXIT);
   }
 }
 
+#ifdef VERIFY
 void
 assert_hook(boolean aCond, int aCode)
 {
@@ -163,6 +167,7 @@ assert_hook(boolean aCond, int aCode)
   display_update();
   while(1); // Hang
 }
+#endif
 
 /**
  * Request that a new program be started.
@@ -195,6 +200,11 @@ run(int jsize)
     int staticSize = mrec->staticStateLength;
     int syncSize = (mrec->lastClass + 1) * sizeof(objSync);
     int statusSize = (mrec->lastClass + 1) * sizeof( classStatusBase[0]);
+#if ! EXECUTE_FROM_FLASH
+    // Skip java binary if it is an top of ram
+    if (jsize > 0)
+      ram_end -= (jsize + 4);
+#endif
 
     staticSize = (staticSize + 3) & ~(3);
     statusSize = (statusSize + 3) & ~(3);
@@ -221,30 +231,9 @@ run(int jsize)
   //printf("Initializing memory\n");
 
   // Initialize memory
-  {
-    //int size;
-
-#if ! EXECUTE_FROM_FLASH
-    // Skip java binary if it is an top of ram
-    if (jsize > 0)
-      ram_end -= (jsize + 4);
-#endif
-
-    //size = ((unsigned) ram_end) - ((unsigned) ram_start);
-
-    memory_init();
-
-    region = ram_start;
-    memory_add_region(region, (byte *) ram_end);
-
-    /*Add extra RAM if available */
-    //ram_end = (byte *) (&__extra_ram_end__);
-    //ram_start = (byte *) (&__extra_ram_start__);
-    //size = ((unsigned) ram_end) - ((unsigned) ram_start);
-
-    //if(size > 0)
-    //  memory_add_region(ram_start, ram_end);
-  }
+  memory_init();
+  region = ram_start;
+  memory_add_region(region, (byte *) ram_end);
 
   //printf("Initializing exceptions\n");
 
@@ -265,11 +254,10 @@ run(int jsize)
  ***************************************************************************/
 //int main (int argc, char *argv[])
 int
-nxt_main(byte *bin, int size)
+nxt_main(const byte *bin, int size)
 {
   int jsize = 0;
   const byte *binary; 
-  unsigned *temp;
 
 #if EXECUTE_FROM_FLASH
   if (bin != NULL) {
@@ -286,6 +274,7 @@ nxt_main(byte *bin, int size)
     jsize = size - 4;
   }
 #else
+  unsigned *temp;
   if (bin != NULL) {
     size = (size + 3) & ~3;
     temp = ((unsigned *) (&__free_ram_end__)) - (size >> 2);
@@ -317,12 +306,13 @@ nxt_main(byte *bin, int size)
   run(jsize);
   display_clear(1);
   nxt_motor_reset_all();
+  udp_reset();
   bt_reset();
   bt_disable();
-  udp_disable();
   hs_disable();
   i2c_disable_all();
   sound_reset();
+  udp_disable();
   return 0;
 }
 
@@ -349,21 +339,6 @@ show_splash()
 }
 
 
-
-U32
-free_stack(void)
-{
-  extern U32 __system_stack_bottom__;
-  extern U32 __system_stack_top__;
-  U32 *sp = &__system_stack_bottom__;
-  U32 space = 0;
-
-  while ((sp < &__system_stack_top__) && *sp == 0x6b617453) {
-    sp++;
-    space += 4;
-  }
-  return space;
-}
 
 #if 0
 void
