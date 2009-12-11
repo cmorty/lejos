@@ -1,10 +1,13 @@
 #!/bin/bash
 
+specialname()
+{
+	echo "_${1//./_}" | tr '[:lower:]' '[:upper:]'
+}
+
 convert_class()
 {
-	local TMP="$1"
-	TMP=_"${1//./_}"
-	TMP="${TMP^^}"
+	local TMP="$(specialname "$1")"
 
 	echo "/**"
 	echo " * Machine-generated file. Do not modify."
@@ -31,9 +34,7 @@ convert_class()
 
 convert_signature()
 {
-	local TMP="$1"
-	TMP=_"${1//./_}"
-	TMP="${TMP^^}"
+	local TMP="$(specialname "$1")"
 
 	echo "/**"
 	echo " * Machine-generated file. Do not modify."
