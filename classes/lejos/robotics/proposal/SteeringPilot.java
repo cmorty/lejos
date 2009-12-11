@@ -233,7 +233,7 @@ public class SteeringPilot implements ArcPilot, TachoMotorListener {
 	}
 
 	public Movement getMovement() {
-		// TODO No idea what result this method is supposed to provide. Perhaps current movement?
+		// TODO This is probably supposed to provide the movement that has occurred since starting.
 		return null;
 	}
 
