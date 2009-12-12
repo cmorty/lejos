@@ -37,18 +37,20 @@ ALL_LDS := $(ALL_ELF:.elf=.ld)
 ALL_MAP := $(addsuffix .map,$(ALL_ELF))
 ALL_OBJECTS := $(C_OBJECTS) $(S_OBJECTS)
 ALL_ASM := $(addsuffix .asm,$(ALL_ELF)) $(addsuffix .asm,$(ALL_OBJECTS))
-
-GEN_HEADER := $(VM_DIR)/specialclasses.h $(VM_DIR)/specialsignatures.h
+ALL_HEAD := $(VM_DIR)/specialclasses.h $(VM_DIR)/specialsignatures.h
 
 MACRO_LDS_GEN = sed -e 's/^$(1)//' -e '/^RAM_ONLY/d' -e'/^ROM_ONLY/d' -e'/^SAMBA_ONLY/d'
 
-.SECONDARY: $(ALL_ELF) $(ALL_LDS) $(ALL_MAP) $(ALL_OBJECTS)
+.SECONDARY: $(ALL_ELF) $(ALL_LDS) $(ALL_MAP) $(ALL_OBJECTS) $(ALL_HEAD)
 
 .PHONY: all
 all:  BuildMessage $(ROMBIN_TARGET)
 
 .PHONY: everything
 everything: BuildMessage $(ALL_BIN) $(ALL_ASM)
+
+.PHONY: header
+header: $(ALL_HEAD)
 
 .PHONY: TargetMessage
 TargetMessage:
@@ -78,7 +80,7 @@ clean:
 	@echo "Removing asm files"
 	@rm -f $(ALL_ASM)
 	@echo "Removing generated headers"
-	@rm -f $(GEN_HEADER)
+	@rm -f $(ALL_HEAD)
 
 
 $(RAM_LDSCRIPT): $(LDSCRIPT_SOURCE)
@@ -101,6 +103,8 @@ $(SAMBA_LDSCRIPT): $(LDSCRIPT_SOURCE)
 	@echo "Generating binary file $@ from $<"
 	$(OBJCOPY) -O binary $< $@
 
+# generated headers:
+
 $(VM_DIR)/specialclasses.h: $(VM_DIR)/specialclasses.db
 	../../dbtoh.sh class $< $@ 
 
@@ -114,7 +118,7 @@ $(VM_DIR)/specialsignatures.h: $(VM_DIR)/specialsignatures.db
 	@echo "Assembling $< to $@"
 	$(CC) $(CFLAGS) -c -o $@ $< 
 
-%.o: %.c $(GEN_HEADER)
+%.o: %.c $(ALL_HEAD)
 	@echo "Compiling $< to $@"
 	$(CC) $(CFLAGS) -c -o $@ $< 
 
@@ -125,18 +129,18 @@ $(VM_DIR)/specialsignatures.h: $(VM_DIR)/specialsignatures.db
 	@echo "Assembling $< to $@"
 	$(CC) $(CFLAGS) -c -o $@ $< 
 
-%.oram: %.c $(GEN_HEADER)
+%.oram: %.c $(ALL_HEAD)
 	@echo "Compiling $< to $@"
 	$(CC) $(CFLAGS) -c -o $@ $< 
 
 
 ### special rules for compiling JVM sources
 
-$(VM_PREFIX)%.o: $(VM_DIR)/%.c $(GEN_HEADER)
+$(VM_PREFIX)%.o: $(VM_DIR)/%.c $(ALL_HEAD)
 	@echo "Compiling $< to $@"
 	$(CC) $(CFLAGS) -c -o $@ $< 
 
-$(VM_PREFIX)interpreter.o: $(VM_DIR)/interpreter.c $(GEN_HEADER)
+$(VM_PREFIX)interpreter.o: $(VM_DIR)/interpreter.c $(ALL_HEAD)
 	@echo "Compiling $< to $@"
 	$(CC) $(CFLAGS) -O3 -c -o $@ $< 
 
