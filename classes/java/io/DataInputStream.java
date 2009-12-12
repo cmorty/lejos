@@ -122,6 +122,7 @@ public class DataInputStream extends FilterInputStream implements DataInput
 	
 	public static final String readUTF(DataInput in) throws IOException
 	{
+		//TODO implement readUTF
 		throw new UnsupportedOperationException("not yet implemented");
 	}
 	

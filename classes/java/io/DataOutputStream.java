@@ -149,6 +149,7 @@ public class DataOutputStream extends FilterOutputStream implements DataOutput
 
 	public final void writeUTF(String s) throws IOException
 	{
+		//TODO implement writeUTF
 		throw new UnsupportedOperationException("not yet implemented");
 	}
 }
