@@ -1,13 +1,14 @@
 #!/bin/bash
 
-specialname()
+to_upper()
 {
-	echo "_${1//./_}" | tr '[:lower:]' '[:upper:]'
+	echo "$1" | tr '[:lower:]' '[:upper:]'
 }
 
 convert_class()
 {
-	local TMP="$(specialname "$1")"
+	local TMP="$(to_upper "_${1//./_}")"
+	local LINE
 
 	echo "/**"
 	echo " * Machine-generated file. Do not modify."
@@ -18,8 +19,8 @@ convert_class()
 	
 	local i=0
 	while read -r LINE; do
-		if [[ ! "$LINE" =~ ^[[:space:]]*# ]] && [[ "$LINE" =~ [^[:space:]] ]]; then
-			LINE="${LINE^^}"
+		if [[ ! "$LINE" =~ ^[[:space:]]*\# ]] && [[ "$LINE" =~ [^[:space:]] ]]; then
+			LINE="$(to_upper "$LINE")"
 			LINE="${LINE//;/}"
 			LINE="${LINE//[/A}"
 			LINE="${LINE//\//_}"
@@ -34,7 +35,8 @@ convert_class()
 
 convert_signature()
 {
-	local TMP="$(specialname "$1")"
+	local TMP="$(to_upper "_${1//./_}")"
+	local LINE
 
 	echo "/**"
 	echo " * Machine-generated file. Do not modify."
