@@ -1,7 +1,10 @@
 package lejos.robotics.proposal;
 
 import lejos.nxt.Motor;
-import lejos.robotics.*;
+import lejos.robotics.MotorEvent;
+import lejos.robotics.Move;
+import lejos.robotics.MoveListener;
+import lejos.robotics.TachoMotorListener;;
 
 
 /*
@@ -19,9 +22,9 @@ import lejos.robotics.*;
  * @author BB
  *
  */
-public class SteeringPilot implements ArcPilot, TachoMotorListener {
+public class SteeringPilot implements ArcMoveController, TachoMotorListener {
 
-	private TachoMotor driveMotor;
+	private lejos.robotics.TachoMotor driveMotor;
 	private float minTurnRadius;
 	private float driveWheelDiameter;
 	private boolean reverseDriveMotor;
@@ -42,7 +45,7 @@ public class SteeringPilot implements ArcPilot, TachoMotorListener {
 	/**
 	 * Indicates the type of movement (arc, travel) that vehicle is engaged in.
 	 */
-	private Movement moveEvent = null;
+	private Move moveEvent = null;
 	
 	// TODO: Possibly will need to allow multiple listeners
 	private MoveListener listener = null;
@@ -67,7 +70,7 @@ public class SteeringPilot implements ArcPilot, TachoMotorListener {
 	 * @param leftTurnTacho The tachometer the steering motor must turn to in order to turn left with the minimum turn radius.
 	 * @param rightTurnTacho The tachometer the steering motor must turn to in order to turn right with the minimum turn radius.
 	 */
-	public SteeringPilot(float driveWheelDiameter, TachoMotor driveMotor, boolean reverseDriveMotor, 
+	public SteeringPilot(float driveWheelDiameter, lejos.robotics.TachoMotor driveMotor, boolean reverseDriveMotor, 
 			TachoMotor steeringMotor, float minTurnRadius, int leftTurnTacho, int rightTurnTacho) {
 		this.driveMotor = driveMotor;
 		this.driveMotor.addListener(this);
@@ -114,20 +117,20 @@ public class SteeringPilot implements ArcPilot, TachoMotorListener {
 		}
 	}
 	
-	public Movement arcForward(float turnRadius) {
+	public Move arcForward(float turnRadius) {
 		return arc(turnRadius, Float.POSITIVE_INFINITY, true);
 	}
 	
-	public Movement arcBackward(float turnRadius) {
+	public Move arcBackward(float turnRadius) {
 		return arc(turnRadius, Float.NEGATIVE_INFINITY, true);
 	}
 	
-	public Movement arc(float turnRadius, float arcAngle) {
+	public Move arc(float turnRadius, float arcAngle) {
 		return arc(turnRadius, arcAngle, false);
 	}
 
-	public Movement arc(float turnRadius, float arcAngle, boolean immediateReturn) {
-		double distance = Movement.convertAngleToDistance(arcAngle, turnRadius);
+	public Move arc(float turnRadius, float arcAngle, boolean immediateReturn) {
+		double distance = Move.convertAngleToDistance(arcAngle, turnRadius);
 		return travelArc(turnRadius, (float)distance, immediateReturn);
 	}
 
@@ -135,11 +138,11 @@ public class SteeringPilot implements ArcPilot, TachoMotorListener {
 		this.minTurnRadius = minTurnRadius;
 	}
 
-	public Movement travelArc(float turnRadius, float distance) {
+	public Move travelArc(float turnRadius, float distance) {
 		return travelArc(turnRadius, distance, false);
 	}
 
-	public Movement travelArc(float turnRadius, float distance, boolean immediateReturn) {
+	public Move travelArc(float turnRadius, float distance, boolean immediateReturn) {
 		
 		// 1. Check if moving. If so, call stop.
 		if(isMoving) stop();
@@ -147,11 +150,11 @@ public class SteeringPilot implements ArcPilot, TachoMotorListener {
 		// 2. Change wheel steering:
 		float actualRadius = steer(turnRadius);
 		
-		// 3 Create new Movement object:
-		float angle = Movement.convertDistanceToAngle(distance, actualRadius);
-		Movement.MovementType mt = Movement.MovementType.ARC;
-		if(turnRadius == Float.POSITIVE_INFINITY) mt = Movement.MovementType.TRAVEL;
-		moveEvent = new Movement(mt, distance, angle, true);
+		// 3 Create new Move object:
+		float angle = Move.convertDistanceToAngle(distance, actualRadius);
+		Move.MoveType mt = Move.MoveType.ARC;
+		if(turnRadius == Float.POSITIVE_INFINITY) mt = Move.MoveType.TRAVEL;
+		moveEvent = new Move(mt, distance, angle, true);
 		
 		// TODO: This if() block is a temporary kludge due to Motor.rotate() bug with Integer.MIN_VALUE:
 		// Remove this if Roger fixes Motor.rotate() bug.
@@ -183,7 +186,7 @@ public class SteeringPilot implements ArcPilot, TachoMotorListener {
 	}
 
 	// TODO: This method should indicate it is not live speed. Such as getSpeedSetting(), setSpeedSetting()
-	// TODO: Many methods in BasicPilot have no documentation and unit specification, incl. this.
+	// TODO: Many methods in MoveController have no documentation and unit specification, incl. this.
 	public float getMoveSpeed() {
 		// TODO Auto-generated method stub
 		return 0;
@@ -203,12 +206,12 @@ public class SteeringPilot implements ArcPilot, TachoMotorListener {
 		
 	}
 
-	public Movement stop() {
+	public Move stop() {
 		// 1. Check if moving. If not, return?
 		if(!isMoving()) return null; // Should return no movement? Or moveEvent? Null might be appropriate.
 		
 		// 2. Get instance of moveEvent here. Used to check when rotationStopped() completes
-		Movement oldMove = moveEvent;
+		Move oldMove = moveEvent;
 		
 		// 3. Stop motor
 		driveMotor.stop();
@@ -220,11 +223,11 @@ public class SteeringPilot implements ArcPilot, TachoMotorListener {
 		return moveEvent;
 	}
 
-	public Movement travel(float distance) {
+	public Move travel(float distance) {
 		return travel(distance, false);
 	}
 
-	public Movement travel(float distance, boolean immediateReturn) {
+	public Move travel(float distance, boolean immediateReturn) {
 		return travelArc(Float.POSITIVE_INFINITY, distance, immediateReturn);
 	}
 
@@ -232,7 +235,7 @@ public class SteeringPilot implements ArcPilot, TachoMotorListener {
 		this.listener = listener;		
 	}
 
-	public Movement getMovement() {
+	public Move getMovement() {
 		// TODO This is probably supposed to provide the movement that has occurred since starting.
 		return null;
 	}
@@ -243,7 +246,7 @@ public class SteeringPilot implements ArcPilot, TachoMotorListener {
 		
 		// Notify MoveListener
 		if(listener != null) {
-			listener.movementStarted(moveEvent, this);
+			listener.moveStarted(moveEvent, this);
 		}
 	}
 
@@ -253,13 +256,13 @@ public class SteeringPilot implements ArcPilot, TachoMotorListener {
 		float distance = (float)((tachoTotal/360f) * Math.PI * driveWheelDiameter);
 		if(reverseDriveMotor) distance = -distance;
 		
-		float angle = Movement.convertDistanceToAngle(distance, moveEvent.getArcRadius()); 
+		float angle = Move.convertDistanceToAngle(distance, moveEvent.getArcRadius()); 
 		
-		moveEvent = new Movement(moveEvent.getMovementType(), distance ,angle, isMoving);
+		moveEvent = new Move(moveEvent.getMoveType(), distance ,angle, isMoving);
 		
 		// Notify MoveListener
 		if(listener != null) {
-			listener.movementStopped(moveEvent, this);
+			listener.moveStopped(moveEvent, this);
 		}
 		
 	}

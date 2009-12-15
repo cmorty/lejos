@@ -1,7 +1,5 @@
 package lejos.robotics;
 
-import lejos.robotics.proposal.SteeringPilot;
-
 /*
  * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
  * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
@@ -13,14 +11,14 @@ import lejos.robotics.proposal.SteeringPilot;
  * @author Lawrie Griffiths
  *
  */
-public class Movement {
+public class Move {
 	/**
 	 * The type of  movement made in sufficient detail to allow errors
 	 * in the movement to be modelled.
 	 */
-	public enum MovementType {TRAVEL, ROTATE, ARC};
+	public enum MoveType {TRAVEL, ROTATE, ARC, STOP};
 	protected float distanceTraveled, angleTurned;
-	protected MovementType movementType;
+	protected MoveType moveType;
 	protected float arcRadius = Float.POSITIVE_INFINITY;
 	protected boolean isMoving;
 	protected long timeStamp;
@@ -33,16 +31,32 @@ public class Movement {
 	 * @param angle the angle turned in degrees
 	 * @param isMoving true iff the movement was created while the robot was moving
 	 */
-	public Movement(MovementType type, float distance, float angle, boolean isMoving) {
-		this.movementType = type;
+	public Move(MoveType type, float distance, float angle, boolean isMoving) {
+		this.moveType = type;
 		this.distanceTraveled = distance;
 		this.angleTurned = angle;
 		this.isMoving = isMoving;
+		// TODO: Could use convertDistanceToAngle() instead here?0 
 		if (Math.abs(angle) > 0.5) {
 			double turnRad = Math.toRadians(angle);
 			arcRadius = (float) ((double) distance / turnRad);
 		}
 		this.timeStamp = System.currentTimeMillis();
+	}
+	
+	/**
+	 * Helper method to calculate the MoveType based on distance, angle, radius parameters.
+	 * TODO: Implement this in constructors and test.
+	 * @param distance
+	 * @param angle
+	 * @param arcRadius
+	 * @return
+	 */
+	private MoveType calcMoveType(float distance, float angle, float arcRadius) {
+		if(distance == 0 & angle == 0) return MoveType.STOP;
+		else if(distance != 0 & arcRadius == Float.POSITIVE_INFINITY) return MoveType.TRAVEL;
+		else if(distance == 0 & angle != 0) return MoveType.ROTATE;
+		else return MoveType.ARC;
 	}
 	
 	/**
@@ -52,9 +66,9 @@ public class Movement {
 	 * @param angle
 	 * @param turnRadius
 	 */
-	public Movement(MovementType type, boolean isMoving, float angle, float turnRadius) {
-		this.movementType = type;
-		this.distanceTraveled = Movement.convertAngleToDistance(angle, turnRadius);
+	public Move(MoveType type, boolean isMoving, float angle, float turnRadius) {
+		this.moveType = type;
+		this.distanceTraveled = Move.convertAngleToDistance(angle, turnRadius);
 		this.angleTurned = angle;
 		this.isMoving = isMoving;
 		arcRadius = turnRadius;
@@ -84,8 +98,8 @@ public class Movement {
 	 * 
 	 * @return the movement type
 	 */
-	public MovementType getMovementType() {
-		return movementType;
+	public MoveType getMoveType() {
+		return moveType;
 	}
 	
 	/**
@@ -99,7 +113,7 @@ public class Movement {
 	/**
 	 * Test if move was in progress
 	 * 
-	 * @return true iff the robot was moving when this Movement object was created
+	 * @return true iff the robot was moving when this Move object was created
 	 */
 	public boolean isMoving() {
 		return isMoving;

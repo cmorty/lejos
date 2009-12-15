@@ -9,8 +9,8 @@ import lejos.robotics.Pose;
 
 import lejos.geom.Point;
 import lejos.robotics.MoveListener;
-import lejos.robotics.Movement;
-import lejos.robotics.MovementProvider;
+import lejos.robotics.Move;
+import lejos.robotics.MoveProvider;
 import lejos.robotics.Pose;
 
 
@@ -20,7 +20,7 @@ import lejos.robotics.Pose;
  * Represents the location and heading(direction angle) of a robot.<br>
  * This class includes  methods for updating the UpdateablePose to track common robot movements.
  * It will updates itself for every move of a Provider if it registers as a MoveListener.
- * The Provider must implement the MovementProvider interface.
+ * The Provider must implement the MoveProvider interface.
  * It can report the current pose at any time, even while a move is in progress.
  * @author Roger Glassey
  */
@@ -44,14 +44,14 @@ public UpdateablePose(float x, float y, float heading)
   super(x,y,heading);
 }
 
-public  void  movementStarted(Movement move, MovementProvider mp)
+public  void  moveStarted(Move move, MoveProvider mp)
   {
     _current = false;
     _angle0 = 0;
     _distance0 = 0;
   }
 
-  public void movementStopped(Movement move, MovementProvider mp)
+  public void moveStopped(Move move, MoveProvider mp)
   {
     update(move);
   }
@@ -61,22 +61,22 @@ public  void  movementStarted(Movement move, MovementProvider mp)
  * provider returns angle and distance since the start of movement.
  * UpdateablePose uses angle0 and distance0 to calculate the change since last update.
  * */
-    protected  synchronized void  update(Movement move)
+    protected  synchronized void  update(Move move)
     {
 
       float angle = move.getAngleTurned();
       float distance = move.getDistanceTraveled();
 
-      Movement.MovementType type = move.getMovementType();
-       if(type == Movement.MovementType.ROTATE)
+      Move.MoveType type = move.getMoveType();
+       if(type == Move.MoveType.ROTATE)
       {
         rotateUpdate(angle -_angle0);
       }
-      else if(type == Movement.MovementType.TRAVEL)
+      else if(type == Move.MoveType.TRAVEL)
       {
         moveUpdate(distance - _distance0);
       }
-      else if(type == Movement.MovementType.ARC)
+      else if(type == Move.MoveType.ARC)
       {
         arcUpdate(distance - _distance0, angle -_angle0) ;
       }
@@ -131,14 +131,14 @@ public void setHeading(float heading )
   _heading = heading;
   _current = true;
 }
-public void setprovider(MovementProvider aprovider)
+public void setprovider(MoveProvider aprovider)
 {
   provider =  aprovider;
 }
 public boolean isCurrent() { return _current;}
 
 protected  boolean _current = true; //pose is up to date
-protected  MovementProvider provider;
+protected  MoveProvider provider;
 protected float _angle0;
 protected float _distance0;
 

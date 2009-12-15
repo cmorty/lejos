@@ -1,6 +1,6 @@
 package lejos.robotics.proposal;
 
-import lejos.robotics.Movement;
+import lejos.robotics.Move;
 
 /*
  * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
@@ -12,7 +12,7 @@ import lejos.robotics.Movement;
  * @author NXJ Team
  *
  */
-public interface ArcPilot extends BasicPilot {
+public interface ArcMoveController extends MoveController {
 	
 	/**
 	 * The minimum steering radius this vehicle is capable of when traveling in an arc.
@@ -43,7 +43,7 @@ public interface ArcPilot extends BasicPilot {
 	  * @param radius of the arc path. If positive, the left side of the robot is on the inside of the turn. If negative, the left
 	  *          side of the robot is on the outside of the turn.
 	  */
-	 public Movement arcForward(float radius);
+	 public Move arcForward(float radius);
 
 	 /**
 	  * Starts the  NXT robot moving backward along an arc with a specified radius.
@@ -59,7 +59,7 @@ public interface ArcPilot extends BasicPilot {
 	  * @param radius of the arc path. If positive, the left side of the robot is on the inside of the turn. If negative, the left
 	  *          side of the robot is on the outside of the turn.
 	  */
-	 public Movement arcBackward(float radius);
+	 public Move arcBackward(float radius);
 	 
 	/**
 	 * Moves the NXT robot along an arc with a specified radius and  angle,
@@ -84,7 +84,7 @@ public interface ArcPilot extends BasicPilot {
 	 * @param angle The sign of the angle determines the direction of robot motion. Positive drives the robot forward, negative drives it backward.
 	 * @see #travelArc(float, float)
 	 */
-	 public Movement arc(float radius, float angle);
+	 public Move arc(float radius, float angle);
 
 	/**
 	 * Moves the NXT robot along an arc with a specified radius and  angle,
@@ -111,7 +111,7 @@ public interface ArcPilot extends BasicPilot {
 	 *          updatePostion() when the robot has stopped. Otherwise, the robot position is lost.
 	 * @see #travelArc(float, float, boolean)
 	 */
-	public Movement arc(float radius, float angle, boolean immediateReturn);
+	public Move arc(float radius, float angle, boolean immediateReturn);
 
 	/**
 	 * Moves the NXT robot a specified distance along an arc mof specified radius,
@@ -138,7 +138,7 @@ public interface ArcPilot extends BasicPilot {
 	 * @see #arc(float, float)
 	 * 
 	 */
-	 public Movement travelArc(float radius, float distance);
+	 public Move travelArc(float radius, float distance);
 
 	/**
 	 * Moves the NXT robot a specified distance along an arc of specified radius,
@@ -170,5 +170,5 @@ public interface ArcPilot extends BasicPilot {
 	 * @see #arc(float, float, boolean)
 	 * 
 	 */
-	public Movement travelArc(float radius, float distance, boolean immediateReturn);
+	public Move travelArc(float radius, float distance, boolean immediateReturn);
 }
