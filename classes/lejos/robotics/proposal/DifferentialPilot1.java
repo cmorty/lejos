@@ -5,10 +5,10 @@ package lejos.robotics.proposal;
 import java.util.ArrayList;
 //import lejos.nxt.Battery;
 import lejos.robotics.MoveListener;
-import lejos.robotics.Movement;
+import lejos.robotics.Move;
 import lejos.robotics.TachoMotor;
-import lejos.robotics.MovementProvider;
-import lejos.robotics.proposal.ArcRotatePilot;
+import lejos.robotics.MoveProvider;
+import lejos.robotics.proposal.ArcRotateMoveController;
 import lejos.robotics.navigation.TachoPilot;
 
 /*
@@ -52,7 +52,7 @@ import lejos.robotics.navigation.TachoPilot;
  * </p>
  * 
  **/
-public class DifferentialPilot1 extends TachoPilot implements MovementProvider
+public class DifferentialPilot1 extends TachoPilot implements MoveProvider
 {
 
 
@@ -156,7 +156,7 @@ public class DifferentialPilot1 extends TachoPilot implements MovementProvider
    */
   public void forward()
   {
-    startMove(Movement.MovementType.TRAVEL,false);
+    startMove(Move.MoveType.TRAVEL,false);
   super.forward();
   }
 
@@ -165,7 +165,7 @@ public class DifferentialPilot1 extends TachoPilot implements MovementProvider
    */
   public void backward()
   {
-    startMove(Movement.MovementType.TRAVEL,false);
+    startMove(Move.MoveType.TRAVEL,false);
    super.backward();
   } 
 
@@ -196,7 +196,7 @@ public class DifferentialPilot1 extends TachoPilot implements MovementProvider
    */
   public void rotate(final float angle, final boolean immediateReturn)
   {
-    startMove( Movement.MovementType.ROTATE,immediateReturn);
+    startMove( Move.MoveType.ROTATE,immediateReturn);
     super.rotate(angle,immediateReturn);
     if (!immediateReturn)
     {
@@ -256,7 +256,7 @@ public class DifferentialPilot1 extends TachoPilot implements MovementProvider
    */
   public void travel(final float distance, final boolean immediateReturn)
   {
-    startMove(Movement.MovementType.TRAVEL, immediateReturn);
+    startMove(Move.MoveType.TRAVEL, immediateReturn);
       super.travel(distance,immediateReturn);
     if (!immediateReturn)
     {
@@ -266,7 +266,7 @@ public class DifferentialPilot1 extends TachoPilot implements MovementProvider
 /**
  * called at start of a movement to inform listeners that a movement has started
  */
-	protected void startMove(Movement.MovementType type, boolean alert)
+	protected void startMove(Move.MoveType type, boolean alert)
     {
      if(isMoving())movementStop();
     _moveType = type;
@@ -277,7 +277,7 @@ public class DifferentialPilot1 extends TachoPilot implements MovementProvider
 
   public void arc(final float radius)
   {
-      startMove(Movement.MovementType.ARC,false);
+      startMove(Move.MoveType.ARC,false);
      super.arc(radius);
   }
 
@@ -289,7 +289,7 @@ public class DifferentialPilot1 extends TachoPilot implements MovementProvider
   public void arc(final float radius, final float angle,
           final boolean immediateReturn)
   {
-     startMove(Movement.MovementType.ARC,immediateReturn);
+     startMove(Move.MoveType.ARC,immediateReturn);
      super.arc(radius,angle,immediateReturn);
      if(!immediateReturn)movementStop();
   }
@@ -301,7 +301,7 @@ public class DifferentialPilot1 extends TachoPilot implements MovementProvider
 
   public  void travelArc(float radius, float distance, boolean immediateReturn)
   {
-     startMove(Movement.MovementType.ARC,immediateReturn);
+     startMove(Move.MoveType.ARC,immediateReturn);
      super.travelArc(radius,distance,immediateReturn);
      if(!immediateReturn)movementStop();
   }
@@ -311,7 +311,7 @@ public class DifferentialPilot1 extends TachoPilot implements MovementProvider
   {
     for (MoveListener p : listeners)
     {
-      p.movementStarted(new Movement(_moveType, 0, 0, true ), this);
+      p.moveStarted(new Move(_moveType, 0, 0, true ), this);
     }
   }
 
@@ -320,18 +320,18 @@ public class DifferentialPilot1 extends TachoPilot implements MovementProvider
     for (MoveListener p : listeners)
     {
       _alert = false;
-      Movement move = new Movement(_moveType, getTravelDistance(), getAngle(), false);
-      p.movementStopped(move, this);
+      Move move = new Move(_moveType, getTravelDistance(), getAngle(), false);
+      p.moveStopped(move, this);
     }
   }
   
  /**
-  * Returns a new Movement object with current type, travel distance, angle, isMoving)
+  * Returns a new Move object with current type, travel distance, angle, isMoving)
   * @return
   */
-  public Movement getMovement()
+  public Move getMovement()
   {
-    return new Movement(_moveType, getTravelDistance(), getAngle(), isMoving());
+    return new Move(_moveType, getTravelDistance(), getAngle(), isMoving());
   }
 
   /**
@@ -383,7 +383,7 @@ public class DifferentialPilot1 extends TachoPilot implements MovementProvider
   /**
    * type of the current movement
    */
-  protected Movement.MovementType _moveType;
+  protected Move.MoveType _moveType;
   private Monitor monitor = new Monitor();
 
   

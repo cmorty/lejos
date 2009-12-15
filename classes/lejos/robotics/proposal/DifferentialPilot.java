@@ -3,7 +3,7 @@ package lejos.robotics.proposal;
 import java.util.ArrayList;
 import lejos.nxt.Battery;
 import lejos.robotics.MoveListener;
-import lejos.robotics.Movement;
+import lejos.robotics.Move;
 import lejos.robotics.TachoMotor;
 
 /*
@@ -47,7 +47,7 @@ import lejos.robotics.TachoMotor;
  * </p>
  * 
  **/
-public class DifferentialPilot implements ArcRotatePilot
+public class DifferentialPilot implements ArcRotateMoveController
 {
 
   /**
@@ -347,7 +347,7 @@ public class DifferentialPilot implements ArcRotatePilot
   public void forward()
   {
     if(isMoving())stop();
-    _moveType = Movement.MovementType.TRAVEL;
+    _moveType = Move.MoveType.TRAVEL;
     movementStart();
     reset();
     setSpeed(Math.round(_robotMoveSpeed * _leftDegPerDistance), Math.round(_robotMoveSpeed * _rightDegPerDistance));
@@ -362,7 +362,7 @@ public class DifferentialPilot implements ArcRotatePilot
   public void backward()
   {
     if (isMoving()) stop();
-    _moveType = Movement.MovementType.TRAVEL;
+    _moveType = Move.MoveType.TRAVEL;
     movementStart();
     reset();
     setSpeed(Math.round(_robotMoveSpeed * _leftDegPerDistance), Math.round(_robotMoveSpeed * _rightDegPerDistance));
@@ -398,7 +398,7 @@ public class DifferentialPilot implements ArcRotatePilot
    *            The wanted angle of rotation in degrees. Positive angle rotate
    *            left (clockwise), negative right.
    */
-  public Movement rotate(final float angle)
+  public Move rotate(final float angle)
   {
     return rotate(angle, false);
   }
@@ -414,10 +414,10 @@ public class DifferentialPilot implements ArcRotatePilot
    * @param immediateReturn
    *            If true this method returns immediately.
    */
-  public Movement rotate(final float angle, final boolean immediateReturn)
+  public Move rotate(final float angle, final boolean immediateReturn)
   {
     if(isMoving())stop();
-    _moveType = Movement.MovementType.ROTATE;
+    _moveType = Move.MoveType.ROTATE;
     reset();
     movementStart();
     _alert = immediateReturn;
@@ -449,7 +449,7 @@ public class DifferentialPilot implements ArcRotatePilot
 /**
    * Stops the NXT robot.
    */
-  public Movement  stop()
+  public Move  stop()
   {
     _alert = false;
     _left.stop();
@@ -469,7 +469,7 @@ public class DifferentialPilot implements ArcRotatePilot
    *            The distance to move. Unit of measure for distance must be
    *            same as wheelDiameter and trackWidth.
    **/
-  public Movement travel(final float distance)
+  public Move travel(final float distance)
   {
     return travel(distance, false);
   }
@@ -486,10 +486,10 @@ public class DifferentialPilot implements ArcRotatePilot
    * @param immediateReturn
    *            If true this method returns immediately.
    */
-  public Movement travel(final float distance, final boolean immediateReturn)
+  public Move travel(final float distance, final boolean immediateReturn)
   {
     if(isMoving())stop();
-    _moveType = Movement.MovementType.TRAVEL;
+    _moveType = Move.MoveType.TRAVEL;
     reset();
     movementStart(); 
       _alert = immediateReturn;
@@ -511,16 +511,16 @@ public class DifferentialPilot implements ArcRotatePilot
 
   }
 
-  public Movement steer(final float turnRate, float angle)
+  public Move steer(final float turnRate, float angle)
   {
     return steer(turnRate, angle, false);
   }
 
-  public Movement steer(final float turnRate, final float angle,
+  public Move steer(final float turnRate, final float angle,
           final boolean immediateReturn)
   {
     if(isMoving())stop();
-    _moveType = Movement.MovementType.ARC;
+    _moveType = Move.MoveType.ARC;
   
     reset();
     movementStart();
@@ -577,35 +577,35 @@ public class DifferentialPilot implements ArcRotatePilot
   }
 
 
-  public Movement arcForward(final float radius)
+  public Move arcForward(final float radius)
   {
     steer(turnRate(radius));
-    return null; // TODO: Return Movement?
+    return null; // TODO: Return Move?
   }
 
-  public Movement arcBackward(final float radius)
+  public Move arcBackward(final float radius)
   {
     // steer(turnRate(radius)); TODO
-	  return null; // TODO: Return Movement?
+	  return null; // TODO: Return Move?
   }
   
-  public Movement arc(final float radius, final float angle)
+  public Move arc(final float radius, final float angle)
   {
     return steer(turnRate(radius), angle);
   }
 
-  public Movement arc(final float radius, final float angle,
+  public Move arc(final float radius, final float angle,
           final boolean immediateReturn)
   {
     return steer(turnRate(radius), angle, immediateReturn);
   }
 
-  public Movement travelArc(float radius, float distance)
+  public Move travelArc(float radius, float distance)
   {
     return travelArc(radius, distance, false);
   }
 
-  public Movement travelArc(float radius, float distance, boolean immediateReturn)
+  public Move travelArc(float radius, float distance, boolean immediateReturn)
   {
     double angle = (distance * 180) / (Math.PI * radius);
     return arc(radius, (float) angle, immediateReturn);
@@ -640,7 +640,7 @@ public class DifferentialPilot implements ArcRotatePilot
   {
     for (MoveListener p : listeners)
     {
-      p.movementStarted(new Movement(_moveType, 0, 0, true), this);
+      p.moveStarted(new Move(_moveType, 0, 0, true), this);
     }
   }
 
@@ -648,8 +648,8 @@ public class DifferentialPilot implements ArcRotatePilot
   {
     for (MoveListener p : listeners)
     {
-      Movement move = new Movement(_moveType, getTravelDistance(), getAngle(), false);
-      p.movementStopped(move, this);
+      Move move = new Move(_moveType, getTravelDistance(), getAngle(), false);
+      p.moveStopped(move, this);
     }
   }
   
@@ -659,9 +659,9 @@ public class DifferentialPilot implements ArcRotatePilot
  
  public float getMinRadius(){return _minRadius;}
  
-  public Movement getMovement()
+  public Move getMovement()
   {
-    return new Movement(_moveType, getTravelDistance(), getAngle(), isMoving());
+    return new Move(_moveType, getTravelDistance(), getAngle(), isMoving());
   }
 
   /**
@@ -713,7 +713,7 @@ public class DifferentialPilot implements ArcRotatePilot
   /**
    * type of the current movement
    */
-  protected Movement.MovementType _moveType;
+  protected Move.MoveType _moveType;
   private Monitor monitor = new Monitor();
   /**
    * Left motor.

@@ -3,7 +3,7 @@ package lejos.robotics.proposal;
 import java.awt.geom.*;
 
 import lejos.geom.Point;
-import lejos.robotics.Movement;
+import lejos.robotics.Move;
 import lejos.robotics.Pose;
 
 /**
@@ -21,16 +21,16 @@ import lejos.robotics.Pose;
  */
 public class ArcAlgorithms { // TODO Make package level when done testing?
 	
-	public static Movement [] getBestPath(Pose start, float turnRadius1, Pose destination, float turnRadius2) {
+	public static Move [] getBestPath(Pose start, float turnRadius1, Pose destination, float turnRadius2) {
 		// Get all paths TODO: This can probably be steamlined with arrays. Sort out Path (Move) container first.
-		Movement [][] paths1 = getAvailablePaths(start, turnRadius1, destination, turnRadius2);
-		Movement [][] paths2 = getAvailablePaths(start, turnRadius1, destination, -turnRadius2);
-		Movement [][] paths3 = getAvailablePaths(start, -turnRadius1, destination, turnRadius2);
-		Movement [][] paths4 = getAvailablePaths(start, -turnRadius1, destination, -turnRadius2);
+		Move [][] paths1 = getAvailablePaths(start, turnRadius1, destination, turnRadius2);
+		Move [][] paths2 = getAvailablePaths(start, turnRadius1, destination, -turnRadius2);
+		Move [][] paths3 = getAvailablePaths(start, -turnRadius1, destination, turnRadius2);
+		Move [][] paths4 = getAvailablePaths(start, -turnRadius1, destination, -turnRadius2);
 		
 		final int PATHS_PER_ARRAY = 4;
 		final int ALL_PATHS = PATHS_PER_ARRAY * 4;
-		Movement [][] paths = new Movement[ALL_PATHS][3];
+		Move [][] paths = new Move[ALL_PATHS][3];
 		// TODO: This can probably be steamlined with arrays. Sort out Path (Move) container first.
 		System.arraycopy(paths1, 0, paths, 0, PATHS_PER_ARRAY);
 		System.arraycopy(paths2, 0, paths, 4, PATHS_PER_ARRAY);
@@ -40,13 +40,13 @@ public class ArcAlgorithms { // TODO Make package level when done testing?
 		return getBestPath(paths);
 	}
 	
-	public static Movement [][] getAvailablePaths(Pose start, float turnRadius1, Pose destination, float turnRadius2) {
+	public static Move [][] getAvailablePaths(Pose start, float turnRadius1, Pose destination, float turnRadius2) {
 		
 		// TODO: These variables can perhaps be calculated based on existing parameters?
 		final int PATHS = 4; // Currently doesn't calculate Pilot.backward() movement along P2 to P3
 		final int MOVES_PER_PATH = 3;
 				
-		Movement [] [] paths = new Movement [PATHS] [MOVES_PER_PATH];
+		Move [] [] paths = new Move [PATHS] [MOVES_PER_PATH];
 				
 		// Draw start circle:
 		Point2D.Float startCircle = ArcAlgorithms.findCircleCenter(start.getLocation(), turnRadius1, start.getHeading());
@@ -94,21 +94,21 @@ public class ArcAlgorithms { // TODO Make package level when done testing?
 		float targetArcB = ArcAlgorithms.getArcBackward(targetArcF); // Prefer this for speed. It is exact.
 		
 		// TODO: This can probably be steamlined with arrays. Sort out Path (Move) container first.
-		paths[0][0] = new Movement(Movement.MovementType.ARC, false, startArcF, turnRadius1);
-		paths[0][1] = new Movement(Movement.MovementType.TRAVEL, p2p3, 0, false);
-		paths[0][2] = new Movement(Movement.MovementType.ARC, false, targetArcF, turnRadius2);
+		paths[0][0] = new Move(Move.MoveType.ARC, false, startArcF, turnRadius1);
+		paths[0][1] = new Move(Move.MoveType.TRAVEL, p2p3, 0, false);
+		paths[0][2] = new Move(Move.MoveType.ARC, false, targetArcF, turnRadius2);
 		
-		paths[1][0] = new Movement(Movement.MovementType.ARC, false, startArcF, turnRadius1);
-		paths[1][1] = new Movement(Movement.MovementType.TRAVEL, p2p3, 0, false);
-		paths[1][2] = new Movement(Movement.MovementType.ARC, false, targetArcB, turnRadius2);
+		paths[1][0] = new Move(Move.MoveType.ARC, false, startArcF, turnRadius1);
+		paths[1][1] = new Move(Move.MoveType.TRAVEL, p2p3, 0, false);
+		paths[1][2] = new Move(Move.MoveType.ARC, false, targetArcB, turnRadius2);
 		
-		paths[2][0] = new Movement(Movement.MovementType.ARC, false, startArcB, turnRadius1);
-		paths[2][1] = new Movement(Movement.MovementType.TRAVEL, p2p3, 0, false);
-		paths[2][2] = new Movement(Movement.MovementType.ARC, false, targetArcF, turnRadius2);
+		paths[2][0] = new Move(Move.MoveType.ARC, false, startArcB, turnRadius1);
+		paths[2][1] = new Move(Move.MoveType.TRAVEL, p2p3, 0, false);
+		paths[2][2] = new Move(Move.MoveType.ARC, false, targetArcF, turnRadius2);
 		
-		paths[3][0] = new Movement(Movement.MovementType.ARC, false, startArcB, turnRadius1);
-		paths[3][1] = new Movement(Movement.MovementType.TRAVEL, p2p3, 0, false);
-		paths[3][2] = new Movement(Movement.MovementType.ARC, false, targetArcB, turnRadius2);
+		paths[3][0] = new Move(Move.MoveType.ARC, false, startArcB, turnRadius1);
+		paths[3][1] = new Move(Move.MoveType.TRAVEL, p2p3, 0, false);
+		paths[3][2] = new Move(Move.MoveType.ARC, false, targetArcB, turnRadius2);
 		
 		return paths;
 	}
@@ -119,13 +119,13 @@ public class ArcAlgorithms { // TODO Make package level when done testing?
 	 * will all have Float.NaN for the distanceTraveled and arcAngle values.
 	 *  
 	 */
-	public static Movement [][] getAvailablePaths(Pose start, Point destination, float r) {
+	public static Move [][] getAvailablePaths(Pose start, Point destination, float r) {
 		
 		// TODO: These variables can perhaps be calculated based on existing parameters?
 		final int PATHS = 4; // Currently doesn't calculate Pilot.backward() movement along P2 to P3
 		final int MOVES_PER_PATH = 2;
 				
-		Movement [] [] paths = new Movement [PATHS] [MOVES_PER_PATH];
+		Move [] [] paths = new Move [PATHS] [MOVES_PER_PATH];
 		
 		// TODO: Use Point instead of Point2D.Float? 
 		Point2D.Float p1 = new Point2D.Float(start.getX(), start.getY());
@@ -150,11 +150,11 @@ public class ArcAlgorithms { // TODO Make package level when done testing?
 			double z = ArcAlgorithms.distBetweenPoints(c, p3);
 			double p2p3 = ArcAlgorithms.distP2toP3(radius, z);
 			
-			paths[i][0] = new Movement(Movement.MovementType.ARC, false, (float)arcLengthForward, radius);
-			paths[i][1] = new Movement(Movement.MovementType.TRAVEL, (float)p2p3, 0, false);
+			paths[i][0] = new Move(Move.MoveType.ARC, false, (float)arcLengthForward, radius);
+			paths[i][1] = new Move(Move.MoveType.TRAVEL, (float)p2p3, 0, false);
 			i++;
-			paths[i][0] = new Movement(Movement.MovementType.ARC, false, (float)arcLengthBackward, radius);
-			paths[i][1] = new Movement(Movement.MovementType.TRAVEL, (float)p2p3, 0, false);
+			paths[i][0] = new Move(Move.MoveType.ARC, false, (float)arcLengthBackward, radius);
+			paths[i][1] = new Move(Move.MoveType.TRAVEL, (float)p2p3, 0, false);
 		}
 
 		return paths;
@@ -167,19 +167,19 @@ public class ArcAlgorithms { // TODO Make package level when done testing?
 	 * @param radius
 	 * @return
 	 */
-	public static Movement [] getBestPath(Pose start, Point destination, float radius) {
+	public static Move [] getBestPath(Pose start, Point destination, float radius) {
 		// Get all paths
-		Movement [][] paths = getAvailablePaths(start, destination, radius);
+		Move [][] paths = getAvailablePaths(start, destination, radius);
 		return getBestPath(paths);
 	}
 
 	/**
-	 * This method takes an array of paths (an array of Movement) and selects the shortest path.
+	 * This method takes an array of paths (an array of Move) and selects the shortest path.
 	 * @param paths Any number of paths.
 	 * @return The shortest path.
 	 */
-	public static Movement [] getBestPath(Movement [][] paths) {
-		Movement [] bestPath = null;
+	public static Move [] getBestPath(Move [][] paths) {
+		Move [] bestPath = null;
 		
 		// Now see which one has shortest travel distance:
 		float minDistance = Float.POSITIVE_INFINITY;

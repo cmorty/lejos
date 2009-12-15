@@ -1,14 +1,14 @@
 package lejos.robotics.proposal;
 
-import lejos.robotics.Movement;
-import lejos.robotics.MovementProvider;
+import lejos.robotics.Move;
+import lejos.robotics.MoveProvider;
 
 /*
  * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
  * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
  */
 
-public interface BasicPilot extends MovementProvider {
+public interface MoveController extends MoveProvider {
   /**
    *Starts the  NXT robot moving forward.
    */
@@ -24,7 +24,7 @@ public interface BasicPilot extends MovementProvider {
    *
    * @return The movement it just achieved?
    */
-   public Movement stop();
+   public Move stop();
 
   /**
    * true if the robot is moving 
@@ -38,14 +38,14 @@ public interface BasicPilot extends MovementProvider {
    * 
    * @param distance The positive or negative distance to move the robot.
    */
-  public Movement travel(float distance);
+  public Move travel(float distance);
 
   /**
    * Moves the NXT robot a specific distance. A positive value moves it forward and a negative value moves it backward.
    * @param distance The positive or negative distance to move the robot, in wheel diameter units.
    * @param immediateReturn If immediateReturn is true then the method returns immediately.
    */
-  public Movement travel(float distance, boolean immediateReturn);
+  public Move travel(float distance, boolean immediateReturn);
   
   public float getMovementIncrement();
   
