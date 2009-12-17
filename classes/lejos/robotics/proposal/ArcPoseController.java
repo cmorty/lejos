@@ -79,6 +79,7 @@ public class ArcPoseController implements PoseController {
 			// 2. Drive the path
 			for(int i=0;i<moves.length;i++) {
 				// TODO: I don't think DifferentialPilot is programmed to work with travelArc() properly yet (infinity etc)
+				// Wait for Roger to make proper working DifferentialPilot (DifferentialMoveControl)
 				pilot.travelArc(moves[i].getArcRadius(), moves[i].getDistanceTraveled());
 			}
 		//} TODO Commented Lawrie's optimized code in order to test arcs with DifferentialPilot

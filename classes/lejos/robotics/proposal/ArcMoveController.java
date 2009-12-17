@@ -1,6 +1,5 @@
 package lejos.robotics.proposal;
 
-import lejos.robotics.Move;
 
 /*
  * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
@@ -43,7 +42,7 @@ public interface ArcMoveController extends MoveController {
 	  * @param radius of the arc path. If positive, the left side of the robot is on the inside of the turn. If negative, the left
 	  *          side of the robot is on the outside of the turn.
 	  */
-	 public Move arcForward(float radius);
+	 public boolean arcForward(float radius);
 
 	 /**
 	  * Starts the  NXT robot moving backward along an arc with a specified radius.
@@ -59,7 +58,7 @@ public interface ArcMoveController extends MoveController {
 	  * @param radius of the arc path. If positive, the left side of the robot is on the inside of the turn. If negative, the left
 	  *          side of the robot is on the outside of the turn.
 	  */
-	 public Move arcBackward(float radius);
+	 public boolean arcBackward(float radius);
 	 
 	/**
 	 * Moves the NXT robot along an arc with a specified radius and  angle,
@@ -84,7 +83,7 @@ public interface ArcMoveController extends MoveController {
 	 * @param angle The sign of the angle determines the direction of robot motion. Positive drives the robot forward, negative drives it backward.
 	 * @see #travelArc(float, float)
 	 */
-	 public Move arc(float radius, float angle);
+	 public boolean arc(float radius, float angle);
 
 	/**
 	 * Moves the NXT robot along an arc with a specified radius and  angle,
@@ -111,7 +110,7 @@ public interface ArcMoveController extends MoveController {
 	 *          updatePostion() when the robot has stopped. Otherwise, the robot position is lost.
 	 * @see #travelArc(float, float, boolean)
 	 */
-	public Move arc(float radius, float angle, boolean immediateReturn);
+	public boolean arc(float radius, float angle, boolean immediateReturn);
 
 	/**
 	 * Moves the NXT robot a specified distance along an arc mof specified radius,
@@ -138,7 +137,7 @@ public interface ArcMoveController extends MoveController {
 	 * @see #arc(float, float)
 	 * 
 	 */
-	 public Move travelArc(float radius, float distance);
+	 public boolean travelArc(float radius, float distance);
 
 	/**
 	 * Moves the NXT robot a specified distance along an arc of specified radius,
@@ -170,5 +169,5 @@ public interface ArcMoveController extends MoveController {
 	 * @see #arc(float, float, boolean)
 	 * 
 	 */
-	public Move travelArc(float radius, float distance, boolean immediateReturn);
+	public boolean travelArc(float radius, float distance, boolean immediateReturn);
 }
