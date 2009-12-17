@@ -48,7 +48,8 @@ package lejos.robotics.proposal;
  * </p>
  *
  **/
-public class DifferentialMoveControl extends TachoPilot  implements TachoMotorListener, MoveProvider
+public class DifferentialMoveControl extends TachoPilot  implements 
+        TachoMotorListener, MoveProvider,ArcRotateMoveController
 
 {
 
@@ -339,8 +340,13 @@ public class DifferentialMoveControl extends TachoPilot  implements TachoMotorLi
               isMoving());
   }
 
+public void setMinRadius(float radius){}
 
+public float getMinRadius( ){return 0;}
 
+public float getMovementIncrement(){return 0;}
+
+public float getAngleIncrement(){return 0;}
   /**
    * should be true if an immediate return movement is in progress.
    * used by rotationStopped()
