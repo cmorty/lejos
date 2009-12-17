@@ -398,7 +398,7 @@ public class DifferentialPilot implements ArcRotateMoveController
    *            The wanted angle of rotation in degrees. Positive angle rotate
    *            left (clockwise), negative right.
    */
-  public Move rotate(final float angle)
+  public boolean rotate(final float angle)
   {
     return rotate(angle, false);
   }
@@ -414,7 +414,7 @@ public class DifferentialPilot implements ArcRotateMoveController
    * @param immediateReturn
    *            If true this method returns immediately.
    */
-  public Move rotate(final float angle, final boolean immediateReturn)
+  public boolean rotate(final float angle, final boolean immediateReturn)
   {
     if(isMoving())stop();
     _moveType = Move.MoveType.ROTATE;
@@ -432,7 +432,8 @@ public class DifferentialPilot implements ArcRotateMoveController
       while (isMoving()) Thread.yield();
       stop();
     }
-    return getMovement();
+    //return getMovement();
+    return true;
   }
 
 
@@ -449,14 +450,15 @@ public class DifferentialPilot implements ArcRotateMoveController
 /**
    * Stops the NXT robot.
    */
-  public Move  stop()
+  public boolean  stop()
   {
     _alert = false;
     _left.stop();
     _right.stop();
     while (isMoving()) Thread.yield();
     movementStop();
-    return getMovement();
+    //return getMovement();
+    return true;
   }
 
   /**
@@ -469,7 +471,7 @@ public class DifferentialPilot implements ArcRotateMoveController
    *            The distance to move. Unit of measure for distance must be
    *            same as wheelDiameter and trackWidth.
    **/
-  public Move travel(final float distance)
+  public boolean travel(final float distance)
   {
     return travel(distance, false);
   }
@@ -486,7 +488,7 @@ public class DifferentialPilot implements ArcRotateMoveController
    * @param immediateReturn
    *            If true this method returns immediately.
    */
-  public Move travel(final float distance, final boolean immediateReturn)
+  public boolean travel(final float distance, final boolean immediateReturn)
   {
     if(isMoving())stop();
     _moveType = Move.MoveType.TRAVEL;
@@ -502,7 +504,8 @@ public class DifferentialPilot implements ArcRotateMoveController
       while (isMoving() && continueMoving()) Thread.yield();
       stop();
     }
-    return getMovement();
+    //return getMovement();
+    return true;
   }
 
   public void steer(final float turnRate)
@@ -511,12 +514,12 @@ public class DifferentialPilot implements ArcRotateMoveController
 
   }
 
-  public Move steer(final float turnRate, float angle)
+  public boolean steer(final float turnRate, float angle)
   {
     return steer(turnRate, angle, false);
   }
 
-  public Move steer(final float turnRate, final float angle,
+  public boolean steer(final float turnRate, final float angle,
           final boolean immediateReturn)
   {
     if(isMoving())stop();
@@ -536,7 +539,8 @@ public class DifferentialPilot implements ArcRotateMoveController
     {
       if (angle < 0) backward();
        else forward();
-      return getMovement();
+      //return getMovement();
+      return true;
     }
     if (turnRate < 0)
     {
@@ -563,7 +567,8 @@ public class DifferentialPilot implements ArcRotateMoveController
       {
         inside.backward();
       }
-      return getMovement();
+      //return getMovement();
+      return true;
     }  // end no turn limit
     float rotAngle = angle * _trackWidth * 2 / (_leftWheelDiameter * (1 - steerRatio));
     inside.rotate(_parity * (int) (rotAngle * steerRatio), true);
@@ -573,39 +578,38 @@ public class DifferentialPilot implements ArcRotateMoveController
       while (isMoving() && continueMoving()) Thread.yield();
       stop();
     }
-    return getMovement();
+    //return getMovement();
+    return true;
   }
 
 
-  public Move arcForward(final float radius)
+  public boolean arcForward(final float radius)
   {
-    steer(turnRate(radius));
-    return null; // TODO: Return Move?
+	  return arc(radius, Float.POSITIVE_INFINITY, true);
   }
 
-  public Move arcBackward(final float radius)
+  public boolean arcBackward(final float radius)
   {
-    // steer(turnRate(radius)); TODO
-	  return null; // TODO: Return Move?
+	  return arc(radius, Float.NEGATIVE_INFINITY, true);
   }
   
-  public Move arc(final float radius, final float angle)
+  public boolean arc(final float radius, final float angle)
   {
     return steer(turnRate(radius), angle);
   }
 
-  public Move arc(final float radius, final float angle,
+  public boolean arc(final float radius, final float angle,
           final boolean immediateReturn)
   {
     return steer(turnRate(radius), angle, immediateReturn);
   }
 
-  public Move travelArc(float radius, float distance)
+  public boolean travelArc(float radius, float distance)
   {
     return travelArc(radius, distance, false);
   }
 
-  public Move travelArc(float radius, float distance, boolean immediateReturn)
+  public boolean travelArc(float radius, float distance, boolean immediateReturn)
   {
     double angle = (distance * 180) / (Math.PI * radius);
     return arc(radius, (float) angle, immediateReturn);

@@ -1,6 +1,5 @@
 package lejos.robotics.proposal;
 
-import lejos.robotics.Move;
 import lejos.robotics.MoveProvider;
 
 /*
@@ -24,7 +23,7 @@ public interface MoveController extends MoveProvider {
    *
    * @return The movement it just achieved?
    */
-   public Move stop();
+   public boolean stop();
 
   /**
    * true if the robot is moving 
@@ -38,14 +37,14 @@ public interface MoveController extends MoveProvider {
    * 
    * @param distance The positive or negative distance to move the robot.
    */
-  public Move travel(float distance);
+  public boolean travel(float distance);
 
   /**
    * Moves the NXT robot a specific distance. A positive value moves it forward and a negative value moves it backward.
    * @param distance The positive or negative distance to move the robot, in wheel diameter units.
    * @param immediateReturn If immediateReturn is true then the method returns immediately.
    */
-  public Move travel(float distance, boolean immediateReturn);
+  public boolean travel(float distance, boolean immediateReturn);
   
   public float getMovementIncrement();
   
