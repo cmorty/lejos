@@ -31,7 +31,7 @@ import lejos.nxt.Battery;
  * <p>
  * <code><pre>
  * Pilot pilot = new TachoPilot(2.1f, 4.4f, Motor.A, Motor.C, true);  // parameters in inches
- * pilot.setMoveSpeed(10);                                           // inches per second
+ * pilot.setTravelSpeed(10);                                           // inches per second
  * pilot.travel(12);                                                  // inches
  * pilot.rotate(-90);                                                 // degree clockwise
  * pilot.travel(-12,true);
@@ -103,14 +103,14 @@ public class TachoPilot implements Pilot {
 
 	/**
 	 * Speed of robot for moving in wheel diameter units per seconds. Set by
-	 * setSpeed(), setMoveSpeed()
+	 *  setTravelSpeed()
 	 */
-	protected float _robotMoveSpeed;
+	protected float _robotTravelSpeed;
 
 	/**
 	 * Speed of robot for turning in degree per seconds.
 	 */
-	protected float _robotTurnSpeed;
+	protected float _robotRotateSpeed;
 
 	/**
 	 * Motor speed degrees per second. Used by forward(),backward() and steer().
@@ -200,7 +200,7 @@ public class TachoPilot implements Pilot {
 	 *            wheel size. Adjust wheel size accordingly. The minimum change
 	 *            in wheel size which will actually have an effect is given by
 	 *            minChange = A*wheelDiameter*wheelDiameter/(1-(A*wheelDiameter)
-	 *            where A = PI/(moveSpeed*360). Thus for a moveSpeed of 25
+	 *            where A = PI/(travelSpeed*360). Thus for a travelSpeed of 25
 	 *            cm/second and a wheelDiameter of 5,5 cm the minChange is about
 	 *            0,01058 cm. The reason for this is, that different while sizes
 	 *            will result in different motor speed. And that is given as an
@@ -233,8 +233,8 @@ public class TachoPilot implements Pilot {
 		// both
 		_trackWidth = trackWidth;
 		_parity = (byte) (reverse ? -1 : 1);
-        setMoveSpeed(.8f*getMoveMaxSpeed());
-		setTurnSpeed(.8f*getTurnMaxSpeed());
+        setTravelSpeed(.8f*getMaxTravelSpeed());
+		setRotateSpeed(.8f*getMaxRotateSpeed());
 	}
 
 	/**
@@ -303,14 +303,14 @@ public class TachoPilot implements Pilot {
    *
    * @param speed The speed of the drive motor(s) in degree per second.
    *
-   * @deprecated in 0.8, use setTurnSpeed() and setMoveSpeed(). The method was deprecated, as this it requires knowledge
+   * @deprecated in 0.8, use setRotateSpeed() and setTravelSpeed(). The method was deprecated, as this it requires knowledge
    *             of the robots physical construction, which this interface should hide!
    */
 	public void setSpeed(final int speed) {
 		_motorSpeed = speed;
-		_robotMoveSpeed = speed
+		_robotTravelSpeed = speed
 				/ Math.max(_leftDegPerDistance, _rightDegPerDistance);
-		_robotTurnSpeed = speed / Math.max(_leftTurnRatio, _rightTurnRatio);
+		_robotRotateSpeed = speed / Math.max(_leftTurnRatio, _rightTurnRatio);
 		setSpeed(speed, speed);
 	}
 
@@ -323,10 +323,10 @@ public class TachoPilot implements Pilot {
 	/**
 	 * also sets _motorSpeed
 	 *
-	 * @see lejos.robotics.navigation.Pilot#setMoveSpeed(float)
+	 * @see lejos.robotics.navigation.Pilot#setTravelSpeed(float)
 	 */
-	public void setMoveSpeed(float speed) {
-		_robotMoveSpeed = speed;
+	public void setTravelSpeed(float speed) {
+		_robotTravelSpeed = speed;
 		_motorSpeed = Math.round(0.5f * speed
 				* (_leftDegPerDistance + _rightDegPerDistance));
 		setSpeed(Math.round(speed * _leftDegPerDistance), Math.round(speed
@@ -334,15 +334,16 @@ public class TachoPilot implements Pilot {
 	}
 
 	/**
-	 * @see lejos.robotics.navigation.Pilot#getMoveSpeed()
+	 * @see lejos.robotics.navigation.Pilot#getTravelSpeed()
 	 */
-	public float getMoveSpeed() {
-		return _robotMoveSpeed;
+	public float getTravelSpeed() {
+		return _robotTravelSpeed;
 	}
 
 	/**
-	 * @see lejos.robotics.navigation.Pilot#getMoveMaxSpeed()
+	 * Use GetMaxTravelSpeed
 	 */
+        @Deprecated
 	public float getMoveMaxSpeed() {
 		// it is generally assumed, that the maximum accurate speed of Motor is
 		// 100 degree/second * Voltage
@@ -351,25 +352,38 @@ public class TachoPilot implements Pilot {
 		// max degree/second divided by degree/unit = unit/second
 	}
 
+  public float getMaxTravelSpeed()
+  {
+    // it is generally assumed, that the maximum accurate speed of Motor is
+    // 100 degree/second * Voltage
+    return Battery.getVoltage() * 100.0f / Math.max(_leftDegPerDistance, _rightDegPerDistance);
+    // max degree/second divided by degree/unit = unit/second
+	}
 	/**
-	 * @see lejos.robotics.navigation.Pilot#setTurnSpeed(float)
+	 * use getRotateSpeed()
 	 */
+    @Deprecated
 	public void setTurnSpeed(float speed) {
-		_robotTurnSpeed = speed;
+		_robotRotateSpeed = speed;
 		setSpeed(Math.round(speed * _leftTurnRatio), Math.round(speed
 				* _rightTurnRatio));
 	}
 
+    public void setRotateSpeed(float speed){
+      _robotRotateSpeed = speed;
+      setSpeed(Math.round(speed * _leftTurnRatio), Math.round(speed * _rightTurnRatio));
+    }
 	/**
-	 * @see lejos.robotics.navigation.Pilot#getTurnSpeed()
+	 * @see lejos.robotics.navigation.Pilot#getRotateSpeed()
 	 */
-	public float getTurnSpeed() {
-		return _robotTurnSpeed;
+	public float getRotateSpeed() {
+		return _robotRotateSpeed;
 	}
 
 	/**
-	 * @see lejos.robotics.navigation.Pilot#getTurnMaxSpeed()
+	 * use getMaxRotateSpeed() instead;
 	 */
+        @Deprecated
 	public float getTurnMaxSpeed() {
 		// it is generally assumed, that the maximum accurate speed of Motor is
 		// 100 degree/second * Voltage
@@ -377,11 +391,20 @@ public class TachoPilot implements Pilot {
 				/ Math.max(_leftTurnRatio, _rightTurnRatio);
 		// max degree/second divided by degree/unit = unit/second
 	}
-
+/**
+	 * @see lejos.robotics.navigation.Pilot#getMaxRotateSpeed()
+	 */
+	public float getMaxRotateSpeed() {
+		// it is generally assumed, that the maximum accurate speed of Motor is
+		// 100 degree/second * Voltage
+		return Battery.getVoltage() * 100.0f
+				/ Math.max(_leftTurnRatio, _rightTurnRatio);
+		// max degree/second divided by degree/unit = unit/second
+	}
 
 	public void forward() {
-		setSpeed(Math.round(_robotMoveSpeed * _leftDegPerDistance), Math
-				.round(_robotMoveSpeed * _rightDegPerDistance));
+		setSpeed(Math.round(_robotTravelSpeed * _leftDegPerDistance), Math
+				.round(_robotTravelSpeed * _rightDegPerDistance));
 		if (_parity == 1) {
 			fwd();
 		} else {
@@ -391,8 +414,8 @@ public class TachoPilot implements Pilot {
 
 
 	public void backward() {
-		setSpeed(Math.round(_robotMoveSpeed * _leftDegPerDistance), Math
-				.round(_robotMoveSpeed * _rightDegPerDistance));
+		setSpeed(Math.round(_robotTravelSpeed * _leftDegPerDistance), Math
+				.round(_robotTravelSpeed * _rightDegPerDistance));
 
 		if (_parity == 1) {
 			bak();
@@ -407,8 +430,8 @@ public class TachoPilot implements Pilot {
 
 
 	public void rotate(final float angle, final boolean immediateReturn) {
-		setSpeed(Math.round(_robotTurnSpeed * _leftTurnRatio), Math
-				.round(_robotTurnSpeed * _rightTurnRatio));
+		setSpeed(Math.round(_robotRotateSpeed * _leftTurnRatio), Math
+				.round(_robotRotateSpeed * _rightTurnRatio));
 		int rotateAngleLeft = _parity * (int) (angle * _leftTurnRatio);
 		int rotateAngleRight = _parity * (int) (angle * _rightTurnRatio);
 		_left.rotate(-rotateAngleLeft, true);
@@ -490,8 +513,8 @@ public class TachoPilot implements Pilot {
 	 *            If true this method returns immediately.
 	 */
 	public void travel(final float distance, final boolean immediateReturn) {
-		setSpeed(Math.round(_robotMoveSpeed * _leftDegPerDistance), Math
-				.round(_robotMoveSpeed * _rightDegPerDistance));
+		setSpeed(Math.round(_robotTravelSpeed * _leftDegPerDistance), Math
+				.round(_robotTravelSpeed * _rightDegPerDistance));
 		_left.rotate((int) (_parity * distance * _leftDegPerDistance), true);
 		_right.rotate((int) (_parity * distance * _rightDegPerDistance),
 				immediateReturn);
