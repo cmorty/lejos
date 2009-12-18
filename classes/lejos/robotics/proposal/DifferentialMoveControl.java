@@ -49,7 +49,7 @@ package lejos.robotics.proposal;
  *
  **/
 public class DifferentialMoveControl extends TachoPilot  implements 
-        TachoMotorListener, MoveProvider,ArcRotateMoveController
+        TachoMotorListener, MoveProvider
 
 {
 
