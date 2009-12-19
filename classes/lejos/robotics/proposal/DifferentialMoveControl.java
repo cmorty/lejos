@@ -1,11 +1,10 @@
 package lejos.robotics.proposal;
 
-//package lejos.robotics.proposal;
 
 //import lejos.nxt.Motor2;
-//import lejos.robotics.navigation.TachoPilot;
-//import lejos.robotics.TachoMotor;
-//import lejos.robotics.TachoMotorListener;
+//import lejos.robotics.navigation.TachoPilot1;
+//import lejos.robotics.TachoMotor1;
+//import lejos.robotics.TachoMotorListener1;
 
 /*
  * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
@@ -21,9 +20,9 @@ package lejos.robotics.proposal;
  * one spot).<br>
  * It can be used with robots that have reversed motor design: the robot moves
  * in the direction opposite to the the direction of motor rotation. Uses the
- * TachoMotor class, which regulates motor speed using the NXT motor's built in
+ * TachoMotor1 class, which regulates motor speed using the NXT motor's built in
  * tachometer.<br>
- * It automatically updates the Pose of a robot if the Pose calls the
+ * It automatically updates the Pose1 of a robot if the Pose1 calls the
  * addMoveListener() method on this class.
  * Some methods optionally return immediately so the thread that called the
  * method can monitor sensors, get current pose, and call stop() if necessary.<br>
@@ -48,13 +47,13 @@ package lejos.robotics.proposal;
  * </p>
  *
  **/
-public class DifferentialMoveControl extends TachoPilot  implements 
-        TachoMotorListener, MoveProvider
+public class DifferentialMoveControl extends TachoPilot1  implements
+        TachoMotorListener1, MoveProvider1
 
 {
 
  /**
-   * Allocates a TachoPilot object, and sets the physical parameters of the
+   * Allocates a TachoPilot1 object, and sets the physical parameters of the
    * NXT robot.<br>
    * Assumes Motor.forward() causes the robot to move forward.
    *
@@ -70,13 +69,13 @@ public class DifferentialMoveControl extends TachoPilot  implements
    *            The right Motor (e.g., Motor.A).
    */
   public DifferentialMoveControl(final float wheelDiameter, final float trackWidth,
-          final TachoMotor leftMotor, final TachoMotor rightMotor)
+          final TachoMotor1 leftMotor, final TachoMotor1 rightMotor)
   {
     this(wheelDiameter, trackWidth, leftMotor, rightMotor, false);
   }
 
   /**
-   * Allocates a TachoPilot object, and sets the physical parameters of the
+   * Allocates a TachoPilot1 object, and sets the physical parameters of the
    * NXT robot.<br>
    *
    * @param wheelDiameter
@@ -94,7 +93,7 @@ public class DifferentialMoveControl extends TachoPilot  implements
    *            running backward.
    */
   public DifferentialMoveControl(final float wheelDiameter, final float trackWidth,
-          final TachoMotor leftMotor, final TachoMotor rightMotor,
+          final TachoMotor1 leftMotor, final TachoMotor1 rightMotor,
           final boolean reverse)
   {
     this(wheelDiameter, wheelDiameter, trackWidth, leftMotor, rightMotor,
@@ -102,7 +101,7 @@ public class DifferentialMoveControl extends TachoPilot  implements
   }
 
   /**
-   * Allocates a TachoPilot object, and sets the physical parameters of the
+   * Allocates a TachoPilot1 object, and sets the physical parameters of the
    * NXT robot.<br>
    *
    * @param leftWheelDiameter
@@ -135,7 +134,7 @@ public class DifferentialMoveControl extends TachoPilot  implements
    */
   public DifferentialMoveControl(final float leftWheelDiameter,
           final float rightWheelDiameter, final float trackWidth,
-          final TachoMotor leftMotor, final TachoMotor rightMotor,
+          final TachoMotor1 leftMotor, final TachoMotor1 rightMotor,
           final boolean reverse)
   {
     super(leftWheelDiameter,rightWheelDiameter,trackWidth, leftMotor,rightMotor,reverse);
@@ -144,7 +143,7 @@ public class DifferentialMoveControl extends TachoPilot  implements
   }
 
 
-  public void addPose(Pose aPose)
+  public void addPose(Pose1 aPose)
   {
     _pose = aPose;
   }
@@ -318,13 +317,13 @@ public class DifferentialMoveControl extends TachoPilot  implements
       updatePose();
     }
 /**
- * called by TachoMotor when a rotation. that returned immediately. is complete
+ * called by TachoMotor1 when a rotation. that returned immediately. is complete
  * calls movementStop()
  * @param motor
  * @param count
  * @param ts
  */
-  public synchronized void rotationStopped(TachoMotor motor,int count, long ts )
+  public synchronized void rotationStopped(TachoMotor1 motor,int count, long ts )
   {
      if(_alert) movementStop(); //a motor has completed an immmediate return
   }
@@ -352,13 +351,14 @@ public float getAngleIncrement(){return 0;}
    * used by rotationStopped()
    */
   protected boolean _alert = false;
+
   /**
-   * the pilot listeners
+   * a pose listens to this class
    */
 
-  Pose _pose;
+  Pose1 _pose;
 
-//  protected Pose.Move _moveType = Pose.Move.NONE;
+//  protected Pose1.Move _moveType = Pose1.Move.NONE;
 //public enum Move {TRAVEL,ROTATE,ARC,NONE}
 
 
