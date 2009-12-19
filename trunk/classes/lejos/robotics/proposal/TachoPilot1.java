@@ -12,7 +12,7 @@ import lejos.nxt.Battery;
  */
 
 /**
- * The TachoPilot1 class is a software abstraction of a NXT robot with two
+ * The TachoPilot class is a software abstraction of a NXT robot with two
  * independently controlled wheels, on opposite sides of the robot, with colinear axels.
  * This design permits the robot to rotate within its own footprint (i.e. turn on
  * one spot without changing its location).<br>
@@ -20,7 +20,7 @@ import lejos.nxt.Battery;
  * backward in a straight line or a circular path or rotate to a new direction.<br>
  * It can be used with robots that have reversed motor design: the robot moves
  * in the direction opposite to the the direction of motor rotation. <br>
- * About angles:  TachoPilot1 uses the Navigation package  standard mathematical convention for angles in
+ * About angles:  TachoPilot uses the Navigation package  standard mathematical convention for angles in
  * the plane. The direction  of the X axis is 0 degrees, the direction  of
  * the Y axis is 90 degrees.  Therefore, a positive angle is a counter clockwise change of direction,
  * and a negative angle is clockwise.<br>
@@ -30,8 +30,8 @@ import lejos.nxt.Battery;
  Example:
  * <p>
  * <code><pre>
- * Pilot pilot = new TachoPilot1(2.1f, 4.4f, Motor.A, Motor.C, true);  // parameters in inches
- * pilot.setMoveSpeed(10);                                           // inches per second
+ * Pilot pilot = new TachoPilot(2.1f, 4.4f, Motor.A, Motor.C, true);  // parameters in inches
+ * pilot.setTravelSpeed(10);                                           // inches per second
  * pilot.travel(12);                                                  // inches
  * pilot.rotate(-90);                                                 // degree clockwise
  * pilot.travel(-12,true);
@@ -45,8 +45,8 @@ import lejos.nxt.Battery;
  * </p>
  * 
  * Note: if you are sure you do not want to use any other part of navigation you
- * can as well use "TachoPilot1 pilot = new TachoPilot1(...)" instead of
- * "Pilot pilot = new TachoPilot1(...)"
+ * can as well use "TachoPilot pilot = new TachoPilot(...)" instead of
+ * "Pilot pilot = new TachoPilot(...)"
  **/
 public class TachoPilot1 implements Pilot {
 
@@ -103,14 +103,14 @@ public class TachoPilot1 implements Pilot {
 
 	/**
 	 * Speed of robot for moving in wheel diameter units per seconds. Set by
-	 * setSpeed(), setMoveSpeed()
+	 * setSpeed(), setTravelSpeed()
 	 */
-	protected float _robotMoveSpeed;
+	protected float _robotTravelSpeed;
 
 	/**
 	 * Speed of robot for turning in degree per seconds.
 	 */
-	protected float _robotTurnSpeed;
+	protected float _robotRotateSpeed;
 
 	/**
 	 * Motor speed degrees per second. Used by forward(),backward() and steer().
@@ -139,7 +139,7 @@ public class TachoPilot1 implements Pilot {
 	protected final float _rightWheelDiameter;
 
 	/**
-	 * Allocates a TachoPilot1 object, and sets the physical parameters of the
+	 * Allocates a TachoPilot object, and sets the physical parameters of the
 	 * NXT robot.<br>
 	 * Assumes Motor.forward() causes the robot to move forward.
 	 * 
@@ -160,7 +160,7 @@ public class TachoPilot1 implements Pilot {
 	}
 
 	/**
-	 * Allocates a TachoPilot1 object, and sets the physical parameters of the
+	 * Allocates a TachoPilot object, and sets the physical parameters of the
 	 * NXT robot.<br>
 	 * 
 	 * @param wheelDiameter
@@ -185,7 +185,7 @@ public class TachoPilot1 implements Pilot {
 	}
 
 	/**
-	 * Allocates a TachoPilot1 object, and sets the physical parameters of the
+	 * Allocates a TachoPilot object, and sets the physical parameters of the
 	 * NXT robot.<br>
 	 * 
 	 * @param leftWheelDiameter
@@ -200,7 +200,7 @@ public class TachoPilot1 implements Pilot {
 	 *            wheel size. Adjust wheel size accordingly. The minimum change
 	 *            in wheel size which will actually have an effect is given by
 	 *            minChange = A*wheelDiameter*wheelDiameter/(1-(A*wheelDiameter)
-	 *            where A = PI/(moveSpeed*360). Thus for a moveSpeed of 25
+	 *            where A = PI/(TravelSpeed*360). Thus for a TravelSpeed of 25
 	 *            cm/second and a wheelDiameter of 5,5 cm the minChange is about
 	 *            0,01058 cm. The reason for this is, that different while sizes
 	 *            will result in different motor speed. And that is given as an
@@ -303,14 +303,14 @@ public class TachoPilot1 implements Pilot {
    *
    * @param speed The speed of the drive motor(s) in degree per second.
    *
-   * @deprecated in 0.8, use setTurnSpeed() and setMoveSpeed(). The method was deprecated, as this it requires knowledge
+   * @deprecated in 0.8, use setRotateSpeed() and setTravelSpeed(). The method was deprecated, as this it requires knowledge
    *             of the robots physical construction, which this interface should hide!
    */
 	public void setSpeed(final int speed) {
 		_motorSpeed = speed;
-		_robotMoveSpeed = speed
+		_robotTravelSpeed = speed
 				/ Math.max(_leftDegPerDistance, _rightDegPerDistance);
-		_robotTurnSpeed = speed / Math.max(_leftTurnRatio, _rightTurnRatio);
+		_robotRotateSpeed = speed / Math.max(_leftTurnRatio, _rightTurnRatio);
 		setSpeed(speed, speed);
 	}
 
@@ -325,7 +325,7 @@ public class TachoPilot1 implements Pilot {
 	 */
        @Deprecated
 	public void setMoveSpeed(float speed) {
-		_robotMoveSpeed = speed;
+		_robotTravelSpeed = speed;
 		_motorSpeed = Math.round(0.5f * speed
 				* (_leftDegPerDistance + _rightDegPerDistance));
 		setSpeed(Math.round(speed * _leftDegPerDistance), Math.round(speed
@@ -337,7 +337,7 @@ public class TachoPilot1 implements Pilot {
 	 * @see lejos.robotics.navigation.Pilot#setTravelSpeed(float)
 	 */
 	public void setTravelSpeed(float travelSpeed) {
-		_robotMoveSpeed = travelSpeed;
+		_robotTravelSpeed = travelSpeed;
 		_motorSpeed = Math.round(0.5f * travelSpeed
 				* (_leftDegPerDistance + _rightDegPerDistance));
 		setSpeed(Math.round(travelSpeed * _leftDegPerDistance), Math.round(travelSpeed
@@ -348,14 +348,14 @@ public class TachoPilot1 implements Pilot {
 	 * @see lejos.robotics.navigation.Pilot#getTravelSpeed()
 	 */
 	public float getTravelSpeed() {
-		return _robotMoveSpeed;
+		return _robotTravelSpeed;
 	}
         /**
 	 * use getTraveleSpeed()
 	 */
         @Deprecated
 	public float getMoveSpeed() {
-		return _robotMoveSpeed;
+		return _robotTravelSpeed;
 	}
 
         /**
@@ -382,7 +382,7 @@ public class TachoPilot1 implements Pilot {
 	}
   public void setRotateSpeed(float rotateSpeed)
   {
-    _robotTurnSpeed = rotateSpeed;
+    _robotRotateSpeed = rotateSpeed;
     setSpeed(Math.round(rotateSpeed * _leftTurnRatio), Math.round(rotateSpeed * _rightTurnRatio));
   }
 
@@ -393,7 +393,7 @@ public class TachoPilot1 implements Pilot {
   @Deprecated
   public void setTurnSpeed(float speed)
   {
-    _robotTurnSpeed = speed;
+    _robotRotateSpeed = speed;
     setSpeed(Math.round(speed * _leftTurnRatio), Math.round(speed * _rightTurnRatio));
   }
 
@@ -402,7 +402,7 @@ public class TachoPilot1 implements Pilot {
 	 */
         @Deprecated
 	public float getTurnSpeed() {
-		return _robotTurnSpeed;
+		return _robotRotateSpeed;
 	}
 
 
@@ -410,7 +410,7 @@ public class TachoPilot1 implements Pilot {
 	 * @see lejos.robotics.navigation.Pilot#getRotateSpeed()
 	 */
 	public float getRotateSpeed() {
-		return _robotTurnSpeed;
+		return _robotRotateSpeed;
 	}
 
 	/**
@@ -426,8 +426,8 @@ public class TachoPilot1 implements Pilot {
 
 
 	public void forward() {
-		setSpeed(Math.round(_robotMoveSpeed * _leftDegPerDistance), Math
-				.round(_robotMoveSpeed * _rightDegPerDistance));
+		setSpeed(Math.round(_robotTravelSpeed * _leftDegPerDistance), Math
+				.round(_robotTravelSpeed * _rightDegPerDistance));
 		if (_parity == 1) {
 			fwd();
 		} else {
@@ -437,8 +437,8 @@ public class TachoPilot1 implements Pilot {
 
 
 	public void backward() {
-		setSpeed(Math.round(_robotMoveSpeed * _leftDegPerDistance), Math
-				.round(_robotMoveSpeed * _rightDegPerDistance));
+		setSpeed(Math.round(_robotTravelSpeed * _leftDegPerDistance), Math
+				.round(_robotTravelSpeed * _rightDegPerDistance));
 
 		if (_parity == 1) {
 			bak();
@@ -453,8 +453,8 @@ public class TachoPilot1 implements Pilot {
 
 
 	public void rotate(final float angle, final boolean immediateReturn) {
-		setSpeed(Math.round(_robotTurnSpeed * _leftTurnRatio), Math
-				.round(_robotTurnSpeed * _rightTurnRatio));
+		setSpeed(Math.round(_robotRotateSpeed * _leftTurnRatio), Math
+				.round(_robotRotateSpeed * _rightTurnRatio));
 		int rotateAngleLeft = _parity * (int) (angle * _leftTurnRatio);
 		int rotateAngleRight = _parity * (int) (angle * _rightTurnRatio);
 		_left.rotate(-rotateAngleLeft, true);
@@ -536,8 +536,8 @@ public class TachoPilot1 implements Pilot {
 	 *            If true this method returns immediately.
 	 */
 	public void travel(final float distance, final boolean immediateReturn) {
-		setSpeed(Math.round(_robotMoveSpeed * _leftDegPerDistance), Math
-				.round(_robotMoveSpeed * _rightDegPerDistance));
+		setSpeed(Math.round(_robotTravelSpeed * _leftDegPerDistance), Math
+				.round(_robotTravelSpeed * _rightDegPerDistance));
 		_left.rotate((int) (_parity * distance * _leftDegPerDistance), true);
 		_right.rotate((int) (_parity * distance * _rightDegPerDistance),
 				immediateReturn);
