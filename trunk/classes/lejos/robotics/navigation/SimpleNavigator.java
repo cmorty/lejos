@@ -186,7 +186,7 @@ public float getAngle()
  */
   public void setMoveSpeed(float speed)
   {
-    pilot.setMoveSpeed(speed);
+    pilot.setTravelSpeed(speed);
   }
 /**
  * sets the robot turn speed  -degrees/second
@@ -194,7 +194,7 @@ public float getAngle()
  */
   public void setTurnSpeed(float speed)
   {
-    pilot.setTurnSpeed(speed);
+    pilot.setRotateSpeed(speed);
   }
 /**
  * Stops the robot. Depending on the robot speed, it travels a bit before actually
