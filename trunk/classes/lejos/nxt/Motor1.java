@@ -1,7 +1,7 @@
 package lejos.nxt;
 
-import lejos.robotics.proposal.TachoMotor;
-import lejos.robotics.proposal.TachoMotorListener;
+import lejos.robotics.proposal.TachoMotor1;
+import lejos.robotics.proposal.TachoMotorListener1;
 import lejos.util.Delay;
 
 
@@ -40,7 +40,7 @@ import lejos.util.Delay;
  * </pre></code>
  * @author Roger Glassey revised 9 Feb 2008 - added lock() method. 
  */
-public class Motor1 extends BasicMotor implements TachoMotor // implements TimerListener
+public class Motor1 extends BasicMotor implements TachoMotor1 // implements TimerListener
 {   
 
    public TachoMotorPort _port;//** private
@@ -119,7 +119,7 @@ public class Motor1 extends BasicMotor implements TachoMotor // implements Timer
    /**
     * TODO: Currently only accepts one listener. We could expand this to multiple if needed.
     */
-   private TachoMotorListener listener = null;
+   private TachoMotorListener1 listener = null;
    
    /**
     * Use this constructor to assign a variable of type motor connected to a particular port.
@@ -135,13 +135,13 @@ public class Motor1 extends BasicMotor implements TachoMotor // implements Timer
       _voltage = Battery.getVoltage();       
    }
 
-   // TODO: Technically addListener() should be added to TachoMotor interface. Not yet at that stage though.
+   // TODO: Technically addListener() should be added to TachoMotor1 interface. Not yet at that stage though.
    /**
-    * Add a TachoMotorListener to this motor. Currently each motor can only have one listener. If you try to add
+    * Add a TachoMotorListener1 to this motor. Currently each motor can only have one listener. If you try to add
     * more than one it will replace the previous listener.
-    * @param listener The TachoMotorListener object that will be notified of motor events.
+    * @param listener The TachoMotorListener1 object that will be notified of motor events.
     */
-   public void addListener(TachoMotorListener listener) {
+   public void addListener(TachoMotorListener1 listener) {
 	   this.listener = listener;
    }
 
@@ -595,7 +595,7 @@ public class Motor1 extends BasicMotor implements TachoMotor // implements Timer
    }
 
    /**
-    * @see lejos.robotics.TachoMotor#getRotationSpeed()
+    * @see lejos.robotics.TachoMotor1#getRotationSpeed()
     */
    public int getRotationSpeed()
    {
@@ -603,7 +603,7 @@ public class Motor1 extends BasicMotor implements TachoMotor // implements Timer
    }
 
    /**
-    * @see lejos.robotics.TachoMotor#getTachoCount()
+    * @see lejos.robotics.TachoMotor1#getTachoCount()
     */
    public int getTachoCount()
    {
