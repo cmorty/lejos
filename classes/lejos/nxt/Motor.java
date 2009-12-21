@@ -14,14 +14,15 @@ import lejos.util.Delay;
  * and <code>Motor.C</code>. To control each motor use
  * methods <code>forward, backward, reverseDirection, stop</code>
  * and <code>flt</code>. To set each motor's speed, use
- * <code>setSpeed.  Speed is in degrees per second. </code>.\
- * Methods that use the tachometer:  regulateSpeed, rotate, rotateTo.   These rotate methods may not stop smoothly at the target angle if called when the motor is already moving<br>
- * Motor has 2 modes : speedRegulation and smoothAcceleration which only works if speed regulation is used. These are initially enabled. 
+ * <code>setSpeed.  </code> Speed is in degrees per second.
+ * Methods that use the tachometer:  regulateSpeed, rotate, rotateTo.
+ * These rotate methods may not stop smoothly at the target angle if called when the motor is already moving<br>
+ * Motor has 2 modes : speedRegulation and smoothAcceleration,
+ * which only works if speed regulation is used. These are initially enabled.
  * The speed is regulated by comparing the tacho count with speed times elapsed time and adjusting motor power to keep these closely matched.
  * Smooth acceleration corrects the speed regulation to account for the acceleration time. 
  * They can be switched off/on by the methods regulateSpeed() and smoothAcceleration().
  * The actual maximum speed of the motor depends on battery voltage and load. With no load, the maximum is about 100 times the voltage.  
- * Speed regulation fails if the target speed exceeds the capability of the motor.
  * If you need the motor to hold its position and you find that still moves after stop() is called , you can use the lock() method.
  *  
  * <p>
@@ -34,7 +35,6 @@ import lejos.util.Delay;
  *   Thread.sleep (1000);
  *   Motor.A.stop();
  *   Motor.C.stop();
- *   Motor.A.regulateSpeed(true);
  *   Motor.A.rotateTo( 360);
  *   Motor.A.rotate(-720,true);
  *   while(Motor.A.isRotating();
@@ -143,7 +143,12 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
    public void addListener(TachoMotorListener listener) {
 	   this.listener = listener;
    }
-   
+
+   /**
+    * Returns the tacho count at which the regulator thread begin to stop the
+    * motor before reaching the desired angle. Usec by the rotate() methods.
+    * @return angle
+    */
    public int getStopAngle() { return _stopAngle;}
 
    /**
@@ -238,7 +243,14 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
    }
 
    /**
-    * @return true iff the motor is currently in motion.
+    * This method returns <b>true </b> if the motor is attempting to rotate.
+    * The return value may not correspond to the actual motor movement.<br>
+    * For example,  If the motor is stalled, isMoving()  will return <b> true. </b><br>
+    * After flt() is called, this method will return  <b>false</b> even though the motor
+    * axle may continue to rotate by inertia.
+    *If the motor is stalled, isMoving()  will return <b> true. </b> . A stall can
+    * be detected  by calling {@link #getRotationSpeed()} or {@link #getError()};
+    * @return true iff the motor if the motor is attempting to rotate.<br>
     */
    public boolean isMoving()
    {
@@ -482,8 +494,9 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
 
 
    /** 
-    * turns speed regulation on/off; <br>
-    * Cumulative speed error is within about 1 degree after initial acceleration.
+    * turns speed regulation on/off; default is on. <br>
+    * When turned on,  the cumulative speed error is typically  within about 1
+    * degree after initial acceleration.
     * @param  yes is true for speed regulation on
     */
    public void regulateSpeed(boolean yes) 
@@ -493,7 +506,7 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
    }
 
    /**
-    * enables smoother acceleration.  Motor speed increases gently,  and does not <>
+    * enables smoother acceleration; default is on.  Motor speed increases gently,  and does not <>
     * overshoot when regulate Speed is used. 
     * 
     */
@@ -504,7 +517,11 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
    }
 
    /**
-    * Sets motor speed , in degrees per second; Up to 900 is possible with 8 volts.
+    * Sets desired motor speed , in degrees per second;
+    * The maximum reliably sustaniable speed is  100 x battery voltage under
+    * moderate load, such as a direct drive robot on the level.
+    * If the parameter is larger than that, the maximum sustaniable value will
+    * be used instead.
     * @param speed value in degrees/sec  
     */
    public void setSpeed (int speed)
@@ -531,7 +548,7 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
    }
 
    /**
-    * Returns the current motor speed in degrees per second
+    * Returns the current desired motor speed in degrees per second
     */
    public int getSpeed()
    {
@@ -562,8 +579,7 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
    }
 
    /**
-    * Return the angle that a Motor is rotating to.
-    * 
+    * Return the angle that this Motor is rotating to.
     * @return angle in degrees
     */
    public int getLimitAngle()
@@ -571,7 +587,9 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
       return _limitAngle;
    }
 
-
+/**
+ * @return <b>true</b> if speed regulation is turned on;
+ */
    public boolean isRegulating()
    {
       return _regulate;
@@ -613,22 +631,28 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
       _port.resetTachoCount();
    }
    /**
-    * for debugging
+    * Returns the difference between actual tacho count and  predicted count,
+    * based on speed * elapsed time.
     * @return regulator error
     */
    public float getError()
    {
-      return regulator.error;
+      return regulator.error/10;
    }
 
    /**
-    * for debugging
+    * Returns estimated power to maintain motor speed.
     * @return base power of regulator
     */
    public float getBasePower()
    {
       return regulator.basePower/10;
-   }   
+   }
+   /**
+    * Sets the power used by the regulator thread to stop the motor at the desired
+    * angle of rotation ;  Use by the rotate() methods;
+    * @param pwr
+    */
    public void setBrakePower(int pwr) {_brakePower = pwr;}
 }
 
