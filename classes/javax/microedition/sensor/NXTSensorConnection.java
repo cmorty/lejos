@@ -68,7 +68,7 @@ public class NXTSensorConnection implements SensorConnection {
 			}
 		}
 		// Create the channels		
-		channelInfos = (NXTChannelInfo[]) info.getChannelInfos();
+		channelInfos = info.getChannelInfos();
 		for(int i=0;i<channelInfos.length;i++) {
 			channels.put(channelInfos[i],new NXTChannel(this, channelInfos[i]));
 		}
