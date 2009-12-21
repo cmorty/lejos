@@ -71,7 +71,7 @@ public class SteeringPilot implements ArcMoveController, TachoMotorListener {
 	 * @param rightTurnTacho The tachometer the steering motor must turn to in order to turn right with the minimum turn radius.
 	 */
 	public SteeringPilot(float driveWheelDiameter, lejos.robotics.TachoMotor driveMotor, boolean reverseDriveMotor, 
-			TachoMotor steeringMotor, float minTurnRadius, int leftTurnTacho, int rightTurnTacho) {
+			lejos.robotics.TachoMotor steeringMotor, float minTurnRadius, int leftTurnTacho, int rightTurnTacho) {
 		this.driveMotor = driveMotor;
 		this.driveMotor.addListener(this);
 		this.driveWheelDiameter = driveWheelDiameter;
