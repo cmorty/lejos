@@ -5,9 +5,9 @@ import lejos.nxt.addon.GyroSensor;
 import lejos.robotics.DirectionFinder;
 
 /**
- * Implementation of the DirectionFinder interface that accumulates or Integrates repeated rate-of-turn readings from a GyroSensor
- * into a continuously updated heading. This class is very similar to CompassSensor, except that the calibration methods are not necessary,
- * and the direction returned does not convey true heading (north, south, etc) but rather
+ * Implementation of the DirectionFinder interface that Integrates repeated rate-of-turn readings from a GyroSensor
+ * into a continuously updated heading. This class is very similar to CompassSensor, 
+ * except that the direction returned does not convey true heading (north, south, etc) but rather
  * relative heading change since the last time setDegrees() or resetCartesianZero() was called.
  * @author Brent Gardner
  */
@@ -15,7 +15,7 @@ public class GyroDirectionFinder extends GyroSensor implements DirectionFinder
 {
     private float cartesianCalibrate = 0;
     private float heading = 0;
-    private float accelerationDpsps;
+    private float acceleration;
 
     private boolean calibrating = false;
     private float gyroCalibration = 0F;
@@ -27,7 +27,6 @@ public class GyroDirectionFinder extends GyroSensor implements DirectionFinder
     public GyroDirectionFinder(SensorPort port)
     {
         super(port);
-        reg.setDaemon(true);
         reg.start();
     }
 
@@ -63,9 +62,9 @@ public class GyroDirectionFinder extends GyroSensor implements DirectionFinder
      * Returns the current rate at which the angular velocity is increasing or decreasing in degrees-per-second, per second
      * @return Angular acceleration in degrees-per-second per second.
      */
-    public float getAccelerationDpsps()
+    public float getAcceleration()
     {
-        return accelerationDpsps;
+        return acceleration;
     }
 
     /**
@@ -149,7 +148,7 @@ public class GyroDirectionFinder extends GyroSensor implements DirectionFinder
                 degreesPerSecond -= gyroCalibration;
                 float secondsSinceLastReading = (float)(now - lastUpdate) / 1000F;
                 parent.heading += degreesPerSecond * secondsSinceLastReading;
-                parent.accelerationDpsps = degreesPerSecond - lastDegreesPerSecond;
+                parent.acceleration = degreesPerSecond - lastDegreesPerSecond;
 
                 // Move On
                 lastDegreesPerSecond = degreesPerSecond;
