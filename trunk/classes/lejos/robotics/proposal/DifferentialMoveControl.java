@@ -485,7 +485,7 @@ public float getTurnMaxSpeed() { return getMaxRotateSpeed();}
      if(!immediateReturn)movementStop();
     return true;
   }
-
+   
   public boolean travelArc(float radius, float distance)
   {
      return travelArc(radius, distance, false);
@@ -494,6 +494,10 @@ public float getTurnMaxSpeed() { return getMaxRotateSpeed();}
   public  boolean travelArc(float radius, float distance, boolean immediateReturn)
   {
     movementStart(immediateReturn);
+    if (radius == Float.POSITIVE_INFINITY || radius == Float.NEGATIVE_INFINITY)
+    {
+      return travel(distance, immediateReturn);
+    }
     float angle = (distance * 180) / ((float) Math.PI * radius);
     return arc(radius, angle, immediateReturn);
   }
