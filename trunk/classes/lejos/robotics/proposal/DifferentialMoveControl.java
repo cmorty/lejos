@@ -660,9 +660,9 @@ public float getTurnMaxSpeed() { return getMaxRotateSpeed();}
     _left.resetTachoCount();
     _right.resetTachoCount();
   }
-public void setMinRadius(float radius){}
+public void setMinRadius(float radius){_turnRadius = radius;}
 
-public float getMinRadius( ){return 0;}
+public float getMinRadius( ){return _turnRadius;}
 
   public float getMovementIncrement()
   {
@@ -680,6 +680,8 @@ public float getMinRadius( ){return 0;}
   public Move getMovement(){return null;}
 
 
+  private float _turnRadius = 0;
+  
  /**
 	 * Left motor.
 	 */
