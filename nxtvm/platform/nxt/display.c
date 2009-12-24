@@ -5,6 +5,7 @@
 #include "specialclasses.h"
 #include "classes.h"
 #include "memory.h"
+#include "nxt_spi.h"
 #include <string.h>
 
 typedef unsigned int uint;
@@ -180,25 +181,40 @@ static const struct
 }};
 static const U8 (*font)[FONT_WIDTH] = font_array.font;
 
-int display_update_time = 0;
-int display_auto_update = 1;
+U32 display_update_time = 0;
+U32 display_update_complete_time = 0;
+U32 display_auto_update_period = DEFAULT_UPDATE_PERIOD;
 
 void
 display_update(void)
 {
-  if(display_auto_update)
-    display_update_time = get_sys_time() + 250;
+  U32 now = get_sys_time();
+  if (display_auto_update_period > 0)
+    display_update_time = now + display_auto_update_period;
   nxt_lcd_update();
+  display_update_complete_time = now + DISPLAY_UPDATE_TIME;
 }
 
-void display_set_auto_update(int mode)
+int display_set_auto_update_period(int period)
 {
-  // Enable/disable automatic refresh of the display.
-  display_auto_update = mode;
-  if (mode == 0)
+  // Set the period for auto updates, 0 disables auto updating
+  int prev = (int) display_auto_update_period;
+  if (period <= 0)
+  {
+    display_auto_update_period = 0;
     display_update_time = 0x7fffffff;
+  }
   else
-    display_update_time = 0;
+  {
+    if (period < DISPLAY_UPDATE_TIME) period = DISPLAY_UPDATE_TIME;
+    display_auto_update_period = period;
+  }
+  return prev;
+}
+
+int display_get_update_complete_time()
+{
+  return display_update_complete_time;
 }
   
 
@@ -597,7 +613,7 @@ display_init(void)
   font_array.arrayHdr.length = sizeof(font_array.font);
 */
   display_clear(0);
-  display_auto_update = 1;
+  display_auto_update_period = DEFAULT_UPDATE_PERIOD;
   nxt_lcd_init((U8 *)display_buffer);
 }
 
