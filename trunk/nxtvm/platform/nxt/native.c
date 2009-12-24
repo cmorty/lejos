@@ -185,7 +185,7 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
      display_goto_xy(paramBase[2], paramBase[3]);
      display_int(p0, paramBase[1]);
     break;   
-  case refresh_4_5V:
+  case asyncRefresh_4_5V:
     display_update();
     break;
   case clear_4_5V:
@@ -207,8 +207,11 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
   case getDisplay_4_5_1B:
     push_word(display_get_array());
     break;
-  case setAutoRefresh_4I_5V:
-    display_set_auto_update(p0);
+  case setAutoRefreshPeriod_4I_5I:
+    push_word(display_set_auto_update_period(p0));
+    break;
+  case getRefreshCompleteTime_4_5I:
+    push_word(display_get_update_complete_time());
     break;
   case bitBlt_4_1BIIII_1BIIIIIII_5V:
     {

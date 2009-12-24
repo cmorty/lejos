@@ -297,7 +297,7 @@ nxt_main(const byte *bin, int size)
   // reset all motors, sensors and devices
 
   sp_init();
-  display_set_auto_update(1);
+  display_set_auto_update_period(DEFAULT_UPDATE_PERIOD);
   //       printf("Installing Binary\n");
 
   install_binary(binary);

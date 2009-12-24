@@ -71,11 +71,11 @@ intBitsToFloat(I)F
 drawString(Ljava/lang/String;II)V
 drawInt(III)V
 drawInt(IIII)V
-refresh()V
+asyncRefresh()V
 clear()V
 setDisplay([I)V
 getDisplay()[B
-setAutoRefresh(I)V
+setAutoRefreshPeriod(I)I
 bitBlt([BIIII[BIIIIIII)V
 getSystemFont()[B
 
@@ -205,3 +205,6 @@ createStackTrace(Ljava/lang/Thread;Ljava/lang/Object;)[I
 
 #Sound
 playQueuedSample([BIIII)I
+
+#LCD
+getRefreshCompleteTime()I

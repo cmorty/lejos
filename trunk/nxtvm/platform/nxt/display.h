@@ -31,9 +31,10 @@ void display_test(void);
 
 U8 *display_get_buffer(void);
 
-void display_set_auto_update(int);
+#define DEFAULT_UPDATE_PERIOD 250
+int display_set_auto_update_period(int);
 
-extern int display_update_time;
-extern int display_auto_update;
+int display_get_update_complete_time();
+extern U32 display_update_time;
 
 #endif
