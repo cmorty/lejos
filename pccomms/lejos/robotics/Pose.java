@@ -110,7 +110,7 @@ public void arcUpdate(float distance, float turnAngle)
  */
 public float angleTo(Point destination)
 {
-  return (float)_location.angleTo(destination);
+  return _location.angleTo(destination);
 }
 /**
  * Returns the angle to <code>destination</code> relative to the pose heading;

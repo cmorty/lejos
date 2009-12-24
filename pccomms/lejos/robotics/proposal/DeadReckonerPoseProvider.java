@@ -2,8 +2,8 @@ package lejos.robotics.proposal;
 
 import lejos.geom.Point;
 import lejos.robotics.MoveListener;
-import lejos.robotics.Movement;
-import lejos.robotics.MovementProvider;
+import lejos.robotics.Move;
+import lejos.robotics.MoveProvider;
 import lejos.robotics.Pose;
 import lejos.robotics.localization.PoseProvider;
 
@@ -26,7 +26,7 @@ import lejos.robotics.localization.PoseProvider;
 public class DeadReckonerPoseProvider implements PoseProvider, MoveListener {
 	private float x = 0, y = 0, heading = 0;
 	private float angle0, distance0;
-	MovementProvider mp;
+	MoveProvider mp;
 	boolean current = true;
 	
 	/**
@@ -35,7 +35,7 @@ public class DeadReckonerPoseProvider implements PoseProvider, MoveListener {
 	 * 
 	 * @param mp the movement provider
 	 */
-	public DeadReckonerPoseProvider(MovementProvider mp) {
+	public DeadReckonerPoseProvider(MoveProvider mp) {
 		mp.addMoveListener(this);
 	}
 		
@@ -44,14 +44,14 @@ public class DeadReckonerPoseProvider implements PoseProvider, MoveListener {
 		return new Pose(x,y,heading);
 	}
 
-	public void movementStarted(Movement event, MovementProvider mp) {
+	public void moveStarted(Move event, MoveProvider mp) {
 	    angle0 = 0;
 	    distance0 = 0;
 	    current = false;
 	    this.mp = mp;;
 	}
 
-	public void movementStopped(Movement event, MovementProvider mp) {
+	public void moveStopped(Move event, MoveProvider mp) {
 		updatePose(event);
 	}
 	
@@ -59,12 +59,12 @@ public class DeadReckonerPoseProvider implements PoseProvider, MoveListener {
 	 * Update the pose with the movement that has occurred since the 
 	 * movementStarted even
 	 */
-	private void updatePose(Movement event) {
+	private void updatePose(Move event) {
 		float angle = event.getAngleTurned() - angle0;
 		float distance = event.getDistanceTraveled() - distance0;
         double dx = 0, dy = 0;
         double headingRad = (Math.toRadians(heading));
-        //MovementType type = event.getMovementType();
+        //MoveType type = event.getMovementType();
         
         if (Math.abs(angle) > .5) { // rotate or arc
             double turnRad = Math.toRadians(angle);

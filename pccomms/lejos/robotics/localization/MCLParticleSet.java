@@ -5,7 +5,7 @@ import lejos.geom.*;
 import java.io.*;
 import lejos.robotics.*;
 import lejos.robotics.mapping.RangeMap;
-import lejos.robotics.Movement;
+import lejos.robotics.Move;
 
 /*
  * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
@@ -223,7 +223,7 @@ public class MCLParticleSet {
    * 
    * @param move the move to apply
    */
-  public void applyMove(Movement move) {
+  public void applyMove(Move move) {
 	maxWeight = 0f;
     for (int i = 0; i < numParticles; i++) {
       particles[i].applyMove(move, distanceNoiseFactor, angleNoiseFactor);

@@ -4,10 +4,10 @@ import lejos.robotics.Pose;
 import lejos.robotics.localization.MCLParticleSet;
 import lejos.robotics.mapping.RangeMap;
 import lejos.robotics.MoveListener;
-import lejos.robotics.MovementProvider;
+import lejos.robotics.MoveProvider;
 import lejos.robotics.RangeReadings;
 import lejos.robotics.RangeScanner;
-import lejos.robotics.Movement;
+import lejos.robotics.Move;
 
 public class MCLPoseProvider implements PoseProvider,MoveListener{
 	private MCLParticleSet particles;
@@ -15,7 +15,7 @@ public class MCLPoseProvider implements PoseProvider,MoveListener{
 	private RangeMap map;
 	private boolean readingsRequired = true;
 	
-	public MCLPoseProvider(MovementProvider mp, RangeScanner scanner, 
+	public MCLPoseProvider(MoveProvider mp, RangeScanner scanner, 
 		                   RangeMap map, int numParticles, int border) {
 		particles = new MCLParticleSet(map, numParticles, border);
 		this.scanner = scanner;
@@ -27,10 +27,10 @@ public class MCLPoseProvider implements PoseProvider,MoveListener{
 		return particles;
 	}
 
-	public void movementStarted(Movement event, MovementProvider mp) {		
+	public void moveStarted(Move event, MoveProvider mp) {		
 	}
 
-	public void movementStopped(Movement event, MovementProvider mp) {
+	public void moveStopped(Move event, MoveProvider mp) {
 		readingsRequired = true;
 		particles.applyMove(event);
 	}
