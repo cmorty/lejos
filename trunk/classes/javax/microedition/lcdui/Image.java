@@ -14,6 +14,12 @@ public class Image {
 		this.height = height;
 		this.data = data;
 	}
+
+    public static Image createImage(int width, int height)
+    {
+        byte[] imageData = new byte[width*(height+7)/8];
+        return new Image(width, height, imageData);
+    }
 	
 	public int getWidth() {
 		return width;
@@ -26,4 +32,9 @@ public class Image {
 	public byte[] getData() {
 		return data;
 	}
+
+    public Graphics getGraphics()
+    {
+        return new Graphics(data, width, height);
+    }
 }
