@@ -46,54 +46,47 @@ public interface Pilot
   public boolean isMoving();
 
   /**
-   * Sets the movement speed of the robot.
-   * 
-   * @param speed The speed in wheel diameter units per second.
+   * Sets the travel speed of the robot in distance/second; Distance is measured
+   * in the same units as wheelDiameter and trackWidth parameters of the constructor;
+   * Must be non-negative;
+   * @param travelSpeed  in wheel diameter units per second
    */
-  public void setMoveSpeed(float speed);
+  public void setTravelSpeed(float travelSpeed);
 
   /**
-   * returns the movement speed of the robot in wheel diameter units per second.
+   * returns the travel speed of the robot in distance/second; Distance is measured
+   * in the same units as wheelDiameter and trackWidth parameters of the constructor;
    * @return the movement speed of the robot in wheel diameter units per second.
    */
-  public float getMoveSpeed();
+  public float getTravelSpeed();
 
   /**
    * Returns the maximal movement speed of the robot depending on battery voltage
    * @return the maximal movement speed of the robot in wheel diameter units per second which can be maintained
    *         accurately. Will change with time, as it is normally dependent on the battery voltage.
    */
-  public float getMoveMaxSpeed();
+  public float getMaxTravelSpeed();
 
   /**
-   * Sets the turning speed of the robot.
-   * 
-   * @param speed The speed in degree per second.
+   * Sets the speed of rotation  of the robot; used by the Rotate() methods;
+   * Must be non-negataive;
+   * @param speed in degrees per second
    */
-  public void setTurnSpeed(float speed);
+  public void setRotateSpeed(float rotateSpeed);
+
 
   /**
    * Returns the turning speed of the robot in degrees per second.
    * @return the turning speed of the robot in degree per second.
    */
-  public float getTurnSpeed();
+  public float getRotateSpeed();
 
   /**
    * Returns the maximum turning speed depending on battery voltage.
    * @return the maximal turning speed of the robot in degree per second which can be maintained accurately. Will change
    *         with time, as it is normally dependent on the battery voltage.
    */
-  public float getTurnMaxSpeed();
-
-  /**
-   * Sets drive motor speed.
-   * 
-   * @param speed The speed of the drive motor(s) in degree per second.
-   * 
-   * @deprecated in 0.8, use setTurnSpeed() and setMoveSpeed(). The method was deprecated, as this it requires knowledge
-   *             of the robots physical construction, which this interface should hide! 
-   */
-  public void setSpeed(int speed);
+  public float getMaxRotateSpeed();
 
   /**
    * Moves the NXT robot a specific distance. A positive value moves it forward and a negative value moves it backward.

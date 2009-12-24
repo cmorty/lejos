@@ -3,7 +3,7 @@ package lejos.robotics.localization;
 import java.util.Random;
 import lejos.robotics.*;
 import lejos.robotics.mapping.RangeMap;
-import lejos.robotics.Movement;
+import lejos.robotics.Move;
 import lejos.geom.*;
 
 /*
@@ -109,7 +109,7 @@ public class MCLParticle {
    * 
    * @param move the robot's move
    */
-  public void applyMove(Movement move, float distanceNoiseFactor, float angleNoiseFactor) {
+  public void applyMove(Move move, float distanceNoiseFactor, float angleNoiseFactor) {
     float ym = (move.getDistanceTraveled() * ((float) Math.sin(Math.toRadians(pose.getHeading()))));
     float xm = (move.getDistanceTraveled() * ((float) Math.cos(Math.toRadians(pose.getHeading()))));
 
