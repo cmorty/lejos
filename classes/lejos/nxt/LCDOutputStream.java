@@ -24,6 +24,6 @@ public class LCDOutputStream extends OutputStream {
 		}	
 		if (pos >= LCD.DISPLAY_CHAR_WIDTH) pos = 0;
 		if (pos == 0) LCD.scroll();
-		LCD.drawChar((char) c, LCD.CELL_WIDTH  * pos++, LCD.SCREEN_HEIGHT - LCD.CELL_HEIGHT, false);	
+		LCD.drawChar((char) c, pos++, LCD.DISPLAY_CHAR_DEPTH - 1);
 	}
 }
