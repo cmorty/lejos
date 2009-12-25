@@ -1,25 +1,25 @@
 package lejos.robotics.proposal;
 
-import java.util.ArrayList;
 
 import lejos.geom.Point;
 import lejos.nxt.addon.GyroDirectionFinder;
 import lejos.nxt.addon.TiltSensor;
-import lejos.robotics.proposal.Pose1;
+import lejos.robotics.Move;
+import lejos.robotics.MoveListener;
+import lejos.robotics.MoveProvider;
+import lejos.robotics.Pose;
+import lejos.robotics.localization.PoseProvider;
 
 /**
  * Implementation of the MoveProvider interface that Integrates repeated readings from a GyroSensor & Accelerometer
  * into a continuously updated position & heading. 
  * @author Brent Gardner
  */
-public class InertialMoveProvider implements MoveProvider1
+public class InertialPoseProvider implements PoseProvider, MoveListener
 {
-    private ArrayList<Pose1> listeners = new ArrayList<Pose1>();
-
-    private Point position = new Point(0, 0);
+    private Pose pose;
     private Point velocity = new Point(0, 0);
     private Point acceleration = new Point(0, 0);
-    private float orientation = 0F;
     private float angularVelocity = 0F;
 
     private Regulator reg = new Regulator(this);
@@ -29,12 +29,33 @@ public class InertialMoveProvider implements MoveProvider1
     private boolean calibrating = false;
     private long calibrationReadingCount = 0;
     private float calibrationSum = 0F;
+    private boolean moving = false;
 
-    public InertialMoveProvider(TiltSensor accelerometer, GyroDirectionFinder gyro)
+    public InertialPoseProvider(TiltSensor accelerometer, GyroDirectionFinder gyro)
     {
         this.accelerometer = accelerometer;
         this.gyro = gyro;
         reg.start();
+    }
+
+    public void setMoveProvider(MoveProvider mp)
+    {
+        mp.addMoveListener(this);
+    }
+
+    public Pose getPose()
+    {
+        return pose;
+    }
+
+    public void moveStopped(Move move, MoveProvider mp)
+    {
+        moving = false;
+    }
+
+    public void moveStarted(Move move, MoveProvider mp)
+    {
+        moving = true;
     }
 
     /**
@@ -64,8 +85,7 @@ public class InertialMoveProvider implements MoveProvider1
      */
     public void updateLocation(Point location)
     {
-        position.x = location.x;
-        position.y = location.y;
+        pose.setLocation(location);
     }
 
     /**
@@ -73,49 +93,13 @@ public class InertialMoveProvider implements MoveProvider1
      */
     public void updateHeading(float heading)
     {
-        orientation = heading;
-    }
-
-    /**
-     * Add a pose to the list of poses to be updated by this class
-     */
-    public void addPose(Pose1 listener)
-    {
-        synchronized(this)
-        {
-            if(listener == null)
-                return;
-            if(listeners.contains(listener))
-                return;
-            listeners.add(listener);
-        }
-    }
-    
-    /**
-     * Update the pose information
-     */
-    public void updatePose()
-    {
-    	// Pose is always being updated?
-    }
-
-    /**
-     * Remove a pose from the list of poses to be updated by this class
-     */
-    public void removePose(Pose1 listener)
-    {
-        synchronized(this)
-        {
-            if(listeners.contains(listener) == false)
-                return;
-            listeners.remove(listener);
-        }
+        pose.setHeading(heading);
     }
 
     /**
      * Turn an accelerometer reading into a value in meters per second squared
      */
-    protected float FixReading(int val)
+    protected float fixReading(int val)
 {
         if(val > 512) val -= 1024;
         return -(float)val / 200.0F * 9.8F;
@@ -126,7 +110,7 @@ public class InertialMoveProvider implements MoveProvider1
      */
     public float getAcceleration()
     {
-        return FixReading(accelerometer.getXAccel()) - accelerometerCalibration;
+        return fixReading(accelerometer.getXAccel()) - accelerometerCalibration;
     }
 
     /**
@@ -134,7 +118,7 @@ public class InertialMoveProvider implements MoveProvider1
      */
     public float getAngularVelocity()
     {
-        return (float)gyro.getVelocity();
+        return (float)gyro.getAngularVelocity();
     }
 
     /**
@@ -142,9 +126,9 @@ public class InertialMoveProvider implements MoveProvider1
      */
     private class Regulator extends Thread
     {
-        private InertialMoveProvider parent;
+        private InertialPoseProvider parent;
 
-        public Regulator(InertialMoveProvider parent)
+        public Regulator(InertialPoseProvider parent)
         {
             setDaemon(true);
             this.parent = parent;
@@ -158,6 +142,9 @@ public class InertialMoveProvider implements MoveProvider1
             while (true)
             {
                 // Check time
+                Thread.yield();
+                if(parent.moving == false)
+                    continue;
                 long now = System.currentTimeMillis();
                 if(now - lastUpdate == 0)
                     continue;
@@ -165,9 +152,9 @@ public class InertialMoveProvider implements MoveProvider1
                 
                 // Read gyro
                 parent.angularVelocity = parent.getAngularVelocity();
-                parent.orientation += parent.angularVelocity * delta;
-                dir.x = (float)Math.cos(Math.toRadians(parent.orientation));
-                dir.y = -(float)Math.sin(Math.toRadians(parent.orientation));
+                parent.pose.setHeading(parent.pose.getHeading() + parent.angularVelocity * delta);
+                dir.x = (float)Math.cos(Math.toRadians(parent.pose.getHeading()));
+                dir.y = -(float)Math.sin(Math.toRadians(parent.pose.getHeading()));
 
                 // Read accelerometer
                 float acc = parent.getAcceleration();
@@ -175,8 +162,8 @@ public class InertialMoveProvider implements MoveProvider1
                 // Calibrate
                 if(calibrating)
                 {
-                	calibrationSum += acc;
-                	calibrationReadingCount++;
+                    calibrationSum += acc;
+                    calibrationReadingCount++;
                 }
                 
                 // Acceleration
@@ -188,19 +175,11 @@ public class InertialMoveProvider implements MoveProvider1
                 parent.velocity.y += parent.acceleration.y * delta;
 
                 // Position
-                parent.position.x += parent.velocity.x * delta;
-                parent.position.y += parent.velocity.y * delta;
-
-                // Notify listeners
-                for(Pose1 pose : parent.listeners)
-                {
-                    pose.setLocation(parent.position);
-                    pose.setHeading(parent.orientation);
-                }
+                parent.pose.getLocation().x += parent.velocity.x * delta;
+                parent.pose.getLocation().y += parent.velocity.y * delta;
 
                 // Move on
                 lastUpdate = now;
-                Thread.yield();
             }
         }
     }
