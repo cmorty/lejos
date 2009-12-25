@@ -1,7 +1,5 @@
 package lejos.nxt.addon;
 
-import lejos.nxt.SensorPort;
-import lejos.nxt.addon.GyroSensor;
 import lejos.robotics.DirectionFinder;
 
 /**
@@ -11,7 +9,7 @@ import lejos.robotics.DirectionFinder;
  * relative heading change since the last time setDegrees() or resetCartesianZero() was called.
  * @author Brent Gardner
  */
-public class GyroDirectionFinder extends GyroSensor implements DirectionFinder
+public class GyroDirectionFinder implements DirectionFinder
 {
     private float cartesianCalibrate = 0;
     private float heading = 0;
@@ -23,11 +21,21 @@ public class GyroDirectionFinder extends GyroSensor implements DirectionFinder
     private float calibrationSum = 0F;
 
     private Regulator reg = new Regulator(this);
+    private GyroSensor gyro;
 
-    public GyroDirectionFinder(SensorPort port)
+    public GyroDirectionFinder(GyroSensor gyro)
     {
-        super(port);
+        this.gyro = gyro;
         reg.start();
+        startCalibration();
+        try
+        {
+            Thread.sleep(50);
+        }
+        catch(Exception ex)
+        {
+        }
+        stopCalibration();
     }
 
     /**
@@ -53,16 +61,16 @@ public class GyroDirectionFinder extends GyroSensor implements DirectionFinder
      * Returns the current rate-of-turn in degrees, as read by the GyroSensor
      * @return Angular velocity in degrees.
      */
-    public float getVelocity()
+    public float getAngularVelocity()
     {
-        return (float)readValue() - gyroCalibration;
+        return (float)gyro.readValue() - gyroCalibration;
     }
 
     /**
      * Returns the current rate at which the angular velocity is increasing or decreasing in degrees-per-second, per second
      * @return Angular acceleration in degrees-per-second per second.
      */
-    public float getAcceleration()
+    public float getAngularAcceleration()
     {
         return acceleration;
     }
@@ -135,7 +143,7 @@ public class GyroDirectionFinder extends GyroSensor implements DirectionFinder
                 long now = System.currentTimeMillis();
                 if(now - lastUpdate == 0)
                     continue;
-                float degreesPerSecond = (float)parent.readValue();
+                float degreesPerSecond = (float)parent.gyro.readValue();
 
                 // Calibration
                 if(calibrating)
