@@ -307,6 +307,8 @@ public float getTurnMaxSpeed() { return getMaxRotateSpeed();}
    */
   public void forward()
   {
+    _type = Move.MoveType.TRAVEL;
+    movementStart(false);
     setSpeed(Math.round(_robotTravelSpeed * _leftDegPerDistance), Math.round(_robotTravelSpeed * _rightDegPerDistance));
     if (_parity == 1)fwd();
      else  bak();
@@ -317,6 +319,7 @@ public float getTurnMaxSpeed() { return getMaxRotateSpeed();}
    */
   public void backward()
   {
+    _type = Move.MoveType.TRAVEL;
     movementStart(false);
     setSpeed(Math.round(_robotTravelSpeed * _leftDegPerDistance), Math.round(_robotTravelSpeed * _rightDegPerDistance));
 
@@ -370,6 +373,7 @@ public float getTurnMaxSpeed() { return getMaxRotateSpeed();}
    */
   public boolean rotate(final float angle, final boolean immediateReturn)
   {
+     _type = Move.MoveType.ROTATE;
     movementStart(immediateReturn);
     setSpeed(Math.round(_robotRotateSpeed * _leftTurnRatio), Math.round(_robotRotateSpeed * _rightTurnRatio));
     int rotateAngleLeft = _parity * (int) (angle * _leftTurnRatio);
@@ -437,6 +441,7 @@ public float getTurnMaxSpeed() { return getMaxRotateSpeed();}
    */
   public boolean travel(final float distance, final boolean immediateReturn)
   {
+     _type = Move.MoveType.TRAVEL;
     movementStart(immediateReturn);
     setSpeed(Math.round(_robotTravelSpeed * _leftDegPerDistance), Math.round(_robotTravelSpeed * _rightDegPerDistance));
     _left.rotate((int) (_parity * distance * _leftDegPerDistance), true);
@@ -458,6 +463,7 @@ public float getTurnMaxSpeed() { return getMaxRotateSpeed();}
     reset();
     if(_pose !=null) _pose.movementStarted();
     _alert = alert;
+    if(_moveListener !=null)_moveListener.moveStarted(null, this);
   }
 
   public boolean arcForward(final float radius)
@@ -480,6 +486,7 @@ public float getTurnMaxSpeed() { return getMaxRotateSpeed();}
   public boolean  arc(final float radius, final float angle,
           final boolean immediateReturn)
   {
+    _type = Move.MoveType.ARC;
      movementStart(immediateReturn);
     steer(turnRate(radius), angle, immediateReturn);
      if(!immediateReturn)movementStop();
@@ -493,11 +500,15 @@ public float getTurnMaxSpeed() { return getMaxRotateSpeed();}
 
   public  boolean travelArc(float radius, float distance, boolean immediateReturn)
   {
+ _type = Move.MoveType.ARC;
+     _type = Move.MoveType.ARC;
     movementStart(immediateReturn);
     if (radius == Float.POSITIVE_INFINITY || radius == Float.NEGATIVE_INFINITY)
     {
+        _type = Move.MoveType.TRAVEL;
       return travel(distance, immediateReturn);
     }
+    _type = Move.MoveType.ROTATE;
     float angle = (distance * 180) / ((float) Math.PI * radius);
     return arc(radius, angle, immediateReturn);
   }
@@ -646,6 +657,11 @@ public float getTurnMaxSpeed() { return getMaxRotateSpeed();}
       _pose.update(getMovementIncrement(), getAngleIncrement(),
               isMoving());
     }
+    if(_moveListener != null)
+    {
+      Move m = new Move(_type, getMovementIncrement(),getAngleIncrement(),isMoving());
+      _moveListener.moveStopped(m, this);
+  }
   }
 
   /**
@@ -781,5 +797,7 @@ protected boolean _alert = false;
    */
 
   Pose1 _pose;
+  MoveListener _moveListener;
+   Move.MoveType _type;
 
 }
