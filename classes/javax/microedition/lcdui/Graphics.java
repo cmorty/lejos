@@ -541,7 +541,6 @@ public class Graphics
     // Temp for testing purposes until Canvas made.
     public void refresh()
     {
-        LCD.setDisplay();
         LCD.refresh();
     }
     // Temp method for testing. Clears out graphics buffer
