@@ -64,7 +64,7 @@ public class Connector {
 					if(sc != null) sc.close();
 				}
         	};
-    	} if (scheme.equals("sensor")) {
+    	} else if (scheme.equals("sensor")) {
     		c =  new NXTSensorConnection(name);
     	} else {
     		throw new ConnectionNotFoundException(scheme + " not a known protocol");
