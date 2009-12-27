@@ -381,6 +381,8 @@ public class Motor1 extends BasicMotor implements TachoMotor1 // implements Time
                      }
                   } //end if ramp up
                   else 	error = (elapsed*_speed/100)- 10*absA;// no ramp
+                  if(error > 400 ) throw new  MotorStalledException(
+                          _thisMotor.getName()+"stalled");
                  int gain = 5;
                   int extrap = 4;
                   power = basePower/10 + gain*(error + extrap*(error - e0))/10;
@@ -418,7 +420,9 @@ public class Motor1 extends BasicMotor implements TachoMotor1 // implements Time
                t1++;
                if( t1 > 20)// speed < 50 deg/sec so increase brake power
                   {
-                  pwr += 10;  
+                  pwr += 10;
+                  if(pwr > 120) throw new  MotorStalledException(
+                          _thisMotor.getName() +"rotation stalled");
                   t1 = 0;
                   }                           
                // don't let motor stall if outside limit angle +- 1 deg
@@ -636,6 +640,22 @@ public class Motor1 extends BasicMotor implements TachoMotor1 // implements Time
       return regulator.basePower/10;
    }   
    public void setBrakePower(int pwr) {_brakePower = pwr;}
+
+    public String getName()
+   {
+     String n = "Motor.C ";
+     if(this == Motor1.A) n =  "Motor.A ";
+     else if(this == Motor1.B ) n = "Motor.B ";
+     return n;
+   }
+
+   static  class MotorStalledException extends RuntimeException
+  {
+    MotorStalledException(String message)
+    {
+     super(message);
+    }
+  }
 }
 
 
