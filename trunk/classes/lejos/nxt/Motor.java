@@ -16,15 +16,19 @@ import lejos.util.Delay;
  * and <code>flt</code>. To set each motor's speed, use
  * <code>setSpeed.  </code> Speed is in degrees per second.
  * Methods that use the tachometer:  regulateSpeed, rotate, rotateTo.
- * These rotate methods may not stop smoothly at the target angle if called when the motor is already moving<br>
+ * These rotate methods may not stop smoothly at the target angle if called when
+ * the motor is already moving<br>
  * Motor has 2 modes : speedRegulation and smoothAcceleration,
  * which only works if speed regulation is used. These are initially enabled.
- * The speed is regulated by comparing the tacho count with speed times elapsed time and adjusting motor power to keep these closely matched.
+ * The speed is regulated by comparing the tacho count with speed times elapsed
+ * time and adjusting motor power to keep these closely matched.
  * Smooth acceleration corrects the speed regulation to account for the acceleration time. 
  * They can be switched off/on by the methods regulateSpeed() and smoothAcceleration().
- * The actual maximum speed of the motor depends on battery voltage and load. With no load, the maximum is about 100 times the voltage.  
+ * The actual maximum speed of the motor depends on battery voltage and load.
+ * With no load, the maximum is about 100 times the voltage.
  * Speed regulation fails if the target speed exceeds the capability of the motor.
- * If you need the motor to hold its position and you find that still moves after stop() is called , you can use the lock() method.
+ * If you need the motor to hold its position and you find that still moves after
+ * stop() is called , you can use the lock() method.
  *  
  * <p>
  * Example:<p>
@@ -100,6 +104,7 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
    
    private int _brakePower = 20;
    private int _lockPower = 30;
+   private boolean _stalled = false;//set by regulator when stall is detected
    private boolean _newOperation = false;// used by regulator.stopAtLimit
   private Motor  _thisMotor = this; // alias  for use by regulator
 
@@ -239,6 +244,7 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
             if(listener != null) listener.rotationStopped(new MotorEvent(this, getTachoCount()));
             return;
          }
+         else _stalled = false; // new motor motion has started
          if(listener != null) listener.rotationStarted(new MotorEvent(this, getTachoCount()));
          _port.controlMotor(_power, _mode);
          if(_regulate)regulator.reset();
@@ -279,7 +285,7 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
    
    public void rotateTo(int limitAngle,boolean immediateReturn)
    {
-	  _newOperation = true;
+       _newOperation = true;
       synchronized(regulator)
       {
          _lock = false;
@@ -295,7 +301,11 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
          _newOperation = false;
       }
       if(immediateReturn)return;
-      while(_rotating) Thread.yield();
+      while(_rotating || _stalled)
+      {
+        if(_stalled)throw new MotorStalledException(getName()+" stalled ");
+        Thread.yield();
+      }
    }
 
    /**
@@ -396,8 +406,11 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
                      }
                   } //end if ramp up
                   else 	error = (elapsed*_speed/100)- 10*absA;// no ramp
-                  if(error > 400 ) throw new  MotorStalledException(
-                          _thisMotor.getName()+"stalled");
+                  if(error > 400 )
+                  {
+                    _stalled = true;
+                    _thisMotor.stop();
+                  }
                  int gain = 5;
                   int extrap = 4;
                   power = basePower/10 + gain*(error + extrap*(error - e0))/10;
@@ -436,8 +449,12 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
                if( t1 > 20)// speed < 50 deg/sec so increase brake power
                   {
                   pwr += 10;  
-                  if(pwr > 120) throw new  MotorStalledException(
-                          _thisMotor.getName() +"stalled");
+                  if(pwr > 120)
+                  {
+                    _stalled = true;
+                    _thisMotor.stop();
+                  }
+
                   t1 = 0;
                   }                           
                // don't let motor stall if outside limit angle +- 1 deg
@@ -622,6 +639,12 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
    {
      return _actualSpeed;
    }
+
+   /**
+    * Returns true if the motor has stalled
+    * @return true if motor has stalled
+    */
+      public boolean isStalled(){return _stalled;}
 
    /**
     * @see lejos.robotics.TachoMotor#getTachoCount()
