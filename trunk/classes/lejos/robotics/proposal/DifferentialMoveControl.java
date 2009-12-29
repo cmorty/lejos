@@ -696,7 +696,10 @@ public float getMinRadius( ){return _turnRadius;}
     return _parity * ((_right.getTachoCount() / _rightTurnRatio) -
             (_left.getTachoCount() / _leftTurnRatio)) / 2.0f;
   }
-  public void addMoveListener(MoveListener m ){}
+  public void addMoveListener(MoveListener m )
+  {
+   _moveListener = m;
+  }
   public Move getMovement(){return null;}
 
 
