@@ -11,7 +11,7 @@ import lejos.robotics.localization.PoseProvider;
 
 public class GyroPoseProvider implements PoseProvider, MoveListener
 {
-    private Regulator reg = new Regulator(this);
+    private Regulator reg = new Regulator();
     private GyroDirectionFinder gyro;
     private Motor driveMotor;
     private float wheelDiameter = 0;
@@ -67,12 +67,9 @@ public class GyroPoseProvider implements PoseProvider, MoveListener
 
     private class Regulator extends Thread
     {
-        private GyroPoseProvider parent;
-
-        public Regulator(GyroPoseProvider parent)
+        public Regulator()
         {
             setDaemon(true);
-            this.parent = parent;
         }
 
         @Override
@@ -91,9 +88,9 @@ public class GyroPoseProvider implements PoseProvider, MoveListener
 
                 // Read gyro
                 if(currentMove != null && currentMove.getMoveType() == Move.MoveType.ROTATE)
-                    parent.pose.setHeading(parent.getHeading());
-                dir.x = (float)Math.cos(Math.toRadians(parent.pose.getHeading()));
-                dir.y = -(float)Math.sin(Math.toRadians(parent.pose.getHeading()));
+                    pose.setHeading(getHeading());
+                dir.x = (float)Math.cos(Math.toRadians(pose.getHeading()));
+                dir.y = -(float)Math.sin(Math.toRadians(pose.getHeading()));
 
                 // Read tachos
                 if(currentMove != null && currentMove.getMoveType() == Move.MoveType.TRAVEL)
@@ -105,8 +102,8 @@ public class GyroPoseProvider implements PoseProvider, MoveListener
                     // Position
                     tempVec.x = dir.x * deltaDist;
                     tempVec.y = dir.y * deltaDist;
-                    parent.pose.getLocation().x += tempVec.x;
-                    parent.pose.getLocation().y += tempVec.y;
+                    pose.getLocation().x += tempVec.x;
+                    pose.getLocation().y += tempVec.y;
                     lastTachoCount = tachoCount;
                 }
 
