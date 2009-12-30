@@ -16,7 +16,9 @@ public class CompassSensor extends I2CSensor implements DirectionFinder {
 	byte[] buf = new byte[2];
 	private static final String MINDSENSORS_ID = "mndsnsrs";
 	private boolean isMindsensors; // For comparing HiTechnic vs. Mindsensors
-	private float cartesianCalibrate = 0; // Used by both cartesian methods. 
+	private float cartesianCalibrate = 0; // Used by both cartesian methods.
+        private float velocity, acceleration;
+        private float heading, diff; // Expose publically when testing - BG 2009-12-30
 	
 	// Mindsensors.com constants:
 	private final static byte COMMAND = 0x41;
@@ -25,11 +27,13 @@ public class CompassSensor extends I2CSensor implements DirectionFinder {
 	
 	// HiTechnic constants:
 	private final static byte MEASUREMENT_MODE = 0x00;
+        private Regulator reg = new Regulator();
 
 	public CompassSensor(I2CPort port)
 	{
 		super(port);		
 		isMindsensors = (this.getProductID().equals(MINDSENSORS_ID));
+                reg.start();
 	}
 	
 	/**
@@ -103,4 +107,62 @@ public class CompassSensor extends I2CSensor implements DirectionFinder {
 			buf[0] = MEASUREMENT_MODE;
 		super.sendData(COMMAND, buf, 1);
 	}
+
+        /**
+         * Returns the current rate-of-turn in degrees
+         * @return Angular velocity in degrees.
+         */
+        public float getAngularVelocity() {
+            return velocity;
+        }
+
+        /**
+         * Returns the current rate at which the angular velocity is increasing or decreasing in degrees-per-second, per second
+         * @return Angular acceleration in degrees-per-second per second.
+         */
+        public float getAngularAcceleration() {
+            return acceleration;
+        }
+
+        /**
+         * This is a private thread class that is used to continously integrate sucessive readings from the compass
+         */
+        private class Regulator extends Thread {
+
+            protected Regulator() {
+                setDaemon(true);
+            }
+
+            @Override
+            public void run() {
+                float lastHeading = getDegreesCartesian();
+                float lastVelocity = 0F;
+                long lastUpdate = System.currentTimeMillis();
+                while (true) {
+                    Thread.yield();
+                    long now = System.currentTimeMillis();
+                    if(now - lastUpdate < 50)
+                        continue;
+
+                    // Get heading and change in heading
+                    heading = getDegreesCartesian();
+                    diff = heading - lastHeading;
+                    if(diff > 180)
+                        diff = heading - 360 - lastHeading;
+                    if(diff < -180)
+                        diff = 360 - lastHeading + heading;
+
+                    // Angular velocity
+                    float secondsSinceLastReading = (float)(now - lastUpdate) / 1000F;
+                    velocity = diff / secondsSinceLastReading;
+                    acceleration = (velocity - lastVelocity) / secondsSinceLastReading;
+
+                    // Move On
+                    lastVelocity = velocity;
+                    lastHeading = heading;
+                    lastUpdate = now;
+                }
+            }
+        }
+
 }
