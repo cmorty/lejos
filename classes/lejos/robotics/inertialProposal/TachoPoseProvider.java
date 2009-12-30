@@ -12,7 +12,7 @@ import lejos.robotics.localization.PoseProvider;
 public class TachoPoseProvider implements PoseProvider, MoveListener
 {
     private lejos.robotics.Move currentMove;
-    private Regulator reg = new Regulator(this);
+    private Regulator reg = new Regulator();
     private float wheelDiameter;
     private float wheelRatio;
     private TachoMotor leftMotor;
@@ -75,12 +75,9 @@ public class TachoPoseProvider implements PoseProvider, MoveListener
 
     private class Regulator extends Thread
     {
-        private TachoPoseProvider parent;
-
-        public Regulator(TachoPoseProvider parent)
+        public Regulator()
         {
             setDaemon(true);
-            this.parent = parent;
         }
 
         @Override
@@ -95,7 +92,7 @@ public class TachoPoseProvider implements PoseProvider, MoveListener
                 long now = System.currentTimeMillis();
                 if(now - lastUpdate == 0)
                     continue;
-                cm = parent.CurrentMove();
+                cm = CurrentMove();
                 if(cm == null)
                     continue;
 
@@ -118,18 +115,18 @@ public class TachoPoseProvider implements PoseProvider, MoveListener
             rightMotor.resetTachoCount();
             int leftCount = 0;
             int rightCount = 0;
-            float oldHeading = parent.pose.getHeading();
+            float oldHeading = pose.getHeading();
             while(cm != null && cm.getMoveType() == MoveType.ROTATE)
             {
                 // Read tacho's
-                leftCount = parent.leftMotor.getTachoCount();
-                rightCount = parent.rightMotor.getTachoCount();
+                leftCount = leftMotor.getTachoCount();
+                rightCount = rightMotor.getTachoCount();
                 float thisHeading = (float)(rightCount - leftCount) / wheelRatio / 2.0f;
-                parent.pose.setHeading(oldHeading + thisHeading);
+                pose.setHeading(oldHeading + thisHeading);
 
                 // Move on
                 Thread.yield();
-                cm = parent.CurrentMove();
+                cm = CurrentMove();
             }
         }
 
@@ -137,25 +134,25 @@ public class TachoPoseProvider implements PoseProvider, MoveListener
         {
             Point dir = new Point(0, 0);
             int lastLeftCount = 0;
-            lastLeftCount = parent.leftMotor.getTachoCount();
+            lastLeftCount = leftMotor.getTachoCount();
             lejos.robotics.Move cm = CurrentMove();
             while(cm != null && cm.getMoveType() == MoveType.TRAVEL)
             {
                 // Read tacho's
-                int leftCount = parent.leftMotor.getTachoCount();
+                int leftCount = leftMotor.getTachoCount();
                 long tachoDiff = leftCount - lastLeftCount;
                 float deltaDist = (float)tachoDiff / 360F * wheelDiameter * (float)Math.PI;
 
                 // Update position
-                dir.x = (float)Math.cos(Math.toRadians(parent.pose.getHeading())) * deltaDist;
-                dir.y = -(float)Math.sin(Math.toRadians(parent.pose.getHeading())) * deltaDist;
-                parent.pose.getLocation().x += dir.x;
-                parent.pose.getLocation().y += dir.y;
+                dir.x = (float)Math.cos(Math.toRadians(pose.getHeading())) * deltaDist;
+                dir.y = -(float)Math.sin(Math.toRadians(pose.getHeading())) * deltaDist;
+                pose.getLocation().x += dir.x;
+                pose.getLocation().y += dir.y;
 
                 // Move on
                 lastLeftCount = leftCount;
                 Thread.yield();
-                cm = parent.CurrentMove();
+                cm = CurrentMove();
             }
         }
 
