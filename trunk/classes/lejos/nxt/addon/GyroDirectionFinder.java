@@ -20,21 +20,25 @@ public class GyroDirectionFinder implements DirectionFinder
     private long calibrationReadingCount = 0;
     private float calibrationSum = 0F;
 
-    private Regulator reg = new Regulator(this);
+    private Regulator reg = new Regulator();
     private GyroSensor gyro;
 
     public GyroDirectionFinder(GyroSensor gyro)
     {
+        this(gyro, false);
+    }
+
+    public GyroDirectionFinder(GyroSensor gyro, boolean calibrate)
+    {
         this.gyro = gyro;
         reg.start();
+        if(calibrate == false)
+            return;
+
+        // Optional calibration
         startCalibration();
-        try
-        {
-            Thread.sleep(50);
-        }
-        catch(Exception ex)
-        {
-        }
+        try { Thread.sleep(50); }
+        catch(Exception ex) { }
         stopCalibration();
     }
 
@@ -125,11 +129,8 @@ public class GyroDirectionFinder implements DirectionFinder
      */
     private class Regulator extends Thread
     {
-        private GyroDirectionFinder parent;
-
-        protected Regulator(GyroDirectionFinder parent)
+        protected Regulator()
         {
-            this.parent = parent;
             setDaemon(true);
         }
 
@@ -140,10 +141,11 @@ public class GyroDirectionFinder implements DirectionFinder
             long lastUpdate = System.currentTimeMillis();
             while (true)
             {
+                Thread.yield();
                 long now = System.currentTimeMillis();
                 if(now - lastUpdate == 0)
                     continue;
-                float degreesPerSecond = (float)parent.gyro.readValue();
+                float degreesPerSecond = (float)gyro.readValue();
 
                 // Calibration
                 if(calibrating)
@@ -155,13 +157,12 @@ public class GyroDirectionFinder implements DirectionFinder
                 // Integration
                 degreesPerSecond -= gyroCalibration;
                 float secondsSinceLastReading = (float)(now - lastUpdate) / 1000F;
-                parent.heading += degreesPerSecond * secondsSinceLastReading;
-                parent.acceleration = degreesPerSecond - lastDegreesPerSecond;
+                heading += degreesPerSecond * secondsSinceLastReading;
+                acceleration = (degreesPerSecond - lastDegreesPerSecond) / secondsSinceLastReading;
 
                 // Move On
                 lastDegreesPerSecond = degreesPerSecond;
                 lastUpdate = now;
-                Thread.yield();
             }
         }
     }
