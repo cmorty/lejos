@@ -137,7 +137,7 @@ public class InertialMoveProvider implements MoveProvider1
      */
     public float getAngularVelocity()
     {
-        return (float)gyro.getAngularVelocity();
+        return gyro.getAngularVelocity();
     }
 
     /**
