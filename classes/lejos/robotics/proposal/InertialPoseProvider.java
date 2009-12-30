@@ -22,13 +22,13 @@ public class InertialPoseProvider implements PoseProvider, MoveListener
     private Point acceleration = new Point(0, 0);
     private float angularVelocity = 0F;
 
-    private Regulator reg = new Regulator(this);
+    private Regulator reg = new Regulator();
     private GyroDirectionFinder gyro;
     private TiltSensor accelerometer;
-    private float accelerometerCalibration = 0F;
+    private Point accelerometerCalibration = new Point(0, 0);
     private boolean calibrating = false;
     private long calibrationReadingCount = 0;
-    private float calibrationSum = 0F;
+    private Point calibrationSum = new Point(0, 0);
     private boolean moving = false;
 
     public InertialPoseProvider(TiltSensor accelerometer, GyroDirectionFinder gyro)
@@ -64,9 +64,11 @@ public class InertialPoseProvider implements PoseProvider, MoveListener
     public void startCalibration()
     {
     	gyro.startCalibration();
-    	accelerometerCalibration = 0F;
+    	accelerometerCalibration.x = 0;
+        accelerometerCalibration.y = 0;
         calibrationReadingCount = 0;
-        calibrationSum = 0F;
+        calibrationSum.x = 0;
+        calibrationSum.y = 0;
         calibrating = true;
     }
 
@@ -77,7 +79,8 @@ public class InertialPoseProvider implements PoseProvider, MoveListener
     {
     	gyro.stopCalibration();
         calibrating = false;
-        accelerometerCalibration = calibrationSum / calibrationReadingCount; 
+        accelerometerCalibration.x = calibrationSum.x / calibrationReadingCount;
+        accelerometerCalibration.y = calibrationSum.y / calibrationReadingCount;
     }
 
     /**
@@ -108,9 +111,17 @@ public class InertialPoseProvider implements PoseProvider, MoveListener
     /**
      * Returns the current acceleration in meters per second squared
      */
-    public float getAcceleration()
+    public float getXAcceleration()
     {
-        return fixReading(accelerometer.getXAccel()) - accelerometerCalibration;
+        return fixReading(accelerometer.getXAccel()) - accelerometerCalibration.x;
+    }
+
+    /**
+     * Returns the current acceleration in meters per second squared
+     */
+    public float getZAcceleration()
+    {
+        return fixReading(accelerometer.getZAccel()) - accelerometerCalibration.y;
     }
 
     /**
@@ -118,7 +129,7 @@ public class InertialPoseProvider implements PoseProvider, MoveListener
      */
     public float getAngularVelocity()
     {
-        return (float)gyro.getAngularVelocity();
+        return gyro.getAngularVelocity();
     }
 
     /**
@@ -126,12 +137,9 @@ public class InertialPoseProvider implements PoseProvider, MoveListener
      */
     private class Regulator extends Thread
     {
-        private InertialPoseProvider parent;
-
-        public Regulator(InertialPoseProvider parent)
+        public Regulator()
         {
             setDaemon(true);
-            this.parent = parent;
         }
 
         @Override
@@ -139,11 +147,12 @@ public class InertialPoseProvider implements PoseProvider, MoveListener
         {
             Point dir = new Point(0, 0);
             long lastUpdate = System.currentTimeMillis();
+            Point acc = new Point(0, 0);
             while (true)
             {
                 // Check time
                 Thread.yield();
-                if(parent.moving == false)
+                if(moving == false)
                     continue;
                 long now = System.currentTimeMillis();
                 if(now - lastUpdate == 0)
@@ -151,32 +160,31 @@ public class InertialPoseProvider implements PoseProvider, MoveListener
                 float delta = (float)(now - lastUpdate) / 1000.0F;
                 
                 // Read gyro
-                parent.angularVelocity = parent.getAngularVelocity();
-                parent.pose.setHeading(parent.pose.getHeading() + parent.angularVelocity * delta);
-                dir.x = (float)Math.cos(Math.toRadians(parent.pose.getHeading()));
-                dir.y = -(float)Math.sin(Math.toRadians(parent.pose.getHeading()));
+                angularVelocity = getAngularVelocity();
+                pose.setHeading(pose.getHeading() + angularVelocity * delta);
+                dir.x = (float)Math.cos(Math.toRadians(pose.getHeading()));
+                dir.y = -(float)Math.sin(Math.toRadians(pose.getHeading()));
 
                 // Read accelerometer
-                float acc = parent.getAcceleration();
-
-                // Calibrate
+                acc.x = getXAcceleration();
+                acc.y = getZAcceleration();
                 if(calibrating)
                 {
-                    calibrationSum += acc;
+                    calibrationSum.x += acc.x;
+                    calibrationSum.y += acc.y;
                     calibrationReadingCount++;
                 }
                 
                 // Acceleration
-                parent.acceleration.x = dir.x * acc;
-                parent.acceleration.y = dir.y * acc;
+                acc.unProjectWith(dir.normalize()).copyTo(acceleration);
 
                 // Velocity
-                parent.velocity.x += parent.acceleration.x * delta;
-                parent.velocity.y += parent.acceleration.y * delta;
+                velocity.x += acceleration.x * delta;
+                velocity.y += acceleration.y * delta;
 
                 // Position
-                parent.pose.getLocation().x += parent.velocity.x * delta;
-                parent.pose.getLocation().y += parent.velocity.y * delta;
+                pose.getLocation().x += velocity.x * delta;
+                pose.getLocation().y += velocity.y * delta;
 
                 // Move on
                 lastUpdate = now;
