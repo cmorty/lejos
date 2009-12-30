@@ -18,7 +18,7 @@ public class Point extends Point2D.Float {
     public Point(float radians)
     {
         this.x = (float)Math.cos(radians);
-        this.y = (float)Math.sin(radians);
+        this.y = -(float)Math.sin(radians);
     }
 
 /**
