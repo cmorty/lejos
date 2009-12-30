@@ -13,7 +13,8 @@ import lejos.robotics.TachoMotorListener;;
  */
 
 /**
- * The SteeringPilot uses a similar steering mechanism to a car.
+ * Vehicles that are controlled by the SteeringPilot class use a similar steering mechanism to a car, in which the 
+ * front wheels pivot from side to side to control direction.
  * If you issue a command for travel(1000) and then issue a command travel(-500) before
  * it completes the travel(1000) movement, it will call stop, properly inform movement listeners that 
  * the forward movement was halted, and then start moving backward 500 units. This makes movements from the SteeringPilot
@@ -154,9 +155,8 @@ public class SteeringPilot implements ArcMoveController, TachoMotorListener {
 		
 		// 3 Create new Move object:
 		float angle = Move.convertDistanceToAngle(distance, actualRadius);
-		Move.MoveType mt = Move.MoveType.ARC;
-		if(turnRadius == Float.POSITIVE_INFINITY) mt = Move.MoveType.TRAVEL;
-		moveEvent = new Move(mt, distance, angle, true);
+		moveEvent = new Move(distance, angle, true);
+		
 		
 		// TODO: This if() block is a temporary kludge due to Motor.rotate() bug with Integer.MIN_VALUE:
 		// Remove this if Roger fixes Motor.rotate() bug.
@@ -241,7 +241,7 @@ public class SteeringPilot implements ArcMoveController, TachoMotorListener {
 	}
 
 	public Move getMovement() {
-		// TODO This is probably supposed to provide the movement that has occurred since starting.
+		// TODO This is probably supposed to provide the movement that has occurred since starting? (No Javadocs for this method makes it hard to figure out how to implement this method.)
 		return null;
 	}
 
@@ -263,7 +263,7 @@ public class SteeringPilot implements ArcMoveController, TachoMotorListener {
 		
 		float angle = Move.convertDistanceToAngle(distance, moveEvent.getArcRadius()); 
 		
-		moveEvent = new Move(moveEvent.getMoveType(), distance ,angle, isMoving);
+		moveEvent = new Move(distance ,angle, isMoving);
 		
 		// Notify MoveListener
 		if(listener != null) {

@@ -659,7 +659,7 @@ public float getTurnMaxSpeed() { return getMaxRotateSpeed();}
     }
     if(_moveListener != null)
     {
-      Move m = new Move(_type, getMovementIncrement(),getAngleIncrement(),isMoving());
+      Move m = new Move(getMovementIncrement(),getAngleIncrement(),isMoving());
       _moveListener.moveStopped(m, this);
   }
   }

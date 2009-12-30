@@ -116,21 +116,21 @@ public class ArcAlgorithms { // TODO Make package level when done testing?
 		float targetArcB = ArcAlgorithms.getArcBackward(targetArcF); // Prefer this for speed. It is exact.
 		
 		// TODO: This can probably be steamlined with arrays. Sort out Path (Move) container first.
-		paths[0][0] = new Move(Move.MoveType.ARC, false, startArcF, turnRadius1);
-		paths[0][1] = new Move(Move.MoveType.TRAVEL, p2p3, 0, false);
-		paths[0][2] = new Move(Move.MoveType.ARC, false, targetArcF, turnRadius2);
+		paths[0][0] = new Move(false, startArcF, turnRadius1);
+		paths[0][1] = new Move(p2p3, 0, false);
+		paths[0][2] = new Move(false, targetArcF, turnRadius2);
 		
-		paths[1][0] = new Move(Move.MoveType.ARC, false, startArcF, turnRadius1);
-		paths[1][1] = new Move(Move.MoveType.TRAVEL, p2p3, 0, false);
-		paths[1][2] = new Move(Move.MoveType.ARC, false, targetArcB, turnRadius2);
+		paths[1][0] = new Move(false, startArcF, turnRadius1);
+		paths[1][1] = new Move(p2p3, 0, false);
+		paths[1][2] = new Move(false, targetArcB, turnRadius2);
 		
-		paths[2][0] = new Move(Move.MoveType.ARC, false, startArcB, turnRadius1);
-		paths[2][1] = new Move(Move.MoveType.TRAVEL, p2p3, 0, false);
-		paths[2][2] = new Move(Move.MoveType.ARC, false, targetArcF, turnRadius2);
+		paths[2][0] = new Move(false, startArcB, turnRadius1);
+		paths[2][1] = new Move(p2p3, 0, false);
+		paths[2][2] = new Move(false, targetArcF, turnRadius2);
 		
-		paths[3][0] = new Move(Move.MoveType.ARC, false, startArcB, turnRadius1);
-		paths[3][1] = new Move(Move.MoveType.TRAVEL, p2p3, 0, false);
-		paths[3][2] = new Move(Move.MoveType.ARC, false, targetArcB, turnRadius2);
+		paths[3][0] = new Move(false, startArcB, turnRadius1);
+		paths[3][1] = new Move(p2p3, 0, false);
+		paths[3][2] = new Move(false, targetArcB, turnRadius2);
 		
 		return paths;
 	}
@@ -179,11 +179,11 @@ public class ArcAlgorithms { // TODO Make package level when done testing?
 			double z = ArcAlgorithms.distBetweenPoints(c, p3);
 			double p2p3 = ArcAlgorithms.distP2toP3(radius, z);
 			
-			paths[i][0] = new Move(Move.MoveType.ARC, false, arcLengthForward, radius);
-			paths[i][1] = new Move(Move.MoveType.TRAVEL, (float)p2p3, 0, false);
+			paths[i][0] = new Move(false, arcLengthForward, radius);
+			paths[i][1] = new Move((float)p2p3, 0, false);
 			i++;
-			paths[i][0] = new Move(Move.MoveType.ARC, false, arcLengthBackward, radius);
-			paths[i][1] = new Move(Move.MoveType.TRAVEL, (float)p2p3, 0, false);
+			paths[i][0] = new Move(false, arcLengthBackward, radius);
+			paths[i][1] = new Move((float)p2p3, 0, false);
 		}
 
 		return paths;
@@ -362,7 +362,7 @@ public class ArcAlgorithms { // TODO Make package level when done testing?
 	 * @param p2 Take-off point on circle
 	 * @param radius Radius of circle
 	 * @return Length of travel along circle, in degrees
-	 * @deprecated This method is no longer used because it can't calculate >180 angles.
+	 * @deprecated This method is no longer used because it can't calculate >180 angles. Delete any time.
 	 */
 	public static double getArcOld(Point2D.Float p1, Point2D.Float p2, double radius) {
 		// I accidently got the radius sign confused. +ve radius is supposed to have circle center to left of robot:

@@ -644,7 +644,7 @@ public class DifferentialPilot implements ArcRotateMoveController
   {
     for (MoveListener p : listeners)
     {
-      p.moveStarted(new Move(_moveType, 0, 0, true), this);
+      p.moveStarted(new Move(0, 0, true), this);
     }
   }
 
@@ -652,7 +652,7 @@ public class DifferentialPilot implements ArcRotateMoveController
   {
     for (MoveListener p : listeners)
     {
-      Move move = new Move(_moveType, getTravelDistance(), getAngle(), false);
+      Move move = new Move(getTravelDistance(), getAngle(), false);
       p.moveStopped(move, this);
     }
   }
@@ -665,7 +665,7 @@ public class DifferentialPilot implements ArcRotateMoveController
  
   public Move getMovement()
   {
-    return new Move(_moveType, getTravelDistance(), getAngle(), isMoving());
+    return new Move(getTravelDistance(), getAngle(), isMoving());
   }
 
   /**
