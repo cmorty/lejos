@@ -2,6 +2,7 @@ package lejos.robotics.inertialProposal;
 
 import java.util.ArrayList;
 import lejos.geom.Point;
+import lejos.robotics.Move;
 import lejos.robotics.Move.MoveType;
 import lejos.robotics.MoveListener;
 import lejos.robotics.MoveProvider;
@@ -15,17 +16,10 @@ public class DifferentialFeedbackPilot implements Pilot, MoveProvider
     private ArrayList<MoveListener> moveListeners = new ArrayList<MoveListener>();
     private TachoMotor leftMotor;
     private TachoMotor rightMotor;
-    private Regulator reg = new Regulator(this);
+    private Regulator reg = new Regulator();
     private lejos.robotics.Move currentMove;
-    private PoseProvider poseReporter;
-
-    // Used to track where the robot was when the current move began
-    private Point startLocation = new Point(0, 0);
-    private float startHeading = 0;
-
-    // Used to cache the position while stopped, so it can be reset to negate sensor precession before a move
-    private Point currentLocation = new Point(0, 0);
-    private float currentHeading = 0;
+    private PoseProvider poseProvider;
+    private Pose startPose = new Pose(); // Used to track where the robot was when the current move began
 
     // Used to store the angle/distance the robot should stop when it reaches
     private float targetAngle = Float.NaN;
@@ -38,14 +32,14 @@ public class DifferentialFeedbackPilot implements Pilot, MoveProvider
     private float desiredMoveSpeed = Float.POSITIVE_INFINITY;
     private float maxMoveSpeed = Float.POSITIVE_INFINITY;
 
-    public DifferentialFeedbackPilot(PoseProvider poseReporter, TachoMotor leftMotor, TachoMotor rightMotor)
+    public DifferentialFeedbackPilot(PoseProvider poseProvider, TachoMotor leftMotor, TachoMotor rightMotor)
     {
-        this(poseReporter, leftMotor, rightMotor, false);
+        this(poseProvider, leftMotor, rightMotor, false);
     }
 
     public DifferentialFeedbackPilot(PoseProvider poseReporter, TachoMotor leftMotor, TachoMotor rightMotor, boolean reverse)
     {
-        this.poseReporter = poseReporter;
+        this.poseProvider = poseReporter;
         this.leftMotor = leftMotor;
         this.rightMotor = rightMotor;
 
@@ -85,7 +79,7 @@ public class DifferentialFeedbackPilot implements Pilot, MoveProvider
 
     public Pose getPose()
     {
-        return poseReporter.getPose();
+        return poseProvider.getPose();
     }
 
     public TachoMotor getLeftMotor()
@@ -131,9 +125,9 @@ public class DifferentialFeedbackPilot implements Pilot, MoveProvider
     public void rotate(float angle, boolean immediateReturn)
     {
         // Reset orientation to known value
-        startHeading = currentHeading;
-        startLocation.x = currentLocation.x;
-        startLocation.y = currentLocation.y;
+        startPose.getLocation().x = getPose().getX();
+        startPose.getLocation().y = getPose().getY();
+        startPose.setHeading(getPose().getHeading());
         currentMove = new lejos.robotics.Move(true, angle, 0);
         NotifyListeners(true);
 
@@ -155,7 +149,7 @@ public class DifferentialFeedbackPilot implements Pilot, MoveProvider
             leftMotor.backward();
         }
         targetDistance = Float.NaN;
-        targetAngle = startHeading + angle;
+        targetAngle = startPose.getHeading() + angle;
 
         while(immediateReturn == false && isMoving() == true)
             Thread.yield();
@@ -164,9 +158,9 @@ public class DifferentialFeedbackPilot implements Pilot, MoveProvider
     public void travel(float distance, boolean immediateReturn)
     {
         // Notify listeners
-        startHeading = currentHeading;
-        startLocation.x = currentLocation.x;
-        startLocation.y = currentLocation.y;
+        startPose.getLocation().x = getPose().getX();
+        startPose.getLocation().y = getPose().getY();
+        startPose.setHeading(getPose().getHeading());
         currentMove = new lejos.robotics.Move(distance, 0, true);
         NotifyListeners(true);
 
@@ -209,7 +203,7 @@ public class DifferentialFeedbackPilot implements Pilot, MoveProvider
 
     public void setAngle(float degrees)
     {
-        currentHeading = degrees;
+        getPose().setHeading(degrees);
     }
 
     public void setSpeed(int speed)
@@ -249,18 +243,18 @@ public class DifferentialFeedbackPilot implements Pilot, MoveProvider
 
     public float getAngle()
     {
-        return currentHeading;
+        return getPose().getHeading();
     }
 
     public Point getLocation()
     {
-        return currentLocation;
+        return getPose().getLocation();
     }
 
     public void setLocation(Point location)
     {
-        currentLocation.x = location.x;
-        currentLocation.y = location.y;
+        getPose().getLocation().x = location.x;
+        getPose().getLocation().y = location.y;
     }
 
     public float getTravelDistance()
@@ -275,7 +269,7 @@ public class DifferentialFeedbackPilot implements Pilot, MoveProvider
 
     public void reset()
     {
-        currentHeading = 0;
+        getPose().setHeading(0);
         totalDistanceTravelled = 0;
     }
 
@@ -339,17 +333,9 @@ public class DifferentialFeedbackPilot implements Pilot, MoveProvider
 
     private class Regulator extends Thread
     {
-        private DifferentialFeedbackPilot parent;
-
-        public Regulator(DifferentialFeedbackPilot parent)
+        public Regulator()
         {
-            this.parent = parent;
             setDaemon(true);
-        }
-
-        public int Sign(float val)
-        {
-            return (int)(val / Math.abs(val));
         }
 
         @Override
@@ -358,17 +344,13 @@ public class DifferentialFeedbackPilot implements Pilot, MoveProvider
             while(true)
             {
                 // Regulate turning
-                if(Float.isNaN(parent.targetAngle) == false)
+                if(Float.isNaN(targetAngle) == false)
                 {
-                    do
-                    {
-                        parent.currentHeading = parent.getPose().getHeading();
+                    while(Math.signum(targetAngle - startPose.getHeading()) == Math.signum(targetAngle - getPose().getHeading()))
                         Thread.yield();
-                    }
-                    while(Sign(parent.targetAngle - parent.startHeading) == Sign(parent.targetAngle - parent.currentHeading));
 
                     // Move on
-                    parent.stop();
+                    stop();
                     NotifyListeners(false);
                 }
 
@@ -376,19 +358,16 @@ public class DifferentialFeedbackPilot implements Pilot, MoveProvider
                 if(Float.isNaN(targetDistance) == false)
                 {
                     float thisDistance = 0;
-                    do
+                    while(thisDistance < targetDistance)
                     {
-                        parent.currentLocation.x = parent.getPose().getX();
-                        parent.currentLocation.y = parent.getPose().getY();
-                        thisDistance = (float)Math.sqrt(Math.pow(parent.currentLocation.x - parent.startLocation.x, 2) + Math.pow(parent.currentLocation.y - parent.startLocation.y, 2));
-                        parent.totalDistanceTravelled = parent.oldDistance + thisDistance;
+                        thisDistance = (float)Math.sqrt(Math.pow(getPose().getX() - startPose.getX(), 2) + Math.pow(getPose().getY() - startPose.getY(), 2));
+                        totalDistanceTravelled = oldDistance + thisDistance;
                         Thread.yield();
                     }
-                    while(thisDistance < targetDistance);
 
                     // Move on
                     NotifyListeners(false);
-                    parent.stop();
+                    stop();
                 }
             }
         }
