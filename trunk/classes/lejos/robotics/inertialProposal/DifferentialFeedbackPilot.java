@@ -134,7 +134,7 @@ public class DifferentialFeedbackPilot implements Pilot, MoveProvider
         startHeading = currentHeading;
         startLocation.x = currentLocation.x;
         startLocation.y = currentLocation.y;
-        currentMove = new lejos.robotics.Move(MoveType.ROTATE, true, angle, 0);
+        currentMove = new lejos.robotics.Move(true, angle, 0);
         NotifyListeners(true);
 
         // Start turning
@@ -167,7 +167,7 @@ public class DifferentialFeedbackPilot implements Pilot, MoveProvider
         startHeading = currentHeading;
         startLocation.x = currentLocation.x;
         startLocation.y = currentLocation.y;
-        currentMove = new lejos.robotics.Move(MoveType.TRAVEL, distance, 0, true);
+        currentMove = new lejos.robotics.Move(distance, 0, true);
         NotifyListeners(true);
 
         // Start moving

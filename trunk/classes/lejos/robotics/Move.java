@@ -24,19 +24,24 @@ public class Move {
 	protected long timeStamp;
 	
 	/**
-	 * Create a movement object to record a movement made by a pilot
+	 * Create a movement object to record a movement made by a pilot. This method automatically calculates the 
+	 * MoveType based on the data as follows:<br>
+	 * <li>(distance NOT 0) AND (angle NOT 0) --> ARC
+	 * <li>(distance = 0) AND (angle NOT 0) --> ROTATE
+	 * <li>(distance NOT 0) AND (angle = 0) --> TRAVEL
+	 * <li>(distance = 0) AND (angle = 0) --> STOP
 	 * 
 	 * @param type the movement type
 	 * @param distance the distance traveled in pilot units
 	 * @param angle the angle turned in degrees
 	 * @param isMoving true iff the movement was created while the robot was moving
 	 */
-	public Move(MoveType type, float distance, float angle, boolean isMoving) {
-		this.moveType = type;
+	public Move(float distance, float angle, boolean isMoving) {
+		this.moveType = Move.calcMoveType(distance, angle);
 		this.distanceTraveled = distance;
 		this.angleTurned = angle;
 		this.isMoving = isMoving;
-		// TODO: Could use convertDistanceToAngle() instead here?0 
+		// TODO: This works fine, but could use convertDistanceToAngle() instead here?
 		if (Math.abs(angle) > 0.5) {
 			double turnRad = Math.toRadians(angle);
 			arcRadius = (float) ((double) distance / turnRad);
@@ -46,29 +51,35 @@ public class Move {
 	
 	/**
 	 * Helper method to calculate the MoveType based on distance, angle, radius parameters.
-	 * TODO: Implement this in constructors and test.
+	 * 
 	 * @param distance
 	 * @param angle
-	 * @param arcRadius
 	 * @return
 	 */
-	private MoveType calcMoveType(float distance, float angle, float arcRadius) {
+	private static MoveType calcMoveType(float distance, float angle) {
 		if(distance == 0 & angle == 0) return MoveType.STOP;
-		else if(distance != 0 & arcRadius == Float.POSITIVE_INFINITY) return MoveType.TRAVEL;
+		else if(distance != 0 & angle == 0) return MoveType.TRAVEL;
 		else if(distance == 0 & angle != 0) return MoveType.ROTATE;
 		else return MoveType.ARC;
 	}
 	
 	/**
-	 * Alternate constructor that uses angle and turn radius instead. Useful for constructing arcs.
+	 * Alternate constructor that uses angle and turn radius instead. Useful for constructing arcs, but it
+	 * can't represent a straight line of travel with a set distance (use the other constructor to specify distance).
+	 *  This method automatically calculates the MoveType based on the data as follows:<br>
+	 * <li>(radius NOT 0) AND (angle NOT 0) --> ARC
+	 * <li>(radius = 0) AND (angle NOT 0) --> ROTATE
+	 * <li>(radius = 0) AND (angle = 0) --> STOP
+	 * <li>(radius = +infinity) AND (angle = 0) --> TRAVEL
+	 * <li>NOTE: can't calculate distance based only on angle and radius, therefore distance can't be calculated and will equal NaN)
 	 * @param type
 	 * @param isMoving
 	 * @param angle
 	 * @param turnRadius
 	 */
-	public Move(MoveType type, boolean isMoving, float angle, float turnRadius) {
-		this.moveType = type;
+	public Move(boolean isMoving, float angle, float turnRadius) {
 		this.distanceTraveled = Move.convertAngleToDistance(angle, turnRadius);
+		this.moveType = Move.calcMoveType(this.distanceTraveled, angle);
 		this.angleTurned = angle;
 		this.isMoving = isMoving;
 		arcRadius = turnRadius;
