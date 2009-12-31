@@ -326,7 +326,7 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
        */
       int calcPower(int speed)
       {   
-         int pwr = 100 -(int)(11*_voltage) +11*_speed/100;
+         int pwr = 100 -(int)(11*_voltage) +11*speed/100;
          if(pwr<0) return 0;
          if(pwr>100)return 100;
          else return pwr;
