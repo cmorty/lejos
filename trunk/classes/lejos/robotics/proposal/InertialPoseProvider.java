@@ -4,6 +4,7 @@ package lejos.robotics.proposal;
 import lejos.geom.Point;
 import lejos.nxt.addon.GyroDirectionFinder;
 import lejos.nxt.addon.TiltSensor;
+import lejos.robotics.DirectionFinder;
 import lejos.robotics.Move;
 import lejos.robotics.MoveListener;
 import lejos.robotics.MoveProvider;
@@ -23,7 +24,7 @@ public class InertialPoseProvider implements PoseProvider, MoveListener
     private float angularVelocity = 0F;
 
     private Regulator reg = new Regulator();
-    private GyroDirectionFinder gyro;
+    private DirectionFinder gyro;
     private TiltSensor accelerometer;
     private Point accelerometerCalibration = new Point(0, 0);
     private boolean calibrating = false;
@@ -31,7 +32,7 @@ public class InertialPoseProvider implements PoseProvider, MoveListener
     private Point calibrationSum = new Point(0, 0);
     private boolean moving = false;
 
-    public InertialPoseProvider(TiltSensor accelerometer, GyroDirectionFinder gyro)
+    public InertialPoseProvider(TiltSensor accelerometer, DirectionFinder gyro)
     {
         this.accelerometer = accelerometer;
         this.gyro = gyro;
