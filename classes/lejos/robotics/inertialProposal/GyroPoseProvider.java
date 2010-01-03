@@ -4,6 +4,7 @@ import lejos.geom.Point;
 import lejos.nxt.Motor;
 import lejos.nxt.addon.GyroDirectionFinder;
 import lejos.robotics.Move;
+import lejos.robotics.Move.MoveType;
 import lejos.robotics.MoveListener;
 import lejos.robotics.MoveProvider;
 import lejos.robotics.Pose;
@@ -38,16 +39,30 @@ public class GyroPoseProvider implements PoseProvider, MoveListener
         return pose;
     }
 
-    public void moveStopped(Move move, MoveProvider mp)
+    public void moveStarted(Move event, MoveProvider mp)
     {
-        currentMove = null;
+        synchronized(this)
+        {
+            if(event.getMoveType() == Move.MoveType.ROTATE)
+                gyro.setDegreesCartesian(pose.getHeading()); // Reset the gyro
+            currentMove = event;
+        }
     }
 
-    public void moveStarted(Move move, MoveProvider mp)
+    public void moveStopped(Move event, MoveProvider mp)
     {
-        if(move.getMoveType() == Move.MoveType.ROTATE)
-            gyro.setDegreesCartesian(pose.getHeading()); // Reset the gyro
-        currentMove = move;
+        synchronized(this)
+        {
+            currentMove = null;
+        }
+    }
+
+    public lejos.robotics.Move CurrentMove()
+    {
+        synchronized(this)
+        {
+            return currentMove;
+        }
     }
 
     public void updateLocation(Point newLocation)
@@ -75,42 +90,57 @@ public class GyroPoseProvider implements PoseProvider, MoveListener
         @Override
         public void run()
         {
-            Point tempVec = new Point(0, 0);
-            Point dir = new Point(0, 0);
-            long lastUpdate = System.currentTimeMillis();
+            lejos.robotics.Move cm;
             while (true)
             {
                 // Check time
                 Thread.yield();
-                long now = System.currentTimeMillis();
-                if(now - lastUpdate == 0)
+                cm = CurrentMove();
+                if(cm == null)
                     continue;
 
-                // Read gyro
-                if(currentMove != null && currentMove.getMoveType() == Move.MoveType.ROTATE)
-                    pose.setHeading(getHeading());
-                dir.x = (float)Math.cos(Math.toRadians(pose.getHeading()));
-                dir.y = -(float)Math.sin(Math.toRadians(pose.getHeading()));
-
-                // Read tachos
-                if(currentMove != null && currentMove.getMoveType() == Move.MoveType.TRAVEL)
-                {
-                    long tachoCount = driveMotor.getTachoCount();
-                    long tachoDiff = tachoCount - lastTachoCount;
-                    float deltaDist = (float)tachoDiff / 360F * wheelDiameter * (float)Math.PI;
-
-                    // Position
-                    tempVec.x = dir.x * deltaDist;
-                    tempVec.y = dir.y * deltaDist;
-                    pose.getLocation().x += tempVec.x;
-                    pose.getLocation().y += tempVec.y;
-                    lastTachoCount = tachoCount;
-                }
-
-                // Move on
-                lastUpdate = now;
+                // Rotate or travel
+                if(cm.getMoveType() == MoveType.ROTATE)
+                    WaitRotateComplete();
+                if(cm.getMoveType() == MoveType.TRAVEL)
+                    WaitTravelComplete();
             }
         }
+
+        private void WaitRotateComplete()
+        {
+            lejos.robotics.Move cm = CurrentMove();
+            while(cm != null && cm.getMoveType() == MoveType.ROTATE)
+            {
+                pose.setHeading(getHeading());
+                Thread.yield();
+                cm = CurrentMove();
+            }
+        }
+
+        private void WaitTravelComplete()
+        {
+            lejos.robotics.Move cm = CurrentMove();
+            driveMotor.resetTachoCount();
+            Point dir = new Point(0, 0);
+            dir.x = (float)Math.cos(Math.toRadians(pose.getHeading()));
+            dir.y = (float)Math.sin(Math.toRadians(pose.getHeading()));
+            lastTachoCount = 0;
+            while(cm != null && cm.getMoveType() == MoveType.TRAVEL)
+            {
+                long tachoCount = driveMotor.getTachoCount();
+                long tachoDiff = tachoCount - lastTachoCount;
+                float deltaDist = (float)tachoDiff / 360F * wheelDiameter * (float)Math.PI;
+                pose.getLocation().x += dir.x * deltaDist;
+                pose.getLocation().y += dir.y * deltaDist;
+
+                // Move on
+                lastTachoCount = tachoCount;
+                Thread.yield();
+                cm = CurrentMove();
+            }
+        }
+
     }
 
 }
