@@ -18,7 +18,7 @@ public class DifferentialFeedbackPilot implements Pilot, MoveProvider
     private Regulator reg = new Regulator();
     private lejos.robotics.Move currentMove;
     private PoseProvider poseProvider;
-    private Pose startPose = new Pose(); // Used to track where the robot was when the current move began
+    public Pose startPose = new Pose(); // Used to track where the robot was when the current move began
 
     // Used to store the angle/distance the robot should stop when it reaches
     public float targetAngle = Float.NaN;
@@ -35,6 +35,12 @@ public class DifferentialFeedbackPilot implements Pilot, MoveProvider
     public float velocity = 0;
     public float thisDistance = 0;
     public float distanceLeft = 0;
+    public int leftTarget = 0;
+    public int rightTarget = 0;
+    public int leftCount = 0;
+    public int rightCount = 0;
+    public float originalDistance = 0;
+    public float x, y;
 
     private float desiredTurnSpeed = Float.POSITIVE_INFINITY;
     private float maxTurnSpeed = Float.POSITIVE_INFINITY;
@@ -126,6 +132,9 @@ public class DifferentialFeedbackPilot implements Pilot, MoveProvider
 
     public void rotate(float angle, boolean immediateReturn)
     {
+        if(Math.abs(angle) < 5F)
+            return;
+
         // Reset orientation to known value
         startPose.getLocation().x = getPose().getX();
         startPose.getLocation().y = getPose().getY();
@@ -136,7 +145,6 @@ public class DifferentialFeedbackPilot implements Pilot, MoveProvider
         // Start turning
         oldLeftCount = leftMotor.getTachoCount();
         oldRightCount = rightMotor.getTachoCount();
-        targetDistance = Float.NaN;
         targetAngle = startPose.getHeading() + angle;
         while(immediateReturn == false && isMoving() == true)
             Thread.yield();
@@ -154,7 +162,6 @@ public class DifferentialFeedbackPilot implements Pilot, MoveProvider
         // Start moving
         oldLeftCount = leftMotor.getTachoCount();
         oldRightCount = rightMotor.getTachoCount();
-        targetAngle = Float.NaN;
         oldDistance = totalDistanceTravelled;
         targetDistance = distance;
         while(immediateReturn == false && isMoving() == true)
@@ -305,7 +312,9 @@ public class DifferentialFeedbackPilot implements Pilot, MoveProvider
 
     private float getDistance()
     {
-        return (float)Math.sqrt(Math.pow(getPose().getX() - startPose.getX(), 2) + Math.pow(getPose().getY() - startPose.getY(), 2));
+        x = getPose().getX();
+        y = getPose().getY();
+        return (float)Math.sqrt(Math.pow(x - startPose.getX(), 2) + Math.pow(y - startPose.getY(), 2));
     }
 
     private class Regulator extends Thread
@@ -324,21 +333,23 @@ public class DifferentialFeedbackPilot implements Pilot, MoveProvider
                 if(Float.isNaN(targetAngle) == false)
                 {
                     float lastHeading = getPose().getHeading();
-                    float startTime = System.currentTimeMillis();
+                    long lastSample = System.currentTimeMillis();
                     float degreesToTurn = targetAngle - lastHeading;
+                    velocity = 1; // for the while loop
                     do
                     {
                         // Read values
                         Thread.yield();
-                        float now = System.currentTimeMillis();
-                        if(now - startTime < 1)
+                        long now = System.currentTimeMillis();
+                        if(now - lastSample < 1)
                             continue;
                         thisHeading = getPose().getHeading();
-                        velocity = (thisHeading - lastHeading) / (now - startTime) / 1000F;
-                        int leftCount = leftMotor.getTachoCount();
-                        int rightCount = rightMotor.getTachoCount();
+                        velocity = (thisHeading - lastHeading) / (now - lastSample) / 1000F;
+                        leftCount = leftMotor.getTachoCount();
+                        rightCount = rightMotor.getTachoCount();
                         float degreesTurned = thisHeading - startPose.getHeading();
                         int rotationsMade = leftCount - oldLeftCount;
+                        lastSample = now;
 
                         // Calculate number of rotations remaining
                         if(degreesTurned != 0 && rotationsMade != 0)
@@ -350,38 +361,42 @@ public class DifferentialFeedbackPilot implements Pilot, MoveProvider
                             rotationsLeft = degreesLeft > 0 ? Integer.MAX_VALUE : Integer.MIN_VALUE;
                         else
                             rotationsLeft = (int)(degreesLeft / anglePerDeg);
-                        if(Math.abs(rotationsLeft) <= 50)
+                        if(Math.abs(rotationsLeft) <= 90)
                             continue; // Leave the last few rotations to the motor regulator
 
                         // Actuate motors
-                        leftMotor.rotateTo(leftCount - (int)rotationsLeft, true);
-                        rightMotor.rotateTo(rightCount + (int)rotationsLeft, true);
+                        leftTarget = leftCount - (int)rotationsLeft;
+                        rightTarget = rightCount + (int)rotationsLeft;
+                        leftMotor.rotateTo(leftTarget, true);
+                        rightMotor.rotateTo(rightTarget, true);
                     }
                     while(leftMotor.isMoving() || rightMotor.isMoving() || Math.abs(velocity) > 1F);
                     targetAngle = Float.NaN;
-                    targetDistance = Float.NaN;
                     NotifyListeners(false);
                 }
 
                 // Regulate movement
                 if(Float.isNaN(targetDistance) == false)
                 {
-                    float lastDistance = getDistance();
+                    originalDistance = getDistance();
+                    float lastDistance = originalDistance;
                     thisDistance = lastDistance;
-                    float startTime = System.currentTimeMillis();
+                    long lastSample = System.currentTimeMillis();
+                    velocity = 1; // for the while loop
                     do
                     {
                         // Read values
                         Thread.yield();
-                        float now = System.currentTimeMillis();
-                        if(now - startTime < 1)
+                        long now = System.currentTimeMillis();
+                        if(now - lastSample < 1)
                             continue;
                         thisDistance = getDistance() * Math.signum(targetDistance);
-                        velocity = (thisDistance - lastDistance) / (now - startTime) / 1000F;
-                        int leftCount = leftMotor.getTachoCount();
-                        int rightCount = rightMotor.getTachoCount();
+                        velocity = (thisDistance - lastDistance) / (now - lastSample) / 1000F;
+                        leftCount = leftMotor.getTachoCount();
+                        rightCount = rightMotor.getTachoCount();
                         int rotationsMade = leftCount - oldLeftCount;
                         totalDistanceTravelled = oldDistance + thisDistance;
+                        lastSample = now;
 
                         // Calculate number of rotations remaining
                         if(thisDistance != 0 && rotationsMade != 0)
@@ -393,15 +408,16 @@ public class DifferentialFeedbackPilot implements Pilot, MoveProvider
                             rotationsLeft = distanceLeft > 0 ? Integer.MAX_VALUE : Integer.MIN_VALUE;
                         else
                             rotationsLeft = (int)(distanceLeft / cmPerDeg);
-                        if(Math.abs(rotationsLeft) <= 50)
+                        if(Math.abs(rotationsLeft) <= 90)
                             continue; // Leave the last few rotations to the motor regulator
 
                         // Actuate motors
-                        leftMotor.rotateTo(leftCount + (int)rotationsLeft, true);
-                        rightMotor.rotateTo(rightCount + (int)rotationsLeft, true);
+                        leftTarget = leftCount + (int)rotationsLeft;
+                        rightTarget = rightCount + (int)rotationsLeft;
+                        leftMotor.rotateTo(leftTarget, true);
+                        rightMotor.rotateTo(rightTarget, true);
                     }
                     while(leftMotor.isMoving() || rightMotor.isMoving() || Math.abs(velocity) > 1F);
-                    targetAngle = Float.NaN;
                     targetDistance = Float.NaN;
                     NotifyListeners(false);
                 }

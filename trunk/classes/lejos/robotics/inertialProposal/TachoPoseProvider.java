@@ -83,15 +83,11 @@ public class TachoPoseProvider implements PoseProvider, MoveListener
         @Override
         public void run()
         {
-            long lastUpdate = System.currentTimeMillis();
             lejos.robotics.Move cm;
             while (true)
             {
                 // Check time
                 Thread.yield();
-                long now = System.currentTimeMillis();
-                if(now - lastUpdate == 0)
-                    continue;
                 cm = CurrentMove();
                 if(cm == null)
                     continue;
@@ -101,11 +97,7 @@ public class TachoPoseProvider implements PoseProvider, MoveListener
                     WaitRotateComplete();
                 if(cm.getMoveType() == MoveType.TRAVEL)
                     WaitTravelComplete();
-                
-                // Move on
-                lastUpdate = now;
             }
-
         }
 
         private void WaitRotateComplete()
@@ -132,22 +124,21 @@ public class TachoPoseProvider implements PoseProvider, MoveListener
 
         private void WaitTravelComplete()
         {
-            Point dir = new Point(0, 0);
-            int lastLeftCount = 0;
-            lastLeftCount = leftMotor.getTachoCount();
             lejos.robotics.Move cm = CurrentMove();
+            leftMotor.resetTachoCount();
+            rightMotor.resetTachoCount();
+            Point dir = new Point(0, 0);
+            dir.x = (float)Math.cos(Math.toRadians(pose.getHeading()));
+            dir.y = -(float)Math.sin(Math.toRadians(pose.getHeading()));
+            int lastLeftCount = 0;
             while(cm != null && cm.getMoveType() == MoveType.TRAVEL)
             {
                 // Read tacho's
                 int leftCount = leftMotor.getTachoCount();
                 long tachoDiff = leftCount - lastLeftCount;
                 float deltaDist = (float)tachoDiff / 360F * wheelDiameter * (float)Math.PI;
-
-                // Update position
-                dir.x = (float)Math.cos(Math.toRadians(pose.getHeading())) * deltaDist;
-                dir.y = -(float)Math.sin(Math.toRadians(pose.getHeading())) * deltaDist;
-                pose.getLocation().x += dir.x;
-                pose.getLocation().y += dir.y;
+                pose.getLocation().x += dir.x * deltaDist;
+                pose.getLocation().y += dir.y * deltaDist;
 
                 // Move on
                 lastLeftCount = leftCount;
