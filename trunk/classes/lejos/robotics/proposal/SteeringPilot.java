@@ -1,9 +1,9 @@
 package lejos.robotics.proposal;
 
 import lejos.nxt.Motor;
-import lejos.robotics.MotorEvent;
 import lejos.robotics.Move;
 import lejos.robotics.MoveListener;
+import lejos.robotics.TachoMotor;
 import lejos.robotics.TachoMotorListener;;
 
 
@@ -126,7 +126,8 @@ public class SteeringPilot implements ArcMoveController, TachoMotorListener {
 		return arc(turnRadius, Float.NEGATIVE_INFINITY, true);
 	}
 	
-	public boolean arc(float turnRadius, float arcAngle) {
+	public boolean arc(float turnRadius, float arcAngle) throws IllegalArgumentException {
+		if(turnRadius == 0) throw new IllegalArgumentException("SteeringPilot can't do zero radius turns."); // Can't turn in one spot
 		return arc(turnRadius, arcAngle, false);
 	}
 
@@ -143,9 +144,9 @@ public class SteeringPilot implements ArcMoveController, TachoMotorListener {
 		return travelArc(turnRadius, distance, false);
 	}
 
-	public boolean travelArc(float turnRadius, float distance, boolean immediateReturn) {
+	public boolean travelArc(float turnRadius, float distance, boolean immediateReturn) throws IllegalArgumentException {
 		
-		if(turnRadius < this.getMinRadius()) return false;
+		if(turnRadius < this.getMinRadius()) throw new IllegalArgumentException("Turn radius can't be less than " + this.getMinRadius());
 		
 		// 1. Check if moving. If so, call stop.
 		if(isMoving) stop();
@@ -245,9 +246,9 @@ public class SteeringPilot implements ArcMoveController, TachoMotorListener {
 		return null;
 	}
 
-	public void rotationStarted(MotorEvent e) {
+	public void rotationStarted(TachoMotor motor, int tachoCount, long timeStamp) {
 		isMoving = true;
-		oldTacho = e.getTachoCount();
+		oldTacho = tachoCount;
 		
 		// Notify MoveListener
 		if(listener != null) {
@@ -255,9 +256,9 @@ public class SteeringPilot implements ArcMoveController, TachoMotorListener {
 		}
 	}
 
-	public void rotationStopped(MotorEvent e) {
+	public void rotationStopped(TachoMotor motor, int tachoCount, long timeStamp) {
 		isMoving = false;
-		int tachoTotal = e.getTachoCount() - oldTacho ;
+		int tachoTotal = tachoCount - oldTacho ;
 		float distance = (float)((tachoTotal/360f) * Math.PI * driveWheelDiameter);
 		if(reverseDriveMotor) distance = -distance;
 		

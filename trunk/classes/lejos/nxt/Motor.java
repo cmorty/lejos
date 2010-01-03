@@ -1,8 +1,5 @@
 package lejos.nxt;
 
-
-    
-import lejos.robotics.MotorEvent;
 import lejos.robotics.TachoMotor;
 import lejos.robotics.TachoMotorListener;
 import lejos.util.Delay;
@@ -237,11 +234,11 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
          if(_mode == STOP || _mode == FLOAT)
          {
             _port.controlMotor(0, _mode);
-            if(listener != null) listener.rotationStopped(new MotorEvent(this, getTachoCount()));
+            if(listener != null) listener.rotationStopped(this, getTachoCount(), System.currentTimeMillis());
             return;
          }
          else _stalled = false; // new motor motion has started
-         if(listener != null) listener.rotationStarted(new MotorEvent(this, getTachoCount()));
+         if(listener != null) listener.rotationStarted(this, getTachoCount(), System.currentTimeMillis());
          _port.controlMotor(_power, _mode);
          if(_regulate)regulator.reset();
       }
@@ -480,7 +477,7 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
          }
          _rotating = false;
          setPower(calcPower(_speed));
-         if(listener != null) listener.rotationStopped(new MotorEvent(Motor.this, getTachoCount()));
+         if(listener != null) listener.rotationStopped(Motor.this, getTachoCount(), System.currentTimeMillis());
       }
 
       /**
