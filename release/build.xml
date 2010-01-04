@@ -25,7 +25,7 @@
 	<property name="release.3rdparty.libs" value="${release.nxj}/3rdparty/lib"/>
 	<property name="plat.unix.src" value="${src}/nxtvm/platform/unix"/>
 	<property name="plat.nxt.src" value="${src}/nxtvm/platform/nxt"/>
-
+	
 	<!-- cpptasks task & type def -->
 	<taskdef resource="cpptasks.tasks">
 	  <classpath>
@@ -112,10 +112,10 @@
   	
 	<!-- copies the lejos sources -->
 	<target name="lejos.sources" description="copies the lejos sources" 
-		depends="subproject.classes.build,subproject.pccomms.build,subproject.pctools.build,subproject.jtools.build,subproject.startup.build">
-		<copy todir="${release.projects}">
-			<fileset dir="${javasrc}">
-        		<include name="classes/**"/>
+		depends="subproject.classes.build,subproject.pccomms.build,subproject.jtools.build,subproject.pctools.build,subproject.startup.build">
+		       <copy todir="${release.projects}">
+		          <fileset dir="${javasrc}">
+		               <include name="classes/**"/> 
       			<exclude name="classes/**/.svn"/>
       			<exclude name="classes/.settings/**"/>
       			<exclude name="classes/build/**"/>
@@ -335,7 +335,7 @@
 	<!-- copies the example project -->
 	<target name="example" depends="create.folders" description="copies the example project">
 		<copy todir="${release.projects}/org.lejos.example">
-      		<fileset dir="${lejos.root}/org.lejos.example">
+      		<fileset dir="${lejos.root}/example">
       			<exclude name="**/*.nxj"/>
       			<exclude name="**/.svn"/>
       			<exclude name=".settings/**"/>
