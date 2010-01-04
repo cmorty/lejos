@@ -16,7 +16,7 @@ public interface TachoMotorListener {
 	 * Called when the motor starts rotating.
 	 * @param event
 	 */
-	public void rotationStarted(TachoMotor motor, int tachoCount, long timeStamp);
+	public void rotationStarted(TachoMotor motor,int tachoCount, long timeStamp);
 	
 	/**
 	 * Called when the motor stops rotating. This includes both Motor.stop() which locks the shaft, and
@@ -24,5 +24,5 @@ public interface TachoMotorListener {
 	 * the tachomoter reading will continue changing after notification.
 	 * @param event
 	 */
-	public void rotationStopped(TachoMotor motor, int tachoCount, long timeStamp);
+	public void rotationStopped(TachoMotor motor,int tachoCount, long timeStamp);
 }
