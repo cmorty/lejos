@@ -21,7 +21,9 @@ import lejos.util.Delay;
  * They can be switched off/on by the methods regulateSpeed() and smoothAcceleration().
  * The actual maximum speed of the motor depends on battery voltage and load. With no load, the maximum is about 100 times the voltage.  
  * If you need the motor to hold its position and you find that still moves after stop() is called , you can use the lock() method.
- *  
+ *  <b>Stall detection</b> If a stall is detected, the motor will stop.  If this
+ * occurrs while the <code>rotate(angle) </code> or <code> rotateTo(angle)<</code> method
+ * is running,  a <code>MotorStalledException</code> will be thrown.
  * <p>
  * Example:<p>
  * <code><pre>
@@ -97,6 +99,7 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
    private int _brakePower = 20;
    private int _lockPower = 30;
    private boolean _stalled = false;//set by regulator when stall is detected
+   private int _stallLimit = 1200;
    private boolean _newOperation = false;// used by regulator.stopAtLimit
   private boolean _rotationPending = false;//used to inform listener when immidiate return rotation stops
   private Motor _thisMotor = this; // alias  for use by regulator
@@ -296,7 +299,7 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
       {
         if(_stalled)throw new MotorStalledException(getName()+" stalled ");
         Thread.yield();
-      }      while(_rotating) Thread.yield();
+      } 
    }
 
    /**
@@ -397,7 +400,8 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
                      }
                   } //end if ramp up
                   else 	error = (elapsed*_speed/100)- 10*absA;// no ramp
-                   if(error > 400 )// 40 degrees 
+                   if(error > _stallLimit )
+
                   {
                     _stalled = true;
                     _thisMotor.stop();
@@ -423,45 +427,45 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
       {  
          _mode = STOP; // stop motor
          _port.controlMotor (0, STOP);
-         int e0 = 0;// former error
-         e0 = angleAtStop();//returns when motor speed < 100 deg/sec
-         e0 -= _limitAngle;
+         int err0 = 0;// former error
+         err0 = angleAtStop();//returns when motor speed < 100 deg/sec
+         err0 -= _limitAngle;
          int k = 0; // time within limit angle +=1
          int t1 = 0; // time since change in tacho count
-         int error = 0; 
+         int err = 0;
          int pwr = _brakePower;// local power
          // exit within +-1  for 40 ms  or motor mathod is called
          while ( k < 40 && !Motor.this._newOperation)
          {
-            error = _limitAngle - getTachoCount();
-            if (error == e0)  // no change in tacho count
+            err = _limitAngle - getTachoCount();
+            if (err == err0)  // no change in tacho count
             {  
                t1++;
                if( t1 > 20)// speed < 50 deg/sec so increase brake power
                   {
-                  pwr += 10;
-                  if(pwr > 120)
+                  pwr += 10; // increase power  if outside limit angle +- 1 deg
+                  if(pwr > 120)  // chekd for stall
                   {
                     _stalled = true;
                     _thisMotor.stop();
                   }
                   t1 = 0;
                   }                           
-               // don't let motor stall if outside limit angle +- 1 deg
+
             }
             else // tacho count changed
             {
                t1 = 0;
-               if( error == 0) pwr = _brakePower;  
-               e0 = error; 
+               if( err == 0) pwr = _brakePower;
+               err0 = err;
             }
-            if(error < -1)
+            if(err < -1)
             {
                _mode = BACKWARD;
                setPower(pwr);
                k = 0;
             }
-            else if (error > 1 )
+            else if (err > 1 )
             {
                _mode = FORWARD ;
                setPower(pwr);
@@ -493,7 +497,7 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
             _port.controlMotor(0,STOP);
             Delay.msDelay(10);
             a = getTachoCount();
-            turning = a != a0; ;
+            turning = a != a0; 
             a0 = a;        
          }
          return	a;
@@ -584,8 +588,7 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
       float ratio =0.06f; // overshoot/speed  - magic number from experiments  .064
       if(!_regulate)ratio = -0.173f + 0.029f * _voltage;// more magic numbers - fit to data
       if (angle < 0 ) angle = -angle;
-//      float endRamp = _speed*0.15f;  //angle at end of ramp up to speed
-       float endRamp = _speed*0.12f;
+       float endRamp = _speed*0.12f;//angle at end of ramp up to speed
      if( angle < endRamp)
      { // more complicated calculation in this case
       float a  = angle/endRamp;// normalized angle
@@ -617,7 +620,7 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
    private void timedOut()
    {
       int angle = getTachoCount();
-      _actualSpeed = 10*(angle - _lastTacho);
+      _actualSpeed = _direction*10*(angle - _lastTacho);
       _lastTacho = angle;
       _voltage = Battery.getVoltage(); 
    }
