@@ -9,17 +9,14 @@ import lejos.robotics.Move;
 
 /**
  * Any class that wants to be updated automatically by a MoveProvider should
- * implement this interface/
+ * implement this interface. Both movementStarted() and movementStopped() also return 
+ * a MoveProvider object. In a scenario where one MoveListener GUI is watching movements from
+ * multiple MovementProviders, it might want to draw one robot as blue, one as green, one as red, etc..
+ * The MoveProvider allows it to differentiate the MovementProviders from one another.
  * 
  * @author nxj team
  */
 public interface MoveListener {
-	/* TODO: BB in my opinion movementStarted() and movementStopped() should also return 
-	 *  a MoveProvider object. In a scenario where one MoveListener GUI is watching movements from
-	 *  multiple MovementProviders, it might want to draw one robot as blue, one as green, one as red, etc..
-	 *  So it needs to be able to differentiate the different MovementProviders from one another.
-	 *  If it just gets a Move object it doesn't know who reported it. 
-	 */
 	
 	/**
 	 * Called when a Move Provider starts a move
@@ -29,10 +26,8 @@ public interface MoveListener {
 	 */
 	public void moveStarted(Move event, MoveProvider mp);
 	
-	//TODO: Change to moveStopped/moveStarted
-	
 	/**
-	 * Called by the movementr provider when a move stops
+	 * Called by the movement provider when a move stops
 	 * 
 	 * @param event the movement
 	 * @param mp movement provider

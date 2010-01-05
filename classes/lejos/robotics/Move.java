@@ -70,14 +70,20 @@ public class Move {
 	 * <li>(radius NOT 0) AND (angle NOT 0) --> ARC
 	 * <li>(radius = 0) AND (angle NOT 0) --> ROTATE
 	 * <li>(radius = 0) AND (angle = 0) --> STOP
-	 * <li>(radius = +infinity) AND (angle = 0) --> TRAVEL
-	 * <li>NOTE: can't calculate distance based only on angle and radius, therefore distance can't be calculated and will equal NaN)
+	 * <li>(radius = +infinity) AND (angle = 0) --> TRAVEL (throws IllegalArgumentException)
+	 * <li>NOTE: When radius is infinity, it is impossible to calculate distance (NaN) therefore this throws exception.
 	 * @param type
 	 * @param isMoving
 	 * @param angle
 	 * @param turnRadius
+	 * 
+	 * @throws IllegalArgumentException when turnRadius == Float.POSITIVE_INFINITY or Float.NEGATIVE_INFINITY
 	 */
-	public Move(boolean isMoving, float angle, float turnRadius) {
+	public Move(boolean isMoving, float angle, float turnRadius) throws IllegalArgumentException {
+		// TODO: Sven is of the mindset that it should just calculate NaN and then the exception will be thrown in some
+		// other part of the program, rather than explicitly disallowing infinity. See his Jan 4, 2009 email.
+		if(turnRadius == Float.POSITIVE_INFINITY|turnRadius == Float.NEGATIVE_INFINITY) 
+			throw new IllegalArgumentException("Can't use infinity in Move(boolean, float, float) constructor.");
 		this.distanceTraveled = Move.convertAngleToDistance(angle, turnRadius);
 		this.moveType = Move.calcMoveType(this.distanceTraveled, angle);
 		this.angleTurned = angle;

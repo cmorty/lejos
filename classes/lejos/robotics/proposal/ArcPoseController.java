@@ -64,9 +64,9 @@ public class ArcPoseController implements PoseController {
 	   		// TODO: What the heck happened to the rotateTo() method? Would make this so much easier.
 	   		float turnAngle2 = destination.getHeading() - poseProvider.getPose().getHeading();
 	   		while (turnAngle2 < -180)turnAngle += 360;
-	   	    System.out.println("BUGSTOP"); // TODO Seems to stop it from freezing bug?
+	   	    System.out.println("BUGSTOPPER"); // TODO Roger's RotatePilot has bug that stops here? Seems to stop it from freezing bug?
 	   	    while (turnAngle2 > 180) turnAngle -= 360;
-	   	    System.out.println("BUGSTOP"); // TODO Seems to stop it from freezing bug?
+	   	    System.out.println("BUGSTOPPER"); // TODO Roger's RotatePilot has bug that stops here? Seems to stop it from freezing bug?
 	   	    ((RotateMoveController) pilot).rotate(turnAngle2);
 	   	} else {
 		
