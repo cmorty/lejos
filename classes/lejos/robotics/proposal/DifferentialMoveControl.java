@@ -46,7 +46,7 @@ import lejos.robotics.*;
  *
  **/
 public class DifferentialMoveControl   implements
-  TachoMotorListener1, MoveProvider1, ArcRotateMoveController
+  TachoMotorListener, MoveProvider, ArcRotateMoveController
 {
 
   /**
@@ -66,7 +66,7 @@ public class DifferentialMoveControl   implements
    *            The right Motor (e.g., Motor.A).
    */
   public DifferentialMoveControl(final float wheelDiameter, final float trackWidth,
-          final TachoMotor1 leftMotor, final TachoMotor1 rightMotor)
+          final TachoMotor leftMotor, final TachoMotor rightMotor)
   {
     this(wheelDiameter, trackWidth, leftMotor, rightMotor, false);
   }
@@ -90,7 +90,7 @@ public class DifferentialMoveControl   implements
    *            running backward.
    */
   public DifferentialMoveControl(final float wheelDiameter, final float trackWidth,
-          final TachoMotor1 leftMotor, final TachoMotor1 rightMotor,
+          final TachoMotor leftMotor, final TachoMotor rightMotor,
           final boolean reverse)
   {
     this(wheelDiameter, wheelDiameter, trackWidth, leftMotor, rightMotor,
@@ -131,7 +131,7 @@ public class DifferentialMoveControl   implements
    */
   public DifferentialMoveControl(final float leftWheelDiameter,
           final float rightWheelDiameter, final float trackWidth,
-          final TachoMotor1 leftMotor, final TachoMotor1 rightMotor,
+          final TachoMotor leftMotor, final TachoMotor rightMotor,
           final boolean reverse)
   {
     _left = leftMotor;
@@ -153,7 +153,7 @@ public class DifferentialMoveControl   implements
  * adds the pose to update
  * @param aPose
  */
-  public void addPose(Pose1 aPose)
+  public void addPose(Pose aPose)
   {
     _pose = aPose;
   }
@@ -162,7 +162,7 @@ public class DifferentialMoveControl   implements
    * Returns the left motor.
    * @return left motor.
    */
-  public TachoMotor1 getLeft()
+  public TachoMotor getLeft()
   {
     return _left;
   }
@@ -171,7 +171,7 @@ public class DifferentialMoveControl   implements
    * returns the right motor.
    * @return right motor.
    */
-  public TachoMotor1 getRight()
+  public TachoMotor getRight()
   {
     return _right;
   }
@@ -461,7 +461,9 @@ public float getTurnMaxSpeed() { return getMaxRotateSpeed();}
   {
     if (isMoving())movementStop();
     reset();
+    /* TODO: Pose doesn't have this method
     if(_pose !=null) _pose.movementStarted();
+    */
     _alert = alert;
     if(_moveListener !=null)_moveListener.moveStarted(null, this);
   }
@@ -634,13 +636,13 @@ public float getTurnMaxSpeed() { return getMaxRotateSpeed();}
        updatePose();
     }
 /**
- * called by TachoMotor1 when a rotation. that returned immediately. is complete
+ * called by TachoMotor when a rotation. that returned immediately. is complete
  * calls movementStop()
  * @param motor
  * @param count
  * @param ts
  */
-  public synchronized void rotationStopped(TachoMotor1 motor,int count, long ts )
+  public synchronized void rotationStopped(TachoMotor motor,int count, long ts )
   {
      if(_alert) movementStop(); //a motor has completed an immmediate return
   }
@@ -654,8 +656,10 @@ public float getTurnMaxSpeed() { return getMaxRotateSpeed();}
   {
     if (_pose != null)
     {
+    	/* TODO: Pose doesn't have this method
       _pose.update(getMovementIncrement(), getAngleIncrement(),
               isMoving());
+              */
     }
     if(_moveListener != null)
     {
@@ -708,23 +712,23 @@ public float getMinRadius( ){return _turnRadius;}
  /**
 	 * Left motor.
 	 */
-	protected final TachoMotor1 _left;
+	protected final TachoMotor _left;
 
 	/**
 	 * Right motor.
 	 */
-	protected final TachoMotor1 _right;
+	protected final TachoMotor _right;
 
     /**
      * The motor at the inside of the turn. set by steer(turnRate)
      * used by other steer methodsl
      */
-    protected TachoMotor1 _inside;
+    protected TachoMotor _inside;
      /**
      * The motor at the outside of the turn. set by steer(turnRate)
      * used by other steer methodsl
      */
-    protected TachoMotor1 _outside;
+    protected TachoMotor _outside;
     /**
      * ratio of inside/outside motor speeds
      * set by steer(turnRate)
@@ -799,7 +803,7 @@ protected boolean _alert = false;
    * a pose listens to this class
    */
 
-  Pose1 _pose;
+  Pose _pose;
   MoveListener _moveListener;
    Move.MoveType _type;
 

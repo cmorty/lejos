@@ -687,8 +687,10 @@ public class DifferentialPilot implements
 
   protected void checkStall()
   {
+	  /* TODO: isStalled() problem here
     while (isMoving() && !_left.isStalled()) Thread.yield();
     if (_left.isStalled())  throw new Motor.MotorStalledException("Left Motor stalled ");
+    */
   }
 
   /**
@@ -699,8 +701,10 @@ public class DifferentialPilot implements
   {
     if (_listener != null)
     {
+    	/* TODO: setValues() problem here
       move.setValues(_type, getMovementIncrement(), getAngleIncrement(), isMoving());
       _listener.moveStopped(move, this);
+      */
     }
   }
 
@@ -736,8 +740,10 @@ public class DifferentialPilot implements
     reset();
     if (_listener != null)
     {
+    	/* TODO: setValues() problem here
       move.setValues(_type, 0, 0, true);
       _listener.moveStarted(move, this);
+      */
     }
   }
 
@@ -788,7 +794,9 @@ public class DifferentialPilot implements
 
   public Move getMovement()
   {
+	  /* TODO: setValues() problem here
     move.setValues(_type, getMovementIncrement(), getAngleIncrement(), isMoving());
+    */
     return move;
   }
 

@@ -1,4 +1,4 @@
-package lejos.robotics.proposal;
+package lejos.robotics.inertialProposal;
 
 
 import lejos.geom.Point;
