@@ -1,7 +1,7 @@
 package lejos.nxt;
 
-import lejos.robotics.proposal.TachoMotor1;
-import lejos.robotics.proposal.TachoMotorListener1;
+import lejos.robotics.TachoMotor;
+import lejos.robotics.proposal.TachoMotorListener;
 import lejos.util.Delay;
 
 
@@ -40,7 +40,7 @@ import lejos.util.Delay;
  * </pre></code>
  * @author Roger Glassey revised 9 Feb 2008 - added lock() method. 
  */
-public class Motor1 extends BasicMotor implements TachoMotor1 // implements TimerListener
+public class Motor1 extends BasicMotor implements TachoMotor // implements TimerListener
 {   
 
    public TachoMotorPort _port;//** private
@@ -119,7 +119,7 @@ public class Motor1 extends BasicMotor implements TachoMotor1 // implements Time
    /**
     * TODO: Currently only accepts one listener. We could expand this to multiple if needed.
     */
-   private TachoMotorListener1 listener = null;
+   private TachoMotorListener listener = null;
    
    /**
     * Use this constructor to assign a variable of type motor connected to a particular port.
@@ -141,7 +141,7 @@ public class Motor1 extends BasicMotor implements TachoMotor1 // implements Time
     * more than one it will replace the previous listener.
     * @param listener The TachoMotorListener1 object that will be notified of motor events.
     */
-   public void addListener(TachoMotorListener1 listener) {
+   public void addListener(TachoMotorListener listener) {
 	   this.listener = listener;
    }
 
@@ -656,6 +656,11 @@ public class Motor1 extends BasicMotor implements TachoMotor1 // implements Time
      super(message);
     }
   }
+
+public void addListener(lejos.robotics.TachoMotorListener listener) {
+	// TODO Auto-generated method stub
+	
+}
 }
 
 
