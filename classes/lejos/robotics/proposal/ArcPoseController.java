@@ -3,7 +3,6 @@ package lejos.robotics.proposal;
 import java.awt.geom.Point2D;
 
 import lejos.geom.Point;
-import lejos.nxt.Button;
 import lejos.robotics.Move;
 import lejos.robotics.Pose;
 import lejos.robotics.localization.PoseProvider;
