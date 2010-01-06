@@ -1,11 +1,10 @@
 package lejos.robotics.proposal;
 
-import java.util.ArrayList;
-import lejos.nxt.Battery;
-import lejos.robotics.MoveListener;
-import lejos.robotics.Move;
-import lejos.robotics.TachoMotor;
 
+import lejos.robotics.proposal.*;
+import lejos.nxt.*;
+import lejos.robotics.*;
+import lejos.robotics.Move;
 /*
  * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
  * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
@@ -20,38 +19,39 @@ import lejos.robotics.TachoMotor;
  * one spot).<br>
  * It can be used with robots that have reversed motor design: the robot moves
  * in the direction opposite to the the direction of motor rotation. Uses the
- * TachoMotor class, which regulates motor speed using the NXT motor's built in
+ * TachoMotor1 class, which regulates motor speed using the NXT motor's built in
  * tachometer.<br>
- * It automatically updates the Pose of a robot if the Pose calls the
+ * It automatically updates the Pose1 of a robot if the Pose1 calls the
  * addMoveListener() method on this class.
  * Some methods optionally return immediately so the thread that called the
  * method can monitor sensors, get current pose, and call stop() if necessary.<br>
  *  Example:
  * <p>
  * <code><pre>
- * PdifferentialPilot pilot = new DifferentialPilot(2.1f, 4.4f, Motor.A, Motor.C, true);  // parameters in inches
- * pilot.setRobotSpeed(10);                                           // inches per second
- * pilot.travel(12);                                                  // inches
- * pilot.rotate(-90);                                                 // degree clockwise
- * pilot.travel(-12,true);
- * while(pilot.isMoving())Thread.yield();
- * pilot.rotate(-90);
- * pilot.rotateTo(270);
- * pilot.steer(-50,180,true);
- * while(pilot.isMoving())Thread.yield();
- * pilot.steer(100);
+ * PdifferentialMoveControl controller = new DifferentialPilot(2.1f, 4.4f, Motor.A, Motor.C, true);  // parameters in inches
+ * controller.setRobotSpeed(10);                                           // inches per second
+ * controller.travel(12);                                                  // inches
+ * controller.rotate(-90);                                                 // degree clockwise
+ * controller.travel(-12,true);
+ * while(controller.isMoving())Thread.yield();
+ * controller.rotate(-90);
+ * controller.rotateTo(270);
+ * controller.steer(-50,180,true);
+ * while(controller.isMoving())Thread.yield();
+ * controller.steer(100);
  * try{Thread.sleep(1000);}
  * catch(InterruptedException e){}
  * pilot.stop();
  * </pre></code>
  * </p>
- * 
+ *
  **/
-public class DifferentialPilot implements ArcRotateMoveController
+public class DifferentialPilot implements
+        TachoMotorListener, MoveProvider, ArcRotateMoveController
 {
 
   /**
-   * Allocates a TachoPilot object, and sets the physical parameters of the
+   * Allocates a DifferentialPilot object, and sets the physical parameters of the
    * NXT robot.<br>
    * Assumes Motor.forward() causes the robot to move forward.
    *
@@ -73,7 +73,7 @@ public class DifferentialPilot implements ArcRotateMoveController
   }
 
   /**
-   * Allocates a TachoPilot object, and sets the physical parameters of the
+   * Allocates a DifferentialPilot object, and sets the physical parameters of the
    * NXT robot.<br>
    *
    * @param wheelDiameter
@@ -99,7 +99,7 @@ public class DifferentialPilot implements ArcRotateMoveController
   }
 
   /**
-   * Allocates a TachoPilot object, and sets the physical parameters of the
+   * Allocates a DifferentialPilot object, and sets the physical parameters of the
    * NXT robot.<br>
    *
    * @param leftWheelDiameter
@@ -147,17 +147,12 @@ public class DifferentialPilot implements ArcRotateMoveController
     // both
     _trackWidth = trackWidth;
     _parity = (byte) (reverse ? -1 : 1);
-    setSpeed(360);
-    monitor.setDaemon(true);
-    monitor.start();
-  }
-
-  public void addMoveListener(MoveListener aListener)
-  {
-    listeners.add(aListener);
+    setTravelSpeed(.8f * getMaxTravelSpeed());
+    setRotateSpeed(.8f * getMaxRotateSpeed());
   }
 
   /**
+   * Returns the left motor.
    * @return left motor.
    */
   public TachoMotor getLeft()
@@ -166,6 +161,7 @@ public class DifferentialPilot implements ArcRotateMoveController
   }
 
   /**
+   * returns the right motor.
    * @return right motor.
    */
   public TachoMotor getRight()
@@ -174,6 +170,7 @@ public class DifferentialPilot implements ArcRotateMoveController
   }
 
   /**
+   * Returnsthe tachoCount of the left motor
    * @return tachoCount of left motor. Positive value means motor has moved
    *         the robot forward.
    */
@@ -183,6 +180,7 @@ public class DifferentialPilot implements ArcRotateMoveController
   }
 
   /**
+   * Returns the tachoCount of the right motor
    * @return tachoCount of the right motor. Positive value means motor has
    *         moved the robot forward.
    */
@@ -192,6 +190,7 @@ public class DifferentialPilot implements ArcRotateMoveController
   }
 
   /**
+   * Returns the actual speed of the left motor
    * @return actual speed of left motor in degrees per second. A negative
    *         value if motor is rotating backwards. Updated every 100 ms.
    **/
@@ -201,6 +200,7 @@ public class DifferentialPilot implements ArcRotateMoveController
   }
 
   /**
+   * Returns the actual speed of right motor
    * @return actual speed of right motor in degrees per second. A negative
    *         value if motor is rotating backwards. Updated every 100 ms.
    **/
@@ -210,6 +210,7 @@ public class DifferentialPilot implements ArcRotateMoveController
   }
 
   /**
+   * Returns the ratio of motor revolutions per 360 degree rotation of the robot
    * @return ratio of motor revolutions per 360 degree rotation of the robot.
    *         If your robot has wheels with different size, it is the average.
    */
@@ -218,27 +219,8 @@ public class DifferentialPilot implements ArcRotateMoveController
     return (_leftTurnRatio + _rightTurnRatio) / 2.0f;
   }
 
-  /**
-   * Sets speed of both motors, as well as moveSpeed and turnSpeed. Only use
-   * if your wheels have the same size.
-   *
-   * @param speed
-   *            The wanted speed in degrees per second.
-   */
-  public void setSpeed(final int speed)
+  private void setSpeed(final int leftSpeed, final int rightSpeed)
   {
-    _motorSpeed = speed;
-    _robotMoveSpeed = speed / Math.max(_leftDegPerDistance, _rightDegPerDistance);
-    _robotTurnSpeed = speed / Math.max(_leftTurnRatio, _rightTurnRatio);
-    setSpeed(speed, speed);
-  }
-
-  protected void setSpeed(final int leftSpeed, final int rightSpeed)
-  {
-    _left.regulateSpeed(_regulating);
-    _left.smoothAcceleration(!isMoving());
-    _right.regulateSpeed(_regulating);
-    _right.smoothAcceleration(!isMoving());
     _left.setSpeed(leftSpeed);
     _right.setSpeed(rightSpeed);
   }
@@ -246,99 +228,92 @@ public class DifferentialPilot implements ArcRotateMoveController
   /**
    * also sets _motorSpeed
    *
-   * @see lejos.robotics.navigation.Pilot#setMoveSpeed(float)
+   * @see lejos.robotics.navigation.Pilot#setTravelSpeed(float)
    */
-  public void setMoveSpeed(float speed)
+  public void setTravelSpeed(final float travelSpeed)
   {
-    _robotMoveSpeed = speed;
-    _motorSpeed = Math.round(0.5f * speed * (_leftDegPerDistance + _rightDegPerDistance));
-    setSpeed(Math.round(speed * _leftDegPerDistance), Math.round(speed * _rightDegPerDistance));
+    _robotTravelSpeed = travelSpeed;
+    _motorSpeed = Math.round(0.5f * travelSpeed * (_leftDegPerDistance + _rightDegPerDistance));
+    setSpeed(Math.round(travelSpeed * _leftDegPerDistance), Math.round(travelSpeed * _rightDegPerDistance));
   }
 
   /**
-   * @see lejos.robotics.navigation.Pilot#getMoveSpeed()
+   * @see lejos.robotics.navigation.Pilot#getTravelSpeed()
    */
+  public float getTravelSpeed()
+  {
+    return _robotTravelSpeed;
+  }
+
+  public float getMoveMaxSpeed()
+  {
+    return getMaxTravelSpeed();
+  }
+
   public float getMoveSpeed()
   {
-    return _robotMoveSpeed;
+    return getTravelSpeed();
+  }
+
+  public void setMoveSpeed(float s)
+  {
+    setTravelSpeed(s);
   }
 
   /**
-   * @see lejos.robotics.navigation.Pilot#getMoveMaxSpeed()
+   * @see lejos.robotics.navigation.Pilot#getTravelMaxSpeed()
    */
-  public float getMoveMaxSpeed()
+  public float getMaxTravelSpeed()
   {
     // it is generally assumed, that the maximum accurate speed of Motor is
     // 100 degree/second * Voltage
     return Battery.getVoltage() * 100.0f / Math.max(_leftDegPerDistance, _rightDegPerDistance);
-  // max degree/second divided by degree/unit = unit/second
+    // max degree/second divided by degree/unit = unit/second
   }
 
   /**
-   * @see lejos.robotics.navigation.Pilot#setTurnSpeed(float)
+   * sets the rotation speed of the vehicle, degrees per second
+   * @param rotateSpeed
    */
-  public void setTurnSpeed(float speed)
+  public void setRotateSpeed(float rotateSpeed)
   {
-    _robotTurnSpeed = speed;
-    setSpeed(Math.round(speed * _leftTurnRatio), Math.round(speed * _rightTurnRatio));
+    _robotRotateSpeed = rotateSpeed;
+    setSpeed(Math.round(rotateSpeed * _leftTurnRatio), Math.round(rotateSpeed * _rightTurnRatio));
   }
 
   /**
-   * @see lejos.robotics.navigation.Pilot#getTurnSpeed()
+   * @see lejos.robotics.navigation.Pilot#getRotateSpeed()
    */
-  public float getTurnSpeed()
+  public float getRotateSpeed()
   {
-    return _robotTurnSpeed;
+    return _robotRotateSpeed;
   }
 
   /**
-   * @see lejos.robotics.navigation.Pilot#getTurnMaxSpeed()
+   * @see lejos.robotics.navigation.Pilot#getRotateMaxSpeed()
    */
-  public float getTurnMaxSpeed()
+  public float getMaxRotateSpeed()
   {
-    // it is generally assumed, that the maximum accurate speed of Motor is
+    // it is generally assumed, that the maximum accurate speed of that can
+//    be reliably maintained Motor is
     // 100 degree/second * Voltage
     return Battery.getVoltage() * 100.0f / Math.max(_leftTurnRatio, _rightTurnRatio);
-  // max degree/second divided by degree/unit = unit/second
+    // max degree/second divided by degree/unit = unit/second
   }
 
-  /**
-   * @return true if the NXT robot is moving.
-   **/
-  public boolean isMoving()
+  public void setTurnSpeed(float s)
   {
-    return _left.isMoving() || _right.isMoving();
-//                ||_left.isRotating()||_right.isRotating();//ensure that motor.rotate() is complete
+    setRotateSpeed(s);
   }
 
-  /**
-   * @return distance traveled since last movement started.
-   **/
-  public float getTravelDistance()
+  public float getTurnSpeed()
   {
-    float left = _left.getTachoCount() / _leftDegPerDistance;
-    float right = _right.getTachoCount() / _rightDegPerDistance;
-    return _parity * (left + right) / 2.0f;
+    return getRotateSpeed();
   }
 
-  /**
-   * @return the angle of rotation of the robot since last started
-   *         tacho count;
-   */
-  public float getAngle()
+  public float getTurnMaxSpeed()
   {
-    float angle = _parity * ((_right.getTachoCount() / _rightTurnRatio) - (_left.getTachoCount() / _leftTurnRatio)) / 2.0f;
-    return angle;
-  }
-
-  /**
-   * Resets tacho count for both motors.
-   **/
-  public void reset()
-  {
-    _left.resetTachoCount();
-    _right.resetTachoCount();
-
+    return getMaxRotateSpeed();
   }
 
   /**
@@ -346,14 +321,16 @@ public class DifferentialPilot implements ArcRotateMoveController
    */
   public void forward()
   {
-    if(isMoving())stop();
-    _moveType = Move.MoveType.TRAVEL;
-    movementStart();
-    reset();
-    setSpeed(Math.round(_robotMoveSpeed * _leftDegPerDistance), Math.round(_robotMoveSpeed * _rightDegPerDistance));
-    
-    if (_parity == 1) fwd();
-    else bak();
+    _type = Move.MoveType.TRAVEL;
+    movementStart(false);
+    setSpeed(Math.round(_robotTravelSpeed * _leftDegPerDistance), Math.round(_robotTravelSpeed * _rightDegPerDistance));
+    if (_parity == 1)
+    {
+      fwd();
+    } else
+    {
+      bak();
+    }
   }
 
   /**
@@ -361,27 +338,21 @@ public class DifferentialPilot implements ArcRotateMoveController
    */
   public void backward()
   {
-    if (isMoving()) stop();
-    _moveType = Move.MoveType.TRAVEL;
-    movementStart();
-    reset();
-    setSpeed(Math.round(_robotMoveSpeed * _leftDegPerDistance), Math.round(_robotMoveSpeed * _rightDegPerDistance));
+    _type = Move.MoveType.TRAVEL;
+    movementStart(false);
+    setSpeed(Math.round(_robotTravelSpeed * _leftDegPerDistance), Math.round(_robotTravelSpeed * _rightDegPerDistance));
 
-    if (_parity == 1) bak();
-    else fwd();
+    if (_parity == 1)
+    {
+      bak();
+    } else
+    {
+      fwd();
+    }
   }
 
   /**
-   * Motors forward. This is called by forward() and backward().
-   */
-  private void fwd()
-  {
-    _left.forward();
-    _right.forward();
-  }
-
-  /**
-   * Motors backward. This is called by forward() and backward().
+   * Motors backward. This is called by forward() and backward(), demending in parity.
    */
   private void bak()
   {
@@ -390,10 +361,35 @@ public class DifferentialPilot implements ArcRotateMoveController
   }
 
   /**
+   * Motors forward. This is called by forward() and backward() depending in parity.
+   */
+  private void fwd()
+  {
+    _left.forward();
+    _right.forward();
+  }
+
+  public boolean rotateLeft()
+  {
+    _type = Move.MoveType.ROTATE;
+    _right.forward();
+    _left.backward();
+    return true;
+  }
+
+  public boolean rotateRight()
+  {
+    _type = Move.MoveType.ROTATE;
+    _left.forward();
+    _right.backward();
+    return true;
+  }
+
+  /**
    * Rotates the NXT robot through a specific angle. Returns when angle is
    * reached. Wheels turn in opposite directions producing a zero radius turn.<br>
    * Note: Requires correct values for wheel diameter and track width.
-   *
+   * calls rotate(angle,false)
    * @param angle
    *            The wanted angle of rotation in degrees. Positive angle rotate
    *            left (clockwise), negative right.
@@ -407,7 +403,7 @@ public class DifferentialPilot implements ArcRotateMoveController
    * Rotates the NXT robot through a specific angle. Returns when angle is
    * reached. Wheels turn in opposite directions producing a zero radius turn.<br>
    * Note: Requires correct values for wheel diameter and track width.
-   *
+   * Side effect: inform listeners
    * @param angle
    *            The wanted angle of rotation in degrees. Positive angle rotate
    *            left (clockwise), negative right.
@@ -416,48 +412,43 @@ public class DifferentialPilot implements ArcRotateMoveController
    */
   public boolean rotate(final float angle, final boolean immediateReturn)
   {
-    if(isMoving())stop();
-    _moveType = Move.MoveType.ROTATE;
-    reset();
-    movementStart();
-    _alert = immediateReturn;
-    setSpeed(Math.round(_robotTurnSpeed * _leftTurnRatio), Math.round(_robotTurnSpeed * _rightTurnRatio));
+    _type = Move.MoveType.ROTATE;
+    movementStart(immediateReturn);
+    setSpeed(Math.round(_robotRotateSpeed * _leftTurnRatio), Math.round(_robotRotateSpeed * _rightTurnRatio));
     int rotateAngleLeft = _parity * (int) (angle * _leftTurnRatio);
     int rotateAngleRight = _parity * (int) (angle * _rightTurnRatio);
     _left.rotate(-rotateAngleLeft, true);
     _right.rotate(rotateAngleRight, immediateReturn);
-    
-    if (!immediateReturn)
-    {
-      while (isMoving()) Thread.yield();
-      stop();
-    }
-    //return getMovement();
+
+    if (!immediateReturn)  checkStall();
+
     return true;
   }
 
-
   /**
-   * This method can be overridden by subclasses to stop the robot if a hazard 
+   * This method can be overridden by subclasses to stop the robot if a hazard
    * is detected
-   * 
+   *
    * @return true iff no hazard is detected
    */
-  protected boolean continueMoving() {
-	return true;
-}
-
-/**
-   * Stops the NXT robot.
-   */
-  public boolean  stop()
+  protected boolean continueMoving()
   {
-    _alert = false;
+    return true;
+  }
+
+  /**
+   * Stops the NXT robot.
+   *  side effect: inform listeners of end of movement
+   */
+  public boolean stop()
+  {
     _left.stop();
     _right.stop();
-    while (isMoving()) Thread.yield();
+    while (isMoving())
+    {
+      Thread.yield();
+    }
     movementStop();
-    //return getMovement();
     return true;
   }
 
@@ -466,7 +457,7 @@ public class DifferentialPilot implements ArcRotateMoveController
    * A positive distance causes forward motion, a negative distance moves
    * backward. If a drift correction has been specified in the constructor it
    * will be applied to the left motor.
-   *
+   * calls travel(distance, false)
    * @param distance
    *            The distance to move. Unit of measure for distance must be
    *            same as wheelDiameter and trackWidth.
@@ -490,118 +481,87 @@ public class DifferentialPilot implements ArcRotateMoveController
    */
   public boolean travel(final float distance, final boolean immediateReturn)
   {
-    if(isMoving())stop();
-    _moveType = Move.MoveType.TRAVEL;
-    reset();
-    movementStart(); 
-      _alert = immediateReturn;
-    setSpeed(Math.round(_robotMoveSpeed * _leftDegPerDistance), Math.round(_robotMoveSpeed * _rightDegPerDistance));
+    _type = Move.MoveType.TRAVEL;
+    if (distance == Float.POSITIVE_INFINITY)
+    {
+      forward();
+      return true;
+    }
+    if ((distance == Float.NEGATIVE_INFINITY))
+    {
+      backward();
+      return true;
+    }
+    movementStart(immediateReturn);
+    setSpeed(Math.round(_robotTravelSpeed * _leftDegPerDistance), Math.round(_robotTravelSpeed * _rightDegPerDistance));
     _left.rotate((int) (_parity * distance * _leftDegPerDistance), true);
     _right.rotate((int) (_parity * distance * _rightDegPerDistance),
-            true);  _alert = immediateReturn;
+            immediateReturn);
     if (!immediateReturn)
     {
-      while (isMoving() && continueMoving()) Thread.yield();
-      stop();
+      checkStall();
     }
-    //return getMovement();
     return true;
   }
-
-  public void steer(final float turnRate)
-  {
-    steer(turnRate, Float.POSITIVE_INFINITY, true);
-
-  }
-
-  public boolean steer(final float turnRate, float angle)
-  {
-    return steer(turnRate, angle, false);
-  }
-
-  public boolean steer(final float turnRate, final float angle,
-          final boolean immediateReturn)
-  {
-    if(isMoving())stop();
-    _moveType = Move.MoveType.ARC;
-  
-    reset();
-    movementStart();
-    
-       _alert = immediateReturn;
-    // TODO: make this work with wheels of different size
-    TachoMotor inside;
-    TachoMotor outside;
-    float rate = turnRate;
-    if (rate < -200) rate = -200;
-    else if (rate > 200)rate = 200;
-    else if (rate == 0)
-    {
-      if (angle < 0) backward();
-       else forward();
-      //return getMovement();
-      return true;
-    }
-    if (turnRate < 0)
-    {
-      inside = _right;
-      outside = _left;
-      rate = -rate;
-    } else
-    {
-      inside = _left;
-      outside = _right;
-    }
-    outside.setSpeed(_motorSpeed);
-    float steerRatio = 1 - rate / 100.0f;
-    inside.setSpeed((int) (_motorSpeed * steerRatio));
-    if (angle == Float.POSITIVE_INFINITY) // no limit angle for turn
-    {
-      if (_parity == 1) outside.forward();
-       else outside.backward();
- 
-      if (_parity * steerRatio > 0)
-      {
-        inside.forward();
-      } else
-      {
-        inside.backward();
-      }
-      //return getMovement();
-      return true;
-    }  // end no turn limit
-    float rotAngle = angle * _trackWidth * 2 / (_leftWheelDiameter * (1 - steerRatio));
-    inside.rotate(_parity * (int) (rotAngle * steerRatio), true);
-    outside.rotate(_parity * (int) rotAngle, true);
-    if (!immediateReturn)
-    {
-      while (isMoving() && continueMoving()) Thread.yield();
-      stop();
-    }
-    //return getMovement();
-    return true;
-  }
-
 
   public boolean arcForward(final float radius)
   {
-	  return arc(radius, Float.POSITIVE_INFINITY, true);
+    _type = Move.MoveType.ARC;
+    movementStart(true);
+    float turnRate = turnRate(radius);
+    steerPrep(turnRate);
+    steerPrep(turnRate);
+    _outside.forward();
+    if (_parity * _steerRatio > 0)
+    {
+      _inside.forward();
+    } else
+    {
+      _inside.backward();
+    }
+    return true;
   }
 
   public boolean arcBackward(final float radius)
   {
-	  return arc(radius, Float.NEGATIVE_INFINITY, true);
+     _type = Move.MoveType.ARC;
+    movementStart(true);
+    float turnRate = turnRate(radius);
+    steerPrep(turnRate);
+    steerPrep(turnRate);
+    _outside.backward();
+    if (_parity * _steerRatio > 0)
+    {
+      _inside.backward();
+    } else
+    {
+      _inside.forward();
+    }
+    return true;
   }
-  
+
   public boolean arc(final float radius, final float angle)
   {
-    return steer(turnRate(radius), angle);
+    return arc(radius, angle, false);
   }
 
   public boolean arc(final float radius, final float angle,
           final boolean immediateReturn)
   {
-    return steer(turnRate(radius), angle, immediateReturn);
+    if (radius == Float.POSITIVE_INFINITY || radius == Float.NEGATIVE_INFINITY)
+    {
+      forward();
+      return true;
+    }
+
+    _type = Move.MoveType.ARC;
+    movementStart(immediateReturn);
+    steer(turnRate(radius), angle, immediateReturn);
+    if (!immediateReturn)
+    {
+      checkStall();
+    }
+    return true;
   }
 
   public boolean travelArc(float radius, float distance)
@@ -611,19 +571,29 @@ public class DifferentialPilot implements ArcRotateMoveController
 
   public boolean travelArc(float radius, float distance, boolean immediateReturn)
   {
-    double angle = (distance * 180) / (Math.PI * radius);
-    return arc(radius, (float) angle, immediateReturn);
+    if (radius == Float.POSITIVE_INFINITY || radius == Float.NEGATIVE_INFINITY)
+    {
+      travel(distance, immediateReturn);
+      return true;
+    }
+    _type = Move.MoveType.ARC;
+    movementStart(immediateReturn);
+    if (radius == 0)
+    {
+      throw new IllegalArgumentException("Zero arc radius");
+    }
+    float angle = (distance * 180) / ((float) Math.PI * radius);
+    return arc(radius, angle, immediateReturn);
   }
 
   /**
    * Calculates the turn rate corresponding to the turn radius; <br>
    * use as the parameter for steer() negative argument means center of turn
    * is on right, so angle of turn is negative
-   *
    * @param radius
-   * @return steer()
+   * @return turnRate to be used in steer()
    */
-  protected int turnRate(final float radius)
+  private float turnRate(final float radius)
   {
     int direction;
     float radiusToUse;
@@ -637,88 +607,192 @@ public class DifferentialPilot implements ArcRotateMoveController
       radiusToUse = radius;
     }
     float ratio = (2 * radiusToUse - _trackWidth) / (2 * radiusToUse + _trackWidth);
-    return Math.round(direction * 100 * (1 - ratio));
+    return (direction * 100 * (1 - ratio));
   }
 
-  protected void movementStart()
+  public void steer(float turnRate)
   {
-    for (MoveListener p : listeners)
+    if (turnRate == 0)
     {
-      p.moveStarted(new Move(0, 0, true), this);
+      forward();
+      return;
+    }
+    steerPrep(turnRate);
+    _outside.forward();
+    if (_parity * _steerRatio > 0) _inside.forward();
+    else _inside.backward();
+  }
+
+  public void steer(final float turnRate, float angle)
+  {
+    steer(turnRate, angle, false);
+  }
+
+  public void steer(final float turnRate, final float angle,
+          final boolean immediateReturn)
+  {
+    if (angle == 0)
+    {
+      return;
+    }
+    if (turnRate == 0)
+    {
+      forward();
+      return;
+    }
+    steerPrep(turnRate);
+    int side = (int) Math.signum(turnRate);
+    int rotAngle = (int) (angle * _trackWidth * 2 / (_leftWheelDiameter * (1 - _steerRatio)));
+    _inside.rotate((int) (_parity * side * rotAngle * _steerRatio), true);
+    _outside.rotate(_parity * side * rotAngle, immediateReturn);
+    if (immediateReturn)
+    {
+      return;
+    }
+    checkStall();
+    _inside.setSpeed(_outside.getSpeed());
+  }
+
+  /**
+   * helper method used by steer(float) and steer(float,float,boolean)
+   * sets _outsideSpeed, _insideSpeed, _steerRatio
+   * @param turnRate
+   */
+  protected void steerPrep(final float turnRate)
+  {
+
+    if (turnRate == 0)
+    {
+      forward();
+      return;
+    }
+    float rate = turnRate;
+    if (rate < -200) rate = -200;
+    if (rate > 200) rate = 200;
+
+    if (turnRate < 0)
+    {
+      _inside = _right;
+      _outside = _left;
+      rate = -rate;
+    } else
+    {
+      _inside = _left;
+      _outside = _right;
+    }
+    _outside.setSpeed(_motorSpeed);
+    _steerRatio = 1 - rate / 100.0f;
+    _inside.setSpeed((int) (_motorSpeed * _steerRatio));
+  }
+
+  protected void checkStall()
+  {
+    while (isMoving() && !_left.isStalled()) Thread.yield();
+    if (_left.isStalled())  throw new Motor.MotorStalledException("Left Motor stalled ");
+  }
+
+  /**
+   * called by Arc() ,travel(),rotate(),stop() rotationStopped()
+   * calls moveStopped on listener
+   */
+  protected synchronized void movementStop()
+  {
+    if (_listener != null)
+    {
+      move.setValues(_type, getMovementIncrement(), getAngleIncrement(), isMoving());
+      _listener.moveStopped(move, this);
     }
   }
 
-  protected void movementStop()
+  /**
+   * called by TachoMotor when a motor rotation is complete
+   * calls movementStop() after both motors stop;
+   * @param motor
+   * @param count
+   * @param ts
+   */
+  public synchronized void rotationStopped(TachoMotor m, int tachoCount, long ts)
   {
-    for (MoveListener p : listeners)
+    if (!isMoving())movementStop();// both motors have stopped
+  }
+
+  /**
+   * called by TachoMotor when a motor rotation starts
+   * not used.
+   * @param motor
+   * @param count
+   * @param ts
+   */
+  public synchronized void rotationStarted(TachoMotor m, int tachoCount, long ts)
+  {
+  }
+
+  /**
+   * called at start of a movement to inform the listening pose  that a movement has started
+   */
+  protected void movementStart(boolean alert)
+  {
+    if (isMoving())  movementStop();
+    reset();
+    if (_listener != null)
     {
-      Move move = new Move(getTravelDistance(), getAngle(), false);
-      p.moveStopped(move, this);
+      move.setValues(_type, 0, 0, true);
+      _listener.moveStarted(move, this);
     }
   }
-  
- public void setMinRadius(float radius){
-   _minRadius = radius;
- }
- 
- public float getMinRadius(){return _minRadius;}
- 
+
+  /**
+   * @return true if the NXT robot is moving.
+   **/
+  public boolean isMoving()
+  {
+    return _left.isMoving() || _right.isMoving();
+  }
+
+  /**
+   * Resets tacho count for both motors.
+   **/
+  public void reset()
+  {
+    _left.resetTachoCount();
+    _right.resetTachoCount();
+  }
+
+  public void setMinRadius(float radius)
+  {
+    _turnRadius = radius;
+  }
+
+  public float getMinRadius()
+  {
+    return _turnRadius;
+  }
+
+  public float getMovementIncrement()
+  {
+    float left = _left.getTachoCount() / _leftDegPerDistance;
+    float right = _right.getTachoCount() / _rightDegPerDistance;
+    return _parity * (left + right) / 2.0f;
+  }
+
+  public float getAngleIncrement()
+  {
+    return _parity * ((_right.getTachoCount() / _rightTurnRatio) -
+            (_left.getTachoCount() / _leftTurnRatio)) / 2.0f;
+  }
+
+  public void addMoveListener(MoveListener m)
+  {
+    _listener = (DeadReckonerPoseProvider) m;
+  }
+
   public Move getMovement()
   {
-    return new Move(getTravelDistance(), getAngle(), isMoving());
+    move.setValues(_type, getMovementIncrement(), getAngleIncrement(), isMoving());
+    return move;
   }
 
-  /**
-   * The only purpose of this inner class is to detect when an immediate return
-   * method exits  because the distance or angle has been reached.
-   */
-  private class Monitor extends Thread
-  {
-
-    public void run()
-    {
-      while (true)
-      {
-        // note:  the pilot may stop or  _alert may be cancelled by the main
-        // thread at any time. Do not call stopNow if either happens
-        while (!_alert)
-        {
-          Thread.yield();//no movement in progress
-        }
-        while (!isMoving())
-        {
-          Thread.yield();
-        }
-
-        while (isMoving())
-        {
-          Thread.yield();
-        }
-        synchronized (monitor)
-        {
-          if (_alert)
-          {
-            _alert = false;
-            movementStop(); // updates listeners
-          }
-        }//end synchronized
-      }
-    }
-  }
-  /**
-   * should be true if an immediate return movement is in progress.
-   * used by monitor
-   */
-  protected boolean _alert = false;
-  /**
-   * the pilot listeners
-   */
-  protected ArrayList<MoveListener> listeners = new ArrayList<MoveListener>();
-  /**
-   * type of the current movement
-   */
-  protected Move.MoveType _moveType;
-  private Monitor monitor = new Monitor();
+  private float _turnRadius = 0;
   /**
    * Left motor.
    */
@@ -727,6 +801,22 @@ public class DifferentialPilot implements ArcRotateMoveController
    * Right motor.
    */
   protected final TachoMotor _right;
+  /**
+   * The motor at the inside of the turn. set by steer(turnRate)
+   * used by other steer methodsl
+   */
+  protected TachoMotor _inside;
+  /**
+   * The motor at the outside of the turn. set by steer(turnRate)
+   * used by other steer methodsl
+   */
+  protected TachoMotor _outside;
+  /**
+   * ratio of inside/outside motor speeds
+   * set by steer(turnRate)
+   * used by other steer methods;
+   */
+  protected float _steerRatio;
   /**
    * Left motor degrees per unit of travel.
    */
@@ -749,13 +839,13 @@ public class DifferentialPilot implements ArcRotateMoveController
   protected final float _rightTurnRatio;
   /**
    * Speed of robot for moving in wheel diameter units per seconds. Set by
-   * setSpeed(), setMoveSpeed()
+   * setSpeed(), setTravelSpeed()
    */
-  protected float _robotMoveSpeed;
+  protected float _robotTravelSpeed;
   /**
    * Speed of robot for turning in degree per seconds.
    */
-  protected float _robotTurnSpeed;
+  protected float _robotRotateSpeed;
   /**
    * Motor speed degrees per second. Used by forward(),backward() and steer().
    */
@@ -763,11 +853,7 @@ public class DifferentialPilot implements ArcRotateMoveController
   /**
    * Motor rotation forward makes robot move forward if parity == 1.
    */
-  protected byte _parity;
-  /**
-   * If true, motor speed regulation is turned on. Default = true.
-   */
-  protected boolean _regulating = true;
+  private byte _parity;
   /**
    * Distance between wheels. Used in steer() and rotate().
    */
@@ -780,16 +866,11 @@ public class DifferentialPilot implements ArcRotateMoveController
    * Diameter of right wheel.
    */
   protected final float _rightWheelDiameter;
-  
-  protected float _minRadius = 0;
-  
-public float getMovementIncrement() {
-	// TODO Auto-generated method stub
-	return 0;
-}
-
-public float getAngleIncrement() {
-	// TODO Auto-generated method stub
-	return 0;
-}
+  /**
+   * a non blocking movement is in progress
+   * set by movementStart, reset by movementStop
+   */
+  protected Move move = new Move(0, 0, false);
+  protected MoveListener _listener;
+  protected Move.MoveType _type;
 }
