@@ -296,6 +296,12 @@ public class RemoteMotor implements TachoMotor, NXTProtocol {
 		// TODO Currently has no actual event-listener architecture
 		
 	}
+        public boolean isStalled()
+        {
+          return false;
+          // TODO can the stall detection be implemented in this class?
+          // in the real Motor, the regulator does it;
+        }
 	
 	
 }
