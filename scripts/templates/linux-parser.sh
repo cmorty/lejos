@@ -25,7 +25,3 @@ for (( i=1; i<=$#; i++ )); do
 			done
 	esac
 done
-
-for i in -classpath "$NXJ_CP_CMDLINE" "${NXJ_CMDLINE[@]}"; do
-	echo "out: $i"
-done
