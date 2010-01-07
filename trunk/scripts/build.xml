@@ -6,6 +6,7 @@
 	
 	<property file="build.properties" />
 	<loadfile property="template.linux" srcFile="templates/linux.sh"/>
+	<loadfile property="template.linux.parser" srcFile="templates/linux-parser.sh"/>
 	<loadfile property="template.windows" srcFile="templates/windows-normal.bat"/>
 	<loadfile property="template.windows.compat" srcFile="templates/windows-compat.bat"/>
 	
@@ -17,7 +18,7 @@
 			<mkdir dir="${linux.dir}"/>
 			<echo message="creating ${linux.dir}/@{file}"/>
 			<echo file="${linux.dir}/@{file}">${template.linux}
-	
+				
 @{command}
 </echo>
 			<fixcrlf file="${linux.dir}/@{file}" encoding="latin1" eol="unix"/>
@@ -30,6 +31,17 @@
 		<sequential>
 			<linux-run file="@{file}">
 				java -Dnxj.home="$NXJ_HOME" -DCOMMAND_NAME="$NXJ_COMMAND" -Djava.library.path="$NXJ_BIN" -classpath "$NXJ_CP_TOOL" @{class} @{args} "$@"
+			</linux-run>
+		</sequential>
+	</macrodef>
+	<macrodef name="linux-parser">
+		<text name="command" trim="true"/>
+		<attribute name="file"/>
+		<sequential>
+			<linux-run file="@{file}">
+${template.linux.parser}
+
+@{command}
 			</linux-run>
 		</sequential>
 	</macrodef>
@@ -97,12 +109,12 @@
 		<linux-run file="nxjc">
 			javac -bootclasspath "$NXJ_CP_BOOT" "$@"
 		</linux-run>
-		<linux-run file="nxjpcc">
-			javac -Xbootclasspath/a:"$NXJ_CP_TOOL" "$@"
-		</linux-run>
-		<linux-run file="nxjpc">
-			java -Dnxj.home="$NXJ_HOME" -Djava.library.path="$NXJ_BIN" -Xbootclasspath/a:"$NXJ_CP_TOOL" "$@"
-		</linux-run>
+		<linux-parser file="nxjpcc">
+			javac -classpath "$NXJ_CP_CMDLINE" "${NXJ_CMDLINE[@]}"
+		</linux-parser>
+		<linux-parser file="nxjpc">
+			java -Dnxj.home="$NXJ_HOME" -Djava.library.path="$NXJ_BIN" -classpath "$NXJ_CP_CMDLINE" "${NXJ_CMDLINE[@]}"
+		</linux-parser>
 	</target>
 	
 	<target name="windows" description="generated batch scripts">
