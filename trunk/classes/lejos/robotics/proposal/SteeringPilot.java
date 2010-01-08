@@ -246,7 +246,7 @@ public class SteeringPilot implements ArcMoveController, TachoMotorListener {
 		return null;
 	}
 
-	public void rotationStarted(TachoMotor motor, int tachoCount, long timeStamp) {
+	public void rotationStarted(TachoMotor motor, int tachoCount, boolean stall, long timeStamp) {
 		isMoving = true;
 		oldTacho = tachoCount;
 		
@@ -256,7 +256,7 @@ public class SteeringPilot implements ArcMoveController, TachoMotorListener {
 		}
 	}
 
-	public void rotationStopped(TachoMotor motor, int tachoCount, long timeStamp) {
+	public void rotationStopped(TachoMotor motor, int tachoCount,boolean stall, long timeStamp) {
 		isMoving = false;
 		int tachoTotal = tachoCount - oldTacho ;
 		float distance = (float)((tachoTotal/360f) * Math.PI * driveWheelDiameter);

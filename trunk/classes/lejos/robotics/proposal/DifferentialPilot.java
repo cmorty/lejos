@@ -1,10 +1,10 @@
 package lejos.robotics.proposal;
 
 
-import lejos.robotics.proposal.*;
+
 import lejos.nxt.*;
 import lejos.robotics.*;
-import lejos.robotics.Move;
+
 /*
  * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
  * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
@@ -420,8 +420,7 @@ public class DifferentialPilot implements
     _left.rotate(-rotateAngleLeft, true);
     _right.rotate(rotateAngleRight, immediateReturn);
 
-    if (!immediateReturn)  checkStall();
-
+    if (!immediateReturn)  while (isMoving()) Thread.yield();
     return true;
   }
 
@@ -497,10 +496,7 @@ public class DifferentialPilot implements
     _left.rotate((int) (_parity * distance * _leftDegPerDistance), true);
     _right.rotate((int) (_parity * distance * _rightDegPerDistance),
             immediateReturn);
-    if (!immediateReturn)
-    {
-      checkStall();
-    }
+    if (!immediateReturn) while (isMoving()) Thread.yield();
     return true;
   }
 
@@ -557,10 +553,7 @@ public class DifferentialPilot implements
     _type = Move.MoveType.ARC;
     movementStart(immediateReturn);
     steer(turnRate(radius), angle, immediateReturn);
-    if (!immediateReturn)
-    {
-      checkStall();
-    }
+    if (!immediateReturn) while (isMoving()) Thread.yield();
     return true;
   }
 
@@ -637,7 +630,8 @@ public class DifferentialPilot implements
     }
     if (turnRate == 0)
     {
-      forward();
+      if (_parity == 1)fwd();
+      else bak(); 
       return;
     }
     steerPrep(turnRate);
@@ -649,7 +643,7 @@ public class DifferentialPilot implements
     {
       return;
     }
-    checkStall();
+     while (isMoving()) Thread.yield();
     _inside.setSpeed(_outside.getSpeed());
   }
 
@@ -685,13 +679,10 @@ public class DifferentialPilot implements
     _inside.setSpeed((int) (_motorSpeed * _steerRatio));
   }
 
-  protected void checkStall()
-  {
-	  /* TODO: isStalled() problem here
-    while (isMoving() && !_left.isStalled()) Thread.yield();
-    if (_left.isStalled())  throw new Motor.MotorStalledException("Left Motor stalled ");
-    */
-  }
+//  protected void checkStall()
+//  {
+//    while (isMoving()) Thread.yield();
+//  }
 
   /**
    * called by Arc() ,travel(),rotate(),stop() rotationStopped()
@@ -699,12 +690,10 @@ public class DifferentialPilot implements
    */
   protected synchronized void movementStop()
   {
+    _stalled = _right.isStalled() ||_left.isStalled();
     if (_listener != null)
     {
-    	/* TODO: setValues() problem here
-      move.setValues(_type, getMovementIncrement(), getAngleIncrement(), isMoving());
-      _listener.moveStopped(move, this);
-      */
+      _listener.moveStopped(new Move(_type, getMovementIncrement(), getAngleIncrement(), isMoving()), this);
     }
   }
 
@@ -715,9 +704,9 @@ public class DifferentialPilot implements
    * @param count
    * @param ts
    */
-  public synchronized void rotationStopped(TachoMotor m, int tachoCount, long ts)
+  public synchronized void rotationStopped(TachoMotor m, int tachoCount, boolean stall,long ts)
   {
-    if (!isMoving())movementStop();// both motors have stopped
+   if (!isMoving() || stall )movementStop();// a motor has stopped
   }
 
   /**
@@ -727,7 +716,7 @@ public class DifferentialPilot implements
    * @param count
    * @param ts
    */
-  public synchronized void rotationStarted(TachoMotor m, int tachoCount, long ts)
+  public synchronized void rotationStarted(TachoMotor m, int tachoCount, boolean stall,long ts)
   {
   }
 
@@ -738,12 +727,10 @@ public class DifferentialPilot implements
   {
     if (isMoving())  movementStop();
     reset();
+    _stalled = false;
     if (_listener != null)
     {
-    	/* TODO: setValues() problem here
-      move.setValues(_type, 0, 0, true);
-      _listener.moveStarted(move, this);
-      */
+      _listener.moveStarted(new Move(_type,0,0,true), this);
     }
   }
 
@@ -755,6 +742,10 @@ public class DifferentialPilot implements
     return _left.isMoving() || _right.isMoving();
   }
 
+  public boolean isStalled()
+  {
+    return _left.isStalled() || _right.isStalled();
+  }
   /**
    * Resets tacho count for both motors.
    **/
@@ -794,10 +785,7 @@ public class DifferentialPilot implements
 
   public Move getMovement()
   {
-	  /* TODO: setValues() problem here
-    move.setValues(_type, getMovementIncrement(), getAngleIncrement(), isMoving());
-    */
-    return move;
+    return  new Move(_type, getMovementIncrement(), getAngleIncrement(), isMoving());
   }
 
   private float _turnRadius = 0;
@@ -874,11 +862,14 @@ public class DifferentialPilot implements
    * Diameter of right wheel.
    */
   protected final float _rightWheelDiameter;
+
+  protected boolean _stalled;
   /**
    * a non blocking movement is in progress
    * set by movementStart, reset by movementStop
    */
-  protected Move move = new Move(0, 0, false);
+
+  
   protected MoveListener _listener;
   protected Move.MoveType _type;
 }
