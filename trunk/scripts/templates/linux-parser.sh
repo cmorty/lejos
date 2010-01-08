@@ -1,6 +1,7 @@
 #!/bin/bash
 
-NXJ_CP_CMDLINE="$NXJ_CP_TOOL"
+# set classpath to . by default (matches behaviour of java and javac)
+NXJ_CP_CMDLINE="$NXJ_CP_TOOL:."
 for (( i=1; i<=$#; i++ )); do
 	case "${!i}" in
 		#handle classpath parameters
