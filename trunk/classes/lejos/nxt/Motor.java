@@ -237,11 +237,11 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
          if(_mode == STOP || _mode == FLOAT)
          {
             _port.controlMotor(0, _mode);
-            if(listener != null) listener.rotationStopped(this, getTachoCount(), System.currentTimeMillis());
+            if(listener != null) listener.rotationStopped(this, getTachoCount(), _stalled, System.currentTimeMillis());
             return;
          }
          else _stalled = false; // new motor motion has started
-         if(listener != null) listener.rotationStarted(this, getTachoCount(), System.currentTimeMillis());
+         if(listener != null) listener.rotationStarted(this, getTachoCount(), _stalled,System.currentTimeMillis());
          _port.controlMotor(_power, _mode);
          if(_regulate)regulator.reset();
       }
@@ -295,9 +295,8 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
          _newOperation = false;
       }
       if(immediateReturn)return;
-      while(_rotating || _stalled)
+      while(_rotating)
       {
-        if(_stalled)throw new MotorStalledException(getName()+" stalled ");
         Thread.yield();
       } 
    }
@@ -481,7 +480,7 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
          }
          _rotating = false;
          setPower(calcPower(_speed));
-         if(listener != null) listener.rotationStopped(Motor.this, getTachoCount(), System.currentTimeMillis());
+         if(listener != null) listener.rotationStopped(Motor.this, getTachoCount(),_stalled, System.currentTimeMillis());
       }
 
       /**
@@ -679,23 +678,7 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
     * @param pwr
     */
    public void setBrakePower(int pwr) {_brakePower = pwr;}
-/**
- *
- * @return the name of this  motor
- */
-   public  String getName()
-   {
-     String n = "Motor.C ";
-     if(this == Motor.A) n =  "Motor.A ";
-     else if(this == Motor.B ) n = "Motor.B ";
-     return n;
-   }
 
-  public static  class MotorStalledException extends RuntimeException
-  {
-    public MotorStalledException(String message)
-    {
-     super( message);
-    }
-  }
+
+
 }
