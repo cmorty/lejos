@@ -23,6 +23,7 @@ public class NXTCommFactory {
 	private static final String USER_HOME = System.getProperty("user.home");
 	private static String propFile;
 	private static String cacheFile = USER_HOME + SEP + "nxj.cache";
+	private static String androidCacheFile = "sdcard/LeJOS/nxj.cache";
 
 	/**
 	 * Load a comms driver for a protocol (USB or Bluetooth)
@@ -37,7 +38,8 @@ public class NXTCommFactory {
 		boolean fantom = false;
 		Properties props = getNXJProperties();
 
-		if ((os.length() >= 7 && os.substring(0, 7).equals("Windows"))||(os.toLowerCase().startsWith("mac os x"))) {
+		if ((os.length() >= 7 && os.substring(0, 7).equals("Windows"))
+				|| (os.toLowerCase().startsWith("mac os x"))) {
 			fantom = true;
 		}
 
@@ -106,7 +108,7 @@ public class NXTCommFactory {
 		}
 		return props;
 	}
-	
+
 	/**
 	 * Load the Bluetooth name cache as properties
 	 * 
@@ -117,7 +119,9 @@ public class NXTCommFactory {
 		Properties props = new Properties();
 
 		try {
-			props.load(new FileInputStream(cacheFile));
+			props.load(new FileInputStream((isAndroid() ? androidCacheFile
+					: cacheFile)));
+
 		} catch (FileNotFoundException e) {
 		} catch (IOException e) {
 			throw new NXTCommException("Cannot read nxj.cache file");
@@ -141,7 +145,7 @@ public class NXTCommFactory {
 		fos = new FileOutputStream(propFile);
 		props.store(fos, comment);
 	}
-	
+
 	/**
 	 * Save the leJOS NXJ Properties
 	 * 
@@ -154,7 +158,21 @@ public class NXTCommFactory {
 	public static void saveNXJCache(Properties props, String comment)
 			throws IOException {
 		FileOutputStream fos;
-		fos = new FileOutputStream(cacheFile);
+
+		fos = new FileOutputStream((isAndroid() ? androidCacheFile : cacheFile));
+
 		props.store(fos, comment);
+	}
+
+	private static boolean isAndroid() {
+		if (os.toLowerCase().indexOf("linux") != -1) {
+			String javaRuntimeName = System.getProperty("java.runtime.name");
+			if ((javaRuntimeName != null)
+					&& (javaRuntimeName.toLowerCase()
+							.indexOf("android runtime") != -1)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }
