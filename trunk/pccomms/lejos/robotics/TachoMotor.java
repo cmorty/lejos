@@ -88,4 +88,11 @@ public interface TachoMotor extends Tachometer, DCMotor {
    * @param activate is true for smooth acceleration.
    */
   void smoothAcceleration(boolean activate);
+
+  /**
+   * returns true if motor is stalled
+   * @return
+   */
+
+    boolean isStalled();
 }
