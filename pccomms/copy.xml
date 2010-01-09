@@ -5,21 +5,15 @@
 -->
 <project name="copy" default="copy" basedir=".">
   	<target name="copy"  description="Copy source of common classes">
-  		<mkdir dir="lejos/robotics/localization"/>
-  		<copy overwrite="true" todir=".">
-  			<fileset dir="../classes">
-  				<include name="lejos/robotics/localization/*.java"/>
-  				<exclude name="lejos/robotics/localization/TachoLocalizer.java"/>
-  				<include name="lejos/robotics/localization/package.html"/>
-  			</fileset>
-  		</copy>
   		<mkdir dir="lejos/geom"/>
+  		<delete dir="lejos/geom" includes="*.java, package.html"/>
   		<copy overwrite="true" todir=".">
   			<fileset dir="../classes">
   				<include name="lejos/geom/*.java"/>
   				<include name="lejos/geom/package.html"/>
   			</fileset>
   		</copy>
+        <!-- NOTE do not add delete for lejos/nxt, it has files in it from the pccomms tree -->
   		<mkdir dir="lejos/nxt"/>
   		<copy overwrite="true" todir=".">
   			<fileset dir="../classes">
@@ -42,6 +36,7 @@
   			</fileset>
   		</copy>
   		<mkdir dir="lejos/nxt/remote"/>
+  		<delete dir="lejos/nxt/remote" includes="*.java, package.html"/>
   		<copy overwrite="true" todir=".">
   			<fileset dir="../classes">
   				<include name="lejos/nxt/remote/AsciizCodec.java"/>
@@ -61,6 +56,7 @@
   			</fileset>
   		</copy>
   		<mkdir dir="lejos/nxt/addon"/>
+		<delete dir="lejos/nxt/addon" includes="*.java, package.html"/>
   		<copy overwrite="true" todir=".">
   			<fileset dir="../classes">
   				<include name="lejos/nxt/addon/*.java"/>
@@ -68,6 +64,7 @@
   			</fileset>
   		</copy>
   		<mkdir dir="lejos/nxt/rcxcomm"/>
+		<delete dir="lejos/nxt/rcxcomm" includes="*.java, package.html"/>
   		<copy overwrite="true" todir=".">
   			<fileset dir="../classes">
   				<include name="lejos/nxt/rcxcomm/*.java"/>
@@ -75,13 +72,24 @@
   			</fileset>
   		</copy>
   		<mkdir dir="lejos/robotics/"/>
+  		<delete dir="lejos/robotics/" includes="*.java, package.html"/>
   		<copy overwrite="true" todir=".">
   			<fileset dir="../classes">
   				<include name="lejos/robotics/*.java"/>
   				<include name="lejos/robotics/package.html"/>
   			</fileset>
   		</copy>
+  		<mkdir dir="lejos/robotics/localization"/>
+  		<delete dir="lejos/robotics/localization" includes="*.java, package.html"/>
+  		<copy overwrite="true" todir=".">
+  			<fileset dir="../classes">
+  				<include name="lejos/robotics/localization/*.java"/>
+  				<exclude name="lejos/robotics/localization/TachoLocalizer.java"/>
+  				<include name="lejos/robotics/localization/package.html"/>
+  			</fileset>
+  		</copy>  		
   		<mkdir dir="lejos/robotics/navigation"/>
+        <delete dir="lejos/robotics/navigation" includes="*.java, package.html"/>
   		<copy overwrite="true"  todir=".">
   			<fileset dir="../classes">
   				<include name="lejos/robotics/navigation/*.java"/>
@@ -89,6 +97,7 @@
   			</fileset>
   		</copy>
   		<mkdir dir="lejos/robotics/mapping"/>
+  		<delete dir="lejos/robotics/mapping" includes="*.java, package.html"/>
   		<copy overwrite="true" todir=".">
   			<fileset dir="../classes">
   				<include name="lejos/robotics/mapping/*.java"/>
@@ -96,14 +105,17 @@
   			</fileset>
   		</copy>
   		<mkdir dir="lejos/robotics/proposal"/>
+  		<delete dir="lejos/robotics/proposal" includes="*.java, package.html"/>
   		<copy overwrite="true"  todir=".">
   			<fileset dir="../classes">
   				<include name="lejos/robotics/proposal/*.java"/>
   				<exclude name="lejos/robotics/proposal/GPSPoseProvider.java"/>
+  				<exclude name="lejos/robotics/proposal/InertialMoveProvider.java"/>
   				<include name="lejos/robotics/proposal/package.html"/>
   			</fileset>
   		</copy>
   		<mkdir dir="lejos/util/"/>
+  		<delete dir="lejos/util/" includes="*.java, package.html"/>
   		<copy overwrite="true" todir=".">
   			<fileset dir="../classes">
   				<include name="lejos/util/Delay.java"/>
