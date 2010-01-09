@@ -32,6 +32,16 @@ public interface PoseController {
 	public Pose goTo(Point destination);
 	
 	/**
+	 * Travels to the coordinates AND heading in the destination Pose.
+	 * If it can't reach the destination, it tries to get as close as possible before giving up
+	 * and reporting the actual coordinates (Pose) achieved.
+	 * 
+	 * @param destination
+	 * @return
+	 */
+	public Pose goTo(Pose destination);
+	
+	/**
 	 * Travels to the coordinates specified.
 	 * If it can't reach the destination, it tries to get as close as possible before giving up
 	 * and reporting the actual coordinates (Pose) achieved.
