@@ -693,7 +693,7 @@ public class DifferentialPilot implements
     _stalled = _right.isStalled() ||_left.isStalled();
     if (_listener != null)
     {
-      _listener.moveStopped(new Move(_type, getMovementIncrement(), getAngleIncrement(), isMoving()), this);
+     // _listener.moveStopped(new Move(_type, getMovementIncrement(), getAngleIncrement(), isMoving()), this);
     }
   }
 
@@ -730,7 +730,7 @@ public class DifferentialPilot implements
     _stalled = false;
     if (_listener != null)
     {
-      _listener.moveStarted(new Move(_type,0,0,true), this);
+      //_listener.moveStarted(new Move(_type,0,0,true), this);
     }
   }
 
@@ -785,7 +785,7 @@ public class DifferentialPilot implements
 
   public Move getMovement()
   {
-    return  new Move(_type, getMovementIncrement(), getAngleIncrement(), isMoving());
+    return  null;//new Move(_type, getMovementIncrement(), getAngleIncrement(), isMoving());
   }
 
   private float _turnRadius = 0;
