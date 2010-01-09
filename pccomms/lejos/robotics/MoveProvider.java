@@ -1,11 +1,6 @@
 package lejos.robotics;
 
-import lejos.robotics.Movement;
-
-/*
- * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
- * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
- */
+import lejos.robotics.Move;
 
 /**
  * Should be implemented by a Pilot that provides a partial movement to a pose
@@ -13,8 +8,8 @@ import lejos.robotics.Movement;
  *
  * @author nxj team
  */
-public interface MovementProvider {
-  public Movement getMovement();
+public interface MoveProvider {
+  public Move getMovement();
   
   /**
    * Adds a MoveListener that will be notified of all movement events.
