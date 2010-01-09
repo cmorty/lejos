@@ -15,14 +15,14 @@ for (( i=1; i<=$#; i++ )); do
 			(( i++ ))
 			NXJ_CMDLINE[$i]="${!i}"
 			;;
-		#handle parameters without arguments
-		-*)
-			NXJ_CMDLINE[$i]="${!i}"
-			;;
-		#abort parsing at first non-parameter argument
-		*)
+		#abort parsing at -jar or classname
+		-jar|[!-]*)
 			for (( ; i<=$#; i++ )); do
 				NXJ_CMDLINE[$i]="${!i}"
 			done
+			;;
+		#handle parameters without arguments
+		*)
+			NXJ_CMDLINE[$i]="${!i}"
 	esac
 done
