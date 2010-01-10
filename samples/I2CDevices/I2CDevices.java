@@ -8,7 +8,7 @@ public class I2CDevices {
 				new I2CSensor(SensorPort.S3),
 		        new I2CSensor(SensorPort.S4)};
 		
-		LCD.setAutoRefresh(0);
+		LCD.setAutoRefresh(false);
 		while (!Button.ESCAPE.isPressed()) {
 			for(int i=0;i<sensors.length;i++) {
 				LCD.drawString("        ", 0, i);
