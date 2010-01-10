@@ -35,10 +35,32 @@ import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
-import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.filechooser.FileFilter;
 
 
 public class MainPanel extends JPanel {
+	
+	//implement JDK-1.6-like FileNameExtensionFilter
+	private static class FileNameExtensionFilter extends FileFilter	{
+		private final String message;
+		private final String ext;
+		
+		public FileNameExtensionFilter(String message, String ext) {
+			this.message = message;
+			this.ext = "." + ext.toLowerCase();
+		}
+
+		@Override
+		public boolean accept(File f) {
+			return f != null && (f.isDirectory() || f.getName().toLowerCase().endsWith(this.ext));
+		}
+
+		@Override
+		public String getDescription() {
+			return this.message;
+		}		
+	}
+	
 	/** SN */
 	private static final long serialVersionUID = -2222575532385000674L;
 
@@ -149,7 +171,9 @@ public class MainPanel extends JPanel {
 				w = in.readInt();
 				h = in.readInt();
 			} catch (EOFException e) {
-				throw new IOException("File format error!", e);
+				IOException e2 = new IOException("File format error!");
+				e2.initCause(e);
+				throw e2;
 			}
 			int i = in.read();
 			if (i != 0) {
