@@ -64,7 +64,7 @@ public class TextField extends Item {
 
 	public void paint(Graphics g, int x, int y, int w, int h, boolean selected) {
 		if (label != null) {
-			g.drawString(label, x, y);
+			g.drawString(label, x, y, 0);
 			if (h <= Display.CHAR_HEIGHT) {
 				x += label.length() * Display.CHAR_WIDTH;
 			} else {
@@ -72,6 +72,6 @@ public class TextField extends Item {
 			}
 		}
 
-		g.drawString(text, x, y, selected);
+		g.drawString(text, x, y, 0, selected);
 	}
 }

@@ -167,10 +167,10 @@ public class StartUpText
             else if (mV >= batteryOk)
                 lowVoltage = false;
             if (lowVoltage)
+            {
                 if ((tick & 1) == 0)
                     drawBattery(0);
-                else
-                    erase(0, 18);
+            }
             else
                 drawBattery(calcBatteryLevel(mV));
         }
@@ -196,10 +196,10 @@ public class StartUpText
         private void updateIO()
         {
             if (ioMode == IO_NONE)
-                g.drawString(" BT", 82, 0, !btPowerOn);  // invert when power is off
+                g.drawString(" BT", 82, 0, 0, !btPowerOn);  // invert when power is off
             else
             {
-                g.drawString(ioDisplay[ioMode][tick % ioDisplay[ioMode].length], 82, 0);
+                g.drawString(ioDisplay[ioMode][tick % ioDisplay[ioMode].length], 82, 0, 0);
                 // Data activity is auto reset
                 if (ioMode <= IO_USB && tick > ioStart + 2)
                     setIOMode(IO_NONE);
@@ -212,8 +212,7 @@ public class StartUpText
          */
         private void updateTitle()
         {
-            int len = title.length();
-            g.drawString(title, (g.getWidth() - (len * LCD.CELL_WIDTH)) / 2, 0);
+            g.drawString(title, LCD.SCREEN_WIDTH / 2, 0, Graphics.HCENTER);
         }
 
         /**
@@ -223,7 +222,6 @@ public class StartUpText
         public void setTitle(String title)
         {
             this.title = title;
-            erase(18, 64);
             update();
         }
 
@@ -232,9 +230,13 @@ public class StartUpText
          */
         public void update()
         {
+            LCD.setAutoRefresh(false);
+            erase(0, 100);
             updateTitle();
             updateIO();
             updateBattery();
+            LCD.refresh();
+            LCD.setAutoRefresh(true);
         }
 
         /**
@@ -249,8 +251,8 @@ public class StartUpText
             {
                 ioStart = tick;
                 ioMode = mode;
-                erase(82, 18);
-                updateIO();
+                if (mode != IO_NONE)
+                    update();
             }
         }
 
@@ -264,8 +266,8 @@ public class StartUpText
             for (;;)
             {
                 Delay.msDelay(1000);
-                update();
                 tick++;
+                update();
             }
         }
     }

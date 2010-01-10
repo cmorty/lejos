@@ -5,6 +5,7 @@ import lejos.nxt.ButtonListener;
 import lejos.util.Timer;
 import lejos.util.TimerListener;
 import lejos.util.Delay;
+import lejos.nxt.LCD;
 
 /**
  * 
@@ -37,7 +38,7 @@ public class Display {
 	private Display() {
 		graphics = new Graphics();
 		// We control when the screen gets updated explicitly
-		graphics.autoRefresh(false);
+		LCD.setAutoRefresh(false);
 	}
 	
 	public static Display getDisplay() {
@@ -270,12 +271,12 @@ public class Display {
 	
 	private synchronized void update() {
 		if (current.getPaintRequest()) {
-			graphics.clear();
+			LCD.clear();
 			updateTicker(tickerOffset);
 			
 			current.paint(graphics);
 			current.clearPaintRequest();
-			graphics.refresh();
+			LCD.refresh();
 		}
 	}
 	
@@ -286,7 +287,7 @@ public class Display {
 			graphics.setColor(Graphics.WHITE);
 			graphics.fillRect(0, 0, SCREEN_WIDTH, CHAR_HEIGHT);
 			graphics.setColor(old);
-			graphics.drawString(ticker.getString(), offset, 0);
+			graphics.drawString(ticker.getString(), offset, 0, 0);
 			/*
 			int tickerLen = ticker.getString().length();
 			for (int i = 0; i < SCREEN_CHAR_WIDTH; i++) {
@@ -297,7 +298,7 @@ public class Display {
 					graphics.drawChar(' ', i * Display.CHAR_WIDTH, 0, false);
 				}
 			}*/
-			graphics.refresh();
+			LCD.refresh();
 			return ticker.getString().length()*CHAR_WIDTH;
 		}
 		
