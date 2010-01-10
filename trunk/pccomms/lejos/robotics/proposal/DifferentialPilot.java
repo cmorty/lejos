@@ -2,6 +2,9 @@ package lejos.robotics.proposal;
 
 
 
+
+import java.util.ArrayList;
+import lejos.robotics.proposal.*;
 import lejos.nxt.*;
 import lejos.robotics.*;
 
@@ -136,11 +139,13 @@ public class DifferentialPilot implements
           final boolean reverse)
   {
     _left = leftMotor;
+   _left.addListener(this);
     _leftWheelDiameter = leftWheelDiameter;
     _leftTurnRatio = trackWidth / leftWheelDiameter;
     _leftDegPerDistance = 360 / ((float) Math.PI * leftWheelDiameter);
     // right
     _right = rightMotor;
+    _right.addListener(this);
     _rightWheelDiameter = rightWheelDiameter;
     _rightTurnRatio = trackWidth / rightWheelDiameter;
     _rightDegPerDistance = 360 / ((float) Math.PI * rightWheelDiameter);
@@ -447,7 +452,7 @@ public class DifferentialPilot implements
     {
       Thread.yield();
     }
-    movementStop();
+//    movementStop();
     return true;
   }
 
@@ -505,8 +510,7 @@ public class DifferentialPilot implements
     _type = Move.MoveType.ARC;
     movementStart(true);
     float turnRate = turnRate(radius);
-    steerPrep(turnRate);
-    steerPrep(turnRate);
+    steerPrep(turnRate); // sets motor speeds
     _outside.forward();
     if (_parity * _steerRatio > 0)
     {
@@ -523,8 +527,7 @@ public class DifferentialPilot implements
      _type = Move.MoveType.ARC;
     movementStart(true);
     float turnRate = turnRate(radius);
-    steerPrep(turnRate);
-    steerPrep(turnRate);
+    steerPrep(turnRate);// sets motor speeds
     _outside.backward();
     if (_parity * _steerRatio > 0)
     {
@@ -549,11 +552,8 @@ public class DifferentialPilot implements
       forward();
       return true;
     }
-
-    _type = Move.MoveType.ARC;
-    movementStart(immediateReturn);
-    steer(turnRate(radius), angle, immediateReturn);
-    if (!immediateReturn) while (isMoving()) Thread.yield();
+    steer(turnRate(radius), angle, immediateReturn);// type and move started called by steer()
+    if (!immediateReturn) while(isMoving())Thread.yield();
     return true;
   }
 
@@ -569,8 +569,8 @@ public class DifferentialPilot implements
       travel(distance, immediateReturn);
       return true;
     }
-    _type = Move.MoveType.ARC;
-    movementStart(immediateReturn);
+//    _type = Move.MoveType.ARC;
+//    movementStart(immediateReturn);
     if (radius == 0)
     {
       throw new IllegalArgumentException("Zero arc radius");
@@ -603,6 +603,13 @@ public class DifferentialPilot implements
     return (direction * 100 * (1 - ratio));
   }
 
+/**
+ * This method is for frequent adjustments of robot direction, for example
+ * for line following and in CompassPilot to correctheading traveling.
+ * It should NEVER be called when this classes is used as a Move Provider
+ * for navigation purposes.
+ * @param turnRate
+ */
   public void steer(float turnRate)
   {
     if (turnRate == 0)
@@ -630,10 +637,11 @@ public class DifferentialPilot implements
     }
     if (turnRate == 0)
     {
-      if (_parity == 1)fwd();
-      else bak(); 
+      forward();
       return;
     }
+   _type = Move.MoveType.ARC;
+   movementStart(immediateReturn);
     steerPrep(turnRate);
     int side = (int) Math.signum(turnRate);
     int rotAngle = (int) (angle * _trackWidth * 2 / (_leftWheelDiameter * (1 - _steerRatio)));
@@ -655,11 +663,11 @@ public class DifferentialPilot implements
   protected void steerPrep(final float turnRate)
   {
 
-    if (turnRate == 0)
-    {
-      forward();
-      return;
-    }
+//    if (turnRate == 0)
+//    {
+//      forward();
+//      return;
+//    }
     float rate = turnRate;
     if (rate < -200) rate = -200;
     if (rate > 200) rate = 200;
@@ -691,10 +699,9 @@ public class DifferentialPilot implements
   protected synchronized void movementStop()
   {
     _stalled = _right.isStalled() ||_left.isStalled();
-    if (_listener != null)
-    {
-     // _listener.moveStopped(new Move(_type, getMovementIncrement(), getAngleIncrement(), isMoving()), this);
-    }
+    for(MoveListener ml : _listeners)
+      ml.moveStopped(new Move(_type,
+            getMovementIncrement(), getAngleIncrement(), isMoving()), this);
   }
 
   /**
@@ -706,7 +713,7 @@ public class DifferentialPilot implements
    */
   public synchronized void rotationStopped(TachoMotor m, int tachoCount, boolean stall,long ts)
   {
-   if (!isMoving() || stall )movementStop();// a motor has stopped
+   if (!isMoving())movementStop();// a motor has stopped
   }
 
   /**
@@ -728,10 +735,9 @@ public class DifferentialPilot implements
     if (isMoving())  movementStop();
     reset();
     _stalled = false;
-    if (_listener != null)
-    {
-      //_listener.moveStarted(new Move(_type,0,0,true), this);
-    }
+    for(MoveListener ml : _listeners)
+      ml.moveStarted(new Move(_type,
+            getMovementIncrement(), getAngleIncrement(), isMoving()), this);
   }
 
   /**
@@ -750,7 +756,7 @@ public class DifferentialPilot implements
    * Resets tacho count for both motors.
    **/
   public void reset()
-  {
+  { 
     _left.resetTachoCount();
     _right.resetTachoCount();
   }
@@ -780,12 +786,12 @@ public class DifferentialPilot implements
 
   public void addMoveListener(MoveListener m)
   {
-    _listener = (DeadReckonerPoseProvider) m;
+    _listeners.add(m);
   }
 
   public Move getMovement()
   {
-    return  null;//new Move(_type, getMovementIncrement(), getAngleIncrement(), isMoving());
+    return  new Move(_type, getMovementIncrement(), getAngleIncrement(), isMoving());
   }
 
   private float _turnRadius = 0;
@@ -869,7 +875,8 @@ public class DifferentialPilot implements
    * set by movementStart, reset by movementStop
    */
 
-  
+
+  protected ArrayList<MoveListener> _listeners= new ArrayList<MoveListener>();
   protected MoveListener _listener;
   protected Move.MoveType _type;
 }

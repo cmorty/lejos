@@ -1,5 +1,7 @@
 package lejos.robotics;
 
+
+
 /*
  * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
  * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
@@ -24,19 +26,19 @@ public class Move {
 	protected long timeStamp;
 	
 	/**
-	 * Create a movement object to record a movement made by a pilot. This method automatically calculates the 
+	 * Create a movement object to record a movement made by a pilot.
+         * This method automatically calculates the
 	 * MoveType based on the data as follows:<br>
 	 * <li>(distance NOT 0) AND (angle NOT 0) --> ARC
 	 * <li>(distance = 0) AND (angle NOT 0) --> ROTATE
 	 * <li>(distance NOT 0) AND (angle = 0) --> TRAVEL
 	 * <li>(distance = 0) AND (angle = 0) --> STOP
-	 * 
-	 * @param type the movement type
 	 * @param distance the distance traveled in pilot units
 	 * @param angle the angle turned in degrees
 	 * @param isMoving true iff the movement was created while the robot was moving
 	 */
-	public Move(float distance, float angle, boolean isMoving) {
+  public Move(float distance, float angle, boolean isMoving)
+  {
 		this.moveType = Move.calcMoveType(distance, angle);
 		this.distanceTraveled = distance;
 		this.angleTurned = angle;
@@ -48,7 +50,47 @@ public class Move {
 		}
 		this.timeStamp = System.currentTimeMillis();
 	}
-	
+
+  /**
+   * Create a movement object to record a movement made by a pilot.
+   * @param type the movement type
+   * @param distance the distance traveled in pilot units
+   * @param angle the angle turned in degrees
+   * @param isMoving true iff the movement was created while the robot was moving
+   */
+  public Move(MoveType type, float distance, float angle,boolean isMoving)
+  {
+    this.moveType = type;
+    this.distanceTraveled = distance;
+    this.angleTurned = angle;
+    if (Math.abs(angle) > 0.5) {
+			double turnRad = Math.toRadians(angle);
+			arcRadius = (float) ((double) distance / turnRad);
+		}
+    this.isMoving = isMoving;
+    this.timeStamp = System.currentTimeMillis();
+  }
+
+  /**
+   * use this method to recycle an existing Move instead of creating a new one
+   * @param distance
+   * @param angle
+   * @param isMoving
+   */
+  public void setValues(MoveType type, float distance, float angle,boolean isMoving)
+  {
+    this.moveType = Move.calcMoveType(distance, angle);
+		this.distanceTraveled = distance;
+		this.angleTurned = angle;
+		this.isMoving = isMoving;
+		// TODO: This works fine, but could use convertDistanceToAngle() instead here?
+		if (Math.abs(angle) > 0.5) {
+			double turnRad = Math.toRadians(angle);
+			arcRadius = (float) ((double) distance / turnRad);
+		}
+		this.timeStamp = System.currentTimeMillis();
+  }
+
 	/**
 	 * Helper method to calculate the MoveType based on distance, angle, radius parameters.
 	 * 
@@ -70,20 +112,14 @@ public class Move {
 	 * <li>(radius NOT 0) AND (angle NOT 0) --> ARC
 	 * <li>(radius = 0) AND (angle NOT 0) --> ROTATE
 	 * <li>(radius = 0) AND (angle = 0) --> STOP
-	 * <li>(radius = +infinity) AND (angle = 0) --> TRAVEL (throws IllegalArgumentException)
-	 * <li>NOTE: When radius is infinity, it is impossible to calculate distance (NaN) therefore this throws exception.
+	 * <li>(radius = +infinity) AND (angle = 0) --> TRAVEL
+	 * <li>NOTE: can't calculate distance based only on angle and radius, therefore distance can't be calculated and will equal NaN)
 	 * @param type
 	 * @param isMoving
 	 * @param angle
 	 * @param turnRadius
-	 * 
-	 * @throws IllegalArgumentException when turnRadius == Float.POSITIVE_INFINITY or Float.NEGATIVE_INFINITY
 	 */
-	public Move(boolean isMoving, float angle, float turnRadius) throws IllegalArgumentException {
-		// TODO: Sven is of the mindset that it should just calculate NaN and then the exception will be thrown in some
-		// other part of the program, rather than explicitly disallowing infinity. See his Jan 4, 2009 email.
-		if(turnRadius == Float.POSITIVE_INFINITY|turnRadius == Float.NEGATIVE_INFINITY) 
-			throw new IllegalArgumentException("Can't use infinity in Move(boolean, float, float) constructor.");
+	public Move(boolean isMoving, float angle, float turnRadius) {
 		this.distanceTraveled = Move.convertAngleToDistance(angle, turnRadius);
 		this.moveType = Move.calcMoveType(this.distanceTraveled, angle);
 		this.angleTurned = angle;
