@@ -210,7 +210,7 @@ public class ChoiceGroup extends Item implements Choice {
     
 	protected void paint(Graphics g, int x, int y, int w, int h, boolean selected) {
     	if (label != null) {
-    		g.drawString(label, x, y, 
+    		g.drawString(label, x, y, 0,
     				(selected && (choiceType == Choice.POPUP)));
     		y += Display.CHAR_HEIGHT;
     		h -= Display.CHAR_HEIGHT;
@@ -241,15 +241,19 @@ public class ChoiceGroup extends Item implements Choice {
     	}
     	
 // TODO: Drawing a rectangle around menu would be nice, but is very slow    	
-//    	if (choiceType == Choice.POPUP) {
-//    		g.drawRect(x, y, w, h);
-//    	}
+    	if (choiceType == Choice.POPUP) {
+            int cur = g.getColor();
+            g.setColor(cur == Graphics.BLACK ? Graphics.WHITE : Graphics.BLACK);
+            g.fillRect(x, y, w, h);
+            g.setColor(cur);
+    		//g.drawRect(x, y, w, h);
+    	}
     	
     	// Display list items with current highlighted
     	int xOffset = (choiceType == Choice.POPUP) ? x : (x + 2 * Display.CHAR_WIDTH);
 		for (int i = scrollFirst; (i < choiceItems.size()) && (i <= scrollLast); i++) {
 			ChoiceItem li = choiceItems.get(i);
-			g.drawString(li.str, xOffset, y, 
+			g.drawString(li.str, xOffset, y, 0,
 					(selected && (i == scrollCurr)));
 			
 			if ((choiceType == Choice.EXCLUSIVE) || (choiceType == Choice.MULTIPLE)) {

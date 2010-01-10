@@ -1,31 +1,96 @@
 package javax.microedition.lcdui;
 
 import lejos.nxt.LCD;
+import javax.microedition.lcdui.game.Sprite;
 
 /**
- * Preliminary Graphics class for LCD Screen
- * @author Brian Bagnall
+ * lcdui.graphics implementation for the NXT LCD screen and in memory images.
+ * This class provides a sun-set of the standard JavaME graphics class. In 
+ * particular it does not implement clipping. There are also several additional
+ * non-standard methods to allow easier use of images, alow access to inverse
+ * text, and allow the use of raster operations. Some of the standard limitations
+ * (like not allowing copyArea of the screen), are not enforced.
+ * @author Brian Bagnall and Andy
  *
  */
 public class Graphics
 {
 
+    /**
+     * Centering text and images horizontally
+     * around the anchor point
+     *
+     * <P>Value <code>1</code> is assigned to <code>HCENTER</code>.</P>
+     */
+    public static final int HCENTER = 1;
+    /**
+     * Centering images vertically
+     * around the anchor point.
+     *
+     * <P>Value <code>2</code> is assigned to <code>VCENTER</code>.</P>
+     */
+    public static final int VCENTER = 2;
+    /**
+     * Position the anchor point of text and images
+     * to the left of the text or image.
+     *
+     * <P>Value <code>4</code> is assigned to <code>LEFT</code>.</P>
+     */
+    public static final int LEFT = 4;
+    /**
+     * Position the anchor point of text and images
+     * to the right of the text or image.
+     *
+     * <P>Value <code>8</code> is assigned to <code>RIGHT</code>.</P>
+     */
+    public static final int RIGHT = 8;
+    /**
+     * Position the anchor point of text and images
+     * above the text or image.
+     *
+     * <P>Value <code>16</code> is assigned to <code>TOP</code>.</P>
+     */
+    public static final int TOP = 16;
+    /**
+     * Position the anchor point of text and images
+     * below the text or image.
+     *
+     * <P>Value <code>32</code> is assigned to <code>BOTTOM</code>.</P>
+     */
+    public static final int BOTTOM = 32;
+    /**
+     * Position the anchor point at the baseline of text.
+     *
+     * <P>Value <code>64</code> is assigned to <code>BASELINE</code>.</P>
+     */
+    public static final int BASELINE = 64;
+    /**
+     * Constant for the <code>SOLID</code> stroke style.
+     *
+     * <P>Value <code>0</code> is assigned to <code>SOLID</code>.</P>
+     */
+    public static final int SOLID = 0;
+    /**
+     * Constant for the <code>DOTTED</code> stroke style.
+     *
+     * <P>Value <code>1</code> is assigned to <code>DOTTED</code>.</P>
+     */
+    public static final int DOTTED = 1;
+    /* Public color definitions NOT Standard*/
+    public static final int BLACK = 0;
+    public static final int WHITE = 0xffffff;
     /** drawArc and fillArc accuracy parameter */
     private static final int ARC_ACC = 5;
-
-    /* Public color definitions */
-    public static final int BLACK = 1;
-    public static final int WHITE = 0;
-
-    /* Public line stroke definitions */
-    public static final int SOLID = 0;
-    public static final int DOTTED = 2;
     private int rgbColor = BLACK;
+    private int textRop = LCD.ROP_OR;
+    private int pixelRop = LCD.ROP_SET;
     private int strokeStyle = SOLID;
     private Font font = Font.getDefaultFont();
     private byte[] imageBuf;
     private int width;
     private int height;
+    private int transX = 0;
+    private int transY = 0;
 
     /**
      * Default constructor returns a context that can be used to access the NXT
@@ -45,149 +110,528 @@ public class Graphics
      * @param width width of the buffer
      * @param height height of the buffer
      */
-    public Graphics(byte []data, int width, int height)
+    Graphics(byte[] data, int width, int height)
     {
         imageBuf = data;
         this.width = width;
         this.height = height;
     }
 
+    /**
+     * Adjust the x co-ordinate to use the translation and anchor values.
+     * @param x Original value
+     * @param w width of the item.
+     * @param anchor anchor parameter
+     * @return updated x value.
+     */
+    private int adjustX(int x, int w, int anchor)
+    {
+        x += transX;
+        switch (anchor & (LEFT | RIGHT | HCENTER))
+        {
+            case LEFT:
+                break;
+            case RIGHT:
+                x -= w;
+                break;
+            case HCENTER:
+                x -= (w >> 1);
+                break;
+        }
+        return x;
+    }
+
+    /**
+     * Adjust the y co-ordinate to use the translation and anchor values.
+     * @param y Original value
+     * @param h height of the item.
+     * @param anchor anchor parameter
+     * @return updated y value.
+     */
+    private int adjustY(int y, int h, int anchor)
+    {
+        y += transY;
+        switch (anchor & (TOP | BOTTOM | VCENTER))
+        {
+            case TOP:
+                break;
+            case BOTTOM:
+                y -= h;
+                break;
+            case VCENTER:
+                y -= (h >> 1);
+                break;
+        }
+        return y;
+    }
+    
+    /* The following are non standard functions. What should we do with them */
+    /**
+     * Return the width of the associated drawing surface.
+     * <br><b>Note</b>: This is a non standard method.
+     * @return width of the surface
+     */
     public int getWidth()
     {
         return width;
     }
 
+    /**
+     * Return the height of the associated drawing surface.
+     * <br><b>Note</b>: This is a non standard method.
+     * @return height of the surface.
+     */
     public int getHeight()
     {
         return height;
     }
 
-    public int getCenteredX(String str)
+    /**
+     * Draws the specified String using the current font and color. x and y
+     * give the location of the anchor point. Additional method to allow for
+     * the easy use of inverted text. In this case the area below the string
+     * is drawn in the current color, before drawing the text in the "inverted"
+     * color.
+     * <br><b>Note</b>: This is a non standard method.
+     * @param str the String to be drawn
+     * @param x the x coordinate of the anchor point
+     * @param y the y coordinate of the anchor point
+     * @param anchor the anchor point for positioning the text
+     * @param inverted true to invert the text display.
+     */
+    public void drawString(String str, int x, int y, int anchor, boolean inverted)
     {
-        return width/2 - font.stringWidth(str)/2;
+        x += transX;
+        y += transY;
+        if (anchor == 0)
+            anchor = TOP | LEFT;
+        if ((anchor & LEFT) == 0)
+        {
+            int strWidth = font.stringWidth(str);
+            if ((anchor & RIGHT) != 0)
+                x -= strWidth;
+            else if ((anchor & HCENTER) != 0)
+                x -= (strWidth / 2);
+        }
+
+        if ((anchor & TOP) == 0)
+        {
+            if ((anchor & BASELINE) != 0)
+                y -= font.getBaselinePosition();
+            else if ((anchor & BOTTOM) != 0)
+                y -= font.getHeight();
+        }
+        int gw = font.glyphWidth;
+        int gh = font.height;
+        int rop = textRop;
+        int cellWidth = font.width;
+        byte[] glyphs = font.glyphs;
+        int span = gw * font.glyphCount;
+        int first = font.firstChar;
+        char[] strData = str.toCharArray();
+        if (inverted)
+        {
+            // draw background and use inverted rop...
+            LCD.bitBlt(null, width, height, 0, 0, imageBuf, width, height, x, y, cellWidth * strData.length, gh, pixelRop);
+            rop = (rgbColor == WHITE ? LCD.ROP_OR : LCD.ROP_ANDINVERTED);
+        }
+        for (int i = 0; i < strData.length; i++)
+            LCD.bitBlt(glyphs, span, gh, gw * (strData[i] - first), 0, imageBuf, width, height, x + i * cellWidth, y, gw, gh, rop);
     }
 
+    /**
+     * Draw the specified image to the graphics surface, using the supplied rop.
+     * <br><b>Note</b>: This is a non standard method.
+     * Added because without it, it is very
+     * hard to invert/manipulate an image, or screen region
+     * @param src image to draw (may be null for ops that do not require input.
+     * @param sx x offset in the source
+     * @param sy y offset in the source
+     * @param w width of area to draw
+     * @param h height of area to draw.
+     * @param x destination
+     * @param y destination
+     * @param anchor location of the anchor point
+     * @param rop drawing operation.
+     * @see Image
+     */
+    public void drawRegionRop(Image src, int sx, int sy, int w, int h, int x, int y, int anchor, int rop)
+    {
+        x = adjustX(x, w, anchor);
+        y = adjustY(y, h, anchor);
+        if (src == null)
+            LCD.bitBlt(imageBuf, width, height, sx, sy, imageBuf, width, height, x, y, w, h, rop);
+        else
+            LCD.bitBlt(src.getData(), src.getWidth(), src.getHeight(), sx, sy, imageBuf, width, height, x, y, w, h, rop);
+    }
+
+    /**
+     * Draw the specified region of the source image to the graphics surface
+     * after applying the requested transformation, use the supplied rop.
+     * <br>NOTE: When calculating the anchor point this method assumes that
+     * a transformed version of the source width/height should be used.
+     * @param src The source image
+     * @param sx x coordinate of the region
+     * @param sy y coordinate of the region
+     * @param w width of the region
+     * @param h height of the region
+     * @param transform the required transform
+     * @param x x coordinate of the anchor point
+     * @param y y coordinate of the anchor point
+     * @param anchor type of anchor
+     * @param rop raster operation used to draw the output.
+     */
+    public void drawRegionRop(Image src, int sx, int sy, int w, int h, int transform, int x, int y, int anchor, int rop)
+    {
+        // Check for common optimized case...
+        if (transform == 0)
+        {
+            drawRegionRop(src, sx, sy, w, h, x, y, anchor, LCD.ROP_COPY);
+            return;
+        }
+
+        byte[] inData = src.getData();
+        int inWidth = src.getWidth();
+        int inHeight = src.getHeight();
+
+        // Transform matrix
+        int x1 = 1;
+        int y1 = 0;
+        int x2 = 0;
+        int y2 = 1;
+        // Transformed version of width/height.
+        int ow = w;
+        int oh = h;
+        switch (transform)
+        {
+            case Sprite.TRANS_MIRROR:
+                x1 = -1;
+                break;
+            case Sprite.TRANS_MIRROR_ROT180:
+                y2 = -1;
+                break;
+            case Sprite.TRANS_MIRROR_ROT270:
+                x1 = 0;
+                y1 = 1;
+                x2 = 1;
+                y2 = 0;
+                ow = h;
+                oh = w;
+                break;
+            case Sprite.TRANS_MIRROR_ROT90:
+                x1 = 0;
+                y1 = -1;
+                x2 = -1;
+                y2 = 0;
+                ow = h;
+                oh = w;
+                break;
+            case Sprite.TRANS_ROT180:
+                x1 = -1;
+                y2 = -1;
+                break;
+            case Sprite.TRANS_ROT270:
+                x1 = 0;
+                y1 = 1;
+                x2 = -1;
+                y2 = 0;
+                ow = h;
+                oh = w;
+                break;
+            case Sprite.TRANS_ROT90:
+                x1 = 0;
+                y1 = -1;
+                x2 = 1;
+                y2 = 0;
+                ow = h;
+                oh = w;
+                break;
+        }
+        // Sort out the anchor point.
+        x = adjustX(x, ow, anchor);
+        y = adjustY(y, oh, anchor);
+
+        // perform the transformation.
+        // We rotate around the centre point
+        int cx = (w + 1) / 2;
+        int cy = (h + 1) / 2;
+        // Setup the input centre point
+        int sxbase = sx + cx;
+        int sybase = sy + cy;
+        // Setup the output centre point. Note that we use transformed rounding.
+        // If we don't do this the for even widths/heights we end up with a
+        // on symetric rotation.
+        int xbase = x + (ow + x1 + y1) / 2;
+        int ybase = y + (oh + x2 + y2) / 2;
+        // Now loop through the input region...
+        int iy = -cy;
+        int iye = iy + h;
+        while (iy < iye)
+        {
+            int iyy1 = iy * y1;
+            int iyy2 = iy * y2;
+            int ix = -cx;
+            int ixe = ix + w;
+            while (ix < ixe)
+            {
+                int ox = ix * x1 + iyy1 + xbase;
+                int oy = ix * x2 + iyy2 + ybase;
+                LCD.bitBlt(inData, inWidth, inHeight, sxbase + ix, sybase + iy, imageBuf, width, height, ox, oy, 1, 1, rop);
+                ix++;
+            }
+            iy++;
+        }
+
+    }
+
+    /**
+     * Clear the graphics surface to white.
+     */
+    public void clear()
+    {
+        LCD.bitBlt(imageBuf, width, height, 0, 0, imageBuf, width, height, 0, 0, width, height, LCD.ROP_CLEAR);
+    }
+
+    /**
+     * Return the currently selected font object.
+     * @return Current font.
+     */
     public Font getFont()
     {
         return font;
     }
 
+    public void setFont(Font f)
+    {
+        font = f;
+    }
+
+    /**
+     * Returns the actual color that will be used on the display if the specified
+     * color is requested. On the NXT LCD and value that is not black will be
+     * treated as white.
+     * @param color
+     * @return
+     */
+    public int getDisplayColor(int color)
+    {
+        return color == BLACK ? BLACK : WHITE;
+    }
+
+    /**
+     * Set the current drawing color. The value is in the format 0x00RRGGBB.
+     * NOTE. Currently only black and white is supported. any non black color
+     * is treated as white!
+     * @param rgb new color.
+     */
     public void setColor(int rgb)
     {
         rgbColor = rgb;
+        if (rgbColor == BLACK)
+        {
+            pixelRop = LCD.ROP_SET;
+            textRop = LCD.ROP_OR;
+        }
+        else
+        {
+            pixelRop = LCD.ROP_CLEAR;
+            textRop = LCD.ROP_ANDINVERTED;
+        }
     }
 
+    /**
+     * Sets the current color to the specified RGB values.
+     * @param red the red component
+     * @param green the green component
+     * @param blue the blue
+     * @throws IllegalArgumentException if any of the color components
+     * are outside of range <code>0-255</code>
+     * @see #getColor
+     */
+    public void setColor(int red, int green, int blue)
+    {
+        if ((red < 0) || (red > 255)
+                || (green < 0) || (green > 255)
+                || (blue < 0) || (blue > 255))
+        {
+            throw new IllegalArgumentException("bad color value");
+        }
+        setColor((red << 16) | (green << 8) | blue);
+    }
+
+    /**
+     * Return the current rgb color.
+     * @return current color.
+     */
     public int getColor()
     {
         return rgbColor;
     }
 
     /**
+     * Gets the red value of color.
+     * @return value in range <code>0-255</code>
+     * @see #setColor(int, int, int)
+     */
+    public int getRedComponent()
+    {
+        return (rgbColor >> 16) & 0xff;
+    }
+
+    /**
+     * Gets the green value of color.
+     * @return integer value in range <code>0-255</code>
+     * @see #setColor(int, int, int)
+     */
+    public int getGreenComponent()
+    {
+        return (rgbColor >> 8) & 0xff;
+    }
+
+    /**
+     * Gets the blue value of color.
+     * @return integer value in range <code>0-255</code>
+     * @see #setColor(int, int, int)
+     */
+    public synchronized int getBlueComponent()
+    {
+        return rgbColor & 0xff;
+    }
+
+    /**
+     * Draws the specified String using the current font and color. x and y
+     * give the location of the anchor point.
+     * @param str the String to be drawn
+     * @param x the x coordinate of the anchor point
+     * @param y the y coordinate of the anchor point
+     * @param anchor the anchor point for positioning the text
+     */
+    public void drawString(String str, int x, int y, int anchor)
+    {
+        drawString(str, x, y, anchor, false);
+    }
+
+    /**
+     * Draw a substring to the graphics surface using the current color.
+     * @param str the base string
+     * @param offset the start of the sub string
+     * @param len the length of the sub string
+     * @param x the x coordinate of the anchor point
+     * @param y the x coordinate of the anchor point
+     * @param anchor the anchor point used to position the text.
+     */
+    public void drawSubstring(String str, int offset, int len,
+            int x, int y, int anchor)
+    {
+        // will throw NullPointerException
+        int strLen = str.length();
+        if ((offset < 0) || (offset > strLen)
+                || (len < 0) || (len > strLen)
+                || ((offset + len) < 0) || ((offset + len) > strLen))
+        {
+            throw new StringIndexOutOfBoundsException();
+        }
+
+        drawString(str.substring(offset, offset + len), x, y, anchor);
+    }
+
+    /**
+     * Draw a single character to the graphics surface using the current color.
+     * @param character the character to draw
+     * @param x the x coordinate of the anchor point
+     * @param y the x coordinate of the anchor point
+     * @param anchor the anchor point used to position the text.
+     */
+    public void drawChar(char character, int x, int y, int anchor)
+    {
+        drawString(new String(new char[]
+                {
+                    character
+                }), x, y, anchor);
+    }
+
+    /**
+     * Draw a series of characters to the graphics surface using the current color.
+     * @param data the characters
+     * @param offset the start of the characters to be drawn
+     * @param length the length of the character string to draw
+     * @param x the x coordinate of the anchor point
+     * @param y the x coordinate of the anchor point
+     * @param anchor the anchor point used to position the text.
+     */
+    public void drawChars(char[] data, int offset, int length,
+            int x, int y, int anchor)
+    {
+
+
+        // this will throw NullPointerException if data == null
+        int chLen = data.length;
+
+        if ((offset < 0) || (offset > chLen)
+                || (length < 0) || (length > chLen)
+                || ((offset + length) < 0) || ((offset + length) > chLen))
+        {
+            throw new ArrayIndexOutOfBoundsException();
+        }
+
+        drawString(new String(data, offset, length), x, y, anchor);
+
+    }
+
+    /**
+     * Draw the specified region of the supplied image to the graphics surface.
+     * NOTE: Transforms are not currently supported.
+     * @param src image to draw (may be null for ops that do not require input.
+     * @param sx x offset to the region
+     * @param sy y offset to the region
+     * @param w width of the region
+     * @param h height of the region
+     * @param transform 
+     * @param x destination
+     * @param y destination
+     * @param anchor location of the anchor point
+     * @see Image
+     */
+    public void drawRegion(Image src,
+            int sx, int sy,
+            int w, int h,
+            int transform,
+            int x, int y,
+            int anchor)
+    {
+        drawRegionRop(src, sx, sy, w, h, transform, x, y, anchor, LCD.ROP_COPY);
+    }
+
+    /**
+     * Draw the specified image to the graphics surface, using the supplied rop.
+     * @param src image to draw (may be null for ops that do not require input.
+     * @param x destination
+     * @param y destination
+     * @param anchor location of the anchor point
+     * @see Image
+     */
+    public void drawImage(Image src, int x, int y, int anchor)
+    {
+        drawRegionRop(src, 0, 0, src.getWidth(), src.getHeight(), x, y, anchor, LCD.ROP_COPY);
+    }
+
+    /**
      * Method to set a pixel to screen.
-     * @param rgbColor the pixel color (0 = white, 1 = black)
      * @param x the x coordinate
      * @param y the y coordinate
      */
-    public void setPixel(int rgbColor, int x, int y)
+    private void setPixel(int x, int y)
     {
-        if (x < 0 || x >= width || y < 0 || y >= height)
-            return; // Test-Modify for speed
-        int bit = (y & 0x7);
-        int index = (y / 8) * width + x;
-        imageBuf[index] = (byte) ((imageBuf[index] & ~(1 << bit)) | (rgbColor << bit));
+        LCD.bitBlt(imageBuf, width, height, 0, 0, imageBuf, width, height, x, y, 1, 1, pixelRop);
     }
 
     /**
-     * Method to get a pixel from the screen.
-     * @param x the x coordinate
-     * @param y the y coordinate
-     * @return the pixel color (0 = white, 1 = black)
+     * Draw a line between the specified points, using the current color and style.
+     * @param x0 x start point
+     * @param y0 y start point
+     * @param x1 x end point
+     * @param y1 y end point
      */
-    public int getPixel(int x, int y)
-    {
-        if (x < 0 || x >= width || y < 0 || y >= height)
-            return 0;
-        int bit = (y & 0x7);
-        int index = (y / 8) * width + x;
-        return ((imageBuf[index] >> bit) & 1);
-    }
-
-    /**
-     * Output a string to the display. Allow any location. Allow the string to
-     * be inverted.
-     * @param str String to display
-     * @param x X location (pixels)
-     * @param y Y location (pixels)
-     * @param invert set to true to displayed the string inverted
-     */
-    public void drawString(String str, int x, int y, boolean invert)
-    {
-        char[] strData = str.toCharArray();
-        int w = font.width;
-        if (invert)
-        {
-            for (int i = 0; (i < strData.length); i++)
-            {
-                drawChar(strData[i], x + i * w, y, true);
-            }
-        } else
-        {
-            for (int i = 0; (i < strData.length); i++)
-            {
-                drawChar(strData[i], x + i * w, y, LCD.ROP_COPY);
-            }
-        }
-
-    }
-
-    /**
-     * Draw a single char to an arbitrary location on the screen.
-     * @param c Character to display
-     * @param x X location (pixels)
-     * @param y Y location (pixels)
-     * @param invert Set to true to invert the display
-     */
-    public void drawChar(char c, int x, int y, boolean invert)
-    {
-        int gw = font.glyphWidth;
-        int gh = font.height;
-        LCD.bitBlt(font.glyphs, gw * 128, gh, gw * c, 0, imageBuf, width, height, x, y, gw, gh, (invert ? LCD.ROP_COPYINVERTED : LCD.ROP_COPY));
-        if (invert)
-            LCD.bitBlt(imageBuf, width, height, 0, 0, imageBuf, width, height, x + gw, y, 1, gh, LCD.ROP_SET);
-    }
-
-    /**
-     * Output a string to the display. Allow any location. Allow use of raster
-     * operations.
-     * @param str String to display
-     * @param x X location (pixels)
-     * @param y Y location (pixels)
-     * @param rop Raster operation
-     */
-    public void drawString(String str, int x, int y, int rop)
-    {
-        char[] strData = str.toCharArray();
-        int w = font.width;
-        for (int i = 0; (i < strData.length); i++)
-        {
-            drawChar(strData[i], x + i * w, y, rop);
-        }
-    }
-
-    /**
-     * Draw a single char to an arbitrary location on the screen.
-     * @param c Character to display
-     * @param x X location (pixels)
-     * @param y Y location (pixels)
-     * @param rop Raster operation for how to combine with existing content
-     */
-    public void drawChar(char c, int x, int y, int rop)
-    {
-        int gw = font.glyphWidth;
-        int gh = font.height;
-        LCD.bitBlt(font.glyphs, gw * 128, gh, gw * c, 0, imageBuf, width, height, x, y, gw, gh, rop);
-    }
-
     public void drawLine(int x0, int y0, int x1, int y1)
     {
         drawLine(x0, y0, x1, y1, strokeStyle);
@@ -196,11 +640,31 @@ public class Graphics
     private void drawLine(int x0, int y0, int x1, int y1, int style)
     {
         // Uses Bresenham's line algorithm
+        y0 += transY;
+        y1 += transY;
+        x0 += transX;
+        x1 += transX;
         int dy = y1 - y0;
         int dx = x1 - x0;
         int stepx, stepy;
         boolean skip = false;
-
+        if (style == SOLID && (dx == 0 || dy == 0))
+        {
+            // Special case horizontal and vertical lines
+            if (dx <= 0)
+            {
+                x0 = x1;
+                dx = -dx;
+            }
+            if (dy <= 0)
+            {
+                y0 = y1;
+                dy = -dy;
+            }
+            LCD.bitBlt(imageBuf, width, height, x0, y0, imageBuf, width, height, x0, y0,
+                    dx + 1, dy + 1, (rgbColor == BLACK ? LCD.ROP_SET : LCD.ROP_CLEAR));
+            return;
+        }
         if (dy < 0)
         {
             dy = -dy;
@@ -217,20 +681,10 @@ public class Graphics
         {
             stepx = 1;
         }
-        if (style == SOLID)
-        {
-            // Special case horizontal and vertical lines
-            if (dy == 0 || dx == 0)
-            {
-                LCD.bitBlt(imageBuf, width, height, 0, 0, imageBuf, width, height, (stepx == 1 ? x0 : x1), (stepy == 1 ? y0 : y1),
-                        (dx == 0 ? 1 : dx + 1), (dy == 0 ? 1 : dy + 1), (rgbColor == BLACK ? LCD.ROP_SET : LCD.ROP_CLEAR));
-                return;
-            }
-        }
         dy <<= 1; // dy is now 2*dy
         dx <<= 1; // dx is now 2*dx
 
-        setPixel(rgbColor, x0, y0);
+        setPixel(x0, y0);
         if (dx > dy)
         {
             int fraction = dy - (dx >> 1);  // same as 2*dy - dx
@@ -244,7 +698,7 @@ public class Graphics
                 x0 += stepx;
                 fraction += dy; // same as fraction -= 2*dy
                 if ((style == SOLID) || !skip)
-                    setPixel(rgbColor, x0, y0);
+                    setPixel(x0, y0);
                 skip = !skip;
             }
         } else
@@ -260,17 +714,35 @@ public class Graphics
                 y0 += stepy;
                 fraction += dx;
                 if ((style == SOLID) || !skip)
-                    setPixel(rgbColor, x0, y0);
+                    setPixel(x0, y0);
                 skip = !skip;
             }
         }
     }
 
+    /**
+     * Draw an arc, using the current color and style.
+     * @param x
+     * @param y
+     * @param width
+     * @param height
+     * @param startAngle
+     * @param arcAngle
+     */
     public void drawArc(int x, int y, int width, int height, int startAngle, int arcAngle)
     {
         drawArc(x, y, width, height, startAngle, arcAngle, strokeStyle, false);
     }
 
+    /**
+     * Draw a filled arc, using the current color.
+     * @param x
+     * @param y
+     * @param width
+     * @param height
+     * @param startAngle
+     * @param arcAngle
+     */
     public void fillArc(int x, int y, int width, int height, int startAngle, int arcAngle)
     {
         // drawArc is for now only SOLID
@@ -283,7 +755,8 @@ public class Graphics
         // Scale up width and height to create more accurate ellipse form
         int xscale = (width < height) ? ARC_ACC : ((ARC_ACC * width + (width >> 1)) / height);
         int yscale = (width < height) ? ((ARC_ACC * height + (height >> 1)) / width) : ARC_ACC;
-
+        x += transX;
+        y += transY;
         // Calculate x, y center and radius from upper left corner
         int x0 = x + (width >> 1);
         int y0 = y + (height >> 1);
@@ -298,20 +771,6 @@ public class Graphics
             arcAngle += 360;  // negative arc angle is OK
         // Check and set start and end angle
         int endAngle = startAngle + arcAngle;
-//      while (endAngle < 0)
-//      {
-//         endAngle = endAngle + 360;
-//      }
-//      while (endAngle > 360)
-//      {
-//         endAngle = endAngle - 360;
-//      }
-//      if (arcAngle < 0)
-//      { // Switches start and end
-//         int temp = startAngle;
-//         startAngle = endAngle;
-//         endAngle = (temp > 0) ? temp : temp + 360;  // was just :temp
-//      }
         if (arcAngle >= 0)
         {
             if (endAngle > 360)  // need 2 segments
@@ -389,28 +848,38 @@ public class Graphics
             } else
             {
                 if (((90 - tp) >= startAngle) && ((90 - tp) <= endAngle))
-                    setPixel(rgbColor, x0 + yxp, y0 - xyp); // 0   - 45 degrees
+                    setPixel(x0 + yxp, y0 - xyp); // 0   - 45 degrees
                 if ((tp >= startAngle) && (tp <= endAngle))
-                    setPixel(rgbColor, x0 + xxp, y0 - yyp); // 45  - 90 degrees
+                    setPixel(x0 + xxp, y0 - yyp); // 45  - 90 degrees
                 if (((180 - tp) >= startAngle) && ((180 - tp) <= endAngle))
-                    setPixel(rgbColor, x0 - xxp, y0 - yyp); // 90  - 135 degrees
+                    setPixel(x0 - xxp, y0 - yyp); // 90  - 135 degrees
                 if (((180 - (90 - tp)) >= startAngle) && ((180 - (90 - tp)) <= endAngle))
-                    setPixel(rgbColor, x0 - yxp, y0 - xyp); // 135 - 180 degrees
+                    setPixel(x0 - yxp, y0 - xyp); // 135 - 180 degrees
                 if (((270 - tp) >= startAngle) && ((270 - tp) <= endAngle))
-                    setPixel(rgbColor, x0 - yxp, y0 + xyp); // 180 - 225 degrees
+                    setPixel(x0 - yxp, y0 + xyp); // 180 - 225 degrees
                 if (((270 - (90 - tp)) >= startAngle) && ((270 - (90 - tp)) <= endAngle))
-                    setPixel(rgbColor, x0 - xxp, y0 + yyp); // 225 - 270 degrees
+                    setPixel(x0 - xxp, y0 + yyp); // 225 - 270 degrees
                 if (((360 - tp) >= startAngle) && ((360 - tp) <= endAngle))
-                    setPixel(rgbColor, x0 + xxp, y0 + yyp); // 270 - 315 degrees
+                    setPixel(x0 + xxp, y0 + yyp); // 270 - 315 degrees
                 if (((360 - (90 - tp)) >= startAngle) && ((360 - (90 - tp)) <= endAngle))
-                    setPixel(rgbColor, x0 + yxp, y0 + xyp); // 315 - 360 degrees
+                    setPixel(x0 + yxp, y0 + xyp); // 315 - 360 degrees
             }
         }
     }
 
+    /**
+     * Draw a rounded rectangle.
+     * @param x
+     * @param y
+     * @param width
+     * @param height
+     * @param arcWidth
+     * @param arcHeight
+     */
     public void drawRoundRect(int x, int y, int width, int height, int arcWidth, int arcHeight)
     {
-
+        x += transX;
+        y += transY;
         int xc = x + (width / 2);
         int yc = y + (height / 2);
         int a = arcWidth / 2;
@@ -440,13 +909,13 @@ public class Graphics
 
         while (yyy >= 0 && xxx <= a)
         {
-            setPixel(BLACK, xc + xxx + translateX, yc + yyy + translateY); // Q4
+            setPixel(xc + xxx + translateX, yc + yyy + translateY); // Q4
             if (xxx != 0 || yyy != 0)
-                setPixel(BLACK, xc - xxx - translateX, yc - yyy - translateY); // Q2
+                setPixel(xc - xxx - translateX, yc - yyy - translateY); // Q2
             if (xxx != 0 && yyy != 0)
             {
-                setPixel(BLACK, xc + xxx + translateX, yc - yyy - translateY); // Q1
-                setPixel(BLACK, xc - xxx - translateX, yc + yyy + translateY); // Q3
+                setPixel(xc + xxx + translateX, yc - yyy - translateY); // Q1
+                setPixel(xc - xxx - translateX, yc + yyy + translateY); // Q3
             }
             if (t + b2 * xxx <= crit1
                     || /* e(xxx+1,y-1/2) <= 0 */ t + a2 * yyy <= crit3)      /* e(xxx+1/2,y) <= 0 */
@@ -478,8 +947,17 @@ public class Graphics
         }
     }
 
+    /**
+     * Draw a rectangle using the current color and style.
+     * @param x
+     * @param y
+     * @param width
+     * @param height
+     */
     public void drawRect(int x, int y, int width, int height)
     {
+        x += transX;
+        y += transY;
         if ((width < 0) || (height < 0))
             return;
 
@@ -495,40 +973,35 @@ public class Graphics
         }
     }
 
+    /**
+     * Draw a filled rectangle using the current color.
+     * @param x
+     * @param y
+     * @param w
+     * @param h
+     */
     public void fillRect(int x, int y, int w, int h)
     {
+        x += transX;
+        y += transY;
         if ((w < 0) || (h < 0))
             return;
-        LCD.bitBlt(imageBuf, width, height, 0, 0, imageBuf, width, height, x, y, w, h, (rgbColor == BLACK ? LCD.ROP_SET : LCD.ROP_CLEAR));
+        LCD.bitBlt(imageBuf, width, height, x, y, imageBuf, width, height, x, y, w, h, (rgbColor == BLACK ? LCD.ROP_SET : LCD.ROP_CLEAR));
     }
 
-    public void drawString(String str, int x, int y)
-    {
-        drawString(str, x, y, LCD.ROP_COPY);
-    }
-
-    public void drawImage(Image img, int x, int y, boolean invert)
-    {
-        if (img == null)
-        {
-            return;
-        }
-        LCD.bitBlt(img.getData(), img.getWidth(), img.getHeight(), 0, 0, imageBuf, width, height, x, y, img.getWidth(), img.getHeight(), (invert ? LCD.ROP_COPYINVERTED : LCD.ROP_COPY));
-    }
-
-    public void drawImage(Image img, int sx, int sy, int x, int y, int w, int h, int rop)
-    {
-        if (img == null)
-            LCD.bitBlt(imageBuf, width, height, 0, 0, imageBuf, width, height, x, y, w, h, rop);
-        else
-            LCD.bitBlt(img.getData(), img.getWidth(), img.getHeight(), sx, sy, imageBuf, width, height, x, y, w, h, rop);
-    }
-
+    /**
+     * Return the current stroke style.
+     * @return current style.
+     */
     public int getStrokeStyle()
     {
         return strokeStyle;
     }
 
+    /**
+     * Set the stroke style to be used for drawing operations.
+     * @param style new style.
+     */
     public void setStrokeStyle(int style)
     {
         if (style != SOLID && style != DOTTED)
@@ -538,22 +1011,56 @@ public class Graphics
         strokeStyle = style;
     }
 
-    // Temp for testing purposes until Canvas made.
-    public void refresh()
+    /**
+     * Copy one rectangular area of the drawing surface to another.
+     * @param sx Source x
+     * @param sy Source y
+     * @param w Source width
+     * @param h Source height
+     * @param x Destination x
+     * @param y Destination y
+     * @param anchor location of the anchor point of the destination.
+     */
+    public void copyArea(int sx, int sy,
+            int w, int h,
+            int x, int y, int anchor)
     {
-        LCD.refresh();
+        x = adjustX(x, w, anchor);
+        y = adjustY(y, h, anchor);
+        LCD.bitBlt(imageBuf, width, height, sx, sy, imageBuf, width, height, x, y, w, h, LCD.ROP_COPY);
     }
-    // Temp method for testing. Clears out graphics buffer
-    // and refreshes screen.
 
-    public void clear()
+    /**
+     * Translates the origin of the graphics context to the point
+     * (x, y) in the current coordinate system. Calls are cumulative.
+     *
+     * @param x the new translation origin x value
+     * @param y new translation origin y value
+     * @see #getTranslateX()
+     * @see #getTranslateY()
+     */
+    public synchronized void translate(int x, int y)
     {
-        LCD.bitBlt(imageBuf, width, height, 0, 0, imageBuf, width, height, 0, 0, width, height, LCD.ROP_CLEAR);
+        transX += x;
+        transY += y;
     }
 
-    public void autoRefresh(boolean on)
+    /**
+     * Gets the X coordinate of the translated origin of this graphics context.
+     * @return X of current origin
+     */
+    public synchronized int getTranslateX()
     {
-        LCD.setAutoRefresh(on);
+        return transX;
+    }
+
+    /**
+     * Gets the Y coordinate of the translated origin of this graphics context.
+     * @return Y of current origin
+     */
+    public synchronized int getTranslateY()
+    {
+        return transY;
     }
 }
 

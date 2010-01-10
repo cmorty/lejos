@@ -203,7 +203,7 @@ public class List extends Screen implements Choice {
     		lineIdx++;
     	}
     	if (title != null) {
-    		g.drawString(title, 0, lineIdx++ * line);
+    		g.drawString(title, 0, lineIdx++ * line, 0);
     	}
 
     	// Update scrolling administration
@@ -226,7 +226,7 @@ public class List extends Screen implements Choice {
     	// Display list items with current highlighted
 		for (int i = scrollFirst; (i < listItems.size()) && (i <= scrollLast); i++) {
 			ListItem li = listItems.get(i);
-			g.drawString(li.str, 2*ch, lineIdx*line, (i == scrollCurr));
+			g.drawString(li.str, 2*ch, lineIdx*line, 0, (i == scrollCurr));
 			
 			// Draw selection state
 			if ((listType == Choice.EXCLUSIVE) || (listType == Choice.MULTIPLE)) {

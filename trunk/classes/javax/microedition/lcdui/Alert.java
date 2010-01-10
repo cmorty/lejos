@@ -143,23 +143,22 @@ public class Alert extends Screen {
 //		g.fillRect(16, 0, 66, 18);
 		int line = Display.CHAR_HEIGHT;
 		int ch = Display.CHAR_WIDTH;
-		//g.fillRect(0, 0, 100, 16);
+		g.fillRect(0, 0, 100, 16);
 		// Use special rop to create a "gray" banner.
-		g.drawImage(null, 0, 0, 0, 0, 100, 16, 0x55);
-		g.drawString(title, g.getCenteredX(title), line/2, true);
-
+		//g.drawImage(null, 0, 0, 0, 0, 100, 16, 0x55);
+		g.drawString(title, Display.SCREEN_WIDTH/2, line/2, Graphics.HCENTER, true);
 		if (this.image != null) {
 			// Draw user defined image
-			g.drawImage(image, 0, 20, false);
+			g.drawImage(image, 0, 20, 0);
 		} else {
-			g.drawImage(icons[this.type], 0, 20, false);
+			g.drawImage(icons[this.type], 0, 20, 0);
 		}
 		
 		
 		// Draw centered text
-		g.drawString(text, 3*ch, 3*line);
+		g.drawString(text, 3*ch, 3*line, 0);
 		if (type == ALERT_TYPE_CONFIRMATION) {
-			g.drawString(confirm ? STR_CONFIRM : STR_DENY, g.getCenteredX(STR_CONFIRM), 4*line, true);
+			g.drawString(confirm ? STR_CONFIRM : STR_DENY, Display.SCREEN_WIDTH/2, 4*line, Graphics.HCENTER, true);
 		} else if (gauge != null) {
 			gauge.paint(g, 0, 32, 100, 32, false);
 		}

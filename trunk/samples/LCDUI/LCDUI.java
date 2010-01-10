@@ -18,6 +18,7 @@ import javax.microedition.lcdui.Spacer;
 import javax.microedition.lcdui.TextBox;
 import javax.microedition.lcdui.TextField;
 import javax.microedition.lcdui.Ticker;
+import javax.microedition.lcdui.Font;
 import lejos.util.Timer;
 import lejos.util.TimerListener;
 import lejos.nxt.LCD;
@@ -52,23 +53,23 @@ class Splasher extends Alert
 	
 	public void paint(Graphics g)
 	{
+        g.setFont(Font.getFont(0, 0, Font.SIZE_LARGE));
 		int iw = img.getWidth();
 		int ih = img.getHeight();
 		int dx = (Display.SCREEN_WIDTH - iw)/2;
-		int dy = (Display.SCREEN_HEIGHT - ih)/2 - 5;
-		int tdx = g.getCenteredX(text);
+		int dy = (Display.SCREEN_HEIGHT - ih)/2 - 10;
 		int tdy = dy + ih + 5;
-		int tw = text.length()*Display.CHAR_WIDTH;
-        tdx = (Display.SCREEN_WIDTH - tw)/2;
-		int th = Display.CHAR_HEIGHT;
+		int tw = g.getFont().stringWidth(text);
+        int tdx = (Display.SCREEN_WIDTH - tw)/2;
+		int th = g.getFont().getHeight();
 		if (startUp)
 		{
 			for(int i = 32; i >=0; i--)
 			{
-				g.clear();
-				g.drawImage(img, 0, 0, dx + i, dy, iw, ih, 0xaaffaa00);
-				g.drawImage(img, 0, 0, dx - i, dy, iw, ih, 0x55ff5500);
-				g.refresh();
+				LCD.clear();
+				g.drawRegionRop(img, 0, 0, iw, ih, dx + i, dy, 0, 0xaaffaa00);
+				g.drawRegionRop(img, 0, 0, iw, ih, dx - i, dy, 0, 0x55ff5500);
+				LCD.refresh();
 				try{Thread.sleep(50);}catch(Exception e){}
 			}
 			int old = g.getColor();
@@ -76,8 +77,8 @@ class Splasher extends Alert
 			for(int i = (Display.SCREEN_HEIGHT - tdy); i >= 0; i--)
 			{
 				g.fillRect(tdx, tdy + i + th + 1, tw, th);
-				g.drawString(text, tdx, tdy + i, false);
-				g.refresh();
+				g.drawString(text, tdx, tdy + i, 0, true);
+				LCD.refresh();
 				try{Thread.sleep(50);}catch(Exception e){}
 			}
 			g.setColor(old);
@@ -86,23 +87,24 @@ class Splasher extends Alert
 		{
 			int old = g.getColor();
 			g.setColor(Graphics.WHITE);
-			g.drawImage(img, 0, 0, dx, dy, iw, ih, LCD.ROP_COPY);
+			g.drawRegionRop(img, 0, 0, iw, ih, dx, dy, 0, LCD.ROP_COPY);
 			for(int i = 0; i < (Display.SCREEN_HEIGHT - tdy); i++)
 			{
 				g.fillRect(tdx, tdy + i - 1, tw, th);
-				g.drawString(text, tdx, tdy + i, false);
-				g.refresh();
+				g.drawString(text, tdx, tdy + i, 0, true);
+				LCD.refresh();
 				try{Thread.sleep(50);}catch(Exception e){}
 			}
 			g.setColor(old);
 			for(int i = 0; i <= iw/2; i++)
 			{
-				g.clear();
-				g.drawImage(img, i, i, dx + i, dy + i, iw - 2*i, ih - 2*i, LCD.ROP_COPY);
-				g.refresh();
+				LCD.clear();
+				g.drawRegionRop(img, i, i, iw - 2*i, ih - 2*i, dx + i, dy + i, 0, LCD.ROP_COPY);
+				LCD.refresh();
 				try{Thread.sleep(50);}catch(Exception e){}
 			}
 		}
+        g.setFont(Font.getDefaultFont());
 	}
 	
 }
@@ -171,7 +173,7 @@ public class LCDUI implements CommandListener {
 			(byte)0x0A, (byte)0x05, (byte)0x0A, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0xFF, (byte)0xFF, (byte)0xFF, (byte)0xFF, (byte)0xFF, (byte)0xFF,
 			(byte)0x0F, (byte)0x1F, (byte)0x3F, (byte)0x3F, (byte)0x7F, (byte)0x7F, (byte)0xFC, (byte)0xF8, (byte)0xF0, (byte)0xF0, (byte)0xF0, (byte)0xF0, (byte)0xF0,
 			(byte)0xF0, (byte)0xF0, (byte)0xF0, (byte)0xF0, (byte)0xF0, (byte)0xF8, (byte)0xFC, (byte)0x7F, (byte)0x7F, (byte)0x3F, (byte)0x3F, (byte)0x1F, (byte)0x0F,});
-	private Splasher startUp		= new Splasher(splash, "LEJOS", true);
+	private Splasher startUp		= new Splasher(splash, "leJOS", true);
 
     // Items on form2
     private Gauge 	volGauge 	= new Gauge("Volume: ", true, 8, 6);

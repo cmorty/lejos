@@ -114,12 +114,12 @@ public class TextBox extends Screen {
 		int line = Display.CHAR_HEIGHT;
 		int ch = Display.CHAR_WIDTH;
 		if (title != null) {
-			g.drawString(title, 0, 1*line);
+			g.drawString(title, 0, 1*line, 0);
 		}
 		
 		// Draw input string per character
 		for (int i = 0; (i < inputIdx) && (inputText[i] > '\0'); i++) {
-			g.drawChar(inputText[i], (i * ch), 2*line, false);
+			g.drawChar(inputText[i], (i * ch), 2*line, 0);
 		}
 		
 		// Draw keyboard frame
@@ -127,7 +127,7 @@ public class TextBox extends Screen {
 		g.drawLine(0, 39, 100, 39);
 		g.drawLine(0, 47, 100, 47);
 		g.drawLine(0, 55, 100, 55);
-		g.drawLine(9, 32, 10, 99);
+		g.drawLine(10, 32, 10, 99);
 		g.drawLine(20, 32, 20, 99);
 		g.drawLine(30, 32, 30, 99);
 		g.drawLine(40, 32, 40, 99);
@@ -140,12 +140,14 @@ public class TextBox extends Screen {
 		// Draw keyboard selection
 		for (int x = 0; x < 10; x++) {
 			for (int y = 0; y < 4; y++) {
-				g.drawChar(keyboard[kSel + y][x], (x * 10) + 2, (y + 4)*line, ((x == xSel) && (y == ySel)));
+				g.drawChar(keyboard[kSel + y][x], (x * 10) + 2, (y + 4)*line, 0);
 			}
 		}
 		
 		// Draw character / digit switch image
-		g.drawImage((kSel == 8) ? chars : digits, 1, 56, (xSel == 0) && (ySel == 3));
+		g.drawImage((kSel == 8) ? chars : digits, 1, 56, 0);
+        // invert the selected item
+        g.drawRegionRop(null, 0, 0,  9, line-1, xSel*10+1, (ySel+4)*line, 0, 0x00ff00ff);
 	}
 	
 	private boolean checkConstraints() {

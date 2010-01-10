@@ -71,7 +71,7 @@ public class Gauge extends Item {
 		int barOffset = 0;
 		
 		if (label != null) {
-			g.drawString(label, x, y, selected);
+			g.drawString(label, x, y, 0, selected);
 			
 			if (h > Display.CHAR_HEIGHT) {
 				barIncr = (h - Display.CHAR_HEIGHT) / maxValue;

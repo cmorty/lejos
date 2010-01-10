@@ -180,7 +180,7 @@ public class Form extends Screen implements CommandListener {
 
 		// Draw title on entire line
 		if (title != null) {
-			g.drawString(title, 0, 0);
+			g.drawString(title, 0, 0, 0);
 			curY += Display.CHAR_HEIGHT;
 		}
 		
@@ -198,9 +198,9 @@ public class Form extends Screen implements CommandListener {
 			// Draw current item
 			Object o = items.get(i);
 			if (o instanceof Image) {
-				g.drawImage((Image) o, curX, curY, false);
+				g.drawImage((Image) o, curX, curY, 0);
 			} else if (o instanceof String) {
-				g.drawString(((String) o), curX, curY);
+				g.drawString(((String) o), curX, curY, 0);
 			} else if (o instanceof Item) {
 				((Item) o).paint(g, curX, curY, curWidth, curHeight, (i == curItemIdx));
 				
