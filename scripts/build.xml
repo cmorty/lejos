@@ -98,6 +98,7 @@ ${template.linux.parser}
 		<linux-tool file="nxjmonitor"       class="lejos.pc.tools.NXJMonitor"/>
 		<linux-tool file="nxjsocketproxy"   class="lejos.pc.tools.SocketProxy"/>
 		<linux-tool file="nxjupload"        class="lejos.pc.tools.NXJUpload"/>
+		<linux-tool file="nxjimage"         class="lejos.pc.tools.ImageConverter"/>
 		
 		<linux-tool file="nxj" class="lejos.pc.tools.NXJLinkAndUpload">
 			--bootclasspath "$NXJ_CP_BOOT" --writeorder "LE" --classpath "." 
@@ -130,6 +131,7 @@ ${template.linux.parser}
 		<win-tool file="nxjmonitor"       class="lejos.pc.tools.NXJMonitor"/>
 		<win-tool file="nxjsocketproxy"   class="lejos.pc.tools.SocketProxy"/>
 		<win-tool file="nxjupload"        class="lejos.pc.tools.NXJUpload"/>
+		<win-tool file="nxjimage"         class="lejos.pc.tools.ImageConverter"/>
 		
 		<win-tool file="nxj" class="lejos.pc.tools.NXJLinkAndUpload">
 			--bootclasspath "%NXJ_CP_BOOT%" --writeorder "LE" --classpath "." 
