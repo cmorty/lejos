@@ -77,21 +77,15 @@ OPCODE(OP_RET)
 #if FP_ARITHMETIC
 
 OPCODE(OP_DCMPL)
-  {
-    //JDOUBLE d1, d2;
-    pop_jdouble(&d2);
-    pop_jdouble(&d1);
-    push_word( do_dcmp (d1.dnum, d2.dnum, -1));
-  }
+  pop_jdouble(&d2);
+  pop_jdouble(&d1);
+  push_word( do_dcmp (d1.dnum, d2.dnum, -1));
   DISPATCH;
 
 OPCODE(OP_DCMPG)
-  {
-    //JDOUBLE d1, d2;
-    pop_jdouble(&d2);
-    pop_jdouble(&d1);
-    push_word( do_dcmp (d1.dnum, d2.dnum, 1));
-  }
+  pop_jdouble(&d2);
+  pop_jdouble(&d1);
+  push_word( do_dcmp (d1.dnum, d2.dnum, 1));
   DISPATCH;
 
 OPCODE(OP_FCMPL)
@@ -112,13 +106,9 @@ OPCODE(OP_FCMPG)
 OPCODE(OP_LCMP)
   // Arguments: 0
   // Stack: -4 + 1
-  {
-    //JLONG l1, l2;
-
-    pop_jlong (&l2);
-    pop_jlong (&l1);
-    push_word (do_lcmp(l1.lnum, l2.lnum, 0));
-  }
+  pop_jlong (&l2);
+  pop_jlong (&l1);
+  push_word (do_lcmp(l1.lnum, l2.lnum, 0));
   DISPATCH;    
 
 #endif
