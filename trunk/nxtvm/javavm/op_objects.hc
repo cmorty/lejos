@@ -34,7 +34,7 @@ OPCODE(OP_GETSTATIC)
     tempInt = dispatch_static_initializer (get_class_record (pc[0]), pc - 1);
     LOAD_REGS();
     if(tempInt)
-      DISPATCH;;
+      DISPATCH;
   }
   push_word(*(((STACKWORD *)get_static_state_base()) + pc[1]));
   pc += 2;
@@ -50,7 +50,7 @@ OPCODE(OP_PUTSTATIC)
     tempInt = dispatch_static_initializer (get_class_record (pc[0]), pc - 1);
     LOAD_REGS();
     if(tempInt)
-      DISPATCH;;
+      DISPATCH;
   }
   *(((STACKWORD *)get_static_state_base()) + pc[1]) = pop_word();
   pc += 2;
@@ -68,7 +68,7 @@ MULTI_OPCODE(OP_GETSTATIC_4)
       tempInt = dispatch_static_initializer (get_class_record (pc[0]), pc - 1);
       LOAD_REGS();
       if(tempInt)
-        DISPATCH;;
+        DISPATCH;
     }
     tempStackWord = ((STATICFIELD *) get_static_fields_base())[((*(pc-1) - OP_GETSTATIC_1)*256 + pc[1])];
     tempWordPtr = (STACKWORD *)(get_static_state_base() + get_static_field_offset (tempStackWord));
@@ -98,7 +98,7 @@ MULTI_OPCODE(OP_PUTSTATIC_4)
       tempInt = dispatch_static_initializer (get_class_record (pc[0]), pc - 1);
       LOAD_REGS();
       if(tempInt)
-        DISPATCH;;
+        DISPATCH;
     }
     tempStackWord = ((STATICFIELD *) get_static_fields_base())[((*(pc-1) - OP_PUTSTATIC_1)*256 + pc[1])];
     tempWordPtr = (STACKWORD *)(get_static_state_base() + get_static_field_offset (tempStackWord));
@@ -163,7 +163,7 @@ OPCODE(OP_GETFIELD_1)
       set_top_ref(get_word_ns((byte *)tempWordPtr, tempStackWord));
     pc += 2;
   }
-  DISPATCH;;
+  DISPATCH;
 
 OPCODE(OP_PUTFIELD_1)
   {
@@ -194,7 +194,7 @@ OPCODE(OP_PUTFIELD_1)
     just_pop_ref();
     pc += 2;
   }
-  DISPATCH;;
+  DISPATCH;
 
 OPCODE(OP_INSTANCEOF)
   // Stack: unchanged
@@ -202,7 +202,7 @@ OPCODE(OP_INSTANCEOF)
   // Ignore hi byte
   set_top_word (instance_of (word2obj (get_top_ref()),  pc[1]|(pc[0] << 8)));
   pc += 2;
-  DISPATCH;;
+  DISPATCH;
 
 OPCODE(OP_CHECKCAST)
   // Stack: -1 +1 (same)
@@ -215,7 +215,7 @@ OPCODE(OP_CHECKCAST)
     goto LABEL_THROW_EXCEPTION;
   }
   pc += 2;
-  DISPATCH;;
+  DISPATCH;
 
 // Notes:
 // - NEW, INSTANCEOF, CHECKCAST: 8 bits ignored, 8-bit class index

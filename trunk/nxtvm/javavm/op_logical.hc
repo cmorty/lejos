@@ -40,75 +40,54 @@ OPCODE(OP_IXOR)
 
 #if LONG_ARITHMETIC
 OPCODE(OP_LSHL)
-  {
-    // Arguments) 0
-    // Stack) -3 +1
-    //JLONG l1;
-    tempStackWord = pop_word();
-    pop_jlong(&l1);
-    l1.lnum <<= (tempStackWord & 0x3F);
-    push_jlong(&l1);
-    DISPATCH;
-  }
+  // Arguments) 0
+  // Stack) -3 +1
+  tempStackWord = pop_word();
+  pop_jlong(&l1);
+  l1.lnum <<= (tempStackWord & 0x3F);
+  push_jlong(&l1);
+  DISPATCH;
 
 OPCODE(OP_LSHR)
-  {
-    // Arguments) 0
-    // Stack) -3 +1
-    //JLONG l1;
-    tempStackWord = pop_word();
-    pop_jlong(&l1);
-    l1.lnum >>= (tempStackWord & 0x3F);
-    push_jlong(&l1);
-    DISPATCH;
-  }
+  // Arguments) 0
+  // Stack) -3 +1
+  tempStackWord = pop_word();
+  pop_jlong(&l1);
+  l1.lnum >>= (tempStackWord & 0x3F);
+  push_jlong(&l1);
+  DISPATCH;
 
 OPCODE(OP_LUSHR)
-  {
-    // Arguments) 0
-    // Stack) -3 +1
-    //JLONG l1;
-    tempStackWord = pop_word();
-    pop_jlong(&l1);
-    l1.lnum = (LLONG)(((ULLONG)l1.lnum) >> (tempStackWord & 0x3F));
-    push_jlong(&l1);
-    DISPATCH;
-  }
+  // Arguments) 0
+  // Stack) -3 +1
+  tempStackWord = pop_word();
+  pop_jlong(&l1);
+  l1.lnum = (LLONG)(((ULLONG)l1.lnum) >> (tempStackWord & 0x3F));
+  push_jlong(&l1);
+  DISPATCH;
 
 OPCODE(OP_LAND)
-  {
-    //JLONG l1, l2;
-    pop_jlong(&l1);
-    pop_jlong(&l2);
-    l2.lnum &= l1.lnum;
-    push_jlong(&l2);
-    DISPATCH;
-  }
+  pop_jlong(&l1);
+  pop_jlong(&l2);
+  l2.lnum &= l1.lnum;
+  push_jlong(&l2);
+  DISPATCH;
 
 OPCODE(OP_LOR)
-  {
-    //JLONG l1, l2;
-    pop_jlong(&l1);
-    pop_jlong(&l2);
-    l2.lnum |= l1.lnum;
-    push_jlong(&l2);
-    DISPATCH;
-  }
+  pop_jlong(&l1);
+  pop_jlong(&l2);
+  l2.lnum |= l1.lnum;
+  push_jlong(&l2);
+  DISPATCH;
 
 OPCODE(OP_LXOR)
-  {
-    //JLONG l1, l2;
-    pop_jlong(&l1);
-    pop_jlong(&l2);
-    l2.lnum ^= l1.lnum;
-    push_jlong(&l2);
-    DISPATCH;
-  }
+  pop_jlong(&l1);
+  pop_jlong(&l2);
+  l2.lnum ^= l1.lnum;
+  push_jlong(&l2);
+  DISPATCH;
 
 #endif
-
-// Notes)
-// - Not supported) LSHL, LSHR, LAND, LOR, LXOR
 
 /*end*/
 

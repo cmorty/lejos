@@ -76,53 +76,38 @@ OPCODE(OP_FREM)
   DISPATCH;
 
 OPCODE(OP_DNEG)
-  {
-    //JDOUBLE d1;
-    pop_jdouble(&d1);
-    d1.dnum = -d1.dnum;
-    push_jdouble(&d1);
-    DISPATCH;
-  }
+  pop_jdouble(&d1);
+  d1.dnum = -d1.dnum;
+  push_jdouble(&d1);
+  DISPATCH;
 
 OPCODE(OP_DSUB)
-  {
-    //JDOUBLE d1, d2;
-    pop_jdouble(&d1);
-    pop_jdouble(&d2);
-    d2.dnum -= d1.dnum;
-    push_jdouble(&d2);
-    DISPATCH;
-  }
+  pop_jdouble(&d1);
+  pop_jdouble(&d2);
+  d2.dnum -= d1.dnum;
+  push_jdouble(&d2);
+  DISPATCH;
 
 OPCODE(OP_DADD)
-  {
-    //JDOUBLE d1, d2;
-    pop_jdouble(&d1);
-    pop_jdouble(&d2);
-    d2.dnum += d1.dnum;
-    push_jdouble(&d2);
-    DISPATCH;
-  }
+  pop_jdouble(&d1);
+  pop_jdouble(&d2);
+  d2.dnum += d1.dnum;
+  push_jdouble(&d2);
+  DISPATCH;
 
 OPCODE(OP_DMUL)
-  {
-    //JDOUBLE d1, d2;
-    pop_jdouble(&d1);
-    pop_jdouble(&d2);
-    d2.dnum *= d1.dnum;
-    push_jdouble(&d2);
-    DISPATCH;
-  }
+  pop_jdouble(&d1);
+  pop_jdouble(&d2);
+  d2.dnum *= d1.dnum;
+  push_jdouble(&d2);
+  DISPATCH;
 
 OPCODE(OP_DDIV)
-  {
-    //JDOUBLE d1, d2;
-    pop_jdouble(&d1);
-    pop_jdouble(&d2);
-    d2.dnum /= d1.dnum;
-    push_jdouble(&d2);
-    DISPATCH;
-  }
+  pop_jdouble(&d1);
+  pop_jdouble(&d2);
+  d2.dnum /= d1.dnum;
+  push_jdouble(&d2);
+  DISPATCH;
 
 OPCODE(OP_DREM)
   pop_jdouble(&d1);
@@ -134,73 +119,55 @@ OPCODE(OP_DREM)
 
 #if LONG_ARITHMETIC
 OPCODE(OP_LNEG)
-  {
-    //JLONG l;
-    pop_jlong(&l1);
-    l1.lnum = -l1.lnum;
-    push_jlong(&l1);
-    DISPATCH;
-  }
+  pop_jlong(&l1);
+  l1.lnum = -l1.lnum;
+  push_jlong(&l1);
+  DISPATCH;
 
 OPCODE(OP_LADD)
-  {
-    //JLONG l1, l2;
-    pop_jlong(&l1);
-    pop_jlong(&l2);
-    l2.lnum += l1.lnum;
-    push_jlong(&l2);
-    DISPATCH;
-  }
+  pop_jlong(&l1);
+  pop_jlong(&l2);
+  l2.lnum += l1.lnum;
+  push_jlong(&l2);
+  DISPATCH;
 
 OPCODE(OP_LSUB)
-  {
-    //JLONG l1, l2;
-    pop_jlong(&l1);
-    pop_jlong(&l2);
-    l2.lnum -= l1.lnum;
-    push_jlong(&l2);
-    DISPATCH;
-  }
+  pop_jlong(&l1);
+  pop_jlong(&l2);
+  l2.lnum -= l1.lnum;
+  push_jlong(&l2);
+  DISPATCH;
 
 OPCODE(OP_LMUL)
-  {
-    //JLONG l1, l2;
-    pop_jlong(&l1);
-    pop_jlong(&l2);
-    l2.lnum *= l1.lnum;
-    push_jlong(&l2);
-    DISPATCH;
-  }
+  pop_jlong(&l1);
+  pop_jlong(&l2);
+  l2.lnum *= l1.lnum;
+  push_jlong(&l2);
+  DISPATCH;
 
 OPCODE(OP_LDIV)
+  pop_jlong(&l1);
+  pop_jlong(&l2);
+  if (l1.lnum == 0)
   {
-    //JLONG l1, l2;
-    pop_jlong(&l1);
-    pop_jlong(&l2);
-    if (l1.lnum == 0)
-    {
-      thrownException = JAVA_LANG_ARITHMETICEXCEPTION;
-      goto LABEL_THROW_EXCEPTION;
-    }
-    l2.lnum /= l1.lnum;
-    push_jlong(&l2);
-    DISPATCH;
+    thrownException = JAVA_LANG_ARITHMETICEXCEPTION;
+    goto LABEL_THROW_EXCEPTION;
   }
+  l2.lnum /= l1.lnum;
+  push_jlong(&l2);
+  DISPATCH;
 
 OPCODE(OP_LREM)
+  pop_jlong(&l1);
+  pop_jlong(&l2);
+  if (l1.lnum == 0)
   {
-    //JLONG l1, l2;
-    pop_jlong(&l1);
-    pop_jlong(&l2);
-    if (l1.lnum == 0)
-    {
-      thrownException = JAVA_LANG_ARITHMETICEXCEPTION;
-      goto LABEL_THROW_EXCEPTION;
-    }
-    l2.lnum %= l1.lnum;
-    push_jlong(&l2);
-    DISPATCH;
+    thrownException = JAVA_LANG_ARITHMETICEXCEPTION;
+    goto LABEL_THROW_EXCEPTION;
   }
+  l2.lnum %= l1.lnum;
+  push_jlong(&l2);
+  DISPATCH;
 #endif
 
 // Notes)

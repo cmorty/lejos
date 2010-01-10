@@ -185,14 +185,11 @@ OPCODE(OP_FCONST_2)
   DISPATCH;
 
 OPCODE(OP_DCONST_1)
-  {
-    // Stack size: +2
-    // Arguments: 0
-    //JDOUBLE d1;
-    d1.dnum = 1.0;
-    push_jdouble(&d1);
-    DISPATCH;
-  }
+  // Stack size: +2
+  // Arguments: 0
+  d1.dnum = 1.0;
+  push_jdouble(&d1);
+  DISPATCH;
 
 #endif // FP_ARITHMETIC
 

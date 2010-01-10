@@ -15,42 +15,30 @@ OPCODE(OP_I2C)
   DISPATCH;
 
 OPCODE(OP_F2D)
-  {
-    // Arguments: 0
-    // Stack: -1 +2
-    //JDOUBLE d1;
-    d1.dnum = (double)word2jfloat(pop_word());
-    push_jdouble(&d1);
-    DISPATCH;
-  }
+  // Arguments: 0
+  // Stack: -1 +2
+  d1.dnum = (double)word2jfloat(pop_word());
+  push_jdouble(&d1);
+  DISPATCH;
 
 OPCODE(OP_D2F)
-  {
-    // Arguments: 0
-    // Stack: -2 +1
-    //JDOUBLE d1;
-    pop_jdouble(&d1);
-    push_word(jfloat2word((float) d1.dnum));
-    DISPATCH;
-  }
+  // Arguments: 0
+  // Stack: -2 +1
+  pop_jdouble(&d1);
+  push_word(jfloat2word((float) d1.dnum));
+  DISPATCH;
 
 OPCODE(OP_L2I)
-  {
-    // Arguments: 0
-    // Stack: -2 +1
-    //JLONG l1;
-    pop_jlong(&l1);
-    push_word((JINT) l1.lnum);
-    DISPATCH;
-  }
+  // Arguments: 0
+  // Stack: -2 +1
+  pop_jlong(&l1);
+  push_word((JINT) l1.lnum);
+  DISPATCH;
 
 OPCODE(OP_I2L)
-  {
-    //JLONG l1;
-    l1.lnum = (LLONG) pop_jint();
-    push_jlong(&l1);
-    DISPATCH;
-  }
+  l1.lnum = (LLONG) pop_jint();
+  push_jlong(&l1);
+  DISPATCH;
 
 #if FP_ARITHMETIC
 
@@ -61,14 +49,11 @@ OPCODE(OP_I2F)
   DISPATCH;
 
 OPCODE(OP_I2D)
-  {
-    // Arguments: 0
-    // Stack: -1 +2
-    //JDOUBLE d1;
-    d1.dnum = (double) (int) pop_word();
-    push_jdouble(&d1);
-    DISPATCH;
-  }
+  // Arguments: 0
+  // Stack: -1 +2
+  d1.dnum = (double) (int) pop_word();
+  push_jdouble(&d1);
+  DISPATCH;
 
 OPCODE(OP_F2I)
   // Arguments: 0
@@ -77,51 +62,34 @@ OPCODE(OP_F2I)
   DISPATCH;
 
 OPCODE(OP_D2I)
-  {
-    // Arguments: 0
-    // Stack: -2 +1  
-    //JDOUBLE d1;
-    pop_jdouble(&d1);
-    push_word((JINT) d1.dnum);
-    DISPATCH;
-  }
+  // Arguments: 0
+  // Stack: -2 +1  
+  pop_jdouble(&d1);
+  push_word((JINT) d1.dnum);
+  DISPATCH;
 
 OPCODE(OP_L2F)
-  {
-    //JLONG l1;
-    pop_jlong(&l1);
-    push_word (jfloat2word ((JFLOAT) l1.lnum));
-    DISPATCH;
-  }
+  pop_jlong(&l1);
+  push_word (jfloat2word ((JFLOAT) l1.lnum));
+  DISPATCH;
 
 OPCODE(OP_L2D)
-  {
-    //JDOUBLE d1;
-    //JLONG l1;
-    pop_jlong(&l1);
-    d1.dnum = (double) l1.lnum;
-    push_jdouble(&d1);
-    DISPATCH;
-  }
+  pop_jlong(&l1);
+  d1.dnum = (double) l1.lnum;
+  push_jdouble(&d1);
+  DISPATCH;
 
 OPCODE(OP_F2L)
-  {
-    //JLONG l1;
-    tempStackWord = pop_word();
-    l1.lnum = (LLONG)word2jfloat(tempStackWord);
-    push_jlong(&l1);
-    DISPATCH;
-  }
+  tempStackWord = pop_word();
+  l1.lnum = (LLONG)word2jfloat(tempStackWord);
+  push_jlong(&l1);
+  DISPATCH;
 
 OPCODE(OP_D2L)
-  {
-    //JDOUBLE d1;
-    //JLONG l1;
-    pop_jdouble(&d1);
-    l1.lnum = (LLONG)d1.dnum;
-    push_jlong(&l1);
-    DISPATCH;
-  }
+  pop_jdouble(&d1);
+  l1.lnum = (LLONG)d1.dnum;
+  push_jlong(&l1);
+  DISPATCH;
 
 #endif
 
