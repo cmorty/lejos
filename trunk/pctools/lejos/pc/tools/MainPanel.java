@@ -85,14 +85,12 @@ public class MainPanel extends JPanel {
 		this.add(splitPane, BorderLayout.CENTER);
 
 		this.picPanel.addPropertyChangeListener(PicturePanel.IMAGE_UPDATE_PROP, new PropertyChangeListener() {
-			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
 				MainPanel.this.updateNxtPart();
 			}
 		});
 
 		this.codePanel.addPropertyChangeListener(CodePanel.CODE_UPDATE_PROP, new PropertyChangeListener(){
-			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
 				MainPanel.this.updateImageFromCode();
 			}
@@ -210,7 +208,6 @@ public class MainPanel extends JPanel {
 			/**SN*/
 			private static final long serialVersionUID = -1915349463841717491L;
 
-			@Override
 			public void actionPerformed(ActionEvent evt) {
 				JFileChooser dialog = new JFileChooser(lastDir);
 				if (dialog.showOpenDialog(panel) == JFileChooser.APPROVE_OPTION) {
@@ -251,7 +248,6 @@ public class MainPanel extends JPanel {
 			/**SN*/
 			private static final long serialVersionUID = 3458676330985853465L;
 
-			@Override
 			public void actionPerformed(ActionEvent evt) {
 				JFileChooser dialog = new JFileChooser(lastDir);
 				dialog.setFileFilter(new FileNameExtensionFilter("LeJOS NXT Image File (*." + EXT + ")", EXT));
@@ -275,7 +271,6 @@ public class MainPanel extends JPanel {
 			/**SN*/
 			private static final long serialVersionUID = 3458676330985853465L;
 
-			@Override
 			public void actionPerformed(ActionEvent evt) {
 				JFileChooser dialog = new JFileChooser(lastDir);
 				dialog.setFileFilter(new FileNameExtensionFilter("LeJOS NXT Image File (*." + EXT + ")", EXT));
@@ -321,7 +316,6 @@ public class MainPanel extends JPanel {
 			/**SN*/
 			private static final long serialVersionUID = -2290105226448425978L;
 
-			@Override
 			public void actionPerformed(ActionEvent e) {
 				System.exit(0);
 			}
@@ -330,13 +324,12 @@ public class MainPanel extends JPanel {
 		menu.add(exitAction);
 
 		menu.addMenuListener(new MenuListener() {
-			@Override
 			public void menuCanceled(MenuEvent e) {
+				//nothing
 			}
-			@Override
 			public void menuDeselected(MenuEvent e) {
+				//nothing
 			}
-			@Override
 			public void menuSelected(MenuEvent e) {
 				exportFileAction.setEnabled(MainPanel.this.currData != null && MainPanel.this.currSize != null);
 			}

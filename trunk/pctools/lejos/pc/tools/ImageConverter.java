@@ -27,7 +27,6 @@ public class ImageConverter {
 		frame.pack();
 		frame.setSize(500, 300);
 		SwingUtilities.invokeLater(new Runnable() {
-			@Override
 			public void run() {
 				frame.setVisible(true);
 			}
