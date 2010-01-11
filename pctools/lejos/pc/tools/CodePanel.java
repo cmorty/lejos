@@ -44,7 +44,6 @@ public class CodePanel extends JPanel {
 		this.setEditEnable(false);
 
 		this.editExecButton.addActionListener(new ActionListener() {
-			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (EDIT_LABEL.equals(CodePanel.this.editExecButton.getText())) {
 					CodePanel.this.setEditEnable(true);

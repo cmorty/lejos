@@ -56,7 +56,6 @@ public class PicturePanel extends JPanel {
 
 		this.imageLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		this.thresholdSlider.addChangeListener(new ChangeListener() {
-			@Override
 			public void stateChanged(ChangeEvent e) {
 				int v = PicturePanel.this.thresholdSlider.getValue();
 				PicturePanel.this.setThreshold(v);
@@ -64,7 +63,6 @@ public class PicturePanel extends JPanel {
 			}
 		});
 		this.thresholdSpinner.addChangeListener(new ChangeListener() {
-			@Override
 			public void stateChanged(ChangeEvent e) {
 				int v = PicturePanel.this.thresholdSpinnerModel.getNumber().intValue();
 				PicturePanel.this.setThreshold(v);
