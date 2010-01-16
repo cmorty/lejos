@@ -9,6 +9,10 @@ extern "C" {
 #endif
 #undef lejos_pc_comm_NXTCommFantom_USB_BUFSZ
 #define lejos_pc_comm_NXTCommFantom_USB_BUFSZ 64L
+#undef lejos_pc_comm_NXTCommFantom_MIN_TIMEOUT
+#define lejos_pc_comm_NXTCommFantom_MIN_TIMEOUT 5000L
+#undef lejos_pc_comm_NXTCommFantom_MAX_ERRORS
+#define lejos_pc_comm_NXTCommFantom_MAX_ERRORS 10L
 /*
  * Class:     lejos_pc_comm_NXTCommFantom
  * Method:    jfantom_find
