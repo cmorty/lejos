@@ -52,7 +52,7 @@ public class NXTCommFactory {
 				Class<?> c = Class.forName(nxtCommName);
 				return (NXTComm) c.newInstance();
 			} catch (Throwable t) {
-				throw new NXTCommException("Cannot load USB driver");
+				throw new NXTCommException("Cannot load USB driver: ",t);
 			}
 		}
 
