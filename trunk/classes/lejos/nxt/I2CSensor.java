@@ -88,7 +88,7 @@ public class I2CSensor implements SensorConstants {
 	 * @param value single byte to send
 	 * @return status zero=success, non-zero=failure
 	 */
-	public int sendData(int register, byte value) {
+	public synchronized int sendData(int register, byte value) {
 		buf1[0] = value;
 		return sendData(register, buf1, 1);
 	}
