@@ -70,7 +70,7 @@ public class I2CSensor implements SensorConstants {
 	 * @param len Length of data to send
 	 * @return status zero=success, non-zero=failure
 	 */
-	public int sendData(int register, byte [] buf, int len) {
+	public synchronized int sendData(int register, byte [] buf, int len) {
         int ret = port.i2cStart(address, register, 1, buf, len, 1);
 		if (ret != 0) return ret;
 		
