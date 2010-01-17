@@ -1,4 +1,5 @@
 import lejos.pc.comm.*;
+
 import java.io.*;
  
 /**
@@ -23,8 +24,25 @@ import java.io.*;
 public class USBSend {	
 	public static void main(String[] args) {
 		NXTConnector conn = new NXTConnector();
+		
+		conn.addLogListener(new NXTCommLogListener(){
+
+			public void logEvent(String message) {
+				System.out.println("USBSend Log.listener: "+message);
+				
+			}
+
+			public void logEvent(Throwable throwable) {
+				System.out.println("USBSend Log.listener - stack trace: ");
+				 throwable.printStackTrace();
+				
+			}
+			
+		} 
+		);
+		
 		if (!conn.connectTo("usb://")){
-			System.err.println("No NXT find using USB");
+			System.err.println("No NXT found using USB");
 			System.exit(1);
 		}
 		
