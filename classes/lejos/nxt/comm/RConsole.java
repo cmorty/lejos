@@ -4,6 +4,7 @@ import lejos.nxt.*;
 import java.io.*;
 import lejos.util.Delay;
 import lejos.nxt.debug.*;
+import java.lang.InterruptedException;
 
 /**
  * This class provides a simple way of sending output for viewing on a 
@@ -48,6 +49,8 @@ public class RConsole extends Thread
     static final int MODE_SWITCH = 0xff;
     static final int MODE_LCD = 0x0;
     static final int MODE_EVENT = 0x1;
+    
+    static final int LCD_UPDATE_PERIOD = 100;
     
     static PrintStream ps;
     static OutputStream os;
@@ -104,6 +107,7 @@ public class RConsole extends Thread
          * Flush the data to the remote console stream. 
          * @throws IOException
          */
+        @Override
         public void flush() throws IOException
         {
             synchronized (sync)
@@ -113,8 +117,9 @@ public class RConsole extends Thread
                     // use busy wait synchronization.
                     outputLen = numBytes;
                     output = buffer;
+                    ioThread.interrupt();
                     while (output != null)
-                        Delay.msDelay(1);
+                        Thread.yield();
                     numBytes = 0;
                 }
             }
@@ -161,6 +166,7 @@ public class RConsole extends Thread
             events = ((hello[2] & OPT_EVENTS) != 0);
             // Create the I/O thread and start it.
             ioThread = new RConsole();
+            ioThread.setPriority(Thread.MAX_PRIORITY);
             ioThread.setDaemon(true);
             ioThread.start();
             // initially we are in normal mode.
@@ -348,9 +354,10 @@ public class RConsole extends Thread
     @Override
     public void run()
     {
-        int lcdCnt = 0;
+        long nextUpdate = 0;
         while (conn != null)
         {
+            long now = System.currentTimeMillis();
             synchronized (os)
             {
                 try
@@ -365,20 +372,30 @@ public class RConsole extends Thread
                     // Are we mirroring the LCD display?
                     if (lcd)
                     {
-                        if (lcdCnt >= 100)
+                        if (now > nextUpdate)
                         {
                             os.write(MODE_SWITCH);
                             os.write(MODE_LCD);
                             os.write(LCD.getDisplay());
                             os.flush();
-                            lcdCnt = 0;
-                        } else
-                            lcdCnt++;
+                            nextUpdate = now + LCD_UPDATE_PERIOD;
+                        }
                     }
+                    else
+                        nextUpdate = now + LCD_UPDATE_PERIOD;
                 } catch (Exception e)
                 {
+                    // Not really sure what do if we get an I/O error. Should
+                    // probably have some way to report it to calling threads.
                     break;
                 }
+            }
+            try {
+                Thread.sleep(nextUpdate - now);
+            }
+            catch (InterruptedException e)
+            {
+                // We use interrupt to wake the threade from sleep early.
             }
             Delay.msDelay(1);
         }
