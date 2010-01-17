@@ -25,9 +25,25 @@ import java.io.*;
 public class BTSend {	
 	public static void main(String[] args) {
 		NXTConnector conn = new NXTConnector();
-		
+	
+		conn.addLogListener(new NXTCommLogListener(){
+
+			public void logEvent(String message) {
+				System.out.println("BTSend Log.listener: "+message);
+				
+			}
+
+			public void logEvent(Throwable throwable) {
+				System.out.println("BTSend Log.listener - stack trace: ");
+				 throwable.printStackTrace();
+				
+			}
+			
+		} 
+		);
 		// Connect to any NXT over Bluetooth
 		boolean connected = conn.connectTo("btspp://");
+	
 		
 		if (!connected) {
 			System.err.println("Failed to connect to any NXT");
