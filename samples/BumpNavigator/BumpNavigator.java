@@ -1,5 +1,7 @@
 import lejos.nxt.*;
-import lejos.robotics.navigation.*;
+import lejos.robotics.proposal.*;
+import lejos.robotics.Pose;
+import lejos.geom.Point;
 import java.util.Random;
 
  
@@ -7,87 +9,105 @@ import java.util.Random;
  * BumpNavigator is a simple obstacle avoiding robot with a single destination.
  * Requires  two touch sensors.
  * Since it relies on dead reckoning to keep track of its
- * location, the accuracy of navigation degrades with each obstacle.  Does not
+ * pose,  the accuracy of navigation degrades with each obstacle.  Does not
  * map the obstacles, but uses a randomized avoiding strategy..
  * 
  * @author Roger Glasssey
  */
 public class BumpNavigator
 {
-  public BumpNavigator(SimpleNavigator navigator, SensorPort leftTouch, SensorPort rightTouch)
-  {
-    this.navigator = navigator;
+  /**
+   * allocates a BumpNavigator
+   * @param pilot  construct this pilot first
+   * @param leftTouch -  touch sensor in left side
+   * @param rightTouch - touch sensor on right side
+   */
+  public BumpNavigator( final ArcRotateMoveController aPilot, final  SensorPort leftTouch, final SensorPort rightTouch)
+  {   
     leftBump = new TouchSensor(leftTouch);
     rightBump = new TouchSensor(rightTouch);
+    pilot = aPilot;
+    drpp = new DeadReckonerPoseProvider(pilot);
   }
 
 /**
- * attempt to reach a destinaton at coordinates x,y despite obstacle.
+ * attempt to reach a destinaton at coordinates x,y despite obstacles.
  * @param x
  * @param y
  */
 
 public void goTo(float x, float y)
-{
-  navigator.setMoveSpeed(20);
-  navigator.setTurnSpeed(180);
-  float destX = x;
-  float destY = y;
-
-  while (navigator.distanceTo(destX,destY) > 5)
   {
-    navigator.goTo(destX, destY,true);
-    int hit = readSensors();
-    if (hit != 0)
+    pilot.setTurnSpeed(180);
+    Point destination = new Point(x, y);
+    pose = drpp.getPose();
+    while (pose.distanceTo(destination) > 2)  //close enough??
     {
-      while (avoid(hit)!= 0) Thread.yield();
+      float angle = pose.angleTo(destination);
+      pilot.rotate(angle - pose.getHeading());  // rotate to face destinaton
+      pilot.travel(pose.distanceTo(destination), true);// init move to destination
+      int hit = 0;
+      hit = readSensors(); // returns if obstacle is hit or travel is complete
+      while (hit != 0)
+      {
+          hit = avoid(hit);  // keep avoiding till no obstacle is hit
+      }
+      pose = drpp.getPose();
     }
   }
-}
-/**
- * causes the robot to back up, turn away from the obstacle
- * @param side  on which hit was detected
- * @return  side on which hit was detected during move
- */
-  public int  avoid(int side)
-  {
-    if(side == 0)return 0;
-    navigator.travel(-5 - rand.nextInt(5));
-    int angle = 60+rand.nextInt(60);
-    navigator.rotate(-side * angle);
-    navigator.travel(10 + rand.nextInt(60), true);
-    return  readSensors();  // watch for hit while moving forward
-  }
-  /**
-   * Monitors touch sensors while the robot is moving.
-   * Returns when robot stops or hit is detected
+
+ /**
+   * Monitors touch sensors while the robot is traveling
+   * Returns when robot reavel is complete or obstacle is hit
+  *  called in main loop and by avoid()
    * @return side on which hit was detected;  0 means none.
    */
   private int readSensors()
   {
     int hit = 0;
-    while(navigator.isMoving()& hit == 0 )
+    while(pilot.isMoving()& hit == 0 )//quit if travel is complete
     {
       if(leftBump.isPressed())hit = 1;
       if(rightBump.isPressed())hit =-1;
       Thread.yield();
     }
-    navigator.stop();
+    pilot.stop();
     return hit;
   }
+
+/**
+ * causes the robot to back up, turn away from the obstacle
+ * returns when obstacle is cleared or if an obstacle is detected while traveling
+ * @param side  on which hit was detected, 0 if avoiding was complete without hit
+ * @return  side on which hit was detected during travel
+ */
+  public int  avoid(int side)
+  {
+    if(side == 0)return 0;
+    pilot.travel(-5 - rand.nextInt(5));
+    int angle = 60+rand.nextInt(60);
+    pilot.rotate(-side * angle);
+    pilot.travel(10 + rand.nextInt(60), true);
+    return  readSensors();  // watch for hit while moving forward
+  }
+
+ 
   /**
    * test of BumperNavitator. destination is 200 cm  directly ahead. 
    * @param args
    */
   public static void main(String[] args)
     {
-      TachoPilot p = new TachoPilot(5.6f, 14.2f, Motor.A, Motor.C);
-      BumpNavigator  robot  = new BumpNavigator( new SimpleNavigator(p),SensorPort.S1, SensorPort.S4);
+      DifferentialPilot pilot = new DifferentialPilot(5.6f, 14.2f, Motor.A, Motor.C);
+      BumpNavigator  robot  = new BumpNavigator(pilot,SensorPort.S1, SensorPort.S4);
       System.out.println("Any button");
       Button.waitForPress();
       robot.goTo(200,0);
     }
-  SimpleNavigator navigator ;
+  
+  private ArcRotateMoveController pilot;
+  private DeadReckonerPoseProvider drpp;
+  private Pose pose = new Pose();
   Random rand = new Random();
   TouchSensor leftBump;
   TouchSensor rightBump;
