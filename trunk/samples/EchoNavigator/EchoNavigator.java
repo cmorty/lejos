@@ -1,13 +1,15 @@
 import lejos.nxt.*;
-import lejos.robotics.navigation.*;
+import lejos.robotics.proposal.*;
+import lejos.robotics.Pose;
+import lejos.geom.Point;
 import java.util.Random;
+import lejos.util.Delay;
 
  
 /**
  * EchoNavigator is a obstacle avoiding  robot that attempts reach its destination.
- *  Uses SimpleNavigator
- * Hareware rquirements:   an ultrasonic sensor mounted on a vertical axle
- * driven by the  third motor.
+ * uses DiffertntialPilot
+ * Hareware rquirements:   an ultrasonic sensor facing foward
  * Since it relies on dead reckoning to keep track of its
  * location, the accuracy of navigation degrades with each obstacle.  Does not
  * mep the obstacles, but uses a randomized avoiding strategy.
@@ -15,103 +17,114 @@ import java.util.Random;
  */
 public class EchoNavigator
 {
-  public EchoNavigator(SimpleNavigator navigator, SensorPort echo, Motor scanMotor)
+  public EchoNavigator(final ArcRotateMoveController aPilot, SensorPort echo)
   {
-    this.navigator = navigator;
     sonar= new UltrasonicSensor(echo);
-    scanner = scanMotor ;
+    pilot = aPilot;
+    drpp = new DeadReckonerPoseProvider(pilot);
   }
 
 /**
- * attempt to reach a destinaton at coordinates x,y despite obstacle.
+ * attempt to reach a destinaton at coordinates x,y despite obstacles.
+ * uses detect() and avoid()
  * @param x coordinate of destination
  * @param y coordinate of destination.
  */
-
 public void goTo(float x, float y)
 {
-  navigator.setMoveSpeed(20);
-  navigator.setTurnSpeed(180);
-  float destX = x;
-  float destY = y;
-  while (navigator.distanceTo(destX,destY) > 5)
+  pilot.setMoveSpeed(20);
+  pilot.setTurnSpeed(180);
+  Point destination = new Point(x, y);
+  pose = drpp.getPose();
+
+  while (pose.distanceTo(destination) > 5)
   {
-    navigator.goTo(destX, destY,true);
-    boolean clear  = readDistance();
-    if (!clear) //  obstacle found
+    float angle = pose.angleTo(destination);
+    pilot.rotate(angle - pose.getHeading());  // rotate to face destinaton
+    pilot.travel(pose.distanceTo(destination), true);// init move to destination
+    boolean clear = detect();// returns if obstacle found or travel is complete
+    while (!clear) //  obstacle found
     {
-      while (!avoid()) Thread.yield();  // keeps calling avoid until no obstacle is in view
+      clear = avoid();
     }
+    pose = drpp.getPose();
   }
 }
 /**
  * backs up, rotates away from the obstacle, and travels forward;
- * returns true if no obstacle was discovered while traveling
- * calls readSensor()
+ * returns true if no obstacle was discovered while traveling<br>
+ * uses readSensor()
  * @return
  */
   private  boolean  avoid()
   {
-      int leftDist = 0;
-      int rightDist = 0;
-      byte turnDirection = 1;
-      boolean more = true;
-      while(more)
+    int leftDist = 0;
+    int rightDist = 0;
+    byte turnDirection = 1;
+    boolean more = true;
+    while (more)
+    {
+      pilot.rotate(75);
+      Delay.msDelay(50);
+      leftDist = sonar.getDistance();
+      pilot.rotate(-150);
+      Delay.msDelay(50);
+      rightDist = sonar.getDistance();
+      pilot.rotate(75);
+      if (leftDist > rightDist)turnDirection = 1;
+      else  turnDirection = -1;
+      more = leftDist < _limit && _limit < _limit;
+      if (more)
       {
-         scanner.rotateTo(75);
-         Sound.pause(20);
-         leftDist = sonar.getDistance();
-         scanner.rotateTo(-70);
-         Sound.pause(20);
-         rightDist = sonar.getDistance();
-         if(leftDist>rightDist) turnDirection = 1;
-         else turnDirection = -1;
-         more = leftDist < _limit && _limit< _limit;
-         if(more) navigator.travel(-4);
-         LCD.drawInt(leftDist,4,0,5);
-         LCD.drawInt(rightDist,4,8,5);
+        pilot.travel(-4);
       }
-      scanner.rotateTo(0);
-    navigator.travel(-10 - rand.nextInt(10));
+      LCD.drawInt(leftDist, 4, 0, 5);
+      LCD.drawInt(rightDist, 4, 8, 5);
+    }
+    pilot.travel(-10 - rand.nextInt(10));
     int angle = 60+rand.nextInt(60);
-    navigator.rotate(turnDirection * angle);
-    navigator.travel(10 + rand.nextInt(60), true);
-    return  readDistance ();  // watch for hit while moving forward
+    pilot.rotate(turnDirection * angle);
+    pilot.travel(10 + rand.nextInt(60), true);
+    return  detect ();  // watch for hit while moving forward
   }
   /**
    * Monitors the ultrasonic sensor while the robot is moving.
-   * Returns if an obstacle is detected or if the robot stops
+   * Returns if an obstacle is detected or if the travel is complete
    * @return false if obstacle was detected
    */
-  public boolean readDistance()
+  public boolean detect()
   {
-    System.out.println(" Moving ");
     int distance = 255;
     boolean clear = true;
-    while( navigator.isMoving()& distance > _limit )
+    while( pilot.isMoving()& distance > _limit )
     {
       distance = sonar.getDistance();
-      LCD.drawString("D "+distance, 0, 0);
-
+      LCD.drawInt(distance, 4,0,1);
       clear = distance > _limit ;
       Thread.yield();
     }
-    navigator.stop();
+    pilot.stop();
     return clear;
   }
+
+  /**
+   * assumes UltrasonicSensor is on port S3;
+   * @param args
+   */
     public static void main(String[] args)
     {
       System.out.println("Any Button");
-      TachoPilot p = new TachoPilot(5.6f, 14.2f, Motor.A, Motor.C);
-      EchoNavigator  robot  = new EchoNavigator( new SimpleNavigator(p),SensorPort.S3, Motor.B);
+     DifferentialPilot pilot = new DifferentialPilot(5.6f, 12.5f, Motor.A, Motor.C);
+      EchoNavigator  robot  = new EchoNavigator(pilot,SensorPort.S3);
       Button.waitForPress();
       robot.goTo(200,0);
     }
 
-  public SimpleNavigator navigator ;
+  private ArcRotateMoveController pilot;
+  private DeadReckonerPoseProvider drpp;
+  private Pose pose = new Pose();
   Random rand = new Random();
   UltrasonicSensor sonar;
-  private Motor scanner;
   int _limit =20; //cm
 
 }
