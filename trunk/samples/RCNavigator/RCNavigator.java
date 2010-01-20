@@ -4,9 +4,11 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import lejos.nxt.*;
+import lejos.robotics.proposal.*;
+import lejos.robotics.Pose;
+import lejos.geom.Point;
 import lejos.nxt.comm.BTConnection;
 import lejos.nxt.comm.Bluetooth;
-import lejos.robotics.navigation.*;
 
  
 
@@ -18,9 +20,12 @@ import lejos.robotics.navigation.*;
 public class RCNavigator
 {
 
-   public RCNavigator(SimpleNavigator aNavigator)
+   public RCNavigator(final ArcRotateMoveController aPilot)
     {
-      navigator = aNavigator;
+      pilot = aPilot;
+      drpp = new DeadReckonerPoseProvider(pilot);
+      pilot.setMoveSpeed(20);
+      pilot.setTurnSpeed(180);
     }
 /**
  * wheel diameter and track width in cm.
@@ -28,12 +33,11 @@ public class RCNavigator
  */
    public static void main(String[] args)
     {
-      Pilot p = new TachoPilot(5.6f, 14.3f, Motor.A, Motor.C);
-      SimpleNavigator nav = new SimpleNavigator(p);
-      new RCNavigator(nav).go();
+      DifferentialPilot pilot = new DifferentialPilot(5.6f, 14.3f, Motor.A, Motor.C);
+      new RCNavigator(pilot).go();
     }
 /**
- * decode incoming messages and issue commands to the SimpleNavigator
+ * decode incoming messages and issue commands 
  */
    private void readData()
     {
@@ -41,29 +45,35 @@ public class RCNavigator
       try
       {
          code = dataIn.readInt();
+         Command command = Command.values()[code];
          LCD.clear();
          LCD.drawInt(code,0,1);
          Sound.playTone(800 + 100 * code, 200);
-         if (code == Command.GOTO.ordinal())// convert enum to int for comparison
+         if (command == Command.GOTO)// convert enum to int for comparison
          {
+           pose = drpp.getPose();
             float x = dataIn.readFloat();
             float y = dataIn.readFloat();
-            navigator.goTo(x, y);
-         } else if (code == Command.TRAVEL.ordinal())
+            Point destination = new Point(x,y);
+            float angle = pose.angleTo(destination);
+            pilot.rotate(angle - pose.getHeading());
+            pilot.travel(pose.distanceTo(destination));
+         } else if (command == Command.TRAVEL)
          {
             float distance = dataIn.readFloat();
             LCD.drawString("D "+Math.round(distance),0 ,2);
-            navigator.travel(distance);
-         } else if (code == Command.ROTATE.ordinal())
+            pilot.travel(distance);
+         } else if (command == Command.ROTATE)
          {
             float angle = dataIn.readFloat();
             LCD.drawString("A "+ Math.round(angle),0,2);
-            navigator.rotate(angle);
+            pilot.rotate(angle);
          }
          report();
          Sound.pause(100);
       } catch (IOException e)
       {
+        System.out.println("Read exception "+e);
       }
     }
 /**
@@ -73,13 +83,14 @@ public class RCNavigator
     {
       try
       {
-         dataOut.writeFloat(navigator.getX());
-         dataOut.writeFloat(navigator.getY());
-         dataOut.writeFloat(navigator.getAngle());
+        pose = drpp.getPose();
+         dataOut.writeFloat(pose.getX());
+         dataOut.writeFloat(pose.getY());
+         dataOut.writeFloat(pose.getHeading());
          dataOut.flush();
-         LCD.drawInt(Math.round(navigator.getX()), 4,0,1);
-         LCD.drawInt(Math.round(navigator.getY()), 4,5,1);
-         LCD.drawInt(Math.round(navigator.getAngle()), 4,10,1);
+         LCD.drawInt(Math.round(pose.getX()), 4,0,1);
+         LCD.drawInt(Math.round(pose.getY()), 4,5,1);
+         LCD.drawInt(Math.round(pose.getHeading()), 4,10,1);
       } catch (IOException e)
       {
       }
@@ -107,7 +118,9 @@ public class RCNavigator
       while (true)readData();
     }
    
-   SimpleNavigator navigator;
+  private ArcRotateMoveController pilot;
+  private DeadReckonerPoseProvider drpp;
+  private Pose pose = new Pose();
    BTConnection connection;
    DataInputStream dataIn;
    DataOutputStream dataOut;
