@@ -35,7 +35,7 @@ import lejos.nxt.*;
 public class BTConnection extends NXTConnection
 {
 	
-	private static final int BTC_FLUSH_WAIT = 10;
+	private static final int BTC_FLUSH_WAIT = 20;
 	
 	public static final int AM_DISABLE = 0;
 	public static final int AM_ALWAYS = 1;
@@ -230,25 +230,28 @@ public class BTConnection extends NXTConnection
 	 * input buffers. If all else fails we discard data. When we return the
 	 * interface should be ready to be switched.
 	 */
-	synchronized void flushInput()
+	synchronized void flushInput(boolean discard)
 	{
 		// Need to be sure that there is no input in the input buffer before
 		// we switch mode. 
 		if (state == CS_IDLE) return;
-		//RConsole.print("Flush\n");
+		//RConsole.println("Flush " + discard);
 		// Try to empty the low level input buffer while giving the 
 		// application chance to help by reading the data.
+        int cnt = 0;
 		int timeout = (int)System.currentTimeMillis() + BTC_FLUSH_WAIT;
-		while (timeout > (int)System.currentTimeMillis())
+		while (inCnt < inBuf.length && (pendingInput() || timeout > (int)System.currentTimeMillis()))
 		{
+            //RConsole.println("PI" + pendingInput() + " ic " + inCnt);
 			// Read as much as we can
-			while (pendingInput() && inCnt < inBuf.length)
-				recv();
+			recv();
 			// Give the app chance to process it
 			try{wait(1);}catch(Exception e){}
+            cnt++;
 		}
-		if (!pendingInput()) return;
-		//1 RConsole.print("Dropping packets\n");
+        //RConsole.println("flush cnt " + cnt);
+		if (!discard || !pendingInput()) return;
+		//RConsole.print("Dropping packets\n");
 		// If we still have input we are now in big trouble we will have
 		// to discard data. Note even if we read all of the data we need
 		// to linger a little to see if more arrives.
