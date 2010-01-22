@@ -3,7 +3,7 @@ package lejos.nxt.comm;
 import java.io.*;
 
 /**
- * Implements an OutputStream over Bluetooth.
+ * Implements an OutputStream over NXT connections.
  *
  */
 public class NXTOutputStream extends OutputStream {
@@ -17,15 +17,16 @@ public class NXTOutputStream extends OutputStream {
         buffer = new byte[buffSize];
 	}
 	
-    public void write(int b) throws IOException {
-    	if (numBytes == buffer.length) {
+    public synchronized void write(int b) throws IOException {
+    	if (numBytes >= buffer.length) {
     		flush();
     	}
     	buffer[numBytes] = (byte) b;
     	numBytes++;  	
     }
     
-	public void flush() throws IOException{
+    @Override
+	public synchronized void flush() throws IOException{
 		if (numBytes > 0) {
 			if (conn.write(buffer, numBytes) < 0) throw new IOException();
 			numBytes = 0;

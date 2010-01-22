@@ -19,7 +19,10 @@ public class PrintStream extends OutputStream {
     @Override
 	public void write (int c) {
     	try {
-    		os.write(c);
+            synchronized (this)
+            {
+                os.write(c);
+            }
     	} catch (IOException ioe) {};
     }
     
@@ -29,9 +32,12 @@ public class PrintStream extends OutputStream {
      * @param s the string to print
      */
     public void print(String s) {
-    	for(int i=0;i<s.length();i++) {
-    		write(s.charAt(i));
-    	}
+        synchronized(this)
+        {
+            for(int i=0;i<s.length();i++) {
+                write(s.charAt(i));
+            }
+        }
         //TODO optional flush
     }
     
@@ -63,8 +69,11 @@ public class PrintStream extends OutputStream {
      * @param s the string to print
      */
     public void println(String s) {
-        print(s);
-        write('\n');
+        synchronized(this)
+        {
+            print(s);
+            write('\n');
+        }
         //TODO make flush optional
         flush();
     }
