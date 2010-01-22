@@ -106,7 +106,7 @@ public class Bluetooth extends NXTCommDevice
 	private static final byte TO_FORCERESET = -1;
 	private static final byte TO_NONE = 0;
 	private static final short TO_FLUSH = 500;
-	private static final byte TO_SWITCH_WAIT = 75;
+	private static final byte TO_SWITCH_WAIT = 50;
 	
 	private static final byte CN_NONE = -1;
 	private static final int CN_IDLE = 0x7ffffff;
@@ -266,6 +266,7 @@ public class Bluetooth extends NXTCommDevice
             loadSettings();
             reset();
 			setDaemon(true);
+            //setPriority(Thread.MAX_PRIORITY);
             start();
 			// Setup initial state
 			powerOn = false;
@@ -276,7 +277,6 @@ public class Bluetooth extends NXTCommDevice
 			cachedAddress = getLocalAddress();
 		}
 
-		
 		private void sendCommand()
 		{
 			// Command should be all setup and ready to go in cmdBuf
@@ -559,9 +559,9 @@ public class Bluetooth extends NXTCommDevice
 			int timeout = (int) System.currentTimeMillis() + TO_SWITCH;
 			while (timeout > (int)System.currentTimeMillis())
 			{
-				if (bc4Mode() == target) return target;
 				// Need to flush input when switching to command mode
-				if (flush && curChan >= 0) Chans[curChan].flushInput();
+				if (bc4Mode() == target) return target;
+				if (flush && curChan >= 0) Chans[curChan].flushInput(true);
 			}
 			//RConsole.print("Failed to switch\n");
 			mode = MO_UNKNOWN;
@@ -598,7 +598,7 @@ public class Bluetooth extends NXTCommDevice
 			if (mode == MO_STREAM && bc4Mode() == MO_CMD && curChan >= 0)
 			{
 				//1 RConsole.print("Trying early flush\n");
-				Chans[curChan].flushInput();
+				Chans[curChan].flushInput(true);
 			}
 			// wait for any output to drain. If this times out we are probably
             // in big trouble and heading for a reset.
@@ -615,6 +615,7 @@ public class Bluetooth extends NXTCommDevice
             }
 			// Need to have a minimum period of no output to the BC4
 			Delay.msDelay(TO_SWITCH_WAIT);
+            if (curChan >= 0) Chans[curChan].flushInput(false);
 			btSetArmCmdMode(MO_CMD);
 			// If there is any input data left we could be in trouble. Try and
 			// flush everything.
