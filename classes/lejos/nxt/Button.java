@@ -93,9 +93,10 @@ public class Button implements ListenerCaller
   }
 
   /**
-   * wait for some button to be pressed (and released). 
-   * @param timeout The number of milliseconds to wait.
-   * @return the ID of that button, the same as readButtons(); 0 if timeout
+   * waits for some button to be pressed (and released).
+   * If a button is down when called, waits for a new press;
+   * @param timeout The maximum number of milliseconds to wait.
+   * @return the ID of that button, the same as readButtons(); 0 if timeout expires
    */ 
   public static int waitForPress(int timeout)
   {
@@ -120,7 +121,8 @@ public class Button implements ListenerCaller
   }
 
   /**
-   * wait for some button to be pressed (and released). 
+   * waits for some button to be pressed (and released).
+   * If a button is down when called, waits for a new press;
    * @return the ID of that button, the same as readButtons(); 
    */ 
   public static int waitForPress()
