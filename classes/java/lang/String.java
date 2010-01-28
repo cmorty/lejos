@@ -365,6 +365,7 @@ public final class String implements CharSequence
    * Returns itself.
    * @return the String itself
    */
+  @Override
   public String toString()
   {
     return this;
@@ -374,29 +375,26 @@ public final class String implements CharSequence
    * Compares the String with an Object
    * @return true if the String is equal to the object, false otherwise
    **/
+  @Override
   public boolean equals(Object other)
   {
-    if (other == null)
-      return false;
-    
     if (other == this)
       return true;
-      
-    try {
-      String os = (String)other;
-      if (os.characters.length != characters.length)
-         return false;
+    //also catches other == null
+    if (!(other instanceof String))
+      return false;
+    
+    String os = (String)other;
+    if (os.characters.length != characters.length)
+       return false;
          
-      for (int i=0; i<characters.length; i++)
-      {
-        if (characters[i] != os.characters[i])
-          return false;
-      }
+    for (int i=0; i<characters.length; i++)
+    {
+      if (characters[i] != os.characters[i])
+        return false;
+    }
       
-      return true;
-    } catch (ClassCastException e) {
-    }    
-    return false;
+    return true;
   }
   
   public boolean equalsIgnoreCase(String s) {
@@ -425,6 +423,7 @@ public final class String implements CharSequence
   /**
    * Special version of hash that returns the same value the same String values
    */
+  @Override
   public int hashCode() {
       int h = hash;
         if (h == 0) {
