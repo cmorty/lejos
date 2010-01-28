@@ -82,6 +82,15 @@ public final class String implements CharSequence
   {
     return characters.length;
   }
+ 
+  	/**
+  	 * Returns true, if and only if this string is of zero length.
+  	 * @return true if this string is of zero length, false otherwise.
+  	 */
+	public boolean isEmpty()
+	{
+		return characters.length == 0;
+	}
 
   /**
    * Return the character at the given index
