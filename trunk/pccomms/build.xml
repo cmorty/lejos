@@ -17,7 +17,11 @@
 			<classpath location="3rdparty/lib/bluecove.jar"/>
 		</javac>
 		<mkdir dir="lib"/>
-    	<jar destfile="lib/pccomm.jar" basedir="build" update="false">
+    	<jar destfile="lib/pccomm.jar" update="false">
+			<fileset dir="build"/>
+			<fileset dir=".">
+				<include name="lejos/util/jni/*.properties"/>
+			</fileset>
     	</jar>
   	</target>
 	
