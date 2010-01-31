@@ -8,9 +8,9 @@ import lejos.util.Delay;
 
 /**
  * Generic lejos nxt connection class. Provide access to standard read/write
- * methods. This code supports both asynchronous (used for Bluetooth connections)
- * and synchronous (used for USB and RS485) I/O operations for the actual reading
- * and writing of the low level buffers.
+ * methods. This code supports both asynchronous (used for Bluetooth and Rs$85 
+ * connections) and synchronous (used for USB) I/O operations for the actual
+ * reading and writing of the low level buffers.
  * NOTE: The code in this class makes a number of assumptions:
  * 1. The input and output buffers have been sized to match the underlying 
  *    device, and the packet header size. In particular the synchronous
@@ -21,8 +21,8 @@ import lejos.util.Delay;
  *    the setIOMode function must be over-ridden.
  * 3. This class allows the use of a "soft" EOF implementation which uses a 
  *    zero length packet as an EOF marker. This only operates when in packet
- *    mode and can be overridden. Currently this is used for USB and RS485
- *    devices. It is not used for Bluetooth connections.
+ *    mode and can be overridden. Currently this is used for USB
+ *    devices. It is not used for Bluetooth/RS485 connections.
  * 4. Some devices (like USB), have an inherent packet structure. The current
  *    PC assumes that when in packet mode an entire packet will fit within
  *    a single USB packet. This limits the maximum packet size which can be
