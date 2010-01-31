@@ -20,7 +20,7 @@ public class OSInfo
 	public static final String ARCH_PPC64 = "ppc64";
 	public static final String ARCH_SPARC = "sparc";
 
-	public static final String OS_WIN32 = "windows";
+	public static final String OS_WINDOWS = "windows";
 	public static final String OS_MACOS = "macos";
 	public static final String OS_MACOSX = "macosx";
 	public static final String OS_SOLARIS = "solaris";
@@ -64,7 +64,6 @@ public class OSInfo
 		{
 			String key = e.getKey().toString();
 			String pattern = e.getValue().toString();
-			System.out.println("|"+key+"|"+pattern+"|");
 			if (key.startsWith(prefix) && value.matches(pattern))
 			{			
 				return key.substring(prefix.length());
