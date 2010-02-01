@@ -45,7 +45,7 @@ public interface I2CPort extends BasicSensorPort {
      *         -5: Invalid register address size.
      */
 	public int i2cStart(int address, int internalAddress,
-            int numInternalBytes, byte[] buffer,
+            int numInternalBytes, byte[] buffer, int offset,
             int numBytes, int transferType);
 
     /**
@@ -58,6 +58,6 @@ public interface I2CPort extends BasicSensorPort {
      *         -3: I2C error
      *         -4: Buffer size error.
      */
-    public int i2cComplete(byte[] buffer, int numBytes);
+    public int i2cComplete(byte[] buffer, int offset, int numBytes);
 	
 }

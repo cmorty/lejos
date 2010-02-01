@@ -324,7 +324,7 @@ public class LCP {
 			for(int i=0;i<txLen-2;i++) {
 				i2cBuffer[i] = cmd[7+i];
 			}
-			SensorPort.i2cStartById(port, cmd[5] >> 1, cmd[6], 1, i2cBuffer, (rxLen == 0 ? txLen - 2 : rxLen), (rxLen == 0 ? 1 : 0));
+			SensorPort.i2cStartById(port, cmd[5] >> 1, cmd[6], 1, i2cBuffer, 0, (rxLen == 0 ? txLen - 2 : rxLen), (rxLen == 0 ? 1 : 0));
 			while (SensorPort.i2cBusyById(port) != 0) {
 				Thread.yield();
 			}
@@ -335,7 +335,7 @@ public class LCP {
 		if (cmdId == LS_READ)
 		{
 			byte port = cmd[2];
-            int ret = SensorPort.i2cCompleteById(port, i2cBuffer, i2cBuffer.length);
+            int ret = SensorPort.i2cCompleteById(port, i2cBuffer, 0, i2cBuffer.length);
 			reply[3] = (byte) ret;
 			for(int i=0;i<ret;i++) reply[i+4] = i2cBuffer[i];
 			len = 20;

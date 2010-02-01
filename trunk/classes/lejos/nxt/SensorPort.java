@@ -1013,22 +1013,24 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
      * @param internalAddress The internal address to use for this operation
      * @param numInternalBytes The number of bytes in the internal address
      * @param buffer The buffer for write operations
+     * @param offset Index of first byte to write
      * @param numBytes Number of bytes to write or read
      * @param transferType 1==write 0==read
      * @return < 0 if there is an error
      */
     public static native int i2cStartById(int aPortId, int address,
             int internalAddress, int numInternalBytes,
-            byte[] buffer, int numBytes, int transferType);
+            byte[] buffer, int offset, int numBytes, int transferType);
 
     /**
      * Complete and I2C operation and retrieve any data read.
      * @param aPortId The Port number for the device
      * @param buffer The buffer to be used for read operations
+     * @param offset Index of first byte to read
      * @param numBytes Number of bytes to read
      * @return < 0 if the is an error, or number of bytes transferred
      */
-    public static native int i2cCompleteById(int aPortId, byte[] buffer, int numBytes);
+    public static native int i2cCompleteById(int aPortId, byte[] buffer, int offset, int numBytes);
 
     /**
      * Low-level method to enable I2C on the port.
@@ -1068,12 +1070,12 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
      * @return < 0 error
      */
     public int i2cStart(int address, int internalAddress,
-            int numInternalBytes, byte[] buffer,
+            int numInternalBytes, byte[] buffer, int offset,
             int numBytes, int transferType)
     {
 
         return i2cStartById(iPortId, address, internalAddress,
-                numInternalBytes, buffer,
+                numInternalBytes, buffer, offset,
                 numBytes, transferType);
     }
 
@@ -1083,9 +1085,9 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
      * @param numBytes Number of bytes to read
      * @return < 0 error otherwise number of bytes read.
      */
-    public int i2cComplete(byte[] buffer, int numBytes)
+    public int i2cComplete(byte[] buffer, int offset, int numBytes)
     {
-        return i2cCompleteById(iPortId, buffer, numBytes);
+        return i2cCompleteById(iPortId, buffer, offset, numBytes);
     }
 
     /**
