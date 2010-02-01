@@ -252,26 +252,26 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
   case i2cBusyById_4I_5I:
     push_word(i2c_busy(p0));
     break;
-  case i2cStartById_4IIII_1BII_5I:
+  case i2cStartById_4IIII_1BIII_5I:
     {
-    	Object *p = word2ptr(paramBase[4]);
-    	byte *byteArray = (byte *) jbyte_array(p);
+    	Object *p = word2obj(paramBase[4]);
+    	JBYTE *byteArray = p ? jbyte_array(p) + paramBase[5] : NULL;
     	push_word(i2c_start(p0,
     	                    paramBase[1],
     	                    paramBase[2],
     	                    paramBase[3],
     	                    byteArray,
-    	                    paramBase[5],
-    	                    paramBase[6]));                      
+    	                    paramBase[6],
+    	                    paramBase[7]));
     }
     break; 
-  case i2cCompleteById_4I_1BI_5I:
+  case i2cCompleteById_4I_1BII_5I:
     {
     	Object *p = word2ptr(paramBase[1]);
-    	byte *byteArray = (byte *) jbyte_array(p);
+    	JBYTE *byteArray = p ? jbyte_array(p) + paramBase[2] : NULL;
     	push_word(i2c_complete(p0,
     	                       byteArray,
-    	                       paramBase[2]));
+    	                       paramBase[3]));
     }
     break; 
   case playFreq_4III_5V:

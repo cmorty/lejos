@@ -16,11 +16,11 @@ int i2c_start(int port,
               U32 address, 
               int internal_address, 
               int n_internal_address_bytes, 
-              U8 *data, 
+              void *data,
               U32 nbytes,
               int write);
 
-int i2c_complete( int port, U8 *data, U32 nbytes);
+int i2c_complete( int port, void *data, U32 nbytes);
 void i2c_test(void);
 
 #endif

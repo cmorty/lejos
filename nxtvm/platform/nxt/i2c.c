@@ -586,7 +586,7 @@ i2c_start(int port,
           U32 address, 
           int internal_address, 
           int n_internal_address_bytes, 
-          U8 *data, 
+          void *data,
           U32 nbytes,
           int write)
 { 
@@ -639,7 +639,9 @@ i2c_start(int port,
   // Set up the data transfer partial transaction
   if (write) {
     pt->state = I2C_NEWWRITE;
-    memcpy(p->buffer, data, nbytes);
+    if (data) {
+    	memcpy(p->buffer, data, nbytes);
+    }
   }
   else
     pt->state = I2C_NEWREAD;
@@ -665,7 +667,7 @@ i2c_start(int port,
 // Check for the operation to be complete and return and read data.
 int
 i2c_complete(int port,
-             U8 *data,
+             void *data,
              U32 nbytes)
 {
   i2c_port *p;
@@ -679,7 +681,9 @@ i2c_complete(int port,
     return -3;
   if (nbytes > I2C_BUF_SIZE) return -4;
   if (nbytes > p->nbytes) nbytes = p->nbytes;
-  memcpy(data, p->buffer, nbytes);
+  if (data) {
+    memcpy(data, p->buffer, nbytes);
+  }
   if (!p->always_active) {
     p->state = I2C_IDLE;
     build_active_list();
