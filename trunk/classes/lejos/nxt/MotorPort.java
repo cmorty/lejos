@@ -6,29 +6,54 @@ package lejos.nxt;
  *
  */
 public class MotorPort implements TachoMotorPort {
-	int _id;
-	int _pwmMode = PWM_FLOAT; // default to float mode
+	private int _id;
+	private int _pwmMode = PWM_FLOAT; // default to float mode
 	
 	private MotorPort(int id)
 	{
 		_id = id;
 	}
 	
+    /**
+     * The number of ports available.
+     */
+    public static final int NUMBER_OF_PORTS = 3;
+    
 	/**
 	 * MotorPort A.
 	 */
-	public static final MotorPort A = new MotorPort ('A');
+	public static final MotorPort A = new MotorPort (0);
 	
 	/**
 	 * MotorPort B.
 	 */
-	public static final MotorPort B = new MotorPort ('B');
+	public static final MotorPort B = new MotorPort (1);
 	
 	/**
 	 * MotorPort C.
 	 */
-	public static final MotorPort C = new MotorPort ('C');
+	public static final MotorPort C = new MotorPort (2);
 	
+    /**
+     * Return the MotorPort with the given Id.
+     * @param id the Id, between 0 and {@link #NUMBER_OF_PORTS}-1.
+     * @return the MotorPort object
+     */
+    public static MotorPort getInstance(int id)
+    {
+    	switch (id)
+    	{
+    		case 0:
+    			return MotorPort.A;
+    		case 1:
+    			return MotorPort.B;
+    		case 2:
+    			return MotorPort.C;
+    		default:
+    			throw new IllegalArgumentException("no such motor port");
+    	}
+    }
+
 	/**
 	 * Low-level method to control a motor.
 	 * 
@@ -38,7 +63,7 @@ public class MotorPort implements TachoMotorPort {
 	public void controlMotor(int power, int mode)
 	{
 		// Convert lejos power and mode to NXT power and mode
-		controlMotorById(_id - 'A', 
+		controlMotorById(_id, 
 				         (mode >= 3 ? 0 : (mode == 2 ? -power: power)) ,
 				         (mode == 3 ? 1 : (mode == 4 ? 0 : _pwmMode)));
 	}
@@ -56,7 +81,7 @@ public class MotorPort implements TachoMotorPort {
 	 */
 	public  int getTachoCount()
 	{
-		return getTachoCountById(_id - 'A');
+		return getTachoCountById(_id);
 	}
 
 	public static native int getTachoCountById(int aMotor);
@@ -66,12 +91,17 @@ public class MotorPort implements TachoMotorPort {
 	 */ 
 	public void resetTachoCount()
 	{
-		resetTachoCountById( _id - 'A');
+		resetTachoCountById(_id);
 	}
 	
 	public void setPWMMode(int mode)
 	{
 		_pwmMode = mode;
+	}
+	
+	public int getId()
+	{
+		return this._id;
 	}
 	  
 	public static synchronized native void resetTachoCountById(int aMotor);
