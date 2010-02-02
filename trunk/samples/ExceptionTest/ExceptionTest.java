@@ -17,10 +17,10 @@ import lejos.util.Delay;
 public class ExceptionTest {
     static void m1()
     {
+		int test[] = new int[2];
         // Force an exception
-		SensorPort p = SensorPort.PORTS[5];
-        //Error t = new Error("Testing testing 123");
-        //throw t;
+		test[0] = test[1] + test[2];
+        //throw new Error("Testing testing 123");
     }
 
     static void m2()

@@ -31,7 +31,7 @@ public class ColorSensorTest
         if (portNo < 0) return;
         for(;;)
         {
-            ColorSensor cs = new ColorSensor(SensorPort.PORTS[portNo]);
+            ColorSensor cs = new ColorSensor(SensorPort.getInstance(portNo));
             int mode = modeMenu.select();
             if (mode < 0) return;
             cs.setFloodlight(colors[mode]);

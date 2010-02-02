@@ -94,9 +94,11 @@ public class View {
 				LCD.drawString(sensorItems[sensor],6,3);
 				LCD.drawString(val,0,4);
 				
+				SensorPort sp = SensorPort.getInstance(portId);
+				
 				if (sensor == 0)
 				{
-					TouchSensor touch = new TouchSensor(SensorPort.PORTS[portId]);
+					TouchSensor touch = new TouchSensor(sp);
 					
 					while (!Button.ESCAPE.isPressed())
 					{
@@ -110,7 +112,7 @@ public class View {
 				
 				if (sensor == 1 || sensor == 2)
 				{
-					LightSensor light = new LightSensor(SensorPort.PORTS[portId], sensor == 1);
+					LightSensor light = new LightSensor(sp, sensor == 1);
 					
 					while (!Button.ESCAPE.isPressed())
 					{
@@ -123,7 +125,7 @@ public class View {
 
 				if (sensor == 3 || sensor == 4)
 				{
-					SoundSensor sound = new SoundSensor(SensorPort.PORTS[portId], sensor == 4);
+					SoundSensor sound = new SoundSensor(sp, sensor == 4);
 					
 					while (!Button.ESCAPE.isPressed())
 					{
@@ -136,7 +138,7 @@ public class View {
 				
 				if (sensor == 5) // RCX Light Sensor
 				{
-					RCXLightSensor light = new RCXLightSensor(SensorPort.PORTS[portId]);
+					RCXLightSensor light = new RCXLightSensor(sp);
 					
 					while (!Button.ESCAPE.isPressed())
 					{
@@ -149,7 +151,7 @@ public class View {
 				
 				if (sensor == 6) // Ultrasonic
 				{
-					UltrasonicSensor sonar = new UltrasonicSensor(SensorPort.PORTS[portId]);
+					UltrasonicSensor sonar = new UltrasonicSensor(sp);
 					
 					while (!Button.ESCAPE.isPressed())
 					{

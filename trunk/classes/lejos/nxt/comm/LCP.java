@@ -233,14 +233,15 @@ public class LCP {
 		// GETINPUTVALUES
 		if (cmdId == GET_INPUT_VALUES) {
 			byte port = cmd[2];
-			int raw = SensorPort.PORTS[port].readRawValue();
-			int scaled = SensorPort.PORTS[port].readValue();
+			SensorPort p = SensorPort.getInstance(port);
+			int raw = p.readRawValue();
+			int scaled = p.readValue();
 			int norm = 1024 - raw;
 			
 			reply[3] = port;
 			reply[4] = 1;
-			reply[6] = (byte) SensorPort.PORTS[port].getType();
-			reply[7] = (byte) SensorPort.PORTS[port].getMode();
+			reply[6] = (byte) p.getType();
+			reply[7] = (byte) p.getMode();
 			setReplyShortInt(raw, reply, 8);
 			setReplyShortInt(norm, reply, 10);
 			setReplyShortInt(scaled, reply, 12);		
@@ -252,7 +253,7 @@ public class LCP {
 			byte port = cmd[2];
 			int sensorType = (cmd[3] & 0xFF);
 			int sensorMode = (cmd[4] & 0xFF);
-			SensorPort.PORTS[port].setTypeAndMode(sensorType, sensorMode);
+			SensorPort.getInstance(port).setTypeAndMode(sensorType, sensorMode);
 		}
 		
 		// SETOUTPUTSTATE
