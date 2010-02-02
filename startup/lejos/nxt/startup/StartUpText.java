@@ -664,8 +664,8 @@ public class StartUpText
         };
         // Make sure color sensor can be used remotely, this will also reset
         // the sensors
-        for(SensorPort sp : SensorPort.PORTS)
-            sp.enableColorSensor();
+        for (int i=0; i<SensorPort.NUMBER_OF_PORTS; i++)
+            SensorPort.getInstance(i).enableColorSensor();
         // Run default program if required
         if (NXT.getProgramExecutionsCount() == 1)
         {

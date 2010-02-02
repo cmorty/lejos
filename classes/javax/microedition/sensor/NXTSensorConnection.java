@@ -59,7 +59,7 @@ public class NXTSensorConnection implements SensorConnection {
 			//System.out.println("port = " + portNumber);
 			if (portNumber < 0) throw new IOException();
 			// Create the sensor port object and set the type and mode
-			port = SensorPort.PORTS[portNumber];
+			port = SensorPort.getInstance(portNumber);
 			//System.out.println("Setting type to " + info.getSensorType() + " , mode = " + info.getMode());
 			port.setTypeAndMode(info.getSensorType(), info.getMode());
 			// For I2C sensors create the I2CSensor object

@@ -197,8 +197,8 @@ public class SensorManager {
 	private static synchronized ArrayList<NXTSensorInfo> getSensors() {
 		ArrayList<NXTSensorInfo> current = new ArrayList<NXTSensorInfo>();
 		
-		for(int i=0;i<SensorPort.PORTS.length;i++) {
-			I2CSensor i2cSensor = new I2CSensor(SensorPort.PORTS[i]);		
+		for(int i=0;i<SensorPort.NUMBER_OF_PORTS;i++) {
+			I2CSensor i2cSensor = new I2CSensor(SensorPort.getInstance(i));		
 			String type = null;
 			
 			// Try a few times as Ultrasonic sensor is unreliable
