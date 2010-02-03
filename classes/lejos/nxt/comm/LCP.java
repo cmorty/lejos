@@ -305,7 +305,7 @@ public class LCP {
 			// Check if boolean value (cmd[3]) is false. If so,
 			// reset TachoCount (i.e. RotationCount in LEGO FW terminology)
 			if(cmd[3] == 0)
-				MotorPort.resetTachoCountById(cmd[2]);				
+				MotorPort.getInstance(cmd[2]).resetTachoCount();				
 		}
 		
 		// KEEPALIVE
@@ -320,13 +320,14 @@ public class LCP {
 			byte port = cmd[2];
 			byte txLen = cmd[3];
 			byte rxLen = cmd[4];
-			SensorPort.i2cEnableById(port, I2CPort.LEGO_MODE);
+			SensorPort p = SensorPort.getInstance(port);
+			p.i2cEnable(I2CPort.LEGO_MODE);
 			Delay.msDelay(100);
 			for(int i=0;i<txLen-2;i++) {
 				i2cBuffer[i] = cmd[7+i];
 			}
-			SensorPort.i2cStartById(port, cmd[5] >> 1, cmd[6], 1, i2cBuffer, 0, (rxLen == 0 ? txLen - 2 : rxLen), (rxLen == 0 ? 1 : 0));
-			while (SensorPort.i2cBusyById(port) != 0) {
+			p.i2cStart(cmd[5] >> 1, cmd[6], 1, i2cBuffer, 0, (rxLen == 0 ? txLen - 2 : rxLen), (rxLen == 0 ? 1 : 0));
+			while (p.i2cBusy() != 0) {
 				Thread.yield();
 			}
 			Delay.msDelay(100);
@@ -336,7 +337,8 @@ public class LCP {
 		if (cmdId == LS_READ)
 		{
 			byte port = cmd[2];
-            int ret = SensorPort.i2cCompleteById(port, i2cBuffer, 0, i2cBuffer.length);
+			SensorPort p = SensorPort.getInstance(port);
+            int ret = p.i2cComplete(i2cBuffer, 0, i2cBuffer.length);
 			reply[3] = (byte) ret;
 			for(int i=0;i<ret;i++) reply[i+4] = i2cBuffer[i];
 			len = 20;
@@ -346,7 +348,8 @@ public class LCP {
 		if (cmdId == LS_GET_STATUS)
 		{
 			byte port = cmd[2];
-			reply[3] = (byte) SensorPort.i2cBusyById(port);
+			SensorPort p = SensorPort.getInstance(port);
+			reply[3] = (byte) p.i2cBusy();
 			len = 4;
 		}
 		
