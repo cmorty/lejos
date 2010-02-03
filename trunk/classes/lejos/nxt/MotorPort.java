@@ -74,7 +74,7 @@ public class MotorPort implements TachoMotorPort {
 	 * @param power power from -100 to =100
 	 * @param mode 0=float, 1=brake
 	 */
-	synchronized static native void controlMotorById(int id, int power, int mode);
+	private static synchronized native void controlMotorById(int id, int power, int mode);
 
 	/**
 	 * returns tachometer count
@@ -84,7 +84,7 @@ public class MotorPort implements TachoMotorPort {
 		return getTachoCountById(_id);
 	}
 
-	public static native int getTachoCountById(int aMotor);
+	private static native int getTachoCountById(int aMotor);
 	
     /**
 	 *resets the tachometer count to 0;
@@ -104,5 +104,5 @@ public class MotorPort implements TachoMotorPort {
 		return this._id;
 	}
 	  
-	public static synchronized native void resetTachoCountById(int aMotor);
+	private static synchronized native void resetTachoCountById(int aMotor);
 }

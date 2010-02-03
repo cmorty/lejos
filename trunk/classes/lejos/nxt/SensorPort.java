@@ -985,7 +985,7 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
      * @param aPortId Port ID (0..4).
      * @param aRequestType ignored.
      */
-    static native int readSensorValue(int aPortId);
+    private static native int readSensorValue(int aPortId);
 
     /**
      * Low-level method to set the input power setting for a sensor.
@@ -1002,7 +1002,7 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
      * Low-level method to set the input power setting for a sensor.
      * Values are: 0 - no power, 1 RCX active power, 2 power always on.
      **/
-    static native void setPowerTypeById(int aPortId, int aPortType);
+    private static native void setPowerTypeById(int aPortId, int aPortType);
 
     /**
      * Call Port Listeners. Used by ListenerThread.
@@ -1020,21 +1020,21 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
      * @param aPortId The port number for this device
      * @param mode I/O mode to use
      */
-    public static native void i2cEnableById(int aPortId, int mode);
+    private static native void i2cEnableById(int aPortId, int mode);
 
     /**
      * Low-level method to disable I2C on the port.
      *
      * @param aPortId The port number for this device
      */
-    public static native void i2cDisableById(int aPortId);
+    private static native void i2cDisableById(int aPortId);
 
     /**
      * Low-level method to test if I2C connection is busy.
      * @param aPortId The port number for this device
      * @return > 0 if busy 0 if not
      */
-    public static native int i2cBusyById(int aPortId);
+    private static native int i2cBusyById(int aPortId);
 
     /**
      * Low-level method to start an I2C transaction.
@@ -1048,7 +1048,7 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
      * @param transferType 1==write 0==read
      * @return < 0 if there is an error
      */
-    public static native int i2cStartById(int aPortId, int address,
+    private static native int i2cStartById(int aPortId, int address,
             int internalAddress, int numInternalBytes,
             byte[] buffer, int offset, int numBytes, int transferType);
 
@@ -1060,7 +1060,7 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
      * @param numBytes Number of bytes to read
      * @return < 0 if the is an error, or number of bytes transferred
      */
-    public static native int i2cCompleteById(int aPortId, byte[] buffer, int offset, int numBytes);
+    private static native int i2cCompleteById(int aPortId, byte[] buffer, int offset, int numBytes);
 
     /**
      * Low-level method to enable I2C on the port.
@@ -1126,7 +1126,7 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
      * @param pin The pin id
      * @param mode The new mode
      */
-    static native void setSensorPinMode(int port, int pin, int mode);
+    private static native void setSensorPinMode(int port, int pin, int mode);
 
     /**
      * Set the output state of a sensor pin
@@ -1134,7 +1134,7 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
      * @param pin The pin id
      * @param val The new output value (0/1)
      */
-    static native void setSensorPin(int port, int pin, int val);
+    private static native void setSensorPin(int port, int pin, int val);
 
     /**
      * Read the current state of a sensor port pin
@@ -1142,7 +1142,7 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
      * @param pin The pin id.
      * @return The current pin state (0/1)
      */
-    static native int getSensorPin(int port, int pin);
+    private static native int getSensorPin(int port, int pin);
 
     /**
      * Read the current ADC value from a sensor port pin
@@ -1150,7 +1150,7 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
      * @param pin The id of the pin to read (SP_DIGI1/SP_ANA)
      * @return The return from the ADC
      */
-    static native int readSensorPin(int port, int pin);
+    private static native int readSensorPin(int port, int pin);
 
     /**
      * Low level method to set the operating mode for a sensor pin.
