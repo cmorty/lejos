@@ -143,7 +143,8 @@ public class LejosInputStreamReader extends Reader
 	@Override
 	public void close() throws IOException
 	{
-		// TODO Auto-generated method stub
-
+		this.low = 0;
+		this.offset = this.limit = 0;
+		this.is.close();
 	}
 }
