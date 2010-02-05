@@ -24,32 +24,36 @@ OPCODE(OP_IFNONNULL)
   pc = do_goto (pc, pop_word() != 0);
   DISPATCH_CHECKED;
 
-OPCODE(OP_IF_ICMPLT)
-  do_isub();
-  // Fall through!
 OPCODE(OP_IFLT)
-  pc = do_goto (pc, pop_jint() < 0);
+  push_word(0);
+  // Fall through!
+OPCODE(OP_IF_ICMPLT)
+  tempStackWord = pop_word();
+  pc = do_goto (pc, pop_jint() < word2jint(tempStackWord));
   DISPATCH_CHECKED;
 
-OPCODE(OP_IF_ICMPLE)
-  do_isub();
-  // Fall through!
 OPCODE(OP_IFLE)
-  pc = do_goto (pc, pop_jint() <= 0);
+  push_word(0);
+  // Fall through!
+OPCODE(OP_IF_ICMPLE)
+  tempStackWord = pop_word();
+  pc = do_goto (pc, pop_jint() <= word2jint(tempStackWord));
   DISPATCH_CHECKED;
 
-OPCODE(OP_IF_ICMPGE)
-  do_isub();
-  // Fall through!
 OPCODE(OP_IFGE)
-  pc = do_goto (pc, pop_jint() >= 0);
+  push_word(0);
+  // Fall through!
+OPCODE(OP_IF_ICMPGE)
+  tempStackWord = pop_word();
+  pc = do_goto (pc, pop_jint() >= word2jint(tempStackWord));
   DISPATCH_CHECKED;
 
-OPCODE(OP_IF_ICMPGT)
-  do_isub();
-  // Fall through!
 OPCODE(OP_IFGT)
-  pc = do_goto (pc, pop_jint() > 0);
+  push_word(0);
+  // Fall through!
+OPCODE(OP_IF_ICMPGT)
+  tempStackWord = pop_word();
+  pc = do_goto (pc, pop_jint() > word2jint(tempStackWord));
   DISPATCH_CHECKED;
 
 OPCODE(OP_JSR)
