@@ -5,7 +5,7 @@ import lejos.util.Delay;
  * Abstraction for a NXT input port.
  * 
  */
-public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
+public class SensorPort extends AbstractI2CSensor implements LegacySensorPort, ListenerCaller
 {
     /** Power types. 5V standard. */
     public static final int POWER_STD = 0;
@@ -131,7 +131,7 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
     }
 
 
-    private int iPortId;
+    private final int iPortId;
     private short iNumListeners = 0;
     private SensorPortListener[] iListeners;
     private int iPreviousValue;
@@ -1062,43 +1062,21 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
      */
     private static native int i2cCompleteById(int aPortId, byte[] buffer, int offset, int numBytes);
 
-    /**
-     * Low-level method to enable I2C on the port.
-     * @param mode The operating mode for the device
-     */
     public void i2cEnable(int mode)
     {
         i2cEnableById(iPortId, mode);
     }
 
-    /**
-     * Low-level method to disable I2C on the port.
-     *
-     */
     public void i2cDisable()
     {
         i2cDisableById(iPortId);
     }
 
-    /**
-     * Low-level method to test if I2C connection is busy.
-     * @return > 0 if the device is busy 0 if it is not
-     */
     public int i2cBusy()
     {
         return i2cBusyById(iPortId);
     }
 
-    /**
-     * Low-level method to start an I2C transaction.
-     * @param address Address of the device
-     * @param internalAddress Internal register address for this operation
-     * @param numInternalBytes Size of the internal address
-     * @param buffer Buffer for write operations
-     * @param numBytes Number of bytes to read/write
-     * @param transferType 1==write 0 ==read
-     * @return < 0 error
-     */
     public int i2cStart(int address, int internalAddress,
             int numInternalBytes, byte[] buffer, int offset,
             int numBytes, int transferType)
@@ -1109,12 +1087,6 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
                 numBytes, transferType);
     }
 
-    /**
-     * Complete an I2C operation and transfer any read bytes
-     * @param buffer Buffer for read data
-     * @param numBytes Number of bytes to read
-     * @return < 0 error otherwise number of bytes read.
-     */
     public int i2cComplete(byte[] buffer, int offset, int numBytes)
     {
         return i2cCompleteById(iPortId, buffer, offset, numBytes);
