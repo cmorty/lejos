@@ -3,6 +3,8 @@ package lejos.robotics.proposal;
 
 
 
+
+
 import java.util.ArrayList;
 import lejos.robotics.proposal.*;
 import lejos.nxt.*;
@@ -17,31 +19,35 @@ import lejos.robotics.*;
  * The DifferentialPilot class is a software abstraction of the Pilot mechanism of a
  * NXT robot. It contains methods to control robot movements: travel forward or
  * backward in a straight line or a circular path or rotate to a new direction.<br>
- * Note: this class will only work with two independently controlled motors to
+ * This  class will only work with two independently controlled motors to
  * steer differentially, so it can rotate within its own footprint (i.e. turn on
- * one spot).<br>
- * It can be used with robots that have reversed motor design: the robot moves
- * in the direction opposite to the the direction of motor rotation. Uses the
- * TachoMotor1 class, which regulates motor speed using the NXT motor's built in
- * tachometer.<br>
- * It automatically updates the Pose1 of a robot if the Pose1 calls the
- * addMoveListener() method on this class.
+ * one spot). It registers as a TachoMotorListener with each of its motors.
+ * An object of this class assumes that it has exclusive control of
+ * its motors.  If any other object makes calls to its motors, the resultes are
+ * unpredictable. <br>
+ * This class  can be used with robots that have reversed motor design: the robot moves
+ * in the direction opposite to the the direction of motor rotation. .<br>
+ * It automatically updates a DeadReckonerMoveProvider which has called the
+ * addMoveListener() method on object class.
  * Some methods optionally return immediately so the thread that called the
  * method can monitor sensors, get current pose, and call stop() if necessary.<br>
+ * Handling stalls: If a stall is detected,   <code>isStalled()</code> returns <code>
+ * true </code>,  <code>isMoving()</code>  returns <code>false</code>, <code>moveStopped()
+ * </code> is called, and, if a blocking method is executing, that method exits.
  *  Example:
  * <p>
  * <code><pre>
- * PdifferentialMoveControl controller = new DifferentialPilot(2.1f, 4.4f, Motor.A, Motor.C, true);  // parameters in inches
- * controller.setRobotSpeed(10);                                           // inches per second
- * controller.travel(12);                                                  // inches
- * controller.rotate(-90);                                                 // degree clockwise
- * controller.travel(-12,true);
- * while(controller.isMoving())Thread.yield();
- * controller.rotate(-90);
- * controller.rotateTo(270);
- * controller.steer(-50,180,true);
- * while(controller.isMoving())Thread.yield();
- * controller.steer(100);
+ * DifferentialPilot pilot = new DifferentialPilot(2.1f, 4.4f, Motor.A, Motor.C, true);  // parameters in inches
+ * pilot.setRobotSpeed(10);                                           // inches per second
+ * pilot.travel(12);                                                  // inches
+ * pilot.rotate(-90);                                                 // degree clockwise
+ * pilot.travel(-12,true);
+ * while(pilot.isMoving())Thread.yield();
+ * pilot.rotate(-90);
+ * pilot.rotateTo(270);
+ * pilot.steer(-50,180,true);
+ * while(pilot.isMoving())Thread.yield();
+ * pilot.steer(100);
  * try{Thread.sleep(1000);}
  * catch(InterruptedException e){}
  * pilot.stop();
@@ -698,7 +704,6 @@ public class DifferentialPilot implements
    */
   protected synchronized void movementStop()
   {
-    _stalled = _right.isStalled() ||_left.isStalled();
     for(MoveListener ml : _listeners)
       ml.moveStopped(new Move(_type,
             getMovementIncrement(), getAngleIncrement(), isMoving()), this);
@@ -713,7 +718,8 @@ public class DifferentialPilot implements
    */
   public synchronized void rotationStopped(TachoMotor m, int tachoCount, boolean stall,long ts)
   {
-   if (!isMoving())movementStop();// a motor has stopped
+   if(m.isStalled())stop();
+   else if (!isMoving())movementStop();// a motor has stopped
   }
 
   /**
@@ -734,7 +740,6 @@ public class DifferentialPilot implements
   {
     if (isMoving())  movementStop();
     reset();
-    _stalled = false;
     for(MoveListener ml : _listeners)
       ml.moveStarted(new Move(_type,
             getMovementIncrement(), getAngleIncrement(), isMoving()), this);
@@ -868,13 +873,6 @@ public class DifferentialPilot implements
    * Diameter of right wheel.
    */
   protected final float _rightWheelDiameter;
-
-  protected boolean _stalled;
-  /**
-   * a non blocking movement is in progress
-   * set by movementStart, reset by movementStop
-   */
-
 
   protected ArrayList<MoveListener> _listeners= new ArrayList<MoveListener>();
   protected MoveListener _listener;
