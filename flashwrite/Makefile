@@ -11,7 +11,7 @@ OBJDUMP   := $(call MACRO_PROG_PATH,objdump)
 .PHONY: all clean
 .SECONDARY: flash.elf flash.bin
 
-all: flash.elf.asm flash.bin.asm FlashWrite.java
+all: flash.elf.asm flash.bin.asm
 	
 clean:
 	rm -f flash.elf flash.elf.asm flash.bin flash.bin.asm FlashWrite.java 
