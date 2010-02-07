@@ -49,8 +49,17 @@ public class I2CSensor implements SensorConstants {
 	 * @param len Length of the return data
 	 * @return status == 0 success, != 0 failure
 	 */
-	public synchronized int getData(int register, byte [] buf, int len) {
-		return this.port.i2cReadData(this.address, register, 1, buf, 0, len);
+	public synchronized int getData(int register, byte [] buf, int len) {	
+		int ret = port.i2cStart(address, register, 1, null, 0, len, 0);
+		
+		if (ret != 0) return ret;
+
+		while (port.i2cBusy() != 0) {
+			Thread.yield();
+		}
+		
+		ret = port.i2cComplete(buf, 0, len);
+        return (ret < 0 ? ret : (ret == len ? 0 : -1));
 	}
 	
 	/**
@@ -62,7 +71,14 @@ public class I2CSensor implements SensorConstants {
 	 * @return status zero=success, non-zero=failure
 	 */
 	public synchronized int sendData(int register, byte [] buf, int len) {
-		return this.port.i2cSendData(this.address, register, 1, buf, 0, len);
+        int ret = port.i2cStart(address, register, 1, buf, 0, len, 1);
+		if (ret != 0) return ret;
+		
+		while (port.i2cBusy() != 0) {
+			Thread.yield();
+		}
+		
+		return port.i2cComplete(null, 0, 0);
 	}
 	
 	/**

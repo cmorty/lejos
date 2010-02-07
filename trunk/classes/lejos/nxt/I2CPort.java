@@ -13,7 +13,7 @@ public interface I2CPort extends BasicSensorPort {
     public static final int NO_RELEASE = 4;
 
     /**
-     * Enable the low level device.
+     * Enable the low level device
      * @param mode One or more of the mode bits above.
      */
 	public void i2cEnable(int mode);
@@ -24,7 +24,7 @@ public interface I2CPort extends BasicSensorPort {
 	public void i2cDisable();
 
     /**
-     * Check to see if the device is busy.
+     * Check to see if the device is busy
      * @return 1 if busy 0 if idle
      */
 	public int i2cBusy();
@@ -36,7 +36,6 @@ public interface I2CPort extends BasicSensorPort {
      * @param internalAddress The internal register address
      * @param numInternalBytes The number of bytes in the internal address
      * @param buffer The data to write to the device (null for reads)
-     * @param offset Index of first byte
      * @param numBytes The number of bytes to transfer
      * @param transferType 0 == read 1 == write
      * @return  0: no error
@@ -45,13 +44,13 @@ public interface I2CPort extends BasicSensorPort {
      *         -4: Buffer size error.
      *         -5: Invalid register address size.
      */
-	public int i2cStart(int address, int internalAddress, int numInternalBytes,
-			byte[] buffer, int offset, int numBytes, int transferType);
+	public int i2cStart(int address, int internalAddress,
+            int numInternalBytes, byte[] buffer, int offset,
+            int numBytes, int transferType);
 
     /**
      * Complete the i2c transaction, and read any returned data.
      * @param buffer The buffer for a read (null for write)
-     * @param offset Index of first byte
      * @param numBytes Number of bytes to transfer
      * @return >= 0 number of bytes returned
      *         -1: Invalid device
@@ -60,30 +59,5 @@ public interface I2CPort extends BasicSensorPort {
      *         -4: Buffer size error.
      */
     public int i2cComplete(byte[] buffer, int offset, int numBytes);
-
-	/**
-	 * Executes an I2C read transaction and waits for the result.
-	 * 
-	 * @param register I2C register, e.g 0x41
-	 * @param buf Buffer to return data
-	 * @param len Length of the return data
-     * @return < 0 error otherwise number of bytes read.
-	 */
-	public int i2cReadData(int address, int internalAddress,
-			int numInternalBytes, byte [] buf, int offset, int len);
-
-	/**
-	 * Executes an I2C write transaction.
-	 * 
-     * @param address Address of the device
-     * @param internalAddress Internal register address for this operation
-     * @param numInternalBytes Size of the internal address
-	 * @param buffer Buffer containing data to send
-	 * @param offset Index of first byte
-	 * @param numBytes Length of data to send
-	 * @return status zero=success, non-zero=failure
-	 */
-	public int i2cSendData(int address, int internalAddress,
-			int numInternalBytes, byte [] buffer, int offset, int numBytes);
 	
 }
