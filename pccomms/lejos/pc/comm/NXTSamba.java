@@ -28,7 +28,7 @@ public class NXTSamba {
 			{
 				if (len <= 0)
 					return false;
-				
+					
 				this.buf = NXTSamba.this.read();
 				this.off = 0;
 				if (this.buf.length > this.len)
@@ -415,7 +415,7 @@ public class NXTSamba {
      */
     private void changeLock(int rgn, boolean lock) throws IOException
     {
-        int cmd = 0x5a000000 | ((64*rgn) << 8);
+        int cmd = 0x5a000000 | (rgn << 14);
         if (lock)
             cmd |= 0x2;
         else
@@ -565,7 +565,7 @@ public class NXTSamba {
                 // Check that we are all in sync
                 System.out.println("Connected to SAM-BA " + version);
                 // Now upload the flash writer helper routine
-                writeBytes(HELPER_CODEADR, getModifiedHelper());
+                writeBytes(HELPER_CODEADR, FlashWrite.CODE);
                 // And set the the clock into PLL/2 mode ready for writing
                 writeWord(0xfffffc30, 0x7);
                 return true;
@@ -580,26 +580,12 @@ public class NXTSamba {
         return false;
 	}
 	
-	private static byte[] getModifiedHelper()
-	{
-		final byte[] code = FlashWrite.CODE;
-		final int len = code.length;
-		
-		byte[] r = new byte[len];
-		System.arraycopy(code, 0, r, 0, len);
-		
-		//encodeMagicInt(code, len + PAGEDATA_OFF, PAGEDATA_MAGIC, ADDR_PAGEDATA);
-		
-		return r;
-	}
-	
 	private static void encodeInt(byte[] code, int off, int value)
 	{
-		for (int i = 0; i < 4; i++)
-		{
-			code[off + i] = (byte)value;
-			value >>>= 8;
-		}
+		code[off    ] = (byte)(value       );
+		code[off + 1] = (byte)(value >>>  8);
+		code[off + 2] = (byte)(value >>> 16);
+		code[off + 3] = (byte)(value >>> 24);
 	}
 	
     /**
