@@ -12,7 +12,6 @@ import lejos.util.Delay;
  *
  */
 public class LCP {
-	private static byte[] i2cBuffer = new byte[16];
     private static File[] files = null;
     private static String[] fileNames = null;
     private static int fileIdx = -1;
@@ -323,10 +322,10 @@ public class LCP {
 			SensorPort p = SensorPort.getInstance(port);
 			p.i2cEnable(I2CPort.LEGO_MODE);
 			Delay.msDelay(100);
-			for(int i=0;i<txLen-2;i++) {
-				i2cBuffer[i] = cmd[7+i];
-			}
-			p.i2cStart(cmd[5] >> 1, cmd[6], 1, i2cBuffer, 0, (rxLen == 0 ? txLen - 2 : rxLen), (rxLen == 0 ? 1 : 0));
+			if (rxLen == 0)
+				p.i2cStart(cmd[5] >> 1, cmd[6], 1, cmd, 7, txLen - 2, 1);
+			else
+				p.i2cStart(cmd[5] >> 1, cmd[6], 1, null, 0, rxLen, 0);
 			while (p.i2cBusy() != 0) {
 				Thread.yield();
 			}
@@ -338,9 +337,8 @@ public class LCP {
 		{
 			byte port = cmd[2];
 			SensorPort p = SensorPort.getInstance(port);
-            int ret = p.i2cComplete(i2cBuffer, 0, i2cBuffer.length);
-			reply[3] = (byte) ret;
-			for(int i=0;i<ret;i++) reply[i+4] = i2cBuffer[i];
+            int ret = p.i2cComplete(reply, 4, 16);
+			reply[3] = (byte)ret;
 			len = 20;
 		}
 		
