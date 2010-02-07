@@ -96,19 +96,26 @@ public class NXTSamba {
     
     private static final int HELPER_STACKSIZE = 0x1000;
     private static final int HELPER_CODEADR = SAMBA_RAM_BASE + HELPER_STACKSIZE;
-    private static final int HELPER_DATAADR = HELPER_CODEADR + FlashWrite.CODE.length;
     private static final int HELPER_PACKET = PAGE_SIZE + 4;
+    private final byte[] helper_code;
+    private final int helper_dataadr;
 
     static
     {
     	assert SAMBA_RAM_BASE >= RAM_BASE;
     	assert SAMBA_RAM_MAX <= RAM_MAX;
     	assert HELPER_CODEADR - HELPER_STACKSIZE >= SAMBA_RAM_BASE;
-    	assert HELPER_DATAADR + HELPER_PACKET <= SAMBA_RAM_MAX;
     }
     
 	private NXTCommUSB nxtComm = null;
     private String version;
+    
+    public NXTSamba() throws IOException
+    {
+    	this.helper_code = FlashWrite.loadCode();
+    	this.helper_dataadr = HELPER_CODEADR + helper_code.length;
+    	assert helper_dataadr + HELPER_PACKET <= SAMBA_RAM_MAX;
+    }
     
     /**
      * Locate all NXT devices that are running in SAM-BA mode.
@@ -469,7 +476,7 @@ public class NXTSamba {
         System.arraycopy(data, offset, buf, 4, len);
         encodeInt(buf, 0, page);
         // And the data into ram
-        writeBytes(HELPER_DATAADR, buf);
+        writeBytes(helper_dataadr, buf);
         // And now use the flash writer to write the data into flash.
         sendGotoCommand(HELPER_CODEADR);
     }
@@ -565,7 +572,7 @@ public class NXTSamba {
                 // Check that we are all in sync
                 System.out.println("Connected to SAM-BA " + version);
                 // Now upload the flash writer helper routine
-                writeBytes(HELPER_CODEADR, FlashWrite.CODE);
+                writeBytes(HELPER_CODEADR, helper_code);
                 // And set the the clock into PLL/2 mode ready for writing
                 writeWord(0xfffffc30, 0x7);
                 return true;
