@@ -16,7 +16,7 @@ import lejos.util.Delay;
  * @author Lawrie Griffiths <lawrie.griffiths@ntlworld.com>
  *
  */
-public class RCXLink extends I2CSensor implements Opcode {
+public class RCXLink extends I2CSensor implements Opcode, IRTransmitter {
 	
 	private byte[] buf = new byte[4];
 	

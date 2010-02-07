@@ -15,7 +15,7 @@ import java.util.*;
  * @author Lawrie Griffiths
  *
  */
-public class IRLink extends I2CSensor {
+public class IRLink extends I2CSensor implements IRTransmitter {
 	
 	//Registers
 	private final static byte TX_BUFFER = 0x40; // 40 to 4C
@@ -102,5 +102,19 @@ public class IRLink extends I2CSensor {
 	
 	private void clearBits() {
 		for(int i=0;i<MAX_BITS;i++) bits.clear(i);
+	}
+	
+	/**
+	 * Send data to the RCX
+	 * 
+	 * @param data up to 8 bytes of data
+	 * @param len the number of bytes
+	 */
+	public void sendBytes(byte[] data, int len) {
+		int register = TX_BUFFER_LEN - data.length;
+		sendData(register,data, data.length);
+		sendData(TX_BUFFER_LEN, (byte) data.length);
+		sendData(TX_MODE, TX_MODE_RCX);
+		sendData(TX_BUFFER_FLAG, (byte) 1);
 	}
 }
