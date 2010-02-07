@@ -13,6 +13,7 @@ public class Battery
 
   private Battery()
   {
+	  //nothing
   }
   
   /**
@@ -37,6 +38,7 @@ public class Battery
   {
       return (getBatteryStatus() & RECHARGEABLE) != 0;
   }
+  
   /**
    * Returns the battery voltage in volts.
    * 
@@ -44,6 +46,6 @@ public class Battery
    */
   public static float getVoltage()
   {
-    return (float)(Battery.getVoltageMilliVolt() * 0.001);
+    return Battery.getVoltageMilliVolt() * 0.001f;
   }
 }
