@@ -165,6 +165,10 @@ public class RCXLink extends I2CSensor implements Opcode, IRTransmitter {
 		defineAndRun(buf,2);
 	}
 	
+	public void sendPacket(byte [] packet) {
+		defineAndRun(packet, packet.length);
+	}
+	
 	public void sendRemoteCommand(int msg) {
 		buf[0] = OPCODE_REMOTE_COMMAND;
 		buf[1] = (byte) (msg >> 8);
