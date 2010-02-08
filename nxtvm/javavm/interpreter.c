@@ -569,9 +569,7 @@ static DISPATCH_LABEL forceCheck[] =
 
   START_DISPATCH
 
-    OPCODE(OP_NOP)
-      DISPATCH;
-
+    #include "op_skip.hc"
     #include "op_stack.hc"
     #include "op_locals.hc"
     #include "op_arrays.hc"
@@ -582,71 +580,24 @@ static DISPATCH_LABEL forceCheck[] =
     #include "op_logical.hc"
     #include "op_arithmetic.hc"
     #include "op_methods.hc"
-
-    OPCODE(OP_XXXUNUSEDXXX)
-    UNUSED_OPCODE(OP_BREAKPOINT)
-    UNUSED_OPCODE(OP_JSR_W)
-    UNUSED_OPCODE(OP_GOTO_W)
-    UNUSED_OPCODE(OP_INVOKEINTERFACE)
-    UNUSED_OPCODE(OP_LDC_W)
-#if !LONG_ARITHMETIC
-    OPCODE(OP_LCMP)
-    OPCODE(OP_LXOR)
-    OPCODE(OP_LOR)
-    OPCODE(OP_LAND)
-    OPCODE(OP_LUSHR)
-    OPCODE(OP_LSHR)
-    OPCODE(OP_LSHL)
-    OPCODE(OP_LNEG)
-    OPCODE(OP_LREM)
-    OPCODE(OP_LDIV)
-    OPCODE(OP_LMUL)
-    OPCODE(OP_LSUB)
-    OPCODE(OP_LADD)
-#endif
-    UNUSED_OPCODE(217)
-    UNUSED_OPCODE(218)
-    UNUSED_OPCODE(219)
-    UNUSED_OPCODE(220)
-    UNUSED_OPCODE(221)
-    UNUSED_OPCODE(222)
-    UNUSED_OPCODE(223)
-    UNUSED_OPCODE(224)
-    UNUSED_OPCODE(225)
-    UNUSED_OPCODE(226)
-    UNUSED_OPCODE(227)
-    UNUSED_OPCODE(228)
-    UNUSED_OPCODE(229)
-    UNUSED_OPCODE(230)
-    UNUSED_OPCODE(231)
-    UNUSED_OPCODE(232)
-    UNUSED_OPCODE(233)
-    UNUSED_OPCODE(234)
-    UNUSED_OPCODE(235)
-    UNUSED_OPCODE(236)
-    UNUSED_OPCODE(237)
-    UNUSED_OPCODE(238)
-    UNUSED_OPCODE(239)
-    UNUSED_OPCODE(240)
-    UNUSED_OPCODE(241)
-    UNUSED_OPCODE(242)
-    UNUSED_OPCODE(243)
-    UNUSED_OPCODE(244)
-    UNUSED_OPCODE(245)
-    UNUSED_OPCODE(246)
-    UNUSED_OPCODE(247)
-    UNUSED_OPCODE(248)
-    UNUSED_OPCODE(249)
-    UNUSED_OPCODE(250)
-    UNUSED_OPCODE(251)
-    UNUSED_OPCODE(252)
-    UNUSED_OPCODE(253)
-    UNUSED_OPCODE(254)
-    UNUSED_OPCODE(255)
-      throw_new_exception (JAVA_LANG_NOSUCHMETHODERROR);
-      DISPATCH;
+    #include "op_unused.hc"
 
   END_DISPATCH
+
+  LABEL_THROW_ARITHMETIC_EXCEPTION:
+    thrownException = JAVA_LANG_ARITHMETICEXCEPTION;
+    goto LABEL_THROW_EXCEPTION;
+
+  LABEL_THROW_NULLPTR_EXCEPTION:
+    thrownException = JAVA_LANG_NULLPOINTEREXCEPTION;
+    goto LABEL_THROW_EXCEPTION;
+
+  LABEL_THROW_EXCEPTION:
+    SAVE_REGS();
+    throw_new_exception(thrownException);
+    LOAD_REGS();
+    DISPATCH_CHECKED;
+
   //-----------------------------------------------
   // SWITCH ENDS HERE
   //-----------------------------------------------

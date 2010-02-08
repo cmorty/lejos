@@ -5,7 +5,7 @@
 OPCODE(OP_ATHROW)
   tempStackWord = pop_ref();
   if (tempStackWord == JNULL)
-    goto LABEL_NULLPTR_EXCEPTION;
+    goto LABEL_THROW_NULLPTR_EXCEPTION;
   SAVE_REGS();
   throw_exception((Throwable *)word2obj(tempStackWord));
   LOAD_REGS();
@@ -31,15 +31,7 @@ OPCODE(OP_MONITOREXIT)
   }
   DISPATCH_CHECKED;
 
-LABEL_THROW_EXCEPTION:
-  SAVE_REGS();
-  throw_new_exception(thrownException);
-  LOAD_REGS();
-  DISPATCH_CHECKED;
-
 // Notes:
 // - Not supported: BREAKPOINT
 
 /*end*/
-
-
