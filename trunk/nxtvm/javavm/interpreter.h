@@ -38,7 +38,7 @@ extern unsigned int debug_word1, debug_word2;
 //extern STACKWORD tempStackWord;
 
 extern void engine();
-#if FAST_DISPATCH == 1
+#if FAST_DISPATCH
 typedef const unsigned short DISPATCH_LABEL;
 extern DISPATCH_LABEL * volatile dispatchTable;
 extern DISPATCH_LABEL *checkEvent;

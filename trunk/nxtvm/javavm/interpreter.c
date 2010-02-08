@@ -205,7 +205,7 @@ static STACKWORD *array_helper(unsigned int idx, Object *obj, int sz)
  * that the dispatch table uses a relative offset to allow the table to be
  * stored in flash memory.
  */
-#if FAST_DISPATCH == 1
+#if FAST_DISPATCH
 // Fast byte code dispatch. Uses the GCC labels as values extension.
 #define OPCODE(op) L_##op: 
 #define UNUSED_OPCODE(op) 
@@ -247,7 +247,7 @@ void engine()
   byte *pc = curPc;
   STACKWORD *stackTop = curStackTop;
   STACKWORD *localsBase = curLocalsBase;
-#if FAST_DISPATCH == 1
+#if FAST_DISPATCH
 // The following table provides the main opcode dispatch table.
 // One entry per opcode, in opcode order. The subtraction makes
 // the value a relative offset allowing a smaller table and
@@ -257,7 +257,7 @@ void engine()
 // unique label entries in this table, results in approximately 1.5K more
 // code! To avoid this we tune the unique entry count by doubling up the
 // entries for opcodes that have multiple labels for the same code.
-static DISPATCH_LABEL dispatch[] = 
+static DISPATCH_LABEL dispatch[] =
 {
   &&L_OP_NOP - &&CHECK_EVENT,
   &&L_OP_ACONST_NULL - &&CHECK_EVENT,
