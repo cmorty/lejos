@@ -186,21 +186,9 @@ OPCODE(OP_ARRAYLENGTH)
     //printf ("ARRAYLENGTH for %d\n", (int) tempRef); 
     
     if (tempRef == JNULL)
-      goto LABEL_NULLPTR_EXCEPTION;
+      goto LABEL_THROW_NULLPTR_EXCEPTION;
     set_top_word (get_array_length (word2obj (tempRef)));
   }
   DISPATCH;
 
-LABEL_NULLPTR_EXCEPTION:
-  thrownException = JAVA_LANG_NULLPOINTEREXCEPTION;
-  goto LABEL_THROW_EXCEPTION;
-
-
 /*end*/
-
-
-
-
-
-
-

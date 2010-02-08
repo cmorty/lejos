@@ -119,7 +119,7 @@ OPCODE(OP_GETFIELD)
     // Optimized version for int/float/reference
     tempStackWord = get_top_ref();
     if (tempStackWord == JNULL)
-      goto LABEL_NULLPTR_EXCEPTION;
+      goto LABEL_THROW_NULLPTR_EXCEPTION;
 
     tempWordPtr = (STACKWORD *)(((byte *) word2ptr (tempStackWord)) + 
                 get_pgfield_offset(pc[0], pc[1]));
@@ -133,7 +133,7 @@ OPCODE(OP_PUTFIELD)
     // Optimized version for int/float/reference
     tempStackWord = get_ref_at(1);
     if (tempStackWord == JNULL)
-      goto LABEL_NULLPTR_EXCEPTION;
+      goto LABEL_THROW_NULLPTR_EXCEPTION;
 
     tempWordPtr = (STACKWORD *)(((byte *) word2ptr (tempStackWord)) + 
                 get_pgfield_offset(pc[0], pc[1]));
@@ -149,7 +149,7 @@ OPCODE(OP_GETFIELD_1)
   {
     tempStackWord = get_top_ref();
     if (tempStackWord == JNULL)
-      goto LABEL_NULLPTR_EXCEPTION;
+      goto LABEL_THROW_NULLPTR_EXCEPTION;
 
     tempWordPtr = (STACKWORD *)(((byte *) word2ptr (tempStackWord)) + 
                 get_pgfield_offset(pc[0], pc[1]));
@@ -176,7 +176,7 @@ OPCODE(OP_PUTFIELD_1)
     {
       tempStackWord = get_ref_at (2);
       if (tempStackWord == JNULL)
-        goto LABEL_NULLPTR_EXCEPTION;
+        goto LABEL_THROW_NULLPTR_EXCEPTION;
       tempWordPtr = (STACKWORD *)(((byte *) word2ptr (tempStackWord)) + offset);
       store_word_ns((byte *)(tempWordPtr + 1), T_LONG, pop_word());
       store_word_ns((byte *)(tempWordPtr), T_LONG, pop_word());
@@ -185,7 +185,7 @@ OPCODE(OP_PUTFIELD_1)
     {
       tempStackWord = get_ref_at (1);
       if (tempStackWord == JNULL)
-        goto LABEL_NULLPTR_EXCEPTION;
+        goto LABEL_THROW_NULLPTR_EXCEPTION;
       tempWordPtr = (STACKWORD *)(((byte *) word2ptr (tempStackWord)) + offset);
       if (fieldType == T_REFERENCE)
         update_object((Object *) tempStackWord);
@@ -224,11 +224,3 @@ OPCODE(OP_CHECKCAST)
 // - GETFIELD and PUTFIELD: 4-bit field type, 12-bit field data offset
 
 /*end*/
-
-
-
-
-
-
-
-

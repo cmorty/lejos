@@ -27,10 +27,7 @@ OPCODE(OP_IDIV)
 OPCODE(OP_IREM)
   tempInt = word2jint(pop_word());
   if (tempInt == 0)
-  {
-    thrownException = JAVA_LANG_ARITHMETICEXCEPTION;
-    goto LABEL_THROW_EXCEPTION;
-  }
+    goto LABEL_THROW_ARITHMETIC_EXCEPTION;
   just_set_top_word ((*(pc-1) == OP_IDIV) ? word2jint(get_top_word()) / tempInt :
                                             word2jint(get_top_word()) % tempInt);
   DISPATCH;
@@ -149,10 +146,7 @@ OPCODE(OP_LDIV)
   pop_jlong(&l1);
   pop_jlong(&l2);
   if (l1.lnum == 0)
-  {
-    thrownException = JAVA_LANG_ARITHMETICEXCEPTION;
-    goto LABEL_THROW_EXCEPTION;
-  }
+    goto LABEL_THROW_ARITHMETIC_EXCEPTION;
   l2.lnum /= l1.lnum;
   push_jlong(&l2);
   DISPATCH;
@@ -161,10 +155,7 @@ OPCODE(OP_LREM)
   pop_jlong(&l1);
   pop_jlong(&l2);
   if (l1.lnum == 0)
-  {
-    thrownException = JAVA_LANG_ARITHMETICEXCEPTION;
-    goto LABEL_THROW_EXCEPTION;
-  }
+    goto LABEL_THROW_ARITHMETIC_EXCEPTION;
   l2.lnum %= l1.lnum;
   push_jlong(&l2);
   DISPATCH;
@@ -175,10 +166,3 @@ OPCODE(OP_LREM)
 // - Operations on doubles are truncated to low float
 
 /*end*/
-
-
-
-
-
-
-
