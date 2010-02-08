@@ -2,6 +2,7 @@
  * This is included inside a switch statement.
  */
 
+#if FAST_DISPATCH
 OPCODE(OP_XXXUNUSEDXXX)
 UNUSED_OPCODE(OP_BREAKPOINT)
 UNUSED_OPCODE(OP_JSR_W)
@@ -62,6 +63,9 @@ UNUSED_OPCODE(252)
 UNUSED_OPCODE(253)
 UNUSED_OPCODE(254)
 UNUSED_OPCODE(255)
+#else
+default:
+#endif
   throw_new_exception (JAVA_LANG_NOSUCHMETHODERROR);
   DISPATCH;
 
