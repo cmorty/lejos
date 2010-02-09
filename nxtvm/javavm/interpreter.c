@@ -584,6 +584,12 @@ static DISPATCH_LABEL forceCheck[] =
 
   END_DISPATCH
 
+  //-----------------------------------------------
+  // SWITCH ENDS HERE
+  //-----------------------------------------------
+
+  return;
+
   LABEL_THROW_ARITHMETIC_EXCEPTION:
     thrownException = JAVA_LANG_ARITHMETICEXCEPTION;
     goto LABEL_THROW_EXCEPTION;
@@ -597,10 +603,6 @@ static DISPATCH_LABEL forceCheck[] =
     throw_new_exception(thrownException);
     LOAD_REGS();
     DISPATCH_CHECKED;
-
-  //-----------------------------------------------
-  // SWITCH ENDS HERE
-  //-----------------------------------------------
 }
 
 
