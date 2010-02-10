@@ -69,12 +69,6 @@ static byte* do_goto ( byte* pc, int aCond)
   return pc;
 }
 
-#define do_isub() \
-{ \
-  STACKWORD poppedWord = pop_word(); \
-  set_top_word (word2jint(get_top_word()) - word2jint(poppedWord)); \
-}
-
 #if FP_ARITHMETIC
 
 STACKWORD do_fcmp (JFLOAT f1, JFLOAT f2, STACKWORD def)
