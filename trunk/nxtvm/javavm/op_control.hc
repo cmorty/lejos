@@ -6,7 +6,8 @@ OPCODE(OP_IF_ICMPEQ)
 OPCODE(OP_IF_ACMPEQ)
   // Arguments: 2
   // Stack: -2
-  do_isub();
+  tempStackWord = pop_word();
+  set_top_word (word2jint(get_top_word()) - word2jint(tempStackWord));
   // Fall through!
 OPCODE(OP_IFEQ)
 OPCODE(OP_IFNULL)
@@ -17,7 +18,8 @@ OPCODE(OP_IFNULL)
 
 OPCODE(OP_IF_ICMPNE)
 OPCODE(OP_IF_ACMPNE)
-  do_isub();
+  tempStackWord = pop_word();
+  set_top_word (word2jint(get_top_word()) - word2jint(tempStackWord));
   // Fall through!
 OPCODE(OP_IFNE)
 OPCODE(OP_IFNONNULL)
