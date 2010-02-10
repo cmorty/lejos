@@ -25,34 +25,38 @@ OPCODE(OP_IFNONNULL)
   DISPATCH_CHECKED;
 
 OPCODE(OP_IFLT)
-  push_word(0);
-  // Fall through!
+  tempStackWord = 0;
+  goto SKIP_OP_IF_ICMPLT;
 OPCODE(OP_IF_ICMPLT)
   tempStackWord = pop_word();
+SKIP_OP_IF_ICMPLT:
   pc = do_goto (pc, pop_jint() < word2jint(tempStackWord));
   DISPATCH_CHECKED;
 
 OPCODE(OP_IFLE)
-  push_word(0);
-  // Fall through!
+  tempStackWord = 0;
+  goto SKIP_OP_IF_ICMPLE;
 OPCODE(OP_IF_ICMPLE)
   tempStackWord = pop_word();
+SKIP_OP_IF_ICMPLE:
   pc = do_goto (pc, pop_jint() <= word2jint(tempStackWord));
   DISPATCH_CHECKED;
 
 OPCODE(OP_IFGE)
-  push_word(0);
-  // Fall through!
+  tempStackWord = 0;
+  goto SKIP_OP_IF_ICMPGE;
 OPCODE(OP_IF_ICMPGE)
   tempStackWord = pop_word();
+SKIP_OP_IF_ICMPGE:
   pc = do_goto (pc, pop_jint() >= word2jint(tempStackWord));
   DISPATCH_CHECKED;
 
 OPCODE(OP_IFGT)
-  push_word(0);
-  // Fall through!
+  tempStackWord = 0;
+  goto SKIP_OP_IF_ICMPGT;
 OPCODE(OP_IF_ICMPGT)
   tempStackWord = pop_word();
+SKIP_OP_IF_ICMPGT:
   pc = do_goto (pc, pop_jint() > word2jint(tempStackWord));
   DISPATCH_CHECKED;
 
