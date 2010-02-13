@@ -1,31 +1,47 @@
 package lejos.nxt;
 
 
+
+
 import lejos.nxt.*;
 import lejos.robotics.TachoMotor;
 import lejos.robotics.TachoMotorListener;
 import lejos.util.Delay;
 
+import lejos.util.Datalogger;
 
 /**
  * Abstraction for a NXT motor. Three instances of <code>Motor</code>
  * are available: <code>Motor.A</code>, <code>Motor.B</code>
- * and <code>Motor.C</code>. To control each motor use
- * methods <code>forward, backward, reverseDirection, stop</code>
- * and <code>flt</code>. To set each motor's speed, use
- * <code>setSpeed.  </code> Speed is in degrees per second.
- * Methods that use the tachometer:  regulateSpeed, rotate, rotateTo.
- * These rotate methods may not stop smoothly at the target angle if called when the motor is already moving<br>
- * Motor has 2 modes : speedRegulation and smoothAcceleration,
- * which only works if speed regulation is used. These are initially enabled.
- * The speed is regulated by comparing the tacho count with speed times elapsed time and adjusting motor power to keep these closely matched.
- * Smooth acceleration corrects the speed regulation to account for the acceleration time. 
- * They can be switched off/on by the methods regulateSpeed() and smoothAcceleration().
- * The actual maximum speed of the motor depends on battery voltage and load. With no load, the maximum is about 100 times the voltage.  
- * If you need the motor to hold its position and you find that still moves after stop() is called , you can use the lock() method.
- *  <b>Stall detection</b> If a stall is detected, the motor will stop.  If this
- * occurrs while the <code>rotate(angle) </code> or <code> rotateTo(angle)<</code> method
- * is running,  a <code>MotorStalledException</code> will be thrown.
+ * and <code>Motor.C</code>.  The basic control methods are:
+ *  <code>forward, backward, reverseDirection, stop</code>
+ * and <code>flt</code>. To set each motor's speed, use {@link #setSpeed(int)
+ * <code>setSpeed  </code> }.
+ * The maximum speed of the motor limited by the battery voltage and load.
+ * With no load, the maximum degrees per second is about 100 times the voltage.  <br>
+ * The speed is regulated by comparing the tacho count with speed times elapsed
+ * time, and adjusting motor power to keep these closely matched. The initial tacho count
+ * and time used in this calculation are reset by most methods, so very frequent
+ * method calls will degrade the accuracy of speed regulation. <br>
+ * The methods <code>rotate(int angle) </code> and <code>rotateTo(int ange)</code>
+ * use the tachometer to control the position at which the motor stops, usually within 1 degree
+ * or 2.<br>
+ * Motor has 2 modes : speedRegulation and smoothAcceleration
+ * which only works if speed regulation is used. Both modes are set by default.
+ * At the start of a rotate() task, smooth acceleration ramps the motor apeed  up
+ * and then down at the end. The control algorithm assumes that the motor is not moving
+ * at the start.
+ * You can control the smoothness of the ramp by using
+ * {@link #setAcceleration(int) <code> setAcceleration()</code>}   
+ *  <br> <b> Listeners.</b>  An object implementing the {@link lejos.robotics.TachoMotorListener
+ * <code> TachoMotorListener </code> } interface  may register with this class.
+ * It will be informed each time the motor starts or stops.
+ * <br> <b>Stall detection</b> If a stall is detected, the motor will stop, and
+ * <code>isStalled()</code >  returns <b>true</b>.
+ * <br>If you need the motor to hold its position against a load and you find that
+ * still moves after stop() is called , you can use the {@link #lock()<code> lock()
+ * </code> }method.
+ * <br>
  * <p>
  * Example:<p>
  * <code><pre>
@@ -38,23 +54,24 @@ import lejos.util.Delay;
  *   Motor.C.stop();
  *   Motor.A.rotateTo( 360);
  *   Motor.A.rotate(-720,true);
- *   while(Motor.A.isRotating();
+ *   while(Motor.A.isRotating() :Thread.yield();
  *   int angle = Motor.A.getTachoCount(); // should be -360
+ *   LCD.drawInt(angle,0,0);
  * </pre></code>
  * @author Roger Glassey revised 9 Feb 2008 - added lock() method. 
  */
 public class Motor extends BasicMotor implements TachoMotor // implements TimerListener
 {
 
-  public TachoMotorPort _port;//** private
+  private  TachoMotorPort _port;//** private
    /*
    * default speed  deg/sec
    */
   private int _speed = 360;
   private boolean _keepGoing = true;// for regulator
   /**
-   * Initially true; changed only by regulateSpeed(),<br>
-   * used by Regulator, updteState, reset*
+   * Initially true; changed only by regulateSpeed().<br>
+   * used by Regulator, updateState, reset
    */
   private boolean _regulate = true;
   public Regulator regulator = new Regulator();
@@ -77,7 +94,7 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
   /**
    * set by smoothAcceleration, forward(),backward(), setSpeed().  Only has effect if _regulate is true
    */
-  public boolean _rampUp = true;
+  private boolean _rampUp = true;
   /** initialized true (ramping enabled); changed only by smoothAcceleration
    * used by forward(),backward(), setSpeed() a value of _rampUp only if motor mode changes.
    */
@@ -136,7 +153,8 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
   // TODO: Technically addListener() should be added to TachoMotor interface. Not yet at that stage though.
   /**
    * Add a TachoMotorListener to this motor. Currently each motor can only have one listener. If you try to add
-   * more than one it will replace the previous listener.
+   * more than one it will replace the previous listener. Usually, the listener
+   * will be a Pilot, and only one per program should be controlling motors 
    * @param listener The TachoMotorListener object that will be notified of motor events.
    */
   public void addListener(TachoMotorListener listener)
@@ -330,6 +348,7 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
       _newOperation = false;
       regulator.braking = false;
       regulator.speed = 0;
+       regulator.timeConstant = 1000 * _speed / _acceleration;
     }
     if (immediateReturn)
     {
@@ -428,19 +447,18 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
             int angle = tachoCount - angle0;
             int absA = angle;
             if (angle < 0) absA = -angle;
-
             stopAngle = _limitAngle - _direction *speed*speed/_acceleration;
             if (_rotating && _direction * (tachoCount - stopAngle) >= 0 && !braking)//Decelerate now
             {
 //      set variables for beginning of deceleration
               braking = true;
               brakeStart = elapsed;
-              brakeAngle = tachoCount;
+              brakeAngle = tachoCount - angle0;
             }
             if (braking)
             {
 // close to limit angle ?  if so , stop  Note: speed is deg/sec - elapsed in ms
-              if(Math.abs(_limitAngle - angle ) < 2 || 
+              if(Math.abs(_limitAngle - tachoCount ) < 2 ||
                       (elapsed -brakeStart ) >  4000 * speed/_acceleration)
               {
                 stopAtLimit();
@@ -669,16 +687,23 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
     regulator.reset();
   }
 /**
- * sets the acceleration rate of this motor en degrees/sec/sed
- * default is 6000;
+ * sets the acceleration rate of this motor in degrees/sec/sec <br>
+ * The default value is 6000;
  * @param acceleration
  */
   public void setAcceleration(int acceleration)
   {
-    _acceleration = acceleration;
-    if(acceleration > 0)
-    regulator.timeConstant = 1000 * _speed / _acceleration;//time to reach speed in ms
+    _acceleration = Math.abs(acceleration);
   }
+  
+/**
+ * returns acceleration
+ * @return the value of acceleration used by smoothAcceleration
+ */
+public int getAcceleration()
+{
+  return _acceleration;
+}
 
   /**
    *sets motor power.  This method is used by the Regulator thread to control motor speed.
@@ -732,7 +757,7 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
   }
 
   /**
-  /* calculates  actual speed and updates battery voltage every 100 ms
+  * calculates  actual speed and updates battery voltage every 100 ms
    */
   private void timedOut()
   {
