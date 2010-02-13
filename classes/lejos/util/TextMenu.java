@@ -176,7 +176,7 @@ public class TextMenu
             Delay.msDelay(20);
 			button=Button.readButtons();
 			
-			if(button == 1) return _selectedIndex;
+			if(button == 1 && _selectedIndex < _length) return _selectedIndex;
 			if(button == 8) return -1; //Escape
 			if(button == 4)//scroll forward
 			{
