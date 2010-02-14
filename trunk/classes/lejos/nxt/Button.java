@@ -109,15 +109,17 @@ public class Button implements ListenerCaller
     NXTEvent event = NXTEvent.allocate(NXTEvent.BUTTONS, 0, 10);
     int button = 0;
     long end = (timeout == 0 ? 0x7fffffffffffffffL : System.currentTimeMillis() + timeout);
-    if (event.waitEvent(ID_ALL << RELEASE_EVENT_SHIFT, end - System.currentTimeMillis()) >= 0)
+    int down = readButtons();
+    if (down != 0)
     {
+        event.waitEvent(down << RELEASE_EVENT_SHIFT, end - System.currentTimeMillis());
         readButtons();
-        if (event.waitEvent(ID_ALL << PRESS_EVENT_SHIFT, end - System.currentTimeMillis()) >= 0)
-        {
+    }
+    if (event.waitEvent(ID_ALL << PRESS_EVENT_SHIFT, end - System.currentTimeMillis()) > 0)
+    {
             button = readButtons();
             event.waitEvent(button << RELEASE_EVENT_SHIFT, NXTEvent.WAIT_FOREVER);
             readButtons();
-        }
     }
     event.free();
     return button;             
