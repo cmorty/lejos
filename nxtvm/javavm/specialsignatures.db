@@ -208,3 +208,7 @@ playQueuedSample([BIIII)I
 
 #LCD
 getRefreshCompleteTime()I
+
+#NXTEvent
+registerEvent()I
+unregisterEvent()I

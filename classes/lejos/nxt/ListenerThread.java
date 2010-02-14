@@ -7,75 +7,80 @@ package lejos.nxt;
  */
 class ListenerThread extends Thread
 {
-  static ListenerThread singleton = new ListenerThread();
-  private static final int MAX_LISTENER_CALLERS = 7;
-  private static int [] masks;
-  private static ListenerCaller [] listenerCallers;
-  private static int numLC = 0;
 
-  int mask;
-  Poll poller = new Poll();   
+    static ListenerThread singleton = null;
+    private static final int MAX_BUTTONS = 4;
+    private static final int MAX_SENSORS = 4;
+    private NXTEvent[] events =
+    {
+        NXTEvent.allocate(NXTEvent.BUTTONS, 0, 10),
+        NXTEvent.allocate(NXTEvent.ANALOG_PORTS, 0, 3)
+    };
+    private ListenerCaller[] buttonCallers = new ListenerCaller[MAX_BUTTONS];
+    private ListenerCaller[] sensorCallers = new ListenerCaller[MAX_SENSORS];
 
-  static ListenerThread get()
-  {
-      synchronized (singleton)
-      {
-          if (!singleton.isAlive())
-          {
-            masks = new int[MAX_LISTENER_CALLERS];
-            listenerCallers = new ListenerCaller[MAX_LISTENER_CALLERS];
+    static synchronized ListenerThread get()
+    {
+        if (singleton == null)
+        {
+            //System.out.println("Create s/t");
+            singleton = new ListenerThread();
             singleton.setDaemon(true);
             singleton.setPriority(Thread.MAX_PRIORITY);
+            //singleton.events[1].unregisterEvent();
             singleton.start();
-          }
-      }
-      
-      return singleton;
-  }
+        }
+        return singleton;
+    }
 
-  void addToMask(int mask, ListenerCaller lc)
-  {
-     int i;
-     this.mask |= mask;
+    void addCaller(int mask, ListenerCaller lc, ListenerCaller[] callers, NXTEvent event)
+    {
+        //System.out.println("Add listener " + mask);
+        int bit = 1;
+        for (int i = 0; i < callers.length; i++, bit <<= 1)
+            if ((bit & mask) != 0)
+            {
+                //System.out.println("Set bit " + bit);
+                callers[i] = lc;
+                event.setFilter(event.getFilter() | bit);
+            }
+    }
 
-     for(i=0;i<numLC;i++) if (listenerCallers[i] == lc) break;
-     if (i == numLC) {
-       masks[numLC] = mask;
-       listenerCallers[numLC++] = lc;
-     }
-       
-     // Interrupt the polling thread, not the current one!
-     interrupt();
-  }
+    void addButtonToMask(int id, ListenerCaller lc)
+    {
+        addCaller(id, lc, buttonCallers, events[0]);
+    }
 
-  void addButtonToMask(int id, ListenerCaller lc) {
-      addToMask(id << Poll.BUTTON_MASK_SHIFT, lc);
-  }
-  
-  void addSensorToMask(int id, ListenerCaller lc) {
-      addToMask(1 << id, lc);
-  }
+    void addSensorToMask(int id, ListenerCaller lc)
+    {
+        addCaller(1 << id, lc, sensorCallers, events[1]);
+    }
 
-  void addSerialToMask(ListenerCaller lc) {
-      addToMask(1 << Poll.SERIAL_SHIFT, lc);
-  }
-  
-  public void run()
-  {
-      for (;;) {
-    	  singleton.setPriority(Thread.MAX_PRIORITY);
-          try  {
-              int changed = poller.poll(mask, 0);
-              
-              // Run events at normal priority so they can use Thread.yield()
-              singleton.setPriority(Thread.NORM_PRIORITY);
+    void callListeners(int events, ListenerCaller[] callers)
+    {
+        int bit = 1;
+        for (int i = 0; i < callers.length; i++, bit <<= 1)
+            if ((bit & events) != 0 && callers[i] != null)
+                callers[i].callListeners();
+    }
 
-              for(int i=0;i<numLC;i++) 
-                if ((changed & masks[i]) != 0) 
-                  listenerCallers[i].callListeners();
-
-          } catch (InterruptedException ie) {
-          }
-      }
-  }
+    @Override
+    public void run()
+    {
+        for (;;)
+        {
+            setPriority(Thread.MAX_PRIORITY);
+            //System.out.println("before wait " + events[1].getSubType());
+            if (NXTEvent.waitEvent(events, NXTEvent.WAIT_FOREVER))
+            {
+                //System.out.println("after wait");
+                // Run events at normal priority so they can use Thread.yield()
+                setPriority(Thread.NORM_PRIORITY);
+                callListeners(events[0].getEventData(), buttonCallers);
+                callListeners(events[1].getEventData(), sensorCallers);
+            }
+            //else
+                //System.out.println("Returns no event");
+        }
+    }
 }

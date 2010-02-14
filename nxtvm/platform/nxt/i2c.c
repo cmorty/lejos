@@ -167,6 +167,7 @@ static i2c_port *i2c_ports[I2C_N_PORTS];
 // dynamically as required.
 static i2c_port *i2c_active[2][I2C_N_PORTS+1];
 static i2c_port **active_list = i2c_active[0];
+static U32 i2c_port_busy = 0;
 
 // The I2C state machines are pumped by a timer interrupt
 // running at 2x the bit speed. This state machine has been
@@ -196,6 +197,7 @@ i2c_timer_isr_C(void)
       // Release the bus completely
       *AT91C_PIOA_ODR = p->sda_pin|p->scl_pin;
       *AT91C_PIOA_SODR = p->sda_pin|p->scl_pin;;
+      i2c_port_busy &= ~(1 << (ap - active_list));
       p->state = I2C_COMPLETE;
       break;
     case I2C_BEGIN:		
@@ -393,6 +395,7 @@ i2c_timer_isr_C(void)
       *AT91C_PIOA_CODR = p->scl_pin;
       *AT91C_PIOA_ODR = p->sda_pin;
       *AT91C_PIOA_SODR = p->sda_pin;
+      i2c_port_busy &= ~(1 << (ap - active_list));
       p->state = I2C_COMPLETE;
       break;
     case I2C_ENDRELEASE1:
@@ -487,6 +490,7 @@ i2c_disable(int port)
     i2c_ports[port] = NULL;
     build_active_list();
     sp_reset(port);
+    i2c_port_busy &= ~(1 << port);
   }
 }
 
@@ -574,8 +578,8 @@ i2c_init(void)
 int
 i2c_busy(int port)
 {
-  if(port >= 0 && (port < I2C_N_PORTS) && i2c_ports[port])
-    return (i2c_ports[port]->state > I2C_COMPLETE);
+  if(port >= 0 && (port < I2C_N_PORTS))
+    return (i2c_port_busy & (1 << port)) != 0;
   return 0;
 }
 
@@ -657,6 +661,7 @@ i2c_start(int port,
   // We save the number of bytes for use for complete
   p->nbytes = nbytes;
   // Start the transaction
+  i2c_port_busy |= 1 << port;
   p->state = I2C_BEGIN;
   if (!p->always_active)
     build_active_list();
@@ -691,4 +696,10 @@ i2c_complete(int port,
   else
     p->state = I2C_ACTIVEIDLE;
   return nbytes;
+}
+
+int
+i2c_event_check(int filter)
+{
+  return ~i2c_port_busy & filter;
 }

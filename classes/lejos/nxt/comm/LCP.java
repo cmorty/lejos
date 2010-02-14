@@ -327,9 +327,7 @@ public class LCP {
 				i2cBuffer[i] = cmd[7+i];
 			}
 			p.i2cStart(cmd[5] >> 1, cmd[6], 1, i2cBuffer, 0, (rxLen == 0 ? txLen - 2 : rxLen), (rxLen == 0 ? 1 : 0));
-			while (p.i2cBusy() != 0) {
-				Thread.yield();
-			}
+            p.i2cWaitIOComplete();
 			Delay.msDelay(100);
 		}
 		

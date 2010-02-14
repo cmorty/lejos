@@ -1,87 +1,83 @@
 #include "constants.h"
-
 #include "poll.h"
 #include "threads.h"
 #include "platform_hooks.h"
-#include "sensors.h"
 
-#define SENSOR_POS		0
-#define BUTTON_POS		4
-#define SERIAL_RECEIVED_POS	9
+#include "display.h"
+#define MAX_EVENTS 16
+#define WAITING 1
+#define SET 2
+NXTEvent *events[MAX_EVENTS];
+int eventCnt;
+static JINT (* const eventCheckers[])(JINT) = {null, bt_event_check, null, null, sp_check_event, i2c_event_check, buttons_check_event};
 
-Poll *poller;
-short old_sensor_values[N_SENSORS];
-short old_button_state;
-
-byte throttle;
-byte throttle_count;
-
-void set_poller(Poll *_poller)
+/**
+ * Initialize the event system. At startup we are not monitoring for any events.
+ */
+void init_events()
 {
-  byte i;
-  
-  poller = _poller;
-  old_button_state = 0;
-  for (i=0; i<N_SENSORS; i++)
-    old_sensor_values[i] = sp_read(i, SP_ANA);
+  int i;
+  for(i = 0; i < MAX_EVENTS; i++)
+    events[i] = null;
+  eventCnt = 0;
 }
 
-
-void poll_inputs()
+/**
+ * register a new event object. After this the system will check for these
+ * events, and notify the Java code if any fire.
+ */
+int register_event(NXTEvent *event)
 {
-  short changed = 0;
-  short button_state = 0;    
-  short i;
-  short port = 0;
-  short *pOldValue = old_sensor_values;
+  if (eventCnt >= MAX_EVENTS) return -1;
+  events[eventCnt++] = event;
+  return 1;
+}
 
-  throttle_count--;
-  if( throttle_count == 0){
-    throttle_count = throttle;
-
-    // If we're not polling or someone already has the monitor
-    // return.
-    if (!poller || get_monitor_count((&(poller->_super.sync))) != 0)
-      return;
-
-    // We do not have a thread that we can use to grab
-    // the monitor but that's OK because we are atomic
-    // anyway.
-      
-    // Check the sensor canonical values.
-    for (i = 1<<SENSOR_POS; i<(1<<BUTTON_POS); i <<= 1, pOldValue++, port++)
+/**
+ * remove an event object from being monitored. Following this the event will
+ * no longer be checked by the system.
+ */
+int unregister_event(NXTEvent *event)
+{
+  int i;
+  for(i = 0; i < eventCnt; i++)
+    if (events[i] == event)
     {
-      short val = (short)sp_read(port, SP_ANA);
-      if (*pOldValue != val) {
-        changed |= i;
-        *pOldValue = val;
-      }
+      while(++i < eventCnt)
+        events[i-1] = events[i];
+      eventCnt--;
+      return 1;
     }
+  return -1;
+}
 
-    // Check the button status
-    button_state = buttons_get();
-    button_state <<= BUTTON_POS; // Shift into poll position  
-    changed |= button_state ^ old_button_state;
-    old_button_state = button_state;
-
-    // Only wake threads up if things have changed since
-    // we last looked.    
-    if (changed)
+/**
+ * Check all active event objects. If an event is detected, notify the 
+ * associated waiting Java thread.
+ */
+void check_events()
+{
+  int i;
+  for(i = 0; i < eventCnt; i++)
+  {
+    NXTEvent *event = events[i];
+    NXTEvent *sync = event->sync;
+    // Is this event being waited on, and has the event check period expired?
+    if (sync->state != 0 && (--event->updateCnt <= 0) && get_monitor_count(&(sync->_super.sync)) == 0)
     {
-      // Or in the latest changes. Some threads may not have
-      // responded to earlier changes yet so we can't
-      // just overwrite them.
-      short jword = 0;
-      store_word_ns((byte*)(&jword), T_SHORT, changed);
-      poller->changed |= jword;
-      
-#if DEBUG_POLL
-      jword = get_word((byte*)&poller->changed, 2);
-      printf("Poller: poller->changed = 0x%1X\n", jword);      
-#endif
-           
-      // poller.notifyAll()
-      monitor_notify_unchecked(&poller->_super, 1);
+      // Check to see if we have anything of interest
+      int changed = (*(eventCheckers[event->typ]))(event->filter);
+      event->eventData |= changed;
+      // notify the user thread
+      if (changed && sync->state == WAITING)
+      { 
+        monitor_notify_unchecked(&sync->_super, 1);
+        // Don't notify this thread again.
+        sync->state |= SET;
+        schedule_request(REQUEST_SWITCH_THREAD);
+      }
+      // Reste the check period counter
+      event->updateCnt = event->updatePeriod;
     }
   }
 }

@@ -136,6 +136,7 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
     private SensorPortListener[] iListeners;
     private int iPreviousValue;
     private int type, mode;
+    private NXTEvent i2cEvent;
 
     /**
      * The SensorReader class provides a type dependent way
@@ -1069,6 +1070,8 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
     public void i2cEnable(int mode)
     {
         i2cEnableById(iPortId, mode);
+        // Allocate the i2c wait event
+        i2cEvent = NXTEvent.allocate(NXTEvent.I2C_PORTS, 1 << iPortId, 1);
     }
 
     /**
@@ -1078,8 +1081,18 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
     public void i2cDisable()
     {
         i2cDisableById(iPortId);
+        i2cEvent.free();
+        i2cEvent = null;
     }
-
+    
+    /**
+     * Wait for the current IO operation on the i2c port to complete.
+     */
+    public void i2cWaitIOComplete()
+    {
+        i2cEvent.waitEvent(NXTEvent.WAIT_FOREVER);
+    }
+    
     /**
      * Low-level method to test if I2C connection is busy.
      * @return > 0 if the device is busy 0 if it is not

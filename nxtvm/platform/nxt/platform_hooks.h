@@ -12,8 +12,6 @@
 #  include "poll.h"
 #  include "display.h"
 
-extern int last_ad_time;
-
 static inline void
 instruction_hook(void)
 {
@@ -26,10 +24,7 @@ tick_hook(void)
 {
   register int st = get_sys_time();
 
-  if (st >= last_ad_time + 3) {
-    last_ad_time = st;
-    poll_inputs();
-  }
+  check_events();
   if (st > display_update_time)
     display_update();
 }
@@ -55,14 +50,10 @@ extern void handle_uncaught_exception(Throwable * exception,
 extern int dispatch_native(TWOBYTES signature, STACKWORD * paramBase);
 
 /**
- * Sensor interface
+ * Event interface
  */
-#define N_SENSORS (4)
-extern int read_sensor(int port);
-
-/**
- * Button interface
- */
-extern int buttons_get();
-
+extern JINT sp_check_event(JINT filter);
+extern JINT buttons_check_event(JINT filter);
+extern JINT bt_event_check(JINT filter);
+extern JINT i2c_event_check(JINT filter);
 #endif // _PLATFORM_HOOKS_H

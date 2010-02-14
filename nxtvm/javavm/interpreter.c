@@ -506,21 +506,21 @@ static DISPATCH_LABEL forceCheck[] =
   DISPATCH_EVENTS
   while( gMakeRequest)
   {
-    byte requestCode = gRequestCode;
+    byte requestCode;
     FOURBYTES now;
 
     SAVE_REGS2();
-    gMakeRequest = false;
-    now = get_sys_time();
-    gRequestCode = REQUEST_TICK;
-    
-    tick_hook();
-
-    if( requestCode == REQUEST_EXIT)
+    if(gRequestCode == REQUEST_EXIT)
     {
       if (!debug_program_exit())
         return;
     }
+    tick_hook();
+    requestCode = gRequestCode;
+    gRequestCode = REQUEST_TICK;
+    gMakeRequest = false;
+    now = get_sys_time();
+
     if( requestCode == REQUEST_SWITCH_THREAD
         || now >= switch_time){
 #if DEBUG_THREADS
@@ -530,9 +530,10 @@ static DISPATCH_LABEL forceCheck[] =
       {
         run_collector();
         gMakeRequest = 0;
+        now = get_sys_time();
       }
-      switch_time = get_sys_time() + TICKS_PER_TIME_SLICE;
-      switch_thread();
+      switch_time = now + TICKS_PER_TIME_SLICE;
+      switch_thread(now);
 #if DEBUG_THREADS
       printf ("done switching thread\n");
 #endif

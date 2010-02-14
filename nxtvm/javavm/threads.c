@@ -180,7 +180,7 @@ int init_thread (Thread *thread)
  *         to switch to.
  */
  
-boolean switch_thread()
+boolean switch_thread(FOURBYTES now)
 {
   Thread *anchorThread, *previousThread, *candidate;
   Thread **pThreadQ;
@@ -253,7 +253,7 @@ boolean switch_thread()
       {
         case CONDVAR_WAITING:
           // We are waiting to be notified
-          if ((candidate->sleepUntil > 0) && (get_sys_time() >= (FOURBYTES) candidate->sleepUntil))
+          if ((candidate->sleepUntil != 0) && (now >= (FOURBYTES) candidate->sleepUntil))
           {
 #if DEBUG_MONITOR
       printf ("Waking up waiting thread %d: %d\n", (int) candidate, candidate->threadId);
@@ -342,7 +342,7 @@ done_pi:
             Thread *pThread = (Thread *)word2obj(candidate->waitingOn);
             if (pThread->state == DEAD ||
                 candidate->interruptState != INTERRUPT_CLEARED ||
-                (candidate->sleepUntil > 0 && get_sys_time() >= (FOURBYTES)candidate->sleepUntil))
+                (candidate->sleepUntil > 0 && now >= (FOURBYTES)candidate->sleepUntil))
             {
               candidate->state = RUNNING;
               candidate->waitingOn = JNULL;
@@ -354,7 +354,7 @@ done_pi:
           }
         case SLEEPING:
           if (candidate->interruptState != INTERRUPT_CLEARED
-              || (get_sys_time() >= (FOURBYTES) candidate->sleepUntil))
+              || (now >= (FOURBYTES) candidate->sleepUntil))
           {
       #if DEBUG_THREADS
       printf ("Waking up sleeping thread %d: %d\n", (int) candidate, candidate->threadId);
@@ -565,7 +565,7 @@ int monitor_wait(Object *obj, const FOURBYTES time)
   currentThread->waitingOn = ptr2ref (obj);
   currentThread->sync = sync;
   // Might be an alarm set too.
-  if (time > 0)
+  if (time != 0)
     currentThread->sleepUntil = get_sys_time() + time; 	
   else
     currentThread->sleepUntil = 0;

@@ -75,7 +75,7 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
   case wait_4_5V:
     return monitor_wait((Object *) word2ptr(p0), 0);
   case wait_4J_5V:
-    return monitor_wait((Object *) word2ptr(p0), paramBase[2]);
+    return monitor_wait((Object *) word2ptr(p0), ((int)paramBase[1] > 0 ? 0x7fffffff : paramBase[2]));
   case notify_4_5V:
     return monitor_notify((Object *) word2ptr(p0), false);
   case notifyAll_4_5V:
@@ -87,7 +87,7 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
     schedule_request(REQUEST_SWITCH_THREAD);
     break;
   case sleep_4J_5V:
-    sleep_thread(paramBase[1]);
+    sleep_thread(((int)p0 > 0 ? 0x7fffffff : paramBase[1]));
     schedule_request(REQUEST_SWITCH_THREAD);
     break;
   case getPriority_4_5I:
@@ -141,7 +141,6 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
     push_word(systick_get_ms());
     break;
   case setPoller_4_5V:
-    set_poller(word2ptr(p0));
     break;
   case readSensorValue_4I_5I:
     push_word(sp_read(p0, SP_ANA));
@@ -306,7 +305,7 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
     break;
   case btPending_4_5I:
     {
-      push_word(bt_pending());
+      push_word(bt_event_check(0xffffffff));
     }
     break;
   case btEnable_4_5V:
@@ -547,6 +546,12 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
       if (trace == NULL) return EXEC_RETRY;
       push_word(obj2ref(trace));
     }
+    break;
+  case registerEvent_4_5I:
+    push_word(register_event((NXTEvent *) ref2obj(p0)));
+    break;
+  case unregisterEvent_4_5I:
+    push_word(unregister_event((NXTEvent *) ref2obj(p0)));
     break;
   default:
     return throw_new_exception(JAVA_LANG_NOSUCHMETHODERROR);

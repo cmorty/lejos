@@ -26,12 +26,14 @@
 #include "nxt_avr.h"
 
 // Sensor port digital pins
-const port_pins sensor_pins[4] = {
+const port_pins sensor_pins[N_SENSORS] = {
   {{AT91C_PIO_PA23, AT91C_PIO_PA18}, AT91C_ADC_CH1, AT91C_ADC_CDR1},
   {{AT91C_PIO_PA28, AT91C_PIO_PA19}, AT91C_ADC_CH2, AT91C_ADC_CDR2},
   {{AT91C_PIO_PA29, AT91C_PIO_PA20}, AT91C_ADC_CH3, AT91C_ADC_CDR3},
   {{AT91C_PIO_PA30, AT91C_PIO_PA2}, AT91C_ADC_CH7, AT91C_ADC_CDR7}
 };
+
+static U16 old_ana_values[N_SENSORS];
 
 
 /**
@@ -59,6 +61,9 @@ sp_reset(int port)
 }
 
 
+/**
+ * Reset all ports.
+ */
 void
 sp_init(void)
 {
@@ -68,16 +73,40 @@ sp_init(void)
     sp_reset(i);
 }
 
+/**
+ * Read the analogue value for this port. We allow access to both the
+ * AVR ADC and the AT91 ADC
+ */
 int
 sp_read(int port, int pin)
 {
   if (pin == SP_ANA)
-    return sensor_adc(port);
+    return (old_ana_values[port] = sensor_adc(port));
   else
   {
     return *sensor_pins[port].ADCData;
   }
 }
+
+int
+sp_check_event(int filter)
+{
+  int port;
+  int bit = 1;
+  int changed = 0;
+  for(port = 0; port < N_SENSORS; port++, bit <<= 1)
+    if (filter & bit)
+    {
+      U16 val = sensor_adc(port);
+      if (val != old_ana_values[port])
+      {
+        changed |= bit;
+        old_ana_values[port] = val;
+      }
+    }
+  return changed;
+}
+        
 
 void sp_set_mode(int port, int pin, int mode)
 {

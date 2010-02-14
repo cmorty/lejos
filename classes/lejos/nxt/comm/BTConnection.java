@@ -44,12 +44,14 @@ public class BTConnection extends NXTConnection
 	int chanNo;
 	byte handle;
 	int switchMode;
+    volatile boolean active;
 
 	public BTConnection(int chan)
 	{
 		state = CS_IDLE;
 		chanNo = chan;
         bufSz = Bluetooth.BUFSZ;
+        active = false;
 		is = null;
 		os = null;
 	}
@@ -111,10 +113,10 @@ public class BTConnection extends NXTConnection
 	 * it to the device. Called by the Bluetooth thread when this channel is
 	 * active, to perform actual data I/O.
 	 */
-	synchronized void send()
+	synchronized int send()
 	{
 		//RConsole.print("send\n");
-		if (outOffset >= outCnt) return;
+		if (outOffset >= outCnt) return Bluetooth.BT_NEWDATA;
         //RConsole.println("Pending " + Bluetooth.btPending());
 		// Transmit the data in the output buffer
 		int cnt = Bluetooth.btWrite(outBuf, outOffset, outCnt - outOffset);
@@ -126,11 +128,9 @@ public class BTConnection extends NXTConnection
 			outOffset = 0;
 			outCnt = 0;
 			notifyAll();
-		}
-		else
-		{
-			//RConsole.print("send remaining " + (outCnt - outOffset) + "\n");
-		}
+            return Bluetooth.BT_NEWDATA;
+        }
+        return Bluetooth.BT_WRITEABLE;
 	}
 
     /**
@@ -144,6 +144,7 @@ public class BTConnection extends NXTConnection
     synchronized int flushBuffer(boolean wait)
     {
         if (outOffset >= outCnt) return 1;
+        if (active) Bluetooth.notifyEvent(Bluetooth.BT_NEWDATA);
         if (wait)
             try {wait();} catch(Exception e){}
         return outCnt - outOffset;
@@ -153,8 +154,9 @@ public class BTConnection extends NXTConnection
 	 * Low level input function. Called by the Bluetooth thread to transfer
 	 * input from the system into the input buffer.
 	 */
-	synchronized void recv()
+	synchronized int recv()
 	{
+        int event = 0;
 		//1 RConsole.print("recv\n");
 		// Read data into the input buffer
 		while (inCnt < inBuf.length)
@@ -164,11 +166,14 @@ public class BTConnection extends NXTConnection
 			int len = (offset >= inOffset ? inBuf.length - offset : inOffset - offset);
 			//RConsole.print("inCnt " + inCnt + " inOffset " + inOffset + " offset " + offset + " len " + len + "\n");
 			int cnt = Bluetooth.btRead(inBuf, offset, len);
+            //if (cnt < len && cnt < 100) RConsole.println("rd " + cnt + " sp " + len);
 			if (cnt <= 0) break;
 			inCnt += cnt;
 			//1 RConsole.print("recv " + inCnt + "\n");
 		}
 		if (inCnt > 0) notifyAll();
+        // Decide what event is needed to be able to progress
+        return (inCnt >= inBuf.length ? Bluetooth.BT_NEWSPACE : Bluetooth.BT_READABLE);
 	}
 
     /**
@@ -179,6 +184,7 @@ public class BTConnection extends NXTConnection
     synchronized int fillBuffer(boolean wait)
     {
         if (inCnt > 0) return inCnt;
+        if (active) Bluetooth.notifyEvent(Bluetooth.BT_NEWSPACE);
         if (wait)
             try{wait();}catch(Exception e){}   
         return inCnt;
@@ -215,12 +221,13 @@ public class BTConnection extends NXTConnection
 	public void setActiveMode(int mode)
 	{
 		switchMode = mode;
+        Bluetooth.notifyEvent(Bluetooth.BT_NEWCMD);
 	}
 
 	
 	private boolean pendingInput()
 	{
-		return (Bluetooth.btPending() & Bluetooth.BT_PENDING_INPUT) != 0;
+		return (Bluetooth.btPending() & Bluetooth.BT_READABLE) != 0;
 	}
 
 	/**

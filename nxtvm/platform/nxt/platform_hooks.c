@@ -3,8 +3,6 @@
 #include "systick.h"
 
 
-int last_ad_time;
-
 FOURBYTES
 get_sys_time_impl(void)
 {

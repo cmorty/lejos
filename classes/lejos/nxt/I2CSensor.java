@@ -54,10 +54,12 @@ public class I2CSensor implements SensorConstants {
 		
 		if (ret != 0) return ret;
 
+        port.i2cWaitIOComplete();
+        /*
 		while (port.i2cBusy() != 0) {
 			Thread.yield();
 		}
-		
+		*/
 		ret = port.i2cComplete(buf, 0, len);
         return (ret < 0 ? ret : (ret == len ? 0 : -1));
 	}
@@ -73,11 +75,12 @@ public class I2CSensor implements SensorConstants {
 	public synchronized int sendData(int register, byte [] buf, int len) {
         int ret = port.i2cStart(address, register, 1, buf, 0, len, 1);
 		if (ret != 0) return ret;
-		
+        port.i2cWaitIOComplete();
+/*
 		while (port.i2cBusy() != 0) {
 			Thread.yield();
 		}
-		
+*/
 		return port.i2cComplete(null, 0, 0);
 	}
 	
