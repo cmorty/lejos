@@ -38,16 +38,4 @@ public interface DirectionFinder {
 	 * angle. 
 	 */
 	public void resetCartesianZero();
-
-        /**
-         * Returns the current rate-of-turn in degrees
-         * @return Angular velocity in degrees.
-         */
-        public float getAngularVelocity();
-
-        /**
-         * Returns the current rate at which the angular velocity is increasing or decreasing in degrees-per-second, per second
-         * @return Angular acceleration in degrees-per-second per second.
-         */
-        public float getAngularAcceleration();
 }
