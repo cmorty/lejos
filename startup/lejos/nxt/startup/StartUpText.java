@@ -1191,7 +1191,7 @@ public class StartUpText
                     break;
 
             }
-        } while (selection > 0);
+        } while (selection >= 0);
     }
 
     /**
