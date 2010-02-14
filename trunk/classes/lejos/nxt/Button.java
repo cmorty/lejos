@@ -15,7 +15,8 @@ public class Button implements ListenerCaller
   public static final int ID_LEFT = 0x2;
   public static final int ID_RIGHT = 0x4;
   public static final int ID_ESCAPE = 0x8;
-  
+
+  private static final int ID_ALL = 0xf;
   private int iCode;
   private ButtonListener[] iListeners;
   private int iNumListeners;
@@ -57,7 +58,9 @@ public class Button implements ListenerCaller
    * Array containing ENTER, LEFT, RIGHT, ESCAPE, in that order.
    */
   public static final Button[] BUTTONS = { Button.ENTER, Button.LEFT, Button.RIGHT, Button.ESCAPE };
-  
+
+  private static final int PRESS_EVENT_SHIFT = 8;
+  private static final int RELEASE_EVENT_SHIFT = 16;
   
   private Button (int aCode)
   {
@@ -66,6 +69,7 @@ public class Button implements ListenerCaller
 
   /**
    * Return the ID of the button. One of 1, 2, 4 or 8.
+   * @return the button Id
    */
   public final int getId()
   {
@@ -86,10 +90,12 @@ public class Button implements ListenerCaller
    */
   public final void waitForPressAndRelease()
   {
-    while(!isPressed())
-        Delay.msDelay(50);
-    while(isPressed())
-        Thread.yield();
+    NXTEvent event = NXTEvent.allocate(NXTEvent.BUTTONS, 0, 10);
+    event.waitEvent(iCode << PRESS_EVENT_SHIFT, NXTEvent.WAIT_FOREVER);
+    readButtons();
+    event.waitEvent(iCode << RELEASE_EVENT_SHIFT, NXTEvent.WAIT_FOREVER);
+    readButtons();
+    event.free();
   }
 
   /**
@@ -100,24 +106,21 @@ public class Button implements ListenerCaller
    */ 
   public static int waitForPress(int timeout)
   {
-     long end = (timeout == 0 ? 0x7fffffffffffffffL : System.currentTimeMillis() + timeout);
-     int button = 0;
-     // Wait for the button to be up
-     while(0 < readButtons())
-     {
-         Delay.msDelay(50);
-         if (System.currentTimeMillis() > end) return 0;
-     }
-     // Wait for it to be pressed
-     while(0 == (button = readButtons()))
-     {
-        Delay.msDelay(50);
-        if (System.currentTimeMillis() > end) return 0;
-     }
-     // and wait for it to be released
-     while(0 < readButtons())
-         Thread.yield();
-     return button;             
+    NXTEvent event = NXTEvent.allocate(NXTEvent.BUTTONS, 0, 10);
+    int button = 0;
+    long end = (timeout == 0 ? 0x7fffffffffffffffL : System.currentTimeMillis() + timeout);
+    if (event.waitEvent(ID_ALL << RELEASE_EVENT_SHIFT, end - System.currentTimeMillis()) >= 0)
+    {
+        readButtons();
+        if (event.waitEvent(ID_ALL << PRESS_EVENT_SHIFT, end - System.currentTimeMillis()) >= 0)
+        {
+            button = readButtons();
+            event.waitEvent(button << RELEASE_EVENT_SHIFT, NXTEvent.WAIT_FOREVER);
+            readButtons();
+        }
+    }
+    event.free();
+    return button;             
   }
 
   /**
@@ -133,6 +136,7 @@ public class Button implements ListenerCaller
   /**
    * Adds a listener of button events. Each button can serve at most
    * 4 listeners.
+   * @param aListener The new listener
    */
   public synchronized void addButtonListener (ButtonListener aListener)
   {
@@ -231,6 +235,7 @@ public class Button implements ListenerCaller
   
   /**
    * Return the click freq for a particular key.
+   * @param key The key to obtain the tone for
    * @return key click duration
    */
   public static int getKeyClickTone(int key)

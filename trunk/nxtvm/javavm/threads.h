@@ -56,7 +56,7 @@ extern void init_threads();
 extern int init_thread (Thread *thread);
 extern void enter_monitor (Thread *pThread, Object* obj);
 extern void exit_monitor (Thread *pThread, Object* obj);
-extern boolean switch_thread();
+extern boolean switch_thread(FOURBYTES now);
 extern void join_thread(Thread *thread, const FOURBYTES time);
 extern void dequeue_thread(Thread *thread);
 extern void enqueue_thread(Thread *thread);

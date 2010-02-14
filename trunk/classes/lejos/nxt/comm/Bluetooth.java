@@ -8,6 +8,8 @@ import javax.bluetooth.RemoteDevice;
 
 import lejos.nxt.SystemSettings;
 import lejos.util.Delay;
+import lejos.nxt.NXTEvent;
+
 
 /**
  * Provides Bluetooth communications.
@@ -77,8 +79,15 @@ public class Bluetooth extends NXTCommDevice
 	public static  final byte MSG_GOTO_DFU_MODE = 58;
 	public static  final byte MSG_ANY = -1;
 	
-	public static final byte BT_PENDING_INPUT = 1;
-	public static final byte BT_PENDING_OUTPUT = 2;
+	public static final byte BT_READABLE = 1;
+	public static final byte BT_WRITEABLE = 2;
+    public static final byte BT_WRITEEMPTY = 4;
+    public static final byte BT_CMDMODE = 0x10;
+    public static final byte BT_STREAMMODE = 0x20;
+
+    public static final int BT_NEWCMD = NXTEvent.USER1;
+    public static final int BT_NEWDATA = NXTEvent.USER2;
+    public static final int BT_NEWSPACE = NXTEvent.USER3;
 
     public static final String PIN = "lejos.bluetooth_pin";
     static final int BUFSZ = 256;
@@ -109,7 +118,6 @@ public class Bluetooth extends NXTCommDevice
 	private static final byte TO_SWITCH_WAIT = 50;
 	
 	private static final byte CN_NONE = -1;
-	private static final int CN_IDLE = 0x7ffffff;
     
     private static final byte IS_IDLE = 0;
     private static final byte IS_RUNNING = 1;
@@ -121,7 +129,7 @@ public class Bluetooth extends NXTCommDevice
 	static byte [] cmdBuf = new byte[128];
 	static byte [] replyBuf = new byte[256];
 	static int cmdTimeout;
-	static int reqState = RS_OFF;
+	static volatile int reqState = RS_OFF;
 	static int savedState;
 	static boolean listening = false;
 	static int connected;
@@ -134,6 +142,7 @@ public class Bluetooth extends NXTCommDevice
 	static String cachedAddress;
     static byte inquiryState = IS_IDLE;
 	static boolean notifyToken = false;
+    static NXTEvent btEvent;
     
 	/**
 	 * Low-level method to write BT data
@@ -262,11 +271,12 @@ public class Bluetooth extends NXTCommDevice
 			connected = 0;
 			listening = false;
 			cancelTimeout();
+            btEvent = NXTEvent.allocate(NXTEvent.BLUETOOTH, 0, 1);
             // Load the pin etc.
             loadSettings();
             reset();
 			setDaemon(true);
-            //setPriority(Thread.MAX_PRIORITY);
+            setPriority(Thread.MAX_PRIORITY);
             start();
 			// Setup initial state
 			powerOn = false;
@@ -488,7 +498,7 @@ public class Bluetooth extends NXTCommDevice
 					}
 					processReply();
 				}
-				Thread.yield();
+                btEvent.waitEvent(BT_READABLE|BT_NEWCMD, cmdEnd - (int)System.currentTimeMillis());
 			}
 			//RConsole.print("Process cmd end\n");
 		}
@@ -508,9 +518,9 @@ public class Bluetooth extends NXTCommDevice
 					return cur;
 				}
 			}
-			// No active channel found say we are idle
-			return CN_IDLE;
-		}
+            // No active chan found stick with the current one
+            return curChan;
+        }
 		
 		private void processStreams()
 		{
@@ -518,50 +528,48 @@ public class Bluetooth extends NXTCommDevice
 			// RConsole.print("PS cur " + curChan + " state " + reqState + "\n");
 			while (true)
 			{
+                int next;
 				synchronized(Bluetooth.sync)
 				{
 					//RConsole.print("Process streams " + reqState + "\n");
 					if (reqState != RS_IDLE) return;
-					int next = selectChan();
+					next = selectChan();
 					if (next < 0) return;
-					if (next != CN_IDLE)
-					{
-						if (!switchToStream(next)) return;
-						// Perform I/O on the current stream. Switching from one stream
-						// to another is a slow process, so we spend at least IO_TIME ms
-						// on each stream before switching away.
-						//RConsole.print("Process streams 2" + reqState + "\n");
-						int ioEnd = (int)System.currentTimeMillis() + IO_TIME;			
-						while (ioEnd > (int)System.currentTimeMillis() && Chans[curChan].state >= BTConnection.CS_CONNECTED)
-						{
-							if (bc4Mode() != MO_STREAM) return;
-							Chans[curChan].send();
-							Chans[curChan].recv();
-							Thread.yield();
-						}
-					}
-					else
-					{
-						//1 RConsole.print("Stream idle\n");
-						if (bc4Mode() != mode) return;
-					}
-					//RConsole.print("Process streams 3" + reqState + "\n");
-					// Do we need to switch back to command mode?
-					if (listening) return;
-				}
-				Thread.yield();
+                }
+                if (!switchToStream(next)) return;
+                // Perform I/O on the current stream. Switching from one stream
+                // to another is a slow process, so we spend at least IO_TIME ms
+                // on each stream before switching away.
+                //RConsole.print("Process streams 2" + reqState + "\n");
+                int ioEnd = (int)System.currentTimeMillis() + IO_TIME;
+                Chans[curChan].active = true;
+                while (Chans[curChan].state >= BTConnection.CS_CONNECTED)
+                {
+                    int event = Chans[curChan].send();
+                    event |= Chans[curChan].recv();
+                    int ret = btEvent.waitEvent(event|BT_CMDMODE|BT_NEWCMD, ioEnd - (int)System.currentTimeMillis());
+                    if (ret < 0 || (ret & (BT_CMDMODE|BT_NEWCMD)) != 0) break;
+                }
+                Chans[curChan].active = false;
+                if (bc4Mode() != mode || listening) return;
 			}
 		}
 		
 		private int waitSwitch(int target, boolean flush)
 		{
 			// Wait for the BC4 to switch to mode, or timeout...
+            int targetEvent = target == MO_CMD ? BT_CMDMODE : BT_STREAMMODE;
+            int events = targetEvent | (flush && (curChan >= 0) ? BT_READABLE : 0);
 			int timeout = (int) System.currentTimeMillis() + TO_SWITCH;
-			while (timeout > (int)System.currentTimeMillis())
+			for(;;)
 			{
-				// Need to flush input when switching to command mode
-				if (bc4Mode() == target) return target;
-				if (flush && curChan >= 0) Chans[curChan].flushInput(true);
+                // wait for the events or a timeout
+                int event = btEvent.waitEvent(events, timeout - System.currentTimeMillis());
+                // are we in the requested mode?
+				if ((event & targetEvent) != 0) return target;
+                // Have we timed out
+                if (event < 0) break;
+				if ((event & BT_READABLE) != 0) Chans[curChan].flushInput(true);
 			}
 			//RConsole.print("Failed to switch\n");
 			mode = MO_UNKNOWN;
@@ -602,12 +610,7 @@ public class Bluetooth extends NXTCommDevice
 			}
 			// wait for any output to drain. If this times out we are probably
             // in big trouble and heading for a reset.
-			int timeout = (int) System.currentTimeMillis() + TO_FLUSH;
-			while(((btPending() & BT_PENDING_OUTPUT) != 0) &&
-                    (timeout > (int)System.currentTimeMillis()))
-				Thread.yield();
-            //RConsole.println("Flush complete " + btPending());
-            if ((btPending() & BT_PENDING_OUTPUT) != 0)
+            if ((btEvent.waitEvent(BT_WRITEEMPTY, TO_FLUSH) & BT_WRITEEMPTY) == 0)
             {
                 // Failed to flush, reset and give up.
                 reset();
@@ -627,18 +630,19 @@ public class Bluetooth extends NXTCommDevice
 			}
 			mode = MO_CMD;
 		}
-		
+
+        /**
+         * return the current operating mode of the BC4 chip.
+         * @return MO_CMD or MO_STREAM
+         */
 		private int bc4Mode()
 		{
-			// return the current mode of the BC4 chip
-			int ret = btGetBC4CmdMode();
-			// > 512 indicates a high logic level which is mode 0!
-			if (ret > 512)
-				return MO_STREAM;
-			else
-				return MO_CMD;
+            return (btPending() & BT_CMDMODE) != 0 ? MO_CMD : MO_STREAM;
 		}
-		
+
+        /**
+         * Wait for the system to become ready.
+         */
 		private void waitInit()
 		{
 			synchronized (Bluetooth.sync)
@@ -649,7 +653,12 @@ public class Bluetooth extends NXTCommDevice
 				Bluetooth.sync.notifyAll();
 			}
 		}
-		
+
+        /**
+         * Main Bluetooth processing loop. Handle command and data transfer
+         * between the system and the BC4 chip.
+         */
+        @Override
 		public void run()
 		{
 			//1 RConsole.print("Thread running\n");
@@ -659,13 +668,18 @@ public class Bluetooth extends NXTCommDevice
 			{
 				processCommands();
 				processStreams();
-				Thread.yield();
 			}
 		}
 	}
 
 	private static BTThread btThread = null;
-	
+
+    static void notifyEvent(int event)
+    {
+        btEvent.notifyEvent(event);
+    }
+
+
 	static private int waitState(int target)
 	{
 		// RConsole.print("Wait state " + target + "\n");
@@ -708,7 +722,11 @@ public class Bluetooth extends NXTCommDevice
 		{
 			// Check we have power if not fail the request
 			if (!powerOn) return -1;
-			if (waitState > 0) reqState = waitState;
+            if (waitState > 0)
+            {
+                reqState = waitState;
+                btEvent.notifyEvent(BT_NEWCMD);
+            }
 			if (timeout != TO_NONE) startTimeout(timeout);
 			while (true)
 			{
@@ -1005,7 +1023,7 @@ public class Bluetooth extends NXTCommDevice
 	 */
 	private static BTConnection connect(byte[] device_addr, int mode, byte[] pin) {
 		
-		//1 RConsole.print("Connect\n"); 
+		//1 RConsole.print("Connect\n");
 		synchronized(Bluetooth.sync)
 		{
 			BTConnection ret = null;

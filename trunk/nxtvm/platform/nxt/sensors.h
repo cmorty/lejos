@@ -32,5 +32,6 @@ extern int sp_get(int, int);
 extern void sp_set_mode(int, int, int);
 extern int sp_read(int, int);
 extern void sp_set_power(int, int);
+extern int sp_check_event(int);
 
 #endif // _SENSORS_H

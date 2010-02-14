@@ -189,7 +189,7 @@ run(int jsize)
   byte *ram_end = (byte *) (&__free_ram_end__);
   byte *ram_start = (byte *) (&__free_ram_start__);
 
-  init_poller();
+  init_events();
   init_debug();
 
   //printf("Initializing Binary\n");
@@ -304,6 +304,7 @@ nxt_main(const byte *bin, int size)
 
   //      printf("Running\n");
   run(jsize);
+  init_events();
   display_clear(1);
   nxt_motor_reset_all();
   udp_reset();

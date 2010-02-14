@@ -22,8 +22,15 @@ static int in_buf_idx = 0;
 
 #define BAUD_RATE 460800
 // Update rate (per second) for the ADC
-//#define ADC_UPDATE_RATE 4000 
 #define ADC_UPDATE_RATE 50000 
+
+// Bit values used for events
+#define BT_READABLE   0x1
+#define BT_WRITEABLE  0x2
+#define BT_WRITEEMPTY 0x4
+#define BT_CMDMODE    0x10
+#define BT_STREAMMODE 0x20
+
 
 	
 void bt_init(void)
@@ -149,20 +156,29 @@ U32 bt_write(U8 *buf, U32 off, U32 len)
     return 0;
 }
 
-U32 bt_pending()
+S32 bt_event_check(S32 filter)
 {
-  // return the state of any pending i/o requests one bit for input one bit
-  // for output.
-  // First check for any input
-  int ret = 0;
+  // Return the current event state.
+  S32 ret = 0;
+  // check read state
   int bytes_ready;
   if (*AT91C_US1_RNCR == 0) 
     bytes_ready = 256 - *AT91C_US1_RCR;
   else 
     bytes_ready = 128 - *AT91C_US1_RCR;
-  if (bytes_ready  > in_buf_idx) ret |= 1;
-  if ((*AT91C_US1_TCR != 0) || (*AT91C_US1_TNCR != 0)) ret |= 2;
-  return ret;
+  if (bytes_ready  > in_buf_idx) ret |= BT_READABLE;
+  // check write state.
+  if (*AT91C_US1_TNCR == 0)
+  {
+    ret |= BT_WRITEABLE;
+    if (*AT91C_US1_TCR == 0) ret |= BT_WRITEEMPTY;
+  }
+  // check command state
+  if (*AT91C_ADC_CDR6 > 512)
+    ret |= BT_STREAMMODE;
+  else
+    ret |= BT_CMDMODE;
+  return ret & filter;
 }
 
 

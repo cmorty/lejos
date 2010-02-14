@@ -20,6 +20,8 @@ void nxt_avr_update(void);
 
 U32 buttons_get(void);
 
+S32 buttons_check_event(S32 filter);
+
 U32 battery_voltage(void);
 
 U32 sensor_adc(U32 n);

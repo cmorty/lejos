@@ -36,6 +36,7 @@ public interface I2CPort extends BasicSensorPort {
      * @param internalAddress The internal register address
      * @param numInternalBytes The number of bytes in the internal address
      * @param buffer The data to write to the device (null for reads)
+     * @param offset Offset of the start of the data in the buffer
      * @param numBytes The number of bytes to transfer
      * @param transferType 0 == read 1 == write
      * @return  0: no error
@@ -51,6 +52,7 @@ public interface I2CPort extends BasicSensorPort {
     /**
      * Complete the i2c transaction, and read any returned data.
      * @param buffer The buffer for a read (null for write)
+     * @param offset Offset of the start of the data in the buffer
      * @param numBytes Number of bytes to transfer
      * @return >= 0 number of bytes returned
      *         -1: Invalid device
@@ -59,5 +61,11 @@ public interface I2CPort extends BasicSensorPort {
      *         -4: Buffer size error.
      */
     public int i2cComplete(byte[] buffer, int offset, int numBytes);
+
+
+    /**
+     * Wait for the current IO operation on the i2c port to complete.
+     */
+    public void i2cWaitIOComplete();
 	
 }

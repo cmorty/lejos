@@ -77,6 +77,6 @@ U32 bt_get_mode(void);
 void bt_reset(void);
 U32 bt_write(U8 *buf, U32 off, U32 len);
 U32 bt_read(U8 * buf, U32 off, U32 len);
-U32 bt_pending(void);
+S32 bt_event_check(S32);
 
 #endif /*BT_H_*/

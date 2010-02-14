@@ -10,26 +10,22 @@
 #include "classes.h"
 
 /**
- * Poll class native structure
+ * NXTEvent class as native structure
  */
-typedef struct S_Poll
+typedef struct S_NXTEvent
 {
   Object _super;	     // Superclass object storage
-  JSHORT changed;            // Mask of inputs that have changed
-} Poll;
-
-extern void set_poller(Poll*);
-extern void poll_inputs();
-
-extern Poll *poller;
-extern byte throttle;
-extern byte throttle_count;
-
-static inline void init_poller()
-{
-  poller = null;
-  throttle = 1;
-  throttle_count = 1;
-}
+  JINT state;
+  struct S_NXTEvent *sync;
+  JINT updatePeriod;
+  JINT updateCnt;
+  JINT typ;
+  JINT filter;
+  JINT eventData;
+} NXTEvent;
+extern void check_events();
+extern int register_event(NXTEvent *event);
+extern int unregister_event(NXTEvent *event);
+extern void init_events();
 
 #endif // _POLL_H
