@@ -158,6 +158,7 @@ typedef struct {
   U8 lego_mode:1;
   U8 always_active:1;
   U8 no_release:1;
+  U8 port_bit;
   U16 nbytes;
 } i2c_port;
 
@@ -197,7 +198,7 @@ i2c_timer_isr_C(void)
       // Release the bus completely
       *AT91C_PIOA_ODR = p->sda_pin|p->scl_pin;
       *AT91C_PIOA_SODR = p->sda_pin|p->scl_pin;;
-      i2c_port_busy &= ~(1 << (ap - active_list));
+      i2c_port_busy &= ~p->port_bit;
       p->state = I2C_COMPLETE;
       break;
     case I2C_BEGIN:		
@@ -395,7 +396,7 @@ i2c_timer_isr_C(void)
       *AT91C_PIOA_CODR = p->scl_pin;
       *AT91C_PIOA_ODR = p->sda_pin;
       *AT91C_PIOA_SODR = p->sda_pin;
-      i2c_port_busy &= ~(1 << (ap - active_list));
+      i2c_port_busy &= ~p->port_bit;
       p->state = I2C_COMPLETE;
       break;
     case I2C_ENDRELEASE1:
@@ -534,6 +535,7 @@ int i2c_enable(int port, int mode)
     p->lego_mode = ((mode & I2C_LEGO_MODE) ? 1 : 0);
     p->no_release = ((mode & I2C_NO_RELEASE) ? 1 : 0);
     p->always_active = ((mode & I2C_ALWAYS_ACTIVE) ? 1 : 0);
+    p->port_bit = 1 << port;
     if (p->always_active) {
       p->state = I2C_ACTIVEIDLE;
       build_active_list();
