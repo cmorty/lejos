@@ -1,42 +1,21 @@
 package lejos.util;
 
 
+import java.util.ArrayList;
 import lejos.nxt.comm.*;
 import lejos.nxt.*;
-
 import java.io.*;
 
 /**
  * Datalogger class; stores float values then  then transmits  via bluetooth or usb<br>
  * works with DataViewer   in pctools.
- * Default size is 512.  Capacity is limited only by the available ram.
- * @author  Roger Glassey   - revised 1/12/08 for large arrays 
+ * 
+ * @author  Roger Glassey   - revised 2/12/10 using ArrayList
  */
 public class Datalogger
 {
-  // overcome limitation of array size; created as needed
 
-  private float[] log;
-  private int _indx = 0;  //where the data will be written
-  private int _size;
-
-  /**
-   * buld a Datalogger with default size  512
-   */
-  public Datalogger()
-  {
-    this(512);
-  }
-
-  /**
-   * build a new Datalogger with capacity  = size;
-   * @param size the capacity of the Datalogger
-   */
-  public Datalogger(int size)
-  {
-    _size = size;
-    log = new float[size];
-  }
+  private ArrayList log = new ArrayList<Float>();
 
   /**
    * write a float  value to the log
@@ -44,29 +23,52 @@ public class Datalogger
    */
   public void writeLog(float v)
   {
-    if (_indx < _size)
-    {
-      log[_indx] = v;
-      _indx++;
-    }
+    Float f = new Float(v);
+     log.add(f);
   }
 
-  /**
-   * Clears the log; next write is at the beginning;
-   *
-   */
-  public void reset()
+/**
+ * write 2 float values to the log
+ * @param v0
+ * @param v1
+ */
+  public void writeLog(float v0, float v1)
   {
-    _indx = 0;
+    writeLog(v0);
+    writeLog(v1);
   }
+ /**
+  * write 3 float values to the log
+  * @param v0
+  * @param v1
+  * @param v2
+  */
+  public void writeLog(float v0, float v1, float v2)
+  {
+    writeLog(v0,v1);
+    writeLog(v2);
+  }
+  /**
+   * write 4 float values to the log
+   * @param v0
+   * @param v1
+   * @param v2
+   * @param v3
+   */
+  public void writeLog(float v0, float v1, float v2, float v3)
+  {
+    writeLog(v0, v1);
+    writeLog(v2,v3);
+  }
+
 
   /**
    * transmit the stored values to the PC via USB or bluetooth;<br>
-   * Displays " ESC for BT". Press the escape key to use BlueTooth; any other to use USB. <br>
+   * Displays menu of choices for transmission mode. Scroll to select, press ENTER <br>
    * Then displays "wait for BT" or "wait for USB".  In DataViewer, click on "StartDownload"
    * When finished, displays the number values sent, and asks "Resend?".
-   * Press ESC to exit the program, any other key to resend.  <br>Then start the download in
-   * DataViewer.
+   * Press ESC to exit the program, any other key to resend.  <br>
+   * Then start the download in DataViewer.
    */
   public void transmit()
   {
@@ -114,14 +116,16 @@ public class Datalogger
 
       LCD.clear();
       LCD.drawString("sending ", 0, 0);
-      LCD.drawInt(_indx,4, 8, 0);;
+      LCD.drawInt(log.size(),4, 8, 0);
       try
       {
-        dataOut.writeInt(_indx);
+
+        dataOut.writeInt(log.size());
         dataOut.flush();
-        for (int i = 0; i < _indx; i++)
+        for (int i = 0; i < log.size(); i++)
         {
-          dataOut.writeFloat(log[i]);
+          Float v = (Float) log.get(i);
+          dataOut.writeFloat(v.floatValue());
         }
         dataOut.flush();
         dataOut.close();
@@ -132,7 +136,7 @@ public class Datalogger
       }
       LCD.clear();
       Sound.beepSequence();
-      LCD.drawString("Sent " + _indx, 0, 0);
+      LCD.drawString("Sent " + log.size(), 0, 0);
       tm.setTitle("Resend?         ");
       String[] itms ={"Yes", "No"};
       tm.setItems(itms);
@@ -144,14 +148,5 @@ public class Datalogger
     } catch (IOException e)
     {
     }
-  }
-
-  /**
-   * obsolete - older version API.  calls transmit();
-   * @param useUSB
-   */
-  public void transmit(boolean useUSB)
-  {
-    transmit();
   }
 }
