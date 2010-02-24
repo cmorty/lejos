@@ -1,6 +1,13 @@
 import lejos.nxt.*;
 import lejos.nxt.addon.*;
 
+/**
+ * 
+ * This example show how to use the device DSwitch
+ * 
+ * @author Juan Antonio Brenha Moral
+ *
+ */
 public class DSwitchTest {
 
 	/**
