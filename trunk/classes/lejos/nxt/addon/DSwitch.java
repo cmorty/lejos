@@ -15,10 +15,16 @@ public class DSwitch extends Motor {
 	    super(port);
 	  }
 	  
+	  /**
+	   * This method turn on the device connected with DSwitch
+	   */
 	  public void turnOn(){
 		  this.forward();
 	  }
 	  
+	  /**
+	   * This method turn off the device connected with DSwitch
+	   */	  
 	  public void turnOff(){
 		  this.stop();
 	  }
