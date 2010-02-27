@@ -92,8 +92,8 @@ resetTachoCountById(I)V
 
 #lejos.nxt.SensorPort
 i2cEnableById(II)V
-i2cBusyById(I)I
-i2cStartById(IIII[BIII)I
+i2cStatusById(I)I
+i2cStartById(II[BIII)I
 i2cDisableById(I)V
 
 #lejos.nxt.Sound

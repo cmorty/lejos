@@ -248,20 +248,18 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
   case i2cDisableById_4I_5V:
     i2c_disable(p0);
     break;
-  case i2cBusyById_4I_5I:
-    push_word(i2c_busy(p0));
+  case i2cStatusById_4I_5I:
+    push_word(i2c_status(p0));
     break;
-  case i2cStartById_4IIII_1BIII_5I:
+  case i2cStartById_4II_1BIII_5I:
     {
-    	Object *p = word2obj(paramBase[4]);
-    	JBYTE *byteArray = p ? jbyte_array(p) + paramBase[5] : NULL;
+    	Object *p = word2obj(paramBase[2]);
+    	JBYTE *byteArray = p ? jbyte_array(p) + paramBase[3] : NULL;
     	push_word(i2c_start(p0,
     	                    paramBase[1],
-    	                    paramBase[2],
-    	                    paramBase[3],
-    	                    byteArray,
-    	                    paramBase[6],
-    	                    paramBase[7]));
+    	                    (U8 *)byteArray,
+    	                    paramBase[4],
+    	                    paramBase[5]));
     }
     break; 
   case i2cCompleteById_4I_1BII_5I:
@@ -269,7 +267,7 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
     	Object *p = word2ptr(paramBase[1]);
     	JBYTE *byteArray = p ? jbyte_array(p) + paramBase[2] : NULL;
     	push_word(i2c_complete(p0,
-    	                       byteArray,
+    	                       (U8 *)byteArray,
     	                       paramBase[3]));
     }
     break; 

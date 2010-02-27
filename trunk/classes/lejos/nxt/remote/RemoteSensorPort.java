@@ -128,7 +128,7 @@ public class RemoteSensorPort implements NXTProtocol, ADSensorPort, I2CPort {
 	 * Test if I2C is busy
 	 * @return the status value (see ErrorMessages)
 	 */
-	public int i2cBusy() {
+	public int i2cStatus() {
 		try {
 			byte[] status = nxtCommand.LSGetStatus((byte) id);
 			return (int) status[0];
@@ -153,26 +153,26 @@ public class RemoteSensorPort implements NXTProtocol, ADSensorPort, I2CPort {
 	/**
 	 * Start an I2C transaction. The remote implementation is synchronous.
 	 * @param address the I2C address (x01 - x7F)
-	 * @param internalAddress the register or internal address
-	 * @param numInternalBytes not used
-	 * @param buffer the buffer for reading or writing data
-     * @param offset Index of first byte to read or write
-	 * @param numBytes the number of bytes to read or write
-	 * @param transferType 0 for read, 1 for write
+     * @param writeBuffer data to write
+     * @param writeOffset offset of the data in the write buffer
+     * @param writeLength length of the data to write
+     * @param readLength Number of bytes to read
 	 * @return the status value
 	 */
-	public int i2cStart(int address, int internalAddress, int numInternalBytes,
-			byte[] buffer, int offset, int numBytes, int transferType) {
-		byte [] txData = {(byte) (address << 1), (byte) internalAddress};
+	public int i2cStart(int address, 
+            byte[] writeBuffer, int writeOffset, int writeLength, int readLength) {
+		byte [] txData = new byte[writeLength + 1];
+        txData[0] =(byte) address;
+        System.arraycopy(writeBuffer, writeOffset, txData, 1, writeLength);
 		int status;
 		try {
-			nxtCommand.LSWrite((byte) id, txData, (byte) numBytes);
+			nxtCommand.LSWrite((byte) id, txData, (byte) readLength);
 		} catch (IOException ioe) {
 			return -1;
 		}
 		
 		do {
-			status = i2cBusy();		
+			status = i2cStatus();		
 		} while (status == ErrorMessages.PENDING_COMMUNICATION_TRANSACTION_IN_PROGRESS || 
 				 status == ErrorMessages.SPECIFIED_CHANNEL_CONNECTION_NOT_CONFIGURED_OR_BUSY);
 		
@@ -196,11 +196,40 @@ public class RemoteSensorPort implements NXTProtocol, ADSensorPort, I2CPort {
 
     }
 
+    /**
+     * Wait for the current IO operation on the i2c port to complete.
+     */
     public void i2cWaitIOComplete()
     {
-        while(i2cBusy() > 0)
+        while(i2cStatus() == ERR_BUSY)
             Thread.yield();
     }
+    
+    
+    /**
+     * High level i2c interface. Perform a complete i2c transaction and return
+     * the results. Writes the specified data to the device and then reads the
+     * requested bytes from it.
+     * @param deviceAddress The I2C device address.
+     * @param writeBuf The buffer containing data to be written to the device.
+     * @param writeOffset The offset of the data within the write buffer
+     * @param writeLen The number of bytes to write.
+     * @param readBuf The buffer to use for the transaction results
+     * @param readOffset Location to write the results to
+     * @param readLen The length of the read
+     * @return < 0 error otherwise the number of bytes read
+     */
+    public synchronized int i2cTransaction(int deviceAddress, byte[]writeBuf,
+            int writeOffset, int writeLen, byte[] readBuf, int readOffset,
+            int readLen)
+    {
+		int ret = i2cStart(deviceAddress, writeBuf, writeOffset, writeLen, readLen);
+		if (ret < 0) return ret;
+        i2cWaitIOComplete();
+		ret = i2cComplete(readBuf, readOffset, readLen);
+        return ret;
+    }
+
 
 }
 

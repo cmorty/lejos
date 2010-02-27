@@ -34,7 +34,7 @@ public class PFMate extends I2CSensor{
 	 */
 	public PFMate(I2CPort port, int channel){
 		super(port);
-		this.setAddress(36);
+		this.setAddress(0x48);
 		setChannel(channel);
 		setMotor(0); 
 

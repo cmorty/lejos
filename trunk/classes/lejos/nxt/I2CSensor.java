@@ -1,7 +1,7 @@
 package lejos.nxt;
-
+import java.lang.IllegalArgumentException;
 /**
- * Abstract class that implements common methods for all I2C sensors.
+ * Class that implements common methods for all I2C sensors.
  * 
  * Extend this class to implement new I2C sensors.
  * 
@@ -22,25 +22,25 @@ public class I2CSensor implements SensorConstants {
 	 */
 	protected static byte SENSOR_TYPE = 0x10;
 	I2CPort port;
-	int address = 1;
+	int address = 2;
 	String version = null;
 	String productID = null;
 	String sensorType = null;
 	byte [] byteBuff = new byte[8];
-	byte [] buf1 = new byte[1];
+	byte [] ioBuf = new byte[32];
 
 	public I2CSensor(I2CPort port, int mode)
 	{
 		this.port = port;
-		port.i2cEnable(mode);
 		port.setType(TYPE_LOWSPEED);
+		port.i2cEnable(mode);
 	}
 
 	public I2CSensor(I2CPort port)
 	{
         this(port, I2CPort.LEGO_MODE);
     }
-	
+
 	/**
 	 * Executes an I2C read transaction and waits for the result.
 	 * 
@@ -49,18 +49,10 @@ public class I2CSensor implements SensorConstants {
 	 * @param len Length of the return data
 	 * @return status == 0 success, != 0 failure
 	 */
-	public synchronized int getData(int register, byte [] buf, int len) {	
-		int ret = port.i2cStart(address, register, 1, null, 0, len, 0);
-		
-		if (ret != 0) return ret;
-
-        port.i2cWaitIOComplete();
-        /*
-		while (port.i2cBusy() != 0) {
-			Thread.yield();
-		}
-		*/
-		ret = port.i2cComplete(buf, 0, len);
+	public synchronized int getData(int register, byte [] buf, int len) {
+        // need to write the internal address.
+        ioBuf[0] = (byte)register;
+		int ret = port.i2cTransaction(address, ioBuf, 0, 1, buf, 0, len);
         return (ret < 0 ? ret : (ret == len ? 0 : -1));
 	}
 	
@@ -73,15 +65,10 @@ public class I2CSensor implements SensorConstants {
 	 * @return status zero=success, non-zero=failure
 	 */
 	public synchronized int sendData(int register, byte [] buf, int len) {
-        int ret = port.i2cStart(address, register, 1, buf, 0, len, 1);
-		if (ret != 0) return ret;
-        port.i2cWaitIOComplete();
-/*
-		while (port.i2cBusy() != 0) {
-			Thread.yield();
-		}
-*/
-		return port.i2cComplete(null, 0, 0);
+        if (len >= ioBuf.length) throw new IllegalArgumentException();
+        ioBuf[0] = (byte)register;
+        System.arraycopy(buf, 0, ioBuf, 1, len);
+        return port.i2cTransaction(address, ioBuf, 0, len+1, null, 0, 0);
 	}
 	
 	/**
@@ -92,8 +79,9 @@ public class I2CSensor implements SensorConstants {
 	 * @return status zero=success, non-zero=failure
 	 */
 	public synchronized int sendData(int register, byte value) {
-		buf1[0] = value;
-		return sendData(register, buf1, 1);
+        ioBuf[0] = (byte)register;
+        ioBuf[1] = value;
+        return port.i2cTransaction(address, ioBuf, 0, 2, null, 0, 0);
 	}
 	
 	/**
@@ -142,17 +130,19 @@ public class I2CSensor implements SensorConstants {
 	}
 	
 	/**
-	 * Set the address of the port 
-	 * Note that addresses are from 0x01 to 0x7F not
-	 * even numbers from 0x02 to 0xFE as given in some I2C device specifications.
-	 * They are 7-bit addresses not 8-bit addresses.
+	 * Set the address of the port
+     * Addresses use the standard Lego/NXT format and are in the range 0x2-0xfe.
+     * The low bit must always be zero. Some data sheets (and older versions
+     * of leJOS) may use i2c 7 bit format (0x1-0x7f) in which case this address
+     * must be shifted left on place to be used with this function.
 	 * 
-	 * @param addr 1 to 0x7F 
+	 * @param addr 0x2 to 0xfe
 	 */
 	public void setAddress(int addr) {
+        if ((address & 1) != 0) throw new IllegalArgumentException("Bad address format");
 		address = addr;
 	}
-	
+
 	/**
 	 * Get the port that the sensor is attached to
 	 * @return the I2CPort

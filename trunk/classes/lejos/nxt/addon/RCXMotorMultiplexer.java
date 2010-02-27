@@ -25,7 +25,7 @@ public class RCXMotorMultiplexer extends I2CSensor {
 	
 	public RCXMotorMultiplexer(I2CPort port) {
 		super(port);
-		setAddress(0x5A);
+		setAddress(0xb4);
 	}
 	
 	public void setSpeed(int speed, int id) {

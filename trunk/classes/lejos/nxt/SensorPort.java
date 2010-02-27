@@ -107,7 +107,11 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
     {
         SensorPort.S1, SensorPort.S2, SensorPort.S3, SensorPort.S4
     };
-    
+
+    /** I2C event filter bits */
+    private static final int I2C_IO_COMPLETE = 1;
+    private static final int I2C_BUS_FREE = 0x100;
+    private static final int I2C_BUS_FREE_TIMEOUT = 10;
     /**
      * Return the SensorPort with the given Id.
      * @param id the Id, between 0 and {@link #NUMBER_OF_PORTS}-1.
@@ -137,6 +141,7 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
     private int iPreviousValue;
     private int type, mode;
     private NXTEvent i2cEvent;
+    private int i2cSensorCnt = 0;
 
     /**
      * The SensorReader class provides a type dependent way
@@ -1031,58 +1036,70 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
     private static native void i2cDisableById(int aPortId);
 
     /**
-     * Low-level method to test if I2C connection is busy.
+     * Low-level method to return the i2c port status
      * @param aPortId The port number for this device
-     * @return > 0 if busy 0 if not
+     * @return 0 if ready
+     *         -1: Invalid device
+     *         -2: Device busy
+     *         -3: Device fault
+     *         -4: Buffer size error.
+     *         -5: Bus is busy
      */
-    private static native int i2cBusyById(int aPortId);
+    private static native int i2cStatusById(int aPortId);
 
     /**
      * Low-level method to start an I2C transaction.
      * @param aPortId The port number for this device
      * @param address The I2C address of the device
-     * @param internalAddress The internal address to use for this operation
-     * @param numInternalBytes The number of bytes in the internal address
-     * @param buffer The buffer for write operations
-     * @param offset Index of first byte to write
-     * @param numBytes Number of bytes to write or read
-     * @param transferType 1==write 0==read
+     * @param writeBuffer The buffer for write operations
+     * @param writeOffset Index of first byte to write
+     * @param writeLen Number of bytes to write
+     * @param readLen Number of bytes to read
      * @return < 0 if there is an error
      */
     private static native int i2cStartById(int aPortId, int address,
-            int internalAddress, int numInternalBytes,
-            byte[] buffer, int offset, int numBytes, int transferType);
+            byte[] writeBuffer, int writeOffset, int writeLen, int readLen);
 
     /**
      * Complete and I2C operation and retrieve any data read.
      * @param aPortId The Port number for the device
-     * @param buffer The buffer to be used for read operations
+     * @param readBuffer The buffer to be used for read operations
      * @param offset Index of first byte to read
      * @param numBytes Number of bytes to read
      * @return < 0 if the is an error, or number of bytes transferred
      */
-    private static native int i2cCompleteById(int aPortId, byte[] buffer, int offset, int numBytes);
+    private static native int i2cCompleteById(int aPortId, byte[] readBuffer, int offset, int readLen);
 
     /**
-     * Low-level method to enable I2C on the port.
+     * Low-level method to enable I2C on the port. Note because there can be
+     * multiple i2c sensors attached to a single port, only the first enable will
+     * set the operating mode.
      * @param mode The operating mode for the device
      */
-    public void i2cEnable(int mode)
+    public synchronized void i2cEnable(int mode)
     {
-        i2cEnableById(iPortId, mode);
-        // Allocate the i2c wait event
-        i2cEvent = NXTEvent.allocate(NXTEvent.I2C_PORTS, 1 << iPortId, 1);
+        if (i2cSensorCnt++ == 0)
+        {
+            i2cEnableById(iPortId, mode);
+            // Allocate the i2c wait event
+            i2cEvent = NXTEvent.allocate(NXTEvent.I2C_PORTS, 1 << iPortId, 1);
+        }
     }
 
     /**
-     * Low-level method to disable I2C on the port.
+     * Low-level method to disable I2C on the port. Note if multiple i2c sensors
+     * are sharing the same port the port will not be disabled until all of the
+     * associated sensors have disabled the port.
      *
      */
-    public void i2cDisable()
+    public synchronized void i2cDisable()
     {
-        i2cDisableById(iPortId);
-        i2cEvent.free();
-        i2cEvent = null;
+        if (--i2cSensorCnt == 0)
+        {
+            i2cDisableById(iPortId);
+            i2cEvent.free();
+            i2cEvent = null;
+        }
     }
     
     /**
@@ -1090,36 +1107,38 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
      */
     public void i2cWaitIOComplete()
     {
-        i2cEvent.waitEvent(NXTEvent.WAIT_FOREVER);
+        i2cEvent.waitEvent(I2C_IO_COMPLETE << iPortId, NXTEvent.WAIT_FOREVER);
     }
     
     /**
      * Low-level method to test if I2C connection is busy.
-     * @return > 0 if the device is busy 0 if it is not
+     * @return 0 if ready
+     *         -1: Invalid device
+     *         -2: Device busy
+     *         -3: Device fault
+     *         -4: Buffer size error.
+     *         -5: Bus is busy
      */
-    public int i2cBusy()
+    public int i2cStatus()
     {
-        return i2cBusyById(iPortId);
+        return i2cStatusById(iPortId);
     }
 
     /**
-     * Low-level method to start an I2C transaction.
+     * Low-level method to start an I2C transaction. Any data that is read is
+     * obtained via a call to i2cComplete.
      * @param address Address of the device
-     * @param internalAddress Internal register address for this operation
-     * @param numInternalBytes Size of the internal address
-     * @param buffer Buffer for write operations
-     * @param numBytes Number of bytes to read/write
-     * @param transferType 1==write 0 ==read
+     * @param writeBuffer Buffer containing bytes to write
+     * @param writeOffset Offset into writeBuffer
+     * @param writeLen number of bytes to write
+     * @param readLen number of bytes to read
      * @return < 0 error
      */
-    public int i2cStart(int address, int internalAddress,
-            int numInternalBytes, byte[] buffer, int offset,
-            int numBytes, int transferType)
+    public int i2cStart(int address, byte[] writeBuffer, int writeOffset,
+            int writeLen, int readLen)
     {
-
-        return i2cStartById(iPortId, address, internalAddress,
-                numInternalBytes, buffer, offset,
-                numBytes, transferType);
+        return i2cStartById(iPortId, address,  writeBuffer, writeOffset,
+                writeLen, readLen);
     }
 
     /**
@@ -1132,6 +1151,41 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
     {
         return i2cCompleteById(iPortId, buffer, offset, numBytes);
     }
+
+    /**
+     * High level i2c interface. Perform a complete i2c transaction and return
+     * the results. Writes the specified data to the device and then reads the
+     * requested bytes from it.
+     * @param deviceAddress The I2C device address.
+     * @param writeBuf The buffer containing data to be written to the device.
+     * @param writeOffset The offset of the data within the write buffer
+     * @param writeLen The number of bytes to write.
+     * @param readBuf The buffer to use for the transaction results
+     * @param readOffset Location to write the results to
+     * @param readLen The length of the read
+     * @return < 0 error otherwise the number of bytes read
+     */
+    public synchronized int i2cTransaction(int deviceAddress, byte[]writeBuf,
+            int writeOffset, int writeLen, byte[] readBuf, int readOffset,
+            int readLen)
+    {
+		int ret = i2cStart(deviceAddress, writeBuf, writeOffset, writeLen, readLen);
+        if (ret == ERR_BUS_BUSY)
+        {
+            // The bus is busy (clock and/or data lines not pulled up to 1).
+            // This could be because a sensor (Lego Ultrasonic) is holding
+            // on to the bus, or because no sensor is plugged in. So we wait
+            // for a short while for it to become free and try again.
+            i2cEvent.waitEvent(I2C_BUS_FREE << iPortId, I2C_BUS_FREE_TIMEOUT);
+            ret = i2cStart(deviceAddress, writeBuf, writeOffset, writeLen, readLen);
+        }
+		if (ret < 0) return ret;
+        i2cWaitIOComplete();
+        //while (i2cStatus() == ERR_BUSY) Thread.yield();
+		ret = i2cComplete(readBuf, readOffset, readLen);
+        return ret;
+    }
+
 
     /**
      * Low level method to set the operating mode for a sensor pin.

@@ -31,7 +31,7 @@ public class RCXSensorMultiplexer extends I2CSensor{
 	 */
 	public RCXSensorMultiplexer(I2CPort port){
 		super(port);
-		super.setAddress(0x7e / 2);
+		super.setAddress(0x7e);
 	}
 	
 	/**

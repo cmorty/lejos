@@ -29,7 +29,7 @@ public class NXTe  extends I2CSensor{
 	//I2C
 	private SensorPort portConnected;
 	private final byte SPI_PORT[] = {0x01,0x02,0x04,0x08};//SPI Ports where you connect LSC
-	public static final byte NXTE_ADDRESS = 0x28;
+	public static final byte NXTE_ADDRESS = 0x50;
 	private final byte REGISTER_IIC = (byte)0xF0;//NXTe IIC address
 	
 	/**
