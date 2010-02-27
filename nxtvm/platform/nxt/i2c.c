@@ -11,15 +11,12 @@
 #include "systick.h"
 #include "memory.h"
 #include "sensors.h"
-
 #include <string.h>
-
 //Sizes etc.
 #define I2C_CLOCK 9600
 #define I2C_MAX_PARTIAL_TRANSACTIONS 5
 #define I2C_N_PORTS 4
 #define I2C_BUF_SIZE 32
-#define I2C_ADDRESS_SIZE 4
 
 // Options
 #define I2C_LEGO_MODE 1
@@ -28,6 +25,10 @@
 
 // Delay used when in Lego mode
 #define I2C_LEGO_DELAY 5
+
+#define IO_COMPLETE_MASK 0xf;
+#define BUS_FREE_MASK 0xf00
+#define BUS_FREE_SHIFT 8
 
 // A partial transaction has the following form:
 // 1. It has a transaction start state, to indicate the type of transaction
@@ -72,13 +73,7 @@
 // Port 4 on the nxt is a little odd. It has extra hardware to implement
 // an RS485 interface. However this interacts with the digital I/O lines
 // which means that the original open collector driver used in this code
-// did not work. The code now uses a combination of open collector drive
-// on the clock lines (with pull up resistors enabled), plus a fully
-// driven ineterface on the data lines. This differs from the Lego
-// firmware which uses a fully driven clock inetrface. However doing so
-// means that it is hard (or impossible), to operate with the devices
-// that make use of clock stretching. It is hoped that the compromise
-// implemented here will work with all devices.
+// did not work. The code now uses full drive on both clock and data.
 //
 // Re-worked by Andy Shaw 02/2009
 //
@@ -142,9 +137,7 @@ typedef enum {
 typedef struct {
   U32 scl_pin;
   U32 sda_pin;
-  U8  addr_int[I2C_ADDRESS_SIZE+1]; /* Device address with internal address */
-  U8  addr;	                    /* Just device address */
-  U8  buffer[I2C_BUF_SIZE];
+  U8  buffer[I2C_BUF_SIZE+2];
   struct i2c_partial_transaction partial_transaction[I2C_MAX_PARTIAL_TRANSACTIONS];
   struct i2c_partial_transaction *current_pt;
 
@@ -159,7 +152,7 @@ typedef struct {
   U8 always_active:1;
   U8 no_release:1;
   U8 port_bit;
-  U16 nbytes;
+  U16 read_len;
 } i2c_port;
 
 static i2c_port *i2c_ports[I2C_N_PORTS];
@@ -248,12 +241,9 @@ i2c_timer_isr_C(void)
       p->data = p->current_pt->data;
       p->nbits = p->current_pt->nbits;
       p->bits = *(p->data);
-      *AT91C_PIOA_OER = p->sda_pin;
       p->state = I2C_TXDATA1;
       // FALLTHROUGH
     case I2C_TXDATA1:
-      if(*AT91C_PIOA_PDSR & p->scl_pin)
-      {
         // Take SCL low
         *AT91C_PIOA_CODR = p->scl_pin;
         p->nbits--;
@@ -264,7 +254,6 @@ i2c_timer_isr_C(void)
         *AT91C_PIOA_OER = p->sda_pin;
         p->bits <<= 1;
         p->state = I2C_TXDATA2;
-      }
       break;
     case I2C_TXDATA2:
       // Take SCL high
@@ -276,16 +265,11 @@ i2c_timer_isr_C(void)
           p->state = I2C_TXDATA1;
       break;
     case I2C_TXACK1:
-      // Wait for high pulse width
-      // If someone else is not holding the pin down, then advance
-      if(*AT91C_PIOA_PDSR & p->scl_pin)
-      {
         // Take SCL low
         *AT91C_PIOA_CODR = p->scl_pin;
         // release the data line
         *AT91C_PIOA_ODR = p->sda_pin;
         p->state = I2C_TXACK2;
-      }
       break;
     case I2C_TXACK2:
       // Take SCL High
@@ -324,13 +308,11 @@ i2c_timer_isr_C(void)
         p->state = I2C_RXDATA1;
       // Fall through
     case I2C_RXDATA1:
-      if(*AT91C_PIOA_PDSR & p->scl_pin){
         // Take SCL Low
         *AT91C_PIOA_CODR = p->scl_pin;
         // get ready to read
         *AT91C_PIOA_ODR = p->sda_pin;
         p->state = I2C_RXDATA2;
-      }
       break;
     case I2C_RXDATA2:
       // Take SCL High
@@ -351,14 +333,11 @@ i2c_timer_isr_C(void)
         p->state = I2C_RXDATA1;
       break;
     case I2C_RXACK1:
-      if(*AT91C_PIOA_PDSR & p->scl_pin)
-      {
         // Take SCL low
         *AT91C_PIOA_CODR = p->scl_pin;
         *AT91C_PIOA_CODR = p->sda_pin;
         *AT91C_PIOA_OER = p->sda_pin;
         p->state = I2C_RXACK2;
-      }
       break;
     case I2C_RXACK2:
       // Clock high
@@ -369,14 +348,10 @@ i2c_timer_isr_C(void)
       p->state = I2C_RXDATA1;
       break;
     case I2C_RXENDACK1:
-      if(*AT91C_PIOA_PDSR & p->scl_pin)
-      {
         // Take SCL low
         *AT91C_PIOA_CODR = p->scl_pin;
         *AT91C_PIOA_SODR = p->sda_pin;
-        *AT91C_PIOA_OER = p->sda_pin;
         p->state = I2C_RXENDACK2;
-      }
       break;
     case I2C_RXENDACK2:
       // Clock high data is already high
@@ -386,9 +361,10 @@ i2c_timer_isr_C(void)
       break;
     case I2C_LEGOEND:
       // Lego mode end case, does not issue stop, but does release the bus
-      // Clock low data is already high
+      // Clock low data is already high, release the data line
       *AT91C_PIOA_CODR = p->scl_pin;
-      p->state = I2C_ENDRELEASE2;
+      *AT91C_PIOA_ODR = p->sda_pin;
+      p->state = I2C_RELEASE;
       break;
     case I2C_ENDNORELEASE:
       // End the transaction but hold onto the bus, keeping the clock low
@@ -465,7 +441,6 @@ build_active_list()
   else
   {
     // if the clock is disabled enable it
-    //if ((*AT91C_TC0_SR & AT91C_TC_CLKSTA) == 0)
     if (*active_list == NULL)
     {
       *AT91C_TC0_CCR = AT91C_TC_CLKEN; /* Enable */
@@ -522,15 +497,12 @@ int i2c_enable(int port, int mode)
     p->sda_pin = sensor_pins[port].pins[SP_DIGI1];
     pinmask = p->scl_pin | p->sda_pin;
     p->state = I2C_IDLE;
-    /* Set clock pin for output, open collector driver, with
-     * pullups enabled. Set data to be enabled for output with
+    /* Set data & clock to be enabled for output with
      * pullups disabled.
      */
     *AT91C_PIOA_SODR  = pinmask;
     *AT91C_PIOA_OER   = pinmask;
-    *AT91C_PIOA_MDER  = p->scl_pin;
-    *AT91C_PIOA_PPUDR = p->sda_pin;
-    *AT91C_PIOA_PPUER = p->scl_pin;
+    *AT91C_PIOA_PPUDR = pinmask;
     /* If we are always active, we never drop below the ACTIVEIDLE state */
     p->lego_mode = ((mode & I2C_LEGO_MODE) ? 1 : 0);
     p->no_release = ((mode & I2C_NO_RELEASE) ? 1 : 0);
@@ -578,10 +550,17 @@ i2c_init(void)
 
 // Is the port busy?
 int
-i2c_busy(int port)
+i2c_status(int port)
 {
-  if(port >= 0 && (port < I2C_N_PORTS))
-    return (i2c_port_busy & (1 << port)) != 0;
+  i2c_port *p;
+  if(port < 0 || port >= I2C_N_PORTS || !i2c_ports[port])
+    return I2C_ERR_INVALID_PORT;
+  if ((i2c_port_busy & (1 << port)) != 0) return I2C_ERR_BUSY;
+  p = i2c_ports[port];
+  if (p->state == I2C_COMPLETE) return 0;
+  // only now is it safe to test the bus
+  if ((*AT91C_PIOA_PDSR & (p->scl_pin|p->sda_pin)) != (p->scl_pin|p->sda_pin))
+    return I2C_ERR_BUS_BUSY;
   return 0;
 }
 
@@ -590,104 +569,85 @@ i2c_busy(int port)
 int
 i2c_start(int port, 
           U32 address, 
-          int internal_address, 
-          int n_internal_address_bytes, 
-          void *data,
-          U32 nbytes,
-          int write)
+          U8 *write_data,
+          int write_len,
+          int read_len)
 { 
   i2c_port *p;
   struct i2c_partial_transaction *pt;
-  if(port < 0 || port >= I2C_N_PORTS || !i2c_ports[port])
-    return -1;
-    
-  if(i2c_busy(port))
-    return -2;
-  if (nbytes > I2C_BUF_SIZE) return -4;   
-  if (n_internal_address_bytes > I2C_ADDRESS_SIZE) return -5;
+  U8 *data;
+  int status = i2c_status(port);
+  if (status < 0) return status;
+  // check buffer size
+  if (read_len > I2C_BUF_SIZE) return I2C_ERR_INVALID_LENGTH;
+  if (write_len > I2C_BUF_SIZE) return I2C_ERR_INVALID_LENGTH;   
+  // must have some data to transfer
+  if (read_len + write_len <= 0) return I2C_ERR_INVALID_LENGTH;
   p = i2c_ports[port];
   pt = p->partial_transaction;
   p->current_pt = pt;
+  data = p->buffer;
   
-  
-  if(n_internal_address_bytes > 0){
-    int addrlen = n_internal_address_bytes;
-    // Set up command to write the internal address to the device
-    p->addr_int[0] = (address << 1); // This is a write
-    pt->nbits = (n_internal_address_bytes + 1)*8;
-    // copy internal address bytes, high bytes first
-    while (addrlen > 0)
-    {
-      p->addr_int[addrlen--] = internal_address;
-      internal_address >>= 8;
-    }
-
-    pt->data = p->addr_int;
+  // process the write data (if any)
+  if (write_len > 0){
+    *data++ = address; // This is a write
+    pt->nbits = (write_len + 1)*8;
+    // copy the write data
+    memcpy(data, write_data, write_len);
+    data += write_len;
+    pt->data = p->buffer;
     pt->state = I2C_NEWSTART;
     // We add an extra stop for the odd Lego i2c sensor, but only on a read
-    if (!write && p->lego_mode){
+    if (read_len > 0 && p->lego_mode){
       pt++;
       pt->state = I2C_LEGOSTOP1;
     }
     pt++;
   }
-
-  if(n_internal_address_bytes == 0 || !write){  
-    // Set up the next partial transaction: start/restart and address
-    pt->state = (n_internal_address_bytes ? I2C_NEWRESTART : I2C_NEWSTART);
-    p->addr = (address << 1) | (write ? 0 : 1);
-    pt->data = &p->addr;
-    pt->nbits = 1*8;
-  
+  // now add the read transaction (if any)
+  if (read_len > 0)
+  {
+    // first we have to write the device address
+    pt->state = (data != p->buffer ? I2C_NEWRESTART : I2C_NEWSTART);
+    pt->data = data;
+    *data++ = address |  1; // this is a read
+    pt->nbits = 8;
+    pt++;
+    // now we have the read
+    pt->state = I2C_NEWREAD;
+    pt->data = p->buffer;
+    pt->nbits = read_len*8;
     pt++;
   }
-  
-  // Set up the data transfer partial transaction
-  if (write) {
-    pt->state = I2C_NEWWRITE;
-    if (data) {
-    	memcpy(p->buffer, data, nbytes);
-    }
-  }
-  else
-    pt->state = I2C_NEWREAD;
-  pt->data = p->buffer;
-  pt->nbits = nbytes*8;
-  // Sort out the final end state transaction
-  pt++;
   if (p->lego_mode)
-    pt->state = (write ? I2C_ENDRELEASE1 : I2C_LEGOEND);
+    pt->state = (read_len <= 0 ? I2C_ENDRELEASE1 : I2C_LEGOEND);
   else
     pt->state = (p->no_release ? I2C_ENDNORELEASE : I2C_ENDRELEASE1);
 
-  // We save the number of bytes for use for complete
-  p->nbytes = nbytes;
+  // We save the number of bytes to read for completion
+  p->read_len = read_len;
   // Start the transaction
   i2c_port_busy |= 1 << port;
   p->state = I2C_BEGIN;
   if (!p->always_active)
     build_active_list();
-  
   return 0;
 }
 
 // Check for the operation to be complete and return and read data.
 int
 i2c_complete(int port,
-             void *data,
+             U8 *data,
              U32 nbytes)
 {
   i2c_port *p;
-  if(port < 0 || port >= I2C_N_PORTS || !i2c_ports[port])
-    return -1;
-    
-  if(i2c_busy(port))
-    return -2;
+  int status = i2c_status(port);
+  if (status < 0) return status;
   p = i2c_ports[port];
   if (p->fault)
-    return -3;
+    return I2C_ERR_FAULT;
   if (nbytes > I2C_BUF_SIZE) return -4;
-  if (nbytes > p->nbytes) nbytes = p->nbytes;
+  if (nbytes > p->read_len) nbytes = p->read_len;
   if (data) {
     memcpy(data, p->buffer, nbytes);
   }
@@ -703,5 +663,20 @@ i2c_complete(int port,
 int
 i2c_event_check(int filter)
 {
-  return ~i2c_port_busy & filter;
+  // get I/O complete status
+  int ret = ~i2c_port_busy & filter & IO_COMPLETE_MASK;
+  // do we need bus status?
+  if (filter & BUS_FREE_MASK)
+  {
+    int port;
+    int bit = 1 << BUS_FREE_SHIFT;
+    for(port = 0; port < I2C_N_PORTS; port++, bit <<= 1)
+      if (filter & bit)
+      {
+        i2c_port *p = i2c_ports[port];
+        if ((*AT91C_PIOA_PDSR & (p->scl_pin|p->sda_pin)) == (p->scl_pin|p->sda_pin))
+          ret |= bit;
+      }
+  }
+  return ret;
 }

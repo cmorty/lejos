@@ -322,13 +322,8 @@ public class LCP {
 			byte rxLen = cmd[4];
 			SensorPort p = SensorPort.getInstance(port);
 			p.i2cEnable(I2CPort.LEGO_MODE);
-			Delay.msDelay(100);
-			for(int i=0;i<txLen-2;i++) {
-				i2cBuffer[i] = cmd[7+i];
-			}
-			p.i2cStart(cmd[5] >> 1, cmd[6], 1, i2cBuffer, 0, (rxLen == 0 ? txLen - 2 : rxLen), (rxLen == 0 ? 1 : 0));
+			int ret = p.i2cStart(cmd[5], cmd, 6, txLen-1, rxLen);
             p.i2cWaitIOComplete();
-			Delay.msDelay(100);
 		}
 		
 		// LSREAD
@@ -338,7 +333,7 @@ public class LCP {
 			SensorPort p = SensorPort.getInstance(port);
             int ret = p.i2cComplete(i2cBuffer, 0, i2cBuffer.length);
 			reply[3] = (byte) ret;
-			for(int i=0;i<ret;i++) reply[i+4] = i2cBuffer[i];
+            if (ret > 0) System.arraycopy(i2cBuffer, 0, reply, 4, ret);
 			len = 20;
 		}
 		
@@ -347,7 +342,7 @@ public class LCP {
 		{
 			byte port = cmd[2];
 			SensorPort p = SensorPort.getInstance(port);
-			reply[3] = (byte) p.i2cBusy();
+			reply[3] = (byte) (p.i2cStatus() == 0 ? 0 : 1);
 			len = 4;
 		}
 		
