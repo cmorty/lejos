@@ -43,7 +43,7 @@ public class RFIDSensor extends I2CSensor
     private static final int REG_SERIALNO = 0xA0;
     private static final int LEN_SERIALNO = 16;
 
-    private static final int DEFAULT_ADDRESS = 2;
+    private static final int DEFAULT_ADDRESS = 4;
 
     // Various delays
     private static final int DELAY_WAKEUP = 5;
