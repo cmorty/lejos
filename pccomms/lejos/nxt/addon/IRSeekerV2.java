@@ -9,7 +9,7 @@ public class IRSeekerV2 extends I2CSensor
       AC, DC 
    }; 
 
-   public static final byte   address   = 0x08; 
+   public static final byte   address   = 0x10;
    byte[]                  buf      = new byte[1]; 
    public static final   float   noAngle = Float.NaN; 
 

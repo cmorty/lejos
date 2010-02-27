@@ -23,7 +23,7 @@ import lejos.nxt.*;
  * 
  */
 public class MSC extends I2CSensor {
-	public static final byte NXTSERVO_ADDRESS = (byte)0x58;
+	public static final byte NXTSERVO_ADDRESS = (byte)0xb0;
 	public static final byte MSC8_VBATT = 0x41;//The I2C Register to read the battery 
 
 	/**
