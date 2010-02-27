@@ -543,7 +543,7 @@ public class Bluetooth extends NXTCommDevice
                 //RConsole.print("Process streams 2" + reqState + "\n");
                 int ioEnd = (int)System.currentTimeMillis() + IO_TIME;
                 Chans[curChan].active = true;
-                while (Chans[curChan].state >= BTConnection.CS_CONNECTED)
+                while (Chans[curChan].state > BTConnection.CS_DISCONNECTED)
                 {
                     int event = Chans[curChan].send();
                     event |= Chans[curChan].recv();
