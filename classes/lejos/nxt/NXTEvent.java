@@ -46,13 +46,14 @@ public class NXTEvent {
     private final static int SET = 2;
 
     public final static int TIMEOUT = 1 << 31;
+    public final static int INTERRUPTED = 1 << 30;
     /** These bits are reserved in the eventData field to indicate that a user
      * event has occurred. User events are created by the  notifyEvent method.
      */
-    public final static int USER1 = 1 << 30;
-    public final static int USER2 = 1 << 29;
-    public final static int USER3 = 1 << 28;
-    public final static int USER4 = 1 << 27;
+    public final static int USER1 = 1 << 29;
+    public final static int USER2 = 1 << 28;
+    public final static int USER3 = 1 << 27;
+    public final static int USER4 = 1 << 26;
 
     /**
      * Value used to make a timeout be forever.
@@ -94,11 +95,44 @@ public class NXTEvent {
             if ((userEvents & filter) != 0)
                 state |= SET;
             else
-                wait(timeout);
-        }
-        catch (InterruptedException e)
-        {
-            // We swallow these.
+            {
+                // This horrible code turns inetrrupted exceptions into events.
+                // If the caller is not interested in INTERRUPTED events then we
+                // ignore (and preserve) the state. Note that in the case of a
+                // wait with a timeout, if we are ignoring interrupt and the wait
+                // is interrupted (other then at the start of the wait), then we
+                // will wait longer than requested (because the wait is re-started).
+                // This could be fixed but I don't think the extra cost/complxity
+                // is worth it...
+                boolean ignoredInterrupt = false;
+                for(;;)
+                {
+                    try {
+                        wait(timeout);
+                        break;
+                    }
+                    catch (InterruptedException e)
+                    {
+                        // are we interested in interrupts?
+                        if ((filter & INTERRUPTED) != 0)
+                        {
+                            // yes so capture it and exit
+                            state |= SET;
+                            eventData |= INTERRUPTED;
+                            break;
+                        }
+                        else
+                        {
+                            // No ignore it.
+                            ignoredInterrupt = true;
+                            continue;
+                        }
+                    }
+                }
+                // Preserve interrupted state if required
+               if (ignoredInterrupt)
+                   Thread.currentThread().interrupt();
+            }
         }
         finally
         {
@@ -110,8 +144,8 @@ public class NXTEvent {
             // User events get reset now
             userEvents = 0;
             state = 0;
-            return eventData;
         }
+        return eventData;
     }
 
 
