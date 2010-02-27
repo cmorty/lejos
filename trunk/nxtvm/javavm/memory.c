@@ -469,7 +469,8 @@ int arraycopy(Object *src, int srcOff, Object *dst, int dstOff, int len)
   primitive = is_primitive(srcCls) || is_primitive(dstCls);
   if (primitive && srcCls != dstCls)
     return throw_new_exception(JAVA_LANG_ARRAYSTOREEXCEPTION);
-  if (srcOff < 0 || (srcOff + len > get_array_length(src)) ||
+  if (len < 0 ||
+      srcOff < 0 || (srcOff + len > get_array_length(src)) ||
       dstOff < 0 || (dstOff + len > get_array_length(dst)))
     return throw_new_exception(JAVA_LANG_ARRAYINDEXOUTOFBOUNDSEXCEPTION);
  
