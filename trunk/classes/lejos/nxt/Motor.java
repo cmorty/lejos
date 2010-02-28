@@ -458,8 +458,9 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
    */
   public void resetTachoCount()
   {
-    regulator.reset();
+
     _tachoPort.resetTachoCount();
+    regulator.reset();
   }
 
   /**
