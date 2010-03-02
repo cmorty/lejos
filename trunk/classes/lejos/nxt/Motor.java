@@ -1,6 +1,7 @@
 package lejos.nxt;
 
 
+import lejos.nxt.*;
 import lejos.robotics.TachoMotor;
 import lejos.robotics.TachoMotorListener;
 import lejos.util.Delay;
@@ -59,7 +60,7 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
    */
   protected int _speed = 360;
   protected boolean _keepGoing = true;// for regulator
-
+  protected boolean _rampUp = true; //used by regulator; true at start of movement and large speed change
 
   public final Regulator regulator = new Regulator();
   /**
@@ -214,10 +215,10 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
     _rotating = false;
     synchronized (regulator)
     {
-      _rotating = false; //regulator should stop testing for rotation limit  ASAP
       _lock = false;
       if (_mode == mode) return; // state is not updated
 
+      _rotating = false; //regulator should stop testing for rotation limit  ASAP
       _mode = mode;
       if (_mode == STOP || _mode == FLOAT)
       {
@@ -270,21 +271,25 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
 
   public void rotateTo(int limitAngle, boolean immediateReturn)
   {
-    _newOperation = true;
-    synchronized (regulator)
+    if(_rotating && (_direction *(limitAngle - getTachoCount())>0))
+    {  // rotation in progress so do not reset regulator
+      _limitAngle = limitAngle;  // just change the limitAngle
+    }
+    else
     {
-      _lock = false;
-      if (limitAngle > getTachoCount())
-        forward();
-      else  backward();
-
-      int stopDistance = _speed * _speed / (2 * _acceleration);
-      stopDistance = (int) Math.max(stopDistance, _speed * 0.075f);
-      _limitAngle = limitAngle;
-      _rotating = true;
-      _newOperation = false;
-      regulator.braking = false;
-      regulator.speed = 0;
+      _newOperation = true;
+      synchronized (regulator)
+      {
+        _lock = false;
+        if (limitAngle > getTachoCount()) forward();
+        else backward();
+        _limitAngle = limitAngle;
+        _rotating = true;
+        _newOperation = false;
+        regulator.braking = false;
+        regulator.speed = 0;
+        regulator.reset();
+      }
     }
     if (immediateReturn) return;
  
@@ -329,15 +334,15 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
     {
       speed = (int) (100 * _voltage);// no faster than motor can sustain
     }
-    boolean smallIncrease = speed < _speed + 200;
+    boolean smallChange = Math.abs(speed - _speed)< 200;
     _speed = speed;
     if (speed < 0)
     {
       _speed = -speed;
     }
     setPower((int) regulator.calcPower(_speed));
-    regulator.reset();
-    if(smallIncrease)regulator.timeConstant = 0;
+    regulator.reset(); // reset sets _rampUp = true;
+    if(smallChange)_rampUp = false;
   }
 
   /**
@@ -458,9 +463,8 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
    */
   public void resetTachoCount()
   {
-
     _tachoPort.resetTachoCount();
-    regulator.reset();
+     regulator.reset();
   }
 
   /**
@@ -538,7 +542,7 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
     }
 
     /**
-     * called by forward() backward() and reverseDirection() <br>
+     * called by forward() backward() and reverseDirection() and setSpeed() <br>
      * resets parameters for speed regulation
      **/
     public void reset()
@@ -553,6 +557,7 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
       err2 = 0;
       timeConstant = 1000 * _speed / _acceleration;
       speed = 0;
+      braking = false;
     }
 
     /**
@@ -579,9 +584,9 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
             elapsed = (int) System.currentTimeMillis() - time0;
             int tachoCount = getTachoCount();
             int angle = tachoCount - angle0;
-            int absA = angle;
-            if (angle < 0) absA = -angle;
+            int absA = Math.abs(angle);
             stopAngle = _limitAngle - _direction * speed * speed / _acceleration;
+            if(!_rampUp)stopAngle =  _limitAngle - _direction * _speed * _speed / _acceleration;
             if (_rotating && _direction * (tachoCount - stopAngle) >= 0 && !braking)//Decelerate now
             {
 //      set variables for beginning of deceleration
@@ -592,7 +597,7 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
             if (braking)
             {
               int timeFactor = 2000;
-// close to limit angle ?  if so , stop  Note: speed is deg/sec - elapsed in ms
+// close to limit angle ?  if so , stop  Note: speed is deg/sec ; but  elapsed in ms
               if (Math.abs(_limitAngle - getTachoCount()) < 2 ||
                       (elapsed - brakeStart) > timeFactor*speed/_acceleration)
               {
@@ -604,16 +609,17 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
                 target = Math.abs(brakeAngle) + speed * timeConstant * factor / 1000;
               }
             } else
-            // not braking
+  // not braking so calculate power to regulate speed
             {
-              if (elapsed < timeConstant * 4)// not at speed yet
+              if (elapsed < timeConstant * 4 &&_rampUp)// not at speed yet
               {
                 float factor = 1 - (float) Math.exp(-elapsed / timeConstant);
                 target = _speed * (elapsed - timeConstant * factor) / 1000f;
                 speed = _speed * factor;  // decays toward _speed
               } else  // adjust elapsed time for acceleration time - don't try to catch up
               {
-                target = ((elapsed - timeConstant) * _speed) / 1000f;
+                if(_rampUp)target = ((elapsed - timeConstant) * _speed) / 1000f;// timeConstant should be 0 of no ramp
+                else target = elapsed *_speed/1000f;
               }
             }
             error = target - absA;
@@ -623,18 +629,8 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
               _stalled = true;
               _thisMotor.stop();
             } else
-            {
-              // use smoothing to reduce the noize in frequrent tacho count readings
-              err1 = 0.5f * err1 + 0.5f * error;  // fast smoothing
-              err2 = 0.8f * err2 + 0.2f * error; // slow smoothing
-              float gain = 4f; // feedback constant
-              float extrap = 8f; // feedback constant
-              power = basePower + gain * (err1 + extrap * (err1 - err2));
-              e0 = error;
-              float smooth = 0.04f;// .04 another magic number from experimen;
-              basePower = basePower + smooth * (power - basePower);
-              setPower((int) power);
-            }
+              calcPower(error);
+         
             // end speed regulation
             }
           // end synchronized block
@@ -643,7 +639,25 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
 
       }	// end keep going loop
       }// end run
-
+/**
+ * helper method for speed regulation.
+ * calculates power from error using double smoothing.
+ * sets basePoser and calles setPower();
+ * @param error
+ */
+    private void calcPower(float error)
+    {
+      // use smoothing to reduce the noise in frequrent tacho count readings
+      err1 = 0.5f * err1 + 0.5f * error;  // fast smoothing
+      err2 = 0.8f * err2 + 0.2f * error; // slow smoothing
+      float gain = 4f; // feedback constant
+      float extrap = 8f; // feedback constant
+      power = basePower + gain * (err1 + extrap * (err1 - err2));
+      e0 = error;
+      float smooth = 0.04f;// .04 another magic number from experimen;
+      basePower = basePower + smooth * (power - basePower);
+      setPower((int) power);
+    }
     /**
      * helper method for run()
      */
