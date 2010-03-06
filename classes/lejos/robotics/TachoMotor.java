@@ -95,4 +95,6 @@ public interface TachoMotor extends Tachometer, DCMotor {
    */
 
     boolean isStalled();
+
+    void setAcceleration(int acceleration);
 }
