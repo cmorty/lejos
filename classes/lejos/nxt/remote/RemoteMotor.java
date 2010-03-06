@@ -303,5 +303,5 @@ public class RemoteMotor implements TachoMotor, NXTProtocol {
           // in the real Motor, the regulator does it;
         }
 	
-	
+	public void setAcceleration(int acceleration){};
 }
