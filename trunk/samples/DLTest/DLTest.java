@@ -32,8 +32,7 @@ public class DLTest
             float x = i*0.5f;
             dl.writeLog(x);
          }
-         dl.transmit(false); 
-         dl.reset();
+         dl.transmit(); 
          LCD.clear();
          LCD.drawString("more?",0,2);
          LCD.refresh();
