@@ -190,6 +190,7 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
   public void stop()
   {
     updateState(STOP);
+    Delay.msDelay(50);
   }
 
   /**
@@ -334,7 +335,7 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
     {
       speed = (int) (100 * _voltage);// no faster than motor can sustain
     }
-    boolean smallChange = Math.abs(speed - _speed)< 200;
+    boolean smallChange = Math.abs(speed - _speed)< 200 && isMoving();
     _speed = speed;
     if (speed < 0)
     {
@@ -558,6 +559,7 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
       timeConstant = 1000 * _speed / _acceleration;
       speed = 0;
       braking = false;
+      _rampUp = true;
     }
 
     /**
@@ -596,7 +598,7 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
             }
             if (braking)
             {
-              int timeFactor = 2000;
+              int timeFactor = 3000;
 // close to limit angle ?  if so , stop  Note: speed is deg/sec ; but  elapsed in ms
               if (Math.abs(_limitAngle - getTachoCount()) < 2 ||
                       (elapsed - brakeStart) > timeFactor*speed/_acceleration)
