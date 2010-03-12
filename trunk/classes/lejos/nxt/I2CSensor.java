@@ -43,34 +43,59 @@ public class I2CSensor implements SensorConstants {
 
 	/**
 	 * Executes an I2C read transaction and waits for the result.
-	 * 
+	 *
 	 * @param register I2C register, e.g 0x41
 	 * @param buf Buffer to return data
 	 * @param len Length of the return data
 	 * @return status == 0 success, != 0 failure
 	 */
 	public synchronized int getData(int register, byte [] buf, int len) {
+        return getData(register, buf, 0, len);
+	}
+	/**
+	 * Executes an I2C read transaction and waits for the result.
+	 *
+	 * @param register I2C register, e.g 0x41
+	 * @param buf Buffer to return data
+     * @param offset Offset of the start of the data
+     * @param len Length of the return data
+	 * @return status == 0 success, != 0 failure
+	 */
+	public synchronized int getData(int register, byte [] buf, int offset, int len) {
         // need to write the internal address.
         ioBuf[0] = (byte)register;
-		int ret = port.i2cTransaction(address, ioBuf, 0, 1, buf, 0, len);
+		int ret = port.i2cTransaction(address, ioBuf, 0, 1, buf, offset, len);
         return (ret < 0 ? ret : (ret == len ? 0 : -1));
 	}
 	
 	/**
 	 *  Executes an I2C write transaction.
-	 *  
+	 *
 	 * @param register I2C register, e.g 0x42
 	 * @param buf Buffer containing data to send
 	 * @param len Length of data to send
 	 * @return status zero=success, non-zero=failure
 	 */
 	public synchronized int sendData(int register, byte [] buf, int len) {
+        return sendData(register, buf, 0, len);
+	}
+
+	/**
+	 *  Executes an I2C write transaction.
+	 *
+	 * @param register I2C register, e.g 0x42
+	 * @param buf Buffer containing data to send
+     * @param offset Offset of the start of the data
+     * @param len Length of data to send
+	 * @return status zero=success, non-zero=failure
+	 */
+	public synchronized int sendData(int register, byte [] buf, int offset, int len) {
         if (len >= ioBuf.length) throw new IllegalArgumentException();
         ioBuf[0] = (byte)register;
-        System.arraycopy(buf, 0, ioBuf, 1, len);
+        System.arraycopy(buf, offset, ioBuf, 1, len);
         return port.i2cTransaction(address, ioBuf, 0, len+1, null, 0, 0);
 	}
-	
+
 	/**
 	 *  Executes an I2C write transaction.
 	 *  
