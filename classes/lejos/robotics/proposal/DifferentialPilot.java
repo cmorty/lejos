@@ -6,7 +6,7 @@ package lejos.robotics.proposal;
 
 
 import java.util.ArrayList;
-import lejos.robotics.proposal.*;
+
 import lejos.nxt.*;
 import lejos.robotics.*;
 
@@ -271,6 +271,13 @@ public class DifferentialPilot implements
     setTravelSpeed(s);
   }
 
+
+  public void setAcceleration(int accel)
+  {
+    _left.setAcceleration(accel);
+    _right.setAcceleration(accel);
+  }
+
   /**
    * @see lejos.robotics.navigation.Pilot#getTravelMaxSpeed()
    */
@@ -383,6 +390,7 @@ public class DifferentialPilot implements
   public boolean rotateLeft()
   {
     _type = Move.MoveType.ROTATE;
+    movementStart(true);
     _right.forward();
     _left.backward();
     return true;
@@ -391,6 +399,7 @@ public class DifferentialPilot implements
   public boolean rotateRight()
   {
     _type = Move.MoveType.ROTATE;
+     movementStart(true);
     _left.forward();
     _right.backward();
     return true;
@@ -458,7 +467,6 @@ public class DifferentialPilot implements
     {
       Thread.yield();
     }
-//    movementStop();
     return true;
   }
 
@@ -612,8 +620,6 @@ public class DifferentialPilot implements
 /**
  * This method is for frequent adjustments of robot direction, for example
  * for line following and in CompassPilot to correctheading traveling.
- * It should NEVER be called when this classes is used as a Move Provider
- * for navigation purposes.
  * @param turnRate
  */
   public void steer(float turnRate)
@@ -625,6 +631,12 @@ public class DifferentialPilot implements
     }
     steerPrep(turnRate);
     _outside.forward();
+    if (!_steering)  //only call movement start if this is the most recent methoc called
+    {
+      _type = Move.MoveType.ARC;
+      movementStart(true);
+      _steering = true;
+    }
     if (_parity * _steerRatio > 0) _inside.forward();
     else _inside.backward();
   }
@@ -669,11 +681,6 @@ public class DifferentialPilot implements
   protected void steerPrep(final float turnRate)
   {
 
-//    if (turnRate == 0)
-//    {
-//      forward();
-//      return;
-//    }
     float rate = turnRate;
     if (rate < -200) rate = -200;
     if (rate > 200) rate = 200;
@@ -762,8 +769,9 @@ public class DifferentialPilot implements
    **/
   public void reset()
   { 
-    _left.resetTachoCount();
-    _right.resetTachoCount();
+    _leftTC = getLeftCount();
+    _rightTC = getRightCount();
+    _steering = false;
   }
 
   public void setMinRadius(float radius)
@@ -778,15 +786,15 @@ public class DifferentialPilot implements
 
   public float getMovementIncrement()
   {
-    float left = _left.getTachoCount() / _leftDegPerDistance;
-    float right = _right.getTachoCount() / _rightDegPerDistance;
+    float left = (_left.getTachoCount() - _leftTC)/ _leftDegPerDistance;
+    float right = ( _right.getTachoCount() - _rightTC) / _rightDegPerDistance;
     return _parity * (left + right) / 2.0f;
   }
 
   public float getAngleIncrement()
   {
-    return _parity * ((_right.getTachoCount() / _rightTurnRatio) -
-            (_left.getTachoCount() / _leftTurnRatio)) / 2.0f;
+    return _parity * (((_right.getTachoCount() - _rightTC) / _rightTurnRatio) -
+            ((_left.getTachoCount()  - _leftTC) / _leftTurnRatio)) / 2.0f;
   }
 
   public void addMoveListener(MoveListener m)
@@ -824,6 +832,7 @@ public class DifferentialPilot implements
    * used by other steer methods;
    */
   protected float _steerRatio;
+  protected boolean _steering = false;
   /**
    * Left motor degrees per unit of travel.
    */
@@ -873,6 +882,9 @@ public class DifferentialPilot implements
    * Diameter of right wheel.
    */
   protected final float _rightWheelDiameter;
+
+  public int _leftTC; // left tacho count
+ public int _rightTC; //right tacho count
 
   protected ArrayList<MoveListener> _listeners= new ArrayList<MoveListener>();
   protected MoveListener _listener;
