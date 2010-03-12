@@ -244,32 +244,31 @@ i2c_timer_isr_C(void)
       p->state = I2C_TXDATA1;
       // FALLTHROUGH
     case I2C_TXDATA1:
-        // Take SCL low
-        *AT91C_PIOA_CODR = p->scl_pin;
-        p->nbits--;
-        if(p->bits & 0x80)
-          *AT91C_PIOA_SODR = p->sda_pin;
-        else
-          *AT91C_PIOA_CODR = p->sda_pin;
-        *AT91C_PIOA_OER = p->sda_pin;
-        p->bits <<= 1;
-        p->state = I2C_TXDATA2;
+      // Take SCL low
+      *AT91C_PIOA_CODR = p->scl_pin;
+      p->nbits--;
+      if(p->bits & 0x80)
+        *AT91C_PIOA_SODR = p->sda_pin;
+      else
+        *AT91C_PIOA_CODR = p->sda_pin;
+      *AT91C_PIOA_OER = p->sda_pin;
+      p->bits <<= 1;
+      p->state = I2C_TXDATA2;
       break;
     case I2C_TXDATA2:
       // Take SCL high
       *AT91C_PIOA_SODR = p->scl_pin;
       if((p->nbits & 7) == 0) 
           p->state = I2C_TXACK1;
-        
         else
           p->state = I2C_TXDATA1;
       break;
     case I2C_TXACK1:
-        // Take SCL low
-        *AT91C_PIOA_CODR = p->scl_pin;
-        // release the data line
-        *AT91C_PIOA_ODR = p->sda_pin;
-        p->state = I2C_TXACK2;
+      // Take SCL low
+      *AT91C_PIOA_CODR = p->scl_pin;
+      // release the data line
+      *AT91C_PIOA_ODR = p->sda_pin;
+      p->state = I2C_TXACK2;
       break;
     case I2C_TXACK2:
       // Take SCL High
@@ -308,11 +307,11 @@ i2c_timer_isr_C(void)
         p->state = I2C_RXDATA1;
       // Fall through
     case I2C_RXDATA1:
-        // Take SCL Low
-        *AT91C_PIOA_CODR = p->scl_pin;
-        // get ready to read
-        *AT91C_PIOA_ODR = p->sda_pin;
-        p->state = I2C_RXDATA2;
+      // Take SCL Low
+      *AT91C_PIOA_CODR = p->scl_pin;
+      // get ready to read
+      *AT91C_PIOA_ODR = p->sda_pin;
+      p->state = I2C_RXDATA2;
       break;
     case I2C_RXDATA2:
       // Take SCL High
@@ -333,11 +332,11 @@ i2c_timer_isr_C(void)
         p->state = I2C_RXDATA1;
       break;
     case I2C_RXACK1:
-        // Take SCL low
-        *AT91C_PIOA_CODR = p->scl_pin;
-        *AT91C_PIOA_CODR = p->sda_pin;
-        *AT91C_PIOA_OER = p->sda_pin;
-        p->state = I2C_RXACK2;
+      // Take SCL low
+      *AT91C_PIOA_CODR = p->scl_pin;
+      *AT91C_PIOA_CODR = p->sda_pin;
+      *AT91C_PIOA_OER = p->sda_pin;
+      p->state = I2C_RXACK2;
       break;
     case I2C_RXACK2:
       // Clock high
@@ -348,10 +347,10 @@ i2c_timer_isr_C(void)
       p->state = I2C_RXDATA1;
       break;
     case I2C_RXENDACK1:
-        // Take SCL low
-        *AT91C_PIOA_CODR = p->scl_pin;
-        *AT91C_PIOA_SODR = p->sda_pin;
-        p->state = I2C_RXENDACK2;
+      // Take SCL low
+      *AT91C_PIOA_CODR = p->scl_pin;
+      *AT91C_PIOA_SODR = p->sda_pin;
+      p->state = I2C_RXENDACK2;
       break;
     case I2C_RXENDACK2:
       // Clock high data is already high
