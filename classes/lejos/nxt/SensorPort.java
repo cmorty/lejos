@@ -1181,7 +1181,6 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
         }
 		if (ret < 0) return ret;
         i2cWaitIOComplete();
-        //while (i2cStatus() == ERR_BUSY) Thread.yield();
 		ret = i2cComplete(readBuf, readOffset, readLen);
         return ret;
     }
