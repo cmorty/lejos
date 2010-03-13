@@ -99,16 +99,17 @@
 				<p>This class stores float values in
 				an array and transmits them to the <a href="../PC_GUI/PCGUITools.htm">DataViewer</a>
 				application running on a PC.  It will use BlueTooth or USB as
-				selected by the user at run time.  The default size of the array
-				is 512, but this can be set to any value, limited by available
-				memory, by a <a href="http://lejos.sourceforge.net/nxt/nxj/api/lejos/util/Datalogger.html#Datalogger(int)">constructor</a>.</p>
+				selected by the user at run time.  </p>
 				<p>Methods:</p>
 				<ul class="BlueArrows">
-					<li><p>void writeLog(float value)</p><p>Writes a <i>value </i> to the array</p>
-					<li><p>void reset()</a>
-					<p/><p>Clear the array.  The next value is written at the beginning.</p>
-					<li><p>void transmit()</a>
-					<p/><p>Transmits the data to the PC. </p>
+					<li>void writeLog(float value) <br></br>
+						Writes a <i>value </i> to the array  </li>
+					<li>void writeLog(float v0, float v1) <br></br> Writes two values to the array </li>
+					
+					
+					<li>void transmit()<br></br>
+					Transmits the data to the PC.  When this method is called, a message is displayed on the
+					NXT screen allowing the user to select USB or BlueTooth as the transmission channel</li>
 				</ul>
 				<p>The complete API of Data:logger is <a href="http://lejos.sourceforge.net/nxt/nxj/api/lejos/util/Datalogger.html">here</a>. 
 				</p>
