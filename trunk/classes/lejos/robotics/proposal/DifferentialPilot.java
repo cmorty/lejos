@@ -6,7 +6,6 @@ package lejos.robotics.proposal;
 
 
 import java.util.ArrayList;
-
 import lejos.nxt.*;
 import lejos.robotics.*;
 
@@ -56,7 +55,7 @@ import lejos.robotics.*;
  *
  **/
 public class DifferentialPilot implements
-        TachoMotorListener, MoveProvider, ArcRotateMoveController
+       TachoMotorListener, MoveControl
 {
 
   /**
@@ -276,6 +275,7 @@ public class DifferentialPilot implements
   {
     _left.setAcceleration(accel);
     _right.setAcceleration(accel);
+
   }
 
   /**
@@ -387,22 +387,21 @@ public class DifferentialPilot implements
     _right.forward();
   }
 
-  public boolean rotateLeft()
+  public void rotateLeft()
   {
     _type = Move.MoveType.ROTATE;
     movementStart(true);
     _right.forward();
     _left.backward();
-    return true;
   }
 
-  public boolean rotateRight()
+  public void rotateRight()
   {
     _type = Move.MoveType.ROTATE;
      movementStart(true);
     _left.forward();
     _right.backward();
-    return true;
+
   }
 
   /**
@@ -414,9 +413,9 @@ public class DifferentialPilot implements
    *            The wanted angle of rotation in degrees. Positive angle rotate
    *            left (clockwise), negative right.
    */
-  public boolean rotate(final float angle)
+  public void  rotate(final float angle)
   {
-    return rotate(angle, false);
+     rotate(angle, false);
   }
 
   /**
@@ -430,7 +429,7 @@ public class DifferentialPilot implements
    * @param immediateReturn
    *            If true this method returns immediately.
    */
-  public boolean rotate(final float angle, final boolean immediateReturn)
+  public void rotate(final float angle, final boolean immediateReturn)
   {
     _type = Move.MoveType.ROTATE;
     movementStart(immediateReturn);
@@ -441,7 +440,6 @@ public class DifferentialPilot implements
     _right.rotate(rotateAngleRight, immediateReturn);
 
     if (!immediateReturn)  while (isMoving()) Thread.yield();
-    return true;
   }
 
   /**
@@ -450,16 +448,15 @@ public class DifferentialPilot implements
    *
    * @return true iff no hazard is detected
    */
-  protected boolean continueMoving()
+  protected void  continueMoving()
   {
-    return true;
   }
 
   /**
    * Stops the NXT robot.
    *  side effect: inform listeners of end of movement
    */
-  public boolean stop()
+  public void stop()
   {
     _left.stop();
     _right.stop();
@@ -467,7 +464,6 @@ public class DifferentialPilot implements
     {
       Thread.yield();
     }
-    return true;
   }
 
   /**
@@ -480,9 +476,9 @@ public class DifferentialPilot implements
    *            The distance to move. Unit of measure for distance must be
    *            same as wheelDiameter and trackWidth.
    **/
-  public boolean travel(final float distance)
+  public void  travel(final float distance)
   {
-    return travel(distance, false);
+      travel(distance, false);
   }
 
   /**
@@ -497,18 +493,16 @@ public class DifferentialPilot implements
    * @param immediateReturn
    *            If true this method returns immediately.
    */
-  public boolean travel(final float distance, final boolean immediateReturn)
+  public void travel(final float distance, final boolean immediateReturn)
   {
     _type = Move.MoveType.TRAVEL;
     if (distance == Float.POSITIVE_INFINITY)
     {
       forward();
-      return true;
     }
     if ((distance == Float.NEGATIVE_INFINITY))
     {
       backward();
-      return true;
     }
     movementStart(immediateReturn);
     setSpeed(Math.round(_robotTravelSpeed * _leftDegPerDistance), Math.round(_robotTravelSpeed * _rightDegPerDistance));
@@ -516,7 +510,6 @@ public class DifferentialPilot implements
     _right.rotate((int) (_parity * distance * _rightDegPerDistance),
             immediateReturn);
     if (!immediateReturn) while (isMoving()) Thread.yield();
-    return true;
   }
 
   public boolean arcForward(final float radius)
@@ -553,35 +546,32 @@ public class DifferentialPilot implements
     return true;
   }
 
-  public boolean arc(final float radius, final float angle)
+  public void arc(final float radius, final float angle)
   {
-    return arc(radius, angle, false);
+    arc(radius, angle, false);
   }
 
-  public boolean arc(final float radius, final float angle,
+  public void arc(final float radius, final float angle,
           final boolean immediateReturn)
   {
     if (radius == Float.POSITIVE_INFINITY || radius == Float.NEGATIVE_INFINITY)
     {
       forward();
-      return true;
     }
     steer(turnRate(radius), angle, immediateReturn);// type and move started called by steer()
     if (!immediateReturn) while(isMoving())Thread.yield();
-    return true;
   }
 
-  public boolean travelArc(float radius, float distance)
+  public void  travelArc(float radius, float distance)
   {
-    return travelArc(radius, distance, false);
+    travelArc(radius, distance, false);
   }
 
-  public boolean travelArc(float radius, float distance, boolean immediateReturn)
+  public void  travelArc(float radius, float distance, boolean immediateReturn)
   {
     if (radius == Float.POSITIVE_INFINITY || radius == Float.NEGATIVE_INFINITY)
     {
       travel(distance, immediateReturn);
-      return true;
     }
 //    _type = Move.MoveType.ARC;
 //    movementStart(immediateReturn);
@@ -590,7 +580,7 @@ public class DifferentialPilot implements
       throw new IllegalArgumentException("Zero arc radius");
     }
     float angle = (distance * 180) / ((float) Math.PI * radius);
-    return arc(radius, angle, immediateReturn);
+    arc(radius, angle, immediateReturn);
   }
 
   /**
