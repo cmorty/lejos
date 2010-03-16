@@ -22,7 +22,7 @@ public class BumpNavigator
    * @param leftTouch -  touch sensor in left side
    * @param rightTouch - touch sensor on right side
    */
-  public BumpNavigator( final ArcRotateMoveController aPilot, final  SensorPort leftTouch, final SensorPort rightTouch)
+  public BumpNavigator( final MoveControl aPilot, final  SensorPort leftTouch, final SensorPort rightTouch)
   {   
     leftBump = new TouchSensor(leftTouch);
     rightBump = new TouchSensor(rightTouch);
@@ -38,7 +38,7 @@ public class BumpNavigator
 
 public void goTo(float x, float y)
   {
-    pilot.setTurnSpeed(180);
+    pilot.setRotateSpeed(180);
     Point destination = new Point(x, y);
     pose = drpp.getPose();
     while (pose.distanceTo(destination) > 2)  //close enough??
@@ -105,7 +105,7 @@ public void goTo(float x, float y)
       robot.goTo(200,0);
     }
   
-  private ArcRotateMoveController pilot;
+  private MoveControl pilot;
   private DeadReckonerPoseProvider drpp;
   private Pose pose = new Pose();
   Random rand = new Random();
