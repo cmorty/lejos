@@ -55,7 +55,7 @@ import lejos.robotics.*;
  *
  **/
 public class DifferentialPilot implements
-       TachoMotorListener, MoveControl
+       TachoMotorListener, ArcRotateMoveController
 {
 
   /**
@@ -157,7 +157,7 @@ public class DifferentialPilot implements
     // both
     _trackWidth = trackWidth;
     _parity = (byte) (reverse ? -1 : 1);
-    setTravelSpeed(.8f * getMaxTravelSpeed());
+    setMoveSpeed(.8f * getMaxTravelSpeed());
     setRotateSpeed(.8f * getMaxRotateSpeed());
   }
 
@@ -247,14 +247,6 @@ public class DifferentialPilot implements
     setSpeed(Math.round(travelSpeed * _leftDegPerDistance), Math.round(travelSpeed * _rightDegPerDistance));
   }
 
-  /**
-   * @see lejos.robotics.navigation.Pilot#getTravelSpeed()
-   */
-  public float getTravelSpeed()
-  {
-    return _robotTravelSpeed;
-  }
-
   public float getMoveMaxSpeed()
   {
     return getMaxTravelSpeed();
@@ -262,12 +254,12 @@ public class DifferentialPilot implements
 
   public float getMoveSpeed()
   {
-    return getTravelSpeed();
+    return _robotTravelSpeed;
   }
 
   public void setMoveSpeed(float s)
   {
-    setTravelSpeed(s);
+    _robotTravelSpeed = s;
   }
 
 
@@ -512,7 +504,7 @@ public class DifferentialPilot implements
     if (!immediateReturn) while (isMoving()) Thread.yield();
   }
 
-  public boolean arcForward(final float radius)
+  public void arcForward(final float radius)
   {
     _type = Move.MoveType.ARC;
     movementStart(true);
@@ -526,10 +518,9 @@ public class DifferentialPilot implements
     {
       _inside.backward();
     }
-    return true;
   }
 
-  public boolean arcBackward(final float radius)
+  public void arcBackward(final float radius)
   {
      _type = Move.MoveType.ARC;
     movementStart(true);
@@ -543,15 +534,14 @@ public class DifferentialPilot implements
     {
       _inside.forward();
     }
-    return true;
   }
 
   public void arc(final float radius, final float angle)
   {
-    arc(radius, angle, false);
+     arc(radius, angle, false);
   }
 
-  public void arc(final float radius, final float angle,
+  public void  arc(final float radius, final float angle,
           final boolean immediateReturn)
   {
     if (radius == Float.POSITIVE_INFINITY || radius == Float.NEGATIVE_INFINITY)
@@ -562,12 +552,12 @@ public class DifferentialPilot implements
     if (!immediateReturn) while(isMoving())Thread.yield();
   }
 
-  public void  travelArc(float radius, float distance)
+  public  void  travelArc(float radius, float distance)
   {
-    travelArc(radius, distance, false);
+     travelArc(radius, distance, false);
   }
 
-  public void  travelArc(float radius, float distance, boolean immediateReturn)
+  public void travelArc(float radius, float distance, boolean immediateReturn)
   {
     if (radius == Float.POSITIVE_INFINITY || radius == Float.NEGATIVE_INFINITY)
     {
