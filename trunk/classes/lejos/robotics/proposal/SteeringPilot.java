@@ -118,33 +118,33 @@ public class SteeringPilot implements ArcMoveController, TachoMotorListener {
 		}
 	}
 	
-	public boolean arcForward(float turnRadius) {
-		return arc(turnRadius, Float.POSITIVE_INFINITY, true);
+	public void arcForward(float turnRadius) {
+		 arc(turnRadius, Float.POSITIVE_INFINITY, true);
 	}
 	
-	public boolean arcBackward(float turnRadius) {
-		return arc(turnRadius, Float.NEGATIVE_INFINITY, true);
+	public void arcBackward(float turnRadius) {
+		arc(turnRadius, Float.NEGATIVE_INFINITY, true);
 	}
 	
-	public boolean arc(float turnRadius, float arcAngle) throws IllegalArgumentException {
+	public void arc(float turnRadius, float arcAngle) throws IllegalArgumentException {
 		if(turnRadius == 0) throw new IllegalArgumentException("SteeringPilot can't do zero radius turns."); // Can't turn in one spot
-		return arc(turnRadius, arcAngle, false);
+		 arc(turnRadius, arcAngle, false);
 	}
 
-	public boolean arc(float turnRadius, float arcAngle, boolean immediateReturn) {
+	public void arc(float turnRadius, float arcAngle, boolean immediateReturn) {
 		double distance = Move.convertAngleToDistance(arcAngle, turnRadius);
-		return travelArc(turnRadius, (float)distance, immediateReturn);
+		 travelArc(turnRadius, (float)distance, immediateReturn);
 	}
 
 	public void setMinRadius(float minTurnRadius) {
 		this.minTurnRadius = minTurnRadius;
 	}
 
-	public boolean travelArc(float turnRadius, float distance) {
-		return travelArc(turnRadius, distance, false);
+	public void travelArc(float turnRadius, float distance) {
+		travelArc(turnRadius, distance, false);
 	}
 
-	public boolean travelArc(float turnRadius, float distance, boolean immediateReturn) throws IllegalArgumentException {
+	public void travelArc(float turnRadius, float distance, boolean immediateReturn) throws IllegalArgumentException {
 		
 		if(turnRadius < this.getMinRadius()) throw new IllegalArgumentException("Turn radius can't be less than " + this.getMinRadius());
 		
@@ -164,7 +164,6 @@ public class SteeringPilot implements ArcMoveController, TachoMotorListener {
 		if((distance == Float.NEGATIVE_INFINITY & !this.reverseDriveMotor) | (distance == Float.POSITIVE_INFINITY & this.reverseDriveMotor)) {
 			driveMotor.backward();
 			//return moveEvent;
-			return true;
 		}
 		
 		// 4. Start moving
@@ -174,7 +173,6 @@ public class SteeringPilot implements ArcMoveController, TachoMotorListener {
 		driveMotor.rotate(tachos, immediateReturn);
 		
 		//return moveEvent;
-		return true;
 	}
 	
 	public void backward() {
@@ -211,9 +209,9 @@ public class SteeringPilot implements ArcMoveController, TachoMotorListener {
 		
 	}
 
-	public boolean stop() {
+	public void stop() {
 		// 1. Check if moving. If not, return?
-		if(!isMoving()) return false; // Should return no movement? Or moveEvent? Null might be appropriate.
+//		if(!isMoving()) return false; // Should return no movement? Or moveEvent? Null might be appropriate.
 		
 		// 2. Get instance of moveEvent here. Used to check when rotationStopped() completes
 		Move oldMove = moveEvent;
@@ -226,15 +224,14 @@ public class SteeringPilot implements ArcMoveController, TachoMotorListener {
 		
 		// 5. Return newly created moveEvent
 		//return moveEvent;
-		return true;
 	}
 
-	public boolean travel(float distance) {
-		return travel(distance, false);
+	public void travel(float distance) {
+		 travel(distance, false);
 	}
 
-	public boolean travel(float distance, boolean immediateReturn) {
-		return travelArc(Float.POSITIVE_INFINITY, distance, immediateReturn);
+	public void travel(float distance, boolean immediateReturn) {
+		travelArc(Float.POSITIVE_INFINITY, distance, immediateReturn);
 	}
 
 	public void addMoveListener(MoveListener listener) {
