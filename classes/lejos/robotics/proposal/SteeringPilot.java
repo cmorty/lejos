@@ -183,14 +183,14 @@ public class SteeringPilot implements ArcMoveController, TachoMotorListener {
 		travel(Float.POSITIVE_INFINITY, true);
 	}
 
-	public float getMoveMaxSpeed() {
+	public float getMaxTravelSpeed() {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	// TODO: This method should indicate it is not live speed. Such as getSpeedSetting(), setSpeedSetting()
 	// TODO: Many methods in MoveController have no documentation and unit specification, incl. this.
-	public float getMoveSpeed() {
+	public float getTravelSpeed() {
 		// TODO Auto-generated method stub
 		return 0;
 	}
@@ -204,7 +204,7 @@ public class SteeringPilot implements ArcMoveController, TachoMotorListener {
 		return isMoving;
 	}
 
-	public void setMoveSpeed(float speed) {
+	public void setTravelSpeed(float speed) {
 		// TODO This should set the motor speed for the drive motor, perhaps also calculates based on wheel diameter?
 		
 	}

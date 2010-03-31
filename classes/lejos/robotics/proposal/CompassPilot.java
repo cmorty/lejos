@@ -102,11 +102,11 @@ public class CompassPilot extends TachoPilot {
 	public synchronized void calibrate()
 	{
 		int spd =_motorSpeed;
-		setTurnSpeed(50);
+		setRotateSpeed(50);
 		compass.startCalibration();
 		super.rotate(360,false);
         compass.stopCalibration();             
-		setSpeed(spd);
+		setTravelSpeed(spd);
 	}
     public void resetCartesianZero()
     {

@@ -14,7 +14,7 @@ import lejos.robotics.*;
 
 public class BasicNavigator
 {
-  public BasicNavigator(MoveControl pilot )
+  public BasicNavigator(ArcRotateMoveController  pilot )
   {
     _pilot = pilot;
     drpp = new DeadReckonerPoseProvider((DifferentialPilot)_pilot);
@@ -44,7 +44,7 @@ public class BasicNavigator
    * executed on the pilot.
    * @return
    */
-public MoveControl getPilot(){ return _pilot;}
+public ArcRotateMoveController getPilot(){ return _pilot;}
 
 /**
  * Moves the robot to the destinatin location
@@ -107,7 +107,7 @@ public MoveControl getPilot(){ return _pilot;}
    *
    */
     public boolean _keepGoing = false;
-    protected MoveControl _pilot;
+    protected ArcRotateMoveController _pilot;
     protected DeadReckonerPoseProvider drpp;
     protected Pose _pose = new Pose();
     protected Point _destination;

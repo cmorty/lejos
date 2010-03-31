@@ -189,30 +189,10 @@ public class DifferentialFeedbackPilot implements Pilot, MoveProvider
     {
         desiredMoveSpeed = speed;
     }
-
-    public float getTurnSpeed()
-    {
-        return desiredTurnSpeed;
-    }
-
-    public void setTurnSpeed(float speed)
-    {
-        desiredTurnSpeed = speed;
-    }
     
     public float getTurnMaxSpeed()
     {
         return maxTurnSpeed;
-    }
-
-    public void setMoveSpeed(float speed)
-    {
-        desiredMoveSpeed = speed;
-    }
-
-    public float getMoveSpeed()
-    {
-        return desiredMoveSpeed;
     }
 
     public float getMoveMaxSpeed()
