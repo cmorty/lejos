@@ -24,8 +24,8 @@ public class RCNavigator
     {
       pilot = aPilot;
       drpp = new DeadReckonerPoseProvider(pilot);
-      pilot.setMoveSpeed(20);
-      pilot.setTurnSpeed(180);
+      pilot.setTravelSpeed(20);
+      pilot.setRotateSpeed(180);
     }
 /**
  * wheel diameter and track width in cm.
