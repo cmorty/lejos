@@ -3,8 +3,6 @@ package lejos.robotics.proposal;
 
 
 
-
-
 import java.util.ArrayList;
 import lejos.nxt.*;
 import lejos.robotics.*;
@@ -22,7 +20,7 @@ import lejos.robotics.*;
  * steer differentially, so it can rotate within its own footprint (i.e. turn on
  * one spot). It registers as a TachoMotorListener with each of its motors.
  * An object of this class assumes that it has exclusive control of
- * its motors.  If any other object makes calls to its motors, the resultes are
+ * its motors.  If any other object makes calls to its motors, the results are
  * unpredictable. <br>
  * This class  can be used with robots that have reversed motor design: the robot moves
  * in the direction opposite to the the direction of motor rotation. .<br>
@@ -33,22 +31,21 @@ import lejos.robotics.*;
  * Handling stalls: If a stall is detected,   <code>isStalled()</code> returns <code>
  * true </code>,  <code>isMoving()</code>  returns <code>false</code>, <code>moveStopped()
  * </code> is called, and, if a blocking method is executing, that method exits.
- *  Example:
+ * <br> Example of use of come common methods:
  * <p>
  * <code><pre>
  * DifferentialPilot pilot = new DifferentialPilot(2.1f, 4.4f, Motor.A, Motor.C, true);  // parameters in inches
- * pilot.setRobotSpeed(10);                                           // inches per second
- * pilot.travel(12);                                                  // inches
- * pilot.rotate(-90);                                                 // degree clockwise
+ * pilot.setRobotSpeed(10);  // inches per second
+ * pilot.travel(12);         // inches
+ * pilot.rotate(-90);        // degree clockwise
  * pilot.travel(-12,true);
  * while(pilot.isMoving())Thread.yield();
  * pilot.rotate(-90);
  * pilot.rotateTo(270);
- * pilot.steer(-50,180,true);
+ * pilot.steer(-50,180,true); // turn 180 degrees to the right
  * while(pilot.isMoving())Thread.yield();
- * pilot.steer(100);
- * try{Thread.sleep(1000);}
- * catch(InterruptedException e){}
+ * pilot.steer(100);          // turns with left wheel stationary
+ * Delay.msDelay(1000;
  * pilot.stop();
  * </pre></code>
  * </p>
@@ -157,7 +154,7 @@ public class DifferentialPilot implements
     // both
     _trackWidth = trackWidth;
     _parity = (byte) (reverse ? -1 : 1);
-    setMoveSpeed(.8f * getMaxTravelSpeed());
+    setTravelSpeed(.8f * getMaxTravelSpeed());
     setRotateSpeed(.8f * getMaxRotateSpeed());
   }
 
@@ -219,15 +216,6 @@ public class DifferentialPilot implements
     return _right.getRotationSpeed();
   }
 
-  /**
-   * Returns the ratio of motor revolutions per 360 degree rotation of the robot
-   * @return ratio of motor revolutions per 360 degree rotation of the robot.
-   *         If your robot has wheels with different size, it is the average.
-   */
-  public float getTurnRatio()
-  {
-    return (_leftTurnRatio + _rightTurnRatio) / 2.0f;
-  }
 
   private void setSpeed(final int leftSpeed, final int rightSpeed)
   {
@@ -247,19 +235,10 @@ public class DifferentialPilot implements
     setSpeed(Math.round(travelSpeed * _leftDegPerDistance), Math.round(travelSpeed * _rightDegPerDistance));
   }
 
-  public float getMoveMaxSpeed()
-  {
-    return getMaxTravelSpeed();
-  }
 
-  public float getMoveSpeed()
+  public float getTravelSpeed()
   {
     return _robotTravelSpeed;
-  }
-
-  public void setMoveSpeed(float s)
-  {
-    _robotTravelSpeed = s;
   }
 
 
@@ -311,17 +290,8 @@ public class DifferentialPilot implements
     // max degree/second divided by degree/unit = unit/second
   }
 
-  public void setTurnSpeed(float s)
-  {
-    setRotateSpeed(s);
-  }
 
-  public float getTurnSpeed()
-  {
-    return getRotateSpeed();
-  }
-
-  public float getTurnMaxSpeed()
+  public float getRotateMaxSpeed()
   {
     return getMaxRotateSpeed();
   }
@@ -598,10 +568,32 @@ public class DifferentialPilot implements
   }
 
 /**
- * This method is for frequent adjustments of robot direction, for example
- * for line following and in CompassPilot to correctheading traveling.
- * @param turnRate
- */
+   * Starts the robot moving forward along a curved path. This method is similar to the
+   * {@link #arc(float radius)} method except it uses the <code> turnRate</code> parameter
+   * do determine the curvature of the path and therefore has the ability to drive straight. This makes
+   * it useful for line following applications.
+   * <p>
+   * The <code>turnRate</code> specifies the sharpness of the turn.  Use values  between -200 and +200.<br>
+   * A negative value means that center of the turn is on the left.  If the
+ * robot is traveling toward the top of the page the arc looks like this: <b>)</b>. <br>
+   * A positive value means that center of the turn is on the  right so the arc liiks  this: <b>(</b>. <br>.
+   *  In this class,  this parameter determines the  ratio of inner wheel speed to outer wheel speed <b>as a percent</b>.<br>
+   * <I>Formula:</I> <code>ratio = 100 - abs(turnRate)</code>.<br>
+   * When the ratio is negative, the outer and inner wheels rotate in
+   * opposite directions.
+   * Examples of how the formula works:
+   * <UL>
+   * <LI><code>steer(0)</code> -> inner and outer wheels turn at the same speed, travel  straight
+   * <LI><code>steer(25)</code> -> the inner wheel turns at 75% of the speed of the outer wheel, turn left
+   * <LI><code>steer(100)</code> -> the inner wheel stops and the outer wheel is at 100 percent, turn left
+   * <LI><code>steer(200)</code> -> the inner wheel turns at the same speed as the outer wheel - a zero radius turn.
+   * </UL>
+   * <p>
+   * Note: If you have specified a drift correction in the constructor it will not be applied in this method.
+   *
+   * @param turnRate If positive, the left side of the robot is on the inside of the turn. If negative,
+   * the left side is on the outside.
+   */
   public void steer(float turnRate)
   {
     if (turnRate == 0)
@@ -621,6 +613,32 @@ public class DifferentialPilot implements
     else _inside.backward();
   }
 
+  /**
+   * Starts the robot moving backward  along a curved path. This method is essentially
+   * the same as
+   * {@link #steer(float turn rate )} except that the robot moves backward instead of forward.
+   * @param turnRate
+   */
+  public void steerBackward(final float turnRate)
+  {
+    if (turnRate == 0)
+    {
+      backward();
+      return;
+    }
+     steerPrep(turnRate);
+    _outside.backward();
+    if (!_steering)  //only call movement start if this is the most recent methoc called
+    {
+      _type = Move.MoveType.ARC;
+      movementStart(true);
+      _steering = true;
+    }
+    if (_parity * _steerRatio > 0) _inside.backward();
+    else _inside.forward();
+  }
+
+  
   public void steer(final float turnRate, float angle)
   {
     steer(turnRate, angle, false);
@@ -680,21 +698,9 @@ public class DifferentialPilot implements
     _inside.setSpeed((int) (_motorSpeed * _steerRatio));
   }
 
-//  protected void checkStall()
-//  {
-//    while (isMoving()) Thread.yield();
-//  }
 
-  /**
-   * called by Arc() ,travel(),rotate(),stop() rotationStopped()
-   * calls moveStopped on listener
-   */
-  protected synchronized void movementStop()
-  {
-    for(MoveListener ml : _listeners)
-      ml.moveStopped(new Move(_type,
-            getMovementIncrement(), getAngleIncrement(), isMoving()), this);
-  }
+
+  
 
   /**
    * called by TachoMotor when a motor rotation is complete
@@ -721,7 +727,7 @@ public class DifferentialPilot implements
   }
 
   /**
-   * called at start of a movement to inform the listening pose  that a movement has started
+   * called at start of a movement to inform the listeners  that a movement has started
    */
   protected void movementStart(boolean alert)
   {
@@ -732,6 +738,17 @@ public class DifferentialPilot implements
             getMovementIncrement(), getAngleIncrement(), isMoving()), this);
   }
 
+  /**
+   * called by Arc() ,travel(),rotate(),stop() rotationStopped()
+   * calls moveStopped on listener
+   */
+  protected synchronized void movementStop()
+  {
+    for(MoveListener ml : _listeners)
+      ml.moveStopped(new Move(_type,
+            getMovementIncrement(), getAngleIncrement(), isMoving()), this);
+  }
+  
   /**
    * @return true if the NXT robot is moving.
    **/
@@ -845,7 +862,7 @@ public class DifferentialPilot implements
   /**
    * Motor speed degrees per second. Used by forward(),backward() and steer().
    */
-  protected int _motorSpeed;
+  public int _motorSpeed;
   /**
    * Motor rotation forward makes robot move forward if parity == 1.
    */
@@ -863,10 +880,14 @@ public class DifferentialPilot implements
    */
   protected final float _rightWheelDiameter;
 
-  public int _leftTC; // left tacho count
- public int _rightTC; //right tacho count
+  protected  int _leftTC; // left tacho count
+  protected  int _rightTC; //right tacho count
 
   protected ArrayList<MoveListener> _listeners= new ArrayList<MoveListener>();
-  protected MoveListener _listener;
   protected Move.MoveType _type;
+
+
+
+
+
 }

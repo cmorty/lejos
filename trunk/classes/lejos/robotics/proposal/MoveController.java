@@ -48,10 +48,10 @@ public interface MoveController extends MoveProvider {
   
   public float getMovementIncrement();
   
-  public void setMoveSpeed(float speed);
+  public void setTravelSpeed(float speed);
   
-  public float getMoveSpeed();
+  public float getTravelSpeed();
   
-  public float getMoveMaxSpeed();
+  public float getMaxTravelSpeed();
   
 }

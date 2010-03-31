@@ -184,7 +184,7 @@ public float getAngle()
  * sets the robots movement speed  - distance units/second
  * @param speed
  */
-  public void setMoveSpeed(float speed)
+  public void setTravelSpeed(float speed)
   {
     pilot.setTravelSpeed(speed);
   }
@@ -192,7 +192,7 @@ public float getAngle()
  * sets the robot turn speed  -degrees/second
  * @param speed
  */
-  public void setTurnSpeed(float speed)
+  public void setRotateSpeed(float speed)
   {
     pilot.setRotateSpeed(speed);
   }

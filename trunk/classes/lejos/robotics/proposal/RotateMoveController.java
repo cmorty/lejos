@@ -26,9 +26,9 @@ public interface RotateMoveController extends MoveController {
   
   public float getAngleIncrement();
   
-  public void setTurnSpeed(float speed);
+  public void setRotateSpeed(float speed);
   
-  public float getTurnSpeed();
+  public float getRotateSpeed();
   
-  public float getTurnMaxSpeed();
+  public float getRotateMaxSpeed();
 }
