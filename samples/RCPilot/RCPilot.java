@@ -57,8 +57,8 @@ public class RCPilot implements RemotePilotMethod
     else if(_code == RemotePilotMethod.ROTATE) pilot.rotate(_param1,_immediate);
     else if(_code == RemotePilotMethod.STEER) pilot.steer(_param1,_param2,_immediate);
     else if(_code == RemotePilotMethod.ARC) pilot.arc(_param1,_param2,_immediate);
-    else if(_code == RemotePilotMethod.SETMOVESPEED)pilot.setMoveSpeed(_param1);
-    else if(_code == RemotePilotMethod.SETTURNSPEED)pilot.setTurnSpeed(_param1);
+    else if(_code == RemotePilotMethod.SETTRAVELSPEED )pilot.setTravelSpeed(_param1);
+    else if(_code == RemotePilotMethod.SETROTATESPEED)pilot.setRotateSpeed(_param1);
     else if(_code == RemotePilotMethod.RESET) pilot.reset();
     else if(_code == RemotePilotMethod.STOP) pilot.stop();
      report();  // always send a response when the pilot method exits

@@ -14,7 +14,7 @@ public interface RemotePilotMethod
   public final int STEER = 5;
   public final int ARC = 6;
   public final int RESET = 7;
-  public final int SETMOVESPEED = 8;
-  public final int SETTURNSPEED = 9;
+  public final int SETTRAVELSPEED = 8;
+  public final int SETROTATESPEED = 9;
   public final int REPORT = 10;
 }

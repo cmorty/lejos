@@ -1,3 +1,4 @@
+import lejos.robotics.proposal.DifferentialPilot;
 import lejos.nxt.*;
 import lejos.robotics.proposal.*;
 import lejos.robotics.Pose;
@@ -22,7 +23,7 @@ public class BumpNavigator
    * @param leftTouch -  touch sensor in left side
    * @param rightTouch - touch sensor on right side
    */
-  public BumpNavigator( final MoveControl aPilot, final  SensorPort leftTouch, final SensorPort rightTouch)
+  public BumpNavigator( final DifferentialPilot aPilot, final  SensorPort leftTouch, final SensorPort rightTouch)
   {   
     leftBump = new TouchSensor(leftTouch);
     rightBump = new TouchSensor(rightTouch);
@@ -41,13 +42,12 @@ public void goTo(float x, float y)
     pilot.setRotateSpeed(180);
     Point destination = new Point(x, y);
     pose = drpp.getPose();
-    while (pose.distanceTo(destination) > 2)  //close enough??
+    while (pose.distanceTo(destination) > 5)  //close enough??
     {
       float angle = pose.angleTo(destination);
       pilot.rotate(angle - pose.getHeading());  // rotate to face destinaton
       pilot.travel(pose.distanceTo(destination), true);// init move to destination
-      int hit = 0;
-      hit = readSensors(); // returns if obstacle is hit or travel is complete
+      int hit = detect(); // returns if obstacle is hit or travel is complete
       while (hit != 0)
       {
           hit = avoid(hit);  // keep avoiding till no obstacle is hit
@@ -62,7 +62,7 @@ public void goTo(float x, float y)
   *  called in main loop and by avoid()
    * @return side on which hit was detected;  0 means none.
    */
-  private int readSensors()
+  private int detect()
   {
     int hit = 0;
     while(pilot.isMoving()& hit == 0 )//quit if travel is complete
@@ -88,7 +88,7 @@ public void goTo(float x, float y)
     int angle = 60+rand.nextInt(60);
     pilot.rotate(-side * angle);
     pilot.travel(10 + rand.nextInt(60), true);
-    return  readSensors();  // watch for hit while moving forward
+    return  detect();  // watch for hit while moving forward
   }
 
  
@@ -105,7 +105,7 @@ public void goTo(float x, float y)
       robot.goTo(200,0);
     }
   
-  private MoveControl pilot;
+  private ArcRotateMoveController pilot;
   private DeadReckonerPoseProvider drpp;
   private Pose pose = new Pose();
   Random rand = new Random();

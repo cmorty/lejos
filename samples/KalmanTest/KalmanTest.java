@@ -73,7 +73,7 @@ public class KalmanTest {
       System.out.println("Velocity: " + (int) velocity);
 
       // Move the robot
-      pilot.setMoveSpeed((float) Math.abs(velocity));
+      pilot.setTravelSpeed((float) Math.abs(velocity));
       if (velocity > 0) pilot.backward();
       else pilot.forward();
       Thread.sleep(1000);

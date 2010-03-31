@@ -17,7 +17,7 @@ import lejos.util.Delay;
  */
 public class EchoNavigator
 {
-  public EchoNavigator(final MoveControl aPilot, SensorPort echo)
+  public EchoNavigator(final ArcRotateMoveController aPilot, SensorPort echo)
   {
     sonar= new UltrasonicSensor(echo);
     pilot = aPilot;
@@ -114,13 +114,13 @@ public void goTo(float x, float y)
     public static void main(String[] args)
     {
       System.out.println("Any Button");
-     DifferentialPilot pilot = new DifferentialPilot(5.6f, 12.5f, Motor.A, Motor.C);
+     ArcRotateMoveController pilot = new DifferentialPilot(5.6f, 12.5f, Motor.A, Motor.C);
       EchoNavigator  robot  = new EchoNavigator(pilot,SensorPort.S3);
       Button.waitForPress();
       robot.goTo(200,0);
     }
 
-  private MoveControl pilot;
+  private ArcRotateMoveController pilot;
   private DeadReckonerPoseProvider drpp;
   private Pose pose = new Pose();
   Random rand = new Random();
