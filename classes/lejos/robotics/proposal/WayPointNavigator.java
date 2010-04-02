@@ -14,7 +14,7 @@ public class WayPointNavigator  extends BasicNavigator
  * can use any pilot the impolements the MoveControl interrface
  * @param pilot
  */
-  WayPointNavigator(MoveControl pilot )
+  public WayPointNavigator(ArcRotateMoveController pilot )
   {
     super(pilot);
     _nav = new Nav();
@@ -46,10 +46,8 @@ public int getCount() { return _count;}
 
     public void run()
     {
-      System.out.println("NAV run "+_keepGoing);
       while (more)
       {
-        if(_keepGoing) System.out.println("keepGoing "+_keepGoing);
         while (_keepGoing)
         {
           _destination = _route.get(_count);
