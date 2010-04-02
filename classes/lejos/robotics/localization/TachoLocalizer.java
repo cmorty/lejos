@@ -65,7 +65,7 @@ public abstract class TachoLocalizer extends SimpleNavigator {
    * 
    */
   public void updatePosition() {
-    super.updatePosition();
+    super.updatePose();
     if (angle != 0f || distance != 0f) {
     	mv = new Move(angle, distance,isMoving);
         particles.applyMove(mv);
