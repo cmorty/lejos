@@ -96,8 +96,8 @@ public class WaypointNav
     {
       Segment segment = segments.get(0);
       System.out.println("x,y "+segment.getX()+ " "+segment.getY());
-      nav.setTurnSpeed(segment.getTurnSpeed());
-      nav.setMoveSpeed(segment.getMoveSpeed());
+      nav.setRotateSpeed(segment.getTurnSpeed());
+      nav.setTravelSpeed(segment.getMoveSpeed());
       nav.goTo(segment.getX(), segment.getY());
       segments.remove(0);
     }
