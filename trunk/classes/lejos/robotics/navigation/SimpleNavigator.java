@@ -149,13 +149,7 @@ public float getAngle()
     _current = !isMoving();
     return new Pose(_pose.getX(),_pose.getY(),_pose.getHeading());
   }
-  /**
-   * @deprecated  - it just calls updatePose()
-   */
-  public void updatePosition()
-  {
-    updatePose();
-  }
+ 
 
 /**
  * sets the robot pose to the new coordinates and heading
