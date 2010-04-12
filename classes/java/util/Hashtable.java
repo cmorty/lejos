@@ -7,10 +7,11 @@ package java.util;
 public class Hashtable
 {
   private static final int TABLE_SIZE = 32;
-  private Object[] iTable = new Object[TABLE_SIZE];
+  private Object[] iTable;
   
   public Hashtable()
   {  
+    this.iTable = new Object[TABLE_SIZE];
   }
 
   public synchronized Object get (Object aKey)
@@ -24,45 +25,41 @@ public class Hashtable
     return pKeyValuePair.iValue;
   }
   
-  public synchronized Object put (Object aKey, Object aValue)
-  {
-	Object r;
-	int pIndex = getTableIndex (aKey);    
-    Object pElement = iTable[pIndex];
-    KeyValuePair pKeyValuePair = null;
-    if (pElement != null)
-      pKeyValuePair = getKeyValuePair (pElement, aKey);    
-    if (pKeyValuePair != null)
-    	r = pKeyValuePair.iValue;
-    else
-    {
-    	r = null;
-    	pKeyValuePair = new KeyValuePair();
-    	pKeyValuePair.iKey = aKey;
-    	pKeyValuePair.iValue = aValue;
-    }
-    if (pElement == null)      
-    {
-    	iTable[pIndex] = pKeyValuePair;
-    } 
-    else if (pElement == pKeyValuePair)
-    {
-    	pKeyValuePair.iValue = aValue;	    
-    }
-    else if (pElement instanceof KeyValuePair)
-    {
-    	Vector pVector = new Vector();
-    	pVector.addElement (pElement);
-    	pVector.addElement (pKeyValuePair);
-      iTable[pIndex] = pVector;
-    }
-    else
-    {
-      // pElement must be a Vector
-      ((Vector) pElement).addElement (pKeyValuePair);	    
-    }
-    return r;
-  }
+	public synchronized Object put (Object aKey, Object aValue)
+	{
+		Object r;
+		int pIndex = getTableIndex(aKey);    
+		Object pElement = iTable[pIndex];
+		if (pElement == null)
+		{
+			r = null;
+			iTable[pIndex] = new KeyValuePair(aKey, aValue);
+		}
+		else
+		{
+			KeyValuePair pKeyValuePair = getKeyValuePair (pElement, aKey);
+			if (pKeyValuePair != null)
+			{
+				r = pKeyValuePair.iValue;
+				pKeyValuePair.iValue = aValue;
+			}
+			else
+			{
+				r = null;
+				pKeyValuePair = new KeyValuePair(aKey, aValue);
+				if (pElement instanceof Vector)
+					((Vector)pElement).addElement(pKeyValuePair);
+				else
+				{
+					Vector pVector = new Vector();
+					pVector.addElement(pElement);
+					pVector.addElement(pKeyValuePair);
+					iTable[pIndex] = pVector;
+				}
+			}
+		}
+		return r;
+	}
 
   /**
    * 
@@ -146,17 +143,23 @@ public class Hashtable
     return null;
   }
   
-  private int getTableIndex (Object aKey)
-  {
-    int pHash = aKey.hashCode();
-    if (pHash < 0)
-      pHash = -pHash;
-    return pHash % TABLE_SIZE;
-  }
+	private int getTableIndex (Object aKey)
+	{
+		int pHash = aKey.hashCode() % TABLE_SIZE;
+		if (pHash < 0)
+			return pHash + TABLE_SIZE;
+		return pHash;
+	}
 
-  private static class KeyValuePair
-  { 
-    Object iKey;
-    Object iValue;
-  }
+	private static class KeyValuePair
+	{ 
+		Object iKey;
+		Object iValue;
+		
+		public KeyValuePair(Object key, Object value)
+		{
+			this.iKey = key;
+			this.iValue = value;
+		}
+	}
 }
