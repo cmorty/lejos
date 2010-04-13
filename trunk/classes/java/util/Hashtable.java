@@ -14,16 +14,19 @@ public class Hashtable
     this.iTable = new Object[TABLE_SIZE];
   }
 
-  public synchronized Object get (Object aKey)
-  {
-    Object pElement = iTable[getTableIndex(aKey)];
-    if (pElement == null)
-      return null;
-    KeyValuePair pKeyValuePair = getKeyValuePair (pElement, aKey);
-    if (pKeyValuePair == null)
-      return null;
-    return pKeyValuePair.iValue;
-  }
+	public synchronized Object get (Object aKey)
+	{
+		Object pElement = iTable[getTableIndex(aKey)];
+		if (pElement != null)
+		{
+			KeyValuePair pKeyValuePair = getKeyValuePair(pElement, aKey);
+			if (pKeyValuePair != null)
+			{
+				return pKeyValuePair.iValue;
+			}
+		}
+		return null;
+	}
   
 	public synchronized Object put (Object aKey, Object aValue)
 	{
@@ -122,26 +125,32 @@ public class Hashtable
 	  };
   }
   
-  private KeyValuePair getKeyValuePair (Object aPivot, Object aKey)
-  {
-    if (aPivot instanceof Vector)
-    {
-      Vector pVec = (Vector) aPivot;
-      int pSize = pVec.size();
-      for (int i = 0; i < pSize; i++)
-      {
-	KeyValuePair pPair = (KeyValuePair) pVec.elementAt (i);
-	if (aKey.equals (pPair.iKey))
-          return pPair;
-      }
-      return null;
-    }
-    // Not a Vector, must be a lone KeyValuePair
-    KeyValuePair pPair = (KeyValuePair) aPivot;
-    if (aKey.equals (pPair.iKey))
-      return pPair;
-    return null;
-  }
+	private KeyValuePair getKeyValuePair(Object aPivot, Object aKey)
+	{
+		if (aPivot instanceof Vector)
+		{
+			Vector pVec = (Vector) aPivot;
+			int pSize = pVec.size();
+			for (int i = 0; i < pSize; i++)
+			{
+				KeyValuePair pPair = (KeyValuePair) pVec.elementAt(i);
+				if (aKey.equals(pPair.iKey))
+				{
+					return pPair;
+				}
+			}
+		}
+		else
+		{
+			// Not a Vector, must be a lone KeyValuePair
+			KeyValuePair pPair = (KeyValuePair)aPivot;
+			if (aKey.equals(pPair.iKey))
+			{
+				return pPair;
+			}
+		}
+		return null;
+	}
   
 	private int getTableIndex (Object aKey)
 	{
