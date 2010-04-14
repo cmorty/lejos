@@ -207,8 +207,15 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
   }
 
   /**
+   * returns <b>true</b> if motor position is locked;
+   * @return
+   */
+  public boolean isLocked(){ return _lock;}
+
+
+  /**
    *calls controlMotor(), regulator.reset().  resets _rotating, _lock; updates _mode
-   *called by forwsrd(), backward(),stop(),flt();
+   *called by forward(), backward(),stop(),flt();
    */
    void updateState(int mode)
   {
@@ -272,9 +279,11 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
 
   public void rotateTo(int limitAngle, boolean immediateReturn)
   {
-    if(_rotating && (_direction *(limitAngle - getTachoCount())>0))
+//    if(_rotating && (_direction *(limitAngle - getTachoCount())>0))
+    if(isMoving() && (_direction *(limitAngle - getTachoCount())>0))
     {  // rotation in progress so do not reset regulator
       _limitAngle = limitAngle;  // just change the limitAngle
+              _rotating = true;
     }
     else
     {
