@@ -1,6 +1,15 @@
 package js.tinyvm;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.io.WriteAbortedException;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.channels.Channels;
+import java.nio.channels.WritableByteChannel;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetEncoder;
 import java.util.logging.Logger;
 
 import js.tinyvm.io.IByteWriter;
@@ -20,6 +29,8 @@ import org.apache.bcel.classfile.ConstantClass;
  */
 public class ConstantValue extends WritableDataWithOffset
 {
+	private boolean warning = true;
+	
    Binary iBinary;
    /**
     * The dereferenced value.
@@ -93,6 +104,25 @@ public class ConstantValue extends WritableDataWithOffset
          return null;
       }
    }
+   
+	private static byte[] getStringData(String str, boolean warn)
+	{
+		int len = str.length();
+		byte[] r = new byte[len];
+		for (int i=0; i<len; i++)
+		{
+			char c = str.charAt(i);
+			if (c > 0xFF && warn)
+			{
+				//TODO use some kind of warning/error report mechanism
+				//TODO somehow output the location of the string
+				System.err.println("Warning: String with characters beyond 0xFF found. Only the lower 8 bits are preserved.");
+			}
+			
+			r[i] = (byte)c;
+		}
+		return r;
+	}
 
    /**
     * Get length in bytes of value.
@@ -117,7 +147,7 @@ public class ConstantValue extends WritableDataWithOffset
       }
       else if (_value instanceof String)
       {
-         return ((String) _value).getBytes().length;
+         return getStringData((String) _value, false).length;
       }
       else if (_value instanceof ClassRecord)
       {
@@ -180,7 +210,7 @@ public class ConstantValue extends WritableDataWithOffset
          }
          else if (_value instanceof String)
          {
-            byte[] bytes = ((String) _value).getBytes();
+            byte[] bytes = getStringData((String) _value, true);
             writer.write(bytes);
          }
          else if (_value instanceof ClassRecord)
