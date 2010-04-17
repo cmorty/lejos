@@ -10,11 +10,11 @@ import javax.microedition.lcdui.Graphics;
 import lejos.nxt.Battery;
 import lejos.nxt.Button;
 import lejos.nxt.LCD;
+import lejos.nxt.NXT;
+import lejos.nxt.SensorPort;
 import lejos.nxt.Settings;
 import lejos.nxt.Sound;
 import lejos.nxt.SystemSettings;
-import lejos.nxt.SensorPort;
-import lejos.util.TextMenu;
 import lejos.nxt.comm.BTConnection;
 import lejos.nxt.comm.Bluetooth;
 import lejos.nxt.comm.LCP;
@@ -22,9 +22,8 @@ import lejos.nxt.comm.LCPResponder;
 import lejos.nxt.comm.NXTCommConnector;
 import lejos.nxt.comm.NXTCommDevice;
 import lejos.nxt.comm.USB;
-import lejos.nxt.NXT;
 import lejos.util.Delay;
-import lejos.nxt.FlashError;
+import lejos.util.TextMenu;
 
 /**
  * This class provides the leJOS system menu.
@@ -46,6 +45,7 @@ public class StartUpText
 
     Graphics g = new Graphics();
     boolean btPowerOn = false;
+    boolean btVisibility = false;
     Indicators ind = new Indicators();
     Responder usb = new Responder(USB.getConnector(), Indicators.IO_USB);
     Responder bt = new Responder(Bluetooth.getConnector(), Indicators.IO_BT);
@@ -67,6 +67,7 @@ public class StartUpText
      * The top line of the display shows battery state, menu titles, and I/O
      * activity.
      */
+    // 	
     class Indicators extends Thread
     {
         // Types of IO activity.
@@ -82,18 +83,8 @@ public class StartUpText
         private static final int RECHARGE_OK = 7200;
         private static final int RECHARGE_MAX = 8200;
         // Animations used for I/O state.
-        private final String[][] ioDisplay = new String[][]
-        {
-            {
-                ".  ", " . ", "  ."
-            },
-            {
-                "+  ", " + ", "  +"
-            },
-            {
-                " I ", "(I)"
-            }
-        };
+        private final byte[] ICONBYTE = toBytes("\u003E\u0020\u003E\u0000\u002E\u002A\u003A\u0000\u003E\u002A\u0014\u007F\u006B\u0077\u0041\u0055\u006B\u007F\u0000\u0014\u0008\u003E\u002A\u0014\u0000");
+
         private int batteryLow;
         private int batteryOk;
         private int batteryRange;
@@ -102,7 +93,15 @@ public class StartUpText
         private int ioMode = IO_NONE;
         private int ioStart;
         private String title = "";
-
+        
+        public byte[] toBytes (String str){
+        	int len=str.length();
+        	byte[] r = new byte[len];
+        	for (int i=0; i<len; i++)
+        	  r[i] = (byte)str.charAt(i);
+        	return r;
+        }
+        
         public Indicators()
         {
             // Init battery parameters
@@ -187,7 +186,6 @@ public class StartUpText
             batteryOk = ok;
             batteryRange = high - low;
         }
-
         /**
          * Update the I/O status.
          * We display Bluetooth state, plus small animations showing I/O
@@ -195,15 +193,31 @@ public class StartUpText
          */
         private void updateIO()
         {
-            if (ioMode == IO_NONE)
-                g.drawString(" BT", 82, 0, 0, !btPowerOn);  // invert when power is off
-            else
-            {
-                g.drawString(ioDisplay[ioMode][tick % ioDisplay[ioMode].length], 82, 0, 0);
-                // Data activity is auto reset
-                if (ioMode <= IO_USB && tick > ioStart + 2)
-                    setIOMode(IO_NONE);
+        	erase(80,19);
+        	if (btPowerOn){
+                LCD.bitBlt(ICONBYTE, 25, 8, 11+((btVisibility?0:1)*7), 0, LCD.getDisplay(), LCD.SCREEN_WIDTH, LCD.SCREEN_HEIGHT, 92, 0, 7, 8, LCD.ROP_COPY);
             }
+            if ((USB.usbStatus() & (0xf0000000)) == (0x10000000))
+            	LCD.bitBlt(ICONBYTE, 25, 8, 0, 0, LCD.getDisplay(), LCD.SCREEN_WIDTH, LCD.SCREEN_HEIGHT, 80, 0, 11, 8, LCD.ROP_COPY);
+            
+            if (ioMode == IO_USB){
+               	LCD.bitBlt(ICONBYTE, 25, 8, 0, 0, LCD.getDisplay(), LCD.SCREEN_WIDTH, LCD.SCREEN_HEIGHT, 80, 0, 11, 8, LCD.ROP_COPY);
+               	//g.setColor(Graphics.WHITE); // ScanLine
+                //g.drawLine(80, tick % 8 , 91, tick % 8);// ScanLine
+               	g.drawLine(80,7,81+((tick % 5)*2),7); // Progress Bar
+                //g.setColor(Graphics.BLACK);// ScanLine
+            }
+            if (ioMode == IO_BT || ioMode == IO_SEARCH){
+            	LCD.bitBlt(ICONBYTE, 25, 8, 11+((btVisibility?0:1)*7), 0, LCD.getDisplay(), LCD.SCREEN_WIDTH, LCD.SCREEN_HEIGHT, 92, 0, 7, 8, LCD.ROP_COPY);
+            	//if (btVisibility)// ScanLine
+            	//	g.setColor(Graphics.WHITE);// ScanLine
+            	//g.drawLine(92, tick % 8 , 99, tick % 8); //ScanLine
+            	g.drawLine(92,7, 92 + (tick % 7), 7); // Progress Bar
+            	//g.setColor(Graphics.BLACK);// ScanLine
+            }
+            // Data activity is auto reset
+            if (ioMode <= IO_USB && tick > ioStart + 2)
+            	setIOMode(IO_NONE);
         }
 
         /**
@@ -271,7 +285,7 @@ public class StartUpText
             }
         }
     }
-
+    //TODO
     /**
      * Class to handle commands from USB/Bluetooth connections.
      * @author andy
@@ -650,6 +664,7 @@ public class StartUpText
                 setAddress();
                 timeout = SystemSettings.getIntSetting(sleepTimeProperty, defaultSleepTime);
                 btPowerOn = setBluetoothPower(Bluetooth.getStatus() == 0);
+                btVisibility = (Bluetooth.getVisibility() == 1);
                 usb.start();
                 bt.start();
                 stState = 2;
@@ -773,6 +788,7 @@ public class StartUpText
         }
         else
             msg("No devices found");
+        ind.setIOMode(Indicators.IO_NONE);
     }
 
     /**
@@ -901,6 +917,7 @@ public class StartUpText
                     break;
                 case 3:
                     Bluetooth.setVisibility((byte) (visible ? 0 : 1));
+                    btVisibility = !visible;
                     break;
                 case 4:
                     bluetoothChangePIN();
