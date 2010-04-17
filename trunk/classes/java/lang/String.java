@@ -53,7 +53,7 @@ public final class String implements CharSequence
   public String (byte[] b, int off, int len) {
 	  characters = new char[len];
 	  for (int i = 0; i < len; i++)
-		  characters[i] = (char)b[off + i];
+		  characters[i] = (char)(b[off + i] & 0xFF);
   }
 
   /**
