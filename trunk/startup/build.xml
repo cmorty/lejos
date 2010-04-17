@@ -48,7 +48,8 @@
 	
 	<target name="link" depends="compile" description="link the binary " >
 		<!-- Link the binary and create a signature file -->
-		<java classname="js.tinyvm.TinyVM">
+		<java classname="js.tinyvm.TinyVM"
+			output="${startup.debug}" logerror="true">
 			<arg value="--bootclasspath"/>
 			<arg path="${lejos.classes}/${vars.classes.classes.jar}" /> 
 			<arg value="--classpath"/>
