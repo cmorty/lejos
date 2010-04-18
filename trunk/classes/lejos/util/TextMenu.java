@@ -156,6 +156,12 @@ public class TextMenu
 	 **/
 	public int select(int selectedIndex, int timeout) 
 	{ 
+		if (selectedIndex >= _length)
+			//might result in -1
+			selectedIndex = _length -1;
+		if (selectedIndex < 0)
+			selectedIndex = 0;
+		
 	   _selectedIndex = selectedIndex;
 //		if (_length<_size) _size = _length;
 		int button = 0;
