@@ -3,20 +3,24 @@
  */
 package lejos.nxt.startup;
 
-interface ActivityIndictaor
+public interface ActivityIndictaor
 {
 	/**
-	 * There is activity currently. Pulses time out automatically. 
+	 * Signal activity. Pulses timeout automatically.
 	 */
 	void pulse();
 	
 	/**
-	 * A new activity has started. The end will be signaled using {@link #decCount()}.
+	 * Signal activity.
+	 * This Activity has to be terminated by calling {@link #decCount()} exactly once.
+	 * @see #decCount()
 	 */
 	void incCount();
 	
 	/**
-	 * One of the activities has ended.
+	 * Signal the end of activity.
+	 * The start of the activity must have been signaled by {@link #incCount()}.
+	 * @see #incCount()
 	 */
 	void decCount();
 }

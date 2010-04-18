@@ -3,10 +3,8 @@
  */
 package lejos.nxt.startup;
 
-class IconIndicator implements ActivityIndictaor
+public class IconIndicator implements ActivityIndictaor
 {
-	private static final int PULSE_TIMEOUT = 1000;
-	
 	private int lcdX;
 	private int iconX;
 	private int iconWidth;
@@ -45,7 +43,7 @@ class IconIndicator implements ActivityIndictaor
 		if (this.iconX >= 0)
 			System.arraycopy(Config.ICON_DATA, iconX, buf, lcdX, iconWidth);
 		
-		if (time - this.lastPulse < PULSE_TIMEOUT || this.count > 0)
+		if (time - this.lastPulse < Config.ACTIVITY_TIMEOUT || this.count > 0)
 		{
 			// ScanLine
 			// int tick = (int)((time / 250) % 7);

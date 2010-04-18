@@ -8,7 +8,7 @@ import lejos.nxt.LCD;
  * The top line of the display shows battery state, menu titles, and I/O
  * activity.
  */
-class BatteryIndicator
+public class BatteryIndicator
 {
     // Battery state information
     private static final int STD_MIN = 6100;
@@ -75,7 +75,6 @@ class BatteryIndicator
 
     /**
      * Display the battery icon.
-     * @param tick some parameter
      */
     public synchronized void draw(long time, byte[] buf)
     {
