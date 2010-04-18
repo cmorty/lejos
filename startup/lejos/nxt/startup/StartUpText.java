@@ -124,13 +124,13 @@ public class StartUpText
      */
     class Responder extends LCPResponder
     {
-    	ActivityIndictaor indi;
+    	IconIndicator indi;
 
         /**
          * Create an object for the required connection type.
          * @param con Connector object for the underlying protocol.
          */
-        public Responder(NXTCommConnector con, ActivityIndictaor indi)
+        public Responder(NXTCommConnector con, IconIndicator indi)
         {
             super(con);            
             setDaemon(true);

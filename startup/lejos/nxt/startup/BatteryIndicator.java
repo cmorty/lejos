@@ -4,9 +4,7 @@ import lejos.nxt.Battery;
 import lejos.nxt.LCD;
 
 /**
- * Manage the top line of the display.
- * The top line of the display shows battery state, menu titles, and I/O
- * activity.
+ * Draws a battery and the name of the NXT.
  */
 public class BatteryIndicator
 {
@@ -101,7 +99,7 @@ public class BatteryIndicator
         {
         	int max = len - Config.TEXT_WIDTH;
         	int max2 = max + 2 * Config.TEXT_SCROLL_PAUSE;
-        	x1 = (int)(time / Config.TEXT_SCROLL_DELAY % (2 * (max2 + 1)));
+        	x1 = (int)(time / Config.TEXT_SCROLL_DELAY % (2 * max2 + 2));
         	if (x1 > max2)
         		x1 = 2 * max2 + 1 - x1;
         	x1 -= Config.TEXT_SCROLL_PAUSE;
@@ -112,6 +110,7 @@ public class BatteryIndicator
         	x2 = 0;
         	len = Config.TEXT_WIDTH;
         }            
+        
         System.arraycopy(this.title, x1, buf, Config.TEXT_POS + x2, len);
         
         if (isOk || (time % (2*Config.ICON_BATTERY_BLINK)) < Config.ICON_BATTERY_BLINK)
