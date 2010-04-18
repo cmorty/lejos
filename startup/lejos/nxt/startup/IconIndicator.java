@@ -53,6 +53,14 @@ class IconIndicator implements ActivityIndictaor
 			// for (int i=0; i<iconWidth; i++)
 			// 	buf[lcdX + i] &= mask; 
 			
+			// ScanLine 2
+			// int tick = (int)((time / 250) % 12);
+			// if (tick > 6)
+			// 	tick = 12 - tick;
+			// int mask = ~(1 << tick);
+			// for (int i=0; i<iconWidth; i++)
+			// 	buf[lcdX + i] &= mask; 
+			
 			// Progress Bar
 			// int tick = (int)((time / 250) % iconWidth);
 			// for (int i=0; i<tick; i++)
