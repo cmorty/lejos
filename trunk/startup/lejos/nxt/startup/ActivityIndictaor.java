@@ -1,5 +1,5 @@
 /**
- * 
+ * Defines methods for indicating activity.
  */
 package lejos.nxt.startup;
 

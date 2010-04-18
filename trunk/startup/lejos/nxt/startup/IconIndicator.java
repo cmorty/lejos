@@ -1,5 +1,5 @@
 /**
- * 
+ * Draws an Icon and an activity indicator.
  */
 package lejos.nxt.startup;
 
@@ -46,13 +46,13 @@ public class IconIndicator implements ActivityIndictaor
 		if (time - this.lastPulse < Config.ACTIVITY_TIMEOUT || this.count > 0)
 		{
 			// ScanLine
-			// int tick = (int)((time / 250) % 7);
+			// int tick = (int)((time / Config.ANIM_DELAY) % 7);
 			// int mask = ~(1 << tick);
 			// for (int i=0; i<iconWidth; i++)
 			// 	buf[lcdX + i] &= mask; 
 			
 			// ScanLine 2
-			// int tick = (int)((time / 250) % 12);
+			// int tick = (int)((time / Config.ANIM_DELAY) % 12);
 			// if (tick > 6)
 			// 	tick = 12 - tick;
 			// int mask = ~(1 << tick);
@@ -60,13 +60,13 @@ public class IconIndicator implements ActivityIndictaor
 			// 	buf[lcdX + i] &= mask; 
 			
 			// Progress Bar
-			// int tick = (int)((time / 250) % iconWidth);
+			// int tick = (int)((time / Config.ANIM_DELAY) % iconWidth);
 			// for (int i=0; i<tick; i++)
 			// 	buf[lcdX + i] |= 0x80;
 			
 			// Token
 			int tw = iconWidth / 2;
-			int tick = (int)((time / 250) % iconWidth);
+			int tick = (int)((time / Config.ANIM_DELAY) % iconWidth);
 			for (int i=0; i<tw; i++)
 				buf[lcdX + (tick + i) % iconWidth] |= 0x80;
 		}
