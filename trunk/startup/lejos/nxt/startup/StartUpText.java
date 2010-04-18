@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.Vector;
 
 import javax.bluetooth.RemoteDevice;
-import javax.microedition.lcdui.Graphics;
 
 import lejos.nxt.Battery;
 import lejos.nxt.Button;
@@ -42,22 +41,23 @@ import lejos.util.TextMenu;
  */
 public class StartUpText
 {
-
-    Graphics g = new Graphics();
-    boolean btPowerOn = false;
-    boolean btVisibility = false;
-    Indicators ind = new Indicators();
-    Responder usb = new Responder(USB.getConnector(), Indicators.IO_USB);
-    Responder bt = new Responder(Bluetooth.getConnector(), Indicators.IO_BT);
+	boolean btPowerOn;
+	boolean btVisibility;
+    IndicatorThread ind = new IndicatorThread();
+    BatteryIndicator indiBA = new BatteryIndicator();
+    IconIndicator indiUSB = new IconIndicator(Config.ICON_USB_POS, Config.ICON_DISABLE_X, Config.ICON_USB_WIDTH);
+    IconIndicator indiBT = new IconIndicator(Config.ICON_BT_POS, Config.ICON_DISABLE_X, Config.ICON_BT_WIDTH);
+    Responder usb = new Responder(USB.getConnector(), indiUSB);
+    Responder bt = new Responder(Bluetooth.getConnector(), indiBT);
     int timeout;
     TextMenu curMenu = null;
-    static final String blank = "                ";
     static final String defaultProgramProperty = "lejos.default_program";
     static final String defaultProgramAutoRunProperty = "lejos.default_autoRun";
     static final String sleepTimeProperty = "lejos.sleep_time";
     static final String pinProperty = "lejos.bluetooth_pin";
     static final int defaultSleepTime = 2;
     static final int maxSleepTime = 10;
+    
     static final String revision = "$Revision$";
     static final int MAJOR_VERSION = 0;
     static final int MINOR_VERSION = 85;
@@ -67,243 +67,75 @@ public class StartUpText
      * The top line of the display shows battery state, menu titles, and I/O
      * activity.
      */
-    // 	
-    class Indicators extends Thread
+	class IndicatorThread extends Thread
     {
-        // Types of IO activity.
-        public static final int IO_NONE = 3;
-        public static final int IO_BT = 0;
-        public static final int IO_USB = 1;
-        public static final int IO_SEARCH = 2;
-        // Battery state information
-        private static final int STD_MIN = 6100;
-        private static final int STD_OK = 6500;
-        private static final int STD_MAX = 8000;
-        private static final int RECHARGE_MIN = 7100;
-        private static final int RECHARGE_OK = 7200;
-        private static final int RECHARGE_MAX = 8200;
-        // Animations used for I/O state.
-        private final byte[] ICONBYTE = toBytes("\u003E\u0020\u003E\u0000\u002E\u002A\u003A\u0000\u003E\u002A\u0014\u007F\u006B\u0077\u0041\u0055\u006B\u007F\u0000\u0014\u0008\u003E\u002A\u0014\u0000");
-
-        private int batteryLow;
-        private int batteryOk;
-        private int batteryRange;
-        private boolean lowVoltage;
-        private int tick = 0;
-        private int ioMode = IO_NONE;
-        private int ioStart;
-        private String title = "";
-        
-        public byte[] toBytes (String str){
-        	int len=str.length();
-        	byte[] r = new byte[len];
-        	for (int i=0; i<len; i++)
-        	  r[i] = (byte)str.charAt(i);
-        	return r;
-        }
-        
-        public Indicators()
-        {
-            // Init battery parameters
-            if (Battery.isRechargeable())
-                initBattery(RECHARGE_MIN, RECHARGE_OK, RECHARGE_MAX);
-            else
-                initBattery(STD_MIN, STD_OK, STD_MAX);
+		public IndicatorThread()
+    	{
+    		super();
             setDaemon(true);
-        }
-
-        /**
-         * Display the battery icon.
-         * @param level Current charge level 0-100%
-         */
-        private void drawBattery(int level)
-        {
-            g.drawRect(1, 1, 11, 5);  // battery icon
-            g.drawRect(13, 3, 1, 1);
-            g.fillRect(2, 2, level / 10, 4);
-            g.setColor(Graphics.WHITE);
-            g.fillRect(level / 10 + 2, 2, 10 - (level / 10), 4);
-            g.setColor(Graphics.BLACK);
-        }
-
-        /**
-         * Erase a specified area of the top line.
-         * @param start
-         * @param len
-         */
-        private void erase(int start, int len)
-        {
-            g.setColor(Graphics.WHITE);
-            g.fillRect(start, 0, len, 8);
-            g.setColor(Graphics.BLACK);
-        }
-
-        /**
-         * Calc the state of the battery charge.
-         * @param mV Current reading
-         * @return current charge level 0-100%
-         */
-        private int calcBatteryLevel(int mV)
-        {
-            int val = ((mV - batteryLow) * 100 + batteryRange / 2) / batteryRange;
-            if (val < 0)
-                val = 0;
-            if (val > 100)
-                val = 100;
-            return val;
-        }
-
-        /**
-         * Update the battery status display.
-         * Low battery state is shown by flashing the icon.
-         */
-        private void updateBattery()
-        {
-            // Handle the battery display.
-            int mV = Battery.getVoltageMilliVolt();
-            if (mV <= batteryLow)
-                lowVoltage = true;
-            else if (mV >= batteryOk)
-                lowVoltage = false;
-            if (lowVoltage)
-            {
-                if ((tick & 1) == 0)
-                    drawBattery(0);
-            }
-            else
-                drawBattery(calcBatteryLevel(mV));
-        }
-
-        /**
-         * Initialize the battery state
-         * @param low Low voltage limit
-         * @param ok Voltage that is OK (not low).
-         * @param high 100% charged level.
-         */
-        private void initBattery(int low, int ok, int high)
-        {
-            batteryLow = low;
-            batteryOk = ok;
-            batteryRange = high - low;
-        }
-        /**
-         * Update the I/O status.
-         * We display Bluetooth state, plus small animations showing I/O
-         * activity.
-         */
-        private void updateIO()
-        {
-        	erase(80,19);
-        	if (btPowerOn){
-                LCD.bitBlt(ICONBYTE, 25, 8, 11+((btVisibility?0:1)*7), 0, LCD.getDisplay(), LCD.SCREEN_WIDTH, LCD.SCREEN_HEIGHT, 92, 0, 7, 8, LCD.ROP_COPY);
-            }
-            if ((USB.usbStatus() & (0xf0000000)) == (0x10000000))
-            	LCD.bitBlt(ICONBYTE, 25, 8, 0, 0, LCD.getDisplay(), LCD.SCREEN_WIDTH, LCD.SCREEN_HEIGHT, 80, 0, 11, 8, LCD.ROP_COPY);
-            
-            if (ioMode == IO_USB){
-               	LCD.bitBlt(ICONBYTE, 25, 8, 0, 0, LCD.getDisplay(), LCD.SCREEN_WIDTH, LCD.SCREEN_HEIGHT, 80, 0, 11, 8, LCD.ROP_COPY);
-               	//g.setColor(Graphics.WHITE); // ScanLine
-                //g.drawLine(80, tick % 8 , 91, tick % 8);// ScanLine
-               	g.drawLine(80,7,81+((tick % 5)*2),7); // Progress Bar
-                //g.setColor(Graphics.BLACK);// ScanLine
-            }
-            if (ioMode == IO_BT || ioMode == IO_SEARCH){
-            	LCD.bitBlt(ICONBYTE, 25, 8, 11+((btVisibility?0:1)*7), 0, LCD.getDisplay(), LCD.SCREEN_WIDTH, LCD.SCREEN_HEIGHT, 92, 0, 7, 8, LCD.ROP_COPY);
-            	//if (btVisibility)// ScanLine
-            	//	g.setColor(Graphics.WHITE);// ScanLine
-            	//g.drawLine(92, tick % 8 , 99, tick % 8); //ScanLine
-            	g.drawLine(92,7, 92 + (tick % 7), 7); // Progress Bar
-            	//g.setColor(Graphics.BLACK);// ScanLine
-            }
-            // Data activity is auto reset
-            if (ioMode <= IO_USB && tick > ioStart + 2)
-            	setIOMode(IO_NONE);
-        }
-
-        /**
-         * Update the title part of the display.
-         * We centre the title string.
-         */
-        private void updateTitle()
-        {
-            g.drawString(title, LCD.SCREEN_WIDTH / 2, 0, Graphics.HCENTER);
-        }
-
-        /**
-         * Set a new title.
-         * @param title
-         */
-        public void setTitle(String title)
-        {
-            this.title = title;
-            update();
-        }
-
-        /**
-         * Update all of the status display.
-         */
-        public void update()
-        {
-            LCD.setAutoRefresh(false);
-            erase(0, 100);
-            updateTitle();
-            updateIO();
-            updateBattery();
-            LCD.refresh();
-            LCD.setAutoRefresh(true);
-        }
-
-        /**
-         * Set an I/O mode.
-         * If this is a new mode we update the display. Data animations (IO_BT
-         * and IO_USB), will automatically reset.
-         * @param mode
-         */
-        public void setIOMode(int mode)
-        {
-            if (mode != ioMode)
-            {
-                ioStart = tick;
-                ioMode = mode;
-                if (mode != IO_NONE)
-                    update();
-            }
-        }
-
-        /**
-         * Main status thread.
-         * Update the display every second.
-         */
-        @Override
-        public void run()
-        {
-            for (;;)
-            {
-                Delay.msDelay(1000);
-                tick++;
-                update();
-            }
-        }
+    	}
+    	
+    	@Override
+		public void run()
+    	{
+    		try
+    		{
+	    		long time;    	
+	    		while (true)
+	    		{
+	    			time = System.currentTimeMillis();
+	    			int x = (USB.usbStatus() & 0xf0000000) == 0x10000000 ? Config.ICON_USB_X : Config.ICON_DISABLE_X;
+	    			indiUSB.setIconX(x);
+	    			
+	    			LCD.setAutoRefresh(false);
+	    			byte[] buf = LCD.getDisplay();
+	    			for (int i=0; i<LCD.SCREEN_WIDTH; i++)
+	    				buf[i] = 0;	    			
+	    			indiBA.draw(time, buf);
+	    			indiUSB.draw(time, buf);
+	    			indiBT.draw(time, buf);
+	    			LCD.setAutoRefresh(true);
+	    			LCD.asyncRefresh();
+	    			
+	    			synchronized (this)
+	    			{
+	    				// wait until next tick
+	    				time = System.currentTimeMillis();
+	    				this.wait(250 - (time % 250));
+	    			}
+	    		}
+    		}
+    		catch (InterruptedException e)
+    		{
+    			//just terminate
+    		}
+    	}
+    	
+    	public synchronized void updateNow()
+    	{
+    		this.notifyAll();
+    	}
     }
-    //TODO
+    
+    
     /**
      * Class to handle commands from USB/Bluetooth connections.
      * @author andy
      */
     class Responder extends LCPResponder
     {
-
-        int mode;
+    	ActivityIndictaor indi;
 
         /**
          * Create an object for the required connection type.
          * @param con Connector object for the underlying protocol.
          */
-        public Responder(NXTCommConnector con, int mode)
+        public Responder(NXTCommConnector con, ActivityIndictaor indi)
         {
-            super(con);
-            this.mode = mode;
+            super(con);            
             setDaemon(true);
+            
+            this.indi = indi; 
         }
 
         /**
@@ -318,7 +150,7 @@ public class StartUpText
         {
             if (len > 0)
             {
-                ind.setIOMode(mode);
+            	this.indi.pulse();
                 if (curMenu != null)
                     curMenu.resetTimeout();
             }
@@ -361,7 +193,7 @@ public class StartUpText
     /**
      * Play the leJOS startup tune.
      */
-    private void playTune()
+    static void playTune()
     {
         int[] freq =
         {
@@ -380,7 +212,8 @@ public class StartUpText
     private void newScreen(String title)
     {
         LCD.clear();
-        ind.setTitle(title);
+        indiBA.setTitle(title);
+        ind.updateNow();
     }
 
     /**
@@ -389,7 +222,7 @@ public class StartUpText
     private void newScreen()
     {
         LCD.clear();
-        ind.update();
+        ind.updateNow();
     }
 
     /**
@@ -398,7 +231,7 @@ public class StartUpText
      * @param powerOn
      * @return The new power state.
      */
-    private boolean setBluetoothPower(boolean powerOn)
+    boolean setBluetoothPower(boolean powerOn)
     {
         // Set the state of the Bluetooth power to be powerOn. Also record the
         // current state of this in the BT status bytes.                                                      
@@ -484,6 +317,27 @@ public class StartUpText
             NXT.shutDown();
         return value;
     }
+    
+    private static void setPixel(byte[] buf, int x, int y)
+    {
+    	x += (y >> 3) * LCD.SCREEN_WIDTH;
+        buf[x] |= 1 << (y & 0x7);
+    }
+    
+    private static void drawRect(int x, int y, int width, int height)
+    {
+    	byte[] buf = LCD.getDisplay();    	
+    	for (int i=0; i<=width; i++)
+    	{
+			setPixel(buf, x+i, y);
+			setPixel(buf, x+i, y+height);
+    	}
+		for (int j=1; j<height; j++)
+		{
+			setPixel(buf, x, y+j);
+			setPixel(buf, x+width, y+j);
+		}
+    }
 
     /**
      * Clears the screen, displays a number and allows user to change
@@ -515,7 +369,7 @@ public class StartUpText
             for (int i = 0; i < digits; i++)
                 str = str + spacer + (char) number[i];
             LCD.drawString(str, 0, 4);
-            g.drawRect(curDigit * 12 + 3, 30, 10, 10);
+            drawRect(curDigit * 12 + 3, 30, 10, 10);
 
             int ret = getButtonPress();
             switch (ret)
@@ -559,7 +413,7 @@ public class StartUpText
      * Ensure that we are using the same name for Bluetooth and USB access to
      * the NXT. The USB (and RS485) address is stored in flash memory.
      */
-    private void setAddress()
+    void setAddress()
     {
         // Ensure the USB address property is set correctly. We use the
         // Bluetooth address as our serial number.
@@ -603,7 +457,7 @@ public class StartUpText
     /**
      * Make the LCD display fade into view.
      */
-    private void fadeIn()
+    static void fadeIn()
     {
         for(int i = 20; i < 0x60; i++)
         {
@@ -615,13 +469,27 @@ public class StartUpText
     /**
      * Make the LCD display fade out of view.
      */
-    private void fadeOut()
+    static void fadeOut()
     {
         for(int i = 0x60; i >= 20; i--)
         {
             Delay.msDelay(5);
             LCD.setContrast(i);
         }
+    }
+    
+    void updateBTIcon()
+    {
+    	int x;
+    	if (btPowerOn)
+	    	if (btVisibility) 
+	    		x = Config.ICON_BT_VISIBLE_X;
+	    	else
+	    		x = Config.ICON_BT_HIDDEN_X;
+    	else
+    		x = Config.ICON_DISABLE_X;
+    	
+    	indiBT.setIconX(x);
     }
     
     /**
@@ -631,6 +499,7 @@ public class StartUpText
      * Initialize I/O etc.
      */
     volatile int stState = 0;
+    
     private void startup()
     {
         LCD.setContrast(0);
@@ -665,6 +534,7 @@ public class StartUpText
                 timeout = SystemSettings.getIntSetting(sleepTimeProperty, defaultSleepTime);
                 btPowerOn = setBluetoothPower(Bluetooth.getStatus() == 0);
                 btVisibility = (Bluetooth.getVisibility() == 1);
+                updateBTIcon();
                 usb.start();
                 bt.start();
                 stState = 2;
@@ -732,9 +602,19 @@ public class StartUpText
             0, 0, 0, 0
         }; // All
         newScreen("Searching");
-        ind.setIOMode(Indicators.IO_SEARCH);
-        Vector devList = Bluetooth.inquire(5, 10, cod);
-        if (devList.size() > 0)
+        Vector devList; 
+        indiBT.incCount();
+        try
+        {
+	        devList = Bluetooth.inquire(5, 10, cod);
+        }
+	    finally
+	    {
+	    	indiBT.decCount();
+	    }
+        if (devList.size() <= 0)
+            msg("No devices found");
+        else
         {
             String[] names = new String[devList.size()];
             for (int i = 0; i < devList.size(); i++)
@@ -744,12 +624,11 @@ public class StartUpText
             }
             TextMenu searchMenu = new TextMenu(names, 1);
             TextMenu subMenu = new TextMenu(new String[]{"Pair"}, 4);
-            int selected;
+            int selected = 0;
             do
             {
                 newScreen("Found");
-                ind.setIOMode(Indicators.IO_NONE);
-                selected = getSelection(searchMenu, 0);
+                selected = getSelection(searchMenu, selected);
                 if (selected >= 0)
                 {
                     RemoteDevice btrd = ((RemoteDevice) devList.elementAt(selected));
@@ -786,9 +665,6 @@ public class StartUpText
                 }
             } while (selected >= 0);
         }
-        else
-            msg("No devices found");
-        ind.setIOMode(Indicators.IO_NONE);
     }
 
     /**
@@ -809,11 +685,11 @@ public class StartUpText
 
             TextMenu deviceMenu = new TextMenu(names, 1);
             TextMenu subMenu = new TextMenu(new String[] {"Remove"}, 6);
-            int selected;
+            int selected = 0;
             do
             {
                 newScreen();
-                selected = getSelection(deviceMenu, 0);
+                selected = getSelection(deviceMenu, selected);
                 if (selected >= 0)
                 {
                     newScreen();
@@ -842,8 +718,9 @@ public class StartUpText
     private void bluetoothPower(boolean on)
     {
         newScreen("Power " + (on ? "on" : "off"));
-        ind.setIOMode(Indicators.IO_BT);
         btPowerOn = setBluetoothPower(on);
+        updateBTIcon();
+        ind.updateNow();
     }
 
     /**
@@ -877,7 +754,7 @@ public class StartUpText
      */
     private void bluetoothMenu()
     {
-        int selection;
+        int selection = 0;
         TextMenu menu = new TextMenu(null, 3);
         boolean visible;
         do
@@ -900,14 +777,11 @@ public class StartUpText
                         {
                             "Power on"
                         });
-            selection = getSelection(menu, 0);
+            selection = getSelection(menu, selection);
             switch (selection)
             {
                 case 0:
-                    if (btPowerOn)
-                        bluetoothPower(false);
-                    else
-                        bluetoothPower(true);
+                    bluetoothPower(!btPowerOn);
                     break;
                 case 1:
                     bluetoothSearch();
@@ -918,6 +792,8 @@ public class StartUpText
                 case 3:
                     Bluetooth.setVisibility((byte) (visible ? 0 : 1));
                     btVisibility = !visible;
+                    updateBTIcon();
+                    ind.updateNow();
                     break;
                 case 4:
                     bluetoothChangePIN();
@@ -1004,7 +880,7 @@ public class StartUpText
      */
     private void filesMenu()
     {
-        int selection;
+        int selection = 0;
         do {
             newScreen("Files");
             File[] files = File.listFiles();
@@ -1015,7 +891,7 @@ public class StartUpText
             for (int i = 0; i < len; i++)
                 fileNames[i] = files[i].getName();
             TextMenu menu = new TextMenu(fileNames, 1);
-            selection = getSelection(menu, 0);
+            selection = getSelection(menu, selection);
             if (selection >= 0)
                 fileMenu(files[selection]);
         } while (selection >= 0);
@@ -1092,20 +968,21 @@ public class StartUpText
      */
     private void defaultProgram()
     {
+    	newScreen("Auto Run");    	
         String defaultPrgm = Settings.getProperty(defaultProgramProperty, "");
-        if (defaultPrgm != null && defaultPrgm.length() > 0)
+        if (defaultPrgm == null || defaultPrgm.length() <= 0)
+            msg("No default set");
+        else
         {
-            LCD.drawString("Auto Run: " + Settings.getProperty(defaultProgramAutoRunProperty, "") + blank, 0, 2);
-            LCD.drawString("Default Program:    ", 0, 3);
-            LCD.drawString(" " + defaultPrgm + blank, 0, 4);
+            LCD.drawString("Auto Run:" + Settings.getProperty(defaultProgramAutoRunProperty, ""), 0, 2);
+            LCD.drawString("Default Program:", 0, 3);
+            LCD.drawString(defaultPrgm, 1, 4);
             int selection = getYesNo("Run at power up?");
             if (selection == 0)
                 Settings.setProperty(defaultProgramAutoRunProperty, "OFF");
             else if (selection == 1)
                 Settings.setProperty(defaultProgramAutoRunProperty, "ON");
         }
-        else
-            msg("No default set");
     }
 
     /**
@@ -1181,11 +1058,11 @@ public class StartUpText
                 {
                     "Run Default", "Files", "Bluetooth", "Sound", "System", "Version"
                 }, 1);
-        int selection;
+        int selection = 0;
         do
         {
             newScreen(Bluetooth.getFriendlyName());
-            selection = getSelection(menu, 0);
+            selection = getSelection(menu, selection);
             switch (selection)
             {
                 case 0:
@@ -1206,7 +1083,6 @@ public class StartUpText
                 case 5:
                     displayVersion();
                     break;
-
             }
         } while (selection >= 0);
     }
@@ -1221,8 +1097,8 @@ public class StartUpText
     {
         StartUpText sysMenu = new StartUpText();
         sysMenu.startup();
-        sysMenu.mainMenu();
-        sysMenu.fadeOut();
+        sysMenu.mainMenu();        
+        fadeOut();
         NXT.shutDown();
     }
 }
