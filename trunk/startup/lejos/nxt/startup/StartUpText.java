@@ -718,7 +718,15 @@ public class StartUpText
     private void bluetoothPower(boolean on)
     {
         newScreen("Power " + (on ? "on" : "off"));
-        btPowerOn = setBluetoothPower(on);
+        indiBT.incCount();
+        try
+        {
+        	btPowerOn = setBluetoothPower(on);
+        }
+        finally
+        {
+        	indiBT.decCount();
+        }
         updateBTIcon();
         ind.updateNow();
     }
