@@ -72,7 +72,7 @@ public class IconIndicator implements ActivityIndictaor
 			//if (tick > 6)
 			//	tick = 12 - tick;
 			//int mask1 = 1 << tick;
-			//int mask2 = ~(5 << (tick+1)) >> 1;
+			//int mask2 = ~(5 << tick) >> 1;
 			//for (int i=0; i<iconWidth; i++)
 			//{
 			//	buf[lcdX + i] |= mask1;
