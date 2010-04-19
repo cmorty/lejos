@@ -3,7 +3,7 @@
  */
 package lejos.nxt.startup;
 
-public interface ActivityIndictaor
+public interface ActivityIndicator
 {
 	/**
 	 * Signal activity. Pulses timeout automatically.
