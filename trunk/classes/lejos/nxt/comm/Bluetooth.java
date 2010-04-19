@@ -316,16 +316,21 @@ public class Bluetooth extends NXTCommDevice
 				//1 RConsole.print("Bad packet len " + len + " cnt " + cnt + "\n");
 				return -1;
 			}
-			int timeout = (int)System.currentTimeMillis() + TO_REPLY;
-			while (cnt < len+1)
-			{
-				cnt += Bluetooth.btRead(replyBuf, cnt, len + 1 - cnt);
-				if ((int)System.currentTimeMillis() > timeout)
-				{
-					//1 RConsole.print("recvReply timeout\n");
-					return -1;
-				}
-			}
+            if (cnt < len + 1)
+            {
+                // We do not have all of the data yet so wait for it.
+                int timeout = (int)System.currentTimeMillis() + TO_REPLY;
+                while (true)
+                {
+                    cnt += Bluetooth.btRead(replyBuf, cnt, len + 1 - cnt);
+                    if (cnt >= len + 1) break;
+                    if (btEvent.waitEvent(BT_READABLE, timeout - System.currentTimeMillis()) < 0)
+    				{
+    					//1 RConsole.print("recvReply timeout\n");
+    					return -1;
+    				}
+    			}
+            }
 			
 			int csum = len;	
 			len -= 2;
@@ -348,7 +353,6 @@ public class Bluetooth extends NXTCommDevice
 		 */	
 		private void reset() 
 		{
-
 			synchronized(Bluetooth.sync)
 			{
 				int len;
@@ -376,7 +380,7 @@ public class Bluetooth extends NXTCommDevice
 					// Now wait for either 5 seconds or for a RESET_INDICATION
 					startTimeout(TO_RESET);
 					while ((len = recvReply()) == 0 || ( len > 0 && replyBuf[1] != MSG_RESET_INDICATION))
-							Thread.yield();
+							Delay.msDelay(1);
                     //1 if (len < 0) RConsole.print("Reset timed out");
 					// Check things are working
 					//1 RConsole.print("Send mode cmd\n");
@@ -384,7 +388,7 @@ public class Bluetooth extends NXTCommDevice
 					sendCommand();
 					startTimeout(TO_SHORT);
 					while ((len = recvReply()) == 0 || (len > 0 && replyBuf[1] != MSG_OPERATING_MODE_RESULT))
-							Thread.yield();
+							Delay.msDelay(1);
 
                     //1 if (len < 0) RConsole.print("mode had timed out\n");
 					// if we got the response without a timeout we are done!
@@ -404,7 +408,6 @@ public class Bluetooth extends NXTCommDevice
 				if (reqState > RS_IDLE)	reqState = RS_ERROR;
 				Bluetooth.sync.notifyAll();
 				resetCnt++;
-
 			}
 		}
 		
@@ -484,9 +487,10 @@ public class Bluetooth extends NXTCommDevice
 			// stream mode.
 			//RConsole.print("Process cmd1\n");
 			switchToCmd();
-			int cmdEnd = (int)System.currentTimeMillis() + CMD_TIME;
-			while (cmdEnd > (int)System.currentTimeMillis() || reqState > RS_IDLE)
-			{
+			//int cmdEnd = (int)System.currentTimeMillis() + CMD_TIME;
+			//while (cmdEnd > (int)System.currentTimeMillis() || reqState > RS_IDLE)
+            int event;
+			do {
 				//RConsole.print("ProcessCommands state " + reqState + "\n");
 				synchronized(Bluetooth.sync)
 				{
@@ -498,8 +502,10 @@ public class Bluetooth extends NXTCommDevice
 					}
 					processReply();
 				}
-                btEvent.waitEvent(BT_READABLE|BT_NEWCMD, cmdEnd - (int)System.currentTimeMillis());
-			}
+
+                event = btEvent.waitEvent(BT_READABLE|BT_NEWCMD, CMD_TIME);
+			} while (reqState > RS_IDLE || event > 0);
+
 			//RConsole.print("Process cmd end\n");
 		}
 		
