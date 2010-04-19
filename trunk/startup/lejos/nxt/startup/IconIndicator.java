@@ -59,6 +59,14 @@ public class IconIndicator implements ActivityIndictaor
 			// for (int i=0; i<iconWidth; i++)
 			// 	buf[lcdX + i] &= mask; 
 			
+			// ScanLine 2 (thick)
+			// int tick = (int)((time / Config.ANIM_DELAY) % 10);
+			// if (tick > 5)
+			// 	tick = 10 - tick;
+			// int mask = ~(3 << tick);
+			// for (int i=0; i<iconWidth; i++)
+			// 	buf[lcdX + i] &= mask; 
+			
 			// Progress Bar
 			// int tick = (int)((time / Config.ANIM_DELAY) % iconWidth);
 			// for (int i=0; i<tick; i++)
