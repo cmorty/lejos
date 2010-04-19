@@ -487,8 +487,6 @@ public class Bluetooth extends NXTCommDevice
 			// stream mode.
 			//RConsole.print("Process cmd1\n");
 			switchToCmd();
-			//int cmdEnd = (int)System.currentTimeMillis() + CMD_TIME;
-			//while (cmdEnd > (int)System.currentTimeMillis() || reqState > RS_IDLE)
             int event;
 			do {
 				//RConsole.print("ProcessCommands state " + reqState + "\n");
@@ -502,7 +500,7 @@ public class Bluetooth extends NXTCommDevice
 					}
 					processReply();
 				}
-
+                // Wait for data to arrive or for a timeout
                 event = btEvent.waitEvent(BT_READABLE|BT_NEWCMD, CMD_TIME);
 			} while (reqState > RS_IDLE || event > 0);
 
