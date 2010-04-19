@@ -46,31 +46,43 @@ public class IconIndicator implements ActivityIndictaor
 		if (time - this.lastPulse < Config.ACTIVITY_TIMEOUT || this.count > 0)
 		{
 			// ScanLine
-			// int tick = (int)((time / Config.ANIM_DELAY) % 7);
-			// int mask = ~(1 << tick);
-			// for (int i=0; i<iconWidth; i++)
-			// 	buf[lcdX + i] &= mask; 
+			//int tick = (int)((time / Config.ANIM_DELAY) % 7);
+			//int mask = ~(1 << tick);
+			//for (int i=0; i<iconWidth; i++)
+			//	buf[lcdX + i] &= mask; 
 			
 			// ScanLine 2
-			// int tick = (int)((time / Config.ANIM_DELAY) % 12);
-			// if (tick > 6)
-			// 	tick = 12 - tick;
-			// int mask = ~(1 << tick);
-			// for (int i=0; i<iconWidth; i++)
-			// 	buf[lcdX + i] &= mask; 
+			//int tick = (int)((time / Config.ANIM_DELAY) % 12);
+			//if (tick > 6)
+			//	tick = 12 - tick;
+			//int mask = ~(1 << tick);
+			//for (int i=0; i<iconWidth; i++)
+			//	buf[lcdX + i] &= mask; 
 			
 			// ScanLine 2 (thick)
-			// int tick = (int)((time / Config.ANIM_DELAY) % 10);
-			// if (tick > 5)
-			// 	tick = 10 - tick;
-			// int mask = ~(3 << tick);
-			// for (int i=0; i<iconWidth; i++)
-			// 	buf[lcdX + i] &= mask; 
+			//int tick = (int)((time / Config.ANIM_DELAY) % 10);
+			//if (tick > 5)
+			//	tick = 10 - tick;
+			//int mask = ~(3 << tick);
+			//for (int i=0; i<iconWidth; i++)
+			//	buf[lcdX + i] &= mask; 
+			
+			// ScanLine 3 (thick)
+			//int tick = (int)((time / Config.ANIM_DELAY) % 12);
+			//if (tick > 6)
+			//	tick = 12 - tick;
+			//int mask1 = 1 << tick;
+			//int mask2 = ~(5 << (tick+1)) >> 1;
+			//for (int i=0; i<iconWidth; i++)
+			//{
+			//	buf[lcdX + i] |= mask1;
+			//	buf[lcdX + i] &= mask2;
+			//}
 			
 			// Progress Bar
-			// int tick = (int)((time / Config.ANIM_DELAY) % iconWidth);
-			// for (int i=0; i<tick; i++)
-			// 	buf[lcdX + i] |= 0x80;
+			//int tick = (int)((time / Config.ANIM_DELAY) % iconWidth);
+			//for (int i=0; i<tick; i++)
+			//	buf[lcdX + i] |= 0x80;
 			
 			// Token
 			int tw = iconWidth / 2;
