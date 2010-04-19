@@ -3,7 +3,7 @@
  */
 package lejos.nxt.startup;
 
-public class IconIndicator implements ActivityIndictaor
+public class IconIndicator implements ActivityIndicator
 {
 	private int lcdX;
 	private int iconX;
@@ -84,7 +84,7 @@ public class IconIndicator implements ActivityIndictaor
 			//for (int i=0; i<tick; i++)
 			//	buf[lcdX + i] |= 0x80;
 			
-			// Token
+			// Token 
 			int tw = iconWidth / 2;
 			int tick = (int)((time / Config.ANIM_DELAY) % iconWidth);
 			for (int i=0; i<tw; i++)
