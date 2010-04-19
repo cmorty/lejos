@@ -7,7 +7,6 @@ package java.lang;
 public abstract class Enum<E extends Enum<E>> implements Comparable<E>
 {
 	//MISSING implements Serializable
-	//MISSING public final Class<E> getDeclaringClass()
 	
 	private int ordinal;
 	private String name;
