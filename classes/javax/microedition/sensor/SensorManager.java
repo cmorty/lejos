@@ -30,7 +30,7 @@ public class SensorManager {
 		new HiTechnicGyroSensorInfo()
 	};
 	// Hashtable of listeners and a quantity or SensorInfo object
-	private static Hashtable listeners = new Hashtable();
+	private static Hashtable<SensorListener, ArrayList<Object>> listeners = new Hashtable<SensorListener, ArrayList<Object>>();
 	// List of currently attached sensors
 	private static ArrayList<NXTSensorInfo> availableSensors;
 	private static ArrayList<NXTActiveCondition> conditions = new ArrayList<NXTActiveCondition>();
@@ -107,17 +107,19 @@ public class SensorManager {
 	// Add either a SensorInfo or a quantity to a listener
 	private synchronized static void addSensorListenerObject(SensorListener listener, Object obj) {
 		// Get existing objects that the listener is monitoring
-		ArrayList<Object> value = (ArrayList<Object>) listeners.get(listener);
+		ArrayList<Object> value = listeners.get(listener);
 		
 		// If no entry for the listener, create an ArrayList for the entries
-		if (value == null) value = new ArrayList<Object>();
+		if (value == null) {
+			value = new ArrayList<Object>();
+			
+			// Add the ArrayList to the listeners
+			listeners.put(listener, value);
+		}
 		
 		if (!value.contains(obj)) { // Don't add the same object twice
 			// Add the object to the ArrayList
 			value.add(obj);
-			
-			// Add the ArrayList to the listeners
-			listeners.put(listener, value);
 		}	
 	}
 	
@@ -253,11 +255,11 @@ public class SensorManager {
 	
 	// Notify listeners of available or unavailable events
 	private synchronized static void notify(NXTSensorInfo sensor, boolean available) {
-		Enumeration quantityKeys = listeners.keys();
+		Enumeration<SensorListener> quantityKeys = listeners.keys();
 		
 		while(quantityKeys.hasMoreElements()) {
-			SensorListener listener = (SensorListener) quantityKeys.nextElement();		
-			ArrayList<Object> values = (ArrayList<Object>) listeners.get(listener);
+			SensorListener listener = quantityKeys.nextElement();		
+			ArrayList<Object> values = listeners.get(listener);
 			if (values != null) {
 				for(Object obj: values) {
 					if (obj instanceof String) {
@@ -393,7 +395,7 @@ public class SensorManager {
 			NXTChannel channel = cond.getChannel();
 			NXTSensorConnection sensor = channel.getSensor();
 			int reading = sensor.getChannelData(channel.getChannelInfo());
-			if(cond.getCondition().isMet((double) reading)) {
+			if(cond.getCondition().isMet(reading)) {
 				NXTData data = new NXTData(channel.getChannelInfo(),1);
 				data.setIntData(0, reading);
 				cond.getConditionListener().conditionMet(sensor, data, cond.getCondition());
