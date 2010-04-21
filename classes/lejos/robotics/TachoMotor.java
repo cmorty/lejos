@@ -59,7 +59,8 @@ public interface TachoMotor extends Tachometer, DCMotor {
    * @param immediateReturn iff true, method returns immediately, thus allowing monitoring of sensors in the calling thread.
    */
   public void rotateTo(int limitAngle,boolean immediateReturn);  
-  
+
+  public int getLimitAngle();
   /**
    * Set motor speed. As a rule of thumb 100 degrees per second are possible for each volt on an NXT motor.
    * 
