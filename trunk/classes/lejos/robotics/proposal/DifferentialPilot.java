@@ -25,7 +25,7 @@ import lejos.robotics.*;
  * This class  can be used with robots that have reversed motor design: the robot moves
  * in the direction opposite to the the direction of motor rotation. .<br>
  * It automatically updates a DeadReckonerMoveProvider which has called the
- * addMoveListener() method on object class.
+ * addMoveListener() method on object class.<br>
  * Some methods optionally return immediately so the thread that called the
  * method can monitor sensors, get current pose, and call stop() if necessary.<br>
  * Handling stalls: If a stall is detected,   <code>isStalled()</code> returns <code>
@@ -223,11 +223,7 @@ public class DifferentialPilot implements
     _right.setSpeed(rightSpeed);
   }
 
-  /**
-   * also sets _motorSpeed
-   *
-   * @see lejos.robotics.navigation.Pilot#setTravelSpeed(float)
-   */
+ 
   public void setTravelSpeed(final float travelSpeed)
   {
     _robotTravelSpeed = travelSpeed;
@@ -241,7 +237,11 @@ public class DifferentialPilot implements
     return _robotTravelSpeed;
   }
 
-
+  /**
+   * sets the accelration of both motors.
+   * @param accel
+   * @see lejos.nxt.Motor#setAcceleration(int acceleration)
+   */
   public void setAcceleration(int accel)
   {
     _left.setAcceleration(accel);
@@ -297,7 +297,7 @@ public class DifferentialPilot implements
   }
 
   /**
-   * Moves the NXT robot forward until stop() is called.
+   * Starts the NXT robot moving forward.
    */
   public void forward()
   {
@@ -314,7 +314,7 @@ public class DifferentialPilot implements
   }
 
   /**
-   * Moves the NXT robot backward until stop() is called.
+   *  Starts the NXT robot moving backward.
    */
   public void backward()
   {
@@ -638,12 +638,63 @@ public class DifferentialPilot implements
     else _inside.forward();
   }
 
-  
+  /**
+   * Moves the robot along a curved path through a specified turn angle. This method is similar to the
+   * {@link #arc(float radius , float angle)} method except it uses a ratio of motor
+   * speeds to determine the curvature of the  path and therefore has the ability to drive straight. This makes
+   * it useful for line following applications. This method does not return until the robot has
+   * completed moving <code>angle</code> degrees along the arc.<br>
+   * The <code>turnRate</code> specifies the sharpness of the turn. Use values  between -200 and +200.<br>
+   * For details about how this parameter works.See {@link #steer(float turnRate) }
+   * <p>
+   * The robot will stop when its heading has changed by the amount of the  <code>angle</code> parameter.<br>
+   * If <code>angle</code> is positive, the robot will move in the direction that increases its heading (it turns left).<br>
+   * If <code>angle</code> is negative, the robot will move in the directin that decreases its heading (turns right).<br>
+   * If <code>angle</code> is zero, the robot will not move and the method returns immediately.
+   * <p> The sign of the turn rate and the sign of the angle together determine if the robot will move forward
+   * or backward. Assuming the robot is heading toward the top of the page. Then a positive turn rate means the
+   * arc looks like this: <b> )</b>  .  If the angle is positive, the robot moves forward to increase its heading angle.
+   * If negative,  it moves backward to decrease the heading.  <br> But if the turn rate is negative,
+   * the arc looks like this: <b> (  </b> .So a positive angle (increase in heading) means the robot
+   * moves backwards, while a negative angle means the robot moves forward to decrease
+   * its heading.
+   *
+   * <p>
+   * Note: If you have specified a drift correction in the constructor it will not be applied in this method.
+   *
+   * @param turnRate If positive, the left side of the robot is on the inside of the turn. If negative,
+   * the left side is on the outside.
+   * @param angle The angle through which the robot will rotate. If negative, the robot will move in the directin that decreases its heading.
+   */
   public void steer(final float turnRate, float angle)
   {
     steer(turnRate, angle, false);
   }
 
+  /**
+   * Moves the robot along a curved path for a specified angle of rotation. This method is similar to the
+   * {@link #arc(float radius, float angle, boolean immediateReturn)} method except it uses the <code> turnRate()</code>
+   * parameter to determine the curvature of the path and therefore has the ability to drive straight.
+   * This makes it useful for line following applications. This method has the ability to return immediately
+   * by using the <code>immediateReturn</code> parameter set to <b>true</b>.
+   *
+   * <p>
+   * The <code>turnRate</code> specifies the sharpness of the turn. Use values between -200 and +200.<br>
+   * For details about how this parameter works, see {@link #steer(float turnRate) }
+   * <p>
+    * The robot will stop when its heading has changed by the amount of the  <code>angle</code> parameter.<br>
+   * If <code>angle</code> is positive, the robot will move in the direction that increases its heading (it turns left).<br>
+   * If <code>angle</code> is negative, the robot will move in the direction that decreases its heading (turns right).<br>
+   * If <code>angle</code> is zero, the robot will not move and the method returns immediately.<br>
+   * For more details about this parameter, see {@link #steer(float turnRate, float angle)}
+   * <p>
+   * Note: If you have specified a drift correction in the constructor it will not be applied in this method.
+   *
+   * @param turnRate If positive, the left side of the robot is on the inside of the turn. If negative,
+   * the left side is on the outside.
+   * @param angle The angle through which the robot will rotate. If negative, robot traces the turning circle backwards.
+   * @param immediateReturn If immediateReturn is true then the method returns immediately.
+   */
   public void steer(final float turnRate, final float angle,
           final boolean immediateReturn)
   {
@@ -676,7 +727,7 @@ public class DifferentialPilot implements
    * sets _outsideSpeed, _insideSpeed, _steerRatio
    * @param turnRate
    */
-  protected void steerPrep(final float turnRate)
+  public void steerPrep(final float turnRate)
   {
 
     float rate = turnRate;
@@ -698,9 +749,6 @@ public class DifferentialPilot implements
     _inside.setSpeed((int) (_motorSpeed * _steerRatio));
   }
 
-
-
-  
 
   /**
    * called by TachoMotor when a motor rotation is complete
@@ -866,7 +914,7 @@ public class DifferentialPilot implements
   /**
    * Motor rotation forward makes robot move forward if parity == 1.
    */
-  private byte _parity;
+  protected byte _parity;
   /**
    * Distance between wheels. Used in steer() and rotate().
    */
