@@ -302,14 +302,19 @@ public class StartUpText
     private void runDefaultProgram()
     {
         String defaultProgram = Settings.getProperty(defaultProgramProperty, "");
-        if (defaultProgram != null && defaultProgram.length() > 0)
+        if (defaultProgram == null || defaultProgram.length() <= 0)
+        	msg("No default set");
+        else
         {
             String progName = defaultProgram + ".nxj";
             File f = new File(progName);
             if (f.exists())
                 f.exec();
             else
+            {
+            	msg("File not found");
                 Settings.setProperty(defaultProgramProperty, "");
+            }
         }
     }
 
@@ -595,7 +600,16 @@ public class StartUpText
     {
         newScreen();
         LCD.drawString(msg, 0, 2);
-        Delay.msDelay(2000);
+        long start = System.currentTimeMillis();
+        int button;
+        int buttons = Button.readButtons();
+        do
+        {
+        	Thread.yield();
+        	
+        	int buttons2 = Button.readButtons();
+        	button = buttons2 & ~buttons;
+        } while (button != Button.ID_ESCAPE && System.currentTimeMillis() - start < 2000);
     }
 
     /**
@@ -905,6 +919,11 @@ public class StartUpText
             int len = 0;
             for (int i = 0; i < files.length && files[i] != null; i++)
                 len++;
+            if (len == 0)
+            {
+                msg("No files found");
+                return;
+            }
             String fileNames[] = new String[len];
             for (int i = 0; i < len; i++)
                 fileNames[i] = files[i].getName();
