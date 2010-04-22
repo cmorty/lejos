@@ -219,9 +219,8 @@ public class StartUpText
      */
     private void newScreen(String title)
     {
-        LCD.clear();
         indiBA.setTitle(title);
-        ind.updateNow();
+        newScreen();
     }
 
     /**
