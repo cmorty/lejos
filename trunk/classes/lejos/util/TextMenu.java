@@ -11,39 +11,14 @@ import lejos.nxt.LCD;
 public class TextMenu  
 {
 	/**
-	 * index of the list item at the top of the list; set by constructor, used by select()
- 	 **/
-	private int _topIndex = 0;  
-	
-	/** 
-	 *	index of the currently selected item; updated by select() used by display();
-	 */
-	private int _selectedIndex = 0;
-	
-	/** 
-	 * number of rows displayed; set by constructor, used by display()
-	 */
-	private int _size = 8;
-	
-	/**
 	 *location of the top row of the list; set by constructor, used by display()
 	 */
 	private int _topRow = 0;
 	
-	/**
-	 *array of items to be displayed ;set by constructor, used by select();
+	/** 
+	 * number of rows displayed; set by constructor, used by display()
 	 */
-	private String [] _items;
-	
-	/**
- 	 *identifies the currently selected item
- 	 */
-	private String _selChar = ">";
-	
-	/**
-	 * a blank line
-	 */
-	public static String blank = "                ";
+	private int _height = 8;
 	
 	/**
 	 *optional menu title displayed immediately above the list of items
@@ -51,9 +26,9 @@ public class TextMenu
 	private String _title;
 	
 	/**
-	 * boolean to cause select to quit 
+	 *array of items to be displayed ;set by constructor, used by select();
 	 */
-	private boolean _quit = false;
+	private String[] _items;
 	
 	/**
 	 * effective length of items array  - number of items before null 
@@ -61,7 +36,27 @@ public class TextMenu
 	private int _length;
 	
 	/**
-	 * startb time for select()
+	 * index of the list item at the top of the list; set by constructor, used by select()
+ 	 **/
+	private int _topIndex = 0;  
+	
+	/**
+ 	 *identifies the currently selected item
+ 	 */
+	private static final char SEL_CHAR = '>';
+	
+	/**
+	 * a blank line
+	 */
+	public static final String BLANK = "                ";
+	
+	/**
+	 * boolean to cause select to quit 
+	 */
+	private boolean _quit = false;
+	
+	/**
+	 * start time for select()
 	 */
 	private int _startTime;
 	
@@ -70,7 +65,7 @@ public class TextMenu
 	 */
 	public TextMenu( String[] items)
 	{
-		this.setItems(items);
+		this(items, 0, null);
 	}
 	
 	/**
@@ -78,8 +73,7 @@ public class TextMenu
 	 */
 	public TextMenu( String[] items, int topRow)
 	{
-		_topRow = topRow;
-		this.setItems(items);
+		this(items, topRow, null);
 	}
 	
 	/**
@@ -89,6 +83,9 @@ public class TextMenu
 	 */	
 	public TextMenu(String[] items, int topRow, String title)
 	{
+		if (topRow < 0 || (topRow == 0 && title != null))
+			throw new IllegalArgumentException("illegal topRow argument");
+		
 		_topRow = topRow;
 		setTitle(title);
 		this.setItems(items);
@@ -101,9 +98,11 @@ public class TextMenu
 	public void setTitle(String title) 
 	{
 		_title = title;
-		if(_topRow == 0)_topRow = 1;
-		if(_length <= 8)_size = _length;
-		if(_size > 8 - _topRow) _size = 8 - _topRow;
+		if(_topRow <= 0)
+			_topRow = 1;		
+		_height = 8 - _topRow;
+		if(_height > _length)
+			_height = _length;
 	}
 	
 	/**
@@ -113,14 +112,19 @@ public class TextMenu
 	public void setItems(String[] items)
 	{
 		_items = items;
-		if(items == null) return;
-		int i = 0;
-		while(i < items.length && items[i] != null)i++;
-		_length = i;
-		_size = _length;
-		if(_size > 8 - _topRow) _size = 8 - _topRow;
-		_quit = false;
-		_topIndex = 0;
+		
+		if (items == null)
+			_length = 0;
+		else
+		{
+			int i = 0;
+			while(i < items.length && items[i] != null)
+				i++;
+			_length = i;
+		}
+		_height = 8 - _topRow;
+		if(_height > _length)
+			_height = _length;		
 	}
 	
 	/**
@@ -162,49 +166,67 @@ public class TextMenu
 		if (selectedIndex < 0)
 			selectedIndex = 0;
 		
-	   _selectedIndex = selectedIndex;
 //		if (_length<_size) _size = _length;
-		int button = 0;
 		_quit = false;
 		resetTimeout();
 //		LCD.clear();
-		display();
-		while(!_quit)
+		if (selectedIndex < _topIndex)
+			_topIndex = selectedIndex;
+		if (selectedIndex >= _topIndex+_height)
+			_topIndex = selectedIndex - _height + 1;			
+		display(selectedIndex, _topIndex);
+		int buttons = Button.readButtons();
+		while(true)
 		{
-			while(Button.readButtons()>0 && !_quit)Thread.yield();// wait for release
-			while(Button.readButtons()==0 && !_quit) {
-				if (timeout > 0 && 
-				   ((int) System.currentTimeMillis())- _startTime >= timeout) 
+			int button;
+			do
+			{				
+				if (_quit)
+					return -2; // quit by another thread
+				
+				if (timeout > 0 && System.currentTimeMillis() - _startTime >= timeout) 
 					return -3; // timeout
+				
 				Thread.yield();
-			}
-			if (_quit) return -2; // quit by another thread
-            Delay.msDelay(20);
-			button=Button.readButtons();
+				int buttons2 = Button.readButtons();
+				button = (buttons2 & ~buttons);				
+				buttons = buttons2;
+			} while (button == 0);
 			
-			if(button == 1 && _selectedIndex < _length) return _selectedIndex;
-			if(button == 8) return -1; //Escape
-			if(button == 4)//scroll forward
+			if(button == Button.ID_ENTER && selectedIndex >= 0 && selectedIndex < _length)
+				return selectedIndex;
+			if(button == Button.ID_ESCAPE)
+				return -1; //Escape
+			if(button == Button.ID_RIGHT)//scroll forward
 			{
-				_selectedIndex ++;
+				selectedIndex++;
 				// check for index out of bounds
-				if(_selectedIndex >= _length) _selectedIndex -= _length;				
-				int diff = _selectedIndex - _topIndex;
-				if(diff < 0)diff += _length;
-				if(diff >= _size) _topIndex = 1+ _selectedIndex  - _size;
+				if(selectedIndex >= _length)
+				{
+					selectedIndex = 0;
+					_topIndex = 0;
+				}
+				else if(selectedIndex >= _topIndex + _height)
+				{
+					_topIndex = selectedIndex - _height + 1;
+				}
 			}
-			if(button == 2)//scroll backward
+			if(button == Button.ID_LEFT)//scroll backward
 			{
-				_selectedIndex --;
+				selectedIndex --;
 				// check for index out of bounds
-				if(_selectedIndex < 0) _selectedIndex  += _length;
-				int diff = _selectedIndex - _topIndex;
-				if(diff > _length) diff -= _length;
-				if(diff < 0 || diff >= _size)_topIndex = _selectedIndex;
+				if(selectedIndex < 0)
+				{
+					selectedIndex  = _length - 1;
+					_topIndex = _length - _height;
+				}
+				else if(selectedIndex < _topIndex)
+				{
+					_topIndex = selectedIndex;
+				}
 			}
-			display();
+			display(selectedIndex, _topIndex);
 		}
-		return -2;
 	}
 	
 	/**
@@ -218,37 +240,29 @@ public class TextMenu
 	/**
 	 * helper method used by select()
 	 */
-	private  void display()
+	private  void display(int selectedIndex, int topIndex)
 	{
-		if(_title != null)LCD.drawString(_title,0,_topRow-1);
-		for (int i = 0;i<_size;i++)
+		//LCD.asyncRefreshWait();
+		if(_title != null)
+			LCD.drawString(_title, 0, _topRow - 1);
+		int max = _topRow + _height;
+		for (int i = _topRow; i < max; i++)
 		{
-			LCD.drawString(blank,0,i + _topRow);
-			int indx = index(i);
-			if(_items[indx] !=null)
+			LCD.drawString(BLANK, 0, i);
+			int idx = i - _topRow + topIndex;
+			if (idx >= 0 && idx < _length)
 			{
-				LCD.drawString(_items[indx],1,i + _topRow);
-				if(indx == _selectedIndex) LCD.drawString(_selChar,0,i + _topRow);
+				LCD.drawChar(idx == selectedIndex ? SEL_CHAR : ' ', 0, i);
+				LCD.drawString(_items[idx], 1, i);
 			}
-			else LCD.drawString(blank,0,i + _topRow);
 		}
-		// clear to bottom of screen
-		for (int i = _size  + _topRow; i<8; i++) LCD.drawString(blank,0,i);
-		LCD.refresh();
+		LCD.asyncRefresh();
 	}
 	
 	/**
-	 * helper method used by display() to calculate the index in the items array corresponding to a row of the 
-	 * menu display
+	 * Returns list of items in this menu; 
+	 * @return the array of item names
 	 */
-	private int index(int row)
-	{
-		return (_topIndex + row + _length)%_length;
-	}
-/**
- *  returns list of items in this menu; 
- * @return the array of item names
- */
 	public String[] getItems()
 	{
 	   return _items;
