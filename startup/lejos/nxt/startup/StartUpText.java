@@ -89,7 +89,6 @@ public class StartUpText
 	    			int x = (USB.usbStatus() & 0xf0000000) == 0x10000000 ? Config.ICON_USB_X : Config.ICON_DISABLE_X;
 	    			indiUSB.setIconX(x);
 	    			
-	    			LCD.setAutoRefresh(false);
 	    			byte[] buf = LCD.getDisplay();
 	    			// clear not necessary, pixels are always overwritten
 	    			//for (int i=0; i<LCD.SCREEN_WIDTH; i++)
@@ -97,7 +96,6 @@ public class StartUpText
 	    			indiBA.draw(time, buf);
 	    			indiUSB.draw(time, buf);
 	    			indiBT.draw(time, buf);
-	    			LCD.setAutoRefresh(true);
 	    			LCD.asyncRefresh();
 	    			
 	    			synchronized (this)
@@ -584,6 +582,7 @@ public class StartUpText
         fadeOut();
         ind.start();
         LCD.clear();
+        LCD.setAutoRefresh(false);
         // Tell the background thread we are done and to fade in the menu.
         stState = 3;
     }
@@ -684,7 +683,9 @@ public class StartUpText
     {
         Vector devList = Bluetooth.getKnownDevicesList();
         newScreen("Devices");
-        if (devList.size() > 0)
+        if (devList.size() <= 0)
+            msg("No known devices");
+        else
         {
             String[] names = new String[devList.size()];
             for (int i = 0; i < devList.size(); i++)
@@ -717,8 +718,6 @@ public class StartUpText
                 }
             } while (selected >= 0);
         }
-        else
-            msg("No known devices");
     }
 
     /**
@@ -898,6 +897,7 @@ public class StartUpText
      */
     private void filesMenu()
     {
+        TextMenu menu = new TextMenu(null, 1);
         int selection = 0;
         do {
             newScreen("Files");
@@ -908,7 +908,7 @@ public class StartUpText
             String fileNames[] = new String[len];
             for (int i = 0; i < len; i++)
                 fileNames[i] = files[i].getName();
-            TextMenu menu = new TextMenu(fileNames, 1);
+            menu.setItems(fileNames);
             selection = getSelection(menu, selection);
             if (selection >= 0)
                 fileMenu(files[selection]);
@@ -1011,7 +1011,7 @@ public class StartUpText
     private void systemMenu()
     {
         String[] menuData = {"Format", "", "Auto Run"};
-        TextMenu menu = new TextMenu(null, 5);
+        TextMenu menu = new TextMenu(menuData, 5);
         int selection = 0;
         do {
             newScreen("System");
@@ -1027,7 +1027,6 @@ public class StartUpText
             if (Battery.isRechargeable())
                 LCD.drawString("R", 15, 4);
             menuData[1] = "Sleep time: " + timeout;
-            menu.setItems(menuData);
             selection = getSelection(menu, selection);
             switch (selection)
             {
