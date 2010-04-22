@@ -69,6 +69,8 @@ public class StartUpText
      */
 	class IndicatorThread extends Thread
     {
+		private boolean updateNow;
+
 		public IndicatorThread()
     	{
     		super();
@@ -89,8 +91,9 @@ public class StartUpText
 	    			
 	    			LCD.setAutoRefresh(false);
 	    			byte[] buf = LCD.getDisplay();
-	    			for (int i=0; i<LCD.SCREEN_WIDTH; i++)
-	    				buf[i] = 0;	    			
+	    			// clear not necessary, pixels are always overwritten
+	    			//for (int i=0; i<LCD.SCREEN_WIDTH; i++)
+	    			//	buf[i] = 0;	    			
 	    			indiBA.draw(time, buf);
 	    			indiUSB.draw(time, buf);
 	    			indiBT.draw(time, buf);
@@ -99,9 +102,15 @@ public class StartUpText
 	    			
 	    			synchronized (this)
 	    			{
-	    				// wait until next tick
-	    				time = System.currentTimeMillis();
-	    				this.wait(250 - (time % 250));
+	    				// only if updateNow hasn't been called
+	    				if (this.updateNow)	    					
+		    				this.updateNow = false;
+	    				else
+	    				{
+		    				// wait until next tick
+		    				time = System.currentTimeMillis();
+		    				this.wait(250 - (time % 250));
+	    				}
 	    			}
 	    		}
     		}
@@ -113,6 +122,7 @@ public class StartUpText
     	
     	public synchronized void updateNow()
     	{
+    		this.updateNow = true;
     		this.notifyAll();
     	}
     }

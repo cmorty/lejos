@@ -8,8 +8,8 @@ public class IconIndicator implements ActivityIndicator
 	private int lcdX;
 	private int iconX;
 	private int iconWidth;
-	private long lastPulse;
 	private int count;
+	private long lastPulse;
 	
 	public IconIndicator(int lcdX, int iconX, int iconWidth)
 	{
@@ -41,7 +41,14 @@ public class IconIndicator implements ActivityIndicator
 	public synchronized void draw(long time, byte[] buf)
 	{
 		if (this.iconX >= 0)
+		{
 			System.arraycopy(Config.ICON_DATA, iconX, buf, lcdX, iconWidth);
+		}
+		else
+		{
+			for (int i=0; i<iconWidth; i++)
+				buf[lcdX + i] = 0;
+		}
 		
 		if (time - this.lastPulse < Config.ACTIVITY_TIMEOUT || this.count > 0)
 		{
