@@ -69,8 +69,6 @@ public class StartUpText
      */
 	class IndicatorThread extends Thread
     {
-		private boolean updateNow;
-
 		public IndicatorThread()
     	{
     		super();
@@ -82,33 +80,26 @@ public class StartUpText
     	{
     		try
     		{
-	    		long time;    	
-	    		while (true)
-	    		{
-	    			time = System.currentTimeMillis();
-	    			int x = (USB.usbStatus() & 0xf0000000) == 0x10000000 ? Config.ICON_USB_X : Config.ICON_DISABLE_X;
-	    			indiUSB.setIconX(x);
+    			synchronized (this)
+    			{
+		    		while (true)
+		    		{
+		    			long time = System.currentTimeMillis();
+		    			int x = (USB.usbStatus() & 0xf0000000) == 0x10000000 ? Config.ICON_USB_X : Config.ICON_DISABLE_X;
+		    			indiUSB.setIconX(x);
+		    			
+		    			byte[] buf = LCD.getDisplay();
+		    			// clear not necessary, pixels are always overwritten
+		    			//for (int i=0; i<LCD.SCREEN_WIDTH; i++)
+		    			//	buf[i] = 0;	    			
+		    			indiBA.draw(time, buf);
+		    			indiUSB.draw(time, buf);
+		    			indiBT.draw(time, buf);
+		    			LCD.asyncRefresh();
 	    			
-	    			byte[] buf = LCD.getDisplay();
-	    			// clear not necessary, pixels are always overwritten
-	    			//for (int i=0; i<LCD.SCREEN_WIDTH; i++)
-	    			//	buf[i] = 0;	    			
-	    			indiBA.draw(time, buf);
-	    			indiUSB.draw(time, buf);
-	    			indiBT.draw(time, buf);
-	    			LCD.asyncRefresh();
-	    			
-	    			synchronized (this)
-	    			{
-	    				// only if updateNow hasn't been called
-	    				if (this.updateNow)	    					
-		    				this.updateNow = false;
-	    				else
-	    				{
-		    				// wait until next tick
-		    				time = System.currentTimeMillis();
-		    				this.wait(250 - (time % 250));
-	    				}
+	    				// wait until next tick
+	    				time = System.currentTimeMillis();
+	    				this.wait(250 - (time % 250));
 	    			}
 	    		}
     		}
@@ -120,7 +111,6 @@ public class StartUpText
     	
     	public synchronized void updateNow()
     	{
-    		this.updateNow = true;
     		this.notifyAll();
     	}
     }
