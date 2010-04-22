@@ -299,11 +299,14 @@ public class StartUpText
     /**
      * Run the default program (if set).
      */
-    private void runDefaultProgram()
+    private void runDefaultProgram(boolean interactive)
     {
         String defaultProgram = Settings.getProperty(defaultProgramProperty, "");
         if (defaultProgram == null || defaultProgram.length() <= 0)
-        	msg("No default set");
+        {
+        	if (interactive)
+        		msg("No default set");
+        }
         else
         {
             String progName = defaultProgram + ".nxj";
@@ -312,7 +315,8 @@ public class StartUpText
                 f.exec();
             else
             {
-            	msg("File not found");
+            	if (interactive)
+            		msg("File not found");
                 Settings.setProperty(defaultProgramProperty, "");
             }
         }
@@ -572,7 +576,7 @@ public class StartUpText
                 Settings.getProperty(defaultProgramAutoRunProperty, "").equals("ON"))
             {
                 tuneThread.start();
-                runDefaultProgram();
+                runDefaultProgram(false);
             }
         }
         initThread.start();
@@ -1102,7 +1106,7 @@ public class StartUpText
             switch (selection)
             {
                 case 0:
-                    runDefaultProgram();
+                    runDefaultProgram(true);
                     break;
                 case 1:
                     filesMenu();
