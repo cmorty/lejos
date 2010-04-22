@@ -1003,7 +1003,7 @@ public class StartUpText
      * Present details of the default program
      * Allow the user to specifiy run on system start etc.
      */
-    private void defaultProgram()
+    private void autoRunMenu()
     {
     	newScreen("Auto Run");    	
         String defaultPrgm = Settings.getProperty(defaultProgramProperty, "");
@@ -1060,7 +1060,7 @@ public class StartUpText
                     Settings.setProperty(sleepTimeProperty, "" + timeout);
                     break;
                 case 2:
-                    defaultProgram();
+                    autoRunMenu();
                     selection = 0;
                     break;
             }
