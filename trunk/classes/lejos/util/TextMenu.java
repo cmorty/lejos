@@ -170,10 +170,10 @@ public class TextMenu
 		_quit = false;
 		resetTimeout();
 //		LCD.clear();
-		if (selectedIndex < _topIndex)
+		if (_topIndex > selectedIndex)
 			_topIndex = selectedIndex;
-		if (selectedIndex >= _topIndex+_height)
-			_topIndex = selectedIndex - _height + 1;			
+		if (_topIndex > _length - _height)
+			_topIndex = _length - _height;			
 		display(selectedIndex, _topIndex);
 		int buttons = Button.readButtons();
 		while(true)
