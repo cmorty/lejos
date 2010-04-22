@@ -743,7 +743,10 @@ public class StartUpText
      */
     private void bluetoothPower(boolean on)
     {
-        newScreen("Power " + (on ? "on" : "off"));
+        newScreen();
+        
+        LCD.drawString("Powering " + (on ? "on" : "off") +" ...", 0, 2);
+        
         indiBT.incCount();
         try
         {
