@@ -463,7 +463,7 @@ public class StartUpText
      */
     static void fadeIn()
     {
-        for(int i = 20; i < 0x60; i++)
+        for(int i = 20; i <= 0x60; i++)
         {
             Delay.msDelay(5);
             LCD.setContrast(i);
