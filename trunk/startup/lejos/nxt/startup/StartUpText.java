@@ -41,16 +41,6 @@ import lejos.util.TextMenu;
  */
 public class StartUpText
 {
-	boolean btPowerOn;
-	boolean btVisibility;
-    IndicatorThread ind = new IndicatorThread();
-    BatteryIndicator indiBA = new BatteryIndicator();
-    IconIndicator indiUSB = new IconIndicator(Config.ICON_USB_POS, Config.ICON_DISABLE_X, Config.ICON_USB_WIDTH);
-    IconIndicator indiBT = new IconIndicator(Config.ICON_BT_POS, Config.ICON_DISABLE_X, Config.ICON_BT_WIDTH);
-    Responder usb = new Responder(USB.getConnector(), indiUSB);
-    Responder bt = new Responder(Bluetooth.getConnector(), indiBT);
-    int timeout;
-    TextMenu curMenu = null;
     static final String defaultProgramProperty = "lejos.default_program";
     static final String defaultProgramAutoRunProperty = "lejos.default_autoRun";
     static final String sleepTimeProperty = "lejos.sleep_time";
@@ -62,6 +52,17 @@ public class StartUpText
     static final int MAJOR_VERSION = 0;
     static final int MINOR_VERSION = 85;
 
+	boolean btPowerOn;
+	boolean btVisibility;
+    IndicatorThread ind = new IndicatorThread();
+    BatteryIndicator indiBA = new BatteryIndicator();
+    IconIndicator indiUSB = new IconIndicator(Config.ICON_USB_POS, Config.ICON_DISABLE_X, Config.ICON_USB_WIDTH);
+    IconIndicator indiBT = new IconIndicator(Config.ICON_BT_POS, Config.ICON_DISABLE_X, Config.ICON_BT_WIDTH);
+    Responder usb = new Responder(USB.getConnector(), indiUSB);
+    Responder bt = new Responder(Bluetooth.getConnector(), indiBT);
+    int timeout;
+    TextMenu curMenu = null;
+    
     /**
      * Manage the top line of the display.
      * The top line of the display shows battery state, menu titles, and I/O
@@ -193,12 +194,9 @@ public class StartUpText
      */
     static void playTune()
     {
-        int[] freq =
-        {
-            523, 784, 659
-        };
+        int[] freq = { 523, 784, 659 };
         for (int i = 0; i < 3; i++)
-            Sound.playNote(Sound.XYLOPHONE, freq[i], (i == 3 ? 500 : 300));
+            Sound.playNote(Sound.XYLOPHONE, freq[i], 300);
         Sound.pause(300);
     }
 
@@ -498,61 +496,77 @@ public class StartUpText
     	indiBT.setIconX(x);
     }
     
-    /**
-     * Startup the menu system.
-     * Play the greeting tune.
-     * Run the default program if auto-run is requested.
-     * Initialize I/O etc.
-     */
-    volatile int stState = 0;
-    
-    private void startup()
+    class TuneThread extends Thread
     {
-        LCD.setContrast(0);
-        Thread tuneThread = new Thread()
+        @Override
+        public void run()
         {
-
-            @Override
-            public void run()
-            {
-                playTune();
-                //fadeIn();
-            }
-        };
-        Thread initThread = new Thread()
+            playTune();
+            //fadeIn();
+        }
+    }    
+    
+    class InitThread extends Thread
+    {
+        /**
+         * Startup the menu system.
+         * Play the greeting tune.
+         * Run the default program if auto-run is requested.
+         * Initialize I/O etc.
+         */
+        int stState = 0;
+        
+        @Override
+        public void run()
         {
-
-            @Override
-            public void run()
+            // Defrag the file system
+            try
             {
-                File.listFiles();
-                // Defrag the file system
-                try
-                {
-                    File.defrag();
-                }
-                catch (IOException ioe)
-                {
-                    File.reset();
-                }
-                stState = 1;
-                setAddress();
-                timeout = SystemSettings.getIntSetting(sleepTimeProperty, defaultSleepTime);
-                btPowerOn = setBluetoothPower(Bluetooth.getStatus() == 0);
-                btVisibility = (Bluetooth.getVisibility() == 1);
-                updateBTIcon();
-                usb.start();
-                bt.start();
-                stState = 2;
-                // Wait for the screen to be dim
-                while (stState != 3)
-                    Thread.yield();
-                // Give time for the menu to be displayed
-                Delay.msDelay(250);
-                // and make it visible.
-                fadeIn();
+                File.defrag();
             }
-        };
+            catch (IOException ioe)
+            {
+                File.reset();
+            }
+            this.setState(1);
+            setAddress();
+            timeout = SystemSettings.getIntSetting(sleepTimeProperty, defaultSleepTime);
+            btPowerOn = setBluetoothPower(Bluetooth.getStatus() == 0);
+            btVisibility = (Bluetooth.getVisibility() == 1);
+            updateBTIcon();
+            usb.start();
+            bt.start();
+            this.setState(2);
+            // Wait for the screen to be dim
+            this.waitState(3);
+            // and make it visible.
+            fadeIn();
+        }
+        
+        public synchronized void setState(int s)
+        {
+        	this.stState = s;
+        	this.notifyAll();
+        }
+        
+        public synchronized void waitState(int s)
+        {
+        	while (this.stState < s)
+        	{
+        		try
+        		{
+        			this.wait();
+        		}
+        		catch (InterruptedException e)
+        		{
+        			// nothing
+        		}
+        	}
+        }
+    }
+    
+    private void startup() throws InterruptedException
+    {
         // Make sure color sensor can be used remotely, this will also reset
         // the sensors
         for (int i=0; i<SensorPort.NUMBER_OF_PORTS; i++)
@@ -564,25 +578,25 @@ public class StartUpText
             if (!Button.LEFT.isPressed() &&
                 Settings.getProperty(defaultProgramAutoRunProperty, "").equals("ON"))
             {
-                tuneThread.start();
+            	playTune();
                 runDefaultProgram(false);
             }
         }
+        InitThread initThread = new InitThread();
         initThread.start();
-        fadeIn();
+        TuneThread tuneThread = new TuneThread();
         // Wait for defrag to complete
-        while (stState != 1)
-            Thread.yield();
+        initThread.waitState(1);
         tuneThread.start();
         // Wait for init to complete
-        while (stState != 2)
-            Thread.yield();
+        initThread.waitState(2);
+        tuneThread.join();
         fadeOut();
-        ind.start();
         LCD.clear();
         LCD.setAutoRefresh(false);
+        ind.start();
         // Tell the background thread we are done and to fade in the menu.
-        stState = 3;
+        initThread.setState(3);
     }
 
     /**
