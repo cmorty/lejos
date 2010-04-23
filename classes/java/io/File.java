@@ -670,15 +670,19 @@ public class File {
 	// TODO: This isn't a standard Java API method and should not be public. - BB
 	public static void defrag() throws IOException
 	{
-		File file;
 		int page_pointer = FILE_START_PAGE; // smallest memory location possible for current file 
 
+		//call to initialize files array
+		File.listFiles();
+		
 		for(byte  i = 0; i < totalFiles; i++)
 		{
-			file = files[i];
-			if(file.page_location > page_pointer) file.moveTo(page_pointer);					
+			File file = files[i];
+			if(file.page_location > page_pointer)
+				file.moveTo(page_pointer);					
 			page_pointer = file.page_location + (int) file.length()/Flash.BYTES_PER_PAGE ;
-			if (file.length()%Flash.BYTES_PER_PAGE >0 ) page_pointer++;	
+			if (file.length()%Flash.BYTES_PER_PAGE >0 )
+				page_pointer++;	
 		}
 		writeTable(files);	// update the file data in flash memory	
 	}
