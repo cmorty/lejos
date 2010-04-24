@@ -63,20 +63,19 @@ shutdown()
     nxt_avr_power_down();
 }
 
+/**
+ * Wait for the user to press ESCAPE and then exit the program
+ */
 static
 void
 wait_for_exit()
 {
-  for (;;) {
-    int b = buttons_get();
-
-    // Check for ESCAPE pressed
-    if (b == (BUTTON_ESCAPE)) {
-      // Exit the program
-      schedule_request(REQUEST_EXIT);
-      break;
-    }
-  }
+  // wait for all buttons to be released
+  while (buttons_get()) ;
+  // now wait for escape
+  while (buttons_get() != BUTTON_ESCAPE) ;
+  // Exit the program
+  schedule_request(REQUEST_EXIT);
 }
 
 #if USE_VARSTAT
@@ -105,7 +104,7 @@ handle_uncaught_exception(Throwable * exception,
   int dummy;
   nxt_motor_reset_all();
   sound_freq(100,500, 80); // buzz
-  display_clear(0);
+  display_reset();
   display_goto_xy(0, line++);
   display_string("Exception: ");
   display_int(get_class_index(&(exception->_super)), 0);
@@ -157,7 +156,7 @@ void
 assert_hook(boolean aCond, int aCode)
 {
   if (aCond) return;
-  display_clear(0);
+  display_reset();
   display_goto_xy(0,0);
   display_string("Assert failed");
   display_goto_xy(0,1);
@@ -305,7 +304,7 @@ nxt_main(const byte *bin, int size)
   //      printf("Running\n");
   run(jsize);
   init_events();
-  display_clear(1);
+  display_reset();
   nxt_motor_reset_all();
   udp_reset();
   bt_reset();
@@ -317,6 +316,7 @@ nxt_main(const byte *bin, int size)
   return 0;
 }
 
+#ifdef FW_SPLASH
 const U8 splash_data[4 * 26] = {
   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
   0x00, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0xFF, 0xFF, 0xFF, 0xFF, 0xFE, 0xFC,
@@ -338,7 +338,7 @@ show_splash()
   display_string("LEJOS");
   display_update();
 }
-
+#endif
 
 
 #if 0
@@ -486,7 +486,9 @@ main(void)
   udp_init();
   systick_wait_ms(1000); // wait for LCD to stabilize
   display_init();
+#ifdef FW_SPLASH
   show_splash(); 
+#endif
   gNextProgram = NULL;
   do 
   {
