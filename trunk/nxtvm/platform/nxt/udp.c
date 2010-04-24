@@ -445,8 +445,11 @@ udp_enumerate()
     display_hex(len, 4);
     display_update();
   }*/
-  // If we are disabled we respond to requests with a stall
-  if (configured & USB_DISABLED)
+  // If we are disabled we respond to some equests with a stall the idea is to
+  // allow initialization/enumeration operations to continue to work when a 
+  // program that is not using USB is running, but to prevent attempts to
+  // perform actual data transfers.
+  if ((configured & (USB_DISABLED|USB_CONFIGURED)) == (USB_DISABLED|USB_CONFIGURED) && (req < STD_GET_STATUS_ZERO || req > STD_GET_STATUS_ENDPOINT))
   {
     udp_send_stall();
     return;
@@ -493,24 +496,35 @@ udp_enumerate()
       currentConfig = val;
       if (val)
       {
-        configured = USB_CONFIGURED;
-        *AT91C_UDP_GLBSTATE  = AT91C_UDP_CONFG;
-        delayedEnable = 0;
-        // Make sure we are not stalled
-        UDP_CLEAREPFLAGS(*AT91C_UDP_CSR1, AT91C_UDP_FORCESTALL);
-        UDP_CLEAREPFLAGS(*AT91C_UDP_CSR2, AT91C_UDP_FORCESTALL);
-        UDP_CLEAREPFLAGS(*AT91C_UDP_CSR3, AT91C_UDP_FORCESTALL);
-        // Now enable the endpoints
-        UDP_SETEPFLAGS(*AT91C_UDP_CSR1, (AT91C_UDP_EPEDS | AT91C_UDP_EPTYPE_BULK_OUT));
-        UDP_SETEPFLAGS(*AT91C_UDP_CSR2, (AT91C_UDP_EPEDS | AT91C_UDP_EPTYPE_BULK_IN));
-        UDP_SETEPFLAGS(*AT91C_UDP_CSR3, AT91C_UDP_EPTYPE_INT_IN);
-        // and reset them...
-        (*AT91C_UDP_RSTEP) |= (AT91C_UDP_EP1|AT91C_UDP_EP2|AT91C_UDP_EP3);
-        (*AT91C_UDP_RSTEP) &= ~(AT91C_UDP_EP1|AT91C_UDP_EP2|AT91C_UDP_EP3);
+        // attempting to switch to a data transfer configuration when disabled
+        // is not allowed.
+        if (configured & USB_DISABLED)
+          udp_send_stall();
+        else
+        {
+          configured = (configured & USB_DISABLED) | USB_CONFIGURED;
+          *AT91C_UDP_GLBSTATE  = AT91C_UDP_CONFG;
+          delayedEnable = 0;
+          // Make sure we are not stalled
+          UDP_CLEAREPFLAGS(*AT91C_UDP_CSR1, AT91C_UDP_FORCESTALL);
+          UDP_CLEAREPFLAGS(*AT91C_UDP_CSR2, AT91C_UDP_FORCESTALL);
+          UDP_CLEAREPFLAGS(*AT91C_UDP_CSR3, AT91C_UDP_FORCESTALL);
+          // Now enable the endpoints
+          UDP_SETEPFLAGS(*AT91C_UDP_CSR1, (AT91C_UDP_EPEDS | AT91C_UDP_EPTYPE_BULK_OUT));
+          UDP_SETEPFLAGS(*AT91C_UDP_CSR2, (AT91C_UDP_EPEDS | AT91C_UDP_EPTYPE_BULK_IN));
+          UDP_SETEPFLAGS(*AT91C_UDP_CSR3, AT91C_UDP_EPTYPE_INT_IN);
+          // and reset them...
+          (*AT91C_UDP_RSTEP) |= (AT91C_UDP_EP1|AT91C_UDP_EP2|AT91C_UDP_EP3);
+          (*AT91C_UDP_RSTEP) &= ~(AT91C_UDP_EP1|AT91C_UDP_EP2|AT91C_UDP_EP3);
+        }
       }
       else
       {
-        configured = USB_READY;
+        // Switching out of data transfer mode disables the device
+        if (configured & USB_CONFIGURED)
+          configured = USB_DISABLED | USB_READY;
+        else
+          configured = (configured & USB_DISABLED) | USB_READY;
         *AT91C_UDP_GLBSTATE  = AT91C_UDP_FADDEN;
         delayedEnable = 0;
         UDP_CLEAREPFLAGS(*AT91C_UDP_CSR1, AT91C_UDP_EPEDS|AT91C_UDP_FORCESTALL);
@@ -589,24 +603,20 @@ udp_enumerate()
       break;
       
     case STD_GET_CONFIGURATION:                                   
-
       udp_send_control((U8 *) &(currentConfig), MIN(sizeof(currentConfig), len));
       break;
 
     case STD_GET_STATUS_ZERO:
-    
       status = 0x01; 
       udp_send_control((U8 *) &status, MIN(sizeof(status), len));
       break;
       
     case STD_GET_STATUS_INTERFACE:
-
       status = 0;
       udp_send_control((U8 *) &status, MIN(sizeof(status), len));
       break;
 
     case STD_GET_STATUS_ENDPOINT:
-
       status = 0;
       ind &= 0x0F;
 
