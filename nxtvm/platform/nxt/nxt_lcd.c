@@ -154,20 +154,18 @@ nxt_lcd_power_up(void)
   systick_wait_ms(20);
   //nxt_lcd_set_multiplex_rate(3);	// 1/65
   //nxt_lcd_set_bias_ratio(3);	// 1/9
-  nxt_lcd_set_pot(0x60);	// ?? 9V??
+  nxt_lcd_set_pot(NXT_DEFAULT_CONTRAST);	// ?? 9V??
 
   //nxt_lcd_set_ram_address_control(1); // auto wrap
   nxt_lcd_set_map_control(0x02); // mirror in y
 
   nxt_spi_set_display(display);
-  nxt_lcd_enable(1);
-
 }
 
 void
 nxt_lcd_init(const U8 *disp)
 {
-  display = disp;
+  display = (U8 *)disp;
   nxt_spi_init();
 
   nxt_lcd_power_up();
