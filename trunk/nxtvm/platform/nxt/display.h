@@ -6,6 +6,8 @@
 
 void display_init(void);
 
+void display_reset(void);
+
 void display_update(void);
 
 void display_force_update(void);

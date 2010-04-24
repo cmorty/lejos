@@ -10,7 +10,7 @@ data_abort_C(void)
 {
   // Need to reset the link to the display to see any output
   nxt_spi_init();
-  display_clear(0);
+  display_reset();
   display_goto_xy(0, 0);
   display_string("Data abort");
   display_goto_xy(0, 1);

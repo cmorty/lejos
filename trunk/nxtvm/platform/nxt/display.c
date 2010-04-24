@@ -18,8 +18,10 @@ typedef unsigned int uint;
  * This is to allow fast dma update of the screen (see nxt_spi.c
  * for details). The buffer is now created wrapped inside of a Java
  * array. This allows the buffer to be shared with Java applications.
+ * NOTE 2
+ * We could initialize the header fields here (as we do for the font), but
+ * for some reason this generates much more code than doing it later...
  */
-//static U8 display_buffer[DISPLAY_DEPTH+1][DISPLAY_WIDTH];
 static struct
 {
   BigArray arrayHdr;
@@ -669,6 +671,17 @@ display_get_font(void)
 }
 
 void
+display_reset()
+{
+  nxt_lcd_enable(0);
+  display_auto_update_period = DEFAULT_UPDATE_PERIOD;
+  display_clear(0);
+  nxt_lcd_set_pot(NXT_DEFAULT_CONTRAST);
+  nxt_lcd_enable(1);
+  display_update();
+}
+
+void
 display_init(void)
 {
   // Initialise the array parameters so that the display can
@@ -682,22 +695,8 @@ display_init(void)
   display_array.arrayHdr.hdr.sync.threadId = 0;
   display_array.arrayHdr.length = DISPLAY_DEPTH*DISPLAY_WIDTH;
   display_array.arrayHdr.offset = 2;
-/*
-  // We use the same trick for the font characters
-  font_array.arrayHdr.hdr.flags.arrays.isArray = 1;
-  // NOTE This object must always be marked, otherwise very, very bad
-  // things will happen!
-  font_array.arrayHdr.hdr.flags.arrays.mark = 1;
-  font_array.arrayHdr.hdr.flags.arrays.length = BIGARRAYLEN;
-  font_array.arrayHdr.hdr.flags.arrays.isAllocated = 1;
-  font_array.arrayHdr.hdr.flags.arrays.type = T_BYTE;
-  font_array.arrayHdr.hdr.monitorCount = 0;
-  font_array.arrayHdr.hdr.threadId = 0;
-  font_array.arrayHdr.length = sizeof(font_array.font);
-*/
-  display_clear(0);
-  display_auto_update_period = DEFAULT_UPDATE_PERIOD;
   nxt_lcd_init((U8 *)display_buffer);
+  display_reset();
 }
 
 #if 0
