@@ -5,6 +5,9 @@ package lejos.nxt.startup;
 
 public class IconIndicator implements ActivityIndicator
 {
+	//not static to avoid decoding in static initializer
+	private final byte[] icon_data = Utils.stringToBytes(Config.ICON_DATA);
+	
 	private int lcdX;
 	private int iconX;
 	private int iconWidth;
@@ -42,7 +45,7 @@ public class IconIndicator implements ActivityIndicator
 	{
 		if (this.iconX >= 0)
 		{
-			System.arraycopy(Config.ICON_DATA, iconX, buf, lcdX, iconWidth);
+			System.arraycopy(icon_data, iconX, buf, lcdX, iconWidth);
 		}
 		else
 		{
