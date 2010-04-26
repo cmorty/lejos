@@ -29,6 +29,7 @@ public class BatteryIndicator
     
 	private byte[] title;
 	private byte[] default_title;
+	private long title_time;
 	
     public BatteryIndicator()
     {
@@ -52,12 +53,16 @@ public class BatteryIndicator
     	byte[] b = Utils.textToBytes(title);
     	this.default_title = b;
     	if (this.title == o)
+    	{
     		this.title = b;
+    		this.title_time = System.currentTimeMillis();
+    	}
     }
     
     public synchronized void setTitle(String title)
     {
    		this.title = (title == null) ? default_title : Utils.textToBytes(title);
+		this.title_time = System.currentTimeMillis();
     }
 
     /**
@@ -93,7 +98,7 @@ public class BatteryIndicator
         {
         	int max = len - Config.TEXT_WIDTH;
         	int max2 = max + 2 * Config.TEXT_SCROLL_PAUSE;
-        	x1 = (int)(time / Config.TEXT_SCROLL_DELAY % (2 * max2 + 2));
+        	x1 = (int)((time - title_time) / Config.TEXT_SCROLL_DELAY % (2 * max2 + 2));
         	if (x1 > max2)
         		x1 = 2 * max2 + 1 - x1;
         	x1 -= Config.TEXT_SCROLL_PAUSE;

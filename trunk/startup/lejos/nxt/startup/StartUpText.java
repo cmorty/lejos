@@ -848,7 +848,7 @@ public class StartUpText
         	selectionAdd = 20;
         	items = new String[]{"Delete file"};
         }
-        newScreen(fileName);
+        newScreen();
         TextMenu menu = new TextMenu(items, 2, fileName);
         int selection = getSelection(menu, 0);
         if (selection >= 0)
