@@ -27,7 +27,7 @@ CFLAGS = $(BASE_ABI_FLAGS) -mthumb \
 	-Wall -Winline -Werror-implicit-function-declaration \
 	-I. -I$(VM_DIR) \
 	-ffunction-sections -fdata-sections \
-	-DSVN_REV=$(SVN_REV) -DMAJOR_VERSION=$(MAJOR_VERSION) -DMINOR_VERSION=$(MINOR_VERSION)
+	-DSVN_REV=$(SVN_REV) -DVERSION_NUMBER=$(VERSION_NUMBER)
 
 LDFLAGS = -cref --gc-sections
 

@@ -139,8 +139,7 @@ usbDisable()V
 
 #System
 getFirmwareRevision()I
-getFirmwareMajorVersion()I
-getFirmwareMinorVersion()I
+getFirmwareRawVersion()I
 
 #USB
 usbSetSerialNo(Ljava/lang/String;)V
