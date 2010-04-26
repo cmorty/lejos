@@ -48,9 +48,8 @@ public class StartUpText
     static final int defaultSleepTime = 2;
     static final int maxSleepTime = 10;
     
-    static final String revision = "$Revision$";
-    static final int MAJOR_VERSION = 0;
-    static final int MINOR_VERSION = 85;
+    static final String REVISION = "$Revision$";
+    static final int VERSION = 0x000805;
 
 	boolean btPowerOn;
 	boolean btVisibility;
@@ -167,24 +166,30 @@ public class StartUpText
         @Override
         protected void postCommand(byte[] inMsg, int inLen, byte[] replyMsg, int replyLen)
         {
-            if (inMsg[1] == LCP.CLOSE || inMsg[1] == LCP.DELETE)
-            {
-                if (inMsg[1] == LCP.DELETE)
-                    try
-                    {
-                        File.defrag();
-                    }
-                    catch (IOException ioe)
-                    {
-                        File.reset();
-                    }
-                Sound.beepSequenceUp();
-                if (curMenu != null)
-                    curMenu.quit();
-            }
-            if (inMsg[1] == LCP.BOOT)
-                // Reboot into firmware update mode. Only supported
-                NXT.boot();
+			switch (inMsg[1])
+			{
+				case LCP.DELETE:
+					try
+					{
+						File.defrag();
+					}
+					catch (IOException ioe)
+					{
+						File.reset();
+					}
+				case LCP.CLOSE:
+					Sound.beepSequenceUp();
+					if (curMenu != null)
+						curMenu.quit();
+					break;
+				case LCP.SET_BRICK_NAME:
+					indiBA.setDefaultTitle(Bluetooth.getFriendlyName());
+					ind.updateNow();
+					break;
+				case LCP.BOOT:
+	                // Reboot into firmware update mode. Only supported
+	                NXT.boot();	                
+			}        	
             super.postCommand(inMsg, inLen, replyMsg, replyLen);
         }
     }
@@ -282,30 +287,20 @@ public class StartUpText
 
         return fileName.substring(0, dot);
     }
-
+    
     /**
      * Run the default program (if set).
      */
-    private void runDefaultProgram(boolean interactive)
+    private void runDefaultProgram()
     {
-        String defaultProgram = Settings.getProperty(defaultProgramProperty, "");
-        if (defaultProgram == null || defaultProgram.length() <= 0)
+    	File f = getDefaultProgram();
+        if (f == null)
         {
-        	if (interactive)
-        		msg("No default set");
+       		msg("No default set");
         }
         else
         {
-            String progName = defaultProgram + ".nxj";
-            File f = new File(progName);
-            if (f.exists())
-                f.exec();
-            else
-            {
-            	if (interactive)
-            		msg("File not found");
-                Settings.setProperty(defaultProgramProperty, "");
-            }
+            f.exec();
         }
     }
 
@@ -496,13 +491,13 @@ public class StartUpText
     	indiBT.setIconX(x);
     }
     
-    class TuneThread extends Thread
+    static class TuneThread extends Thread
     {
         @Override
         public void run()
         {
+            fadeIn();
             playTune();
-            //fadeIn();
         }
     }    
     
@@ -530,6 +525,7 @@ public class StartUpText
             }
             this.setState(1);
             setAddress();
+            indiBA.setDefaultTitle(Bluetooth.getFriendlyName());
             timeout = SystemSettings.getIntSetting(sleepTimeProperty, defaultSleepTime);
             btPowerOn = setBluetoothPower(Bluetooth.getStatus() == 0);
             btVisibility = (Bluetooth.getVisibility() == 1);
@@ -565,40 +561,6 @@ public class StartUpText
         }
     }
     
-    private void startup() throws InterruptedException
-    {
-        // Make sure color sensor can be used remotely, this will also reset
-        // the sensors
-        for (int i=0; i<SensorPort.NUMBER_OF_PORTS; i++)
-            SensorPort.getInstance(i).enableColorSensor();
-        // Run default program if required
-        if (NXT.getProgramExecutionsCount() == 1)
-        {
-            // First time we have run
-            if (!Button.LEFT.isPressed() &&
-                Settings.getProperty(defaultProgramAutoRunProperty, "").equals("ON"))
-            {
-            	playTune();
-                runDefaultProgram(false);
-            }
-        }
-        InitThread initThread = new InitThread();
-        initThread.start();
-        TuneThread tuneThread = new TuneThread();
-        // Wait for defrag to complete
-        initThread.waitState(1);
-        tuneThread.start();
-        // Wait for init to complete
-        initThread.waitState(2);
-        tuneThread.join();
-        fadeOut();
-        LCD.clear();
-        LCD.setAutoRefresh(false);
-        ind.start();
-        // Tell the background thread we are done and to fade in the menu.
-        initThread.setState(3);
-    }
-
     /**
      * Display a status message
      * @param msg
@@ -869,49 +831,47 @@ public class StartUpText
     {
         String fileName = file.getName();
         String ext = getExtension(fileName);
-        newScreen();
-        TextMenu menu = new TextMenu(null, 2);
-        menu.setTitle(fileName);
+        int selectionAdd;
+        String[] items;
         if (ext.equals("nxj") || ext.equals("bin"))
         {
-            menu.setItems(new String[]{"Execute program", "Set as Default", "Delete file"});
-            switch(getSelection(menu, 0))
-            {
-                case 0:
-                    usb.shutdown();
-                    bt.shutdown();
-                    file.exec();
-                    break;
-                case 1:
-                    Settings.setProperty(defaultProgramProperty, getBaseName(fileName));
-                    break;
-                case 2:
-                    deleteFile(file);
-                    break;
-            }
+        	selectionAdd = 0;
+            items = new String[]{"Execute program", "Set as Default", "Delete file"};            
         }
         else if (ext.equals("wav"))
         {
-            menu.setItems(new String[]{"Play sample", "Delete file"});
-            switch (getSelection(menu, 0))
-            {
-                case 0:
-                    Sound.playSample(file);
-                    break;
-                case 1:
-                    deleteFile(file);
-                    break;
-            }
+        	selectionAdd = 10;
+        	items = new String[]{"Play sample", "Delete file"};
         }
         else
         {
-            menu.setItems(new String[]{"Delete file"});
-            switch (getSelection(menu, 0))
-            {
-                case 0:
-                    deleteFile(file);
-                    break;
-            }
+        	selectionAdd = 20;
+        	items = new String[]{"Delete file"};
+        }
+        newScreen(fileName);
+        TextMenu menu = new TextMenu(items, 2, fileName);
+        int selection = getSelection(menu, 0);
+        if (selection >= 0)
+        {
+	        switch(selection + selectionAdd)
+	        {
+	            case 0:
+	                usb.shutdown();
+	                bt.shutdown();
+	                file.exec();
+	                break;
+	            case 1:
+	                Settings.setProperty(defaultProgramProperty, fileName);
+	                break;
+	            case 10:
+	                Sound.playSample(file);
+	                break;
+	            case 2:
+	            case 11:
+	            case 20:
+	                deleteFile(file);
+	                break;
+	        }
         }
     }
 
@@ -1003,10 +963,10 @@ public class StartUpText
      * @param prompt A description of the action about to be performed
      * @return 1=yes 0=no < 0 escape
      */
-    private int getYesNo(String prompt)
+    private int getYesNo(String prompt, boolean yes)
     {
         TextMenu menu = new TextMenu(new String[]{"No", "Yes"}, 6, prompt);
-        return getSelection(menu, 0);
+        return getSelection(menu, yes ? 1 : 0);
     }
 
     /**
@@ -1015,21 +975,22 @@ public class StartUpText
      */
     private void autoRunMenu()
     {
-    	newScreen("Auto Run");    	
-        String defaultPrgm = Settings.getProperty(defaultProgramProperty, "");
-        if (defaultPrgm == null || defaultPrgm.length() <= 0)
-            msg("No default set");
-        else
-        {
-            LCD.drawString("Auto Run:" + Settings.getProperty(defaultProgramAutoRunProperty, ""), 0, 2);
-            LCD.drawString("Default Program:", 0, 3);
-            LCD.drawString(defaultPrgm, 1, 4);
-            int selection = getYesNo("Run at power up?");
-            if (selection == 0)
-                Settings.setProperty(defaultProgramAutoRunProperty, "OFF");
-            else if (selection == 1)
-                Settings.setProperty(defaultProgramAutoRunProperty, "ON");
-        }
+    	newScreen("Auto Run");
+    	File f = getDefaultProgram();
+    	if (f == null)
+    	{
+       		msg("No default set");
+    	}
+    	else
+    	{
+        	LCD.drawString("Default Program:", 0, 2);
+        	LCD.drawString(f.getName(), 1, 3);
+        	
+        	String current = Settings.getProperty(defaultProgramAutoRunProperty, "");
+            int selection = getYesNo("Run at power up?", current.equals("ON"));
+            if (selection >= 0)
+            	Settings.setProperty(defaultProgramAutoRunProperty, selection == 0 ? "OFF" : "ON");
+    	}
     }
 
     /**
@@ -1039,38 +1000,46 @@ public class StartUpText
      */
     private void systemMenu()
     {
-        String[] menuData = {"Format", "", "Auto Run"};
-        TextMenu menu = new TextMenu(menuData, 5);
+        String[] menuData = {"Format", "", "Auto Run", "Unset default"};
+        TextMenu menu = new TextMenu(menuData, 4);
         int selection = 0;
         do {
             newScreen("System");
-            LCD.drawString("Flash", 0, 2);
-            LCD.drawInt(File.freeMemory(), 6, 10, 2);
-            LCD.drawString("RAM", 0, 3);
-            LCD.drawInt((int) (Runtime.getRuntime().freeMemory()), 11, 3);
-            LCD.drawString("Battery", 0, 4);
+            LCD.drawString("Flash", 0, 1);
+            LCD.drawInt(File.freeMemory(), 6, 10, 1);
+            LCD.drawString("RAM", 0, 2);
+            LCD.drawInt((int) (Runtime.getRuntime().freeMemory()), 11, 2);
+            LCD.drawString("Battery", 0, 3);
             int millis = Battery.getVoltageMilliVolt() + 50;
-            LCD.drawInt((millis - millis % 1000) / 1000, 11, 4);
-            LCD.drawString(".", 12, 4);
-            LCD.drawInt((millis % 1000) / 100, 13, 4);
+            LCD.drawInt((millis - millis % 1000) / 1000, 11, 3);
+            LCD.drawString(".", 12, 3);
+            LCD.drawInt((millis % 1000) / 100, 13, 3);
             if (Battery.isRechargeable())
-                LCD.drawString("R", 15, 4);
+                LCD.drawString("R", 15, 3);
             menuData[1] = "Sleep time: " + timeout;
+            File f = getDefaultProgram();
+            if (f == null)
+            	menuData[3] = null;
+            menu.setItems(menuData);
             selection = getSelection(menu, selection);
             switch (selection)
             {
                 case 0:
-                    if (getYesNo("Delete all files?") == 1)
+                    if (getYesNo("Delete all files?", false) == 1)
                         File.format();
                     break;
                 case 1:
                     timeout++;
                     if (timeout > maxSleepTime)
                         timeout = 0;
-                    Settings.setProperty(sleepTimeProperty, "" + timeout);
+                    Settings.setProperty(sleepTimeProperty, String.valueOf(timeout));
                     break;
                 case 2:
                     autoRunMenu();
+                    break;
+                case 3:
+                    Settings.setProperty(defaultProgramProperty, "");
+                    Settings.setProperty(defaultProgramAutoRunProperty, "");
                     selection = 0;
                     break;
             }
@@ -1084,13 +1053,11 @@ public class StartUpText
     {
         newScreen("Version");
         LCD.drawString("Firmware version", 0, 2);
-        LCD.drawString(NXT.getFirmwareMajorVersion() + "." +
-                NXT.getFirmwareMinorVersion() + "(rev. " +
+        LCD.drawString(Utils.versionToString(NXT.getFirmwareRawVersion()) + "(rev." +
                 NXT.getFirmwareRevision() + ")", 1, 3);
         LCD.drawString("Menu version", 0, 4);
-        LCD.drawString(MAJOR_VERSION + "." +
-                MINOR_VERSION + "(rev." +
-                revision.substring(10, revision.length() - 2) + ")", 1, 5);
+        LCD.drawString(Utils.versionToString(VERSION) + "(rev." +
+                REVISION.substring(11, REVISION.length() - 2) + ")", 1, 5);
         getButtonPress();
     }
 
@@ -1107,12 +1074,12 @@ public class StartUpText
         int selection = 0;
         do
         {
-            newScreen(Bluetooth.getFriendlyName());
+            newScreen(null);
             selection = getSelection(menu, selection);
             switch (selection)
             {
                 case 0:
-                    runDefaultProgram(true);
+                    runDefaultProgram();
                     break;
                 case 1:
                     filesMenu();
@@ -1133,6 +1100,41 @@ public class StartUpText
         } while (selection >= 0);
     }
 
+    private void startup(TuneThread tuneThread) throws InterruptedException
+    {
+        InitThread initThread = new InitThread();
+        initThread.start();
+        // Wait for defrag to complete
+        initThread.waitState(1);
+        // Make sure color sensor can be used remotely, this will also reset
+        // the sensors
+        for (int i=0; i<SensorPort.NUMBER_OF_PORTS; i++)
+            SensorPort.getInstance(i).enableColorSensor();
+        // Wait for init to complete
+        initThread.waitState(2);
+        tuneThread.join();
+        fadeOut();
+        LCD.clear();
+        ind.start();
+        // Tell the background thread we are done and to fade in the menu.
+        initThread.setState(3);
+    }
+    
+    private static File getDefaultProgram()
+    {
+    	String file = Settings.getProperty(defaultProgramProperty, "");
+    	if (file.length() > 0)
+    	{
+    		File f = new File(file);
+        	if (f.exists())
+        		return f;
+        	
+           	Settings.setProperty(defaultProgramProperty, "");
+           	Settings.setProperty(defaultProgramAutoRunProperty, "OFF");
+    	}
+    	return null;
+    }
+
     /**
      * Main entry point.
      * Startup the system.
@@ -1141,9 +1143,49 @@ public class StartUpText
      */
     public static void main(String[] args) throws Exception
     {
+        // Run default program if required
+        if (NXT.getProgramExecutionsCount() == 1)
+        {
+            // First time we have run
+        	File f = getDefaultProgram();
+        	if (f != null)
+        	{
+            	String auto = Settings.getProperty(defaultProgramAutoRunProperty, "");        	
+        		if (auto.equals("ON") && !Button.LEFT.isPressed())
+	            {
+            		f.exec();
+	            }
+        	}
+        }
+        
+        LCD.setAutoRefresh(false);
+        LCD.setContrast(0);
+        
+        byte[] logo_data = Utils.stringToBytes(Config.LOGO_DATA);
+    	byte[] text_data = Utils.textToBytes("leJOS "+Utils.versionToString(VERSION));
+    	byte[] display = LCD.getDisplay();
+    	
+    	int logo_x = (LCD.SCREEN_WIDTH - Config.LOGO_WIDTH)/2;
+    	int text_x = (LCD.SCREEN_WIDTH - text_data.length)/2;
+    	int logo_y = (LCD.SCREEN_HEIGHT - Config.LOGO_HEIGHT - Config.LOGO_TEXT_SEP - LCD.FONT_HEIGHT)/2;
+    	int text_y = logo_y + Config.LOGO_HEIGHT + Config.LOGO_TEXT_SEP;
+    	
+    	LCD.bitBlt(logo_data, Config.LOGO_WIDTH, Config.LOGO_HEIGHT, 0, 0,
+    			display, LCD.SCREEN_WIDTH, LCD.SCREEN_HEIGHT, logo_x, logo_y,
+    			Config.LOGO_WIDTH, Config.LOGO_HEIGHT, LCD.ROP_COPY);
+    	LCD.bitBlt(text_data, text_data.length, LCD.FONT_HEIGHT, 0, 0,
+    			display, LCD.SCREEN_WIDTH, LCD.SCREEN_HEIGHT, text_x, text_y,
+    			text_data.length, LCD.FONT_HEIGHT, LCD.ROP_COPY);
+    	
+    	LCD.asyncRefresh();
+        
+        TuneThread tuneThread = new TuneThread();    	
+        tuneThread.start();
+        
         StartUpText sysMenu = new StartUpText();
-        sysMenu.startup();
-        sysMenu.mainMenu();        
+        sysMenu.startup(tuneThread);
+        sysMenu.mainMenu();
+
         fadeOut();
         NXT.shutDown();
     }

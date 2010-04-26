@@ -27,7 +27,8 @@ public class BatteryIndicator
     private int levelHigh;
     private boolean isOk;
     
-	private volatile byte[] title;
+	private byte[] title;
+	private byte[] default_title;
 	
     public BatteryIndicator()
     {
@@ -45,30 +46,18 @@ public class BatteryIndicator
     	}
     }
     
-    public void setTitle(String title)
+    public synchronized void setDefaultTitle(String title)
     {
-    	int len = title.length();        	
-    	int blen = 0;
-    	if (len > 0)
-    		blen = len * (LCD.FONT_WIDTH + 1) - 1;
-    	
-    	byte[] b = new byte[blen];        	
-    	byte[] f = LCD.getSystemFont();
-    	
-    	for (int i=0; i<len; i++)
-    	{
-    		char c = title.charAt(i);
-    		int i1 = c * LCD.FONT_WIDTH;
-    		int i2 = i * (LCD.FONT_WIDTH + 1);
-    		
-    		if (i1 < f.length)
-    			System.arraycopy(f, i1, b, i2, LCD.FONT_WIDTH);
-    	}
-
-    	synchronized (this)
-    	{
+    	byte[] o = this.default_title;
+    	byte[] b = Utils.textToBytes(title);
+    	this.default_title = b;
+    	if (this.title == o)
     		this.title = b;
-    	}
+    }
+    
+    public synchronized void setTitle(String title)
+    {
+   		this.title = (title == null) ? default_title : Utils.textToBytes(title);
     }
 
     /**
@@ -94,6 +83,11 @@ public class BatteryIndicator
         {
         	x1 = 0;
         	x2 = (Config.TEXT_WIDTH - len) / 2;
+        	
+        	for (int i=0; i<x2; i++)
+        		buf[Config.TEXT_POS + i]=0;
+        	for (int i=x2+len; i<Config.TEXT_WIDTH; i++)
+        		buf[Config.TEXT_POS + i]=0;
         }
         else
         {
