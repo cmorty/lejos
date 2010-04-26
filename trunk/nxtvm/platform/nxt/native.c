@@ -436,11 +436,8 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
   case getFirmwareRevision_4_5I:
     push_word((STACKWORD) getRevision());
     break;
-  case getFirmwareMajorVersion_4_5I:
-    push_word((STACKWORD) MAJOR_VERSION);
-    break;
-  case getFirmwareMinorVersion_4_5I:
-    push_word((STACKWORD) MINOR_VERSION); 
+  case getFirmwareRawVersion_4_5I:
+    push_word((STACKWORD) VERSION_NUMBER); 
     break;
   case hsEnable_4_5V:
     {

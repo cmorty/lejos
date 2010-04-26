@@ -33,18 +33,47 @@ public class NXT {
 	 public static native int getProgramExecutionsCount();
 	 
 	 /**
+	  * Return major and minor version and the patch level within a single integer.
+	  * The format is not specified. Please use {@link #getFirmwareMajorVersion()},
+	  * {@link #getFirmwareMinorVersion()}, and {@link #getFirmwarePatchLevel()}
+	  * instead of this method.
+	  * 
+	  * @return a single version int
+	  * @see #getFirmwareMajorVersion()
+	  * @see #getFirmwareMinorVersion()
+	  * @see #getFirmwarePatchLevel()
+	  */
+	 public static native int getFirmwareRawVersion();
+
+	 /**
 	  * Get the leJOS NXJ firmware major version
 	  * 
 	  * @return the major version number
 	  */
-	 public static native int getFirmwareMajorVersion();
+	 public static int getFirmwareMajorVersion()
+	 {
+		 return getFirmwareRawVersion() >>> 16;
+	 }
 
 	 /**
 	  * Get the leJOS NXJ firmware minor version
 	  * 
 	  * @return the minor version number
 	  */
-	 public static native int getFirmwareMinorVersion();
+	 public static int getFirmwareMinorVersion()
+	 {
+		 return (getFirmwareRawVersion() >>> 8) & 0xFF;
+	 }
+
+	 /**
+	  * Get the leJOS NXJ firmware patch level
+	  * 
+	  * @return the patch level number
+	  */
+	 public static int getFirmwarePatchLevel()
+	 {
+		 return getFirmwareRawVersion() & 0xFF;
+	 }
 
 	 /**
 	  * Get the leJOS NXJ firmware revision number
