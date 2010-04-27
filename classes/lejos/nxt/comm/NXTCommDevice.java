@@ -102,24 +102,22 @@ abstract public class NXTCommDevice
 		return new String(caddr);
 	}
 
-    /**
-     * Return a string version of a device devName held as a byte array
-     * @param name
-     * @return string version of devName
-     */
-    public static String nameToString(byte[] name)
-    {
-        if (name == null || name.length == 0) return null;
-        // Work out how long the devName is...
-        int len = name.length;
-        while (len > 0 && name[len-1] == 0)
-            len--;
-        char[] cname = new char[len];
-        for(int i = 0; i < len; i++)
-            cname[i] = (char)name[i];
-        return new String(cname);
-    }
+	/**
+	 * Return a string version of a device devName held as a byte array
+	 * @param name
+	 * @return string version of devName
+	 */
+	public static String nameToString(byte[] name)
+	{
+		if (name == null || name.length == 0)
+			return null;
 
+		int len = name.length;
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < len && name[i] != 0; i++)
+			sb.append((char) name[i]);
+		return sb.toString();
+	}
 
    /**
      * Set the USB serial number. Should be a unique 12 character String
