@@ -1,7 +1,6 @@
 package lejos.nxt.startup;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Vector;
 
 import javax.bluetooth.RemoteDevice;
@@ -306,19 +305,19 @@ public class StartUpText
      * @param vol Volume setting 0-10
      * @return String version.
      */
-    private String formatVol(int vol)
+    private static String formatVol(int vol)
     {
         if (vol == 0)
             return "mute";
         if (vol == 10)
-            return "10";
-        return " " + vol;
+            return "10";        
+        return new StringBuilder().append(' ').append(vol).toString();
     }
 
     /**
      * Run the default program (if set).
      */
-    private void runDefaultProgram()
+    private void mainRunDefault()
     {
     	File f = getDefaultProgram();
         if (f == null)
@@ -732,24 +731,6 @@ public class StartUpText
     }
 
     /**
-     * Delete a file from the file system.
-     * Once the file has been deleted we may need to defrag.
-     * @param file
-     */
-    private void deleteFile(File file)
-    {
-        file.delete();
-        try
-        {
-            File.defrag();
-        }
-        catch (IOException ioe)
-        {
-            File.reset();
-        }
-    }
-
-    /**
      * Present the menu for a single file.
      * @param file
      */
@@ -795,7 +776,8 @@ public class StartUpText
 	            case 2:
 	            case 11:
 	            case 20:
-	                deleteFile(file);
+	                file.delete();
+	                Utils.defragFilesystem();
 	                break;
 	        }
         }
@@ -1005,7 +987,7 @@ public class StartUpText
             switch (selection)
             {
                 case 0:
-                    runDefaultProgram();
+                    mainRunDefault();
                     break;
                 case 1:
                     filesMenu();
