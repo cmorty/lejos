@@ -1,7 +1,6 @@
 package lejos.nxt.startup;
 
 import lejos.nxt.Battery;
-import lejos.nxt.LCD;
 
 /**
  * Draws a battery and the name of the NXT.

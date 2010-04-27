@@ -21,7 +21,6 @@ import lejos.nxt.comm.LCPResponder;
 import lejos.nxt.comm.NXTCommConnector;
 import lejos.nxt.comm.NXTCommDevice;
 import lejos.nxt.comm.USB;
-import lejos.util.Delay;
 import lejos.util.TextMenu;
 
 /**
@@ -51,16 +50,74 @@ public class StartUpText
     static final String REVISION = "$Revision$";
     static final int VERSION = 0x000805;
 
-	boolean btPowerOn;
-	boolean btVisibility;
+    private int timeout;
+    private boolean btPowerOn;
+    private boolean btVisibility;
     IndicatorThread ind = new IndicatorThread();
     BatteryIndicator indiBA = new BatteryIndicator();
     IconIndicator indiUSB = new IconIndicator(Config.ICON_USB_POS, Config.ICON_DISABLE_X, Config.ICON_USB_WIDTH);
     IconIndicator indiBT = new IconIndicator(Config.ICON_BT_POS, Config.ICON_DISABLE_X, Config.ICON_BT_WIDTH);
-    Responder usb = new Responder(USB.getConnector(), indiUSB);
-    Responder bt = new Responder(Bluetooth.getConnector(), indiBT);
-    int timeout;
-    TextMenu curMenu = null;
+    private Responder usb = new Responder(USB.getConnector(), indiUSB);
+    private Responder bt = new Responder(Bluetooth.getConnector(), indiBT);
+    private TextMenu curMenu = null;
+    
+	static class TuneThread extends Thread
+	{
+        int stState = 0;
+    	
+		@Override
+		public void run()
+		{
+			Utils.fadeIn();
+			this.waitState(1);
+			playTune();
+			// Tell others, that tune is complete
+			this.setState(2);
+            // Wait for init to complete
+            this.waitState(3);
+            // Fade in
+            Utils.fadeIn();
+		}
+		
+        public synchronized void setState(int s)
+        {
+        	this.stState = s;
+        	this.notifyAll();
+        }
+        
+        public synchronized void waitState(int s)
+        {
+        	while (this.stState < s)
+        	{
+        		try
+        		{
+        			this.wait();
+        		}
+        		catch (InterruptedException e)
+        		{
+        			// nothing
+        		}
+        	}
+        }
+	}
+    
+    static class InitThread extends Thread
+    {
+    	StartUpText menu;
+    	
+        /**
+         * Startup the menu system.
+         * Play the greeting tune.
+         * Run the default program if auto-run is requested.
+         * Initialize I/O etc.
+         */            
+        @Override
+        public void run()
+        {
+            setAddress();            
+        	menu = new StartUpText();        	
+        }
+    }
     
     /**
      * Manage the top line of the display.
@@ -76,32 +133,29 @@ public class StartUpText
     	}
     	
     	@Override
-		public void run()
+		public synchronized void run()
     	{
     		try
     		{
-    			synchronized (this)
-    			{
-		    		while (true)
-		    		{
-		    			long time = System.currentTimeMillis();
-		    			int x = (USB.usbStatus() & 0xf0000000) == 0x10000000 ? Config.ICON_USB_X : Config.ICON_DISABLE_X;
-		    			indiUSB.setIconX(x);
-		    			
-		    			byte[] buf = LCD.getDisplay();
-		    			// clear not necessary, pixels are always overwritten
-		    			//for (int i=0; i<LCD.SCREEN_WIDTH; i++)
-		    			//	buf[i] = 0;	    			
-		    			indiBA.draw(time, buf);
-		    			indiUSB.draw(time, buf);
-		    			indiBT.draw(time, buf);
-		    			LCD.asyncRefresh();
+	    		while (true)
+	    		{
+	    			long time = System.currentTimeMillis();
+	    			int x = (USB.usbStatus() & 0xf0000000) == 0x10000000 ? Config.ICON_USB_X : Config.ICON_DISABLE_X;
+	    			indiUSB.setIconX(x);
 	    			
-	    				// wait until next tick
-	    				time = System.currentTimeMillis();
-	    				this.wait(250 - (time % 250));
-	    			}
-	    		}
+	    			byte[] buf = LCD.getDisplay();
+	    			// clear not necessary, pixels are always overwritten
+	    			//for (int i=0; i<LCD.SCREEN_WIDTH; i++)
+	    			//	buf[i] = 0;	    			
+	    			indiBA.draw(time, buf);
+	    			indiUSB.draw(time, buf);
+	    			indiBT.draw(time, buf);
+	    			LCD.asyncRefresh();
+    			
+    				// wait until next tick
+    				time = System.currentTimeMillis();
+    				this.wait(Config.ANIM_DELAY - (time % Config.ANIM_DELAY));
+    			}
     		}
     		catch (InterruptedException e)
     		{
@@ -149,8 +203,7 @@ public class StartUpText
             if (len > 0)
             {
             	this.indi.pulse();
-                if (curMenu != null)
-                    curMenu.resetTimeout();
+            	resetMenuTimeout();
             }
             return super.preCommand(inMsg, len);
         }
@@ -169,18 +222,10 @@ public class StartUpText
 			switch (inMsg[1])
 			{
 				case LCP.DELETE:
-					try
-					{
-						File.defrag();
-					}
-					catch (IOException ioe)
-					{
-						File.reset();
-					}
+					Utils.defragFilesystem();
 				case LCP.CLOSE:
 					Sound.beepSequenceUp();
-					if (curMenu != null)
-						curMenu.quit();
+					redisplayMenu();
 					break;
 				case LCP.SET_BRICK_NAME:
 					indiBA.setDefaultTitle(Bluetooth.getFriendlyName());
@@ -192,6 +237,16 @@ public class StartUpText
 			}        	
             super.postCommand(inMsg, inLen, replyMsg, replyLen);
         }
+    }
+    
+    public StartUpText()
+    {
+    	timeout = SystemSettings.getIntSetting(sleepTimeProperty, defaultSleepTime);
+        btPowerOn = setBluetoothPower(Bluetooth.getStatus() == 0);
+    	btVisibility = (Bluetooth.getVisibility() == 1);
+    	
+        indiBA.setDefaultTitle(Bluetooth.getFriendlyName());
+        updateBTIcon();
     }
 
     /**
@@ -231,7 +286,7 @@ public class StartUpText
      * @param powerOn
      * @return The new power state.
      */
-    boolean setBluetoothPower(boolean powerOn)
+    static boolean setBluetoothPower(boolean powerOn)
     {
         // Set the state of the Bluetooth power to be powerOn. Also record the
         // current state of this in the BT status bytes.                                                      
@@ -261,34 +316,6 @@ public class StartUpText
     }
 
     /**
-     * Return the extension part of a filename
-     * @param fileName
-     * @return the file extension
-     */
-    private String getExtension(String fileName)
-    {
-        int dot = fileName.lastIndexOf(".");
-        if (dot < 0)
-            return "";
-
-        return fileName.substring(dot + 1, fileName.length());
-    }
-
-    /**
-     * Return the base part (no extension) of a filename
-     * @param fileName
-     * @return the base part of the name
-     */
-    private String getBaseName(String fileName)
-    {
-        int dot = fileName.lastIndexOf(".");
-        if (dot < 0)
-            return fileName;
-
-        return fileName.substring(0, dot);
-    }
-    
-    /**
      * Run the default program (if set).
      */
     private void runDefaultProgram()
@@ -317,27 +344,6 @@ public class StartUpText
         return value;
     }
     
-    private static void setPixel(byte[] buf, int x, int y)
-    {
-    	x += (y >> 3) * LCD.SCREEN_WIDTH;
-        buf[x] |= 1 << (y & 0x7);
-    }
-    
-    private static void drawRect(int x, int y, int width, int height)
-    {
-    	byte[] buf = LCD.getDisplay();    	
-    	for (int i=0; i<=width; i++)
-    	{
-			setPixel(buf, x+i, y);
-			setPixel(buf, x+i, y+height);
-    	}
-		for (int j=1; j<height; j++)
-		{
-			setPixel(buf, x, y+j);
-			setPixel(buf, x+width, y+j);
-		}
-    }
-
     /**
      * Clears the screen, displays a number and allows user to change
      * the digits of the number individually using the NXT buttons.
@@ -368,7 +374,7 @@ public class StartUpText
             for (int i = 0; i < digits; i++)
                 str = str + spacer + (char) number[i];
             LCD.drawString(str, 0, 4);
-            drawRect(curDigit * 12 + 3, 30, 10, 10);
+            Utils.drawRect(curDigit * 12 + 3, 30, 10, 10);
 
             int ret = getButtonPress();
             switch (ret)
@@ -412,7 +418,7 @@ public class StartUpText
      * Ensure that we are using the same name for Bluetooth and USB access to
      * the NXT. The USB (and RS485) address is stored in flash memory.
      */
-    void setAddress()
+    static void setAddress()
     {
         // Ensure the USB address property is set correctly. We use the
         // Bluetooth address as our serial number.
@@ -441,42 +447,43 @@ public class StartUpText
      */
     private int getSelection(TextMenu menu, int cur)
     {
-        curMenu = menu;
+    	this.setCurMenu(menu);
+    	
         int selection;
         // If the menu is interrupted by another thread, redisplay
         do {
             selection = menu.select(cur, timeout*60000);
         } while (selection == -2);
+        
         if (selection == -3)
             NXT.shutDown();
-        curMenu = null;
+        
+    	this.setCurMenu(menu);
+    	
         return selection;
     }
-
-    /**
-     * Make the LCD display fade into view.
-     */
-    static void fadeIn()
+    
+    synchronized void setCurMenu(TextMenu menu)
     {
-        for(int i = 20; i <= 0x60; i++)
-        {
-            Delay.msDelay(5);
-            LCD.setContrast(i);
-        }
-    }
-
-    /**
-     * Make the LCD display fade out of view.
-     */
-    static void fadeOut()
-    {
-        for(int i = 0x60; i >= 20; i--)
-        {
-            Delay.msDelay(5);
-            LCD.setContrast(i);
-        }
+    	this.curMenu = menu;
     }
     
+    synchronized void redisplayMenu()
+    {
+		if (curMenu != null)
+		{
+			curMenu.quit();
+		}
+    }
+    
+    synchronized void resetMenuTimeout()
+    {
+        if (curMenu != null)
+        {
+            curMenu.resetTimeout();
+        }
+    }
+
     void updateBTIcon()
     {
     	int x;
@@ -489,76 +496,6 @@ public class StartUpText
     		x = Config.ICON_DISABLE_X;
     	
     	indiBT.setIconX(x);
-    }
-    
-    static class TuneThread extends Thread
-    {
-        @Override
-        public void run()
-        {
-            fadeIn();
-            playTune();
-        }
-    }    
-    
-    class InitThread extends Thread
-    {
-        /**
-         * Startup the menu system.
-         * Play the greeting tune.
-         * Run the default program if auto-run is requested.
-         * Initialize I/O etc.
-         */
-        int stState = 0;
-        
-        @Override
-        public void run()
-        {
-            // Defrag the file system
-            try
-            {
-                File.defrag();
-            }
-            catch (IOException ioe)
-            {
-                File.reset();
-            }
-            this.setState(1);
-            setAddress();
-            indiBA.setDefaultTitle(Bluetooth.getFriendlyName());
-            timeout = SystemSettings.getIntSetting(sleepTimeProperty, defaultSleepTime);
-            btPowerOn = setBluetoothPower(Bluetooth.getStatus() == 0);
-            btVisibility = (Bluetooth.getVisibility() == 1);
-            updateBTIcon();
-            usb.start();
-            bt.start();
-            this.setState(2);
-            // Wait for the screen to be dim
-            this.waitState(3);
-            // and make it visible.
-            fadeIn();
-        }
-        
-        public synchronized void setState(int s)
-        {
-        	this.stState = s;
-        	this.notifyAll();
-        }
-        
-        public synchronized void waitState(int s)
-        {
-        	while (this.stState < s)
-        	{
-        		try
-        		{
-        			this.wait();
-        		}
-        		catch (InterruptedException e)
-        		{
-        			// nothing
-        		}
-        	}
-        }
     }
     
     /**
@@ -830,7 +767,7 @@ public class StartUpText
     private void fileMenu(File file)
     {
         String fileName = file.getName();
-        String ext = getExtension(fileName);
+        String ext = Utils.getExtension(fileName);
         int selectionAdd;
         String[] items;
         if (ext.equals("nxj") || ext.equals("bin"))
@@ -973,7 +910,7 @@ public class StartUpText
      * Present details of the default program
      * Allow the user to specifiy run on system start etc.
      */
-    private void autoRunMenu()
+    private void systemAutoRun()
     {
     	newScreen("Auto Run");
     	File f = getDefaultProgram();
@@ -1035,7 +972,7 @@ public class StartUpText
                     Settings.setProperty(sleepTimeProperty, String.valueOf(timeout));
                     break;
                 case 2:
-                    autoRunMenu();
+                    systemAutoRun();
                     break;
                 case 3:
                     Settings.setProperty(defaultProgramProperty, "");
@@ -1100,24 +1037,11 @@ public class StartUpText
         } while (selection >= 0);
     }
 
-    private void startup(TuneThread tuneThread) throws InterruptedException
+    private void start()
     {
-        InitThread initThread = new InitThread();
-        initThread.start();
-        // Wait for defrag to complete
-        initThread.waitState(1);
-        // Make sure color sensor can be used remotely, this will also reset
-        // the sensors
-        for (int i=0; i<SensorPort.NUMBER_OF_PORTS; i++)
-            SensorPort.getInstance(i).enableColorSensor();
-        // Wait for init to complete
-        initThread.waitState(2);
-        tuneThread.join();
-        fadeOut();
-        LCD.clear();
-        ind.start();
-        // Tell the background thread we are done and to fade in the menu.
-        initThread.setState(3);
+        bt.start();
+        usb.start();
+    	ind.start();
     }
     
     private static File getDefaultProgram()
@@ -1134,7 +1058,7 @@ public class StartUpText
     	}
     	return null;
     }
-
+    
     /**
      * Main entry point.
      * Startup the system.
@@ -1182,11 +1106,31 @@ public class StartUpText
         TuneThread tuneThread = new TuneThread();    	
         tuneThread.start();
         
-        StartUpText sysMenu = new StartUpText();
-        sysMenu.startup(tuneThread);
-        sysMenu.mainMenu();
+        Utils.defragFilesystem();
+        
+        // Tell thread, that defrag is complete
+        tuneThread.setState(1);
+        
+        InitThread initThread = new InitThread();
+        initThread.start();
+        
+        // Make sure color sensor can be used remotely.
+        // This will also reset the sensors
+        for (int i=0; i<SensorPort.NUMBER_OF_PORTS; i++)
+            SensorPort.getInstance(i).enableColorSensor();
+        
+        // Wait for init to complete
+        initThread.join();      
+        // Wait until tune is complete
+        tuneThread.waitState(2);
+        Utils.fadeOut();
+        
+        initThread.menu.start();
+        // Tell the background thread we are done and to fade in the menu.
+        tuneThread.setState(3);
+        initThread.menu.mainMenu();
 
-        fadeOut();
+        Utils.fadeOut();
         NXT.shutDown();
     }
 }
