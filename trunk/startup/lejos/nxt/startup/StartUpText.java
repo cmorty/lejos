@@ -354,63 +354,55 @@ public class StartUpText
      * @param defaultNumber Start with a default PIN. Array of bytes up to 8 length.
      * @return
      */
-    private byte[] enterNumber(int digits, String title, byte[] defaultNumber)
+    private boolean enterNumber(String title, byte[] number, int digits)
     {
         // !! Should probably check to make sure defaultNumber is digits in size
-        char spacer = ' ';
-        byte[] number = new byte[digits];
         int curDigit = 0;
-        boolean done = false;
 
-        if (defaultNumber != null)
-            number = defaultNumber;
-
-
-        while (!done)
+        while (true)
         {
             newScreen();
             LCD.drawString(title, 0, 2);
-            String str = "";
             for (int i = 0; i < digits; i++)
-                str = str + spacer + (char) number[i];
-            LCD.drawString(str, 0, 4);
+                LCD.drawChar((char)number[i], i * 2 + 1, 4);
+            
+            if (curDigit >= digits)
+            	return true;
+            
             Utils.drawRect(curDigit * 12 + 3, 30, 10, 10);
 
             int ret = getButtonPress();
             switch (ret)
             {
-                case 0x01:
+                case Button.ID_ENTER:
                 { // ENTER
                     curDigit++;
-                    if (curDigit >= digits)
-                        done = true;
                     break;
                 }
-                case 0x02:
+                case Button.ID_LEFT:
                 { // LEFT
                     number[curDigit]--;
                     if (number[curDigit] < '0')
                         number[curDigit] = '9';
                     break;
                 }
-                case 0x04:
+                case Button.ID_RIGHT:
                 { // RIGHT
                     number[curDigit]++;
                     if (number[curDigit] > '9')
                         number[curDigit] = '0';
                     break;
                 }
-                case 0x08:
+                case Button.ID_ESCAPE:
                 { // ESCAPE
                     curDigit--;
-                    // Return null if user backs out
+                    // Return false if user backs out
                     if (curDigit < 0)
-                        return null;
+                        return false;
                     break;
                 }
             }
         }
-        return number;
     }
 
     /**
@@ -569,12 +561,10 @@ public class StartUpText
                     {
                         newScreen("Pairing");
                         Bluetooth.addDevice(btrd);
-                        byte[] tempPin =
-                        {
-                            '0', '0', '0', '0'
-                        };
-                        byte[] pin = enterNumber(4, "PIN for " + btrd.getFriendlyName(false), tempPin); // !! Assuming 4 length
-                        if (pin == null) break;
+                        // !! Assuming 4 length
+                        byte[] pin = { '0', '0', '0', '0' };
+                        if (!enterNumber("PIN for " + btrd.getFriendlyName(false), pin, pin.length))
+                        	break;
                         LCD.drawString("Please wait...", 0, 6);
                         BTConnection connection = Bluetooth.connect(btrd.getDeviceAddr(), 0, pin);
                         // Indicate Success or failure:
@@ -670,20 +660,19 @@ public class StartUpText
     {
         // 1. Retrieve PIN from System properties
         String pinStr = SystemSettings.getStringSetting(pinProperty, "1234");
-        byte[] pin = new byte[pinStr.length()];
-        for (int i = 0; i < pinStr.length(); i++)
+        int len = pinStr.length();
+        byte[] pin = new byte[len];
+        for (int i = 0; i < len; i++)
             pin[i] = (byte) pinStr.charAt(i);
 
         // 2. Call enterNumber() method
-        pin = enterNumber(4, "Enter NXT PIN", pin);
-
-        // 3. Set PIN in system memory.
-        String pinSet = "";
-        if (pin != null)
+        if (enterNumber("Enter NXT PIN", pin, 4))
         {
+            // 3. Set PIN in system memory.
+        	StringBuilder sb = new StringBuilder();
             for (int i = 0; i < pin.length; i++)
-                pinSet += (char) pin[i];
-            Settings.setProperty(pinProperty, pinSet);
+                sb.append((char) pin[i]);
+            Settings.setProperty(pinProperty, sb.toString());
             Bluetooth.setPin(pin);
         }
     }
