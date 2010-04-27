@@ -1,6 +1,10 @@
 package lejos.nxt.startup;
 
+import java.io.File;
+import java.io.IOException;
+
 import lejos.nxt.LCD;
+import lejos.util.Delay;
 
 public class Utils
 {
@@ -41,5 +45,91 @@ public class Utils
 		//very short byte code
 		return new StringBuilder().append(version >>> 16).append('.').append((version >>> 8) & 0xFF).append('.')
 				.append(version & 0xFF).toString();
+	}
+
+	/**
+	 * Make the LCD display fade into view.
+	 */
+	public static void fadeIn()
+	{
+	    for(int i = Config.MIN_CONTRAST; i < Config.MAX_CONTRAST; )
+	    {
+	        Delay.msDelay(5);
+	        LCD.setContrast(++i);
+	    }
+	}
+
+	/**
+	 * Make the LCD display fade out of view.
+	 */
+	public static void fadeOut()
+	{
+	    for(int i = Config.MAX_CONTRAST; i > Config.MIN_CONTRAST; )
+	    {
+	        Delay.msDelay(5);
+	        LCD.setContrast(--i);
+	    }
+	}
+
+	public static void drawRect(int x, int y, int width, int height)
+	{
+		byte[] buf = LCD.getDisplay();    	
+		for (int i=0; i<=width; i++)
+		{
+			Utils.setPixel(buf, x+i, y);
+			Utils.setPixel(buf, x+i, y+height);
+		}
+		for (int j=1; j<height; j++)
+		{
+			Utils.setPixel(buf, x, y+j);
+			Utils.setPixel(buf, x+width, y+j);
+		}
+	}
+
+	public static void defragFilesystem()
+	{
+		try
+		{
+	        // Defrag the file system
+			File.defrag();
+		}
+		catch (IOException ioe)
+		{
+			File.reset();
+		}
+	}
+
+	private static void setPixel(byte[] buf, int x, int y)
+	{
+		x += (y >> 3) * LCD.SCREEN_WIDTH;
+	    buf[x] |= 1 << (y & 0x7);
+	}
+
+	/**
+	 * Return the extension part of a filename
+	 * @param fileName
+	 * @return the file extension
+	 */
+	public static String getExtension(String fileName)
+	{
+	    int dot = fileName.lastIndexOf(".");
+	    if (dot < 0)
+	        return "";
+	
+	    return fileName.substring(dot + 1, fileName.length());
+	}
+
+	/**
+	 * Return the base part (no extension) of a filename
+	 * @param fileName
+	 * @return the base part of the name
+	 */
+	public static String getBaseName(String fileName)
+	{
+	    int dot = fileName.lastIndexOf(".");
+	    if (dot < 0)
+	        return fileName;
+	
+	    return fileName.substring(0, dot);
 	}
 }
