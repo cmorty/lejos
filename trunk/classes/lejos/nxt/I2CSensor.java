@@ -167,6 +167,16 @@ public class I2CSensor implements SensorConstants {
         if ((address & 1) != 0) throw new IllegalArgumentException("Bad address format");
 		address = addr;
 	}
+	
+	/**
+	 * Return thes the I2C address of the sensor.
+	 * The sensor uses the address/address+1 for writing/reading.
+	 * @return the I2C address.
+	 */
+	public int getAddress()
+	{
+		return this.address;
+	}
 
 	/**
 	 * Get the port that the sensor is attached to
