@@ -48,6 +48,9 @@ public interface SensorConstants {
     public static final int TYPE_COLORGREEN = 15;
     public static final int TYPE_COLORBLUE = 16;
     public static final int TYPE_COLORNONE = 17;
+    
+    public static final int MIN_TYPE = 0;
+    public static final int MAX_TYPE = 17;
 	  
 	public static final int MODE_RAW = 0x00;
 	public static final int MODE_BOOLEAN = 0x20;
