@@ -28,54 +28,6 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
     /** Sensor port pin mode. Pin is analogue input */
     public static final int SP_MODE_ADC = 3;
 
-    // Digital I/O pins used to control the sensor operation
-    private static final int DIGI_I2C = -1;
-    private static final int DIGI_OFF = 0;
-    private static final int DIGI_0_ON = (1 << SP_DIGI0);
-    private static final int DIGI_1_ON = (1 << SP_DIGI1);
-    private static final byte[] powerType =
-    {
-        POWER_STD, // NO_SENSOR
-        POWER_STD, // SWITCH
-        POWER_RCX9V, // TEMPERATURE
-        POWER_RCX9V, // REFLECTION
-        POWER_RCX9V, // ANGLE
-        POWER_STD, // LIGHT_ACTIVE
-        POWER_STD, // LIGHT_INACTIVE
-        POWER_STD, // SOUND_DB
-        POWER_STD, // SOUND_DBA
-        POWER_STD, // CUSTOM
-        POWER_STD, // LOWSPEED,
-        POWER_9V,  // LOWSPEED_9V
-        POWER_STD, // Unused
-        POWER_STD, // COLOR_FULL
-        POWER_STD, // COLOR_RED
-        POWER_STD, // COLOR_GREEN
-        POWER_STD, // COLOR_BLUE
-        POWER_STD, // COLOR_NONE
-    };
-    private static final byte[] controlPins =
-    {
-        DIGI_OFF, // NO_SENSOR
-        DIGI_OFF, // SWITCH
-        DIGI_OFF, // TEMPERATURE
-        DIGI_OFF, // REFLECTION
-        DIGI_OFF, // ANGLE
-        DIGI_0_ON, // LIGHT_ACTIVE
-        DIGI_OFF, // LIGHT_INACTIVE
-        DIGI_0_ON, // SOUND_DB
-        DIGI_1_ON, // SOUND_DBA
-        DIGI_OFF, // CUSTOM
-        DIGI_I2C, // LOWSPEED,
-        DIGI_I2C,  // LOWSPEED_9V
-        DIGI_OFF,  // Unused
-        DIGI_OFF, // COLOR_FULL
-        DIGI_OFF, // COLOR_RED
-        DIGI_OFF, // COLOR_GREEN
-        DIGI_OFF, // COLOR_BLUE
-        DIGI_OFF, // COLOR_NONE
-    };
-
     /**
      * The number of ports available.
      */
@@ -765,8 +717,8 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
     }
 
 
-    private SensorReader offReader = new SensorReader();
-    private SensorReader standardReader = new StandardReader();
+    private final SensorReader offReader = new SensorReader();
+    private final SensorReader standardReader = new StandardReader();
     private SensorReader colorReader = null;
     private SensorReader curReader = offReader;
 
@@ -890,40 +842,73 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
      */
     public void setType(int newType)
     {
-        if (newType == type) return;
-        if (newType < powerType.length)
+        if (newType == type)
+        	return;
+		if (newType < MIN_TYPE || newType > MAX_TYPE)
+			throw new IllegalArgumentException();
+        
+        int powerType;
+        switch (newType)
         {
-            // Work out what reader we need for the new type
-            SensorReader newReader;
-            // Determine what reader to use.
-            if (newType >= TYPE_COLORFULL)
-                newReader = colorReader;
-            else if (newType >= TYPE_SWITCH)
-                newReader = standardReader;
-            else
-                newReader = offReader;
-            if (newReader == null)
-                newReader = offReader;
-            // if we are changing readers tell the old one we are done.
-            if (newReader != curReader)
-                curReader.setType(TYPE_NO_SENSOR);
-            // Set the power and pins for the new type.
-            int control = controlPins[newType];
-            setPowerType(powerType[newType]);
-            // Set the state of the digital I/O pins
-            if (control != DIGI_I2C)
-            {
-                setSensorPinMode(SP_DIGI0, SP_MODE_OUTPUT);
-                setSensorPinMode(SP_DIGI1, SP_MODE_OUTPUT);
-                setSensorPin(SP_DIGI0, ((control & DIGI_0_ON) != 0 ? 1 : 0));
-                setSensorPin(SP_DIGI1, ((control & DIGI_1_ON) != 0 ? 1 : 0));
-            }
-            // Switch to the new type
-            this.type = newType;
-            curReader = newReader;
-            newReader.setType(newType);
-            newReader.setMode(mode);
+        	case TYPE_TEMPERATURE:
+        	case TYPE_REFLECTION:
+        	case TYPE_ANGLE:
+        		powerType = POWER_RCX9V;
+        		break;
+        	case TYPE_LOWSPEED_9V:
+        		powerType = POWER_9V;
+        		break;
+        	default:
+        		powerType = POWER_STD;
         }
+        
+        int controlPins;
+        switch (newType)
+        {
+	    	case TYPE_LIGHT_ACTIVE:
+	    	case TYPE_SOUND_DB:
+	    		controlPins = 1 << SP_DIGI0;
+	    		break;
+	    	case TYPE_SOUND_DBA:
+	    		controlPins = 1 << SP_DIGI1;
+	    		break;
+	    	case TYPE_LOWSPEED:
+	    	case TYPE_LOWSPEED_9V:
+	    		controlPins = -1;
+	    		break;
+	    	default:
+        		controlPins = 0;
+        }
+        
+        // Work out what reader we need for the new type
+        SensorReader newReader;
+        // Determine what reader to use.
+        if (newType >= TYPE_COLORFULL)
+            newReader = colorReader;
+        else if (newType >= TYPE_SWITCH)
+            newReader = standardReader;
+        else
+            newReader = offReader;
+        if (newReader == null)
+            newReader = offReader;
+        // if we are changing readers tell the old one we are done.
+        if (newReader != curReader)
+            curReader.setType(TYPE_NO_SENSOR);
+        // Set the power and pins for the new type.
+        setPowerType(powerType);
+        // Set the state of the digital I/O pins
+        if (controlPins >= 0)
+        {
+            setSensorPinMode(SP_DIGI0, SP_MODE_OUTPUT);
+            setSensorPinMode(SP_DIGI1, SP_MODE_OUTPUT);
+            setSensorPin(SP_DIGI0, (controlPins >> SP_DIGI0) & 0x01);
+            setSensorPin(SP_DIGI1, (controlPins >> SP_DIGI1) & 0x01);
+        }
+        // Switch to the new type
+        this.type = newType;
+        curReader = newReader;
+        newReader.setType(newType);
+        newReader.setMode(mode);
     }
 
     /**
