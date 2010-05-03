@@ -194,7 +194,14 @@ public void setHeading(float heading )
 {
   _heading = heading;
 }
-
+/**
+ * return string contains x,y and headint
+ * @return x,y,heading
+ */
+public String toString()
+{
+  return("X"+_location.x+" Y"+_location.y+" H"+_heading);
+}
 protected  Point _location;
 protected  float _heading;
 
