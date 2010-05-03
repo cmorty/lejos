@@ -788,6 +788,14 @@ udp_enable(int reset)
     interrupts_enable(); 
   if (reset)
     udp_reset();
+  else if (configured & USB_CONFIGURED)
+  {
+    // unstall the endpoints if we previously stalled them...
+    UDP_CLEAREPFLAGS(*AT91C_UDP_CSR1, AT91C_UDP_FORCESTALL);
+    UDP_CLEAREPFLAGS(*AT91C_UDP_CSR2, AT91C_UDP_FORCESTALL);
+    UDP_CLEAREPFLAGS(*AT91C_UDP_CSR3, AT91C_UDP_FORCESTALL);
+  }
+
 }
 
 void
@@ -795,9 +803,17 @@ udp_disable()
 {
   /* Disable processing of USB requests */
   U8 buf[MAX_BUF];
-  // Discard any input
-  while (udp_read(buf, 0, sizeof(buf)) > 0)
-    ;
+  // Stall the endpoints, note we can not reset them at this point as this
+  // will screw up the data toggle and result in lost data.
+  if (configured & USB_CONFIGURED)
+  {
+    UDP_SETEPFLAGS(*AT91C_UDP_CSR1, AT91C_UDP_FORCESTALL);
+    UDP_SETEPFLAGS(*AT91C_UDP_CSR2, AT91C_UDP_FORCESTALL);
+    UDP_SETEPFLAGS(*AT91C_UDP_CSR3, AT91C_UDP_FORCESTALL);
+    // Discard any input
+    while (udp_read(buf, 0, sizeof(buf)) > 0)
+      ;
+  }
   int i_state = interrupts_get_and_disable();
   configured |= USB_DISABLED;
   currentFeatures = 0;
