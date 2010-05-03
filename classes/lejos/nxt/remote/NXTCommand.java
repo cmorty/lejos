@@ -98,6 +98,7 @@ public class NXTCommand implements NXTProtocol {
 	public byte startProgram(String fileName) throws IOException {
 		byte[] request = { DIRECT_COMMAND_NOREPLY, START_PROGRAM };
 		request = appendString(request, fileName);
+        open = false;
 		return sendRequest(request, 22);
 	}
 	
@@ -383,8 +384,8 @@ public class NXTCommand implements NXTProtocol {
 	public void close() throws IOException {
 		if (!open) return;
 		open = false;
-		byte[] request = { SYSTEM_COMMAND_NOREPLY, NXJ_DISCONNECT };
-		nxtComm.sendRequest(request, 0); // Tell NXT to disconnect
+		byte[] request = { SYSTEM_COMMAND_REPLY, NXJ_DISCONNECT };
+		nxtComm.sendRequest(request, 3); // Tell NXT to disconnect
 		nxtComm.close();
 	}
 
