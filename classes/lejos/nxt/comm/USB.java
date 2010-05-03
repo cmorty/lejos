@@ -34,12 +34,7 @@ public class USB extends NXTCommDevice {
 	private USB()
 	{		
 	}
-
-    private static void flushInput(NXTConnection conn)
-    {
-        conn.discardInput();
-    }
-    
+   
     private static boolean isConnected(NXTConnection conn, byte [] cmd)
     {
         // This method provides support for packet mode connections.
@@ -107,8 +102,6 @@ public class USB extends NXTCommDevice {
             usbSetSerialNo(devAddress);
             usbEnable(((mode & RESET) != 0 ? 1 : 0));
             mode &= ~RESET;
-            // Discard any left over input
-            flushInput(conn);
             if (timeout == 0) timeout = 0x7fffffff;
             while(listening && timeout-- > 0)
             {
@@ -151,24 +144,6 @@ public class USB extends NXTCommDevice {
         return waitForConnection(0, 0);
     }
     
-    /**
-     * Wait for the remote side of the connection to close down.
-     * @param conn The connection associated with this device.
-     * @param timeout
-     */
-    public static void waitForDisconnect(USBConnection conn, int timeout)
-    {
-        while(timeout-- > 0)
-        {
-            flushInput(conn);
-            int status = usbStatus();
-            // Wait for the interface to be down
-            if ((status & USB_STATE_MASK) != USB_STATE_CONNECTED || (status & USB_CONFIG_MASK) == 0)
-                break;
-            Delay.msDelay(1);
-        }
-        usbDisable();
-    }
 
     /**
      * Cancel a long running command issued on another thread.
