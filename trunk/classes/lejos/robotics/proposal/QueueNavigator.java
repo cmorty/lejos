@@ -4,7 +4,7 @@ import lejos.robotics.proposal.*;
 import lejos.util.Delay;
 
 import java.util.*;
-import lejos.nxt.comm.RConsole;
+//import lejos.nxt.comm.RConsole;
 
 /**
  *This  class can follow a sequence of way points;
@@ -70,7 +70,7 @@ public class QueueNavigator  extends BasicNavigator
   public void resume()
   {
     if(_route.size() > 0 ) _keepGoing = true;
-    RConsole.println("resume "+_route.size());
+    //RConsole.println("resume "+_route.size());
   }
 
   /**
@@ -108,14 +108,14 @@ public WayPoint getWaypoint()
 
          if(!_keepGoing) break;
           _pilot.rotate(normalize(angle), true);
-          RConsole.println("rotate "+angle);
+          //RConsole.println("rotate "+angle);
           while (_pilot.isMoving() && _keepGoing)
           {
             Thread.yield();
           }
-           RConsole.println("rotate "+angle+" incr "+_pilot.getAngleIncrement());
+           //RConsole.println("rotate "+angle+" incr "+_pilot.getAngleIncrement());
 //          Delay.msDelay(20);
-          RConsole.println("WPN "+drpp.getPose());
+          //RConsole.println("WPN "+drpp.getPose());
 
           float distance = _pose.distanceTo(_destination);
            if(!_keepGoing) break;
@@ -125,9 +125,9 @@ public WayPoint getWaypoint()
             Thread.yield();
           }
           if(!_keepGoing) break;
-          RConsole.println("travel "+distance+" dist "+_pilot.getMovementIncrement());
+          //RConsole.println("travel "+distance+" dist "+_pilot.getMovementIncrement());
 //          Delay.msDelay(20);
-          RConsole.println("WPN "+drpp.getPose());
+          //RConsole.println("WPN "+drpp.getPose());
           _pose = drpp.getPose();
           if(listeners != null)
           {
