@@ -53,7 +53,7 @@ public class LCPResponder extends Thread {
      */
     protected int preCommand(byte[] inMsg, int len)
     {
-        if (len < 0 || inMsg[1] == LCP.NXJ_DISCONNECT || inMsg[1] == LCP.START_PROGRAM)
+        if (len < 0 || inMsg[1] == LCP.START_PROGRAM)
             disconnect();
         return len;
     }
@@ -73,6 +73,8 @@ public class LCPResponder extends Thread {
     
     protected void postCommand(byte[] inMsg, int inLen, byte[] replyMsg, int replyLen)
     {
+        if (inMsg[1] == LCP.NXJ_DISCONNECT)
+            disconnect();
     }
     
 	public void run() 
