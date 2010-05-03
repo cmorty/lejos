@@ -83,14 +83,6 @@ public class USBConnection extends NXTConnection
         return cnt;
     }
          
-    /**
-     * Close the USB stream connection. 
-     */
-	void disconnect()
-    { 
-        USB.waitForDisconnect(this, CLOSETIMEOUT2);
-        super.disconnect();
-	}
 
    /**
      * Tell the lower levels that they can release any resources for this

@@ -449,12 +449,14 @@ ioloop: while (offset < len)
 		//RConsole.print("Close\n");
         //LCD.drawInt(1, 8, 0, 6);
         //LCD.drawInt(state, 8, 8, 6);
+        boolean EOFExpected = false;
 		if (state == CS_IDLE) return;
 		synchronized (this)
 		{
 			if (state >= CS_CONNECTED)
             {
                 sendEOF();
+                if (state != CS_EOF && header > 0) EOFExpected = true;
 				state = CS_DISCONNECTING;
             }
 		}
@@ -465,21 +467,25 @@ ioloop: while (offset < len)
         //RConsole.println("Closing 1 cnt is " + outCnt);
         //LCD.drawInt(2, 8, 0, 6);
         //LCD.drawInt(state, 8, 8, 6);
-		for(int i = 0; state == CS_DISCONNECTING && (outCnt > 0 && i < CLOSETIMEOUT1); i++ )
+		for(int i = 0; state == CS_DISCONNECTING && (outCnt > 0 && i < CLOSETIMEOUT1); i++)
 		{
-            flushBuffer(false);
 			read(null, inBuf.length, false);
+            flushBuffer(false);
 			Delay.msDelay(1);
 		}
         //RConsole.println("Closing 2 cnt is " + outCnt);
         //LCD.drawInt(3, 8, 0, 6);
         //LCD.drawInt(state, 8, 8, 6);
-		for(int i = 0; state == CS_DISCONNECTING && i < CLOSETIMEOUT2; i++ )
-		{
-            flushBuffer(false);
-			read(null, inBuf.length, false);
-			Delay.msDelay(1);
-		}
+        // Wait for possible EOF packet.
+        if (EOFExpected)
+        {
+    		for(int i = 0; state == CS_DISCONNECTING && i < CLOSETIMEOUT2; i++)
+        	{
+                read(null, inBuf.length, false);
+                flushBuffer(false);
+                Delay.msDelay(1);
+            }
+        }
         synchronized(this)
         {
             // Dump any remaining output
@@ -512,15 +518,16 @@ ioloop: while (offset < len)
 	}
 
     /**
-     * Discard and input
-     * Dumps any input data
+     * Discard any input
+     * Reads and throws away any input until no more is present. Then resets the
+     * read state.
      */
     synchronized void discardInput()
     {
         do {
             inCnt = 0;
             inOffset = 0;
-            try {wait(1);} catch(Exception e) {}
+            Delay.msDelay(1);
             fillBuffer(false);
         } while (inCnt > 0);
         // Reset packet stream
