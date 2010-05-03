@@ -220,6 +220,14 @@ public class RemoteMotor implements TachoMotor, NXTProtocol {
 		rotate(limitAngle - tachometer, returnNow);
 	}
 	
+        /**
+         * TachoMotor for  NXT need this
+         * @return
+         */
+        public int getLimitAngle()
+        {
+          return 0;
+        }
 	public void resetTachoCount() {
 		try {
 			nxtCommand.resetMotorPosition(this.id, false);
@@ -303,5 +311,5 @@ public class RemoteMotor implements TachoMotor, NXTProtocol {
           // in the real Motor, the regulator does it;
         }
 	
-	
+	public void setAcceleration(int acceleration){};
 }

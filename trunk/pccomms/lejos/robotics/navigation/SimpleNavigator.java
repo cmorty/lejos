@@ -149,13 +149,7 @@ public float getAngle()
     _current = !isMoving();
     return new Pose(_pose.getX(),_pose.getY(),_pose.getHeading());
   }
-  /**
-   * @deprecated  - it just calls updatePose()
-   */
-  public void updatePosition()
-  {
-    updatePose();
-  }
+ 
 
 /**
  * sets the robot pose to the new coordinates and heading
@@ -184,7 +178,7 @@ public float getAngle()
  * sets the robots movement speed  - distance units/second
  * @param speed
  */
-  public void setMoveSpeed(float speed)
+  public void setTravelSpeed(float speed)
   {
     pilot.setTravelSpeed(speed);
   }
@@ -192,7 +186,7 @@ public float getAngle()
  * sets the robot turn speed  -degrees/second
  * @param speed
  */
-  public void setTurnSpeed(float speed)
+  public void setRotateSpeed(float speed)
   {
     pilot.setRotateSpeed(speed);
   }
