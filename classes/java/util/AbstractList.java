@@ -20,7 +20,7 @@ abstract class AbstractList<E> extends AbstractCollection<E> implements List<E>
 	{
 		if (o == this)
 			return true;
-		if (!(o instanceof List))
+		if (!(o instanceof List<?>))
 			return false;
 		
 		Iterator<?> it1 = this.iterator();
@@ -37,14 +37,7 @@ abstract class AbstractList<E> extends AbstractCollection<E> implements List<E>
 			Object o1 = it1.next();
 			Object o2 = it2.next();
 			
-			if (o1 == null)
-			{
-				if (o2 != null)
-				{
-					return false;
-				}
-			}
-			else if (!o1.equals(o2))
+			if (o1 != o2 && (o1 == null || o2 == null || !o1.equals(o2)))
 			{
 				return false;
 			}
