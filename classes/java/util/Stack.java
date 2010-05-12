@@ -15,14 +15,13 @@ package java.util;
  */
 public class Stack<E> extends Vector<E>
 {
-
 	/**
 	 * creates a new Stack instance
 	 */
 	public Stack()
 	{
-		// do nothing
-	} // Stack()
+		super(7, 0);
+	}
 
 	/**
 	 * pushes an object onto the stack
@@ -35,7 +34,7 @@ public class Stack<E> extends Vector<E>
 		// add the object to base vector
 		addElement(anObject);
 		return anObject;
-	} // push()
+	}
 
 	/**
 	 * fetches an object from the top of the stack and removes it
@@ -69,7 +68,7 @@ public class Stack<E> extends Vector<E>
 			throw new EmptyStackException();
 		// return top element
 		return elementAt(idx);
-	} // peek()
+	}
 
 	/**
 	 * is this stack empty?
@@ -79,7 +78,7 @@ public class Stack<E> extends Vector<E>
 	public boolean empty()
 	{
 		return (size() == 0);
-	} // empty()
+	}
 
 	public synchronized int search(Object o)
 	{
@@ -87,4 +86,4 @@ public class Stack<E> extends Vector<E>
 		return (i < 0) ? i : this.size() - i;
 	}
 
-} // class Stack
+}
