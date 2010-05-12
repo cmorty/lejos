@@ -141,12 +141,12 @@ public class Vector<E>
 		return true;
 	}
 
-	public synchronized int indexOf(E aObj)
+	public int indexOf(Object aObj)
 	{
 		return indexOf(aObj, 0);
 	}
 
-	public synchronized int indexOf(E aObj, int aIndex)
+	public synchronized int indexOf(Object aObj, int aIndex)
 	{
 		if (aObj == null)
 		{
@@ -191,7 +191,7 @@ public class Vector<E>
 	 * @return the index of the last occurrence of the object or -1, if object
 	 *         is not found
 	 */
-	public synchronized int lastIndexOf(E anObject)
+	public synchronized int lastIndexOf(Object anObject)
 	{
 		return lastIndexOf(anObject, elementCount - 1);
 	}
@@ -206,7 +206,7 @@ public class Vector<E>
 	 *         is not found
 	 * @throws ArrayIndexOutOfBoundsException
 	 */
-	public synchronized int lastIndexOf(E anObject, int anIndex) throws ArrayIndexOutOfBoundsException
+	public synchronized int lastIndexOf(Object anObject, int anIndex) throws ArrayIndexOutOfBoundsException
 	{
 		if (anObject == null)
 		{
@@ -250,7 +250,7 @@ public class Vector<E>
 		elementData[--elementCount] = null;
 	}
 
-	public synchronized void setElementAt(Object aObj, int aIndex)
+	public synchronized void setElementAt(E aObj, int aIndex)
 	{
 		if (aIndex < 0 || aIndex >= elementCount)
 			throw new ArrayIndexOutOfBoundsException();

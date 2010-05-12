@@ -15,21 +15,8 @@ package java.util;
  * A LIFO stack of objects. 
  * TODO recycable
  */
-public class Stack extends Vector {
+public class Stack<E> extends Vector<E> {
 
-	////////////////////////////////////////////
-	// constants
-	////////////////////////////////////////////
-    
-	////////////////////////////////////////////
-	// fields
-	////////////////////////////////////////////
-
-	////////////////////////////////////////////
-	// constructors
-	////////////////////////////////////////////
-
-	////////////////////////////////////////////
     /**
      * creates a new Stack instance
      */
@@ -37,51 +24,48 @@ public class Stack extends Vector {
     	// do nothing
     } // Stack()
 
-	////////////////////////////////////////////
 	/**
 	 * pushes an object onto the stack
 	 * @param anObject the object
 	 * @return Object the object pushed onto the stack
 	 */
-    public Object push(Object anObject) {
+    public E push(E anObject) {
     	// add the object to base vector
 		addElement(anObject);
 		return anObject;
     } // push()
 
-	////////////////////////////////////////////
 	/**
 	 * fetches an object from the top of the stack
 	 * and removes it
 	 * @return Object the object removed from the top of the stock
 	 * @throws EmptyStackException
 	 */
-    public synchronized Object pop() throws EmptyStackException {
+	public synchronized E pop() {
+    	int idx = size() - 1;
+    	if (idx < 0)
+    		throw new EmptyStackException();
 		// get object
-		Object popped = peek();
+		E popped = elementAt(idx);
 		// remove and return object
-		removeElementAt(size() - 1);
+		removeElementAt(idx);
 		return popped;
     } // pop()
 
-	////////////////////////////////////////////
 	/**
 	 * fetches an object from the stack
 	 * <br>does not remove it!
 	 * @return Object the object at the top of the stack
 	 * @throws EmptyStackException
 	 */
-    public synchronized Object peek() throws EmptyStackException {
-    	// size of stack
-		int	sizeOfStack = size();
-		// empty stack?
-		if(sizeOfStack==0)
-	    	throw new EmptyStackException();
+    public synchronized E peek() {
+    	int idx = size() - 1;
+    	if (idx < 0)
+    		throw new EmptyStackException();
 	    // return top element
-		return elementAt(sizeOfStack-1);
+		return elementAt(idx);
     } // peek()
 
-	////////////////////////////////////////////
 	/**
 	 * is this stack empty?
 	 * @return boolean true, if the stack is empty
@@ -89,5 +73,11 @@ public class Stack extends Vector {
     public boolean empty() {
 		return (size()==0);
     } // empty()
+    
+    public synchronized int search(Object o)
+    {
+    	int i = this.lastIndexOf(o);
+    	return (i<0) ? i : this.size() - i;
+    }
 
 } // class Stack
