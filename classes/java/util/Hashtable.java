@@ -94,9 +94,9 @@ public class Hashtable<K, V>
 					Object element = iTable[cur];
 					if (element != null)
 					{
-						if (element instanceof Vector)
+						if (element instanceof Vector<?>)
 						{
-							Vector v = (Vector) element;
+							Vector<?> v = (Vector<?>) element;
 							if (curVector < v.size())
 								return true;
 
@@ -155,9 +155,9 @@ public class Hashtable<K, V>
   
 	private KeyValuePair getKeyValuePair(Object aPivot, Object aKey)
 	{
-		if (aPivot instanceof Vector)
+		if (aPivot instanceof Vector<?>)
 		{
-			Vector pVec = (Vector) aPivot;
+			Vector<?> pVec = (Vector<?>) aPivot;
 			int pSize = pVec.size();
 			for (int i = 0; i < pSize; i++)
 			{
