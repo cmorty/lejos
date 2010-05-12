@@ -14,9 +14,9 @@ package java.util;
 /**
  * A dynamic array.
  */
-public class Vector
+public class Vector<E>
 {
-	private class MyEnumeration implements Enumeration<Object>
+	private class MyEnumeration implements Enumeration<E>
 	{
 		int cur = 0;
 
@@ -25,7 +25,7 @@ public class Vector
 			return (size() > cur);
 		}
 
-		public Object nextElement()
+		public E nextElement()
 		{
 			return elementAt(cur++);
 		}
@@ -61,12 +61,12 @@ public class Vector
 	 * 
 	 * @return an Enumeration of all the objects in the Vector
 	 */
-	public Enumeration<Object> elements()
+	public Enumeration<E> elements()
 	{
 		return new MyEnumeration();
 	}
 
-	public synchronized void addElement(Object aObj)
+	public synchronized void addElement(E aObj)
 	{
 		ensureCapacityHelper(elementCount + 1);
 		elementData[elementCount++] = aObj;
@@ -82,12 +82,13 @@ public class Vector
 		removeAllElements();
 	}
 
-	public synchronized Object elementAt(int aIndex)
+	@SuppressWarnings("unchecked")
+	public synchronized E elementAt(int aIndex)
 	{
 		if ((aIndex < 0) && (aIndex >= elementCount))
 			throw new ArrayIndexOutOfBoundsException();
 
-		return elementData[aIndex];
+		return (E)elementData[aIndex];
 	}
 
 	public synchronized void ensureCapacity(int minCapacity)
@@ -119,10 +120,10 @@ public class Vector
 	@Override
 	public boolean equals(Object aObj)
 	{
-		if (aObj instanceof Vector)
+		if (aObj instanceof Vector<?>)
 			return false;
 		
-		Vector v = (Vector)aObj;
+		Vector<?> v = (Vector<?>)aObj;
 		if (this.elementCount != v.elementCount)
 			return false;
 		
@@ -140,12 +141,12 @@ public class Vector
 		return true;
 	}
 
-	public synchronized int indexOf(Object aObj)
+	public synchronized int indexOf(E aObj)
 	{
 		return indexOf(aObj, 0);
 	}
 
-	public synchronized int indexOf(Object aObj, int aIndex)
+	public synchronized int indexOf(E aObj, int aIndex)
 	{
 		if (aObj == null)
 		{
@@ -167,7 +168,7 @@ public class Vector
 		return -1;
 	}
 
-	public synchronized void insertElementAt(Object aObj, int aIndex)
+	public synchronized void insertElementAt(E aObj, int aIndex)
 	{
 		if (aIndex < 0 || aIndex > elementCount)
 			throw new ArrayIndexOutOfBoundsException();
@@ -190,7 +191,7 @@ public class Vector
 	 * @return the index of the last occurrence of the object or -1, if object
 	 *         is not found
 	 */
-	public synchronized int lastIndexOf(Object anObject)
+	public synchronized int lastIndexOf(E anObject)
 	{
 		return lastIndexOf(anObject, elementCount - 1);
 	}
@@ -205,7 +206,7 @@ public class Vector
 	 *         is not found
 	 * @throws ArrayIndexOutOfBoundsException
 	 */
-	public synchronized int lastIndexOf(Object anObject, int anIndex) throws ArrayIndexOutOfBoundsException
+	public synchronized int lastIndexOf(E anObject, int anIndex) throws ArrayIndexOutOfBoundsException
 	{
 		if (anObject == null)
 		{
@@ -230,7 +231,7 @@ public class Vector
 		elementCount = 0;
 	}
 
-	public synchronized boolean removeElement(Object aObj)
+	public synchronized boolean removeElement(E aObj)
 	{
 		int index = indexOf(aObj);
 		if (index < 0)
@@ -279,9 +280,16 @@ public class Vector
 
 	public synchronized Object[] toArray()
 	{
-		Object[] result = new Object[elementCount];
-		System.arraycopy(elementData, 0, result, 0, elementCount);
-		return result;
+		return this.toArray(new Object[elementCount]);
+	}
+
+	public synchronized <T> T[] toArray(T[] dest)
+	{
+		if (this.elementCount > dest.length)
+			throw new UnsupportedOperationException("Array is too small and expanding is not supported.");
+
+		System.arraycopy(this.elementData, 0, dest, 0, elementCount);		
+		return dest;
 	}
 
 	@Override
