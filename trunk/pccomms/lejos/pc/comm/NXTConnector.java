@@ -125,20 +125,19 @@ public class NXTConnector extends NXTCommLoggable
 				// Create an array of NXTInfos from the properties
 				if (props.size() > 0 && !(nxt != null && nxt.equals("*"))) {	
 					Hashtable<String,String> nxtNames = new Hashtable<String,String>();
-					Enumeration<?> enProps = props.propertyNames();
 					
 					debug("Searching cache file for known Bluetooth devices");
 					
 					// Populate hashTable from NXT_<name> entries, filtering by name, if supplied
-				    for (; enProps.hasMoreElements(); ) {
-				        // Get property name
-				        String propName = (String)enProps.nextElement();
+					for (Map.Entry<?, ?> e : props.entrySet()) {
+				        // Get property name						
+				        String propName = (String)e.getKey();
 				        
 				        if (propName.startsWith("NXT_")) {
-				        	String nxtName = propName.substring(4);
-				        	String nxtAddr = (String)props.get(propName);
+				        	String nxtAddr = propName.substring(4);
+				        	String nxtName = (String)e.getValue();
 					        
-				        	if (searchParam == null || nxtName.equals(nxt)) {
+				        	if (isAddress(nxtAddr) && (searchParam == null || nxtName.equals(nxt))) {
 				        		debug("Found " + nxtName + " " + nxtAddr + " in cache file");
 				        		nxtNames.put(nxtName, nxtAddr);
 				        	}				        	
@@ -180,7 +179,7 @@ public class NXTConnector extends NXTCommLoggable
 				for(int i=0;i<nxtInfos.length;i++) {
 					log("Name " + i + " = " + nxtInfos[i].name);
 					log("Address " + i + " = " + nxtInfos[i].deviceAddress);
-					props.put("NXT_" + nxtInfos[i].name, nxtInfos[i].deviceAddress);
+					props.put("NXT_" + nxtInfos[i].deviceAddress, nxtInfos[i].name);
 				}
 				
 				debug("Saving cached names");
@@ -315,7 +314,7 @@ public class NXTConnector extends NXTCommLoggable
 		if (colonIndex >= 0) colonIndex +=2; // Skip "//"
 		
 		String nameString = deviceURL.substring(colonIndex+1);		
-		boolean isAddress = nameString.startsWith("00");
+		boolean isAddress = isAddress(nameString);
 		
 		if (isAddress) {
 			addr = nameString;
@@ -326,6 +325,11 @@ public class NXTConnector extends NXTCommLoggable
 		}
 		
 		return connectTo(name, addr, protocols, mode);
+	}
+	
+	private boolean isAddress(String s)
+	{
+		return s != null && s.startsWith("00");
 	}
 	
 	/**
