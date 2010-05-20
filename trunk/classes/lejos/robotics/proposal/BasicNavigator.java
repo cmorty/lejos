@@ -97,7 +97,7 @@ public ArcRotateMoveController getPilot(){ return _pilot;}
  * @param angle
  * @return
  */
-  float normalize(float angle)
+  public float normalize(float angle)
   {
     while(angle > 180 )angle -=  360;
     while(angle < -180) angle += 360;

@@ -32,37 +32,36 @@ public class ShortestPathPlanner
     _map = theMap;
     initialize(); // in case this method has already been called before
     Node source = new Node(start);
-    Node destination = new Node(finish);
+    Node destination = new Node(finish);  // current destination
     source.setSourceDistance(0);
     _reached.add(source);
     _candidate.add(destination);
     Node from;  // current start node
     Node dest;  // current destination node
-    int index = _candidate.size()-1;  //index of current destinatin in candidate set
+    int index = _candidate.size()-1;  //index of current destination in candidate set
     boolean failed = false;
 
     while (_candidate.size() > 0 && !failed)
     {
       _count++;
-      // get destination from in_candidate set
+      // get destination from inCandidateSet set
       dest = _candidate.get(index);
       from = getBest(dest);
       float distance = from.getDistance(dest);
-      if (distance >= BIG)  // dest is blocked  from best  reached node
+      if (distance >= BIG)  // dest is known to be blocked  from best node in  _reached
       {
         index--;  // try another temporary start node
         failed = index < 0; // tried the whole stack.
       } else
-      { // dest  not previously blocked  from  best  reached node
-//     if  now blocked, this call may add  two nodes to Candidate stack
+      { // dest is not known to be blocked  from  best  reached node
         if (segmentBlocked(from, dest))
-        {
-          from.block(dest);// dest not directly reachable
-          index = _candidate.size() - 1;  // start from top of stack
+        { // this method call possibly created and added new nodes to the _candidate set
+          from.block(dest);//  rcord  dest as not directly reachable
+          index = _candidate.size() - 1;  // search from top  from top of stack
         } else  // not blocked  so dest node has is  reached
         {
-          if (distance < .05f) // essentially same node as from
-          {
+          if (distance < .05f) // essentially same node as best node in _reached,
+          { // so will not be a separate way point in the route
             dest.setPredecessor(from.getPredecessor());
             dest.setSourceDistance(from.getSourceDistance());
           } else
@@ -71,7 +70,7 @@ public class ShortestPathPlanner
             dest.setSourceDistance(from.getSourceDistance() + from.getDistance(dest));
           }
           // move dest from _candidate to _reached
-          _reached.add(dest); // add only if not in the se
+          _reached.add(dest);
           _candidate.remove(dest);  // pop the stack
           index = _candidate.size() - 1;
         } // end else  dest not blocked
@@ -95,7 +94,7 @@ public class ShortestPathPlanner
   /**
    * helper method for findPath(). Determines if the straight line segment 
    * crosses a line on the map.
-   * Side effect: nodes at the end of the blocking line are added to the in_candidate set
+   * Side effect: creates nodes at the end of the blocking line and adds them to the _candidate set
    * @param from the  beginning of the line segment
    * @param theDest the end of the line segment
    * @return  true if the segment is blocked
@@ -119,18 +118,18 @@ public class ShortestPathPlanner
         blocked = true;
       }// nodes at end of the line
     }
-    if (blocked)  // add end points of the blocking segment to  in_candidate set
+    if (blocked)  // add end points of the blocking segment to  inCandidateSet set
     {
       Point2D p1 =  line.getP1();
       Point2D  p2 = line.getP2();
       n1 = new Node((float)p1.getX(),(float)p1.getY());
-      if(!in_reached(n1) &&!in_candidate(n1))
+      if(!inReachedSet(n1) &&!inCandidateSet(n1))
       {
         n1.setSourceDistance(from.getSourceDistance() + from.getDistance(n1));
         _candidate.add(n1);
       }
        n2 = new Node((float)p2.getX(),(float)p2.getY());
-       if(!in_reached(n2) && !in_candidate(n2))
+       if(!inReachedSet(n2) && !inCandidateSet(n2))
       {
         n2.setSourceDistance(from.getSourceDistance() + from.getDistance(n2));
         _candidate.add(n2);
@@ -168,7 +167,7 @@ public class ShortestPathPlanner
    * @param aNode
    * @return true if aNode has been reached already
    */
-  protected boolean in_reached(final Node  aNode)
+  protected boolean inReachedSet(final Node  aNode)
   {
     boolean found = false;
     for (Node n : _reached)
@@ -184,13 +183,12 @@ public class ShortestPathPlanner
    * @param aNode
    * @return true if aNode has been reached already
    */
-  protected boolean in_candidate(final Node aNode)
+  protected boolean inCandidateSet(final Node aNode)
   {
     boolean found = false;
     for (Node n : _candidate)
     {
       found = aNode.getLocation().equals(n.getLocation());
-//      RConsole.println("aNode "+aNode+" n "+n);
       if (found) break;
     }
     return found;
