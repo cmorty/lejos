@@ -426,6 +426,7 @@ public class DifferentialPilot implements
     {
       Thread.yield();
     }
+    Thread.yield(); // give other threads a chance to react 
   }
 
   /**
@@ -727,7 +728,7 @@ public class DifferentialPilot implements
    * sets _outsideSpeed, _insideSpeed, _steerRatio
    * @param turnRate
    */
-  public void steerPrep(final float turnRate)
+  protected void steerPrep(final float turnRate)
   {
 
     float rate = turnRate;
