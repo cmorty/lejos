@@ -144,113 +144,118 @@ class StringUtils
 		return c;
 	}
 	
-
-	private static class Pow10FConstants
-	{
-		public static final float[] POW10F_1 = {1E+1f, 1E+2f, 1E+4f, 1E+8f, 1E+16f, 1E+32f, };
-		public static final float[] POW10F_2 = {1E-1f, 1E-2f, 1E-4f, 1E-8f, 1E-16f, 1E-32f, };	
-	}
-	
 	private static float pow10f_bf(float r, int e)
 	{
-		// bf stand for "Big exponent First"
-		
-		float[] b;
-		if (e >= 0)
-			b = Pow10FConstants.POW10F_1;
-		else
+		// bf stands for "Big exponent First"
+		if (e > 0)
 		{
-			b = Pow10FConstants.POW10F_2;
-			e = -e;
+			if ((e & 0x020) != 0) r *= 1E+32f;
+			if ((e & 0x010) != 0) r *= 1E+16f;
+			if ((e & 0x008) != 0) r *= 1E+8f;
+			if ((e & 0x004) != 0) r *= 1E+4f;
+			if ((e & 0x002) != 0) r *= 1E+2f;
+			if ((e & 0x001) != 0) r *= 1E+1f;
 		}
-		
-		if ((e & 0x020) != 0) r *= b[5];
-		if ((e & 0x010) != 0) r *= b[4];
-		if ((e & 0x008) != 0) r *= b[3];
-		if ((e & 0x004) != 0) r *= b[2];
-		if ((e & 0x002) != 0) r *= b[1];
-		if ((e & 0x001) != 0) r *= b[0];
+		else if (e < 0)
+		{
+			e = -e;
+			if ((e & 0x020) != 0) r *= 1E-32f;
+			if ((e & 0x010) != 0) r *= 1E-16f;
+			if ((e & 0x008) != 0) r *= 1E-8f;
+			if ((e & 0x004) != 0) r *= 1E-4f;
+			if ((e & 0x002) != 0) r *= 1E-2f;
+			if ((e & 0x001) != 0) r *= 1E-1f;			
+		}
 		
 		return r;
 	}
 	
 	private static float pow10f_sf(float r, int e)
 	{
-		// sf stand for "Small exponent First"
-		
-		float[] b;
-		if (e >= 0)
-			b = Pow10FConstants.POW10F_1;
+		// sf stands for "Small exponent First"
+		if (e > 0)
+		{
+			if ((e & 0x001) != 0) r *= 1E+1f;
+			if ((e & 0x002) != 0) r *= 1E+2f;
+			if ((e & 0x004) != 0) r *= 1E+4f;
+			if ((e & 0x008) != 0) r *= 1E+8f;
+			if ((e & 0x010) != 0) r *= 1E+16f;
+			if ((e & 0x020) != 0) r *= 1E+32f;
+		}
 		else
 		{
-			b = Pow10FConstants.POW10F_2;
 			e = -e;
+			if ((e & 0x001) != 0) r *= 1E-1f;
+			if ((e & 0x002) != 0) r *= 1E-2f;
+			if ((e & 0x004) != 0) r *= 1E-4f;
+			if ((e & 0x008) != 0) r *= 1E-8f;
+			if ((e & 0x010) != 0) r *= 1E-16f;
+			if ((e & 0x020) != 0) r *= 1E-32f;			
 		}
-		
-		if ((e & 0x001) != 0) r *= b[0];
-		if ((e & 0x002) != 0) r *= b[1];
-		if ((e & 0x004) != 0) r *= b[2];
-		if ((e & 0x008) != 0) r *= b[3];
-		if ((e & 0x010) != 0) r *= b[4];
-		if ((e & 0x020) != 0) r *= b[5];
 		
 		return r;
 	}
 	
-	private static class Pow10DConstants
-	{
-		public static final double[] POW10D_1 = {1E+1, 1E+2, 1E+4, 1E+8, 1E+16, 1E+32, 1E+64, 1E+128, 1E+256, };
-		public static final double[] POW10D_2 = {1E-1, 1E-2, 1E-4, 1E-8, 1E-16, 1E-32, 1E-64, 1E-128, 1E-256, };		
-	}
-	
 	private static double pow10d_bf(double r, int e)
 	{
-		// bf stand for "Big exponent First"
-		
-		double[] b;
-		if (e >= 0)
-			b = Pow10DConstants.POW10D_1;
-		else
-		{
-			b = Pow10DConstants.POW10D_2;
-			e = -e;
+		// bf stands for "Big exponent First"
+		if (e > 0)
+		{			
+			if ((e & 0x100) != 0) r *= 1E+256;
+			if ((e & 0x080) != 0) r *= 1E+128;
+			if ((e & 0x040) != 0) r *= 1E+64;
+			if ((e & 0x020) != 0) r *= 1E+32;
+			if ((e & 0x010) != 0) r *= 1E+16;
+			if ((e & 0x008) != 0) r *= 1E+8;
+			if ((e & 0x004) != 0) r *= 1E+4;
+			if ((e & 0x002) != 0) r *= 1E+2;
+			if ((e & 0x001) != 0) r *= 1E+1;
 		}
-		
-		if ((e & 0x100) != 0) r *= b[8];
-		if ((e & 0x080) != 0) r *= b[7];
-		if ((e & 0x040) != 0) r *= b[6];
-		if ((e & 0x020) != 0) r *= b[5];
-		if ((e & 0x010) != 0) r *= b[4];
-		if ((e & 0x008) != 0) r *= b[3];
-		if ((e & 0x004) != 0) r *= b[2];
-		if ((e & 0x002) != 0) r *= b[1];
-		if ((e & 0x001) != 0) r *= b[0];
+		else if (e < 0)
+		{
+			e = -e;
+			if ((e & 0x100) != 0) r *= 1E-256;
+			if ((e & 0x080) != 0) r *= 1E-128;
+			if ((e & 0x040) != 0) r *= 1E-64;
+			if ((e & 0x020) != 0) r *= 1E-32;
+			if ((e & 0x010) != 0) r *= 1E-16;
+			if ((e & 0x008) != 0) r *= 1E-8;
+			if ((e & 0x004) != 0) r *= 1E-4;
+			if ((e & 0x002) != 0) r *= 1E-2;
+			if ((e & 0x001) != 0) r *= 1E-1;			
+		}
 		
 		return r;
 	}
 	
 	private static double pow10d_sf(double r, int e)
 	{
-		// sf stand for "Small exponent First"
-		
-		double[] b;
-		if (e >= 0)
-			b = Pow10DConstants.POW10D_1;
-		else
+		// sf stands for "Small exponent First"
+		if (e > 0)
 		{
-			b = Pow10DConstants.POW10D_2;
-			e = -e;
+			if ((e & 0x001) != 0) r *= 1E+1;
+			if ((e & 0x002) != 0) r *= 1E+2;
+			if ((e & 0x004) != 0) r *= 1E+4;
+			if ((e & 0x008) != 0) r *= 1E+8;
+			if ((e & 0x010) != 0) r *= 1E+16;
+			if ((e & 0x020) != 0) r *= 1E+32;
+			if ((e & 0x040) != 0) r *= 1E+64;
+			if ((e & 0x080) != 0) r *= 1E+128;
+			if ((e & 0x100) != 0) r *= 1E+256;
 		}
-		
-		if ((e & 0x001) != 0) r *= b[0];
-		if ((e & 0x002) != 0) r *= b[1];
-		if ((e & 0x004) != 0) r *= b[2];
-		if ((e & 0x008) != 0) r *= b[3];
-		if ((e & 0x010) != 0) r *= b[4];
-		if ((e & 0x020) != 0) r *= b[5];
-		if ((e & 0x040) != 0) r *= b[6];
-		if ((e & 0x080) != 0) r *= b[7];
-		if ((e & 0x100) != 0) r *= b[8];
+		else if (e < 0)
+		{
+			e = -e;
+			if ((e & 0x001) != 0) r *= 1E-1;
+			if ((e & 0x002) != 0) r *= 1E-2;
+			if ((e & 0x004) != 0) r *= 1E-4;
+			if ((e & 0x008) != 0) r *= 1E-8;
+			if ((e & 0x010) != 0) r *= 1E-16;
+			if ((e & 0x020) != 0) r *= 1E-32;
+			if ((e & 0x040) != 0) r *= 1E-64;
+			if ((e & 0x080) != 0) r *= 1E-128;
+			if ((e & 0x100) != 0) r *= 1E-256;			
+		}
 		
 		return r;
 	}
