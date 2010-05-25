@@ -9,7 +9,7 @@ package java.lang;
  * @author <a href="mailto:martin@egholm-nielsen.dk">Martin E. Nielsen</a>
  * @author Sven Köhler
  */
-public final class StringBuffer
+public final class StringBuffer implements CharSequence
 {
 	private static final int INITIAL_CAPACITY = 10;
 	private static final int CAPACITY_INCREMENT_NUM = 3;	//numerator of the increment factor
@@ -245,7 +245,7 @@ public final class StringBuffer
   public synchronized String substring(int start) {
       return substring(start, curLen);
   }
-
+  
   public String substring(int start, int end) {
 	  if (start < 0 || start > curLen)
 		  throw new StringIndexOutOfBoundsException(start);
@@ -256,6 +256,11 @@ public final class StringBuffer
 	  
 	  int len = end - start;
 	  return new String(characters, start, len);
+  }
+
+  public CharSequence subSequence(int start, int end)
+  {
+	  return substring(start, end);
   }
 }
 
