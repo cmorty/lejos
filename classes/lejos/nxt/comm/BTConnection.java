@@ -156,7 +156,6 @@ public class BTConnection extends NXTConnection
 	 */
 	synchronized int recv()
 	{
-        int event = 0;
 		//1 RConsole.print("recv\n");
 		// Read data into the input buffer
 		while (inCnt < inBuf.length)

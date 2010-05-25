@@ -55,5 +55,6 @@ extern int dispatch_native(TWOBYTES signature, STACKWORD * paramBase);
 extern JINT sp_check_event(JINT filter);
 extern JINT buttons_check_event(JINT filter);
 extern JINT bt_event_check(JINT filter);
+extern JINT udp_event_check(JINT filter);
 extern JINT i2c_event_check(JINT filter);
 #endif // _PLATFORM_HOOKS_H

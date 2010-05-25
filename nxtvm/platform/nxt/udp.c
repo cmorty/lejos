@@ -22,7 +22,7 @@
 #include "systick.h"
 #include <string.h>
 #include "rconsole.h"
-
+#include "display.h"
 #define MAX_BUF   64
 #define EP_OUT    1
 #define EP_IN     2
@@ -78,15 +78,22 @@
 
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 
-// USB States
-#define USB_READY       0
-#define USB_CONFIGURED  1
-#define USB_SUSPENDED   2
+// USB Hardware States
+#define ST_READY       0x0
+#define ST_CONFIGURED  0x1
+#define ST_SUSPENDED   0x2
 
-#define USB_DISABLED    0x8000
-#define USB_NEEDRESET   0x4000
-#define USB_WRITEABLE   0x100000
-#define USB_READABLE    0x200000
+// Driver flags
+#define ST_DISABLED    0x8000
+#define ST_NEEDRESET   0x4000
+
+#define SET_STATE(s) (configured = (configured & (ST_DISABLED|ST_NEEDRESET)) | (s))
+
+// USB Events
+#define USB_READABLE     0x1
+#define USB_WRITEABLE    0x2
+#define USB_CONFIGURED   0x10
+#define USB_UNCONFIGURED 0x20
 
 // Critical section macros. Disable and enable interrupts
 #define ENTER() (*AT91C_UDP_IDR = (AT91C_UDP_EPINT0 | AT91C_UDP_RXSUSP | AT91C_UDP_RXRSM))
@@ -95,7 +102,7 @@
 static U8 currentConfig;
 static U32 currentFeatures;
 static unsigned currentRxBank;
-static int configured = (USB_DISABLED|USB_NEEDRESET);
+static int configured = (ST_DISABLED|ST_NEEDRESET);
 static int newAddress;
 static U8 *outPtr;
 static U32 outCnt;
@@ -206,7 +213,6 @@ static const U8 ld[] = {0x04,0x03,0x09,0x04}; // Language descriptor
       
 extern void udp_isr_entry(void);
 
-
 static
 void
 reset()
@@ -214,7 +220,7 @@ reset()
   // setup config state.
   currentConfig = 0;
   currentRxBank = AT91C_UDP_RX_DATA_BK0;
-  configured = (configured & USB_DISABLED) | USB_READY;
+  SET_STATE(ST_READY);
   currentFeatures = 0;
   newAddress = -1;
   outCnt = 0;
@@ -222,21 +228,11 @@ reset()
 }
  
 
-int
-udp_init(void)
-{
-  udp_disable();
-  configured = (USB_DISABLED|USB_NEEDRESET);
-  return 1;
-}
-
 void 
-udp_reset()
+force_reset()
 {
+  // reset the UDP connection.
   int i_state;
-
-  // We must be enabled
-  if (configured & USB_DISABLED) return;
 
   // Take the hardware off line
   *AT91C_PIOA_PER = (1 << 16);
@@ -309,7 +305,7 @@ udp_read(U8* buf, int off, int len)
     if (packetSize == 0) return -2;
     return packetSize;
   }
-  if (configured != USB_CONFIGURED) return -1;
+  if (configured != ST_CONFIGURED) return -1;
   return 0;
 }
 
@@ -321,7 +317,7 @@ udp_write(U8* buf, int off, int len)
    */
   int i;
   
-  if (configured != USB_CONFIGURED) return -1;
+  if (configured != ST_CONFIGURED) return -1;
   // Can we write ?
   if ((*AT91C_UDP_CSR2 & AT91C_UDP_TXPKTRDY) != 0) return 0;
   // Limit to max transfer size
@@ -356,6 +352,24 @@ static void udp_send_control(U8* p, int len)
   for(i=0;i<8 && i<outCnt;i++)
     *AT91C_UDP_FDR0 = outPtr[i];
   UDP_SETEPFLAGS(*AT91C_UDP_CSR0, AT91C_UDP_TXPKTRDY);
+}
+
+static
+void
+udp_stall_endpoints()
+{
+  UDP_SETEPFLAGS(*AT91C_UDP_CSR1, AT91C_UDP_FORCESTALL);
+  UDP_SETEPFLAGS(*AT91C_UDP_CSR2, AT91C_UDP_FORCESTALL);
+  UDP_SETEPFLAGS(*AT91C_UDP_CSR3, AT91C_UDP_FORCESTALL);
+}
+
+static
+void
+udp_unstall_endpoints()
+{
+  UDP_CLEAREPFLAGS(*AT91C_UDP_CSR1, AT91C_UDP_FORCESTALL);
+  UDP_CLEAREPFLAGS(*AT91C_UDP_CSR2, AT91C_UDP_FORCESTALL);
+  UDP_CLEAREPFLAGS(*AT91C_UDP_CSR3, AT91C_UDP_FORCESTALL);
 }
   
 static
@@ -449,7 +463,7 @@ udp_enumerate()
   // allow initialization/enumeration operations to continue to work when a 
   // program that is not using USB is running, but to prevent attempts to
   // perform actual data transfers.
-  if ((configured & (USB_DISABLED|USB_CONFIGURED)) == (USB_DISABLED|USB_CONFIGURED) && (req < STD_GET_STATUS_ZERO || req > STD_GET_STATUS_ENDPOINT))
+  if ((configured & (ST_DISABLED|ST_CONFIGURED)) == (ST_DISABLED|ST_CONFIGURED) && (req < STD_GET_STATUS_ZERO || req > STD_GET_STATUS_ENDPOINT))
   {
     udp_send_stall();
     return;
@@ -496,35 +510,27 @@ udp_enumerate()
       currentConfig = val;
       if (val)
       {
-        // attempting to switch to a data transfer configuration when disabled
-        // is not allowed.
-        if (configured & USB_DISABLED)
-          udp_send_stall();
-        else
+        SET_STATE(ST_CONFIGURED);
+        *AT91C_UDP_GLBSTATE  = AT91C_UDP_CONFG;
+        delayedEnable = 0;
+        // Make sure we are not stalled
+        udp_unstall_endpoints();
+        // Now enable the endpoints
+        UDP_SETEPFLAGS(*AT91C_UDP_CSR1, (AT91C_UDP_EPEDS | AT91C_UDP_EPTYPE_BULK_OUT));
+        UDP_SETEPFLAGS(*AT91C_UDP_CSR2, (AT91C_UDP_EPEDS | AT91C_UDP_EPTYPE_BULK_IN));
+        UDP_SETEPFLAGS(*AT91C_UDP_CSR3, AT91C_UDP_EPTYPE_INT_IN);
+        // and reset them...
+        (*AT91C_UDP_RSTEP) |= (AT91C_UDP_EP1|AT91C_UDP_EP2|AT91C_UDP_EP3);
+        (*AT91C_UDP_RSTEP) &= ~(AT91C_UDP_EP1|AT91C_UDP_EP2|AT91C_UDP_EP3);
+        if (configured & ST_DISABLED)
         {
-          configured = (configured & USB_DISABLED) | USB_CONFIGURED;
-          *AT91C_UDP_GLBSTATE  = AT91C_UDP_CONFG;
-          delayedEnable = 0;
-          // Make sure we are not stalled
-          UDP_CLEAREPFLAGS(*AT91C_UDP_CSR1, AT91C_UDP_FORCESTALL);
-          UDP_CLEAREPFLAGS(*AT91C_UDP_CSR2, AT91C_UDP_FORCESTALL);
-          UDP_CLEAREPFLAGS(*AT91C_UDP_CSR3, AT91C_UDP_FORCESTALL);
-          // Now enable the endpoints
-          UDP_SETEPFLAGS(*AT91C_UDP_CSR1, (AT91C_UDP_EPEDS | AT91C_UDP_EPTYPE_BULK_OUT));
-          UDP_SETEPFLAGS(*AT91C_UDP_CSR2, (AT91C_UDP_EPEDS | AT91C_UDP_EPTYPE_BULK_IN));
-          UDP_SETEPFLAGS(*AT91C_UDP_CSR3, AT91C_UDP_EPTYPE_INT_IN);
-          // and reset them...
-          (*AT91C_UDP_RSTEP) |= (AT91C_UDP_EP1|AT91C_UDP_EP2|AT91C_UDP_EP3);
-          (*AT91C_UDP_RSTEP) &= ~(AT91C_UDP_EP1|AT91C_UDP_EP2|AT91C_UDP_EP3);
+          // we are disabled so we stall the endpoints for now
+          udp_stall_endpoints();
         }
       }
       else
       {
-        // Switching out of data transfer mode disables the device
-        if (configured & USB_CONFIGURED)
-          configured = USB_DISABLED | USB_READY;
-        else
-          configured = (configured & USB_DISABLED) | USB_READY;
+        SET_STATE(ST_READY);
         *AT91C_UDP_GLBSTATE  = AT91C_UDP_FADDEN;
         delayedEnable = 0;
         UDP_CLEAREPFLAGS(*AT91C_UDP_CSR1, AT91C_UDP_EPEDS|AT91C_UDP_FORCESTALL);
@@ -709,10 +715,10 @@ display_hex(intCnt++, 4);*/
     //display_goto_xy(0,2);
     //display_string("Suspend      ");
     //display_update();
-    if ((configured & ~USB_DISABLED) == USB_CONFIGURED)
-      configured = (configured & USB_DISABLED) | USB_SUSPENDED;
+    if ((configured & ~ST_DISABLED) == ST_CONFIGURED)
+      SET_STATE(ST_SUSPENDED);
     else
-      configured = (configured & USB_DISABLED) | USB_READY;
+      SET_STATE(ST_READY);
     *AT91C_UDP_ICR = SUSPEND_INT;
     currentRxBank = AT91C_UDP_RX_DATA_BK0;
   }
@@ -721,10 +727,10 @@ display_hex(intCnt++, 4);*/
     //display_goto_xy(0,2);
     //display_string("Resume     ");
     //display_update();
-    if ((configured & ~USB_DISABLED) == USB_SUSPENDED)
-      configured = (configured & USB_DISABLED) | USB_CONFIGURED;
+    if ((configured & ~ST_DISABLED) == ST_SUSPENDED)
+      SET_STATE(ST_CONFIGURED);
     else
-      configured = (configured & USB_DISABLED) | USB_READY;
+      SET_STATE(ST_READY);
     *AT91C_UDP_ICR = WAKEUP;
     *AT91C_UDP_ICR = SUSPEND_RESUME;
   }
@@ -740,24 +746,19 @@ display_hex(intCnt++, 4);*/
     //display_string("IE2");
 }
 
-int
-udp_status()
+S32 udp_event_check(S32 filter)
 {
-  /* Return the current status of the USB connection. This information
-   * can be used to determine if the connection can be used. We return
-   * the connected state, the currently selected configuration and
-   * the currenly active features. This latter item is used by co-operating
-   * software on the PC and nxt to indicate the start and end of a stream
-   * connection.
-   */
-  int ret = (configured << 28) | (currentConfig << 24) | (currentFeatures & 0xffff);
-
-  if (configured == USB_CONFIGURED)
+  // Return the current event state.
+  S32 ret = 0;
+  if (configured == ST_CONFIGURED)
   {
+    ret |= USB_CONFIGURED;
     if ((*AT91C_UDP_CSR1) & currentRxBank) ret |= USB_READABLE;
     if ((*AT91C_UDP_CSR2 & AT91C_UDP_TXPKTRDY) == 0) ret |= USB_WRITEABLE;
   }
-  return ret;
+  else
+    ret = USB_UNCONFIGURED;
+  return ret & filter;
 }
 
 void
@@ -782,18 +783,16 @@ udp_enable(int reset)
          (U32) udp_isr_entry);
   aic_mask_on(AT91C_PERIPHERAL_ID_UDP);
   *AT91C_UDP_IER = (AT91C_UDP_EPINT0 | AT91C_UDP_RXSUSP | AT91C_UDP_RXRSM);
-  reset = reset || (configured & USB_NEEDRESET);
-  configured &= ~USB_DISABLED;
+  reset = reset || (configured & ST_NEEDRESET);
+  configured &= ~(ST_DISABLED|ST_NEEDRESET);
   if (i_state)
     interrupts_enable(); 
   if (reset)
-    udp_reset();
-  else if (configured & USB_CONFIGURED)
+    force_reset();
+  else if (configured & ST_CONFIGURED)
   {
     // unstall the endpoints if we previously stalled them...
-    UDP_CLEAREPFLAGS(*AT91C_UDP_CSR1, AT91C_UDP_FORCESTALL);
-    UDP_CLEAREPFLAGS(*AT91C_UDP_CSR2, AT91C_UDP_FORCESTALL);
-    UDP_CLEAREPFLAGS(*AT91C_UDP_CSR3, AT91C_UDP_FORCESTALL);
+    udp_unstall_endpoints();
   }
 
 }
@@ -805,17 +804,15 @@ udp_disable()
   U8 buf[MAX_BUF];
   // Stall the endpoints, note we can not reset them at this point as this
   // will screw up the data toggle and result in lost data.
-  if (configured & USB_CONFIGURED)
+  if (configured & ST_CONFIGURED)
   {
-    UDP_SETEPFLAGS(*AT91C_UDP_CSR1, AT91C_UDP_FORCESTALL);
-    UDP_SETEPFLAGS(*AT91C_UDP_CSR2, AT91C_UDP_FORCESTALL);
-    UDP_SETEPFLAGS(*AT91C_UDP_CSR3, AT91C_UDP_FORCESTALL);
+    udp_stall_endpoints();
     // Discard any input
     while (udp_read(buf, 0, sizeof(buf)) > 0)
       ;
   }
   int i_state = interrupts_get_and_disable();
-  configured |= USB_DISABLED;
+  configured |= ST_DISABLED;
   currentFeatures = 0;
   if (i_state)
     interrupts_enable(); 
@@ -843,6 +840,29 @@ udp_set_name(U8 *name, int len)
     named[0] = len*2 + 2;
   } 
 }
+
+/**
+ * Initialize the device ready for use. Force a reset when next enabled.
+ */
+int udp_init(void)
+{
+  udp_disable();
+  configured = (ST_DISABLED|ST_NEEDRESET);
+  return 1;
+}
+
+/**
+ * Reset the device after use by a program. If the device has not been disabled
+ * via a normal closedown, then we must reset it.
+ */
+void
+udp_reset(void)
+{
+  if (configured & ST_DISABLED) return;
+  force_reset();
+  udp_disable();
+}
+
 
 
 #if REMOTE_CONSOLE
