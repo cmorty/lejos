@@ -9,7 +9,7 @@ package java.lang;
  * @author <a href="mailto:martin@egholm-nielsen.dk">Martin E. Nielsen</a>
  * @author Sven Köhler
  */
-public class StringBuilder
+public class StringBuilder implements CharSequence
 {
 	private static final int INITIAL_CAPACITY = 10;
 	private static final int CAPACITY_INCREMENT_NUM = 3;	//numerator of the increment factor
@@ -256,7 +256,12 @@ public class StringBuilder
 	  
 	  int len = end - start;
 	  return new String(characters, start, len);
-  }  
+  }
+  
+  public CharSequence subSequence(int start, int end)
+  {
+	  return substring(start, end);
+  }
 }
 
 
