@@ -139,7 +139,7 @@ public class StartUpText
 	    		while (true)
 	    		{
 	    			long time = System.currentTimeMillis();
-	    			int x = (USB.usbStatus() & 0xf0000000) == 0x10000000 ? Config.ICON_USB_X : Config.ICON_DISABLE_X;
+	    			int x = (USB.usbStatus() & USB.USB_CONFIGURED) != 0 ? Config.ICON_USB_X : Config.ICON_DISABLE_X;
 	    			indiUSB.setIconX(x);
 	    			
 	    			byte[] buf = LCD.getDisplay();
