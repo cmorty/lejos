@@ -1,5 +1,5 @@
 package lejos.nxt.comm;
-import lejos.util.Delay;
+import lejos.nxt.NXTEvent;
 /**
  * Low-level USB access.
  * 
@@ -8,13 +8,13 @@ import lejos.util.Delay;
  */
 public class USB extends NXTCommDevice {
     public static final int RESET = 0x40000000;
-    static final int BUFSZ = 64;
-    static final int USB_STREAM = 1;
-    static final int USB_STATE_MASK = 0xf0000000;
-    static final int USB_STATE_CONNECTED = 0x10000000;
-    static final int USB_CONFIG_MASK = 0xf000000;
-    static final int USB_WRITABLE = 0x100000;
-    static final int USB_READABLE = 0x200000;
+    static final int BUFSZ = 256;
+    static final int HW_BUFSZ = 64;
+    // USB events
+	public static final byte USB_READABLE = 1;
+	public static final byte USB_WRITEABLE = 2;
+    public static final byte USB_CONFIGURED = 0x10;
+    public static final byte USB_UNCONFIGURED = 0x20;
     
     // Private versions of LCP values. We don't want to pull in all of the
     // LCP code.
@@ -23,19 +23,62 @@ public class USB extends NXTCommDevice {
 	private static final byte GET_FIRMWARE_VERSION = (byte)0x88;
 	private static final byte GET_DEVICE_INFO = (byte)0x9B;
     private static final byte NXJ_PACKET_MODE = (byte)0xFF;
+    
+    // Events used for internal state changes
+    static final int USB_DISCONNECT = NXTEvent.USER1;
+    static final int USB_NEWDATA = NXTEvent.USER2;
+    static final int USB_NEWSPACE = NXTEvent.USER3;
 
-    private static volatile boolean listening = false;
+    // Internal synchronization object
+    private static final Object usbSync = new Object();
+    private static NXTEvent usbEvent;
+    private static boolean listening = false;
+    private static USBConnection connection;
+    
 
     static {
         loadSettings();
     }
-    
+
+    static class USBThread extends Thread
+    {
+        public USBThread()
+        {
+            setDaemon(true);
+            setPriority(MAX_PRIORITY);
+        }
+
+        /**
+         * Main I/O thread for USB connections
+         */
+        @Override
+        public void run()
+        {
+            while (true)
+            {
+                // Wait for a connection to be established
+                synchronized(usbSync)
+                {
+                    while (connection == null)
+                        try{usbSync.wait();} catch (InterruptedException e){}
+                }
+                // Perform I/O on the connection
+                while(connection != null)
+                {
+                    int event = connection.send();
+                    event |= connection.recv();
+                    int ret = usbEvent.waitEvent(event|USB_DISCONNECT|USB_UNCONFIGURED, NXTEvent.WAIT_FOREVER);
+                    if (ret < 0 || (ret & (USB_DISCONNECT|USB_UNCONFIGURED)) != 0) connection.disconnected();
+                }
+            }
+        }
+    }
     
 	private USB()
 	{		
 	}
    
-    private static boolean isConnected(NXTConnection conn, byte [] cmd)
+    private static boolean isConnected(byte [] cmd)
     {
         // This method provides support for packet mode connections.
         // We wait for the PC to tell us that the connection has been established.
@@ -43,9 +86,8 @@ public class USB extends NXTCommDevice {
         // of the device.
         int len = 3;
         boolean ret = false;
-        if (conn.available() < 2) return false;
         // Look for a system command
-        if (conn.read(cmd, cmd.length, false) >= 2 && cmd[0] == SYSTEM_COMMAND_REPLY)
+        if (usbRead(cmd, 0, cmd.length) >= 2 && cmd[0] == SYSTEM_COMMAND_REPLY)
         {
             cmd[2] = (byte)0xff;
             if (cmd[1] == GET_FIRMWARE_VERSION) 
@@ -77,9 +119,18 @@ public class USB extends NXTCommDevice {
                 len = 3;
             }
             cmd[0] = REPLY_COMMAND;
-            conn.write(cmd, len, false);
+            usbWrite(cmd, 0, len);
         }
         return ret;
+    }
+
+    /**
+     * Notify the I/O thread of an event
+     * @param event
+     */
+    static void notifyEvent(int event)
+    {
+        usbEvent.notifyEvent(event);
     }
 
     
@@ -92,49 +143,70 @@ public class USB extends NXTCommDevice {
      */
     public static USBConnection waitForConnection(int timeout, int mode)
     {
-        // Allocate buffer here for use by other methods. Saves repeated
-        // allocations.
-        listening = true;
-        try {
-            byte [] buf = new byte [BUFSZ];
-            USBConnection conn = new USBConnection(NXTConnection.RAW);
-            usbSetName(devName);
-            usbSetSerialNo(devAddress);
-            usbEnable(((mode & RESET) != 0 ? 1 : 0));
-            mode &= ~RESET;
-            if (timeout == 0) timeout = 0x7fffffff;
-            while(listening && timeout-- > 0)
+        // Check the state of things and initialize if required
+        synchronized(usbSync)
+        {
+            // We only allow a single connection over USB
+            if (listening || connection != null) return null;
+            if (usbEvent == null)
             {
-                int status = usbStatus();
-                // Check for the interface to be ready and to be in a non control
-                // configuration.
-                if ((status & USB_STATE_MASK) == USB_STATE_CONNECTED && (status & USB_CONFIG_MASK) != 0)
+                usbEvent = NXTEvent.allocate(NXTEvent.USB, 0, 1);
+                USBThread usbThread = new USBThread();
+                usbThread.start();
+            }
+            usbEvent.clearEvent(USB_DISCONNECT);
+            listening = true;
+        }
+        // Now wait for a connection
+        byte [] buf = new byte [BUFSZ];
+        //USB.usbEvent.waitEvent(USB.USB_WRITEABLE|USB.USB_UNCONFIGURED, NXTEvent.WAIT_FOREVER);
+        usbSetName(devName);
+        usbSetSerialNo(devAddress);
+        usbEnable(((mode & RESET) != 0 ? 1 : 0));
+        mode &= ~RESET;
+        long end = (timeout == 0 ? 0x7fffffffffffffffL : System.currentTimeMillis() + timeout);
+        while(listening)
+        {
+            // Wait for the USB interface to become ready for use.
+            int status = usbEvent.waitEvent(USB_CONFIGURED|USB_DISCONNECT, end - System.currentTimeMillis());
+            // check for timeout or cancel
+            if ((status & (USB_DISCONNECT|NXTEvent.TIMEOUT)) != 0) break;
+            // Interface is ready, for LCP and packet mode we wait for data to arrive
+            if (mode == NXTConnection.LCP || mode == NXTConnection.PACKET)
+                status = usbEvent.waitEvent(USB_READABLE|USB_UNCONFIGURED|USB_DISCONNECT, end - System.currentTimeMillis());
+            if ((status & (USB_DISCONNECT|NXTEvent.TIMEOUT)) != 0) break;
+            if ((status & USB_UNCONFIGURED) != 0) continue;
+            if (mode == NXTConnection.RAW ||
+                (mode == NXTConnection.LCP && ((status & USB_READABLE) != 0)) ||
+                (mode == NXTConnection.PACKET && isConnected(buf)))
+            {
+                synchronized(usbSync)
                 {
-                    if (mode == NXTConnection.RAW ||
-                        (mode == NXTConnection.LCP && ((status & (USB_READABLE|USB_WRITABLE)) == (USB_READABLE|USB_WRITABLE))) ||
-                        (mode == NXTConnection.PACKET && isConnected(conn, buf)))
-                    {
-                        conn.setIOMode(mode);
-                        return conn;
-                    }
-                }
-                try {
-                    Thread.sleep(1);
-                }
-                catch (InterruptedException e)
-                {
-                    break;
+                    // now connected, set things up for I/O
+                    listening = false;
+                    connection = new USBConnection(mode);
+                    usbSync.notifyAll();
+                    return connection;
                 }
             }
         }
-        finally
-        {
-            listening = false;
-        }
-        usbDisable();
+        // Failed to connect, clean things up
+        freeConnection();
         return null;
     }
-    
+
+    /**
+     * Disable the device and free associated resources.
+     */
+    static void freeConnection()
+    {
+        synchronized(usbSync)
+        {
+            listening = false;
+            connection = null;
+            usbDisable();
+        }
+    }
     /**
      * Wait for ever for the USB connection to become available.
      * @return a connection object or null if no connection.
@@ -152,10 +224,16 @@ public class USB extends NXTCommDevice {
      */
     public static boolean cancelConnect()
     {
-        // Note there is almost certainly a race condition here....
-        boolean ret = listening;
-        listening = false;
-        return ret;
+        synchronized(usbSync)
+        {
+            if (listening)
+            {
+                listening = false;
+                usbEvent.notifyEvent(USB_DISCONNECT);
+                return true;
+            }
+        }
+        return false;
     }
     
 	public static native void usbEnable(int reset);
@@ -187,9 +265,9 @@ public class USB extends NXTCommDevice {
         }
 
         /**
-         * Wait for an incomming connection, or for the request to timeout.
+         * Wait for an incoming connection, or for the request to timeout.
          * @param timeout Time in ms to wait for the connection to be made
-         * @param mode I/O mode to be used for the accpeted connection.
+         * @param mode I/O mode to be used for the accepted connection.
          * @return A NXTConnection object for the new connection or null if error.
          */
         public NXTConnection waitForConnection(int timeout, int mode)

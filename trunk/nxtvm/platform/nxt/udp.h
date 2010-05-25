@@ -10,10 +10,10 @@ void udp_enable(int reset);
 void udp_reset(void);
 int udp_write(U8* buf, int off, int len);
 int udp_read(U8* buf, int off, int len);
-int udp_status();
 void udp_set_serialno(U8 *serNo, int len);
 void udp_set_name(U8 *name, int len);
 void udp_rconsole(U8* buf, int len);
+S32 udp_event_check(S32 filter);
 
 #define   USB_TIMEOUT   0x0BB8 
 #define END_OF_BUS_RESET ((unsigned int) 0x1 << 12)

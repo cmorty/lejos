@@ -9,7 +9,7 @@
 #define SET 2
 NXTEvent *events[MAX_EVENTS];
 int eventCnt;
-static JINT (* const eventCheckers[])(JINT) = {null, bt_event_check, null, null, sp_check_event, i2c_event_check, buttons_check_event};
+static JINT (* const eventCheckers[])(JINT) = {null, bt_event_check, udp_event_check, null, sp_check_event, i2c_event_check, buttons_check_event};
 
 /**
  * Initialize the event system. At startup we are not monitoring for any events.

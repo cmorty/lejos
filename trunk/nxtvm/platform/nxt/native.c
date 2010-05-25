@@ -330,7 +330,7 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
     break; 
   case usbStatus_4_5I:
     {
-      push_word(udp_status());
+      push_word(udp_event_check(0xffffffff));
     }
     break;
   case usbEnable_4I_5V:
