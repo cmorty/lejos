@@ -205,8 +205,7 @@ public final class Character implements Comparable<Character>
 	public static int toCodePoint(char high, char low)
 	{
 		//no validating required, says JDK javadocs
-		//TODO does the compiler really inline and merge the constants?
-		return high << 10 + low - (MIN_HIGH_SURROGATE << 10) - MIN_LOW_SURROGATE + MIN_SUPPLEMENTARY_CODE_POINT;
+		return high << 10 + low + (MIN_SUPPLEMENTARY_CODE_POINT - (MIN_HIGH_SURROGATE << 10) - MIN_LOW_SURROGATE);
 	}
 		
 	/**
