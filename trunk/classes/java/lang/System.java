@@ -29,6 +29,27 @@ public final class System
    */
   public static native long currentTimeMillis();
   
+	/**
+	 * Returns <code>null</code>. In leJOS, there are no system properties. So this function returns <code>null</code>.
+	 * @param name name of the system property
+	 * @return <code>null</code>
+	 */
+	public static String getProperty(String name)
+	{
+		return null;
+	}
+
+	/**
+	 * Returns <code>def</code>. In leJOS, there are no system properties. So this function returns <code>def</code>.
+	 * @param name name of the system property
+	 * @param def default value that is returns if system property doesn't exist
+	 * @return <code>def</code>
+	 */
+	public static String getProperty(String name, String def)
+	{
+		return def;
+	}
+
   /**
    * Get the singleton instance of Runtime.
    */
