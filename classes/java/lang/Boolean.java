@@ -8,11 +8,12 @@ public final class Boolean implements Comparable<Boolean>
 {
 	public static final Boolean FALSE = new Boolean(false);
 	public static final Boolean TRUE = new Boolean(true);
+	
     // References to the following field are automatically replaced with a load
     // of the correct value by the linker, so no need to initialize.
 	public static final Class<?> TYPE = null;
+	
 	//MISSING implements Serializable
-	//MISSING public static getBoolean(String name);
 	
 	private final boolean value;
 	
@@ -48,6 +49,11 @@ public final class Boolean implements Comparable<Boolean>
 			&& (this.value == ((Boolean)o).value);
 	}
 	
+	public static boolean getBoolean(String name)
+	{
+		return parseBoolean(System.getProperty(name));
+	}
+	
 	@Override
 	public int hashCode()
 	{
@@ -56,7 +62,7 @@ public final class Boolean implements Comparable<Boolean>
 	
 	public static boolean parseBoolean(String s)
 	{
-		if (s.length() != 4)
+		if (s == null || s.length() != 4)
 			return false;
 		
 		char c0 = s.charAt(0);
