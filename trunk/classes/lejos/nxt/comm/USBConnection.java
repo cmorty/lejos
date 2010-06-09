@@ -2,6 +2,7 @@ package lejos.nxt.comm;
 
 import lejos.nxt.*;
 import java.io.*;
+import lejos.util.Delay;
 
 
 /**
@@ -23,7 +24,7 @@ import java.io.*;
  */
 public class USBConnection extends NXTConnection 
 {
-    static final int HDRSZ = 1;
+    static final int HDRSZ = 2;
     // The following var controls how much data we will attempt to buffer for a read.
     // In all modes we ensure that we can always issue a read with at least HW_BUFSZ
     // bytes in the buffer to ensure no data is lost. When operating in LCP mode the
@@ -36,6 +37,9 @@ public class USBConnection extends NXTConnection
 	{
 		state = CS_CONNECTED;
         bufSz = USB.BUFSZ;
+        // Only one packet per buffer
+        maxPkt = 0xffff;
+        // Allow more input buffer space for faster overlapped I/O
         inBuf = new byte[USB.BUFSZ];
         outBuf = new byte[USB.BUFSZ];
         is = null;
@@ -83,10 +87,11 @@ public class USBConnection extends NXTConnection
         USB.notifyEvent(USB.USB_NEWDATA);
         if (wait)
             try {wait();} catch(Exception e){}
-        return outCnt - outOffset;
+        // All of the data will be sent eventually, so say all gone.
+        return 1;
     }
 
-	/**
+    /**
 	 * Low level input function. Called by the USB thread to transfer
 	 * input from the system into the input buffer.
      * @return the event to wait for
@@ -101,7 +106,14 @@ public class USBConnection extends NXTConnection
 			int offset = (inOffset + inCnt) % inBuf.length;
 			int len = (offset >= inOffset ? inBuf.length - offset : inOffset - offset);
 			//RConsole.print("inCnt " + inCnt + " inOffset " + inOffset + " offset " + offset + " len " + len + "\n");
-			int cnt = USB.usbRead(inBuf, offset, len);
+            if (len < USB.HW_BUFSZ)
+            {
+                // Not enough space to read a full packet, so wait until there
+                // is more space available...
+                notifyAll();
+                return USB.USB_NEWSPACE;
+            }
+            int cnt = USB.usbRead(inBuf, offset, len);
             //if (cnt < len && cnt < 100) RConsole.println("rd " + cnt + " sp " + len);
 			if (cnt <= 0) break;
 			inCnt += cnt;
@@ -158,7 +170,6 @@ public class USBConnection extends NXTConnection
         // Only packet modes uses a header for USB
         if (mode == PACKET)
         {
-            // make sure we have at least enough space to read all of a hardware packet
             readThreshold = inBuf.length - USB.HW_BUFSZ;
             setHeader(HDRSZ);
         }

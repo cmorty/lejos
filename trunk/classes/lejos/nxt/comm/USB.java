@@ -158,7 +158,7 @@ public class USB extends NXTCommDevice {
             listening = true;
         }
         // Now wait for a connection
-        byte [] buf = new byte [BUFSZ];
+        byte [] buf = new byte [HW_BUFSZ];
         //USB.usbEvent.waitEvent(USB.USB_WRITEABLE|USB.USB_UNCONFIGURED, NXTEvent.WAIT_FOREVER);
         usbSetName(devName);
         usbSetSerialNo(devAddress);
