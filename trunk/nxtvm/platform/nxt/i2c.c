@@ -246,6 +246,8 @@ i2c_timer_isr_C(void)
     case I2C_TXDATA1:
       // Take SCL low
       *AT91C_PIOA_CODR = p->scl_pin;
+      // delay things to allow clock to settle
+      { int i; for(i = 0; i < 60; i++);}
       p->nbits--;
       if(p->bits & 0x80)
         *AT91C_PIOA_SODR = p->sda_pin;
