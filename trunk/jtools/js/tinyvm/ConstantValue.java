@@ -13,6 +13,7 @@ import java.nio.charset.CharsetEncoder;
 import java.util.logging.Logger;
 
 import js.tinyvm.io.IByteWriter;
+import js.tinyvm.io.IOUtilities;
 
 import org.apache.bcel.classfile.Constant;
 import org.apache.bcel.classfile.ConstantDouble;
@@ -29,8 +30,6 @@ import org.apache.bcel.classfile.ConstantClass;
  */
 public class ConstantValue extends WritableDataWithOffset
 {
-	private boolean warning = true;
-	
    Binary iBinary;
    /**
     * The dereferenced value.
@@ -72,57 +71,65 @@ public class ConstantValue extends WritableDataWithOffset
    /**
     * Get type of this value.
     */
-   public TinyVMType getType ()
+   public int getTypeIndex ()
    {
       if (_value instanceof Double)
       {
-         return TinyVMType.T_DOUBLE;
+         return TinyVMType.T_DOUBLE.type();
       }
       else if (_value instanceof Float)
       {
-         return TinyVMType.T_FLOAT;
+         return TinyVMType.T_FLOAT.type();
       }
       else if (_value instanceof Integer)
       {
-         return TinyVMType.T_INT;
+         return TinyVMType.T_INT.type();
       }
       else if (_value instanceof Long)
       {
-         return TinyVMType.T_LONG;
+         return TinyVMType.T_LONG.type();
       }
       else if (_value instanceof String)
       {
-         return TinyVMType.T_OBJECT;
+         return this.checkOptimizedString((String) _value) ? iBinary.getClassIndex("java/lang/String") : iBinary.getClassIndex("[C");
       }
       else if (_value instanceof ClassRecord)
       {
-         return TinyVMType.T_CLASS;
+         return TinyVMType.T_CLASS.type();
       }
       else
       {
          assert false: "Check: known type";
-         return null;
+         return 0;
       }
    }
    
-	private static byte[] getStringData(String str, boolean warn)
+	private static byte[] getStringData(String str)
 	{
 		int len = str.length();
 		byte[] r = new byte[len];
 		for (int i=0; i<len; i++)
 		{
 			char c = str.charAt(i);
-			if (c > 0xFF && warn)
-			{
-				//TODO use some kind of warning/error report mechanism
-				//TODO somehow output the location of the string
-				System.err.println("Warning: String with characters beyond 0xFF found. Only the lower 8 bits are preserved.");
-			}
-			
+         assert c <= 0xff : "Invalid optimized string value";
 			r[i] = (byte)c;
 		}
 		return r;
 	}
+   
+   /**
+    * Check to see if we can store this string in an optimized form.
+    * @param str
+    * @return
+    */
+   private boolean checkOptimizedString(String str)
+   {
+		int len = str.length();
+      if (len >= TinyVMConstants.MAX_OPTIMIZED_STRING) return false;
+		for (int i=0; i<len; i++)
+			if (str.charAt(i) > 0xFF) return false;
+      return true;
+   }
 
    /**
     * Get length in bytes of value.
@@ -147,7 +154,8 @@ public class ConstantValue extends WritableDataWithOffset
       }
       else if (_value instanceof String)
       {
-         return getStringData((String) _value, false).length;
+         int len = ((String)_value).length();
+         return this.checkOptimizedString((String)_value) ?  len: IOUtilities.adjustedSize(2 + 2 + 2 + 2 + (len*2), 4);
       }
       else if (_value instanceof ClassRecord)
       {
@@ -166,10 +174,13 @@ public class ConstantValue extends WritableDataWithOffset
     */
    public int getAlignment()
    {
-       // alignment is the same as length, except for strings which are byte
-       // aligned.
+       // alignment is the same as length, except for strings.
        if (_value instanceof String)
-           return 1;
+          // Note we cheat a little here, by specifying an 8 byte alignmant
+          // for none optimized strings, event though they only require 4 byte
+          // alignment. This ensures that we do not place strings in the
+          // area that can be used for fast access to 4 byte constants.
+          return this.checkOptimizedString((String)_value) ? 1 : 8;
        else
            return getLength();
    }
@@ -210,8 +221,24 @@ public class ConstantValue extends WritableDataWithOffset
          }
          else if (_value instanceof String)
          {
-            byte[] bytes = getStringData((String) _value, true);
-            writer.write(bytes);
+            if (this.checkOptimizedString((String) _value))
+            {
+               byte[] bytes = getStringData((String) _value);
+               writer.write(bytes);
+            }
+            else
+            {
+               // non-optimized case, we write out a character array object
+               int len = ((String)_value).length();
+               int classIndex = iBinary.getClassIndex("[C");
+               writer.writeU2(TinyVMConstants.ARRAY_HEADER | classIndex);
+               writer.writeU2(0); // sync bytes
+               writer.writeU2(len); // array length
+               writer.writeU2(2); // offset to start of data
+               for(int i = 0; i < len; i++)
+                  writer.writeU2(((String)_value).charAt(i));
+               IOUtilities.writePadding(writer, 4);
+            }
          }
          else if (_value instanceof ClassRecord)
          {

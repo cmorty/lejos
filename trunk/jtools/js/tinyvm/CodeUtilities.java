@@ -479,7 +479,7 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
           instruction = OP_LDC_1 + idx/256;
           idx = idx % 256;
           iBinary.constNormLoads++;
-          if (pRecord.constantValue().getType() == TinyVMType.T_OBJECT)
+          if (pRecord.constantValue().getTypeIndex() > TinyVMType.T_VOID_TYPE)
              iBinary.constString++;
       }
       return (instruction << 8) | idx;
@@ -488,7 +488,7 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
    /**
     * Generate and instruction to access a static field.
     * @param aPoolIndex The field to access
-    * @param optInst The optimixed version of the instruction
+    * @param optInst The optimized version of the instruction
     * @param normInst The normal version of the instruction.
     * @return
     * @throws TinyVMException

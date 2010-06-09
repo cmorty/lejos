@@ -26,8 +26,8 @@ public class TinyVMConstants
    public static final int MAX_CONSTANTS = 1024;
    public static final int MAX_STATICS = 1024;
    public static final int MAX_FIELD_OFFSET = F_OFFSET_MASK;
-   public static final int MAX_STRING_CONSTANT_LENGTH = 255;
    public static final int MAX_DIMS = 7;
+   public static final int MAX_OPTIMIZED_STRING = 255;
 
    public static final int C_INITIALIZED = 0x01;
    public static final int C_ARRAY = 0x02;
@@ -41,5 +41,6 @@ public class TinyVMConstants
    public static final int M_STATIC = 0x04;
 
    public static final int OBJ_HEADER = 0xff00;
+   public static final int ARRAY_HEADER = 0xfd00;
    
 }
