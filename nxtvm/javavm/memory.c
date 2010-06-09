@@ -172,7 +172,7 @@ static void compact_aheap();
 #define obj_size(OBJ_) TO_WORDS(get_class_record(get_class_index(OBJ_))->classSize)
 #define get_size(OBJ_) (is_array(OBJ_) ? array_size(OBJ_) : obj_size(OBJ_))
 #define array_element_size(OBJ_) (get_class_record(get_class_index(OBJ_))->classSize)
-#define get_free_size(OBJ_) (is_std_array((Object *)(OBJ_)) ? NORM_OBJ_SIZE : BA_OBJ_SIZE + ((BigArray *)(OBJ_))->length/2)
+#define get_free_size(OBJ_) (is_std_array((Object *)(OBJ_)) ? NORM_OBJ_SIZE : BA_OBJ_SIZE + ((BigArray *)(OBJ_))->length)
 
 /**
  * The following functions manage the allocation request and retry mechanism.
@@ -521,20 +521,25 @@ Object *new_string (ConstantRecord *constantRecord,
   ref = oheap_allocate(TO_WORDS(get_class_record(JAVA_LANG_STRING)->classSize), JAVA_LANG_STRING, LEN_OBJECT);
   if (ref != JNULL)
   {
-    // Guard the partially created object against the GC
-    arr = new_array (AC, constantRecord->constantSize);
-    if (arr != JNULL)
-    {
-      store_word_ns( (byte *) &(((String *) ref)->characters), T_INT, obj2word(arr));
-      dst = jchar_array(arr);
-      src = get_constant_ptr(constantRecord);
-      src_end = src + constantRecord->constantSize;
-
-      while( src < src_end)
-        *dst++ = (JCHAR) (*src++);
-    }
+    // what sort of array do we have?
+    if (constantRecord->constantType == AC)
+      store_word_ns( (byte *) &(((String *) ref)->characters), T_INT, obj2word(get_constant_ptr(constantRecord)));
     else
-      ref = JNULL;
+    {
+      arr = new_array (AC, constantRecord->stringLength);
+      if (arr != JNULL)
+      {
+        store_word_ns( (byte *) &(((String *) ref)->characters), T_INT, obj2word(arr));
+        src = get_constant_ptr(constantRecord);
+        dst = jchar_array(arr);
+        src_end = src + constantRecord->stringLength;
+
+        while( src < src_end)
+          *dst++ = (JCHAR) (*src++);
+      }
+      else
+        ref = JNULL;
+    }
   }
   return alloc_complete(ref);
 }
@@ -1010,8 +1015,7 @@ static inline void set_free_size(FreeObject *ptr, TWOBYTES sz)
   else
   {
     *((TWOBYTES *)ptr) = T_FREE | (LEN_BIGARRAY << ARRAY_LENGTH_SHIFT);
-// NOTE currently a void array object size is 2 bytes, when we change this we can remove the *2
-    ((BigArray *)ptr)->length = (sz - BA_OBJ_SIZE)*2;
+    ((BigArray *)ptr)->length = (sz - BA_OBJ_SIZE);
   }
 }
 

@@ -138,10 +138,7 @@ typedef struct S_ConstantRecord
    * Type of constant.
    */
   byte constantType;
-  /**
-   * Size of constant. Length of Utf8 entry for strings.
-   */
-  byte constantSize;
+  byte stringLength;
 } ConstantRecord;
 
 typedef TWOBYTES STATICFIELD;

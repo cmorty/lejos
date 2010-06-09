@@ -76,10 +76,9 @@ public class ConstantRecord implements WritableData
    {
       return IOUtilities.adjustedSize(2 + // offset
          1 + // type
-         1, // size
-         2);
+         1,  // Optimized string length
+         4);
    }
-
    /**
     * Dump.
     * 
@@ -92,9 +91,13 @@ public class ConstantRecord implements WritableData
       try
       {
          writer.writeU2(_constantValue.getOffset());
-         writer.writeU1(_constantValue.getType().type());
-         writer.writeU1(_constantValue.getLength());
-         IOUtilities.writePadding(writer, 2);
+         int typ = _constantValue.getTypeIndex();
+         writer.writeU1(typ);
+         if (typ == iBinary.getClassIndex("java/lang/String"))
+            writer.writeU1(_constantValue.getLength());
+         else
+            writer.writeU1(0);
+         IOUtilities.writePadding(writer, 4);
       }
       catch (IOException e)
       {

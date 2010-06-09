@@ -36,10 +36,9 @@ MULTI_OPCODE(OP_LDC_4)
   // Arguments: 1
   switch (tempConstRec->constantType)
   {
-    case T_REFERENCE:
-
-      // T_REFERENCE is actually String
-
+    case JAVA_LANG_STRING:
+    case AC:
+      // Optimized and none optimized strings
       SAVE_REGS();
       tempWordPtr = (void *) new_string (tempConstRec, pc - 1);
       LOAD_REGS();
