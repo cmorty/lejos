@@ -57,6 +57,8 @@ public final class VM
     public static final int VM_LONG = 11;
     public static final int VM_VOID = 12;
     public static final int VM_OBJECTARRAY = 13;
+    public static final int VM_STRING = 37;
+    public static final int VM_CHARARRAY = 18;
 
     // The base address of the in memory program header
     private static final int IMAGE_BASE = memPeekInt(MEM, IMAGE*4);
@@ -460,16 +462,20 @@ public final class VM
             int addr = baseAddr + item*((CONSTANT_LEN + CONSTANT_ALIGNMENT - 1) & ~(CONSTANT_ALIGNMENT -1));
             int offset = memPeekShort(ABSOLUTE, addr) + IMAGE_BASE;
             int typ = memPeekByte(ABSOLUTE, addr+2);
-            int len = memPeekByte(ABSOLUTE, addr+3);
-            if (typ == VM_OBJECT)
+            if (typ == VM_STRING)
             {
-                // Must be a string constant
+                // Must be an optimized string constant
+                int len = memPeekByte(ABSOLUTE, addr+3);
                 char chars[] = new char[len];
                 for(int i = 0; i < len; i++)
                     chars[i] = (char)memPeekByte(ABSOLUTE, offset+i);
                 return new VMValue(new String(chars));
             }
-            len = VMValue.lengths[typ];
+            else if (typ == VM_CHARARRAY)
+            {
+                // Non optimized string constant
+                return new VMValue(new String((char [])memGetReference(ABSOLUTE, offset)));
+            }
             return new VMValue(typ, offset);
         }
 
