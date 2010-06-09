@@ -35,6 +35,7 @@ public class RS485Connection extends NXTConnection
 		os = null;
         bbAddress = RS485.BB_INVALID;
         bufSz = RS485.BUFSZ;
+        maxPkt = 0xffff;
 	}
 
 	public String getName()
@@ -171,14 +172,16 @@ public class RS485Connection extends NXTConnection
      * only return 1 if all of the data will eventually be written. It should
      * avoid writing part of the data.
      * @param wait if true wait until the output has been written
-     * @return -ve if error, 0 if not written, +ve if written
+     * @return -ve if error, 0 if not written, +ve if written/no data
      */
     synchronized int flushBuffer(boolean wait)
     {
+        // If nothing to do say all ok.
         if (outOffset >= outCnt) return 1;
         if (wait)
             try {wait();} catch(Exception e){}
-        return outCnt - outOffset;
+        // Data will be written eventually so say all ok.
+        return 1;
     }
 
 	/**

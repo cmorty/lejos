@@ -59,6 +59,7 @@ public abstract class NXTConnection implements StreamConnection {
 	int pktOffset;
 	int pktLen;
     int bufSz;
+    int maxPkt;
     InputStream is;
 	OutputStream os;
     String address;
@@ -74,18 +75,19 @@ public abstract class NXTConnection implements StreamConnection {
      * only return 1 if all of the data will eventually be written. It should
      * avoid writing part of the data.
      * @param wait if true wait until the output has been written
-     * @return -ve if error, 0 if not written, +ve if written
+     * @return -ve if error, 0 if not written, +ve if written/no data
      */
     abstract int flushBuffer(boolean wait);
 
 	/**
-	 * Attempt to write bytes to the Bluetooth connection. Optionally wait if it
-	 * is not possible to write at the moment. Supports both packet and stream
+	 * Attempt to write bytes to the connection. Optionally wait if it
+	 * is not possible to write at the moment. Supports both packet and raw
 	 * write operations. If in packet mode a set of header bytes indicating
 	 * the size of the packet will be sent ahead of the data.
-	 * NOTE: If in packet mode and writing large packets (> 254 bytes), then
-	 * the blocking mode (wait = true), should be used to ensure that the packet
-	 * is sent correctly.
+	 * NOTE: If in packet mode the maximum write will be limited to the
+     * underlying maximum packet length. When using packet mode with writes
+     * larger then the I/O buffer, wait mode must be used to ensure correct
+     * operation.
 	 * @param	data	The data to be written.
 	 * @param	len		The number of bytes to write.
 	 * @param	wait	True if the call should block until all of the data has
@@ -100,6 +102,7 @@ public abstract class NXTConnection implements StreamConnection {
 		// Place the data to be sent in the output buffer. If there is no
 		// space and wait is true then wait for space.
 		int offset = -header;
+        if (len > maxPkt) len = maxPkt;
 		int hdr = len;
 
 		//1 RConsole.print("write " + len +" bytes\n");
@@ -109,6 +112,8 @@ public abstract class NXTConnection implements StreamConnection {
 			return -2;
 		}
 		if (state < CS_CONNECTED) return -1;
+        // If we have pending data and will not wait, return so that we
+        // preserve packet boundaries.
 		if (outCnt > 0 && !wait) return 0;
 		// Make sure we have a place to put the data
 ioloop: while (offset < len)
@@ -120,7 +125,7 @@ ioloop: while (offset < len)
 				//RConsole.print("Waiting in write\n");
 				if (flushBuffer(true) < 0) disconnected();
 				//RConsole.print("Wakeup state " + state + "\n");
-				if (state < CS_CONNECTED) break ioloop;
+				if (state < CS_CONNECTED) return -1;
 			}
 			if (offset < 0)
 			{
@@ -140,10 +145,9 @@ ioloop: while (offset < len)
 		}
         //if (offset != 0) LCD.drawInt(offset, 4, 0, 1);
         // Send the data. If there is a problem report that the data was not sent.
-        int written  = flushBuffer(wait);
-        if (written > 0) return offset;
-        if (written < 0) disconnected();
-        return written;
+        if (flushBuffer(wait) < 0) disconnected();
+        if (state < CS_CONNECTED) return -1;
+        return offset;
 	}
 
 
@@ -156,7 +160,7 @@ ioloop: while (offset < len)
 
     /**
 	 * Attempt to read data from the connection. Optionally wait for data to
-	 * become available. Supports both packet and stream mode operations. When
+	 * become available. Supports both packet and raw mode operations. When
 	 * in packet mode the packet length bytes are automatically processed. The
 	 * read will return just a single packet. If the packet is larger then the
 	 * requested length then the rest of the packet will be returned in the

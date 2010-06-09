@@ -51,6 +51,7 @@ public class BTConnection extends NXTConnection
 		state = CS_IDLE;
 		chanNo = chan;
         bufSz = Bluetooth.BUFSZ;
+        maxPkt = 0xffff;
         active = false;
 		is = null;
 		os = null;
@@ -139,15 +140,17 @@ public class BTConnection extends NXTConnection
      * only return 1 if all of the data will eventually be written. It should
      * avoid writing part of the data. 
      * @param wait if true wait until the output has been written
-     * @return -ve if error, 0 if not written, +ve if written
+     * @return -ve if error, 0 if not written, +ve if written/no data
      */
     synchronized int flushBuffer(boolean wait)
     {
+        // No data to send so say all done.
         if (outOffset >= outCnt) return 1;
         if (active) Bluetooth.notifyEvent(Bluetooth.BT_NEWDATA);
         if (wait)
             try {wait();} catch(Exception e){}
-        return outCnt - outOffset;
+        // All of the data should go eventually, so say everything is ok.
+        return 1;
     }
 
 	/**
