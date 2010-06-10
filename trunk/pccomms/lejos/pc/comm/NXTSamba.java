@@ -152,7 +152,7 @@ public class NXTSamba {
      */
     private byte[] read() throws IOException
     {
-        byte [] ret = nxtComm.readPacket(false);
+        byte [] ret = nxtComm.readWithTimeout();
         if (ret == null || ret.length == 0)
             throw new IOException("Read timeout");
         // System.out.println("Debug: "+new String(ret, CHARSET));
@@ -222,7 +222,7 @@ public class NXTSamba {
      */
     private void write(byte[] data) throws IOException
     {
-        if (nxtComm.writePacket(data, true) != data.length)
+        if (nxtComm.writeWithTimeout(data) != data.length)
             throw new IOException("Write timeout");
     }
     

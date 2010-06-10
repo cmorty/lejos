@@ -218,15 +218,14 @@ public abstract class NXTCommUSB implements NXTComm {
     }
 
     /**
-     * Low level access function reads and returns a single block from the
-     * USB device with an optional timeout.
-     * @param block true if request should block rather than timeout
-     * @return date or null if at EOF
+     * Low level access function reads and returns data from the
+     * USB device with a timeout.
+     * @return date or null if the read times out
      */
-    byte[] readPacket(boolean block) throws IOException
+    byte[] readWithTimeout() throws IOException
     {
         int len;
-        while((len=devRead(nxtInfo.nxtPtr, inBuf, 0, inBuf.length)) == 0 && block)
+        while((len=devRead(nxtInfo.nxtPtr, inBuf, 0, inBuf.length)) == 0)
             {}
         if (len < 0) throw new IOException("Error in read");
         if (len == 0) return new byte[0];
@@ -236,22 +235,27 @@ public abstract class NXTCommUSB implements NXTComm {
     }
     
     /**
-     * Low level access function, writes a single block to the USB device with
-     * optional timeout.
+     * Low level access function, writes data to the USB device with
+     * a timeout.
      * @param data
      * @param offset
      * @param len
-     * @param block true if requests should block rather than timeout
      * @return number of bytes actually written
      * @throws java.io.IOException
      */
-    int writePacket(byte[] data, boolean block) throws IOException
+    int writeWithTimeout(byte[] data) throws IOException
     {
-        int ret;
-        while ((ret = devWrite(nxtInfo.nxtPtr, data, 0, data.length)) == 0 && block)
-            {}
-        if (ret < 0) throw new IOException("Error in write");
-        return ret;
+        int offset = 0;
+        while (offset < data.length)
+        {
+            int ret;
+            while ((ret = devWrite(nxtInfo.nxtPtr, data, offset, data.length - offset)) == 0)
+                {}
+            if (ret < 0) throw new IOException("Error in write");
+            if (ret == 0) return offset;
+            offset += ret;
+        }
+        return offset;
     }
     
     private boolean writeEOF()
@@ -416,7 +420,6 @@ public abstract class NXTCommUSB implements NXTComm {
      */
 	public void close() throws IOException {
         if (nxtInfo == null || nxtInfo.nxtPtr == 0) return;
-        System.out.println("Closing...");
         try {
             flushBuffer();
             if (packetMode)
@@ -457,6 +460,7 @@ public abstract class NXTCommUSB implements NXTComm {
      * @throws java.io.IOException
      */
 	public byte [] read() throws IOException {
+System.out.println("Read called");
         if (EOF) return null;
         int len;
         if (packetMode)
@@ -496,6 +500,7 @@ public abstract class NXTCommUSB implements NXTComm {
      * @throws java.io.IOException
      */
 	public void write(byte [] data) throws IOException {
+System.out.println("Write called for " + data.length);
         if (packetMode)
         {
             writeByte((byte) data.length);
