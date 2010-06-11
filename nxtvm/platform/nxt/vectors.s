@@ -22,6 +22,6 @@ vectors_start:
 		ldr   pc,=prefetch_abort_handler  @ Prefetch Abort
 		ldr   pc,=data_abort_handler      @ Data Abort
 		ldr   pc,=reserved_handler        @ reserved
-		ldr   pc,vectors_start-0xF00      @ IRQ : read the AIC
-		ldr   pc,vectors_start-0xF00      @ FIQ : read the AIC
+		ldr   pc,vectors_start+0xFFFFF100 @ IRQ : read the AIC
+		ldr   pc,vectors_start+0xFFFFF104 @ FIQ : read the AIC
 
