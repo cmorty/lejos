@@ -18,7 +18,8 @@
 
 #include "jfantom.h"
 #define MAX_DEVS 64
-#define MAX_WRITE 64
+#define MAX_READ 64
+#define MAX_WRITE 512
 
 
 // Pointer type as integer
@@ -194,6 +195,7 @@ JNIEXPORT jint JNICALL Java_lejos_pc_comm_NXTCommFantom_jfantom_1read_1data
    if (dev == NULL) return -1;
 
    jbyte *jb = env->GetByteArrayElements(jdata, 0);
+   if (len > MAX_READ) len = MAX_READ;
    read_len = nFANTOM100_iNXT_read(dev->nxtPtr, (unsigned char *)jb + offset, len, &status);
    env->ReleaseByteArrayElements(jdata, jb, 0);
    return read_len;
