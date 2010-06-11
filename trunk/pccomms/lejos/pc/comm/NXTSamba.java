@@ -108,6 +108,7 @@ public class NXTSamba {
     }
     
 	private NXTCommUSB nxtComm = null;
+    private byte [] inputBuf = new byte[NXTCommUSB.USB_BUFSZ];
     private String version;
     
     public NXTSamba() throws IOException
@@ -152,11 +153,13 @@ public class NXTSamba {
      */
     private byte[] read() throws IOException
     {
-        byte [] ret = nxtComm.readWithTimeout();
-        if (ret == null || ret.length == 0)
+        int ret = nxtComm.rawRead(inputBuf, 0, inputBuf.length, false);
+        if (ret == 0)
             throw new IOException("Read timeout");
         // System.out.println("Debug: "+new String(ret, CHARSET));
-        return ret;
+        byte [] newBuf = new byte[ret];
+        System.arraycopy(inputBuf, 0, newBuf, 0, ret);
+        return newBuf;
     }
     
     private int readAnswerWord(int len) throws IOException
@@ -222,7 +225,7 @@ public class NXTSamba {
      */
     private void write(byte[] data) throws IOException
     {
-        if (nxtComm.writeWithTimeout(data) != data.length)
+        if (nxtComm.rawWrite(data, 0, data.length, false) != data.length)
             throw new IOException("Write timeout");
     }
     

@@ -33,8 +33,8 @@ public abstract class NXTCommUSB implements NXTComm {
     static final String VENDOR_ATMEL = "0x03EB";
     static final String PRODUCT_SAMBA = "0x6124";
     
-    private byte[] inBuf = new byte[USB_BUFSZ];
-    private byte[] outBuf = new byte[USB_BUFSZ];
+    private byte[] inBuf = new byte[USB_BUFSZ*8];
+    private byte[] outBuf = new byte[USB_BUFSZ*8];
     int inCnt = 0;
     int inOffset = 0;
     int outCnt = 0;
@@ -175,9 +175,8 @@ public abstract class NXTCommUSB implements NXTComm {
         int len;
         inCnt = 0;
         inOffset = 0;
-        while((len=devRead(nxtInfo.nxtPtr, inBuf, 0, inBuf.length)) == 0)
-            {}
-        if (len < 0) throw new IOException("Error in read");
+        len = rawRead(inBuf, 0, inBuf.length, true);
+        if (len <= 0) throw new IOException("Error in read");
         inCnt = len;
     }
 
@@ -200,8 +199,7 @@ public abstract class NXTCommUSB implements NXTComm {
     {
         int ret;
         if (outCnt <= 0) return;
-        while ((ret = devWrite(nxtInfo.nxtPtr, outBuf, 0, outCnt)) == 0)
-            {}
+        ret = rawWrite(outBuf, 0, outCnt, true);
         if (ret < 0 || ret != outCnt) throw new IOException("Error in write");
         outCnt = 0;
     }
@@ -219,61 +217,58 @@ public abstract class NXTCommUSB implements NXTComm {
 
     /**
      * Low level access function reads and returns data from the
-     * USB device with a timeout.
+     * USB device with an optional timeout timeout.
+     * @param buf output buffer
+     * @param offset offset into the buffer
+     * @param number of bytes to write
+     * @param wait true if the call should block
      * @return date or null if the read times out
      */
-    byte[] readWithTimeout() throws IOException
+    int rawRead(byte [] buf, int offset, int len, boolean wait) throws IOException
     {
-        int len;
-        while((len=devRead(nxtInfo.nxtPtr, inBuf, 0, inBuf.length)) == 0)
+        int ret;
+        while((ret=devRead(nxtInfo.nxtPtr, buf, offset, len)) == 0 && wait)
             {}
-        if (len < 0) throw new IOException("Error in read");
-        if (len == 0) return new byte[0];
-        byte [] ret = new byte[len];
-        System.arraycopy(inBuf, 0, ret, 0, len);
+        if (ret < 0) throw new IOException("Error in read");
+        if (ret == 0) return 0;
         return ret;
     }
     
     /**
-     * Low level access function, writes data to the USB device with
-     * a timeout.
-     * @param data
+     * Low level access function, writes data to the USB device with an optional
+     * timeout.
+     * @param buf
      * @param offset
      * @param len
+     * @param wait true if the call should block
      * @return number of bytes actually written
      * @throws java.io.IOException
      */
-    int writeWithTimeout(byte[] data) throws IOException
+    int rawWrite(byte[] buf, int offset, int len, boolean wait) throws IOException
     {
-        int offset = 0;
-        while (offset < data.length)
+        int written = 0;
+        while (written < len)
         {
             int ret;
-            while ((ret = devWrite(nxtInfo.nxtPtr, data, offset, data.length - offset)) == 0)
+            while ((ret = devWrite(nxtInfo.nxtPtr, buf, offset + written, len - written)) == 0)
                 {}
             if (ret < 0) throw new IOException("Error in write");
-            if (ret == 0) return offset;
-            offset += ret;
+            if (ret == 0) return written;
+            written += ret;
         }
-        return offset;
+        return written;
     }
     
-    private boolean writeEOF()
+    private boolean writeEOF() throws IOException
     {
         outBuf[0] = 0;
         outBuf[1] = 0;
-        return (devWrite(nxtInfo.nxtPtr, outBuf, 0, 2) == 2);
+        return (rawWrite(outBuf, 0, 2, false) == 2);
     }
-    
-    private void waitEOF()
-    {
-        while(devRead(nxtInfo.nxtPtr, inBuf, 0, inBuf.length) > 1)
-            {}
-    }
-    
+        
     /**
      * Helper function, convert an array of names into an NXTInfo vector. This
-     * function takes an array of standard Lego USB string adresses and converts
+     * function takes an array of standard Lego USB string addresses and converts
      * them into an nxtVector. It handles the both NXT and Samba type devices.
      * @param nxtNames an array of device address strings.
      * @return
@@ -309,7 +304,7 @@ public abstract class NXTCommUSB implements NXTComm {
 
 
     /**
-     * Locate availabe nxt devices and return them. Optionally filter the list
+     * Locate available nxt devices and return them. Optionally filter the list
      * to those that match name.
      * @param name The name to search for. If null return all devices.
      * @param protocol The protocol to search for, must be USB
@@ -460,7 +455,6 @@ public abstract class NXTCommUSB implements NXTComm {
      * @throws java.io.IOException
      */
 	public byte [] read() throws IOException {
-System.out.println("Read called");
         if (EOF) return null;
         int len;
         if (packetMode)
@@ -500,7 +494,6 @@ System.out.println("Read called");
      * @throws java.io.IOException
      */
 	public void write(byte [] data) throws IOException {
-System.out.println("Write called for " + data.length);
         if (packetMode)
         {
             writeByte((byte) data.length);
