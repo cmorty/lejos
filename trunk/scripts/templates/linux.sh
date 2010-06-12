@@ -29,7 +29,7 @@ else
 	NXJ_BIN="$(my_readlink "$0")"
 	NXJ_BIN="$(my_resolve "$(pwd)" "$NXJ_BIN")"
 	NXJ_BIN="$(dirname -- "$NXJ_BIN")"
-	NXJ_HOME="$(dirname -- "$NXJ_BIN")"
+	NXJ_HOME="$NXJ_BIN/.."
 fi
 
 NXJ_LIBS="$NXJ_HOME/lib"
