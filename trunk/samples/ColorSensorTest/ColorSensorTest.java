@@ -19,13 +19,13 @@ public class ColorSensorTest
 	public static void main(String [] args) throws Exception
     {
         String ports[] = {"Port 1", "Port 2", "Port 3", "Port 4"};
-        TextMenu portMenu = new TextMenu(ports, 0, "Sensor port");
+        TextMenu portMenu = new TextMenu(ports, 1, "Sensor port");
         String modes[] = {"Full", "Red", "Green", "Blue", "White", "None"};
         int colors[] = {Color.WHITE, Color.RED, Color.GREEN, Color.BLUE, Color.WHITE, Color.NONE};
         String colorNames[] = {"None", "Red", "Green", "Blue", "Yellow",
                                 "Megenta", "Orange", "White", "Black", "Pink",
                                 "Grey", "Light Grey", "Dark Grey", "Cyan"};
-        TextMenu modeMenu = new TextMenu(modes, 0, "Color mode");
+        TextMenu modeMenu = new TextMenu(modes, 1, "Color mode");
 
         int portNo = portMenu.select();
         if (portNo < 0) return;

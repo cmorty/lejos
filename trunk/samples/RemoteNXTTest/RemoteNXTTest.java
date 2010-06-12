@@ -33,7 +33,7 @@ public class RemoteNXTTest {
 
         // Get the type of communications to be used
         String[] connectionStrings = new String[]{"Bluetooth", "RS485"};
-        TextMenu connectionMenu = new TextMenu(connectionStrings, 0, "Connection");
+        TextMenu connectionMenu = new TextMenu(connectionStrings, 1, "Connection");
         NXTCommConnector[] connectors = {Bluetooth.getConnector(), RS485.getConnector()};
 
         int connectionType = connectionMenu.select();

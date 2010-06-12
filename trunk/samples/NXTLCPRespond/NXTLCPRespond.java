@@ -34,7 +34,7 @@ public class NXTLCPRespond
     public static void main(String[] args) throws Exception
     {
         String[] connectionStrings = new String[]{"Bluetooth", "USB", "RS485"};
-        TextMenu connectionMenu = new TextMenu(connectionStrings, 0, "Connection");
+        TextMenu connectionMenu = new TextMenu(connectionStrings, 1, "Connection");
         NXTCommConnector[] connectors = {Bluetooth.getConnector(), USB.getConnector(), RS485.getConnector()};
 
         int connectionType = connectionMenu.select();
