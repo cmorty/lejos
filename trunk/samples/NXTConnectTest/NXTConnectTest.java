@@ -36,7 +36,7 @@ public class NXTConnectTest
     {
         String name = "NXT";
         String[] connectionStrings = {"Bluetooth", "RS485"};
-        TextMenu connectionMenu = new TextMenu(connectionStrings, 0, "Connection");
+        TextMenu connectionMenu = new TextMenu(connectionStrings, 1, "Connection");
         String[] modeStrings = {"Packet", "Raw"};
         TextMenu modeMenu = new TextMenu(modeStrings, 0, "Mode");
         NXTCommConnector[] connectors = {Bluetooth.getConnector(), RS485.getConnector()};
