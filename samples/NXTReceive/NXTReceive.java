@@ -24,9 +24,9 @@ public class NXTReceive
     public static void main(String[] args) throws Exception
     {
         String[] connectionStrings = new String[]{"Bluetooth", "USB", "RS485"};
-        TextMenu connectionMenu = new TextMenu(connectionStrings, 0, "Connection");
+        TextMenu connectionMenu = new TextMenu(connectionStrings, 1, "Connection");
         String[] modeStrings = new String[] {"Packet", "Raw"};
-        TextMenu modeMenu = new TextMenu(modeStrings, 0, "Mode");
+        TextMenu modeMenu = new TextMenu(modeStrings, 1, "Mode");
         NXTCommConnector[] connectors = {Bluetooth.getConnector(), USB.getConnector(), RS485.getConnector()};
         int[] modes = {NXTConnection.PACKET, NXTConnection.RAW};
 
