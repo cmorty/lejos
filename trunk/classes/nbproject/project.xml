@@ -13,12 +13,14 @@
                 <source-folder>
                     <label>Source Packages</label>
                     <location>.</location>
+                    <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
                     <label>Source Packages</label>
                     <type>java</type>
                     <location>.</location>
                     <includes>java/**,javax/**,lejos/**</includes>
+                    <encoding>UTF-8</encoding>
                 </source-folder>
             </folders>
             <ide-actions>
