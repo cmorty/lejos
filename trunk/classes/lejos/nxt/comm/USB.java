@@ -29,6 +29,8 @@ public class USB extends NXTCommDevice {
     static final int USB_NEWDATA = NXTEvent.USER2;
     static final int USB_NEWSPACE = NXTEvent.USER3;
 
+    static final int FLUSH_TIMEOUT = 100;
+
     // Internal synchronization object
     private static final Object usbSync = new Object();
     private static NXTEvent usbEvent;
@@ -204,6 +206,10 @@ public class USB extends NXTCommDevice {
         {
             listening = false;
             connection = null;
+            // Wait for any output to drain
+            usbEvent.waitEvent(USB_WRITEABLE|USB_UNCONFIGURED, FLUSH_TIMEOUT);
+            // And give things chance to settle
+            usbEvent.waitEvent(USB_UNCONFIGURED, FLUSH_TIMEOUT);
             usbDisable();
         }
     }
