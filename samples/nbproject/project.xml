@@ -16,9 +16,9 @@
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
-                    <label>BTConnectTest</label>
+                    <label>ArcNavigator</label>
                     <type>java</type>
-                    <location>BTConnectTest</location>
+                    <location>ArcNavigator</location>
                     <excludes>**.class,**.nxj</excludes>
                     <encoding>UTF-8</encoding>
                 </source-folder>
@@ -26,6 +26,13 @@
                     <label>BlueStats</label>
                     <type>java</type>
                     <location>BlueStats</location>
+                    <excludes>**.class,**.nxj</excludes>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>BTConnectTest</label>
+                    <type>java</type>
+                    <location>BTConnectTest</location>
                     <excludes>**.class,**.nxj</excludes>
                     <encoding>UTF-8</encoding>
                 </source-folder>
@@ -100,6 +107,13 @@
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
+                    <label>DSwitchTest</label>
+                    <type>java</type>
+                    <location>DSwitchTest</location>
+                    <excludes>**.class,**.nxj</excludes>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
                     <label>EchoNavigator</label>
                     <type>java</type>
                     <location>EchoNavigator</location>
@@ -131,6 +145,13 @@
                     <label>GraphicsSample</label>
                     <type>java</type>
                     <location>GraphicsSample</location>
+                    <excludes>**.class,**.nxj</excludes>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>GyroTest</label>
+                    <type>java</type>
+                    <location>GyroTest</location>
                     <excludes>**.class,**.nxj</excludes>
                     <encoding>UTF-8</encoding>
                 </source-folder>
@@ -247,6 +268,13 @@
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
+                    <label>NXTLineLeaderTest</label>
+                    <type>java</type>
+                    <location>NXTLineLeaderTest</location>
+                    <excludes>**.class,**.nxj</excludes>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
                     <label>NXTReceive</label>
                     <type>java</type>
                     <location>NXTReceive</location>
@@ -299,6 +327,13 @@
                     <label>RCNavigator</label>
                     <type>java</type>
                     <location>RCNavigator</location>
+                    <excludes>**.class,**.nxj</excludes>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>RCPilot</label>
+                    <type>java</type>
+                    <location>RCPilot</location>
                     <excludes>**.class,**.nxj</excludes>
                     <encoding>UTF-8</encoding>
                 </source-folder>
@@ -362,6 +397,13 @@
                     <label>RFIDTest</label>
                     <type>java</type>
                     <location>RFIDTest</location>
+                    <excludes>**.class,**.nxj</excludes>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>SensorMuxTest</label>
+                    <type>java</type>
+                    <location>SensorMuxTest</location>
                     <excludes>**.class,**.nxj</excludes>
                     <encoding>UTF-8</encoding>
                 </source-folder>
@@ -479,13 +521,18 @@
             <view>
                 <items>
                     <source-folder style="packages">
-                        <label>BTConnectTest</label>
-                        <location>BTConnectTest</location>
+                        <label>ArcNavigator</label>
+                        <location>ArcNavigator</location>
                         <excludes>**.class,**.nxj</excludes>
                     </source-folder>
                     <source-folder style="packages">
                         <label>BlueStats</label>
                         <location>BlueStats</location>
+                        <excludes>**.class,**.nxj</excludes>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>BTConnectTest</label>
+                        <location>BTConnectTest</location>
                         <excludes>**.class,**.nxj</excludes>
                     </source-folder>
                     <source-folder style="packages">
@@ -539,6 +586,11 @@
                         <excludes>**.class,**.nxj</excludes>
                     </source-folder>
                     <source-folder style="packages">
+                        <label>DSwitchTest</label>
+                        <location>DSwitchTest</location>
+                        <excludes>**.class,**.nxj</excludes>
+                    </source-folder>
+                    <source-folder style="packages">
                         <label>EchoNavigator</label>
                         <location>EchoNavigator</location>
                         <excludes>**.class,**.nxj</excludes>
@@ -561,6 +613,11 @@
                     <source-folder style="packages">
                         <label>GraphicsSample</label>
                         <location>GraphicsSample</location>
+                        <excludes>**.class,**.nxj</excludes>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>GyroTest</label>
+                        <location>GyroTest</location>
                         <excludes>**.class,**.nxj</excludes>
                     </source-folder>
                     <source-folder style="packages">
@@ -644,6 +701,11 @@
                         <excludes>**.class,**.nxj</excludes>
                     </source-folder>
                     <source-folder style="packages">
+                        <label>NXTLineLeaderTest</label>
+                        <location>NXTLineLeaderTest</location>
+                        <excludes>**.class,**.nxj</excludes>
+                    </source-folder>
+                    <source-folder style="packages">
                         <label>NXTReceive</label>
                         <location>NXTReceive</location>
                         <excludes>**.class,**.nxj</excludes>
@@ -681,6 +743,11 @@
                     <source-folder style="packages">
                         <label>RCNavigator</label>
                         <location>RCNavigator</location>
+                        <excludes>**.class,**.nxj</excludes>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>RCPilot</label>
+                        <location>RCPilot</location>
                         <excludes>**.class,**.nxj</excludes>
                     </source-folder>
                     <source-folder style="packages">
@@ -726,6 +793,11 @@
                     <source-folder style="packages">
                         <label>RFIDTest</label>
                         <location>RFIDTest</location>
+                        <excludes>**.class,**.nxj</excludes>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>SensorMuxTest</label>
+                        <location>SensorMuxTest</location>
                         <excludes>**.class,**.nxj</excludes>
                     </source-folder>
                     <source-folder style="packages">
@@ -876,6 +948,12 @@
                 <package-root>WaypointNav</package-root>
                 <package-root>Sniffer</package-root>
                 <package-root>JSR256Test</package-root>
+                <package-root>ArcNavigator</package-root>
+                <package-root>DSwitchTest</package-root>
+                <package-root>GyroTest</package-root>
+                <package-root>NXTLineLeaderTest</package-root>
+                <package-root>RCPilot</package-root>
+                <package-root>SensorMuxTest</package-root>
                 <classpath mode="compile">../classes/lib/classes.jar</classpath>
                 <source-level>1.5</source-level>
             </compilation-unit>
