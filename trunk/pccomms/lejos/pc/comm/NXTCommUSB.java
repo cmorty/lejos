@@ -250,7 +250,7 @@ public abstract class NXTCommUSB implements NXTComm {
         while (written < len)
         {
             int ret;
-            while ((ret = devWrite(nxtInfo.nxtPtr, buf, offset + written, len - written)) == 0)
+            while ((ret = devWrite(nxtInfo.nxtPtr, buf, offset + written, len - written)) == 0 && wait)
                 {}
             if (ret < 0) throw new IOException("Error in write");
             if (ret == 0) return written;
@@ -426,7 +426,7 @@ public abstract class NXTCommUSB implements NXTComm {
         }
         catch (IOException e)
         {
-            System.out.println("Got exception during close");
+            System.out.println("Got exception during close: " + e);
         }
 		devClose(nxtInfo.nxtPtr);
         nxtInfo.nxtPtr = 0;
