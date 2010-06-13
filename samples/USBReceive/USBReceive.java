@@ -31,8 +31,11 @@ public class USBReceive {
             }         
 			dOut.writeInt(-b);
 			dOut.flush();
-	        LCD.drawInt((int)b,8,0,1);
+	        LCD.drawInt(b,8,0,1);
 		}
+        dOut.close();
+        dIn.close();
+        conn.close();
 	}
 }
 
