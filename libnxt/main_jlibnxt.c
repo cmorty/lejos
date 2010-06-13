@@ -277,11 +277,9 @@ JNIEXPORT void JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1close(JNIEnv *e
 JNIEXPORT jint JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1send_1data(JNIEnv *env, jobject obj, jlong nxt, jbyteArray data, jint offset, jint len)  {
   int ret;
   char *jb = (char *) (*env)->GetByteArrayElements(env, data, 0);  
-  if (len > MAX_WRITE) len = MAX_WRITE;
   ret = nxt_write_buf((long) nxt, jb+offset, len);
   (*env)->ReleaseByteArrayElements(env, data, (jbyte *) jb, 0);
-   // Assume any error is a timeout!!! Need to fix this!
-   if (ret < 0) ret = 0;
+  if (ret == -ETIMEDOUT) ret = 0;
   return ret;
 }
 
