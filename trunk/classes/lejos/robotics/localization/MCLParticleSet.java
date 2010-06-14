@@ -1,11 +1,16 @@
 package lejos.robotics.localization;
 
+
+import lejos.util.Datalogger;
 import java.awt.Rectangle;
 import lejos.geom.*;
 import java.io.*;
 import lejos.robotics.*;
 import lejos.robotics.mapping.RangeMap;
 import lejos.robotics.Move;
+import java.util.Random;
+
+
 
 /*
  * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
@@ -21,22 +26,18 @@ import lejos.robotics.Move;
 public class MCLParticleSet {
   // Constants 
   private static final float BIG_FLOAT = 10000f;
-  
   // Static variables
   public static int maxIterations = 1000;
-  
+  private static float twoSigmaSquared = 200f; // was 250
   // Instance variables
-  private float twoSigmaSquared = 250f;
-  private float distanceNoiseFactor = 0.02f;
-  private float angleNoiseFactor = 0.02f;
+  private float distanceNoiseFactor = 0.1f;
+  private float angleNoiseFactor = 2.5f;
   private int numParticles;
   private MCLParticle[] particles;
   private RangeMap map;
-  private float estimatedX, estimatedY, estimatedAngle;
-  private float minX, maxX, minY, maxY;
-  private float maxWeight;
+  private float maxWeight, totalWeight;
   private int border = 10;	// The minimum distance from the edge of the map
-  							// to generate a particle.
+  private Random random = new Random(); // to generate a particle.
   private Rectangle boundingRect;
   private boolean debug = false;
   
@@ -45,7 +46,8 @@ public class MCLParticleSet {
    * 
    * @param map the map of the enclosed environment
    */
-  public MCLParticleSet(RangeMap map, int numParticles, int border) {
+  public MCLParticleSet(RangeMap map, int numParticles, int border)
+  {
     this.map = map;
     this.numParticles = numParticles;
     this.border = border;
@@ -54,7 +56,34 @@ public class MCLParticleSet {
     for (int i = 0; i < numParticles; i++) {
       particles[i] = generateParticle();
     }
-    resetEstimate();
+//    resetEstimate();
+  }
+/**
+ * generates a circular cloud of particles centered on initialPose with random 
+ * radius  and angle
+ * @param map
+ * @param numParticles
+ * @param initialPose
+ * @param radiusNoise  standard deviation of radius
+ * @param headingNoise standard deviation of heading noise
+ */
+  public MCLParticleSet(RangeMap map, int numParticles, Pose initialPose,
+          float radiusNoise, float headingNoise)
+  {
+    this.map = map;
+    this.numParticles = numParticles;
+    border = 0;
+    boundingRect = map.getBoundingRect();
+    particles = new MCLParticle[numParticles];
+    for (int i = 0; i < numParticles; i++)
+    {
+      float rad = radiusNoise * (float) random.nextGaussian();
+      float theta = (float) (2 * Math.PI * Math.random());
+      float x = initialPose.getX() + rad * (float) Math.cos(theta);
+      float y = initialPose.getY() + rad * (float) Math.sin(theta);
+      float heading = initialPose.getHeading() + headingNoise * (float) random.nextGaussian();
+      particles[i] = new MCLParticle((new Pose(x,y,heading)));
+    }
   }
 
   /**
@@ -110,12 +139,13 @@ public class MCLParticleSet {
     return particles[i];
   }
 
+
   /**
    * Resample the set picking those with higher weights.
-   * 
+   *
    * Note that the new set has multiple instances of the particles with higher
    * weights.
-   * 
+   *
    * @return true iff lost
    */
   public boolean resample() {
@@ -131,7 +161,8 @@ public class MCLParticleSet {
 
     while (count < numParticles) {
       iterations++;
-      if (iterations >= maxIterations) {
+      if (iterations >= maxIterations)
+      {
         if (debug) System.out.println("Lost: count = " + count);
         if (count > 0) { // Duplicate the ones we have so far
           for (int i = count; i < numParticles; i++) {
@@ -143,13 +174,15 @@ public class MCLParticleSet {
           for (int i = 0; i < numParticles; i++) {
             particles[i] = generateParticle();
           }
-          resetEstimate();
+//          resetEstimate();
           return true;
         }
       }
       float rand = (float) Math.random();
-      for (int i = 0; i < numParticles && count < numParticles; i++) {
-        if (oldParticles[i].getWeight() >= rand) {
+      for (int i = 0; i < numParticles && count < numParticles; i++)
+      {
+        if (oldParticles[i].getWeight() >= rand)
+        {
           Pose p = oldParticles[i].getPose();
           float x = p.getX();
           float y = p.getY();
@@ -161,41 +194,7 @@ public class MCLParticleSet {
         }
       }
     }
-    estimatePose();
     return false;
-  }
-  
-  /**
-   * Estimate pose from weighted average of the particles
-   */
-  private void estimatePose() {
-    resetEstimate();
-    float totalWeights = 0;
-    
-    minX = boundingRect.x + boundingRect.width;
-    minY = boundingRect.y + boundingRect.height;
-    maxX = boundingRect.x;
-    maxY = boundingRect.y;
-    
-    for (int i = 0; i < numParticles; i++) {
-	  Pose p = particles[i].getPose();
-	  float x = p.getX();
-      float y = p.getY();
-      float weight = particles[i].getWeight();
-	  
-      estimatedX += (x * weight);
-      estimatedY += (y * weight);
-      estimatedAngle += (p.getHeading() * weight);
-      totalWeights += weight;
-
-      if (x < minX) minX = x;
-      if (x > maxX) maxX = x;
-      if (y < minY) minY = y;
-      if (y > maxY) maxY = y;
-    }  
-    estimatedX /= totalWeights;
-    estimatedY /= totalWeights;
-    estimatedAngle /= totalWeights;
   }
 
   /**
@@ -203,101 +202,48 @@ public class MCLParticleSet {
    * 
    * @param rr the robot range readings
    */
-  public void calculateWeights(RangeReadings rr, RangeMap map) {
+  public boolean  calculateWeights(RangeReadings rr, RangeMap map) {
+  
+   if(rr.incomplete()) return false;
     maxWeight = 0f;
+    totalWeight = 0f;
+    float minWeight = (float) .001f/numParticles;
     for (int i = 0; i < numParticles; i++) {
       particles[i].calculateWeight(rr, map, twoSigmaSquared);
       float weight = particles[i].getWeight();
+      if(weight < minWeight) weight = minWeight;
       if (weight > maxWeight) {
         maxWeight = weight;
       }
+      totalWeight += weight;
     }
+    if(maxWeight < 0.1f )return false;
+    return true;
   }
   
-  public void printMaxWeight() {
-    System.out.println("Max = " + maxWeight);
-  }
-
   /**
    * Apply a move to each particle
    * 
    * @param move the move to apply
    */
   public void applyMove(Move move) {
+//    RConsole.println("particles applyMove "+move.getMoveType()+" NrP "+numParticles);
 	maxWeight = 0f;
     for (int i = 0; i < numParticles; i++) {
       particles[i].applyMove(move, distanceNoiseFactor, angleNoiseFactor);
     }
-    estimatePose();
-  }
-
-  /**
-   * Get the estimated pose of the robot
-   * 
-   * @return the estimated pose
-   */
-  public Pose getEstimatedPose() {
-    return new Pose(estimatedX, estimatedY, estimatedAngle);
-  }
-
-  /**
-   * Get the minimum X value of the estimated position
-   * 
-   * @return the minimum X value
-   */
-  public float getMinX() {
-    return minX;
-  }
-
-  /**
-   * Get the maximum X value of the estimated position
-   * 
-   * @return the maximum X value
-   */
-  public float getMaxX() {
-    return maxX;
-  }
-
-  /**
-   * Get the minimum Y value of the estimated position
-   * 
-   * @return the minimum Y value
-   */
-  public float getMinY() {
-    return minY;
-  }
-
-  /**
-   * Get the maximum Y value of the estimated position
-   * 
-   * @return the maximum Y value
-   */
-  public float getMaxY() {
-    return maxY;
-  }
-
-  /**
-   * Reset the estimated position to unknown
-   */
-  public void resetEstimate() {
-    estimatedX = 0;
-    estimatedY = 0;
-    estimatedAngle = 0;
-    minX = boundingRect.x;
-    minY = boundingRect.y;
-    maxX = boundingRect.x + boundingRect.width;
-    maxY = boundingRect.y + boundingRect.height;
+//    RConsole.println("particles apply move est pose ");
   }
   
-  /**
-   * Return the minimum rectangle enclosing all the particles
-   * 
-   * @return the rectangle
-   */
-  public Rectangle getErrorRect() {
-	  return new Rectangle((int) minX, (int) minY, 
-			               (int) (maxX-minX), (int) (maxY-minY));
-  }
+//  /**
+//   * Return the minimum rectangle enclosing all the particles
+//   *
+//   * @return the rectangle
+//   */
+//  public Rectangle getErrorRect() {
+//	  return new Rectangle((int) minX, (int) minY,
+//			               (int) (maxX-minX), (int) (maxY-minY));
+//  }
   
   /**
    * The highest weight of any particle
@@ -330,7 +276,7 @@ public class MCLParticleSet {
    * Set the standard deviation for the sensor probability model
    * @param sigma the standard deviation
    */
-  public void setSigma(float sigma) {
+  public static void setSigma(float sigma) {
     twoSigmaSquared = 2 * sigma * sigma;
   }
   
@@ -401,7 +347,19 @@ public class MCLParticleSet {
           dos.flush();
       }
   }
-  
+
+  public void logParticles(Datalogger log)
+  {
+    for (int i = 0; i < numParticles; i++)
+    {
+         MCLParticle part = getParticle(i);
+          Pose pose = part.getPose();
+          float weight = part.getWeight();
+          log.writeLog(pose.getX(),pose.getY(),pose.getHeading(),weight);
+    }
+    log.writeLog(99,99,99,99);
+  }
+
   /**
    * Load serialized particles from a data input stream
    * @param dis the data input stream
@@ -419,43 +377,69 @@ public class MCLParticleSet {
       particles[i].setWeight(dis.readFloat());
     }  
   }
-  
-  /**
-   * Dump the serialized estimate of pose to a data output stream
-   * @param dos the data output stream
-   * @throws IOException
-   */
-  public void dumpEstimation(DataOutputStream dos) throws IOException {
-      Pose pose = getEstimatedPose();
-      float minX = getMinX();
-      float maxX = getMaxX();
-      float minY = getMinY();
-      float maxY = getMaxY();
 
-      dos.writeFloat(pose.getX());
-      dos.writeFloat(pose.getY());
-      dos.writeFloat(pose.getHeading());
-      dos.writeFloat(minX);
-      dos.writeFloat(maxX);
-      dos.writeFloat(minY);
-      dos.writeFloat(maxY);
-      dos.flush();
+  public Pose getEstimatedPose()
+  {
+    float totalWeights = 0;
+    float estimatedX = 0;
+    float estimatedY = 0;
+    float estimatedAngle = 0;
+     for (int i = 0; i < numParticles; i++)
+    {
+      Pose p = getParticle(i).getPose();
+      float x = p.getX();
+      float y = p.getY();
+      float weight = getParticle(i).getWeight();
+       estimatedX += (x * weight);
+      estimatedY += (y * weight);
+      float head = p.getHeading();
+      estimatedAngle += (head * weight);
+      totalWeights += weight;
+     }
+    estimatedX /= totalWeights;
+     estimatedY /= totalWeights;
+     estimatedAngle /= totalWeights;
+     return new Pose(estimatedX,estimatedY,estimatedAngle);
   }
+//  /**
+//   * Dump the serialized estimate of pose to a data output stream
+//   * @param dos the data output stream
+//   * @throws IOException
+//   */
+//  public void dumpEstimation(DataOutputStream dos) throws IOException {
+//      Pose pose = getEstimatedPose();
+//      float minX = getMinX();
+//      float maxX = getMaxX();
+//      float minY = getMinY();
+//      float maxY = getMaxY();
+//
+//      dos.writeFloat(pose.getX());
+//      dos.writeFloat(pose.getY());
+//      dos.writeFloat(pose.getHeading());
+//      dos.writeFloat(minX);
+//      dos.writeFloat(maxX);
+//      dos.writeFloat(minY);
+//      dos.writeFloat(maxY);
+//      dos.writeFloat((float)varX);
+//      dos.writeFloat((float)varY);
+//      dos.writeFloat((float)varH);
+//      dos.flush();
+//  }
   
   /**
    * Load serialized estimated pose from a data input stream
    * @param dis the data input stream
    * @throws IOException
    */
-  public void loadEstimation(DataInputStream dis) throws IOException {
-      estimatedX = dis.readFloat();
-      estimatedY = dis.readFloat();
-      estimatedAngle = dis.readFloat();
-      minX = dis.readFloat();
-      maxX = dis.readFloat();
-      minY = dis.readFloat();
-      maxY = dis.readFloat();
-  }
+//  public void loadEstimation(DataInputStream dis) throws IOException {
+//      estimatedX = dis.readFloat();
+//      estimatedY = dis.readFloat();
+//      estimatedAngle = dis.readFloat();
+//      minX = dis.readFloat();
+//      maxX = dis.readFloat();
+//      minY = dis.readFloat();
+//      maxY = dis.readFloat();
+//  }
   
   /**
    * Find the closest particle to specified coordinates and dump its

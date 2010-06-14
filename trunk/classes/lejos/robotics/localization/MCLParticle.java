@@ -116,7 +116,7 @@ public class MCLParticle {
     pose.setLocation(new Point((float) (pose.getX() + xm + (distanceNoiseFactor * xm * rand.nextGaussian())),
                      (float) (pose.getY() + ym + (distanceNoiseFactor * ym * rand.nextGaussian()))));
     pose.setHeading((float) (pose.getHeading() + move.getAngleTurned()
-        + (angleNoiseFactor * move.getAngleTurned() * rand.nextGaussian())));
+        + (angleNoiseFactor  * rand.nextGaussian())));
     pose.setHeading((float) ((int) (pose.getHeading() + 0.5f) % 360));
   }
 }
