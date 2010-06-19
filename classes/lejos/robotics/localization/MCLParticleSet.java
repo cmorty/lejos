@@ -1,8 +1,8 @@
 package lejos.robotics.localization;
 
 
-import lejos.nxt.comm.RConsole;
-import lejos.util.Datalogger;
+//import lejos.nxt.comm.RConsole;
+//import lejos.util.Datalogger;
 import lejos.nxt.*;
 
 import java.awt.Rectangle;
@@ -253,7 +253,7 @@ public class MCLParticleSet {
    */
   public void resampleLowVar()
   {
-    RConsole.println("mcl resample total weight "+ totalWeight);
+//    RConsole.println("mcl resample total weight "+ totalWeight);
     //  table 4.4 line numbers
     MCLParticle[] oldParticles = particles; // line 2
     particles = new MCLParticle[numParticles];
@@ -273,8 +273,8 @@ public class MCLParticleSet {
         i++;  // line 9
         if (i == numParticles)
         {
-          RConsole.println("Resample " + i + " m " + m + " weight " +
-                  oldParticles[i - 1].getWeight() / totalWeight);
+//          RConsole.println("Resample " + i + " m " + m + " weight " +
+//                  oldParticles[i - 1].getWeight() / totalWeight);
           i = 0;// avoid array out of bounds
         }
         float w = oldParticles[i].getWeight() / totalWeight;
@@ -288,7 +288,7 @@ public class MCLParticleSet {
         k++;
       }
     } //  end  for  line 13
- RConsole.println("Resample old particles used "+k);
+// RConsole.println("Resample old particles used "+k);
   }
 
 
@@ -298,8 +298,8 @@ public class MCLParticleSet {
    * @param rr the robot range readings
    */
   public boolean  calculateWeights(RangeReadings rr, RangeMap map) {
-   RConsole.print(" calc weights using vals:  "+rr.getRange(0)+" "+rr.getRange(1)+" "
-           +rr.getAngle(0)+" "+rr.getAngle(1));
+//   RConsole.print(" calc weights using vals:  "+rr.getRange(0)+" "+rr.getRange(1)+" "
+//           +rr.getAngle(0)+" "+rr.getAngle(1));
    if(rr.incomplete()) return false;
     maxWeight = 0f;
     totalWeight = 0f;
@@ -313,7 +313,7 @@ public class MCLParticleSet {
       }
       totalWeight += weight;
     }
-    RConsole.println("MCL  MAX W " + maxWeight +" TotalWeignt "+totalWeight);
+//    RConsole.println("MCL  MAX W " + maxWeight +" TotalWeignt "+totalWeight);
     if(maxWeight < 0.1f )return false;
     return true;
   }
@@ -448,17 +448,17 @@ public class MCLParticleSet {
       }
   }
 
-  public void logParticles(Datalogger log)
-  {
-    for (int i = 0; i < numParticles; i++)
-    {
-         MCLParticle part = getParticle(i);
-          Pose pose = part.getPose();
-          float weight = part.getWeight();
-          log.writeLog(pose.getX(),pose.getY(),pose.getHeading(),weight);
-    }
-    log.writeLog(99,99,99,99);
-  }
+//  public void logParticles(Datalogger log)
+//  {
+//    for (int i = 0; i < numParticles; i++)
+//    {
+//         MCLParticle part = getParticle(i);
+//          Pose pose = part.getPose();
+//          float weight = part.getWeight();
+//          log.writeLog(pose.getX(),pose.getY(),pose.getHeading(),weight);
+//    }
+//    log.writeLog(99,99,99,99);
+//  }
 
   /**
    * Load serialized particles from a data input stream
