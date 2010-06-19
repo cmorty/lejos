@@ -8,13 +8,13 @@ import lejos.nxt.addon.NXTLineLeader.LineColor;
 /**
  * 
  * An Example to show how to use NXTLineLeader with 2 NXT Motors.
- * The results are fantastics if you compare this sensor in compare to one light sensor 
+ * The results are fantastic if you compare this sensor in compare to one light sensor 
  * to create the classic line follower robot
  * 
  * @author Eric Pascual
  *
  */
-public class NXTLLTest {
+public class NXTLineLeaderTest {
 	NXTLineLeader ll = new NXTLineLeader(SensorPort.S1);
 
 	void go() {
@@ -81,7 +81,7 @@ public class NXTLLTest {
 	}
 
 	public static void main(String[] args) {
-		new NXTLLTest().go();
+		new NXTLineLeaderTest().go();
 	}
 }
 
