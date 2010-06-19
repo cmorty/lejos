@@ -1,6 +1,9 @@
 package lejos.robotics.localization;
 
-//import lejos.util.Datalogger;
+
+import lejos.nxt.comm.RConsole;
+import lejos.util.Datalogger;
+import lejos.nxt.*;
 
 import java.awt.Rectangle;
 import lejos.geom.*;
@@ -194,8 +197,100 @@ public class MCLParticleSet {
         }
       }
     }
+//    estimatePose();
     return false;
   }
+  /**
+   * Resample the set picking those with higher weights.
+   * 
+   * Note that the new set has multiple instances of the particles with higher
+   * weights.
+   * 
+   * @return true iff lost
+   */
+  public boolean resampleBasic() {
+    // Rename particles as oldParticles and create a new set
+    MCLParticle[] oldParticles = particles;
+    particles = new MCLParticle[numParticles];
+
+    // Continually pick a random number and select the particles with
+    // weights greater than or equal to it until we have a full
+    // set of particles.
+    int count = 0;
+    int iterations = 0;
+
+    while (count < numParticles)
+    {
+      if (iterations >= maxIterations)
+      {
+        return false;
+
+      } // exceeded max iterations
+      count = 0;
+      while( count < numParticles )
+      {
+        iterations++;
+//      for (int i = 0; i < numParticles && count < numParticles; i++) {
+        int i = random.nextInt(numParticles);
+        float w = oldParticles[i].getWeight();
+        if (w >= random.nextFloat() * maxWeight)
+        {
+          Pose p = oldParticles[i].getPose();
+          float x = p.getX();
+          float y = p.getY();
+          float angle = p.getHeading();
+          // Create a new instance of the particle and set its weight
+          particles[count] = new MCLParticle(new Pose(x, y, angle));
+          particles[count].setWeight(oldParticles[i].getWeight());
+          count++;
+        }
+      }
+    }
+    return false;
+  }
+  /**
+    Thrun Low variance resampling algorithm pg 110 table 4.4
+   */
+  public void resampleLowVar()
+  {
+    RConsole.println("mcl resample total weight "+ totalWeight);
+    //  table 4.4 line numbers
+    MCLParticle[] oldParticles = particles; // line 2
+    particles = new MCLParticle[numParticles];
+    float np_1 = 1.0f/ numParticles;
+    float r = random.nextFloat() * np_1;// line 3
+    float c = oldParticles[0].getWeight()/totalWeight;//. line 4
+    int k = 0; 
+    int iold = 0;
+
+    int i=  0; // line 5
+
+    for (int m = 0; m < numParticles; m++)// line 6
+    {
+      float u = r + m * np_1; // line 7
+      while (u > c)// line 8
+      {
+        i++;  // line 9
+        if (i == numParticles)
+        {
+          RConsole.println("Resample " + i + " m " + m + " weight " +
+                  oldParticles[i - 1].getWeight() / totalWeight);
+          i = 0;// avoid array out of bounds
+        }
+        float w = oldParticles[i].getWeight() / totalWeight;
+//        if( w < .01/numParticles )RConsole.println("w "+w+" i "+i+" c "+c+" u "+u);
+        c += oldParticles[i].getWeight() / totalWeight; // line 10
+      }// end while  // line 11
+      particles[m] = oldParticles[i];// line 12
+      if (i != iold)
+      {
+        iold = i;
+        k++;
+      }
+    } //  end  for  line 13
+ RConsole.println("Resample old particles used "+k);
+  }
+
 
   /**
    * Calculate the weight for each particle
@@ -203,7 +298,8 @@ public class MCLParticleSet {
    * @param rr the robot range readings
    */
   public boolean  calculateWeights(RangeReadings rr, RangeMap map) {
-  
+   RConsole.print(" calc weights using vals:  "+rr.getRange(0)+" "+rr.getRange(1)+" "
+           +rr.getAngle(0)+" "+rr.getAngle(1));
    if(rr.incomplete()) return false;
     maxWeight = 0f;
     totalWeight = 0f;
@@ -217,6 +313,7 @@ public class MCLParticleSet {
       }
       totalWeight += weight;
     }
+    RConsole.println("MCL  MAX W " + maxWeight +" TotalWeignt "+totalWeight);
     if(maxWeight < 0.1f )return false;
     return true;
   }
@@ -234,6 +331,9 @@ public class MCLParticleSet {
     }
 //    RConsole.println("particles apply move est pose ");
   }
+
+
+
   
 //  /**
 //   * Return the minimum rectangle enclosing all the particles
@@ -348,17 +448,17 @@ public class MCLParticleSet {
       }
   }
 
-//  public void logParticles(Datalogger log)
-//  {
-//    for (int i = 0; i < numParticles; i++)
-//    {
-//         MCLParticle part = getParticle(i);
-//          Pose pose = part.getPose();
-//          float weight = part.getWeight();
-//          log.writeLog(pose.getX(),pose.getY(),pose.getHeading(),weight);
-//    }
-//    log.writeLog(99,99,99,99);
-//  }
+  public void logParticles(Datalogger log)
+  {
+    for (int i = 0; i < numParticles; i++)
+    {
+         MCLParticle part = getParticle(i);
+          Pose pose = part.getPose();
+          float weight = part.getWeight();
+          log.writeLog(pose.getX(),pose.getY(),pose.getHeading(),weight);
+    }
+    log.writeLog(99,99,99,99);
+  }
 
   /**
    * Load serialized particles from a data input stream
@@ -460,4 +560,10 @@ public class MCLParticleSet {
       dos.writeFloat(p.getWeight());
       dos.flush();
   }
+
+   // to do   fix MCLFrame in pccomms  us use MCLPoseProvider
+  public float getMaxX(){ return 0;}
+   public float getMaxY(){ return 0;}
+    public float getMinX(){ return 0;}
+     public float getMinY(){ return 0;}
 }
