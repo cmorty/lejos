@@ -1,7 +1,9 @@
 package lejos.robotics.localization;
 
+import lejos.nxt.comm.RConsole;
+//import lejos.util.Datalogger;
+import lejos.nxt.*;
 
-import lejos.util.Datalogger;
 import java.awt.Rectangle;
 import lejos.geom.*;
 import java.io.*;
@@ -348,17 +350,17 @@ public class MCLParticleSet {
       }
   }
 
-  public void logParticles(Datalogger log)
-  {
-    for (int i = 0; i < numParticles; i++)
-    {
-         MCLParticle part = getParticle(i);
-          Pose pose = part.getPose();
-          float weight = part.getWeight();
-          log.writeLog(pose.getX(),pose.getY(),pose.getHeading(),weight);
-    }
-    log.writeLog(99,99,99,99);
-  }
+//  public void logParticles(Datalogger log)
+//  {
+//    for (int i = 0; i < numParticles; i++)
+//    {
+//         MCLParticle part = getParticle(i);
+//          Pose pose = part.getPose();
+//          float weight = part.getWeight();
+//          log.writeLog(pose.getX(),pose.getY(),pose.getHeading(),weight);
+//    }
+//    log.writeLog(99,99,99,99);
+//  }
 
   /**
    * Load serialized particles from a data input stream
