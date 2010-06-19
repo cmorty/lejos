@@ -1,8 +1,6 @@
 package lejos.robotics.localization;
 
-import lejos.nxt.comm.RConsole;
 //import lejos.util.Datalogger;
-import lejos.nxt.*;
 
 import java.awt.Rectangle;
 import lejos.geom.*;
