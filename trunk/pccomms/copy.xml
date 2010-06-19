@@ -87,6 +87,7 @@
   			<fileset dir="../classes">
   				<include name="lejos/robotics/localization/*.java"/>
   				<exclude name="lejos/robotics/localization/TachoLocalizer.java"/>
+  				<exclude name="lejos/robotics/localization/MCLWayPointNavigator.java"/>
   				<include name="lejos/robotics/localization/package.html"/>
   			</fileset>
   		</copy>  		
