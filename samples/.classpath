@@ -23,8 +23,10 @@
 	<classpathentry excluding="build.xml" kind="src" path="HelloWorld"/>
 	<classpathentry excluding="build.xml" kind="src" path="Homer"/>
 	<classpathentry excluding="build.xml" kind="src" path="I2CDevices"/>
+	<classpathentry excluding="build.xml" kind="src" path="IRTransmit"/>
 	<classpathentry excluding="build.xml" kind="src" path="JSR256Test"/>
 	<classpathentry excluding="build.xml" kind="src" path="KalmanTest"/>
+	<classpathentry excluding="build.xml" kind="src" path="KalmanTest2"/>
 	<classpathentry excluding="build.xml" kind="src" path="LatteboxTest"/>
 	<classpathentry excluding="build.xml" kind="src" path="LCDUI"/>
 	<classpathentry excluding="build.xml" kind="src" path="Line"/>
@@ -55,6 +57,7 @@
 	<classpathentry excluding="build.xml" kind="src" path="RCXTempTest"/>
 	<classpathentry excluding="build.xml" kind="src" path="RemoteNXTTest"/>
 	<classpathentry excluding="build.xml" kind="src" path="RFIDTest"/>
+	<classpathentry excluding="build.xml" kind="src" path="RTCTest"/>
 	<classpathentry excluding="build.xml" kind="src" path="SensorMuxTest"/>
 	<classpathentry excluding="build.xml" kind="src" path="SignalTest"/>
 	<classpathentry excluding="build.xml" kind="src" path="Sniffer"/>
