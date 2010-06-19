@@ -28,8 +28,8 @@ public class UltrasonicSensor extends I2CSensor implements RangeFinder
 	private static final byte MODE_CAPTURE = 0x3;
 	private static final byte MODE_RESET = 0x4;
 	/* Device timing */
-	private static final int DELAY_CMD = 0x8;
-	private static final int DELAY_AVAILABLE = 0x20;
+	private static final int DELAY_CMD = 0x5;
+	private static final int DELAY_AVAILABLE = 0xf;
 	
 	private byte[] buf = new byte[1];
 	private byte[] inBuf = new byte[8];
