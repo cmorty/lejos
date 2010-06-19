@@ -1,5 +1,7 @@
 package lejos.robotics;
 
+import lejos.robotics.RangeReadings;
+
 /*
  * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
  * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
@@ -14,8 +16,14 @@ public interface RangeScanner {
 	/**
 	 * Take a set of range readings. The RangeReadings object defines the
 	 * number of readings and their angles to the robot's heading.
-	 * 
 	 * @return the range readings
 	 */ 
 	public RangeReadings getRangeValues();
+
+        /**
+         * set the array of angles at which range readings are to be taken
+         * @param angles
+         */
+
+        public void setAngles(float[] angles);
 }

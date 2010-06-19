@@ -62,7 +62,7 @@ public class WayPoint extends Point {
 		if (maxPositionError >= 0 && 
 		    p.distanceTo(this) > maxPositionError) return false;
 		if (headingRequired && maxHeadingError >= 0 && 
-			    Math.abs(p.getHeading() - heading) > maxPositionError) return false;
+			    Math.abs(p.getHeading() - heading) > maxHeadingError) return false;
 		return true;
 	}
 }

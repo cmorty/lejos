@@ -23,7 +23,7 @@ public interface MoveController extends MoveProvider {
    *
    * @return The movement it just achieved?
    */
-   public boolean stop();
+   public void stop();
 
   /**
    * true if the robot is moving 
@@ -37,21 +37,21 @@ public interface MoveController extends MoveProvider {
    * 
    * @param distance The positive or negative distance to move the robot.
    */
-  public boolean travel(float distance);
+  public void travel(float distance);
 
   /**
    * Moves the NXT robot a specific distance. A positive value moves it forward and a negative value moves it backward.
    * @param distance The positive or negative distance to move the robot, in wheel diameter units.
    * @param immediateReturn If immediateReturn is true then the method returns immediately.
    */
-  public boolean travel(float distance, boolean immediateReturn);
+  public void travel(float distance, boolean immediateReturn);
   
   public float getMovementIncrement();
   
-  public void setMoveSpeed(float speed);
+  public void setTravelSpeed(float speed);
   
-  public float getMoveSpeed();
+  public float getTravelSpeed();
   
-  public float getMoveMaxSpeed();
+  public float getMaxTravelSpeed();
   
 }
