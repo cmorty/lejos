@@ -39,7 +39,7 @@ public class NXTMMX extends I2CSensor{
 	 */
 	public  NXTMMX(I2CPort port){
 		super(port);
-		setAddress(0x06/2);
+		setAddress(0x06);
 		reset();
 		A = new NXTMMXMotor(this, 0);
 		B = new NXTMMXMotor(this, 1);
