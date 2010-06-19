@@ -1,6 +1,6 @@
-<project name="RFIDTest" default="uploadandrun">
+<project name="RTCTest" default="uploadandrun">
     <description>
-    	RFIDTest build file
+    	RTCTest build file
     </description>
 
 	<target name="clean" description="clean up all generated files" >

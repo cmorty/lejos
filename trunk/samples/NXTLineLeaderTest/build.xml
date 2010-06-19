@@ -1,6 +1,6 @@
-<project name="RFIDTest" default="uploadandrun">
+<project name="NXTLineLeader" default="uploadandrun">
     <description>
-    	RFIDTest build file
+    	NXTLineLeader build file
     </description>
 
 	<target name="clean" description="clean up all generated files" >
