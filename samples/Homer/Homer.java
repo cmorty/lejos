@@ -169,8 +169,8 @@ public class Homer implements RangeScanner {
    * Check if estimated pose is accurate enough
    */
   boolean goodEstimate(Pose pose) {
-    int width = particles.getErrorRect().width;
-    int height = particles.getErrorRect().height;
+    int width = mcl.getErrorRect().width;
+    int height = mcl.getErrorRect().height;
     System.out.println("At " + (int) pose.getX() + "," + (int)  pose.getY() + " Error: " + width + "," + height + " Weight: " + particles.getMaxWeight());
     return width < 50 && height < 50;
   }
@@ -185,5 +185,10 @@ public class Homer implements RangeScanner {
       else randomMove();
     }
   }
+
+public void setAngles(float[] angles) {
+	// TODO Auto-generated method stub
+	
+}
 }
 
