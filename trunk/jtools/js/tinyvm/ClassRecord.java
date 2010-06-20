@@ -821,6 +821,8 @@ public class ClassRecord implements WritableData
       assert className.indexOf('.') == -1: "Precondition: className is in correct form: "
          + className;
 
+      String className2 = className.replace('/', '.');
+      
       InputStream pIn;
       try
       {
@@ -829,7 +831,7 @@ public class ClassRecord implements WritableData
       }
       catch (IOException e)
       {
-         throw new TinyVMException("Class " + className.replace('/', '.')
+         throw new TinyVMException("Class " + className2
             + " (file " + className + ".class) not found in CLASSPATH " + aCP);
       }
 
@@ -847,6 +849,11 @@ public class ClassRecord implements WritableData
          // TODO refactor exceptions
          throw new TinyVMException(e.getMessage(), e);
       }
+      
+      String actualName = pCR.iCF.getClassName();
+      if (!actualName.equals(className2))
+          throw new TinyVMException("found class "+actualName+" instead of requested "+className2);
+      
       pCR.iType = TinyVMType.T_REFERENCE;
       pCR.iNumDims = 0;
       pCR.iArrayElementClass = null;
