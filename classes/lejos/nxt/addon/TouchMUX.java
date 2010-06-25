@@ -9,7 +9,7 @@ import lejos.nxt.ADSensorPort;
  */
 
 /**
- * Interface for the Mindsensors Touch Multiplexor.
+ * Interface for the Mindsensors Touch Multiplexer.
  * This device allows up to three touch sensors to be attached to a single NXT
  * sensor port.
  *
@@ -32,7 +32,7 @@ public class TouchMUX {
 
         /**
          * Create an object to represent one touch sensor attached to the
-         * multiplexor.
+         * multiplexer.
          * @param touchId The id of this sensor.
          */
         MuxTouchSensor(int touchId)
@@ -61,8 +61,8 @@ public class TouchMUX {
     public final Touch T3 = new MuxTouchSensor(ID_T3);
     
     /**
-     * Create a object to provide access to a touch sensor multiplexor
-     * @param port The NXT sensor port to which the multiplexor is attached
+     * Create a object to provide access to a touch sensor multiplexer
+     * @param port The NXT sensor port to which the multiplexer is attached
      */
     public TouchMUX(ADSensorPort port)
     {
@@ -140,7 +140,7 @@ public class TouchMUX {
     private static final int L123 = 352;
 
     /**
-     * Read the touch multiplexor and return a bit mask showing which sensors
+     * Read the touch multiplexer and return a bit mask showing which sensors
      * are currently pressed. Returns ID_T1 if T1 is pressed, ID_T2 if T2 is
      * pressed and ID_T3 id T3 is pressed. If more then one sensor is pressed
      * the return will be an or of the values.
