@@ -1,7 +1,7 @@
 package lejos.robotics.localization;
 
 import lejos.geom.Point;
-//import lejos.nxt.comm.RConsole;
+import lejos.nxt.comm.RConsole;
 import lejos.robotics.Pose;
 import lejos.robotics.mapping.RangeMap;
 import lejos.robotics.proposal.DifferentialPilot;
@@ -45,7 +45,7 @@ public class MCLWayPointNavigator
      mcl.update();
     _pose = mcl.getPose();
 //    dl.writeLog(_pose.getX(),_pose.getY(),_pose.getHeading());
-//    RConsole.println("initial pose estimate "+_pose);
+     RConsole.println("initial pose estimate "+_pose);
   }
 /**
  * The robot will follow the route defined by the list of WayPoints.
@@ -75,9 +75,9 @@ public class MCLWayPointNavigator
     _destination = destination;
     _pose = mcl.getPose();
     float nextHeading = _pose.angleTo(destination);
-    float angle = normalize(nextHeading - _pose.getHeading());
+    float angle =_pose.relativeBearing(destination);
 
-//    RConsole.println("Destinatin "+destination+" amgle "+angle+" heading "+nextHeading);
+    RConsole.println("Destination "+destination+" direction "+nextHeading+" rotation angle "+angle);
     float[] angles =
     {
       normalize(180 - nextHeading), normalize(-90 - nextHeading)
@@ -90,9 +90,9 @@ public class MCLWayPointNavigator
     pilot.travel(distance);
      mcl.update();  // to Do : make this update automatic
     _pose = mcl.getPose();
-//    RConsole.print("at waypoint "+mcl.getPose());
-//       RConsole.println(" sX "+mcl.getSigmaX()+" sY "+
-//           mcl.getSigmaY()+" sH "+mcl.getSigmaHeading());
+    RConsole.print("at waypoint "+mcl.getPose());
+       RConsole.println(" sX "+mcl.getSigmaX()+" sY "+
+           mcl.getSigmaY()+" sH "+mcl.getSigmaHeading());
   }
 
   /**
