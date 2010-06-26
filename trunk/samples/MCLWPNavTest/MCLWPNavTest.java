@@ -30,9 +30,9 @@ public class MCLWPNavTest {
 
       RotatingRangeScanner rs = new RotatingRangeScanner(Motor.B, SensorPort.S3);
       FixedRangeScanner fs = new FixedRangeScanner(p,SensorPort.S3);
-     Line[] lines = {
-      new Line(0,0,0,200),
-        new Line(0,0,200,0 )};
+     lejos.geom.Line[] lines = {
+      new lejos.geom.Line(0,0,0,200),
+        new lejos.geom.Line(0,0,200,0 )};
       RangeMap aMap = new LineMap(lines,null);
       MCLWayPointNavigator  robot = new MCLWayPointNavigator(p, fs,aMap);
        ArrayList<WayPoint>  route = new ArrayList<WayPoint>();
