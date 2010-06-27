@@ -1186,7 +1186,7 @@ public class Bluetooth extends NXTCommDevice
 			byte[] device = new byte[ADDRESS_LEN];
 			byte[] devclass = new byte[4];
 			byte[] name = new byte[NAME_LEN];
-			Vector retVec = new Vector(1);
+			Vector<RemoteDevice> retVec = new Vector<RemoteDevice>(1);
 			RemoteDevice curDevice;
 			cmdStart();
 			cmdInit(MSG_DUMP_LIST, 1, 0, 0);
@@ -1411,7 +1411,7 @@ public class Bluetooth extends NXTCommDevice
 	 * @return a vector of all the devices found
 	 */
 	public static Vector inquire(int maxDevices,  int timeout, byte[] cod) {
-		Vector retVec = new Vector();
+		Vector<RemoteDevice> retVec = new Vector<RemoteDevice>();
 		byte[] device = new byte[ADDRESS_LEN];
 		byte[] name = new byte[NAME_LEN];
         byte[] retCod = new byte[4];
@@ -1438,7 +1438,7 @@ public class Bluetooth extends NXTCommDevice
 					cmdComplete();
 					// Fill in the names	
 					for (int i = 0; i < retVec.size(); i++) {
-						RemoteDevice btrd = ((RemoteDevice) retVec.elementAt(i));
+						RemoteDevice btrd = retVec.elementAt(i);
 						String s = btrd.getFriendlyName(false);
 						if (s.length() == 0) {
 							String nm = lookupName(btrd.getDeviceAddr());

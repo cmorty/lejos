@@ -206,7 +206,7 @@ protected  ArrayList<WayPoint> getRoute(Node destination)
     Node n = destination;
     WayPoint  w ;
     do {  // add waypoints to route as push down stack
-      w = new WayPoint((Point)n.getLocation());
+      w = new WayPoint(n.getLocation());
       route.add(0, w);
       n = n.getPredecessor();
     } while (n != null);

@@ -345,8 +345,8 @@ public class DifferentialFeedbackPilot implements Pilot, MoveProvider
                             continue; // Leave the last few rotations to the motor regulator
 
                         // Actuate motors
-                        leftTarget = leftCount - (int)rotationsLeft;
-                        rightTarget = rightCount + (int)rotationsLeft;
+                        leftTarget = leftCount - rotationsLeft;
+                        rightTarget = rightCount + rotationsLeft;
                         leftMotor.rotateTo(leftTarget, true);
                         rightMotor.rotateTo(rightTarget, true);
                     }
@@ -392,8 +392,8 @@ public class DifferentialFeedbackPilot implements Pilot, MoveProvider
                             continue; // Leave the last few rotations to the motor regulator
 
                         // Actuate motors
-                        leftTarget = leftCount + (int)rotationsLeft;
-                        rightTarget = rightCount + (int)rotationsLeft;
+                        leftTarget = leftCount + rotationsLeft;
+                        rightTarget = rightCount + rotationsLeft;
                         leftMotor.rotateTo(leftTarget, true);
                         rightMotor.rotateTo(rightTarget, true);
                     }

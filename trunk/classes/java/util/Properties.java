@@ -13,7 +13,7 @@ import java.io.BufferedWriter;
  * @author BB
  *
  */
-public class Properties extends Hashtable {
+public class Properties extends Hashtable<Object, Object> {
     
 	private static final long serialVersionUID = 4112578634029874840L;
 
@@ -388,7 +388,7 @@ public class Properties extends Hashtable {
         //bw.write("#" + new Date().toString());
         //bw.newLine();
         synchronized (this) {
-            for (Enumeration e = keys(); e.hasMoreElements();) {
+            for (Enumeration<Object> e = keys(); e.hasMoreElements();) {
             	String key = (String)e.nextElement();
             	String val = (String)get(key);
             	key = saveConvert(key, true, escUnicode);
@@ -414,17 +414,17 @@ public class Properties extends Hashtable {
         return (val == null) ? defaultValue : val;
     }
 
-    public Enumeration propertyNames() {
-        Hashtable h = new Hashtable();
+    public Enumeration<?> propertyNames() {
+        Hashtable<Object,Object> h = new Hashtable<Object,Object>();
         enumerate(h);
         return h.keys();
     }
     
     public void list(PrintStream out) {
         out.println("- properties -");
-        Hashtable h = new Hashtable();
+        Hashtable<Object,Object> h = new Hashtable<Object,Object>();
         enumerate(h);
-        for (Enumeration e = h.keys() ; e.hasMoreElements() ;) {
+        for (Enumeration<Object> e = h.keys() ; e.hasMoreElements() ;) {
             String key = (String)e.nextElement();
             String val = (String)h.get(key);
             if (val.length() > 40) {
@@ -434,27 +434,28 @@ public class Properties extends Hashtable {
         }
     }
 
-    private synchronized void enumerate(Hashtable h) {
-        if (defaults != null) defaults.enumerate(h);
+    private synchronized void enumerate(Hashtable<Object,Object> h) {
+        if (defaults != null)
+        	defaults.enumerate(h);
      
-        for (Enumeration e = keys() ; e.hasMoreElements() ;) {
+        for (Enumeration<Object> e = keys() ; e.hasMoreElements() ;) {
         	String key = (String)e.nextElement();
             h.put(key, get(key));
         }
     }
 
-    private synchronized void enumerateStringProperties(Hashtable h) {
-        if (defaults != null) {
-            defaults.enumerateStringProperties(h);
-        }
-        for (Enumeration e = keys() ; e.hasMoreElements() ;) {
-            Object k = e.nextElement();
-            Object v = get(k);
-            if (k instanceof String && v instanceof String) {
-                h.put((String) k, (String) v);
-            }
-        }
-    }
+//    private synchronized void enumerateStringProperties(Hashtable<Object,Object> h) {
+//        if (defaults != null) {
+//            defaults.enumerateStringProperties(h);
+//        }
+//        for (Enumeration<Object> e = keys() ; e.hasMoreElements() ;) {
+//            Object k = e.nextElement();
+//            Object v = get(k);
+//            if (k instanceof String && v instanceof String) {
+//                h.put(k, v);
+//            }
+//        }
+//    }
 
     private static char toHex(int nibble) {
         return hexDigit[(nibble & 0xF)];

@@ -15,7 +15,7 @@ import java.io.*;
 public class Datalogger
 {
 
-  private ArrayList log = new ArrayList<Float>();
+  private ArrayList<Float> log = new ArrayList<Float>();
 
   /**
    * write a float  value to the log
@@ -124,7 +124,7 @@ public class Datalogger
         dataOut.flush();
         for (int i = 0; i < log.size(); i++)
         {
-          Float v = (Float) log.get(i);
+          Float v = log.get(i);
           dataOut.writeFloat(v.floatValue());
         }
         dataOut.flush();

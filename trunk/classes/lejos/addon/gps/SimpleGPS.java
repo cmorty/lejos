@@ -48,7 +48,7 @@ public class SimpleGPS extends Thread {
 	private boolean shutdown = false;
 	
 	// Listener-notifier
-	static protected Vector listeners = new Vector();
+	static protected Vector<GPSListener> listeners = new Vector<GPSListener>();
 
 	
 	/**
@@ -326,7 +326,7 @@ public class SimpleGPS extends Thread {
 		 *  if there are any listeners before making unnecessary copy. */
 		
 		for(int i=0; i<listeners.size();i++){
-			GPSListener gpsl = (GPSListener)listeners.elementAt(i);
+			GPSListener gpsl = listeners.elementAt(i);
 			gpsl.sentenceReceived(sen);
 		}
 	}

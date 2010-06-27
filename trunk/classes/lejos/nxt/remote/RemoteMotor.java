@@ -122,6 +122,7 @@ public class RemoteMotor implements TachoMotor, NXTProtocol {
 	 * @deprecated
 	 * @return rotation count.
 	 */
+    @Deprecated
 	public int getRotationCount() {
 		// !! Consider making this protected to keep off limits from users.
 		return getTachoCount();
@@ -136,6 +137,7 @@ public class RemoteMotor implements TachoMotor, NXTProtocol {
 	 * @deprecated
 	 * @return Block Encoder count.
 	 */
+    @Deprecated
 	public int getBlockTacho() {
 		try {
 			OutputState state = nxtCommand.getOutputState(id);
@@ -245,6 +247,7 @@ public class RemoteMotor implements TachoMotor, NXTProtocol {
 	 * @deprecated
 	 * @return Error value. 0 means success. See lejos.pc.comm.ErrorMessages for details.
 	 */
+    @Deprecated
 	public int resetBlockTacho() {
 		// Note: This method can also reset tachometer relative to last position.
 		// I didn't include this because it seems unintuitive, but the 

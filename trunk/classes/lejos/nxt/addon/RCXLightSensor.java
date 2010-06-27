@@ -45,6 +45,7 @@ public class RCXLightSensor implements SensorConstants, LampLightDetector {
 	  * the LED go on when you call this method.
 	  * @deprecated Use {@link #setFloodlight(boolean)} with true instead 
 	  */
+    @Deprecated
 	public void activate()
 	{
 		setFloodlight(true);
@@ -54,6 +55,7 @@ public class RCXLightSensor implements SensorConstants, LampLightDetector {
      * Passivates an RCX light sensor.
      * @deprecated Use {@link #setFloodlight(boolean)} with false instead 
 	 */
+    @Deprecated
 	public void passivate()
 	{
 		setFloodlight(false);
@@ -64,6 +66,7 @@ public class RCXLightSensor implements SensorConstants, LampLightDetector {
 	 * @return Value as a percentage.
 	 * @deprecated Use {@link #getLightValue()} instead 
 	 */
+    @Deprecated
 	public int readValue()
 	{
 		return getLightValue();

@@ -14,7 +14,7 @@ package java.util;
 /**
  * A FIFO Queue of objects. 
  */
-public class Queue extends Vector {
+public class Queue<E> extends Vector<E> {
 	
 	//TODO in JDK, java.util.Queue is an interface
 
@@ -44,7 +44,7 @@ public class Queue extends Vector {
 	 * @param anObject the object
 	 * @return Object the object pushed onto the Queue
 	 */
-    public Object push(Object anObject) {
+    public E push(E anObject) {
     	// add the object to base vector
 		addElement(anObject);
 		return anObject;
