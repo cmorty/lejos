@@ -14,7 +14,7 @@ import lejos.nxt.SensorPort;
  */
 public class NXTSensorConnection implements SensorConnection {
 	private NXTChannelInfo[] channelInfos;
-	private Hashtable channels = new Hashtable();
+	private Hashtable<ChannelInfo, Channel> channels = new Hashtable<ChannelInfo, Channel>();
 	private I2CSensor i2cSensor;
 	private byte[] buf = new byte[2];
 	private NXTSensorInfo info;
@@ -78,7 +78,7 @@ public class NXTSensorConnection implements SensorConnection {
 	}
 	
 	public Channel getChannel(ChannelInfo channelInfo) {
-		return (Channel) channels.get(channelInfo);
+		return channels.get(channelInfo);
 	}
 
 	public Data[] getData(int bufferSize) throws IOException {

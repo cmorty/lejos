@@ -310,6 +310,7 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
   /**
    * @deprecated  this class always uses smooth acceleration
    */
+  @Deprecated
   public void smoothAcceleration(boolean yes) { }
 
    /**
@@ -324,6 +325,7 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
    * @deprecated  this class always uses speed regulation.
    * @param  yes is true for speed regulation on
    */
+  @Deprecated
   public void regulateSpeed(boolean yes)
   {
   }
@@ -427,6 +429,7 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
   /**
    * @deprecated this class always uses speed regulation
    */
+  @Deprecated
   public boolean isRegulating()
   {
     return true;

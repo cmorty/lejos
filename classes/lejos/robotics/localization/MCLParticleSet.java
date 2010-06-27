@@ -303,7 +303,7 @@ public class MCLParticleSet {
    if(rr.incomplete()) return false;
     maxWeight = 0f;
     totalWeight = 0f;
-    float minWeight = (float) .001f/numParticles;
+    float minWeight = .001f /numParticles;
     for (int i = 0; i < numParticles; i++) {
       particles[i].calculateWeight(rr, map, twoSigmaSquared);
       float weight = particles[i].getWeight();

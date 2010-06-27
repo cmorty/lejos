@@ -32,7 +32,7 @@ public abstract class LocationProvider {
 	 * <li>[2] is the proximityRadius as a Float</li>
 	 * </ul>
 	 */
-	protected static final Vector listeners = new Vector();
+	protected static final Vector<Object[]> listeners = new Vector<Object[]>();
 	
 	/**
 	 * Empty constructor to help implementations and extensions. This is not intended to be used by applications. Applications should not make subclasses of this class and invoke this constructor from the subclass.
