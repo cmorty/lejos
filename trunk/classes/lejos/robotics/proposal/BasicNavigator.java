@@ -1,23 +1,33 @@
 package lejos.robotics.proposal;
 
+import lejos.robotics.proposal.*;
 
+//import lejos.nxt.comm.RConsole;
 import lejos.geom.Point;
 import lejos.robotics.*;
+import lejos.robotics.localization.*;
 
 /**
  * Moves the robot to a destination.
- * Uses any pilot that implements the MoveControl face.
- * You can executed methods on the Pilot if you wish; the Navitator pose will
- * automatically updated.
+ * Uses either a differenial pilot or a steering pilot
+ * You can executed methods directly on the Pilot if you wish;
+ * the Navitator pose will automatically be updated
  * @author Roger
  */
-
 public class BasicNavigator
 {
-  public BasicNavigator(ArcRotateMoveController  pilot )
-  {
+  public BasicNavigator(ArcMoveController  pilot, PoseProvider poseProvider )
+  {  // toDo - modify to use MCLPoseProvider
     _pilot = pilot;
-    drpp = new DeadReckonerPoseProvider((DifferentialPilot)_pilot);
+    if(poseProvider == null)
+    this.poseProvider = new DeadReckonerPoseProvider((ArcMoveController)_pilot);
+    else this.poseProvider =(MCLPoseProvider) poseProvider;
+    _radius = _pilot.getMinRadius();
+  }
+
+  public void setPose(Pose aPose)
+  {
+    _pose = aPose;
   }
 /**
  * Sets the initial pose of the robot;
@@ -25,9 +35,10 @@ public class BasicNavigator
  * @param y roboe Y location
  * @param heading robot initial heading
  */
-  public void setInitialPose(float x, float y, float heading)
+  public void setInitialPose(Pose aPose, float headingNoise, float radiusNoise )
   {
-    _pose = new Pose(x,y,heading);
+    _pose = aPose;
+    ((MCLPoseProvider)poseProvider).setInitialPose(_pose, headingNoise, radiusNoise);
   }
 
   /**
@@ -36,7 +47,7 @@ public class BasicNavigator
    * @return
    */
   public Pose getPose( ){
-    return drpp.getPose();
+    return poseProvider.getPose();
   }
   /**
    * returns a referenct to the pilot.
@@ -44,7 +55,7 @@ public class BasicNavigator
    * executed on the pilot.
    * @return
    */
-public ArcRotateMoveController getPilot(){ return _pilot;}
+public ArcMoveController getPilot(){ return _pilot;}
 
 /**
  * Moves the robot to the destinatin location
@@ -54,14 +65,24 @@ public ArcRotateMoveController getPilot(){ return _pilot;}
  */
   public void goTo(Point destination, boolean immediateReturn)
   {
+    _radius = _pilot.getMinRadius();
     _keepGoing = true;
     _destination = destination;
-    _pose = drpp.getPose();
-    float angle = _pose.relativeBearing(_destination);
-    _pilot.rotate(normalize(angle));
-    float distance = _pose.distanceTo(_destination);
-    _pilot.travel(distance, immediateReturn);
-    _pose = drpp.getPose();
+    _pose = poseProvider.getPose();
+    float destinationRelativeBearing = normalize(_pose.relativeBearing(_destination));
+    float distance = _pose.distanceTo(destination);
+    if(_radius == 0)
+    {
+      ((RotateMoveController) _pilot).rotate(destinationRelativeBearing,true);
+    }
+
+    else performArc(destinationRelativeBearing,false);
+    while(_pilot.isMoving() && _keepGoing)Thread.yield();
+    _pose = poseProvider.getPose();
+    distance = _pose.distanceTo(_destination);
+    _pilot.travel(distance,true);
+      while(_pilot.isMoving() && _keepGoing)Thread.yield();
+    _pose = poseProvider.getPose();
   }
 
   /**
@@ -85,6 +106,61 @@ public ArcRotateMoveController getPilot(){ return _pilot;}
     goTo(x,y,false);
   }
 /**
+ * go to the point
+ * @param p
+ */
+  public void goTo(Point p )
+  {
+    goTo((float)p.getX(),(float)p.getY());
+  }
+
+  /**
+   * Helper method for goTo() ; uses a simile altorithm for performing the
+   * arc move to change direction before
+   * the robot travels to the destination.  The default arc followed in the
+   * forward direction.  If the destination is inside the default arc, this
+   * method is called agin with the  second parameter set to <b>true</b>
+   * @param destinationRelativeBearing
+   * @param close  // true if the destination is inside of the default turning circle
+   */
+  protected void performArc(float destinationRelativeBearing,
+          boolean  close )
+  {
+    if(destinationRelativeBearing == 0)return;
+    int side = (int)Math.signum(destinationRelativeBearing);
+    if (close) side *= -1;
+    float xc,yc;   // turning center;
+    float centerBearing = _pose.getHeading() + side*90;  // direction of center from robot
+    centerBearing = (float) Math.toRadians(centerBearing);
+    xc = _pose.getX() + _radius*(float)Math.cos(centerBearing);
+    yc = _pose.getY() + _radius*(float)Math.sin(centerBearing);
+    Point center = new Point(xc,yc);
+    float centerToDestBearing = center.angleTo(_destination);
+    float  destDistance = (float) center.distance(_destination);
+//    float newHeading = 0;
+    // acatually, the actual tangent is perpendicular to the tangent angle.
+    float tangentAngle = (float)Math.toDegrees(Math.acos(_radius / destDistance));
+    if( destDistance < _radius )
+    {
+      performArc(destinationRelativeBearing ,true); // use the center on the opposice side
+      return;
+    }
+    else 
+    {
+    float newHeading  = centerToDestBearing + side* (90 - tangentAngle );
+    _pilot.arc(side*_radius,newHeading - _pose.getHeading(),true);
+    }
+  }
+
+   /**
+   * Interrupts the current move and stops the robot
+   */
+  public void interrupt()
+  {
+    stop();
+  }
+    
+/**
  * Stops the robot immediately.
  */
   public void stop()
@@ -106,9 +182,11 @@ public ArcRotateMoveController getPilot(){ return _pilot;}
   /**
    *
    */
-    public boolean _keepGoing = false;
-    protected ArcRotateMoveController _pilot;
-    protected DeadReckonerPoseProvider drpp;
+    protected boolean _keepGoing = false;
+    protected ArcMoveController _pilot;
+    protected PoseProvider poseProvider;
+//    DeadReckonerPoseProvider poseProvider;
     protected Pose _pose = new Pose();
     protected Point _destination;
+    protected float _radius;
 }
