@@ -1,14 +1,18 @@
 package lejos.robotics.proposal;
 
+
+
 import lejos.robotics.proposal.*;
-import lejos.util.Delay;
 
 import java.util.*;
-//import lejos.nxt.comm.RConsole;
+
 
 /**
  *This  class can follow a sequence of way points;
  *Uses an inner class that has it own thresd to do the work.
+ * It can use either a differential pilot or steering pilot.
+ * Uses a PoseController to keep its pose updated, and calls its Waypoint Listeners
+ * when a way point is reached.
  * @author Roger
  */
 public class QueueNavigator  extends BasicNavigator
@@ -17,15 +21,16 @@ public class QueueNavigator  extends BasicNavigator
  * can use any pilot the impolements the MoveControl interrface
  * @param pilot
  */
-  public QueueNavigator(ArcRotateMoveController pilot )
+  public QueueNavigator(ArcMoveController pilot )
   {
-    super(pilot);
+    super(pilot, null);
     _nav = new Nav();
     _nav.start();
   }
+
 /**
  * Betin following the route  Can be a non-blocking method
- * @param aRoute seqiemce of way points to be visited
+ * @param aRoute sequemce of way points to be visited
  * @param immediateReturn if true, returns immidiately
  */
   public void folowRoute( ArrayList<WayPoint>  aRoute, boolean immediateReturn)
@@ -35,6 +40,7 @@ public class QueueNavigator  extends BasicNavigator
     if(immediateReturn)return;
     else while(_keepGoing) Thread.yield();
   }
+
 /**
  * Add a WayPointListener
  * @param aListener
@@ -55,14 +61,6 @@ public class QueueNavigator  extends BasicNavigator
     _keepGoing = true;
   }
 
-  /**
-   * Stop the robot
-   */
-  public void interrupt()
-  {
-    _keepGoing =false;
-    stop();
-  }
 
 /**
  * Resume the route after an interrupt
@@ -70,11 +68,10 @@ public class QueueNavigator  extends BasicNavigator
   public void resume()
   {
     if(_route.size() > 0 ) _keepGoing = true;
-    //RConsole.println("resume "+_route.size());
   }
 
   /**
-   * emptay the  queue
+   * Stop the robot and emptay the  queue
    */
   public void flush()
   {
@@ -90,7 +87,9 @@ public WayPoint getWaypoint()
   if(_route.size() <= 0 ) return null;
   else return _route.get(0);
 }
-
+/**
+ *this inner class runs the thread that processes the waypoint queue
+ */
   protected  class Nav extends Thread
   {
     boolean more = true;
@@ -103,20 +102,19 @@ public WayPoint getWaypoint()
         while (_keepGoing)
         {
           _destination = _route.get(0);
-          _pose = drpp.getPose();
-          float angle = _pose.relativeBearing(_destination);
-
+          _pose = poseProvider.getPose();
+          float destinationRelativeBearing = _pose.relativeBearing(_destination);
          if(!_keepGoing) break;
-          _pilot.rotate(normalize(angle), true);
-          //RConsole.println("rotate "+angle);
+           if(_radius == 0)
+    {
+      ((RotateMoveController) _pilot).rotate(destinationRelativeBearing,true);
+    }
+           else performArc(destinationRelativeBearing,true);
           while (_pilot.isMoving() && _keepGoing)
           {
             Thread.yield();
           }
-           //RConsole.println("rotate "+angle+" incr "+_pilot.getAngleIncrement());
-//          Delay.msDelay(20);
-          //RConsole.println("WPN "+drpp.getPose());
-
+           _pose = poseProvider.getPose();
           float distance = _pose.distanceTo(_destination);
            if(!_keepGoing) break;
           _pilot.travel(distance, true);
@@ -125,23 +123,20 @@ public WayPoint getWaypoint()
             Thread.yield();
           }
           if(!_keepGoing) break;
-          //RConsole.println("travel "+distance+" dist "+_pilot.getMovementIncrement());
-//          Delay.msDelay(20);
-          //RConsole.println("WPN "+drpp.getPose());
-          _pose = drpp.getPose();
+          _pose = poseProvider.getPose();
           if(listeners != null)
           {
             for(WayPointListener l : listeners)
-              l.atWayPoint(drpp.getPose());
+              l.atWayPoint(poseProvider.getPose());
           }
-          _route.remove(0);
+          if (_keepGoing && 0 < _route.size()) {_route.remove(0);}
           _keepGoing = _keepGoing && 0 < _route.size();
-//          System.out.println("NAV S "+_route.size()+" "+_keepGoing);
           Thread.yield();
-        }
-      }
-    }
-  }
+        } // end while keepGoing
+        Thread.yield();
+      }  // end while more
+    }  // end run
+  } // end Nav class
 
 //   int _count = 0;
    protected Nav _nav ;
