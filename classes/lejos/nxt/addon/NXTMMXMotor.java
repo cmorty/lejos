@@ -1,9 +1,5 @@
 package lejos.nxt.addon;
-import lejos.robotics.DCMotor;
-import lejos.robotics.Encoder;
-import lejos.robotics.TachoMotor;
-import lejos.robotics.TachoMotorListener;
-import lejos.robotics.Tachometer;
+
 /**
  * Supports Mindsensors NXTMMX. this device allows you to connect two 
  * additional motors to your robot. Multiple NXTMMXs can be chained together.
@@ -11,7 +7,7 @@ import lejos.robotics.Tachometer;
  * @author Michael D. Smith mdsmitty@gmail.com
  *
  */
-public class NXTMMXMotor implements DCMotor, Encoder, Tachometer, TachoMotor {
+public class NXTMMXMotor {
 
 	private NXTMMX mux;
 	private boolean rampUp = true;
@@ -22,24 +18,24 @@ public class NXTMMXMotor implements DCMotor, Encoder, Tachometer, TachoMotor {
 	private byte[] buffer = new byte[4];
 
 	//bits for the command register 0-7   
-	private final int CONTROL_SPEED =    0x01; //0
-	private final int CONTROL_RAMP =     0x02; //1
-	private final int CONTROL_RELATIVE = 0x04; //2
-	private final int CONTROL_TACHO =    0x08; //3
-	private final int CONTROL_TACHO_BREAK =      0x10; //4
-	private final int CONTROL_TACHO_LOCK =       0x20; //5
-	private final int CONTROL_TIME =     0x40; //6
-	private final int CONTROL_GO =       0x80; //7
+	private final int CONTROL_SPEED =       0x01; //0
+	private final int CONTROL_RAMP =        0x02; //1
+	private final int CONTROL_RELATIVE =    0x04; //2
+	private final int CONTROL_TACHO =       0x08; //3
+	private final int CONTROL_TACHO_BREAK = 0x10; //4
+	private final int CONTROL_TACHO_LOCK =  0x20; //5
+	private final int CONTROL_TIME =        0x40; //6
+	private final int CONTROL_GO =          0x80; //7
 	
 	//bits for status register 0-7
-	private final int STATUS_SPEED =    0x01; //0
-	private final int STATUS_RAMP =     0x02; //1
-	private final int STATUS_POWERED = 0x04; //2
-	private final int STATUS_POSIONAL = 0x08; //3
-	private final int STATUS_BREAK =      0x10; //4
-	private final int STATUS_OVERLOAD =       0x20; //5
-	private final int STATUS_TIME =     0x40; //6
-	private final int STATUS_STALL =       0x80; //7
+	private final int STATUS_SPEED =        0x01; //0
+	private final int STATUS_RAMP =         0x02; //1
+	private final int STATUS_POWERED =      0x04; //2
+	private final int STATUS_POSIONAL =     0x08; //3
+	private final int STATUS_BREAK =        0x10; //4
+	private final int STATUS_OVERLOAD =     0x20; //5
+	private final int STATUS_TIME =         0x40; //6
+	private final int STATUS_STALL =        0x80; //7
 	
 	//motor registers                     A         B
 	private int REG_RotateTo =           0x42;//   0x4A
@@ -90,7 +86,6 @@ public class NXTMMXMotor implements DCMotor, Encoder, Tachometer, TachoMotor {
 		int speed;
 		command = 0;
 		command |= CONTROL_SPEED;
-		//if(controlSpeed) command |= CONTROL_SPEED; //0
 		if(rampUp) command |= CONTROL_RAMP; //1
 		if(mux.isAutoStart())command |= CONTROL_GO;
 		speed = getSpeedInternal();
@@ -116,7 +111,6 @@ public class NXTMMXMotor implements DCMotor, Encoder, Tachometer, TachoMotor {
 		int speed;
 		command = 0;
 		command |= CONTROL_SPEED;
-		//if(controlSpeed) command |= CONTROL_SPEED; //0
 		if(rampUp) command |= CONTROL_RAMP; //1
 		if(mux.isAutoStart())command |= CONTROL_GO;
 		
@@ -520,15 +514,5 @@ public class NXTMMXMotor implements DCMotor, Encoder, Tachometer, TachoMotor {
 	private int getStatus(){
 		mux.getData(REG_Status, buffer, 1);
 		return buffer[0];
-	}
-
-	public void addListener(TachoMotorListener listener) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void setAcceleration(int acceleration) {
-		// TODO Auto-generated method stub
-		
 	}
 }
