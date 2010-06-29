@@ -1,5 +1,4 @@
 package lejos.nxt.addon;
-
 import lejos.nxt.*;
 /**
 * Supports Mindsensors NXTMMX. this device allows you to connect two 
@@ -196,4 +195,3 @@ public class NXTMMX extends I2CSensor{
         	+ (buffer[0] & 0xFF); 
 	}
 }
-
