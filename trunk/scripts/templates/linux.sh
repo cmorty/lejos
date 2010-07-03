@@ -45,16 +45,19 @@ NXJ_JAR_JTOOLS="$NXJ_LIBS/jtools.jar"
 NXJ_JAR_PCCOMM="$NXJ_LIBS/pccomm.jar"
 NXJ_JAR_PCTOOLS="$NXJ_LIBS/pctools.jar"
 
-if [[ "$(uname -s)" =~ ^CYGWIN ]]; then
-	SEP=";"
-else
-	SEP=":"
-fi
+SEP=":"
+NXJ_FORCE32=""
+NXJ_CP_BLUECOVE="$NXJ_JAR_BLUECOVE"
+OS_KERNEL="$(uname -s)"
 
-if [ "$(uname -s)" == "Linux" ]; then
+if [ "${OS_KERNEL:0:6}" == "CYGWIN" ]; then
+	SEP=";"
+fi
+if [ "${OS_KERNEL}" == "Linux" ]; then
 	NXJ_CP_BLUECOVE="$NXJ_JAR_BLUECOVE$SEP$NXJ_JAR_BLUECOVE_GPL"
-else
-	NXJ_CP_BLUECOVE="$NXJ_JAR_BLUECOVE"
+fi
+if [ "${OS_KERNEL}" == "Darwin" ]; then
+    NXJ_FORCE32="-d32"
 fi
 
 NXJ_CP_BOOT="$NXJ_JAR_CLASSES"
