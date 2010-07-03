@@ -1,54 +1,106 @@
 package lejos.robotics.proposal;
 
-import lejos.robotics.proposal.*;
-
-//import lejos.nxt.comm.RConsole;
+import lejos.robotics.localization.PoseProvider;
+import java.util.*;
 import lejos.geom.Point;
 import lejos.robotics.*;
-import lejos.robotics.localization.*;
+import lejos.nxt.comm.RConsole;
 
 /**
- * Moves the robot to a destination.
- * Uses either a differenial pilot or a steering pilot
- * You can executed methods directly on the Pilot if you wish;
- * the Navitator pose will automatically be updated
+ *This  class can follow a sequence of way points;
+ *Uses an inner class that has it own thresd to do the work.
+ * It can use either a differential pilot or steering pilot.
+ * Uses a PoseController to keep its pose updated, and calls its Waypoint Listeners
+ * when a way point is reached.
  * @author Roger
  */
-public class BasicNavigator
+public class BasicNavigator   implements PoseController
 {
-  public BasicNavigator(ArcMoveController  pilot, PoseProvider poseProvider )
+/**
+ * can use any pilot the impolements the MoveControl interrface
+ * @param pilot
+ */
+  public BasicNavigator(ArcMoveController pilot )
+  {
+    this(pilot,null);
+  
+  }
+public BasicNavigator(ArcMoveController  pilot, PoseProvider poseProvider )
   {  // toDo - modify to use MCLPoseProvider
     _pilot = pilot;
     if(poseProvider == null)
     this.poseProvider = new DeadReckonerPoseProvider((ArcMoveController)_pilot);
-    else this.poseProvider =(MCLPoseProvider) poseProvider;
+//    else this.poseProvider =(MCLPoseProvider) poseProvider;
     _radius = _pilot.getMinRadius();
+    _nav = new Nav();
+    _nav.start();
+  }
+  public void followRoute(ArrayList<WayPoint>  aRoute)
+  {
+    followRoute( aRoute ,false);
   }
 
-  public void setPose(Pose aPose)
+  
+  public void followRoute(ArrayList<WayPoint>aRoute, boolean immediateReturn )
   {
-    _pose = aPose;
+    _route = aRoute;
+    _keepGoing = true;
+    if(immediateReturn)return;
+    else while(_keepGoing) Thread.yield();
   }
+
+
+public void goTo(WayPoint destination)
+{
+  RConsole.println("goTo "+destination);
+  addWaypoint(destination);
+}
+
+public void goTo(float x, float y, boolean immediateReturn)
+{
+  goTo(new WayPoint(x,y));
+  if(!immediateReturn)
+  {
+    while(!_keepGoing)Thread.yield();
+  }
+}
+
 /**
- * Sets the initial pose of the robot;
- * @param x robot X location
- * @param y roboe Y location
- * @param heading robot initial heading
+ * Add a WayPointListener
+ * @param aListener
+ */
+  public void addListener(WayPointListener aListener)
+  {
+    if(listeners == null )listeners = new ArrayList<WayPointListener>();
+    listeners.add(aListener);
+  }
+
+   public void setPose(float x, float y, float heading)
+  {
+    setPose(new Pose(x,y,heading));
+  }
+
+  public void setPose(Pose pose)
+  {
+    _pose = pose;
+    poseProvider.setPose(_pose);
+  }
+  public void setHeading(float heading)
+  {
+    setPose(_pose.getX(),_pose.getY(),heading);
+  }
+
+/**
+ * Betin following the route  Can be a non-blocking method
+ * @param aRoute sequemce of way points to be visited
+ * @param immediateReturn if true, returns immidiately
  */
   public void setInitialPose(Pose aPose, float headingNoise, float radiusNoise )
   {
     _pose = aPose;
-    ((MCLPoseProvider)poseProvider).setInitialPose(_pose, headingNoise, radiusNoise);
+    poseProvider.setPose(_pose);
   }
 
-  /**
-   * returns the current pose of the robot.
-   * The pose is kept up to date by a DeadReckonerPoseProvider
-   * @return
-   */
-  public Pose getPose( ){
-    return poseProvider.getPose();
-  }
   /**
    * returns a referenct to the pilot.
    * The Navigator pose will be automatically updated as a result of methods
@@ -57,63 +109,51 @@ public class BasicNavigator
    */
 public ArcMoveController getPilot(){ return _pilot;}
 
-/**
- * Moves the robot to the destinatin location
- * @param destination
- * @param immediateReturn  if true, this method will return as soon as the
- * rotation is complete;
- */
-  public void goTo(Point destination, boolean immediateReturn)
+  /**
+   * add a WayPoint to the route array. If the robot is not moving, it will
+   * start following the route.
+   * @param aWayPoint
+   */
+  public void addWaypoint(WayPoint aWayPoint)
   {
-    _radius = _pilot.getMinRadius();
+
+    _route.add(aWayPoint);
+    RConsole.println("add WP "+aWayPoint+" sIZE "+_route.size());
     _keepGoing = true;
-    _destination = destination;
-    _pose = poseProvider.getPose();
-    float destinationRelativeBearing = normalize(_pose.relativeBearing(_destination));
-    float distance = _pose.distanceTo(destination);
-    if(_radius == 0)
-    {
-      ((RotateMoveController) _pilot).rotate(destinationRelativeBearing,true);
-    }
-
-    else performArc(destinationRelativeBearing,false);
-    while(_pilot.isMoving() && _keepGoing)Thread.yield();
-    _pose = poseProvider.getPose();
-    distance = _pose.distanceTo(_destination);
-    _pilot.travel(distance,true);
-      while(_pilot.isMoving() && _keepGoing)Thread.yield();
-    _pose = poseProvider.getPose();
   }
+public void interrupt()
+{
+  _keepGoing = false;
+  _pilot.stop();
+}
 
-  /**
-   * Goes to a location specified by the x,y coordinates
-   * @param x
-   * @param y
-   * @param immediateReturn
-   */
-  public void goTo(float x, float y, boolean immediateReturn)
-  {
-    goTo(new Point(x,y),immediateReturn);
-  }
-
-  /**
-   * goes to location specified by x and y coordinates.  Returns when it gets there.
-   * @param x
-   * @param y
-   */
-  public void goTo(float x, float y)
-  {
-    goTo(x,y,false);
-  }
 /**
- * go to the point
- * @param p
+ * Resume the route after an interrupt
  */
-  public void goTo(Point p )
+  public void resume()
   {
-    goTo((float)p.getX(),(float)p.getY());
+    if(_route.size() > 0 ) _keepGoing = true;
   }
 
+
+  /**
+   * calls interrupt()
+   */
+  public void stop()
+  {
+    interrupt();
+  }
+  /**
+   * Stop the robot and emptay the  queue
+   */
+  public void flushQueue()
+  {
+    _keepGoing = false;
+    _pilot.stop();
+    for(int i = _route.size()-1 ; i > 0; i++)_route.remove(i);
+  }
+  
+  
   /**
    * Helper method for goTo() ; uses a simile altorithm for performing the
    * arc move to change direction before
@@ -152,22 +192,30 @@ public ArcMoveController getPilot(){ return _pilot;}
     }
   }
 
-   /**
-   * Interrupts the current move and stops the robot
+  /**
+   * Returns the  waypoint to which the robot is moving
+   * @return
    */
-  public void interrupt()
-  {
-    stop();
-  }
-    
-/**
- * Stops the robot immediately.
- */
-  public void stop()
-  {
-    _keepGoing = false;
-    _pilot.stop();
-  }
+public WayPoint getWaypoint()
+{
+  if(_route.size() <= 0 ) return null;
+  else return _route.get(0);
+}
+
+public Pose getPose()
+{
+  return poseProvider.getPose();
+}
+public void setPoseProvider(PoseProvider aProvider)
+{
+  poseProvider = aProvider;
+}
+
+public PoseProvider getPoseProvider()
+{
+  return poseProvider;
+}
+
 /**
  * returns the equivalent angle between -180 and +180 degrees
  * @param angle
@@ -179,14 +227,70 @@ public ArcMoveController getPilot(){ return _pilot;}
     while(angle < -180) angle += 360;
     return angle;
   }
-  /**
-   *
-   */
-    protected boolean _keepGoing = false;
+/**
+ *this inner class runs the thread that processes the waypoint queue
+ */
+   protected  class Nav extends Thread
+  {
+    boolean more = true;
+
+    public void run()
+    { RConsole.println("RUNNING ");
+
+      setDaemon(true);
+      while (more)
+      {
+        while (_keepGoing)// && _route != null && _route.size()>0)
+        { 
+          _destination = _route.get(0);
+          _pose = poseProvider.getPose();
+          float destinationRelativeBearing = _pose.relativeBearing(_destination);
+         if(!_keepGoing) break;
+           if(_radius == 0)
+    {
+      ((RotateMoveController) _pilot).rotate(destinationRelativeBearing);
+    }
+           else performArc(destinationRelativeBearing,true);
+          while (_pilot.isMoving() && _keepGoing)
+          {
+            Thread.yield();
+          }
+         
+           _pose = poseProvider.getPose();
+//           RConsole.println("after rotation " +((DifferentialPilot)_pilot).getAngleIncrement());
+          float distance = _pose.distanceTo(_destination);
+           if(!_keepGoing) break;
+          _pilot.travel(distance, true);
+          while (_pilot.isMoving() && _keepGoing)
+          {
+            Thread.yield();
+          }
+          if(!_keepGoing) break;
+          _pose = poseProvider.getPose();
+          if(listeners != null)
+          { 
+            for(WayPointListener l : listeners)
+              l.atWayPoint(poseProvider.getPose());
+          }
+          if (_keepGoing && 0 < _route.size()) {_route.remove(0);}
+          _keepGoing = _keepGoing && 0 < _route.size();
+          Thread.yield();
+        } // end while keepGoing
+        Thread.yield();
+      }  // end while more
+    }  // end run
+  } // end Nav class
+
+//   int _count = 0;
+   protected Nav _nav ;
+   protected ArrayList<WayPoint>  _route  = new ArrayList() ;
+   protected ArrayList<WayPointListener>  listeners ;
+  protected boolean _keepGoing = false;
     protected ArcMoveController _pilot;
-    protected PoseProvider poseProvider;
+    public PoseProvider poseProvider;
 //    DeadReckonerPoseProvider poseProvider;
     protected Pose _pose = new Pose();
     protected Point _destination;
     protected float _radius;
+
 }
