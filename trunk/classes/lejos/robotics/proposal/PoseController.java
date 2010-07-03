@@ -1,5 +1,8 @@
- package lejos.robotics.proposal;
+package lejos.robotics.proposal;
 
+
+import java.util.ArrayList;
+import lejos.robotics.proposal.*;
 import lejos.robotics.Pose;
 import lejos.robotics.localization.PoseProvider;
 import lejos.geom.Point;
@@ -19,47 +22,64 @@ import lejos.geom.Point;
  * @author NXJ Team
  *
  */
-public interface PoseController {
+public interface PoseController
+{
+  /**
+   * starts  the robot moving to the coordinates in the destination WayPoint.
+   * @param destination
+   */
+  public void goTo(WayPoint destination);
 
-	/**
-	 * Travels to the coordinates in the destination Point.
-	 * If it can't reach the destination, it tries to get as close as possible before giving up
-	 * and reporting the actual coordinates (Pose) achieved.
-	 * 
-	 * @param destination
-	 * @return The new pose it achieved.
-	 */
-	public Pose goTo(Point destination);
-	
-	/**
-	 * Travels to the coordinates AND heading in the destination Pose.
-	 * If it can't reach the destination, it tries to get as close as possible before giving up
-	 * and reporting the actual coordinates (Pose) achieved.
-	 * 
-	 * @param destination
-	 * @return
-	 */
-	public Pose goTo(Pose destination);
-	
-	/**
-	 * Travels to the coordinates specified.
-	 * If it can't reach the destination, it tries to get as close as possible before giving up
-	 * and reporting the actual coordinates (Pose) achieved.
-	 * 
-	 * @param x the x coordinate of the target point
-	 * @param y the y co-ordinate of the target point
-	 * @return The new pose it achieved.
-	 */
-	public Pose goTo(float x, float y);
-		
-	// TODO: Add method to travel to waypoints in order?
-	//public Pose goTo(Collection <Point> destination);
-	
-	/**
-	 * Note: There is no corresponding setPilot() method because the type of robot vehicle could
-	 * not change after the program starts, unless it was physically a transformer robot. 
-	 * @return the pilot
-	 */
+   /**
+    * Starts the robot moving to location specified by x and y coordinates.
+    * if the immmediatereturn parameter is false, this method returns when the
+    * arrives.
+    * @param x coordinate of the destination
+    * @param y coordinate of the testinati0n
+    * @param immediateReturn  if<b>true</b> the method returns immediately, if
+    */
+  public void goTo(float x, float y, boolean immediateReturn);
+
+  /**
+   * goes to the sequence of waypoints contained in the route.
+   * Informs its listeners of each waypoint reached. The waypoint is removed
+   * from the queue when it is reached.
+   * @param theRoute
+   */
+  public void followRoute(ArrayList<WayPoint> theRoute);
+/**
+ * stops the robot and empties the queue of waypoints
+ */
+  public void flushQueue(); 
+
+  /**
+   * stops the robot immediately; preserves the rest of the queue
+   */
+  public void interrupt();
+
+/**
+ * resumes following the route
+ */
+  public void resume();  //following the route after an interruption;
+
+  /**
+   * Adds a waypoint to the queue.  If the robot has stopped because the queue
+   * is empty, it goes to this waypoint.
+   * @param aWayPoint
+   */
+  public void addWaypoint(WayPoint aWayPoint); // adds a WayPoint to the route.
+
+  /**
+   * adds a waypoint listener.
+   * @param aListener
+   */
+  public void addListener (WayPointListener aListener);
+
+  /**
+   * Note: There is no corresponding setPilot() method because the type of robot vehicle could
+   * not change after the program starts, unless it was physically a transformer robot.
+   * @return the pilot
+   */
 	public ArcMoveController getPilot();
 		
 	/**
