@@ -148,5 +148,5 @@ public class TachoPoseProvider implements PoseProvider, MoveListener
         }
 
     }
-
+    public void setPose(Pose aPose ){pose = aPose;}
 }

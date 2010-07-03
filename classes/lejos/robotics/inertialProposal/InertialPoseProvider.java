@@ -191,5 +191,6 @@ public class InertialPoseProvider implements PoseProvider, MoveListener
             }
         }
     }
+    public void setPose(Pose aPose ){pose = aPose;}
 
 }
