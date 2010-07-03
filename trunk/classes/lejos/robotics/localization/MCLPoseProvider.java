@@ -55,6 +55,11 @@ public class MCLPoseProvider implements PoseProvider, MoveListener
             radiusNoise,  headingNoise);
   }
 
+
+       public void setPose(Pose aPose)
+       {
+         setInitialPose(aPose, 1,1);
+       }
   /**
    * returns the particle set
    * @return the particle set
