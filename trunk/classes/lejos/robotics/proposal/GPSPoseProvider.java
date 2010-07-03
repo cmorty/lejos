@@ -19,5 +19,9 @@ public class GPSPoseProvider implements PoseProvider {
 		// TODO Auto-generated method stub
 		return null;
 	}
+        public void setPose(Pose aPose)
+        {
+          // TODO Auto-generated method stub
+        }
 
 }
