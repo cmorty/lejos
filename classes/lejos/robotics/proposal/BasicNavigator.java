@@ -4,7 +4,6 @@ import lejos.robotics.localization.PoseProvider;
 import java.util.*;
 import lejos.geom.Point;
 import lejos.robotics.*;
-import lejos.nxt.comm.RConsole;
 
 /**
  *This  class can follow a sequence of way points;
@@ -52,7 +51,7 @@ public BasicNavigator(ArcMoveController  pilot, PoseProvider poseProvider )
 
 public void goTo(WayPoint destination)
 {
-  RConsole.println("goTo "+destination);
+//  RConsole.println("goTo "+destination);
   addWaypoint(destination);
 }
 
@@ -118,7 +117,6 @@ public ArcMoveController getPilot(){ return _pilot;}
   {
 
     _route.add(aWayPoint);
-    RConsole.println("add WP "+aWayPoint+" sIZE "+_route.size());
     _keepGoing = true;
   }
 public void interrupt()
@@ -235,8 +233,7 @@ public PoseProvider getPoseProvider()
     boolean more = true;
 
     public void run()
-    { RConsole.println("RUNNING ");
-
+    { 
       setDaemon(true);
       while (more)
       {
