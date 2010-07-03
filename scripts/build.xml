@@ -30,7 +30,7 @@
 		<attribute name="class"/>
 		<sequential>
 			<linux-run file="@{file}">
-				java -Dnxj.home="$NXJ_HOME" -DCOMMAND_NAME="$NXJ_COMMAND" -Djava.library.path="$NXJ_BIN" -classpath "$NXJ_CP_TOOL" @{class} @{args} "$@"
+				java $NXJ_FORCE32 -Dnxj.home="$NXJ_HOME" -DCOMMAND_NAME="$NXJ_COMMAND" -Djava.library.path="$NXJ_BIN" -classpath "$NXJ_CP_TOOL" @{class} @{args} "$@"
 			</linux-run>
 		</sequential>
 	</macrodef>
@@ -114,7 +114,7 @@ ${template.linux.parser}
 			javac -classpath "$NXJ_CP_CMDLINE" "${NXJ_CMDLINE[@]}"
 		</linux-parser>
 		<linux-parser file="nxjpc">
-			java -Dnxj.home="$NXJ_HOME" -Djava.library.path="$NXJ_BIN" -classpath "$NXJ_CP_CMDLINE" "${NXJ_CMDLINE[@]}"
+			java $NXJ_FORCE32 -Dnxj.home="$NXJ_HOME" -Djava.library.path="$NXJ_BIN" -classpath "$NXJ_CP_CMDLINE" "${NXJ_CMDLINE[@]}"
 		</linux-parser>
 	</target>
 	
