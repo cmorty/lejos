@@ -33,14 +33,15 @@ public class NXJBrowser {
 	fParser = new NXJBrowserCommandLineParser();
   }
   
-  public static void main(String args[]) {
-	try {
-		NXJBrowser instance = new NXJBrowser();
-		instance.run(args);
-	} catch(Throwable t) {
-         System.err.println("Error: " + t.getMessage());
+	public static void main(String args[]) {
+		try	{
+			NXJBrowser instance = new NXJBrowser();
+			instance.run(args);
+		} catch (Throwable t) {
+			System.err.println("Error: " + t.getMessage());
+			System.exit(1);
+		}
 	}
-  }
   
   public void run(String[] args) throws js.tinyvm.TinyVMException, NXTCommException  {
 

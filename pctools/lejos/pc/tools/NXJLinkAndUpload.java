@@ -37,6 +37,7 @@ public class NXJLinkAndUpload extends NXTCommLoggable {
 			instance.run(args);
 		} catch (Throwable t) {
 			System.err.println("an error occurred: " + t.getMessage());
+			System.exit(1);
 		}
 	}
 
