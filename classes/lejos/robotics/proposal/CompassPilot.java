@@ -1,14 +1,9 @@
 package lejos.robotics.proposal;
 
-
-
-import lejos.robotics.proposal.*;
-import lejos.nxt.*;
-import lejos.robotics.*;
-import lejos.util.Delay;
+import lejos.nxt.Motor;
+import lejos.robotics.DirectionFinder;
 import lejos.robotics.Move;
-
-import lejos.robotics.*;
+import lejos.util.Delay;
 
 /*
  * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
