@@ -53,6 +53,7 @@ public class NXJLinkAndUpload extends NXTCommLoggable {
 	public void run(String[] args) throws js.tinyvm.TinyVMException, NXJUploadException {
 		// process arguments
 		if (!fParser.parseOrHelp(NXJLinkAndUpload.class, args))
+			//TODO report error via System.exit()
 			return;
 
 		String binName = fParser.getOutput();
