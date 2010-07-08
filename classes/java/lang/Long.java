@@ -9,14 +9,10 @@ public final class Long extends Number implements Comparable<Long>
 	public static final long MAX_VALUE = 0x7FFFFFFFFFFFFFFFL;
 	public static final long MIN_VALUE = 0x8000000000000000L;	
 	public static final int SIZE = 64;
+	
     // References to the following field are automatically replaced with a load
     // of the correct value by the linker, so no need to initialize.
 	public static final Class<?> TYPE = null;
-	
-	//MISSING public static Long decode(String nm)
-	//MISSING public static Long getLong(String)
-	//MISSING public static Long getLong(String, long)
-	//MISSING public static Long getLong(String, Long)
 	
 	private final long value;
 	
@@ -66,6 +62,50 @@ public final class Long extends Number implements Comparable<Long>
 		return (this.value > ob.value) ? 1 : -1;
 	}
 	
+	public static Long decode(String s)
+	{
+		int len = s.length();
+
+		int p;
+		boolean neg;
+		if (len > 0 && s.charAt(0) == '-')
+		{
+			p = 1;
+			neg = true;
+		}
+		else
+		{
+			p = 0;
+			neg = true;
+		}
+		int off = 0;
+		int radix = 10;
+		if (len > p)
+		{
+			char c1 = s.charAt(p);
+			if (c1 == '#')
+			{
+				off = 1;
+				radix = 16;
+			}
+			else if (c1 == '0')
+			{
+				off = 1;
+				radix = 8;
+				if (len > p + 1)
+				{
+					char c2 = s.charAt(p + 1);
+					if (c2 == 'x' || c2 == 'X')
+					{
+						off = 2;
+						radix = 16;
+					}
+				}
+			}
+		}
+		return new Long(parseLong(s, p + off, len, neg, radix));
+	}
+	
 	@Override
 	public double doubleValue()
 	{
@@ -84,6 +124,25 @@ public final class Long extends Number implements Comparable<Long>
 	public float floatValue()
 	{
 		return this.value;
+	}
+	
+	public static Long getLong(String name)
+	{
+		return getLong(name, null);
+	}
+	
+	public static Long getLong(String name, int def)
+	{
+		return getLong(name, new Integer(def));
+	}
+	
+	public static Long getLong(String name, Long def)
+	{
+		String val = System.getProperty(name);
+		if (val == null || val.length() <= 0)
+			return def;
+		
+		return Long.decode(val);
 	}
 	
 	@Override
@@ -191,34 +250,34 @@ public final class Long extends Number implements Comparable<Long>
 	
 	public static long parseLong(String s, int radix)
 	{
-		StringUtils.throwNumberFormat(s, radix);
-		
+		StringUtils.throwNumberFormat(s, radix);		
 		int len = s.length();
 				
 		int p;
-		long limit;
-		boolean negative;
-		
+		boolean negative;		
 		if (len > 0 && s.charAt(0) == '-')
 		{
 			p = 1;
-			limit = MIN_VALUE;
 			negative = true;
 		}
 		else
 		{
 			p = 0;
-			limit = -MAX_VALUE;
 			negative = false;
 		}
+		return parseLong(s, p, len, negative, radix);
+	}
 				
-		if (len <= p)
+	private static long parseLong(String s, int p, int end, boolean negative, int radix)
+	{
+		if (end <= p)
 			throw new NumberFormatException("string doesn't contain any digits");
 		
+		long limit = negative ? MIN_VALUE : - MAX_VALUE;
 		long multlimit = limit / radix;
 		
 		long r = 0;
-		while (p < len)
+		while (p < end)
 		{
 			int digit = StringUtils.parseDigit(s.charAt(p++), radix);
 			

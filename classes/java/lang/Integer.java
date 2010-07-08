@@ -11,24 +11,19 @@ public final class Integer extends Number implements Comparable<Integer>
 	 * The largest value of type <code>int</code>. The constant 
 	 * value of this field is <tt>2147483647</tt>.
 	 */
-	public static final int   MAX_VALUE = 0x7fffffff;
+	public static final int MAX_VALUE = 0x7fffffff;
 
 	/**
 	 * The smallest value of type <code>int</code>. The constant 
 	 * value of this field is <tt>-2147483648</tt>.
 	 */
-	public static final int   MIN_VALUE = 0x80000000;
+	public static final int MIN_VALUE = 0x80000000;
 
 	public static final int SIZE = 32;
+
     // References to the following field are automatically replaced with a load
     // of the correct value by the linker, so no need to initialize.
 	public static final Class<?> TYPE = null;
-	
-	//MISSING public static final Class TYPE
-	//MISSING public static Integer decode(String nm)
-	//MISSING public static Integer getInteger(String)
-	//MISSING public static Integer getInteger(String, int)
-	//MISSING public static Integer getInteger(String, Integer)
 	
 	/**
 	 * The value of the Integer.
@@ -88,6 +83,50 @@ public final class Integer extends Number implements Comparable<Integer>
 		return (this.value > ob.value) ? 1 : -1;
 	}
 	
+	public static Integer decode(String s)
+	{
+		int len = s.length();
+
+		int p;
+		boolean neg;
+		if (len > 0 && s.charAt(0) == '-')
+		{
+			p = 1;
+			neg = true;
+		}
+		else
+		{
+			p = 0;
+			neg = true;
+		}
+		int off = 0;
+		int radix = 10;
+		if (len > p)
+		{
+			char c1 = s.charAt(p);
+			if (c1 == '#')
+			{
+				off = 1;
+				radix = 16;
+			}
+			else if (c1 == '0')
+			{
+				off = 1;
+				radix = 8;
+				if (len > p + 1)
+				{
+					char c2 = s.charAt(p + 1);
+					if (c2 == 'x' || c2 == 'X')
+					{
+						off = 2;
+						radix = 16;
+					}
+				}
+			}
+		}
+		return new Integer(parseInt(s, p + off, len, neg, radix));
+	}
+	
 	@Override
 	public double doubleValue()
 	{
@@ -106,6 +145,25 @@ public final class Integer extends Number implements Comparable<Integer>
 	public float floatValue()
 	{
 		return this.value;
+	}
+	
+	public static Integer getInteger(String name)
+	{
+		return getInteger(name, null);
+	}
+	
+	public static Integer getInteger(String name, int def)
+	{
+		return getInteger(name, new Integer(def));
+	}
+	
+	public static Integer getInteger(String name, Integer def)
+	{
+		String val = System.getProperty(name);
+		if (val == null || val.length() <= 0)
+			return def;
+		
+		return Integer.decode(val);
 	}
 	
 	@Override
@@ -209,33 +267,33 @@ public final class Integer extends Number implements Comparable<Integer>
 	public static int parseInt(String s, int radix)
 	{
 		StringUtils.throwNumberFormat(s, radix);
-		
 		int len = s.length();
-				
-		int p;
-		int limit;
-		boolean negative;
 		
+		int p;
+		boolean neg;
 		if (len > 0 && s.charAt(0) == '-')
 		{
 			p = 1;
-			limit = MIN_VALUE;
-			negative = true;
+			neg = true;
 		}
 		else
 		{
 			p = 0;
-			limit = -MAX_VALUE;
-			negative = false;
+			neg = false;
 		}
-				
-		if (len <= p)
+		return parseInt(s, p, len, neg, radix);
+	}
+	
+	private static int parseInt(String s, int p, int end, boolean negative, int radix)
+	{
+		int limit = negative ? MIN_VALUE : -MAX_VALUE;
+		if (end <= p)
 			throw new NumberFormatException("string doesn't contain any digits");
 		
 		int multlimit = limit / radix;
 		
 		int r = 0;
-		while (p < len)
+		while (p < end)
 		{
 			int digit = StringUtils.parseDigit(s.charAt(p++), radix);
 			
