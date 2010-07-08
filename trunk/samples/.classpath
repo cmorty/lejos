@@ -33,6 +33,7 @@
 	<classpathentry excluding="build.xml" kind="src" path="Listen"/>
 	<classpathentry excluding="build.xml" kind="src" path="LLCMonitor"/>
 	<classpathentry excluding="build.xml" kind="src" path="MatrixTest"/>
+	<classpathentry excluding="build.xml" kind="src" path="MCLWPNavTest"/>
 	<classpathentry excluding="build.xml" kind="src" path="MemoryTest"/>
 	<classpathentry excluding="build.xml" kind="src" path="MonitorTest"/>
 	<classpathentry excluding="build.xml" kind="src" path="NXTCamTest"/>
