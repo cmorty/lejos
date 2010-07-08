@@ -34,6 +34,7 @@ public class NXJUpload extends NXTCommLoggable {
 			instance.run(args);
 		} catch(Throwable t) {
 			System.err.println("An error occurred: " + t.getMessage());
+			System.exit(1);
 		}
 	}
 	
