@@ -67,6 +67,7 @@ public class TinyVM extends TinyVMTool {
 		assert args != null : "Precondition: args != null";
 
 		if (!fParser.parseOrHelp(TinyVM.class, args))
+			//TODO report error via System.exit()
 			return;
 
 		String classpath = fParser.getCP();
