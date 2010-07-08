@@ -1,6 +1,6 @@
 package lejos.robotics.proposal;
 
-import lejos.nxt.Motor;
+import lejos.robotics.TachoMotor;
 import lejos.robotics.DirectionFinder;
 import lejos.robotics.Move;
 import lejos.util.Delay;
@@ -44,7 +44,7 @@ public class CompassPilot extends DifferentialPilot
    * @param rightMotor
    */
   public CompassPilot(DirectionFinder compass, float wheelDiameter,
-          float trackWidth, Motor leftMotor, Motor rightMotor)
+          float trackWidth, TachoMotor leftMotor, TachoMotor rightMotor)
   {
     this(compass, wheelDiameter, trackWidth, leftMotor, rightMotor, false);
   }
@@ -61,7 +61,7 @@ public class CompassPilot extends DifferentialPilot
    * @param reverse if true of motor.forward() drives the robot backwards
    */
   public CompassPilot(DirectionFinder compass, float wheelDiameter,
-          float trackWidth, Motor leftMotor, Motor rightMotor, boolean reverse)
+          float trackWidth, TachoMotor leftMotor, TachoMotor rightMotor, boolean reverse)
   {
     super(wheelDiameter, trackWidth, leftMotor, rightMotor, reverse);
     this.compass = compass;
