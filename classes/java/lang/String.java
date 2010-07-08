@@ -426,7 +426,7 @@ public final class String implements CharSequence, Comparable<String>
 	
 	public int lastIndexOf(char ch)
 	{
-		return lastIndexOf(ch, characters.length);
+		return lastIndexOf(ch, characters.length - 1);
 	}
 	
 	public int lastIndexOf(char ch, int fromIndex)
