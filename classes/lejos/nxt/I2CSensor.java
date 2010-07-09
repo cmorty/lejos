@@ -22,13 +22,10 @@ public class I2CSensor implements SensorConstants {
 	 */
 	protected static byte REG_SENSOR_TYPE = 0x10;
 	
-	private I2CPort port;
-	private int address = 2;
-//	private String version = null;
-//	private String productID = null;
-//	private String sensorType = null;
-	private byte [] byteBuff = new byte[8];
-	private byte [] ioBuf = new byte[32];
+	protected I2CPort port;
+	protected int address = 2;
+	protected byte[] byteBuff = new byte[8];
+	protected byte[] ioBuf = new byte[32];
 
 	public I2CSensor(I2CPort port, int mode)
 	{
