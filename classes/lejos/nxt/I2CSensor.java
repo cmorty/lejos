@@ -12,22 +12,23 @@ public class I2CSensor implements SensorConstants {
 	/**
 	 * Returns the version number of the sensor. e.g. "V1.0" Reply length = 8.
 	 */
-	protected static byte VERSION = 0x00;
+	protected static byte REG_VERSION = 0x00;
 	/**
 	 * Returns the product ID of the sensor.  e.g. "LEGO" Reply length = 8.
 	 */
-	protected static byte PRODUCT_ID = 0x08;
+	protected static byte REG_PRODUCT_ID = 0x08;
 	/**
 	 * Returns the sensor type. e.g. "Sonar" Reply length = 8.
 	 */
-	protected static byte SENSOR_TYPE = 0x10;
-	I2CPort port;
-	int address = 2;
-	String version = null;
-	String productID = null;
-	String sensorType = null;
-	byte [] byteBuff = new byte[8];
-	byte [] ioBuf = new byte[32];
+	protected static byte REG_SENSOR_TYPE = 0x10;
+	
+	private I2CPort port;
+	private int address = 2;
+//	private String version = null;
+//	private String productID = null;
+//	private String sensorType = null;
+	private byte [] byteBuff = new byte[8];
+	private byte [] ioBuf = new byte[32];
 
 	public I2CSensor(I2CPort port, int mode)
 	{
@@ -115,7 +116,7 @@ public class I2CSensor implements SensorConstants {
 	 * @return 8-byte string
 	 */
 	public String getVersion() {
-		return fetchString(VERSION, 8);
+		return fetchString(REG_VERSION, 8);
 	}
 	
 	/**
@@ -124,7 +125,7 @@ public class I2CSensor implements SensorConstants {
 	 * @return 8-byte string
 	 */
 	public String getProductID() {
-		return fetchString(PRODUCT_ID, 8);
+		return fetchString(REG_PRODUCT_ID, 8);
 	}
 	
 	/**
@@ -133,7 +134,7 @@ public class I2CSensor implements SensorConstants {
 	 * @return 8-byte string
 	 */
 	public String getSensorType() {
-		return fetchString(SENSOR_TYPE, 8);
+		return fetchString(REG_SENSOR_TYPE, 8);
 	}
 
     /**
