@@ -22,23 +22,31 @@ public class I2CSensor implements SensorConstants {
 	 */
 	protected static byte REG_SENSOR_TYPE = 0x10;
 	
+	protected static int DEFAULT_I2C_ADDRESS = 0x02;
+	
 	protected I2CPort port;
 	protected int address = 2;
 	protected byte[] byteBuff = new byte[8];
 	protected byte[] ioBuf = new byte[32];
 
-	public I2CSensor(I2CPort port, int mode)
-	{
-		this.port = port;
-		port.setType(TYPE_LOWSPEED);
-		port.i2cEnable(mode);
-	}
-
 	public I2CSensor(I2CPort port)
 	{
-        this(port, I2CPort.LEGO_MODE);
+        this(port, DEFAULT_I2C_ADDRESS, I2CPort.LEGO_MODE, TYPE_LOWSPEED);
     }
 
+	public I2CSensor(I2CPort port, int mode)
+	{
+		this(port, DEFAULT_I2C_ADDRESS, mode, TYPE_LOWSPEED);
+	}
+	
+	public I2CSensor(I2CPort port, int address, int mode, int type)
+	{
+		this.port = port;
+		this.address = address;
+		port.setType(type);
+		port.i2cEnable(mode);
+	}
+	
 	/**
 	 * Executes an I2C read transaction and waits for the result.
 	 *
@@ -159,7 +167,9 @@ public class I2CSensor implements SensorConstants {
      * must be shifted left on place to be used with this function.
 	 * 
 	 * @param addr 0x2 to 0xfe
+	 * @deprecated If the device has a changeable address, then constructor of the class should have an address parameter. If not, please report a bug.
 	 */
+	@Deprecated
 	public void setAddress(int addr) {
         if ((address & 1) != 0) throw new IllegalArgumentException("Bad address format");
 		address = addr;
