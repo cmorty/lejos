@@ -138,20 +138,19 @@ public class I2CSensor implements SensorConstants {
 
     /**
      * Internal helper function, read a string from the device
-     * @param register
+     * @param reg
      * @param len The length of the space padded reply.
      * @return the requested string
      */
-	protected String fetchString(int register, int len) {
-		int ret = getData(register, byteBuff, 8);
-		if (ret != 0) return "";
-		char [] charBuff = new char[len];
-		int newlen = 0;
-		while(newlen < 8 && byteBuff[newlen] > ' ') {
-			charBuff[newlen] = (char) byteBuff[newlen];
-			newlen++;
-		}			
-		return new String(charBuff, 0, newlen);
+	protected String fetchString(byte reg, int len) {
+		getData(reg, byteBuff, 0, len);
+		
+		int i;
+		char[] charBuff = new char[len];		
+		for (i=0; i<len && byteBuff[i] != 0; i++)
+			charBuff[i] = (char)(byteBuff[i] & 0xFF);
+		
+		return new String(charBuff, 0, i);
 	}
 	
 	/**
