@@ -149,12 +149,15 @@ public class I2CSensor implements SensorConstants {
      * @return the requested string
      */
 	protected String fetchString(byte reg, int len) {
-		getData(reg, byteBuff, 0, len);
+		byte[] buf = new byte[len];
+		int ret = getData(reg, buf, 0, len);
+		if (ret != 0)
+			return "";
 		
 		int i;
 		char[] charBuff = new char[len];		
-		for (i=0; i<len && byteBuff[i] != 0; i++)
-			charBuff[i] = (char)(byteBuff[i] & 0xFF);
+		for (i=0; i<len && buf[i] != 0; i++)
+			charBuff[i] = (char)(buf[i] & 0xFF);
 		
 		return new String(charBuff, 0, i);
 	}
