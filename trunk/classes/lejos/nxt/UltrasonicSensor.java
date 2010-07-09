@@ -15,12 +15,12 @@ import lejos.util.Delay;
 public class UltrasonicSensor extends I2CSensor implements RangeFinder
 {
 	/* Device control locations */
-	private static final byte MODE = 0x41;
-	private static final byte DISTANCE = 0x42;
-	private static final byte FACTORY_DATA = 0x11;
-	private static final byte UNITS = 0x14;
-	private static final byte CALIBRATION = 0x4a;
-	private static final byte PING_INTERVAL = 0x40;
+	private static final byte REG_MODE = 0x41;
+	private static final byte REG_DISTANCE = 0x42;
+	private static final byte REG_FACTORY_DATA = 0x11;
+	private static final byte REG_UNITS = 0x14;
+	private static final byte REG_CALIBRATION = 0x4a;
+	private static final byte REG_PING_INTERVAL = 0x40;
 	/* Device modes */
 	private static final byte MODE_OFF = 0x0;
 	private static final byte MODE_SINGLE = 0x1;
@@ -112,7 +112,7 @@ public class UltrasonicSensor extends I2CSensor implements RangeFinder
 		if (mode == MODE_CONTINUOUS && now() < dataAvailableTime)
 			return currentDistance;
 		waitUntil(dataAvailableTime);
-		int ret = getData(DISTANCE, buf, 1);
+		int ret = getData(REG_DISTANCE, buf, 1);
 		currentDistance = (ret == 0 ? (buf[0] & 0xff) : 255);
 		// Make a note of when new data should be available.
 		if (mode == MODE_CONTINUOUS)
@@ -139,7 +139,7 @@ public class UltrasonicSensor extends I2CSensor implements RangeFinder
 	{
 		if (dist.length < inBuf.length || mode != MODE_SINGLE) return -1;
 		waitUntil(dataAvailableTime);
-		int ret = getData(DISTANCE, inBuf, inBuf.length);
+		int ret = getData(REG_DISTANCE, inBuf, inBuf.length);
 		for(int i = 0; i < inBuf.length; i++)
 			dist[i] = (int)inBuf[i] & 0xff;
 		return ret;
@@ -153,7 +153,7 @@ public class UltrasonicSensor extends I2CSensor implements RangeFinder
 	private int setMode(byte mode)
 	{
 		buf[0] = mode;
-		int ret = sendData(MODE, buf, 1);
+		int ret = sendData(REG_MODE, buf, 1);
 		// Make a note of when the data will be available
 		dataAvailableTime = now() + DELAY_AVAILABLE;
 		if (ret == 0) this.mode = mode;
@@ -289,7 +289,7 @@ public class UltrasonicSensor extends I2CSensor implements RangeFinder
 	public int getFactoryData(byte data[])
 	{
 		if (data.length < 3) return -1;
-		return getMultiBytes(FACTORY_DATA, data, 3);
+		return getMultiBytes(REG_FACTORY_DATA, data, 3);
 	}
 	/**
 	 * Return a string indicating the type of units in use by the unit.
@@ -299,7 +299,7 @@ public class UltrasonicSensor extends I2CSensor implements RangeFinder
 	 */
 	public String getUnits()
 	{
-		int ret = getData(UNITS, inBuf, 7);
+		int ret = getData(REG_UNITS, inBuf, 7);
 		if(ret != 0)
 			return "       ";
 		char [] charBuff = new char[7];
@@ -326,7 +326,7 @@ public class UltrasonicSensor extends I2CSensor implements RangeFinder
 		 * valid data at 0x4a...
 		 */
 		if (data.length < 3) return -1;
-		return getMultiBytes(CALIBRATION, data, 3);
+		return getMultiBytes(REG_CALIBRATION, data, 3);
 	}
 	
 	/**
@@ -342,7 +342,7 @@ public class UltrasonicSensor extends I2CSensor implements RangeFinder
 	public int setCalibrationData(byte data[])
 	{
 		if (data.length < 3) return -1;
-		return setMultiBytes(CALIBRATION, data, 3);
+		return setMultiBytes(REG_CALIBRATION, data, 3);
 	}
 	
 	/**
@@ -356,7 +356,7 @@ public class UltrasonicSensor extends I2CSensor implements RangeFinder
 	 */
 	public byte getContinuousInterval()
 	{
-		int ret = getData(PING_INTERVAL, buf,1);
+		int ret = getData(REG_PING_INTERVAL, buf,1);
 		return (ret == 0 ? buf[0] : -1);
 	}
 	
@@ -369,7 +369,7 @@ public class UltrasonicSensor extends I2CSensor implements RangeFinder
 	public int setContinuousInterval(byte interval)
 	{
 		buf[0] = interval;
-		int ret = sendData(PING_INTERVAL, buf, 1);
+		int ret = sendData(REG_PING_INTERVAL, buf, 1);
 		return ret;
 	}
 	
@@ -384,7 +384,7 @@ public class UltrasonicSensor extends I2CSensor implements RangeFinder
 	 */
 	public byte getMode()
 	{
-		int ret = getData(MODE, buf,1);
+		int ret = getData(REG_MODE, buf,1);
 		return (ret == 0 ? buf[0] : -1);
 	}
 }
