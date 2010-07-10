@@ -93,7 +93,7 @@ public class MCLPoseProvider implements PoseProvider, MoveListener
 
  /**
   * returns the difference between max and min x
-  * @return
+  * @return the diference between min and max x
   */
   public float getXRange()
   {
@@ -101,7 +101,7 @@ public class MCLPoseProvider implements PoseProvider, MoveListener
   }
   /**
    * return difference between max and min y
-   * @return
+   * @return difference between max and min y
    */
   public float getYRange()
   {
@@ -146,7 +146,7 @@ public class MCLPoseProvider implements PoseProvider, MoveListener
   }
   /**
    * returns the best best estimate of the current pose;
-   * @return
+   * @return the estimated pose
    */
   public Pose getPose()
   {
@@ -215,40 +215,40 @@ public class MCLPoseProvider implements PoseProvider, MoveListener
   }
   /**
    * returns the maximum value of  X in the particle set
-   * @return
+   * @return   max X
    */
   public float getMaxX() { return maxX;}
   /**
    * returns the minimum value of   X in the particle set;
-   * @return
+   * @return minimum X
    */
   public float getMinX() { return minX;}
   /**
    * rturns the maximum value of Y in the particle set;
-   * @return
+   * @return max y
    */
   public float getMaxY() { return maxY;}
   /**
    * returns the minimum value of Y in the particle set;
-   * @return
+   * @return minimum Y
    */
   public float getMinY() { return minY;}
 
   /**
    * returns the standard deviation of the X values in the particle set;
-   * @return
+   * @return sigmz X
    */
   public float getSigmaX() { return (float)Math.sqrt(varX);}
 
   /**
    * returns the standard deviation of the Y values in the particle set;
-   * @return
+   * @return sigma Y
    */
   public float getSigmaY() { return (float)Math.sqrt(varY);}
 
   /**
    * returns the standard deviation of the Y values in the particle set;
-   * @return
+   * @return sigma heading
    */
   public float getSigmaHeading() {return (float)Math.sqrt(varH);}
 

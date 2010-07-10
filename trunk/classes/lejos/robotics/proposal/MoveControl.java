@@ -54,7 +54,7 @@ public interface MoveControl extends MoveProvider
   /**
    * Sets the speed of rotation  of the robot; used by the Rotate() methods;
    * Must be non-negataive;
-   * @param speed in degrees per second
+   * @param rotateSpeed in degrees per second
    */
   public void setRotateSpeed(float rotateSpeed);
 

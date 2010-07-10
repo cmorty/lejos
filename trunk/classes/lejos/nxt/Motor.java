@@ -28,7 +28,7 @@ import lejos.util.Delay;
  * <br> <b>Stall detection</b> If a stall is detected, the motor will stop, and
  * <code>isStalled()</code >  returns <b>true</b>.
  * <br>If you need the motor to hold its position against a load and you find that
- * still moves after stop() is called , you can use the {@link #lock()<code> lock()
+ * still moves after stop() is called , you can use the {@link #lock <code> lock()
  * </code> }method.
  * <br>
  * <p>
@@ -208,7 +208,7 @@ public class Motor extends BasicMotor implements TachoMotor // implements TimerL
 
   /**
    * returns <b>true</b> if motor position is locked;
-   * @return
+   * @return true if locked
    */
   public boolean isLocked(){ return _lock;}
 

@@ -20,9 +20,7 @@ public interface MoveController extends MoveProvider {
 
   /**
    * Halts the NXT robot
-   *
-   * @return The movement it just achieved?
-   */
+*/
    public void stop();
 
   /**

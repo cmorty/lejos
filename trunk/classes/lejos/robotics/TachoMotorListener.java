@@ -14,7 +14,6 @@ package lejos.robotics;
 public interface TachoMotorListener {
 	/**
 	 * Called when the motor starts rotating.
-	 * @param event
 	 */
 	public void rotationStarted(TachoMotor motor,int tachoCount, boolean stalled, long timeStamp);
 	
@@ -22,7 +21,6 @@ public interface TachoMotorListener {
 	 * Called when the motor stops rotating. This includes both Motor.stop() which locks the shaft, and
 	 * Motor.flt() in which the shaft floats freely after power is cut to the motor. Beware: In the second case, it's possible
 	 * the tachomoter reading will continue changing after notification.
-	 * @param event
 	 */
 	public void rotationStopped(TachoMotor motor,int tachoCount, boolean stalled,long timeStamp);
 }

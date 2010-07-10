@@ -249,9 +249,6 @@ public class DifferentialPilot implements
 
   }
 
-  /**
-   * @see lejos.robotics.navigation.Pilot#getTravelMaxSpeed()
-   */
   public float getMaxTravelSpeed()
   {
     // it is generally assumed, that the maximum accurate speed of Motor is
@@ -270,17 +267,13 @@ public class DifferentialPilot implements
     setSpeed(Math.round(rotateSpeed * _leftTurnRatio), Math.round(rotateSpeed * _rightTurnRatio));
   }
 
-  /**
-   * @see lejos.robotics.navigation.Pilot#getRotateSpeed()
-   */
+
   public float getRotateSpeed()
   {
     return _robotRotateSpeed;
   }
 
-  /**
-   * @see lejos.robotics.navigation.Pilot#getRotateMaxSpeed()
-   */
+
   public float getMaxRotateSpeed()
   {
     // it is generally assumed, that the maximum accurate speed of that can
@@ -407,8 +400,6 @@ public class DifferentialPilot implements
   /**
    * This method can be overridden by subclasses to stop the robot if a hazard
    * is detected
-   *
-   * @return true iff no hazard is detected
    */
   protected void  continueMoving()
   {
@@ -570,7 +561,7 @@ public class DifferentialPilot implements
 
 /**
    * Starts the robot moving forward along a curved path. This method is similar to the
-   * {@link #arc(float radius)} method except it uses the <code> turnRate</code> parameter
+   * {@link #arc(float radius )} method except it uses the <code> turnRate</code> parameter
    * do determine the curvature of the path and therefore has the ability to drive straight. This makes
    * it useful for line following applications.
    * <p>
@@ -755,12 +746,13 @@ public class DifferentialPilot implements
    * called by TachoMotor when a motor rotation is complete
    * calls movementStop() after both motors stop;
    * @param motor
-   * @param count
-   * @param ts
+   * @param tachoCount
+   * @param  stall : true if motor is sealled
+   * @param ts  s time stamp
    */
-  public synchronized void rotationStopped(TachoMotor m, int tachoCount, boolean stall,long ts)
+  public synchronized void rotationStopped(TachoMotor motor, int tachoCount, boolean stall,long ts)
   {
-   if(m.isStalled())stop();
+   if(motor.isStalled())stop();
    else if (!isMoving())movementStop();// a motor has stopped
   }
 
@@ -768,10 +760,11 @@ public class DifferentialPilot implements
    * called by TachoMotor when a motor rotation starts
    * not used.
    * @param motor
-   * @param count
-   * @param ts
+   * @param tachoCount
+   * @param stall    true of the motor is stalled
+   * @param ts  time stamp
    */
-  public synchronized void rotationStarted(TachoMotor m, int tachoCount, boolean stall,long ts)
+  public synchronized void rotationStarted(TachoMotor motor, int tachoCount, boolean stall,long ts)
   {
   }
 

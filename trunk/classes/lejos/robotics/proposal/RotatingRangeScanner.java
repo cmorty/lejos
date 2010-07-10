@@ -25,8 +25,7 @@ public class RotatingRangeScanner implements RangeScanner
   }
   /**
    * Returns a set of Range Readings taken the angles specified.
-   * @param angles at which the range readings are taken
-   * @return
+   * @return the set of range values
    */
   public RangeReadings getRangeValues()
   {
