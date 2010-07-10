@@ -11,11 +11,9 @@ import lejos.robotics.proposal.WayPoint;
 //import lejos.util.Datalogger;
 
 /**
- * This robot displays some stuff on the screen
- * @author 
+ * Qususd architecture navitaotr that uses MCL to estimate position at way point
+ * @author Roger
  */
-
-
 public class MCLWayPointNavigator
 {
 

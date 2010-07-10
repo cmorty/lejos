@@ -332,7 +332,7 @@ public class RConsole extends Thread
 
     /**
      * Return a print stream connected to the remote console.
-     * @return
+     * @return the print stream
      */
     public static PrintStream getPrintStream()
     {

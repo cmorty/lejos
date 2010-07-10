@@ -23,7 +23,7 @@ public class ShortestPathPlanner
    * finds the shortest path between start  and finish Points whild avoiding the obstacles
    * in the map
    * @param start : the beginning of the path
-   * @param finish: the destination
+   * @param finish : the destination
    * @param theMap  that contains the obstacles
    * @return an array list of waypoints.  If no path exists, returns null
    */
@@ -142,7 +142,7 @@ public class ShortestPathPlanner
    * Helper method for findPath() <br>
    * returns the  node in  the Reached set, whose distance from the start node plus
    * its straignt line distance to the destination is the minimum.
-   * @param currentDestinati0n - the current destination node, (in the Candidate set)
+   * @param currentDestination : the current destination node, (in the Candidate set)
    * @return the node the node which could be the last node in the shortest path
    */
   protected  Node getBest(Node currentDestination)
@@ -258,7 +258,7 @@ protected  ArrayList<WayPoint> getRoute(Node destination)
 
 /**
  * test if this Node is one of the ends of  theLine
- * @param the line  endpoints to check
+ * @param theLine  endpoints to check
  * @return true if this node is an end of the line
  */
   public boolean atEndOfLine(Line theLine)
@@ -292,8 +292,8 @@ protected  ArrayList<WayPoint> getRoute(Node destination)
 
   /**
    * return the straight distance from this node to aNode
-   * @param n
-   * @return
+   * @param aNode
+   * @return the distance
    */
   public float getDistance(Node aNode)
   {
@@ -303,7 +303,7 @@ protected  ArrayList<WayPoint> getRoute(Node destination)
 
   /**
    * return the locataion of this node
-   * @return
+   * @return the location
    */
  public Point getLocation()
  {
@@ -327,7 +327,7 @@ protected  ArrayList<WayPoint> getRoute(Node destination)
  {_predecessor = thePredecessor;}
  /**
   * get the predecessor of this node in the shortest path from the start
-  * @return
+  * @return the predecessor node
   */
  public Node getPredecessor() { return _predecessor;}
 

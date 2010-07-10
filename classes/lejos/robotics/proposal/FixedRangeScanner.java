@@ -24,7 +24,7 @@ public class FixedRangeScanner implements RangeScanner
    * return a set of range readings determined taken at the relative bearings
    * defined in the angles  array;
    * The robot rotates back to its original heading at the end.
-   * @return
+   * @return the set of range readings
    */
   public RangeReadings getRangeValues()
   {

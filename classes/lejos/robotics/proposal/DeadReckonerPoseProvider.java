@@ -44,7 +44,7 @@ public class DeadReckonerPoseProvider implements PoseProvider, MoveListener
 
   /**
    * returns  a new pose that represents the current location and heading of the robot
-   * @return
+   * @return pose
    */
   public Pose getPose()
   {
