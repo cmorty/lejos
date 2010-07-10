@@ -116,37 +116,46 @@ public class I2CSensor implements SensorConstants {
 	}
 	
 	/**
-	 * Return the sensor version number.
+	 * Read the sensor version number.
+	 * This method reads up to 8 bytes
+	 * and returns the characters before the zero termination byte.
 	 * 
-	 * @return 8-byte string
+	 * @return version number
 	 */
 	public String getVersion() {
 		return fetchString(REG_VERSION, 8);
 	}
 	
 	/**
-	 * Return the sensor product identifier.
+	 * Read the sensor product identifier.
+	 * This method reads up to 8 bytes
+	 * and returns the characters before the zero termination byte.
 	 * 
-	 * @return 8-byte string
+	 * @return product identifier
 	 */
 	public String getProductID() {
 		return fetchString(REG_PRODUCT_ID, 8);
 	}
 	
 	/**
-	 * Return the sensor type.
+	 * Read the sensor type.
+	 * This method reads up to 8 bytes
+	 * and returns the characters before the zero termination byte.
 	 * 
-	 * @return 8-byte string
+	 * @return sensor type
 	 */
 	public String getSensorType() {
 		return fetchString(REG_SENSOR_TYPE, 8);
 	}
 
     /**
-     * Internal helper function, read a string from the device
+     * Read a string from the device.
+     * This functions reads the specified number of bytes
+     * and returns the characters before the zero termination byte.
+     * 
      * @param reg
-     * @param len The length of the space padded reply.
-     * @return the requested string
+     * @param len maximum length of the string, including the zero termination byte
+     * @return the string containing the characters before the zero termination byte
      */
 	protected String fetchString(byte reg, int len) {
 		byte[] buf = new byte[len];
