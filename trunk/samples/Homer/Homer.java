@@ -13,7 +13,7 @@ import lejos.robotics.RangeScanner;
 import lejos.robotics.localization.MCLParticleSet;
 import lejos.robotics.mapping.LineMap;
 import lejos.robotics.mapping.RangeMap;
-import lejos.robotics.proposal.ArcPoseController;
+import lejos.robotics.proposal.BasicNavigator;
 import lejos.robotics.proposal.DestinationUnreachableException;
 import lejos.robotics.proposal.DifferentialPilot;
 import lejos.robotics.localization.MCLPoseProvider;
@@ -89,7 +89,7 @@ public class Homer implements RangeScanner {
     // Find a route home
     Pose home = new Pose(50, 300, -90);
     PathFinder pf = new MapPathFinder(map, readings);
-    PoseController pc = new  ArcPoseController(pilot, mcl);
+    BasicNavigator pc = new  BasicNavigator(pilot, mcl);
     
     System.out.println("Located: (" + (int) start.getX() + "," + (int) start.getY() + ")");
     
@@ -99,7 +99,8 @@ public class Homer implements RangeScanner {
       
       for(WayPoint wp: route) {
         System.out.println("Go to (" + (int) wp.x + "," + (int) wp.y + ")");
-        Pose pose = pc.goTo(wp);
+        pc.goTo(wp);
+        Pose  pose = mcl.getPose();
         goodEstimate(pose); // Just for diagnostics
         // Pose controller should have a goTo(Pose) method to do this
         pilot.rotate(wp.getHeading() - pose.getHeading());
