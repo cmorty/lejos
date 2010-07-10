@@ -90,10 +90,9 @@ public void goTo(float x, float y, boolean immediateReturn)
   }
 
 /**
- * Sets a initial pose
- * @param aPose the initial pose
- * @param headingNoise  not used in this class
- * @param radiusNoise  not used by this class
+ * Betin following the route  Can be a non-blocking method
+ * @param aRoute sequemce of way points to be visited
+ * @param immediateReturn if true, returns immidiately
  */
   public void setInitialPose(Pose aPose, float headingNoise, float radiusNoise )
   {
@@ -105,7 +104,7 @@ public void goTo(float x, float y, boolean immediateReturn)
    * returns a referenct to the pilot.
    * The Navigator pose will be automatically updated as a result of methods
    * executed on the pilot.
-   * @return  the pilot
+   * @return
    */
 public ArcMoveController getPilot(){ return _pilot;}
 
@@ -193,7 +192,7 @@ public void interrupt()
 
   /**
    * Returns the  waypoint to which the robot is moving
-   * @return the current waypoint
+   * @return
    */
 public WayPoint getWaypoint()
 {
