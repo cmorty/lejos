@@ -636,8 +636,8 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
          * If in single color mode the returned data is a simple percentage. If in
          * full color mode the data is a set of calibrated red/blue/green/blank
          * readings that range from 0 to 255. You can access the index of each color
-         * using RGB_RED, RGB_GREEN, RGB_BLUE and RGB_BLANK. e.g. to retrieve the Blue value:
-         * <code>vals[ColorSensor.RGB_BLUE]</code>
+         * using RED_INDEX, GREEN_INDEX, BLUE_INDEX and BLANK_INDEX. e.g. to retrieve the Blue value:
+         * <code>vals[ColorSensor.BLUE_INDEX]</code>
          *
          * @param vals 4 element array for the results
          * @return < 0 of error, the number of values if ok
@@ -675,6 +675,9 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
                 int green = values[GREEN_INDEX];
                 int blank = values[BLANK_INDEX];
                 // we have calibrated values, now use them to determine the color
+                /*
+                This is the original color recognition algorithm taken from the
+                1.28 version of the Lego firmware
                 if ((red < 55 && green < 55 && blue < 55) ||
                         (blank < 30 && red < 100 && green < 100 && blue < 100))
                     return SensorPort.BLACK;
@@ -710,6 +713,50 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
                         return SensorPort.BLUE;
                     if (red < 70 || green < 70 || (blank < 100 && blue < 100))
                         return SensorPort.BLACK;
+                    return SensorPort.WHITE;
+                }
+                */
+                // The following algorithm comes from the 1.29 Lego firmware.
+                if (red > blue && red > green)
+                {
+                    // red dominant color
+                    if (red < 65 || (blank < 40 && red < 110))
+                        return SensorPort.BLACK;
+                    if (((blue >> 2) + (blue >> 3) + blue < green) &&
+                            ((green << 1) > red))
+                        return SensorPort.YELLOW;
+                    if ((green << 1) - (green >> 2) < red)
+                        return SensorPort.RED;
+                    if (blue < 70 || green < 70 || (blank < 140 && red < 140))
+                        return SensorPort.BLACK;
+                    return SensorPort.WHITE;
+                }
+                else if (green > blue)
+                {
+                    // green dominant color
+                    if (green < 40 || (blank < 30 && green < 70))
+                        return SensorPort.BLACK;
+                    if ((blue << 1) < red)
+                        return SensorPort.YELLOW;
+                    if ((red + (red >> 2)) < green ||
+                            (blue + (blue>>2)) < green )
+                        return SensorPort.GREEN;
+                    if (red < 70 || blue < 70 || (blank < 140 && green < 140))
+                        return SensorPort.BLACK;
+                    return SensorPort.WHITE;
+                }
+                else
+                {
+                    // blue dominant color
+                    if (blue < 48 || (blank < 25 && blue < 85))
+                        return SensorPort.BLACK;
+                    if ((((red*48) >> 5) < blue && ((green*48) >> 5) < blue) ||
+                            ((red*58) >> 5) < blue || ((green*58) >> 5) < blue)
+                        return SensorPort.BLUE;
+                    if (red < 60 || green < 60 || (blank < 110 && blue < 120))
+                        return SensorPort.BLACK;
+                    if ((red + (red >> 3)) < blue || (green + (green >> 3)) < blue)
+                        return SensorPort.BLUE;
                     return SensorPort.WHITE;
                 }
             }
