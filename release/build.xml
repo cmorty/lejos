@@ -270,18 +270,13 @@
         		<include name="jfantom.dll"/>
       			<include name="jlibnxt.dll"/>
       			<include name="lejos_nxt_rom.bin"/>
+      			<include name="libjfantom.jnilib"/>
       		</fileset>
     	</copy>
 		
 		<copy todir="${release.bin}">
       		<fileset dir="${lejos.root}/startup/build">
       			<include name="StartUpText.bin"/>
-      		</fileset>
-    	</copy>
-		
-		<copy todir="${release.bin}">
-      		<fileset dir="${src}/jfantom">
-        		<include name="libjfantom.jnilib"/>
       		</fileset>
     	</copy>
 			
