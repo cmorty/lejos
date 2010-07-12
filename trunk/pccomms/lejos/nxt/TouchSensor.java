@@ -1,4 +1,5 @@
 package lejos.nxt;
+import lejos.robotics.Touch;
 
 /*
  * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
@@ -10,7 +11,7 @@ package lejos.nxt;
  * Also works with RCX touch sensors.
  * 
  */
-public class TouchSensor implements SensorConstants {
+public class TouchSensor implements SensorConstants, Touch {
 	ADSensorPort port;
 	
 	/**

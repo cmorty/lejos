@@ -40,7 +40,7 @@ package lejos.util;
 	@serial pivot vector.
 	*/
 	private int[] piv;
-	
+
 	/* ------------------------
 	Constructor
 	* ------------------------ */

@@ -115,11 +115,14 @@ public float angleTo(Point destination)
 /**
  * Returns the angle to <code>destination</code> relative to the pose heading;
  * @param destination  the target point
- * @return the relative bearing of the destination
+ * @return the relative bearing of the destination, between -180 and 180
  */
 public float relativeBearing(Point destination)
 {
-  return angleTo(destination) - _heading;
+  float bearing = angleTo(destination) - _heading;
+  if(bearing < -180)bearing +=360;
+  if(bearing > 180)bearing -= 360;
+  return bearing;
 }
 /**
  * Return the distance to the destination

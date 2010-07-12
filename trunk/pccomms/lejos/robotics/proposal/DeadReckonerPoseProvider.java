@@ -44,11 +44,11 @@ public class DeadReckonerPoseProvider implements PoseProvider, MoveListener
 
   /**
    * returns  a new pose that represents the current location and heading of the robot
-   * @return
+   * @return pose
    */
   public Pose getPose()
   {
-    if (!current)
+    if (!current )
     {
       updatePose(mp.getMovement());
     }
@@ -67,7 +67,11 @@ public class DeadReckonerPoseProvider implements PoseProvider, MoveListener
     current = false;
     this.mp = mp;
   }
-
+public void setPose(Pose aPose )
+{
+  setPosition(aPose.getLocation());
+  setHeading(aPose.getHeading());
+}
   /**
    * called by a MoveProvider when movement ends
    * @param event - the event that just started
@@ -120,6 +124,7 @@ public class DeadReckonerPoseProvider implements PoseProvider, MoveListener
     return a;
   }
 
+
   public void setPosition(Point p)
   {
     x = p.x;
@@ -127,7 +132,7 @@ public class DeadReckonerPoseProvider implements PoseProvider, MoveListener
     current = true;
   }
 
-  void setHeading(float heading)
+  public void setHeading(float heading)
   {
     this.heading = heading;
     current = true;
