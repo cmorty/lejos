@@ -60,7 +60,7 @@ public void goTo(float x, float y, boolean immediateReturn)
   goTo(new WayPoint(x,y));
   if(!immediateReturn)
   {
-    while(!_keepGoing)Thread.yield();
+    while(_keepGoing)Thread.yield();
   }
 }
 
@@ -238,7 +238,7 @@ public PoseProvider getPoseProvider()
       while (more)
       {
         while (_keepGoing)// && _route != null && _route.size()>0)
-        { 
+        {
           _destination = _route.get(0);
           _pose = poseProvider.getPose();
           float destinationRelativeBearing = _pose.relativeBearing(_destination);
