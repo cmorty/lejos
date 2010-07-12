@@ -19,7 +19,7 @@ import lejos.robotics.localization.PoseProvider;
  * 
  * @author BB
  */
-public class ArcPoseController implements PoseController {
+public class ArcPoseController  {
 	private ArcMoveController pilot;
 	private PoseProvider poseProvider;
 	
@@ -50,8 +50,9 @@ public class ArcPoseController implements PoseController {
 		poseProvider = replacement;
 	}
 
-	public Pose goTo(Pose destination) {
-		
+	public Pose goTo(WayPoint aDestination) {
+		Pose destination = new Pose((float)aDestination.getX(),
+                        (float)aDestination.getY(), aDestination.getHeading() );
 		Pose pose = poseProvider.getPose();
 	   	if (pilot instanceof RotateMoveController & pilot.getMinRadius() == 0) { // optimize for RotateMoveController
 	   	   // TODO: What the heck happened to the rotateTo() method? Would make this so much easier.

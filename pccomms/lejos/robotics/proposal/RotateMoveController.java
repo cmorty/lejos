@@ -44,7 +44,7 @@ public interface RotateMoveController extends MoveController {
 
   /**
    * returns the maximum value of the rotation speed;
-   * @return
+   * @return max rotation speed
    */
   public float getRotateMaxSpeed();
 }

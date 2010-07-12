@@ -364,6 +364,7 @@ public class ArcAlgorithms { // TODO Make package level when done testing?
 	 * @return Length of travel along circle, in degrees
 	 * @deprecated This method is no longer used because it can't calculate >180 angles. Delete any time.
 	 */
+    @Deprecated
 	public static double getArcOld(Point2D.Float p1, Point2D.Float p2, double radius) {
 		// I accidently got the radius sign confused. +ve radius is supposed to have circle center to left of robot:
 		radius = -radius; // Kludge. Should really correct my equations.

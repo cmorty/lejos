@@ -114,7 +114,6 @@ public class Move {
 	 * <li>(radius = 0) AND (angle = 0) --> STOP
 	 * <li>(radius = +infinity) AND (angle = 0) --> TRAVEL
 	 * <li>NOTE: can't calculate distance based only on angle and radius, therefore distance can't be calculated and will equal NaN)
-	 * @param type
 	 * @param isMoving
 	 * @param angle
 	 * @param turnRadius
@@ -176,7 +175,7 @@ public class Move {
 	 * Static utility method for converting distance (given turn radius) into angle.
 	 * @param distance
 	 * @param turnRadius
-	 * @return
+	 * @return angle
 	 */
 	public static float convertDistanceToAngle(float distance, float turnRadius){
 		return (float)((distance * 360) / (2 * Math.PI * turnRadius));
@@ -186,7 +185,7 @@ public class Move {
 	 * Static utility method for converting angle (given turn radius) into distance.
 	 * @param angle
 	 * @param turnRadius
-	 * @return
+	 * @return distance
 	 */
 	public static float convertAngleToDistance(float angle, float turnRadius){
 		return (float)((angle * 2 * Math.PI * turnRadius) / 360);

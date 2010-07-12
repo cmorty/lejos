@@ -305,6 +305,7 @@ public class TachoPilot implements Pilot {
    * @deprecated in 0.8, use setRotateSpeed() and setTravelSpeed(). The method was deprecated, as this it requires knowledge
    *             of the robots physical construction, which this interface should hide!
    */
+    @Deprecated
 	public void setSpeed(final int speed) {
 		_motorSpeed = speed;
 		_robotTravelSpeed = speed
@@ -702,6 +703,7 @@ public class TachoPilot implements Pilot {
     * control methods in this class work well with it on.  If you realy want
     * to change motor speed regulation, use getLeft().regulateSpeed()
     */
+    @Deprecated
     public void regulateSpeed(boolean yes)
     {
       _left.regulateSpeed(yes);

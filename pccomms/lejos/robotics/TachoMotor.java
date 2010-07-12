@@ -92,7 +92,7 @@ public interface TachoMotor extends Tachometer, DCMotor {
 
   /**
    * returns true if motor is stalled
-   * @return
+   * @return true if stalled
    */
 
     boolean isStalled();
