@@ -37,11 +37,9 @@ public class RConsole extends Thread
      * means that if Bluetooth is being use for the remote display, then the
      * user code should not also use Bluetooth.
      * 
-     * To ensure correct operation we synchronize output functions using a 
-     * sync variable. This variable normally uses the pront stream object
-     * for synchronization. However when running in debug mode we point this
-     * at a new object to ensure that any locks held on the pront stream will
-     * not block debug mode I/O.
+     * To ensure correct operation we use two separate print streams one for
+     * normal mode the other debug mode. This ensures that any locks held on the
+     * normal print stream will not block debug mode I/O.
      */
     static final int OPT_LCD = 1;
     static final int OPT_EVENTS = 2;
@@ -52,13 +50,13 @@ public class RConsole extends Thread
     
     static final int LCD_UPDATE_PERIOD = 100;
     
-    static PrintStream ps;
+    static volatile PrintStream ps;
+    static PrintStream psNormal;
+    static PrintStream psDebug;
     static OutputStream os;
-    static Object debugLock = new Object();
-    static Object sync = null;
     static volatile byte[] output;
     static volatile int outputLen;
-    static NXTConnection conn;
+    static volatile NXTConnection conn;
     static RConsole ioThread;
     static boolean lcd = false;
     static boolean events = false;
@@ -90,17 +88,14 @@ public class RConsole extends Thread
          * @param b the byte to write
          * @throws IOException
          */
-        public void write(int b) throws IOException
+        public synchronized void write(int b) throws IOException
         {
-            synchronized(sync)
+            if (numBytes == buffer.length)
             {
-                if (numBytes == buffer.length)
-                {
-                    flush();
-                }
-                buffer[numBytes] = (byte) b;
-                numBytes++;
+                flush();
             }
+            buffer[numBytes] = (byte) b;
+            numBytes++;
         }
 
         /**
@@ -108,21 +103,22 @@ public class RConsole extends Thread
          * @throws IOException
          */
         @Override
-        public void flush() throws IOException
+        public synchronized void flush() throws IOException
         {
-            synchronized (sync)
+            if (numBytes > 0)
             {
-                if (numBytes > 0)
+                // use busy wait synchronization.
+                outputLen = numBytes;
+                output = buffer;
+                numBytes = 0;
+                if (conn != null)
                 {
-                    // use busy wait synchronization.
-                    outputLen = numBytes;
-                    output = buffer;
                     ioThread.interrupt();
                     while (output != null)
                         Thread.yield();
-                    numBytes = 0;
                 }
             }
+           
         }
     }
 
@@ -142,25 +138,23 @@ public class RConsole extends Thread
     {
         if (c == null)
             return;
-        conn = c;
         try
         {
             LCD.drawString("Got connection  ", 0, 0);
             // Perfomr the handshake. This conists of 2 signature bytes 'RC'
             // followed by a single capability byte.
             byte[] hello = new byte[32];
-            int len = conn.read(hello, hello.length);
+            int len = c.read(hello, hello.length);
             if (len != 3 || hello[0] != 'R' || hello[1] != 'C')
             {
                 LCD.drawString("Console no h/s    ", 0, 0);
-                conn.close();
+                c.close();
                 return;
             }
             LCD.drawString("Console open    ", 0, 0);
-            if (conn == null)
-                return;
+            conn = c;
             os = conn.openOutputStream();
-            ps = new PrintStream(new RConsoleOutputStream(128));
+            ps = psNormal = new PrintStream(new RConsoleOutputStream(128));
             LCD.refresh();
             lcd = ((hello[2] & OPT_LCD) != 0);
             events = ((hello[2] & OPT_EVENTS) != 0);
@@ -169,8 +163,6 @@ public class RConsole extends Thread
             ioThread.setPriority(Thread.MAX_PRIORITY);
             ioThread.setDaemon(true);
             ioThread.start();
-            // initially we are in normal mode.
-            setDebugMode(false);
             println("Console open");
         } catch (Exception e)
         {
@@ -273,13 +265,10 @@ public class RConsole extends Thread
      */
     public static void print(String s)
     {
-        if (ps == null)
+        if (conn == null)
             return;
-        synchronized (sync)
-        {
-            ps.print(s);
-            ps.flush();
-        }
+        ps.print(s);
+        ps.flush();
     }
 
     /**
@@ -288,12 +277,9 @@ public class RConsole extends Thread
      */
     public static void println(String s)
     {
-        if (ps == null)
+        if (conn == null)
             return;
-        synchronized (sync)
-        {
-            ps.println(s);
-        }
+        ps.println(s);
     }
 
     /**
@@ -301,20 +287,18 @@ public class RConsole extends Thread
      */
     public static void close()
     {
-        if (conn == null)
-            return;
         println("Console closed");
         synchronized (os)
         {
+            if (conn == null)
+                return;
             try
             {
                 conn.close();
+                conn = null;
                 LCD.drawString("Console closed  ", 0, 0);
                 LCD.refresh();
                 Delay.msDelay(2000);
-                ps = null;
-                conn = null;
-                os = null;
             } catch (Exception e)
             {
             }
@@ -327,7 +311,7 @@ public class RConsole extends Thread
      */
     public static boolean isOpen()
     {
-        return (ps != null);
+        return (conn != null);
     }
 
     /**
@@ -340,26 +324,19 @@ public class RConsole extends Thread
     }
 
     /**
-     * Enter and leave debug mode. When in debug mode we use a different locking
-     * mechanism to ensure that suspended user threads will not block I/O.
-     * @param debug true to enter debug mode, false to leave.
-     */
-    public static void setDebugMode(boolean debug)
-    {
-            sync = (debug ? debugLock : ps);
-    }
-    /**
      * Main console I/O thread.
      */
     @Override
     public void run()
     {
         long nextUpdate = 0;
-        while (conn != null)
+        while (true)
         {
             long now = System.currentTimeMillis();
             synchronized (os)
             {
+                if (conn == null)
+                    break;
                 try
                 {
                     // First check to see if we have any "normal" output to go.
@@ -395,10 +372,11 @@ public class RConsole extends Thread
             }
             catch (InterruptedException e)
             {
-                // We use interrupt to wake the threade from sleep early.
+                // We use interrupt to wake the thread from sleep early.
             }
-            Delay.msDelay(1);
         }
+        // dump any pending output
+        output = null;
     }
 
     /**
@@ -453,11 +431,25 @@ public class RConsole extends Thread
     }
 
     /**
+     * Set the stream to be used for output. Used to switch between normal
+     * mode and debug mode
+     * @param p the PrintStream to use for RConsole I/O
+     */
+    static private void setStreams(PrintStream p)
+    {
+        ps = p;
+        System.setErr(p);
+        System.setOut(p);
+
+    }
+
+    /**
      * The following internal class provides an implicit remote console and
      * also hooks into the debug event system.
      */
     static public class Monitor extends DebugMonitor
     {
+        static PrintStream debugPS;
 
         /**
          * Exit the program
@@ -476,7 +468,8 @@ public class RConsole extends Thread
         @Override
         protected void processEvent(int event)
         {
-            setDebugMode(true);
+            // Switch to debug streams
+            setStreams(psDebug);
             switch (event)
             {
                 case DebugInterface.DBG_EXCEPTION:
@@ -493,7 +486,8 @@ public class RConsole extends Thread
                     exit();
                     break;
             }
-            setDebugMode(false);
+            // Switch back...
+            setStreams(psNormal);
         }
 
         /**
@@ -506,8 +500,10 @@ public class RConsole extends Thread
         {
             // Open the console and re-direct standard channels to it.
             RConsole.open();
-            System.setErr(RConsole.getPrintStream());
-            System.setOut(RConsole.getPrintStream());
+            // Create print stream for use during debug events.
+            psDebug = new PrintStream(new RConsoleOutputStream(128));
+            // and set things into normal mode
+            setStreams(psNormal);
             // now create and run the monitor.
             new Monitor().monitorEvents();
         }
