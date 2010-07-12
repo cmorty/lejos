@@ -1074,12 +1074,13 @@ public class StartUpText
     	
     	LCD.asyncRefresh();
         
-        TuneThread tuneThread = new TuneThread();    	
+        TuneThread tuneThread = new TuneThread();
+        //Fade in
         tuneThread.start();
         
         Utils.defragFilesystem();
         
-        // Tell thread, that defrag is complete
+        // Tell thread to play tune
         tuneThread.setState(1);
         
         InitThread initThread = new InitThread();
@@ -1097,7 +1098,7 @@ public class StartUpText
         Utils.fadeOut();
         
         initThread.menu.start();
-        // Tell the background thread we are done and to fade in the menu.
+        // Tell thread to fade in again
         tuneThread.setState(3);
         initThread.menu.mainMenu();
 
