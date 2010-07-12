@@ -825,15 +825,15 @@ public class DifferentialPilot implements
 
   public float getMovementIncrement()
   {
-    float left = (_left.getTachoCount() - _leftTC)/ _leftDegPerDistance;
-    float right = ( _right.getTachoCount() - _rightTC) / _rightDegPerDistance;
-    return _parity * (left + right) / 2.0f;
+    float left = (getLeftCount() - _leftTC)/ _leftDegPerDistance;
+    float right = (getRightCount() - _rightTC) / _rightDegPerDistance;
+    return /*_parity * */ (left + right) / 2.0f;
   }
 
   public float getAngleIncrement()
   {
-    return _parity * (((_right.getTachoCount() - _rightTC) / _rightTurnRatio) -
-            ((_left.getTachoCount()  - _leftTC) / _leftTurnRatio)) / 2.0f;
+    return /*_parity * */(((getRightCount() - _rightTC) / _rightTurnRatio) -
+            ((getLeftCount()  - _leftTC) / _leftTurnRatio)) / 2.0f;
   }
 
   public void addMoveListener(MoveListener m)
