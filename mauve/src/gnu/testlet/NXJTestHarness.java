@@ -98,7 +98,7 @@ public class NXJTestHarness extends TestHarness
   public static void main (String[] args)
   {
 	  RConsole.openBluetooth(0);
-	  System.setOut(new PrintStream(RConsole.openOutputStream()));
+	  System.setOut(new PrintStream(RConsole.getPrintStream()));
 	  NXJTestHarness harness = new NXJTestHarness();
 	  
 	  // Run the tests
