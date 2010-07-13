@@ -209,6 +209,32 @@ public class LCD
         setAutoRefreshPeriod((on ? DEFAULT_REFRESH_PERIOD : 0));
         autoRefresh = on;
     }
+    
+	/**
+	 * Method to set a pixel to screen.
+	 * @param rgbColor the pixel color (0 = white, 1 = black)
+	 * @param x the x coordinate
+	 * @param y the y coordinate
+	 */
+	public static void setPixel(int rgbColor, int x, int y) {
+		if (x < 0 || x >= SCREEN_WIDTH || y < 0 || y >= SCREEN_HEIGHT) return; // Test-Modify for speed
+		int bit = (y & 0x7);
+		int index = (y/8)*SCREEN_WIDTH + x;
+		displayBuf[index] = (byte)((displayBuf[index] & ~(1 << bit)) | (rgbColor << bit));
+	}
+	
+	/**
+	 * Method to get a pixel from the screen.
+	 * @param x the x coordinate
+	 * @param y the y coordinate
+	 * @return the pixel color (0 = white, 1 = black)
+	 */
+	public static int getPixel(int x, int y) {
+		if (x < 0 || x >= SCREEN_WIDTH || y < 0 || y >= SCREEN_HEIGHT) return 0; 
+		int bit = (y & 0x7);
+		int index = (y/8)*SCREEN_WIDTH + x;
+		return ((displayBuf[index] >> bit) & 1);
+	}
 
     /**
      * Standard two input BitBlt function. Supports standard raster ops and
