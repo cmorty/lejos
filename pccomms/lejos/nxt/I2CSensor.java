@@ -64,6 +64,10 @@ public class I2CSensor implements SensorConstants {
 		return port;
 	}
 	
+	public int getData(int register, byte [] buf, int length) {
+		return this.getData(register, buf, 0, length);
+	}
+	
 	/**
 	 * Method for retrieving data values from the sensor. BYTE0 (
 	 * is usually the primary data value for the sensor.
@@ -75,7 +79,7 @@ public class I2CSensor implements SensorConstants {
 	 * @param length Length of data to read (minimum 1, maximum 16) 
 	 * @return the status
 	 */
-	public int getData(int register, byte [] buf, int length) {
+	public int getData(int register, byte [] buf, int offset, int length) {
 		byte [] txData = {address, (byte) register};
 		try {
 			nxtCommand.LSWrite(port, txData, (byte)length);
@@ -95,7 +99,7 @@ public class I2CSensor implements SensorConstants {
 				
 		try {
 			byte [] ret = nxtCommand.LSRead(port);
-			if (ret != null) System.arraycopy(ret, 0,buf, 0, ret.length);
+			if (ret != null) System.arraycopy(ret, 0,buf, offset, ret.length);
 		} catch (IOException ioe) {
 			System.out.println(ioe.getMessage());
 			return -1;
@@ -130,17 +134,21 @@ public class I2CSensor implements SensorConstants {
 		}
 	}
 	
+	public int sendData(int register, byte [] data, int length) {
+		return this.sendData(register, data, 0, length);
+	}
+	
 	/**
 	 * Send data top the sensor
 	 * @param register A data register in the I2C sensor.
 	 * @param data The byte to send.
 	 * @param length the number of bytes
 	 */
-	public int sendData(int register, byte [] data, int length) {
+	public int sendData(int register, byte [] data, int offset, int length) {
 		byte [] txData = {address, (byte) register};
 		byte [] sendData = new byte[length+2];
 		System.arraycopy(txData,0,sendData,0,2);
-		System.arraycopy(data,0,sendData,2,length);
+		System.arraycopy(data,offset,sendData,2,length);
 		try {
 			return nxtCommand.LSWrite(this.port, sendData, (byte)0);
 		} catch (IOException ioe) {
