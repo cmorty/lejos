@@ -10,6 +10,7 @@ public class SpeedTest {
   Random rand = new Random();
   LightSensor ls = new LightSensor(SensorPort.S3);
   UltrasonicSensor us = new UltrasonicSensor(SensorPort.S1);
+  us.continuous();
   Motor MA = Motor.A;
   Motor MB = Motor.B;
   Motor MC = Motor.C;

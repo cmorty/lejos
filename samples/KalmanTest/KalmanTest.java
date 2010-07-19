@@ -46,6 +46,8 @@ public class KalmanTest {
     Matrix control = new Matrix(1,1);
     Matrix measurement = new Matrix(1,1);
     
+    sonic.continuous();
+    
     //RConsole.openBluetooth(0);
     //System.setOut(new PrintStream(RConsole.openOutputStream()));
     
