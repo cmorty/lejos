@@ -18,6 +18,7 @@ public class FixedRangeScanner implements RangeScanner
   {
     pilot = aPilot;
     sonar = new UltrasonicSensor(port);
+    sonar.continuous();
   }
 
   /**

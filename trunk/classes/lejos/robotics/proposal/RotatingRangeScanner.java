@@ -20,8 +20,9 @@ public class RotatingRangeScanner implements RangeScanner
    */
   public RotatingRangeScanner(TachoMotor head, SensorPort port)
   {
-    sonar = new UltrasonicSensor(port);
     this.head = head;
+    sonar = new UltrasonicSensor(port);
+    sonar.continuous();
   }
   /**
    * Returns a set of Range Readings taken the angles specified.

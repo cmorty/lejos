@@ -20,6 +20,7 @@ public class EchoNavigator
   public EchoNavigator(final ArcRotateMoveController aPilot, SensorPort echo)
   {
     sonar= new UltrasonicSensor(echo);
+    sonar.continuous();
     pilot = aPilot;
     drpp = new DeadReckonerPoseProvider(pilot);
   }

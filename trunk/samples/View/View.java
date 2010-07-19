@@ -152,6 +152,7 @@ public class View {
 				if (sensor == 6) // Ultrasonic
 				{
 					UltrasonicSensor sonar = new UltrasonicSensor(sp);
+					sonar.continuous();
 					
 					while (!Button.ESCAPE.isPressed())
 					{

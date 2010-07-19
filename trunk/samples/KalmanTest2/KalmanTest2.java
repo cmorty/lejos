@@ -53,6 +53,8 @@ public class KalmanTest2 {
     float initialHeading = compass.getDegrees();
     float heading = initialHeading;
     
+    sonic.continuous();
+    
     RConsole.openBluetooth(0);
     System.setOut(new PrintStream(RConsole.getPrintStream()));
     

@@ -76,7 +76,7 @@ class DetectWall implements Behavior
   public boolean takeControl()
   {
     sonar.ping();
-    Sound.pause(20);
+    //Sound.pause(20);
     return touch.isPressed() || sonar.getDistance() < 25;
   }
 
