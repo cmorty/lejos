@@ -15,6 +15,9 @@ public class BatteryIndicator
     private static final int RECHARGE_OK = 7200;
     private static final int RECHARGE_MAX = 8200;
     
+	private static final int HISTORY_SIZE = 2000 / Config.ANIM_DELAY;
+	private static final int WINDOW_TOLERANCE = 10;
+	
     private static final byte BATTERY_TOKEN_FULL = 0x3F;
     private static final byte BATTERY_TOKEN_EMPTY = 0x21;
     private static final byte BATTERY_TOKEN_NOB = 0x0C;
@@ -26,6 +29,11 @@ public class BatteryIndicator
     private int levelHigh;
     private boolean isOk;
     
+	private final int[] history = new int[HISTORY_SIZE];
+	private int windowcenter;
+	private int historyindex;
+	private int historysum;
+	
 	private byte[] title;
 	private byte[] default_title;
 	private long title_time;
@@ -44,6 +52,11 @@ public class BatteryIndicator
     		this.levelOk = STD_OK;
     		this.levelHigh = STD_MAX;
     	}
+    	
+		windowcenter = Battery.getVoltageMilliVolt();
+		historysum = windowcenter * HISTORY_SIZE;
+		for (int i = 0; i < HISTORY_SIZE; i++)
+			history[i] = windowcenter;
     }
     
     public synchronized void setDefaultTitle(String title)
@@ -63,13 +76,29 @@ public class BatteryIndicator
    		this.title = (title == null) ? default_title : Utils.textToBytes(title);
 		this.title_time = System.currentTimeMillis();
     }
+    
+    private int getLevel()
+    {
+    	int val = Battery.getVoltageMilliVolt();
+    	
+		historysum += val - history[historyindex];
+		history[historyindex] = val;
+		historyindex = (historyindex + 1) % HISTORY_SIZE;
+		int average = (historysum + HISTORY_SIZE/2) / HISTORY_SIZE;
+		
+		int diff = average - windowcenter;
+		if (diff < -WINDOW_TOLERANCE || diff > WINDOW_TOLERANCE)
+			windowcenter += diff / 2;
+    	
+		return windowcenter;
+    }
 
     /**
      * Display the battery icon.
      */
     public synchronized void draw(long time, byte[] buf)
     {
-    	int level = Battery.getVoltageMilliVolt();
+    	int level = getLevel();
     	
         if (level <= levelMin)
         {
