@@ -27,7 +27,7 @@ public class I2CSensor implements SensorConstants {
 	protected static int DEFAULT_I2C_ADDRESS = 0x02;
 	
 	protected I2CPort port;
-	protected int address = 2;
+	protected int address;
 	protected byte[] byteBuff = new byte[8];
 	private byte[] ioBuf = new byte[32];
 
@@ -182,7 +182,7 @@ public class I2CSensor implements SensorConstants {
      * of leJOS) may use i2c 7 bit format (0x1-0x7f) in which case this address
      * must be shifted left on place to be used with this function.
 	 * 
-	 * @param addr 0x2 to 0xfe
+	 * @param addr 0x02 to 0xfe
 	 * @deprecated If the device has a changeable address, then constructor of the class should have an address parameter. If not, please report a bug.
 	 */
 	@Deprecated
