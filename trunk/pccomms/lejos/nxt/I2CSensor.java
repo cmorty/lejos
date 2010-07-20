@@ -14,38 +14,51 @@ import lejos.pc.comm.*;
 public class I2CSensor implements SensorConstants {
 	private static final NXTCommand nxtCommand = NXTCommandConnector.getSingletonOpen();
 		
-	protected byte address = 0x02; // the default I2C address for a port. You can change address of compass sensor (see docs) and then communicate with multiple sensors on same physical port.
-	protected static byte STOP = 0x00; // Commands don't seem to use this?
-	protected static String BLANK = "       ";
+	private static byte STOP = 0x00; // Commands don't seem to use this?
+	private static String BLANK = "       ";
 	
-	// Port information (constants)
 	/**
 	 * Returns the version number of the sensor. e.g. "V1.0" Reply length = 8.
 	 */
-	protected static byte VERSION = 0x00;
+	protected static byte REG_VERSION = 0x00;
 	/**
 	 * Returns the product ID of the sensor.  e.g. "LEGO" Reply length = 8.
 	 */
-	protected static byte PRODUCT_ID = 0x08;
+	protected static byte REG_PRODUCT_ID = 0x08;
 	/**
 	 * Returns the sensor type. e.g. "Sonar" Reply length = 8.
 	 */
-	protected static byte SENSOR_TYPE = 0x10;
-	/**
-	 * Returns the "zero position" set at the factory for this sensor. e.g. 0 Reply length = 1.
-	 *
-	 */
+	protected static byte REG_SENSOR_TYPE = 0x10;
 	
-	byte port;
+	protected static int DEFAULT_I2C_ADDRESS = 0x02;
+	
+	protected byte port;
+	protected int address;
+	
+	public I2CSensor(I2CPort port)
+	{
+        this(port, DEFAULT_I2C_ADDRESS, I2CPort.LEGO_MODE, TYPE_LOWSPEED);
+    }
 	
 	/**
-	 * 
-     * @param s A sensor. e.g. Port.S1
-     * @param mode Set the operating i2c mode NOTE this value does not work for remote sensors.
+	 * @param port
+	 * @param mode will not work on PC side
 	 */
-	public I2CSensor(I2CPort s, int mode) {
-		port = (byte)s.getId();
-		s.setTypeAndMode(NXTProtocol.LOWSPEED, NXTProtocol.RAWMODE);
+	public I2CSensor(I2CPort port, int mode)
+	{
+		this(port, DEFAULT_I2C_ADDRESS, mode, TYPE_LOWSPEED);
+	}
+	
+	/**
+	 * @param port
+	 * @param address
+	 * @param mode will not work on PC side
+	 * @param type
+	 */
+	public I2CSensor(I2CPort port, int address, int mode, int type)
+	{
+		port.setTypeAndMode(type, NXTProtocol.RAWMODE);
+		this.port = (byte)port.getId();
 		// Flushes out any existing data
 		try {
 			nxtCommand.LSGetStatus(this.port); 
@@ -54,11 +67,6 @@ public class I2CSensor implements SensorConstants {
 			System.out.println(ioe.getMessage());
 		}
 	}
-
-	public I2CSensor(I2CPort s) {
-		this(s, NXTProtocol.LOWSPEED);
-	}
-	
 	
 	public int getId() {
 		return port;
@@ -80,7 +88,7 @@ public class I2CSensor implements SensorConstants {
 	 * @return the status
 	 */
 	public int getData(int register, byte [] buf, int offset, int length) {
-		byte [] txData = {address, (byte) register};
+		byte [] txData = {(byte)address, (byte) register};
 		try {
 			nxtCommand.LSWrite(port, txData, (byte)length);
 		} catch (IOException ioe) {
@@ -124,7 +132,7 @@ public class I2CSensor implements SensorConstants {
 	 * @param value The data value.
 	 */
 	public int sendData(int register, byte value) {
-		byte [] txData = {address, (byte) register, value};
+		byte [] txData = {(byte)address, (byte) register, value};
 		try {
 			int ret = nxtCommand.LSWrite(this.port, txData, (byte)0);
             return ret;
@@ -145,7 +153,7 @@ public class I2CSensor implements SensorConstants {
 	 * @param length the number of bytes
 	 */
 	public int sendData(int register, byte [] data, int offset, int length) {
-		byte [] txData = {address, (byte) register};
+		byte [] txData = {(byte)address, (byte) register};
 		byte [] sendData = new byte[length+2];
 		System.arraycopy(txData,0,sendData,0,2);
 		System.arraycopy(data,offset,sendData,2,length);
@@ -163,7 +171,7 @@ public class I2CSensor implements SensorConstants {
 	 * @return The version number. e.g. "V1.0"
 	 */
 	public String getVersion() {
-		return fetchString(VERSION, 8);
+		return fetchString(REG_VERSION, 8);
 	}
 	
 	/**
@@ -173,7 +181,7 @@ public class I2CSensor implements SensorConstants {
 	 * @return The product ID. e.g. "LEGO"
 	 */
 	public String getProductID() {
-		return fetchString(PRODUCT_ID, 8);
+		return fetchString(REG_PRODUCT_ID, 8);
 	}
 	
 	/**
@@ -183,28 +191,31 @@ public class I2CSensor implements SensorConstants {
 	 * @return The sensor type. e.g. "Sonar"
 	 */
 	public String getSensorType() {
-		return fetchString(SENSOR_TYPE, 8);
+		return fetchString(REG_SENSOR_TYPE, 8);
 	}
 	
-	/**
-	 * Helper method for retrieving string constants using I2C protocol.
-	 * @param constantEnumeration e.g. I2CProtocol.VERSION
-     * @param rxLength
-     * @return the string
-	 */
-	 protected String fetchString(int constantEnumeration, int rxLength) {
-		byte [] stringBytes = new byte[rxLength];
-		getData(constantEnumeration, stringBytes, rxLength);
-
-		// Get rid of everything after 0.
-		int zeroPos = 0;
-		for(zeroPos = 0;zeroPos < rxLength;zeroPos++) {
-			if(stringBytes [zeroPos] == 0) break;
-		}
-		String s = new String(stringBytes).substring(0,zeroPos);
-		return s;
+    /**
+     * Read a string from the device.
+     * This functions reads the specified number of bytes
+     * and returns the characters before the zero termination byte.
+     * 
+     * @param reg
+     * @param len maximum length of the string, including the zero termination byte
+     * @return the string containing the characters before the zero termination byte
+     */
+	protected String fetchString(byte reg, int len) {
+		byte[] buf = new byte[len];
+		int ret = getData(reg, buf, 0, len);
+		if (ret != 0)
+			return "";
+		
+		int i;
+		char[] charBuff = new char[len];		
+		for (i=0; i<len && buf[i] != 0; i++)
+			charBuff[i] = (char)(buf[i] & 0xFF);
+		
+		return new String(charBuff, 0, i);
 	}
-
 
 	/**
 	 * Set the address of the port 
@@ -212,9 +223,11 @@ public class I2CSensor implements SensorConstants {
 	 * even numbers from 0x02 to 0xFE as given in some I2C device specifications.
 	 * They are 7-bit addresses not 8-bit addresses.
 	 * 
-	 * @param addr 1 to 0x7F 
+	 * @param addr 0x02 to 0xfe
+	 * @deprecated If the device has a changeable address, then constructor of the class should have an address parameter. If not, please report a bug.
 	 */
 	public void setAddress(int addr) {
-		address = (byte) (addr << 1);
+        if ((address & 1) != 0) throw new IllegalArgumentException("Bad address format");
+		address = addr;
 	}
 }
