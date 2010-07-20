@@ -28,7 +28,6 @@ public class I2CSensor implements SensorConstants {
 	
 	protected I2CPort port;
 	protected int address;
-	protected byte[] byteBuff = new byte[8];
 	private byte[] ioBuf = new byte[32];
 
 	public I2CSensor(I2CPort port)

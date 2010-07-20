@@ -40,6 +40,7 @@ public class UltrasonicSensor extends I2CSensor implements RangeFinder
 	private long nextCmdTime = 0;
 	private long dataAvailableTime = 0;
 	private byte mode = MODE_CONTINUOUS;
+	private byte[] byteBuff = new byte[8];
 
 	/**
 	 * Wait until the specified time
