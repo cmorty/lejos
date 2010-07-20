@@ -53,10 +53,11 @@ public class BatteryIndicator
     		this.levelHigh = STD_MAX;
     	}
     	
-		windowcenter = Battery.getVoltageMilliVolt();
-		historysum = windowcenter * HISTORY_SIZE;
+    	int val = Battery.getVoltageMilliVolt();
+		windowcenter = val;
+		historysum = val * HISTORY_SIZE;
 		for (int i = 0; i < HISTORY_SIZE; i++)
-			history[i] = windowcenter;
+			history[i] = val;
     }
     
     public synchronized void setDefaultTitle(String title)
