@@ -561,7 +561,7 @@ public class DifferentialPilot implements
 
 /**
    * Starts the robot moving forward along a curved path. This method is similar to the
-   * {@link #arc(float radius )} method except it uses the <code> turnRate</code> parameter
+   * {@link #arcForward(float radius )} method except it uses the <code> turnRate</code> parameter
    * do determine the curvature of the path and therefore has the ability to drive straight. This makes
    * it useful for line following applications.
    * <p>
