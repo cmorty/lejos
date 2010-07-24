@@ -104,7 +104,7 @@ public class Homer implements RangeScanner {
       
       for(WayPoint wp: route) {
         System.out.println("Go to (" + (int) wp.x + "," + (int) wp.y + ")");
-        pc.goTo(wp);
+        pc.goTo(wp,false);  
         Pose  pose = mcl.getPose();
         goodEstimate(pose); // Just for diagnostics
         // Pose controller should have a goTo(Pose) method to do this
