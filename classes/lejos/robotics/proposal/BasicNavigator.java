@@ -6,17 +6,18 @@ import lejos.geom.Point;
 import lejos.robotics.*;
 
 /**
- *This  class can follow a sequence of way points;
- *Uses an inner class that has it own thresd to do the work.
+ *This class can cause the robot to follow a route - a sequence of way points ;
+ * The way points are stored in a queue (actually, a Collection).
+ * This  class uses  an inner class running its own thread to issue movement commands to its pilot.
  * It can use either a differential pilot or steering pilot.
- * Uses a PoseController to keep its pose updated, and calls its Waypoint Listeners
+ * It also uses a PoseController to keep its pose updated, and calls its Waypoint Listeners
  * when a way point is reached.
  * @author Roger
  */
 public class BasicNavigator   implements PoseController
 {
 /**
- * can use any pilot the impolements the MoveControl interrface
+ * can use any pilot the impelements the MoveControl interface
  * @param pilot
  */
   public BasicNavigator(ArcMoveController pilot )
@@ -34,65 +35,85 @@ public BasicNavigator(ArcMoveController  pilot, PoseProvider poseProvider )
     _nav = new Nav();
     _nav.start();
   }
-  public void followRoute(ArrayList<WayPoint>  aRoute)
+
+/**
+ * This method is the same as followRoute(aRoute, true );
+ * @param aRoute
+ */
+  public void followRoute(Collection<WayPoint>  aRoute)
   {
     followRoute( aRoute ,false);
   }
 
   
-  public void followRoute(ArrayList<WayPoint>aRoute, boolean immediateReturn )
+  public void followRoute(Collection<WayPoint>aRoute, boolean immediateReturn )
   {
-    _route = aRoute;
+    _route = (ArrayList<WayPoint>) aRoute;
     _keepGoing = true;
     if(immediateReturn)return;
     else while(_keepGoing) Thread.yield();
   }
 
-
-public void goTo(WayPoint destination)
+public void goTo(WayPoint destination, boolean immediateReturn)
 {
-//  RConsole.println("goTo "+destination);
   addWaypoint(destination);
-}
-
-public void goTo(float x, float y, boolean immediateReturn)
-{
-  goTo(new WayPoint(x,y));
-  if(!immediateReturn)
+   if(!immediateReturn)
   {
     while(_keepGoing)Thread.yield();
   }
 }
 
+
 /**
- * Add a WayPointListener
- * @param aListener
+ * Causes the robot move to the coordinates specified in the parameters
+ * @param x coordinate of the destination
+ * @param y coordinate of the destinatin
+ * @param immediateReturn if<b>trure<>/b> this method returns immediately
  */
+public void goTo(float x, float y, boolean immediateReturn)
+{
+  goTo(new WayPoint(x,y),immediateReturn);
+}
+
   public void addListener(WayPointListener aListener)
   {
     if(listeners == null )listeners = new ArrayList<WayPointListener>();
     listeners.add(aListener);
   }
-
+/**
+ * sets tho pose of the robot in the pose provider
+ * @param x coordinate of the robot
+ * @param y coordinate of the robot
+ * @param heading  of the robot
+ */
    public void setPose(float x, float y, float heading)
   {
     setPose(new Pose(x,y,heading));
   }
-
+/**
+ * sets the pose of the robot in the pose provider
+ * @param pose
+ */
   public void setPose(Pose pose)
   {
     _pose = pose;
     poseProvider.setPose(_pose);
   }
+
+  /**
+   * sets the heading of the robot in the pose provider
+   * @param heading
+   */
   public void setHeading(float heading)
   {
     setPose(_pose.getX(),_pose.getY(),heading);
   }
 
 /**
- * Betin following the route  Can be a non-blocking method
- * @param aRoute sequemce of way points to be visited
- * @param immediateReturn if true, returns immidiately
+ * This method is for future use with  MCLPoseProvider
+ * @param aPose : the initial pose
+ * @param headingNoise
+ * @param radiusNoise
  */
   public void setInitialPose(Pose aPose, float headingNoise, float radiusNoise )
   {
@@ -104,18 +125,13 @@ public void goTo(float x, float y, boolean immediateReturn)
    * returns a referenct to the pilot.
    * The Navigator pose will be automatically updated as a result of methods
    * executed on the pilot.
-   * @return
+   * @return reference to the pilot
    */
 public ArcMoveController getPilot(){ return _pilot;}
 
-  /**
-   * add a WayPoint to the route array. If the robot is not moving, it will
-   * start following the route.
-   * @param aWayPoint
-   */
+ 
   public void addWaypoint(WayPoint aWayPoint)
   {
-
     _route.add(aWayPoint);
     _keepGoing = true;
   }
@@ -125,25 +141,19 @@ public void interrupt()
   _pilot.stop();
 }
 
-/**
- * Resume the route after an interrupt
- */
   public void resume()
   {
     if(_route.size() > 0 ) _keepGoing = true;
   }
 
-
-  /**
-   * calls interrupt()
-   */
+   /**
+    * calls interrupt()
+    */
   public void stop()
   {
     interrupt();
   }
-  /**
-   * Stop the robot and emptay the  queue
-   */
+
   public void flushQueue()
   {
     _keepGoing = false;
@@ -153,13 +163,13 @@ public void interrupt()
   
   
   /**
-   * Helper method for goTo() ; uses a simile altorithm for performing the
+   * Helper method for goTo() if a SteeringPilot is used ; uses a simple algorithm for performing the
    * arc move to change direction before
-   * the robot travels to the destination.  The default arc followed in the
+   * the robot travels to the destination.  The default arc is followed in the
    * forward direction.  If the destination is inside the default arc, this
-   * method is called agin with the  second parameter set to <b>true</b>
+   * method is called again with the  second parameter set to <b>true</b>
    * @param destinationRelativeBearing
-   * @param close  // true if the destination is inside of the default turning circle
+   * @param close  <b> true </b>if the destination is inside of the default turning circle
    */
   protected void performArc(float destinationRelativeBearing,
           boolean  close )
@@ -192,7 +202,7 @@ public void interrupt()
 
   /**
    * Returns the  waypoint to which the robot is moving
-   * @return
+   * @return the  waypoint to which the robot is moving
    */
 public WayPoint getWaypoint()
 {
@@ -200,6 +210,10 @@ public WayPoint getWaypoint()
   else return _route.get(0);
 }
 
+/**
+ * returns the current pose of the robot
+ * @return the current pose of the robot
+ */
 public Pose getPose()
 {
   return poseProvider.getPose();
@@ -217,7 +231,7 @@ public PoseProvider getPoseProvider()
 /**
  * returns the equivalent angle between -180 and +180 degrees
  * @param angle
- * @return
+ * @return normalized angle
  */
   public float normalize(float angle)
   {
