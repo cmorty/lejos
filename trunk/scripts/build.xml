@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="project" default="all">
+<project name="leJOS scripts" default="all">
 	<description>
 		Generates scripts
     </description>
