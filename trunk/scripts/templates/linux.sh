@@ -26,8 +26,8 @@ else
 	while [ -L "$NXJ_BIN" ]; do
 		NXJ_BIN="$(my_readlink "$NXJ_BIN")"
 	done
-	NXJ_BIN="$(my_resolve "$(pwd)" "$NXJ_BIN")"
 	NXJ_BIN="$(dirname -- "$NXJ_BIN")"
+	NXJ_BIN="$(my_resolve "$(pwd)" "$NXJ_BIN")"
 	NXJ_HOME="$NXJ_BIN/.."
 fi
 
