@@ -924,7 +924,7 @@ public class StartUpText
             LCD.drawInt((millis % 1000) / 100, 13, 3);
             if (Battery.isRechargeable())
                 LCD.drawString("R", 15, 3);
-            menuData[1] = "Sleep time: " + timeout;
+            menuData[1] = "Sleep time: " + (timeout == 0 ? "off" : String.valueOf(timeout));
             File f = getDefaultProgram();
             if (f == null)
             	menuData[3] = null;
