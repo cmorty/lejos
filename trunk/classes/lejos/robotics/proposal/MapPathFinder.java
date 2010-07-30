@@ -25,7 +25,7 @@ import lejos.robotics.mapping.RangeMap;
  * @author Lawrie Griffiths
  *
  */
-public class MapPathFinder extends ArrayList<WayPoint> implements PathFinder {	
+public class MapPathFinder implements PathFinder {	
 	private static final long serialVersionUID = 1L;
 	private static final int MAX_ITERATIONS = 1000;
 	private static final float MAX_DISTANCE = 40;
@@ -50,13 +50,14 @@ public class MapPathFinder extends ArrayList<WayPoint> implements PathFinder {
 	public Collection<WayPoint> findRoute(Pose start, Pose destination)
 			throws DestinationUnreachableException {
 		Pose pose = start;
+		ArrayList<WayPoint> route = new ArrayList<WayPoint>();
 		
 		// Continue until we return a route or throw DestinationUnReachableException
 		for(;;) {
 			// If the current pose if close enough to the destination, go straight there
 			if (pose.distanceTo(destination.getLocation()) < MAX_DISTANCE) {
-				add(new WayPoint(destination));
-				return this;
+				route.add(new WayPoint(destination));
+				return route;
 			} else {
 				Pose testPose = null;
 				
@@ -95,7 +96,7 @@ public class MapPathFinder extends ArrayList<WayPoint> implements PathFinder {
 				}
 				if (testPose == null) throw new  DestinationUnreachableException();
 				else {
-					add(new WayPoint(testPose));
+					route.add(new WayPoint(testPose));
 					pose = testPose;
 				}
 			}
