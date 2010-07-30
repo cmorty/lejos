@@ -2,8 +2,6 @@ package lejos.robotics.proposal;
 
 import java.util.ArrayList;
 import java.util.Collection;
-
-import lejos.geom.Point;
 import lejos.robotics.Pose;
 
 /*
@@ -18,15 +16,7 @@ import lejos.robotics.Pose;
  *
  */
 public class SimplePathFinder implements PathFinder {
-	
-	public Collection<WayPoint> findRoute(Pose start, Point destination)
-			throws DestinationUnreachableException {
-		ArrayList<WayPoint> route = new ArrayList<WayPoint>();
-		route.add(new WayPoint(destination));
-		return route;
-	}
-
-	public Collection<WayPoint> findRoute(Pose start, Pose destination)
+	public Collection<WayPoint> findRoute(Pose start, WayPoint destination)
 			throws DestinationUnreachableException {
 		ArrayList<WayPoint> route = new ArrayList<WayPoint>();
 		route.add(new WayPoint(destination));
