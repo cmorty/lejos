@@ -100,7 +100,7 @@ public class Homer implements RangeScanner {
     
     // Go home
     try {
-      Collection<WayPoint> route = pf.findRoute(start, home);
+      Collection<WayPoint> route = pf.findRoute(start, new WayPoint(home));
       
       for(WayPoint wp: route) {
         System.out.println("Go to (" + (int) wp.x + "," + (int) wp.y + ")");
