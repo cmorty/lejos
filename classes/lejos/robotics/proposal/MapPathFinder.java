@@ -41,13 +41,7 @@ public class MapPathFinder implements PathFinder {
 		this.readings = readings;
 	}
 	
-	public Collection<WayPoint> findRoute(Pose start, Point destination)
-			throws DestinationUnreachableException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public Collection<WayPoint> findRoute(Pose start, Pose destination)
+	public Collection<WayPoint> findRoute(Pose start, WayPoint destination)
 			throws DestinationUnreachableException {
 		Pose pose = start;
 		ArrayList<WayPoint> route = new ArrayList<WayPoint>();
@@ -55,7 +49,7 @@ public class MapPathFinder implements PathFinder {
 		// Continue until we return a route or throw DestinationUnReachableException
 		for(;;) {
 			// If the current pose if close enough to the destination, go straight there
-			if (pose.distanceTo(destination.getLocation()) < MAX_DISTANCE) {
+			if (pose.distanceTo(destination) < MAX_DISTANCE) {
 				route.add(new WayPoint(destination));
 				return route;
 			} else {
@@ -69,8 +63,8 @@ public class MapPathFinder implements PathFinder {
 				    if (testPose.distanceTo(pose.getLocation()) > MAX_DISTANCE) continue;
 				    
 					// The new pose must be at least MIN_GAIN closer to the destination
-					if (pose.distanceTo(destination.getLocation()) - 
-							testPose.distanceTo(destination.getLocation()) < MIN_GAIN)
+					if (pose.distanceTo(destination) - 
+							testPose.distanceTo(destination) < MIN_GAIN)
 						continue;
 					
 					// We must be able to get a valid set of range readings from the new pose
