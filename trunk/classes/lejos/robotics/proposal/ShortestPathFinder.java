@@ -13,7 +13,7 @@ import lejos.robotics.Pose;
  * changes of direction occur.
  * It uses the Node inner class for its internal representation of points.
  *
- * @author Roger
+ * @author Roger Glassey
  */
 public class ShortestPathFinder implements PathFinder
 {
@@ -24,20 +24,9 @@ public class ShortestPathFinder implements PathFinder
  * @return the shortest route
  * @throws DestinationUnreachableException  if, for example, you nave not called setMap();
  */
-  public Collection<WayPoint> findRoute(Pose start, Point finish) throws DestinationUnreachableException
+  public Collection<WayPoint> findRoute(Pose start, WayPoint finish) throws DestinationUnreachableException
   {
     return findPath(start.getLocation(), finish, _map);
-  }
-/**
- * Calculates the shortest path to the finish. The heading of the finish pose is ignored.
- * @param start the initial robot pose
- * @param finish  final robot location (the heading of the pose is ignored)
- * @return shortest path
- * @throws DestinationUnreachableException
- */
-  public Collection<WayPoint> findRoute(Pose start, Pose finish) throws DestinationUnreachableException
-  {
-    return findPath(start.getLocation(), finish.getLocation(), _map);
   }
 
   /**
