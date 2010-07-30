@@ -76,7 +76,7 @@ public interface PoseController
    * not change after the program starts, unless it was physically a transformer robot.
    * @return the pilot
    */
-  public ArcMoveController getPilot();
+  public MoveController getPilot();
 
   /**
    * Get a reference to the PoseProvider being used as a localizer.
