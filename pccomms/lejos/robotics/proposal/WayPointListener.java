@@ -4,13 +4,13 @@ import lejos.robotics.Pose;
 
 /**
  *
- * @author roger
+ * @author Roger Glassey
  */
 public interface WayPointListener
 {
   /**
-   * @param thePose :the actual estimated pose  of the robot when the waypoion has
+   * @param thePose :the actual estimated pose of the robot when the waypoint has
    * been approximately reached.
    */
-  public  void  atWayPoint(Pose thePose);
+  public void atWayPoint(Pose thePose);
 }

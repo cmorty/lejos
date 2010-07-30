@@ -1,23 +1,44 @@
 package lejos.robotics.proposal;
 
-
 import java.util.*;
 import lejos.geom.*;
 import java.awt.geom.Point2D;
-import lejos.robotics.proposal.WayPoint;
-// The  library for this project sould be set to include  classes.jar from  NXJ_HOME
+import lejos.robotics.Pose;
+// The  library for this project should be set to include  classes.jar from  NXJ_HOME
 
 /**
  * This class calculates the shortest path from a starting point to a finish point.
  * while avoiding obstacles that are represented as a set of straight lines.
  * The path passes through the end points of some of these lines, which is where the
  * changes of direction occur.
- * It uses the Node inner class for its internal representatin of points.
+ * It uses the Node inner class for its internal representation of points.
  *
  * @author Roger
  */
-public class ShortestPathPlanner
+public class ShortestPathFinder implements PathFinder
 {
+/**
+ * This calculate the shortest path
+ * @param start  the initial robot pose
+ * @param finish the final robot location
+ * @return the shortest route
+ * @throws DestinationUnreachableException  if, for example, you nave not called setMap();
+ */
+  public Collection<WayPoint> findRoute(Pose start, Point finish) throws DestinationUnreachableException
+  {
+    return findPath(start.getLocation(), finish, _map);
+  }
+/**
+ * Calculates the shortest path to the finish. The heading of the finish pose is ignored.
+ * @param start the initial robot pose
+ * @param finish  final robot location (the heading of the pose is ignored)
+ * @return shortest path
+ * @throws DestinationUnreachableException
+ */
+  public Collection<WayPoint> findRoute(Pose start, Pose finish) throws DestinationUnreachableException
+  {
+    return findPath(start.getLocation(), finish.getLocation(), _map);
+  }
 
   /**
    * finds the shortest path between start  and finish Points whild avoiding the obstacles
@@ -27,7 +48,7 @@ public class ShortestPathPlanner
    * @param theMap  that contains the obstacles
    * @return an array list of waypoints.  If no path exists, returns null
    */
-  public ArrayList<WayPoint> findPath(Point start, Point finish, ArrayList<Line> theMap)
+  public ArrayList<WayPoint> findPath(Point start, Point finish, ArrayList<Line> theMap)throws DestinationUnreachableException
   {
     _map = theMap;
     initialize(); // in case this method has already been called before
@@ -56,7 +77,7 @@ public class ShortestPathPlanner
       { // dest is not known to be blocked  from  best  reached node
         if (segmentBlocked(from, dest))
         { // this method call possibly created and added new nodes to the _candidate set
-          from.block(dest);//  rcord  dest as not directly reachable
+          from.block(dest);//  Record dest as not directly reachable
           index = _candidate.size() - 1;  // search from top  from top of stack
         } else  // not blocked  so dest node has is  reached
         {
@@ -79,12 +100,16 @@ public class ShortestPathPlanner
     }// end while
     if (failed)
     {
-      return null;
+      throw new DestinationUnreachableException();
+//      return null;
     }
     return getRoute(destination);
   }
 
-
+ public void setMap(ArrayList<Line> theMap)
+ {
+   _map = theMap;
+ }
   protected void initialize()
   {
     _reached = new ArrayList<Node>();
@@ -104,8 +129,8 @@ public class ShortestPathPlanner
     Node to = new Node(theDest.getLocation()); // alias the destination
     Node n1 = null; // one end of the blocking line
     Node n2 = null; // other end of the blocking line
-    Line line = null; // the line conecting  from node   with to node
-    Point intersection; // point wher the segment crosses the blockin gline
+    Line line = null; // the line connecting  from node   with to node
+    Point intersection; // point where the segment crosses the blocking line
     boolean blocked = false;
     Line segment = new Line(from.getX(), from.getY(),
             to.getX(), to.getY());
@@ -141,7 +166,7 @@ public class ShortestPathPlanner
   /**
    * Helper method for findPath() <br>
    * returns the  node in  the Reached set, whose distance from the start node plus
-   * its straignt line distance to the destination is the minimum.
+   * its straight line distance to the destination is the minimum.
    * @param currentDestination : the current destination node, (in the Candidate set)
    * @return the node the node which could be the last node in the shortest path
    */
@@ -219,6 +244,9 @@ protected  ArrayList<WayPoint> getRoute(Node destination)
   public int getIterationCount(){ return _count;}
 
   public int getNodeCount(){return _reached.size();}
+
+
+  //***********  instance variables in ShortestPathFinder *******************
   protected    int _count =  0;
   /**
    * set by segmentBlocked() used by findPath()
@@ -244,6 +272,7 @@ protected  ArrayList<WayPoint> getRoute(Node destination)
   protected  ArrayList<Line> _map = new ArrayList<Line>();
 
 
+//************Begin definition of Node class  **********************
  protected class Node
 {
   public Node(Point p)
@@ -297,12 +326,12 @@ protected  ArrayList<WayPoint> getRoute(Node destination)
    */
   public float getDistance(Node aNode)
   {
-    if(_blocked.indexOf(aNode) > -1) return ShortestPathPlanner.BIG;
+    if(_blocked.indexOf(aNode) > -1) return ShortestPathFinder.BIG;
     else return getDistance(aNode.getLocation());
   }
 
   /**
-   * return the locataion of this node
+   * return the location of this node
    * @return the location
    */
  public Point getLocation()
@@ -311,7 +340,7 @@ protected  ArrayList<WayPoint> getRoute(Node destination)
  }
 
  /**
-  * add aNode to list of nodes not a neighbor of this Node
+  * add aNode to list of nodes not a neighbour of this Node
   * @param aNode
   */
  public void block(Node aNode)
@@ -341,12 +370,12 @@ protected  ArrayList<WayPoint> getRoute(Node destination)
    * @return Y coordinate
    */
   public float getY(){return (float)_p.getY();}
- public String toString(){return " "+getX()+" , "+getY()+" ";}
+  public String toString(){return " "+getX()+" , "+getY()+" ";}
   protected Point _p;
   protected float _sourceDistance;
   protected Node _predecessor;
   public ArrayList<Node> _blocked = new ArrayList<Node>();
  }
-
+// ****************   end Node class ****************************
 } 
 

@@ -17,17 +17,19 @@ import lejos.robotics.Pose;
  * @author Lawrie Griffiths
  *
  */
-public class SimplePathFinder extends ArrayList<WayPoint> implements PathFinder {
-
+public class SimplePathFinder implements PathFinder {
+	
 	public Collection<WayPoint> findRoute(Pose start, Point destination)
 			throws DestinationUnreachableException {
-		add(new WayPoint(destination));
-		return this;
+		ArrayList<WayPoint> route = new ArrayList<WayPoint>();
+		route.add(new WayPoint(destination));
+		return route;
 	}
 
 	public Collection<WayPoint> findRoute(Pose start, Pose destination)
 			throws DestinationUnreachableException {
-		add(new WayPoint(destination));
-		return this;
+		ArrayList<WayPoint> route = new ArrayList<WayPoint>();
+		route.add(new WayPoint(destination));
+		return route;
 	}
 }

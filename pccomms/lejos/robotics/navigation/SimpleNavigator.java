@@ -12,19 +12,19 @@ import lejos.robotics.*;
 /**
  * The SimpleNavigator class uses dead reckoning to  keep track of its robot pose (the location in the plane
  * and its heading -  the direction in which it moves).  While dead reckoning is relatively
- * easy to implement and very quick to caolculate,  its disadvantage
+ * easy to implement and very quick to calculate,  its disadvantage
  * is that errors in the estimated pose accumulate.<br>
- * SimpleNavigator can perform  three elementary movements  in a plane:  trvel in  a straignt line,
+ * SimpleNavigator can perform  three elementary movements  in a plane:  travel in  a straight line,
  * move in the arc of a circle, and a rotate  in place.  The movement commands
  * have an immediate return option which is useful, for example, for a client
  * class that uses s SimpleNavigataor to detect obstacles or monitor incoming messages while moving.
  *  <br>
  * This class uses a private Pilot  object to execute these moves.  The Pilot directly
  * controls the hardware, which must be able to  turn in place,
- * for example using 2 wheel differential steering.  The  Pilot is passed to the Navitator
+ * for example using 2 wheel differential steering.  The  Pilot is passed to the Navigator
  * a the parameter of its constructor.  After the Navigator is constructed,
  * the client has no further need for the Pilot, but issues commands to the Navigator.
- * If the client  bypasses the navigator and issues commsnds directly to the Pilot, this  will destroy
+ * If the client  bypasses the navigator and issues commands directly to the Pilot, this  will destroy
  * the accuracy of the Navigataor's pose.<br>
  *<b>A note about coordinates:</b> All angles are in degrees, distances in the units used to specify robot dimensions.
  * Angles related to positions in the plane are relative to the X axis ;  direction of the Y axis is 90 degrees.
@@ -39,7 +39,7 @@ public class SimpleNavigator {
      * Allocates a SimpleNavigator with a Pilot that you supply.
      * @param  pilot can be  any class that implements the pilot interface
      */
-    public SimpleNavigator(Pilot pilot) {
+    public SimpleNavigator(TachoPilot pilot) {
         this.pilot = pilot;
     }
 
@@ -52,7 +52,7 @@ public class SimpleNavigator {
      * of the right tire, same units as wheel diameter
      * @param rightMotor The motor used to drive the right wheel e.g. Motor.C.
      * @param leftMotor The motor used to drive the left wheel e.g. Motor.A.
-     * @param reverse  If motor.forward() dives the robot backwars, set this parameter true.
+     * @param reverse  If motor.forward() dives the robot backwards, set this parameter true.
      *
      * @deprecated The correct way is to create the Pilot in advance and to use that in construction of the
      *             SimpleNavigator. Otherwise the SimpleNavigator needs to know detail it should not care about!
@@ -245,7 +245,7 @@ public float getAngle()
 
   /**
    * Rotates the NXT robot through a specific number of degrees in a direction (+ or -).
-   *  If immediateReturn is true, method returns immidiately.
+   *  If immediateReturn is true, method returns immediately.
    * @param angle Angle to rotate in degrees. A positive value rotates left, a negative value right.
    * @param immediateReturn if true, the method returns immediately
    */
@@ -270,7 +270,7 @@ public float getAngle()
   /**
    * Rotates the NXT robot to point in a specific direction relative to the x axis.  It make the smallest
    * rotation  necessary .
-   * If immediateReturn is true, method returns immidiately
+   * If immediateReturn is true, method returns immediately
    * @param angle The angle to rotate to, in degrees.
    * @param immediateReturn if true,  method returns immediately
    */
@@ -472,7 +472,7 @@ public float getAngle()
    * it useful for line following applications. This method does not return until the robot has
    * completed moving <code>angle</code> degrees along the arc.<br>
    * The <code>turnRate</code> specifies the sharpness of the turn, between -200 and +200.<br>
-   * For details about how this paramet works. see {@link #steer(int turnRate) }
+   * For details about how this parameter works. see {@link #steer(int turnRate) }
    * <p>
    * The robot will stop when the degrees it has moved along the arc equals <code>angle</code>.<br>
    * If <code>angle</code> is positive, the robot will move travel forwards.<br>
@@ -498,7 +498,7 @@ public float getAngle()
  
    * <p>
    * The <code>turnRate</code> specifies the sharpness of the turn, between -200 and +200.<br>
-   * For details about how this paramet works, see {@link #steer(int turnRate) }
+   * For details about how this parameter works, see {@link #steer(int turnRate) }
    * <p>
    * The robot will stop when the degrees it has moved along the arc equals <code>angle</code>.<br>
    * If <code>angle</code> is positive, the robot will move travel forwards.<br>
@@ -523,6 +523,6 @@ public float getAngle()
     private float _distance0 = 0;
     private float _angle0 = 0;
     private boolean _current = false; //prevent unnecessary pose updates
-    private Pilot pilot;
+    private TachoPilot pilot;
 }
 

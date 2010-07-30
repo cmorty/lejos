@@ -1,5 +1,8 @@
 package lejos.robotics.proposal;
 
+
+
+
 import java.util.ArrayList;
 import lejos.nxt.*;
 import lejos.robotics.*;
@@ -10,12 +13,10 @@ import lejos.robotics.*;
  */
 
 /**
- * The DifferentialPilot class is a software abstraction of the Pilot mechanism of a
- * NXT robot. It contains methods to control robot movements: travel forward or
- * backward in a straight line or a circular path or rotate to a new direction.<br>
- * This  class will only work with two independently controlled motors to
- * steer differentially, so it can rotate within its own footprint (i.e. turn on
- * one spot). It registers as a TachoMotorListener with each of its motors.
+ * The PseudoSteeringClass emulates the SteeringPilot class using a vehicle with differential
+ * steering. In other words, the vehicle has differential steering but is limited to doing arcs
+ * and not rotating on the spot. You must provide a minimum steering radius, i.e the radius
+ * of the minium turning circle.
  * An object of this class assumes that it has exclusive control of
  * its motors.  If any other object makes calls to its motors, the results are
  * unpredictable. <br>
@@ -48,8 +49,8 @@ import lejos.robotics.*;
  * </p>
  *
  **/
-public class DifferentialPilot implements
-       TachoMotorListener, ArcRotateMoveController
+public class PseudoSteeringPilot implements
+       TachoMotorListener, ArcMoveController
 {
 
   /**
@@ -57,6 +58,8 @@ public class DifferentialPilot implements
    * NXT robot.<br>
    * Assumes Motor.forward() causes the robot to move forward.
    *
+   * @param minSteeringRadius 
+   * 			Radius of the minimum steering circle
    * @param wheelDiameter
    *            Diameter of the tire, in any convenient units (diameter in mm
    *            is usually printed on the tire).
@@ -68,16 +71,18 @@ public class DifferentialPilot implements
    * @param rightMotor
    *            The right Motor (e.g., Motor.A).
    */
-  public DifferentialPilot(final float wheelDiameter, final float trackWidth,
+  public PseudoSteeringPilot(final float minSteeringRadius, final float wheelDiameter, final float trackWidth,
           final TachoMotor leftMotor, final TachoMotor rightMotor)
   {
-    this(wheelDiameter, trackWidth, leftMotor, rightMotor, false);
+    this(minSteeringRadius, wheelDiameter, trackWidth, leftMotor, rightMotor, false);
   }
 
   /**
    * Allocates a DifferentialPilot object, and sets the physical parameters of the
    * NXT robot.<br>
    *
+   * @param minSteeringRadius 
+   * 			Radius of the minimum steering circle
    * @param wheelDiameter
    *            Diameter of the tire, in any convenient units (diameter in mm
    *            is usually printed on the tire).
@@ -92,11 +97,11 @@ public class DifferentialPilot implements
    *            If true, the NXT robot moves forward when the motors are
    *            running backward.
    */
-  public DifferentialPilot(final float wheelDiameter, final float trackWidth,
+  public PseudoSteeringPilot(final float minSteeringRadius, final float wheelDiameter, final float trackWidth,
           final TachoMotor leftMotor, final TachoMotor rightMotor,
           final boolean reverse)
   {
-    this(wheelDiameter, wheelDiameter, trackWidth, leftMotor, rightMotor,
+    this(minSteeringRadius, wheelDiameter, wheelDiameter, trackWidth, leftMotor, rightMotor,
             reverse);
   }
 
@@ -104,6 +109,8 @@ public class DifferentialPilot implements
    * Allocates a DifferentialPilot object, and sets the physical parameters of the
    * NXT robot.<br>
    *
+   * @param minSteeringRadius 
+   * 			Radius of the minimum steering circle
    * @param leftWheelDiameter
    *            Diameter of the left wheel, in any convenient units (diameter
    *            in mm is usually printed on the tire).
@@ -132,7 +139,7 @@ public class DifferentialPilot implements
    *            If true, the NXT robot moves forward when the motors are
    *            running backward.
    */
-  public DifferentialPilot(final float leftWheelDiameter,
+  public PseudoSteeringPilot(final float minSteeringRadius, final float leftWheelDiameter,
           final float rightWheelDiameter, final float trackWidth,
           final TachoMotor leftMotor, final TachoMotor rightMotor,
           final boolean reverse)
@@ -151,8 +158,8 @@ public class DifferentialPilot implements
     // both
     _trackWidth = trackWidth;
     _parity = (byte) (reverse ? -1 : 1);
+    _turnRadius = minSteeringRadius;
     setTravelSpeed(.8f * getMaxTravelSpeed());
-    setRotateSpeed(.8f * getMaxRotateSpeed());
   }
 
   /**
@@ -174,7 +181,7 @@ public class DifferentialPilot implements
   }
 
   /**
-   * Returnsthe tachoCount of the left motor
+   * Returns the tachoCount of the left motor
    * @return tachoCount of left motor. Positive value means motor has moved
    *         the robot forward.
    */
@@ -255,38 +262,6 @@ public class DifferentialPilot implements
   }
 
   /**
-   * sets the rotation speed of the vehicle, degrees per second
-   * @param rotateSpeed
-   */
-  public void setRotateSpeed(float rotateSpeed)
-  {
-    _robotRotateSpeed = rotateSpeed;
-    setSpeed(Math.round(rotateSpeed * _leftTurnRatio), Math.round(rotateSpeed * _rightTurnRatio));
-  }
-
-
-  public float getRotateSpeed()
-  {
-    return _robotRotateSpeed;
-  }
-
-
-  public float getMaxRotateSpeed()
-  {
-    // it is generally assumed, that the maximum accurate speed of that can
-//    be reliably maintained Motor is
-    // 100 degree/second * Voltage
-    return Battery.getVoltage() * 100.0f / Math.max(_leftTurnRatio, _rightTurnRatio);
-    // max degree/second divided by degree/unit = unit/second
-  }
-
-
-  public float getRotateMaxSpeed()
-  {
-    return getMaxRotateSpeed();
-  }
-
-  /**
    * Starts the NXT robot moving forward.
    */
   public void forward()
@@ -337,61 +312,6 @@ public class DifferentialPilot implements
   {
     _left.forward();
     _right.forward();
-  }
-
-  public void rotateLeft()
-  {
-    _type = Move.MoveType.ROTATE;
-    movementStart(true);
-    _right.forward();
-    _left.backward();
-  }
-
-  public void rotateRight()
-  {
-    _type = Move.MoveType.ROTATE;
-     movementStart(true);
-    _left.forward();
-    _right.backward();
-
-  }
-
-  /**
-   * Rotates the NXT robot through a specific angle. Returns when angle is
-   * reached. Wheels turn in opposite directions producing a zero radius turn.<br>
-   * Note: Requires correct values for wheel diameter and track width.
-   * calls rotate(angle,false)
-   * @param angle
-   *            The wanted angle of rotation in degrees. Positive angle rotate
-   *            left (clockwise), negative right.
-   */
-  public void  rotate(final float angle)
-  {
-     rotate(angle, false);
-  }
-
-  /**
-   * Rotates the NXT robot through a specific angle. Returns when angle is
-   * reached. Wheels turn in opposite directions producing a zero radius turn.<br>
-   * Note: Requires correct values for wheel diameter and track width.
-   * Side effect: inform listeners
-   * @param angle
-   *            The wanted angle of rotation in degrees. Positive angle rotate
-   *            left (clockwise), negative right.
-   * @param immediateReturn
-   *            If true this method returns immediately.
-   */
-  public void rotate(final float angle, final boolean immediateReturn)
-  {
-    _type = Move.MoveType.ROTATE;
-    movementStart(immediateReturn);
-    setSpeed(Math.round(_robotRotateSpeed * _leftTurnRatio), Math.round(_robotRotateSpeed * _rightTurnRatio));
-    int rotateAngleLeft = _parity * (int) (angle * _leftTurnRatio);
-    int rotateAngleRight = _parity * (int) (angle * _rightTurnRatio);
-    _left.rotate(-rotateAngleLeft, true);
-    _right.rotate(rotateAngleRight, immediateReturn);
-
-    if (!immediateReturn)  while (isMoving()) Thread.yield();
   }
 
   /**

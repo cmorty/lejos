@@ -19,9 +19,15 @@ public class WayPoint extends Point {
 		headingRequired = false; 
 	}
 	
+	public WayPoint(float x, float y, float heading) {
+		super(x,y);
+		headingRequired = true;
+		this.heading = heading;
+	}
+	
 	public WayPoint(Point p) {
 		super((float) p.getX(),(float) p.getY());
-		headingRequired = true;
+		headingRequired = false;
 	}
 	
 	public WayPoint(Pose p) {
