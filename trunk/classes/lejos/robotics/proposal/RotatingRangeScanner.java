@@ -7,8 +7,8 @@ import lejos.robotics.RangeScanner;
 import lejos.util.Delay;
 
 /**
- * implementatin of RangeScanner with a rotating ultrasonic sensor
- * @author roger
+ * Implementation of RangeScanner with a rotating ultrasonic sensor
+ * @author Roger Glassey
  */
 public class RotatingRangeScanner implements RangeScanner
 {
