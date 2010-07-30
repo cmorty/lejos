@@ -21,7 +21,7 @@ public class WayPoint extends Point {
 	
 	public WayPoint(float x, float y, float heading) {
 		super(x,y);
-		headingRequired = false;
+		headingRequired = true;
 		this.heading = heading;
 	}
 	
