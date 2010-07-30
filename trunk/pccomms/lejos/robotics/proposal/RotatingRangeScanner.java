@@ -7,8 +7,8 @@ import lejos.robotics.RangeScanner;
 import lejos.util.Delay;
 
 /**
- * implementatin of RangeScanner with a rotating ultrasonic sensor
- * @author roger
+ * Implementation of RangeScanner with a rotating ultrasonic sensor
+ * @author Roger Glassey
  */
 public class RotatingRangeScanner implements RangeScanner
 {
@@ -20,8 +20,9 @@ public class RotatingRangeScanner implements RangeScanner
    */
   public RotatingRangeScanner(TachoMotor head, SensorPort port)
   {
-    sonar = new UltrasonicSensor(port);
     this.head = head;
+    sonar = new UltrasonicSensor(port);
+    sonar.continuous();
   }
   /**
    * Returns a set of Range Readings taken the angles specified.
