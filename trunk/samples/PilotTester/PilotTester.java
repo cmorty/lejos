@@ -1,5 +1,6 @@
 import lejos.nxt.*;
 import lejos.robotics.navigation.*;
+import lejos.robotics.proposal.DifferentialPilot;
 
 /**
  * Test of the Pilot class.
@@ -23,14 +24,15 @@ import lejos.robotics.navigation.*;
  */
 public class PilotTester
 {
-	static TachoPilot robot = new TachoPilot(5.6f,16.0f,Motor.A, Motor.C,true);
+	static DifferentialPilot robot = new DifferentialPilot(5.6f,16.0f,Motor.A, Motor.C,true);
  
 	public static void main(String[] args ) throws Exception
 	{
         // Wait for user to press ENTER
 		Button.ENTER.waitForPressAndRelease();
 
-		robot.setSpeed(500);
+		//robot.setTravelSpeed(500);
+		//robot.setRotateSpeed(500);
 		robot.forward();
 		pause(1000);
 		robot.stop();
