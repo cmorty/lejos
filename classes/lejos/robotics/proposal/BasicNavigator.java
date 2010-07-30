@@ -21,18 +21,19 @@ public class BasicNavigator implements PoseController
    * Can use any pilot that implements the ArcMoveController interface
    * @param pilot
    */
-  public BasicNavigator(ArcMoveController pilot )
+  public BasicNavigator(MoveController pilot )
   {
     this(pilot,null);
   }
 
-  public BasicNavigator(ArcMoveController  pilot, PoseProvider poseProvider )
+  public BasicNavigator(MoveController  pilot, PoseProvider poseProvider )
   {  // toDo - modify to use MCLPoseProvider
     _pilot = pilot;
     if(poseProvider == null)
       this.poseProvider = new DeadReckonerPoseProvider((ArcMoveController)_pilot);
 //    else this.poseProvider =(MCLPoseProvider) poseProvider;
-    _radius = _pilot.getMinRadius();
+    
+    _radius = (_pilot instanceof ArcMoveController ? ((ArcMoveController) _pilot).getMinRadius() : 0);
     _nav = new Nav();
     _nav.start();
   }  
@@ -128,7 +129,7 @@ public class BasicNavigator implements PoseController
    * executed on the pilot.
    * @return reference to the pilot
    */
-  public ArcMoveController getPilot(){ return _pilot;}
+  public MoveController getPilot(){ return _pilot;}
 
   public void addWaypoint(WayPoint aWayPoint)
   {
@@ -196,7 +197,7 @@ public class BasicNavigator implements PoseController
     else 
     {
     float newHeading  = centerToDestBearing + side* (90 - tangentAngle );
-    _pilot.arc(side*_radius,newHeading - _pose.getHeading(),true);
+    ((ArcMoveController) _pilot).arc(side*_radius,newHeading - _pose.getHeading(),true);
     }
   }
 
@@ -263,26 +264,57 @@ public class BasicNavigator implements PoseController
           {
             ((RotateMoveController) _pilot).rotate(destinationRelativeBearing);
           }
-          else performArc(destinationRelativeBearing,true);
+          else
+          {
+  			// 1. Get shortest path:
+  			Move [] moves;
+  			float minRadius = (_pilot instanceof ArcMoveController ? ((ArcMoveController) _pilot).getMinRadius() : 0);
+  			
+  			if (_destination.headingRequired)
+  			{
+  				moves = ArcAlgorithms.getBestPath(poseProvider.getPose(), minRadius, _destination.getPose(),minRadius);
+  			} 
+  			else
+  			{
+  				moves = ArcAlgorithms.getBestPath(poseProvider.getPose(), _destination, minRadius);  				
+  			}
+  			// 2. Drive the path
+  			for(int i=0;i<moves.length;i++) {
+  				((ArcMoveController) _pilot).travelArc(moves[i].getArcRadius(), moves[i].getDistanceTraveled());
+  			}
+          }
+          //else performArc(destinationRelativeBearing,true);
           
           while (_pilot.isMoving() && _keepGoing)
           {
             Thread.yield();
           }
+          
+          if(!_keepGoing) break;
          
           _pose = poseProvider.getPose();
 //           RConsole.println("after rotation " +((DifferentialPilot)_pilot).getAngleIncrement());
-          float distance = _pose.distanceTo(_destination);
-          if(!_keepGoing) break;
-          _pilot.travel(distance, true);
-          
-          while (_pilot.isMoving() && _keepGoing)
+
+          if (_radius == 0)
           {
-            Thread.yield();
-          }
+            float distance = _pose.distanceTo(_destination);
+            _pilot.travel(distance, true);
           
-          if(!_keepGoing) break;
-          _pose = poseProvider.getPose();
+            while (_pilot.isMoving() && _keepGoing)
+            {
+              Thread.yield();
+            }
+          
+            if(!_keepGoing) break;
+            
+            _pose = poseProvider.getPose();
+ 
+            if (_destination.headingRequired) {
+            	_pose = poseProvider.getPose();
+            	_destination.getHeading();
+            	((RotateMoveController) _pilot).rotate(_destination.getHeading() - _pose.getHeading());
+            }
+          }         
           
           if(listeners != null)
           { 
@@ -304,10 +336,10 @@ public class BasicNavigator implements PoseController
   protected ArrayList<WayPoint>  _route  = new ArrayList<WayPoint>() ;
   protected ArrayList<WayPointListener>  listeners ;
   protected boolean _keepGoing = false;
-  protected ArcMoveController _pilot;
+  protected MoveController _pilot;
   public PoseProvider poseProvider;
 //    DeadReckonerPoseProvider poseProvider;
   protected Pose _pose = new Pose();
-  protected Point _destination;
+  protected WayPoint _destination;
   protected float _radius;
 }
