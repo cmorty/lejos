@@ -24,11 +24,11 @@ public class Line {
 		// direction you want to be "forward" for your vehicle.
 		// The wheel and axle dimension parameters should be
 		// set for your robot, but are not critical.
-		final Pilot pilot = new TachoPilot(5.6f,16.0f,Motor.A, Motor.C, false);
+		final TachoPilot pilot = new TachoPilot(5.6f,16.0f,Motor.A, Motor.C, false);
 		final LightSensor light = new LightSensor(SensorPort.S1);
                 pilot.setRotateSpeed(180);
         /**
-         * this behavior wants to take contrtol when the light sensor sees the line
+         * this behavior wants to take control when the light sensor sees the line
          */
 		Behavior DriveForward = new Behavior()
 		{
