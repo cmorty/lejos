@@ -1,6 +1,7 @@
 import lejos.nxt.*;
 import lejos.robotics.subsumption.*;
-import lejos.robotics.navigation.*;
+import lejos.robotics.proposal.DifferentialPilot;
+import lejos.robotics.proposal.RotateMoveController;
 
 /**
  * Demonstration of use of the Behavior and Pilot classes to
@@ -24,7 +25,7 @@ public class Line {
 		// direction you want to be "forward" for your vehicle.
 		// The wheel and axle dimension parameters should be
 		// set for your robot, but are not critical.
-		final TachoPilot pilot = new TachoPilot(5.6f,16.0f,Motor.A, Motor.C, false);
+		final RotateMoveController pilot = new DifferentialPilot(5.6f,16.0f,Motor.A, Motor.C, true);
 		final LightSensor light = new LightSensor(SensorPort.S1);
                 pilot.setRotateSpeed(180);
         /**
