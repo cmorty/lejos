@@ -1,8 +1,5 @@
 package lejos.robotics.proposal;
 
-
-
-
 import java.util.ArrayList;
 import lejos.nxt.*;
 import lejos.robotics.*;
@@ -524,6 +521,7 @@ public class DifferentialPilot implements
     if (radius == Float.POSITIVE_INFINITY || radius == Float.NEGATIVE_INFINITY)
     {
       travel(distance, immediateReturn);
+      return;
     }
 //    _type = Move.MoveType.ARC;
 //    movementStart(immediateReturn);
@@ -927,9 +925,5 @@ public class DifferentialPilot implements
 
   protected ArrayList<MoveListener> _listeners= new ArrayList<MoveListener>();
   protected Move.MoveType _type;
-
-
-
-
 
 }
