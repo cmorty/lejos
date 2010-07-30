@@ -47,7 +47,7 @@ import lejos.robotics.TachoMotor;
  * can as well use "TachoPilot pilot = new TachoPilot(...)" instead of
  * "Pilot pilot = new TachoPilot(...)"
  **/
-public class TachoPilot implements Pilot {
+public class TachoPilot {
 
 	/**
 	 * Left motor.
