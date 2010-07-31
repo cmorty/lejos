@@ -1,4 +1,5 @@
 import lejos.nxt.*;
+import lejos.util.Delay;
 import lejos.robotics.proposal.DifferentialPilot;
 
 /**
@@ -20,7 +21,7 @@ import lejos.robotics.proposal.DifferentialPilot;
  *
  * @author Roger Glassey and Lawrie Griffiths
  *
- */
+ */ 
 public class PilotTester
 {
 	static DifferentialPilot robot = new DifferentialPilot(5.6f,16.0f,Motor.A, Motor.C,true);
@@ -28,16 +29,15 @@ public class PilotTester
 	public static void main(String[] args ) throws Exception
 	{
         // Wait for user to press ENTER
-		Button.ENTER.waitForPressAndRelease();
-
-		//robot.setTravelSpeed(500);
-		//robot.setRotateSpeed(500);
+		Button.waitForPress();
+		robot.setTravelSpeed(40); // cm/sec
+		robot.setRotateSpeed(180); // deg/sec
 		robot.forward();
-		pause(1000);
+		Delay.msDelay(1000);;
 		robot.stop();
 		showCount(0);
 		robot.backward();
-		pause(1000);
+		Delay.msDelay(1000);;
 		robot.stop();
 		showCount(1);
 		robot.travel(10,true);
@@ -64,22 +64,15 @@ public class PilotTester
 		robot.steer(50, -180);
 		showCount(7);
 		robot.travel(10,true);
-		pause(500);
-        robot.stop();
+		Delay.msDelay(500);
+                robot.stop();
 		robot.travel(-10);
 		robot.rotate(720);
 		
 		// Exit after any button is pressed
 		Button.waitForPress();
 	}
-		
-    public static void pause(int time)
-    {
-    	try{ Thread.sleep(time);
-    }
-    	catch(InterruptedException e){}
-    }
-    
+   
 	public static void showCount(int i)
 	{
 		LCD.drawInt(robot.getLeftCount(),0,i);
