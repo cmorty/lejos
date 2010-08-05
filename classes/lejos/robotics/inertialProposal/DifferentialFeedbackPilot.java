@@ -8,7 +8,7 @@ import lejos.robotics.MoveProvider;
 import lejos.robotics.Pose;
 import lejos.robotics.TachoMotor;
 import lejos.robotics.localization.PoseProvider;
-import lejos.robotics.proposal.MoveController;
+import lejos.robotics.navigation.MoveController;
 
 public class DifferentialFeedbackPilot implements MoveController
 {

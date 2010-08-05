@@ -4,11 +4,10 @@ import lejos.geom.Point;
 import lejos.nxt.comm.RConsole;
 import lejos.robotics.Pose;
 import lejos.robotics.mapping.RangeMap;
-import lejos.robotics.proposal.DifferentialPilot;
+import lejos.robotics.navigation.DifferentialPilot;
+import lejos.robotics.navigation.WayPoint;
 import lejos.robotics.RangeScanner;
 import java.util.ArrayList;
-import lejos.robotics.proposal.WayPoint;
-//import lejos.util.Datalogger;
 
 /**
  * Qususd architecture navitaotr that uses MCL to estimate position at way point
