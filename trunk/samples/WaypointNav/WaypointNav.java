@@ -12,7 +12,7 @@ import java.util.ArrayList;
  */
 public class WaypointNav
 {
-  LegacyNavigator nav;
+  BasicNavigator nav;
   /**
    * Inner class to describe an segment by providing the next end point and wanted velocity for turning and moving.
    */
@@ -60,7 +60,7 @@ public class WaypointNav
    * @param y The starting y position.
    * @param heading The starting heading.
    */
-  public WaypointNav(LegacyNavigator navigator) {
+  public WaypointNav(BasicNavigator navigator) {
     nav = navigator;
   }
 
@@ -96,9 +96,9 @@ public class WaypointNav
     {
       Segment segment = segments.get(0);
       System.out.println("x,y "+segment.getX()+ " "+segment.getY());
-      nav.setRotateSpeed(segment.getTurnSpeed());
-      nav.setTravelSpeed(segment.getMoveSpeed());
-      nav.goTo(segment.getX(), segment.getY());
+      ((RotateMoveController) nav.getMoveController()).setRotateSpeed(segment.getTurnSpeed());
+      nav.getMoveController().setTravelSpeed(segment.getMoveSpeed());
+      nav.goTo(new WayPoint(segment.getX(), segment.getY()), false);
       segments.remove(0);
     }
   }
@@ -110,8 +110,8 @@ public class WaypointNav
     {
       System.out.println("Any button");
       Button.waitForPress();
-      LegacyNavigator nav = new LegacyNavigator(
-              new LegacyPilot(5.6f, 14.2f, Motor.A, Motor.C));
+      BasicNavigator nav = new BasicNavigator(
+              new DifferentialPilot(5.6f, 14.2f, Motor.A, Motor.C));
       WaypointNav wpNav = new WaypointNav(nav);
       wpNav.add(20, 20, 90, 15);
       wpNav.add(20,0,180,30);

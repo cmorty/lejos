@@ -6,11 +6,11 @@ import lejos.robotics.navigation.*;
 /**
  *Testing an algorithm for making arc turns to reach a destination
  *
- * @author roger
+ * @author Roger Glassey
  */
 public class ArcNavigator
 {
- public ArcNavigator(LegacyPilot pilot, float minimumRadius)
+ public ArcNavigator(DifferentialPilot pilot, float minimumRadius)
  {
    this.pilot = pilot;
    _radius = minimumRadius;
@@ -21,16 +21,16 @@ public class ArcNavigator
    calculatArc(new Point(x,y));
    pilot.reset();
    pilot.arc(_radius*_side,_turnAngle);
-   _pose.arcUpdate(pilot.getTravelDistance(),pilot.getAngle());
+   _pose.arcUpdate(pilot.getMovementIncrement(),pilot.getAngleIncrement());
    pilot.reset();
    pilot.travel(_travelDistance);
-   _pose.moveUpdate(pilot.getTravelDistance());
+   _pose.moveUpdate(pilot.getMovementIncrement());
 
  }
  /**
-  * calculaters the parameters of the arc() method to turn the robot toward the
-  * destinatiion; also calculates the distance to travel along the tangent line
-  * to the destinatin after the arc move is complete;
+  * Calculates the parameters of the arc() method to turn the robot toward the
+  * destination; also calculates the distance to travel along the tangent line
+  * to the destination after the arc move is complete;
   * Returns  false  if the point is inside the turning circle and cannot be reached.
   * @param destination
   * @return true if the destination can be reached.
@@ -49,12 +49,12 @@ public class ArcNavigator
     Point center = new Point(
             _pose.getX() + _radius * (float) Math.cos(centerRad),
             _pose.getY() + _radius * (float) Math.sin(centerRad));
-    // distance to destinatin from center
+    // distance to destination from center
        float destDistance = (float)center.distance(destination);
        if(destDistance < _radius )return false;
-       //angle between tangent to arc and true bearing of destinatin from center
+       //angle between tangent to arc and true bearing of destination from center
        float tangentAngle = _side*(float)Math.asin(_radius/destDistance);// radians
-       // true bearing of destinatin from center
+       // true bearing of destination from center
        float centerToDestBearing = center.angleTo(destination);// degrees
       _turnAngle =centerToDestBearing + (float)Math.toDegrees(tangentAngle) -_pose.getHeading();
      _turnAngle = Math.abs(normalize(_turnAngle)); //delete with next revision of Pilot API
@@ -62,7 +62,7 @@ public class ArcNavigator
     return true;
   }
 /**
- * returns the eqivalent angle between -180 and 180
+ * returns the equivalent angle between -180 and 180
  * @param angle
  * @return
  */
@@ -78,7 +78,7 @@ public class ArcNavigator
      */
     public static void main(String[] args)
     {
-      LegacyPilot pilot = new LegacyPilot(2.16f, 5.42f, Motor.A, Motor.B);
+      DifferentialPilot pilot = new DifferentialPilot(2.16f, 5.42f, Motor.A, Motor.B);
       float minimumRadius = 5;
       ArcNavigator nav = new ArcNavigator(pilot,minimumRadius);
       Button.waitForPress();
@@ -90,7 +90,7 @@ public class ArcNavigator
       Button.waitForPress();
 
     }
-    LegacyPilot pilot;
+    DifferentialPilot pilot;
     /**
      * the radius to use in the arc method
      */

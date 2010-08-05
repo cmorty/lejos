@@ -26,7 +26,7 @@ public class RCPilot implements RemotePilotMethod
    * Constructor allocates the pilot object to be controlled
    * @param aPilot
    */
-  public RCPilot(LegacyPilot aPilot)
+  public RCPilot(DifferentialPilot aPilot)
   {
     pilot = aPilot;
   }
@@ -92,8 +92,8 @@ public class RCPilot implements RemotePilotMethod
       try
       {
          dataOut.writeBoolean(pilot.isMoving());
-         dataOut.writeFloat(pilot.getTravelDistance());
-         dataOut.writeFloat(pilot.getAngle());
+         dataOut.writeFloat(pilot.getMovementIncrement());
+         dataOut.writeFloat(pilot.getAngleIncrement());
          dataOut.flush();
       } catch (IOException e)
       {
@@ -147,12 +147,12 @@ public class RCPilot implements RemotePilotMethod
      */
     public static void main(String[] args)
     {
-      LegacyPilot p = new LegacyPilot(2.2f, 5.2f, Motor.A, Motor.C);
+      DifferentialPilot p = new DifferentialPilot(2.2f, 5.2f, Motor.A, Motor.C);
       RCPilot pilot = new RCPilot(p);
       pilot.go();
     }
     
-  protected LegacyPilot pilot;
+  protected DifferentialPilot pilot;
   protected DataInputStream dataIn;
   protected DataOutputStream dataOut;
   protected OutputStream os;
