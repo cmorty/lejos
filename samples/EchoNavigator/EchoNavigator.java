@@ -7,15 +7,14 @@ import lejos.geom.Point;
 import java.util.Random;
 import lejos.util.Delay;
 
- 
 /**
  * EchoNavigator is a obstacle avoiding  robot that attempts reach its destination.
  * uses DiffertntialPilot
- * Hareware rquirements:   an ultrasonic sensor facing foward
+ * Hardware requirements:  an ultrasonic sensor facing forward
  * Since it relies on dead reckoning to keep track of its
  * location, the accuracy of navigation degrades with each obstacle.  Does not
- * mep the obstacles, but uses a randomized avoiding strategy.
- * @author Roger
+ * map the obstacles, but uses a randomized avoiding strategy.
+ * @author Roger Glassey
  */
 public class EchoNavigator
 {
@@ -28,7 +27,7 @@ public class EchoNavigator
   }
 
 /**
- * attempt to reach a destinaton at coordinates x,y despite obstacles.
+ * attempt to reach a destination at coordinates x,y despite obstacles.
  * uses detect() and avoid()
  * @param x coordinate of destination
  * @param y coordinate of destination.
@@ -53,12 +52,13 @@ public void goTo(float x, float y)
     pose = drpp.getPose();
   }
 }
-/**
- * backs up, rotates away from the obstacle, and travels forward;
- * returns true if no obstacle was discovered while traveling<br>
- * uses readSensor()
- * @return
- */
+
+  /**
+   * backs up, rotates away from the obstacle, and travels forward;
+   * returns true if no obstacle was discovered while traveling<br>
+   * uses readSensor()
+   * @return
+   */
   private  boolean  avoid()
   {
     int leftDist = 0;
@@ -114,14 +114,14 @@ public void goTo(float x, float y)
    * assumes UltrasonicSensor is on port S3;
    * @param args
    */
-    public static void main(String[] args)
-    {
-      System.out.println("Any Button");
-     ArcRotateMoveController pilot = new DifferentialPilot(5.6f, 12.5f, Motor.A, Motor.C);
-      EchoNavigator  robot  = new EchoNavigator(pilot,SensorPort.S3);
-      Button.waitForPress();
-      robot.goTo(200,0);
-    }
+  public static void main(String[] args)
+  {
+    System.out.println("Any Button");
+    ArcRotateMoveController pilot = new DifferentialPilot(5.6f, 12.5f, Motor.A, Motor.C);
+    EchoNavigator  robot  = new EchoNavigator(pilot,SensorPort.S3);
+    Button.waitForPress();
+    robot.goTo(200,0);
+  }
 
   private ArcRotateMoveController pilot;
   private DeadReckonerPoseProvider drpp;

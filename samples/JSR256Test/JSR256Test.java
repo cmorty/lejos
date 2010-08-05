@@ -14,10 +14,11 @@ import javax.microedition.sensor.SensorInfo;
 import lejos.nxt.Button;
 import lejos.nxt.Motor;
 import lejos.nxt.comm.RConsole;
+import lejos.robotics.navigation.DifferentialPilot;
 import lejos.robotics.navigation.LegacyPilot;
 
 public class JSR256Test implements ConditionListener {
-	LegacyPilot pilot = new LegacyPilot(5.6f,16.0f,Motor.B, Motor.C,true);
+	DifferentialPilot pilot = new DifferentialPilot(5.6f,16.0f,Motor.B, Motor.C,true);
 	
 	public void run() throws InterruptedException {
 		RConsole.openBluetooth(0);	
@@ -32,7 +33,6 @@ public class JSR256Test implements ConditionListener {
 		}
 
 		SensorInfo sonicInfo = sonic.getSensorInfo();
-
 		Condition condition = new LimitCondition(100,Condition.OP_LESS_THAN);
 
 		ChannelInfo channelInfo = sonic.getSensorInfo().getChannelInfos()[0];

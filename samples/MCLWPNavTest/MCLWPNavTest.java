@@ -16,7 +16,7 @@ import lejos.robotics.localization.*;
 public class MCLWPNavTest {
 
 /**
- * this class tests the MCLWayPointNavigator.  It uses a Fixed Range scanner,
+ * This class tests the MCLWayPointNavigator.  It uses a Fixed Range scanner,
  * but can use a RotatingRangeScanner by a couple of simple changes.
  * The map assumes the lines define the X and  Y axes, and the initial pose of
  * the robot is at 60,60 heading 180
