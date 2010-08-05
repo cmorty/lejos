@@ -8,6 +8,17 @@ import lejos.robotics.Pose;
  * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
  */
 
+/**
+ * A sequence of way points make up a route that a robot can navigate.
+ * 
+ * WayPoint extends Point, as a way point can just be a point.
+ * 
+ * However, a WayPoint can optionally specify a heading that the robot must achieve when it reaches the  way points.
+ * 
+ * It can also optionally specify how close the robot must get to the way point in order for it to be deemed to
+ * have reached it.
+ * 
+ */
 public class WayPoint extends Point {
 	protected float heading = 0;
 	protected boolean headingRequired;
@@ -56,6 +67,11 @@ public class WayPoint extends Point {
 		maxHeadingError = distance;
 	}
 	
+	/**
+	 * Return a Pose that represents the way point. If no header is specified, it is set to zero.
+	 * 
+	 * @return the pose corresponding to the way point
+	 */
 	public Pose getPose() {
 		return new Pose(x,y,heading);
 	}

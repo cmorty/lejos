@@ -24,7 +24,7 @@ import lejos.nxt.Motor;
  * @author Lawrie Griffiths
  *
  */
-public abstract class TachoLocalizer extends SimpleNavigator {	
+public abstract class TachoLocalizer extends LegacyNavigator {	
   protected RangeReadings readings;
   protected float projection;
   protected RangeMap map;
