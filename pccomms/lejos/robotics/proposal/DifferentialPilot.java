@@ -220,7 +220,10 @@ public class DifferentialPilot implements
     _right.setSpeed(rightSpeed);
   }
 
- 
+ /**
+  * set travel speed in wheel diameter units per second
+  * @param travelSpeed : speed in distance (wheel diameter)units/sec
+  */
   public void setTravelSpeed(final float travelSpeed)
   {
     _robotTravelSpeed = travelSpeed;

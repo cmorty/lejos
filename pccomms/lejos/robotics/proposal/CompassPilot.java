@@ -119,7 +119,6 @@ public class CompassPilot extends DifferentialPilot
    */
   public synchronized void calibrate()
   {
-    float spd = _robotRotateSpeed;
     setRotateSpeed(50);
     compass.startCalibration();
     super.rotate(360, false);
