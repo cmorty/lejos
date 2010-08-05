@@ -5,7 +5,6 @@ import lejos.robotics.mapping.RangeMap;
 import lejos.robotics.RangeReadings;
 import lejos.robotics.navigation.*;
 import lejos.robotics.Move;
-import lejos.robotics.Move.MoveType;
 import lejos.nxt.Motor;
 
 /**
