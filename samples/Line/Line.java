@@ -1,7 +1,7 @@
 import lejos.nxt.*;
 import lejos.robotics.subsumption.*;
-import lejos.robotics.proposal.DifferentialPilot;
-import lejos.robotics.proposal.RotateMoveController;
+import lejos.robotics.navigation.DifferentialPilot;
+import lejos.robotics.navigation.RotateMoveController;
 
 /**
  * Demonstration of use of the Behavior and Pilot classes to

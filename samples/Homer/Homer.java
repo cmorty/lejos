@@ -13,14 +13,14 @@ import lejos.robotics.RangeScanner;
 import lejos.robotics.localization.MCLParticleSet;
 import lejos.robotics.mapping.LineMap;
 import lejos.robotics.mapping.RangeMap;
-import lejos.robotics.proposal.BasicNavigator;
-import lejos.robotics.proposal.DestinationUnreachableException;
-import lejos.robotics.proposal.DifferentialPilot;
+import lejos.robotics.navigation.BasicNavigator;
+import lejos.robotics.navigation.DestinationUnreachableException;
+import lejos.robotics.navigation.DifferentialPilot;
+import lejos.robotics.navigation.MapPathFinder;
+import lejos.robotics.navigation.PathFinder;
+import lejos.robotics.navigation.PoseController;
+import lejos.robotics.navigation.WayPoint;
 import lejos.robotics.localization.MCLPoseProvider;
-import lejos.robotics.proposal.MapPathFinder;
-import lejos.robotics.proposal.PathFinder;
-import lejos.robotics.proposal.PoseController;
-import lejos.robotics.proposal.WayPoint;
 
 /**
  * Test of Monte Carlo Localisation, Pose Controllers and Path finders.

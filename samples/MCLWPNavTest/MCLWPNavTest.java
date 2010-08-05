@@ -1,16 +1,17 @@
 import lejos.nxt.*;
-import lejos.robotics.proposal.*;
-  import lejos.robotics.Pose;
+import lejos.robotics.FixedRangeScanner;
+import lejos.robotics.Pose;
+import lejos.robotics.RotatingRangeScanner;
 import lejos.robotics.mapping.*;
-import lejos.geom.*;
+import lejos.robotics.navigation.DifferentialPilot;
+import lejos.robotics.navigation.WayPoint;
 import java.util.ArrayList;
 import lejos.nxt.comm.RConsole;
 import lejos.robotics.localization.*;
 
-
 /**
  *
- * @author owner
+ * @author Roger Glassey
  */
 public class MCLWPNavTest {
 
