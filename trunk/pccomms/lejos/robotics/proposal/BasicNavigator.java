@@ -10,7 +10,7 @@ import lejos.robotics.*;
  * The way points are stored in a queue (actually, a Collection).
  * This  class uses  an inner class running its own thread to issue movement commands to its pilot.
  * It can use either a differential pilot or steering pilot.
- * It also uses a PoseProvider to keep its pose updated, and calls its Waypoint Listeners
+ * It also uses a PoseProvider to keep its pose updated, and calls its WayPoint Listeners
  * when a way point is reached.
  * @author Roger Glassey
  */
@@ -27,25 +27,15 @@ public class BasicNavigator implements PoseController
   }
 
   public BasicNavigator(MoveController  pilot, PoseProvider poseProvider )
-  {  // toDo - modify to use MCLPoseProvider
+  {
     _pilot = pilot;
     if(poseProvider == null)
       this.poseProvider = new DeadReckonerPoseProvider((ArcMoveController)_pilot);
-//    else this.poseProvider =(MCLPoseProvider) poseProvider;
     
     _radius = (_pilot instanceof ArcMoveController ? ((ArcMoveController) _pilot).getMinRadius() : 0);
     _nav = new Nav();
     _nav.start();
   }  
-
-  /**
-   * This method is the same as followRoute(aRoute, true );
-   * @param aRoute
-   */
-  public void followRoute(Collection<WayPoint>  aRoute)
-  {
-    followRoute( aRoute ,false);
-  }
 
   public void followRoute(Collection<WayPoint>aRoute, boolean immediateReturn )
   {
@@ -62,17 +52,6 @@ public class BasicNavigator implements PoseController
     {
       while(_keepGoing)Thread.yield();
     }
-  }
-
-  /**
-   * Causes the robot move to the coordinates specified in the parameters
-   * @param x coordinate of the destination
-   * @param y coordinate of the destination
-   * @param immediateReturn if<b>true<>/b> this method returns immediately
-   */
-  public void goTo(float x, float y, boolean immediateReturn)
-  {
-    goTo(new WayPoint(x,y),immediateReturn);
   }
 
   public void addListener(WayPointListener aListener)
@@ -103,7 +82,7 @@ public class BasicNavigator implements PoseController
   }
 
   /**
-   * sets the heading of the robot in the pose provider
+   * Sets the heading of the robot in the pose provider
    * @param heading
    */
   public void setHeading(float heading)
@@ -124,12 +103,12 @@ public class BasicNavigator implements PoseController
    }
 
   /**
-   * Returns a reference to the pilot.
+   * Returns a reference to the MoveController.
    * The Navigator pose will be automatically updated as a result of methods
-   * executed on the pilot.
-   * @return reference to the pilot
+   * executed on the MoveController.
+   * @return reference to the MoveController
    */
-  public MoveController getPilot(){ return _pilot;}
+  public MoveController getMoveController(){ return _pilot;}
 
   public void addWaypoint(WayPoint aWayPoint)
   {
@@ -205,7 +184,7 @@ public class BasicNavigator implements PoseController
    * Returns the waypoint to which the robot is moving
    * @return the waypoint to which the robot is moving
    */
-  public WayPoint getWaypoint()
+  public WayPoint getWayPoint()
   {
     if(_route.size() <= 0 ) return null;
     else return _route.get(0);
@@ -331,14 +310,12 @@ public class BasicNavigator implements PoseController
     }  // end run
   } // end Nav class
 
-//   int _count = 0;
   protected Nav _nav ;
-  protected ArrayList<WayPoint>  _route  = new ArrayList<WayPoint>() ;
-  protected ArrayList<WayPointListener>  listeners ;
+  protected ArrayList<WayPoint> _route  = new ArrayList<WayPoint>() ;
+  protected ArrayList<WayPointListener> listeners ;
   protected boolean _keepGoing = false;
   protected MoveController _pilot;
-  public PoseProvider poseProvider;
-//    DeadReckonerPoseProvider poseProvider;
+  protected PoseProvider poseProvider;
   protected Pose _pose = new Pose();
   protected WayPoint _destination;
   protected float _radius;
