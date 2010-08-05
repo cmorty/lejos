@@ -1,4 +1,4 @@
-package lejos.robotics.proposal;
+package lejos.robotics.navigation;
 
 /**
  * Exception thrown by path finders when the destination cannot be reached

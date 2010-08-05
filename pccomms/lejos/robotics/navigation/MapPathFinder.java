@@ -1,4 +1,4 @@
-package lejos.robotics.proposal;
+package lejos.robotics.navigation;
 
 import java.awt.Rectangle;
 import java.util.ArrayList;

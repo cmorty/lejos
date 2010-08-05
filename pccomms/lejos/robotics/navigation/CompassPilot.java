@@ -1,4 +1,4 @@
-package lejos.robotics.proposal;
+package lejos.robotics.navigation;
 
 import lejos.robotics.TachoMotor;
 import lejos.robotics.DirectionFinder;

@@ -1,10 +1,10 @@
-package lejos.robotics.proposal;
+package lejos.robotics.navigation;
 
 import lejos.nxt.Motor;
 import lejos.robotics.Move;
 import lejos.robotics.MoveListener;
 import lejos.robotics.TachoMotor;
-import lejos.robotics.TachoMotorListener;;
+import lejos.robotics.TachoMotorListener;
 
 
 /*

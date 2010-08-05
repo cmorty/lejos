@@ -1,4 +1,5 @@
-package lejos.robotics.proposal;
+package lejos.robotics.navigation;
+
 
 /*
  * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.

@@ -1,6 +1,8 @@
-package lejos.robotics.proposal;
+package lejos.robotics.navigation;
 
+import lejos.robotics.localization.DeadReckonerPoseProvider;
 import lejos.robotics.localization.PoseProvider;
+
 import java.util.*;
 import lejos.geom.Point;
 import lejos.robotics.*;
@@ -208,18 +210,10 @@ public class BasicNavigator implements PoseController
   {
     return poseProvider;
   }
-
-  /**
-   * Returns the equivalent angle between -180 and +180 degrees
-   * @param angle
-   * @return normalized angle
-   */
-   public float normalize(float angle)
-   {
-     while(angle > 180 )angle -=  360;
-     while(angle < -180) angle += 360;
-     return angle;
-   }
+  
+  public void waitForDestinationReached() {
+	  while (_keepGoing) Thread.yield();
+  }
  
   /**
    * This inner class runs the thread that processes the waypoint queue
@@ -262,7 +256,6 @@ public class BasicNavigator implements PoseController
   				((ArcMoveController) _pilot).travelArc(moves[i].getArcRadius(), moves[i].getDistanceTraveled());
   			}
           }
-          //else performArc(destinationRelativeBearing,true);
           
           while (_pilot.isMoving() && _keepGoing)
           {
@@ -272,7 +265,6 @@ public class BasicNavigator implements PoseController
           if(!_keepGoing) break;
          
           _pose = poseProvider.getPose();
-//           RConsole.println("after rotation " +((DifferentialPilot)_pilot).getAngleIncrement());
 
           if (_radius == 0)
           {

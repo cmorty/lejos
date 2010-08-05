@@ -1,4 +1,4 @@
-package lejos.robotics.proposal;
+package lejos.robotics.navigation;
 
 import java.util.*;
 import lejos.geom.*;

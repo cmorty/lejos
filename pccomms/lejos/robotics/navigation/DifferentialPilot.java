@@ -1,4 +1,4 @@
-package lejos.robotics.proposal;
+package lejos.robotics.navigation;
 
 import java.util.ArrayList;
 import lejos.nxt.*;

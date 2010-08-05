@@ -1,4 +1,5 @@
-package lejos.robotics.proposal;
+package lejos.robotics.navigation;
+
 
 
 /*
