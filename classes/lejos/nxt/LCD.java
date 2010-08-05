@@ -210,18 +210,16 @@ public class LCD
         autoRefresh = on;
     }
     
-	/**
-	 * Method to set a pixel to screen.
-	 * @param x the x coordinate
-	 * @param y the y coordinate
-	 * @param color the pixel color (0 = white, 1 = black)
-	 */
-	public static void setPixel(int x, int y, int color) {
-		if (x < 0 || x >= SCREEN_WIDTH || y < 0 || y >= SCREEN_HEIGHT) return; // Test-Modify for speed
-		int bit = (y & 0x7);
-		int index = (y/8)*SCREEN_WIDTH + x;
-		displayBuf[index] = (byte)((displayBuf[index] & ~(1 << bit)) | (color << bit));
-	}
+    /**
+     * Method to set a pixel on the screen.
+     * @param x the x coordinate
+     * @param y the y coordinate
+     * @param color the pixel color (0 = white, 1 = black)
+     */
+    public static void setPixel(int x, int y, int color)
+    {
+        bitBlt(displayBuf, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0, displayBuf, SCREEN_WIDTH, SCREEN_HEIGHT, x, y, 1, 1,(color == 1 ? ROP_SET : ROP_CLEAR));
+    }
 	
 	/**
 	 * Method to get a pixel from the screen.
