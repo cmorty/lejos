@@ -14,10 +14,10 @@ import javax.microedition.sensor.SensorInfo;
 import lejos.nxt.Button;
 import lejos.nxt.Motor;
 import lejos.nxt.comm.RConsole;
-import lejos.robotics.navigation.TachoPilot;
+import lejos.robotics.navigation.LegacyPilot;
 
 public class JSR256Test implements ConditionListener {
-	TachoPilot pilot = new TachoPilot(5.6f,16.0f,Motor.B, Motor.C,true);
+	LegacyPilot pilot = new LegacyPilot(5.6f,16.0f,Motor.B, Motor.C,true);
 	
 	public void run() throws InterruptedException {
 		RConsole.openBluetooth(0);	

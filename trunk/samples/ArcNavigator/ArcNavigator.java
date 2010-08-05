@@ -10,7 +10,7 @@ import lejos.robotics.navigation.*;
  */
 public class ArcNavigator
 {
- public ArcNavigator(TachoPilot pilot, float minimumRadius)
+ public ArcNavigator(LegacyPilot pilot, float minimumRadius)
  {
    this.pilot = pilot;
    _radius = minimumRadius;
@@ -78,7 +78,7 @@ public class ArcNavigator
      */
     public static void main(String[] args)
     {
-      TachoPilot pilot = new TachoPilot(2.16f, 5.42f, Motor.A, Motor.B);
+      LegacyPilot pilot = new LegacyPilot(2.16f, 5.42f, Motor.A, Motor.B);
       float minimumRadius = 5;
       ArcNavigator nav = new ArcNavigator(pilot,minimumRadius);
       Button.waitForPress();
@@ -90,7 +90,7 @@ public class ArcNavigator
       Button.waitForPress();
 
     }
-    TachoPilot pilot;
+    LegacyPilot pilot;
     /**
      * the radius to use in the arc method
      */
