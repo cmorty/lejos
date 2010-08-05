@@ -2,9 +2,7 @@ package lejos.robotics.inertialProposal;
 
 import java.util.ArrayList;
 import lejos.geom.Point;
-import lejos.nxt.Sound;
 import lejos.robotics.MoveListener;
-import lejos.robotics.MoveProvider;
 import lejos.robotics.Pose;
 import lejos.robotics.TachoMotor;
 import lejos.robotics.localization.PoseProvider;
