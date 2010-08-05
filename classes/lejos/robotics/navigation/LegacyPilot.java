@@ -47,7 +47,7 @@ import lejos.robotics.TachoMotor;
  * can as well use "TachoPilot pilot = new TachoPilot(...)" instead of
  * "Pilot pilot = new TachoPilot(...)"
  **/
-public class TachoPilot {
+public class LegacyPilot {
 
 	/**
 	 * Left motor.
@@ -153,7 +153,7 @@ public class TachoPilot {
 	 * @param rightMotor
 	 *            The right Motor (e.g., Motor.A).
 	 */
-	public TachoPilot(final float wheelDiameter, final float trackWidth,
+	public LegacyPilot(final float wheelDiameter, final float trackWidth,
 			final TachoMotor leftMotor, final TachoMotor rightMotor) {
 		this(wheelDiameter, trackWidth, leftMotor, rightMotor, false);
 	}
@@ -176,7 +176,7 @@ public class TachoPilot {
 	 *            If true, the NXT robot moves forward when the motors are
 	 *            running backward.
 	 */
-	public TachoPilot(final float wheelDiameter, final float trackWidth,
+	public LegacyPilot(final float wheelDiameter, final float trackWidth,
 			final TachoMotor leftMotor, final TachoMotor rightMotor,
 			final boolean reverse) {
 		this(wheelDiameter, wheelDiameter, trackWidth, leftMotor, rightMotor,
@@ -215,7 +215,7 @@ public class TachoPilot {
 	 *            If true, the NXT robot moves forward when the motors are
 	 *            running backward.
 	 */
-	public TachoPilot(final float leftWheelDiameter,
+	public LegacyPilot(final float leftWheelDiameter,
 			final float rightWheelDiameter, final float trackWidth,
 			final TachoMotor leftMotor, final TachoMotor rightMotor,
 			final boolean reverse) {
