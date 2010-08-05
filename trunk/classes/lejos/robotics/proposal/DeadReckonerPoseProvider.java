@@ -1,6 +1,5 @@
 package lejos.robotics.proposal;
 
-
 import lejos.geom.Point;
 import lejos.robotics.MoveListener;
 import lejos.robotics.Move;
@@ -67,11 +66,13 @@ public class DeadReckonerPoseProvider implements PoseProvider, MoveListener
     current = false;
     this.mp = mp;
   }
-public void setPose(Pose aPose )
-{
-  setPosition(aPose.getLocation());
-  setHeading(aPose.getHeading());
-}
+  
+  public void setPose(Pose aPose )
+  {
+    setPosition(aPose.getLocation());
+    setHeading(aPose.getHeading());
+  }
+  
   /**
    * called by a MoveProvider when movement ends
    * @param event - the event that just started
@@ -123,7 +124,6 @@ public void setPose(Pose aPose )
     while (a < -180) a += 360;
     return a;
   }
-
 
   public void setPosition(Point p)
   {

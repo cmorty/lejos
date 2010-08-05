@@ -7,7 +7,7 @@ package lejos.robotics.proposal;
  */
 
 /**
- * An enhanced Pilot that is capable of traveling in arcs.
+ * An enhanced MoveController that is capable of traveling in arcs.
  * @author NXJ Team
  *
  */
@@ -29,7 +29,7 @@ public interface ArcMoveController extends MoveController {
 	public void setMinRadius(float radius);
 
 	/**
-	  * Starts the  NXT robot moving forward along an arc with a specified radius.
+	  * Starts the NXT robot moving forward along an arc with a specified radius.
 	  * <p>
 	  * If <code>radius</code> is positive, the robot arcs left, and the center of the turning circle is on the left side of the robot.<br>
 	  * If <code>radius</code> is negative, the robot arcs right, and the center of the turning circle is on the right side of the robot.<br>
@@ -45,7 +45,7 @@ public interface ArcMoveController extends MoveController {
 	 public void arcForward(float radius);
 
 	 /**
-	  * Starts the  NXT robot moving backward along an arc with a specified radius.
+	  * Starts the NXT robot moving backward along an arc with a specified radius.
 	  * <p>
 	  * If <code>radius</code> is positive, the robot arcs left, and the center of the turning circle is on the left side of the robot.<br>
 	  * If <code>radius</code> is negative, the robot arcs right, and the center of the turning circle is on the right side of the robot.<br>
@@ -106,8 +106,7 @@ public interface ArcMoveController extends MoveController {
 	 * @param radius of the arc path. If positive, the left side of the robot is on the inside of the turn. If negative, the left
 	 *          side of the robot is on the outside of the turn.
 	 * @param angle The sign of the angle determines the direction of robot motion. Positive drives the robot forward, negative drives it backward.
-	 * @param immediateReturn If immediateReturn is true then the method returns immediately and your code MUST call
-	 *          updatePostion() when the robot has stopped. Otherwise, the robot position is lost.
+	 * @param immediateReturn If immediateReturn is true then the method returns immediately. 
 	 * @see #travelArc(float, float, boolean)
 	 */
 	public void arc(float radius, float angle, boolean immediateReturn);
@@ -164,8 +163,7 @@ public interface ArcMoveController extends MoveController {
 	 * @param radius of the arc path. If positive, the left side of the robot is on the inside of the turn. If negative, the left
 	 *          side of the robot is on the outside of the turn.
 	 * @param distance to travel, in same units as <code>radius</code>. The sign of the distance determines the direction of robot motion. Positive drives the robot forward, negative drives it backward.
-	 * @param immediateReturn If immediateReturn is true then the method returns immediately and your code MUST call
-	 *        updatePostion() when the robot has stopped. Otherwise, the robot position is lost. 
+	 * @param immediateReturn If immediateReturn is true then the method returns immediately. 
 	 * @see #arc(float, float, boolean)
 	 * 
 	 */
