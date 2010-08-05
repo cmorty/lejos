@@ -10,8 +10,8 @@ import lejos.robotics.RangeScanner;
 import java.util.ArrayList;
 
 /**
- * Qususd architecture navitaotr that uses MCL to estimate position at way point
- * @author Roger
+ * Queued architecture navigator that uses MCL to estimate position at way point
+ * @author Roger Glassey
  */
 public class MCLWayPointNavigator
 {
@@ -47,7 +47,7 @@ public class MCLWayPointNavigator
 /**
  * The robot will follow the route defined by the list of WayPoints.
  * The method will return when the last waypoint is reached.
- * The robot pose at each waypoint is diaplayed on the console.
+ * The robot pose at each waypoint is displayed on the console.
  * To do:  use the queuing architecture so the method can return immediately.
  * @param route
  */
@@ -93,7 +93,7 @@ public class MCLWayPointNavigator
   }
 
   /**
-   * Interrupts the progreas of the robot.
+   * Interrupts the progress of the robot.
    */
   public void interrupt(){_keepGoing = false;}
 
@@ -115,6 +115,6 @@ public static float normalize(float angle)
   private static RangeMap map;
   private static DifferentialPilot pilot;
   private static MCLPoseProvider mcl;
-//  Datalogger dl = new Datalogger();  //remove commment markers to use this/
+//  Datalogger dl = new Datalogger();  //remove comment markers to use this/
 
 }
