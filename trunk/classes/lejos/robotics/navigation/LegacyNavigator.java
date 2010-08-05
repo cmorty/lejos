@@ -32,14 +32,14 @@ import lejos.robotics.*;
  * the x axis.<br>
  *
  */
-public class SimpleNavigator {
+public class LegacyNavigator {
 
 
     /**
      * Allocates a SimpleNavigator with a Pilot that you supply.
      * @param  pilot can be  any class that implements the pilot interface
      */
-    public SimpleNavigator(TachoPilot pilot) {
+    public LegacyNavigator(LegacyPilot pilot) {
         this.pilot = pilot;
     }
 
@@ -58,10 +58,10 @@ public class SimpleNavigator {
      *             SimpleNavigator. Otherwise the SimpleNavigator needs to know detail it should not care about!
      */
     @Deprecated
-    public SimpleNavigator(float wheelDiameter, float trackWidth, TachoMotor leftMotor, TachoMotor rightMotor, boolean reverse) {
+    public LegacyNavigator(float wheelDiameter, float trackWidth, TachoMotor leftMotor, TachoMotor rightMotor, boolean reverse) {
       // In the signature Motor was not changed to TachoMotor. This method only saves one to write "new TachoPilot" at the
       // cost of maintaining this method and comments, thus it should not be used!
-        pilot = new TachoPilot(wheelDiameter, trackWidth, leftMotor, rightMotor, reverse);
+        pilot = new LegacyPilot(wheelDiameter, trackWidth, leftMotor, rightMotor, reverse);
     }
 
     /**
@@ -78,10 +78,10 @@ public class SimpleNavigator {
      *             SimpleNavigator. Otherwise the SimpleNavigator needs to know detail it should not care about!
      */
     @Deprecated
-    public SimpleNavigator(float wheelDiameter, float trackWidth, TachoMotor leftMotor, TachoMotor rightMotor) {
+    public LegacyNavigator(float wheelDiameter, float trackWidth, TachoMotor leftMotor, TachoMotor rightMotor) {
       // In the signature Motor was not changed to TachoMotor. This method only saves one to write "new TachoPilot" at the
       // cost of maintaining this method and comments, thus it should not be used!
-        pilot = new TachoPilot(wheelDiameter, trackWidth, leftMotor, rightMotor);
+        pilot = new LegacyPilot(wheelDiameter, trackWidth, leftMotor, rightMotor);
     }
 /**
  *gets the current value of the X coordinate
@@ -523,6 +523,6 @@ public float getAngle()
     private float _distance0 = 0;
     private float _angle0 = 0;
     private boolean _current = false; //prevent unnecessary pose updates
-    private TachoPilot pilot;
+    private LegacyPilot pilot;
 }
 
