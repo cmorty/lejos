@@ -1,9 +1,7 @@
-package lejos.robotics.proposal;
+package lejos.robotics;
 
 
-import lejos.robotics.RangeScanner;
-import lejos.robotics.RangeReadings;
-import lejos.robotics.proposal.RotateMoveController;
+import lejos.robotics.navigation.RotateMoveController;
 import lejos.nxt.*;
 import lejos.util.Delay;
 //import lejos.nxt.comm.RConsole;

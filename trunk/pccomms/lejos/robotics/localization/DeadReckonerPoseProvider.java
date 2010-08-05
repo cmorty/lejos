@@ -1,11 +1,10 @@
-package lejos.robotics.proposal;
+package lejos.robotics.localization;
 
 import lejos.geom.Point;
 import lejos.robotics.MoveListener;
 import lejos.robotics.Move;
 import lejos.robotics.MoveProvider;
 import lejos.robotics.Pose;
-import lejos.robotics.localization.PoseProvider;
 
 /*
  * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.

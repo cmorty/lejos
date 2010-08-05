@@ -1,9 +1,6 @@
-package lejos.robotics.proposal;
+package lejos.robotics;
 
 import lejos.nxt.*;
-import lejos.robotics.TachoMotor;
-import lejos.robotics.RangeReadings;
-import lejos.robotics.RangeScanner;
 import lejos.util.Delay;
 
 /**
