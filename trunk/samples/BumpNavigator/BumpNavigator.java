@@ -1,6 +1,7 @@
-import lejos.robotics.proposal.DifferentialPilot;
+import lejos.robotics.localization.DeadReckonerPoseProvider;
+import lejos.robotics.navigation.ArcRotateMoveController;
+import lejos.robotics.navigation.DifferentialPilot;
 import lejos.nxt.*;
-import lejos.robotics.proposal.*;
 import lejos.robotics.Pose;
 import lejos.geom.Point;
 import java.util.Random;

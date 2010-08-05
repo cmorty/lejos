@@ -1,6 +1,6 @@
 import lejos.nxt.*;
 import lejos.util.Delay;
-import lejos.robotics.proposal.DifferentialPilot;
+import lejos.robotics.navigation.DifferentialPilot;
 
 /**
  * Test of the Pilot class.

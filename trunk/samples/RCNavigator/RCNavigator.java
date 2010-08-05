@@ -1,16 +1,14 @@
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-
 import lejos.nxt.*;
-import lejos.robotics.proposal.*;
+import lejos.robotics.localization.DeadReckonerPoseProvider;
+import lejos.robotics.navigation.ArcRotateMoveController;
+import lejos.robotics.navigation.DifferentialPilot;
 import lejos.robotics.Pose;
 import lejos.geom.Point;
 import lejos.nxt.comm.BTConnection;
 import lejos.nxt.comm.Bluetooth;
-
- 
 
 /**
  *Example of a navigating robot  operating under remote control

@@ -1,6 +1,5 @@
 import lejos.nxt.*;
 import lejos.robotics.navigation.*;
-import lejos.robotics.proposal.DifferentialPilot;
 import lejos.nxt.comm.*;
 
 /**
