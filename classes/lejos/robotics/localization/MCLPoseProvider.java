@@ -1,6 +1,6 @@
 package lejos.robotics.localization;
 
-
+import lejos.geom.Point;
 import lejos.robotics.Pose;
 import lejos.robotics.mapping.RangeMap;
 import lejos.robotics.MoveListener;
@@ -10,9 +10,9 @@ import lejos.robotics.RangeScanner;
 import lejos.robotics.Move;
 import java.awt.Rectangle;
 import java.io.*;
+
 public class MCLPoseProvider implements PoseProvider, MoveListener
 {
-
   private MCLParticleSet particles;
   private RangeScanner scanner;
   private RangeMap map;
@@ -224,7 +224,7 @@ public class MCLPoseProvider implements PoseProvider, MoveListener
    */
   public float getMinX() { return minX;}
   /**
-   * rturns the maximum value of Y in the particle set;
+   * Returns the maximum value of Y in the particle set;
    * @return max y
    */
   public float getMaxY() { return maxY;}
@@ -236,7 +236,7 @@ public class MCLPoseProvider implements PoseProvider, MoveListener
 
   /**
    * returns the standard deviation of the X values in the particle set;
-   * @return sigmz X
+   * @return sigma X
    */
   public float getSigmaX() { return (float)Math.sqrt(varX);}
 
@@ -261,7 +261,6 @@ public class MCLPoseProvider implements PoseProvider, MoveListener
   public void dumpEstimation(DataOutputStream dos) throws IOException {
       Pose pose = getPose();
 
-
       dos.writeFloat(pose.getX());
       dos.writeFloat(pose.getY());
       dos.writeFloat(pose.getHeading());
@@ -274,5 +273,4 @@ public class MCLPoseProvider implements PoseProvider, MoveListener
       dos.writeFloat((float)varH);
       dos.flush();
   }
- 
 }
