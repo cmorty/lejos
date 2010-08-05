@@ -26,7 +26,7 @@ public class RCPilot implements RemotePilotMethod
    * Constructor allocates the pilot object to be controlled
    * @param aPilot
    */
-  public RCPilot(TachoPilot aPilot)
+  public RCPilot(LegacyPilot aPilot)
   {
     pilot = aPilot;
   }
@@ -147,12 +147,12 @@ public class RCPilot implements RemotePilotMethod
      */
     public static void main(String[] args)
     {
-      TachoPilot p = new TachoPilot(2.2f, 5.2f, Motor.A, Motor.C);
+      LegacyPilot p = new LegacyPilot(2.2f, 5.2f, Motor.A, Motor.C);
       RCPilot pilot = new RCPilot(p);
       pilot.go();
     }
     
-  protected TachoPilot pilot;
+  protected LegacyPilot pilot;
   protected DataInputStream dataIn;
   protected DataOutputStream dataOut;
   protected OutputStream os;

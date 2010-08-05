@@ -1,5 +1,6 @@
 import lejos.nxt.*;
 import lejos.robotics.navigation.*;
+import lejos.robotics.proposal.DifferentialPilot;
 import lejos.nxt.comm.*;
 
 /**
@@ -27,7 +28,7 @@ import lejos.nxt.comm.*;
  */
 public class MonitorTest 
 {
-	static TachoPilot robot = new TachoPilot(5.6f,16.0f,Motor.A, Motor.C,true);
+	static DifferentialPilot robot = new DifferentialPilot(5.6f,16.0f,Motor.A, Motor.C,true);
 	
 	public static void main(String[] args ) throws Exception 
 	{
@@ -44,7 +45,7 @@ public class MonitorTest
 		
 		LCP.messageWrite(0, "PilotTester Started");
 
-		robot.setSpeed(500);
+		//robot.setTravelSpeed(500);
 		LCP.messageWrite(0, "Moving forward");
 		robot.forward();
 		pause(1000);
