@@ -56,14 +56,14 @@ public class KalmanTest2 {
     
     sonic.continuous();
     
-    RConsole.openBluetooth(0);
-    System.setOut(new PrintStream(RConsole.getPrintStream()));
+    //RConsole.openBluetooth(0);
+    //System.setOut(new PrintStream(RConsole.getPrintStream()));
     
     System.out.println("Initial Heading:" + initialHeading);
     
     // Create the pilot
     DifferentialPilot pilot = new DifferentialPilot( 
-        TYRE_DIAMETER, AXLE_TRACK, Motor.B, Motor.C, true);
+        TYRE_DIAMETER, AXLE_TRACK, Motor.A, Motor.C, true);
     
     //Create the filter
     KalmanFilter filter = new KalmanFilter(a,b,c,q,r);
