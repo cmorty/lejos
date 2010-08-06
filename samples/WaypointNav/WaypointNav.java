@@ -1,3 +1,4 @@
+import lejos.robotics.Pose;
 import lejos.robotics.navigation.*;
 import lejos.nxt.*;
 import java.util.ArrayList;
@@ -68,7 +69,7 @@ public class WaypointNav
    * Stop the robot and clear the queue.
    */
   public void clear() {
-    nav.stop();
+    nav.interrupt();
     segments.clear();
   }
 
@@ -90,7 +91,7 @@ public class WaypointNav
    */
   public void execute(float x, float y, float heading)
   {
-    nav.setPose(x,y,heading);
+    nav.getPoseProvider().setPose(new Pose(x,y,heading));
     System.out.println(" exec ");
     while (segments.size() > 0)
     {

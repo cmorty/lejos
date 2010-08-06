@@ -54,7 +54,7 @@ public class KalmanTest {
     
     // Create the pilot
     DifferentialPilot pilot = new DifferentialPilot( 
-        TYRE_DIAMETER, AXLE_TRACK, Motor.B, Motor.C, true);
+        TYRE_DIAMETER, AXLE_TRACK, Motor.A, Motor.C, true);
     
     //Create the filter
     KalmanFilter filter = new KalmanFilter(a,b,c,q,r);
