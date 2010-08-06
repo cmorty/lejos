@@ -1,6 +1,5 @@
 package lejos.robotics.localization;
 
-import lejos.geom.Point;
 import lejos.robotics.Pose;
 import lejos.robotics.mapping.RangeMap;
 import lejos.robotics.MoveListener;
@@ -55,11 +54,11 @@ public class MCLPoseProvider implements PoseProvider, MoveListener
             radiusNoise,  headingNoise);
   }
 
-
-       public void setPose(Pose aPose)
-       {
-         setInitialPose(aPose, 1,1);
-       }
+  public void setPose(Pose aPose)
+  {
+    setInitialPose(aPose, 1,1);
+  }
+   
   /**
    * returns the particle set
    * @return the particle set
@@ -76,12 +75,13 @@ public class MCLPoseProvider implements PoseProvider, MoveListener
   {
     
   }
-/**
- * required by MoveListener interface.
- * Applies the move to all particles; updates the estimated pose after Travel
- * @param event the event just completed
- * @param mp
- */
+  
+  /**
+   * required by MoveListener interface.
+   * Applies the move to all particles; updates the estimated pose after Travel
+   * @param event the event just completed
+   * @param mp
+   */
   public void moveStopped(Move event, MoveProvider mp)
   {
     particles.applyMove(event);
@@ -91,10 +91,10 @@ public class MCLPoseProvider implements PoseProvider, MoveListener
     }
   }
 
- /**
-  * returns the difference between max and min x
-  * @return the diference between min and max x
-  */
+  /**
+   * returns the difference between max and min x
+   * @return the diference between min and max x
+   */
   public float getXRange()
   {
     return getMaxX()-  getMinX();
@@ -107,14 +107,15 @@ public class MCLPoseProvider implements PoseProvider, MoveListener
   {
     return getMaxY()- getMinY();
   }
-/**
- * updates the estimated pose using monte carlo method applied to particles.
- * Gets range readings from the scanner, calculates weights and resamples the
- * the particles.  Tries at most 4 times  range values are incpmplete and/or
- * the probabilities of the sensor readings are too small;.
- * @return  true if the update was successful.  Otherwise, the dead reckoning pose
- * is the only one availabale.
- */
+  
+  /**
+   * updates the estimated pose using monte carlo method applied to particles.
+   * Gets range readings from the scanner, calculates weights and resamples the
+   * the particles.  Tries at most 4 times  range values are incpmplete and/or
+   * the probabilities of the sensor readings are too small;.
+   * @return  true if the update was successful.  Otherwise, the dead reckoning pose
+   * is the only one availabale.
+   */
   public boolean update()
   {
     int maxTries = 4;
@@ -144,6 +145,7 @@ public class MCLPoseProvider implements PoseProvider, MoveListener
 //        particles.logParticles(dl);
     return true;
   }
+  
   /**
    * returns the best best estimate of the current pose;
    * @return the estimated pose
@@ -153,8 +155,9 @@ public class MCLPoseProvider implements PoseProvider, MoveListener
     estimatePose();
     return new Pose(_x, _y, _heading);
 
-    }
-/**
+   }
+  
+  /**
    * Estimate pose from weighted average of the particles
    */
   private void estimatePose()
@@ -164,9 +167,10 @@ public class MCLPoseProvider implements PoseProvider, MoveListener
     float estimatedX = 0;
     float estimatedY = 0;
     float estimatedAngle = 0;
-     varX = 0;
+    varX = 0;
     varY = 0;
     varH = 0;
+    
     for (int i = 0; i < numParticles; i++)
     {
       Pose p = particles.getParticle(i).getPose();
@@ -203,9 +207,8 @@ public class MCLPoseProvider implements PoseProvider, MoveListener
      _y = estimatedY;
      _heading = estimatedAngle;
   }
-
-
-   /**
+  
+  /**
    * Returns the minimum rectangle enclosing all the particles
    * @return rectangle : the minimum rectangle enclosing all the particles
    */
@@ -213,21 +216,25 @@ public class MCLPoseProvider implements PoseProvider, MoveListener
 	  return new Rectangle((int) minX, (int) minY,
 			               (int) (maxX-minX), (int) (maxY-minY));
   }
+  
   /**
    * returns the maximum value of  X in the particle set
    * @return   max X
    */
   public float getMaxX() { return maxX;}
+  
   /**
    * returns the minimum value of   X in the particle set;
    * @return minimum X
    */
   public float getMinX() { return minX;}
+  
   /**
    * Returns the maximum value of Y in the particle set;
    * @return max y
    */
   public float getMaxY() { return maxY;}
+  
   /**
    * returns the minimum value of Y in the particle set;
    * @return minimum Y
@@ -253,7 +260,7 @@ public class MCLPoseProvider implements PoseProvider, MoveListener
   public float getSigmaHeading() {return (float)Math.sqrt(varH);}
 
 
-   /**
+  /**
    * Dump the serialized estimate of pose to a data output stream
    * @param dos the data output stream
    * @throws IOException
