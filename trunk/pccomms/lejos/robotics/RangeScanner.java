@@ -20,10 +20,9 @@ public interface RangeScanner {
 	 */ 
 	public RangeReadings getRangeValues();
 
-        /**
-         * set the array of angles at which range readings are to be taken
-         * @param angles
-         */
-
-        public void setAngles(float[] angles);
+    /**
+     * Set the array of angles at which range readings are to be taken
+     * @param angles
+     */
+     public void setAngles(float[] angles);
 }
