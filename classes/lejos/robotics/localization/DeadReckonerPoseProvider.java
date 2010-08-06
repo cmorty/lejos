@@ -124,14 +124,14 @@ public class DeadReckonerPoseProvider implements PoseProvider, MoveListener
     return a;
   }
 
-  public void setPosition(Point p)
+  private void setPosition(Point p)
   {
     x = p.x;
     y = p.y;
     current = true;
   }
 
-  public void setHeading(float heading)
+  private void setHeading(float heading)
   {
     this.heading = heading;
     current = true;

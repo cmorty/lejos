@@ -2,9 +2,7 @@ package lejos.robotics.navigation;
 
 import lejos.robotics.localization.DeadReckonerPoseProvider;
 import lejos.robotics.localization.PoseProvider;
-
 import java.util.*;
-import lejos.geom.Point;
 import lejos.robotics.*;
 
 /**
@@ -63,48 +61,6 @@ public class BasicNavigator implements PoseController
   }
 
   /**
-   * Sets the pose of the robot in the pose provider
-   * @param x coordinate of the robot
-   * @param y coordinate of the robot
-   * @param heading  of the robot
-   */
-   public void setPose(float x, float y, float heading)
-   {
-     setPose(new Pose(x,y,heading));
-   }
- 
-  /**
-   * Sets the pose of the robot in the pose provider
-   * @param pose
-   */
-  public void setPose(Pose pose)
-  {
-    _pose = pose;
-    poseProvider.setPose(_pose);
-  }
-
-  /**
-   * Sets the heading of the robot in the pose provider
-   * @param heading
-   */
-  public void setHeading(float heading)
-  {
-    setPose(_pose.getX(),_pose.getY(),heading);
-  }
-
-  /**
-   * This method is for future use with  MCLPoseProvider
-   * @param aPose : the initial pose
-   * @param headingNoise
-   * @param radiusNoise
-   */
-   public void setInitialPose(Pose aPose, float headingNoise, float radiusNoise )
-   {
-     _pose = aPose;
-     poseProvider.setPose(_pose);
-   }
-
-  /**
    * Returns a reference to the MoveController.
    * The Navigator pose will be automatically updated as a result of methods
    * executed on the MoveController.
@@ -129,57 +85,11 @@ public class BasicNavigator implements PoseController
     if(_route.size() > 0 ) _keepGoing = true;
   }
 
-  /**
-   * Calls interrupt()
-   */
-  public void stop()
-  {
-    interrupt();
-  }
-
   public void flushQueue()
   {
     _keepGoing = false;
     _pilot.stop();
     for(int i = _route.size()-1 ; i > 0; i++)_route.remove(i);
-  }
-  
-  /**
-   * Helper method for goTo() if a SteeringPilot is used ; uses a simple algorithm for performing the
-   * arc move to change direction before
-   * the robot travels to the destination.  The default arc is followed in the
-   * forward direction.  If the destination is inside the default arc, this
-   * method is called again with the  second parameter set to <b>true</b>
-   * @param destinationRelativeBearing
-   * @param close  <b> true </b>if the destination is inside of the default turning circle
-   */
-  protected void performArc(float destinationRelativeBearing,
-          boolean  close)
-  {
-    if(destinationRelativeBearing == 0)return;
-    int side = (int)Math.signum(destinationRelativeBearing);
-    if (close) side *= -1;
-    float xc,yc;   // turning center;
-    float centerBearing = _pose.getHeading() + side*90;  // direction of center from robot
-    centerBearing = (float) Math.toRadians(centerBearing);
-    xc = _pose.getX() + _radius*(float)Math.cos(centerBearing);
-    yc = _pose.getY() + _radius*(float)Math.sin(centerBearing);
-    Point center = new Point(xc,yc);
-    float centerToDestBearing = center.angleTo(_destination);
-    float  destDistance = (float) center.distance(_destination);
-//    float newHeading = 0;
-    // actually, the actual tangent is perpendicular to the tangent angle.
-    float tangentAngle = (float)Math.toDegrees(Math.acos(_radius / destDistance));
-    if( destDistance < _radius )
-    {
-      performArc(destinationRelativeBearing ,true); // use the center on the opposite side
-      return;
-    }
-    else 
-    {
-    float newHeading  = centerToDestBearing + side* (90 - tangentAngle );
-    ((ArcMoveController) _pilot).arc(side*_radius,newHeading - _pose.getHeading(),true);
-    }
   }
 
   /**
@@ -190,15 +100,6 @@ public class BasicNavigator implements PoseController
   {
     if(_route.size() <= 0 ) return null;
     else return _route.get(0);
-  }
-
-  /**
-   * Returns the current pose of the robot
-   * @return the current pose of the robot
-   */
-  public Pose getPose()
-  {
-    return poseProvider.getPose();
   }
 
   public void setPoseProvider(PoseProvider aProvider)
