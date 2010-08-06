@@ -15,6 +15,6 @@ import lejos.robotics.Pose;
 public interface PoseProvider {
 	
 	public Pose getPose();
-        public void setPose(Pose aPose);
-		
+    
+	public void setPose(Pose aPose);		
 }
