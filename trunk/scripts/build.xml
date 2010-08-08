@@ -111,10 +111,10 @@ ${template.linux.parser}
 			javac -bootclasspath "$NXJ_CP_BOOT" "$@"
 		</linux-run>
 		<linux-parser file="nxjpcc">
-			javac -classpath "$NXJ_CP_CMDLINE" "${NXJ_CMDLINE[@]}"
+			javac -classpath "$NXJ_CMDLINE_CP" "${NXJ_CMDLINE[@]}"
 		</linux-parser>
 		<linux-parser file="nxjpc">
-			java $NXJ_FORCE32 -Dnxj.home="$NXJ_HOME" -Djava.library.path="$NXJ_BIN" -classpath "$NXJ_CP_CMDLINE" "${NXJ_CMDLINE[@]}"
+			java $NXJ_FORCE32 -Dnxj.home="$NXJ_HOME" -Djava.library.path="$NXJ_CMDLINE_LP" -classpath "$NXJ_CMDLINE_CP" "${NXJ_CMDLINE[@]}"
 		</linux-parser>
 	</target>
 	
