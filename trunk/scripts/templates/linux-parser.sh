@@ -10,6 +10,10 @@ for (( i=1; i<=$#; i++ )); do
 			(( i++ ))
 			NXJ_CMDLINE_CP="$NXJ_CP_TOOL$SEP${!i}"
 			;;
+		#handle -Djava.library.path=
+		-Djava.library.path=*)
+			NXJ_CMDLINE_LP="$NXJ_BIN$SEP${!i:20}"
+			;;
 		#handle other parameters that accept arguments
 		-sourcepath|-bootclasspath|-extdirs|-endorseddirs|-processor|-processorpath|-d|-s|-encoding|-source|-target|-Xmaxerrs|-Xmaxwarns|-Xstdout)
 			NXJ_CMDLINE[$i]="${!i}"
@@ -21,10 +25,6 @@ for (( i=1; i<=$#; i++ )); do
 			for (( ; i<=$#; i++ )); do
 				NXJ_CMDLINE[$i]="${!i}"
 			done
-			;;
-		#handle -Djava.library.path=
-		-Djava.library.path=*)
-			NXJ_CMDLINE_LP="$NXJ_BIN$SEP${!i:20}"
 			;;
 		#handle parameters without arguments
 		*)
