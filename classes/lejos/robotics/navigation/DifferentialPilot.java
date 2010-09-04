@@ -10,7 +10,7 @@ import lejos.robotics.*;
  */
 
 /**
- * The DifferentialPilot class is a software abstraction of the Pilot mechanism of a
+ * The DifferentialPilot1 class is a software abstraction of the Pilot mechanism of a
  * NXT robot. It contains methods to control robot movements: travel forward or
  * backward in a straight line or a circular path or rotate to a new direction.<br>
  * This  class will only work with two independently controlled motors to
@@ -31,7 +31,7 @@ import lejos.robotics.*;
  * <br> Example of use of come common methods:
  * <p>
  * <code><pre>
- * DifferentialPilot pilot = new DifferentialPilot(2.1f, 4.4f, Motor.A, Motor.C, true);  // parameters in inches
+ * DifferentialPilot1 pilot = new DifferentialPilot1(2.1f, 4.4f, Motor.A, Motor.C, true);  // parameters in inches
  * pilot.setRobotSpeed(10);  // inches per second
  * pilot.travel(12);         // inches
  * pilot.rotate(-90);        // degree clockwise
@@ -53,7 +53,7 @@ public class DifferentialPilot implements
 {
 
   /**
-   * Allocates a DifferentialPilot object, and sets the physical parameters of the
+   * Allocates a DifferentialPilot1 object, and sets the physical parameters of the
    * NXT robot.<br>
    * Assumes Motor.forward() causes the robot to move forward.
    *
@@ -75,7 +75,7 @@ public class DifferentialPilot implements
   }
 
   /**
-   * Allocates a DifferentialPilot object, and sets the physical parameters of the
+   * Allocates a DifferentialPilot1 object, and sets the physical parameters of the
    * NXT robot.<br>
    *
    * @param wheelDiameter
@@ -101,7 +101,7 @@ public class DifferentialPilot implements
   }
 
   /**
-   * Allocates a DifferentialPilot object, and sets the physical parameters of the
+   * Allocates a DifferentialPilot1 object, and sets the physical parameters of the
    * NXT robot.<br>
    *
    * @param leftWheelDiameter
@@ -346,17 +346,31 @@ public class DifferentialPilot implements
   {
     _type = Move.MoveType.ROTATE;
     movementStart(true);
-    _right.forward();
-    _left.backward();
+    if(_parity >0)
+    {
+      _right.forward();
+      _left.backward();
+    }
+    else
+    {
+      _left.forward();
+      _right.backward();
+    }
   }
 
   public void rotateRight()
   {
     _type = Move.MoveType.ROTATE;
-     movementStart(true);
-    _left.forward();
-    _right.backward();
-
+    movementStart(true);
+    if (_parity > 0)
+    {
+      _left.forward();
+      _right.backward();
+    } else
+    {
+      _right.forward();
+      _left.backward();
+    }
   }
 
   /**
@@ -472,14 +486,10 @@ public class DifferentialPilot implements
     movementStart(true);
     float turnRate = turnRate(radius);
     steerPrep(turnRate); // sets motor speeds
-    _outside.forward();
-    if (_parity * _steerRatio > 0)
-    {
-      _inside.forward();
-    } else
-    {
-      _inside.backward();
-    }
+    if(_parity >0)_outside.forward();
+    else _outside.backward();
+    if (_parity * _steerRatio > 0)  _inside.forward();
+    else _inside.backward();
   }
 
   public void arcBackward(final float radius)
@@ -488,14 +498,10 @@ public class DifferentialPilot implements
     movementStart(true);
     float turnRate = turnRate(radius);
     steerPrep(turnRate);// sets motor speeds
-    _outside.backward();
-    if (_parity * _steerRatio > 0)
-    {
-      _inside.backward();
-    } else
-    {
-      _inside.forward();
-    }
+    if(_parity > 0)_outside.backward();
+    else _outside.forward();
+    if (_parity * _steerRatio > 0)_inside.backward();
+     else _inside.forward();
   }
 
   public void arc(final float radius, final float angle)
@@ -595,7 +601,8 @@ public class DifferentialPilot implements
       return;
     }
     steerPrep(turnRate);
-    _outside.forward();
+    if(_parity >0)_outside.forward();
+    else _outside.backward();
     if (!_steering)  //only call movement start if this is the most recent methoc called
     {
       _type = Move.MoveType.ARC;
@@ -616,11 +623,14 @@ public class DifferentialPilot implements
   {
     if (turnRate == 0)
     {
-      backward();
+      if (_parity < 0)  forward();
+
+       else backward();
       return;
     }
      steerPrep(turnRate);
-    _outside.backward();
+     if(_parity > 0 ) _outside.backward();
+     else _outside.forward();
     if (!_steering)  //only call movement start if this is the most recent methoc called
     {
       _type = Move.MoveType.ARC;
