@@ -38,6 +38,7 @@ public class Sound
     private Sound()
     {
     }
+    public static int C2 = 523;
     
     /**
      * Play a system sound.
@@ -50,8 +51,6 @@ public class Sound
      * <TR><TD>4</TD><TD>long, low buzz</TD></TR>
      * </TABLE>
      */
-    public static int C2 = 523;
-
     public static void systemSound(boolean aQueued, int aCode)
     {
         if (aCode == 0)
