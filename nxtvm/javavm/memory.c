@@ -113,7 +113,7 @@ static Object *sweepBase;      /* current position of sweeping */
 static FreeObject *sweepFree;  /* current position of sweeping free ptr */
 static Object *overflowScan;   /* current position of overflow scan */
 // Mark queue
-#define MAX_CALL_DEPTH 8
+#define MAX_CALL_DEPTH 4
 #define MARK_Q_SIZE 64
 static TWOBYTES markQ[MARK_Q_SIZE];
 static int markQHd = 0;
@@ -549,20 +549,33 @@ Object *new_string (ConstantRecord *constantRecord,
  */
 int init_stacks(Thread *thread)
 {
+  Object *callStack;
+  Object *valueStack;
+  if (!alloc_start()) return -1;
   // Allocate the call stack
-  Object *callStack = new_single_array(AB, INITIAL_STACK_FRAMES*sizeof(StackFrame));
-  // And the value stack
-  Object *valueStack = new_single_array(AI, INITIAL_STACK_SIZE);
-  if (!callStack || !valueStack) return -1;
-  thread->stackFrameArray = ptr2ref(callStack);
-  thread->stackArray = ptr2ref(valueStack);
-  if (is_ah_array(valueStack))
+  callStack = new_array(AB, INITIAL_STACK_FRAMES*sizeof(StackFrame));
+  if (callStack)
   {
-    AHeapObj *ah = (AHeapObj *)(array_start(valueStack) - sizeof(AHeapObj));
-    ah->thread = (FOURBYTES *)thread - heapStart;
+    // And the value stack
+    valueStack = new_array(AI, INITIAL_STACK_SIZE);
+    if (valueStack)
+    {
+      thread->stackFrameArray = ptr2ref(callStack);
+      thread->stackArray = ptr2ref(valueStack);
+      if (is_ah_array(valueStack))
+      {
+        AHeapObj *ah = (AHeapObj *)(array_start(valueStack) - sizeof(AHeapObj));
+        ah->thread = (FOURBYTES *)thread - heapStart;
+      }
+      alloc_complete(callStack);
+      return 0;
+    }
   }
-  return 0;
+  // allocation failed
+  alloc_complete(null);
+  return -1;
 }
+
 /**
  * If the stack is stored in a moveable object we need to keep a link back to
  * the thread so that we can update the frame values if the value stack moves.
@@ -596,7 +609,7 @@ void free_stacks(Thread *thread)
 static
 void update_stack_frames(Thread *thread, int offset)
 {
-  // The value stack has moved. We need to update the poointers in the
+  // The value stack has moved. We need to update the pointers in the
   // stack frames.
   StackFrame *sf = (StackFrame *)array_start(thread->stackFrameArray);
   int cnt = thread->stackFrameIndex;
