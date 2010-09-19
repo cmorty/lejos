@@ -113,7 +113,24 @@ public class RConsole extends Thread
                 numBytes = 0;
                 if (conn != null)
                 {
-                    ioThread.interrupt();
+                    /*
+                     * We need to wake up the I/O thread but we must take care
+                     * with holding a lock. The really safe way to do this is to
+                     * use interrupt. However this will generate an exception
+                     * which means a stack trace will be captures which costs
+                     * time and creates garbage. So instead we can use internal
+                     * knowledge of the leJOS scheduler. Following a yield this
+                     * thread will run for at least 1ms without any task switch
+                     * this means that it is is pretty safe to take the lock and
+                     * use notify (which will not switch away), to wake up the
+                     * other thread...
+                     */
+                    //ioThread.interrupt();
+                    Thread.yield();
+                    synchronized(os)
+                    {
+                        os.notify();
+                    }
                     while (output != null)
                         Thread.yield();
                 }
@@ -366,13 +383,13 @@ public class RConsole extends Thread
                     // probably have some way to report it to calling threads.
                     break;
                 }
-            }
-            try {
-                Thread.sleep(nextUpdate - now);
-            }
-            catch (InterruptedException e)
-            {
-                // We use interrupt to wake the thread from sleep early.
+                try {
+                    os.wait(nextUpdate - now);
+                }
+                catch (InterruptedException e)
+                {
+                    // We may use interrupt to wake the thread from sleep early.
+                }
             }
         }
         // dump any pending output
