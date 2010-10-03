@@ -39,10 +39,10 @@
 
 // Some examples:
 //
-//  Transaction to write a single byte to an address will have:
+//  Transaction to write a single byte to a device will have:
 //  partial transaction:
 //  0: Start. Tx 1 byte address
-//  1: Date send the 1 byte of data 
+//  1: send the 1 byte of data 
 //  2: Stop
 //
 //
@@ -54,16 +54,17 @@
 //
 //  Transaction to write some bytes to a particular internal address at an address:
 //
-//  0: Start. Send address + internal address.
-//  1: Send data bytes.
+//  0: Start. Send address
+//  1: Send internal address + data bytes.
 //  2: Stop 
 //
 //  Transaction to read some bytes from a particular internal address at an address:
 //
-//  0: Start. Send address + internal address.
-//  1: Restart. Send address.
-//  2: Read data.
-//  3. Stop
+//  0: Start. Send address
+//  1: Send internal address
+//  2: Restart. Send address.
+//  3: Read data.
+//  4. Stop
 //
 // Note: It appears that the Lego ultrasonic sensor needs a 
 // stop and an extra clock before the restart.
@@ -73,7 +74,14 @@
 // Port 4 on the nxt is a little odd. It has extra hardware to implement
 // an RS485 interface. However this interacts with the digital I/O lines
 // which means that the original open collector driver used in this code
-// did not work. The code now uses full drive on both clock and data.
+// did not work. The code now uses full drive on both clock and data. The 
+// extra hardware means that the output voltage is lower than on other ports
+// this is particularly bad when using the external pull up where the voltage
+// may only reach approx 3.5 volts rather than the more normal 4.5 volts.
+// Because of this some sensors may not correctly recognize clock signals,
+// generated using only the pull up resistor. The only time this mode is
+// used is when in standard mode (and with NO_RELEASE not set), so care
+// should be taken if using this mode on port 4.
 //
 // Re-worked by Andy Shaw 02/2009
 //
@@ -82,7 +90,7 @@
 // Lego implementation. There are now more partial transactions and
 // there is a mode setting to allow standard mode or Lego mode operation.
 // In addition tests showed that the i2c code was using up to 40% of the
-// available cpu. To reduce this teh state machine has been simplified
+// available cpu. To reduce this the state machine has been simplified
 // and modified to require only 2 states per clock instead of 4 (and thus
 // allowing the use of a lower interrupt rate). We now track the usage of
 // the i2c system. When no ports are active the clock is disabled.
@@ -103,13 +111,11 @@ typedef enum {
   I2C_IDLE,
   I2C_ACTIVEIDLE,
   I2C_COMPLETE,
-  I2C_RELEASE,
   I2C_BEGIN,
   I2C_NEWSTART,
   I2C_NEWRESTART,
   I2C_NEWREAD,
   I2C_NEWWRITE,
-  I2C_RESTART1,
   I2C_START1,
   I2C_START2,
   I2C_DELAY,
@@ -117,26 +123,28 @@ typedef enum {
   I2C_RXDATA2,
   I2C_RXENDACK1,
   I2C_RXENDACK2,
-  I2C_RXENDACK3,
   I2C_RXACK1,
   I2C_RXACK2,
   I2C_TXDATA1,
   I2C_TXDATA2,
   I2C_TXACK1,
   I2C_TXACK2,
-  I2C_LEGOEND,
-  I2C_ENDNORELEASE,
-  I2C_ENDRELEASE1,
-  I2C_ENDRELEASE2,
-  I2C_ENDRELEASE3,
-  I2C_LEGOSTOP1,
-  I2C_LEGOSTOP2,
-  I2C_LEGOSTOP3,
+  I2C_STOP1,
+  I2C_STOP2,
+  I2C_STOP3,
+  I2C_ENDLEGO1,
+  I2C_ENDLEGO2,
+  I2C_END,
+  I2C_ENDSTOP1,
+  I2C_ENDSTOP2,
+  I2C_ENDSTOP3,
+  I2C_RELEASE,
 } i2c_port_state;
 
 typedef struct {
   U32 scl_pin;
   U32 sda_pin;
+  U32 ready_mask;
   U8  buffer[I2C_BUF_SIZE+2];
   struct i2c_partial_transaction partial_transaction[I2C_MAX_PARTIAL_TRANSACTIONS];
   struct i2c_partial_transaction *current_pt;
@@ -187,16 +195,9 @@ i2c_timer_isr_C(void)
     case I2C_COMPLETE:          // Transaction completed
       continue;
       break;
-    case I2C_RELEASE:
-      // Release the bus completely
-      *AT91C_PIOA_ODR = p->sda_pin|p->scl_pin;
-      *AT91C_PIOA_SODR = p->sda_pin|p->scl_pin;;
-      i2c_port_busy &= ~p->port_bit;
-      p->state = I2C_COMPLETE;
-      break;
     case I2C_BEGIN:		
       // Start new transaction
-      *AT91C_PIOA_OER |= p->sda_pin|p->scl_pin;
+      *AT91C_PIOA_OER = p->sda_pin|p->scl_pin;
       p->fault = 0;
       p->state = p->current_pt->state;
       break;
@@ -276,8 +277,8 @@ i2c_timer_isr_C(void)
       // Take SCL High
       *AT91C_PIOA_SODR = p->scl_pin;
       if(*AT91C_PIOA_PDSR & p->sda_pin) {
-        p->fault=1;
-        p->state = I2C_ENDRELEASE1;
+        p->fault = 1;
+        p->state = I2C_ENDSTOP1;
       }
       else if (p->nbits == 0)
       {
@@ -352,6 +353,7 @@ i2c_timer_isr_C(void)
       // Take SCL low
       *AT91C_PIOA_CODR = p->scl_pin;
       *AT91C_PIOA_SODR = p->sda_pin;
+      *AT91C_PIOA_OER = p->sda_pin;
       p->state = I2C_RXENDACK2;
       break;
     case I2C_RXENDACK2:
@@ -360,58 +362,68 @@ i2c_timer_isr_C(void)
       p->current_pt++;
       p->state = p->current_pt->state;
       break;
-    case I2C_LEGOEND:
-      // Lego mode end case, does not issue stop, but does release the bus
+    case I2C_STOP1:
+      // Issue a Stop state
+      // SCL is high, take it low
+      *AT91C_PIOA_CODR = p->scl_pin;
+      *AT91C_PIOA_CODR = p->sda_pin;
+      *AT91C_PIOA_OER = p->sda_pin;
+      p->state = I2C_STOP2;
+      break;
+    case I2C_STOP2:
+      // Take SCL high
+      *AT91C_PIOA_SODR = p->scl_pin;
+      p->state = I2C_STOP3;
+      break;  
+    case I2C_STOP3:
+      // Take SDA pin high while the clock is high
+      *AT91C_PIOA_SODR = p->sda_pin;
+      // and move to the next state
+      p->current_pt++;
+      p->state = p->current_pt->state;
+      break;
+    case I2C_ENDLEGO1:
+      // Lego mode end case, does not issue stop. Used at end of rx
       // Clock low data is already high, release the data line
       *AT91C_PIOA_CODR = p->scl_pin;
       *AT91C_PIOA_ODR = p->sda_pin;
+      p->state = I2C_ENDLEGO2;
+      break;
+    case I2C_ENDLEGO2:
+      // Clock high, data is already high and we are done
+      *AT91C_PIOA_SODR = p->scl_pin;
       p->state = I2C_RELEASE;
       break;
-    case I2C_ENDNORELEASE:
+    case I2C_END:
       // End the transaction but hold onto the bus, keeping the clock low
       // Clock low and keep it active
       *AT91C_PIOA_CODR = p->scl_pin;
-      *AT91C_PIOA_ODR = p->sda_pin;
-      *AT91C_PIOA_SODR = p->sda_pin;
-      i2c_port_busy &= ~p->port_bit;
-      p->state = I2C_COMPLETE;
+      p->state = I2C_RELEASE;
       break;
-    case I2C_ENDRELEASE1:
-      // Standard end case issue stop and release the bus
+    case I2C_ENDSTOP1:
+      // Issue a Stop state
       // SCL is high, take it low
       *AT91C_PIOA_CODR = p->scl_pin;
       *AT91C_PIOA_CODR = p->sda_pin;
       *AT91C_PIOA_OER = p->sda_pin;
-      p->state = I2C_ENDRELEASE2;
+      p->state = I2C_ENDSTOP2;
       break;
-    case I2C_ENDRELEASE2:
+    case I2C_ENDSTOP2:
       // Take SCL high
       *AT91C_PIOA_SODR = p->scl_pin;
-      p->state = I2C_ENDRELEASE3;
+      p->state = I2C_ENDSTOP3;
       break;  
-    case I2C_ENDRELEASE3:
-      // Take SDA pin high
+    case I2C_ENDSTOP3:
+      // Take SDA pin high while the clock is high
       *AT91C_PIOA_SODR = p->sda_pin;
       p->state = I2C_RELEASE;
       break;
-    case I2C_LEGOSTOP1:
-      // Special case stop used mid read in lego mode
-      // SCL is high, take it low
-      *AT91C_PIOA_CODR = p->scl_pin;
-      *AT91C_PIOA_CODR = p->sda_pin;
-      *AT91C_PIOA_OER = p->sda_pin;
-      p->state = I2C_LEGOSTOP2;
-      break;
-    case I2C_LEGOSTOP2:
-      // Take SCL high
-      *AT91C_PIOA_SODR = p->scl_pin;
-      p->state = I2C_LEGOSTOP3;
-      break;  
-    case I2C_LEGOSTOP3:
-      // Take SDA pin high
-      *AT91C_PIOA_SODR = p->sda_pin;
-      p->current_pt++;
-      p->state = p->current_pt->state;
+    case I2C_RELEASE:
+      // Release whichever lines we can
+      *AT91C_PIOA_ODR = p->ready_mask;
+      // All done
+      i2c_port_busy &= ~p->port_bit;
+      p->state = I2C_COMPLETE;
       break;
     }
   }
@@ -513,6 +525,12 @@ int i2c_enable(int port, int mode)
       p->state = I2C_ACTIVEIDLE;
       build_active_list();
     }
+    // Select which lines to test to see if the bus is busy.
+    // If the clock line is being driven by us we do not test it.
+    if (p->lego_mode || p->no_release)
+      p->ready_mask = p->sda_pin;
+    else
+      p->ready_mask = pinmask;
     return 1;
   }
   return -1;
@@ -560,7 +578,7 @@ i2c_status(int port)
   p = i2c_ports[port];
   if (p->state == I2C_COMPLETE) return 0;
   // only now is it safe to test the bus
-  if ((*AT91C_PIOA_PDSR & (p->scl_pin|p->sda_pin)) != (p->scl_pin|p->sda_pin))
+  if ((*AT91C_PIOA_PDSR & (p->ready_mask)) != (p->ready_mask))
     return I2C_ERR_BUS_BUSY;
   return 0;
 }
@@ -601,7 +619,7 @@ i2c_start(int port,
     // We add an extra stop for the odd Lego i2c sensor, but only on a read
     if (read_len > 0 && p->lego_mode){
       pt++;
-      pt->state = I2C_LEGOSTOP1;
+      pt->state = I2C_STOP1;
     }
     pt++;
   }
@@ -620,11 +638,11 @@ i2c_start(int port,
     pt->nbits = read_len*8;
     pt++;
   }
+  // define what happens at the end of the operation
   if (p->lego_mode)
-    pt->state = (read_len <= 0 ? I2C_ENDRELEASE1 : I2C_LEGOEND);
+    pt->state = (read_len > 0 ? I2C_ENDLEGO1 : I2C_ENDSTOP1);
   else
-    pt->state = (p->no_release ? I2C_ENDNORELEASE : I2C_ENDRELEASE1);
-
+    pt->state = (p->no_release ? I2C_END : I2C_ENDSTOP1);
   // We save the number of bytes to read for completion
   p->read_len = read_len;
   // Start the transaction
@@ -675,7 +693,7 @@ i2c_event_check(int filter)
       if (filter & bit)
       {
         i2c_port *p = i2c_ports[port];
-        if ((*AT91C_PIOA_PDSR & (p->scl_pin|p->sda_pin)) == (p->scl_pin|p->sda_pin))
+        if ((*AT91C_PIOA_PDSR & (p->ready_mask)) == (p->ready_mask))
           ret |= bit;
       }
   }
