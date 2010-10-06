@@ -1,6 +1,7 @@
 package lejos.nxt.addon;
 
 import lejos.nxt.SensorPort;
+import lejos.nxt.I2CPort;
 import lejos.nxt.I2CSensor;
 import java.util.ArrayList;
 
@@ -38,7 +39,7 @@ public class NXTe  extends I2CSensor{
 	 * @param port
 	 */
 	public NXTe(SensorPort port){
-		super(port);
+		super(port, NXTE_ADDRESS, I2CPort.LEGO_MODE, TYPE_LOWSPEED_9V);
 		
 		port.setType(TYPE_LOWSPEED_9V);
 		port.setMode(MODE_RAW);

@@ -24,16 +24,26 @@ public class RCXSensorMultiplexer extends I2CSensor{
 	private final static int CHANNEL3 = 0xfb;
 	private final static int CHANNEL4 = 0xf7;
 	private final static int ALLOFF = 0xFF;
+
+    public static final int DEFAULT_RCXSMUX_ADDRESS = 0x7e;
 	
 	/**
-	 * 
+	 *
 	 * @param port NXT Sensor port
 	 */
 	public RCXSensorMultiplexer(I2CPort port){
-		super(port);
-		super.setAddress(0x7e);
+		this(port, DEFAULT_RCXSMUX_ADDRESS);
 	}
-	
+
+	/**
+	 *
+     * @param port NXT Sensor port
+     * @param address I2C address
+	 */
+	public RCXSensorMultiplexer(I2CPort port, int address){
+		super(port, address, I2CPort.LEGO_MODE, TYPE_LOWSPEED);
+	}
+
 	/**
 	 * Selects channel one
 	 *

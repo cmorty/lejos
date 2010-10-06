@@ -45,10 +45,14 @@ public class NXTCam extends I2CSensor {
 	 */
 	public static final char LINE_TRACKING = 'L';
 	
+	public NXTCam(I2CPort port, int address)
+	{
+		super(port, address, I2CPort.LEGO_MODE, TYPE_LOWSPEED_9V);
+	}
+
 	public NXTCam(I2CPort port)
 	{
-		super(port);
-		port.setType(TYPE_LOWSPEED_9V);
+		this(port, DEFAULT_I2C_ADDRESS);
 	}
 	
 	/**

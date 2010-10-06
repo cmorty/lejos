@@ -34,11 +34,15 @@ public class TiltSensor extends I2CSensor {
 	
 	public TiltSensor(I2CPort port)
 	{
-		super(port);
-		port.setType(TYPE_LOWSPEED_9V);
+		this(port, DEFAULT_I2C_ADDRESS);
+	}
+
+	public TiltSensor(I2CPort port, int address)
+	{
+		super(port, address, I2CPort.LEGO_MODE, TYPE_LOWSPEED_9V);
 		isMindsensors = (this.getProductID().equals(MINDSENSORS_ID));
 	}
-	
+
 	/**
 	 * Tilt of sensor along X-axis (see top of Mindsensors.com sensor for
 	 * diagram of axis).  128 is level. 

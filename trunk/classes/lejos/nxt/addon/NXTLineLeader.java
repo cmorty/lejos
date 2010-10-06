@@ -80,12 +80,21 @@ public class NXTLineLeader extends I2CSensor {
 
 	/**
 	 * Constructor
-	 * 
+	 *
+     * @param port
+     * @param address I2C address for the device
+	 */
+	public NXTLineLeader(I2CPort port, int address) {
+		super(port, address, I2CPort.LEGO_MODE, TYPE_LOWSPEED_9V);
+	}
+
+	/**
+	 * Constructor
+	 *
 	 * @param port
 	 */
 	public NXTLineLeader(I2CPort port) {
-		super(port);
-		port.setType(TYPE_LOWSPEED_9V);
+		this(port, DEFAULT_I2C_ADDRESS);
 	}
 
 	/**

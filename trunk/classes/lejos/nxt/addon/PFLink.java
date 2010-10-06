@@ -151,9 +151,13 @@ public class PFLink extends I2CSensor {
             0xDD, 0x31, 0xa0  // Motor Ch4 A Rev B Rev 
     }; 
 
-    public PFLink(I2CPort _Port) { 
-        super(_Port); 
-    } 
+    public PFLink(I2CPort _Port, int address) {
+        super(_Port, address, I2CPort.LEGO_MODE, TYPE_LOWSPEED);
+    }
+
+    public PFLink(I2CPort _Port) {
+        super(_Port);
+    }
 
     /** 
      * Should be called once to set up the NRLink for usage in the program 
