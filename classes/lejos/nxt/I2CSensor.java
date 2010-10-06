@@ -179,7 +179,7 @@ public class I2CSensor implements SensorConstants {
      * Addresses use the standard Lego/NXT format and are in the range 0x2-0xfe.
      * The low bit must always be zero. Some data sheets (and older versions
      * of leJOS) may use i2c 7 bit format (0x1-0x7f) in which case this address
-     * must be shifted left on place to be used with this function.
+     * must be shifted left one place to be used with this function.
 	 * 
 	 * @param addr 0x02 to 0xfe
 	 * @deprecated If the device has a changeable address, then constructor of the class should have an address parameter. If not, please report a bug.
@@ -191,8 +191,8 @@ public class I2CSensor implements SensorConstants {
 	}
 	
 	/**
-	 * Return thes the I2C address of the sensor.
-	 * The sensor uses the address/address+1 for writing/reading.
+	 * Return the the I2C address of the sensor.
+	 * The sensor uses the address for writing/reading.
 	 * @return the I2C address.
 	 */
 	public int getAddress()
