@@ -26,11 +26,25 @@ public class CompassSensor extends I2CSensor implements DirectionFinder {
 	// HiTechnic constants:
 	private final static byte MEASUREMENT_MODE = 0x00;
 
-	public CompassSensor(I2CPort port)
+    /**
+     * Create a compass sensor object
+     * @param port Sensor port for the compass
+     * @param address The I2C address used by the sensor
+     */
+	public CompassSensor(I2CPort port, int address)
 	{
-		super(port);		
+		super(port, address, I2CPort.LEGO_MODE, TYPE_LOWSPEED);
 		isMindsensors = (this.getProductID().equals(MINDSENSORS_ID));
 	}
+
+   /**
+     * Create a compass sensor object
+     * @param port Sensor port for the compass
+     */
+	public CompassSensor(I2CPort port)
+    {
+        this(port, DEFAULT_I2C_ADDRESS);
+    }
 	
 	/**
 	 * Returns the directional heading in degrees. (0 to 359.9)
