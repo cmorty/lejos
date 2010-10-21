@@ -86,7 +86,7 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 						pm.subTask("Linking");
 						linkProgram(absoluteBinPathName);
 						// check if linking was successfull
-						if(!binary.exists()) {
+						if(!binary.exists()||!(binary.length()>0)) {
 							throw new LeJOSNXJException("linking of program failed");
 						}
 						// connect to brick
