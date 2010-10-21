@@ -62,6 +62,11 @@ public class NXTCommFactory {
 		if ((protocol & NXTCommFactory.BLUETOOTH) != 0) {
 			String nxtCommName = props.getProperty("NXTCommBluetooth",
 					defaultDriver);
+			
+			if(isAndroid()){
+				nxtCommName="lejos.pc.comm.NXTCommAndroid";
+			}
+			
 			try {
 				Class<?> c = Class.forName(nxtCommName);
 				return (NXTComm) c.newInstance();
