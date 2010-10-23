@@ -11,6 +11,12 @@
   <property name="binary" value="${program}.nxj" />
   <property name="debug" value ="${program}.nxd" />
 	
+	  <condition property="d32Flag" value="-d32" else="-Dblank.dummy.arg=">
+	    <and>
+	      <os family="mac"/>
+	    </and>
+	  </condition> 
+	
   <!-- deletes class files -->
   <target name="clean" description="clean up all generated files">
     <delete>
@@ -80,6 +86,7 @@
   <target name="upload" depends="link"
         description="upload the binary" >
     <java classname="lejos.pc.tools.NXJUpload" fork="true">
+      <jvmarg value="${d32Flag}"/>
       <jvmarg value="-Djava.library.path=${nxj.library.path}"/>
       <jvmarg value="-Dnxj.home=${nxj.home}"/>
       <arg value="${binary}"/>
@@ -98,6 +105,7 @@
   <target name="uploadandrun" depends="link"
         description="upload and run the binary" >
     <java classname="lejos.pc.tools.NXJUpload" fork="true">
+      <jvmarg value="${d32Flag}"/>
       <jvmarg value="-Djava.library.path=${nxj.library.path}"/>
       <jvmarg value="-Dnxj.home=${nxj.home}"/>
       <arg value="${binary}"/>
@@ -117,6 +125,7 @@
   <target name="debuguploadandrun" depends="debuglink"
         description="upload and run the binary" >
     <java classname="lejos.pc.tools.NXJUpload" fork="true">
+      <jvmarg value="${d32Flag}"/>
       <jvmarg value="-Djava.library.path=${nxj.library.path}"/>
       <jvmarg value="-Dnxj.home=${nxj.home}"/>
       <arg value="${binary}"/>
