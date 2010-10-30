@@ -139,33 +139,33 @@ nxt_open(long hdev)
 {
   struct usb_dev_handle *hdl;
   struct usb_device *dev = (struct usb_device *)hdev;
-  int ret;
+  int ret, interf;
   char buf[64];
   hdl = usb_open((struct usb_device *) hdev);
   if (!hdl) return 0;
-  ret = usb_set_configuration(hdl, 1);
-
-  if (ret < 0)
-    {
-      usb_close(hdl);
-      return 0;
-    }
+  
   // If we are in SAMBA mode we need interface 1, otherwise 0
-  if (dev->descriptor.idVendor == VENDOR_ATMEL &&
-                   dev->descriptor.idProduct == PRODUCT_SAMBA)
-  {
-    ret = usb_claim_interface(hdl, 1);
-  }
-  else
-  {
-    ret = usb_claim_interface(hdl, 0);
-  }
+  interf = (dev->descriptor.idVendor == VENDOR_ATMEL &&
+            dev->descriptor.idProduct == PRODUCT_SAMBA) ? 1 : 0;
 
+  // TODO check that driver is actually active, error checking
+  // detach cdc_acm driver (issue in linux >=2.6.35.5
+  // if detach unsuccessfull, other calls will fail
+  usb_detach_kernel_driver_np(hdl, interf);
+  
+  ret = usb_set_configuration(hdl, 1);
   if (ret < 0)
-    {
-      usb_close(hdl);
-      return 0;
-    }
+  {
+    usb_close(hdl);
+    return 0;
+  }
+  
+  ret = usb_claim_interface(hdl, interf);
+  if (ret < 0)
+  {
+    usb_close(hdl);
+    return 0;
+  }
   // Discard any data that is left in the buffer
   while (usb_bulk_read(hdl, 0x82, buf, sizeof(buf), 1) > 0)
     ;
