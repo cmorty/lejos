@@ -455,8 +455,8 @@ public class LegacyPilot {
 	public void rotate(final float angle, final boolean immediateReturn) {
 		setSpeed(Math.round(_robotRotateSpeed * _leftTurnRatio), Math
 				.round(_robotRotateSpeed * _rightTurnRatio));
-		int rotateAngleLeft = _parity * (int) (angle * _leftTurnRatio);
-		int rotateAngleRight = _parity * (int) (angle * _rightTurnRatio);
+		int rotateAngleLeft = _parity * Math.round(angle * _leftTurnRatio);
+		int rotateAngleRight = _parity * Math.round(angle * _rightTurnRatio);
 		_left.rotate(-rotateAngleLeft, true);
 		_right.rotate(rotateAngleRight, immediateReturn);
 		if (!immediateReturn) {
@@ -538,8 +538,8 @@ public class LegacyPilot {
 	public void travel(final float distance, final boolean immediateReturn) {
 		setSpeed(Math.round(_robotTravelSpeed * _leftDegPerDistance), Math
 				.round(_robotTravelSpeed * _rightDegPerDistance));
-		_left.rotate((int) (_parity * distance * _leftDegPerDistance), true);
-		_right.rotate((int) (_parity * distance * _rightDegPerDistance),
+		_left.rotate((_parity * Math.round(distance * _leftDegPerDistance)), true);
+		_right.rotate((_parity * Math.round(distance * _rightDegPerDistance)),
 				immediateReturn);
 		if (!immediateReturn) {
 			while (_left.isMoving() || _right.isMoving())
