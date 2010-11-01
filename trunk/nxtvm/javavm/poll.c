@@ -9,7 +9,8 @@
 #define SET 2
 NXTEvent *events[MAX_EVENTS];
 int eventCnt;
-static JINT (* const eventCheckers[])(JINT) = {null, bt_event_check, udp_event_check, null, sp_check_event, i2c_event_check, buttons_check_event};
+JINT no_event(JINT filter) { return 0; }
+static JINT (* const eventCheckers[])(JINT) = {no_event, bt_event_check, udp_event_check, null, sp_check_event, i2c_event_check, buttons_check_event};
 
 /**
  * Initialize the event system. At startup we are not monitoring for any events.
@@ -52,6 +53,25 @@ int unregister_event(NXTEvent *event)
 }
 
 /**
+ * set and/or clear events.
+ */
+int change_event(NXTEvent *event, JINT set, JINT clear)
+{
+  event->userEvents &= ~clear;
+  event->userEvents |= set;
+  // deliver event now if it matches the filter and someone is waiting
+  set &= event->filter;
+  if (set && event->sync->state == WAITING && get_monitor_count(&(event->sync->_super.sync)) == 0)
+  {
+    event->eventData |= set;
+    event->state |= SET;
+    monitor_notify_unchecked(&event->sync->_super, 1);
+    schedule_request(REQUEST_SWITCH_THREAD);
+  }
+  return event->userEvents;
+}
+
+/**
  * Check all active event objects. If an event is detected, notify the 
  * associated waiting Java thread.
  */
@@ -66,14 +86,14 @@ void check_events()
     if (sync->state != 0 && (--event->updateCnt <= 0) && get_monitor_count(&(sync->_super.sync)) == 0)
     {
       // Check to see if we have anything of interest
-      int changed = (*(eventCheckers[event->typ]))(event->filter);
-      event->eventData |= changed;
+      int changed = (*(eventCheckers[event->typ]))(event->filter) | (event->userEvents & event->filter);
       // notify the user thread
       if (changed && sync->state == WAITING)
       { 
-        monitor_notify_unchecked(&sync->_super, 1);
+        event->eventData |= changed;
         // Don't notify this thread again.
-        sync->state |= SET;
+        event->state |= SET;
+        monitor_notify_unchecked(&sync->_super, 1);
         schedule_request(REQUEST_SWITCH_THREAD);
       }
       // Reste the check period counter

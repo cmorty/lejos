@@ -548,6 +548,9 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
   case unregisterEvent_4_5I:
     push_word(unregister_event((NXTEvent *) ref2obj(p0)));
     break;
+  case changeEvent_4II_5I:
+    push_word(change_event((NXTEvent *) ref2obj(p0), paramBase[1], paramBase[2]));
+    break;
   default:
     return throw_new_exception(JAVA_LANG_NOSUCHMETHODERROR);
   }
