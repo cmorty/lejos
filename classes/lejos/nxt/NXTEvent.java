@@ -28,6 +28,8 @@ public class NXTEvent {
     private volatile int eventData;
     private volatile int userEvents;
 
+    /** Event type for no hardware events */
+    public final static int NONE = 0;
     /** Event type for the Bluetooth device */
     public final static int BLUETOOTH = 1;
     /** Event type for the USB device */
@@ -76,6 +78,14 @@ public class NXTEvent {
     public native int unregisterEvent();
 
     /**
+     * Set and clear events flags atomically
+     * @param set events to be set
+     * @param clear events to be cleared
+     * @return the current events
+     */
+    private native int changeEvent(int set, int clear);
+
+    /**
      * Wait for an event to occur or for the specified timeout. If a timeout occurs
      * then the TIMEOUT event bit will be set in the result. This bit is the
      * sign bit so timeouts can be detected by testing for a -ve result.
@@ -87,12 +97,12 @@ public class NXTEvent {
         if (timeout <= 0L) return TIMEOUT;
         sync = this;
         updatePeriodCnt = 0;
-        eventData = 0;
+        eventData = userEvents & filter;
         state = WAITING;
         try
         {
             // If we already have a user event don't wait
-            if ((userEvents & filter) != 0)
+            if (eventData != 0)
                 state |= SET;
             else
             {
@@ -136,13 +146,9 @@ public class NXTEvent {
         }
         finally
         {
-            // Trim the user events
-            userEvents &= filter;
             if ((state & SET) == 0)
-                userEvents |= TIMEOUT;
-            eventData |= userEvents;
-            // User events get reset now
-            userEvents = 0;
+                eventData |= TIMEOUT;
+            changeEvent(0, eventData);
             state = 0;
         }
         return eventData;
@@ -164,8 +170,6 @@ public class NXTEvent {
 
     /**
      * Wait for multiple events.
-     * <br> Note: The first event in the array is the primary event. This is the
-     * only event that can be used with the notifyEvent method.
      * @param events an array of events to wait on.
      * @param timeout the wait timeout. Note a value of <= 0 will return immeadiately.
      * @return true if an event occurred, false otherwise.
@@ -183,39 +187,33 @@ public class NXTEvent {
                 events[i].sync = sync;
                 events[i].updatePeriodCnt = 0;
             }
-            return (sync.waitEvent(timeout) & TIMEOUT) == 0;
+            boolean ret = (sync.waitEvent(timeout) & TIMEOUT) == 0;
+            for(int i = 1; i < events.length; i++)
+            {
+                events[i].sync = events[i];
+                events[i].changeEvent(0, events[i].eventData);
+            }
+            return ret;
         }
     }
 
     /**
      * This call can be used to raise a user event. User events will wake a thread
-     * from an eventWait call. When waiting on multiple events only the primary
-     * event can use user events.
+     * from an eventWait call. 
      * @param event
-     * @return true if a thread was waiting for this event, false otherwise.
      */
-    public synchronized boolean notifyEvent(int event)
+    public void notifyEvent(int event)
     {
-        userEvents |= event;
-        if (((state & WAITING) != 0) && ((userEvents & filter) != 0))
-        {
-            // Stop the system from sending further notifications
-            state |= SET;
-            notify();
-            return true;
-        }
-        else
-            return false;
+        changeEvent(event, 0);
     }
 
     /**
-     * Clear an event. At the moment only user events can be cleared by this
-     * method.
+     * Clear an event. 
      * @param event The events to be cleared.
      */
-    public synchronized void clearEvent(int event)
+    public void clearEvent(int event)
     {
-        userEvents &= ~event;
+        changeEvent(0, event);
     }
 
     public int getEventData()

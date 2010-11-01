@@ -211,3 +211,4 @@ getRefreshCompleteTime()I
 #NXTEvent
 registerEvent()I
 unregisterEvent()I
+changeEvent(II)I

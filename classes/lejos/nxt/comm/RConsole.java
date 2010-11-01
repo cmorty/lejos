@@ -43,6 +43,8 @@ public class RConsole extends Thread
      */
     static final int OPT_LCD = 1;
     static final int OPT_EVENTS = 2;
+
+    static final int IO_EVENT = NXTEvent.USER1;
     
     static final int MODE_SWITCH = 0xff;
     static final int MODE_LCD = 0x0;
@@ -58,6 +60,7 @@ public class RConsole extends Thread
     static volatile int outputLen;
     static volatile NXTConnection conn;
     static RConsole ioThread;
+    static NXTEvent ioEvent;
     static boolean lcd = false;
     static boolean events = false;
 
@@ -65,7 +68,7 @@ public class RConsole extends Thread
      * This internal class is used to provide a print stream connection to the
      * remote console. Note that to avoid locking issues between normal and
      * debug mode operation it is not connected directly to the remote output
-     * stream. Instead a simple busy/wait scheme is used to pass data between
+     * stream. Instead an event scheme is used to pass data between
      * this code and the main output thread.
      */
     static private class RConsoleOutputStream extends OutputStream
@@ -97,7 +100,6 @@ public class RConsole extends Thread
             buffer[numBytes] = (byte) b;
             numBytes++;
         }
-
         /**
          * Flush the data to the remote console stream. 
          * @throws IOException
@@ -125,7 +127,19 @@ public class RConsole extends Thread
                      * use notify (which will not switch away), to wake up the
                      * other thread...
                      */
+                    ioEvent.notifyEvent(IO_EVENT);
+                    while (output != null)
+                        Thread.yield();
+                    /*
+                    buffer[0] = (byte)outputLen;
+                    if (USB.usbWrite(buffer, 0, outputLen+2) <= 0)
+                    {
+                        blocked++;
+                    while(USB.usbWrite(buffer, 0, outputLen+2) <= 0)
+                        Thread.yield();
+                    }*/
                     //ioThread.interrupt();
+                    /*
                     Thread.yield();
                     synchronized(os)
                     {
@@ -133,6 +147,8 @@ public class RConsole extends Thread
                     }
                     while (output != null)
                         Thread.yield();
+                     *
+                     */
                 }
             }
            
@@ -175,6 +191,7 @@ public class RConsole extends Thread
             LCD.refresh();
             lcd = ((hello[2] & OPT_LCD) != 0);
             events = ((hello[2] & OPT_EVENTS) != 0);
+            ioEvent = NXTEvent.allocate(NXTEvent.NONE, IO_EVENT, 5);
             // Create the I/O thread and start it.
             ioThread = new RConsole();
             ioThread.setPriority(Thread.MAX_PRIORITY);
@@ -383,14 +400,16 @@ public class RConsole extends Thread
                     // probably have some way to report it to calling threads.
                     break;
                 }
+                /*
                 try {
                     os.wait(nextUpdate - now);
                 }
                 catch (InterruptedException e)
                 {
                     // We may use interrupt to wake the thread from sleep early.
-                }
+                }*/
             }
+            ioEvent.waitEvent(nextUpdate - now);
         }
         // dump any pending output
         output = null;
