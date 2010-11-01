@@ -67,14 +67,23 @@ public class OpticalDistanceSensor extends I2CSensor implements RangeFinder{
 	private final static byte ARPA_OFF = 0x4F; //(default)
 	
 	/**
-	 * 
+	 *
 	 * @param port NXT sensor port 1-4
 	 */
 	public OpticalDistanceSensor(I2CPort port){
-		super(port);
+		this(port, DEFAULT_I2C_ADDRESS);
+	}
+
+	/**
+	 *
+     * @param port NXT sensor port 1-4
+     * @param address I2C address for the sensor
+	 */
+	public OpticalDistanceSensor(I2CPort port, int address){
+		super(port, address, I2CPort.LEGO_MODE, TYPE_LOWSPEED);
 		powerOn();
 	}
-	
+
 	/**
 	 * This only needs the be run if you are changing the sensor.
 	 * @param module changes the sensor module attached the he board.

@@ -18,9 +18,7 @@ public class SensorMux extends I2CSensor {
 	 * @param port
 	 */
 	public SensorMux(I2CPort port) {
-		super(port);
-		port.setType(TYPE_LOWSPEED_9V);
-		this.setAddress(0x08);
+		super(port, 0x08, I2CPort.LEGO_MODE, TYPE_LOWSPEED_9V);
 	}
    
    /**

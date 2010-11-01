@@ -17,6 +17,8 @@ import lejos.nxt.*;
 public class PFMate extends I2CSensor{
 	public PFMateMotor A;
 	public PFMateMotor B;
+
+    public static final int DEFAULT_PFMATE_ADDRESS = 0x48;
 	
 	private final static int CHANNEL_REG = 0x42; //register to control the channel the receiver is using
 	private final static int MOTORS_REG = 0x43;  // register for motor control 
@@ -33,15 +35,24 @@ public class PFMate extends I2CSensor{
 	 * @param channel PF Channel 1-4
 	 */
 	public PFMate(I2CPort port, int channel){
-		super(port);
-		this.setAddress(0x48);
+        this(port, channel, DEFAULT_PFMATE_ADDRESS);
+	}
+
+	/**
+	 * Constructor takes in the sensor port and the PF channel you will be using
+	 * @param port sensor port
+     * @param channel PF Channel 1-4
+     * @param address I2C address of the controller
+	 */
+	public PFMate(I2CPort port, int channel, int address){
+		super(port, address, I2CPort.LEGO_MODE, TYPE_LOWSPEED);
 		setChannel(channel);
-		setMotor(0); 
+		setMotor(0);
 
 		A = new PFMateMotor(this, OPER_A_REG, SPEED_A_REG);
 		B = new PFMateMotor(this, OPER_B_REG, SPEED_B_REG);
 	}
-	
+
 	/**
 	 * Sends command to PF IR receiver to apply changes made to the registers. Call this after
 	 * You have set speed, direction and/or channel.
