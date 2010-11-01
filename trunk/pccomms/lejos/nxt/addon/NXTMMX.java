@@ -27,6 +27,8 @@ public class NXTMMX extends I2CSensor{
 	
 	private byte [] buffer = new byte[2];
 	private boolean autoStart = true;
+
+    public static final int DEFAULT_MMX_ADDRESS = 0x6;
 	
 	//motors
 	public NXTMMXMotor A;
@@ -34,16 +36,24 @@ public class NXTMMX extends I2CSensor{
 	
 	/**
 	 * Constructor for the NXTMMX
-	 * @param port - the port its plugged in to
+     * @param port - the port its plugged in to
+     * @param address The I2C address for the device
 	 */
-	public  NXTMMX(I2CPort port){
-		super(port);
-		setAddress(0x06);
+	public  NXTMMX(I2CPort port, int address){
+		super(port, address, I2CPort.LEGO_MODE, TYPE_LOWSPEED);
 		reset();
 		A = new NXTMMXMotor(this, 0);
 		B = new NXTMMXMotor(this, 1);
 	}
-	
+
+	/**
+	 * Constructor for the NXTMMX
+	 * @param port - the port its plugged in to
+	 */
+	public  NXTMMX(I2CPort port){
+        this(port, DEFAULT_MMX_ADDRESS);
+	}
+
 	/**
 	 * resets mux values to default and stops all tasks. this includes zeroing the tachos.
 	 */

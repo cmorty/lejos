@@ -2,6 +2,7 @@ package lejos.nxt.addon;
 
 import lejos.nxt.SensorPort;
 import lejos.nxt.I2CSensor;
+import lejos.nxt.I2CPort;
 
 /*
  * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
@@ -47,7 +48,11 @@ public class PSPNXController extends I2CSensor {
 	private byte[] buf = new byte[2];
 
 	public PSPNXController(SensorPort port)	{
-		super(port);
+        this(port, DEFAULT_I2C_ADDRESS);
+    }
+
+	public PSPNXController(SensorPort port, int address)	{
+		super(port, address, I2CPort.LEGO_MODE, TYPE_LOWSPEED);
 		// Set correct sensor type, default is TYPE_LOWSPEED
 		// port.setType(TYPE_LOWSPEED_9V);
 
