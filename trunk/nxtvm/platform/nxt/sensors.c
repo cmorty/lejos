@@ -33,7 +33,15 @@ const port_pins sensor_pins[N_SENSORS] = {
   {{AT91C_PIO_PA30, AT91C_PIO_PA2}, AT91C_ADC_CH7, AT91C_ADC_CDR7}
 };
 
-static U16 old_ana_values[N_SENSORS];
+
+// masks and bits used for sensor events
+#define GT_EVENTS 0xf
+#define LT_EVENTS 0xf0
+#define GT_SHIFT 0
+#define LT_SHIFT 4
+#define GET_TARGET(f) (((f) >> 8) & 0x3ff)
+#define GET_TOLERANCE(f) (((f) >> 18) & 0xff)
+
 
 
 /**
@@ -81,28 +89,27 @@ int
 sp_read(int port, int pin)
 {
   if (pin == SP_ANA)
-    return (old_ana_values[port] = sensor_adc(port));
+    return sensor_adc(port);
   else
-  {
     return *sensor_pins[port].ADCData;
-  }
 }
 
 int
 sp_check_event(int filter)
 {
   int port;
-  int bit = 1;
+  int bit = (1 << GT_SHIFT) | (1 << LT_SHIFT);
   int changed = 0;
+  int target = GET_TARGET(filter);
+  int tolerance = GET_TOLERANCE(filter);
   for(port = 0; port < N_SENSORS; port++, bit <<= 1)
     if (filter & bit)
     {
       U16 val = sensor_adc(port);
-      if (val != old_ana_values[port])
-      {
-        changed |= bit;
-        old_ana_values[port] = val;
-      }
+      if ((filter & bit & GT_EVENTS) && (val > (target + tolerance)))
+        changed |= (bit & GT_EVENTS);
+      if ((filter & bit & LT_EVENTS) && (val < (target - tolerance)))
+        changed |= (bit & LT_EVENTS);
     }
   return changed;
 }
