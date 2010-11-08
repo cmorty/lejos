@@ -94,6 +94,18 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
     private int type, mode;
     private NXTEvent i2cEvent;
     private int i2cSensorCnt = 0;
+    /**
+     * The event filter for a sensor port allows for less than and greater
+     * then a target value (with a +/- tolerance).
+     */
+    private int listenerFilter = 0;
+    private static final int GT_EVENT_SHIFT = 0;
+    private static final int LT_EVENT_SHIFT = 4;
+    private static final int TARGET_SHIFT = 8;
+    private static final int TARGET_MASK = 0x00003ff00;
+    private static final int TOLERANCE_SHIFT = 18;
+    private static final int TOLERANCE_MASK = 0x03fc0000;
+    private static final int DEFAULT_TOLERANCE = 2;
 
     /**
      * The SensorReader class provides a type dependent way
@@ -804,6 +816,8 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
         type = -1;
         mode = MODE_RAW;
         curReader = offReader;
+        // set default listener filter
+        listenerFilter = ((1<<iPortId) << GT_EVENT_SHIFT) | ((1<<iPortId) << LT_EVENT_SHIFT) | (DEFAULT_TOLERANCE << TOLERANCE_SHIFT);
         setType(TYPE_NO_SENSOR);
     }
 
@@ -830,9 +844,22 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
     public synchronized void addSensorPortListener(SensorPortListener aListener)
     {
         if (iListeners == null)
+        {
             iListeners = new SensorPortListener[8];
+            ListenerThread.get().addListener(NXTEvent.ANALOG_PORTS, listenerFilter, 4, this);
+        }
         iListeners[iNumListeners++] = aListener;
-        ListenerThread.get().addSensorToMask(iPortId, this);
+    }
+
+    /**
+     * Set the tolerance used when triggering a listener event. The event will only
+     * trigger when the new value is different from the old value by +/- this
+     * amount.
+     * @param tolerance
+     */
+    public synchronized void setListenerTolerance(int tolerance)
+    {
+        listenerFilter = (listenerFilter & ~TOLERANCE_MASK) | ((tolerance << TOLERANCE_SHIFT) & TOLERANCE_MASK);
     }
 
     /**
@@ -1044,13 +1071,15 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
 
     /**
      * Call Port Listeners. Used by ListenerThread.
+     * @return New event filter mask.
      */
-    public synchronized void callListeners()
+    public synchronized int callListeners()
     {
         int newValue = readSensorValue(iPortId);
         for (int i = 0; i < iNumListeners; i++)
             iListeners[i].stateChanged(this, iPreviousValue, newValue);
         iPreviousValue = newValue;
+        return (listenerFilter & ~TARGET_MASK) | (newValue << TARGET_SHIFT);
     }
 
     /**
@@ -1176,6 +1205,7 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
     /**
      * Complete an I2C operation and transfer any read bytes
      * @param buffer Buffer for read data
+     * @param offset offset into the buffer
      * @param numBytes Number of bytes to read
      * @return < 0 error otherwise number of bytes read.
      */

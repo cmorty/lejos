@@ -64,7 +64,7 @@ int change_event(NXTEvent *event, JINT set, JINT clear)
   if (set && event->sync->state == WAITING && get_monitor_count(&(event->sync->_super.sync)) == 0)
   {
     event->eventData |= set;
-    event->state |= SET;
+    event->sync->state |= SET;
     monitor_notify_unchecked(&event->sync->_super, 1);
     schedule_request(REQUEST_SWITCH_THREAD);
   }
@@ -86,13 +86,13 @@ void check_events()
     if (sync->state != 0 && (--event->updateCnt <= 0) && get_monitor_count(&(sync->_super.sync)) == 0)
     {
       // Check to see if we have anything of interest
-      int changed = (*(eventCheckers[event->typ]))(event->filter) | (event->userEvents & event->filter);
+      int changed = ((*(eventCheckers[event->typ]))(event->filter) | event->userEvents | event->eventData) & event->filter;
+      event->eventData |= changed;
       // notify the user thread
-      if (changed && sync->state == WAITING)
+      if (changed && (sync->state == WAITING))
       { 
-        event->eventData |= changed;
         // Don't notify this thread again.
-        event->state |= SET;
+        sync->state |= SET;
         monitor_notify_unchecked(&sync->_super, 1);
         schedule_request(REQUEST_SWITCH_THREAD);
       }

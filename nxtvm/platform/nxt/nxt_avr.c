@@ -66,7 +66,6 @@ static U32 from_buf;
 #define BUTTON_DEBOUNCE_CNT 50/2;
 static U16 prev_buttons;
 static U16 button_state;
-static U16 old_button_state;
 static U16 debounce_state;
 static U16 debounce_cnt;
 
@@ -312,23 +311,13 @@ buttons_get(void)
 }
 
 /**
- * Event interface, check for change in button state. We support three
- * types of event. Button press, Button release and state change. The
- * state change mode is only present for compatibility with old code and
- * reports a change from one call to this function to the next.
+ * Event interface, check for change in button state. We support two
+ * types of event. Button press and Button release. 
  */
 S32 buttons_check_event(S32 filter)
 {
-  S32 ret;
-  if (filter & 0xf)
-  {
-    ret = (button_state ^ old_button_state);
-    old_button_state = button_state;
-  }
-  else
-    ret = 0;
-  ret |= (button_state << 8);
-  ret |= (~(button_state << 16) & 0xff0000);
+  S32 ret = button_state;
+  ret |= (~(button_state << 8) & 0xff00);
   return ret & filter;  
 }
 

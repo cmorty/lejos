@@ -59,8 +59,8 @@ public class Button implements ListenerCaller
    */
   public static final Button[] BUTTONS = { Button.ENTER, Button.LEFT, Button.RIGHT, Button.ESCAPE };
 
-  private static final int PRESS_EVENT_SHIFT = 8;
-  private static final int RELEASE_EVENT_SHIFT = 16;
+  private static final int PRESS_EVENT_SHIFT = 0;
+  private static final int RELEASE_EVENT_SHIFT = 8;
   
   private Button (int aCode)
   {
@@ -145,9 +145,10 @@ public class Button implements ListenerCaller
     if (iListeners == null)
     {
       iListeners = new ButtonListener[4];
+      ListenerThread.get().addListener(NXTEvent.BUTTONS, iCode << (isPressed() ? RELEASE_EVENT_SHIFT : PRESS_EVENT_SHIFT), 10, this);
+      
     }
     iListeners[iNumListeners++] = aListener;
-    ListenerThread.get().addButtonToMask(iCode, this);
   }
   /**
    * <i>Low-level API</i> that reads status of buttons.
@@ -177,15 +178,18 @@ public class Button implements ListenerCaller
 
   /**
    * Call Button Listeners. Used by ListenerThread.
+   * @return New event filter
    */
-  public synchronized void callListeners()
+  public synchronized int callListeners()
   {
+    boolean pressed = isPressed();
     for( int i = 0; i < iNumListeners; i++) {
-      if( isPressed())
+      if(pressed)
         iListeners[i].buttonPressed( this);
       else
         iListeners[i].buttonReleased( this);
     }
+    return iCode << (pressed ? RELEASE_EVENT_SHIFT : PRESS_EVENT_SHIFT);
   }
   
   /**
