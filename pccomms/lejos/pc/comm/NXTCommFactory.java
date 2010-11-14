@@ -71,7 +71,7 @@ public class NXTCommFactory {
 				Class<?> c = Class.forName(nxtCommName);
 				return (NXTComm) c.newInstance();
 			} catch (Throwable t) {
-				throw new NXTCommException("Cannot load Bluetooth driver");
+				throw new NXTCommException("Cannot load Bluetooth driver", t);
 			}
 		}
 		return null;
