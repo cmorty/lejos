@@ -161,7 +161,7 @@ public class ConvertToLeJOSNatureAction implements IObjectActionDelegate {
 		// create classpath entries
 		IClasspathEntry[] entries = new IClasspathEntry[1];
 		// classes jar
-		IPath jar = new Path(nxjHome + "/lib/classes.jar");
+		IPath jar = new Path(nxjHome + "/lib/nxt/classes.jar");
 		IClasspathEntry entry = JavaCore.newLibraryEntry(jar, null, new Path(
 				"/"));
 		entries[0] = entry;
