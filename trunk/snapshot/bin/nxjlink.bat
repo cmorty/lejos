@@ -38,5 +38,5 @@ if "%OS%" == "Windows_NT" goto :winnt
 	call :build_classpath NXJ_CP_NXT "%NXJ_HOME%\lib\nxt"
 
 
-java -Dnxj.home="%NXJ_HOME%" -DCOMMAND_NAME="nxjlink" -Djava.library.path="%NXJ_BIN%" -classpath "%NXJ_CP_PC%" js.tinyvm.TinyVM --writeorder "LE" --bootclasspath "%NXJ_CP_NXT%" --classpath "." %*
+java -Dnxj.home="%NXJ_HOME%" -DCOMMAND_NAME="nxjlink" -Djava.library.path="%NXJ_BIN%" -classpath "%NXJ_CP_PC%" lejos.pc.tools.NXJLink --writeorder "LE" --bootclasspath "%NXJ_CP_NXT%" --classpath "." %*
 :eof
