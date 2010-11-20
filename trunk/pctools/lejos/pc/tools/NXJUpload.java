@@ -1,7 +1,12 @@
 package lejos.pc.tools;
 
-import lejos.pc.comm.*;
+import java.io.File;
+
+import lejos.pc.comm.NXTCommFactory;
+import lejos.pc.comm.NXTCommLoggable;
+
 import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.ParseException;
 
 /**
  * Command-line utility to upload a linked binary to the NXT.
@@ -9,18 +14,8 @@ import org.apache.commons.cli.CommandLine;
  * @author Lawrie Griffiths
  *
  */
-public class NXJUpload extends NXTCommLoggable {
-	private NXJUploadCommandLineParser fParser;
-	private Upload fUpload;
-
-	/** 
-	 * Create a NXJUpload object
-	 */
-	public NXJUpload() {
-		super();
-		fParser = new NXJUploadCommandLineParser();
-		fUpload = new Upload(); 
-	}
+public class NXJUpload {
+	private Upload fUpload = new Upload();
 
 	/**
 	 * Main entry point
@@ -47,10 +42,28 @@ public class NXJUpload extends NXTCommLoggable {
 	 * @throws js.tinyvm.TinyVMException
 	 * @throws NXJUploadException
 	 */
-	public void run(String[] args) throws js.tinyvm.TinyVMException, NXJUploadException {
-		int protocols = 0;
+	private int run(String[] args) throws NXJUploadException {
+		NXJUploadCommandLineParser fParser = new NXJUploadCommandLineParser(NXJUpload.class, "[options] filename");
+		CommandLine commandLine;
 		
-		CommandLine commandLine = fParser.parse(args);
+		try
+		{
+			commandLine = fParser.parse(args);
+		}
+		catch (ParseException e)
+		{
+			System.err.println(e.getMessage());
+			fParser.printHelp(System.err);
+			return 1;
+		}
+		
+		if (commandLine.hasOption("h"))
+		{
+			fParser.printHelp(System.out);
+			return 0;
+		}
+		
+		int protocols = 0;
 		boolean run = commandLine.hasOption("r");
 		boolean blueTooth = commandLine.hasOption("b");
 		boolean usb = commandLine.hasOption("u");
@@ -58,11 +71,14 @@ public class NXJUpload extends NXTCommLoggable {
 		String address = commandLine.getOptionValue("d");
 		
 		String fileName = commandLine.getArgs()[0];
+		File inputFile = new File(fileName);
+		String nxtFileName = inputFile.getName();
 		
 		if (blueTooth) protocols |= NXTCommFactory.BLUETOOTH;
 		if (usb) protocols |= NXTCommFactory.USB;
 		
-		fUpload.upload(name, address, protocols, fileName, run);
+		fUpload.upload(name, address, protocols, inputFile, nxtFileName, run);
+		return 0;
 	}	
 	
 	/**
@@ -71,7 +87,6 @@ public class NXJUpload extends NXTCommLoggable {
 	 * @param listener
 	 */
 	public void addLogListener(ToolsLogListener listener) {
-		fLogListeners.add(listener);
 		fUpload.addLogListener(listener);
 	}
 	
@@ -81,7 +96,6 @@ public class NXJUpload extends NXTCommLoggable {
 	 * @param listener
 	 */
 	public void removeLogListener(ToolsLogListener listener) {
-		fLogListeners.remove(listener);
 		fUpload.removeLogListener(listener);
 	}
 }

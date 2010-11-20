@@ -1,8 +1,11 @@
 package lejos.pc.tools;
 
-import java.io.*;
-import lejos.nxt.remote.*;
-import lejos.pc.comm.*;
+import java.io.File;
+
+import lejos.nxt.remote.NXTCommand;
+import lejos.pc.comm.NXTCommFactory;
+import lejos.pc.comm.NXTCommLoggable;
+import lejos.pc.comm.NXTConnector;
 
 /**
  * Utility class used by the nxj and nxjupload command line tools.
@@ -23,30 +26,13 @@ public class Upload extends NXTCommLoggable {
 	}
 
 	public void upload(String name, String address, int protocols,
-			String fileName, boolean run) throws NXJUploadException {
-		
-		File f = new File(fileName);
-		
-		if (!f.exists()) {
-			throw new NXJUploadException(fileName + ": No such file");
-		}
-		
-		String nxtFileName = f.getName();
+			File f, String nxtFileName, boolean run) throws NXJUploadException {
 		
 		// Under some circumstances the filename might be a full package name
 		// Remove all but the last two components
 		
-		int lastDot = nxtFileName.lastIndexOf('.');
-		
-		if (lastDot >= 0) {
-			lastDot = nxtFileName.substring(0, lastDot).lastIndexOf('.');
-			
-			if (lastDot >= 0) 
-				nxtFileName = nxtFileName.substring(lastDot+1);
-		}
-
 		if (nxtFileName.length() > 20) {
-			throw new NXJUploadException(fileName
+			throw new NXJUploadException(nxtFileName
 					+ ": Filename is more than 20 characters");
 		}
 

@@ -1,15 +1,36 @@
 package lejos.pc.tools;
 
-import lejos.pc.comm.*;
-import lejos.nxt.remote.*;
-import java.awt.*;
-import javax.swing.*;
-import javax.swing.table.*;
+import java.awt.BorderLayout;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.table.TableColumn;
+
+import lejos.nxt.remote.NXTCommand;
+import lejos.pc.comm.NXTComm;
+import lejos.pc.comm.NXTCommException;
+import lejos.pc.comm.NXTCommFactory;
+import lejos.pc.comm.NXTConnector;
+import lejos.pc.comm.NXTInfo;
 
 import org.apache.commons.cli.CommandLine;
-
-import java.awt.event.*;
-import java.io.*;
+import org.apache.commons.cli.ParseException;
 
 /**
  * 
@@ -20,46 +41,55 @@ import java.io.*;
  *
  *  @author Lawrie Griffiths <lawrie.griffiths@ntlworld.com>
  */
-public class NXJBrowser {
-  public static final int MAX_FILES = 30;
-  private NXTCommand nxtCommand;
-  private Cursor hourglassCursor = new Cursor(Cursor.WAIT_CURSOR);
-  private Cursor normalCursor = new Cursor(Cursor.DEFAULT_CURSOR);
-  private NXJBrowserCommandLineParser fParser;
-  private static String title = "NXJ File Browser";
-  private JFrame frame;
-  
-  public NXJBrowser() {
-	fParser = new NXJBrowserCommandLineParser();
-  }
-  
-	public static void main(String args[]) {
-		try	{
-			NXJBrowser instance = new NXJBrowser();
-			instance.run(args);
-		} catch (Throwable t) {
-			System.err.println("Error: " + t.getMessage());
-			System.exit(1);
+public class NXJBrowser
+{
+	public static final int MAX_FILES = 30;
+	private NXTCommand nxtCommand;
+	private Cursor hourglassCursor = new Cursor(Cursor.WAIT_CURSOR);
+	private Cursor normalCursor = new Cursor(Cursor.DEFAULT_CURSOR);
+	private static String title = "NXJ File Browser";
+	private JFrame frame;
+
+	public static void main(String args[])
+	{
+		int r;
+		try
+		{
+			r = new NXJBrowser().run(args);
 		}
+		catch (Exception e)
+		{
+			e.printStackTrace(System.err);
+			r = 1;
+		}
+		
+		if (r >= 0)
+			System.exit(r);
 	}
   
-  public void run(String[] args) throws js.tinyvm.TinyVMException, NXTCommException  {
-
-    frame = new JFrame(title);
-
-    WindowListener listener = new WindowAdapter() {
-      public void windowClosing(WindowEvent w) {
-        try {
-        	nxtCommand.close();
-        } catch (IOException ioe) {}
-        System.exit(0);
-      }
-    };
-    frame.addWindowListener(listener);
+  private int run(String[] args)
+  {
+	NXJBrowserCommandLineParser fParser = new NXJBrowserCommandLineParser(NXJBrowser.class, "[options]");
+	CommandLine commandLine;
+	
+	try
+	{
+		commandLine = fParser.parse(args);
+	}
+	catch (ParseException e)
+	{
+		System.err.println(e.getMessage());
+		fParser.printHelp(System.err);
+		return 1;
+	}
+	
+	if (commandLine.hasOption("h"))
+	{
+		fParser.printHelp(System.out);
+		return 0;
+	}
 
     nxtCommand = NXTCommand.getSingleton();
-    
-    CommandLine commandLine = fParser.parse(args);
     
     String name = commandLine.getOptionValue("n");
 	boolean blueTooth = commandLine.hasOption("b");
@@ -80,7 +110,7 @@ public class NXJBrowser {
 	
     if (nxts.length == 0) {
         System.err.println("No NXT found - is it switched on and plugged in (for USB)?");
-        System.exit(1);
+        return 1;
     }
     
     // Display a list of NXTs
@@ -93,6 +123,18 @@ public class NXJBrowser {
     
     nxtTable.setRowSelectionInterval(0, 0);
     
+    frame = new JFrame(title);
+
+    WindowListener listener = new WindowAdapter() {
+      public void windowClosing(WindowEvent w) {
+        try {
+        	nxtCommand.close();
+        } catch (IOException ioe) {}
+        System.exit(0);
+      }
+    };
+    frame.addWindowListener(listener);
+
     frame.getContentPane().add(nxtTablePane, BorderLayout.CENTER);
     
     JButton connectButton = new JButton("Connect");
@@ -124,6 +166,7 @@ public class NXJBrowser {
 
     frame.pack();
     frame.setVisible(true);
+    return -1;
   }
   
   private void showFiles(final JFrame frame, NXTInfo nxt) {

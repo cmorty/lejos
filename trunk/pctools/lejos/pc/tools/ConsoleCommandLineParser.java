@@ -10,9 +10,9 @@ import org.apache.commons.cli.ParseException;
 /**
  * CommandLineParser
  */
-class NXJBrowserCommandLineParser extends AbstractCommandLineParser
+class ConsoleCommandLineParser extends AbstractCommandLineParser
 {
-	public NXJBrowserCommandLineParser(Class<?> caller, String params)
+	public ConsoleCommandLineParser(Class<?> caller, String params)
 	{
 		super(caller, params);
 		
@@ -27,8 +27,12 @@ class NXJBrowserCommandLineParser extends AbstractCommandLineParser
 		Option addressOption = new Option("d", "address", true, "look for NXT with given address");
 		addressOption.setArgName("address");
 		options.addOption(addressOption);
+
+		Option debugOption = new Option("gr", "remotedebug", true, "use the specified debug file");
+		debugOption.setArgName("debugfile");
+		options.addOption(debugOption);
 	}
-	
+
 	/**
 	 * Parse commandline.
 	 * 
