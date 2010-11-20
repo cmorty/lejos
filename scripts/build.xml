@@ -5,10 +5,9 @@
     </description>
 	
 	<property file="build.properties" />
-	<loadfile property="template.linux" srcFile="templates/linux.sh"/>
+	<loadfile property="template.linux" srcFile="templates/linux-base.sh"/>
 	<loadfile property="template.linux.parser" srcFile="templates/linux-parser.sh"/>
-	<loadfile property="template.windows" srcFile="templates/windows-normal.bat"/>
-	<loadfile property="template.windows.compat" srcFile="templates/windows-compat.bat"/>
+	<loadfile property="template.windows" srcFile="templates/windows-base.bat"/>
 	
 	
 	<macrodef name="linux-run">
@@ -30,7 +29,7 @@
 		<attribute name="class"/>
 		<sequential>
 			<linux-run file="@{file}">
-				java $NXJ_FORCE32 -Dnxj.home="$NXJ_HOME" -DCOMMAND_NAME="$NXJ_COMMAND" -Djava.library.path="$NXJ_BIN" -classpath "$NXJ_CP_TOOL" @{class} @{args} "$@"
+				java $NXJ_FORCE32 -Dnxj.home="$NXJ_HOME" -DCOMMAND_NAME="$NXJ_COMMAND" -Djava.library.path="$NXJ_BIN" -classpath "$NXJ_CP_PC" @{class} @{args} "$@"
 			</linux-run>
 		</sequential>
 	</macrodef>
@@ -60,27 +59,13 @@ ${template.linux.parser}
 			<fixcrlf file="${windows.dir}/@{file}.bat" encoding="latin1" eol="dos"/>
 		</sequential>
 	</macrodef>
-	<macrodef name="win-compat">
-		<text name="command" trim="true"/>
-		<attribute name="file"/>
-		<sequential>
-			<mkdir dir="${windows.dir}"/>
-			<echo message="creating ${windows.dir}/@{file}.bat"/>
-			<echo file="${windows.dir}/@{file}.bat">${template.windows.compat}
-
-@{command}
-:eof
-</echo>
-			<fixcrlf file="${windows.dir}/@{file}.bat" encoding="latin1" eol="dos"/>
-		</sequential>
-	</macrodef>
 	<macrodef name="win-tool">
 		<text name="args" trim="true" optional="true"/>
 		<attribute name="file"/>
 		<attribute name="class"/>
 		<sequential>
 			<win-run file="@{file}">
-				java -Dnxj.home="%NXJ_HOME%" -DCOMMAND_NAME="@{file}" -Djava.library.path="%NXJ_BIN%" -classpath "%NXJ_CP_TOOL%" @{class} @{args} %*
+				java -Dnxj.home="%NXJ_HOME%" -DCOMMAND_NAME="@{file}" -Djava.library.path="%NXJ_BIN%" -classpath "%NXJ_CP_PC%" @{class} @{args} %*
 			</win-run>
 		</sequential>
 	</macrodef>
@@ -101,14 +86,14 @@ ${template.linux.parser}
 		<linux-tool file="nxjimage"         class="lejos.pc.tools.ImageConverter"/>
 		
 		<linux-tool file="nxj" class="lejos.pc.tools.NXJLinkAndUpload">
-			--bootclasspath "$NXJ_CP_BOOT" --writeorder "LE" --classpath "." 
+			--bootclasspath "$NXJ_CP_NXT" --writeorder "LE" --classpath "." 
 		</linux-tool>
-		<linux-tool file="nxjlink" class="js.tinyvm.TinyVM">
-			--bootclasspath "$NXJ_CP_BOOT" --writeorder "LE" --classpath "." 
+		<linux-tool file="nxjlink" class="lejos.pc.tools.NXJLink">
+			--bootclasspath "$NXJ_CP_NXT" --writeorder "LE" --classpath "." 
 		</linux-tool>
 		
 		<linux-run file="nxjc">
-			javac -bootclasspath "$NXJ_CP_BOOT" "$@"
+			javac -bootclasspath "$NXJ_CP_NXT" "$@"
 		</linux-run>
 		<linux-parser file="nxjpcc">
 			javac -classpath "$NXJ_CMDLINE_CP" "${NXJ_CMDLINE[@]}"
@@ -134,31 +119,21 @@ ${template.linux.parser}
 		<win-tool file="nxjimage"         class="lejos.pc.tools.ImageConverter"/>
 		
 		<win-tool file="nxj" class="lejos.pc.tools.NXJLinkAndUpload">
-			--bootclasspath "%NXJ_CP_BOOT%" --writeorder "LE" --classpath "." 
+			--writeorder "LE" --bootclasspath "%NXJ_CP_NXT%" --classpath "." 
 		</win-tool>
 		<win-tool file="nxjlink" class="js.tinyvm.TinyVM">
-			--bootclasspath "%NXJ_CP_BOOT%" --writeorder "LE" --classpath "." 
+			--writeorder "LE" --bootclasspath "%NXJ_CP_NXT%" --classpath "." 
 		</win-tool>
 		
 		<win-run file="nxjc">
-			javac -bootclasspath "%NXJ_CP_BOOT%" %*
+			javac -bootclasspath "%NXJ_CP_NXT%" %*
 		</win-run>
 		<win-run file="nxjpcc">
-			javac -Xbootclasspath/a:"%NXJ_CP_TOOL%" %*
+			javac -Xbootclasspath/a:"%NXJ_CP_PC%" %*
 		</win-run>
 		<win-run file="nxjpc">
-			java -Dnxj.home="%NXJ_HOME%" -Djava.library.path="%NXJ_BIN%" -Xbootclasspath/a:"%NXJ_CP_TOOL%" %*
+			java -Dnxj.home="%NXJ_HOME%" -Djava.library.path="%NXJ_BIN%" -Xbootclasspath/a:"%NXJ_CP_PC%" %*
 		</win-run>
-		
-		<win-compat file="lejosdl">
-			"%NXJ_BIN%\nxj.bat" -r %*
-		</win-compat>
-		<win-compat file="lejosfirmdl">
-			"%NXJ_BIN%\nxjflash.bat" %*
-		</win-compat>
-		<win-compat file="lejosjc">
-			"%NXJ_BIN%\nxjc.bat" %*
-		</win-compat>
 	</target>
 	
 	<target name="clean">
