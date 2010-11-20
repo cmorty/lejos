@@ -121,7 +121,7 @@ ${template.linux.parser}
 		<win-tool file="nxj" class="lejos.pc.tools.NXJLinkAndUpload">
 			--writeorder "LE" --bootclasspath "%NXJ_CP_NXT%" --classpath "." 
 		</win-tool>
-		<win-tool file="nxjlink" class="js.tinyvm.TinyVM">
+		<win-tool file="nxjlink" class="lejos.pc.tools.NXJLink">
 			--writeorder "LE" --bootclasspath "%NXJ_CP_NXT%" --classpath "." 
 		</win-tool>
 		
