@@ -136,7 +136,7 @@ public class NXJLink
 			pm.setVerbose(verbose);
 
 			TinyVMTool tinyVM = new TinyVMTool();
-			tinyVM.addProgressMonitor(new CLIToolProgressMonitor());
+			tinyVM.addProgressMonitor(pm);
 
 			tinyVM.link(joinCP(bootclasspath, classpath), classes, all, stream, bigEndian, options,
 				debug, debugStream);
