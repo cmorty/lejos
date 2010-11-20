@@ -1,15 +1,29 @@
 package lejos.pc.tools;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.event.*;
-import javax.swing.*;
-import javax.swing.event.*;
-import java.awt.*;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import js.tinyvm.TinyVMException;
-import org.apache.commons.cli.*;
-import java.io.*;
+
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.ParseException;
 
 /**
  * Downloads  data from the RConsole running on a NXT <br>
@@ -36,8 +50,8 @@ public class ConsoleViewer extends JFrame implements ConsoleViewerUI, ActionList
 
     private JLabel statusField = new JLabel();
 
-    private TextField nameField = new TextField(10);
-    private TextField addrField = new TextField(12);
+    private JTextField nameField = new JTextField(10);
+    private JTextField addrField = new JTextField(12);
     private ConsoleViewComms comm;
     private boolean usbSelected = true;
     private String usingUSB = "Using USB";
@@ -45,7 +59,7 @@ public class ConsoleViewer extends JFrame implements ConsoleViewerUI, ActionList
     /**
      * Screen area to hold the downloaded data
      */
-    private TextArea theLog;
+    private JTextArea theLog;
 
     private LCDDisplay lcd;
 
@@ -157,7 +171,7 @@ public class ConsoleViewer extends JFrame implements ConsoleViewerUI, ActionList
         topPanel.add(topLeftPanel);
         topPanel.add(lcd);
         add(topPanel, BorderLayout.NORTH);
-        theLog = new TextArea(40, 40); // Center area of the frame
+        theLog = new JTextArea(40, 40); // Center area of the frame
         add(theLog, BorderLayout.CENTER);
 
         add(statusPanel, BorderLayout.SOUTH);
@@ -207,7 +221,8 @@ public class ConsoleViewer extends JFrame implements ConsoleViewerUI, ActionList
      */
     public void append(String data)
     {
-        theLog.setText(theLog.getText()+data);
+    	//TODO fix thread safety
+    	theLog.append(data);
         theLog.setCaretPosition(0x7fffffff);
     }
 
@@ -232,15 +247,38 @@ public class ConsoleViewer extends JFrame implements ConsoleViewerUI, ActionList
      */
     public static void main(String[] args)
     {
-		try {
-            ConsoleCommandLineParser fParser = new ConsoleCommandLineParser();
-            CommandLine commandLine = fParser.parse(args);
-            String debugFile = commandLine.getOptionValue("gr");
-            ConsoleViewer frame = new ConsoleViewer(debugFile);
-            frame.setVisible(true);
-		} catch (Throwable t) {
-			System.err.println("An error has occurred: " + t.getMessage());
+    	int r = start(args);
+    	if (r >= 0)
+    	{
+    		System.exit(r);
+    	}
+    }
+    
+    private static int start(String[] args)
+    {
+        ConsoleViewerCommandLineParser fParser = new ConsoleViewerCommandLineParser(ConsoleViewer.class, "[options]");
+    	CommandLine commandLine;
+		try
+		{
+            commandLine = fParser.parse(args);
 		}
+		catch (ParseException e)
+		{
+			System.err.println(e.getMessage());
+			fParser.printHelp(System.err);
+			return 1;
+		}
+		
+		if (commandLine.hasOption("h"))
+		{
+			fParser.printHelp(System.out);
+			return 0;
+		}
+		
+        String debugFile = commandLine.getOptionValue("gr");
+        ConsoleViewer frame = new ConsoleViewer(debugFile);
+        frame.setVisible(true);        
+        return -1;
     }
 
     /**
@@ -273,66 +311,6 @@ public class ConsoleViewer extends JFrame implements ConsoleViewerUI, ActionList
 	public void logMessage(String msg) {
 		System.out.println(msg);
 	}
-
-
-    /**
-     * CommandLineParser
-     */
-    static private class ConsoleCommandLineParser
-    {
-       /**
-        * Parse commandline.
-        *
-        * @param args command line
-        * @throws TinyVMException
-        */
-       public CommandLine parse (String[] args) throws TinyVMException
-       {
-          assert args != null: "Precondition: args != null";
-
-          Options options = new Options();
-          options.addOption("h", "help", false, "help");
-          Option debugOption = new Option("gr", "remotedebug", true,
-                 "use the specified debug file");
-          debugOption.setArgName("debugfile");
-          options.addOption(debugOption);
-
-          CommandLine result;
-          try
-          {
-             try
-             {
-                result = new GnuParser().parse(options, args);
-             }
-             catch (ParseException e)
-             {
-                throw new TinyVMException(e.getMessage(), e);
-             }
-
-             if (result.hasOption("h"))
-             {
-                throw new TinyVMException("Help:");
-             }
-          }
-          catch (TinyVMException e)
-          {
-             StringWriter writer = new StringWriter();
-             PrintWriter printWriter = new PrintWriter(writer);
-             printWriter.println(e.getMessage());
-
-             String commandName = System.getProperty("COMMAND_NAME", "lejos.pc.tools.Console");
-
-             String usage = commandName + " [options]";
-             new HelpFormatter().printHelp(printWriter, 80, usage.toString(), null,
-                options, 0, 2, null);
-
-             throw new TinyVMException(writer.toString());
-          }
-
-          assert result != null: "Postconditon: result != null";
-          return result;
-       }
-    }
 }
 
 

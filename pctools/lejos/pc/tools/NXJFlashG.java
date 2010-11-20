@@ -1,13 +1,22 @@
 package lejos.pc.tools;
 
-import lejos.pc.comm.*;
-import java.io.*;
-import javax.swing.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.io.IOException;
 
-import java.awt.*;
+import javax.swing.BorderFactory;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+
+import lejos.pc.comm.NXTCommException;
+import lejos.pc.comm.NXTCommFactory;
+import lejos.pc.comm.NXTConnector;
+import lejos.pc.comm.NXTInfo;
+import lejos.pc.comm.NXTSamba;
 
 /***
- *GUI application to write the leJOS Virtual Machine and Menu system to the NXT
+ * GUI application to write the leJOS Virtual Machine and Menu system to the NXT
  * Flash. Created on August 15, 2008, 9:36 AM revised Nov 10, 2008 to run with
  * Java 5 Author Roger Glassey based on Andy Shaw original command line code
  */

@@ -10,9 +10,9 @@ import org.apache.commons.cli.ParseException;
 /**
  * CommandLineParser
  */
-class NXJBrowserCommandLineParser extends AbstractCommandLineParser
+class SocketProxyCommandLineParser extends AbstractCommandLineParser
 {
-	public NXJBrowserCommandLineParser(Class<?> caller, String params)
+	public SocketProxyCommandLineParser(Class<?> caller, String params)
 	{
 		super(caller, params);
 		

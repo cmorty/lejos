@@ -95,7 +95,7 @@ public class NXJFlash implements NXJFlashUI {
 	 * @throws Exception
 	 */
 	public void run(String[] args) throws Exception {
-		NXJFlashCommandLineParser parser = new NXJFlashCommandLineParser();
+		NXJFlashCommandLineParser parser = new NXJFlashCommandLineParser(NXJFlash.class, "[options] [firmware-file] [startup-menu-file]");
 		CommandLine commandLine = parser.parse(args);
 		String vmFile = null;
 		String menuFile = null;

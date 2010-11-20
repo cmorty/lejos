@@ -1,9 +1,9 @@
 package lejos.pc.tools;
 
-import java.io.*;
-import js.tinyvm.TinyVMException;
-import org.apache.commons.cli.*;
-import lejos.pc.comm.*;
+import lejos.pc.comm.NXTCommFactory;
+
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.ParseException;
 
 /**
  * Console output monitor class.
@@ -15,18 +15,39 @@ import lejos.pc.comm.*;
 public class Console implements ConsoleViewerUI {
 
 	public static void main(String[] args){
+		int r;
 		try {
-			(new Console()).run(args);
-		} catch (Throwable t) {
-			System.err.println("An error has occurred: " + t.getMessage());
+			r = new Console().run(args);
+		} catch (Exception e) {
+			e.printStackTrace(System.err);
+			r = 1;
 		}
+		System.exit(r);
 	}
 
 
-	private void run(String[] args) throws TinyVMException {
+	private int run(String[] args)
+	{
+		ConsoleCommandLineParser fParser = new ConsoleCommandLineParser(Console.class, "[options]");
+		CommandLine commandLine;
+		try
+		{
+			commandLine = fParser.parse(args);
+		}
+		catch (ParseException e)
+		{
+			System.err.println(e.getMessage());
+			fParser.printHelp(System.err);
+			return 1;
+		}
+		
+		if (commandLine.hasOption("h"))
+		{
+			fParser.printHelp(System.out);
+			return 0;
+		}
+		
 		int protocols = 0;
-		ConsoleCommandLineParser fParser = new ConsoleCommandLineParser();
-		CommandLine commandLine = fParser.parse(args);
 		boolean blueTooth = commandLine.hasOption("b");
 		boolean usb = commandLine.hasOption("u");
 		String name = commandLine.getOptionValue("n");
@@ -42,14 +63,14 @@ public class Console implements ConsoleViewerUI {
 			logMessage("Failed to connect to NXT");
 			System.exit(1);
 		}
+		return 0;
 	}
 
 	public void append(String value) {
 		System.out.print(value);
 	}
     
-    public void updateLCD(byte[] buffer)
-    {
+    public void updateLCD(byte[] buffer) {
     }
 
 	public void connectedTo(String name, String address) {
@@ -61,76 +82,4 @@ public class Console implements ConsoleViewerUI {
 
 	public void setStatus(String msg) {
 	}
-
-
-    /**
-     * CommandLineParser
-     */
-    static private class ConsoleCommandLineParser
-    {
-       /**
-        * Parse commandline.
-        *
-        * @param args command line
-        * @throws TinyVMException
-        */
-       public CommandLine parse (String[] args) throws TinyVMException
-       {
-          assert args != null: "Precondition: args != null";
-
-          Options options = new Options();
-          options.addOption("h", "help", false, "help");
-          options.addOption("b", "bluetooth", false, "use bluetooth");
-          options.addOption("u", "usb", false, "use usb");
-
-          Option nameOption = new Option("n", "name", true,"look for named NXT");
-          nameOption.setArgName("name");
-          options.addOption(nameOption);
-
-          Option addressOption = new Option("d", "address", true,
-                 "look for NXT with given address");
-          addressOption.setArgName("address");
-          options.addOption(addressOption);
-
-          Option debugOption = new Option("gr", "remotedebug", true,
-                 "use the specified debug file");
-          debugOption.setArgName("debugfile");
-          options.addOption(debugOption);
-
-          CommandLine result;
-          try
-          {
-             try
-             {
-                result = new GnuParser().parse(options, args);
-             }
-             catch (ParseException e)
-             {
-                throw new TinyVMException(e.getMessage(), e);
-             }
-
-             if (result.hasOption("h"))
-             {
-                throw new TinyVMException("Help:");
-             }
-          }
-          catch (TinyVMException e)
-          {
-             StringWriter writer = new StringWriter();
-             PrintWriter printWriter = new PrintWriter(writer);
-             printWriter.println(e.getMessage());
-
-             String commandName = System.getProperty("COMMAND_NAME", "lejos.pc.tools.Console");
-
-             String usage = commandName + " [options]";
-             new HelpFormatter().printHelp(printWriter, 80, usage.toString(), null,
-                options, 0, 2, null);
-
-             throw new TinyVMException(writer.toString());
-          }
-
-          assert result != null: "Postconditon: result != null";
-          return result;
-       }
-    }
 }

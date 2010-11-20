@@ -1,19 +1,16 @@
 package lejos.pc.tools;
 
-import js.tinyvm.TinyVMException;
-import js.tinyvm.util.TinyVMCommandLineParser;
 
 import org.apache.commons.cli.Option;
-import org.apache.commons.cli.ParseException;
 
 /**
  * CommandLineParser
  */
-public class NXJCommandLineParser extends TinyVMCommandLineParser
+public class NXJLinkAndUploadCommandLineParser extends NXJLinkCommandLineParser
 {
-	public NXJCommandLineParser()
+	public NXJLinkAndUploadCommandLineParser(Class<?> caller)
 	{
-		super(false);
+		super(caller, false);
 		
 		options.addOption("b", "bluetooth", false, "use bluetooth");		
 		options.addOption("u", "usb", false, "use usb");	  
@@ -53,17 +50,5 @@ public class NXJCommandLineParser extends TinyVMCommandLineParser
 	public String getAddress()
 	{
 		return getLastOptVal(result, "d");
-	}
-	
-	/**
-	 * Parse commandline.
-	 * 
-	 * @param args command line
-	 * @throws TinyVMException
-	 */
-	@Override
-	public void parse (String[] args) throws ParseException
-	{
-		super.parse(args);
 	}
 }
