@@ -6,6 +6,8 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridLayout;
+import java.awt.TextArea;
+import java.awt.TextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -17,8 +19,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -50,8 +50,8 @@ public class ConsoleViewer extends JFrame implements ConsoleViewerUI, ActionList
 
     private JLabel statusField = new JLabel();
 
-    private JTextField nameField = new JTextField(10);
-    private JTextField addrField = new JTextField(12);
+    private TextField nameField = new TextField(10);
+    private TextField addrField = new TextField(12);
     private ConsoleViewComms comm;
     private boolean usbSelected = true;
     private String usingUSB = "Using USB";
@@ -59,7 +59,7 @@ public class ConsoleViewer extends JFrame implements ConsoleViewerUI, ActionList
     /**
      * Screen area to hold the downloaded data
      */
-    private JTextArea theLog;
+    private TextArea theLog;
 
     private LCDDisplay lcd;
 
@@ -171,7 +171,7 @@ public class ConsoleViewer extends JFrame implements ConsoleViewerUI, ActionList
         topPanel.add(topLeftPanel);
         topPanel.add(lcd);
         add(topPanel, BorderLayout.NORTH);
-        theLog = new JTextArea(40, 40); // Center area of the frame
+        theLog = new TextArea(40, 40); // Center area of the frame
         add(theLog, BorderLayout.CENTER);
 
         add(statusPanel, BorderLayout.SOUTH);
@@ -221,8 +221,7 @@ public class ConsoleViewer extends JFrame implements ConsoleViewerUI, ActionList
      */
     public void append(String data)
     {
-    	//TODO fix thread safety
-    	theLog.append(data);
+        theLog.append(data);
         theLog.setCaretPosition(0x7fffffff);
     }
 
