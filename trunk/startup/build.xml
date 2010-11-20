@@ -48,7 +48,7 @@
 	
 	<target name="link" depends="compile" description="link the binary " >
 		<!-- Link the binary and create a signature file -->
-		<java classname="lejos.pc.tools.NXJLink"
+		<java classname="lejos.pc.tools.NXJLink" failonerror="true"
 			output="${startup.debug}" logerror="true">
 			<arg value="--bootclasspath"/>
 			<arg path="${lejos.classes}/${vars.classes.classes.jar}" /> 
