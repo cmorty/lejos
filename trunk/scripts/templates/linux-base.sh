@@ -20,7 +20,7 @@ function my_readlink() {
 function my_build_cp() {
 	local TMP_SEP=":"
 	shopt -s globstar nullglob
-	for i in "$1"/**/*.jar2; do
+	for i in "$1"/**/*.jar; do
 		echo -n "$TMP_SEP$i"
 		TMP_SEP="$SEP"
 	done 
