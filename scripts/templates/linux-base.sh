@@ -18,7 +18,7 @@ function my_readlink() {
 	my_resolve "$TMP1" "$TMP2"
 }
 function my_build_cp() {
-	local TMP_SEP=":"
+	local TMP_SEP=""
 	shopt -s globstar nullglob
 	for i in "$1"/**/*.jar; do
 		echo -n "$TMP_SEP$i"
