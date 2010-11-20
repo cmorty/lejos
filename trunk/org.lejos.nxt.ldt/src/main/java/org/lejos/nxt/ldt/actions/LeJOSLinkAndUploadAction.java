@@ -4,11 +4,11 @@ import java.io.File;
 import java.io.IOException;
 
 import js.common.CLIToolProgressMonitor;
-import js.tinyvm.TinyVM;
 import lejos.nxt.remote.NXTCommand;
 import lejos.pc.comm.NXTComm;
 import lejos.pc.comm.NXTCommFactory;
 import lejos.pc.comm.NXTConnector;
+import lejos.pc.tools.NXJLink;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -46,7 +46,7 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 
 	private ISelection _selection;
 	private LeJOSNXJLogListener logListener;
-	private TinyVM tinyVM;
+	private NXJLink tinyVM;
 	private NXTConnector connector;
 	private String pathSeparator = System.getProperty("path.separator");
 
@@ -55,7 +55,7 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 	 */
 	public LeJOSLinkAndUploadAction() {
 		logListener = new LeJOSNXJLogListener();
-		tinyVM = new TinyVM();
+		tinyVM = new NXJLink();
 		tinyVM.addProgressMonitor(new CLIToolProgressMonitor());
 		connector = new NXTConnector();
 		connector.addLogListener(logListener);
@@ -219,7 +219,7 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 				LeJOSNXJUtil.message("linking using " + argsString);
 			}
 			// run linker
-			tinyVM = new TinyVM();
+			tinyVM = new NXJLink();
 			tinyVM.addProgressMonitor(new LeJOSNXJLogListener());
 			tinyVM.start(tinyVMArgs);
 		} catch (Throwable t) {
