@@ -1,49 +1,42 @@
 @echo off
 if "%OS%" == "Windows_NT" goto :winnt
 
-:win9x
-	if not "%NXJ_HOME%" == "" goto vars_set_nxj
+:win98
+	echo Windows 9x/ME is no longer supported.
+	echo Please upgrade to Windows 2000 or later.
+	goto :eof
 
-	echo Windows 9x/ME detected. Aborting because the
-	echo the NXJ_HOME variable is not set.
+:append_jar
+	set "TMP_CP=%TMP_CP%;%~1"
+	goto :eof
+
+:build_classpath
+	set "TMP_CP="
+	for /R "%~2" %%i in (*.jar) do (
+		call :append_jar "%%i"
+	)
+	set "%~1=%TMP_CP:~1%"
+	goto :eof
+
+:normalize_path
+	set "%~1=%~f2"
 	goto :eof
 
 :winnt
 	setlocal
-	if not "%NXJ_HOME%" == "" goto vars_set_nxj
+	if not "%NXJ_HOME%" == "" goto :nxj_home_found
 
-	call :winnt_normalize NXJ_BIN "%~dp0\."
-	call :winnt_normalize NXJ_HOME "%~dp0\.."
-	goto :vars_ready
+	call :normalize_path NXJ_BIN "%~dp0\."
+	call :normalize_path NXJ_HOME "%~dp0\.."
+	goto :build_classpaths
 
-:winnt_normalize
-	set "%1=%~f2"
-	goto :eof
-
-:vars_set_nxj
+:nxj_home_found
 	set NXJ_BIN=%NXJ_HOME%\bin
 
-:vars_ready
-
-set NXJ_LIBS=%NXJ_HOME%\lib
-set NXJ_LIBS_3rd=%NXJ_HOME%\3rdparty\lib
-
-set NXJ_JAR_BCEL=%NXJ_LIBS_3rd%\bcel.jar
-set NXJ_JAR_BLUECOVE=%NXJ_LIBS_3rd%\bluecove.jar
-set NXJ_JAR_BLUECOVE_GPL=%NXJ_LIBS_3rd%\bluecove-gpl.jar
-set NXJ_JAR_COMMONS_CLI=%NXJ_LIBS_3rd%\commons-cli.jar
-
-set NXJ_JAR_CLASSES=%NXJ_LIBS%\classes.jar
-set NXJ_JAR_JTOOLS=%NXJ_LIBS%\jtools.jar
-set NXJ_JAR_PCCOMM=%NXJ_LIBS%\pccomm.jar
-set NXJ_JAR_PCTOOLS=%NXJ_LIBS%\pctools.jar
-
-set NXJ_CP_BLUECOVE=%NXJ_JAR_BLUECOVE%
-
-set NXJ_CP_BOOT=%NXJ_JAR_CLASSES%
-set NXJ_CP_LINK=%NXJ_JAR_BCEL%;%NXJ_JAR_COMMONS_CLI%;%NXJ_JAR_JTOOLS%
-set NXJ_CP_TOOL=%NXJ_CP_BLUECOVE%;%NXJ_CP_LINK%;%NXJ_JAR_PCCOMM%;%NXJ_JAR_PCTOOLS%
+:build_classpaths
+	call :build_classpath NXJ_CP_PC "%NXJ_HOME%\lib\pc"
+	call :build_classpath NXJ_CP_NXT "%NXJ_HOME%\lib\nxt"
 
 
-java -Dnxj.home="%NXJ_HOME%" -DCOMMAND_NAME="nxjsocketproxy" -Djava.library.path="%NXJ_BIN%" -classpath "%NXJ_CP_TOOL%" lejos.pc.tools.SocketProxy  %*
+java -Dnxj.home="%NXJ_HOME%" -DCOMMAND_NAME="nxjsocketproxy" -Djava.library.path="%NXJ_BIN%" -classpath "%NXJ_CP_PC%" lejos.pc.tools.SocketProxy  %*
 :eof

@@ -58,7 +58,7 @@
 		<echo message="*** leaving classes project"/>
 	</target>
 	<target name="subproject.classes.copy" depends="subproject.classes.build">
-		<copy todir="lib">
+		<copy todir="lib/nxt">
 			<fileset file="${project.classes}/${vars.classes.classes.jar}"/>
     	</copy>
 	</target>
@@ -72,7 +72,7 @@
 		<echo message="*** leaving jtools project"/>
 	</target>
 	<target name="subproject.jtools.copy" depends="subproject.jtools.build">
-		<copy todir="lib">
+		<copy todir="lib/pc">
 			<fileset file="${project.jtools}/${vars.jtools.jtools.jar}"/>
     	</copy>
 	</target>
@@ -86,12 +86,12 @@
 		<echo message="*** leaving pccomms project"/>
 	</target>
 	<target name="subproject.pccomms.copy" depends="subproject.pccomms.build">
-		<copy todir="lib">
+		<copy todir="lib/pc">
 			<fileset file="${project.pccomms}/${vars.pccomms.pccomms.jar}"/>
     	</copy>
 	</target>
 	
-	<target name="subproject.pctools.build" depends="subproject.pccomms.build">
+	<target name="subproject.pctools.build" depends="subproject.pccomms.build, subproject.jtools.build">
 		<echo message="*** entering pctools project"/>
 		<ant inheritAll="false"	dir="${project.pctools}" antfile="build.xml">
 			<target name="clean"/>
@@ -100,12 +100,12 @@
 		<echo message="*** leaving pctools project"/>
 	</target>
 	<target name="subproject.pctools.copy" depends="subproject.pctools.build">
-		<copy todir="lib">
+		<copy todir="lib/pc">
 			<fileset file="${project.pctools}/${vars.pctools.pctools.jar}"/>
     	</copy>
 	</target>
 	
-	<target name="subproject.startup.build" depends="subproject.classes.build">
+	<target name="subproject.startup.build" depends="subproject.classes.build, subproject.pctools.build">
 		<echo message="*** entering startup project"/>
 		<ant inheritAll="false"	dir="${project.startup}" antfile="build.xml">
 			<target name="clean"/>
