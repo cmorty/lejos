@@ -44,8 +44,14 @@
 	<target name="compile" depends="clean" description="compile the source">
 		<!-- Compile the java code from ${src} -->
 		<echo>src = ${src}</echo>
-		<javac srcdir="${src}" destdir="${src}" debug="true" includeantruntime="false">
+		<javac srcdir="${src}" destdir="${src}" debug="true" includeantruntime="false" verbose="false">
 			<bootclasspath refid="lejos.nxt" />
+			<!--
+				Without this, there are some JDK jars in the classpath.
+				Set verbose=true to check that the classpath is really clean.
+			-->
+    		<compilerarg value="-extdirs" />
+    		<compilerarg value="" />
 		</javac>
 	</target>
 
