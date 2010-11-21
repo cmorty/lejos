@@ -123,15 +123,6 @@
 			<classpath refid="lejos.pc" />
 			<arg value="${binary}" />
 			<arg value="-r" />
-			<classpath>
-				<pathelement location="${nxj.jtools.jar}" />
-				<pathelement location="${nxj.pctools.jar}" />
-				<pathelement location="${nxj.pccomm.jar}" />
-				<pathelement location="${nxj.commons.jar}" />
-				<pathelement location="${nxj.bcel.jar}" />
-				<pathelement location="${nxj.bluecove.jar}" />
-				<pathelement location="${nxj.bluecove-gpl.jar}" />
-			</classpath>
 		</java>
 	</target>
 
