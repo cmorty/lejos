@@ -12,6 +12,17 @@
   <property name="class" value="gnu.testlet.${program}"/>
   <property name="binary" value="${build}/${program}.nxj" />
 	
+	<path id="lejos.pc">
+		<fileset dir="${nxj.home}/lib/pc">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+	<path id="lejos.nxt">
+		<fileset dir="${nxj.home}/lib/nxt">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
   <!-- deletes generated files -->
   <target name="clean" description="clean up all generated files">
   	<delete dir="build"/>
@@ -21,69 +32,53 @@
         description="compile the source " >
     <!-- Compile the java code from ${src} to ${build}  -->
   	<mkdir dir="${build}"/>
-    <javac srcdir="${src}" destdir="${build}">
-      <bootclasspath>
-        <pathelement location="${nxj.classes.home}/lib/classes.jar"/>
-      </bootclasspath>
+    <javac srcdir="${src}" destdir="${build}" includeantruntime="false" verbose="false">
+      <bootclasspath refid="lejos.nxt" />
+		<!--
+			Without this, there are some JDK jars in the classpath.
+			Set verbose=true to check that the classpath is really clean.
+		-->
+		<compilerarg value="-extdirs" />
+		<compilerarg value="" />
     </javac>
   </target>
 
   <target name="link" depends="compile"
         description="link the binary " >
     <!-- Link the binary and create a signature file -->
-    <java classname="js.tinyvm.TinyVM">
+    <java classname="lejos.pc.tools.NXJLink" failonerror="true">
+    	<classpath refid="lejos.pc" />
       <arg value="--bootclasspath"/>
-      <arg path="${nxj.classes.jar}" />
+      <arg pathref="lejos.nxt" />
       <arg value="--classpath"/>
       <arg path="${build}" />
       <arg value="--writeorder" />
       <arg value="LE" />
-      <arg value="${class}"/>
       <arg value="-o"/>
       <arg value="${binary}"/>
       <arg value="-v"/>
-      <classpath>
-        <pathelement location="${nxj.jtools.jar}"/>
-  		<pathelement location="${nxj.commons.jar}"/>
-  		<pathelement location="${nxj.bcel.jar}"/>
-      </classpath>
+      <arg value="${class}"/>
     </java>
   </target>
 	
   <target name="upload" depends="link"
         description="upload the binary" >
-    <java classname="lejos.pc.tools.NXJUpload" fork="true">
+    <java classname="lejos.pc.tools.NXJUpload" fork="true" failonerror="true">
       <jvmarg value="-Djava.library.path=${nxj.library.path}"/>
       <jvmarg value="-Dnxj.home=${nxj.home}"/>
+    	<classpath refid="lejos.pc"/>
       <arg value="${binary}"/>
-      <classpath>
-        <pathelement location="${nxj.jtools.jar}"/>
-        <pathelement location="${nxj.pctools.jar}"/>
-      	<pathelement location="${nxj.pccomm.jar}"/>
-  		<pathelement location="${nxj.commons.jar}"/>
-  		<pathelement location="${nxj.bcel.jar}"/>
-      	<pathelement location="${nxj.bluecove.jar}"/>
-      	<pathelement location="${nxj.bluecove-gpl.jar}"/>
-      </classpath>
     </java>
   </target>
 	
   <target name="uploadandrun" depends="link"
         description="upload and run the binary" >
-    <java classname="lejos.pc.tools.NXJUpload" fork="true">
+    <java classname="lejos.pc.tools.NXJUpload" fork="true" failonerror="true">
       <jvmarg value="-Djava.library.path=${nxj.library.path}"/>
       <jvmarg value="-Dnxj.home=${nxj.home}"/>
+    	<classpath refid="lejos.pc" />
       <arg value="${binary}"/>
       <arg value="-r"/>
-      <classpath>
-        <pathelement location="${nxj.jtools.jar}"/>
-        <pathelement location="${nxj.pctools.jar}"/>
-      	<pathelement location="${nxj.pccomm.jar}"/>
-  		<pathelement location="${nxj.commons.jar}"/>
-  		<pathelement location="${nxj.bcel.jar}"/>
-      	<pathelement location="${nxj.bluecove.jar}"/>
-      	<pathelement location="${nxj.bluecove-gpl.jar}"/>
-      </classpath>
     </java>
   </target>
 </project>
