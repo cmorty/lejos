@@ -29,8 +29,14 @@
 	<target name="compile" depends="clean" description="compile the source ">
 		<!-- Compile the java code from ${src} to ${build}  -->
 		<mkdir dir="${build}" />
-		<javac srcdir="${src}" destdir="${build}">
+		<javac srcdir="${src}" destdir="${build}" includeantruntime="false" verbose="false">
 			<bootclasspath refid="lejos.nxt" />
+			<!--
+				Without this, there are some JDK jars in the classpath.
+				Set verbose=true to check that the classpath is really clean.
+			-->
+    		<compilerarg value="-extdirs" />
+    		<compilerarg value="" />
 		</javac>
 	</target>
 
@@ -74,10 +80,12 @@
 	<target name="Zip for Netbeans" description="Zip the application to the sample project">
 		<property name="plugin" location="../NXJPlugin/src/nxjplugin/" />
 		<zip basedir="." destfile="${plugin}/NXJSampleProject.zip">
-			<exclude name="**/build/" />
-			<exclude name="**/bin/" />
-			<exclude name="**/dist/" />
-			<exclude name="**/nbproject/private/" />
+			<exclude name="build/**" />
+			<exclude name="bin/**" />
+			<exclude name="dist/**" />
+			<exclude name="nbproject/private/**" />
+			<exclude name=".project" />
+			<exclude name=".classpath" />
 		</zip>
 	</target>
 </project>
