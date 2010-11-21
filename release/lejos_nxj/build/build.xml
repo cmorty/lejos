@@ -41,12 +41,12 @@
 	<!-- cpptasks task & type def -->
 	<taskdef resource="cpptasks.tasks">
 	  <classpath>
-	    <pathelement location="${builddir}/cpptasks.jar"/>
+	    <pathelement location="${basedir}/cpptasks.jar"/>
 	  </classpath>
 	</taskdef>
 	<typedef resource="cpptasks.types">
 	  <classpath>
-	    <pathelement location="${builddir}/cpptasks.jar"/>
+	    <pathelement location="${basedir}/cpptasks.jar"/>
 	  </classpath>
 	</typedef>
 	
