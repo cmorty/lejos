@@ -16,6 +16,7 @@
 	<property name="src" value="${lejos.root}"/>
 	<property name="javasrc" value="${src}"/>
 	<property name="javavm.src" value="${src}/nxtvm/javavm"/>
+	<property name="release.build" value="${release.nxj}/build"/>
 	<property name="release.lib" value="${release.nxj}/lib"/>
 	<property name="release.src" value="${release.nxj}/src"/>
 	<property name="release.projects" value="${release.nxj}/projects"/>
@@ -32,12 +33,12 @@
 	<!-- cpptasks task & type def -->
 	<taskdef resource="cpptasks.tasks">
 	  <classpath>
-	    <pathelement location="${release.3rdparty.libs}/cpptasks.jar"/>
+	    <pathelement location="${release.build}/cpptasks.jar"/>
 	  </classpath>
 	</taskdef>
 	<typedef resource="cpptasks.types">
 	  <classpath>
-	    <pathelement location="${release.3rdparty.libs}/cpptasks.jar"/>
+	    <pathelement location="${release.build}/cpptasks.jar"/>
 	  </classpath>
 	</typedef>
 	
