@@ -75,7 +75,7 @@
 
 		<property name="binary" value="${build}/${class}.nxj" />
 		<!-- Link the binary and create a signature file -->
-		<java classname="js.tinyvm.TinyVM" failonerror="true">
+		<java classname="lejos.pc.tools.NXJLink" failonerror="true">
 			<classpath refid="lejos.px" />
 			<arg value="--bootclasspath" />
 			<arg pathref="lejos.nxt" />
