@@ -38,5 +38,5 @@ if "%OS%" == "Windows_NT" goto :winnt
 	call :build_classpath NXJ_CP_NXT "%NXJ_HOME%\lib\nxt"
 
 
-javac -bootclasspath "%NXJ_CP_NXT%" %*
+javac -bootclasspath "%NXJ_CP_NXT%" -extdirs "" %*
 :eof
