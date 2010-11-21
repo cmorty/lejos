@@ -6,9 +6,9 @@
 	<!-- set properties for this build -->
 	<property environment="env" />
 	<property file="build.properties" />
+	<property name="nxj.library.path" location="${nxj.home}/bin" />
 	<property name="src" location="src" />
 	<property name="build" location="build" />
-	<property name="nxj.library.path" location="${nxj.home}/bin" />
 
 	<path id="lejos.pc">
 		<fileset dir="${nxj.home}/lib/pc">
