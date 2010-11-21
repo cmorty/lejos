@@ -93,7 +93,7 @@ ${template.linux.parser}
 		</linux-tool>
 		
 		<linux-run file="nxjc">
-			javac -bootclasspath "$NXJ_CP_NXT" "$@"
+			javac -bootclasspath "$NXJ_CP_NXT" -extdirs "" "$@"
 		</linux-run>
 		<linux-parser file="nxjpcc">
 			javac -classpath "$NXJ_CMDLINE_CP" "${NXJ_CMDLINE[@]}"
@@ -126,7 +126,7 @@ ${template.linux.parser}
 		</win-tool>
 		
 		<win-run file="nxjc">
-			javac -bootclasspath "%NXJ_CP_NXT%" %*
+			javac -bootclasspath "%NXJ_CP_NXT%" -extdirs "" %*
 		</win-run>
 		<win-run file="nxjpcc">
 			javac -Xbootclasspath/a:"%NXJ_CP_PC%" %*
