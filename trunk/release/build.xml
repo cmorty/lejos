@@ -24,6 +24,8 @@
 	<property name="release.pc.docs" value="${release.nxj}/projects/pccomms/doc"/>
 	<property name="3rdparty.subdir" value="pc/3rdparty"/>
 	<property name="release.3rdparty.libs" value="${release.lib}/${3rdparty.subdir}"/>
+	<property name="release.nxt.libs" value="${release.lib}/nxt"/>
+	<property name="release.pc.libs" value="${release.lib}/pc"/>
 	<property name="plat.unix.src" value="${src}/nxtvm/platform/unix"/>
 	<property name="plat.nxt.src" value="${src}/nxtvm/platform/nxt"/>
 	
@@ -292,22 +294,22 @@
 	
 	<!-- copies the jar files -->
 	<target name="libs" depends="create.folders" description="copies the jar files">
-		<copy todir="${release.lib}">
+		<copy todir="${release.nxt.libs}">
       		<fileset dir="${lejos.root}/classes/lib">
         		<include name="*.jar"/>
       		</fileset>
     	</copy>
-		<copy todir="${release.lib}">
+		<copy todir="${release.pc.libs}">
       		<fileset dir="${lejos.root}/jtools/lib">
         		<include name="*.jar"/>
       		</fileset>
     	</copy>
-		<copy todir="${release.lib}">
+		<copy todir="${release.pc.libs}">
       		<fileset dir="${lejos.root}/pctools/lib">
         		<include name="*.jar"/>
       		</fileset>
     	</copy>
-		<copy todir="${release.lib}">
+		<copy todir="${release.pc.libs}">
       		<fileset dir="${lejos.root}/pccomms/lib">
         		<include name="*.jar"/>
       		</fileset>
