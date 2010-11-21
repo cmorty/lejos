@@ -10,7 +10,7 @@
   	<property file="build.properties"/>
 	<property environment="env"/>
 	<property name="lejos.root" value="${basedir}/.."/>
-	<property name="release" value="${lejos.root}/release"/>
+	<property name="release" value="${basedir}"/>
 	<property name="release.nxj" value="${release}/lejos_nxj"/>
 	<property name="release.bin" value="${release.nxj}/bin"/>
 	<property name="src" value="${lejos.root}"/>
@@ -22,7 +22,8 @@
 	<property name="release.dist" value="${release}/dist"/>
 	<property name="release.classes.docs" value="${release.nxj}/projects/classes/doc"/>
 	<property name="release.pc.docs" value="${release.nxj}/projects/pccomms/doc"/>
-	<property name="release.3rdparty.libs" value="${release.nxj}/3rdparty/lib"/>
+	<property name="3rdparty.subdir" value="pc/3rdparty"/>
+	<property name="release.3rdparty.libs" value="${release.lib}/${3rdparty.subdir}"/>
 	<property name="plat.unix.src" value="${src}/nxtvm/platform/unix"/>
 	<property name="plat.nxt.src" value="${src}/nxtvm/platform/nxt"/>
 	
@@ -65,7 +66,9 @@
 	<target name="clean" description="clean up all generated files">
 	  	<!-- delete transient release folders -->
 		<delete dir="${release.bin}"/>
-		<delete dir="${release.lib}"/>
+		<delete dir="${release.lib}" includeemptydirs="true">
+			<exclude name="${3rdparty.subdir}/**" />
+		</delete>
 	  	<delete dir="${release.src}"/>
 	  	<delete dir="${release.projects}"/>
   	</target>
@@ -365,7 +368,7 @@
 			    <include name="lejos_nxj/LICENSE"/>
 			    <include name="lejos_nxj/LEGAL"/>
 			    <include name="lejos_nxj/ACKNOWLEDGMENTS"/>
-			    <include name="lejos_nxj/lib/*.jar"/>
+			    <include name="lejos_nxj/lib/**/*.jar"/>
 			    <include name="lejos_nxj/src/**"/>
 			    <include name="lejos_nxj/bin/*"/>
 			 	<include name="lejos_nxj/projects/**"/>
@@ -374,7 +377,6 @@
 			 	<exclude name="lejos_nxj/bin/*.dll"/>
 			 	<exclude name="lejos_nxj/bin/*.bat"/>
 			 	<include name="lejos_nxj/build/*"/>
-			 	<include name="lejos_nxj/3rdparty/**"/>
 			 	<include name="lejos_nxj/docs/**"/>
 			  </tarfileset>
 		</tar>
@@ -391,7 +393,7 @@
 			 	<include name="lejos_nxj/LICENSE"/>
 			 	<include name="lejos_nxj/LEGAL"/>
 			 	<include name="lejos_nxj/ACKNOWLEDGMENTS"/>
-			    <include name="lejos_nxj/lib/*.jar"/>
+			    <include name="lejos_nxj/lib/**/*.jar"/>
 			 	<include name="lejos_nxj/projects/**"/>
 			    <include name="lejos_nxj/src/**"/>
 			 	<exclude name="lejos_nxj/src/jbluez/**"/>
@@ -415,8 +417,7 @@
 			 	<exclude name="lejos_nxj/bin/nxjpcc"/>
 			 	<exclude name="lejos_nxj/bin/nxjcontrol"/>
 			 	<exclude name="lejos_nxj/bin/*.so"/>
-			 	<include name="lejos_nxj/3rdparty/**"/>
-			 	<exclude name="lejos_nxj/3rdparty/lib/bluecove-gpl.jar"/>
+			 	<exclude name="lejos_nxj/lib/**/bluecove-gpl.jar"/>
 			  </fileset>
 		</zip>
 	</target>
@@ -439,14 +440,13 @@
              author="true"
              destdir="${release.pc.docs}"
              source="1.5"
-    	     classpath="${javasrc}/pccomms/3rdparty/lib/bluecove.jar"
+    	     classpath="${release.3rdparty.libs}/bluecove.jar"
              defaultexcludes="yes">
       <fileset dir="${javasrc}/pccomms">
       		<exclude name="doc/**"/>
       	    <exclude name="build/**"/>
       		<exclude name="nbproject/**"/>
       	    <exclude name="**/pccomm.jar"/>
-      		<exclude name="3rdparty/**"/>
       	    <exclude name="**/.*/**"/>
       		<exclude name="**/*.h"/>
       		<exclude name="**/*.class"/>
