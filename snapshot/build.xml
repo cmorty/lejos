@@ -89,6 +89,11 @@
 		<copy todir="lib/pc">
 			<fileset file="${project.pccomms}/${vars.pccomms.pccomms.jar}"/>
     	</copy>
+		<copy todir="lib/pc/3rdparty">
+			<fileset dir="${project.pccomms}/3rdparty/lib" >
+				<include name="**/*.jar" />
+			</fileset>
+		</copy>
 	</target>
 	
 	<target name="subproject.pctools.build" depends="subproject.pccomms.build, subproject.jtools.build">
