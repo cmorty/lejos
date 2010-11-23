@@ -61,7 +61,7 @@ public class Console implements ConsoleViewerUI {
 		boolean connected = comm.connectTo(name, address, protocols);
 		if (!connected) {
 			logMessage("Failed to connect to NXT");
-			System.exit(1);
+			return 1;
 		}
 		return 0;
 	}
