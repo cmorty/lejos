@@ -88,11 +88,6 @@ public class FileOutputStream extends OutputStream {
 		file.file_length++; 
 		if(data_pointer >= Flash.BYTES_PER_PAGE) 
 		{
-			if(file.getIndex()< ( File.totalFiles -1)) 
-				{
-				file.moveToTop();
-				page_pointer = file.page_location + file.file_length/Flash.BYTES_PER_PAGE; 					
-				}
 			flush(); // Write to flash
 			page_pointer++; // Move to next page
 			data_pointer = 0;
@@ -104,6 +99,12 @@ public class FileOutputStream extends OutputStream {
 		if (buff == null)
 			throw new IOException("stream is closed");
 		
+		if(file.getIndex()< ( File.totalFiles -1)) 
+		{
+			int old = file.page_location;
+			file.moveToTop();
+			page_pointer += file.page_location - old; 					
+		}
 		Flash.writePage(buff, page_pointer);
     }
 	
