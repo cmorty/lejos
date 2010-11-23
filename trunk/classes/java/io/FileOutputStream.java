@@ -33,8 +33,9 @@ public class FileOutputStream extends OutputStream {
 	/**
 	 * create a new OutputStream to write to this file, starting  at the beginning of the file.
 	 * @param f  the file this stream writes to
+	 * @throws FileNotFoundException
 	 */		
-	public FileOutputStream(File f) 
+	public FileOutputStream(File f) throws FileNotFoundException 
 	{
 		this(f, false);
 	}
@@ -44,26 +45,44 @@ public class FileOutputStream extends OutputStream {
  * @param f  the file this stream writes to
  * @param append  if true this stream will start writing at the end of the file, otherwise at the beginning
  */	
-	public FileOutputStream(File f, boolean append) {
+	public FileOutputStream(File f, boolean append) throws FileNotFoundException {
         file = f;
 		buff = new byte[Flash.BYTES_PER_PAGE];
-		page_pointer = file.page_location;
-		data_pointer = 0; // Start of first page
 
+		// create file, in case it does not exist
+		// Note: createNewFile does nothing, when file already exists.
+		try
+		{
+			file.createNewFile();
+		}
+		catch (IOException e)
+		{
+			//exception chaning would be nice 
+			throw new FileNotFoundException("file could not be created");
+		}
+		
 		if(append)
 		{
 			page_pointer = file.page_location + file.file_length/Flash.BYTES_PER_PAGE ;
 			data_pointer =  file.file_length%Flash.BYTES_PER_PAGE;
 			Flash.readPage(buff, page_pointer);
 		}
-		else file.file_length = 0;// can this cause trouble?
+		else
+		{
+			page_pointer = file.page_location;
+			data_pointer = 0; // Start of first page
+			file.file_length = 0;// can this cause trouble?
+		}
 	}
 	
 /**
  * write 1 byte to the file; if necessary, file will be moved become the last file in memory
  */	
+	@Override
 	public void write(int b) throws IOException {
-		if(file.page_location < 0) throw new IOException(); // "File has not been created!"
+		if (buff == null)
+			throw new IOException("stream is closed");
+		
 		buff[data_pointer] = (byte)b;
 		data_pointer++;
 		file.file_length++; 
@@ -80,7 +99,11 @@ public class FileOutputStream extends OutputStream {
 		}
 	}
 	
+	@Override
 	public void flush() throws IOException {
+		if (buff == null)
+			throw new IOException("stream is closed");
+		
 		Flash.writePage(buff, page_pointer);
     }
 	
@@ -89,12 +112,15 @@ public class FileOutputStream extends OutputStream {
 	 * Resets pointers, so file can be written again from beginning with the same output stream.
 	 */	
 	public void close() throws IOException {
-		// !! Alternate implementation: If this is a new file, perhaps only 
-		// write the file table information AFTER close() called so  
-		// incomplete/partial files don't exist.
-		flush();
-		File.writeTable(File.listFiles()); // Updates file size for this file.
-        page_pointer = file.page_location;
-        data_pointer = 0; // Start of first page
+		if (buff != null)
+		{
+			// !! Alternate implementation: If this is a new file, perhaps only 
+			// write the file table information AFTER close() called so  
+			// incomplete/partial files don't exist.
+			flush();
+			File.writeTable(File.listFiles()); // Updates file size for this file.
+			
+			buff = null;			
+		}
 	}
 }
