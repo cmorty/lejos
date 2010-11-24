@@ -204,8 +204,9 @@ static STACKWORD *array_helper(unsigned int idx, Object *obj, int sz)
 #define OPCODE(op) L_##op: 
 #define UNUSED_OPCODE(op) 
 #define MULTI_OPCODE(op)
-#define DISPATCH goto *(&&CHECK_EVENT + dispatchTable[*pc++])
-#define DISPATCH_CHECKED {instruction_hook(); DISPATCH;}
+#define DISPATCH1 goto *(&&CHECK_EVENT + dispatchTable[*pc++])
+#define DISPATCH goto *(&&CHECK_EVENT + dispatch[*pc++])
+#define DISPATCH_CHECKED {instruction_hook(); DISPATCH1;}
 #define START_DISPATCH DISPATCH;
 #define END_DISPATCH
 #define DISPATCH_EVENTS CHECK_EVENT: (pc--, dispatchTable = dispatch);
