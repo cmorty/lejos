@@ -103,6 +103,19 @@ public class ConsoleViewComms
     }
 
     /**
+     * Wait for the console session to end
+     */
+    public void waitComplete()
+    {
+        if (!this.daemon && reader != null)
+            try {
+                reader.join();
+            } catch(InterruptedException e)
+            {
+
+            }
+    }
+    /**
      * Thread to read the RConsole data and send it to the viewer append method
      */
     private class Reader extends Thread

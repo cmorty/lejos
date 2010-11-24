@@ -63,6 +63,7 @@ public class Console implements ConsoleViewerUI {
 			logMessage("Failed to connect to NXT");
 			return 1;
 		}
+        comm.waitComplete();
 		return 0;
 	}
 
