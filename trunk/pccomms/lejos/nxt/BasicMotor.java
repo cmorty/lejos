@@ -16,13 +16,14 @@ import lejos.robotics.DCMotor;
  */
 public abstract class BasicMotor implements DCMotor
 {
-	final int FORWARD = 1;
-	final int BACKWARD = 2;
-	final int STOP = 3;
-	final int FLOAT = 4;
+	public final static int FORWARD = 1;
+	public final static int BACKWARD = 2;
+	public final static int STOP = 3;
+	public final static int FLOAT = 4;
+    public final static int MAX_POWER = 100;
 
-	int _mode = FLOAT;
-	int _power = 50;
+	protected int _mode = FLOAT;
+	protected int _power = 50;
 	protected BasicMotorPort _port;
 
 	/**
