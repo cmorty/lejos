@@ -321,11 +321,10 @@ public class RConsole extends Thread
      */
     public static void close()
     {
+        if (conn == null) return;
         println("Console closed");
         synchronized (os)
         {
-            if (conn == null)
-                return;
             try
             {
                 conn.close();
