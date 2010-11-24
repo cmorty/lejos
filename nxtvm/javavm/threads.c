@@ -13,7 +13,9 @@
 #include "memory.h"
 #include "exceptions.h"
 #include "stack.h"
+#include <string.h>
 #define NO_OWNER 0x00
+#define MAX_ID 0xff
 
 #define get_stack_frame() ((StackFrame *) (currentThread->currentStackFrame))
 
@@ -33,11 +35,6 @@ Thread* bootThread;
  */
 REFERENCE threads;
 Thread **threadQ;
-
-/**
- * Thread id generator, always increasing.
- */
-byte gThreadCounter;
 
 /**
  * Current program number, i.e. number of 'main()'s hanging around
@@ -105,7 +102,6 @@ void init_threads()
   threads = ptr2ref(new_single_array(ALJAVA_LANG_OBJECT, 10));
   threadQ = (Thread **)ref_array(threads);
   Thread **pQ = threadQ;
-  gThreadCounter = 0;
   currentThread = JNULL;
   for (i = 0; i<10; i++)
   {
@@ -123,6 +119,50 @@ void init_threads()
 }
 
 /**
+ * Find a free thread id and return it.
+ */
+static int get_new_thread_id()
+{
+  // Thread ids must be between 1 and 255, so we need to recycle ids if we
+  // create more than 254 threads. We do this by using a bitmap to mark
+  // each id in use then search this map looking for an unused (i.e. zero)
+  // entry.
+#define BITSPERWORD (8*sizeof(FOURBYTES))
+  FOURBYTES inUse[MAX_ID/BITSPERWORD];
+  int i;
+  memset(inUse, 0, sizeof(inUse));
+  // scan all threads and mark all in use ids
+  for (i=0; i < MAX_PRIORITY; i++)
+  {
+    Thread *pFirstThread = threadQ[i];
+    if (pFirstThread)
+    {
+      Thread *pThread = pFirstThread;
+      do {
+        inUse[pThread->threadId/BITSPERWORD] |= 1 << (pThread->threadId % BITSPERWORD);
+        pThread = word2ptr(pThread->nextThread);
+      } while (pThread != pFirstThread);
+    }
+  }
+  // id 0 is always in use...
+  *inUse |= 1;
+  // find a free id...
+  for(i = 0; i < sizeof(inUse)/sizeof(FOURBYTES); i++)
+  {
+    FOURBYTES w = inUse[i];
+    if (w != ~0)
+    {
+      int j = 0;
+      for(j=0; w & 1; j++)
+        w >>= 1;
+      return i*BITSPERWORD + j;
+    }
+  }
+  // failed to find a free id...
+  return NO_OWNER;
+}
+
+/**
  * Allocate stack frames
  * Allocate ID
  * Insert into run list
@@ -134,7 +174,10 @@ int init_thread (Thread *thread)
    * with the GC we must take steps to allow the calling instruction to be
    * re-started. So take care of any changes to global state.
    */
-  thread->threadId = gThreadCounter + 1;
+  thread->threadId = get_new_thread_id();
+
+  if (thread->threadId == NO_OWNER)
+    return throw_new_exception(JAVA_LANG_OUTOFMEMORYERROR);
   
   // Catch the primordial thread
   if (currentThread == null)
@@ -151,7 +194,6 @@ int init_thread (Thread *thread)
   {
     return EXEC_RETRY;
   }
-  gThreadCounter++;
   
   #ifdef VERIFY
   assert (is_array (word2obj (thread->stackFrameArray)), THREADS0);
