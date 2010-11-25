@@ -9,6 +9,7 @@ import java.io.*;
 
 
 import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.ParseException;
 
 /**
  *
@@ -94,9 +95,26 @@ public class NXJFlash implements NXJFlashUI {
 	 *            the command line arguments
 	 * @throws Exception
 	 */
-	public void run(String[] args) throws Exception {
+	public int run(String[] args) throws Exception {
 		NXJFlashCommandLineParser parser = new NXJFlashCommandLineParser(NXJFlash.class, "[options] [firmware-file] [startup-menu-file]");
-		CommandLine commandLine = parser.parse(args);
+		CommandLine commandLine;
+		try
+		{
+			commandLine = parser.parse(args);
+		}
+		catch (ParseException e)
+		{
+			System.err.println(e.getMessage());
+			parser.printHelp(System.err);
+			return 1;
+		}
+		
+		if (commandLine.hasOption("h"))
+		{
+			parser.printHelp(System.out);
+			return 0;
+		}
+		
 		String vmFile = null;
 		String menuFile = null;
 		if (commandLine.getArgs().length > 0)
@@ -115,6 +133,7 @@ public class NXJFlash implements NXJFlashUI {
 		if (nxt != null) {
 			updater.updateDevice(nxt, memoryImage, fs, true, true, true);
 		}
+		return 0;
 	}
 
 	/**
@@ -123,12 +142,13 @@ public class NXJFlash implements NXJFlashUI {
 	 * @throws Exception
 	 */
 	public static void main(String[] args) throws Exception {
+		int r;
 		try {
-			NXJFlash instance = new NXJFlash();
-			instance.run(args);
-		} catch (Throwable t) {
-			System.err.println("an error occurred: " + t.getMessage());
-			System.exit(1);
+			r = new NXJFlash().run(args);
+		} catch (Exception e) {
+			e.printStackTrace(System.err);
+			r = 1;
 		}
+		System.exit(r);
 	}
 }
