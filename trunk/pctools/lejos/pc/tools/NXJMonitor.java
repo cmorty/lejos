@@ -90,7 +90,7 @@ public class NXJMonitor extends JFrame implements ActionListener {
 		setSize(500,300);
 	}
 	
-	public void run() throws NXTCommException {
+	public int run() throws NXTCommException {
 	    int protocols = NXTCommFactory.USB | NXTCommFactory.BLUETOOTH;
 	    final JFrame frame = this;
 	    
@@ -101,7 +101,7 @@ public class NXJMonitor extends JFrame implements ActionListener {
 		
 	    if (nxts.length == 0) {
 	        System.err.println("No NXT found - is it switched on and plugged in (for USB)?");
-	        System.exit(1);
+	        return 1;
 	    }
 	    
 	    // Display a list of NXT
@@ -145,6 +145,7 @@ public class NXJMonitor extends JFrame implements ActionListener {
 
 	    pack();
 	    setVisible(true);
+	    return -1;
 	}
 	
 	private void showMonitor(String name) {
@@ -266,12 +267,16 @@ public class NXJMonitor extends JFrame implements ActionListener {
 	}
 	
 	public static void main(String[] args) {
-      	NXJMonitor frame = new NXJMonitor();
+		int r;
 		try {
-			frame.run();
+			r = new NXJMonitor().run();
 		} catch (Exception e) {
-			System.err.println(e.getMessage());
+			e.printStackTrace(System.err);
+			r = 1;
 		}
+		
+		if (r >= 0)
+			System.exit(r);
 	}
 }
 

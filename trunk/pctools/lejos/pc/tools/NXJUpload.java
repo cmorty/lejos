@@ -23,14 +23,19 @@ public class NXJUpload {
 	 * @param args command line arguments
 	 */
 	public static void main(String[] args) {
-		try {
+		int r;
+		try
+		{
 			NXJUpload instance = new NXJUpload();
 			instance.addLogListener(new ToolsLogger());
-			instance.run(args);
-		} catch(Throwable t) {
-			System.err.println("An error occurred: " + t.getMessage());
-			System.exit(1);
+			r = instance.run(args);
 		}
+		catch (Exception e)
+		{
+			e.printStackTrace(System.err);
+			r = 1;
+		}
+		System.exit(r);
 	}
 	
 	/** 
