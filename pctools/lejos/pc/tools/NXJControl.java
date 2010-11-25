@@ -148,18 +148,22 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
 	 * Command line entry point
 	 */
 	public static void main(String args[]) {
+		int r;
 		try {
-			NXJControl instance = new NXJControl();
-			instance.run();
-		} catch (Throwable t) {
-			System.err.println("Error: " + t.getMessage());
+			r = new NXJControl().run();
+		} catch (Exception t) {
+			t.printStackTrace(System.err);
+			r = 1;
 		}
+		
+		if (r >= 0)
+			System.exit(r);
 	}
 
 	/**
 	 * Run the program
 	 */
-	private void run() {
+	private int run() {
 		// Close connection and exit when frame windows closed
 		WindowListener listener = new WindowAdapter() {
 			public void windowClosing(WindowEvent w) {
@@ -257,6 +261,7 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
 		frame.add(tabbedPane);
 		frame.pack();
 		frame.setVisible(true);
+		return -1;
 	}
 
 	/**
