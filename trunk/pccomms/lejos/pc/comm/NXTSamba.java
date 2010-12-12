@@ -58,6 +58,7 @@ public class NXTSamba {
 	}
 
 	private static final String CHARSET = "iso-8859-1";
+	private static final String COMMAND_TERMINATOR = "#\n";
 	
 	private static final char CMD_GOTO = 'G';
 	private static final char CMD_TEXT = 'T';	//SAM-BA sends ">" prompt
@@ -66,11 +67,11 @@ public class NXTSamba {
 	private static final char CMD_READ_OCTET = 'o';
 	private static final char CMD_READ_HWORD = 'h';  
 	private static final char CMD_READ_WORD = 'w';
-	private static final char CMD_READ_STREAM = 'R';
 	private static final char CMD_WRITE_OCTET = 'O';
 	private static final char CMD_WRITE_HWORD = 'H';  
 	private static final char CMD_WRITE_WORD = 'W';  
-	private static final char CMD_WRITE_STREAM = 'S';
+	private static final char CMD_STREAM_READ = 'R';
+	private static final char CMD_STREAM_WRITE = 'S';
     private static final byte PROMPT_CHAR = '>';
 
     /**
@@ -243,31 +244,31 @@ public class NXTSamba {
     
     private void sendInitCommand(char cmd) throws IOException
     {
-    	String command = cmd + "#";
+    	String command = cmd + COMMAND_TERMINATOR;
         writeString(command);
     }
     
     private void sendGotoCommand(int addr) throws IOException
     {
-    	String command = CMD_GOTO + hexFormat(addr, 8) + "#";
+    	String command = CMD_GOTO + hexFormat(addr, 8) + COMMAND_TERMINATOR;
         writeString(command);
     }
     
     private void sendStreamCommand(char cmd, int addr, int len) throws IOException
     {
-    	String command = cmd + hexFormat(addr, 8) + "," + hexFormat(len, 8) + "#";
+    	String command = cmd + hexFormat(addr, 8) + "," + hexFormat(len, 8) + COMMAND_TERMINATOR;
         writeString(command);
     }
     
     private void sendWriteCommand(char cmd, int addr, int len, int value) throws IOException
     {
-    	String command = cmd + hexFormat(addr, 8) + "," + hexFormat(value, 2 * len) + "#";
+    	String command = cmd + hexFormat(addr, 8) + "," + hexFormat(value, 2 * len) + COMMAND_TERMINATOR;
         writeString(command);
     }
     
     private void sendReadCommand(char cmd, int addr, int len) throws IOException
     {
-        String command = cmd + hexFormat(addr, 8) + "," + len + "#";
+        String command = cmd + hexFormat(addr, 8) + "," + len + COMMAND_TERMINATOR;
         writeString(command);
     }
     
@@ -362,7 +363,7 @@ public class NXTSamba {
     
     public InputStream createInputStream(int addr, int len) throws IOException
     {
-    	sendStreamCommand(CMD_READ_STREAM, addr, len);
+    	sendStreamCommand(CMD_STREAM_READ, addr, len);
     	return new MemoryInputStream(len);
     }
 
@@ -376,7 +377,7 @@ public class NXTSamba {
      */
     public void readBytes(int addr, byte[] data, int off, int len) throws IOException
     {
-    	sendStreamCommand(CMD_READ_STREAM, addr, len);
+    	sendStreamCommand(CMD_STREAM_READ, addr, len);
     	readAnswerStream(data, off, len);
     }
 
@@ -388,7 +389,7 @@ public class NXTSamba {
      */
     public void writeBytes(int addr, byte[] data) throws IOException
     {
-    	sendStreamCommand(CMD_WRITE_STREAM, addr, data.length);
+    	sendStreamCommand(CMD_STREAM_WRITE, addr, data.length);
         write(data);
     }
 
