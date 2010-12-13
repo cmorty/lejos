@@ -22,8 +22,8 @@ public class MCLWayPointNavigator
     pilot = aPilot;
      scanner =aScaner;
      map = aMap;
-     mcl = new MCLPoseProvider(pilot,scanner, map, NUM_PARTICLES );
-     MCLParticleSet.setSigma(4);
+     mcl = new MCLPoseProvider(pilot,scanner, map, NUM_PARTICLES, 0);
+     mcl.getParticles().setSigma(4);
   }
 /**
  * set the initial pose of the robot. The robot will perform a scan and estimate
