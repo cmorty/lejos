@@ -23,7 +23,7 @@ public class NXTCommFactory {
 	private static final String USER_HOME = System.getProperty("user.home");
 	private static String propFile;
 	private static String cacheFile = USER_HOME + SEP + "nxj.cache";
-	private static String androidCacheFile = "sdcard/LeJOS/nxj.cache";
+	private static String androidCacheFile = "sdcard/leJOS/nxj.cache";
 
 	/**
 	 * Load a comms driver for a protocol (USB or Bluetooth)
