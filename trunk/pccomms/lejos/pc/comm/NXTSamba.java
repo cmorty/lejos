@@ -86,6 +86,7 @@ public class NXTSamba {
     public static final int FLASH_BASE = 0x00100000;
     public static final int FLASH_MAX  = 0x00140000;
 	public static final int PAGE_SIZE  = 256;
+	public static final int PAGE_MAX = (FLASH_MAX - FLASH_BASE) / PAGE_SIZE;
 	
     
     /**
@@ -473,6 +474,8 @@ public class NXTSamba {
      */
     public void writePage(int page, byte[] data, int offset, int len) throws IOException
     {
+    	if (page < 0 || page >= PAGE_MAX)
+    		throw new IllegalArgumentException("page number out of range");
     	if (len > PAGE_SIZE)
     		len = PAGE_SIZE;
     	
