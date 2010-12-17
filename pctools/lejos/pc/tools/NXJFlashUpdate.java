@@ -44,6 +44,27 @@ public class NXJFlashUpdate {
 		mem[offset++] = (byte) ((val >> 16) & 0xff);
 		mem[offset++] = (byte) ((val >> 24) & 0xff);
 	}
+	
+	private static int readWholeFile(InputStream src, byte[] dst, int off, int maxlen) throws IOException
+	{
+		int len = 0;
+		while (maxlen > 0)
+		{
+			int r = src.read(dst, off, maxlen);
+			if (r < 0)
+				return len;
+			
+			len += r;
+			off += r;
+			maxlen -= r;
+		}
+		
+		int r = src.read();
+		if (r >= 0)
+			throw new IOException("array to small");
+			
+		return len;
+	}
 
 	/**
 	 * Create the memory image ready to be flashed to the device. Load the
@@ -64,7 +85,7 @@ public class NXJFlashUpdate {
 		// home = System.getenv("NXJ_HOME");
 		if (home == null)
 			home = "";
-		String SEP = System.getProperty("file.separator");
+		String SEP = File.separator;
 		if (vmName == null)
 			vmName = home + SEP + "bin" + SEP + VM;
 		if (menuName == null)
@@ -73,14 +94,13 @@ public class NXJFlashUpdate {
 		ui.message("Menu file: " + menuName);
 		FileInputStream vm = new FileInputStream(vmName);
 		FileInputStream menu = new FileInputStream(menuName);
-		int vmLen = vm.read(memoryImage, 0, memoryImage.length);
+		int vmLen = readWholeFile(vm, memoryImage, 0, memoryImage.length);
 		// Round up to page and use as base for the menu location
 		int menuStart = ((vmLen + NXTSamba.PAGE_SIZE - 1) / NXTSamba.PAGE_SIZE)
 				* NXTSamba.PAGE_SIZE;
 		// Read the menu. Note we may read less than the full size of the menu.
 		// If so this will be caught by the overall size check below.
-		int menuLen = menu.read(memoryImage, menuStart, memoryImage.length
-				- menuStart);
+		int menuLen = readWholeFile(menu, memoryImage, menuStart, memoryImage.length - menuStart);
 		// We store the length and location of the Menu in special locations
 		// that are known to the firmware.
 		storeWord(memoryImage, MENU_LENGTH_LOC, menuLen);
@@ -254,19 +274,28 @@ public class NXJFlashUpdate {
 		return failCnt;
 	}
 
-	public void writePages(NXTSamba nxt, int first, byte[] memoryImage)
-			throws IOException {
-		int pages = memoryImage.length / NXTSamba.PAGE_SIZE;
-		int p = -1;
-		for (int page = 0; page < pages; page++) {
+	private void writePages(NXTSamba nxt, int first, byte[] memoryImage) throws IOException {
+		//round up
+		int offset = 0;
+		int length = memoryImage.length;
+		int pages = (length + NXTSamba.PAGE_SIZE -1) / NXTSamba.PAGE_SIZE;
+		
+		int page = 0;
+		int percent = -1;
+		while (length > 0){
 			int np = page * 100 / pages;
-			if (np > p)
+			if (np > percent)
 			{
-				p = np;
+				percent = np;
 				ui.progress("Writing", np);
 			}
-			nxt.writePage(first + page, memoryImage, page	* NXTSamba.PAGE_SIZE);
+			nxt.writePage(first + page, memoryImage, offset, length);
+			
+			page++;
+			offset += NXTSamba.PAGE_SIZE;
+			length -= NXTSamba.PAGE_SIZE;
 		}
+		ui.progress("Writing", 100);
 		
 		//workaround the problem, that verification and rebooting fails directly after write
 		nxt.readWord(getPageAddr(first));
