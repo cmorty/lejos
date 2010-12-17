@@ -17,6 +17,7 @@ class NXJFlashCommandLineParser extends AbstractCommandLineParser
 		
 		options.addOption("h", "help", false, "help");
 		options.addOption("f", "format", false, "format file system");
+		options.addOption("b", "format", false, "flash non-leJOS binary firmware image");
 		options.addOption("v", "verify", false, "backward compatibility switch (verify is now default)");
 		options.addOption("q", "quiet", false,
 				"quiet mode - do not report progress");
@@ -34,11 +35,11 @@ class NXJFlashCommandLineParser extends AbstractCommandLineParser
 	{
 		result = new GnuParser().parse(options, args);
 
-		if (result.getArgs().length == 1)
-			throw new ParseException("You must provide both firmware and menu file");
-
-		if (result.getArgs().length > 2)
-			throw new ParseException("Too many files");
+//		if (result.getArgs().length == 1)
+//			throw new ParseException("You must provide both firmware and menu file");
+//
+//		if (result.getArgs().length > 2)
+//			throw new ParseException("Too many files");
 		
 		return result;
 	}

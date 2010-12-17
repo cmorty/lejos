@@ -115,25 +115,81 @@ public class NXJFlash implements NXJFlashUI {
 			return 0;
 		}
 		
-		String vmFile = null;
-		String menuFile = null;
-		if (commandLine.getArgs().length > 0)
-			vmFile = commandLine.getArgs()[0];
-		if (commandLine.getArgs().length > 1)
-			menuFile = commandLine.getArgs()[1];
-		String home = System.getProperty("nxj.home");
-		if (home == null)
-			home = System.getenv("NXJ_HOME");
-		byte[] memoryImage = updater
-				.createFirmwareImage(vmFile, menuFile, home);
-		byte[] fs = null;
-		if (commandLine.hasOption("f"))
-			fs = updater.createFilesystemImage();
+		String[] files = commandLine.getArgs();
+		byte[] memoryImage;
+		byte[] fs;
+		
+		if (commandLine.hasOption("b"))
+		{
+			if (files.length != 1)
+			{
+				System.err.println("Specify exactly one filename.");
+				return 1;
+			}
+			if (commandLine.hasOption("f"))
+			{
+				System.err.println("Format filesystem not supported.");
+				return 1;
+			}
+			
+			memoryImage = readWholeFile(files[0]);
+			fs = null;
+		}
+		else
+		{
+			String vmFile = null;
+			String menuFile = null;
+			if (files.length > 0)
+			{
+				if (files.length < 2)
+				{
+					System.err.println("You must provide both firmware and menu file.");
+					return 1;
+				}
+				if (files.length > 2)
+				{
+					System.err.println("Too many files.");
+					return 1;
+				}
+				
+				vmFile = files[0];
+				menuFile = files[1];
+			}
+			
+			String home = System.getProperty("nxj.home");
+			if (home == null)
+				home = System.getenv("NXJ_HOME");
+			
+			memoryImage = updater.createFirmwareImage(vmFile, menuFile, home);
+			if (commandLine.hasOption("f"))
+				fs = updater.createFilesystemImage();
+			else
+				fs = null;
+		}
+		
 		NXTSamba nxt = openDevice();
 		if (nxt != null) {
 			updater.updateDevice(nxt, memoryImage, fs, true, true, true);
 		}
 		return 0;
+	}
+
+	private byte[] readWholeFile(String filename) throws IOException
+	{
+		FileInputStream in = new FileInputStream(filename);
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
+		
+		byte[] buf = new byte[4096];
+		while (true)
+		{
+			int r = in.read(buf);
+			if (r < 0)
+				break;
+			
+			os.write(buf);
+		}
+		
+		return os.toByteArray();
 	}
 
 	/**

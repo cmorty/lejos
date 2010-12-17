@@ -475,6 +475,7 @@ public class NXTSamba {
     {
     	if (len > PAGE_SIZE)
     		len = PAGE_SIZE;
+    	
         // Generate data chunk (32 bit int pagenum + 256 byte data)
         byte [] buf = new byte[HELPER_PACKET];
         System.arraycopy(data, offset, buf, 4, len);
@@ -487,20 +488,20 @@ public class NXTSamba {
 
     /**
      * Write a series of pages to flash memory.
-     * @param first
+     * @param firstPage
      * @param data
-     * @param start
+     * @param offset
      * @param len
      * @throws java.io.IOException
      */
-    public void writePages(int first, byte[] data, int start, int len) throws IOException
+    public void writePages(int firstPage, byte[] data, int offset, int len) throws IOException
     {
         while (len > 0)
         {
-            writePage(first, data, start, len);
-            start += PAGE_SIZE;
+            writePage(firstPage, data, offset, len);
+            offset += PAGE_SIZE;
             len -= PAGE_SIZE;
-            first++;
+            firstPage++;
         }
     }
 
