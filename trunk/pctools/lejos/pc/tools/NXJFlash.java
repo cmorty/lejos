@@ -186,7 +186,7 @@ public class NXJFlash implements NXJFlashUI {
 			if (r < 0)
 				break;
 			
-			os.write(buf);
+			os.write(buf, 0, r);
 		}
 		
 		return os.toByteArray();
