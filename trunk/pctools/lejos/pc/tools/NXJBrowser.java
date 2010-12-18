@@ -78,8 +78,7 @@ public class NXJBrowser
 	}
 	catch (ParseException e)
 	{
-		System.err.println(e.getMessage());
-		fParser.printHelp(System.err);
+		fParser.printHelp(System.err, e);
 		return 1;
 	}
 	

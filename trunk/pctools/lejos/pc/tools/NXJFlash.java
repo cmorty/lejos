@@ -97,71 +97,43 @@ public class NXJFlash implements NXJFlashUI {
 	 */
 	public int run(String[] args) throws Exception {
 		NXJFlashCommandLineParser parser = new NXJFlashCommandLineParser(NXJFlash.class, "[options] [firmware-file] [startup-menu-file]");
-		CommandLine commandLine;
 		try
 		{
-			commandLine = parser.parse(args);
+			parser.parse(args);
 		}
 		catch (ParseException e)
 		{
-			System.err.println(e.getMessage());
-			parser.printHelp(System.err);
+			parser.printHelp(System.err, e);
 			return 1;
 		}
 		
-		if (commandLine.hasOption("h"))
+		if (parser.isHelp())
 		{
 			parser.printHelp(System.out);
 			return 0;
 		}
 		
-		String[] files = commandLine.getArgs();
+		//TODO what about quiet option ?
+		
 		byte[] memoryImage;
 		byte[] fs;
 		
-		if (commandLine.hasOption("b"))
+		if (parser.isBinary())
 		{
-			if (files.length != 1)
-			{
-				System.err.println("Specify exactly one filename.");
-				return 1;
-			}
-			if (commandLine.hasOption("f"))
-			{
-				System.err.println("Format filesystem not supported.");
-				return 1;
-			}
-			
-			memoryImage = readWholeFile(files[0]);
+			memoryImage = readWholeFile(parser.getFirmwareFile());
 			fs = null;
 		}
 		else
 		{
-			String vmFile = null;
-			String menuFile = null;
-			if (files.length > 0)
-			{
-				if (files.length < 2)
-				{
-					System.err.println("You must provide both firmware and menu file.");
-					return 1;
-				}
-				if (files.length > 2)
-				{
-					System.err.println("Too many files.");
-					return 1;
-				}
-				
-				vmFile = files[0];
-				menuFile = files[1];
-			}
+			String vmFile = parser.getFirmwareFile();
+			String menuFile = parser.getMenuFile();
 			
 			String home = System.getProperty("nxj.home");
 			if (home == null)
 				home = System.getenv("NXJ_HOME");
 			
 			memoryImage = updater.createFirmwareImage(vmFile, menuFile, home);
-			if (commandLine.hasOption("f"))
+			if (parser.doFormat())
 				fs = updater.createFilesystemImage();
 			else
 				fs = null;
