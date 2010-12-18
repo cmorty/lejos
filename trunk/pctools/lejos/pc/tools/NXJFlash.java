@@ -184,11 +184,11 @@ public class NXJFlash implements NXJFlashUI {
 			byte[] buf = new byte[4096];
 			while (true)
 			{
-				int r = in.read(buf);
-				if (r < 0)
+				int len = in.read(buf, 0 , buf.length);
+				if (len < 0)
 					break;
 				
-				os.write(buf, 0, r);
+				os.write(buf, 0, len);
 			}
 			
 			return os.toByteArray();
