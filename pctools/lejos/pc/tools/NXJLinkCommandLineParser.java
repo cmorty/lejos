@@ -17,6 +17,7 @@ class NXJLinkCommandLineParser extends AbstractCommandLineParser
 {
 	private final boolean reqoutput;
 	private boolean bigendian;
+	private boolean help;
 	private String bp;
 	private String cp;
 
@@ -111,7 +112,7 @@ class NXJLinkCommandLineParser extends AbstractCommandLineParser
 
 	public boolean isHelp()
 	{
-		return this.result.hasOption("h");
+		return this.help;
 	}
 
 	public boolean isAll()
@@ -212,6 +213,10 @@ class NXJLinkCommandLineParser extends AbstractCommandLineParser
 		assert args != null : "Precondition: args != null";
 
 		result = new GnuParser().parse(options, args);
+		
+		this.help = result.hasOption("h");
+		if (this.help)
+			return;
 
 		if (!result.hasOption("bp"))
 		{

@@ -2,6 +2,7 @@ package lejos.pc.tools;
 
 
 import org.apache.commons.cli.Option;
+import org.apache.commons.cli.ParseException;
 
 /**
  * CommandLineParser
@@ -50,5 +51,16 @@ public class NXJLinkAndUploadCommandLineParser extends NXJLinkCommandLineParser
 	public String getAddress()
 	{
 		return getLastOptVal(result, "d");
+	}
+	
+	@Override
+	public void parse(String[] args) throws ParseException
+	{
+		super.parse(args);
+		
+		if (this.isHelp())
+			return;
+		
+		//do other stuff here, if needed
 	}
 }
