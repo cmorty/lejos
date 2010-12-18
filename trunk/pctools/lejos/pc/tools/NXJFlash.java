@@ -125,8 +125,8 @@ public class NXJFlash implements NXJFlashUI {
 		}
 		else
 		{
-			String vmFile = parser.getFirmwareFile();
-			String menuFile = parser.getMenuFile();
+			File vmFile = parser.getFirmwareFile();
+			File menuFile = parser.getMenuFile();
 			
 			String home = System.getProperty("nxj.home");
 			if (home == null)
@@ -146,9 +146,9 @@ public class NXJFlash implements NXJFlashUI {
 		return 0;
 	}
 
-	private byte[] readWholeFile(String filename) throws IOException
+	private byte[] readWholeFile(File file) throws IOException
 	{
-		FileInputStream in = new FileInputStream(filename);
+		FileInputStream in = new FileInputStream(file);
 		try
 		{
 			ByteArrayOutputStream os = new ByteArrayOutputStream();
