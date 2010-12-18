@@ -45,25 +45,33 @@ public class NXJFlashUpdate {
 		mem[offset++] = (byte) ((val >> 24) & 0xff);
 	}
 	
-	private static int readWholeFile(InputStream src, byte[] dst, int off, int maxlen) throws IOException
+	private static int readWholeFile(String src, byte[] dst, int off, int maxlen) throws IOException
 	{
-		int len = 0;
-		while (maxlen > 0)
+		FileInputStream in = new FileInputStream(src);
+		try
 		{
-			int r = src.read(dst, off, maxlen);
-			if (r < 0)
-				return len;
+			int len = 0;
+			while (maxlen > 0)
+			{
+				int r = in.read(dst, off, maxlen);
+				if (r < 0)
+					return len;
+				
+				len += r;
+				off += r;
+				maxlen -= r;
+			}
 			
-			len += r;
-			off += r;
-			maxlen -= r;
+			int r = in.read();
+			if (r >= 0)
+				throw new IOException("array to small");
+				
+			return len;
 		}
-		
-		int r = src.read();
-		if (r >= 0)
-			throw new IOException("array to small");
-			
-		return len;
+		finally
+		{
+			in.close();
+		}
 	}
 
 	/**
@@ -92,15 +100,13 @@ public class NXJFlashUpdate {
 			menuName = home + SEP + "bin" + SEP + MENU;
 		ui.message("VM file: " + vmName);
 		ui.message("Menu file: " + menuName);
-		FileInputStream vm = new FileInputStream(vmName);
-		FileInputStream menu = new FileInputStream(menuName);
-		int vmLen = readWholeFile(vm, memoryImage, 0, memoryImage.length);
+		int vmLen = readWholeFile(vmName, memoryImage, 0, memoryImage.length);
 		// Round up to page and use as base for the menu location
 		int menuStart = ((vmLen + NXTSamba.PAGE_SIZE - 1) / NXTSamba.PAGE_SIZE)
 				* NXTSamba.PAGE_SIZE;
 		// Read the menu. Note we may read less than the full size of the menu.
 		// If so this will be caught by the overall size check below.
-		int menuLen = readWholeFile(menu, memoryImage, menuStart, memoryImage.length - menuStart);
+		int menuLen = readWholeFile(menuName, memoryImage, menuStart, memoryImage.length - menuStart);
 		// We store the length and location of the Menu in special locations
 		// that are known to the firmware.
 		storeWord(memoryImage, MENU_LENGTH_LOC, menuLen);

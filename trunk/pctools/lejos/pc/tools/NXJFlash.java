@@ -177,19 +177,26 @@ public class NXJFlash implements NXJFlashUI {
 	private byte[] readWholeFile(String filename) throws IOException
 	{
 		FileInputStream in = new FileInputStream(filename);
-		ByteArrayOutputStream os = new ByteArrayOutputStream();
-		
-		byte[] buf = new byte[4096];
-		while (true)
+		try
 		{
-			int r = in.read(buf);
-			if (r < 0)
-				break;
+			ByteArrayOutputStream os = new ByteArrayOutputStream();
 			
-			os.write(buf, 0, r);
+			byte[] buf = new byte[4096];
+			while (true)
+			{
+				int r = in.read(buf);
+				if (r < 0)
+					break;
+				
+				os.write(buf, 0, r);
+			}
+			
+			return os.toByteArray();
 		}
-		
-		return os.toByteArray();
+		finally
+		{
+			in.close();
+		}
 	}
 
 	/**
