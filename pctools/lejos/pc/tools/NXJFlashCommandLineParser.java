@@ -1,5 +1,7 @@
 package lejos.pc.tools;
 
+import java.io.File;
+
 import js.tinyvm.TinyVMException;
 
 import org.apache.commons.cli.GnuParser;
@@ -10,8 +12,8 @@ import org.apache.commons.cli.ParseException;
  */
 class NXJFlashCommandLineParser extends AbstractCommandLineParser
 {
-	private String firmwareFile;
-	private String menuFile;
+	private File firmwareFile;
+	private File menuFile;
 	private boolean binary;
 	private boolean format;
 	private boolean quiet;
@@ -60,7 +62,7 @@ class NXJFlashCommandLineParser extends AbstractCommandLineParser
 			if (this.format)
 				throw new ParseException("Formatting filesystem not supported in binary mode");
 			
-			this.firmwareFile = files[0];
+			this.firmwareFile = new File(files[0]);
 		}
 		else
 		{
@@ -71,10 +73,19 @@ class NXJFlashCommandLineParser extends AbstractCommandLineParser
 				if (files.length < 2)
 					throw new ParseException("You must provide both firmware and menu file");
 				
-				this.firmwareFile = files[0];
-				this.menuFile = files[1];
+				this.firmwareFile = new File(files[0]);
+				this.menuFile = new File(files[1]);
 			}			
 		}
+		
+		testFile(this.firmwareFile);
+		testFile(this.menuFile);
+	}
+
+	private void testFile(File file) throws ParseException
+	{
+		if (file != null && !file.exists())
+			throw new ParseException("File does not exist: " + file);
 	}
 
 	public boolean isHelp()
@@ -97,12 +108,12 @@ class NXJFlashCommandLineParser extends AbstractCommandLineParser
 		return this.format;
 	}
 	
-	public String getFirmwareFile()
+	public File getFirmwareFile()
 	{
 		return this.firmwareFile;
 	}
 	
-	public String getMenuFile()
+	public File getMenuFile()
 	{
 		return this.menuFile;
 	}

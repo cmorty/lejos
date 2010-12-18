@@ -45,7 +45,7 @@ public class NXJFlashUpdate {
 		mem[offset++] = (byte) ((val >> 24) & 0xff);
 	}
 	
-	private static int readWholeFile(String src, byte[] dst, int off, int maxlen) throws IOException
+	private static int readWholeFile(File src, byte[] dst, int off, int maxlen) throws IOException
 	{
 		FileInputStream in = new FileInputStream(src);
 		try
@@ -83,7 +83,7 @@ public class NXJFlashUpdate {
 	 *            Options for the location of the firmware and menu.
 	 * @return Memory image ready to be flashed to the device.
 	 */
-	public byte[] createFirmwareImage(String vmName, String menuName,
+	public byte[] createFirmwareImage(File vmName, File menuName,
 			String leJOSHomeDir) throws IOException, FileNotFoundException {
 		ui.message("Building firmware image.");
 		byte[] memoryImage = new byte[MAX_FIRMWARE_PAGES * NXTSamba.PAGE_SIZE];
@@ -95,9 +95,9 @@ public class NXJFlashUpdate {
 			home = "";
 		String SEP = File.separator;
 		if (vmName == null)
-			vmName = home + SEP + "bin" + SEP + VM;
+			vmName = new File(home + SEP + "bin" + SEP + VM);
 		if (menuName == null)
-			menuName = home + SEP + "bin" + SEP + MENU;
+			menuName = new File(home + SEP + "bin" + SEP + MENU);
 		ui.message("VM file: " + vmName);
 		ui.message("Menu file: " + menuName);
 		int vmLen = readWholeFile(vmName, memoryImage, 0, memoryImage.length);
