@@ -2,7 +2,6 @@ package lejos.pc.tools;
 
 import js.tinyvm.TinyVMException;
 
-import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.ParseException;
 
@@ -11,6 +10,13 @@ import org.apache.commons.cli.ParseException;
  */
 class NXJFlashCommandLineParser extends AbstractCommandLineParser
 {
+	private String firmwareFile;
+	private String menuFile;
+	private boolean binary;
+	private boolean format;
+	private boolean quiet;
+	private boolean help;
+	
 	public NXJFlashCommandLineParser(Class<?> caller, String params)
 	{
 		super(caller, params);
@@ -31,16 +37,73 @@ class NXJFlashCommandLineParser extends AbstractCommandLineParser
 	 * @return the parsed commands
 	 * @throws TinyVMException
 	 */
-	public CommandLine parse(String[] args) throws ParseException
+	public void parse(String[] args) throws ParseException
 	{
 		result = new GnuParser().parse(options, args);
+		String[] files = result.getArgs();
 
-//		if (result.getArgs().length == 1)
-//			throw new ParseException("You must provide both firmware and menu file");
-//
-//		if (result.getArgs().length > 2)
-//			throw new ParseException("Too many files");
+		this.help = result.hasOption("h");
+		if (this.help)
+			return;
+
+		this.quiet = result.hasOption("q");
+		this.binary = result.hasOption("b");
+		this.format = result.hasOption("f");
 		
-		return result;
+		if (this.binary)
+		{
+			if (files.length > 1)
+				throw new ParseException("Too many files");
+			if (files.length < 1)
+				throw new ParseException("No file specified");
+			
+			if (this.format)
+				throw new ParseException("Formatting filesystem not supported in binary mode");
+			
+			this.firmwareFile = files[0];
+		}
+		else
+		{
+			if (files.length > 0)
+			{
+				if (files.length > 2)
+					throw new ParseException("Too many files");
+				if (files.length < 2)
+					throw new ParseException("You must provide both firmware and menu file");
+				
+				this.firmwareFile = files[0];
+				this.menuFile = files[1];
+			}			
+		}
+	}
+
+	public boolean isHelp()
+	{
+		return this.help;
+	}
+	
+	public boolean isQuiet()
+	{
+		return this.quiet;
+	}
+	
+	public boolean isBinary()
+	{
+		return this.binary;
+	}
+	
+	public boolean doFormat()
+	{
+		return this.format;
+	}
+	
+	public String getFirmwareFile()
+	{
+		return this.firmwareFile;
+	}
+	
+	public String getMenuFile()
+	{
+		return this.menuFile;
 	}
 }

@@ -22,6 +22,18 @@ public abstract class AbstractCommandLineParser
 
 	public void printHelp(OutputStream u)
 	{
+		this.printHelp(u, null);
+	}
+	
+	public void printHelp(OutputStream u, Throwable e)
+	{
+		PrintWriter out = new PrintWriter(u, false);
+		if (e != null)
+		{
+			out.println();
+			out.println("Error: " + e.getMessage());
+		}
+		
 		String usage = System.getProperty("COMMAND_NAME");
 		if (usage == null)
 			usage = "java " + caller.getName();
@@ -31,7 +43,6 @@ public abstract class AbstractCommandLineParser
 		String header = "options:";
 		String footer = "";
 	
-		PrintWriter out = new PrintWriter(u, false);
 		out.println();
 		new HelpFormatter().printHelp(out, 80, usage, header, options, 0, 2, footer);
 		out.println();
