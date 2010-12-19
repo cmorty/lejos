@@ -3,12 +3,17 @@
  */
 package lejos.pc.tools;
 
-import lejos.pc.comm.*;
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 
+import lejos.pc.comm.NXTCommException;
+import lejos.pc.comm.NXTCommFactory;
+import lejos.pc.comm.NXTConnector;
+import lejos.pc.comm.NXTInfo;
+import lejos.pc.comm.NXTSamba;
 
-
-import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.ParseException;
 
 /**
@@ -36,7 +41,7 @@ public class NXJFlash implements NXJFlashUI {
 		while (System.in.available() > 0)
 			System.in.read();
 		if (choice >= '0' && choice <= '9')
-			return (int) (choice - '0');
+			return choice - '0';
 		return -1;
 	}
 
@@ -120,7 +125,7 @@ public class NXJFlash implements NXJFlashUI {
 		
 		if (parser.isBinary())
 		{
-			memoryImage = readWholeFile(parser.getFirmwareFile());
+			memoryImage = createFileImage(parser.getFirmwareFile());
 			fs = null;
 		}
 		else
@@ -146,7 +151,7 @@ public class NXJFlash implements NXJFlashUI {
 		return 0;
 	}
 
-	private byte[] readWholeFile(File file) throws IOException
+	private byte[] createFileImage(File file) throws IOException
 	{
 		FileInputStream in = new FileInputStream(file);
 		try
@@ -161,6 +166,8 @@ public class NXJFlash implements NXJFlashUI {
 					break;
 				
 				os.write(buf, 0, len);
+				if (os.size() > NXTSamba.FLASH_SIZE)
+					throw new IOException("file is too large for flash memory");
 			}
 			
 			return os.toByteArray();
