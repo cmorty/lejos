@@ -85,8 +85,9 @@ public class NXTSamba {
      */
     public static final int FLASH_BASE = 0x00100000;
     public static final int FLASH_MAX  = 0x00140000;
+    public static final int FLASH_SIZE = FLASH_MAX - FLASH_BASE;
 	public static final int PAGE_SIZE  = 256;
-	public static final int PAGE_MAX = (FLASH_MAX - FLASH_BASE) / PAGE_SIZE;
+	public static final int PAGE_MAX = FLASH_SIZE / PAGE_SIZE;
 	
     
     /**
