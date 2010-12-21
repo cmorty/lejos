@@ -58,8 +58,15 @@ public class SystemSettings {
 	 * @param value the String value
 	 */
 	static void setSlot(int slot, String value) {
-		for(int i=0;i<MAX_SETTING_SIZE;i++) buf[slot*MAX_SETTING_SIZE+i] = 0;
-		for(int i=0;i<value.length();i++) buf[slot*MAX_SETTING_SIZE+i] = (byte) value.charAt(i);
+		int len = value.length();
+		if (len > MAX_SETTING_SIZE)
+			throw new IllegalArgumentException("value too large");
+		
+		for(int i=0;i<MAX_SETTING_SIZE;i++)
+			buf[slot*MAX_SETTING_SIZE+i] = 0;
+
+		for(int i=0;i<len;i++)
+			buf[slot*MAX_SETTING_SIZE+i] = (byte)value.charAt(i);
 	}
 	
 	/**
@@ -122,10 +129,11 @@ public class SystemSettings {
 	 */
 	static void setSetting(String key, String value) {
 		int slot = getSlot(key);
-		if (slot >= 0) {
-			setSlot(slot, value);
-			Flash.writePage(buf, SETTINGS_PAGE);
-		}
+		if (slot < 0)
+			throw new IllegalArgumentException("unsupported key");
+		
+		setSlot(slot, value);
+		Flash.writePage(buf, SETTINGS_PAGE);
 	}
 	
 	/**
