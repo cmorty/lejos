@@ -1,10 +1,5 @@
 package lejos.robotics.localization;
 
-
-//import lejos.nxt.comm.RConsole;
-//import lejos.util.Datalogger;
-import lejos.nxt.*;
-
 import java.awt.Rectangle;
 import lejos.geom.*;
 import java.io.*;
@@ -12,8 +7,6 @@ import lejos.robotics.*;
 import lejos.robotics.mapping.RangeMap;
 import lejos.robotics.Move;
 import java.util.Random;
-
-
 
 /*
  * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
@@ -31,7 +24,7 @@ public class MCLParticleSet {
   private static final float BIG_FLOAT = 10000f;
   // Static variables
   public static int maxIterations = 1000;
-  private static float twoSigmaSquared = 200f; // was 250
+  private float twoSigmaSquared = 200f; // was 250
   // Instance variables
   private float distanceNoiseFactor = 0.1f;
   private float angleNoiseFactor = 2.5f;
@@ -331,19 +324,6 @@ public class MCLParticleSet {
     }
 //    RConsole.println("particles apply move est pose ");
   }
-
-
-
-  
-//  /**
-//   * Return the minimum rectangle enclosing all the particles
-//   *
-//   * @return the rectangle
-//   */
-//  public Rectangle getErrorRect() {
-//	  return new Rectangle((int) minX, (int) minY,
-//			               (int) (maxX-minX), (int) (maxY-minY));
-//  }
   
   /**
    * The highest weight of any particle
@@ -376,7 +356,7 @@ public class MCLParticleSet {
    * Set the standard deviation for the sensor probability model
    * @param sigma the standard deviation
    */
-  public static void setSigma(float sigma) {
+  public void setSigma(float sigma) {
     twoSigmaSquared = 2 * sigma * sigma;
   }
   
@@ -448,18 +428,6 @@ public class MCLParticleSet {
       }
   }
 
-//  public void logParticles(Datalogger log)
-//  {
-//    for (int i = 0; i < numParticles; i++)
-//    {
-//         MCLParticle part = getParticle(i);
-//          Pose pose = part.getPose();
-//          float weight = part.getWeight();
-//          log.writeLog(pose.getX(),pose.getY(),pose.getHeading(),weight);
-//    }
-//    log.writeLog(99,99,99,99);
-//  }
-
   /**
    * Load serialized particles from a data input stream
    * @param dis the data input stream
@@ -477,69 +445,6 @@ public class MCLParticleSet {
       particles[i].setWeight(dis.readFloat());
     }  
   }
-
-  public Pose getEstimatedPose()
-  {
-    float totalWeights = 0;
-    float estimatedX = 0;
-    float estimatedY = 0;
-    float estimatedAngle = 0;
-     for (int i = 0; i < numParticles; i++)
-    {
-      Pose p = getParticle(i).getPose();
-      float x = p.getX();
-      float y = p.getY();
-      float weight = getParticle(i).getWeight();
-       estimatedX += (x * weight);
-      estimatedY += (y * weight);
-      float head = p.getHeading();
-      estimatedAngle += (head * weight);
-      totalWeights += weight;
-     }
-    estimatedX /= totalWeights;
-     estimatedY /= totalWeights;
-     estimatedAngle /= totalWeights;
-     return new Pose(estimatedX,estimatedY,estimatedAngle);
-  }
-//  /**
-//   * Dump the serialized estimate of pose to a data output stream
-//   * @param dos the data output stream
-//   * @throws IOException
-//   */
-//  public void dumpEstimation(DataOutputStream dos) throws IOException {
-//      Pose pose = getEstimatedPose();
-//      float minX = getMinX();
-//      float maxX = getMaxX();
-//      float minY = getMinY();
-//      float maxY = getMaxY();
-//
-//      dos.writeFloat(pose.getX());
-//      dos.writeFloat(pose.getY());
-//      dos.writeFloat(pose.getHeading());
-//      dos.writeFloat(minX);
-//      dos.writeFloat(maxX);
-//      dos.writeFloat(minY);
-//      dos.writeFloat(maxY);
-//      dos.writeFloat((float)varX);
-//      dos.writeFloat((float)varY);
-//      dos.writeFloat((float)varH);
-//      dos.flush();
-//  }
-  
-  /**
-   * Load serialized estimated pose from a data input stream
-   * @param dis the data input stream
-   * @throws IOException
-   */
-//  public void loadEstimation(DataInputStream dis) throws IOException {
-//      estimatedX = dis.readFloat();
-//      estimatedY = dis.readFloat();
-//      estimatedAngle = dis.readFloat();
-//      minX = dis.readFloat();
-//      maxX = dis.readFloat();
-//      minY = dis.readFloat();
-//      maxY = dis.readFloat();
-//  }
   
   /**
    * Find the closest particle to specified coordinates and dump its
@@ -560,10 +465,4 @@ public class MCLParticleSet {
       dos.writeFloat(p.getWeight());
       dos.flush();
   }
-
-   // to do   fix MCLFrame in pccomms  us use MCLPoseProvider
-  public float getMaxX(){ return 0;}
-   public float getMaxY(){ return 0;}
-    public float getMinX(){ return 0;}
-     public float getMinY(){ return 0;}
 }

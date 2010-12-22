@@ -16,10 +16,11 @@ public class MCLPoseProvider implements PoseProvider, MoveListener
   private RangeScanner scanner;
   private RangeMap map;
   private int numParticles;
-  float _x,_y,_heading;
+  private float _x,_y,_heading;
   private float minX, maxX, minY, maxY;
-  double varX, varY, varH;
+  private double varX, varY, varH;
   private boolean autoUpdate = false;
+  private boolean updated;
 
   public MCLPoseProvider(MoveProvider mp, RangeScanner scanner,
           RangeMap map, int numParticles, int border)
@@ -29,29 +30,21 @@ public class MCLPoseProvider implements PoseProvider, MoveListener
     this.scanner = scanner;
     this.map = map;
     mp.addMoveListener(this);
+    updated = false;
   }
-
-  public MCLPoseProvider(MoveProvider mp, RangeScanner scanner,
-          RangeMap map, int numParticles)
-  {
-    this.numParticles = numParticles;
-    this.scanner = scanner;
-    this.map = map;
-    mp.addMoveListener(this);
-  }
-/**
- * Sets the inital particle set to a circular cloud centered on  aPose
- * @param aPose
- * @param radiusNoise
- * @param headingNoise
- */
+  
+  /**
+   * Sets the initial particle set to a circular cloud centered on  aPose
+   * @param aPose
+   * @param radiusNoise
+   * @param headingNoise
+   */
   public void setInitialPose( Pose aPose,float radiusNoise,float headingNoise)
   {
     _x = aPose.getX();
     _y = aPose.getY();
     _heading = aPose.getHeading();
-       particles = new MCLParticleSet(map, numParticles, aPose,
-            radiusNoise,  headingNoise);
+    particles = new MCLParticleSet(map, numParticles, aPose, radiusNoise,  headingNoise);
   }
 
   public void setPose(Pose aPose)
@@ -60,7 +53,7 @@ public class MCLPoseProvider implements PoseProvider, MoveListener
   }
    
   /**
-   * returns the particle set
+   * Returns the particle set
    * @return the particle set
    */
   public MCLParticleSet getParticles()
@@ -69,7 +62,7 @@ public class MCLPoseProvider implements PoseProvider, MoveListener
   }
 
   /**
-    require by MoveListener interface; does nothing
+    Required by MoveListener interface; does nothing
    */
   public void moveStarted(Move event, MoveProvider mp)
   {
@@ -77,7 +70,7 @@ public class MCLPoseProvider implements PoseProvider, MoveListener
   }
   
   /**
-   * required by MoveListener interface.
+   * Required by MoveListener interface.
    * Applies the move to all particles; updates the estimated pose after Travel
    * @param event the event just completed
    * @param mp
@@ -85,22 +78,24 @@ public class MCLPoseProvider implements PoseProvider, MoveListener
   public void moveStopped(Move event, MoveProvider mp)
   {
     particles.applyMove(event);
+    updated = false;
     if(autoUpdate && event.getMoveType() ==  Move.MoveType.TRAVEL)
     {
-    update();
+    	update();
     }
   }
 
   /**
-   * returns the difference between max and min x
-   * @return the diference between min and max x
+   * Returns the difference between max and min x
+   * @return the difference between min and max x
    */
   public float getXRange()
   {
     return getMaxX()-  getMinX();
   }
+  
   /**
-   * return difference between max and min y
+   * Return difference between max and min y
    * @return difference between max and min y
    */
   public float getYRange()
@@ -109,49 +104,55 @@ public class MCLPoseProvider implements PoseProvider, MoveListener
   }
   
   /**
-   * updates the estimated pose using monte carlo method applied to particles.
+   * Updates the estimated pose using Monte Carlo method applied to particles.
    * Gets range readings from the scanner, calculates weights and resamples the
-   * the particles.  Tries at most 4 times  range values are incpmplete and/or
+   * the particles.  Tries at most 4 times  range values are incomplete and/or
    * the probabilities of the sensor readings are too small;.
    * @return  true if the update was successful.  Otherwise, the dead reckoning pose
-   * is the only one availabale.
+   * is the only one available.
    */
   public boolean update()
   {
-    int maxTries = 4;
-     int tries = 0;
+	if (scanner == null) return false;
+	
+    int maxTries = 1;
+    int tries = 0;
+    updated = true;
+    
     while (tries < maxTries)
     {
 
-    RangeReadings rr = scanner.getRangeValues();
-    if(rr.incomplete())rr = scanner.getRangeValues();
-    if(rr.incomplete())
-    {
-      System.out.println("READINGS INCOMPOETE");
-              tries = maxTries;
-              break;
-    }
-       if (particles.calculateWeights(rr, map)) break;
+      RangeReadings rr = scanner.getRangeValues();
+      //if(rr.incomplete())rr = scanner.getRangeValues();
+      if(rr.incomplete())
+      {
+        //System.out.println("READINGS INCOMPLETE");
+        tries = maxTries;
+        break;
+      }
+      if (particles.calculateWeights(rr, map)) break;
       else  tries++;
     }
-     if(tries == maxTries )
-     {
-       System.out.println(" sensor data is too improbable from the current pose ");
-       return false;
-     }
+    
+    if(tries == maxTries )
+    {
+      //System.out.println(" sensor data is too improbable from the current pose ");
+      return false;
+    }
 
     particles.resample();
-    estimatePose();
+    //estimatePose();
 //        particles.logParticles(dl);
     return true;
   }
   
   /**
-   * returns the best best estimate of the current pose;
+   * Returns the best best estimate of the current pose;
    * @return the estimated pose
    */
   public Pose getPose()
   {
+	if (!updated) update();
     estimatePose();
     return new Pose(_x, _y, _heading);
 
@@ -162,7 +163,7 @@ public class MCLPoseProvider implements PoseProvider, MoveListener
    */
   private void estimatePose()
   {
-
+    if (scanner == null) return;
     float totalWeights = 0;
     float estimatedX = 0;
     float estimatedY = 0;
@@ -200,12 +201,12 @@ public class MCLPoseProvider implements PoseProvider, MoveListener
     varY -= (estimatedY * estimatedY);
     estimatedAngle /= totalWeights;
     varH /= totalWeights;
-     varH -= (estimatedAngle * estimatedAngle);
-     while(estimatedAngle > 180) estimatedAngle -=360;
-     while(estimatedAngle < -180) estimatedAngle +=360;
-     _x = estimatedX;
-     _y = estimatedY;
-     _heading = estimatedAngle;
+    varH -= (estimatedAngle * estimatedAngle);
+    while(estimatedAngle > 180) estimatedAngle -=360;
+    while(estimatedAngle < -180) estimatedAngle +=360;
+    _x = estimatedX;
+    _y = estimatedY;
+    _heading = estimatedAngle;
   }
   
   /**
@@ -218,13 +219,13 @@ public class MCLPoseProvider implements PoseProvider, MoveListener
   }
   
   /**
-   * returns the maximum value of  X in the particle set
+   * Returns the maximum value of  X in the particle set
    * @return   max X
    */
   public float getMaxX() { return maxX;}
   
   /**
-   * returns the minimum value of   X in the particle set;
+   * Returns the minimum value of   X in the particle set;
    * @return minimum X
    */
   public float getMinX() { return minX;}
@@ -236,29 +237,28 @@ public class MCLPoseProvider implements PoseProvider, MoveListener
   public float getMaxY() { return maxY;}
   
   /**
-   * returns the minimum value of Y in the particle set;
+   * Returns the minimum value of Y in the particle set;
    * @return minimum Y
    */
   public float getMinY() { return minY;}
 
   /**
-   * returns the standard deviation of the X values in the particle set;
+   * Returns the standard deviation of the X values in the particle set;
    * @return sigma X
    */
   public float getSigmaX() { return (float)Math.sqrt(varX);}
 
   /**
-   * returns the standard deviation of the Y values in the particle set;
+   * Returns the standard deviation of the Y values in the particle set;
    * @return sigma Y
    */
   public float getSigmaY() { return (float)Math.sqrt(varY);}
 
   /**
-   * returns the standard deviation of the Y values in the particle set;
+   * Returns the standard deviation of the Y values in the particle set;
    * @return sigma heading
    */
   public float getSigmaHeading() {return (float)Math.sqrt(varH);}
-
 
   /**
    * Dump the serialized estimate of pose to a data output stream
@@ -266,11 +266,9 @@ public class MCLPoseProvider implements PoseProvider, MoveListener
    * @throws IOException
    */
   public void dumpEstimation(DataOutputStream dos) throws IOException {
-      Pose pose = getPose();
-
-      dos.writeFloat(pose.getX());
-      dos.writeFloat(pose.getY());
-      dos.writeFloat(pose.getHeading());
+      dos.writeFloat(_x);
+      dos.writeFloat(_y);
+      dos.writeFloat(_heading);
       dos.writeFloat(minX);
       dos.writeFloat(maxX);
       dos.writeFloat(minY);
@@ -280,4 +278,23 @@ public class MCLPoseProvider implements PoseProvider, MoveListener
       dos.writeFloat((float)varH);
       dos.flush();
   }
+  
+  /**
+   * Load serialized estimated pose from a data input stream
+   * @param dis the data input stream
+   * @throws IOException
+   */
+  public void loadEstimation(DataInputStream dis) throws IOException {
+      _x = dis.readFloat();
+      _y = dis.readFloat();
+      _heading = dis.readFloat();
+      minX = dis.readFloat();
+      maxX = dis.readFloat();
+      minY = dis.readFloat();
+      maxY = dis.readFloat();
+      varX = dis.readFloat();
+      varY = dis.readFloat();
+      varH = dis.readFloat();
+      System.out.println("Estimate = " + minX + " , " + maxX + " , " + minY + " , " + maxY);
+   }
 }
