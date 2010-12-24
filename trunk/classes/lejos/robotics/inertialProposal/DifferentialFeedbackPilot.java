@@ -8,6 +8,10 @@ import lejos.robotics.TachoMotor;
 import lejos.robotics.localization.PoseProvider;
 import lejos.robotics.navigation.MoveController;
 
+/*
+ * TODO: Need to assess if Brent's version of a DifferentialPilot is redundant. If his strategy uses feedback along the
+ * movement it might be useful to include in the actual leJOS NXJ release. Need to test this more. 
+ */
 public class DifferentialFeedbackPilot implements MoveController
 {
     private ArrayList<MoveListener> moveListeners = new ArrayList<MoveListener>();

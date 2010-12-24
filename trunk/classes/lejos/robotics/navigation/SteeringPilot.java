@@ -20,6 +20,10 @@ import lejos.robotics.TachoMotorListener;
  * the forward movement was halted, and then start moving backward 500 units. This makes movements from the SteeringPilot
  * leak-proof and incorruptible. 
  *
+ * Note: A DifferentialPilot robot can simulate a SteeringPilot robot by calling DifferentialPilot.setMinRadius()
+ * and setting the value to something greater than zero (example: 15 cm).
+ * 
+ * @see lejos.robotics.navigation.DifferentialPilot#setMinRadius(float)
  * @author BB
  *
  */

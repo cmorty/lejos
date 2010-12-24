@@ -21,6 +21,7 @@ import lejos.robotics.Pose;
  * Alternate names:  DeadReckonerPoseProvider, DeadReckoner, OrienteeringPoseProvider, OdometryPoseProvider 
  * 
  */
+// TODO: Probably makes more sense to use inner class implementation of MoveListener?
 public class DeadReckonerPoseProvider implements PoseProvider, MoveListener
 {
 
