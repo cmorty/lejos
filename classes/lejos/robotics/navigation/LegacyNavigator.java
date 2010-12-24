@@ -31,6 +31,9 @@ import lejos.robotics.*;
  * The x and y coordinate values and the direction angle are all initialized to 0, so if the first move is forward() the robot will run along
  * the x axis.<br>
  *
+ * @deprecated  This class will disappear in NXJ version 1.0. Use a PathController instead. 
+ * @see lejos.robotics.navigation.PathController
+ *
  */
 public class LegacyNavigator {
 

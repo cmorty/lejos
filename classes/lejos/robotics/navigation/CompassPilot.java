@@ -9,9 +9,15 @@ import lejos.util.Delay;
  * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
  * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
  */
+
 /**
  * A Pilot that keeps track of direction using a CompassSensor.
+ * @deprecated  This class will disappear in NXJ version 1.0. Compass should be added to a PoseProvider. 
+ * @see lejos.robotics.localization.PoseProvider#getPose()
  */
+// TODO: Note @deprecated message above, I'm not sure PoseProvider is exactly right place to point users to yet.
+// Need to explain this more when we are sure how this will replace CompassPilot. - BB
+
 public class CompassPilot extends DifferentialPilot
 {
 

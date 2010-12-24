@@ -47,6 +47,9 @@ import lejos.robotics.*;
  * </pre></code>
  * </p>
  *
+ * Note: A DifferentialPilot robot can simulate a SteeringPilot robot by calling DifferentialPilot.setMinRadius()
+ * and setting the value to something greater than zero (perhaps 15 cm).
+ *
  **/
 public class DifferentialPilot implements
        TachoMotorListener, ArcRotateMoveController
@@ -824,6 +827,13 @@ public class DifferentialPilot implements
     _steering = false;
   }
 
+  /**
+   * Set the radius of the minimum turning circle.
+   * Note: A DifferentialPilot robot can simulate a SteeringPilot robot by calling DifferentialPilot.setMinRadius()
+   * and setting the value to something greater than zero (example: 15 cm).
+   * 
+   * @param radius the radius in degrees
+   */
   public void setMinRadius(float radius)
   {
     _turnRadius = radius;
