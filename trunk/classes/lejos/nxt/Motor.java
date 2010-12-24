@@ -194,7 +194,7 @@ public class Motor extends BasicMotor implements TachoMotor
     @Override
     public void stop()
     {
-        reg.newMove(0, acceleration, NO_LIMIT, true, true);
+        reg.newMove(0, acceleration, NO_LIMIT, true, false);
     }
 
     /**
