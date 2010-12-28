@@ -181,7 +181,7 @@ public class Motor extends BasicMotor implements TachoMotor
     @Override
     public void flt()
     {
-        reg.newMove(0, acceleration, NO_LIMIT, false, true);
+        reg.newMove(0, acceleration, NO_LIMIT, false, false);
     }
 
     /**
@@ -405,7 +405,6 @@ public class Motor extends BasicMotor implements TachoMotor
         static final float HOLD_P = 2f;
         static final float HOLD_I = 0.04f;
         static final float HOLD_D = 8f;
-        int angle0 = tachoPort.getTachoCount();
         float basePower = 0; //used to calculate power
         float err1 = 0; // used in smoothing
         float err2 = 0; // used in smoothing
@@ -433,7 +432,7 @@ public class Motor extends BasicMotor implements TachoMotor
          */
         synchronized void reset()
         {
-            curCnt = angle0 = tachoPort.getTachoCount();
+            curCnt = tachoPort.getTachoCount();
         }
 
         /**
@@ -602,7 +601,6 @@ public class Motor extends BasicMotor implements TachoMotor
                     now += delta;
                     long elapsed = now - baseTime;
                     int tachoCount = tachoPort.getTachoCount();
-                    int angle = tachoCount - angle0;
                     if (moving)
                     {
                         if (elapsed < accTime)
@@ -610,13 +608,13 @@ public class Motor extends BasicMotor implements TachoMotor
                             // We are still acclerating, calculate new position
                             curVelocity = baseVelocity + curAcc * elapsed / (1000);
                             curCnt = baseCnt + (baseVelocity + curVelocity) * elapsed / (2 * 1000);
-                            error = curCnt - angle;
+                            error = curCnt - tachoCount;
                         } else
                         {
                             // no longer acclerating, calculate new psotion
                             curVelocity = curTargetVelocity;
                             curCnt = baseCnt + accCnt + curVelocity * (elapsed - accTime) / 1000;
-                            error = curCnt - angle;
+                            error = curCnt - tachoCount;
                             // Check to see if the move is complete
                             if (curTargetVelocity == 0 && (pending || (Math.abs(error) < 2 && elapsed > accTime + 100) || elapsed > accTime + 500))
                             {
@@ -647,9 +645,15 @@ public class Motor extends BasicMotor implements TachoMotor
                     } else if (curHold)
                     {
                         // not moving, hold position
-                        error = curCnt - angle;
+                        error = curCnt - tachoCount;
                         //RConsole.println("hold " + curCnt + " " + angle);
                         calcPower(error, HOLD_P, HOLD_I, HOLD_D);
+                    }
+                    else
+                    {
+                        // Allow the motor to move freely
+                        curCnt = tachoCount;
+                        tachoPort.controlMotor(0, FLOAT);
                     }
                 }
                 //RConsole.println("" + elapsed + " " + (int)curVelocity + " " + (int)curCnt+ " " + absA);
