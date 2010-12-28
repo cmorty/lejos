@@ -23,7 +23,7 @@ public interface ArcMoveController extends MoveController {
 	public float getMinRadius();
 	
 	/**
-	 * Set the radius of the minimum turning circle
+	 * Set the radius of the minimum turning circle.
 	 * 
 	 * @param radius the radius in degrees
 	 */

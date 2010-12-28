@@ -46,7 +46,11 @@ import lejos.robotics.TachoMotor;
  * Note: if you are sure you do not want to use any other part of navigation you
  * can as well use "TachoPilot pilot = new TachoPilot(...)" instead of
  * "Pilot pilot = new TachoPilot(...)"
- **/
+ * 
+ * @deprecated  This class will disappear in NXJ version 1.0. Use an implementing class of MoveController instead. 
+ * @see lejos.robotics.navigation.MoveController
+  
+ */
 public class LegacyPilot {
 
 	/**
