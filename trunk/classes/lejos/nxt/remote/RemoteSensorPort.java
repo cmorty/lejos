@@ -187,7 +187,8 @@ public class RemoteSensorPort implements NXTProtocol, ADSensorPort, I2CPort {
 			byte [] ret = nxtCommand.LSRead((byte) id);
             if (ret == null) return -1;
             if (numBytes > ret.length) numBytes = ret.length;
-			System.arraycopy(ret, 0, buffer, offset, numBytes);
+            if (numBytes > 0)
+                System.arraycopy(ret, 0, buffer, offset, numBytes);
 		} catch (IOException ioe) {
 			return -1;
 		}
