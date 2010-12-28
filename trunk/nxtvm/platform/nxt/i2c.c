@@ -531,6 +531,8 @@ int i2c_enable(int port, int mode)
       p->ready_mask = p->sda_pin;
     else
       p->ready_mask = pinmask;
+    // Release whichever lines we can
+    *AT91C_PIOA_ODR = p->ready_mask;
     return 1;
   }
   return -1;
