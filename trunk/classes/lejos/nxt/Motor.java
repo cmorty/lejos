@@ -83,7 +83,7 @@ public class Motor extends BasicMotor implements TachoMotor
         port.setPWMMode(TachoMotorPort.PWM_BRAKE);
         reg = new Regulator2();
         reg.setDaemon(true);
-        reg.setPriority(Thread.MAX_PRIORITY - 1);
+        reg.setPriority(Thread.MAX_PRIORITY);
         reg.start();
     }
 
@@ -149,7 +149,7 @@ public class Motor extends BasicMotor implements TachoMotor
     @Override
     public void forward()
     {
-        reg.newMove(+speed, acceleration, +NO_LIMIT, true, false);
+        reg.newMove(speed, acceleration, +NO_LIMIT, true, false);
     }
 
     /**
@@ -158,7 +158,7 @@ public class Motor extends BasicMotor implements TachoMotor
     @Override
     public void backward()
     {
-        reg.newMove(-speed, acceleration, -NO_LIMIT, true, false);
+        reg.newMove(speed, acceleration, -NO_LIMIT, true, false);
     }
 
     /**
@@ -215,10 +215,7 @@ public class Motor extends BasicMotor implements TachoMotor
 
     public void rotateTo(int limitAngle, boolean immediateReturn)
     {
-        synchronized (reg)
-        {
-            reg.newMove((Math.round(reg.curCnt) <= limitAngle ? +speed : -speed), acceleration, limitAngle, true, !immediateReturn);
-        }
+        reg.newMove(speed, acceleration, limitAngle, true, !immediateReturn);
     }
 
     /**
@@ -422,7 +419,8 @@ public class Motor extends BasicMotor implements TachoMotor
         long accTime = 0;
         boolean moving = false;
         boolean pending = false;
-        int newVelocity = 0;
+        boolean checkLimit = false;
+        int newSpeed = 0;
         int newAcceleration = 0;
         int newLimit = 0;
         boolean newHold = true;
@@ -441,24 +439,25 @@ public class Motor extends BasicMotor implements TachoMotor
          * velocity up to an optional limit point. If a limit point is set this
          * method will be called again to initiate a controlled deceleration
          * to that point
-         * @param velocity
+         * @param speed
          * @param acceleration
          * @param limit
          * @param hold
          */
-        synchronized private void startSubMove(float velocity, float acceleration, int limit, boolean hold)
+        synchronized private void startSubMove(float speed, float acceleration, int limit, boolean hold)
         {
             //RConsole.println("Start " + velocity + " " + acceleration + " " + limit);
             float absAcc = Math.abs(acceleration);
             baseTime = now;
-            curTargetVelocity = velocity;
-            curAcc = velocity - curVelocity >= 0 ? absAcc : -absAcc;
-            accTime = Math.round(((velocity - curVelocity) / curAcc) * 1000);
+            curTargetVelocity = (limit - curCnt >= 0 ? speed : -speed);
+            curAcc = curTargetVelocity - curVelocity >= 0 ? absAcc : -absAcc;
+            accTime = Math.round(((curTargetVelocity - curVelocity) / curAcc) * 1000);
             accCnt = (curVelocity + curTargetVelocity) * accTime / (2 * 1000);
             baseCnt = curCnt;
             baseVelocity = curVelocity;
-            curLimit = (limit == -NO_LIMIT ? -limit : limit);
+            checkLimit = Math.abs(limit) != NO_LIMIT;
             curHold = hold;
+            curLimit = limit;
             moving = curTargetVelocity != 0 || baseVelocity != 0;
         }
 
@@ -481,23 +480,23 @@ public class Motor extends BasicMotor implements TachoMotor
          * Initiate a new move and optionally wait for it to complete.
          * If some other move is currently executing then ensure that this move
          * is terminated correctly and then start the new move operation.
-         * @param velocity
+         * @param speed
          * @param acceleration
          * @param limit
          * @param hold
          * @param waitComplete
          */
-        synchronized public void newMove(int velocity, int acceleration, int limit, boolean hold, boolean waitComplete)
+        synchronized public void newMove(int speed, int acceleration, int limit, boolean hold, boolean waitComplete)
         {
             // ditch any existing pending command
             pending = false;
             // Stop moves always happen now
-            if (velocity == 0)
+            if (speed == 0)
                 startSubMove(0, acceleration, NO_LIMIT, hold);
             else if (!moving)
             {
                 // not moving so we start a new move
-                startSubMove(velocity, acceleration, limit, hold);
+                startSubMove(speed, acceleration, limit, hold);
                 updateState(Math.round(curTargetVelocity), hold, false);
             }
             else
@@ -506,13 +505,14 @@ public class Motor extends BasicMotor implements TachoMotor
                 // the new request? We must ensure that the new move is in the
                 // same direction and that any stop will not exceed the current
                 // acceleration request.
-                float acc = (curVelocity*curVelocity)/(2*(limit - curCnt));
-                if (velocity*curVelocity >= 0 && Math.abs(acc) <= acceleration)
-                    startSubMove(velocity, acceleration, limit, hold);
+                float moveLen = limit - curCnt;
+                float acc = (curVelocity*curVelocity)/(2*(moveLen));
+                if (moveLen*curVelocity >= 0 && Math.abs(acc) <= acceleration)
+                    startSubMove(speed, acceleration, limit, hold);
                 else
                 {
                     // Save the requested move
-                    newVelocity = velocity;
+                    newSpeed = speed;
                     newAcceleration = acceleration;
                     newLimit = limit;
                     newHold = hold;
@@ -537,10 +537,10 @@ public class Motor extends BasicMotor implements TachoMotor
         {
             if (curTargetVelocity != 0)
             {
-                startSubMove((curTargetVelocity < 0 ? -newSpeed : +newSpeed), curAcc, curLimit, curHold);
+                startSubMove(newSpeed, curAcc, curLimit, curHold);
             }
             if (pending)
-                newVelocity = (newVelocity < 0 ? -speed : +speed);
+                this.newSpeed = newSpeed;
         }
 
         /**
@@ -551,7 +551,7 @@ public class Motor extends BasicMotor implements TachoMotor
         {
             if (curTargetVelocity != 0)
             {
-                startSubMove(curTargetVelocity, newAcc, curLimit, curHold);
+                startSubMove(Math.abs(curTargetVelocity), newAcc, curLimit, curHold);
             }
             if (pending)
                 newAcceleration = newAcc;
@@ -578,7 +578,7 @@ public class Motor extends BasicMotor implements TachoMotor
             if (pending)
             {
                 pending = false;
-                startSubMove((newLimit > curCnt ? 1 : -1)*newVelocity, newAcceleration, newLimit, newHold);
+                startSubMove(newSpeed, newAcceleration, newLimit, newHold);
                 updateState(Math.round(curTargetVelocity), curHold, false);
             }
             notifyAll();
@@ -636,7 +636,7 @@ public class Motor extends BasicMotor implements TachoMotor
                         }
                         calcPower(error, MOVE_P, MOVE_I, MOVE_D);
                         // If we have a move limit, check for time to start the deceleration stage
-                        if (curLimit != NO_LIMIT)
+                        if (checkLimit)
                         {
                             float acc = (curVelocity*curVelocity)/(2*(curLimit - curCnt));
                             if (Math.abs(acc) >= Math.abs(curAcc))
