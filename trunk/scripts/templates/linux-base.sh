@@ -36,14 +36,24 @@ else
 	NXJ_HOME="$NXJ_BIN/.."
 fi
 
+if [ -n "$LEJOS_NXT_JAVA_HOME" ]; then
+	JAVA="$LEJOS_NXT_JAVA_HOME/bin/java"
+	JAVAC="$LEJOS_NXT_JAVA_HOME/bin/javac"
+elif [ -n "$JAVA_HOME" ]; then
+	JAVA="$JAVA_HOME/bin/java"
+	JAVAC="$JAVA_HOME/bin/javac"
+else
+	JAVA="java"
+	JAVAC="javac"
+fi
+
 SEP=":"
 NXJ_FORCE32=""
 OS_KERNEL="$(uname -s)"
 
 if [ "${OS_KERNEL:0:6}" == "CYGWIN" ]; then
 	SEP=";"
-fi
-if [ "${OS_KERNEL}" == "Darwin" ]; then
+elif [ "${OS_KERNEL}" == "Darwin" ]; then
     NXJ_FORCE32="-d32"
 fi
 

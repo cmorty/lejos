@@ -10,6 +10,9 @@
 	<loadfile property="template.windows" srcFile="templates/windows-base.bat"/>
 	
 	
+	<!--
+		Linux macros
+	-->
 	<macrodef name="linux-run">
 		<text name="command" trim="true"/>
 		<attribute name="file"/>
@@ -29,7 +32,7 @@
 		<attribute name="class"/>
 		<sequential>
 			<linux-run file="@{file}">
-				java $NXJ_FORCE32 -Dnxj.home="$NXJ_HOME" -DCOMMAND_NAME="$NXJ_COMMAND" -Djava.library.path="$NXJ_BIN" -classpath "$NXJ_CP_PC" @{class} @{args} "$@"
+				"$JAVA" $NXJ_FORCE32 -Dnxj.home="$NXJ_HOME" -DCOMMAND_NAME="$NXJ_COMMAND" -Djava.library.path="$NXJ_BIN" -classpath "$NXJ_CP_PC" @{class} @{args} "$@"
 			</linux-run>
 		</sequential>
 	</macrodef>
@@ -45,6 +48,9 @@ ${template.linux.parser}
 		</sequential>
 	</macrodef>
 	
+	<!--
+		Windows macros
+	-->
 	<macrodef name="win-run">
 		<text name="command" trim="true"/>
 		<attribute name="file"/>
@@ -93,13 +99,13 @@ ${template.linux.parser}
 		</linux-tool>
 		
 		<linux-run file="nxjc">
-			javac -bootclasspath "$NXJ_CP_NXT" -extdirs "" "$@"
+			"$JAVAC" -bootclasspath "$NXJ_CP_NXT" -extdirs "" "$@"
 		</linux-run>
 		<linux-parser file="nxjpcc">
-			javac -classpath "$NXJ_CMDLINE_CP" "${NXJ_CMDLINE[@]}"
+			"$JAVAC" -classpath "$NXJ_CMDLINE_CP" "${NXJ_CMDLINE[@]}"
 		</linux-parser>
 		<linux-parser file="nxjpc">
-			java $NXJ_FORCE32 -Dnxj.home="$NXJ_HOME" -Djava.library.path="$NXJ_CMDLINE_LP" -classpath "$NXJ_CMDLINE_CP" "${NXJ_CMDLINE[@]}"
+			"$JAVA" $NXJ_FORCE32 -Dnxj.home="$NXJ_HOME" -Djava.library.path="$NXJ_CMDLINE_LP" -classpath "$NXJ_CMDLINE_CP" "${NXJ_CMDLINE[@]}"
 		</linux-parser>
 	</target>
 	
