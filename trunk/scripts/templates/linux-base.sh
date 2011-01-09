@@ -18,9 +18,9 @@ function my_readlink() {
 	my_resolve "$TMP1" "$TMP2"
 }
 function my_build_cp() {
-	local TMP_CP="$(find "$1" -name "*.jar" -printf "$SEP%p")"
-	# remove first $SEP 
-	echo ${TMP_CP:1}
+	local TMP_CP="$(find "$1" -name "*.jar" -print0 | tr "\0" "$SEP")"
+	# remove last $SEP 
+	echo ${TMP_CP:(-1)}
 }
 
 NXJ_COMMAND="$(basename -- "$0")"
