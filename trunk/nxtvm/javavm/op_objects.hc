@@ -34,7 +34,7 @@ OPCODE(OP_GETSTATIC)
     tempInt = dispatch_static_initializer (get_class_record (pc[0]), pc - 1);
     LOAD_REGS();
     if(tempInt)
-      DISPATCH;
+      DISPATCH_CHECKED;
   }
   push_word(*(((STACKWORD *)get_static_state_base()) + pc[1]));
   pc += 2;
@@ -50,7 +50,7 @@ OPCODE(OP_PUTSTATIC)
     tempInt = dispatch_static_initializer (get_class_record (pc[0]), pc - 1);
     LOAD_REGS();
     if(tempInt)
-      DISPATCH;
+      DISPATCH_CHECKED;
   }
   *(((STACKWORD *)get_static_state_base()) + pc[1]) = pop_word();
   pc += 2;
@@ -68,7 +68,7 @@ MULTI_OPCODE(OP_GETSTATIC_4)
       tempInt = dispatch_static_initializer (get_class_record (pc[0]), pc - 1);
       LOAD_REGS();
       if(tempInt)
-        DISPATCH;
+        DISPATCH_CHECKED;
     }
     tempStackWord = ((STATICFIELD *) get_static_fields_base())[((*(pc-1) - OP_GETSTATIC_1)*256 + pc[1])];
     tempWordPtr = (STACKWORD *)(get_static_state_base() + get_static_field_offset (tempStackWord));
@@ -98,7 +98,7 @@ MULTI_OPCODE(OP_PUTSTATIC_4)
       tempInt = dispatch_static_initializer (get_class_record (pc[0]), pc - 1);
       LOAD_REGS();
       if(tempInt)
-        DISPATCH;
+        DISPATCH_CHECKED;
     }
     tempStackWord = ((STATICFIELD *) get_static_fields_base())[((*(pc-1) - OP_PUTSTATIC_1)*256 + pc[1])];
     tempWordPtr = (STACKWORD *)(get_static_state_base() + get_static_field_offset (tempStackWord));
