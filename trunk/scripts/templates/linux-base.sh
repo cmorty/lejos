@@ -20,7 +20,7 @@ function my_readlink() {
 function my_build_cp() {
 	local TMP_CP="$(find "$1" -name "*.jar" -print0 | tr "\0" "$SEP")"
 	# remove last $SEP 
-	echo ${TMP_CP:(-1)}
+	echo ${TMP_CP%?}
 }
 
 NXJ_COMMAND="$(basename -- "$0")"
