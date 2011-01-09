@@ -99,8 +99,25 @@ public class Button implements ListenerCaller
   }
 
   /**
-   * waits for some button to be pressed (and released).
-   * If a button is down when called, waits for a new press;
+   * Wait for all of the buttons to have been released or for the end time.
+   * Do not beep if new buttons are pressed.
+   * @param event event to use for waiting
+   * @param end end time used for timeout
+   */
+  private static void waitAllReleased(NXTEvent event, long end)
+  {
+    for(;;)
+    {
+      curButtons = getButtons();
+      if (curButtons == 0) return;
+      if (event.waitEvent(curButtons << RELEASE_EVENT_SHIFT, end - System.currentTimeMillis()) < 0) return;
+    }
+  }
+
+  /**
+   * Waits for some button to be pressed (and released).
+   * If any buttons are down when called, this must be released before the press
+   * will be sensed.
    * @param timeout The maximum number of milliseconds to wait.
    * @return the ID of that button, the same as readButtons(); 0 if timeout expires
    */ 
@@ -109,17 +126,13 @@ public class Button implements ListenerCaller
     NXTEvent event = NXTEvent.allocate(NXTEvent.BUTTONS, 0, 10);
     int button = 0;
     long end = (timeout == 0 ? 0x7fffffffffffffffL : System.currentTimeMillis() + timeout);
-    int down = readButtons();
-    if (down != 0)
+    waitAllReleased(event, end);
+    int down = event.waitEvent(ID_ALL << PRESS_EVENT_SHIFT, end - System.currentTimeMillis());
+    if (down > 0)
     {
-        event.waitEvent(down << RELEASE_EVENT_SHIFT, end - System.currentTimeMillis());
-        readButtons();
-    }
-    if (event.waitEvent(ID_ALL << PRESS_EVENT_SHIFT, end - System.currentTimeMillis()) > 0)
-    {
-            button = readButtons();
-            event.waitEvent(button << RELEASE_EVENT_SHIFT, NXTEvent.WAIT_FOREVER);
-            readButtons();
+      button = down >> PRESS_EVENT_SHIFT;
+      readButtons();
+      waitAllReleased(event, NXTEvent.WAIT_FOREVER);
     }
     event.free();
     return button;             
