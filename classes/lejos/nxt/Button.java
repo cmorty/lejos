@@ -171,23 +171,28 @@ public class Button implements ListenerCaller
    */
   static native int getButtons();
 
-  /**
-   * <i>Low-level API</i> that reads status of buttons.
-   * @return An integer with possibly some bits set: 0x01 (ENTER button pressed)
-   * 0x02 (LEFT button pressed), 0x04 (RIGHT button pressed), 0x08 (ESCAPE button pressed).
-   * If all buttons are released, this method returns 0.
-   */
-  public static int readButtons()
-  {
-      int newButtons = getButtons();
-      if (newButtons != curButtons && clickVol != 0)
-      {
-          int tone = clickFreq[newButtons];
-          if (tone != 0) Sound.playTone(tone, clickLen, -clickVol);
-      }
-      curButtons = newButtons;
-      return newButtons;
-  }
+	/**
+	 * <i>Low-level API</i> that reads status of buttons.
+	 * 
+	 * @return An integer with possibly some bits set: 0x01 (ENTER button pressed)
+	 * 0x02 (LEFT button pressed), 0x04 (RIGHT button pressed), 0x08 (ESCAPE button pressed).
+	 * If all buttons are released, this method returns 0.
+	 */
+	public static synchronized int readButtons()
+	{
+		int newButtons = getButtons();
+		if (newButtons != curButtons)
+		{
+			curButtons = newButtons;
+			if (clickVol != 0)
+			{
+				int tone = clickFreq[newButtons];
+				if (tone != 0)
+					Sound.playTone(tone, clickLen, -clickVol);
+			}
+		}
+		return newButtons;
+	}
 
   /**
    * Call Button Listeners. Used by ListenerThread.
