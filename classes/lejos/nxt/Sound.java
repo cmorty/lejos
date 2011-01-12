@@ -292,7 +292,7 @@ public class Sound
      * Queue a series of PCM samples to play at the
      * specified volume and sample rate.
      * Returns the number of samples that have actually been queued.
-     * If the queue is full, the method exists immediately and returns 0.
+     * If the queue is full, the method exits immediately and returns 0.
      * 
      * @param data Buffer containing the samples
      * @param offset Offset of the first sample in the buffer
