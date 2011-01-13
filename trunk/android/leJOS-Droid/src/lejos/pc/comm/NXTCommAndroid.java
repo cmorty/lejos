@@ -52,8 +52,7 @@ public class NXTCommAndroid implements NXTComm {
 			}
 			//Log.d(TAG, "Connection success -- is connected to " + mmDevice.getName());
 			yield(); // allow main NXTCommAndroid thread to read connected
-			// status and finish NXTComm setup
-
+			
 		}
 
 		private void relyConnectionFailure(IOException e) {
@@ -303,26 +302,6 @@ public class NXTCommAndroid implements NXTComm {
 		System.arraycopy(data2, 0, data, l1, l2);
 		return data;
 	}
-
-	//	public void displayToastOnUIThread(Message message) {
-	//		mUIMessageHandler.sendMessage(message);
-	//	}
-	//
-	//	public void displayToastOnUIThread(String message) {
-	//		Message message_holder = formMessage(message);
-	//		message_holder.what = TOAST;
-	//		mUIMessageHandler.sendMessage(message_holder);
-	//	}
-
-	//	public void sendMessageToUIThread(String message) {
-	//		Message message_holder = formMessage(message);
-	//		message_holder.what = MESSAGE;
-	//		mUIMessageHandler.sendMessage(message_holder);
-	//	}
-
-	//	public void sendMessageToUIThread(Message message) {
-	//		mUIMessageHandler.sendMessage(message);
-	//	}
 
 	public InputStream getInputStream() {
 		return new NXTCommInputStream(this);
