@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="hello">こにちは</string>
+    <string name="app_name">leJOS-Droid</string>
+    <string name="test_1">TachoCount</string>
+    <string name="test_2">BTSend</string>
+    <string name="test_3">RCNavigationControl</string>
+    
+    <!--  DeviceListActivity -->
+    <string name="scanning">scanning for devices...</string>
+    <string name="select_device">Select a device to connect</string>
+    <string name="none_paired">No devices have been paired</string>
+    <string name="none_found">No devices found</string>
+    <string name="title_paired_devices">Paired Devices</string>
+    <string name="title_other_devices">Other Available Devices</string>
+    <string name="button_scan">Scan for devices</string>
+    <string name="pairing_message">After pairing, press menu and connect.</string>
+    <string name="wait_till_bt_on">Turning Bluetooth on (to connect to your robot)</string>
+    <string name="bt_off_message">Bluetooth turned off. See you later!</string>
+    
+<string name="connect_tab">Connect</string>
+<string name="command_tab">Commands</string>
+<string name="xyz_tab">Pos. and Heading</string>
+<string name="name_label">Name</string>
+<string name="address_label">Address</string>
+<string name="connect_button">Connect</string>
+<string name="x_label">          X:</string>
+<string name="y_label">          Y:</string>
+<string name="heading_label">   Heading:</string>
+<string name="rc_nav_control">RCNavigationControl</string>
+<string name="status_label">Status: </string>
+<string name="goto_button">GoTo XY</string>
+<string name="rotate_button">Rotate</string>
+<string name="travel_button">Travel</string>
+</resources>
