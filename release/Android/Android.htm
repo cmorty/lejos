@@ -35,8 +35,7 @@
 			<div class="linkAHEAD2"><a href="#3.1">TachoCount</a></div>
 			<div class="linkAHEAD2"><a href="#3.2">BTSend</a></div>
 			<div class="linkAHEAD2"><a href="#3.3">RCNagivationControl</a></div>
-			<div class="linkAHEAD"><a href="#2">Application
-			Fundamentals</a></div>
+			<div class="linkAHEAD"><a href="#2">Application Fundamentals</a></div>
 			<div class="linkAHEAD2"><a href="#2.1">Connection</a></div>
 			<div class="linkAHEAD2"><a href="#2.2">Threading</a></div>
 			<div class="linkAHEAD2"><a href="#2.3">Messaging</a></div>
@@ -97,6 +96,7 @@
 			</p>
 			<img src="build_path.jpg" />
 			</p>
+			<p>The LeJOSDroid project can be imported into Eclipse by selecting File --> Import --> General --> Existing Projects into Workspace and selecting the android/leJOS-Droid folder</p>
 			<a id="1.3" name="1.3"></a>
 			<h5>cache file</h5>
 			<p>leJOS uses a nxj.cache file to record the MAC addresses of
@@ -130,10 +130,12 @@
 			important to understand the modifications required by <a href="#2">Android
 			Application Fundamentals</a></p>
 
-			<p>It can be installed with <a
+			<p>The LeJOSDroid.apk can be installed with <a
 				href="http://developer.android.com/guide/developing/tools/adb.html#move"
 				target="_blank">the adb tool in
-			your-android-sdk-location/platform-tools/.</a></p>
+			your-android-sdk-location/platform-tools/.</a>  Please uninstall the distributed LeJOSDroid.apk from your Android device (via Settings --> Applications --> Manage Applications) before reinstalling a new LeJOSDroid.apk or there will be an error about conflicting signatures.  <a
+				href="http://developer.android.com/guide/publishing/app-signing.html"
+				target="_blank">How to sign an Application</a>.</p>
 
 
 			<a id="3.1" name="3.1"></a>
@@ -172,7 +174,6 @@
 			<h5>Connection</h5>
 			<p>You will need to pair with the NXT from your Android device
 			before being able to connect.</p>
-			<p>DOCUMENT the NXJCACHE</p>
 			<p>leJOS connection is done via the standard <code>lejos.pc.comm.NXTConnector</code>
 			method. leJOS will detect the Android environment and attempt to load
 			<code>lejos.pc.comm.NXTCommAndroid</code>. NXTCommAndroid is not
@@ -309,12 +310,11 @@
 			the RCNavigationControl instance).
 			<div class="CodeBox"><pre><code>
  public class RCNavComms{ //example for Android
-     RCNavigationControl control;
+     Handler mUIMessageHandler;
 
-     public RCNavComms(RCNavigationControl control)
-     {
-         this.control = control;
-     }
+     public RCNavComms(Handler mUIMessageHandler){
+         this.mUIMessageHandler=mUIMessageHandler;
+    }
      
     public void sendPosToUIThread(float x, float y, float h) {
   	     float[] pos= {x,y,h};
@@ -370,7 +370,7 @@
 			Handler and passing in an instance to use to update the UI, it's very
 			true that Threads will run briefly as the UI thread if you try to
 			update the UI by passing in an instance and modifying the View (as
-			done in the PC or MAC example). Views in Android are decidedly single
+			would be done by using the PC or MAC example). Views in Android are decidedly single
 			threaded and sanity checks may not catch what you are doing, and thus
 			lead to unpredictable behavior. Also, there is a risk of <a
 				href="http://android-developers.blogspot.com/2009/01/avoiding-memory-leaks.html"
@@ -385,9 +385,9 @@
 				target="_blank">Android Activity lifecycle </a> and should be
 			understood before creating your own application.</p>
 			<p>For instance, some essential setup is actually done in
-			RCNavigationControl in onResume() instead of onCreate(). This is to
+			<code>RCNavigationControl</code> in <code>onResume()</code> instead of <code>onCreate()</code>. This is to
 			enable correct functioning when the application resumes from
-			onPause().
+			<code>onPause()</code>.
 
 			<div class="CodeBox"><pre><code> 
        	@Override
