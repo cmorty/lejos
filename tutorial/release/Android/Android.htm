@@ -29,13 +29,15 @@
 			<div class="nolinkLESSON">Using leJOS with Android</div>
 			<div class="linkAHEAD"><a href="#1">Prerequisites</a></div>
 			<div class="linkAHEAD2"><a href="#1.1">Android SDK</a></div>
-			<div class="linkAHEAD2"><a href="#1.2">Eclipse Plugin</a></div>
-			<div class="linkAHEAD2"><a href="#1.3">Device Setup</a></div>
+			<div class="linkAHEAD2"><a href="#1.2">IDE Plugins</a></div>
+			<div class="linkAHEAD2"><a href="#1.3">Sdcard Cache File</a></div>
+			<div class="linkAHEAD2"><a href="#1.4">Device Setup</a></div>
 			<div class="linkAHEAD"><a href="#3">LeJOSDroid Samples</a></div>
 			<div class="linkAHEAD2"><a href="#3.1">TachoCount</a></div>
 			<div class="linkAHEAD2"><a href="#3.2">BTSend</a></div>
 			<div class="linkAHEAD2"><a href="#3.3">RCNagivationControl</a></div>
-			<div class="linkAHEAD"><a href="#2">Application Fundamentals</a></div>
+			<div class="linkAHEAD"><a href="#2">Application
+			Fundamentals</a></div>
 			<div class="linkAHEAD2"><a href="#2.1">Connection</a></div>
 			<div class="linkAHEAD2"><a href="#2.2">Threading</a></div>
 			<div class="linkAHEAD2"><a href="#2.3">Messaging</a></div>
@@ -83,12 +85,19 @@
 				href="http://developer.android.com/sdk/installing.html"
 				target="_blank">install it</a>.</p>
 			<a id="1.2" name="1.2"></a>
-			<h5>Eclipse Plugin</h5>
-			<p>It is also suggested to use the <a
+			<h5>IDE Plugins</h5>
+			<p>There is an <a
 				href="http://developer.android.com/sdk/eclipse-adt.html"
-				target="_blank">Eclipse Plugin</a> to simplify building .apks.</p>
-			<p>To use leJOS in your Android project within Eclipse, make
-			sure:
+				target="_blank">Eclipse Plugin</a> or a <a
+				href="http://kenai.com/projects/nbandroid/" target="_blank">Netbeans
+			Plugin</a> to simplify developing and building .apks. The <a href="#3">LeJOSDroid
+			sample project</a> was set up using the Eclipse Android Plugin and can be
+			imported into Eclipse by selecting File --> Import --> General -->
+			Existing Projects into Workspace and selecting the
+			android/leJOS-Droid folder</p>
+			</p>
+			<p>To use leJOS in your own Android project within Eclipse (same
+			principles apply for Netbeans), make sure:
 			<li>the lejos pccomms.jar (.9 or later) is in your project/libs
 			dir</li>
 			<img src="libs.jpg" />
@@ -96,18 +105,20 @@
 			</p>
 			<img src="build_path.jpg" />
 			</p>
-			<p>The LeJOSDroid project can be imported into Eclipse by selecting File --> Import --> General --> Existing Projects into Workspace and selecting the android/leJOS-Droid folder</p>
+
 			<a id="1.3" name="1.3"></a>
-			<h5>cache file</h5>
+			<h5>Sdcard Cache File</h5>
 			<p>leJOS uses a nxj.cache file to record the MAC addresses of
 			paired NXT devices. Running the sample LeJOSDroid.apk will set this
 			up for you. To enable this otherwise, create a <code>leJOS</code>
 			directory in the root dir of your Android's sdcard. Without this
 			cache file, leJOS will iterate through the list of paired devices on
 			your Android handset and connect to the first NXT it finds.</p>
-			<h5>Handset Debugging</h5>
+			<a id="1.4" name="1.4"></a>
+			<h5>Device Setup</h5>
 			<p>To develop with an Android device, which is necessary for
-			anything involving a connection to the NXT, you will need to <a
+			anything involving a BlueTooth connection to the NXT, you will need
+			to <a
 				href="http://developer.android.com/guide/developing/device.html#setting-up"
 				target="_blank">set up your Android device for debugging</a>. The
 			Android emulator can be used to develop the GUI of your application,
@@ -133,7 +144,11 @@
 			<p>The LeJOSDroid.apk can be installed with <a
 				href="http://developer.android.com/guide/developing/tools/adb.html#move"
 				target="_blank">the adb tool in
-			your-android-sdk-location/platform-tools/.</a>  Please uninstall the distributed LeJOSDroid.apk from your Android device (via Settings --> Applications --> Manage Applications) before reinstalling a new LeJOSDroid.apk or there will be an error about conflicting signatures.  <a
+			your-android-sdk-location/platform-tools/.</a> Please uninstall the
+			distributed LeJOSDroid.apk from your Android device (via Settings -->
+			Applications --> Manage Applications) before reinstalling a new
+			LeJOSDroid.apk or there will be an error about conflicting
+			signatures. <a
 				href="http://developer.android.com/guide/publishing/app-signing.html"
 				target="_blank">How to sign an Application</a>.</p>
 
@@ -144,17 +159,17 @@
 			Nothing needs to be uploaded to or run on your brick.</p>
 			<a id="3.2" name="3.2"></a>
 			<h5>BTSend</h5>
-			<p>The BTSend example requires that samples/BTRecieve be uploaded
-			to your NXT running leJOS firmware. See the section on flashing the
-			leJOS firmware in <a href="../Preliminaries/GettingStarted.htm">
-			getting started</a> for your OS, and <a
-				href="../Preliminaries/CompileAndRun.htm"> compiling and running
-			leJOS programs</a> on the NXT.</p>
+			<p>The BTSend example requires that samples/BTRecieve must be
+			uploaded and running on a NXT with leJOS firmware. See the section on
+			flashing the leJOS firmware in <a
+				href="../Preliminaries/GettingStarted.htm"> getting started</a> for
+			your OS, and <a href="../Preliminaries/CompileAndRun.htm">
+			compiling and running leJOS programs</a> on the NXT.</p>
 
 			<a id="3.3" name="3.3"></a>
 			<h5>RCNavigationControl</h5>
 			<p>The BTSend example requires that samples/RCNavigator must be
-			upload to your NXT running leJOS firmware. See the section on
+			uploaded and running on a NXT with leJOS firmware. See the section on
 			flashing the leJOS firmware in <a
 				href="../Preliminaries/GettingStarted.htm"> getting started</a> for
 			your OS, and <a href="../Preliminaries/CompileAndRun.htm">
@@ -269,7 +284,7 @@
 				target="_blank">Message Handlers</a> or <a
 				href="http://android.com/docs/reference/java/util/concurrent/BlockingQueue.html"
 				target="_blank">BlockingQueues</a> must be used to exchange data
-			between threads as no direct communication is possible.</p>
+			between threads as direct communication is not advised.</p>
 			<p>RCNavigationControl is extremely illustrative of this point.
 			In the original <code>pcsamples/RCNavigationControl</code>, the <code>RCNavComms</code>
 			class is created while passing in the <code>RCNavigationControl</code>
@@ -370,24 +385,25 @@
 			Handler and passing in an instance to use to update the UI, it's very
 			true that Threads will run briefly as the UI thread if you try to
 			update the UI by passing in an instance and modifying the View (as
-			would be done by using the PC or MAC example). Views in Android are decidedly single
-			threaded and sanity checks may not catch what you are doing, and thus
-			lead to unpredictable behavior. Also, there is a risk of <a
+			would be done by using the PC or MAC example). Views in Android are
+			decidedly single threaded and sanity checks may not catch what you
+			are doing, and thus lead to unpredictable behavior. Also, there is a
+			risk of <a
 				href="http://android-developers.blogspot.com/2009/01/avoiding-memory-leaks.html"
 				target="_blank">memory leaks</a>.</p>
 
 			<p><a href="#top">Back to top</a></p>
 			<a id="2.4" name="2.4"></a>
-			<h5>LifeCycle basics</h5>
+			<h5>LifeCycle Basics</h5>
 			<p>Many of the LeJOSDroid methods such as <code>onCreate(Bundle
 			b), onPause(), onResume()</code> are part of the <a
 				href=" http://developer.android.com/guide/topics/fundamentals.html#actlife"
 				target="_blank">Android Activity lifecycle </a> and should be
 			understood before creating your own application.</p>
-			<p>For instance, some essential setup is actually done in
-			<code>RCNavigationControl</code> in <code>onResume()</code> instead of <code>onCreate()</code>. This is to
-			enable correct functioning when the application resumes from
-			<code>onPause()</code>.
+			<p>For instance, some essential setup is actually done in <code>RCNavigationControl</code>
+			in <code>onResume()</code> instead of <code>onCreate()</code>. This
+			is to enable correct functioning when the application resumes from <code>onPause()</code>.
+
 
 			<div class="CodeBox"><pre><code> 
        	@Override
