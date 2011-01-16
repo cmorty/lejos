@@ -48,16 +48,23 @@ public class Motor extends BasicMotor implements TachoMotor
 {
 
     protected static final int NO_LIMIT = 0x7fffffff;
-    protected final Regulator2 reg;
+    public final Regulator reg;
     protected TachoMotorPort tachoPort;
     protected boolean stalled = false;
     protected TachoMotorListener listener = null;
-    protected int speed = 360;
-    protected int acceleration = 9000;
+    protected float speed = 360;
+    protected int acceleration = 6000;
     protected int limitAngle = 0;
     protected int stallLimit = 50;
     protected int stallCnt = 0;
-    protected boolean runRegulator = true;
+    protected static final Controller cont = new Controller();
+
+    static {
+        // Start the single controller thread
+        cont.setPriority(Thread.MAX_PRIORITY);
+        cont.setDaemon(true);
+        cont.start();
+    }
 
     /**
      * Motor A.
@@ -81,18 +88,19 @@ public class Motor extends BasicMotor implements TachoMotor
         super();
         tachoPort = port;
         port.setPWMMode(TachoMotorPort.PWM_BRAKE);
-        reg = new Regulator2();
-        reg.setDaemon(true);
-        reg.setPriority(Thread.MAX_PRIORITY);
-        reg.start();
+        reg = new Regulator();
     }
 
     /**
-     * Stops the motor regulation thread associated with this motor.
+     * Removes this motor from the motor regulation system. After this call
+     * the motor will be in float mode. Note calling any
+     * of the high level move operations (forward, rotate etc.), will
+     * automatically enable regulation.
      */
     public void shutdown()
     {
-        runRegulator = false;
+        // Putting the motor into float mode disbales regulation.
+        flt();
     }
 
     /**
@@ -133,7 +141,7 @@ public class Motor extends BasicMotor implements TachoMotor
      * Returns the current position that the motor regulator is trying to
      * maintain. Normally this will be the actual position of the motor and will
      * be the same as the value returned by getTachoCount(). However in some
-     * circumstances (motors that are in the process of stalling, or motors
+     * circumstances (activeMotors that are in the process of stalling, or activeMotors
      * that have been forced out of position), the two values may differ. Note
      * this value is not valid if regulation has been terminated.
      * @return the current position calculated by the regulator.
@@ -233,6 +241,20 @@ public class Motor extends BasicMotor implements TachoMotor
     }
 
     /**
+     * Sets desired motor speed , in degrees per second;
+     * The maximum reliably sustainable velocity is  100 x battery voltage under
+     * moderate load, such as a direct drive robot on the level.
+     * If the parameter is larger than that, the maximum sustainable value will
+     * be used instead.
+     * @param speed value in degrees/sec
+     */
+    public void setSpeed(float speed)
+    {
+        this.speed = speed;
+        reg.adjustSpeed(speed);
+    }
+
+    /**
      * sets the acceleration rate of this motor in degrees/sec/sec <br>
      * The default value is 1000; Smaller values will make speeding up. or stopping
      * at the end of a rotate() task, smoother;
@@ -322,7 +344,7 @@ public class Motor extends BasicMotor implements TachoMotor
      */
     public int getSpeed()
     {
-        return speed;
+        return Math.round(speed);
     }
 
     /**
@@ -393,12 +415,18 @@ public class Motor extends BasicMotor implements TachoMotor
      * Once the motor stops, the final position is held using the same PID control
      * mechanism (with slightly different parameters), as that used for movement.
      **/
-    protected class Regulator2 extends Thread
+    protected class Regulator
     {
         // PID constants for move and for hold
-        static final float MOVE_P = 4f;
+        // Old values
+        //static final float MOVE_P = 4f;
+        //static final float MOVE_I = 0.04f;
+        //static final float MOVE_D = 32f;
+        // New values
+        //static final float MOVE_P = 7f;
+        static final float MOVE_P = 6f;
         static final float MOVE_I = 0.04f;
-        static final float MOVE_D = 32f;
+        static final float MOVE_D = 22f;
         static final float HOLD_P = 2f;
         static final float HOLD_I = 0.04f;
         static final float HOLD_D = 8f;
@@ -420,17 +448,22 @@ public class Motor extends BasicMotor implements TachoMotor
         boolean moving = false;
         boolean pending = false;
         boolean checkLimit = false;
-        int newSpeed = 0;
+        float newSpeed = 0;
         int newAcceleration = 0;
         int newLimit = 0;
         boolean newHold = true;
+        int tachoCnt;
+        public int power;
+        int mode;
+        boolean active = false;
 
         /**
          * Reset the tachometer readings
          */
         synchronized void reset()
         {
-            curCnt = tachoPort.getTachoCount();
+            curCnt = tachoCnt = tachoPort.getTachoCount();
+            now = System.currentTimeMillis();
         }
 
         /**
@@ -446,8 +479,8 @@ public class Motor extends BasicMotor implements TachoMotor
          */
         synchronized private void startSubMove(float speed, float acceleration, int limit, boolean hold)
         {
-            //RConsole.println("Start " + velocity + " " + acceleration + " " + limit);
             float absAcc = Math.abs(acceleration);
+            checkLimit = Math.abs(limit) != NO_LIMIT;
             baseTime = now;
             curTargetVelocity = (limit - curCnt >= 0 ? speed : -speed);
             curAcc = curTargetVelocity - curVelocity >= 0 ? absAcc : -absAcc;
@@ -455,7 +488,6 @@ public class Motor extends BasicMotor implements TachoMotor
             accCnt = (curVelocity + curTargetVelocity) * accTime / (2 * 1000);
             baseCnt = curCnt;
             baseVelocity = curVelocity;
-            checkLimit = Math.abs(limit) != NO_LIMIT;
             curHold = hold;
             curLimit = limit;
             moving = curTargetVelocity != 0 || baseVelocity != 0;
@@ -486,8 +518,13 @@ public class Motor extends BasicMotor implements TachoMotor
          * @param hold
          * @param waitComplete
          */
-        synchronized public void newMove(int speed, int acceleration, int limit, boolean hold, boolean waitComplete)
+        synchronized public void newMove(float speed, int acceleration, int limit, boolean hold, boolean waitComplete)
         {
+            if (!active)
+            {
+                cont.addMotor(Motor.this);
+                active = true;
+            }
             // ditch any existing pending command
             pending = false;
             // Stop moves always happen now
@@ -533,7 +570,7 @@ public class Motor extends BasicMotor implements TachoMotor
          * regulator.
          * @param newSpeed new target speed.
          */
-        synchronized void adjustSpeed(int newSpeed)
+        synchronized void adjustSpeed(float newSpeed)
         {
             if (curTargetVelocity != 0)
             {
@@ -572,7 +609,6 @@ public class Motor extends BasicMotor implements TachoMotor
                 curVelocity = 0;
                 stallCnt = 0;
                 startSubMove(0, 0, NO_LIMIT, curHold);
-                //RConsole.println("Stall detected");
             }
             // if we have a new move, go start it
             if (pending)
@@ -587,80 +623,64 @@ public class Motor extends BasicMotor implements TachoMotor
         /**
          * Monitors time and tachoCount to regulate velocity and stop motor rotation at limit angle
          */
-        @Override
-        public void run()
+        synchronized void regulateMotor(long delta)
         {
-            now = System.currentTimeMillis();
-            baseTime = now;
-            while (runRegulator)
+            float error;
+            now += delta;
+            long elapsed = now - baseTime;
+            if (moving)
             {
-                synchronized (this)
+                if (elapsed < accTime)
                 {
-                    float error;
-                    long delta = System.currentTimeMillis() - now;
-                    now += delta;
-                    long elapsed = now - baseTime;
-                    int tachoCount = tachoPort.getTachoCount();
-                    if (moving)
+                    // We are still acclerating, calculate new position
+                    curVelocity = baseVelocity + curAcc * elapsed / (1000);
+                    curCnt = baseCnt + (baseVelocity + curVelocity) * elapsed / (2 * 1000);
+                    error = curCnt - tachoCnt;
+                } else
+                {
+                    // no longer acclerating, calculate new psotion
+                    curVelocity = curTargetVelocity;
+                    curCnt = baseCnt + accCnt + curVelocity * (elapsed - accTime) / 1000;
+                    error = curCnt - tachoCnt;
+                    // Check to see if the move is complete
+                    if (curTargetVelocity == 0 && (pending || (Math.abs(error) < 2 && elapsed > accTime + 100) || elapsed > accTime + 500))
                     {
-                        if (elapsed < accTime)
-                        {
-                            // We are still acclerating, calculate new position
-                            curVelocity = baseVelocity + curAcc * elapsed / (1000);
-                            curCnt = baseCnt + (baseVelocity + curVelocity) * elapsed / (2 * 1000);
-                            error = curCnt - tachoCount;
-                        } else
-                        {
-                            // no longer acclerating, calculate new psotion
-                            curVelocity = curTargetVelocity;
-                            curCnt = baseCnt + accCnt + curVelocity * (elapsed - accTime) / 1000;
-                            error = curCnt - tachoCount;
-                            // Check to see if the move is complete
-                            if (curTargetVelocity == 0 && (pending || (Math.abs(error) < 2 && elapsed > accTime + 100) || elapsed > accTime + 500))
-                            {
-                                //RConsole.println("end error " + error + " time " + (elapsed - accTime) + " target " + curCnt + " base " + baseCnt);
-                                endMove(false);
-                            }
-                        }
-                        //if (curCnt > 10000)
-                        //RConsole.println("cc " + curCnt + " t " + elapsed + " cs " + curVelocity + " at " + accTime + " curAcc " + curAcc);
-                        // check for stall
-                        if (Math.abs(error) > stallLimit)
-                        {
-                            baseTime += delta;
-                            if (stallCnt++ > 1000) endMove(true);
-                        }
-                        else
-                        {
-                            stallCnt /= 2;
-                        }
-                        calcPower(error, MOVE_P, MOVE_I, MOVE_D);
-                        // If we have a move limit, check for time to start the deceleration stage
-                        if (checkLimit)
-                        {
-                            float acc = (curVelocity*curVelocity)/(2*(curLimit - curCnt));
-                            if (Math.abs(acc) >= Math.abs(curAcc))
-                                startSubMove(0, acc, NO_LIMIT, curHold);
-                        }
-                    } else if (curHold)
-                    {
-                        // not moving, hold position
-                        error = curCnt - tachoCount;
-                        //RConsole.println("hold " + curCnt + " " + angle);
-                        calcPower(error, HOLD_P, HOLD_I, HOLD_D);
-                    }
-                    else
-                    {
-                        // Allow the motor to move freely
-                        curCnt = tachoCount;
-                        tachoPort.controlMotor(0, FLOAT);
+                        endMove(false);
                     }
                 }
-                //RConsole.println("" + elapsed + " " + (int)curVelocity + " " + (int)curCnt+ " " + absA);
-                //RConsole.println("" + (int)curVelocity + " " + (int)curCnt+ " " + absA);
-                Delay.msDelay(now + 4 - System.currentTimeMillis());
-
-            }	// end keep going loop
+                // check for stall
+                if (Math.abs(error) > stallLimit)
+                {
+                    baseTime += delta;
+                    if (stallCnt++ > 1000) endMove(true);
+                }
+                else
+                {
+                    stallCnt /= 2;
+                }
+                calcPower(error, MOVE_P, MOVE_I, MOVE_D);
+                // If we have a move limit, check for time to start the deceleration stage
+                if (checkLimit)
+                {
+                    float acc = (curVelocity*curVelocity)/(2*(curLimit - curCnt));
+                    if (curAcc/acc < 1.0)
+                        startSubMove(0, acc, NO_LIMIT, curHold);
+                }
+            } else if (curHold)
+            {
+                // not moving, hold position
+                error = curCnt - tachoCnt;
+                calcPower(error, HOLD_P, HOLD_I, HOLD_D);
+            }
+            else
+            {
+                // Allow the motor to move freely
+                curCnt = tachoCnt;
+                power = 0;
+                mode = FLOAT;
+                active = false;
+                cont.removeMotor(Motor.this);
+            }
         }// end run
 
         /**
@@ -672,19 +692,85 @@ public class Motor extends BasicMotor implements TachoMotor
         private void calcPower(float error, float P, float I, float D)
         {
             // use smoothing to reduce the noise in frequrent tacho count readings
-            err1 = 0.5f * err1 + 0.5f * error;  // fast smoothing
-            err2 = 0.8f * err2 + 0.2f * error; // slow smoothing
-            float power = basePower + P * err1 + D * (err1 - err2);
-            basePower = basePower + I * (power - basePower);
+            // New values
+            err1 = 0.375f * err1 + 0.625f * error;  // fast smoothing
+            err2 = 0.75f * err2 + 0.25f * error; // slow smoothing
+            // Original values
+            //err1 = 0.5f * err1 + 0.5f * error;  // fast smoothing
+            //err2 = 0.8f * err2 + 0.2f * error; // slow smoothing
+            float newPower = basePower + P * err1 + D * (err1 - err2);
+            basePower = basePower + I * (newPower - basePower);
             if (basePower > MAX_POWER)
                 basePower = MAX_POWER;
             else if (basePower < -MAX_POWER)
                 basePower = -MAX_POWER;
-            int pwr = (power > MAX_POWER ? MAX_POWER : power < -MAX_POWER ? -MAX_POWER : Math.round(power));
-            if (pwr == 0)
-                tachoPort.controlMotor(pwr, STOP);
-            else
-                tachoPort.controlMotor(pwr, FORWARD);
+            power = (newPower > MAX_POWER ? MAX_POWER : newPower < -MAX_POWER ? -MAX_POWER : Math.round(newPower));
+
+            mode = (power == 0 ? STOP : FORWARD);
+        }
+    }
+
+    /**
+     * This class provides a single thread that drives all of the motor regulation
+     * process. Only active motors will be regulated. To try and keep motors
+     * as closely synchronized as possible tach counts for all motors are gathered
+     * as close as possible to the same time. Similarly new power levels for each
+     * motor are also set at the same time.
+     */
+    protected static class Controller extends Thread
+    {
+        static final int UPDATE_PERIOD = 4;
+        Motor [] activeMotors = new Motor[0];
+
+        /**
+         * Add a motor to the set of active motors.
+         * @param m
+         */
+        synchronized void addMotor(Motor m)
+        {
+            Motor [] newMotors = new Motor[activeMotors.length+1];
+            System.arraycopy(activeMotors, 0, newMotors, 0, activeMotors.length);
+            newMotors[activeMotors.length] = m;
+            m.reg.reset();
+            activeMotors = newMotors;
+        }
+
+        /**
+         * Remove a motor from the set of active motors.
+         * @param m
+         */
+        synchronized void removeMotor(Motor m)
+        {
+            Motor [] newMotors = new Motor[activeMotors.length-1];
+            int j = 0;
+            for(int i = 0; i < activeMotors.length; i++)
+                if (activeMotors[i] != m)
+                    newMotors[j++] = activeMotors[i];
+            activeMotors = newMotors;
+        }
+
+
+        @Override
+        public void run()
+        {
+            long now = System.currentTimeMillis();
+            for(;;)
+            {
+                long delta;
+                synchronized (this)
+                {
+                    delta = System.currentTimeMillis() - now;
+                    Motor [] motors = activeMotors;
+                    now += delta;
+                    for(Motor m : motors)
+                        m.reg.tachoCnt = m.tachoPort.getTachoCount();
+                    for(Motor m : motors)
+                        m.reg.regulateMotor(delta);
+                    for(Motor m : motors)
+                        m.tachoPort.controlMotor(m.reg.power, m.reg.mode);
+                }
+                Delay.msDelay(now + UPDATE_PERIOD - System.currentTimeMillis());
+           }	// end keep going loop
         }
     }
 }
