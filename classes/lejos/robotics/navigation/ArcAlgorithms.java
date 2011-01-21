@@ -1,8 +1,6 @@
 package lejos.robotics.navigation;
 
-import java.awt.geom.*;
-
-import lejos.geom.Point;
+import lejos.geom.*;
 import lejos.robotics.Move;
 import lejos.robotics.Pose;
 
@@ -33,7 +31,7 @@ public class ArcAlgorithms { // TODO Make package level when done testing?
 	 * @return
 	 */
 	public static Move [] getBestPath(Pose start, float turnRadius1, Pose destination, float turnRadius2) {
-		// Get all paths TODO: This can probably be steamlined with arrays. Sort out Path (Move) container first.
+		// Get all paths TODO: This can probably be streamlined with arrays. Sort out Path (Move) container first.
 		Move [][] paths1 = getAvailablePaths(start, turnRadius1, destination, turnRadius2);
 		Move [][] paths2 = getAvailablePaths(start, turnRadius1, destination, -turnRadius2);
 		Move [][] paths3 = getAvailablePaths(start, -turnRadius1, destination, turnRadius2);
@@ -71,16 +69,16 @@ public class ArcAlgorithms { // TODO Make package level when done testing?
 		Move [] [] paths = new Move [PATHS] [MOVES_PER_PATH];
 				
 		// Draw start circle:
-		Point2D.Float startCircle = ArcAlgorithms.findCircleCenter(start.getLocation(), turnRadius1, start.getHeading());
+		Point startCircle = ArcAlgorithms.findCircleCenter(start.getLocation(), turnRadius1, start.getHeading());
 		
 		// Draw target circle:
-		Point2D.Float targetCircle = ArcAlgorithms.findCircleCenter(destination.getLocation(), turnRadius2, destination.getHeading());
+		Point targetCircle = ArcAlgorithms.findCircleCenter(destination.getLocation(), turnRadius2, destination.getHeading());
 		
 		// Calculate "inner circle" (sometimes it is outer circle)
 		float innerRadius = turnRadius1 - turnRadius2;
 		
 		float newHeading;
-		Point2D.Float p2inner;
+		Point p2inner;
 				
 		// TODO: Special case if radius = 0 for both? 
 		
@@ -93,7 +91,7 @@ public class ArcAlgorithms { // TODO Make package level when done testing?
 			p2inner = ArcAlgorithms.findP2(startCircle, targetCircle, innerRadius);
 			
 			// To find arcLength, need to make new p1 that sits on inner circle.
-			Point2D.Float p1inner = ArcAlgorithms.findPointOnHeading(start.getLocation(), start.getHeading() + 90, turnRadius1);
+			Point p1inner = ArcAlgorithms.findPointOnHeading(start.getLocation(), start.getHeading() + 90, turnRadius1);
 			
 			// Find new heading:
 			float sArc = ArcAlgorithms.getArc(p1inner, p2inner, innerRadius, start.getHeading(), true);
@@ -101,8 +99,8 @@ public class ArcAlgorithms { // TODO Make package level when done testing?
 		} // END OF UNEQUAL RADII CODE
 		
 		// Find points p2 and p3:
-		Point2D.Float p2 = ArcAlgorithms.findPointOnHeading(p2inner, newHeading - 90, turnRadius2);
-		Point2D.Float p3 = ArcAlgorithms.findPointOnHeading(targetCircle, newHeading - 90, turnRadius2);
+		Point p2 = ArcAlgorithms.findPointOnHeading(p2inner, newHeading - 90, turnRadius2);
+		Point p3 = ArcAlgorithms.findPointOnHeading(targetCircle, newHeading - 90, turnRadius2);
 		
 		// Find distance to drive straight segment:
 		float p2p3 = ArcAlgorithms.distBetweenPoints(p2, p3);
@@ -157,9 +155,9 @@ public class ArcAlgorithms { // TODO Make package level when done testing?
 		Move [] [] paths = new Move [PATHS] [MOVES_PER_PATH];
 		
 		// TODO: Use Point instead of Point2D.Float? 
-		Point2D.Float p1 = new Point2D.Float(start.getX(), start.getY());
+		Point p1 = new Point(start.getX(), start.getY());
 		// the Point destination below should really return float, not double. Not sure why Laurie returns a double.
-		Point2D.Float p3 = new Point2D.Float((float)destination.getX(), (float)destination.getY());
+		Point p3 = new Point((float)destination.getX(), (float)destination.getY());
 		
 		for(int i = 0;i<PATHS;i++) { 
 			float radius = turnRadius;
@@ -169,8 +167,8 @@ public class ArcAlgorithms { // TODO Make package level when done testing?
 			if(i>=PATHS/2) radius = -turnRadius; // Do calculations for +ve radius then -ve radius
 			
 			// Find two arc angles:
-			Point2D.Float c = ArcAlgorithms.findCircleCenter(p1, radius, start.getHeading());
-			Point2D.Float p2 = ArcAlgorithms.findP2(c, p3, radius);
+			Point c = ArcAlgorithms.findCircleCenter(p1, radius, start.getHeading());
+			Point p2 = ArcAlgorithms.findP2(c, p3, radius);
 			float arcLengthForward = ArcAlgorithms.getArc(p1, p2, radius, start.getHeading(), true);
 			//double arcLengthBackward = ArcAlgorithms.getArc(p1, p2, radius, start.getHeading(), false);
 			float arcLengthBackward = ArcAlgorithms.getArcBackward(arcLengthForward); // faster
@@ -245,13 +243,13 @@ public class ArcAlgorithms { // TODO Make package level when done testing?
 	 * @param distance The distance away from this point to calculate a new point
 	 * @return A new point "distance" from the first point along the same heading. 
 	 */
-	public static Point2D.Float findPointOnHeading(Point2D.Float original, float heading, float distance) {
+	public static Point findPointOnHeading(Point original, float heading, float distance) {
 	
 		// TODO: Do calculation to set theta angle according to "quadrant" of destination point? Probably not needed.
 		double head = heading - 180;
 		double pax = original.x - distance * Math.cos(Math.toRadians(head));
 		double pay = original.y - distance * Math.sin(Math.toRadians(head));
-		Point2D.Float Pa = new Point2D.Float((float)pax, (float)pay);
+		Point Pa = new Point((float)pax, (float)pay);
 		return Pa;
 	}
 	
@@ -265,7 +263,7 @@ public class ArcAlgorithms { // TODO Make package level when done testing?
 	 * @return The angle in degrees (between 0 and 180)
 	 */
 	// TODO: Reorder triangle order so middle variable is apex of angle.
-	public static float getTriangleAngle(Point2D.Float p1, Point2D.Float p2, Point2D.Float pa) {
+	public static float getTriangleAngle(Point p1, Point p2, Point pa) {
 		// Now calculate lengths of all lines on our P1-Pa-P2 triangle
 		double a = distBetweenPoints(p1, p2);
 		//System.out.println("a: " + a);
@@ -314,11 +312,11 @@ public class ArcAlgorithms { // TODO Make package level when done testing?
 	 * @return Length of travel along circle, in degrees
 	 * 
 	 */
-	public static float getArc(Point2D.Float p1, Point2D.Float p2, float radius, float heading, boolean forward) {
+	public static float getArc(Point p1, Point p2, float radius, float heading, boolean forward) {
 		// I accidently got the radius sign confused. +ve radius is supposed to have circle center to left of robot:
 		radius = -radius; // Kludge. Should really correct my equations.
 		
-		Point2D.Float pa = ArcAlgorithms.findPointOnHeading(p1, heading, radius*2);
+		Point pa = ArcAlgorithms.findPointOnHeading(p1, heading, radius*2);
 		//System.out.println("pa: " + pa);
 		float arcLength = ArcAlgorithms.getTriangleAngle(p1, p2, pa);
 		arcLength *= -2;
@@ -365,7 +363,7 @@ public class ArcAlgorithms { // TODO Make package level when done testing?
 	 * @deprecated This method is no longer used because it can't calculate >180 angles. Delete any time.
 	 */
     @Deprecated
-	public static double getArcOld(Point2D.Float p1, Point2D.Float p2, double radius) {
+	public static double getArcOld(Point p1, Point p2, double radius) {
 		// I accidently got the radius sign confused. +ve radius is supposed to have circle center to left of robot:
 		radius = -radius; // Kludge. Should really correct my equations.
 		
@@ -399,7 +397,7 @@ public class ArcAlgorithms { // TODO Make package level when done testing?
 	 * @param b The second point
 	 * @return The distance between points a and b.
 	 */
-	public static float distBetweenPoints(Point2D.Float a, Point2D.Float b) {
+	public static float distBetweenPoints(Point a, Point b) {
 		double z = Math.pow((b.x - a.x), 2) + Math.pow((b.y - a.y), 2);
 		return (float)Math.sqrt(z);
 	}
@@ -412,8 +410,8 @@ public class ArcAlgorithms { // TODO Make package level when done testing?
 	 * @param to Final point.
 	 * @return Heading in degrees (0-360) 
 	 */
-	public static float getHeading(Point2D.Float from, Point2D.Float to) {
-		Point2D.Float xAxis = new Point2D.Float(from.x + 30, from.y);
+	public static float getHeading(Point from, Point to) {
+		Point xAxis = new Point(from.x + 30, from.y);
 		float heading = ArcAlgorithms.getTriangleAngle(from, to, xAxis);
 		if(to.y < from.y) heading = 360 - heading;
 		return heading;
@@ -427,7 +425,7 @@ public class ArcAlgorithms { // TODO Make package level when done testing?
 	 * @param radius The turn radius.
 	 * @return P2, the takeoff point on the circle.
 	 */
-	public static Point2D.Float findP2(Point2D.Float c, Point2D.Float p3, float radius) {
+	public static Point findP2(Point c, Point p3, float radius) {
 		// I accidently got the radius sign confused. +ve radius is supposed to have circle center to left of robot:
 		radius = -radius; // Kludge. Should really correct my equations.
 				
@@ -446,7 +444,7 @@ public class ArcAlgorithms { // TODO Make package level when done testing?
 		double x2 = p3.x - a2;
 		double y2 = p3.y - o1;
 		
-		return new Point2D.Float((float)x2, (float)y2);
+		return new Point((float)x2, (float)y2);
 	}
 	
 	/**
@@ -459,7 +457,7 @@ public class ArcAlgorithms { // TODO Make package level when done testing?
 	 * @param heading Start heading of vehicle, in degrees (not radians).
 	 * @return The center point of the circle.
 	 */
-	public static Point2D.Float findCircleCenter(Point2D.Float p1, float radius, float heading) {
+	public static Point findCircleCenter(Point p1, float radius, float heading) {
 		// I accidently got the radius sign confused. +ve radius is supposed to have circle center to left of robot:
 		radius = -radius; // Kludge. Should really correct my equations.
 				
@@ -468,6 +466,6 @@ public class ArcAlgorithms { // TODO Make package level when done testing?
 		double a = p1.x + radius * Math.cos(Math.toRadians(t));
 		double b = p1.y + radius * Math.sin(Math.toRadians(t));
 		
-		return new Point2D.Float((float)a,(float)b);
+		return new Point((float)a,(float)b);
 	}
 }
