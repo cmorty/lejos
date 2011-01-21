@@ -31,12 +31,23 @@ if "%OS%" == "Windows_NT" goto :winnt
 	goto :build_classpaths
 
 :nxj_home_found
-	set NXJ_BIN=%NXJ_HOME%\bin
+	set "NXJ_BIN=%NXJ_HOME%\bin"
 
 :build_classpaths
 	call :build_classpath NXJ_CP_PC "%NXJ_HOME%\lib\pc"
 	call :build_classpath NXJ_CP_NXT "%NXJ_HOME%\lib\nxt"
 
+	if not "%LEJOS_NXT_JAVA_HOME%" == "" (
+		set "JAVA=%LEJOS_NXT_JAVA_HOME%/bin/java"
+		set "JAVAC=%LEJOS_NXT_JAVA_HOME%/bin/javac"
+	) else if not "%JAVA_HOME%" == "" (
+		set "JAVA=%JAVA_HOME%/bin/java"
+		set "JAVAC=%JAVA_HOME%/bin/javac"
+	) else (
+		set "JAVA=java"
+		set "JAVAC=javac"
+	)
 
-java -Dnxj.home="%NXJ_HOME%" -DCOMMAND_NAME="nxjlink" -Djava.library.path="%NXJ_BIN%" -classpath "%NXJ_CP_PC%" lejos.pc.tools.NXJLink --writeorder "LE" --bootclasspath "%NXJ_CP_NXT%" --classpath "." %*
+
+"%JAVA%" -Dnxj.home="%NXJ_HOME%" -DCOMMAND_NAME="nxjlink" -Djava.library.path="%NXJ_BIN%" -classpath "%NXJ_CP_PC%" lejos.pc.tools.NXJLink --writeorder "LE" --bootclasspath "%NXJ_CP_NXT%" --classpath "." %*
 :eof
