@@ -19,28 +19,22 @@ public class OSInfo
 	public static final String ARCH_PPC = "ppc";
 	public static final String ARCH_PPC64 = "ppc64";
 	public static final String ARCH_SPARC = "sparc";
+	public static final String ARCH_PA_RISK = "pa_risk";
+	public static final String ARCH_ARM = "arm";
 
+	public static final String OS_WINDOWS_CE = "windows_ce";
 	public static final String OS_WINDOWS = "windows";
+	public static final String OS_LINUX = "linux";
 	public static final String OS_MACOS = "macos";
 	public static final String OS_MACOSX = "macosx";
 	public static final String OS_SOLARIS = "solaris";
-	public static final String OS_LINUX = "linux";
+	
+	public static final String UNKNOWN = "unknown";
 
-	private static final Properties ALIAS;
+	private static final String PREFIX_OS = "os.";
+	private static final String PREFIX_ARCH = "arch.";
 	
-	static
-	{
-		try
-		{
-			ALIAS = loadProperties();
-		}
-		catch (IOException e)
-		{
-			throw new RuntimeException("couldn't determine os/arch", e);
-		}
-	}
-	
-	private static Properties loadProperties() throws IOException
+	private static Map<?, ?> loadProperties() throws IOException
 	{
 		String path = OSInfo.class.getName().replace('.', '/') + ".properties";
 		URL u = OSInfo.class.getClassLoader().getResource(path);
@@ -57,15 +51,15 @@ public class OSInfo
 		}
 	}
 	
-	private static String probe(Properties p, String prefix, String value)
+	private static String probe(Map<?, ?> p, String prefix, String value)
 	{
 		value = value.toLowerCase();
-		for (Map.Entry<Object, Object> e : p.entrySet())
+		for (Map.Entry<?, ?> e : p.entrySet())
 		{
 			String key = e.getKey().toString();
 			String pattern = e.getValue().toString();
 			if (key.startsWith(prefix) && value.matches(pattern))
-			{			
+			{
 				return key.substring(prefix.length());
 			}
 		}
@@ -74,12 +68,12 @@ public class OSInfo
 
 	private static String getDefaultOS()
 	{
-		return System.getProperty("os.name");
+		return System.getProperty("os.name", UNKNOWN);
 	}
 
 	private static String getDefaultArch()
 	{
-		return System.getProperty("os.arch");
+		return System.getProperty("os.arch", UNKNOWN);
 	}
 
 	private static int getDefaultModel()
@@ -100,27 +94,24 @@ public class OSInfo
 	/**
 	 * Creates OSInfo-Object with Infos about the current System according to the
 	 * System-properties.
+	 * @throws IOException 
 	 */
-	public OSInfo()
+	public OSInfo() throws IOException
 	{
 		this(getDefaultOS(), getDefaultArch(), getDefaultModel());
 	}
 
 	/**
-	 * TODO_IO javadoc
 	 * @param osname
 	 * @param arch
 	 * @param datamodel
+	 * @throws IOException 
 	 */
-	public OSInfo(String osname, String arch, int datamodel)
+	public OSInfo(String osname, String arch, int datamodel) throws IOException
 	{
+		Map<?, ?> ALIAS = loadProperties();
 		osname = probe(ALIAS, "os.", osname);
 		arch = probe(ALIAS, "arch.", arch);
-
-		if (arch.equals(ARCH_PPC) && datamodel > 32)
-		{
-			arch += datamodel;
-		}
 
 		this.os = osname;
 		this.arch = arch;
