@@ -400,33 +400,25 @@ public class RS485 extends NXTCommDevice {
          */
         int assignAddress(byte addr, byte[] remAddress, byte[] remName)
         {
-            //RConsole.println("Assign address " + devName + " " + devAddress);
             byte [] data = new byte[1+2*ADDRESS_LEN+2*NAME_LEN];
             int offset = 1;
             //First byte is the address to be assigned
             data[0] = addr;
             // Now copy in the address bytes
-            //RConsole.println("1");
             if (remAddress != null && remAddress.length == ADDRESS_LEN)
                 System.arraycopy(remAddress, 0, data, offset, ADDRESS_LEN);
             offset += ADDRESS_LEN;
             // and the name
-            //RConsole.println("2");
             if (remName != null && remName.length <= NAME_LEN)
                 System.arraycopy(remName, 0, data, offset, remName.length);
             offset += NAME_LEN;
-            //RConsole.println("3");
 
             // Copy in our netAddress and netName
             System.arraycopy(netAddress, 0, data, offset, ADDRESS_LEN);
             offset += ADDRESS_LEN;
-            //RConsole.println("4");
 
             System.arraycopy(netName, 0, data, offset, NAME_LEN);
             // Now broadcast it
-            //RConsole.println("5");
-
-
             return sendData(BB_BROADCAST, (byte)0, (byte)0, data, 0, data.length);
         }
 
@@ -607,6 +599,7 @@ public class RS485 extends NXTCommDevice {
             RS485Connection con;
             byte addr = frame[0];
             byte control = frame[1];
+            //RConsole.println("addr " + addr + " control " + control);
             if (addr >= slaveConnections.length) return;
             con = slaveConnections[addr];
             if (addr == BB_BROADCAST)
@@ -621,6 +614,7 @@ public class RS485 extends NXTCommDevice {
                     // assignment. Check to see if we are interested.
                     if (con != null)
                     {
+                        //RConsole.println("state " + con.state);
                         synchronized(con)
                         {
                             if (con.state == RS485Connection.CS_CONNECTING1)
@@ -635,7 +629,7 @@ public class RS485 extends NXTCommDevice {
             // Access shared data
             synchronized(con)
             {
-                //RConsole.println("processRequest addr " + addr + " control " + control + " time " + (int)System.currentTimeMillis());
+                //RConsole.println("processRequest addr " + addr + " control " + control + " time " + (int)System.currentTimeMillis()+ " state " + con.state);
                 con.retryCnt = 0;
                 if (control == BB_DISC)
                 {
@@ -824,7 +818,6 @@ public class RS485 extends NXTCommDevice {
     {
         RS485Connection con;
 
-        con = controller.newConnection(DS_SLAVE);
         synchronized(controller)
         {
             // We only allow a single listening connection
