@@ -24,16 +24,13 @@ if "%OS%" == "Windows_NT" goto :winnt
 
 :winnt
 	setlocal
-	if not "%NXJ_HOME%" == "" goto :nxj_home_found
+	if not "%NXJ_HOME%" == "" (
+		set "NXJ_BIN=%NXJ_HOME%\bin"
+	) else (
+		call :normalize_path NXJ_BIN "%~dp0\."
+		call :normalize_path NXJ_HOME "%~dp0\.."
+	)
 
-	call :normalize_path NXJ_BIN "%~dp0\."
-	call :normalize_path NXJ_HOME "%~dp0\.."
-	goto :build_classpaths
-
-:nxj_home_found
-	set "NXJ_BIN=%NXJ_HOME%\bin"
-
-:build_classpaths
 	call :build_classpath NXJ_CP_PC "%NXJ_HOME%\lib\pc"
 	call :build_classpath NXJ_CP_NXT "%NXJ_HOME%\lib\nxt"
 
