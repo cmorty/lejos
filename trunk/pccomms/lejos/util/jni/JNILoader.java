@@ -1,18 +1,21 @@
 package lejos.util.jni;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 
 public class JNILoader
 {
-	private final OSInfo osinfo = new OSInfo();
+	private final OSInfo osinfo;
 	private final File folder;
 	private JNIException lastFault; 
 	
-	public JNILoader(Class<?> caller) throws URISyntaxException
+	public JNILoader(Class<?> caller) throws URISyntaxException, IOException
 	{
+		this.osinfo = new OSInfo();
+		
 		String name = caller.getName();
 		String path = name.replace('.', '/') + ".class";
 		URL u = caller.getClassLoader().getResource(path);
