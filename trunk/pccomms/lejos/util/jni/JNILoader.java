@@ -9,6 +9,11 @@ public class JNILoader
 {
 	private final OSInfo osinfo;
 	private final String subdir;
+	
+	public JNILoader() throws IOException
+	{
+		this(null);
+	}
 
 	public JNILoader(String subdir) throws IOException
 	{
@@ -88,6 +93,6 @@ public class JNILoader
 			}
 			folder = folder.getParentFile();
 		}
-		throw new JNIException("library " + libfile + " (" + os + "/" + arch + ") has not been found in " + basefolder);
+		throw new JNIException("library " + libfile + " (" + os + "/" + arch + ") was not found in " + basefolder);
 	}
 }
