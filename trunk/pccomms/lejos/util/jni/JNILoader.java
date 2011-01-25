@@ -8,7 +8,6 @@ import java.net.URISyntaxException;
 public class JNILoader
 {
 	private final OSInfo osinfo;
-	private JNIException lastFault; 
 	
 	public JNILoader() throws IOException
 	{
@@ -43,12 +42,20 @@ public class JNILoader
 		return tmp.getParentFile();
 	}
 	
-	public void loadLibrary(Class<?> caller, String libname) throws URISyntaxException
+	public void loadLibrary(Class<?> caller, String libname) throws JNIException
 	{
 		String libfile = System.mapLibraryName(libname);
 		String arch = osinfo.getArch();
 		String os = osinfo.getOS();
-		File folder = getBaseFolder(caller);
+		File folder;
+		try
+		{
+			folder = getBaseFolder(caller);
+		}
+		catch (URISyntaxException e)
+		{
+			throw new JNIException("internal error", e);
+		}
 		File f = new File(new File(folder, os), arch);
 		
 		// try to find libfile in ./os/arch, ./os, and .
@@ -60,21 +67,19 @@ public class JNILoader
 				try
 				{
 					System.load(f2.getPath());
-					this.lastFault = null;
 					return;
 				}
 				catch (Exception e)
 				{
-					this.lastFault = new JNIException("could not load library "+f2.getPath(), e);
+					throw new JNIException("could not load library "+f2.getPath(), e);
+				}
+				catch (UnsatisfiedLinkError e)
+				{
+					throw new JNIException("could not load library "+f2.getPath(), e);
 				}
 			}
 			f = f.getParentFile();
 		}
-		this.lastFault = new JNIException("library "+libfile+" has not been found ("+os+"/"+arch+")");
-	}
-	
-	public JNIException getLastFault()
-	{
-		return this.lastFault;
+		throw new JNIException("library "+libfile+" has not been found ("+os+"/"+arch+")");
 	}
 }
