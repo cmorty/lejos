@@ -8,18 +8,20 @@ import java.net.URISyntaxException;
 public class JNILoader
 {
 	private final OSInfo osinfo;
-	
-	public JNILoader() throws IOException
+	private final String subdir;
+
+	public JNILoader(String subdir) throws IOException
 	{
-		this.osinfo = new OSInfo();		
+		this.osinfo = new OSInfo();
+		this.subdir = subdir;
 	}
-	
+
 	private File getBaseFolder(Class<?> caller) throws URISyntaxException
 	{
 		String clname = caller.getName();
 		String clpath = clname.replace('.', '/') + ".class";
 		URI u = caller.getClassLoader().getResource(clpath).toURI();
-		
+
 		File tmp;
 		if ("jar".equalsIgnoreCase(u.getScheme()))
 		{
@@ -27,59 +29,65 @@ public class JNILoader
 			int i = jarpath.indexOf('!');
 			if (i < 0)
 				throw new RuntimeException("no ! in JAR path");
-			
-			jarpath = jarpath.substring(0, i);			
+
+			jarpath = jarpath.substring(0, i);
 			tmp = new File(new URI(jarpath));
 		}
 		else
 		{
 			tmp = new File(u);
-			for (int i=clname.indexOf('.'); i>=0; i=clname.indexOf('.', i+1))
+			for (int i = clname.indexOf('.'); i >= 0; i = clname.indexOf('.', i + 1))
 			{
 				tmp = tmp.getParentFile();
 			}
 		}
 		return tmp.getParentFile();
 	}
-	
+
 	public void loadLibrary(Class<?> caller, String libname) throws JNIException
 	{
-		String libfile = System.mapLibraryName(libname);
-		String arch = osinfo.getArch();
-		String os = osinfo.getOS();
-		File folder;
+		File basefolder;
 		try
 		{
-			folder = getBaseFolder(caller);
+			basefolder = getBaseFolder(caller);
 		}
 		catch (URISyntaxException e)
 		{
 			throw new JNIException("internal error", e);
 		}
-		File f = new File(new File(folder, os), arch);
-		
-		// try to find libfile in ./os/arch, ./os, and .
-		for (int i=0; i<3; i++)
-		{			
-			File f2 = new File(f, libfile);
-			if (f2.exists())
+
+		if (this.subdir != null)
+			basefolder = new File(basefolder, this.subdir);
+
+		String libfile = System.mapLibraryName(libname);
+		String arch = osinfo.getArch();
+		String os = osinfo.getOS();
+		File folder = new File(new File(basefolder, os), arch);
+
+		// try to find libfile in basefolder/os/arch, basefolder/os, and
+		// basefolder
+		for (int i = 0; i < 3; i++)
+		{
+			File libpath = new File(folder, libfile);
+			if (libpath.exists())
 			{
+				String libpath2 = libpath.getAbsolutePath();
 				try
 				{
-					System.load(f2.getPath());
+					System.load(libpath2);
 					return;
 				}
 				catch (Exception e)
 				{
-					throw new JNIException("could not load library "+f2.getPath(), e);
+					throw new JNIException("cannot load library " + libpath2, e);
 				}
 				catch (UnsatisfiedLinkError e)
 				{
-					throw new JNIException("could not load library "+f2.getPath(), e);
+					throw new JNIException("cannot load library " + libpath2, e);
 				}
 			}
-			f = f.getParentFile();
+			folder = folder.getParentFile();
 		}
-		throw new JNIException("library "+libfile+" has not been found ("+os+"/"+arch+")");
+		throw new JNIException("library " + libfile + " (" + os + "/" + arch + ") has not been found in " + basefolder);
 	}
 }
