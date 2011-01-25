@@ -23,6 +23,7 @@ public class JNILoader
 
 	private File getBaseFolder(Class<?> caller) throws URISyntaxException
 	{
+		// getName also works as expected for nested classes (returns package.Outer$Inner)
 		String clname = caller.getName();
 		String clpath = clname.replace('.', '/') + ".class";
 		URI u = caller.getClassLoader().getResource(clpath).toURI();
@@ -69,8 +70,7 @@ public class JNILoader
 		String os = osinfo.getOS();
 		File folder = new File(new File(basefolder, os), arch);
 
-		// try to find libfile in basefolder/os/arch, basefolder/os, and
-		// basefolder
+		// try to find libfile in basefolder/os/arch, basefolder/os, and basefolder
 		for (int i = 0; i < 3; i++)
 		{
 			File libpath = new File(folder, libfile);
