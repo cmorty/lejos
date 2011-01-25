@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 
 public class JNILoader
 {
@@ -21,17 +22,20 @@ public class JNILoader
 		this.subdir = subdir;
 	}
 
-	private File getBaseFolder(Class<?> caller) throws URISyntaxException
+	private File getBaseFolder(Class<?> caller) throws JNIException, URISyntaxException
 	{
 		// getName also works as expected for nested classes (returns package.Outer$Inner)
 		String clname = caller.getName();
 		String clpath = clname.replace('.', '/') + ".class";
-		URI u = caller.getClassLoader().getResource(clpath).toURI();
-
+		URL url = caller.getClassLoader().getResource(clpath);
+		if (url == null)
+			throw new JNIException(clpath + " not found in classpath");
+			
 		File tmp;
-		if ("jar".equalsIgnoreCase(u.getScheme()))
+		URI uri = url.toURI();
+		if ("jar".equalsIgnoreCase(uri.getScheme()))
 		{
-			String jarpath = u.getRawSchemeSpecificPart();
+			String jarpath = uri.getRawSchemeSpecificPart();
 			int i = jarpath.indexOf('!');
 			if (i < 0)
 				throw new RuntimeException("no ! in JAR path");
@@ -41,7 +45,7 @@ public class JNILoader
 		}
 		else
 		{
-			tmp = new File(u);
+			tmp = new File(uri);
 			for (int i = clname.indexOf('.'); i >= 0; i = clname.indexOf('.', i + 1))
 			{
 				tmp = tmp.getParentFile();
