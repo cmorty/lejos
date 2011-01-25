@@ -102,19 +102,16 @@ public class OSInfo
 	}
 
 	/**
-	 * @param osname
+	 * @param os
 	 * @param arch
 	 * @param datamodel
 	 * @throws IOException 
 	 */
-	public OSInfo(String osname, String arch, int datamodel) throws IOException
+	public OSInfo(String os, String arch, int datamodel) throws IOException
 	{
 		Map<?, ?> ALIAS = loadProperties();
-		osname = probe(ALIAS, "os.", osname);
-		arch = probe(ALIAS, "arch.", arch);
-
-		this.os = osname;
-		this.arch = arch;
+		this.os = probe(ALIAS, PREFIX_OS, os);
+		this.arch = probe(ALIAS, PREFIX_ARCH, arch);
 	}
 
 	/**
