@@ -4,52 +4,57 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 
 public class JNILoader
 {
 	private final OSInfo osinfo;
-	private final File folder;
 	private JNIException lastFault; 
 	
-	public JNILoader(Class<?> caller) throws URISyntaxException, IOException
+	public JNILoader() throws IOException
 	{
-		this.osinfo = new OSInfo();
-		
-		String name = caller.getName();
-		String path = name.replace('.', '/') + ".class";
-		URL u = caller.getClassLoader().getResource(path);
+		this.osinfo = new OSInfo();		
+	}
+	
+	private File getBaseFolder(Class<?> caller) throws URISyntaxException
+	{
+		String clname = caller.getName();
+		String clpath = clname.replace('.', '/') + ".class";
+		URI u = caller.getClassLoader().getResource(clpath).toURI();
 		
 		File tmp;
-		if (u.getProtocol().equalsIgnoreCase("jar"))
+		if ("jar".equalsIgnoreCase(u.getScheme()))
 		{
-			path = u.getPath();
-			int i = path.indexOf('!');
-			if (i >= 0)
-				path = path.substring(0, i);
-						
-			tmp = new File(new URI(path)).getParentFile();
+			String jarpath = u.getRawSchemeSpecificPart();
+			int i = jarpath.indexOf('!');
+			if (i < 0)
+				throw new RuntimeException("no ! in JAR path");
+			
+			jarpath = jarpath.substring(0, i);			
+			tmp = new File(new URI(jarpath));
 		}
 		else
 		{
-			tmp = new File(u.toURI());
-			for (int i=0; i>=0; i=name.indexOf('.', i+1))
+			tmp = new File(u);
+			for (int i=clname.indexOf('.'); i>=0; i=clname.indexOf('.', i+1))
 			{
 				tmp = tmp.getParentFile();
 			}
 		}
-		this.folder = tmp;
+		return tmp.getParentFile();
 	}
 	
-	public void loadLibrary(String name)
+	public void loadLibrary(Class<?> caller, String libname) throws URISyntaxException
 	{
-		name = System.mapLibraryName(name);
-		String os = osinfo.getOS();
+		String libfile = System.mapLibraryName(libname);
 		String arch = osinfo.getArch();
+		String os = osinfo.getOS();
+		File folder = getBaseFolder(caller);
 		File f = new File(new File(folder, os), arch);
+		
+		// try to find libfile in ./os/arch, ./os, and .
 		for (int i=0; i<3; i++)
-		{
-			File f2 = new File(f, name);
+		{			
+			File f2 = new File(f, libfile);
 			if (f2.exists())
 			{
 				try
@@ -62,10 +67,10 @@ public class JNILoader
 				{
 					this.lastFault = new JNIException("could not load library "+f2.getPath(), e);
 				}
-			}		
+			}
 			f = f.getParentFile();
 		}
-		this.lastFault = new JNIException("library "+name+" has not been found ("+os+"/"+arch+")");
+		this.lastFault = new JNIException("library "+libfile+" has not been found ("+os+"/"+arch+")");
 	}
 	
 	public JNIException getLastFault()
