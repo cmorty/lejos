@@ -79,7 +79,7 @@ public class RemoteMotor implements TachoMotor, NXTProtocol {
 	
 	public void setSpeed(int speed) {
 		
-		if(speed > 900|speed < 0)
+		if(speed > 900 || speed < 0)
 			return;
 		speed = (speed * 100) / 900;
 		this.power = (byte)speed;
