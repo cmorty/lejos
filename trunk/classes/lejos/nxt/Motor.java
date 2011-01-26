@@ -93,14 +93,15 @@ public class Motor extends BasicMotor implements TachoMotor
 
     /**
      * Removes this motor from the motor regulation system. After this call
-     * the motor will be in float mode. Note calling any
+     * the motor will be in float mode and will have stopped. Note calling any
      * of the high level move operations (forward, rotate etc.), will
      * automatically enable regulation.
      */
     public void shutdown()
     {
-        // Putting the motor into float mode disbales regulation.
-        flt();
+        // Putting the motor into float mode disables regulation. note
+        // that we wait for the operation to complete.
+        reg.newMove(0, acceleration, NO_LIMIT, false, true);
     }
 
     /**
@@ -114,19 +115,25 @@ public class Motor extends BasicMotor implements TachoMotor
         synchronized (reg)
         {
             // work out the mode
-            int mode = (velocity == 0 ? (hold ? STOP : FLOAT) : velocity > 0 ? FORWARD : BACKWARD);
+            int newMode = (velocity == 0 ? (hold ? STOP : FLOAT) : velocity > 0 ? FORWARD : BACKWARD);
             this.stalled = stalled;
-            if (mode == _mode)
+            if (newMode == mode)
                 return;
-            _mode = mode;
+            mode = newMode;
             // Call any listener.
-            if (mode == STOP || mode == FLOAT)
+            if (listener != null)
             {
-                if (listener != null)
+                if (newMode == STOP || newMode == FLOAT)
                     listener.rotationStopped(this, getTachoCount(), stalled, System.currentTimeMillis());
-            } else if (listener != null)
-                listener.rotationStarted(this, getTachoCount(), false, System.currentTimeMillis());
+                else
+                    listener.rotationStarted(this, getTachoCount(), false, System.currentTimeMillis());
+            }
         }
+    }
+
+    protected void updateState(int mode)
+    {
+        // not used in this implemnentation of BasicMotor
     }
 
     /**
@@ -167,19 +174,6 @@ public class Motor extends BasicMotor implements TachoMotor
     public void backward()
     {
         reg.newMove(speed, acceleration, -NO_LIMIT, true, false);
-    }
-
-    /**
-     * Reverses direction of the motor. It only has
-     * effect if the motor is moving.
-     */
-    @Override
-    public void reverseDirection()
-    {
-        if (_mode == FORWARD)
-            backward();
-        else if (_mode == BACKWARD)
-            forward();
     }
 
     /**
@@ -347,24 +341,6 @@ public class Motor extends BasicMotor implements TachoMotor
         return Math.round(speed);
     }
 
-    /**
-     * @deprecated  this class always uses speed regulation.
-     * @param  activate is true for speed regulation on
-     */
-    @Deprecated
-    public void regulateSpeed(boolean activate)
-    {
-
-    }
-
-    /**
-     * @deprecated  this class always uses smooth acceleration
-     */
-    @Deprecated
-    public void smoothAcceleration(boolean activate)
-    {
-
-    }
 
     /**
      * @deprecated The regulator will always try to hold position unless the

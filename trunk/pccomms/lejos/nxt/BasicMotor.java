@@ -8,8 +8,7 @@ import lejos.robotics.DCMotor;
  */
 
 /** 
- * An abstraction for a motor without a tachometer,
- * such as an RCX motor.
+ * Abstraction for basic motor operations.
  * 
  * @author Lawrie Griffiths.
  *
@@ -22,30 +21,8 @@ public abstract class BasicMotor implements DCMotor
 	public final static int FLOAT = 4;
     public final static int MAX_POWER = 100;
 
-	protected int _mode = FLOAT;
-	protected int _power = 50;
-	protected BasicMotorPort _port;
-
-	/**
-	 * Sets power.
-	 * 
-	 * @param power power setting: 0 - 100
-	 */
-	public void setPower(int power)
-	{
-		_power = power;
-		_port.controlMotor(_power, _mode);
-	}
-	 
-	/**
-	 * Returns the current power setting.
-	 * 
-	 * @return power value 0-100
-	 */
-	public int getPower()
-	{
-		return _power;
-	}
+	protected int mode = FLOAT;
+	abstract protected void updateState( int newMode);
 
 	/**
 	 * Causes motor to rotate forward.
@@ -57,10 +34,12 @@ public abstract class BasicMotor implements DCMotor
 	  
 	/**
 	 * Return true if motor is forward.
-	 */
+     *
+     * @return true if the motor is running forwards
+     */
 	public boolean isForward()
 	{
-		return (_mode == FORWARD);
+		return (mode == FORWARD);
 	}
 
 	/**
@@ -73,10 +52,12 @@ public abstract class BasicMotor implements DCMotor
 
 	/**
 	 * Return true if motor is backward.
-	 */
+     *
+     * @return true if the motor is running backwards
+     */
 	public boolean isBackward()
 	{
-		return (_mode == BACKWARD);
+		return (mode == BACKWARD);
 	}
 
 	/**
@@ -85,11 +66,10 @@ public abstract class BasicMotor implements DCMotor
 	 */
 	public void reverseDirection()
 	{
-		if (_mode == FORWARD)
-			updateState( BACKWARD);
-		else
-		if (_mode == BACKWARD)
-			updateState( FORWARD);
+		if (mode == FORWARD)
+			backward();
+        else if (mode == BACKWARD)
+			forward();
 	}
 
 	/**
@@ -99,7 +79,7 @@ public abstract class BasicMotor implements DCMotor
 	 */
 	public boolean isMoving()
 	{
-		return (_mode == FORWARD || _mode == BACKWARD);   
+		return (mode == FORWARD || mode == BACKWARD);   
 	}
 
 	/**
@@ -120,7 +100,7 @@ public abstract class BasicMotor implements DCMotor
 	 */
 	public boolean isFloating()
 	{
-		return _mode == FLOAT;	  
+		return mode == FLOAT;	  
 	}
 	  
 	/**
@@ -137,21 +117,14 @@ public abstract class BasicMotor implements DCMotor
 	  
 	/**
 	 * Return true if motor is stopped.
-	 */
+     *
+     * @return true if the motor is stopped
+     */
 	public boolean isStopped()
 	{
-		return (_mode == STOP);
+		return (mode == STOP);
 	}
 
-	void updateState( int mode)
-	{
-		if( _mode != mode)
-		{
-			_mode = mode;
-			_port.controlMotor(_power, _mode);
-		}
-	}
-	  
 	/**
 	 * Returns the mode.
 	 * 
@@ -159,7 +132,7 @@ public abstract class BasicMotor implements DCMotor
 	 */
 	public int getMode()
 	{ 
-		return _mode;
+		return mode;
 	}
 }
 

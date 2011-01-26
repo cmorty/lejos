@@ -1,6 +1,7 @@
 import lejos.nxt.Button;
 import lejos.nxt.LCD;
-import lejos.nxt.Motor;
+import lejos.nxt.MotorPort;
+import lejos.nxt.NXTMotor;
 import lejos.nxt.SensorPort;
 import lejos.nxt.addon.NXTLineLeader;
 import lejos.nxt.addon.NXTLineLeader.LineColor;
@@ -16,6 +17,8 @@ import lejos.nxt.addon.NXTLineLeader.LineColor;
  */
 public class NXTLineLeaderTest {
 	NXTLineLeader ll = new NXTLineLeader(SensorPort.S1);
+    NXTMotor MA = new NXTMotor(MotorPort.A);
+    NXTMotor MC = new NXTMotor(MotorPort.C);
 
 	void go() {
 		LCD.clear();
@@ -40,11 +43,8 @@ public class NXTLineLeaderTest {
 		LCD.clear();
 		LCD.drawString("Running...", 0, 0);
 
-		Motor.A.regulateSpeed(false);
-		Motor.C.regulateSpeed(false);
-		
-		Motor.A.forward();
-		Motor.C.forward();
+		MA.forward();
+		MC.forward();
 
 		int lastResult = -1;
 		int lastSteering = 0;
@@ -54,23 +54,23 @@ public class NXTLineLeaderTest {
 				switch (llResult) {
 				case 0xff:
 					// LCD.drawString("ALL BLACK", 0, 3);
-					Motor.A.stop();
-					Motor.C.stop();
+					MA.stop();
+					MC.stop();
 					break;
 				case 0x00:
 					// LCD.drawString("ALL WHITE", 0, 3);
-					Motor.A.setPower(20 - lastSteering);
-					Motor.C.setPower(20 + lastSteering);
-					Motor.A.forward();
-					Motor.C.forward();
+					MA.setPower(20 - lastSteering);
+					MC.setPower(20 + lastSteering);
+					MA.forward();
+					MC.forward();
 					break;
 				default:
 					int steering = ll.getSteering();
 					int power = 100 - Math.abs(steering);
-					Motor.A.setPower(power - steering);
-					Motor.C.setPower(power + steering);
-					Motor.A.forward();
-					Motor.C.forward();
+					MA.setPower(power - steering);
+					MC.setPower(power + steering);
+					MA.forward();
+					MC.forward();
 					lastSteering = steering;
 				}
 				lastResult = llResult;

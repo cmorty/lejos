@@ -11,19 +11,9 @@ public class SpeedTest {
   LightSensor ls = new LightSensor(SensorPort.S3);
   UltrasonicSensor us = new UltrasonicSensor(SensorPort.S1);
   us.continuous();
-  Motor MA = Motor.A;
-  Motor MB = Motor.B;
-  Motor MC = Motor.C;
-  /* Disable the speed regulation and close down the associated threads.
-   * This test does not require this type of motion control.
-   */
-
-  MA.regulateSpeed(false);
-  MB.regulateSpeed(false);
-  MC.regulateSpeed(false);
-  MA.shutdown();
-  MB.shutdown();
-  MC.shutdown();
+  NXTMotor MA = new NXTMotor(MotorPort.A);
+  NXTMotor MB = new NXTMotor(MotorPort.B);
+  NXTMotor MC = new NXTMotor(MotorPort.C);
   
   MB.forward();
   MC.forward();
@@ -35,7 +25,7 @@ public class SpeedTest {
   int lightVal=0;
   while(totalTime < TOTALTIME) {
    lightVal = ls.readValue();
-   distVal = us.getDistance();
+   //distVal = us.getDistance();
    tacho = MB.getTachoCount();
    int RN = rand.nextInt( 100) + 1;
    int V3 = (lightVal + distVal + tacho)*100/RN;
