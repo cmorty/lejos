@@ -60,7 +60,12 @@ public interface TachoMotor extends Tachometer, DCMotor {
    */
   public void rotateTo(int limitAngle,boolean immediateReturn);  
 
+  /**
+   * Return the limit angle (if any)
+   * @return the current limit angle
+   */
   public int getLimitAngle();
+
   /**
    * Set motor speed. As a rule of thumb 100 degrees per second are possible for each volt on an NXT motor.
    * 
@@ -76,26 +81,14 @@ public interface TachoMotor extends Tachometer, DCMotor {
   int getSpeed();
  
   /**
-   * Turns speed regulation on/off. Cumulative speed error is within about 1 degree after initial acceleration on the
-   * NXT.
-   * 
-   * @param activate is true for speed regulation.
-   */
-  void regulateSpeed(boolean activate);
-
-  /**
-   * Enables smoother acceleration. Motor speed increases gently, and does not overshoot when regulate Speed is used.
-   * 
-   * @param activate is true for smooth acceleration.
-   */
-  void smoothAcceleration(boolean activate);
-
-  /**
    * returns true if motor is stalled
    * @return true if stalled
    */
 
-    boolean isStalled();
-
-    void setAcceleration(int acceleration);
+   boolean isStalled();
+   /**
+    * Set the required rate of acceleration degrees/s/s
+    * @param acceleration
+    */
+   void setAcceleration(int acceleration);
 }
