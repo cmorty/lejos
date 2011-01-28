@@ -13,32 +13,32 @@ public class TextMenu
 	/**
 	 *location of the top row of the list; set by constructor, used by display()
 	 */
-	private int _topRow = 0;
+	protected int _topRow = 0;
 	
 	/** 
 	 * number of rows displayed; set by constructor, used by display()
 	 */
-	private int _height = 8;
+	protected int _height = 8;
 	
 	/**
 	 *optional menu title displayed immediately above the list of items
 	 */
-	private String _title;
+	protected String _title;
 	
 	/**
 	 *array of items to be displayed ;set by constructor, used by select();
 	 */
-	private String[] _items;
+	protected String[] _items;
 	
 	/**
 	 * effective length of items array  - number of items before null 
 	 */
-	private int _length;
+	protected int _length;
 	
 	/**
 	 * index of the list item at the top of the list; set by constructor, used by select()
  	 **/
-	private int _topIndex = 0;  
+	protected int _topIndex = 0;  
 	
 	/**
  	 *identifies the currently selected item
@@ -53,12 +53,12 @@ public class TextMenu
 	/**
 	 * boolean to cause select to quit 
 	 */
-	private boolean _quit = false;
+	protected boolean _quit = false;
 	
 	/**
 	 * start time for select()
 	 */
-	private int _startTime;
+	protected int _startTime;
 	
 	/**
 	 * This constructor sets location of the top row of the item list to row 0 of the display.
@@ -240,7 +240,7 @@ public class TextMenu
 	/**
 	 * helper method used by select()
 	 */
-	private  void display(int selectedIndex, int topIndex)
+	protected void display(int selectedIndex, int topIndex)
 	{
 		//LCD.asyncRefreshWait();
 		if(_title != null)
