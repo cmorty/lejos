@@ -115,7 +115,15 @@ public class BasicNavigator implements PoseController
   public void waitForDestinationReached() {
 	  while (_keepGoing) Thread.yield();
   }
- 
+
+ /*(
+  * returns <code> false </code> if the the final waypoint has been rached or <br>
+  interrupt() has been called
+  */
+  public boolean isGoing()
+  {
+    return _keepGoing;
+  }
   /**
    * This inner class runs the thread that processes the waypoint queue
    */
@@ -140,22 +148,22 @@ public class BasicNavigator implements PoseController
           }
           else
           {
-  			// 1. Get shortest path:
-  			Move [] moves;
-  			float minRadius = (_pilot instanceof ArcMoveController ? ((ArcMoveController) _pilot).getMinRadius() : 0);
-  			
-  			if (_destination.headingRequired)
-  			{
-  				moves = ArcAlgorithms.getBestPath(poseProvider.getPose(), minRadius, _destination.getPose(),minRadius);
-  			} 
-  			else
-  			{
-  				moves = ArcAlgorithms.getBestPath(poseProvider.getPose(), _destination, minRadius);  				
-  			}
-  			// 2. Drive the path
-  			for(int i=0;i<moves.length;i++) {
-  				((ArcMoveController) _pilot).travelArc(moves[i].getArcRadius(), moves[i].getDistanceTraveled());
-  			}
+            // 1. Get shortest path:
+            Move[] moves;
+            float minRadius = (_pilot instanceof ArcMoveController ? ((ArcMoveController) _pilot).getMinRadius() : 0);
+
+            if (_destination.headingRequired)
+            {
+              moves = ArcAlgorithms.getBestPath(poseProvider.getPose(), minRadius, _destination.getPose(), minRadius);
+            } else
+            {
+              moves = ArcAlgorithms.getBestPath(poseProvider.getPose(), _destination, minRadius);
+            }
+            // 2. Drive the path
+            for (int i = 0; i < moves.length; i++)
+            {
+              ((ArcMoveController) _pilot).travelArc(moves[i].getArcRadius(), moves[i].getDistanceTraveled());
+            }
           }
           
           while (_pilot.isMoving() && _keepGoing)
