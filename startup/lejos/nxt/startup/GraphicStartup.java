@@ -30,6 +30,7 @@ public class GraphicStartup {
     static final int defaultSleepTime = 2;
     static final int maxSleepTime = 10;
     
+    static final String ICDefault = "\u00fe\u0001\u0001\u0001\u0001\u0001\u0061\u0099\u0045\u0031\u0001\u0001\u0001\u0001\u0001\u00fe\u007f\u0080\u009d\u00bf\u00b7\u008f\u0080\u0095\u0095\u0091\u0094\u0085\u0083\u0080\u0080\u007f";
     static final String ICProgram = "\u00fe\u0001\u0001\u0001\u0001\u0001\u0061\u0099\u0045\u0031\u0001\u0001\u0001\u0001\u0001\u00fe\u007f\u0080\u0080\u0090\u0091\u0095\u0095\u0095\u0095\u0091\u0094\u0085\u0083\u0080\u0080\u007f";
     static final String ICFiles = "\u00f0\u0068\u0068\u0058\u0048\u0044\u0042\u0081\u0002\u0006\n\u0012\"\u004a\u00d4\u00f8\u007f\u0080\u0080\u0080\u0080\u0080\u0080\u0080\u0081\u0081\u0081\u00c5\u00ab\u00d5\u00ab\u007f";
     static final String ICBlue = "\0\0\u00f0\u00fc\u00ce\u009e\u003f\u0003\u0067\u000f\u009e\u00fe\u00fc\u00f0\0\0\0\0\u000f\u003f\u0073\u0079\u00fc\u00c0\u00e6\u00f0\u0079\u007f\u003f\u000f\0\0";
@@ -42,6 +43,10 @@ public class GraphicStartup {
     static final String ICSearch = "\u0078\u0084\u001a\r\u0005\u0001\u0001\u0002\u0084\u0078\0\0\0\0\0\0\0\0\u0001\u0002\u0002\u0002\u0002\u0003\u0005\u0009\u0012\u0024\u0048\u0050\u0020\0";
     static final String ICPIN = "\0\0\0\u006c\u0092\u0092\u006c\u0092\u0092\u006c\u0092\u0092\u006c\0\0\0\0\0\u003e\u000b\u000e\0\u0023\u003e\"\u0001\u003e\u000c\u0011\u003e\0\0";
     static final String ICDelete = "\0\0\u0010\u00e8\u0028\u00a8\u0028\u00ac\u0028\u00a8\u0028\u00e8\u0010\0\0\0\0\0\0\u003f\u0040\u005f\u0040\u005f\u0040\u005f\u0040\u003f\0\0\0\0";
+    
+    static final String ICFormat = "\0\0\u0080\u0060\u0098\u0024\u0014\u0014\u0014\u0014\u0024\u0098\u0060\u0080\0\0\0\u000c\u0013\u001a\u001a\u001b\u001b\u001b\u0013\u0017\u0013\u0016\u0012\u0013\u000c\0";
+    static final String ICSleep = "\0\u0012\u001a\u0096\u0072\u0090\u0024\u0034\u00ac\u00a4\u0008\u0010\u0090\u0060\u0080\0\0\0\0\u0007\u0018\u0020\u0021\u0041\u0058\u0058\u0041\u0021\u0020\u0018\u0007\0";
+    static final String ICAutoRun = "\u0040\u0050\u0050\u0050\u0010\u0080\u0060\u0050\u0050\u0050\u0070\u0050\u0070\u00d0\u0070\0\u0005\u0005\u0001\0\u000e\u0009\u0008\u0008\u0008\u0008\u0008\u0008\u0006\u0001\0\0";
     
 	static final int POWER = 6;
 	static final int VISIBILITY = 7;
@@ -547,8 +552,10 @@ public class GraphicStartup {
                 icons[i] = ICNXT;
             }
             GraphicMenu searchMenu = new GraphicMenu(names, icons);
+            searchMenu.setParentIcon(ICSearch);
             // TODO Make Pair Icon
             GraphicMenu subMenu = new GraphicMenu(new String[]{"Pair"}, new String[]{ICNXT});
+            subMenu.setParentIcon(ICSearch);
             int selected = 0;
             do
             {
@@ -611,8 +618,10 @@ public class GraphicStartup {
             }
 
             GraphicMenu deviceMenu = new GraphicMenu(names, icons);
+            deviceMenu.setParentIcon(ICNXT);
             //TextMenu subMenu = new TextMenu(new String[] {"Remove"}, 6);
             GraphicMenu subMenu = new GraphicMenu(new String[] {"Remove"},new String[]{ICDelete});
+            subMenu.setParentIcon(ICNXT);
             int selected = 0;
             do
             {
@@ -756,8 +765,7 @@ public class GraphicStartup {
         {
         	selectionAdd = 0;
             items = new String[]{"Execute program", "Set as Default", "Delete file"}; 
-            // TODO Default Icon
-            icons = new String[]{ICProgram,"",ICDelete};
+            icons = new String[]{ICProgram,ICDefault,ICDelete};
         }
         else if (ext.equals("wav"))
         {
@@ -776,6 +784,7 @@ public class GraphicStartup {
         LCD.drawString(Long.toString(file.length()), 5, 2);
         //TextMenu menu = new TextMenu(items, 2, fileName);
         GraphicMenu menu = new GraphicMenu(items,icons,fileName);
+        menu.setParentIcon(ICFiles);
         int selection = getSelection(menu, 0);
         if (selection >= 0)
         {
@@ -810,6 +819,7 @@ public class GraphicStartup {
     {
         //TextMenu menu = new TextMenu(null, 1);
     	GraphicMenu menu = new GraphicMenu(null,null);
+    	menu.setParentIcon(ICFiles);
         int selection = 0;
         do {
             newScreen("Files");
@@ -827,7 +837,9 @@ public class GraphicStartup {
             for (int i = 0; i < len; i++){
                 fileNames[i] = files[i].getName();
                 String ext = Utils.getExtension(files[i].getName());
-                if (ext.equals("nxj") || ext.equals("bin"))
+                if(getDefaultProgram() != null && getDefaultProgram().getName().equals(fileNames[i]))
+                	icons[i] = ICDefault;
+                else if (ext.equals("nxj") || ext.equals("bin"))
                 	icons[i] = ICProgram;
                 else if (ext.equals("wav"))
                 	icons[i] = ICSound;
@@ -939,7 +951,10 @@ public class GraphicStartup {
     private void systemMenu()
     {
         String[] menuData = {"Format", "", "Auto Run", "Unset default"};
-        TextMenu menu = new TextMenu(menuData, 4);
+        String[] iconData = {ICFormat,ICSleep,ICAutoRun,ICDefault};
+        //TextMenu menu = new TextMenu(menuData, 4);
+        GraphicMenu menu = new GraphicMenu(menuData,iconData);
+        menu.setParentIcon(ICNXT);
         int selection = 0;
         do {
             newScreen("System");
@@ -1008,7 +1023,8 @@ public class GraphicStartup {
         GraphicMenu menu = new GraphicMenu(new String[]
                 {
                     "Run Default", "Files", "Bluetooth", "Sound", "System", "Version"
-                },new String[] {ICProgram,ICFiles,ICBlue,ICSound,ICNXT,ICLeJOS});
+                },new String[] {ICDefault,ICFiles,ICBlue,ICSound,ICNXT,ICLeJOS});
+        menu.setYLocation(3);
         int selection = 0;
         do
         {
