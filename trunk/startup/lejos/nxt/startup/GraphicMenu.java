@@ -3,7 +3,18 @@ package lejos.nxt.startup;
 import lejos.nxt.Button;
 import lejos.nxt.LCD;
 import lejos.util.TextMenu;
-
+/**
+ * Displays a list of items using icons (16x16).  The select() method allows the user to scroll the list using the right and left keys to scroll forward and backward 
+ * through the list. The location of the list , and an optional title can be specified to an extent.
+ * 
+ * The layout of a GraphicMenu is really basic.  It consists of a scrolling arc 
+ * of 5 icons underneath the label.  The position of the label determines where 
+ * the icons are drawn and can be defined with the method setYLocation().  Other 
+ * than the label location, nothing can be changed about the location of the menu.
+ * 
+ * @author Legoabram
+ *
+ */
 public class GraphicMenu extends TextMenu{
 	private static final byte xArea = 0; // x of Menu Area
 	//private static final byte yArea = 40; // y of Menu Area
@@ -23,7 +34,7 @@ public class GraphicMenu extends TextMenu{
 	private String[] _icons;
 	
 	/**
-	 * This constructor sets location of the top row of the item list to row 0 of the display.
+	 * This constructor sets the location of the menu at line 4 by default.
 	 */
 	public GraphicMenu( String[] items,String[] icons)
 	{
@@ -31,19 +42,14 @@ public class GraphicMenu extends TextMenu{
 	}
 	
 	/**
-	 * This constuctor allows the specfication of a title (of up to 16 characters) and the location of the item list <br>
+	 * This constructor allows the specification of a title (of up to 16 characters) <br>
 	 * The title is displayed in the row above the item list.
 	 * @param items  -  string array containing the menu items. No items beyond the first null will be displayed.
+	 * @param icons  -  string array containing the icon data in the form of a string instead of a byte[].
 	 */	
 	public GraphicMenu(String[] items,String[] icons, String title)
 	{
 		super(items,1,title);
-		int topRow = 1;
-		if (topRow < 0 || (topRow == 0 && title != null))
-			throw new IllegalArgumentException("illegal topRow argument");
-		
-		_topRow = topRow;
-		setTitle(title);
 		this.setItems(items,icons);
 	}
 	
@@ -187,7 +193,7 @@ public class GraphicMenu extends TextMenu{
 		if(_parent != null)
 			LCD.bitBlt(Utils.stringToBytes(_parent), 16, 16, 0, 0, xArea+41,yArea+18, 16, 16, LCD.ROP_COPY);
 		//Prepare Index Locations
-		int length = _items.length;
+		int length = _length;
 		int[] index = new int[5];
 		for (int i = 0; i < 5; i++)
 			index[i] = selectedIndex + (i-2);
@@ -218,7 +224,7 @@ public class GraphicMenu extends TextMenu{
 	}
 	
 	public void clearArea(){
-		LCD.bitBlt(new byte[396], 99, 25, 0, 0, 0, yArea, 99, 25, LCD.ROP_COPY);
+		LCD.bitBlt(new byte[400], 100, 30, 0, 0, 0, yArea, 100, 30, LCD.ROP_COPY);
 	}
 	
 	/**

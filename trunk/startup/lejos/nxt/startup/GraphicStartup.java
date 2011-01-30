@@ -796,7 +796,12 @@ public class GraphicStartup {
 	                file.exec();
 	                break;
 	            case 1:
-	                Settings.setProperty(defaultProgramProperty, fileName);
+	            	if (fileName.length() > 16){
+	            		msg("Filename Too Big");
+	            		fileMenu(file);
+	            	}
+	            	else
+	            		Settings.setProperty(defaultProgramProperty, fileName);
 	                break;
 	            case 10:
 	                Sound.playSample(file);
@@ -971,9 +976,11 @@ public class GraphicStartup {
                 LCD.drawString("R", 15, 3);
             menuData[1] = "Sleep time: " + (timeout == 0 ? "off" : String.valueOf(timeout));
             File f = getDefaultProgram();
-            if (f == null)
+            if (f == null){
             	menuData[3] = null;
-            menu.setItems(menuData);
+            	iconData[3] = null;
+            }
+            menu.setItems(menuData,iconData);
             selection = getSelection(menu, selection);
             switch (selection)
             {
